@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 281C1E63F06
-	for <dpdk-dev@archiver.kernel.org>; Sun, 15 Feb 2026 19:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C732E63F08
+	for <dpdk-dev@archiver.kernel.org>; Sun, 15 Feb 2026 19:54:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 977BC402E8;
-	Sun, 15 Feb 2026 20:53:56 +0100 (CET)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
- [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id B6761402CA
- for <dev@dpdk.org>; Sun, 15 Feb 2026 20:53:55 +0100 (CET)
-Received: by mail-wr1-f41.google.com with SMTP id
- ffacd0b85a97d-4362d4050c1so2907102f8f.2
- for <dev@dpdk.org>; Sun, 15 Feb 2026 11:53:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8B0C1402F0;
+	Sun, 15 Feb 2026 20:53:58 +0100 (CET)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 29A1F402EB
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 20:53:57 +0100 (CET)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-48375f1defeso18495205e9.0
+ for <dev@dpdk.org>; Sun, 15 Feb 2026 11:53:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771185235;
- x=1771790035; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771185237;
+ x=1771790037; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=O5afsdi7lNYzV8vldLmWWutq89CMERsseppW/hqO6Lo=;
- b=lJkvirCJyyMnh4j9VHCKvZGxNfiX4ORP5duAyb78t2vXmtA0H5VFBLuXbXy+LIz1cO
- 8113F4DAm54ZmKr2AaYK+S20SxSZ5aqWfcle3PKec/EKiFvXdJejkFBeZQL7WYS7hnX4
- BZdADkUR0tMFlGwGjK0d4oVenNFzLaZWNiAq7+RPimeBgJgpV8BsiyYKpXfuAbytazu4
- q7/DzES/ntxqEZdeYUnOoeFYehN3oKhZi+oCBlr/vB1++CTUEc1cdBQgZL0rUSXF69cZ
- 0uZVqSZkc3QKH5o/B7gNYTJeEoWe4np1dvOHeDkj5gG17NnCi2piDSEn1OJeMoSmTCVA
- 8KBA==
+ bh=20R19dCnc/BbP+s8EiCxdL8VBzClIClf5xdw2NhyXmI=;
+ b=OiYSnJvxKmJhOeX/txwefPOVPr8Kvx0iWeyJMGOG8/C2YYUo0Wb8i2Yx87IR5LmlCc
+ IfU4UP0OUEfhMlGFDYA4EHb2Xw1GRV6nL6wqw/epyXGHxUhPS8JVwkUtNdvJ5AlzBkgv
+ 6XE/Y3kGlWNTH2px9F0MLqJz92W9ONgzANxK0lhgSbu6WIB6awtQ+OEQgoHb7WoCcQHo
+ 9oQ04krwEj1nJSNREBMKYq3e1it9c4SiJ3XfBW0ru7A1WpjEfQLh3D0knM2qIegenlZw
+ Rfh7TgYf8orhmCU2st2IJPpK0fR8S2i1cMxt8L2FHNfqsMyFxHcUOGlysrydI1G1/mx1
+ bV4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771185235; x=1771790035;
+ d=1e100.net; s=20230601; t=1771185237; x=1771790037;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=O5afsdi7lNYzV8vldLmWWutq89CMERsseppW/hqO6Lo=;
- b=VPZyvuIDQAhpH6vltfo4fnZIEWz9er5WpvpjfD0yiGUrXkpf1gaVoJhtltuzhSZ7nB
- VpHH95E9N86a6MriD26s2NzRT+o4w6yusqtQpjLjUcM0fsk28xnyIdUNcJska3CCQo//
- OYPnROH8Gr/SYjkg4cinPL5UgwyJ/JOI9x699jrtXS7myjraW0ON6yHqVW8NWdr3qoMG
- UzYiWANQQUBlPlkRB6hzJh/hwqXMcCNISCVPEEp7cP7k56Zm+z/NiQzdqPlkcIzf2MjF
- e3ETLRdl/mtNZsPw5f6uwhxhLqCp3quP6Z80pRgtStC5rneASf3Y5eYPrvjrb81shAKT
- rhXQ==
-X-Gm-Message-State: AOJu0Yysyq+Ba92aS5pxvFvammr8WmBGNmU5E92+O0UpVZkJwe9Dzivx
- yrL6m6kADX63ruRPjByBQwsNSjqFB7SUGL+hPEuzOc/QwnY6CWciUu/PF4Y4RPMfHuoRFd1/3Mz
- D7+Fql4c=
-X-Gm-Gg: AZuq6aLbELIlAqlUVhgh/ZwNmWvgN3kPoOcDl7aX1KcOHvIy4duH/j1VnUKf4YPIqgG
- WZu41W6ggyXjH+SC5gn866vkREsai8mpXcNjWmf/9VarKXhWnBjh9nDR1w6bOIcNULa+ALB/OwP
- JOtWiRQcOQqcsC/kMzA3zfNVEmBBwyUodJHuxC0HMTIE2kg3YMWoZbiB3IfbLi26o/NmLIKrHjv
- L4DiY2HU1KOnqP70A5qG59cuBrWKpkN6tWaiVapeRkLl0krx+3hiWz3LxUolXH8xWqgHRuW2/44
- emtz9bOoueKr06+waibNMgi0YdoACsq+4R+LXCpC0szaxVRC/vHLJDkf13dPTmPzc9W8mKxtgpG
- x8By6DK4ACIdE1Nd894HnEix//Zc4GCp6F1KqyISUXtC577wY7JBBFNYx8jqk9Kv6VjXi+GuGrM
- F1ULsQUrHOPDwogMUpAcvKg37vX4RlZBpMW499JOQ9MczJTfJhCvXsLCu5MVhFyQ==
-X-Received: by 2002:a05:600c:c16b:b0:483:43d8:8d68 with SMTP id
- 5b1f17b1804b1-48373a546b1mr151173725e9.28.1771185235087; 
- Sun, 15 Feb 2026 11:53:55 -0800 (PST)
+ bh=20R19dCnc/BbP+s8EiCxdL8VBzClIClf5xdw2NhyXmI=;
+ b=ncu9pgvqlaOqG782uWNEnaSwekStMhZ1iNFZCNoBhiHMOP9iO7Zg6jkOuOtA17fF73
+ kMBP3Y6HZYdviwUmgNnI4DtBYPtsjIeNhW6MYVgtu8QORPrPdhA1ZUYtTNTA3RcUxXPG
+ 2E9kBmeEKnHLqulii4xqcwXAdKWl/fOQ57FEQPoVMJaagiOF33CxZ2/b5z4IlnQgtSFv
+ RX9fdysmIo8ozYuO3AATXy+06ERjPjrRu/tI75ceZLgV7flhee/xuvMPLu1dUtNn3vET
+ kqvWSk+4OCBeG8mCeFm+7Me3IwlOf5dGARvHPw7to/fjbZ4hXc3CMSCHirYHtt+yW8JW
+ PKeA==
+X-Gm-Message-State: AOJu0YwInJ75UzQzo5Au7qqWxQKhibecTw/FVqOHbAZvQnbyFaqfhZoE
+ 66/zF3t9mYnIzdP4o4vF95kHE+2BuHsmF/B0tL3jLF9OKzUrKgNleJCvAB52oReHr6EKD/c4Zys
+ K4+6oHqA=
+X-Gm-Gg: AZuq6aLAKCSYvQd3CJCQFsGp/jMnVFHnxqi9y+zSx8sxiuOKalnSRcX5Q8ZQsr0WU0s
+ OW2WKX5tetVE7ouaRPnb4SGkCeVVeJKjY3BGWXTo4miq7VlHyvY5u2Wm+zGUbSw/8bAsUl1KFrA
+ v5Co2TH3DWmIEVASYnUWAbbL84tYrWDttd4yeD31flU4lyeXzWZds9CRXHoT871DCMeHOAhiFF+
+ QNTmWrOCw0AnqETdiByyxed+Ee97s5LJEse9vCJmIGnj5eIQn6XLj+rZmKqyyLaiTttACevSGL+
+ TLYm/GIXirqx4CguHexN110OJb3EFjRCxwWa4SFQpUpggtCzwKEymDv4xOfeLlR9XMWttHAl/59
+ UH1l4BqV5myx4lrKXJpQxTNg2qwGYNrSGNeGLuVQv2ZDraW8uwQoqbFEILm2UxQ98hSco4kS3PC
+ hXkzYrMzxiCnJnrRTT3O3DapEt0wzPLoUaqVjlF9EOV23jbRwGMYRzOsolEBITnA==
+X-Received: by 2002:a05:600c:4f8a:b0:477:7c7d:d9b2 with SMTP id
+ 5b1f17b1804b1-48373a7592cmr125345855e9.32.1771185236616; 
+ Sun, 15 Feb 2026 11:53:56 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4835d99497asm526490415e9.6.2026.02.15.11.53.53
+ 5b1f17b1804b1-4835d99497asm526490415e9.6.2026.02.15.11.53.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 15 Feb 2026 11:53:54 -0800 (PST)
+ Sun, 15 Feb 2026 11:53:56 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 01/10] test: add unit tests for TAP PMD
-Date: Sun, 15 Feb 2026 11:52:19 -0800
-Message-ID: <20260215195348.557945-2-stephen@networkplumber.org>
+Subject: [PATCH 02/10] net/tap: replace runtime speed capability with constant
+Date: Sun, 15 Feb 2026 11:52:20 -0800
+Message-ID: <20260215195348.557945-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260215195348.557945-1-stephen@networkplumber.org>
 References: <20260215195348.557945-1-stephen@networkplumber.org>
@@ -80,932 +80,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a standalone test suite for the TAP PMD, modeled on the existing
-test_pmd_ring tests. Exercises device configuration, link status,
-stats, MTU, MAC address, promiscuous/allmulticast modes, queue
-start/stop, link up/down, device stop/start, and multi-queue setup.
+The TAP/TUN virtual device always operates at 10G. The link speed is
+set in the static initializer for pmd_link, so the runtime assignments
+in rte_pmd_tap_probe() and rte_pmd_tun_probe() are redundant.
+
+Replace tap_dev_speed_capa(), which dynamically computed speed
+capabilities against pmd_link.link_speed, with a compile-time
+constant TAP_SPEED_CAPA. Remove the unused 'speed' variable and
+redundant assignments.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/meson.build    |   1 +
- app/test/test_pmd_tap.c | 896 ++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 897 insertions(+)
- create mode 100644 app/test/test_pmd_tap.c
+ drivers/net/tap/rte_eth_tap.c | 48 ++++++-----------------------------
+ 1 file changed, 8 insertions(+), 40 deletions(-)
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 48874037eb..b57fed424b 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -144,6 +144,7 @@ source_file_deps = {
-     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
-     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
-     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
-+    'test_pmd_tap.c': ['ethdev', 'net_tap', 'bus_vdev'],
-     'test_pmu.c': ['pmu'],
-     'test_power.c': ['power', 'power_acpi', 'power_kvm_vm', 'power_intel_pstate',
-         'power_amd_pstate', 'power_cppc'],
-diff --git a/app/test/test_pmd_tap.c b/app/test/test_pmd_tap.c
-new file mode 100644
-index 0000000000..998691e152
---- /dev/null
-+++ b/app/test/test_pmd_tap.c
-@@ -0,0 +1,896 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2024 Intel Corporation
-+ */
-+
-+#include "test.h"
-+
-+#include <stdio.h>
-+
-+#ifndef RTE_EXEC_ENV_LINUX
-+
-+/* TAP PMD is only available on Linux */
-+static int
-+test_pmd_tap(void)
-+{
-+	printf("TAP PMD not supported on this platform, skipping test\n");
-+	return TEST_SKIPPED;
-+}
-+
-+#else /* RTE_EXEC_ENV_LINUX */
-+
-+#include <string.h>
-+#include <unistd.h>
-+
-+#include <rte_ethdev.h>
-+#include <rte_bus_vdev.h>
-+#include <rte_mbuf.h>
-+#include <rte_ether.h>
-+#include <rte_ip.h>
-+
-+#define SOCKET0 0
-+#define RING_SIZE 256
-+#define NB_MBUF 2048
-+#define MAX_PKT_BURST 32
-+#define PKT_LEN 64
-+
-+static struct rte_mempool *mp;
-+static int tap_port0 = -1;
-+static int tap_port1 = -1;
-+
-+static int
-+test_tap_ethdev_configure(int port)
-+{
-+	struct rte_eth_conf port_conf;
-+	struct rte_eth_link link;
-+	int ret;
-+
-+	memset(&port_conf, 0, sizeof(struct rte_eth_conf));
-+
-+	ret = rte_eth_dev_configure(port, 1, 1, &port_conf);
-+	if (ret < 0) {
-+		printf("Configure failed for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	ret = rte_eth_tx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL);
-+	if (ret < 0) {
-+		printf("TX queue setup failed for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	ret = rte_eth_rx_queue_setup(port, 0, RING_SIZE, SOCKET0, NULL, mp);
-+	if (ret < 0) {
-+		printf("RX queue setup failed for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	ret = rte_eth_dev_start(port);
-+	if (ret < 0) {
-+		printf("Error starting port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	ret = rte_eth_link_get(port, &link);
-+	if (ret < 0) {
-+		printf("Link get failed for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	printf("Port %d: link status %s, speed %u Mbps\n",
-+	       port,
-+	       link.link_status ? "up" : "down",
-+	       link.link_speed);
-+
-+	return 0;
-+}
-+
-+static struct rte_mbuf *
-+create_test_packet(struct rte_mempool *pool, uint16_t pkt_len)
-+{
-+	struct rte_mbuf *mbuf;
-+	struct rte_ether_hdr *eth_hdr;
-+	struct rte_ipv4_hdr *ip_hdr;
-+	uint8_t *payload;
-+	uint16_t i;
-+
-+	mbuf = rte_pktmbuf_alloc(pool);
-+	if (mbuf == NULL)
-+		return NULL;
-+
-+	/* Ensure minimum packet size for Ethernet */
-+	if (pkt_len < RTE_ETHER_MIN_LEN)
-+		pkt_len = RTE_ETHER_MIN_LEN;
-+
-+	mbuf->data_len = pkt_len;
-+	mbuf->pkt_len = pkt_len;
-+
-+	/* Create Ethernet header */
-+	eth_hdr = rte_pktmbuf_mtod(mbuf, struct rte_ether_hdr *);
-+	memset(&eth_hdr->dst_addr, 0xFF, RTE_ETHER_ADDR_LEN); /* broadcast */
-+	memset(&eth_hdr->src_addr, 0x02, RTE_ETHER_ADDR_LEN);
-+	eth_hdr->src_addr.addr_bytes[5] = 0x01;
-+	eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	/* Create simple IPv4 header */
-+	ip_hdr = (struct rte_ipv4_hdr *)(eth_hdr + 1);
-+	memset(ip_hdr, 0, sizeof(*ip_hdr));
-+	ip_hdr->version_ihl = 0x45; /* IPv4, 20 byte header */
-+	ip_hdr->total_length = rte_cpu_to_be_16(pkt_len - sizeof(*eth_hdr));
-+	ip_hdr->time_to_live = 64;
-+	ip_hdr->next_proto_id = IPPROTO_UDP;
-+	ip_hdr->src_addr = rte_cpu_to_be_32(0x0A000001); /* 10.0.0.1 */
-+	ip_hdr->dst_addr = rte_cpu_to_be_32(0x0A000002); /* 10.0.0.2 */
-+
-+	/* Fill payload with pattern */
-+	payload = (uint8_t *)(ip_hdr + 1);
-+	for (i = 0; i < pkt_len - sizeof(*eth_hdr) - sizeof(*ip_hdr); i++)
-+		payload[i] = (uint8_t)(i & 0xFF);
-+
-+	return mbuf;
-+}
-+
-+static int
-+test_tap_send_receive(void)
-+{
-+	struct rte_mbuf *tx_mbufs[MAX_PKT_BURST];
-+	struct rte_mbuf *rx_mbufs[MAX_PKT_BURST];
-+	uint16_t nb_tx, nb_rx;
-+	int i;
-+
-+	printf("Testing TAP packet send and receive\n");
-+
-+	/* Create test packets */
-+	for (i = 0; i < MAX_PKT_BURST / 2; i++) {
-+		tx_mbufs[i] = create_test_packet(mp, PKT_LEN);
-+		if (tx_mbufs[i] == NULL) {
-+			printf("Failed to create test packet %d\n", i);
-+			/* Free already allocated packets */
-+			while (--i >= 0)
-+				rte_pktmbuf_free(tx_mbufs[i]);
-+			return TEST_FAILED;
-+		}
-+	}
-+
-+	/* Send packets */
-+	nb_tx = rte_eth_tx_burst(tap_port0, 0, tx_mbufs, MAX_PKT_BURST / 2);
-+	printf("Transmitted %u packets on port %d\n", nb_tx, tap_port0);
-+
-+	/* Free any unsent packets */
-+	for (i = nb_tx; i < MAX_PKT_BURST / 2; i++)
-+		rte_pktmbuf_free(tx_mbufs[i]);
-+
-+	if (nb_tx == 0) {
-+		printf("Warning: No packets transmitted (this may be expected if interface is not up)\n");
-+		return TEST_SUCCESS;
-+	}
-+
-+	/* Small delay to allow packets to be processed */
-+	usleep(10000);
-+
-+	/* Try to receive packets (note: TAP loopback depends on kernel config) */
-+	nb_rx = rte_eth_rx_burst(tap_port0, 0, rx_mbufs, MAX_PKT_BURST);
-+	printf("Received %u packets on port %d\n", nb_rx, tap_port0);
-+
-+	/* Free received packets */
-+	for (i = 0; i < nb_rx; i++)
-+		rte_pktmbuf_free(rx_mbufs[i]);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_stats_get(int port)
-+{
-+	struct rte_eth_stats stats;
-+	int ret;
-+
-+	printf("Testing TAP PMD stats_get for port %d\n", port);
-+
-+	ret = rte_eth_stats_get(port, &stats);
-+	if (ret != 0) {
-+		printf("Error: failed to get stats for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	printf("Port %d stats:\n", port);
-+	printf("  ipackets: %"PRIu64"\n", stats.ipackets);
-+	printf("  opackets: %"PRIu64"\n", stats.opackets);
-+	printf("  ibytes:   %"PRIu64"\n", stats.ibytes);
-+	printf("  obytes:   %"PRIu64"\n", stats.obytes);
-+	printf("  ierrors:  %"PRIu64"\n", stats.ierrors);
-+	printf("  oerrors:  %"PRIu64"\n", stats.oerrors);
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_stats_reset(int port)
-+{
-+	struct rte_eth_stats stats;
-+	int ret;
-+
-+	printf("Testing TAP PMD stats_reset for port %d\n", port);
-+
-+	ret = rte_eth_stats_reset(port);
-+	if (ret != 0) {
-+		printf("Error: failed to reset stats for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	ret = rte_eth_stats_get(port, &stats);
-+	if (ret != 0) {
-+		printf("Error: failed to get stats after reset for port %d\n",
-+		       port);
-+		return -1;
-+	}
-+
-+	/* After reset, all stats should be zero */
-+	if (stats.ipackets != 0 || stats.opackets != 0 ||
-+	    stats.ibytes != 0 || stats.obytes != 0 ||
-+	    stats.ierrors != 0 || stats.oerrors != 0) {
-+		printf("Error: port %d stats are not zero after reset\n", port);
-+		return -1;
-+	}
-+
-+	printf("Stats reset successful for port %d\n", port);
-+	return 0;
-+}
-+
-+static int
-+test_tap_link_status(int port)
-+{
-+	struct rte_eth_link link;
-+	int ret;
-+
-+	printf("Testing TAP PMD link status for port %d\n", port);
-+
-+	ret = rte_eth_link_get_nowait(port, &link);
-+	if (ret < 0) {
-+		printf("Error: failed to get link status for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	printf("Port %d link: status=%s speed=%u duplex=%s\n",
-+	       port,
-+	       link.link_status ? "up" : "down",
-+	       link.link_speed,
-+	       link.link_duplex ? "full" : "half");
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_dev_info(int port)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	int ret;
-+
-+	printf("Testing TAP PMD dev_info for port %d\n", port);
-+
-+	ret = rte_eth_dev_info_get(port, &dev_info);
-+	if (ret != 0) {
-+		printf("Error: failed to get dev info for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	printf("Port %d device info:\n", port);
-+	printf("  driver_name: %s\n", dev_info.driver_name);
-+	printf("  if_index: %u\n", dev_info.if_index);
-+	printf("  max_rx_queues: %u\n", dev_info.max_rx_queues);
-+	printf("  max_tx_queues: %u\n", dev_info.max_tx_queues);
-+	printf("  max_rx_pktlen: %u\n", dev_info.max_rx_pktlen);
-+
-+	/* Verify this is indeed a TAP device */
-+	if (strcmp(dev_info.driver_name, "net_tap") != 0 &&
-+	    strcmp(dev_info.driver_name, "net_tun") != 0) {
-+		printf("Warning: unexpected driver name: %s\n",
-+		       dev_info.driver_name);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_mtu(int port)
-+{
-+	uint16_t mtu;
-+	int ret;
-+
-+	printf("Testing TAP PMD MTU operations for port %d\n", port);
-+
-+	/* Get current MTU */
-+	ret = rte_eth_dev_get_mtu(port, &mtu);
-+	if (ret != 0) {
-+		printf("Error: failed to get MTU for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+	printf("Current MTU for port %d: %u\n", port, mtu);
-+
-+	/* Try to set a new MTU */
-+	ret = rte_eth_dev_set_mtu(port, 1400);
-+	if (ret != 0) {
-+		printf("Warning: failed to set MTU to 1400 for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		/* Not a fatal error - may require privileges */
-+	} else {
-+		printf("MTU set to 1400 for port %d\n", port);
-+
-+		/* Restore original MTU */
-+		ret = rte_eth_dev_set_mtu(port, mtu);
-+		if (ret != 0)
-+			printf("Warning: failed to restore MTU for port %d\n", port);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_mac_addr(int port)
-+{
-+	struct rte_ether_addr mac_addr;
-+	int ret;
-+
-+	printf("Testing TAP PMD MAC address for port %d\n", port);
-+
-+	ret = rte_eth_macaddr_get(port, &mac_addr);
-+	if (ret != 0) {
-+		printf("Error: failed to get MAC address for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+
-+	printf("Port %d MAC address: " RTE_ETHER_ADDR_PRT_FMT "\n",
-+	       port, RTE_ETHER_ADDR_BYTES(&mac_addr));
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_promiscuous(int port)
-+{
-+	int ret;
-+	int promisc_enabled;
-+
-+	printf("Testing TAP PMD promiscuous mode for port %d\n", port);
-+
-+	/* Get current promiscuous state */
-+	promisc_enabled = rte_eth_promiscuous_get(port);
-+	printf("Promiscuous mode initially %s for port %d\n",
-+	       promisc_enabled ? "enabled" : "disabled", port);
-+
-+	/* Enable promiscuous mode */
-+	ret = rte_eth_promiscuous_enable(port);
-+	if (ret != 0) {
-+		printf("Warning: failed to enable promiscuous mode for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+	} else {
-+		if (rte_eth_promiscuous_get(port) != 1) {
-+			printf("Error: promiscuous mode not enabled after enable call\n");
-+			return -1;
-+		}
-+		printf("Promiscuous mode enabled for port %d\n", port);
-+	}
-+
-+	/* Disable promiscuous mode */
-+	ret = rte_eth_promiscuous_disable(port);
-+	if (ret != 0) {
-+		printf("Warning: failed to disable promiscuous mode for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+	} else {
-+		if (rte_eth_promiscuous_get(port) != 0) {
-+			printf("Error: promiscuous mode not disabled after disable call\n");
-+			return -1;
-+		}
-+		printf("Promiscuous mode disabled for port %d\n", port);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_allmulti(int port)
-+{
-+	int ret;
-+	int allmulti_enabled;
-+
-+	printf("Testing TAP PMD allmulticast mode for port %d\n", port);
-+
-+	/* Get current allmulticast state */
-+	allmulti_enabled = rte_eth_allmulticast_get(port);
-+	printf("Allmulticast mode initially %s for port %d\n",
-+	       allmulti_enabled ? "enabled" : "disabled", port);
-+
-+	/* Enable allmulticast mode */
-+	ret = rte_eth_allmulticast_enable(port);
-+	if (ret != 0) {
-+		printf("Warning: failed to enable allmulticast mode for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+	} else {
-+		if (rte_eth_allmulticast_get(port) != 1) {
-+			printf("Error: allmulticast mode not enabled after enable call\n");
-+			return -1;
-+		}
-+		printf("Allmulticast mode enabled for port %d\n", port);
-+	}
-+
-+	/* Disable allmulticast mode */
-+	ret = rte_eth_allmulticast_disable(port);
-+	if (ret != 0) {
-+		printf("Warning: failed to disable allmulticast mode for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+	} else {
-+		if (rte_eth_allmulticast_get(port) != 0) {
-+			printf("Error: allmulticast mode not disabled after disable call\n");
-+			return -1;
-+		}
-+		printf("Allmulticast mode disabled for port %d\n", port);
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_queue_start_stop(int port)
-+{
-+	int ret;
-+
-+	printf("Testing TAP PMD queue start/stop for port %d\n", port);
-+
-+	/* Stop RX queue */
-+	ret = rte_eth_dev_rx_queue_stop(port, 0);
-+	if (ret != 0 && ret != -ENOTSUP) {
-+		printf("Error: failed to stop RX queue for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+	printf("RX queue stopped for port %d\n", port);
-+
-+	/* Stop TX queue */
-+	ret = rte_eth_dev_tx_queue_stop(port, 0);
-+	if (ret != 0 && ret != -ENOTSUP) {
-+		printf("Error: failed to stop TX queue for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+	printf("TX queue stopped for port %d\n", port);
-+
-+	/* Start RX queue */
-+	ret = rte_eth_dev_rx_queue_start(port, 0);
-+	if (ret != 0 && ret != -ENOTSUP) {
-+		printf("Error: failed to start RX queue for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+	printf("RX queue started for port %d\n", port);
-+
-+	/* Start TX queue */
-+	ret = rte_eth_dev_tx_queue_start(port, 0);
-+	if (ret != 0 && ret != -ENOTSUP) {
-+		printf("Error: failed to start TX queue for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+	printf("TX queue started for port %d\n", port);
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_link_up_down(int port)
-+{
-+	struct rte_eth_link link;
-+	int ret;
-+
-+	printf("Testing TAP PMD link up/down for port %d\n", port);
-+
-+	/* Set link down */
-+	ret = rte_eth_dev_set_link_down(port);
-+	if (ret != 0) {
-+		printf("Warning: failed to set link down for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+	} else {
-+		ret = rte_eth_link_get_nowait(port, &link);
-+		if (ret == 0)
-+			printf("Link status after set_link_down: %s\n",
-+			       link.link_status ? "up" : "down");
-+	}
-+
-+	/* Set link up */
-+	ret = rte_eth_dev_set_link_up(port);
-+	if (ret != 0) {
-+		printf("Warning: failed to set link up for port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+	} else {
-+		ret = rte_eth_link_get_nowait(port, &link);
-+		if (ret == 0)
-+			printf("Link status after set_link_up: %s\n",
-+			       link.link_status ? "up" : "down");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_dev_stop_start(int port)
-+{
-+	int ret;
-+
-+	printf("Testing TAP PMD device stop/start for port %d\n", port);
-+
-+	/* Stop the device */
-+	ret = rte_eth_dev_stop(port);
-+	if (ret != 0) {
-+		printf("Error: failed to stop port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+	printf("Device stopped for port %d\n", port);
-+
-+	/* Start the device again */
-+	ret = rte_eth_dev_start(port);
-+	if (ret != 0) {
-+		printf("Error: failed to start port %d: %s\n",
-+		       port, rte_strerror(-ret));
-+		return -1;
-+	}
-+	printf("Device started for port %d\n", port);
-+
-+	return 0;
-+}
-+
-+static int
-+test_tap_multi_queue(void)
-+{
-+	struct rte_eth_conf port_conf;
-+	struct rte_mempool *mq_mp;
-+	const uint16_t nb_queues = 2;
-+	int ret;
-+	int port = -1;
-+
-+	printf("Testing TAP PMD multi-queue configuration\n");
-+
-+	/* Create a separate mempool for multi-queue test */
-+	mq_mp = rte_pktmbuf_pool_create("tap_mq_pool", NB_MBUF, 32, 0,
-+					RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+	if (mq_mp == NULL) {
-+		printf("Warning: failed to create mempool for multi-queue test: %s\n",
-+		       rte_strerror(rte_errno));
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Create a new TAP device for multi-queue test */
-+	ret = rte_vdev_init("net_tap_mq", "iface=dtap_mq");
-+	if (ret < 0) {
-+		printf("Warning: failed to create multi-queue TAP device: %s\n",
-+		       rte_strerror(-ret));
-+		rte_mempool_free(mq_mp);
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Find the port */
-+	RTE_ETH_FOREACH_DEV(port) {
-+		char name[RTE_ETH_NAME_MAX_LEN];
-+		if (rte_eth_dev_get_name_by_port(port, name) == 0 &&
-+		    strstr(name, "net_tap_mq"))
-+			break;
-+	}
-+
-+	if (port < 0 || port >= RTE_MAX_ETHPORTS) {
-+		printf("Error: could not find multi-queue TAP device\n");
-+		rte_vdev_uninit("net_tap_mq");
-+		rte_mempool_free(mq_mp);
-+		return TEST_FAILED;
-+	}
-+
-+	memset(&port_conf, 0, sizeof(struct rte_eth_conf));
-+
-+	/* Configure with multiple queues */
-+	ret = rte_eth_dev_configure(port, nb_queues, nb_queues, &port_conf);
-+	if (ret < 0) {
-+		printf("Warning: multi-queue configure failed: %s\n",
-+		       rte_strerror(-ret));
-+		rte_vdev_uninit("net_tap_mq");
-+		rte_mempool_free(mq_mp);
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Setup TX queues */
-+	for (uint16_t q = 0; q < nb_queues; q++) {
-+		ret = rte_eth_tx_queue_setup(port, q, RING_SIZE, SOCKET0, NULL);
-+		if (ret < 0) {
-+			printf("Error: TX queue %u setup failed: %s\n",
-+			       q, rte_strerror(-ret));
-+			rte_vdev_uninit("net_tap_mq");
-+			rte_mempool_free(mq_mp);
-+			return TEST_FAILED;
-+		}
-+	}
-+
-+	/* Setup RX queues */
-+	for (uint16_t q = 0; q < nb_queues; q++) {
-+		ret = rte_eth_rx_queue_setup(port, q, RING_SIZE, SOCKET0, NULL, mq_mp);
-+		if (ret < 0) {
-+			printf("Error: RX queue %u setup failed: %s\n",
-+			       q, rte_strerror(-ret));
-+			rte_vdev_uninit("net_tap_mq");
-+			rte_mempool_free(mq_mp);
-+			return TEST_FAILED;
-+		}
-+	}
-+
-+	ret = rte_eth_dev_start(port);
-+	if (ret < 0) {
-+		printf("Error: failed to start multi-queue port: %s\n",
-+		       rte_strerror(-ret));
-+		rte_vdev_uninit("net_tap_mq");
-+		rte_mempool_free(mq_mp);
-+		return TEST_FAILED;
-+	}
-+
-+	printf("Multi-queue TAP device configured with %u queues\n", nb_queues);
-+
-+	/* Cleanup */
-+	rte_eth_dev_stop(port);
-+	rte_eth_dev_close(port);
-+	rte_vdev_uninit("net_tap_mq");
-+	rte_mempool_free(mq_mp);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static void
-+test_tap_cleanup(void)
-+{
-+	int ret;
-+
-+	printf("Cleaning up TAP PMD test resources\n");
-+
-+	if (tap_port0 >= 0) {
-+		ret = rte_eth_dev_stop(tap_port0);
-+		if (ret != 0)
-+			printf("Warning: failed to stop port %d: %s\n",
-+			       tap_port0, rte_strerror(-ret));
-+		rte_eth_dev_close(tap_port0);
-+	}
-+
-+	if (tap_port1 >= 0) {
-+		ret = rte_eth_dev_stop(tap_port1);
-+		if (ret != 0)
-+			printf("Warning: failed to stop port %d: %s\n",
-+			       tap_port1, rte_strerror(-ret));
-+		rte_eth_dev_close(tap_port1);
-+	}
-+
-+	rte_vdev_uninit("net_tap0");
-+	rte_vdev_uninit("net_tap1");
-+
-+	if (mp != NULL) {
-+		rte_mempool_free(mp);
-+		mp = NULL;
-+	}
-+
-+	tap_port0 = -1;
-+	tap_port1 = -1;
-+}
-+
-+static int
-+test_tap_setup(void)
-+{
-+	int ret;
-+	uint16_t port_id;
-+
-+	printf("Setting up TAP PMD test\n");
-+
-+	/* Create mempool */
-+	mp = rte_pktmbuf_pool_create("tap_test_pool", NB_MBUF, 32, 0,
-+				     RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+	if (mp == NULL) {
-+		printf("Error: failed to create mempool: %s\n",
-+		       rte_strerror(rte_errno));
-+		return -1;
-+	}
-+
-+	/* Create first TAP device */
-+	ret = rte_vdev_init("net_tap0", "iface=dtap_test0");
-+	if (ret < 0) {
-+		printf("Error: failed to create TAP device net_tap0: %s\n",
-+		       rte_strerror(-ret));
-+		rte_mempool_free(mp);
-+		mp = NULL;
-+		return -1;
-+	}
-+
-+	/* Create second TAP device */
-+	ret = rte_vdev_init("net_tap1", "iface=dtap_test1");
-+	if (ret < 0) {
-+		printf("Error: failed to create TAP device net_tap1: %s\n",
-+		       rte_strerror(-ret));
-+		rte_vdev_uninit("net_tap0");
-+		rte_mempool_free(mp);
-+		mp = NULL;
-+		return -1;
-+	}
-+
-+	/* Find the port IDs */
-+	RTE_ETH_FOREACH_DEV(port_id) {
-+		char name[RTE_ETH_NAME_MAX_LEN];
-+		if (rte_eth_dev_get_name_by_port(port_id, name) != 0)
-+			continue;
-+
-+		if (strstr(name, "net_tap0"))
-+			tap_port0 = port_id;
-+		else if (strstr(name, "net_tap1"))
-+			tap_port1 = port_id;
-+	}
-+
-+	if (tap_port0 < 0 || tap_port1 < 0) {
-+		printf("Error: failed to find TAP port IDs\n");
-+		test_tap_cleanup();
-+		return -1;
-+	}
-+
-+	printf("Created TAP devices: tap_port0=%d, tap_port1=%d\n",
-+	       tap_port0, tap_port1);
-+
-+	return 0;
-+}
-+
-+/* Individual test case wrappers */
-+
-+static int
-+test_tap_configure_port0(void)
-+{
-+	return test_tap_ethdev_configure(tap_port0) == 0 ?
-+	       TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int
-+test_tap_configure_port1(void)
-+{
-+	return test_tap_ethdev_configure(tap_port1) == 0 ?
-+	       TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int
-+test_tap_packet_send_receive(void)
-+{
-+	return test_tap_send_receive();
-+}
-+
-+static int
-+test_tap_get_stats(void)
-+{
-+	if (test_tap_stats_get(tap_port0) != 0)
-+		return TEST_FAILED;
-+	if (test_tap_stats_get(tap_port1) != 0)
-+		return TEST_FAILED;
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_reset_stats(void)
-+{
-+	if (test_tap_stats_reset(tap_port0) != 0)
-+		return TEST_FAILED;
-+	if (test_tap_stats_reset(tap_port1) != 0)
-+		return TEST_FAILED;
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_get_link_status(void)
-+{
-+	if (test_tap_link_status(tap_port0) != 0)
-+		return TEST_FAILED;
-+	if (test_tap_link_status(tap_port1) != 0)
-+		return TEST_FAILED;
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_get_dev_info(void)
-+{
-+	if (test_tap_dev_info(tap_port0) != 0)
-+		return TEST_FAILED;
-+	if (test_tap_dev_info(tap_port1) != 0)
-+		return TEST_FAILED;
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_mtu_ops(void)
-+{
-+	return test_tap_mtu(tap_port0) == 0 ? TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int
-+test_tap_mac_addr_get(void)
-+{
-+	if (test_tap_mac_addr(tap_port0) != 0)
-+		return TEST_FAILED;
-+	if (test_tap_mac_addr(tap_port1) != 0)
-+		return TEST_FAILED;
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_promisc_mode(void)
-+{
-+	return test_tap_promiscuous(tap_port0) == 0 ? TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int
-+test_tap_allmulti_mode(void)
-+{
-+	return test_tap_allmulti(tap_port0) == 0 ? TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int
-+test_tap_queue_ops(void)
-+{
-+	return test_tap_queue_start_stop(tap_port0) == 0 ?
-+	       TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int
-+test_tap_link_ops(void)
-+{
-+	return test_tap_link_up_down(tap_port0) == 0 ? TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int
-+test_tap_stop_start(void)
-+{
-+	return test_tap_dev_stop_start(tap_port0) == 0 ?
-+	       TEST_SUCCESS : TEST_FAILED;
-+}
-+
-+static int
-+test_tap_multiqueue(void)
-+{
-+	return test_tap_multi_queue();
-+}
-+
-+static struct unit_test_suite test_pmd_tap_suite = {
-+	.setup = test_tap_setup,
-+	.teardown = test_tap_cleanup,
-+	.suite_name = "TAP PMD Unit Test Suite",
-+	.unit_test_cases = {
-+		TEST_CASE(test_tap_configure_port0),
-+		TEST_CASE(test_tap_configure_port1),
-+		TEST_CASE(test_tap_get_dev_info),
-+		TEST_CASE(test_tap_get_link_status),
-+		TEST_CASE(test_tap_mac_addr_get),
-+		TEST_CASE(test_tap_get_stats),
-+		TEST_CASE(test_tap_reset_stats),
-+		TEST_CASE(test_tap_packet_send_receive),
-+		TEST_CASE(test_tap_promisc_mode),
-+		TEST_CASE(test_tap_allmulti_mode),
-+		TEST_CASE(test_tap_mtu_ops),
-+		TEST_CASE(test_tap_queue_ops),
-+		TEST_CASE(test_tap_link_ops),
-+		TEST_CASE(test_tap_stop_start),
-+		TEST_CASE(test_tap_multiqueue),
-+		TEST_CASES_END()
-+	}
-+};
-+
-+static int
-+test_pmd_tap(void)
-+{
-+	return unit_test_suite_runner(&test_pmd_tap_suite);
-+}
-+
-+#endif /* RTE_EXEC_ENV_LINUX */
-+
-+REGISTER_FAST_TEST(tap_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_tap);
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index 7a8a98cddb..aa236cf967 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -891,39 +891,13 @@ tap_dev_configure(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
+-static uint32_t
+-tap_dev_speed_capa(void)
+-{
+-	uint32_t speed = pmd_link.link_speed;
+-	uint32_t capa = 0;
+-
+-	if (speed >= RTE_ETH_SPEED_NUM_10M)
+-		capa |= RTE_ETH_LINK_SPEED_10M;
+-	if (speed >= RTE_ETH_SPEED_NUM_100M)
+-		capa |= RTE_ETH_LINK_SPEED_100M;
+-	if (speed >= RTE_ETH_SPEED_NUM_1G)
+-		capa |= RTE_ETH_LINK_SPEED_1G;
+-	if (speed >= RTE_ETH_SPEED_NUM_5G)
+-		capa |= RTE_ETH_LINK_SPEED_2_5G;
+-	if (speed >= RTE_ETH_SPEED_NUM_5G)
+-		capa |= RTE_ETH_LINK_SPEED_5G;
+-	if (speed >= RTE_ETH_SPEED_NUM_10G)
+-		capa |= RTE_ETH_LINK_SPEED_10G;
+-	if (speed >= RTE_ETH_SPEED_NUM_20G)
+-		capa |= RTE_ETH_LINK_SPEED_20G;
+-	if (speed >= RTE_ETH_SPEED_NUM_25G)
+-		capa |= RTE_ETH_LINK_SPEED_25G;
+-	if (speed >= RTE_ETH_SPEED_NUM_40G)
+-		capa |= RTE_ETH_LINK_SPEED_40G;
+-	if (speed >= RTE_ETH_SPEED_NUM_50G)
+-		capa |= RTE_ETH_LINK_SPEED_50G;
+-	if (speed >= RTE_ETH_SPEED_NUM_56G)
+-		capa |= RTE_ETH_LINK_SPEED_56G;
+-	if (speed >= RTE_ETH_SPEED_NUM_100G)
+-		capa |= RTE_ETH_LINK_SPEED_100G;
+-
+-	return capa;
+-}
++/* Speed capabilities for virtual TAP/TUN device (always 10G) */
++#define TAP_SPEED_CAPA (RTE_ETH_LINK_SPEED_10M | \
++			RTE_ETH_LINK_SPEED_100M | \
++			RTE_ETH_LINK_SPEED_1G | \
++			RTE_ETH_LINK_SPEED_2_5G | \
++			RTE_ETH_LINK_SPEED_5G | \
++			RTE_ETH_LINK_SPEED_10G)
+ 
+ static int
+ tap_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+@@ -936,7 +910,7 @@ tap_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 	dev_info->max_rx_queues = RTE_PMD_TAP_MAX_QUEUES;
+ 	dev_info->max_tx_queues = RTE_PMD_TAP_MAX_QUEUES;
+ 	dev_info->min_rx_bufsize = 0;
+-	dev_info->speed_capa = tap_dev_speed_capa();
++	dev_info->speed_capa = TAP_SPEED_CAPA;
+ 	dev_info->rx_queue_offload_capa = TAP_RX_OFFLOAD;
+ 	dev_info->rx_offload_capa = dev_info->rx_queue_offload_capa;
+ 	dev_info->tx_queue_offload_capa = TAP_TX_OFFLOAD;
+@@ -2325,7 +2299,6 @@ set_mac_type(const char *key __rte_unused,
+  * Open a TUN interface device. TUN PMD
+  * 1) sets tap_type as false
+  * 2) intakes iface as argument.
+- * 3) as interface is virtual set speed to 10G
+  */
+ static int
+ rte_pmd_tun_probe(struct rte_vdev_device *dev)
+@@ -2373,7 +2346,6 @@ rte_pmd_tun_probe(struct rte_vdev_device *dev)
+ 			}
+ 		}
+ 	}
+-	pmd_link.link_speed = RTE_ETH_SPEED_NUM_10G;
+ 
+ 	TAP_LOG(DEBUG, "Initializing pmd_tun for %s", name);
+ 
+@@ -2495,7 +2467,6 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
+ 	const char *name, *params;
+ 	int ret;
+ 	struct rte_kvargs *kvlist = NULL;
+-	int speed;
+ 	char tap_name[RTE_ETH_NAME_MAX_LEN];
+ 	char remote_iface[RTE_ETH_NAME_MAX_LEN];
+ 	struct rte_ether_addr user_mac = { .addr_bytes = {0} };
+@@ -2545,8 +2516,6 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
+ 		return 0;
+ 	}
+ 
+-	speed = RTE_ETH_SPEED_NUM_10G;
+-
+ 	/* use tap%d which causes kernel to choose next available */
+ 	strlcpy(tap_name, DEFAULT_TAP_NAME "%d", RTE_ETH_NAME_MAX_LEN);
+ 	memset(remote_iface, 0, RTE_ETH_NAME_MAX_LEN);
+@@ -2587,7 +2556,6 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
+ 				persist = 1;
+ 		}
+ 	}
+-	pmd_link.link_speed = speed;
+ 
+ 	TAP_LOG(DEBUG, "Initializing pmd_tap for %s", name);
+ 
 -- 
 2.51.0
 
