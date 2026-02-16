@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3347EE81A5D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 18:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E77F2E83820
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 18:14:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AFBE40296;
-	Mon, 16 Feb 2026 19:00:18 +0100 (CET)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
- [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 0DFD840289
- for <dev@dpdk.org>; Mon, 16 Feb 2026 19:00:17 +0100 (CET)
-Received: by mail-wm1-f49.google.com with SMTP id
- 5b1f17b1804b1-48372efa020so24243575e9.2
- for <dev@dpdk.org>; Mon, 16 Feb 2026 10:00:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 314E840296;
+	Mon, 16 Feb 2026 19:14:13 +0100 (CET)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
+ [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id 14D8740289
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 19:14:11 +0100 (CET)
+Received: by mail-wr1-f48.google.com with SMTP id
+ ffacd0b85a97d-43767807da6so2420001f8f.2
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 10:14:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771264816;
- x=1771869616; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=7DtHI02sPi/EzOAqRnX/U3RhRa9soIupCw0rIqubQ0A=;
- b=kVZxzyOKj8dcG9PeYy145Z1E9lrYHoDn0iHy9W07RRXFP8z74QLRKY+OIT2DQkXAmp
- EMEnkPwu31VWsU0e1KaSHV2JMSka3RwICkDpXJXoyMi6nmkYfp90GG7oWgWP88UKUdrk
- iSLAa+Nn71jQBeOL5c5+iasVezRiHAFklEdR1nLZgqF4JV5aNwlnmzGE4sPjedpMUndL
- +/L8p5NZKlo5c1EOogZAsGmfL7QifRujx44EHQh4ru8HwNxu8lYeF/+FkpnefohEBgDj
- TpmyWUd+eI3mayDidOWPwy7l3hfWjg/NQCQzVCDP77Cy+QF3kkGYADQZE6tWYOmcjOdp
- wswQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771264816; x=1771869616;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771265651;
+ x=1771870451; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7DtHI02sPi/EzOAqRnX/U3RhRa9soIupCw0rIqubQ0A=;
- b=faMeW92s5+uvov0wxtaow2sonkIGljDSA3e+m3OCsbnMCHPTm4nxZr5+E7gJY/ivHY
- 4FqW5zxXyONhstePcryie78oR+CeN0A7StY1CVERzKCCbFqdkIb5FVQvkvdcU85T0dE6
- S5Vgu6F3fc/Kq/zpz1ifFU5EmZ+gC2p2q89yfzI8oiaK9IpIybyiwKzbJqfBEmrch3K8
- jFrDHF44iseryqfj3LuTa4AZ+XX+Vw2AFKj8OFy7fHrsDGpzjehlI/Y5eQ0lj+Vv6YR/
- tpmAAvPaSjHdUu/yGPQ7zKZNTbo0qgQ52ItllWmqddeqHJyh0PFjNSkHA0zeJZO0VfDc
- 7i9A==
-X-Gm-Message-State: AOJu0Yxiux36Tlhf3e0PYwT5JknI57A5v7vFd4BVlvIUZHCteGV/9M5a
- LSrM+AeLzU9XBw3wrgEMngKbD1irNZpeXA+PaN1h/UReVjnMUdNmPG+p6PCed7HAq4dOCA6hb3K
- M7nmoG2o=
-X-Gm-Gg: AZuq6aLtThGRj6bLeFS5aR7jnmNdTsZ6kNrNMkSt2pvhlU+4Wl279j6Ry7fYyshEOuj
- YqMdJNRvlgSoqXOeoigIAJvwhuH+PQiJ4dLh1IU1ye8VfN65ngRFpAo8C79V/CeHIr92Be8O4/I
- Ye36g1GGaqlOqUGLJ4Gu84B4rVOl8C5BlXJB5NfAbeXY4SZfdp0Y2HvdaR7ITN2ZfnjLw1JB4/C
- +3+thIlX2ecGK+5ERwljklq27o4WRw8Bby+v2G/42SETPvLqNJM3ZRfWiIG3tZShw+MwICPh/JS
- Sd4vfkH7lMOfdZou3Mmuf0KgH0UBUIyclVQLG8ROclYAExoqWunLt/eQyTsxyh62jGL0/rxVRkA
- Zc5OJANeh84mJGQucxMGZMmXYedl1YVjjrPQJmkfvP85WpAwZu+8lzbmAQujJCvbIddJUJtl/9J
- ntyrAEoei5y3hqC+ZO7T++ygLYmyvqZWU3mDMvhCXzf59pi7hkIoB4wVZZD02mdw==
-X-Received: by 2002:a05:600c:1c07:b0:477:561f:6fc8 with SMTP id
- 5b1f17b1804b1-48379bac86bmr174520275e9.5.1771264816383; 
- Mon, 16 Feb 2026 10:00:16 -0800 (PST)
+ bh=RbhXRg54+P49C0DNVRNSUPvUE+D/k4esNl9A7aki7/Y=;
+ b=igPGuI7hXE9B9qTEsxCKRj3joDD9OHuPo4MGiYAOx5DNzndtRzYVou+7QHuud/NtP1
+ oRuq+lzJzfuZ/+/wFo42OUyuDRJvLWXHQCwcIlHUXR7roc3/we+CyZR7KmkVHJ56EFi0
+ FuSayJFeVS81zrQM5FQdOZQPg0KKS36D3xOK5wSqooTYgyKs4PNcwf51awQudZ0koX9Z
+ +iU3yOeuVxFQwnC0ZTldRw6t+qatjxpleZUuAK75V9lJyoeCjlQWfFGyNO2P12TBn750
+ EtJvkXKklWT3T/OkpR3ts8dGZ9yEEBgTK6eL+ykeZfStSwav/MXXSWeZihP9s5N/f1B6
+ 7JjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771265651; x=1771870451;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=RbhXRg54+P49C0DNVRNSUPvUE+D/k4esNl9A7aki7/Y=;
+ b=a+skTXEBsyjTRXBd4k5d1aD15G9GJ5SKhb5Hqtk1nRyk2zG+T3sLXhRJAbW4b4Szec
+ Kgsqv8XkRafyki7Oj+umO1Wf4UiucoUxPmtdBPqULHYilhHrbDfm8l9mDLDYDRLfyQrw
+ dP+GXsOyiPQPZE88nZx/FXEniiGpDBiEQWYiIEceNEMxfHpQzAZCberoB6YRbRmVMhsk
+ vaZS+6qjis6oguYfRSPEpjtjq1yHxJsj9nY1xRmE3b1xvuDccKK4RHFv69uD93lV2l0u
+ VHsT8OlurQ8tqGYQVwCgLxDrd5K6WEbrwkYKs8G9oDCjglc7NCM4R8v0csxBbSaNBzJp
+ 8uxA==
+X-Gm-Message-State: AOJu0Yw5OvWVQsIg4seXIjmUtmIkIuIyhw6/u1zxIM/r6sMQ1fq3104t
+ 4MzwZyLUf3jXuyKagFq7MF9hdepQ6iTSpgOvt+zRozxmDREHvjXALgkf0sZaHeHHNPN1fIq4iZr
+ mFGKS2fc=
+X-Gm-Gg: AZuq6aKOEo0rGuzVug3VKT6y8hrzLJ9drKNCl5EjB8HYZ1SV/+kvhFbSkU7R0C6CcQp
+ AVFEdYXYqE/qu2Z7Ans79AYoy/x5j2RTnPwuV1zid//KjVVcX1+go9bBLSxsxrb8L4wtAx/FoUu
+ 9HIqhr/xkoLUXtTZ3ahVCA5dN6O2r0SRmwyzct1acwntFxv0G6eiJBSOR+YCtzmiGh6GmSiR1BX
+ 5HUqyV660rLnAcoJHP8xiOZyHtk0btMftGflAHWJ7bT74WYeDwGbtA1kDmf1Eifbs+WsluWx1xW
+ rxOerob5GI8jflHh7qr16FiNXITl/1nhf1HjYDTFNM/z6TWHH+AdFAOOBXz3Q9Sn6qttscv55EC
+ G6h17+lg2lfQnPmv3niO4XUXz/XYMW39B9+ffBlq8Pp9g7yWzPSKuT+GhWpRnlp6WMItjr4F6d0
+ BVnOcvF1l4pXAPyFGjIZTjFvoKCsEvR6/t+MAl+Dwps6MOWORV0Md+c7viVcr16g==
+X-Received: by 2002:a05:6000:24c4:b0:435:94dc:8c78 with SMTP id
+ ffacd0b85a97d-4379790e785mr19869151f8f.40.1771265651427; 
+ Mon, 16 Feb 2026 10:14:11 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48371a02a79sm193276775e9.3.2026.02.16.10.00.14
+ ffacd0b85a97d-43796acffcesm26064725f8f.37.2026.02.16.10.14.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Feb 2026 10:00:15 -0800 (PST)
+ Mon, 16 Feb 2026 10:14:11 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [RFC] ethdev: clarify rte_eth_tx_burst() return value and ownership
- semantics
-Date: Mon, 16 Feb 2026 10:00:11 -0800
-Message-ID: <20260216180011.393782-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v16 00/21] net/pcap: improvements and test suite
+Date: Mon, 16 Feb 2026 10:11:55 -0800
+Message-ID: <20260216181407.428877-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260106182823.192350-1-stephen@networkplumber.org>
+References: <20260106182823.192350-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,80 +80,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The documentation for rte_eth_tx_burst() uses the word "sent" to
-describe the return value, which is misleading. Packets returned as
-consumed may not have been transmitted yet; they have been accepted
-by the driver and are no longer the caller's responsibility.
+This series contains improvements to the PCAP PMD including new
+features, bug fixes, code cleanup, and a comprehensive test suite.
 
-This matters because the common usage pattern is:
+New features:
+  - VLAN tag insertion on Tx and stripping on Rx
+  - Runtime VLAN offload configuration via vlan_offload_set callback
+  - Nanosecond precision timestamps (when hardware/libpcap supports it)
+  - Accurate link state, speed, and duplex reporting in interface mode
+  - Link status change (LSC) interrupt support in interface mode
+  - EOF notification via link status change for rx_pcap mode
+  - Support for Windows interface mode
+  - Advertise RTE_ETH_TX_OFFLOAD_MULTI_SEGS capability
+  - Configurable snapshot length via snaplen devarg
 
-    n = rte_eth_tx_burst(port, txq, mbufs, nb_pkts);
-    for (i = n; i < nb_pkts; i++)
-        rte_pktmbuf_free(mbufs[i]);
+Bug fixes:
+  - Fix multi-segment transmit to dynamically allocate instead of
+    silently truncating packets larger than 9K stack buffer
+  - Change Tx burst to always consume all packets; failed sends
+    increment error counter rather than leaving mbufs for retry
+    (pcap_sendpacket failures are not transient)
+  - Reject non-Ethernet interfaces to prevent malformed packets
+    and kernel warnings on FreeBSD/macOS loopback
+  - Fix infinite_rx ring fill applying VLAN strip and timestamp
+    offloads to template packets, preventing those offloads from
+    working correctly during packet delivery
 
-For this to work correctly, the contract must be:
- - tx_pkts[0..n-1]: ownership transferred to the driver.
- - tx_pkts[n..nb_pkts-1]: untouched, still owned by the caller.
+Code cleanup:
+  - Convert internal flags from int to bool
+  - Remove unnecessary casts of void* from rte_zmalloc
+  - Replace rte_malloc/rte_memcpy with libc equivalents in osdep code
+  - Include headers explicitly rather than relying on indirect includes
+  - Remove unnecessary volatile qualifier on statistics
+  - Reduce scope of file-level variables
+  - Defer pcap handle opening until device start
+  - Use bulk free for better Tx performance
 
-Several drivers (and AI-assisted reviews) misinterpret the current
-wording and treat packets with errors as unconsumed, returning a
-short count. This causes callers to retry those packets indefinitely.
-The correct behavior is that the driver must consume (and free)
-erroneous packets, counting them via tx_errors.
+Testing:
+  - Add comprehensive unit test suite covering basic operations,
+    timestamps, jumbo frames, VLAN handling, multi-queue, and more
+  - Test discovers network interfaces using pcap_findalldevs API
+    for portable interface enumeration across Linux, FreeBSD, macOS,
+    and Windows
+  - New tests for runtime VLAN offload toggle, VLAN strip with
+    infinite_rx mode, and timestamp generation in infinite_rx mode
 
-Replace "sent" with "consumed" in the return value description,
-spell out the mbuf ownership contract, clarify the error handling
-expectation, and update the @return block to match.
+v16:
+  - Split up the patches around transmit logic
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- lib/ethdev/rte_ethdev.h | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+Stephen Hemminger (21):
+  maintainers: update for pcap driver
+  doc: update features for PCAP PMD
+  net/pcap: include used headers
+  net/pcap: remove unnecessary casts
+  net/pcap: avoid using rte_malloc and rte_memcpy
+  net/pcap: advertise Tx multi segment
+  net/pcap: replace stack bounce buffer with per-queue allocation
+  net/pcap: fix error accounting and backpressure on transmit
+  net/pcap: add datapath debug logging
+  net/pcap: consolidate boolean flag handling
+  net/pcap: support VLAN strip and insert offloads
+  net/pcap: add link state and speed for interface mode
+  net/pcap: support nanosecond timestamp precision
+  net/pcap: reject non-Ethernet interfaces
+  net/pcap: reduce scope of file-level variables
+  net/pcap: avoid use of volatile
+  net/pcap: clarify maximum received packet
+  net/pcap: add snapshot length devarg
+  net/pcap: add link status change support for iface mode
+  net/pcap: add EOF notification via link status change
+  test: add comprehensive test suite for pcap PMD
 
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index 0d8e2d0236..9e49c4a945 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -6639,13 +6639,24 @@ uint16_t rte_eth_call_tx_callbacks(uint16_t port_id, uint16_t queue_id,
-  * of the ring.
-  *
-  * The rte_eth_tx_burst() function returns the number of packets it
-- * actually sent. A return value equal to *nb_pkts* means that all packets
-- * have been sent, and this is likely to signify that other output packets
-+ * has consumed from the *tx_pkts* array. The driver takes ownership of
-+ * the mbufs for all consumed packets (tx_pkts[0] to tx_pkts[n-1]);
-+ * the caller must not access them afterward. The remaining packets
-+ * (tx_pkts[n] to tx_pkts[nb_pkts-1]) are not modified and remain the
-+ * caller's responsibility.
-+ *
-+ * A return value equal to *nb_pkts* means that all packets have been
-+ * consumed, and this is likely to signify that other output packets
-  * could be immediately transmitted again. Applications that implement a
-  * "send as many packets to transmit as possible" policy can check this
-  * specific case and keep invoking the rte_eth_tx_burst() function until
-  * a value less than *nb_pkts* is returned.
-  *
-+ * If a packet cannot be transmitted due to an error (for example, an
-+ * invalid offload flag), the driver must still consume it and free the
-+ * mbuf, rather than stopping at that point. Such packets should be
-+ * counted in the *tx_errors* port statistic.
-+ *
-  * It is the responsibility of the rte_eth_tx_burst() function to
-  * transparently free the memory buffers of packets previously sent.
-  * This feature is driven by the *tx_free_thresh* value supplied to the
-@@ -6679,9 +6690,9 @@ uint16_t rte_eth_call_tx_callbacks(uint16_t port_id, uint16_t queue_id,
-  * @param nb_pkts
-  *   The maximum number of packets to transmit.
-  * @return
-- *   The number of output packets actually stored in transmit descriptors of
-- *   the transmit ring. The return value can be less than the value of the
-- *   *tx_pkts* parameter when the transmit ring is full or has been filled up.
-+ *   The number of packets consumed from the *tx_pkts* array.
-+ *   The return value can be less than the value of the
-+ *   *nb_pkts* parameter when the transmit ring is full or has been filled up.
-  */
- static inline uint16_t
- rte_eth_tx_burst(uint16_t port_id, uint16_t queue_id,
+ MAINTAINERS                            |    1 +
+ app/test/meson.build                   |    2 +
+ app/test/test_pmd_pcap.c               | 3422 ++++++++++++++++++++++++
+ doc/guides/nics/features/pcap.ini      |    9 +
+ doc/guides/nics/pcap.rst               |   41 +
+ doc/guides/rel_notes/release_26_03.rst |   13 +
+ drivers/net/pcap/pcap_ethdev.c         |  923 +++++--
+ drivers/net/pcap/pcap_osdep.h          |   39 +
+ drivers/net/pcap/pcap_osdep_freebsd.c  |   98 +-
+ drivers/net/pcap/pcap_osdep_linux.c    |  124 +-
+ drivers/net/pcap/pcap_osdep_windows.c  |   95 +-
+ 11 files changed, 4529 insertions(+), 238 deletions(-)
+ create mode 100644 app/test/test_pmd_pcap.c
+
 -- 
 2.51.0
 
