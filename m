@@ -2,49 +2,169 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB53E7BD8B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 10:37:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04273E7BD83
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 10:48:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5AE9940289;
-	Mon, 16 Feb 2026 11:37:29 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id 4651740269
- for <dev@dpdk.org>; Mon, 16 Feb 2026 11:37:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2CA8E40289;
+	Mon, 16 Feb 2026 11:48:26 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id CAB0D40269;
+ Mon, 16 Feb 2026 11:48:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771238247; x=1802774247;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=h+sXhLNPBH3ERNyVhrN9WO9N8tOtiqEQhV2v/btvAj0=;
- b=fTYbQggZxwrRLoBtB/ofbG7VCIMpJ7RSz8lZzBWYj24/O0F+ikUqUomm
- SpSX4b3uEsSj2cUUA08X5OTy6Gy+j4AsAdLO9mzXOGEyH9D7JvM+Hpp91
- xSbBVib0T3eFvqf2VfL2Te2KRApCvEPXDTXP+VibbeC5C0+NyxQYU7aL8
- 4gf8mh0J+g0gMvZeTILcbi7aXZrw81AjM+kB71bEfY9SRvAOqjgjFsq/P
- NQIpGXwKq1OmwEKiryGUMhWlaz9Fh0tp5vDb8G3ao6Kia2xaYEFcOijFq
- 6iWglr8640RUccxHOIsHtPL6ebJCFeEw0WkJFVpMlL4Hvl3eQyEoHdGf8 Q==;
-X-CSE-ConnectionGUID: irXs8dGhSbCyzI9Kco26kA==
-X-CSE-MsgGUID: QqrftqpmS9+I+sM1MtgrMQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11702"; a="72029362"
-X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="72029362"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Feb 2026 02:37:26 -0800
-X-CSE-ConnectionGUID: Kh3xGLYSSaejtDv6kT0wzw==
-X-CSE-MsgGUID: Rg9DvEmyTH+l8w8czQgtbQ==
+ t=1771238905; x=1802774905;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=JHXpovnyIdHXwyI/YFvoJeVKfo1/wEkIWqykW8hNGe0=;
+ b=kSUMHV/8B9BkskdsCGVuOZRpIN4ryALKNt5u9/yCc+L4QW9ve/twBjfk
+ txS8Fv+Tk0/ebFVJU5OaZmsYZCSx++P6t7JKGtJJnvCx0D/siELCTvRif
+ etePUwU1OWkRFs2no2Ae3miRWJ5y3lZf5HyGln17nZazwfuLELoKJMZkK
+ 4PgRo918V1Lc91rC+M9zAzG8uLzwFH2CKAYiYOuw7E/4+qo8PSMOhfTvs
+ 3Vkr2HehqbwcSfyW0OmYIa8HHEc7tl1h6TRJQXF0rXu0SBteud2k0gtPS
+ GmS8nqJVWb2WOtctU1f9MGSWJxzbjD8B7kwqob/2VFXUXQ20fkgN1fROQ g==;
+X-CSE-ConnectionGUID: oQwZfiJ9QGm52ZP4HnHWMw==
+X-CSE-MsgGUID: qKKiwhcDSB+cXItWuPKvNw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11702"; a="72306390"
+X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="72306390"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Feb 2026 02:48:23 -0800
+X-CSE-ConnectionGUID: gLC6fiGwSqiKTOMUSyKNpw==
+X-CSE-MsgGUID: ITsNTA/mTzaDMCfyySSV0g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="242702610"
-Received: from pae-14.iind.intel.com ([10.190.203.153])
- by fmviesa001.fm.intel.com with ESMTP; 16 Feb 2026 02:37:24 -0800
-From: Anurag Mandal <anurag.mandal@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
- Anurag Mandal <anurag.mandal@intel.com>
-Subject: [PATCH] net/iavf: add support for QinQ strip
-Date: Mon, 16 Feb 2026 10:37:10 +0000
-Message-Id: <20260216103710.195777-1-anurag.mandal@intel.com>
-X-Mailer: git-send-email 2.34.1
+X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="218096785"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Feb 2026 02:48:24 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Mon, 16 Feb 2026 02:48:23 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Mon, 16 Feb 2026 02:48:23 -0800
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.4) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Mon, 16 Feb 2026 02:48:22 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=l7bJjoLGtOU9bo2ui599bLLfAOJz0rdjp7m6XXSCbFLCquC8uOz10a7qvTWIzSMRP6EhMtKgqNOVNXpkBurDQaH8sw6fLXnC+9RPKhL66ZeoUIDxbQotrUVXPpmiK3t6dB7tmz7kU7Vpze7sFAE+Eu5VD27kMx/J4yEfvBgBwvX0TrnLnQ0rCBr/TbeGfnR5pyrPvU5cZl8cwHtsaqcswlokKphdIixyg0bhpxihsufSlBjH+AIhXM7eXGjhZlUsWU5Gd2EYB2ZkF7bwxUWC4uqAAmXXddAanAY8yUlHlEXI+ixSSUqeUic9RIKen/Oh2P86tqc6xGTHnPNwDs6Zhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+vpoWFbTJ+/CvvvCZp2sjRgkp3Nu3x2wQEAp00bQaUU=;
+ b=jfi4cJ0ZaPe8EyQ00zcICHPXVK3jTFP631Oe1PqLrSfZ4Q/eSCY4QQxm0aTUkDLNMGNiQ1VeDz0v6qnEYIHxI5dD1n4kn5BgEsLmN9KQARuOGlE+Fc2gazdwHZ2CxouerUZU+nE9Ro8xotuOEGj8xBi44o5HrqYnkCLlKJiT4uCHmSA1Kv5bAZexNeQLgM8PrrKKLKq188YKiFtTFygA129gG4Bq8G7ZRhLVewClnZ4pFExK9LnqNsLOhXq+OSmmnsun3ttcMQQIdUglyOofxCSGaQ6rmCMuQ6CpX7lu2W/H21YvNTZMH0CdBquDMwh9pZVcYuL6uWVbqXEWMCkdyQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by IA0PR11MB7332.namprd11.prod.outlook.com (2603:10b6:208:434::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.16; Mon, 16 Feb
+ 2026 10:48:21 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9611.013; Mon, 16 Feb 2026
+ 10:48:21 +0000
+Date: Mon, 16 Feb 2026 10:48:15 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Thierry Herbelot <thierry.herbelot@6wind.com>
+CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Anatoly Burakov
+ <anatoly.burakov@intel.com>, <stable@dpdk.org>, Olivier Matz
+ <olivier.matz@6wind.com>
+Subject: Re: [V2] drivers/net: reorder Intel drivers list in meson script
+Message-ID: <aZL177s7Wu3vLsPl@bricha3-mobl1.ger.corp.intel.com>
+References: <20260123162104.1854187-1-thierry.herbelot@6wind.com>
+ <20260123162707.1854505-1-thierry.herbelot@6wind.com>
+ <aXOm1Xep0eINPO3y@bricha3-mobl1.ger.corp.intel.com>
+ <82710dcc-d2f9-4e69-9f5f-ac70135e2333@6wind.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <82710dcc-d2f9-4e69-9f5f-ac70135e2333@6wind.com>
+X-ClientProxiedBy: DUZP191CA0016.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:4f9::15) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA0PR11MB7332:EE_
+X-MS-Office365-Filtering-Correlation-Id: 325f7948-10be-4387-e9af-08de6d48e69a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?FlUbI01eUmUAOZOeQ51AbukOlJeD63TL4ZVpGatWjBnoa/juNsSLIBpub22V?=
+ =?us-ascii?Q?SAluJ8QwvxT5lA+VMGq6I7aNm++UBRHhKwiMpgNHVKKslhz2jExEqUqFhwa8?=
+ =?us-ascii?Q?x+temE9OBZ6aZnY3Ua47Q1rNlTicjE6SmdqIuvXWMVk05lpTjACENvKOJgZn?=
+ =?us-ascii?Q?5P+XgInsk+BpTvqGd4RAUwBZBq3mtRqV7ZbZSRN3nZkmIKk7M5ElVytgAt+M?=
+ =?us-ascii?Q?34Q4E5pA0maoTlthlTgJ3D51NJmXfhpUpLjUZ9Qt5g8/PbVH34bUFNydiryc?=
+ =?us-ascii?Q?UP6UHvrjaWYxmBQN9VuC9ct2IwOJv381Jli3DthxyOHyYoNYA0g19EXVr5PT?=
+ =?us-ascii?Q?UoZdumNl3Bl56sTj4fVQStEacODq3EXy3lhsC5kex5yekoSHlf2+NrAT6MLH?=
+ =?us-ascii?Q?XidFyxKoUjAitzJRy91O7q4dXp9rsdZnTMfpfosen86GzuEsJnxE2v6DvYxN?=
+ =?us-ascii?Q?ZW4ImNmVFVuMoc7dZJS1vXD2wjvySFhnRLaQxIDnpYk4ALU8IHcM0iS56qtr?=
+ =?us-ascii?Q?KVu8l/jS/5JcBa6hGvD2nqG9/ujrSbUaoLd3fz8nXDNebGHENxYn1EWzNK7G?=
+ =?us-ascii?Q?BjtJ/RGQH5IQVRko7a07O1uBa7VeBwMI+5LHfbLLYU8AhwZyZKa0BCYEagFa?=
+ =?us-ascii?Q?+iEo+Dm8gHBJMWN0sEh5DC+37jpteY581PiLlNd4I1R+JJd4T1NROVzj9Q7n?=
+ =?us-ascii?Q?bkkVJ6jv47Pzokor9BEVRBBOpk+kCrIcoSQ2w/7VHiIj9gXauSqkA6Vfg9s/?=
+ =?us-ascii?Q?olDqExcqrxgHuFIgHcz5yz8zMUpXfX0/M8xBA9jY8hc+RmBOrrSe08UAjzp0?=
+ =?us-ascii?Q?ZMINzldZPVg67Pew+8DO4j1mjNx880Bx+VnUYa247QcxqkxRPjMiKlGIW2S2?=
+ =?us-ascii?Q?9/fYiOlQodLzR52BZkX2rcQ9bX8UCASki/atQL3Hgr37r2yDRo3HYW8+e4Oj?=
+ =?us-ascii?Q?8xi1OMIDewuhCkKIK1LLTFoLCS6hm70bgDwLoACRjAOeGeyq10cpvgaxTkfs?=
+ =?us-ascii?Q?cX3vqHCkA10KiOp2a4aYMim7pDaUiNUJ5gkZPmDNLf1TNLC6IZvslRdwNslL?=
+ =?us-ascii?Q?B6ZQdQvn+lwNpvyHPxfHxwMY0vA7lgQtKy/coHYv9zm1vSoJxsaK/2SQdNt7?=
+ =?us-ascii?Q?ev/elkdy+jGcwmj1XBEBiPm04xK5wuivMUsK92bvJwTgvektVOwvYYacNH5+?=
+ =?us-ascii?Q?qnT05cXMpvAxJuA4zCzaPcJ03xLLgzsttkzQd2XaR42qe6oiZO9ip9ieEKG/?=
+ =?us-ascii?Q?v+732JdNtGqRN+qiH5xSwm/z9Td93WUXpJvw35LcmL+D9lq0FOCXLdztHtEy?=
+ =?us-ascii?Q?LZcwlxLCRWTrBN375mwZ0L6mdym95sV5BoiOJSCilFRPSOOn2GAFMLG25mZt?=
+ =?us-ascii?Q?CGMG27w51YTH8Z0662EPc1Xoq34CdHZUX3Uu6Ev7J/5Y0FplVl/yqcNafKKp?=
+ =?us-ascii?Q?cYgbRwVfqflwJ0PinjKkS7aHefk+NWQJKFGxAgtDf+7Uz7hTh0flm4Qvz/t5?=
+ =?us-ascii?Q?aei8RUwMNiwTd68P86tWGjxSsta0Mu8qKDTctmZXYzqdgN8eGeJBiwkafHNC?=
+ =?us-ascii?Q?CehcATWGxCGvaaH24Dk=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rO71rkdncG0TkINxEdEhexonToow4FcPAxiJS61AHbwdjuX3JwOvkhl08D2T?=
+ =?us-ascii?Q?w5FRSPYykiIabjtk0LZajle8ZOh7tYjrjMLgSOvMWTRVUo9vrjVLnKYSy97T?=
+ =?us-ascii?Q?74FBg45F+ZQUnM2pmpDO3ZDPP4V5+KQuAb6zI62ghbJzUeqtok6kB/FvaEM+?=
+ =?us-ascii?Q?tPnKF97Fu0t3FZsGEEj7zlkB8kVKjkQy5cKNi9ejLnjNmEyZcF5T/Fu91p2R?=
+ =?us-ascii?Q?Bv6e7xijo4YD5s6OnBzuHSpWItyS5kxTpSHRSVNQ+Kpmj+y/Gp7YYc45vY0J?=
+ =?us-ascii?Q?s56IW34MUzVIq7e+CjbXYqzIlndUg4wLrp/wsoeezQSDAWW88cxlOW0kyXuu?=
+ =?us-ascii?Q?jbHcNPZzh0cEA9fqVnXP+UNEMzigM4joPRhq8nZjgjmkr0spcP3dTxa8snpP?=
+ =?us-ascii?Q?RmQGoxx/3YZiTos+BL8Ljpg/s8Lmh1auajedHm6xXV8tN6euFz9SPB50npWa?=
+ =?us-ascii?Q?DLd3CDddw9UTGDtAsUoLVOc+KjeSGHk2wQyNVLCAIW48UO5mqOXBz3VnjZ1T?=
+ =?us-ascii?Q?yUESzlIIqJC376C5qbE07sv3/5QMxOlEGkZ+SfJRZ8tlNtdDFX0sWDBjWqoK?=
+ =?us-ascii?Q?N8mP19ZgvHs+2p5aKQScd49hGjCkf0I7geJ1tz9WYtNZaWZf7PH8amF846Br?=
+ =?us-ascii?Q?KzB1NC9xAaCZRx2qqPJps8hXZKbB1hmFjIqo6Upj5YPpY4VumROJyHnOmkWt?=
+ =?us-ascii?Q?bOuPn6d+fjGkwwbZbII4blb8+ETB6iA4XlrN4pWt0u9v1cExb19dB9zETZBG?=
+ =?us-ascii?Q?2zHR+j7pDBbGzcFcH+sL0TPcHh0CITAnjwD8DtNEskK0hj9ZRp9A/0nr269y?=
+ =?us-ascii?Q?43gnXZjvTNCOLkuBtGV5y4KW+R+FqxP69J5ZSJldO25D/6Lyke4/wkb2H9Gf?=
+ =?us-ascii?Q?1xET5ur0t9ZqkbaawMfPxrwbaYdaAxp/KLZRy83uhKmg4vh4SILu7ex0xYgA?=
+ =?us-ascii?Q?ZS/WlsiaP5L/nCQ9VEF0cFl/ASsN2idoIbIGofmvk0J/WitahE8qb5mkwUYG?=
+ =?us-ascii?Q?4+5Bv497eNpv096RHaMGbaVzFy6gJUXG5SOS2PM1nkPXMo9uQZxbchM/+2FT?=
+ =?us-ascii?Q?zHm3mZxF7DzRzLSZowQKvHZ5YFVR5XQdxqIwavr0ElZ/V8gW7L5r1zOTxv66?=
+ =?us-ascii?Q?0Wxti6at2dUCL2uyxSWYv9LpA7LGn94HTkKP6L+IWFIQypnrX4K/vEEHKaxq?=
+ =?us-ascii?Q?kIU6JTfuosjummClmyf9GJvY93kNsfWwfiiUi45houiTAtem/+GdTqfi9Hre?=
+ =?us-ascii?Q?YG4mPHMSQ0JU/mAIwoV3hTZicLPDGVSOmHCT07GSq1GjbDDIqbJ7VlovgCEf?=
+ =?us-ascii?Q?7dD0LCS8+mhVEkM0Bp/ynic2V4TpU9H6D2bsuFr96VCukLgs0XCp478B/SKv?=
+ =?us-ascii?Q?DSgtAq0DFQlUthh5U0wvJH8CQUpuqs2QLkyNSu+c3fpeC489d/mlSZUmdHvG?=
+ =?us-ascii?Q?JiG6ZNZP5jzXXLUB5ZmhhL1Ubvhns/8s4p6awzxImHxMojK87NRAVr5yNarj?=
+ =?us-ascii?Q?sgQg4SloiFsQNZIUhFOE+BFpqWrkH+DDT8zyHJUCoOUQCGjC7Aosgc4bhQl+?=
+ =?us-ascii?Q?6bRybf5pucLdXI3sodIjajacVVQNlTOt2TbpzYywDVZxAVhDmV2hvYdQ0SPc?=
+ =?us-ascii?Q?/BTbQOCmTqeUwODrnxt957vcdCCrN9WUwRBlydTWVKnu5iRpUVSlddILBIK7?=
+ =?us-ascii?Q?bhjGDpsX5DnuOQsR/WBsucUgxsTC0FkM6TX/a4oQtx8rmHgUps3qN0J1IocP?=
+ =?us-ascii?Q?o2ly92mZyPQaSYsL7EdOXHwTIaeNAKs=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 325f7948-10be-4387-e9af-08de6d48e69a
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2026 10:48:20.9818 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q3te0ymAezXpj4S36heoSQbETTUVDlWMfN3Xkdc65F//ccs5LJLFFfVezHT2apLNXYzdrG00IWynIE5lzU93Dz1PUntuj0SwT/1s0YDOEWM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7332
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,275 +178,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-QinQ strip with VLAN TPID 0x88a8 & 0x8100 support was absent.
+On Fri, Jan 23, 2026 at 05:57:41PM +0100, Thierry Herbelot wrote:
+> On 1/23/26 17:50, Bruce Richardson wrote:
+> > On Fri, Jan 23, 2026 at 05:27:07PM +0100, Thierry Herbelot wrote:
+> > > After an upstream patch (see Fixes), net_ixgbe_vf is no longer
+> > > declared in testpmd PMD info, when compiling under Redhat-9:
+> > > 
+> > > > $ meson setup build && ninja -C build
+> > > > $ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
+> > > >      "name": "net_ixgbe",
+> > > 
+> > > Name 'net_ixgbe_vf' should also be reported.
+> > > 
+> > > One workaround is to move 'intel/ixgbe' as last in the list of Intel
+> > > drivers. This restores net_ixgbe_vf under Redhat-9:
+> > > 
+> > > > $ meson setup build && ninja -C build
+> > > > $ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
+> > > >      "name": "net_ixgbe_vf",
+> > > >      "name": "net_ixgbe",
+> > > 
+> > > Fixes: 04f1b16c54f3 ("drivers: merge common and net idpf drivers")
+> > > Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
+> > > ---
+> > > V2: use shorter lines in commit log.
+> > > ---
+> > >   drivers/net/meson.build | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/net/meson.build b/drivers/net/meson.build
+> > > index c7dae4ad273c..8d96244cdbb0 100644
+> > > --- a/drivers/net/meson.build
+> > > +++ b/drivers/net/meson.build
+> > > @@ -32,8 +32,8 @@ drivers = [
+> > >           'intel/ice',
+> > >           'intel/idpf',
+> > >           'intel/ipn3ke',
+> > > -        'intel/ixgbe',
+> > >           'intel/cpfl',  # depends on idpf, so must come after it
+> > > +        'intel/ixgbe',
+> > >           'ionic',
+> > >           'mana',
+> > >           'memif',
+> > 
+> > This is a strange one - did you do any investgation into why or how this
+> > fixes things? You describe it as a workaround so any hints towards a proper
+> > root cause and fix are welcome :-)
+> 
+> Hello Bruce,
+> 
+> This is indeed a bit puzzling: it seems that the expected ELF section is
+> present, a 'strings' dump shows no difference between a 'full' testpmd and
+> one missing ixgbe_vf. Still pmdinfo is missing one PMD.
+> 
+> The issue was not seen when using Ubuntu-24.04.
+> 
+[Not unexpectedly,] it appears that there is more to it than just missing
+this driver. Installing a centos 9 VM and doing a clang build and comparing
+the pmdinfo output to the GCC build output, I find there are in fact 3
+missing drivers in the output: net_dpaa2, net_ixgbe_vf, and net_sfc_efx.
 
-This patch adds support for QinQ strip with both Outer VLAN
-TPIDs 0x88a8 (802.1ad) & 0x8100 (802.1Q).
-VLAN Extend should be enabled for the same and Outer VLAN
-TPID should be set properly.
+Changing the order of things to move down ixgbe makes ixgbe_vf and sfc_efx
+reappear, but sadly net_vcpf now disappears. :-(
+Therefore, more investigation and root causing is needed to find a proper
+fix.
 
-1. Tested QinQ stripping with TPIDs 0x88a8 as well as 0x8100.
-2. Tested Double VLAN stripping i.e. QinQ (802.1ad/802.1Q) &
-   VLAN (802.1Q) stripping simulatenously.
-3. Tested Single VLAN (802.1Q) stripping.
-
-Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
----
- doc/guides/nics/intel_vf.rst         | 31 ++++++++++++++
- drivers/net/intel/iavf/iavf.h        |  2 +
- drivers/net/intel/iavf/iavf_ethdev.c | 46 +++++++++++++++++++++
- drivers/net/intel/iavf/iavf_vchnl.c  | 60 ++++++++++++++++++++++++++--
- 4 files changed, 136 insertions(+), 3 deletions(-)
-
-diff --git a/doc/guides/nics/intel_vf.rst b/doc/guides/nics/intel_vf.rst
-index bc600e4b58..8f32ae8e12 100644
---- a/doc/guides/nics/intel_vf.rst
-+++ b/doc/guides/nics/intel_vf.rst
-@@ -764,3 +764,34 @@ the VLAN header tag length will be automatically added to MTU when configuring q
- As a consequence, when attempting to configure a VF port with MTU that,
- together with a VLAN tag header, exceeds maximum supported MTU,
- port configuration will fail if kernel driver has configured VLAN filtering on that VF.
-+
-+QinQ strip
-+~~~~~~~~~~
-+
-+QinQ TPID is set as 0x8100 IEEE 802.1Q by default.
-+For QinQ strip with TPID 0x88A8 IEEE 802.1ad,
-+extend VLAN is enabled and VLAN outer TPID is set to 0x88A8.
-+VLAN filter steps can be added before or after.
-+
-+To start ``testpmd``, and enable QinQ strip for TPID 0x88A8 on port 0:
-+
-+.. code-block:: console
-+
-+   ./<build_dir>/app/dpdk-testpmd -l 0-15 -- -i --forward-mode=mac
-+   ...
-+
-+   testpmd> vlan set extend on 0
-+   testpmd> vlan set outer tpid 0x88A8 0
-+   testpmd> vlan set qinq_strip on 0
-+
-+For QinQ strip with TPID 0x8100, extend VLAN is enabled only.
-+
-+To start ``testpmd``, and enable QinQ strip for default TPID on port 0:
-+
-+.. code-block:: console
-+
-+   ./<build_dir>/app/dpdk-testpmd -l 0-15 -- -i --forward-mode=mac
-+   ...
-+
-+   testpmd> vlan set extend on 0
-+   testpmd> vlan set qinq_strip on 0
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 39949acc11..a7a9f4101b 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -291,6 +291,7 @@ struct iavf_info {
- 	bool in_reset_recovery;
- 
- 	uint32_t ptp_caps;
-+	uint16_t tpid;  /* VLAN tag identifier */
- 	rte_spinlock_t phc_time_aq_lock;
- };
- 
-@@ -507,6 +508,7 @@ int iavf_configure_queues(struct iavf_adapter *adapter,
- 			uint16_t num_queue_pairs, uint16_t index);
- int iavf_get_supported_rxdid(struct iavf_adapter *adapter);
- int iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable);
-+int iavf_config_outer_vlan_strip_v2(struct iavf_adapter *adapter, bool enable);
- int iavf_config_vlan_insert_v2(struct iavf_adapter *adapter, bool enable);
- int iavf_add_del_vlan_v2(struct iavf_adapter *adapter, uint16_t vlanid,
- 			 bool add);
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 802e095174..89870b0e22 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -125,6 +125,8 @@ static int iavf_dev_add_mac_addr(struct rte_eth_dev *dev,
- static void iavf_dev_del_mac_addr(struct rte_eth_dev *dev, uint32_t index);
- static int iavf_dev_vlan_filter_set(struct rte_eth_dev *dev,
- 				   uint16_t vlan_id, int on);
-+static int iavf_vlan_tpid_set(struct rte_eth_dev *dev,
-+			     enum rte_vlan_type vlan_type, uint16_t tpid);
- static int iavf_dev_vlan_offload_set(struct rte_eth_dev *dev, int mask);
- static int iavf_dev_rss_reta_update(struct rte_eth_dev *dev,
- 				   struct rte_eth_rss_reta_entry64 *reta_conf,
-@@ -224,6 +226,7 @@ static const struct eth_dev_ops iavf_eth_dev_ops = {
- 	.mac_addr_remove            = iavf_dev_del_mac_addr,
- 	.set_mc_addr_list			= iavf_set_mc_addr_list,
- 	.vlan_filter_set            = iavf_dev_vlan_filter_set,
-+	.vlan_tpid_set              = iavf_vlan_tpid_set,
- 	.vlan_offload_set           = iavf_dev_vlan_offload_set,
- 	.rx_queue_start             = iavf_dev_rx_queue_start,
- 	.rx_queue_stop              = iavf_dev_rx_queue_stop,
-@@ -715,6 +718,7 @@ iavf_dev_configure(struct rte_eth_dev *dev)
- 	}
- 
- 	iavf_dev_init_vlan(dev);
-+	vf->tpid = RTE_ETHER_TYPE_VLAN; /* VLAN TPID set to 0x8100 by default */
- 
- 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RSS_PF) {
- 		if (iavf_init_rss(ad) != 0) {
-@@ -1386,6 +1390,32 @@ iavf_dev_del_mac_addr(struct rte_eth_dev *dev, uint32_t index)
- 	vf->mac_num--;
- }
- 
-+static int
-+iavf_vlan_tpid_set(struct rte_eth_dev *dev, enum rte_vlan_type vlan_type, uint16_t tpid)
-+{
-+	struct iavf_adapter *adapter =
-+		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
-+	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
-+	int qinq = dev_conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_VLAN_EXTEND;
-+
-+	if ((vlan_type != RTE_ETH_VLAN_TYPE_INNER &&
-+	    vlan_type != RTE_ETH_VLAN_TYPE_OUTER) ||
-+	    (!qinq && vlan_type == RTE_ETH_VLAN_TYPE_INNER)) {
-+		PMD_DRV_LOG(ERR, "Unsupported vlan type.");
-+		return -EINVAL;
-+	}
-+
-+	/* This API only fills internal iavf_info structure
-+	 * and does not send any signal to hardware
-+	 */
-+	if (qinq && vlan_type == RTE_ETH_VLAN_TYPE_OUTER)
-+		vf->tpid = rte_cpu_to_le_16(tpid); /* Outer VLAN can be 0x88a8 or 0x8100 */
-+	else
-+		vf->tpid = RTE_ETHER_TYPE_VLAN; /* Inner VLAN 0x8100 */
-+	return 0;
-+}
-+
- static int
- iavf_disable_vlan_strip_ex(struct rte_eth_dev *dev, int on)
- {
-@@ -1474,6 +1504,8 @@ iavf_dev_vlan_offload_set_v2(struct rte_eth_dev *dev, int mask)
- 	struct iavf_adapter *adapter =
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	bool enable;
-+	int qinq = dev->data->dev_conf.rxmode.offloads &
-+		RTE_ETH_RX_OFFLOAD_VLAN_EXTEND;
- 	int err;
- 
- 	if (mask & RTE_ETH_VLAN_FILTER_MASK) {
-@@ -1493,6 +1525,20 @@ iavf_dev_vlan_offload_set_v2(struct rte_eth_dev *dev, int mask)
- 			return -EIO;
- 	}
- 
-+	if (mask & RTE_ETH_QINQ_STRIP_MASK) {
-+		if (!qinq) {
-+			PMD_DRV_LOG(ERR, "VLAN-extend disabled");
-+			return -ENOSYS;
-+		}
-+		enable = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_QINQ_STRIP);
-+		err = iavf_config_outer_vlan_strip_v2(adapter, enable);
-+		/* If not support, the stripping is already disabled by PF */
-+		if (err == -ENOTSUP && !enable)
-+			err = 0;
-+		if (err)
-+			return -EIO;
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 9ad39300c6..e55e322425 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -779,6 +779,49 @@ iavf_get_supported_rxdid(struct iavf_adapter *adapter)
- 	return 0;
- }
- 
-+int
-+iavf_config_outer_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
-+{
-+	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
-+	struct virtchnl_vlan_supported_caps *stripping_caps;
-+	struct virtchnl_vlan_setting vlan_strip;
-+	struct iavf_cmd_info args;
-+	uint32_t *ethertype;
-+	int ret;
-+
-+	memset(&vlan_strip, 0, sizeof(vlan_strip));
-+	stripping_caps = &vf->vlan_v2_caps.offloads.stripping_support;
-+	if ((stripping_caps->outer & VIRTCHNL_VLAN_ETHERTYPE_88A8) &&
-+	    (stripping_caps->outer & VIRTCHNL_VLAN_TOGGLE) &&
-+	    vf->tpid == RTE_ETHER_TYPE_QINQ) {
-+		ethertype = &vlan_strip.outer_ethertype_setting;
-+		*ethertype = VIRTCHNL_VLAN_ETHERTYPE_88A8;
-+	} else if ((stripping_caps->outer & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
-+		   (stripping_caps->outer & VIRTCHNL_VLAN_TOGGLE) &&
-+		   vf->tpid == RTE_ETHER_TYPE_VLAN) {
-+		ethertype = &vlan_strip.outer_ethertype_setting;
-+		*ethertype = VIRTCHNL_VLAN_ETHERTYPE_8100;
-+	} else {
-+		return -ENOTSUP;
-+	}
-+
-+	vlan_strip.vport_id = vf->vsi_res->vsi_id;
-+
-+	args.ops = enable ? VIRTCHNL_OP_ENABLE_VLAN_STRIPPING_V2 :
-+			    VIRTCHNL_OP_DISABLE_VLAN_STRIPPING_V2;
-+	args.in_args = (uint8_t *)&vlan_strip;
-+	args.in_args_size = sizeof(vlan_strip);
-+	args.out_buffer = vf->aq_resp;
-+	args.out_size = IAVF_AQ_BUF_SZ;
-+	ret = iavf_execute_vf_cmd_safe(adapter, &args, 0);
-+	if (ret)
-+		PMD_DRV_LOG(ERR, "fail to execute command %s",
-+			    enable ? "VIRTCHNL_OP_ENABLE_VLAN_STRIPPING_V2" :
-+				     "VIRTCHNL_OP_DISABLE_VLAN_STRIPPING_V2");
-+
-+	return ret;
-+}
-+
- int
- iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
- {
-@@ -787,14 +830,20 @@ iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
- 	struct virtchnl_vlan_setting vlan_strip;
- 	struct iavf_cmd_info args;
- 	uint32_t *ethertype;
-+	int qinq = adapter->dev_data->dev_conf.rxmode.offloads &
-+		   RTE_ETH_RX_OFFLOAD_VLAN_EXTEND;
- 	int ret;
- 
- 	stripping_caps = &vf->vlan_v2_caps.offloads.stripping_support;
- 
--	if ((stripping_caps->outer & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
-+	/* When VLAN extend is disabled, Single VLAN mode which is Outer VLAN
-+	 * When VLAN extend is enabled, QinQ mode, this API works only on
-+	 * Inner VLAN strip which is always 0x8100.
-+	 */
-+	if (!qinq && (stripping_caps->outer & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
- 	    (stripping_caps->outer & VIRTCHNL_VLAN_TOGGLE))
- 		ethertype = &vlan_strip.outer_ethertype_setting;
--	else if ((stripping_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
-+	else if (qinq && (stripping_caps->inner & VIRTCHNL_VLAN_ETHERTYPE_8100) &&
- 		 (stripping_caps->inner & VIRTCHNL_VLAN_TOGGLE))
- 		ethertype = &vlan_strip.inner_ethertype_setting;
- 	else
-@@ -868,6 +917,8 @@ iavf_add_del_vlan_v2(struct iavf_adapter *adapter, uint16_t vlanid, bool add)
- 	struct virtchnl_vlan *vlan_setting;
- 	struct iavf_cmd_info args;
- 	uint32_t filtering_caps;
-+	int qinq = adapter->dev_data->dev_conf.rxmode.offloads &
-+		   RTE_ETH_RX_OFFLOAD_VLAN_EXTEND;
- 	int err;
- 
- 	supported_caps = &vf->vlan_v2_caps.filtering.filtering_support;
-@@ -885,7 +936,10 @@ iavf_add_del_vlan_v2(struct iavf_adapter *adapter, uint16_t vlanid, bool add)
- 	memset(&vlan_filter, 0, sizeof(vlan_filter));
- 	vlan_filter.vport_id = vf->vsi_res->vsi_id;
- 	vlan_filter.num_elements = 1;
--	vlan_setting->tpid = RTE_ETHER_TYPE_VLAN;
-+	if (qinq && vf->tpid == RTE_ETHER_TYPE_QINQ)
-+		vlan_setting->tpid = RTE_ETHER_TYPE_QINQ;
-+	else
-+		vlan_setting->tpid = RTE_ETHER_TYPE_VLAN;
- 	vlan_setting->tci = vlanid;
- 
- 	args.ops = add ? VIRTCHNL_OP_ADD_VLAN_V2 : VIRTCHNL_OP_DEL_VLAN_V2;
--- 
-2.34.1
-
+/Bruce
