@@ -2,36 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B370DE81A40
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 16:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408DEE81A42
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 16:26:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 898164065A;
-	Mon, 16 Feb 2026 17:25:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D7C4640666;
+	Mon, 16 Feb 2026 17:25:19 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 86426402C5
+ by mails.dpdk.org (Postfix) with ESMTP id 9FB4B40269
  for <dev@dpdk.org>; Mon, 16 Feb 2026 17:25:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
  s=office2-2020; t=1771259111;
- bh=rCiBIUqDGEWdEC5KvnpqeTyTTeMuKXrYbmmoxbhItSQ=;
+ bh=LJH8jU5YiHPuR2o9M9VkKvOVsrj2pq6uRSgVuffdDJg=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References;
- b=Sgm23x6nte4514BSUghXjrneqfABZNbAcKsqg/claotMO/Urw98XXW/BkvboeTN2m
- G5qgg8N90gXukbWpMPjTPBeyO7oD9tqgyDTByDkA+cUFPEvtIbPeKOG/G/rZg9IraG
- Wt/kR2d+YuXk3Q63o+nLUz8FtylvH/8vpVSjYAmbRuNXTDtRAvh5OxDlm3qOCUBDiw
- rvcFhVxU4C6dGXEImIMdBTCDLZisR84/IvGgqDssV8jY6Kskfh8lzvGCycJFm3sg0E
- L7gA78Del5VXeecx9f8pZYIZ+LNa8o1YvQfnQgQ10AC39rL/U9X4RaWzkaDyaZdEz9
- vqW2vLo4CMGOg==
+ b=b46+SjlqauYmsyMMI/SkBT8Ap5kTzEPTl61G5ypZMzrJ9X6rgPYemyFGSzrv5H07Z
+ 78aFqYfUd8Eu2dkc2EEwLnR1T4cXCESHBcNnppLL1BC47mDOuKFPKf/qXMaH2NjZ3P
+ SZCCOk83e6byWbGpQwPa+m+QAc/H4HyLwTUbnHFpqGnRjmjLDq+uChDjIvFxOQe0k/
+ skBJ2Nr2jHRogtqHj17SiuMEe/p4XN9bdLkJ9SdVtNa5iP/CFu6hEdaHeokrk31Et3
+ sE3QpOyH5MNIfptm4EhHzrjgNjH7YPJqp4XMlbkOkmMjHknCTmcRsk1PlQag5ljnYE
+ +83UO9WTR3++Q==
 Received: from emil.cesnet.cz (gtx107.cesnet.cz [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 5DC541180078;
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 7786F118007E;
  Mon, 16 Feb 2026 17:25:11 +0100 (CET)
 From: spinler@cesnet.cz
 To: dev@dpdk.org
 Cc: Martin Spinler <spinler@cesnet.cz>
-Subject: [PATCH v9 6/8] net/nfb: add compatible cards to driver PCI ID table
-Date: Mon, 16 Feb 2026 17:25:04 +0100
-Message-ID: <20260216162506.2702066-7-spinler@cesnet.cz>
+Subject: [PATCH v9 7/8] net/nfb: report firmware version
+Date: Mon, 16 Feb 2026 17:25:05 +0100
+Message-ID: <20260216162506.2702066-8-spinler@cesnet.cz>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260216162506.2702066-1-spinler@cesnet.cz>
 References: <20260115151656.393106-1-spinler@cesnet.cz>
@@ -53,58 +53,59 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Martin Spinler <spinler@cesnet.cz>
 
-The nfb driver is compatible with:
-- NFB-200G2QL card secondary PCI device
-- FB2CGHH card
-- COMBO-400G1 card
-- Common CESNET-NDK cards
+Report the firmware version, which is described
+by project name and project version.
 
 Signed-off-by: Martin Spinler <spinler@cesnet.cz>
 ---
- drivers/net/nfb/nfb.h        | 5 +++++
- drivers/net/nfb/nfb_ethdev.c | 4 ++++
- 2 files changed, 9 insertions(+)
+ drivers/net/nfb/nfb_ethdev.c | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/drivers/net/nfb/nfb.h b/drivers/net/nfb/nfb.h
-index ea8e4fd255..1d863d5ad7 100644
---- a/drivers/net/nfb/nfb.h
-+++ b/drivers/net/nfb/nfb.h
-@@ -24,13 +24,18 @@ extern int nfb_logtype;
- /* PCI Vendor ID */
- #define PCI_VENDOR_ID_NETCOPE 0x1b26
- #define PCI_VENDOR_ID_SILICOM 0x1c2c
-+#define PCI_VENDOR_ID_CESNET  0x18ec
- 
- /* PCI Device IDs */
- #define PCI_DEVICE_ID_NFB_40G2  0xcb80
- #define PCI_DEVICE_ID_NFB_100G2 0xc2c1
- #define PCI_DEVICE_ID_NFB_200G2QL 0xc250
-+#define PCI_DEVICE_ID_NFB_200G2QL_E1 0xc251
- #define PCI_DEVICE_ID_FB2CGG3   0x00d0
-+#define PCI_DEVICE_ID_FB2CGHH   0x00d2
- #define PCI_DEVICE_ID_FB2CGG3D  0xc240
-+#define PCI_DEVICE_ID_COMBO400G1 0xc400
-+#define PCI_DEVICE_ID_CESNET_NDK_COMMON 0xc000
- 
- /* Max index of ndp rx/tx queues */
- #define RTE_ETH_NDP_MAX_RX_QUEUES 32
 diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-index 82b39a0bfe..3bdfc89499 100644
+index 3bdfc89499..111f75e293 100644
 --- a/drivers/net/nfb/nfb_ethdev.c
 +++ b/drivers/net/nfb/nfb_ethdev.c
-@@ -844,8 +844,12 @@ static const struct rte_pci_id nfb_pci_id_table[] = {
- 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NETCOPE, PCI_DEVICE_ID_NFB_40G2) },
- 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NETCOPE, PCI_DEVICE_ID_NFB_100G2) },
- 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NETCOPE, PCI_DEVICE_ID_NFB_200G2QL) },
-+	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_NETCOPE, PCI_DEVICE_ID_NFB_200G2QL_E1) },
- 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_SILICOM, PCI_DEVICE_ID_FB2CGG3) },
-+	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_SILICOM, PCI_DEVICE_ID_FB2CGHH) },
- 	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_SILICOM, PCI_DEVICE_ID_FB2CGG3D) },
-+	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_CESNET, PCI_DEVICE_ID_COMBO400G1) },
-+	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_CESNET, PCI_DEVICE_ID_CESNET_NDK_COMMON) },
- 	{ .vendor_id = 0, }
+@@ -502,6 +502,32 @@ nfb_eth_mac_addr_remove(struct rte_eth_dev *dev, uint32_t index)
+ 		nc_rxmac_set_mac(internals->rxmac[i], index, 0, 0);
+ }
+ 
++static int
++nfb_eth_fw_version_get(struct rte_eth_dev *dev, char *fw_version,
++		size_t fw_size)
++{
++	int ret;
++	const char *proj_name, *proj_vers;
++	struct pmd_internals *intl = dev->process_private;
++
++	proj_name = nc_info_get_fw_project_name(intl->nfb, NULL);
++	proj_vers = nc_info_get_fw_project_version(intl->nfb, NULL);
++
++	if (proj_name == NULL)
++		proj_name = "";
++	if (proj_vers == NULL)
++		proj_vers = "";
++
++	ret = snprintf(fw_version, fw_size, "%s;%s", proj_name, proj_vers);
++	if (ret < 0)
++		return ret;
++
++	if (ret >= (signed int)fw_size)
++		return strlen(proj_name) + 1 + strlen(proj_vers) + 1;
++
++	return 0;
++}
++
+ static const struct eth_dev_ops ops = {
+ 	.dev_start = nfb_eth_dev_start,
+ 	.dev_stop = nfb_eth_dev_stop,
+@@ -528,6 +554,7 @@ static const struct eth_dev_ops ops = {
+ 	.mac_addr_set = nfb_eth_mac_addr_set,
+ 	.mac_addr_add = nfb_eth_mac_addr_add,
+ 	.mac_addr_remove = nfb_eth_mac_addr_remove,
++	.fw_version_get = nfb_eth_fw_version_get,
  };
  
+ /**
 -- 
 2.53.0
 
