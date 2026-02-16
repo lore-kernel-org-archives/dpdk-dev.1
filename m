@@ -2,67 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83B6E7BD83
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 10:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E9EE7BD86
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 10:23:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D8C8140289;
-	Mon, 16 Feb 2026 11:17:09 +0100 (CET)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 1F11D40269
- for <dev@dpdk.org>; Mon, 16 Feb 2026 11:17:08 +0100 (CET)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-2ba895adfeaso2666655eec.0
- for <dev@dpdk.org>; Mon, 16 Feb 2026 02:17:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1771237026; x=1771841826; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=C75/bX4JNfFWEnGhUC+xPAGMzqvNYzAQazHxohYRpIA=;
- b=dc8++1Mp5rbDgXb+6vGBxHUyA9j1thbkA4k6HOjy+qQps2OHM1GiKj9wz83N0W6KgA
- LDwK6tRObTAbjWjfdyfYWsrQpr4kbNjD9AYVfBwF91/oBQE4Z/8tXvPtFzOGz/QBOV3T
- ZO3XqiPkvV2YIVubdBpOIYRk24kEpa194QXg+nqrF2NVs3wR8eS96aRDCFU3pTiCyH34
- uyRrTKaociWRhyys3rhOXPnrPRL+0nPdwLSJfq4iBIRYjOEAe3cxY8b+QdXu+6hJJ1aC
- n1qcyqPPoWIce6Q5z9Kp2MV+/f0eZOlgk8KhE9kWp8AYf7F2I6CjlHA0b9/n4/WAKHAw
- ffog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771237026; x=1771841826;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=C75/bX4JNfFWEnGhUC+xPAGMzqvNYzAQazHxohYRpIA=;
- b=HiFOAinvVApHRXCj34he645fNJptTUIl/pMVTJb9q8ghvE3nh8saE6D26VXGXTY8v7
- OlKRYLM5AfYmVTHb+7K/BlWqIvk0Mt6CBv9J/gLMycgJnTpP3kw5vYy0NJ4t5ySWz/Uc
- z9EBgDWQb79RLsFP4jqPvSsnXktITlyfZpdHwfgRrrZB6broIhSYiUhoLRku5esyVkG3
- cU22v+W7D2ziChwEsIVqNlolFc36zIpWdqfR+iwitFFFrjRs3qOBSEsJMi7fT2C55vMs
- wjjkkT7iM08WR+SRIRYTDuuXaqtHcIYTqdbRSSveFeKWwBu6OvMOVcOrvs4e4069okmK
- 2Wvw==
-X-Gm-Message-State: AOJu0YyNl8jDLNE4bUDqUCgbTkOC3g6Fa3uuaA5vsn/1VkBMYrH8tNDi
- T2z03gqxOjKFhGXX3i26/zkecQx4gf9sma+w3C9tXKPjwwCvs7YATpnjN8TZ6Q==
-X-Gm-Gg: AZuq6aKlE0OkDHEDSKbrGH0nkp0s+dBw0+BlmL0TQP5SwPcWGAM5LkEPahI8fgDYR79
- uQH5Y4QahCbHP1aFEY8W0XyaAS/N7fYvT7XD4cd+oNiX1meEHacI5S8Mk2PsPBpa3w2BWvI+mNX
- ApMktFK8VTjyyc54IqDPCByeH2ln5Tg32eT40gPYiy5sAI0UOmKp8nItmZji95DLjP4Oc769bvS
- LB3W0Zl7JABR8LIJIJlaTrRHCqkNBS+vnpV6SOUK9IxyTvj+O6bQtRSXlOMuYYoEusL2HnU0GHV
- QkrQwXYLXvrSaHBjmsO43K3mu78t6bOjsreqr+XZze+RV65VZH9ut511oCtNlOgC2W73s6ldHgZ
- jzVFJBMwfzAH8Fw62YwE/1c5g8hBPTqJ6NpUyIbMvulLpDKIgHJA2OeE/PGitM57WJxCFwrlAAw
- PM3OxCaQGLMpUT8d4c4iwzwEy9WN3OIEnHkaH+5EtC2oeEFHCPUuHiNMPRTimnSQ97b0cmoimw
-X-Received: by 2002:a05:7300:6da1:b0:2ba:7b63:3f6e with SMTP id
- 5a478bee46e88-2babc3c9740mr2580248eec.11.1771237026491; 
- Mon, 16 Feb 2026 02:17:06 -0800 (PST)
-Received: from C9HFQX6C61.corp.nandps.com ([130.41.236.144])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2bacb5622f2sm10450311eec.10.2026.02.16.02.17.04
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Mon, 16 Feb 2026 02:17:06 -0800 (PST)
-From: Yehor Malikov <malikovyehor@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4BBC440289;
+	Mon, 16 Feb 2026 11:23:15 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id A872140269
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 11:23:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1771237393; x=1802773393;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=ydjGRnDWBj1Y8k+czd9UziHGbwJFHdyiYOKRcjFkoUs=;
+ b=FjDjbyEgG45gHrwqbjxN1/VKv8F8dgp8QLXF3ErHRiHzHGVJhhjN0K5z
+ h9i9MhXJpZtP0L7kfKM3VD8iC5MH43CvbSL2PPEuPTp4hXQymg0W246LM
+ Y1ni0aGW6dyhDggOgOj5xErA5cKgJTXTbsbDLxZ1qcJtsY0xym3nnHq6a
+ sl3b2GiJt5us1bnU8vrM3jVg96XQIbNe9qZzaiXWPMoUk0ZmI094Xh+6u
+ /VUsmxGWfzGojPmkr2QOkQNb7oPI0OChy2VVX9+2AKCwBytdfD6DUeLwH
+ AfnAuZNQWqrgT9tGoSsgW6MtWmlI2gTISwAiFm7MswrE1UDn4YPVDx/D5 A==;
+X-CSE-ConnectionGUID: f6snM/P6RPqvxtmFSoWOCA==
+X-CSE-MsgGUID: VB/0qdMGQ5OBtW0qrjALoQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11702"; a="72219448"
+X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="72219448"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Feb 2026 02:23:12 -0800
+X-CSE-ConnectionGUID: LR8sxZaJQqeCOs/LhCf3iA==
+X-CSE-MsgGUID: HHuRweeKRm+xsa6xdfeJdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="217573633"
+Received: from silpixa00401921.ir.intel.com ([10.20.224.96])
+ by fmviesa004.fm.intel.com with ESMTP; 16 Feb 2026 02:23:12 -0800
+From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: maxime.coquelin@redhat.com, chenbox@nvidia.com, stephen@networkplumber.org
-Subject: Re: [PATCH v9] vhost: fix use-after-free in fdset during shutdown
-Date: Mon, 16 Feb 2026 11:17:01 +0100
-Message-ID: <20260216101701.29340-1-malikovyehor@gmail.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260205183529.66909-1-malikovyehor@gmail.com>
-References: <20260205183529.66909-1-malikovyehor@gmail.com>
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2] net/iavf: fix txq flags setting after Tx path selection
+Date: Mon, 16 Feb 2026 10:22:53 +0000
+Message-ID: <20260216102253.2801021-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260210095045.1901921-1-ciara.loftus@intel.com>
+References: <20260210095045.1901921-1-ciara.loftus@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -78,9 +60,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi everyone,
+Ensure the txq flags "use_ctx" and "use_vec_entry" are set/unset
+properly after tx path selection. Prior to this commit these flags were
+only configured if a vector path was chosen. Fix this by making their
+configuration unconditional. Also simplify how the "use_vec_entry" flag
+is set by removing the dedicated function that sets the flag in favour
+of just setting it inline.
 
-Just a friendly ping on this patch. Let me know if there is any feedback or if anything else is needed from my side!
+Fixes: ebcfb039afa8 ("net/iavf: use common Tx path selection infrastructure")
 
-Thanks,
-Yehor
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+v2:
+* Get a pointer to the selected tx path features and use it instead of
+ directly referencing it twice in a row.
+* Use >= SIMD_128 instead of != 0 to determine if a selected path is
+ vector (future proofing).
+---
+ drivers/net/intel/iavf/iavf_rxtx.c          | 17 ++++++++---------
+ drivers/net/intel/iavf/iavf_rxtx.h          |  1 -
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c |  7 -------
+ 3 files changed, 8 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index e621d4bf47..4bcdd202c0 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -3871,6 +3871,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ #ifdef RTE_ARCH_X86
+ 	struct ci_tx_queue *txq;
+ 	int i;
++	const struct ci_tx_path_features *selected_features;
+ #endif
+ 	struct ci_tx_path_features req_features = {
+ 		.tx_offloads = dev->data->dev_conf.txmode.offloads,
+@@ -3905,15 +3906,13 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
+ 
+ out:
+ #ifdef RTE_ARCH_X86
+-	if (iavf_tx_path_infos[adapter->tx_func_type].features.simd_width != 0) {
+-		for (i = 0; i < dev->data->nb_tx_queues; i++) {
+-			txq = dev->data->tx_queues[i];
+-			if (!txq)
+-				continue;
+-			iavf_txq_vec_setup(txq);
+-			txq->use_ctx =
+-				iavf_tx_path_infos[adapter->tx_func_type].features.ctx_desc;
+-		}
++	selected_features = &iavf_tx_path_infos[adapter->tx_func_type].features;
++	for (i = 0; i < dev->data->nb_tx_queues; i++) {
++		txq = dev->data->tx_queues[i];
++		if (!txq)
++			continue;
++		txq->use_ctx = selected_features->ctx_desc;
++		txq->use_vec_entry = selected_features->simd_width >= RTE_VECT_SIMD_128;
+ 	}
+ #endif
+ 
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index fe3385dcf6..80b06518b0 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -592,7 +592,6 @@ int iavf_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
+ int iavf_rx_vec_dev_check(struct rte_eth_dev *dev);
+ int iavf_tx_vec_dev_check(struct rte_eth_dev *dev);
+ int iavf_rxq_vec_setup(struct ci_rx_queue *rxq);
+-int iavf_txq_vec_setup(struct ci_tx_queue *txq);
+ uint16_t iavf_recv_pkts_vec_avx512(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 				   uint16_t nb_pkts);
+ uint16_t iavf_recv_pkts_vec_avx512_offload(void *rx_queue,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index 2e18be3616..db0462f0f5 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -1800,13 +1800,6 @@ iavf_xmit_pkts_vec_avx2_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return iavf_xmit_pkts_vec_avx2_common(tx_queue, tx_pkts, nb_pkts, true);
+ }
+ 
+-int __rte_cold
+-iavf_txq_vec_setup(struct ci_tx_queue *txq)
+-{
+-	txq->use_vec_entry = true;
+-	return 0;
+-}
+-
+ void __rte_cold
+ iavf_rx_queue_release_mbufs_vec(struct ci_rx_queue *rxq)
+ {
+-- 
+2.43.0
+
