@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B068CE8383C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 22:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A14E83840
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 22:24:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC0A640289;
-	Mon, 16 Feb 2026 23:12:58 +0100 (CET)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
- [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id C72054026C
- for <dev@dpdk.org>; Mon, 16 Feb 2026 23:12:56 +0100 (CET)
-Received: by mail-wr1-f44.google.com with SMTP id
- ffacd0b85a97d-436234ef0f0so2499637f8f.1
- for <dev@dpdk.org>; Mon, 16 Feb 2026 14:12:56 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0B96B40289;
+	Mon, 16 Feb 2026 23:24:12 +0100 (CET)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com
+ [209.85.221.46]) by mails.dpdk.org (Postfix) with ESMTP id BCC5E4026C
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 23:24:10 +0100 (CET)
+Received: by mail-wr1-f46.google.com with SMTP id
+ ffacd0b85a97d-436356740e6so4291012f8f.2
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 14:24:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771279976;
- x=1771884776; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771280650;
+ x=1771885450; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EbLthgYha1T/ug4xdRn7lM8o1emQOxHunl5Nut+5SeM=;
- b=QbyN90pA+EkRwQEy12oWPiKpHpMun3tN7dCZ5emNvz5PAsZE6G4PmlijFuC2mLc8qU
- xmjvP62vZDQusm5Z4KMV92VJQdiUb1kWPMwwg4Gtn7E5Re4aAYhz+MYHjJDV3nmUPtw9
- aW8iXa4opYIfF1qB+yq3IpJ2n3fL4KBsqexEWhY/mCVGGnkurfR+AbRvyFjFQkyhJJzq
- 3RHiapnC3Bktrxs7+QC9xO0+tukrHqzFOLpfeZKu1Fh44ANOUF4V62iPWLDSL4WqZwCs
- jqCDAaxz0u6RHGtRZO0OZGnIor9AhZ5aJ/25Y7tl+WHbTvNO0kb1XXKthV9mLEYZ+/RH
- Xplg==
+ bh=yzocSu/mbNdSrGoJ822Nv51qmmAB+6m9Kcw2eZPE/5c=;
+ b=TOIEa7Ux8d3Cwtd1GZvGHdCMFOOx0/zui/Od2u3MNZWD6jXdDTDt3T3Ov1xy36WzDg
+ 8KLV1g84JRoUxU6bBHQksOD1PIPvAMJ9pEseQwFaQ71/oydgwAzVJfH5yvKzY+88EAiO
+ 5q4bQYy99xpGiidk+ewhSGZnryBR9RmrKmk3cV/A6aOmNeXMvsqgDv5oLRDoWX0dfimh
+ ot3S6mye3C/ny3k2duxv1JHs940spaF6/h8GEoez0vp2tm1kWuIiARIDHjBsZVD62ApF
+ 7w0/poPrhu90LdtXXBBtWOLYDnAzHTc41bTVv0i6jzmhLtbvlNJn5gaO/djF4J3y0MLt
+ 85hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771279976; x=1771884776;
+ d=1e100.net; s=20230601; t=1771280650; x=1771885450;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=EbLthgYha1T/ug4xdRn7lM8o1emQOxHunl5Nut+5SeM=;
- b=VkIaF0ez+mcvHjddtotcUSIQNzqElE1OIq7zgDIWYMAwgX8t4vMkslKrFMcX/ruT7J
- E2y5jw7FiPmud8NqyGUvOFmwVqZCcW7W6u+d9RY0W4ELNSV6C1C/Sx2vHmW3kdpNc/xg
- 9y4VyzxmqA0wPagb75ho+kMRdRr7v5ss97dUJMv1LjLiXN7CHP/JTObEQFCSIOdS7Mt5
- 6CWT+C3qk7a4VG0JDnLyOPxCAgBbXbyKVcdsHJ/4nttifd+tQKLBPCt6mmmJvsVvDT8+
- 5xl5MhM0yEod9g3HI2usjGU0SikMKp4WjBNiYTVlnj6fI2/mSR9mcsEVbToIba8HyMHS
- dpLg==
-X-Gm-Message-State: AOJu0Yw0tLIGdKsQdH6+R/ZBd53fKegv4b6gyGVMUi709SeWgCrPYvFE
- Q0YNlQl5XVEFAvjOYyEoyCiIRJsEaabMONtLLfhtjHwl+GmqPRe3Mc/eokym1Cn334M=
-X-Gm-Gg: AZuq6aIrTu0AKmx5hmJXIxPHLyk0NGw08kILhDVsJH8ggspPHppMvjNId6Hq3rWnPLF
- +tS53SzoYECxDdxbSRlZezdF3jallyyIsU0b5RJbrOsZBv3AZOEvtRRxvO8Aw059Eb2UdJemZxC
- HTrTVIrDXOzwV+VSzBkz5GNISoP+P4uIlyU4Ip58eCyO05Njbdrdwj5FSwhhLnXUxpFJXmJWfGO
- S6D+ozjCWq1p/t9bagdlf/Tsf/DIGx0NRqpLOiIEnSGsLthlLH+87SRM1ciTM4QeXoGJTdLjF88
- 6jetygnsxncT00VwzPBX599es3Vr/MjUfOl35RQYfSHYYy+BWGLdOqz0LEUjn/1oO3LSyn4+fAM
- AvMz3yDbPhg7iqg8oNP3+b6Xo+7hehl3zBIKIgCTmPjB6xaikajeBGiS3nwvlAAp+1aHg2Lb18h
- elgHvwpPyJkr/zSM6pmvYilglDZ7u7xpwcM3T64hKPJFN0QvNfFY/EpRz1phhx3HDe
-X-Received: by 2002:a5d:526e:0:b0:437:9ccf:6b20 with SMTP id
- ffacd0b85a97d-4379ccf6b47mr14706940f8f.55.1771279976336; 
- Mon, 16 Feb 2026 14:12:56 -0800 (PST)
+ bh=yzocSu/mbNdSrGoJ822Nv51qmmAB+6m9Kcw2eZPE/5c=;
+ b=ScyHUmGtm1M7j3EpLajjx7mEgGM4tsJ1MXvdYeug38jYFhtiQ0opvCA6fkUoTH6IvK
+ 3A0VUCIrsPMxf+5OMQ/RzOpwL0vv/bIN6VKFxEyyKO0DjjMLiBjfD4oPiDMs2BNAWbgs
+ uDw9i7jxxGUUz60hbhC1YAfDyTOkjTt1B1CTb8//hksuYpBUn4+4KZAzTDRaq0Tn948W
+ NLnUi+qC0M8pu4ayOOwiEVLIsrvlxSgXmAZzbl9NdBJjkstiLggLsp/fKtKzydQoWAw4
+ p5bocHQe+UpgegDZhmoezf926cdNmyzToPxAM0P0SPVVJHcR3gVBhRLhV7B4e2Fcr6L5
+ Mtcw==
+X-Gm-Message-State: AOJu0Yx/MBYTU55yML3BVJdQCQiN57tvRPdzSAQE8rEBhyDliVLxcdAj
+ EOqL0LS9cuspZ+h+Wj96iel6FleM45LpJ/LFVTLkX944BtJX6wa61KvlvD7ubbIMGRk=
+X-Gm-Gg: AZuq6aL0c3gR+mm6fB89K87aAo9ThzhM9rSYrqJnlj+y0EJAS0TKmlOfXnqQSGpWXHg
+ 211Ub7rTSAwLEN0X6UwW01ZYN92aLZuMHzuExijuKW9D82VwVmqoRwUFJCHLwuWm13twz4pELMU
+ 80/zNv/ZNTObrFbgpdA38vlXP7YQR4xVAZmzIXCOtelZ/iq8/1GNJpSCG1IHPgTIiEc6drVH/E1
+ pQvX/O4GfGSTjy2Wsug1iN0ZAlUA1yp4f2UtlHMesM15kJsL1XHsQE4LKIAjPt3ttVEIw6MFEzu
+ vnjVPtaWcsKXLtgh7rcMfjfi5wxvIy+DJ5IjkL27dRoIWm0oCt1oGFklF+ZsbLV9Xi7XSZWDbPk
+ P5i/oNI9/zfFWVzoAp5K7PHh1UjYxeq03xH3cbwty66aDVXDn07/9pmkALo5YeKrF/BUqn4K6L8
+ 4WkqM0JHJy1MMoMgCxfLE31245+bfhL0W8dTWSmJWOfhAcaK6N58PFCmX4z26pKf0A
+X-Received: by 2002:a05:6000:288e:b0:430:f5ed:83e3 with SMTP id
+ ffacd0b85a97d-4379db31b5amr13374458f8f.6.1771280650218; 
+ Mon, 16 Feb 2026 14:24:10 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43796a5ac7csm26640790f8f.7.2026.02.16.14.12.55
+ ffacd0b85a97d-43796a6a5e5sm28276520f8f.9.2026.02.16.14.24.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Feb 2026 14:12:56 -0800 (PST)
-Date: Mon, 16 Feb 2026 14:12:52 -0800
+ Mon, 16 Feb 2026 14:24:10 -0800 (PST)
+Date: Mon, 16 Feb 2026 14:24:05 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-Cc: <dev@dpdk.org>, <Selwin.Sebastian@amd.com>
-Subject: Re: [PATCH] net/axgbe: added marvel m88e1512 PHY support
-Message-ID: <20260216141252.76f2b567@phoenix.local>
-In-Reply-To: <20260216085431.972-1-ashokkumar.natarajan@amd.com>
-References: <20260216085431.972-1-ashokkumar.natarajan@amd.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: Re: [PATCH v4 22/27] net/iavf: avoid rte malloc in queue operations
+Message-ID: <20260216142405.1a1ba2fd@phoenix.local>
+In-Reply-To: <869fa36c643d5f9da0bd4992fc179914eff53a93.1770978324.git.anatoly.burakov@intel.com>
+References: <cover.1770978324.git.anatoly.burakov@intel.com>
+ <869fa36c643d5f9da0bd4992fc179914eff53a93.1770978324.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -79,55 +80,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 16 Feb 2026 14:24:31 +0530
-Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com> wrote:
+On Fri, 13 Feb 2026 10:26:33 +0000
+Anatoly Burakov <anatoly.burakov@intel.com> wrote:
 
-> Added marvel m88e1512 1G PHY support in amd axgbe driver
+> Currently, when enabling, disabling, or switching queues, we are using
+> rte_malloc followed by an immediate rte_free. This is not needed as these
+> structures are not being stored anywhere, so replace them with stack
+> allocation or malloc/free where appropriate.
 >=20
-> Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
-Multiple CI build failures. Fix and resubmit.
-FAILED: drivers/libtmp_rte_net_axgbe.a.p/net_axgbe_axgbe_phy_impl.c.o=20
-clang -Idrivers/libtmp_rte_net_axgbe.a.p -Idrivers -I../drivers -Idrivers/n=
-et/axgbe -I../drivers/net/axgbe -Ilib/ethdev -I../lib/ethdev -Ilib/eal/comm=
-on -I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include -I..=
-/lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include -Ilib/e=
-al/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal -I../li=
-b/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I.=
-./lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/argparse -I../lib/ar=
-gparse -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mempool -I../l=
-ib/mempool -Ilib/ring -I../lib/ring -Ilib/meter -I../lib/meter -Idrivers/bu=
-s/pci -I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci -I../lib/pc=
-i -Idrivers/bus/vdev -I../drivers/bus/vdev -fcolor-diagnostics -D_FILE_OFFS=
-ET_BITS=3D64 -Wall -Winvalid-pch -Wextra -Werror -std=3Dc11 -O3 -include rt=
-e_config.h -Wvla -Wcast-qual -Wcomma -Wdeprecated -Wformat -Wformat-nonlite=
-ral -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-=
-externs -Wold-style-definition -Wpointer-arith -Wshadow -Wsign-compare -Wst=
-rict-prototypes -Wundef -Wwrite-strings -Wno-missing-field-initializers -D_=
-GNU_SOURCE -fPIC -march=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INT=
-ERNAL_API -Wno-format-truncation -Wno-address-of-packed-member -Wno-comma -=
-Wno-cast-qual -Wno-shadow -DRTE_LOG_DEFAULT_LOGTYPE=3Dpmd.net.axgbe -DRTE_A=
-NNOTATE_LOCKS -Wthread-safety -MD -MQ drivers/libtmp_rte_net_axgbe.a.p/net_=
-axgbe_axgbe_phy_impl.c.o -MF drivers/libtmp_rte_net_axgbe.a.p/net_axgbe_axg=
-be_phy_impl.c.o.d -o drivers/libtmp_rte_net_axgbe.a.p/net_axgbe_axgbe_phy_i=
-mpl.c.o -c ../drivers/net/axgbe/axgbe_phy_impl.c
-../drivers/net/axgbe/axgbe_phy_impl.c:2359:6: error: variable 'ret' is used=
- uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uniniti=
-alized]
- 2359 |         if (bmcr =3D=3D -1)
-      |             ^~~~~~~~~~
-../drivers/net/axgbe/axgbe_phy_impl.c:2368:9: note: uninitialized use occur=
-s here
- 2368 |         return ret;
-      |                ^~~
-../drivers/net/axgbe/axgbe_phy_impl.c:2359:2: note: remove the 'if' if its =
-condition is always false
- 2359 |         if (bmcr =3D=3D -1)
-      |         ^~~~~~~~~~~~~~~
- 2360 |                 goto out;
-      |                 ~~~~~~~~
-../drivers/net/axgbe/axgbe_phy_impl.c:2356:9: note: initialize the variable=
- 'ret' to silence this warning
- 2356 |         int ret;
-      |                ^
-      |                 =3D 0
+AI caught something here.
+
+Patch 22/27 =E2=80=94 net/iavf: avoid rte malloc in queue operations
+Error (Correctness =E2=80=94 Uninitialized stack memory)
+
+In iavf_switch_queue_lv(), the stack-allocated queue_req is not zero-initia=
+lized:
+
+=EF=BF=BC
+c
+	} queue_req;   /* <-- no "=3D {0}" */
+The original code used rte_zmalloc which zeroes the buffer. The other two f=
+unctions in this same patch (iavf_enable_queues_lv and iavf_disable_queues_=
+lv) correctly use =3D {0}, but iavf_switch_queue_lv does not. The structure=
+ is then sent as a virtchnl message via args.in_args, meaning uninitialized=
+ stack bytes will be transmitted to the PF driver. While individual fields =
+like num_chunks, vport_id, queue_type, start_queue_id, and num_queues are s=
+et explicitly, padding bytes and any other fields within the struct will co=
+ntain garbage.
+
+Additionally, this function previously allocated only sizeof(struct virtchn=
+l_del_ena_dis_queues) (which includes exactly 1 chunk), but the new stack s=
+truct includes IAVF_RXTX_QUEUE_CHUNKS_NUM - 1 additional chunks. Since num_=
+chunks is set to 1, the extra space is harmless =E2=80=94 but passing sizeo=
+f(queue_req) as in_args_size now sends a larger buffer than before. Compare=
+ with the enable/disable functions which also have the extra chunks but act=
+ually use IAVF_RXTX_QUEUE_CHUNKS_NUM chunks. The size change is likely beni=
+gn but worth noting.
+
+Fix: Add =3D {0} to the declaration, matching the pattern in the sibling fu=
+nctions in the same patch:
+
+=EF=BF=BC
+c
+	} queue_req =3D {0};
