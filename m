@@ -2,77 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BEEE81A29
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 14:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC19E81A2E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 14:49:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9BE1840289;
-	Mon, 16 Feb 2026 15:29:40 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B9A940289;
+	Mon, 16 Feb 2026 15:49:12 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id AA01A40269
- for <dev@dpdk.org>; Mon, 16 Feb 2026 15:29:38 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B53ED40269
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 15:49:10 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1771252174;
+ s=mimecast20190719; t=1771253350;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=ISzpiJQfA2kxPtQr+os0mdxcxCuZqzt3tyOoy00P22M=;
- b=Zcs3h6io5mpOdF/qI9QAZmlwzA2iUfecPHApumheEp0VjW2lSEDYMBnV+W8yU3mLrBdMf0
- HtrX8dSiFq/+dLgplYk0Q8lDrFiDg5M3Z0wVNCD335J4Mqsb5FlVLmcqNZsLQnkFpSLW23
- bk8d53t9PjCuVMh8H+cgXm71cy3k2YM=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=8D+PVuhcJBZrR6HWPoAE+2jeXcaFRnkI+mVNDAxBpRo=;
+ b=V17yaZ3kVgCf9lvgO5F4AsDbdNPVjVPTf726H3ED/T56RWaGON9HMInQklo6DLgNdTpgp/
+ 8YQXvbCKO+/K/lVe3u59Fpyf57ubBxaujgSMIBFqmEn7UrwOKxscJr0Ri7i7q79lfsYc/G
+ lhluPftpR0L9aq0+eydJ1qjhModsQ8w=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-mkK6obtgOLaeaYIis-FnSA-1; Mon, 16 Feb 2026 09:29:30 -0500
-X-MC-Unique: mkK6obtgOLaeaYIis-FnSA-1
-X-Mimecast-MFC-AGG-ID: mkK6obtgOLaeaYIis-FnSA_1771252163
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-38302f5aba6so18022971fa.1
- for <dev@dpdk.org>; Mon, 16 Feb 2026 06:29:27 -0800 (PST)
+ us-mta-43-lfizPbycOVCNzfw1H1yW-A-1; Mon, 16 Feb 2026 09:49:08 -0500
+X-MC-Unique: lfizPbycOVCNzfw1H1yW-A-1
+X-Mimecast-MFC-AGG-ID: lfizPbycOVCNzfw1H1yW-A_1771253347
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-385bb7f429cso19621431fa.1
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 06:49:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771252163; x=1771856963;
+ d=1e100.net; s=20230601; t=1771253347; x=1771858147;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ISzpiJQfA2kxPtQr+os0mdxcxCuZqzt3tyOoy00P22M=;
- b=AgePGAiDghXoFiOPyc/s5uqh8JuZVXtcB4uzsRzVX+jIyi55d0rHt288vm0dpj1y/u
- N+yjLscPJ/KymqESRPQkBGRl40W+56liA5ychK+LsA3f+VflppGBFWaZNNCLb6mi0Tfu
- KiVd9ZzhCdIUNW7hzcC5hGegbbtkKSX1HnVjrla2oFI2SNkhUZx5g52yADmfbKBljUR5
- c6PB5TXjDza58G8/lymbxhDlnX0meQKHwJS5n5y1x31r4/kixTxOropzeCvBzSxgwtF7
- liXrBhfFZxDkNmFWQDF5TUAzSsSeZ8DzLKRLCg7dDOa5r2gL88acw8hOo5LDEYD7ptba
- oAiA==
-X-Gm-Message-State: AOJu0YxBiOFenotCS9mzrntUwnyUM5+a0oSANb5xGGTEbcWHOyydczee
- oBbuLPB11ODb7RE/0CWDOnjmsonubiLdY1jH48CmhbRtNqlWSrM0dRf5KVU07apT/JJ+HbmUykx
- U/CcRGprp7ioR/3//ZC5/RkS+mDM6Z+Yyt0JJeV6b6VLm/ILDGStC1680mHacuyMqexl4jO7T+u
- 60NsDM2zdE/YtuV3ZBvnw=
-X-Gm-Gg: AZuq6aLfLkGZuZIhhy0Aj50B/h3pmB669/OuKNIdNfh2inLFTUnB7OaHoZnAxaeuVcE
- o9sFtnkS5VVbUBs49eHwpZWSO3lpTFnhCvxKRbQK9iHEpOo05jnC5uWhtni2LggExJgF7cclaQy
- if0yhUu1D/qF+8thjkjrwXZ+RGf0RqpkEdkYGiWepkbmyAJzYGwOU+Ce/YW1rQkfavw3HFu8uh2
- /7syfT6M9ZMvz/Wwq1JuvVStsCH+uyGKKgD5hGN0/MO1aFKIZVzp2K3bnjCZyJw4F+a5w==
-X-Received: by 2002:a05:651c:f09:b0:385:f0ce:e222 with SMTP id
- 38308e7fff4ca-388106be1a2mr26158621fa.41.1771252163356; 
- Mon, 16 Feb 2026 06:29:23 -0800 (PST)
-X-Received: by 2002:a05:651c:f09:b0:385:f0ce:e222 with SMTP id
- 38308e7fff4ca-388106be1a2mr26158491fa.41.1771252162882; Mon, 16 Feb 2026
- 06:29:22 -0800 (PST)
+ bh=8D+PVuhcJBZrR6HWPoAE+2jeXcaFRnkI+mVNDAxBpRo=;
+ b=UgDiUqjqFJkfAbXi7WT0h1pqNmVG9n0HKBwQ1csVT9ErrBUUNEWIEtfVwdoKVvEGGi
+ jwghTYfuIKxNdcqG5v0jotmzrSdhT31UQSy4SqV+q+h0kYng2e2twzm/v38EN08KbrNH
+ 6idYfgpj0dWgdA65wI+Qn4WiQvAgXHByvMZHbuKJtLs8kbpWFtHgoZwA2BYEr9om6Y43
+ 5cGqNfzIVmKlfM93kcs3SWIdaQO6T/n8oOXyD3zyhplaEyao+zNdKQWVtAn2cZfTKqak
+ n3gnyv8zsJKQIWDCUqLkgk8nL/d+kjUUYL1dId542vFJd10O0gIeNQ35khSm5WS4fO5n
+ Bwfg==
+X-Gm-Message-State: AOJu0YyA19SdSR+Dc7Ow6PvMXb/H3osPVMyV81ICpF2JmcEj6oIXj7OK
+ rq6vvYmkRvP5Y6mzwpRQ4+g3FeXxS3OJj+EorRVMGwLc0yNn3mmG2Bor1aVvZJ2KMgbdoillhKz
+ 1W/wejv+5PyX4EjL4xDc4OLRZi2qBUdVf4VEht4K3MUmKPRuNz06HpHeib8vo/MGvjMsdbAWV8D
+ 6COhWJITOVkjfJzJ1gAoM=
+X-Gm-Gg: AZuq6aL/Un4eLWcn+srGHu7WPbcVdby+E3NdYSixs1q2Srx8DMTtbf31tQIiRZ/auSM
+ lLoaHDO64oz8lPMTFlseeXuK/thvRYRsw+AHbxKYOiN10nm7jOOMN0l+JfNYwK1RC5szYGjavTQ
+ MXI9ItgijTtIkdsJWUowASfWxhP3x0JlEZpm3PbtGCwM6wx8FWYX1IKjqEikWSOrGpku6E8v4Dy
+ jVGSDau9ZN9QFtGR5/Apti8KpxWXte4dUlhovG3Zju9C8N+oQ3YT2xceaKQ66tnqHMWQA==
+X-Received: by 2002:a05:6512:398e:b0:59e:5bfa:4eaf with SMTP id
+ 2adb3069b0e04-59f69c6868amr2616572e87.37.1771253347200; 
+ Mon, 16 Feb 2026 06:49:07 -0800 (PST)
+X-Received: by 2002:a05:6512:398e:b0:59e:5bfa:4eaf with SMTP id
+ 2adb3069b0e04-59f69c6868amr2616565e87.37.1771253346736; Mon, 16 Feb 2026
+ 06:49:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20260128194141.90018-1-scott.k.mitch1@gmail.com>
- <20260202044841.90945-1-scott.k.mitch1@gmail.com>
- <20260202044841.90945-2-scott.k.mitch1@gmail.com>
-In-Reply-To: <20260202044841.90945-2-scott.k.mitch1@gmail.com>
+References: <20260126164519.3029952-1-bruce.richardson@intel.com>
+ <20260213152227.879170-1-bruce.richardson@intel.com>
+In-Reply-To: <20260213152227.879170-1-bruce.richardson@intel.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 16 Feb 2026 15:29:10 +0100
-X-Gm-Features: AaiRm52odX8Bw-nUb-SKV4OjgcbdwhnBPXHLzVZ3-RC0tyuYkfyYHcOQMo94gYk
-Message-ID: <CAJFAV8zr6zcvOwY920y=Sbo60UUSWhMw4jROs0h=ugNXJAHQ+A@mail.gmail.com>
-Subject: Re: [PATCH v19 1/2] eal: add __rte_may_alias and __rte_aligned to
- unaligned typedefs
-To: scott.k.mitch1@gmail.com, Andre Muezerie <andremue@linux.microsoft.com>, 
- Tyler Retzlaff <roretzla@linux.microsoft.com>
-Cc: dev@dpdk.org, mb@smartsharesystems.com, stephen@networkplumber.org, 
- bruce.richardson@intel.com, Cyril Chemparathy <cchemparathy@ezchip.com>,
- stable@dpdk.org
+Date: Mon, 16 Feb 2026 15:48:54 +0100
+X-Gm-Features: AaiRm51OJs9RAPcLlj-MLRoVKBOUds3ORfDeU4RT-ZPE8tsFPjin1Upa7kOYfGg
+Message-ID: <CAJFAV8y5PCivWu_a9EnbQ-5AJxe=1zcn2RBXHj8Zts3cTpZEOg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] improve error reporting & resilience in unit tests
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 4VFCOv5LHO7ENiL4CkxFHAMmxsesxn79MzKRW6LGwnM_1771252163
+X-Mimecast-MFC-PROC-ID: gqymhonMTJevetwlqPjX7a73aYb0XwHtHO_kzF1h3dE_1771253347
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -88,107 +83,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Scott, Andre, Tyler,
+On Fri, 13 Feb 2026 at 16:22, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+>
+> In the EAL flags unit tests sporadic errors were encountered which were proving
+> both difficult to debug and to reproduce. This series aims to improve the
+> situation by firstly adding more debug logs and output so we can better
+> root cause any issues experienced. The final patch then removes pci probing from
+> many test runs where its not needed, so as to avoid issues with unexpected
+> drivers being loaded or probed due to the HW on the system running the tests.
+>
+> V2: split second patch into two, to separate out logging and no-pci changes
+>
+> Bruce Richardson (3):
+>   eal: add location info to interrupt error message
+>   test/eal_flags: add EAL debug flags to recursive calls
+>   test/eal_flags: remove PCI probing for recursive calls
+>
+>  app/test/test_eal_flags.c              | 229 +++++++++++++------------
+>  lib/eal/common/eal_common_interrupts.c |   2 +-
+>  2 files changed, 123 insertions(+), 108 deletions(-)
 
-On Mon, 2 Feb 2026 at 05:48, <scott.k.mitch1@gmail.com> wrote:
->
-> From: Scott Mitchell <scott.k.mitch1@gmail.com>
->
-> Add __rte_may_alias attribute to unaligned_uint{16,32,64}_t typedefs
-> to prevent GCC strict-aliasing optimization bugs. GCC has a bug where
-> it incorrectly elides struct initialization when strict aliasing is
-> enabled, causing reads from uninitialized memory.
->
-> Add __rte_aligned(1) attribute to unaligned_uint{16,32,64}_t typedefs
-> which allows for safe access at any alignment. Without this, accessing
-> a uint16_t at an odd address is undefined behavior. Without this
-> UBSan detects `UndefinedBehaviorSanitizer: undefined-behavior`.
->
-> Fixes: 7621d6a8d0bd ("eal: add and use unaligned integer types")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Scott Mitchell <scott.k.mitch1@gmail.com>
-
-[snip]
-
-> diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-> index 573bf4f2ce..7b36966019 100644
-> --- a/lib/eal/include/rte_common.h
-> +++ b/lib/eal/include/rte_common.h
-> @@ -121,16 +121,42 @@ extern "C" {
->  #define __rte_aligned(a) __attribute__((__aligned__(a)))
->  #endif
->
-> -#ifdef RTE_ARCH_STRICT_ALIGN
-> -typedef uint64_t unaligned_uint64_t __rte_aligned(1);
-> -typedef uint32_t unaligned_uint32_t __rte_aligned(1);
-> -typedef uint16_t unaligned_uint16_t __rte_aligned(1);
-> +/**
-> + * Macro to mark a type that is not subject to type-based aliasing rules
-> + */
-> +#ifdef RTE_TOOLCHAIN_MSVC
-> +#define __rte_may_alias
->  #else
-> -typedef uint64_t unaligned_uint64_t;
-> -typedef uint32_t unaligned_uint32_t;
-> -typedef uint16_t unaligned_uint16_t;
-> +#define __rte_may_alias __attribute__((__may_alias__))
->  #endif
->
-> +/* Unaligned types implementation notes:
-> + * __rte_aligned(1) - Reduces alignment requirement to 1 byte, allowing
-> + *                    these types to safely access memory at any address.
-> + *                    Without this, accessing a uint16_t at an odd address
-> + *                    is undefined behavior (even on x86 where hardware
-> + *                    handles it).
-> + *
-> + * __rte_may_alias  - Prevents strict-aliasing optimization bugs where
-> + *                    compilers may incorrectly elide memory operations
-> + *                    when casting between pointer types.
-> + */
-> +
-> +/**
-> + * Type for safe unaligned u64 access.
-> + */
-> +typedef __rte_may_alias __rte_aligned(1) uint64_t unaligned_uint64_t;
-> +
-> +/**
-> + * Type for safe unaligned u32 access.
-> + */
-> +typedef __rte_may_alias __rte_aligned(1) uint32_t unaligned_uint32_t;
-> +
-> +/**
-> + * Type for safe unaligned u16 access.
-> + */
-> +typedef __rte_may_alias __rte_aligned(1) uint16_t unaligned_uint16_t;
-> +
->  /**
->   * @deprecated
->   * @see __rte_packed_begin
-> @@ -159,15 +185,6 @@ typedef uint16_t unaligned_uint16_t;
->  #define __rte_packed_end __attribute__((__packed__))
->  #endif
->
-> -/**
-> - * Macro to mark a type that is not subject to type-based aliasing rules
-> - */
-> -#ifdef RTE_TOOLCHAIN_MSVC
-> -#define __rte_may_alias
-> -#else
-> -#define __rte_may_alias __attribute__((__may_alias__))
-> -#endif
-> -
->  /******* Macro to mark functions and fields scheduled for removal *****/
->  #ifdef RTE_TOOLCHAIN_MSVC
->  #define __rte_deprecated
-
-This change raises a warning in checkpatch.
-https://mails.dpdk.org/archives/test-report/2026-February/955237.html
-
-IIRC, we added this check for MSVC support, making sure no
-__rte_aligned() would be added in unsupported locations.
-
-@Microsoft guys, do you have a suggestion?
+Series applied, thanks.
 
 
 -- 
