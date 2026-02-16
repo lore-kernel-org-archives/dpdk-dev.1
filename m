@@ -2,51 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70303E63F3F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 09:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28F0E7BD81
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 10:01:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3BE440289;
-	Mon, 16 Feb 2026 10:37:25 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id ADF4B40269
- for <dev@dpdk.org>; Mon, 16 Feb 2026 10:37:24 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771234645; x=1802770645;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=s1+40E3kFwjOqHxNgV+7GtSXLAzHIefStQfxLkGjChw=;
- b=e7ALhIQIpWZyxxs+0/cMEQANttLs99Lh3CqWpUJ9JG84CqsJCBa5fsJw
- kAQeRTb0OY5Mt6JPF2OiyLpSRDNPmydP6SpC5HQ0p4SPwnBQN05NiNroB
- PqA+rLeD8U//NTEmnwvBt2pTOjmwLTPh0zO/T7BUcaMAfSnN9qTUMjNW1
- t1akBWwqMUD/j3qEzzJo8Jtp3qwxnnqKKeGHS3NGNQ606/Og9itNms+ks
- thdjqtgAvkP8dpsXxRg5dxC5AeVO8dNGzaOicv5oar2JvOjwMFLJBJE1b
- MHOJ50sWfnl9j3VJ70r2jDBeANLEElvMrwkKJRsItekdLqNsdLmpXtC9R w==;
-X-CSE-ConnectionGUID: ENHVTHeCRH64v5lsvuh/Bg==
-X-CSE-MsgGUID: q1mVjQUxSGOXS737DldRHQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11702"; a="97772505"
-X-IronPort-AV: E=Sophos;i="6.21,293,1763452800"; d="scan'208";a="97772505"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Feb 2026 01:37:24 -0800
-X-CSE-ConnectionGUID: b18oVfBjS7Or0/wZjg64hg==
-X-CSE-MsgGUID: JcdOmSkRTZCEPzNfFI65Ag==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,293,1763452800"; d="scan'208";a="217566329"
-Received: from icx005.iind.intel.com (HELO icx005..) ([10.190.212.217])
- by fmviesa004.fm.intel.com with ESMTP; 16 Feb 2026 01:37:22 -0800
-From: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Cc: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-Subject: [PATCH] doc: improve e1000 driver documentation
-Date: Mon, 16 Feb 2026 19:55:04 +0000
-Message-ID: <20260216195533.2030568-1-chaitanyababux.talluri@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 18D9E402DA;
+	Mon, 16 Feb 2026 11:01:52 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 766A440289
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 11:01:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1771236109;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=ZGMjiSHEm50yIdYCW6uB/ONPvNfmG1Wdl6pC/4xL9wo=;
+ b=UgqL4p/CSFFE1q2sATqIdDN28V5Dz2pUn23z+jXLbl3DplHTy/nt/p5OKWprAc/XccORKp
+ dP5iP3ihXH00CBhy/6E1agwIMdOgCqXoTeSj0KMAAtdMOS64xynEi9wZZdOnBkLMRZNo6a
+ uLRYQxWTE6jHd4IDCtIP+scOMu2k03g=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-zNP7tXTnPbqznx7GvwwHyQ-1; Mon, 16 Feb 2026 05:01:48 -0500
+X-MC-Unique: zNP7tXTnPbqznx7GvwwHyQ-1
+X-Mimecast-MFC-AGG-ID: zNP7tXTnPbqznx7GvwwHyQ_1771236107
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-387126f6da6so15594761fa.1
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 02:01:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771236106; x=1771840906;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=ZGMjiSHEm50yIdYCW6uB/ONPvNfmG1Wdl6pC/4xL9wo=;
+ b=DSampC3SbczcqvrGIFbBDySp4WXMWvIQp9kLwgkzfvdfoFMOE6vDfQQJv9qdP3vCCG
+ gprlp41hstwfLtydpEPC5k0tR9Ox68vrBxi9pB6Nn4qvX/EjnYU/CjE4AQr8iobY8m+b
+ /zjETTmAvRKBftsLKxITGAT4y9EFVUIbEEbRVGbjQUQdER405hBEikDJn1km4bDg3GX6
+ e3CCtZMIZ/l7Cesb54TZ1yEJS5ksm7jQVP0JyzT4ChgHtR96zHM+z+dLlsxoZ1/3tQp+
+ SPyRfBh+bQXVHCFI5VUQTkUzlkpqvIuDCwEdDhSbh0H3lvU2aj6nku9oSgPk3Bu2kXS6
+ Pvxg==
+X-Gm-Message-State: AOJu0YxSE3ug2bqTWENuCznGu14LChONWuEDEfpC8OvGLy+VVTEKIAAZ
+ 2XGAEEgMPtlLML5CtcDAIDJwJPKzZg1KiUOhlMmsLz/5a6yBi1vxzLVOxkAF2Yet0I+Jb+q2DNS
+ YBxnK90kFKmnIhqPj2+00lK5vv8y9AO2BN40elRLqZmkrZeEepWd0khvGozgSLM7chy6RFfZKZe
+ wwXI+bvFmsSvsqL56v7XmVCZgDLzjfZg==
+X-Gm-Gg: AZuq6aLAgRKOFxKwk9m8pK7bs27J2X5weqY2tgFHgBcr7aHlisaeIbPGdF7mdsSVh1p
+ qjUiPCwS5LZLWaj/VGbcjurCiUAN/3EMKQ22JTn8csCwa/o+PyO+21rEt8Zq5ZrYqSEv5ptXFZr
+ Txgw7anKgDw+/pFYUnbnlVOA0xGs9hbwcsXHJoY9RWZw3ZvyX8s1Z1bOZGGzRLGcbgTqCNGsDJK
+ mxErlWmAyBBO/GI5avfdEOVugVAFdSI8qlBV/9Ht5hObAANIwhGTA1bDT4Nh+PwEVxALQ==
+X-Received: by 2002:a05:651c:1545:b0:387:90a:e4a0 with SMTP id
+ 38308e7fff4ca-3881b9509eemr18181441fa.29.1771236106498; 
+ Mon, 16 Feb 2026 02:01:46 -0800 (PST)
+X-Received: by 2002:a05:651c:1545:b0:387:90a:e4a0 with SMTP id
+ 38308e7fff4ca-3881b9509eemr18181301fa.29.1771236106016; Mon, 16 Feb 2026
+ 02:01:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260126210615.175816-1-stephen@networkplumber.org>
+ <20260213192039.221213-1-stephen@networkplumber.org>
+ <20260213192039.221213-7-stephen@networkplumber.org>
+In-Reply-To: <20260213192039.221213-7-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 16 Feb 2026 11:01:34 +0100
+X-Gm-Features: AaiRm50hr-belWdxP2ZqD5Y_g380wHAvLJEMVoY3DzozB4L131GmAnbL1lpbV-c
+Message-ID: <CAJFAV8x-9SDi2hfeAHT3zaxr0kSiAEdW=GtHkKz+DTr_K7-H6w@mail.gmail.com>
+Subject: Re: [PATCH v7 6/7] test/pcapng: skip test if null driver missing
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ZjV5yj5HhdhSf7P-97Fon-TIn0TEqyS5sJ8UxmM8lhw_1771236107
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,73 +84,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update e1000 driver docs to cover all Intel 1G devices,
-including emulated e1000 and real hardware,
-and group related drivers (igb, igc) for clarity."
+On Fri, 13 Feb 2026 at 20:21, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> If null PMD is disabled in the build via -Ddisable_drivers=null
+> then do not build pcapng test.
+>
+> Fixes: 6f01a3ca5c7f ("test: fix dependency on pcapng")
 
-Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
----
- doc/guides/nics/e1000em.rst | 47 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+There was no dependency on net/null at this point in git history.
+Instead, this fix is about:
+Fixes: 0c614a0fa6c6 ("test/pcapng: cleanup")
 
-diff --git a/doc/guides/nics/e1000em.rst b/doc/guides/nics/e1000em.rst
-index ed4f57e9c6..b2e09cd673 100644
---- a/doc/guides/nics/e1000em.rst
-+++ b/doc/guides/nics/e1000em.rst
-@@ -1,6 +1,53 @@
- ..  SPDX-License-Identifier: BSD-3-Clause
-     Copyright(c) 2010-2014 Intel Corporation.
- 
-+Intel 1G Network Drivers (e1000, igb, igc)
-+==========================================
-+
-+Overview
-+--------
-+
-+DPDK provides several poll mode drivers (PMDs) supporting Intel 1 Gigabit
-+Ethernet controller families. These include:
-+
-+*   e1000 – Intel 8254x family devices, including QEMU e1000 emulation.
-+*   e1000e – Intel PRO/1000 PCI‑Express family (82563/6/7, 82571/2/3/4/7/8/9,
-+             82583 and I217/I218/I219-based adapters).
-+
-+These drivers follow similar design principles and capabilities and are grouped
-+here for clarity.
-+
-+Supported Hardware
-+------------------
-+
-+E1000 Devices
-+~~~~~~~~~~~~~
-+
-+The e1000 Linux base driver supports the Intel® PRO/1000 PCI and PCI‑X
-+family of Gigabit Ethernet controllers. Supported devices include:
-+
-+*   Intel 82540, 82541, 82545, 82546
-+*   QEMU ``e1000`` emulated NIC
-+
-+E1000e Devices
-+~~~~~~~~~~~~~~
-+
-+The e1000e Linux base driver supports the Intel PRO/1000 PCI‑Express family
-+including:
-+
-+*   82563/82566/82567 series
-+*   82571/82572/82573/82574/82577/82578/82579 series
-+*   82583-based adapters
-+*   I217, I218 and I219 Gigabit Network Connections
-+
-+Driver Notes
-+~~~~~~~~~~~~
-+
-+*   e1000 – supports PCI/PCI‑X Gigabit adapters.
-+*   e1000e – supports PCI‑Express Gigabit adapters.
-+
-+Both drivers are widely used across physical and virtualized environments.
-+
- Driver for VM Emulated Devices
- ==============================
- 
+
+> Cc: stable@dpdk.org
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+
+
 -- 
-2.43.0
+David Marchand
 
