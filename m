@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2A19E83841
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 23:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B0DE83841
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 23:05:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8023B4067E;
-	Tue, 17 Feb 2026 00:05:00 +0100 (CET)
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com
- [209.85.221.53]) by mails.dpdk.org (Postfix) with ESMTP id 934E14064C
- for <dev@dpdk.org>; Tue, 17 Feb 2026 00:04:58 +0100 (CET)
-Received: by mail-wr1-f53.google.com with SMTP id
- ffacd0b85a97d-436356740e6so4314963f8f.2
- for <dev@dpdk.org>; Mon, 16 Feb 2026 15:04:58 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 67C1B40695;
+	Tue, 17 Feb 2026 00:05:03 +0100 (CET)
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com
+ [209.85.221.44]) by mails.dpdk.org (Postfix) with ESMTP id 2A1874067E
+ for <dev@dpdk.org>; Tue, 17 Feb 2026 00:05:00 +0100 (CET)
+Received: by mail-wr1-f44.google.com with SMTP id
+ ffacd0b85a97d-4362507f0feso2374075f8f.0
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 15:05:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771283098;
- x=1771887898; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771283100;
+ x=1771887900; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=eVLyJfxM17TdVjysGpfX0wko6tfcszG+c7F8KIvjWMg=;
- b=cjSRrT2wCBqka3yCIJJyeMlH0P8Q35P8pUkntF7nZSdID7ahg4y8Wt7m1zcwy6iEm6
- UA6wN9Zu1u8FQNiBqz6D4XtxUeDAKmgQYPwFN/gSKVKP9DJUP2iugc3q6AmbwR9WolLd
- dBuStGX0KshWjo2+ITeKhIlco5mvnSo3jwRUmBulVP7fiq6o61wPqwPFC1W0KkuhAhDw
- JFsqGhMfww5M5oyq4dx/43GNcNEgWfWTMJ5OBNXk/pRMMc3Jr+8b3QS2iLPRQ/nrLKqG
- VTgt6koW1uYtq6WTuKnfWfAkggAV9h5mvr1GMXUIOAuJ6h2rPLUs4ZxwCbCd99mBlpKK
- Ruig==
+ bh=/omJoVtSBuPtIyWBO+npMl3uPvGP9xe48jZLhu4cU/8=;
+ b=pa0yGpJJyljAsyOaJ271YlNe08RMKGWXaDLsrCya/nRk6r+yuznj8rD2Nx9817cVk8
+ 1T3P5Ee5ipgXpSMmIpP20klJo4bCnmN2Q+mAx/8zW2kbRtGed4nLKsfub4V79SPOqRfW
+ Ba8VDlHc3q1KY/hyvmfhZ7dN7bFQg1DiPM/hnkzH1tbiXfGaTNENYe5j1Hyj9lu2RGh3
+ yk/axY10rjEcBhAiIHNtQD98K0fr7pjDjZU1Qajsm8+MYLHuDpEzmeUzNBCoW1OHXTIG
+ qigvoKXae+ZLOYL35vcm48hQUBQHNJRvfcKTlE2xzN9s14K5tRRK+vCnxUjmfHFNyxOW
+ 0eHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771283098; x=1771887898;
+ d=1e100.net; s=20230601; t=1771283100; x=1771887900;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=eVLyJfxM17TdVjysGpfX0wko6tfcszG+c7F8KIvjWMg=;
- b=Et/85D+LtjBt+z8NvqMs6EjIBQrBxknLk7GfVDlguH3FvBxXDRgnzZ+AxYmMhyi2jv
- 1AMT87Upj9Q+BD71srl6KCiKU5LfinBpWJBM2b7FlH5SiucfTOvznNN5oXaxQBv6y3L9
- e1SQTysPRdLsm1CF7WuhxqiL2n3eXJuVkwrpWRgXS9yRQa3kj90PlOjNd0LDmT+o48cA
- 70LP4plAadjGZiP+dmtpDY+0zYpvBBa6vt7qxgul6WJHagMcapemLE8kWc2LSVlexSOe
- p2FRQiDOxl6DuTaciM0AH7nMaVbmJl3aRU74iBsBzKzyAPARU2GJCOPaV1JzD9MZfhZ2
- wHlw==
-X-Gm-Message-State: AOJu0YzUa/qutOasqETRMOS/eigr0Ug5rWAD01iR9e/XkXlS1YT3J314
- dPFwyMP2uSwN4fw4rIbcbob4poY1WUWPEwJUFPpCxDM5DwNn97AgWevzX5bzQ4+yr5ULHfX9Crj
- L7wmtKxI=
-X-Gm-Gg: AZuq6aK+t3YYz3NoBdpYO6+xxcc2p8B49nsOZ1vxTSnfqzDl4q11jnqz5uvOXs1Qlkt
- WKT9jlcxDaPp/kNGt4A2oFjVlNq950aynj6VanPcLIF9/RElZusy9vWoHz86hZnpvln6yQRFyN3
- fKt7SCFBwOpeX0tEJfk6vwOWj4UORLz+vOglWB1lqfL/lbGdJ2wpgUamdpTFlK7ur350kDnPDL5
- +1Q9Atdtq3BGoQGpJ9kSwu4At7vkHz/6r600EarHHU8+g+PYiMS9crkvS6t0Wh4vCSFwafWFyxj
- 81iOfKqPpDt23PAoJbJ7C6s/zIITtDk3e7rQ9QNeMa3Dz+vOtFQ+Dr4QaaTgfLgd90H5Rauf4v+
- nbhIALaMbfPYCFwwqgDs+emXXVyHb67mV+B40l1VJsZD7ohQ7x7hirukAlFjz45SsV3Z72zYxPV
- 0ZCkZLPDwG7Vogs/7+FhQAkdxEojZ1gcHRdz9FIrENKtACuaUd4G1cQFrtyx8ZNg==
-X-Received: by 2002:a05:6000:2001:b0:437:6758:ce70 with SMTP id
- ffacd0b85a97d-4379db61f70mr18593413f8f.26.1771283098203; 
- Mon, 16 Feb 2026 15:04:58 -0800 (PST)
+ bh=/omJoVtSBuPtIyWBO+npMl3uPvGP9xe48jZLhu4cU/8=;
+ b=orUOlrXBXLrW+fyR2WgoLCbkQpm5rOHuAO6v1rlTW0DmpbJNRYYPAYDregEhsbzHC8
+ otHxVzbsvEhOqhhmYWZFkRYb5/WQuDxTHxCktWyCzFd2d2K+1QQoYU5TxXkjZrLfv8z8
+ EfbW5NE5fvxP6f9dBTa2MDk2IgTURhxQoYky14io59foPy2E1IDOddLxlXu5GTPAEvDF
+ QkFwLcQ09r9fXy64740sX8xnBEly8ucn6H64VQGWnv/RjneN2UpVzEHg+ad7CJTZOF03
+ g/9UFemTVl86wcUYdHOi1K+Wvl2RxRG2ufFWJEfba5ZoI7xfaOmIypK+CiC49NRXZ1cs
+ /3sA==
+X-Gm-Message-State: AOJu0Yx3ITYmKCkmOGqAd6Z5uYFtz9znXXOePfvlsILqt2KT7MeuegaI
+ 8tmfeF1oWIxb6AKHUxGLBG9tPYdwtmy/OG4dS87gQnaWPngsbq4bewJBRjR8GNrKVJfge2I33cC
+ /vZBEIE0=
+X-Gm-Gg: AZuq6aJPrTFyyT0uS7DyoSQDScZ6LW59teJESuJDauCqtjriUISTEWCetxMWaQ7Vlh9
+ OIThRWyK1Wb2QbDJyJ6obuJkSEp1jl+9DJ3YAxrbBVArSPzl24uPWhho/RlqpVkcOUeMrySI6uO
+ J8sR//uwXCSy9ARDwC65Nu/IjN5vjorjm6mjnTXv0w7cW+hGETRw8sPUoAwjbsdujG/rbgH+HW9
+ B31NXhHEgXyHl+8nQmCBfRmkTTueTri74Il32XO3ivGcbrFpp0awDG60YCaR/7G7z6S3o+O6grL
+ gk6h2iTC9WLXakFBd9Ak3jpjzyHnJy0SpK81fHn5rKIXjPJ+y9gLFD3i9YM5ASii/mrrREISW+Q
+ Wa4VS0Sw1EwslSymXFq5igX+4WrQ7OV5UhmHx1TBFJizrSEfKvBVRktDK9tpExzzNYCFWXMsdjX
+ c2ZWP8+BgsshYtzRI1iJ9Ltg1VEZMhwvy9TzFwv377aua4IgeVdcEr0lP7H54+nY8gEArRAFQ7
+X-Received: by 2002:a5d:5f48:0:b0:432:5c43:53 with SMTP id
+ ffacd0b85a97d-43796aeff1emr22366131f8f.36.1771283099785; 
+ Mon, 16 Feb 2026 15:04:59 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43796ac82f7sm33158867f8f.28.2026.02.16.15.04.56
+ ffacd0b85a97d-43796ac82f7sm33158867f8f.28.2026.02.16.15.04.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Feb 2026 15:04:57 -0800 (PST)
+ Mon, 16 Feb 2026 15:04:59 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
 	stable@dpdk.org
-Subject: [PATCH v2 09/11] net/tap: fix use-after-free on remote flow creation
- failure
-Date: Mon, 16 Feb 2026 15:02:33 -0800
-Message-ID: <20260216230437.847578-10-stephen@networkplumber.org>
+Subject: [PATCH v2 10/11] net/tap: free remote flow when implicit rule already
+ exists
+Date: Mon, 16 Feb 2026 15:02:34 -0800
+Message-ID: <20260216230437.847578-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260216230437.847578-1-stephen@networkplumber.org>
 References: <20260215195348.557945-1-stephen@networkplumber.org>
@@ -83,79 +83,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-After a local TC filter rule is installed and the flow is inserted
-into pmd->flows, failure during remote flow creation jumps to the
-fail label which frees the flow without removing it from the list
-and without deleting the kernel-side TC rule.
+When tap_flow_implicit_create() gets EEXIST from the kernel, the
+allocated remote_flow is never freed. Add rte_free() on that path.
 
-Send RTM_DELTFILTER to clean up the local rule and call
-LIST_REMOVE before freeing.
-
-Bugzilla ID: 1881
-Fixes: 2bc06869cd94 ("net/tap: add remote netdevice traffic capture")
+Bugzilla ID: 1880
+Fixes: 2ef1c0da894a ("net/tap: fix isolation mode toggling")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/tap/tap_flow.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+ drivers/net/tap/tap_flow.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/tap/tap_flow.c b/drivers/net/tap/tap_flow.c
-index 9d4ef27a8a..427faf75d5 100644
+index 427faf75d5..da1e70019a 100644
 --- a/drivers/net/tap/tap_flow.c
 +++ b/drivers/net/tap/tap_flow.c
-@@ -1293,7 +1293,7 @@ tap_flow_create(struct rte_eth_dev *dev,
- 			rte_flow_error_set(
- 				error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
- 				"cannot allocate memory for rte_flow");
--			goto fail;
-+			goto fail_remove;
- 		}
- 		msg = &remote_flow->msg;
- 		/* set the rule if_index for the remote netdevice */
-@@ -1307,14 +1307,14 @@ tap_flow_create(struct rte_eth_dev *dev,
- 			rte_flow_error_set(
- 				error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE,
- 				NULL, "rte flow rule validation failed");
--			goto fail;
-+			goto fail_remove;
- 		}
- 		err = tap_nl_send(pmd->nlsk_fd, &msg->nh);
- 		if (err < 0) {
- 			rte_flow_error_set(
- 				error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE,
- 				NULL, "Failure sending nl request");
--			goto fail;
-+			goto fail_remove;
- 		}
- 		err = tap_nl_recv_ack(pmd->nlsk_fd);
- 		if (err < 0) {
-@@ -1325,15 +1325,22 @@ tap_flow_create(struct rte_eth_dev *dev,
- 				error, ENOMEM, RTE_FLOW_ERROR_TYPE_HANDLE,
- 				NULL,
- 				"overlapping rules or Kernel too old for flower support");
--			goto fail;
-+			goto fail_remove;
- 		}
- 		flow->remote_flow = remote_flow;
- 	}
- 	return flow;
-+
-+fail_remove:
-+	/* Delete the local TC rule that was already installed */
-+	flow->msg.nh.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK;
-+	flow->msg.nh.nlmsg_type = RTM_DELTFILTER;
-+	if (tap_nl_send(pmd->nlsk_fd, &flow->msg.nh) >= 0)
-+		tap_nl_recv_ack(pmd->nlsk_fd);
-+	LIST_REMOVE(flow, next);
- fail:
- 	rte_free(remote_flow);
--	if (flow)
--		tap_flow_free(pmd, flow);
-+	tap_flow_free(pmd, flow);
- 	return NULL;
- }
- 
+@@ -1625,8 +1625,10 @@ int tap_flow_implicit_create(struct pmd_internals *pmd,
+ 	err = tap_nl_recv_ack(pmd->nlsk_fd);
+ 	if (err < 0) {
+ 		/* Silently ignore re-entering existing rule */
+-		if (errno == EEXIST)
++		if (errno == EEXIST) {
++			rte_free(remote_flow);
+ 			goto success;
++		}
+ 		TAP_LOG(ERR,
+ 			"Kernel refused TC filter rule creation (%d): %s",
+ 			errno, strerror(errno));
 -- 
 2.51.0
 
