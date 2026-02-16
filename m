@@ -2,45 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FD1E81A25
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 15:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA53DE81A36
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 15:23:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E620A40289;
-	Mon, 16 Feb 2026 16:00:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E008240289;
+	Mon, 16 Feb 2026 16:23:24 +0100 (CET)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id B78FC40269;
- Mon, 16 Feb 2026 16:00:46 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5A72D40269
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 16:23:23 +0100 (CET)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 9618B20FCA;
- Mon, 16 Feb 2026 16:00:46 +0100 (CET)
-Content-class: urn:content-classes:message
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 132EF20FCA;
+ Mon, 16 Feb 2026 16:23:23 +0100 (CET)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Mon, 16 Feb 2026 16:23:22 +0100
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+	dev@dpdk.org
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [RFC PATCH v3 0/2] mempool: de-inline get/put unlikely code paths
+Date: Mon, 16 Feb 2026 15:23:18 +0000
+Message-ID: <20260216152320.105312-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260216115813.103515-1-mb@smartsharesystems.com>
+References: <20260216115813.103515-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v19 1/2] eal: add __rte_may_alias and __rte_aligned to
- unaligned typedefs
-Date: Mon, 16 Feb 2026 16:00:43 +0100
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65724@smartserver.smartshare.dk>
-In-Reply-To: <CAJFAV8zr6zcvOwY920y=Sbo60UUSWhMw4jROs0h=ugNXJAHQ+A@mail.gmail.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v19 1/2] eal: add __rte_may_alias and __rte_aligned to
- unaligned typedefs
-Thread-Index: AdyfUKmVF472d61eR4aoqIuQik32XQAA8fhg
-References: <20260128194141.90018-1-scott.k.mitch1@gmail.com>
- <20260202044841.90945-1-scott.k.mitch1@gmail.com>
- <20260202044841.90945-2-scott.k.mitch1@gmail.com>
- <CAJFAV8zr6zcvOwY920y=Sbo60UUSWhMw4jROs0h=ugNXJAHQ+A@mail.gmail.com>
-From: =?UTF-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "David Marchand" <david.marchand@redhat.com>, <scott.k.mitch1@gmail.com>,
- "Andre Muezerie" <andremue@linux.microsoft.com>,
- "Tyler Retzlaff" <roretzla@linux.microsoft.com>
-Cc: <dev@dpdk.org>, <stephen@networkplumber.org>, <bruce.richardson@intel.com>,
- "Cyril Chemparathy" <cchemparathy@ezchip.com>, <stable@dpdk.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 16 Feb 2026 15:23:22.0538 (UTC)
+ FILETIME=[2FFDE8A0:01DC9F58]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,82 +46,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBEYXZpZCBNYXJjaGFuZCBbbWFpbHRvOmRhdmlkLm1hcmNoYW5kQHJlZGhhdC5jb21d
-DQo+IFNlbnQ6IE1vbmRheSwgMTYgRmVicnVhcnkgMjAyNiAxNS4yOQ0KPiANCj4gSGVsbG8gU2Nv
-dHQsIEFuZHJlLCBUeWxlciwNCj4gDQo+IE9uIE1vbiwgMiBGZWIgMjAyNiBhdCAwNTo0OCwgPHNj
-b3R0LmsubWl0Y2gxQGdtYWlsLmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBGcm9tOiBTY290dCBNaXRj
-aGVsbCA8c2NvdHQuay5taXRjaDFAZ21haWwuY29tPg0KPiA+DQo+ID4gQWRkIF9fcnRlX21heV9h
-bGlhcyBhdHRyaWJ1dGUgdG8gdW5hbGlnbmVkX3VpbnR7MTYsMzIsNjR9X3QgdHlwZWRlZnMNCj4g
-PiB0byBwcmV2ZW50IEdDQyBzdHJpY3QtYWxpYXNpbmcgb3B0aW1pemF0aW9uIGJ1Z3MuIEdDQyBo
-YXMgYSBidWcgd2hlcmUNCj4gPiBpdCBpbmNvcnJlY3RseSBlbGlkZXMgc3RydWN0IGluaXRpYWxp
-emF0aW9uIHdoZW4gc3RyaWN0IGFsaWFzaW5nIGlzDQo+ID4gZW5hYmxlZCwgY2F1c2luZyByZWFk
-cyBmcm9tIHVuaW5pdGlhbGl6ZWQgbWVtb3J5Lg0KPiA+DQo+ID4gQWRkIF9fcnRlX2FsaWduZWQo
-MSkgYXR0cmlidXRlIHRvIHVuYWxpZ25lZF91aW50ezE2LDMyLDY0fV90IHR5cGVkZWZzDQo+ID4g
-d2hpY2ggYWxsb3dzIGZvciBzYWZlIGFjY2VzcyBhdCBhbnkgYWxpZ25tZW50LiBXaXRob3V0IHRo
-aXMsDQo+IGFjY2Vzc2luZw0KPiA+IGEgdWludDE2X3QgYXQgYW4gb2RkIGFkZHJlc3MgaXMgdW5k
-ZWZpbmVkIGJlaGF2aW9yLiBXaXRob3V0IHRoaXMNCj4gPiBVQlNhbiBkZXRlY3RzIGBVbmRlZmlu
-ZWRCZWhhdmlvclNhbml0aXplcjogdW5kZWZpbmVkLWJlaGF2aW9yYC4NCj4gPg0KPiA+IEZpeGVz
-OiA3NjIxZDZhOGQwYmQgKCJlYWw6IGFkZCBhbmQgdXNlIHVuYWxpZ25lZCBpbnRlZ2VyIHR5cGVz
-IikNCj4gPiBDYzogc3RhYmxlQGRwZGsub3JnDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTY290
-dCBNaXRjaGVsbCA8c2NvdHQuay5taXRjaDFAZ21haWwuY29tPg0KPiANCj4gW3NuaXBdDQo+IA0K
-PiA+IGRpZmYgLS1naXQgYS9saWIvZWFsL2luY2x1ZGUvcnRlX2NvbW1vbi5oDQo+IGIvbGliL2Vh
-bC9pbmNsdWRlL3J0ZV9jb21tb24uaA0KPiA+IGluZGV4IDU3M2JmNGYyY2UuLjdiMzY5NjYwMTkg
-MTAwNjQ0DQo+ID4gLS0tIGEvbGliL2VhbC9pbmNsdWRlL3J0ZV9jb21tb24uaA0KPiA+ICsrKyBi
-L2xpYi9lYWwvaW5jbHVkZS9ydGVfY29tbW9uLmgNCj4gPiBAQCAtMTIxLDE2ICsxMjEsNDIgQEAg
-ZXh0ZXJuICJDIiB7DQo+ID4gICNkZWZpbmUgX19ydGVfYWxpZ25lZChhKSBfX2F0dHJpYnV0ZV9f
-KChfX2FsaWduZWRfXyhhKSkpDQo+ID4gICNlbmRpZg0KPiA+DQo+ID4gLSNpZmRlZiBSVEVfQVJD
-SF9TVFJJQ1RfQUxJR04NCj4gPiAtdHlwZWRlZiB1aW50NjRfdCB1bmFsaWduZWRfdWludDY0X3Qg
-X19ydGVfYWxpZ25lZCgxKTsNCj4gPiAtdHlwZWRlZiB1aW50MzJfdCB1bmFsaWduZWRfdWludDMy
-X3QgX19ydGVfYWxpZ25lZCgxKTsNCj4gPiAtdHlwZWRlZiB1aW50MTZfdCB1bmFsaWduZWRfdWlu
-dDE2X3QgX19ydGVfYWxpZ25lZCgxKTsNCj4gPiArLyoqDQo+ID4gKyAqIE1hY3JvIHRvIG1hcmsg
-YSB0eXBlIHRoYXQgaXMgbm90IHN1YmplY3QgdG8gdHlwZS1iYXNlZCBhbGlhc2luZw0KPiBydWxl
-cw0KPiA+ICsgKi8NCj4gPiArI2lmZGVmIFJURV9UT09MQ0hBSU5fTVNWQw0KPiA+ICsjZGVmaW5l
-IF9fcnRlX21heV9hbGlhcw0KPiA+ICAjZWxzZQ0KPiA+IC10eXBlZGVmIHVpbnQ2NF90IHVuYWxp
-Z25lZF91aW50NjRfdDsNCj4gPiAtdHlwZWRlZiB1aW50MzJfdCB1bmFsaWduZWRfdWludDMyX3Q7
-DQo+ID4gLXR5cGVkZWYgdWludDE2X3QgdW5hbGlnbmVkX3VpbnQxNl90Ow0KPiA+ICsjZGVmaW5l
-IF9fcnRlX21heV9hbGlhcyBfX2F0dHJpYnV0ZV9fKChfX21heV9hbGlhc19fKSkNCj4gPiAgI2Vu
-ZGlmDQo+ID4NCj4gPiArLyogVW5hbGlnbmVkIHR5cGVzIGltcGxlbWVudGF0aW9uIG5vdGVzOg0K
-PiA+ICsgKiBfX3J0ZV9hbGlnbmVkKDEpIC0gUmVkdWNlcyBhbGlnbm1lbnQgcmVxdWlyZW1lbnQg
-dG8gMSBieXRlLA0KPiBhbGxvd2luZw0KPiA+ICsgKiAgICAgICAgICAgICAgICAgICAgdGhlc2Ug
-dHlwZXMgdG8gc2FmZWx5IGFjY2VzcyBtZW1vcnkgYXQgYW55DQo+IGFkZHJlc3MuDQo+ID4gKyAq
-ICAgICAgICAgICAgICAgICAgICBXaXRob3V0IHRoaXMsIGFjY2Vzc2luZyBhIHVpbnQxNl90IGF0
-IGFuIG9kZA0KPiBhZGRyZXNzDQo+ID4gKyAqICAgICAgICAgICAgICAgICAgICBpcyB1bmRlZmlu
-ZWQgYmVoYXZpb3IgKGV2ZW4gb24geDg2IHdoZXJlDQo+IGhhcmR3YXJlDQo+ID4gKyAqICAgICAg
-ICAgICAgICAgICAgICBoYW5kbGVzIGl0KS4NCj4gPiArICoNCj4gPiArICogX19ydGVfbWF5X2Fs
-aWFzICAtIFByZXZlbnRzIHN0cmljdC1hbGlhc2luZyBvcHRpbWl6YXRpb24gYnVncw0KPiB3aGVy
-ZQ0KPiA+ICsgKiAgICAgICAgICAgICAgICAgICAgY29tcGlsZXJzIG1heSBpbmNvcnJlY3RseSBl
-bGlkZSBtZW1vcnkNCj4gb3BlcmF0aW9ucw0KPiA+ICsgKiAgICAgICAgICAgICAgICAgICAgd2hl
-biBjYXN0aW5nIGJldHdlZW4gcG9pbnRlciB0eXBlcy4NCj4gPiArICovDQo+ID4gKw0KPiA+ICsv
-KioNCj4gPiArICogVHlwZSBmb3Igc2FmZSB1bmFsaWduZWQgdTY0IGFjY2Vzcy4NCj4gPiArICov
-DQo+ID4gK3R5cGVkZWYgX19ydGVfbWF5X2FsaWFzIF9fcnRlX2FsaWduZWQoMSkgdWludDY0X3QN
-Cj4gdW5hbGlnbmVkX3VpbnQ2NF90Ow0KPiA+ICsNCj4gPiArLyoqDQo+ID4gKyAqIFR5cGUgZm9y
-IHNhZmUgdW5hbGlnbmVkIHUzMiBhY2Nlc3MuDQo+ID4gKyAqLw0KPiA+ICt0eXBlZGVmIF9fcnRl
-X21heV9hbGlhcyBfX3J0ZV9hbGlnbmVkKDEpIHVpbnQzMl90DQo+IHVuYWxpZ25lZF91aW50MzJf
-dDsNCj4gPiArDQo+ID4gKy8qKg0KPiA+ICsgKiBUeXBlIGZvciBzYWZlIHVuYWxpZ25lZCB1MTYg
-YWNjZXNzLg0KPiA+ICsgKi8NCj4gPiArdHlwZWRlZiBfX3J0ZV9tYXlfYWxpYXMgX19ydGVfYWxp
-Z25lZCgxKSB1aW50MTZfdA0KPiB1bmFsaWduZWRfdWludDE2X3Q7DQo+ID4gKw0KPiA+ICAvKioN
-Cj4gPiAgICogQGRlcHJlY2F0ZWQNCj4gPiAgICogQHNlZSBfX3J0ZV9wYWNrZWRfYmVnaW4NCj4g
-PiBAQCAtMTU5LDE1ICsxODUsNiBAQCB0eXBlZGVmIHVpbnQxNl90IHVuYWxpZ25lZF91aW50MTZf
-dDsNCj4gPiAgI2RlZmluZSBfX3J0ZV9wYWNrZWRfZW5kIF9fYXR0cmlidXRlX18oKF9fcGFja2Vk
-X18pKQ0KPiA+ICAjZW5kaWYNCj4gPg0KPiA+IC0vKioNCj4gPiAtICogTWFjcm8gdG8gbWFyayBh
-IHR5cGUgdGhhdCBpcyBub3Qgc3ViamVjdCB0byB0eXBlLWJhc2VkIGFsaWFzaW5nDQo+IHJ1bGVz
-DQo+ID4gLSAqLw0KPiA+IC0jaWZkZWYgUlRFX1RPT0xDSEFJTl9NU1ZDDQo+ID4gLSNkZWZpbmUg
-X19ydGVfbWF5X2FsaWFzDQo+ID4gLSNlbHNlDQo+ID4gLSNkZWZpbmUgX19ydGVfbWF5X2FsaWFz
-IF9fYXR0cmlidXRlX18oKF9fbWF5X2FsaWFzX18pKQ0KPiA+IC0jZW5kaWYNCj4gPiAtDQo+ID4g
-IC8qKioqKioqIE1hY3JvIHRvIG1hcmsgZnVuY3Rpb25zIGFuZCBmaWVsZHMgc2NoZWR1bGVkIGZv
-ciByZW1vdmFsDQo+ICoqKioqLw0KPiA+ICAjaWZkZWYgUlRFX1RPT0xDSEFJTl9NU1ZDDQo+ID4g
-ICNkZWZpbmUgX19ydGVfZGVwcmVjYXRlZA0KPiANCj4gVGhpcyBjaGFuZ2UgcmFpc2VzIGEgd2Fy
-bmluZyBpbiBjaGVja3BhdGNoLg0KPiBodHRwczovL21haWxzLmRwZGsub3JnL2FyY2hpdmVzL3Rl
-c3QtcmVwb3J0LzIwMjYtRmVicnVhcnkvOTU1MjM3Lmh0bWwNCj4gDQo+IElJUkMsIHdlIGFkZGVk
-IHRoaXMgY2hlY2sgZm9yIE1TVkMgc3VwcG9ydCwgbWFraW5nIHN1cmUgbm8NCj4gX19ydGVfYWxp
-Z25lZCgpIHdvdWxkIGJlIGFkZGVkIGluIHVuc3VwcG9ydGVkIGxvY2F0aW9ucy4NCg0KSXQgbG9v
-a3MgbGlrZSBNU1ZDIGNhbiB1c2UgYWxpZ25tZW50IGZvciB0eXBlIGRlZmluaXRpb25zIHRvbzoN
-Cmh0dHBzOi8vbGVhcm4ubWljcm9zb2Z0LmNvbS9lbi11cy9jcHAvY3BwL2FsaWduLWNwcD92aWV3
-PW1zdmMtMTcwI3ZjbHJmX2RlY2xzcGVjYWxpZ250eXBlZGVmDQoNCkl0IGlzIGFwcGxpZWQgb24g
-YSBzdHJ1Y3R1cmUsIHRob3VnaCwgc28gbWF5IG5vdCBiZSB2aWFibGUgZm9yIHNjYWxhciB0eXBl
-cy4gSURLLg0KDQpCdXQgaXQgbG9va3MgbGlrZSBNU1ZDIGNhbiBvbmx5IGluY3JlYXNlIGFsaWdu
-bWVudDoNCmh0dHBzOi8vbGVhcm4ubWljcm9zb2Z0LmNvbS9lbi11cy9jcHAvY3BwL2FsaWduLWNw
-cD92aWV3PW1zdmMtMTcwIzp+OnRleHQ9X19kZWNsc3BlYyhhbGlnbiglMjMpKSUyMGNhbiUyMG9u
-bHklMjBpbmNyZWFzZSUyMGFsaWdubWVudCUyMHJlc3RyaWN0aW9ucy4NCg0KU28gcGFja2luZyBt
-YXkgYmUgbmVlZGVkIHRvby4NCg0KPiANCj4gQE1pY3Jvc29mdCBndXlzLCBkbyB5b3UgaGF2ZSBh
-IHN1Z2dlc3Rpb24/DQo+IA0KPiANCj4gLS0NCj4gRGF2aWQgTWFyY2hhbmQNCg0K
+De-inline unlikely code paths, for smaller footprint.
+
+Morten Brørup (2):
+  mempool: simplify get objects
+  mempool: de-inline get/put unlikely code paths
+
+ lib/mempool/rte_mempool.c | 112 ++++++++++++++++++
+ lib/mempool/rte_mempool.h | 239 ++++++++++++++++++--------------------
+ 2 files changed, 227 insertions(+), 124 deletions(-)
+
+-- 
+2.43.0
+
