@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC19E81A2E
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 14:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02138E81A2B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 14:58:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B9A940289;
-	Mon, 16 Feb 2026 15:49:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CA2EB40289;
+	Mon, 16 Feb 2026 15:58:31 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id B53ED40269
- for <dev@dpdk.org>; Mon, 16 Feb 2026 15:49:10 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9489640269
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 15:58:30 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1771253350;
+ s=mimecast20190719; t=1771253910;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=8D+PVuhcJBZrR6HWPoAE+2jeXcaFRnkI+mVNDAxBpRo=;
- b=V17yaZ3kVgCf9lvgO5F4AsDbdNPVjVPTf726H3ED/T56RWaGON9HMInQklo6DLgNdTpgp/
- 8YQXvbCKO+/K/lVe3u59Fpyf57ubBxaujgSMIBFqmEn7UrwOKxscJr0Ri7i7q79lfsYc/G
- lhluPftpR0L9aq0+eydJ1qjhModsQ8w=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=wMf1DXo7FBnnLbXF9BT6waVaso54YOUXd+79T2QDBkE=;
+ b=XOratvjU3VN+dEzf5+OjSdcSIasmQC6rj+lmr7sNuLZTCzcYB+f3zbBzQDu4dg6nL8Xd0R
+ jRykrdQzqRaXo6VHKvtfkOOISoLW3Gem1PUinRy8C4wxkTzCVeL5fXp7qfAX1P1i0V2UdQ
+ upaozv8K0E9SmTvv7HjSy+Kpfk2extk=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-43-lfizPbycOVCNzfw1H1yW-A-1; Mon, 16 Feb 2026 09:49:08 -0500
-X-MC-Unique: lfizPbycOVCNzfw1H1yW-A-1
-X-Mimecast-MFC-AGG-ID: lfizPbycOVCNzfw1H1yW-A_1771253347
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-385bb7f429cso19621431fa.1
- for <dev@dpdk.org>; Mon, 16 Feb 2026 06:49:08 -0800 (PST)
+ us-mta-526-EJps71oDPMyo9unsNwf2Gw-1; Mon, 16 Feb 2026 09:58:28 -0500
+X-MC-Unique: EJps71oDPMyo9unsNwf2Gw-1
+X-Mimecast-MFC-AGG-ID: EJps71oDPMyo9unsNwf2Gw_1771253907
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-59f7319ff3fso905377e87.3
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 06:58:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771253347; x=1771858147;
+ d=1e100.net; s=20230601; t=1771253907; x=1771858707;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8D+PVuhcJBZrR6HWPoAE+2jeXcaFRnkI+mVNDAxBpRo=;
- b=UgDiUqjqFJkfAbXi7WT0h1pqNmVG9n0HKBwQ1csVT9ErrBUUNEWIEtfVwdoKVvEGGi
- jwghTYfuIKxNdcqG5v0jotmzrSdhT31UQSy4SqV+q+h0kYng2e2twzm/v38EN08KbrNH
- 6idYfgpj0dWgdA65wI+Qn4WiQvAgXHByvMZHbuKJtLs8kbpWFtHgoZwA2BYEr9om6Y43
- 5cGqNfzIVmKlfM93kcs3SWIdaQO6T/n8oOXyD3zyhplaEyao+zNdKQWVtAn2cZfTKqak
- n3gnyv8zsJKQIWDCUqLkgk8nL/d+kjUUYL1dId542vFJd10O0gIeNQ35khSm5WS4fO5n
- Bwfg==
-X-Gm-Message-State: AOJu0YyA19SdSR+Dc7Ow6PvMXb/H3osPVMyV81ICpF2JmcEj6oIXj7OK
- rq6vvYmkRvP5Y6mzwpRQ4+g3FeXxS3OJj+EorRVMGwLc0yNn3mmG2Bor1aVvZJ2KMgbdoillhKz
- 1W/wejv+5PyX4EjL4xDc4OLRZi2qBUdVf4VEht4K3MUmKPRuNz06HpHeib8vo/MGvjMsdbAWV8D
- 6COhWJITOVkjfJzJ1gAoM=
-X-Gm-Gg: AZuq6aL/Un4eLWcn+srGHu7WPbcVdby+E3NdYSixs1q2Srx8DMTtbf31tQIiRZ/auSM
- lLoaHDO64oz8lPMTFlseeXuK/thvRYRsw+AHbxKYOiN10nm7jOOMN0l+JfNYwK1RC5szYGjavTQ
- MXI9ItgijTtIkdsJWUowASfWxhP3x0JlEZpm3PbtGCwM6wx8FWYX1IKjqEikWSOrGpku6E8v4Dy
- jVGSDau9ZN9QFtGR5/Apti8KpxWXte4dUlhovG3Zju9C8N+oQ3YT2xceaKQ66tnqHMWQA==
-X-Received: by 2002:a05:6512:398e:b0:59e:5bfa:4eaf with SMTP id
- 2adb3069b0e04-59f69c6868amr2616572e87.37.1771253347200; 
- Mon, 16 Feb 2026 06:49:07 -0800 (PST)
-X-Received: by 2002:a05:6512:398e:b0:59e:5bfa:4eaf with SMTP id
- 2adb3069b0e04-59f69c6868amr2616565e87.37.1771253346736; Mon, 16 Feb 2026
- 06:49:06 -0800 (PST)
+ bh=wMf1DXo7FBnnLbXF9BT6waVaso54YOUXd+79T2QDBkE=;
+ b=bTOLscyVgTskxJ2Dk4I5RZTIKcGTPfCHi+hsp78jy8DJG0elHcFP0pWFbpW2nc7CR1
+ aRaqUU50ENwgcDbBxI08wYfvahMEiiCMCVuVamfNg0WoYhiZlhskmW/hxXQ7ppE1vzZ5
+ 6ilM9ch34NSFIAmKuRywCtkyjY2XnjkanJtKJT9wFxXBHaW4ohov3iHrH8xuk2tRRQCH
+ 7jNbrFljxjjDYv3b+6S32/Qtcda08HUxYaMBvmiDg+D1X+qYCKwdh9pE6MeefIyzjdpR
+ UXcinGWf5dUJ8Elo4ac56FDQ5qZzw7/Tmi1+N8xthiTlUIJ3mjOmll2L5psskq/ER/2k
+ X9lA==
+X-Gm-Message-State: AOJu0Yx3WuGqEvAoeSLI4yuwF4ROcFcGSU9I7BJPHJX6Gc/1HoqC0V74
+ zhsuxnV7N4XD0jMtE4yeXEve9k2m5K970mQVT3H/OKTnxy16cnJzpn4BXmu5BxrqtgYaPbw4+6w
+ V16BzjDmLjhCzeGIuzzpYntY7j6kQztI4NHyBsbTsG3+4q+dSTVfbsRYoKF6R6ZIQzV6X3OoIOA
+ PWChyO+kLgdi8XIH3fegE17PVZKcQ=
+X-Gm-Gg: AZuq6aJwKsFfizugqSV3nhakzMzSksWJtSH9P2PJgNd+IPQR04cfXxNJ+NT55YLHRV/
+ fDq/8mhe8LriHO4R8BvAagpDYPJwNQL+Sbx7Kz2rzP5n+qWfEYzQV9t4W9vSlyTts5ueMimNnzK
+ WANwp0OqWQYiwxP94yLSSjz8LNx/2vkbXSj9P0OXXiiTqLdVJ2neYJif+hqgUAjp7cDjJosPoK0
+ mXqqiqqpYHMSfmbb2oqhjrUvjic3ARXmPHzZ4D5VQTcxl9G3OHJe9Ej02maOMLplv3q8g==
+X-Received: by 2002:a05:6512:2242:b0:59e:56f3:6c8e with SMTP id
+ 2adb3069b0e04-59f69c29c1fmr3071559e87.11.1771253907311; 
+ Mon, 16 Feb 2026 06:58:27 -0800 (PST)
+X-Received: by 2002:a05:6512:2242:b0:59e:56f3:6c8e with SMTP id
+ 2adb3069b0e04-59f69c29c1fmr3071553e87.11.1771253906767; Mon, 16 Feb 2026
+ 06:58:26 -0800 (PST)
 MIME-Version: 1.0
-References: <20260126164519.3029952-1-bruce.richardson@intel.com>
- <20260213152227.879170-1-bruce.richardson@intel.com>
-In-Reply-To: <20260213152227.879170-1-bruce.richardson@intel.com>
+References: <20260122122354.1820368-2-bruce.richardson@intel.com>
+ <20260122221728.231962-1-stephen@networkplumber.org>
+In-Reply-To: <20260122221728.231962-1-stephen@networkplumber.org>
 From: David Marchand <david.marchand@redhat.com>
-Date: Mon, 16 Feb 2026 15:48:54 +0100
-X-Gm-Features: AaiRm51OJs9RAPcLlj-MLRoVKBOUds3ORfDeU4RT-ZPE8tsFPjin1Upa7kOYfGg
-Message-ID: <CAJFAV8y5PCivWu_a9EnbQ-5AJxe=1zcn2RBXHj8Zts3cTpZEOg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] improve error reporting & resilience in unit tests
-To: Bruce Richardson <bruce.richardson@intel.com>
+Date: Mon, 16 Feb 2026 15:58:15 +0100
+X-Gm-Features: AaiRm51ps9MbdDAiU6l01Dt56P6hl7hZyPQgLZdJpdul9ZVYERYsK1RxKth8em8
+Message-ID: <CAJFAV8w0jHn6y11MnE-0GDvV_tRpDen7RFn88D7g5EZrQ5B8eg@mail.gmail.com>
+Subject: Re: [PATCH] test/bpf: skip the BPF ELF load tests if net null missing
+To: Stephen Hemminger <stephen@networkplumber.org>
 Cc: dev@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: gqymhonMTJevetwlqPjX7a73aYb0XwHtHO_kzF1h3dE_1771253347
+X-Mimecast-MFC-PROC-ID: zdvSSyteZYrpGvAPeEQgn2OE6YORrd_hS-CxyyznMjo_1771253907
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -83,28 +83,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 13 Feb 2026 at 16:22, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
+On Thu, 22 Jan 2026 at 23:17, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
 >
-> In the EAL flags unit tests sporadic errors were encountered which were proving
-> both difficult to debug and to reproduce. This series aims to improve the
-> situation by firstly adding more debug logs and output so we can better
-> root cause any issues experienced. The final patch then removes pci probing from
-> many test runs where its not needed, so as to avoid issues with unexpected
-> drivers being loaded or probed due to the HW on the system running the tests.
+> The BPF filtering tests need NULL PMD vdev to work.
 >
-> V2: split second patch into two, to separate out logging and no-pci changes
->
-> Bruce Richardson (3):
->   eal: add location info to interrupt error message
->   test/eal_flags: add EAL debug flags to recursive calls
->   test/eal_flags: remove PCI probing for recursive calls
->
->  app/test/test_eal_flags.c              | 229 +++++++++++++------------
->  lib/eal/common/eal_common_interrupts.c |   2 +-
->  2 files changed, 123 insertions(+), 108 deletions(-)
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Series applied, thanks.
+Applied, thanks.
 
 
 -- 
