@@ -2,165 +2,165 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13EE0E81A4A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 17:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4209AE81A56
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 17:10:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1EFC140296;
-	Mon, 16 Feb 2026 18:08:56 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 0A1CD40289
- for <dev@dpdk.org>; Mon, 16 Feb 2026 18:08:53 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E75640296;
+	Mon, 16 Feb 2026 18:10:04 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id 1F1F140289
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 18:10:01 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771261734; x=1802797734;
+ t=1771261802; x=1802797802;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=VYLzFDYXPfmdp+Y0hHYhq3OdJwJf7GmX3jDWt5MHDgA=;
- b=YVRmXJv6VorLx/FDHpIjDVIOPS+N4KtEryrP+fbyAF41/9eORLP7LgdO
- vT+CtM21mbGNe65JeRUJTRuKJmo2pC8FyhX1wGK27MEeA4/9siAKjUaNb
- 6rpwIFfO1cGmy1wjzOC7wqcnbtKTz4kCBRWl3DzOtvHYbTNSmjQKpSMj6
- +BibwnQlfXpYqz1oKsaYAXzR3Uh7mvOSL1TjFgApO9CykckVFoVIs3zU7
- R7FapQ/42huZl74kNFBQ7wb2/vbBcFW1sK67gYwTbAKU5Mxj/POcEQrHA
- M1eVRGzmV8vmKstkvXWxnkbHnuamR0lb91Kb84lyBRUCe5Usj7IYCoDO6 A==;
-X-CSE-ConnectionGUID: yqsKD9UhSi22/G0Ct4tkPg==
-X-CSE-MsgGUID: Gj9vZ9U4RUeYVfH4n5K2qA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11703"; a="82974726"
-X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="82974726"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Feb 2026 09:08:53 -0800
-X-CSE-ConnectionGUID: nIZpWsTmSMWBKD3epg60nw==
-X-CSE-MsgGUID: QOF4YTisQ4Ok1j+PRMi2yg==
+ bh=qGQ7MBaKtPyolcNpsU92kUVtAcchHB4opVx3Y8xD1pQ=;
+ b=Zkz+y0Wrrr5sE27rvdXrfpbo17rjSEY+BlZ4p5eqRtmhh/z4DXQO26+U
+ oE76wr48mDvGjwIVXEAYUmoBfPsVYSDed4V3QET4XuafXXJlvNfFrGIms
+ fHodEiLRSC5MX0lvfAUhr6r2B2zKfUfENfReKY0wnOqjSABNl8iYqlkIQ
+ M5NzK5YQZJKojTi1q701DiL/yFpbewSteWkVnR3F7jffKOi9QWLdF3GdQ
+ XjRdDtfNiCutiLCsAwDngyewDgtRGjowybs2IhtW8rZctkgBEOi1ElGMH
+ 8ZnnfD7V9FkuTVbunEYZuJBZzvwMfC+tX8SntnZ+dTzGVdbeZDu3gzpVH w==;
+X-CSE-ConnectionGUID: 8t2o7LTJSFG9A55YHm5/3g==
+X-CSE-MsgGUID: ipF0+CJlRmCINkWl7xN2vA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11703"; a="83708996"
+X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="83708996"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Feb 2026 09:10:01 -0800
+X-CSE-ConnectionGUID: 1BZk+1LRT4SsF5F+HJPXpw==
+X-CSE-MsgGUID: l4urdSpiQbmfq6NGSmIuVA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="212441671"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Feb 2026 09:08:53 -0800
+X-IronPort-AV: E=Sophos;i="6.21,294,1763452800"; d="scan'208";a="251337715"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Feb 2026 09:10:01 -0800
 Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Mon, 16 Feb 2026 09:08:52 -0800
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ 15.2.2562.35; Mon, 16 Feb 2026 09:10:00 -0800
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
  FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Mon, 16 Feb 2026 09:08:52 -0800
-Received: from PH7PR06CU001.outbound.protection.outlook.com (52.101.201.3) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ 15.2.2562.35 via Frontend Transport; Mon, 16 Feb 2026 09:10:00 -0800
+Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.36) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Mon, 16 Feb 2026 09:08:52 -0800
+ 15.2.2562.35; Mon, 16 Feb 2026 09:10:00 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=E0AJoJY/ELkR2+13pIUA8Elf1TN0aAa5vqwc2XmFF3qsm1RrcNwPZAt4jZB3R3g7P3++mlMtbHiGPLNl6ejnfvRVsG1BPrNOlEa1ypJu1u+1jdFiFj2kurwYtz7CxtRw4aH4rp0EnyL+bLO1e2AULB4vQ7+gqajuqGb6YBHv8So1EQwTvWj9L8PkfTEdRxmm9CyDCxtpeBaAUczkd1N3VniA+2yt4REpYcm2gpTQo874wGQFtc/W1BSzoAiOaUMuSsCZWQSPTFXi4YYIRYLYH32AVskR0eldyMUt2XfvhsZcAcuKsuIR/I+/hR391Ipz+KQSvN+JzuwDGKI1Q5umhA==
+ b=y7njbM5uvLSdStsIXmWe6cK5vJtgjGddcwyAf7v2l6DjzcGanRAfSkffzNu+QyTyHtJy3/s6kQhubG8DxEYMY/Cx3fkWzpdF+LqO9ZjsuF6QPlegKHAAiMtXX9NT1UEDZGFVAIaEb7ltROiMgiCIQNvoS2uMXK0U+HwV7Gg25inzmZz0pmw3Eknf9/wM4BbZrgeEZsASS7A7sE9GB9W/Zt/oUZdi82F2hBMM8dWps2QE8+UKonBfJrsmojQbUiDjuRG6PF5h8jKth7VgRpHCWje7KX47/56ZcGc2eEKIpMGaLDIDr8tnnDhIHhlvC2JCU7iDdjMPdPpBw42tFnxfgA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9ei3Tf3R/o8ADymKmZXEIT2imGZErbU0Og2DNY0fiBA=;
- b=lVhYsNvG3T2oL0BKtmPy6M0siiFVTnTsihixUeUyvUvUgDRSVYLdBp8Nm+yJczAkJg920upVu8MC9uHg6+A+eK54vwQks3wlHkav5WGvdnnBzA83dxtbAqhD9PWfJnNd5BYRx1ayqMFpWN2Fb8sUy4ESmFWvy5ZQRWwFRr41+kdTp5vi2rxHhC2pcRLcQRMS/qduBwQSRkNz80mKIBk0iNc6myZ0dIFxaWT1FE73B7L2p+tYlRx8x/tELIXvyHqry2lCNfXM/IMz2FVY1OA0KtvRuupqSq62xdqzqA9a1spM5R8woqx16OamxGjFVrgwAfBDoNlnMEFR5eEpcIQ6Vg==
+ bh=RTHgVA7YEJ1lSQh6cyabpMwIRBmKWHZfL1KOxUotPXM=;
+ b=KgvbM+3IrHamSs1xQuSeywftGiD6BAkr/nLRKyPLqTssc05XxD9dtXKZbEBR2U4XyyaBFZF2GpeLBt4mUgSPLSkchUlbEESnuqxwf0owOy9MN1PV5tkc6OP9P7qUeba+y4hTz0fXfZvIiesfEoNNHbJmfZQrvptZGx7U0Z6yuBNbxrzSUpRMW8Z3yqSmkM1VTbzaMYNgMJcV0/zJpJYtCdxGPr3yVnnOt5gdKXaUjaF7YR4a7lc9pX9VlebI5w2FtQRupGtYDrjNKU6SF7PgI48NE5/VD3M5R19Of2I39kjzdpApjt0gwXi1nffSLSyK3ZHibxV/ne/D4CFTsCMiZw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SA3PR11MB7611.namprd11.prod.outlook.com (2603:10b6:806:304::17) with
+ by SA0PR11MB4623.namprd11.prod.outlook.com (2603:10b6:806:95::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.16; Mon, 16 Feb
- 2026 17:08:50 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.15; Mon, 16 Feb
+ 2026 17:09:58 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9611.013; Mon, 16 Feb 2026
- 17:08:49 +0000
-Date: Mon, 16 Feb 2026 17:08:45 +0000
+ 17:09:58 +0000
+Date: Mon, 16 Feb 2026 17:09:54 +0000
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Anatoly Burakov <anatoly.burakov@intel.com>
 CC: <dev@dpdk.org>
-Subject: Re: [PATCH v3 11/27] net/i40e: avoid rte malloc in MAC/VLAN filtering
-Message-ID: <aZNPHVJYGlGfiOpT@bricha3-mobl1.ger.corp.intel.com>
+Subject: Re: [PATCH v3 12/27] net/i40e: avoid rte malloc in VF resource queries
+Message-ID: <aZNPYmfqFwJMK1b1@bricha3-mobl1.ger.corp.intel.com>
 References: <cover.1770817884.git.anatoly.burakov@intel.com>
  <cover.1770817884.git.anatoly.burakov@intel.com>
- <e0e9fe897b674db0e8da9884813b363fee3914bf.1770817884.git.anatoly.burakov@intel.com>
+ <506b85c8822496fa6f1628834a353975ffc71302.1770817884.git.anatoly.burakov@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <e0e9fe897b674db0e8da9884813b363fee3914bf.1770817884.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DB8P191CA0026.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:130::36) To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <506b85c8822496fa6f1628834a353975ffc71302.1770817884.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DU7P251CA0025.EURP251.PROD.OUTLOOK.COM
+ (2603:10a6:10:551::20) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA3PR11MB7611:EE_
-X-MS-Office365-Filtering-Correlation-Id: cd65d3ec-790b-464c-6a62-08de6d7e0dc5
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA0PR11MB4623:EE_
+X-MS-Office365-Filtering-Correlation-Id: 22519e9f-d56a-4260-b546-08de6d7e36e4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?j2MohPEKgQAZ3PJ5D8vlslXdkRfCllw6mAysZ6vZO3iZeHsMY7iC62+uB8Ki?=
- =?us-ascii?Q?g512ID0tVzHvj3qx11ZmilO24mUmjjjerKrTe3yU3A1EFgBkRMbCC2CPH7MO?=
- =?us-ascii?Q?OOXwyUeXmXIdIrz/rq995Y0ihS1A/KU+K8QgfQz495vX6TcJM8d2P+/gH8ny?=
- =?us-ascii?Q?JD8a8hVP+v1ISFe9ryjEkpwtz8Vp9PKxxK2iMOMCciRuiMkCzDDig4z39gPe?=
- =?us-ascii?Q?n6SsZODHFrSPwQ0RRUhOGWNouLA6CEMAn72nzohdKIacZy37eotZIE2+NZZ7?=
- =?us-ascii?Q?fWe8zbrlMFyDqIW1l5O0VDcZ1gY7KehahDf+CLrSEva1uWIhD+kS+zcqqD4/?=
- =?us-ascii?Q?H0e06qVAbgOIVblTU+gYIeQ4qEIiPR+7Qz5qLbWBeMR1npTV/BrZFnS9H1VT?=
- =?us-ascii?Q?KfM/KqdzSXQ/KOc2BDs/qFuTzmG6GJV/saKFewtwudwXPNMLWVNU+AyCyO1f?=
- =?us-ascii?Q?y13hztS5vlGAqJ2i753+xxuG+x2Uc1t3yv/1HOeVwz6iRRQ1AzzNNBFhChvR?=
- =?us-ascii?Q?U3SPHO4ABU9foL1lgPEvS8FWxOo4iKPt/ZtCkO0GW/vbiRrJVa60e86V793J?=
- =?us-ascii?Q?6FMW+O3LUWfbACvzvHtiMtLRhnZGwFh7pHipvUffzEvipMxDHfxKTF+7O3lv?=
- =?us-ascii?Q?DF91XD0QJcLYPkgOCw3fz1sJoluTQxAxMyq5hD5rH5UPR9jiv1N8NI9VVuP7?=
- =?us-ascii?Q?7DSoUoXMTcdnwC6WPG6snSqd5p6kDpqWNYS1TEQmw5Yiq8+pKp6Bc4qKfi+0?=
- =?us-ascii?Q?mOk+cYBvbf1ET/vWAZ+reXl2pWdh4WJxNZWBkxI4r9eQC2gP19X5O7/M4vzW?=
- =?us-ascii?Q?JO9xBEeJO8BaO+6XLZsshuKixEOQLA8tIKhBB+Ovlg+ZpWBYJAny8PSSGtHp?=
- =?us-ascii?Q?f5klILt9NmbemLZsGI9p3dMQTwbSoNWfT+iCw9AfDe+PmmGHwWIA8lXNB39z?=
- =?us-ascii?Q?g1LyFPnaL8TkB1rs532TI/Spx14lXb1HhXeYd7+SHoDSmKO1yXk+t8Fot30H?=
- =?us-ascii?Q?ZRooYTZBGB5Cp1Ou3f39vJIntKVMTcz5SmR4+ftu/YsJx69/Lx2O0iDXg7U2?=
- =?us-ascii?Q?QoQ+iCFBvclseldcKVBMwz77dWsFlJzWIGHP5ynno77cvFE5scpucjnYdIrg?=
- =?us-ascii?Q?69ieeRn+UcBW06EcAYp2RnYX0QgDqxcOrzUlVh2ar37mZ5dhz9L7bVMleYDx?=
- =?us-ascii?Q?bqaAz1X66YWDnA7fMez+qvXzJa8ZwVtCryXHCET8Q7Hg5EsqNfPD/xbswkIV?=
- =?us-ascii?Q?j66in41awNz+qePEw2G8xrQ0LBQyQakzKHOr82ZoKs4n/ggZwhB/D9sy9wIV?=
- =?us-ascii?Q?FnktkiH9QRBlMrxLkgDK6kXlfVSKN5rRs5406QcN5KpdohcRYOmcbbG9caza?=
- =?us-ascii?Q?1WmxtVR39dplZphtBxD4FGgNd7WTAJlDcMgUZXcLzVJGy7F3MzVyh5LoQNcd?=
- =?us-ascii?Q?maay+kGte4EJnm/JNgHT0tchjpZosiGwbI0/OxxxoHuyZ8RYzAthj2UVAJUi?=
- =?us-ascii?Q?BiBvItw5lSS9oTPr9buOFzx5cFIDbKLkynDj+JhrCDTeMzuqV4wZiJsrsjdI?=
- =?us-ascii?Q?k3jHpmMyggSQB5qdqhg=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?o0HftMPXA9trgkb2bF8Ali1jrDHoLO3HwXIzUVLrN4ypVJRTDHBZEtEtqRop?=
+ =?us-ascii?Q?qKQJXhaOQwG3tPMascX08n2i3Bh44YhBNVKcygtChKB26ZSAzZxd5GgkQqWs?=
+ =?us-ascii?Q?PtHv+aCZT6zXsLDV/yf57gE8KaSyBHk1ZRxA1co4wcVMbj36WQauC6s+HqnH?=
+ =?us-ascii?Q?xeKWrzoCvL8VJ/uJUDXSowODC36A0JhsPjhWhqKW9PiRJnV0bEvf+Sri+JBh?=
+ =?us-ascii?Q?fJ1nAO6xTitO45fFpA8q8bGr5IC9orEQf5esRopXXNlM2BhQuBcpAYcAIv/Z?=
+ =?us-ascii?Q?bVuyv7wnUgGG9zQvGfMxBy1nIsDZnFk6S/j6dV1hQV2Zhb/I4Tg3X1d+/tC9?=
+ =?us-ascii?Q?rnR5tLQ8MntoWbzO7JRUx1o/di5Ao80Z4TbDTTSKUj0IwKusf6xXv62rlZbe?=
+ =?us-ascii?Q?obx29rxe/o3AQ4zKr0T9eQN0d8qg83TV0XIvINqaYqhRSYpSNki/0Spiddvt?=
+ =?us-ascii?Q?lHU5bdHYxU8E7BOy6o2pI+Laf4ALxSI27MFI/+kOaOgeFPh4FS+6q1cr6XLR?=
+ =?us-ascii?Q?AlBt+j7P8k66TeUTvhcojDXnjAUSTK/Hfht0xSxvIboSOZr11+3i3LOO0z35?=
+ =?us-ascii?Q?T8H4QJtVDZNumOE15wIsfHg2bLblvzZF5tTgYZFUrPgd7UXHwf3ikGEFgLNz?=
+ =?us-ascii?Q?2I+aZZap6OIgfGADLTgFLfebzjpzPVWu/3ZGPGaAcdm1eTE+kV26VpiTcKQl?=
+ =?us-ascii?Q?5VKmCjA5FR1KctysNC22axgA5MmBTiKZ5Km3aRRfqjayKOE5k4+j+V1JCZKf?=
+ =?us-ascii?Q?3WDOWdknCYLumi/dRMOadZ/xSAyz4liK7yEBW6h7jjObGMEaZAs+ES5YI0Bp?=
+ =?us-ascii?Q?O6wry8okv+kO2e8UGadxiLj0L8bO2399O/OSYHyNZa8uq1rlUioA9pCdMQJK?=
+ =?us-ascii?Q?UPG7UiDTuf/IY2yoFe+MNe0a069xbPjCSq8ehG520G8BkUe1IQANWS0fLQgX?=
+ =?us-ascii?Q?55eQ8g+LRIRQj63phaIP2NBAFQDPXDmXCmHX2ykN5zGpfLQWYKxuEIph8Djb?=
+ =?us-ascii?Q?5NmsrhLd2tSZJKkGiG+aWvUzNVk8m5lUfkas23j0UyqcNP/NVyQYUeS34ZVc?=
+ =?us-ascii?Q?6mAl4RYIybLUTfYsHMrcjU6KaTyIDFn1VhdPmfMlsZmLjUOPUoiXBCEk57/z?=
+ =?us-ascii?Q?78qz+w8e3T1g3n7zqHzNriwjnTmEpjtlyMqCQXwqHu3AVWdfF73xrXFV6o5H?=
+ =?us-ascii?Q?Nez9irX3W/JpwmqB5J2saMkIILhFC3hYe4YcCycMIh8zw34319CMj7wuhDbX?=
+ =?us-ascii?Q?jYfKLyA+6B2rAXPQBkYUUYjNl6mcMYVZ0f+Yv/1Lov6PoWFNDAj8uBcLls59?=
+ =?us-ascii?Q?YBI68fjrdNpX5l92ioYX4lJaNvI0DEkvVHVQHq6SXCNOQFNf6NJyjr5kT6IE?=
+ =?us-ascii?Q?lDAFHg6Q3cWjZNa/qADoCYbIkE9g7KR6GQoSepJvv8Rv+SfjJaRcEQjoxYh4?=
+ =?us-ascii?Q?jPhrAnKaqVsDPhAwMk+dcd2CSq4Jl+0wbOq3++AHCJvns6eC63NBxoNdTBTE?=
+ =?us-ascii?Q?lg7+6L/RU9c2CS6p76U95AyquXS59nDwa1fH1mhf5uxUCP5nB7UZircs0jk+?=
+ =?us-ascii?Q?MbuTe5NrWMsQc/CIXKw=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(376014)(366016); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VsWcr4/8MKKx52hPxenhiHvqpgDA5hAOGeUsSsE83xoQIP83bdxhyWmNgB8C?=
- =?us-ascii?Q?jvBOxgFbdCI3rAGumOsDtYcRVh/SlSxSmJzgKkGKG8VjUScrceMAGRhKTA6b?=
- =?us-ascii?Q?wGd11I3qgsFNckLGSiKhXSowgrt5KAyNTgEJxswlNPk/KXbvLzhaA35NKfST?=
- =?us-ascii?Q?cLW9PJLkBsTGknyjOnIFi52a7cTmRfLIKGFi6Y18vsG13W6z874+ZQeRMbzO?=
- =?us-ascii?Q?S5xBXrQVb/Kr5489doZbHxklP30i6ffc2rs51iIBmjOgAYAiSw+emUd16Wzc?=
- =?us-ascii?Q?8vQbEuvkvGZgnEkFu4e/Umw2qi7ycCPYRJIF51LnXTgJgjiDFoaQF2QebzcA?=
- =?us-ascii?Q?Zv/gHDMoicRgqtP96SymyhZvggsOWTG0sbGLGtu/Cf3w+zwU0jQM6uarU2FY?=
- =?us-ascii?Q?oSxIJaDe0t8NufrYgXf74Kmn6XlGt7ooEGbHraPwOfouJ/2TCbBRP1D/ZX6c?=
- =?us-ascii?Q?xt9Z6m1kxHPptWwQDSBo+LaaZcKh0eW0LTHdiRiX+nuPt8cHQxjd0ZJZC92M?=
- =?us-ascii?Q?VmSSG4iVAIPnPH0Hi3DvLfFfDLwP97RfMnwgcaA/r5Ca3FLKvryi8cIum5cf?=
- =?us-ascii?Q?cNG710zwBJKSgCj4egNYMdiztL03WQbEkXTeQtEM3+C+zHZQRnPHG479h5Xc?=
- =?us-ascii?Q?wYpsgXvHMkTfTAnM8cPdsfhrIwmMHxthYtMna3K5PdCy7cV9CZmdaejVpDIW?=
- =?us-ascii?Q?ajiU+kqJdw38vSHoFvpms6HhYLKSzlMqbOs7mhNPjj852iSG3AXMUnau6w2G?=
- =?us-ascii?Q?ipWb2BffX5qCW2osP/caSK9/qma3ce67Awo/dJBhnsd0Eo4OTN2tU0NarlFZ?=
- =?us-ascii?Q?/zw4WGiHVkLeVq5kl0aZxRYNOuxHqCCq5AG+lseF/8YwX8LtgX8GALcJZ/aZ?=
- =?us-ascii?Q?C71CTBIkslcqByV9TlRrcKOV3qynRKxAOsWAk0BHmvKGFHc0vjfEDcDCeflH?=
- =?us-ascii?Q?nzNRBjB4TumvGLNPRwUJ/dqGmgvOP+BQCDUUpjKNaIKc3zZIGiZC8YKRyxVj?=
- =?us-ascii?Q?FjR6QSGJRrLEV5TBPYzKz2ecflxmE/a1jGX/fwvNrCSpn2WdgDE0qYkb0eJ8?=
- =?us-ascii?Q?yyI/FINdEZBNFQZTwi4WiXJEcqkkqUI7hOaLSILYjYQxZ1WiTzOE0i7Uesae?=
- =?us-ascii?Q?jfGI3uESJ4R3TGryo0Hna+jFJ6rHJZ914MHyAfId1CY14Mfclq+LD1TMY4l6?=
- =?us-ascii?Q?yh1dsBIuEMwxwF6Cldzpgt/zRvgTFADPfXs1FRGA9l+1oXyRHGYD53US3uCH?=
- =?us-ascii?Q?SPOkaDUoy8c9ofPxX8JymhR2Ua/gDVFjsMZ3bzhyTZIj50h6C80atDU8upbo?=
- =?us-ascii?Q?N4M5Ukca4KAWqemWvQlzeL9HDNvtrD7qA4oLQfsKSyXICSDajYsDyhdOfB5x?=
- =?us-ascii?Q?AW+Y/Eoi0YE1wWsr0h6YBKONgEgE2NpHOt5XMGDyKOnjQsOpq53CNA4aijaM?=
- =?us-ascii?Q?J6Bn0bEzAv33uZyM5l8XfvW53/sLhevNs6onmlg1teJp51zIWxjBqEgflES/?=
- =?us-ascii?Q?eoAV3svgzS//mVYVXLk0Kfvweuf2UhmtGfCkPPw7agruUccH6UABOWBmo/xm?=
- =?us-ascii?Q?flC5mFxWO2PKFJtnblgbmR1QDVxc2kv78CVd2QypZY+FFs/V5jBd4pcGLLIr?=
- =?us-ascii?Q?gfUWMS4lDZRqIWs3MyuoA3cwTo9aQmErNonM8zUiKUPxXYKo/RjCjww6fZW5?=
- =?us-ascii?Q?/QEEgA4m69nyayAGHixohKYd+xnZEjF88X3ccaVjral9mkARCiuC/BEjgkUH?=
- =?us-ascii?Q?S/ooDDZDx05oo9vzxpFpJHpQfYkc/QE=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: cd65d3ec-790b-464c-6a62-08de6d7e0dc5
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?N09F2NPI2QieXbKAcXMV1fQBx3BvIy9lGfuEkJO1qiX8OwOkEF2TPCfnrc4Y?=
+ =?us-ascii?Q?F+gL7Yx05VRB8zkP98FguKelihpYjj9IUfn9B4nm+zIiCFohMeBuej00wRDt?=
+ =?us-ascii?Q?mwzrolPYCb15sNjRyHilloO0XLMIRFBCtdgNgYw0lHueM38ODFdkXCu1T6+x?=
+ =?us-ascii?Q?xHJUWWUw9sA/a861Y8TMXazJmEv6oRvWYdKiriV14q1c+5kdW5CRGZr3eUwX?=
+ =?us-ascii?Q?TWC+yb5tug2qdxACq5vem8tLGFAWCTsDriAqhfoBFaRBAORo1Idj0urp9f4b?=
+ =?us-ascii?Q?E7gq4k/3sU0FUKPKjcDGlgZ7rSrauYdC0D1RQaThAip6ltG3P3/dcTIcTjhX?=
+ =?us-ascii?Q?ARPg6Ol624mOSz2kBcgeFh2TD0UZYO9pfcQH9R238t7IS1yVsF0MIdFTMWso?=
+ =?us-ascii?Q?VOan6Oh8GpIDI5Jlg4nNvAfh6Gpfzr7HYeds9inHp3digSPYjeNXhFR6Apuj?=
+ =?us-ascii?Q?7vem6VkjKaJ1RsWXgIcTJRs5RuT/iV9JR5xWVYsF8FwbilLg8CilbsJBYB0H?=
+ =?us-ascii?Q?o0GVsn2FSHbcMDNOj5HKEFsXiEN8Pd1LszUdASiuuiknbL8lMotR9hKVc6lL?=
+ =?us-ascii?Q?9TjXaOp10lV/g0/fqXF5vDCang2GQZ8bJoEOfuDQkQBDKmLX1fTzJN5xAnUO?=
+ =?us-ascii?Q?0MY26IB8QaGDWAhfhsgn6rm/H8Mve2Kq5MLYK1q90jq+MVqABmg+vCqVQ+YK?=
+ =?us-ascii?Q?gvuQBQfW2bcKQnK38+7Y9cCi7ybB3+ZDjoeY4ih9qvcAR/FmhadfTjT3CNR8?=
+ =?us-ascii?Q?+S4QldZZThd/mLK0D78UqXh2TXTF57zA4IR4m7BLOjrbka0kwfEE2fMo4JSE?=
+ =?us-ascii?Q?6IgMrIzt/Ok9Y9GwAvWsUT4Yvn/7qHS3IONXgiM0TeH31mKa34mBhiLEFNzM?=
+ =?us-ascii?Q?T7qV7frlt4HXZL4viqdXHt5eJ0qKEcIUeU3HMddFBsngNQVAS5PE4DPE4YZC?=
+ =?us-ascii?Q?+MIIGruTwdhAcX6lMIpSn+2V+Of1bzEE8U4SoB3Tjntx2tFvVFj49Cc6bel0?=
+ =?us-ascii?Q?B1drWvTICfRW9faGm+rC83RSLqGTYGhXaXqVZ6gJCNSx4O+dOVUpNvf50Mjq?=
+ =?us-ascii?Q?pqu9stfE/K5R3BrIY2l1q2dejbVkvnjviK/JQI2XqQqA+uo9zhuTEnAofnD0?=
+ =?us-ascii?Q?np6Qrggl8Xj5fYFtAppugjSMo1SB2KEYT4yHFkJT43Kfl1axbWbt6vAWhCa4?=
+ =?us-ascii?Q?YNlFqgCZ5OFZy8ZEIlRxU87ipv6JJifdw23OgiUg2AWA0XqUE9H2/JtrrxOM?=
+ =?us-ascii?Q?F+HychTlbSczpkWS/FccPt8TkgpmCWPTwNN25knd1PxDibvrd0eqGHA6vA4A?=
+ =?us-ascii?Q?uS3d0q+tqc2weS5OudEbHKamSoRDNvoDTFGAjzCPWrDh6ayycM86s29mWTgZ?=
+ =?us-ascii?Q?WFqhIve07H0yJ0z/S1LSQL5eDc37s07KvLwO43DjMv5b/uDinZBbVsGTt/8d?=
+ =?us-ascii?Q?eYt1MWXmojb+6DNdeDnC6oT1PnFx4O7HY067dgarGWbnEFq7SoX3XsJjnyxB?=
+ =?us-ascii?Q?JkVjzjdGqxIGkoE1gLV1yhqCqyS7PY/aNIAX4xg+5pNlV5mRTf3VdIjzbA6R?=
+ =?us-ascii?Q?AI9RxM4LakdlpxGEFJqCzPqhhCe5e5CszHSzNkitshG7ykU7ZX1V2KzY/ySg?=
+ =?us-ascii?Q?xRYj8eYvhvvbRm+ulHMd9lPbtY6GG/q+vDxGftGrFMXiIKpzRBOhqQlyo//q?=
+ =?us-ascii?Q?3GsFCoctXmc9oV/a+wYPpRFpBRqyK9Xc2iUW40n6aZDReIJE5eJdOCHlRkGt?=
+ =?us-ascii?Q?IJCVsbxWTgvgDXfgAyKupYAWYaZ9Tpg=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 22519e9f-d56a-4260-b546-08de6d7e36e4
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2026 17:08:49.9278 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2026 17:09:58.8758 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Daahyh1M7go9pfkorNg0Q9rXTVhlZlUqtzeE6NZ6CtcQXYfJ/z2LvQXQayGgmx16PvmyQR1lXUU6UZHiKCLJI0a77ThcFH1gGraVppo4kRM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR11MB7611
+X-MS-Exchange-CrossTenant-UserPrincipalName: eM3o0PBJzDsHtVrepXy8RfPOnyJwmVuhOiVhHKhipAIoH4ZkWxN/qcxTsQ4f7g95PY5F7lmU06nlL6LNFvNme6yucEljLXXkIkyosONqSOE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4623
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -175,262 +175,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Feb 11, 2026 at 01:52:53PM +0000, Anatoly Burakov wrote:
-> Currently, when adding, removing, or configuring MAC and VLAN filters,
-> we are using rte_zmalloc followed by an immediate rte_free. This is not
-> needed as this memory is not being stored anywhere, so replace it with
-> regular malloc/free.
-
-A minor nit on a number of these patches and the commit logs. I suggest
-expanding on the "not being stored anywhere" part to instead say that the
-memory is a temporary scratchpad and so does not need to be in DPDK
-hugepage memory.
-
-For the code though:
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-
-
+On Wed, Feb 11, 2026 at 01:52:54PM +0000, Anatoly Burakov wrote:
+> Currently, when responding to VF resource queries, we are dynamically
+> allocating a temporary buffer with rte_zmalloc followed by an immediate
+> rte_free. This is not needed as the response is only used temporarily,
+> so replace it with a stack-allocated structure (the allocation is fixed
+> in size and pretty small).
 > 
 > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
->  drivers/net/intel/i40e/i40e_ethdev.c  | 38 +++++++++++++--------------
->  drivers/net/intel/i40e/rte_pmd_i40e.c | 16 +++++------
->  2 files changed, 26 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-> index 654b0e5d16..806c29368c 100644
-> --- a/drivers/net/intel/i40e/i40e_ethdev.c
-> +++ b/drivers/net/intel/i40e/i40e_ethdev.c
-> @@ -4165,8 +4165,7 @@ i40e_vlan_offload_set(struct rte_eth_dev *dev, int mask)
->  	if (mask & RTE_ETH_VLAN_EXTEND_MASK) {
->  		i = 0;
->  		num = vsi->mac_num;
-> -		mac_filter = rte_zmalloc("mac_filter_info_data",
-> -				 num * sizeof(*mac_filter), 0);
-> +		mac_filter = calloc(num, sizeof(*mac_filter));
->  		if (mac_filter == NULL) {
->  			PMD_DRV_LOG(ERR, "failed to allocate memory");
->  			return I40E_ERR_NO_MEMORY;
-> @@ -4206,7 +4205,7 @@ i40e_vlan_offload_set(struct rte_eth_dev *dev, int mask)
->  			if (ret)
->  				PMD_DRV_LOG(ERR, "i40e vsi add mac fail.");
->  		}
-> -		rte_free(mac_filter);
-> +		free(mac_filter);
->  	}
->  
->  	if (mask & RTE_ETH_QINQ_STRIP_MASK) {
-> @@ -6231,8 +6230,7 @@ i40e_vsi_config_vlan_filter(struct i40e_vsi *vsi, bool on)
->  
->  	num = vsi->mac_num;
->  
-> -	mac_filter = rte_zmalloc("mac_filter_info_data",
-> -				 num * sizeof(*mac_filter), 0);
-> +	mac_filter = calloc(num, sizeof(*mac_filter));
->  	if (mac_filter == NULL) {
->  		PMD_DRV_LOG(ERR, "failed to allocate memory");
->  		return I40E_ERR_NO_MEMORY;
-> @@ -6264,7 +6262,7 @@ i40e_vsi_config_vlan_filter(struct i40e_vsi *vsi, bool on)
->  	}
->  
->  DONE:
-> -	rte_free(mac_filter);
-> +	free(mac_filter);
->  	return ret;
->  }
->  
-> @@ -7154,7 +7152,7 @@ i40e_add_macvlan_filters(struct i40e_vsi *vsi,
->  	ele_num = hw->aq.asq_buf_size / sizeof(*req_list);
->  	ele_buff_size = hw->aq.asq_buf_size;
->  
-> -	req_list = rte_zmalloc("macvlan_add", ele_buff_size, 0);
-> +	req_list = calloc(1, ele_buff_size);
->  	if (req_list == NULL) {
->  		PMD_DRV_LOG(ERR, "Fail to allocate memory");
->  		return I40E_ERR_NO_MEMORY;
-> @@ -7207,7 +7205,7 @@ i40e_add_macvlan_filters(struct i40e_vsi *vsi,
->  	} while (num < total);
->  
->  DONE:
-> -	rte_free(req_list);
-> +	free(req_list);
->  	return ret;
->  }
->  
-> @@ -7230,7 +7228,7 @@ i40e_remove_macvlan_filters(struct i40e_vsi *vsi,
->  	ele_num = hw->aq.asq_buf_size / sizeof(*req_list);
->  	ele_buff_size = hw->aq.asq_buf_size;
->  
-> -	req_list = rte_zmalloc("macvlan_remove", ele_buff_size, 0);
-> +	req_list = calloc(1, ele_buff_size);
->  	if (req_list == NULL) {
->  		PMD_DRV_LOG(ERR, "Fail to allocate memory");
->  		return I40E_ERR_NO_MEMORY;
-> @@ -7286,7 +7284,7 @@ i40e_remove_macvlan_filters(struct i40e_vsi *vsi,
->  	} while (num < total);
->  
->  DONE:
-> -	rte_free(req_list);
-> +	free(req_list);
->  	return ret;
->  }
->  
-> @@ -7455,7 +7453,7 @@ i40e_vsi_remove_all_macvlan_filter(struct i40e_vsi *vsi)
->  	else
->  		num = vsi->mac_num * vsi->vlan_num;
->  
-> -	mv_f = rte_zmalloc("macvlan_data", num * sizeof(*mv_f), 0);
-> +	mv_f = calloc(num, sizeof(*mv_f));
->  	if (mv_f == NULL) {
->  		PMD_DRV_LOG(ERR, "failed to allocate memory");
->  		return I40E_ERR_NO_MEMORY;
-> @@ -7484,7 +7482,7 @@ i40e_vsi_remove_all_macvlan_filter(struct i40e_vsi *vsi)
->  
->  	ret = i40e_remove_macvlan_filters(vsi, mv_f, num);
->  DONE:
-> -	rte_free(mv_f);
-> +	free(mv_f);
->  
->  	return ret;
->  }
-> @@ -7510,7 +7508,7 @@ i40e_vsi_add_vlan(struct i40e_vsi *vsi, uint16_t vlan)
->  		return I40E_ERR_PARAM;
->  	}
->  
-> -	mv_f = rte_zmalloc("macvlan_data", mac_num * sizeof(*mv_f), 0);
-> +	mv_f = calloc(mac_num, sizeof(*mv_f));
->  
->  	if (mv_f == NULL) {
->  		PMD_DRV_LOG(ERR, "failed to allocate memory");
-> @@ -7532,7 +7530,7 @@ i40e_vsi_add_vlan(struct i40e_vsi *vsi, uint16_t vlan)
->  	vsi->vlan_num++;
->  	ret = I40E_SUCCESS;
->  DONE:
-> -	rte_free(mv_f);
-> +	free(mv_f);
->  	return ret;
->  }
->  
-> @@ -7561,7 +7559,7 @@ i40e_vsi_delete_vlan(struct i40e_vsi *vsi, uint16_t vlan)
->  		return I40E_ERR_PARAM;
->  	}
->  
-> -	mv_f = rte_zmalloc("macvlan_data", mac_num * sizeof(*mv_f), 0);
-> +	mv_f = calloc(mac_num, sizeof(*mv_f));
->  
->  	if (mv_f == NULL) {
->  		PMD_DRV_LOG(ERR, "failed to allocate memory");
-> @@ -7594,7 +7592,7 @@ i40e_vsi_delete_vlan(struct i40e_vsi *vsi, uint16_t vlan)
->  	vsi->vlan_num--;
->  	ret = I40E_SUCCESS;
->  DONE:
-> -	rte_free(mv_f);
-> +	free(mv_f);
->  	return ret;
->  }
->  
-> @@ -7626,7 +7624,7 @@ i40e_vsi_add_mac(struct i40e_vsi *vsi, struct i40e_mac_filter_info *mac_filter)
->  			mac_filter->filter_type == I40E_MAC_HASH_MATCH)
->  		vlan_num = 1;
->  
-> -	mv_f = rte_zmalloc("macvlan_data", vlan_num * sizeof(*mv_f), 0);
-> +	mv_f = calloc(vlan_num, sizeof(*mv_f));
->  	if (mv_f == NULL) {
->  		PMD_DRV_LOG(ERR, "failed to allocate memory");
->  		return I40E_ERR_NO_MEMORY;
-> @@ -7665,7 +7663,7 @@ i40e_vsi_add_mac(struct i40e_vsi *vsi, struct i40e_mac_filter_info *mac_filter)
->  
->  	ret = I40E_SUCCESS;
->  DONE:
-> -	rte_free(mv_f);
-> +	free(mv_f);
->  
->  	return ret;
->  }
-> @@ -7696,7 +7694,7 @@ i40e_vsi_delete_mac(struct i40e_vsi *vsi, struct rte_ether_addr *addr)
->  			filter_type == I40E_MAC_HASH_MATCH)
->  		vlan_num = 1;
->  
-> -	mv_f = rte_zmalloc("macvlan_data", vlan_num * sizeof(*mv_f), 0);
-> +	mv_f = calloc(vlan_num, sizeof(*mv_f));
->  	if (mv_f == NULL) {
->  		PMD_DRV_LOG(ERR, "failed to allocate memory");
->  		return I40E_ERR_NO_MEMORY;
-> @@ -7725,7 +7723,7 @@ i40e_vsi_delete_mac(struct i40e_vsi *vsi, struct rte_ether_addr *addr)
->  
->  	ret = I40E_SUCCESS;
->  DONE:
-> -	rte_free(mv_f);
-> +	free(mv_f);
->  	return ret;
->  }
->  
-> diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.c b/drivers/net/intel/i40e/rte_pmd_i40e.c
-> index a358f68bc5..fb73fa924f 100644
-> --- a/drivers/net/intel/i40e/rte_pmd_i40e.c
-> +++ b/drivers/net/intel/i40e/rte_pmd_i40e.c
-> @@ -233,7 +233,7 @@ i40e_vsi_rm_mac_filter(struct i40e_vsi *vsi)
->  			   filter_type == I40E_MAC_HASH_MATCH)
->  			vlan_num = 1;
->  
-> -		mv_f = rte_zmalloc("macvlan_data", vlan_num * sizeof(*mv_f), 0);
-> +		mv_f = calloc(vlan_num, sizeof(*mv_f));
->  		if (!mv_f) {
->  			PMD_DRV_LOG(ERR, "failed to allocate memory");
->  			return I40E_ERR_NO_MEMORY;
-> @@ -250,18 +250,18 @@ i40e_vsi_rm_mac_filter(struct i40e_vsi *vsi)
->  			ret = i40e_find_all_vlan_for_mac(vsi, mv_f, vlan_num,
->  							 &f->mac_info.mac_addr);
->  			if (ret != I40E_SUCCESS) {
-> -				rte_free(mv_f);
-> +				free(mv_f);
->  				return ret;
->  			}
->  		}
->  
->  		ret = i40e_remove_macvlan_filters(vsi, mv_f, vlan_num);
->  		if (ret != I40E_SUCCESS) {
-> -			rte_free(mv_f);
-> +			free(mv_f);
->  			return ret;
->  		}
->  
-> -		rte_free(mv_f);
-> +		free(mv_f);
->  		ret = I40E_SUCCESS;
->  	}
->  
-> @@ -294,7 +294,7 @@ i40e_vsi_restore_mac_filter(struct i40e_vsi *vsi)
->  			   f->mac_info.filter_type == I40E_MAC_HASH_MATCH)
->  			vlan_num = 1;
->  
-> -		mv_f = rte_zmalloc("macvlan_data", vlan_num * sizeof(*mv_f), 0);
-> +		mv_f = calloc(vlan_num, sizeof(*mv_f));
->  		if (!mv_f) {
->  			PMD_DRV_LOG(ERR, "failed to allocate memory");
->  			return I40E_ERR_NO_MEMORY;
-> @@ -312,18 +312,18 @@ i40e_vsi_restore_mac_filter(struct i40e_vsi *vsi)
->  			ret = i40e_find_all_vlan_for_mac(vsi, mv_f, vlan_num,
->  							 &f->mac_info.mac_addr);
->  			if (ret != I40E_SUCCESS) {
-> -				rte_free(mv_f);
-> +				free(mv_f);
->  				return ret;
->  			}
->  		}
->  
->  		ret = i40e_add_macvlan_filters(vsi, mv_f, vlan_num);
->  		if (ret != I40E_SUCCESS) {
-> -			rte_free(mv_f);
-> +			free(mv_f);
->  			return ret;
->  		}
->  
-> -		rte_free(mv_f);
-> +		free(mv_f);
->  		ret = I40E_SUCCESS;
->  	}
->  
-> -- 
-> 2.47.3
-> 
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
