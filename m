@@ -2,37 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC344E63F3D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 09:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70303E63F3F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 09:37:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 99FF040289;
-	Mon, 16 Feb 2026 10:27:56 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 4FFAB40269
- for <dev@dpdk.org>; Mon, 16 Feb 2026 10:27:55 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 1031120FCA;
- Mon, 16 Feb 2026 10:27:55 +0100 (CET)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Mon, 16 Feb 2026 10:27:52 +0100
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
-	dev@dpdk.org
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v3] mempool: simplify get objects
-Date: Mon, 16 Feb 2026 09:27:50 +0000
-Message-ID: <20260216092750.94137-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A3BE440289;
+	Mon, 16 Feb 2026 10:37:25 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id ADF4B40269
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 10:37:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1771234645; x=1802770645;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=s1+40E3kFwjOqHxNgV+7GtSXLAzHIefStQfxLkGjChw=;
+ b=e7ALhIQIpWZyxxs+0/cMEQANttLs99Lh3CqWpUJ9JG84CqsJCBa5fsJw
+ kAQeRTb0OY5Mt6JPF2OiyLpSRDNPmydP6SpC5HQ0p4SPwnBQN05NiNroB
+ PqA+rLeD8U//NTEmnwvBt2pTOjmwLTPh0zO/T7BUcaMAfSnN9qTUMjNW1
+ t1akBWwqMUD/j3qEzzJo8Jtp3qwxnnqKKeGHS3NGNQ606/Og9itNms+ks
+ thdjqtgAvkP8dpsXxRg5dxC5AeVO8dNGzaOicv5oar2JvOjwMFLJBJE1b
+ MHOJ50sWfnl9j3VJ70r2jDBeANLEElvMrwkKJRsItekdLqNsdLmpXtC9R w==;
+X-CSE-ConnectionGUID: ENHVTHeCRH64v5lsvuh/Bg==
+X-CSE-MsgGUID: q1mVjQUxSGOXS737DldRHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11702"; a="97772505"
+X-IronPort-AV: E=Sophos;i="6.21,293,1763452800"; d="scan'208";a="97772505"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Feb 2026 01:37:24 -0800
+X-CSE-ConnectionGUID: b18oVfBjS7Or0/wZjg64hg==
+X-CSE-MsgGUID: JcdOmSkRTZCEPzNfFI65Ag==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,293,1763452800"; d="scan'208";a="217566329"
+Received: from icx005.iind.intel.com (HELO icx005..) ([10.190.212.217])
+ by fmviesa004.fm.intel.com with ESMTP; 16 Feb 2026 01:37:22 -0800
+From: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Cc: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
+Subject: [PATCH] doc: improve e1000 driver documentation
+Date: Mon, 16 Feb 2026 19:55:04 +0000
+Message-ID: <20260216195533.2030568-1-chaitanyababux.talluri@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260120082049.466224-1-mb@smartsharesystems.com>
-References: <20260120082049.466224-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 16 Feb 2026 09:27:52.0731 (UTC)
- FILETIME=[866FA6B0:01DC9F26]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,119 +60,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Removed explicit test for build time constant request size,
-and added comment that the compiler loop unrolls when request size is
-build time constant, to improve source code readability.
+Update e1000 driver docs to cover all Intel 1G devices,
+including emulated e1000 and real hardware,
+and group related drivers (igb, igc) for clarity."
 
-Moved setting cache->len up before the copy loop; not only for code
-similarity (cache->len is now set before each copy loop), but also as an
-optimization:
-The function's pointer parameters are not marked restrict, so writing to
-obj_table in the copy loop might formally modify cache->size. And thus,
-setting cache->len = cache->size after the copy loop requires loading
-cache->size again after copying the objects.
-Moving this line up before the copy loop avoids that extra load of
-cache->size when setting cache->len.
-
-Similarly, moved statistics update up before the copy loops.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
 ---
-v3:
-* Added to description why setting cache->len was moved up before the copy
-  loop.
-* Moved statistics update up before the copy loop.
-v2:
-* Removed unrelated microoptimization from rte_mempool_do_generic_put(),
-  which was also described incorrectly.
----
- lib/mempool/rte_mempool.h | 47 ++++++++++++---------------------------
- 1 file changed, 14 insertions(+), 33 deletions(-)
+ doc/guides/nics/e1000em.rst | 47 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index aedc100964..7989d7a475 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -1531,47 +1531,29 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	cache_objs = &cache->objs[cache->len];
+diff --git a/doc/guides/nics/e1000em.rst b/doc/guides/nics/e1000em.rst
+index ed4f57e9c6..b2e09cd673 100644
+--- a/doc/guides/nics/e1000em.rst
++++ b/doc/guides/nics/e1000em.rst
+@@ -1,6 +1,53 @@
+ ..  SPDX-License-Identifier: BSD-3-Clause
+     Copyright(c) 2010-2014 Intel Corporation.
  
- 	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
--	if (__rte_constant(n) && n <= cache->len) {
-+	if (likely(n <= cache->len)) {
-+		/* The entire request can be satisfied from the cache. */
-+		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
-+		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
++Intel 1G Network Drivers (e1000, igb, igc)
++==========================================
 +
- 		/*
--		 * The request size is known at build time, and
--		 * the entire request can be satisfied from the cache,
--		 * so let the compiler unroll the fixed length copy loop.
-+		 * If the request size is known at build time,
-+		 * the compiler unrolls the fixed length copy loop.
- 		 */
- 		cache->len -= n;
- 		for (index = 0; index < n; index++)
- 			*obj_table++ = *--cache_objs;
- 
--		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
--		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
--
- 		return 0;
- 	}
- 
--	/*
--	 * Use the cache as much as we have to return hot objects first.
--	 * If the request size 'n' is known at build time, the above comparison
--	 * ensures that n > cache->len here, so omit RTE_MIN().
--	 */
--	len = __rte_constant(n) ? cache->len : RTE_MIN(n, cache->len);
--	cache->len -= len;
-+	/* Use the cache as much as we have to return hot objects first. */
-+	len = cache->len;
- 	remaining = n - len;
-+	cache->len = 0;
- 	for (index = 0; index < len; index++)
- 		*obj_table++ = *--cache_objs;
- 
--	/*
--	 * If the request size 'n' is known at build time, the case
--	 * where the entire request can be satisfied from the cache
--	 * has already been handled above, so omit handling it here.
--	 */
--	if (!__rte_constant(n) && likely(remaining == 0)) {
--		/* The entire request is satisfied from the cache. */
--
--		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
--		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
--
--		return 0;
--	}
--
- 	/* Dequeue below would overflow mem allocated for cache? */
- 	if (unlikely(remaining > RTE_MEMPOOL_CACHE_MAX_SIZE))
- 		goto driver_dequeue;
-@@ -1589,17 +1571,16 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	}
- 
- 	/* Satisfy the remaining part of the request from the filled cache. */
-+	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
-+	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
++Overview
++--------
 +
- 	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
- 	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE);
- 	cache_objs = &cache->objs[cache->size + remaining];
-+	cache->len = cache->size;
- 	for (index = 0; index < remaining; index++)
- 		*obj_table++ = *--cache_objs;
++DPDK provides several poll mode drivers (PMDs) supporting Intel 1 Gigabit
++Ethernet controller families. These include:
++
++*   e1000 – Intel 8254x family devices, including QEMU e1000 emulation.
++*   e1000e – Intel PRO/1000 PCI‑Express family (82563/6/7, 82571/2/3/4/7/8/9,
++             82583 and I217/I218/I219-based adapters).
++
++These drivers follow similar design principles and capabilities and are grouped
++here for clarity.
++
++Supported Hardware
++------------------
++
++E1000 Devices
++~~~~~~~~~~~~~
++
++The e1000 Linux base driver supports the Intel® PRO/1000 PCI and PCI‑X
++family of Gigabit Ethernet controllers. Supported devices include:
++
++*   Intel 82540, 82541, 82545, 82546
++*   QEMU ``e1000`` emulated NIC
++
++E1000e Devices
++~~~~~~~~~~~~~~
++
++The e1000e Linux base driver supports the Intel PRO/1000 PCI‑Express family
++including:
++
++*   82563/82566/82567 series
++*   82571/82572/82573/82574/82577/82578/82579 series
++*   82583-based adapters
++*   I217, I218 and I219 Gigabit Network Connections
++
++Driver Notes
++~~~~~~~~~~~~
++
++*   e1000 – supports PCI/PCI‑X Gigabit adapters.
++*   e1000e – supports PCI‑Express Gigabit adapters.
++
++Both drivers are widely used across physical and virtualized environments.
++
+ Driver for VM Emulated Devices
+ ==============================
  
--	cache->len = cache->size;
--
--	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
--	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
--
- 	return 0;
- 
- driver_dequeue:
 -- 
 2.43.0
 
