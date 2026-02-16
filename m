@@ -2,86 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1253EEF5872
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 17:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3347EE81A5D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Feb 2026 18:00:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A60640296;
-	Mon, 16 Feb 2026 18:39:15 +0100 (CET)
-Received: from fout-b4-smtp.messagingengine.com
- (fout-b4-smtp.messagingengine.com [202.12.124.147])
- by mails.dpdk.org (Postfix) with ESMTP id A5A6340289;
- Mon, 16 Feb 2026 18:39:13 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.stl.internal (Postfix) with ESMTP id D0F851D004F8;
- Mon, 16 Feb 2026 12:39:12 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Mon, 16 Feb 2026 12:39:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1771263552;
- x=1771349952; bh=Mi/Ce2wuOeZCL3Vq7OoOZ+BBWqM4KxgqN5YhuYvZLaw=; b=
- O/Gd5bRFlAWW5e3JSjjnx4OEW5Gcm5oK1FrF9hSwE8ABbxfLW0YPfzNrwuAQ/QXE
- tTrAWR7cwiJMmYAqc26AqAU3+osADLyYLgxOWU5lA3Gi+PKZbZtmVcim7/WLQS8s
- 3XQ6xwxsbW7UH+YwEZe4bVkdHagwxL5lK0WL0qQSb6s1Vizc+E6QvLdYto4usrmC
- iV0fhU7BcFWVUX307YT4YXAZYNn4RR0ezvC1s7oasPVw+r3kmQzExSoxS+zimexr
- Pwrd3h9zBN2cC3I3rwzl7Vd37E8trQVZCDCaaEOjYlO+GyDI6sOmB0mIY+f1HxoX
- fwCdIYeslSyXdmUp4S/XpQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1771263552; x=
- 1771349952; bh=Mi/Ce2wuOeZCL3Vq7OoOZ+BBWqM4KxgqN5YhuYvZLaw=; b=B
- PisKlVUkLnLjLcAQrmX7ph9z1/iXjVSYKsutkrUC9knx55dBqDV440WffxkpSXu1
- v3bhSaKqiuxgdd+dunftBb3hXp2ag2NWDLoODCl6FBbfzeMFCT0ploOWEHF2SAAO
- nFNha35xtIsf/MsjkUhf8MHghPSQYP8RsMmDEwYZUGwQeCfi+zV6CLA4YfenLtHo
- XgndCdGeFBfn7+eIvvEy60BIWX0QNQ00WX/gTl1qjykTyne3wt8cZSDxiKMbp07t
- uU+IJpRT8buqN+eJoYHiF5pX8wOhig9vVIvv6nGY3ucMHc4I8FOtddsEpWD9bwV/
- EuGZd/YSEWdH+CEDXVEcw==
-X-ME-Sender: <xms:QFaTadNbyFaSSrKfIypFW1s6yeyizsrbuE7sDiOdWXi0OZYGFPlmZg>
- <xme:QFaTaa7JgiWB9ug4Pz7-LBpOQaO8A7ZNVU6aiA5GGS-fQoF26Bcp0dMI_GITzmR2B
- aHC539dnExzW4UthR7Ti26WQ3CwExc4Y8FYNaxzdLkeupKYRdX_HA>
-X-ME-Received: <xmr:QFaTabSpUliTeERfq7hYJMgFtc1JzXURHHJH93kJRelDEOYjejqunZpKK_WF8g2DSDyveqA3e3rjMzAgi-3ZT-VmwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvudejgeelucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeejpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
- esihhnthgvlhdrtghomhdprhgtphhtthhopehthhhivghrrhihrdhhvghrsggvlhhothes
- ieifihhnugdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
- hopegrnhgrthholhihrdgsuhhrrghkohhvsehinhhtvghlrdgtohhmpdhrtghpthhtohep
- shhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopeholhhivhhivghrrdhmrghtii
- esieifihhnugdrtghomhdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrhgv
- ughhrghtrdgtohhm
-X-ME-Proxy: <xmx:QFaTafD9Z2iKuPVXDCwxJTx9EXvEWcw1OVc1ivAJak3POMTPNri2kQ>
- <xmx:QFaTaTGb8AbBS67c7LqepKwGWzRiTWfFU-ojc_L3cv5NNRGjEn5NFg>
- <xmx:QFaTaRCIuz0s7oFoyn_9SB3wisHcL1BucfQnAiw9RVeA3xQsyTdV0g>
- <xmx:QFaTaTUjjFtILtTZY5p0pIMzyEfbyNyn5QsxKRM7-zytyFqoybnbHg>
- <xmx:QFaTaark6Gw8Q0fKc06GyTzQTpodiC9YiOLJFFuzqnM8ej-6mgM6BLwN>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 Feb 2026 12:39:11 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: Thierry Herbelot <thierry.herbelot@6wind.com>, dev@dpdk.org,
- Anatoly Burakov <anatoly.burakov@intel.com>, stable@dpdk.org,
- Olivier Matz <olivier.matz@6wind.com>, david.marchand@redhat.com
-Subject: Re: [V2] drivers/net: reorder Intel drivers list in meson script
-Date: Mon, 16 Feb 2026 18:39:10 +0100
-Message-ID: <3565693.M7mRfaRNBu@thomas>
-In-Reply-To: <aZMASdK2HOCqukIs@bricha3-mobl1.ger.corp.intel.com>
-References: <20260123162104.1854187-1-thierry.herbelot@6wind.com>
- <aZL177s7Wu3vLsPl@bricha3-mobl1.ger.corp.intel.com>
- <aZMASdK2HOCqukIs@bricha3-mobl1.ger.corp.intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4AFBE40296;
+	Mon, 16 Feb 2026 19:00:18 +0100 (CET)
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com
+ [209.85.128.49]) by mails.dpdk.org (Postfix) with ESMTP id 0DFD840289
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 19:00:17 +0100 (CET)
+Received: by mail-wm1-f49.google.com with SMTP id
+ 5b1f17b1804b1-48372efa020so24243575e9.2
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 10:00:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771264816;
+ x=1771869616; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=7DtHI02sPi/EzOAqRnX/U3RhRa9soIupCw0rIqubQ0A=;
+ b=kVZxzyOKj8dcG9PeYy145Z1E9lrYHoDn0iHy9W07RRXFP8z74QLRKY+OIT2DQkXAmp
+ EMEnkPwu31VWsU0e1KaSHV2JMSka3RwICkDpXJXoyMi6nmkYfp90GG7oWgWP88UKUdrk
+ iSLAa+Nn71jQBeOL5c5+iasVezRiHAFklEdR1nLZgqF4JV5aNwlnmzGE4sPjedpMUndL
+ +/L8p5NZKlo5c1EOogZAsGmfL7QifRujx44EHQh4ru8HwNxu8lYeF/+FkpnefohEBgDj
+ TpmyWUd+eI3mayDidOWPwy7l3hfWjg/NQCQzVCDP77Cy+QF3kkGYADQZE6tWYOmcjOdp
+ wswQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771264816; x=1771869616;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=7DtHI02sPi/EzOAqRnX/U3RhRa9soIupCw0rIqubQ0A=;
+ b=faMeW92s5+uvov0wxtaow2sonkIGljDSA3e+m3OCsbnMCHPTm4nxZr5+E7gJY/ivHY
+ 4FqW5zxXyONhstePcryie78oR+CeN0A7StY1CVERzKCCbFqdkIb5FVQvkvdcU85T0dE6
+ S5Vgu6F3fc/Kq/zpz1ifFU5EmZ+gC2p2q89yfzI8oiaK9IpIybyiwKzbJqfBEmrch3K8
+ jFrDHF44iseryqfj3LuTa4AZ+XX+Vw2AFKj8OFy7fHrsDGpzjehlI/Y5eQ0lj+Vv6YR/
+ tpmAAvPaSjHdUu/yGPQ7zKZNTbo0qgQ52ItllWmqddeqHJyh0PFjNSkHA0zeJZO0VfDc
+ 7i9A==
+X-Gm-Message-State: AOJu0Yxiux36Tlhf3e0PYwT5JknI57A5v7vFd4BVlvIUZHCteGV/9M5a
+ LSrM+AeLzU9XBw3wrgEMngKbD1irNZpeXA+PaN1h/UReVjnMUdNmPG+p6PCed7HAq4dOCA6hb3K
+ M7nmoG2o=
+X-Gm-Gg: AZuq6aLtThGRj6bLeFS5aR7jnmNdTsZ6kNrNMkSt2pvhlU+4Wl279j6Ry7fYyshEOuj
+ YqMdJNRvlgSoqXOeoigIAJvwhuH+PQiJ4dLh1IU1ye8VfN65ngRFpAo8C79V/CeHIr92Be8O4/I
+ Ye36g1GGaqlOqUGLJ4Gu84B4rVOl8C5BlXJB5NfAbeXY4SZfdp0Y2HvdaR7ITN2ZfnjLw1JB4/C
+ +3+thIlX2ecGK+5ERwljklq27o4WRw8Bby+v2G/42SETPvLqNJM3ZRfWiIG3tZShw+MwICPh/JS
+ Sd4vfkH7lMOfdZou3Mmuf0KgH0UBUIyclVQLG8ROclYAExoqWunLt/eQyTsxyh62jGL0/rxVRkA
+ Zc5OJANeh84mJGQucxMGZMmXYedl1YVjjrPQJmkfvP85WpAwZu+8lzbmAQujJCvbIddJUJtl/9J
+ ntyrAEoei5y3hqC+ZO7T++ygLYmyvqZWU3mDMvhCXzf59pi7hkIoB4wVZZD02mdw==
+X-Received: by 2002:a05:600c:1c07:b0:477:561f:6fc8 with SMTP id
+ 5b1f17b1804b1-48379bac86bmr174520275e9.5.1771264816383; 
+ Mon, 16 Feb 2026 10:00:16 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-48371a02a79sm193276775e9.3.2026.02.16.10.00.14
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 16 Feb 2026 10:00:15 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [RFC] ethdev: clarify rte_eth_tx_burst() return value and ownership
+ semantics
+Date: Mon, 16 Feb 2026 10:00:11 -0800
+Message-ID: <20260216180011.393782-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,85 +80,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-16/02/2026 12:32, Bruce Richardson:
-> On Mon, Feb 16, 2026 at 10:48:15AM +0000, Bruce Richardson wrote:
-> > On Fri, Jan 23, 2026 at 05:57:41PM +0100, Thierry Herbelot wrote:
-> > > On 1/23/26 17:50, Bruce Richardson wrote:
-> > > > On Fri, Jan 23, 2026 at 05:27:07PM +0100, Thierry Herbelot wrote:
-> > > > > After an upstream patch (see Fixes), net_ixgbe_vf is no longer
-> > > > > declared in testpmd PMD info, when compiling under Redhat-9:
-> > > > > 
-> > > > > > $ meson setup build && ninja -C build
-> > > > > > $ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
-> > > > > >      "name": "net_ixgbe",
-> > > > > 
-> > > > > Name 'net_ixgbe_vf' should also be reported.
-> > > > > 
-> > > > > One workaround is to move 'intel/ixgbe' as last in the list of Intel
-> > > > > drivers. This restores net_ixgbe_vf under Redhat-9:
-> > > > > 
-> > > > > > $ meson setup build && ninja -C build
-> > > > > > $ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
-> > > > > >      "name": "net_ixgbe_vf",
-> > > > > >      "name": "net_ixgbe",
-> > > > > 
-> > > > > Fixes: 04f1b16c54f3 ("drivers: merge common and net idpf drivers")
-> > > > > Signed-off-by: Thierry Herbelot <thierry.herbelot@6wind.com>
-> > > > > ---
-> > > > > V2: use shorter lines in commit log.
-> > > > > ---
-> > > > >   drivers/net/meson.build | 2 +-
-> > > > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > > 
-> > > > > diff --git a/drivers/net/meson.build b/drivers/net/meson.build
-> > > > > index c7dae4ad273c..8d96244cdbb0 100644
-> > > > > --- a/drivers/net/meson.build
-> > > > > +++ b/drivers/net/meson.build
-> > > > > @@ -32,8 +32,8 @@ drivers = [
-> > > > >           'intel/ice',
-> > > > >           'intel/idpf',
-> > > > >           'intel/ipn3ke',
-> > > > > -        'intel/ixgbe',
-> > > > >           'intel/cpfl',  # depends on idpf, so must come after it
-> > > > > +        'intel/ixgbe',
-> > > > >           'ionic',
-> > > > >           'mana',
-> > > > >           'memif',
-> > > > 
-> > > > This is a strange one - did you do any investgation into why or how this
-> > > > fixes things? You describe it as a workaround so any hints towards a proper
-> > > > root cause and fix are welcome :-)
-> > > 
-> > > Hello Bruce,
-> > > 
-> > > This is indeed a bit puzzling: it seems that the expected ELF section is
-> > > present, a 'strings' dump shows no difference between a 'full' testpmd and
-> > > one missing ixgbe_vf. Still pmdinfo is missing one PMD.
-> > > 
-> > > The issue was not seen when using Ubuntu-24.04.
-> > > 
-> > [Not unexpectedly,] it appears that there is more to it than just missing
-> > this driver. Installing a centos 9 VM and doing a clang build and comparing
-> > the pmdinfo output to the GCC build output, I find there are in fact 3
-> > missing drivers in the output: net_dpaa2, net_ixgbe_vf, and net_sfc_efx.
-> > 
-> > Changing the order of things to move down ixgbe makes ixgbe_vf and sfc_efx
-> > reappear, but sadly net_vcpf now disappears. :-(
-> > Therefore, more investigation and root causing is needed to find a proper
-> > fix.
-> > 
-> Doing a bit of poking with strings on the various binaries has shown why
-> some of these strings are not showing up despite being present in the
-> binary. In some cases, the bytes leading up to "PMD_INFO_STRING=" are
-> printable characters, in which case the PMD gets omitted from the output as
-> the ascii string found does not _start_ with PMD_INFO_STRING.
-> 
-> Given this info, I'm not sure whether this should be fixed in the code, is
-> a compiler issue, or whether we should just modify our script to find
-> PMD_INFO_STRING anywhere in output strings not just at the start.
-> 
-> Suggestions?
+The documentation for rte_eth_tx_burst() uses the word "sent" to
+describe the return value, which is misleading. Packets returned as
+consumed may not have been transmitted yet; they have been accepted
+by the driver and are no longer the caller's responsibility.
 
-I feel it would be more reliable to find the string anywhere.
+This matters because the common usage pattern is:
 
+    n = rte_eth_tx_burst(port, txq, mbufs, nb_pkts);
+    for (i = n; i < nb_pkts; i++)
+        rte_pktmbuf_free(mbufs[i]);
+
+For this to work correctly, the contract must be:
+ - tx_pkts[0..n-1]: ownership transferred to the driver.
+ - tx_pkts[n..nb_pkts-1]: untouched, still owned by the caller.
+
+Several drivers (and AI-assisted reviews) misinterpret the current
+wording and treat packets with errors as unconsumed, returning a
+short count. This causes callers to retry those packets indefinitely.
+The correct behavior is that the driver must consume (and free)
+erroneous packets, counting them via tx_errors.
+
+Replace "sent" with "consumed" in the return value description,
+spell out the mbuf ownership contract, clarify the error handling
+expectation, and update the @return block to match.
+
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ lib/ethdev/rte_ethdev.h | 21 ++++++++++++++++-----
+ 1 file changed, 16 insertions(+), 5 deletions(-)
+
+diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
+index 0d8e2d0236..9e49c4a945 100644
+--- a/lib/ethdev/rte_ethdev.h
++++ b/lib/ethdev/rte_ethdev.h
+@@ -6639,13 +6639,24 @@ uint16_t rte_eth_call_tx_callbacks(uint16_t port_id, uint16_t queue_id,
+  * of the ring.
+  *
+  * The rte_eth_tx_burst() function returns the number of packets it
+- * actually sent. A return value equal to *nb_pkts* means that all packets
+- * have been sent, and this is likely to signify that other output packets
++ * has consumed from the *tx_pkts* array. The driver takes ownership of
++ * the mbufs for all consumed packets (tx_pkts[0] to tx_pkts[n-1]);
++ * the caller must not access them afterward. The remaining packets
++ * (tx_pkts[n] to tx_pkts[nb_pkts-1]) are not modified and remain the
++ * caller's responsibility.
++ *
++ * A return value equal to *nb_pkts* means that all packets have been
++ * consumed, and this is likely to signify that other output packets
+  * could be immediately transmitted again. Applications that implement a
+  * "send as many packets to transmit as possible" policy can check this
+  * specific case and keep invoking the rte_eth_tx_burst() function until
+  * a value less than *nb_pkts* is returned.
+  *
++ * If a packet cannot be transmitted due to an error (for example, an
++ * invalid offload flag), the driver must still consume it and free the
++ * mbuf, rather than stopping at that point. Such packets should be
++ * counted in the *tx_errors* port statistic.
++ *
+  * It is the responsibility of the rte_eth_tx_burst() function to
+  * transparently free the memory buffers of packets previously sent.
+  * This feature is driven by the *tx_free_thresh* value supplied to the
+@@ -6679,9 +6690,9 @@ uint16_t rte_eth_call_tx_callbacks(uint16_t port_id, uint16_t queue_id,
+  * @param nb_pkts
+  *   The maximum number of packets to transmit.
+  * @return
+- *   The number of output packets actually stored in transmit descriptors of
+- *   the transmit ring. The return value can be less than the value of the
+- *   *tx_pkts* parameter when the transmit ring is full or has been filled up.
++ *   The number of packets consumed from the *tx_pkts* array.
++ *   The return value can be less than the value of the
++ *   *nb_pkts* parameter when the transmit ring is full or has been filled up.
+  */
+ static inline uint16_t
+ rte_eth_tx_burst(uint16_t port_id, uint16_t queue_id,
+-- 
+2.51.0
 
