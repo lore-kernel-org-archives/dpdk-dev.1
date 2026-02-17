@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01756E83856
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 06:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6240FE8385B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 07:09:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0584D402A2;
-	Tue, 17 Feb 2026 07:56:54 +0100 (CET)
-Received: from shelob.oktetlabs.ru (shelob.oktetlabs.ru [91.220.146.113])
- by mails.dpdk.org (Postfix) with ESMTP id 59F694029D;
- Tue, 17 Feb 2026 07:56:52 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 shelob.oktetlabs.ru D7BF138
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=oktetlabs.ru;
- s=default; t=1771311411;
- bh=c+DaE7BBkIW4bs17C/M4msrb1+B0sfmB1QeZz8RWEIg=;
- h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
- b=TkSgezA8sLBEO4L3gBul5PlsMUhaatH5CCMeo6kzq7LzrESpJLhrQygBYEx6Y2Awp
- 0M4cfTCQ5B3z57Gk/8YA8tG/2pqggMMRq+EqKI2cjPfKOQ8ax+KnRgnhH1zd9dj+BL
- iYEWZPs9Z9Qdz5Pr11r1e/UHV9Fon44jmPFiMic4=
-Received: from [192.168.38.17] (aros.oktetlabs.ru [192.168.38.17])
- (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by shelob.oktetlabs.ru (Postfix) with ESMTPSA id D7BF138;
- Tue, 17 Feb 2026 09:56:51 +0300 (MSK)
-Message-ID: <16223afb-38a9-4f7f-87f2-3619b518ad05@oktetlabs.ru>
-Date: Tue, 17 Feb 2026 09:56:51 +0300
+	by mails.dpdk.org (Postfix) with ESMTP id 6075C402A2;
+	Tue, 17 Feb 2026 08:09:42 +0100 (CET)
+Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
+ by mails.dpdk.org (Postfix) with ESMTP id 9CFD24029D
+ for <dev@dpdk.org>; Tue, 17 Feb 2026 08:09:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
+ s=office2-2020; t=1771312180;
+ bh=2zfy8jjf6k1EE7E6AdeNKelZRK1tVgPZc62DbszpAjI=;
+ h=Subject:From:To:Cc:Date:In-Reply-To:References;
+ b=j64VzTEbpSWDXd+fYkhrB6g0j7rRKFbSp+wmVWHvuzMfk9bvKQNOErSZ0FJI/UiX7
+ 3cy5RleOQLT1HbakxhwJribS3ty/FqfIlk3wlPXZ3XsY91M37QNTHIPNyrxWLZbgHj
+ D40H26nIs6wqiew63Q7oKRtDWGTvptvAjASz6Uxb7497MRuRRd8nE5Cd94FbETMFtg
+ 2+9s7W3IMuTCSUIcSJ+zKXyHMJoWrt2ays1tMR51okcYrWNgbvUTnna94E9TkzQKAu
+ 5126pMZL84pdNT+M71QShlQoWR4oI3LdFlUCuNAYW7t7LG8iDcNSFGMfeWsJTrJOI0
+ kRM0qa+rJQ9cw==
+Received: from [IPv6:2001:718:812:27::107] (gtx107.cesnet.cz
+ [IPv6:2001:718:812:27::107])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits)
+ server-digest SHA256) (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 5A9D31180086;
+ Tue, 17 Feb 2026 08:09:40 +0100 (CET)
+Message-ID: <06bb3288b409107ddf125fba93219c9a7ed6a2b7.camel@cesnet.cz>
+Subject: Re: [PATCH v9 0/8] net/nfb: rework to real multiport
+From: Martin Spinler <spinler@cesnet.cz>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Date: Tue, 17 Feb 2026 08:09:40 +0100
+In-Reply-To: <20260216141104.5055879c@phoenix.local>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
+ <20260216162506.2702066-1-spinler@cesnet.cz>
+ <20260216141104.5055879c@phoenix.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ethdev: fix mbuf fast release requirements description
-To: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, techboard@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>, stable@dpdk.org
-References: <20260205092848.36435-1-mb@smartsharesystems.com>
- <20260205094109.07193182@phoenix.local>
-Content-Language: en-US
-From: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Organization: OKTET Labs
-In-Reply-To: <20260205094109.07193182@phoenix.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,38 +54,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2/5/26 8:41 PM, Stephen Hemminger wrote:
-> On Thu,  5 Feb 2026 09:28:48 +0000
-> Morten Brørup <mb@smartsharesystems.com> wrote:
-> 
->> It was unclear if mbuf fast release could support segmented packets, or if
->> mbuf fast release required non-segmented packets.
->> This has now been investigated in detail, and it was concluded that
->> segmented packets can be supported with mbuf fast release still achieving
->> the enhanced performance.
->> So the description of the mbuf fast release Tx offload flag was fixed.
->>
->> Furthermore, the general descriptions of the Rx and Tx offloads were
->> improved, to reflect that they are not only for device capability
->> reporting, but also for device and queue configuration purposes.
->>
->> NB: If a driver does not support segmented packets with mbuf fast release,
->> it can check the multi segment send flag when selecting transmit function.
->>
->> Fixes: 55624173bacb ("mbuf: add raw free and alloc bulk functions")
->> Cc: stable@dpdk.org
->>
->> Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
->> ---
->> The other description improvements were taken from patch-155635 ("[v3,2/3]
->> ethdev: Improve descriptions of RX and TX offloads").
->> ---
-> 
-> Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-> 
-> I wonder if it would be good to point the AI documentation review
-> tool at the docbook comments in ethdev. There are some grammar
-> and clarity errors there.
+> After some feedback to the AI review. It still had minor feedback, do you=
+ want more detail?
+> I can take this as is or you can send new version.
 
-Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+I think I can address only one warning from the AI review:
+the propagated return value in Patch 4.
 
+> Patch 2: If rte_eth_dev_create() succeeds but rte_eth_dev_get_by_name()
+> returns NULL, the created device is never added to the cleanup TAILQ
+> and leaks.
+
+The rte_eth_dev_create() does not return rte_eth_dev*, so I don't have
+a handle to cleanup something with rte_eth_dev_destroy().
+
+The only solution that comes to my mind, is to add the rte_eth_dev
+temporary handle to let say a second 'temporary' TAILQ list inside
+nfb_eth_dev_init() (called in rte_eth_dev_create()), which will be
+checked after the rte_eth_dev_create() returns. However, it's still
+messy and doesn't solve the problem comprehensively.
+
+> Patch 3: nfb_default_dev_path() return value used without NULL check befo=
+re passing to nfb_open().
+
+Both is fine (nfb_default_dev_path doesn't returns NULL, nfb_open can
+handle NULL: calls nfb_default_dev_path() internally in that case).
+
+> Patch 4: The kvargs callback returns errors from input validation (e.g., =
+bad port string) but ifc_params.ret is only set after nfb_eth_dev_create_fo=
+r_ifc, so the caller can overwrite the real error with 0.
+
+Fixed in v10.
+
+
+> Patch 8: Release notes don't mention the new vdev/simulation support from=
+ patch 3.
+
+Quite a minor feature.
