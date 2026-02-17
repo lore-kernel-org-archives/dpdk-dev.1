@@ -2,71 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF29E83856
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 05:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAB3E83856
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 05:40:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1409540608;
-	Tue, 17 Feb 2026 06:35:12 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+	by mails.dpdk.org (Postfix) with ESMTP id 5F74F402A2;
+	Tue, 17 Feb 2026 06:40:03 +0100 (CET)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id CF85E4064C
- for <dev@dpdk.org>; Tue, 17 Feb 2026 06:35:10 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id 5E6324029D;
+ Tue, 17 Feb 2026 06:40:02 +0100 (CET)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
  by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 61GNtRPC653796 for <dev@dpdk.org>; Mon, 16 Feb 2026 21:35:10 -0800
+ 61GKJ4AC3055578; Mon, 16 Feb 2026 21:40:01 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=+
- f1/HbX3I2xllBEQEOqXwee3TKXxSIDzAeTLXhb4AfA=; b=j8WPQSTQJpSZqHPEJ
- rzYl91prVtju+TLlc9eNY1Oj7E25HXiyeV2yG0B4lFoaQoCr6BdRQXBIAIi9YV2i
- uhZnFJjp+MPm9u2+29tjii6hRwWLKtYT6FAbCTiwEeHqbUJ6x7sHRPTcvEMNaiTl
- uBZsXsw86hvhEk2E96v1MgxD1d9jvmkQTVGTuN0stzxnrpBrpXyZsA68x1Srjluj
- a/iNmHr+mB9W9xvrrqg+XKiwoxmjoJPooL0otwzizjgXRte1NAhprsGcTeFWTe0n
- qV+507L0BGI0hwZJymnJKXklxiK29+heUpiAxcPp1nybVWqbNdEXWdiOIyMmyx8J
- aVgsw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4cccxf8cbj-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 16 Feb 2026 21:35:09 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=1wa/JgJvz/o/6jhz87EZsdb
+ FNzSDFlF3NOlzy7aofvs=; b=WSCErQJHchlApoIAN/IeX7HaoEF6GKK5/DkicQM
+ GSAzq+kil68CsogpZJ4hxaZOixdl9BpW9VG/q4wcYzgv4f+XIx4q5XIWle61wdOT
+ lnbUP8wabkUzmoQNECrYAoP7ngcXCIU12T5LBUDqdysG8HymiOq4Fb06OF+U2DES
+ XTM4VDQp4JuIHBq5Y9KXPgV1VEyqFtFuNBTbq6ZdR2hIvGKMwGkVBW5Nh5RW0rAQ
+ sVF7J8vO7YYDKIa5kiUjs3UalLgKEIatNC01J5p64gb2v8mpqc0wXJUj5MPaN3go
+ +wH1JhzolfEjxzAk+Y+T1DLuQMuA/YqTDP3e0QNLwTGHNaQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4cbe6ck17v-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 16 Feb 2026 21:40:01 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 16 Feb 2026 21:35:25 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 16 Feb 2026 21:35:25 -0800
-Received: from cavium-DT-30.. (unknown [10.28.36.108])
- by maili.marvell.com (Postfix) with ESMTP id 9DBB13F707A;
- Mon, 16 Feb 2026 21:35:06 -0800 (PST)
-From: Nawal Kishor <nkishor@marvell.com>
-To: <dev@dpdk.org>, Ashwin Sekhar T K <asekhar@marvell.com>, Pavan Nikhilesh
- <pbhagavatula@marvell.com>
-CC: <jerinj@marvell.com>, Nawal Kishor <nkishor@marvell.com>
-Subject: [PATCH v3 2/2] mempool/cnxk: add halo support in mempool
-Date: Tue, 17 Feb 2026 11:04:44 +0530
-Message-ID: <20260217053448.490168-3-nkishor@marvell.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20260217053448.490168-1-nkishor@marvell.com>
-References: <20251205055140.2395369-3-nkishor@marvell.com>
- <20260217053448.490168-1-nkishor@marvell.com>
+ 15.2.1544.25; Mon, 16 Feb 2026 21:40:17 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 16 Feb 2026 21:40:17 -0800
+Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
+ by maili.marvell.com (Postfix) with ESMTP id 497E43F707A;
+ Mon, 16 Feb 2026 21:39:57 -0800 (PST)
+From: Rahul Bhansali <rbhansali@marvell.com>
+To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <jerinj@marvell.com>, Rakesh Kudurumalla <rkudurumalla@marvell.com>,
+ <stable@dpdk.org>
+Subject: [PATCH v2 01/18] common/cnxk: fix engine capabilities fetch logic
+Date: Tue, 17 Feb 2026 11:09:26 +0530
+Message-ID: <20260217053943.2748100-1-rbhansali@marvell.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=cdbfb3DM c=1 sm=1 tr=0 ts=6993fe0d cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+X-Authority-Analysis: v=2.4 cv=KO9XzVFo c=1 sm=1 tr=0 ts=6993ff31 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
- a=GgsMoib0sEa3-_RKJdDe:22 a=M5GUcnROAAAA:8 a=O2xDoXpjbB-c8oYjlWsA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDA0NCBTYWx0ZWRfXzgN55BnedXlM
- 3PYukYmOoau3Z7ULjWHoVrseCFaPKKUg5Mu+ZKmRIOt3JF/c0C0KqpflIWWsDyQ90rhCdn+TNcj
- u+2WKrV6QHG1xJ/dYIyw69M//MvV8o2/280PVn+1UeTw18dHff8fREOBbubMNd2YGyQG0t3ZwNJ
- jTnVO+1OMZ9edlET/7zEpYHI/UwpYdudoEwRcuz9w4l1ScAO9JgI+AAvSVx25XK2VEIqACpv3rD
- +xiQMCMRA5j9Y1cM8XZMY2Rb8qbXQAoabWT7qG6SP2Sra3xs3nLO0yfhOcx3T0Wsosy8ccYTwUE
- WGJG2teIXWRQuQ43cXoCLNPnYohhNSDYquDiRw55E+InGip6IGEQ3b6W6q0d61/Zw+SHKoyhxcO
- tGP4SLVX10Y9RzrVMmEmpglX47u3z7yrb2KT0AwsVd+Fe/hDzyPk7Tud0gWhBypSLi5jCKW01RW
- yRLGKBjia0Fm7WH2PoQ==
-X-Proofpoint-ORIG-GUID: ub1IvnCjm7QiUWzZUt2JpkzwLtGSXs-d
-X-Proofpoint-GUID: ub1IvnCjm7QiUWzZUt2JpkzwLtGSXs-d
+ a=GgsMoib0sEa3-_RKJdDe:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
+ a=PnxCTWz9nqBHbpKa4poA:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-ORIG-GUID: 1DruHrjkxlTVOVRopPd1hVu3_UnMBNHz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE3MDA0NSBTYWx0ZWRfX0plu9oOCoDJF
+ qVqX/5XzHMa4j+3SjW30TCGD8KqjFYxQXeqWD/h7lmVBy+Y8XSxn+mnBIFt0GOwpBu4QJHLWMPa
+ Ab4/bMuVkxcMTAHQVSWb5XpREZB7HIyBMC1oqihMO01CqQr7JiKMwhZYoFlBkixWoMKOE6ZTASj
+ 2F6xmdO+U4KJ/0836//5xLBpCk/2G94+MHgjSQ1mQb6NE3fijHAlb3UWrRP+riCg2wSakARGLiz
+ H4djVqRMd77NKPnTUm+dDRQO2z0I8YC/hOEy6HSs681FhNqU2aKleEBByXJlXQysv9Ysyv8xUBz
+ Wmaj3i+4lCcbubLWNfxMG1xWttDMlmd6hlZ05DWaQy6AjShO08ZdcjzrAn0rUZiTkE+j+zENMkc
+ NYSyBTq8wgtwkVY7awnOnHkzOBheaidAjHcftDu7lMwPc55RVmjjXDxi5EQAI4H3dL9R61s6E16
+ xvjbWdUWws1RY4WVzBw==
+X-Proofpoint-GUID: 1DruHrjkxlTVOVRopPd1hVu3_UnMBNHz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-16_08,2026-02-16_04,2025-10-01_01
@@ -83,414 +81,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds the support of halos in CN20K mempool driver. It
-introduces a new devargs parameter "halo_ena" to enable or disable
-halo feature. If halo_ena is set to 1, halos will be enabled for
-NPA pools created by the mempool driver.
+From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-Signed-off-by: Nawal Kishor <nkishor@marvell.com>
+For CN9k platform, incorrect status is checked from LOAD
+FVC instruction while retrieving engine capabilities.
+
+The loop is updated for a valid return status check on
+LOADFVC instruction.
+
+Fixes: 7c67c489d466 ("common/cnxk: fetch engine capabilities")
+Cc: stable@dpdk.org
+
+Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 ---
-v3:
- * Added details about the new "halo_ena" parameter in the documentation.
+Changes in v2: Updated commit message. Removed not related macro change.
 
- doc/guides/mempool/cnxk.rst              | 24 ++++++++--
- drivers/mempool/cnxk/cn10k_mempool_ops.c | 19 ++++----
- drivers/mempool/cnxk/cn20k_mempool_ops.c | 60 ++++++++++++++++++++++++
- drivers/mempool/cnxk/cn9k_mempool_ops.c  |  2 +-
- drivers/mempool/cnxk/cnxk_mempool.c      | 40 +++++++++++-----
- drivers/mempool/cnxk/cnxk_mempool.h      | 16 ++++++-
- drivers/mempool/cnxk/cnxk_mempool_ops.c  | 11 +++--
- drivers/mempool/cnxk/meson.build         |  1 +
- 8 files changed, 141 insertions(+), 32 deletions(-)
- create mode 100644 drivers/mempool/cnxk/cn20k_mempool_ops.c
+ drivers/common/cnxk/roc_nix_inl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/doc/guides/mempool/cnxk.rst b/doc/guides/mempool/cnxk.rst
-index 3d0729245a..178ff99acf 100644
---- a/doc/guides/mempool/cnxk.rst
-+++ b/doc/guides/mempool/cnxk.rst
-@@ -5,7 +5,7 @@ cnxk NPA Mempool Driver
- =======================
- 
- The cnxk NPA PMD (**librte_mempool_cnxk**) provides mempool driver support for
--the integrated mempool device found in **Marvell OCTEON CN9K/CN10K** SoC family.
-+the integrated mempool device found in **Marvell OCTEON CN9K/CN10K/CN20K** SoC family.
- 
- More information about cnxk SoC can be found at `Marvell Official Website
- <https://www.marvell.com/embedded-processors/infrastructure-processors/>`_.
-@@ -30,6 +30,11 @@ CN10k NPA supports:
- - Batch dequeue of up to 512 pointers with single instruction.
- - Batch enqueue of up to 15 pointers with single instruction.
- 
-+CN20k NPA supports:
-+
-+- HALO support for 1:1 aura-pool mapping, which uses a single unified context
-+  instead of separate aura and pool contexts, saving HW context space.
-+
- Prerequisites and Compilation procedure
- ---------------------------------------
- 
-@@ -56,11 +61,24 @@ Runtime Config Options
-   With the above configuration, the driver will set up only 512 mempools for
-   the given application to save HW resources.
- 
-+- ``HALO enable`` (default ``0``)
-+
-+  The HALO feature is available on CN20K platforms and allows 1:1 aura-pool
-+  mapping to use a single unified context instead of separate aura and pool
-+  contexts, saving HW context space. This parameter enables or disables HALO
-+  support for NPA pools created by the mempool driver.
-+  For example::
-+
-+    -a 0002:02:00.0,halo_ena=1
-+
-+  With the above configuration, HALO support will be enabled for mempools created
-+  on CN20K platforms.
-+
- .. note::
- 
-    Since this configuration is per application, the end user needs to
--   provide ``max_pools`` parameter to the first PCIe device probed by the given
--   application.
-+   provide ``max_pools`` and/or ``halo_ena`` parameter to the first PCIe device
-+   probed by the given application.
- 
- Debugging Options
- ~~~~~~~~~~~~~~~~~
-diff --git a/drivers/mempool/cnxk/cn10k_mempool_ops.c b/drivers/mempool/cnxk/cn10k_mempool_ops.c
-index a5be0ccafe..09f900a850 100644
---- a/drivers/mempool/cnxk/cn10k_mempool_ops.c
-+++ b/drivers/mempool/cnxk/cn10k_mempool_ops.c
-@@ -2,9 +2,6 @@
-  * Copyright(C) 2021 Marvell.
-  */
- 
--#include <rte_mempool.h>
--
--#include "roc_api.h"
- #include "cnxk_mempool.h"
- 
- #define BATCH_ALLOC_SZ              ROC_CN10K_NPA_BATCH_ALLOC_MAX_PTRS
-@@ -79,7 +76,7 @@ batch_op_data_set(uint64_t pool_id, struct batch_op_data *op_data)
- 	batch_op_data_tbl[aura] = op_data;
- }
- 
--static int
-+int
- batch_op_init(struct rte_mempool *mp)
- {
- 	struct batch_op_data *op_data;
-@@ -109,7 +106,7 @@ batch_op_init(struct rte_mempool *mp)
- 	return 0;
- }
- 
--static void
-+void
- batch_op_fini(struct rte_mempool *mp)
- {
- 	struct batch_op_data *op_data;
-@@ -149,7 +146,7 @@ batch_op_fini(struct rte_mempool *mp)
- 	rte_wmb();
- }
- 
--static int __rte_hot
-+int __rte_hot
- cn10k_mempool_enq(struct rte_mempool *mp, void *const *obj_table,
- 		  unsigned int n)
- {
-@@ -181,7 +178,7 @@ cn10k_mempool_enq(struct rte_mempool *mp, void *const *obj_table,
- 	return 0;
- }
- 
--static unsigned int
-+unsigned int
- cn10k_mempool_get_count(const struct rte_mempool *mp)
- {
- 	struct batch_op_data *op_data;
-@@ -326,7 +323,7 @@ mempool_deq_batch_sync(struct rte_mempool *mp, void **obj_table, unsigned int n)
- 	return count;
- }
- 
--static int __rte_hot
-+int __rte_hot
- cn10k_mempool_deq(struct rte_mempool *mp, void **obj_table, unsigned int n)
- {
- 	struct batch_op_data *op_data;
-@@ -353,7 +350,7 @@ cn10k_mempool_deq(struct rte_mempool *mp, void **obj_table, unsigned int n)
- 	return 0;
- }
- 
--static int
-+int
- cn10k_mempool_alloc(struct rte_mempool *mp)
- {
- 	uint32_t block_size;
-@@ -376,7 +373,7 @@ cn10k_mempool_alloc(struct rte_mempool *mp)
- 		block_size += padding;
- 	}
- 
--	rc = cnxk_mempool_alloc(mp);
-+	rc = cnxk_mempool_alloc(mp, 0);
- 	if (rc)
- 		return rc;
- 
-@@ -392,7 +389,7 @@ cn10k_mempool_alloc(struct rte_mempool *mp)
- 	return rc;
- }
- 
--static void
-+void
- cn10k_mempool_free(struct rte_mempool *mp)
- {
- 	batch_op_fini(mp);
-diff --git a/drivers/mempool/cnxk/cn20k_mempool_ops.c b/drivers/mempool/cnxk/cn20k_mempool_ops.c
-new file mode 100644
-index 0000000000..f8817d8743
---- /dev/null
-+++ b/drivers/mempool/cnxk/cn20k_mempool_ops.c
-@@ -0,0 +1,60 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2025 Marvell.
-+ */
-+
-+#include "cnxk_mempool.h"
-+
-+static int
-+cn20k_mempool_alloc(struct rte_mempool *mp)
-+{
-+	uint32_t block_size;
-+	int halo_ena, rc;
-+	size_t padding;
-+
-+	block_size = mp->elt_size + mp->header_size + mp->trailer_size;
-+	/* Align header size to ROC_ALIGN */
-+	if (mp->header_size % ROC_ALIGN != 0) {
-+		padding = RTE_ALIGN_CEIL(mp->header_size, ROC_ALIGN) -
-+			  mp->header_size;
-+		mp->header_size += padding;
-+		block_size += padding;
-+	}
-+
-+	/* Align block size to ROC_ALIGN */
-+	if (block_size % ROC_ALIGN != 0) {
-+		padding = RTE_ALIGN_CEIL(block_size, ROC_ALIGN) - block_size;
-+		mp->trailer_size += padding;
-+		block_size += padding;
-+	}
-+
-+	/* Get halo status */
-+	halo_ena = roc_idev_npa_halo_ena_get();
-+
-+	rc = cnxk_mempool_alloc(mp, halo_ena ? ROC_NPA_HALO_F : 0);
-+	if (rc)
-+		return rc;
-+
-+	rc = batch_op_init(mp);
-+	if (rc) {
-+		plt_err("Failed to init batch alloc mem rc=%d", rc);
-+		goto error;
-+	}
-+
-+	return 0;
-+error:
-+	cnxk_mempool_free(mp);
-+	return rc;
-+}
-+
-+static struct rte_mempool_ops cn20k_mempool_ops = {
-+	.name = "cn20k_mempool_ops",
-+	.alloc = cn20k_mempool_alloc,
-+	.free = cn10k_mempool_free,
-+	.enqueue = cn10k_mempool_enq,
-+	.dequeue = cn10k_mempool_deq,
-+	.get_count = cn10k_mempool_get_count,
-+	.calc_mem_size = cnxk_mempool_calc_mem_size,
-+	.populate = cnxk_mempool_populate,
-+};
-+
-+RTE_MEMPOOL_REGISTER_OPS(cn20k_mempool_ops);
-diff --git a/drivers/mempool/cnxk/cn9k_mempool_ops.c b/drivers/mempool/cnxk/cn9k_mempool_ops.c
-index b7967f8085..8248071cb7 100644
---- a/drivers/mempool/cnxk/cn9k_mempool_ops.c
-+++ b/drivers/mempool/cnxk/cn9k_mempool_ops.c
-@@ -72,7 +72,7 @@ cn9k_mempool_alloc(struct rte_mempool *mp)
- 	padding = ((block_size / ROC_ALIGN) % 2) ? 0 : ROC_ALIGN;
- 	mp->trailer_size += padding;
- 
--	return cnxk_mempool_alloc(mp);
-+	return cnxk_mempool_alloc(mp, 0);
- }
- 
- static struct rte_mempool_ops cn9k_mempool_ops = {
-diff --git a/drivers/mempool/cnxk/cnxk_mempool.c b/drivers/mempool/cnxk/cnxk_mempool.c
-index 6ff11d8004..6939fccff4 100644
---- a/drivers/mempool/cnxk/cnxk_mempool.c
-+++ b/drivers/mempool/cnxk/cnxk_mempool.c
-@@ -18,6 +18,7 @@
- #define CNXK_NPA_DEV_NAME	 RTE_STR(cnxk_npa_dev_)
- #define CNXK_NPA_DEV_NAME_LEN	 (sizeof(CNXK_NPA_DEV_NAME) + PCI_PRI_STR_SIZE)
- #define CNXK_NPA_MAX_POOLS_PARAM "max_pools"
-+#define CNXK_NPA_HALO_ENA_PARAM	 "halo_ena"
- 
- static inline uint32_t
- npa_aura_size_to_u32(uint8_t val)
-@@ -46,30 +47,46 @@ parse_max_pools_handler(const char *key, const char *value, void *extra_args)
- 	return 0;
- }
- 
--static inline uint32_t
--parse_max_pools(struct rte_devargs *devargs)
-+static int
-+parse_halo_ena_handler(const char *key, const char *value, void *extra_args)
-+{
-+	RTE_SET_USED(key);
-+	uint8_t val;
-+
-+	val = atoi(value);
-+	if (val != 0 && val != 1)
-+		return -EINVAL;
-+
-+	*(uint8_t *)extra_args = val;
-+	return 0;
-+}
-+
-+static int
-+cnxk_mempool_plt_parse_devargs(struct rte_pci_device *pci_dev)
- {
- 	uint32_t max_pools = npa_aura_size_to_u32(NPA_AURA_SZ_128);
-+	struct rte_devargs *devargs = pci_dev->device.devargs;
- 	struct rte_kvargs *kvlist;
-+	uint32_t halo_ena = 0;
- 
- 	if (devargs == NULL)
--		goto exit;
-+		goto null_devargs;
- 	kvlist = rte_kvargs_parse(devargs->args, NULL);
- 	if (kvlist == NULL)
- 		goto exit;
- 
- 	rte_kvargs_process(kvlist, CNXK_NPA_MAX_POOLS_PARAM,
- 			   &parse_max_pools_handler, &max_pools);
-+	rte_kvargs_process(kvlist, CNXK_NPA_HALO_ENA_PARAM,
-+			   &parse_halo_ena_handler, &halo_ena);
- 	rte_kvargs_free(kvlist);
--exit:
--	return max_pools;
--}
- 
--static int
--cnxk_mempool_plt_parse_devargs(struct rte_pci_device *pci_dev)
--{
--	roc_idev_npa_maxpools_set(parse_max_pools(pci_dev->device.devargs));
-+null_devargs:
-+	roc_idev_npa_maxpools_set(max_pools);
-+	roc_idev_npa_halo_ena_set(halo_ena);
- 	return 0;
-+exit:
-+	return -EINVAL;
- }
- 
- static inline char *
-@@ -201,7 +218,8 @@ RTE_PMD_REGISTER_PCI(mempool_cnxk, npa_pci);
- RTE_PMD_REGISTER_PCI_TABLE(mempool_cnxk, npa_pci_map);
- RTE_PMD_REGISTER_KMOD_DEP(mempool_cnxk, "vfio-pci");
- RTE_PMD_REGISTER_PARAM_STRING(mempool_cnxk,
--			      CNXK_NPA_MAX_POOLS_PARAM "=<128-1048576>");
-+			      CNXK_NPA_MAX_POOLS_PARAM "=<128-1048576>"
-+			      CNXK_NPA_HALO_ENA_PARAM "=<0-1>");
- 
- RTE_INIT(cnxk_mempool_parse_devargs)
- {
-diff --git a/drivers/mempool/cnxk/cnxk_mempool.h b/drivers/mempool/cnxk/cnxk_mempool.h
-index 669e617952..941290061e 100644
---- a/drivers/mempool/cnxk/cnxk_mempool.h
-+++ b/drivers/mempool/cnxk/cnxk_mempool.h
-@@ -7,6 +7,8 @@
- 
- #include <rte_mempool.h>
- 
-+#include "roc_api.h"
-+
- enum cnxk_mempool_flags {
- 	/* This flag is used to ensure that only aura zero is allocated.
- 	 * If aura zero is not available, then mempool creation fails.
-@@ -47,7 +49,7 @@ int cnxk_mempool_populate(struct rte_mempool *mp, unsigned int max_objs,
- 			  void *vaddr, rte_iova_t iova, size_t len,
- 			  rte_mempool_populate_obj_cb_t *obj_cb,
- 			  void *obj_cb_arg);
--int cnxk_mempool_alloc(struct rte_mempool *mp);
-+int cnxk_mempool_alloc(struct rte_mempool *mp, uint64_t roc_flags);
- void cnxk_mempool_free(struct rte_mempool *mp);
- 
- int __rte_hot cnxk_mempool_enq(struct rte_mempool *mp, void *const *obj_table,
-@@ -55,6 +57,16 @@ int __rte_hot cnxk_mempool_enq(struct rte_mempool *mp, void *const *obj_table,
- int __rte_hot cnxk_mempool_deq(struct rte_mempool *mp, void **obj_table,
- 			       unsigned int n);
- 
-+int batch_op_init(struct rte_mempool *mp);
-+void batch_op_fini(struct rte_mempool *mp);
-+int __rte_hot cn10k_mempool_enq(struct rte_mempool *mp, void *const *obj_table,
-+				unsigned int n);
-+unsigned int cn10k_mempool_get_count(const struct rte_mempool *mp);
-+int __rte_hot cn10k_mempool_deq(struct rte_mempool *mp, void **obj_table,
-+				unsigned int n);
-+int cn10k_mempool_alloc(struct rte_mempool *mp);
-+void cn10k_mempool_free(struct rte_mempool *mp);
-+
- int cn10k_mempool_plt_init(void);
- 
--#endif
-+#endif /* _CNXK_MEMPOOL_H_ */
-diff --git a/drivers/mempool/cnxk/cnxk_mempool_ops.c b/drivers/mempool/cnxk/cnxk_mempool_ops.c
-index 5c7fcea487..01b6247fbb 100644
---- a/drivers/mempool/cnxk/cnxk_mempool_ops.c
-+++ b/drivers/mempool/cnxk/cnxk_mempool_ops.c
-@@ -70,9 +70,9 @@ cnxk_mempool_calc_mem_size(const struct rte_mempool *mp, uint32_t obj_num,
- }
- 
- int
--cnxk_mempool_alloc(struct rte_mempool *mp)
-+cnxk_mempool_alloc(struct rte_mempool *mp, uint64_t roc_flags)
- {
--	uint32_t block_count, flags, roc_flags = 0;
-+	uint32_t block_count, flags;
- 	uint64_t aura_handle = 0;
- 	struct npa_aura_s aura;
- 	struct npa_pool_s pool;
-@@ -98,7 +98,7 @@ cnxk_mempool_alloc(struct rte_mempool *mp)
- 
- 	flags = CNXK_MEMPOOL_FLAGS(mp);
- 	if (flags & CNXK_MEMPOOL_F_ZERO_AURA) {
--		roc_flags = ROC_NPA_ZERO_AURA_F;
-+		roc_flags |= ROC_NPA_ZERO_AURA_F;
- 	} else if (flags & CNXK_MEMPOOL_F_CUSTOM_AURA) {
- 		struct npa_aura_s *paura;
- 
-@@ -192,9 +192,12 @@ cnxk_mempool_plt_init(void)
- 
- 	if (roc_model_is_cn9k()) {
- 		rte_mbuf_set_platform_mempool_ops("cn9k_mempool_ops");
--	} else if (roc_model_is_cn10k() || roc_model_is_cn20k()) {
-+	} else if (roc_model_is_cn10k()) {
- 		rte_mbuf_set_platform_mempool_ops("cn10k_mempool_ops");
- 		rc = cn10k_mempool_plt_init();
-+	} else if (roc_model_is_cn20k()) {
-+		rte_mbuf_set_platform_mempool_ops("cn20k_mempool_ops");
-+		rc = cn10k_mempool_plt_init();
- 	}
- 	return rc;
- }
-diff --git a/drivers/mempool/cnxk/meson.build b/drivers/mempool/cnxk/meson.build
-index e388cce26a..7722264320 100644
---- a/drivers/mempool/cnxk/meson.build
-+++ b/drivers/mempool/cnxk/meson.build
-@@ -14,6 +14,7 @@ sources = files(
-         'cnxk_mempool_telemetry.c',
-         'cn9k_mempool_ops.c',
-         'cn10k_mempool_ops.c',
-+        'cn20k_mempool_ops.c',
-         'cn10k_hwpool_ops.c',
- )
- 
--- 
-2.48.1
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index f8be98efd5..683a9cc7ce 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -1228,7 +1228,7 @@ nix_inl_eng_caps_get(struct nix *nix)
+ 		do {
+ 			roc_lmt_mov_seg((void *)lmt_base, &inst, 4);
+ 			lmt_status = roc_lmt_submit_ldeor(lf->io_addr);
+-		} while (lmt_status != 0);
++		} while (lmt_status == 0);
+
+ 		/* Wait until CPT instruction completes */
+ 		do {
+--
+2.34.1
 
