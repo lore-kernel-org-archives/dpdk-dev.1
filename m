@@ -2,27 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026EFE9A03B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 22:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEB3E9A03E
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 22:03:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE39240612;
-	Tue, 17 Feb 2026 23:03:28 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EDC25402DA;
+	Tue, 17 Feb 2026 23:03:39 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 8FE3F40615
- for <dev@dpdk.org>; Tue, 17 Feb 2026 23:03:27 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 257FF402EF
+ for <dev@dpdk.org>; Tue, 17 Feb 2026 23:03:38 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 8B1FC4A65B; Tue, 17 Feb 2026 23:03:27 +0100 (CET)
+ id 217E84A65B; Tue, 17 Feb 2026 23:03:38 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/testpmd Bug 1834] [dpdk-25.11-rc2] Segmentation fault in Rx
- offload testcase
-Date: Tue, 17 Feb 2026 22:03:27 +0000
+Subject: [DPDK/core Bug 1760] Failed to send message on primary process exit
+Date: Tue, 17 Feb 2026 22:03:38 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: changed
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: testpmd
-X-Bugzilla-Version: unspecified
+X-Bugzilla-Component: core
+X-Bugzilla-Version: 25.07
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
 X-Bugzilla-Who: thomas@monjalon.net
@@ -33,9 +32,9 @@ X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: resolution bug_status
-Message-ID: <bug-1834-3-F0zHxb7CVd@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1834-3@http.bugs.dpdk.org/>
-References: <bug-1834-3@http.bugs.dpdk.org/>
+Message-ID: <bug-1760-3-7kXpecnZS2@http.bugs.dpdk.org/>
+In-Reply-To: <bug-1760-3@http.bugs.dpdk.org/>
+References: <bug-1760-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -55,17 +54,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1834
+http://bugs.dpdk.org/show_bug.cgi?id=3D1760
 
 Thomas Monjalon (thomas@monjalon.net) changed:
 
            What    |Removed                     |Added
 ----------------------------------------------------------------------------
          Resolution|---                         |FIXED
-             Status|CONFIRMED                   |RESOLVED
+             Status|UNCONFIRMED                 |RESOLVED
 
---- Comment #6 from Thomas Monjalon (thomas@monjalon.net) ---
-Resolved in http://git.dpdk.org/dpdk/commit/?id=3D9cd1dcc49e
+--- Comment #1 from Thomas Monjalon (thomas@monjalon.net) ---
+Resolved in http://git.dpdk.org/dpdk/commit/?id=3Dcefd5edce2
 
 --=20
 You are receiving this mail because:
