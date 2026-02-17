@@ -2,16 +2,16 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36C2EE909C0
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 15:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3D7E909C0
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 15:06:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 985734064F;
-	Tue, 17 Feb 2026 16:06:44 +0100 (CET)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
- [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id 4C5FE400EF
+	by mails.dpdk.org (Postfix) with ESMTP id B417F40664;
+	Tue, 17 Feb 2026 16:06:45 +0100 (CET)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com
+ [209.85.221.41]) by mails.dpdk.org (Postfix) with ESMTP id 81A794064F
  for <dev@dpdk.org>; Tue, 17 Feb 2026 16:06:43 +0100 (CET)
-Received: by mail-wr1-f47.google.com with SMTP id
- ffacd0b85a97d-43591b55727so4889809f8f.3
+Received: by mail-wr1-f41.google.com with SMTP id
+ ffacd0b85a97d-43638a33157so4183099f8f.1
  for <dev@dpdk.org>; Tue, 17 Feb 2026 07:06:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771340803;
@@ -19,52 +19,54 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=vm8a5rEoc6qQmS4kJJ2H6LpiJNYUBZ+GEdrb7CAJ8AY=;
- b=GsHY/emPXQ06KG13GaU4AYBWm+p4d5a2IJrwOjMFAuDHsrp+tDbuqw1Y4aZUj5w+zR
- igLuv5ivPFHcl8V2J1DgnVEeJVErNdnNsh4TD+Tu1GYSYeDw9lVR9iT1BMxyzdyVPRh6
- 08nq9x4HvtbjIqxjSGVv0KIcernAMHhH3qClUzA+kZQGkfZIHnRdLZGsf4kvoni9KlHk
- dOkJU1TwLIvHOAmpE5DzBWLB2ZuKYR/0tLrlXfqzVgxV+hC7JvTrB1wYkOeXtEI9Qofq
- 0Lg2/hsQwJwvqvw/IGlA7qcMqxWvAla9/9nRz7JNHVs3YILc/HecbS4BfogY+NQfDGoi
- 9qhA==
+ bh=4XtP29O9qOrPgPmy1yWNF0G1G0MJeVpJ/jGCz23inLQ=;
+ b=h0iZrK8v71qAj6RpIPJYIh4QZ6HBwAwXEcPX1A4VrBoXi3g7zoH2OhDZnzTsqUrT/H
+ wIKglbE4zJs/t2DMCrx4vQ7ZXriVHMUXB2uiY1qTykJzDiwTkWWPgwGLX8N0K1vdVxNU
+ gXeMANXyLcSDZm1Hc+blQyvKOFbwQMl2Wj/bjJu2L7K7sXVi+76ciHtyHkD4kIkbVP55
+ xlGTOwIPwufHaH+ZnqKWRbNxBCc3i3c0bjg0RMHa3A56n+M17sLuQ4tGb8zbFFy7EDzf
+ i9N/DyH9Woe19DIFB50+jeOf11PGbq7lBXYyxm6Q0lTo5ON7ii+ts3BxDte6Kq94uhAr
+ 23mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20230601; t=1771340803; x=1771945603;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=vm8a5rEoc6qQmS4kJJ2H6LpiJNYUBZ+GEdrb7CAJ8AY=;
- b=vEjRoCSjEIFeKmz5jzOFPIOTkBoZglJT2FM9KVXtghJpGHEIutFoGk7CknsAG/W91u
- IEbDD766yVV62XDnYTdp8gYKiPqE7wJsSeJEQn+eNyebcBuS5LtfMjubOYu+HRd3xEuM
- mQ4ttpMaY7iXL3Zu6fjNQmBGi5UGffKo5CkJH77yNzCvJLBT/2cxdIBpJga060J4eLqZ
- Vl8N3d7NQiNY5ZT16d4wdATWU3ZcKCKubG8wTxVSLkx5vXdHIWwIZ2xpIr4UmfPnTBVg
- KYpSn6SAf4uX0DBY4/rIzUtEWkJAewyYzwDfogYNqXpimoVBDoHmyjJ90qx9klwrV/0T
- iuLw==
-X-Gm-Message-State: AOJu0Yz/jWgBeC6UWQr7vPDmLmSSii1vla/uHT/RSw8nYZSmoSckurAz
- we7HZfQW3IxnEp5pquLkoqnPzC3FMkSEQI3x3+Q1EXd/HGBzP0S/vtpl05OquXWMTfPzlzlme16
- KDoe2
-X-Gm-Gg: AZuq6aIS+oOK7mTDbFPpwlV0sgZOLgL+7iG+sDJJlgSesA/p+3AWCWEFAQ9LNSHIe4C
- KEdJ0BtifGTtEDvYTqo0PgzUFIcSO06IfI2O8dlbg9qfOwwBxVbIkP1NX3CWofotBjMatYw3K/f
- O9ltkGIXJTq1+7v55VzagntBba3xOzSqNOuTVvKY+FQH2sgbH1OlpHLdXAOgPtjrethSk0Qhk/s
- 9NhON1nL0pq/glPEi1VTHAUeePRPBVtOSVN/ak6WCE3VugwQdb3AjTjesfgN0yN9tpoOaxnkY0v
- B+gcrUS+XsdNgTqFieWKB6qGmFWo7lSLpSbteYSNot7KNvPxmU1gk/CfeNvV9xGYKxuroDx4g6Z
- 7tCpqUVefk6tIwza5SmxO7gmqlXb6yy29i8p9X/rZVVN7UhFqZkzLlGbekW0aKklSzEineV8pzc
- x4k6kRbTwW9IPeLsWrsc5W9pvZIYW85gdII/YwQVurzpw25OT42I2013dRtR6vnQ==
-X-Received: by 2002:a05:6000:26d0:b0:430:f494:6a9c with SMTP id
- ffacd0b85a97d-4379db619abmr23019875f8f.17.1771340801154; 
- Tue, 17 Feb 2026 07:06:41 -0800 (PST)
+ bh=4XtP29O9qOrPgPmy1yWNF0G1G0MJeVpJ/jGCz23inLQ=;
+ b=XpuLuwO4HVR00sJhlBAtv/M45uSLa3XRxA9qw7JK0o+ShjG1Fg8tNla5YmDD2h7bnG
+ iFUQLzC5W4NMfYQtsSYnbXDgfycGPErZXnrOeI/db0FO71nW+uiDnhPz8kJYpPevpRfN
+ rNXUnVim/tR8lQY/Lg/fdzsPgoUMbNTm7cam84iZlTuQmXo2AyFCZE74ihbvQY5G/1m+
+ 3QgHmFFdM70fcF4Ahr+8w8MGDznGkoZ52vqpEk8J1J0HzadAdrYoT3TZbkqfqEbggWBQ
+ vYodSOqN6509SOuGErILHhqbg61ZN/02QmXg1MuY/W7gFsFd5X5CooOm2znPFh2xkvN3
+ YCww==
+X-Gm-Message-State: AOJu0YzeCySw5jLjw5ap+QhjElS0u24E3YSSh5uqTnuH8lX0Ltf3iTzB
+ FG9SQcyvM+80C0uyij94c+XRaejpb342rnTLpcp1iwUmVTEbOBrKYuhJtgmA9OZr4Y+qM66EmzL
+ ZsA7s
+X-Gm-Gg: AZuq6aItp19DYqIXyALgOdj7UNJDxm+dh/pkJ+xN2vM0BqkUEnZxjNXPQ8tJq8lTHor
+ mOgB86NrSzyNHW3yIsA4XArs5cL0jgTlSUdTiAndn83hx8rQVvNc2kli8iV5CtsybdXEpEa7Y6p
+ p6BQKuU9al6A80/33+LioJSHUEyszIukuy0tXClJc45KQh8BC9gxDV2a4rPGSNgGd3D48eYoJGg
+ wfNJj1eIXvGGP9OPUP9WNqsuJP4itI2mxcieSOQum68hHAjnXBe9uzqHRKOHRwrlvYHXI32Z42u
+ V31tfpaY3SWlWOoX/zqNhnK8+/4u1PIXYhx4NidsNEdk8knwpqxAy5h53H7R1Aa0fwWHfMaYG4X
+ ceKc44BNmKaWJUkbYmV+ibtDszItIlRATldVS8yWndyWs8PJNn/Tf7OOw0u4KLcNOW0nyf8C4Ap
+ xDOpxP9HPBdlsV8vJUEQtapfGjqr8NXCih99rjvisYIak2a4CM5N1KVb8wzA8sNw==
+X-Received: by 2002:a5d:588d:0:b0:430:f68f:ee96 with SMTP id
+ ffacd0b85a97d-4379791c186mr23496702f8f.36.1771340802956; 
+ Tue, 17 Feb 2026 07:06:42 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43796a6ba57sm28492012f8f.15.2026.02.17.07.06.39
+ ffacd0b85a97d-43796a6ba57sm28492012f8f.15.2026.02.17.07.06.41
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 17 Feb 2026 07:06:40 -0800 (PST)
+ Tue, 17 Feb 2026 07:06:42 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [RFT 0/4] net/mlx5: fix several correctness bugs
-Date: Tue, 17 Feb 2026 07:04:58 -0800
-Message-ID: <20260217150635.134031-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+	stable@dpdk.org
+Subject: [RFT 1/4] net/mlx5: fix NULL dereference in Tx queue start
+Date: Tue, 17 Feb 2026 07:04:59 -0800
+Message-ID: <20260217150635.134031-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260215195348.557945-1-stephen@networkplumber.org>
+In-Reply-To: <20260217150635.134031-1-stephen@networkplumber.org>
 References: <20260215195348.557945-1-stephen@networkplumber.org>
+ <20260217150635.134031-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,37 +82,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Found these during a code review of the mlx5 driver.  I don't have
-ConnectX hardware to test, so sending as RFC for maintainers to
-verify and test.
+mlx5_txq_get() can return NULL for an unconfigured queue index,
+but the result is dereferenced to initialise txq_data before the
+NULL check on the following line.  Move the txq_data assignment
+after the NULL guard.
 
-Summary:
+Fixes: 6f356d3840e6 ("net/mlx5: pass DevX object info in Tx queue start")
+Cc: stable@dpdk.org
 
-  1/4  NULL pointer dereference in mlx5_txq_start() - txq_ctrl is
-       dereferenced before the NULL check one line later.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/mlx5/mlx5_trigger.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-  2/4  DevX queue counter leak in hairpin counter setup - the
-       counter object is not freed when the subsequent modify call
-       fails.
-
-  3/4  Use-after-free in ASO age and CT management init - on queue
-       init failure the management structure is freed but the
-       pointer is not NULLed, so a retry dereferences freed memory.
-
-  4/4  64-bit counter truncation - uint64_t* cast to uint32_t*
-       leaves the upper 32 bits uninitialised, producing wrong
-       hairpin queue statistics.
-
-Stephen Hemminger (4):
-  net/mlx5: fix NULL dereference in Tx queue start
-  net/mlx5: fix counter leak in hairpin queue setup
-  net/mlx5: fix use-after-free in ASO management init
-  net/mlx5: fix counter truncation in queue counter read
-
- drivers/net/mlx5/mlx5.c         | 13 ++++++++++++-
- drivers/net/mlx5/mlx5_trigger.c |  3 ++-
- 2 files changed, 14 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
+index f155b1a7a0..a070aaecfd 100644
+--- a/drivers/net/mlx5/mlx5_trigger.c
++++ b/drivers/net/mlx5/mlx5_trigger.c
+@@ -59,10 +59,11 @@ mlx5_txq_start(struct rte_eth_dev *dev)
+ 	for (cnt = log_max_wqe; cnt > 0; cnt -= 1) {
+ 		for (i = 0; i != priv->txqs_n; ++i) {
+ 			struct mlx5_txq_ctrl *txq_ctrl = mlx5_txq_get(dev, i);
+-			struct mlx5_txq_data *txq_data = &txq_ctrl->txq;
++			struct mlx5_txq_data *txq_data;
+ 
+ 			if (!txq_ctrl)
+ 				continue;
++			txq_data = &txq_ctrl->txq;
+ 			if (txq_data->elts_n != cnt) {
+ 				mlx5_txq_release(dev, i);
+ 				continue;
 -- 
 2.51.0
 
