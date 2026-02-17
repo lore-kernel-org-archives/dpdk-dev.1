@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3437FE83848
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 00:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261A8E83848
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Feb 2026 01:29:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 011134029D;
-	Tue, 17 Feb 2026 01:27:51 +0100 (CET)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
- [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id 6F4BA4029D
- for <dev@dpdk.org>; Tue, 17 Feb 2026 01:27:49 +0100 (CET)
-Received: by mail-wr1-f42.google.com with SMTP id
- ffacd0b85a97d-4362197d174so2465139f8f.3
- for <dev@dpdk.org>; Mon, 16 Feb 2026 16:27:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DD1DA402A7;
+	Tue, 17 Feb 2026 02:28:59 +0100 (CET)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 725884029D
+ for <dev@dpdk.org>; Tue, 17 Feb 2026 02:28:58 +0100 (CET)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-4836f363ad2so41634115e9.1
+ for <dev@dpdk.org>; Mon, 16 Feb 2026 17:28:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771288069;
- x=1771892869; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771291738;
+ x=1771896538; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=wxM5GlQetvx3unTpyVRat9s69PpXE4bgmwzLsnL3bZ0=;
- b=YNjtcUUyX4iW4YGSUA9IJSZBczU2r5quXDNRTDaEu1Qwz7ocYmpiOinryfYawU2cKM
- pj55H9UKtY8eSAnVWbTTARg48JJCNP4iK4FZlvOCoaOFVwMTOmTXclAymGdeIcycdRJc
- NriuCXqd7I/tnhBdQla/IH13jTyCRxZb5g/AWhsSPv5t4yQpx2Q7oLxMvMV5tbnZd55Z
- RzYhY5jabfwil8prevZiGSTL/dpCMmqpuHg4tWCXjEN+InFBqnSaBP7GPxe6XgDqyUmS
- Eu1tSjLStJLnT+7qhZI1cxSFL5qjMOMjytnXSShYiyPNzphStqzBSfScMporStlyRzBe
- 143g==
+ :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+ :reply-to; bh=b4hWHkUEuIkNIvUJBhS433D2pcT2GVuLgIBvStEaU3A=;
+ b=dE2zbNEbmfkuvZg1giETaHRFEld6CSzaWKinvuVKJpatYwpurCTHvzV6UsjEvP0TNt
+ +bcnBCHG+mEVnjiJSa+h4by5qy1wpZ2+o43SVX327XRF2zN9SyLmL2tCS+lb2BvYe3XZ
+ L+cwQb/PJ6lTb8Dbcp0e0RAb8kk6Z5JQWMIN7gaoIQr10qqW+MSd7ArCI6Gd14uVcDA2
+ cmQCIB3esRgRFCSIKTe/pJ4/JNXAMw+Y5bgZwEJcGcl5QSYbLkdOQiC9eL4PpcROuqsx
+ EeCq0WqcKA9CDex1TSyHylOdSKpXZ1yGMV74CVbrvDBaPhP2nvp6jI8ZFR9tlL4mhUTF
+ TbiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771288069; x=1771892869;
+ d=1e100.net; s=20230601; t=1771291738; x=1771896538;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=wxM5GlQetvx3unTpyVRat9s69PpXE4bgmwzLsnL3bZ0=;
- b=qvm1FAsRt8zQ3OJ7jb0o/DGa+K67qGFMwOQSkL1rlc8NtwjciFG85dxOQUlb+jmPwS
- YwanXtAIX9UZF6eubGReBv1VdM7bReD8yAqnEVSUq9HX/6p8Y7j2LF3s+pAg/ZmZEqqA
- VHZBJabRWrwchdQnj4B7UqFnvRfI5IAb2Q8H8LX/dJWu6zb4JspVbz8GoUbZkE3mGjkC
- XHAlAormuaXi2MMsGPcytPTY9XHbZ2/K09kfxN0o+hnAc8QI+CcNxesiUeMt7oKeGR1y
- T5AP0Xzfd5cfYdSquzIsyhQB2ESsiFq2z+zaQlR9qz64ZfF2OpRcEJLLlerDZQ8qxj4V
- y5rg==
-X-Gm-Message-State: AOJu0YwsLcKMR6LzmJ1TMAqEC8aaF2C/d2ChYV4nIhgv3v9M6uTCAGHa
- FYCIEHWILkDjX9p1FmX50HWBaB7x13WXQR7cnDh4r2IQSxXt2SfZE8cOYzeRcHZ7ims=
-X-Gm-Gg: AZuq6aJYnOu9TA1vJrxxaDVXbogBjc0FDTi4dQOO7EBhPcL1enBMcY47d51MWV/4YnL
- RUQ2gqN4T0IaXEWBJ93ZQbFkiO+HmrOMrFzmE/WwngtTgE6+tjESD79/+qd3L3B4HFTTWhnwhnL
- LvUVBNZHzkSWDX2afrEcsuONUHPX52luHbkNaQhrBrQBRXYrPB2ct8Z5k/sLezFCJyu8YRmTQNB
- XMbUDY/Y3ZO9OFJh1v8b9QcJbNZjxgV/PZzjrMAEz08hp+tmanCTQchYCi+SFCwwDqCwn9120RK
- uIXlrGU4OYqFT7fFnFXVpjIhgkWe6B1j1MFtmofrCLG18cNsayZO6NPs3c1b2abWM5UUv8Pi+f1
- 6vxdReT0nKqzZ0PUS74VZeqTEodTZ2a3apOZyPb9nLEXkUzpWYuEF40mOrQm6l1jzqFX/oju5U0
- 9PVoQ6VKpjs1i57ECK2qgKXz88mcgt6MID/mpUbsaVc8+1g0BdlQJzj06+q1+lwbQJ
-X-Received: by 2002:adf:ce90:0:b0:437:7088:4150 with SMTP id
- ffacd0b85a97d-437978c0a14mr17892068f8f.10.1771288068786; 
- Mon, 16 Feb 2026 16:27:48 -0800 (PST)
+ :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=b4hWHkUEuIkNIvUJBhS433D2pcT2GVuLgIBvStEaU3A=;
+ b=t7SsDJ3B9DItGLvWlzng72pjqycMx0DN97AsgImH3Ea7IRqfRRCWOeKjxy0Js8n0NY
+ gYRHDaDobXDgUfGSmNs4Rx7CJDQ1wJktGGGrqeJh7VsobCuiUEC37ECV3WqVHdkqnb+a
+ j+am2JfxFyhh2ZmWhIlL1Ndog+wicKEpvssa9sVt1N2UB1ChD5rIUbPXk1AXlnOVy2le
+ AsjBPocXbKas7tbsE12UeCzSt7KL689Xcdva56SRZcyqogsDMZ2BGrLEViyj+h7kstZa
+ Cu2GgE+hxPvtvobIFaRaaDHsSXSPNG3fSWcayVnkFknVbIwtfR7e4SY3A7fRXOghYeYH
+ nKQg==
+X-Gm-Message-State: AOJu0YxLWKURsvHJG6Ii+YYg9ilzbNyUtnpDzSQuK8ZLEg5cPgJV3CTn
+ yk8NGB7PXazmY8wZuMQB2pWDVcmRwr0E3oR7/WBona97svcluYXn59fMRnQz0eRWqwqb8HM7g8V
+ WSHjl3zU=
+X-Gm-Gg: AZuq6aKSoJ06Ba1SOu/8ehHN7qp19WPZoh85Z+64YJwtPdoMIGf7JrmjjfPgUsWUUdu
+ CnQyfVkvYqHSkWyDmuknO+PHCgC2NWilK+ihRHk6AbFW3l2CToMDyqg0R+7RHGsKhtcHfM3Rz8R
+ iWalhk3KSKGl8ARSHCM4TBoSrxRV8cESS/Izz8zQELltl2WL87cW+fga5Mjq5ObiyfhP01IY+vI
+ 4jWXpaBVsSs65qG1/L8x7aY1kGJaruuYs5R/XhoH5JI332pGBvFv3y7YwdtEyEuqT2TZiHk8mor
+ cA6CRErQHVs4XRFcgz0LVgQ7TeqPjUTKPAe8slpzh6F5qtsTZ+J5dOvgNwa9gsbje6haik/8dJi
+ RzlrmNjJwjtZE1nJUtezNICvMuBcEPKY5r8Kz/PjI5W59wL5l/0N+176ejlxfhVTLm0TufkJP+h
+ EeS4FHond/3WmxwYNnn+zHFWrXf94zNEiFfPiNbEtE9WqUlCGgZ0CCxf1QC86ni0o4blSSR2iJq
+ DU=
+X-Received: by 2002:a05:600c:1f91:b0:47d:4047:f377 with SMTP id
+ 5b1f17b1804b1-48373a69e47mr183141125e9.36.1771291737757; 
+ Mon, 16 Feb 2026 17:28:57 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43796a74704sm32449749f8f.16.2026.02.16.16.27.46
+ 5b1f17b1804b1-4834d5ebd1bsm539511615e9.6.2026.02.16.17.28.56
+ for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Feb 2026 16:27:47 -0800 (PST)
-Date: Mon, 16 Feb 2026 16:27:41 -0800
+ Mon, 16 Feb 2026 17:28:57 -0800 (PST)
+Date: Mon, 16 Feb 2026 17:28:51 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-Cc: <dev@dpdk.org>, <Selwin.Sebastian@amd.com>
-Subject: Re: [PATCH 1/3] net/axgbe: Add external PHY read/write functions
-Message-ID: <20260216162741.7f9df17c@phoenix.local>
-In-Reply-To: <20260216125205.1032-1-ashokkumar.natarajan@amd.com>
-References: <20260216125205.1032-1-ashokkumar.natarajan@amd.com>
+To: dev@dpdk.org
+Subject: Re: [PATCH v2 11/11] net/tap: track device by ifindex instead of name
+Message-ID: <20260216172851.742aef30@phoenix.local>
+In-Reply-To: <20260216230437.847578-12-stephen@networkplumber.org>
+References: <20260215195348.557945-1-stephen@networkplumber.org>
+ <20260216230437.847578-1-stephen@networkplumber.org>
+ <20260216230437.847578-12-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,67 +82,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 16 Feb 2026 18:22:03 +0530
-Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com> wrote:
+On Mon, 16 Feb 2026 15:02:35 -0800
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> Introduce helper functions to perform external PHY register read and
-> write operations. These helpers currently support only IEEE Clause 22
-> PHY access, providing a simple and consistent API for accessing
-> standard 16=E2=80=91bit MII registers on external PHY devices.
->=20
-> This patch does not implement Clause 45 transactions; support for C45
-> access can be added in future updates as needed.
->=20
-> No functional changes are introduced for existing drivers. The new
-> helpers will be used by subsequent patches that require external PHY
-> management.
->=20
-> Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
+> Remove name and remote_iface strings from pmd_internals.
+> The interface name can change at any time due to udev or admin
+> action, making cached names unreliable.
+> 
+> Resolve ifindex once at creation via TUNGETIFF on the keep-alive
+> fd. For per-queue opens, recover the name on demand with
+> if_indextoname(). In tap_netns_change(), use TUNGETIFF to get
+> the current kernel name before resolving the new ifindex,
+> fixing a bug where a rename during namespace move would lose
+> the device.
+> 
+> Log messages now use dev->device->name (DPDK vdev name) or
+> the ifindex, following the pattern established by the rtap PMD.
+> 
+> Bugzilla ID: 1880
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 > ---
 
-The result of AI review feedback reports some issues that need resolution.
-All AI feedback can be wrong, so use this is inspiration.
-
-Correctness issues (must fix):
-
-1. axgbe_get_phy_id() uses the return value of read() directly in
-bit-shift arithmetic without checking for errors. If either MDIO read
-fails (returns negative), the resulting PHY ID is garbage and could
-accidentally match M88E1512_E_PHY_ID, triggering the wrong init
-sequence. Please add error checks after each read.
-
-2. axgbe_phy_an_config() silently drops the return value of
-axgbe_m88e1512_config_aneg(). That function can fail at multiple points
-but the caller always returns 0. Should be: return
-axgbe_m88e1512_config_aneg(pdata);
-
-3. axgbe_m88e1512_init() switches PHY pages multiple times but never
-restores page 0 on error paths. If a write fails while on page 0xFF or
-0x12, all subsequent MDIO accesses from other code paths will hit the
-wrong registers. Add an error cleanup label that restores page 0.
-
-4. The read/write helpers (patch 1) don't check the return value of the
-underlying read_ext_mii_regs_c22/write_ext_mii_regs_c22 calls. Errors
-from the hardware layer pass through silently.
-
-Other items:
-
-5. Function name typo: axgbe_m88e5112_set_page should be axgbe_m88e1512_set=
-_page to match the actual PHY model.
-
-6. All three subject lines use uppercase "Add" after the colon =E2=80=94 sh=
-ould be lowercase per DPDK convention.
-
-7. Missing space: if(ret) should be if (ret) in the init caller in patch 2.
-
-8. The init function blocks for 2 seconds total (two rte_delay_ms(1000) cal=
-ls). Is polling for reset completion feasible instead?
-
-9. Missing release notes for external PHY support and 100M speed =E2=80=94 =
-these are user-visible features.
-
-10. Various magic numbers (0x8001, 0x1177, 0xC00D) written to registers wit=
-hout defines or comments referencing the datasheet.
-
-Please fix at least items 1-4 and resubmit.
-
+This patch is not ready and needs to be dropped
