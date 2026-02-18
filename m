@@ -2,76 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FAAE9A02C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 17:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44318E9A02C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 17:07:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB07D40269;
-	Wed, 18 Feb 2026 18:01:29 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id ABC5E4014F
- for <dev@dpdk.org>; Wed, 18 Feb 2026 18:01:28 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1771434088;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=ok03nz9AU8HCByybyZuJ4iNGK8idYF2gRpAEWx7MSgw=;
- b=OeHS7HdoMf4Tjmd10tEJIE0k09ZAcEQlnaj4m7PGw5CAu2/uTUWTpirStCwemSLarZeHCQ
- Onj4lUAgxwqYtJH74b8X7kkeAv7BHv/SEBLF0FrDOMDzAko4kKw9Kie2W1UdapkCMs6IgW
- ZFyob6usTFtyciX5plZIQPhxIV3cmec=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-516-K9kgg3y1MiehAtClWd_KaA-1; Wed, 18 Feb 2026 12:01:26 -0500
-X-MC-Unique: K9kgg3y1MiehAtClWd_KaA-1
-X-Mimecast-MFC-AGG-ID: K9kgg3y1MiehAtClWd_KaA_1771434085
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-59f7319ff3fso57042e87.3
- for <dev@dpdk.org>; Wed, 18 Feb 2026 09:01:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771434085; x=1772038885;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+	by mails.dpdk.org (Postfix) with ESMTP id 3207140269;
+	Wed, 18 Feb 2026 18:07:14 +0100 (CET)
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com
+ [209.85.160.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 4177E4014F
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 18:07:13 +0100 (CET)
+Received: by mail-qt1-f169.google.com with SMTP id
+ d75a77b69052e-506aa68065eso48271181cf.1
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 09:07:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771434432;
+ x=1772039232; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ok03nz9AU8HCByybyZuJ4iNGK8idYF2gRpAEWx7MSgw=;
- b=MQNvMIrywj3oXRtuW7aDPk04KxmjzToCpdScMOmdIfBTaUyks8aZO5EODcmZ8tILkC
- sSfwCYZeYPxdIxs28VlR+DfVMqw1fTm2kY3YnBjl+G8aVvn5m5AoPoy/VXdaO1U3Ae2b
- NscmE5gpKp1Y+6YK061tqVKJes0ZnTqQdGOhOpI/9kHv0wWPx/bwFXhwJCgbaBRECAZI
- hVtcUJQRQNLL6x0ohcYxf9qGq6IbPNbNhPhxvPRLaXUrUYXNdStQPEYDWn7v30IiXqIF
- LJXNWRwtJS2NOJwOGz4TnVHka5pyq/Fn+xTXqZ9EvpsJeN8G9YOrjaia5rRBcriilRKG
- z8Cg==
+ bh=Oql+FLOz0FhNRXwDOvq5K1bTNWPh0bJ1/xLWBaPvES0=;
+ b=sFRSo+yQCuSL0aFYPfkbfYcK/3mp7oFPg9wCqlwq0tF5hc+6jvIJCy6YrNZ1D+Bp1S
+ WCLQfTsB3HQ69JWsIp5rtRcN7iw5T1ioSiSg5PBw7uwfGsoUr3i6/nfyO9d7NyA95V+9
+ wfpC22UvgfxCFrmaAD9qdqyZodN2nGsxpxvRUAuO9W72G8Si7PhxpHG8fVXd4SholkIT
+ ReJh06OWg3ng0R1Xs1cACYww2wsDMuvkrAfHNz5fruItelTP5NE/xpF0nWDrSlG4TPA0
+ xgPr9+MBOMUmwRi9pjk7264GCqYNrvXobnO1bMSjWlSdn9GlLbMu6RDA8u7+Z5d5W7G/
+ ssUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771434432; x=1772039232;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Oql+FLOz0FhNRXwDOvq5K1bTNWPh0bJ1/xLWBaPvES0=;
+ b=MmaFaC4r0NMn5q9t1K7mQYcSpOg+554slSfNes2b7SJd1tdNcuV+1w5cpTnqGoj42y
+ V/LrMx7NELBwUbhyL2/Cc+QbPbG1v0pHHh7bdRxzCE437ZTcz3mMkTZ2in+eSrtZbd4v
+ np0Uh5eB/hxdr7tdN5+1p6DuRhe0QOLf14XPnJhd7IMphgqWoDppSxNZntdovavNugDf
+ 8J+jL5mZfrAYgJPsesgai8WCfhBZIOHk0V8PMt3S2jUfDLAsQ6WNh0JRaky2DGRBN7h9
+ t74vZFku7DIEeRtPzysW2vhgm51knt8VCPQCjBJmxPx1+tZ11wDeTU0PlCLKEYt4LDMc
+ 1tew==
 X-Forwarded-Encrypted: i=1;
- AJvYcCV/OylVE3M1Qzu52zEgm3XZigxR1biJGYWCFXOUzuHebrKQERMapXw8Ke5gzf9pt62HJOM=@dpdk.org
-X-Gm-Message-State: AOJu0YxvjQhDAAWzR+qhhn7hOnXsbdN/tjarq4vTNh7VEnjgwdQqiiPX
- 7MMntNXly+P6VGJBU9CUtEkWGiVTPPSwgSNK25Z6CAklhMdb0Nmj8suHTdoA/RcB5JJOxKLFMLx
- qwETw8GlP4N7wnifUBluEJLv0hZ/IhzMuoj2IrXiQm6qaOMMjo1tGGRoHbT+GSO+7QKkDVhdCU6
- FQl5MopgQt1U8EomaDUAc=
-X-Gm-Gg: AZuq6aLv+1GlqNjY7af3nzWUT055jwzZ+cZ0yR+f3i/GFlLHyBswU1nngp/0URNTOn7
- VTVhyTe2I4cMQe8UKdWQw44j7H7UQhjveePzJekXMb/5NQ2b7nFiOq9cFiDSYXuwGnyFYX0paXD
- yB4ttv/3Qpp8xxsabW2xnydlefTsoNErPuYHOQSmSE+lre0jH9564QWuFaGPokC9rueETeJszQt
- A72/HMsldhgGESU/1IWzVGOJwfJIPm7rlY5hdSOnB3Qv5sYI5vCswrHxAs6olCVsGt0Aw==
-X-Received: by 2002:a05:6512:acb:b0:59f:851d:fc29 with SMTP id
- 2adb3069b0e04-59f8974aad0mr18080e87.2.1771434084215; 
- Wed, 18 Feb 2026 09:01:24 -0800 (PST)
-X-Received: by 2002:a05:6512:acb:b0:59f:851d:fc29 with SMTP id
- 2adb3069b0e04-59f8974aad0mr18069e87.2.1771434083508; Wed, 18 Feb 2026
- 09:01:23 -0800 (PST)
-MIME-Version: 1.0
-References: <20260218160453.142311-1-maxime@leroys.fr>
- <20260218160453.142311-12-maxime@leroys.fr>
-In-Reply-To: <20260218160453.142311-12-maxime@leroys.fr>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 18 Feb 2026 18:01:12 +0100
-X-Gm-Features: AaiRm50xUKItWz1dNypjOO7xi0QPwORmPcHJD9Ix370w1gtbykQ71EVMOXl8Fp8
-Message-ID: <CAJFAV8yNUdZRfxcHG3uGtS=7hW32JOxwyseetC7J6gBnMYB0vg@mail.gmail.com>
-Subject: Re: [PATCH 11/11] bus/fslmc: remove dead blocklist check in plug path
+ AJvYcCXEa4WBu6i9hO+rS2zy6hgnORTuJYVaGH1KRAWz1Y7jinT8svBye8TxCNNDVQtku1SYbZ0=@dpdk.org
+X-Gm-Message-State: AOJu0Yyg/lzUY3wusM19qFQrqItAX7H1jt17NOoImZ5qPqc7UMwWHYjE
+ mOVY9UTIJLnkfuFRFkqbpRiQkPI1eOn6xu3wFZ0FKU7eSR0WYspw0Lq90g0eDyf63A0CofsF9eA
+ E/dB5
+X-Gm-Gg: AZuq6aJMfW4XDeubW9d/GaYgxMfOaccC6eOxT+HYG+NFynHUe01dVphYjRNCOsgE/Tw
+ v9GjgI8pbDX9lgjEID9yTzzZ6sI9GmFd/9tHUqWZtJOC78o5yVruFne5JdGCrwNcN9O7OMCrbCd
+ mgFVR1wmEgRlbbmoZ+ArDgBOd8/lm7A8AS3Y9TF26/ULyQLlAMOJvKQpVV3EeDH6jjtWTJvW4Oo
+ g+4Z1nl4qEuLxRRckVZMiLiRFDciqLjxQgOirqE68j92ZfMAJVZ1O/4zy/71SMWTuZNyRaevX/S
+ yYmwwnH8GfZEnfVUGmbomvWaH7I8vsxmd+Z5c6fSh7EAyDR0uATzzlLWbYiaMCdnsCghvxqHgn0
+ +FoWCSzGgvorodjdyixmxQwEklP8WP1VvEY2Mc0FmY6GHgP2SiGpfNfx24B0n3Hp+eakwGREBnC
+ cb5uVuuynFKAdmnpLJQrDlg0d/f4OVT3VoeXHsm0EXCT3yuTYK8aUo0fqOzkHTm7/W
+X-Received: by 2002:a05:622a:3cc:b0:4ed:680e:29d2 with SMTP id
+ d75a77b69052e-506e921684fmr28165841cf.44.1771434432230; 
+ Wed, 18 Feb 2026 09:07:12 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-506a9bfab83sm129534731cf.10.2026.02.18.09.07.11
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 18 Feb 2026 09:07:11 -0800 (PST)
+Date: Wed, 18 Feb 2026 09:07:08 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: Maxime Leroy <maxime@leroys.fr>
 Cc: hemant.agrawal@nxp.com, dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: R-a9LqWIJIm5qSmjEzsmvflR30qzofUw8TWMyjag4Wc_1771434085
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 00/11] net/dpaa2: fixes and improvements
+Message-ID: <20260218090708.2168dd07@phoenix.local>
+In-Reply-To: <20260218160453.142311-1-maxime@leroys.fr>
+References: <20260218160453.142311-1-maxime@leroys.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,29 +83,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 18 Feb 2026 at 17:06, Maxime Leroy <maxime@leroys.fr> wrote:
->
-> The plug callback is only reached via rte_dev_probe() which adds the
-> device to the EAL devargs list with RTE_DEV_ALLOWED policy. There is
-> no way to reach fslmc_bus_plug() with a blocked device, making the
-> blocklist check dead code.
->
-> Remove it.
->
-> Fixes: b5721f271cbf ("bus/fslmc: support DPNI hotplug")
-> Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+On Wed, 18 Feb 2026 17:04:42 +0100
+Maxime Leroy <maxime@leroys.fr> wrote:
 
-Checking for RTE_DEV_BLOCKED does not seem needed as the scanning part
-will affect this bus device list first.
-The strange thing is that it is probably consistent with other buses...
+> Various fixes and improvements for the dpaa2 net driver and fslmc bus.
+> 
+> Patches 1-2, 4-5 fix resource leaks on port close and in error paths.
+> 
+> Patch 3 fixes a misleading Rx descriptor limit warning.
+> 
+> Patches 6-7 replace getenv-based configuration with proper devargs
+> for taildrop and data stashing options. There are still 8 remaining getenv
+> calls in the driver that should be converted to devargs.
+> Note: the taildrop disable path has never been reachable until now
+> and is untested. NXP maintainers should validate this feature.
+> 
+> Patch 8 fixes link status not updating after port stop/start when
+> link state change interrupts are enabled.
+> Patch 9 is a minor cleanup in the same area.
+> 
+> Patches 10-11 fix devargs propagation on DPNI hotplug.
 
-The scan/probe code would need some cleanup / consolidation on the EAL
-side, but that's a separate topic.
-
-Overall, this change does not seem wrong, my only concern is
-disaligning with other buses.
-
-
--- 
-David Marchand
-
+Looks good, shouldn't the patches with Fixes: tag be marked
+as Cc: stable@dpdk.org for backport?
