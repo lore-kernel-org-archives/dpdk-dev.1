@@ -2,75 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA6EE9A03B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 08:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF2FEE9A03E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 09:05:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 29BEB40299;
-	Wed, 18 Feb 2026 09:52:44 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 53E4E4014F
- for <dev@dpdk.org>; Wed, 18 Feb 2026 09:52:43 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1771404762;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=EvzTOD/V2Ntd5ijyn3/0ZaK2+sverQ0ucbfTbghz0tE=;
- b=e0/4cpZrMB80ivHDZVC7ZYUUug7vppmQG60llVW+jgn9tnCZd/ufOfkh3L6cop9ptK5uV7
- CnwUNJE76JdQxYmU+qXsUkMCmmII3QarVvZr5D1Da/ulJy2GAfKVVW1CNQj5aqdCpPpI3X
- lABqTkRpfB70qu+QMXIV+fKR8WyaB68=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-94-JNz3udvxPV2JsftIWZG03g-1; Wed, 18 Feb 2026 03:52:41 -0500
-X-MC-Unique: JNz3udvxPV2JsftIWZG03g-1
-X-Mimecast-MFC-AGG-ID: JNz3udvxPV2JsftIWZG03g_1771404760
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-385d4c511e4so27585611fa.1
- for <dev@dpdk.org>; Wed, 18 Feb 2026 00:52:41 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771404760; x=1772009560;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+	by mails.dpdk.org (Postfix) with ESMTP id BA32D40299;
+	Wed, 18 Feb 2026 10:05:51 +0100 (CET)
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
+ [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id BAC964014F
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 10:05:49 +0100 (CET)
+Received: by mail-dy1-f170.google.com with SMTP id
+ 5a478bee46e88-2b785801c93so56966eec.0
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 01:05:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1771405548; x=1772010348; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EvzTOD/V2Ntd5ijyn3/0ZaK2+sverQ0ucbfTbghz0tE=;
- b=n/IymHbrLmkaQ29ATaHrPKdwczznQA88ROvcCwiizkWYYH4FD+We9rfESTQ1col9l2
- fIUUc+DhOUxyxnGSRbbqm843C1+xyr2uazEpeyBNZALhoSzbqMh2vt9NtYSI1gXNNgSN
- l3+pONaz1KzWSdMaFjOGz78AOMBY+cBImy/9r/EkvEAXqB2e+zPVt2MQ550S/WrFbLMd
- pIPH2FaqqBNWYwWqtVB0AA9xoiaRC97L1yIQfsC6zqo9L1VYbTqg7Y8ky13w6qBX0SgW
- 2Z6kUoXMonuGcYTkgQ/BVhNcYyhH7rUunStw+k1GF3ApDWww3FcNMd5x2fsXyz1lLVCa
- 52RA==
-X-Gm-Message-State: AOJu0YxozWPkEXc3z/N+h1+rWSlKjhuBv3LoBL0da7VyHq3S9WITKv+P
- GEqB4IwLTY3upviUytiSzQi6q+Rg0j6J5RkFvmxheDO2arqDIIkdcxCu5xOkKybiavQgGi7iRHB
- faj3hwLw096bPC9WOJ6K/157oSHsrChbK6P5sWawitgn4Zbxs4pU3iZcbjlsdI2Ge5Y4IMLyYnE
- 0dkfF+yRJQqMLmfLHceFo=
-X-Gm-Gg: AZuq6aK2QiwUYYyWLitsMbsi30uhefA80sZf6IMNbKv1DiO8zRrDgjCOU9nFIoIdmgj
- k3zh4LbsVlamudkG7lQg3BEg3bJCU+nLW5TMFvElpD8qetLtcDpPX0Gra/I1G3op1gVld3xHNhC
- vSIWtjkOFx2YdRfLx67FQ5SJscyOYPRnCVLHtdWgBJE6WWoSma/PjpgpqMT6jvI0qNWE3jVHe2f
- ZUP/xtVPI1daHi8QiYN2gq/PdQZw6bTaAlP3Z3thTwi/Aq3RRl4L9CUDadZl/drLagH1A==
-X-Received: by 2002:a05:6512:3a91:b0:59e:3934:fe39 with SMTP id
- 2adb3069b0e04-59f83bc23e8mr342691e87.38.1771404759761; 
- Wed, 18 Feb 2026 00:52:39 -0800 (PST)
-X-Received: by 2002:a05:6512:3a91:b0:59e:3934:fe39 with SMTP id
- 2adb3069b0e04-59f83bc23e8mr342683e87.38.1771404759352; Wed, 18 Feb 2026
- 00:52:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20260218075016.65429-2-malikovyehor@gmail.com>
- <20260218080155.67111-1-malikovyehor@gmail.com>
-In-Reply-To: <20260218080155.67111-1-malikovyehor@gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 18 Feb 2026 09:52:27 +0100
-X-Gm-Features: AaiRm53uNsXm0jtLHRKp6kOR9moUpa_K0HDKEQtj6Zv0l1IKCr7sWsQzKWYxob4
-Message-ID: <CAJFAV8yjTs8inmZqYyPrTubc_oaKfEi=nv_58HzyXf9f+pPg0Q@mail.gmail.com>
-Subject: Re: [PATCH v11] vhost: fix use-after-free in fdset during shutdown
-To: Yehor Malikov <malikovyehor@gmail.com>
-Cc: dev@dpdk.org, maxime.coquelin@redhat.com, chenbox@nvidia.com, 
+ bh=wOUtxMPzOJN7wSdnZew5D+Bka69wj7/1vlx4V5bWXHk=;
+ b=i0z55DHXYzjdsa+XgOlBld7ZBX9TN2KVqMeDJVXR0sYPu/eovmJocs0fPQhBFb6thI
+ Z1C9MCL6IE265d0wbArXc2W+qYDv1smzsHHgs1eU2aovBwDb/6PgUqBknpQk44JrVl18
+ WUwWQZ7EVbm/5d4dUNi6nO3E36fat3GHs1WG02Nu2o0gSJbMBfzZeehFQepyHZV0MTKI
+ P8pysiqdfEXuBYMII5IFVp1Yd162GGWZp1ZvoCvrLrwyAMKphoGk3HaRoaSc2aUcnYPM
+ N3Iykl8M627tVP96tIsexotJIgROcjd4wXHKn2wFPF3A9U6cwfMJl5uS1x2ZYx381Cgo
+ Q/eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771405548; x=1772010348;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=wOUtxMPzOJN7wSdnZew5D+Bka69wj7/1vlx4V5bWXHk=;
+ b=HwWvaFerjbO9LW8OrCHVgaCG38drY3cVd3cCSiWBNEfWvWOLRGQups6fMAaad2XZjm
+ eyQnp1TWuvu/HoQ90vYOM4IVhyTCIpexFW9SuRvvfmZ0DwhQyIGR79YdYfkogUFP7/op
+ kM23//R4udNSKqR2Krfn/RDHyfilKHHO4/a39anflzBzrn8fZNwqHhlC0OdRHS85zEG0
+ K0QPSef8AbisA4sb/uN0CNN2pLM4s1BiMnwSEtWEVsRLfdIPabOvCxsWi82WLDssrLmb
+ XYMRlCOwWGIFlAkQKuVBsplseL6As1TfY5T7BQ0rqGbxjE6T8rzgGrpk1DtsmRX4iUIu
+ yO9w==
+X-Gm-Message-State: AOJu0YzUKYm6YthHfeczUCDRpqE5Ji1sYpp8jB/OFO7VKBpctnzZ3S9u
+ ZzNWvd4hs/40YDetKhzxpCbqwKIXamiqYU+Oo47Ja3JKvmFmbzSw0byDG43MdQ==
+X-Gm-Gg: AZuq6aIYWpy8l0V9crhgPP+U1GICtrOFN6bQxgtHHUgO+Igam0/zt3/sXjviQ+/mcoP
+ xxgLSi7CqujvNeS+bCBo+saNopQ+upLiK23Bxs2crcibatB6y/xkow/a/MEdX6+a+5tD0Vgi8HX
+ 08NX+tTHYEGL7gPFbo+qbn8SzQ3UDsvhKnM3e1GTF5aG4mAUa0vj2yAHn7RMpXWqcWtVdqZSXXq
+ 13hoU1nz64V5Cggryv1Vj0of/Bkt4KMsmaU7t6+MqpZfcLaSRvLlagIg0yVjTfTY/acmQ05qzEu
+ DiXMRBkPimpkQW2iN/DwyIibD3kcN/3/1F6npnGXkSG7G1MDWAJorfXsCowgMaHGUQQKkwGnecP
+ AEFJ243iInd+dmflAidXOrU54n8QMOdP9x0xwYHfBgafi0RwpKd1eR3SF5ZPDGoDQWtPGojy4S+
+ 2Z8Vhbsd+ReV7mYuQCaIm0Fy78kTSJqnFIxaPrfdomFOC1M9WPze+mn5tWHLWd3w==
+X-Received: by 2002:a05:7301:3e19:b0:2ba:8018:cc53 with SMTP id
+ 5a478bee46e88-2bac97ce44fmr6067780eec.35.1771405547993; 
+ Wed, 18 Feb 2026 01:05:47 -0800 (PST)
+Received: from C9HFQX6C61.corp.nandps.com ([130.41.236.144])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2bacb582bebsm16727463eec.15.2026.02.18.01.05.45
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 18 Feb 2026 01:05:47 -0800 (PST)
+From: Yehor Malikov <malikovyehor@gmail.com>
+To: dev@dpdk.org
+Cc: maxime.coquelin@redhat.com, david.marchand@redhat.com, chenbox@nvidia.com,
  stephen@networkplumber.org, Yehor Malikov <Yehor.Malikov@solidigm.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 3RtjtJOo53BvPI6KiTn0T14oNz7jcsxXgdeO3i_Y2I4_1771404760
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: [PATCH v12] vhost: fix use-after-free in fdset during shutdown
+Date: Wed, 18 Feb 2026 10:05:40 +0100
+Message-ID: <20260218090540.89215-1-malikovyehor@gmail.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <CAJFAV8yjTs8inmZqYyPrTubc_oaKfEi=nv_58HzyXf9f+pPg0Q@mail.gmail.com>
+References: <CAJFAV8yjTs8inmZqYyPrTubc_oaKfEi=nv_58HzyXf9f+pPg0Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,50 +79,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+From: Yehor Malikov <Yehor.Malikov@solidigm.com>
 
-On Wed, 18 Feb 2026 at 09:02, Yehor Malikov <malikovyehor@gmail.com> wrote:
->
-> From: Yehor Malikov <Yehor.Malikov@solidigm.com>
->
-> The fdset_event_dispatch thread runs in a loop checking the destroy
-> flag after each epoll_wait iteration. During process exit,
-> rte_eal_cleanup() frees hugepage memory while the fdset thread is
-> still running. Since the fdset structure was allocated with
-> rte_zmalloc() (hugepage-backed), accessing it after rte_eal_cleanup()
-> causes use-after-free.
->
-> Switch fdset allocation from rte_zmalloc/rte_free to libc
-> calloc/free. The fdset is a control-path structure that does not
-> need hugepage memory. Using libc allocation ensures the fdset
-> remains valid after rte_eal_cleanup() releases hugepages.
->
-> Fixes: e68a6feaa3b3 ("vhost: improve fdset initialization")
->
-> Signed-off-by: Yehor Malikov <Yehor.Malikov@solidigm.com>
+The fdset_event_dispatch thread runs in a loop checking the destroy
+flag after each epoll_wait iteration. During process exit,
+rte_eal_cleanup() frees hugepage memory while the fdset thread is
+still running. Since the fdset structure was allocated with
+rte_zmalloc() (hugepage-backed), accessing it after rte_eal_cleanup()
+causes use-after-free.
 
-On the principle, the fix lgtm and deserves being backported.
+Switch fdset allocation from rte_zmalloc/rte_free to libc
+calloc/free. The fdset is a control-path structure that does not
+need hugepage memory. Using libc allocation ensures the fdset
+remains valid after rte_eal_cleanup() releases hugepages.
 
-The commit e68a6feaa3b3 ("vhost: improve fdset initialization") has
-been there since v24.07.
-Is this something that you hit easily?
+Fixes: e68a6feaa3b3 ("vhost: improve fdset initialization")
 
+Signed-off-by: Yehor Malikov <Yehor.Malikov@solidigm.com>
+---
+ .mailmap           | 1 +
+ lib/vhost/fd_man.c | 6 +++---
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-> diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
-> index f9147edee7..fae6d787b6 100644
-> --- a/lib/vhost/fd_man.c
-> +++ b/lib/vhost/fd_man.c
-> @@ -8,9 +8,10 @@
->  #include <sys/epoll.h>
->  #include <unistd.h>
->
-> +#include <stdlib.h>
-> +
-
-Nit: this can be fixed when applying, stdlib.h header include can go
-in the first block with other libc includes.
-
-
+diff --git a/.mailmap b/.mailmap
+index fc53ed2a55..711a6ceff5 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1840,6 +1840,7 @@ Yaroslav Brustinov <ybrustin@cisco.com>
+ Yash Sharma <ysharma@marvell.com>
+ Yasufumi Ogawa <ogawa.yasufumi@lab.ntt.co.jp> <yasufum.o@gmail.com>
+ Yelena Krivosheev <yelena@marvell.com>
++Yehor Malikov <Yehor.Malikov@solidigm.com>
+ Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>
+ Yevgeny Kliteynik <kliteyn@nvidia.com>
+ Yi Chen <chenyi221@huawei.com>
+diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
+index f9147edee7..5748bc31e2 100644
+--- a/lib/vhost/fd_man.c
++++ b/lib/vhost/fd_man.c
+@@ -4,13 +4,13 @@
+ 
+ #include <errno.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include <sys/epoll.h>
+ #include <unistd.h>
+ 
+ #include <rte_common.h>
+ #include <rte_log.h>
+-#include <rte_malloc.h>
+ #include <rte_string_fns.h>
+ #include <rte_thread.h>
+ 
+@@ -94,7 +94,7 @@ fdset_init(const char *name)
+ 		return fdset;
+ 	}
+ 
+-	fdset = rte_zmalloc(NULL, sizeof(*fdset), 0);
++	fdset = calloc(1, sizeof(*fdset));
+ 	if (!fdset) {
+ 		VHOST_FDMAN_LOG(ERR, "failed to alloc fdset %s", name);
+ 		goto err_unlock;
+@@ -142,7 +142,7 @@ fdset_init(const char *name)
+ err_epoll:
+ 	close(fdset->epfd);
+ err_free:
+-	rte_free(fdset);
++	free(fdset);
+ err_unlock:
+ 	pthread_mutex_unlock(&fdsets_mutex);
+ 
 -- 
-David Marchand
+2.52.0
 
