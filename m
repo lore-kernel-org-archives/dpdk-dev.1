@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C22E9A047
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 16:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D12B6E9A02C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 16:43:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9650440608;
-	Wed, 18 Feb 2026 17:43:30 +0100 (CET)
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com
- [209.85.167.182])
- by mails.dpdk.org (Postfix) with ESMTP id 5C97A4014F
- for <dev@dpdk.org>; Wed, 18 Feb 2026 17:43:29 +0100 (CET)
-Received: by mail-oi1-f182.google.com with SMTP id
- 5614622812f47-45f0b597eb4so3115749b6e.2
- for <dev@dpdk.org>; Wed, 18 Feb 2026 08:43:29 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 732C54065C;
+	Wed, 18 Feb 2026 17:43:31 +0100 (CET)
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com
+ [209.85.210.44]) by mails.dpdk.org (Postfix) with ESMTP id 489B640269
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 17:43:30 +0100 (CET)
+Received: by mail-ot1-f44.google.com with SMTP id
+ 46e09a7af769-7d19bfe1190so62964a34.1
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 08:43:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771433008;
- x=1772037808; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771433009;
+ x=1772037809; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+t8nlRwrEdKLy3OyoJT/mgWMhFX+uUPFpXg6LiJCQKM=;
- b=Qm4Pzh/lnwNjlxfO7yTuPdMUaP256DkwUDACCjp7MuQGwimYGDvn3znzwPW8pBN3it
- rhcSAXU87cYrwlgpdfzdqAunFuSlSnsHOwXyWdFyIxAc++LBSHP6YF1BZxklv7aPSYvq
- vZOC5aszVcSPj2cBLwOTBdTTXsLbBYcqTiyfFVHsTynKH1i4OFTZjBuoNXHpYsBpmWCI
- SHA6W9o95S3QsY9oXiPo+oQ5mWkD51UnzOivpaP/jqN8Lfn5bi935lTOZXxDNvG15V9c
- ECGLmmveRfjm3QHSkbuzAzkyVbaHHXXu8diSqGmVp/ia/suWx6yyOjWRuPFQR8aoKKSX
- J01w==
+ bh=83n2R8eXQFwYvpDNQ+GuxrAR2KG4hT6o7bwNPA2OZyg=;
+ b=tqL+rKVSBqFJ9ivbBvTGpPGwFFABrG/ehRl7i8bI6P9EO6FLoQE2Vgxab7CmfNfKuI
+ tIkKbTX1hVUuuYOlunmIjBLF6alxUXtfhYTaeGCw1IiegHZ1PC1bl6Ve6+H69pjJVvRp
+ M6wWITc/7PdipJMPmE1cb43O4vyfaHorRZkv3ZrpG/7ZehCzTWUHrN7I+/6dOrey/1Gs
+ ta3vafAAAXJnVIx9yZUXzPQGwoJ6UuG2YBqh2xhuzv8UDXGQJ01p/XCfTtNRga+MCPvn
+ WdrXi0d53XNL/sfRujKcpQ18ssjYgSb5jWQiq4e5iSajRoycKXia/yQqn/36n0ARC8Ay
+ 2OQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771433008; x=1772037808;
+ d=1e100.net; s=20230601; t=1771433009; x=1772037809;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+t8nlRwrEdKLy3OyoJT/mgWMhFX+uUPFpXg6LiJCQKM=;
- b=p5nNsNfSs7QiI1k+2oeRRWAVAEqEul2kvXgFjh7gYmfkWktckBJi25kvlrzxuP7v0J
- De3ZAudHMvhW3K214KRAAzZjnf2w32yKGAR1MqH1VTxuDCATo8oZ/Xj4c8ycCHpOfx53
- g/qrkARA3g+Tl5hIdt7rWsQcyQYEB+mL5MxFYcLHkt6Bnw+eEIM8Pl0K/TWZG69SQyMz
- KyCF8i+GszvU+ICDzi8CXS2nXPZ+J6eHHECyAmHwv7mhpcM3Sy9u04zmMXuRtmlIqak4
- Si52WZHXDwm7lbjjrffVryGhwVFf+Al/SI80RmMM+i2KbhpP2dIGg793hQ4wUeEhxHnd
- W7qA==
-X-Gm-Message-State: AOJu0YxbbJy6k3PZDhuVdRVsoPklwvL3Mfa2D3uXwpPnyMX1cGCWS8em
- wwNG6w7QhuR99+luwiT2EerJo/Bl5obqqD9yKuqiXkP0yFjVQZKIr7ru0wopsaj9p6EOdgHmUPH
- G1CnX
-X-Gm-Gg: AZuq6aL0rxPTEAiEHu/whtcLA8qitPpGvBcuaBo/MmwejYxPTkWFWsO6fdJcNyHE1Jv
- jPPkOLNbzeEqVhWSsmCF/YZMZXML1T42aLcV0u1rzqf4dnnurwNT/yJFgKZdr3SQqVTr3ZKDzjo
- JIu9M2rr28YRRWrMXw5Ezx8CbwkReZIs0eSDX5AWZoVscQkSLy3H8n/Rc/NSImzVpLY9gK1JkQD
- ZRfugfAytwk+M8vCU+M59inqCq6r4cNbd9/imTgfnF4df6UB9rZNQTqrrWoy2zBBbJ17zfhfqD8
- zxI7grQ96YIWmY5c/bfMHirXsmItnaz1cxnQ6l5v0Am0dS5WfvlPg+z9m+hhtuMhN4MaE8iu4nm
- A+RNMBbyj+zlpqhlebJuZ10n+PtaU/RsCnu+N984oWlOdXdjOuY3onrm30pYhys45iRLXJhgEns
- WgzrpeBkx8ecNC9wFEvybaHLLj8kpPtHsi75f8RzQ/JFxfRw1AhHQkntWNZqxKsg==
-X-Received: by 2002:a05:6808:1a12:b0:45e:f0af:a294 with SMTP id
- 5614622812f47-46410b46abamr1210141b6e.12.1771433008522; 
- Wed, 18 Feb 2026 08:43:28 -0800 (PST)
+ bh=83n2R8eXQFwYvpDNQ+GuxrAR2KG4hT6o7bwNPA2OZyg=;
+ b=J5NEalZ02VaWHJbUYLjwIFZELww46/NElhNLOegJik300FHGrT4UKvQskZkkWNUDqH
+ zdKkqoUxDxsEPiboZsBt6Ri5ikFhGx2LIITYVydbnXmVjh9sOzveZZIjOobz4lv7rfx+
+ nYmjrtbsdUys63kHDzdKSl/9pWho0o0UcXLEmu7UhNzjR0icyoRMbawTUmzav/ygyfnr
+ 4XC76jqsYraihdrpl1vPLpgWFvr/peCXTbGH/Hk9U2UfUnpPELH4W2bWbCfUJw8eVGBh
+ k5UvwO7En4z26+5uH71e0un4tgSN9vaVMI2S1Yn5s0zUuYQJaehpci6IzKPbT8rzvBuc
+ I9FQ==
+X-Gm-Message-State: AOJu0Ywyunwxw0xyDIDp0LaN+ggsreNhusvCGWgjal4x/yHgdbwDXqNg
+ DkS5UEISAiCoA6acbWwGRih6ZuZLlTowyDZN28fVVN7wUXxfsfNAPqcOYW1F5mfW52pjP56lAnD
+ 2SuBe
+X-Gm-Gg: AZuq6aI+dqrIqOM68IAasBS9TOjsEiQNGy+doOi15xFT/T8/TQEPG8R0QHkbnQsYa2f
+ LQbyaL6djoh7/DtIcBWZzw6AWqduuRgyCF9hmSx7kxRsOswphNfeUy3lPr/8FaE+chu0AB5J2JN
+ jOT72ZwksfDJvIRXHa5hAxqAd/q1QkOopO+vyWhj2hNnNB4xvitRd0AjdK7lwDHTV/r8n9r5ezl
+ n09f0wYQJeuewTfUNTdgLFQr6b0SGcrwBLyKkUGhlL+/aCA2Med8hedauReZGtiRi/J3ZdUXwas
+ X3WPkzAw3a8gYci+fLhwNWbGN0u7IztKrs9hh5DglA2qAVOo5OMStPjA9FK7xyK4ZBNAM4XL5+S
+ s2wxmFr+KjzZR4QiopxzZLQ0Dvfwq88zemgLCA+zFvgIuKlYDkUruhupOxqPUPDp4VcnFIbADJ+
+ 4Tlvlp65U0UagQG2MJYAQMolYKd8CfG+QREl3txHziTk5ifgllgu23tXVgzOMwPYn3fyMBSZxQ
+X-Received: by 2002:a05:6830:268f:b0:7c5:3c7d:7e67 with SMTP id
+ 46e09a7af769-7d505e49fb9mr1348508a34.29.1771433009545; 
+ Wed, 18 Feb 2026 08:43:29 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d4c6727752sm12878313a34.23.2026.02.18.08.43.27
+ 46e09a7af769-7d4c6727752sm12878313a34.23.2026.02.18.08.43.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 18 Feb 2026 08:43:28 -0800 (PST)
+ Wed, 18 Feb 2026 08:43:29 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Selwin Sebastian <selwin.sebastian@amd.com>
-Subject: [PATCH 1/4] net/axgbe: fix resource leaks in device init error paths
-Date: Wed, 18 Feb 2026 08:40:59 -0800
-Message-ID: <20260218164324.915065-2-stephen@networkplumber.org>
+Subject: [PATCH 2/4] net/axgbe: fix Rx queue leak on descriptor init failure
+Date: Wed, 18 Feb 2026 08:41:00 -0800
+Message-ID: <20260218164324.915065-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260218164324.915065-1-stephen@networkplumber.org>
 References: <20260218164324.915065-1-stephen@networkplumber.org>
@@ -82,81 +81,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Several error paths in eth_axgbe_dev_init() fail to release
-previously allocated resources:
+When wrapper_rx_desc_init() fails to allocate an mbuf for queue i,
+only queue i is released. Queues 0 through i-1 have already been
+fully populated with mbufs assigned to sw_ring entries and
+programmed into hardware descriptors, but are never cleaned up.
+This leaks all mbufs from the previously initialized queues.
 
- - When hash_mac_addrs allocation fails, mac_addrs is leaked.
- - When phy_init() fails, hash_mac_addrs is leaked.
- - The return value of rte_intr_callback_register() is not
-   checked, so a failure leaves the driver without interrupt
-   handling but continuing as if everything is functional.
- - When the DMA software reset via hw_if.exit() fails, the
-   error is only logged and initialization continues with the
-   hardware in an undefined state.
-
-Fix all error paths to properly clean up previously allocated
-resources, check the interrupt registration return value, and
-propagate the DMA reset failure.
+Fix by releasing all previously initialized queues when an
+allocation failure occurs.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/axgbe/axgbe_ethdev.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ drivers/net/axgbe/axgbe_dev.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/axgbe/axgbe_ethdev.c b/drivers/net/axgbe/axgbe_ethdev.c
-index cfcd880961..709a52acc8 100644
---- a/drivers/net/axgbe/axgbe_ethdev.c
-+++ b/drivers/net/axgbe/axgbe_ethdev.c
-@@ -2359,6 +2359,8 @@ eth_axgbe_dev_init(struct rte_eth_dev *eth_dev)
- 		PMD_INIT_LOG(ERR,
- 			     "Failed to allocate %d bytes needed to "
- 			     "store MAC addresses", len);
-+		rte_free(eth_dev->data->mac_addrs);
-+		eth_dev->data->mac_addrs = NULL;
- 		return -ENOMEM;
- 	}
- 
-@@ -2405,8 +2407,14 @@ eth_axgbe_dev_init(struct rte_eth_dev *eth_dev)
- 					  pdata->vdata->rx_max_fifo_size);
- 	/* Issue software reset to DMA */
- 	ret = pdata->hw_if.exit(pdata);
--	if (ret)
-+	if (ret) {
- 		PMD_DRV_LOG_LINE(ERR, "hw_if->exit EBUSY error");
-+		rte_free(eth_dev->data->hash_mac_addrs);
-+		eth_dev->data->hash_mac_addrs = NULL;
-+		rte_free(eth_dev->data->mac_addrs);
-+		eth_dev->data->mac_addrs = NULL;
-+		return ret;
-+	}
- 
- 	/* Set default configuration data */
- 	axgbe_default_config(pdata);
-@@ -2426,14 +2434,23 @@ eth_axgbe_dev_init(struct rte_eth_dev *eth_dev)
- 
- 	ret = pdata->phy_if.phy_init(pdata);
- 	if (ret) {
-+		rte_free(eth_dev->data->hash_mac_addrs);
-+		eth_dev->data->hash_mac_addrs = NULL;
- 		rte_free(eth_dev->data->mac_addrs);
- 		eth_dev->data->mac_addrs = NULL;
- 		return ret;
- 	}
- 
--	rte_intr_callback_register(pci_dev->intr_handle,
-+	ret = rte_intr_callback_register(pci_dev->intr_handle,
- 				   axgbe_dev_interrupt_handler,
- 				   (void *)eth_dev);
-+	if (ret) {
-+		rte_free(eth_dev->data->hash_mac_addrs);
-+		eth_dev->data->hash_mac_addrs = NULL;
-+		rte_free(eth_dev->data->mac_addrs);
-+		eth_dev->data->mac_addrs = NULL;
-+		return ret;
-+	}
- 	PMD_INIT_LOG(DEBUG, "port %d vendorID=0x%x deviceID=0x%x",
- 		     eth_dev->data->port_id, pci_dev->id.vendor_id,
- 		     pci_dev->id.device_id);
+diff --git a/drivers/net/axgbe/axgbe_dev.c b/drivers/net/axgbe/axgbe_dev.c
+index 634d4ee4a5..ae2ae42021 100644
+--- a/drivers/net/axgbe/axgbe_dev.c
++++ b/drivers/net/axgbe/axgbe_dev.c
+@@ -1025,7 +1025,10 @@ static int wrapper_rx_desc_init(struct axgbe_port *pdata)
+ 			if (mbuf == NULL) {
+ 				PMD_DRV_LOG_LINE(ERR, "RX mbuf alloc failed queue_id = %u, idx = %d",
+ 					    (unsigned int)rxq->queue_id, j);
+-				axgbe_dev_rx_queue_release(pdata->eth_dev, i);
++
++				do {
++					axgbe_dev_rx_queue_release(pdata->eth_dev, i);
++				} while (i-- > 0);
+ 				return -ENOMEM;
+ 			}
+ 			rxq->sw_ring[j] = mbuf;
 -- 
 2.51.0
 
