@@ -2,75 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4694E9A03B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 07:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C4DE9A03B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 07:50:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AF155402E0;
-	Wed, 18 Feb 2026 08:43:39 +0100 (CET)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com
- [209.85.221.50]) by mails.dpdk.org (Postfix) with ESMTP id 58B764014F
- for <dev@dpdk.org>; Wed, 18 Feb 2026 08:43:37 +0100 (CET)
-Received: by mail-wr1-f50.google.com with SMTP id
- ffacd0b85a97d-4362507f0feso3233528f8f.0
- for <dev@dpdk.org>; Tue, 17 Feb 2026 23:43:37 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 27E7A40299;
+	Wed, 18 Feb 2026 08:50:51 +0100 (CET)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 5C4874014F
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 08:50:49 +0100 (CET)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-2b740872a01so11148969eec.1
+ for <dev@dpdk.org>; Tue, 17 Feb 2026 23:50:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=6wind.com; s=google; t=1771400617; x=1772005417; darn=dpdk.org;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :from:to:cc:subject:date:message-id:reply-to;
- bh=kgYRlRw4nMn1v+RIo9QUiQ1mn3BNlMDnJPxfNiZm06M=;
- b=DeifM3q8bCPL1jHUgruchS6JqomJGzSp5oLCkqkEw8mhBexvLnuk0hr+cSGIWx+bRk
- ahq7cZKfTjTaO0OQU76otiza30b5bFe9/7Rt/b15Q0Vmy1HHpj8yHbmcpotQV4a11smW
- 4Mx/ehx2hfYQA0GBTCCeT9tqss6dWKUjST4BGgvRgnAs5FBfXFuzMreF7gUPUoyp7WVP
- OIUb1e6ky+9elER5KYohP9u/waIDjWpISnXEFRFVe5UesTG2DwVYcmG8aAv2361U1SYs
- /l01V8/ZLZu7xq/FJbsXq+sIX2iYHKSFuXpV9JEqkd+HgMs3x8PvyMFtjbwiflFpX1nf
- /itQ==
+ d=gmail.com; s=20230601; t=1771401048; x=1772005848; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Tr+xFr1mwyaWNzb+uX1X3QWsr707FEKp5LdylAkkYMg=;
+ b=Oe9pt//qxGTltW9KCv0jLtbk0keJI9zzKPm+iyx+Xkj7LYbIu1sakSX8j832xYQMD/
+ yDutl1KtMyrLH4RHYR/D2OYf1HpK3g0fEQO0WcajQMKlFkqbEfc3d71QoflFLhH/8nkL
+ Z1hZbX6y3DtGhwUYUe0FJ9/+w/ynZFSAvFnv8k3OH9MWDPN8q145vXMarclOaT97an7C
+ lsVgbpNqkBKWm9h/m/eLc6ds+v6zHwLINhP7hf+Mb4xR0wIrcvkGlMoLhw4yhnZkNDlm
+ tsO9HH5Nqs0krmiBrAd67b0KlCv99SHR25YAri5w3OsCXl7+hoFdGagO8BEQMjRX9Kn0
+ IAWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771400617; x=1772005417;
- h=content-transfer-encoding:in-reply-to:from:content-language
- :references:cc:to:subject:user-agent:mime-version:date:message-id
- :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=kgYRlRw4nMn1v+RIo9QUiQ1mn3BNlMDnJPxfNiZm06M=;
- b=icF0GMD8cwo2GdOrx1uHE0/EgeGhIl0XqTWAXtxNHivO5M3lMcbfMkUbWtbF5Ex/aW
- Zo63oBq+n6n3O48uMbzx7mDhTdPRZ54CNf8WCFZsoOhw9O2lOAR/n4T2Dh8+1wYug/n4
- gO2CTOEABlep4rmGNETzr4ZFA75Fi1NUdwTHfI8r/1ETKC6UGgyAv22odH7dB/galtZB
- qUBwZ2O/lJiKJotticWlegvW7FSr32PLAGgk/gqwToEa2+BxgjoD2IXKg80R8+Jjx4c2
- xP4XiUi3DPZTz8nrH9eaxX6yXAvqKTnhOpxqUQN6PcoTOgghmLz8TCjySDEA6kSAa7Tq
- gAjQ==
-X-Gm-Message-State: AOJu0YxnJUxD6B8ZEXOARmjRc3uwZFDN3pEsd1ZLAB9lBTE6gB6phivj
- Til0K1lTe//OcWb5s770PMlKKKJF0csKTLvRaganNUAwq5qVceaL3u1qSNHxJ0zIKw==
-X-Gm-Gg: AZuq6aLWkqDU0MGmErXUXiW4t9ytUrUyNhjq4JKcS4s30t+QxDhUq/swthRMR2dDYE7
- ODiO4ymHgfOz3Jf42Osbwl3WSnbzuGXoIQiliORgRMCBV5sGdtb6QcJnK5U8VNqzjDxCi5XFxUN
- +c7KJu9uqiVZcWyz2hukTNrc6/qPl9awxgO81FeMD3jePXs+bAN/yiz821mNFLjWomNRHU8OSLi
- Ljdmxr4J5C5jMrt07yGoZ00dnlLuu6Pz8E0NBwQskHkDZYYQDaolxzmDF8GcyyzSJHwVLoxDl6b
- SZBnDmwW5ijcAuE/JQREZLqGs81Ekk4u1JfmXjR+jO8WjSfmNWVspNjytDNIIEaLsr2rx7rKuhc
- Y6/VbG8SzHf6HJrWouQjBRIbmvxydzEtJFhjHBg7kSoGOSHdZ1v4uR/jbs+5XSZNvxbqi6gp6om
- 4yRjZ61E7JUkVbIO9MSKjX0yE38nNQrwyBmci4bQ==
-X-Received: by 2002:a05:6000:184f:b0:436:30b0:75a0 with SMTP id
- ffacd0b85a97d-43796aefe7dmr29087298f8f.37.1771400617003; 
- Tue, 17 Feb 2026 23:43:37 -0800 (PST)
-Received: from [10.17.1.39] ([185.13.181.2]) by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43796ad015bsm41128830f8f.38.2026.02.17.23.43.36
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 17 Feb 2026 23:43:36 -0800 (PST)
-Message-ID: <77498d19-80a8-457e-ba05-22047a5edf68@6wind.com>
-Date: Wed, 18 Feb 2026 08:43:36 +0100
+ d=1e100.net; s=20230601; t=1771401048; x=1772005848;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Tr+xFr1mwyaWNzb+uX1X3QWsr707FEKp5LdylAkkYMg=;
+ b=v2XLvCtyamqQhG+Gvg1wLLSBnE0Hr03BJtChkTd/eq0v+s162sYMxiQcWG/mKs08p6
+ CJiipR9EKZClj38uF0evuFAJXRvc7NVJ6byc5gcbCWSKHQqRYbtJqTgw6gbV3xF3+wdE
+ xt2BgKthZIsgvZpM4XeBEJX7GueBley56kSO15uKQHMXa6aEgDU7tDzRH1KQ+9F1v6yl
+ BuzambAbc+Y8GqJi6arEcnTFLl2t3fmFP+JCTUNjAUanKdLQdj2avanmnDPuM7IVdtaA
+ XHMl3XUaq0ZyILh1BP75omIqbYIprM+pSXf35AbLqNcYJJmUo+DyrQrG6KPtVLuSwU0Y
+ 49Cg==
+X-Gm-Message-State: AOJu0YxJefxI2K761Jwev0igPCQE9ntTwdqURgu9l7NLC4RRAPudGHgB
+ AvvZh3vqLmzt4ihN3SEE4DOiOG89YDihoKolq4M3TVsvgI+EodJ8lI7dF1ea/g==
+X-Gm-Gg: AZuq6aKW5ZaHzARPCmpEt6/QdoN/22NN1Sj8nWS0ZMSrevrVjH/6b/3ie2Pnk6tLEYm
+ Vqyz4dWWxR75RYh739mc2Rez9pbzcBjW84FJTvm/hsn96AzW3e5+VZr6R8UZmYWPPwLzYxP3vsU
+ toyzwDvgdggqbbqHQjDMxNHemh1ouMnvKH6J+9l7k+2rd+Dm2ByYcLaxI46zLPuOCWB0PNsdOKr
+ KfZ91tyA/1HzQuc/xLyhUnMHObaZHa50ZSjjqUZ4j5GzIM08NUXcbpJ/FWZZYSyNz0+t/MN5I6r
+ nmroBqpXQJVkB2NgswY6gI/M3NHQ5IPgAb24rYTWlpkDd0x0VN6T6Y3Zq5NqJOadNW3cEu7eWAg
+ qQycTuxBrdDrt10cSBMZotUsvdZvBwrDp/tGDhuMEHvjJHzKI9wm51vxDLndIkExj2YGBofcnZx
+ e5HbU1wv2Rx6jBnogcaf9tZtPuuJh3onV5xeP3SGiPp8W0kIUwlFrWS0gOHByWvQ==
+X-Received: by 2002:a05:693c:380a:b0:2ae:5dc2:3b08 with SMTP id
+ 5a478bee46e88-2bd50082621mr666366eec.18.1771401047746; 
+ Tue, 17 Feb 2026 23:50:47 -0800 (PST)
+Received: from C9HFQX6C61.corp.nandps.com ([130.41.236.144])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2bacb66addcsm17413864eec.24.2026.02.17.23.50.45
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Tue, 17 Feb 2026 23:50:47 -0800 (PST)
+From: Yehor Malikov <malikovyehor@gmail.com>
+To: dev@dpdk.org
+Cc: maxime.coquelin@redhat.com, david.marchand@redhat.com, chenbox@nvidia.com,
+ stephen@networkplumber.org, Yehor Malikov <Yehor.Malikov@solidigm.com>
+Subject: [PATCH v10] vhost: fix use-after-free in fdset during shutdown
+Date: Wed, 18 Feb 2026 08:50:17 +0100
+Message-ID: <20260218075016.65429-2-malikovyehor@gmail.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <CAJFAV8zTzM5vXEckOvLsH54p50PGO9n5Uj0R5krHSmUmnzKFUg@mail.gmail.com>
+References: <CAJFAV8zTzM5vXEckOvLsH54p50PGO9n5Uj0R5krHSmUmnzKFUg@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usertools/pmdinfo: fix search for PMD info string
-To: Bruce Richardson <bruce.richardson@intel.com>,
- David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, rjarry@redhat.com, stable@dpdk.org
-References: <20260123162104.1854187-1-thierry.herbelot@6wind.com>
- <20260217124844.1458644-1-bruce.richardson@intel.com>
- <CAJFAV8wcc_+6AY2029ZV8=ft9qYmbztStodF88tVXUS_UPPXMw@mail.gmail.com>
- <aZSsl2wcdM6RFDKL@bricha3-mobl1.ger.corp.intel.com>
-Content-Language: en-US
-From: Thierry Herbelot <thierry.herbelot@6wind.com>
-In-Reply-To: <aZSsl2wcdM6RFDKL@bricha3-mobl1.ger.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,65 +79,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2/17/26 18:59, Bruce Richardson wrote:
-> On Tue, Feb 17, 2026 at 06:53:20PM +0100, David Marchand wrote:
->> On Tue, 17 Feb 2026 at 13:49, Bruce Richardson
->> <bruce.richardson@intel.com> wrote:
->>>
->>> The PMD_INFO_STRING constant string is not guaranteed to appear in the
->>> output binary immediately after an unprintable character. Because of
->>> this, in some cases the information for a driver could be missed by the
->>> PMD info script as it only checks for the prefix at the start of strings
->>> that it finds. Change the script to use "s.find()" rather than
->>> "s.startswith()" to fix this issue.
->>>
->>> Fixes: 0ce3cf4afd04 ("usertools/pmdinfo: rewrite simpler script")
->>> Cc: stable@dpdk.org
->>>
->>> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
->>
->> Surprising we hit this issue only now.
-> 
-> Agreed. Two thoughts here:
-> 1. are the compilers normally arranging the data in ways that nearly
-> guarantee that the strings are not prefixed by other printable data?
-> 2. if we were missing a couple of drivers from dpdk-pmdinfo, would it
-> really be noticed? Even in the reported case, there were actually 3 missing
-> driver listings, but only one was actually noticed.
-> 
-> I'd suspect #2 myself. :-)
-> 
->> Acked-by: David Marchand <david.marchand@redhat.com>
->>
->> It would be good to hear back from the initial reporter.
->>
-> Agreed. I'd like independent confirmation that this fixes the issue on RHEL
-> 9 as reported.
+From: Yehor Malikov <Yehor.Malikov@solidigm.com>
 
-Hello Bruce,
+The fdset_event_dispatch thread runs in a loop checking the destroy
+flag after each epoll_wait iteration. During process exit,
+rte_eal_cleanup() frees hugepage memory while the fdset thread is
+still running. Since the fdset structure was allocated with
+rte_zmalloc() (hugepage-backed), accessing it after rte_eal_cleanup()
+causes use-after-free.
 
-Sorry for the late response.
-I confirm your patch does fix the original issue:
+Switch fdset allocation from rte_zmalloc/rte_free to libc
+calloc/free. The fdset is a control-path structure that does not
+need hugepage memory. Using libc allocation ensures the fdset
+remains valid after rte_eal_cleanup() releases hugepages.
 
-$ head -2 /etc/os-release
-NAME="Red Hat Enterprise Linux"
-VERSION="9.7 (Plow)"
-$ meson setup build
-$ ninja -C build
-...
-$ ./usertools/dpdk-pmdinfo.py build/app/dpdk-testpmd|grep ixgbe
-     "name": "net_ixgbe_vf",
-     "name": "net_ixgbe",
+Fixes: e68a6feaa3b3 ("vhost: improve fdset initialization")
 
-Thanks !
+Signed-off-by: Yehor Malikov <Yehor.Malikov@solidigm.com>
+---
+ lib/vhost/fd_man.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-	Best regards
-
-	Thierry
-
-> 
-> /Bruce
-
+diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
+index f9147edee7..fae6d787b6 100644
+--- a/lib/vhost/fd_man.c
++++ b/lib/vhost/fd_man.c
+@@ -8,9 +8,10 @@
+ #include <sys/epoll.h>
+ #include <unistd.h>
+ 
++#include <stdlib.h>
++
+ #include <rte_common.h>
+ #include <rte_log.h>
+-#include <rte_malloc.h>
+ #include <rte_string_fns.h>
+ #include <rte_thread.h>
+ 
+@@ -94,7 +95,7 @@ fdset_init(const char *name)
+ 		return fdset;
+ 	}
+ 
+-	fdset = rte_zmalloc(NULL, sizeof(*fdset), 0);
++	fdset = calloc(1, sizeof(*fdset));
+ 	if (!fdset) {
+ 		VHOST_FDMAN_LOG(ERR, "failed to alloc fdset %s", name);
+ 		goto err_unlock;
+@@ -142,7 +143,7 @@ fdset_init(const char *name)
+ err_epoll:
+ 	close(fdset->epfd);
+ err_free:
+-	rte_free(fdset);
++	free(fdset);
+ err_unlock:
+ 	pthread_mutex_unlock(&fdsets_mutex);
+ 
 -- 
-Thierry Herbelot
+2.52.0
 
