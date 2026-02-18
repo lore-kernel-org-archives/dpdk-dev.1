@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C4DE9A03B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 07:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A79E9A03E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 08:02:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 27E7A40299;
-	Wed, 18 Feb 2026 08:50:51 +0100 (CET)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 5C4874014F
- for <dev@dpdk.org>; Wed, 18 Feb 2026 08:50:49 +0100 (CET)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-2b740872a01so11148969eec.1
- for <dev@dpdk.org>; Tue, 17 Feb 2026 23:50:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1A4A740299;
+	Wed, 18 Feb 2026 09:02:06 +0100 (CET)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id C2CD14014F
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 09:02:04 +0100 (CET)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-12713e56abdso516028c88.1
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 00:02:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1771401048; x=1772005848; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1771401723; x=1772006523; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Tr+xFr1mwyaWNzb+uX1X3QWsr707FEKp5LdylAkkYMg=;
- b=Oe9pt//qxGTltW9KCv0jLtbk0keJI9zzKPm+iyx+Xkj7LYbIu1sakSX8j832xYQMD/
- yDutl1KtMyrLH4RHYR/D2OYf1HpK3g0fEQO0WcajQMKlFkqbEfc3d71QoflFLhH/8nkL
- Z1hZbX6y3DtGhwUYUe0FJ9/+w/ynZFSAvFnv8k3OH9MWDPN8q145vXMarclOaT97an7C
- lsVgbpNqkBKWm9h/m/eLc6ds+v6zHwLINhP7hf+Mb4xR0wIrcvkGlMoLhw4yhnZkNDlm
- tsO9HH5Nqs0krmiBrAd67b0KlCv99SHR25YAri5w3OsCXl7+hoFdGagO8BEQMjRX9Kn0
- IAWw==
+ bh=vISCSz5dtEP2AkQYfDzdugBwJZyTfQW+qfAxg147WP4=;
+ b=k/a9qn1E48mxFi31N0bv2AKgQCHT4aN+7WqNRGdUS6Ve3An7WswmR5cX0vU0nnXtbb
+ qiNQ6RmlCB7vxd2IgSyuv4KpaA7FES17VrvHBKHlk78jI2S/YNau94R4z/mhGb/k3NWu
+ I7iAj5ogXX6k0Yz9pq53KXoHGqrnuHByEHvYQYIu/y9kKYw5PvFdK8urxRjovUZ760Di
+ vm8AHlbgCovpwqd4tHrz9QypXZVKxLyb3WjWG65/sp0MSaIb5zvQtQyUTgvZHffKKcQ3
+ LuHTs36eQ9rcAe3TQhpXf5yJrhU7ZoyyfzHrz4kRwtS5kfO7Wjh+gsRjmom23pmZNzwZ
+ KSmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771401048; x=1772005848;
+ d=1e100.net; s=20230601; t=1771401723; x=1772006523;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Tr+xFr1mwyaWNzb+uX1X3QWsr707FEKp5LdylAkkYMg=;
- b=v2XLvCtyamqQhG+Gvg1wLLSBnE0Hr03BJtChkTd/eq0v+s162sYMxiQcWG/mKs08p6
- CJiipR9EKZClj38uF0evuFAJXRvc7NVJ6byc5gcbCWSKHQqRYbtJqTgw6gbV3xF3+wdE
- xt2BgKthZIsgvZpM4XeBEJX7GueBley56kSO15uKQHMXa6aEgDU7tDzRH1KQ+9F1v6yl
- BuzambAbc+Y8GqJi6arEcnTFLl2t3fmFP+JCTUNjAUanKdLQdj2avanmnDPuM7IVdtaA
- XHMl3XUaq0ZyILh1BP75omIqbYIprM+pSXf35AbLqNcYJJmUo+DyrQrG6KPtVLuSwU0Y
- 49Cg==
-X-Gm-Message-State: AOJu0YxJefxI2K761Jwev0igPCQE9ntTwdqURgu9l7NLC4RRAPudGHgB
- AvvZh3vqLmzt4ihN3SEE4DOiOG89YDihoKolq4M3TVsvgI+EodJ8lI7dF1ea/g==
-X-Gm-Gg: AZuq6aKW5ZaHzARPCmpEt6/QdoN/22NN1Sj8nWS0ZMSrevrVjH/6b/3ie2Pnk6tLEYm
- Vqyz4dWWxR75RYh739mc2Rez9pbzcBjW84FJTvm/hsn96AzW3e5+VZr6R8UZmYWPPwLzYxP3vsU
- toyzwDvgdggqbbqHQjDMxNHemh1ouMnvKH6J+9l7k+2rd+Dm2ByYcLaxI46zLPuOCWB0PNsdOKr
- KfZ91tyA/1HzQuc/xLyhUnMHObaZHa50ZSjjqUZ4j5GzIM08NUXcbpJ/FWZZYSyNz0+t/MN5I6r
- nmroBqpXQJVkB2NgswY6gI/M3NHQ5IPgAb24rYTWlpkDd0x0VN6T6Y3Zq5NqJOadNW3cEu7eWAg
- qQycTuxBrdDrt10cSBMZotUsvdZvBwrDp/tGDhuMEHvjJHzKI9wm51vxDLndIkExj2YGBofcnZx
- e5HbU1wv2Rx6jBnogcaf9tZtPuuJh3onV5xeP3SGiPp8W0kIUwlFrWS0gOHByWvQ==
-X-Received: by 2002:a05:693c:380a:b0:2ae:5dc2:3b08 with SMTP id
- 5a478bee46e88-2bd50082621mr666366eec.18.1771401047746; 
- Tue, 17 Feb 2026 23:50:47 -0800 (PST)
+ bh=vISCSz5dtEP2AkQYfDzdugBwJZyTfQW+qfAxg147WP4=;
+ b=Ad8w2RGQ/zETBcwsca6VuD4TzRIiJS7ITuvo9otNCNbL7Iy83kLVXqYGrR4l191X5Q
+ Yv7BBUxggupHfEXPeYGBepMpzq2ruPwpI/vBG172ds90/rptr93ysGgR0PfQ9STlRWa5
+ QxMKAL8O3HA5o0douSNAh+7bWfGlDg7ezGl60yZo+SHoT4+XUcPKualDUA6a9C+EDvQF
+ irU9hQCTWC5d1EQw79ghL4VflS7Okh/dbvUIaNHK939DMxrmDia8owLCwwUu1wTWvw+N
+ OyO8A/NsHDqVQ65r1rCZYTry1UBrS33sgc6InYKQQ62segCppkELSPmaJr4H5WisuA+x
+ /CAg==
+X-Gm-Message-State: AOJu0YwP9I71sV3xskooHFnIHxQXTV5kpsMj4mgvdW9YkRl40aHVhH7p
+ B7HDpStdr+ooVGLib1PNvBNlPwU/JXdroQRXhLFgRTUh5CW+zvDUaurh7/zl/A==
+X-Gm-Gg: AZuq6aLognXKhT48Vk3IEXQY1XV7sPtrfS+y8xqTIPCVhFbylorpU8f4RoT6Fq7UgX/
+ x3bbwS7u5wGXDxHuM53dfimKUWsWO5Bvp9UXXxjInK7yMqpJrQVdHkRWOHGkLlVz8fOJseyI/wM
+ XdvUK7RTy1he/dv9SQpstMd86u9N0U3T/if8XNiQ+6/Mzjy2cweopRZYl6TyZcJGbC1fKEQkAgx
+ NtmX6qIlM+AIm23FFchCysQYB44BNgcYSxUMvm1WBdtKDeMMSnJqbAWSCyzvTzQzZU8DKPqJuK3
+ Y38A6s9Nymste9nEo47csrjs4ec6AIqMjjeuUtKDrkSoHDevGVnQLgWeOGDzGER7PHjGCPrwQLN
+ I2s3kSLIBZa67lR6j6sYya1cdwyfFW2DFGofcefbdaYUAQygEUiGUMDSaHGh2fD72I9wSobEFgo
+ KSGwmFWr2n7Jb7/CDK2GWM3CgbESHIzhQrHJCk0Ey8U5r0rDdKzB4fq08PKs+sAg==
+X-Received: by 2002:a05:7022:6198:b0:123:3301:a718 with SMTP id
+ a92af1059eb24-127598a7b72mr389358c88.1.1771401723096; 
+ Wed, 18 Feb 2026 00:02:03 -0800 (PST)
 Received: from C9HFQX6C61.corp.nandps.com ([130.41.236.144])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2bacb66addcsm17413864eec.24.2026.02.17.23.50.45
+ a92af1059eb24-12742cbc900sm20971326c88.14.2026.02.18.00.02.00
  (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Tue, 17 Feb 2026 23:50:47 -0800 (PST)
+ Wed, 18 Feb 2026 00:02:02 -0800 (PST)
 From: Yehor Malikov <malikovyehor@gmail.com>
 To: dev@dpdk.org
 Cc: maxime.coquelin@redhat.com, david.marchand@redhat.com, chenbox@nvidia.com,
  stephen@networkplumber.org, Yehor Malikov <Yehor.Malikov@solidigm.com>
-Subject: [PATCH v10] vhost: fix use-after-free in fdset during shutdown
-Date: Wed, 18 Feb 2026 08:50:17 +0100
-Message-ID: <20260218075016.65429-2-malikovyehor@gmail.com>
+Subject: [PATCH v11] vhost: fix use-after-free in fdset during shutdown
+Date: Wed, 18 Feb 2026 09:01:55 +0100
+Message-ID: <20260218080155.67111-1-malikovyehor@gmail.com>
 X-Mailer: git-send-email 2.52.0
-In-Reply-To: <CAJFAV8zTzM5vXEckOvLsH54p50PGO9n5Uj0R5krHSmUmnzKFUg@mail.gmail.com>
-References: <CAJFAV8zTzM5vXEckOvLsH54p50PGO9n5Uj0R5krHSmUmnzKFUg@mail.gmail.com>
+In-Reply-To: <20260218075016.65429-2-malikovyehor@gmail.com>
+References: <20260218075016.65429-2-malikovyehor@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -97,9 +97,22 @@ Fixes: e68a6feaa3b3 ("vhost: improve fdset initialization")
 
 Signed-off-by: Yehor Malikov <Yehor.Malikov@solidigm.com>
 ---
+ .mailmap           | 1 +
  lib/vhost/fd_man.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
+diff --git a/.mailmap b/.mailmap
+index fc53ed2a55..711a6ceff5 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -1840,6 +1840,7 @@ Yaroslav Brustinov <ybrustin@cisco.com>
+ Yash Sharma <ysharma@marvell.com>
+ Yasufumi Ogawa <ogawa.yasufumi@lab.ntt.co.jp> <yasufum.o@gmail.com>
+ Yelena Krivosheev <yelena@marvell.com>
++Yehor Malikov <Yehor.Malikov@solidigm.com>
+ Yerden Zhumabekov <e_zhumabekov@sts.kz> <yerden.zhumabekov@sts.kz>
+ Yevgeny Kliteynik <kliteyn@nvidia.com>
+ Yi Chen <chenyi221@huawei.com>
 diff --git a/lib/vhost/fd_man.c b/lib/vhost/fd_man.c
 index f9147edee7..fae6d787b6 100644
 --- a/lib/vhost/fd_man.c
