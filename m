@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBA3E9A02C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 17:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32DFE9A047
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 17:21:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A6EF940269;
-	Wed, 18 Feb 2026 18:13:29 +0100 (CET)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 8A4604014F
- for <dev@dpdk.org>; Wed, 18 Feb 2026 18:13:28 +0100 (CET)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-896fa834290so911166d6.1
- for <dev@dpdk.org>; Wed, 18 Feb 2026 09:13:28 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 95A7440269;
+	Wed, 18 Feb 2026 18:21:16 +0100 (CET)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
+ [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 6901D4014F
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 18:21:15 +0100 (CET)
+Received: by mail-qv1-f51.google.com with SMTP id
+ 6a1803df08f44-8947e17968eso545646d6.0
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 09:21:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771434808;
- x=1772039608; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771435274;
+ x=1772040074; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HBZF/nc3mPYssIeUs2rTyGWP+smXnJx99cV9Fd7wRFQ=;
- b=db6O6SMdumDRjchuD6DnMQjhrvu3WSFnW3JU40PmdZad41/n2uKdQ3Kd/UwWIzaJ5u
- s2/0pcdfdQx10e2no6rezcirWNFHOeRoiAiD8OKgrwp/kZ7JPP2Vxo1w5c3YwcVrqBKP
- kUAlVBvYoQU/mGHMu/HKnWaWJw8E0vrQLSl8aP8OxUaYrlI3XdUeSdF+4+KOQ0oLxG6L
- mAPt8xa0hKtjDza1yxKTbBFfXJ5mX9TXqQDYjtsr0agBNlJGGTqgaKhAnySw0vW7lCHA
- zxMH5Cw4/91JyWyv3xJS4LOnljXwqiHsRzJrDT/kzQv3soiz9ulTZA7G3nAg/n4Awhrf
- HWvg==
+ bh=9MiRTxBE8SLHrPi+WLlQJhSspOumLerk/s0exBJ6vZw=;
+ b=NmCFJvXxL0aFBjDUdLtiIrt/kf4rpFDHZa0kXI5Qojs2T7BC6zEIW7Q3LxD6Kfbykb
+ niLph1rzPDnJ7rHb4rK90na7Cmos+bp7N8NCO8rZAaFEEjeAWSSxNulcJuKhoreI8REO
+ 4EWfx9ZVRMsEp3fbRi+jSl3nIGrLXir34ZGvBhuto2DVaIVaky6Y8l94M9Hf0NHiKsqk
+ bRNDWeTJSDI26CcMufoBCtMOALBZpoFEW0UbasqW+OtRmdhwt7OyTBzforlYUeiULIZJ
+ +TyRjqe/6tKBJgWln7j9DAODSLX824ALZCuQ2/hMVWyEMDAAI3g2Tw9FvRL56ZERsiBG
+ bkUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771434808; x=1772039608;
+ d=1e100.net; s=20230601; t=1771435274; x=1772040074;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=HBZF/nc3mPYssIeUs2rTyGWP+smXnJx99cV9Fd7wRFQ=;
- b=bdd7QsHsEIGRbf5sNKn/xjlpFU7qWZAMsyd6G6Yug+zMJiwrgbBMFCVl6uRwARSNsw
- gaYS7u49bDD+B8jD3ToZuUuIQzdVg8a1TRR8sQk+1aXWmgUjhlBrLUOEn8844J8b9h2y
- tuJe3A59i+uBXXkVb4RyFX/5udScKGIj9mympghGDg1K72NsVFv8FFOjF9UgqSPWQ1gt
- zDXWRH/h8mMwwSu6Vq+mBAhHbAWBofVruzmSLwP9OAsRKgUzddbvu6IK4E/C+nh/bWCr
- A5AMU/uIe7K+Vsu+RTcQVVpUsXa5tiOWKevo0VzJIZNynICyHffwbJqQLzAa23ZCI3Q8
- 6+hw==
-X-Gm-Message-State: AOJu0Yw9cf5JyKSBqNM/J+jml3OwXEzS46vTL9Wn8WLXO1TkF0p9bB1t
- BSaT/cFLal468UAK2xHWxYVFkj5h5ojns+SJ0E9AqVLGPsPR60Zl6NujNPMV9zKz4a0=
-X-Gm-Gg: AZuq6aJHnBZDVvxKUGlhOEs1pBVYo8D6wsDIfQhNGFTjzRuN8XxMHZcyuSEH1HuaJmG
- wzzCI+ezUZhYZKHoQmFEigoWaWPtNMU9fIOekOJ7Dc8lp8fk90g7zPQwZpXA62TUCAhfHKMr3oY
- +76rsBs9uMJkeQRq/m0QIruQ2guZW4MrIdu7qK4ZKyZGFW90mdF4Y/rrur+eM+UR9w30J0uA8ho
- n0tOdGSqdsph2KFZlE9Kut9DW9islF6QJdVC8NfZsnbMRi2e/jU4h/iQNjzPux5IWR30XKh+7Sh
- JGM+lK4+ux9jN1QryPgqIDvLajbtK2rBbvk9we9jozN/Thcq7JakN/efN2VAnNlLXG6LpuJ4Lxd
- hAFHfSd+vgDU2/+YbUJGsPp0i6iGVQ2A1gGxdNTzzXWl9+Roh3Oo7TFsC0C4naWv+kVcCIXq43c
- PVdTXxlTIZ42A160Q+sctPrF6DkjXMBzd6vml3avYvPzXRR4wWz+C/hn5AAfEkNCdI
-X-Received: by 2002:ad4:5cc5:0:b0:87c:19af:4b76 with SMTP id
- 6a1803df08f44-89957e17c8bmr37363216d6.17.1771434807664; 
- Wed, 18 Feb 2026 09:13:27 -0800 (PST)
+ bh=9MiRTxBE8SLHrPi+WLlQJhSspOumLerk/s0exBJ6vZw=;
+ b=IvhrA4OPhG1OG1JL/9VZ622WidEpL/3QfLlLSRDj4pwccTkeWNFlbF2CbzLu5wvo75
+ 31/MWfREQ8wAVZElcArE910d4dh55ZdbaLZ0C77BlSL+y86Bz4mRMnYUPTxVM/xdLrKv
+ vJz0QUM4jrjxjEELOZNOCtKkp2L6QdOylSDabx0g/kLzZGUI/RTD9sg5TfyK6Tj9LhNA
+ F02bGtDra/umzsl7v7OxpOkbUo8CJUPdAKlDTcYWTdKgrZdGyOna8ecStNiSPFYRaNRy
+ TX0al/AqIT14/WzUofnSB5ZWEmsiqpUom5zE3iQJ9L3UF5u9QM0Qja1EmuaOYXkFmjD0
+ NM1A==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUXgELP08Y+TJHoo3IVfNWb0iVTWQiE1fSOCDMQje+NaQrPAK/29+xMyzO0zQwX6stJfqg=@dpdk.org
+X-Gm-Message-State: AOJu0YxZgXlXRhKE+e2KROEn0/K99o/B0pcWSyJ0PakyAR2N4tbSJayO
+ zuOdMCYp7EVeynqy6eZSVlgbZ4iM8wVbGwKoNNLKHuTDU1kCkhF1RoEFefVlD7E4i94=
+X-Gm-Gg: AZuq6aJDMEWq15oIHyAfXXyDuUpOidtgA372DVzSYe8RI3iUlWHZ+8sIZWcm0VG7+w8
+ gvnS5Y4zw6hvaWkW9aCTbiXoNlwxd+SG7vjNlhvGNmZ/jYPMG05WT4ElQUcL8Xqv+tmVWWvLfD0
+ 6GlUQKKSa/Ro98u3fqVZjKls6TfRQDHO3N+gHswcXvtzgQHwIZYS3rLn9ev3NLckAfKsmEFgsaE
+ MXf3oW9sDvDVatozCMoU9wU9Mxy+xE4SSBHRpTXQMFibHBMGkNoBkoGW4AIg7QNWmE5AoW+mJWA
+ oE7jkGc+dS5SEKahMhtSFknMn8pdf6H/8SIP89+1N6c4zbIeRo/00Gd4NcMJZ6qy8ia2uB3CeVw
+ CUdlSxyUk+P3DrnVjSwSf6OvRi08dkCHwOXH6zbIhH4O9YrsDNfZZihXq3IziuPgyKjm4hWHsKu
+ bU+SGd+8oF2YH+Bkshzx90iVbVEsxLQnxOq1V+GzYrdU7bE3qZSWVTGuxoyD58lUWZ
+X-Received: by 2002:ac8:5d0a:0:b0:4f1:b742:35c2 with SMTP id
+ d75a77b69052e-506a683233cmr212265501cf.22.1771435274413; 
+ Wed, 18 Feb 2026 09:21:14 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cb2b0bc2d5sm1859418885a.10.2026.02.18.09.13.26
+ d75a77b69052e-50684bd4b95sm186374821cf.33.2026.02.18.09.21.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 18 Feb 2026 09:13:27 -0800 (PST)
-Date: Wed, 18 Feb 2026 09:13:24 -0800
+ Wed, 18 Feb 2026 09:21:13 -0800 (PST)
+Date: Wed, 18 Feb 2026 09:21:11 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>, "Andrew
- Rybchenko" <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [RFC] ethdev: clarify rte_eth_tx_burst() return value and
- ownership semantics
-Message-ID: <20260218091324.17a671dd@phoenix.local>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65728@smartserver.smartshare.dk>
-References: <20260216180011.393782-1-stephen@networkplumber.org>
- <98CBD80474FA8B44BF855DF32C47DC35F65728@smartserver.smartshare.dk>
+To: Maxime Leroy <maxime@leroys.fr>
+Cc: hemant.agrawal@nxp.com, dev@dpdk.org
+Subject: Re: [PATCH 00/11] net/dpaa2: fixes and improvements
+Message-ID: <20260218092111.695aaf00@phoenix.local>
+In-Reply-To: <20260218160453.142311-1-maxime@leroys.fr>
+References: <20260218160453.142311-1-maxime@leroys.fr>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -82,54 +81,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 18 Feb 2026 09:48:04 +0100
-Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+On Wed, 18 Feb 2026 17:04:42 +0100
+Maxime Leroy <maxime@leroys.fr> wrote:
 
-> > + *
-> > + * A return value equal to *nb_pkts* means that all packets have been
-> > + * consumed, and this is likely to signify that other output packets
-> >   * could be immediately transmitted again. Applications that implement
-> > a
-> >   * "send as many packets to transmit as possible" policy can check
-> > this
-> >   * specific case and keep invoking the rte_eth_tx_burst() function
-> > until
-> >   * a value less than *nb_pkts* is returned.
-> >   *
-> > + * If a packet cannot be transmitted due to an error (for example, an
-> > + * invalid offload flag), the driver must still consume it and free
-> > the
-> > + * mbuf, rather than stopping at that point. Such packets should be
-> > + * counted in the *tx_errors* port statistic. =20
+> Various fixes and improvements for the dpaa2 net driver and fslmc bus.
 >=20
-> The above paragraph is driver centric, it should be application centric.
-
-Most of the applications are doing it right already since everybody
-starts with l2fwd, or l3fwd. The problem I see is buggy drivers.
-
-> Suggest rephrasing as:
+> Patches 1-2, 4-5 fix resource leaks on port close and in error paths.
 >=20
-> If a packet cannot be transmitted due to an error (for example, an invali=
-d offload flag), the rte_eth_tx_burst() function will still consume it, rat=
-her than stopping at that point.
-> Such packets are counted in the *oerrors* port statistic.
+> Patch 3 fixes a misleading Rx descriptor limit warning.
 >=20
-> NB: In struct rte_eth_stats [1], the error counter is named "oerrors", no=
-t "tx_errors".
+> Patches 6-7 replace getenv-based configuration with proper devargs
+> for taildrop and data stashing options. There are still 8 remaining getenv
+> calls in the driver that should be converted to devargs.
+> Note: the taildrop disable path has never been reachable until now
+> and is untested. NXP maintainers should validate this feature.
 >=20
-> [1]: https://elixir.bootlin.com/dpdk/v25.11/source/lib/ethdev/rte_ethdev.=
-h#L273
+> Patch 8 fixes link status not updating after port stop/start when
+> link state change interrupts are enabled.
+> Patch 9 is a minor cleanup in the same area.
+>=20
+> Patches 10-11 fix devargs propagation on DPNI hotplug.
 
-Good point, I was thinking of the per-queue stats and xstats.
+I decided to ask AI "what remaining bugs are still found by review
+after applying these patches"
 
-> While discussing details...
-> Let's say a packet has 4 segments, and the driver only has 2 descriptors =
-remaining available.
-> In that case, I think the driver should not consume the packet, but leave=
- it for the application to either drop it or retry transmitting it later.
-> Do we want to mention this case too, or is it a semi-obvious case of the =
-descriptor ring having no more room?
+# dpaa2: remaining issues after Leroy series (v26.03-rc1)
 
-There are also other cases of backpressure like when driver talks to kernel=
- and gets EAGAIN or EBUSY
+The Leroy 11-patch series covers the resource leak and softparser
+cleanup bugs well.  The items below are what is left.
 
+---
+
+## 1. NULL deref and packet leak in dump_err_pkts()  (dpaa2_rxtx.c ~729-746)
+
+Three related problems in the same function:
+
+(a) `mbuf` is NULL-checked on line 729 (`if (mbuf)`) but the very next
+    statement dereferences `mbuf->nb_segs` unconditionally =E2=80=94 crashes
+    when mbuf is NULL.
+
+(b) In the multi-segment path the while-loop walks `mbuf` to NULL, then
+    `rte_pktmbuf_free(mbuf)` frees NULL =E2=80=94 no-op =E2=80=94 so the pa=
+cket is
+    never freed.
+
+(c) `sprintf(title, "Payload seg[%d]", i)` writes into a 32-byte stack
+    buffer with no bounds check.
+
+Suggested fix: save the head pointer before iterating, move the hexdump
+and free inside the NULL guard, and switch to `snprintf`.
+
+## 2. Unbounded SG chain walk in eth_sg_fd_to_mbuf()  (dpaa2_rxtx.c:334)
+
+```c
+while (!DPAA2_SG_IS_FINAL(sge)) {
+    sge =3D &sgt[i++];
+    ...
+}
+```
+
+No upper bound on `i`.  If hardware or corrupt DMA data fails to set
+the FINAL bit, this walks past the end of the SGT buffer.  Adding
+`&& i < DPAA2_MAX_SGS` to the loop condition is the minimal fix.
+
+## 3. MAC stats path can deref NULL DMA pointers  (dpaa2_ethdev.c ~2005-202=
+4)
+
+`dpaa2_dev_mac_setup_stats()` is void-returning and can fail silently
+(malloc or IOVA mapping failure), setting both DMA pointers to NULL.
+The caller in `dpaa2_dev_xstats_get()` does not check and proceeds to
+pass zero IOVAs to firmware and dereference `cnt_values_dma_mem`.
+Either make the setup function return an error code or add a NULL guard
+before use.
+
+## 4. sw_td label in dpaa2_dev_tx() may double-free  (dpaa2_rxtx.c ~1516-15=
+23)
+
+At the `sw_td:` label, `bufs` has already been advanced past the
+prepared frames and `num_tx` counts packets already handed to HW.
+The loop frees `num_tx` packets via `*bufs++`, which are the same
+buffers HW will also release =E2=80=94 potential double-free.  Needs someone
+with the HW context to verify the intended semantics.
+
+## 5. dpaa2_dev_loopback_rx() always returns 0  (dpaa2_rxtx.c:2144)
+
+The function updates internal counters correctly but unconditionally
+returns 0, so the framework never sees received traffic.  Should
+probably return `num_rx`.
+
+## 6. Burst mode info reports only the first matching offload  (dpaa2_ethde=
+v.c ~464-506)
+
+Both `dpaa2_dev_rx_burst_mode_get()` and the TX variant break out of
+the offload loop after the first match.  When multiple offloads are
+enabled only the first is shown in `mode->info`.  The loop should
+concatenate all matching strings.
