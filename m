@@ -2,81 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD59E9A03B
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 10:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2516E9A047
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 12:04:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A8883402C5;
-	Wed, 18 Feb 2026 11:45:49 +0100 (CET)
-Received: from fhigh-b7-smtp.messagingengine.com
- (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
- by mails.dpdk.org (Postfix) with ESMTP id 6F0C5402A3
- for <dev@dpdk.org>; Wed, 18 Feb 2026 11:45:48 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 6845F7A0169;
- Wed, 18 Feb 2026 05:45:47 -0500 (EST)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Wed, 18 Feb 2026 05:45:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm3; t=1771411547; x=1771497947; bh=cGPZxjqR8+4cMcybVYaNN
- AIyiu7Kmr170A55P8pNUnM=; b=klJq84Ev04tE3CYQLooXyY60nroCv+TdpXBMB
- YWPe33qBk8dJ0BexKU/rYuTJiT2fQRa/iiGZngI5jxYfCh40lu4+/Wfh+gbLOIiq
- C2wF4av452gxVSkG8e6DjSf8oW18eKiWY0SCyHFtgbq/DGN5WKX4q/O0x2QLQnpW
- BAi0kyoIgvL+C7TIqUHkJvZqA+fRXmL+E0rmDQoRjrwNy4P7jT/S0FnbaiOat7wl
- ONa5nf3g6wLnpPdUELiegJYaONQwpU7WbmftBopo7ZbuYueB4uADhu8JRkDdjkL0
- tumOe/okYbY0EypQpYx86sugQoMXYTgcWXKf8aOFGUYjY8Oog==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
- 1771411547; x=1771497947; bh=cGPZxjqR8+4cMcybVYaNNAIyiu7Kmr170A5
- 5P8pNUnM=; b=AKD4XjQGTPSH/Ixs+RGnn0gWb39wPsrnIyTI4SC7ZYHYI5YS4Yn
- F6FgDnHt5IwMVGknAz/GeAMHiO3zOusXwXaNwWi0vZGGC2zCHuTa4bO7o45QOcnb
- R95tfX8ZkWCF1obHw79ye3ipIe7PRjOaKtGhIZzzfoYhn1fTezEqjMrUrP/P7+Lt
- Ts/523TkqA9vtITSMdXWDudD/Vwq/a0u/GZHSSGHjQ3ANVbxryvEp/aH0z/QdxW3
- EHwUZlGO9kEwsCLcSIRDsX0BLwKofGgCgh+i1bKCoq6CFabKVQbd7hD5T3xUVRlb
- lAXfp8K/ltCnyzUQ3YkDimv7+E5WFsTfblA==
-X-ME-Sender: <xms:WpiVaW__gelKsXYP0c3QEoONWARZSa0aoduwXPJddRrMTNmtZI3RNA>
- <xme:WpiVaQzceEanprwyUQD-Sue3rd7ODd-RdLoGwxImdQHgdfLDznSN5QvpsDxK7FH91
- HcloxW5DW8hZxwxzKw5oL9kor71xw4bKonZWhHKfTWM1KiJ7F75hg>
-X-ME-Received: <xmr:WpiVab7UEk6GVWyquPDmsVu9cFrZMOMeDGFPR9MKjdZLnsobDJpAmccaUIE6_k3em3wJT1NRQzYP0-ngyC37MmApluBN7CA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvvddvgeefucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghsucfo
- ohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtffrrg
- htthgvrhhnpeevveefveeiiefhtedukeegkeelieegffeukeevudetueffieduveetiedu
- keefleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
- hthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhmohgu
- vgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
- hopeifrghnghhfvghifhgvihegtdeshhhurgifvghirdgtohhmpdhrtghpthhtoheprghn
- ughrvgifrdgsohihvghrsegrmhgurdgtohhmpdhrtghpthhtohepjhhirgifvghnfihuse
- htrhhushhtnhgvthhitgdrtghomhdprhgtphhtthhopeiirghihihufigrnhhgsehtrhhu
- shhtnhgvthhitgdrtghomhdprhgtphhtthhopehvrghtthhunhhurhhusehmrghrvhgvlh
- hlrdgtohhmpdhrtghpthhtoheprghnughrvgifrdhrhigstghhvghnkhhosehokhhtvght
- lhgrsghsrdhruhdprhgtphhtthhopegrnhgrthholhihrdgsuhhrrghkohhvsehinhhtvg
- hlrdgtohhm
-X-ME-Proxy: <xmx:WpiVaf9DuJoh9EG8jxSgz69sDPqW2GR_sdciuv-_d3SsSi9uOgFfxw>
- <xmx:WpiVaYrLLNI6eDSczMau_vOPCC0z9ohP1k0E5u-jVQqUzJkGR9RtYw>
- <xmx:WpiVaYrDEYA2dk94edn72J29nbnJbzO-0ktm6aRkpXzvRWhVpC31XA>
- <xmx:WpiVaT3MtJSWTIXeHwmJGk-rNGdwx_V3E46gVhWLuEr5ic7iDeEceQ>
- <xmx:W5iVacvZLyJk9fzX_tefgfMUxucwo1ZO5Tho_FukK_o66sY_WMsTW0fS>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 18 Feb 2026 05:45:44 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 8AC63402A3;
+	Wed, 18 Feb 2026 13:04:33 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id AF24C4014F
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 13:04:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1771416272; x=1802952272;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=XsYt/MBsc0WwbYTZ4QHcZRlWRw+OrVp2HqyRvKGL5PY=;
+ b=PY9FU5igQNmG08Mw2bNmBt0TbkrjdkGl8j/pLZJVDSaIxtVf9R+O7dex
+ KQibtECWERon7arop9cNV9AKRikpKcNrfFVVdpT1HveCSxJyiA8Fl+hOa
+ 8SOrjjH6roXQ1V6XuBMJSIV/TaGVbLCBRJmDwUGou6TUIcz1PY4ra+3R8
+ HQKsIhw8kvdNNFMxJdRAfUwW0r4dlmlGs1gx0NyXoqr8C5BzbMIFTZzVV
+ zo4ji8m8Ns+mdOaeRZxB7t7FLJnin/dSF7vBspc/Ws159HEIMB7doeth8
+ 2uXwO/4C4P2vupKKN7D4Psj/3GVrw79QS4b+fH0Aw3q8iRzSXqeTAJkyp A==;
+X-CSE-ConnectionGUID: i0T+UQtzS+Kc0VGpGi0l5g==
+X-CSE-MsgGUID: /TX8Hr9NRZu2uiblG2NE0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11704"; a="83113595"
+X-IronPort-AV: E=Sophos;i="6.21,298,1763452800"; d="scan'208";a="83113595"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 18 Feb 2026 04:04:31 -0800
+X-CSE-ConnectionGUID: Ikc/AUnzQJejcxOoKao6/A==
+X-CSE-MsgGUID: 1TP+22meTKqMi18ve3kY/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,298,1763452800"; d="scan'208";a="214165784"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by orviesa008.jf.intel.com with ESMTP; 18 Feb 2026 04:04:30 -0800
+From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: Feifei Wang <wangfeifei40@huawei.com>, Andrew Boyer <andrew.boyer@amd.com>,
- Jiawen Wu <jiawenwu@trustnetic.com>, Zaiyu Wang <zaiyuwang@trustnetic.com>,
- Vamsi Attunuru <vattunuru@marvell.com>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH] drivers/net: remove redundant callbacks cleanup
-Date: Wed, 18 Feb 2026 11:45:24 +0100
-Message-ID: <20260218104524.2780167-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.52.0
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH] net/idpf: remove useless function
+Date: Wed, 18 Feb 2026 12:04:12 +0000
+Message-ID: <20260218120412.1809390-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -92,124 +57,108 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some callbacks are set to NULL in the release process.
-It is not needed as it is already done in rte_eth_dev_release_port()
-called by rte_eth_dev_close(), rte_eth_dev_destroy()
-or rte_eth_dev_pci_generic_remove().
+Commit 376faf4aaa16 ("net/idpf: enable simple Tx function") removed the
+one assignment that was performed in the function
+idpf_qc_tx_vec_avx512_setup. Without it, the function is useless and
+results in USELESS_CALL defects reported by Coverity. Fix these by
+removing the function and the logic that calls it in idpf and cpfl.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+Coverity issue: 501500
+Coverity issue: 501501
+
+Fixes: 376faf4aaa16 ("net/idpf: enable simple Tx function")
+
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/hinic3/hinic3_ethdev.c    |  4 ----
- drivers/net/ionic/ionic_ethdev.c      |  5 -----
- drivers/net/ngbe/ngbe_ethdev_vf.c     |  3 ---
- drivers/net/octeon_ep/otx_ep_ethdev.c | 10 +---------
- drivers/net/sfc/sfc_repr.c            |  4 ----
- drivers/net/txgbe/txgbe_ethdev_vf.c   |  3 ---
- 6 files changed, 1 insertion(+), 28 deletions(-)
+ drivers/net/intel/cpfl/cpfl_rxtx.c               | 16 ----------------
+ drivers/net/intel/idpf/idpf_common_rxtx.h        |  4 ----
+ drivers/net/intel/idpf/idpf_common_rxtx_avx512.c | 10 ----------
+ drivers/net/intel/idpf/idpf_rxtx.c               | 16 ----------------
+ 4 files changed, 46 deletions(-)
 
-diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
-index 0e25175ba1..0f72728a95 100644
---- a/drivers/net/hinic3/hinic3_ethdev.c
-+++ b/drivers/net/hinic3/hinic3_ethdev.c
-@@ -2044,10 +2044,6 @@ hinic3_dev_release(struct rte_eth_dev *eth_dev)
- 	hinic3_free_nic_hwdev(nic_dev->hwdev);
- 	hinic3_free_hwdev(nic_dev->hwdev);
- 
--	eth_dev->rx_pkt_burst = NULL;
--	eth_dev->tx_pkt_burst = NULL;
--	eth_dev->dev_ops = NULL;
+diff --git a/drivers/net/intel/cpfl/cpfl_rxtx.c b/drivers/net/intel/cpfl/cpfl_rxtx.c
+index 11451e1666..36ee452876 100644
+--- a/drivers/net/intel/cpfl/cpfl_rxtx.c
++++ b/drivers/net/intel/cpfl/cpfl_rxtx.c
+@@ -1551,20 +1551,4 @@ cpfl_set_tx_function(struct rte_eth_dev *dev)
+ 	dev->tx_pkt_prepare = idpf_dp_prep_pkts;
+ 	PMD_DRV_LOG(NOTICE, "Using %s Tx (port %d).",
+ 			idpf_tx_path_infos[ad->tx_func_type].info, dev->data->port_id);
 -
- 	rte_free(nic_dev->hwdev);
- 	nic_dev->hwdev = NULL;
- }
-diff --git a/drivers/net/ionic/ionic_ethdev.c b/drivers/net/ionic/ionic_ethdev.c
-index 6e9cd5f7eb..d2888d9650 100644
---- a/drivers/net/ionic/ionic_ethdev.c
-+++ b/drivers/net/ionic/ionic_ethdev.c
-@@ -1112,11 +1112,6 @@ eth_ionic_dev_uninit(struct rte_eth_dev *eth_dev)
- 	if (eth_dev->state != RTE_ETH_DEV_UNUSED)
- 		ionic_dev_close(eth_dev);
- 
--	eth_dev->dev_ops = NULL;
--	eth_dev->rx_pkt_burst = NULL;
--	eth_dev->tx_pkt_burst = NULL;
--	eth_dev->tx_pkt_prepare = NULL;
--
- 	return 0;
- }
- 
-diff --git a/drivers/net/ngbe/ngbe_ethdev_vf.c b/drivers/net/ngbe/ngbe_ethdev_vf.c
-index e575c47049..6406df40d0 100644
---- a/drivers/net/ngbe/ngbe_ethdev_vf.c
-+++ b/drivers/net/ngbe/ngbe_ethdev_vf.c
-@@ -746,9 +746,6 @@ ngbevf_dev_close(struct rte_eth_dev *dev)
- 	 **/
- 	ngbevf_remove_mac_addr(dev, 0);
- 
--	dev->rx_pkt_burst = NULL;
--	dev->tx_pkt_burst = NULL;
--
- 	/* Disable the interrupts for VF */
- 	ngbevf_intr_disable(dev);
- 
-diff --git a/drivers/net/octeon_ep/otx_ep_ethdev.c b/drivers/net/octeon_ep/otx_ep_ethdev.c
-index f7f927a4e7..99be30523a 100644
---- a/drivers/net/octeon_ep/otx_ep_ethdev.c
-+++ b/drivers/net/octeon_ep/otx_ep_ethdev.c
-@@ -656,12 +656,8 @@ otx_ep_dev_close(struct rte_eth_dev *eth_dev)
- 	struct otx_ep_device *otx_epvf;
- 	uint32_t num_queues, q_no;
- 
--	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
--		eth_dev->dev_ops = NULL;
--		eth_dev->rx_pkt_burst = NULL;
--		eth_dev->tx_pkt_burst = NULL;
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
- 		return 0;
+-#ifdef RTE_ARCH_X86
+-#ifdef CC_AVX512_SUPPORT
+-	if (idpf_tx_path_infos[ad->tx_func_type].features.simd_width >= RTE_VECT_SIMD_256 &&
+-			idpf_tx_path_infos[ad->tx_func_type].features.single_queue) {
+-		for (i = 0; i < dev->data->nb_tx_queues; i++) {
+-			txq = dev->data->tx_queues[i];
+-			if (txq == NULL)
+-				continue;
+-			if (idpf_tx_path_infos[ad->tx_func_type].features.simd_width ==
+-					RTE_VECT_SIMD_512)
+-				idpf_qc_tx_vec_avx512_setup(txq);
+-		}
 -	}
- 
- 	otx_epvf = OTX_EP_DEV(eth_dev);
- 	otx_ep_mbox_send_dev_exit(eth_dev);
-@@ -731,10 +727,6 @@ otx_ep_eth_dev_uninit(struct rte_eth_dev *eth_dev)
- 	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
- 		otx_ep_mbox_uninit(eth_dev);
- 
--	eth_dev->dev_ops = NULL;
--	eth_dev->rx_pkt_burst = NULL;
--	eth_dev->tx_pkt_burst = NULL;
--
- 	return 0;
+-#endif /* CC_AVX512_SUPPORT */
+-#endif /* RTE_ARCH_X86 */
  }
- 
-diff --git a/drivers/net/sfc/sfc_repr.c b/drivers/net/sfc/sfc_repr.c
-index fbb5f58a8e..4ccdf8358b 100644
---- a/drivers/net/sfc/sfc_repr.c
-+++ b/drivers/net/sfc/sfc_repr.c
-@@ -820,10 +820,6 @@ sfc_repr_dev_close(struct rte_eth_dev *dev)
- 
- 	sfc_mae_clear_switch_port(srs->switch_domain_id, srs->switch_port_id);
- 
--	dev->rx_pkt_burst = NULL;
--	dev->tx_pkt_burst = NULL;
--	dev->dev_ops = NULL;
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
+index 914cab0f25..cc11ea43b9 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.h
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
+@@ -231,10 +231,6 @@ int idpf_qc_singleq_rx_vec_setup(struct idpf_rx_queue *rxq);
+ __rte_internal
+ int idpf_qc_splitq_rx_vec_setup(struct idpf_rx_queue *rxq);
+ __rte_internal
+-int idpf_qc_tx_vec_avx512_setup(struct ci_tx_queue *txq);
+-__rte_internal
+-int idpf_qc_tx_vec_avx512_setup(struct ci_tx_queue *txq);
+-__rte_internal
+ uint16_t idpf_dp_singleq_recv_pkts_avx512(void *rx_queue,
+ 					  struct rte_mbuf **rx_pkts,
+ 					  uint16_t nb_pkts);
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+index fe870617bc..bcf8fec14c 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+@@ -1357,13 +1357,3 @@ idpf_dp_splitq_xmit_pkts_avx512(void *tx_queue, struct rte_mbuf **tx_pkts,
+ {
+ 	return idpf_splitq_xmit_pkts_vec_avx512_cmn(tx_queue, tx_pkts, nb_pkts);
+ }
 -
- 	sfc_repr_unlock(sr);
- 	sfc_repr_lock_fini(sr);
- 
-diff --git a/drivers/net/txgbe/txgbe_ethdev_vf.c b/drivers/net/txgbe/txgbe_ethdev_vf.c
-index f6fd2b1557..39a5fff65c 100644
---- a/drivers/net/txgbe/txgbe_ethdev_vf.c
-+++ b/drivers/net/txgbe/txgbe_ethdev_vf.c
-@@ -862,9 +862,6 @@ txgbevf_dev_close(struct rte_eth_dev *dev)
- 	 **/
- 	txgbevf_remove_mac_addr(dev, 0);
- 
--	dev->rx_pkt_burst = NULL;
--	dev->tx_pkt_burst = NULL;
+-RTE_EXPORT_INTERNAL_SYMBOL(idpf_qc_tx_vec_avx512_setup)
+-int __rte_cold
+-idpf_qc_tx_vec_avx512_setup(struct ci_tx_queue *txq)
+-{
+-	if (!txq)
+-		return 0;
 -
- 	/* Disable the interrupts for VF */
- 	txgbevf_intr_disable(dev);
- 
+-	return 0;
+-}
+diff --git a/drivers/net/intel/idpf/idpf_rxtx.c b/drivers/net/intel/idpf/idpf_rxtx.c
+index 6317112353..448d5fb425 100644
+--- a/drivers/net/intel/idpf/idpf_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_rxtx.c
+@@ -897,20 +897,4 @@ idpf_set_tx_function(struct rte_eth_dev *dev)
+ 	dev->tx_pkt_prepare = idpf_dp_prep_pkts;
+ 	PMD_DRV_LOG(NOTICE, "Using %s Tx (port %d).",
+ 			idpf_tx_path_infos[ad->tx_func_type].info, dev->data->port_id);
+-
+-#ifdef RTE_ARCH_X86
+-#ifdef CC_AVX512_SUPPORT
+-	if (idpf_tx_path_infos[ad->tx_func_type].features.simd_width >= RTE_VECT_SIMD_256 &&
+-			idpf_tx_path_infos[ad->tx_func_type].features.single_queue) {
+-		for (i = 0; i < dev->data->nb_tx_queues; i++) {
+-			txq = dev->data->tx_queues[i];
+-			if (txq == NULL)
+-				continue;
+-			if (idpf_tx_path_infos[ad->tx_func_type].features.simd_width ==
+-					RTE_VECT_SIMD_512)
+-				idpf_qc_tx_vec_avx512_setup(txq);
+-		}
+-	}
+-#endif /* CC_AVX512_SUPPORT */
+-#endif /* RTE_ARCH_X86 */
+ }
 -- 
-2.52.0
+2.43.0
 
