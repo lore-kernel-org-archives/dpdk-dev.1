@@ -2,167 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F60E9A03E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 10:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B429BE9A03E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 10:19:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7881540395;
-	Wed, 18 Feb 2026 11:09:29 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id B965B402A3
- for <dev@dpdk.org>; Wed, 18 Feb 2026 11:09:27 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771409368; x=1802945368;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=VjHB4n/nBQ6Uv9OmJLBW+8icWEiIgJ5vIFM3/dCYdgQ=;
- b=GEIYsg7IEEFyQ/ZJaqjJMAUOyZC1r0TNT40xZfkFr57mT/3PFQsXHhm9
- fGw72KTzTs5wX9NvaYpB6qIYudOIWgIgy783PN8oaoYTUGOAoT3z1AucM
- fjpoTi0lSmc5UytLEF6Rm+j7P1Y1eRSBR1lHJBhzlQBZ+wKn75J+TiO6g
- 7XcFqGkNfMbejl+7pfuP/XzZ7G4ZCeTf97BTxaUvBQo6o1F3gwA9xQg9P
- 9SVzPIO80dGun12y4Z1ak2kuGk59xr8xtnc9KRZcD/CWTjbz+kNujc35h
- QadjCtc4807TOet3bkQ0iObwzoiwmgJrJ3xF+oTQ60Gxxwx9xueItohlW g==;
-X-CSE-ConnectionGUID: d5CTcVlkR5WM3Y2J9gwDag==
-X-CSE-MsgGUID: qJLUhtquTICwW3kzi6fVmg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11704"; a="60052287"
-X-IronPort-AV: E=Sophos;i="6.21,298,1763452800"; d="scan'208";a="60052287"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Feb 2026 02:09:27 -0800
-X-CSE-ConnectionGUID: /qMZhl2dS1u9KbTVEiL11w==
-X-CSE-MsgGUID: /OfhO515TV2ND69RPWNcjg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,298,1763452800"; d="scan'208";a="214006309"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 Feb 2026 02:09:27 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Wed, 18 Feb 2026 02:09:26 -0800
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35 via Frontend Transport; Wed, 18 Feb 2026 02:09:26 -0800
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.28) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.35; Wed, 18 Feb 2026 02:09:26 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Kat+3UR6k8RvUk7cdrLbMgyWhq+FwBuzE0msj59CuQPtDOUdtcK3271EyarwI4Z73Pfn8S+SzGAsdVRxE+OowRfkcs+GIteoGJBPoJFPOZdS90eiRZ//Ey3vQi/I7sP/ejo2LeV072FeX7VJUyhy/Fsh4Jy5mDrZ5MNrzJ7mNC+6GJ9nBmkijhnifJjoXzgjKP2vCkT4QFHw5DEVIwcNFYK2lcVfRZlAu5dQOJ2E7t5U9w/p6OokCHlj5pjeFZl0Bvo/8DlyDGG+O3gzTcDC+CuKGWvkSecJds7lMOTJZD6M/zPu6fuMUxuVarcQXojkESJGYq6Ed3NqhvJxUpIFMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RgyHQCTOp6Ki+JnF9bf12HAohVK8OQW++Y6RPADs6PU=;
- b=kutCpwZPA75neNEgxsOreSrCZu6mQRVIluEye7yhPVZhXghmuPd19daSai2tJLxflvPX1BIl/Pf+68RgTF97LeWTf0X8ukaFrjLtMx9AaaKEUfzDB7MTZn8OkmBxEjU6/UTkQZSS0VNv8kAQoJfRefsC6DkghIjsvzf9vz3l0s83izoqdMjUKfL1kG/E1XdbA/ZeCFd5xfTsc4xDHOhDcbS6iJY0ySxunviqvv5PGAWJcTFLoyOyWq1Ym1s5J7n0VupDOivyrlz/TR6JT1W0gge7dJFV2QFUY2X44eJOZ1y0dQITut+DHMRJwhEULFq84qKQ7bb257qyIUJIIWNkVQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by PH7PR11MB5818.namprd11.prod.outlook.com (2603:10b6:510:132::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.14; Wed, 18 Feb
- 2026 10:09:24 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9632.010; Wed, 18 Feb 2026
- 10:09:24 +0000
-Date: Wed, 18 Feb 2026 10:09:19 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Ciara Loftus <ciara.loftus@intel.com>
-CC: <dev@dpdk.org>
-Subject: Re: [PATCH v3 10/10] net/cpfl: permit secondary process Tx path
- selection
-Message-ID: <aZWPzwOqXALbzhR7@bricha3-mobl1.ger.corp.intel.com>
-References: <20260205124627.371733-1-ciara.loftus@intel.com>
- <20260218094937.1652391-1-ciara.loftus@intel.com>
- <20260218094937.1652391-11-ciara.loftus@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260218094937.1652391-11-ciara.loftus@intel.com>
-X-ClientProxiedBy: DU7PR01CA0030.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50e::19) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id DB595402C5;
+	Wed, 18 Feb 2026 11:19:24 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id DFF88402A3
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 11:19:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1771409963;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=mFGVbudX2KeuWRLx49fZjxWJOq3N4RtztniCJovJItg=;
+ b=dlJFA1w9vbTXhWL1gRsUo+QR/jaA5D8NiQB32H4ge9nU5ZlhQASLw/NzDSSixdQ3hv4WSJ
+ 4s8muuHuo16ZBqmcgLuO7N5kjMynqkcPcZVmmIxTRLPNqU0g6uvWRcnEoPfN/GWLX+X8ws
+ cb2DCsaRs4M5pxhjMsWuGMkeJ9AQm7g=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-167-8IIBqbhGN_-o67pAcAtTqA-1; Wed,
+ 18 Feb 2026 05:19:21 -0500
+X-MC-Unique: 8IIBqbhGN_-o67pAcAtTqA-1
+X-Mimecast-MFC-AGG-ID: 8IIBqbhGN_-o67pAcAtTqA_1771409961
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 147B9180025C
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 10:19:21 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.45.225.11])
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 4BF1A30001A5
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 10:19:20 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Subject: [PATCH] eal/linux: fix HPET symbols export
+Date: Wed, 18 Feb 2026 11:18:59 +0100
+Message-ID: <20260218101859.3028581-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB5818:EE_
-X-MS-Office365-Filtering-Correlation-Id: 92c3317d-42d6-427f-c2b5-08de6ed5cad7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?yz7dgq06fNN0BXAvZcTnwN0g3EnV3pj9FbclCTAfETwgIVFyrcNwUX6JbUdc?=
- =?us-ascii?Q?c/L1pcf31OXS0XxGWVMOyMDoIgJMcJDeD86ywLoNdaDQu0lkS/olpB5qczUA?=
- =?us-ascii?Q?ojxyZY79vuDPPxCAtBLdVj6ogbvZn/XBFwa34Hd9Fc+et5xoyQjIlT8ZTigS?=
- =?us-ascii?Q?C/BBNRDSS1/T2MlzOIo674j81tUjTEKyYMghDDYBfGtrz+/15IXjTpkFZZDw?=
- =?us-ascii?Q?KyiMrji4HoCJVTEVFZJQyv5kKfw/1QR7k5cIyTvABK4HQnS/eArSiuKdOpO0?=
- =?us-ascii?Q?Xji+O2mTv8ITQqJWAjFNMIw333dlrjMeZ2YzVzMyNoix3h5BRZdt+YLacs5g?=
- =?us-ascii?Q?oZDRTS/3RH+YjDxk65UOiPeMvH08ptZ1AorFYlAHM5Bi5EjVh2DgKY53S4zj?=
- =?us-ascii?Q?9MWnq+XPNEEdjxAV8ToqjQ0s8w0M7DONj+G05EyOLImzoJmIhncwmTY10sd3?=
- =?us-ascii?Q?+a7YgxSo+lGcgkL2Ff4yzkCn/XVkBanP1AZ929U0aexwneVQllfp1i7KVH7D?=
- =?us-ascii?Q?YVYh9olBqp8BNcQPr7LEy/8rG5z8vTBow5IYirj7BzdSwOOLJnStKpNfuazR?=
- =?us-ascii?Q?X5JYrt7GSonN9RgLTdkvNgaljHPUGhBwI4E9zIBaMcqw74+ACdOtdSjheWuC?=
- =?us-ascii?Q?rwAm0Ne/m9Ija7C6WmvOEhOrt4Ckb692moGYjDtEbrgxqF0NkYa68WkDdo08?=
- =?us-ascii?Q?R0uKGPo9j5nfMbKGHmBfjMPur+12OWECxKdb8YXgRvYSTWZ9qu6eKzQ6/pTo?=
- =?us-ascii?Q?qRh/joaJ6J1GpwnwegwvFYoaibvB49Ef2V+FFJaJb4EPWOgbGXXc0+YSY7P/?=
- =?us-ascii?Q?pCTeE0mJnspjGjZHiiHocRPZu29kLsi9/AVbnem4AlVk49pg+8UbrjPffckH?=
- =?us-ascii?Q?4lJRpY4AfKKTXze9XfezejheZ/sb2G5uXt78PoZGgsu3Jljd5d1/JaUr8TU+?=
- =?us-ascii?Q?OGLbFIEEAAsdssmwsgSqklHwi4dz3B34BDUj7lc7m71MBEKztO2471M0PltN?=
- =?us-ascii?Q?77gab6B502LRQFQC0bY5Wk69QBwP+BnzM7wQgcXrGhek1qlkoNmhIitNZlmA?=
- =?us-ascii?Q?rO6UuXVNdkw1KvfdfPAIco/U8AoZlu4riouRbJQoAlCEmbY0ecBqUDe/QvjQ?=
- =?us-ascii?Q?6a097KIk16thTcD+/FoU/yvG8LGrAR+yXJosT6twDthPN1W8UOz9uXPpZ0ly?=
- =?us-ascii?Q?blFq+/ezPfGsRthrwBTnn4Ka2Gc0ooDOsyCB6jDjK+m10Li7IOdpbJJWIHog?=
- =?us-ascii?Q?bUGtHsA4WVMDg1v1Ph6hEv51H96EQBbtxd3ZZQSd0GWlEvm/i7LrS+gCMlbQ?=
- =?us-ascii?Q?M6EU+4H4YfaZYI0g2CeUmfw1G3+u8SqKMCMEzZfWQ+Q3LkvYNFRlAZxk47YR?=
- =?us-ascii?Q?2BNx7/83+plix6y9hh+Ep2GAI8R9CiaeTKKclo9lotkFDHq2dUcVXume/9IS?=
- =?us-ascii?Q?/IGVjxM11x3WFGS1ILy61Kffc3wrWqEq19hXsBOBd0XmmBVaxFnaMrKWhqO3?=
- =?us-ascii?Q?7by8qHrBfMIpiTbk4Ktw5CmngnILnN7+3JCVUDDMIUv75M04PR9eQKriIZr5?=
- =?us-ascii?Q?xLvIPBVsisSHLKFF5Eg=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016); DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Q/X1vATy9HRE9dfeXLuy1PKoAZBgZGAhNzDeeM8J45tvw0/5sCqU5YV2BhsA?=
- =?us-ascii?Q?2HDAlWbaZI4sKgBSetdqsef4ryxwWlakM7+ZYgor5TBHtAIHRwu5+/mw273x?=
- =?us-ascii?Q?YPOAoPwL5sXYQLFWTOrU4Bm9YLfCFZSXRG99NGNAOFir303rVT+78/u3OUDZ?=
- =?us-ascii?Q?gNB76oGNP/H2rD1mohfAqVS+zM/Q45PGjfaVutJ/g9kZ1CkCMej8p2NFOdR4?=
- =?us-ascii?Q?p6CFwXAwRGhhvpATxneuvExAr7+iIQsPbOmD21hHl4IujjQawi9vyP7a8EJ8?=
- =?us-ascii?Q?1S2ZYJEEqFspl/3v0PYiI+pX/w2nRDLMGQk+HrzbIQ0tFn91OpSedxxNu0gU?=
- =?us-ascii?Q?DljYc9sUvEKV0l0+TWc3qduHzpufeouVrxg3dzzGWJ7ZQR2oMG3nsizD0uL4?=
- =?us-ascii?Q?mOhoPOxT4rdYk8s7EeGTI7Mvp49HUYjf3FxbA9P+UJ3KDH7b5DoNb0MB4K2v?=
- =?us-ascii?Q?h9rWmcGlQuos1RSDM3KV92Bs4qyQa52wTMqiOt4lOplUXuQ0YIoDAjyXiH8q?=
- =?us-ascii?Q?r1dXw+IQ/ZnBi9izqArAcEkVas/j91Jhyx/KT7CVKvPOT/8NXm0z3KpaZ3EH?=
- =?us-ascii?Q?Jgt1EJ0DMNlAdRTsG12egCYs5DIjAjA6A/m01/uHUnZwyzix0AcuO4hkwmRN?=
- =?us-ascii?Q?e8YYpeTm4oReTtjINVgp1aYM+l7S3jHmPwgjHjhiOsT9TlV7ONQ7G5+Pjc/r?=
- =?us-ascii?Q?uodtynAUwNY/8ZBSnfg7orYXC/cSRPvoEGU+MxKgVOpjk3vSxbALens9I+q8?=
- =?us-ascii?Q?kAs2L77OnL3JEl0eIJa1T9b/xQhtVtxeQVYEix3PkxV1hoV41bYsU8/6A7Su?=
- =?us-ascii?Q?dmUGYwVHuA0D4PrrPPX063q1YZxpqaOdsPJT3cd9JfV9SaNiVTsD1Iryh38m?=
- =?us-ascii?Q?CJ7r41MKmMrx8sm7u98pdQxBWYbXFtXklSKzhSoHnt4knsGuYF5pJWn686W8?=
- =?us-ascii?Q?dfYyO4GS6jfwSiajb2vK63u5fELKa09xiCtoR+KN0auMPDNJB93sVpubgyEX?=
- =?us-ascii?Q?39VHhiFeXTIuuDp38Xr7u0+v2qd+WKQALwANVlqyiD7ccItkmDNCAeHoA19W?=
- =?us-ascii?Q?rg9mkXrsGYonh+fhPyJxwJLYrijXy0d9UhBmLcPLDt2IW9ppQmgFgsO6soBp?=
- =?us-ascii?Q?GDL+n1yh6YrdAux8f5WcY7Zn2C4shOynFSsRWKfMdrsoKUz91PTgzirenfap?=
- =?us-ascii?Q?wq9WnnOlht76NqAgMuZ36oitz+pBbrOsgtaAAJCyo/Ojx+j0IT392zmLR77l?=
- =?us-ascii?Q?HAQ0l15i6YSu5YRYSAPDdKv1k2c+SKhCLwSUInYmZKrOFEvdN95Sg3wQF8mQ?=
- =?us-ascii?Q?69QCXLM5EkQItNlV07HhIUhL5gANLfu2YiZvUM02HLOKYuX9u/fJgpcXYc+3?=
- =?us-ascii?Q?Xkz0Mg5DUc0sZIvUTAIMsYzOM4M7kdpq002VrHoJfeXGZj0+Ir6zsLub+0UG?=
- =?us-ascii?Q?cN+xtJboNSYssm2lUs+yq6Fsi9ZYtOQ/vYGw/9rcI/QDWI+PQiHaS/huC6QM?=
- =?us-ascii?Q?pScks7+rAxAYykNPqp03VkJveBfWdDaj231hgNzheMk3CXZ5adyxb9RunNB8?=
- =?us-ascii?Q?FEawp2CR59JMI8WyTKiZmPKDjyATlk9Z6JRL2W10EOwjpn6TZ24mz94earzH?=
- =?us-ascii?Q?DSENdW2YjyQDXoHlQlkHxaNLRkHgbaEX1i5pCmlZYlH9Npdyca0YRuJgTvpW?=
- =?us-ascii?Q?q38pnxFwGnt1IA2XWNbKUnIhHXJsGYeFghCczRVUeqrmayN47HAI7OJ5SH2G?=
- =?us-ascii?Q?rkDV548gsRrGyXz8NJ6str0BfIgQ7dw=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 92c3317d-42d6-427f-c2b5-08de6ed5cad7
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2026 10:09:24.4769 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NoTcK25XpxJcuziHhMNdwvJHlUujg89g9DwXqEev4ITm2aCSaXdXujJ7aD4wTGCuSoKjebaN9z2jwhQEM8Yfs95ZCkttKxLgpWv8qHtyf44=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5818
-X-OriginatorOrg: intel.com
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 6x96Tq16nQRhUzCEfNA4aJOOOwKfkhkO8woo-T-upII_1771409961
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -176,21 +64,430 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Feb 18, 2026 at 09:49:37AM +0000, Ciara Loftus wrote:
-> Commit 6970745698b9 ("net/cpfl: use common Tx path selection
-> infrastructure") changed the way that secondary processes selected their
-> Tx burst function. Instead of letting secondary processes select their
-> own function, they now used the function selected by the primary
-> process. However, the primary process only selects the function at
-> device start, so if the primary process hadn't started the device by the
-> time the secondary process was selecting its Tx burst function, the
-> secondary process would not select the correct function.
-> 
-> This commit addresses this issue by allowing the secondary process to
-> select the path if the device has not been started yet.
-> 
-> Fixes: 6970745698b9 ("net/cpfl: use common Tx path selection infrastructure")
-> 
-> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> ---
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+The .map generation script has no clue about build configuration as it
+relies only on the presence of RTE_EXPORT* and RTE_VERSION* markers in
+a source file.
+
+As a consequence, Linux eal_exports.map contains references to
+HPET symbols regardless of the use_hpet meson option value.
+
+$ meson configure build -Duse_hpet=false
+$ ninja -C build
+...
+$ grep hpet build/lib/eal_exports.map
+	rte_eal_hpet_init;
+	rte_get_hpet_cycles;
+	rte_get_hpet_hz;
+
+As far as I have seen, superfluous exports have no impact on generating
+a shared library with the GNU linker, yet it might be different with
+other linkers (MSVC linker would complain, for example).
+
+Moving those symbols to a dedicated source file solves this (non?) issue.
+
+Fixes: 57c194d142d9 ("build: use dynamically generated version maps")
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ lib/eal/linux/eal_timer.c      | 175 --------------------------------
+ lib/eal/linux/eal_timer_hpet.c | 179 +++++++++++++++++++++++++++++++++
+ lib/eal/linux/meson.build      |   4 +
+ 3 files changed, 183 insertions(+), 175 deletions(-)
+ create mode 100644 lib/eal/linux/eal_timer_hpet.c
+
+diff --git a/lib/eal/linux/eal_timer.c b/lib/eal/linux/eal_timer.c
+index 0e670a0af6..39f975b6b9 100644
+--- a/lib/eal/linux/eal_timer.c
++++ b/lib/eal/linux/eal_timer.c
+@@ -6,11 +6,6 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <inttypes.h>
+-#ifdef RTE_LIBEAL_USE_HPET
+-#include <fcntl.h>
+-#include <sys/mman.h>
+-#include <unistd.h>
+-#endif
+ 
+ #include <rte_common.h>
+ #include <rte_cycles.h>
+@@ -22,176 +17,6 @@
+ RTE_EXPORT_SYMBOL(eal_timer_source)
+ enum timer_source eal_timer_source = EAL_TIMER_HPET;
+ 
+-#ifdef RTE_LIBEAL_USE_HPET
+-
+-#define DEV_HPET "/dev/hpet"
+-
+-/* Maximum number of counters. */
+-#define HPET_TIMER_NUM 3
+-
+-/* General capabilities register */
+-#define CLK_PERIOD_SHIFT     32 /* Clock period shift. */
+-#define CLK_PERIOD_MASK      0xffffffff00000000ULL /* Clock period mask. */
+-
+-/**
+- * HPET timer registers. From the Intel IA-PC HPET (High Precision Event
+- * Timers) Specification.
+- */
+-struct eal_hpet_regs {
+-	/* Memory-mapped, software visible registers */
+-	uint64_t capabilities;      /**< RO General Capabilities Register. */
+-	uint64_t reserved0;         /**< Reserved for future use. */
+-	uint64_t config;            /**< RW General Configuration Register. */
+-	uint64_t reserved1;         /**< Reserved for future use. */
+-	uint64_t isr;               /**< RW Clear General Interrupt Status. */
+-	uint64_t reserved2[25];     /**< Reserved for future use. */
+-	union {
+-		uint64_t counter;   /**< RW Main Counter Value Register. */
+-		struct {
+-			uint32_t counter_l; /**< RW Main Counter Low. */
+-			uint32_t counter_h; /**< RW Main Counter High. */
+-		};
+-	};
+-	uint64_t reserved3;         /**< Reserved for future use. */
+-	struct {
+-		uint64_t config;    /**< RW Timer Config and Capability Reg. */
+-		uint64_t comp;      /**< RW Timer Comparator Value Register. */
+-		uint64_t fsb;       /**< RW FSB Interrupt Route Register. */
+-		uint64_t reserved4; /**< Reserved for future use. */
+-	} timers[HPET_TIMER_NUM]; /**< Set of HPET timers. */
+-};
+-
+-/* Mmap'd hpet registers */
+-static volatile struct eal_hpet_regs *eal_hpet = NULL;
+-
+-/* Period at which the HPET counter increments in
+- * femtoseconds (10^-15 seconds). */
+-static uint32_t eal_hpet_resolution_fs = 0;
+-
+-/* Frequency of the HPET counter in Hz */
+-static uint64_t eal_hpet_resolution_hz = 0;
+-
+-/* Incremented 4 times during one 32bits hpet full count */
+-static uint32_t eal_hpet_msb;
+-
+-static rte_thread_t msb_inc_thread_id;
+-
+-/*
+- * This function runs on a specific thread to update a global variable
+- * containing used to process MSB of the HPET (unfortunately, we need
+- * this because hpet is 32 bits by default under linux).
+- */
+-static uint32_t
+-hpet_msb_inc(__rte_unused void *arg)
+-{
+-	uint32_t t;
+-
+-	while (1) {
+-		t = (eal_hpet->counter_l >> 30);
+-		if (t != (eal_hpet_msb & 3))
+-			eal_hpet_msb ++;
+-		sleep(10);
+-	}
+-	return 0;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_get_hpet_hz)
+-uint64_t
+-rte_get_hpet_hz(void)
+-{
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+-
+-	if (internal_conf->no_hpet)
+-		rte_panic("Error, HPET called, but no HPET present\n");
+-
+-	return eal_hpet_resolution_hz;
+-}
+-
+-RTE_EXPORT_SYMBOL(rte_get_hpet_cycles)
+-uint64_t
+-rte_get_hpet_cycles(void)
+-{
+-	uint32_t t, msb;
+-	uint64_t ret;
+-	const struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+-
+-	if (internal_conf->no_hpet)
+-		rte_panic("Error, HPET called, but no HPET present\n");
+-
+-	t = eal_hpet->counter_l;
+-	msb = eal_hpet_msb;
+-	ret = (msb + 2 - (t >> 30)) / 4;
+-	ret <<= 32;
+-	ret += t;
+-	return ret;
+-}
+-
+-#endif
+-
+-#ifdef RTE_LIBEAL_USE_HPET
+-/*
+- * Open and mmap /dev/hpet (high precision event timer) that will
+- * provide our time reference.
+- */
+-RTE_EXPORT_SYMBOL(rte_eal_hpet_init)
+-int
+-rte_eal_hpet_init(int make_default)
+-{
+-	int fd, ret;
+-	struct internal_config *internal_conf =
+-		eal_get_internal_configuration();
+-
+-	if (internal_conf->no_hpet) {
+-		EAL_LOG(NOTICE, "HPET is disabled");
+-		return -1;
+-	}
+-
+-	fd = open(DEV_HPET, O_RDONLY);
+-	if (fd < 0) {
+-		EAL_LOG(ERR, "ERROR: Cannot open "DEV_HPET": %s!",
+-			strerror(errno));
+-		internal_conf->no_hpet = 1;
+-		return -1;
+-	}
+-	eal_hpet = mmap(NULL, 1024, PROT_READ, MAP_SHARED, fd, 0);
+-	if (eal_hpet == MAP_FAILED) {
+-		EAL_LOG(ERR, "ERROR: Cannot mmap "DEV_HPET"!");
+-		close(fd);
+-		internal_conf->no_hpet = 1;
+-		return -1;
+-	}
+-	close(fd);
+-
+-	eal_hpet_resolution_fs = (uint32_t)((eal_hpet->capabilities &
+-					CLK_PERIOD_MASK) >>
+-					CLK_PERIOD_SHIFT);
+-
+-	eal_hpet_resolution_hz = (1000ULL*1000ULL*1000ULL*1000ULL*1000ULL) /
+-		(uint64_t)eal_hpet_resolution_fs;
+-
+-	EAL_LOG(INFO, "HPET frequency is ~%"PRIu64" kHz",
+-			eal_hpet_resolution_hz/1000);
+-
+-	eal_hpet_msb = (eal_hpet->counter_l >> 30);
+-
+-	/* create a thread that will increment a global variable for
+-	 * msb (hpet is 32 bits by default under linux) */
+-	ret = rte_thread_create_internal_control(&msb_inc_thread_id, "hpet-msb",
+-			hpet_msb_inc, NULL);
+-	if (ret != 0) {
+-		EAL_LOG(ERR, "ERROR: Cannot create HPET timer thread!");
+-		internal_conf->no_hpet = 1;
+-		return -1;
+-	}
+-
+-	if (make_default)
+-		eal_timer_source = EAL_TIMER_HPET;
+-	return 0;
+-}
+-#endif
+-
+ /* Check if the kernel deems the arch provided TSC frequency trustworthy. */
+ 
+ static bool
+diff --git a/lib/eal/linux/eal_timer_hpet.c b/lib/eal/linux/eal_timer_hpet.c
+new file mode 100644
+index 0000000000..63e38bd53e
+--- /dev/null
++++ b/lib/eal/linux/eal_timer_hpet.c
+@@ -0,0 +1,179 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2010-2014 Intel Corporation.
++ * Copyright(c) 2012-2013 6WIND S.A.
++ */
++
++#include <fcntl.h>
++#include <inttypes.h>
++#include <sys/mman.h>
++#include <unistd.h>
++
++#include <rte_cycles.h>
++#include <rte_thread.h>
++
++#include <eal_export.h>
++#include "eal_private.h"
++
++#define DEV_HPET "/dev/hpet"
++
++/* Maximum number of counters. */
++#define HPET_TIMER_NUM 3
++
++/* General capabilities register */
++#define CLK_PERIOD_SHIFT     32 /* Clock period shift. */
++#define CLK_PERIOD_MASK      0xffffffff00000000ULL /* Clock period mask. */
++
++/**
++ * HPET timer registers. From the Intel IA-PC HPET (High Precision Event
++ * Timers) Specification.
++ */
++struct eal_hpet_regs {
++	/* Memory-mapped, software visible registers */
++	uint64_t capabilities;      /**< RO General Capabilities Register. */
++	uint64_t reserved0;         /**< Reserved for future use. */
++	uint64_t config;            /**< RW General Configuration Register. */
++	uint64_t reserved1;         /**< Reserved for future use. */
++	uint64_t isr;               /**< RW Clear General Interrupt Status. */
++	uint64_t reserved2[25];     /**< Reserved for future use. */
++	union {
++		uint64_t counter;   /**< RW Main Counter Value Register. */
++		struct {
++			uint32_t counter_l; /**< RW Main Counter Low. */
++			uint32_t counter_h; /**< RW Main Counter High. */
++		};
++	};
++	uint64_t reserved3;         /**< Reserved for future use. */
++	struct {
++		uint64_t config;    /**< RW Timer Config and Capability Reg. */
++		uint64_t comp;      /**< RW Timer Comparator Value Register. */
++		uint64_t fsb;       /**< RW FSB Interrupt Route Register. */
++		uint64_t reserved4; /**< Reserved for future use. */
++	} timers[HPET_TIMER_NUM]; /**< Set of HPET timers. */
++};
++
++/* Mmap'd hpet registers */
++static volatile struct eal_hpet_regs *eal_hpet;
++
++/* Period at which the HPET counter increments in femtoseconds (10^-15 seconds). */
++static uint32_t eal_hpet_resolution_fs;
++
++/* Frequency of the HPET counter in Hz */
++static uint64_t eal_hpet_resolution_hz;
++
++/* Incremented 4 times during one 32bits hpet full count */
++static uint32_t eal_hpet_msb;
++
++static rte_thread_t msb_inc_thread_id;
++
++/*
++ * This function runs on a specific thread to update a global variable
++ * containing used to process MSB of the HPET (unfortunately, we need
++ * this because hpet is 32 bits by default under linux).
++ */
++static uint32_t
++hpet_msb_inc(__rte_unused void *arg)
++{
++	uint32_t t;
++
++	while (1) {
++		t = (eal_hpet->counter_l >> 30);
++		if (t != (eal_hpet_msb & 3))
++			eal_hpet_msb++;
++		sleep(10);
++	}
++	return 0;
++}
++
++RTE_EXPORT_SYMBOL(rte_get_hpet_hz)
++uint64_t
++rte_get_hpet_hz(void)
++{
++	const struct internal_config *internal_conf =
++		eal_get_internal_configuration();
++
++	if (internal_conf->no_hpet)
++		rte_panic("Error, HPET called, but no HPET present\n");
++
++	return eal_hpet_resolution_hz;
++}
++
++RTE_EXPORT_SYMBOL(rte_get_hpet_cycles)
++uint64_t
++rte_get_hpet_cycles(void)
++{
++	uint32_t t, msb;
++	uint64_t ret;
++	const struct internal_config *internal_conf =
++		eal_get_internal_configuration();
++
++	if (internal_conf->no_hpet)
++		rte_panic("Error, HPET called, but no HPET present\n");
++
++	t = eal_hpet->counter_l;
++	msb = eal_hpet_msb;
++	ret = (msb + 2 - (t >> 30)) / 4;
++	ret <<= 32;
++	ret += t;
++	return ret;
++}
++
++/*
++ * Open and mmap /dev/hpet (high precision event timer) that will
++ * provide our time reference.
++ */
++RTE_EXPORT_SYMBOL(rte_eal_hpet_init)
++int
++rte_eal_hpet_init(int make_default)
++{
++	int fd, ret;
++	struct internal_config *internal_conf =
++		eal_get_internal_configuration();
++
++	if (internal_conf->no_hpet) {
++		EAL_LOG(NOTICE, "HPET is disabled");
++		return -1;
++	}
++
++	fd = open(DEV_HPET, O_RDONLY);
++	if (fd < 0) {
++		EAL_LOG(ERR, "ERROR: Cannot open "DEV_HPET": %s!",
++			strerror(errno));
++		internal_conf->no_hpet = 1;
++		return -1;
++	}
++	eal_hpet = mmap(NULL, 1024, PROT_READ, MAP_SHARED, fd, 0);
++	if (eal_hpet == MAP_FAILED) {
++		EAL_LOG(ERR, "ERROR: Cannot mmap "DEV_HPET"!");
++		close(fd);
++		internal_conf->no_hpet = 1;
++		return -1;
++	}
++	close(fd);
++
++	eal_hpet_resolution_fs = (uint32_t)((eal_hpet->capabilities &
++					CLK_PERIOD_MASK) >>
++					CLK_PERIOD_SHIFT);
++
++	eal_hpet_resolution_hz = (1000ULL*1000ULL*1000ULL*1000ULL*1000ULL) /
++		(uint64_t)eal_hpet_resolution_fs;
++
++	EAL_LOG(INFO, "HPET frequency is ~%"PRIu64" kHz",
++			eal_hpet_resolution_hz/1000);
++
++	eal_hpet_msb = (eal_hpet->counter_l >> 30);
++
++	/* create a thread that will increment a global variable for
++	 * msb (hpet is 32 bits by default under linux)
++	 */
++	ret = rte_thread_create_internal_control(&msb_inc_thread_id, "hpet-msb",
++			hpet_msb_inc, NULL);
++	if (ret != 0) {
++		EAL_LOG(ERR, "ERROR: Cannot create HPET timer thread!");
++		internal_conf->no_hpet = 1;
++		return -1;
++	}
++
++	if (make_default)
++		eal_timer_source = EAL_TIMER_HPET;
++	return 0;
++}
+diff --git a/lib/eal/linux/meson.build b/lib/eal/linux/meson.build
+index e99ebed256..29ba313218 100644
+--- a/lib/eal/linux/meson.build
++++ b/lib/eal/linux/meson.build
+@@ -19,6 +19,10 @@ sources += files(
+         'eal_vfio_mp_sync.c',
+ )
+ 
++if dpdk_conf.get('RTE_LIBEAL_USE_HPET')
++    sources += files('eal_timer_hpet.c')
++endif
++
+ deps += ['kvargs', 'telemetry']
+ if has_libnuma
+     dpdk_conf.set10('RTE_EAL_NUMA_AWARE_HUGEPAGES', true)
+-- 
+2.53.0
+
