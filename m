@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46046E9A057
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 17:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0935CE9A058
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 18:04:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20C9040696;
-	Thu, 19 Feb 2026 18:51:26 +0100 (CET)
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com
- [209.85.210.47]) by mails.dpdk.org (Postfix) with ESMTP id 8522D40677
- for <dev@dpdk.org>; Thu, 19 Feb 2026 18:51:22 +0100 (CET)
-Received: by mail-ot1-f47.google.com with SMTP id
- 46e09a7af769-7d4c4b494fcso781915a34.3
- for <dev@dpdk.org>; Thu, 19 Feb 2026 09:51:22 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3B4A0402D5;
+	Thu, 19 Feb 2026 19:04:56 +0100 (CET)
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com
+ [209.85.167.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 22C47402CA
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 19:04:55 +0100 (CET)
+Received: by mail-oi1-f171.google.com with SMTP id
+ 5614622812f47-45ee8823e2aso644290b6e.0
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 10:04:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771523482;
- x=1772128282; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771524294;
+ x=1772129094; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DLSpoqHW+kRx+I4ZplRJyuWDxeuPc+YCTuCCAxCn760=;
- b=Aj+fN3KO8AydUFIup+GVBc2qDG2KMPMgfcoCseLzKsxJr9ILOkNz1STWlmqSuP75SL
- EGYgV6FVKAyFY0znccYns5Fv3PW+T6lVx/6VPjOq8bU1P2CBRs6/RpRhGVgXW2+aRXZu
- 4PcPBzDfmOZZ/Q58zr1N0aFUZ6PpZgnCoAtfHV2UCuf2mzzVE0JKxqiJrpPMt9+P11k0
- iFZG+U1Av3Rqu81c/XKZxzxC0p6JeQAzhjy8GIPx2/DFlxDDGcA7e7fw7dHB50l2m0HU
- dx3zuTy3pibT5PusHLRvMtSWAk+myzt60gSY6uy9wgqPe2uo0a302YP9uyt0bGc6v4fx
- EP4w==
+ bh=EsAjMySlt1V9c8bGdjj955xr4zQMfiz/vIbH4pmTQGM=;
+ b=Ka+jlCfqlqTIBsDqM7i8gjsWvgB6DaTo/hJ9HtqBZihIvTWgoMAKcMOWpqgXEbS7ET
+ w98N74TnkAxGSlUwRU0FK9hFsmtwkjGoWuDaGLb0aRDc+gdu8XEXEncZwWN0VZF4f3hZ
+ pc3tlvcHAhk/CtCHao2COh/wWlLFQgDhXFw7SPhgjsoZMos0NpjRhJVeX+swZ8+Bos9M
+ KNkxwTRRvcWwSxApoSrk8aVjSpyl8ZrRNW1YsEqZQCdyWTcGqOnB/jFKu0AyL7vmI6WD
+ qMY57ieoNUJz8IZCqPfWUTmNvW+ckZifSkPBvUlwkF2ZQiZ4ecuRxcP+ZY4BmAhow14r
+ JXVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771523482; x=1772128282;
+ d=1e100.net; s=20230601; t=1771524294; x=1772129094;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=DLSpoqHW+kRx+I4ZplRJyuWDxeuPc+YCTuCCAxCn760=;
- b=dQCuJxVW7Gdm1cwT8nTHh4ogn9x9exAhU5DUHDv7+br26kWvgMHhahVd5O3m0Isewy
- 1Mxs15cLq3G/pmwcNWfsyfP3XbjIlYyVbTnq/WzaFYQ1RCYQQWkD7GecOhSU8JOHicSo
- ATeluytRPhNHdwzc94uHs23AQ25pCXwPhxnz5McK+FWbk1ZUovGO51kTIcVBDAPuqJLE
- tI6Y/TBkrC7lIS+MRlZ0NTnojkV5HgmylzJk14M/yvBvPHv9ykbev93PkqiFgT/iJCWI
- qeZ87xKshkcc4zznxECB+jtAbEgRd5L8j1ElNFMefwekMyCcR16a9vqyoh1dRZJGxqzN
- zn2w==
-X-Gm-Message-State: AOJu0YzBth8k3re1jj/puF+nZaaTNzAmZDwwsGHJ8HxfFG82a1Tm58Ag
- 5UZIHQiTS4SzIQ9rQvf90p3lgBJp6TyI1kv+gCSg1RhdaiulPIgX5ym2Z9liMTAZzGA=
-X-Gm-Gg: AZuq6aJQ7Cb5BXh3He+kVIkj+ytOQa6RYdYx9mrkfeLlX0R/MiQOWwoNzsFBjKxf2M7
- uY4HLJvedH7vlOCUuhzHYKUVQ5jZASWIar/EYzaQJzl7q6eKM8Si7jlQhwHesUI/rUyD3Q1171e
- DNpCtJsweWGH6wvgIsKyWTSibT/l7HIszYQoU8qm9J8QalwhTZm9jR92TWV9ZNpXJYwEdBisjXS
- 0I5DLwlFk7ZcG/NS2gjSoTAD2UY79YhfHTMfhdf1678PPjv4tV6tytmD+M59pQ/go+W3dYG7NmC
- QIQtfsrAhVg6pkBPcBSahJQOPslxr6SpqBy1GQdCp79gbdMdCmUfUB4KKCOSWOuuDF5XWn47z5R
- TqZaj7KBFU+ZL/B3FNfuLFWjuUdpO5rb5dX2lXK0FrLgZ3hcQer7V35xxAbktpyMQa4MWXGnbGv
- dvRYSjyXrN/t6xJXZMj0GvLw2cBOxreY0+nM4i7m3bOpI8CA7te3BQIXzuZOxhQElb
-X-Received: by 2002:a05:6830:b88:b0:7c7:6063:8e0f with SMTP id
- 46e09a7af769-7d4d0b0021fmr9608781a34.15.1771523481826; 
- Thu, 19 Feb 2026 09:51:21 -0800 (PST)
+ bh=EsAjMySlt1V9c8bGdjj955xr4zQMfiz/vIbH4pmTQGM=;
+ b=qx/ypW/W68gTRJALSmIa44kI6RtwqyONjsOlKpdXtko9m8/+ss65nP4DfDOx9S5vhq
+ A49NXYxwJiq8a+BwPIvNSeSsucwAMJB28v0XRgBmCgwO9nW0E5e2ejzr93bCEmech/Jn
+ owwBa6E44Gdyu2ybhGwS4ZdX9c9HjerkIANjbjd+sAaIcMDWAoYw4cG6m9QelKKx1wBy
+ M9P5ertgbUojpGY0PoF3VQnqPsGxZPNbC/sOnqfTiFKqxzgBzAesIQk1H/hYL6jqzgfB
+ rqjsFs1rpz9kGPgPPvdWXmbZDuGv7WXYMbKu7bNSvp3kDAGZiVoN4GVluCznH0z0Ytbs
+ /BPw==
+X-Gm-Message-State: AOJu0YwI+lzTduKINueHvMEMPv5aXpQm3IuoE07zTkU/OxsLU+RcwdZ+
+ 8yBMS7qNQljGNY90EkXa0SYdoxN5aAZhP/fLjah528Er4Ry/ytrpdJ2KL308j17N53M=
+X-Gm-Gg: AZuq6aKyULAH7lrgl5cFl67SKAwRpnto9jFfFzC/VLJ9bUkjlrHYqYUIcbqw9/qYFqt
+ AvkDK23oSnD82//GI0ZW+AJ47nUC6Bb9WH2dWc0e6neYODLoCFWiFl/a1SHw0poAM56fTMmo+lW
+ fMiTgirvCygZBN9mJlZwJm/WFLbtsBYXTblfmNh8NRWiDzIk73KL1Kp+pM4mtLYp9KHl/y220KJ
+ kYBoQ3HHql29/U6qt47QCVfzMHMHszFTMtki0h35nKXOyhvI2O8f0Wrvn3Turet4dPLgorI/1aT
+ iwJrie43cgmXrXqOEOd/ugAhR/9Hkv7RgSxLikW4JqjxYzFFOHPxcQ9wRzgvVobykSi4Lm0QRlM
+ vvUGm8IcpykDxKMzIoVnFfCxEUXvMRpCRPaJsBcSJHts4JWUQTiyH3e5905Q7aBO4axf1EIMWKG
+ 53ol360MGfJteLLOOm2pnyNe6cQMtnqWLL/RI4cV0gs35D+OxJbqJ+pvSZuBKqfEIJ
+X-Received: by 2002:a05:6808:6604:b0:44f:e61d:1893 with SMTP id
+ 5614622812f47-4639aea7241mr11982000b6e.63.1771524294231; 
+ Thu, 19 Feb 2026 10:04:54 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d4d668434bsm13756856a34.9.2026.02.19.09.51.20
+ 5614622812f47-4636b098dd9sm17275598b6e.15.2026.02.19.10.04.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Feb 2026 09:51:21 -0800 (PST)
-Date: Thu, 19 Feb 2026 09:19:38 -0800
+ Thu, 19 Feb 2026 10:04:54 -0800 (PST)
+Date: Thu, 19 Feb 2026 10:04:51 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Nawal Kishor <nkishor@marvell.com>
-Cc: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar
- K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha
- Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- <jerinj@marvell.com>, <asekhar@marvell.com>
-Subject: Re: [PATCH v4 1/2] common/cnxk: add support for halos
-Message-ID: <20260219091938.3593270c@phoenix.local>
-In-Reply-To: <20260217103932.679806-2-nkishor@marvell.com>
-References: <20251205055140.2395369-3-nkishor@marvell.com>
- <20260217103932.679806-1-nkishor@marvell.com>
- <20260217103932.679806-2-nkishor@marvell.com>
+To: Aaron Conole <aconole@redhat.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v9 1/6] doc: add AGENTS.md for AI code review tools
+Message-ID: <20260219100451.297be004@phoenix.local>
+In-Reply-To: <f7t7bsanlme.fsf@redhat.com>
+References: <20260109014106.398156-1-stephen@networkplumber.org>
+ <20260213214107.234072-1-stephen@networkplumber.org>
+ <20260213214107.234072-2-stephen@networkplumber.org>
+ <f7t7bsanlme.fsf@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,45 +83,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 17 Feb 2026 16:09:21 +0530
-Nawal Kishor <nkishor@marvell.com> wrote:
+On Wed, 18 Feb 2026 09:59:21 -0500
+Aaron Conole <aconole@redhat.com> wrote:
 
-> +int
-> +roc_idev_npa_halo_ena_get(void)
-> +{
-> +	struct idev_cfg *idev;
-> +	int halo_ena;
-> +
-> +	idev = idev_get_cfg();
-> +	halo_ena = 0;
-> +	if (idev != NULL)
-> +		halo_ena = __atomic_load_n(&idev->halo_ena, __ATOMIC_ACQUIRE);
+> Much of the following sections can be written as part of checkpatch,
+> which means we don't need to spend compute resources with the AI on it.
+> For example, telling the AI that source files need to begin with SPDX
+> identifiers, line lenghts, tag format order, tag parsing, etc.  The
+> downside is that if we ask the AI to *generate* code, then it won't
+> follow these rules; but when we ask AI to *review* the code, it takes
+> fewer tokens to submit and we can let the AI do the thing it really
+> shines at - recognizing subtle patterns, rather than stuff we can write
+> a python script to do.
 
-Do not use __atomic_load_n, DPDK has migrated to rte_atomic_load_explicit
-
-> diff --git a/drivers/common/cnxk/roc_idev_priv.h b/drivers/common/cnxk/roc_idev_priv.h
-> index 98b6286bfe..dde555535b 100644
-> --- a/drivers/common/cnxk/roc_idev_priv.h
-> +++ b/drivers/common/cnxk/roc_idev_priv.h
-> @@ -30,6 +30,7 @@ struct idev_cfg {
->  	struct npa_lf *npa;
->  	uint16_t npa_refcnt;
->  	uint32_t max_pools;
-> +	int halo_ena;
-
-Using int for a flag value is legacy C code style.
-Use bool to save space and have some type safety.
-
-> +	if (roc_feature_npa_has_halo() && roc_nix->sqb_halo_ena) {
-> +		struct npa_cn20k_halo_s halo;
-> +
-> +		memset(&halo, 0, sizeof(struct npa_cn20k_halo_s));
-> +		halo.nat_align = 1;
-> +		halo.fc_ena = 1;
-> +		halo.fc_stype = 0x3; /* STSTP */
-> +		halo.fc_addr = (uint64_t)sq->fc;
-> +		halo.fc_hyst_bits = 0; /* Store count on all updates */
-> +		halo.unified_ctx = 1;
-
-Using structure initialization is preferred over memset and individual values.
+Also, the script now has many checkpatch ish things that are not
+in current script (and would bloat it). Examples are:
+   * using const on function pointer tables
+   * using rte_stdatomic
+   * not using rte_smp_mb
+   * using bool for flag values
 
