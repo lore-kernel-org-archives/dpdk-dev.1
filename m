@@ -2,77 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6C9E9A03B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 09:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1920EE9A03B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 09:08:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10506402CC;
-	Thu, 19 Feb 2026 10:05:56 +0100 (CET)
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
- [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 2628A402AC
- for <dev@dpdk.org>; Thu, 19 Feb 2026 10:05:55 +0100 (CET)
-Received: by mail-qv1-f52.google.com with SMTP id
- 6a1803df08f44-8954c181830so8169036d6.1
- for <dev@dpdk.org>; Thu, 19 Feb 2026 01:05:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771491954; cv=none;
- d=google.com; s=arc-20240605;
- b=d2quEG+75fsHiUZqGicfwlr6IL1yobHlxtlWpHw5YapxY9RRIRtR9s70pWq/U1dFGP
- uVmPQIouT/u7+MtU/qdk9my13TyCSFTGHQCtqdW5HOcgehC9pX2URE0fi+kPtSGEzF8G
- yMjqqyQtpErekFvm1jigQFYjQgxoX2uotVfYAHS7nhgrio3Bo7E7Uso812Zbvu98h10h
- NOu34lgD11pG3osQqUR7SA6EJpGdPb6tPSPOqktZBLbtqOX2Rd7QkACj5n5erGNyTw/s
- fnRVQQY9Nq3oniiPRMr/I/04w+9DCSQqBhGNn5tcEbPuCEVPWJdQE9Z/ptZkfxMDKjPT
- y1xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version;
- bh=fznsyADLQl8X9QTV2HOjZZkw9tFpSPlmWuiWVg2YGiM=;
- fh=lJ5ZsS44s+lXwCAnWV+6jwrszKl7lzxhKjspvIqcysY=;
- b=BV45ua5Moj69AgxKQeys463uW7IJJLdc19jhyvgu2xYIRba+KvzeJiPV+9DX/x8+iD
- MrS+M4k+nJ+alNU341qivPLR5obathaiPxQ4bGgDsfmnvd4RBZHYcdTBKt4vXHnmd8Fs
- EGDRY+JN77kXgKTlrF0uqbBNIoRn8hSLGfBC9HI91AE52gAduxaNJ4jZKf/dVPMb4o68
- +74x311EHle6tBMo8ws4TWrkAMjA9Uk+IqDs0ZXZvwmgccv9iWqYMVLKgLUGiulqYH6r
- bKtxtVPCs+Q/RHmDWQmyVBAsiDEqtt9/IJvSx3Z0D25WW5oIvxS1bSn6a0aDZXsFoJrK
- mY7w==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771491954; x=1772096754;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=fznsyADLQl8X9QTV2HOjZZkw9tFpSPlmWuiWVg2YGiM=;
- b=IdRSoy0l9fPyOzm8I+8E4XRon+8bRvfkBUCYHermngTsQHVgQvTI3LxaNZLEWSukFu
- bXKZRMsRaXalKbu/9w8O/pJDlmgJA714ps/WlAtfznI/KUUEF2yjMwNNTbsy0ocZFxD+
- aYnqDHR4H8sGja3nNIvERKZw7L9w3Inm44xCSWuqe6Ub0+NXm0IP0XVi164J/yUc+mN6
- /Hwxm/1qw/q4s0aH8K7OmO00svot2nqMnmf6skuE9oOdcXAyQdCZKawUeWxpTZ9FgDrO
- 7f72V6Rc+5UEeE3ppBmIHdFVO/esRaS7snQN2Pg8nFRuB2a1qq+y5Je6C+MCwkN8MrZ/
- aiBg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXx5ImxSbcbmwa2xXctOqg6tELWsCOaPm+tU5hMxIRizwQ6S1qtSpjrX03y+x/3BEVLNv8=@dpdk.org
-X-Gm-Message-State: AOJu0Yym4VnJoS4aAfMT/mXrI50PZzI6UqOpAN/g7VTMHjpAqgitsBcu
- WdxWyB/rO+ABi7wqkY8PK+EJS4QUkXWRjnKeyXiFo80GWbIMVLLvwWs5Zu6/9kAfyZyXfokfeCr
- ae1kPIzd7VvhNZvfquIDmvcGTRlSqyLA=
-X-Gm-Gg: AZuq6aInPvCDVEbAGNkVDx+dRaCczfB+mDrRlkK2Qfk9/+CFW6vpN93YOqilGOl5+d0
- +x3TuYSynXDPOspJvOVUJ1PA/8z2LireDCh6jSLfBg744CL/YtRtb6U+RkH+ETPxHqw+k2G8oNy
- bPqu8nvrkSP+r0i7WPNKuAJKO1QqowyE6s/feUDpVsQ4h3M3uDq9M5gpTIyIcBb0q4aZ4dUcuwR
- HwlXHjvmvSeB+blHMS4USuxHONjlJVMnudZPX6DZdzj6pHecP0XORrPC3MOaswbJ/5Fui8NEuoT
- P0WWIvLonhhwLNhrAYJd3grBNf+5kSnJc1YLZQ==
-X-Received: by 2002:a05:6214:1c8e:b0:884:5e18:e91a with SMTP id
- 6a1803df08f44-897402d5612mr269120256d6.2.1771491954291; Thu, 19 Feb 2026
- 01:05:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 33602402CC;
+	Thu, 19 Feb 2026 10:08:57 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 29CD8402AC
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 10:08:56 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 61IJTjCO1084174 for <dev@dpdk.org>; Thu, 19 Feb 2026 01:08:55 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=2qe8DW2EbnwOmwwl3SgJU/e
+ 3Ev0IIJ6yNfgA2bcnerM=; b=RkYmtfpoALKpBOfXYq1eDC8htcVk8gV1YJHkQll
+ twYwpEkwtRqIjEWxg2Fc0BBA0/0QG3VR5/OOcFlIi68CEoPCjvdPCtACJ8zV9OM2
+ ucuLrHRpeptgZ7px/aBZqWoOW4fGCKT2cBwwc54VYemgrr/l7b9QfF5RLPWxTMab
+ 1cmXLkIUw9q4PpsucwAJokdA08qyTWZz1F9gxfromdIMPCzZD0G0llwTBiuwPZ3P
+ Vpu1fO7t90x5kU2zLYFWjKl+IPdWfmRH49maARNzFY3ELHTqlVdFoj1wNMqIu3tV
+ o3VSdps+WlkhD9UInARrULqBfDxeEMLO07MvpeJlkbzIqhA==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4cdkmr9bdj-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 01:08:55 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 19 Feb 2026 01:08:54 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 19 Feb 2026 01:08:54 -0800
+Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
+ by maili.marvell.com (Postfix) with ESMTP id 51BD83F708D;
+ Thu, 19 Feb 2026 01:08:52 -0800 (PST)
+From: Rahul Bhansali <rbhansali@marvell.com>
+To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <jerinj@marvell.com>, Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Subject: [PATCH 1/8] net/cnxk: support of plain packet reassembly
+Date: Thu, 19 Feb 2026 14:38:40 +0530
+Message-ID: <20260219090847.3257753-1-rbhansali@marvell.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20260218160453.142311-1-maxime@leroys.fr>
- <20260218160453.142311-11-maxime@leroys.fr>
- <CAJFAV8z=CfhvELVRPJMteB+LwTwET7ZdaOuA9eyL3OaVGmPMjQ@mail.gmail.com>
-In-Reply-To: <CAJFAV8z=CfhvELVRPJMteB+LwTwET7ZdaOuA9eyL3OaVGmPMjQ@mail.gmail.com>
-From: Maxime Leroy <maxime@leroys.fr>
-Date: Thu, 19 Feb 2026 10:05:43 +0100
-X-Gm-Features: AaiRm51jkg6Y9kvecGaVVoHCqRUFROpbqPjquQQRuZPutt2W3F-jo840cJMZ6IQ
-Message-ID: <CAHHRULXWDg2qpc-WR1pehzZ6+PasdeNx3aqOjVj_0K12Zk-UgQ@mail.gmail.com>
-Subject: Re: [PATCH 10/11] bus/fslmc: fix devargs not propagated on hotplug
-To: David Marchand <david.marchand@redhat.com>
-Cc: hemant.agrawal@nxp.com, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: efe7SVXriNUo-0SMw6klXU3ZO4Pa0VUd
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE5MDA4MyBTYWx0ZWRfX3Wx/1DnsCDL6
+ 8WrT4AWSSszC6SyFBFV3+7vFll1i1sI37DMqTdcLKWQmNvj5PlYNtVvhuWFzyHKacNGtsDdQD3b
+ uOtGvWY9gcyyxv16dh7aDcU/bep5V/O1TqPKPVs3D1LcYsHFo4pVKuL1cOvWsxgAv0EQTSIQ2DC
+ MvTiCkbLXsVg7ZgQXPgkUMqt5rDP5p7hIuY45GmbR1FX/F76GVhIFsvNgd2ajlZ70L0+N3KgVdT
+ m/Scggbr2iF4DkZRGHlI3xUbsJAjURUcgmzxjDPzj4v0CNhgqt+J4BRqkfUTZ7arfa3Q545McbW
+ 5MDXGQXnc4ZG1chuE4vgYDE1FQBFrtGQ4MOKMaeobB3ERVJEV6ktGtpYb2wNwfxhqZmrOcfJQ6k
+ k+nt61ShrdP8HxZrzgLLEDULLSsza+aNqcGaIlorfaOJ9yUwfjk7e5WE5lGuf25l7FvMKqKsp9B
+ paHBPUFA31wL2TXwuXw==
+X-Authority-Analysis: v=2.4 cv=J76nLQnS c=1 sm=1 tr=0 ts=6996d327 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
+ a=GgsMoib0sEa3-_RKJdDe:22 a=M5GUcnROAAAA:8 a=OggndEzcbkeGkWZouN0A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: efe7SVXriNUo-0SMw6klXU3ZO4Pa0VUd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-19_02,2026-02-18_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,95 +80,543 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Le mer. 18 f=C3=A9vr. 2026 =C3=A0 17:45, David Marchand
-<david.marchand@redhat.com> a =C3=A9crit :
->
-> On Wed, 18 Feb 2026 at 17:06, Maxime Leroy <maxime@leroys.fr> wrote:
-> >
-> > When a device is hotplugged via rte_dev_probe(), the EAL adds the
-> > devargs to its global list before calling the bus plug callback.
-> > However, fslmc_bus_plug() never refreshes dev->device.devargs from
-> > the EAL list -- it was only set during the initial bus scan.
-> >
-> > As a result, PMD-specific devargs (e.g. drv_no_taildrop) passed
-> > through rte_dev_probe() are silently ignored by the driver.
-> >
-> > Refresh devargs from the EAL list in fslmc_bus_plug() before probing,
-> > the same way it is done during the initial bus scan.
-> >
-> > Fixes: b5721f271cbf ("bus/fslmc: support DPNI hotplug")
-> > Signed-off-by: Maxime Leroy <maxime@leroys.fr>
-> > ---
-> >  drivers/bus/fslmc/fslmc_bus.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bu=
-s.c
-> > index abdb0ad50d..a539753649 100644
-> > --- a/drivers/bus/fslmc/fslmc_bus.c
-> > +++ b/drivers/bus/fslmc/fslmc_bus.c
-> > @@ -596,6 +596,11 @@ fslmc_bus_plug(struct rte_device *rte_dev)
-> >                         struct rte_dpaa2_device, device);
-> >         struct rte_dpaa2_driver *drv;
-> >
-> > +       /* Refresh devargs from the EAL devargs list, as they may
-> > +        * have been added after the initial bus scan (e.g. hotplug).
-> > +        */
-> > +       dev->device.devargs =3D fslmc_devargs_lookup(dev);
-> > +
-> >         TAILQ_FOREACH(drv, &rte_fslmc_bus.driver_list, next) {
-> >                 ret =3D rte_fslmc_match(drv, dev);
-> >                 if (ret)
->
-> This looks like a strange location for a fix.
->
-> The hotplug path calls this bus ->scan() which is supposed to refresh
-> the devices.
-> Could you double check if something is wrong on this side?
->
-Hi David,
+From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-rte_fslmc_scan() is guarded by a process_once flag and returns
-immediately after the initial bus scan. During hotplug,
-local_dev_probe() does call bus->scan(), but it is a no-op -
-scan_one_fslmc_device()
-(which calls fslmc_devargs_lookup()) is never reached.
+Adds support of plain packet reassembly by configuring
+UCAST_CPT rule.
 
-The device already exists in the bus device list from the initial
-scan, so find_device() succeeds, but its devargs pointer is stale
-(NULL).
+Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+---
+ doc/guides/rel_notes/release_26_03.rst        |   1 +
+ drivers/common/cnxk/roc_nix_inl.h             |   2 +-
+ .../common/cnxk/roc_platform_base_symbols.c   |   1 +
+ drivers/net/cnxk/cn20k_ethdev.c               |  78 ++++--
+ drivers/net/cnxk/cn20k_rx.h                   |   6 +-
+ drivers/net/cnxk/cnxk_ethdev.c                | 233 ++++++++++++++----
+ drivers/net/cnxk/cnxk_ethdev.h                |   8 +
+ 7 files changed, 270 insertions(+), 59 deletions(-)
 
-You are right that insert_in_device_list() does not handle the comp =3D=3D
-0 case (unlike PCI which refreshes the existing object and frees the
-duplicate). Fixing that and removing process_once would allow scan to
-properly refresh devargs on rescan.
-
-However it is a larger change: beyond the dedup fix, device_count
-would need to be kept consistent, and fslmc_vfio_process_group()
-removes infrastructure objects (DPMCP, DPRC, excess DPIO) from the
-device list during the initial probe, so a rescan would re-insert them
-as new entries that would need to be handled as well.
-
-Making the fslmc bus scan re-entrant is a significant rework of a
-critical code path, for a use case (true hotplug of dynamically
-created devices) that is not common on NXP platforms.
-I think this is best left to the NXP maintainers who know this code
-intimately. My use case is grout, which uses the EAL hotplug API to
-late-probe devices that already exist in the DPRC at boot time.
-
-That said, you are right that scan is the proper place for this fix.
-Rather than making it fully re-entrant, a simpler approach is to
-refresh devargs on existing devices when scan is called again:
-
- if (process_once) {
-     DPAA2_BUS_DEBUG("Fslmc bus already scanned. Not rescanning");
-     TAILQ_FOREACH(dev, &rte_fslmc_bus.device_list, next)
-         dev->device.devargs =3D fslmc_devargs_lookup(dev);
-     return 0;
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index b4499ec066..b1f9b3c82b 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -80,6 +80,7 @@ New Features
+ * **Updated Marvell cnxk net driver.**
+ 
+   * Added out-of-place support for CN20K SoC.
++  * Added plain packet reassembly support for CN20K SoC.
+ 
+ * **Updated ZTE zxdh ethernet driver.**
+ 
+diff --git a/drivers/common/cnxk/roc_nix_inl.h b/drivers/common/cnxk/roc_nix_inl.h
+index 68f395438c..596f12d1c7 100644
+--- a/drivers/common/cnxk/roc_nix_inl.h
++++ b/drivers/common/cnxk/roc_nix_inl.h
+@@ -160,7 +160,7 @@ bool __roc_api roc_nix_inl_inb_is_enabled(struct roc_nix *roc_nix);
+ uintptr_t __roc_api roc_nix_inl_inb_sa_base_get(struct roc_nix *roc_nix,
+ 						bool inl_dev_sa);
+ uint16_t roc_nix_inl_inb_ipsec_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev);
+-uint16_t roc_nix_inl_inb_reass_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev);
++uint16_t __roc_api roc_nix_inl_inb_reass_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev);
+ bool __roc_api roc_nix_inl_inb_rx_inject_enable(struct roc_nix *roc_nix, bool inl_dev_sa);
+ uint32_t __roc_api roc_nix_inl_inb_spi_range(struct roc_nix *roc_nix,
+ 					     bool inl_dev_sa, uint32_t *min,
+diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
+index 79dd18fbd7..2c73efd877 100644
+--- a/drivers/common/cnxk/roc_platform_base_symbols.c
++++ b/drivers/common/cnxk/roc_platform_base_symbols.c
+@@ -228,6 +228,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_tm_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_tm_sdp_prepare_tree)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_dev_dump)
++RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_inb_reass_profile_id_get)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_outb_cpt_lfs_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_sq_desc_dump)
+ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_fc_config_get)
+diff --git a/drivers/net/cnxk/cn20k_ethdev.c b/drivers/net/cnxk/cn20k_ethdev.c
+index 7e9e32f80b..fd153c3105 100644
+--- a/drivers/net/cnxk/cn20k_ethdev.c
++++ b/drivers/net/cnxk/cn20k_ethdev.c
+@@ -616,22 +616,17 @@ static int
+ cn20k_nix_reassembly_capability_get(struct rte_eth_dev *eth_dev,
+ 				    struct rte_eth_ip_reassembly_params *reassembly_capa)
+ {
+-	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
+-	int rc = -ENOTSUP;
+ 	RTE_SET_USED(eth_dev);
+ 
+ 	if (!roc_feature_nix_has_reass())
+ 		return -ENOTSUP;
+ 
+-	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY) {
+-		reassembly_capa->timeout_ms = 60 * 1000;
+-		reassembly_capa->max_frags = 4;
+-		reassembly_capa->flags =
+-			RTE_ETH_DEV_REASSEMBLY_F_IPV4 | RTE_ETH_DEV_REASSEMBLY_F_IPV6;
+-		rc = 0;
+-	}
++	reassembly_capa->timeout_ms = 60 * 1000;
++	reassembly_capa->max_frags = 8;
++	reassembly_capa->flags =
++		RTE_ETH_DEV_REASSEMBLY_F_IPV4 | RTE_ETH_DEV_REASSEMBLY_F_IPV6;
+ 
+-	return rc;
++	return 0;
  }
+ 
+ static int
+@@ -649,7 +644,8 @@ cn20k_nix_reassembly_conf_set(struct rte_eth_dev *eth_dev,
+ {
+ 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
+ 	struct roc_cpt_rxc_time_cfg rxc_time_cfg = {0};
+-	int rc = 0;
++	uint16_t nb_rxq = dev->nb_rxq;
++	int rc = 0, i;
+ 
+ 	if (!roc_feature_nix_has_reass())
+ 		return -ENOTSUP;
+@@ -659,15 +655,69 @@ cn20k_nix_reassembly_conf_set(struct rte_eth_dev *eth_dev,
+ 		if (!dev->inb.nb_oop)
+ 			dev->rx_offload_flags &= ~NIX_RX_REAS_F;
+ 		dev->inb.reass_en = false;
++		if (dev->ip_reass_en) {
++			cnxk_nix_ip_reass_rule_clr(eth_dev);
++			dev->ip_reass_en = false;
++		}
+ 		return 0;
+ 	}
+ 
++	if (!(dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY)) {
++		rc = cnxk_nix_inline_inbound_setup(dev);
++		if (rc) {
++			plt_err("Nix inline inbound setup failed rc=%d", rc);
++			goto done;
++		}
++		rc = cnxk_nix_inline_inbound_mode_setup(dev);
++		if (rc) {
++			plt_err("Nix inline inbound mode setup failed rc=%d", rc);
++			goto cleanup;
++		}
++
++		for (i = 0; i < nb_rxq; i++) {
++			struct roc_nix_rq *rq = &dev->rqs[i];
++			if (!rq) {
++				plt_err("Receive queue = %d not enabled ", i);
++				goto cleanup;
++			}
++			struct cn20k_eth_rxq *rxq = eth_dev->data->rx_queues[i];
++
++			roc_nix_inl_dev_xaq_realloc(rq->aura_handle);
++
++			rq->tag_mask = 0x0FF00000 | ((uint32_t)RTE_EVENT_TYPE_ETHDEV << 28);
++			rc = roc_nix_inl_dev_rq_get(rq, !!eth_dev->data->dev_started);
++			if (rc)
++				goto cleanup;
++			rxq->lmt_base = dev->nix.lmt_base;
++			rxq->sa_base = roc_nix_inl_inb_sa_base_get(&dev->nix, dev->inb.inl_dev);
++			rc = roc_npa_buf_type_update(rq->aura_handle,
++						     ROC_NPA_BUF_TYPE_PACKET_IPSEC, 1);
++			if (rc)
++				goto cleanup;
++		}
++	}
+ 	rc = roc_nix_reassembly_configure(&rxc_time_cfg, conf->timeout_ms);
+-	if (!rc && dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY) {
+-		dev->rx_offload_flags |= NIX_RX_REAS_F;
+-		dev->inb.reass_en = true;
++	if (rc) {
++		plt_err("Nix reassembly_configure failed rc=%d", rc);
++		goto cleanup;
+ 	}
+ 
++	dev->rx_offload_flags |= NIX_RX_REAS_F | NIX_RX_OFFLOAD_SECURITY_F;
++	dev->inb.reass_en = !!((dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY));
++
++	if (!dev->ip_reass_en) {
++		rc = cnxk_nix_ip_reass_rule_set(eth_dev, 0);
++		if (rc) {
++			plt_err("Nix reassembly rule setup failed rc=%d", rc);
++			goto cleanup;
++		}
++	}
++	return 0;
++cleanup:
++	dev->inb.reass_en = false;
++	if (!(dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY))
++		rc |= cnxk_nix_inl_inb_fini(dev);
++done:
+ 	return rc;
+ }
+ 
+diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
+index 83c222c53c..d6c217cdf5 100644
+--- a/drivers/net/cnxk/cn20k_rx.h
++++ b/drivers/net/cnxk/cn20k_rx.h
+@@ -258,7 +258,8 @@ nix_sec_meta_to_mbuf_sc(uint64_t cq_w5, uint64_t cpth, const uint64_t sa_base,
+ 			*rte_security_dynfield(mbuf) = (uint64_t)inb_priv->userdata;
+ 	} else {
+ 		/* Update dynamic field with userdata */
+-		*rte_security_dynfield(mbuf) = (uint64_t)inb_priv->userdata;
++		if (flags & NIX_RX_REAS_F && inb_priv->userdata)
++			*rte_security_dynfield(mbuf) = (uint64_t)inb_priv->userdata;
+ 	}
+ 
+ 	*len = ((w3 >> 48) & 0xFFFF) + ((cq_w5 >> 16) & 0xFF) - (cq_w5 & 0xFF);
+@@ -917,7 +918,8 @@ nix_sec_meta_to_mbuf(uintptr_t inb_sa, uintptr_t cpth, struct rte_mbuf **inner,
+ 		/* Get SPI from CPT_PARSE_S's cookie(already swapped) */
+ 		inb_priv = roc_nix_inl_ot_ipsec_inb_sa_sw_rsvd((void *)inb_sa);
+ 		/* Update dynamic field with userdata */
+-		*rte_security_dynfield(inner_m) = (uint64_t)inb_priv->userdata;
++		if (flags & NIX_RX_REAS_F && inb_priv->userdata)
++			*rte_security_dynfield(inner_m) = (uint64_t)inb_priv->userdata;
+ 	}
+ 
+ 	/* Clear and update original lower 16 bit of data offset */
+diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
+index ff78622b58..c979454f37 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.c
++++ b/drivers/net/cnxk/cnxk_ethdev.c
+@@ -7,6 +7,11 @@
+ #include <eal_export.h>
+ #include <rte_eventdev.h>
+ #include <rte_pmd_cnxk.h>
++#include "roc_priv.h"
++
++#define REASS_PRIORITY             0
++#define CLS_LTYPE_OFFSET_START     7
++#define CLS_LFLAGS_LC_OFFSET (CLS_LTYPE_OFFSET_START + 4)
+ 
+ static const uint32_t cnxk_mac_modes[CGX_MODE_MAX + 1] = {
+ 	[CGX_MODE_SGMII] = RTE_ETH_LINK_SPEED_1G,
+@@ -203,46 +208,160 @@ cnxk_nix_inb_mode_set(struct cnxk_eth_dev *dev, bool use_inl_dev)
+ 	return cnxk_nix_lookup_mem_sa_base_set(dev);
+ }
+ 
+-static int
+-nix_security_setup(struct cnxk_eth_dev *dev)
++int
++cnxk_nix_inline_inbound_mode_setup(struct cnxk_eth_dev *dev)
++{
++	int rc = 0;
++
++	/* By default pick using inline device for poll mode.
++	 * Will be overridden when event mode rq's are setup.
++	 */
++	cnxk_nix_inb_mode_set(dev, !dev->inb.no_inl_dev);
++
++	/* Allocate memory to be used as dptr for CPT ucode
++	 * WRITE_SA op.
++	 */
++	dev->inb.sa_dptr =
++		plt_zmalloc(ROC_NIX_INL_OT_IPSEC_INB_HW_SZ, 0);
++	if (!dev->inb.sa_dptr) {
++		plt_err("Couldn't allocate memory for SA dptr");
++		rc = -ENOMEM;
++		goto cleanup;
++	}
++	dev->inb.inl_dev_q = roc_nix_inl_dev_qptr_get(0);
++cleanup:
++	return rc;
++}
++
++static void
++cnxk_flow_ipfrag_set(struct roc_npc_flow *flow, struct roc_npc *npc)
++{
++	uint8_t lc_offset;
++	uint64_t mask;
++
++	lc_offset = rte_popcount64(npc->rx_parse_nibble & ((1ULL << CLS_LFLAGS_LC_OFFSET) - 1));
++
++	lc_offset *= 4;
++
++	mask = (~(0xffULL << lc_offset));
++	flow->mcam_data[0] &= mask;
++	flow->mcam_mask[0] &= mask;
++	flow->mcam_data[0] |= (0x02ULL << lc_offset);
++	flow->mcam_mask[0] |= (0x82ULL << lc_offset);
++}
++
++int
++cnxk_nix_ip_reass_rule_set(struct rte_eth_dev *eth_dev, uint32_t rq)
++{
++	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct nix_rx_action2_s *action2;
++	struct nix_rx_action_s *action;
++	struct roc_npc_flow mcam;
++	int prio = 0, rc = 0;
++	struct roc_npc *npc;
++	int resp_count = 0;
++	bool inl_dev;
++
++	npc = &dev->npc;
++	inl_dev = roc_nix_inb_is_with_inl_dev(&dev->nix);
++
++	prio = REASS_PRIORITY;
++	memset(&mcam, 0, sizeof(struct roc_npc_flow));
++
++	action = (struct nix_rx_action_s *)&mcam.npc_action;
++	action2 = (struct nix_rx_action2_s *)&mcam.npc_action2;
++
++	if (inl_dev) {
++		struct roc_nix_rq *inl_rq;
++
++		inl_rq = roc_nix_inl_dev_rq(&dev->nix);
++		if (!inl_rq) {
++			plt_err("Failed to get inline dev rq for %d", dev->nix.port_id);
++			goto mcam_alloc_failed;
++		}
++		action->pf_func = roc_idev_nix_inl_dev_pffunc_get();
++		action->index = inl_rq->qid;
++	} else {
++		action->pf_func = npc->pf_func;
++		action->index = rq;
++	}
++	action->op = NIX_RX_ACTIONOP_UCAST_CPT;
++
++	action2->inline_profile_id = roc_nix_inl_inb_reass_profile_id_get(npc->roc_nix, inl_dev);
++
++	rc = roc_npc_mcam_merge_base_steering_rule(npc, &mcam);
++	if (rc < 0)
++		goto mcam_alloc_failed;
++
++	/* Channel[11] should be 'b0 */
++	mcam.mcam_data[0] &= (~0xfffULL);
++	mcam.mcam_mask[0] &= (~0xfffULL);
++	mcam.mcam_data[0] |= (uint64_t)(npc->channel & 0x7ff);
++	mcam.mcam_mask[0] |= (BIT_ULL(12) - 1);
++	cnxk_flow_ipfrag_set(&mcam, npc);
++
++	mcam.priority = prio;
++	mcam.key_type = roc_npc_get_key_type(npc, &mcam);
++	rc = roc_npc_mcam_alloc_entry(npc, &mcam, NULL, prio, &resp_count);
++	if (rc || resp_count == 0)
++		goto mcam_alloc_failed;
++
++	mcam.enable = true;
++	rc = roc_npc_mcam_write_entry(npc, &mcam);
++	if (rc < 0)
++		goto mcam_write_failed;
++
++	dev->ip_reass_rule_id = mcam.mcam_id;
++	dev->ip_reass_en = true;
++	return 0;
++
++mcam_write_failed:
++	rc = roc_npc_mcam_free(npc, &mcam);
++	if (rc)
++		return rc;
++mcam_alloc_failed:
++	return -EIO;
++}
++
++int
++cnxk_nix_inline_inbound_setup(struct cnxk_eth_dev *dev)
+ {
+ 	struct roc_nix *nix = &dev->nix;
+-	int i, rc = 0;
++	int rc = 0;
+ 
+-	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY) {
+-		/* Setup minimum SA table when inline device is used */
+-		nix->ipsec_in_min_spi = dev->inb.no_inl_dev ? dev->inb.min_spi : 0;
+-		nix->ipsec_in_max_spi = dev->inb.no_inl_dev ? dev->inb.max_spi : 1;
++	/* Setup minimum SA table when inline device is used */
++	nix->ipsec_in_min_spi = dev->inb.no_inl_dev ? dev->inb.min_spi : 0;
++	nix->ipsec_in_max_spi = dev->inb.no_inl_dev ? dev->inb.max_spi : 1;
+ 
+-		/* Enable custom meta aura when multi-chan is used */
+-		if (nix->local_meta_aura_ena && roc_nix_inl_dev_is_multi_channel() &&
+-		    !dev->inb.custom_meta_aura_dis)
+-			nix->custom_meta_aura_ena = true;
++	/* Enable custom meta aura when multi-chan is used */
++	if (nix->local_meta_aura_ena && roc_nix_inl_dev_is_multi_channel() &&
++	    !dev->inb.custom_meta_aura_dis)
++		nix->custom_meta_aura_ena = true;
+ 
+-		/* Setup Inline Inbound */
+-		rc = roc_nix_inl_inb_init(nix);
+-		if (rc) {
+-			plt_err("Failed to initialize nix inline inb, rc=%d",
++	/* Setup Inline Inbound */
++	rc = roc_nix_inl_inb_init(nix);
++	if (rc) {
++		plt_err("Failed to initialize nix inline inb, rc=%d",
+ 				rc);
+-			return rc;
+-		}
++		return rc;
++	}
+ 
+-		/* By default pick using inline device for poll mode.
+-		 * Will be overridden when event mode rq's are setup.
+-		 */
+-		cnxk_nix_inb_mode_set(dev, !dev->inb.no_inl_dev);
++	return 0;
++}
+ 
+-		/* Allocate memory to be used as dptr for CPT ucode
+-		 * WRITE_SA op.
+-		 */
+-		dev->inb.sa_dptr =
+-			plt_zmalloc(ROC_NIX_INL_OT_IPSEC_INB_HW_SZ, 0);
+-		if (!dev->inb.sa_dptr) {
+-			plt_err("Couldn't allocate memory for SA dptr");
+-			rc = -ENOMEM;
++static int
++nix_security_setup(struct cnxk_eth_dev *dev)
++{
++	struct roc_nix *nix = &dev->nix;
++	int i, rc = 0;
++
++	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY) {
++		rc = cnxk_nix_inline_inbound_setup(dev);
++		if (rc)
++			return rc;
++		rc = cnxk_nix_inline_inbound_mode_setup(dev);
++		if (rc)
+ 			goto cleanup;
+-		}
+-		dev->inb.inl_dev_q = roc_nix_inl_dev_qptr_get(0);
+ 	}
+ 
+ 	if (dev->tx_offloads & RTE_ETH_TX_OFFLOAD_SECURITY ||
+@@ -365,6 +484,22 @@ nix_meter_fini(struct cnxk_eth_dev *dev)
+ 	return 0;
+ }
+ 
++int
++cnxk_nix_inl_inb_fini(struct cnxk_eth_dev *dev)
++{
++	struct roc_nix *nix = &dev->nix;
++	int rc;
++
++	if (dev->inb.sa_dptr) {
++		plt_free(dev->inb.sa_dptr);
++		dev->inb.sa_dptr = NULL;
++	}
++	rc = roc_nix_inl_inb_fini(nix);
++	if (rc)
++		plt_err("Failed to cleanup nix inline inb, rc=%d", rc);
++	return rc;
++}
++
+ static int
+ nix_security_release(struct cnxk_eth_dev *dev)
+ {
+@@ -374,7 +509,7 @@ nix_security_release(struct cnxk_eth_dev *dev)
+ 	int rc, ret = 0;
+ 
+ 	/* Cleanup Inline inbound */
+-	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY) {
++	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY || dev->ip_reass_en) {
+ 		/* Destroy inbound sessions */
+ 		tvar = NULL;
+ 		RTE_TAILQ_FOREACH_SAFE(eth_sec, &dev->inb.list, entry, tvar)
+@@ -384,17 +519,14 @@ nix_security_release(struct cnxk_eth_dev *dev)
+ 		/* Clear lookup mem */
+ 		cnxk_nix_lookup_mem_sa_base_clear(dev);
+ 
+-		rc = roc_nix_inl_inb_fini(nix);
+-		if (rc)
+-			plt_err("Failed to cleanup nix inline inb, rc=%d", rc);
+-		ret |= rc;
++		ret |= cnxk_nix_inl_inb_fini(dev);
+ 
+ 		cnxk_nix_lookup_mem_metapool_clear(dev);
++	}
+ 
+-		if (dev->inb.sa_dptr) {
+-			plt_free(dev->inb.sa_dptr);
+-			dev->inb.sa_dptr = NULL;
+-		}
++	if (dev->ip_reass_en) {
++		cnxk_nix_ip_reass_rule_clr(eth_dev);
++		dev->ip_reass_en = false;
+ 	}
+ 
+ 	/* Cleanup Inline outbound */
+@@ -946,7 +1078,7 @@ cnxk_nix_rx_queue_release(struct rte_eth_dev *eth_dev, uint16_t qid)
+ 	plt_nix_dbg("Releasing rxq %u", qid);
+ 
+ 	/* Release rq reference for inline dev if present */
+-	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY)
++	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY || dev->ip_reass_en)
+ 		roc_nix_inl_dev_rq_put(rq);
+ 
+ 	/* Cleanup ROC RQ */
+@@ -1760,6 +1892,18 @@ cnxk_nix_rx_queue_stop(struct rte_eth_dev *eth_dev, uint16_t qid)
+ 	return rc;
+ }
+ 
++int
++cnxk_nix_ip_reass_rule_clr(struct rte_eth_dev *eth_dev)
++{
++	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct roc_npc *npc = &dev->npc;
++
++	if (dev->ip_reass_en)
++		return roc_npc_mcam_free_entry(npc, dev->ip_reass_rule_id);
++	else
++		return 0;
++}
++
+ static int
+ cnxk_nix_dev_stop(struct rte_eth_dev *eth_dev)
+ {
+@@ -1842,7 +1986,7 @@ cnxk_nix_dev_start(struct rte_eth_dev *eth_dev)
+ 			return rc;
+ 	}
+ 
+-	if (dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY) {
++	if ((dev->rx_offloads & RTE_ETH_RX_OFFLOAD_SECURITY) || dev->ip_reass_en) {
+ 		rc = roc_nix_inl_rq_ena_dis(&dev->nix, true);
+ 		if (rc) {
+ 			plt_err("Failed to enable Inline device RQ, rc=%d", rc);
+@@ -2258,6 +2402,11 @@ cnxk_eth_dev_uninit(struct rte_eth_dev *eth_dev, bool reset)
+ 	/* Disable and free rte_meter entries */
+ 	nix_meter_fini(dev);
+ 
++	if (dev->ip_reass_en) {
++		cnxk_nix_ip_reass_rule_clr(eth_dev);
++		dev->ip_reass_en = false;
++	}
++
+ 	/* Disable and free rte_flow entries */
+ 	roc_npc_fini(&dev->npc);
+ 
+diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
+index 3d0a587406..1b63b02ad8 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.h
++++ b/drivers/net/cnxk/cnxk_ethdev.h
+@@ -427,6 +427,8 @@ struct cnxk_eth_dev {
+ 	/* Reassembly dynfield/flag offsets */
+ 	int reass_dynfield_off;
+ 	int reass_dynflag_bit;
++	uint32_t ip_reass_rule_id;
++	bool ip_reass_en;
+ 
+ 	/* MCS device */
+ 	struct cnxk_mcs_dev *mcs_dev;
+@@ -645,6 +647,10 @@ int cnxk_nix_tm_set_queue_rate_limit(struct rte_eth_dev *eth_dev,
+ int cnxk_nix_tm_mark_vlan_dei(struct rte_eth_dev *eth_dev, int mark_green,
+ 			      int mark_yellow, int mark_red,
+ 			      struct rte_tm_error *error);
++int cnxk_nix_ip_reass_rule_clr(struct rte_eth_dev *eth_dev);
++int cnxk_nix_ip_reass_rule_set(struct rte_eth_dev *eth_dev, uint32_t rq);
++int cnxk_nix_inl_inb_fini(struct cnxk_eth_dev *dev);
++
+ int cnxk_nix_tm_mark_ip_ecn(struct rte_eth_dev *eth_dev, int mark_green,
+ 			    int mark_yellow, int mark_red,
+ 			    struct rte_tm_error *error);
+@@ -736,6 +742,8 @@ __rte_internal
+ int cnxk_nix_inb_mode_set(struct cnxk_eth_dev *dev, bool use_inl_dev);
+ __rte_internal
+ void cnxk_ethdev_rx_offload_cb_register(cnxk_ethdev_rx_offload_cb_t cb);
++int cnxk_nix_inline_inbound_setup(struct cnxk_eth_dev *dev);
++int cnxk_nix_inline_inbound_mode_setup(struct cnxk_eth_dev *dev);
+ 
+ struct cnxk_eth_sec_sess *cnxk_eth_sec_sess_get_by_sa_idx(struct cnxk_eth_dev *dev,
+ 							  uint32_t sa_idx, bool inb);
+-- 
+2.34.1
 
-Let me know what you think of this approach.
-
--------------------------------
-Maxime Leroy
-maxime@leroys.fr
