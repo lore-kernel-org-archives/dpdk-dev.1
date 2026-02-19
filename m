@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C007FE9A04A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 14:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E47E9A04A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 14:39:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1A4E402C6;
-	Thu, 19 Feb 2026 15:38:19 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AE714402C6;
+	Thu, 19 Feb 2026 15:39:04 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 5A3BD402AA
- for <dev@dpdk.org>; Thu, 19 Feb 2026 15:38:18 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id CEEA0402AA
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 15:39:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1771511897;
+ s=mimecast20190719; t=1771511943;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
  bh=25tdjYu6zRa4H1Q9rUTt6Ry6xF+PPL+PJL/DL6xkbqE=;
- b=YhATcLUgof4EDgkKzgEukDRLOfUckSzEVG0ZPC4WLnh5RRgLSS4V/FUYig+qFisDKAVe7O
- VDlfavOemM2MbvuvTGhLyCDuAvYk3ebNsAAncpeEGJY5bF1XJT5oDcNgq6Hs3Oz7b0m3Fb
- huoaHfZ1cldFkt9Pujp5aHr732JxSt4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ b=WBTOt5gtJw2py4pvHC2bs87sfAgp48DjX89HOmzxI29U79cpxhCYh6NB0XdbmADJ+ujWjR
+ pZl8O4umSGgH0dKAkIPHALUlxv0Zd9YoZ6OEqpe+3c8hGEVxGqyl07z5hioAdrfZZw1nHN
+ lbDrGpvsVeks7Sbp2m4JQlsNVGwKN0k=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-189-_VQRSyVnO8mSb9OMDPLPCg-1; Thu,
- 19 Feb 2026 09:38:14 -0500
-X-MC-Unique: _VQRSyVnO8mSb9OMDPLPCg-1
-X-Mimecast-MFC-AGG-ID: _VQRSyVnO8mSb9OMDPLPCg_1771511892
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-245-tTT0RfAyPdmY3JFWUYAg6Q-1; Thu,
+ 19 Feb 2026 09:38:59 -0500
+X-MC-Unique: tTT0RfAyPdmY3JFWUYAg6Q-1
+X-Mimecast-MFC-AGG-ID: tTT0RfAyPdmY3JFWUYAg6Q_1771511938
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 2B493195605F; Thu, 19 Feb 2026 14:38:12 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8569518005B0; Thu, 19 Feb 2026 14:38:58 +0000 (UTC)
 Received: from rh.redhat.com (unknown [10.44.32.51])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 203C1195410F; Thu, 19 Feb 2026 14:38:08 +0000 (UTC)
+ by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id BE0723000C26; Thu, 19 Feb 2026 14:38:55 +0000 (UTC)
 From: Kevin Traynor <ktraynor@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, david.marchand@redhat.com, dsosnowski@nvidia.com,
  viacheslavo@nvidia.com, hkalra@marvell.com,
  Kevin Traynor <ktraynor@redhat.com>
 Subject: [PATCH v4 0/3] interrupt disconnect/error event handling
-Date: Thu, 19 Feb 2026 14:37:36 +0000
-Message-ID: <20260219143739.200670-1-ktraynor@redhat.com>
+Date: Thu, 19 Feb 2026 14:38:49 +0000
+Message-ID: <20260219143852.200722-1-ktraynor@redhat.com>
 In-Reply-To: <20260128122055.192104-1-ktraynor@redhat.com>
 References: <20260128122055.192104-1-ktraynor@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -YoGesYVwI0NPSP-g5kBYaPlliZuvRu5RGBTCIirZS8_1771511892
+X-Mimecast-MFC-PROC-ID: l2QvyEzGPpwgNTam_NPaFh9SJRgAWrlruQrW1dRe0JY_1771511938
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
