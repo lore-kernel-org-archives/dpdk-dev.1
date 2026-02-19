@@ -2,76 +2,165 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8EFDE9A048
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A30E9A048
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:53:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9EC7402EA;
-	Thu, 19 Feb 2026 17:52:57 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6A60A402CA
- for <dev@dpdk.org>; Thu, 19 Feb 2026 17:52:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1771519976;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=JDGPGRn2VIefYQ/imN+QVkimiY1miYAUkRrWz+xW8dU=;
- b=hycm8LIauNv9Fj/O7mVtg7PAgsTiS8KLEjpddhAr+rEwE1tJ7F5NFVbR/uWkThZY2ky6D3
- Sc6vLC/3EuHjvirPz6dnvgft2gZ/Jq66WY0pzgFelRE5k+C+c+mt/CtXZhilCDm6BSV50h
- OdIRake5OfuBih7ak2qE3pTsasU0Pa4=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-300-Q5fSo16IPduUFEm60gPPWw-1; Thu, 19 Feb 2026 11:52:53 -0500
-X-MC-Unique: Q5fSo16IPduUFEm60gPPWw-1
-X-Mimecast-MFC-AGG-ID: Q5fSo16IPduUFEm60gPPWw_1771519971
-Received: by mail-lf1-f69.google.com with SMTP id
- 2adb3069b0e04-59e62ac0bfbso1178993e87.0
- for <dev@dpdk.org>; Thu, 19 Feb 2026 08:52:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771519971; x=1772124771;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=JDGPGRn2VIefYQ/imN+QVkimiY1miYAUkRrWz+xW8dU=;
- b=OQPy3IlqSEesr+C9f+5hCDKXcb3V7G3Sd6ePD8PPYrgT+VaEVm4MWc1rwKWk7ADNIC
- Mnc6d+UQ0KkdcqmCQ0Mo2zZvBnkfZN/w7XYbPT778mcWfmzw00iKdZeItRM42a2pJYDv
- zRCOHAbDuXiFd9IKkBbwzBTFhChwTK2crtNTovAzuWNvnFsXkJCNgY5ASZrWbIRtIrIN
- OxBwLgXANOUhQog5RqVeqayh13RlvzdJzECW4PXGiLfpdTz7nqb+dn+K2Gl2BzGqRoPy
- aC+T+zwcbITKak4siDBA99qhzdVDjNEW+nJvHYbzQPp0pgHPiCHpzRZbEJGa/aXHfJy2
- YDjQ==
-X-Gm-Message-State: AOJu0Yyw6h6cy54zdm2g2h7mp8/we3NuOeBMfpqPW9Iev+xTc+r7z2W6
- RH9+0zI6TPa+Haaswybi/uLmRod1GyEGJO/r0Z2+3SeI9RAfii8oWerKQC+u03hg/8QhHrU6VBq
- yiaO1JULXPgR+cThQiVBaT4IhGvX/sedWvUcao+bzJ0s2Pm1ajofcPvgl7UZ8QpW3fbNXUdM6wo
- dIn3WZS49cStxKW3JG54k=
-X-Gm-Gg: AZuq6aJTWuNHFYAhY5t4eZHMOJMtwD9ZZLBIQuqtiwv2/ljrEpL7bwXPzXZE6rYViNV
- yzizdFHU9Ucx4xmbdw/alChOu5DzaxZwcy8n/i43Rqu31jpHzyMGBTj2FiItpUID/AEiRJ+GpW5
- si1v1/FgegfY0HKr9bEXWlyCizc3hvAG5ZKDOwiHPXvmyF8Qpa0mpl3Bfy/zpOzeEPGLvFX8pIX
- eKbkg6QC12ahq7jxJLAUZ5TBsAOLXVtTUTTLf+qt7nHVowE6jmHIGWYUcFrIyXKfa9RQg==
-X-Received: by 2002:a05:6512:b05:b0:59e:597e:7f0 with SMTP id
- 2adb3069b0e04-59f028323f7mr7365712e87.48.1771519971380; 
- Thu, 19 Feb 2026 08:52:51 -0800 (PST)
-X-Received: by 2002:a05:6512:b05:b0:59e:597e:7f0 with SMTP id
- 2adb3069b0e04-59f028323f7mr7365701e87.48.1771519970862; Thu, 19 Feb 2026
- 08:52:50 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id EFB564042E;
+	Thu, 19 Feb 2026 17:53:02 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id EFDBA4042C
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 17:53:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1771519981; x=1803055981;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=K+f5Nqp4MEHmjJ1PzVux0Drlcp7RyUa69kIxyf/V5K8=;
+ b=Zvt6YF4wJW10ppWfHbmhDJCvprph87143VU5dmqlISKfBm8bSkxw02TL
+ XM+9rtcSnhU78b9iXkJScT7w49RXxdqN19wx5FCK1hcndXZHjSqxPijqu
+ 8g5a9VvPiRnAkpgJkskb4SMvvL+m8sRtlXfqag48APX7yR5cTRztk255r
+ J1ID2f4Ubum+7nexu03yeVOXRThlDqqGMCNTxoJQVsDIiP2mL8d5dA9la
+ PaJ+KL3uuDZLNBJoHBc2YN9PKwzFZsUbPGPDSIimrTjIKsl82pvfc74rx
+ A6ElQwhjFbTF3kVnB3uM+McIfwK+h9PVKS8FY45gQgjxNJSHwjo3XPan4 Q==;
+X-CSE-ConnectionGUID: ACPWPPlvQLCrhzk7sLtOtw==
+X-CSE-MsgGUID: WMoY0pMyRMyVwwT+30qjaQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="60186214"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="60186214"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Feb 2026 08:52:57 -0800
+X-CSE-ConnectionGUID: 7GcC1Qk+SXeiJ48zWsQ1WA==
+X-CSE-MsgGUID: gNFajWBDRPGb2h2FZ/X3Sg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="213657858"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Feb 2026 08:52:56 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Thu, 19 Feb 2026 08:52:55 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Thu, 19 Feb 2026 08:52:55 -0800
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.3) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Thu, 19 Feb 2026 08:52:55 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hfcIrwcieL8LIJv3WFuRFlea8hnTDaU9iiJwFI3p59SIz/OufQRZX5EMEX8Nx1bRiWRO4xtvK1IepFbQj6xm50MmKkpbeYHhAqBTVL6N7XBpOsQ95chMg7qjhRCrolt5SUmOZGsA3JapSmRMo7k6kBFS1kXqPkVudUGtB8PICgxpbxbRY2lkSD5kxWBpc14pZnY49tWkaJ8EIeNvwyxRZOniLD9f8J6oRfn9xIij0NfHPsUiVHKDDwfPZiv0Caa0i4xK6Y6supQLsy9DhAooQKAK+FUUE/K2rf4EeqkTuoTi9MBS0E8gXzxtnFL8v9WNRw6/SRGlewSEHJW7BGxDtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RdfDHieqPVBjmgw9keH7sPDfC5G1VkQpAJhG5m3GWzM=;
+ b=OqGMVBfSRxy96XxfMkBimc9wGDHB8dDwn1fLIP3F+1rfaEuu1/OiyfbLCgYcMoQCVgNeYTQaCxRRCZ0izWvXn26PjqaEV+AGaKT5HQ8fluINbI52NqEK029MCj6jOpYVBlvUef95MSQwuGoox+y82tKjX9lbXIxopdwQGYn+A6QYWNEjb4GLOlVlBS4+NicVj3AVguPETpis7WIs2Rl965HptDuvQljzGKenFYqytJ2AZ4LmtcUqHc0balaFyL0hR66vkNBXgYcGqw+Bz1eXovCTWONOpUtGG7mhG4SsJjU7wa0HXF4r5NQcKX/ltIVqle9ipIo099aYIcgD3PP6gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by CO1PR11MB5171.namprd11.prod.outlook.com (2603:10b6:303:94::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.16; Thu, 19 Feb
+ 2026 16:52:46 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9632.010; Thu, 19 Feb 2026
+ 16:52:46 +0000
+Date: Thu, 19 Feb 2026 16:52:42 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Shaiq Wani <shaiq.wani@intel.com>
+CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>
+Subject: Re: [PATCH v7 0/7] Add support for L2TPV2 over UDP to ICE PMD
+Message-ID: <aZc_2vLFZbtIXyM7@bricha3-mobl1.ger.corp.intel.com>
+References: <20260202094244.447966-2-shaiq.wani@intel.com>
+ <20260219112103.2370766-1-shaiq.wani@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260219112103.2370766-1-shaiq.wani@intel.com>
+X-ClientProxiedBy: DU6P191CA0030.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:53f::9) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-References: <20260218160453.142311-1-maxime@leroys.fr>
- <20260218160453.142311-11-maxime@leroys.fr>
- <CAJFAV8z=CfhvELVRPJMteB+LwTwET7ZdaOuA9eyL3OaVGmPMjQ@mail.gmail.com>
- <CAHHRULXWDg2qpc-WR1pehzZ6+PasdeNx3aqOjVj_0K12Zk-UgQ@mail.gmail.com>
-In-Reply-To: <CAHHRULXWDg2qpc-WR1pehzZ6+PasdeNx3aqOjVj_0K12Zk-UgQ@mail.gmail.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 19 Feb 2026 17:52:39 +0100
-X-Gm-Features: AaiRm53uqg-BzllzCsVIvfRx5FydHl7qAoiqIQszNtrMGmjhxI_Ayyhi-QEpL0M
-Message-ID: <CAJFAV8yxPE9Sf3EY9j32D7GG+Kz7ovNYx9hFW+9dzazprfkqnA@mail.gmail.com>
-Subject: Re: [PATCH 10/11] bus/fslmc: fix devargs not propagated on hotplug
-To: Maxime Leroy <maxime@leroys.fr>, hemant.agrawal@nxp.com
-Cc: dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: toN0NfTv6RfPVuv5LbPdsfaXu-GGv5Cgap5-oxGSTF0_1771519971
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CO1PR11MB5171:EE_
+X-MS-Office365-Filtering-Correlation-Id: 675c54fb-1c93-47da-e064-08de6fd74ed6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?qEi/Pf8dUWb6WRTQlSjT2KcQVKPDo3qmaE3yx6GMfW+ED9lHMnPd+eKIZc+W?=
+ =?us-ascii?Q?y1knyBin//hqexnUttbEcD8ERUSvsTx8Cq/cF0fuGZsEKLkecGBU2RUa3/dJ?=
+ =?us-ascii?Q?LyiHneG+d9gTwI04z26kNQsIJ/U8yU5oSG2EJ9vxJOdz/L9qGrRXWcWYjNxa?=
+ =?us-ascii?Q?/O+G2Bwe5s0kF/S110wZKjC1xBA8ENo7D0c0Drfw1JWznTtcbJ3Cf2PXyrg0?=
+ =?us-ascii?Q?epuVncsPv8X9CUWOK7jgWYc1Psw/cB/Xn5GlagOA6UB6P7RTSKQX5O7+v4rt?=
+ =?us-ascii?Q?ei7OwwlhEFOTfw8v8P93SKY8T4f+mSULVsJzHjCs3QtRLmCaqH1KUUnAo0P7?=
+ =?us-ascii?Q?ffjkYPsJh4Ui1IC3C7HaRxSMQfv591guolF0DIeXclOW431Rj0xxb8onNiL4?=
+ =?us-ascii?Q?gRE5CUcPo7ueELNh6ekQcLnAk6GxVe4lC5Lm8G0TOj6JKC0P1Zd/EhEPwQD9?=
+ =?us-ascii?Q?mGOBmqDt1kmkRhgR0/Mow6+5LJWihnUU8ygthxDEz82aBPRBwk/MVdlp8aC9?=
+ =?us-ascii?Q?daN5pS4JZ4JVWHqS1yINfSQ4fWxqAdqyG5RfQLzSIoDfMc7bX0/jFPRGISj4?=
+ =?us-ascii?Q?vr9DR9t57eBg+Li1oM8fYucIfAXVfzCHgy83oL1MBqjuaoIeDNvKMz8emx+b?=
+ =?us-ascii?Q?ApRatT41OGMv0yB1y45MMRmvyxRKQMMa0PBeQ1wGWcEijaX4Gj63wz0slOMk?=
+ =?us-ascii?Q?nw7MSrwZfTViuge90mumtoURi1OUhbQMr0sEzjJg6GUDei7BKmvquEYYs26K?=
+ =?us-ascii?Q?eET71ghLOaS3RkXSG/hayZIYR0PVwSFfli104v/rUBjQSKzSNwueSBEp8Svi?=
+ =?us-ascii?Q?vCHTN0bMG19VZMUDtp6uWH3HiG30xGZ7FhANguOLjEMkhT5VAv4y4G+2nFju?=
+ =?us-ascii?Q?6LjXyewKRXuuq1bt9sfNIb6dLZid+i03XfHRV2tFGvB3P/SAPxYuihilrOz0?=
+ =?us-ascii?Q?A2akiqILLyfRq2bNRaw9McD+aF5DOM9bOhDl5LaFWUf7Dk7ugc9p47MOCWnz?=
+ =?us-ascii?Q?kbm0hPZcpVJY+eJzzqERDXpXi87Yf5zSPblUEvz47GRCoIPhJbdIZ09uXxtS?=
+ =?us-ascii?Q?GizrJwRg3S4QCWfWJbuvOmam9repyTDlVUFG0TdRJMniUkKODDO5aV+9hIHn?=
+ =?us-ascii?Q?Y2RcwnQJwAk8RoNBqznyetWCwPcL35xNN37cwCWeGJq/bBOhWYwh7fjArm8a?=
+ =?us-ascii?Q?ipUF2bA1aubIy9wkM4H/eMgt1zjTEE4vM0VzoRAMEF4fGXmCthKJEdt/KP9t?=
+ =?us-ascii?Q?Z1ESpmBF64UI+/eLJABcHu95Jqh1w/nltFxJwiHr0zqCYmXorAHlX0GO+o7p?=
+ =?us-ascii?Q?tQbZSzfYldLRrudOrL8ZiIMU6YeDTrR2rEd/2UgTuvR1l2GcCScrykqIu60X?=
+ =?us-ascii?Q?UA/2Tb3oSVRYL9NP8aJftJRzI2Vj8soauc+hGamOk/r6x+7jeWf5CzWLypK7?=
+ =?us-ascii?Q?qdHARHVs3JuhmdTjCMRzBMCA9rXYPhb88+QSkFDwNURYQgP0Q0s/qBkkXNMD?=
+ =?us-ascii?Q?0+ddxc326lppchgBjc4Lev6ed3mR6267IiggZWglsgtXGflKwGLGMu0/bsht?=
+ =?us-ascii?Q?UELaf/zszdqB5K0QdA8=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?nH5eeBH+yfm4jKlBW3mNkQF3V0+QzCkBsZ8Wr4KQkZPiXuM242zuur2tLwsn?=
+ =?us-ascii?Q?2f2WU3nfMTOHRLUxL2nqzAJDuo4xWjz9wdXCToaz4K5POGSJbOWgqzyqFvtX?=
+ =?us-ascii?Q?SSK+WpVnY23Vim4mEFZJXX38ffwAwxjsALR1xmRDabYvnyQmZ+g3q7FjEPw6?=
+ =?us-ascii?Q?c2apPX2PNULoU8PLMK6ARgfXi4bAHUUomrNR5t9OLQFlmg1OB2o2CrkHrTQq?=
+ =?us-ascii?Q?bzetui8ficrdvnpWyeifWsyo6qbXyz3ApLMx9vMGjaLlSXrdm0p3ivj2wCAF?=
+ =?us-ascii?Q?8/OZ44rJQ0Hq1X9q0cEDckheLUv82XgJLsGQ6EWT6VTV1GBBQ3TRYL9LbZ/5?=
+ =?us-ascii?Q?63BaskT0euk3e+zg0T0j5b4zjW6bd55iP4WWFheegbCXGIwE7LgDaRY2JMO/?=
+ =?us-ascii?Q?/TVnby8tMoQRlBrv0p8CHrPfrlbrE6dMxjbEIAgBEwLb+bwjIr6wgVDa8M3W?=
+ =?us-ascii?Q?ZUjZRoU+oInfIwHmQWDZqGHQoMNXz9Rr+8OQn1gossM+kPWLIoadinJMa636?=
+ =?us-ascii?Q?Nh1I33mEL0D1rEnoVnxUrLnyGAFek7s9dl424CNnIzOnj4dFNMY3I1bFpAUS?=
+ =?us-ascii?Q?YbLlcz8Q1wthwD5dL9tbKkb1aDPJSBy4/eUAV6HCch8jKrcE0jJ8hwWs4BnM?=
+ =?us-ascii?Q?vS1dp9OANECHkjeciNnzt9keLB/D1/6U4JTbHSsBcmr2BU2d7AtQfCY3mYP9?=
+ =?us-ascii?Q?jr+xqW1ON4BcxshssxTGbdI2Y4S9ROkseWViTyEBQ0Gz0rp+zPoZplNCIDiL?=
+ =?us-ascii?Q?gYEaofHGkx9zqgSSjTOSHkOxQ1p9vbhd6pgf10jBL7hxpkSO5LA+3Ag2vBTM?=
+ =?us-ascii?Q?ZNbuNXcPY75ux5XriD+MulhN4CtacWinaOGxoqywOGLasw5VtHrm6mh2BNL0?=
+ =?us-ascii?Q?JxjDnaiP30YAkeIAmSJHeb4ThPt9GRPFeBFsKzawO5XUJTvqS9jydoiRhnQG?=
+ =?us-ascii?Q?6IEeRJTacGM5/NmXT1AD4c4Ta6xVFbT6XKwpwDT5IpbgQ9srx0ePk4cooHfe?=
+ =?us-ascii?Q?1xJQgK5tp8vku+LSA4r+zujo6rtpNm1eRF1OB4pdyw7akgdMPSga9Y1W9+v/?=
+ =?us-ascii?Q?a1meIftG0zM05sZNMA6n1okvCYoKxq3aaRlKuQDY1EX+TCKOpIffU6yWsVnG?=
+ =?us-ascii?Q?M5oQg1YjsL1+k8iXcXenJLrUNIP3TCM5e9Lj8nvdE+1UK0TpSDWmOntCZOeT?=
+ =?us-ascii?Q?8Xqa9WEjDK/GJw/FLePoKrud/m5A20+AI/UiSGabzn7ZbhZMxtqWvqme8V97?=
+ =?us-ascii?Q?38OkW9Y/K61cA/gr6Zk4DjVxZBnJCC9v3lkFMZ7TWTUuyqbbm9lsl/PURND9?=
+ =?us-ascii?Q?41uZOQlePaXN025auggRgNqfv8TuCgsqkhLOuqvJa89C/PUCfdjvMfmchCZk?=
+ =?us-ascii?Q?Y+ja4MXjvLiyOLdzZzM8Nw7rlILft6QBz9fTxJU6a6/e7Cs8cqJeVpqNcM+5?=
+ =?us-ascii?Q?M/m4bCi3wQxSUx4uNrAzm4hsbGo86p5NorVZpnadvBiAWi1+I/M08dB/kIem?=
+ =?us-ascii?Q?CGyi3ZiPrOcZwvWRkSwtzHwaQFBojTsGOdMhtQEETxRMpE9MqbpFWndwvhIp?=
+ =?us-ascii?Q?G/vDf/ENIrwpya1AV7Y0rLRZVvsC0TPkrJSYgZEiZbAaoxcaljI+6cCUPjNH?=
+ =?us-ascii?Q?e2CBGmHggUvirTnXr48/ynuKiq9ksHb/toDSGw5h6yNjrJWD0Z7EYe2OlvxY?=
+ =?us-ascii?Q?A8NltTUwnLsjUpe7LGKHGy1AReptK2gHaHF6dhwqPDxUtwza15Y+ilx3bQ8i?=
+ =?us-ascii?Q?GB4X3vxv9/dMwAxbShUR0RhpTXv++is=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 675c54fb-1c93-47da-e064-08de6fd74ed6
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2026 16:52:46.6179 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jDb0BxDknzC4A4/acUGBIXeqfQkGFsu4IBY2bIpF9660oVErLNZgXXs85XKf72bEYtBl4t8HxFNPOK8J3xa7M1JsguL+6NRgLot/IxWwh/Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5171
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,86 +174,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+On Thu, Feb 19, 2026 at 04:50:56PM +0530, Shaiq Wani wrote:
+> This patchset enables L2TPv2 over UDP support in the ice PMD via rte_flow,
+> allowing flow classification and RSS hashing for L2TPv2 traffic.
+>   
+> v7: removed FDIR in doc and commit log titles.
+> 
+> v6: split patch 3 into 2 separate patches.
+> 
+> v5: Resending v4 patches with correct cover letter and threading.
+>   
+> v4: *Version 3 patchset was incomplete due to a server reboot.
+>     *V4 includes all patches for review.
+>  
+> v3: Fixed compilation issues.
+> v2: Addressed AI generated comments.
+> 
+> 
+Patchset applied to dpdk-next-net-intel,
 
-On Thu, 19 Feb 2026 at 10:06, Maxime Leroy <maxime@leroys.fr> wrote:
-> > > diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-> > > index abdb0ad50d..a539753649 100644
-> > > --- a/drivers/bus/fslmc/fslmc_bus.c
-> > > +++ b/drivers/bus/fslmc/fslmc_bus.c
-> > > @@ -596,6 +596,11 @@ fslmc_bus_plug(struct rte_device *rte_dev)
-> > >                         struct rte_dpaa2_device, device);
-> > >         struct rte_dpaa2_driver *drv;
-> > >
-> > > +       /* Refresh devargs from the EAL devargs list, as they may
-> > > +        * have been added after the initial bus scan (e.g. hotplug).
-> > > +        */
-> > > +       dev->device.devargs = fslmc_devargs_lookup(dev);
-> > > +
-> > >         TAILQ_FOREACH(drv, &rte_fslmc_bus.driver_list, next) {
-> > >                 ret = rte_fslmc_match(drv, dev);
-> > >                 if (ret)
-> >
-> > This looks like a strange location for a fix.
-> >
-> > The hotplug path calls this bus ->scan() which is supposed to refresh
-> > the devices.
-> > Could you double check if something is wrong on this side?
-> >
-> Hi David,
->
-> rte_fslmc_scan() is guarded by a process_once flag and returns
-> immediately after the initial bus scan. During hotplug,
-> local_dev_probe() does call bus->scan(), but it is a no-op -
-> scan_one_fslmc_device()
-> (which calls fslmc_devargs_lookup()) is never reached.
->
-> The device already exists in the bus device list from the initial
-> scan, so find_device() succeeds, but its devargs pointer is stale
-> (NULL).
->
-> You are right that insert_in_device_list() does not handle the comp ==
-> 0 case (unlike PCI which refreshes the existing object and frees the
-> duplicate). Fixing that and removing process_once would allow scan to
-> properly refresh devargs on rescan.
->
-> However it is a larger change: beyond the dedup fix, device_count
-> would need to be kept consistent, and fslmc_vfio_process_group()
-> removes infrastructure objects (DPMCP, DPRC, excess DPIO) from the
-> device list during the initial probe, so a rescan would re-insert them
-> as new entries that would need to be handled as well.
->
-> Making the fslmc bus scan re-entrant is a significant rework of a
-> critical code path, for a use case (true hotplug of dynamically
-> created devices) that is not common on NXP platforms.
-> I think this is best left to the NXP maintainers who know this code
-> intimately. My use case is grout, which uses the EAL hotplug API to
-> late-probe devices that already exist in the DPRC at boot time.
-
-Ok, thanks for the explanations.
-I agree, it seems too intrusive for fixing this issue.
-
-
->
-> That said, you are right that scan is the proper place for this fix.
-> Rather than making it fully re-entrant, a simpler approach is to
-> refresh devargs on existing devices when scan is called again:
->
->  if (process_once) {
->      DPAA2_BUS_DEBUG("Fslmc bus already scanned. Not rescanning");
->      TAILQ_FOREACH(dev, &rte_fslmc_bus.device_list, next)
->          dev->device.devargs = fslmc_devargs_lookup(dev);
->      return 0;
->  }
->
-> Let me know what you think of this approach.
-
-That seems a good trade off, as it avoids mixing responsibilities in
-this bus code.
-
-What do you think Hemant?
-
-
--- 
-David Marchand
-
+Thanks,
+/Bruce
