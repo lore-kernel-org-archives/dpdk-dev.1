@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2BDE9A02C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 01:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D550DE9A02C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 01:26:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7BE97402C6;
-	Thu, 19 Feb 2026 02:23:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BC4B2402C6;
+	Thu, 19 Feb 2026 02:26:01 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id D0AB2402BD
- for <dev@dpdk.org>; Thu, 19 Feb 2026 02:23:55 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 34AF1402BD
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 02:26:01 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id B7C304A667; Thu, 19 Feb 2026 02:23:55 +0100 (CET)
+ id A3F7A4A667; Thu, 19 Feb 2026 02:26:00 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1886] net/avp: tx_burst callbacks free mbufs then
- return short count, causing double-free
-Date: Thu, 19 Feb 2026 01:23:55 +0000
+Subject: [DPDK/ethdev Bug 1887] bnxt: single bad packet in tx burst stalls
+ transmission of remaining valid packets
+Date: Thu, 19 Feb 2026 01:26:00 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1886-3@http.bugs.dpdk.org/>
+Message-ID: <bug-1887-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -55,11 +55,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1886
+http://bugs.dpdk.org/show_bug.cgi?id=3D1887
 
-            Bug ID: 1886
-           Summary: net/avp: tx_burst callbacks free mbufs then return
-                    short count, causing double-free
+            Bug ID: 1887
+           Summary: bnxt: single bad packet in tx burst stalls
+                    transmission of remaining valid packets
            Product: DPDK
            Version: 25.11
           Hardware: All
@@ -72,128 +72,73 @@ http://bugs.dpdk.org/show_bug.cgi?id=3D1886
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Recent audit of how tx_pkt_burst is (or is not) being handled in drivers fo=
-und
-this.
+Recent audit of tx_pkt_burst semantics in drivers found this bug.
 
-The AVP PMD tx_burst callbacks (`avp_xmit_pkts` and `avp_xmit_scattered_pkt=
-s`)
-violate the `rte_eth_tx_burst()` mbuf ownership contract.  Both functions f=
-ree
-all mbufs they process, but return the result of `avp_fifo_put()` which may=
- be
-smaller.  When the caller follows the standard pattern:
+he bnxt scalar transmit path (`_bnxt_xmit_pkts` in `bnxt_txr.c`) has two
+error handling problems that violate the `rte_eth_tx_burst()` contract.
 
-```c
-n =3D rte_eth_tx_burst(port, txq, mbufs, nb_pkts);
-for (i =3D n; i < nb_pkts; i++)
-    rte_pktmbuf_free(mbufs[i]);
-```
+## Bug 1: break-on-error stops processing valid packets
 
-any mbufs that were freed by the driver but not reported as consumed will be
-freed a second time by the caller.
+When `bnxt_start_xmit()` returns `-EINVAL` for a malformed packet (bad IOVA,
+mismatched `nb_segs`, zero `data_len`, too many TSO segments), the driver
+frees the mbuf and increments a drop counter, but then breaks out of the
+transmit loop. The dropped packet is correctly included in the return value,
+so the immediate caller won't leak or double-free it. However, every valid
+packet after the bad one is returned as unconsumed even though there may be
+plenty of ring space. The caller must re-submit them in a subsequent call.
+In a burst of 32 packets where packet 2 is malformed, 29 valid packets get
+needlessly bounced back.
 
-There are several additional bugs in the same code paths, listed below.
-
-### Bug 1: Double-free in avp_xmit_pkts (avp_ethdev.c ~line 1917 vs 1926)
-
-The function frees each mbuf at line 1917 (`rte_pktmbuf_free(m)`) inside the
-processing loop which runs for `count` packets.  At line 1924 it calls
-`avp_fifo_put()` and returns the FIFO result `n` at line 1926.  If the FIFO
-fills between the earlier free-count check and the put, `n < count`, and
-`tx_pkts[n..count-1]` get double-freed.
-
-Fix: return `count` instead of `n`, since all `count` mbufs have already be=
-en
-consumed.
-
-### Bug 2: Double-free in avp_xmit_scattered_pkts (line 1793 vs 1809)
-
-Same pattern.  All `nb_pkts` mbufs are freed in the loop (line 1793) but
-`avp_fifo_put()` result is returned (line 1809).
-
-Fix: return `nb_pkts` instead of `n`.
-
-### Bug 3: AVP host buffer leak on partial avp_fifo_get (lines 1862-1866)
+The `break` should be `continue` for the `-EINVAL` case. The `break` is only
+appropriate for `-EIO` (device error) and `-ENOMEM` (ring full), where
+continuing would be pointless.
 
 ```c
-n =3D avp_fifo_get(alloc_q, (void **)&avp_bufs, count);
-if (unlikely(n !=3D count)) {
-    txq->errors++;
-    return 0;
+/* current code */
+if (unlikely(rc)) {
+    if (rc =3D=3D -EINVAL) {
+        rte_atomic_fetch_add_explicit(&txq->tx_mbuf_drop, 1,
+                                       rte_memory_order_relaxed);
+        dropped++;
+    }
+    break;
+}
+
+/* proposed fix */
+if (unlikely(rc)) {
+    if (rc =3D=3D -EINVAL) {
+        rte_atomic_fetch_add_explicit(&txq->tx_mbuf_drop, 1,
+                                       rte_memory_order_relaxed);
+        dropped++;
+        continue;
+    }
+    break;
 }
 ```
 
-If `avp_fifo_get()` returns a partial result (0 < n < count), those `n` AVP
-buffers have been dequeued from the allocation queue but are never returned.
-They are permanently leaked.  The same pattern exists in
-`avp_xmit_scattered_pkts` at lines 1769-1774.
+## Bug 2: partial descriptor ring state on multi-segment drop
 
-Fix: return partial buffers to alloc_q before returning:
+`bnxt_start_xmit()` writes transmit descriptors and advances `tx_raw_prod`
+incrementally as it walks a multi-segment packet. If validation fails partw=
+ay
+through the segment chain (the zero `data_len` check at line 474), execution
+jumps to `drop:` which frees the mbuf but does not roll back `tx_raw_prod` =
+or
+clean up the descriptors already written for the earlier segments of that
+packet. This leaves orphaned descriptors in the ring that reference a
+now-freed mbuf's memory.
 
-```c
-if (unlikely(n !=3D count)) {
-    if (n > 0)
-        avp_fifo_put(alloc_q, (void **)&avp_bufs[0], n);
-    return 0;
-}
-```
+This second issue is harder to hit in practice since the failing check
+(`data_len =3D=3D 0` on a middle segment) is unusual, but when it does occu=
+r the
+consequences =E2=80=94 stale DMA addresses in the descriptor ring =E2=80=94=
+ are severe.
 
-### Bug 4: Wrong variable in error comparison (line 1806)
+## Scope
 
-```c
-if (unlikely(n !=3D orig_nb_pkts))
-    txq->errors +=3D (orig_nb_pkts - n);
-```
-
-`n` is the result of putting `nb_pkts` entries, but it is compared against
-`orig_nb_pkts` which is the original caller count before clamping by
-`AVP_MAX_TX_BURST` and resource limits.  These values differ whenever the
-burst was clamped, so the error count is wrong.
-
-Fix: compare against `nb_pkts`.
-
-### Bug 5: Spurious error counting for unconsumed packets
-
-Both TX functions increment `txq->errors` for all `nb_pkts` when returning 0
-due to resource exhaustion or detach (lines 1714, 1761, 1832, 1855).  Since
-the function returns 0, no mbufs were consumed =E2=80=94 the caller still o=
-wns all of
-them.  These are not transmission errors; they are backpressure.  Inflating
-`oerrors` is misleading.
-
-Fix: remove the error increments on the early-return-zero paths.
-
-### Bug 6: Oversized packets silently truncated (lines 1886-1899)
-
-When a packet exceeds both `guest_mbuf_size` and `host_mbuf_size`,
-`avp_xmit_pkts` truncates it to the smaller buffer size and transmits a
-corrupt frame.  Per the tx_burst contract, the driver should consume and
-free the mbuf and count it in tx_errors, not send garbage.
-
-Fix: set the AVP buffer length to 0 (skip the copy) and count the error.
-
-## Steps to Reproduce
-
-Code inspection of `drivers/net/avp/avp_ethdev.c` at tag v26.03-rc1.
-
-The double-free (bugs 1-2) can trigger when the tx FIFO fills between the
-`avp_fifo_free_count()` check and the `avp_fifo_put()` call.  This is a race
-against the host consumer and is timing-dependent.
-
-The buffer leak (bug 3) triggers when `avp_fifo_get()` from the alloc queue
-returns a partial result, which can occur under host-side memory pressure.
-
-## Suggested Patch
-
-A patch addressing all six issues is available.  The key changes are:
-
-- Return the number of mbufs freed (consumed) rather than the FIFO put count
-- Return partially dequeued AVP buffers on allocation failure
-- Remove error counting for unconsumed packets (backpressure is not an erro=
-r)
-- Drop oversized packets instead of truncating
-- Fix the orig_nb_pkts vs nb_pkts comparison
+Both bugs are in the scalar path only. The vector paths (`bnxt_xmit_pkts_ve=
+c`
+and AVX2 variant) skip per-packet validation entirely and are not affected.
 
 --=20
 You are receiving this mail because:
