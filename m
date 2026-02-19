@@ -2,78 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B13FBC55184
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 10:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 036E0C5518E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 10:09:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8FDEE402C6;
-	Fri, 20 Feb 2026 11:09:33 +0100 (CET)
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com
- [209.85.128.47]) by mails.dpdk.org (Postfix) with ESMTP id 8741A402AC
- for <dev@dpdk.org>; Thu, 19 Feb 2026 10:25:15 +0100 (CET)
-Received: by mail-wm1-f47.google.com with SMTP id
- 5b1f17b1804b1-48371119eacso6740235e9.2
- for <dev@dpdk.org>; Thu, 19 Feb 2026 01:25:15 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771493115; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 8B2E84042E;
+	Fri, 20 Feb 2026 11:09:34 +0100 (CET)
+Received: from mail-yx1-f66.google.com (mail-yx1-f66.google.com
+ [74.125.224.66]) by mails.dpdk.org (Postfix) with ESMTP id 99124402EA
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 16:25:59 +0100 (CET)
+Received: by mail-yx1-f66.google.com with SMTP id
+ 956f58d0204a3-64ae2ce2fe1so1033299d50.1
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 07:25:59 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771514759; cv=none;
  d=google.com; s=arc-20240605;
- b=UhzpThq0m24hy7OYSMj9Ua4/ltmK5bAAXZRB6bn2ciqANynDdMrYJ+BDSSgTAOtZZk
- bE2UHRFYVjOyi1U0sTS3B+vAs3vRvTLLvtQX5BQ5v5L1SxS+TxnJ1HyB8waicrGjUQWg
- hDG1IiPCKmQbkaA2C6oyKikF7bCowb/oeAQglOMKvh0A6FLToCybdvCazEAP2780DgBr
- uybZ23loWUtfV2p0UYIUWtk1Q3DuyidlBgKeK98wWaHQZFMIzA4ajXHIuu/Lr0ziMS+X
- GazsZRdWyhrpFqOBz4h0pLvPzwWQR6c0eNWK4EZFXImuRM15uB9unK/3YRs50JTYhbQx
- +cTw==
+ b=NhBL7YvpyKKzaQN5eZfkbWdt6bAXlUzLTSzZJh6PTHeQSJo8QiCYVEovUpVqgbPZ7K
+ WPv8ZRwMWh3y3u2eB8BtnIp2cOefMkoFvHMTVg0g3rVvps+W6rluCJXrXu5hpImcjpeN
+ h+m8P7xDWxpEPLgSWjLxVrosnPTYgDr+64o/6rS5Nn/UcWUdSIn+9lzyzTnP8mMyty8C
+ Op8c2jcQ4uRNNFVQl6M7HlM8/PI8wYN/yoMJShgj13LLMvp3bSwOQoZ3zOYs74mXjN0k
+ zpjlapjaHcDIzvSMOeLVbsn1sK78GNzcPEb+47MPYtrr1oTqbJuz3J7PrAclNRl/LXyu
+ oitg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=to:subject:message-id:date:from:mime-version:dkim-signature;
- bh=vOzi6NNr7pIQ3Cdy50Oj7C7skQs2VH0mrhQJkNehc1U=;
+ bh=FvBhdx9YNfP6WNlB/cewzAy1RmBo4K1YBdot9RCwJsY=;
  fh=eUqWHLlhrxpykrabbQYbmT5B5FclN6p18glcXqrZikU=;
- b=gvqfKXKScXCw+mC5DOGC0ht4DtGuVlLc06AjkneiCaAqKmeVlKJi143SXd+F06bmYs
- CDVffnx9z5dDG9UvGvsK3JqFTIqdGg4Wyj1wEx4WmKcrNkAFwrfXUzy8J4RZRPwtSf+i
- kr8N4MqtvfdCkYq47XlV/jzP5skvZzZBaClOMdhs3GbxBfZCDNLDpg8vug7bZdNXbLEa
- vX6XcjB2QD7TDqDQ67ZXdFmY9qjN+zgDoEF8bLF+IL18GkPDwh09v8UjIG7ieChG6HeC
- ctpnat6LLkixOnFr/6YO12xMW0Fwk1uV2T3+/UpfpHELfWtU+Ul8bBqqicjgH3x8Z5QI
- 9ung==; darn=dpdk.org
+ b=bEytF2lOtKNExTIiS6AbTqssLoFhnwWW20J3G0PHnTYeAvw59cqCGvafTSid2m4qcy
+ SS+BUbRy11s3Q7tZ2Y75TZ8SZSb/9a+02iMi31oV9K35xNPXBXqxVS6q/BSVInDf70G1
+ sQx7J/08AyJzC1odAUocJ1PB5k6zpzQkXycZ2c0dMNLoRKU4ZFX1HtnWUSN2kMWow3nE
+ ah9vE/d6V35CeiI9l0IgFGkMIw4Weqc29LMvEx9fLphBACwgc1neKgqveugRaJPrzIDf
+ uZ2hzpX3iKHVllFzlnFP7q84T+1Vc67qGbQ4WaL1+qVs9VeoDQGpczJ9dv8F2qJ+FoiN
+ yeLg==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1771493115; x=1772097915; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1771514759; x=1772119559; darn=dpdk.org;
  h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
  :date:message-id:reply-to;
- bh=vOzi6NNr7pIQ3Cdy50Oj7C7skQs2VH0mrhQJkNehc1U=;
- b=k72VDp/MnBjDnmNoz6HuDhfW+OLffxoykGUZsPLAo1kO7tUKvmB7IOfCLQgjIL6aXd
- 11oxctDWPAhvGcU00ri+dLtX/QlIcd6xI0MDLRSaptjOZx4P5b0qjqat5DUJuQ+mAP2R
- KutuAc7LpM+uNiGXxxzF2ZCt90X3QQqEZefyv9mD4i7MaDTe232lhN2WP65KYaCS6nad
- KFkZ7ppnyvKGNmfbWFQii31eNnPvGxC8gDTmJyOFcgsyKk9g27KFhkrOel+xm14tbVAJ
- QIdzKwBj3mQgC0ZnP1D15uVMxQhj+pOsqwqHdBsRE9aYiEOjSKEN52hnoRx+F3zqpSke
- zWsg==
+ bh=FvBhdx9YNfP6WNlB/cewzAy1RmBo4K1YBdot9RCwJsY=;
+ b=MmWOusZrRPL00Wuok+fnVNHpAckOZHCS5rUqilF9+C+vVCkeFcZ5LyISCdwdVuunV7
+ Iz7Y3Tnc155t5SJDHvX1/G5e8l06vHBTa16zwdUbnIuLFkuZRSXertBgD7o1cMi29vVH
+ iSrgqrnyeMolRsjrkSFgeCkFbslHxkLkbzKnGjGip9iM1LiDbkEr3ML91FCyHxeBTi6h
+ M8a4mCfZj2/iQh+b8A0uI79blSylcYHIOtAV8RrfVNA/T07g5dYOfDhZstOan/C8ipHY
+ mP2/c2oLfsS1BJ1DrbopFarbV2M/Gpt0mzjAwHcTlEl9ZRS9be2TQ8ylnQ40eHDKVr3Y
+ nfMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771493115; x=1772097915;
+ d=1e100.net; s=20230601; t=1771514759; x=1772119559;
  h=to:subject:message-id:date:from:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=vOzi6NNr7pIQ3Cdy50Oj7C7skQs2VH0mrhQJkNehc1U=;
- b=VEnJo7WAYig4Ekzwww/luT7pHcijNQ4JqDK4El+TSuoBT1RwBa+nkdoVwKS5m+8+Fc
- kOIPFu/nSJOHpsr6/usOJgrJquEd4Oo0RK+iy1+0l+dzrfrq8+8+FyOHgCAHsEVEBYit
- Rt4GaQL2rzRWqer57UBgZhtAvPqCT/8Q9FCF/KNGEk5yqlirCusxnCHaSaBvOyJ/Zy8n
- YVBcpNsg3NKh04sdn8MWn9GAwWZoyg+c9HGcFYDMqpt2NXAzv1AKhgIovUSIutwZH4Uf
- 6ppkGsWY+15dms8Ofo5pY//X83YoL/EQt88fZp97Xy1DyacSN2RlJQrk3mXyAV+sPNpg
- ZTfw==
-X-Gm-Message-State: AOJu0YwzHKVNIdoc0L7IZLrR+mGwhHfYRFJpkDKFD42Yhqeb+S3C3C40
- IwEFni1pw27nVLCxk4DJNtdkRuaxqyF9lYuxTF03njJlcTtNraerMhJ2oWMsInEXNy+mr3UysIU
- 7pfFM+ZjOCpHysLA15+KgOGLIkipzxVBPFPtJ
-X-Gm-Gg: AZuq6aJFUzG+qA8BjEzR61e8Iy9I//q8kpgDS8gozrtVgcVMLh6gxlw0ObBDVSgKDfC
- UCNx+xPVl0CdrIeGpIZoCePbQfG9uIILj1Uokd1OA9g/+R7ILPRGoxYghLW0rw+DgsQjJ5A5rd9
- cXMnQnZrzfMwGTrB6W5fKqXeOBwjUIhutwUlW4sESoF42a0BtkJgOlP/zT7662TQ4Af6DZ87Sm8
- A9DYAJChP050lM4EZJ9WJDOq2Vx6Ohb9yydyMuPXJE9Bo+EJmKGEsvmnGw+GVFGDyNfaSNYnK2G
- sPz62gQ=
-X-Received: by 2002:a05:6000:2dc5:b0:435:a2f8:151c with SMTP id
- ffacd0b85a97d-43958e13c96mr7700875f8f.28.1771493114649; Thu, 19 Feb 2026
- 01:25:14 -0800 (PST)
+ bh=FvBhdx9YNfP6WNlB/cewzAy1RmBo4K1YBdot9RCwJsY=;
+ b=J6nfq4rYAmjRifEMTR5uR8g4oDOIjqybXhgAtIPSQvtjesm/Ck52xgB2Y3ScXdSVpD
+ XYDYAg2LSUkz8KUCPWT+jiJykOhghWuXp8wnpsFUv8l/hlgEQ08gaOxVanZ2+cIRMVc3
+ xfrvzdraQ1csjpWmM3ehF1vn7JH1gwUcOqkpxqczTGYpmzQUvQZqTOhkWtbxB4n+Bs57
+ UjzsLyDyxkS1i96p2k/9yr5BWNPIXVJqOSJpZ9XHa8YdoS2e3sLF/1ZtFXgn/gRo4tuu
+ dzMmhUvogl/nNo1SIMumXvehqE4TJ1cSke9Yjf3qfu9+2vpO9H5vPaVxm2hzvqazr+rI
+ wj/g==
+X-Gm-Message-State: AOJu0YyW+nN0c2+raiUtq6fvyrZPs0K/9UsqIaSLmPFafyI+8kV/gQlu
+ CD9SO5jL/on1up6NgzWQmRws8ZHz/OSfbfUKsK/cvzrJrQYHxK8B8tftQboKSQkLGS3Eci27nLG
+ jHtITuiBqNqWTpM4mjhowHvx5zrQz5DY0VvJU
+X-Gm-Gg: AZuq6aLGzwc9cwGzGexzYjuCVoAf5mDienmZVm1ANtj1ThJgIhuv2PI4+Jg7bNfMO2n
+ SvDpJjkx/Xvsq8r5GWiL4n5rG9YrNjsrhYEWNOounsn2WTwPWteBH7XlmJUv+fGJrSK7SLAoLEH
+ hihpQkWID65enCDCbIw4u8wZQOH3eEpN3vZfTF10E+N25K6zmKKNb9SYFsXT2I4VVX8TzMOSrBr
+ SWsMSAVd7fBh6IsqwVZ4BxOD+Ot1oYiwF2pr+ZDYQFV+bGT4linQ3ULPRykf/6vtGckxymJmaze
+ bQTgpZA=
+X-Received: by 2002:a05:690e:168c:b0:649:ec90:e295 with SMTP id
+ 956f58d0204a3-64c55562512mr4797139d50.18.1771514758655; Thu, 19 Feb 2026
+ 07:25:58 -0800 (PST)
 MIME-Version: 1.0
-From: Harsh raj Singh <singhharshraj215@gmail.com>
-Date: Thu, 19 Feb 2026 14:55:02 +0530
-X-Gm-Features: AaiRm51mBDVtkbIdcuDO-bkV21DDPjw8ULgMSZ5zKX17uhNh2QN7CjQ1oEg7X0A
-Message-ID: <CAN33txEUWT_1wJMa2Rz_XNYQZyqGWrQgzkicWJvJEcFVi2+20A@mail.gmail.com>
-Subject: [PATCH] examples/l2fwd_acl: add ACL-based L2 forwarding example
+From: reza firoozi <rfiroozi257@gmail.com>
+Date: Thu, 19 Feb 2026 18:55:41 +0330
+X-Gm-Features: AaiRm52OhNBxkYyHHdPp2AuZ8NHGsrlyp4-CpPJBx8mGOPkm8MH9AZ1JpEcoc64
+Message-ID: <CAC=Da-1K8qPRsYPpgcQHfZVycRigj3iNNoJ-mmShwjpsKsqysQ@mail.gmail.com>
+Subject: Re: [PATCH v6 11/18] net/mlx5: add HW steering VLAN push, pop and VID
+ modify flow actions
 To: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/alternative; boundary="000000000000e7737d064b2eebef"
 X-Mailman-Approved-At: Fri, 20 Feb 2026 11:09:31 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -88,43 +89,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From 9d87abade4e79b4377367bbcbf79a1095beed127 Mon Sep 17 00:00:00 2001
-From: Harsh Raj Singh <harshraj215@gmail.com>
-Date: Thu, 19 Feb 2026 14:16:16 +0530
-Subject: [PATCH] examples/l2fwd_acl: add ACL-based L2 forwarding example
+--000000000000e7737d064b2eebef
+Content-Type: text/plain; charset="UTF-8"
 
-This example demonstrates usage of the DPDK ACL library
-to classify packets based on:
 
-  - protocol
-  - source IPv4
-  - destination IPv4
-  - source port
-  - destination port
 
-Packets matching ACL rules are forwarded,
-others are dropped.
+--000000000000e7737d064b2eebef
+Content-Type: text/html; charset="UTF-8"
 
-The example provides a minimal reference
-for developers wanting to integrate ACL
-classification into packet forwarding paths.
+<div dir="auto"></div>
 
-Signed-off-by: Harsh Raj Singh <harshraj215@gmail.com>
----
- examples/l2fwd_acl/README.md   |  18 +++
- examples/l2fwd_acl/main.c      | 249 +++++++++++++++++++++++++++++++++
- examples/l2fwd_acl/meson.build |   4 +
- examples/meson.build           |   1 +
- 4 files changed, 272 insertions(+)
- create mode 100644 examples/l2fwd_acl/README.md
- create mode 100644 examples/l2fwd_acl/main.c
- create mode 100644 examples/l2fwd_acl/meson.build
-
-diff --git a/examples/l2fwd_acl/README.md b/examples/l2fwd_acl/README.md
-new file mode 100644
-index 0000000000..5b5494e297
---- /dev/null
-+++ b/examples/l2fwd_acl/README.md
-@@ -0,0 +1,18 @@
-+L2 Forwarding with ACL Example
-+==============================
+--000000000000e7737d064b2eebef--
