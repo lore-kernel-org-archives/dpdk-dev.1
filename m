@@ -2,38 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2E4E9A04C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 06:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B80BEE9A03B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 06:20:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8250B402CC;
-	Thu, 19 Feb 2026 07:17:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9ABC4402CC;
+	Thu, 19 Feb 2026 07:20:34 +0100 (CET)
 Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id 6BBF5402AC
- for <dev@dpdk.org>; Thu, 19 Feb 2026 07:17:25 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id DCE23402AC
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 07:20:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1771481845;
- bh=/yECynI3b/TMrN2MD4i7ot2XAVuEoZ+cjRTwZ42FvsU=;
- h=Subject:From:To:Date:In-Reply-To:References;
- b=QxY3qpC0rVVacxPr20sOOCTKoi83Wgh9ckNcirOzzMyDaeO2xcT86xenDMoSPTBdf
- nXshUry/SB9HvErw3eBPF3gcqA7R7l3OOn0GwrmhN03kI3ANSUIDz+q8E46tzWNMRu
- 5wRWi+AuKU5zYnypK0iHP01OVp5kg85M2EM3fUC2N8L8fHnG2/ja+MxcTrH7KelCRw
- 9sn81aKDHysEzoP9SqcZcpxnbP2jLWQhZcwZTa8JNHdRFdEzGpaMAXNAwfwt4pT1NT
- FG7Z/sDHHSDod3l1WE2N7rkcs1F//TOsUDwDRdnYBDegSqT977nH6TYYPpzW0FmdXZ
- K+VKIcVA+zZIg==
+ s=office2-2020; t=1771482032;
+ bh=KV9jqmXhVw9pM6BO2IT7LoPTlCX3D3PrdKZs+liNzyQ=;
+ h=Subject:From:To:Cc:Date:In-Reply-To:References;
+ b=FAPB1ilD/Q+AmB7R7q3ZZDh5FXPXvMiCPbXmDkRrpwghIJywgGDclaB6JPmU986BA
+ izwrLbHa3a6vjzXSrcHDqHSz3x9dcVB8xEBbLFt1TlHWkcrtSbWSlZpr0FeqS+Yg4f
+ aI0jE+R9noBUIWa/ekJIOO7ypMdKJL4Uu/kZ5dNA+py1IR7nXDhROdD1aOaBdOjeB1
+ /eGYRMN2h8koBRI6lAsPFp74j7fcHbUs/KEDCSbQX+csE4B5fTkHAb4OG05noJFbAU
+ Joayfw0p3ECK+zqUc/CQwTw1XrzecC4FOehIMhCPkzNS+YgWUd2XM5tfijHYZOUiyl
+ m3jEnlegK31ng==
 Received: from [IPv6:2001:718:812:27::107] (gtx107.cesnet.cz
  [IPv6:2001:718:812:27::107])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits)
- server-digest SHA256) (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id E87FD11800B6;
- Thu, 19 Feb 2026 07:17:24 +0100 (CET)
-Message-ID: <73181990690a4db48275b94f434913b601c3be4d.camel@cesnet.cz>
-Subject: Re: [PATCH] net/nfb: fix eth_node memory leak in deinit
+ key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits))
+ (No client certificate requested)
+ by office2.cesnet.cz (Postfix) with ESMTPSA id 8860111800B6;
+ Thu, 19 Feb 2026 07:20:32 +0100 (CET)
+Message-ID: <d6f174ffc3252d4cbfe5132bb0916ca3986a7492.camel@cesnet.cz>
+Subject: Re: [PATCH 5/7] net/nfb: support setting Rx MTU
 From: Martin Spinler <spinler@cesnet.cz>
-To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
-Date: Thu, 19 Feb 2026 07:17:24 +0100
-In-Reply-To: <20260218181621.1066237-1-stephen@networkplumber.org>
-References: <20260218181621.1066237-1-stephen@networkplumber.org>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Date: Thu, 19 Feb 2026 07:20:32 +0100
+In-Reply-To: <20260218102058.53296e9e@phoenix.local>
+References: <20260206170435.302184-1-spinler@cesnet.cz>
+ <20260206170435.302184-6-spinler@cesnet.cz>
+ <20260218102058.53296e9e@phoenix.local>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.58.3 
@@ -51,31 +54,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thank you. Can be squashed, but it's OK this way.
+> Since mtu is 16 bit value, you need to use uint32_t to avoid
+> overflow.
+>=20
+> Something like:
+> +	uint32_t frame_len =3D (uint32_t)mtu + RTE_ETHER_HDR_LEN + RTE_ETHER_CR=
+C_LEN;
+> +	if (frame_len > priv->frame_len_max_cap)
+> +		return -EINVAL;
+>=20
+> +	for (i =3D 0; i < intl->max_rxmac; ++i)
+> +		nc_rxmac_set_frame_length(intl->rxmac[i], frame_len, RXMAC_FRAME_LENGT=
+H_MAX);
 
-Acked-by: Martin Spinler <spinler@cesnet.cz>
-
-On Wed, 2026-02-18 at 10:16 -0800, Stephen Hemminger wrote:
-> The eth_node array allocated with calloc() in nfb_nc_eth_init() is
-> freed on the error path but not in the normal teardown path via
-> nfb_nc_eth_deinit(). Add the missing free().
->=20
-> Fixes: 9b173c0f89 ("net/nfb: get correct link speed")
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  drivers/net/nfb/nfb_ethdev.c | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/net/nfb/nfb_ethdev.c b/drivers/net/nfb/nfb_ethdev.c
-> index e267dca9af..ba7c849a4b 100644
-> --- a/drivers/net/nfb/nfb_ethdev.c
-> +++ b/drivers/net/nfb/nfb_ethdev.c
-> @@ -186,6 +186,7 @@ nfb_nc_eth_deinit(struct pmd_internals *intl)
->  	for (i =3D 0; i < intl->max_rxmac; i++)
->  		nc_rxmac_close(intl->rxmac[i]);
-> =20
-> +	free(intl->eth_node);
->  	free(intl->txmac);
->  	free(intl->rxmac);
->  }
+Thank you, this check is cleaner.
