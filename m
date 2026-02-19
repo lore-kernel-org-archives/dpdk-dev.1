@@ -2,53 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0F67E9A04A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 15:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D9FE9A03B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:07:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1645402C6;
-	Thu, 19 Feb 2026 16:23:19 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 067FA402AA
- for <dev@dpdk.org>; Thu, 19 Feb 2026 16:23:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3F52E402C6;
+	Thu, 19 Feb 2026 17:07:40 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id B7F17402AA
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 17:07:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771514598; x=1803050598;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=38S/Eu80GxbTNmbgCiM+EKpLnMb8pw/KVo/8YQnhi/E=;
- b=lN+A6Ty/zrxBSmYNKn/H0yd8+qMAQdh2FRwd/Rh8vds26X7hXJ8FNoNB
- IQulcSNQ95aUr3s8Kw9zRe+RRqdKtbIAP902OrYGlWIEsvq9X2zfZ1aB+
- qKKR6vG433BqCoIMNNr8NqeZVNiCa+sAm40ALxLam8UqytdUlm6CN+Zg4
- QE23PCaj23Qwxx8XXidmhcknOwfXgNngsmpfHTqvcxh6mY1QTchrD1IXl
- PY3bNuKr7GRsGzRHrY65LN/qhboTkYLg98bNUKooFiJ6QaarqY7pquK5z
- bT5fzzWt2UclvZ4yoEMxs33q7h7hdSWmfESRN4IIu8DpGkPN5KpTpI8s/ g==;
-X-CSE-ConnectionGUID: aPaOfUfUTLGWqN7XqR3xmQ==
-X-CSE-MsgGUID: SMHxTWJqRMCRxci5/J6FOg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="71806331"
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="71806331"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Feb 2026 07:23:17 -0800
-X-CSE-ConnectionGUID: q6TXYvVrTFmVZgfiZYrxMg==
-X-CSE-MsgGUID: dOdS8Hg5StqbILT1jHei6w==
+ t=1771517260; x=1803053260;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=rYxSaEUqsycfh6mrKZTOjtAv+avfxT1T8dsp14T1X7E=;
+ b=c8fk5h5L9weJtQz0Wza9/pvrBbQNLp2iQJHwwKJYQ4wgof+yuYD7KAxX
+ FMKlqZWZWTf17lCYk2i86sMtjojTys6jjXwIdFM76B6V1oYpKQbWDVJ/6
+ 58ml4Sms1mk2m6arsY4xQOx8RkO9OaOVc0u3jxIPnvb59wvk5N6N4fe6s
+ JQgHQM2oEqM7vrWwB8aNAh7euahz96x8pl3a2U3KcZJyknIa1OSO5p6oC
+ MkN73SUcabquPFFUiyWZ5bBTOy4DmhgV1X11DwP2ISSoJ91+8oPblakvR
+ QMPjdUihgOkWi3XTD1JM1hcJk/TRAJqCFz5ZV+63I+1x5lRMTSn6GlsY+ Q==;
+X-CSE-ConnectionGUID: JNcw5zwPTq+yokBlamlS7A==
+X-CSE-MsgGUID: B/LKJFPuQG6Q/hihO0/yww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="83713592"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="83713592"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Feb 2026 08:07:38 -0800
+X-CSE-ConnectionGUID: EWJRf/HFTNiJRHhyOQioWw==
+X-CSE-MsgGUID: Efe0NnKVRFeD06E/Ro/lXw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="218679331"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="218320338"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa003.jf.intel.com with ESMTP; 19 Feb 2026 07:23:15 -0800
+ by fmviesa004.fm.intel.com with ESMTP; 19 Feb 2026 08:07:36 -0800
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: stephen@networkplumber.org, Bruce Richardson <bruce.richardson@intel.com>,
- Selwin Sebastian <selwin.sebastian@amd.com>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Jeroen de Borst <jeroendb@google.com>,
- Joshua Washington <joshwash@google.com>, Rosen Xu <rosen.xu@altera.com>
-Subject: [PATCH v2] drivers: disable comma warnings selectively
-Date: Thu, 19 Feb 2026 15:22:25 +0000
-Message-ID: <20260219152302.2103018-1-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH] net/iavf: explicitly pass flags param to Tx context fns
+Date: Thu, 19 Feb 2026 16:07:26 +0000
+Message-ID: <20260219160726.2117208-1-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260213151559.656837-1-bruce.richardson@intel.com>
-References: <20260213151559.656837-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -64,98 +58,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Rather than disabling -Wcomma for all drivers, only disable it on a
-case-by-case basis for drivers that need it disabled. Use a variable to
-do so, to avoid issues with compilers like MSVC that don't support the
--Wno-comma flag.
+The get_context_desc() function takes as an explicit parameter the
+ol_flags from the packet, which saves re-reading them from the mbuf. The
+subfunctions for creating the segmentation part of the descriptor or the
+ipsec handling do not take this parameter though, and then re-read the
+ol_flags from the mbuf. While essentially harmless, this does confuse
+static analysis tools like converity which does not realise that
+ol_flags and m->ol_flags are the same, leading to false positives
+like [1].
+
+Fix this and avoid coverity false positives by just passing the local
+ol_flags variable so all code uses the same flags source and avoid
+unnecessary mbuf reads.
+
+[1] Coverity Issue: 501497
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
-V2: resubmit now that dependent patches have hit main
+NOTE: Not flagging this as a bugfix since there is no actual bug here,
+just a code improvement to try and prevent false positives.
 ---
- config/meson.build                 | 6 ++++++
- drivers/meson.build                | 2 +-
- drivers/net/axgbe/meson.build      | 4 +++-
- drivers/net/bnxt/meson.build       | 1 +
- drivers/net/gve/meson.build        | 1 +
- drivers/raw/ifpga/base/meson.build | 1 +
- 6 files changed, 13 insertions(+), 2 deletions(-)
+ drivers/net/intel/iavf/iavf_rxtx.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/config/meson.build b/config/meson.build
-index 02e2798cca..9ba7b9a338 100644
---- a/config/meson.build
-+++ b/config/meson.build
-@@ -367,6 +367,12 @@ if cc.has_argument('-Wno-shadow')
-     no_shadow_cflag = '-Wno-shadow'
- endif
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index e621d4bf47..2464a988eb 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -2361,14 +2361,14 @@ iavf_calc_context_desc(const struct rte_mbuf *mb, uint8_t vlan_flag)
+ }
  
-+# per-driver option to disable -Wcomma if supported by the compiler
-+no_comma_cflag = []
-+if cc.has_argument('-Wno-comma')
-+    no_comma_cflag = '-Wno-comma'
-+endif
-+
- foreach arg: global_cflags
-     if cc.has_argument(arg)
-         add_project_arguments(arg, language: 'c')
-diff --git a/drivers/meson.build b/drivers/meson.build
-index 3fe3be48fb..6ae102e943 100644
---- a/drivers/meson.build
-+++ b/drivers/meson.build
-@@ -86,7 +86,7 @@ default_cflags = machine_args
- default_cflags += ['-DALLOW_EXPERIMENTAL_API']
- default_cflags += ['-DALLOW_INTERNAL_API']
+ static inline void
+-iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, const struct rte_mbuf *m)
++iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, uint64_t ol_flags, const struct rte_mbuf *m)
+ {
+ 	uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
+ 	uint64_t eip_len = 0;
+ 	uint64_t eip_noinc = 0;
+ 	/* Default - IP_ID is increment in each segment of LSO */
  
--warning_disable_cflags = ['-Wno-format-truncation', '-Wno-address-of-packed-member', '-Wno-comma']
-+warning_disable_cflags = ['-Wno-format-truncation', '-Wno-address-of-packed-member']
- foreach cflag:warning_disable_cflags
-     if cc.has_argument(cflag)
-         default_cflags += cflag
-diff --git a/drivers/net/axgbe/meson.build b/drivers/net/axgbe/meson.build
-index 5a14549317..1aa523a749 100644
---- a/drivers/net/axgbe/meson.build
-+++ b/drivers/net/axgbe/meson.build
-@@ -15,7 +15,9 @@ sources = files(
-         'axgbe_rxtx.c',
- )
+-	switch (m->ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 |
++	switch (ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 |
+ 			RTE_MBUF_F_TX_OUTER_IPV6 |
+ 			RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
+ 	case RTE_MBUF_F_TX_OUTER_IPV4:
+@@ -2385,9 +2385,9 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, const struct rte_mbuf *m)
+ 	break;
+ 	}
  
--cflags += ['-Wno-cast-qual', no_shadow_cflag]
-+cflags += ['-Wno-cast-qual']
-+cflags += no_shadow_cflag
-+cflags += no_comma_cflag
+-	if (!(m->ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD)) {
++	if (!(ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD)) {
+ 		/* L4TUNT: L4 Tunneling Type */
+-		switch (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
++		switch (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
+ 		case RTE_MBUF_F_TX_TUNNEL_IPIP:
+ 			/* for non UDP / GRE tunneling, set to 00b */
+ 			break;
+@@ -2425,7 +2425,7 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, const struct rte_mbuf *m)
+ 					IAVF_TX_CTX_EXT_IP_IPV4 |
+ 					IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
+ 				(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
+-				(m->ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
++				(ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
+ 			eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
+ 	}
  
- if arch_subdir == 'x86'
-     sources += files('axgbe_rxtx_vec_sse.c')
-diff --git a/drivers/net/bnxt/meson.build b/drivers/net/bnxt/meson.build
-index dc122fb3df..e13aa4e341 100644
---- a/drivers/net/bnxt/meson.build
-+++ b/drivers/net/bnxt/meson.build
-@@ -14,6 +14,7 @@ endif
+@@ -2435,18 +2435,18 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, const struct rte_mbuf *m)
+ }
  
- cflags += no_wvla_cflag
- cflags += no_shadow_cflag
-+cflags += no_comma_cflag
+ static inline uint16_t
+-iavf_fill_ctx_desc_segmentation_field(volatile uint64_t *field,
++iavf_fill_ctx_desc_segmentation_field(volatile uint64_t *field, uint64_t ol_flags,
+ 	const struct rte_mbuf *m, struct iavf_ipsec_crypto_pkt_metadata *ipsec_md)
+ {
+ 	uint64_t segmentation_field = 0;
+ 	uint64_t total_length = 0;
  
- headers = files('rte_pmd_bnxt.h')
- cflags_options = [
-diff --git a/drivers/net/gve/meson.build b/drivers/net/gve/meson.build
-index add431c2bb..b5d67ee490 100644
---- a/drivers/net/gve/meson.build
-+++ b/drivers/net/gve/meson.build
-@@ -20,3 +20,4 @@ sources = files(
- includes += include_directories('base')
+-	if (m->ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD) {
++	if (ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD) {
+ 		total_length = ipsec_md->l4_payload_len;
+ 	} else {
+ 		total_length = m->pkt_len - (m->l2_len + m->l3_len + m->l4_len);
  
- cflags += no_wvla_cflag
-+cflags += no_comma_cflag
-diff --git a/drivers/raw/ifpga/base/meson.build b/drivers/raw/ifpga/base/meson.build
-index efebff94e9..225bde052b 100644
---- a/drivers/raw/ifpga/base/meson.build
-+++ b/drivers/raw/ifpga/base/meson.build
-@@ -24,3 +24,4 @@ base_sources = files(
-         'opae_at24_eeprom.c',
-         'opae_eth_group.c',
- )
-+base_cflags += no_comma_cflag
+-		if (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
++		if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
+ 			total_length -= m->outer_l3_len + m->outer_l2_len;
+ 	}
+ 
+@@ -2573,7 +2573,7 @@ iavf_get_context_desc(uint64_t ol_flags, const struct rte_mbuf *mbuf,
+ 		}
+ 
+ 		/* TSO segmentation field */
+-		iavf_fill_ctx_desc_segmentation_field(&cd_type_cmd, mbuf, ipsec_md);
++		iavf_fill_ctx_desc_segmentation_field(&cd_type_cmd, ol_flags, mbuf, ipsec_md);
+ 	}
+ 
+ 	/* VLAN field for L2TAG2 */
+@@ -2589,7 +2589,7 @@ iavf_get_context_desc(uint64_t ol_flags, const struct rte_mbuf *mbuf,
+ 
+ 	/* Tunneling field */
+ 	if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
+-		iavf_fill_ctx_desc_tunnelling_field((uint64_t *)&cd_tunneling_params, mbuf);
++		iavf_fill_ctx_desc_tunnelling_field(&cd_tunneling_params, ol_flags, mbuf);
+ 
+ 	/* L2TAG2 field (VLAN) */
+ 	if (ol_flags & RTE_MBUF_F_TX_QINQ) {
 -- 
 2.51.0
 
