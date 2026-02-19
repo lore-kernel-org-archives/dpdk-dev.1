@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D9FE9A03B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:07:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49674E9A03B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:23:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3F52E402C6;
-	Thu, 19 Feb 2026 17:07:40 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id B7F17402AA
- for <dev@dpdk.org>; Thu, 19 Feb 2026 17:07:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 12FA7402ED;
+	Thu, 19 Feb 2026 17:23:20 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 097AD402AA
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 17:23:18 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771517260; x=1803053260;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=rYxSaEUqsycfh6mrKZTOjtAv+avfxT1T8dsp14T1X7E=;
- b=c8fk5h5L9weJtQz0Wza9/pvrBbQNLp2iQJHwwKJYQ4wgof+yuYD7KAxX
- FMKlqZWZWTf17lCYk2i86sMtjojTys6jjXwIdFM76B6V1oYpKQbWDVJ/6
- 58ml4Sms1mk2m6arsY4xQOx8RkO9OaOVc0u3jxIPnvb59wvk5N6N4fe6s
- JQgHQM2oEqM7vrWwB8aNAh7euahz96x8pl3a2U3KcZJyknIa1OSO5p6oC
- MkN73SUcabquPFFUiyWZ5bBTOy4DmhgV1X11DwP2ISSoJ91+8oPblakvR
- QMPjdUihgOkWi3XTD1JM1hcJk/TRAJqCFz5ZV+63I+1x5lRMTSn6GlsY+ Q==;
-X-CSE-ConnectionGUID: JNcw5zwPTq+yokBlamlS7A==
-X-CSE-MsgGUID: B/LKJFPuQG6Q/hihO0/yww==
-X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="83713592"
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="83713592"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Feb 2026 08:07:38 -0800
-X-CSE-ConnectionGUID: EWJRf/HFTNiJRHhyOQioWw==
-X-CSE-MsgGUID: Efe0NnKVRFeD06E/Ro/lXw==
+ t=1771518199; x=1803054199;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=02Whfr21OWE2UNZuzBSirTSyotMkd39aC4Y2HjmDOsU=;
+ b=Zvv4gWGl8oJPioz9nNwCvXPDeL4/NtFsPzVvot5/QRL0T1yJkRC+jIg3
+ J6BWOD2NwnD9GB5rPR8yXehyBywxRy4nC2F+v5HJlQR1FpbLt+SHgi8Zn
+ 2FaKaZXgl/rcD0yfAz42hE16vu1PhKkmAj2TvYTu9GlpeYZbArRd9KiA8
+ 6ti00UK12G39jEyVdMPlDl7LD2RLs8MLHJ+TheGQbrn4gews+sXh7SXgY
+ 1K6Uugn/VO0Ow0+RNVyiHPyTj6PDxtxvXdQ4cR91RwwomefOtMOiH6zbx
+ YaxNOmM9IThfsEHiqBJunhNz/WIxr848Bh0WKLcfScD+qAgnNovfIrzaW A==;
+X-CSE-ConnectionGUID: lM/5ZfROStaWxlTxxy033Q==
+X-CSE-MsgGUID: T5vk7DCVSKCkWrHXnXn07Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="83231420"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="83231420"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Feb 2026 08:23:18 -0800
+X-CSE-ConnectionGUID: xbZgbhAkR8WNqWYkkvf/Xg==
+X-CSE-MsgGUID: yQcT81lJSKOUdZTC5O1zkw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="218320338"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa004.fm.intel.com with ESMTP; 19 Feb 2026 08:07:36 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="218699771"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa003.jf.intel.com with ESMTP; 19 Feb 2026 08:23:18 -0800
+From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH] net/iavf: explicitly pass flags param to Tx context fns
-Date: Thu, 19 Feb 2026 16:07:26 +0000
-Message-ID: <20260219160726.2117208-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
+Subject: [PATCH v6 00/27] Cleanups for ixgbe, i40e, iavf, and ice PMD's
+Date: Thu, 19 Feb 2026 16:22:43 +0000
+Message-ID: <cover.1771518103.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1770646012.git.anatoly.burakov@intel.com>
+References: <cover.1770646012.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,111 +58,114 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The get_context_desc() function takes as an explicit parameter the
-ol_flags from the packet, which saves re-reading them from the mbuf. The
-subfunctions for creating the segmentation part of the descriptor or the
-ipsec handling do not take this parameter though, and then re-read the
-ol_flags from the mbuf. While essentially harmless, this does confuse
-static analysis tools like converity which does not realise that
-ol_flags and m->ol_flags are the same, leading to false positives
-like [1].
+This patchset is an assortment of cleanups for ixgbe, i40e, iavf, and ice PMD.
 
-Fix this and avoid coverity false positives by just passing the local
-ol_flags variable so all code uses the same flags source and avoid
-unnecessary mbuf reads.
+IXGBE:
 
-[1] Coverity Issue: 501497
+- Remove unnecessary macros and #ifdef's
+- Disentangle unrelated flow API code paths
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
----
-NOTE: Not flagging this as a bugfix since there is no actual bug here,
-just a code improvement to try and prevent false positives.
----
- drivers/net/intel/iavf/iavf_rxtx.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+I40E:
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index e621d4bf47..2464a988eb 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -2361,14 +2361,14 @@ iavf_calc_context_desc(const struct rte_mbuf *mb, uint8_t vlan_flag)
- }
- 
- static inline void
--iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, const struct rte_mbuf *m)
-+iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, uint64_t ol_flags, const struct rte_mbuf *m)
- {
- 	uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
- 	uint64_t eip_len = 0;
- 	uint64_t eip_noinc = 0;
- 	/* Default - IP_ID is increment in each segment of LSO */
- 
--	switch (m->ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 |
-+	switch (ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 |
- 			RTE_MBUF_F_TX_OUTER_IPV6 |
- 			RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
- 	case RTE_MBUF_F_TX_OUTER_IPV4:
-@@ -2385,9 +2385,9 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, const struct rte_mbuf *m)
- 	break;
- 	}
- 
--	if (!(m->ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD)) {
-+	if (!(ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD)) {
- 		/* L4TUNT: L4 Tunneling Type */
--		switch (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
-+		switch (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
- 		case RTE_MBUF_F_TX_TUNNEL_IPIP:
- 			/* for non UDP / GRE tunneling, set to 00b */
- 			break;
-@@ -2425,7 +2425,7 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, const struct rte_mbuf *m)
- 					IAVF_TX_CTX_EXT_IP_IPV4 |
- 					IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
- 				(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
--				(m->ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
-+				(ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
- 			eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
- 	}
- 
-@@ -2435,18 +2435,18 @@ iavf_fill_ctx_desc_tunnelling_field(uint64_t *qw0, const struct rte_mbuf *m)
- }
- 
- static inline uint16_t
--iavf_fill_ctx_desc_segmentation_field(volatile uint64_t *field,
-+iavf_fill_ctx_desc_segmentation_field(volatile uint64_t *field, uint64_t ol_flags,
- 	const struct rte_mbuf *m, struct iavf_ipsec_crypto_pkt_metadata *ipsec_md)
- {
- 	uint64_t segmentation_field = 0;
- 	uint64_t total_length = 0;
- 
--	if (m->ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD) {
-+	if (ol_flags & RTE_MBUF_F_TX_SEC_OFFLOAD) {
- 		total_length = ipsec_md->l4_payload_len;
- 	} else {
- 		total_length = m->pkt_len - (m->l2_len + m->l3_len + m->l4_len);
- 
--		if (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
-+		if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
- 			total_length -= m->outer_l3_len + m->outer_l2_len;
- 	}
- 
-@@ -2573,7 +2573,7 @@ iavf_get_context_desc(uint64_t ol_flags, const struct rte_mbuf *mbuf,
- 		}
- 
- 		/* TSO segmentation field */
--		iavf_fill_ctx_desc_segmentation_field(&cd_type_cmd, mbuf, ipsec_md);
-+		iavf_fill_ctx_desc_segmentation_field(&cd_type_cmd, ol_flags, mbuf, ipsec_md);
- 	}
- 
- 	/* VLAN field for L2TAG2 */
-@@ -2589,7 +2589,7 @@ iavf_get_context_desc(uint64_t ol_flags, const struct rte_mbuf *mbuf,
- 
- 	/* Tunneling field */
- 	if (ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK)
--		iavf_fill_ctx_desc_tunnelling_field((uint64_t *)&cd_tunneling_params, mbuf);
-+		iavf_fill_ctx_desc_tunnelling_field(&cd_tunneling_params, ol_flags, mbuf);
- 
- 	/* L2TAG2 field (VLAN) */
- 	if (ol_flags & RTE_MBUF_F_TX_QINQ) {
+- Get rid of global variables and unnecessary allocations
+- Reduce code duplication around default RSS keys
+- Use more appropriate integer types and definitions
+
+IAVF:
+
+- Remove dead code
+- Remove unnecessary allocations
+- Separate RSS uninit from hash flow parser uninit
+
+ICE:
+
+- Remove unnecessary allocations
+
+This is done in preparation for further rework.
+
+Note that this patchset depends on driver bug fix patchset [1] (already integrated into next-net-intel).
+
+[1] https://patches.dpdk.org/project/dpdk/list/?series=37350
+
+v1 -> v2:
+- Added more cleanups around rte_malloc usage
+
+v2 -> v3:
+- Reworded some commit messages
+- Added a new patch for ICE
+- Rebased on latest bug fix patches
+
+v3 -> v4:
+- Rebased on latest bugfix patchset
+
+v4 -> v5:
+- Adjusted typing for queue size
+- Fixed missing zero initializations for stack allocations
+
+v5 -> v6:
+- Addressed feedback for v3, v4, and v5
+- Changed more allocations to be stack based
+- Reworked queue and IRQ map related i40e patches for better logic
+
+Anatoly Burakov (27):
+  net/ixgbe: remove MAC type check macros
+  net/ixgbe: remove security-related ifdefery
+  net/ixgbe: split security and ntuple filters
+  net/i40e: get rid of global filter variables
+  net/i40e: make default RSS key global
+  net/i40e: use unsigned types for queue comparisons
+  net/i40e: use proper flex len define
+  net/i40e: remove global pattern variable
+  net/i40e: avoid rte malloc in tunnel set
+  net/i40e: avoid rte malloc in RSS RETA operations
+  net/i40e: avoid rte malloc in MAC/VLAN filtering
+  net/i40e: avoid rte malloc in VF resource queries
+  net/i40e: avoid rte malloc in adminq operations
+  net/i40e: avoid rte malloc in DDP package handling
+  net/i40e: avoid rte malloc in DDP ptype handling
+  net/iavf: remove remnants of pipeline mode
+  net/iavf: decouple hash uninit from parser uninit
+  net/iavf: avoid rte malloc in VF mailbox for IPsec
+  net/iavf: avoid rte malloc in RSS configuration
+  net/iavf: avoid rte malloc in MAC address operations
+  net/iavf: avoid rte malloc in IPsec operations
+  net/iavf: avoid rte malloc in queue operations
+  net/iavf: avoid rte malloc in irq map config
+  net/ice: avoid rte malloc in RSS RETA operations
+  net/ice: avoid rte malloc in MAC address operations
+  net/ice: avoid rte malloc in raw pattern parsing
+  net/ice: avoid rte malloc in flow pattern match
+
+ drivers/net/intel/i40e/i40e_ethdev.c         | 370 +++++++----------
+ drivers/net/intel/i40e/i40e_ethdev.h         |  26 +-
+ drivers/net/intel/i40e/i40e_flow.c           | 147 ++++---
+ drivers/net/intel/i40e/i40e_hash.c           |  27 +-
+ drivers/net/intel/i40e/i40e_hash.h           |   3 +
+ drivers/net/intel/i40e/i40e_pf.c             |  26 +-
+ drivers/net/intel/i40e/rte_pmd_i40e.c        |  60 +--
+ drivers/net/intel/iavf/iavf.h                |   7 +-
+ drivers/net/intel/iavf/iavf_ethdev.c         |  37 +-
+ drivers/net/intel/iavf/iavf_fdir.c           |   1 -
+ drivers/net/intel/iavf/iavf_fsub.c           |   1 -
+ drivers/net/intel/iavf/iavf_generic_flow.h   |  15 -
+ drivers/net/intel/iavf/iavf_hash.c           |  13 +-
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c   | 283 +++++--------
+ drivers/net/intel/iavf/iavf_vchnl.c          | 412 ++++++++++---------
+ drivers/net/intel/ice/ice_acl_filter.c       |   3 +-
+ drivers/net/intel/ice/ice_dcf_ethdev.c       |  26 +-
+ drivers/net/intel/ice/ice_ethdev.c           |  29 +-
+ drivers/net/intel/ice/ice_fdir_filter.c      |  19 +-
+ drivers/net/intel/ice/ice_generic_flow.c     |  15 +-
+ drivers/net/intel/ice/ice_hash.c             |  13 +-
+ drivers/net/intel/ice/ice_switch_filter.c    |   5 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c       |   8 -
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h       |  16 -
+ drivers/net/intel/ixgbe/ixgbe_flow.c         | 228 ++++++----
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c         |  26 --
+ drivers/net/intel/ixgbe/ixgbe_rxtx.h         |   2 -
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c |   6 -
+ 28 files changed, 783 insertions(+), 1041 deletions(-)
+
 -- 
-2.51.0
+2.47.3
 
