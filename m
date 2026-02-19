@@ -2,21 +2,21 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D550DE9A02C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 01:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA4EE9A02C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 01:34:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC4B2402C6;
-	Thu, 19 Feb 2026 02:26:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id F15B8402C6;
+	Thu, 19 Feb 2026 02:33:59 +0100 (CET)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 34AF1402BD
- for <dev@dpdk.org>; Thu, 19 Feb 2026 02:26:01 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 9AA22402BD
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 02:33:58 +0100 (CET)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id A3F7A4A667; Thu, 19 Feb 2026 02:26:00 +0100 (CET)
+ id 8CEE14A667; Thu, 19 Feb 2026 02:33:58 +0100 (CET)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1887] bnxt: single bad packet in tx burst stalls
- transmission of remaining valid packets
-Date: Thu, 19 Feb 2026 01:26:00 +0000
+Subject: [DPDK/ethdev Bug 1888] dpaa/dpaa2: permanent tx errors cause caller
+ to retry packets forever
+Date: Thu, 19 Feb 2026 01:33:58 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
@@ -24,7 +24,7 @@ X-Bugzilla-Product: DPDK
 X-Bugzilla-Component: ethdev
 X-Bugzilla-Version: 25.11
 X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
+X-Bugzilla-Severity: minor
 X-Bugzilla-Who: stephen@networkplumber.org
 X-Bugzilla-Status: UNCONFIRMED
 X-Bugzilla-Resolution: 
@@ -35,7 +35,7 @@ X-Bugzilla-Flags:
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
  op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1887-3@http.bugs.dpdk.org/>
+Message-ID: <bug-1888-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -55,90 +55,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1887
+http://bugs.dpdk.org/show_bug.cgi?id=3D1888
 
-            Bug ID: 1887
-           Summary: bnxt: single bad packet in tx burst stalls
-                    transmission of remaining valid packets
+            Bug ID: 1888
+           Summary: dpaa/dpaa2: permanent tx errors cause caller to retry
+                    packets forever
            Product: DPDK
            Version: 25.11
           Hardware: All
                 OS: All
             Status: UNCONFIRMED
-          Severity: normal
+          Severity: minor
           Priority: Normal
          Component: ethdev
           Assignee: dev@dpdk.org
           Reporter: stephen@networkplumber.org
   Target Milestone: ---
 
-Recent audit of tx_pkt_burst semantics in drivers found this bug.
+Both dpaa and dpaa2 transmit paths stop processing on any error and return
+a short count without freeing the failing packet. For permanent errors
+(unsupported segment count, missing buffer pool), this leaves the bad packet
+as the first unconsumed entry and the caller retries it indefinitely.
 
-he bnxt scalar transmit path (`_bnxt_xmit_pkts` in `bnxt_txr.c`) has two
-error handling problems that violate the `rte_eth_tx_burst()` contract.
+## Affected functions
 
-## Bug 1: break-on-error stops processing valid packets
+- `dpaa_eth_queue_tx()` in `drivers/net/dpaa/dpaa_rxtx.c`
+- `dpaa2_dev_tx()` in `drivers/net/dpaa2/dpaa2_rxtx.c`
+- `dpaa2_dev_tx_ordered()` in `drivers/net/dpaa2/dpaa2_rxtx.c`
 
-When `bnxt_start_xmit()` returns `-EINVAL` for a malformed packet (bad IOVA,
-mismatched `nb_segs`, zero `data_len`, too many TSO segments), the driver
-frees the mbuf and increments a drop counter, but then breaks out of the
-transmit loop. The dropped packet is correctly included in the return value,
-so the immediate caller won't leak or double-free it. However, every valid
-packet after the bad one is returned as unconsumed even though there may be
-plenty of ring space. The caller must re-submit them in a subsequent call.
-In a burst of 32 packets where packet 2 is malformed, 29 valid packets get
-needlessly bounced back.
+## Description
 
-The `break` should be `continue` for the `-EINVAL` case. The `break` is only
-appropriate for `-EIO` (device error) and `-ENOMEM` (ring full), where
-continuing would be pointless.
+All three functions prepare frame descriptors in a loop. When an error
+occurs at position N, they jump to a `send_pkts` / `send_n_return` label
+that enqueues packets 0 through N-1 and returns. The packet at position N
+is neither enqueued nor freed =E2=80=94 it is returned to the caller as the=
+ first
+unconsumed packet.
+
+For transient errors (allocation failure, HW backpressure) this is
+tolerable since the caller can retry and succeed later. For permanent
+errors the packet can never succeed and callers that re-submit unconsumed
+packets spin forever:
 
 ```c
-/* current code */
-if (unlikely(rc)) {
-    if (rc =3D=3D -EINVAL) {
-        rte_atomic_fetch_add_explicit(&txq->tx_mbuf_drop, 1,
-                                       rte_memory_order_relaxed);
-        dropped++;
-    }
-    break;
-}
-
-/* proposed fix */
-if (unlikely(rc)) {
-    if (rc =3D=3D -EINVAL) {
-        rte_atomic_fetch_add_explicit(&txq->tx_mbuf_drop, 1,
-                                       rte_memory_order_relaxed);
-        dropped++;
-        continue;
-    }
-    break;
+while (nb_pkts) {
+    n =3D rte_eth_tx_burst(port, txq, mbufs, nb_pkts);
+    mbufs +=3D n;
+    nb_pkts -=3D n;
 }
 ```
 
-## Bug 2: partial descriptor ring state on multi-segment drop
+Permanent error conditions include:
 
-`bnxt_start_xmit()` writes transmit descriptors and advances `tx_raw_prod`
-incrementally as it walks a multi-segment packet. If validation fails partw=
-ay
-through the segment chain (the zero `data_len` check at line 474), execution
-jumps to `drop:` which frees the mbuf but does not roll back `tx_raw_prod` =
-or
-clean up the descriptors already written for the earlier segments of that
-packet. This leaves orphaned descriptors in the ring that reference a
-now-freed mbuf's memory.
+- **dpaa**: `nb_segs > DPAA_SGT_MAX_ENTRIES` in `tx_on_dpaa_pool()`
+- **dpaa2**: `nb_segs > 1` for non-hw-offload buffer pool
+- **dpaa2**: no buffer pool attached (`!mp || !priv->bp_list`)
 
-This second issue is harder to hit in practice since the failing check
-(`data_len =3D=3D 0` on a middle segment) is unusual, but when it does occu=
-r the
-consequences =E2=80=94 stale DMA addresses in the descriptor ring =E2=80=94=
- are severe.
+## Expected behavior
 
-## Scope
+Per the rte_eth_tx_burst() contract, the driver should consume erroneous
+packets (free the mbuf), count them in `tx_errors`, and continue processing
+the remaining burst =E2=80=94 not stop at the first error.
 
-Both bugs are in the scalar path only. The vector paths (`bnxt_xmit_pkts_ve=
-c`
-and AVX2 variant) skip per-packet validation entirely and are not affected.
+## Note
+
+The dpaa2 `sw_td` (software tail drop) path handles this correctly: it
+frees all remaining packets and returns the full count. The same approach
+should be applied to permanent errors in the normal transmit paths.
+
+## Version
+
+Found by code inspection against DPDK v25.03-rc1.
 
 --=20
 You are receiving this mail because:
