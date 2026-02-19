@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C998E9A05A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 19:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 265BFE9A05A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 19:08:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AD69E402C6;
-	Thu, 19 Feb 2026 20:00:55 +0100 (CET)
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
- [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 11F72402AC
- for <dev@dpdk.org>; Thu, 19 Feb 2026 20:00:54 +0100 (CET)
-Received: by mail-qv1-f54.google.com with SMTP id
- 6a1803df08f44-89473dca8aaso15520696d6.0
- for <dev@dpdk.org>; Thu, 19 Feb 2026 11:00:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 41183402C6;
+	Thu, 19 Feb 2026 20:08:58 +0100 (CET)
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com
+ [209.85.222.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 840E3402AC
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 20:08:57 +0100 (CET)
+Received: by mail-qk1-f170.google.com with SMTP id
+ af79cd13be357-8c711959442so168321885a.0
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 11:08:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771527653;
- x=1772132453; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771528137;
+ x=1772132937; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Lf3xeqTbTLVSnxuj84uHoV1/Qpqnz/gJiNyF042g00E=;
- b=cm3xVUGpZa6sBPcyh/OdjbX0mvzEtmE3sNMM3oBQdGyJ5qJf9DyXpbOZwpIeREA1S6
- LcyQGoqTMWTlcSihZefDWnWvCeiKVWTOKkGUyg3H/zkzOBiBc/oxqqV4eUG9iHhyaa6X
- jhOTQ4KmwR6WnE6siAINGsppDv+pmynvDyFjxWS8wI+IsX2FCFuXJdmSJgghP6tqpFTC
- 7xcOpw61qE1KH26xzk014LDfrL+1T0aOuNsibUwNoTFPpUeOWcuiuQEZFIF5XOhcvspF
- g8IGxtnH2Hz0dM7/XnXd0MAcaGyQkVvlJLTyibgAaii+oABJHT7XmNvpcMaswlY5WfC/
- 9d6g==
+ bh=I2nkVXe6ACHv/yeXJ+unwad64Gp1ayDU7PqJMdKjpQ8=;
+ b=JjMBSetv79UjA7nLGmB+6F3AIRGi3ScHNa/HjeVgvoTVjgIKE19+y689l1uwJhICmb
+ E1EDhQ9hTG7jhB1UsQd/NlL1t1++Be0VUO3p7yWkIayeib/GX5Jkc/HXM+wl5MaA4y4x
+ 2+CO63Vd34hfTbJjLryJjHA/NH4uHrM1qh50YhxjfU+lLZs0L5YVt+w3H1apGKANyRDA
+ aoQqncK9cXHUKlpeR0iGJpE3FOE1FC4C4F9azjf/gU8CskBktwvhgykicPHoRuyaN4T0
+ 4U1W1KwW4hH0Slm12aIt0IHHjNCKAzb1K0X5nrDynt83XThPkflY97a334LWxO1rJ/tl
+ IOhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771527653; x=1772132453;
+ d=1e100.net; s=20230601; t=1771528137; x=1772132937;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Lf3xeqTbTLVSnxuj84uHoV1/Qpqnz/gJiNyF042g00E=;
- b=aTGg49VASsqRsypbhmjZngUfHtyirPn1VpFCznWFliD9vXYT0FiFQinLHwj8nkdVy5
- aRlBpeLEYAz1tXgMZ59JXAXfbdX4UxIFb58fpC9qayLJptmCmnpVwpk/iafmYNoY0Fyb
- WMQXY0ZTewH2PkOdNrjyCdkHGTP+P1ek5zHHz6YuvoU2vkLZmJ8r0jfokTDT4OsQ3FAB
- ICix72fnYkQoSADmX/IcIcu9KXQhLtdrZmE7algwFWqSjafRZSIEA91Ed6P+3wOZlyw+
- ne0epUI75735u9VCDdkztpLZuDRDh62eULyaojCKtXGMGdG+JhHd/F87CjIdTe7RnPKl
- F/WQ==
-X-Gm-Message-State: AOJu0YwPVLCUHcoNqxDSobl1Ob1hSPlVI/klucZeTS0K2x7pOQELkvYS
- a915Me4veaNF5lf03s55s/Xg9wP5b5+8kNVSQ3nIqjj7c4E7TvznEQptvzB4juviwd9LaxuZbNN
- kG4uc
-X-Gm-Gg: AZuq6aLFS2C+srcjxJa59Y726kUiHoxRsTaPw72YKXg7ZjrY4A6NzUT3JdUx5q/tR+E
- 3o2Hgn+8Zcsh67Ig//grSEY0WtBF4xQ2tid1Z2R9MVND+r+M2XK8aX30h725862e230xtLF+OFQ
- awqzDOhpwF3M/t1kgazVaqrry874SITIvHnQN8z+FUdL7kWNoiDn66OmVenWoIZxDqTwR03Mkyw
- wtn0/wAKMcarvMonp1Gg0BnAHsDZxk/MW0pUsipHOJTjXn4OOyagINhcsA3VeoVW/3gdFOcBOrD
- wQL2yb0+3dU8wVf5pxhoGXmvTgVLaJU0Jnls6tdB3qe4+YMPKlCLmxbotnJ1ZZwPtis38qCXQm0
- iTs0Pi+n7lbin5qe+Ze63xR2NNpeZdX9A5ajOGuY/LM4s1bLU9YqyzMgCl7ZhN9qlteGiBxuwyR
- vX7n+U6ObgVyRInDxTyJ23zHyd9tP7pp2qzrP9ZuG1NShCUgGLLrkx3USlTViZR7sL
-X-Received: by 2002:a05:6214:27c9:b0:890:6331:7e88 with SMTP id
- 6a1803df08f44-897404842fcmr292239866d6.44.1771527652941; 
- Thu, 19 Feb 2026 11:00:52 -0800 (PST)
+ bh=I2nkVXe6ACHv/yeXJ+unwad64Gp1ayDU7PqJMdKjpQ8=;
+ b=Qa5LvP2F4YGtOu2dyt02EVJCMySU1OL9AhSbGyrTpqm7x17dIEMR1qy5Z6/bbtgZjp
+ vxWF2ZPzWGQDVxKETMXWHPiI/W/pq3c+qe2iitr8+fc4Y2y9qLb5ZTeKPEyzyB3iCzbt
+ gQ4ukfwrIkaExR06dg4dwTpJ6haVJ8yOZreCZN9LTKEeSlTkA9K0KgK0rV1TSsklegyp
+ IltsXZ7sqqDs507N/AWSaUc+AuJ8OgG8Gc2qQDGHtj2iGWwcuVb08XuI3ZYsrLdWiH9/
+ 9CyTXadHy70O+1pm5gEGuv2Sk9h7VELJimCA41Ynz5TbHSQ2nwYatUQcQVkKGpvZuUYn
+ jlww==
+X-Gm-Message-State: AOJu0YyEoZCuC6TcdFTY3VDAWZTbgRFqPzMk/Awd7BNWNaC9x9BEEu4P
+ Vc4PcsUPW0b4u1gwk02vJn+V1DJcjJllUSAyLNolbahFYPLuHa8c4Ryu6hUJ/B5bDrE=
+X-Gm-Gg: AZuq6aK5/5A5MA9tf3vGKfDdzHHXb/DrPH3h1f4GQNsKuaY6wRbK0uArQQJmwqPqmsR
+ ZYy4+qMJ4GWBct9EDl3Gg1eyyF2c5lqPZpX6EfMJQtDuFFJmOt0j1dL3cThuE2gkNaACVmm++tw
+ BdLOEMRzAOqj44BmIhTTqgypREIg8dErgj241X0aeF1Ec4QluvyqkZlP6k4PfBEhjslUUyamIhb
+ k5aDlnNcR2ytA5SfrcTkLfIpFDBdI4Hx1quPQ+lagfMH63GJttfFFjwue63c/tJebpmMvwaIYcO
+ 7+VhXAiMIa/Xnq/rZHV+sV1mkh44obDMoulOB1D0FK02SijLshIgfcmb4fEiIhffnRrJuZ4OIh5
+ WiQpOxj+/7Zc1E+Zq2y8rOgRLE3rLefp5rcip8PuiQVUNKhOmjYQT++QTTsShplVFB4a2YC8MT+
+ /P6ZCKvHeKCfr4C2gILCqXYzRKYT5J3JLSqbc/BYxL5nC5AbbEw7Hu4k0/ldCCWlA6
+X-Received: by 2002:a05:620a:1995:b0:883:647b:6dec with SMTP id
+ af79cd13be357-8cb7be3b716mr325431385a.3.1771528136706; 
+ Thu, 19 Feb 2026 11:08:56 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8971cd8a5ccsm222611376d6.25.2026.02.19.11.00.52
+ af79cd13be357-8cb2b1c7e71sm2339312385a.30.2026.02.19.11.08.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Feb 2026 11:00:52 -0800 (PST)
-Date: Thu, 19 Feb 2026 11:00:49 -0800
+ Thu, 19 Feb 2026 11:08:56 -0800 (PST)
+Date: Thu, 19 Feb 2026 11:08:53 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH v2] ethdev: clarify rte_eth_tx_burst() return value and
- ownership semantics
-Message-ID: <20260219110049.60743444@phoenix.local>
-In-Reply-To: <20260219004449.114564-1-stephen@networkplumber.org>
-References: <20260216180011.393782-1-stephen@networkplumber.org>
- <20260219004449.114564-1-stephen@networkplumber.org>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v6 00/27] Cleanups for ixgbe, i40e, iavf, and ice PMD's
+Message-ID: <20260219110853.3852de22@phoenix.local>
+In-Reply-To: <cover.1771518103.git.anatoly.burakov@intel.com>
+References: <cover.1770646012.git.anatoly.burakov@intel.com>
+ <cover.1771518103.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,37 +81,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 18 Feb 2026 16:44:49 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Thu, 19 Feb 2026 16:22:43 +0000
+Anatoly Burakov <anatoly.burakov@intel.com> wrote:
 
-> The documentation for rte_eth_tx_burst() uses the word "sent" to
-> describe the return value, which is misleading. Packets returned as
-> consumed may not have been transmitted yet; they have been accepted
-> by the driver and are no longer the caller's responsibility.
-> 
-> This matters because the common usage pattern is:
-> 
->     n = rte_eth_tx_burst(port, txq, mbufs, nb_pkts);
->     for (i = n; i < nb_pkts; i++)
->         rte_pktmbuf_free(mbufs[i]);
-> 
-> For this to work correctly, the contract must be:
->  - tx_pkts[0..n-1]: ownership transferred to the driver.
->  - tx_pkts[n..nb_pkts-1]: untouched, still owned by the caller.
-> 
-> Several drivers (and AI-assisted reviews) misinterpret the current
-> wording and treat packets with errors as unconsumed, returning a
-> short count. This causes callers to retry those packets indefinitely.
-> The correct behavior is that the driver must consume (and free)
-> erroneous packets, counting them via oerrors.
-> 
-> Replace "sent" with "consumed" in the return value description,
-> spell out the mbuf ownership contract, clarify the error handling
-> expectation, and update the @return block to match.
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-> ---
+> This patchset is an assortment of cleanups for ixgbe, i40e, iavf, and ice PMD.
 
-FYI - many, many drivers got this wrong. Only a few seem to get
-it right.
+AI review had some observations here:
+
+Patch 20/27: net/iavf: avoid rte malloc in MAC address operations
+
+in_args_size is always sizeof(list_req) (full 64-entry struct) regardless of how many addresses are populated. The old code computed an exact-fit length. Probably harmless since num_elements governs PF-side parsing, but worth verifying.
+
+Patch 21/27: net/iavf: avoid rte malloc in IPsec operations
+
+Pre-existing: iavf_ipsec_crypto_status_get() response struct uses struct virtchnl_ipsec_cap but the function reads ipsec_status. The old code had the same mismatch. Since you're refactoring this function, consider fixing the response type to struct virtchnl_ipsec_status.
+
+Patch 23/27: net/iavf: avoid rte malloc in irq map config
+
+iavf_config_irq_map_lv_chunk(): double-offset bug. The loop runs for (i = chunk_start; i < chunk_end; i++) but then indexes map_info->qv_maps[i] (should be [i - chunk_start]) and vf->qv_map[chunk_start + i] (should be [i]). For the second chunk, this writes past the local array and reads the wrong qv_map entries.
+iavf_config_irq_map(): the num_vectors counting via if (vmi > max_vmi) only works if vector IDs are assigned in monotonically increasing order across the queue iteration. If not (e.g., round-robin where a lower vmi appears after a higher one), the count will be too low. The old code simply used vf->nb_msix which is always correct.
