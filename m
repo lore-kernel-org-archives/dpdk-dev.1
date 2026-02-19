@@ -2,71 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BFCE9A02C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 01:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 746BDE9A03B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 01:46:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0FD98402E4;
-	Thu, 19 Feb 2026 02:44:51 +0100 (CET)
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com
- [209.85.167.174])
- by mails.dpdk.org (Postfix) with ESMTP id 36F16402D5
- for <dev@dpdk.org>; Thu, 19 Feb 2026 02:44:49 +0100 (CET)
-Received: by mail-oi1-f174.google.com with SMTP id
- 5614622812f47-463960df4f9so273448b6e.0
- for <dev@dpdk.org>; Wed, 18 Feb 2026 17:44:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771465488;
- x=1772070288; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=THUCtBRZW/cH83EDS4zLiqJT4lAFGQ/G/yAG+P0mbkM=;
- b=LMCbU50MbFziPYFai8wO8d1ZoheB/qC77AHlnhUf33yC+ZOXz/6I4CnpUs2Ug2R41b
- 97KJ4g57YL/ir0UAWDp0Kh+Ouiga7/tctdaW7PXDT/A3kvdk/sXxONPxSC95vtT7Kpg5
- WS+aiZ0ZBZxrvWkKfrq7ftm56cRN+l+atqZJ4UsGT0MDmgUMyYtcWlQbV41Ku9oGeDD7
- Tr0taqTj1V/OIp3VzNfjr9LbLmCJ13eUYSaOitJqEuftUtLvgHhVdXZZc+hlPHFUfZ9L
- Jyov0rfKI5MPawbSvNAA1ALFqJq3JcQy2y8SC3K32WW4VtYOJjtSLyz+YEFeGT1ACbX0
- 7Teg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771465488; x=1772070288;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=THUCtBRZW/cH83EDS4zLiqJT4lAFGQ/G/yAG+P0mbkM=;
- b=LeMpHekTRre5GEtDDX0GCPVKlrdM0uEc7UGoGYrT+qZxCjIGAZIeLig4bAAYmzomnb
- 9ohRnEzOySC67Ik7SLdNyES1D23dWdVQSD4UpRiqcRSTVFEq7M9nrlmWuihqgeIuAHTL
- fXin3F+IBr12rkhnkdgiFKzOW6olWV0vnp425NwJ9y6Mo9wkPkZqv+LGhjoB/7HhFy3i
- ULvM44B7qD/dT7ilXYfgox5obBzp6qzbtGW4kPf0PCuTmNi67yTwb1DoU7t42chukmTh
- rwlKHTX+RtVoA6NrAX7DQhwmLKZ/GZBKV5NRv4lAkwwAphugWX4fnDeteNtOYxsu7yzp
- RCjg==
-X-Gm-Message-State: AOJu0YznKe0Q7SW1PPIqplzLfBK52nGS+aemH59qOcg8oo7WBHgk/Wuz
- 8iYiZNxadvkw4PdbSXx76vm/lL2Oh9T9FJ5q7xDMYrr4A7yhQZoYiYNrgaBzurTY1Q4X/PyqtQE
- TTDSy
-X-Gm-Gg: AZuq6aIHFdGXTLy95g0PGPFWiXHJHmC77LMTE4pVYsk2V4aM1WqnbwRleT+okxZE1gu
- /Xtm/LuDSUg+0g8z6Y8CYqFggtG6CJbRlQwvEXjZ9HYCk0ui/L+ThL3N4k/tKPRyKz5+RBeJ5fw
- PSRLbscyRwuk1YK+tI1xRHUIw6fbjI53UK/ZVxDiXEsH1rtlfaeuLMOdNgck0EN64O7TKtQAZmZ
- I27MqU7tN0nSWWbFfV7QtW7i2wP9OaaWhSVvqOmQBf/hBtOIoL00JjBTFFJ//Y1ks6/7/mW89kG
- oRGLeomIKWDz2WiA3d0rQtQgc3YPhcqXBioizSpvzs1tO8RJ8DGzM7dv1ZIgUbwm+1fS0ckEYZZ
- HhwSyi8oDBoY4+aiXsVnOjlHZnbNhT5LUfTgRPy0n/OqhgnMHEepCnrrPQgEegXuQ2Fe3YA9+rl
- hGiVoah9kk8q7pXtghaI0yWGEYIWE03t8I9WpuLGAgfmd/xvnQo1f7Ykbr3wpLDw==
-X-Received: by 2002:a05:6808:168b:b0:45e:fd68:3de4 with SMTP id
- 5614622812f47-463b3ce7e7fmr8952622b6e.0.1771465488351; 
- Wed, 18 Feb 2026 17:44:48 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5614622812f47-46404bf9283sm3746576b6e.16.2026.02.18.17.44.47
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 18 Feb 2026 17:44:47 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 4C35A402C6;
+	Thu, 19 Feb 2026 02:46:43 +0100 (CET)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id A4ED7402BD
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 02:46:41 +0100 (CET)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 96E974A667; Thu, 19 Feb 2026 02:46:41 +0100 (CET)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Long Li <longli@microsoft.com>, Wei Hu <weh@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>
-Subject: [RFT] net/netvsc: fix txd leak on chimney buffer alloc failure
-Date: Wed, 18 Feb 2026 17:44:44 -0800
-Message-ID: <20260219014444.175203-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
+Subject: [DPDK/ethdev Bug 1889] r8169: rtl_xmit_pkts breaks tx_burst
+ ownership contract on invalid mbufs
+Date: Thu, 19 Feb 2026 01:46:41 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: ethdev
+X-Bugzilla-Version: 25.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: minor
+X-Bugzilla-Who: stephen@networkplumber.org
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1889-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,43 +55,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Audit of tx_pkt_burst() code path in drivers found this related bug.
+http://bugs.dpdk.org/show_bug.cgi?id=3D1889
 
-When hn_try_txagg() fails because hn_chim_alloc() cannot allocate a
-chimney buffer slot, it returns NULL without freeing the txd descriptor
-that was obtained earlier from the txd pool. The caller then breaks
-out of the transmit loop without returning the txd either.
+            Bug ID: 1889
+           Summary: r8169: rtl_xmit_pkts breaks tx_burst ownership
+                    contract on invalid mbufs
+           Product: DPDK
+           Version: 25.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: minor
+          Priority: Normal
+         Component: ethdev
+          Assignee: dev@dpdk.org
+          Reporter: stephen@networkplumber.org
+  Target Milestone: ---
 
-Each occurrence leaks one txd descriptor. Under sustained chimney
-buffer pressure this eventually exhausts the txd pool and blocks
-all transmit on the queue.
+`rtl_xmit_pkts()` in `drivers/net/r8169/r8169_rxtx.c` returns a short
+count when it encounters an invalid mbuf, violating the `rte_eth_tx_burst()`
+ownership contract. This can cause callers to retry an unfixable packet
+indefinitely.
 
-Add hn_txd_put() before the break to return the txd to the pool.
 
-Fixes: 4e9c73e96e83 ("net/netvsc: add Hyper-V network device")
-Cc: stable@dpdk.org
+## Description
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/netvsc/hn_rxtx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+In `rtl_xmit_pkts()` (r8169_rxtx.c, line ~1974), the mbuf validation
+check uses `break` to exit the transmit loop when it encounters an invalid
+packet:
 
-diff --git a/drivers/net/netvsc/hn_rxtx.c b/drivers/net/netvsc/hn_rxtx.c
-index 72dab26ede..3fc54e76b9 100644
---- a/drivers/net/netvsc/hn_rxtx.c
-+++ b/drivers/net/netvsc/hn_rxtx.c
-@@ -1595,8 +1595,10 @@ hn_xmit_pkts(void *ptxq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 
- 
- 			pkt = hn_try_txagg(hv, txq, txd, pkt_size);
--			if (unlikely(!pkt))
-+			if (unlikely(!pkt)) {
-+				hn_txd_put(txq, txd);
- 				break;
-+			}
- 
- 			hn_encap(pkt, queue_id, m);
- 			hn_append_to_chim(txq, pkt, m);
--- 
-2.51.0
+```c
+    for (nb_tx =3D 0; nb_tx < nb_pkts; nb_tx++) {
+        tx_pkt =3D *tx_pkts++;
 
+        if (txq->tx_free < tx_pkt->nb_segs)
+            break;
+
+        /* Check mbuf is valid */
+        if (tx_pkt->nb_segs =3D=3D 0 || tx_pkt->pkt_len =3D=3D 0 ||
+            (tx_pkt->nb_segs > 1 && tx_pkt->next =3D=3D NULL))
+            break;
+
+        rtl_xmit_pkt(hw, txq, tx_pkt);
+    }
+```
+
+The `rte_eth_tx_burst()` contract requires:
+
+- `tx_pkts[0..n-1]`: ownership transferred to the driver (consumed).
+- `tx_pkts[n..nb_pkts-1]`: untouched, still owned by the caller.
+
+When the driver encounters an invalid mbuf at index `nb_tx` and breaks,
+that invalid packet becomes the first "unconsumed" packet returned to the
+caller. Applications using the standard retry pattern will attempt to
+re-transmit the unfixable packet indefinitely:
+
+```c
+    /* Common application pattern that becomes an infinite loop */
+    do {
+        n =3D rte_eth_tx_burst(port, txq, &mbufs[sent], nb_pkts - sent);
+        sent +=3D n;
+    } while (sent < nb_pkts);
+```
+
+Per the clarified `rte_eth_tx_burst()` semantics: if a packet cannot be
+transmitted due to an error, the driver must still consume it, free the
+mbuf, and count it via `tx_errors`. Stopping at the error packet is
+incorrect.
+
+Note: the `txq->tx_free < tx_pkt->nb_segs` check (ring full) correctly
+uses `break` =E2=80=94 the driver genuinely cannot accept the packet, and t=
+he
+caller should retry later.
+
+## Steps to Reproduce
+
+1. Construct an mbuf with `pkt_len =3D=3D 0` or `nb_segs =3D=3D 0` or a
+   multi-segment mbuf with a NULL `next` pointer.
+2. Submit it in the middle of a burst to `rte_eth_tx_burst()` on an r8169
+   port.
+3. Observe that the return value leaves the invalid mbuf as the first
+   unconsumed packet.
+4. A retry loop will stall forever on that packet.
+
+## Suggested Fix
+
+Replace the `break` on invalid mbufs with consume-and-continue:
+
+```c
+        /* Check mbuf is valid */
+        if (tx_pkt->nb_segs =3D=3D 0 || tx_pkt->pkt_len =3D=3D 0 ||
+            (tx_pkt->nb_segs > 1 && tx_pkt->next =3D=3D NULL)) {
+            rte_pktmbuf_free(tx_pkt);
+            txq->sw_stats.tx_errors++;
+            continue;
+        }
+```
+
+This ensures the erroneous packet is consumed (freed), counted in
+statistics, and does not block subsequent valid packets in the burst.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
