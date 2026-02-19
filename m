@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7180BE9A04C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 09:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63363E9A04C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 09:09:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 59F0B40654;
-	Thu, 19 Feb 2026 10:09:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4B4B240657;
+	Thu, 19 Feb 2026 10:09:22 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 54D60402CC
+ by mails.dpdk.org (Postfix) with ESMTP id C914C4064F
  for <dev@dpdk.org>; Thu, 19 Feb 2026 10:09:18 +0100 (CET)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
  by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 61J288GW553489 for <dev@dpdk.org>; Thu, 19 Feb 2026 01:09:17 -0800
+ 61J288GX553489 for <dev@dpdk.org>; Thu, 19 Feb 2026 01:09:18 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=+
- istEhpgRZcqBuyXFz9S/WcUNHCwuE6Bl09rGzr/IEM=; b=hYg/e1br2//ee9ER1
- fqTFrKmbKvupUp9SoaM/XKFYqKZ3jncl7K1wNQwpp2YcjcprQqgFAUapTrZn63KA
- FN/B47dI9hHd1ronrXjmyUTYEWGAEUbrs582XZKfMiGBCaYUVOgd+1yNZbhsf9Js
- f0yc+F6EMU3iY3M6EE9YqckkogWUM3Ae9No/fuEirXEIFVaFll2pp2Zn1bfQOfNL
- Vjj/TvAs2K5Yrxzmo2cgAsFpHcp8Dy5SgPvtZzAeAcXFkgNBgSmSH3+9yjT3vuF7
- cC4Ha0sdFy2YxHTSnRXO4lX7lQJDiA3pbayTXE4pyVDIngbEf7HJlE4JPmoUWs01
- 5Aohg==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=i
+ hLBzc9ddi2aNjHX1x+LFJDh8QlcbaHFqe7jcNH6F74=; b=AKfH9f8xxbvrBKBOq
+ bEkgK3gOPM02PJyc0sP81ad7ByFc2jOidWkYi8KjcZReZi/KzaIZECTn3nCdEtjj
+ xCxUWoyUl10qsXhZzBg93yvBt4ampjDmewJ62SDZ6hgOy5d9HqKCjmvAo7Y45a2A
+ FbZawvFjXrZrTHZYj70ar+C0EMrJBVKRUSLdDQSPt4eOCt96pnzeb/VRhX/t+0I1
+ kwqkENHMYfdSLRMZSDSlmuz5EP7+dyqyK6TK28UF2ugrtnk8rN/CM42tUMjMy4oD
+ 9oy5KSyO+mlBwPa42OHxxWHo9PdVMeV2njC6L6qI65VrWLWJvKL1FuhLV0ztfhAP
+ 4/3zA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4cdsfagmeg-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4cdsfagmeg-2
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 19 Feb 2026 01:09:17 -0800 (PST)
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 01:09:18 -0800 (PST)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 19 Feb 2026 01:09:19 -0800
+ 15.2.1544.25; Thu, 19 Feb 2026 01:09:23 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 19 Feb 2026 01:09:19 -0800
+ Transport; Thu, 19 Feb 2026 01:09:23 -0800
 Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 5B0123F708A;
- Thu, 19 Feb 2026 01:09:00 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id 2E0523F708A;
+ Thu, 19 Feb 2026 01:09:03 -0800 (PST)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH 3/8] common/cnxk: update platform features
-Date: Thu, 19 Feb 2026 14:38:42 +0530
-Message-ID: <20260219090847.3257753-3-rbhansali@marvell.com>
+Subject: [PATCH 4/8] common/cnxk: add RQ PB and WQE cache config
+Date: Thu, 19 Feb 2026 14:38:43 +0530
+Message-ID: <20260219090847.3257753-4-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260219090847.3257753-1-rbhansali@marvell.com>
 References: <20260219090847.3257753-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=T/GBjvKQ c=1 sm=1 tr=0 ts=6996d33d cx=c_pps
+X-Authority-Analysis: v=2.4 cv=T/GBjvKQ c=1 sm=1 tr=0 ts=6996d33e cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
- a=GgsMoib0sEa3-_RKJdDe:22 a=M5GUcnROAAAA:8 a=8XJruD5YaIXrFINUfzsA:9
+ a=GgsMoib0sEa3-_RKJdDe:22 a=M5GUcnROAAAA:8 a=TA6KQb-nIjAiVJtrjLsA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE5MDA4MyBTYWx0ZWRfXw9yXrbUAcR+X
- b2CZwWpd7EIzlz6edKu6+Zj/1gEPk0ATwKoAa2crfMEAoYD7mmYz72c3KD99ICOWDNA3FSVMOfp
- 6ZWxyVwcTQLBEaHur9qgGUCAFshvTgfcU0qwTDHzjn7sLRq+ECpTK4By1wgEE1DGIx7DmFuKura
- 9eXjr3SwNR4efbRMQa5t/KM4rzGckAjsqtTNSgVyfBOHL4cIiAGj79Ovv8gsuXRYWJQWQoHnW04
- bG9Yw7ybkSb3PGFp/7CipPiTggVBr4CKldLtig+UHUPx/B2bqFyhhaPJYLMUU/SDrFIZVacvIFM
- mXPMHLCBKYsRLD7LqrFYId20APix9DskNcvZLRi9j7H0BXD1zyC/62St0B3ZbaVBSZGZu8y/rpE
- RX09lqTcZ2kq7DJ6X9iG5I43ZUSiWVuzRc0G6rt6MRIbpfAUadWAv7/aS1xynhmBoXG3ckwx4SS
- zGyLcrYMVeIdhogYUDA==
-X-Proofpoint-ORIG-GUID: xwPje3QBcT0_u7ed7CvvCZ-yyvaw7O4n
-X-Proofpoint-GUID: xwPje3QBcT0_u7ed7CvvCZ-yyvaw7O4n
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE5MDA4MyBTYWx0ZWRfX9XjYtc/u+YcK
+ 1OS7V3Va7CgjwnpMAYCUDxrIdl8lJ312ZrzS70eGc78apga0ZbxLulBLrGIr/BOcBqpNePu+ARa
+ Pugy59nSP93hblfXAAGgSC5QpLMOWFq5WyffeIEZqA/2Frdy+ll23BsTewnuusKTFXTH0y6Db9N
+ +SvmvJQemFa/Rra9n90FfkutFT9amvw6HeTWlS3GSpsPIZwqI7UDOSj1bhE9HkJzr6AODRAV0w9
+ qRf0kuj8k5fzot51v2AEJd5C/N69mtRLpB4nNL9hAUTQN32U/9H0ufrTmHGB8ukEq2aY/RCM10k
+ ci6IeKuXT4msetsp3140ixprXRYPsLPNEK6stq8AOBcbBr0UoiZQXmvFtiY92qW9WVJwnEzg9J9
+ wnh6mX0DrjqEokLRKQUMplHTrKX8ldzTXPgbEJD4d48spLWhyu48QX1nwuR81MMNv/ry7ZvJIh7
+ eCusof0LkcJks4SVTFQ==
+X-Proofpoint-ORIG-GUID: dkZC-TskWp244GG5RpDKv3LxM4phXmw3
+X-Proofpoint-GUID: dkZC-TskWp244GG5RpDKv3LxM4phXmw3
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-19_02,2026-02-18_01,2025-10-01_01
@@ -83,27 +83,137 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds cnf20ka platform check for plain packet reassembly
-features.
+Adds RQ's PB (Packet buffer) and WQE cache configuration
+options.
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- drivers/common/cnxk/roc_features.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/common/cnxk/roc_nix.h       | 14 ++++++++++++++
+ drivers/common/cnxk/roc_nix_inl.c   |  2 ++
+ drivers/common/cnxk/roc_nix_queue.c | 16 ++++++++--------
+ 3 files changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_features.h b/drivers/common/cnxk/roc_features.h
-index 3c34041d76..57a51c4db3 100644
---- a/drivers/common/cnxk/roc_features.h
-+++ b/drivers/common/cnxk/roc_features.h
-@@ -117,7 +117,7 @@ roc_feature_nix_has_inl_profile(void)
- static inline bool
- roc_feature_nix_has_plain_pkt_reassembly(void)
- {
--	return roc_model_is_cn20k();
-+	return roc_model_is_cn20k() && !roc_model_is_cnf20ka();
- }
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index ffa1a706f9..7bc3e1f5c6 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -34,6 +34,16 @@
+ #define ROC_NIX_LSO_FORMAT_IDX_TSOV6 1
+ #define ROC_NIX_LSO_FORMAT_IDX_IPV4  2
  
- static inline bool
++#define ROC_NIX_RQ_MAX_PB_CACHING_VAL 3
++
++/* First aligned cache block is allocated into the LLC.
++ * All remaining cache blocks are not allocated.
++ */
++#define ROC_NIX_RQ_DEFAULT_PB_CACHING 2
++
++/* Writes of WQE data are allocated into LLC. */
++#define ROC_NIX_RQ_DEFAULT_WQE_CACHING 1
++
+ enum roc_nix_rss_reta_sz {
+ 	ROC_NIX_RSS_RETA_SZ_64 = 64,
+ 	ROC_NIX_RSS_RETA_SZ_128 = 128,
+@@ -448,6 +458,10 @@ struct roc_nix_rq {
+ 	bool spb_drop_ena;
+ 	/* XQE drop enable */
+ 	bool xqe_drop_ena;
++	/* RQ PB caching */
++	uint8_t pb_caching;
++	/* RQ WQE caching */
++	uint8_t wqe_caching;
+ 	/* End of Input parameters */
+ 	struct roc_nix *roc_nix;
+ 	uint64_t meta_aura_handle;
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index a21c40acf1..911c349604 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -1838,6 +1838,8 @@ roc_nix_inl_dev_rq_get(struct roc_nix_rq *rq, bool enable)
+ 	inl_rq->spb_ena = rq->spb_ena;
+ 	inl_rq->spb_aura_handle = rq->spb_aura_handle;
+ 	inl_rq->spb_size = rq->spb_size;
++	inl_rq->pb_caching = rq->pb_caching;
++	inl_rq->wqe_caching = rq->wqe_caching;
+ 
+ 	if (roc_errata_nix_no_meta_aura()) {
+ 		uint64_t aura_limit =
+diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/roc_nix_queue.c
+index ab3a71ec60..ef9b651022 100644
+--- a/drivers/common/cnxk/roc_nix_queue.c
++++ b/drivers/common/cnxk/roc_nix_queue.c
+@@ -499,7 +499,7 @@ nix_rq_cn9k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints,
+ 		aq->rq.sso_grp = rq->hwgrp;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+ 
+ 		aq->rq.good_utag = rq->tag_mask >> 24;
+ 		aq->rq.bad_utag = rq->tag_mask >> 24;
+@@ -530,7 +530,7 @@ nix_rq_cn9k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints,
+ 	aq->rq.lpb_sizem1 = rq->lpb_size / 8;
+ 	aq->rq.lpb_sizem1 -= 1; /* Expressed in size minus one */
+ 	aq->rq.ena = ena;
+-	aq->rq.pb_caching = 0x2; /* First cache aligned block to LLC */
++	aq->rq.pb_caching = rq->pb_caching;
+ 	aq->rq.xqe_imm_size = 0; /* No pkt data copy to CQE */
+ 	aq->rq.rq_int_ena = 0;
+ 	/* Many to one reduction */
+@@ -616,7 +616,7 @@ nix_rq_cn10k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cf
+ 		aq->rq.sso_grp = rq->hwgrp;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+ 
+ 		aq->rq.xqe_drop_ena = 0;
+ 		aq->rq.good_utag = rq->tag_mask >> 24;
+@@ -647,7 +647,7 @@ nix_rq_cn10k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cf
+ 		aq->rq.ipsecd_drop_en = 1;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+ 	}
+ 
+ 	aq->rq.lpb_aura = roc_npa_aura_handle_to_aura(rq->aura_handle);
+@@ -683,7 +683,7 @@ nix_rq_cn10k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cf
+ 		aq->rq.spb_ena = 0;
+ 	}
+ 
+-	aq->rq.pb_caching = 0x2; /* First cache aligned block to LLC */
++	aq->rq.pb_caching = rq->pb_caching;
+ 	aq->rq.xqe_imm_size = 0; /* No pkt data copy to CQE */
+ 	aq->rq.rq_int_ena = 0;
+ 	/* Many to one reduction */
+@@ -797,7 +797,7 @@ nix_rq_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cfg, boo
+ 		aq->rq.sso_grp = rq->hwgrp;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+ 
+ 		aq->rq.good_utag = rq->tag_mask >> 24;
+ 		aq->rq.bad_utag = rq->tag_mask >> 24;
+@@ -816,7 +816,7 @@ nix_rq_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cfg, boo
+ 		aq->rq.ipsecd_drop_en = 1;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+ 	}
+ 
+ 	aq->rq.lpb_aura = roc_npa_aura_handle_to_aura(rq->aura_handle);
+@@ -852,7 +852,7 @@ nix_rq_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cfg, boo
+ 		aq->rq.spb_ena = 0;
+ 	}
+ 
+-	aq->rq.pb_caching = 0x2; /* First cache aligned block to LLC */
++	aq->rq.pb_caching = rq->pb_caching;
+ 	aq->rq.xqe_imm_size = 0; /* No pkt data copy to CQE */
+ 	aq->rq.rq_int_ena = 0;
+ 	/* Many to one reduction */
 -- 
 2.34.1
 
