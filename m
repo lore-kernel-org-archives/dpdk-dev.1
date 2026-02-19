@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0462BE9A055
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 17:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF37E9A057
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 17:51:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 419154066E;
-	Thu, 19 Feb 2026 18:51:19 +0100 (CET)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com
- [209.85.167.173])
- by mails.dpdk.org (Postfix) with ESMTP id EAA4D4064E
- for <dev@dpdk.org>; Thu, 19 Feb 2026 18:51:16 +0100 (CET)
-Received: by mail-oi1-f173.google.com with SMTP id
- 5614622812f47-45f18e8f2f5so746539b6e.3
- for <dev@dpdk.org>; Thu, 19 Feb 2026 09:51:16 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F4A14065A;
+	Thu, 19 Feb 2026 18:51:20 +0100 (CET)
+Received: from mail-oi1-f194.google.com (mail-oi1-f194.google.com
+ [209.85.167.194])
+ by mails.dpdk.org (Postfix) with ESMTP id A53F04064E
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 18:51:17 +0100 (CET)
+Received: by mail-oi1-f194.google.com with SMTP id
+ 5614622812f47-463208653d6so751880b6e.3
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 09:51:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771523476;
- x=1772128276; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771523477;
+ x=1772128277; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=dbZlANkMQYHj7WagzvDpmCJgwTegJEXHrS1tCS9fW+Q=;
- b=YUbacxEx/xuxMOI2chTAXGeMpTbZSFs6zFHYFh6f9+bX6dHaeXLquPjlhMfxUGDMgm
- /2r6lWCRb3F7k6SBFfaEMaSsIne2ygXv11w1XRg/0N7auFIOFuNj7pM4nayvw45ivko3
- XTsSueNUzs+pddHFCZhjbvFL4ddGCsxefvZM+YKe97TvV27qWZ2KCmywjtl5RREqlBSQ
- pOZzn2S7tzBa9hCBEkwCFP3VHTZa0uu6+yzpCzXFxpuISakZEny3c6aJFZwrpf8eqLNB
- ZXBXoqns1uXclykNWLDM8yHk0o6e8cnx9iERcT7OVbvll3WuBgtl1l58bcrh/5nbZR4k
- TVqQ==
+ bh=r92brlExUYKOZR+gJ8q0fvZd2nGwHIe81/wDVg0BwBo=;
+ b=Sy5KV+bNDDI/ktDEnwNn4BEEuh32+hgn4fx0UE6pJM+Wm8D4b1pVr+zO6yA/M/RV/A
+ PeNeie7hpP302SXtUrdCUuxN2vXH8vi8dDaS7oA6AOo6RjJDqG0eoCZYif0mFfpWlYkz
+ 5JQkncxupz7JY5g60HUTziNKzactKwdNW/eZ5zidPySEuCmo+7AJguC7eVDt3TC+TylC
+ +hIYWQjn76I7T46DDvJ37pegcmviIiPsLNRRTVbX2oHafA2tGz4yegMqPmJRDzSCEQyu
+ H0srTNgKNw1UMzrRREnCle6GHT8v6jQyYrOBc3/DPAzJ3tpAK1fFaAAfu/wBb+HAAmy8
+ 4xKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771523476; x=1772128276;
+ d=1e100.net; s=20230601; t=1771523477; x=1772128277;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=dbZlANkMQYHj7WagzvDpmCJgwTegJEXHrS1tCS9fW+Q=;
- b=ws9ogxI8X+QV6i9/5hpGWUg/FVZctHp5geCa2DOs2v27Xpuh9rJFDz20wsk9ywrpv4
- Kh81SlOMo7O7zkVv3yUSeuaADYNfvFlBjljGLhVmYbraSWH5T2t1Dx4TPDZPR8mxENxO
- rfFbbJtkqs/rwDs7Jb7rbDefsobMtyV+xHyChqkifJIE1SyqZSK5gKydAvkljlQogg84
- wbkrA0Wiz3llRcuEr+dNWEYqF1Y0cSBGxbzIStknwDLTeIMk7aPOt5F009Etg2LlEjFg
- nh6hPZJWVs0QCL6A2BE41ZAIONizFrcd1l2XjOuQqQPSV5xjUq/jvFYirxzpAChUyD8c
- Acmg==
-X-Gm-Message-State: AOJu0YxV+m4To3Gyrqs85/oai0c5YxcrzqmWaGw3HGmWkNj9NNb61X+B
- 7PkvNAbxR16C627y6Ip/qKRKF2vAaK64z2IZlYmGq+16GicxrRzjh8AMNDcc7KHqnJdD9JeTqCi
- +V4We
-X-Gm-Gg: AZuq6aIYYXH++tUuOXkAZE1rIiOIaHa8wo7b1sv8gf2GGE8Z4fWgl+ZEl6JGivll9oA
- XfsnFgstWdxPy0MJfo8qMvcetK1x0G+LlDlHse15ORDOkxHEjx81ivYj0T472xIatE40NU2TELY
- Ienvupj3KP5kAJMsgpuiWNb5LPRkTYqQocNK6U2cUDYGtjbZtYugc9I4dos0m9RTiGR/oLQhHfE
- HMMcTZZfxdVxGEh2XZOgYmpTfa6/VxZAk6dyX+MSatAremIWloFXtDR22al3Tizboo4Eb22jd1u
- wOs6HNyb1d8lyJAHKR8OjPnwBz23sdBK7pMdY8HUkIVRUWqCiEnAcihH/R1QAhkdn1WvU7vnKxr
- cw2hBLDtACUOEUp830GiyAE4eYFf50RgSJ87xn8TwcJgbK9LkphUxHEhx/Ewm9IJCtQgUkdIDtU
- pdyuQgTDp7VzwVF7tteEVrGamSXrJNRjLkkaYy9sGfGksmJUBMEzodgI7q18rcoA==
-X-Received: by 2002:a05:6820:160e:b0:662:c09a:903d with SMTP id
- 006d021491bc7-679a7477d8amr3574138eaf.79.1771523475809; 
- Thu, 19 Feb 2026 09:51:15 -0800 (PST)
+ bh=r92brlExUYKOZR+gJ8q0fvZd2nGwHIe81/wDVg0BwBo=;
+ b=a+giy/1rZxoFoz89nTENMd9Gu2UwK8MSYJbW/xCHUbAkrHhaja87uYdFDOAxuyD+Im
+ ZQ517eEcT0pcGpuU8JVrHEAnY7+HnauOCJl3m2zlDfMlr77zxSl9A5LtIe3zIPIoXPoE
+ thdm9zM6SE2O822cvSp9jaWFhriynaOqcZhDuyVeOR5l3vwkYlUHYJx4+hGGNTJA6zGG
+ uhvy4aMg+Y0sJvE7WIgQl1kJx8kLkV/Atlh1+DslUrrJy0IAIk57lbORH+4RQu1s5B3v
+ 7wPsvbSyvhV+Mq9pIJ6M4+bGhI/Y0lElkzCOPZhksKI3dP/ahO1npBb9Jsq6oOAMJxiB
+ 2Adg==
+X-Gm-Message-State: AOJu0YwNh+1qigfR6x7EulcKtgXI6n2sl1VdwmaspWYgPBaq8+Oxuu2Z
+ Y8F7kyurG/23yItVqpzdFXr6zILfqvJFOQI/iVUYQiEp+yfB38IoYRVLB2WnLK4wLa867LNiAzb
+ 3oDA+JSg=
+X-Gm-Gg: AZuq6aI9irS/csntjWXw3hDGLt7Wnl9u5TaKGAkwTuoM+9zj4ZLqLBnaUTUZiNl2t8j
+ C5avNtZBqJIRq8g3OGL1vTA+9rVqx1bajoj9GvmNlLv9SUQIQy7+P8b+96oB3vT0QbOAS38U4pN
+ 3cRddkYDFJq12uY/EkY798JQ93f/UR2s4DSYGfGD/lJbDHuQcNM5+cwMpSEKzo4tNaeq6USqgzP
+ RnhW5kcy0Wu5ycC2GVc0OwUyq1RGKn3MJXLgnb/YR99w9TJ7KQcrUWdWSAG2fbiTLONiF2jziSr
+ Eqs6qU8Qxtq0KK0oboiI9jijc6k7THV/oCEuwUUg/bZGZAhFVWP3Gei2xc2sxDw/mJSn4lMD9Tj
+ W10y6pnLMZYJvtC9iCA/ye9HF1yXU4XwL/dGS9nbXpxxC0+eu/5fa3D0C5NwP+bM6apprxX9g5F
+ 2+1MSHBYXtVFbSxEgplYQyLbD29dtXny/h0aXs8SyzkXPsFyDm04mdhbSTdybwDw==
+X-Received: by 2002:a4a:ec41:0:b0:65f:1012:69c5 with SMTP id
+ 006d021491bc7-679aef3c6f9mr1872980eaf.76.1771523476830; 
+ Thu, 19 Feb 2026 09:51:16 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 006d021491bc7-67985df6ffcsm10261701eaf.4.2026.02.19.09.51.14
+ 006d021491bc7-67985df6ffcsm10261701eaf.4.2026.02.19.09.51.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Feb 2026 09:51:15 -0800 (PST)
+ Thu, 19 Feb 2026 09:51:16 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v10 2/6] devtools: add multi-provider AI patch review script
-Date: Thu, 19 Feb 2026 09:48:47 -0800
-Message-ID: <20260219175110.287747-3-stephen@networkplumber.org>
+Subject: [PATCH v10 3/6] devtools: add compare-reviews.sh for multi-provider
+ analysis
+Date: Thu, 19 Feb 2026 09:48:48 -0800
+Message-ID: <20260219175110.287747-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260219175110.287747-1-stephen@networkplumber.org>
 References: <20260213214107.234072-1-stephen@networkplumber.org>
@@ -82,1382 +83,232 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is an AI generated script to review DPDK patches against
-the AGENTS.md coding guidelines using AI language models.
+Add script to run patch reviews across multiple AI providers for
+comparison purposes.
 
-Supported AI providers:
-  - Anthropic Claude (default)
-  - OpenAI ChatGPT
-  - xAI Grok
-  - Google Gemini
-
-The script reads a patch file and the AGENTS.md guidelines, then
-submits them to the selected AI provider for review. Results are
-organized by severity level (Error, Warning, Info) as defined in
-the guidelines.
+The script automatically detects which providers have API keys
+configured and runs analyze-patch.py for each one. This allows
+users to compare review quality and feedback across different
+AI models.
 
 Features:
-  - Provider selection via -p/--provider option
-  - Custom model selection via -m/--model option
-  - Verbose mode shows token usage statistics
-  - Uses temporary files for API requests to handle large patches
-  - Prompt caching support for Anthropic to reduce costs
+  - Auto-detects available providers based on environment variables
+  - Optional provider selection via -p/--providers option
+  - Saves individual reviews to separate files with -o/--output
+  - Verbose mode passes through to underlying analyze-patch.py
 
 Usage:
-  ./devtools/analyze-patch.py 0001-net-ixgbe-fix-something.patch
-  ./devtools/analyze-patch.py -p xai my-patch.patch
-  ./devtools/analyze-patch.py -l  # list providers
+  ./devtools/compare-reviews.sh my-patch.patch
+  ./devtools/compare-reviews.sh -p anthropic,xai my-patch.patch
+  ./devtools/compare-reviews.sh -o ./reviews my-patch.patch
 
-Requires the appropriate API key environment variable to be set
-for the chosen provider (ANTHROPIC_API_KEY, OPENAI_API_KEY,
-XAI_API_KEY, or GOOGLE_API_KEY).
+Output files are named <patch>-<provider>.txt when using the
+output directory option.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- devtools/analyze-patch.py | 1334 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 1334 insertions(+)
- create mode 100755 devtools/analyze-patch.py
+ devtools/compare-reviews.sh | 192 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 192 insertions(+)
+ create mode 100755 devtools/compare-reviews.sh
 
-diff --git a/devtools/analyze-patch.py b/devtools/analyze-patch.py
+diff --git a/devtools/compare-reviews.sh b/devtools/compare-reviews.sh
 new file mode 100755
-index 0000000000..c77908fb3c
+index 0000000000..a63eeffb71
 --- /dev/null
-+++ b/devtools/analyze-patch.py
-@@ -0,0 +1,1334 @@
-+#!/usr/bin/env python3
++++ b/devtools/compare-reviews.sh
+@@ -0,0 +1,192 @@
++#!/bin/bash
 +# SPDX-License-Identifier: BSD-3-Clause
 +# Copyright(c) 2026 Stephen Hemminger
 +
-+"""
-+Analyze DPDK patches using AI providers.
++# Compare DPDK patch reviews across multiple AI providers
++# Runs analyze-patch.py with each available provider
++
++set -e
++
++SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
++ANALYZE_SCRIPT="${SCRIPT_DIR}/analyze-patch.py"
++AGENTS_FILE="AGENTS.md"
++OUTPUT_DIR=""
++PROVIDERS=""
++FORMAT="text"
++
++usage() {
++    cat <<EOF
++Usage: $(basename "$0") [OPTIONS] <patch-file>
++
++Compare DPDK patch reviews across multiple AI providers.
++
++Options:
++    -a, --agents FILE      Path to AGENTS.md file (default: AGENTS.md)
++    -o, --output DIR       Save individual reviews to directory
++    -p, --providers LIST   Comma-separated list of providers to use
++                           (default: all providers with API keys set)
++    -f, --format FORMAT    Output format: text, markdown, html, json
++                           (default: text)
++    -v, --verbose          Show verbose output from each provider
++    -h, --help             Show this help message
++
++Environment Variables:
++    Set API keys for providers you want to use:
++    ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY, GOOGLE_API_KEY
 +
-+Supported providers: Anthropic Claude, OpenAI ChatGPT, xAI Grok, Google Gemini
-+"""
-+
-+import argparse
-+import json
-+import os
-+import re
-+import subprocess
-+import sys
-+import tempfile
-+from datetime import date
-+from email.message import EmailMessage
-+from pathlib import Path
-+from typing import Iterator
-+from urllib.request import Request, urlopen
-+from urllib.error import URLError, HTTPError
-+
-+# Output formats
-+OUTPUT_FORMATS = ["text", "markdown", "html", "json"]
-+
-+# Large file handling modes
-+LARGE_FILE_MODES = ["error", "truncate", "chunk", "commits-only", "summary"]
-+
-+# Approximate tokens per character (conservative estimate for code)
-+CHARS_PER_TOKEN = 3.5
-+
-+# Default token limits by provider (leaving room for system prompt and response)
-+PROVIDER_INPUT_LIMITS = {
-+    "anthropic": 180000,  # 200K context, reserve for system/response
-+    "openai": 115000,  # 128K context for gpt-4o
-+    "xai": 115000,  # Assume similar to OpenAI
-+    "google": 900000,  # Gemini has 1M context
-+}
-+
-+# Provider configurations
-+PROVIDERS = {
-+    "anthropic": {
-+        "name": "Claude",
-+        "endpoint": "https://api.anthropic.com/v1/messages",
-+        "default_model": "claude-sonnet-4-5-20250929",
-+        "env_var": "ANTHROPIC_API_KEY",
-+    },
-+    "openai": {
-+        "name": "ChatGPT",
-+        "endpoint": "https://api.openai.com/v1/chat/completions",
-+        "default_model": "gpt-4o",
-+        "env_var": "OPENAI_API_KEY",
-+    },
-+    "xai": {
-+        "name": "Grok",
-+        "endpoint": "https://api.x.ai/v1/chat/completions",
-+        "default_model": "grok-3",
-+        "env_var": "XAI_API_KEY",
-+    },
-+    "google": {
-+        "name": "Gemini",
-+        "endpoint": "https://generativelanguage.googleapis.com/v1beta/models",
-+        "default_model": "gemini-2.0-flash",
-+        "env_var": "GOOGLE_API_KEY",
-+    },
-+}
-+
-+# LTS releases: any DPDK release with minor version .11
-+# (e.g., 19.11, 20.11, 21.11, 22.11, 23.11, 24.11, 25.11, ...)
-+
-+SYSTEM_PROMPT_BASE = """\
-+You are an expert DPDK code reviewer. Analyze patches for compliance with \
-+DPDK coding standards and contribution guidelines. Provide clear, actionable \
-+feedback organized by severity (Error, Warning, Info) as defined in the \
-+guidelines."""
-+
-+LTS_RULES = """
-+LTS (Long Term Stable) branch rules apply:
-+- Only bug fixes allowed, no new features
-+- No new APIs (experimental or stable)
-+- ABI must remain unchanged
-+- Backported fixes should reference the original commit with Fixes: tag
-+- Copyright years should reflect when the code was originally written
-+- Be conservative: reject changes that aren't clearly bug fixes"""
-+
-+FORMAT_INSTRUCTIONS = {
-+    "text": """Provide your review in plain text format.""",
-+    "markdown": """Provide your review in Markdown format with:
-+- Headers (##) for each severity level (Errors, Warnings, Info)
-+- Bullet points for individual issues
-+- Code blocks (```) for code references
-+- Bold (**) for emphasis on key points""",
-+    "html": """Provide your review in HTML format with:
-+- <h2> tags for each severity level (Errors, Warnings, Info)
-+- <ul>/<li> for individual issues
-+- <pre><code> for code references
-+- <strong> for emphasis on key points
-+- Use appropriate semantic HTML tags
-+- Do NOT include <html>, <head>, or <body> tags - just the content""",
-+    "json": """Provide your review in JSON format with this structure:
-+{
-+  "summary": "Brief one-line summary of the review",
-+  "errors": [
-+    {"issue": "description", "location": "file:line", "suggestion": "fix"}
-+  ],
-+  "warnings": [
-+    {"issue": "description", "location": "file:line", "suggestion": "fix"}
-+  ],
-+  "info": [
-+    {"issue": "description", "location": "file:line", "suggestion": "fix"}
-+  ],
-+  "passed_checks": ["list of checks that passed"],
-+  "overall_status": "PASS|WARN|FAIL"
-+}
-+Output ONLY valid JSON, no markdown code fences or other text.""",
-+}
-+
-+USER_PROMPT = """Please review the following DPDK patch file '{patch_name}' \
-+against the AGENTS.md guidelines. Check for:
-+
-+1. Commit message format (subject line, body, tags)
-+2. License/copyright compliance
-+3. C coding style issues
-+4. API and documentation requirements
-+5. Any other guideline violations
-+
-+{format_instruction}
-+
-+--- PATCH CONTENT ---
-+"""
-+
-+
-+def error(msg):
-+    """Print error message and exit."""
-+    print(f"Error: {msg}", file=sys.stderr)
-+    sys.exit(1)
-+
-+
-+def get_git_config(key):
-+    """Get a value from git config."""
-+    try:
-+        result = subprocess.run(
-+            ["git", "config", "--get", key],
-+            capture_output=True,
-+            text=True,
-+            check=True,
-+        )
-+        return result.stdout.strip()
-+    except (subprocess.CalledProcessError, FileNotFoundError):
-+        return None
-+
-+
-+def is_lts_release(release):
-+    """Check if a release is an LTS release.
-+
-+    Per DPDK project guidelines, any release with minor version .11
-+    is an LTS release (e.g., 19.11, 21.11, 23.11, 24.11, 25.11).
-+    """
-+    if not release:
-+        return False
-+    # Check for explicit -lts suffix
-+    if "-lts" in release.lower():
-+        return True
-+    # Extract base version (e.g., "23.11" from "23.11.1" or "23.11-rc1")
-+    version = release.split("-")[0]
-+    parts = version.split(".")
-+    if len(parts) >= 2:
-+        try:
-+            minor = int(parts[1])
-+            return minor == 11
-+        except ValueError:
-+            pass
-+    return False
-+
-+
-+def estimate_tokens(text):
-+    """Estimate token count from text length."""
-+    return int(len(text) / CHARS_PER_TOKEN)
-+
-+
-+def split_mbox_patches(content):
-+    """Split an mbox file into individual patches."""
-+    patches = []
-+    current_patch = []
-+    in_patch = False
-+
-+    for line in content.split("\n"):
-+        # Detect start of new message in mbox format
-+        if line.startswith("From ") and (
-+            " Mon " in line
-+            or " Tue " in line
-+            or " Wed " in line
-+            or " Thu " in line
-+            or " Fri " in line
-+            or " Sat " in line
-+            or " Sun " in line
-+        ):
-+            if current_patch:
-+                patches.append("\n".join(current_patch))
-+            current_patch = [line]
-+            in_patch = True
-+        elif in_patch:
-+            current_patch.append(line)
-+
-+    # Don't forget the last patch
-+    if current_patch:
-+        patches.append("\n".join(current_patch))
-+
-+    return patches if patches else [content]
-+
-+
-+def extract_commit_messages(content):
-+    """Extract only commit messages from patch content."""
-+    patches = split_mbox_patches(content)
-+    messages = []
-+
-+    for patch in patches:
-+        lines = patch.split("\n")
-+        msg_lines = []
-+        in_headers = True
-+        in_body = False
-+        found_subject = False
-+
-+        for line in lines:
-+            # Collect headers we care about
-+            if in_headers:
-+                if line.startswith("Subject:"):
-+                    msg_lines.append(line)
-+                    found_subject = True
-+                elif line.startswith(("From:", "Date:")):
-+                    msg_lines.append(line)
-+                elif line.startswith((" ", "\t")) and found_subject:
-+                    # Subject continuation
-+                    msg_lines.append(line)
-+                elif line == "":
-+                    if found_subject:
-+                        in_headers = False
-+                        in_body = True
-+                        msg_lines.append("")
-+            elif in_body:
-+                # Stop at the diff
-+                if line.startswith("---") and not line.startswith("----"):
-+                    break
-+                if line.startswith("diff --git"):
-+                    break
-+                msg_lines.append(line)
-+
-+        if msg_lines:
-+            messages.append("\n".join(msg_lines))
-+
-+    return "\n\n---\n\n".join(messages)
-+
-+
-+def truncate_content(content, max_tokens, provider):
-+    """Truncate content to fit within token limit."""
-+    max_chars = int(max_tokens * CHARS_PER_TOKEN)
-+
-+    if len(content) <= max_chars:
-+        return content, False
-+
-+    # Try to truncate at a reasonable boundary
-+    truncated = content[:max_chars]
-+
-+    # Find last complete diff hunk or patch boundary
-+    last_diff = truncated.rfind("\ndiff --git")
-+    last_patch = truncated.rfind("\nFrom ")
-+
-+    if last_diff > max_chars * 0.5:
-+        truncated = truncated[:last_diff]
-+    elif last_patch > max_chars * 0.5:
-+        truncated = truncated[:last_patch]
-+
-+    truncated += "\n\n[... Content truncated due to size limits ...]\n"
-+    return truncated, True
-+
-+
-+def chunk_content(content, max_tokens, provider) -> Iterator[tuple[str, int, int]]:
-+    """Split content into chunks that fit within token limit.
-+
-+    Yields tuples of (chunk_content, chunk_number, total_chunks).
-+    """
-+    patches = split_mbox_patches(content)
-+
-+    if len(patches) == 1:
-+        # Single large patch - split by diff sections
-+        yield from chunk_single_patch(content, max_tokens)
-+        return
-+
-+    # Multiple patches - group them to fit within limits
-+    chunks = []
-+    current_chunk = []
-+    current_size = 0
-+    max_chars = int(max_tokens * CHARS_PER_TOKEN * 0.9)  # 90% to leave margin
-+
-+    for patch in patches:
-+        patch_size = len(patch)
-+        if current_size + patch_size > max_chars and current_chunk:
-+            chunks.append("\n".join(current_chunk))
-+            current_chunk = []
-+            current_size = 0
-+
-+        if patch_size > max_chars:
-+            # Single patch too large, truncate it
-+            if current_chunk:
-+                chunks.append("\n".join(current_chunk))
-+                current_chunk = []
-+                current_size = 0
-+            truncated, _ = truncate_content(patch, max_tokens * 0.9, provider)
-+            chunks.append(truncated)
-+        else:
-+            current_chunk.append(patch)
-+            current_size += patch_size
-+
-+    if current_chunk:
-+        chunks.append("\n".join(current_chunk))
-+
-+    total = len(chunks)
-+    for i, chunk in enumerate(chunks, 1):
-+        yield chunk, i, total
-+
-+
-+def chunk_single_patch(content, max_tokens) -> Iterator[tuple[str, int, int]]:
-+    """Split a single large patch by diff sections."""
-+    max_chars = int(max_tokens * CHARS_PER_TOKEN * 0.9)
-+
-+    # Extract header (everything before first diff)
-+    first_diff = content.find("\ndiff --git")
-+    if first_diff == -1:
-+        # No diff sections, just truncate
-+        truncated, _ = truncate_content(content, max_tokens * 0.9, "anthropic")
-+        yield truncated, 1, 1
-+        return
-+
-+    header = content[: first_diff + 1]
-+    diff_content = content[first_diff + 1 :]
-+
-+    # Split by diff sections
-+    diffs = []
-+    current_diff = []
-+    for line in diff_content.split("\n"):
-+        if line.startswith("diff --git") and current_diff:
-+            diffs.append("\n".join(current_diff))
-+            current_diff = []
-+        current_diff.append(line)
-+    if current_diff:
-+        diffs.append("\n".join(current_diff))
-+
-+    # Group diffs into chunks
-+    chunks = []
-+    current_chunk_diffs = []
-+    current_size = len(header)
-+
-+    for diff in diffs:
-+        diff_size = len(diff)
-+        if current_size + diff_size > max_chars and current_chunk_diffs:
-+            chunks.append(header + "\n".join(current_chunk_diffs))
-+            current_chunk_diffs = []
-+            current_size = len(header)
-+
-+        if diff_size + len(header) > max_chars:
-+            # Single diff too large
-+            if current_chunk_diffs:
-+                chunks.append(header + "\n".join(current_chunk_diffs))
-+                current_chunk_diffs = []
-+            truncated_diff = diff[: max_chars - len(header) - 100]
-+            truncated_diff += "\n[... diff truncated ...]\n"
-+            chunks.append(header + truncated_diff)
-+            current_size = len(header)
-+        else:
-+            current_chunk_diffs.append(diff)
-+            current_size += diff_size
-+
-+    if current_chunk_diffs:
-+        chunks.append(header + "\n".join(current_chunk_diffs))
-+
-+    total = len(chunks)
-+    for i, chunk in enumerate(chunks, 1):
-+        yield chunk, i, total
-+
-+
-+def get_summary_prompt():
-+    """Get prompt modifications for summary mode."""
-+    return """
-+NOTE: This is a LARGE patch series. Provide a HIGH-LEVEL summary review only:
-+- Focus on overall architecture and design concerns
-+- Check commit message formatting across the series
-+- Identify any obvious policy violations
-+- Do NOT attempt detailed line-by-line code review
-+- Summarize the scope and purpose of the changes
-+"""
-+
-+
-+def format_combined_reviews(reviews, output_format, patch_name):
-+    """Combine multiple chunk/patch reviews into a single output."""
-+    if output_format == "json":
-+        combined = {
-+            "patch_file": patch_name,
-+            "sections": [
-+                {"label": label, "review": review} for label, review in reviews
-+            ],
-+        }
-+        return json.dumps(combined, indent=2)
-+    elif output_format == "html":
-+        sections = []
-+        for label, review in reviews:
-+            sections.append(f"<h2>{label}</h2>\n{review}")
-+        return "\n<hr>\n".join(sections)
-+    elif output_format == "markdown":
-+        sections = []
-+        for label, review in reviews:
-+            sections.append(f"## {label}\n\n{review}")
-+        return "\n\n---\n\n".join(sections)
-+    else:  # text
-+        sections = []
-+        for label, review in reviews:
-+            sections.append(f"=== {label} ===\n\n{review}")
-+        return "\n\n" + "=" * 60 + "\n\n".join(sections)
-+
-+
-+def build_system_prompt(review_date, release):
-+    """Build system prompt with date and release context."""
-+    prompt = SYSTEM_PROMPT_BASE
-+    prompt += f"\n\nCurrent date: {review_date}."
-+
-+    if release:
-+        prompt += f"\nTarget DPDK release: {release}."
-+        if is_lts_release(release):
-+            prompt += LTS_RULES
-+        else:
-+            prompt += "\nThis is a main branch or standard release."
-+            prompt += "\nNew features and experimental APIs are allowed."
-+
-+    return prompt
-+
-+
-+def build_anthropic_request(
-+    model,
-+    max_tokens,
-+    system_prompt,
-+    agents_content,
-+    patch_content,
-+    patch_name,
-+    output_format="text",
-+):
-+    """Build request payload for Anthropic API."""
-+    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
-+    user_prompt = USER_PROMPT.format(
-+        patch_name=patch_name, format_instruction=format_instruction
-+    )
-+    return {
-+        "model": model,
-+        "max_tokens": max_tokens,
-+        "system": [
-+            {"type": "text", "text": system_prompt},
-+            {
-+                "type": "text",
-+                "text": agents_content,
-+                "cache_control": {"type": "ephemeral"},
-+            },
-+        ],
-+        "messages": [
-+            {
-+                "role": "user",
-+                "content": user_prompt + patch_content,
-+            }
-+        ],
-+    }
-+
-+
-+def build_openai_request(
-+    model,
-+    max_tokens,
-+    system_prompt,
-+    agents_content,
-+    patch_content,
-+    patch_name,
-+    output_format="text",
-+):
-+    """Build request payload for OpenAI-compatible APIs."""
-+    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
-+    user_prompt = USER_PROMPT.format(
-+        patch_name=patch_name, format_instruction=format_instruction
-+    )
-+    return {
-+        "model": model,
-+        "max_tokens": max_tokens,
-+        "messages": [
-+            {"role": "system", "content": system_prompt},
-+            {"role": "system", "content": agents_content},
-+            {
-+                "role": "user",
-+                "content": user_prompt + patch_content,
-+            },
-+        ],
-+    }
-+
-+
-+def build_google_request(
-+    max_tokens,
-+    system_prompt,
-+    agents_content,
-+    patch_content,
-+    patch_name,
-+    output_format="text",
-+):
-+    """Build request payload for Google Gemini API."""
-+    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
-+    user_prompt = USER_PROMPT.format(
-+        patch_name=patch_name, format_instruction=format_instruction
-+    )
-+    return {
-+        "contents": [
-+            {"role": "user", "parts": [{"text": system_prompt}]},
-+            {"role": "user", "parts": [{"text": agents_content}]},
-+            {
-+                "role": "user",
-+                "parts": [{"text": user_prompt + patch_content}],
-+            },
-+        ],
-+        "generationConfig": {"maxOutputTokens": max_tokens},
-+    }
-+
-+
-+def call_api(
-+    provider,
-+    api_key,
-+    model,
-+    max_tokens,
-+    system_prompt,
-+    agents_content,
-+    patch_content,
-+    patch_name,
-+    output_format="text",
-+    verbose=False,
-+):
-+    """Make API request to the specified provider."""
-+    config = PROVIDERS[provider]
-+
-+    # Build request based on provider
-+    if provider == "anthropic":
-+        request_data = build_anthropic_request(
-+            model,
-+            max_tokens,
-+            system_prompt,
-+            agents_content,
-+            patch_content,
-+            patch_name,
-+            output_format,
-+        )
-+        headers = {
-+            "Content-Type": "application/json",
-+            "x-api-key": api_key,
-+            "anthropic-version": "2023-06-01",
-+        }
-+        url = config["endpoint"]
-+    elif provider == "google":
-+        request_data = build_google_request(
-+            max_tokens,
-+            system_prompt,
-+            agents_content,
-+            patch_content,
-+            patch_name,
-+            output_format,
-+        )
-+        headers = {"Content-Type": "application/json"}
-+        url = f"{config['endpoint']}/{model}:generateContent?key={api_key}"
-+    else:  # openai, xai
-+        request_data = build_openai_request(
-+            model,
-+            max_tokens,
-+            system_prompt,
-+            agents_content,
-+            patch_content,
-+            patch_name,
-+            output_format,
-+        )
-+        headers = {
-+            "Content-Type": "application/json",
-+            "Authorization": f"Bearer {api_key}",
-+        }
-+        url = config["endpoint"]
-+
-+    # Make request
-+    request_body = json.dumps(request_data).encode("utf-8")
-+    req = Request(url, data=request_body, headers=headers, method="POST")
-+
-+    try:
-+        with urlopen(req) as response:
-+            result = json.loads(response.read().decode("utf-8"))
-+    except HTTPError as e:
-+        error_body = e.read().decode("utf-8")
-+        try:
-+            error_data = json.loads(error_body)
-+            error(f"API error: {error_data.get('error', error_body)}")
-+        except json.JSONDecodeError:
-+            error(f"API error ({e.code}): {error_body}")
-+    except URLError as e:
-+        error(f"Connection error: {e.reason}")
-+
-+    # Show verbose info
-+    if verbose:
-+        print("=== Token Usage ===", file=sys.stderr)
-+        if provider == "anthropic":
-+            usage = result.get("usage", {})
-+            print(f"Input tokens: {usage.get('input_tokens', 'N/A')}", file=sys.stderr)
-+            print(
-+                f"Cache creation: {usage.get('cache_creation_input_tokens', 0)}",
-+                file=sys.stderr,
-+            )
-+            print(
-+                f"Cache read: {usage.get('cache_read_input_tokens', 0)}",
-+                file=sys.stderr,
-+            )
-+            print(
-+                f"Output tokens: {usage.get('output_tokens', 'N/A')}", file=sys.stderr
-+            )
-+        elif provider == "google":
-+            usage = result.get("usageMetadata", {})
-+            print(
-+                f"Prompt tokens: {usage.get('promptTokenCount', 'N/A')}",
-+                file=sys.stderr,
-+            )
-+            print(
-+                f"Output tokens: {usage.get('candidatesTokenCount', 'N/A')}",
-+                file=sys.stderr,
-+            )
-+        else:  # openai, xai
-+            usage = result.get("usage", {})
-+            print(
-+                f"Prompt tokens: {usage.get('prompt_tokens', 'N/A')}", file=sys.stderr
-+            )
-+            print(
-+                f"Completion tokens: {usage.get('completion_tokens', 'N/A')}",
-+                file=sys.stderr,
-+            )
-+        print("===================", file=sys.stderr)
-+
-+    # Extract response text
-+    if provider == "anthropic":
-+        if "error" in result:
-+            error(f"API error: {result['error'].get('message', result)}")
-+        content = result.get("content", [])
-+        return "".join(
-+            block.get("text", "") for block in content if block.get("type") == "text"
-+        )
-+    elif provider == "google":
-+        if "error" in result:
-+            error(f"API error: {result['error'].get('message', result)}")
-+        candidates = result.get("candidates", [])
-+        if not candidates:
-+            error("No response from Gemini")
-+        parts = candidates[0].get("content", {}).get("parts", [])
-+        return "".join(part.get("text", "") for part in parts)
-+    else:  # openai, xai
-+        if "error" in result:
-+            error(f"API error: {result['error'].get('message', result)}")
-+        choices = result.get("choices", [])
-+        if not choices:
-+            error("No response from API")
-+        return choices[0].get("message", {}).get("content", "")
-+
-+
-+def get_last_message_id(patch_content):
-+    """Extract Message-ID from the last patch in an mbox."""
-+    msg_ids = re.findall(
-+        r"^Message-I[Dd]:\s*(.+)$", patch_content, re.MULTILINE | re.IGNORECASE
-+    )
-+    if msg_ids:
-+        msg_id = msg_ids[-1].strip()
-+        # Normalize: remove < > and add them back
-+        msg_id = msg_id.strip("<>")
-+        return f"<{msg_id}>"
-+    return None
-+
-+
-+def get_last_subject(patch_content):
-+    """Extract subject from the last patch in an mbox."""
-+    # Find all Subject lines with potential continuations
-+    subjects = []
-+    lines = patch_content.split("\n")
-+    i = 0
-+    while i < len(lines):
-+        if lines[i].lower().startswith("subject:"):
-+            subject = lines[i][8:].strip()
-+            i += 1
-+            # Handle continuation lines
-+            while i < len(lines) and lines[i].startswith((" ", "\t")):
-+                subject += lines[i].strip()
-+                i += 1
-+            subjects.append(subject)
-+        else:
-+            i += 1
-+    return subjects[-1] if subjects else None
-+
-+
-+def send_email(
-+    to_addrs, cc_addrs, from_addr, subject, in_reply_to, body, dry_run=False
-+):
-+    """Send review email using git send-email, sendmail, or msmtp."""
-+    msg = EmailMessage()
-+    msg["From"] = from_addr
-+    msg["To"] = ", ".join(to_addrs)
-+    if cc_addrs:
-+        msg["Cc"] = ", ".join(cc_addrs)
-+    msg["Subject"] = subject
-+    if in_reply_to:
-+        msg["In-Reply-To"] = in_reply_to
-+        msg["References"] = in_reply_to
-+    msg.set_content(body)
-+
-+    email_text = msg.as_string()
-+
-+    if dry_run:
-+        print("=== Email Preview (dry-run) ===", file=sys.stderr)
-+        print(email_text, file=sys.stderr)
-+        print("=== End Preview ===", file=sys.stderr)
-+        return True
-+
-+    # Write to temp file for git send-email
-+    with tempfile.NamedTemporaryFile(mode="w", suffix=".eml", delete=False) as f:
-+        f.write(email_text)
-+        temp_file = f.name
-+
-+    try:
-+        # Try git send-email first
-+        if get_git_config("sendemail.smtpserver"):
-+            # Build command with all arguments
-+            flat_cmd = ["git", "send-email", "--confirm=never", "--quiet"]
-+            for addr in to_addrs:
-+                flat_cmd.extend(["--to", addr])
-+            for addr in cc_addrs:
-+                flat_cmd.extend(["--cc", addr])
-+            if from_addr:
-+                flat_cmd.extend(["--from", from_addr])
-+            if in_reply_to:
-+                flat_cmd.extend(["--in-reply-to", in_reply_to])
-+            flat_cmd.append(temp_file)
-+
-+            try:
-+                subprocess.run(flat_cmd, check=True, capture_output=True)
-+                print("Email sent via git send-email", file=sys.stderr)
-+                return True
-+            except (subprocess.CalledProcessError, FileNotFoundError):
-+                pass
-+
-+        # Try sendmail
-+        try:
-+            subprocess.run(
-+                ["sendmail", "-t"],
-+                input=email_text,
-+                text=True,
-+                capture_output=True,
-+                check=True,
-+            )
-+            print("Email sent via sendmail", file=sys.stderr)
-+            return True
-+        except (subprocess.CalledProcessError, FileNotFoundError):
-+            pass
-+
-+        # Try msmtp
-+        try:
-+            subprocess.run(
-+                ["msmtp", "-t"],
-+                input=email_text,
-+                text=True,
-+                capture_output=True,
-+                check=True,
-+            )
-+            print("Email sent via msmtp", file=sys.stderr)
-+            return True
-+        except (subprocess.CalledProcessError, FileNotFoundError):
-+            pass
-+
-+        error("Could not send email. Configure git send-email, sendmail, or msmtp.")
-+
-+    finally:
-+        os.unlink(temp_file)
-+
-+
-+def list_providers():
-+    """Print available providers and exit."""
-+    print("Available AI Providers:\n")
-+    print(f"{'Provider':<12} {'Default Model':<30} {'API Key Variable'}")
-+    print(f"{'--------':<12} {'-------------':<30} {'----------------'}")
-+    for name, config in PROVIDERS.items():
-+        print(f"{name:<12} {config['default_model']:<30} {config['env_var']}")
-+    sys.exit(0)
-+
-+
-+def main():
-+    parser = argparse.ArgumentParser(
-+        description="Analyze DPDK patches using AI providers",
-+        formatter_class=argparse.RawDescriptionHelpFormatter,
-+        epilog="""
 +Examples:
-+    %(prog)s patch.patch                    # Review with default settings
-+    %(prog)s -p openai my-patch.patch       # Use OpenAI ChatGPT
-+    %(prog)s -f markdown patch.patch        # Output as Markdown
-+    %(prog)s -f json -o review.json patch.patch  # Save JSON to file
-+    %(prog)s -f html -o review.html patch.patch  # Save HTML to file
-+    %(prog)s -r 24.11 patch.patch           # Review for specific release
-+    %(prog)s -r 24.11-lts patch.patch       # Review for LTS branch
-+    %(prog)s --send-email --to dev@dpdk.org series.mbox
-+    %(prog)s --send-email --to dev@dpdk.org --dry-run series.mbox
++    $(basename "$0") my-patch.patch
++    $(basename "$0") -p anthropic,openai my-patch.patch
++    $(basename "$0") -o ./reviews -f markdown my-patch.patch
++EOF
++    exit "${1:-0}"
++}
 +
-+Large File Handling:
-+    %(prog)s --split-patches series.mbox    # Review each patch separately
-+    %(prog)s --split-patches --patch-range 1-5 series.mbox  # Review patches 1-5
-+    %(prog)s --large-file=truncate patch.mbox   # Truncate to fit limit
-+    %(prog)s --large-file=commits-only series.mbox  # Review commit messages only
-+    %(prog)s --large-file=summary series.mbox   # High-level summary only
-+    %(prog)s --large-file=chunk series.mbox     # Split and review in chunks
++error() {
++    echo "Error: $1" >&2
++    exit 1
++}
 +
-+Large File Modes:
-+    error       - Fail with error (default)
-+    truncate    - Truncate content to fit token limit
-+    chunk       - Split into chunks and review each
-+    commits-only - Extract and review only commit messages
-+    summary     - Request high-level summary review
++# Check which providers have API keys configured
++get_available_providers() {
++    local available=""
 +
-+LTS Releases:
-+    Use -r/--release with LTS version (e.g., 24.11-lts, 23.11) to enable
-+    stricter review rules: bug fixes only, no new features or APIs.
-+    Any DPDK release with minor version .11 is an LTS release.
-+        """,
-+    )
++    [[ -n "$ANTHROPIC_API_KEY" ]] && available="${available}anthropic,"
++    [[ -n "$OPENAI_API_KEY" ]] && available="${available}openai,"
++    [[ -n "$XAI_API_KEY" ]] && available="${available}xai,"
++    [[ -n "$GOOGLE_API_KEY" ]] && available="${available}google,"
 +
-+    parser.add_argument("patch_file", nargs="?", help="Patch file to analyze")
-+    parser.add_argument(
-+        "-p",
-+        "--provider",
-+        choices=PROVIDERS.keys(),
-+        default="anthropic",
-+        help="AI provider (default: anthropic)",
-+    )
-+    parser.add_argument(
-+        "-a",
-+        "--agents",
-+        default="AGENTS.md",
-+        help="Path to AGENTS.md file (default: AGENTS.md)",
-+    )
-+    parser.add_argument(
-+        "-m",
-+        "--model",
-+        help="Model to use (default: provider-specific)",
-+    )
-+    parser.add_argument(
-+        "-t",
-+        "--tokens",
-+        type=int,
-+        default=4096,
-+        help="Max tokens for response (default: 4096)",
-+    )
-+    parser.add_argument(
-+        "-v",
-+        "--verbose",
-+        action="store_true",
-+        help="Show API request details",
-+    )
-+    parser.add_argument(
-+        "-f",
-+        "--format",
-+        choices=OUTPUT_FORMATS,
-+        default="text",
-+        dest="output_format",
-+        help="Output format: text, markdown, html, json (default: text)",
-+    )
-+    parser.add_argument(
-+        "-o",
-+        "--output",
-+        metavar="FILE",
-+        help="Write output to file instead of stdout",
-+    )
-+    parser.add_argument(
-+        "-l",
-+        "--list-providers",
-+        action="store_true",
-+        help="List available providers and exit",
-+    )
++    # Remove trailing comma
++    echo "${available%,}"
++}
 +
-+    # Date and release options
-+    parser.add_argument(
-+        "-D",
-+        "--date",
-+        metavar="YYYY-MM-DD",
-+        help="Review date context (default: today)",
-+    )
-+    parser.add_argument(
-+        "-r",
-+        "--release",
-+        metavar="VERSION",
-+        help="Target DPDK release (e.g., 24.11, 23.11-lts)",
-+    )
++# Get file extension for format
++get_extension() {
++    case "$1" in
++        text)     echo "txt" ;;
++        markdown) echo "md" ;;
++        html)     echo "html" ;;
++        json)     echo "json" ;;
++        *)        echo "txt" ;;
++    esac
++}
 +
-+    # Large file handling options
-+    large_group = parser.add_argument_group("Large File Handling")
-+    large_group.add_argument(
-+        "--large-file",
-+        choices=LARGE_FILE_MODES,
-+        default="error",
-+        metavar="MODE",
-+        help="How to handle large files: error (default), truncate, "
-+        "chunk, commits-only, summary",
-+    )
-+    large_group.add_argument(
-+        "--max-tokens",
-+        type=int,
-+        metavar="N",
-+        help="Max input tokens (default: provider-specific)",
-+    )
-+    large_group.add_argument(
-+        "--split-patches",
-+        action="store_true",
-+        help="Split mbox into individual patches and review each separately",
-+    )
-+    large_group.add_argument(
-+        "--patch-range",
-+        metavar="N-M",
-+        help="Review only patches N through M (1-indexed, use with --split-patches)",
-+    )
++# Parse command line options
++VERBOSE=""
 +
-+    # Email options
-+    email_group = parser.add_argument_group("Email Options")
-+    email_group.add_argument(
-+        "--send-email",
-+        action="store_true",
-+        help="Send review via email",
-+    )
-+    email_group.add_argument(
-+        "--to",
-+        action="append",
-+        dest="to_addrs",
-+        default=[],
-+        metavar="ADDRESS",
-+        help="Email recipient (can be specified multiple times)",
-+    )
-+    email_group.add_argument(
-+        "--cc",
-+        action="append",
-+        dest="cc_addrs",
-+        default=[],
-+        metavar="ADDRESS",
-+        help="CC recipient (can be specified multiple times)",
-+    )
-+    email_group.add_argument(
-+        "--from",
-+        dest="from_addr",
-+        metavar="ADDRESS",
-+        help="From address (default: from git config)",
-+    )
-+    email_group.add_argument(
-+        "--dry-run",
-+        action="store_true",
-+        help="Show email without sending",
-+    )
++while [[ $# -gt 0 ]]; do
++    case "$1" in
++        -a|--agents)
++            AGENTS_FILE="$2"
++            shift 2
++            ;;
++        -o|--output)
++            OUTPUT_DIR="$2"
++            shift 2
++            ;;
++        -p|--providers)
++            PROVIDERS="$2"
++            shift 2
++            ;;
++        -f|--format)
++            FORMAT="$2"
++            shift 2
++            ;;
++        -v|--verbose)
++            VERBOSE="-v"
++            shift
++            ;;
++        -h|--help)
++            usage 0
++            ;;
++        -*)
++            error "Unknown option: $1"
++            ;;
++        *)
++            break
++            ;;
++    esac
++done
 +
-+    args = parser.parse_args()
++# Check for required arguments
++if [[ $# -lt 1 ]]; then
++    echo "Error: No patch file specified" >&2
++    usage 1
++fi
 +
-+    if args.list_providers:
-+        list_providers()
++PATCH_FILE="$1"
 +
-+    # Check patch file is provided
-+    if not args.patch_file:
-+        parser.error("patch_file is required")
++if [[ ! -f "$PATCH_FILE" ]]; then
++    error "Patch file not found: $PATCH_FILE"
++fi
 +
-+    # Get provider config
-+    config = PROVIDERS[args.provider]
-+    model = args.model or config["default_model"]
++if [[ ! -f "$ANALYZE_SCRIPT" ]]; then
++    error "analyze-patch.py not found: $ANALYZE_SCRIPT"
++fi
 +
-+    # Get API key
-+    api_key = os.environ.get(config["env_var"])
-+    if not api_key:
-+        error(f"{config['env_var']} environment variable not set")
++# Validate format
++case "$FORMAT" in
++    text|markdown|html|json) ;;
++    *) error "Invalid format: $FORMAT (must be text, markdown, html, or json)" ;;
++esac
 +
-+    # Validate files
-+    agents_path = Path(args.agents)
-+    if not agents_path.exists():
-+        error(f"AGENTS.md not found: {args.agents}")
++# Get providers to use
++if [[ -z "$PROVIDERS" ]]; then
++    PROVIDERS=$(get_available_providers)
++fi
 +
-+    patch_path = Path(args.patch_file)
-+    if not patch_path.exists():
-+        error(f"Patch file not found: {args.patch_file}")
++if [[ -z "$PROVIDERS" ]]; then
++    error "No API keys configured. Set at least one of: "\
++"ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY, GOOGLE_API_KEY"
++fi
 +
-+    # Validate email options
-+    if args.send_email and not args.to_addrs:
-+        error("--send-email requires at least one --to address")
++# Create output directory if specified
++if [[ -n "$OUTPUT_DIR" ]]; then
++    mkdir -p "$OUTPUT_DIR"
++fi
 +
-+    # Get from address for email
-+    from_addr = args.from_addr
-+    if args.send_email and not from_addr:
-+        git_name = get_git_config("user.name")
-+        git_email = get_git_config("user.email")
-+        if git_email:
-+            from_addr = f"{git_name} <{git_email}>" if git_name else git_email
-+        else:
-+            error("No --from specified and git user.email not configured")
++PATCH_BASENAME=$(basename "$PATCH_FILE")
++PATCH_STEM="${PATCH_BASENAME%.*}"
++EXT=$(get_extension "$FORMAT")
 +
-+    # Determine review date
-+    review_date = args.date or date.today().isoformat()
++echo "Reviewing patch: $PATCH_BASENAME"
++echo "Providers: $PROVIDERS"
++echo "Format: $FORMAT"
++echo "========================================"
++echo ""
 +
-+    # Build system prompt with date and release context
-+    system_prompt = build_system_prompt(review_date, args.release)
++# Run review for each provider
++IFS=',' read -ra PROVIDER_LIST <<< "$PROVIDERS"
++for provider in "${PROVIDER_LIST[@]}"; do
++    echo ">>> Running review with: $provider"
++    echo ""
 +
-+    # Read files
-+    agents_content = agents_path.read_text()
-+    patch_content = patch_path.read_text()
-+    patch_name = patch_path.name
++    if [[ -n "$OUTPUT_DIR" ]]; then
++        OUTPUT_FILE="${OUTPUT_DIR}/${PATCH_STEM}-${provider}.${EXT}"
++        python3 "$ANALYZE_SCRIPT" \
++            -p "$provider" \
++            -a "$AGENTS_FILE" \
++            -f "$FORMAT" \
++            $VERBOSE \
++            "$PATCH_FILE" | tee "$OUTPUT_FILE"
++        echo ""
++        echo "Saved to: $OUTPUT_FILE"
++    else
++        python3 "$ANALYZE_SCRIPT" \
++            -p "$provider" \
++            -a "$AGENTS_FILE" \
++            -f "$FORMAT" \
++            $VERBOSE \
++            "$PATCH_FILE"
++    fi
 +
-+    # Determine max tokens for this provider
-+    max_input_tokens = args.max_tokens or PROVIDER_INPUT_LIMITS.get(
-+        args.provider, 100000
-+    )
++    echo ""
++    echo "========================================"
++    echo ""
++done
 +
-+    # Estimate token count
-+    estimated_tokens = estimate_tokens(patch_content + agents_content)
++echo "Review comparison complete."
 +
-+    # Parse patch range if specified
-+    patch_start, patch_end = None, None
-+    if args.patch_range:
-+        try:
-+            if "-" in args.patch_range:
-+                start, end = args.patch_range.split("-", 1)
-+                patch_start = int(start)
-+                patch_end = int(end)
-+            else:
-+                patch_start = patch_end = int(args.patch_range)
-+        except ValueError:
-+            error(f"Invalid --patch-range format: {args.patch_range}")
-+
-+    # Handle --split-patches mode
-+    if args.split_patches:
-+        patches = split_mbox_patches(patch_content)
-+        total_patches = len(patches)
-+
-+        if total_patches == 1:
-+            print(
-+                f"Note: Only 1 patch found in mbox, --split-patches has no effect",
-+                file=sys.stderr,
-+            )
-+        else:
-+            print(
-+                f"Found {total_patches} patches in mbox",
-+                file=sys.stderr,
-+            )
-+
-+            # Apply patch range filter
-+            if patch_start is not None:
-+                if patch_start < 1 or patch_start > total_patches:
-+                    error(
-+                        f"Patch range start {patch_start} out of range (1-{total_patches})"
-+                    )
-+                if patch_end < patch_start or patch_end > total_patches:
-+                    error(
-+                        f"Patch range end {patch_end} out of range ({patch_start}-{total_patches})"
-+                    )
-+                patches = patches[patch_start - 1 : patch_end]
-+                print(
-+                    f"Reviewing patches {patch_start}-{patch_end} ({len(patches)} patches)",
-+                    file=sys.stderr,
-+                )
-+
-+            # Review each patch separately
-+            all_reviews = []
-+            for i, patch in enumerate(patches, patch_start or 1):
-+                patch_label = f"Patch {i}/{total_patches}"
-+                print(f"\nReviewing {patch_label}...", file=sys.stderr)
-+
-+                review_text = call_api(
-+                    args.provider,
-+                    api_key,
-+                    model,
-+                    args.tokens,
-+                    system_prompt,
-+                    agents_content,
-+                    patch,
-+                    f"{patch_name} ({patch_label})",
-+                    args.output_format,
-+                    args.verbose,
-+                )
-+                all_reviews.append((patch_label, review_text))
-+
-+            # Combine reviews
-+            review_text = format_combined_reviews(
-+                all_reviews, args.output_format, patch_name
-+            )
-+
-+            # Skip the normal API call
-+            estimated_tokens = 0  # Bypass size check since we've already processed
-+
-+    # Check if content is too large
-+    is_large = estimated_tokens > max_input_tokens
-+
-+    if is_large:
-+        print(
-+            f"Warning: Estimated {estimated_tokens:,} tokens exceeds limit of "
-+            f"{max_input_tokens:,}",
-+            file=sys.stderr,
-+        )
-+
-+        if args.large_file == "error":
-+            error(
-+                f"Patch file too large ({estimated_tokens:,} tokens). "
-+                f"Use --large-file=truncate|chunk|commits-only|summary to handle, "
-+                f"or --split-patches to review patches individually."
-+            )
-+        elif args.large_file == "truncate":
-+            print("Truncating content to fit token limit...", file=sys.stderr)
-+            patch_content, was_truncated = truncate_content(
-+                patch_content, max_input_tokens, args.provider
-+            )
-+            if was_truncated:
-+                print("Content was truncated.", file=sys.stderr)
-+        elif args.large_file == "commits-only":
-+            print("Extracting commit messages only...", file=sys.stderr)
-+            patch_content = extract_commit_messages(patch_content)
-+            new_estimate = estimate_tokens(patch_content + agents_content)
-+            print(
-+                f"Reduced to ~{new_estimate:,} tokens (commit messages only)",
-+                file=sys.stderr,
-+            )
-+            if new_estimate > max_input_tokens:
-+                patch_content, _ = truncate_content(
-+                    patch_content, max_input_tokens, args.provider
-+                )
-+        elif args.large_file == "summary":
-+            print("Using summary mode for large patch...", file=sys.stderr)
-+            system_prompt += get_summary_prompt()
-+            patch_content, _ = truncate_content(
-+                patch_content, max_input_tokens, args.provider
-+            )
-+        elif args.large_file == "chunk":
-+            print("Processing in chunks...", file=sys.stderr)
-+            all_reviews = []
-+            for chunk, chunk_num, total_chunks in chunk_content(
-+                patch_content, max_input_tokens, args.provider
-+            ):
-+                chunk_label = f"Chunk {chunk_num}/{total_chunks}"
-+                print(f"Reviewing {chunk_label}...", file=sys.stderr)
-+
-+                review_text = call_api(
-+                    args.provider,
-+                    api_key,
-+                    model,
-+                    args.tokens,
-+                    system_prompt,
-+                    agents_content,
-+                    chunk,
-+                    f"{patch_name} ({chunk_label})",
-+                    args.output_format,
-+                    args.verbose,
-+                )
-+                all_reviews.append((chunk_label, review_text))
-+
-+            # Combine chunk reviews
-+            review_text = format_combined_reviews(
-+                all_reviews, args.output_format, patch_name
-+            )
-+
-+            # Skip the normal single API call below
-+            estimated_tokens = 0
-+
-+    if args.verbose:
-+        print("=== Request ===", file=sys.stderr)
-+        print(f"Provider: {args.provider}", file=sys.stderr)
-+        print(f"Model: {model}", file=sys.stderr)
-+        print(f"Review date: {review_date}", file=sys.stderr)
-+        if args.release:
-+            lts_status = " (LTS)" if is_lts_release(args.release) else ""
-+            print(f"Target release: {args.release}{lts_status}", file=sys.stderr)
-+        print(f"Output format: {args.output_format}", file=sys.stderr)
-+        print(f"AGENTS file: {args.agents}", file=sys.stderr)
-+        print(f"Patch file: {args.patch_file}", file=sys.stderr)
-+        print(f"Estimated tokens: {estimated_tokens:,}", file=sys.stderr)
-+        print(f"Max input tokens: {max_input_tokens:,}", file=sys.stderr)
-+        if args.large_file != "error":
-+            print(f"Large file mode: {args.large_file}", file=sys.stderr)
-+        if args.split_patches:
-+            print("Split patches: yes", file=sys.stderr)
-+        if args.output:
-+            print(f"Output file: {args.output}", file=sys.stderr)
-+        if args.send_email:
-+            print("Send email: yes", file=sys.stderr)
-+            print(f"To: {', '.join(args.to_addrs)}", file=sys.stderr)
-+            if args.cc_addrs:
-+                print(f"Cc: {', '.join(args.cc_addrs)}", file=sys.stderr)
-+            print(f"From: {from_addr}", file=sys.stderr)
-+        print("===============", file=sys.stderr)
-+
-+    # Call API (unless already processed via chunks/split)
-+    if estimated_tokens > 0:  # Not already processed
-+        review_text = call_api(
-+            args.provider,
-+            api_key,
-+            model,
-+            args.tokens,
-+            system_prompt,
-+            agents_content,
-+            patch_content,
-+            patch_name,
-+            args.output_format,
-+            args.verbose,
-+        )
-+
-+    if not review_text:
-+        error(f"No response received from {args.provider}")
-+
-+    # Format output based on requested format
-+    provider_name = config["name"]
-+
-+    if args.output_format == "json":
-+        # For JSON, try to parse and add metadata
-+        try:
-+            review_data = json.loads(review_text)
-+        except json.JSONDecodeError:
-+            # If AI didn't return valid JSON, wrap the text
-+            review_data = {"raw_review": review_text}
-+
-+        output_data = {
-+            "metadata": {
-+                "patch_file": patch_name,
-+                "provider": args.provider,
-+                "provider_name": provider_name,
-+                "model": model,
-+                "review_date": review_date,
-+                "target_release": args.release,
-+                "is_lts": is_lts_release(args.release) if args.release else False,
-+            },
-+            "review": review_data,
-+        }
-+        output_text = json.dumps(output_data, indent=2)
-+    elif args.output_format == "html":
-+        # Wrap HTML content with header
-+        release_info = ""
-+        if args.release:
-+            lts_badge = " (LTS)" if is_lts_release(args.release) else ""
-+            release_info = f"<br>Target release: {args.release}{lts_badge}"
-+        output_text = f"""<!-- AI-generated review of {patch_name} -->
-+<!-- Reviewed using {provider_name} ({model}) on {review_date} -->
-+<div class="patch-review">
-+<h1>Patch Review: {patch_name}</h1>
-+<p class="review-meta">Reviewed by {provider_name} ({model}) on {review_date}{release_info}</p>
-+{review_text}
-+</div>
-+"""
-+    elif args.output_format == "markdown":
-+        release_info = ""
-+        if args.release:
-+            lts_badge = " (LTS)" if is_lts_release(args.release) else ""
-+            release_info = f"\n*Target release: {args.release}{lts_badge}*\n"
-+        output_text = f"""# Patch Review: {patch_name}
-+
-+*Reviewed by {provider_name} ({model}) on {review_date}*
-+{release_info}
-+{review_text}
-+"""
-+    else:  # text
-+        release_info = ""
-+        if args.release:
-+            lts_badge = " (LTS)" if is_lts_release(args.release) else ""
-+            release_info = f"Target release: {args.release}{lts_badge}\n"
-+        output_text = f"=== Patch Review: {patch_name} (via {provider_name}) ===\n"
-+        output_text += f"Review date: {review_date}\n"
-+        output_text += release_info
-+        output_text += "\n" + review_text
-+
-+    # Write output
-+    if args.output:
-+        Path(args.output).write_text(output_text)
-+        print(f"Review written to: {args.output}", file=sys.stderr)
-+    else:
-+        print(output_text)
-+
-+    # Send email if requested
-+    if args.send_email:
-+        # Email always uses plain text - warn if different format requested
-+        if args.output_format != "text":
-+            print(
-+                f"Note: Email will be sent as plain text regardless of "
-+                f"--format={args.output_format}",
-+                file=sys.stderr,
-+            )
-+
-+        in_reply_to = get_last_message_id(patch_content)
-+        orig_subject = get_last_subject(patch_content)
-+
-+        if orig_subject:
-+            # Remove [PATCH n/m] prefix
-+            review_subject = re.sub(r"^\[PATCH[^\]]*\]\s*", "", orig_subject)
-+            review_subject = f"[REVIEW] {review_subject}"
-+        else:
-+            review_subject = f"[REVIEW] {patch_name}"
-+
-+        # Build email body - always use plain text version
-+        release_info = ""
-+        if args.release:
-+            lts_badge = " (LTS)" if is_lts_release(args.release) else ""
-+            release_info = f"Target release: {args.release}{lts_badge}\n"
-+
-+        email_body = f"""AI-generated review of {patch_name}
-+Reviewed using {provider_name} ({model}) on {review_date}
-+{release_info}
-+This is an automated review. Please verify all suggestions.
-+
-+---
-+
-+{review_text}
-+"""
-+
-+        if args.verbose:
-+            print("", file=sys.stderr)
-+            print("=== Email Details ===", file=sys.stderr)
-+            print(f"Subject: {review_subject}", file=sys.stderr)
-+            print(f"In-Reply-To: {in_reply_to}", file=sys.stderr)
-+            print("=====================", file=sys.stderr)
-+
-+        send_email(
-+            args.to_addrs,
-+            args.cc_addrs,
-+            from_addr,
-+            review_subject,
-+            in_reply_to,
-+            email_body,
-+            args.dry_run,
-+        )
-+
-+        if not args.dry_run:
-+            print("", file=sys.stderr)
-+            print(f"Review sent to: {', '.join(args.to_addrs)}", file=sys.stderr)
-+
-+
-+if __name__ == "__main__":
-+    main()
++if [[ -n "$OUTPUT_DIR" ]]; then
++    echo "All reviews saved to: $OUTPUT_DIR"
++fi
 -- 
 2.51.0
 
