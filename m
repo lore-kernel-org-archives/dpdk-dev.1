@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93518E9A057
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 17:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFE5E9A055
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 17:51:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B00184042E;
-	Thu, 19 Feb 2026 18:47:56 +0100 (CET)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
- [209.85.222.175])
- by mails.dpdk.org (Postfix) with ESMTP id 6007F402CA
- for <dev@dpdk.org>; Thu, 19 Feb 2026 18:47:55 +0100 (CET)
-Received: by mail-qk1-f175.google.com with SMTP id
- af79cd13be357-8c70ce93afaso102026785a.0
- for <dev@dpdk.org>; Thu, 19 Feb 2026 09:47:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E3DB1402D5;
+	Thu, 19 Feb 2026 18:51:14 +0100 (CET)
+Received: from mail-ot1-f65.google.com (mail-ot1-f65.google.com
+ [209.85.210.65]) by mails.dpdk.org (Postfix) with ESMTP id 5F4B1402CA
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 18:51:14 +0100 (CET)
+Received: by mail-ot1-f65.google.com with SMTP id
+ 46e09a7af769-7d4c3484268so874227a34.0
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 09:51:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771523274;
- x=1772128074; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771523473;
+ x=1772128273; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KNEfmOXho41VC9rIE4f4bTpDsKI/XzKxIew0IOddlnU=;
- b=26yOmFZraW+a2cLWF1pcPuVXEx5+0/ruRdG8iCF46OHsm9nbi2XNwghsajkoO91ad5
- HTBRqHKEdU09nYFpBqAVu66UcX3spB+E1oh8pi1pQfLSHUR83mfW+319jPuntzWid7I/
- 2eS8w8rqyMRvBG2kcGxH2HLtyFgcLdAsHnbOxkFsDff5bqvP0+O2hl+bdEQvCsrcEDVz
- Pj2RDqFWwdcUXKIZxLlxG3M+Kuc0y2me0oXeQrYGOiAXHOhMbOKP9ulog1H0NmgzsYPH
- A76hd7vdR0I6esXVRWNDQYCDDMPBieHUGWyMBZKLmivxMNaF9jVAJwflKAuutUbDa7k6
- nwGQ==
+ bh=ZKA9SvTK7bsIZsifgnwcKNqMJFn/bYfqMhplTqDOx/g=;
+ b=QwPJn8IFy+yz0CZhyDbgBnOqM7IKsuR2kSmWMHo69o0KvcJJBehzHz36Y3tEolOmus
+ i9k8XAPRIPA+FuzK9QBpslT915K4n0jN5rWdUV1gnTPloJCiO5EWlKa3NAE/RWZ2BS/o
+ 124wQOYTulcgaNIl7E/3Nx8spRnrLSxVnqHtz7P12yUIzlwV6jV8ETPi53fdzOA6k9zl
+ P5bPVuxvwAEJqQ7k+gY/Ckfu8xOzKy1a2u+sEnb0HfMHvVkvy4QHjRiGv21H3Mf/C9Q0
+ 1KEjEdo+5pivUvfj/yzUl/Cq7ujMK+VayNxZxabgyk24yzQidSopne6i3NXi65ShXFJ4
+ pEOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771523274; x=1772128074;
+ d=1e100.net; s=20230601; t=1771523473; x=1772128273;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KNEfmOXho41VC9rIE4f4bTpDsKI/XzKxIew0IOddlnU=;
- b=rov/cih0j2K1lmkh42aOvQxPjmc5gOfpeSqfe8PbqNuN/Y2eTLzb5QstLON4WdrTYZ
- omZel+dcKuoCbDXadSVUPRmG/2ZgD4VnYmwbjjMxtVcqvgLE8qVjg/A4UacrL2bmfPtI
- +YSUtu8BaR++rvLV5RcIu16GhP9XjhEP8i8gM7QgKaBhvGdAztZGpc2e0WpdvYM9NiJF
- gmiylgDTclRPg94GtMzNYAbFWPJDEf5eYojqO41yeaVpD57Cg4SWN7sPfG/NPs+Q6/kW
- ZOk8hq2o3BY+S5ymEYQSTS+UyeZZKoJ1YdpIG2zvuupFI+ZBmjn/asmR6SN91/2rJ2FG
- dHLw==
-X-Gm-Message-State: AOJu0YzcaJZdiaaWKJLFFNshfz4mNAHeoLWQo+z3cp/6BD54v31ZpyTB
- pFOUOrIYwGseUJHc89XQMNN0Ul/rgAn+EENaWJQnlRCl4fcIinvs//S7tz+3a5uahCo=
-X-Gm-Gg: AZuq6aIoy0yS0ST/ML13HDzeRDywbSipRKCgGpFolGAbtJUvmMOkybjY7L451sRzatD
- HEywGndEyJmLHIMbxGx656f/+VahO4ub3ahO+hllZfP7NBQnZIsVQ2Q7okC7DGELRl8wVIAnrub
- bNPLvCy2q8NfROC5I8okTOxVmbGCIWAUe2pBRZidUDsqFgj7KWNwFn7WJTXcMuMpON9NHqOy3Sp
- P6UverQcor/2rfreBAF4SMUKaLNh04Efn1Iit0G5SaqL6mk6ql7ygUDzZQyo5e7F8onlHwTFMn1
- LgAH4UkgJu5TRo41VQUc5lOopxUfkeG8y21XzqwgrmgEoyEAf2bA9jDAX0OG5nuUDVRg3OCtRAn
- m350nS0s4t1DZg4O9eSUtiV3kuudLWkFXPbgDa6tNvzG1uCzl4w/ScQ8NDyvBhxZHWnziZ0ruc7
- lvWQo/jzgJDc1WH/LZ44Ci2HuD68+K4bey9UMgu+beeRjvPEBEmY15BR/Nkhn9YqJY
-X-Received: by 2002:a05:620a:1aa1:b0:8c9:f9c1:5ed with SMTP id
- af79cd13be357-8cb740b8beamr741539785a.63.1771523274149; 
- Thu, 19 Feb 2026 09:47:54 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=ZKA9SvTK7bsIZsifgnwcKNqMJFn/bYfqMhplTqDOx/g=;
+ b=L4KGW7Tu5IGz3eAz4Fnw6mv8qbEydvR4cZzlk37Hoph+roJBcg51jX3MHLWt4btWK6
+ YO3wCSpJ/Niwz8ljJgpjl/qLehOFbhL58pHLimNXbeQTtctuX/vAbaNkZCMZAm8VrIlb
+ rVNEENP5aoo5CEgCgxf+n5g05Oskl9+G3l8RUzImYNBi6+fwjlwb9uEUTOBg8DwROUR1
+ NSGDvdNeCZdMuSSpxoMAgARfxioeyMBSgLYlHlYy3OeqEwu4oE+woJ1p8fPPj9PmpkAi
+ A9UFedQSVBQ3bg36uoWRUEngAd9pE4PNVuZoOD8VIKRdwyH3acXq2yejqKpXFS35erDt
+ ULvw==
+X-Gm-Message-State: AOJu0YwpN30L/pdaS62MvvkwpR/2GwTT/OofseBEWCSuBKXNCH68y0gQ
+ OR9/AmRRL5GkYlkoW2s6CucnPhSdDju3kIz6TbRgP5Qi/Rwdv9Vx2OgMvLuGCRrPww69f93JMyp
+ 6E9UT0jM=
+X-Gm-Gg: AZuq6aJr0NWa7Pl5mtSM2E/korZijmgbUf8o+HFnzCZ8diOEIGo1GRubcu0llVFmuTN
+ sFxt4uDjioHZa2ZHdp2m5+yF7vsPzb/xCXunyOqFC9TP79WqSxbXfCP99ZwuZgmteR1h2nGk0kQ
+ 40gTWx5bJ5j1eB60PbDsxeo5uHiWiO9QXmM642AW24CCjv85ggPW7Z3Nef1ZUuyMP4iIrMCSUDE
+ CiN6IpKEDfsTcNTJgB8Dh34GXy4+O1RudwAz3efhif32aOU6QkuMidJK+MR5G88a68PZUaVIUD/
+ 6AUUVUtZdk6KcmYAHU+NYHgcEsQNdhHT7qMfX6aFMWYBPJnF+crFBe4aIM/devIiFX/kdIsNrRh
+ W21nFuK7vQiV9ejMKHNNY5FxKWHXV0oO3myzAokLOFjP0fwVGFeAyXht4XtSX5Rr+B3ZPwygWQg
+ Nlibclr+05wZk6p+7Qc6/pxQBMTcPURhedEfpEAC1RW+3sILwQHXEfzdVKLoKDcA==
+X-Received: by 2002:a05:6820:1b18:b0:66e:58f3:b4e9 with SMTP id
+ 006d021491bc7-679a7447c33mr3681263eaf.67.1771523473333; 
+ Thu, 19 Feb 2026 09:51:13 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8971cca6fddsm212344306d6.19.2026.02.19.09.47.53
+ 006d021491bc7-67985df6ffcsm10261701eaf.4.2026.02.19.09.51.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Feb 2026 09:47:53 -0800 (PST)
-Date: Thu, 19 Feb 2026 09:47:49 -0800
+ Thu, 19 Feb 2026 09:51:12 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Aaron Conole <aconole@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v9 1/6] doc: add AGENTS.md for AI code review tools
-Message-ID: <20260219094749.4e3edc6e@phoenix.local>
-In-Reply-To: <f7t7bsanlme.fsf@redhat.com>
-References: <20260109014106.398156-1-stephen@networkplumber.org>
- <20260213214107.234072-1-stephen@networkplumber.org>
- <20260213214107.234072-2-stephen@networkplumber.org>
- <f7t7bsanlme.fsf@redhat.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v10 0/6] AI-assisted code and documentation review
+Date: Thu, 19 Feb 2026 09:48:45 -0800
+Message-ID: <20260219175110.287747-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260213214107.234072-1-stephen@networkplumber.org>
+References: <20260213214107.234072-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,50 +80,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 18 Feb 2026 09:59:21 -0500
-Aaron Conole <aconole@redhat.com> wrote:
+This series adds tooling for AI-assisted review of DPDK patches and
+documentation. The goal is to catch common coding style violations,
+commit message formatting errors, and documentation issues before
+patches reach the mailing list, reducing reviewer workload on
+mechanical checks.
 
-> Much of the following sections can be written as part of checkpatch,
-> which means we don't need to spend compute resources with the AI on it.
-> For example, telling the AI that source files need to begin with SPDX
-> identifiers, line lenghts, tag format order, tag parsing, etc.  The
-> downside is that if we ask the AI to *generate* code, then it won't
-> follow these rules; but when we ask AI to *review* the code, it takes
-> fewer tokens to submit and we can let the AI do the thing it really
-> shines at - recognizing subtle patterns, rather than stuff we can write
-> a python script to do.
+The approach uses a structured guidelines document (AGENTS.md) that
+codifies the project's existing standards from the contributor
+documentation, coding style guide, and validation scripts into a
+format that AI models can apply consistently. The review scripts
+then submit patches or documentation against these guidelines using
+any of several AI providers.
 
-Well, checkpatch is slow, misses somethings and doesn't provide any
-good rationale back to developer. My experience is that the cost of
-AI is per-input token. And AGENTS.md is also integrated into IDE's
-like Visual Studio so it will get coverage there where checkpatch
-will not.
+The series includes:
 
-> 
-> I'm approaching this from the perspective of running CI using this
-> AGENTS.md file - but I might be wrong on the scope of this one, as it
-> may be intended for something else (like using some IDE integrated
-> extensions where that stuff can make sense to guide generation).
+  1. AGENTS.md - consolidated review guidelines derived from
+     patches.rst, coding_style.rst, check-git-log.sh,
+     checkpatches.sh, and the Coccinelle scripts
 
-I was starting look at kernel review-prompts then making sure
-other anti-patterns in DPDK got covered.
+  2. analyze-patch.py - reviews patches against AGENTS.md using
+     AI providers (Anthropic, OpenAI, xAI, Google), with support
+     for patch series splitting and LTS-specific rules
 
-> 
-> As for the CI reviewing part, napkin math for Anthropic API shows this
-> takes up about .30c / patch (~17k tok) we would submit, and that doesn't
-> include whatever the patch context is - so I think we would exhaust any
-> budget dedicated to this really early (probably within a few dozen
-> patches).
+  3. compare-reviews.sh - runs the same patch through multiple
+     providers for comparison, auto-detecting available API keys
 
-For any reasonable size patchset I end up splitting.
-For me having more through review is higher priority than keeping cost
-down (at this point).
+  4. review-doc.py - reviews documentation files for spelling,
+     grammar, and technical accuracy, with batch processing and
+     multiple output formats
 
-> 
-> Maybe it's possible to split up the AGENTS.md file into stuff that's
-> good for review and stuff that's good for generation.  WDYT?
+  5. Contributing guide updates documenting the new tools
 
-Yes and no. Yes it could be split, but I use it for patch and existing
-code review already. This is a bigger question, what do other projects do?
-Being a "trail blazer" in this area is just extra wasted effort.
+  6. MAINTAINERS entry for the new files
+
+AI review is intended as a supplement to human review, not a
+replacement. The tools are optional and require the contributor
+to have an API key for their chosen provider.
+
+v10 - add more anti-patterns found in reviews.
+
+v9 - update AGENTS.md to cover bugs that were found in 26.03
+     and previous PVS studio scans.
+
+Stephen Hemminger (6):
+  doc: add AGENTS.md for AI code review tools
+  devtools: add multi-provider AI patch review script
+  devtools: add compare-reviews.sh for multi-provider analysis
+  devtools: add multi-provider AI documentation review script
+  doc: add AI-assisted patch review to contributing guide
+  MAINTAINERS: add section for AI review tools
+
+ AGENTS.md                              | 1882 ++++++++++++++++++++++++
+ MAINTAINERS                            |    8 +
+ devtools/analyze-patch.py              | 1334 +++++++++++++++++
+ devtools/compare-reviews.sh            |  192 +++
+ devtools/review-doc.py                 | 1098 ++++++++++++++
+ doc/guides/contributing/new_driver.rst |    2 +
+ doc/guides/contributing/patches.rst    |   56 +
+ 7 files changed, 4572 insertions(+)
+ create mode 100644 AGENTS.md
+ create mode 100755 devtools/analyze-patch.py
+ create mode 100755 devtools/compare-reviews.sh
+ create mode 100755 devtools/review-doc.py
+
+-- 
+2.51.0
 
