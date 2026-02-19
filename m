@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F17E7E9A04A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 507BAE9A04A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:26:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3328F40A8A;
-	Thu, 19 Feb 2026 17:23:56 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4543240B91;
+	Thu, 19 Feb 2026 17:23:57 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 8636B40685
- for <dev@dpdk.org>; Thu, 19 Feb 2026 17:23:40 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 85BEE4065C
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 17:23:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771518221; x=1803054221;
+ t=1771518223; x=1803054223;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=q2soMFwotkJRVdtjvswcDjomE6B+mQTCCPvuzLeEekw=;
- b=DMf+503fApodlLgUKKx3xOyATAFB1j043DCWUYkP4uU+lz945dTf0ETG
- lyZ6t+3pfl9wJ96aJsPJfrcoGRTTEuwQIDKljRsXzZnroDJCARYmVUPhN
- FsCctjws1e/SFNvgERRkRk8d5vpsv++Taz0jN6of5Hhcc8K4l36oXDLLZ
- d5qs57DPDVG/rRsH7Xpd3dKHa7oE5N03pX7n+unFyhaW3+v6PmBK7QP4B
- Q3MfgH6oOenpoviSKCId3l4EtR3XE5ICVMGHpg1x9mxMOSZ1WPBH1jw91
- Ao1Q0pYjRrRXBKqet2dlksUlu0tLz52cdeKZG4KwMWLIdvZOoomuZGVmZ Q==;
-X-CSE-ConnectionGUID: Oh2frMGfSxKGTE/0SJYa7A==
-X-CSE-MsgGUID: K/84GWAySDaY4IPXEhoHuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="83231462"
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="83231462"
+ bh=V64Js9vumK2mni0kFJcKUf4Iabhg6U/1tM6QX0bhji8=;
+ b=IVWBmHsVULP10et4Y/cRJ8Q8JuoHjWXXdJJ+zMA60jplCQ3JCikiF/LA
+ jDe7DNg+i2ORyTyTj/okAWGpmlwGEWzBqQw28z1GhfB8oYzjO02WTU29k
+ QvTcnWwA/bUGo1MN6ln7Fa3IMYjGOPN0fIhSe5mFScMUPg6j231cNEXP1
+ CCjhd4YLBrZXIENd5cSkmr+3PVuIxgIgX7YrhFBPszv18CSGh71UZTbz8
+ UFCO8PK+bcf23988CaLZnKCwwMokF1JSyUc5GS2qziNDtBDpbZ5iAVx9S
+ TajpRVySY/ni89dxNQfPiMskm5ZcSd4GEOcPgRYlDSQ5nPz1PcmQNhq6g w==;
+X-CSE-ConnectionGUID: BHIxQZ34Qxu58/g1ZK9krg==
+X-CSE-MsgGUID: HoO12Z0ERZC9OoIF9ZoWDQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="83231463"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="83231463"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Feb 2026 08:23:40 -0800
-X-CSE-ConnectionGUID: YyMOFAhZTsmWYh1YTzxTmA==
-X-CSE-MsgGUID: WXW8zoJCSkanIGaFKK+pSg==
+ 19 Feb 2026 08:23:42 -0800
+X-CSE-ConnectionGUID: 0t+O5yLPTx2pHTHAadPAaA==
+X-CSE-MsgGUID: IES59wlwTCG88Vj3KGh3Zg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="218699972"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="218699980"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 19 Feb 2026 08:23:40 -0800
+ by orviesa003.jf.intel.com with ESMTP; 19 Feb 2026 08:23:41 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v6 21/27] net/iavf: avoid rte malloc in IPsec operations
-Date: Thu, 19 Feb 2026 16:23:04 +0000
-Message-ID: <5cace9bf0fec58b0a4a74deb852f9e24a06a717f.1771518103.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 22/27] net/iavf: avoid rte malloc in queue operations
+Date: Thu, 19 Feb 2026 16:23:05 +0000
+Message-ID: <6eec08167d5c15817cbeeb725a5f942850cab005.1771518103.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771518103.git.anatoly.burakov@intel.com>
  <cover.1771518103.git.anatoly.burakov@intel.com>
@@ -60,222 +60,374 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when performing IPsec security association operations and
-retrieving device capabilities, we are using rte_malloc followed by
-immediate rte_free. This memory does not need to be stored in hugepage
-memory and the allocation size can be pretty small, so replace with stack
+Currently, when enabling, disabling, or switching queues, we are using
+rte_malloc followed by an immediate rte_free. This is not needed as these
+structures are not being stored anywhere, so replace them with stack
 allocation.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
----
- drivers/net/intel/iavf/iavf_ipsec_crypto.c | 122 +++++++--------------
- 1 file changed, 38 insertions(+), 84 deletions(-)
+The original code did not check maximum queue number, because the design
+was built around an anti-pattern of caller having to chunk the queue
+configuration. This has now been corrected as well.
 
-diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-index aa4cf1d96d..98aa8b115b 100644
---- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-+++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-@@ -3,6 +3,7 @@
-  */
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ drivers/net/intel/iavf/iavf.h        |   3 +-
+ drivers/net/intel/iavf/iavf_ethdev.c |  15 +-
+ drivers/net/intel/iavf/iavf_vchnl.c  | 212 ++++++++++++++-------------
+ 3 files changed, 115 insertions(+), 115 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 6054321771..77a2c94290 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -503,8 +503,7 @@ int iavf_disable_queues(struct iavf_adapter *adapter);
+ int iavf_disable_queues_lv(struct iavf_adapter *adapter);
+ int iavf_configure_rss_lut(struct iavf_adapter *adapter);
+ int iavf_configure_rss_key(struct iavf_adapter *adapter);
+-int iavf_configure_queues(struct iavf_adapter *adapter,
+-			uint16_t num_queue_pairs, uint16_t index);
++int iavf_configure_queues(struct iavf_adapter *adapter, uint16_t num_queue_pairs);
+ int iavf_get_supported_rxdid(struct iavf_adapter *adapter);
+ int iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable);
+ int iavf_config_vlan_insert_v2(struct iavf_adapter *adapter, bool enable);
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index f74a0cb21f..f7bfd099ed 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1036,20 +1036,7 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ 	if (iavf_set_vf_quanta_size(adapter, index, num_queue_pairs) != 0)
+ 		PMD_DRV_LOG(WARNING, "configure quanta size failed");
  
- #include <stdalign.h>
-+#include <stdlib.h>
- 
- #include <rte_cryptodev.h>
- #include <rte_ethdev.h>
-@@ -902,29 +903,18 @@ static uint32_t
- iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
- 	struct iavf_security_session *sess)
- {
--	struct inline_ipsec_msg *request = NULL, *response = NULL;
--	size_t request_len, response_len;
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_sa_destroy sa_destroy;
-+	} req = {0};
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_resp resp;
-+	} resp = {0};
-+	struct inline_ipsec_msg *request = &req.msg, *response = &resp.msg;
- 
- 	int rc = 0;
- 
--	request_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_sa_destroy);
--
--	request = rte_malloc("iavf-sa-del-request", request_len, 0);
--	if (request == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
+-	/* If needed, send configure queues msg multiple times to make the
+-	 * adminq buffer length smaller than the 4K limitation.
+-	 */
+-	while (num_queue_pairs > IAVF_CFG_Q_NUM_PER_BUF) {
+-		if (iavf_configure_queues(adapter,
+-				IAVF_CFG_Q_NUM_PER_BUF, index) != 0) {
+-			PMD_DRV_LOG(ERR, "configure queues failed");
+-			goto error;
+-		}
+-		num_queue_pairs -= IAVF_CFG_Q_NUM_PER_BUF;
+-		index += IAVF_CFG_Q_NUM_PER_BUF;
 -	}
 -
--	response_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_resp);
--
--	response = rte_malloc("iavf-sa-del-response", response_len, 0);
--	if (response == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
- 	/* set msg header params */
- 	request->ipsec_opcode = INLINE_IPSEC_OP_SA_DESTROY;
- 	request->req_id = (uint16_t)0xDEADBEEF;
-@@ -942,10 +932,10 @@ iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
- 
- 	/* send virtual channel request to add SA to hardware database */
- 	rc = iavf_ipsec_crypto_request(adapter,
--			(uint8_t *)request, request_len,
--			(uint8_t *)response, response_len);
-+			(uint8_t *)request, sizeof(req),
-+			(uint8_t *)response, sizeof(resp));
- 	if (rc)
--		goto update_cleanup;
-+		return rc;
- 
- 	/* verify response */
- 	if (response->ipsec_opcode != request->ipsec_opcode ||
-@@ -960,10 +950,6 @@ iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
- 			response->ipsec_data.ipsec_status->status)
- 		rc = -EFAULT;
- 
--update_cleanup:
--	rte_free(response);
--	rte_free(request);
--
- 	return rc;
- }
- 
-@@ -1109,51 +1095,35 @@ static int
- iavf_ipsec_crypto_device_capabilities_get(struct iavf_adapter *adapter,
- 		struct virtchnl_ipsec_cap *capability)
- {
-+	struct {
-+		struct inline_ipsec_msg msg;
-+	} req = {0};
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_cap cap;
-+	} resp = {0};
- 	/* Perform pf-vf comms */
--	struct inline_ipsec_msg *request = NULL, *response = NULL;
--	size_t request_len, response_len;
-+	struct inline_ipsec_msg *request = &req.msg, *response = &resp.msg;
- 	int rc;
- 
--	request_len = sizeof(struct inline_ipsec_msg);
--
--	request = rte_malloc("iavf-device-capability-request", request_len, 0);
--	if (request == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
--	response_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_cap);
--	response = rte_malloc("iavf-device-capability-response",
--			response_len, 0);
--	if (response == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
- 	/* set msg header params */
- 	request->ipsec_opcode = INLINE_IPSEC_OP_GET_CAP;
- 	request->req_id = (uint16_t)0xDEADBEEF;
- 
- 	/* send virtual channel request to add SA to hardware database */
- 	rc = iavf_ipsec_crypto_request(adapter,
--			(uint8_t *)request, request_len,
--			(uint8_t *)response, response_len);
-+			(uint8_t *)request, sizeof(req),
-+			(uint8_t *)response, sizeof(resp));
- 	if (rc)
--		goto update_cleanup;
-+		return rc;
- 
- 	/* verify response id */
- 	if (response->ipsec_opcode != request->ipsec_opcode ||
- 		response->req_id != request->req_id){
--		rc = -EFAULT;
--		goto update_cleanup;
-+		return -EFAULT;
+-	if (iavf_configure_queues(adapter, num_queue_pairs, index) != 0) {
++	if (iavf_configure_queues(adapter, num_queue_pairs) != 0) {
+ 		PMD_DRV_LOG(ERR, "configure queues failed");
+ 		goto error;
  	}
- 	memcpy(capability, response->ipsec_data.ipsec_cap, sizeof(*capability));
- 
--update_cleanup:
--	rte_free(response);
--	rte_free(request);
--
- 	return rc;
- }
- 
-@@ -1535,50 +1505,34 @@ iavf_ipsec_crypto_status_get(struct iavf_adapter *adapter,
- 		struct virtchnl_ipsec_status *status)
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index f44dc7e7be..f0ab3b950b 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -1020,19 +1020,15 @@ int
+ iavf_enable_queues_lv(struct iavf_adapter *adapter)
  {
- 	/* Perform pf-vf comms */
--	struct inline_ipsec_msg *request = NULL, *response = NULL;
--	size_t request_len, response_len;
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+-	struct virtchnl_del_ena_dis_queues *queue_select;
+-	struct virtchnl_queue_chunk *queue_chunk;
 +	struct {
-+		struct inline_ipsec_msg msg;
-+	} req = {0};
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_cap cap;
-+	} resp = {0};
-+	struct inline_ipsec_msg *request = &req.msg, *response = &resp.msg;
- 	int rc;
++		struct virtchnl_del_ena_dis_queues msg;
++		struct virtchnl_queue_chunk chunks[IAVF_RXTX_QUEUE_CHUNKS_NUM - 1];
++	} queue_req = {0};
++	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
++	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
+ 	struct iavf_cmd_info args;
+-	int err, len;
++	int err;
  
--	request_len = sizeof(struct inline_ipsec_msg);
+-	len = sizeof(struct virtchnl_del_ena_dis_queues) +
+-		  sizeof(struct virtchnl_queue_chunk) *
+-		  (IAVF_RXTX_QUEUE_CHUNKS_NUM - 1);
+-	queue_select = rte_zmalloc("queue_select", len, 0);
+-	if (!queue_select)
+-		return -ENOMEM;
 -
--	request = rte_malloc("iavf-device-status-request", request_len, 0);
--	if (request == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
--	response_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_cap);
--	response = rte_malloc("iavf-device-status-response",
--			response_len, 0);
--	if (response == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
- 	/* set msg header params */
- 	request->ipsec_opcode = INLINE_IPSEC_OP_GET_STATUS;
- 	request->req_id = (uint16_t)0xDEADBEEF;
+-	queue_chunk = queue_select->chunks.chunks;
+ 	queue_select->chunks.num_chunks = IAVF_RXTX_QUEUE_CHUNKS_NUM;
+ 	queue_select->vport_id = vf->vsi_res->vsi_id;
  
- 	/* send virtual channel request to add SA to hardware database */
- 	rc = iavf_ipsec_crypto_request(adapter,
--			(uint8_t *)request, request_len,
--			(uint8_t *)response, response_len);
-+			(uint8_t *)request, sizeof(req),
-+			(uint8_t *)response, sizeof(resp));
- 	if (rc)
--		goto update_cleanup;
-+		return rc;
+@@ -1048,7 +1044,7 @@ iavf_enable_queues_lv(struct iavf_adapter *adapter)
  
- 	/* verify response id */
- 	if (response->ipsec_opcode != request->ipsec_opcode ||
--		response->req_id != request->req_id){
--		rc = -EFAULT;
--		goto update_cleanup;
-+			response->req_id != request->req_id){
-+		return -EFAULT;
- 	}
- 	memcpy(status, response->ipsec_data.ipsec_status, sizeof(*status));
+ 	args.ops = VIRTCHNL_OP_ENABLE_QUEUES_V2;
+ 	args.in_args = (u8 *)queue_select;
+-	args.in_args_size = len;
++	args.in_args_size = sizeof(queue_req);
+ 	args.out_buffer = vf->aq_resp;
+ 	args.out_size = IAVF_AQ_BUF_SZ;
+ 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
+@@ -1056,7 +1052,6 @@ iavf_enable_queues_lv(struct iavf_adapter *adapter)
+ 		PMD_DRV_LOG(ERR,
+ 			    "Failed to execute command of OP_ENABLE_QUEUES_V2");
  
--update_cleanup:
--	rte_free(response);
--	rte_free(request);
--
- 	return rc;
+-	rte_free(queue_select);
+ 	return err;
  }
  
+@@ -1064,19 +1059,15 @@ int
+ iavf_disable_queues_lv(struct iavf_adapter *adapter)
+ {
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+-	struct virtchnl_del_ena_dis_queues *queue_select;
+-	struct virtchnl_queue_chunk *queue_chunk;
++	struct {
++		struct virtchnl_del_ena_dis_queues msg;
++		struct virtchnl_queue_chunk chunks[IAVF_RXTX_QUEUE_CHUNKS_NUM - 1];
++	} queue_req = {0};
++	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
++	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
+ 	struct iavf_cmd_info args;
+-	int err, len;
++	int err;
+ 
+-	len = sizeof(struct virtchnl_del_ena_dis_queues) +
+-		  sizeof(struct virtchnl_queue_chunk) *
+-		  (IAVF_RXTX_QUEUE_CHUNKS_NUM - 1);
+-	queue_select = rte_zmalloc("queue_select", len, 0);
+-	if (!queue_select)
+-		return -ENOMEM;
+-
+-	queue_chunk = queue_select->chunks.chunks;
+ 	queue_select->chunks.num_chunks = IAVF_RXTX_QUEUE_CHUNKS_NUM;
+ 	queue_select->vport_id = vf->vsi_res->vsi_id;
+ 
+@@ -1092,7 +1083,7 @@ iavf_disable_queues_lv(struct iavf_adapter *adapter)
+ 
+ 	args.ops = VIRTCHNL_OP_DISABLE_QUEUES_V2;
+ 	args.in_args = (u8 *)queue_select;
+-	args.in_args_size = len;
++	args.in_args_size = sizeof(queue_req);
+ 	args.out_buffer = vf->aq_resp;
+ 	args.out_size = IAVF_AQ_BUF_SZ;
+ 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
+@@ -1100,7 +1091,6 @@ iavf_disable_queues_lv(struct iavf_adapter *adapter)
+ 		PMD_DRV_LOG(ERR,
+ 			    "Failed to execute command of OP_DISABLE_QUEUES_V2");
+ 
+-	rte_free(queue_select);
+ 	return err;
+ }
+ 
+@@ -1109,17 +1099,14 @@ iavf_switch_queue_lv(struct iavf_adapter *adapter, uint16_t qid,
+ 		 bool rx, bool on)
+ {
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+-	struct virtchnl_del_ena_dis_queues *queue_select;
+-	struct virtchnl_queue_chunk *queue_chunk;
++	struct {
++		struct virtchnl_del_ena_dis_queues msg;
++	} queue_req = {0};
++	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
++	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
+ 	struct iavf_cmd_info args;
+-	int err, len;
++	int err;
+ 
+-	len = sizeof(struct virtchnl_del_ena_dis_queues);
+-	queue_select = rte_zmalloc("queue_select", len, 0);
+-	if (!queue_select)
+-		return -ENOMEM;
+-
+-	queue_chunk = queue_select->chunks.chunks;
+ 	queue_select->chunks.num_chunks = 1;
+ 	queue_select->vport_id = vf->vsi_res->vsi_id;
+ 
+@@ -1138,7 +1125,7 @@ iavf_switch_queue_lv(struct iavf_adapter *adapter, uint16_t qid,
+ 	else
+ 		args.ops = VIRTCHNL_OP_DISABLE_QUEUES_V2;
+ 	args.in_args = (u8 *)queue_select;
+-	args.in_args_size = len;
++	args.in_args_size = sizeof(queue_req);
+ 	args.out_buffer = vf->aq_resp;
+ 	args.out_size = IAVF_AQ_BUF_SZ;
+ 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
+@@ -1146,7 +1133,6 @@ iavf_switch_queue_lv(struct iavf_adapter *adapter, uint16_t qid,
+ 		PMD_DRV_LOG(ERR, "Failed to execute command of %s",
+ 			    on ? "OP_ENABLE_QUEUES_V2" : "OP_DISABLE_QUEUES_V2");
+ 
+-	rte_free(queue_select);
+ 	return err;
+ }
+ 
+@@ -1214,88 +1200,116 @@ iavf_configure_rss_key(struct iavf_adapter *adapter)
+ 	return err;
+ }
+ 
+-int
+-iavf_configure_queues(struct iavf_adapter *adapter,
+-		uint16_t num_queue_pairs, uint16_t index)
++static void
++iavf_configure_queue_pair(struct iavf_adapter *adapter,
++		struct virtchnl_queue_pair_info *vc_qp,
++		uint16_t q_idx)
+ {
++	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+ 	struct ci_rx_queue **rxq = (struct ci_rx_queue **)adapter->dev_data->rx_queues;
+ 	struct ci_tx_queue **txq = (struct ci_tx_queue **)adapter->dev_data->tx_queues;
++
++	/* common parts */
++	vc_qp->txq.vsi_id = vf->vsi_res->vsi_id;
++	vc_qp->txq.queue_id = q_idx;
++
++	vc_qp->rxq.vsi_id = vf->vsi_res->vsi_id;
++	vc_qp->rxq.queue_id = q_idx;
++	vc_qp->rxq.max_pkt_size = vf->max_pkt_len;
++
++	/* is this txq active? */
++	if (q_idx < adapter->dev_data->nb_tx_queues) {
++		vc_qp->txq.ring_len = txq[q_idx]->nb_tx_desc;
++		vc_qp->txq.dma_ring_addr = txq[q_idx]->tx_ring_dma;
++	}
++
++	/* is this rxq active? */
++	if (q_idx >= adapter->dev_data->nb_rx_queues)
++		return;
++
++	vc_qp->rxq.ring_len = rxq[q_idx]->nb_rx_desc;
++	vc_qp->rxq.dma_ring_addr = rxq[q_idx]->rx_ring_phys_addr;
++	vc_qp->rxq.databuffer_size = rxq[q_idx]->rx_buf_len;
++	vc_qp->rxq.crc_disable = rxq[q_idx]->crc_len != 0 ? 1 : 0;
++	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_RX_FLEX_DESC) {
++		if (vf->supported_rxdid & RTE_BIT64(rxq[q_idx]->rxdid)) {
++			vc_qp->rxq.rxdid = rxq[q_idx]->rxdid;
++			PMD_DRV_LOG(NOTICE, "request RXDID[%d] in Queue[%d]",
++					vc_qp->rxq.rxdid, q_idx);
++		} else {
++			PMD_DRV_LOG(NOTICE, "RXDID[%d] is not supported, "
++					"request default RXDID[%d] in Queue[%d]",
++					rxq[q_idx]->rxdid, IAVF_RXDID_LEGACY_1, q_idx);
++			vc_qp->rxq.rxdid = IAVF_RXDID_LEGACY_1;
++		}
++
++		if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_PTP &&
++			vf->ptp_caps & VIRTCHNL_1588_PTP_CAP_RX_TSTAMP &&
++			rxq[q_idx]->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP)
++			vc_qp->rxq.flags |= VIRTCHNL_PTP_RX_TSTAMP;
++	}
++}
++
++static int
++iavf_configure_queue_chunk(struct iavf_adapter *adapter,
++		uint16_t chunk_sz,
++		uint16_t chunk_start)
++{
+ 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+-	struct virtchnl_vsi_queue_config_info *vc_config;
+-	struct virtchnl_queue_pair_info *vc_qp;
+-	struct iavf_cmd_info args;
+-	uint16_t i, size;
++	struct {
++		struct virtchnl_vsi_queue_config_info config;
++		struct virtchnl_queue_pair_info qp[IAVF_CFG_Q_NUM_PER_BUF];
++	} queue_req = {0};
++	struct iavf_cmd_info args = {0};
++	struct virtchnl_vsi_queue_config_info *vc_config = &queue_req.config;
++	struct virtchnl_queue_pair_info *vc_qp = vc_config->qpair;
++	uint16_t chunk_end = chunk_start + chunk_sz;
++	uint16_t i;
+ 	int err;
+ 
+-	size = sizeof(*vc_config) +
+-	       sizeof(vc_config->qpair[0]) * num_queue_pairs;
+-	vc_config = rte_zmalloc("cfg_queue", size, 0);
+-	if (!vc_config)
+-		return -ENOMEM;
++	if (chunk_sz > IAVF_CFG_Q_NUM_PER_BUF)
++		return -EINVAL;
+ 
+ 	vc_config->vsi_id = vf->vsi_res->vsi_id;
+-	vc_config->num_queue_pairs = num_queue_pairs;
++	vc_config->num_queue_pairs = chunk_sz;
+ 
+-	for (i = index, vc_qp = vc_config->qpair;
+-		 i < index + num_queue_pairs;
+-	     i++, vc_qp++) {
+-		vc_qp->txq.vsi_id = vf->vsi_res->vsi_id;
+-		vc_qp->txq.queue_id = i;
++	for (i = chunk_start; i < chunk_end; i++, vc_qp++)
++		iavf_configure_queue_pair(adapter, vc_qp, i);
+ 
+-		/* Virtchnnl configure tx queues by pairs */
+-		if (i < adapter->dev_data->nb_tx_queues) {
+-			vc_qp->txq.ring_len = txq[i]->nb_tx_desc;
+-			vc_qp->txq.dma_ring_addr = txq[i]->tx_ring_dma;
+-		}
+-
+-		vc_qp->rxq.vsi_id = vf->vsi_res->vsi_id;
+-		vc_qp->rxq.queue_id = i;
+-		vc_qp->rxq.max_pkt_size = vf->max_pkt_len;
+-
+-		if (i >= adapter->dev_data->nb_rx_queues)
+-			continue;
+-
+-		/* Virtchnnl configure rx queues by pairs */
+-		vc_qp->rxq.ring_len = rxq[i]->nb_rx_desc;
+-		vc_qp->rxq.dma_ring_addr = rxq[i]->rx_ring_phys_addr;
+-		vc_qp->rxq.databuffer_size = rxq[i]->rx_buf_len;
+-		vc_qp->rxq.crc_disable = rxq[i]->crc_len != 0 ? 1 : 0;
+-		if (vf->vf_res->vf_cap_flags &
+-		    VIRTCHNL_VF_OFFLOAD_RX_FLEX_DESC) {
+-			if (vf->supported_rxdid & RTE_BIT64(rxq[i]->rxdid)) {
+-				vc_qp->rxq.rxdid = rxq[i]->rxdid;
+-				PMD_DRV_LOG(NOTICE, "request RXDID[%d] in Queue[%d]",
+-					    vc_qp->rxq.rxdid, i);
+-			} else {
+-				PMD_DRV_LOG(NOTICE, "RXDID[%d] is not supported, "
+-					    "request default RXDID[%d] in Queue[%d]",
+-					    rxq[i]->rxdid, IAVF_RXDID_LEGACY_1, i);
+-				vc_qp->rxq.rxdid = IAVF_RXDID_LEGACY_1;
+-			}
+-
+-			if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_CAP_PTP &&
+-			    vf->ptp_caps & VIRTCHNL_1588_PTP_CAP_RX_TSTAMP &&
+-			    rxq[i]->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP)
+-				vc_qp->rxq.flags |= VIRTCHNL_PTP_RX_TSTAMP;
+-		}
+-	}
+-
+-	memset(&args, 0, sizeof(args));
+ 	args.ops = VIRTCHNL_OP_CONFIG_VSI_QUEUES;
+ 	args.in_args = (uint8_t *)vc_config;
+-	args.in_args_size = size;
++	args.in_args_size = sizeof(queue_req);
+ 	args.out_buffer = vf->aq_resp;
+ 	args.out_size = IAVF_AQ_BUF_SZ;
+ 
+ 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
+ 	if (err)
+-		PMD_DRV_LOG(ERR, "Failed to execute command of"
+-			    " VIRTCHNL_OP_CONFIG_VSI_QUEUES");
+-
+-	rte_free(vc_config);
++		PMD_DRV_LOG(ERR, "Failed to execute command VIRTCHNL_OP_CONFIG_VSI_QUEUES");
+ 	return err;
+ }
+ 
++int
++iavf_configure_queues(struct iavf_adapter *adapter, uint16_t num_queue_pairs)
++{
++	uint16_t c;
++	int err;
++
++	/*
++	 * we cannot configure all queues in one go because they won't fit into
++	 * adminq buffer, so we're going to chunk them instead
++	 */
++	for (c = 0; c < num_queue_pairs; c += IAVF_CFG_Q_NUM_PER_BUF) {
++		uint16_t chunk_sz = RTE_MIN(num_queue_pairs - c, IAVF_CFG_Q_NUM_PER_BUF);
++		err = iavf_configure_queue_chunk(adapter, chunk_sz, c);
++		if (err) {
++			PMD_DRV_LOG(ERR, "Failed to configure queues chunk [%u, %u)",
++					c, c + chunk_sz);
++			return err;
++		}
++	}
++	return 0;
++}
++
+ int
+ iavf_config_irq_map(struct iavf_adapter *adapter)
+ {
 -- 
 2.47.3
 
