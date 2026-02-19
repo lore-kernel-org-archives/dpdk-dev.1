@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5620AE9A04C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 09:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236FDE9A04C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 09:09:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7BA7540395;
-	Thu, 19 Feb 2026 10:09:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 67C194064C;
+	Thu, 19 Feb 2026 10:09:18 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id BF2A4402F2
- for <dev@dpdk.org>; Thu, 19 Feb 2026 10:09:07 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 6272D402CC
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 10:09:17 +0100 (CET)
 Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
  by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 61J288GV553489 for <dev@dpdk.org>; Thu, 19 Feb 2026 01:09:07 -0800
+ 61J28mZa554604 for <dev@dpdk.org>; Thu, 19 Feb 2026 01:09:16 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=1
- McNzd1VzunW+zZrDeKJ0Whd8feyCFTh+5kcicQ6KM8=; b=PbitqHSdD9mFD68DR
- 9a4Hh1eOZoVyNIemGn1XnjzlvUGW462sMuF30YHkYyNue7e6qBeDhCAZufV0nv4P
- ULPnQmDj93FMnbCB7FJR0cGLnddJnyeA5f0UIdyqtoNi5yLeJS8Bgm90xtXUhoxg
- grHMu37kPQwhtckmOkQHxWp/mFcZQvu2n9P85bJG9y20rVQtqxfB2tyH4y0Je0uA
- asWyZjWsGT02Q9SeXajOHe4dS2Y5O7SYzL0Pbs9DtmGFGAed8zNQyoX4F39ClToq
- 8jDrY06LRepHf/4Ppbdf3xhVSyST8FmzmCK4ImeeZbWwGv6n3UPjk0dWKLCk2fw2
- s6f1w==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=f
+ mRY+FyZ6HNAG44KsmQtH5CHajeRAQTTJoLMhesEj/4=; b=U9FPIhe+CRMeBxH/V
+ tysvZJpFGveC1tKGEn0uIk9FnRX6OKxlsHSLulovgdFIMlhQfrnuA8TH7FuTeeMn
+ oUSNTRW5HYbEEQnwMTxGojB0G1HbrZi239DaEInlBBNbYGPi7p2hxQ51LP+o1+XJ
+ axl/qwenArDNqOf3/QAAQxzQIK1Jqtoh+GL/kwAMgR5IYgzx/9VwzsyRuV4IDw7e
+ 5TSFYXvGsQKMgoHu1Xo4tf+YX8g8ESPfUANj5X+KnanVj08uKe1BlzaxoPz+9gCm
+ kWqYXE8dhOPFLKWlH5BkKKan1w4E3wd2U2enY2G5ELZdAQxR2k8nqkkd8ziRTm0R
+ OPKBg==
 Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4cdsfagme2-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4cdsfagmeq-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 19 Feb 2026 01:09:05 -0800 (PST)
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 01:09:16 -0800 (PST)
 Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 19 Feb 2026 01:08:59 -0800
+ 15.2.1544.25; Thu, 19 Feb 2026 01:09:16 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
  (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 19 Feb 2026 01:08:59 -0800
+ Transport; Thu, 19 Feb 2026 01:09:16 -0800
 Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 3084F3F708A;
- Thu, 19 Feb 2026 01:08:55 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id B20AB3F7090;
+ Thu, 19 Feb 2026 01:09:13 -0800 (PST)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH 2/8] net/cnxk: support IPsec Rx inject for cn20k
-Date: Thu, 19 Feb 2026 14:38:41 +0530
-Message-ID: <20260219090847.3257753-2-rbhansali@marvell.com>
+Subject: [PATCH 6/8] net/cnxk: update SA context push size
+Date: Thu, 19 Feb 2026 14:38:45 +0530
+Message-ID: <20260219090847.3257753-6-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260219090847.3257753-1-rbhansali@marvell.com>
 References: <20260219090847.3257753-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=T/GBjvKQ c=1 sm=1 tr=0 ts=6996d331 cx=c_pps
+X-Authority-Analysis: v=2.4 cv=T/GBjvKQ c=1 sm=1 tr=0 ts=6996d33c cx=c_pps
  a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
  a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
- a=GgsMoib0sEa3-_RKJdDe:22 a=M5GUcnROAAAA:8 a=ctBjVGk8KDStni5OKZAA:9
+ a=GgsMoib0sEa3-_RKJdDe:22 a=M5GUcnROAAAA:8 a=lH-GayZZPaCz9AlQGi4A:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE5MDA4MyBTYWx0ZWRfX2WC0XuF+zONl
- uReOB8RMujo0WGunDkwPTVmJEit7SBx7pe4wsrk3vRFKm/TzwnK7bNJDp8YhaSQfTI49M+ndxKx
- hEY2fiepSDJLkf54Ru00i/WjTBFXN+qCOEFaaMY0xf83HP2kfLr7tZd0LOebskBLUwCfgupYDZy
- mKIrDBMDwP6m9A60YEgOhoBuDjLbJMfV8EFqE745dpNwIs1nGyGpMbTQ8cA3NaEweGCzlvQiw6Z
- kRwazWi5hWm6VbIvNmlsrY6PAllzbQ8KVrQiXSEg4m6fnC7xnH4F2JXyqkV5mgWUD5Z7d5oGUTV
- p151mIwxI+02bjDGO8Uadkaj3bmkcvxi/TaeTN41iZ/6vgmu0xdnqeBZ8Tz/lFaWd+QgRuEdeGI
- nEC+mMweVKxpLeQClXliFslbMddgo7PztdJ2/YDkjBDfyoNY/S0jkReg0If/CIAdokdV6Zcrag3
- BVx/En/LUzu5saTNeZw==
-X-Proofpoint-ORIG-GUID: 4eSvs6QN91pWezlO9nxKI4KrgyCFS7NK
-X-Proofpoint-GUID: 4eSvs6QN91pWezlO9nxKI4KrgyCFS7NK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjE5MDA4MyBTYWx0ZWRfXylBR3W4VhTlf
+ cAkg2FPzULr+UqS3BcGEcVqJ2YGzDIqyz1VueFMuUfwAIxX+MaZEnvF6YD1E2h5xfBxA+jsDX88
+ BafYymwwMn7nTkza4qUnT6lXCC5oFSpZcBZiciyfrU0Mi5D3dJp+GMZxvwXufhZcyp1M1qzOjwG
+ DANA5vo1+5dv13JPPJzTnj0c8nbx1J8JV9G8AtQdSxQVNJ2OJYsyuZz/6da54VSw/se0ZLDhesq
+ J8NIAJ8PvvNls8Gre8XpLHyBaKMrFgms3d5ifr1aPGbSQsFtzynBY52naWuQrO5i6Bsw7UKMIbk
+ AzkgHGFj+ey5jAFYY6DHl6G15cU2QRI3K3JR1ojciYEPTXRbRLSz+++mrrenscaPIlqyXwMgOay
+ fd8HeDH0gaJ664fTxMhNCoIWih8Jv3HVAx8Idjyi587a7OK4VfpHGY80YI9gRd3LaJDccGdBA6g
+ wuGQT7etrv86Oh49K/Q==
+X-Proofpoint-ORIG-GUID: VWMVS80LonA76d3gaAwtQvNGUyKJkXf3
+X-Proofpoint-GUID: VWMVS80LonA76d3gaAwtQvNGUyKJkXf3
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-19_02,2026-02-18_01,2025-10-01_01
@@ -83,287 +83,174 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds support of IPsec Rx inject handling for cn20k platform.
+Reduce SA context push size to 128 byte for AES_GCM encryption
+for CPT performance improvement on CN20k platform.
+Also, corrects few macros for cn20k specific.
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- doc/guides/rel_notes/release_26_03.rst |   1 +
- drivers/net/cnxk/cn20k_ethdev_sec.c    |  50 +++++++
- drivers/net/cnxk/cn20k_rx.h            | 174 +++++++++++++++++++++++++
- 3 files changed, 225 insertions(+)
+ drivers/net/cnxk/cn20k_ethdev_sec.c | 96 ++++++++++++++++++++++++++---
+ 1 file changed, 87 insertions(+), 9 deletions(-)
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index b1f9b3c82b..300e105740 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -81,6 +81,7 @@ New Features
- 
-   * Added out-of-place support for CN20K SoC.
-   * Added plain packet reassembly support for CN20K SoC.
-+  * Added IPsec Rx inject support for CN20k Soc.
- 
- * **Updated ZTE zxdh ethernet driver.**
- 
 diff --git a/drivers/net/cnxk/cn20k_ethdev_sec.c b/drivers/net/cnxk/cn20k_ethdev_sec.c
-index c6a51f99f5..e406f0e879 100644
+index e406f0e879..5553aed1b1 100644
 --- a/drivers/net/cnxk/cn20k_ethdev_sec.c
 +++ b/drivers/net/cnxk/cn20k_ethdev_sec.c
-@@ -1172,6 +1172,54 @@ eth_sec_caps_add(struct rte_security_capability eth_sec_caps[], uint32_t *idx,
- 	*idx += nb_caps;
+@@ -655,16 +655,71 @@ outb_dbg_iv_update(struct roc_ow_ipsec_outb_sa *outb_sa, const char *__iv_str)
+ 	}
+ 
+ 	/* Update source of IV */
+-	outb_sa->w2.s.iv_src = ROC_IE_OT_SA_IV_SRC_FROM_SA;
++	outb_sa->w2.s.iv_src = ROC_IE_OW_SA_IV_SRC_FROM_SA;
+ 	free(iv_str);
  }
  
-+static uint16_t __rte_hot
-+cn20k_eth_sec_inb_rx_inject(void *device, struct rte_mbuf **pkts,
-+			    struct rte_security_session **sess, uint16_t nb_pkts)
++static void
++cn20k_eth_sec_inb_sa_misc_fill(struct roc_ow_ipsec_inb_sa *sa,
++			       struct rte_security_ipsec_xform *ipsec_xfrm)
 +{
-+	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)device;
-+	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct roc_ow_ipsec_inb_ctx_update_reg *ctx;
++	size_t offset;
 +
-+	return cn20k_nix_inj_pkts(sess, &dev->inj_cfg, pkts, nb_pkts);
++	if (sa->w2.s.enc_type != ROC_IE_SA_ENC_AES_GCM)
++		return;
++
++	/* Update ctx push size for AES GCM */
++	offset = offsetof(struct roc_ow_ipsec_inb_sa, hmac_opad_ipad);
++	ctx = (struct roc_ow_ipsec_inb_ctx_update_reg *)((uint8_t *)sa + offset);
++	sa->w0.s.hw_ctx_off = offset / 8;
++	sa->w0.s.ctx_push_size = sa->w0.s.hw_ctx_off + 1;
++
++	if (ipsec_xfrm->life.bytes_soft_limit)
++		ctx->soft_life = ipsec_xfrm->life.bytes_soft_limit + 1;
++
++	if (ipsec_xfrm->life.packets_soft_limit)
++		ctx->soft_life = ipsec_xfrm->life.packets_soft_limit + 1;
++
++	if (ipsec_xfrm->life.bytes_hard_limit)
++		ctx->hard_life = ipsec_xfrm->life.bytes_hard_limit + 1;
++
++	if (ipsec_xfrm->life.packets_hard_limit)
++		ctx->hard_life = ipsec_xfrm->life.packets_hard_limit + 1;
 +}
 +
-+static int
-+cn20k_eth_sec_rx_inject_config(void *device, uint16_t port_id, bool enable)
-+{
-+	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)device;
-+	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
-+	uint64_t channel, pf_func, inj_match_id = 0xFFFFUL;
-+	struct cnxk_ethdev_inj_cfg *inj_cfg;
-+	struct roc_nix *nix = &dev->nix;
-+	struct roc_cpt_lf *inl_lf;
-+	uint64_t sa_base;
+ static int
+ cn20k_eth_sec_outb_sa_misc_fill(struct roc_nix *roc_nix, struct roc_ow_ipsec_outb_sa *sa,
+ 				void *sa_cptr, struct rte_security_ipsec_xform *ipsec_xfrm,
+ 				uint32_t sa_idx)
+ {
++	struct roc_ow_ipsec_outb_ctx_update_reg *ctx;
+ 	uint64_t *ring_base, ring_addr;
++	size_t offset;
 +
-+	if (!rte_eth_dev_is_valid_port(port_id))
-+		return -EINVAL;
++	if (sa->w2.s.enc_type == ROC_IE_SA_ENC_AES_GCM) {
++		offset = offsetof(struct roc_ow_ipsec_outb_sa, hmac_opad_ipad);
++		ctx = (struct roc_ow_ipsec_outb_ctx_update_reg *)((uint8_t *)sa + offset);
++		sa->w0.s.hw_ctx_off = offset / 8;
++		sa->w0.s.ctx_push_size = sa->w0.s.hw_ctx_off + 1;
 +
-+	if (eth_dev->data->dev_started || !eth_dev->data->dev_configured)
-+		return -EBUSY;
++		if (ipsec_xfrm->esn.value)
++			ctx->esn_val = ipsec_xfrm->esn.value - 1;
 +
-+	if (!roc_nix_inl_inb_rx_inject_enable(nix, dev->inb.inl_dev))
-+		return -ENOTSUP;
++		if (ipsec_xfrm->life.bytes_soft_limit)
++			ctx->soft_life = ipsec_xfrm->life.bytes_soft_limit + 1;
 +
-+	roc_idev_nix_rx_inject_set(port_id, enable);
++		if (ipsec_xfrm->life.packets_soft_limit)
++			ctx->soft_life = ipsec_xfrm->life.packets_soft_limit + 1;
 +
-+	inl_lf = roc_nix_inl_inb_inj_lf_get(nix);
-+	if (!inl_lf)
-+		return -ENOTSUP;
-+	sa_base = roc_nix_inl_inb_sa_base_get(nix, dev->inb.inl_dev);
++		if (ipsec_xfrm->life.bytes_hard_limit)
++			ctx->hard_life = ipsec_xfrm->life.bytes_hard_limit + 1;
 +
-+	inj_cfg = &dev->inj_cfg;
-+	inj_cfg->sa_base = sa_base | eth_dev->data->port_id;
-+	inj_cfg->io_addr = inl_lf->io_addr;
-+	inj_cfg->lmt_base = nix->lmt_base;
-+	channel = roc_nix_get_base_chan(nix);
-+	pf_func = roc_idev_nix_inl_dev_pffunc_get();
-+	inj_cfg->cmd_w0 = pf_func << 48 | inj_match_id << 32 | channel << 4;
-+
-+	return 0;
-+}
-+
- #define CPT_LMTST_BURST 32
- static uint16_t
- cn20k_inl_dev_submit(struct roc_nix_inl_dev_q *q, void *inst, uint16_t nb_inst)
-@@ -1233,6 +1281,8 @@ cn20k_eth_sec_ops_override(void)
- 	cnxk_eth_sec_ops.capabilities_get = cn20k_eth_sec_capabilities_get;
- 	cnxk_eth_sec_ops.session_update = cn20k_eth_sec_session_update;
- 	cnxk_eth_sec_ops.session_stats_get = cn20k_eth_sec_session_stats_get;
-+	cnxk_eth_sec_ops.rx_inject_configure = cn20k_eth_sec_rx_inject_config;
-+	cnxk_eth_sec_ops.inb_pkt_rx_inject = cn20k_eth_sec_inb_rx_inject;
- 
- 	/* Update platform specific rte_pmd_cnxk ops */
- 	cnxk_pmd_ops.inl_dev_submit = cn20k_inl_dev_submit;
-diff --git a/drivers/net/cnxk/cn20k_rx.h b/drivers/net/cnxk/cn20k_rx.h
-index d6c217cdf5..ca056efd30 100644
---- a/drivers/net/cnxk/cn20k_rx.h
-+++ b/drivers/net/cnxk/cn20k_rx.h
-@@ -890,6 +890,169 @@ cn20k_nix_flush_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t pk
- 
- #if defined(RTE_ARCH_ARM64)
- 
-+static __rte_always_inline uint16_t
-+cn20k_nix_rx_inj_prepare_mseg(struct rte_mbuf *m, uint64_t *cmd)
-+{
-+	union nix_send_sg_s *sg, l_sg;
-+	struct rte_mbuf *m_next;
-+	uint16_t segdw, nb_segs;
-+	uint64_t len, dlen;
-+	uint64_t *slist;
-+
-+	sg = (union nix_send_sg_s *)cmd;
-+	l_sg.u = sg->u;
-+	l_sg.u &= 0xC00000000000000; /* LD_TYPE */
-+	l_sg.subdc = NIX_SUBDC_SG;
-+	nb_segs = m->nb_segs;
-+	len = m->pkt_len;
-+	slist = &cmd[1];
-+
-+	/* Fill mbuf segments */
-+	do {
-+		*slist = rte_pktmbuf_iova(m);
-+		dlen = m->data_len;
-+		len -= dlen;
-+
-+		/* Set the segment length */
-+		l_sg.u |= ((uint64_t)dlen << (l_sg.segs << 4));
-+		l_sg.segs += 1;
-+		slist++;
-+		nb_segs--;
-+		if (l_sg.segs > 2 && nb_segs) {
-+			sg->u = l_sg.u;
-+			/* Next SG subdesc */
-+			sg = (union nix_send_sg_s *)slist;
-+			l_sg.u = sg->u;
-+			l_sg.u &= 0xC00000000000000; /* LD_TYPE */
-+			l_sg.subdc = NIX_SUBDC_SG;
-+			slist++;
-+		}
-+		m_next = m->next;
-+		m = m_next;
-+	} while (nb_segs);
-+
-+	/* Add remaining bytes of data to last seg */
-+	if (len) {
-+		uint8_t shft = (l_sg.subdc == NIX_SUBDC_SG) ? ((l_sg.segs - 1) << 4) : 0;
-+		dlen = ((l_sg.u >> shft) & 0xFFFFULL) + len;
-+		l_sg.u = l_sg.u & ~(0xFFFFULL << shft);
-+		l_sg.u |= dlen << shft;
++		if (ipsec_xfrm->life.packets_hard_limit)
++			ctx->hard_life = ipsec_xfrm->life.packets_hard_limit + 1;
++	} else {
++		ctx = &sa->ctx;
 +	}
-+	/* Write the last subdc out */
-+	sg->u = l_sg.u;
+ 
+ 	if (roc_nix_inl_is_cq_ena(roc_nix))
+ 		goto done;
+@@ -675,8 +730,8 @@ cn20k_eth_sec_outb_sa_misc_fill(struct roc_nix *roc_nix, struct roc_ow_ipsec_out
+ 			return -ENOTSUP;
+ 
+ 		ring_addr = ring_base[sa_idx >> ROC_NIX_SOFT_EXP_ERR_RING_MAX_ENTRY_LOG2];
+-		sa->ctx.err_ctl.s.mode = ROC_IE_OT_ERR_CTL_MODE_RING;
+-		sa->ctx.err_ctl.s.address = ring_addr >> 3;
++		ctx->err_ctl.s.mode = ROC_IE_OW_ERR_CTL_MODE_RING;
++		ctx->err_ctl.s.address = ring_addr >> 3;
+ 		sa->w0.s.ctx_id = ((uintptr_t)sa_cptr >> 51) & 0x1ff;
+ 	}
+ done:
+@@ -751,7 +806,7 @@ cn20k_eth_sec_session_create(void *device, struct rte_security_session_conf *con
+ 		uintptr_t sa;
+ 
+ 		PLT_STATIC_ASSERT(sizeof(struct cn20k_inb_priv_data) <
+-				  ROC_NIX_INL_OT_IPSEC_INB_SW_RSVD);
++				  ROC_NIX_INL_OW_IPSEC_INB_SW_RSVD);
+ 
+ 		spi_mask = roc_nix_inl_inb_spi_range(nix, inl_dev, NULL, NULL);
+ 
+@@ -796,6 +851,8 @@ cn20k_eth_sec_session_create(void *device, struct rte_security_session_conf *con
+ 			goto err;
+ 		}
+ 
++		cn20k_eth_sec_inb_sa_misc_fill(inb_sa_dptr, ipsec);
 +
-+	segdw = (uint64_t *)slist - cmd;
-+	/* Roundup extra dwords to multiple of 2 */
-+	segdw = (segdw >> 1) + (segdw & 0x1);
-+	return segdw;
-+}
+ 		inb_priv = roc_nix_inl_ow_ipsec_inb_sa_sw_rsvd(inb_sa);
+ 		/* Back pointer to get eth_sec */
+ 		inb_priv->eth_sec = eth_sec;
+@@ -856,7 +913,7 @@ cn20k_eth_sec_session_create(void *device, struct rte_security_session_conf *con
+ 		uint32_t sa_idx;
+ 
+ 		PLT_STATIC_ASSERT(sizeof(struct cn20k_outb_priv_data) <
+-				  ROC_NIX_INL_OT_IPSEC_OUTB_SW_RSVD);
++				  ROC_NIX_INL_OW_IPSEC_OUTB_SW_RSVD);
+ 
+ 		/* Alloc an sa index */
+ 		rc = cnxk_eth_outb_sa_idx_get(dev, &sa_idx, ipsec->spi);
+@@ -1138,6 +1195,7 @@ cn20k_eth_sec_session_stats_get(void *device, struct rte_security_session *sess,
+ 	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)device;
+ 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
+ 	struct cnxk_eth_sec_sess *eth_sec;
++	size_t offset;
+ 	int rc;
+ 
+ 	eth_sec = cnxk_eth_sec_sess_get_by_sess(dev, sess);
+@@ -1152,11 +1210,31 @@ cn20k_eth_sec_session_stats_get(void *device, struct rte_security_session *sess,
+ 	stats->protocol = RTE_SECURITY_PROTOCOL_IPSEC;
+ 
+ 	if (eth_sec->inb) {
+-		stats->ipsec.ipackets = ((struct roc_ow_ipsec_inb_sa *)eth_sec->sa)->ctx.mib_pkts;
+-		stats->ipsec.ibytes = ((struct roc_ow_ipsec_inb_sa *)eth_sec->sa)->ctx.mib_octs;
++		struct roc_ow_ipsec_inb_sa *sa = (struct roc_ow_ipsec_inb_sa *)eth_sec->sa;
++		struct roc_ow_ipsec_inb_ctx_update_reg *ctx;
 +
-+static __rte_always_inline uint16_t
-+cn20k_nix_inj_pkts(struct rte_security_session **sess, struct cnxk_ethdev_inj_cfg *inj_cfg,
-+		   struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	uintptr_t c_lbase = inj_cfg->lmt_base;
-+	struct cn20k_sec_sess_priv sess_priv;
-+	uint64_t sa_base = inj_cfg->sa_base;
-+	uint16_t c_lmt_id, burst, left, i;
-+	uintptr_t cptres, rxphdr, dptr;
-+	struct rte_mbuf *m, *last;
-+	uint64_t sa, w0, gthr_sz;
-+	uint8_t lnum, shft, loff;
-+	uint64x2_t cmd01, cmd23;
-+	uint64_t ucode_cmd[4];
-+	rte_iova_t c_io_addr;
-+	uint16_t segdw, segs;
-+	uint64_t *laddr;
-+
-+	/* Get LMT base address and LMT ID as lcore id */
-+	ROC_LMT_CPT_BASE_ID_GET(c_lbase, c_lmt_id);
-+	c_io_addr = inj_cfg->io_addr;
-+
-+	left = nb_pkts;
-+again:
-+	burst = left > 32 ? 32 : left;
-+
-+	lnum = 0;
-+	loff = 0;
-+	shft = 16;
-+
-+	for (i = 0; i < burst; i++) {
-+		m = tx_pkts[i];
-+		sess_priv.u64 = sess[i]->fast_mdata;
-+		last = rte_pktmbuf_lastseg(m);
-+
-+		cptres = rte_pktmbuf_mtod_offset(last, uintptr_t, last->data_len);
-+		cptres += BIT_ULL(7);
-+		cptres = (cptres - 1) & ~(BIT_ULL(7) - 1);
-+		segs = m->nb_segs;
-+
-+		if (segs > 1) {
-+			/* Pointer to WQE header */
-+			/* Reserve 8 Dwords of WQE Hdr + Rx Parse Hdr */
-+			rxphdr = cptres + 8;
-+			dptr = rxphdr + 7 * 8;
-+			/* Prepare Multiseg SG list */
-+			segdw = cn20k_nix_rx_inj_prepare_mseg(m, (uint64_t *)(dptr));
-+			*(uint64_t *)rxphdr = (uint64_t)(segdw - 1) << 12;
-+			cptres += 64 + segdw * 16;
-+			gthr_sz = (segs % 3) == 0 ? (segs / 3) : (segs / 3 + 1);
-+			ucode_cmd[1] = dptr | (gthr_sz << 60);
++		if (sa->w2.s.enc_type == ROC_IE_SA_ENC_AES_GCM) {
++			offset = offsetof(struct roc_ow_ipsec_inb_sa, hmac_opad_ipad);
++			ctx = (struct roc_ow_ipsec_inb_ctx_update_reg *)((uint8_t *)sa + offset);
 +		} else {
-+			dptr = (uint64_t)rte_pktmbuf_iova(m);
-+			ucode_cmd[1] = dptr;
++			ctx = &sa->ctx;
 +		}
 +
-+		/* Prepare CPT instruction */
-+		/* CPT word 0 and 1 */
-+		cmd01 = vdupq_n_u64(0);
-+		w0 = inj_cfg->cmd_w0 | ((uint64_t)m->l2_len - 2) << 24 | (uint64_t)m->l2_len << 16;
-+		cmd01 = vsetq_lane_u64(w0, cmd01, 0);
-+		cmd01 = vsetq_lane_u64(cptres, cmd01, 1);
++		stats->ipsec.ipackets = ctx->mib_pkts;
++		stats->ipsec.ibytes = ctx->mib_octs;
+ 	} else {
+-		stats->ipsec.opackets = ((struct roc_ow_ipsec_outb_sa *)eth_sec->sa)->ctx.mib_pkts;
+-		stats->ipsec.obytes = ((struct roc_ow_ipsec_outb_sa *)eth_sec->sa)->ctx.mib_octs;
++		struct roc_ow_ipsec_outb_sa *sa = (struct roc_ow_ipsec_outb_sa *)eth_sec->sa;
++		struct roc_ow_ipsec_outb_ctx_update_reg *ctx;
 +
-+		/* CPT word 2 and 3 */
-+		cmd23 = vdupq_n_u64(0);
-+		/* Set PF func */
-+		w0 &= 0xFFFF000000000000UL;
-+		cmd23 = vsetq_lane_u64(w0, cmd23, 0);
-+		cmd23 = vsetq_lane_u64(((uint64_t)m + sizeof(struct rte_mbuf)) | 1, cmd23, 1);
++		if (sa->w2.s.enc_type == ROC_IE_SA_ENC_AES_GCM) {
++			offset = offsetof(struct roc_ow_ipsec_outb_sa, hmac_opad_ipad);
++			ctx = (struct roc_ow_ipsec_outb_ctx_update_reg *)((uint8_t *)sa + offset);
++		} else {
++			ctx = &sa->ctx;
++		}
 +
-+		sa_base &= ~0xFFFFUL;
-+		sa = (uintptr_t)roc_nix_inl_ow_ipsec_inb_sa(sa_base, sess_priv.sa_idx);
-+		ucode_cmd[0] = (ROC_IE_OW_MAJOR_OP_PROCESS_INBOUND_IPSEC << 48 | 1UL << 54 |
-+				((uint64_t)sess_priv.chksum) << 32 | (1ULL << 34) | m->pkt_len);
-+
-+		ucode_cmd[2] = 0;
-+		ucode_cmd[3] = (ROC_CPT_DFLT_ENG_GRP_SE << 61 | 1UL << 60 | sa);
-+
-+		/* Move to our line */
-+		laddr = LMT_OFF(c_lbase, lnum, loff ? 64 : 0);
-+
-+		/* Write CPT instruction to lmt line */
-+		vst1q_u64(laddr, cmd01);
-+		vst1q_u64((laddr + 2), cmd23);
-+
-+		*(__uint128_t *)(laddr + 4) = *(__uint128_t *)ucode_cmd;
-+		*(__uint128_t *)(laddr + 6) = *(__uint128_t *)(ucode_cmd + 2);
-+
-+		loff = !loff;
-+		lnum = lnum + (loff ? 0 : 1);
-+		shft = shft + (loff ? 0 : 3);
-+	}
-+
-+	left -= burst;
-+	tx_pkts += burst;
-+	sess += burst;
-+
-+	cn20k_nix_sec_steorl(c_io_addr, c_lmt_id, lnum, loff, shft);
-+
-+	rte_io_wmb();
-+	if (left)
-+		goto again;
-+
-+	return nb_pkts;
-+}
-+
- static __rte_always_inline void
- nix_sec_meta_to_mbuf(uintptr_t inb_sa, uintptr_t cpth, struct rte_mbuf **inner, uint64_t *ol_flags,
- 		     const uint16_t flags, uint64x2_t *rearm, uint64_t buf_sz)
-@@ -1741,6 +1904,17 @@ cn20k_nix_recv_pkts_vector(void *args, struct rte_mbuf **mbufs, uint16_t pkts, c
++		stats->ipsec.opackets = ctx->mib_pkts;
++		stats->ipsec.obytes = ctx->mib_octs;
+ 	}
+ 
  	return 0;
- }
- 
-+static __rte_always_inline uint16_t
-+cn20k_nix_inj_pkts(struct rte_security_session **sess, struct cnxk_ethdev_inj_cfg *inj_cfg,
-+		   struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	RTE_SET_USED(sess);
-+	RTE_SET_USED(inj_cfg);
-+	RTE_SET_USED(tx_pkts);
-+	RTE_SET_USED(nb_pkts);
-+	return 0;
-+}
-+
- #endif
- 
- #define RSS_F	  NIX_RX_OFFLOAD_RSS_F
 -- 
 2.34.1
 
