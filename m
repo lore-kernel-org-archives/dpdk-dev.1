@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F364E9A02C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Feb 2026 18:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517C8E9A02C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 00:12:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6991540269;
-	Wed, 18 Feb 2026 19:21:58 +0100 (CET)
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com
- [209.85.167.181])
- by mails.dpdk.org (Postfix) with ESMTP id 6ED4D4014F
- for <dev@dpdk.org>; Wed, 18 Feb 2026 19:21:57 +0100 (CET)
-Received: by mail-oi1-f181.google.com with SMTP id
- 5614622812f47-46390d4ac7bso68327b6e.0
- for <dev@dpdk.org>; Wed, 18 Feb 2026 10:21:57 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 46882402C6;
+	Thu, 19 Feb 2026 01:12:09 +0100 (CET)
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com
+ [209.85.167.171])
+ by mails.dpdk.org (Postfix) with ESMTP id D4046402BD
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 01:12:07 +0100 (CET)
+Received: by mail-oi1-f171.google.com with SMTP id
+ 5614622812f47-45f09874c4cso218034b6e.3
+ for <dev@dpdk.org>; Wed, 18 Feb 2026 16:12:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771438917;
- x=1772043717; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771459927;
+ x=1772064727; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LsSS7ddMsRs6+uvbGy3Q5uDI168tG6AKq2tjMS6az9E=;
- b=VXMqad9x9KqP0OGib9apJxDJ1ofSN4zjZ4+CtAsAnRBZOruay09D1h4K0hgtOmQVdE
- D0OlDlI9JmiJWaF8sfRuSaglfofl6/w6cZzF6j6BXEr5xEf12ZU3WOJ/N3Z5uQuVM7gf
- GgzqrawxsIlnlG3fGfpXJF5VjasZW4IXv/cvBtDVhGrb29WEUkHvHDUmK2MnZ2ffsiXw
- 0jfcGCcpwf5MX1NdO0isuuPF/vbp8RN3n7o2B4VN043wvrSFbi+jE5+/++eYT1bBgQZc
- vWt4aIVxrO24Q1izZe+couu6fW7jzZ+lhyTjK2/ZGb11ES8XFMObih22dQ/wmg8kby/C
- uvYw==
+ bh=q+wFRc2hmDjU8QEhv2jbMjfpeRQ4sgOm2pxMjzZ4dFo=;
+ b=JjxUjaSEpd+tAs/w8N2N2G+cuy09l/Y8M7zOct5dZstW1bqUFUfwh7NAM6O2qzZEs2
+ 68IvqnWjkNxl/osstkft2FFzu60aeUgMI96GQOALvS1wh8dZ5jipHdVaYXNzItf7B+P/
+ nF9nNj3CLlkSRFDQOHuNK6f4DBHVVifKcwhlStEWfw5ZxQl1L8drL5woyI2wYrx/l+Xl
+ Morj68sbX96TQa/mwjAALVCRVHozZ4ZhFqoLA77RpDrPVuR+A2PoifmZbsmrR3oE2s25
+ R2wn3U+lJDHZuxoJSJYE2W/Pe84IrD66GsVeVPrlmCkHTwvYOwbU5ORwYKbcVQK9D6yP
+ AXpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771438917; x=1772043717;
+ d=1e100.net; s=20230601; t=1771459927; x=1772064727;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=LsSS7ddMsRs6+uvbGy3Q5uDI168tG6AKq2tjMS6az9E=;
- b=w0TdcJQj0KOpx6G9bfeNmAAbOPLR3/GeWYC7KY9Z080IzsnqYiEeBivcP44/BuVP8w
- F0iCU0udVVGZOMKjt1zFn6UhiXbmOKlnol5zCeqmzjGY054F4Q18/INcwtl02+f02Yvf
- 6KDYmI9Gfkh5KIa68aBkj9zfuWpc3DYteuSlieUku/b6DDVvvPt1yOvlQY0JARyKqpQs
- oR1EKp6HV9kfUpw5fiT7GuwL9jpgjVIxf8UKmkeiocRteNjy6fQ4PVDl3IvDwGe6NzRm
- VYaiWn1ZTvRThZpDqxAPbF1fzrAA9tdDFIm6i/rPGv+gw0uvMZHGz3iiDCJEq98fgnXt
- NEBQ==
-X-Gm-Message-State: AOJu0YwmToBB7CsCrzYxDB6D3tOMDoRGeiGRrbZTmb9xJPu0syk5Ykde
- vkNPC/OmrhuyJ1vLmSgYvcC1vc7d3dZRSFrg7TwIv9fkoY3LaJi3CchEEjMmJEc3BIkrhSgQOWu
- 8qxj9
-X-Gm-Gg: AZuq6aJvGlHSGzKIsZlYZxbH3tCSLUTJWmehe+cGn3rB0T4Ui0FjHj1WDc0fuO65J/k
- uNv2BaCltaa+mdOBG6IIJHCcP9KY1qPjj1Kk/hIHI899nFFfC0KsvSZvAPD3XNAVyQFEOW/i4Lw
- HDjInSUFqZnl0fA+9eKk5DeX+/PMbttAduNwMniEaVh5e9xgqgsyCoXGw2u9slV5wlrZmX4JEm4
- DD7uoJAIJU3uW7x+G0EdTUZNQMLnlmDX7GHmE0JjhttltY0j8uS4I4bu9GNINCtxIyNoP8Bx4Wq
- DCGrg4LZjzmWpDrPWrNXQk2OCjzEolZbI77h6AePedysQVdt7hZRf2V4MfkBD4FrGq1mzPEnoQ4
- sqJuBX8CxiqLCY7F34AkK6yLrUFft0H37bi0GH+UYwRKuM4n+jZ3k697U09y+6g4W8Jg0QyKIuS
- HmnL5dB+HysaNWOJFEMx2KJIts4Qn/q3YWhBI/k4jYF4RVdlCj8TxZdSPnKtcdVmJJ7fvXf5x11
- t4=
-X-Received: by 2002:a05:6808:1205:b0:45c:881c:e0c0 with SMTP id
- 5614622812f47-46410d006b2mr1426945b6e.47.1771438916659; 
- Wed, 18 Feb 2026 10:21:56 -0800 (PST)
+ bh=q+wFRc2hmDjU8QEhv2jbMjfpeRQ4sgOm2pxMjzZ4dFo=;
+ b=NLM6W9e1z2dlfeDROlAc5lgFCpKT8CDYcJSaFd7P+AjWwO01WfrWjm9V11JOTc7u0r
+ RzdKJT4+P5y9x7zsIZIoeWHBeZzyIFcn83jh+5W1Lx79KxLNliIU8HSGDYFDHEP6TRpp
+ F6kOOSaZqxjpSm7rGWI1Jfxp1r/2NGHxHfFm7e3MQVVqCXdzStHWyvJpvuWLXmjhKMxD
+ GlhyVHGhCgozaJIaSQTBvoL4AFPcAi+4PYEem3WFR/TFjCvJ4W47dqt6QRcfovDYm5Mn
+ UBVGH77dgoNjWC0VKulncCO8QdKVYJ/9oTHcGn9MPmYddrzuqfYs1gjt/9+uw2ndsiQ7
+ nkyQ==
+X-Gm-Message-State: AOJu0YyKjg61Nr1AvFTE2dn0rngbQbLzjkvm/fTmArUku5DjZjdPYttt
+ rbsDIdV4WDkVyVFYi56oE0gubqtslztl2mYHZyDRJQPA+ah/uTIHCn5gOxuuNBZ5JGgtgQDmR2t
+ EQvyk
+X-Gm-Gg: AZuq6aI4R7fR60uIuHPKptWKKItIycMrsLg3GGdswBDDa7IPj3u88CdsGJOppQm19Gx
+ CqdYLXfsD4JYHl4PHPfWABnB6QRDN2cOH3e0XjPbM7OyRb5FYcL4lW1nKhe5QSCPg90x/xtKBhQ
+ oU6ErmUlu+ZR+M19yKoFBN0tjAt66Sof3kxn/R7aQwM2jSUNleK6fLgPIEHuMtvJcl7Gf4TX4OL
+ /RekvmD6V2YAWarsPd1Yyf+urCowldx4J8C3xDZDfFKndduycXarg09+/MsFcyMuQGdu6OBebvp
+ BX3aHIQCPXcNvVuReb/i38DABA3DCXh/kkqJMcj1XT9Zv5d3Klc6uNqzjfRnVyQwxZOyygoUEmJ
+ x0OYXd16/oR0NZvq21fl6Ip2UMY47SfaqJjqLJaKMt01kb7jcdGzVM0VPSIT65fJRJNPLUOeeQ3
+ Ne+TY5Jz/zhc0HVvaBWp0FUJ2a0cgCNpy4imU2mXafDLyEDh6u4oeJ57EwB8fgsILU
+X-Received: by 2002:a05:6808:d4f:b0:450:cf73:7703 with SMTP id
+ 5614622812f47-4639ab5f4d7mr10549763b6e.12.1771459926624; 
+ Wed, 18 Feb 2026 16:12:06 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5614622812f47-463ee1f67f7sm5118953b6e.12.2026.02.18.10.21.55
+ 5614622812f47-463ee1f67f7sm5736350b6e.12.2026.02.18.16.12.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 18 Feb 2026 10:21:56 -0800 (PST)
-Date: Wed, 18 Feb 2026 10:21:53 -0800
+ Wed, 18 Feb 2026 16:12:06 -0800 (PST)
+Date: Wed, 18 Feb 2026 16:12:02 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: spinler@cesnet.cz
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/6] net/nfb: ethernet enhancements
-Message-ID: <20260218102153.6d45f4e0@phoenix.local>
-In-Reply-To: <20260217110324.3344310-1-spinler@cesnet.cz>
-References: <20260206170435.302184-1-spinler@cesnet.cz>
- <20260217110324.3344310-1-spinler@cesnet.cz>
+Subject: Re: [PATCH v10 0/8] net/nfb: rework to real multiport
+Message-ID: <20260218161202.314d78eb@phoenix.local>
+In-Reply-To: <20260217071040.2855133-1-spinler@cesnet.cz>
+References: <20260115151656.393106-1-spinler@cesnet.cz>
+ <20260217071040.2855133-1-spinler@cesnet.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -83,53 +82,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 17 Feb 2026 12:03:18 +0100
+On Tue, 17 Feb 2026 08:10:32 +0100
 spinler@cesnet.cz wrote:
 
 > From: Martin Spinler <spinler@cesnet.cz>
 > 
-> This set includes minor enhancements to the Ethernet
-> configuration and overall usage.
+> This series implements real multiport for better user experience.
+> 
+> The existing driver creates one ethdev/port for one PCI device.
+> As the CESNET-NDK based cards aren't capable to represent each
+> Ethernet port by own PCI device, new driver implementation
+> processes real port configuration from firmware/card and switches
+> from rte_eth_dev_pci_generic_probe to multiple rte_eth_dev_create calls.
 > 
 > ---
-> Depends-on: series-37385 ("net/nfb: rework to real multiport")
-> 
-> v2:
-> * P2/7: close MDIO handles in error path of nfb_nc_eth_init
-> * P2/7: add bounds check for eth_node population
-> * P2/7: add check for nfb_mdio_if_read_pma() return value
->         in nfb_mdio_cl45_pma_get_speed_capa()
-> * P2/7: add include guard to nfb_mdio.h
-> * P3/7: move nfb_eth_dev_set_link() (PMA configuration)
->         before MAC enable/disable call to avoid inconsistency on failure
-> * P4/7: add check for nfb_mdio_if_write_pma() return value
-> * P5/7: set dev_info->max_mtu
-> * P5/7: add frame_len_max_cap to struct pmd_priv; used in MTU configuration
-> * P5/7: extract nfb_mac_read_frame_len_max_cap() from nfb_eth_mtu_set()
-> * P5/7: check for MTU overflow
-> * P6/7: use direct value for stats->ierrors from rx_cntrs
-> * P7/7: remove this patch completely and distribute release notes update
->         to matching patches
-> 
-> Martin Spinler (6):
->   net/nfb: use MAC address assigned to card
->   net/nfb: get correct link speed
->   net/nfb: support real link-up/down config
->   net/nfb: support setting RS-FEC mode
->   net/nfb: support setting Rx MTU
->   net/nfb: read total stats from macs
-> 
->  doc/guides/rel_notes/release_26_03.rst |   3 +-
->  drivers/net/nfb/meson.build            |   1 +
->  drivers/net/nfb/nfb.h                  |   8 +
->  drivers/net/nfb/nfb_ethdev.c           | 247 +++++++++++++++++++++----
->  drivers/net/nfb/nfb_mdio.c             |  44 +++++
->  drivers/net/nfb/nfb_mdio.h             |  39 ++++
->  drivers/net/nfb/nfb_stats.c            |  40 ++--
->  7 files changed, 335 insertions(+), 47 deletions(-)
->  create mode 100644 drivers/net/nfb/nfb_mdio.c
->  create mode 100644 drivers/net/nfb/nfb_mdio.h
-> 
 
-Queued all these to next-net with small change to avoid overflow when
-computing mtu.
+Queued to next-net.
