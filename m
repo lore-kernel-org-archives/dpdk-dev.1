@@ -2,45 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B80BEE9A03B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 06:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517B9E9A03B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 07:20:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9ABC4402CC;
-	Thu, 19 Feb 2026 07:20:34 +0100 (CET)
-Received: from office2.cesnet.cz (office2.cesnet.cz [78.128.248.237])
- by mails.dpdk.org (Postfix) with ESMTP id DCE23402AC
- for <dev@dpdk.org>; Thu, 19 Feb 2026 07:20:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cesnet.cz;
- s=office2-2020; t=1771482032;
- bh=KV9jqmXhVw9pM6BO2IT7LoPTlCX3D3PrdKZs+liNzyQ=;
- h=Subject:From:To:Cc:Date:In-Reply-To:References;
- b=FAPB1ilD/Q+AmB7R7q3ZZDh5FXPXvMiCPbXmDkRrpwghIJywgGDclaB6JPmU986BA
- izwrLbHa3a6vjzXSrcHDqHSz3x9dcVB8xEBbLFt1TlHWkcrtSbWSlZpr0FeqS+Yg4f
- aI0jE+R9noBUIWa/ekJIOO7ypMdKJL4Uu/kZ5dNA+py1IR7nXDhROdD1aOaBdOjeB1
- /eGYRMN2h8koBRI6lAsPFp74j7fcHbUs/KEDCSbQX+csE4B5fTkHAb4OG05noJFbAU
- Joayfw0p3ECK+zqUc/CQwTw1XrzecC4FOehIMhCPkzNS+YgWUd2XM5tfijHYZOUiyl
- m3jEnlegK31ng==
-Received: from [IPv6:2001:718:812:27::107] (gtx107.cesnet.cz
- [IPv6:2001:718:812:27::107])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits))
- (No client certificate requested)
- by office2.cesnet.cz (Postfix) with ESMTPSA id 8860111800B6;
- Thu, 19 Feb 2026 07:20:32 +0100 (CET)
-Message-ID: <d6f174ffc3252d4cbfe5132bb0916ca3986a7492.camel@cesnet.cz>
-Subject: Re: [PATCH 5/7] net/nfb: support setting Rx MTU
-From: Martin Spinler <spinler@cesnet.cz>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-Date: Thu, 19 Feb 2026 07:20:32 +0100
-In-Reply-To: <20260218102058.53296e9e@phoenix.local>
-References: <20260206170435.302184-1-spinler@cesnet.cz>
- <20260206170435.302184-6-spinler@cesnet.cz>
- <20260218102058.53296e9e@phoenix.local>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.3 
+	by mails.dpdk.org (Postfix) with ESMTP id 35B7C402CC;
+	Thu, 19 Feb 2026 08:20:50 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 4DE44402AC
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 08:20:48 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 14D54208F6;
+ Thu, 19 Feb 2026 08:20:48 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH v2] ethdev: clarify rte_eth_tx_burst() return value and
+ ownership semantics
+Date: Thu, 19 Feb 2026 08:20:44 +0100
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6572C@smartserver.smartshare.dk>
+In-Reply-To: <20260219004449.114564-1-stephen@networkplumber.org>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v2] ethdev: clarify rte_eth_tx_burst() return value and
+ ownership semantics
+Thread-Index: AdyhOP3UP0QrXcF9QMuNcKpNapBu8wANxM6g
+References: <20260216180011.393782-1-stephen@networkplumber.org>
+ <20260219004449.114564-1-stephen@networkplumber.org>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
+Cc: "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
+ <bruce.richardson@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,17 +51,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Since mtu is 16 bit value, you need to use uint32_t to avoid
-> overflow.
->=20
-> Something like:
-> +	uint32_t frame_len =3D (uint32_t)mtu + RTE_ETHER_HDR_LEN + RTE_ETHER_CR=
-C_LEN;
-> +	if (frame_len > priv->frame_len_max_cap)
-> +		return -EINVAL;
->=20
-> +	for (i =3D 0; i < intl->max_rxmac; ++i)
-> +		nc_rxmac_set_frame_length(intl->rxmac[i], frame_len, RXMAC_FRAME_LENGT=
-H_MAX);
+> + * If a packet cannot be transmitted due to an error (for example, an
+> + * invalid offload flag), the driver must still consume it and free
+> the
+> + * mbuf, rather than stopping at that point. Such packets should be
+> + * counted in the *tx_errors* port statistic.
+> + *
 
-Thank you, this check is cleaner.
+Looks like v1.
+Please update with my feedback.
+
+-Morten
+
