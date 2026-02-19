@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5705E9A04A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 774F8E9A03B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 16:26:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7F8D740DCA;
-	Thu, 19 Feb 2026 17:24:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F00D40DD1;
+	Thu, 19 Feb 2026 17:24:01 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 3B0694060C
+ by mails.dpdk.org (Postfix) with ESMTP id E069A4060C
  for <dev@dpdk.org>; Thu, 19 Feb 2026 17:23:45 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1771518226; x=1803054226;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=cmE6/LLdyKYREBdM95QoJQn4jTUfnfaMbCEtOgEo5i4=;
- b=IwyW1JuQrBY05/henUG6o7GppTdXZqhKm1dsLhtBnisdn4b+sBg5cjJZ
- 9kXCv65+MDe+GeQyqHBRbFs8vCFYtM3qH0R7R5dYXRQVwLloVforAeUw8
- cKoNl1lMOlT23QJuvYIAQX9kXdXdOjP6MjHPBMNFPaC1Ad6xaOj4olgq1
- npwb0XC9dqD4NJZJjXvF7XA9r9UqQ/ouol7ONEKhzJTZO5WbyHllPwd4W
- TnB84tP4TGI9B18ooQgDIPHdTnCJm9inJNmrTQhYNw8LFA3PQC2+ZquB4
- HaVSKE/Gj6a2kdX52HVq4r247KS0S6irNY90JUnCeBsYm8YeE/kgvO4Ck Q==;
-X-CSE-ConnectionGUID: pHF3dA7UQ2WUMBkWAFCA8Q==
-X-CSE-MsgGUID: m/4A8PEXR7GvNc1AFhT54w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="83231473"
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="83231473"
+ bh=nxK1n/LnRnoLJ7Fp4W/a0OzOokriZ+8ukhaCg4ZbADs=;
+ b=NT9pvJi8+XFRRzPKQT/0xBYZKKzywcoYLmgWd7si8VtwKNcDoYD7iyFL
+ U384/3JqmJJmKOIjgSu282uQoI7uH0beg2frDDfNDfrOvpjp2Uhez0Mji
+ aBwY0RbM03Rd2s0HcU5kf3XD3+2bI4ruW3QvWeWvQvUIAIr0xMhipDX6e
+ FVlT5ab7BO04AckLk+5iIw+CARBIL3Dr7J5mUTgtD7UJB2e/SAnhPV6nK
+ rRZ1nYTPdQZdQTduASicMhvAITQtKg1JRdAIavWvWOPTzQZIv8Sy29YLN
+ pmi1AHLULymyMBXi3FSC1ekUjzrYxUWkhfrjUnVwUNrkq6mlQ6dP/KoLG g==;
+X-CSE-ConnectionGUID: Ry3j423kTRqhxrBRdp1kMw==
+X-CSE-MsgGUID: cJLhWhtUT+GLd0r4YHL3dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="83231476"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="83231476"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Feb 2026 08:23:44 -0800
-X-CSE-ConnectionGUID: kh0wO8nNTxq9bj1DBGRobg==
-X-CSE-MsgGUID: XyovP5cxQ/K3NSRPcWo85Q==
+ 19 Feb 2026 08:23:46 -0800
+X-CSE-ConnectionGUID: Cb3Uj+WaT7e6zDciQTSoOA==
+X-CSE-MsgGUID: 2uVlsEJYTCWBh2emlPT0FA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="218700001"
+X-IronPort-AV: E=Sophos;i="6.21,300,1763452800"; d="scan'208";a="218700035"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 19 Feb 2026 08:23:44 -0800
+ by orviesa003.jf.intel.com with ESMTP; 19 Feb 2026 08:23:45 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v6 25/27] net/ice: avoid rte malloc in MAC address operations
-Date: Thu, 19 Feb 2026 16:23:08 +0000
-Message-ID: <e4a54d8ccba04f9294ba6aea47ff8115b7adb652.1771518103.git.anatoly.burakov@intel.com>
+Subject: [PATCH v6 26/27] net/ice: avoid rte malloc in raw pattern parsing
+Date: Thu, 19 Feb 2026 16:23:09 +0000
+Message-ID: <208369aa43bb8444544c7747ef173a562f427baf.1771518103.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771518103.git.anatoly.burakov@intel.com>
  <cover.1771518103.git.anatoly.burakov@intel.com>
@@ -60,62 +60,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when adding or deleting MAC addresses, we are using
-rte_zmalloc followed by an immediate rte_free. This memory does not need
-to be stored in hugepage memory, so replace it with stack allocation.
+Currently, when parsing raw flow patterns, we are using rte_zmalloc
+followed by an immediate rte_free. This memory does not need to be stored
+in hugepage memory, so replace it with regular malloc/free.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/ice/ice_dcf_ethdev.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+ drivers/net/intel/ice/ice_fdir_filter.c | 14 +++++++-------
+ drivers/net/intel/ice/ice_hash.c        | 10 +++++-----
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
-index 037382b336..332f1e356e 100644
---- a/drivers/net/intel/ice/ice_dcf_ethdev.c
-+++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
-@@ -928,19 +928,14 @@ dcf_add_del_mc_addr_list(struct ice_dcf_hw *hw,
- 			 struct rte_ether_addr *mc_addrs,
- 			 uint32_t mc_addrs_num, bool add)
- {
--	struct virtchnl_ether_addr_list *list;
--	struct dcf_virtchnl_cmd args;
-+	struct {
-+		struct virtchnl_ether_addr_list list;
-+		struct virtchnl_ether_addr addr[DCF_NUM_MACADDR_MAX];
-+	} list_req = {0};
-+	struct virtchnl_ether_addr_list *list = &list_req.list;
-+	struct dcf_virtchnl_cmd args = {0};
- 	uint32_t i;
--	int len, err = 0;
--
--	len = sizeof(struct virtchnl_ether_addr_list);
--	len += sizeof(struct virtchnl_ether_addr) * mc_addrs_num;
--
--	list = rte_zmalloc(NULL, len, 0);
--	if (!list) {
--		PMD_DRV_LOG(ERR, "fail to allocate memory");
--		return -ENOMEM;
--	}
-+	int err = 0;
+diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
+index da22b65a77..5f44b5c818 100644
+--- a/drivers/net/intel/ice/ice_fdir_filter.c
++++ b/drivers/net/intel/ice/ice_fdir_filter.c
+@@ -1879,13 +1879,13 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+ 				pkt_len)
+ 				return -rte_errno;
  
- 	for (i = 0; i < mc_addrs_num; i++) {
- 		memcpy(list->list[i].addr, mc_addrs[i].addr_bytes,
-@@ -955,13 +950,12 @@ dcf_add_del_mc_addr_list(struct ice_dcf_hw *hw,
- 	args.v_op = add ? VIRTCHNL_OP_ADD_ETH_ADDR :
- 			VIRTCHNL_OP_DEL_ETH_ADDR;
- 	args.req_msg = (uint8_t *)list;
--	args.req_msglen  = len;
-+	args.req_msglen  = sizeof(list_req);
- 	err = ice_dcf_execute_virtchnl_cmd(hw, &args);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "fail to execute command %s",
- 			    add ? "OP_ADD_ETHER_ADDRESS" :
- 			    "OP_DEL_ETHER_ADDRESS");
--	rte_free(list);
- 	return err;
+-			tmp_spec = rte_zmalloc(NULL, pkt_len / 2, 0);
++			tmp_spec = calloc(1, pkt_len / 2);
+ 			if (!tmp_spec)
+ 				return -rte_errno;
+ 
+-			tmp_mask = rte_zmalloc(NULL, pkt_len / 2, 0);
++			tmp_mask = calloc(1, pkt_len / 2);
+ 			if (!tmp_mask) {
+-				rte_free(tmp_spec);
++				free(tmp_spec);
+ 				return -rte_errno;
+ 			}
+ 
+@@ -1950,13 +1950,13 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+ 
+ 			filter->parser_ena = true;
+ 
+-			rte_free(tmp_spec);
+-			rte_free(tmp_mask);
++			free(tmp_spec);
++			free(tmp_mask);
+ 			break;
+ 
+ raw_error:
+-			rte_free(tmp_spec);
+-			rte_free(tmp_mask);
++			free(tmp_spec);
++			free(tmp_mask);
+ 			return ret_val;
+ 		}
+ 
+diff --git a/drivers/net/intel/ice/ice_hash.c b/drivers/net/intel/ice/ice_hash.c
+index afdc8f220a..854c6e8dca 100644
+--- a/drivers/net/intel/ice/ice_hash.c
++++ b/drivers/net/intel/ice/ice_hash.c
+@@ -676,13 +676,13 @@ ice_hash_parse_raw_pattern(struct ice_adapter *ad,
+ 
+ 	pkt_len = spec_len / 2;
+ 
+-	pkt_buf = rte_zmalloc(NULL, pkt_len, 0);
++	pkt_buf = calloc(1, pkt_len);
+ 	if (!pkt_buf)
+ 		return -ENOMEM;
+ 
+-	msk_buf = rte_zmalloc(NULL, pkt_len, 0);
++	msk_buf = calloc(1, pkt_len);
+ 	if (!msk_buf) {
+-		rte_free(pkt_buf);
++		free(pkt_buf);
+ 		return -ENOMEM;
+ 	}
+ 
+@@ -733,8 +733,8 @@ ice_hash_parse_raw_pattern(struct ice_adapter *ad,
+ 	rte_memcpy(&meta->raw.prof, &prof, sizeof(prof));
+ 
+ free_mem:
+-	rte_free(pkt_buf);
+-	rte_free(msk_buf);
++	free(pkt_buf);
++	free(msk_buf);
+ 
+ 	return ret;
  }
- 
 -- 
 2.47.3
 
