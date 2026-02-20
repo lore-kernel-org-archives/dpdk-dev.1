@@ -2,69 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55F6FC54EFC
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 05:49:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CDCC54EFC
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 05:49:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32B3D406B4;
-	Fri, 20 Feb 2026 06:48:52 +0100 (CET)
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
- [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id 8283840678
- for <dev@dpdk.org>; Fri, 20 Feb 2026 06:48:48 +0100 (CET)
-Received: by mail-qv1-f45.google.com with SMTP id
- 6a1803df08f44-896fa834290so19587236d6.1
- for <dev@dpdk.org>; Thu, 19 Feb 2026 21:48:48 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 55D7340689;
+	Fri, 20 Feb 2026 06:48:53 +0100 (CET)
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com
+ [209.85.219.52]) by mails.dpdk.org (Postfix) with ESMTP id 9DD6140685
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 06:48:49 +0100 (CET)
+Received: by mail-qv1-f52.google.com with SMTP id
+ 6a1803df08f44-896fa834290so19587386d6.1
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 21:48:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771566528;
- x=1772171328; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771566529;
+ x=1772171329; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FX3nZFBP3EJDtIuZL8I+GEgURZS6cCmm2/u5sMmB3kE=;
- b=jONxfdViyu3zu3LCVB76Lum8ZYBvkqCdZlZLVPn1zCGxpm2K4bNjHwPNODPubx+VLv
- xbv2WfY6N4qKfamAjRvs8+xa53T2/kVlVvQ3BBhLJq1T+MCSYkiyqqAI7gyVnWx3tI9c
- OTS/cKpLCfJy/maFZNMbA25ErvioorvnkP9smDl510m8EmvYuTOnD0F/1kfe5LxtDscF
- rjsjIWDFQpwxGxqVhIA8oIePdx9nM+dyxL6Mnew+qHi72Rt5q4wHutU280wRgxqrAVk8
- fYAA8M1soS/stc0gi/76dUQw2jA5jQJH5Vj5soA38Qyzh1//yiYjYZslAWbjkgA1i5WL
- hkTw==
+ bh=FswscZpUERaIG3uf2kmmB+PMjrQoK9kFK54jzOCG1eU=;
+ b=PMTVD/P/oSmuYuZV082BMfVl1ekiKamguI2PY0Of1jvpOoIy46BToXWnivjIbax94V
+ tWcmZXhwwcOpax4bbHqwHFSo5UTccaxlDa1Cqt07fPI6IJrZgldOawJs0DWtsMlfpU2J
+ kdYL/Ow5Wr2xLeH18Ol9XEQBYAufF51xm2n5b2GLeRk7A+PbBzEwcNGZG3UuvrsXvnWc
+ noPrbTBWMghk76deQT8oeuNtxO6XcUN/gcRuWyXF1fh24bPcHPL8flh7y6DLAn+JzSRH
+ BsYrNhqXnJ/p8Hd4ef0SNo0U+6BwfpxHLkBMcZatTAuyL37SU/B27TTr9E22DTUs3GZC
+ Ajwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771566528; x=1772171328;
+ d=1e100.net; s=20230601; t=1771566529; x=1772171329;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=FX3nZFBP3EJDtIuZL8I+GEgURZS6cCmm2/u5sMmB3kE=;
- b=uPM+9TbNgDuddYCpCOkHqnxfSy7Aij2SjfXzsxzvRVS9E/avQ3noUN4nEWIFY5K0Dv
- nRBiaUqn/5UVvjmBdNlUmVH0t/xgtltIC9frCB/oQsB39W5LDByspxQKHiuhhCC5gSD1
- 2PEO/xMJ9AnHS7VPfFNHy3T+Wn3K2Y0s0DPz9ksDrpMzk29azfn6ApWuPwyak8vRtDzn
- lK+9la72n/eAhlYdZ0Y+lW05bsVmEyS83S41+TOizDqIohTcB3yPaIi0xQOlH8gPLCJn
- +962tvEbloKECMdkF6cb8KMj2qaAFm3eybA4moQfspZZj6N/xw/uZeE24a6/9haAAaKb
- tZvQ==
-X-Gm-Message-State: AOJu0Yz2hbGfW49qvxuqVJQ9O1OwIsNOsEZVqVbk/SzFdSyz5uzdlEe/
- P8CnxCB5cmHCXk3QtcV0ZRCQybDbdf06pGHrBG5L+ZobcGbi3HvtL20j3R7xy+hL5QkgwQbE70M
- lM6Lt
-X-Gm-Gg: AZuq6aL+1zzu0LNe4GtwYdmSpRSIMyLUgOJCpIDxWOgykUHTKZppRnAxgKUCBEN22Mu
- uYdkfF1Cev3YYPCnSO5DPrbLjPUb1r6YxKCt2pKST2WN/XUamIAfrvQhm/GyqsyI+CBZNRPQE/d
- 5NcD3UgidFkTOM4Tbd57lP3HLsBPUEupyXd57g8fC6JaDDofJsWg8cqjnEbLkzY8wFQXmmhe6ul
- Xjr08oci4ss6TExGeFHkzu8cSLs+BxeeXwxj3Okg7YH22CZ90wfTZrc7wpSXV0dQiknIsTqIMrJ
- el0PEZTzWkd8GIvOG9y8ft9QgmuOBaTLEqEXciu4AerLQuWdjBhR3BuNL+lDuiT3hExmZfV2Bdu
- dPX8u40cB0Z7J5ppImemMZNkqEK3uzIZ9Q5EHy+KUiI5BQ23srt/xopACoVELqGvzwx+yX+Bd2v
- RGiFSxK50ZHJm2G3sLAPh703c9NUlRzM44yFAAOn6oF/KQns7XXb8fGdXjDvJD9g==
-X-Received: by 2002:ad4:5ded:0:b0:895:4aee:ac8d with SMTP id
- 6a1803df08f44-89965b45016mr57951956d6.21.1771566527804; 
- Thu, 19 Feb 2026 21:48:47 -0800 (PST)
+ bh=FswscZpUERaIG3uf2kmmB+PMjrQoK9kFK54jzOCG1eU=;
+ b=DBidi5YZiAQ+y0Wxfu93G+Fthicd2semGv+nQRP26FFWMzDX1unK4ZQcO/4TXSFyfG
+ dkGr2iYjc5TmlBkqnuilqnysRq5eCLVayZgHGLo2X662skXdhA6RxVJZ8YkEUSZGz/nt
+ 9lyMpUIICDaw3J+O5cQac8GeZ+V/G0IF1OXGt0vj1ah9NXeJTWCJ6/ZJVWmeQcPYbLiL
+ s6OOOBRYuYkl7aP59hR8pd3rj2T/ozh4wnnz43RSJqTfL+3L4mqO5jMF6Q1l1Ck13Mvf
+ RFKcsm8oap+GETVrBS/ULDDfErhnYXTnq+1IdImEGDlHfXnmg8nNZ7ZQN/eIEIythlVq
+ Zvhg==
+X-Gm-Message-State: AOJu0YzFm56VPAGr02XK658W0lQZJ9Y1SDl4ON1in6T9kvGNd9na9D4z
+ kEqtof/6MaAmXI5pM0thvcSdWnWuQ6IjlM2Acphc7YQXe6FNxQJOz9kSWwkZKwLd54DNkkgjg7S
+ 8xYZP
+X-Gm-Gg: AZuq6aKNTuugYGW0uY5tpd11WdSVYkE89SyvECl62uTk3fChpAfcgDhIR3KujDQKh9A
+ TF1TYG3m7AAef2m4IXLRSfHnr40Rg2U1Vl3V06A9alYM8J2ghb0lCPnYHqER1iTnKjeR6FBEb4b
+ bY4wObaWvHKYorf7hPEPRL7rkSTxkAVHT0nnSh2VO315+k3QEOsiAtOkOquCibl4rSeneNmMkdb
+ lRIhKyTwd7m68QBFxLE8I1m08+o93ipTSvkg3XCvTgCZgycxF2Y205ZF3RPyUtwq9kRVjObsN+T
+ W2KU3LQVycHZ8O3a1cv5V3UE9iduvcDBAZ+EzZlA/CNr4hMda19bZj4cv4695Ai8FOfOlldNWz5
+ 0mhyZpxMLM9rtgG8LYHB6GRU7SNb393RKRrGydQqR1gQnmVQQDBsgEEmWSg/cXjUP511O8EQPAV
+ 8rMohpw4QhPGNuY6zXqm6uFph7sQ5LN0hJ8I3Zjgq1A+G30y/wd4Oi1fBiKWzA/Q==
+X-Received: by 2002:ad4:4432:0:b0:896:fd8f:9cdc with SMTP id
+ 6a1803df08f44-89971a36ac3mr5172426d6.1.1771566528826; 
+ Thu, 19 Feb 2026 21:48:48 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8971cdad6c1sm229078096d6.39.2026.02.19.21.48.46
+ 6a1803df08f44-8971cdad6c1sm229078096d6.39.2026.02.19.21.48.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Feb 2026 21:48:47 -0800 (PST)
+ Thu, 19 Feb 2026 21:48:48 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Ferruh Yigit <ferruh.yigit@amd.com>,
- David Marchand <david.marchand@redhat.com>
-Subject: [PATCH v17 09/23] net/pcap: fix error accounting and backpressure on
- transmit
-Date: Thu, 19 Feb 2026 21:45:44 -0800
-Message-ID: <20260220054834.1632201-10-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v17 10/23] net/pcap: add datapath debug logging
+Date: Thu, 19 Feb 2026 21:45:45 -0800
+Message-ID: <20260220054834.1632201-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260220054834.1632201-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -84,156 +81,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The error handling when pcap_sendpacket() was incorrect.
-When underlying kernel socket buffer got full the send was counted as
-an error. Malformed multi-segment mbufs where pkt_len exceeds actual
-data were silently accepted.
-
-Malformed mbufs are now detected via rte_pktmbuf_read() failure
-and counted as errors.
-
-On Linux, pcap_sendpacket() calls send() on a blocking PF_PACKET
-socket with default kernel buffer sizes and no TX ring (PACKET_TX_RING).
-The send() call only blocks when the kernel socket send buffer is full,
-providing limited backpressure. Backpressure is not an error.
-
-Fixes: fbbbf553f268 ("net/pcap: fix concurrent multiseg Tx")
-Cc: stable@dpdk.org
+Add datapath debug logging macros (PMD_RX_LOG, PMD_TX_LOG) gated
+on RTE_ETHDEV_DEBUG_RX/TX. Use PMD_TX_LOG in transmit error paths
+to aid debugging without impacting normal datapath performance.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 77 +++++++++++++++++++++-------------
- 1 file changed, 49 insertions(+), 28 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c |  8 ++++----
+ drivers/net/pcap/pcap_osdep.h  | 14 ++++++++++++++
+ 2 files changed, 18 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 4cf5319839..1ab5b1755c 100644
+index 1ab5b1755c..5b59e9d813 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -407,22 +407,27 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	 * dumper */
- 	for (i = 0; i < nb_pkts; i++) {
- 		struct rte_mbuf *mbuf = bufs[i];
--		size_t len, caplen;
-+		uint32_t len, caplen;
-+		const uint8_t *data;
+@@ -419,7 +419,7 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		data = rte_pktmbuf_read(mbuf, 0, caplen, temp_data);
+ 		if (unlikely(data == NULL)) {
+ 			/* This only happens if mbuf is bogus pkt_len > data_len */
+-			PMD_LOG(ERR, "rte_pktmbuf_read failed");
++			PMD_TX_LOG(ERR, "rte_pktmbuf_read failed");
+ 			dumper_q->tx_stat.err_pkts++;
+ 		} else {
+ 			pcap_dump((u_char *)dumper, &header, data);
+@@ -501,7 +501,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		const uint8_t *data;
  
- 		len = caplen = rte_pktmbuf_pkt_len(mbuf);
- 
- 		calculate_timestamp(&header.ts);
- 		header.len = len;
- 		header.caplen = caplen;
--		/* rte_pktmbuf_read() returns a pointer to the data directly
--		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
--		 * a pointer to temp_data after copying into it.
--		 */
--		pcap_dump((u_char *)dumper, &header,
--			rte_pktmbuf_read(mbuf, 0, caplen, temp_data));
- 
--		num_tx++;
--		tx_bytes += caplen;
-+		data = rte_pktmbuf_read(mbuf, 0, caplen, temp_data);
-+		if (unlikely(data == NULL)) {
-+			/* This only happens if mbuf is bogus pkt_len > data_len */
-+			PMD_LOG(ERR, "rte_pktmbuf_read failed");
-+			dumper_q->tx_stat.err_pkts++;
-+		} else {
-+			pcap_dump((u_char *)dumper, &header, data);
-+
-+			num_tx++;
-+			tx_bytes += caplen;
-+		}
-+
- 		rte_pktmbuf_free(mbuf);
- 	}
- 
-@@ -434,9 +439,8 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	pcap_dump_flush(dumper);
- 	dumper_q->tx_stat.pkts += num_tx;
- 	dumper_q->tx_stat.bytes += tx_bytes;
--	dumper_q->tx_stat.err_pkts += nb_pkts - num_tx;
- 
--	return nb_pkts;
-+	return i;
- }
- 
- /*
-@@ -461,7 +465,17 @@ eth_tx_drop(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- }
- 
- /*
-- * Callback to handle sending packets through a real NIC.
-+ * Send a burst of packets to a pcap device.
-+ *
-+ * On Linux, pcap_sendpacket() calls send() on a blocking PF_PACKET
-+ * socket with default kernel buffer sizes and no TX ring (PACKET_TX_RING).
-+ * The send() call only blocks when the kernel socket send buffer is full,
-+ * providing limited backpressure.
-+ *
-+ * On error, pcap_sendpacket() returns non-zero and the loop breaks,
-+ * leaving remaining packets unsent.
-+ *
-+ * Bottom line: backpressure is not an error.
-  */
- static uint16_t
- eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
-@@ -483,34 +497,41 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 
- 	for (i = 0; i < nb_pkts; i++) {
- 		struct rte_mbuf *mbuf = bufs[i];
--		size_t len = rte_pktmbuf_pkt_len(mbuf);
--		int ret;
-+		uint32_t len = rte_pktmbuf_pkt_len(mbuf);
-+		const uint8_t *data;
- 
--		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) &&
--				len > RTE_ETH_PCAP_SNAPSHOT_LEN)) {
-+		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) && len > RTE_ETH_PCAP_SNAPSHOT_LEN)) {
- 			PMD_LOG(ERR,
--				"Dropping multi segment PCAP packet. Size (%zd) > max size (%u).",
-+				"Dropping multi segment PCAP packet. Size (%u) > max size (%u).",
+ 		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) && len > RTE_ETH_PCAP_SNAPSHOT_LEN)) {
+-			PMD_LOG(ERR,
++			PMD_TX_LOG(ERR,
+ 				"Dropping multi segment PCAP packet. Size (%u) > max size (%u).",
  				len, RTE_ETH_PCAP_SNAPSHOT_LEN);
-+			tx_queue->tx_stat.err_pkts++;
- 			rte_pktmbuf_free(mbuf);
- 			continue;
- 		}
+ 			tx_queue->tx_stat.err_pkts++;
+@@ -512,7 +512,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		data = rte_pktmbuf_read(mbuf, 0, len, temp_data);
+ 		if (unlikely(data == NULL)) {
+ 			/* This only happens if mbuf is bogus pkt_len > data_len */
+-			PMD_LOG(ERR, "rte_pktmbuf_read failed");
++			PMD_TX_LOG(ERR, "rte_pktmbuf_read failed");
+ 			tx_queue->tx_stat.err_pkts++;
+ 		} else {
+ 			/*
+@@ -520,7 +520,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 			 * Assume it is EBUSY, ENOMEM, or EINTR, something that can be retried.
+ 			 */
+ 			if (pcap_sendpacket(pcap, data, len) != 0) {
+-				PMD_LOG(ERR, "pcap_sendpacket() failed: %s", pcap_geterr(pcap));
++				PMD_TX_LOG(ERR, "pcap_sendpacket() failed: %s", pcap_geterr(pcap));
+ 				break;
+ 			}
+ 			num_tx++;
+diff --git a/drivers/net/pcap/pcap_osdep.h b/drivers/net/pcap/pcap_osdep.h
+index a0e2b5ace9..fe7399ff9f 100644
+--- a/drivers/net/pcap/pcap_osdep.h
++++ b/drivers/net/pcap/pcap_osdep.h
+@@ -13,6 +13,20 @@
+ extern int eth_pcap_logtype;
+ #define RTE_LOGTYPE_ETH_PCAP eth_pcap_logtype
  
--		/* rte_pktmbuf_read() returns a pointer to the data directly
--		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
--		 * a pointer to temp_data after copying into it.
--		 */
--		ret = pcap_sendpacket(pcap,
--			rte_pktmbuf_read(mbuf, 0, len, temp_data), len);
--		if (unlikely(ret != 0))
--			break;
--		num_tx++;
--		tx_bytes += len;
-+		data = rte_pktmbuf_read(mbuf, 0, len, temp_data);
-+		if (unlikely(data == NULL)) {
-+			/* This only happens if mbuf is bogus pkt_len > data_len */
-+			PMD_LOG(ERR, "rte_pktmbuf_read failed");
-+			tx_queue->tx_stat.err_pkts++;
-+		} else {
-+			/*
-+			 * No good way to separate back pressure from failure here
-+			 * Assume it is EBUSY, ENOMEM, or EINTR, something that can be retried.
-+			 */
-+			if (pcap_sendpacket(pcap, data, len) != 0) {
-+				PMD_LOG(ERR, "pcap_sendpacket() failed: %s", pcap_geterr(pcap));
-+				break;
-+			}
-+			num_tx++;
-+			tx_bytes += len;
-+		}
++#ifdef RTE_ETHDEV_DEBUG_RX
++#define PMD_RX_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, ETH_PCAP, "%s() rx: ", __func__, __VA_ARGS__)
++#else
++#define PMD_RX_LOG(...) do { } while (0)
++#endif
 +
- 		rte_pktmbuf_free(mbuf);
- 	}
++#ifdef RTE_ETHDEV_DEBUG_TX
++#define PMD_TX_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, ETH_PCAP, "%s() tx: ", __func__, __VA_ARGS__)
++#else
++#define PMD_TX_LOG(...) do { } while (0)
++#endif
++
+ int osdep_iface_index_get(const char *name);
+ int osdep_iface_mac_get(const char *name, struct rte_ether_addr *mac);
  
- 	tx_queue->tx_stat.pkts += num_tx;
- 	tx_queue->tx_stat.bytes += tx_bytes;
--	tx_queue->tx_stat.err_pkts += i - num_tx;
- 
- 	return i;
- }
 -- 
 2.51.0
 
