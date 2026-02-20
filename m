@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FA99C53214
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 05:04:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F649C53214
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 05:04:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D6B440647;
-	Fri, 20 Feb 2026 06:04:22 +0100 (CET)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com
- [209.85.222.175])
- by mails.dpdk.org (Postfix) with ESMTP id 27C4C40395
- for <dev@dpdk.org>; Fri, 20 Feb 2026 06:04:18 +0100 (CET)
-Received: by mail-qk1-f175.google.com with SMTP id
- af79cd13be357-8cb3e0093e3so170820585a.0
- for <dev@dpdk.org>; Thu, 19 Feb 2026 21:04:18 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6D0C140659;
+	Fri, 20 Feb 2026 06:04:23 +0100 (CET)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
+ [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id 24A6040608
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 06:04:19 +0100 (CET)
+Received: by mail-qv1-f50.google.com with SMTP id
+ 6a1803df08f44-896f82e5961so23634996d6.0
+ for <dev@dpdk.org>; Thu, 19 Feb 2026 21:04:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771563857;
- x=1772168657; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771563858;
+ x=1772168658; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=SezU/5GufF1EnMCX8wl/9cMSJxt7mlXFMHwW5iGBxLY=;
- b=be4rHLGdf6N053GOk38yqxkHSD1a0hecJsiuNkiV7YTaehuHpd7IQPuL5precTuqWm
- sM/rzDLL6aWqOFTyhcTcgrVNTKWj5KHOKPm1rKMpjpEZi17fwgf/oJ3eWk7DbCAwK1MP
- gLOTppzG9UY9IFVdGKHcqyHxuMVyU4TDvt/tNyfGc7bXVjP8xod3wXrV/2AERQTHZLcD
- lF/kDr6I6Yg82QrzIM/KDJKJyYp9nCehEkw5O5R5P5xbUn/TJFLTUvkcst7G64Yg6vQJ
- k8bAYAQjLwBJKAq8kYv1xa1QdLFExWNQXis+XpdzIpFU3lY6ePp1W6O+Nm8ohTdkhium
- 79Ew==
+ bh=bzW78w1dPlWGmVg6647acRJROJFPKKATd7WIMabPUwE=;
+ b=1RO9gk5Ug+hlQiA7cnmWp+eOoHkpjLM0QCPRh0oa03aGmhfsIgE0QqGtVs9dzIR3v+
+ TZ9i5H1b5D1AFXT6K4ElERAl8yGS1juxvZIUY36vlHFUEy9pLBp1OVnT2/jCdMqDIiCE
+ 1f/TNeJloY3zzls7TBjFGVJ2wGr8OMcAX/qi8FbCdLOK0ZMFiUOF/+oi6IYcrfUk5Mz9
+ R5mKOimytICgQXzm67qqKSu5fr7ByjGpaPOS9vmxrsw+US75DBry/rNhgNMqrZ82MDmq
+ zVoOwpitpAiD0/IBNQZe7WJXGa6aciZKqfEyjRDA7CSEnFUENlITUE9JG5GuLy8Kju6z
+ 6LIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771563857; x=1772168657;
+ d=1e100.net; s=20230601; t=1771563858; x=1772168658;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=SezU/5GufF1EnMCX8wl/9cMSJxt7mlXFMHwW5iGBxLY=;
- b=vs2yWIHUlP2c9z8eVEObVZnhYSKmEWRziImprxY52aJP3Z1RwkMDcFKVuV7vV8Obkl
- gj0NAmwan2IKl+pzjocpZjCfRa/8/FRoTHBTx6ZwOW319zpuqh9O1wdvZ3TZXPy5LN9O
- x1cTNprtKu25WMu5iuYB1T/a6Hkb48IXMkjifB/CzYeqAbNwCZdIBk8t9FMOQ8T59vdJ
- EgSE3oYzHBW1pYX+nX8JvvFg8LXl3kuwvdlEMxPGlsmBHNKwXnhFNnRoGZ8mhrydBdg2
- uJIhS69fm1lcPEnfjIFrBMt4RtHLclBqMKJHFhtSKFZcaUz1yKZROcqAAh0lZAPKeN0g
- jxdw==
-X-Gm-Message-State: AOJu0YwHetg1Q90iGhnJaOYdLaeRyZ+bFgoTbPE/OamlxCZSAMnDvQ5v
- BkOF8KUchwARN8Hczf96VmQe9QDckOvyVA8A7yL58EGaR5ZDsBhDxZFw6Ynh7JeFJtV/8OBqOvU
- cU1OZ
-X-Gm-Gg: AZuq6aIfFVsNxIEqSfFjL1Z+NE0G/N2ZX3OYSP2MEeQGBn1j/Ziyy9T5KqsIei0wuyI
- wTirubmhXR9QkgQMJ85zTajyp9G/Wi+DOkARgLrl8WnozChM+EnDVQI+Niq9HNQwFD4QknzqITK
- 6bDShMh4ETL9d4U7G1fSXJOUGop1UqBE0xj1fCFFyo5l/lBrlxocYzRZidj7V7XP1qHFtkufi7C
- h2NuZkgdAB8VU9iJxSIEXSBhQmzl9i5xDU6ICY74tbUDvXoYQc1TQpfVoY4ADwWOgSqHgLppWYk
- nemkS1GmbOjcJPBh3HAGsHHhipzgoE2sudZh+MrCLjCso7ZtBj0zgd+c/xnwqtbS0QS60ngr72C
- HzHQkGmhzNzD0Ey7mwtxqjAkyx4ieuGHT9q4fVnjDbVF6K6K0/zyn24OucaxvMp2apfYCFe1YZJ
- 3m55UME5PoZ+KzvApAJ63ZRBYF4ff4votskF009AwJc/FGRj7HpCEqH9dcJqX+pw==
-X-Received: by 2002:a05:620a:4712:b0:8cb:43a3:8b58 with SMTP id
- af79cd13be357-8cb85ac9eb2mr41216285a.76.1771563857473; 
- Thu, 19 Feb 2026 21:04:17 -0800 (PST)
+ bh=bzW78w1dPlWGmVg6647acRJROJFPKKATd7WIMabPUwE=;
+ b=OkUzBtPsSvgQ16bd/Fw/dYxqs/jsM9D6WQfeNbWKslYJ+ykXqdkjnzJbUkicTqgJGo
+ suMdJlSW/3DblEs6wTCjY79WKPp0Ad/+hhj+doOVNc762FDXsT+zEYdl5sjWRt8+PNiS
+ ovG5ZiEKNMm+9Q8hnTtnQtMNiBaOaM1nJ1z45/s/yCTDth+UkzZQmvlChyKtZou6OE4V
+ ue56vm+J93XU5M2niNN58WWCE5U7EbgDFdZ15uxv983HVjv0yy6zoVijshh0ktGvkz1F
+ SLFyyJ1ARHH5duF4xR0Zdo38e2pScBOs78ZpNSu3W5tV/CZ1aVL9nbGTR933iQsESMlj
+ H5uA==
+X-Gm-Message-State: AOJu0YwlcXgo/nwBfcx7KGhd9KtRFBo+6t8JQ1I6EnxyybXXWmhGk+r+
+ c9/RuLWV2jiJ7LxfCBk/FfYovQyXPpPhHxJ4QBrs85kowXMQDGLxUnDYgRoxEdnhzkLymoM922i
+ FQgZk
+X-Gm-Gg: AZuq6aKSS1N9aU+NjZxM1+6coYMTi5QQWWWhWwH6rLI1bHl0ZHqY/xcuJXW8xrEPlkH
+ D67FpWzNdzErkbQCJt9w47j3UIrl0oprHPSvwSH5dz0Nci5TnKUl2lHUw9FZ8lnJUj85ObblqZn
+ w64pY21kRGUrNsFWFPlXZ1NkfdXyORkvNtbDtO72knHCCtuwm1W3KXIcK46SGweYjbe0YdjDz3Y
+ aULbaZQ9nCUuFa5T+ywJS358JKl9iT5/OOGrXT+qdEFi4KcWgbYV0J7t7VWwwMRbt/mi0yJHHQq
+ qK2vVAvjDpXDg5zBr+NM2vmIxmWmbTQOzmb0kEzFnlzXcYMjBxthewxneLE0PzisfuPXgeD8KtK
+ j0tkR2o9sZkLELm/pF7qaTUZCJmf3mmTo9CWV0CgZ/hV6nTrj1hTY8eJpGj0SI1puSxLKBLrS2Y
+ dJIJmxQR0pdf/jl8WiEojYxf2zTqIc/tCdazdee6DhS/UpY9J/RZ+JGuP9P+UonJu5mGSNhTng
+X-Received: by 2002:ad4:5ca9:0:b0:896:76ab:5a1 with SMTP id
+ 6a1803df08f44-897404d10dbmr326829086d6.65.1771563858392; 
+ Thu, 19 Feb 2026 21:04:18 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cb2b0f38dbsm2289278685a.21.2026.02.19.21.04.16
+ af79cd13be357-8cb2b0f38dbsm2289278685a.21.2026.02.19.21.04.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Feb 2026 21:04:17 -0800 (PST)
+ Thu, 19 Feb 2026 21:04:18 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 04/10] net/tap: extend fixed MAC range to 16 bits
-Date: Thu, 19 Feb 2026 21:02:06 -0800
-Message-ID: <20260220050409.1571022-5-stephen@networkplumber.org>
+Subject: [PATCH v3 05/10] net/tap: skip checksum on truncated L4 headers
+Date: Thu, 19 Feb 2026 21:02:07 -0800
+Message-ID: <20260220050409.1571022-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260220050409.1571022-1-stephen@networkplumber.org>
 References: <20260215195348.557945-1-stephen@networkplumber.org>
@@ -82,43 +81,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The generated fixed MAC address stored the interface index in a single
-byte, which wraps after 256 devices and produces duplicate MACs under
-repeated hot-plug. Spread the index across the last two bytes of the
-address, extending the unique range to 65536.
+Add a bounds check before accessing the UDP or TCP header in
+tap_verify_csum(). A single-segment packet whose L4 header extends
+past rte_pktmbuf_data_len() would cause an out-of-bounds read.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/tap/rte_eth_tap.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ drivers/net/tap/rte_eth_tap.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
 diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index e06e1ca079..8b6d5db37e 100644
+index 8b6d5db37e..45ca32cfb8 100644
 --- a/drivers/net/tap/rte_eth_tap.c
 +++ b/drivers/net/tap/rte_eth_tap.c
-@@ -2274,13 +2274,15 @@ set_mac_type(const char *key __rte_unused,
- 		return 0;
- 
- 	if (!strncasecmp(ETH_TAP_MAC_FIXED, value, strlen(ETH_TAP_MAC_FIXED))) {
--		static int iface_idx;
--
--		/* fixed mac = 02:64:74:61:70:<iface_idx> */
--		memcpy((char *)user_mac->addr_bytes, "\002dtap",
--			RTE_ETHER_ADDR_LEN);
--		user_mac->addr_bytes[RTE_ETHER_ADDR_LEN - 1] =
--			iface_idx++ + '0';
-+		static uint16_t iface_idx;
-+
-+		/* fixed mac that is locally assigned based off of iface_idx. */
-+		user_mac->addr_bytes[0] = RTE_ETHER_LOCAL_ADMIN_ADDR; /* 0x2 */
-+		user_mac->addr_bytes[1] = 'd';
-+		user_mac->addr_bytes[2] = 't';
-+		user_mac->addr_bytes[3] = 'a';
-+		user_mac->addr_bytes[4] = 'p' + (iface_idx >> 8);
-+		user_mac->addr_bytes[5] = '0' + (uint8_t)iface_idx++;
- 		goto success;
+@@ -365,8 +365,15 @@ tap_verify_csum(struct rte_mbuf *mbuf)
+ 		 */
+ 		return;
  	}
++
+ 	if (l4 == RTE_PTYPE_L4_UDP || l4 == RTE_PTYPE_L4_TCP) {
+ 		int cksum_ok;
++		const unsigned int l4_min_len = (l4 == RTE_PTYPE_L4_UDP)
++			? sizeof(struct rte_udp_hdr) : sizeof(struct rte_tcp_hdr);
++
++		/* Don't verify checksum if L4 header is truncated */
++		if (l2_len + l3_len + l4_min_len > rte_pktmbuf_data_len(mbuf))
++			return;
  
+ 		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len + l3_len);
+ 		/* Don't verify checksum for multi-segment packets. */
 -- 
 2.51.0
 
