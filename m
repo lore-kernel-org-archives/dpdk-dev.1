@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22FDC531FF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 10:16:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B553EC5518E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 10:17:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3632540DCE;
-	Fri, 20 Feb 2026 11:15:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 71AAB40DDE;
+	Fri, 20 Feb 2026 11:15:35 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 381FE40609
- for <dev@dpdk.org>; Fri, 20 Feb 2026 11:15:11 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 6D1BC40609
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 11:15:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771582511; x=1803118511;
+ t=1771582512; x=1803118512;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=5B2DDICKHDV6MBd/Mx34hq3yxiEV0ZibMsIvmhsRkq0=;
- b=IRyPvyXxZ4qHwb9cJQfoeprRnGtMSY9uogp9BRNmKSNfiPiLD+u51xGT
- uMwMpV3CO+RAVaEvGkth8YWhbEg+Zi7mlMu9LvbBKJ6y13qbTKiHfOSOE
- MT6LvZ0nCXtsjcxvjSjN9dy0NUDZtU5RgnFuJvbQqEm6qYPi7Jig6THbB
- X1SXQDfCHes95COjOS3ngJ/rInMgrl1Xi5Wuuj8iQKloNzr8CkeWWS3jg
- tX9l1ZqehgEgk2gOVpB9sCHlkqL1yVpdSApkFgizi1sLA4cnvS3pAGcvN
- 9LsDAjT5555j2Bn4CsjUjScdxpaV5bCt7CxnDUQnMMMTJUq7vyyt2E2e4 Q==;
-X-CSE-ConnectionGUID: 61B68BC1SkuQU8tcgCQu1g==
-X-CSE-MsgGUID: iAnzkImXQXC9NTQzqsgUsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="75283365"
-X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="75283365"
+ bh=fTMvvzADNT/VsPV+vO48YjDbLKbWwNkqNj9enIo/VZs=;
+ b=W6G0kUDh+1Mcu/NSwXjgFjUhmhn+Ezu0QkJP9JG5DRJFamDeeh3gYNDI
+ kY/nkEuyXW+4hFU4mglIlMS3bhyKW1EpCF/0YQST7HATRziEMkR73Ule5
+ OLPcPxxJQf9hA6HFyAb3uzGm+UNw7OCh3Dbkk0Y5NTFnJGHCNBxVk29jD
+ vfLLvPqaO8NUgrodF2yAAFGvbyFpu2cBFPd9DqhlK3KI69xR6bOHVYM8P
+ eMv2ehK2ccYajEQkNdVowwPMsJW3gyyTY2vadXYNwh+61sOjtxde7BmN1
+ YVP0BSQJ4a2Y0PuKAO2zucbH0fjCU+9dFsF8XcBfUX44yN+SgI6QnmGZa w==;
+X-CSE-ConnectionGUID: ytoXrJj9R1i1ugwX7ylYhg==
+X-CSE-MsgGUID: 5HGBUsBHTTOFlwD3wzZmEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="75283366"
+X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="75283366"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Feb 2026 02:15:11 -0800
-X-CSE-ConnectionGUID: h19BnKueRJ2UhMSf3o3zcQ==
-X-CSE-MsgGUID: rwFgh8wWQ3WvNX/S0VeMRQ==
+ 20 Feb 2026 02:15:12 -0800
+X-CSE-ConnectionGUID: w2EfFNrMQoaUSYFf4e1y0w==
+X-CSE-MsgGUID: JnlmmG0sRXOA43OF22LjaA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="214038542"
+X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="214038549"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa010.jf.intel.com with ESMTP; 20 Feb 2026 02:15:10 -0800
+ by orviesa010.jf.intel.com with ESMTP; 20 Feb 2026 02:15:11 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v7 18/27] net/iavf: avoid rte malloc in VF mailbox for IPsec
-Date: Fri, 20 Feb 2026 10:14:25 +0000
-Message-ID: <b4d37cad7f2dce532104a97129d3a1e250603da1.1771582363.git.anatoly.burakov@intel.com>
+Subject: [PATCH v7 19/27] net/iavf: avoid rte malloc in RSS configuration
+Date: Fri, 20 Feb 2026 10:14:26 +0000
+Message-ID: <8b333598d55597ab0a80f8b6eee6e389f9d90204.1771582363.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771582362.git.anatoly.burakov@intel.com>
  <cover.1771582362.git.anatoly.burakov@intel.com>
@@ -60,305 +60,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when calling down into the VF mailbox, IPsec code will use
-rte_malloc to allocate VF message structures. This memory does not need
-to be stored in hugepage memory and the allocation size is pretty small,
-so replace it with stack allocation.
+Currently, when configuring RSS (redirection table, lookup table, and
+hash key), we are using rte_zmalloc followed by an immediate rte_free.
+This memory does not need to be stored in hugepage memory, and in context
+of IAVF we do not define how big these structures can be, so replace the
+allocations with regular malloc/free.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ipsec_crypto.c | 181 +++++++++------------
- 1 file changed, 78 insertions(+), 103 deletions(-)
+ drivers/net/intel/iavf/iavf_ethdev.c | 4 ++--
+ drivers/net/intel/iavf/iavf_vchnl.c  | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-index 82323b9aa9..29609e4447 100644
---- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-+++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-@@ -458,36 +458,31 @@ static uint32_t
- iavf_ipsec_crypto_security_association_add(struct iavf_adapter *adapter,
- 	struct rte_security_session_conf *conf)
- {
--	struct inline_ipsec_msg *request = NULL, *response = NULL;
--	struct virtchnl_ipsec_sa_cfg *sa_cfg;
--	size_t request_len, response_len;
--
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_sa_cfg sa_cfg;
-+	} sa_req;
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_sa_cfg_resp sa_cfg_resp;
-+	} sa_resp;
-+	struct inline_ipsec_msg *request = &sa_req.msg;
-+	struct inline_ipsec_msg *response = &sa_resp.msg;
-+	struct virtchnl_ipsec_sa_cfg *sa_cfg = &sa_req.sa_cfg;
- 	int rc;
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index b45da4d8b1..4e0df2ca05 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1553,7 +1553,7 @@ iavf_dev_rss_reta_update(struct rte_eth_dev *dev,
+ 		return -EINVAL;
+ 	}
  
--	request_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_sa_cfg);
--
--	request = rte_malloc("iavf-sad-add-request", request_len, 0);
--	if (request == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
--	response_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_sa_cfg_resp);
--	response = rte_malloc("iavf-sad-add-response", response_len, 0);
--	if (response == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
-+	/*
-+	 * MSVC doesn't allow inline initialization of structs with zero-sized
-+	 * members so we have to memset them instead.
-+	 */
-+	memset(&sa_req, 0, sizeof(sa_req));
-+	memset(&sa_resp, 0, sizeof(sa_resp));
+-	lut = rte_zmalloc("rss_lut", reta_size, 0);
++	lut = calloc(1, reta_size);
+ 	if (!lut) {
+ 		PMD_DRV_LOG(ERR, "No memory can be allocated");
+ 		return -ENOMEM;
+@@ -1573,7 +1573,7 @@ iavf_dev_rss_reta_update(struct rte_eth_dev *dev,
+ 	ret = iavf_configure_rss_lut(adapter);
+ 	if (ret) /* revert back */
+ 		rte_memcpy(vf->rss_lut, lut, reta_size);
+-	rte_free(lut);
++	free(lut);
  
- 	/* set msg header params */
- 	request->ipsec_opcode = INLINE_IPSEC_OP_SA_CREATE;
- 	request->req_id = (uint16_t)0xDEADBEEF;
- 
- 	/* set SA configuration params */
--	sa_cfg = (struct virtchnl_ipsec_sa_cfg *)(request + 1);
--
- 	sa_cfg->spi = conf->ipsec.spi;
- 	sa_cfg->virtchnl_protocol_type = VIRTCHNL_PROTO_ESP;
- 	sa_cfg->virtchnl_direction =
-@@ -541,10 +536,10 @@ iavf_ipsec_crypto_security_association_add(struct iavf_adapter *adapter,
- 
- 	/* send virtual channel request to add SA to hardware database */
- 	rc = iavf_ipsec_crypto_request(adapter,
--			(uint8_t *)request, request_len,
--			(uint8_t *)response, response_len);
-+			(uint8_t *)request, sizeof(sa_req),
-+			(uint8_t *)response, sizeof(sa_resp));
- 	if (rc)
--		goto update_cleanup;
-+		return rc;
- 
- 	/* verify response id */
- 	if (response->ipsec_opcode != request->ipsec_opcode ||
-@@ -552,9 +547,6 @@ iavf_ipsec_crypto_security_association_add(struct iavf_adapter *adapter,
- 		rc = -EFAULT;
- 	else
- 		rc = response->ipsec_data.sa_cfg_resp->sa_handle;
--update_cleanup:
--	rte_free(response);
--	rte_free(request);
- 
- 	return rc;
+ 	return ret;
  }
-@@ -722,18 +714,24 @@ iavf_ipsec_crypto_inbound_security_policy_add(struct iavf_adapter *adapter,
- 	bool is_udp,
- 	uint16_t udp_port)
- {
--	struct inline_ipsec_msg *request = NULL, *response = NULL;
--	size_t request_len, response_len;
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_sp_cfg sp_cfg;
-+	} sp_req;
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_sp_cfg_resp sp_cfg_resp;
-+	} sp_resp;
-+	struct inline_ipsec_msg *request = &sp_req.msg;
-+	struct inline_ipsec_msg *response = &sp_resp.msg;
- 	int rc = 0;
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index 9ad39300c6..55986ef909 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -1159,7 +1159,7 @@ iavf_configure_rss_lut(struct iavf_adapter *adapter)
+ 	int len, err = 0;
  
--	request_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_sp_cfg);
--	request = rte_malloc("iavf-inbound-security-policy-add-request",
--				request_len, 0);
--	if (request == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
-+	/*
-+	 * MSVC doesn't allow inline initialization of structs with zero-sized
-+	 * members so we have to memset them instead.
-+	 */
-+	memset(&sp_req, 0, sizeof(sp_req));
-+	memset(&sp_resp, 0, sizeof(sp_resp));
+ 	len = sizeof(*rss_lut) + vf->vf_res->rss_lut_size - 1;
+-	rss_lut = rte_zmalloc("rss_lut", len, 0);
++	rss_lut = calloc(1, len);
+ 	if (!rss_lut)
+ 		return -ENOMEM;
  
- 	/* set msg header params */
- 	request->ipsec_opcode = INLINE_IPSEC_OP_SP_CREATE;
-@@ -768,21 +766,12 @@ iavf_ipsec_crypto_inbound_security_policy_add(struct iavf_adapter *adapter,
- 	request->ipsec_data.sp_cfg->is_udp = is_udp;
- 	request->ipsec_data.sp_cfg->udp_port = htons(udp_port);
+@@ -1178,7 +1178,7 @@ iavf_configure_rss_lut(struct iavf_adapter *adapter)
+ 		PMD_DRV_LOG(ERR,
+ 			    "Failed to execute command of OP_CONFIG_RSS_LUT");
  
--	response_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_sp_cfg_resp);
--	response = rte_malloc("iavf-inbound-security-policy-add-response",
--				response_len, 0);
--	if (response == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
- 	/* send virtual channel request to add SA to hardware database */
- 	rc = iavf_ipsec_crypto_request(adapter,
--			(uint8_t *)request, request_len,
--			(uint8_t *)response, response_len);
-+			(uint8_t *)request, sizeof(sp_req),
-+			(uint8_t *)response, sizeof(sp_resp));
- 	if (rc)
--		goto update_cleanup;
-+		return rc;
- 
- 	/* verify response */
- 	if (response->ipsec_opcode != request->ipsec_opcode ||
-@@ -791,10 +780,6 @@ iavf_ipsec_crypto_inbound_security_policy_add(struct iavf_adapter *adapter,
- 	else
- 		rc = response->ipsec_data.sp_cfg_resp->rule_id;
- 
--update_cleanup:
--	rte_free(request);
--	rte_free(response);
--
- 	return rc;
+-	rte_free(rss_lut);
++	free(rss_lut);
+ 	return err;
  }
  
-@@ -802,25 +787,24 @@ static uint32_t
- iavf_ipsec_crypto_sa_update_esn(struct iavf_adapter *adapter,
- 	struct iavf_security_session *sess)
- {
--	struct inline_ipsec_msg *request = NULL, *response = NULL;
--	size_t request_len, response_len;
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_sa_update sa_update;
-+	} sp_req;
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_resp ipsec_resp;
-+	} sp_resp;
-+	struct inline_ipsec_msg *request = &sp_req.msg;
-+	struct inline_ipsec_msg *response = &sp_resp.msg;
- 	int rc = 0;
+@@ -1191,7 +1191,7 @@ iavf_configure_rss_key(struct iavf_adapter *adapter)
+ 	int len, err = 0;
  
--	request_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_sa_update);
--	request = rte_malloc("iavf-sa-update-request", request_len, 0);
--	if (request == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
--	response_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_resp);
--	response = rte_malloc("iavf-sa-update-response", response_len, 0);
--	if (response == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
-+	/*
-+	 * MSVC doesn't allow inline initialization of structs with zero-sized
-+	 * members so we have to memset them instead.
-+	 */
-+	memset(&sp_req, 0, sizeof(sp_req));
-+	memset(&sp_resp, 0, sizeof(sp_resp));
+ 	len = sizeof(*rss_key) + vf->vf_res->rss_key_size - 1;
+-	rss_key = rte_zmalloc("rss_key", len, 0);
++	rss_key = calloc(1, len);
+ 	if (!rss_key)
+ 		return -ENOMEM;
  
- 	/* set msg header params */
- 	request->ipsec_opcode = INLINE_IPSEC_OP_SA_UPDATE;
-@@ -833,10 +817,10 @@ iavf_ipsec_crypto_sa_update_esn(struct iavf_adapter *adapter,
+@@ -1210,7 +1210,7 @@ iavf_configure_rss_key(struct iavf_adapter *adapter)
+ 		PMD_DRV_LOG(ERR,
+ 			    "Failed to execute command of OP_CONFIG_RSS_KEY");
  
- 	/* send virtual channel request to add SA to hardware database */
- 	rc = iavf_ipsec_crypto_request(adapter,
--			(uint8_t *)request, request_len,
--			(uint8_t *)response, response_len);
-+			(uint8_t *)request, sizeof(sp_req),
-+			(uint8_t *)response, sizeof(sp_resp));
- 	if (rc)
--		goto update_cleanup;
-+		return rc;
- 
- 	/* verify response */
- 	if (response->ipsec_opcode != request->ipsec_opcode ||
-@@ -845,10 +829,6 @@ iavf_ipsec_crypto_sa_update_esn(struct iavf_adapter *adapter,
- 	else
- 		rc = response->ipsec_data.ipsec_resp->resp;
- 
--update_cleanup:
--	rte_free(request);
--	rte_free(response);
--
- 	return rc;
+-	rte_free(rss_key);
++	free(rss_key);
+ 	return err;
  }
  
-@@ -899,25 +879,24 @@ int
- iavf_ipsec_crypto_security_policy_delete(struct iavf_adapter *adapter,
- 	uint8_t is_v4, uint32_t flow_id)
- {
--	struct inline_ipsec_msg *request = NULL, *response = NULL;
--	size_t request_len, response_len;
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_sp_destroy sp_destroy;
-+	} sp_req;
-+	struct {
-+		struct inline_ipsec_msg msg;
-+		struct virtchnl_ipsec_resp resp;
-+	} sp_resp;
-+	struct inline_ipsec_msg *request = &sp_req.msg;
-+	struct inline_ipsec_msg *response = &sp_resp.msg;
- 	int rc = 0;
- 
--	request_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_sp_destroy);
--	request = rte_malloc("iavf-sp-del-request", request_len, 0);
--	if (request == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
--
--	response_len = sizeof(struct inline_ipsec_msg) +
--			sizeof(struct virtchnl_ipsec_resp);
--	response = rte_malloc("iavf-sp-del-response", response_len, 0);
--	if (response == NULL) {
--		rc = -ENOMEM;
--		goto update_cleanup;
--	}
-+	/*
-+	 * MSVC doesn't allow inline initialization of structs with zero-sized
-+	 * members so we have to memset them instead.
-+	 */
-+	memset(&sp_req, 0, sizeof(sp_req));
-+	memset(&sp_resp, 0, sizeof(sp_resp));
- 
- 	/* set msg header params */
- 	request->ipsec_opcode = INLINE_IPSEC_OP_SP_DESTROY;
-@@ -931,21 +910,17 @@ iavf_ipsec_crypto_security_policy_delete(struct iavf_adapter *adapter,
- 
- 	/* send virtual channel request to add SA to hardware database */
- 	rc = iavf_ipsec_crypto_request(adapter,
--			(uint8_t *)request, request_len,
--			(uint8_t *)response, response_len);
-+			(uint8_t *)request, sizeof(sp_req),
-+			(uint8_t *)response, sizeof(sp_resp));
- 	if (rc)
--		goto update_cleanup;
-+		return rc;
- 
- 	/* verify response */
- 	if (response->ipsec_opcode != request->ipsec_opcode ||
- 		response->req_id != request->req_id)
- 		rc = -EFAULT;
- 	else
--		return response->ipsec_data.ipsec_status->status;
--
--update_cleanup:
--	rte_free(request);
--	rte_free(response);
-+		rc = response->ipsec_data.ipsec_status->status;
- 
- 	return rc;
- }
 -- 
 2.47.3
 
