@@ -2,52 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EC3C5ACD9
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 16:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87388C5ACD9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 17:06:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E3D0E4027B;
-	Fri, 20 Feb 2026 17:34:39 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 068144026D;
- Fri, 20 Feb 2026 17:34:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771605278; x=1803141278;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=QVpzg05mTkNZrAzUvL/FMIBrc4QGcMUIjHzgKyee5CM=;
- b=QvsIs//bwLzyDtyEmJ0U7i/+zpYdYLnXk4g9E4e3eb0oqhIicDh8PgOz
- FPeHlgg/PHgIQW9YTCV1gh+QRc4k/CfliZvUdvJo59fRALL6TMRopzKE4
- eu7RvFjNcNq7qEsgI1+UPcAjszIwrv7Uh30DkRfDV6QaTWHlETsmGrU++
- OnJ5yFZ4EfgnxItjBgoHBv3AjcgRshoQcPicfsuwD1FL/+hf8/8YyZ8ed
- QDWzDxnXDSjvF5Fc3amt36nKf2Ex8oQxMxsWcmbU/fp256n+9ZjOMTPSx
- g8USxe4xx7HY5Z3warDaAt/dtSf9TL/6GjTR3jd5ueNwaDsnXOfCDcMJL w==;
-X-CSE-ConnectionGUID: mnsuaDIXSMi+599mF7XIAw==
-X-CSE-MsgGUID: pQw6v5HcTKaxmO91a3kIqA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11707"; a="72605612"
-X-IronPort-AV: E=Sophos;i="6.21,302,1763452800"; d="scan'208";a="72605612"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Feb 2026 08:34:37 -0800
-X-CSE-ConnectionGUID: D+/jtOlBSoCK+5zdpEsVhw==
-X-CSE-MsgGUID: c8J8i5GHQhiYZ1gxU97tzA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,302,1763452800"; d="scan'208";a="213930662"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa008.fm.intel.com with ESMTP; 20 Feb 2026 08:34:35 -0800
-From: Bruce Richardson <bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 66668402AA;
+	Fri, 20 Feb 2026 18:06:22 +0100 (CET)
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com
+ [209.85.160.177])
+ by mails.dpdk.org (Postfix) with ESMTP id E55954026D
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 18:06:20 +0100 (CET)
+Received: by mail-qt1-f177.google.com with SMTP id
+ d75a77b69052e-50335b926c2so20295171cf.2
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 09:06:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771607179;
+ x=1772211979; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=qWvgSx32CO2ryAGSqMt3NPecHT47gTbI+mf3v1KqhqQ=;
+ b=SHwuUI5qz1f4BX1Z0AEpjJFaqj2UqU04CeCO3gFKH/QorMIwmuEWPLmtxBPebdDpw9
+ SrBXqBShqI4dNOVHBhTLsuAvj5owJO1+HU0sgF2Bbeu4EKXhpMXHGfxPxpBonTpBfaia
+ +9MkLjIqZK5TFV7e7+vYr7jJ/xPxdBu8ZRq4PCq/4w0XukfnF0232CbjyPcz6iiwTU2S
+ NC0LfBKsE16Kay4V4zIZJNUeUJpSr5s7EOxaeGHX58vmLd80PgJaTCBvfEXqxrO14tjT
+ ivcrCQkBPJL+l3LTUv471SvD0g1d8mMPIc/cdaXeoe8rHetXHdGfs5Tcpc1JBBNVUwYM
+ SL5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771607179; x=1772211979;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=qWvgSx32CO2ryAGSqMt3NPecHT47gTbI+mf3v1KqhqQ=;
+ b=eUktFyNvCHe5f7yAtuJPLhXi/dclGdav5qqMBBPbGjWVA/k07BHHkqoCxT9oEdaDZk
+ dA4S7J+yFTtheDpKv/ItqrusuJIBJ6UppeOYEkFN+B9rfnl7QidgNx/Y4GgOdezeabsp
+ 9XMnUnhf0VLeLhFOQpBCimW2dNiiV6qpttvXDEM1yY7wjYNVYbdLilo6HWwQx6PLzD4n
+ UV4cfF6VTrWWxTt9oAkYadyx8aHw2qdT75UkUKlZHH7+T/WvzLwVH1M9AYtZfOR5oa+z
+ PjrYq6EP5N/tSm/sEJmfkCmkBzzK6qOQooclwPaDYjrGCNtniRlOCwDAeebSrABQfVHy
+ DKkw==
+X-Gm-Message-State: AOJu0YyVqgHFN32bc+aWjKuL8/F+j5CfQAHqnq1MzjqPFYhT3ZKbMe7D
+ B0SWMcRD1hXjsVz/V8WpjYQ33/IgcaXBhiXd+lgFuzGDrh+ABevjGoiHTmHYvktm/32LHkSE3Oi
+ /M9ZA
+X-Gm-Gg: AZuq6aJipLUZoUG+NKQWc0VMlPPhtb1fFjzYQSOxrHwaAZM0CR1l+rQ8eqj9lxQ6D4/
+ cnCrhZchg2FurHXd8mwNao8zyynRJANTpL+tcI9FGIBYvmsv5Gar/WMbMZWCatAjYR6EsEhGwDR
+ y9sS6vcskiTbz/sIvpz97HU0xGNnUdbSVKkP2DT85vGsJW92QKfcYfikpMdvYKhQXcy1dNyqFCf
+ 2ykXg8bS9MkZXQzEdzo9wPVpHqtZziP55n5S6w4AGmaUV1IuWBKDe01Pa2bJjVAf4fZmQe4C0UT
+ BWt2wG+0swUD78ItGrA1VBhBahI0I8fUQd4ZDf/RK6WXts9pOPtifas0kKYwXAoas0rAxLEfSiC
+ +QoY4/rn4YVcoa+zg5EfQvJH8eejnMYWrfdDjxx64rn29bzKuLhlLf1DB/l/5OZ+O9UO1v5zJTc
+ O/lWDbAJigThkOs5bKEB3sD/047rmv2hFOzY1teRa4F6tm/zM0ap6VLMdVFfzIkw==
+X-Received: by 2002:ac8:5a8c:0:b0:4ed:b5d8:a192 with SMTP id
+ d75a77b69052e-5070bc6b84emr6969031cf.38.1771607178922; 
+ Fri, 20 Feb 2026 09:06:18 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-50684bc39e6sm276277591cf.31.2026.02.20.09.06.17
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 20 Feb 2026 09:06:18 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: oleksandrn@interfacemasters.com, vladimir.medvedkin@intel.com,
- Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] hash: fix overflow of 32-bit offsets
-Date: Fri, 20 Feb 2026 16:33:47 +0000
-Message-ID: <20260220163431.2639622-1-bruce.richardson@intel.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 00/10] net/tap: cleanups and bug fixes
+Date: Fri, 20 Feb 2026 09:02:00 -0800
+Message-ID: <20260220170614.75560-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260220143933.2553112-1-bruce.richardson@intel.com>
-References: <20260220143933.2553112-1-bruce.richardson@intel.com>
+In-Reply-To: <20260215195348.557945-1-stephen@networkplumber.org>
+References: <20260215195348.557945-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -62,201 +81,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When computing the offset inside the overall hash structure by adding an
-offset to a base pointer, the offset was generally calculated by
-multiplying two 32-bit values, which could then overflow. Prevent
-overflow by using (size_t) casts on the elements being multiplied to
-ensure they are 64-bit on 64-bit systems.
+Patches 1-3 are minor cleanups: replace the runtime speed capability
+function with a compile-time constant (TAP is always 10G), clarify
+TUN/TAP flag operator precedence with parentheses, and extend the
+fixed MAC index to 16 bits to avoid duplicates after 256 hot-plug
+cycles.
 
-Fixes: b26473ff8f4a ("hash: add reset function")
-Fixes: 406da3dfb3b5 ("hash: move duplicated code into functions")
-Fixes: 9eca8bd7a61c ("hash: separate lock-free and r/w lock lookup")
-Fixes: 4d9ca3ed2133 ("hash: use ordered loads only if signature matches")
-Fixes: 769b2de7fb52 ("hash: implement RCU resources reclamation")
-Fixes: e605a1d36ca7 ("hash: add lock-free r/w concurrency")
-Fixes: 6dc34e0afe7a ("hash: retrieve a key given its position")
-Fixes: f9edbc9bb6bc ("hash: add iterate function")
-Fixes: 75706568a7eb ("hash: add extendable bucket feature")
-Cc: stable@dpdk.org
+Patches 4-9 fix bugs tagged for stable: a bounds check to prevent
+an out-of-bounds read on truncated L4 headers; resource leaks in
+the primary and secondary process probe error paths; a missing free
+of the IPC reply buffer on queue count mismatch; a use-after-free
+with an orphaned kernel TC rule when remote flow creation fails; and
+a leaked remote_flow allocation on EEXIST from an implicit rule.
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
----
-V2: 
-* use size_t rather than uintptr_t
-* consistently apply size_t cast to the key_entry_size value rather than the position one.
+Patch 10 adds a unit test suite for the TAP PMD modeled on the ring
+PMD tests, covering configuration, link, stats, MTU, MAC, promisc,
+allmulti, queue start/stop, link up/down, stop/start, and multi-queue.
 
----
- lib/hash/rte_cuckoo_hash.c | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+v4 - fix build on clang
 
-diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index da12825c6e..3f382dd117 100644
---- a/lib/hash/rte_cuckoo_hash.c
-+++ b/lib/hash/rte_cuckoo_hash.c
-@@ -705,7 +705,7 @@ rte_hash_reset(struct rte_hash *h)
- 	}
- 
- 	memset(h->buckets, 0, h->num_buckets * sizeof(struct rte_hash_bucket));
--	memset(h->key_store, 0, h->key_entry_size * (h->entries + 1));
-+	memset(h->key_store, 0, (size_t)h->key_entry_size * (h->entries + 1));
- 	*h->tbl_chng_cnt = 0;
- 
- 	/* reset the free ring */
-@@ -774,7 +774,7 @@ search_and_update(const struct rte_hash *h, void *data, const void *key,
- 	for (i = 0; i < RTE_HASH_BUCKET_ENTRIES; i++) {
- 		if (bkt->sig_current[i] == sig) {
- 			k = (struct rte_hash_key *) ((char *)keys +
--					bkt->key_idx[i] * h->key_entry_size);
-+					bkt->key_idx[i] * (size_t)h->key_entry_size);
- 			if (rte_hash_cmp_eq(key, k->key, h) == 0) {
- 				/* The store to application data at *data
- 				 * should not leak after the store to pdata
-@@ -1140,7 +1140,7 @@ __rte_hash_add_key_with_hash(const struct rte_hash *h, const void *key,
- 			return -ENOSPC;
- 	}
- 
--	new_k = RTE_PTR_ADD(keys, slot_id * h->key_entry_size);
-+	new_k = RTE_PTR_ADD(keys, slot_id * (size_t)h->key_entry_size);
- 	/* The store to application data (by the application) at *data should
- 	 * not leak after the store of pdata in the key store. i.e. pdata is
- 	 * the guard variable. Release the application data to the readers.
-@@ -1329,7 +1329,7 @@ search_one_bucket_l(const struct rte_hash *h, const void *key,
- 		if (bkt->sig_current[i] == sig &&
- 				bkt->key_idx[i] != EMPTY_SLOT) {
- 			k = (struct rte_hash_key *) ((char *)keys +
--					bkt->key_idx[i] * h->key_entry_size);
-+					bkt->key_idx[i] * (size_t)h->key_entry_size);
- 
- 			if (rte_hash_cmp_eq(key, k->key, h) == 0) {
- 				if (data != NULL)
-@@ -1367,7 +1367,7 @@ search_one_bucket_lf(const struct rte_hash *h, const void *key, uint16_t sig,
- 					  rte_memory_order_acquire);
- 			if (key_idx != EMPTY_SLOT) {
- 				k = (struct rte_hash_key *) ((char *)keys +
--						key_idx * h->key_entry_size);
-+						key_idx * (size_t)h->key_entry_size);
- 
- 				if (rte_hash_cmp_eq(key, k->key, h) == 0) {
- 					if (data != NULL) {
-@@ -1569,7 +1569,7 @@ __hash_rcu_qsbr_free_resource(void *p, void *e, unsigned int n)
- 	keys = h->key_store;
- 
- 	k = (struct rte_hash_key *) ((char *)keys +
--				rcu_dq_entry.key_idx * h->key_entry_size);
-+				rcu_dq_entry.key_idx * (size_t)h->key_entry_size);
- 	key_data = k->pdata;
- 	if (h->hash_rcu_cfg->free_key_data_func)
- 		h->hash_rcu_cfg->free_key_data_func(h->hash_rcu_cfg->key_data_ptr,
-@@ -1757,7 +1757,7 @@ search_and_remove(const struct rte_hash *h, const void *key,
- 					  rte_memory_order_acquire);
- 		if (bkt->sig_current[i] == sig && key_idx != EMPTY_SLOT) {
- 			k = (struct rte_hash_key *) ((char *)keys +
--					key_idx * h->key_entry_size);
-+					key_idx * (size_t)h->key_entry_size);
- 			if (rte_hash_cmp_eq(key, k->key, h) == 0) {
- 				bkt->sig_current[i] = NULL_SIGNATURE;
- 				/* Free the key store index if
-@@ -1912,8 +1912,7 @@ rte_hash_get_key_with_position(const struct rte_hash *h, const int32_t position,
- 	RETURN_IF_TRUE(((h == NULL) || (key == NULL)), -EINVAL);
- 
- 	struct rte_hash_key *k, *keys = h->key_store;
--	k = (struct rte_hash_key *) ((char *) keys + (position + 1) *
--				     h->key_entry_size);
-+	k = (struct rte_hash_key *) ((char *) keys + (position + 1) * (size_t)h->key_entry_size);
- 	*key = k->key;
- 
- 	if (position !=
-@@ -2007,7 +2006,7 @@ __bulk_lookup_l(const struct rte_hash *h, const void **keys,
- 			const struct rte_hash_key *key_slot =
- 				(const struct rte_hash_key *)(
- 				(const char *)h->key_store +
--				key_idx * h->key_entry_size);
-+				key_idx * (size_t)h->key_entry_size);
- 			rte_prefetch0(key_slot);
- 			continue;
- 		}
-@@ -2021,7 +2020,7 @@ __bulk_lookup_l(const struct rte_hash *h, const void **keys,
- 			const struct rte_hash_key *key_slot =
- 				(const struct rte_hash_key *)(
- 				(const char *)h->key_store +
--				key_idx * h->key_entry_size);
-+				key_idx * (size_t)h->key_entry_size);
- 			rte_prefetch0(key_slot);
- 		}
- 	}
-@@ -2046,7 +2045,7 @@ __bulk_lookup_l(const struct rte_hash *h, const void **keys,
- 			const struct rte_hash_key *key_slot =
- 				(const struct rte_hash_key *)(
- 				(const char *)h->key_store +
--				key_idx * h->key_entry_size);
-+				key_idx * (size_t)h->key_entry_size);
- 
- 			/*
- 			 * If key index is 0, do not compare key,
-@@ -2074,7 +2073,7 @@ __bulk_lookup_l(const struct rte_hash *h, const void **keys,
- 			const struct rte_hash_key *key_slot =
- 				(const struct rte_hash_key *)(
- 				(const char *)h->key_store +
--				key_idx * h->key_entry_size);
-+				key_idx * (size_t)h->key_entry_size);
- 
- 			/*
- 			 * If key index is 0, do not compare key,
-@@ -2193,7 +2192,7 @@ __bulk_lookup_lf(const struct rte_hash *h, const void **keys,
- 				const struct rte_hash_key *key_slot =
- 					(const struct rte_hash_key *)(
- 					(const char *)h->key_store +
--					key_idx * h->key_entry_size);
-+					key_idx * (size_t)h->key_entry_size);
- 				rte_prefetch0(key_slot);
- 				continue;
- 			}
-@@ -2207,7 +2206,7 @@ __bulk_lookup_lf(const struct rte_hash *h, const void **keys,
- 				const struct rte_hash_key *key_slot =
- 					(const struct rte_hash_key *)(
- 					(const char *)h->key_store +
--					key_idx * h->key_entry_size);
-+					key_idx * (size_t)h->key_entry_size);
- 				rte_prefetch0(key_slot);
- 			}
- 		}
-@@ -2233,7 +2232,7 @@ __bulk_lookup_lf(const struct rte_hash *h, const void **keys,
- 				const struct rte_hash_key *key_slot =
- 					(const struct rte_hash_key *)(
- 					(const char *)h->key_store +
--					key_idx * h->key_entry_size);
-+					key_idx * (size_t)h->key_entry_size);
- 
- 				/*
- 				 * If key index is 0, do not compare key,
-@@ -2265,7 +2264,7 @@ __bulk_lookup_lf(const struct rte_hash *h, const void **keys,
- 				const struct rte_hash_key *key_slot =
- 					(const struct rte_hash_key *)(
- 					(const char *)h->key_store +
--					key_idx * h->key_entry_size);
-+					key_idx * (size_t)h->key_entry_size);
- 
- 				/*
- 				 * If key index is 0, do not compare key,
-@@ -2621,7 +2620,7 @@ rte_hash_iterate(const struct rte_hash *h, const void **key, void **data, uint32
- 
- 	__hash_rw_reader_lock(h);
- 	next_key = (struct rte_hash_key *) ((char *)h->key_store +
--				position * h->key_entry_size);
-+				position * (size_t)h->key_entry_size);
- 	/* Return key and data */
- 	*key = next_key->key;
- 	*data = next_key->pdata;
-@@ -2652,7 +2651,7 @@ rte_hash_iterate(const struct rte_hash *h, const void **key, void **data, uint32
- 	}
- 	__hash_rw_reader_lock(h);
- 	next_key = (struct rte_hash_key *) ((char *)h->key_store +
--				position * h->key_entry_size);
-+				position * (size_t)h->key_entry_size);
- 	/* Return key and data */
- 	*key = next_key->key;
- 	*data = next_key->pdata;
+Stephen Hemminger (10):
+  net/tap: replace runtime speed capability with constant
+  net/tap: clarify TUN/TAP flag assignment
+  net/tap: extend fixed MAC range to 16 bits
+  net/tap: skip checksum on truncated L4 headers
+  net/tap: fix resource leaks in tap create error path
+  net/tap: fix resource leaks in secondary process probe
+  net/tap: free IPC reply buffer on queue count mismatch
+  net/tap: fix use-after-free on remote flow creation failure
+  net/tap: free remote flow when implicit rule already exists
+  test: add unit tests for TAP PMD
+
+ app/test/meson.build          |   1 +
+ app/test/test_pmd_tap.c       | 907 ++++++++++++++++++++++++++++++++++
+ drivers/net/tap/rte_eth_tap.c |  97 ++--
+ drivers/net/tap/tap_flow.c    |  23 +-
+ 4 files changed, 967 insertions(+), 61 deletions(-)
+ create mode 100644 app/test/test_pmd_tap.c
+
 -- 
 2.51.0
 
