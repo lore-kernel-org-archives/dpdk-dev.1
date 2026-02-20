@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1C1C5518E
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 10:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBAB9C5518E
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 10:16:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9784440B8F;
-	Fri, 20 Feb 2026 11:15:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9F6D240B98;
+	Fri, 20 Feb 2026 11:15:17 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
- by mails.dpdk.org (Postfix) with ESMTP id 5122940609
- for <dev@dpdk.org>; Fri, 20 Feb 2026 11:15:05 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 661EE40609
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 11:15:06 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771582505; x=1803118505;
+ t=1771582506; x=1803118506;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=du3qwQx3RAjh/F654aIPhXR47vETZmsxPeYwcf+S82I=;
- b=k7OkY2Shmbbslci038afewsAK0m5qjqNtLQKg8rUEh1SWZosgXElicCs
- 2PDPAhOpjgxeT1WcGNyYA6njGIjhnuRmh1YYyPjaMmYWU/vd8xEV5qYDB
- qeZbo+soxVfh8nd0k++hcCLn8Z3nb52Yb/G2XaJ5UtY/wUdh5i/SQeBMU
- VfXtTuI4Q7Vc6Q9Wdb7Ifpilp2Y0ecVbAKneYiJcLstOu8pIOwbaAmpcd
- atn7pVEulPNPEW02pIMSsO4Tx5TN3Fc17oJMZHx7cKAfpaV28TsMkXLqT
- islb0j1SbUTbR2B4wJ4A9IKxkuS0MMQnuhHrjk+BWGz1Ja3w3kVhDaMnB w==;
-X-CSE-ConnectionGUID: VVLiWl3ERrOqx5+8SoixBw==
-X-CSE-MsgGUID: 9ztDdlolSUyc9MY7czA2ng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="75283355"
-X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="75283355"
+ bh=8AOR/iCUCRFrU0llcFKaFjNODoxy4J/EpPkezCXmAZk=;
+ b=ADqaYJksc+EGNZdz9CHzRzMTiC+s+YlrXK4FoiiD0rnGA2R6NaxY6txq
+ aM0X9br9QiQkq1vC68xJdV3uZxX7UhpJ7uuNsKrSm+bQy+5Z14/YQldVE
+ aEg3p1923MpUuQQCGheyHpu3TvhO5ErtXdmxU9mRtSZLXNhNDK9kOcb0f
+ 1u8k0s+63MOTNSlH7vBAso3s7p0gTX1Y0VYiyj4rZtSGjApxa1sWW/NVT
+ oboPhNQPa2m7zF9sLammpmhSZ9VuQRlRW5Ql34Zj4t78dFB2bw2JtYeQO
+ 0KLVcMrHQiVJWr6T8mGOcGn67FX4/N0XDPBP197+tVyj0KidAfn+IoVZC A==;
+X-CSE-ConnectionGUID: 3Kyyz7GZRoOXFklCKOI+Dg==
+X-CSE-MsgGUID: UTWnBidMQESinMdEm7pk0w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="75283356"
+X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="75283356"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 20 Feb 2026 02:15:05 -0800
-X-CSE-ConnectionGUID: u5D3mTmCRxu25fJmRN2uzw==
-X-CSE-MsgGUID: FXO2TdgETOS2ygpQvA4B9g==
+ 20 Feb 2026 02:15:06 -0800
+X-CSE-ConnectionGUID: sj3xaR9zTd2xjZMm9KjZ6Q==
+X-CSE-MsgGUID: UuVCjP/wR+Ggm6rfJjwyYQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="214038517"
+X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="214038522"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa010.jf.intel.com with ESMTP; 20 Feb 2026 02:15:04 -0800
+ by orviesa010.jf.intel.com with ESMTP; 20 Feb 2026 02:15:05 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v7 13/27] net/i40e: avoid rte malloc in adminq operations
-Date: Fri, 20 Feb 2026 10:14:20 +0000
-Message-ID: <854f2a1fd12dd64f3ede905a06a6ed4fe128754c.1771582363.git.anatoly.burakov@intel.com>
+Subject: [PATCH v7 14/27] net/i40e: avoid rte malloc in DDP package handling
+Date: Fri, 20 Feb 2026 10:14:21 +0000
+Message-ID: <023f7aafe9c4c71a59cac3bc366848ce0a03dd1c.1771582363.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771582362.git.anatoly.burakov@intel.com>
  <cover.1771582362.git.anatoly.burakov@intel.com>
@@ -60,46 +60,173 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when processing admin queue messages, we are using rte_zmalloc
-followed by an immediate rte_free. This memory does not need to be stored
-in hugepage memory, so replace it with stack allocation.
+Currently, when processing Dynamic Driver Profile (DDP) packages and
+checking profile information, we are using rte_zmalloc followed by
+immediate rte_free. This memory does not need to be stored in hugepage
+memory, so replace it with stack allocation.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/net/intel/i40e/rte_pmd_i40e.c | 43 +++++----------------------
+ 1 file changed, 8 insertions(+), 35 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index 672d337d99..cd648285d1 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -6870,14 +6870,11 @@ i40e_dev_handle_aq_msg(struct rte_eth_dev *dev)
+diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.c b/drivers/net/intel/i40e/rte_pmd_i40e.c
+index 4839a1d9bf..7892fa8a4e 100644
+--- a/drivers/net/intel/i40e/rte_pmd_i40e.c
++++ b/drivers/net/intel/i40e/rte_pmd_i40e.c
+@@ -1557,7 +1557,7 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
+ {
+ 	struct rte_eth_dev *dev = &rte_eth_devices[port];
  	struct i40e_hw *hw = I40E_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	struct i40e_arq_event_info info;
- 	uint16_t pending, opcode;
-+	uint8_t msg_buf[I40E_AQ_BUF_SZ] = {0};
- 	int ret;
- 
--	info.buf_len = I40E_AQ_BUF_SZ;
--	info.msg_buf = rte_zmalloc("msg_buffer", info.buf_len, 0);
--	if (!info.msg_buf) {
--		PMD_DRV_LOG(ERR, "Failed to allocate mem");
--		return;
+-	uint8_t *buff;
++	uint8_t buff[(I40E_MAX_PROFILE_NUM + 4) * I40E_PROFILE_INFO_SIZE] = {0};
+ 	struct rte_pmd_i40e_profile_list *p_list;
+ 	struct rte_pmd_i40e_profile_info *pinfo, *p;
+ 	uint32_t i;
+@@ -1570,13 +1570,6 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
+ 		PMD_DRV_LOG(INFO, "Read-only profile.");
+ 		return 0;
+ 	}
+-	buff = rte_zmalloc("pinfo_list",
+-			   (I40E_PROFILE_INFO_SIZE * I40E_MAX_PROFILE_NUM + 4),
+-			   0);
+-	if (!buff) {
+-		PMD_DRV_LOG(ERR, "failed to allocate memory");
+-		return -1;
 -	}
-+	info.buf_len = sizeof(msg_buf);
-+	info.msg_buf = msg_buf;
  
- 	pending = 1;
- 	while (pending) {
-@@ -6913,7 +6910,6 @@ i40e_dev_handle_aq_msg(struct rte_eth_dev *dev)
- 			break;
+ 	ret = i40e_aq_get_ddp_list(
+ 		hw, (void *)buff,
+@@ -1584,7 +1577,6 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
+ 		0, NULL);
+ 	if (ret) {
+ 		PMD_DRV_LOG(ERR, "Failed to get profile info list.");
+-		rte_free(buff);
+ 		return -1;
+ 	}
+ 	p_list = (struct rte_pmd_i40e_profile_list *)buff;
+@@ -1592,20 +1584,17 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
+ 		p = &p_list->p_info[i];
+ 		if (pinfo->track_id == p->track_id) {
+ 			PMD_DRV_LOG(INFO, "Profile exists.");
+-			rte_free(buff);
+ 			return 1;
  		}
  	}
--	rte_free(info.msg_buf);
+ 	/* profile with group id 0xff is compatible with any other profile */
+ 	if ((pinfo->track_id & group_mask) == group_mask) {
+-		rte_free(buff);
+ 		return 0;
+ 	}
+ 	for (i = 0; i < p_list->p_count; i++) {
+ 		p = &p_list->p_info[i];
+ 		if ((p->track_id & group_mask) == 0) {
+ 			PMD_DRV_LOG(INFO, "Profile of the group 0 exists.");
+-			rte_free(buff);
+ 			return 2;
+ 		}
+ 	}
+@@ -1616,12 +1605,9 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
+ 		if ((pinfo->track_id & group_mask) !=
+ 		    (p->track_id & group_mask)) {
+ 			PMD_DRV_LOG(INFO, "Profile of different group exists.");
+-			rte_free(buff);
+ 			return 3;
+ 		}
+ 	}
+-
+-	rte_free(buff);
+ 	return 0;
  }
  
- static void
+@@ -1637,7 +1623,10 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
+ 	struct i40e_generic_seg_header *profile_seg_hdr;
+ 	struct i40e_generic_seg_header *metadata_seg_hdr;
+ 	uint32_t track_id;
+-	uint8_t *profile_info_sec;
++	struct {
++		struct i40e_profile_section_header sec;
++		struct i40e_profile_info info;
++	} profile_info_sec = {0};
+ 	int is_exist;
+ 	enum i40e_status_code status = I40E_SUCCESS;
+ 	static const uint32_t type_mask = 0xff000000;
+@@ -1702,26 +1691,15 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
+ 		return -EINVAL;
+ 	}
+ 
+-	profile_info_sec = rte_zmalloc(
+-		"i40e_profile_info",
+-		sizeof(struct i40e_profile_section_header) +
+-		sizeof(struct i40e_profile_info),
+-		0);
+-	if (!profile_info_sec) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate memory");
+-		return -EINVAL;
+-	}
+-
+ 	/* Check if the profile already loaded */
+ 	i40e_generate_profile_info_sec(
+ 		((struct i40e_profile_segment *)profile_seg_hdr)->name,
+ 		&((struct i40e_profile_segment *)profile_seg_hdr)->version,
+-		track_id, profile_info_sec,
++		track_id, (uint8_t* )&profile_info_sec,
+ 		op == RTE_PMD_I40E_PKG_OP_WR_ADD);
+-	is_exist = i40e_check_profile_info(port, profile_info_sec);
++	is_exist = i40e_check_profile_info(port, (uint8_t* )&profile_info_sec);
+ 	if (is_exist < 0) {
+ 		PMD_DRV_LOG(ERR, "Failed to check profile.");
+-		rte_free(profile_info_sec);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1734,13 +1712,11 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
+ 			else if (is_exist == 3)
+ 				PMD_DRV_LOG(ERR, "Profile of different group already exists");
+ 			i40e_update_customized_info(dev, buff, size, op);
+-			rte_free(profile_info_sec);
+ 			return -EEXIST;
+ 		}
+ 	} else if (op == RTE_PMD_I40E_PKG_OP_WR_DEL) {
+ 		if (is_exist != 1) {
+ 			PMD_DRV_LOG(ERR, "Profile does not exist.");
+-			rte_free(profile_info_sec);
+ 			return -EACCES;
+ 		}
+ 	}
+@@ -1752,7 +1728,6 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
+ 			track_id);
+ 		if (status) {
+ 			PMD_DRV_LOG(ERR, "Failed to write profile for delete.");
+-			rte_free(profile_info_sec);
+ 			return status;
+ 		}
+ 	} else {
+@@ -1765,14 +1740,13 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
+ 				PMD_DRV_LOG(ERR, "Failed to write profile for add.");
+ 			else
+ 				PMD_DRV_LOG(ERR, "Failed to write profile.");
+-			rte_free(profile_info_sec);
+ 			return status;
+ 		}
+ 	}
+ 
+ 	if (track_id && (op != RTE_PMD_I40E_PKG_OP_WR_ONLY)) {
+ 		/* Modify loaded profiles info list */
+-		status = i40e_add_rm_profile_info(hw, profile_info_sec);
++		status = i40e_add_rm_profile_info(hw, (uint8_t* )&profile_info_sec);
+ 		if (status) {
+ 			if (op == RTE_PMD_I40E_PKG_OP_WR_ADD)
+ 				PMD_DRV_LOG(ERR, "Failed to add profile to info list.");
+@@ -1785,7 +1759,6 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
+ 	    op == RTE_PMD_I40E_PKG_OP_WR_DEL)
+ 		i40e_update_customized_info(dev, buff, size, op);
+ 
+-	rte_free(profile_info_sec);
+ 	return status;
+ }
+ 
 -- 
 2.47.3
 
