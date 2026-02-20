@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A0BC5ACD3
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 17:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 092A4C5ACD9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 17:07:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 398AB4066F;
-	Fri, 20 Feb 2026 18:06:33 +0100 (CET)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com
- [209.85.160.177])
- by mails.dpdk.org (Postfix) with ESMTP id 716F7402EB
- for <dev@dpdk.org>; Fri, 20 Feb 2026 18:06:26 +0100 (CET)
-Received: by mail-qt1-f177.google.com with SMTP id
- d75a77b69052e-506c00df428so20536071cf.3
- for <dev@dpdk.org>; Fri, 20 Feb 2026 09:06:26 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 47A2040658;
+	Fri, 20 Feb 2026 18:06:34 +0100 (CET)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
+ [209.85.160.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 7029C40649
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 18:06:27 +0100 (CET)
+Received: by mail-qt1-f181.google.com with SMTP id
+ d75a77b69052e-506bcb23a78so18789271cf.3
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 09:06:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771607186;
- x=1772211986; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771607187;
+ x=1772211987; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=J4b23B6SnlWqkiDUZMz81fRy0A7mA0B6xTLcIFNKEBE=;
- b=nLKwQRubvznafdxq61ctuaV8lgxLzzLMozgYrA8rpd/mZ4OxlE2gfPe5ghrIwv2qv5
- Hqx7Qw84qfO+on55HnGtKvOaUdD3fBi4tHCtDReta2fmaxBvGj5XPhvZ0noiVexk3uL6
- VnM7ZR1G5UCFxvkCUcfFhKxWlcxzd0rxjTTCcg49giuyFpDQ84t2RxQy/qSOu8GsIsgh
- 3f4feOeuujp2yvEoRqD568yQAWKAvKcwmNvTSry5RKrru1p//tD72Lhb4WqdqPe6nv/l
- 6qv0puEvu7wYInkRBeGAij9UJFwXql49g4zc9xwZS8xdMPZpPab79uzDmU4cwqRY3FMI
- Jz5g==
+ bh=tkIumbna05lhPKYUcpHVHbGErZ/c8U2EYo5DG071w3s=;
+ b=nWwPwIzQq23TQcUbrC43oQOofzAjg573Z7YGMcDBTIZM0m3cUl6kOs85qfqqWYpLJw
+ U+wAql4x0g2z1cVIejAzEUuyn7xDYU5QWMqY+m3K84ylaSsoWx2FJyKNNjVbMogGLnJQ
+ lhP9xDXg5L6hFT/JN/Dkgv2zKjMV1aytJJVUJxs05UpMNBU68VWo5Di35vWcx4SEGM9f
+ gHsR8trEPIjZkBTpE62P7Ew72sWtD5laVf1JUiAdsAZXUgNK8SpQijN4EvUX6wLOInt8
+ 0CL9RK1S7ZRr9jCHwiqCtQnxyzhwKrN7Uj04LbKR+14B40lhy9QELFUztd672lm2eNW+
+ kmUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771607186; x=1772211986;
+ d=1e100.net; s=20230601; t=1771607187; x=1772211987;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=J4b23B6SnlWqkiDUZMz81fRy0A7mA0B6xTLcIFNKEBE=;
- b=MScdwKgS7A/aj0Od9m/fHiPn8gEdLY/W4SB00RBtO5RJuMnJlpm92cBblTCrHKwlXZ
- +KfiUoGuG7l/vD7af5yNJ3rnXDZ9mS6AIrckqtQAoGelJ2r7U23zAQp1j8ZXx/e4S2b8
- A6du9o3/eXcPq0sKYLAuQo2rXWNJlgR38ed1iODOU/wz01WsBsMRkyHPtAonardjAERL
- DvSPWCAcrxh+2QxuDtaSYUQhpIT/YQ/CcR7F5WIM/cggr+QDZeSmBFzAeGQWqPgoZdlU
- tQXImEhfdlkpLN7kuSLVbg7q90AQvYnaXE32E0JL1qlQl56uApQgYHwtWQ3pNqmDzEsz
- QMyA==
-X-Gm-Message-State: AOJu0Yxpy0JcAjZWLzsJSfDfYGUYxrx+qY91PDrkWDTri6yCOZQZPN4B
- zx1vuO32syi9/KXr/Afecs3kT87ETPmegyMFAyJZDeiXxetN5shhyvX8wk8SIpHV8/pY42REhYg
- e0YW8
-X-Gm-Gg: AZuq6aLRRY7WSLlnYk267orLNH2MEYrI0/jYoYKYpnOg/e056acj7+efOZpvKSgpj2E
- E8KTXYLG6UbrtAGL1A3tz1P/FGxsgrwEOWqCFWzek/9eSJK9xGwiCcmooAj9kSC3GIq9+jsZPFI
- v0WoT0sL3hSwRnqR0J9HLU+0ok2vY3dqZTJjMD9JGzVcjTSVQ4HgASqk7XQmNCW4uQuKUkZyWjO
- n3SPb6DD3nYj7TAqfitVVGsKOugwQX4faNJUZAFgZhfsC/sREoC0QvBNxS8cBl+CoA6Ww0pQki+
- GM2rqUsDIBDc+mvk21NpXui65sOb2U5VpZULZe4Gg1VvBMQdjTDjVv18DUyAA1RURayn78p7cRC
- GegrIs8fnLT8gdP0bpd7DoQV1xvLS+dZJL8JkA1eVNcKuiBkXa0rttf0Z4J49aQEn+3AdKAMXu5
- cOaU2YiS9IjimHXEqp/SN3LVFjdcDdc9OliZSuI0sR5RRPbo3WJV52jTONFnx3Aw==
-X-Received: by 2002:a05:622a:4a:b0:506:be2c:a96a with SMTP id
- d75a77b69052e-5070bbd0688mr7747981cf.17.1771607185563; 
- Fri, 20 Feb 2026 09:06:25 -0800 (PST)
+ bh=tkIumbna05lhPKYUcpHVHbGErZ/c8U2EYo5DG071w3s=;
+ b=cfdJuWgn/DSDlwAA0XrGlDWWPQ3a95QH0thqG6SU3fvbgPlByuDsjOIP5qI19gO7Gc
+ OtaYUQZRXrrAkFuJjdNExNyQ0/tDiDsRM/l2FRM3bn5qRa/idEqiCXHexQ8juxrMT4YH
+ hPmoyhRjsmtACrUDBA67MBqd3aWrhoradwWOWlwSemyJWLyU+94X1msoDUpGq0fKXkWo
+ wPqg0C5tlv23lO43iUiNb/50qElaPH5Nj3BFIkXNWPKzFSiA/HhB9ZtaffVvROsjpDWu
+ bXoGHKZvY4hOrtjlkD0MnAKvpltxHNq7CWqsEtZbun9y1FXoBI02rqXqCJdVrNBzRxS4
+ 7m0w==
+X-Gm-Message-State: AOJu0YxYGWYtCzGCFv2K6Md65CXQBoeGUFwsfWm2frmMfSRTkMtSXpSz
+ xk/AZWuVTWqeRmDIiHfuRZUWt6IBd0IGErmSox9dOWxnf79SBjzQXX1jB4hO5xJSbFBXPtrW2Li
+ KClVC
+X-Gm-Gg: AZuq6aL+rMrOCue8ai+vrPoSxcnF1DC+62XNZ7ZRwEVYZjUAgnOogCZY2kjOLzKhkwU
+ d4YWVQfTZ995IP9p7jQS9tMFTs/HGPM/eoahKwavHE9DpoCyPOs6sgvAfsQ/isj9Yocsx8EMs2v
+ F7UBpsl9hy7AptZd2SL6A0q9clwhuJI1Zf4uO4vyFWQSGXJkak6WPirYh2y/mb50ZSiq/LjJb5H
+ tRWgpxoS39Bdy6mLGTJAAGmF1ZKz4wgKcrkSspMEzd7oLPA9kL6dxXwkbgvNgX5/gTS9Qk0QHeo
+ 8RCgiHW0duOrSIpfXMYog2dvr+lAAA01tdbXLQsji5ek8CLebF6CiRz7ZNz0M1arUtsK5PYtYtZ
+ Vtse2ikZbezAXQZlXO1PZwfZNTXIeYRIBFEHPCnsjdqzhDCtR5P0KDSLhnqKOTf5TRfMQ8/1eeW
+ x4cntlNxwhW3QHO7277rdQTI6UNzr/33s2/Kxuz96zeRWixXgPtegwEv2tHjxemQ==
+X-Received: by 2002:ac8:7d8e:0:b0:4ee:168a:9ebb with SMTP id
+ d75a77b69052e-5070bc84f7cmr6526171cf.58.1771607186768; 
+ Fri, 20 Feb 2026 09:06:26 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-50684bc39e6sm276277591cf.31.2026.02.20.09.06.24
+ d75a77b69052e-50684bc39e6sm276277591cf.31.2026.02.20.09.06.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 20 Feb 2026 09:06:25 -0800 (PST)
+ Fri, 20 Feb 2026 09:06:26 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
 	stable@dpdk.org
-Subject: [PATCH v4 06/10] net/tap: fix resource leaks in secondary process
- probe
-Date: Fri, 20 Feb 2026 09:02:06 -0800
-Message-ID: <20260220170614.75560-7-stephen@networkplumber.org>
+Subject: [PATCH v4 07/10] net/tap: free IPC reply buffer on queue count
+ mismatch
+Date: Fri, 20 Feb 2026 09:02:07 -0800
+Message-ID: <20260220170614.75560-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260220170614.75560-1-stephen@networkplumber.org>
 References: <20260215195348.557945-1-stephen@networkplumber.org>
@@ -84,73 +84,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Four error paths in the secondary-process branch of
-rte_pmd_tap_probe() returned -1 without cleanup:
-
-- primary process not alive: leaked eth_dev
-- process_private malloc failure: leaked eth_dev
-- tap_mp_attach_queues failure: leaked eth_dev and process_private
-- rte_mp_action_register failure: leaked eth_dev and process_private
-
-Add secondary_fail and secondary_fail_pp labels to free
-process_private and release the ethdev port.
+In tap_mp_attach_queues(), if the reply queue count does not match
+the number of received file descriptors, the function returns -1
+without freeing the reply buffer allocated by rte_mp_request_sync().
+Add the missing free().
 
 Bugzilla ID: 1881
-Fixes: c9aa56edec8e ("net/tap: access primary process queues from secondary")
+Fixes: 9ad43ad8fbee ("net/tap: fix potential IPC buffer overrun")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/tap/rte_eth_tap.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/net/tap/rte_eth_tap.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index 9b38d1f50b..974b45ecad 100644
+index 974b45ecad..deb1d72382 100644
 --- a/drivers/net/tap/rte_eth_tap.c
 +++ b/drivers/net/tap/rte_eth_tap.c
-@@ -2502,31 +2502,38 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
- 		eth_dev->tx_pkt_burst = pmd_tx_burst;
- 		if (!rte_eal_primary_proc_alive(NULL)) {
- 			TAP_LOG(ERR, "Primary process is missing");
--			return -1;
-+			goto secondary_fail;
- 		}
- 		eth_dev->process_private = malloc(sizeof(struct pmd_process_private));
- 		if (eth_dev->process_private == NULL) {
- 			TAP_LOG(ERR,
- 				"Failed to alloc memory for process private");
--			return -1;
-+			goto secondary_fail;
- 		}
- 		memset(eth_dev->process_private, 0, sizeof(struct pmd_process_private));
- 
- 		ret = tap_mp_attach_queues(name, eth_dev);
- 		if (ret != 0)
--			return -1;
-+			goto secondary_fail_pp;
- 
- 		if (!tap_devices_count) {
- 			ret = rte_mp_action_register(TAP_MP_REQ_START_RXTX, tap_mp_req_start_rxtx);
- 			if (ret < 0 && rte_errno != ENOTSUP) {
- 				TAP_LOG(ERR, "tap: Failed to register IPC callback: %s",
- 					strerror(rte_errno));
--				return -1;
-+				goto secondary_fail_pp;
- 			}
- 		}
- 		tap_devices_count++;
- 		rte_eth_dev_probing_finish(eth_dev);
- 		return 0;
-+
-+secondary_fail_pp:
-+		free(eth_dev->process_private);
-+		eth_dev->process_private = NULL;
-+secondary_fail:
-+		rte_eth_dev_release_port(eth_dev);
-+		return -1;
+@@ -2407,6 +2407,7 @@ tap_mp_attach_queues(const char *port_name, struct rte_eth_dev *dev)
+ 	/* Attach the queues from received file descriptors */
+ 	if (reply_param->q_count != reply->num_fds) {
+ 		TAP_LOG(ERR, "Unexpected number of fds received");
++		free(reply);
+ 		return -1;
  	}
  
- 	/* use tap%d which causes kernel to choose next available */
 -- 
 2.51.0
 
