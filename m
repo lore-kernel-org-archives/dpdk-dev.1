@@ -2,67 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C0DC561E6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 19:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6EA8C5CFEB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 23:07:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DBE60402AA;
-	Fri, 20 Feb 2026 20:25:26 +0100 (CET)
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com
- [209.85.219.50]) by mails.dpdk.org (Postfix) with ESMTP id D0D8B4026D
- for <dev@dpdk.org>; Fri, 20 Feb 2026 20:25:25 +0100 (CET)
-Received: by mail-qv1-f50.google.com with SMTP id
- 6a1803df08f44-8954ae375efso29178166d6.1
- for <dev@dpdk.org>; Fri, 20 Feb 2026 11:25:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1771615525; x=1772220325; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=SMdzPa4T9G7PICaCDHg4X2yAZk1ccvdOWt68ZITzYZY=;
- b=OTPO6EQBBqeLjT8qlWR/cCqgE2jJrEb5it9XzypYCGAoNF0dkB5dd7AUAqJQEVDhMF
- oTnCbND+SHGCe9F1OF3q3D0bTkcxyMZOgX13yGY8XjZlLrUWwEs4GKFFXcBlGsSqI1rj
- 69KAsU29/CMall8e6a4A1qU6afkraR5GMHkmk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771615525; x=1772220325;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=SMdzPa4T9G7PICaCDHg4X2yAZk1ccvdOWt68ZITzYZY=;
- b=qdSwZaEx6mEg0qPuuFGg4JIllkjaZx4V97iGUVT1vbujhcbLC1x8Ko8d1isi4PrrzM
- HenQvwRJp6L1ttNs4c5rZDDgV0ighxGG0jSEYHvmvFTKb+/Fv0an8leZHczosi0HoKKE
- IhX7h1aR1y0uEeZNHt98N/NIorNYy92DJXw+suvJKQTARZoRYTRfSzNzzDGRU5TXTBdl
- ah90ZeNP0EaaQ7bx1BXgs9VyRRnyxczD/ogvQyRX5HX0PcLSeDSwh93kzC8iGADqAaLd
- dKvhDtf74gVuKOltKGZJPs7fhjb+OTMHKf3FHRsr2bSDgJU6l0IflUKK/wRd4JyQk3HA
- LkOQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXU4F61NS2OaaTLmcjtK2JS5HH9DzQUPVGmYEYnw787Dak1UkRel4FdytdESzCfax1zPEg=@dpdk.org
-X-Gm-Message-State: AOJu0Yz8Lv4fq/qLB/2ts9OcnfCARlQ0ourleyMgGIb+dICDyv/3tTqg
- 9Kp5n02ICdwHUdImI8MH7tVgKjuEQvKK/sE08bjhBgkEfc563SMFpyjDj7kOE4B6MSc=
-X-Gm-Gg: AZuq6aJWfMV8oLl9rvHnNlvpqzhFRm7i04KKrTWOoUabURnrTa7HLEC8tapS4h2ZsoP
- EnCFY1XFTOpyIq0PzfPKeDJ48imV/MD5GMhC9+fM9XLVWvjm/EluFFBBarLFeZz57j3XTKIqTWN
- Ib+hyvZWeC5oM1IelosT7TFiqTCqxPn6/aR8inYE7tDtNt7NDtZY1rCpZiMkgbZ8mA7ee0c4dgl
- JCnEpBLU/9W8I8nFAx0Di0xwKqxbu2urGGkNJdI2cH2zblYTcQcJL9xE02D/wbR5ZPsXzDurEHA
- 1xyaihncT7FDtH830LFCsEY+agNxMJzazYd/+KVVRyfv/kkvnJWsbP8wZ+sPhK7B1ZKYAfBkP7e
- hymqU+j2Lh8rnN8HM1mQxVKbZxI0hgPVRu3xmMtCMf1KLvnfM5eqbsRasmm5huU+GiAQUCaTSZz
- 2/NfoxlnStlphS5nj3EAAZGp5NWLQkDhmN6nE+BST48ABO9dGM9t3blCauGjKmZ9XD
-X-Received: by 2002:a05:6214:29c4:b0:895:4a14:28f1 with SMTP id
- 6a1803df08f44-8997a9821bcmr12428776d6.32.1771615524954; 
- Fri, 20 Feb 2026 11:25:24 -0800 (PST)
-Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8997e24627csm358906d6.29.2026.02.20.11.25.24
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 20 Feb 2026 11:25:24 -0800 (PST)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: probb@iol.unh.edu,
-	dev@dpdk.org
-Cc: dmarx@iol.unh.edu, luca.vizzarro@arm.com,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v1] dts: add support for no link topology
-Date: Fri, 20 Feb 2026 14:25:10 -0500
-Message-ID: <20260220192510.37163-1-abailey@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id BC7374025A;
+	Sat, 21 Feb 2026 00:07:57 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 91A8840150
+ for <dev@dpdk.org>; Sat, 21 Feb 2026 00:07:55 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 61K84xF91084254; Fri, 20 Feb 2026 15:07:52 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
+ 1+jv+mQ3wUDK3w92PYz97uypmFVyVizl/6wjwbFeHI=; b=Th6AOEmQzuEt4J4pW
+ W3vPqThzkwolZdBl/nEO/ZlufORJmJPz5wJyszu6jjpRwEBYYEpXgAz1H4qDdBwW
+ UPdG5Wmw6mb5Uu2CE5zIE0zeUMOnvRm5alykrRCnEaImT6WJZMtxNW9qwQTkK9Mt
+ 7TTlbspkPG+feCMijXuzXlHEkZk6WWRuQ2OCXvMh2dtAlg11xRymb8qKYNAdatmV
+ TiCHq3kunX1Gl8AjK62V5uToc4o8Kw4EetqGDqLNfnt9mZu0O/BXPXPTcX4BQkbX
+ cZA7RRdvW4MstZBR9iinzku8klOME7e+joW4nr2SUZA7UZ+2O+42gLIANJ9R0ZoK
+ YWyiQ==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4cdkmrdy0m-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Fri, 20 Feb 2026 15:07:52 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 20 Feb 2026 15:08:08 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Fri, 20 Feb 2026 15:08:08 -0800
+Received: from LYYJYPGKF4.marvell.com (unknown [10.28.165.174])
+ by maili.marvell.com (Postfix) with ESMTP id 0DBBB5B6943;
+ Fri, 20 Feb 2026 15:07:48 -0800 (PST)
+From: <pbhagavatula@marvell.com>
+To: <mb@smartsharesystems.com>, <jerinj@marvell.com>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>, Bruce Richardson <bruce.richardson@intel.com>
+CC: <dev@dpdk.org>, Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [PATCH 1/2] config: add mbuf burst size configuration
+Date: Sat, 21 Feb 2026 04:37:43 +0530
+Message-ID: <20260220230745.26418-1-pbhagavatula@marvell.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251126082414.91933-1-pbhagavatula@marvell.com>
+References: <20251126082414.91933-1-pbhagavatula@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: Sh4canSOio6CERXoL7tuwMpj-burZ8nK
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjIwMDE4OSBTYWx0ZWRfX436Z9rgTzhE4
+ OZdhrrxx12N3dija8QOksHcYl2I0SPioPeIZq88aqrzr79oYn99g6KD9lJtLU+ZExN5zHBoDi1O
+ qLoNx7m3n5HMr1Wc4pHl7N90ErZjipL65tZMIzaduI5cZm7SA7tC4MdtI3LCVQ1cQEPLhun7KZJ
+ UZIY7VCuTQdG8U/LIln7Ms+itGUZyS5+Lm8YqMJtTBWuDGE4B7KA0qmZmNZf82Spbr/IDJ1EToM
+ BymrJ+9IhGpMaNpFyCRdYX0IBekFXcSoi1ebz1rmNig2jRhiobvnsbqkLsBcgK97NAxkTC8PuQ3
+ HdoxQsvXN6DLk8VjoijCPNZCSX47lhSH9dz9pGcn1aNwK0fNmDaZ4m50xrTezicRrcjhifM1R7t
+ VIcVzA/BZCKnz8kRIoUXInT9rASVaBYvTdk8wGrg5EElt1TIndZVgmVEJqfxdDalJdHcawo52iR
+ ESlnvn6LJKbIXGfO+gg==
+X-Authority-Analysis: v=2.4 cv=J76nLQnS c=1 sm=1 tr=0 ts=6998e948 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=Mpw57Om8IfrbqaoTuvik:22
+ a=GgsMoib0sEa3-_RKJdDe:22 a=M5GUcnROAAAA:8 a=0ouuwSWPl8E_Yop2Dz4A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: Sh4canSOio6CERXoL7tuwMpj-burZ8nK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-02-20_04,2026-02-20_04,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,287 +82,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for running DTS with no traffic generator node and no ethdev
-interfaces. Some applications, like dpdk-test-crypto-perf run without
-ethdev interfaces and no traffic generator. In these cases, it is
-beneficial to remove the overhead of creating a node and ports that are
-not used.
+From: Pavan Nikhilesh <pbhagavatula@marvell.com>
 
-Bugzilla ID: 1870
+Add configurable mbuf burst size macros:
+- RTE_MBUF_BURST_SIZE_THROUGHPUT: optimized for throughput (default 32)
+- RTE_MBUF_BURST_SIZE_LATENCY: optimized for low latency (default 4)
+- RTE_MBUF_BURST_SIZE_DEFAULT: references the selected profile
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+Add meson option 'mbuf_burst_size_default' to select between
+'throughput' (default) and 'latency' profiles.
+
+Platform-specific configurations can override
+RTE_MBUF_BURST_SIZE_THROUGHPUT.
+Set to 64 for CN10K which benefits from larger bursts.
+
+Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
 ---
- dts/api/test.py                          |  8 +++++---
- dts/configurations/test_run.example.yaml |  4 ++--
- dts/framework/config/__init__.py         | 16 ++++++++-------
- dts/framework/config/node.py             |  2 +-
- dts/framework/config/test_run.py         |  4 ++--
- dts/framework/context.py                 |  2 +-
- dts/framework/remote_session/dpdk.py     |  3 ++-
- dts/framework/test_run.py                | 25 ++++++++++++++----------
- dts/framework/testbed_model/topology.py  | 17 +++++++++++-----
- 9 files changed, 49 insertions(+), 32 deletions(-)
+v1 Changes:
+- Renamed RTE_OPTIMAL_BURST_SIZE to RTE_MBUF_BURST_SIZE_DEFAULT,
+- Added RTE_MBUF_BURST_SIZE_THROUGHPUT/RTE_MBUF_BURST_SIZE_LATENCY
+  macros with meson option mbuf_burst_size_default to select profile.
 
-diff --git a/dts/api/test.py b/dts/api/test.py
-index e17babe0ca..046f1778a5 100644
---- a/dts/api/test.py
-+++ b/dts/api/test.py
-@@ -109,12 +109,14 @@ def fail(failure_description: str) -> None:
-     Raises:
-         TestCaseVerifyError: Always raised to indicate the test case failed.
-     """
-+    ctx = get_ctx()
-     get_logger().debug("A test case failed, showing the last 10 commands executed on SUT:")
--    for command_res in get_ctx().sut_node.main_session.remote_session.history[-10:]:
-+    for command_res in ctx.sut_node.main_session.remote_session.history[-10:]:
-         get_logger().debug(command_res.command)
-     get_logger().debug("A test case failed, showing the last 10 commands executed on TG:")
--    for command_res in get_ctx().tg_node.main_session.remote_session.history[-10:]:
--        get_logger().debug(command_res.command)
-+    if ctx.tg_node:
-+        for command_res in ctx.tg_node.main_session.remote_session.history[-10:]:
-+            get_logger().debug(command_res.command)
-     raise TestCaseVerifyError(failure_description)
- 
- 
-diff --git a/dts/configurations/test_run.example.yaml b/dts/configurations/test_run.example.yaml
-index c8035fccf0..f6ca09545e 100644
---- a/dts/configurations/test_run.example.yaml
-+++ b/dts/configurations/test_run.example.yaml
-@@ -23,7 +23,7 @@ dpdk:
-     # in a subdirectory of DPDK tree root directory. Otherwise, will be using the `build_options`
-     # to build the DPDK from source. Either `precompiled_build_dir` or `build_options` can be
-     # defined, but not both.
--func_traffic_generator:
-+func_traffic_generator: # Remove both traffic generators when running a no-link topology
-   type: SCAPY
- # perf_traffic_generator:
- #   type: TREX
-@@ -42,7 +42,7 @@ vdevs: # optional; if removed, vdevs won't be used in the execution
- system_under_test_node: "SUT 1"
- # Traffic generator node to use for this execution environment
- traffic_generator_node: "TG 1"
--port_topology:
-+port_topology: # provide empty list for no-link environment
-   - sut.port-0 <-> tg.port-0  # explicit link. `sut` and `tg` are special identifiers that refer
-                               # to the respective test run's configured nodes.
-   - port-1 <-> port-1         # implicit link, left side is always SUT, right side is always TG.
-diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__init__.py
-index d2f0138e4a..59d566aa0b 100644
---- a/dts/framework/config/__init__.py
-+++ b/dts/framework/config/__init__.py
-@@ -94,9 +94,10 @@ def validate_port_links(self) -> Self:
-                 f"already linked to port {sut_node_port_peer[0]}.{sut_node_port_peer[1]}."
-             )
- 
--            tg_node_port_peer = existing_port_links.get(
--                (self.test_run.traffic_generator_node, link.tg_port), None
--            )
-+            if self.test_run.traffic_generator_node:
-+                tg_node_port_peer = existing_port_links.get(
-+                    (self.test_run.traffic_generator_node, link.tg_port), None
-+                )
-             assert (
-                 tg_node_port_peer is not None
-             ), f"Invalid TG node port specified for link port_topology.{link_idx}."
-@@ -122,11 +123,12 @@ def validate_test_run_against_nodes(self) -> Self:
-         ), f"The system_under_test_node {sut_node_name} is not a valid node name."
- 
-         tg_node_name = self.test_run.traffic_generator_node
--        tg_node = next((n for n in self.nodes if n.name == tg_node_name), None)
-+        if self.test_run.port_topology:
-+            tg_node = next((n for n in self.nodes if n.name == tg_node_name), None)
- 
--        assert (
--            tg_node is not None
--        ), f"The traffic_generator_name {tg_node_name} is not a valid node name."
-+            assert (
-+                tg_node is not None
-+            ), f"The traffic_generator_name {tg_node_name} is not a valid node name."
- 
-         return self
- 
-diff --git a/dts/framework/config/node.py b/dts/framework/config/node.py
-index 438a1bdc8f..d91c0835e4 100644
---- a/dts/framework/config/node.py
-+++ b/dts/framework/config/node.py
-@@ -69,7 +69,7 @@ class NodeConfiguration(FrozenModel):
-     #: An optional hugepage configuration.
-     hugepages: HugepageConfiguration | None = Field(None, alias="hugepages_2mb")
-     #: The ports that can be used in testing.
--    ports: list[PortConfig] = Field(min_length=1)
-+    ports: list[PortConfig] = Field(default=[], min_length=0)
- 
-     @model_validator(mode="after")
-     def verify_unique_port_names(self) -> Self:
-diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
-index 6c292a3675..07440c5250 100644
---- a/dts/framework/config/test_run.py
-+++ b/dts/framework/config/test_run.py
-@@ -490,11 +490,11 @@ class TestRunConfiguration(FrozenModel):
-     #: The SUT node name to use in this test run.
-     system_under_test_node: str
-     #: The TG node name to use in this test run.
--    traffic_generator_node: str
-+    traffic_generator_node: str | None = Field(default=None)
-     #: The seed to use for pseudo-random generation.
-     random_seed: int | None = None
-     #: The port links between the specified nodes to use.
--    port_topology: list[PortLinkConfig] = Field(max_length=2)
-+    port_topology: list[PortLinkConfig] = Field(default=[], max_length=2)
- 
-     fields_from_settings = model_validator(mode="before")(
-         load_fields_from_settings("test_suites", "random_seed")
-diff --git a/dts/framework/context.py b/dts/framework/context.py
-index 8f1021dc96..371473f61c 100644
---- a/dts/framework/context.py
-+++ b/dts/framework/context.py
-@@ -72,7 +72,7 @@ class Context:
-     """Runtime context."""
- 
-     sut_node: Node
--    tg_node: Node
-+    tg_node: Node | None
-     topology: Topology
-     dpdk_build: "DPDKBuildEnvironment"
-     dpdk: "DPDKRuntimeEnvironment"
-diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-index c3575cfcaf..d63114b0e2 100644
---- a/dts/framework/remote_session/dpdk.py
-+++ b/dts/framework/remote_session/dpdk.py
-@@ -13,6 +13,7 @@
- from pathlib import Path, PurePath
- from typing import ClassVar, Final
- 
-+from api.capabilities import LinkTopology
- from framework.config.test_run import (
-     DPDKBuildConfiguration,
-     DPDKBuildOptionsConfiguration,
-@@ -263,7 +264,7 @@ def _build_dpdk(self) -> None:
-         ctx = get_ctx()
-         # If the SUT is an ice driver device, make sure to build with 16B descriptors.
-         if (
--            ctx.topology.sut_port_ingress
-+            ctx.topology.type is not LinkTopology.NO_LINK and not ctx.topology.sut_port_ingress
-             and ctx.topology.sut_port_ingress.config.os_driver == "ice"
-         ):
-             meson_args = MesonArgs(
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index ff0a12c9ce..536d0f33fb 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -189,25 +189,28 @@ def __init__(
-         self.config = config
-         self.logger = get_dts_logger()
- 
-+        tg_node = None
-         sut_node = next(n for n in nodes if n.name == config.system_under_test_node)
--        tg_node = next(n for n in nodes if n.name == config.traffic_generator_node)
--
--        topology = Topology.from_port_links(
--            PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
--            for link in self.config.port_topology
--        )
-+        if config.traffic_generator_node:
-+            tg_node = next(n for n in nodes if n.name == config.traffic_generator_node)
-+            topology = Topology.from_port_links(
-+                PortLink(sut_node.ports_by_name[link.sut_port], tg_node.ports_by_name[link.tg_port])
-+                for link in self.config.port_topology
-+            )
-+        else:
-+            topology = Topology.from_port_links(iter([]))
- 
-         dpdk_build_env = DPDKBuildEnvironment(config.dpdk.build, sut_node)
-         dpdk_runtime_env = DPDKRuntimeEnvironment(config.dpdk, sut_node, dpdk_build_env)
- 
-         func_traffic_generator = (
-             create_traffic_generator(config.func_traffic_generator, tg_node)
--            if config.func and config.func_traffic_generator
-+            if config.func and config.func_traffic_generator and tg_node
-             else None
-         )
-         perf_traffic_generator = (
-             create_traffic_generator(config.perf_traffic_generator, tg_node)
--            if config.perf and config.perf_traffic_generator
-+            if config.perf and config.perf_traffic_generator and tg_node
-             else None
-         )
- 
-@@ -343,7 +346,8 @@ def next(self) -> State | None:
-         test_run.remaining_tests = deque(test_run.selected_tests)
- 
-         test_run.ctx.sut_node.setup()
--        test_run.ctx.tg_node.setup()
-+        if test_run.ctx.tg_node:
-+            test_run.ctx.tg_node.setup()
-         test_run.ctx.dpdk.setup()
-         test_run.ctx.topology.setup()
- 
-@@ -450,7 +454,8 @@ def next(self) -> State | None:
-             self.test_run.ctx.perf_tg.teardown()
-         self.test_run.ctx.topology.teardown()
-         self.test_run.ctx.dpdk.teardown()
--        self.test_run.ctx.tg_node.teardown()
-+        if self.test_run.ctx.tg_node:
-+            self.test_run.ctx.tg_node.teardown()
-         self.test_run.ctx.sut_node.teardown()
-         return None
- 
-diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
-index 13b4b58a74..186ef6bad6 100644
---- a/dts/framework/testbed_model/topology.py
-+++ b/dts/framework/testbed_model/topology.py
-@@ -70,6 +70,8 @@ def from_port_links(cls, port_links: Iterator[PortLink]) -> Self:
-             ConfigurationError: If an unsupported link topology is supplied.
-         """
-         type = LinkTopology.NO_LINK
-+        sut_ports = []
-+        tg_ports = []
- 
-         if port_link := next(port_links, None):
-             type = LinkTopology.ONE_LINK
-@@ -100,16 +102,18 @@ def node_and_ports_from_id(self, node_identifier: NodeIdentifier) -> tuple[Node,
-             case "sut":
-                 return ctx.sut_node, self.sut_ports
-             case "tg":
--                return ctx.tg_node, self.tg_ports
--            case _:
--                msg = f"Invalid node `{node_identifier}` given."
--                raise InternalError(msg)
-+                if self.type is not LinkTopology.NO_LINK:
-+                    return ctx.tg_node, self.tg_ports
-+        msg = f"Invalid node `{node_identifier}` given."
-+        raise InternalError(msg)
- 
-     def setup(self) -> None:
-         """Setup topology ports.
- 
-         Binds all the ports to the right kernel driver to retrieve MAC addresses and logical names.
-         """
-+        if self.type is LinkTopology.NO_LINK:
-+            return
-         self._prepare_devbind_script()
-         self._setup_ports("sut")
-         self._setup_ports("tg")
-@@ -119,6 +123,8 @@ def teardown(self) -> None:
- 
-         Restores all the ports to their original drivers before the test run.
-         """
-+        if self.type is LinkTopology.NO_LINK:
-+            return
-         self._restore_ports_original_drivers("sut")
-         self._restore_ports_original_drivers("tg")
- 
-@@ -264,7 +270,8 @@ def prepare_node(node: Node) -> None:
-             node.main_session.devbind_script_path = devbind_script_path
- 
-         ctx = get_ctx()
--        prepare_node(ctx.tg_node)
-+        if self.type is not LinkTopology.NO_LINK:
-+            prepare_node(ctx.tg_node)
-         prepare_node(ctx.sut_node)
- 
-     @property
--- 
-2.50.1
+ config/arm/meson.build |  1 +
+ config/meson.build     | 15 +++++++++++++++
+ meson_options.txt      |  2 ++
+ 3 files changed, 18 insertions(+)
+
+diff --git a/config/arm/meson.build b/config/arm/meson.build
+index 523b0fc0ed50..1b2cdbd25774 100644
+--- a/config/arm/meson.build
++++ b/config/arm/meson.build
+@@ -481,6 +481,7 @@ soc_cn10k = {
+         ['RTE_MAX_LCORE', 24],
+         ['RTE_MAX_NUMA_NODES', 1],
+         ['RTE_MEMPOOL_ALIGN', 128],
++        ['RTE_MBUF_BURST_SIZE_THROUGHPUT', 64],
+     ],
+     'part_number': '0xd49',
+     'extra_march_features': ['crypto'],
+diff --git a/config/meson.build b/config/meson.build
+index 02e2798ccaf1..578b561a4fd1 100644
+--- a/config/meson.build
++++ b/config/meson.build
+@@ -393,10 +393,25 @@ if get_option('mbuf_refcnt_atomic')
+ endif
+ dpdk_conf.set10('RTE_IOVA_IN_MBUF', get_option('enable_iova_as_pa'))
+
++# Recommended mbuf burst sizes for generic applications.
++# Platform-specific configs may override these values.
++# RTE_MBUF_BURST_SIZE_THROUGHPUT: Burst size optimized for throughput.
++dpdk_conf.set('RTE_MBUF_BURST_SIZE_THROUGHPUT', 32)
++# RTE_MBUF_BURST_SIZE_LATENCY: Burst size optimized for low latency.
++dpdk_conf.set('RTE_MBUF_BURST_SIZE_LATENCY', 4)
++
+ compile_time_cpuflags = []
+ subdir(arch_subdir)
+ dpdk_conf.set('RTE_COMPILE_TIME_CPUFLAGS', ','.join(compile_time_cpuflags))
+
++# RTE_MBUF_BURST_SIZE_DEFAULT: Default burst size used by examples and testpmd.
++# Controlled by -Dmbuf_burst_size_default option (throughput or latency).
++if get_option('mbuf_burst_size_default') == 'latency'
++    dpdk_conf.set('RTE_MBUF_BURST_SIZE_DEFAULT', 'RTE_MBUF_BURST_SIZE_LATENCY')
++else
++    dpdk_conf.set('RTE_MBUF_BURST_SIZE_DEFAULT', 'RTE_MBUF_BURST_SIZE_THROUGHPUT')
++endif
++
+ # apply cross-specific options
+ if meson.is_cross_build()
+     # configure RTE_MAX_LCORE and RTE_MAX_NUMA_NODES from cross file
+diff --git a/meson_options.txt b/meson_options.txt
+index e28d24054cf1..2caf0be91d39 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -46,6 +46,8 @@ option('enable_iova_as_pa', type: 'boolean', value: true, description:
+        'Support the use of physical addresses for IO addresses, such as used by UIO or VFIO in no-IOMMU mode. When disabled, DPDK can only run with IOMMU support for address mappings, but will have more space available in the mbuf structure.')
+ option('mbuf_refcnt_atomic', type: 'boolean', value: true, description:
+        'Atomically access the mbuf refcnt.')
++option('mbuf_burst_size_default', type: 'combo', choices: ['throughput', 'latency'], value: 'throughput', description:
++       'Default mbuf burst size profile: throughput-optimized or latency-optimized.')
+ option('platform', type: 'string', value: 'native', description:
+        'Platform to build, either "native", "generic" or a SoC. Please refer to the Linux build guide for more information.')
+ option('pkt_mbuf_headroom', type: 'integer', value: 128, description:
+--
+2.50.1 (Apple Git-155)
 
