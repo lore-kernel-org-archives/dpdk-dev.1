@@ -2,75 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC6FC531E1
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Feb 2026 21:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A519EC531E4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 04:12:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B38DB402C6;
-	Thu, 19 Feb 2026 22:53:32 +0100 (CET)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com
- [209.85.160.177])
- by mails.dpdk.org (Postfix) with ESMTP id 4AE7F402AC
- for <dev@dpdk.org>; Thu, 19 Feb 2026 22:53:31 +0100 (CET)
-Received: by mail-qt1-f177.google.com with SMTP id
- d75a77b69052e-503347dea84so13877651cf.3
- for <dev@dpdk.org>; Thu, 19 Feb 2026 13:53:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771538010;
- x=1772142810; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=q18369xYXqRdn0ZgQtDXrd8IGLUFGAiCRcbvN8JI8RY=;
- b=E2/rRoVSQFx4+e/d21+c2BUG35t0WezHFFncJulJ1S+2dO1Mb7JplxV9RQZJespC9e
- 1jLwhlE6B4wDTeGJPtdhoyzeirr6qLSFq+IICm9FVSwaXXKvxDuwV/TumRkhozK7uEjH
- zT4udZFxMeaynM6FT2bMTTXPIOp32jP9i3WPFs9atP2jS5yMOEhHufloDGVbcCE5iOjx
- I0N8i4aQ3XnzNljYWkwgyAC/hs4w+WueXbG/zIzIc5x8FerazMahFKTJY1q2ByZyLfzd
- tQZI1s7EFjq5jFvreQNB05CJWSjlb4OvanH3PfWlTv/So0ky/vyTzjQ67q1BE7mdJwwk
- tplA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771538010; x=1772142810;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=q18369xYXqRdn0ZgQtDXrd8IGLUFGAiCRcbvN8JI8RY=;
- b=q6bSD0PyN/WKEp+V1f2VM3cAHG2X4w6PhitkIY4KZ+RaPAFq3ZuslW1fIGkB/z02C9
- b2ImO/fX2hspzX+jHq2a8MKPbnB99hb7Gr2bAeoqzU+jqFglHPZehTLBjFfe3S5qoBC1
- nqpEp/pbkLvhhPlfpS+sRKQpxKyd5y25874rL2Gh3ImACfEo2A/PCbxInIzXHr3EmDHH
- 4+gA9ihGJ3ra2KkD5HMpeB0dvCMRGuVPTtmesZKD9pqSEj8JUuBqlgiuTiiVfIhJ5HFS
- LVm3gpaOa8KGmSLAZmhdnwFx3YskSXymlJ8+NP2WtLNKYIZDu7YqWb2YjJXM0WqZvq48
- 0haA==
-X-Gm-Message-State: AOJu0Yy05gpbyjP5crL0tYAlwWrrwk1ASLwy/f/r5u9P686l8WQO5B4r
- /RDgVIHLG70RrzfP9oWlLIhNHEG/SXX87aga3b5SY1zd5C3L7qS6lcBydRsziThmavQ=
-X-Gm-Gg: AZuq6aItu+o8chKN4uBQ2DUEDonAeVMEcOGTDkoF0KHadtarq5nMmHKFyEG5S2syivd
- MdXRTUm9HznFLdz/JfkxwxkFQItZMWNI6n9SzblxcKLD0EM8GRHQeJB3DyZMd63QR2j5oGs2FOC
- OnJ66EdXadT8AzGkPOwCUC9KiwDsPlnuIBEfAm5Gqy6VQWc3SH7gWzu/uDy+Lidx01I0en0vL/4
- mcNC5KDtXF0MdCVltqDCqB+FMH4Aw4BsPwuqJ5n7/3ysuOQeNrqq7no1hIQZylFxW6Dd7DffbXM
- YFevswxd6MfC151JXVtrW3VstnaDQY6j6dJNsd/MK27l+3W7Lh+eMaVHvef2QA/usxwMQb/Fibt
- L48h9yynzZwBGnMVtE0Oz7mFzfY/jJHxL/A6FTQW3QvQ8kkKDKDWn/aHTCVSYZ2B9Y0XD0zLRqf
- seglOVF9nvFOMcqqO5mc/rPWti4aMHevjT8Zs0Q4iUC7oJ6DvLEnVtyACyV2pYe+aB
-X-Received: by 2002:a05:622a:1884:b0:502:9a94:2f9c with SMTP id
- d75a77b69052e-506b40012cfmr239937621cf.44.1771538010326; 
- Thu, 19 Feb 2026 13:53:30 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-506847d6f55sm249150601cf.5.2026.02.19.13.53.29
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Feb 2026 13:53:30 -0800 (PST)
-Date: Thu, 19 Feb 2026 13:53:26 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Selwin Sebastian <selwin.sebastian@amd.com>, Kishore
- Padmanabha <kishore.padmanabha@broadcom.com>, Ajit Khaparde
- <ajit.khaparde@broadcom.com>, Jeroen de Borst <jeroendb@google.com>, Joshua
- Washington <joshwash@google.com>, Rosen Xu <rosen.xu@altera.com>
-Subject: Re: [PATCH v2] drivers: disable comma warnings selectively
-Message-ID: <20260219135326.47236283@phoenix.local>
-In-Reply-To: <20260219152302.2103018-1-bruce.richardson@intel.com>
-References: <20260213151559.656837-1-bruce.richardson@intel.com>
- <20260219152302.2103018-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 92A024027B;
+	Fri, 20 Feb 2026 05:12:20 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 3E96840276
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 05:12:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1771560739; x=1803096739;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=oHm9nvbq429wQCbEyhgNfgTX/BMjXJBi/y0MQt0SEEo=;
+ b=UKS0woLzKUvWpp/tJ4/21mIi/WbN2BeonblFhiuNCnkm/TRxPbgxb5v+
+ 1AqxxrOnX5fk8P0HKZ+NBQ3w+CCAnGG0qnE9BiiMuBN9Uak6vVijPSIbB
+ TDZd5C9eG7jFMMtXjiViWNnowicfM2f5Yy+zBqXo7hxYg5Cew/2YzK5jO
+ 7Nr5xBUr2MRHpGjr+6xAZW+I9B3WOlQR+j6J0v096K55sp+8AWf/U8eqm
+ nfr9m9FAXFYfAWm3ykq7ueJ0MoXZF/jJVUEeFsVgMRPllyDlHj/gQp4DA
+ tdI/berrbY7+gA5QijR7svmkHvnGtTZmtYEPbbg7oVXm73qAxkgvb4qj4 w==;
+X-CSE-ConnectionGUID: C3TTR8nwQECB8iHp2iipeQ==
+X-CSE-MsgGUID: 1/RYrNalRQOtEeCm3gJq9A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11706"; a="71679993"
+X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="71679993"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Feb 2026 20:12:18 -0800
+X-CSE-ConnectionGUID: 7uIMkyWLT3eCBVkJgx5Y4w==
+X-CSE-MsgGUID: kBfFdqtDTr+Gm409V55plQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,301,1763452800"; d="scan'208";a="213853297"
+Received: from icx005.iind.intel.com (HELO icx005..) ([10.190.212.217])
+ by orviesa006.jf.intel.com with ESMTP; 19 Feb 2026 20:12:16 -0800
+From: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
+ Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
+Subject: [PATCH v2] doc: improve e1000 driver documentation
+Date: Fri, 20 Feb 2026 14:30:21 +0000
+Message-ID: <20260220143023.2337552-1-chaitanyababux.talluri@intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260216195533.2030568-1-chaitanyababux.talluri@intel.com>
+References: <20260216195533.2030568-1-chaitanyababux.talluri@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,15 +61,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 19 Feb 2026 15:22:25 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+Update e1000 driver docs to cover all Intel 1G devices,
+including emulated e1000 and real hardware.
 
-> Rather than disabling -Wcomma for all drivers, only disable it on a
-> case-by-case basis for drivers that need it disabled. Use a variable to
-> do so, to avoid issues with compilers like MSVC that don't support the
-> -Wno-comma flag.
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
+v2: Addressed review comments.
 
-Queued to next-net
+Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
+---
+ doc/guides/nics/e1000em.rst | 47 +++++++------------------------------
+ 1 file changed, 8 insertions(+), 39 deletions(-)
+
+diff --git a/doc/guides/nics/e1000em.rst b/doc/guides/nics/e1000em.rst
+index b2e09cd673..c0fc4fe685 100644
+--- a/doc/guides/nics/e1000em.rst
++++ b/doc/guides/nics/e1000em.rst
+@@ -1,52 +1,21 @@
+ ..  SPDX-License-Identifier: BSD-3-Clause
+     Copyright(c) 2010-2014 Intel Corporation.
+ 
+-Intel 1G Network Drivers (e1000, igb, igc)
+-==========================================
++E1000 Poll Mode Driver
++======================
+ 
+ Overview
+ --------
+ 
+-DPDK provides several poll mode drivers (PMDs) supporting Intel 1 Gigabit
+-Ethernet controller families. These include:
++DPDK provides several poll mode drivers (PMDs) supporting Intel 1 Gigabit ethernet controller families.
++These include:
+ 
+-*   e1000 – Intel 8254x family devices, including QEMU e1000 emulation.
+-*   e1000e – Intel PRO/1000 PCI‑Express family (82563/6/7, 82571/2/3/4/7/8/9,
+-             82583 and I217/I218/I219-based adapters).
++*   e1000 – Intel 8254x family devices, including QEMU ``e1000`` emulation.
++*   e1000e – Intel PRO/1000 PCI‑Express family (82563/6/7, 82571/2/3/4/7/8/9, 82583 and I217/I218/I219-based adapters).
+ 
+-These drivers follow similar design principles and capabilities and are grouped
+-here for clarity.
++.. note::
+ 
+-Supported Hardware
+-------------------
+-
+-E1000 Devices
+-~~~~~~~~~~~~~
+-
+-The e1000 Linux base driver supports the Intel® PRO/1000 PCI and PCI‑X
+-family of Gigabit Ethernet controllers. Supported devices include:
+-
+-*   Intel 82540, 82541, 82545, 82546
+-*   QEMU ``e1000`` emulated NIC
+-
+-E1000e Devices
+-~~~~~~~~~~~~~~
+-
+-The e1000e Linux base driver supports the Intel PRO/1000 PCI‑Express family
+-including:
+-
+-*   82563/82566/82567 series
+-*   82571/82572/82573/82574/82577/82578/82579 series
+-*   82583-based adapters
+-*   I217, I218 and I219 Gigabit Network Connections
+-
+-Driver Notes
+-~~~~~~~~~~~~
+-
+-*   e1000 – supports PCI/PCI‑X Gigabit adapters.
+-*   e1000e – supports PCI‑Express Gigabit adapters.
+-
+-Both drivers are widely used across physical and virtualized environments.
++   The ``igb`` and ``igc`` PMDs are built from the same driver binary but are documented in separate sections for clarity.
+ 
+ Driver for VM Emulated Devices
+ ==============================
+-- 
+2.43.0
+
