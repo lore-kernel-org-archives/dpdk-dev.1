@@ -2,78 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF96CC56204
-	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 14:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123ADC56201
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Feb 2026 15:09:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9C67D4027B;
-	Fri, 20 Feb 2026 15:53:46 +0100 (CET)
-Received: from fout-a2-smtp.messagingengine.com
- (fout-a2-smtp.messagingengine.com [103.168.172.145])
- by mails.dpdk.org (Postfix) with ESMTP id 2DA8E4026D
- for <dev@dpdk.org>; Fri, 20 Feb 2026 15:53:45 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id 9117AEC04D7;
- Fri, 20 Feb 2026 09:53:44 -0500 (EST)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-02.internal (MEProxy); Fri, 20 Feb 2026 09:53:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to; s=fm3; t=1771599224; x=1771685624; bh=i++zZ+YJpUPQAflTu0/RV
- NZVbZXaqo3PhC8sUgVSUsw=; b=F2sN3HFxD4TQKn3Nvd+HfxS8O4qdZFnDdnBOW
- SWYMzUPV0F/UOOjvACKIXhfTqGlSpGjGih03o1jA+vxX7EVnkYqcqfhTNGH1z8QK
- 1kQq8HJq6UjuKKNvBtG09SYeY1kHRkt9DS/esBOQ/yGkjw/sOAKTVqTa2AVgVo3d
- ttGP8vN/qIK8ibddlYJ/cpTcKvVMjc1du/kIw1FFnKWt0a/YdHW0f25oiQFMXFNq
- 7R+yFLLL1wdiGHJ6/wsbUDLAssQWzOENewTTj3TedM7SzNIDjWEZUW1mkBdZ9KIT
- CqARXn/t+QuLc6SkPcgsJzGifb/zfGbyX5Z5WOsy82PUU24mA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
- :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
- 1771599224; x=1771685624; bh=i++zZ+YJpUPQAflTu0/RVNZVbZXaqo3PhC8
- sUgVSUsw=; b=aE1JhmV+IRhLzhdQv0QtbmnrFYvNI4hNsHqph1iDMDl/Xp2OMN+
- ThhmOsMMi0ku6Quh8m7TFoQo7eue4ZLn3r06b7DYYiu1lE/xXy0E2mVqDDAfrCPU
- 6g6TYJi2MupEKKe8IWrfD5cAq2KlU8jViqrXdmk1LmT6gPl0/zyFXolrI2GFZWye
- ReYHh476alJtTUHPuSnGu01qIYhyHSfO5drnc8C4fRn1jTsCG/UxxBxrUCBEVLoV
- 7p7tpApmYUiZaMZbKcI+B+GqLuf+6PPJs9uCtiR8lwn+TnzETaWuhI8RVTteeomJ
- njzEwxfFOAfVS0VtsqmF9SUU8NwNFyGrJKg==
-X-ME-Sender: <xms:d3WYaTU4Yd3CFEgk0ePKMwYggyy5YyZbIogSQVPq0p8k6J2v8eU5sQ>
- <xme:d3WYad2QjmBJAcPDjG6nXv3nQpst3_koTMdT67tMQtlnZT6BASgTmwN7noMpV3I3U
- uL0tjBOJMEghYW82dNZqu-JyJGcfnx14XOOWYFem0qWS4jhKBhp4Q>
-X-ME-Received: <xmr:d3WYaRoY2k-JezcuI2NFEOg8ZXbm6yQVyIiACIEvJCRIu5O2Nvuhrra5jnt-WpHCxS1BptizjM9O2CBe0Gvlj21eBbRensU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvvdekjeefucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
- dtnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehmohhn
- jhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepveevfeevieeihfetudekgeekle
- eigeffueekveduteeuffeiudevteeiudekfeelnecuvehluhhsthgvrhfuihiivgeptden
- ucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvth
- dpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggv
- vhesughpughkrdhorhhgpdhrtghpthhtohepsgihrhhonhdrmhgrrhhohhhnsehinhhtvg
- hlrdgtohhmpdhrtghpthhtohepuggrvhhiugdrhhhunhhtsehinhhtvghlrdgtohhmpdhr
- tghpthhtoheplhgvvgdruggrlhihsehinhhtvghlrdgtohhmpdhrtghpthhtohepgihurg
- hniihihigrnhhgvdeshhhurgifvghirdgtohhmpdhrtghpthhtohepkhihohdrlhhiuhes
- nhgvsghulhgrqdhmrghtrhhigidrtghomhdprhgtphhtthhopehjrghvvghnpgiguhesrh
- gvrghlshhilhdrtghomhdrtghn
-X-ME-Proxy: <xmx:d3WYaUUNK0S3WFgFFRuuVEYzEgKwzB4KdOwIupSO49Fvs9PvvJ8JkA>
- <xmx:d3WYacZ4kQ3RKcq3Dt34JsNMtMFkfH7Fn1V12fhr6jBFnBxABsVIdw>
- <xmx:d3WYaRewR9YJY14WBddZMqPx0rJeRYQghfjRrqtRcJVlx8_qHMXKcw>
- <xmx:d3WYaW3_yF9KNMN1EmvyuWmnpwExAXkNUb4LfzZepidU2nxoRMxwOQ>
- <xmx:eHWYaSDHyOS25aLm7AYMK52UHQzbNuZaC9hSZxPmKrm5qzKG2d6kOGLy>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 20 Feb 2026 09:53:42 -0500 (EST)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: dev@dpdk.org
-Cc: byron.marohn@intel.com, david.hunt@intel.com, lee.daly@intel.com,
- xuanziyang2@huawei.com, kyo.liu@nebula-matrix.com, javen_xu@realsil.com.cn
-Subject: [PATCH] maintainers: prune unreachable contacts
-Date: Fri, 20 Feb 2026 15:53:26 +0100
-Message-ID: <20260220145326.289338-1-thomas@monjalon.net>
-X-Mailer: git-send-email 2.52.0
+	by mails.dpdk.org (Postfix) with ESMTP id 0C6E24027B;
+	Fri, 20 Feb 2026 16:09:22 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 266E34026D;
+ Fri, 20 Feb 2026 16:09:20 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 1C624206CD;
+ Fri, 20 Feb 2026 16:09:19 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH] hash: fix overflow of 32-bit offsets
+Date: Fri, 20 Feb 2026 16:09:14 +0100
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65735@smartserver.smartshare.dk>
+In-Reply-To: <20260220143933.2553112-1-bruce.richardson@intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] hash: fix overflow of 32-bit offsets
+Thread-Index: AdyidsVUeFcp+PsLSJ61wt5krWKMAwAAoBMQ
+References: <20260220143933.2553112-1-bruce.richardson@intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>,
+	<dev@dpdk.org>
+Cc: <vladimir.medvedkin@intel.com>, <oleksandrn@interfacemasters.com>,
+ <stable@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,86 +48,77 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some email addresses are not responding to "RCPT TO".
-Drop these maintainers as we cannot reach them.
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Friday, 20 February 2026 15.40
+>=20
+> When computing the offset inside the overall hash structure by adding
+> an
+> offset to a base pointer, the offset was generally calculated by
+> multiplying two 32-bit values, which could then overflow. Prevent
+> overflow by using (uintptr_t) casts on the elements being multiplied =
+to
+> ensure they are 64-bit on 64-bit systems.
+>=20
+> Fixes: b26473ff8f4a ("hash: add reset function")
+> Fixes: 406da3dfb3b5 ("hash: move duplicated code into functions")
+> Fixes: 9eca8bd7a61c ("hash: separate lock-free and r/w lock lookup")
+> Fixes: 4d9ca3ed2133 ("hash: use ordered loads only if signature
+> matches")
+> Fixes: 769b2de7fb52 ("hash: implement RCU resources reclamation")
+> Fixes: e605a1d36ca7 ("hash: add lock-free r/w concurrency")
+> Fixes: 6dc34e0afe7a ("hash: retrieve a key given its position")
+> Fixes: f9edbc9bb6bc ("hash: add iterate function")
+> Fixes: 75706568a7eb ("hash: add extendable bucket feature")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
+>  lib/hash/rte_cuckoo_hash.c | 36 ++++++++++++++++++------------------
+>  1 file changed, 18 insertions(+), 18 deletions(-)
+>=20
+> diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
+> index da12825c6e..f2478d5286 100644
+> --- a/lib/hash/rte_cuckoo_hash.c
+> +++ b/lib/hash/rte_cuckoo_hash.c
+> @@ -705,7 +705,7 @@ rte_hash_reset(struct rte_hash *h)
+>  	}
+>=20
+>  	memset(h->buckets, 0, h->num_buckets * sizeof(struct
+> rte_hash_bucket));
+> -	memset(h->key_store, 0, h->key_entry_size * (h->entries + 1));
+> +	memset(h->key_store, 0, (size_t)h->key_entry_size * (h->entries +
+> 1));
 
-Cc: byron.marohn@intel.com
-Cc: david.hunt@intel.com
-Cc: lee.daly@intel.com
-Cc: xuanziyang2@huawei.com
-Cc: kyo.liu@nebula-matrix.com
-Cc: javen_xu@realsil.com.cn
+Agree.
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+>  	*h->tbl_chng_cnt =3D 0;
+>=20
+>  	/* reset the free ring */
+> @@ -774,7 +774,7 @@ search_and_update(const struct rte_hash *h, void
+> *data, const void *key,
+>  	for (i =3D 0; i < RTE_HASH_BUCKET_ENTRIES; i++) {
+>  		if (bkt->sig_current[i] =3D=3D sig) {
+>  			k =3D (struct rte_hash_key *) ((char *)keys +
+> -					bkt->key_idx[i] * h->key_entry_size);
+> +					(uintptr_t)bkt->key_idx[i] * h-
+> >key_entry_size);
 
----
+The fix is technically correct.
+However, for source code readability purposes:
 
-This patch should confirm the email bounces.
-If this is a mistake, please reply.
----
- MAINTAINERS | 7 -------
- 1 file changed, 7 deletions(-)
+Please don't cast bkt->key_idx[i] (and similar below) to uintptr_t; it's =
+not a pointer type.
+It might be reasonable casting it to ptrdiff_t, but I'm not sure about =
+that.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index b7a1e28c5a..2faf28f522 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -774,7 +774,6 @@ F: doc/guides/nics/hns3.rst
- F: doc/guides/nics/features/hns3.ini
- 
- Huawei hinic
--M: Ziyang Xuan <xuanziyang2@huawei.com>
- M: Xiaoyun Wang <cloud.wangxiaoyun@huawei.com>
- F: drivers/net/hinic/
- F: doc/guides/nics/hinic.rst
-@@ -1021,7 +1020,6 @@ F: doc/guides/nics/features/rnp.ini
- 
- Nebulamatrix nbl
- M: Dimon Zhao <dimon.zhao@nebula-matrix.com>
--M: Kyo Liu <kyo.liu@nebula-matrix.com>
- M: Leon Yu <leon.yu@nebula-matrix.com>
- M: Sam Chen <sam.chen@nebula-matrix.com>
- F: drivers/net/nbl/
-@@ -1032,7 +1030,6 @@ Realtek r8169
- M: Howard Wang <howard_wang@realsil.com.cn>
- M: Chunhao Lin <hau@realtek.com>
- M: Xing Wang <xing_wang@realsil.com.cn>
--M: Javen Xu <javen_xu@realsil.com.cn>
- F: drivers/net/r8169/
- F: doc/guides/nics/r8169.rst
- F: doc/guides/nics/features/r8169.ini
-@@ -1331,7 +1328,6 @@ F: drivers/compress/qat/
- F: drivers/common/qat/
- 
- ISA-L
--M: Lee Daly <lee.daly@intel.com>
- M: Pablo de Lara <pablo.de.lara.guarch@intel.com>
- F: drivers/compress/isal/
- F: doc/guides/compressdevs/isal.rst
-@@ -1677,7 +1673,6 @@ F: doc/guides/prog_guide/pdcp_lib.rst
- F: app/test/test_pdcp*
- 
- Distributor
--M: David Hunt <david.hunt@intel.com>
- F: lib/distributor/
- F: doc/guides/prog_guide/packet_distrib_lib.rst
- F: app/test/test_distributor*
-@@ -1743,7 +1738,6 @@ F: app/test-acl/
- F: app/test/test_acl.*
- 
- EFD
--M: Byron Marohn <byron.marohn@intel.com>
- M: Yipeng Wang <yipeng1.wang@intel.com>
- F: lib/efd/
- F: doc/guides/prog_guide/efd_lib.rst
-@@ -1844,7 +1838,6 @@ F: doc/guides/prog_guide/ptr_compress_lib.rst
- 
- Power management
- M: Anatoly Burakov <anatoly.burakov@intel.com>
--M: David Hunt <david.hunt@intel.com>
- M: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
- F: lib/power/
- F: doc/guides/prog_guide/power_man.rst
--- 
-2.52.0
+The natural type for h->key_entry_size is size_t; it's only smaller to =
+save memory or something.
+So, please cast the type that naturally would be wider, i.e. use: =
+(size_t)h->key_entry_size
+
+PS: If you change the casting as suggested, remember to update the patch =
+description accordingly.
+
+With or without above suggestion for readability,
+Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
 
