@@ -2,78 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1D1E98DFA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 07:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F8BEE98DFA
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 07:58:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E04C4025E;
-	Mon, 23 Feb 2026 08:57:52 +0100 (CET)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
- [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id B9F734026D
- for <dev@dpdk.org>; Fri, 20 Feb 2026 12:48:44 +0100 (CET)
-Received: by mail-wr1-f47.google.com with SMTP id
- ffacd0b85a97d-4376acce52eso1234230f8f.1
- for <dev@dpdk.org>; Fri, 20 Feb 2026 03:48:44 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771588124; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id 6730D402E4;
+	Mon, 23 Feb 2026 08:57:53 +0100 (CET)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com
+ [209.85.221.42]) by mails.dpdk.org (Postfix) with ESMTP id 084CA402AA
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 19:43:46 +0100 (CET)
+Received: by mail-wr1-f42.google.com with SMTP id
+ ffacd0b85a97d-4359228b7c6so1866024f8f.2
+ for <dev@dpdk.org>; Fri, 20 Feb 2026 10:43:46 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1771613025; cv=none;
  d=google.com; s=arc-20240605;
- b=QefLXnIWU05euwmEKNIoLmRT0BVHYqERTpB673YubIDflpoD7QSLlKLfWAa71IjhTm
- EF2aQOq3mOqLA2ZGo77xMrDGsYpEKze7LNiW55snBZ/T+/94cB5OkGdEvhjfAA8oaZlh
- lkzFBgeYUUmL9iutNz8fMmDECUWEPGcRyhY5TMqV7MkF7q4C04QgHpeXDf6/LLM+cFSX
- 7F0Uzqpf4qgQT5cXSy4VIi+pe3/QqflN9IFGlcmf80sVCa/6I9fYWsx52TFueiED8xTn
- w6lUFNhirb3tQnrnKSVbi5soRVzbe8CtLP3QqdJcg/AEQrfdMT1DrK/njxDfYVEO0cGA
- /fKw==
+ b=DiMkfy/6gffjhu0MDjm2X97fsFo12x4XrQndszAGK7VA2cesfY93GRztyjC7SOTXAB
+ qatsWpJLCEsT84O41oVRHSdDGRmsNLD0DjlI5BrhhQoIuv+FTvW4ksvAwUtOxXchdSV5
+ uJ1ai6bl5irGlP1p918EH+nAKjT7J0BN24stwqZRGk3LVUqNNZwLauXFw4+33/mib4kz
+ YsMX/abqAvK+/XfR64QoO/baQ/3Epqa7kCOsFlxZlW7H7IzsZhXpsfOeUW4+LGX1hAXq
+ M7ZGG9/zSs0XIsbVL29x+EI7L83HFAqBJnmMK1QkCscZ3VRHJPdo/3yLh0QmD2EQvR6o
+ wMPw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=to:subject:message-id:date:from:mime-version:dkim-signature;
- bh=joo9Y4qLbCLEwjnvjSCGJ8qhNIYMb0XjSDqdBPS9XPU=;
+ bh=9vsOePLC8QrOhr/OFXrUYR3q8fPrem850B6gNqSrWyk=;
  fh=eUqWHLlhrxpykrabbQYbmT5B5FclN6p18glcXqrZikU=;
- b=jC7FM8xCG5Pcopdc2R24GPAc/PuBioczMT6BaI2vcUPkx584yJamighrTAQl8xMZXm
- 97+YZUqbbT198N1NCEA9bRXcvCel44ygqyF1J8KC1dmcWfjnhR0kGJBw3Pp93fqGY24b
- OIkjpKYBIP5x9gNlhONPs3SPok0UYdTljvYLWVLgEgnjP1O9jopdJN3qBKGSOEzTKFeJ
- AmbNjjDkJ7HkD4OXEFwtdoPw1vqJ9+LEOg59uJgDl84YlCMvscfxmHnGUqs2IM2npQon
- vqEiHdDX8qMA0W8qHvaX7Y3xMeTSvCv/GuzjYjtjUw0TH0Uar6GILzofvNQUpV5k1ln3
- 1jrg==; darn=dpdk.org
+ b=Z1HfhhLdVg1g0fvAg+ZzNcK5dm4iDfqILK4L2W+q/LDilrH7ILdrad6V561qTGD0p8
+ 62fZcU8Aly6IzzAHTntNMHpmRdDzGzGyYGTUmeSY8zZ+8eWXgSOuSXKmsoahwcDHr3L2
+ OHXXdV1fHXrlwZlBjE895Fou4doXYlcJWBfZTjQLrLPPrjK/1tBeYORRRnuVALJoh3fS
+ AIeuWmijbWDgoUidsmk7VSTrI7prTdfpli3fQ9+ZSkf+26gvuznrMMsJq4IWfN3s1pvi
+ i6cMzF71j5JFWdOqMGxyBQBdB7NPePnXnNlJ39szqSJwjVT7CVTVAyXIpm69DmlRNfTD
+ yIZQ==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1771588124; x=1772192924; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1771613025; x=1772217825; darn=dpdk.org;
  h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
  :date:message-id:reply-to;
- bh=joo9Y4qLbCLEwjnvjSCGJ8qhNIYMb0XjSDqdBPS9XPU=;
- b=EoJcRJk6+QAi8YjNCd0bUxewPJ/OSEd0iMxnQ2IUbvcXZQmj9Z2/+rm4iU1l5TRmMc
- twNyZqsm0ycVsmkI5Dp9XGP/vZpRkogTzYiaOleqgGg5w8OKS0x0QjpyDVw82Xqch/NT
- b0kua34LvjMCjAuK1zhel8MRG6mKxabPYQoCu9+CEc9Vj0E5dRnvOWn0c0pXJ+WILFaM
- CmbyGWWOOLGBuN/uJwZhujRtWJGV4aduGLzVdAofkbQEx9qvwdQAL20SySCHLCLFwOCe
- jQfYlwHD28tqL7snh8EJGcUE3Rr4W8k+sPQvP+sXP2GWVj9/Y4x5UqzjdmKlGOYDRo8P
- 5rsg==
+ bh=9vsOePLC8QrOhr/OFXrUYR3q8fPrem850B6gNqSrWyk=;
+ b=U8q3Nzx/eoHmKZW9GSYqHn+OwaJ0BCbvqog26g/+OKaL6dPrs7YJMmw/WGhW4KXhUO
+ RlX9j+KTkQ4lHyW41bP8Mt8KWLYbkE2SViNP3RmXjILxBaxGUCUl0E/rHgsbJY8LOHiP
+ I7fhEePIujl9yrP7kq8ZjbA2g4af6iFhWTBmuJzN9ts0Vf5Eq9Mj3s8+rnxzrIfxTduh
+ KNWOZNhMznOsivC6CnJsqQkgR5KAZwgmA3o313DnK4F2MeEQnB6perW3Uv23qVr+10yn
+ sxUknjROSN29a9i0dAumM9zN8ppqFW22suyE/exkqmAblu95qIkn9tPyrU9geJyUrmQi
+ BI+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771588124; x=1772192924;
+ d=1e100.net; s=20230601; t=1771613025; x=1772217825;
  h=to:subject:message-id:date:from:mime-version:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=joo9Y4qLbCLEwjnvjSCGJ8qhNIYMb0XjSDqdBPS9XPU=;
- b=DAvbMuRtjHmT1IWpe4rDareI5g2qCLP0qhbMs6GX111oz06JRu9cRvsPIkMZ8mj4zQ
- 6v/0hqtpim8YztU7hf+PVernvQMdzmpEMNZgGjyP9WN76bmva3/IG1A2EvUlhCr/6rAb
- NwH5j1dcwnqg6JXztJfbfCYLeVurvdwWtHF/CXS6U1n8vdUBcDsn3b+uR/TRpZe4pAdF
- SvJJMp0TjLNpDhJ32Vpmd19GUsPO6hCmNP6jhIrtWwlDYpaoStvLFyVvjM16obM6xqTn
- /6sGi76ZiWN67xcl/rLEVKZ+eXvMb/wRbMM2uv2sw5khGOSjy6fu9z8CNAvqvlROmGkg
- ddPg==
-X-Gm-Message-State: AOJu0YyHF9eQts3KWIdhX0k+mGvTBnQgenhbDNUoJkZg8rKA8b/ioYtN
- L0+jHjtSEIjJrywqewhj4M9Wh62Va/hK7oNyF3rvr0QO5aLpIXi40V2lmjqhgYcDHp+PKCyJI/x
- q12IiLxOEnGHmBpBKlBgmDKOfy5vDEl5u3jSuL4M=
-X-Gm-Gg: AZuq6aKcJtd9bU9vrpJKPS5ATVWtiWc7pwq6HyBPH+rqkVxPWMAwDU2VCSwJBQ23r9r
- HSn6Hyx6bs0UtER4HDpeqMVL9faNYw6ACsUnja3wGtC5ej2gIdNPINBec5MMGoYeiHLeL1Ydzg0
- yi8dxjtaTO/I4c88sQYHdLABzZfEblhRfvJYQg4Axp19szAuoBtMvdNzjI7rgmjZr8+WEh5QV72
- GhmSYSzaMgkC2fJqx76iGB9IGLOcqEPI/Cyb+fgYXl0S6isnjhIez213Sr5SKDum1KjJYNTE7WX
- b1IjMFA=
-X-Received: by 2002:a05:6000:2482:b0:432:586f:2a9d with SMTP id
- ffacd0b85a97d-43958e3bdffmr16535474f8f.32.1771588123881; Fri, 20 Feb 2026
- 03:48:43 -0800 (PST)
+ bh=9vsOePLC8QrOhr/OFXrUYR3q8fPrem850B6gNqSrWyk=;
+ b=xMd+uZmcS0v3DdoTyhz5MiLPTjaeFtpnDfKX++flLZW9WjIYlHq5R1tyQUCUaZ8MhB
+ pPbevfbBO2phwTTbcOutO915Z+z7rNByziJvFJzstP2TQQuV0y0sGvUWuqvVfB6Md2jc
+ EnU/VFEbkIc1moRpZO+CT1jkuNugj9ezLEO5U5rFbD990sHpLWN6930MSXGygklnd3ea
+ TkELdM/tMMF3ipgYcnDXt59eff2panLOjnhara3ou1exPDJ6Q+c2jCkuOqusJuwdWb0R
+ DoCQBc4CWesAiF6cTsuJs/gUf6ysxwJpr1vqFjSFFIdCc+TWOqpRbzBnkK6vvOl4cdDS
+ kzcw==
+X-Gm-Message-State: AOJu0Yw0bWZfrI5ruUZqm9ohkCJzbLCY7vuQTga+jfXwC5OQJh7PKgSG
+ q1SHwV7pBKLLcLWlWDRXOaOL4OsAragCcZkhUZqSMYNTzCAskCX6HBwCFlWqOBQiMTvzFF9e9Mh
+ b49Ml6BdXqnuxihpBGily4EKjwuX0tjyjoNYRCjbA3F8C
+X-Gm-Gg: AZuq6aJVxv1LOxIMxkHH/u5VJ6zCxqIaKDjYFEBRVdSaib9l4iD/b4xYIieHBcJV5a3
+ RTdwfHXQvp1U38zbhCoRa7xQ8bZl2lQ8bSiyscPfv0BOsQ9ukSOLVkSjhoiU+MW7tM7ba7laLSO
+ lYBaveBCrLIL1OqclD622HNl958DpbclnIMBmX/gncci9K562WCz9wW2uOh7uYvzLLLWkoJyJm4
+ 8/SHedWfTRjZuMFWwEWhvottHvJ+H3fwDCWsmexU5y+3FxrL9khFJqKsRBCxRYGXPXGzTNo29c+
+ lFtGgpg=
+X-Received: by 2002:a05:6000:2583:b0:436:145a:e54f with SMTP id
+ ffacd0b85a97d-4396f169c6amr1488370f8f.24.1771613025090; Fri, 20 Feb 2026
+ 10:43:45 -0800 (PST)
 MIME-Version: 1.0
 From: Harsh raj Singh <singhharshraj215@gmail.com>
-Date: Fri, 20 Feb 2026 17:18:32 +0530
-X-Gm-Features: AaiRm53A8rqnWqWQlu6LyxkFWRXmUsy90KRJN9X6gVggA-BjxpuhGPU7uAlyEZs
-Message-ID: <CAN33txFiMRpKpdEat+P+tqQmn4POTY3XafJRxnkjj6BAY6sAnw@mail.gmail.com>
-Subject: [PATCH v2] examples/l2fwd_acl: add ACL-based L2 forwarding example
+Date: Sat, 21 Feb 2026 00:13:33 +0530
+X-Gm-Features: AaiRm50y-5xyb4cZGPhCqLXbXIaLc-otQl5NftU_Z1_6QInoF3v7MXpz_rRMckA
+Message-ID: <CAN33txETfmQEj8j=W4-nkUk1rAq0_JLhZuR4R-c3YCrDY90y6A@mail.gmail.com>
+Subject: [PATCH] examples/l2fwd_acl: add ACL-based L2 forwarding example
 To: dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="0000000000000ac0cb064b45cd0e"
 X-Mailman-Approved-At: Mon, 23 Feb 2026 08:57:51 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -88,363 +88,191 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From 27423213cde0594243b96114d67ade6f51cdf764 Mon Sep 17 00:00:00 2001
-From: Harsh Raj Singh <harshraj215@gmail.com>
-Date: Thu, 19 Feb 2026 14:16:16 +0530
-Subject: [PATCH v2] examples/l2fwd_acl: add ACL-based L2 forwarding example
+--0000000000000ac0cb064b45cd0e
+Content-Type: text/plain; charset="UTF-8"
 
-This example demonstrates usage of the DPDK ACL library
-to classify packets based on:
+Hi,
 
-  - protocol
-  - source IPv4
-  - destination IPv4
-  - source port
-  - destination port
+Please find attached my patch adding an ACL-based L2 forwarding example.
 
-Packets matching ACL rules are forwarded,
-others are dropped.
+Thanks,
+Harsh Raj Singh
 
-The example provides a minimal reference
-for developers wanting to integrate ACL
-classification into packet forwarding paths.
+--0000000000000ac0cb064b45cd0e
+Content-Type: text/x-patch; charset="US-ASCII"; 
+	name="0001-examples-l2fwd_acl-add-ACL-based-L2-forwarding-examp.patch"
+Content-Disposition: attachment; 
+	filename="0001-examples-l2fwd_acl-add-ACL-based-L2-forwarding-examp.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mlv8n6r50>
+X-Attachment-Id: f_mlv8n6r50
 
-Signed-off-by: Harsh Raj Singh <harshraj215@gmail.com>
-
-From 27423213cde0594243b96114d67ade6f51cdf764 Mon Sep 17 00:00:00 2001
-From: Harsh Raj Singh <harshraj215@gmail.com>
-Date: Thu, 19 Feb 2026 14:16:16 +0530
-Subject: [PATCH] examples/l2fwd_acl: add ACL-based L2 forwarding example
-
-This example demonstrates usage of the DPDK ACL library
-to classify packets based on:
-
-  - protocol
-  - source IPv4
-  - destination IPv4
-  - source port
-  - destination port
-
-Packets matching ACL rules are forwarded,
-others are dropped.
-
-The example provides a minimal reference
-for developers wanting to integrate ACL
-classification into packet forwarding paths.
-
-Signed-off-by: Harsh Raj Singh <harshraj215@gmail.com>
----
- examples/l2fwd_acl/README.md   |  18 +++
- examples/l2fwd_acl/main.c      | 247 +++++++++++++++++++++++++++++++++
- examples/l2fwd_acl/meson.build |   3 +
- examples/meson.build           |   1 +
- 4 files changed, 269 insertions(+)
- create mode 100644 examples/l2fwd_acl/README.md
- create mode 100644 examples/l2fwd_acl/main.c
- create mode 100644 examples/l2fwd_acl/meson.build
-
-diff --git a/examples/l2fwd_acl/README.md b/examples/l2fwd_acl/README.md
-new file mode 100644
-index 0000000000..5b5494e297
---- /dev/null
-+++ b/examples/l2fwd_acl/README.md
-@@ -0,0 +1,18 @@
-+L2 Forwarding with ACL Example
-+==============================
-+
-+This example demonstrates use of the DPDK ACL library
-+to classify packets based on:
-+
-+- protocol
-+- source IPv4
-+- destination IPv4
-+- source port
-+- destination port
-+
-+Packets matching ACL rules are forwarded,
-+others are dropped.
-+
-+Run:
-+
-+./dpdk-l2fwd-acl -l 0-2 -n 4 -- -p 0x1
-diff --git a/examples/l2fwd_acl/main.c b/examples/l2fwd_acl/main.c
-new file mode 100644
-index 0000000000..6e05145b33
---- /dev/null
-+++ b/examples/l2fwd_acl/main.c
-@@ -0,0 +1,247 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * l2fwd_acl example: demonstrates use of DPDK ACL library
-+ */
-+
-+#include <stdbool.h>
-+#include <signal.h>
-+#include <getopt.h>
-+#include <stdlib.h>
-+
-+#include <rte_acl.h>
-+#include <rte_eal.h>
-+#include <rte_ethdev.h>
-+#include <rte_ether.h>
-+#include <rte_ip.h>
-+#include <rte_mbuf.h>
-+#include <rte_tcp.h>
-+#include <rte_udp.h>
-+#include <rte_log.h>
-+
-+#define NUM_FIELDS 5
-+#define MAX_RULES  32
-+#define NB_MBUF    8192
-+#define BURST      32
-+
-+/* ---- Correct DPDK logging style ---- */
-+#define RTE_LOGTYPE_L2FWD_ACL RTE_LOGTYPE_USER1
-+#define LOGTYPE_L2FWD_ACL RTE_LOGTYPE_L2FWD_ACL
-+
-+RTE_ACL_RULE_DEF(acl_rule, NUM_FIELDS);
-+
-+struct pkt_key {
-+    uint8_t  proto;
-+    uint32_t src_ip;
-+    uint32_t dst_ip;
-+    uint16_t src_port;
-+    uint16_t dst_port;
-+};
-+
-+enum {
-+    PROTO_FIELD,
-+    SRC_FIELD,
-+    DST_FIELD,
-+    SPORT_FIELD,
-+    DPORT_FIELD
-+};
-+
-+static volatile bool force_quit;
-+static uint32_t portmask = 0x1;
-+
-+static struct rte_acl_field_def field_defs[NUM_FIELDS] = {
-+    { RTE_ACL_FIELD_TYPE_BITMASK, sizeof(uint8_t),  PROTO_FIELD, 0,
-offsetof(struct pkt_key, proto) },
-+    { RTE_ACL_FIELD_TYPE_MASK,    sizeof(uint32_t), SRC_FIELD,   1,
-offsetof(struct pkt_key, src_ip) },
-+    { RTE_ACL_FIELD_TYPE_MASK,    sizeof(uint32_t), DST_FIELD,   2,
-offsetof(struct pkt_key, dst_ip) },
-+    { RTE_ACL_FIELD_TYPE_RANGE,   sizeof(uint16_t), SPORT_FIELD, 3,
-offsetof(struct pkt_key, src_port) },
-+    { RTE_ACL_FIELD_TYPE_RANGE,   sizeof(uint16_t), DPORT_FIELD, 3,
-offsetof(struct pkt_key, dst_port) },
-+};
-+
-+static void
-+signal_handler(int sig)
-+{
-+    if (sig == SIGINT || sig == SIGTERM)
-+        force_quit = true;
-+}
-+
-+static int
-+parse_args(int argc, char **argv)
-+{
-+    int opt;
-+    while ((opt = getopt(argc, argv, "p:")) != -1) {
-+        switch (opt) {
-+        case 'p':
-+            portmask = strtoul(optarg, NULL, 16);
-+            break;
-+        default:
-+            return -1;
-+        }
-+    }
-+    return 0;
-+}
-+
-+/* ---------------- ACL INITIALIZATION ---------------- */
-+
-+static struct rte_acl_ctx *
-+init_acl(void)
-+{
-+    struct rte_acl_param prm = {
-+        .name = "acl_ctx",
-+        .socket_id = rte_socket_id(),
-+        .rule_size = RTE_ACL_RULE_SZ(NUM_FIELDS),
-+        .max_rule_num = MAX_RULES
-+    };
-+
-+    struct rte_acl_ctx *ctx = rte_acl_create(&prm);
-+    if (!ctx)
-+        rte_exit(EXIT_FAILURE, "ACL create failed\n");
-+
-+    struct acl_rule rule;
-+    memset(&rule, 0, sizeof(rule));
-+
-+    rule.data.priority = 10;
-+    rule.data.category_mask = 1;
-+    rule.data.userdata = 1;
-+
-+    rule.field[PROTO_FIELD].value.u8 = IPPROTO_TCP;
-+    rule.field[PROTO_FIELD].mask_range.u8 = 0xFF;
-+
-+    rule.field[SRC_FIELD].value.u32 =
-+        rte_be_to_cpu_32(RTE_IPV4(172,17,166,200));
-+    rule.field[SRC_FIELD].mask_range.u32 = 32;
-+
-+    rule.field[DST_FIELD].value.u32 = 0;
-+    rule.field[DST_FIELD].mask_range.u32 = 0;
-+
-+    rule.field[SPORT_FIELD].value.u16 = 0;
-+    rule.field[SPORT_FIELD].mask_range.u16 = 65535;
-+
-+    rule.field[DPORT_FIELD].value.u16 = 0;
-+    rule.field[DPORT_FIELD].mask_range.u16 = 65535;
-+
-+    if (rte_acl_add_rules(ctx, (struct rte_acl_rule *)&rule, 1) < 0)
-+        rte_exit(EXIT_FAILURE, "ACL rule add failed\n");
-+
-+    struct rte_acl_config cfg;
-+    memset(&cfg, 0, sizeof(cfg));
-+    cfg.num_categories = 1;
-+    cfg.num_fields = NUM_FIELDS;
-+    memcpy(cfg.defs, field_defs, sizeof(field_defs));
-+
-+    if (rte_acl_build(ctx, &cfg) != 0)
-+        rte_exit(EXIT_FAILURE, "ACL build failed\n");
-+
-+    RTE_LOG(INFO, L2FWD_ACL, "ACL ready\n");
-+    return ctx;
-+}
-+
-+/* ---------------- MAIN ---------------- */
-+
-+int main(int argc, char **argv)
-+{
-+    force_quit = false;
-+    signal(SIGINT, signal_handler);
-+    signal(SIGTERM, signal_handler);
-+
-+    int ret = rte_eal_init(argc, argv);
-+    if (ret < 0)
-+        rte_exit(EXIT_FAILURE, "EAL init failed\n");
-+
-+    argc -= ret;
-+    argv += ret;
-+
-+    if (parse_args(argc, argv) < 0)
-+        rte_exit(EXIT_FAILURE, "Invalid arguments\n");
-+
-+    struct rte_acl_ctx *acl_ctx = init_acl();
-+
-+    struct rte_mempool *mp = rte_pktmbuf_pool_create(
-+        "mbuf_pool", NB_MBUF, 256, 0,
-+        RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
-+
-+    if (!mp)
-+        rte_exit(EXIT_FAILURE, "mempool failed\n");
-+
-+    uint16_t port_id;
-+    RTE_ETH_FOREACH_DEV(port_id) {
-+
-+        if (!(portmask & (1 << port_id)))
-+            continue;
-+
-+        struct rte_eth_conf conf = {0};
-+
-+        if (rte_eth_dev_configure(port_id, 1, 1, &conf) < 0)
-+            rte_exit(EXIT_FAILURE, "port configure failed\n");
-+
-+        if (rte_eth_rx_queue_setup(port_id, 0, 1024,
-+            rte_eth_dev_socket_id(port_id), NULL, mp) < 0)
-+            rte_exit(EXIT_FAILURE, "rx setup failed\n");
-+
-+        if (rte_eth_tx_queue_setup(port_id, 0, 1024,
-+            rte_eth_dev_socket_id(port_id), NULL) < 0)
-+            rte_exit(EXIT_FAILURE, "tx setup failed\n");
-+
-+        if (rte_eth_dev_start(port_id) < 0)
-+            rte_exit(EXIT_FAILURE, "port start failed\n");
-+
-+        rte_eth_promiscuous_enable(port_id);
-+
-+        RTE_LOG(INFO, L2FWD_ACL, "Started port %u\n", port_id);
-+    }
-+
-+    struct rte_mbuf *bufs[BURST];
-+
-+    while (!force_quit) {
-+
-+        RTE_ETH_FOREACH_DEV(port_id) {
-+
-+            if (!(portmask & (1 << port_id)))
-+                continue;
-+
-+            uint16_t nb = rte_eth_rx_burst(port_id, 0, bufs, BURST);
-+            if (!nb) continue;
-+
-+            for (int i = 0; i < nb; i++) {
-+
-+                struct rte_mbuf *m = bufs[i];
-+                struct rte_ether_hdr *eth =
-+                    rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
-+
-+                if (eth->ether_type !=
-+                    rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4)) {
-+                    rte_pktmbuf_free(m);
-+                    continue;
-+                }
-+
-+                struct rte_ipv4_hdr *ip =
-+                    (struct rte_ipv4_hdr *)(eth + 1);
-+
-+                struct pkt_key key = {0};
-+                key.proto  = ip->next_proto_id;
-+                key.src_ip = rte_be_to_cpu_32(ip->src_addr);
-+                key.dst_ip = rte_be_to_cpu_32(ip->dst_addr);
-+
-+                uint8_t *l4 = (uint8_t *)ip + (ip->ihl * 4);
-+
-+                if (key.proto == IPPROTO_TCP) {
-+                    struct rte_tcp_hdr *tcp = (struct rte_tcp_hdr *)l4;
-+                    key.src_port = rte_be_to_cpu_16(tcp->src_port);
-+                    key.dst_port = rte_be_to_cpu_16(tcp->dst_port);
-+                } else if (key.proto == IPPROTO_UDP) {
-+                    struct rte_udp_hdr *udp = (struct rte_udp_hdr *)l4;
-+                    key.src_port = rte_be_to_cpu_16(udp->src_port);
-+                    key.dst_port = rte_be_to_cpu_16(udp->dst_port);
-+                }
-+
-+                const uint8_t *data[1] = {(const uint8_t *)&key};
-+                uint32_t res[1];
-+
-+                rte_acl_classify(acl_ctx, data, res, 1, 1);
-+
-+                if (res[0])
-+                    rte_eth_tx_burst(port_id, 0, &m, 1);
-+                else
-+                    rte_pktmbuf_free(m);
-+            }
-+        }
-+    }
-+
-+    return 0;
-diff --git a/examples/l2fwd_acl/meson.build b/examples/l2fwd_acl/meson.build
-new file mode 100644
-index 0000000000..331dd545e9
---- /dev/null
-+++ b/examples/l2fwd_acl/meson.build
-@@ -0,0 +1,3 @@
-+sources = files('main.c')
-+
-+deps += ['acl', 'ethdev', 'mbuf', 'net']
-diff --git a/examples/meson.build b/examples/meson.build
-index 25d9c88457..bce2982229 100644
---- a/examples/meson.build
-+++ b/examples/meson.build
-@@ -24,6 +24,7 @@ all_examples = [
-         'ipsec-secgw',
-         'ipv4_multicast',
-         'l2fwd',
-+        'l2fwd_acl',
-         'l2fwd-cat',
-         'l2fwd-crypto',
-         'l2fwd-event',
--- 
-2.43.0
+RnJvbSAyNzQyMzIxM2NkZTA1OTQyNDNiOTYxMTRkNjdhZGU2ZjUxY2RmNzY0IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBIYXJzaCBSYWogU2luZ2ggPGhhcnNocmFqMjE1QGdtYWlsLmNv
+bT4KRGF0ZTogVGh1LCAxOSBGZWIgMjAyNiAxNDoxNjoxNiArMDUzMApTdWJqZWN0OiBbUEFUQ0hd
+IGV4YW1wbGVzL2wyZndkX2FjbDogYWRkIEFDTC1iYXNlZCBMMiBmb3J3YXJkaW5nIGV4YW1wbGUK
+ClRoaXMgZXhhbXBsZSBkZW1vbnN0cmF0ZXMgdXNhZ2Ugb2YgdGhlIERQREsgQUNMIGxpYnJhcnkK
+dG8gY2xhc3NpZnkgcGFja2V0cyBiYXNlZCBvbjoKCiAgLSBwcm90b2NvbAogIC0gc291cmNlIElQ
+djQKICAtIGRlc3RpbmF0aW9uIElQdjQKICAtIHNvdXJjZSBwb3J0CiAgLSBkZXN0aW5hdGlvbiBw
+b3J0CgpQYWNrZXRzIG1hdGNoaW5nIEFDTCBydWxlcyBhcmUgZm9yd2FyZGVkLApvdGhlcnMgYXJl
+IGRyb3BwZWQuCgpUaGUgZXhhbXBsZSBwcm92aWRlcyBhIG1pbmltYWwgcmVmZXJlbmNlCmZvciBk
+ZXZlbG9wZXJzIHdhbnRpbmcgdG8gaW50ZWdyYXRlIEFDTApjbGFzc2lmaWNhdGlvbiBpbnRvIHBh
+Y2tldCBmb3J3YXJkaW5nIHBhdGhzLgoKU2lnbmVkLW9mZi1ieTogSGFyc2ggUmFqIFNpbmdoIDxo
+YXJzaHJhajIxNUBnbWFpbC5jb20+Ci0tLQogZXhhbXBsZXMvbDJmd2RfYWNsL1JFQURNRS5tZCAg
+IHwgIDE4ICsrKwogZXhhbXBsZXMvbDJmd2RfYWNsL21haW4uYyAgICAgIHwgMjQ3ICsrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKwogZXhhbXBsZXMvbDJmd2RfYWNsL21lc29uLmJ1aWxk
+IHwgICAzICsKIGV4YW1wbGVzL21lc29uLmJ1aWxkICAgICAgICAgICB8ICAgMSArCiA0IGZpbGVz
+IGNoYW5nZWQsIDI2OSBpbnNlcnRpb25zKCspCiBjcmVhdGUgbW9kZSAxMDA2NDQgZXhhbXBsZXMv
+bDJmd2RfYWNsL1JFQURNRS5tZAogY3JlYXRlIG1vZGUgMTAwNjQ0IGV4YW1wbGVzL2wyZndkX2Fj
+bC9tYWluLmMKIGNyZWF0ZSBtb2RlIDEwMDY0NCBleGFtcGxlcy9sMmZ3ZF9hY2wvbWVzb24uYnVp
+bGQKCmRpZmYgLS1naXQgYS9leGFtcGxlcy9sMmZ3ZF9hY2wvUkVBRE1FLm1kIGIvZXhhbXBsZXMv
+bDJmd2RfYWNsL1JFQURNRS5tZApuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwMDAw
+Li41YjU0OTRlMjk3Ci0tLSAvZGV2L251bGwKKysrIGIvZXhhbXBsZXMvbDJmd2RfYWNsL1JFQURN
+RS5tZApAQCAtMCwwICsxLDE4IEBACitMMiBGb3J3YXJkaW5nIHdpdGggQUNMIEV4YW1wbGUKKz09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PQorCitUaGlzIGV4YW1wbGUgZGVtb25zdHJhdGVz
+IHVzZSBvZiB0aGUgRFBESyBBQ0wgbGlicmFyeQordG8gY2xhc3NpZnkgcGFja2V0cyBiYXNlZCBv
+bjoKKworLSBwcm90b2NvbAorLSBzb3VyY2UgSVB2NAorLSBkZXN0aW5hdGlvbiBJUHY0CistIHNv
+dXJjZSBwb3J0CistIGRlc3RpbmF0aW9uIHBvcnQKKworUGFja2V0cyBtYXRjaGluZyBBQ0wgcnVs
+ZXMgYXJlIGZvcndhcmRlZCwKK290aGVycyBhcmUgZHJvcHBlZC4KKworUnVuOgorCisuL2RwZGst
+bDJmd2QtYWNsIC1sIDAtMiAtbiA0IC0tIC1wIDB4MQpkaWZmIC0tZ2l0IGEvZXhhbXBsZXMvbDJm
+d2RfYWNsL21haW4uYyBiL2V4YW1wbGVzL2wyZndkX2FjbC9tYWluLmMKbmV3IGZpbGUgbW9kZSAx
+MDA2NDQKaW5kZXggMDAwMDAwMDAwMC4uNmUwNTE0NWIzMwotLS0gL2Rldi9udWxsCisrKyBiL2V4
+YW1wbGVzL2wyZndkX2FjbC9tYWluLmMKQEAgLTAsMCArMSwyNDcgQEAKKy8qIFNQRFgtTGljZW5z
+ZS1JZGVudGlmaWVyOiBCU0QtMy1DbGF1c2UKKyAqIGwyZndkX2FjbCBleGFtcGxlOiBkZW1vbnN0
+cmF0ZXMgdXNlIG9mIERQREsgQUNMIGxpYnJhcnkKKyAqLworCisjaW5jbHVkZSA8c3RkYm9vbC5o
+PgorI2luY2x1ZGUgPHNpZ25hbC5oPgorI2luY2x1ZGUgPGdldG9wdC5oPgorI2luY2x1ZGUgPHN0
+ZGxpYi5oPgorCisjaW5jbHVkZSA8cnRlX2FjbC5oPgorI2luY2x1ZGUgPHJ0ZV9lYWwuaD4KKyNp
+bmNsdWRlIDxydGVfZXRoZGV2Lmg+CisjaW5jbHVkZSA8cnRlX2V0aGVyLmg+CisjaW5jbHVkZSA8
+cnRlX2lwLmg+CisjaW5jbHVkZSA8cnRlX21idWYuaD4KKyNpbmNsdWRlIDxydGVfdGNwLmg+Cisj
+aW5jbHVkZSA8cnRlX3VkcC5oPgorI2luY2x1ZGUgPHJ0ZV9sb2cuaD4KKworI2RlZmluZSBOVU1f
+RklFTERTIDUKKyNkZWZpbmUgTUFYX1JVTEVTICAzMgorI2RlZmluZSBOQl9NQlVGICAgIDgxOTIK
+KyNkZWZpbmUgQlVSU1QgICAgICAzMgorCisvKiAtLS0tIENvcnJlY3QgRFBESyBsb2dnaW5nIHN0
+eWxlIC0tLS0gKi8KKyNkZWZpbmUgUlRFX0xPR1RZUEVfTDJGV0RfQUNMIFJURV9MT0dUWVBFX1VT
+RVIxCisjZGVmaW5lIExPR1RZUEVfTDJGV0RfQUNMIFJURV9MT0dUWVBFX0wyRldEX0FDTAorCitS
+VEVfQUNMX1JVTEVfREVGKGFjbF9ydWxlLCBOVU1fRklFTERTKTsKKworc3RydWN0IHBrdF9rZXkg
+eworICAgIHVpbnQ4X3QgIHByb3RvOworICAgIHVpbnQzMl90IHNyY19pcDsKKyAgICB1aW50MzJf
+dCBkc3RfaXA7CisgICAgdWludDE2X3Qgc3JjX3BvcnQ7CisgICAgdWludDE2X3QgZHN0X3BvcnQ7
+Cit9OworCitlbnVtIHsKKyAgICBQUk9UT19GSUVMRCwKKyAgICBTUkNfRklFTEQsCisgICAgRFNU
+X0ZJRUxELAorICAgIFNQT1JUX0ZJRUxELAorICAgIERQT1JUX0ZJRUxECit9OworCitzdGF0aWMg
+dm9sYXRpbGUgYm9vbCBmb3JjZV9xdWl0Oworc3RhdGljIHVpbnQzMl90IHBvcnRtYXNrID0gMHgx
+OworCitzdGF0aWMgc3RydWN0IHJ0ZV9hY2xfZmllbGRfZGVmIGZpZWxkX2RlZnNbTlVNX0ZJRUxE
+U10gPSB7CisgICAgeyBSVEVfQUNMX0ZJRUxEX1RZUEVfQklUTUFTSywgc2l6ZW9mKHVpbnQ4X3Qp
+LCAgUFJPVE9fRklFTEQsIDAsIG9mZnNldG9mKHN0cnVjdCBwa3Rfa2V5LCBwcm90bykgfSwKKyAg
+ICB7IFJURV9BQ0xfRklFTERfVFlQRV9NQVNLLCAgICBzaXplb2YodWludDMyX3QpLCBTUkNfRklF
+TEQsICAgMSwgb2Zmc2V0b2Yoc3RydWN0IHBrdF9rZXksIHNyY19pcCkgfSwKKyAgICB7IFJURV9B
+Q0xfRklFTERfVFlQRV9NQVNLLCAgICBzaXplb2YodWludDMyX3QpLCBEU1RfRklFTEQsICAgMiwg
+b2Zmc2V0b2Yoc3RydWN0IHBrdF9rZXksIGRzdF9pcCkgfSwKKyAgICB7IFJURV9BQ0xfRklFTERf
+VFlQRV9SQU5HRSwgICBzaXplb2YodWludDE2X3QpLCBTUE9SVF9GSUVMRCwgMywgb2Zmc2V0b2Yo
+c3RydWN0IHBrdF9rZXksIHNyY19wb3J0KSB9LAorICAgIHsgUlRFX0FDTF9GSUVMRF9UWVBFX1JB
+TkdFLCAgIHNpemVvZih1aW50MTZfdCksIERQT1JUX0ZJRUxELCAzLCBvZmZzZXRvZihzdHJ1Y3Qg
+cGt0X2tleSwgZHN0X3BvcnQpIH0sCit9OworCitzdGF0aWMgdm9pZAorc2lnbmFsX2hhbmRsZXIo
+aW50IHNpZykKK3sKKyAgICBpZiAoc2lnID09IFNJR0lOVCB8fCBzaWcgPT0gU0lHVEVSTSkKKyAg
+ICAgICAgZm9yY2VfcXVpdCA9IHRydWU7Cit9CisKK3N0YXRpYyBpbnQKK3BhcnNlX2FyZ3MoaW50
+IGFyZ2MsIGNoYXIgKiphcmd2KQoreworICAgIGludCBvcHQ7CisgICAgd2hpbGUgKChvcHQgPSBn
+ZXRvcHQoYXJnYywgYXJndiwgInA6IikpICE9IC0xKSB7CisgICAgICAgIHN3aXRjaCAob3B0KSB7
+CisgICAgICAgIGNhc2UgJ3AnOgorICAgICAgICAgICAgcG9ydG1hc2sgPSBzdHJ0b3VsKG9wdGFy
+ZywgTlVMTCwgMTYpOworICAgICAgICAgICAgYnJlYWs7CisgICAgICAgIGRlZmF1bHQ6CisgICAg
+ICAgICAgICByZXR1cm4gLTE7CisgICAgICAgIH0KKyAgICB9CisgICAgcmV0dXJuIDA7Cit9CisK
+Ky8qIC0tLS0tLS0tLS0tLS0tLS0gQUNMIElOSVRJQUxJWkFUSU9OIC0tLS0tLS0tLS0tLS0tLS0g
+Ki8KKworc3RhdGljIHN0cnVjdCBydGVfYWNsX2N0eCAqCitpbml0X2FjbCh2b2lkKQoreworICAg
+IHN0cnVjdCBydGVfYWNsX3BhcmFtIHBybSA9IHsKKyAgICAgICAgLm5hbWUgPSAiYWNsX2N0eCIs
+CisgICAgICAgIC5zb2NrZXRfaWQgPSBydGVfc29ja2V0X2lkKCksCisgICAgICAgIC5ydWxlX3Np
+emUgPSBSVEVfQUNMX1JVTEVfU1ooTlVNX0ZJRUxEUyksCisgICAgICAgIC5tYXhfcnVsZV9udW0g
+PSBNQVhfUlVMRVMKKyAgICB9OworCisgICAgc3RydWN0IHJ0ZV9hY2xfY3R4ICpjdHggPSBydGVf
+YWNsX2NyZWF0ZSgmcHJtKTsKKyAgICBpZiAoIWN0eCkKKyAgICAgICAgcnRlX2V4aXQoRVhJVF9G
+QUlMVVJFLCAiQUNMIGNyZWF0ZSBmYWlsZWRcbiIpOworCisgICAgc3RydWN0IGFjbF9ydWxlIHJ1
+bGU7CisgICAgbWVtc2V0KCZydWxlLCAwLCBzaXplb2YocnVsZSkpOworCisgICAgcnVsZS5kYXRh
+LnByaW9yaXR5ID0gMTA7CisgICAgcnVsZS5kYXRhLmNhdGVnb3J5X21hc2sgPSAxOworICAgIHJ1
+bGUuZGF0YS51c2VyZGF0YSA9IDE7CisKKyAgICBydWxlLmZpZWxkW1BST1RPX0ZJRUxEXS52YWx1
+ZS51OCA9IElQUFJPVE9fVENQOworICAgIHJ1bGUuZmllbGRbUFJPVE9fRklFTERdLm1hc2tfcmFu
+Z2UudTggPSAweEZGOworCisgICAgcnVsZS5maWVsZFtTUkNfRklFTERdLnZhbHVlLnUzMiA9Cisg
+ICAgICAgIHJ0ZV9iZV90b19jcHVfMzIoUlRFX0lQVjQoMTcyLDE3LDE2NiwyMDApKTsKKyAgICBy
+dWxlLmZpZWxkW1NSQ19GSUVMRF0ubWFza19yYW5nZS51MzIgPSAzMjsKKworICAgIHJ1bGUuZmll
+bGRbRFNUX0ZJRUxEXS52YWx1ZS51MzIgPSAwOworICAgIHJ1bGUuZmllbGRbRFNUX0ZJRUxEXS5t
+YXNrX3JhbmdlLnUzMiA9IDA7CisKKyAgICBydWxlLmZpZWxkW1NQT1JUX0ZJRUxEXS52YWx1ZS51
+MTYgPSAwOworICAgIHJ1bGUuZmllbGRbU1BPUlRfRklFTERdLm1hc2tfcmFuZ2UudTE2ID0gNjU1
+MzU7CisKKyAgICBydWxlLmZpZWxkW0RQT1JUX0ZJRUxEXS52YWx1ZS51MTYgPSAwOworICAgIHJ1
+bGUuZmllbGRbRFBPUlRfRklFTERdLm1hc2tfcmFuZ2UudTE2ID0gNjU1MzU7CisKKyAgICBpZiAo
+cnRlX2FjbF9hZGRfcnVsZXMoY3R4LCAoc3RydWN0IHJ0ZV9hY2xfcnVsZSAqKSZydWxlLCAxKSA8
+IDApCisgICAgICAgIHJ0ZV9leGl0KEVYSVRfRkFJTFVSRSwgIkFDTCBydWxlIGFkZCBmYWlsZWRc
+biIpOworCisgICAgc3RydWN0IHJ0ZV9hY2xfY29uZmlnIGNmZzsKKyAgICBtZW1zZXQoJmNmZywg
+MCwgc2l6ZW9mKGNmZykpOworICAgIGNmZy5udW1fY2F0ZWdvcmllcyA9IDE7CisgICAgY2ZnLm51
+bV9maWVsZHMgPSBOVU1fRklFTERTOworICAgIG1lbWNweShjZmcuZGVmcywgZmllbGRfZGVmcywg
+c2l6ZW9mKGZpZWxkX2RlZnMpKTsKKworICAgIGlmIChydGVfYWNsX2J1aWxkKGN0eCwgJmNmZykg
+IT0gMCkKKyAgICAgICAgcnRlX2V4aXQoRVhJVF9GQUlMVVJFLCAiQUNMIGJ1aWxkIGZhaWxlZFxu
+Iik7CisKKyAgICBSVEVfTE9HKElORk8sIEwyRldEX0FDTCwgIkFDTCByZWFkeVxuIik7CisgICAg
+cmV0dXJuIGN0eDsKK30KKworLyogLS0tLS0tLS0tLS0tLS0tLSBNQUlOIC0tLS0tLS0tLS0tLS0t
+LS0gKi8KKworaW50IG1haW4oaW50IGFyZ2MsIGNoYXIgKiphcmd2KQoreworICAgIGZvcmNlX3F1
+aXQgPSBmYWxzZTsKKyAgICBzaWduYWwoU0lHSU5ULCBzaWduYWxfaGFuZGxlcik7CisgICAgc2ln
+bmFsKFNJR1RFUk0sIHNpZ25hbF9oYW5kbGVyKTsKKworICAgIGludCByZXQgPSBydGVfZWFsX2lu
+aXQoYXJnYywgYXJndik7CisgICAgaWYgKHJldCA8IDApCisgICAgICAgIHJ0ZV9leGl0KEVYSVRf
+RkFJTFVSRSwgIkVBTCBpbml0IGZhaWxlZFxuIik7CisKKyAgICBhcmdjIC09IHJldDsKKyAgICBh
+cmd2ICs9IHJldDsKKworICAgIGlmIChwYXJzZV9hcmdzKGFyZ2MsIGFyZ3YpIDwgMCkKKyAgICAg
+ICAgcnRlX2V4aXQoRVhJVF9GQUlMVVJFLCAiSW52YWxpZCBhcmd1bWVudHNcbiIpOworCisgICAg
+c3RydWN0IHJ0ZV9hY2xfY3R4ICphY2xfY3R4ID0gaW5pdF9hY2woKTsKKworICAgIHN0cnVjdCBy
+dGVfbWVtcG9vbCAqbXAgPSBydGVfcGt0bWJ1Zl9wb29sX2NyZWF0ZSgKKyAgICAgICAgIm1idWZf
+cG9vbCIsIE5CX01CVUYsIDI1NiwgMCwKKyAgICAgICAgUlRFX01CVUZfREVGQVVMVF9CVUZfU0la
+RSwgcnRlX3NvY2tldF9pZCgpKTsKKworICAgIGlmICghbXApCisgICAgICAgIHJ0ZV9leGl0KEVY
+SVRfRkFJTFVSRSwgIm1lbXBvb2wgZmFpbGVkXG4iKTsKKworICAgIHVpbnQxNl90IHBvcnRfaWQ7
+CisgICAgUlRFX0VUSF9GT1JFQUNIX0RFVihwb3J0X2lkKSB7CisKKyAgICAgICAgaWYgKCEocG9y
+dG1hc2sgJiAoMSA8PCBwb3J0X2lkKSkpCisgICAgICAgICAgICBjb250aW51ZTsKKworICAgICAg
+ICBzdHJ1Y3QgcnRlX2V0aF9jb25mIGNvbmYgPSB7MH07CisKKyAgICAgICAgaWYgKHJ0ZV9ldGhf
+ZGV2X2NvbmZpZ3VyZShwb3J0X2lkLCAxLCAxLCAmY29uZikgPCAwKQorICAgICAgICAgICAgcnRl
+X2V4aXQoRVhJVF9GQUlMVVJFLCAicG9ydCBjb25maWd1cmUgZmFpbGVkXG4iKTsKKworICAgICAg
+ICBpZiAocnRlX2V0aF9yeF9xdWV1ZV9zZXR1cChwb3J0X2lkLCAwLCAxMDI0LAorICAgICAgICAg
+ICAgcnRlX2V0aF9kZXZfc29ja2V0X2lkKHBvcnRfaWQpLCBOVUxMLCBtcCkgPCAwKQorICAgICAg
+ICAgICAgcnRlX2V4aXQoRVhJVF9GQUlMVVJFLCAicnggc2V0dXAgZmFpbGVkXG4iKTsKKworICAg
+ICAgICBpZiAocnRlX2V0aF90eF9xdWV1ZV9zZXR1cChwb3J0X2lkLCAwLCAxMDI0LAorICAgICAg
+ICAgICAgcnRlX2V0aF9kZXZfc29ja2V0X2lkKHBvcnRfaWQpLCBOVUxMKSA8IDApCisgICAgICAg
+ICAgICBydGVfZXhpdChFWElUX0ZBSUxVUkUsICJ0eCBzZXR1cCBmYWlsZWRcbiIpOworCisgICAg
+ICAgIGlmIChydGVfZXRoX2Rldl9zdGFydChwb3J0X2lkKSA8IDApCisgICAgICAgICAgICBydGVf
+ZXhpdChFWElUX0ZBSUxVUkUsICJwb3J0IHN0YXJ0IGZhaWxlZFxuIik7CisKKyAgICAgICAgcnRl
+X2V0aF9wcm9taXNjdW91c19lbmFibGUocG9ydF9pZCk7CisKKyAgICAgICAgUlRFX0xPRyhJTkZP
+LCBMMkZXRF9BQ0wsICJTdGFydGVkIHBvcnQgJXVcbiIsIHBvcnRfaWQpOworICAgIH0KKworICAg
+IHN0cnVjdCBydGVfbWJ1ZiAqYnVmc1tCVVJTVF07CisKKyAgICB3aGlsZSAoIWZvcmNlX3F1aXQp
+IHsKKworICAgICAgICBSVEVfRVRIX0ZPUkVBQ0hfREVWKHBvcnRfaWQpIHsKKworICAgICAgICAg
+ICAgaWYgKCEocG9ydG1hc2sgJiAoMSA8PCBwb3J0X2lkKSkpCisgICAgICAgICAgICAgICAgY29u
+dGludWU7CisKKyAgICAgICAgICAgIHVpbnQxNl90IG5iID0gcnRlX2V0aF9yeF9idXJzdChwb3J0
+X2lkLCAwLCBidWZzLCBCVVJTVCk7CisgICAgICAgICAgICBpZiAoIW5iKSBjb250aW51ZTsKKwor
+ICAgICAgICAgICAgZm9yIChpbnQgaSA9IDA7IGkgPCBuYjsgaSsrKSB7CisKKyAgICAgICAgICAg
+ICAgICBzdHJ1Y3QgcnRlX21idWYgKm0gPSBidWZzW2ldOworICAgICAgICAgICAgICAgIHN0cnVj
+dCBydGVfZXRoZXJfaGRyICpldGggPQorICAgICAgICAgICAgICAgICAgICBydGVfcGt0bWJ1Zl9t
+dG9kKG0sIHN0cnVjdCBydGVfZXRoZXJfaGRyICopOworCisgICAgICAgICAgICAgICAgaWYgKGV0
+aC0+ZXRoZXJfdHlwZSAhPQorICAgICAgICAgICAgICAgICAgICBydGVfY3B1X3RvX2JlXzE2KFJU
+RV9FVEhFUl9UWVBFX0lQVjQpKSB7CisgICAgICAgICAgICAgICAgICAgIHJ0ZV9wa3RtYnVmX2Zy
+ZWUobSk7CisgICAgICAgICAgICAgICAgICAgIGNvbnRpbnVlOworICAgICAgICAgICAgICAgIH0K
+KworICAgICAgICAgICAgICAgIHN0cnVjdCBydGVfaXB2NF9oZHIgKmlwID0KKyAgICAgICAgICAg
+ICAgICAgICAgKHN0cnVjdCBydGVfaXB2NF9oZHIgKikoZXRoICsgMSk7CisKKyAgICAgICAgICAg
+ICAgICBzdHJ1Y3QgcGt0X2tleSBrZXkgPSB7MH07CisgICAgICAgICAgICAgICAga2V5LnByb3Rv
+ICA9IGlwLT5uZXh0X3Byb3RvX2lkOworICAgICAgICAgICAgICAgIGtleS5zcmNfaXAgPSBydGVf
+YmVfdG9fY3B1XzMyKGlwLT5zcmNfYWRkcik7CisgICAgICAgICAgICAgICAga2V5LmRzdF9pcCA9
+IHJ0ZV9iZV90b19jcHVfMzIoaXAtPmRzdF9hZGRyKTsKKworICAgICAgICAgICAgICAgIHVpbnQ4
+X3QgKmw0ID0gKHVpbnQ4X3QgKilpcCArIChpcC0+aWhsICogNCk7CisKKyAgICAgICAgICAgICAg
+ICBpZiAoa2V5LnByb3RvID09IElQUFJPVE9fVENQKSB7CisgICAgICAgICAgICAgICAgICAgIHN0
+cnVjdCBydGVfdGNwX2hkciAqdGNwID0gKHN0cnVjdCBydGVfdGNwX2hkciAqKWw0OworICAgICAg
+ICAgICAgICAgICAgICBrZXkuc3JjX3BvcnQgPSBydGVfYmVfdG9fY3B1XzE2KHRjcC0+c3JjX3Bv
+cnQpOworICAgICAgICAgICAgICAgICAgICBrZXkuZHN0X3BvcnQgPSBydGVfYmVfdG9fY3B1XzE2
+KHRjcC0+ZHN0X3BvcnQpOworICAgICAgICAgICAgICAgIH0gZWxzZSBpZiAoa2V5LnByb3RvID09
+IElQUFJPVE9fVURQKSB7CisgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBydGVfdWRwX2hkciAq
+dWRwID0gKHN0cnVjdCBydGVfdWRwX2hkciAqKWw0OworICAgICAgICAgICAgICAgICAgICBrZXku
+c3JjX3BvcnQgPSBydGVfYmVfdG9fY3B1XzE2KHVkcC0+c3JjX3BvcnQpOworICAgICAgICAgICAg
+ICAgICAgICBrZXkuZHN0X3BvcnQgPSBydGVfYmVfdG9fY3B1XzE2KHVkcC0+ZHN0X3BvcnQpOwor
+ICAgICAgICAgICAgICAgIH0KKworICAgICAgICAgICAgICAgIGNvbnN0IHVpbnQ4X3QgKmRhdGFb
+MV0gPSB7KGNvbnN0IHVpbnQ4X3QgKikma2V5fTsKKyAgICAgICAgICAgICAgICB1aW50MzJfdCBy
+ZXNbMV07CisKKyAgICAgICAgICAgICAgICBydGVfYWNsX2NsYXNzaWZ5KGFjbF9jdHgsIGRhdGEs
+IHJlcywgMSwgMSk7CisKKyAgICAgICAgICAgICAgICBpZiAocmVzWzBdKQorICAgICAgICAgICAg
+ICAgICAgICBydGVfZXRoX3R4X2J1cnN0KHBvcnRfaWQsIDAsICZtLCAxKTsKKyAgICAgICAgICAg
+ICAgICBlbHNlCisgICAgICAgICAgICAgICAgICAgIHJ0ZV9wa3RtYnVmX2ZyZWUobSk7CisgICAg
+ICAgICAgICB9CisgICAgICAgIH0KKyAgICB9CisKKyAgICByZXR1cm4gMDsKZGlmZiAtLWdpdCBh
+L2V4YW1wbGVzL2wyZndkX2FjbC9tZXNvbi5idWlsZCBiL2V4YW1wbGVzL2wyZndkX2FjbC9tZXNv
+bi5idWlsZApuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwMDAwLi4zMzFkZDU0NWU5
+Ci0tLSAvZGV2L251bGwKKysrIGIvZXhhbXBsZXMvbDJmd2RfYWNsL21lc29uLmJ1aWxkCkBAIC0w
+LDAgKzEsMyBAQAorc291cmNlcyA9IGZpbGVzKCdtYWluLmMnKQorCitkZXBzICs9IFsnYWNsJywg
+J2V0aGRldicsICdtYnVmJywgJ25ldCddCmRpZmYgLS1naXQgYS9leGFtcGxlcy9tZXNvbi5idWls
+ZCBiL2V4YW1wbGVzL21lc29uLmJ1aWxkCmluZGV4IDI1ZDljODg0NTcuLmJjZTI5ODIyMjkgMTAw
+NjQ0Ci0tLSBhL2V4YW1wbGVzL21lc29uLmJ1aWxkCisrKyBiL2V4YW1wbGVzL21lc29uLmJ1aWxk
+CkBAIC0yNCw2ICsyNCw3IEBAIGFsbF9leGFtcGxlcyA9IFsKICAgICAgICAgJ2lwc2VjLXNlY2d3
+JywKICAgICAgICAgJ2lwdjRfbXVsdGljYXN0JywKICAgICAgICAgJ2wyZndkJywKKyAgICAgICAg
+J2wyZndkX2FjbCcsCiAgICAgICAgICdsMmZ3ZC1jYXQnLAogICAgICAgICAnbDJmd2QtY3J5cHRv
+JywKICAgICAgICAgJ2wyZndkLWV2ZW50JywKLS0gCjIuNDMuMAoK
+--0000000000000ac0cb064b45cd0e--
