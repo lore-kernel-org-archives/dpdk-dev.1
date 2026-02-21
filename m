@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7366E98DFA
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 07:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E61E98DF9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 07:58:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C032A40656;
-	Mon, 23 Feb 2026 08:57:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C46864065B;
+	Mon, 23 Feb 2026 08:58:00 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id AA9D14025A;
+ by mails.dpdk.org (Postfix) with ESMTP id D813C40150;
  Sat, 21 Feb 2026 03:45:47 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 2EF1F20B6F05; Fri, 20 Feb 2026 18:45:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2EF1F20B6F05
+ id A7E8420B6F00; Fri, 20 Feb 2026 18:45:47 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A7E8420B6F00
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1771641947;
- bh=jtrzi2EvRpF/wcLCrmk7bvR1SEHUdfsboA4jI5lT4T4=;
+ bh=2GBwX7YnE3bX5P5s28DesJ6PHXeRZCXzGaxN2djrIqo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=msTeTH6f8irGKQd8f8YV9EF1O4qthj8XzEaR/+jCS5EVRPd5WCNiN/qy+bknTn47e
- i16hcdKPH9yo6KUuC+D8lhnCECoin+NogpCJueTXubDYuYraWgdHufSDAQoiqDUUUI
- Eyp7b/7UiI6Lh2m+3tNeUBEdrrRh0u07oAQUXvmk=
+ b=Xz6rBZg9mzx+rnHNdrciPjOeu4XzMRwBdZJUcyoq40WDTbxlDMPIQOAEmOlK5p5Un
+ MiEGVtbnuBIP/mhL3R2rj6CK6ZPVa+78kOgAU8SmFU7fOAhNbOR1+YyNokF4Fi7b4f
+ tjwX5J5AQz7HsNlTLFUEwYr4aE6CCsC1IKGD0W3k=
 From: longli@linux.microsoft.com
 To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
@@ -28,9 +28,9 @@ To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
  Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH v2 5/8] net/netvsc: fix devargs memory leak on hotplug
-Date: Fri, 20 Feb 2026 18:45:24 -0800
-Message-ID: <20260221024540.659098-5-longli@linux.microsoft.com>
+Subject: [PATCH v2 6/8] net/mana: fix fast-path ops setup in secondary process
+Date: Fri, 20 Feb 2026 18:45:25 -0800
+Message-ID: <20260221024540.659098-6-longli@linux.microsoft.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260221024540.659098-1-longli@linux.microsoft.com>
 References: <20260221024540.659098-1-longli@linux.microsoft.com>
@@ -52,44 +52,56 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Long Li <longli@microsoft.com>
 
-Device arguments (devargs) allocated during VF hotplug were not being
-freed when the hotplug context was cleaned up, causing a memory leak.
+On hotplug, the secondary process is not able to set rte_eth_fp_ops
+because the primary process has not finished setting up the device
+for datapath.
 
-The devargs are allocated in netvsc_hotadd_callback() via
-rte_devargs_parse() and stored in the hotadd context structure. They
-must be freed with rte_devargs_reset() before freeing the context.
+Fix this by properly setting up rte_eth_fp_ops in the secondary
+process when the primary requests to start datapath. Set both
+rxq.data and txq.data to point to the device's RX/TX queue arrays,
+enabling the fast-path operations to access queues correctly.
 
-Free devargs in both cleanup paths:
-- netvsc_hotplug_retry() after hotplug attempt completes
-- hn_dev_close() when canceling pending hotplug operations
+Also update rte_eth_fp_ops burst function pointers in the STOP_RXTX
+handler. Without this, the secondary's rte_eth_fp_ops retains stale
+burst function pointers after stop, since rte_eth_fp_ops is
+process-local and eth_dev_fp_ops_reset() in rte_eth_dev_stop() only
+affects the primary.
 
-Fixes: 7fc4c0997b04 ("net/netvsc: fix hot adding multiple VF PCI devices")
+Without this fix, the secondary process cannot transmit or receive
+packets because the fast-path queue data pointers are NULL.
+
+Fixes: 62724d1a3981 ("net/mana: start/stop device")
 Cc: stable@dpdk.org
+
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/netvsc/hn_ethdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/mana/mp.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index 813b0e0cdb..4f3966ddd1 100644
---- a/drivers/net/netvsc/hn_ethdev.c
-+++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -716,6 +716,7 @@ static void netvsc_hotplug_retry(void *args)
- 	LIST_REMOVE(hot_ctx, list);
- 	rte_spinlock_unlock(&hv->hotadd_lock);
+diff --git a/drivers/net/mana/mp.c b/drivers/net/mana/mp.c
+index 5467d385ce..7c5c0fa88f 100644
+--- a/drivers/net/mana/mp.c
++++ b/drivers/net/mana/mp.c
+@@ -145,6 +145,9 @@ mana_mp_secondary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
+ 		dev->tx_pkt_burst = mana_tx_burst;
+ 		dev->rx_pkt_burst = mana_rx_burst;
  
-+	rte_devargs_reset(d);
- 	free(hot_ctx);
- }
++		rte_eth_fp_ops[param->port_id].rxq.data = dev->data->rx_queues;
++		rte_eth_fp_ops[param->port_id].txq.data = dev->data->tx_queues;
++
+ 		rte_mb();
  
-@@ -1131,6 +1132,7 @@ hn_dev_close(struct rte_eth_dev *dev)
- 		hot_ctx = LIST_FIRST(&hv->hotadd_list);
- 		rte_eal_alarm_cancel(netvsc_hotplug_retry, hot_ctx);
- 		LIST_REMOVE(hot_ctx, list);
-+		rte_devargs_reset(&hot_ctx->da);
- 		free(hot_ctx);
- 	}
- 	rte_spinlock_unlock(&hv->hotadd_lock);
+ 		res->result = 0;
+@@ -154,6 +157,9 @@ mana_mp_secondary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
+ 	case MANA_MP_REQ_STOP_RXTX:
+ 		DRV_LOG(INFO, "Port %u stopping datapath", dev->data->port_id);
+ 
++		rte_eth_fp_ops[param->port_id].rx_pkt_burst = mana_rx_burst_removed;
++		rte_eth_fp_ops[param->port_id].tx_pkt_burst = mana_tx_burst_removed;
++
+ 		dev->tx_pkt_burst = mana_tx_burst_removed;
+ 		dev->rx_pkt_burst = mana_rx_burst_removed;
+ 
 -- 
 2.43.0
 
