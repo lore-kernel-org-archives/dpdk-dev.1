@@ -2,41 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CB40C636A0
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 15:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D393C636A0
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 15:31:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ADB6B40665;
-	Sun, 22 Feb 2026 16:31:36 +0100 (CET)
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com
- [95.215.58.183]) by mails.dpdk.org (Postfix) with ESMTP id 82E114064E
- for <dev@dpdk.org>; Sun, 22 Feb 2026 16:30:51 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A7384066D;
+	Sun, 22 Feb 2026 16:31:37 +0100 (CET)
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com
+ [95.215.58.172]) by mails.dpdk.org (Postfix) with ESMTP id D56AD4064C
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 16:30:53 +0100 (CET)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
  include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=danielg0.com;
- s=key1; t=1771774251;
+ s=key1; t=1771774253;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=0YeVP2eP1IicOR1i/Id4X8iBHQFvAYMFRviFhnt2Aws=;
- b=PWt300AXCPFdreKSXqKVU/lpt7rIfSqUir0CxnNg4lujHbkN7lCm2mY4tVJsTtxi7RFhTZ
- 3JGiJU/dcmySWNQRLTtYKYM/LaIAEMQmZlebY9tuqhblmblUtZGYvvqNWDhcfqBSRacHu+
- sZVKgxeviQThvNvi3HuHhEiA4jpM55Y=
+ bh=Gwe4Wjx12AEvwgT/qwlB6plTxxvcygRv2t/haIucsAo=;
+ b=RoUfjdrncMPZ+BjnerjB4OKqWC10BLGGTTJzUON0HGaAkgwv45BqC+zdGbpnxP2OGe/XXN
+ s5HJ8A+oUzNSgpHD5Wxa09bQKeeZv8RfO1qXQBSiBSDAbcCjT1jiBK6afOmTCJ3AZjbrXy
+ TjTWPowa6I3xY/u9bP7YC7ngT//yXBc=
 From: Daniel Gregory <code@danielg0.com>
 To: =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
  Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+ Sameh Gobriel <sameh.gobriel@intel.com>
 Cc: Daniel Gregory <daniel.gregory@bytedance.com>, dev@dpdk.org,
  Punit Agrawal <punit.agrawal@bytedance.com>,
  Liang Ma <liangma@liangbit.com>,
  Pengcheng Wang <wangpengcheng.pp@bytedance.com>,
  Chunsong Feng <fengchunsong@bytedance.com>,
- Sun Yuechi <sunyuechi@iscas.ac.cn>, Daniel Gregory <code@danielg0.com>
-Subject: [PATCH v4 08/10] hash: use accelerated CRC on riscv
-Date: Sun, 22 Feb 2026 16:30:02 +0100
-Message-ID: <631b9506edd5fa5dfc61f98aae4d5a8fd4d2857d.1771772598.git.code@danielg0.com>
+ Sun Yuechi <sunyuechi@iscas.ac.cn>
+Subject: [PATCH v4 09/10] member: use accelerated CRC on riscv
+Date: Sun, 22 Feb 2026 16:30:03 +0100
+Message-ID: <4ad0a26fa5a02032fb3e44c43c68fbc2c4af5775.1771772598.git.code@danielg0.com>
 In-Reply-To: <cover.1771772598.git.code@danielg0.com>
 References: <20240827153230.52880-1-daniel.gregory@bytedance.com>
  <cover.1771772598.git.code@danielg0.com>
@@ -63,40 +61,23 @@ implementation of CRC hashing using hardware instructions is available.
 Use it rather than jhash.
 
 Signed-off-by: Daniel Gregory <daniel.gregory@bytedance.com>
-Signed-off-by: Daniel Gregory <code@danielg0.com>
 ---
- lib/hash/rte_cuckoo_hash.c | 3 +++
- lib/hash/rte_fbk_hash.c    | 3 +++
- 2 files changed, 6 insertions(+)
+ lib/member/member.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/hash/rte_cuckoo_hash.c b/lib/hash/rte_cuckoo_hash.c
-index da12825c6e..ce45760b3e 100644
---- a/lib/hash/rte_cuckoo_hash.c
-+++ b/lib/hash/rte_cuckoo_hash.c
-@@ -460,6 +460,9 @@ rte_hash_create(const struct rte_hash_parameters *params)
- #elif defined(RTE_ARCH_ARM64)
- 	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_CRC32))
- 		default_hash_func = (rte_hash_function)rte_hash_crc;
-+#elif defined(RTE_ARCH_RISCV)
-+	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_RISCV_EXT_ZBC))
-+		default_hash_func = (rte_hash_function)rte_hash_crc;
- #endif
- 	/* Setup hash context */
- 	strlcpy(h->name, params->name, sizeof(h->name));
-diff --git a/lib/hash/rte_fbk_hash.c b/lib/hash/rte_fbk_hash.c
-index 45d4a13427..4266bb5198 100644
---- a/lib/hash/rte_fbk_hash.c
-+++ b/lib/hash/rte_fbk_hash.c
-@@ -148,6 +148,9 @@ rte_fbk_hash_create(const struct rte_fbk_hash_params *params)
- #elif defined(RTE_ARCH_ARM64)
- 	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_CRC32))
- 		default_hash_func = (rte_fbk_hash_fn)rte_hash_crc_4byte;
-+#elif defined(RTE_ARCH_RISCV)
-+	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_RISCV_EXT_ZBC))
-+		default_hash_func = (rte_fbk_hash_fn)rte_hash_crc_4byte;
- #endif
+diff --git a/lib/member/member.h b/lib/member/member.h
+index 96003f7543..0950709eb6 100644
+--- a/lib/member/member.h
++++ b/lib/member/member.h
+@@ -12,7 +12,7 @@ extern int librte_member_logtype;
+ 		"%s(): ", __func__, __VA_ARGS__)
  
- 	/* Set up hash table context. */
+ /* Hash function used by membership library. */
+-#if defined(RTE_ARCH_X86) || defined(__ARM_FEATURE_CRC32)
++#if defined(RTE_ARCH_X86) || defined(__ARM_FEATURE_CRC32) || defined(RTE_RISCV_FEATURE_ZBC)
+ #include <rte_hash_crc.h>
+ #define MEMBER_HASH_FUNC       rte_hash_crc
+ #else
 -- 
 2.53.0
 
