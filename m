@@ -2,89 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B060C5CFE6
-	for <dpdk-dev@archiver.kernel.org>; Sat, 21 Feb 2026 16:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F349BC636A0
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 15:30:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1E72F4025A;
-	Sat, 21 Feb 2026 17:26:55 +0100 (CET)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com
- [209.85.219.47]) by mails.dpdk.org (Postfix) with ESMTP id 193BA40150
- for <dev@dpdk.org>; Sat, 21 Feb 2026 17:26:53 +0100 (CET)
-Received: by mail-qv1-f47.google.com with SMTP id
- 6a1803df08f44-897002b7576so38618886d6.3
- for <dev@dpdk.org>; Sat, 21 Feb 2026 08:26:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771691212;
- x=1772296012; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=QE34Wjr+/D+EGOVDOmqbzvV0U3kO40ObKIZc+dqzHH4=;
- b=yQr77l75riQONHv/pGjQD6zz+kfAYEZSJA3Fhc6wvvH4YSP58MOMt6nvK548NO5nCc
- +bZyFP+I31RWzC8Ls8clTIt0ScEyt8bQV8LskjHc1qScRRHIMiIjEN4mBKgzp+GF7ytZ
- zcZJMsZIJA5mhRRzeonQ9Qdg5wiCy1hRD2n1byhK/ENmvERixeAbFT7FgbGeB7bDkCFb
- eeYoiBVgL3zFvZOLv1mD45LY85WsBgBx3KUIbhi2yIPU9uTBGupAnsR9oRk2+b2sCtkP
- J6tZCDcYEcuWBvFHlGxx7uraEFPWE+gabURMYroczhe15hu8WdL73qF5SSYvapMd3mF1
- Ammg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771691212; x=1772296012;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=QE34Wjr+/D+EGOVDOmqbzvV0U3kO40ObKIZc+dqzHH4=;
- b=jbrak1h2yIkbk7vZMqAFY0KTDs5/KPuB//Q47qbFr8xEi+ijBcEWso4vSv+NawGE42
- b+IsIv2OO8QNAZXNzXGG2W5AA0sRKc9ZksJIOgCdskRp8DVtgDlcNRO6or4LJsG9jy/6
- Ou15Pk7nyuDzdbM/69VdYupfnlRrUVU/tpiVRp5m8rC7/j3umsGsXs/QnMHzPu4Hy7Vm
- HJyEdcO6SqdDRRpuEr71M75wApVAsyGJzpMcsNKExH91SNpFadDBnvbSPL7c1jsbMrPD
- vj83SCLDnD52Wyybj0kbnJ7/I3pxnVBU+T5prZEeJqMc39feI92sQl5zd5iPf+cxzMnD
- ts5g==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWufSAW7aC5Kur9sRXnqVWNulBtrnKCCc5ykubs5DfcjrHHsf9FTsAKpPVutqkLdw4g2ds=@dpdk.org
-X-Gm-Message-State: AOJu0YxamKUU16j9eP4z38/iBVyegd8lI5GEEV3YSa2iPbtQPQppQV/c
- 1Std9XV/Ys98VtCmQIaxS6Ecy/8pm7bNd2o50YjdnVkrSOlwM0MBt/qikXSycr6c+NI=
-X-Gm-Gg: AZuq6aLMR0HodOlnEGJEZ+hLoEQZP3MrCZ62Qw4IP6gHQbuA9EZjpb43t0MWai33BVR
- Ja4Bz49tc4KoC/83JRiHcBH/XmR61oGA8BDkdnzmyq1zTgE1sJTN91g3mXFZLiAIPKI5YRLE3Br
- EL12JfHJcvSVD1ZsX6lyUqo6tAXnKyTW3bCAYKth7Vnl5a0DRYoj+8IV6Hh7yYg/g7nFybdupMJ
- W0p2PNVESk3vx+ZBKT2RP30BoilNofQKZhR4LDtVmj8e4g+181xohNupRa2h/e8q0Iz5H9JID4L
- 960R0rCm8MMSSD3/IL6b73oYCpE+Pzk3iow50IGmjlVOXqaGgAiZEfQIp1C3dxadQLxLTWDBmtl
- PA4ThYNKuzoo/Zy5r4EB5vSptsUK1EcWKcRbjRFpAqx/20CW3ByqcBe1mhcg+a80gXDwSdE9xAN
- 84Lx9SuyR7/47wGEYfDIlq44pajThk7ApF4i+FFXbMAK3px2G2DMuIPRO97+eJd/ke
-X-Received: by 2002:ac8:7d8e:0:b0:506:a320:e45b with SMTP id
- d75a77b69052e-5070bc6c30fmr48992131cf.39.1771691212115; 
- Sat, 21 Feb 2026 08:26:52 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8997e76f08fsm20952266d6.49.2026.02.21.08.26.49
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 21 Feb 2026 08:26:51 -0800 (PST)
-Date: Sat, 21 Feb 2026 08:26:46 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: <pbhagavatula@marvell.com>
-Cc: <mb@smartsharesystems.com>, <jerinj@marvell.com>, Wisam Jaddo
- <wisamm@nvidia.com>, Aman Singh <aman.deep.singh@intel.com>, Chas Williams
- <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>, Akhil Goyal
- <gakhil@marvell.com>, Anoob Joseph <anoobj@marvell.com>, Nicolas Chautru
- <nicolas.chautru@intel.com>, David Hunt <david.hunt@intel.com>, Chengwen
- Feng <fengchengwen@huawei.com>, Kevin Laatz <kevin.laatz@intel.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, Radu Nicolau <radu.nicolau@intel.com>,
- Tomasz Kantecki <tomasz.kantecki@intel.com>, Fan Zhang
- <fanzhang.oss@gmail.com>, Sunil Kumar Kori <skori@marvell.com>, Anatoly
- Burakov <anatoly.burakov@intel.com>, Sivaprasad Tummala
- <sivaprasad.tummala@amd.com>, Jingjing Wu <jingjing.wu@intel.com>,
- Volodymyr Fialko <vfialko@marvell.com>, Cristian Dumitrescu
- <cristian.dumitrescu@intel.com>, John McNamara <john.mcnamara@intel.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>, Chenbo Xia
- <chenbox@nvidia.com>, <dev@dpdk.org>
-Subject: Re: [PATCH 2/2] examples: use default mbuf burst size
-Message-ID: <20260221082646.4ec49f29@phoenix.local>
-In-Reply-To: <20260220230745.26418-2-pbhagavatula@marvell.com>
-References: <20251126082414.91933-1-pbhagavatula@marvell.com>
- <20260220230745.26418-1-pbhagavatula@marvell.com>
- <20260220230745.26418-2-pbhagavatula@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6FD95402E7;
+	Sun, 22 Feb 2026 16:30:38 +0100 (CET)
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com
+ [95.215.58.177]) by mails.dpdk.org (Postfix) with ESMTP id 61C4B402E6
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 16:30:32 +0100 (CET)
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
+ include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=danielg0.com;
+ s=key1; t=1771774229;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=coj48eoUMOOF+dm5Vm3onX7DhX/rBVlsb6oF5lbqe1I=;
+ b=OWDVOLOgHJj+tCW0IXSzCCXw2QTU0rq4YEnihSnzXYaUdu9fD2Xzf0jbLCZOQMHETiZgJA
+ FgCkBJwTmqOs6hFEq6v69LLx4Uwkdw84m8MXSXCwAFQ2F8YX+rNEc/nwn36X/3Dwo1Or7c
+ XiZzufOfZ219UxAJ4zzxj5pZncNYIao=
+From: Daniel Gregory <code@danielg0.com>
+To: =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>
+Cc: Daniel Gregory <code@danielg0.com>, dev@dpdk.org,
+ Punit Agrawal <punit.agrawal@bytedance.com>,
+ Liang Ma <liangma@liangbit.com>,
+ Pengcheng Wang <wangpengcheng.pp@bytedance.com>,
+ Chunsong Feng <fengchunsong@bytedance.com>,
+ Daniel Gregory <daniel.gregory@bytedance.com>,
+ Sun Yuechi <sunyuechi@iscas.ac.cn>
+Subject: [PATCH v4 00/10] riscv: implement accelerated crc using zbc
+Date: Sun, 22 Feb 2026 16:29:54 +0100
+Message-ID: <cover.1771772598.git.code@danielg0.com>
+In-Reply-To: <20240827153230.52880-1-daniel.gregory@bytedance.com>
+References: <20240827153230.52880-1-daniel.gregory@bytedance.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,148 +52,137 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 21 Feb 2026 04:37:44 +0530
-<pbhagavatula@marvell.com> wrote:
+The RISC-V Zbc extension adds instructions for carry-less multiplication
+we can use to implement CRC in hardware. This patch set contains two new
+implementations:
 
-> From: Pavan Nikhilesh <pbhagavatula@marvell.com>
->=20
-> Replace hardcoded burst sizes with RTE_MBUF_BURST_SIZE_DEFAULT
-> to adapt to platform-specific optimal burst sizes.
->=20
-> Signed-off-by: Pavan Nikhilesh <pbhagavatula@marvell.com>
-> ---
+- one in lib/hash/rte_crc_riscv64.h that uses a Barrett reduction to
+  implement the four rte_hash_crc_* functions
+- one in lib/net/net_crc_zbc.c that uses repeated single-folds to reduce
+  the buffer until it is small enough for a Barrett reduction to
+  implement rte_crc16_ccitt_zbc_handler and rte_crc32_eth_zbc_handler
 
-This is way to broad. See deeper AI analysis for all the places
-this patch is over stepping...
+My approach is largely based on the Intel's "Fast CRC Computation Using
+PCLMULQDQ Instruction" white paper
+https://www.researchgate.net/publication/263424619_Fast_CRC_computation
+and a post about "Optimizing CRC32 for small payload sizes on x86"
+https://mary.rs/lab/crc32/
 
-Should only touch examples, and never change the MAX values.
-It should not change any drivers.
+Whether these new implementations are enabled is controlled by new
+build-time and run-time detection of the RISC-V extensions present in
+the compiler and on the target system.
 
------
-Patch 2/2: examples: use default mbuf burst size
-Error: Semantic mismatch =E2=80=94 evt_options.vector_size set to burst siz=
-e macro
-In app/test-eventdev/evt_options.c:
+I have carried out some performance comparisons between the generic
+table implementations and the new hardware implementations. Listed below
+is the number of cycles it takes to compute the CRC hash for buffers of
+various sizes (as reported by rte_get_timer_cycles()). These results
+were collected on a Kendryte K230 and averaged over 20 samples:
 
-=EF=BF=BC
-c
--	opt->vector_size =3D 64;
-+	opt->vector_size =3D RTE_MBUF_BURST_SIZE_DEFAULT;
-The original hardcoded value of 64 for vector_size is an event vector size,=
- not an mbuf burst size. Event vector sizes and mbuf burst sizes serve diff=
-erent purposes =E2=80=94 event vectors aggregate events for batch processin=
-g and can legitimately be larger than the Rx/Tx burst size. Replacing 64 wi=
-th RTE_MBUF_BURST_SIZE_DEFAULT (which defaults to 32 in throughput mode) si=
-lently halves the default event vector size on all non-CN10K platforms. Thi=
-s is a functional regression that could degrade event-mode throughput. The =
-original value should remain 64, or a separate RTE_EVENT_VECTOR_SIZE_DEFAUL=
-T macro should be introduced.
+|Buffer    | CRC32-ETH (lib/net) | CRC32C (lib/hash)   |
+|Size (MB) | Table    | Hardware | Table    | Hardware |
+|----------|----------|----------|----------|----------|
+|        1 |   155168 |    11610 |    73026 |    18385 |
+|        2 |   311203 |    22998 |   145586 |    35886 |
+|        3 |   466744 |    34370 |   218536 |    53939 |
+|        4 |   621843 |    45536 |   291574 |    71944 |
+|        5 |   777908 |    56989 |   364152 |    89706 |
+|        6 |   932736 |    68023 |   437016 |   107726 |
+|        7 |  1088756 |    79236 |   510197 |   125426 |
+|        8 |  1243794 |    90467 |   583231 |   143614 |
 
-Error: MAX_PKT_BURST_VEC reduced from 256 to burst default
-In examples/ipsec-secgw/ipsec-secgw.h:
+These results suggest a speed-up of lib/net by thirteen times, and of
+lib/hash by four times.
 
-=EF=BF=BC
-c
--#define MAX_PKT_BURST_VEC 256
-+#define MAX_PKT_BURST_VEC RTE_MBUF_BURST_SIZE_DEFAULT
-MAX_PKT_BURST_VEC was intentionally set to 256 for vectorized IPsec process=
-ing, which processes packets in large vectorized batches. Reducing it to 32=
- (the default throughput burst size) is a significant behavioral change tha=
-t will likely hurt vectorized IPsec performance. This macro also feeds into=
- the MAX_PKTS calculation immediately below it, so the reduction cascades. =
-This should either keep 256 or use a separate vector-specific configuration.
+I have also run the hash_functions_autotest benchmark in dpdk_test,
+which measures the performance of the lib/hash implementation on small
+buffers, getting the following times:
 
-Error: MAX_PKT_BURST and DEF_PKT_BURST collapsed to same value in bonding t=
-ests
-In app/test/test_link_bonding_mode4.c:
+| Key Length | Time (ticks/op)     |
+| (bytes)    | Table    | Hardware |
+|------------|----------|----------|
+|          1 |     0.47 |     0.85 |
+|          2 |     0.57 |     0.87 |
+|          4 |     0.99 |     0.88 |
+|          8 |     1.35 |     0.88 |
+|          9 |     1.20 |     1.09 |
+|         13 |     1.76 |     1.35 |
+|         16 |     1.87 |     1.02 |
+|         32 |     2.96 |     0.98 |
+|         37 |     3.35 |     1.45 |
+|         40 |     3.49 |     1.12 |
+|         48 |     4.02 |     1.25 |
+|         64 |     5.08 |     1.54 |
 
-=EF=BF=BC
-c
--#define MAX_PKT_BURST           (32)
--#define DEF_PKT_BURST           (16)
-+#define MAX_PKT_BURST		(RTE_MBUF_BURST_SIZE_DEFAULT)
-+#define DEF_PKT_BURST		(RTE_MBUF_BURST_SIZE_DEFAULT)
-Originally MAX_PKT_BURST (32) and DEF_PKT_BURST (16) were intentionally dif=
-ferent values =E2=80=94 the max is a buffer/array size limit and the defaul=
-t is the actual burst count used. Setting both to the same value means the =
-test now always bursts at the maximum array size with no headroom. If any c=
-ode path allocates MAX_PKT_BURST elements and bursts DEF_PKT_BURST, this di=
-stinction is lost. At minimum, DEF_PKT_BURST should remain smaller than MAX=
-_PKT_BURST.
+v4:
+- rebase on 26.03-rc1
+- RISC64 -> RISCV64 in test_hash.c (Stephen Hemminger)
+- Added section to release notes (Stephen Hemminger)
+- SPDX-License_Identifier -> SPDX-License-Identifier in
+  rte_crc_riscv64.h (Stephen Hemminger)
+- Fix header guard in rte_crc_riscv64.h (Stephen Hemminger)
+- assert -> RTE_ASSERT in rte_crc_riscv64.h (Stephen Hemminger)
+- Fix copyright statement in net_crc_zbc.c (Stephen Hemminger)
+- Make crc context structs static in net_crc_zbc.c (Stephen Hemminger)
+- prefer the optimised crc when zbc present over jhash in rte_fbk_hash.c
+v3:
+- rebase on 24.07
+- replace crc with CRC in commits (check-git-log.sh)
+v2:
+- replace compile flag with build-time (riscv extension macros) and
+  run-time detection (linux hwprobe syscall) (Stephen Hemminger)
+- add qemu target that supports zbc (Stanislaw Kardach)
+- fix spelling error in commit message
+- fix a bug in the net/ implementation that would cause segfaults on
+  small unaligned buffers
+- refactor net/ implementation to move variable declarations to top of
+  functions
+- enable the optimisation in a couple other places optimised crc is
+  preferred to jhash
+  - l3fwd-power
+  - cuckoo-hash
 
-Similarly in app/test/test_link_bonding.c, the original DEF_PKT_BURST was 1=
-6, now it becomes RTE_MBUF_BURST_SIZE_DEFAULT (32), which equals MAX_PKT_BU=
-RST in some cases =E2=80=94 same concern about losing the max/default disti=
-nction.
+Daniel Gregory (10):
+  config/riscv: detect presence of Zbc extension
+  hash: implement CRC using riscv carryless multiply
+  net: implement CRC using riscv carryless multiply
+  config/riscv: add qemu crossbuild target
+  examples/l3fwd: use accelerated CRC on riscv
+  ipfrag: use accelerated CRC on riscv
+  examples/l3fwd-power: use accelerated CRC on riscv
+  hash: use accelerated CRC on riscv
+  member: use accelerated CRC on riscv
+  doc: implement CRC using riscv carryless multiply
 
-Warning: NTB_MAX_PKT_BURST and NTB_DFLT_PKT_BURST collapsed
-In examples/ntb/ntb_fwd.c:
+ .mailmap                                      |   2 +-
+ MAINTAINERS                                   |   2 +
+ app/test/test_crc.c                           |  10 +
+ app/test/test_hash.c                          |   7 +
+ config/riscv/meson.build                      |  33 +++
+ config/riscv/riscv64_qemu_linux_gcc           |  17 ++
+ .../linux_gsg/cross_build_dpdk_for_riscv.rst  |   5 +
+ doc/guides/rel_notes/release_26_03.rst        |   8 +
+ examples/l3fwd-power/main.c                   |   2 +-
+ examples/l3fwd/l3fwd_em.c                     |   2 +-
+ lib/eal/riscv/include/rte_cpuflags.h          |   2 +
+ lib/eal/riscv/rte_cpuflags.c                  | 112 +++++++---
+ lib/hash/meson.build                          |   1 +
+ lib/hash/rte_crc_riscv64.h                    |  90 ++++++++
+ lib/hash/rte_cuckoo_hash.c                    |   3 +
+ lib/hash/rte_fbk_hash.c                       |   3 +
+ lib/hash/rte_hash_crc.c                       |  13 +-
+ lib/hash/rte_hash_crc.h                       |   6 +-
+ lib/ip_frag/ip_frag_internal.c                |   6 +-
+ lib/member/member.h                           |   2 +-
+ lib/net/meson.build                           |   4 +
+ lib/net/net_crc.h                             |  11 +
+ lib/net/net_crc_zbc.c                         | 194 ++++++++++++++++++
+ lib/net/rte_net_crc.c                         |  30 ++-
+ lib/net/rte_net_crc.h                         |   3 +
+ 25 files changed, 526 insertions(+), 42 deletions(-)
+ create mode 100644 config/riscv/riscv64_qemu_linux_gcc
+ create mode 100644 lib/hash/rte_crc_riscv64.h
+ create mode 100644 lib/net/net_crc_zbc.c
 
-=EF=BF=BC
-c
--#define NTB_MAX_PKT_BURST 32
--#define NTB_DFLT_PKT_BURST 32
-+#define NTB_MAX_PKT_BURST  RTE_MBUF_BURST_SIZE_DEFAULT
-+#define NTB_DFLT_PKT_BURST RTE_MBUF_BURST_SIZE_DEFAULT
-These were already the same value (32), so there's no regression today, but=
- the intent of having separate MAX and DEFAULT macros is to allow them to d=
-iverge. Replacing both with the same configurable macro permanently ties th=
-em together. Consider using RTE_MBUF_BURST_SIZE_DEFAULT only for the defaul=
-t and keeping MAX as a separate (potentially larger) constant.
+-- 
+2.53.0
 
-Warning: RTE_MBUF_F_RX_BURST_MAX / RTE_MBUF_F_TX_BURST_MAX naming confusion
-In examples/qos_meter/main.c:
-
-=EF=BF=BC
-c
--#define RTE_MBUF_F_RX_BURST_MAX                32
--#define RTE_MBUF_F_TX_BURST_MAX                32
-+#define RTE_MBUF_F_RX_BURST_MAX		RTE_MBUF_BURST_SIZE_DEFAULT
-+#define RTE_MBUF_F_TX_BURST_MAX		RTE_MBUF_BURST_SIZE_DEFAULT
-The RTE_MBUF_F_ prefix is reserved for mbuf flags (e.g., RTE_MBUF_F_RX_RSS_=
-HASH). These macros are local to the example and not real mbuf flags, but t=
-his naming is confusing and was a pre-existing issue. Since this patch is a=
-lready touching these lines, it would be a good opportunity to rename them =
-to something like QOS_RX_BURST_MAX/QOS_TX_BURST_MAX to avoid namespace conf=
-usion.
-
-Warning: PKT_ENQUEUE and PKT_DEQUEUE not updated in qos_sched
-In examples/qos_sched/main.h:
-
-=EF=BF=BC
-c
- #define MAX_PKT_RX_BURST RTE_MBUF_BURST_SIZE_DEFAULT
- #define PKT_ENQUEUE 64
- #define PKT_DEQUEUE 63
- #define MAX_PKT_TX_BURST RTE_MBUF_BURST_SIZE_DEFAULT
-MAX_PKT_RX_BURST and MAX_PKT_TX_BURST are updated from 64 to RTE_MBUF_BURST=
-_SIZE_DEFAULT (32), but PKT_ENQUEUE remains hardcoded at 64 and PKT_DEQUEUE=
- at 63. Now the enqueue size is 2=C3=97 the Rx burst size, creating an inco=
-nsistency. If these values are related (and they appear to be =E2=80=94 you=
- burst Rx into an enqueue batch), they should be updated together or the re=
-lationship should be documented.
-
-Warning: fprintf(stderr, ...) in example code for non-error messages
-In examples/l3fwd/main.c, the added else branches print to stderr even when=
- the user explicitly provided a value:
-
-=EF=BF=BC
-c
-} else {
-    fprintf(stderr, "vector size set to (%" PRIu16 ")\n",
-        evt_rsrc->vector_size);
-}
-Using stderr for informational messages (not errors) is unconventional. Thi=
-s is example code so it's not critical, but printf or RTE_LOG would be more=
- appropriate for confirming a user-supplied setting.
-
-Warning: Duplicate MAX_PKT_BURST definition
-In examples/link_status_interrupt/main.c, MAX_PKT_BURST is defined twice (l=
-ines 41 and 63 in the original). Both are being updated, but this pre-exist=
-ing duplicate #define should ideally be cleaned up. Since the patch is alre=
-ady modifying both lines, removing the duplicate would be a good cleanup.
-
-=EF=BF=BC
-=EF=BF=BC
-=EF=BF=BC
-=EF=BF=BC
