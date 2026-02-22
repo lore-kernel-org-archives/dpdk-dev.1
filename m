@@ -2,47 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8370C636A0
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 15:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37524C636A0
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 15:31:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5AD8640608;
-	Sun, 22 Feb 2026 16:30:46 +0100 (CET)
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com
- [95.215.58.176]) by mails.dpdk.org (Postfix) with ESMTP id 97641402E6
- for <dev@dpdk.org>; Sun, 22 Feb 2026 16:30:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 752C840616;
+	Sun, 22 Feb 2026 16:30:47 +0100 (CET)
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com
+ [95.215.58.179]) by mails.dpdk.org (Postfix) with ESMTP id 439D1402ED
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 16:30:39 +0100 (CET)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
  include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=danielg0.com;
- s=key1; t=1771774237;
+ s=key1; t=1771774238;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=1a//jTJe72c+XR7y38Km5rraZnf+60kM4ql9oJwiZLE=;
- b=W6w/iV65LLwVVnHSsC2St0XdGzqMRa32qS7r/bplKY1Dvx2LBjQhjercbCpMy+lWY26GuW
- I3OZIe4N3b0It3uJYc18BQeupWeRS/b6R7VriDQ4GtdzYZp9Z+AqRZHesseMvW8KAAnkpI
- tafMrZ2cy9Tws5Yq4YNwvKctmni78uo=
+ bh=y4TwV6ZTkNN7kp34IuULHpG+jVIevsStKyIJrVhmh3M=;
+ b=FA2eI33FrUm9i01mfgxa9PcRyMgtUlGTE9LHcw95O9WgtCNORNsE2JOGQs5sd2XufFy774
+ YF5nuJX6Ljt2527LhSS6QzoaNMalkfVIMt9no1JN4Ac2PcCqZriIXaCTp2IBMqblMoDAgJ
+ rX22MIGSaZq287jBvOMCt3Mrf7uAtR4=
 From: Daniel Gregory <code@danielg0.com>
 To: =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
  Thomas Monjalon <thomas@monjalon.net>,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Jasvinder Singh <jasvinder.singh@intel.com>,
  Sun Yuechi <sunyuechi@iscas.ac.cn>
 Cc: Daniel Gregory <daniel.gregory@bytedance.com>, dev@dpdk.org,
  Punit Agrawal <punit.agrawal@bytedance.com>,
  Liang Ma <liangma@liangbit.com>,
  Pengcheng Wang <wangpengcheng.pp@bytedance.com>,
  Chunsong Feng <fengchunsong@bytedance.com>
-Subject: [PATCH v4 02/10] hash: implement CRC using riscv carryless multiply
-Date: Sun, 22 Feb 2026 16:29:56 +0100
-Message-ID: <d71a1cdba644ace64566d62b1d5364b7cf8202d8.1771772598.git.code@danielg0.com>
+Subject: [PATCH v4 03/10] net: implement CRC using riscv carryless multiply
+Date: Sun, 22 Feb 2026 16:29:57 +0100
+Message-ID: <eb0fc35415ba5f54cebc4aec93dffdb88370e41f.1771772598.git.code@danielg0.com>
 In-Reply-To: <cover.1771772598.git.code@danielg0.com>
 References: <20240827153230.52880-1-daniel.gregory@bytedance.com>
  <cover.1771772598.git.code@danielg0.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 X-BeenThere: dev@dpdk.org
@@ -60,248 +56,386 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Daniel Gregory <daniel.gregory@bytedance.com>
 
-Using carryless multiply instructions from RISC-V's Zbc extension,
-implement a Barrett reduction that calculates CRC-32C checksums.
+Using carryless multiply instructions (clmul) from RISC-V's Zbc
+extension, implement CRC-32 and CRC-16 calculations on buffers.
 
-Based on the approach described by Intel's whitepaper on "Fast CRC
-Computation for Generic Polynomials Using PCLMULQDQ Instruction", which
-is also described here
-(https://web.archive.org/web/20240111232520/https://mary.rs/lab/crc32/)
+Based on the approach described in Intel's whitepaper on "Fast CRC
+Computation for Generic Polynomails Using PCLMULQDQ Instructions", we
+perform repeated folds-by-1 whilst the buffer is still big enough, then
+perform Barrett's reductions on the rest.
 
-Add a case to the autotest_hash unit test.
+Add a case to the crc_autotest suite that tests this implementation.
 
 Signed-off-by: Daniel Gregory <daniel.gregory@bytedance.com>
 ---
- MAINTAINERS                |  1 +
- app/test/test_hash.c       |  7 +++
- lib/hash/meson.build       |  1 +
- lib/hash/rte_crc_riscv64.h | 90 ++++++++++++++++++++++++++++++++++++++
- lib/hash/rte_hash_crc.c    | 13 +++++-
- lib/hash/rte_hash_crc.h    |  6 ++-
- 6 files changed, 116 insertions(+), 2 deletions(-)
- create mode 100644 lib/hash/rte_crc_riscv64.h
+ MAINTAINERS           |   1 +
+ app/test/test_crc.c   |  10 +++
+ lib/net/meson.build   |   4 +
+ lib/net/net_crc.h     |  11 +++
+ lib/net/net_crc_zbc.c | 194 ++++++++++++++++++++++++++++++++++++++++++
+ lib/net/rte_net_crc.c |  30 ++++++-
+ lib/net/rte_net_crc.h |   3 +
+ 7 files changed, 252 insertions(+), 1 deletion(-)
+ create mode 100644 lib/net/net_crc_zbc.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 1b2f1ed2ba..aac1c48cd3 100644
+index aac1c48cd3..0f2cc5d87e 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -338,6 +338,7 @@ M: Stanisław Kardach <stanislaw.kardach@gmail.com>
- F: config/riscv/
+@@ -339,6 +339,7 @@ F: config/riscv/
  F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
  F: lib/eal/riscv/
-+F: lib/hash/rte_crc_riscv64.h
+ F: lib/hash/rte_crc_riscv64.h
++F: lib/net/net_crc_zbc.c
  M: Sun Yuechi <sunyuechi@iscas.ac.cn>
  F: lib/**/*rvv*
  
-diff --git a/app/test/test_hash.c b/app/test/test_hash.c
-index 3fb3d96d05..74aaed440e 100644
---- a/app/test/test_hash.c
-+++ b/app/test/test_hash.c
-@@ -231,6 +231,13 @@ test_crc32_hash_alg_equiv(void)
- 			printf("Failed checking CRC32_SW against CRC32_ARM64\n");
- 			break;
- 		}
-+
-+		/* Check against 8-byte-operand RISCV64 CRC32 if available */
-+		rte_hash_crc_set_alg(CRC32_RISCV64);
-+		if (hash_val != rte_hash_crc(data64, data_len, init_val)) {
-+			printf("Failed checking CRC32_SW against CRC32_RISCV64\n");
-+			break;
-+		}
+diff --git a/app/test/test_crc.c b/app/test/test_crc.c
+index 4ff03e3f64..951eaf846f 100644
+--- a/app/test/test_crc.c
++++ b/app/test/test_crc.c
+@@ -96,6 +96,16 @@ crc_all_algs(const char *desc, enum rte_net_crc_type type,
  	}
+ 	rte_net_crc_free(ctx);
  
- 	/* Resetting to best available algorithm */
-diff --git a/lib/hash/meson.build b/lib/hash/meson.build
-index 7ce504ee8b..2e6db933a9 100644
---- a/lib/hash/meson.build
-+++ b/lib/hash/meson.build
-@@ -12,6 +12,7 @@ headers = files(
- indirect_headers += files(
-         'rte_crc_arm64.h',
-         'rte_crc_generic.h',
-+        'rte_crc_riscv64.h',
-         'rte_crc_sw.h',
-         'rte_crc_x86.h',
-         'rte_thash_x86_gfni.h',
-diff --git a/lib/hash/rte_crc_riscv64.h b/lib/hash/rte_crc_riscv64.h
++	ctx = rte_net_crc_set_alg(RTE_NET_CRC_ZBC, type);
++	TEST_ASSERT_NOT_NULL(ctx, "cannot allocate the CRC context");
++	crc = rte_net_crc_calc(ctx, data, data_len);
++	if (crc != res) {
++		RTE_LOG(ERR, USER1, "TEST FAILED: %s ZBC\n", desc);
++		debug_hexdump(stdout, "ZBC", &crc, 4);
++		ret = TEST_FAILED;
++	}
++	rte_net_crc_free(ctx);
++
+ 	return ret;
+ }
+ 
+diff --git a/lib/net/meson.build b/lib/net/meson.build
+index 3fad5edc5b..154af7d9ae 100644
+--- a/lib/net/meson.build
++++ b/lib/net/meson.build
+@@ -57,4 +57,8 @@ elif (dpdk_conf.has('RTE_ARCH_ARM64') and
+         cc.get_define('__ARM_FEATURE_CRYPTO', args: machine_args) != '')
+     sources += files('net_crc_neon.c')
+     cflags += ['-DCC_ARM64_NEON_PMULL_SUPPORT']
++elif (dpdk_conf.has('RTE_ARCH_RISCV') and
++        cc.get_define('RTE_RISCV_FEATURE_ZBC', args: machine_args) != '')
++    sources += files('net_crc_zbc.c')
++    cflags += ['-DCC_RISCV64_ZBC_CLMUL_SUPPORT']
+ endif
+diff --git a/lib/net/net_crc.h b/lib/net/net_crc.h
+index 320b0edca8..971f38afaa 100644
+--- a/lib/net/net_crc.h
++++ b/lib/net/net_crc.h
+@@ -44,4 +44,15 @@ rte_crc16_ccitt_neon_handler(const uint8_t *data, uint32_t data_len);
+ uint32_t
+ rte_crc32_eth_neon_handler(const uint8_t *data, uint32_t data_len);
+ 
++/* RISCV64 Zbc */
++void
++rte_net_crc_zbc_init(void);
++
++uint32_t
++rte_crc16_ccitt_zbc_handler(const uint8_t *data, uint32_t data_len);
++
++uint32_t
++rte_crc32_eth_zbc_handler(const uint8_t *data, uint32_t data_len);
++
++
+ #endif /* _NET_CRC_H_ */
+diff --git a/lib/net/net_crc_zbc.c b/lib/net/net_crc_zbc.c
 new file mode 100644
-index 0000000000..4e0fff5098
+index 0000000000..dfbdc641b5
 --- /dev/null
-+++ b/lib/hash/rte_crc_riscv64.h
-@@ -0,0 +1,90 @@
++++ b/lib/net/net_crc_zbc.c
+@@ -0,0 +1,194 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2024 ByteDance
 + */
 +
-+#ifndef _RTE_CRC_RISCV64_H_
-+#define _RTE_CRC_RISCV64_H_
-+
++#include <riscv_bitmanip.h>
 +#include <stdint.h>
 +
-+#include <riscv_bitmanip.h>
++#include <rte_common.h>
++#include <rte_net_crc.h>
 +
-+#include <rte_debug.h>
++#include "net_crc.h"
 +
-+/*
-+ * CRC-32C takes a reflected input (bit 7 is the lsb) and produces a reflected
-+ * output. As reflecting the value we're checksumming is expensive, we instead
-+ * reflect the polynomial P (0x11EDC6F41) and mu and our CRC32 algorithm.
-+ *
-+ * The mu constant is used for a Barrett reduction. It's 2^96 / P (0x11F91CAF6)
-+ * reflected. Picking 2^96 rather than 2^64 means we can calculate a 64-bit crc
-+ * using only two multiplications (https://mary.rs/lab/crc32/)
-+ */
-+static const uint64_t p = 0x105EC76F1;
-+static const uint64_t mu = 0x4869EC38DEA713F1UL;
++/* CLMUL CRC computation context structure */
++struct crc_clmul_ctx {
++	uint64_t Pr;
++	uint64_t mu;
++	uint64_t k3;
++	uint64_t k4;
++	uint64_t k5;
++};
 +
-+/* Calculate the CRC32C checksum using a Barrett reduction */
++static struct crc_clmul_ctx crc32_eth_clmul;
++static struct crc_clmul_ctx crc16_ccitt_clmul;
++
++/* Perform Barrett's reduction on 8, 16, 32 or 64-bit value */
 +static inline uint32_t
-+crc32c_riscv64(uint64_t data, uint32_t init_val, uint32_t bits)
++crc32_barrett_zbc(
++	const uint64_t data,
++	uint32_t crc,
++	uint32_t bits,
++	const struct crc_clmul_ctx *params)
 +{
-+	RTE_ASSERT((bits == 64) || (bits == 32) || (bits == 16) || (bits == 8));
++	assert((bits == 64) || (bits == 32) || (bits == 16) || (bits == 8));
 +
 +	/* Combine data with the initial value */
-+	uint64_t crc = (uint64_t)(data ^ init_val) << (64 - bits);
++	uint64_t temp = (uint64_t)(data ^ crc) << (64 - bits);
 +
 +	/*
 +	 * Multiply by mu, which is 2^96 / P. Division by 2^96 occurs by taking
 +	 * the lower 64 bits of the result (remember we're inverted)
 +	 */
-+	crc = __riscv_clmul_64(crc, mu);
++	temp = __riscv_clmul_64(temp, params->mu);
 +	/* Multiply by P */
-+	crc = __riscv_clmulh_64(crc, p);
++	temp = __riscv_clmulh_64(temp, params->Pr);
 +
 +	/* Subtract from original (only needed for smaller sizes) */
 +	if (bits == 16 || bits == 8)
-+		crc ^= init_val >> bits;
++		temp ^= crc >> bits;
++
++	return temp;
++}
++
++/* Repeat Barrett's reduction for short buffer sizes */
++static inline uint32_t
++crc32_repeated_barrett_zbc(
++	const uint8_t *data,
++	uint32_t data_len,
++	uint32_t crc,
++	const struct crc_clmul_ctx *params)
++{
++	while (data_len >= 8) {
++		crc = crc32_barrett_zbc(*(const uint64_t *)data, crc, 64, params);
++		data += 8;
++		data_len -= 8;
++	}
++	if (data_len >= 4) {
++		crc = crc32_barrett_zbc(*(const uint32_t *)data, crc, 32, params);
++		data += 4;
++		data_len -= 4;
++	}
++	if (data_len >= 2) {
++		crc = crc32_barrett_zbc(*(const uint16_t *)data, crc, 16, params);
++		data += 2;
++		data_len -= 2;
++	}
++	if (data_len >= 1)
++		crc = crc32_barrett_zbc(*(const uint8_t *)data, crc, 8, params);
 +
 +	return crc;
 +}
 +
-+/*
-+ * Use carryless multiply to perform hash on a value, falling back on the
-+ * software in case the Zbc extension is not supported
-+ */
-+static inline uint32_t
-+rte_hash_crc_1byte(uint8_t data, uint32_t init_val)
++/* Perform a reduction by 1 on a buffer (minimum length 2) */
++static inline void
++crc32_reduce_zbc(const uint64_t *data, uint64_t *high, uint64_t *low,
++		 const struct crc_clmul_ctx *params)
 +{
-+	if (likely((rte_hash_crc32_alg & CRC32_RISCV64) != 0))
-+		return crc32c_riscv64(data, init_val, 8);
++	uint64_t highh = __riscv_clmulh_64(params->k3, *high);
++	uint64_t highl = __riscv_clmul_64(params->k3, *high);
++	uint64_t lowh = __riscv_clmulh_64(params->k4, *low);
++	uint64_t lowl = __riscv_clmul_64(params->k4, *low);
 +
-+	return crc32c_1byte(data, init_val);
++	*high = highl ^ lowl;
++	*low = highh ^ lowh;
++
++	*high ^= *(data++);
++	*low ^= *(data++);
 +}
 +
 +static inline uint32_t
-+rte_hash_crc_2byte(uint16_t data, uint32_t init_val)
++crc32_eth_calc_zbc(
++	const uint8_t *data,
++	uint32_t data_len,
++	uint32_t crc,
++	const struct crc_clmul_ctx *params)
 +{
-+	if (likely((rte_hash_crc32_alg & CRC32_RISCV64) != 0))
-+		return crc32c_riscv64(data, init_val, 16);
++	uint64_t high, low;
++	/* Minimum length we can do reduction-by-1 over */
++	const uint32_t min_len = 16;
++	/* Barrett reduce until buffer aligned to 8-byte word */
++	uint32_t misalign = (size_t)data & 7;
++	if (misalign != 0 && misalign <= data_len) {
++		crc = crc32_repeated_barrett_zbc(data, misalign, crc, params);
++		data += misalign;
++		data_len -= misalign;
++	}
 +
-+	return crc32c_2bytes(data, init_val);
++	if (data_len < min_len)
++		return crc32_repeated_barrett_zbc(data, data_len, crc, params);
++
++	/* Fold buffer into two 8-byte words */
++	high = *((const uint64_t *)data) ^ crc;
++	low = *((const uint64_t *)(data + 8));
++	data += 16;
++	data_len -= 16;
++
++	for (; data_len >= 16; data_len -= 16, data += 16)
++		crc32_reduce_zbc((const uint64_t *)data, &high, &low, params);
++
++	/* Fold last 128 bits into 96 */
++	low = __riscv_clmul_64(params->k4, high) ^ low;
++	high = __riscv_clmulh_64(params->k4, high);
++	/* Upper 32 bits of high are now zero */
++	high = (low >> 32) | (high << 32);
++
++	/* Fold last 96 bits into 64 */
++	low = __riscv_clmul_64(low & 0xffffffff, params->k5);
++	low ^= high;
++
++	/*
++	 * Barrett reduction of remaining 64 bits, using high to store initial
++	 * value of low
++	 */
++	high = low;
++	low = __riscv_clmul_64(low, params->mu);
++	low &= 0xffffffff;
++	low = __riscv_clmul_64(low, params->Pr);
++	crc = (high ^ low) >> 32;
++
++	/* Combine crc with any excess */
++	crc = crc32_repeated_barrett_zbc(data, data_len, crc, params);
++
++	return crc;
 +}
 +
-+static inline uint32_t
-+rte_hash_crc_4byte(uint32_t data, uint32_t init_val)
++void
++rte_net_crc_zbc_init(void)
 +{
-+	if (likely((rte_hash_crc32_alg & CRC32_RISCV64) != 0))
-+		return crc32c_riscv64(data, init_val, 32);
++	/*
++	 * Initialise CRC32 data - Constants derived from Intel whitepaper "Fast
++	 * CRC Computation for Generic Polynomials Using PCLMULQDQ Instrs"
++	 */
++	crc32_eth_clmul.Pr = 0x1db710641LL; /* polynomial P reversed */
++	crc32_eth_clmul.mu = 0xb4e5b025f7011641LL; /* (2 ^ 64 / P) reversed */
++	crc32_eth_clmul.k3 = 0x1751997d0LL; /* (x^(128+32) mod P << 32) reversed << 1 */
++	crc32_eth_clmul.k4 = 0x0ccaa009eLL; /* (x^(128-32) mod P << 32) reversed << 1 */
++	crc32_eth_clmul.k5 = 0x163cd6124LL; /* (x^64 mod P << 32) reversed << 1 */
 +
-+	return crc32c_1word(data, init_val);
++	/* Initialise CRC16 data */
++	/* Same calculations as above, with polynomial << 16 */
++	crc16_ccitt_clmul.Pr = 0x10811LL;
++	crc16_ccitt_clmul.mu = 0x859b040b1c581911LL;
++	crc16_ccitt_clmul.k3 = 0x8e10LL;
++	crc16_ccitt_clmul.k4 = 0x189aeLL;
++	crc16_ccitt_clmul.k5 = 0x114aaLL;
 +}
 +
-+static inline uint32_t
-+rte_hash_crc_8byte(uint64_t data, uint32_t init_val)
++uint32_t
++rte_crc16_ccitt_zbc_handler(const uint8_t *data, uint32_t data_len)
 +{
-+	if (likely((rte_hash_crc32_alg & CRC32_RISCV64) != 0))
-+		return crc32c_riscv64(data, init_val, 64);
-+
-+	return crc32c_2words(data, init_val);
++	/* Negate the crc, which is present in the lower 16-bits */
++	return (uint16_t)~crc32_eth_calc_zbc(data,
++		data_len,
++		0xffff,
++		&crc16_ccitt_clmul);
 +}
 +
-+#endif /* _RTE_CRC_RISCV64_H_ */
-diff --git a/lib/hash/rte_hash_crc.c b/lib/hash/rte_hash_crc.c
-index 523be0bf92..939753f436 100644
---- a/lib/hash/rte_hash_crc.c
-+++ b/lib/hash/rte_hash_crc.c
-@@ -17,7 +17,7 @@ RTE_EXPORT_SYMBOL(rte_hash_crc32_alg)
- uint8_t rte_hash_crc32_alg = CRC32_SW;
++uint32_t
++rte_crc32_eth_zbc_handler(const uint8_t *data, uint32_t data_len)
++{
++	return ~crc32_eth_calc_zbc(data,
++		data_len,
++		0xffffffffUL,
++		&crc32_eth_clmul);
++}
+diff --git a/lib/net/rte_net_crc.c b/lib/net/rte_net_crc.c
+index 3a589bdd6d..75668d76c4 100644
+--- a/lib/net/rte_net_crc.c
++++ b/lib/net/rte_net_crc.c
+@@ -40,7 +40,7 @@ struct rte_net_crc {
  
- /**
-- * Allow or disallow use of SSE4.2/ARMv8 intrinsics for CRC32 hash
-+ * Allow or disallow use of SSE4.2/ARMv8/RISC-V intrinsics for CRC32 hash
-  * calculation.
-  *
-  * @param alg
-@@ -26,6 +26,7 @@ uint8_t rte_hash_crc32_alg = CRC32_SW;
-  *   - (CRC32_SSE42) Use SSE4.2 intrinsics if available
-  *   - (CRC32_SSE42_x64) Use 64-bit SSE4.2 intrinsic if available (default x86)
-  *   - (CRC32_ARM64) Use ARMv8 CRC intrinsic if available (default ARMv8)
-+ *   - (CRC32_RISCV64) Use RISCV64 Zbc extension if available
-  */
- RTE_EXPORT_SYMBOL(rte_hash_crc_set_alg)
- void
-@@ -54,6 +55,14 @@ rte_hash_crc_set_alg(uint8_t alg)
- 		rte_hash_crc32_alg = CRC32_ARM64;
+ static struct {
+ 	rte_net_crc_handler f[RTE_NET_CRC_REQS];
+-} handlers[RTE_NET_CRC_AVX512 + 1];
++} handlers[RTE_NET_CRC_ZBC + 1];
+ 
+ /* Scalar handling */
+ 
+@@ -174,6 +174,20 @@ neon_pmull_init(void)
  #endif
+ }
  
-+#if defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_ZBC)
-+	if (!(alg & CRC32_RISCV64))
-+		HASH_CRC_LOG(WARNING,
-+			"Unsupported CRC32 algorithm requested using CRC32_RISCV64");
-+	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_RISCV_EXT_ZBC))
-+		rte_hash_crc32_alg = CRC32_RISCV64;
++/* ZBC/CLMUL handling */
++
++#define ZBC_CLMUL_CPU_SUPPORTED \
++	rte_cpu_get_flag_enabled(RTE_CPUFLAG_RISCV_EXT_ZBC)
++
++static void
++zbc_clmul_init(void)
++{
++#ifdef CC_RISCV64_ZBC_CLMUL_SUPPORT
++	if (ZBC_CLMUL_CPU_SUPPORTED)
++		rte_net_crc_zbc_init();
 +#endif
++}
 +
- 	if (rte_hash_crc32_alg == CRC32_SW)
- 		HASH_CRC_LOG(WARNING,
- 			"Unsupported CRC32 algorithm requested using CRC32_SW");
-@@ -66,6 +75,8 @@ RTE_INIT(rte_hash_crc_init_alg)
- 	rte_hash_crc_set_alg(CRC32_SSE42_x64);
- #elif defined(RTE_ARCH_ARM64) && defined(__ARM_FEATURE_CRC32)
- 	rte_hash_crc_set_alg(CRC32_ARM64);
-+#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_ZBC)
-+	rte_hash_crc_set_alg(CRC32_RISCV64);
- #else
- 	rte_hash_crc_set_alg(CRC32_SW);
+ static void
+ handlers_init(enum rte_net_crc_alg alg)
+ {
+@@ -205,6 +219,15 @@ handlers_init(enum rte_net_crc_alg alg)
+ 			handlers[alg].f[RTE_NET_CRC32_ETH] = rte_crc32_eth_neon_handler;
+ 			break;
+ 		}
++#endif
++		break;
++	case RTE_NET_CRC_ZBC:
++#ifdef CC_RISCV64_ZBC_CLMUL_SUPPORT
++		if (ZBC_CLMUL_CPU_SUPPORTED) {
++			handlers[alg].f[RTE_NET_CRC16_CCITT] = rte_crc16_ccitt_zbc_handler;
++			handlers[alg].f[RTE_NET_CRC32_ETH] = rte_crc32_eth_zbc_handler;
++			break;
++		}
  #endif
-diff --git a/lib/hash/rte_hash_crc.h b/lib/hash/rte_hash_crc.h
-index fa07c97685..3b23b98283 100644
---- a/lib/hash/rte_hash_crc.h
-+++ b/lib/hash/rte_hash_crc.h
-@@ -24,6 +24,7 @@
- #define CRC32_x64           (1U << 2)
- #define CRC32_SSE42_x64     (CRC32_x64|CRC32_SSE42)
- #define CRC32_ARM64         (1U << 3)
-+#define CRC32_RISCV64       (1U << 4)
+ 		/* fall-through */
+ 	case RTE_NET_CRC_SCALAR:
+@@ -248,6 +271,9 @@ struct rte_net_crc *rte_net_crc_set_alg(enum rte_net_crc_alg alg, enum rte_net_c
+ 			return crc;
+ 		}
+ 		break;
++	case RTE_NET_CRC_ZBC:
++		crc->alg = RTE_NET_CRC_ZBC;
++		return crc;
+ 	case RTE_NET_CRC_SCALAR:
+ 		/* fall-through */
+ 	default:
+@@ -275,8 +301,10 @@ RTE_INIT(rte_net_crc_init)
+ 	sse42_pclmulqdq_init();
+ 	avx512_vpclmulqdq_init();
+ 	neon_pmull_init();
++	zbc_clmul_init();
+ 	handlers_init(RTE_NET_CRC_SCALAR);
+ 	handlers_init(RTE_NET_CRC_NEON);
+ 	handlers_init(RTE_NET_CRC_SSE42);
+ 	handlers_init(RTE_NET_CRC_AVX512);
++	handlers_init(RTE_NET_CRC_ZBC);
+ }
+diff --git a/lib/net/rte_net_crc.h b/lib/net/rte_net_crc.h
+index 6fb143f533..6712e5dae6 100644
+--- a/lib/net/rte_net_crc.h
++++ b/lib/net/rte_net_crc.h
+@@ -25,6 +25,7 @@ enum rte_net_crc_alg {
+ 	RTE_NET_CRC_SSE42,
+ 	RTE_NET_CRC_NEON,
+ 	RTE_NET_CRC_AVX512,
++	RTE_NET_CRC_ZBC,
+ };
  
- extern uint8_t rte_hash_crc32_alg;
- 
-@@ -31,6 +32,8 @@ extern uint8_t rte_hash_crc32_alg;
- #include "rte_crc_arm64.h"
- #elif defined(RTE_ARCH_X86)
- #include "rte_crc_x86.h"
-+#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_ZBC)
-+#include "rte_crc_riscv64.h"
- #else
- #include "rte_crc_generic.h"
- #endif
-@@ -40,7 +43,7 @@ extern "C" {
- #endif
- 
- /**
-- * Allow or disallow use of SSE4.2/ARMv8 intrinsics for CRC32 hash
-+ * Allow or disallow use of SSE4.2/ARMv8/RISC-V intrinsics for CRC32 hash
-  * calculation.
+ /** CRC context (algorithm, type) */
+@@ -51,6 +52,8 @@ rte_net_crc_free(struct rte_net_crc *crc);
+  *   - RTE_NET_CRC_SSE42 (Use 64-bit SSE4.2 intrinsic)
+  *   - RTE_NET_CRC_NEON (Use ARM Neon intrinsic)
+  *   - RTE_NET_CRC_AVX512 (Use 512-bit AVX intrinsic)
++ *   - RTE_NET_CRC_ZBC (Use RISC-V Zbc extension)
++ *
+  * @param type
+  *   CRC type (enum rte_net_crc_type)
   *
-  * @param alg
-@@ -49,6 +52,7 @@ extern "C" {
-  *   - (CRC32_SSE42) Use SSE4.2 intrinsics if available
-  *   - (CRC32_SSE42_x64) Use 64-bit SSE4.2 intrinsic if available (default x86)
-  *   - (CRC32_ARM64) Use ARMv8 CRC intrinsic if available (default ARMv8)
-+ *   - (CRC32_RISCV64) Use RISC-V Carry-less multiply if available (default rv64gc_zbc)
-  */
- void
- rte_hash_crc_set_alg(uint8_t alg);
 -- 
 2.53.0
 
