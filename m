@@ -2,38 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 269D9C636A0
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 15:31:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707C6C636A0
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 15:31:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE4A24065D;
-	Sun, 22 Feb 2026 16:30:55 +0100 (CET)
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com
- [95.215.58.183]) by mails.dpdk.org (Postfix) with ESMTP id A1C004042F
- for <dev@dpdk.org>; Sun, 22 Feb 2026 16:30:45 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A220B40663;
+	Sun, 22 Feb 2026 16:30:56 +0100 (CET)
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com
+ [95.215.58.172]) by mails.dpdk.org (Postfix) with ESMTP id B955A4060C
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 16:30:47 +0100 (CET)
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and
  include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=danielg0.com;
- s=key1; t=1771774245;
+ s=key1; t=1771774247;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=FsOfGOAa8JnOGcmzN+peeU/pvasPoSMs0KsV5ACnTGI=;
- b=IDvf55OR9948QljHQ7q3KGjMdwAayXKYtmz5pj9vPEjC0md5Mg1kd1TqleH1/geZkFw0PV
- MDo+4Q+h1ENlO386o9e8zutj13UMDvgcJVSXzwIRw+DCaKqVP4+1699eQOTAPPwE3U79qz
- mP+z4jV3UuQuCll/Bl/rpuqU0CctDGQ=
+ bh=Dm7YtWQoVaKQSFnMASIHXE3jzuDaec+eH5QL/hZd6jQ=;
+ b=j+37VD8wemX4Y8P/xBBlk2+OYr5tpRk5xPSRXYz5cJMfM5Jni2S32dpx5NhoumidzUp6Tw
+ FP/5tfhd2YUKC9bASpKtdZTfoksEJx5y8TJm1Q0D6+I04jMEleQFe5IWRsIpCAkboBei6p
+ UA7u77frvHQn6+OOr2tis029ZZLiJAM=
 From: Daniel Gregory <code@danielg0.com>
 To: =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ David Hunt <david.hunt@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>
 Cc: Daniel Gregory <daniel.gregory@bytedance.com>, dev@dpdk.org,
  Punit Agrawal <punit.agrawal@bytedance.com>,
  Liang Ma <liangma@liangbit.com>,
  Pengcheng Wang <wangpengcheng.pp@bytedance.com>,
  Chunsong Feng <fengchunsong@bytedance.com>,
  Sun Yuechi <sunyuechi@iscas.ac.cn>
-Subject: [PATCH v4 06/10] ipfrag: use accelerated CRC on riscv
-Date: Sun, 22 Feb 2026 16:30:00 +0100
-Message-ID: <4508943b3cbdd6fdae7867693c58a2c78de7a758.1771772598.git.code@danielg0.com>
+Subject: [PATCH v4 07/10] examples/l3fwd-power: use accelerated CRC on riscv
+Date: Sun, 22 Feb 2026 16:30:01 +0100
+Message-ID: <5b8ae7aa5839e390471123e5a0b19e211600e5a9.1771772598.git.code@danielg0.com>
 In-Reply-To: <cover.1771772598.git.code@danielg0.com>
 References: <20240827153230.52880-1-daniel.gregory@bytedance.com>
  <cover.1771772598.git.code@danielg0.com>
@@ -61,39 +63,22 @@ Use it rather than jhash.
 
 Signed-off-by: Daniel Gregory <daniel.gregory@bytedance.com>
 ---
- lib/ip_frag/ip_frag_internal.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ examples/l3fwd-power/main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/ip_frag/ip_frag_internal.c b/lib/ip_frag/ip_frag_internal.c
-index 7cbef647df..19a28c447b 100644
---- a/lib/ip_frag/ip_frag_internal.c
-+++ b/lib/ip_frag/ip_frag_internal.c
-@@ -45,14 +45,14 @@ ipv4_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2)
+diff --git a/examples/l3fwd-power/main.c b/examples/l3fwd-power/main.c
+index 02ec17d799..58cd36473e 100644
+--- a/examples/l3fwd-power/main.c
++++ b/examples/l3fwd-power/main.c
+@@ -273,7 +273,7 @@ static struct rte_mempool * pktmbuf_pool[NB_SOCKETS];
  
- 	p = (const uint32_t *)&key->src_dst;
+ #if (APP_LOOKUP_METHOD == APP_LOOKUP_EXACT_MATCH)
  
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
-+#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64) || defined(RTE_RISCV_FEATURE_ZBC)
- 	v = rte_hash_crc_4byte(p[0], PRIME_VALUE);
- 	v = rte_hash_crc_4byte(p[1], v);
- 	v = rte_hash_crc_4byte(key->id, v);
+-#ifdef RTE_ARCH_X86
++#if defined(RTE_ARCH_X86) || defined(RTE_RISCV_FEATURE_ZBC)
+ #include <rte_hash_crc.h>
+ #define DEFAULT_HASH_FUNC       rte_hash_crc
  #else
- 
- 	v = rte_jhash_3words(p[0], p[1], key->id, PRIME_VALUE);
--#endif /* RTE_ARCH_X86 */
-+#endif /* RTE_ARCH_X86 || RTE_ARCH_ARM64 || RTE_RISCV_FEATURE_ZBC */
- 
- 	*v1 =  v;
- 	*v2 = (v << 7) + (v >> 14);
-@@ -66,7 +66,7 @@ ipv6_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2)
- 
- 	p = (const uint32_t *) &key->src_dst;
- 
--#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
-+#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64) || defined(RTE_RISCV_FEATURE_ZBC)
- 	v = rte_hash_crc_4byte(p[0], PRIME_VALUE);
- 	v = rte_hash_crc_4byte(p[1], v);
- 	v = rte_hash_crc_4byte(p[2], v);
 -- 
 2.53.0
 
