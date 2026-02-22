@@ -2,72 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8BBC636C1
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 22:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACD7C636BA
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 22:15:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 416F0402B8;
-	Sun, 22 Feb 2026 23:00:40 +0100 (CET)
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com
- [209.85.210.42]) by mails.dpdk.org (Postfix) with ESMTP id 6EA4B4027B
- for <dev@dpdk.org>; Sun, 22 Feb 2026 23:00:38 +0100 (CET)
-Received: by mail-ot1-f42.google.com with SMTP id
- 46e09a7af769-7d4be94eeacso3231220a34.2
- for <dev@dpdk.org>; Sun, 22 Feb 2026 14:00:38 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D0D82402B8;
+	Sun, 22 Feb 2026 23:15:48 +0100 (CET)
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com
+ [209.85.161.48]) by mails.dpdk.org (Postfix) with ESMTP id A86F04027B
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 23:15:47 +0100 (CET)
+Received: by mail-oo1-f48.google.com with SMTP id
+ 006d021491bc7-6786b13984fso2512427eaf.2
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 14:15:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771797637;
- x=1772402437; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=N/fVPI3Npb40v9fRiZCcoXxnNVHAOZ99+t7G4QGBb2w=;
- b=O8wweDUtQ1W0F0yE++N7YNMYh8nikcj/IuU5aKD2N+UG1GJGs+DUi5Ud5PsRq5Y6TC
- gZj334hcSA1ueQOeirC/aNrBaLKRj8Kr7rw2CKwedp3NK45t0px9h04GkLhdVcahDuEf
- qXtxES3vQsOlF3ChuYBGvgDeeDa8Nq2I/w/DSZVNfmLNZmQfox0ISumbig8G216GUu3F
- +3M3Zz56BUa43ega74pfTD9S3IcxGXYsMf4GNG1491NTWEn4PWg6UZ3z6A2mcfsWONhg
- yKh8gBeM528f4pzHfuGiIBR8ASBns8kS69Y2vj+djQJ5ksSf4F8fQESXWWY0SyM4euSG
- jTyw==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771798547;
+ x=1772403347; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=ac4G2voK1zAofTTlpkSi1MYsCTbvU7eOIIwPSTmjeY4=;
+ b=WxI0TNP65/7T370pUUVVMDBZyzebQigv5SjiQvlTX94PELVyq2RVhaRk+Y3zj8R3Vc
+ Tm3DVXEMFmb+JDzjv4Zml0j1soksz3Nz/I1LaHh8M0cZPCDsMg0MryvUjLz7ynV7gW6m
+ CQYkmFCJj7M1ra6to6Axow9ZvaxsrcnWJ0Ve1CxPliDyPeak7BnyMdghK83phN6brMR7
+ GU6NRlEuN7CbqH6j58WJQ34rUn7OLBWYxI/G1KJLtvuy37JcRB8oSgOP1Y163ZbGJIbS
+ Z/G8jKO17omtiPBtecuXruAuRdmzWVHdeyXwgNFKR5LlcCtuDaIWG8hVQ327HNLPZzMb
+ rp+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771797637; x=1772402437;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=N/fVPI3Npb40v9fRiZCcoXxnNVHAOZ99+t7G4QGBb2w=;
- b=llSYS8srJ3DyPupxLOBvHQUue/U7l/m7IAIJKjy0PX0hJcEKbahptThzRUtd8xYaY2
- Nyp/ab5X8reUfYSB5SVd5zinwIv3yLopY6YcyLQJi0ICBVTD0HPJXQkhCctASHkwsQdf
- wXdOS0dVTgg0S95bcH2tOgZ1BYb7NAbAw2dBbv8lUoGzUgOA2leujLllfrapq+F3cCFI
- nmk+0uAvhzxjpZNAK/SeLX7fwESa4BwViV7Oej8EoGnfkuVuZwRP60g2KNDAmFjcBjQc
- 5FJSv/rB8Joazgts5JpOKPpy6gBplvWYH7Vcbigj+4HIjV/nthJHBrfv8zDYIrAoJphk
- dnLA==
-X-Gm-Message-State: AOJu0YzX7rf9oFgMBpUaCzSUH0VIUjK8+/iJ4JHYcI+Nzrr4+B5vOku6
- VCzyBLOtoLcExePzH0zH1w8zNauL2YmUZYBW1OyGzkdI39WBE1J1s+MeD0UdLcJ2CXObn2Ti71u
- 01tOn
-X-Gm-Gg: AZuq6aLWzfhzdDRUCQJd4UQtgyuPviYwSVT1qCm6RHuI/31cTETXRFBenVBXfCvhGt5
- KQrbDqaBHrEWizhABlMX41yc5AmrVG5P7zMn1BniaZ8Bd8/DjQpxf3IV6uhSTsJugfInr0prydG
- FZnSrVBk0rMN9drMNAuQwE/VJtaDXxFjo1cREaDSTlAhIPGofs64WyKuxFc93AnA3ZWfdjtriw6
- E4S2LbPWkbVEWoezO20qhOUpOqJ7Xspw3h2qW2z/OXEBIFYZ8aFOeM/GPwuG+bYsnlofukFWkIR
- 0XcxPGnJWHTNDt7kU+LfFTODqp746b9z2iYqnOEtDmZeZJaXvOO8Zgzr7DWSiNqoZQyIsAYvNOk
- TI3iUsqUSxQ09bkO5eZzh1pYLVlsat0VlCUuj4iikQcRMeLZt+RnZ1Iyl+ecisb3g1WCBMe1mdY
- yQsTmHGUCIgbT6P+Vo0uA8xAtyuJMsAkiY846i1n4bjZeksCKja28bne1k4waQR3ob
-X-Received: by 2002:a05:6830:2aab:b0:7cb:125d:2a47 with SMTP id
- 46e09a7af769-7d52beb1751mr4117391a34.1.1771797637527; 
- Sun, 22 Feb 2026 14:00:37 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1771798547; x=1772403347;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=ac4G2voK1zAofTTlpkSi1MYsCTbvU7eOIIwPSTmjeY4=;
+ b=Y42oAclKF3281SYf/PkkoaTr4Pjiv80TUOthFLF5vWcLflPmTp8jcEHBvqjxJdrCPX
+ ZcN3pV3Wq5WXPgMpTd1qzFS7bMhJ/0fPi6wSNHY04osYaCATFMNT2heVCQn9BrZmYSnX
+ 6ySikl+3B8PZzngCzEVYYnfJgaMj1CLitpJlTMlnbWap3IUaAtEgRBfdLmSWzTMkfxyg
+ vhMqMPiJf7wb4y6hTPZT1UFs/3Jj34Uhz8sHUF5oyVrVQdMO6NMsmpFITgNIZghfoJpD
+ 7DpcjpowUfXmthhQqETS6Uik6OiFXSAr4srkmiMu0H2nQwcJ0SxUxfbua/g/eRA70xmc
+ d7jA==
+X-Gm-Message-State: AOJu0YzxIpqhMOzYNjAcIpVCGMXIr+L0FaoBnOcSTfij0aMtgekgUa/y
+ CVkPe+icih0Ik/yahU9xFWOMYl6rOZ4zaSPWm9KS2YxUFFm48p7uMoqW9hsu3dM9X1D7aOW+q1O
+ BPBgp
+X-Gm-Gg: AZuq6aIeBSA4bYOnWWlE6+TNdPsbCYEJVNHqj5cjvPT7m58C7Y/6hlIaCs4QYyTqitt
+ UcxFHBiw+13u4tdo7R/BJ3NKt1FtEIaWL2OqViVEa84d9gC7n28fuXzNCg11MWAinXaeZjXZts/
+ bcnBUT7FXUbbHfjBCjzNbY5Y5W21pw34usgszDk9oSTKs2ErK7j2aO1tacsvF7IrYjr730ow7+a
+ cDMvYigukVvVYMZSH11kqN/4tKL3Bx3fVGqgWZUhxKsCS10UFZZCfHGj3U2rx/d0hnhsUmDuzCu
+ QznwqpGtAQ5Mf6lre6gqTH0h4rEMl/2gfw1pN6PPB38g7LEbNVAo0epstR4FOhhun9I0JD8ciF1
+ ViFzDe5Mf2eU8roCGxXiU9qP4Rqm2HXs8YTOZ7+JbIRyRlxx/+U7lIoxNefhRuwNX8wp7TDJsgV
+ icxEwhOD0vaVkRlxLX8EfG39Y/fhWkIOqe6GJ+6OxaFhZScEuokrXUXSZwBvjoag==
+X-Received: by 2002:a05:6820:150e:b0:663:11b2:d61d with SMTP id
+ 006d021491bc7-679c466b431mr4369992eaf.25.1771798546732; 
+ Sun, 22 Feb 2026 14:15:46 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d52cf78729sm5652957a34.6.2026.02.22.14.00.36
+ 006d021491bc7-679c56574ddsm4843548eaf.7.2026.02.22.14.15.45
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 22 Feb 2026 14:00:37 -0800 (PST)
-Date: Sun, 22 Feb 2026 14:00:34 -0800
+ Sun, 22 Feb 2026 14:15:46 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: stable@dpdk.org, Matan Azrad <matan@nvidia.com>, Long Li
- <longli@microsoft.com>
-Subject: Re: [RFC] net/vdev_netvsc: check for NetVSC device before auto-probe
-Message-ID: <20260222140034.3675188e@phoenix.local>
-In-Reply-To: <20260222204813.773962-1-stephen@networkplumber.org>
-References: <20260222204813.773962-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>
+Subject: [RFC] test/eal_flags: suppress vdev_netvsc auto-probe
+Date: Sun, 22 Feb 2026 14:15:42 -0800
+Message-ID: <20260222221542.804546-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,30 +79,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 22 Feb 2026 12:48:13 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Hyper-V systems (including Azure-hosted CI), the vdev_netvsc
+driver auto-injects itself during vdev bus scan. This interferes
+with the vdev flag test causing the nodeaction subprocess to fail.
 
-> The custom scan callback unconditionally injects net_vdev_netvsc into
-> the devargs list on any Hyper-V system without checking whether NetVSC
-> interfaces actually exist. This causes the eal_flags_vdev_opt_autotest
-> to fail on GitHub Actions runners (which are Azure/Hyper-V VMs) because
-> the vdev bus probes both the test's intended vdev and the injected
-> net_vdev_netvsc, which fails to initialize on systems without NetVSC
-> interfaces.
-> 
-> Check whether at least one NetVSC interface exists (via the sysfs
-> class_id check the driver already uses) before adding devargs in the
-> scan callback.
-> 
-> Fixes: 56252de779a6 ("net/vdev_netvsc: add automatic probing")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
+Suppress by passing net_vdev_netvsc,ignore=1 in the valid vdev
+test cases. The scan callback sees it already in devargs and
+skips injection; the probe honours ignore and does nothing.
 
-This is not sufficient to fix the github problem.
-The container still has an interface, and cloud-init has given it
-an address. But it has no route to outside (in container).
+Fixes: 0d684a783088 ("app/test: fix and separate --vdev unit test")
+Cc: stable@dpdk.org
 
-It looks like the whole automagic vdev_netvsc model is so brittle
-it should be removed.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ app/test/test_eal_flags.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
+index bebddf1c98..1c0d8e040a 100644
+--- a/app/test/test_eal_flags.c
++++ b/app/test/test_eal_flags.c
+@@ -426,13 +426,16 @@ test_invalid_vdev_flag(void)
+ 
+ 	/* Test with valid vdev option */
+ 	const char *vdevval1[] = {prgname, prefix, no_huge, eal_debug_logs,
+-				bus_debug_logs,	vdev, "net_ring0"};
++				bus_debug_logs,	vdev, "net_ring0",
++				vdev, "net_vdev_netvsc,ignore=1"};
+ 
+ 	const char *vdevval2[] = {prgname, prefix, no_huge, eal_debug_logs,
+-				bus_debug_logs, vdev, "net_ring0,args=test"};
++				bus_debug_logs, vdev, "net_ring0,args=test",
++				vdev, "net_vdev_netvsc,ignore=1"};
+ 
+ 	const char *vdevval3[] = {prgname, prefix, no_huge, eal_debug_logs,
+-				bus_debug_logs, vdev, "net_ring0,nodeaction=r1:0:CREATE"};
++				bus_debug_logs, vdev, "net_ring0,nodeaction=r1:0:CREATE",
++				vdev, "net_vdev_netvsc,ignore=1"};
+ 
+ 	if (launch_proc(vdevinval) == 0) {
+ 		printf("Error (line %d) - process did run ok with invalid vdev parameter\n",
+-- 
+2.51.0
+
