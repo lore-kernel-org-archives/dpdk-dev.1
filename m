@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D4FC636A1
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 17:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA60C636A1
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 17:33:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 94EBA4066D;
-	Sun, 22 Feb 2026 18:32:44 +0100 (CET)
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com
- [209.85.167.180])
- by mails.dpdk.org (Postfix) with ESMTP id EB02E402EF
- for <dev@dpdk.org>; Sun, 22 Feb 2026 18:32:36 +0100 (CET)
-Received: by mail-oi1-f180.google.com with SMTP id
- 5614622812f47-463ba60966aso1040922b6e.1
- for <dev@dpdk.org>; Sun, 22 Feb 2026 09:32:36 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E9C8840689;
+	Sun, 22 Feb 2026 18:32:45 +0100 (CET)
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com
+ [209.85.210.54]) by mails.dpdk.org (Postfix) with ESMTP id 4E29140651
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 18:32:38 +0100 (CET)
+Received: by mail-ot1-f54.google.com with SMTP id
+ 46e09a7af769-7d4cb7e10efso3142482a34.0
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 09:32:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771781556;
- x=1772386356; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771781557;
+ x=1772386357; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=XAerORJkQDysDtQhhNKPVAsKM8rNwtqY8JT7cq4wSIo=;
- b=Y/te4vp+328/IX+e3A7f4GjqLsRLg1IdXcRgZlmPMUdcNh8pKqQgDkb/qoCO7XuhHf
- uUbe98TISPDuvuf1nOKsxpAdoaOlDP8euh1q/4Lqhsi6m6tnLr2gzdGB3nZ1oYJcw3Qg
- 0YPvxYU3h43pS20n0xnDHjiN0Md0lRpNHrCBA15W0ECNfIqJCnlanp6T5sivI/XB05vB
- pyoJKuYcerRsJSgL5qzwn+MJKAbKXACbRZdsjNKCPcS2UxXaWgWnwvht0MEEIkxu2XH/
- TI9uYUIj4tPhYFXAaM/5caLUrx+RyHIhcHeiQD91GLmQ6Plc574xQBCEXMDkyuXwUXM+
- yALQ==
+ bh=2QFgTKunZMtPZVmAKui5ElScOS1xm1uJqPsz+Q+HqjU=;
+ b=n9CfgaHlUwFtQC63161h6TXcxc52gSLkhIT4F7Q7ohqp09/h7ErvCjmZtKHlzYQ1Ul
+ vHbIIoSxvBIz7vtpU4CrWDXlU5/sHJklTkEHJ6d3YjcJmKpAYusJ/TK1NbFyCy5LixeX
+ ZfsvMj3JtKBUp2CaULNs6EkN1DszKwRlTbLj4foZAusMH6yHt/UURHkK8jH6YS8evsFy
+ pI6T7uNfi0tZNMNg4kDb4CtN9uVu8iGOl2Hclejyz41lM0zK/JDsNZ3alrsQCFlrX9na
+ kuojy4RFMZ68qN2RVKp2uK25+KyToVq0XD/7PJ38jesisj3KjKzhwGvUTX/ye6Nz6N7I
+ EXgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771781556; x=1772386356;
+ d=1e100.net; s=20230601; t=1771781557; x=1772386357;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=XAerORJkQDysDtQhhNKPVAsKM8rNwtqY8JT7cq4wSIo=;
- b=nIfspJ0RhqG0RxkME5KM+cpj7GviJLZ6ROJTnhBzjsE5yzW8mC8WdEJCuBdEnAs4Qi
- OCEiZV53ywwRIF87fqYqBpU8gAnhX508FAG5usF+mrresfYR5npWZP3B2eVMRoVYMv91
- XFceedAGQm8fi5EZTWvRf+wxQ0PvPyiye5baRP4Duz+YgmafZ64dI53LK4R2PEeMaTpa
- BHHTKC5YFQeVt3uThm8tIE1X5Mw30zgL8N2zXfvbJkMnpy38N3bTLrmx0tIxRoDlHdpm
- roxOklN04ZUEGUHx0eIdRsqqk3uLA6J0NfstPYfeGtA37UgcpJivLMiSGNhe8GWOqGRi
- 1mrA==
-X-Gm-Message-State: AOJu0Yz1QS9PO8GNEWD/chFzoLPFpkRl5ZURBRnIve+ZT2oNCi+or/fI
- Q0gcm+RSvzu89NDAYeux3zW8X1NfFhEksXq4BFimOgO+OwZdGJG71i7M2URsquAcwcADMYJBqgv
- 0Jht9
-X-Gm-Gg: AZuq6aLYcUIGznuio1OnNWKoo7fAxeEbUI5jB5hIcyAeXuAOTUly14Y1Mn6mtlZ2988
- VpPLmb0ltXLOsY//tz7YDSSPB65J8i7lLgFxg1K+2T8DLiNmrvCg0rAlbfTOGjxhulr3WpDv0YV
- MRvhRyb8lQ6lcbv74ZwlkY6F4KwkhEM0tdlaEUsjyKloTbkS6I0FWYi+K61mVXH9QJXre4q1Tzx
- zP+7kJUQq66bx4pvAwS7FDRpzg3qjnq2X1H7idtrQeX2vRq7O1nImAofOynsrzgN67XK6q3y1QB
- AuXl7I7UVcY5KzEk+EqzYTbQDIyZw4vtA+Z1tXFS3B4G5D8pvndagCPiFWJbgxInljQEhM9FWw4
- kfg8Ei7/HTLp6ibyZ0SZFLa0BC3ymIYw7AX4dZzS/9VXCyPFXgDvUq9BSIth+c2CcUI09vQRLFL
- 6A/B9B5xEqlnPoJ1BEO4b912u/gEpVIURfVx+UMC4KVzG3guscbO57ILmFA9NNFA==
-X-Received: by 2002:a05:6808:c2bc:b0:45a:78b:65e1 with SMTP id
- 5614622812f47-4644635f19amr3360760b6e.48.1771781556260; 
- Sun, 22 Feb 2026 09:32:36 -0800 (PST)
+ bh=2QFgTKunZMtPZVmAKui5ElScOS1xm1uJqPsz+Q+HqjU=;
+ b=Fj8HlhlVVp9zmxHsEHLz6zOK4fYybT4PsT5ZzKzJKsvTis5Cx/jN0Hj195B7q+WVhk
+ eMo+Ie6fbb3VRlONx7n/aillWOyYxEhDTZvLDSerWy4ygAupBu6UTU8gf81NPf+eJcqG
+ gfXZFRHoCum0jeX/mv1kt8zEGbSS8ozOycXGpOqj0py6W6WC/Vfv4xOC7oRhBRbusAHC
+ s2eVZFRrb295306MjriX/89PLZrhi6FEcSC8tk++ucHiPN4WVClQcTxRIjiVhCCw9JsL
+ Gl37lx6Ne8/ZS0VbyrDM2OwbqX4plvofZvRhcM0Y3VT7mSS08wyvXh0XwhNtyX584u0M
+ L8Ag==
+X-Gm-Message-State: AOJu0YxFpkXVsoZta+jZPw5x+3WnruecRxPX0CQzxXjeQFZFpZEebJMT
+ ZMBmnLYOD52ybLPHCibZZR0dDgJDAifAoleYkmBX0EjEkBglT9VCNmarOb5WEK3jYlkDFO11eit
+ 4WMHf
+X-Gm-Gg: AZuq6aIftGnQqQI21D1sOY1QKNDgnADgiW6S+TXhm6J1ducD/mzZtzvea4GUPR6/w+W
+ czmgpWTUtMEhDG/sMO13r8QSkhkiONMhKuW9Ieb10PQInBQ/1uvvpkDIrb7A8UAMwW0i2GIgUfl
+ QMWG0W6cqwBpRSuydp2fh5d2INx0aEUB7Q3DvTgDIphEW2cyktaew/3hQuD/G/SMtKskkrgA3d6
+ ++gegmv27HNpTvdHfFaRN/OvuAMO68PZYOaZzbKA25SqQIDZa3iLv2DEecxq0lx9mF7zLuuA+jd
+ vB6KWAzSYb2+Hc4btcecCU3OM0gUhLN5MGYhOk3D64XCWh/U4ps6dz89v/TuQRxoUIUDx5OH2Js
+ UM4KR2Gn6zSPmk4ruGIqLrzhv96TJo8spYAbylZL/jq40gCg+/H0C5tn3Ioc2yW1lcLXsS6oMSI
+ v7RNeHnGcUxyG7CuuzCwsXRM8O2xt6qBTpextaCPhi1X8YNazcaIu8C3yl4iAScwdzN77HiOoN
+X-Received: by 2002:a05:6808:2e47:b0:44d:bf83:d7f8 with SMTP id
+ 5614622812f47-46446180f1amr4224395b6e.4.1771781557385; 
+ Sun, 22 Feb 2026 09:32:37 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-4157d2d7922sm5608972fac.12.2026.02.22.09.32.35
+ 586e51a60fabf-4157d2d7922sm5608972fac.12.2026.02.22.09.32.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 22 Feb 2026 09:32:35 -0800 (PST)
+ Sun, 22 Feb 2026 09:32:36 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v5 07/19] net/tap: skip checksum on truncated L4 headers
-Date: Sun, 22 Feb 2026 09:30:42 -0800
-Message-ID: <20260222173225.522754-8-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+	stable@dpdk.org
+Subject: [PATCH v5 08/19] net/tap: fix resource leaks in tap create error path
+Date: Sun, 22 Feb 2026 09:30:43 -0800
+Message-ID: <20260222173225.522754-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260222173225.522754-1-stephen@networkplumber.org>
 References: <20260215195348.557945-1-stephen@networkplumber.org>
@@ -82,35 +82,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a bounds check before accessing the UDP or TCP header in
-tap_verify_csum(). A single-segment packet whose L4 header extends
-past rte_pktmbuf_data_len() would cause an out-of-bounds read.
+Correct two leaks in eth_dev_tap_create():
+
+- process_private was never freed on error_exit. Add free() before
+  releasing the port.
+- If the process_private malloc failed, the function returned -1
+  directly without releasing the ethdev port allocated by
+  rte_eth_vdev_allocate(). Jump to a new error_exit_nodev_release
+  label instead.
+
+Bugzilla ID: 1881
+Fixes: ed8132e7c912 ("net/tap: move fds of queues to be in process private")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/tap/rte_eth_tap.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/tap/rte_eth_tap.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index 47dad54465..c810b0df72 100644
+index c810b0df72..acae3b6d76 100644
 --- a/drivers/net/tap/rte_eth_tap.c
 +++ b/drivers/net/tap/rte_eth_tap.c
-@@ -365,8 +365,15 @@ tap_verify_csum(struct rte_mbuf *mbuf)
- 		 */
- 		return;
+@@ -1999,7 +1999,7 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
+ 	process_private = malloc(sizeof(struct pmd_process_private));
+ 	if (process_private == NULL) {
+ 		TAP_LOG(ERR, "Failed to alloc memory for process private");
+-		return -1;
++		goto error_exit_nodev_release;
  	}
-+
- 	if (l4 == RTE_PTYPE_L4_UDP || l4 == RTE_PTYPE_L4_TCP) {
- 		int cksum_ok;
-+		const unsigned int l4_min_len = (l4 == RTE_PTYPE_L4_UDP)
-+			? sizeof(struct rte_udp_hdr) : sizeof(struct rte_tcp_hdr);
-+
-+		/* Don't verify checksum if L4 header is truncated */
-+		if (l2_len + l3_len + l4_min_len > rte_pktmbuf_data_len(mbuf))
-+			return;
+ 	memset(process_private, 0, sizeof(struct pmd_process_private));
  
- 		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len + l3_len);
- 		/* Don't verify checksum for multi-segment packets. */
+@@ -2189,9 +2189,12 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
+ 		close(pmd->nlsk_fd);
+ 	if (pmd->ka_fd != -1)
+ 		close(pmd->ka_fd);
++	rte_intr_instance_free(pmd->intr_handle);
++	free(dev->process_private);
++
++error_exit_nodev_release:
+ 	/* mac_addrs must not be freed alone because part of dev_private */
+ 	dev->data->mac_addrs = NULL;
+-	rte_intr_instance_free(pmd->intr_handle);
+ 	rte_eth_dev_release_port(dev);
+ 
+ error_exit_nodev:
 -- 
 2.51.0
 
