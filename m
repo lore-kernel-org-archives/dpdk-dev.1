@@ -2,60 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B625EC110C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 17:44:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F75EC1116
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 17:45:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49381402EF;
-	Mon, 23 Feb 2026 18:44:03 +0100 (CET)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com
- [209.85.210.49]) by mails.dpdk.org (Postfix) with ESMTP id 15A774025E
- for <dev@dpdk.org>; Mon, 23 Feb 2026 18:44:02 +0100 (CET)
-Received: by mail-ot1-f49.google.com with SMTP id
- 46e09a7af769-7d18d0e6d71so3000646a34.1
- for <dev@dpdk.org>; Mon, 23 Feb 2026 09:44:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6EEB7402EF;
+	Mon, 23 Feb 2026 18:45:25 +0100 (CET)
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com
+ [209.85.210.44]) by mails.dpdk.org (Postfix) with ESMTP id E8A52400EF
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 18:45:23 +0100 (CET)
+Received: by mail-ot1-f44.google.com with SMTP id
+ 46e09a7af769-7d4c4b494fcso2610944a34.3
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 09:45:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771868641;
- x=1772473441; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771868723;
+ x=1772473523; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ba+7tLvwsXEDCEVPXzfChm/DFnNfbotXjU2lE16uUi4=;
- b=0R0jY5SQ3suwiWIHgMIXToxYlkU9QgQk/J6hSk/8A0o15I9UINR8KP32MQyCo81vgN
- RC+7+9cGmWoalFwFTdGQUnKV50NIozgZsnrtoF542p6f15n5lESDe/laZBp7NB0S1mFj
- 7QKrBuKMnlRSa5VhoKzOPHVYthfvF+B9UieElBWOByy9iwaS3cEMO3XjNNwbyWaP01eV
- 8wNgwFV0eWO+qFBhyZmw0PX3yiDzdZUH9Zix4bQ3e14j6XYt1h0i1um1yyzSek9IjlnC
- cxmh1QfkVqETX++TsOAnNxr9WJ1e0qst1XqSWnnZa+q986aLAilFHA807waNhsqLzTE1
- AvxA==
+ bh=RgENgI3qP1k45kDEb4b2TYQGFcskMgSVzZwmFKdrzMA=;
+ b=gM/4DiH+KA1+Q1QJvL+ydwj/it/NZz1j75zuHQAFyG7yiQHGNAlAJvAWdQibyFFb2U
+ I+97zKcUJ0+iMtl0cxZK2sa0MOQoUEyhnX73hSBnjNqSWaqCRQbhtTrSLwwkNxJRI/AE
+ PVgUhXlCQIeF1jfpD4Uq1VOVegiICmoIsvvB6rPOZpqyjpdeihWwHD38xW5+b587Fq9v
+ qmbnmVmtgbtfccvcH0qZsHw9pxvZJ5pValzlEFV5SFoq9EudXjIcAIvSpzw2wunhZWs2
+ YubSI9qWaookxh3PgevBawEvXBZ0FJMxtTGvWRN4rOvfUGlkDmIZ3dUW8DOqkfpB4z9n
+ iLSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771868641; x=1772473441;
+ d=1e100.net; s=20230601; t=1771868723; x=1772473523;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ba+7tLvwsXEDCEVPXzfChm/DFnNfbotXjU2lE16uUi4=;
- b=Luomjy6xxgWE48QLHveHc54O8z2RsvBFkWF5xTxrAWU/Cr76dYNF6k1/Q7NacJnoZP
- EJKPfmORwmPCXwiBDslB/kTsyLW9f7LLgp9hNK4CV3FhcqXnZ4NcSF9pfljC1PpwlCb2
- juXNdbCOUW68KZYxsvQEjdC3ecHskn2oPxwVPLE+vIC2vCeFedIiCil/3m57Z9tKi+ma
- zP8QHZwxboBX+TgzowE3wjvajsYtS1D9wYAxw9SxQw34CNIQsvPdvfwRnvt0G93k9AO2
- ovy/FvhgWpVpP1s2uwl8IriGKU715wCvOpPbJvGEGlVIC3qHurddmSCMdh1UpEz2dy2y
- C6Gw==
-X-Gm-Message-State: AOJu0YzhVLRKovsKl3osO72o3VE73t6WVVwJA0wE9Q1yFVCf8U8C13Au
- QkWA9jeXrpqXijNtK8K/iR8zdrz/7F7/gHMgEL3yY5NO9VBedhRUo8gX2SBVGJVo6/g=
-X-Gm-Gg: AZuq6aKm78Uj193apceRFTGuH41PhFfT8nnaIEU8cTbA0cL0J8iv9J11SuSokqIZKRo
- lk9q10IlKMqy8nBYPdhtCuw0AS6Zfo7EgmEYh/YtZnIhoMlfE5/etvU8WSx1UmtbxUpqOcT8uc3
- 1FeiXbYVkmH2AUGdXjQsB8tMV5DGpyVcx+P7wRYUcDRmNgMLNK1qwwVv7yqTr4z7CNRuTlH15XW
- j/3AGYLuj6fAGnDWrk/NHe9D7MXRH1/GmpMf0EvMctrNwBfZI2zr5PP7/z9Fa2Q2aGlG4HYwLPz
- s8E18rPIbG5YkHzW4M7mpiwLI/GQ8MiNVClqNkK6TwGA615noyZOGkUVh5hcyxIgaiXcIir7VsE
- 8J8ILjwNYuZbTJg61HNveq2AVTv6JYrLi45Zlmc2g0aW3YJq4nGCgYmYV+JMO8o61YJUR8zW0RF
- PmIM0WW29dVZfaXOmD2HDt/PvnLW7BqgyfuTUNGBF6mny+x7Shp3kO/fIxPSzRicyF
-X-Received: by 2002:a05:6830:6996:b0:7cf:cc2c:1d7b with SMTP id
- 46e09a7af769-7d52be3af25mr5936313a34.10.1771868641263; 
- Mon, 23 Feb 2026 09:44:01 -0800 (PST)
+ bh=RgENgI3qP1k45kDEb4b2TYQGFcskMgSVzZwmFKdrzMA=;
+ b=rq5niToDzgpDINsMeQR/hwD9dSjdqclHxdydc5nx/KmvW3Ta2kjNsVfNQLxUxA5YMX
+ Tcu2g/18z/jrdMniSbC6p9YM4xq9kFNcpdYkHs+NCBrxXluJUuA281Q2ucuJxdRMViT3
+ yLFtOGSpFqkiJoNp3m98zuoIb8Si7LI+Yz5uqTygUyE0BQAzTvTn9MBAq1+Anvlwsd/4
+ qiByItlX76CZwVsRv0sBNFk0ASjBgQ0phpl6+ESCWoDNaVHnkhPlwZDnQt0KHEPm1uei
+ j4tBXJHOFINJkQyJDlWOdf5Wa5MVQjLmHFpYdvn8tpMITtbDTH+eesXYqSjOHTZ+m8Zz
+ fodA==
+X-Gm-Message-State: AOJu0YyjDQeFfam9Ijlx41Z9fVjjKzkxKujCoPb3j3/eWxxDe2iYVKQG
+ AyycuijfttgEhOliW6p04LTOZKVudX8d7X10kUMp5XmKvdLN5MfZeEdYyoxz6U1UmFY=
+X-Gm-Gg: AZuq6aL22KIRpdu9BHLSNn1JFfoW73O0k7TN+U5LL7PLZ3yYefoF3EzlWjr8MdNuC/e
+ Fssq7+tCS+90xT2h1izPRXRh7k6irKULasWZFgwPIw3qyA+I9jFg0yxewxgQYdn8oRdOEwkZf6J
+ lRkliqb85w9R0kUAxPh6vCW0Khf5wUAdz9eKaclTSg8TBIjHRNxEWhOhA8FpuhiNEzUyXfshps0
+ SqcM8ymirScEAm0BBWmEfZN+FCn7GQIhiqFIACSu+fii3cmUt5ZN+Q1MaKVs8U5IvvfCPp0a2xE
+ j0MbOMQbDNBW57UjsxSDuEbwFdAW08EUIBcWcfUb1zBMXDFuNT0+xPHaeDFx1XX7N0bFtnUlw+r
+ 8ZCaOn9T1DlovqKsKp0vM/QvAvbVAgcuxzrZqFIqXQc+ssDwXEQb/7sKnGesNlkbTRCq8Tgr+pT
+ EbIUFpxVsKYDCzzbCMsm0IcODJlncz8YgZJd1fK2L+FxV333/KIjoBBj5NSHXM+Yg3
+X-Received: by 2002:a05:6830:3bc5:b0:7cf:ccc0:db0a with SMTP id
+ 46e09a7af769-7d52bf9c73fmr6622132a34.33.1771868723098; 
+ Mon, 23 Feb 2026 09:45:23 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d52d038804sm7723275a34.18.2026.02.23.09.44.00
+ 46e09a7af769-7d52cf9f5b9sm7615920a34.8.2026.02.23.09.45.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Feb 2026 09:44:01 -0800 (PST)
-Date: Mon, 23 Feb 2026 09:43:58 -0800
+ Mon, 23 Feb 2026 09:45:22 -0800 (PST)
+Date: Mon, 23 Feb 2026 09:45:19 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: longli@linux.microsoft.com
 Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, stable@dpdk.org, Dariusz
@@ -63,12 +63,12 @@ Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, stable@dpdk.org, Dariusz
  <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
  <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
  <matan@nvidia.com>, Long Li <longli@microsoft.com>
-Subject: Re: [PATCH v2 2/8] net/netvsc: fix race conditions on VF add/remove
- events
-Message-ID: <20260223094358.58f5b0f4@phoenix.local>
-In-Reply-To: <20260221024540.659098-2-longli@linux.microsoft.com>
+Subject: Re: [PATCH v2 3/8] net/netvsc: add multi-process VF device removal
+ support
+Message-ID: <20260223094519.5764d5fd@phoenix.local>
+In-Reply-To: <20260221024540.659098-3-longli@linux.microsoft.com>
 References: <20260221024540.659098-1-longli@linux.microsoft.com>
- <20260221024540.659098-2-longli@linux.microsoft.com>
+ <20260221024540.659098-3-longli@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -85,54 +85,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 20 Feb 2026 18:45:21 -0800
+On Fri, 20 Feb 2026 18:45:22 -0800
 longli@linux.microsoft.com wrote:
 
 > From: Long Li <longli@microsoft.com>
 >=20
-> Netvsc gets notification from VSP on VF add/remove over VMBUS, but the
-> timing may not match the DPDK sequence of device events triggered from
-> uevents from kernel.
+> When a VF device is hot-removed by the primary process, secondary
+> processes must be notified to release their references to the VF port.
+> Without this, secondary processes retain stale port references leading
+> to crashes or undefined behavior when accessing the removed device.
 >=20
-> Remove the retry logic from the code when attach to VF and rely on DPDK
-> event to attach to VF. With this change, both the notifications from VSP
-> and the DPDK will attempt a VF attach.
+> This patch adds multi-process communication infrastructure to coordinate
+> VF removal across all processes:
 >=20
-> Also implement locking when checking on all VF related fields.
+> - Shared memory (netvsc_shared_data) to track secondary process count
+> - Multi-process message handlers (NETVSC_MP_REQ_VF_REMOVE) to notify
+>   secondaries when primary removes a VF device
+> - Secondary handler calls rte_eth_dev_release_port() to cleanly release
+>   the VF port in its own process space
+> - Primary waits for all secondaries to acknowledge removal before
+>   proceeding
 >=20
-> Fixes: a2a23a794b3a ("net/netvsc: support VF device hot add/remove")
+> The implementation uses rte_mp_request_sync() to ensure all secondary
+> processes respond within NETVSC_MP_REQ_TIMEOUT_SEC (5 seconds) before
+> the primary completes the VF removal sequence.
+>=20
+> Fixes: 7fc4c0997b04 ("net/netvsc: fix hot adding multiple VF PCI devices")
 > Cc: stable@dpdk.org
 >=20
 > Signed-off-by: Long Li <longli@microsoft.com>
 
-AI review spotted related issue.
+AI review feedback:
 
-**Patch 2 (net/netvsc: fix race conditions on VF add/remove events)** =E2=
-=80=94 the most complex patch in the series.
+**Patch 3 (net/netvsc: add multi-process VF device removal support)** =E2=
+=80=94 adds MP infrastructure to coordinate VF removal across processes.
 
-**What it fixes correctly:**
+**Three concerns:**
 
-The old Tx/Rx paths had a TOCTOU race: they checked `vf_vsc_switched` witho=
-ut the lock, acquired the lock, then re-checked. A VF remove could complete=
- between the first check and the lock acquisition. The new code takes the r=
-ead lock *before* any VF state checks =E2=80=94 correct fix. The lock is pr=
-operly released on both paths.
+1. **Race window on `secondary_cnt` during probe (~50% confidence).** The s=
+econdary increments `secondary_cnt` *after* `rte_eth_dev_probing_finish()`,=
+ but `netvsc_init_once()` and device setup happen before that. A primary re=
+moving a VF during this window sees `secondary_cnt =3D=3D 0`, skips `rte_mp=
+_request_sync()`, and the secondary never gets notified =E2=80=94 leaving i=
+t with a stale VF port reference.
 
-The upgrade of `hn_vf_close()` from read lock to write lock is also a real =
-bug fix, since it modifies `vf_attached` and calls `rte_eth_dev_close()`.
+2. **Misleading "VF is already locked by primary" comment.** In `netvsc_sec=
+ondary_handle_device_remove()`, the code reads `hv->vf_ctx.vf_port` from sh=
+ared memory with a comment saying the primary's lock protects it. But `rte_=
+rwlock_t` is process-local =E2=80=94 it doesn't work cross-process. The act=
+ual synchronization comes from the MP message exchange itself (the primary =
+sends the message after setting state, the secondary handles it after recei=
+ving). The comment should reflect that.
 
-Moving callback registration into `hn_vf_attach()` with proper rollback (vi=
-a the new `hn_vf_detach()` helper) is a good structural improvement that ti=
-es callback lifetime to VF attach/detach lifecycle.
+3. **`netvsc_init_once()` not protected by the spinlock.** It's called from=
+ `eth_hn_probe()` without `netvsc_shared_data_lock`, while `netvsc_uninit_o=
+nce()` is called *inside* the lock. If two netvsc devices probe concurrentl=
+y in the same process, the `init_done` flag check could race. Low risk sinc=
+e DPDK probe is typically single-threaded, but inconsistent with the uninit=
+ path.
 
-The unconditional clear of `vf_vsc_switched` in `hn_vf_remove_unlocked()` i=
-s correct =E2=80=94 if the VF is being removed, the switched flag must be c=
-leared regardless of whether `hn_nvs_set_datapath(SYNTHETIC)` succeeded.
+**Minor style notes:** `MZ_NETVSC_SHARED_DATA` uses macro-style naming but =
+is a `const char *` variable =E2=80=94 could be a `#define` for consistency=
+ with `NETVSC_MP_NAME`. The stub `netvsc_mp_primary_handle()` that always r=
+eturns 0 is benign but could mask future protocol errors.
 
-**One potential concern (~60% confidence):**
-
-If the VF is successfully configured and started but `hn_nvs_set_datapath(V=
-F)` fails at the `switch_data_path:` label, the function returns an error b=
-ut leaves the VF started and attached. The callers don't clean this up. Thi=
-s is a pre-existing design issue the patch doesn't worsen, and the hypervis=
-or may retry, but it could confuse subsequent add/remove cycles.
+**Overall:** Sound infrastructure, suitable for merging with the comment fi=
+x and awareness of the probe-time race window.
