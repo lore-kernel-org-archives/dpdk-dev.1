@@ -2,35 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0EDE98E10
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 10:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B380FEA4FB0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 11:21:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2827F4025E;
-	Mon, 23 Feb 2026 11:20:58 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 76E76400EF
- for <dev@dpdk.org>; Mon, 23 Feb 2026 11:20:57 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2BBE120770;
- Mon, 23 Feb 2026 11:20:57 +0100 (CET)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Mon, 23 Feb 2026 11:20:56 +0100
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org,
-	Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH] mempool: introduce statistics reset function
-Date: Mon, 23 Feb 2026 10:20:54 +0000
-Message-ID: <20260223102054.336350-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 9FAE94025E;
+	Mon, 23 Feb 2026 12:21:33 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 0E69F400EF
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 12:21:32 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fKJMB5RrXzJ46cY;
+ Mon, 23 Feb 2026 19:21:10 +0800 (CST)
+Received: from frapema100004.china.huawei.com (unknown [7.182.19.128])
+ by mail.maildlp.com (Postfix) with ESMTPS id 9B04340573;
+ Mon, 23 Feb 2026 19:21:30 +0800 (CST)
+Received: from frapema500003.china.huawei.com (7.182.19.114) by
+ frapema100004.china.huawei.com (7.182.19.128) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Mon, 23 Feb 2026 12:21:30 +0100
+Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
+ frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
+ Mon, 23 Feb 2026 12:21:30 +0100
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Bruce Richardson <bruce.richardson@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "stephen@networkplumber.org" <stephen@networkplumber.org>
+Subject: RE: [PATCH] app/test: simplify getting the current file prefix
+Thread-Topic: [PATCH] app/test: simplify getting the current file prefix
+Thread-Index: AQHcopFpmqIJVNYoq0yGx1UJjndK8LWQHPXQ
+Date: Mon, 23 Feb 2026 11:21:30 +0000
+Message-ID: <3ea36267a2594b27b017284d0eba2a30@huawei.com>
+References: <20260220174952.2647744-1-bruce.richardson@intel.com>
+In-Reply-To: <20260220174952.2647744-1-bruce.richardson@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.74]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 23 Feb 2026 10:20:56.0531 (UTC)
- FILETIME=[19053A30:01DCA4AE]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -44,148 +55,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Populating a mempool with objects is accounted for in the statistics.
-When analyzing mempool cache statistics, this may distort the data.
-In order to simplify mempool cache statistics analysis, a mempool
-statistics reset function was added.
+> diff --git a/app/test/process.h b/app/test/process.h
+> index 402dc4f96f..1ab5671943 100644
+> --- a/app/test/process.h
+> +++ b/app/test/process.h
+> @@ -8,12 +8,11 @@
+>  #include <errno.h>  /* errno */
+>  #include <limits.h> /* PATH_MAX */
+>  #ifndef RTE_EXEC_ENV_WINDOWS
+> -#include <libgen.h> /* basename et al */
+>  #include <sys/wait.h>
+>  #endif
+>  #include <stdlib.h> /* NULL */
+>  #include <string.h> /* strerror */
+> -#include <unistd.h> /* readlink */
+> +#include <unistd.h>
 
-Furthermore, details about average burst sizes and mempool cache miss
-rates were added to the statistics shown when dumping a mempool.
+Can we delete it entirely? Compiles for me at least.
 
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/mempool/mempool_trace.h        |  7 +++++
- lib/mempool/mempool_trace_points.c |  4 +++
- lib/mempool/rte_mempool.c          | 50 ++++++++++++++++++++++++++++--
- lib/mempool/rte_mempool.h          | 12 +++++++
- 4 files changed, 71 insertions(+), 2 deletions(-)
+>  #include <dirent.h>
+>=20
+>  #include <rte_string_fns.h> /* strlcpy */
+> @@ -239,17 +238,7 @@ file_prefix_arg(void)
+>  static inline char *
+>  get_current_prefix(char *prefix, int size)
+>  {
+> -	char buf[PATH_MAX];
+> -
+> -	/* get file for config (fd is always 3) return NULL on error */
+> -	if (readlink("/proc/self/fd/3", buf, sizeof(buf)) =3D=3D -1)
+> -		return NULL;
+> -
+> -	/*
+> -	 * path should be something like "/var/run/dpdk/config"
+> -	 * which results in prefix of "dpdk"
+> -	 */
+> -	rte_basename(dirname(buf), prefix, size);
+> +	rte_basename(rte_eal_get_runtime_dir(), prefix, size);
+>  	return prefix;
 
-diff --git a/lib/mempool/mempool_trace.h b/lib/mempool/mempool_trace.h
-index c595a3116b..23cda1473c 100644
---- a/lib/mempool/mempool_trace.h
-+++ b/lib/mempool/mempool_trace.h
-@@ -104,6 +104,13 @@ RTE_TRACE_POINT(
- 	rte_trace_point_emit_string(mempool->name);
- )
- 
-+RTE_TRACE_POINT(
-+	rte_mempool_trace_stats_reset,
-+	RTE_TRACE_POINT_ARGS(struct rte_mempool *mempool),
-+	rte_trace_point_emit_ptr(mempool);
-+	rte_trace_point_emit_string(mempool->name);
-+)
-+
- RTE_TRACE_POINT(
- 	rte_mempool_trace_cache_create,
- 	RTE_TRACE_POINT_ARGS(uint32_t size, int socket_id,
-diff --git a/lib/mempool/mempool_trace_points.c b/lib/mempool/mempool_trace_points.c
-index ec465780f4..8249981502 100644
---- a/lib/mempool/mempool_trace_points.c
-+++ b/lib/mempool/mempool_trace_points.c
-@@ -60,6 +60,10 @@ RTE_TRACE_POINT_REGISTER(rte_mempool_trace_populate_default,
- RTE_TRACE_POINT_REGISTER(rte_mempool_trace_populate_anon,
- 	lib.mempool.populate.anon)
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(__rte_mempool_trace_stats_reset, 26.03)
-+RTE_TRACE_POINT_REGISTER(rte_mempool_trace_stats_reset,
-+	lib.mempool.stats_reset)
-+
- RTE_TRACE_POINT_REGISTER(rte_mempool_trace_cache_create,
- 	lib.mempool.cache_create)
- 
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 3042d94c14..ff7d940f91 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -1049,6 +1049,28 @@ rte_mempool_in_use_count(const struct rte_mempool *mp)
- 	return mp->size - rte_mempool_avail_count(mp);
- }
- 
-+/* Reset the statistics of a mempool. */
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mempool_stats_reset, 26.03)
-+void
-+rte_mempool_stats_reset(struct rte_mempool *mp)
-+{
-+	RTE_ASSERT(mp != NULL);
-+
-+#ifdef RTE_LIBRTE_MEMPOOL_STATS
-+	memset(&mp->stats, 0, sizeof(mp->stats));
-+	if (mp->cache_size != 0) {
-+		for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
-+			memset(&mp->local_cache[lcore_id].stats, 0,
-+					sizeof(mp->local_cache[lcore_id].stats));
-+		}
-+	}
-+
-+	rte_mempool_trace_stats_reset(mp);
-+#else
-+	RTE_SET_USED(mp);
-+#endif
-+}
-+
- /* dump the cache status */
- static unsigned
- rte_mempool_dump_cache(FILE *f, const struct rte_mempool *mp)
-@@ -1327,10 +1349,34 @@ rte_mempool_dump(FILE *f, struct rte_mempool *mp)
- 	fprintf(f, "    get_fail_bulk=%"PRIu64"\n", sum.get_fail_bulk);
- 	fprintf(f, "    get_fail_objs=%"PRIu64"\n", sum.get_fail_objs);
- 	if (info.contig_block_size > 0) {
--		fprintf(f, "    get_success_blks=%"PRIu64"\n",
--			sum.get_success_blks);
-+		fprintf(f, "    get_success_blks=%"PRIu64"\n", sum.get_success_blks);
- 		fprintf(f, "    get_fail_blks=%"PRIu64"\n", sum.get_fail_blks);
- 	}
-+	fprintf(f, "    avg objs/bulk put=%#Lf, get=%#Lf, get_fail=%#Lf\n",
-+			sum.put_bulk != 0 ? (long double)sum.put_objs / sum.put_bulk : 0,
-+			sum.get_success_bulk != 0 ?
-+			(long double)sum.get_success_objs / sum.get_success_bulk : 0,
-+			sum.get_fail_bulk != 0 ?
-+			(long double)sum.get_fail_objs / sum.get_fail_bulk : 0);
-+	fprintf(f, "    avg common_pool objs/bulk put=%#Lf, get=%#Lf\n",
-+			sum.put_common_pool_bulk != 0 ?
-+			(long double)sum.put_common_pool_objs / sum.put_common_pool_bulk : 0,
-+			sum.get_common_pool_bulk != 0 ?
-+			(long double)sum.get_common_pool_objs / sum.get_common_pool_bulk : 0);
-+	fprintf(f, "    avg cache miss rate put_objs=%s%#Lf, get_objs=%s%#Lf\n",
-+			sum.put_common_pool_objs != 0 ? "1/" : "",
-+			sum.put_common_pool_objs != 0 ?
-+			(long double)sum.put_objs / sum.put_common_pool_objs : 0,
-+			sum.get_common_pool_objs != 0 ? "1/" : "",
-+			sum.get_common_pool_objs != 0 ?
-+			(long double)sum.get_success_objs / sum.get_common_pool_objs : 0);
-+	fprintf(f, "    avg cache miss rate put_bulk=%s%#Lf, get_bulk=%s%#Lf\n",
-+			sum.put_common_pool_bulk != 0 ? "1/" : "",
-+			sum.put_common_pool_bulk != 0 ?
-+			(long double)sum.put_bulk / sum.put_common_pool_bulk : 0,
-+			sum.get_common_pool_bulk != 0 ? "1/" : "",
-+			sum.get_common_pool_bulk != 0 ?
-+			(long double)sum.get_success_bulk / sum.get_common_pool_bulk : 0);
- #else
- 	fprintf(f, "  no statistics available\n");
- #endif
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 1144dca58a..1aea1789e9 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -1288,6 +1288,18 @@ uint32_t rte_mempool_obj_iter(struct rte_mempool *mp,
- uint32_t rte_mempool_mem_iter(struct rte_mempool *mp,
- 	rte_mempool_mem_cb_t *mem_cb, void *mem_cb_arg);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Reset the statistics of a mempool.
-+ *
-+ * @param mp
-+ *   A pointer to the mempool structure.
-+ */
-+__rte_experimental
-+void rte_mempool_stats_reset(struct rte_mempool *mp);
-+
- /**
-  * Dump the status of the mempool to a file.
-  *
--- 
-2.43.0
+Do we even need it as a separate function anymore?
 
+>  }
+>=20
+> @@ -260,12 +249,8 @@ file_prefix_arg(void)
+>  	static char prefix[NAME_MAX + sizeof("--file-prefix=3D")];
+>  	char tmp[NAME_MAX];
+>=20
+> -	if (get_current_prefix(tmp, sizeof(tmp)) =3D=3D NULL) {
+> -		fprintf(stderr, "Error - unable to get current prefix!\n");
+> -		return NULL;
+> -	}
+> -
+> -	snprintf(prefix, sizeof(prefix), "--file-prefix=3D%s", tmp);
+> +	snprintf(prefix, sizeof(prefix), "--file-prefix=3D%s",
+> +			get_current_prefix(tmp, sizeof(tmp)));
+>  	return prefix;
+>  #endif
+>  }
+> --
+> 2.51.0
+
+With or without comments above addressed,
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
+
+Tested-by: Marat Khalili <marat.khalili@huawei.com>
