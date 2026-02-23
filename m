@@ -2,70 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BACD7C636BA
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Feb 2026 22:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E36B4E83847
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 02:49:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D0D82402B8;
-	Sun, 22 Feb 2026 23:15:48 +0100 (CET)
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com
- [209.85.161.48]) by mails.dpdk.org (Postfix) with ESMTP id A86F04027B
- for <dev@dpdk.org>; Sun, 22 Feb 2026 23:15:47 +0100 (CET)
-Received: by mail-oo1-f48.google.com with SMTP id
- 006d021491bc7-6786b13984fso2512427eaf.2
- for <dev@dpdk.org>; Sun, 22 Feb 2026 14:15:47 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 20764402C9;
+	Mon, 23 Feb 2026 03:49:50 +0100 (CET)
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com
+ [209.85.167.175])
+ by mails.dpdk.org (Postfix) with ESMTP id C8BD140288
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 03:49:48 +0100 (CET)
+Received: by mail-oi1-f175.google.com with SMTP id
+ 5614622812f47-46392972257so2535004b6e.2
+ for <dev@dpdk.org>; Sun, 22 Feb 2026 18:49:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771798547;
- x=1772403347; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=ac4G2voK1zAofTTlpkSi1MYsCTbvU7eOIIwPSTmjeY4=;
- b=WxI0TNP65/7T370pUUVVMDBZyzebQigv5SjiQvlTX94PELVyq2RVhaRk+Y3zj8R3Vc
- Tm3DVXEMFmb+JDzjv4Zml0j1soksz3Nz/I1LaHh8M0cZPCDsMg0MryvUjLz7ynV7gW6m
- CQYkmFCJj7M1ra6to6Axow9ZvaxsrcnWJ0Ve1CxPliDyPeak7BnyMdghK83phN6brMR7
- GU6NRlEuN7CbqH6j58WJQ34rUn7OLBWYxI/G1KJLtvuy37JcRB8oSgOP1Y163ZbGJIbS
- Z/G8jKO17omtiPBtecuXruAuRdmzWVHdeyXwgNFKR5LlcCtuDaIWG8hVQ327HNLPZzMb
- rp+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771798547; x=1772403347;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771814988;
+ x=1772419788; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ac4G2voK1zAofTTlpkSi1MYsCTbvU7eOIIwPSTmjeY4=;
- b=Y42oAclKF3281SYf/PkkoaTr4Pjiv80TUOthFLF5vWcLflPmTp8jcEHBvqjxJdrCPX
- ZcN3pV3Wq5WXPgMpTd1qzFS7bMhJ/0fPi6wSNHY04osYaCATFMNT2heVCQn9BrZmYSnX
- 6ySikl+3B8PZzngCzEVYYnfJgaMj1CLitpJlTMlnbWap3IUaAtEgRBfdLmSWzTMkfxyg
- vhMqMPiJf7wb4y6hTPZT1UFs/3Jj34Uhz8sHUF5oyVrVQdMO6NMsmpFITgNIZghfoJpD
- 7DpcjpowUfXmthhQqETS6Uik6OiFXSAr4srkmiMu0H2nQwcJ0SxUxfbua/g/eRA70xmc
- d7jA==
-X-Gm-Message-State: AOJu0YzxIpqhMOzYNjAcIpVCGMXIr+L0FaoBnOcSTfij0aMtgekgUa/y
- CVkPe+icih0Ik/yahU9xFWOMYl6rOZ4zaSPWm9KS2YxUFFm48p7uMoqW9hsu3dM9X1D7aOW+q1O
- BPBgp
-X-Gm-Gg: AZuq6aIeBSA4bYOnWWlE6+TNdPsbCYEJVNHqj5cjvPT7m58C7Y/6hlIaCs4QYyTqitt
- UcxFHBiw+13u4tdo7R/BJ3NKt1FtEIaWL2OqViVEa84d9gC7n28fuXzNCg11MWAinXaeZjXZts/
- bcnBUT7FXUbbHfjBCjzNbY5Y5W21pw34usgszDk9oSTKs2ErK7j2aO1tacsvF7IrYjr730ow7+a
- cDMvYigukVvVYMZSH11kqN/4tKL3Bx3fVGqgWZUhxKsCS10UFZZCfHGj3U2rx/d0hnhsUmDuzCu
- QznwqpGtAQ5Mf6lre6gqTH0h4rEMl/2gfw1pN6PPB38g7LEbNVAo0epstR4FOhhun9I0JD8ciF1
- ViFzDe5Mf2eU8roCGxXiU9qP4Rqm2HXs8YTOZ7+JbIRyRlxx/+U7lIoxNefhRuwNX8wp7TDJsgV
- icxEwhOD0vaVkRlxLX8EfG39Y/fhWkIOqe6GJ+6OxaFhZScEuokrXUXSZwBvjoag==
-X-Received: by 2002:a05:6820:150e:b0:663:11b2:d61d with SMTP id
- 006d021491bc7-679c466b431mr4369992eaf.25.1771798546732; 
- Sun, 22 Feb 2026 14:15:46 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=DmjMzZZ9KZi8XJxX7Q+Y06dy2oRH2j3KnRDdHNdL8xE=;
+ b=su1noGo5ww19UzNkpsZzzhneSuI3sk8rc4mpB+OtCQ6e8zTv2iI4SRIuatuwICreCt
+ rridjHsl/VSfLQ6wS1kFlB6OJhSxf5hFjYxwvKbfDAd4QCdkzUwioVpddXUIBrlBeNgC
+ +zacfvIjP0YZ+HaGakKPck83cWRT52pFjF3LW3UCLjlxuBKxS7Oe51VYFGqhiLWVtMc+
+ ddAN4ScbINvzcyFC26LTPI3GkouWRWdghVHiibhM2IMZ+MZwFYMoXS8b68AAATGg+Nch
+ vWqHM35/zzoMxLLhZ7VOfpHs7V/GxN4XaIizSUTuxc4oB3UOzoX/RaOAEYW1auANG0OB
+ lahA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771814988; x=1772419788;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=DmjMzZZ9KZi8XJxX7Q+Y06dy2oRH2j3KnRDdHNdL8xE=;
+ b=UwBR5CgEWgKohh2Kp3r3CqkIfdf8dsyX2KIT4bzKk4+zqCCZeTOfXfeKQbSP8HGYng
+ cRhZWHxcjSAWuCvdrwfoVILg9mboswRJ1CZ/frg9Dwzv/peVZnsA4fSOAJVjuaEjqKH1
+ oJg7jeCQMoTsNYktPMhnzkmXbqVO5q9kgwlgt2CrV5mBm3KjFKkt/gIwRtmXIPzJeVsX
+ 9FkiEi9SJa9lY97kt+TxNl7XvEdKsIVyfGqJhAfJuL7itZs29ZafAPbSOuxzwodOMKEG
+ 7RORIALzHOGHwrGZFdXkibpz+3YywXJ4OWKZNC8xBeUMC4r9GqSS4fge87coOcC1V5lq
+ UAMQ==
+X-Gm-Message-State: AOJu0YxlZGpnsakjCZtlWYUdmSNLXnzrBBN1B2HC0N06i2hYXHr7g1x5
+ XWU6hcIT8qAWJrgQ3F5CvUE1mYCFjq2u1aaTwSFkPaGi5uC3kMF3WtzM7eFpjD0nSGoT698cAYu
+ GqohV
+X-Gm-Gg: AZuq6aI1NTXLuQIrNF0Ko4g/YqDh5JLEU0nCbFhlg1xOvk8b4cmPJsAsOEVGP2pkCle
+ jCszLvlp+6WndPifDPggAjyMJEJ1fBn6gcB4NZWiv8Iq8Kbm6eDiIipJByNtvczv28zb4Rxxy5x
+ laeNbh44utu5qRgJH06PF1ZtRPAft6tjHd4zKJio+p3RnWLlsw9/nB98+917aKfwwrZK7HKXhqa
+ NHk/D5zg9Tq83Qxmm0jS3r01096FHNvHjpl8UkS6nyw8znarA5iN4/gqNg79TQh753Zb05r4/J5
+ tHGzqkeBFXnQJTqPV/hJwEIVURRDnDGT7HAAS2Oc3AhuzlCTce36iiu28v1QpyoxZyBErU3AZEH
+ THUZlw/Olv2g1SzHkV5dQ1xSCdBLUbdnp9r/eWJTI7e8YP8fNCmpyJdwV7qtTaMgTPqVAuoIdcl
+ mZYiS9xR69gJf8vx9x003LSQ9SdpOZ8zGj7uJwKu1wsOwvlMbZUKzpT/LejNfkPqz9
+X-Received: by 2002:a05:6808:524b:b0:45e:f092:c665 with SMTP id
+ 5614622812f47-4644635914bmr3848536b6e.44.1771814987818; 
+ Sun, 22 Feb 2026 18:49:47 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 006d021491bc7-679c56574ddsm4843548eaf.7.2026.02.22.14.15.45
+ 5614622812f47-4644a1efc76sm4241777b6e.18.2026.02.22.18.49.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 22 Feb 2026 14:15:46 -0800 (PST)
+ Sun, 22 Feb 2026 18:49:47 -0800 (PST)
+Date: Sun, 22 Feb 2026 18:49:44 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Thomas Monjalon <thomas@monjalon.net>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>
-Subject: [RFC] test/eal_flags: suppress vdev_netvsc auto-probe
-Date: Sun, 22 Feb 2026 14:15:42 -0800
-Message-ID: <20260222221542.804546-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
+Cc: stable@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, Pablo de Lara
+ <pablo.de.lara.guarch@intel.com>
+Subject: Re: [RFC] test/eal_flags: suppress vdev_netvsc auto-probe
+Message-ID: <20260222184944.0b43ea22@phoenix.local>
+In-Reply-To: <20260222221542.804546-1-stephen@networkplumber.org>
+References: <20260222221542.804546-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,46 +82,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Hyper-V systems (including Azure-hosted CI), the vdev_netvsc
-driver auto-injects itself during vdev bus scan. This interferes
-with the vdev flag test causing the nodeaction subprocess to fail.
+On Sun, 22 Feb 2026 14:15:42 -0800
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-Suppress by passing net_vdev_netvsc,ignore=1 in the valid vdev
-test cases. The scan callback sees it already in devargs and
-skips injection; the probe honours ignore and does nothing.
+> On Hyper-V systems (including Azure-hosted CI), the vdev_netvsc
+> driver auto-injects itself during vdev bus scan. This interferes
+> with the vdev flag test causing the nodeaction subprocess to fail.
+> 
+> Suppress by passing net_vdev_netvsc,ignore=1 in the valid vdev
+> test cases. The scan callback sees it already in devargs and
+> skips injection; the probe honours ignore and does nothing.
+> 
+> Fixes: 0d684a783088 ("app/test: fix and separate --vdev unit test")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-Fixes: 0d684a783088 ("app/test: fix and separate --vdev unit test")
-Cc: stable@dpdk.org
+Self NAK
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_eal_flags.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+This is not the underlying cause of the test failures.
+The issue is likely parallel test invocation overlapping on the file prefix
+which is already addressed by another pending patch series.
 
-diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-index bebddf1c98..1c0d8e040a 100644
---- a/app/test/test_eal_flags.c
-+++ b/app/test/test_eal_flags.c
-@@ -426,13 +426,16 @@ test_invalid_vdev_flag(void)
- 
- 	/* Test with valid vdev option */
- 	const char *vdevval1[] = {prgname, prefix, no_huge, eal_debug_logs,
--				bus_debug_logs,	vdev, "net_ring0"};
-+				bus_debug_logs,	vdev, "net_ring0",
-+				vdev, "net_vdev_netvsc,ignore=1"};
- 
- 	const char *vdevval2[] = {prgname, prefix, no_huge, eal_debug_logs,
--				bus_debug_logs, vdev, "net_ring0,args=test"};
-+				bus_debug_logs, vdev, "net_ring0,args=test",
-+				vdev, "net_vdev_netvsc,ignore=1"};
- 
- 	const char *vdevval3[] = {prgname, prefix, no_huge, eal_debug_logs,
--				bus_debug_logs, vdev, "net_ring0,nodeaction=r1:0:CREATE"};
-+				bus_debug_logs, vdev, "net_ring0,nodeaction=r1:0:CREATE",
-+				vdev, "net_vdev_netvsc,ignore=1"};
- 
- 	if (launch_proc(vdevinval) == 0) {
- 		printf("Error (line %d) - process did run ok with invalid vdev parameter\n",
--- 
-2.51.0
-
+That said, something should be done about vdev_netvsc driver and github
+interactions.
