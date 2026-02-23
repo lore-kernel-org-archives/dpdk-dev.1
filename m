@@ -2,45 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1524EC1112
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 17:16:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53B0BEC1112
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 17:21:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DE23D4025E;
-	Mon, 23 Feb 2026 18:16:20 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 324AB400EF
- for <dev@dpdk.org>; Mon, 23 Feb 2026 18:16:19 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fKSDY6chVzJ4682;
- Tue, 24 Feb 2026 01:15:57 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 359A740570;
- Tue, 24 Feb 2026 01:16:18 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 23 Feb 2026 18:16:17 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Mon, 23 Feb 2026 18:16:17 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: David Marchand <david.marchand@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "bruce.richardson@intel.com" <bruce.richardson@intel.com>
-Subject: RE: [PATCH] test/eal: remove PCI probing for vdev tests
-Thread-Topic: [PATCH] test/eal: remove PCI probing for vdev tests
-Thread-Index: AQHcpN0RLeou2wA6OU+ddnDxPltP4LWQgLEQ
-Date: Mon, 23 Feb 2026 17:16:17 +0000
-Message-ID: <8c67f4d90bd540e29c9e1ab4fcdc0dc8@huawei.com>
-References: <20260223155603.3651641-1-david.marchand@redhat.com>
-In-Reply-To: <20260223155603.3651641-1-david.marchand@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.74]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 96B934025E;
+	Mon, 23 Feb 2026 18:21:08 +0100 (CET)
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com
+ [209.85.210.44]) by mails.dpdk.org (Postfix) with ESMTP id 56FC2400EF
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 18:21:07 +0100 (CET)
+Received: by mail-ot1-f44.google.com with SMTP id
+ 46e09a7af769-7d4c12ff3d5so4164672a34.2
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 09:21:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771867266;
+ x=1772472066; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=NkzHqJHpNM8chWReBQZe8QfEdc40rDqvNI0WCZNxa5g=;
+ b=ocAP0vlXjfXjyibgwr92ygk8UuutqA3BPfQNqNxxl+IX5+RW3RpnODDdorby7pq96z
+ iQm0h3wkCWKczGkvEIF1sHrNTb2RcFyd4wn7Ala5em/MQix66wUGJjE6PFwnNrylmbJT
+ D0A7IOA5x18F24yqEoFhXON+Aedl7wABNO06lA9BDdQYzWrS+wwn+IBC07uhJQLOIBxi
+ o4Kzx4sA6rgPKps1/7kM3+WX5RT4IXEAO0iZIdDbie3qIzhFss8xk0nKREYnEEfeU/Rt
+ G6yepsitykPFKBzxX8WayvGvD0ZbO3IKSJyFEk7j0KK6vG2CvoPdGasn61cYV4Qr5+Yc
+ Pfww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771867266; x=1772472066;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=NkzHqJHpNM8chWReBQZe8QfEdc40rDqvNI0WCZNxa5g=;
+ b=p80mT94RVzGwsfxaz9ecPRSZuDmvGiwC7UkmVtviuIHt0aiIVXB7FZtUXXfaB3HDTx
+ 3x/n/SYx2LGCl19reqq+5ExW14gGI91XbYjF2ohIhOsk6cL/tcdCXzXx8cwErERZUff8
+ kUjJ+mbwvCqrjehrmrcbk7ayrLXQHmuNQRa3d4HeQbVqH0FVYglvgpmBZg/kLS0NO7U6
+ s0hb38onz2EbRAtdNmIGRKX+LowSjF0OIYWqzwUCxKOo1iBmKxF8a60Zr2sEOpN4iWmI
+ p/m8JjAUMdm+cv3qiNX1dDZQW4lfmXdhzIzHgRqWurbniqrO/Wmd8qR03LoduKixcB4V
+ W3rA==
+X-Gm-Message-State: AOJu0YxIjU9TqXeFAABJ5RjBAslnVWxhaeNuW6+96jD7j20ZKol3237i
+ FBG/pSvvXa3hZuLuP691XNsVjdDA2HVstZvzwJqw0sDvc2V6D863Kj55uDIZEgbXWX0w5Zb5m8m
+ KCeIR
+X-Gm-Gg: AZuq6aIXxA8jIKzbxGHSqiB86Z/FE02HJ0gJblxTp/NY7Jt0u9k3zKdsioU3p1h3Xdi
+ 7KRM5tSDRPI+yxMIRfruFxeN+3m35pG4gRUnTnZccr4S3g/5FGys/vTidEGX4DDwaypMTCuM/2i
+ lRzm5Y/YU4ep7BU9SOgm+JeAnlSl/aRIm++pnN9eGgzUX3yny8U/PK9aHFLcS35f2vZ/wOyW+FB
+ VM6jfxOm+4SrJH3IFp5sR7nATqDJ+nR+FoP7CT3NFYoY7SqSnU1vVKlev7E3N+3hLt5aiB7H5O6
+ Uo82w7v9ClDTnYof9vqd9KN8tRFrJRihhj9PCPxfRymFf9Xxn5H6FhxPUvTqs2NwbHavKi7xn0q
+ 1EggaoalSS3EDY4zqcyYdHEmqfqN3jsnZv5AW42NJ3pho0HAuJ1wbD/a7VXPg8dHgpQ4ANdmbxa
+ hnP4gSGlz0nB4q2rSJTBZvBjNci7Jn5EWSqbBC+xGq51a30Zr/UbFWIDm9gx/P1Wzd
+X-Received: by 2002:a05:6830:2701:b0:7c7:266:392d with SMTP id
+ 46e09a7af769-7d52be3de89mr4815124a34.13.1771867266484; 
+ Mon, 23 Feb 2026 09:21:06 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 46e09a7af769-7d52cf9f5b9sm7569261a34.8.2026.02.23.09.21.05
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 23 Feb 2026 09:21:06 -0800 (PST)
+Date: Mon, 23 Feb 2026 09:21:02 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH] mempool: introduce statistics reset function
+Message-ID: <20260223092102.20446fa4@phoenix.local>
+In-Reply-To: <20260223102054.336350-1-mb@smartsharesystems.com>
+References: <20260223102054.336350-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,64 +80,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: David Marchand <david.marchand@redhat.com>
-> Sent: Monday 23 February 2026 15:56
-> To: dev@dpdk.org
-> Cc: bruce.richardson@intel.com
-> Subject: [PATCH] test/eal: remove PCI probing for vdev tests
->=20
-> Similarly to commit f67f76e6bbfd ("test/eal: remove PCI probing for
-> recursive calls"), let's disable PCI probing in vdev tests as it
-> triggers false positive failures in GHA.
->=20
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
->  app/test/test_eal_flags.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-> index bebddf1c98..06a605cce1 100644
-> --- a/app/test/test_eal_flags.c
-> +++ b/app/test/test_eal_flags.c
-> @@ -422,17 +422,17 @@ test_invalid_vdev_flag(void)
->=20
->  	/* Test with invalid vdev option */
->  	const char *vdevinval[] =3D {prgname, prefix, no_huge, eal_debug_logs,
-> -				bus_debug_logs, vdev, "eth_dummy"};
-> +				bus_debug_logs, no_pci, vdev, "eth_dummy"};
->=20
->  	/* Test with valid vdev option */
->  	const char *vdevval1[] =3D {prgname, prefix, no_huge, eal_debug_logs,
-> -				bus_debug_logs,	vdev, "net_ring0"};
-> +				bus_debug_logs,	no_pci, vdev, "net_ring0"};
+On Mon, 23 Feb 2026 10:20:54 +0000
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-Could use this opportunity to replace tab before no_pci with space.
+> +	fprintf(f, "    avg objs/bulk put=3D%#Lf, get=3D%#Lf, get_fail=3D%#Lf\n=
+",
+> +			sum.put_bulk !=3D 0 ? (long double)sum.put_objs / sum.put_bulk : 0,
+> +			sum.get_success_bulk !=3D 0 ?
+> +			(long double)sum.get_success_objs / sum.get_success_bulk : 0,
+> +			sum.get_fail_bulk !=3D 0 ?
+> +			(long double)sum.get_fail_objs / sum.get_fail_bulk : 0);
+> +	fprintf(f, "    avg common_pool objs/bulk put=3D%#Lf, get=3D%#Lf\n",
+> +			sum.put_common_pool_bulk !=3D 0 ?
+> +			(long double)sum.put_common_pool_objs / sum.put_common_pool_bulk : 0,
+> +			sum.get_common_pool_bulk !=3D 0 ?
+> +			(long double)sum.get_common_pool_objs / sum.get_common_pool_bulk : 0);
+> +	fprintf(f, "    avg cache miss rate put_objs=3D%s%#Lf, get_objs=3D%s%#L=
+f\n",
+> +			sum.put_common_pool_objs !=3D 0 ? "1/" : "",
+> +			sum.put_common_pool_objs !=3D 0 ?
+> +			(long double)sum.put_objs / sum.put_common_pool_objs : 0,
+> +			sum.get_common_pool_objs !=3D 0 ? "1/" : "",
+> +			sum.get_common_pool_objs !=3D 0 ?
+> +			(long double)sum.get_success_objs / sum.get_common_pool_objs : 0);
+> +	fprintf(f, "    avg cache miss rate put_bulk=3D%s%#Lf, get_bulk=3D%s%#L=
+f\n",
+> +			sum.put_common_pool_bulk !=3D 0 ? "1/" : "",
+> +			sum.put_common_pool_bulk !=3D 0 ?
+> +			(long double)sum.put_bulk / sum.put_common_pool_bulk : 0,
+> +			sum.get_common_pool_bulk !=3D 0 ? "1/" : "",
+> +			sum.get_common_pool_bulk !=3D 0 ?
+> +			(long double)sum.get_success_bulk / sum.get_common_pool_bulk : 0);
 
->=20
->  	const char *vdevval2[] =3D {prgname, prefix, no_huge, eal_debug_logs,
-> -				bus_debug_logs, vdev, "net_ring0,args=3Dtest"};
-> +				bus_debug_logs, no_pci, vdev, "net_ring0,args=3Dtest"};
->=20
->  	const char *vdevval3[] =3D {prgname, prefix, no_huge, eal_debug_logs,
-> -				bus_debug_logs, vdev, "net_ring0,nodeaction=3Dr1:0:CREATE"};
-> +				bus_debug_logs, no_pci, vdev, "net_ring0,nodeaction=3Dr1:0:CREATE"};
->=20
->  	if (launch_proc(vdevinval) =3D=3D 0) {
->  		printf("Error (line %d) - process did run ok with invalid vdev paramet=
-er\n",
-> --
-> 2.53.0
-
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
-Tested-by: Marat Khalili <marat.khalili@huawei.com>
-
-Definitely not a problem of this patch, but creating a separate define for =
-each command-line argument like --no-huge does nothing to save us from repe=
-ating `prgname, prefix, eal_debug_logs, ...` bazillion times. If tokens are=
- burning a hole in someone's pocket, perhaps instead we could move this who=
-le command prefix into some kind of function or macro with parameters (poss=
-ibly one launching subprocess as well).
-
-Another thought, should we have NOPCI_OK/NOPCI_SKIP similar to ASAN and NOH=
-UGE?
+This is getting verbose, would look better as function or better yet table =
+driven.
