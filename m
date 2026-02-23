@@ -2,69 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93594EC110E
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 17:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 888CDEC1113
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 17:40:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 83E7A4025E;
-	Mon, 23 Feb 2026 18:21:42 +0100 (CET)
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com
- [209.85.160.43]) by mails.dpdk.org (Postfix) with ESMTP id 682B1400EF
- for <dev@dpdk.org>; Mon, 23 Feb 2026 18:21:41 +0100 (CET)
-Received: by mail-oa1-f43.google.com with SMTP id
- 586e51a60fabf-4043b27ddeaso2688207fac.1
- for <dev@dpdk.org>; Mon, 23 Feb 2026 09:21:41 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 06E64402EF;
+	Mon, 23 Feb 2026 18:40:10 +0100 (CET)
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com
+ [209.85.210.42]) by mails.dpdk.org (Postfix) with ESMTP id 9A90D4025E
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 18:40:08 +0100 (CET)
+Received: by mail-ot1-f42.google.com with SMTP id
+ 46e09a7af769-7d19bfe1190so3834508a34.1
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 09:40:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771867300;
- x=1772472100; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=TDnxHxb3Yid2oMVtPGFfXwdwVB5hHlreXel38ClvUD8=;
- b=1KTk7FhHBrYq2k/uu0SWMpIIQHmeXtZvLMsL9owQv8CbaYKU6tuFZj3ccex+iVKlqo
- aniwl/lweQl1FMrR43mgX/R9RjEcrGCbrg6/jrUpan7BFhsYRpFq1lFtgVQfaTc3BtcY
- CmD9mZvhqUkmSd68QGuuhP/WOIA5iuzBz8fX+ynlrXX/WqZ+sZ+pWgUzlpHNxSnrT8aw
- sfeYqBy/RR/NBW5akAf+lfFYgtBkCeKS2d2b2s53pe4pmxl2m/4SbQaaWGtDz/04EvQU
- QesdlA8Dq6p3RCma6qlg//LuOkDKHOkykCnky5U0hW/0k+rL5TxMqe7H0ROuzWkrkO7W
- 9B+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771867300; x=1772472100;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771868408;
+ x=1772473208; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=TDnxHxb3Yid2oMVtPGFfXwdwVB5hHlreXel38ClvUD8=;
- b=ecew/ZZHjLYnz3ygDOnl2ZLBS1V5Qx9zBOL1uXZUt5cPH+x2bd3lI+/qsyPqakCpXe
- wKyd+x34DzuZlA/u4c9lWTps61+PtTxgS6Jc2HM2T0mk/iJxJkFWIb6ZYlxBvTd7V8YN
- NXgWUwBRjtWrz/nPwMl75TNSTcZez7lxqUc2p24/O/8JGEGfAuwn4ZooDYyjyzAzWp18
- l5iFK814uoyquABP2WQgGvXL/qclNida5dbcXcCcaE0pexLnuNBQ/zrsEE2fxUQWVsz3
- fpxXbMxZXLMQzD3/4OsOt9b/KxABMWWkrRxuOX6aZ86fzfcKsx0QfbJJcQ1raGsh0NTg
- OiSg==
-X-Gm-Message-State: AOJu0Yz/aMWX6FDvyqsFst/idpBz23Zd9S/8wk6B4ZDr1ZY0g1DAl8lB
- WMKE60bCWj98Oed+1qg3Xr/5KpltN95X5xZA0AU7ZZEZ/xXurkc+Zh8eX2JENy/ZSqR8H9KvDLa
- qss3+
-X-Gm-Gg: AZuq6aIHaMS000zacxg5X5TO4spBRl8vYkrBPMMuQQ0Ro6CSGV49iJu3jzNcXDrSqEY
- f/ZFTiSk9zQPWrPwXoxmKsgTKZ1+ImYzyE/7A2Kww9tISi5nQmbFYQzpx3n+hUDqVGql/a0BYR3
- XVqhzoxUPUnWMPf/afMpmtqvgXPWBs5rT8BsZqi9XpW2Se2gEnS6W1Wqldkh0yk/LdjbKckeHbJ
- 0ZYgkqGPRqy7ar2zihCv5BrVgbxWIfAhNHQGnguhfB5ZZ0ELqvknBf3dMuLvm9UxsQCCir3nWvL
- 8tmtwQRS1BmMPXBwbg+wB8giIyWdzFfKLFy+etFGbDbnSBAagnb0WjOMURI39b+N5l7OCaSwIpQ
- KIXMLyUB7FUihH7ZRAmsN/4qWZ+IMVWh4dKnXIzABZ4pQ9v5xMEwnYz79/cwzvi+anpUFyj+598
- bR5CD/7Vm9ghNkBNwryPVR5zvEthbJ6T4jmhUN2lafoOYiR3A9ZPg87ujfV9VKSMi1EXkguG8x
-X-Received: by 2002:a05:6820:3091:b0:663:23a:cafc with SMTP id
- 006d021491bc7-679c46160d0mr5693374eaf.67.1771867300536; 
- Mon, 23 Feb 2026 09:21:40 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=95N4RbviGqf9gyepjL6CN78d8iE6aiokF3JGOasWYYU=;
+ b=qql1yuqYjQXDR7WhJpoE2NHqwG3c1CkXOOy3FiyVco9xuIgNh38qcGPh9hRNhPuH9y
+ C9PMIu/35xkB+/x8cEInb6SeDemSB7zDjP8E4KTl6o1hc2ClUvDy4r2fbGTblexHVR5f
+ sMEQf9HvdylaGqckwCN6EkAxyEak97FidycDgWveV0/uqYgOL+P1D08k9hV898hoUIzQ
+ Lzrob1CXUXVP9hvZ7LzX/B1By85X3FOZP+McAXTmsziBQradKRzYXxhTXjVyxw88LF5n
+ Dd31SpUG04yNzCMPVHJ9KbIsE/Cf/qjCIabgr93SrzTUAcdWpBRC3LkNVQgJltMDahZN
+ tovg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1771868408; x=1772473208;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=95N4RbviGqf9gyepjL6CN78d8iE6aiokF3JGOasWYYU=;
+ b=PymBXB3gHT5YD1CkqGCi9NBJmbWgrow9lxcdKgVbKOBz6uVEJw6d8O4wB+QISsNQ9J
+ SrUVPfpvlezBUILPhalOvBeUh48q0kZIdkeSbVVd0kHtYn+t/ND47CrNVFyufF9Bp9KY
+ t+8zyuB67i+t1uvz/sOEYQJg9kKYstNE1z8zgkrurnRzAPwp7kBuZDYLU1+0vIuaHLga
+ QUdxS5sxrlM9GABi2NpBsm/y5KgwA4eIJNWwgqVpN6i3vzynHRlnTMzWAhe0WN5g0ivd
+ Dyn5PvpVXUfYNo8jEuOXw7iyXiQpZXbYe4gj0Go4TSiNyvlpbIqellevDrRyoT7oKYap
+ cqdw==
+X-Gm-Message-State: AOJu0Yz5gV2KOK/+RF+UPmjMvXKFKbkSRoahmXjfmtpgecWHeozSv5KX
+ VjrEvJFo87MTQLdgCH+RvnkitkDaoktrc6XJ4DCQlBks8pGWShx2ZxSJzzYaa1PuJLc=
+X-Gm-Gg: AZuq6aKLRF26l82W/hoyqqzsHAnhhDv3DFw62DeYeKIUktLg7Gnm+rfWAn0Xr95Fn0t
+ rmocPsSosc14R1yLWVyexDFYwjz3SgsgKxdXx6E5FzX4tfO8Wv/pCgtrZetETqzQqtFYINPTbyI
+ FMXgpegIhs4E/VJo2tUcJeA2KjBEr+QAkb+L75GjLfG8OOLTPMhXJd6WeX2mdhPm5h3zIdlhNL+
+ 15VFcqsOPwEQ6eCamqM0dspFtu1sbJZBB8jBoNiE2xHronI0Hmd3HxyJg6s1FIpnA+lFfl7wGRe
+ 3/+PsdDW7mZZnQQQ5odCUQALVHhbkUAKFkqE1qy/SE6uvjYkWSXdpYaGwHb/xPjPgbkqURkxpqW
+ tOW4PPNvMMDWkUKG638wVMH3GUwKyNxvy4+kP/N9abvLxf6Rj8mG1OxTjEEt8Yz12gjw82Ne5DL
+ Mlu1HmJl0x7TXtzWPYdR4Of8CXQRGk0P8FIcVOImksBfMpNmyhX+qzW97Sr8xCBTE3
+X-Received: by 2002:a05:6830:90b:b0:7cc:4d72:586e with SMTP id
+ 46e09a7af769-7d52be3bfb2mr6755503a34.9.1771868407690; 
+ Mon, 23 Feb 2026 09:40:07 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 006d021491bc7-679c5630827sm6445652eaf.3.2026.02.23.09.21.39
+ 46e09a7af769-7d52d04c637sm7591742a34.19.2026.02.23.09.40.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Feb 2026 09:21:40 -0800 (PST)
+ Mon, 23 Feb 2026 09:40:07 -0800 (PST)
+Date: Mon, 23 Feb 2026 09:40:04 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Matan Azrad <matan@nvidia.com>
-Subject: [PATCH] net/vdev_netvsc: block driver in github action
-Date: Mon, 23 Feb 2026 09:21:37 -0800
-Message-ID: <20260223172137.93558-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
+To: longli@linux.microsoft.com
+Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, stable@dpdk.org, Dariusz
+ Sosnowski <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>, Long Li <longli@microsoft.com>
+Subject: Re: [PATCH v2 2/8] net/netvsc: fix race conditions on VF add/remove
+ events
+Message-ID: <20260223094004.445914ee@phoenix.local>
+In-Reply-To: <20260221024540.659098-2-longli@linux.microsoft.com>
+References: <20260221024540.659098-1-longli@linux.microsoft.com>
+ <20260221024540.659098-2-longli@linux.microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,36 +85,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Hyper-V systems (including Azure-hosted CI), the vdev_netvsc
-driver auto-injects itself during vdev bus scan. This interferes
-with other tests.
+On Fri, 20 Feb 2026 18:45:21 -0800
+longli@linux.microsoft.com wrote:
 
-Suppress this by detecting via environment variable.
+> +	rte_rwlock_read_lock(&hv->vf_lock);
+> +	vf_dev = hn_get_vf_dev(hv);
+> +	if (hv->vf_ctx.vf_vsc_switched && vf_dev &&
+> +	    vf_dev->data->dev_started) {
+> +		void *sub_q = vf_dev->data->tx_queues[queue_id];
+> +
+> +		nb_tx = (*vf_dev->tx_pkt_burst)
+> +				(sub_q, tx_pkts, nb_pkts);
+>  		rte_rwlock_read_unlock(&hv->vf_lock);
+> +		return nb_tx;
+>  	}
+> +	rte_rwlock_read_unlock(&hv->vf_lock);
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/vdev_netvsc/vdev_netvsc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ok, but read locks not free. It does incur an additional cache miss
+which may impact performance.
 
-diff --git a/drivers/net/vdev_netvsc/vdev_netvsc.c b/drivers/net/vdev_netvsc/vdev_netvsc.c
-index f4a84783ce..39d52b7541 100644
---- a/drivers/net/vdev_netvsc/vdev_netvsc.c
-+++ b/drivers/net/vdev_netvsc/vdev_netvsc.c
-@@ -805,6 +805,14 @@ vdev_netvsc_scan_callback(__rte_unused void *arg)
- /** Initialize the custom scan. */
- RTE_INIT(vdev_netvsc_custom_scan_add)
- {
-+	/*
-+	 * Hack: github actions run on Azure/Hyper-V container and don't
-+	 * want any network devices in that environment to get intertwined
-+	 * with any tests.
-+	 */
-+	if (getenv("GITHUB_ACTIONS"))
-+		return;
-+
- 	if (rte_hypervisor_get() == RTE_HYPERVISOR_HYPERV)
- 		rte_vdev_add_custom_scan(vdev_netvsc_scan_callback, NULL);
- }
--- 
-2.51.0
+Might be better in future to have some form of lockless access here.
 
