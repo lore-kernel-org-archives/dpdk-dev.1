@@ -2,84 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060A9E98DFF
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 09:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0EDE98E10
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 10:20:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E47904025E;
-	Mon, 23 Feb 2026 10:40:12 +0100 (CET)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id DF432400EF
- for <dev@dpdk.org>; Mon, 23 Feb 2026 10:09:52 +0100 (CET)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-483a233819aso38677155e9.3
- for <dev@dpdk.org>; Mon, 23 Feb 2026 01:09:52 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1771837792; cv=none;
- d=google.com; s=arc-20240605;
- b=QKTYnzpQ1E5v5ptxVBIDXmDtZAwrX/7uyhRUdt0zr0JUxqhfmfewagGss2+MsYrV/Y
- rf3NBMCLaGphTM9HGUU6XuplPYLzuM6iMj4piZNMXBXTP7m5nfaU/J6D3m2y2YfCQzWC
- Tl04V//59/yE0LkctTRKyX9KMg9LRX3DSsXHyhwniKKkC2c3gwuS0xONNuosJ8cSQ5rg
- e4nLPbNxH1Ag5a2uZIFifeAgBBk/NNI1f6RjRXIgEAtxmsUciEIRJFuoibtUeYlWllH8
- ohGxyBIhba3RGhmReqSCAO+J/RLIlvZ6Zlsj3Jyjbjot5Tfr1MYCDz8ukDUp7AMUM1AO
- Rzgg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=to:subject:message-id:date:from:in-reply-to:references:mime-version
- :dkim-signature;
- bh=10OKnhuANDYQaDTK3hzB4X7OYWWvq5Dy8TSjDVvZ1Ek=;
- fh=eUqWHLlhrxpykrabbQYbmT5B5FclN6p18glcXqrZikU=;
- b=DccBeKx+Wb+RB/VOS8z22BsxaL7Ciwq8JvXRo16DjZU/K6Kn3fSGfvrseXV+B1f2sd
- PHvR1YEW8oCiY/ZD+F/DoBRCGPJBSoA5201tN8ow4UF/zlrHPzuwin6z7o8VSauHVqs8
- ZcynBFlVzU2ALgcTJQNQDs0jszcG8+KFceYtFo5avgEQQTGJA09FhmWNP5N6MHsEGjbr
- +5TOIWyjOXnU1DcsnjAtUaEqCsqi2rDQNNXW9eNpijvE/u4Xm5b488TDWe5N1kLeYW4K
- BOC5N9v/YPgvHowuoS7ZYLVgms1T90Fl3AtDOGD5N3CMT7zXnvp1jXxgvNWtng2syPVk
- nu8g==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1771837792; x=1772442592; darn=dpdk.org;
- h=to:subject:message-id:date:from:in-reply-to:references:mime-version
- :from:to:cc:subject:date:message-id:reply-to;
- bh=10OKnhuANDYQaDTK3hzB4X7OYWWvq5Dy8TSjDVvZ1Ek=;
- b=QkUnjjJASrqkQq6qYmjLAEltXeLHdyJRRY26cxAGLMM9aSATKSYxUKHOipnbSWvtmq
- iAgAE9L2qcP8i2+ipNLe2ROk1KiuwUrkliSJV3AC/yTWnv9I8b47sp94ROdpKergBrXo
- +iOVCZJnHzlbkotZT6GqK4cgvy1aUucp7MaRSnmfJnE42ikQA5O9ui2dBQjMgxA6JbNb
- KjskVQ7IShv1Zk1CH/X4XmIIyI45DugJcnlOXpDXmeXqlw5L91KzJIF5iXqpE5R4FihZ
- 8/sWUXI+uUcm9Z6jAnTOFtKbA+kdWqi/HJUn2rSbUMsRfdN4avyFGnefu6ZcXy1L79kK
- gX2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771837792; x=1772442592;
- h=to:subject:message-id:date:from:in-reply-to:references:mime-version
- :x-gm-gg:x-gm-message-state:from:to:cc:subject:date:message-id
- :reply-to;
- bh=10OKnhuANDYQaDTK3hzB4X7OYWWvq5Dy8TSjDVvZ1Ek=;
- b=eVcsLa5wplzeXeuLEG7WsEMcY51EOZ9uRvdzpTyl6ynHhZ9xbjatuTlBUSk2r+e93w
- AzH0mLWRAPWzCp4dMg+AFQHPVHRCf1gumSt7QfuJe25RSgtLbPCm15AF6Nh0yKr6tgrD
- /5rsEpEo+qZLX4DfBK3iZs1wAkDqqs6Mc09/60w8Ou7O9nf6h0jT9d9ci/Z2ZAb8FPSh
- bwz22rQbpyXJ05b29KKf7uyAd3cEFT9nvkwIzFCmWOHPnCfN+wwq1r2j3Ch3+KMI+W+O
- yjFizZtkoQgc9OlfgUruGGX7mt8VHUQSSsF5d47CwK8b6X7C0vuw9SoeXLJNdTXg/wMw
- JtHg==
-X-Gm-Message-State: AOJu0Yw0iE8SG8M5fjK+eqOGEh7e8aLZrd9XFY/lwIDHpckCPjSUWhes
- cJEtS+mlXtcOw4w10kURUUPWgPnwtnnID2GK2soqAsl0Ffy7MJUwB9Isg5cwf7IDVm17IUkuSEB
- ve+Zo8S7gSYJqzgjvS8ty7ePDQbNUdRL0Uxpt6L4=
-X-Gm-Gg: AZuq6aKVZUNSaGFHqiGlWOmQJnHRbXJTWz+ix0hPbAgXWlKKa2l41OhjG1x2kHrcGwX
- QXRxkyY8JfYPndAWSW0e+H3yYPa5CVypj/ExYnmN91YU/TCw0WwXBOqYFCdSRBhVhNH+50uHE2P
- ruumAbvi1lrolPpgOYubSdCe84ww+aqoOrW6MZJrGZEXrHCQ5OJ7g4yo9r5Hf+wXlh/6KVbkZho
- Q5rTlfkEcyaer1CscYzMjwiUh0n/VfWNQRLCRhw2a1tmyOac2yO05WHeDmGSIwowaytJ5tjt0fH
- B7eBrh0=
-X-Received: by 2002:a05:600c:1e1d:b0:480:f27c:6335 with SMTP id
- 5b1f17b1804b1-483a9637a55mr139845305e9.25.1771837791664; Mon, 23 Feb 2026
- 01:09:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2827F4025E;
+	Mon, 23 Feb 2026 11:20:58 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 76E76400EF
+ for <dev@dpdk.org>; Mon, 23 Feb 2026 11:20:57 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2BBE120770;
+ Mon, 23 Feb 2026 11:20:57 +0100 (CET)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Mon, 23 Feb 2026 11:20:56 +0100
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org,
+	Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH] mempool: introduce statistics reset function
+Date: Mon, 23 Feb 2026 10:20:54 +0000
+Message-ID: <20260223102054.336350-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-References: <CAN33txETfmQEj8j=W4-nkUk1rAq0_JLhZuR4R-c3YCrDY90y6A@mail.gmail.com>
- <CAN33txH=GJyXy+TyfPxPFrhLCxgrT11yZbMyju1B3vgq8YJ_Sg@mail.gmail.com>
-In-Reply-To: <CAN33txH=GJyXy+TyfPxPFrhLCxgrT11yZbMyju1B3vgq8YJ_Sg@mail.gmail.com>
-From: Harsh raj Singh <singhharshraj215@gmail.com>
-Date: Mon, 23 Feb 2026 14:39:39 +0530
-X-Gm-Features: AaiRm52wjoRSpNYtYI263sbO7BSz5VIKeWsUID1j23b1c2DlySO-VrdZdJcoIEA
-Message-ID: <CAN33txFeC6gFax6Ty3+uR84tKvXQ6ZqyJaRkvibwd5cTk3rU4A@mail.gmail.com>
-Subject: Re: [PATCH] examples/l2fwd_acl: add ACL-based L2 forwarding example
-To: dev@dpdk.org
-Content-Type: multipart/mixed; boundary="0000000000002c3672064b7a2252"
-X-Mailman-Approved-At: Mon, 23 Feb 2026 10:40:11 +0100
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 23 Feb 2026 10:20:56.0531 (UTC)
+ FILETIME=[19053A30:01DCA4AE]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,179 +44,148 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000002c3672064b7a2252
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Populating a mempool with objects is accounted for in the statistics.
+When analyzing mempool cache statistics, this may distort the data.
+In order to simplify mempool cache statistics analysis, a mempool
+statistics reset function was added.
 
-v2:
-- Fixed indentation (tabs not spaces)
-- Fixed checkpatch issues
-- Fixed sign-off email mismatch
+Furthermore, details about average burst sizes and mempool cache miss
+rates were added to the statistics shown when dumping a mempool.
 
-On Mon, Feb 23, 2026 at 9:58=E2=80=AFAM Harsh raj Singh
-<singhharshraj215@gmail.com> wrote:
->
-> do i have any update on it
->
-> On Sat, Feb 21, 2026 at 12:13=E2=80=AFAM Harsh raj Singh
-> <singhharshraj215@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > Please find attached my patch adding an ACL-based L2 forwarding example=
-.
-> >
-> > Thanks,
-> > Harsh Raj Singh
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+---
+ lib/mempool/mempool_trace.h        |  7 +++++
+ lib/mempool/mempool_trace_points.c |  4 +++
+ lib/mempool/rte_mempool.c          | 50 ++++++++++++++++++++++++++++--
+ lib/mempool/rte_mempool.h          | 12 +++++++
+ 4 files changed, 71 insertions(+), 2 deletions(-)
 
---0000000000002c3672064b7a2252
-Content-Type: text/x-patch; charset="US-ASCII"; name="l2fwd_acl_v2.patch"
-Content-Disposition: attachment; filename="l2fwd_acl_v2.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_mlyygq260>
-X-Attachment-Id: f_mlyygq260
+diff --git a/lib/mempool/mempool_trace.h b/lib/mempool/mempool_trace.h
+index c595a3116b..23cda1473c 100644
+--- a/lib/mempool/mempool_trace.h
++++ b/lib/mempool/mempool_trace.h
+@@ -104,6 +104,13 @@ RTE_TRACE_POINT(
+ 	rte_trace_point_emit_string(mempool->name);
+ )
+ 
++RTE_TRACE_POINT(
++	rte_mempool_trace_stats_reset,
++	RTE_TRACE_POINT_ARGS(struct rte_mempool *mempool),
++	rte_trace_point_emit_ptr(mempool);
++	rte_trace_point_emit_string(mempool->name);
++)
++
+ RTE_TRACE_POINT(
+ 	rte_mempool_trace_cache_create,
+ 	RTE_TRACE_POINT_ARGS(uint32_t size, int socket_id,
+diff --git a/lib/mempool/mempool_trace_points.c b/lib/mempool/mempool_trace_points.c
+index ec465780f4..8249981502 100644
+--- a/lib/mempool/mempool_trace_points.c
++++ b/lib/mempool/mempool_trace_points.c
+@@ -60,6 +60,10 @@ RTE_TRACE_POINT_REGISTER(rte_mempool_trace_populate_default,
+ RTE_TRACE_POINT_REGISTER(rte_mempool_trace_populate_anon,
+ 	lib.mempool.populate.anon)
+ 
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(__rte_mempool_trace_stats_reset, 26.03)
++RTE_TRACE_POINT_REGISTER(rte_mempool_trace_stats_reset,
++	lib.mempool.stats_reset)
++
+ RTE_TRACE_POINT_REGISTER(rte_mempool_trace_cache_create,
+ 	lib.mempool.cache_create)
+ 
+diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
+index 3042d94c14..ff7d940f91 100644
+--- a/lib/mempool/rte_mempool.c
++++ b/lib/mempool/rte_mempool.c
+@@ -1049,6 +1049,28 @@ rte_mempool_in_use_count(const struct rte_mempool *mp)
+ 	return mp->size - rte_mempool_avail_count(mp);
+ }
+ 
++/* Reset the statistics of a mempool. */
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mempool_stats_reset, 26.03)
++void
++rte_mempool_stats_reset(struct rte_mempool *mp)
++{
++	RTE_ASSERT(mp != NULL);
++
++#ifdef RTE_LIBRTE_MEMPOOL_STATS
++	memset(&mp->stats, 0, sizeof(mp->stats));
++	if (mp->cache_size != 0) {
++		for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
++			memset(&mp->local_cache[lcore_id].stats, 0,
++					sizeof(mp->local_cache[lcore_id].stats));
++		}
++	}
++
++	rte_mempool_trace_stats_reset(mp);
++#else
++	RTE_SET_USED(mp);
++#endif
++}
++
+ /* dump the cache status */
+ static unsigned
+ rte_mempool_dump_cache(FILE *f, const struct rte_mempool *mp)
+@@ -1327,10 +1349,34 @@ rte_mempool_dump(FILE *f, struct rte_mempool *mp)
+ 	fprintf(f, "    get_fail_bulk=%"PRIu64"\n", sum.get_fail_bulk);
+ 	fprintf(f, "    get_fail_objs=%"PRIu64"\n", sum.get_fail_objs);
+ 	if (info.contig_block_size > 0) {
+-		fprintf(f, "    get_success_blks=%"PRIu64"\n",
+-			sum.get_success_blks);
++		fprintf(f, "    get_success_blks=%"PRIu64"\n", sum.get_success_blks);
+ 		fprintf(f, "    get_fail_blks=%"PRIu64"\n", sum.get_fail_blks);
+ 	}
++	fprintf(f, "    avg objs/bulk put=%#Lf, get=%#Lf, get_fail=%#Lf\n",
++			sum.put_bulk != 0 ? (long double)sum.put_objs / sum.put_bulk : 0,
++			sum.get_success_bulk != 0 ?
++			(long double)sum.get_success_objs / sum.get_success_bulk : 0,
++			sum.get_fail_bulk != 0 ?
++			(long double)sum.get_fail_objs / sum.get_fail_bulk : 0);
++	fprintf(f, "    avg common_pool objs/bulk put=%#Lf, get=%#Lf\n",
++			sum.put_common_pool_bulk != 0 ?
++			(long double)sum.put_common_pool_objs / sum.put_common_pool_bulk : 0,
++			sum.get_common_pool_bulk != 0 ?
++			(long double)sum.get_common_pool_objs / sum.get_common_pool_bulk : 0);
++	fprintf(f, "    avg cache miss rate put_objs=%s%#Lf, get_objs=%s%#Lf\n",
++			sum.put_common_pool_objs != 0 ? "1/" : "",
++			sum.put_common_pool_objs != 0 ?
++			(long double)sum.put_objs / sum.put_common_pool_objs : 0,
++			sum.get_common_pool_objs != 0 ? "1/" : "",
++			sum.get_common_pool_objs != 0 ?
++			(long double)sum.get_success_objs / sum.get_common_pool_objs : 0);
++	fprintf(f, "    avg cache miss rate put_bulk=%s%#Lf, get_bulk=%s%#Lf\n",
++			sum.put_common_pool_bulk != 0 ? "1/" : "",
++			sum.put_common_pool_bulk != 0 ?
++			(long double)sum.put_bulk / sum.put_common_pool_bulk : 0,
++			sum.get_common_pool_bulk != 0 ? "1/" : "",
++			sum.get_common_pool_bulk != 0 ?
++			(long double)sum.get_success_bulk / sum.get_common_pool_bulk : 0);
+ #else
+ 	fprintf(f, "  no statistics available\n");
+ #endif
+diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
+index 1144dca58a..1aea1789e9 100644
+--- a/lib/mempool/rte_mempool.h
++++ b/lib/mempool/rte_mempool.h
+@@ -1288,6 +1288,18 @@ uint32_t rte_mempool_obj_iter(struct rte_mempool *mp,
+ uint32_t rte_mempool_mem_iter(struct rte_mempool *mp,
+ 	rte_mempool_mem_cb_t *mem_cb, void *mem_cb_arg);
+ 
++/**
++ * @warning
++ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
++ *
++ * Reset the statistics of a mempool.
++ *
++ * @param mp
++ *   A pointer to the mempool structure.
++ */
++__rte_experimental
++void rte_mempool_stats_reset(struct rte_mempool *mp);
++
+ /**
+  * Dump the status of the mempool to a file.
+  *
+-- 
+2.43.0
 
-RnJvbSA4NjAwYWQ3ODc0NzllNjQ0ZGYxYWJjN2QyMTM4MDNmYTc3ZmI0ZmE0IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBIYXJzaCBSYWogU2luZ2ggPHNpbmdoaGFyc2hyYWoyMTVAZ21h
-aWwuY29tPgpEYXRlOiBNb24sIDIzIEZlYiAyMDI2IDE0OjMwOjE2ICswNTMwClN1YmplY3Q6IFtQ
-QVRDSF0gZXhhbXBsZXMvbDJmd2RfYWNsOiBhZGQgQUNMLWJhc2VkIEwyIGZvcndhcmRpbmcgZXhh
-bXBsZQoKVGhpcyBleGFtcGxlIGRlbW9uc3RyYXRlcyB1c2FnZSBvZiB0aGUgRFBESyBBQ0wgbGli
-cmFyeQp0byBjbGFzc2lmeSBwYWNrZXRzIGJhc2VkIG9uIDUtdHVwbGUgZmllbGRzIGFuZCBmb3J3
-YXJkCm9ubHkgbWF0Y2hpbmcgcGFja2V0cy4KClNpZ25lZC1vZmYtYnk6IEhhcnNoIFJhaiBTaW5n
-aCA8c2luZ2hoYXJzaHJhajIxNUBnbWFpbC5jb20+Ci0tLQogZXhhbXBsZXMvbDJmd2RfYWNsL1JF
-QURNRS5tZCAgIHwgIDE4ICsrKwogZXhhbXBsZXMvbDJmd2RfYWNsL21haW4uYyAgICAgIHwgMjc0
-ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwogZXhhbXBsZXMvbDJmd2RfYWNsL21l
-c29uLmJ1aWxkIHwgICAzICsKIDMgZmlsZXMgY2hhbmdlZCwgMjk1IGluc2VydGlvbnMoKykKIGNy
-ZWF0ZSBtb2RlIDEwMDY0NCBleGFtcGxlcy9sMmZ3ZF9hY2wvUkVBRE1FLm1kCiBjcmVhdGUgbW9k
-ZSAxMDA2NDQgZXhhbXBsZXMvbDJmd2RfYWNsL21haW4uYwogY3JlYXRlIG1vZGUgMTAwNjQ0IGV4
-YW1wbGVzL2wyZndkX2FjbC9tZXNvbi5idWlsZAoKZGlmZiAtLWdpdCBhL2V4YW1wbGVzL2wyZndk
-X2FjbC9SRUFETUUubWQgYi9leGFtcGxlcy9sMmZ3ZF9hY2wvUkVBRE1FLm1kCm5ldyBmaWxlIG1v
-ZGUgMTAwNjQ0CmluZGV4IDAwMDAwMDAwMDAuLjViNTQ5NGUyOTcKLS0tIC9kZXYvbnVsbAorKysg
-Yi9leGFtcGxlcy9sMmZ3ZF9hY2wvUkVBRE1FLm1kCkBAIC0wLDAgKzEsMTggQEAKK0wyIEZvcndh
-cmRpbmcgd2l0aCBBQ0wgRXhhbXBsZQorPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CisK
-K1RoaXMgZXhhbXBsZSBkZW1vbnN0cmF0ZXMgdXNlIG9mIHRoZSBEUERLIEFDTCBsaWJyYXJ5Cit0
-byBjbGFzc2lmeSBwYWNrZXRzIGJhc2VkIG9uOgorCistIHByb3RvY29sCistIHNvdXJjZSBJUHY0
-CistIGRlc3RpbmF0aW9uIElQdjQKKy0gc291cmNlIHBvcnQKKy0gZGVzdGluYXRpb24gcG9ydAor
-CitQYWNrZXRzIG1hdGNoaW5nIEFDTCBydWxlcyBhcmUgZm9yd2FyZGVkLAorb3RoZXJzIGFyZSBk
-cm9wcGVkLgorCitSdW46CisKKy4vZHBkay1sMmZ3ZC1hY2wgLWwgMC0yIC1uIDQgLS0gLXAgMHgx
-CmRpZmYgLS1naXQgYS9leGFtcGxlcy9sMmZ3ZF9hY2wvbWFpbi5jIGIvZXhhbXBsZXMvbDJmd2Rf
-YWNsL21haW4uYwpuZXcgZmlsZSBtb2RlIDEwMDY0NAppbmRleCAwMDAwMDAwMDAwLi45ODAwYWRi
-OGM4Ci0tLSAvZGV2L251bGwKKysrIGIvZXhhbXBsZXMvbDJmd2RfYWNsL21haW4uYwpAQCAtMCww
-ICsxLDI3NCBAQAorLyogU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEJTRC0zLUNsYXVzZQorICog
-bDJmd2RfYWNsIGV4YW1wbGU6IGRlbW9uc3RyYXRlcyB1c2Ugb2YgRFBESyBBQ0wgbGlicmFyeQor
-ICovCisKKyNpbmNsdWRlIDxnZXRvcHQuaD4KKyNpbmNsdWRlIDxzaWduYWwuaD4KKyNpbmNsdWRl
-IDxzdGRib29sLmg+CisjaW5jbHVkZSA8c3RkbGliLmg+CisKKyNpbmNsdWRlIDxydGVfYWNsLmg+
-CisjaW5jbHVkZSA8cnRlX2VhbC5oPgorI2luY2x1ZGUgPHJ0ZV9ldGhkZXYuaD4KKyNpbmNsdWRl
-IDxydGVfZXRoZXIuaD4KKyNpbmNsdWRlIDxydGVfaXAuaD4KKyNpbmNsdWRlIDxydGVfbG9nLmg+
-CisjaW5jbHVkZSA8cnRlX21idWYuaD4KKyNpbmNsdWRlIDxydGVfdGNwLmg+CisjaW5jbHVkZSA8
-cnRlX3VkcC5oPgorCisjZGVmaW5lIE5VTV9GSUVMRFMgNQorI2RlZmluZSBNQVhfUlVMRVMgMzIK
-KyNkZWZpbmUgTkJfTUJVRiA4MTkyCisjZGVmaW5lIEJVUlNUIDMyCisKKy8qIC0tLS0gQ29ycmVj
-dCBEUERLIGxvZ2dpbmcgc3R5bGUgLS0tLSAqLworI2RlZmluZSBSVEVfTE9HVFlQRV9MMkZXRF9B
-Q0wgUlRFX0xPR1RZUEVfVVNFUjEKKyNkZWZpbmUgTE9HVFlQRV9MMkZXRF9BQ0wgUlRFX0xPR1RZ
-UEVfTDJGV0RfQUNMCisKK1JURV9BQ0xfUlVMRV9ERUYoYWNsX3J1bGUsIE5VTV9GSUVMRFMpOwor
-CitzdHJ1Y3QgcGt0X2tleSB7CisJdWludDhfdCBwcm90bzsKKwl1aW50MzJfdCBzcmNfaXA7CisJ
-dWludDMyX3QgZHN0X2lwOworCXVpbnQxNl90IHNyY19wb3J0OworCXVpbnQxNl90IGRzdF9wb3J0
-OworfTsKKworZW51bSB7CisJUFJPVE9fRklFTEQsCisJU1JDX0ZJRUxELAorCURTVF9GSUVMRCwK
-KwlTUE9SVF9GSUVMRCwKKwlEUE9SVF9GSUVMRAorfTsKKworc3RhdGljIHZvbGF0aWxlIGJvb2wg
-Zm9yY2VfcXVpdDsKK3N0YXRpYyB1aW50MzJfdCBwb3J0bWFzayA9IDB4MTsKKworc3RhdGljIHN0
-cnVjdCBydGVfYWNsX2ZpZWxkX2RlZiBmaWVsZF9kZWZzW05VTV9GSUVMRFNdID0geworCXsgUlRF
-X0FDTF9GSUVMRF9UWVBFX0JJVE1BU0ssIHNpemVvZih1aW50OF90KSwgUFJPVE9fRklFTEQsIDAs
-CisJICBvZmZzZXRvZihzdHJ1Y3QgcGt0X2tleSwgcHJvdG8pIH0sCisJeyBSVEVfQUNMX0ZJRUxE
-X1RZUEVfTUFTSywgc2l6ZW9mKHVpbnQzMl90KSwgU1JDX0ZJRUxELCAxLAorCSAgb2Zmc2V0b2Yo
-c3RydWN0IHBrdF9rZXksIHNyY19pcCkgfSwKKwl7IFJURV9BQ0xfRklFTERfVFlQRV9NQVNLLCBz
-aXplb2YodWludDMyX3QpLCBEU1RfRklFTEQsIDIsCisJICBvZmZzZXRvZihzdHJ1Y3QgcGt0X2tl
-eSwgZHN0X2lwKSB9LAorCXsgUlRFX0FDTF9GSUVMRF9UWVBFX1JBTkdFLCBzaXplb2YodWludDE2
-X3QpLCBTUE9SVF9GSUVMRCwgMywKKwkgIG9mZnNldG9mKHN0cnVjdCBwa3Rfa2V5LCBzcmNfcG9y
-dCkgfSwKKwl7IFJURV9BQ0xfRklFTERfVFlQRV9SQU5HRSwgc2l6ZW9mKHVpbnQxNl90KSwgRFBP
-UlRfRklFTEQsIDMsCisJICBvZmZzZXRvZihzdHJ1Y3QgcGt0X2tleSwgZHN0X3BvcnQpIH0sCit9
-OworCitzdGF0aWMgdm9pZAorc2lnbmFsX2hhbmRsZXIoaW50IHNpZykKK3sKKwlpZiAoc2lnID09
-IFNJR0lOVCB8fCBzaWcgPT0gU0lHVEVSTSkKKwkJZm9yY2VfcXVpdCA9IHRydWU7Cit9CisKK3N0
-YXRpYyBpbnQKK3BhcnNlX2FyZ3MoaW50IGFyZ2MsIGNoYXIgKiphcmd2KQoreworCWludCBvcHQ7
-CisKKwl3aGlsZSAoKG9wdCA9IGdldG9wdChhcmdjLCBhcmd2LCAicDoiKSkgIT0gLTEpIHsKKwkJ
-c3dpdGNoIChvcHQpIHsKKwkJY2FzZSAncCc6CisJCQlwb3J0bWFzayA9IHN0cnRvdWwob3B0YXJn
-LCBOVUxMLCAxNik7CisJCQlicmVhazsKKwkJZGVmYXVsdDoKKwkJCXJldHVybiAtMTsKKwkJfQor
-CX0KKwlyZXR1cm4gMDsKK30KKworLyogLS0tLS0tLS0tLS0tLS0tLSBBQ0wgSU5JVElBTElaQVRJ
-T04gLS0tLS0tLS0tLS0tLS0tLSAqLworCitzdGF0aWMgc3RydWN0IHJ0ZV9hY2xfY3R4ICoKK2lu
-aXRfYWNsKHZvaWQpCit7CisJc3RydWN0IHJ0ZV9hY2xfcGFyYW0gcHJtID0geworCQkubmFtZSA9
-ICJhY2xfY3R4IiwKKwkJLnNvY2tldF9pZCA9IHJ0ZV9zb2NrZXRfaWQoKSwKKwkJLnJ1bGVfc2l6
-ZSA9IFJURV9BQ0xfUlVMRV9TWihOVU1fRklFTERTKSwKKwkJLm1heF9ydWxlX251bSA9IE1BWF9S
-VUxFUywKKwl9OworCisJc3RydWN0IHJ0ZV9hY2xfY3R4ICpjdHggPSBydGVfYWNsX2NyZWF0ZSgm
-cHJtKTsKKwlpZiAoIWN0eCkKKwkJcnRlX2V4aXQoRVhJVF9GQUlMVVJFLCAiQUNMIGNyZWF0ZSBm
-YWlsZWRcbiIpOworCisJc3RydWN0IGFjbF9ydWxlIHJ1bGU7CisJbWVtc2V0KCZydWxlLCAwLCBz
-aXplb2YocnVsZSkpOworCisJcnVsZS5kYXRhLnByaW9yaXR5ID0gMTA7CisJcnVsZS5kYXRhLmNh
-dGVnb3J5X21hc2sgPSAxOworCXJ1bGUuZGF0YS51c2VyZGF0YSA9IDE7CisKKwlydWxlLmZpZWxk
-W1BST1RPX0ZJRUxEXS52YWx1ZS51OCA9IElQUFJPVE9fVENQOworCXJ1bGUuZmllbGRbUFJPVE9f
-RklFTERdLm1hc2tfcmFuZ2UudTggPSAweEZGOworCisJcnVsZS5maWVsZFtTUkNfRklFTERdLnZh
-bHVlLnUzMiA9CisJCXJ0ZV9iZV90b19jcHVfMzIoUlRFX0lQVjQoMTcyLCAxNywgMTY2LCAyMDAp
-KTsKKwlydWxlLmZpZWxkW1NSQ19GSUVMRF0ubWFza19yYW5nZS51MzIgPSAzMjsKKworCXJ1bGUu
-ZmllbGRbRFNUX0ZJRUxEXS52YWx1ZS51MzIgPSAwOworCXJ1bGUuZmllbGRbRFNUX0ZJRUxEXS5t
-YXNrX3JhbmdlLnUzMiA9IDA7CisKKwlydWxlLmZpZWxkW1NQT1JUX0ZJRUxEXS52YWx1ZS51MTYg
-PSAwOworCXJ1bGUuZmllbGRbU1BPUlRfRklFTERdLm1hc2tfcmFuZ2UudTE2ID0gNjU1MzU7CisK
-KwlydWxlLmZpZWxkW0RQT1JUX0ZJRUxEXS52YWx1ZS51MTYgPSAwOworCXJ1bGUuZmllbGRbRFBP
-UlRfRklFTERdLm1hc2tfcmFuZ2UudTE2ID0gNjU1MzU7CisKKwlpZiAocnRlX2FjbF9hZGRfcnVs
-ZXMoY3R4LAorCQkJKHN0cnVjdCBydGVfYWNsX3J1bGUgKikmcnVsZSwgMSkgPCAwKQorCQlydGVf
-ZXhpdChFWElUX0ZBSUxVUkUsICJBQ0wgcnVsZSBhZGQgZmFpbGVkXG4iKTsKKworCXN0cnVjdCBy
-dGVfYWNsX2NvbmZpZyBjZmc7CisJbWVtc2V0KCZjZmcsIDAsIHNpemVvZihjZmcpKTsKKwljZmcu
-bnVtX2NhdGVnb3JpZXMgPSAxOworCWNmZy5udW1fZmllbGRzID0gTlVNX0ZJRUxEUzsKKwltZW1j
-cHkoY2ZnLmRlZnMsIGZpZWxkX2RlZnMsIHNpemVvZihmaWVsZF9kZWZzKSk7CisKKwlpZiAocnRl
-X2FjbF9idWlsZChjdHgsICZjZmcpICE9IDApCisJCXJ0ZV9leGl0KEVYSVRfRkFJTFVSRSwgIkFD
-TCBidWlsZCBmYWlsZWRcbiIpOworCisJUlRFX0xPRyhJTkZPLCBMMkZXRF9BQ0wsICJBQ0wgcmVh
-ZHlcbiIpOworCXJldHVybiBjdHg7Cit9CisKKy8qIC0tLS0tLS0tLS0tLS0tLS0gTUFJTiAtLS0t
-LS0tLS0tLS0tLS0tICovCisKK2ludAorbWFpbihpbnQgYXJnYywgY2hhciAqKmFyZ3YpCit7CisJ
-Zm9yY2VfcXVpdCA9IGZhbHNlOworCXNpZ25hbChTSUdJTlQsIHNpZ25hbF9oYW5kbGVyKTsKKwlz
-aWduYWwoU0lHVEVSTSwgc2lnbmFsX2hhbmRsZXIpOworCisJaW50IHJldCA9IHJ0ZV9lYWxfaW5p
-dChhcmdjLCBhcmd2KTsKKwlpZiAocmV0IDwgMCkKKwkJcnRlX2V4aXQoRVhJVF9GQUlMVVJFLCAi
-RUFMIGluaXQgZmFpbGVkXG4iKTsKKworCWFyZ2MgLT0gcmV0OworCWFyZ3YgKz0gcmV0OworCisJ
-aWYgKHBhcnNlX2FyZ3MoYXJnYywgYXJndikgPCAwKQorCQlydGVfZXhpdChFWElUX0ZBSUxVUkUs
-ICJJbnZhbGlkIGFyZ3VtZW50c1xuIik7CisKKwlzdHJ1Y3QgcnRlX2FjbF9jdHggKmFjbF9jdHgg
-PSBpbml0X2FjbCgpOworCisJc3RydWN0IHJ0ZV9tZW1wb29sICptcCA9IHJ0ZV9wa3RtYnVmX3Bv
-b2xfY3JlYXRlKAorCQkibWJ1Zl9wb29sIiwgTkJfTUJVRiwgMjU2LCAwLAorCQlSVEVfTUJVRl9E
-RUZBVUxUX0JVRl9TSVpFLCBydGVfc29ja2V0X2lkKCkpOworCisJaWYgKCFtcCkKKwkJcnRlX2V4
-aXQoRVhJVF9GQUlMVVJFLCAibWVtcG9vbCBmYWlsZWRcbiIpOworCisJdWludDE2X3QgcG9ydF9p
-ZDsKKworCVJURV9FVEhfRk9SRUFDSF9ERVYocG9ydF9pZCkgeworCisJCWlmICghKHBvcnRtYXNr
-ICYgKDEgPDwgcG9ydF9pZCkpKQorCQkJY29udGludWU7CisKKwkJc3RydWN0IHJ0ZV9ldGhfY29u
-ZiBjb25mID0gezB9OworCisJCWlmIChydGVfZXRoX2Rldl9jb25maWd1cmUocG9ydF9pZCwgMSwg
-MSwgJmNvbmYpIDwgMCkKKwkJCXJ0ZV9leGl0KEVYSVRfRkFJTFVSRSwgInBvcnQgY29uZmlndXJl
-IGZhaWxlZFxuIik7CisKKwkJaWYgKHJ0ZV9ldGhfcnhfcXVldWVfc2V0dXAocG9ydF9pZCwgMCwg
-MTAyNCwKKwkJCQlydGVfZXRoX2Rldl9zb2NrZXRfaWQocG9ydF9pZCksCisJCQkJTlVMTCwgbXAp
-IDwgMCkKKwkJCXJ0ZV9leGl0KEVYSVRfRkFJTFVSRSwgInJ4IHNldHVwIGZhaWxlZFxuIik7CisK
-KwkJaWYgKHJ0ZV9ldGhfdHhfcXVldWVfc2V0dXAocG9ydF9pZCwgMCwgMTAyNCwKKwkJCQlydGVf
-ZXRoX2Rldl9zb2NrZXRfaWQocG9ydF9pZCksCisJCQkJTlVMTCkgPCAwKQorCQkJcnRlX2V4aXQo
-RVhJVF9GQUlMVVJFLCAidHggc2V0dXAgZmFpbGVkXG4iKTsKKworCQlpZiAocnRlX2V0aF9kZXZf
-c3RhcnQocG9ydF9pZCkgPCAwKQorCQkJcnRlX2V4aXQoRVhJVF9GQUlMVVJFLCAicG9ydCBzdGFy
-dCBmYWlsZWRcbiIpOworCisJCXJ0ZV9ldGhfcHJvbWlzY3VvdXNfZW5hYmxlKHBvcnRfaWQpOwor
-CisJCVJURV9MT0coSU5GTywgTDJGV0RfQUNMLAorCQkJIlN0YXJ0ZWQgcG9ydCAldVxuIiwgcG9y
-dF9pZCk7CisJfQorCisJc3RydWN0IHJ0ZV9tYnVmICpidWZzW0JVUlNUXTsKKworCXdoaWxlICgh
-Zm9yY2VfcXVpdCkgeworCisJCVJURV9FVEhfRk9SRUFDSF9ERVYocG9ydF9pZCkgeworCisJCQlp
-ZiAoIShwb3J0bWFzayAmICgxIDw8IHBvcnRfaWQpKSkKKwkJCQljb250aW51ZTsKKworCQkJdWlu
-dDE2X3QgbmIgPQorCQkJCXJ0ZV9ldGhfcnhfYnVyc3QocG9ydF9pZCwgMCwgYnVmcywgQlVSU1Qp
-OworCisJCQlpZiAoIW5iKQorCQkJCWNvbnRpbnVlOworCisJCQlmb3IgKGludCBpID0gMDsgaSA8
-IG5iOyBpKyspIHsKKworCQkJCXN0cnVjdCBydGVfbWJ1ZiAqbSA9IGJ1ZnNbaV07CisJCQkJc3Ry
-dWN0IHJ0ZV9ldGhlcl9oZHIgKmV0aCA9CisJCQkJCXJ0ZV9wa3RtYnVmX210b2QobSwKKwkJCQkJ
-CXN0cnVjdCBydGVfZXRoZXJfaGRyICopOworCisJCQkJaWYgKGV0aC0+ZXRoZXJfdHlwZSAhPQor
-CQkJCQkJcnRlX2NwdV90b19iZV8xNigKKwkJCQkJCQlSVEVfRVRIRVJfVFlQRV9JUFY0KSkgewor
-CQkJCQlydGVfcGt0bWJ1Zl9mcmVlKG0pOworCQkJCQljb250aW51ZTsKKwkJCQl9CisKKwkJCQlz
-dHJ1Y3QgcnRlX2lwdjRfaGRyICppcCA9CisJCQkJCShzdHJ1Y3QgcnRlX2lwdjRfaGRyICopKGV0
-aCArIDEpOworCisJCQkJc3RydWN0IHBrdF9rZXkga2V5ID0gezB9OworCQkJCWtleS5wcm90byA9
-IGlwLT5uZXh0X3Byb3RvX2lkOworCQkJCWtleS5zcmNfaXAgPSBydGVfYmVfdG9fY3B1XzMyKGlw
-LT5zcmNfYWRkcik7CisJCQkJa2V5LmRzdF9pcCA9IHJ0ZV9iZV90b19jcHVfMzIoaXAtPmRzdF9h
-ZGRyKTsKKworCQkJCXVpbnQ4X3QgKmw0ID0KKwkJCQkJKHVpbnQ4X3QgKilpcCArIChpcC0+aWhs
-ICogNCk7CisKKwkJCQlpZiAoa2V5LnByb3RvID09IElQUFJPVE9fVENQKSB7CisJCQkJCXN0cnVj
-dCBydGVfdGNwX2hkciAqdGNwID0KKwkJCQkJCShzdHJ1Y3QgcnRlX3RjcF9oZHIgKilsNDsKKwkJ
-CQkJa2V5LnNyY19wb3J0ID0KKwkJCQkJCXJ0ZV9iZV90b19jcHVfMTYodGNwLT5zcmNfcG9ydCk7
-CisJCQkJCWtleS5kc3RfcG9ydCA9CisJCQkJCQlydGVfYmVfdG9fY3B1XzE2KHRjcC0+ZHN0X3Bv
-cnQpOworCQkJCX0gZWxzZSBpZiAoa2V5LnByb3RvID09IElQUFJPVE9fVURQKSB7CisJCQkJCXN0
-cnVjdCBydGVfdWRwX2hkciAqdWRwID0KKwkJCQkJCShzdHJ1Y3QgcnRlX3VkcF9oZHIgKilsNDsK
-KwkJCQkJa2V5LnNyY19wb3J0ID0KKwkJCQkJCXJ0ZV9iZV90b19jcHVfMTYodWRwLT5zcmNfcG9y
-dCk7CisJCQkJCWtleS5kc3RfcG9ydCA9CisJCQkJCQlydGVfYmVfdG9fY3B1XzE2KHVkcC0+ZHN0
-X3BvcnQpOworCQkJCX0KKworCQkJCWNvbnN0IHVpbnQ4X3QgKmRhdGFbMV0gPSB7CisJCQkJCShj
-b25zdCB1aW50OF90ICopJmtleSwKKwkJCQl9OworCQkJCXVpbnQzMl90IHJlc1sxXTsKKworCQkJ
-CXJ0ZV9hY2xfY2xhc3NpZnkoYWNsX2N0eCwgZGF0YSwgcmVzLCAxLCAxKTsKKworCQkJCWlmIChy
-ZXNbMF0pCisJCQkJCXJ0ZV9ldGhfdHhfYnVyc3QocG9ydF9pZCwgMCwgJm0sIDEpOworCQkJCWVs
-c2UKKwkJCQkJcnRlX3BrdG1idWZfZnJlZShtKTsKKwkJCX0KKwkJfQorCX0KKworCXJldHVybiAw
-OworfQpkaWZmIC0tZ2l0IGEvZXhhbXBsZXMvbDJmd2RfYWNsL21lc29uLmJ1aWxkIGIvZXhhbXBs
-ZXMvbDJmd2RfYWNsL21lc29uLmJ1aWxkCm5ldyBmaWxlIG1vZGUgMTAwNjQ0CmluZGV4IDAwMDAw
-MDAwMDAuLjMzMWRkNTQ1ZTkKLS0tIC9kZXYvbnVsbAorKysgYi9leGFtcGxlcy9sMmZ3ZF9hY2wv
-bWVzb24uYnVpbGQKQEAgLTAsMCArMSwzIEBACitzb3VyY2VzID0gZmlsZXMoJ21haW4uYycpCisK
-K2RlcHMgKz0gWydhY2wnLCAnZXRoZGV2JywgJ21idWYnLCAnbmV0J10KLS0gCjIuNDMuMAoK
---0000000000002c3672064b7a2252--
