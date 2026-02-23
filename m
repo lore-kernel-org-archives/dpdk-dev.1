@@ -2,71 +2,147 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F98AEC1127
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 19:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E3FEEC28C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Feb 2026 21:42:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3B59D4025E;
-	Mon, 23 Feb 2026 20:35:28 +0100 (CET)
-Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
- by mails.dpdk.org (Postfix) with ESMTP id 5EDAB400EF
- for <dev@dpdk.org>; Mon, 23 Feb 2026 20:35:27 +0100 (CET)
-Received: by mail-dl1-f49.google.com with SMTP id
- a92af1059eb24-1271195d2a7so381170c88.0
- for <dev@dpdk.org>; Mon, 23 Feb 2026 11:35:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771875326;
- x=1772480126; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=VUK4uGhH6J2x/kwJf1Jn4hIcSUa7wchQQdY7DGuRGTw=;
- b=fl+c5m45+lCY914Mh/RE/BRD7GcArDlM0iijmAzniXmMnYL2PMxiYAkbNSzhp4Q+ZK
- tMqSOGPZxnLaC4OFCsCoLp7PSv9DKeuWA964ss1z3iusbGJXYTg1lkAOgkER7cNMooaF
- NgmzxBeaDMkghV29qBhb3pxpNMC5zzj09P4Ue5mK9lXQuafookEU/g8WZAbh9pIEVy3L
- psBMVQSp0ifXl1+l7E8UsW/0/hy23pvzvZqfwCMxxBsnaJQDlwnMpkHBTVw9obSHCt+y
- lr1drM1w6pLkSZxJWNmMupgttKkFxd14A/hfMk0oWhDC7x/Sf7yMpx13qphwsJavPOgd
- gvDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771875326; x=1772480126;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=VUK4uGhH6J2x/kwJf1Jn4hIcSUa7wchQQdY7DGuRGTw=;
- b=ZeO3T+xR5jIHWm8700TiA7MVePg3Th9HflTsmRSiutN/l3s1QMpW+KvM0xFCeBHsJd
- STVwa1fjmfKElllE2Wi9ZJygeCH1JaWGWMOWj4PKtG2rSLBAEWpgJ+xU4E4YNRGZcei2
- XW5PTJFl0QQ/+wjRZG1hbCl7yKQjvZ617GKB400jBmv+g0kD+1iMiUo/G94sCbodDCt5
- 76SHdrUodjfmyDgMQP+4MvUO8jgYSmUjbgeuDZjte6olSQtyE8Fo+uu0NFGABBT/O9Z4
- WXJpIJv07BqcDUfhzVWqyeaeofLyr7bs6lOOXLUCiJDHFdp/tFhWAjovViH6mrn5GEDT
- oyuw==
-X-Gm-Message-State: AOJu0YzbwVxIw0zjD+Qe1Aaj4/cpZLlNbUTzZ2xPH5FNZDE1TJqThoRp
- PBCFQudPuGYaRswS2AtgiKBI5eyD4Ef00vHFg/7pmXnYKpGCL2ZDtoqYCLpHCKvQ3ED01vgiFgf
- FiOCU
-X-Gm-Gg: AZuq6aLi3t70r6cZZwoTMqykLB1CwHt3lnr5dmDxjrp8UCVwQhxMARDEuncN1qlLKL4
- gJFJEsiH0mfGiV8QfubZTG0scAP5qXElDyDTzcFSve+liiLzkksE4KJilA6KgVNohyvE6fvf2JQ
- knaNj43kyGc8aBoqbMmctuZfXesj5to8qTfxaJKQs3tLnzkaHe47HuQLtd146k1AlDU85DorPdm
- N0qGMHFtG6bbsHa+kzZWrxlAO6VQ3XaDkvpY6znNji21h0gZb6dvfGhq+26BuCefVaJgXkYnIZp
- z53pukO+L67R96flr5Rg4Te06+JxwVfH5BvSihxHN4CQ6Q6+jqTMR6FMnkrke4fOgn8I00JOq9Q
- 7rrnMjoukhcn9XP4o86si8NMCKa4Fotpvg6tmaUdyXP43ddC6Onw04id8kPnsETBc5QR32pgcOD
- V1lrYtt9qNwXOcqGpuC6zPSjZ9Z0YpZuRWfJKaaHa1pfzIbR+tGbeRlAm8jAWvRw==
-X-Received: by 2002:a05:7022:f83:b0:11a:3a1c:6c5c with SMTP id
- a92af1059eb24-1276acb316cmr4771931c88.3.1771875325933; 
- Mon, 23 Feb 2026 11:35:25 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1276af102d9sm7821624c88.1.2026.02.23.11.35.24
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Feb 2026 11:35:25 -0800 (PST)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Marat Khalili <marat.khalili@huawei.com>
-Subject: [RFC] bpf/arm64: add BPF_ABS/BPF_IND packet load support
-Date: Mon, 23 Feb 2026 11:34:34 -0800
-Message-ID: <20260223193522.323100-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
+	by mails.dpdk.org (Postfix) with ESMTP id 000B3402D8;
+	Mon, 23 Feb 2026 22:42:49 +0100 (CET)
+Received: from CO1PR03CU002.outbound.protection.outlook.com
+ (mail-westus2azon11020128.outbound.protection.outlook.com [52.101.46.128])
+ by mails.dpdk.org (Postfix) with ESMTP id BFDF8400EF;
+ Mon, 23 Feb 2026 22:42:47 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SpuuKGiewY5wqPDpt9bt4biT5zol7198XxOLdQP6P+bm2T6SD3umByomGDpALP1CMNaE5tQYOQbZq36vUtWJemsNmOFWUp8KBmgIOnPMhj4k7Be6w6ZcT1C2fDVuzOR9y/uuhMBhhcv24YqEvsBI12VD0oNC8eB04OL0JnqgGAZUvn7uqsFgYQHR43ZEBAlINLlfcj4zST2fe/q1wJU1Coc1eQ2suVYFw3oq8komVguFpoJNS/kOv5pDSCcJexdTfCAuvFftWOMHzsXT3QQkCkdRsW4oT7Mv7GeT7//85cGCouIOlhYdxT0w6aL/MZ8MA2Wa2kPNB+bThgtz+WIZ5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CJP+SrKlAEwQbuE+JV3FnJ9pz5fKfB4MEKJOV1lb27o=;
+ b=Jfa6OD5HVPhXIA+SIDQkntKnsec66AKEZvdzlCzJrp5hGgIJlkmULDYDIIPcsZSwt3rnrJzzkp354uez4E8EchbPRLmRZT8OeDx2YljuzRXaI91KxZuc2szZHxJE3GQ6R6FjHFudsnNzX6Yzr3yuDxf+HKCDOcRzAqvA/dhGbRy5CjOv/PbhH9pdzpLTYgztLtKbQi1MxDxZfiyqbObBvBzdXL4qIJxroi7dL4JhtJ0fxxrzJrdY6kU2Uegm2jTjDCh/frOUUUTVahxR3vIYxMg821J+7uKG1zTYxdZqSyzxDvsGU6NfqFVUjDmyerO3RLzBoBl7MRehzVQYj7jvng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CJP+SrKlAEwQbuE+JV3FnJ9pz5fKfB4MEKJOV1lb27o=;
+ b=NdyZRSU2a5+IeijAsS65cE4xhc7GXAQxHpBpwlb2hNIvA40Y3frQIctYGpECcZ/uD7OHVBj0NH5WcACK/T2LNtW3t/rcljOs1waTGLnpjmr9Py8+ZIu4UMSz16oMBvMbk2m0VtQueKZ3uAhK6cR25K3Aq23PSAML2kBtMJY5nFw=
+Received: from DS3PR21MB5735.namprd21.prod.outlook.com (2603:10b6:8:2e0::20)
+ by DS4PR21MB6284.namprd21.prod.outlook.com (2603:10b6:8:308::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.0; Mon, 23 Feb
+ 2026 21:42:45 +0000
+Received: from DS3PR21MB5735.namprd21.prod.outlook.com
+ ([fe80::a3f4:6107:de7c:5925]) by DS3PR21MB5735.namprd21.prod.outlook.com
+ ([fe80::a3f4:6107:de7c:5925%5]) with mapi id 15.20.9654.007; Mon, 23 Feb 2026
+ 21:42:45 +0000
+From: Long Li <longli@microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "stable@dpdk.org" <stable@dpdk.org>, Matan Azrad <matan@nvidia.com>
+Subject: RE: [EXTERNAL] Re: [RFC] net/vdev_netvsc: check for NetVSC device
+ before auto-probe
+Thread-Topic: [EXTERNAL] Re: [RFC] net/vdev_netvsc: check for NetVSC device
+ before auto-probe
+Thread-Index: AQHcpEavzlNbZvRdU0qrElmj4yBvvbWQ0PHw
+Date: Mon, 23 Feb 2026 21:42:45 +0000
+Message-ID: <DS3PR21MB5735AEF2A98A5E9D57F508D8CE77A@DS3PR21MB5735.namprd21.prod.outlook.com>
+References: <20260222204813.773962-1-stephen@networkplumber.org>
+ <20260222140034.3675188e@phoenix.local>
+In-Reply-To: <20260222140034.3675188e@phoenix.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=7aa3709c-997a-4384-9918-baeb2fb0f029;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-02-23T21:38:28Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS3PR21MB5735:EE_|DS4PR21MB6284:EE_
+x-ms-office365-filtering-correlation-id: a4bcec2e-de9f-4a47-3895-08de73247b23
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|376014|366016|1800799024|38070700021;
+x-microsoft-antispam-message-info: =?us-ascii?Q?fY3JjgjzTo9Sz3hKnCV87goMJpl6E2D2wLokFUq96nMKFGmvmMUdn1MI6Rbo?=
+ =?us-ascii?Q?sx0JSieNIoY0dj2v54rwwUYS1qZlkk9YEwPlxffQr8n6DJbDPPBOkm//V+wy?=
+ =?us-ascii?Q?q3qALTghqdbsdttzA5v+G73OPY5Vgh9WZj4vA6H5JmS6qmZaYhm2r+Vd0lpu?=
+ =?us-ascii?Q?0j0G/D0oYohCQnyspYxKNp+XV4rk0JcUwVnvTbQkeJvOOYP9SYAFYaY5Bkzy?=
+ =?us-ascii?Q?X2GgVPxrICSwrsrXiOOwrY9Q44v/oWytTXbrvm7B6o76N9OL1LPEg8xHjBso?=
+ =?us-ascii?Q?MSD0CZC+hqp+C/pImCWc1Hgk9MEYqdzHFzWNFPyB+mjeOfrwsvaTehkv3f+t?=
+ =?us-ascii?Q?rzYgAH5uiGXDGSEt6v6g3Dcy1XXPwunri9xx9x/xvepU743HnsCC9jRAlCuU?=
+ =?us-ascii?Q?dZP6AldUgU5SsQPMjmhB07sYEjJK0KvzdENMp0utrddckb9KDQ5i4C3v4Rut?=
+ =?us-ascii?Q?g0+KACScLQu5sDS6ZSN2Q+9pkBhIGh2SxrOWnAoRydlQX0Ysd2MXiIeXT75Y?=
+ =?us-ascii?Q?8kP0jOvlYawENOGYJ9waVoA/Gk4kBp0Fk9+joujnZ/NvT7wsX/1pz9o/2K4K?=
+ =?us-ascii?Q?N5AL868k+d1Bn2qi9+VK+P+nkTAi3O5qMWtjp/Iy0BsD+x7wcKWyPQWo4yDf?=
+ =?us-ascii?Q?K7J33+w6tPZ+CE8MF0fbj3KsiomXN0tZciaPm6cS65TiPuN8NFpcRjae2QrH?=
+ =?us-ascii?Q?ZB0uhU6ktRxPzhA3Cpx/Ov+jRJBW6oGygtTRly4C8CxZ2D76L8agDUaWWj5e?=
+ =?us-ascii?Q?DYINm7JoKNW/jztnadjKqWyWGAxLwRFCNYWUbfC4zk0f3HlmHTG1UIIEiDJk?=
+ =?us-ascii?Q?CtHU51NFMqzMV3tolMPRHmPJ8A8CbKKKPKPx+dSEkGgF4UYJ2gaSIN4XZsKd?=
+ =?us-ascii?Q?VvZ/xy/UHrDLRfaxvgjTEI0zlwpXFf3Pl06a2lmYVKtyE2wUwWeFuaS2Lsp7?=
+ =?us-ascii?Q?qEMC4XxPbhNvrX+rCV+uHdH5nqjUL6bhbuJzj7TyCFV8+xrhh5y5MOHB0Djx?=
+ =?us-ascii?Q?lpC7wg+hdvWt1ZVutrpg7U7XGvTHmCjzV7NN7vWtAIJ7hMhlV9zQ2fkFy3eP?=
+ =?us-ascii?Q?TmJBD03yER8kTaIJSu+Z4y7V1ark4uEMksg/VKT80WkZO8T84RLjeKhiAjF5?=
+ =?us-ascii?Q?epYAlXdW6njdDfE0LJlXU9uE3gMjjR4lcDMEO7MqJih2BkFCQnDxFacVGeuv?=
+ =?us-ascii?Q?1fVc/gxYChvhaw3nT14XQLiTwTgX8p+Eh217+5UQEefGKCdduJEsVT4yJF4K?=
+ =?us-ascii?Q?tXDlogWsjeQsUn4XxRywb8t7EzJUqIgmseL+my00Oc5z/SmyQHyARDiBkUd6?=
+ =?us-ascii?Q?43zJ8mNohq0dP5YttkdgB+nfkQrHPwlVcoPh6mMTMq58KtA3v2jtkkoRGttR?=
+ =?us-ascii?Q?S4bXvjX0jusZlMAYWAxDv8ij/+xQjrqLTeTJLMO8s5oAV2VJjCZnBDi9BE77?=
+ =?us-ascii?Q?kWQnq9H2/m2sw/VUwPPRhXZPfI5gkhJ2ycgbwopo8VR9asl+IjTJY9hp/1p1?=
+ =?us-ascii?Q?lFvD48c62/2CCJpiJzhEJ3ddQwieFR7s9BrjA+UvjNRQtmKaUq+rz8WYhKsK?=
+ =?us-ascii?Q?BGoeLx1RdOpGZFlTvTvEVRmv1BZ0OJ4WPr+JIxkkR9eavw099/ql/vnTwlpu?=
+ =?us-ascii?Q?GqhR8LnmY1zhiEG0KiysL4s=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS3PR21MB5735.namprd21.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(38070700021); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?cITkxpW2PAfki20BQMOAJmtZsGaZieFRmQLIOVuskoEmv/NTwFKYxSRFFVmc?=
+ =?us-ascii?Q?5f/p7b7XD65oMrCfLIvtBtT/hfKDMLUbeENDzZfMDnJePhjxX2+YOiFUim1/?=
+ =?us-ascii?Q?sGEwSMr+BLzMCU/M8t0oPhkpcFT/Z3cI/6VLhQH0cS0FepIGiEk1sm5e9Py8?=
+ =?us-ascii?Q?GFVhrImrWxGFJcR7qdM2R+MhCB2umEWWHe+NYu11cy7Xl7TR6lBGXHw3hGvJ?=
+ =?us-ascii?Q?ws9tOfsHZpbRTMJBEyESx4Ij0CIoeFGffntRYNZhr34uwlxUGGPJfYUiPq+N?=
+ =?us-ascii?Q?pHvRC9L1krS8A21aXzaH/gfyxS0Eo/2SxXRwjDRgJJGZHem7o/p75ebZBkwd?=
+ =?us-ascii?Q?H+QWM3qyxYsJyDvTYm/8kXcGzaUuCFN7x+9tWVMrJP0tEYr1wSbhfr2sXnZF?=
+ =?us-ascii?Q?z+MQIaz5fLIabrn1wcud7MB0SfO4oD4swfq3abbVdWltgPowl1iBB9PCqPKk?=
+ =?us-ascii?Q?pnArlao7ldooxrDwkwAQ7VXowZrU/4+p7OnTBIIMWX1BGlhtSkJJSD//phsO?=
+ =?us-ascii?Q?RcZLrUaL4i9mIIT4UbeDLLxCojAZK7KALWyjn7dwhvGQx358vwbNzmGyccQr?=
+ =?us-ascii?Q?bJxCA3x8ZSrls7J1RQsWuh/mPl77s4fdK1MhzadbaOAppZMOBkIoveC2vi8b?=
+ =?us-ascii?Q?VshlsV4KY2j9dYDrfnbYRp273PvhrU6vF8zGJfnBTIYCyShtrrxMr8OvtgB+?=
+ =?us-ascii?Q?XXG9B9/Rw96X+8/t31JZvgsotOobdi0qXAk1ReWDISxOOY582swmHCK+aDhd?=
+ =?us-ascii?Q?Z8Ms3Egu+YZcClAsQ3EZm9OEYHD4CSf8gM9D1cZGPUq45UlChK2UZufkMMFh?=
+ =?us-ascii?Q?u2AiPiNWFDwrAYtWhmq4xdZwlFfo14G/7kZg8z0N/dLStfTVTscgQrvyZgEK?=
+ =?us-ascii?Q?o6J7gwfwo36DM4UXS6m2fYe5rvzVsCu/3JpDNaJH65HEzRV5HNlWBjCLbAgs?=
+ =?us-ascii?Q?Qwx+oB3rKzn1JTLVCwERa6ttaFRrgAoYttCsGpfG+VId0pSOLKvSZZ6btA5H?=
+ =?us-ascii?Q?N3s9E6TOAD49MZE/dI6+RrMzEtpnhywDfhxCi7KGDJ9Ih92sQI4dFFOSGgMx?=
+ =?us-ascii?Q?2a0/deF9mQn6t730+5VLim3cIiMe/4ZkdYF4I/eyrvmyc0QR+/UEK5R5Nd7S?=
+ =?us-ascii?Q?kaJPXAW/TCntd2EzxpNypGseYgPpK+Y2RBW7aeC0QyGPGCZX8GaaqZfHUzRN?=
+ =?us-ascii?Q?BYrhgwnbP/FxTDCzPHg0MdhgQeIoYzvG232oIhz+g776yqkTlJeYVijb9xcB?=
+ =?us-ascii?Q?weND/qcHPLtpThc1JPA2/SdLCy1BE3SoQ8jRyuDOSAD5ak/GZptC0as9L3Eb?=
+ =?us-ascii?Q?YDgnLSXnEyT2kqdhNLVEOfC5bjp68RSNdPVcBWXYvc4Isva2hvz8nYP6u3Vp?=
+ =?us-ascii?Q?MUuxJyzZhIjEbqnvO9WpXLOqNqJeJ/wQvCWPsxNIBKibEVG95GmIP1JJ2yB0?=
+ =?us-ascii?Q?wvZfPxipgKqEGEHO8vna6wUs5MAc+mXUXI9Nc1g9VH2LoNAkFPcJzjJlII+h?=
+ =?us-ascii?Q?Nq/BTKmIuUtDTqgPAlhVhR2/Z6wmYXSE5V1S5njJrAUxRc9fhFWlM5NFskpj?=
+ =?us-ascii?Q?3bcxIinTTsNWIfkIDBMxgyc0j17Xr1vXfrD4sl0/3c+UkGf313s+giRNsQ47?=
+ =?us-ascii?Q?4uQ7gXNRDrfBrYpvFVI8Cnemi8aoGibAMBl4L3hpKNYmS6yDJoPoyiSiut5s?=
+ =?us-ascii?Q?CUyMQzv+1Eq2u/aqmMrRKB+i5cMGRERNjBhBx6SAoaf98aDu?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS3PR21MB5735.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4bcec2e-de9f-4a47-3895-08de73247b23
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Feb 2026 21:42:45.4960 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: m52gUAY4bkSWfsYLhp1ylZ4jtMtm4LxqtALbLkXxpa5vsg++ok4nd2pJo168z+qA7QXWwVuwG9KFOSCdSdfjBw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR21MB6284
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,373 +156,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use AI to generate the missing BPF_LD | BPF_ABS and BPF_LD | BPF_IND
-instruction support to the arm64 JIT. These are needed for packet
-data access in programs produced by rte_bpf_convert().
-Without this the JIT rejects converted cBPF programs with "invalid opcode 0x30".
+> Subject: [EXTERNAL] Re: [RFC] net/vdev_netvsc: check for NetVSC device be=
+fore
+> auto-probe
+>=20
+> On Sun, 22 Feb 2026 12:48:13 -0800
+> Stephen Hemminger <stephen@networkplumber.org> wrote:
+>=20
+> > The custom scan callback unconditionally injects net_vdev_netvsc into
+> > the devargs list on any Hyper-V system without checking whether NetVSC
+> > interfaces actually exist. This causes the eal_flags_vdev_opt_autotest
+> > to fail on GitHub Actions runners (which are Azure/Hyper-V VMs)
+> > because the vdev bus probes both the test's intended vdev and the
+> > injected net_vdev_netvsc, which fails to initialize on systems without
+> > NetVSC interfaces.
+> >
+> > Check whether at least one NetVSC interface exists (via the sysfs
+> > class_id check the driver already uses) before adding devargs in the
+> > scan callback.
+> >
+> > Fixes: 56252de779a6 ("net/vdev_netvsc: add automatic probing")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > ---
+>=20
+> This is not sufficient to fix the github problem.
+> The container still has an interface, and cloud-init has given it an addr=
+ess. But it
+> has no route to outside (in container).
+>=20
+> It looks like the whole automagic vdev_netvsc model is so brittle it shou=
+ld be
+> removed.
 
-Uses a fast path for single-segment mbufs and falls back to
-__rte_pktmbuf_read() for multi-segment packets, matching the
-approach used by the x86 JIT.
+Can we set up a default config of not auto probing net_vdev_netvsc? Or some=
+ kind of flags that says a driver should not be auto loaded.
 
-Bugzilla ID: 1427
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- lib/bpf/bpf_jit_arm64.c | 301 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 301 insertions(+)
-
-diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
-index a04ef33a9c..dff101dbba 100644
---- a/lib/bpf/bpf_jit_arm64.c
-+++ b/lib/bpf/bpf_jit_arm64.c
-@@ -3,11 +3,13 @@
-  */
- 
- #include <errno.h>
-+#include <stddef.h>
- #include <stdbool.h>
- #include <stdlib.h>
- 
- #include <rte_common.h>
- #include <rte_byteorder.h>
-+#include <rte_mbuf.h>
- 
- #include "bpf_impl.h"
- 
-@@ -43,6 +45,7 @@ struct a64_jit_ctx {
- 	uint32_t program_start;   /* Program index, Just after prologue */
- 	uint32_t program_sz;      /* Program size. Found in first pass */
- 	uint8_t foundcall;        /* Found EBPF_CALL class code in eBPF pgm */
-+	uint8_t foundldmbuf;      /* Found BPF_ABS/BPF_IND in eBPF pgm */
- };
- 
- static int
-@@ -1137,12 +1140,293 @@ check_program_has_call(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
- 		switch (op) {
- 		/* Call imm */
- 		case (BPF_JMP | EBPF_CALL):
-+		/*
-+		 * BPF_ABS/BPF_IND instructions may need to call
-+		 * __rte_pktmbuf_read() in the slow path, so treat
-+		 * them as having a call for register save purposes.
-+		 */
-+		case (BPF_LD | BPF_ABS | BPF_B):
-+		case (BPF_LD | BPF_ABS | BPF_H):
-+		case (BPF_LD | BPF_ABS | BPF_W):
-+		case (BPF_LD | BPF_IND | BPF_B):
-+		case (BPF_LD | BPF_IND | BPF_H):
-+		case (BPF_LD | BPF_IND | BPF_W):
- 			ctx->foundcall = 1;
-+			ctx->foundldmbuf = 1;
- 			return;
- 		}
- 	}
- }
- 
-+/*
-+ * Emit SUBS (extended register) for comparing with zero-extended halfword.
-+ * Used to compare: data_len - offset against size.
-+ * CMP (imm): SUBS Xd, Xn, #imm
-+ */
-+static void
-+emit_cmp_imm(struct a64_jit_ctx *ctx, bool is64, uint8_t rn, uint16_t imm12)
-+{
-+	uint32_t insn, imm;
-+	int32_t simm;
-+
-+	imm = mask_imm(12, imm12);
-+	simm = (int32_t)imm12;
-+	insn = RTE_SHIFT_VAL32(is64, 31);
-+	insn |= RTE_SHIFT_VAL32(1, 30); /* SUB */
-+	insn |= RTE_SHIFT_VAL32(1, 29); /* set flags */
-+	insn |= UINT32_C(0x11000000);
-+	insn |= A64_ZR; /* Rd = ZR for CMP */
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
-+	insn |= RTE_SHIFT_VAL32(imm, 10);
-+
-+	emit_insn(ctx, insn, check_reg(rn) || check_imm(12, simm));
-+}
-+
-+/*
-+ * Emit a load from [rn + unsigned immediate offset].
-+ * LDR (unsigned offset): size determined by sz parameter.
-+ */
-+static void
-+emit_ldr_uimm(struct a64_jit_ctx *ctx, uint8_t sz, uint8_t rt, uint8_t rn,
-+	       uint16_t uimm)
-+{
-+	uint32_t insn, scale, imm;
-+	int32_t simm;
-+
-+	/* Determine scale from BPF size encoding */
-+	if (sz == BPF_B)
-+		scale = 0;
-+	else if (sz == BPF_H)
-+		scale = 1;
-+	else if (sz == BPF_W)
-+		scale = 2;
-+	else /* EBPF_DW */
-+		scale = 3;
-+
-+	/* imm12 is the offset divided by the access size */
-+	imm = uimm >> scale;
-+	simm = (int32_t)imm;
-+
-+	insn = RTE_SHIFT_VAL32(scale, 30);
-+	insn |= UINT32_C(0x39400000); /* LDR (unsigned offset) base */
-+	insn |= RTE_SHIFT_VAL32(mask_imm(12, imm), 10);
-+	insn |= RTE_SHIFT_VAL32(rn, 5);
-+	insn |= rt;
-+
-+	emit_insn(ctx, insn, check_reg(rt) || check_reg(rn) ||
-+		  check_imm(12, simm) || check_ls_sz(sz));
-+}
-+
-+/*
-+ * Emit code for BPF_LD | BPF_ABS and BPF_LD | BPF_IND packet loads.
-+ *
-+ * These instructions load data from the packet referenced by the mbuf
-+ * pointer implicitly held in EBPF_REG_6. The algorithm mirrors the
-+ * inline rte_pktmbuf_read():
-+ *
-+ *   fast path (single-segment, contiguous):
-+ *     off = imm               (BPF_ABS)
-+ *     off = src_reg + imm     (BPF_IND)
-+ *     if (off + size <= mbuf->data_len)
-+ *         R0 = *(type *)(mbuf->buf_addr + mbuf->data_off + off)
-+ *         R0 = bswap(R0)    // network to host byte order
-+ *     else goto slow_path
-+ *
-+ *   slow path (multi-segment or out-of-bounds):
-+ *     ptr = __rte_pktmbuf_read(mbuf, off, size, tmp_buf_on_stack)
-+ *     if (ptr == NULL) goto exit
-+ *     R0 = *(type *)ptr
-+ *     R0 = bswap(R0)
-+ */
-+static void
-+emit_ld_mbuf(struct a64_jit_ctx *ctx, uint8_t op, uint8_t src,
-+	     int32_t imm, uint8_t tmp1, uint8_t tmp2)
-+{
-+	uint8_t r0, r6;
-+	uint8_t mode, opsz;
-+	uint32_t sz;
-+	int32_t exit_off;
-+
-+	r0 = ebpf_to_a64_reg(ctx, EBPF_REG_0);
-+	r6 = ebpf_to_a64_reg(ctx, EBPF_REG_6);
-+
-+	mode = BPF_MODE(op);
-+	opsz = BPF_SIZE(op);
-+	sz = bpf_size(opsz);
-+
-+	/*
-+	 * Compute the packet offset in tmp1.
-+	 * BPF_ABS: off = imm
-+	 * BPF_IND: off = src_reg + imm
-+	 */
-+	emit_mov_imm(ctx, 1, tmp1, imm);
-+	if (mode == BPF_IND)
-+		emit_add(ctx, 1, tmp1, src);
-+
-+	/*
-+	 * Fast path: check if access is within the first segment.
-+	 * Load mbuf->data_len (uint16_t) into tmp2.
-+	 */
-+	emit_ldr_uimm(ctx, BPF_H, tmp2, r6,
-+		       offsetof(struct rte_mbuf, data_len));
-+	/* Zero-extend tmp2 to 64-bit (data_len is 16-bit) */
-+	emit_bitfield(ctx, 1, tmp2, tmp2, 0, 15, A64_UBFM);
-+
-+	/* tmp2 = data_len - off */
-+	emit_sub(ctx, 1, tmp2, tmp1);
-+
-+	/*
-+	 * If data_len - off < sz, the access extends beyond the first
-+	 * segment. Branch to the slow path.
-+	 * CMP tmp2, #sz; B.LT slow_path
-+	 *
-+	 * The slow path is a fixed number of instructions ahead.
-+	 * Fast path remaining instructions (counted below):
-+	 *   emit_ldr_uimm  (buf_addr)    1
-+	 *   emit_ldr_uimm  (data_off)    1
-+	 *   emit_bitfield  (zext)        1
-+	 *   emit_add       (+ data_off)  1
-+	 *   emit_add       (+ off)       1
-+	 *   emit_ldr       (load value)  1
-+	 *   emit_rev / emit_zero_extend  1 or 2 (max 2)
-+	 *   emit_b         (skip slow)   1
-+	 * Total fast path after branch: max 9 instructions
-+	 *
-+	 * We branch forward to the slow path start.
-+	 * Calculate as: the b_cond instruction itself is at current idx,
-+	 * then 9 instructions of fast path follow, so slow path starts
-+	 * at +10 from the b_cond (but b_cond offset is in instructions
-+	 * relative to itself, so +10).
-+	 *
-+	 * Use B.LT for signed comparison: if data_len < off, tmp2 went
-+	 * negative so this catches both insufficient length and negative
-+	 * offset results.
-+	 */
-+	emit_cmp_imm(ctx, 1, tmp2, sz);
-+	/* Count of fast path instructions to skip: varies by byte-swap */
-+	{
-+		/*
-+		 * For BPF_B: no swap needed, just zero_extend 64 = nop
-+		 * For BPF_H: rev16 + zero_extend = 2 insns
-+		 * For BPF_W: rev32 = 1 insn
-+		 * To simplify, use a fixed forward offset.
-+		 * Fast path body: 6 insns (load ptr computation + ldr) +
-+		 * swap (0 for B, 2 for H, 1 for W) + 1 branch = 7..9
-+		 *
-+		 * Use the two-pass approach: first pass calculates offsets,
-+		 * second pass emits. We track the instruction index.
-+		 */
-+		uint32_t fast_start, fast_end, slow_start, slow_end;
-+
-+		fast_start = ctx->idx;
-+
-+		/* Placeholder: emit B.LT with a dummy offset (will be fixed) */
-+		emit_b_cond(ctx, A64_LT, 0);
-+
-+		/* === Fast path body === */
-+
-+		/* Load buf_addr (void *, 8 bytes at offset 0) into r0 */
-+		emit_ldr_uimm(ctx, EBPF_DW, r0, r6,
-+			       offsetof(struct rte_mbuf, buf_addr));
-+
-+		/* Load data_off (uint16_t) into tmp2 */
-+		emit_ldr_uimm(ctx, BPF_H, tmp2, r6,
-+			       offsetof(struct rte_mbuf, data_off));
-+		/* Zero-extend data_off to 64-bit */
-+		emit_bitfield(ctx, 1, tmp2, tmp2, 0, 15, A64_UBFM);
-+
-+		/* r0 = buf_addr + data_off */
-+		emit_add(ctx, 1, r0, tmp2);
-+		/* r0 = buf_addr + data_off + off */
-+		emit_add(ctx, 1, r0, tmp1);
-+
-+		/* Load the actual value: r0 = *(size *)r0 */
-+		emit_mov_imm(ctx, 1, tmp2, 0);
-+		emit_ldr(ctx, opsz, r0, r0, tmp2);
-+
-+		/* Byte-swap from network order to host order */
-+		if (opsz == BPF_H)
-+			emit_rev(ctx, r0, 16);
-+		else if (opsz == BPF_W)
-+			emit_rev(ctx, r0, 32);
-+		/* BPF_B: no swap needed */
-+
-+		/* Skip the slow path */
-+		emit_b(ctx, 0); /* placeholder */
-+		fast_end = ctx->idx;
-+
-+		/* === Slow path === */
-+		slow_start = ctx->idx;
-+
-+		/*
-+		 * Call __rte_pktmbuf_read(mbuf, off, len, buf).
-+		 * ARM64 calling convention: R0-R3 are arguments.
-+		 * R0 = mbuf (EBPF_REG_6)
-+		 * R1 = off (tmp1)
-+		 * R2 = len (sz)
-+		 * R3 = buf (stack pointer, we use current SP as temp buf)
-+		 *
-+		 * The caller-save EBPF registers R1-R5 are scratch anyway
-+		 * for BPF_ABS/BPF_IND instructions per the BPF spec.
-+		 */
-+
-+		/* R0 = mbuf */
-+		emit_mov_64(ctx, A64_R(0), r6);
-+		/* R1 = off (already in tmp1, move to A64_R(1)) */
-+		emit_mov_64(ctx, A64_R(1), tmp1);
-+		/* R2 = size */
-+		emit_mov_imm(ctx, 0, A64_R(2), sz);
-+		/* R3 = address of temp buffer on the stack (use SP) */
-+		emit_mov_64(ctx, A64_R(3), A64_SP);
-+
-+		/* Call __rte_pktmbuf_read */
-+		emit_mov_imm(ctx, 1, tmp2, (uint64_t)__rte_pktmbuf_read);
-+		emit_blr(ctx, tmp2);
-+
-+		/* Check return value: if NULL, exit with 0 */
-+		/* R0 has the return value (pointer or NULL) */
-+		emit_cbnz(ctx, 1, A64_R(0), 3);
-+		emit_mov_imm(ctx, 1, r0, 0);
-+		exit_off = (ctx->program_start + ctx->program_sz) - ctx->idx;
-+		emit_b(ctx, exit_off);
-+
-+		/* Load value from returned pointer */
-+		emit_mov_imm(ctx, 1, tmp2, 0);
-+		emit_ldr(ctx, opsz, A64_R(0), A64_R(0), tmp2);
-+
-+		/* Byte-swap from network order to host order */
-+		if (opsz == BPF_H)
-+			emit_rev(ctx, A64_R(0), 16);
-+		else if (opsz == BPF_W)
-+			emit_rev(ctx, A64_R(0), 32);
-+		/* BPF_B: no swap needed */
-+
-+		/* Move result to EBPF R0 register */
-+		emit_mov_64(ctx, r0, A64_R(0));
-+
-+		slow_end = ctx->idx;
-+
-+		/*
-+		 * Now fix up the forward branches that were emitted with
-+		 * placeholder offsets. We re-emit them with correct offsets.
-+		 *
-+		 * The B.LT at fast_start should jump to slow_start.
-+		 * The B at fast_end-1 should jump to slow_end.
-+		 */
-+		if (ctx->ins != NULL) {
-+			/* Fix B.LT: offset from fast_start to slow_start */
-+			ctx->idx = fast_start;
-+			emit_b_cond(ctx, A64_LT,
-+				    (int32_t)(slow_start - fast_start));
-+
-+			/* Fix B: offset from fast_end-1 to slow_end */
-+			ctx->idx = fast_end - 1;
-+			emit_b(ctx, (int32_t)(slow_end - (fast_end - 1)));
-+		}
-+		ctx->idx = slow_end;
-+	}
-+}
-+
- /*
-  * Walk through eBPF code and translate them to arm64 one.
-  */
-@@ -1162,6 +1446,13 @@ emit(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
- 	ctx->idx = 0;
- 	/* arm64 SP must be aligned to 16 */
- 	ctx->stack_sz = RTE_ALIGN_MUL_CEIL(bpf->stack_sz, 16);
-+	/*
-+	 * BPF_ABS/BPF_IND instructions need a temporary buffer on the
-+	 * stack for __rte_pktmbuf_read(). Reserve at least 16 bytes
-+	 * (aligned) below the BPF stack for this purpose.
-+	 */
-+	if (ctx->foundldmbuf && ctx->stack_sz == 0)
-+		ctx->stack_sz = 16;
- 	tmp1 = ebpf_to_a64_reg(ctx, TMP_REG_1);
- 	tmp2 = ebpf_to_a64_reg(ctx, TMP_REG_2);
- 	tmp3 = ebpf_to_a64_reg(ctx, TMP_REG_3);
-@@ -1338,6 +1629,16 @@ emit(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
- 			emit_mov_imm(ctx, 1, dst, u64);
- 			i++;
- 			break;
-+		/* R0 = ntoh(*(size *)(mbuf->pkt_data + imm)) */
-+		case (BPF_LD | BPF_ABS | BPF_B):
-+		case (BPF_LD | BPF_ABS | BPF_H):
-+		case (BPF_LD | BPF_ABS | BPF_W):
-+		/* R0 = ntoh(*(size *)(mbuf->pkt_data + src + imm)) */
-+		case (BPF_LD | BPF_IND | BPF_B):
-+		case (BPF_LD | BPF_IND | BPF_H):
-+		case (BPF_LD | BPF_IND | BPF_W):
-+			emit_ld_mbuf(ctx, op, src, imm, tmp1, tmp2);
-+			break;
- 		/* *(size *)(dst + off) = src */
- 		case (BPF_STX | BPF_MEM | BPF_B):
- 		case (BPF_STX | BPF_MEM | BPF_H):
--- 
-2.51.0
-
+Most customers are running "vdev" arguments to load them in their DPDK appl=
+ication.
