@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495FAEFB810
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 07:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D21EFB810
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 07:27:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC53A4027F;
-	Tue, 24 Feb 2026 08:26:59 +0100 (CET)
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
- [113.46.200.222])
- by mails.dpdk.org (Postfix) with ESMTP id A4B4D400D5
- for <dev@dpdk.org>; Tue, 24 Feb 2026 08:26:58 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D7BD9402E8;
+	Tue, 24 Feb 2026 08:27:02 +0100 (CET)
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
+ [113.46.200.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 43896400D5
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 08:26:59 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=f3PfmtzTSmy7sFzAm65n8BQXIysrP0iMyVVOWYY4zVw=;
- b=TSDUJ5M3vUnILUwyj9SKbOK5/jvG6Tozl6NMy4IQys/s5QRJZVwJ2Ss/1KwsixccaDP+zFoO7
- 56M0/cI6x178KSiF7WVSZBaex4fVwSYTs3yqjGVSscAu5xZJ3xptAXs4jzpNmKX/IOEn6Au1Rp9
- C+D7HfKzCKLLsLVMQDt7skQ=
+ bh=utxug6AO5yx2nbhQd6+S4vY/tGc/X5KGmRp/VswZM3c=;
+ b=Gb4Ib6dNiM6O+5i36AMM7qQVzGKL0UBc+MSDxAUKg7RuyaoYq0Qz3I+Xg5AaBCjAOyQrlVK7k
+ ojq9ujmuxvqSlkQmFZeHZO8xss76faipBDQkFJi9ka882oOvXwgOHVc4r03css2ljVDAPnjVnoL
+ fCH4z8DSCz1WOIJh89ZQkSA=
 Received: from mail.maildlp.com (unknown [172.19.162.92])
- by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4fKq0y0j5SzLlSX;
- Tue, 24 Feb 2026 15:22:10 +0800 (CST)
+ by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4fKq0w6xX7zmV7j;
+ Tue, 24 Feb 2026 15:22:08 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 277E340568;
+ by mail.maildlp.com (Postfix) with ESMTPS id 06DAB40562;
  Tue, 24 Feb 2026 15:26:56 +0800 (CST)
 Received: from localhost.localdomain (10.50.163.32) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
@@ -30,12 +30,10 @@ Received: from localhost.localdomain (10.50.163.32) by
 From: Chengwen Feng <fengchengwen@huawei.com>
 To: <thomas@monjalon.net>, <stephen@networkplumber.org>
 CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>
-Subject: [PATCH 1/2] app/testpmd: check whether start for DCB fwd-tc command
-Date: Tue, 24 Feb 2026 15:26:46 +0800
-Message-ID: <20260224072647.607-2-fengchengwen@huawei.com>
+Subject: [PATCH 0/2] enhance for DCB fwd-tc command
+Date: Tue, 24 Feb 2026 15:26:45 +0800
+Message-ID: <20260224072647.607-1-fengchengwen@huawei.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20260224072647.607-1-fengchengwen@huawei.com>
-References: <20260224072647.607-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.50.163.32]
@@ -54,44 +52,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The 'set dcb fwd_tc xxx' and 'set dcb fwd_tc_cores xxx' commands should
-check whether started forwarding, this patch add it.
+Add two commits for enhancing DCB fwd-tc command.
 
-Fixes: c58bdc7a589c ("app/testpmd: set DCB forwarding TCs")
-Fixes: 945e9be0a803 ("app/testpmd: support multi-cores process one TC")
-Cc: stable@dpdk.org
+Chengwen Feng (2):
+  app/testpmd: check whether start for DCB fwd-tc command
+  app/testpmd: add show DCB fwd-tc command
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- app/test-pmd/cmdline.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ app/test-pmd/cmdline.c                      | 28 ++++++++++++++++++---
+ doc/guides/testpmd_app_ug/testpmd_funcs.rst |  4 ++-
+ 2 files changed, 28 insertions(+), 4 deletions(-)
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index c33c66f327..012a3ad32f 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -6241,6 +6241,10 @@ static void cmd_set_dcb_fwd_tc_parsed(void *parsed_result,
- {
- 	struct cmd_set_dcb_fwd_tc_result *res = parsed_result;
- 	int i;
-+	if (test_done == 0) {
-+		fprintf(stderr, "Please stop forwarding first\n");
-+		return;
-+	}
- 	if (res->tc_mask == 0) {
- 		fprintf(stderr, "TC mask should not be zero!\n");
- 		return;
-@@ -6293,6 +6297,10 @@ static void cmd_set_dcb_fwd_tc_cores_parsed(void *parsed_result,
- 					    __rte_unused void *data)
- {
- 	struct cmd_set_dcb_fwd_tc_cores_result *res = parsed_result;
-+	if (test_done == 0) {
-+		fprintf(stderr, "Please stop forwarding first\n");
-+		return;
-+	}
- 	if (res->tc_cores == 0) {
- 		fprintf(stderr, "Cores per-TC should not be zero!\n");
- 		return;
 -- 
 2.17.1
 
