@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 144C9E9B258
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 12:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24AA5E9B258
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 12:26:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5245240A6B;
-	Tue, 24 Feb 2026 13:24:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5530640B92;
+	Tue, 24 Feb 2026 13:24:33 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 1BFFA4065B
- for <dev@dpdk.org>; Tue, 24 Feb 2026 13:23:59 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id D11084068A
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 13:24:04 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771935840; x=1803471840;
+ t=1771935845; x=1803471845;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=fAtQSHfJaDxmBIR5cr/CCn9Bfkq/DykDdwzl0qyYgJk=;
- b=GjzT4hskITwz36wK0rcwNkK8+ujX6Sjhjwp3sSvznNVdae9T7DftAsAH
- v2PVVyj2w4Qk9GYL4wZjGNlyUtCk821T3RNy0B+9JcuaodBIZPvmKf7x6
- Wep1tt+GcmtIgklgJ0UzlDgKj9pDAFM56kbXNTflQHepH9lqsS8h5DRpR
- 3yAqV+TtCEpex/cnqH9KUORWGm/XViWw7h9Pz+3aTF3M6b18VKM4L44x2
- fl0b2xaYW7hYK0JtP+MBUefWk6SLOQuc6656DffVMyAfA9+NH8Y0M6ynG
- fAJk3AhnZfdpNPeu5W/30zW5d4FVbEOj2IGD7ACX7AQEuwZonjtSDVBk8 g==;
-X-CSE-ConnectionGUID: q67HllzWQ12uVmOWAHTBPA==
-X-CSE-MsgGUID: 5kfMsE94TRyNXZMHTkrvkA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72158132"
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="72158132"
+ bh=WKITX3Fs3abQF5bMmO74jo91dBgRF0L1povID0W4f0I=;
+ b=bG5S3zNl3uBWNc4HJkP388IFWt5PoruEdUD/w7GCA+F+tdi77Y8SrVw/
+ YYAxwO8u94fIS6kZwiKDADoKcrjW0FxKxadS/2Dg82xVg/yCWwrib3pWE
+ Y4ZxULi9Log1nzU36+xMSo9FBmNZcAE0iSBzpYbYZIr1/XRxODpg+eOrv
+ lvzEgAC6SUt/31q4Ja0EnoQL9F0h1WFufZ010pLPKm1M0rOPDCf3FvoLO
+ eX/h0N/4VhfDFqW4rHi+pEZdpAjS+0w5yB+SzQIfhQh8+EL+HUXfknJVO
+ H3jR4/u75P6YaSlggx/UMUj6ZH4KiHBisglSM5O6h4PqHHoQusoemReLL A==;
+X-CSE-ConnectionGUID: Rtndo4WAT+WbUEresjSfFQ==
+X-CSE-MsgGUID: FakoWldkQCaVpfUYw12Arw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72158145"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="72158145"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Feb 2026 04:24:00 -0800
-X-CSE-ConnectionGUID: FYIFTVWMRqSmNkpAo/+xlw==
-X-CSE-MsgGUID: 3uXKBS+vSPWvrJaTywX3UQ==
+ 24 Feb 2026 04:24:05 -0800
+X-CSE-ConnectionGUID: XSAfFYRhRnyqwBIliXwOiQ==
+X-CSE-MsgGUID: gma4IcTQTVigKxTR7BC69A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="243854470"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="243854489"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa001.fm.intel.com with ESMTP; 24 Feb 2026 04:23:59 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 24 Feb 2026 04:24:04 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v8 18/26] net/iavf: avoid rte malloc in VF mailbox for IPsec
-Date: Tue, 24 Feb 2026 12:23:27 +0000
-Message-ID: <47891779856cb56646e7aaf8c0cc61f863a8d0d3.1771935744.git.anatoly.burakov@intel.com>
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v8 23/26] net/ice: avoid rte malloc in RSS RETA operations
+Date: Tue, 24 Feb 2026 12:23:32 +0000
+Message-ID: <ad40f003fc9fb9d977c020f3fb307e0f9a5cb843.1771935744.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771935744.git.anatoly.burakov@intel.com>
  <cover.1771935744.git.anatoly.burakov@intel.com>
@@ -60,227 +60,119 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when calling down into the VF mailbox, IPsec code will use
-rte_malloc to allocate VF message structures. This memory does not need
-to be stored in hugepage memory and the allocation size is pretty small,
-so replace it with regular malloc/free.
+Currently, when updating or querying RSS redirection table (RETA), we
+are using rte_zmalloc followed by an immediate rte_free. This memory does
+not need to be stored in hugepage memory, so replace it with stack
+allocation.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/iavf/iavf_ipsec_crypto.c | 60 ++++++++++------------
- 1 file changed, 28 insertions(+), 32 deletions(-)
+ drivers/net/intel/ice/ice_dcf_ethdev.c |  4 ++--
+ drivers/net/intel/ice/ice_ethdev.c     | 29 ++++++--------------------
+ 2 files changed, 8 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-index 82323b9aa9..fe540e76cb 100644
---- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-+++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
-@@ -467,7 +467,7 @@ iavf_ipsec_crypto_security_association_add(struct iavf_adapter *adapter,
- 	request_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_sa_cfg);
+diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
+index abd7875e7b..388495d69c 100644
+--- a/drivers/net/intel/ice/ice_dcf_ethdev.c
++++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
+@@ -1336,7 +1336,7 @@ ice_dcf_dev_rss_reta_update(struct rte_eth_dev *dev,
+ 		return -EINVAL;
+ 	}
  
--	request = rte_malloc("iavf-sad-add-request", request_len, 0);
-+	request = calloc(1, request_len);
- 	if (request == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -475,7 +475,7 @@ iavf_ipsec_crypto_security_association_add(struct iavf_adapter *adapter,
+-	lut = rte_zmalloc("rss_lut", reta_size, 0);
++	lut = calloc(1, reta_size);
+ 	if (!lut) {
+ 		PMD_DRV_LOG(ERR, "No memory can be allocated");
+ 		return -ENOMEM;
+@@ -1356,7 +1356,7 @@ ice_dcf_dev_rss_reta_update(struct rte_eth_dev *dev,
+ 	ret = ice_dcf_configure_rss_lut(hw);
+ 	if (ret) /* revert back */
+ 		rte_memcpy(hw->rss_lut, lut, reta_size);
+-	rte_free(lut);
++	free(lut);
  
- 	response_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_sa_cfg_resp);
--	response = rte_malloc("iavf-sad-add-response", response_len, 0);
-+	response = calloc(1, response_len);
- 	if (response == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -553,8 +553,8 @@ iavf_ipsec_crypto_security_association_add(struct iavf_adapter *adapter,
- 	else
- 		rc = response->ipsec_data.sa_cfg_resp->sa_handle;
- update_cleanup:
--	rte_free(response);
--	rte_free(request);
-+	free(response);
-+	free(request);
- 
- 	return rc;
+ 	return ret;
  }
-@@ -728,8 +728,7 @@ iavf_ipsec_crypto_inbound_security_policy_add(struct iavf_adapter *adapter,
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 41474b7002..0d6b030536 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -5564,7 +5564,7 @@ ice_rss_reta_update(struct rte_eth_dev *dev,
+ 	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+ 	uint16_t i, lut_size = pf->hash_lut_size;
+ 	uint16_t idx, shift;
+-	uint8_t *lut;
++	uint8_t lut[ICE_AQC_GSET_RSS_LUT_TABLE_SIZE_2K] = {0};
+ 	int ret;
  
- 	request_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_sp_cfg);
--	request = rte_malloc("iavf-inbound-security-policy-add-request",
--				request_len, 0);
-+	request = calloc(1, request_len);
- 	if (request == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -770,8 +769,7 @@ iavf_ipsec_crypto_inbound_security_policy_add(struct iavf_adapter *adapter,
+ 	if (reta_size != ICE_AQC_GSET_RSS_LUT_TABLE_SIZE_128 &&
+@@ -5581,14 +5581,9 @@ ice_rss_reta_update(struct rte_eth_dev *dev,
+ 	/* It MUST use the current LUT size to get the RSS lookup table,
+ 	 * otherwise if will fail with -100 error code.
+ 	 */
+-	lut = rte_zmalloc(NULL,  RTE_MAX(reta_size, lut_size), 0);
+-	if (!lut) {
+-		PMD_DRV_LOG(ERR, "No memory can be allocated");
+-		return -ENOMEM;
+-	}
+ 	ret = ice_get_rss_lut(pf->main_vsi, lut, lut_size);
+ 	if (ret)
+-		goto out;
++		return ret;
  
- 	response_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_sp_cfg_resp);
--	response = rte_malloc("iavf-inbound-security-policy-add-response",
--				response_len, 0);
-+	response = calloc(1, response_len);
- 	if (response == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -792,8 +790,8 @@ iavf_ipsec_crypto_inbound_security_policy_add(struct iavf_adapter *adapter,
- 		rc = response->ipsec_data.sp_cfg_resp->rule_id;
+ 	for (i = 0; i < reta_size; i++) {
+ 		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+@@ -5604,10 +5599,7 @@ ice_rss_reta_update(struct rte_eth_dev *dev,
+ 		pf->hash_lut_size = reta_size;
+ 	}
  
- update_cleanup:
--	rte_free(request);
--	rte_free(response);
-+	free(request);
-+	free(response);
- 
- 	return rc;
+-out:
+-	rte_free(lut);
+-
+-	return ret;
++	return 0;
  }
-@@ -808,7 +806,7 @@ iavf_ipsec_crypto_sa_update_esn(struct iavf_adapter *adapter,
  
- 	request_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_sa_update);
--	request = rte_malloc("iavf-sa-update-request", request_len, 0);
-+	request = calloc(1, request_len);
- 	if (request == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -816,7 +814,7 @@ iavf_ipsec_crypto_sa_update_esn(struct iavf_adapter *adapter,
+ static int
+@@ -5618,7 +5610,7 @@ ice_rss_reta_query(struct rte_eth_dev *dev,
+ 	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+ 	uint16_t i, lut_size = pf->hash_lut_size;
+ 	uint16_t idx, shift;
+-	uint8_t *lut;
++	uint8_t lut[ICE_AQC_GSET_RSS_LUT_TABLE_SIZE_2K] = {0};
+ 	int ret;
  
- 	response_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_resp);
--	response = rte_malloc("iavf-sa-update-response", response_len, 0);
-+	response = calloc(1, response_len);
- 	if (response == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -846,8 +844,8 @@ iavf_ipsec_crypto_sa_update_esn(struct iavf_adapter *adapter,
- 		rc = response->ipsec_data.ipsec_resp->resp;
+ 	if (reta_size != lut_size) {
+@@ -5630,15 +5622,9 @@ ice_rss_reta_query(struct rte_eth_dev *dev,
+ 		return -EINVAL;
+ 	}
  
- update_cleanup:
--	rte_free(request);
--	rte_free(response);
-+	free(request);
-+	free(response);
+-	lut = rte_zmalloc(NULL, reta_size, 0);
+-	if (!lut) {
+-		PMD_DRV_LOG(ERR, "No memory can be allocated");
+-		return -ENOMEM;
+-	}
+-
+ 	ret = ice_get_rss_lut(pf->main_vsi, lut, reta_size);
+ 	if (ret)
+-		goto out;
++		return ret;
  
- 	return rc;
+ 	for (i = 0; i < reta_size; i++) {
+ 		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+@@ -5647,10 +5633,7 @@ ice_rss_reta_query(struct rte_eth_dev *dev,
+ 			reta_conf[idx].reta[shift] = lut[i];
+ 	}
+ 
+-out:
+-	rte_free(lut);
+-
+-	return ret;
++	return 0;
  }
-@@ -905,7 +903,7 @@ iavf_ipsec_crypto_security_policy_delete(struct iavf_adapter *adapter,
  
- 	request_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_sp_destroy);
--	request = rte_malloc("iavf-sp-del-request", request_len, 0);
-+	request = calloc(1, request_len);
- 	if (request == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -913,7 +911,7 @@ iavf_ipsec_crypto_security_policy_delete(struct iavf_adapter *adapter,
- 
- 	response_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_resp);
--	response = rte_malloc("iavf-sp-del-response", response_len, 0);
-+	response = calloc(1, response_len);
- 	if (response == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -944,8 +942,8 @@ iavf_ipsec_crypto_security_policy_delete(struct iavf_adapter *adapter,
- 		return response->ipsec_data.ipsec_status->status;
- 
- update_cleanup:
--	rte_free(request);
--	rte_free(response);
-+	free(request);
-+	free(response);
- 
- 	return rc;
- }
-@@ -962,7 +960,7 @@ iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
- 	request_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_sa_destroy);
- 
--	request = rte_malloc("iavf-sa-del-request", request_len, 0);
-+	request = calloc(1, request_len);
- 	if (request == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -971,7 +969,7 @@ iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
- 	response_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_resp);
- 
--	response = rte_malloc("iavf-sa-del-response", response_len, 0);
-+	response = calloc(1, response_len);
- 	if (response == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -1013,8 +1011,8 @@ iavf_ipsec_crypto_sa_del(struct iavf_adapter *adapter,
- 		rc = -EFAULT;
- 
- update_cleanup:
--	rte_free(response);
--	rte_free(request);
-+	free(response);
-+	free(request);
- 
- 	return rc;
- }
-@@ -1168,7 +1166,7 @@ iavf_ipsec_crypto_device_capabilities_get(struct iavf_adapter *adapter,
- 
- 	request_len = sizeof(struct inline_ipsec_msg);
- 
--	request = rte_malloc("iavf-device-capability-request", request_len, 0);
-+	request = calloc(1, request_len);
- 	if (request == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -1176,8 +1174,7 @@ iavf_ipsec_crypto_device_capabilities_get(struct iavf_adapter *adapter,
- 
- 	response_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_cap);
--	response = rte_malloc("iavf-device-capability-response",
--			response_len, 0);
-+	response = calloc(1, response_len);
- 	if (response == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -1203,8 +1200,8 @@ iavf_ipsec_crypto_device_capabilities_get(struct iavf_adapter *adapter,
- 	memcpy(capability, response->ipsec_data.ipsec_cap, sizeof(*capability));
- 
- update_cleanup:
--	rte_free(response);
--	rte_free(request);
-+	free(response);
-+	free(request);
- 
- 	return rc;
- }
-@@ -1593,7 +1590,7 @@ iavf_ipsec_crypto_status_get(struct iavf_adapter *adapter,
- 
- 	request_len = sizeof(struct inline_ipsec_msg);
- 
--	request = rte_malloc("iavf-device-status-request", request_len, 0);
-+	request = calloc(1, request_len);
- 	if (request == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -1601,8 +1598,7 @@ iavf_ipsec_crypto_status_get(struct iavf_adapter *adapter,
- 
- 	response_len = sizeof(struct inline_ipsec_msg) +
- 			sizeof(struct virtchnl_ipsec_status);
--	response = rte_malloc("iavf-device-status-response",
--			response_len, 0);
-+	response = calloc(1, response_len);
- 	if (response == NULL) {
- 		rc = -ENOMEM;
- 		goto update_cleanup;
-@@ -1628,8 +1624,8 @@ iavf_ipsec_crypto_status_get(struct iavf_adapter *adapter,
- 	memcpy(status, response->ipsec_data.ipsec_status, sizeof(*status));
- 
- update_cleanup:
--	rte_free(response);
--	rte_free(request);
-+	free(response);
-+	free(request);
- 
- 	return rc;
- }
+ static int
 -- 
 2.47.3
 
