@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F14E9B25B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 12:25:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C588BE9B25B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 12:25:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E065A4068A;
-	Tue, 24 Feb 2026 13:24:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D9B4540395;
+	Tue, 24 Feb 2026 13:24:06 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 93DE14060C
- for <dev@dpdk.org>; Tue, 24 Feb 2026 13:23:54 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4D1474060C
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 13:23:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771935835; x=1803471835;
+ t=1771935836; x=1803471836;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=fda2A26vqB1nKmzQfF0mNUfBxMNCyT8g8GXE45afWRk=;
- b=Z4hYx9mDLBIxI1Dzm+WRiZvK8iuwZ1nir3YYvvfc1DoyQuW8t+QoRhI1
- tHkpC+a4UhKv/sePSZxxyXR2CW4KN1QJ3j0tlU7FCehkBKdideZ1pCR+/
- WSHKPGS1j6nUZuwFpXGIMgtjVXoFjV9N/MQeTSdZn++oUvvYKzJuq1nv1
- 8fbJ0wHbjNVAeHifTO6w9p8gy0MtySuoj/GqZ/iOwCl+LZeoh7ASE/Rx/
- F2VObALSzyfXSYjUqkWXD2t0btZ4PTkvX4p486Zoyw8v3NfsxVUDBG969
- uTCIoANJNKQ/Rv47aR9dW7LGpAEmhZQLUR3VKZeSxfvnGKDIQ9BFsH+Xm Q==;
-X-CSE-ConnectionGUID: L6MVu5WhTqKul1Nj0za45g==
-X-CSE-MsgGUID: wyFQvC+kQnK217cTG3c3JQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72158122"
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="72158122"
+ bh=du3qwQx3RAjh/F654aIPhXR47vETZmsxPeYwcf+S82I=;
+ b=i8DQrW3NBXugL0aG8pTXZBK85AM5shYwC9KTprT46mEhPFFCuOW0VEdw
+ +PvDWLsUG9aX+btDPHcWfVgJRH2j1iorXgvoZQPvLW7YGxk0Cf9XLnI3p
+ t5OfpNX69CPOaRi0PsRyWRvD3B8OGE5lRNcgruiciL9n5QNvh/9T8UZJS
+ /KgLKdLBpEoctOP6XIwxexSdMu4zRqEK/la4zjFDu4qQR1eIN6Bji9Lix
+ pi5qkKIIShw6f//3cVemEHLqo0Ne7b9mn4Q5Qh+QnLkKA1aoWF2VSBZSm
+ wdXNhnGdQpUG2T9tjsacWyDaisLu5ORmPGVvpd2ueuvM4P7md5jv9yL6h A==;
+X-CSE-ConnectionGUID: +ly9LIR6SQWNM23hAFeLBQ==
+X-CSE-MsgGUID: Fll4mEjiRGCdtVb0Bls7jQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72158123"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="72158123"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Feb 2026 04:23:54 -0800
-X-CSE-ConnectionGUID: L+i5s9ofSROPZgZkpaGcsw==
-X-CSE-MsgGUID: rMTBPpifS1qQeNx6jq08Sw==
+ 24 Feb 2026 04:23:55 -0800
+X-CSE-ConnectionGUID: 2/ld1+++RoafuxraUHE8Kg==
+X-CSE-MsgGUID: J7oTQXRURRaRypbUENzpwA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="243854450"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="243854453"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa001.fm.intel.com with ESMTP; 24 Feb 2026 04:23:53 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 24 Feb 2026 04:23:54 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v8 12/26] net/i40e: avoid rte malloc in VF resource queries
-Date: Tue, 24 Feb 2026 12:23:21 +0000
-Message-ID: <db1f2f400c639314ac5dadb1d56ed62a630a2046.1771935744.git.anatoly.burakov@intel.com>
+Subject: [PATCH v8 13/26] net/i40e: avoid rte malloc in adminq operations
+Date: Tue, 24 Feb 2026 12:23:22 +0000
+Message-ID: <fa23f104dec6e0830e9e4cf8c8bf85817cf19263.1771935744.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771935744.git.anatoly.burakov@intel.com>
  <cover.1771935744.git.anatoly.burakov@intel.com>
@@ -60,71 +60,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when responding to VF resource queries, we are dynamically
-allocating a temporary buffer with rte_zmalloc followed by an immediate
-rte_free. This memory does not need to be stored in hugepage memory and
-the allocation size is pretty small, so replace it with stack allocation.
+Currently, when processing admin queue messages, we are using rte_zmalloc
+followed by an immediate rte_free. This memory does not need to be stored
+in hugepage memory, so replace it with stack allocation.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/i40e/i40e_pf.c | 26 +++++++-------------------
- 1 file changed, 7 insertions(+), 19 deletions(-)
+ drivers/net/intel/i40e/i40e_ethdev.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_pf.c b/drivers/net/intel/i40e/i40e_pf.c
-index ebe1deeade..08cdd6bc4d 100644
---- a/drivers/net/intel/i40e/i40e_pf.c
-+++ b/drivers/net/intel/i40e/i40e_pf.c
-@@ -309,9 +309,14 @@ static int
- i40e_pf_host_process_cmd_get_vf_resource(struct i40e_pf_vf *vf, uint8_t *msg,
- 					 bool b_op)
- {
--	struct virtchnl_vf_resource *vf_res = NULL;
-+	/* only have 1 VSI by default */
-+	struct {
-+		struct virtchnl_vf_resource vf_res;
-+		struct virtchnl_vsi_resource vsi_res;
-+	} res = {0};
-+	struct virtchnl_vf_resource *vf_res = &res.vf_res;
- 	struct i40e_hw *hw = I40E_PF_TO_HW(vf->pf);
--	uint32_t len = 0;
-+	uint32_t len = sizeof(res);
- 	uint64_t default_hena = I40E_RSS_HENA_ALL;
- 	int ret = I40E_SUCCESS;
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index 672d337d99..cd648285d1 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -6870,14 +6870,11 @@ i40e_dev_handle_aq_msg(struct rte_eth_dev *dev)
+ 	struct i40e_hw *hw = I40E_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	struct i40e_arq_event_info info;
+ 	uint16_t pending, opcode;
++	uint8_t msg_buf[I40E_AQ_BUF_SZ] = {0};
+ 	int ret;
  
-@@ -322,20 +327,6 @@ i40e_pf_host_process_cmd_get_vf_resource(struct i40e_pf_vf *vf, uint8_t *msg,
- 		return ret;
- 	}
- 
--	/* only have 1 VSI by default */
--	len =  sizeof(struct virtchnl_vf_resource) +
--				I40E_DEFAULT_VF_VSI_NUM *
--		sizeof(struct virtchnl_vsi_resource);
--
--	vf_res = rte_zmalloc("i40e_vf_res", len, 0);
--	if (vf_res == NULL) {
--		PMD_DRV_LOG(ERR, "failed to allocate mem");
--		ret = I40E_ERR_NO_MEMORY;
--		vf_res = NULL;
--		len = 0;
--		goto send_msg;
+-	info.buf_len = I40E_AQ_BUF_SZ;
+-	info.msg_buf = rte_zmalloc("msg_buffer", info.buf_len, 0);
+-	if (!info.msg_buf) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate mem");
+-		return;
 -	}
--
- 	if (VF_IS_V10(&vf->version)) /* doesn't support offload negotiate */
- 		vf->request_caps = VIRTCHNL_VF_OFFLOAD_L2 |
- 				   VIRTCHNL_VF_OFFLOAD_VLAN;
-@@ -377,11 +368,8 @@ i40e_pf_host_process_cmd_get_vf_resource(struct i40e_pf_vf *vf, uint8_t *msg,
- 	rte_ether_addr_copy(&vf->mac_addr,
- 		(struct rte_ether_addr *)vf_res->vsi_res[0].default_mac_addr);
++	info.buf_len = sizeof(msg_buf);
++	info.msg_buf = msg_buf;
  
--send_msg:
- 	i40e_pf_host_send_msg_to_vf(vf, VIRTCHNL_OP_GET_VF_RESOURCES,
- 					ret, (uint8_t *)vf_res, len);
--	rte_free(vf_res);
--
- 	return ret;
+ 	pending = 1;
+ 	while (pending) {
+@@ -6913,7 +6910,6 @@ i40e_dev_handle_aq_msg(struct rte_eth_dev *dev)
+ 			break;
+ 		}
+ 	}
+-	rte_free(info.msg_buf);
  }
  
+ static void
 -- 
 2.47.3
 
