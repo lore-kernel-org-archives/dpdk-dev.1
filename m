@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C2DE9B25B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 12:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E85FE9B258
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 12:25:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E1F940696;
-	Tue, 24 Feb 2026 13:24:08 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D35B140A73;
+	Tue, 24 Feb 2026 13:24:09 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 3C26F40647
- for <dev@dpdk.org>; Tue, 24 Feb 2026 13:23:57 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 348234065A
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 13:23:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1771935838; x=1803471838;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=Q0tSkQucXUCXECYI4tHDsQ1rXzzaq4fbICmrELlCfus=;
- b=ineUHtsCdO8+vXqgAFtz+x5n9Q1czLK3IzgPBeNKjRNe+BWtYZ3QDwTG
- XNbFp0xbE5VPLXbS/n3xS/H8pSZhJVR3QqTbm2ZZRnEMSQUVL1EiLB9xb
- jCV5wR14kjxglNnAdVVqDcsAXau4M/JXqU8iTfIxRkZfNV3QrUzZkPC8R
- alRwU2GXYJyHIkwFtuUUX7td/cvCZYuW51gS0G/hogSKwyUF+CmZ6mtDb
- 7umy9IQY9tliIQd/5PmTj+hHJFzrCHf9IVdmxPApR6J8L7+9p7bXQ/FsX
- Fb4GAmQI7slMdV74n4d4gZYLp4kSogH4BX6LQIpV2PovM42u5jAOAphkN Q==;
-X-CSE-ConnectionGUID: vby+ITGDQ9GDZGRKHEr1Iw==
-X-CSE-MsgGUID: v7FhunV6TGOsv0cJHqS+Rg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72158128"
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="72158128"
+ bh=ZgaVFD8pvSce2hm9I5pRrIkN5XF0nSgzJNxXeprTzfE=;
+ b=Ip3qJUU2GmuGBEOgFro3U/UMIrP/z+V0fr7wKNU6bZoEwdJqOdqNGd/m
+ gLX0n3esuiXjUmNyRPo5wlX55a7UHG+hMDH4q5IMHwnibI662dSoGgUdh
+ UxINg83AMsusxfzh4LwLwXfQmbnePHW39ZQyjws5ffXUr9ZAFOlWCxgBB
+ OjFDbHlZB7X4UvURc+Z3e58eFIwyrQ3qpIn81noHtFl3rBmtVwBexeAud
+ kCXjwVK+B1MWYsV8nA1IWp2xxmx9fTmdYxKyFFdwO+Y3pC6e33E1FMppj
+ OWa5760vVVOfQJjI9+OiDS0secoKIGdM/bAk6xl7vdD5Ymvsf/gHyMLqh Q==;
+X-CSE-ConnectionGUID: zJMGaAwxQ3G9hrIuTV/xKQ==
+X-CSE-MsgGUID: TEf57iUTTTGoXyMFsUzS0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72158129"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="72158129"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Feb 2026 04:23:57 -0800
-X-CSE-ConnectionGUID: BVaZShiuQquh91FpX6AGKQ==
-X-CSE-MsgGUID: HL9YmxPoSWmNhIPBwY5Dqw==
+ 24 Feb 2026 04:23:58 -0800
+X-CSE-ConnectionGUID: XTE8lFBmTo6nTRxkpKLYaQ==
+X-CSE-MsgGUID: dzl3FDuiTV6FVl6V9o+PLw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="243854459"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="243854462"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa001.fm.intel.com with ESMTP; 24 Feb 2026 04:23:56 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 24 Feb 2026 04:23:57 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v8 15/26] net/i40e: avoid rte malloc in DDP ptype handling
-Date: Tue, 24 Feb 2026 12:23:24 +0000
-Message-ID: <72021acae569b65188ac82c80d3c0cdb1c847e3a.1771935744.git.anatoly.burakov@intel.com>
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v8 16/26] net/iavf: remove remnants of pipeline mode
+Date: Tue, 24 Feb 2026 12:23:25 +0000
+Message-ID: <bb3d15d1d35c4fd41b2fc9b7c66a242e482aaae4.1771935744.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771935744.git.anatoly.burakov@intel.com>
  <cover.1771935744.git.anatoly.burakov@intel.com>
@@ -60,146 +60,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when updating customized protocol and packet type information
-via DDP packages, we are using rte_zmalloc followed by immediate
-rte_free. This memory does not need to be stored in hugepage memory, so
-replace it with stack allocation or regular calloc/free as appropriate.
+When pipeline mode was removed, some of the things used by pipelines were
+left in the code. Remove them as they are unused.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.c | 43 ++++++++--------------------
- 1 file changed, 12 insertions(+), 31 deletions(-)
+ drivers/net/intel/iavf/iavf_fdir.c         |  1 -
+ drivers/net/intel/iavf/iavf_fsub.c         |  1 -
+ drivers/net/intel/iavf/iavf_generic_flow.h | 15 ---------------
+ drivers/net/intel/iavf/iavf_hash.c         |  1 -
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c |  1 -
+ 5 files changed, 19 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index cd648285d1..af736f59be 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -11716,8 +11716,7 @@ i40e_update_customized_pctype(struct rte_eth_dev *dev, uint8_t *pkg,
- {
- 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
- 	uint32_t pctype_num;
--	struct rte_pmd_i40e_ptype_info *pctype;
--	uint32_t buff_size;
-+	struct rte_pmd_i40e_ptype_info pctype[I40E_CUSTOMIZED_MAX] = {0};
- 	struct i40e_customized_pctype *new_pctype = NULL;
- 	uint8_t proto_id;
- 	uint8_t pctype_value;
-@@ -11743,19 +11742,16 @@ i40e_update_customized_pctype(struct rte_eth_dev *dev, uint8_t *pkg,
- 		return -1;
- 	}
+diff --git a/drivers/net/intel/iavf/iavf_fdir.c b/drivers/net/intel/iavf/iavf_fdir.c
+index 0ef6e0d04a..9eae874800 100644
+--- a/drivers/net/intel/iavf/iavf_fdir.c
++++ b/drivers/net/intel/iavf/iavf_fdir.c
+@@ -1632,7 +1632,6 @@ static struct iavf_flow_parser iavf_fdir_parser = {
+ 	.array = iavf_fdir_pattern,
+ 	.array_len = RTE_DIM(iavf_fdir_pattern),
+ 	.parse_pattern_action = iavf_fdir_parse,
+-	.stage = IAVF_FLOW_STAGE_DISTRIBUTOR,
+ };
  
--	buff_size = pctype_num * sizeof(struct rte_pmd_i40e_proto_info);
--	pctype = rte_zmalloc("new_pctype", buff_size, 0);
--	if (!pctype) {
--		PMD_DRV_LOG(ERR, "Failed to allocate memory");
-+	if (pctype_num > RTE_DIM(pctype)) {
-+		PMD_DRV_LOG(ERR, "Pctype number exceeds maximum supported");
- 		return -1;
- 	}
- 	/* get information about new pctype list */
- 	ret = rte_pmd_i40e_get_ddp_info(pkg, pkg_size,
--					(uint8_t *)pctype, buff_size,
-+					(uint8_t *)pctype, sizeof(pctype),
- 					RTE_PMD_I40E_PKG_INFO_PCTYPE_LIST);
- 	if (ret) {
- 		PMD_DRV_LOG(ERR, "Failed to get pctype list");
--		rte_free(pctype);
- 		return -1;
- 	}
+ RTE_INIT(iavf_fdir_engine_register)
+diff --git a/drivers/net/intel/iavf/iavf_fsub.c b/drivers/net/intel/iavf/iavf_fsub.c
+index cf1030320f..bfb34695de 100644
+--- a/drivers/net/intel/iavf/iavf_fsub.c
++++ b/drivers/net/intel/iavf/iavf_fsub.c
+@@ -814,7 +814,6 @@ iavf_flow_parser iavf_fsub_parser = {
+ 	.array = iavf_fsub_pattern_list,
+ 	.array_len = RTE_DIM(iavf_fsub_pattern_list),
+ 	.parse_pattern_action = iavf_fsub_parse,
+-	.stage = IAVF_FLOW_STAGE_DISTRIBUTOR,
+ };
  
-@@ -11836,7 +11832,6 @@ i40e_update_customized_pctype(struct rte_eth_dev *dev, uint8_t *pkg,
- 		}
- 	}
+ RTE_INIT(iavf_fsub_engine_init)
+diff --git a/drivers/net/intel/iavf/iavf_generic_flow.h b/drivers/net/intel/iavf/iavf_generic_flow.h
+index b11bb4cf2b..b97cf8b7ff 100644
+--- a/drivers/net/intel/iavf/iavf_generic_flow.h
++++ b/drivers/net/intel/iavf/iavf_generic_flow.h
+@@ -485,20 +485,6 @@ enum iavf_flow_engine_type {
+ 	IAVF_FLOW_ENGINE_MAX,
+ };
  
--	rte_free(pctype);
- 	return 0;
- }
- 
-@@ -11846,11 +11841,10 @@ i40e_update_customized_ptype(struct rte_eth_dev *dev, uint8_t *pkg,
- 			     struct rte_pmd_i40e_proto_info *proto,
- 			     enum rte_pmd_i40e_package_op op)
- {
--	struct rte_pmd_i40e_ptype_mapping *ptype_mapping;
-+	struct rte_pmd_i40e_ptype_mapping ptype_mapping[I40E_MAX_PKT_TYPE] = {0};
- 	uint16_t port_id = dev->data->port_id;
- 	uint32_t ptype_num;
--	struct rte_pmd_i40e_ptype_info *ptype;
--	uint32_t buff_size;
-+	struct rte_pmd_i40e_ptype_info ptype[I40E_MAX_PKT_TYPE] = {0};
- 	uint8_t proto_id;
- 	char name[RTE_PMD_I40E_DDP_NAME_SIZE];
- 	uint32_t i, j, n;
-@@ -11881,31 +11875,20 @@ i40e_update_customized_ptype(struct rte_eth_dev *dev, uint8_t *pkg,
- 		return -1;
- 	}
- 
--	buff_size = ptype_num * sizeof(struct rte_pmd_i40e_ptype_info);
--	ptype = rte_zmalloc("new_ptype", buff_size, 0);
--	if (!ptype) {
--		PMD_DRV_LOG(ERR, "Failed to allocate memory");
-+	if (ptype_num > RTE_DIM(ptype)) {
-+		PMD_DRV_LOG(ERR, "Too many ptypes");
- 		return -1;
- 	}
- 
- 	/* get information about new ptype list */
- 	ret = rte_pmd_i40e_get_ddp_info(pkg, pkg_size,
--					(uint8_t *)ptype, buff_size,
-+					(uint8_t *)ptype, sizeof(ptype),
- 					RTE_PMD_I40E_PKG_INFO_PTYPE_LIST);
- 	if (ret) {
- 		PMD_DRV_LOG(ERR, "Failed to get ptype list");
--		rte_free(ptype);
- 		return ret;
- 	}
- 
--	buff_size = ptype_num * sizeof(struct rte_pmd_i40e_ptype_mapping);
--	ptype_mapping = rte_zmalloc("ptype_mapping", buff_size, 0);
--	if (!ptype_mapping) {
--		PMD_DRV_LOG(ERR, "Failed to allocate memory");
--		rte_free(ptype);
--		return -1;
--	}
+-/**
+- * classification stages.
+- * for non-pipeline mode, we have two classification stages: Distributor/RSS
+- * for pipeline-mode we have three classification stages:
+- * Permission/Distributor/RSS
+- */
+-enum iavf_flow_classification_stage {
+-	IAVF_FLOW_STAGE_NONE = 0,
+-	IAVF_FLOW_STAGE_IPSEC_CRYPTO,
+-	IAVF_FLOW_STAGE_RSS,
+-	IAVF_FLOW_STAGE_DISTRIBUTOR,
+-	IAVF_FLOW_STAGE_MAX,
+-};
 -
- 	/* Update ptype mapping table. */
- 	for (i = 0; i < ptype_num; i++) {
- 		ptype_mapping[i].hw_ptype = ptype[i].ptype_id;
-@@ -12040,8 +12023,6 @@ i40e_update_customized_ptype(struct rte_eth_dev *dev, uint8_t *pkg,
- 	if (ret)
- 		PMD_DRV_LOG(ERR, "Failed to update ptype mapping table.");
+ /* Struct to store engine created. */
+ struct iavf_flow_engine {
+ 	TAILQ_ENTRY(iavf_flow_engine) node;
+@@ -527,7 +513,6 @@ struct iavf_flow_parser {
+ 	struct iavf_pattern_match_item *array;
+ 	uint32_t array_len;
+ 	parse_pattern_action_t parse_pattern_action;
+-	enum iavf_flow_classification_stage stage;
+ };
  
--	rte_free(ptype_mapping);
--	rte_free(ptype);
- 	return ret;
- }
+ /* Struct to store parser created. */
+diff --git a/drivers/net/intel/iavf/iavf_hash.c b/drivers/net/intel/iavf/iavf_hash.c
+index 1725c2b2b9..a40fed7542 100644
+--- a/drivers/net/intel/iavf/iavf_hash.c
++++ b/drivers/net/intel/iavf/iavf_hash.c
+@@ -691,7 +691,6 @@ static struct iavf_flow_parser iavf_hash_parser = {
+ 	.array = iavf_hash_pattern_list,
+ 	.array_len = RTE_DIM(iavf_hash_pattern_list),
+ 	.parse_pattern_action = iavf_hash_parse_pattern_action,
+-	.stage = IAVF_FLOW_STAGE_RSS,
+ };
  
-@@ -12076,7 +12057,7 @@ i40e_update_customized_info(struct rte_eth_dev *dev, uint8_t *pkg,
- 	}
+ int
+diff --git a/drivers/net/intel/iavf/iavf_ipsec_crypto.c b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+index ab41b1973e..82323b9aa9 100644
+--- a/drivers/net/intel/iavf/iavf_ipsec_crypto.c
++++ b/drivers/net/intel/iavf/iavf_ipsec_crypto.c
+@@ -1983,7 +1983,6 @@ static struct iavf_flow_parser iavf_ipsec_flow_parser = {
+ 	.array = iavf_ipsec_flow_pattern,
+ 	.array_len = RTE_DIM(iavf_ipsec_flow_pattern),
+ 	.parse_pattern_action = iavf_ipsec_flow_parse,
+-	.stage = IAVF_FLOW_STAGE_IPSEC_CRYPTO,
+ };
  
- 	buff_size = proto_num * sizeof(struct rte_pmd_i40e_proto_info);
--	proto = rte_zmalloc("new_proto", buff_size, 0);
-+	proto = calloc(proto_num, sizeof(struct rte_pmd_i40e_proto_info));
- 	if (!proto) {
- 		PMD_DRV_LOG(ERR, "Failed to allocate memory");
- 		return;
-@@ -12088,7 +12069,7 @@ i40e_update_customized_info(struct rte_eth_dev *dev, uint8_t *pkg,
- 					RTE_PMD_I40E_PKG_INFO_PROTOCOL_LIST);
- 	if (ret) {
- 		PMD_DRV_LOG(ERR, "Failed to get protocol list");
--		rte_free(proto);
-+		free(proto);
- 		return;
- 	}
- 
-@@ -12126,7 +12107,7 @@ i40e_update_customized_info(struct rte_eth_dev *dev, uint8_t *pkg,
- 	if (ret)
- 		PMD_DRV_LOG(INFO, "No ptype is updated.");
- 
--	rte_free(proto);
-+	free(proto);
- }
- 
- /* Create a QinQ cloud filter
+ RTE_INIT(iavf_ipsec_flow_engine_register)
 -- 
 2.47.3
 
