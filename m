@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A20F3C991
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 15:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B133DF3C991
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 15:16:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 76A7F40671;
-	Tue, 24 Feb 2026 16:15:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 54B3F40697;
+	Tue, 24 Feb 2026 16:15:12 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id E4F0340609
- for <dev@dpdk.org>; Tue, 24 Feb 2026 16:14:50 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id D92214064F
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 16:14:51 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771946091; x=1803482091;
+ t=1771946092; x=1803482092;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=d1CExCBEvpBdyLUDGBkKjRPYt5/ispeAIqLYzrSxQAA=;
- b=Y8tTrsNqWdb/H2frscp3kRCGqTYWHDnSLBZqnb2L9ZSsO+cJAHlQH1P5
- WHp8t8+OXEuj9zH0TJxwiyqIMQ4PiouoAkc/j/Kt0zk0afSYljr9bLNXf
- 42IcKZ8TLXCNimirSvf6GRTSQFZIwUf0bpWXdIVCJ7LC61stlWXtw5NFU
- J5Zv6JC/yWssKRt//EWbhxY2iuMFxcrD/UG8kLqKHRqJO0Mycln+LkL3p
- i+kY53LAQ34Xe0wA6O25b0KJvg0qFZeIapwvfnxoCL896mU+Dw/xr3lXw
- j7qy0sEjgkFCLYTUXK1fXUMfFo6CFmWchFVER8JJzsaisdFgvq9gXIHGn g==;
-X-CSE-ConnectionGUID: 5r8NB/51SB6rIhYlJamDYg==
-X-CSE-MsgGUID: 5lqWKSoGQWm71e/WTxfoCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11711"; a="84056255"
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="84056255"
+ bh=fda2A26vqB1nKmzQfF0mNUfBxMNCyT8g8GXE45afWRk=;
+ b=mceCliendmLcKI/f/DJxDwe/xkqTqSiP8wH3zhy4eNE9pqPjWFoFuoqG
+ Sm7BAWkSni5qMUX4EkJ9LjuGVTwA5BfX8aXwhDwURkFaCtPQmMndi73ja
+ r+JAmLpLIptMo8ChqQ4oiliKSqgLXx2YU5EmNfzjM+qmbVTYDo5o4Lric
+ 1OUt/qLxWOjqq/B/R2hPhdZTHMHMUl1A6ciLEF8zVOLNoD59tRxctPxHy
+ +bkl6TEHni2/Fb/Y86FRKfIUOjoChirC1puB8DU7GqIKg1otl668KcX1l
+ soCGaYDb6Qa6RWSwXNGY3a2ZEviGfCtGqkmC9ncVvpkbo4pWh/JHues4U Q==;
+X-CSE-ConnectionGUID: JM4s1znETNChUlD28gqHzA==
+X-CSE-MsgGUID: e/KLgjjeSA62CCYheWL4kw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11711"; a="84056258"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="84056258"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Feb 2026 07:14:50 -0800
-X-CSE-ConnectionGUID: g9XhO3JQRVSi/31H2GPqug==
-X-CSE-MsgGUID: Ofo4kCDSRYGOpuqdN3Yt7A==
+ 24 Feb 2026 07:14:51 -0800
+X-CSE-ConnectionGUID: AIMfaejISH+xIH9AXth+UA==
+X-CSE-MsgGUID: xSMhEgVOR8CXWHdPGFAN4g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="220526148"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="220526154"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa005.fm.intel.com with ESMTP; 24 Feb 2026 07:14:50 -0800
+ by fmviesa005.fm.intel.com with ESMTP; 24 Feb 2026 07:14:51 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v9 11/26] net/i40e: avoid rte malloc in MAC/VLAN filtering
-Date: Tue, 24 Feb 2026 15:14:16 +0000
-Message-ID: <29034e6abc0bc3e0455a163d12fab10e7005a69a.1771945933.git.anatoly.burakov@intel.com>
+Subject: [PATCH v9 12/26] net/i40e: avoid rte malloc in VF resource queries
+Date: Tue, 24 Feb 2026 15:14:17 +0000
+Message-ID: <db1f2f400c639314ac5dadb1d56ed62a630a2046.1771945933.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771945933.git.anatoly.burakov@intel.com>
  <cover.1771945933.git.anatoly.burakov@intel.com>
@@ -60,457 +60,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when adding, removing, or configuring MAC and VLAN filters,
-we are using rte_zmalloc followed by an immediate rte_free. This memory
-does not need to be stored in hugepage memory, so replace it with regular
-malloc/free or stack allocation where appropriate.
+Currently, when responding to VF resource queries, we are dynamically
+allocating a temporary buffer with rte_zmalloc followed by an immediate
+rte_free. This memory does not need to be stored in hugepage memory and
+the allocation size is pretty small, so replace it with stack allocation.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/i40e/i40e_ethdev.c  | 135 +++++++++++---------------
- drivers/net/intel/i40e/rte_pmd_i40e.c |  17 ++--
- 2 files changed, 65 insertions(+), 87 deletions(-)
+ drivers/net/intel/i40e/i40e_pf.c | 26 +++++++-------------------
+ 1 file changed, 7 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
-index ba66f9e3fd..672d337d99 100644
---- a/drivers/net/intel/i40e/i40e_ethdev.c
-+++ b/drivers/net/intel/i40e/i40e_ethdev.c
-@@ -6,6 +6,7 @@
- #include <stdio.h>
- #include <errno.h>
- #include <stdint.h>
-+#include <stdlib.h>
- #include <string.h>
- #include <unistd.h>
- #include <stdarg.h>
-@@ -4128,7 +4129,6 @@ static int
- i40e_vlan_offload_set(struct rte_eth_dev *dev, int mask)
+diff --git a/drivers/net/intel/i40e/i40e_pf.c b/drivers/net/intel/i40e/i40e_pf.c
+index ebe1deeade..08cdd6bc4d 100644
+--- a/drivers/net/intel/i40e/i40e_pf.c
++++ b/drivers/net/intel/i40e/i40e_pf.c
+@@ -309,9 +309,14 @@ static int
+ i40e_pf_host_process_cmd_get_vf_resource(struct i40e_pf_vf *vf, uint8_t *msg,
+ 					 bool b_op)
  {
- 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
--	struct i40e_mac_filter_info *mac_filter;
- 	struct i40e_vsi *vsi = pf->main_vsi;
- 	struct rte_eth_rxmode *rxmode;
- 	struct i40e_mac_filter *f;
-@@ -4163,12 +4163,12 @@ i40e_vlan_offload_set(struct rte_eth_dev *dev, int mask)
- 	}
- 
- 	if (mask & RTE_ETH_VLAN_EXTEND_MASK) {
-+		struct i40e_mac_filter_info mac_filter[I40E_NUM_MACADDR_MAX] = {0};
- 		i = 0;
- 		num = vsi->mac_num;
--		mac_filter = rte_zmalloc("mac_filter_info_data",
--				 num * sizeof(*mac_filter), 0);
--		if (mac_filter == NULL) {
--			PMD_DRV_LOG(ERR, "failed to allocate memory");
-+
-+		if (num > I40E_NUM_MACADDR_MAX) {
-+			PMD_DRV_LOG(ERR, "Too many MAC addresses");
- 			return I40E_ERR_NO_MEMORY;
- 		}
- 
-@@ -4206,7 +4206,6 @@ i40e_vlan_offload_set(struct rte_eth_dev *dev, int mask)
- 			if (ret)
- 				PMD_DRV_LOG(ERR, "i40e vsi add mac fail.");
- 		}
--		rte_free(mac_filter);
- 	}
- 
- 	if (mask & RTE_ETH_QINQ_STRIP_MASK) {
-@@ -6198,7 +6197,7 @@ i40e_vsi_config_vlan_filter(struct i40e_vsi *vsi, bool on)
- 	int i, num;
- 	struct i40e_mac_filter *f;
- 	void *temp;
--	struct i40e_mac_filter_info *mac_filter;
-+	struct i40e_mac_filter_info mac_filter[I40E_NUM_MACADDR_MAX] = {0};
- 	enum i40e_mac_filter_type desired_filter;
+-	struct virtchnl_vf_resource *vf_res = NULL;
++	/* only have 1 VSI by default */
++	struct {
++		struct virtchnl_vf_resource vf_res;
++		struct virtchnl_vsi_resource vsi_res;
++	} res = {0};
++	struct virtchnl_vf_resource *vf_res = &res.vf_res;
+ 	struct i40e_hw *hw = I40E_PF_TO_HW(vf->pf);
+-	uint32_t len = 0;
++	uint32_t len = sizeof(res);
+ 	uint64_t default_hena = I40E_RSS_HENA_ALL;
  	int ret = I40E_SUCCESS;
  
-@@ -6211,12 +6210,9 @@ i40e_vsi_config_vlan_filter(struct i40e_vsi *vsi, bool on)
+@@ -322,20 +327,6 @@ i40e_pf_host_process_cmd_get_vf_resource(struct i40e_pf_vf *vf, uint8_t *msg,
+ 		return ret;
  	}
  
- 	num = vsi->mac_num;
+-	/* only have 1 VSI by default */
+-	len =  sizeof(struct virtchnl_vf_resource) +
+-				I40E_DEFAULT_VF_VSI_NUM *
+-		sizeof(struct virtchnl_vsi_resource);
 -
--	mac_filter = rte_zmalloc("mac_filter_info_data",
--				 num * sizeof(*mac_filter), 0);
--	if (mac_filter == NULL) {
--		PMD_DRV_LOG(ERR, "failed to allocate memory");
--		return I40E_ERR_NO_MEMORY;
-+	if (num > I40E_NUM_MACADDR_MAX) {
-+		PMD_DRV_LOG(ERR, "Too many MAC addresses");
-+		return -1;
- 	}
- 
- 	i = 0;
-@@ -6228,7 +6224,7 @@ i40e_vsi_config_vlan_filter(struct i40e_vsi *vsi, bool on)
- 		if (ret) {
- 			PMD_DRV_LOG(ERR, "Update VSI failed to %s vlan filter",
- 				    on ? "enable" : "disable");
--			goto DONE;
-+			return ret;
- 		}
- 		i++;
- 	}
-@@ -6240,13 +6236,11 @@ i40e_vsi_config_vlan_filter(struct i40e_vsi *vsi, bool on)
- 		if (ret) {
- 			PMD_DRV_LOG(ERR, "Update VSI failed to %s vlan filter",
- 				    on ? "enable" : "disable");
--			goto DONE;
-+			return ret;
- 		}
- 	}
- 
--DONE:
--	rte_free(mac_filter);
--	return ret;
-+	return 0;
- }
- 
- /* Configure vlan stripping on or off */
-@@ -7128,19 +7122,20 @@ i40e_add_macvlan_filters(struct i40e_vsi *vsi,
- 	uint16_t flags;
- 	int ret = I40E_SUCCESS;
- 	struct i40e_hw *hw = I40E_VSI_TO_HW(vsi);
--	struct i40e_aqc_add_macvlan_element_data *req_list;
-+	uint8_t aq_buff[I40E_AQ_BUF_SZ] = {0};
-+	struct i40e_aqc_add_macvlan_element_data *req_list =
-+			(struct i40e_aqc_add_macvlan_element_data *)aq_buff;
-+
-+	if (hw->aq.asq_buf_size > I40E_AQ_BUF_SZ) {
-+		PMD_DRV_LOG(ERR, "AdminQ size biffer than max");
-+		return I40E_ERR_NO_MEMORY;
-+	}
- 
- 	if (filter == NULL  || total == 0)
- 		return I40E_ERR_PARAM;
- 	ele_num = hw->aq.asq_buf_size / sizeof(*req_list);
- 	ele_buff_size = hw->aq.asq_buf_size;
- 
--	req_list = rte_zmalloc("macvlan_add", ele_buff_size, 0);
--	if (req_list == NULL) {
--		PMD_DRV_LOG(ERR, "Fail to allocate memory");
--		return I40E_ERR_NO_MEMORY;
+-	vf_res = rte_zmalloc("i40e_vf_res", len, 0);
+-	if (vf_res == NULL) {
+-		PMD_DRV_LOG(ERR, "failed to allocate mem");
+-		ret = I40E_ERR_NO_MEMORY;
+-		vf_res = NULL;
+-		len = 0;
+-		goto send_msg;
 -	}
 -
- 	num = 0;
- 	do {
- 		actual_num = (num + ele_num > total) ? (total - num) : ele_num;
-@@ -7169,8 +7164,7 @@ i40e_add_macvlan_filters(struct i40e_vsi *vsi,
- 				break;
- 			default:
- 				PMD_DRV_LOG(ERR, "Invalid MAC match type");
--				ret = I40E_ERR_PARAM;
--				goto DONE;
-+				return I40E_ERR_PARAM;
- 			}
+ 	if (VF_IS_V10(&vf->version)) /* doesn't support offload negotiate */
+ 		vf->request_caps = VIRTCHNL_VF_OFFLOAD_L2 |
+ 				   VIRTCHNL_VF_OFFLOAD_VLAN;
+@@ -377,11 +368,8 @@ i40e_pf_host_process_cmd_get_vf_resource(struct i40e_pf_vf *vf, uint8_t *msg,
+ 	rte_ether_addr_copy(&vf->mac_addr,
+ 		(struct rte_ether_addr *)vf_res->vsi_res[0].default_mac_addr);
  
- 			req_list[i].queue_number = 0;
-@@ -7182,14 +7176,11 @@ i40e_add_macvlan_filters(struct i40e_vsi *vsi,
- 						actual_num, NULL);
- 		if (ret != I40E_SUCCESS) {
- 			PMD_DRV_LOG(ERR, "Failed to add macvlan filter");
--			goto DONE;
-+			return ret;
- 		}
- 		num += actual_num;
- 	} while (num < total);
+-send_msg:
+ 	i40e_pf_host_send_msg_to_vf(vf, VIRTCHNL_OP_GET_VF_RESOURCES,
+ 					ret, (uint8_t *)vf_res, len);
+-	rte_free(vf_res);
 -
--DONE:
--	rte_free(req_list);
--	return ret;
-+	return I40E_SUCCESS;
- }
- 
- int
-@@ -7202,21 +7193,22 @@ i40e_remove_macvlan_filters(struct i40e_vsi *vsi,
- 	uint16_t flags;
- 	int ret = I40E_SUCCESS;
- 	struct i40e_hw *hw = I40E_VSI_TO_HW(vsi);
--	struct i40e_aqc_remove_macvlan_element_data *req_list;
-+	uint8_t aq_buff[I40E_AQ_BUF_SZ] = {0};
-+	struct i40e_aqc_remove_macvlan_element_data *req_list =
-+			(struct i40e_aqc_remove_macvlan_element_data *)aq_buff;
- 	enum i40e_admin_queue_err aq_status;
- 
- 	if (filter == NULL  || total == 0)
- 		return I40E_ERR_PARAM;
- 
--	ele_num = hw->aq.asq_buf_size / sizeof(*req_list);
--	ele_buff_size = hw->aq.asq_buf_size;
--
--	req_list = rte_zmalloc("macvlan_remove", ele_buff_size, 0);
--	if (req_list == NULL) {
--		PMD_DRV_LOG(ERR, "Fail to allocate memory");
-+	if (hw->aq.asq_buf_size > I40E_AQ_BUF_SZ) {
-+		PMD_DRV_LOG(ERR, "AdminQ size biffer than max");
- 		return I40E_ERR_NO_MEMORY;
- 	}
- 
-+	ele_num = hw->aq.asq_buf_size / sizeof(*req_list);
-+	ele_buff_size = hw->aq.asq_buf_size;
-+
- 	num = 0;
- 	do {
- 		actual_num = (num + ele_num > total) ? (total - num) : ele_num;
-@@ -7245,8 +7237,7 @@ i40e_remove_macvlan_filters(struct i40e_vsi *vsi,
- 				break;
- 			default:
- 				PMD_DRV_LOG(ERR, "Invalid MAC filter type");
--				ret = I40E_ERR_PARAM;
--				goto DONE;
-+				return I40E_ERR_PARAM;
- 			}
- 			req_list[i].flags = rte_cpu_to_le_16(flags);
- 		}
-@@ -7260,15 +7251,13 @@ i40e_remove_macvlan_filters(struct i40e_vsi *vsi,
- 				ret = I40E_SUCCESS;
- 			} else {
- 				PMD_DRV_LOG(ERR, "Failed to remove macvlan filter");
--				goto DONE;
-+				return ret;
- 			}
- 		}
- 		num += actual_num;
- 	} while (num < total);
- 
--DONE:
--	rte_free(req_list);
--	return ret;
-+	return I40E_SUCCESS;
- }
- 
- /* Find out specific MAC filter */
-@@ -7436,7 +7425,7 @@ i40e_vsi_remove_all_macvlan_filter(struct i40e_vsi *vsi)
- 	else
- 		num = vsi->mac_num * vsi->vlan_num;
- 
--	mv_f = rte_zmalloc("macvlan_data", num * sizeof(*mv_f), 0);
-+	mv_f = calloc(num, sizeof(*mv_f));
- 	if (mv_f == NULL) {
- 		PMD_DRV_LOG(ERR, "failed to allocate memory");
- 		return I40E_ERR_NO_MEMORY;
-@@ -7465,7 +7454,7 @@ i40e_vsi_remove_all_macvlan_filter(struct i40e_vsi *vsi)
- 
- 	ret = i40e_remove_macvlan_filters(vsi, mv_f, num);
- DONE:
--	rte_free(mv_f);
-+	free(mv_f);
- 
  	return ret;
  }
-@@ -7473,7 +7462,7 @@ i40e_vsi_remove_all_macvlan_filter(struct i40e_vsi *vsi)
- int
- i40e_vsi_add_vlan(struct i40e_vsi *vsi, uint16_t vlan)
- {
--	struct i40e_macvlan_filter *mv_f;
-+	struct i40e_macvlan_filter mv_f[I40E_NUM_MACADDR_MAX] = {0};
- 	int mac_num;
- 	int ret = I40E_SUCCESS;
- 
-@@ -7490,37 +7479,31 @@ i40e_vsi_add_vlan(struct i40e_vsi *vsi, uint16_t vlan)
- 		PMD_DRV_LOG(ERR, "Error! VSI doesn't have a mac addr");
- 		return I40E_ERR_PARAM;
- 	}
--
--	mv_f = rte_zmalloc("macvlan_data", mac_num * sizeof(*mv_f), 0);
--
--	if (mv_f == NULL) {
--		PMD_DRV_LOG(ERR, "failed to allocate memory");
--		return I40E_ERR_NO_MEMORY;
-+	if (mac_num > I40E_NUM_MACADDR_MAX) {
-+		PMD_DRV_LOG(ERR, "Error! Too many MAC addresses");
-+		return I40E_ERR_PARAM;
- 	}
- 
- 	ret = i40e_find_all_mac_for_vlan(vsi, mv_f, mac_num, vlan);
- 
- 	if (ret != I40E_SUCCESS)
--		goto DONE;
-+		return ret;
- 
- 	ret = i40e_add_macvlan_filters(vsi, mv_f, mac_num);
- 
- 	if (ret != I40E_SUCCESS)
--		goto DONE;
-+		return ret;
- 
- 	i40e_set_vlan_filter(vsi, vlan, 1);
- 
- 	vsi->vlan_num++;
--	ret = I40E_SUCCESS;
--DONE:
--	rte_free(mv_f);
--	return ret;
-+	return I40E_SUCCESS;
- }
- 
- int
- i40e_vsi_delete_vlan(struct i40e_vsi *vsi, uint16_t vlan)
- {
--	struct i40e_macvlan_filter *mv_f;
-+	struct i40e_macvlan_filter mv_f[I40E_NUM_MACADDR_MAX] = {0};
- 	int mac_num;
- 	int ret = I40E_SUCCESS;
- 
-@@ -7541,42 +7524,36 @@ i40e_vsi_delete_vlan(struct i40e_vsi *vsi, uint16_t vlan)
- 		PMD_DRV_LOG(ERR, "Error! VSI doesn't have a mac addr");
- 		return I40E_ERR_PARAM;
- 	}
--
--	mv_f = rte_zmalloc("macvlan_data", mac_num * sizeof(*mv_f), 0);
--
--	if (mv_f == NULL) {
--		PMD_DRV_LOG(ERR, "failed to allocate memory");
--		return I40E_ERR_NO_MEMORY;
-+	if (mac_num > I40E_NUM_MACADDR_MAX) {
-+		PMD_DRV_LOG(ERR, "Error! Too many MAC addresses");
-+		return I40E_ERR_PARAM;
- 	}
- 
- 	ret = i40e_find_all_mac_for_vlan(vsi, mv_f, mac_num, vlan);
- 
- 	if (ret != I40E_SUCCESS)
--		goto DONE;
-+		return ret;
- 
- 	ret = i40e_remove_macvlan_filters(vsi, mv_f, mac_num);
- 
- 	if (ret != I40E_SUCCESS)
--		goto DONE;
-+		return ret;
- 
- 	/* This is last vlan to remove, replace all mac filter with vlan 0 */
- 	if (vsi->vlan_num == 1) {
- 		ret = i40e_find_all_mac_for_vlan(vsi, mv_f, mac_num, 0);
- 		if (ret != I40E_SUCCESS)
--			goto DONE;
-+			return ret;
- 
- 		ret = i40e_add_macvlan_filters(vsi, mv_f, mac_num);
- 		if (ret != I40E_SUCCESS)
--			goto DONE;
-+			return ret;
- 	}
- 
- 	i40e_set_vlan_filter(vsi, vlan, 0);
- 
- 	vsi->vlan_num--;
--	ret = I40E_SUCCESS;
--DONE:
--	rte_free(mv_f);
--	return ret;
-+	return I40E_SUCCESS;
- }
- 
- int
-@@ -7607,7 +7584,7 @@ i40e_vsi_add_mac(struct i40e_vsi *vsi, struct i40e_mac_filter_info *mac_filter)
- 			mac_filter->filter_type == I40E_MAC_HASH_MATCH)
- 		vlan_num = 1;
- 
--	mv_f = rte_zmalloc("macvlan_data", vlan_num * sizeof(*mv_f), 0);
-+	mv_f = calloc(vlan_num, sizeof(*mv_f));
- 	if (mv_f == NULL) {
- 		PMD_DRV_LOG(ERR, "failed to allocate memory");
- 		return I40E_ERR_NO_MEMORY;
-@@ -7646,7 +7623,7 @@ i40e_vsi_add_mac(struct i40e_vsi *vsi, struct i40e_mac_filter_info *mac_filter)
- 
- 	ret = I40E_SUCCESS;
- DONE:
--	rte_free(mv_f);
-+	free(mv_f);
- 
- 	return ret;
- }
-@@ -7677,7 +7654,7 @@ i40e_vsi_delete_mac(struct i40e_vsi *vsi, struct rte_ether_addr *addr)
- 			filter_type == I40E_MAC_HASH_MATCH)
- 		vlan_num = 1;
- 
--	mv_f = rte_zmalloc("macvlan_data", vlan_num * sizeof(*mv_f), 0);
-+	mv_f = calloc(vlan_num, sizeof(*mv_f));
- 	if (mv_f == NULL) {
- 		PMD_DRV_LOG(ERR, "failed to allocate memory");
- 		return I40E_ERR_NO_MEMORY;
-@@ -7706,7 +7683,7 @@ i40e_vsi_delete_mac(struct i40e_vsi *vsi, struct rte_ether_addr *addr)
- 
- 	ret = I40E_SUCCESS;
- DONE:
--	rte_free(mv_f);
-+	free(mv_f);
- 	return ret;
- }
- 
-diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.c b/drivers/net/intel/i40e/rte_pmd_i40e.c
-index a358f68bc5..4839a1d9bf 100644
---- a/drivers/net/intel/i40e/rte_pmd_i40e.c
-+++ b/drivers/net/intel/i40e/rte_pmd_i40e.c
-@@ -2,6 +2,7 @@
-  * Copyright(c) 2010-2017 Intel Corporation
-  */
- 
-+#include <stdlib.h>
- #include <eal_export.h>
- #include <rte_string_fns.h>
- #include <rte_malloc.h>
-@@ -233,7 +234,7 @@ i40e_vsi_rm_mac_filter(struct i40e_vsi *vsi)
- 			   filter_type == I40E_MAC_HASH_MATCH)
- 			vlan_num = 1;
- 
--		mv_f = rte_zmalloc("macvlan_data", vlan_num * sizeof(*mv_f), 0);
-+		mv_f = calloc(vlan_num, sizeof(*mv_f));
- 		if (!mv_f) {
- 			PMD_DRV_LOG(ERR, "failed to allocate memory");
- 			return I40E_ERR_NO_MEMORY;
-@@ -250,18 +251,18 @@ i40e_vsi_rm_mac_filter(struct i40e_vsi *vsi)
- 			ret = i40e_find_all_vlan_for_mac(vsi, mv_f, vlan_num,
- 							 &f->mac_info.mac_addr);
- 			if (ret != I40E_SUCCESS) {
--				rte_free(mv_f);
-+				free(mv_f);
- 				return ret;
- 			}
- 		}
- 
- 		ret = i40e_remove_macvlan_filters(vsi, mv_f, vlan_num);
- 		if (ret != I40E_SUCCESS) {
--			rte_free(mv_f);
-+			free(mv_f);
- 			return ret;
- 		}
- 
--		rte_free(mv_f);
-+		free(mv_f);
- 		ret = I40E_SUCCESS;
- 	}
- 
-@@ -294,7 +295,7 @@ i40e_vsi_restore_mac_filter(struct i40e_vsi *vsi)
- 			   f->mac_info.filter_type == I40E_MAC_HASH_MATCH)
- 			vlan_num = 1;
- 
--		mv_f = rte_zmalloc("macvlan_data", vlan_num * sizeof(*mv_f), 0);
-+		mv_f = calloc(vlan_num, sizeof(*mv_f));
- 		if (!mv_f) {
- 			PMD_DRV_LOG(ERR, "failed to allocate memory");
- 			return I40E_ERR_NO_MEMORY;
-@@ -312,18 +313,18 @@ i40e_vsi_restore_mac_filter(struct i40e_vsi *vsi)
- 			ret = i40e_find_all_vlan_for_mac(vsi, mv_f, vlan_num,
- 							 &f->mac_info.mac_addr);
- 			if (ret != I40E_SUCCESS) {
--				rte_free(mv_f);
-+				free(mv_f);
- 				return ret;
- 			}
- 		}
- 
- 		ret = i40e_add_macvlan_filters(vsi, mv_f, vlan_num);
- 		if (ret != I40E_SUCCESS) {
--			rte_free(mv_f);
-+			free(mv_f);
- 			return ret;
- 		}
- 
--		rte_free(mv_f);
-+		free(mv_f);
- 		ret = I40E_SUCCESS;
- 	}
  
 -- 
 2.47.3
