@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93899E9B25B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 12:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C2DE9B25B
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 12:25:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BDDAB40698;
-	Tue, 24 Feb 2026 13:24:07 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E1F940696;
+	Tue, 24 Feb 2026 13:24:08 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
- by mails.dpdk.org (Postfix) with ESMTP id 481E440650
- for <dev@dpdk.org>; Tue, 24 Feb 2026 13:23:56 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 3C26F40647
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 13:23:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771935837; x=1803471837;
+ t=1771935838; x=1803471838;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=8AOR/iCUCRFrU0llcFKaFjNODoxy4J/EpPkezCXmAZk=;
- b=P0u33djnMnZeX82TUoX7Yk2Kp16Qt5AnHQNg7likOM9DMGX0d47oeR3S
- 69RBTgSte+zAt1Fat+X8hk5aTt4kSBVzm4ohO1lDHYr3Z4JH2mFUtN15R
- QRBLQD0xVnPwP3OsxBayDK+WKbaIJhJRgmIZDGQ0RXf+6wqYemq4/zJej
- 0ppQBbdnCvnhcqUPsMoDSPH3j2T9wxButja+wx83D7P/kF1rHVvt3Iymt
- 7F4Rlb0BXUjAvPOf67tgkZcgdZpL7TuYyrbxhvpq1TuhyxDunjfzOvANJ
- P6tyOYb+muc+j7q1DzAFIBV9prb9Zx2cFy4vvtEe+yj9V7eZMk62OZEmz g==;
-X-CSE-ConnectionGUID: vJXnjZnVQByQXoPeeCOQSQ==
-X-CSE-MsgGUID: c9NBlcMvTeu3dYU0bRXK2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72158126"
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="72158126"
+ bh=Q0tSkQucXUCXECYI4tHDsQ1rXzzaq4fbICmrELlCfus=;
+ b=ineUHtsCdO8+vXqgAFtz+x5n9Q1czLK3IzgPBeNKjRNe+BWtYZ3QDwTG
+ XNbFp0xbE5VPLXbS/n3xS/H8pSZhJVR3QqTbm2ZZRnEMSQUVL1EiLB9xb
+ jCV5wR14kjxglNnAdVVqDcsAXau4M/JXqU8iTfIxRkZfNV3QrUzZkPC8R
+ alRwU2GXYJyHIkwFtuUUX7td/cvCZYuW51gS0G/hogSKwyUF+CmZ6mtDb
+ 7umy9IQY9tliIQd/5PmTj+hHJFzrCHf9IVdmxPApR6J8L7+9p7bXQ/FsX
+ Fb4GAmQI7slMdV74n4d4gZYLp4kSogH4BX6LQIpV2PovM42u5jAOAphkN Q==;
+X-CSE-ConnectionGUID: vby+ITGDQ9GDZGRKHEr1Iw==
+X-CSE-MsgGUID: v7FhunV6TGOsv0cJHqS+Rg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11710"; a="72158128"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="72158128"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Feb 2026 04:23:56 -0800
-X-CSE-ConnectionGUID: oS+KsKLhTyCVT7EffBmBeA==
-X-CSE-MsgGUID: zjO05wHdSzar9pUnCXXhJQ==
+ 24 Feb 2026 04:23:57 -0800
+X-CSE-ConnectionGUID: BVaZShiuQquh91FpX6AGKQ==
+X-CSE-MsgGUID: HL9YmxPoSWmNhIPBwY5Dqw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="243854456"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="243854459"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa001.fm.intel.com with ESMTP; 24 Feb 2026 04:23:55 -0800
+ by fmviesa001.fm.intel.com with ESMTP; 24 Feb 2026 04:23:56 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v8 14/26] net/i40e: avoid rte malloc in DDP package handling
-Date: Tue, 24 Feb 2026 12:23:23 +0000
-Message-ID: <03a8205b508dca129f1f3a5c916688f9c1022d7a.1771935744.git.anatoly.burakov@intel.com>
+Subject: [PATCH v8 15/26] net/i40e: avoid rte malloc in DDP ptype handling
+Date: Tue, 24 Feb 2026 12:23:24 +0000
+Message-ID: <72021acae569b65188ac82c80d3c0cdb1c847e3a.1771935744.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771935744.git.anatoly.burakov@intel.com>
  <cover.1771935744.git.anatoly.burakov@intel.com>
@@ -60,173 +60,146 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when processing Dynamic Driver Profile (DDP) packages and
-checking profile information, we are using rte_zmalloc followed by
-immediate rte_free. This memory does not need to be stored in hugepage
-memory, so replace it with stack allocation.
+Currently, when updating customized protocol and packet type information
+via DDP packages, we are using rte_zmalloc followed by immediate
+rte_free. This memory does not need to be stored in hugepage memory, so
+replace it with stack allocation or regular calloc/free as appropriate.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/i40e/rte_pmd_i40e.c | 43 +++++----------------------
- 1 file changed, 8 insertions(+), 35 deletions(-)
+ drivers/net/intel/i40e/i40e_ethdev.c | 43 ++++++++--------------------
+ 1 file changed, 12 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/rte_pmd_i40e.c b/drivers/net/intel/i40e/rte_pmd_i40e.c
-index 4839a1d9bf..7892fa8a4e 100644
---- a/drivers/net/intel/i40e/rte_pmd_i40e.c
-+++ b/drivers/net/intel/i40e/rte_pmd_i40e.c
-@@ -1557,7 +1557,7 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
+diff --git a/drivers/net/intel/i40e/i40e_ethdev.c b/drivers/net/intel/i40e/i40e_ethdev.c
+index cd648285d1..af736f59be 100644
+--- a/drivers/net/intel/i40e/i40e_ethdev.c
++++ b/drivers/net/intel/i40e/i40e_ethdev.c
+@@ -11716,8 +11716,7 @@ i40e_update_customized_pctype(struct rte_eth_dev *dev, uint8_t *pkg,
  {
- 	struct rte_eth_dev *dev = &rte_eth_devices[port];
- 	struct i40e_hw *hw = I40E_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	uint8_t *buff;
-+	uint8_t buff[(I40E_MAX_PROFILE_NUM + 4) * I40E_PROFILE_INFO_SIZE] = {0};
- 	struct rte_pmd_i40e_profile_list *p_list;
- 	struct rte_pmd_i40e_profile_info *pinfo, *p;
- 	uint32_t i;
-@@ -1570,13 +1570,6 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
- 		PMD_DRV_LOG(INFO, "Read-only profile.");
- 		return 0;
- 	}
--	buff = rte_zmalloc("pinfo_list",
--			   (I40E_PROFILE_INFO_SIZE * I40E_MAX_PROFILE_NUM + 4),
--			   0);
--	if (!buff) {
--		PMD_DRV_LOG(ERR, "failed to allocate memory");
--		return -1;
--	}
- 
- 	ret = i40e_aq_get_ddp_list(
- 		hw, (void *)buff,
-@@ -1584,7 +1577,6 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
- 		0, NULL);
- 	if (ret) {
- 		PMD_DRV_LOG(ERR, "Failed to get profile info list.");
--		rte_free(buff);
+ 	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+ 	uint32_t pctype_num;
+-	struct rte_pmd_i40e_ptype_info *pctype;
+-	uint32_t buff_size;
++	struct rte_pmd_i40e_ptype_info pctype[I40E_CUSTOMIZED_MAX] = {0};
+ 	struct i40e_customized_pctype *new_pctype = NULL;
+ 	uint8_t proto_id;
+ 	uint8_t pctype_value;
+@@ -11743,19 +11742,16 @@ i40e_update_customized_pctype(struct rte_eth_dev *dev, uint8_t *pkg,
  		return -1;
  	}
- 	p_list = (struct rte_pmd_i40e_profile_list *)buff;
-@@ -1592,20 +1584,17 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
- 		p = &p_list->p_info[i];
- 		if (pinfo->track_id == p->track_id) {
- 			PMD_DRV_LOG(INFO, "Profile exists.");
--			rte_free(buff);
- 			return 1;
+ 
+-	buff_size = pctype_num * sizeof(struct rte_pmd_i40e_proto_info);
+-	pctype = rte_zmalloc("new_pctype", buff_size, 0);
+-	if (!pctype) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate memory");
++	if (pctype_num > RTE_DIM(pctype)) {
++		PMD_DRV_LOG(ERR, "Pctype number exceeds maximum supported");
+ 		return -1;
+ 	}
+ 	/* get information about new pctype list */
+ 	ret = rte_pmd_i40e_get_ddp_info(pkg, pkg_size,
+-					(uint8_t *)pctype, buff_size,
++					(uint8_t *)pctype, sizeof(pctype),
+ 					RTE_PMD_I40E_PKG_INFO_PCTYPE_LIST);
+ 	if (ret) {
+ 		PMD_DRV_LOG(ERR, "Failed to get pctype list");
+-		rte_free(pctype);
+ 		return -1;
+ 	}
+ 
+@@ -11836,7 +11832,6 @@ i40e_update_customized_pctype(struct rte_eth_dev *dev, uint8_t *pkg,
  		}
  	}
- 	/* profile with group id 0xff is compatible with any other profile */
- 	if ((pinfo->track_id & group_mask) == group_mask) {
--		rte_free(buff);
- 		return 0;
- 	}
- 	for (i = 0; i < p_list->p_count; i++) {
- 		p = &p_list->p_info[i];
- 		if ((p->track_id & group_mask) == 0) {
- 			PMD_DRV_LOG(INFO, "Profile of the group 0 exists.");
--			rte_free(buff);
- 			return 2;
- 		}
- 	}
-@@ -1616,12 +1605,9 @@ i40e_check_profile_info(uint16_t port, uint8_t *profile_info_sec)
- 		if ((pinfo->track_id & group_mask) !=
- 		    (p->track_id & group_mask)) {
- 			PMD_DRV_LOG(INFO, "Profile of different group exists.");
--			rte_free(buff);
- 			return 3;
- 		}
- 	}
--
--	rte_free(buff);
+ 
+-	rte_free(pctype);
  	return 0;
  }
  
-@@ -1637,7 +1623,10 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 	struct i40e_generic_seg_header *profile_seg_hdr;
- 	struct i40e_generic_seg_header *metadata_seg_hdr;
- 	uint32_t track_id;
--	uint8_t *profile_info_sec;
-+	struct {
-+		struct i40e_profile_section_header sec;
-+		struct i40e_profile_info info;
-+	} profile_info_sec = {0};
- 	int is_exist;
- 	enum i40e_status_code status = I40E_SUCCESS;
- 	static const uint32_t type_mask = 0xff000000;
-@@ -1702,26 +1691,15 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 		return -EINVAL;
+@@ -11846,11 +11841,10 @@ i40e_update_customized_ptype(struct rte_eth_dev *dev, uint8_t *pkg,
+ 			     struct rte_pmd_i40e_proto_info *proto,
+ 			     enum rte_pmd_i40e_package_op op)
+ {
+-	struct rte_pmd_i40e_ptype_mapping *ptype_mapping;
++	struct rte_pmd_i40e_ptype_mapping ptype_mapping[I40E_MAX_PKT_TYPE] = {0};
+ 	uint16_t port_id = dev->data->port_id;
+ 	uint32_t ptype_num;
+-	struct rte_pmd_i40e_ptype_info *ptype;
+-	uint32_t buff_size;
++	struct rte_pmd_i40e_ptype_info ptype[I40E_MAX_PKT_TYPE] = {0};
+ 	uint8_t proto_id;
+ 	char name[RTE_PMD_I40E_DDP_NAME_SIZE];
+ 	uint32_t i, j, n;
+@@ -11881,31 +11875,20 @@ i40e_update_customized_ptype(struct rte_eth_dev *dev, uint8_t *pkg,
+ 		return -1;
  	}
  
--	profile_info_sec = rte_zmalloc(
--		"i40e_profile_info",
--		sizeof(struct i40e_profile_section_header) +
--		sizeof(struct i40e_profile_info),
--		0);
--	if (!profile_info_sec) {
+-	buff_size = ptype_num * sizeof(struct rte_pmd_i40e_ptype_info);
+-	ptype = rte_zmalloc("new_ptype", buff_size, 0);
+-	if (!ptype) {
 -		PMD_DRV_LOG(ERR, "Failed to allocate memory");
--		return -EINVAL;
++	if (ptype_num > RTE_DIM(ptype)) {
++		PMD_DRV_LOG(ERR, "Too many ptypes");
+ 		return -1;
+ 	}
+ 
+ 	/* get information about new ptype list */
+ 	ret = rte_pmd_i40e_get_ddp_info(pkg, pkg_size,
+-					(uint8_t *)ptype, buff_size,
++					(uint8_t *)ptype, sizeof(ptype),
+ 					RTE_PMD_I40E_PKG_INFO_PTYPE_LIST);
+ 	if (ret) {
+ 		PMD_DRV_LOG(ERR, "Failed to get ptype list");
+-		rte_free(ptype);
+ 		return ret;
+ 	}
+ 
+-	buff_size = ptype_num * sizeof(struct rte_pmd_i40e_ptype_mapping);
+-	ptype_mapping = rte_zmalloc("ptype_mapping", buff_size, 0);
+-	if (!ptype_mapping) {
+-		PMD_DRV_LOG(ERR, "Failed to allocate memory");
+-		rte_free(ptype);
+-		return -1;
 -	}
 -
- 	/* Check if the profile already loaded */
- 	i40e_generate_profile_info_sec(
- 		((struct i40e_profile_segment *)profile_seg_hdr)->name,
- 		&((struct i40e_profile_segment *)profile_seg_hdr)->version,
--		track_id, profile_info_sec,
-+		track_id, (uint8_t* )&profile_info_sec,
- 		op == RTE_PMD_I40E_PKG_OP_WR_ADD);
--	is_exist = i40e_check_profile_info(port, profile_info_sec);
-+	is_exist = i40e_check_profile_info(port, (uint8_t* )&profile_info_sec);
- 	if (is_exist < 0) {
- 		PMD_DRV_LOG(ERR, "Failed to check profile.");
--		rte_free(profile_info_sec);
- 		return -EINVAL;
- 	}
+ 	/* Update ptype mapping table. */
+ 	for (i = 0; i < ptype_num; i++) {
+ 		ptype_mapping[i].hw_ptype = ptype[i].ptype_id;
+@@ -12040,8 +12023,6 @@ i40e_update_customized_ptype(struct rte_eth_dev *dev, uint8_t *pkg,
+ 	if (ret)
+ 		PMD_DRV_LOG(ERR, "Failed to update ptype mapping table.");
  
-@@ -1734,13 +1712,11 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 			else if (is_exist == 3)
- 				PMD_DRV_LOG(ERR, "Profile of different group already exists");
- 			i40e_update_customized_info(dev, buff, size, op);
--			rte_free(profile_info_sec);
- 			return -EEXIST;
- 		}
- 	} else if (op == RTE_PMD_I40E_PKG_OP_WR_DEL) {
- 		if (is_exist != 1) {
- 			PMD_DRV_LOG(ERR, "Profile does not exist.");
--			rte_free(profile_info_sec);
- 			return -EACCES;
- 		}
- 	}
-@@ -1752,7 +1728,6 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 			track_id);
- 		if (status) {
- 			PMD_DRV_LOG(ERR, "Failed to write profile for delete.");
--			rte_free(profile_info_sec);
- 			return status;
- 		}
- 	} else {
-@@ -1765,14 +1740,13 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 				PMD_DRV_LOG(ERR, "Failed to write profile for add.");
- 			else
- 				PMD_DRV_LOG(ERR, "Failed to write profile.");
--			rte_free(profile_info_sec);
- 			return status;
- 		}
- 	}
- 
- 	if (track_id && (op != RTE_PMD_I40E_PKG_OP_WR_ONLY)) {
- 		/* Modify loaded profiles info list */
--		status = i40e_add_rm_profile_info(hw, profile_info_sec);
-+		status = i40e_add_rm_profile_info(hw, (uint8_t* )&profile_info_sec);
- 		if (status) {
- 			if (op == RTE_PMD_I40E_PKG_OP_WR_ADD)
- 				PMD_DRV_LOG(ERR, "Failed to add profile to info list.");
-@@ -1785,7 +1759,6 @@ rte_pmd_i40e_process_ddp_package(uint16_t port, uint8_t *buff,
- 	    op == RTE_PMD_I40E_PKG_OP_WR_DEL)
- 		i40e_update_customized_info(dev, buff, size, op);
- 
--	rte_free(profile_info_sec);
- 	return status;
+-	rte_free(ptype_mapping);
+-	rte_free(ptype);
+ 	return ret;
  }
  
+@@ -12076,7 +12057,7 @@ i40e_update_customized_info(struct rte_eth_dev *dev, uint8_t *pkg,
+ 	}
+ 
+ 	buff_size = proto_num * sizeof(struct rte_pmd_i40e_proto_info);
+-	proto = rte_zmalloc("new_proto", buff_size, 0);
++	proto = calloc(proto_num, sizeof(struct rte_pmd_i40e_proto_info));
+ 	if (!proto) {
+ 		PMD_DRV_LOG(ERR, "Failed to allocate memory");
+ 		return;
+@@ -12088,7 +12069,7 @@ i40e_update_customized_info(struct rte_eth_dev *dev, uint8_t *pkg,
+ 					RTE_PMD_I40E_PKG_INFO_PROTOCOL_LIST);
+ 	if (ret) {
+ 		PMD_DRV_LOG(ERR, "Failed to get protocol list");
+-		rte_free(proto);
++		free(proto);
+ 		return;
+ 	}
+ 
+@@ -12126,7 +12107,7 @@ i40e_update_customized_info(struct rte_eth_dev *dev, uint8_t *pkg,
+ 	if (ret)
+ 		PMD_DRV_LOG(INFO, "No ptype is updated.");
+ 
+-	rte_free(proto);
++	free(proto);
+ }
+ 
+ /* Create a QinQ cloud filter
 -- 
 2.47.3
 
