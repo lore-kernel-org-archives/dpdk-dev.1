@@ -2,77 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0F2F3C985
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 14:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3849F3C997
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 15:14:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7FC9D402DF;
-	Tue, 24 Feb 2026 15:44:48 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id ADE6E40270
- for <dev@dpdk.org>; Tue, 24 Feb 2026 15:44:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1771944287;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=UILWfny380lq2W4mgIv8tJPY2JOfC6+YGQulGGhu6mM=;
- b=TFiRAGTfljhWBo7eZqnmYaW0Zmer3f9GmO30iEczx1EUKTX3XxmBormr+JmRneQd57QLsL
- 6LwyeTP1F6GejC0EzHqrsGv5iVhQjt8KNfyvf+ELI6IenQYWoLVwTaOjpqze2/F0FRTmwU
- 4FA5uPhTt1ylMiUHl2/gcMNZcdQSxgo=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-108-ysBYBcLfM5OLO-3PD0ciNw-1; Tue, 24 Feb 2026 09:44:43 -0500
-X-MC-Unique: ysBYBcLfM5OLO-3PD0ciNw-1
-X-Mimecast-MFC-AGG-ID: ysBYBcLfM5OLO-3PD0ciNw_1771944282
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-38713b537d2so13310301fa.3
- for <dev@dpdk.org>; Tue, 24 Feb 2026 06:44:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771944281; x=1772549081;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=UILWfny380lq2W4mgIv8tJPY2JOfC6+YGQulGGhu6mM=;
- b=sep0UOc/nBzuellZavAud2CLQAuV7UP3vaYIi3M7WxWW3Z0SGWHlyF4ilIMzhiFHl2
- R2KYNUDHjyf9P8M2Pk9WTI/XF1AAPpBaOUfpTUalP2cJFZ7EelGT742hTymrvDl6frUm
- qF3GKpmumOpv5HC7d1H/0iq3jmNmaq/bKHxTv2cFng+TClqULUdCF6ZeDFGR+JwPdAkL
- lD26z/ntitt9Maty1MKf9cbJuIKjaVcC9c6pNp1aZHrFinPV7A9xp2jRwLigTRGVIm99
- QIUEq8jBV7JBZ/Xv39nl5kvjghmKtrUA/YhDNZgsgORv2ZD8JXdrcVStHmePUHH71YWJ
- rutA==
-X-Gm-Message-State: AOJu0Yw1qw+2Yz3FilaK/9ehuUVSQ1NBehj5iHnC+9ocW+AmNW5AEdrB
- 05/EDwXK3bMb7/VuU7yKxwKFNg1aKJ/KHwljLTg1LozacmmS0EcyTHz0LqLMM8ThmW2CnCgD1wy
- B0B06M2q49knvKXDa/JGYi4wJ5rFIfBbogI8HJ13+0vcJ1zx5+DTw1QP0qdgiA/A4RYoUYF92NH
- h0YqZLXsTJALH+CHs2GNM=
-X-Gm-Gg: ATEYQzyy6tDpxpywh8yDdrUBNN5vLCoOkthpge2Sm+3fnBXAzNUaa4tBMZvMzrjwMJ3
- GoV0a10nVVpYuXXTeL/Wi6XCRb/8qZHOMUJeC9OKD0xeEdPV7RxQWR2SjqoX/IrWr9TNJQ3BnuU
- ggPgmKqu2fd5nS6k5BHVzWW7V/R9/3rjxPhrRly1keWuZjnDPhJJgnyfgoWlh9L/4SaFZYGShlB
- Lpl/OvDKS40lyoq8hlglytiHUzd+u0reVXoCgeMQEmHUAuwkMuSQ9XOol763WZAFHDseQ==
-X-Received: by 2002:a2e:bc08:0:b0:386:fa6b:44e0 with SMTP id
- 38308e7fff4ca-389a5d6c05emr38857041fa.10.1771944281149; 
- Tue, 24 Feb 2026 06:44:41 -0800 (PST)
-X-Received: by 2002:a2e:bc08:0:b0:386:fa6b:44e0 with SMTP id
- 38308e7fff4ca-389a5d6c05emr38856861fa.10.1771944280350; Tue, 24 Feb 2026
- 06:44:40 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 258644027F;
+	Tue, 24 Feb 2026 16:14:43 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+ by mails.dpdk.org (Postfix) with ESMTP id 750E2400D5
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 16:14:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1771946081; x=1803482081;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=OAZoJhxJg44SRkaf5MBcbhsUDi/SoGls4Uxzz4KnDCw=;
+ b=DmCTCAkFL/M7bNE0f1G2D9vpXEJLt9IjrJkphJy4nw6MQpdInw1MdVJy
+ V1zsfvucqPIFbg8NyEypsirRTgiEwNstxcA5b4tta82O4GxT0eA8chSVr
+ agp/Hnv3MiwPBRKiWsIAPgpKeAxK5F98BaL4CMJjG35Zi3j2CVajctUos
+ 2K74NLbAv3qkpxruXN8FqkX5elq6UbTeMSeEyO4EnEwYfn8oZhDlohWj9
+ DYDVVYX3lDohi57cO5tF/C6wayILVKTOyVMz+bx6Rh82W+hcJ/HWbQtt7
+ WWuLgQmauAU0SyksSzHY8smJMAOaq2PGxIdEXAI1hUBDakPXnt7giDfLS g==;
+X-CSE-ConnectionGUID: bYgoN+1uT5CcxVlv2DYbMQ==
+X-CSE-MsgGUID: VZxWdl4lQKaMzHY/13nOqQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11711"; a="84056234"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="84056234"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Feb 2026 07:14:40 -0800
+X-CSE-ConnectionGUID: HgFkas/zS3O38eyIzmULrw==
+X-CSE-MsgGUID: in6bjLt7T2i1cIBXF/Y95w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="220526060"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by fmviesa005.fm.intel.com with ESMTP; 24 Feb 2026 07:14:39 -0800
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [PATCH v9 00/26] Cleanups for ixgbe, i40e, iavf, and ice PMD's
+Date: Tue, 24 Feb 2026 15:14:05 +0000
+Message-ID: <cover.1771945933.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <cover.1770646012.git.anatoly.burakov@intel.com>
+References: <cover.1770646012.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-References: <20260224014259.443846-1-stephen@networkplumber.org>
- <CAJFAV8yNsWO7pFH3B4-Wce=XBMNA3N4t__YL7nDpKNeojV2Dtg@mail.gmail.com>
- <CAJFAV8z0oo6zUdfYJDPJe8pJCkpZ4WVyABn0Xq1=EN=s+6givA@mail.gmail.com>
- <20260224064110.1d65ef69@phoenix.local>
-In-Reply-To: <20260224064110.1d65ef69@phoenix.local>
-From: David Marchand <david.marchand@redhat.com>
-Date: Tue, 24 Feb 2026 15:44:28 +0100
-X-Gm-Features: AaiRm50vJfZYRuBaDPo8ioOg8S51m65J3FAjJXwmLgSAFvpst33DsAbf5_aHMdE
-Message-ID: <CAJFAV8xC=F542X149H7C5+iA5gkhN_ZXgHaghr+xmLmEgMhQEA@mail.gmail.com>
-Subject: Re: [RFC] net/vdev_netvsc: disable auto-detection by default
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, 
- Matan Azrad <matan@nvidia.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: q-UQiIi5qSH8WHMkOTZW19uqpGm1CqxLAA2wiS0RQSc_1771944282
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,61 +58,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 24 Feb 2026 at 15:41, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Tue, 24 Feb 2026 08:58:45 +0100
-> David Marchand <david.marchand@redhat.com> wrote:
->
-> > On Tue, 24 Feb 2026 at 08:41, David Marchand <david.marchand@redhat.com> wrote:
-> > >
-> > > On Tue, 24 Feb 2026 at 02:43, Stephen Hemminger
-> > > <stephen@networkplumber.org> wrote:
-> > > >
-> > > > The vdev_netvsc driver auto-injects itself on Hyper-V via an
-> > > > RTE_INIT constructor. This interferes with tests on github actions
-> > > > which uses Azure where the driver probes in forked subprocesses
-> > > > and crashes on uninitialized interrupt instances.
-> > > >
-> > > > Guard the auto-detection behind RTE_LIBRTE_VDEV_NETVSC_AUTO
-> > > > (disabled by default). The driver must now be explicitly
-> > > > requested with --vdev=net_vdev_netvsc.
-> > > >
-> > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> > >
-> > > The failure in GHA can be avoided with a simpler:
-> > > https://patchwork.dpdk.org/project/dpdk/patch/20260223155603.3651641-1-david.marchand@redhat.com/
-> >
-> > After rerunning with debug, the vdev netvsc is still probed, but is
-> > not at fault for the recent failures we saw.
-> >
-> > VMBUS_BUS: vmbus_probe_one_driver(): VMBUS device
-> > 7c1e52d8-3f86-7c1e-52d8-3f867c1e52d8 on NUMA socket -1
-> > VMBUS_BUS: rte_vmbus_map_device(): Not managed by UIO driver, skipped
-> > VDEV_BUS: vdev_probe_all_drivers(): Search driver to probe device net_ring0
-> > VDEV_BUS: vdev_probe_all_drivers(): Search driver to probe device
-> > net_vdev_netvsc
-> > DPAA2_BUS: fslmc_vfio_close_group: Get fd by name((null)) failed(-19)
-> > DPAA2_BUS: Unable to close devices -19
-> > DPAA_BUS: dpaa_bus_cleanup():  >>
-> > DPAA_BUS: Portal already cleaned
-> > DPAA_BUS: dpaa_bus_cleanup(): Bus cleanup done
-> > Calling recursive action for test_invalid_vdev_flag
-> > Returned from recursive action for test_invalid_vdev_flag with 0
-> > Cleaning up /home/runner/work/dpdk/dpdk/build/app/dpdk-test recursive instance
-> > /home/runner/work/dpdk/dpdk/build/app/dpdk-test recursive instance returning 0
-> > Test OK
-> > RTE>>
->
-> The DPAA_BUS looks like noise.
-> And also VMBUS.
->
-> Maybe we need a --no-bus flag that shuts off all buses?
+This patchset is an assortment of cleanups for ixgbe, i40e, iavf, and ice PMD.
 
-I have this patch in store :-) since I also need this for OVS, I'll
-send it soon.
+IXGBE:
 
+- Remove unnecessary macros and #ifdef's
+- Disentangle unrelated flow API code paths
+
+I40E:
+
+- Get rid of global variables and unnecessary allocations
+- Reduce code duplication around default RSS keys
+- Use more appropriate integer types and definitions
+
+IAVF:
+
+- Remove dead code
+- Remove unnecessary allocations
+- Separate RSS uninit from hash flow parser uninit
+
+ICE:
+
+- Remove unnecessary allocations
+
+This is done in preparation for further rework.
+
+Note that this patchset depends on driver bug fix patchset [1] as well as an
+IPsec struct fix [2] (both already integrated into next-net-intel).
+
+[1] https://patches.dpdk.org/project/dpdk/list/?series=37350
+[2] https://patches.dpdk.org/project/dpdk/patch/c87355f75826ec90a506dc8d4548e3f6af2b7e93.1771581658.git.anatoly.burakov@intel.com/
+
+v1 -> v2:
+- Added more cleanups around rte_malloc usage
+
+v2 -> v3:
+- Reworded some commit messages
+- Added a new patch for ICE
+- Rebased on latest bug fix patches
+
+v3 -> v4:
+- Rebased on latest bugfix patchset
+
+v4 -> v5:
+- Adjusted typing for queue size
+- Fixed missing zero initializations for stack allocations
+
+v5 -> v6:
+- Addressed feedback for v3, v4, and v5
+- Changed more allocations to be stack based
+- Reworked queue and IRQ map related i40e patches for better logic
+
+v6 -> v7:
+- Fixed offset logic in IRQ map
+- (Hopefully) fixed zero-sized array initialization error for MSVC
+
+v7 -> v8:
+- Reverted to using calloc for IPsec patch because MSVC doesn't like
+  stack-initialized structs with zero-sized array members
+- Merged two IPsec patches together
+
+v8 -> v9:
+- Fixed testing failures in IAVF on account of "wrong" adminq buffer sizes
+
+Anatoly Burakov (26):
+  net/ixgbe: remove MAC type check macros
+  net/ixgbe: remove security-related ifdefery
+  net/ixgbe: split security and ntuple filters
+  net/i40e: get rid of global filter variables
+  net/i40e: make default RSS key global
+  net/i40e: use unsigned types for queue comparisons
+  net/i40e: use proper flex len define
+  net/i40e: remove global pattern variable
+  net/i40e: avoid rte malloc in tunnel set
+  net/i40e: avoid rte malloc in RSS RETA operations
+  net/i40e: avoid rte malloc in MAC/VLAN filtering
+  net/i40e: avoid rte malloc in VF resource queries
+  net/i40e: avoid rte malloc in adminq operations
+  net/i40e: avoid rte malloc in DDP package handling
+  net/i40e: avoid rte malloc in DDP ptype handling
+  net/iavf: remove remnants of pipeline mode
+  net/iavf: decouple hash uninit from parser uninit
+  net/iavf: avoid rte malloc in VF mailbox for IPsec
+  net/iavf: avoid rte malloc in RSS configuration
+  net/iavf: avoid rte malloc in MAC address operations
+  net/iavf: avoid rte malloc in queue operations
+  net/iavf: avoid rte malloc in irq map config
+  net/ice: avoid rte malloc in RSS RETA operations
+  net/ice: avoid rte malloc in MAC address operations
+  net/ice: avoid rte malloc in raw pattern parsing
+  net/ice: avoid rte malloc in flow pattern match
+
+ drivers/net/intel/i40e/i40e_ethdev.c         | 370 +++++++---------
+ drivers/net/intel/i40e/i40e_ethdev.h         |  26 +-
+ drivers/net/intel/i40e/i40e_flow.c           | 147 +++----
+ drivers/net/intel/i40e/i40e_hash.c           |  27 +-
+ drivers/net/intel/i40e/i40e_hash.h           |   3 +
+ drivers/net/intel/i40e/i40e_pf.c             |  26 +-
+ drivers/net/intel/i40e/rte_pmd_i40e.c        |  60 +--
+ drivers/net/intel/iavf/iavf.h                |   7 +-
+ drivers/net/intel/iavf/iavf_ethdev.c         |  37 +-
+ drivers/net/intel/iavf/iavf_fdir.c           |   1 -
+ drivers/net/intel/iavf/iavf_fsub.c           |   1 -
+ drivers/net/intel/iavf/iavf_generic_flow.h   |  15 -
+ drivers/net/intel/iavf/iavf_hash.c           |  13 +-
+ drivers/net/intel/iavf/iavf_ipsec_crypto.c   |  61 ++-
+ drivers/net/intel/iavf/iavf_vchnl.c          | 432 ++++++++++---------
+ drivers/net/intel/ice/ice_acl_filter.c       |   3 +-
+ drivers/net/intel/ice/ice_dcf_ethdev.c       |  26 +-
+ drivers/net/intel/ice/ice_ethdev.c           |  29 +-
+ drivers/net/intel/ice/ice_fdir_filter.c      |  19 +-
+ drivers/net/intel/ice/ice_generic_flow.c     |  15 +-
+ drivers/net/intel/ice/ice_hash.c             |  13 +-
+ drivers/net/intel/ice/ice_switch_filter.c    |   5 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c       |   8 -
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h       |  16 -
+ drivers/net/intel/ixgbe/ixgbe_flow.c         | 228 ++++++----
+ drivers/net/intel/ixgbe/ixgbe_rxtx.c         |  26 --
+ drivers/net/intel/ixgbe/ixgbe_rxtx.h         |   2 -
+ drivers/net/intel/ixgbe/ixgbe_rxtx_vec_sse.c |   6 -
+ 28 files changed, 740 insertions(+), 882 deletions(-)
 
 -- 
-David Marchand
+2.47.3
 
