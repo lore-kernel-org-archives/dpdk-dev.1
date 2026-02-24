@@ -2,67 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE178F4BB7F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 20:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE1DF4BB89
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 20:37:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7CB6840270;
-	Tue, 24 Feb 2026 21:04:32 +0100 (CET)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id 74790400D5
- for <dev@dpdk.org>; Tue, 24 Feb 2026 21:04:31 +0100 (CET)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-503347dea84so65525511cf.3
- for <dev@dpdk.org>; Tue, 24 Feb 2026 12:04:31 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A17C640270;
+	Tue, 24 Feb 2026 21:37:15 +0100 (CET)
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
+ [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id 233C6400D5
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 21:37:14 +0100 (CET)
+Received: by mail-dy1-f171.google.com with SMTP id
+ 5a478bee46e88-2b82c605dbdso1879036eec.0
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 12:37:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1771963470; x=1772568270; darn=dpdk.org;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1771965433;
+ x=1772570233; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Rm94KKRzMFA1FbzwMbaXcvh4BpPgL8CHSVJQkz6qkxQ=;
- b=NoYbfjoUadnWpE3HGd+HHFS7Iwc9OLJApGiMmD5gGpr4NZtgHY7V/AxGTJJzbGmdVa
- kq9T/lNaGjAF1YP3aR0OTQjr6iIpRCkWaWNGJktDM35qGWG0wdKaDxqYqZK8RIJFGT6S
- UCkcLQ6DXJcWd8qeIGnU063abyNNxth8UkAlo=
+ bh=AKwBHLKt2SWzwruuhrSVikmaGgsha/0LGsF8IJDrwLw=;
+ b=snQqOdFRGX6zycMBL4TssuF9exyjo7kbeN1wrBKjhJybSM4V7zV4jmYJ6kg3PuT4Yy
+ ADabAcaKKwAox1t8H4JvyPu6sVr0eG1lQRaD+ybJ9rkW0OXE5ftd3RLSGdfd74ALQFPo
+ 6kNiORWPR9UWEl9lxeoFawypBXUBtP791BEJbxhOGkN26JJHE7NnAEEDEWJPOSTt6Cup
+ gAibuga0Xe7VLBdTmVhOY/t+hHdJ0qw+eUglWpHxTgGBcRNIZa8tyevioQjJGfNbEFqz
+ cL9cdnyIzqVeY++B+82FgCebcZMhWBWWjsq7pNTE+jV6ngNiXiQDDT7vrbrOuIxBg4RI
+ Nk4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1771963470; x=1772568270;
+ d=1e100.net; s=20230601; t=1771965433; x=1772570233;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Rm94KKRzMFA1FbzwMbaXcvh4BpPgL8CHSVJQkz6qkxQ=;
- b=DlPK2AeNOP7DRxlDmXL+Z9KsmmQR6y56Kat5d/UnMFDGcwF95x7fthsxnnfuyekfGb
- PmoBOkHwUZ00PKifjbJeGAX0UXi3nDQVE/8SBgCW3h1hv3qsAkr45qYd+hiwSzEJf39v
- BEOdBiyS8A8/F0Rcj/OSgElMLjo3M8PbwNdcFnknJuOSBcbkCf2ODjtd9W+y1A/Av2rx
- kzMbBAJ18FxblcoSTKGoyIL044zOsLGgNKW1f9QJsTZoBuAxI/ocHvOriFoOJfkBoiFr
- JgCav1hwgGneRxB+JbaAGEQSYov9MIlApXe4OtI4bXuJD5tMUPbvD8WrOJdZ4VMLJsDl
- F9RQ==
-X-Gm-Message-State: AOJu0YwHWs7qAlOtZAb7wt5z8AYIhIxr+4Dfk8Lod3tfJ9i/eM0jHwoi
- bii9Oi6SxlpduxWwQtXlbY5JrtVCJskLp0uDckwjMKSars+noFtbaxY8yOi+VWhVFJCWo7MLjhj
- JA147/3TmxV2zJ8sP8MYzN+9npC872Rjd75XuL35xVhSxctrwl58sRy+6Ycz2J0ubtp/xH1vavS
- gaZ8K+QHd1fFkkrFyebYuJAxSwYkg=
-X-Gm-Gg: AZuq6aI7Zg1RuLDsqhpXVL/jJfv8G6CAiHshk3hDMSU0F3Xe4bR/IdAcHmjlO2UeLUf
- XRLlcOPvgPvVn1gpI6YDpzswkvVAoCJWb1fGctBPn561A8oTbHH9P5npVewUCdFKaTnNhshpwaJ
- sXil6YvMg4HWziYttO9xfoNhc7/oGmTMEyHbcUNH1v2niLFp0Ggbp8+3YTn6+wa/CdzEUhoVSnz
- 9sO/8mUcE7W+vvXC7K5vdXbROMy12NlIhAtekRNx0VbNw923YplCgQHffV2l19nhQSD3lV9C9xJ
- UAIbTJO8nRQnDzYpVtQYvJdoIX87DWHNXeOsqG/F6p3o1OOfjpnu0dfDHctGV1E3tCovKTy33gR
- 5dtFDFCDZivGesXrKYRuEBlCtV4s8t4FyztTzu+TGh/gjL8m5cfttWSqiFWeHKkVIo+PlN8IfAe
- WerZZfvIDeqEbCwMnif3ZMu6WWV9fyQfgk0dblOWEBrIvK9yR/W92hb/aQIMvDihzZ
-X-Received: by 2002:a05:622a:1308:b0:4ed:dec2:301a with SMTP id
- d75a77b69052e-5070bbcc95amr185704361cf.16.1771963470110; 
- Tue, 24 Feb 2026 12:04:30 -0800 (PST)
-Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ bh=AKwBHLKt2SWzwruuhrSVikmaGgsha/0LGsF8IJDrwLw=;
+ b=rR5C8+7kubY1ZlxKk/o+UQC6ygbSAHqVqBpPfuYSENQmwiwB3yPVLp0TBL20RALdpk
+ ObzWLvHArpNVXU8MEzyilKQHCk+idDXbvRrjVbk7CNjpC17zW9Q+D7XS2GvnI1LrqL8F
+ aRXuUUOHAuhqI5cM3npB56IJcbZW53DfazBx6kkl3nASpgd96n2t+G6mngB6/cFwvk4K
+ nmcvHvoIs1DAb2ix7rRShYetiPLngy9X5OqQqq807LsCnz457bcPHgQbZODAB6G+Ul6E
+ QaMr1/qN0EtnD3CUNGJtbPt8gZeQVJ6wYatBDft9pSLTKDaSU9p2t2czm7D0Lf3iFnkq
+ HA3w==
+X-Gm-Message-State: AOJu0YxbSN0HT+HB0q2eaWFsXpaJMWm59Z1eL2OQ0Ag3jRqkwJG7Xyb6
+ MEl+QTk+6fRjmz5vX3Sfnz/TvjkIzffBW/a7WfBQWhZ+UAUaUaLBfp6A5k2CBEKFvJIG13mx2sW
+ bDSDG
+X-Gm-Gg: ATEYQzw+oPlXQCbk/p//jsddRz+NEOwpHfycPq48yqjt5tkokcJoqMziTYjPob7MHsZ
+ JMSykWqslOjyutpiCKLv/Ts/8IlNx7JZNhS2n35AkrmcGoZgyFEWNIV5ac4h8/g4t0StMFp3ddd
+ 7GFsHSvGg5q0JH4U9V/tmPuFPUriblJWU9IMCRqWfa+U+S9zEEi7DyxqhmB78KIr6qwo2ccASLn
+ ZbhecBmhkpcaouAHjGVO4ET3Q5fnA1btO01WFXl6LSlnNFxTKZoeUlDXe8P62hzkWZ8SfcUQ8jV
+ SQK4ifJ4LWoHcdlDpD79cPyp6E0T2VLcbd+CydajQdg5+y8yXn9Uu/kcy6i96X0BF8Wx0cLrgCp
+ ITjmRgVmX3SOy3wBGzLJixlZwdcVpkQucnIUMpTN2rg0LDLl62SCTP7YhGeAC0H5v5e2of01Gzt
+ WqZOVTYRvffABGIluORjAvRPUucCrR4S6VEJIdlACngvDrRVDq5R66BTSS6bOEwZnZwtfFJl7y
+X-Received: by 2002:a05:7300:e8a3:b0:2b7:1e86:3604 with SMTP id
+ 5a478bee46e88-2bd7b9e6bd3mr6385394eec.6.1771965432895; 
+ Tue, 24 Feb 2026 12:37:12 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8997e62f453sm104993486d6.36.2026.02.24.12.04.29
+ 5a478bee46e88-2bd7dbe82d3sm8575083eec.21.2026.02.24.12.37.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 24 Feb 2026 12:04:29 -0800 (PST)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: dev@dpdk.org,
-	probb@iol.unh.edu
-Cc: dmarx@iol.unh.edu, luca.vizzarro@arm.com,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v1] dts: reduce precision for single-core performance test
- suite
-Date: Tue, 24 Feb 2026 15:04:19 -0500
-Message-ID: <20260224200419.50597-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
+ Tue, 24 Feb 2026 12:37:12 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: [RFC] net/cnxk: only build if platform is specified
+Date: Tue, 24 Feb 2026 12:37:09 -0800
+Message-ID: <20260224203709.27696-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -78,49 +81,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Previously, the single-core performance test suite did not
-limit the significant figures written to the result json file.
-This patch limits the results for the output and the json
-result file to the thousandths place.
+The generic build was building for all SOC types and that
+takes a long time (like 10 minutes). The driver should only be
+built if soc_type is set to one of the know values.
 
-Bugzilla ID: 1895
-Fixes: d77d7f04f24c ("dts: add single-core performance test suite")
-
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- dts/tests/TestSuite_single_core_forward_perf.py | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/cnxk/meson.build | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/dts/tests/TestSuite_single_core_forward_perf.py b/dts/tests/TestSuite_single_core_forward_perf.py
-index 8a92ba39b5..1e7ab7b036 100644
---- a/dts/tests/TestSuite_single_core_forward_perf.py
-+++ b/dts/tests/TestSuite_single_core_forward_perf.py
-@@ -91,7 +91,7 @@ def _produce_stats_table(self, test_parameters: list[dict[str, int | float]]) ->
-         print("-" * len(header))
-         for params in test_parameters:
-             print(f"{params['frame_size']:>12} | {params['num_descriptors']:>12} | ", end="")
--            print(f"{params['measured_mpps']:>12.2f} | {params['expected_mpps']:>14.2f}")
-+            print(f"{params['measured_mpps']:>12} | {params['expected_mpps']:>14}")
-             print("-" * len(header))
+diff --git a/drivers/net/cnxk/meson.build b/drivers/net/cnxk/meson.build
+index 53caa6c171..4a2f4e1a92 100644
+--- a/drivers/net/cnxk/meson.build
++++ b/drivers/net/cnxk/meson.build
+@@ -14,8 +14,10 @@ else
+         soc_type = platform
+ endif
  
-         write_performance_json({"results": test_parameters})
-@@ -131,10 +131,12 @@ def single_core_forward_perf(self) -> None:
-             with TestPmd(
-                 **driver_specific_testpmd_args,
-             ) as testpmd:
--                params["measured_mpps"] = self._transmit(testpmd, frame_size)
--                params["performance_delta"] = (
--                    float(params["measured_mpps"]) - float(params["expected_mpps"])
--                ) / float(params["expected_mpps"])
-+                params["measured_mpps"] = round(self._transmit(testpmd, frame_size), 3)
-+                params["performance_delta"] = round(
-+                    (float(params["measured_mpps"]) - float(params["expected_mpps"]))
-+                    / float(params["expected_mpps"]),
-+                    3,
-+                )
-                 params["pass"] = float(params["performance_delta"]) >= -self.delta_tolerance
+-if soc_type != 'cn9k' and soc_type != 'cn10k' and soc_type != 'cn20k'
+-        soc_type = 'all'
++if soc_type != 'cn9k' and soc_type != 'cn10k' and soc_type != 'cn20k' and soc_type != 'all'
++        build = false
++        reason = 'not supported on soc_type ' + soc_type
++        subdir_done()
+ endif
  
-         self._produce_stats_table(self.test_parameters)
+ sources = files(
 -- 
-2.50.1
+2.51.0
 
