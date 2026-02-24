@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71135F3C995
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 15:17:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA100F3C995
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Feb 2026 15:17:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6395040BA0;
-	Tue, 24 Feb 2026 16:15:22 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F41F40C35;
+	Tue, 24 Feb 2026 16:15:23 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id 4063C40612
- for <dev@dpdk.org>; Tue, 24 Feb 2026 16:15:01 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4EFF440612
+ for <dev@dpdk.org>; Tue, 24 Feb 2026 16:15:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1771946101; x=1803482101;
+ t=1771946102; x=1803482102;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=oc2e0xbk0c6xWtkRmx84tgLylMNX0gP5DbA412AjLaE=;
- b=bCMA/+08fwzKc4WZ43LWrEfj7VmXz4nil+f7NOnsl5BxBcdwoHxoYMkK
- y6752Xa1qg71xANyt6i5k/trA2qnKF+V66lhfgJx02WtGZdnVB7ZJxNLE
- q610hoCf/kPbhWAnw3ID2qhfDxLy7MkU3FnQAkU35QFeaFHt2P8wharXZ
- jJf6eONNYUKv6PwaiMxUgF5CCbyamxqlci742y+oWaWzqGHCmjNxvvXIi
- epyony6EaVZQNOFrCqF3VxHQ2OyrzGasJ0Qlku5ylq1DIV3m8Zknkc6aw
- b8HGgWinKw4tCpZrfVKSSPMvWefc4iGJGunkeBati855+hGmQ6bpD6+xM A==;
-X-CSE-ConnectionGUID: vjBVWviSTteXlx7krbN4ZQ==
-X-CSE-MsgGUID: lWICqMLiTBS/3nuC+eyqlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11711"; a="84056276"
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="84056276"
+ bh=WKITX3Fs3abQF5bMmO74jo91dBgRF0L1povID0W4f0I=;
+ b=PC+2W8qAfSVUGLuvXxcJA2bjFrO1obd78YfgDyPloSeoApUke/NboLRZ
+ 68/UP1fNpFI3mvxrEotnK9Ouc3hFqBaK8hiD2DgHu9MJrH6Aq0OTwmPQY
+ MRzmaWibxvtSVbu6hEF9bWJz/X610AhuryVZtnB4ElT1ZH9qMn84JsGCM
+ UcexMlFfWAnYbVWbhPwPRwvU7Os8ypD3WAZqSVzb0YYLh807bk8SFNg9U
+ tpWWFcHNpXDePn9ulTW2NlXVlXr5XvdnchVCkUM/cGZcz9cSrOwiORotS
+ 8bNarAqg9vZvAwBNrHSwGf4UJcerhTZWQOU4Ldo19hojDG2yoaDUb+el1 A==;
+X-CSE-ConnectionGUID: cNP4dMe4QfyNh8hif9RNgA==
+X-CSE-MsgGUID: O8ratVzPQA6rRBBteoeflg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11711"; a="84056277"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="84056277"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 24 Feb 2026 07:15:01 -0800
-X-CSE-ConnectionGUID: X9ggq416Q9GHAbrIcucmfQ==
-X-CSE-MsgGUID: b8fv/p4bSjGoRblGDPVm8A==
+ 24 Feb 2026 07:15:02 -0800
+X-CSE-ConnectionGUID: rYAmFoxWTEmLCEsiL+7BwA==
+X-CSE-MsgGUID: rfIvBmmkTCaSz7TwI92XWw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="220526232"
+X-IronPort-AV: E=Sophos;i="6.21,308,1763452800"; d="scan'208";a="220526241"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa005.fm.intel.com with ESMTP; 24 Feb 2026 07:15:00 -0800
+ by fmviesa005.fm.intel.com with ESMTP; 24 Feb 2026 07:15:01 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v9 22/26] net/iavf: avoid rte malloc in irq map config
-Date: Tue, 24 Feb 2026 15:14:27 +0000
-Message-ID: <5e6a55afa2b45e3ee5ec17af7a6c548c96e9698b.1771945933.git.anatoly.burakov@intel.com>
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v9 23/26] net/ice: avoid rte malloc in RSS RETA operations
+Date: Tue, 24 Feb 2026 15:14:28 +0000
+Message-ID: <65ebb6bc737a471d661d1e951648a76ebcbcd351.1771945933.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1771945933.git.anatoly.burakov@intel.com>
  <cover.1771945933.git.anatoly.burakov@intel.com>
@@ -60,228 +60,119 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, when configuring IRQ maps, we are using rte_zmalloc followed
-by an immediate rte_free. This memory does not need to be stored in
-hugepage memory, so replace it with stack allocation.
-
-The original code did not check maximum IRQ map size, because the design
-was built around an anti-pattern of caller having to chunk the IRQ map
-calls. This has now been corrected as well.
+Currently, when updating or querying RSS redirection table (RETA), we
+are using rte_zmalloc followed by an immediate rte_free. This memory does
+not need to be stored in hugepage memory, so replace it with stack
+allocation.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/intel/iavf/iavf.h        |   3 +-
- drivers/net/intel/iavf/iavf_ethdev.c |  15 +---
- drivers/net/intel/iavf/iavf_vchnl.c  | 121 ++++++++++++++++++---------
- 3 files changed, 83 insertions(+), 56 deletions(-)
+ drivers/net/intel/ice/ice_dcf_ethdev.c |  4 ++--
+ drivers/net/intel/ice/ice_ethdev.c     | 29 ++++++--------------------
+ 2 files changed, 8 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 77a2c94290..f9bb398a77 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -511,8 +511,7 @@ int iavf_add_del_vlan_v2(struct iavf_adapter *adapter, uint16_t vlanid,
- 			 bool add);
- int iavf_get_vlan_offload_caps_v2(struct iavf_adapter *adapter);
- int iavf_config_irq_map(struct iavf_adapter *adapter);
--int iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num,
--			uint16_t index);
-+int iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num);
- void iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add);
- int iavf_dev_link_update(struct rte_eth_dev *dev,
- 			__rte_unused int wait_to_complete);
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 6e216f4c0f..26e7febecf 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -919,20 +919,7 @@ static int iavf_config_rx_queues_irqs(struct rte_eth_dev *dev,
- 			goto config_irq_map_err;
- 		}
- 	} else {
--		uint16_t num_qv_maps = dev->data->nb_rx_queues;
--		uint16_t index = 0;
--
--		while (num_qv_maps > IAVF_IRQ_MAP_NUM_PER_BUF) {
--			if (iavf_config_irq_map_lv(adapter,
--					IAVF_IRQ_MAP_NUM_PER_BUF, index)) {
--				PMD_DRV_LOG(ERR, "config interrupt mapping for large VF failed");
--				goto config_irq_map_err;
--			}
--			num_qv_maps -= IAVF_IRQ_MAP_NUM_PER_BUF;
--			index += IAVF_IRQ_MAP_NUM_PER_BUF;
--		}
--
--		if (iavf_config_irq_map_lv(adapter, num_qv_maps, index)) {
-+		if (iavf_config_irq_map_lv(adapter, dev->data->nb_rx_queues)) {
- 			PMD_DRV_LOG(ERR, "config interrupt mapping for large VF failed");
- 			goto config_irq_map_err;
- 		}
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index eb9e4d0c2d..08dd6f2d7f 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -1319,81 +1319,122 @@ int
- iavf_config_irq_map(struct iavf_adapter *adapter)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
--	struct virtchnl_irq_map_info *map_info;
--	struct virtchnl_vector_map *vecmap;
--	struct iavf_cmd_info args;
--	int len, i, err;
-+	struct {
-+		struct virtchnl_irq_map_info map_info;
-+		struct virtchnl_vector_map vecmap[IAVF_MAX_NUM_QUEUES_DFLT];
-+	} map_req = {0};
-+	struct virtchnl_irq_map_info *map_info = &map_req.map_info;
-+	struct iavf_cmd_info args = {0};
-+	int i, err, max_vmi = -1;
-+	size_t buf_len;
- 
--	len = sizeof(struct virtchnl_irq_map_info) +
--	      sizeof(struct virtchnl_vector_map) * vf->nb_msix;
-+	if (adapter->dev_data->nb_rx_queues > IAVF_MAX_NUM_QUEUES_DFLT) {
-+		PMD_DRV_LOG(ERR, "number of queues (%u) exceeds the max supported (%u)",
-+			    adapter->dev_data->nb_rx_queues, IAVF_MAX_NUM_QUEUES_DFLT);
-+		return -EINVAL;
-+	}
- 
--	map_info = rte_zmalloc("map_info", len, 0);
--	if (!map_info)
--		return -ENOMEM;
--
--	map_info->num_vectors = vf->nb_msix;
- 	for (i = 0; i < adapter->dev_data->nb_rx_queues; i++) {
--		vecmap =
--		    &map_info->vecmap[vf->qv_map[i].vector_id - vf->msix_base];
-+		struct virtchnl_vector_map *vecmap;
-+		/* always 0 for 1 MSIX, never bigger than rxq for multi MSIX */
-+		uint16_t vmi = vf->qv_map[i].vector_id - vf->msix_base;
-+
-+		/* can't happen but avoid static analysis warnings */
-+		if (vmi >= IAVF_MAX_NUM_QUEUES_DFLT) {
-+			PMD_DRV_LOG(ERR, "vector id (%u) exceeds the max supported (%u)",
-+					vf->qv_map[i].vector_id,
-+					vf->msix_base + IAVF_MAX_NUM_QUEUES_DFLT - 1);
-+			return -EINVAL;
-+		}
-+
-+		vecmap = &map_info->vecmap[vmi];
- 		vecmap->vsi_id = vf->vsi_res->vsi_id;
- 		vecmap->rxitr_idx = IAVF_ITR_INDEX_DEFAULT;
- 		vecmap->vector_id = vf->qv_map[i].vector_id;
- 		vecmap->txq_map = 0;
- 		vecmap->rxq_map |= 1 << vf->qv_map[i].queue_id;
-+
-+		/* MSIX vectors round robin so look for max */
-+		if (vmi > max_vmi) {
-+			map_info->num_vectors++;
-+			max_vmi = vmi;
-+		}
+diff --git a/drivers/net/intel/ice/ice_dcf_ethdev.c b/drivers/net/intel/ice/ice_dcf_ethdev.c
+index abd7875e7b..388495d69c 100644
+--- a/drivers/net/intel/ice/ice_dcf_ethdev.c
++++ b/drivers/net/intel/ice/ice_dcf_ethdev.c
+@@ -1336,7 +1336,7 @@ ice_dcf_dev_rss_reta_update(struct rte_eth_dev *dev,
+ 		return -EINVAL;
  	}
  
-+	/* for some reason PF side checks for buffer being too big, so adjust it down */
-+	buf_len = sizeof(struct virtchnl_irq_map_info) +
-+		  sizeof(struct virtchnl_vector_map) * map_info->num_vectors;
-+
- 	args.ops = VIRTCHNL_OP_CONFIG_IRQ_MAP;
- 	args.in_args = (u8 *)map_info;
--	args.in_args_size = len;
-+	args.in_args_size = buf_len;
- 	args.out_buffer = vf->aq_resp;
- 	args.out_size = IAVF_AQ_BUF_SZ;
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "fail to execute command OP_CONFIG_IRQ_MAP");
+-	lut = rte_zmalloc("rss_lut", reta_size, 0);
++	lut = calloc(1, reta_size);
+ 	if (!lut) {
+ 		PMD_DRV_LOG(ERR, "No memory can be allocated");
+ 		return -ENOMEM;
+@@ -1356,7 +1356,7 @@ ice_dcf_dev_rss_reta_update(struct rte_eth_dev *dev,
+ 	ret = ice_dcf_configure_rss_lut(hw);
+ 	if (ret) /* revert back */
+ 		rte_memcpy(hw->rss_lut, lut, reta_size);
+-	rte_free(lut);
++	free(lut);
  
--	rte_free(map_info);
- 	return err;
+ 	return ret;
  }
+diff --git a/drivers/net/intel/ice/ice_ethdev.c b/drivers/net/intel/ice/ice_ethdev.c
+index 41474b7002..0d6b030536 100644
+--- a/drivers/net/intel/ice/ice_ethdev.c
++++ b/drivers/net/intel/ice/ice_ethdev.c
+@@ -5564,7 +5564,7 @@ ice_rss_reta_update(struct rte_eth_dev *dev,
+ 	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+ 	uint16_t i, lut_size = pf->hash_lut_size;
+ 	uint16_t idx, shift;
+-	uint8_t *lut;
++	uint8_t lut[ICE_AQC_GSET_RSS_LUT_TABLE_SIZE_2K] = {0};
+ 	int ret;
  
--int
--iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num,
--		uint16_t index)
-+static int
-+iavf_config_irq_map_lv_chunk(struct iavf_adapter *adapter,
-+		uint16_t chunk_sz,
-+		uint16_t chunk_start)
- {
-+	struct {
-+		struct virtchnl_queue_vector_maps map_info;
-+		struct virtchnl_queue_vector qv_maps[IAVF_CFG_Q_NUM_PER_BUF];
-+	} chunk_req = {0};
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
--	struct virtchnl_queue_vector_maps *map_info;
--	struct virtchnl_queue_vector *qv_maps;
--	struct iavf_cmd_info args;
--	int len, i, err;
--	int count = 0;
-+	struct iavf_cmd_info args = {0};
-+	struct virtchnl_queue_vector_maps *map_info = &chunk_req.map_info;
-+	struct virtchnl_queue_vector *qv_maps = chunk_req.qv_maps;
-+	size_t buf_len;
-+	uint16_t i;
- 
--	len = sizeof(struct virtchnl_queue_vector_maps) +
--	      sizeof(struct virtchnl_queue_vector) * (num - 1);
--
--	map_info = rte_zmalloc("map_info", len, 0);
--	if (!map_info)
+ 	if (reta_size != ICE_AQC_GSET_RSS_LUT_TABLE_SIZE_128 &&
+@@ -5581,14 +5581,9 @@ ice_rss_reta_update(struct rte_eth_dev *dev,
+ 	/* It MUST use the current LUT size to get the RSS lookup table,
+ 	 * otherwise if will fail with -100 error code.
+ 	 */
+-	lut = rte_zmalloc(NULL,  RTE_MAX(reta_size, lut_size), 0);
+-	if (!lut) {
+-		PMD_DRV_LOG(ERR, "No memory can be allocated");
 -		return -ENOMEM;
-+	if (chunk_sz > IAVF_CFG_Q_NUM_PER_BUF)
-+		return -EINVAL;
+-	}
+ 	ret = ice_get_rss_lut(pf->main_vsi, lut, lut_size);
+ 	if (ret)
+-		goto out;
++		return ret;
  
- 	map_info->vport_id = vf->vsi_res->vsi_id;
--	map_info->num_qv_maps = num;
--	for (i = index; i < index + map_info->num_qv_maps; i++) {
--		qv_maps = &map_info->qv_maps[count++];
-+	map_info->num_qv_maps = chunk_sz;
-+	for (i = 0; i < chunk_sz; i++) {
-+		qv_maps = &map_info->qv_maps[i];
- 		qv_maps->itr_idx = VIRTCHNL_ITR_IDX_0;
- 		qv_maps->queue_type = VIRTCHNL_QUEUE_TYPE_RX;
--		qv_maps->queue_id = vf->qv_map[i].queue_id;
--		qv_maps->vector_id = vf->qv_map[i].vector_id;
-+		qv_maps->queue_id = vf->qv_map[chunk_start + i].queue_id;
-+		qv_maps->vector_id = vf->qv_map[chunk_start + i].vector_id;
+ 	for (i = 0; i < reta_size; i++) {
+ 		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+@@ -5604,10 +5599,7 @@ ice_rss_reta_update(struct rte_eth_dev *dev,
+ 		pf->hash_lut_size = reta_size;
  	}
  
-+	/* for some reason PF side checks for buffer being too big, so adjust it down */
-+	buf_len = sizeof(struct virtchnl_queue_vector_maps) +
-+		  sizeof(struct virtchnl_queue_vector) * chunk_sz;
-+
- 	args.ops = VIRTCHNL_OP_MAP_QUEUE_VECTOR;
- 	args.in_args = (u8 *)map_info;
--	args.in_args_size = len;
-+	args.in_args_size = buf_len;
- 	args.out_buffer = vf->aq_resp;
- 	args.out_size = IAVF_AQ_BUF_SZ;
--	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
--	if (err)
--		PMD_DRV_LOG(ERR, "fail to execute command OP_MAP_QUEUE_VECTOR");
- 
--	rte_free(map_info);
--	return err;
-+	return iavf_execute_vf_cmd_safe(adapter, &args, 0);
-+}
-+
-+int
-+iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num)
-+{
-+	uint16_t c;
-+	int err;
-+
-+	for (c = 0; c < num; c += IAVF_CFG_Q_NUM_PER_BUF) {
-+		uint16_t chunk_sz = RTE_MIN(num - c, IAVF_CFG_Q_NUM_PER_BUF);
-+		err = iavf_config_irq_map_lv_chunk(adapter, chunk_sz, c);
-+		if (err) {
-+			PMD_DRV_LOG(ERR, "Failed to configure irq map chunk [%u, %u)",
-+					c, c + chunk_sz);
-+			return err;
-+		}
-+	}
+-out:
+-	rte_free(lut);
+-
+-	return ret;
 +	return 0;
  }
  
- void
+ static int
+@@ -5618,7 +5610,7 @@ ice_rss_reta_query(struct rte_eth_dev *dev,
+ 	struct ice_pf *pf = ICE_DEV_PRIVATE_TO_PF(dev->data->dev_private);
+ 	uint16_t i, lut_size = pf->hash_lut_size;
+ 	uint16_t idx, shift;
+-	uint8_t *lut;
++	uint8_t lut[ICE_AQC_GSET_RSS_LUT_TABLE_SIZE_2K] = {0};
+ 	int ret;
+ 
+ 	if (reta_size != lut_size) {
+@@ -5630,15 +5622,9 @@ ice_rss_reta_query(struct rte_eth_dev *dev,
+ 		return -EINVAL;
+ 	}
+ 
+-	lut = rte_zmalloc(NULL, reta_size, 0);
+-	if (!lut) {
+-		PMD_DRV_LOG(ERR, "No memory can be allocated");
+-		return -ENOMEM;
+-	}
+-
+ 	ret = ice_get_rss_lut(pf->main_vsi, lut, reta_size);
+ 	if (ret)
+-		goto out;
++		return ret;
+ 
+ 	for (i = 0; i < reta_size; i++) {
+ 		idx = i / RTE_ETH_RETA_GROUP_SIZE;
+@@ -5647,10 +5633,7 @@ ice_rss_reta_query(struct rte_eth_dev *dev,
+ 			reta_conf[idx].reta[shift] = lut[i];
+ 	}
+ 
+-out:
+-	rte_free(lut);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ static int
 -- 
 2.47.3
 
