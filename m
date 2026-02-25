@@ -2,47 +2,140 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A7AFCEE94
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 12:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3B4EFCEE95
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 12:09:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C5EBC40288;
-	Wed, 25 Feb 2026 13:09:21 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 29FBB40609;
+	Wed, 25 Feb 2026 13:09:31 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id 65A99400D6
- for <dev@dpdk.org>; Wed, 25 Feb 2026 13:09:19 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A0CFB402EE
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 13:09:28 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1772021360; x=1803557360;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=I5lSJq4Zymf+U76v/2CONqgbZz78pFkhTODUwJP7PPk=;
- b=cx8t2QU6WvIXRUp5iArmohmd4tCnmKveiyalx9Kr8zTe9Og+6PLGL2Ww
- PNp2nmKwn95gQy3FpI2xnTjOVpn/9ZtLSXIvIKi3xCL4PPN+oiP9021gH
- rG0qHX4nrFsorQThtc8Aovy52xTW4WiQ4QRHGyPkx6R7rlO71yVW61Kly
- n9xrFMVrGuDSQfhE9QV/Mtj+apK7tn43wenKAPr04hLgaBzPq69iFf++9
- 7/dqiHO4a7MBDQk794Wq0ysTH12R+lFTZEzKnI4aS7dDZCUY3Elx1a7uS
- dKHSLgkfmR3Va8ZUkZjfz80UQn1RGBDz/3eCtrBUM0ThHHaGDVLbgsN7G g==;
-X-CSE-ConnectionGUID: SUCiEsYjQQ2qqhZZjvCjaA==
-X-CSE-MsgGUID: 004O5TVsRM+NccRa5gLagA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11711"; a="72095465"
-X-IronPort-AV: E=Sophos;i="6.21,310,1763452800"; d="scan'208";a="72095465"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ t=1772021369; x=1803557369;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=iGWH094BVu7Rmvm/GaIK/NA+PIZq2rAb3GUNmOAEESo=;
+ b=V0v4Zg2SI9fjagcKX32/JrKG1L0uPYxaZrJqF3tJ+VU46stHNIhywBMa
+ 36tW2Q2LATLzQoAZOUH++cvzEQ6FLSLE3YKtUvrP1x9s+B94FrSVCEJVy
+ isJmsFdCSIZ3JR+skpzASOxE8K1g1F8j+7+k9EJJIQwzDmaKD+r6IUMCy
+ R/rExA+WOsdZN7OJo61Fru4xNb6rZUYXzON9kn3zzkO3r3BmkwJwBckjd
+ AD0fKjZgjHvy9zMuJ6iBpAD4wKad456laHGDLZUpJxO5EWbx0WAv+5R/+
+ Q28KFcGGAhGFfi0xcOrX4PWAA16JxyFhFJMV2iUTJAmouIOYuiPOqmJrl A==;
+X-CSE-ConnectionGUID: 0CMiCIgjQcWZd2Z/jIxb1Q==
+X-CSE-MsgGUID: HVDSNWaNQSWDP5cpaHFvTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11711"; a="72095555"
+X-IronPort-AV: E=Sophos;i="6.21,310,1763452800"; d="scan'208";a="72095555"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Feb 2026 04:09:18 -0800
-X-CSE-ConnectionGUID: xsQ5We+DS9awKP6mw4wF0A==
-X-CSE-MsgGUID: xci/r2JwQp+WKN3SNmZgyw==
+ 25 Feb 2026 04:09:27 -0800
+X-CSE-ConnectionGUID: VIFCIlZLSYqKZD1FiWZcDw==
+X-CSE-MsgGUID: dFTDe/9MSKqKIEwghWZy0w==
 X-ExtLoop1: 1
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa003.fm.intel.com with ESMTP; 25 Feb 2026 04:09:17 -0800
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v1 1/1] net/iavf: remove global adminq response buffer
-Date: Wed, 25 Feb 2026 12:09:16 +0000
-Message-ID: <2a3001591642339ecf8f91584c83bf0766e0b66d.1772021348.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
+X-IronPort-AV: E=Sophos;i="6.21,310,1763452800"; d="scan'208";a="214512787"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Feb 2026 04:09:27 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Wed, 25 Feb 2026 04:09:26 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35 via Frontend Transport; Wed, 25 Feb 2026 04:09:26 -0800
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.18) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.35; Wed, 25 Feb 2026 04:09:26 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KX0LRyMEa4jq1ez/CJLG+Z+HYw3oZAct65JehgD/kFut0SN5zkBktnKfVhUKngYLWJu4aEa01dc1Nq8kzLCBTBv4rTmiClAa7ziuXWxCi2dVDrooddXbh+MdGaR2CeoeXJa/Vh66jz539JCodISvvqAUgC5IRTsZKFetybel+njwoaamDeYH3qonkFag6W3RFhoGFVHP7LPoQn/ykbr2L4UBOgAIJ92wTviT7L11HJpCtKvt3D7ktNtaAvIJCwNW9rp9fnuavLrAQXmRaSgGRpZ9AbeRD2LdKypUhw5rWjVPBd/hSXq8td0zL3fKmT+6FAtJVT1++iFJ4It56kyxtw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rVkofSXWEoFvx1RtgQh+l8up/J3L+XncPqe6CGExsYw=;
+ b=WY12mXS3DqJZzK8CMVaXviF3Gj0jlavqAacVm/PZbz5BVmJNlAPR4IhcNc8tMZzrexr5a+O4C60/oKM1iYlKzPyd0fulKgOtiFxzyQ1IWsmWuM5DVSaHzFGQ73+MDsJMsIqs6u+5u7OurTSpicQGgLUwGzSKg2PCQ2ENyHDGIjyoP4UFu2EMh1jiAnmU7Ur5cf0uY7lBrOnmlOcyirzFOtfPWbQFUR7rxbW+kJ/vYp/elFgc9Sp3Wf1B8DAOXxNtBgZzUcJRZg/rJHm4PukM6jA73gRK+lAoPipkvHBXrmU8Fm4vCB6pS72Nrwvs5D9/TdFYFwU7UTEyZLxSz3+zjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SJ0PR11MB5772.namprd11.prod.outlook.com (2603:10b6:a03:422::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.11; Wed, 25 Feb
+ 2026 12:09:18 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9632.017; Wed, 25 Feb 2026
+ 12:09:18 +0000
+Date: Wed, 25 Feb 2026 12:09:13 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: David Marchand <david.marchand@redhat.com>
+CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Andrew Rybchenko
+ <andrew.rybchenko@oktetlabs.ru>, Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Subject: Re: [RFC 2/2] eal: configure initial device probing
+Message-ID: <aZ7mabhJYLYiWJOu@bricha3-mobl1.ger.corp.intel.com>
+References: <20260225112922.3982104-1-david.marchand@redhat.com>
+ <20260225112922.3982104-2-david.marchand@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260225112922.3982104-2-david.marchand@redhat.com>
+X-ClientProxiedBy: DU7P250CA0019.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:10:54f::12) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ0PR11MB5772:EE_
+X-MS-Office365-Filtering-Correlation-Id: 94a9cb5d-456e-4ee4-a0c7-08de7466b3ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info: sJG2gOlC9ftSLcka5gpokMwfCZC9YIalaKzlEMR3B/qhfhGfEL42Zcem+uQDusxayRYg3zSaIdk2ZKIA8KcQIP2x+xw+p+hXWB9mIAZ8J0aM/NiB5g3XGNNt+GEyMdTitDLGpvaPMBcnWc+cz0QwGRvchYE+sU6g/O786+5rCzkwk7xri6PfPD6Z7u83qFYs3zm129smPqso5su41G+OfnBLoL8SJeahxaOr/seg3PRZOAmVrsVMdvc0TSacxf+qv1sVlnd2muY6AyGInw3ZFK+YQ5zjqmgyB+sBpIwe5wnveon5eXEZiqYNdT54WRh9f+VgtHXgdD5rHawWMOqbQFPw+pGi8pD/yEbdennngqJFbvL+/dUZC6Kovxexvp8MiS0xsF0xORbIP7eE2XocKSlAv+wioimHlZsU+O+i+mGJ4POdLTfTYDr9AXghhaH2VF2K6QRG8rSvh2Wh3NXUu+3G1Vgwwjmykq9EMyr3td7fwJKudJ5l2gU4/FnoDwgpSz4JN3j37scu3mFF/1bAh6MPiW+TqKKh7EPAmKSGjNWKsDaZFwvjbx+sVoEz6/gUf2y50jKtryZoRnfAS/6qgI9uRVupqIq3AUoOTUtz1VjWagZ/LCKwgpRsRqZwFR8STX85LnWkrmz4+cVZvxVpe27kr+UFqmP4eNSHx6i3nyA/DN8E7N2eLcs7rEZvjS3FlydbPHl6f6mp4YTlcEQeYO2yyQaATNMIOYPVc/W9x8Q=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(7053199007); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?0nse1skHsaZPD4vCFpBwmMIvdjbBSfQIP6X+/+mEO6xojZFuI74OsXSK1oWN?=
+ =?us-ascii?Q?sJjJ/KFaC1+pZ9SXTR0OkOaYNCghYZusZxOgDZU7g/EcmIgQ67rQBBcw0c3h?=
+ =?us-ascii?Q?pJCRcSLOApjVsVoL7EtP/H5t8q6NragBTakBOXpv0ObxcX1oKtzp+u7EFkRM?=
+ =?us-ascii?Q?xLr8i1y+0vt8wqqH57dlO0VN7OCcifx3zxZIecSPSsTjjSg1rJzqBxQqzLSW?=
+ =?us-ascii?Q?mZ5T3pfzrpd21C6NZN+yknPLzUmEPh4sf0YWhzlKeRyKoV8DhkgBvQy8fTk5?=
+ =?us-ascii?Q?41lsyeUGd1N7YpGaOxYUsD8Ku5jROfnoh1lXtAqEjQVLWGD86GahKm4hhwl4?=
+ =?us-ascii?Q?IRaySeFdPycP4b634zPm4ZjQyZ6Lh8sM/OyJWr1F/vmjIeUIxYH/PXbPI2IH?=
+ =?us-ascii?Q?N2BXi2tbOpTQQii+OHSrxCz/1AHoyqM9F1K9eEqASGo8baiuxCGCrBUsjP0r?=
+ =?us-ascii?Q?KLH8w67E8FmLVbXj03UY9YBXnAhLk9aaKSrFNrPcPGny5O3qeItea8PZbWhG?=
+ =?us-ascii?Q?l5kKeVcBfvfYqpT3NGNN9WeL1AnYSqaFDKX0UCx8D4qkWeVZAlocPVOAlt+i?=
+ =?us-ascii?Q?lli0rqu9z8wIyZYsbMJTgfb7W/vXEmDweBj7tZkhZXnQ5M6G9h1bgyKjG8ai?=
+ =?us-ascii?Q?5xwWuFg6LnSnGwUF+nuKeExyv/5nkWOtCSgEVy6AmJFq8W5e3okzKRsVLeF9?=
+ =?us-ascii?Q?H23AnJA5Cd/MPmUwA9Wxg6FX5/nuM3b/zLJ01hHTg1odHcu3CiXSds8TJrt9?=
+ =?us-ascii?Q?jCItIOnLellIXkQUzea3331+iXpZFw8HEwLIJ2laUfctcBEG2VlKUunCcBKh?=
+ =?us-ascii?Q?JeEkUfukJM3681cBCSSfbx4ZPNsl7lRxvJfzhULEZ2/WNLLExiWqCUb6G6Hd?=
+ =?us-ascii?Q?hUYGTisUeEvndtMh0WwnIpAZYM0Eo0ZbNlkabXCCe1O1RolItzILF58VOKrp?=
+ =?us-ascii?Q?33QpdCt6a5aZr4McJP3lQa405qgbbg+sP9Lk7Lo5zgBLP7QsgOqxh/Dy4jS0?=
+ =?us-ascii?Q?/rDKS24jVUAdvJNjK9j1uAfdz0BFkZJb7DhY4eaGVrO0YAkCDod6gQZJZz30?=
+ =?us-ascii?Q?P6ECevio9rTKmwdcK8rMw8I5JCl1qK8YbyGCPfNB6AtUaS+/QI4D5OUVPkyA?=
+ =?us-ascii?Q?ohrfTDmbQ7J92W4p9lLi/Yhf5dAoLWZt4ZHYnhMvnv9LB6yDWRwazWS7LzKJ?=
+ =?us-ascii?Q?BBqEt5MmuTz0PXIaAKnNyViAmsv6JFVs/V46JBk7LcOUZlDgCB1w1ubKMYoP?=
+ =?us-ascii?Q?rOr5PHXkxqM2G861hnZtUwtjoKKpZAGsDfBxDcvNLi/qJ1U67eDB83M/v5Tk?=
+ =?us-ascii?Q?Wj48X9WcX63rKkxx0n/NcwZZ/1E40uWhQpaSp7zZYZj76WxHAGKEd18JeYdb?=
+ =?us-ascii?Q?XTvDytdc8yMVsVRfCm5sCLDbSwqyKJH1x8/svASmaSdLEhQOD+1Ax8K6WsiL?=
+ =?us-ascii?Q?JdjnNR6D4FjyFFif1Im+kdBf5ZsymP4ykRWPQDD7pOTquSSYp7UNU7rX90sM?=
+ =?us-ascii?Q?pbEBTJlUFbymOIHEP2U101VFLMoopLBAmuIwlPqVlGvpjoLAf4pbOWGSIeEL?=
+ =?us-ascii?Q?I1wk/XeCHhwgsSOG18nikh4omTuAWo0GvAXgY796yWGz1woAJ89L6YHyzlwu?=
+ =?us-ascii?Q?j/w4lhPC7a2OlckAZul+uHZlZ0+Mqd3rkahVsj+WkG2WGTcNqTrn57PZEv6Y?=
+ =?us-ascii?Q?XQY3T3PZgGL7C2rs/TOHCCx+8ivhjB/La4bNmO21k2N4XS2qNhY8cky7/CKi?=
+ =?us-ascii?Q?hWMIDw6IuxuENGmpJFAjczhO7PBb+u0=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94a9cb5d-456e-4ee4-a0c7-08de7466b3ab
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2026 12:09:18.5388 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: T+6Ej5iSchc9ljNuAO7MjHED+PkxXd+uv61Own/1RsWmkoapcBGNPq6uVF4BSwWUbbHRqQZ3lKxi24WZKNq3AZVoKTEN85bRVPfcJKhVE9Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5772
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -56,941 +149,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In many places where we are calling down into virtchnl, we are using a
-globally allocated adminq response buffer. This is unnecessary, so replace
-with adminq buffers allocated on stack.
+On Wed, Feb 25, 2026 at 12:29:21PM +0100, David Marchand wrote:
+> Some applications use port hotplug as their primary way for using DPDK
+> resources.
+> Having a systematic device probing is a problem when not all available
+> resources will be used by the application, as such applications won't set
+> an explicit allow list at startup.
+> 
+> This is the case for OVS on systems with multiple mlx5 devices:
+> one device can be used by the kernel while the other(s) are used by DPDK.
+> In such a setup, the kernel used device may get reconfigured in
+> unexpected ways and trigger issues like the one described by Kevin
+> not so long ago in bugzilla 1873.
+> 
+> Add an EAL option to disable device probing, allowing to select per bus.
+> 
+> Note: the current implementation does not take combinations of the new
+> option with -a/-b.
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> ---
+Wondering about this problem and fix options. Rather than a new flag for
+no-probe, would an alternative flag to switch the default mode from
+block-listing to allow-listing work? 
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- drivers/net/intel/iavf/iavf.h        |   1 -
- drivers/net/intel/iavf/iavf_ethdev.c |  13 --
- drivers/net/intel/iavf/iavf_vchnl.c  | 240 +++++++++++++++------------
- 3 files changed, 136 insertions(+), 118 deletions(-)
+Right now, by default, EAL probes all buses and tries to take all
+non-blocklisted devices. We could add a flag to switch that so that we
+allow-list by default, which I think should have the same effect as this if
+no -a flags are passed. We already have support for managing -a and -b flag
+interactions, which should make interacting with the new flag easier.
 
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index f9bb398a77..c44ef54766 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -242,7 +242,6 @@ struct iavf_info {
- 	volatile RTE_ATOMIC(enum virtchnl_ops) pend_cmd; /* pending command not finished */
- 	RTE_ATOMIC(uint32_t) pend_cmd_count;
- 	int cmd_retval; /* return value of the cmd response from PF */
--	uint8_t *aq_resp; /* buffer to store the adminq response from PF */
- 
- 	/** iAVF watchdog enable */
- 	bool watchdog_enabled;
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 26e7febecf..d32a3c56a1 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -2545,11 +2545,6 @@ iavf_init_vf(struct rte_eth_dev *dev)
- 		goto err;
- 	}
- 
--	vf->aq_resp = rte_zmalloc("vf_aq_resp", IAVF_AQ_BUF_SZ, 0);
--	if (!vf->aq_resp) {
--		PMD_INIT_LOG(ERR, "unable to allocate vf_aq_resp memory");
--		goto err_aq;
--	}
- 	if (iavf_check_api_version(adapter) != 0) {
- 		PMD_INIT_LOG(ERR, "check_api version failed");
- 		goto err_api;
-@@ -2623,8 +2618,6 @@ iavf_init_vf(struct rte_eth_dev *dev)
- 	rte_free(vf->vf_res);
- 	vf->vsi_res = NULL;
- err_api:
--	rte_free(vf->aq_resp);
--err_aq:
- 	iavf_shutdown_adminq(hw);
- err:
- 	return -1;
-@@ -2642,9 +2635,6 @@ iavf_uninit_vf(struct rte_eth_dev *dev)
- 	vf->vsi_res = NULL;
- 	vf->vf_res = NULL;
- 
--	rte_free(vf->aq_resp);
--	vf->aq_resp = NULL;
--
- 	rte_free(vf->qos_cap);
- 	vf->qos_cap = NULL;
- 
-@@ -2997,9 +2987,6 @@ iavf_dev_close(struct rte_eth_dev *dev)
- 	vf->vsi_res = NULL;
- 	vf->vf_res = NULL;
- 
--	rte_free(vf->aq_resp);
--	vf->aq_resp = NULL;
--
- 	/*
- 	 * If the VF is reset via VFLR, the device will be knocked out of bus
- 	 * master mode, and the driver will fail to recover from the reset. Fix
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 08dd6f2d7f..5e8ca20cf1 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -510,14 +510,11 @@ iavf_handle_virtchnl_msg(struct rte_eth_dev *dev)
- 	uint16_t pending, aq_opc;
- 	enum virtchnl_ops msg_opc;
- 	enum iavf_status msg_ret;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int ret;
- 
--	info.buf_len = IAVF_AQ_BUF_SZ;
--	if (!vf->aq_resp) {
--		PMD_DRV_LOG(ERR, "Buffer for adminq resp should not be NULL");
--		return;
--	}
--	info.msg_buf = vf->aq_resp;
-+	info.buf_len = sizeof(msg_buf);
-+	info.msg_buf = msg_buf;
- 
- 	pending = 1;
- 	while (pending) {
-@@ -599,16 +596,16 @@ iavf_handle_virtchnl_msg(struct rte_eth_dev *dev)
- int
- iavf_enable_vlan_strip(struct iavf_adapter *adapter)
- {
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int ret;
- 
- 	memset(&args, 0, sizeof(args));
- 	args.ops = VIRTCHNL_OP_ENABLE_VLAN_STRIPPING;
- 	args.in_args = NULL;
- 	args.in_args_size = 0;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	ret = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (ret)
- 		PMD_DRV_LOG(ERR, "Failed to execute command of"
-@@ -620,16 +617,16 @@ iavf_enable_vlan_strip(struct iavf_adapter *adapter)
- int
- iavf_disable_vlan_strip(struct iavf_adapter *adapter)
- {
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int ret;
- 
- 	memset(&args, 0, sizeof(args));
- 	args.ops = VIRTCHNL_OP_DISABLE_VLAN_STRIPPING;
- 	args.in_args = NULL;
- 	args.in_args_size = 0;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	ret = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (ret)
- 		PMD_DRV_LOG(ERR, "Failed to execute command of"
-@@ -647,6 +644,7 @@ iavf_check_api_version(struct iavf_adapter *adapter)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_version_info version, *pver;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	struct iavf_cmd_info args;
- 	int err;
- 
-@@ -656,8 +654,8 @@ iavf_check_api_version(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_VERSION;
- 	args.in_args = (uint8_t *)&version;
- 	args.in_args_size = sizeof(version);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -697,12 +695,13 @@ iavf_get_vf_resource(struct iavf_adapter *adapter)
- 	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(adapter);
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	uint32_t caps, len;
- 	int err, i;
- 
- 	args.ops = VIRTCHNL_OP_GET_VF_RESOURCES;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	caps = IAVF_BASIC_OFFLOAD_CAPS | VIRTCHNL_VF_CAP_ADV_LINK_SPEED |
- 		VIRTCHNL_VF_OFFLOAD_RX_FLEX_DESC |
-@@ -758,13 +757,14 @@ iavf_get_supported_rxdid(struct iavf_adapter *adapter)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int ret;
- 
- 	args.ops = VIRTCHNL_OP_GET_SUPPORTED_RXDIDS;
- 	args.in_args = NULL;
- 	args.in_args_size = 0;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	ret = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (ret) {
-@@ -785,6 +785,7 @@ iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_vlan_supported_caps *stripping_caps;
- 	struct virtchnl_vlan_setting vlan_strip;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	struct iavf_cmd_info args;
- 	uint32_t *ethertype;
- 	int ret;
-@@ -808,8 +809,8 @@ iavf_config_vlan_strip_v2(struct iavf_adapter *adapter, bool enable)
- 			    VIRTCHNL_OP_DISABLE_VLAN_STRIPPING_V2;
- 	args.in_args = (uint8_t *)&vlan_strip;
- 	args.in_args_size = sizeof(vlan_strip);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	ret = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (ret)
- 		PMD_DRV_LOG(ERR, "fail to execute command %s",
-@@ -825,6 +826,7 @@ iavf_config_vlan_insert_v2(struct iavf_adapter *adapter, bool enable)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_vlan_supported_caps *insertion_caps;
- 	struct virtchnl_vlan_setting vlan_insert;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	struct iavf_cmd_info args;
- 	uint32_t *ethertype;
- 	int ret;
-@@ -848,8 +850,8 @@ iavf_config_vlan_insert_v2(struct iavf_adapter *adapter, bool enable)
- 			    VIRTCHNL_OP_DISABLE_VLAN_INSERTION_V2;
- 	args.in_args = (uint8_t *)&vlan_insert;
- 	args.in_args_size = sizeof(vlan_insert);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	ret = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (ret)
- 		PMD_DRV_LOG(ERR, "fail to execute command %s",
-@@ -867,6 +869,7 @@ iavf_add_del_vlan_v2(struct iavf_adapter *adapter, uint16_t vlanid, bool add)
- 	struct virtchnl_vlan_filter_list_v2 vlan_filter;
- 	struct virtchnl_vlan *vlan_setting;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	uint32_t filtering_caps;
- 	int err;
- 
-@@ -891,8 +894,8 @@ iavf_add_del_vlan_v2(struct iavf_adapter *adapter, uint16_t vlanid, bool add)
- 	args.ops = add ? VIRTCHNL_OP_ADD_VLAN_V2 : VIRTCHNL_OP_DEL_VLAN_V2;
- 	args.in_args = (uint8_t *)&vlan_filter;
- 	args.in_args_size = sizeof(vlan_filter);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "fail to execute command %s",
-@@ -906,13 +909,14 @@ iavf_get_vlan_offload_caps_v2(struct iavf_adapter *adapter)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int ret;
- 
- 	args.ops = VIRTCHNL_OP_GET_OFFLOAD_VLAN_V2_CAPS;
- 	args.in_args = NULL;
- 	args.in_args_size = 0;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	ret = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (ret) {
-@@ -921,7 +925,7 @@ iavf_get_vlan_offload_caps_v2(struct iavf_adapter *adapter)
- 		return ret;
- 	}
- 
--	rte_memcpy(&vf->vlan_v2_caps, vf->aq_resp, sizeof(vf->vlan_v2_caps));
-+	rte_memcpy(&vf->vlan_v2_caps, msg_buf, sizeof(vf->vlan_v2_caps));
- 
- 	return 0;
- }
-@@ -932,6 +936,7 @@ iavf_enable_queues(struct iavf_adapter *adapter)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_queue_select queue_select;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	memset(&queue_select, 0, sizeof(queue_select));
-@@ -943,8 +948,8 @@ iavf_enable_queues(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_ENABLE_QUEUES;
- 	args.in_args = (u8 *)&queue_select;
- 	args.in_args_size = sizeof(queue_select);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
- 		PMD_DRV_LOG(ERR,
-@@ -960,6 +965,7 @@ iavf_disable_queues(struct iavf_adapter *adapter)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_queue_select queue_select;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	memset(&queue_select, 0, sizeof(queue_select));
-@@ -971,8 +977,8 @@ iavf_disable_queues(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_DISABLE_QUEUES;
- 	args.in_args = (u8 *)&queue_select;
- 	args.in_args_size = sizeof(queue_select);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
- 		PMD_DRV_LOG(ERR,
-@@ -989,6 +995,7 @@ iavf_switch_queue(struct iavf_adapter *adapter, uint16_t qid,
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_queue_select queue_select;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	if (adapter->closed)
-@@ -1007,8 +1014,8 @@ iavf_switch_queue(struct iavf_adapter *adapter, uint16_t qid,
- 		args.ops = VIRTCHNL_OP_DISABLE_QUEUES;
- 	args.in_args = (u8 *)&queue_select;
- 	args.in_args_size = sizeof(queue_select);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "Failed to execute command of %s",
-@@ -1027,6 +1034,7 @@ iavf_enable_queues_lv(struct iavf_adapter *adapter)
- 	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
- 	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	queue_select->chunks.num_chunks = IAVF_RXTX_QUEUE_CHUNKS_NUM;
-@@ -1045,8 +1053,8 @@ iavf_enable_queues_lv(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_ENABLE_QUEUES_V2;
- 	args.in_args = (u8 *)queue_select;
- 	args.in_args_size = sizeof(queue_req);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR,
-@@ -1066,6 +1074,7 @@ iavf_disable_queues_lv(struct iavf_adapter *adapter)
- 	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
- 	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	queue_select->chunks.num_chunks = IAVF_RXTX_QUEUE_CHUNKS_NUM;
-@@ -1084,8 +1093,8 @@ iavf_disable_queues_lv(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_DISABLE_QUEUES_V2;
- 	args.in_args = (u8 *)queue_select;
- 	args.in_args_size = sizeof(queue_req);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR,
-@@ -1105,6 +1114,7 @@ iavf_switch_queue_lv(struct iavf_adapter *adapter, uint16_t qid,
- 	struct virtchnl_del_ena_dis_queues *queue_select = &queue_req.msg;
- 	struct virtchnl_queue_chunk *queue_chunk = queue_select->chunks.chunks;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	queue_select->chunks.num_chunks = 1;
-@@ -1126,8 +1136,8 @@ iavf_switch_queue_lv(struct iavf_adapter *adapter, uint16_t qid,
- 		args.ops = VIRTCHNL_OP_DISABLE_QUEUES_V2;
- 	args.in_args = (u8 *)queue_select;
- 	args.in_args_size = sizeof(queue_req);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "Failed to execute command of %s",
-@@ -1142,6 +1152,7 @@ iavf_configure_rss_lut(struct iavf_adapter *adapter)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_rss_lut *rss_lut;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int len, err = 0;
- 
- 	len = sizeof(*rss_lut) + vf->vf_res->rss_lut_size - 1;
-@@ -1156,8 +1167,8 @@ iavf_configure_rss_lut(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_CONFIG_RSS_LUT;
- 	args.in_args = (u8 *)rss_lut;
- 	args.in_args_size = len;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
-@@ -1174,6 +1185,7 @@ iavf_configure_rss_key(struct iavf_adapter *adapter)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_rss_key *rss_key;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int len, err = 0;
- 
- 	len = sizeof(*rss_key) + vf->vf_res->rss_key_size - 1;
-@@ -1188,8 +1200,8 @@ iavf_configure_rss_key(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_CONFIG_RSS_KEY;
- 	args.in_args = (u8 *)rss_key;
- 	args.in_args_size = len;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
-@@ -1266,6 +1278,7 @@ iavf_configure_queue_chunk(struct iavf_adapter *adapter,
- 	uint16_t chunk_end = chunk_start + chunk_sz;
- 	uint16_t i;
- 	size_t buf_len;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	if (chunk_sz > IAVF_CFG_Q_NUM_PER_BUF)
-@@ -1284,8 +1297,8 @@ iavf_configure_queue_chunk(struct iavf_adapter *adapter,
- 	args.ops = VIRTCHNL_OP_CONFIG_VSI_QUEUES;
- 	args.in_args = (uint8_t *)vc_config;
- 	args.in_args_size = buf_len;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
-@@ -1325,6 +1338,7 @@ iavf_config_irq_map(struct iavf_adapter *adapter)
- 	} map_req = {0};
- 	struct virtchnl_irq_map_info *map_info = &map_req.map_info;
- 	struct iavf_cmd_info args = {0};
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int i, err, max_vmi = -1;
- 	size_t buf_len;
- 
-@@ -1368,8 +1382,8 @@ iavf_config_irq_map(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_CONFIG_IRQ_MAP;
- 	args.in_args = (u8 *)map_info;
- 	args.in_args_size = buf_len;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "fail to execute command OP_CONFIG_IRQ_MAP");
-@@ -1391,6 +1405,7 @@ iavf_config_irq_map_lv_chunk(struct iavf_adapter *adapter,
- 	struct virtchnl_queue_vector_maps *map_info = &chunk_req.map_info;
- 	struct virtchnl_queue_vector *qv_maps = chunk_req.qv_maps;
- 	size_t buf_len;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	uint16_t i;
- 
- 	if (chunk_sz > IAVF_CFG_Q_NUM_PER_BUF)
-@@ -1413,8 +1428,8 @@ iavf_config_irq_map_lv_chunk(struct iavf_adapter *adapter,
- 	args.ops = VIRTCHNL_OP_MAP_QUEUE_VECTOR;
- 	args.in_args = (u8 *)map_info;
- 	args.in_args_size = buf_len;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	return iavf_execute_vf_cmd_safe(adapter, &args, 0);
- }
-@@ -1447,6 +1462,7 @@ iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add)
- 	struct virtchnl_ether_addr_list *list = &list_req.list;
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args = {0};
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err, i;
- 	size_t buf_len;
- 
-@@ -1473,8 +1489,8 @@ iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add)
- 	args.ops = add ? VIRTCHNL_OP_ADD_ETH_ADDR : VIRTCHNL_OP_DEL_ETH_ADDR;
- 	args.in_args = (uint8_t *)list;
- 	args.in_args_size = buf_len;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "fail to execute command %s",
-@@ -1488,6 +1504,7 @@ iavf_query_stats(struct iavf_adapter *adapter,
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_queue_select q_stats;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	if (adapter->closed)
-@@ -1498,8 +1515,8 @@ iavf_query_stats(struct iavf_adapter *adapter,
- 	args.ops = VIRTCHNL_OP_GET_STATS;
- 	args.in_args = (uint8_t *)&q_stats;
- 	args.in_args_size = sizeof(q_stats);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -1519,6 +1536,7 @@ iavf_config_promisc(struct iavf_adapter *adapter,
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_promisc_info promisc;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	if (adapter->closed)
-@@ -1536,8 +1554,8 @@ iavf_config_promisc(struct iavf_adapter *adapter,
- 	args.ops = VIRTCHNL_OP_CONFIG_PROMISCUOUS_MODE;
- 	args.in_args = (uint8_t *)&promisc;
- 	args.in_args_size = sizeof(promisc);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 
-@@ -1565,6 +1583,7 @@ iavf_add_del_eth_addr(struct iavf_adapter *adapter, struct rte_ether_addr *addr,
- 	uint8_t cmd_buffer[sizeof(struct virtchnl_ether_addr_list) +
- 			   sizeof(struct virtchnl_ether_addr)];
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	if (adapter->closed)
-@@ -1580,8 +1599,8 @@ iavf_add_del_eth_addr(struct iavf_adapter *adapter, struct rte_ether_addr *addr,
- 	args.ops = add ? VIRTCHNL_OP_ADD_ETH_ADDR : VIRTCHNL_OP_DEL_ETH_ADDR;
- 	args.in_args = cmd_buffer;
- 	args.in_args_size = sizeof(cmd_buffer);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "fail to execute command %s",
-@@ -1597,6 +1616,7 @@ iavf_add_del_vlan(struct iavf_adapter *adapter, uint16_t vlanid, bool add)
- 	uint8_t cmd_buffer[sizeof(struct virtchnl_vlan_filter_list) +
- 							sizeof(uint16_t)];
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	vlan_list = (struct virtchnl_vlan_filter_list *)cmd_buffer;
-@@ -1607,8 +1627,8 @@ iavf_add_del_vlan(struct iavf_adapter *adapter, uint16_t vlanid, bool add)
- 	args.ops = add ? VIRTCHNL_OP_ADD_VLAN : VIRTCHNL_OP_DEL_VLAN;
- 	args.in_args = cmd_buffer;
- 	args.in_args_size = sizeof(cmd_buffer);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
- 		PMD_DRV_LOG(ERR, "fail to execute command %s",
-@@ -1625,6 +1645,7 @@ iavf_fdir_add(struct iavf_adapter *adapter,
- 	struct virtchnl_fdir_add *fdir_ret;
- 
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	filter->add_fltr.vsi_id = vf->vsi_res->vsi_id;
-@@ -1633,8 +1654,8 @@ iavf_fdir_add(struct iavf_adapter *adapter,
- 	args.ops = VIRTCHNL_OP_ADD_FDIR_FILTER;
- 	args.in_args = (uint8_t *)(&filter->add_fltr);
- 	args.in_args_size = sizeof(*(&filter->add_fltr));
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -1685,6 +1706,7 @@ iavf_fdir_del(struct iavf_adapter *adapter,
- 	struct virtchnl_fdir_del *fdir_ret;
- 
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	filter->del_fltr.vsi_id = vf->vsi_res->vsi_id;
-@@ -1693,8 +1715,8 @@ iavf_fdir_del(struct iavf_adapter *adapter,
- 	args.ops = VIRTCHNL_OP_DEL_FDIR_FILTER;
- 	args.in_args = (uint8_t *)(&filter->del_fltr);
- 	args.in_args_size = sizeof(filter->del_fltr);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -1732,6 +1754,7 @@ iavf_fdir_check(struct iavf_adapter *adapter,
- 	struct virtchnl_fdir_add *fdir_ret;
- 
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	filter->add_fltr.vsi_id = vf->vsi_res->vsi_id;
-@@ -1740,8 +1763,8 @@ iavf_fdir_check(struct iavf_adapter *adapter,
- 	args.ops = VIRTCHNL_OP_ADD_FDIR_FILTER;
- 	args.in_args = (uint8_t *)(&filter->add_fltr);
- 	args.in_args_size = sizeof(*(&filter->add_fltr));
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -1774,6 +1797,7 @@ iavf_flow_sub(struct iavf_adapter *adapter, struct iavf_fsub_conf *filter)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_flow_sub *fsub_cfg;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	filter->sub_fltr.vsi_id = vf->vsi_res->vsi_id;
-@@ -1783,8 +1807,8 @@ iavf_flow_sub(struct iavf_adapter *adapter, struct iavf_fsub_conf *filter)
- 	args.ops = VIRTCHNL_OP_FLOW_SUBSCRIBE;
- 	args.in_args = (uint8_t *)(&filter->sub_fltr);
- 	args.in_args_size = sizeof(*(&filter->sub_fltr));
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -1825,6 +1849,7 @@ iavf_flow_unsub(struct iavf_adapter *adapter, struct iavf_fsub_conf *filter)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_flow_unsub *unsub_cfg;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	filter->unsub_fltr.vsi_id = vf->vsi_res->vsi_id;
-@@ -1834,8 +1859,8 @@ iavf_flow_unsub(struct iavf_adapter *adapter, struct iavf_fsub_conf *filter)
- 	args.ops = VIRTCHNL_OP_FLOW_UNSUBSCRIBE;
- 	args.in_args = (uint8_t *)(&filter->unsub_fltr);
- 	args.in_args_size = sizeof(filter->unsub_fltr);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -1869,6 +1894,7 @@ iavf_flow_sub_check(struct iavf_adapter *adapter,
- 	struct virtchnl_flow_sub *fsub_cfg;
- 
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	filter->sub_fltr.vsi_id = vf->vsi_res->vsi_id;
-@@ -1877,8 +1903,8 @@ iavf_flow_sub_check(struct iavf_adapter *adapter,
- 	args.ops = VIRTCHNL_OP_FLOW_SUBSCRIBE;
- 	args.in_args = (uint8_t *)(&filter->sub_fltr);
- 	args.in_args_size = sizeof(*(&filter->sub_fltr));
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -1908,8 +1934,8 @@ int
- iavf_add_del_rss_cfg(struct iavf_adapter *adapter,
- 		     struct virtchnl_rss_cfg *rss_cfg, bool add)
- {
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	memset(&args, 0, sizeof(args));
-@@ -1917,8 +1943,8 @@ iavf_add_del_rss_cfg(struct iavf_adapter *adapter,
- 		VIRTCHNL_OP_DEL_RSS_CFG;
- 	args.in_args = (u8 *)rss_cfg;
- 	args.in_args_size = sizeof(*rss_cfg);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
-@@ -1933,15 +1959,15 @@ iavf_add_del_rss_cfg(struct iavf_adapter *adapter,
- int
- iavf_get_hena_caps(struct iavf_adapter *adapter, uint64_t *caps)
- {
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	args.ops = VIRTCHNL_OP_GET_RSS_HENA_CAPS;
- 	args.in_args = NULL;
- 	args.in_args_size = 0;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -1957,17 +1983,17 @@ iavf_get_hena_caps(struct iavf_adapter *adapter, uint64_t *caps)
- int
- iavf_set_hena(struct iavf_adapter *adapter, uint64_t hena)
- {
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_rss_hena vrh;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	vrh.hena = hena;
- 	args.ops = VIRTCHNL_OP_SET_RSS_HENA;
- 	args.in_args = (u8 *)&vrh;
- 	args.in_args_size = sizeof(vrh);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
-@@ -1982,14 +2008,15 @@ iavf_get_qos_cap(struct iavf_adapter *adapter)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	uint32_t len;
- 	int err;
- 
- 	args.ops = VIRTCHNL_OP_GET_QOS_CAPS;
- 	args.in_args = NULL;
- 	args.in_args_size = 0;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 
- 	if (err) {
-@@ -2012,16 +2039,16 @@ int iavf_set_q_tc_map(struct rte_eth_dev *dev,
- {
- 	struct iavf_adapter *adapter =
- 			IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	memset(&args, 0, sizeof(args));
- 	args.ops = VIRTCHNL_OP_CONFIG_QUEUE_TC_MAP;
- 	args.in_args = (uint8_t *)q_tc_mapping;
- 	args.in_args_size = size;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
-@@ -2035,16 +2062,16 @@ int iavf_set_q_bw(struct rte_eth_dev *dev,
- {
- 	struct iavf_adapter *adapter =
- 			IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(dev->data->dev_private);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	memset(&args, 0, sizeof(args));
- 	args.ops = VIRTCHNL_OP_CONFIG_QUEUE_BW;
- 	args.in_args = (uint8_t *)q_bw;
- 	args.in_args_size = size;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err)
-@@ -2063,6 +2090,7 @@ iavf_add_del_mc_addr_list(struct iavf_adapter *adapter,
- 		(IAVF_NUM_MACADDR_MAX * sizeof(struct virtchnl_ether_addr))];
- 	struct virtchnl_ether_addr_list *list;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	uint32_t i;
- 	int err;
- 
-@@ -2089,8 +2117,8 @@ iavf_add_del_mc_addr_list(struct iavf_adapter *adapter,
- 	args.in_args = cmd_buffer;
- 	args.in_args_size = sizeof(struct virtchnl_ether_addr_list) +
- 		i * sizeof(struct virtchnl_ether_addr);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 
- 	if (err) {
-@@ -2110,6 +2138,7 @@ iavf_request_queues(struct rte_eth_dev *dev, uint16_t num)
- 	struct iavf_info *vf =  IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_vf_res_request vfres;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	uint16_t num_queue_pairs;
- 	int err;
- 	int i = 0;
-@@ -2129,8 +2158,8 @@ iavf_request_queues(struct rte_eth_dev *dev, uint16_t num)
- 	args.ops = VIRTCHNL_OP_REQUEST_QUEUES;
- 	args.in_args = (u8 *)&vfres;
- 	args.in_args_size = sizeof(vfres);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) {
- 		err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
-@@ -2173,14 +2202,15 @@ iavf_get_max_rss_queue_region(struct iavf_adapter *adapter)
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	uint16_t qregion_width;
- 	int err;
- 
- 	args.ops = VIRTCHNL_OP_GET_MAX_RSS_QREGION;
- 	args.in_args = NULL;
- 	args.in_args_size = 0;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -2203,15 +2233,15 @@ iavf_ipsec_crypto_request(struct iavf_adapter *adapter,
- 		uint8_t *msg, size_t msg_len,
- 		uint8_t *resp_msg, size_t resp_msg_len)
- {
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	args.ops = VIRTCHNL_OP_INLINE_IPSEC_CRYPTO;
- 	args.in_args = msg;
- 	args.in_args_size = msg_len;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 1);
- 	if (err) {
-@@ -2228,9 +2258,9 @@ iavf_ipsec_crypto_request(struct iavf_adapter *adapter,
- int
- iavf_set_vf_quanta_size(struct iavf_adapter *adapter, u16 start_queue_id, u16 num_queues)
- {
--	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct iavf_cmd_info args;
- 	struct virtchnl_quanta_cfg q_quanta;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	if (adapter->devargs.quanta_size == 0)
-@@ -2244,8 +2274,8 @@ iavf_set_vf_quanta_size(struct iavf_adapter *adapter, u16 start_queue_id, u16 nu
- 	args.ops = VIRTCHNL_OP_CONFIG_QUANTA;
- 	args.in_args = (uint8_t *)&q_quanta;
- 	args.in_args_size = sizeof(q_quanta);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -2262,6 +2292,7 @@ iavf_get_ptp_cap(struct iavf_adapter *adapter)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_ptp_caps ptp_caps;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err;
- 
- 	ptp_caps.caps = VIRTCHNL_1588_PTP_CAP_RX_TSTAMP |
-@@ -2270,8 +2301,8 @@ iavf_get_ptp_cap(struct iavf_adapter *adapter)
- 	args.ops = VIRTCHNL_OP_1588_PTP_GET_CAPS;
- 	args.in_args = (uint8_t *)&ptp_caps;
- 	args.in_args_size = sizeof(ptp_caps);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 	if (err) {
-@@ -2292,13 +2323,14 @@ iavf_get_phc_time(struct ci_rx_queue *rxq)
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	struct virtchnl_phc_time phc_time;
- 	struct iavf_cmd_info args;
-+	uint8_t msg_buf[IAVF_AQ_BUF_SZ] = {0};
- 	int err = 0;
- 
- 	args.ops = VIRTCHNL_OP_1588_PTP_GET_TIME;
- 	args.in_args = (uint8_t *)&phc_time;
- 	args.in_args_size = sizeof(phc_time);
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
-+	args.out_buffer = msg_buf;
-+	args.out_size = sizeof(msg_buf);
- 
- 	rte_spinlock_lock(&vf->phc_time_aq_lock);
- 	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
--- 
-2.47.3
-
+WDYT?
+/Bruce
