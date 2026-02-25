@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB1EFD45F6
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 22:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D746BFD45F9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 22:36:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A512940279;
-	Wed, 25 Feb 2026 23:23:16 +0100 (CET)
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
- [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id CEFE1400D6
- for <dev@dpdk.org>; Wed, 25 Feb 2026 23:23:14 +0100 (CET)
-Received: by mail-dy1-f172.google.com with SMTP id
- 5a478bee46e88-2bdc47747e2so169688eec.0
- for <dev@dpdk.org>; Wed, 25 Feb 2026 14:23:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A17E40279;
+	Wed, 25 Feb 2026 23:36:21 +0100 (CET)
+Received: from mail-dl1-f65.google.com (mail-dl1-f65.google.com [74.125.82.65])
+ by mails.dpdk.org (Postfix) with ESMTP id 61B66400D6
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 23:36:20 +0100 (CET)
+Received: by mail-dl1-f65.google.com with SMTP id
+ a92af1059eb24-126ea4e9694so501105c88.1
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 14:36:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772058194;
- x=1772662994; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772058979;
+ x=1772663779; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=aHqm8Z1ucT+qAMNXTlRvI7NoGPbNg7ZVEhYXDFtyPzA=;
- b=A8fclVDK8uO9cEtBteRsHAfozbL2KrUTa3K23+oYt3LIIfITlXOPnQUlbMEuQNSNBt
- wpWwrB5+CkpXedQxiRoRA1ol+Gshpco7ja5ll/dIT0TQPZ25CH7GJC+WzIDpil4oa5k4
- LQp/m5h5jKoYPv8qN0AAvu3WmOjpbhfrBirntPQCp4i2m8hsOlpGuBzTWSSN3OWHSDV9
- ZIaHJTK+h64bfDx88znNBCcPKbRHr1WJovKT7qxncjyq1MSON6MH7mvqVTScoMISDkHG
- i6BgAUX+0FMk4mjzqi4ySW8Ac+7Cq7gocz9aWrg68s2NRIqY5ik7F7+y3d9s8baSxTK1
- 6Hvw==
+ bh=1toKF3/U9tMm9f0gIBEnZyPenpWU6pOm1dA7rihFY64=;
+ b=htiIWTqq7mPXaADPgcevBKPCyTqAzctJiBQwspbymZVzQUZ5XDczVsVBFpdwekEhLH
+ vvmAnNTSF+oPZRK8/0lCmUHwXI7j3qk1Mx8SL73XFIIHl7kab1qXVXQ+iDwIWIezMR/w
+ SVsqjJRZU1qOpdSpSytvYX0jjszHvMfYvkarkyWAoWW6vbbiNPe3lDv6Jv/wJ4pupGfR
+ dk5QDMKqcyeWJ5Ri5Natcv2Z4x2cLrVv/AsALfxAHMW4hjbJcTRN8hizG9g0nH9YhlP3
+ jc3QX0DBE3ahtGHj2owRS6Iv+ESURgvX0OT5SYxLeQMxALOaKnZOZyFrOYC0zVYLd8Yz
+ 4hQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772058194; x=1772662994;
+ d=1e100.net; s=20230601; t=1772058979; x=1772663779;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=aHqm8Z1ucT+qAMNXTlRvI7NoGPbNg7ZVEhYXDFtyPzA=;
- b=l/B3oyonQx6ySsnIZbz8r0jOOgg24ki+wWnAkyafOWv1Kf4RuhkUYcrrzdN+JmpUvJ
- ywy+hESJeASzTtD1EERRDdqH8vq1hH4Z+TvBC0oyLxxwoc6JzO6LFJjUkzi0N9acnLhR
- rX8N6iCyVRSZlq/rrxvoLGPGp5zaBvpwKu/TVPZgUuZ2WUkBGDWP3Y6ABwcvW85aNPm9
- anRYA4n/HO9RQpK5h38IxNjxBWjo7mLSDrLe8fOqaCkBMGdOJoLIowVRqQk6joEFktv8
- ZCqwXSIXjVkM7BSUCvq4V2ImVk01ucxlgPpskLqd9NFuQkP2nlV+navOQ5WikYbeJxhK
- McKQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCUMrFivSboodlCM5mkemiwX/YQhyoJ8EGLyXw52/b1Z/0wyhnLHjEm9ol5dNKBCpyXEGSw=@dpdk.org
-X-Gm-Message-State: AOJu0YzptmAOAT6hXTmtJfhor/odreSFE1HQuFXiVhBCphsDReH83EpE
- ObN36kwGOxMDKzCHVrdsKodNW9W064aqCS3L9Z/m/AsZaeks1Gd6U+9Q2FRFYb8bsyc=
-X-Gm-Gg: ATEYQzz146b2rhet7NqiYkhZD8hoC0F5w7vjyp97i2W07t7iNR/eVxVGA5BCCYn1M1F
- 6sMEBCwfaWCP9g3Ie5F/+y/+TtPoU8oP53NpBmu3ivbIIBOvgq9BdRF/7YToQZTE6d26rEpV/kh
- cer6HOTnOjCRcWfk+zo0lVwdXawmQcS5ogX+F+XFZ2tAVL6XFQAHARMqFp+SmEaBZOfr7ssn+Bw
- jq4vsQXGAPJNbXcDEnwyynCHgrNg0t6c+W73AI02lXMxXl42wOg0kRpsoEjyylpzlXzup/3xw4o
- XrOBpFx07F069XIoGFn5CXnpLfXWaNCi+yB2DYQc2gnvnQu6rwSlfxM0j7aaGQ9/6vDE5fTlYEP
- DuZaeJmGsezH5tVvKwGpJU+SGVaCXR5rElFd0wIno/2Nm1G4qbh89t+huG4h2q1aikgUrUf8c60
- ULmtzui1WlVtjG8ktTCZjiizVWGwbdbfm9ySq82ACQGb/3+bK80QqwDSwN1bwVpr73
-X-Received: by 2002:a05:7300:538e:b0:2b7:1abc:a6eb with SMTP id
- 5a478bee46e88-2bdcbf4440dmr841272eec.7.1772058193592; 
- Wed, 25 Feb 2026 14:23:13 -0800 (PST)
+ bh=1toKF3/U9tMm9f0gIBEnZyPenpWU6pOm1dA7rihFY64=;
+ b=DTQI+ufkqiJ3eNMJz1k5xIRFU17iMybBfkOXVbg8OiXsqM+s5KWD2grlshKTZSfxft
+ jEyt4JMeq4UQXDg2PYOoCAZOndvE28A7IEgw9toG1cXNVa6UdNrjuLjD4yLqim9w5Gs/
+ uEyvAPkZgSpZsM5G86MZ1FJtw/Q0Yff+otlKYHPAf+mCd6jAL1rYl8y59fD3tBgDyaYe
+ WNTJN+0pK3ZQLfh7TFg7xZ7Tr8W7xTy3b5BWStf8j6VzCRq07pHRga8rnrbjQBcDcIph
+ E7S63QlhEPLZ6QIXNm6BkoAamTIghlRYmAx5XpIEOVHPSwfYedxjdYydJIEmJbJAszmh
+ J4zQ==
+X-Gm-Message-State: AOJu0YxOsU39+4TzhiIR8k83ctPyivSs+JWy2W04UcoCmz7NigLocp1D
+ 9mD9Vo2AofXyoMueRRCU+dezG5+ZEVFk0vsK0gBPgTeAS9ABYp8ACVONZvBVIyvmJmg=
+X-Gm-Gg: ATEYQzwxluT56ZSGgvdbs6/zL4SnpzBQiDWwnkLURrQLhdRHsyWU183TLmhPbDdUs+Z
+ I+TAoI0jDBmp2ccMZqu0qTisQukOlM1GFkN2LUPWrSVd7U7NtVfnVwFaE1vfsrVHCARt/JUIiKr
+ jFtHVYJSSFk+x0LhdlTsRJtfuAGLLfYx0bvDAQMh66DZaq6iWn6xq48qQzPu5sZkPn28a7ukP+p
+ 0jLzrAAJWEdqcHYjg7tbcslFXKFzQalZKQykk/DX6x2Avv9txtTjbgayZwroI9c5RYNCPs9/J5R
+ nmD5C+Uvgoog4e0fqiLCkpWswRawEoxC2It60XpkCr8q2qZrNvOZDgfLyM0FxN70LVDgn1HPUI3
+ u1zhcjg6W1h6KLD2buOl8xQ7iabbcMNiWQfY/DPdeHda4bUfmzfmuDjqV0PwJuIwcY+qL0vZAqb
+ Vs0SJAwq1S1q0lx4yOFL7+mnaethlOZKk8sGLfPBAxSZYuopZUhN8LSENnzBop3qSa
+X-Received: by 2002:a05:7022:b8d:b0:127:33e0:ea44 with SMTP id
+ a92af1059eb24-1276ad1b5e8mr8546270c88.29.1772058979236; 
+ Wed, 25 Feb 2026 14:36:19 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2bdd1cf0115sm267044eec.8.2026.02.25.14.23.13
+ 5a478bee46e88-2bdd1f48c77sm367557eec.26.2026.02.25.14.36.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Feb 2026 14:23:13 -0800 (PST)
-Date: Wed, 25 Feb 2026 14:23:10 -0800
+ Wed, 25 Feb 2026 14:36:19 -0800 (PST)
+Date: Wed, 25 Feb 2026 14:36:16 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Maxime Peim <maxime.peim@gmail.com>
-Cc: Wisam Jaddo <wisamm@nvidia.com>, dev@dpdk.org
-Subject: Re: [PATCH] test/flow: add support for async API
-Message-ID: <20260225142310.51f75f4d@phoenix.local>
-In-Reply-To: <20260224105712.937285-2-maxime.peim@gmail.com>
-References: <20260224105712.937285-2-maxime.peim@gmail.com>
+To: longli@linux.microsoft.com
+Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, stable@dpdk.org, Dariusz
+ Sosnowski <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>, Long Li <longli@microsoft.com>
+Subject: Re: [PATCH v3 0/7] fix multi-process VF hotplug
+Message-ID: <20260225143616.581a8aeb@phoenix.local>
+In-Reply-To: <20260225020246.890306-1-longli@linux.microsoft.com>
+References: <20260225020246.890306-1-longli@linux.microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,272 +83,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 24 Feb 2026 11:56:47 +0100
-Maxime Peim <maxime.peim@gmail.com> wrote:
 
-> Add async flow API mode to test-flow-perf application for improved
-> flow rule insertion performance. The async API allows batching flow
-> rule creation operations and processing completions in bulk, reducing
-> per-rule overhead.
->=20
-> New command line options:
->   --async: enable async flow API mode
->   --async-queue-size=3DN: size of async queues (default: 1024)
->   --async-push-batch=3DN: flows to batch before push (default: 256)
->=20
-> Signed-off-by: Maxime Peim <maxime.peim@gmail.com>
-> ---
->  app/test-flow-perf/actions_gen.c | 172 +++++++++++++
->  app/test-flow-perf/actions_gen.h |   4 +
->  app/test-flow-perf/async_flow.c  | 239 ++++++++++++++++++
->  app/test-flow-perf/async_flow.h  |  41 ++++
->  app/test-flow-perf/items_gen.c   |  13 +
->  app/test-flow-perf/items_gen.h   |   4 +
->  app/test-flow-perf/main.c        | 410 ++++++++++++++++++++++++-------
->  app/test-flow-perf/meson.build   |   1 +
->  8 files changed, 798 insertions(+), 86 deletions(-)
->  create mode 100644 app/test-flow-perf/async_flow.c
->  create mode 100644 app/test-flow-perf/async_flow.h
-
-
-Looked good to me, but AI more detailed dive found some things:
-
-The one thing it found was:
-
-Race condition on `flow` variable =E2=80=94 insert_flows_async() is called
-concurrently from multiple cores but uses a file-scope static `flow`
-pointer. One core can overwrite it between async_generate_flow() and
-the flows_list assignment. Needs a local `struct rte_flow *flow;`
-declaration.
-
-But lots more stuff that you should address:
-
-# Review: [PATCH] test/flow: add support for async API
-
-**Patch**: test/flow: add support for async API
-**Author**: Maxime Peim <maxime.peim@gmail.com>
-**Files changed**: 8 (798 insertions, 86 deletions)
-
----
-
-## Errors
-
-### 1. `alloca()` for `queue_attr_list` allocates wrong size (buffer overfl=
-ow)
-
-In `async_flow.c`, `async_flow_init_port()`:
-
-```c
-const struct rte_flow_queue_attr **queue_attr_list =3D
-    alloca(sizeof(struct rte_flow_queue_attr) * nb_queues);
-```
-
-This allocates `nb_queues * sizeof(struct rte_flow_queue_attr)` bytes, but =
-`queue_attr_list` is an array of **pointers** (`const struct rte_flow_queue=
-_attr **`). It should allocate `nb_queues * sizeof(struct rte_flow_queue_at=
-tr *)`. If `sizeof(struct rte_flow_queue_attr) < sizeof(pointer)`, this is =
-a buffer overflow when iterating `nb_queues` entries. If `sizeof(struct rte=
-_flow_queue_attr) > sizeof(pointer)`, it wastes stack space but is not dang=
-erous.
-
-**Fix**:
-```c
-const struct rte_flow_queue_attr **queue_attr_list =3D
-    alloca(sizeof(struct rte_flow_queue_attr *) * nb_queues);
-```
-
-Or more idiomatically: `alloca(sizeof(*queue_attr_list) * nb_queues)`.
-
-### 2. `alloca()` with unbounded `nb_queues` =E2=80=94 potential stack over=
-flow
-
-`nb_queues` comes from `mc_pool.cores_count` which is user-controlled via `=
---cores`. While it's capped by `port_info.max_nb_queues` if the device repo=
-rts it, if `max_nb_queues` is 0 or `UINT32_MAX` (which the code explicitly =
-skips), there's no upper bound enforced before `alloca()`. A large value co=
-uld blow the stack.
-
-**Fix**: Add a reasonable upper bound check before the `alloca()` calls, or=
- use `rte_malloc`/`malloc` instead.
-
-### 3. `flow` variable used in `insert_flows_async()` without declaration
-
-The function `insert_flows_async()` in `main.c` references `flow` (e.g., li=
-ne 994: `flow =3D generate_flow(...)`, line 1014: `flow =3D async_generate_=
-flow(...)`) but `flow` is never declared as a local variable within this fu=
-nction. It appears to rely on a file-scope `static struct rte_flow *flow` v=
-ariable. This creates a hidden data race: if multiple cores call `insert_fl=
-ows_async()` concurrently (which they do =E2=80=94 `flows_handler` is calle=
-d per-core), they share the same `flow` pointer without synchronization. On=
-e core could overwrite `flow` between the `async_generate_flow()` call and =
-the `flows_list[flow_index++] =3D flow` assignment.
-
-**Fix**: Declare `struct rte_flow *flow;` as a local variable inside `inser=
-t_flows_async()`.
-
-### 4. Missing NULL check on `flow` before measuring first-flow latency
-
-In `insert_flows_async()`:
-
-```c
-flow =3D async_generate_flow(...);
-
-if (counter =3D=3D start_counter) {
-    first_flow_latency =3D ...;
-    printf(":: First Flow Latency ...\n");
-}
-
-if (force_quit)
-    break;
-
-if (!flow) {
-    print_flow_error(error);
-    rte_exit(EXIT_FAILURE, ...);
-}
-```
-
-The `flow =3D=3D NULL` check happens **after** the first-flow latency measu=
-rement and the `force_quit` check. If the first flow creation fails (`flow =
-=3D=3D NULL`) and `force_quit` is set, the code breaks out of the loop and =
-proceeds to use `flows_list` which has a NULL entry at index 0, potentially=
- causing issues during cleanup. More critically, if it's the first flow and=
- it fails, the code prints a misleading "First Flow installed" latency mess=
-age before discovering the failure.
-
-**Fix**: Move the `if (!flow)` check immediately after `async_generate_flow=
-()`, before the latency print.
-
-### 5. `port_attr.nb_counters` not set =E2=80=94 may cause configure failure
-
-In `async_flow_init_port()`, `port_attr` is zero-initialized but `nb_counte=
-rs` and `nb_aging_objects` are not set even though the flow actions may inc=
-lude `COUNT` or metering. Some PMDs require these to be nonzero when counte=
-rs are used with async flows. This could cause silent failures or `rte_flow=
-_configure` to reject the configuration.
-
-This is a moderate-confidence concern (~60%) =E2=80=94 it depends on the sp=
-ecific PMD, but the code doesn't attempt to set these fields at all.
-
-### 6. `#include "rte_common.h"` =E2=80=94 incorrect include style
-
-In `main.c`:
-```c
-#include "rte_common.h"
-```
-
-DPDK public headers should be included with angle brackets: `#include <rte_=
-common.h>`. Using quotes searches the local directory first, which is incor=
-rect for a system/library header. This could also fail to compile if the lo=
-cal directory doesn't have a copy.
-
----
-
-## Warnings
-
-### 7. `memset` on `set_ipv6_mask` inside function body with `static` varia=
-ble
-
-In `fill_actions_template()`:
-```c
-static struct rte_flow_action_set_ipv6 set_ipv6_mask;
-/* ... */
-memset(set_ipv6_mask.ipv6_addr.a, 0xff, 16);
-```
-
-The `memset` is called **every time** `fill_actions_template()` is invoked,=
- but the variable is `static`. This is redundant after the first call and s=
-uggests the initialization should either be done once (with a static flag o=
-r at file scope) or the variable shouldn't be `static`. It's not a bug, but=
- it's wasteful and indicates a design inconsistency =E2=80=94 all other sta=
-tic mask variables are initialized at declaration.
-
-### 8. `actions_counter` is `uint8_t` =E2=80=94 can overflow with many acti=
-ons
-
-In `fill_actions_template()`, `actions_counter` is declared as `uint8_t`, w=
-hich limits it to 255 entries. While `MAX_ACTIONS_NUM` is likely smaller, t=
-here's no bounds check against the `actions[]` and `masks[]` array sizes. I=
-f the template_actions table plus the END sentinel exceeds the caller's arr=
-ay, this silently writes out of bounds.
-
-### 9. Unnecessary `rte_zmalloc` for `results` array in `insert_flows_async=
-()`
-
-```c
-results =3D rte_zmalloc("results", sizeof(struct rte_flow_op_result) * asyn=
-c_push_batch, 0);
-```
-
-Per AGENTS.md guidelines, `rte_malloc` is for DMA-accessible or shared memo=
-ry. The `results` array is only used locally by the CPU for pulling flow op=
-eration results. Standard `malloc` (or even a stack allocation if `async_pu=
-sh_batch` is bounded) would be more appropriate and wouldn't consume limite=
-d hugepage memory.
-
-### 10. Gratuitous reformatting of the `lgopts[]` table
-
-The patch reformats the entire existing `lgopts[]` table from `{ "name", ..=
-.}` with alignment spaces to `{"name", ...}` without alignment. This change=
-s 60+ lines that have nothing to do with the async feature, making the diff=
- much harder to review and potentially causing merge conflicts with other i=
-n-flight patches.
-
-This should be a separate cleanup patch, or the new entries should match th=
-e existing style.
-
-### 11. `rte_zmalloc` for `flows_list` =E2=80=94 unnecessary hugepage usage
-
-```c
-flows_list =3D rte_zmalloc("flows_list",
-    (sizeof(struct rte_flow *) * (rules_count_per_core + 1)), 0);
-```
-
-This is a pointer array used only for bookkeeping. Standard `calloc` is app=
-ropriate here. (Note: the existing `insert_flows()` has the same pattern, s=
-o this may be intentional consistency, but it's still worth noting.)
-
-### 12. Division by zero if `cpu_time_used` is zero
-
-In `insert_flows_async()`:
-```c
-insertion_rate =3D ((double)(rules_count_per_core / cpu_time_used) / 1000);
-```
-
-If the loop completes very quickly or `rules_count_per_core` is 0, `cpu_tim=
-e_used` could be 0, causing a floating-point division by zero (infinity/NaN=
-). Additionally, the integer division `rules_count_per_core / cpu_time_used=
-` truncates =E2=80=94 it should be `(double)rules_count_per_core / cpu_time=
-_used` to get an accurate rate.
-
-### 13. Commit message body line length
-
-The commit body line `"Encapped data is fixed with pattern: ether,ipv4,udp,=
-vxlan"` in the usage() help text additions (within the code) is fine, but t=
-he actual commit message body should be checked =E2=80=94 the `--async-queu=
-e-size=3DN:` line formatting appears tight but within limits.
-
-### 14. Copyright uses "Mellanox Technologies" =E2=80=94 potentially outdat=
-ed
-
-The new file `async_flow.c` and `async_flow.h` use `Copyright 2026 Mellanox=
- Technologies, Ltd`. The author's email is `@gmail.com` (individual), and M=
-ellanox was acquired by NVIDIA in 2020. This is noted only as an observatio=
-n per AGENTS.md =E2=80=94 the copyright holder's choice is not subject to r=
-eview.
-
----
-
-## Summary
-
-The most critical finding is **#3** =E2=80=94 the `flow` variable race cond=
-ition in the multi-core `insert_flows_async()` path. If multiple cores run =
-this function concurrently (which is the intended use), they would share an=
-d clobber a file-scope `flow` pointer. This is a real correctness bug that =
-would cause intermittent failures.
-
-The **#1** `alloca()` size mismatch is also a clear bug that could cause me=
-mory corruption depending on the struct size vs pointer size relationship o=
-n the target architecture.
-
-The remaining issues range from stack safety (#2), error handling order (#4=
-), to style/efficiency concerns (#7=E2=80=93#12).
+This patch is generally in good shape. Using the AGENTS.md and AI review
+did see some things that should be addressed. As always take look
+at AI review with a skeptical mind; some of this it being overly
+picky...
+
+ A few findings from review:
+
+Patch 1/7 (netvsc race conditions):
+
+    netvsc_hotplug_retry: hn_vf_add() return value ignored. The newly
+added call at line 675 doesn't check the return. A failed VF attach
+during hotplug retry would be completely silent =E2=80=94 at minimum log the
+error. hn_vf_add_unlocked: goto detach after -EEXIST tears down the
+original attachment. When hn_vf_attach() returns -EEXIST (already
+attached) and a subsequent configure/start step fails, hn_vf_detach()
+unregisters the callback and clears vf_attached/vf_port from the
+original successful attachment. This leaves the VF port with an owner
+but netvsc thinking it's detached. Consider skipping hn_vf_detach()
+when the attach was an -EEXIST rather than a fresh attach. Version
+notes (v2/v3 changelog) are above the --- line and will be included in
+the permanent commit message. Move them below ---.
+
+Patch 2/7 (multi-process VF removal):
+
+    eth_hn_remove: MP infrastructure torn down before device cleanup.
+The counter decrement and netvsc_uninit_once() (which frees the shared
+memzone and unregisters MP handlers) happen before the device is
+closed. If a pending hn_remove_delayed alarm fires after the memzone is
+freed, netvsc_mp_req_vf() dereferences netvsc_shared_data (freed
+memory) when checking secondary_cnt. Suggest moving the counter
+decrement and uninit to after device close/release. Secondary init
+failure leaves netvsc_shared_data dangling. If
+netvsc_mp_init_secondary() fails, netvsc_shared_data still points to
+the memzone but init_done is false. Consider clearing it on failure.
+Same version-notes-above---- issue as patch 1.
+
+Patch 3/7 (mana PD leak):
+
+    PD deallocation order. ib_parent_pd is freed before ib_pd. If
+there's a parent/child dependency (as the naming suggests),
+deallocating the parent first will fail with EBUSY. Consider reversing
+the order: dealloc ib_pd first, then ib_parent_pd. Same version-notes
+issue.
+
+
+Patches 5-7/7 (fp_ops in secondary):
+
+These look correct and well-placed (before the existing rte_mb()).
+
+Minor note: the plain (non-atomic) pointer stores to rte_eth_fp_ops
+fields could theoretically tear on ARM if a polling thread reads
+simultaneously. This is consistent with the existing burst function
+pointer pattern so not a regression, but worth keeping in mind.
+
+Overall the series is in good shape. Items 2 and 4 are the most
+important to address.
