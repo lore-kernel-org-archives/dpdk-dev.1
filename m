@@ -2,77 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C9F3FD377A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 17:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE915FD377D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 18:26:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0ACA04027F;
-	Wed, 25 Feb 2026 18:53:56 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4C343400D6
- for <dev@dpdk.org>; Wed, 25 Feb 2026 18:53:54 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772042033;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=I8OvDUkTwcxKyvj6tPKCYtGMRACyeVDrB16CFfLicxw=;
- b=D+DFLSYaWRZTdPFUWAQ81ZhyNpcHNpwxFA81/IgYTR7LvnxUcXEUc7HAo5IhwtlzWQQKgF
- sM8j47oSvogDgtF/s5S0ECm07cc4i/Pkdf03F7XGTc8l+S40d/86bH9h9XgZX6cLgoHO67
- GuM5glcQD8r6uAaRpJtZ3ULPlZ2RHIw=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504-Ple5HTzGM_uVbGefZnu_6w-1; Wed, 25 Feb 2026 12:53:52 -0500
-X-MC-Unique: Ple5HTzGM_uVbGefZnu_6w-1
-X-Mimecast-MFC-AGG-ID: Ple5HTzGM_uVbGefZnu_6w_1772042031
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5a1035ec417so635341e87.2
- for <dev@dpdk.org>; Wed, 25 Feb 2026 09:53:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 022344027F;
+	Wed, 25 Feb 2026 19:26:22 +0100 (CET)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
+ [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id 93420400D6
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 19:26:20 +0100 (CET)
+Received: by mail-qv1-f49.google.com with SMTP id
+ 6a1803df08f44-896f9397ecdso152486d6.3
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 10:26:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1772043979; x=1772648779; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=CsECToQHnjoL2Md93vcx46fWiRZ3CM9mZxIM0HAGojw=;
+ b=I0eWo7Y6ZVDoBkw8vFXxzcDU/nNEShkWQfp/+bpBxfMyk3/iss5iAPG1NiQ/jS9ULZ
+ NER74lqxnpeMCRStn8fj4SCFiDRk9WAz0zaNZ8r5nFahwDg9SqZUg4Qd+RRp8oC9cRAu
+ FMv0VB+s377gWr5VM7y7z1Fj6dscr6g/2UDZM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772042031; x=1772646831;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20230601; t=1772043979; x=1772648779;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=I8OvDUkTwcxKyvj6tPKCYtGMRACyeVDrB16CFfLicxw=;
- b=Ee/MWiktvAX8jiF9/XoofDIdWpbeWVimffbc5Su5dVjVKw9DMbsnIbGMyJ7O+JV+To
- vJqwRxJg+/uRVUSYu2/7X9sXfTPCcnmpYfGNrgDlpdZzMge56/wDps/cvtQKdE2lMpE1
- iLV9Kbg6Bu1xb4XyeV98yIpvcF7RDN/cDqSLZkVfZzr0GQJTP+QohwJhWC7P7pXEG9+Y
- CRts4BzD5S+jfdyeoPjhg95oAjluJFdS+iEy+w2UkHehP6wcX2OW9fR3ZrUosupIl4kf
- oIkHIrOw/E67rV1t8jbBJF/G/M+Bz8nGrU/pWFwLM3YYQjcjETfbI9BbVJ0k/ok01N8x
- 4u8g==
-X-Gm-Message-State: AOJu0Ywf1nfeUXM+ldJpglEX73LjTJycDXEz7qBEBmGay0i6BnCQk6Gn
- u/AJf/cxub6xq55jk/xfzXkCgg+XnIqHnnhRpt0fr9D+bNsfykzBK9RzMKCtZ69wiVRxrBgRMGe
- ewMSA2w/33WNtLwr0oka1ngJfZG/dT962F+wBkt0jqrMWduq38V2NA1mrkkDFbMrr6hqS2yGB5H
- 4zR/ZSnIhAweybrjpAO1E=
-X-Gm-Gg: ATEYQzwjRLtUzrbqawhzR9aO6MJyRgYXxEKw7/UHlW4H19vkweMXv+LYxAhZ71H/Yvt
- Sr6PgM5oRjHpn5g5XSH0ekS7CACGJreUOspVrDS8cDEELYiBolP9RM/ETiHKFaLDXkmfFceB67V
- dlpOV+zsj3aG9pq31H9tXlyF9BANqYf60WBK43BF5mSi/NW1e8LkaoNptASA/riNkDQZ2FULIZs
- FUqQ8l8KjZUn3EPNM/Q1fDk6H2sX8oDmVNfCeQBgPC1q56MfJmSZrR+P4A+Pmh+yFY37Q==
-X-Received: by 2002:a05:6512:2215:b0:59f:6e67:38e5 with SMTP id
- 2adb3069b0e04-5a1061982admr392944e87.37.1772042030654; 
- Wed, 25 Feb 2026 09:53:50 -0800 (PST)
-X-Received: by 2002:a05:6512:2215:b0:59f:6e67:38e5 with SMTP id
- 2adb3069b0e04-5a1061982admr392935e87.37.1772042030220; Wed, 25 Feb 2026
- 09:53:50 -0800 (PST)
+ bh=CsECToQHnjoL2Md93vcx46fWiRZ3CM9mZxIM0HAGojw=;
+ b=azAvrRGvAKkg+njw5shy9zC11kH9NmXx35QeL2twQZGufdl70JoXnIjipQxl0q+GVK
+ Bw+5V/2jQE4FnzzGiyWGba7l8eGm4uz1ziDs1B40pI26NeOYYoemWu/gX81ObpmYl9B9
+ F+SgleCAoDoxsAl1so6QMp4Lyzf5srYIAcvLFWpi2qxeVSx/HSDNxFfHH3ee4T6pRw7A
+ GUse8+51q10D1TRZxQgb+Mrta7+/VHSDxNjTAkYt7rbMFG7OuBBJTTImRprOYNqz66pL
+ CyoZ++Fn/9csqYmx4qT0AJCfYU12N92+UyJ+z5OeizwobJaZjcaxmZqh9iGjJV661j4c
+ FXZA==
+X-Gm-Message-State: AOJu0YyiraJo3JeCr0+Htf4dsUTNC9SKdNbT5DfykgvQCops+KzYpkkX
+ 2ypSnlI1z1m2ysCdJohQxh559QsAuZMD2cHcmWC/B4tNqNoBH/9FhH5M1C2Kv/l3W3yoytUl2N5
+ HibNqyTBOjQtjBgjLruToLLWbnX0vlTxMKct0PQMvXzPqF+u9v70JqyoR/Kcc9NIXbzozzmrw89
+ J3zHQ6pFt4aHOF/2ThIYaKGmHTtJo=
+X-Gm-Gg: ATEYQzyhPnbuG+j30EAdOHfpAuguyUWsE+pMbKjV1rdIgzXXVqdp8unbtfDcX6Fur5i
+ YhbphEwBi5Jy1ezMxi24RvYEt7bHALTSRdfyD6ElXbay8VL9IxPwti7NYeB19U0qCyT3yVP+H0Z
+ kSj5LaTv++A5PYkNffUgNVoDRMraSzEa42m/CzVO1XEBZAFvYyLZ3kJDfPLnSWMb9Y4zyn1taun
+ M+2ZbGtd8MXicwIH5T198W5bVQPlSRc/CSsC/ItvbtgUSnhx/TjopQeDlcyawxgYZnik1Un8vhM
+ cou4Mm1A4XerTm2bSckgMKFLCP+nT64lNkUy9IVVrKC8I1YHy11T+3vxhe1b/SGQI/6ZkRG0U1Q
+ Y68AGhzs5hOCwEnQ507oY+W7euVy1OcBrEF5DxRjZDhwMNq/bVa8x+D8NwDyRl6sFGiSq3LPH+I
+ RnsBL2fhSJzF+I/IZs/NphWc0ZwdrUa8oNHuttFX4tOD4BJGGDETVRJRyAXHs3Z4jB
+X-Received: by 2002:a05:6214:3003:b0:896:af07:a4f8 with SMTP id
+ 6a1803df08f44-89979c39988mr239972196d6.11.1772043979442; 
+ Wed, 25 Feb 2026 10:26:19 -0800 (PST)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-8997c8a771fsm127155576d6.17.2026.02.25.10.26.18
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 25 Feb 2026 10:26:18 -0800 (PST)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: dev@dpdk.org,
+	probb@iol.unh.edu
+Cc: dmarx@iol.unh.edu, luca.vizzarro@arm.com,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v1] dts: port speed capabilities test suite to next DTS
+Date: Wed, 25 Feb 2026 13:26:16 -0500
+Message-ID: <20260225182616.71972-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
-References: <20260225112922.3982104-1-david.marchand@redhat.com>
- <20260225112922.3982104-2-david.marchand@redhat.com>
- <aZ7mabhJYLYiWJOu@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aZ7mabhJYLYiWJOu@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 25 Feb 2026 18:53:38 +0100
-X-Gm-Features: AaiRm50XtC5whYskMBRZEwOpTGbhB8UUHsAsgZi5eq0owWfLnebBFCmRIZhhBgM
-Message-ID: <CAJFAV8wqHWH7dO+c7v=hvUvRwGrvg3GcykKAu2tCTmYRNdU5Dw@mail.gmail.com>
-Subject: Re: [RFC 2/2] eal: configure initial device probing
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: MmJNu3Zl0CcGbnWOJyaCLml709zfaLwJSLAyG3i3JIw_1772042031
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,44 +76,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 25 Feb 2026 at 13:09, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
->
-> On Wed, Feb 25, 2026 at 12:29:21PM +0100, David Marchand wrote:
-> > Some applications use port hotplug as their primary way for using DPDK
-> > resources.
-> > Having a systematic device probing is a problem when not all available
-> > resources will be used by the application, as such applications won't set
-> > an explicit allow list at startup.
-> >
-> > This is the case for OVS on systems with multiple mlx5 devices:
-> > one device can be used by the kernel while the other(s) are used by DPDK.
-> > In such a setup, the kernel used device may get reconfigured in
-> > unexpected ways and trigger issues like the one described by Kevin
-> > not so long ago in bugzilla 1873.
-> >
-> > Add an EAL option to disable device probing, allowing to select per bus.
-> >
-> > Note: the current implementation does not take combinations of the new
-> > option with -a/-b.
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > ---
-> Wondering about this problem and fix options. Rather than a new flag for
-> no-probe, would an alternative flag to switch the default mode from
-> block-listing to allow-listing work?
->
-> Right now, by default, EAL probes all buses and tries to take all
-> non-blocklisted devices. We could add a flag to switch that so that we
-> allow-list by default, which I think should have the same effect as this if
-> no -a flags are passed. We already have support for managing -a and -b flag
-> interactions, which should make interacting with the new flag easier.
+This commit ports the speed capabilities test suite from old DTS to next
+DTS.
 
-I like the idea. The devil is in the details though and I'll have to
-look carefully at all bus probe() functions.
-I'll try to implement as a RFC v2.
+Bugzilla ID: 1494
 
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ .../tests.TestsSuite_speed_capabilities.rst   |  8 +++
+ dts/configurations/tests_config.example.yaml  |  4 ++
+ dts/tests/TestSuite_speed_capabilities.py     | 54 +++++++++++++++++++
+ 3 files changed, 66 insertions(+)
+ create mode 100644 doc/api/dts/tests.TestsSuite_speed_capabilities.rst
+ create mode 100644 dts/tests/TestSuite_speed_capabilities.py
 
+diff --git a/doc/api/dts/tests.TestsSuite_speed_capabilities.rst b/doc/api/dts/tests.TestsSuite_speed_capabilities.rst
+new file mode 100644
+index 0000000000..de6dc42757
+--- /dev/null
++++ b/doc/api/dts/tests.TestsSuite_speed_capabilities.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++speed_capabilities Test Suite
++=============================
++
++.. automodule:: tests.TestSuite_speed_capabilities
++   :members:
++   :show-inheritance:
+diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
+index 64fa630aa0..bdc4c49a1c 100644
+--- a/dts/configurations/tests_config.example.yaml
++++ b/dts/configurations/tests_config.example.yaml
+@@ -15,3 +15,7 @@ hello_world:
+ #       num_descriptors: 1024
+ #       expected_mpps: 1.0
+ #   delta_tolerance: 0.05
++# port_speed_capabilities:
++#   test_parameters:
++#     0 : 100 Gbps # set link speed according to your expected speed in Gbps
++#     1 : 100 Gbps
+\ No newline at end of file
+diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
+new file mode 100644
+index 0000000000..9ab488ab1b
+--- /dev/null
++++ b/dts/tests/TestSuite_speed_capabilities.py
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 University of New Hampshire
++
++"""Speed capability test suite.
++
++This test suite ensures that testpmd recognizes the expected speed from a link in Gbps.
++"""
++
++from typing import Literal
++
++from api.capabilities import (
++    LinkTopology,
++    requires_link_topology,
++)
++from api.test import verify
++from api.testpmd import TestPmd
++from framework.test_suite import BaseConfig, TestSuite, func_test
++
++
++class Config(BaseConfig):
++    """Performance test metrics."""
++
++    test_parameters: dict[int, Literal["1 Gbps", "10 Gbps", "25 Gbps", "40 Gbps", "100 Gbps"]] = {
++        0: "100 Gbps",
++    }
++
++
++@requires_link_topology(LinkTopology.ONE_LINK)
++class TestSpeedCapabilities(TestSuite):
++    """Speed capabilities test suite."""
++
++    config: Config
++
++    def set_up_suite(self):
++        """Set up the test suite."""
++        self.test_parameters = self.config.test_parameters
++
++    @func_test
++    def validate_port_speed(self) -> None:
++        """Validate expected port speed is also the observed port speed.
++
++        Steps:
++            * Show port info for each available port
++
++        Verify:
++            * The resulting link speeds are equal to the configured link speeds
++        """
++        with TestPmd() as testpmd:
++            for i, param in enumerate(self.test_parameters.items()):
++                link_speed = testpmd.show_port_info(i).link_speed
++                verify(
++                    link_speed == param[1],
++                    f"port {i} speed {link_speed} does not match configured '{param[1]}'",
++                )
 -- 
-David Marchand
+2.50.1
 
