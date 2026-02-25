@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42348FD374E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 13:59:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC45FFD375F
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 13:59:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0F51F40664;
-	Wed, 25 Feb 2026 14:58:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 03DE0402DF;
+	Wed, 25 Feb 2026 14:58:38 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 6756E402B2;
- Wed, 25 Feb 2026 03:03:01 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4B245402E4;
+ Wed, 25 Feb 2026 03:03:02 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 3CB2120B6F03; Tue, 24 Feb 2026 18:03:01 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3CB2120B6F03
+ id D7F9D20B6F04; Tue, 24 Feb 2026 18:03:01 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D7F9D20B6F04
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
  s=default; t=1771984981;
- bh=BpoTudAyRXFfq5cOg6yOtmutGKgWLS7/WJUju3A/N9w=;
+ bh=5RBm0nhVkH2eH5gBQn6cJaM2XG/uz3Z7o7NNfY5px28=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Yiujvbz4z4JaLQnbwSBE558HJnavOZCF6oOlfQwj8tSjId0lJvD02zYNC3/DC58uV
- jVpM0GkTJHGE+DVdvANZ63IXjTSHveOVR2Uq8BNgYPvvKikCA28rZaWvqU+ws+wjgU
- RdouAoI663wkNbWInhBOrQQcrGN0+uImqTmDgFKc=
+ b=GiQp/i8RfGgEIFfrpzG6ScFe1KI/nRj2btYq4xBNNV6+Z4bAl7ZmtfShjN8AETTfH
+ nZTjIEr4n0waydQZ4glcW57D3qlqsfe+09Bt5TDuTzUH0E62dE8xNT7xd3IqQpthVk
+ LK12CgYIQMMatr2Hoq91JrFgrAJERGEydjBov+P0=
 From: longli@linux.microsoft.com
 To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
@@ -28,9 +28,9 @@ To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
  Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH v3 6/7] net/mlx5: fix fast-path ops setup in secondary process
-Date: Tue, 24 Feb 2026 18:02:38 -0800
-Message-ID: <20260225020246.890306-7-longli@linux.microsoft.com>
+Subject: [PATCH v3 7/7] net/mlx4: fix fast-path ops setup in secondary process
+Date: Tue, 24 Feb 2026 18:02:39 -0800
+Message-ID: <20260225020246.890306-8-longli@linux.microsoft.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260225020246.890306-1-longli@linux.microsoft.com>
 References: <20260225020246.890306-1-longli@linux.microsoft.com>
@@ -52,61 +52,49 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Long Li <longli@microsoft.com>
 
-On hotplug, the secondary process is not able to set rte_eth_fp_ops
-because the primary process has not finished setting up the device
-for datapath.
+The secondary process MLX4_MP_REQ_START_RXTX handler sets
+dev->rx_pkt_burst and dev->tx_pkt_burst, but does not update
+rte_eth_fp_ops[].rxq.data and txq.data. Since rte_eth_rx_burst()
+uses rte_eth_fp_ops (which is process-local), the secondary
+retains stale queue data pointers after VF hot-add, causing a
+segfault.
 
-When the primary process re-attaches a VF during a hot-add event
-(e.g. Accelerated Networking re-enabled on Azure), it sends
-MLX5_MP_REQ_START_RXTX to the secondary process. The secondary
-handler sets rx/tx burst functions and reinitializes UAR mappings,
-but does not update the fast-path queue data pointers. The stale
-rxq.data and txq.data in rte_eth_fp_ops cause a segfault when the
-secondary resumes polling the re-added VF port.
+Similarly, the MLX4_MP_REQ_STOP_RXTX handler sets dev burst
+functions to dummy but does not update rte_eth_fp_ops burst
+pointers, leaving the secondary calling into freed resources.
 
-Fix this by setting rte_eth_fp_ops rxq.data and txq.data to point
-to the device's RX/TX queue arrays in the secondary process when
-the primary requests to start datapath, before the memory barrier.
+Fix by updating rte_eth_fp_ops rxq.data and txq.data in the
+START_RXTX handler, and rte_eth_fp_ops burst function pointers
+in the STOP_RXTX handler.
 
-Also update rte_eth_fp_ops burst function pointers in the STOP_RXTX
-handler. Without this, the secondary's rte_eth_fp_ops retains stale
-burst function pointers after stop, since rte_eth_fp_ops is
-process-local and eth_dev_fp_ops_reset() in rte_eth_dev_stop() only
-affects the primary.
-
-Without this fix, the secondary process crashes with SIGSEGV in
-rte_eth_rx_burst() at qd = p->rxq.data[queue_id] when the VF is
-hot-added back.
-
-Fixes: 2aac5b5d119f ("net/mlx5: sync stop/start with secondary process")
+Fixes: 080d8bc15905 ("net/mlx4: sync stop/start with secondary process")
 Cc: stable@dpdk.org
-
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/mlx5/linux/mlx5_mp_os.c | 4 ++++
+ drivers/net/mlx4/mlx4_mp.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/mlx5/linux/mlx5_mp_os.c b/drivers/net/mlx5/linux/mlx5_mp_os.c
-index f2e71c9bd4..955a990a39 100644
---- a/drivers/net/mlx5/linux/mlx5_mp_os.c
-+++ b/drivers/net/mlx5/linux/mlx5_mp_os.c
-@@ -189,6 +189,8 @@ struct rte_mp_msg mp_res;
- 			}
+diff --git a/drivers/net/mlx4/mlx4_mp.c b/drivers/net/mlx4/mlx4_mp.c
+index 534cb31151..00ecadee79 100644
+--- a/drivers/net/mlx4/mlx4_mp.c
++++ b/drivers/net/mlx4/mlx4_mp.c
+@@ -149,6 +149,8 @@ mp_secondary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
  		}
+ #endif
  		close(mp_msg->fds[0]);
 +		rte_eth_fp_ops[param->port_id].rxq.data = dev->data->rx_queues;
 +		rte_eth_fp_ops[param->port_id].txq.data = dev->data->tx_queues;
  		rte_mb();
- 		mp_init_msg(&priv->mp_id, &mp_res, param->type);
+ 		mp_init_msg(dev, &mp_res, param->type);
  		res->result = 0;
-@@ -198,6 +200,8 @@ struct rte_mp_msg mp_res;
- 		DRV_LOG(INFO, "port %u stopping datapath", dev->data->port_id);
- 		dev->rx_pkt_burst = rte_eth_pkt_burst_dummy;
+@@ -158,6 +160,8 @@ mp_secondary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
+ 		INFO("port %u stopping datapath", dev->data->port_id);
  		dev->tx_pkt_burst = rte_eth_pkt_burst_dummy;
+ 		dev->rx_pkt_burst = rte_eth_pkt_burst_dummy;
 +		rte_eth_fp_ops[param->port_id].rx_pkt_burst = rte_eth_pkt_burst_dummy;
 +		rte_eth_fp_ops[param->port_id].tx_pkt_burst = rte_eth_pkt_burst_dummy;
  		rte_mb();
- 		mp_init_msg(&priv->mp_id, &mp_res, param->type);
+ 		mp_init_msg(dev, &mp_res, param->type);
  		res->result = 0;
 -- 
 2.43.0
