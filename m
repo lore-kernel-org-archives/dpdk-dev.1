@@ -2,41 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99EC2EFD206
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 08:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09B5EFD20F
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 08:57:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E106F40395;
-	Wed, 25 Feb 2026 09:06:44 +0100 (CET)
-Received: from mailgw1.hygon.cn (unknown [101.204.27.37])
- by mails.dpdk.org (Postfix) with ESMTP id 29BD2402E8;
- Wed, 25 Feb 2026 09:06:41 +0100 (CET)
-Received: from maildlp1.hygon.cn (unknown [127.0.0.1])
- by mailgw1.hygon.cn (Postfix) with ESMTP id 4fLRxn6BW3zwprD;
- Wed, 25 Feb 2026 16:06:37 +0800 (CST)
-Received: from maildlp1.hygon.cn (unknown [172.23.18.60])
- by mailgw1.hygon.cn (Postfix) with ESMTP id 4fLRxm06qyzwpqv;
- Wed, 25 Feb 2026 16:06:36 +0800 (CST)
-Received: from cncheex04.Hygon.cn (unknown [172.23.18.114])
- by maildlp1.hygon.cn (Postfix) with ESMTPS id D41E35957;
- Wed, 25 Feb 2026 16:06:29 +0800 (CST)
-Received: from kk5.hygon.cn (172.19.22.47) by cncheex04.Hygon.cn
- (172.23.18.114) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Wed, 25 Feb
- 2026 16:06:35 +0800
-From: Liangxing Wang <wangliangxing@hygon.cn>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>,
- <fengchengwen@huawei.com>
-CC: <dev@dpdk.org>, Liangxing Wang <wangliangxing@hygon.cn>, <stable@dpdk.org>
-Subject: [PATCH v3 2/2] app: extend NUMA nodes limit
-Date: Wed, 25 Feb 2026 08:05:31 +0000
-Message-ID: <20260225080532.727512-1-wangliangxing@hygon.cn>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id C33314021E;
+	Wed, 25 Feb 2026 09:57:01 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+ by mails.dpdk.org (Postfix) with ESMTP id CAD33400D6
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 09:57:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1772009821; x=1803545821;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=WnltfNKhc37cPmLxegsv7FH8DCLaTqbEcQuTeFmHhv0=;
+ b=j2eLi5TKs5HbMA3WiY1ucY9OC4mEu58dssCNtO8nVxvgcigPC+kt8hXZ
+ tIrHIlsEqmITC9J3rmk9VVUxKICBOoVz24VQN9ULoPr5hPMRedOon4D6i
+ Fux4ltyPZZ2ipuiTOw2bQsxg8NWnYWD+XAd+zRTGicxtTH39MmbNn9Bku
+ YwrxaDw20lDe185lr4zyNa8aoS3VgQ1JhI3yaoI4xHIxJG9O91flO3Eth
+ LENG+rh63DiZXY4gxrqIwF5vU9Vv9G1nirxtHkppGl98D3dajFkXXNr+z
+ Yb7tjYMP6GCPKsGj6c16MmsoDpT9glVupCqpW6eMxPweQT5vGhlewzLyW g==;
+X-CSE-ConnectionGUID: gm6z4ai+SLuAKRiCmyfe3Q==
+X-CSE-MsgGUID: HqAmITpkR1W/aN8Q1nN56w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11711"; a="75650426"
+X-IronPort-AV: E=Sophos;i="6.21,310,1763452800"; d="scan'208";a="75650426"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Feb 2026 00:57:00 -0800
+X-CSE-ConnectionGUID: Apyv/wRiRt2cc3ztqlVJ5A==
+X-CSE-MsgGUID: qZ0x5lK8R16GB60Wn4Ki9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,310,1763452800"; d="scan'208";a="221171517"
+Received: from unknown (HELO sprmax15..) ([10.138.182.128])
+ by orviesa005.jf.intel.com with ESMTP; 25 Feb 2026 00:56:59 -0800
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Subject: [PATCH] net/idpf: fix typo in CQ scan threshold macro name
+Date: Wed, 25 Feb 2026 14:23:33 +0530
+Message-Id: <20260225085333.2740447-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [172.19.22.47]
-X-ClientProxiedBy: cncheex06.Hygon.cn (172.23.18.116) To cncheex04.Hygon.cn
- (172.23.18.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,45 +58,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use RTE_MAX_NUMA_NODES instead of hardcoded 2 to extend NUMA nodes
-limit for pmd_perf_autotest.
+Fix the misspelled macro IDPD_TXQ_SCAN_CQ_THRESH to
+IDPF_TXQ_SCAN_CQ_THRESH in the header and its usage
+in the AVX512 split queue Tx path.
 
-Remove unused NB_SOCKETS macro for graph app.
-
-Cc: stable@dpdk.org
-
-Signed-off-by: Liangxing Wang <wangliangxing@hygon.cn>
+Fixes: e528d7c74819 ("common/idpf: add AVX512 data path for split queue model")
+Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
- app/graph/ethdev_rx_priv.h | 1 -
- app/test/test_pmd_perf.c   | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/intel/idpf/idpf_common_rxtx.h        | 2 +-
+ drivers/net/intel/idpf/idpf_common_rxtx_avx512.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/app/graph/ethdev_rx_priv.h b/app/graph/ethdev_rx_priv.h
-index a76ebacc0c..8388cfbd8f 100644
---- a/app/graph/ethdev_rx_priv.h
-+++ b/app/graph/ethdev_rx_priv.h
-@@ -12,7 +12,6 @@
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
+index 914cab0f25..5e9e9c1d6d 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.h
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
+@@ -52,7 +52,7 @@
+ #define IDPF_VPMD_TX_MAX_BURST		32
+ #define IDPF_VPMD_DESCS_PER_LOOP	4
+ #define IDPF_RXQ_REARM_THRESH		64
+-#define IDPD_TXQ_SCAN_CQ_THRESH	64
++#define IDPF_TXQ_SCAN_CQ_THRESH	64
  
- #define MAX_RX_QUEUE_PER_PORT 128
- #define MAX_JUMBO_PKT_LEN  9600
--#define NB_SOCKETS 8
+ /* MTS */
+ #define GLTSYN_CMD_SYNC_0_0	(PF_TIMESYNC_BASE + 0x0)
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+index fe870617bc..54efe66401 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+@@ -1166,7 +1166,7 @@ idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
  
- struct __rte_cache_aligned lcore_params {
- 	uint16_t port_id;
-diff --git a/app/test/test_pmd_perf.c b/app/test/test_pmd_perf.c
-index 995b0a6f20..a547a33a1c 100644
---- a/app/test/test_pmd_perf.c
-+++ b/app/test/test_pmd_perf.c
-@@ -15,7 +15,7 @@
- #include "test.h"
+ 	cq_qid = cq->tx_tail;
  
- #define NB_ETHPORTS_USED                (1)
--#define NB_SOCKETS                      (2)
-+#define NB_SOCKETS                      RTE_MAX_NUMA_NODES
- #define MEMPOOL_CACHE_SIZE 250
- #define MAX_PKT_BURST                   (32)
- #define RX_DESC_DEFAULT        (1024)
+-	for (i = 0; i < IDPD_TXQ_SCAN_CQ_THRESH; i++) {
++	for (i = 0; i < IDPF_TXQ_SCAN_CQ_THRESH; i++) {
+ 		if (cq_qid == cq->nb_tx_desc) {
+ 			cq_qid = 0;
+ 			cq->expected_gen_id ^= 1;
 -- 
-2.43.0
-
+2.34.1
 
