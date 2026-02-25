@@ -2,71 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0405FD45F9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 23:09:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58842FD45F1
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 23:19:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3DDF4021F;
-	Thu, 26 Feb 2026 00:09:11 +0100 (CET)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 99CD2400D6
- for <dev@dpdk.org>; Thu, 26 Feb 2026 00:09:10 +0100 (CET)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-2ba9c484e5eso204259eec.1
- for <dev@dpdk.org>; Wed, 25 Feb 2026 15:09:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 7F0094021F;
+	Thu, 26 Feb 2026 00:19:04 +0100 (CET)
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com
+ [209.85.222.170])
+ by mails.dpdk.org (Postfix) with ESMTP id 5D0E4400D6
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 00:19:03 +0100 (CET)
+Received: by mail-qk1-f170.google.com with SMTP id
+ af79cd13be357-8cb20bcff5aso14592585a.3
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 15:19:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772060950;
- x=1772665750; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772061542;
+ x=1772666342; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=JUAG/YY5dQZhT6Xt/GLpRyE+8o+AvbRzrhsqO5eEgsE=;
- b=Moi9/xLTijkxloEIeWymeAPBku2EmnzRmqvAq4rlYs8DT+J96M9rcTX8ljBvfyiUPp
- pociuPPWsyUoV9ywru9ltLx1FN1ppYMkeq7CnpiBYjRJvnUMj/SWWbb8th/3Eiml88T9
- bythioY+lgnGQ4sb472cIHJZqb34b/uGZiMu03c5he7oOxzWCaGr6hHUmq6yHAWmTihY
- 6lJxKBZy3xL17upx8R0jsedMA/jfmrozlR58xEQ1lUTZb85xEF0fVNI3c0iRdIKLPF0j
- CVNlCBw9ykUSZVuydJtq2KXmPPGabFzuFrmav6YR/ZIVTdesCCK7TdMz0sGMlVnyVKq4
- V82g==
+ :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
+ :reply-to; bh=r3kQSMov78rpK08r5pzut/uKIrlsraMyHEJEFFZ3ie0=;
+ b=b/y4DmxIG5hsmUzlSAU8/oF5kQW/w2umdntUJQzW9ulNua9jln+dBGFUW5Qm2DOtbF
+ fOiAItkjU4Brc6DyNUC5m0gv5C7TU/ehaYIa0W6ww5gONmVta31WnhwlF5JCbFbvVNGl
+ y5ixgWIBppHoBPuuUoQ/tPZ1tT1DR/rhEnzI7efMvptz9tf+BviOoGZdPbeaSUjc5i1a
+ BePTgFlrZV3EIpeP1LfbsOFeypdEBBGeNex5ijrI+WVzIyIvzJ3bZI31qnbTxF7miQ9E
+ XZBMf3FMoOhrxZQ5tAXIsJ3YW8jHe2mdjL6pRmdZU9eEoSiWjBREpMYGJz+vQ9yQhTnK
+ UojA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772060950; x=1772665750;
+ d=1e100.net; s=20230601; t=1772061542; x=1772666342;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=JUAG/YY5dQZhT6Xt/GLpRyE+8o+AvbRzrhsqO5eEgsE=;
- b=Gwk7PXAzUMmoAEF50vakckAjBLRr4FBsBfyO+jJlSCRsU/g9VTH5cW+40ZHJmCRpt9
- 2aKN+XV3atNAHGlJT+j3x9/RmGoGoTuoZG9qkoXzI8W8F4VY8nGJAPyLRQpvjDS7ull6
- RTnGpB13G5Z2pnGBk4brJBpQs5dYraDAARIX5pufNP13VWfRgeBe9y9wmZx1QKguoC1k
- IGhNA+S+yXp7mS7dt6484ZHCsXN9AfK+YiAFioaK3xiW92zFVaCYqny6Qd0EFXVMD26Y
- GLfWYCMW5OheYw0WSFwTeESCvwvhFCkLvD+OxWGHvMOMQt9qiOrqK9x1kxs8guqchVAG
- Bebw==
-X-Gm-Message-State: AOJu0YxrdRInKsLwrbZYEEsSupjxh5/zmgq58e0nTpvuuFd8v/01colg
- 5q0ij9pQ3Qg+zXrrZdz5cJ7XF8azHVSjPjJlxvKqyiFP5KtLGNljgoPpFYDh50KgKCs=
-X-Gm-Gg: ATEYQzwFgbLiKUoVEVwQh0XZKbD7keehKSTXQgZWK9b2v6TKPOFCm94lq1IO+1tbwSe
- m1GLeRIKcmHjv4TwEKc67Ycr9csiMzTsaMschkDi/EmFKRkys635EUTxhYVG7WCpu6su99A5Qt8
- vnAEFP4v8u2xjNLlTJqDL8WgsNToYgexTW8OOpuxd2PaJPBisOujXVIcXJ5EYch7D/NySVTF1s1
- g73aKZadWzEdu24WKn/reBVC8dPIM8wRlHfaQZBMhmxkrlDZYkZBGedrYM5CjAziZ9fEidneirW
- ohoUUS0RuqTORvwA++HlUMaWSyl8TehlRbUwgxVd2kWIXqwkbxU6SCDjEReqVN02gVOPOPImoU+
- 5Q5V7z6FTMTRhvBcHJ5t0TYjno3YXH9kU49BCXuWwNwRnX/f1PaZaapoM6VzOhUwluFx6cqwnm9
- THg+W44FSvrDigb6ytbwF2THUkX4m87v/ZEMzKbPeHD3005PnnuWeUlXPLxr6DlUih
-X-Received: by 2002:a05:7300:5727:b0:2ba:8018:cc57 with SMTP id
- 5a478bee46e88-2bdcbf66996mr985496eec.11.1772060949501; 
- Wed, 25 Feb 2026 15:09:09 -0800 (PST)
+ :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=r3kQSMov78rpK08r5pzut/uKIrlsraMyHEJEFFZ3ie0=;
+ b=fRLX6jz55ojjINEtNrOv8JPDLIgL0O8Uw/j3+h0nph/ClYnsI75Ney6+wpxOHXyOYJ
+ 8W1RqgkNnTVM+qkvv+DuNgh14auHLB42WFafRoo4RD5fkRKIuOMDxmQf9Hl8wtXSGcJX
+ nqv+JLRbFT2J8Cy1vRg6Ida3Xywv20YtOdCiWvd+ZI/w0bz/x9VYLpsLMq6XeBE27mlF
+ wclt/wGbwH7Q9KDfI2zZW9/9gnpyji5g3vEEtiTPxF9VYt9zX8oXaJAymrobKnxSyWfp
+ QImSOJ7ih8iK68zdIdqknjNrYKQk23g2T7yJ3ws0TjwD2U7bBZkd0Gx7GGQx/cmjX7yr
+ 5g4w==
+X-Gm-Message-State: AOJu0YznFhVb/eDeu1dRFx0FDlpR+/Pxpoasxh37was+HrJCsltq9VPv
+ gaRDp9JM+YR1LgRVU+/F2a6TkqHxH2ld0C+7LgK7DxtteHqZFC1zwj0C+Yk3Mi6yY/h8fkLm3Gh
+ kCD1t3fM=
+X-Gm-Gg: ATEYQzxSGpcEt8Gdjagl6d46t9zwmfeqP6e+XVXnHNG+sYgVBLcazxBL4eNsJIujdES
+ gcSOe4PLbu2DVM9LG6uIf47awUemIsfo95siBLqmB9PRai5k3L07qdsqAIL0qG91rrsiluM9O5H
+ cA6PoUI+9kATytIWQFZmwSphErxdEQnO692mY+pQXNA2LAg12Te74BBGQwx3AIFitG7MG+YnF5N
+ EqtWWXJDJz2Dh3AWg8R4aoPu6LhGuamtTw4oG/EULVcmeqW64BNWpR2DKNVcC6flwkVaOg106Wj
+ /AZ9JIf5LHBOcDZMpEQ355EdW8hN+OCa6x5Uf9we4RbppyKhBy96Zui0c4I5mnJzDsA47lh6ouk
+ 7qsfrzor+HQJTkQAf17RMfVu0Uj0+Oh8zrJHPeFuESygvDeAlbKtNdCELzsfLDQBK9rQGBOK5D7
+ bT1lqa0TXH+jkvwnjGKkYUHQJjrClqmR7DIx3UfJDZGoM+WVsG9Ram8M7mODCfuNpZ
+X-Received: by 2002:a05:620a:4505:b0:8c7:1106:1a44 with SMTP id
+ af79cd13be357-8cb8ca92db1mr2257037885a.79.1772061542347; 
+ Wed, 25 Feb 2026 15:19:02 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2bdd1f23c01sm382509eec.16.2026.02.25.15.09.08
+ af79cd13be357-8cbbf6f926csm49050485a.32.2026.02.25.15.19.01
+ for <dev@dpdk.org>
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Feb 2026 15:09:09 -0800 (PST)
-Date: Wed, 25 Feb 2026 15:09:07 -0800
+ Wed, 25 Feb 2026 15:19:02 -0800 (PST)
+Date: Wed, 25 Feb 2026 15:18:58 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-Cc: <dev@dpdk.org>, <Selwin.Sebastian@amd.com>
-Subject: Re: [PATCH v2 1/3] net/axgbe: add external PHY read/write functions
-Message-ID: <20260225150907.54d467ef@phoenix.local>
-In-Reply-To: <20260225124456.1871-1-ashokkumar.natarajan@amd.com>
-References: <20260216125205.1032-1-ashokkumar.natarajan@amd.com>
- <20260225124456.1871-1-ashokkumar.natarajan@amd.com>
+To: dev@dpdk.org
+Subject: Re: [PATCH v5 00/19] net/tap: cleanups, bug fixes, and VLA removal
+Message-ID: <20260225151858.4ad951fe@phoenix.local>
+In-Reply-To: <20260222173225.522754-1-stephen@networkplumber.org>
+References: <20260215195348.557945-1-stephen@networkplumber.org>
+ <20260222173225.522754-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,50 +81,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 25 Feb 2026 18:14:54 +0530
-Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com> wrote:
+On Sun, 22 Feb 2026 09:30:35 -0800
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> Introduce helper functions to perform external PHY register read and
-> write operations. These helpers currently support only IEEE Clause 22
-> PHY access, providing a simple and consistent API for accessing
-> standard 16=E2=80=91bit MII registers on external PHY devices.
->=20
-> Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-> ---
+> Patches 1-2 are documentation and bug fixes that stand alone: update
+> the features matrix to match current driver capabilities, and fix
+> queue statistics to count all queues regardless of the queue stat
+> counter limit.
+> 
+> Patch 3 fixes interface name buffers to use IFNAMSIZ instead of
+> RTE_ETH_NAME_MAX_LEN, since these are Linux kernel interface names
+> not DPDK device names.
+> 
+> Patches 4-6 are minor cleanups: replace the runtime speed capability
+> function with a compile-time constant (TAP is always 10G), clarify
+> TUN/TAP flag operator precedence with parentheses, and extend the
+> fixed MAC index to 16 bits to avoid duplicates after 256 hot-plug
+> cycles.
+> 
+> Patches 7-12 fix bugs tagged for stable: a bounds check to prevent
+> an out-of-bounds read on truncated L4 headers; resource leaks in
+> the primary and secondary process probe error paths; a missing free
+> of the IPC reply buffer on queue count mismatch; a use-after-free
+> with an orphaned kernel TC rule when remote flow creation fails; and
+> a leaked remote_flow allocation on EEXIST from an implicit rule.
+> 
+> Patches 13-18 restructure the driver internals: dynamically allocate
+> queue structures instead of embedding fixed-size arrays in
+> pmd_internals; replace the pointer-to-VLA iovec with a flexible
+> array member sized from MTU and mbuf geometry; replace the Tx
+> per-packet VLA with a fixed-size stack array capped at 128 segments;
+> remove the VLA in flow item validation; consolidate per-queue
+> statistics into a common structure; and enable -Wvla warnings.
+> 
+> Patch 19 adds a unit test suite for the TAP PMD covering
+> configuration, link, stats, MTU, MAC, promisc, allmulti, queue
+> start/stop, link up/down, stop/start, and multi-queue.
+> 
+> v5 - use IFNAMSIZ for interface name buffers
+>    - dynamically allocate queue structures
+>    - compute Rx scatter segments from MTU instead of nb_rx_desc
+>    - use flex array for Rx iovecs, fixed stack array for Tx
+>    - consolidate queue statistics
+> 
+> 
+> Stephen Hemminger (19):
+>   net/tap: fix handling of queue stats
+>   doc: update tap features
+>   net/tap: use correct length for interface names
+>   net/tap: replace runtime speed capability with constant
+>   net/tap: clarify TUN/TAP flag assignment
+>   net/tap: extend fixed MAC range to 16 bits
+>   net/tap: skip checksum on truncated L4 headers
+>   net/tap: fix resource leaks in tap create error path
+>   net/tap: fix resource leaks in secondary process probe
+>   net/tap: free IPC reply buffer on queue count mismatch
+>   net/tap: fix use-after-free on remote flow creation failure
+>   net/tap: free remote flow when implicit rule already exists
+>   net/tap: dynamically allocate queue structures
+>   net/tap: remove VLA in flow item validation
+>   net/tap: fix Rx descriptor vs scatter segment confusion
+>   net/tap: replace use of VLA in transmit burst
+>   net/tap: consolidate queue statistics
+>   net/tap: enable VLA warnings
+>   test: add unit tests for TAP PMD
+> 
+>  app/test/meson.build             |    1 +
+>  app/test/test_pmd_tap.c          | 1143 ++++++++++++++++++++++++++++++
+>  doc/guides/nics/features/tap.ini |   14 +-
+>  drivers/net/tap/meson.build      |    1 -
+>  drivers/net/tap/rte_eth_tap.c    |  411 ++++++-----
+>  drivers/net/tap/rte_eth_tap.h    |   28 +-
+>  drivers/net/tap/tap_flow.c       |   36 +-
+>  7 files changed, 1424 insertions(+), 210 deletions(-)
+>  create mode 100644 app/test/test_pmd_tap.c
+> 
 
-I didn't see anything here, but AI spotted some things.
-Please revise and resubmit.
-
-Thanks for the series. A few findings, mostly in patch 2:
-Patch 2 (M88E1512 support):
-
-1. axgbe_phy_link_status() always returns 0 (link up) even when the
-M88E1512 reports link down or the read fails. The goto out path leads
-to return 0, which means "link up" in this function's contract. The
-link-down and error paths need to return a non-zero value.=20
-
-2. Integer shift UB in axgbe_get_phy_id(): (u32)(phy_id_1 << 16) evaluates =
-the
-shift at int width before widening. If bit 15 of phy_id_1 is set,
-shifting into the sign bit is undefined behavior. Move the cast before
-the shift: (u32)phy_id_1 << 16.=20
-
-3. axgbe_get_ext_phy_link_status() doesn't
-set *linkup =3D false on the BMCR_ANRESTART early-return path. Works
-today because the caller pre-initializes the variable, but the function
-should be self-contained.
-
-4. The new out label unconditionally clears
-rx_adapt_done on the M88E1512 link-down path =E2=80=94 please verify this is
-intentional and doesn't interfere with the internal SerDes receiver
-adaptation state machine.
-
-Patch 3 (100Mbps):
-
-5. The SPEED_1000 =E2=86=92 SPEED_100 change in axgbe_sgmii_100_mode() is a=
- bug fix in existing code =E2=80=94 the 100M mode function was incorrectly =
-configuring the MAC for 1G. This should have its own Fixes: tag and Cc: sta=
-ble@dpdk.org so it gets backported to stable branches.
-
-Item 1 is the most critical =E2=80=94 it inverts link status reporting for =
-the M88E1512.
+Applied to next-net.
