@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F38FCEE8A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 12:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC3CFCEE8A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 12:01:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C835440658;
-	Wed, 25 Feb 2026 13:00:23 +0100 (CET)
-Received: from BL2PR02CU003.outbound.protection.outlook.com
- (mail-eastusazon11011032.outbound.protection.outlook.com [52.101.52.32])
- by mails.dpdk.org (Postfix) with ESMTP id 405B340647
- for <dev@dpdk.org>; Wed, 25 Feb 2026 13:00:22 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 76E0D4066A;
+	Wed, 25 Feb 2026 13:00:28 +0100 (CET)
+Received: from DM5PR21CU001.outbound.protection.outlook.com
+ (mail-centralusazon11011014.outbound.protection.outlook.com [52.101.62.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 5960140288
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 13:00:26 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WZHS1bMr/yToitoRPvKCZDE/MbAEqMWR9wy4mF6RRE2tXrb9wUfe5v/Itvede+K4xXxNxidORZ93KRQuSaeHi2sNJ0uHpuR2B9nPh0kGV972i0gqjwrgv4Jrlbp+w3XmoxogCqiocGoVKvCnVdS5SPFse5DOn+G5jrbrpsOflPOV5KhWNJRiWFKNGwAanI6CE3rmm5J2Qz78eHQfz1i1zOv0TestPHihdOfHsIdY6WFDONIepGXRwWKB+JLoUldk2a9Vid07SYAuwQNPC++IN6fnLoI6O+Iqn6HlVQtPlXwBnUrp51zWmalWKHfimZsjubawRY/B+bmjV08m0x6T/w==
+ b=QNTgSpUVWetlFsJQ+4Kd8inN2zo9WAQYRR5fUT1tSz2ekMfnShjBH6YY5o+F8CnHiUIW3mH1PCzKacktKpg3uf7QGbFVHk8wseGFUlYGhjiMi/4tMJ0BgAnvbVI/fadZ3x3fLfbneptJ3uqTexSoKpmijf3FslmcIZubY0M/eK4/zDRA5gteXQpQpZYcrtAI+5MgNpEF8n0Gcar9GMhnqpzN/WCenyMl2TcneLMAFTPZAEoeTuNgIteQxnr0hdm/W8H/49tuG/F5fZ0ZDXvV5/hN8CdafFp1QOuNMwuSE1THNN/ividrh49YeN1lT6w8Xt8r7Z2G8FO2osvhW8X/3w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9t7wk5XD7MPKnWFb1TA+Ypt4p1ClrI1VyOlyWhh0sIE=;
- b=MU9o0X2dorhaLGGaHas1FE+d6ucfLoulh2A25Gayd2CbO72GX7GgVWOhHr3SD4RfhiTzG4pfixbZsdnDBkLj8BnUUhXNRTXXeYD0QXgWnaH65XwiBaQpS786bFiQiOIDHvONFNl6II+09Q2i0GRxqyjhN3mzpy0/5cMfkpr9U2RLnIwvWJiMJYpvFMBu8FFLWO5QMYUhEDVwaQTugnSMxJ4OS39ttcfBwK/1RYXuy+17hyKI1XPGUlGGKlOB4eqb78IowikBDpDNLlaByquPDdkG+pvVO0N+ye1iNJQ7zVM78XO/+DecKi268yaDrilxZf0C+0trO15NXBGwdIDfsA==
+ bh=QV0nJdkPOGSiSA6oJB4RW5rb72STS3t90vjWVx2yZdU=;
+ b=l/LsyB6g+WU5HeuwX9d2HPEom2CD1A2nYSvN1r3sO3UKbfu32HG2FMOQ3poj23bXTIznrnh6HVo1inCbr5k5u6g/IcXrCDHFVQk7HWURg4y0vpAo1E4Skfw+LCJRwvd8YaUAgL28+Pov83p9KrpJ0trcJuuWqfIIB0LEbcRMfjB4VJc0oQKSafDRDC2Gltdg9ea0uyxwCYIgJQrTdhGm6OW17EL3ZH2DyaVEZ4XCRVSPsZH/flL/eGCgQYJ72NmHd9RMWLlChGHfYnL2gpks6WPWYCuU51VWQhOG8eaznkho2i+7VG9aBUXwifHZHFTBHcVclnJcPRp8YlLoo9yNyQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9t7wk5XD7MPKnWFb1TA+Ypt4p1ClrI1VyOlyWhh0sIE=;
- b=lBq2YwWt08GNLnG1GPVHHVJAwiKvvRwkZ22XLpIh1FvN5y6cebmJRCntjxtbB01bjrCpvqA/v0Mfu9ryPbFAEtjvkVdytf7Iq8oPoy/s6m3XOYJqbhYuaaCufj6aHpOkEKHQtGGA9CM7ThNO4ANv9MxhplSYe3GAw0/swz0m84OzGjShz69iOkAVbDohL8QnGTgiYw+8zoxbmR5spKoKm3PvJzHbwvRHThb8mnXHRRQa0mrAu22Ahucsi4qMMCHqzmsYWnlr7yPYN5DXjqMZr+6d7gBOFGR/hdiNUJ7B5EDoDNm/bk/xT5+tCLLzNkpGdILOvfkZc+ireFQsbqM97Q==
-Received: from BLAPR05CA0006.namprd05.prod.outlook.com (2603:10b6:208:36e::9)
- by MW4PR12MB5667.namprd12.prod.outlook.com (2603:10b6:303:18a::10)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.21; Wed, 25 Feb
- 2026 12:00:14 +0000
-Received: from BL6PEPF0001AB71.namprd02.prod.outlook.com
- (2603:10b6:208:36e:cafe::7a) by BLAPR05CA0006.outlook.office365.com
- (2603:10b6:208:36e::9) with Microsoft SMTP Server (version=TLS1_3,
+ bh=QV0nJdkPOGSiSA6oJB4RW5rb72STS3t90vjWVx2yZdU=;
+ b=SmNRtP/qTaGvvw+H1xgIxcemLcNv/eGkzkGJgiCok3F1YVWAQTrTpylw+B1FcZOp8CBcfsaFf+BRh5hSOiFLundUXNinlrc0XjhE8F+XXmvL9oC8e+MT/s0xEJ3iQILFGNmqzVy84BsWTxwXANRqfNDQiz193kadmNN4yEE1hPmz/Q1VGRyq0psgvVlRGm4kkvgPsJ+WPuRLPmxl6EZvtdWiFMYdNFt/JuBx2eBbTnAuhHbEVs26HyBpbKsp2BXxNL6S9MON8nOe9DyKAvidNbYFDeuyzYguRXMAQYrlUFmcRjbIgnv3+Ounu0Prg1H91MGJWFiWCok5sGd8G5xd/Q==
+Received: from BN9PR03CA0375.namprd03.prod.outlook.com (2603:10b6:408:f7::20)
+ by CYYPR12MB8854.namprd12.prod.outlook.com (2603:10b6:930:b8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.13; Wed, 25 Feb
+ 2026 12:00:18 +0000
+Received: from BN1PEPF00006003.namprd05.prod.outlook.com
+ (2603:10b6:408:f7:cafe::b7) by BN9PR03CA0375.outlook.office365.com
+ (2603:10b6:408:f7::20) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.23 via Frontend Transport; Wed,
- 25 Feb 2026 12:00:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ 25 Feb 2026 12:00:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=nvidia.com;
 Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BL6PEPF0001AB71.mail.protection.outlook.com (10.167.242.164) with Microsoft
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00006003.mail.protection.outlook.com (10.167.243.235) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.12 via Frontend Transport; Wed, 25 Feb 2026 12:00:14 +0000
+ 15.20.9632.12 via Frontend Transport; Wed, 25 Feb 2026 12:00:17 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Feb
- 2026 04:00:02 -0800
+ 2026 04:00:04 -0800
 Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Feb
- 2026 04:00:00 -0800
+ 2026 04:00:02 -0800
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
  <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
  <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 CC: <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>
-Subject: [PATCH 6/9] net/mlx5: lazily allocate HWS push VLAN action
-Date: Wed, 25 Feb 2026 12:59:14 +0100
-Message-ID: <20260225115918.233843-7-dsosnowski@nvidia.com>
+Subject: [PATCH 7/9] net/mlx5: lazily allocate HWS send to kernel action
+Date: Wed, 25 Feb 2026 12:59:15 +0100
+Message-ID: <20260225115918.233843-8-dsosnowski@nvidia.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260225115918.233843-1-dsosnowski@nvidia.com>
 References: <20260225115918.233843-1-dsosnowski@nvidia.com>
@@ -75,29 +75,29 @@ X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB71:EE_|MW4PR12MB5667:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25d5e1b4-be3e-4bbc-97bd-08de74656f80
+X-MS-TrafficTypeDiagnostic: BN1PEPF00006003:EE_|CYYPR12MB8854:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17782e99-0b2d-4d72-b2c2-08de7465717a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|36860700013|1800799024; 
-X-Microsoft-Antispam-Message-Info: nZi2nYGrVQp1QfBMTN8NSzD4Zs9TnXbASrq1l1fTKmeXjrK6jjvyJI/JHxaVF+VtfpnFy4DkxyBCMeDz2p9jj0aeWDJ00nWotDvLbDio9WFYkD/MlnCHIhEYfHAIX1MryvhvWG13fDljMw4dUYFXkfPkPNuO62wirE9IHMesN1/G7jda7S0blSlfHejIvLtAgGnkoiLjYRPlpYiveQOnzonl5yFUYJRai1BLxx/7OuTFM4Z31N7/JjcWYtwYMUx5+ZGzjwwMkQ6+Lx/c3SMSQC5oTwHC8A7282F2mkRWd5N6ktbd5NTQG2i4mAxdvS+zergbIFrrQSRoR1PgaTiKcEkQbMOjogENydfbcnWshpN8kLka+EVyf1Z3zgdYMkrqIIGew+xePezHv2YH+tX5kQcpORrKvkODbsMH/RNxwTDvYTXmOoECjX2dY6iPw82ectoli12aXMt7GmfnKxhXM37hsd32LELeEPK1G9w6lL1caxCKb6M/jbghoF1voLjt0cPFJ74wqwQOFxzGBg9mkBRUsxj5WEA/ruBt7ymzOL1sNRDxqMGXh6otpmjsbQCST27+d9lxZ7yvXx/9nv9dkGplgtj1bUwB6fRZskWpwA+aIArdM6R0erraL2OlO3oHYwpFfpxBjZw2GrZOzj45q8faeLi+pn6epSqkdqZfXNVpzHkTl+QQQP7EX3+NuWzNoEGZZ7mMirqyjL+B5izldBahq6TdH2TJIs5VDlM8Wk6gp/AI2BO0Bb2NETqD+j2kVN3Kjkp6+U+/QLwFnc0ozQK5gQ2S65qjHEcKcFiHtpdIqQDMJZuxKy/flmkR2OLy6TeFlGQa/fSlRHdeZd9Gkg==
-X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024); DIR:OUT;
+ ARA:13230040|1800799024|376014|82310400026|36860700013; 
+X-Microsoft-Antispam-Message-Info: aX84sZXi7S/TMexBc/oNTStlM0I9fieO+jRS9ovwkY0lmPI8AXvKS+Z+OHh4UmWmWdjuS82wqIiTCd+H4PYTGOAh7lPAEQkfCLOCdrfNc2vgHGX0nrZQGEiZbrmJLTzKz+LdhpT4n4zqOa7byJKav1te9Fq23L2Ets0rBrlOigRkNLf/pluxsd/5IWZLmH9gK3mr4EZUO8vDbaXYxgfLw4XHJbumSgB4zKcrTVeaB52K1oXxl4XJ1GypJTFrquTZXkjKANN8yuo7YBFnu8O72S+9EYjmDBazrrg6QB2AeDo+TViT3c6OQwxARFykTSgfuJF5WVLOtMb16GoqruyW+SBqAEiJfWfCYL+R8NEkyE8vGxMNRfgrDKzelqdMqzqsTERtHuwdQmhIniEzpvptIJ+rOnsfFHdMFOdFmN/if7kwjBIHai2XWsm600XlejPxmmRKj+3Xs2buFkdjezn68O9T8qz8fwph++hk+yKa0I7JQWOG05tKGb5s6rLMswLbtdP0ZwOCw0pVJWZEVcY/upnDU3ftz9MboPbtw2rqi3q8hwu/9yYQbA5a/ldbMU+SIVV9Ul4n0iFTGAcZomP3BGZd3shAKGnQfeFf0o1YfhBLUL6cidBR2Wi9Mu4Z4RTB29P0mHuJHo9XNqnNUotWE+CCx9JkLnxb8s3vDaoJhkUt9t+jjQKfY4YV4SrEXQNEkYhfnxgc44adZAW4XJ364FrFY8xqHiqNp1YIeNA1M0Wsq0xeanhy9mxpSiQuq7NbzJGZHtf5dMOtXpVPMWpZ+QtvF/AvVkzAgabVKMt4PsNn3VLeRbkNjbBSpJAKjdQLzbbJwUY4yIAadGpFtRrfBA==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: gHflWQZ29w5anLnV6v6hor+NGYPpPtKfFpyCm1wSen5sk775l2y1uOVTHp7Q4FFCp0LdagYC59pQhNS0eak+Z/LzArhA0/zsmNgIXnJevj8D4uW7yDIPLmZV0upE1wBR5SqeX0TRNdZmUd6j4Mgk9bGrnC453yb1tBCw3z4hIEV2Q9yCfNWg1OZ3c18PdbOBJCSe5eUfaMWdoADatp+3ImBGHzYtSM2GiDzUMVG30fhpxmin4iD4pey90gQRgzMsECanXvqx8/GF51h8X8GFSQZ4EVxUZIc1DlydqXQ2+zAE6TH3ixfEuEC9gmCwqACOKzfebUizS9o+J9VeIdTN2G/KFZ13EMkokJFugPqqDM+EZMlJk0fOxk2X8A5A/8Ko3b1dKT3L11pJIf8+518n+EV3mGOQI9DMIfskGYKKTysSK0xqZCSyRsgJqxb39HEc
+X-MS-Exchange-AntiSpam-MessageData-0: vNSkgv4M2hJjVm/tLSPNodDaC41olOqShLDJOdze2EPXZS4MLsx8LBhaVqI/p7ch/z5mn2FRJcXusnkeLA245T2fNa+v0rH4SEnJv7BRwrgg+TD8peBr7KJ+/hdR/pVMKR/VZtTXMyS6SkinVIAnFDW9D9aDRLulmQ0fSV/gV4ITtKmr9CHWCm1T2hqJd2DZzM+C7WuA0iIipqZdjnvq5oUSaEn/ZippMEoMn76iAyOqQFCKcY0ZBo7cXXqbCHlW0yMyQvJVTYB0bWbzIITTsDniIqPGNJzpKa2p2Xr281BDOFUZWeA4gBWHTgOcIqknFrkqBYUoaSteoeL92qdn9T7YAsCQFDH96P0f9jJT3m3n4/iPKyF4WDoo3+7UKvDyySm4RL1ruiql9vtrxZc/gRzSDuQdGrFq8hw4WbnzZo9NKUhfWIOOkP8JeY9mIqlT
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2026 12:00:14.2529 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25d5e1b4-be3e-4bbc-97bd-08de74656f80
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Feb 2026 12:00:17.5618 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17782e99-0b2d-4d72-b2c2-08de7465717a
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB71.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BN1PEPF00006003.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB5667
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8854
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,209 +111,339 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-HWS push_vlan action is used to implement OF_PUSH_VLAN rte_flow action.
+HWS send_to_kernel action is used to implement
+SEND_TO_KERNEL rte_flow action.
 It was allocated either on port start or on rte_flow_configure().
 This could cause unnecessary FW resource usage
-if user did not use any OF_PUSH_VLAN action.
+if user did not use any SEND_TO_KERNEL action.
 
 This patch extends global actions internal API,
 introduced in previous commits, to allow lazy allocation
-of HWS push_vlan action. It will be allocated on first use
+of HWS send_to_kernel action. It will be allocated on first use
 and will be allocated per domain to minimize FW resource usage.
 
 Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 Acked-by: Ori Kam <orika@nvidia.com>
 ---
- drivers/net/mlx5/mlx5.h                    |  1 -
- drivers/net/mlx5/mlx5_flow_hw.c            | 78 +++-------------------
- drivers/net/mlx5/mlx5_hws_global_actions.c | 21 ++++++
+ drivers/net/mlx5/mlx5.h                    |  2 -
+ drivers/net/mlx5/mlx5_flow_hw.c            | 90 ++++------------------
+ drivers/net/mlx5/mlx5_hws_global_actions.c | 59 +++++++++++---
  drivers/net/mlx5/mlx5_hws_global_actions.h |  5 ++
- 4 files changed, 36 insertions(+), 69 deletions(-)
+ 4 files changed, 66 insertions(+), 90 deletions(-)
 
 diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
-index 9e46a8cee8..94b4cb0d7b 100644
+index 94b4cb0d7b..739b414faf 100644
 --- a/drivers/net/mlx5/mlx5.h
 +++ b/drivers/net/mlx5/mlx5.h
-@@ -2110,7 +2110,6 @@ struct mlx5_priv {
- 	LIST_HEAD(flow_hw_tbl, rte_flow_template_table) flow_hw_tbl;
- 	/* HW steering rte flow group list header */
- 	LIST_HEAD(flow_hw_grp, mlx5_flow_group) flow_hw_grp;
--	struct mlx5dr_action *hw_push_vlan[MLX5DR_TABLE_TYPE_MAX];
- 	struct mlx5dr_action **hw_vport;
- 	/* HWS global actions. */
+@@ -2115,8 +2115,6 @@ struct mlx5_priv {
  	struct mlx5_hws_global_actions hw_global_actions;
+ 	/* HW steering global default miss action. */
+ 	struct mlx5dr_action *hw_def_miss;
+-	/* HW steering global send to kernel action. */
+-	struct mlx5dr_action *hw_send_to_kernel[MLX5DR_TABLE_TYPE_MAX];
+ 	/* HW steering create ongoing rte flow table list header. */
+ 	LIST_HEAD(flow_hw_tbl_ongo, rte_flow_template_table) flow_hw_tbl_ongo;
+ 	struct mlx5_indexed_pool *acts_ipool; /* Action data indexed pool. */
 diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index 21c61bce90..2ecae1b7e7 100644
+index 2ecae1b7e7..7fafe3fe6a 100644
 --- a/drivers/net/mlx5/mlx5_flow_hw.c
 +++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -2737,8 +2737,16 @@ __flow_hw_translate_actions_template(struct rte_eth_dev *dev,
- 			mlx5_flow_hw_rxq_flag_set(dev, true);
+@@ -2913,14 +2913,24 @@ __flow_hw_translate_actions_template(struct rte_eth_dev *dev,
  			break;
- 		case RTE_FLOW_ACTION_TYPE_OF_PUSH_VLAN:
--			acts->rule_acts[dr_pos].action =
--				priv->hw_push_vlan[type];
-+			dr_action = mlx5_hws_global_action_push_vlan_get(priv, type, is_root);
+ 		case RTE_FLOW_ACTION_TYPE_SEND_TO_KERNEL:
+ 			if (is_root) {
+-				__flow_hw_action_template_destroy(dev, acts);
+ 				rte_flow_error_set(&sub_error, ENOTSUP,
+ 					RTE_FLOW_ERROR_TYPE_ACTION,
+ 					NULL,
+ 					"Send to kernel action on root table is not supported in HW steering mode");
+ 				goto err;
+ 			}
+-			acts->rule_acts[dr_pos].action = priv->hw_send_to_kernel[type];
++			dr_action = mlx5_hws_global_action_send_to_kernel_get(priv,
++					type,
++					MLX5_HW_LOWEST_PRIO_ROOT);
 +			if (dr_action == NULL) {
-+				DRV_LOG(ERR, "port %u failed to allocate push VLAN action",
++				DRV_LOG(ERR, "port %u failed to allocate send to kernel action",
 +					priv->dev_data->port_id);
 +				rte_flow_error_set(&sub_error, ENOMEM,
 +						   RTE_FLOW_ERROR_TYPE_STATE, NULL,
-+						   "failed to allocate push VLAN action");
++						   "failed to allocate send to kernel action");
 +				goto err;
 +			}
 +			acts->rule_acts[dr_pos].action = dr_action;
- 			if (is_template_masked_push_vlan(masks->conf))
- 				acts->rule_acts[dr_pos].push_vlan.vlan_hdr =
- 					vlan_hdr_to_be32(actions);
-@@ -11378,65 +11386,6 @@ mlx5_flow_ct_init(struct rte_eth_dev *dev,
- 	return ret;
+ 			break;
+ 		case RTE_FLOW_ACTION_TYPE_MODIFY_FIELD:
+ 			err = flow_hw_modify_field_compile(dev, attr, actions,
+@@ -7366,36 +7376,14 @@ mlx5_flow_hw_actions_validate(struct rte_eth_dev *dev,
+ 			action_flags |= MLX5_FLOW_ACTION_JUMP;
+ 			break;
+ #ifdef HAVE_MLX5DV_DR_ACTION_CREATE_DEST_ROOT_TABLE
+-		case RTE_FLOW_ACTION_TYPE_SEND_TO_KERNEL: {
+-			bool res;
+-
++		case RTE_FLOW_ACTION_TYPE_SEND_TO_KERNEL:
+ 			if (priv->shared_host)
+ 				return rte_flow_error_set(error, ENOTSUP,
+ 							  RTE_FLOW_ERROR_TYPE_ACTION,
+ 							  action,
+ 							  "action not supported in guest port");
+-			if (attr->ingress) {
+-				res = priv->hw_send_to_kernel[MLX5DR_TABLE_TYPE_NIC_RX];
+-			} else if (attr->egress) {
+-				res = priv->hw_send_to_kernel[MLX5DR_TABLE_TYPE_NIC_TX];
+-			} else {
+-				if (!is_unified_fdb(priv))
+-					res = priv->hw_send_to_kernel[MLX5DR_TABLE_TYPE_FDB];
+-				else
+-					res =
+-					    priv->hw_send_to_kernel[MLX5DR_TABLE_TYPE_FDB_RX] &&
+-					    priv->hw_send_to_kernel[MLX5DR_TABLE_TYPE_FDB_TX] &&
+-					    priv->hw_send_to_kernel[MLX5DR_TABLE_TYPE_FDB_UNIFIED];
+-			}
+-			if (!res)
+-				return rte_flow_error_set(error, ENOTSUP,
+-							  RTE_FLOW_ERROR_TYPE_ACTION,
+-							  action,
+-							  "action is not available");
+-
+ 			action_flags |= MLX5_FLOW_ACTION_SEND_TO_KERNEL;
+ 			break;
+-		}
+ #endif
+ 		case RTE_FLOW_ACTION_TYPE_QUEUE:
+ 			ret = mlx5_hw_validate_action_queue(dev, action, mask,
+@@ -9891,55 +9879,6 @@ flow_hw_free_vport_actions(struct mlx5_priv *priv)
+ 	priv->hw_vport = NULL;
  }
  
+-#ifdef HAVE_MLX5DV_DR_ACTION_CREATE_DEST_ROOT_TABLE
+-static __rte_always_inline void
+-_create_send_to_kernel_actions(struct mlx5_priv *priv, int type)
+-{
+-	int action_flag;
+-
+-	action_flag = mlx5_hw_act_flag[1][type];
+-	priv->hw_send_to_kernel[type] =
+-		mlx5dr_action_create_dest_root(priv->dr_ctx,
+-				MLX5_HW_LOWEST_PRIO_ROOT,
+-				action_flag);
+-	if (!priv->hw_send_to_kernel[type])
+-		DRV_LOG(WARNING, "Unable to create HWS send to kernel action");
+-}
+-#endif
+-
 -static void
--flow_hw_destroy_vlan(struct rte_eth_dev *dev)
+-flow_hw_create_send_to_kernel_actions(__rte_unused struct mlx5_priv *priv,
+-				      __rte_unused bool is_proxy)
 -{
--	struct mlx5_priv *priv = dev->data->dev_private;
--	enum mlx5dr_table_type i;
--
--	for (i = MLX5DR_TABLE_TYPE_NIC_RX; i < MLX5DR_TABLE_TYPE_MAX; i++) {
--		if (priv->hw_push_vlan[i]) {
--			mlx5dr_action_destroy(priv->hw_push_vlan[i]);
--			priv->hw_push_vlan[i] = NULL;
--		}
--	}
--}
--
--static int
--_create_vlan(struct mlx5_priv *priv, enum mlx5dr_table_type type)
--{
--	const enum mlx5dr_action_flags flags[MLX5DR_TABLE_TYPE_MAX] = {
--		MLX5DR_ACTION_FLAG_HWS_RX,
--		MLX5DR_ACTION_FLAG_HWS_TX,
--		MLX5DR_ACTION_FLAG_HWS_FDB,
--		MLX5DR_ACTION_FLAG_HWS_FDB_RX,
--		MLX5DR_ACTION_FLAG_HWS_FDB_TX,
--		MLX5DR_ACTION_FLAG_HWS_FDB_UNIFIED,
--	};
--
--	/* rte_errno is set in the mlx5dr_action* functions. */
--	priv->hw_push_vlan[type] =
--		mlx5dr_action_create_push_vlan(priv->dr_ctx, flags[type]);
--	if (!priv->hw_push_vlan[type])
--		return -rte_errno;
--	return 0;
--}
--
--static int
--flow_hw_create_vlan(struct rte_eth_dev *dev)
--{
--	struct mlx5_priv *priv = dev->data->dev_private;
--	enum mlx5dr_table_type i, from, to;
--	int rc;
+-#ifdef HAVE_MLX5DV_DR_ACTION_CREATE_DEST_ROOT_TABLE
+-	int i, from, to;
 -	bool unified_fdb = is_unified_fdb(priv);
 -
--	for (i = MLX5DR_TABLE_TYPE_NIC_RX; i <= MLX5DR_TABLE_TYPE_NIC_TX; i++) {
--		rc = _create_vlan(priv, i);
--		if (rc)
--			return rc;
+-	for (i = MLX5DR_TABLE_TYPE_NIC_RX; i <= MLX5DR_TABLE_TYPE_NIC_TX; i++)
+-		_create_send_to_kernel_actions(priv, i);
+-
+-	if (is_proxy) {
+-		from = unified_fdb ? MLX5DR_TABLE_TYPE_FDB_RX : MLX5DR_TABLE_TYPE_FDB;
+-		to = unified_fdb ? MLX5DR_TABLE_TYPE_FDB_UNIFIED : MLX5DR_TABLE_TYPE_FDB;
+-		for (i = from; i <= to; i++)
+-			_create_send_to_kernel_actions(priv, i);
 -	}
--	from = unified_fdb ? MLX5DR_TABLE_TYPE_FDB_RX : MLX5DR_TABLE_TYPE_FDB;
--	to = unified_fdb ? MLX5DR_TABLE_TYPE_FDB_UNIFIED : MLX5DR_TABLE_TYPE_FDB;
--	if (priv->sh->config.dv_esw_en && priv->master) {
--		for (i = from; i <= to; i++) {
--			rc = _create_vlan(priv, i);
--			if (rc)
--				return rc;
--		}
--	}
--	return 0;
+-#endif
 -}
 -
- void
- mlx5_flow_hw_cleanup_ctrl_rx_tables(struct rte_eth_dev *dev)
+-static void
+-flow_hw_destroy_send_to_kernel_action(struct mlx5_priv *priv)
+-{
+-	int i;
+-
+-	for (i = MLX5DR_TABLE_TYPE_NIC_RX; i < MLX5DR_TABLE_TYPE_MAX; i++) {
+-		if (priv->hw_send_to_kernel[i]) {
+-			mlx5dr_action_destroy(priv->hw_send_to_kernel[i]);
+-			priv->hw_send_to_kernel[i] = NULL;
+-		}
+-	}
+-}
+-
+ static bool
+ flow_hw_should_create_nat64_actions(struct mlx5_priv *priv)
  {
-@@ -11992,7 +11941,6 @@ __mlx5_flow_hw_resource_release(struct rte_eth_dev *dev, bool ctx_close)
+@@ -11941,7 +11880,6 @@ __mlx5_flow_hw_resource_release(struct rte_eth_dev *dev, bool ctx_close)
  	if (priv->hw_def_miss)
  		mlx5dr_action_destroy(priv->hw_def_miss);
  	flow_hw_destroy_nat64_actions(priv);
--	flow_hw_destroy_vlan(dev);
- 	flow_hw_destroy_send_to_kernel_action(priv);
+-	flow_hw_destroy_send_to_kernel_action(priv);
  	flow_hw_free_vport_actions(priv);
  	if (priv->acts_ipool) {
-@@ -12452,12 +12400,6 @@ __flow_hw_configure(struct rte_eth_dev *dev,
- 		if (ret < 0)
+ 		mlx5_ipool_destroy(priv->acts_ipool);
+@@ -12360,8 +12298,6 @@ __flow_hw_configure(struct rte_eth_dev *dev,
  			goto err;
+ 		}
  	}
--	ret = flow_hw_create_vlan(dev);
--	if (ret) {
--		rte_flow_error_set(error, -ret, RTE_FLOW_ERROR_TYPE_UNSPECIFIED,
--				   NULL, "Failed to VLAN actions.");
--		goto err;
--	}
- 	if (flow_hw_should_create_nat64_actions(priv)) {
- 		if (flow_hw_create_nat64_actions(priv, error))
+-	if (!priv->shared_host)
+-		flow_hw_create_send_to_kernel_actions(priv, is_proxy);
+ 	if (port_attr->nb_conn_tracks || (host_priv && host_priv->hws_ctpool)) {
+ 		if (mlx5_flow_ct_init(dev, port_attr->nb_conn_tracks, nb_q_updated))
  			goto err;
 diff --git a/drivers/net/mlx5/mlx5_hws_global_actions.c b/drivers/net/mlx5/mlx5_hws_global_actions.c
-index 236e6f1d1a..2bbfa5a24c 100644
+index 2bbfa5a24c..d8b21a67f1 100644
 --- a/drivers/net/mlx5/mlx5_hws_global_actions.c
 +++ b/drivers/net/mlx5/mlx5_hws_global_actions.c
-@@ -42,6 +42,7 @@ mlx5_hws_global_actions_cleanup(struct mlx5_priv *priv)
- 	global_actions_array_cleanup(priv, &priv->hw_global_actions.drop, "drop");
+@@ -43,48 +43,67 @@ mlx5_hws_global_actions_cleanup(struct mlx5_priv *priv)
  	global_actions_array_cleanup(priv, &priv->hw_global_actions.tag, "tag");
  	global_actions_array_cleanup(priv, &priv->hw_global_actions.pop_vlan, "pop_vlan");
-+	global_actions_array_cleanup(priv, &priv->hw_global_actions.push_vlan, "push_vlan");
+ 	global_actions_array_cleanup(priv, &priv->hw_global_actions.push_vlan, "push_vlan");
++	global_actions_array_cleanup(priv,
++				     &priv->hw_global_actions.send_to_kernel,
++				     "send_to_kernel");
  
  	rte_spinlock_unlock(&priv->hw_global_actions.lock);
  }
-@@ -70,6 +71,13 @@ action_create_pop_vlan_cb(struct mlx5dr_context *ctx,
+ 
+ typedef struct mlx5dr_action *(*global_action_create_t)(struct mlx5dr_context *ctx,
+-							uint32_t action_flags);
++							uint32_t action_flags,
++							void *user_data);
+ 
+ static struct mlx5dr_action *
+ action_create_drop_cb(struct mlx5dr_context *ctx,
+-		      uint32_t action_flags)
++		      uint32_t action_flags,
++		      void *user_data __rte_unused)
+ {
+ 	return mlx5dr_action_create_dest_drop(ctx, action_flags);
+ }
+ 
+ static struct mlx5dr_action *
+ action_create_tag_cb(struct mlx5dr_context *ctx,
+-		     uint32_t action_flags)
++		     uint32_t action_flags,
++		     void *user_data __rte_unused)
+ {
+ 	return mlx5dr_action_create_tag(ctx, action_flags);
+ }
+ 
+ static struct mlx5dr_action *
+ action_create_pop_vlan_cb(struct mlx5dr_context *ctx,
+-			  uint32_t action_flags)
++			  uint32_t action_flags,
++			  void *user_data __rte_unused)
+ {
  	return mlx5dr_action_create_pop_vlan(ctx, action_flags);
  }
  
+ static struct mlx5dr_action *
+ action_create_push_vlan_cb(struct mlx5dr_context *ctx,
+-			   uint32_t action_flags)
++			   uint32_t action_flags,
++			   void *user_data __rte_unused)
+ {
+ 	return mlx5dr_action_create_push_vlan(ctx, action_flags);
+ }
+ 
 +static struct mlx5dr_action *
-+action_create_push_vlan_cb(struct mlx5dr_context *ctx,
-+			   uint32_t action_flags)
++action_create_send_to_kernel_cb(struct mlx5dr_context *ctx,
++				uint32_t action_flags,
++				void *user_data)
 +{
-+	return mlx5dr_action_create_push_vlan(ctx, action_flags);
++	uint16_t priority = (uint16_t)(uintptr_t)user_data;
++
++	return mlx5dr_action_create_dest_root(ctx, priority, action_flags);
 +}
 +
  static struct mlx5dr_action *
  global_action_get(struct mlx5_priv *priv,
  		  struct mlx5_hws_global_actions_array *array,
-@@ -145,3 +153,16 @@ mlx5_hws_global_action_pop_vlan_get(struct mlx5_priv *priv,
+ 		  const char *name,
+ 		  enum mlx5dr_table_type table_type,
+ 		  bool is_root,
+-		  global_action_create_t create_cb)
++		  global_action_create_t create_cb,
++		  void *user_data)
+ {
+ 	enum mlx5dr_action_flags action_flags;
+ 	struct mlx5dr_action *action = NULL;
+@@ -100,7 +119,7 @@ global_action_get(struct mlx5_priv *priv,
+ 	if (action != NULL)
+ 		goto unlock_ret;
+ 
+-	action = create_cb(priv->dr_ctx, action_flags);
++	action = create_cb(priv->dr_ctx, action_flags, user_data);
+ 	if (action == NULL) {
+ 		DRV_LOG(ERR, "port %u failed to create %s HWS action",
+ 			priv->dev_data->port_id,
+@@ -125,7 +144,8 @@ mlx5_hws_global_action_drop_get(struct mlx5_priv *priv,
+ 				 "drop",
+ 				 table_type,
  				 is_root,
- 				 action_create_pop_vlan_cb);
+-				 action_create_drop_cb);
++				 action_create_drop_cb,
++				 NULL);
  }
+ 
+ struct mlx5dr_action *
+@@ -138,7 +158,8 @@ mlx5_hws_global_action_tag_get(struct mlx5_priv *priv,
+ 				 "tag",
+ 				 table_type,
+ 				 is_root,
+-				 action_create_tag_cb);
++				 action_create_tag_cb,
++				 NULL);
+ }
+ 
+ struct mlx5dr_action *
+@@ -151,7 +172,8 @@ mlx5_hws_global_action_pop_vlan_get(struct mlx5_priv *priv,
+ 				 "pop_vlan",
+ 				 table_type,
+ 				 is_root,
+-				 action_create_pop_vlan_cb);
++				 action_create_pop_vlan_cb,
++				 NULL);
+ }
+ 
+ struct mlx5dr_action *
+@@ -164,5 +186,20 @@ mlx5_hws_global_action_push_vlan_get(struct mlx5_priv *priv,
+ 				 "push_vlan",
+ 				 table_type,
+ 				 is_root,
+-				 action_create_push_vlan_cb);
++				 action_create_push_vlan_cb,
++				 NULL);
++}
 +
 +struct mlx5dr_action *
-+mlx5_hws_global_action_push_vlan_get(struct mlx5_priv *priv,
-+				     enum mlx5dr_table_type table_type,
-+				     bool is_root)
++mlx5_hws_global_action_send_to_kernel_get(struct mlx5_priv *priv,
++					   enum mlx5dr_table_type table_type,
++					   uint16_t priority)
 +{
 +	return global_action_get(priv,
-+				 &priv->hw_global_actions.push_vlan,
-+				 "push_vlan",
++				 &priv->hw_global_actions.send_to_kernel,
++				 "send_to_kernel",
 +				 table_type,
-+				 is_root,
-+				 action_create_push_vlan_cb);
-+}
++				 false, /* send-to-kernel is non-root only */
++				 action_create_send_to_kernel_cb,
++				 (void *)(uintptr_t)priority);
+ }
 diff --git a/drivers/net/mlx5/mlx5_hws_global_actions.h b/drivers/net/mlx5/mlx5_hws_global_actions.h
-index d04ebc42be..4281ba701c 100644
+index 4281ba701c..7fbca9fc96 100644
 --- a/drivers/net/mlx5/mlx5_hws_global_actions.h
 +++ b/drivers/net/mlx5/mlx5_hws_global_actions.h
-@@ -27,6 +27,7 @@ struct mlx5_hws_global_actions {
- 	struct mlx5_hws_global_actions_array drop;
+@@ -28,6 +28,7 @@ struct mlx5_hws_global_actions {
  	struct mlx5_hws_global_actions_array tag;
  	struct mlx5_hws_global_actions_array pop_vlan;
-+	struct mlx5_hws_global_actions_array push_vlan;
+ 	struct mlx5_hws_global_actions_array push_vlan;
++	struct mlx5_hws_global_actions_array send_to_kernel;
  	rte_spinlock_t lock;
  };
  
-@@ -46,4 +47,8 @@ struct mlx5dr_action *mlx5_hws_global_action_pop_vlan_get(struct mlx5_priv *priv
- 							  enum mlx5dr_table_type table_type,
- 							  bool is_root);
+@@ -51,4 +52,8 @@ struct mlx5dr_action *mlx5_hws_global_action_push_vlan_get(struct mlx5_priv *pri
+ 							   enum mlx5dr_table_type table_type,
+ 							   bool is_root);
  
-+struct mlx5dr_action *mlx5_hws_global_action_push_vlan_get(struct mlx5_priv *priv,
-+							   enum mlx5dr_table_type table_type,
-+							   bool is_root);
++struct mlx5dr_action *mlx5_hws_global_action_send_to_kernel_get(struct mlx5_priv *priv,
++								 enum mlx5dr_table_type table_type,
++								 uint16_t priority);
 +
  #endif /* !RTE_PMD_MLX5_HWS_GLOBAL_ACTIONS_H_ */
 -- 
