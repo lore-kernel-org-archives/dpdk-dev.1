@@ -2,71 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B79FD3773
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 16:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9170BFD3774
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 16:50:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 106B640288;
-	Wed, 25 Feb 2026 17:25:31 +0100 (CET)
-Received: from mail-qv1-f67.google.com (mail-qv1-f67.google.com
- [209.85.219.67]) by mails.dpdk.org (Postfix) with ESMTP id F29614027F
- for <dev@dpdk.org>; Wed, 25 Feb 2026 17:25:29 +0100 (CET)
-Received: by mail-qv1-f67.google.com with SMTP id
- 6a1803df08f44-896fd2c5337so58687386d6.2
- for <dev@dpdk.org>; Wed, 25 Feb 2026 08:25:29 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 590844027F;
+	Wed, 25 Feb 2026 17:50:26 +0100 (CET)
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com
+ [74.125.82.175]) by mails.dpdk.org (Postfix) with ESMTP id B0264400D6
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 17:50:25 +0100 (CET)
+Received: by mail-dy1-f175.google.com with SMTP id
+ 5a478bee46e88-2bdca815fdfso1163572eec.1
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 08:50:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772036729;
- x=1772641529; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772038225;
+ x=1772643025; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+BoNR20MCM2b1vrb2ih/9fje5xBC6lnF91WokO+leCg=;
- b=XrOyzr8gZffsYaU5shLlxxRpuLAclhQ4CCoMbxkNs1SnU9f56XU/db8GrYLKPgZrra
- 6vKC+xzPEb8EO3pTN4dbM7RKsmVpe/2DI2I8NVl+VSsVyDfzwvgYhc55FEMuhLZ+UYyO
- vD1x8nIvVjFHgXp1W1SFB4SPUXoxSTo4kxc0YwRb3GAEsCOwsO4t/doTaRyURThnnOHg
- qLiNqBrzAyTSwxF0H8mrvLkjKBHk15xyzm/KuY2ijaaFpFNmdMPgyfqD7ZaaBp50v4W1
- 3oud7UyWbYzrH1P3Stf2oyjq/kctWn0FbRbQWfFpHRCvdr997RqkLlI+0FrYYeubExwG
- 8vYg==
+ bh=WQ8ZuQNiAQfXqvobZIX2WKUpZBIprnkmi+TUrC0fB+c=;
+ b=yyTeqKU/lAyjy9BTUMHbS8DwtJPX/ffH/DZKAe2gb5jZWBLFWxSY0wghxqoXYKJwjC
+ XjKOyAd3lKhnntMJXgfweJK+hz5pgHsmqjYHL7C4KWN1H4rHAMm9cDgJvK+FrNU7qaol
+ jnuYeZYRpyIFFCUDuT8d7vFzJcZ3QBwGDpC59jGh+WO7lEVmEqOIawB2I1eldJ5cAICj
+ 9ZGw3uBuOIP2iv2bmVco+yjGEKDijA1nRQIQMNVgngg6SpLL32Q5Uny6OKFvSLj4QGVh
+ 53YcjQYI74ao5z+1BiwqUQHoqf49sfwvZiYJ/e8K8Rby3iQ8s0H7PbWs2zzMUkcXJqnn
+ /phg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772036729; x=1772641529;
+ d=1e100.net; s=20230601; t=1772038225; x=1772643025;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+BoNR20MCM2b1vrb2ih/9fje5xBC6lnF91WokO+leCg=;
- b=muX9KkJurUAtx/bBSTBSZl2ZXEOGIg6H1ZdJaunbOldkTvNUrIAKGiUOzdHW8J2ydq
- 1E/diQ60R0ucDREtAXOELd+yo8b/XWy/orDwHF4uc4mDNC+DKplmDXiA7r4C+7X2Lc7P
- BJF8ETCDVCk2JFqUmmQhwj53uGQVEwo0XZDTeO4gVt2nLHYCU5V4vf2QswOzHE3jdeeq
- WpOLuQdW9cXPUK1ZWiF1pc07OkinuzI4LyJxmYo6mqIah9dW9R3vvfUloD999K7bPGRx
- hZbEr+UsI9WVf7J4BCjJarzRMIgwhoRFmg/OTnjwPF1SMxifPiYROKsTFviwR48F2jK3
- s1Rg==
-X-Gm-Message-State: AOJu0YzSAi8A7IHLd1ytiL0UUcfsCk3XPGhiCxDQ3dxc9RjWjU1Mw/En
- BljFw81MfGbeduQZbf3clYudf8cbCHRg9YdUV7nr8hjVNen/NufG9T+Edu02JoxzcqE=
-X-Gm-Gg: ATEYQzxYjCVWk055v8Y1G/3IyopTpioS0HsJEf/g0ZMZ232OZaJ4vR+uNcb4GdDKy05
- PBNmi07tyBAwJUna5SOcNxxNBqvEKNlEHcGDU2ZxpDtWc2nvq4wxAG7znVh4xxewvFvJKwx/cl+
- 6ByUyGdVRweTcDWlPcibF5bZwKawyazGjDWU1XuuuFH+JFatB3ROZLPSEHk0tgRG2zkedIawoYZ
- Hk9fwBF/3qDQncXQy4fIl+hpceCphd7OAuZhj63od1CDdYA5a/aehAmnFNQCIzCOxpbqj601KNZ
- GE1YdDOmItr3P6i4s13/wFRrjLTeSChBpqm2EOhYEubnWtuyrSm2m8eMVkLPR33hB/2Vg1msakC
- B9Fpdd9n6YEBujg3BTeNh2rZHeiHYqS9nROuKjaEUpapOkDSJw912qJvcy/76O/M+VOUtxwy0xX
- SlW621Vj4q78DN7IxiFSmJEvAvlpQFbM8jsDyn6Fn/G33fbvK4tIiFG09nOcKZLore
-X-Received: by 2002:a05:6214:410d:b0:899:bbe7:6f80 with SMTP id
- 6a1803df08f44-899bbe7731amr26254176d6.42.1772036729113; 
- Wed, 25 Feb 2026 08:25:29 -0800 (PST)
+ bh=WQ8ZuQNiAQfXqvobZIX2WKUpZBIprnkmi+TUrC0fB+c=;
+ b=mVVZSPR+LjGagaAiCCb+869aIAZwPChyTuzaoJUmUI6ci8DLXkh9/exeevAQIAGhw/
+ uTv4KSKdy418G+pnXyGvb4m+HgWG91mo0GTNlk9lF21c9RPI4GZQMPmHcwU8HGbxE5id
+ lMDCG19oBpGil2gSFoN45trHukMuZNJG7NlrT/G0O967ENIc6U1sn0QLRGTa5RGWmIN/
+ PtvhnGeD3Od1BLwM+kZNCC1n11x3RTE3idaFcSLvcSfzu3aAfSeu/jz37uw68Ecysybt
+ VufNctzl+myvx+PchI0GNAnkBvjlmKfYJxg4qWfI9axNd1mGvwSP6rNQyRteQNfSGRtR
+ WDsA==
+X-Gm-Message-State: AOJu0YxLnp98MosqnY9cmrU/DqMvGr9mFNEi1Nb2r5F7vhxoNOcXi3ua
+ QtZCjG6QWTi5N2TUx1Y/b6r7S/4Q0P4YsNffy5pcdMwUesiPPvdzsW4MxSSLo7i2ljdT3XIg8r3
+ SGZlw
+X-Gm-Gg: ATEYQzwox9JVQYDeL20i43Ys7syrds1A8/55SMlMsBJVjT7dKhBRQfcP7Dr7qfye5yf
+ 0a/l8m9qnfJvlwNczqN+eaoq49JRu/0DRdmo4FTAQvknzUAVC8I9/klUVPT8TOc6OHjU3p8yO5C
+ YwDGcUC/uV2uMhNluBVthPxsFmHH/pInXmqMTPnMK7RGfNZxKmG4X24G0LxyVWGYlU0h0m/TBzS
+ PF4bX6SUBbxJc4DumLpIXUzyEf3QPKDOiDnel7QeLJHuL7VWpniepEX1r31odInDAndnJ75crYJ
+ F9yIQSm84hA3N7Lfmpvhphks76nV9qEFlK7FIAM99uo0POV+KXs5r2KmDBJolkO5crbvvLtkh7S
+ L99AethRQ8gAiR85rDY0PrMWUppbRgW9nrZH3pP/Qh/hFiCqa9AOZVOlApuuN9v5aA9T777wl4x
+ HOZ0c1Yrq9RnaqbQCl0YeQUIgfzYdZtG73g3txHaNDHWUMgMcxzAVKWkKG0lZQe0Mh
+X-Received: by 2002:a05:7300:730c:b0:2bd:c285:2fe with SMTP id
+ 5a478bee46e88-2bdc285075bmr1370034eec.9.1772038224465; 
+ Wed, 25 Feb 2026 08:50:24 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8997e63091dsm124602386d6.41.2026.02.25.08.25.28
+ 5a478bee46e88-2bd7dbe8304sm9409959eec.17.2026.02.25.08.50.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Feb 2026 08:25:28 -0800 (PST)
-Date: Wed, 25 Feb 2026 08:25:25 -0800
+ Wed, 25 Feb 2026 08:50:24 -0800 (PST)
+Date: Wed, 25 Feb 2026 08:50:21 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3 2/2] doc: add device hotplug documentation
-Message-ID: <20260225082525.5fc3e0a2@phoenix.local>
-In-Reply-To: <5906353fe6b1e388ce9bc44bf600bc94d2006e9d.1772020302.git.anatoly.burakov@intel.com>
-References: <7430d193b05505bbb51a508725fd6f671183e132.1772020302.git.anatoly.burakov@intel.com>
- <5906353fe6b1e388ce9bc44bf600bc94d2006e9d.1772020302.git.anatoly.burakov@intel.com>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon Yu
+ <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v3 1/1] net/nbl: add igb uio support for NBL VF devices
+Message-ID: <20260225085021.4182499e@phoenix.local>
+In-Reply-To: <20260225033943.30751-2-dimon.zhao@nebula-matrix.com>
+References: <20260211024029.33810-1-dimon.zhao@nebula-matrix.com>
+ <20260225033943.30751-1-dimon.zhao@nebula-matrix.com>
+ <20260225033943.30751-2-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,103 +83,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 25 Feb 2026 11:52:25 +0000
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+On Tue, 24 Feb 2026 19:39:42 -0800
+Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> Currently, device hotplug is not documented except in API headers. Add
-> documentation for device hotplug, both for user facing side of it, and a
-> high level overview of its internal workings.
->=20
-> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> Due to a chip design limitation, only the VF
+> supports the igb_uio driver. The PF does not.
+> 
+> The igb_uio driver requires allocating interrupts and configuring the
+> PCIe MSI-X table before the driver's probe function is called.
+> This pre-probe configuration is only possible on the VF due to the
+> hardware limitation; the PF can only configure the MSI-X table during
+> its probe process.
+> 
+> Therefore, using igb_uio on the PF will fail.
+> This commit clarifies this restriction.
+> 
+> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 > ---
->=20
-> Notes:
->     v2:
->     - Removed "summary" section
->=20
->  doc/guides/prog_guide/dev_args.rst       |   3 +
->  doc/guides/prog_guide/device_hotplug.rst | 286 +++++++++++++++++++++++
->  doc/guides/prog_guide/index.rst          |   1 +
->  3 files changed, 290 insertions(+)
->  create mode 100644 doc/guides/prog_guide/device_hotplug.rst
+>  doc/guides/nics/nbl.rst                       | 11 ++++
+>  doc/guides/rel_notes/release_26_03.rst        |  4 ++
+>  drivers/net/nbl/nbl_core.c                    |  2 +
+>  drivers/net/nbl/nbl_dev/nbl_dev.c             | 33 ++++++++++--
+>  drivers/net/nbl/nbl_dev/nbl_dev.h             |  3 ++
+>  drivers/net/nbl/nbl_dispatch.c                | 50 +++++++++++++++++++
+>  drivers/net/nbl/nbl_ethdev.c                  | 13 +++++
+>  .../nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.c | 12 +++++
+>  .../nbl_hw/nbl_hw_leonis/nbl_hw_leonis_snic.h |  9 ++++
+>  .../nbl/nbl_hw/nbl_hw_leonis/nbl_res_leonis.c | 10 ++++
+>  drivers/net/nbl/nbl_include/nbl_def_channel.h |  5 ++
+>  .../net/nbl/nbl_include/nbl_def_dispatch.h    |  3 ++
+>  drivers/net/nbl/nbl_include/nbl_def_hw.h      |  3 ++
+>  .../net/nbl/nbl_include/nbl_def_resource.h    |  3 ++
+>  14 files changed, 157 insertions(+), 4 deletions(-)
+> 
+> diff --git a/doc/guides/nics/nbl.rst b/doc/guides/nics/nbl.rst
+> index ba0a119dfd..c74826a3c2 100644
+> --- a/doc/guides/nics/nbl.rst
+> +++ b/doc/guides/nics/nbl.rst
+> @@ -101,3 +101,14 @@ Limitations or Known Issues
+>  32-bit architectures are not supported.
+>  
+>  Windows and BSD are not supported yet.
+> +
+> +**igb_uio Driver Support**
+> +
+> +Due to chip design limitations, only the VF supports the ``igb_uio`` driver,
+> +PF does not support this driver.
+> +
+> +**uio_pci_generic Driver Support**
+> +
+> +The ``uio_pci_generic`` driver is not supported on either PF or VF devices.
+> +This is because the NBL PMD requires MSI-X interrupts to receive mailbox
+> +messages, but the ``uio_pci_generic`` driver does not support MSI-X interrupts.
 
+The igb_uio driver is deprecated at this point, it is not upstream and has
+lots of issues. Can VFIO be used in no IOMMU mode for this instead?
 
-This is great to see. It would be the flow from kernel to udev/systemd was =
-explained.
-If I remember right, mlx does this through another IB mechanism.
-Also mention this is Linux only.
-
-AI review is good at finding grammar and other things.
-
-
----
-
-**Overall assessment:** This is a solid and welcome addition. Device hotplu=
-g has long needed proper documentation beyond the API headers. The structur=
-e is logical, the code examples are helpful, and the multi-process synchron=
-ization section is particularly well done. A few issues worth addressing:
-
-**Technical issues:**
-
-1. **`device_event_callback` return type mismatch (line 289):** The callbac=
-k is declared as returning `int`, but `rte_dev_event_cb_fn` is typedef'd as=
- returning `void`. This will cause a compiler warning/error if anyone copie=
-s this example verbatim. Should be `void` with no return statement.
-
-2. **Missing error check on `rte_dev_probe()` (line 205):** The "Device Lif=
-ecycle Example" calls `rte_dev_probe(devargs)` without checking the return =
-value, while the "Basic Usage" example above it correctly shows error handl=
-ing. For a reference example demonstrating "proper device lifecycle managem=
-ent," this is inconsistent. Should check the return.
-
-3. **`port_id` type (line 203):** `port_id` is declared as `unsigned` but `=
-RTE_ETH_FOREACH_MATCHING_DEV` expects `uint16_t`. Should be `uint16_t port_=
-id;`.
-
-4. **`rte_eal_hotplug_add()`/`rte_eal_hotplug_remove()` deprecation status =
-(line 179):** Are these functions deprecated or planned for deprecation in =
-favor of `rte_dev_probe()`/`rte_dev_remove()`? If so, worth mentioning. If =
-not, it might still be good to indicate which API is preferred for new code.
-
-**Documentation nits:**
-
-5. **Line 152:** "after the initial EAL initialization has completed" =E2=
-=80=94 consider noting that `rte_eal_init()` must have returned successfull=
-y, since that's the specific precondition.
-
-6. **Line 224:** "to find newly attached port" =E2=86=92 "to find the newly=
- attached port"
-
-7. **Line 232:** "In addition to providing generic hotplug infrastructure t=
-o be used in the above described manner" =E2=80=94 a bit wordy. Consider: "=
-In addition to the hotplug APIs described above, EAL also offers a device e=
-vent infrastructure."
-
-8. **Line 269:** "When ``RTE_DEV_EVENT_REMOVE`` event is delivered, the EAL=
- has already released all internal resources associated with the device." =
-=E2=80=94 Is this accurate? My understanding is that the uevent notificatio=
-n tells the application the kernel removed the device, but it's still up to=
- the application to call `rte_dev_remove()` to clean up EAL resources. If t=
-he EAL had already cleaned up, there'd be nothing for the application to do=
-. Please double-check this claim.
-
-9. **Line 412, nl_groups:** The doc says `nl_groups =3D 0xffffffff`. This i=
-s an implementation detail that could change and may be more confusing than=
- helpful for users reading the prog guide. Consider dropping it or noting i=
-t's an implementation note.
-
-**Structural:**
-
-10. **Placement in index.rst:** The new page is added right after `dev_args=
-` under "Device Libraries," which makes sense given the cross-references. G=
-ood.
-
-11. **The "Implementation Details" section** (line 308 onward) switches fro=
-m user-facing guidance to internal architecture. This is useful for contrib=
-utors but might be better as a separate subsection with a note that it desc=
-ribes internals. Currently the document transitions from "here's how to use=
- it" to "here's how it works internally" without much signaling.
-
-**Minor:**
-- Copyright says 2025 (line 142) =E2=80=94 should be 2026 given the submiss=
-ion date.
