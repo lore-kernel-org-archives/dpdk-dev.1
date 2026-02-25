@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9EF5FD3773
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 16:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96459FD376A
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 17:01:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D46114027F;
-	Wed, 25 Feb 2026 17:52:56 +0100 (CET)
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
- by mails.dpdk.org (Postfix) with ESMTP id F2FF9400D6
- for <dev@dpdk.org>; Wed, 25 Feb 2026 17:52:55 +0100 (CET)
-Received: by mail-dl1-f52.google.com with SMTP id
- a92af1059eb24-127423bea4bso2788593c88.0
- for <dev@dpdk.org>; Wed, 25 Feb 2026 08:52:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1736F402E5;
+	Wed, 25 Feb 2026 18:01:29 +0100 (CET)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com
+ [209.85.222.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 2FD484027F
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 18:01:27 +0100 (CET)
+Received: by mail-qk1-f172.google.com with SMTP id
+ af79cd13be357-8c711959442so103324085a.0
+ for <dev@dpdk.org>; Wed, 25 Feb 2026 09:01:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772038375;
- x=1772643175; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772038886;
+ x=1772643686; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=D7pgqG5eTqAxImIBcjslfBDu9JXLMjcXIsg6xttTDKI=;
- b=xPeKQfooII/l6LOZDGLlulEKInePXQmjBO7q7RngFRm+4EGkf/GG/By+8R7HHPZiQ+
- 2aiVVU4OxCUga312TUQK7wCNHX/j52SmDxVbtxc3NwBri9ja9FBpwIOQ0YaZZDb7rbh6
- vFc6wPSWs18x2LgLZjvlqxwkd0zrgVtE/G/5lT82oNHmlyfcrWFKZNTI7Y1MDAb8Ys9W
- mE6WLRdVsuWVeOcwe8mBMrirqAzXYpylODSRMefBPNVGut9XzZ87QeJC8XUQSO9GNT0p
- QjB5l/pM8zxNoUZ0Zt1NguO+2i4eicgCplb1HHt44y5SSpDe5u6LMoD75M/WxmgmHWVH
- Omow==
+ bh=whJXPGlu08Cz9FTVkV989wkyjVzTu0YYaf76MDU3h50=;
+ b=TZoJT/kdOOkjXwdyxt6WVyHpSW2sCIaEKA5/34NCmpqg9Zx34BTqTBz1jFIS7MQnH2
+ CWXT6sJCa6Qy1HRjq5VpcdBrB+FKXWJR0vtKiRJ6P+WwRqPJfq2tY6HhbtumESLzQ5jT
+ zBB5o9IaHYW2xxGvChq/TisEW2kszSrGtlJSPGh8T0pTFulUkHvP50KYgb/95Dc0CNvS
+ 2sciq/PxCJe3fQXzw+9NkEBIS8cdfN3lQWis7NU4TCWLlTqC9I8S1+ycB492Ai7AwsZa
+ BhnLMw4X+TeVO63aYuJFM+V+1sV6o5htwThVNm8eyQspkHQ9eYyGFExNJxZXqV6xeJYr
+ EfIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772038375; x=1772643175;
+ d=1e100.net; s=20230601; t=1772038886; x=1772643686;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=D7pgqG5eTqAxImIBcjslfBDu9JXLMjcXIsg6xttTDKI=;
- b=xPqEkJq+0cfHH7SPihNWUTllKXQA1QUu5AlQHzILtwgvCaZ6YqH0jFaRF0vLfzL0Wx
- RKRZTJdWoqcDvh8fcpnoA4NkZW+qG7n8cJduwOMiKXodJp5v4P9Wuli/ex/xapM2he5g
- 9gHxTJC6J9os4wycDfEFPtrrmYSC9jTjt4me/DITLv3dBPuYPPreRd9Zg9Eo2HXnbw9h
- kA+QEmWY/+NloGqhJM/7EUZgcFn2IOYZNqLXS3Aarywo33zKfi8rEeVJBPtROus2ecOd
- YfTIANSD40bkA4mI1xZGYs10uvbRi6pDN3Zej1QDEggtzR5UTkzgw8+S5atC3NAR1dAl
- FlRA==
-X-Gm-Message-State: AOJu0YxBw8aMiyuVISi/y/yJfucMPLqI5wpwPN8Nwxzf4YAI8wp2YHML
- R8nj8c4E+wCwirrtZ08IeJX9zW/hb+QGm5beIAIClXJqrvZrldCKNu7ekGQ3GPUU5INHT4JMsw3
- Qg2+LKOw=
-X-Gm-Gg: ATEYQzyd5P5HZ36u0HJgdln7Av8lSRp1/ESLLfomFeI0xcQmsbwgRLmWQH1PF9VJ5SK
- p/5lvFzVdQshW9tmodXStRE3INJ630Ds9RKUzfxziWnRYOlDrlBc3/bHfUR2fZafsWdysSfpt9H
- qxpA89WEXlxHb1FMvUcE95aFlwFn9y4Hugp45yJCPSr0sjbF+b24SjZhjOXbC61LjKsbnHTF566
- aCYko+cUhnGkbR8FnkYIT8kHWNwFnIjlY0Nhg4fsLQxKePo6wVBUYK2uida1Zbi7ojlDDSM1smC
- niChDAKm9KOT+PzeYFGoBoAocxWW1X1479Qpprs6ExmpIHHL/h2q81HhjcvdtwV2D8tihWHZ5GP
- E/G5X0jj6JVMUGYQhopUZh2bWSvCnolLyjFQITKw94w+7oKsYIjEnjbgLfaxMBWWfvewCKDyUtV
- olSvyo4k68nK4huQ5hAtDx3Ot35zFs4gi6kSeZeswAlnShhrrmlHlmsfMdjr+/4Q6Q
-X-Received: by 2002:a05:7022:4397:b0:123:2c98:f6ac with SMTP id
- a92af1059eb24-1276acb8b30mr7255555c88.12.1772038374662; 
- Wed, 25 Feb 2026 08:52:54 -0800 (PST)
+ bh=whJXPGlu08Cz9FTVkV989wkyjVzTu0YYaf76MDU3h50=;
+ b=i4PotZHJHdsYJ9kIV65CP4/mxl7sjMaDQOGNELpOvVIEGEf6yBqIU+brBNbSQBJbMa
+ sKPCIAo+eVPBgTE8O16F4qk0XREj7z2OeUuO49dcSZxlIc2IamtvKdsyEJs9y6sCgfIf
+ sU0l2M1KH86IIUA3s+RACX4rEdnS6lEVPyuhI9ImyQU3wFsRUc4Qe7hmLAUrFZkZe9dI
+ 9dFdVne+8f1TltdiadALMTpdL3emNSy1r4J9LGa7rGmDzWL1XqWg73wWFR27mZMufaVH
+ /GyGC5ERDZ7K45hpfUMg4kW0tJPBP/6FI6wSdRt9Zchhv62Ezyqh7cXtPdreL7ZHGDeT
+ h1AA==
+X-Gm-Message-State: AOJu0YyGwtxthml3rBQL4nW5/N61OFCfyA+45sCv/HsD5TNAC32soNM9
+ T4WFT9Wib1EbC+k4IZn//5OhERSzDMM57pBnWIU9S4+yUnuSQ6b530Vox2YqmJhx2RU=
+X-Gm-Gg: ATEYQzzDlElH8jTDwVYGe5FbvGvV+WSlU4zbYq9RDpg63qH8272gmk0w3+eOyZMNfgV
+ +DhZAzc9SbNfGWBbANyXObeV4jC3prsk4sabnOIRXJI1g896ymLiEBOcj833RbwT3HAyrBc6pPo
+ HNIqgLZBvy1NDdRAvXCCzAZPlTJ5PtQHxDCT62zrXNHwcqIGUcN0zlyjU2DW3HoFb5cmPj19plk
+ 2oIuoyckMUuWHjOjLnbpzX5N4oqDmNfM59BX1sRCwreV2WRoZfxP2Fm+8zxQVg+J7fdV7KQaVnq
+ fywV4YJJ1ZkuTSvuE+vdUUTIJAucIh3V+cJ9XA32Z+qj1rYziaKuSjdkfUMzuZU+KAhBDPg6xWm
+ /vXtz4eSpoJaMLMjY/zz7O5cBTBh5AfnRbDKh07ZwZRnqRC/22Yl2qVMMHhVVO1vJSx/p1aFHWd
+ j9MsgZx+tGBKcyHIgCZH6QCPxcdgLGfDB8UEWcmLq6l483xfa4eNrFTxBEB2Z65XTe
+X-Received: by 2002:a05:620a:916a:b0:8cb:bae9:9f59 with SMTP id
+ af79cd13be357-8cbbae9a4bfmr191644985a.30.1772038884194; 
+ Wed, 25 Feb 2026 09:01:24 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1276af2ea06sm16320024c88.7.2026.02.25.08.52.54
+ af79cd13be357-8cb8d1202e2sm1294956685a.44.2026.02.25.09.01.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Feb 2026 08:52:54 -0800 (PST)
-Date: Wed, 25 Feb 2026 08:52:51 -0800
+ Wed, 25 Feb 2026 09:01:23 -0800 (PST)
+Date: Wed, 25 Feb 2026 09:01:20 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Selwin Sebastian <selwin.sebastian@amd.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/4] net/axgbe: fix resource leaks and OOB access
-Message-ID: <20260225085251.2bc82809@phoenix.local>
-In-Reply-To: <20260218164324.915065-1-stephen@networkplumber.org>
-References: <20260218164324.915065-1-stephen@networkplumber.org>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Chas Williams <3chas3@gmail.com>, "Min Hu
+ (Connor)" <humin29@huawei.com>, Chaoyong He <chaoyong.he@corigine.com>,
+ Long Wu <long.wu@corigine.com>
+Subject: Re: [PATCH] net/bonding: clamp Rx free threshold for small rings
+Message-ID: <20260225090120.20e17300@phoenix.local>
+In-Reply-To: <20260224121358.3102740-1-bruce.richardson@intel.com>
+References: <20260224121358.3102740-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,41 +82,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 18 Feb 2026 08:40:58 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Tue, 24 Feb 2026 12:13:58 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-> Code review of the axgbe PMD identified several correctness bugs,
-> primarily around resource management on error paths in device
-> initialization and an out-of-bounds descriptor ring access.
+> The bonding driver creates a minimal-sized Rx ring as part of the setup,
+> using the driver default parameters as it does so. However, for some
+> cases the default values need adjustment for absolute minimal sized
+> rings which can cause failures - for example, having an free threshold
+> of 32 is too large for a ring of size 64.
 > 
-> Patch 1 fixes multiple resource leak paths in eth_axgbe_dev_init():
->   - mac_addrs leaked when hash_mac_addrs allocation fails
->   - hash_mac_addrs leaked when phy_init() fails
->   - rte_intr_callback_register() return value unchecked
->   - DMA reset failure via hw_if.exit() logged but not propagated
+> Unfortunately, the drivers themselves cannot properly handle this by
+> adjusting their defaults because:
+> a) the defaults are returned from info_get which gets called before the
+> desired ring-size is known
+> b) the replacement of the NULL rxconf value, which indicates use of
+> defaults, happens at the ethdev level, so the driver is unaware of the
+> source of the requested parameters - whether they are explicitly set by
+> the user or substituted by ethdev layer.
 > 
-> Patch 2 fixes wrapper_rx_desc_init() which only releases the
-> current queue on mbuf allocation failure, leaking all mbufs
-> from previously initialized queues.
+> Therefore, we modify the bonding PMD to clamp the free thresh value to
+> ring_size / 4 which should work in all cases.
 > 
-> Patch 3 adds pthread_mutex_destroy() calls in axgbe_dev_close()
-> for the four mutexes created during init.
+> Fixes: 4da0705bf896 ("net/bonding: fix dedicated queue setup")
+> Cc: stable@dpdk.org
 > 
-> Patch 4 fixes an out-of-bounds read in both Rx and Tx descriptor
-> status functions where desc[idx + offset] can exceed the ring
-> size. The offset is now folded into the index before masking.
-> 
-> 
-> Stephen Hemminger (4):
->   net/axgbe: fix resource leaks in device init error paths
->   net/axgbe: fix Rx queue leak on descriptor init failure
->   net/axgbe: destroy mutexes on device close
->   net/axgbe: fix descriptor status out-of-bounds access
-> 
->  drivers/net/axgbe/axgbe_dev.c    |  5 ++++-
->  drivers/net/axgbe/axgbe_ethdev.c | 26 ++++++++++++++++++++++++--
->  drivers/net/axgbe/axgbe_rxtx.c   |  8 ++++----
->  3 files changed, 32 insertions(+), 7 deletions(-)
-> 
+> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+> ---
 
-Could I get a review of this, and test on real hardware please.
+Queued to next-net
