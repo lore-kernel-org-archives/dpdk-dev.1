@@ -2,24 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89518FD375F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 13:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1C3FD375F
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Feb 2026 13:58:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37902402F2;
-	Wed, 25 Feb 2026 14:58:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3961F4060C;
+	Wed, 25 Feb 2026 14:58:33 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id A0BB3402AA;
- Wed, 25 Feb 2026 03:02:53 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 098CD400D6;
+ Wed, 25 Feb 2026 03:02:59 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 1D3CF20B6F02; Tue, 24 Feb 2026 18:02:53 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 1D3CF20B6F02
+ id 8F0F020B6F02; Tue, 24 Feb 2026 18:02:58 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8F0F020B6F02
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
- s=default; t=1771984973;
- bh=tRwbg53btlr+4MYkPkoFE6/DWkiLsj6X558/jyX6uBo=;
+ s=default; t=1771984978;
+ bh=WNUWi87azEJBSjXUL+40/uFe7mklFsbkHObmTD12Crw=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=pU7Mri0CEMda6ljA/fp2+tXOlG3N1wBSpzMmmeYmZUwqAgiuUVDKNMjXKMzsvfEia
- wQLtgcMmWM+YXQI8QXn/Czux9aLnG8b5RUxjP+ZahJ9GbP56CuEOFSBqW2bpb3ZcX9
- Djq02iRRgBVdjfh0MsvsKQe9sMJy9y4ub9R1xhz0=
+ b=QVKL/L+HGQIxMVKFK0Orw59HEd09Rpv6BB2PgfzS/Da/3UkqPdrh6AtV+ZkV3g3OU
+ S07Oig4XE0KNoRR0mZfJoICG7pNOhZQP8ATIhcRT2jPN+5z2qCy63Tr8/Nv3wDZzzE
+ vbIY5XonMXAaOS/og0rVrXZKjEBJURFLEP7pNG+A=
 From: longli@linux.microsoft.com
 To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
@@ -28,9 +28,9 @@ To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
  Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH v3 1/7] net/netvsc: fix race conditions on VF add/remove events
-Date: Tue, 24 Feb 2026 18:02:33 -0800
-Message-ID: <20260225020246.890306-2-longli@linux.microsoft.com>
+Subject: [PATCH v3 2/7] net/netvsc: add multi-process VF device removal support
+Date: Tue, 24 Feb 2026 18:02:34 -0800
+Message-ID: <20260225020246.890306-3-longli@linux.microsoft.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260225020246.890306-1-longli@linux.microsoft.com>
 References: <20260225020246.890306-1-longli@linux.microsoft.com>
@@ -53,424 +53,411 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Long Li <longli@microsoft.com>
 
-Netvsc gets notification from VSP on VF add/remove over VMBUS, but the
-timing may not match the DPDK sequence of device events triggered from
-uevents from kernel.
+When a VF device is hot-removed by the primary process, secondary
+processes must be notified to release their references to the VF port.
+Without this, secondary processes retain stale port references leading
+to crashes or undefined behavior when accessing the removed device.
 
-Remove the retry logic from the code when attach to VF and rely on DPDK
-event to attach to VF. With this change, both the notifications from VSP
-and the DPDK will attempt a VF attach.
+This patch adds multi-process communication infrastructure to coordinate
+VF removal across all processes:
 
-Also implement locking when checking on all VF related fields.
+- Shared memory (netvsc_shared_data) to track secondary process count
+- Multi-process message handlers (NETVSC_MP_REQ_VF_REMOVE) to notify
+  secondaries when primary removes a VF device
+- Secondary handler calls rte_eth_dev_release_port() to cleanly release
+  the VF port in its own process space
+- Primary waits for all secondaries to acknowledge removal before
+  proceeding
 
-Fixes: a2a23a794b3a ("net/netvsc: support VF device hot add/remove")
+The implementation uses rte_mp_request_sync() to ensure all secondary
+processes respond within NETVSC_MP_REQ_TIMEOUT_SEC (5 seconds) before
+the primary completes the VF removal sequence.
+
+Fixes: 7fc4c0997b04 ("net/netvsc: fix hot adding multiple VF PCI devices")
 Cc: stable@dpdk.org
 
 Signed-off-by: Long Li <longli@microsoft.com>
 v3:
-- No changes from v2 (was patch 2 in v2)
+- Use #define for MZ_NETVSC_SHARED_DATA instead of const char pointer
+- Simplify netvsc_secondary_handle_device_remove() to take vf_port
+  directly instead of struct hn_data pointer
+- Return 0 (not error) when VF port is not present in secondary,
+  as this is a normal condition during startup
+- Pass vf_port as parameter to netvsc_mp_req_vf() instead of reading
+  from hv->vf_ctx internally
+- Protect netvsc_init_once() and secondary_cnt increment under same
+  spinlock to prevent race between MP handler registration and
+  secondary count visibility
+- Add secondary_cnt decrement in error and cleanup paths
+- Fix misleading comment about cross-process locking
 
 v2:
-- Rename __hn_vf_add/__hn_vf_remove to hn_vf_add_unlocked/
-  hn_vf_remove_unlocked to avoid C-reserved double-underscore
-  prefix (C99 7.1.3)
-- Add hn_vf_detach() cleanup helper to reverse hn_vf_attach()
-  when VF configure/start fails, preventing half-attached VF state
-- Unconditionally clear vf_vsc_switched on VF remove since the VF
-  is being removed regardless of hn_nvs_set_datapath() result
+- Add rte_eth_dev_is_valid_port() check before accessing
+  rte_eth_devices[] in secondary VF removal handler
+- Rename netvsc_mp_req_VF to netvsc_mp_req_vf per DPDK lowercase
+  naming convention
+- Use rte_memory_order_acquire/release instead of relaxed for
+  secondary_cnt to ensure visibility on ARM
+- Initialize ret = 0 in netvsc_init_once()
 ---
- drivers/net/netvsc/hn_ethdev.c |   6 +-
- drivers/net/netvsc/hn_rxtx.c   |  40 +++++-----
- drivers/net/netvsc/hn_var.h    |   1 +
- drivers/net/netvsc/hn_vf.c     | 140 ++++++++++++++++++---------------
- 4 files changed, 100 insertions(+), 87 deletions(-)
+ drivers/net/netvsc/hn_ethdev.c | 275 ++++++++++++++++++++++++++++++++-
+ drivers/net/netvsc/hn_nvs.h    |   6 +
+ drivers/net/netvsc/hn_vf.c     |   4 +
+ 3 files changed, 284 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index 6584819f4f..6068c225fd 100644
+index 6068c225fd..c1e1fbf0ee 100644
 --- a/drivers/net/netvsc/hn_ethdev.c
 +++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -672,6 +672,7 @@ static void netvsc_hotplug_retry(void *args)
+@@ -48,6 +48,31 @@
+ 	    (var) = (tvar))
+ #endif
  
- 			free(drv_str);
- 
-+			hn_vf_add(dev, hv);
- 			break;
- 		}
- 	}
-@@ -1412,11 +1413,12 @@ eth_hn_dev_init(struct rte_eth_dev *eth_dev)
- 	hv->max_queues = RTE_MIN(rxr_cnt, (unsigned int)max_chan);
- 
- 	/* If VF was reported but not added, do it now */
-+	rte_rwlock_write_lock(&hv->vf_lock);
- 	if (hv->vf_ctx.vf_vsp_reported && !hv->vf_ctx.vf_vsc_switched) {
- 		PMD_INIT_LOG(DEBUG, "Adding VF device");
--
--		err = hn_vf_add(eth_dev, hv);
-+		err = hn_vf_add_unlocked(eth_dev, hv);
- 	}
-+	rte_rwlock_write_unlock(&hv->vf_lock);
- 
- 	return 0;
- 
-diff --git a/drivers/net/netvsc/hn_rxtx.c b/drivers/net/netvsc/hn_rxtx.c
-index 72dab26ede..0d770d1b25 100644
---- a/drivers/net/netvsc/hn_rxtx.c
-+++ b/drivers/net/netvsc/hn_rxtx.c
-@@ -1540,20 +1540,18 @@ hn_xmit_pkts(void *ptxq, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
- 		hn_process_events(hv, txq->queue_id, 0);
- 
- 	/* Transmit over VF if present and up */
--	if (hv->vf_ctx.vf_vsc_switched) {
--		rte_rwlock_read_lock(&hv->vf_lock);
--		vf_dev = hn_get_vf_dev(hv);
--		if (hv->vf_ctx.vf_vsc_switched && vf_dev &&
--		    vf_dev->data->dev_started) {
--			void *sub_q = vf_dev->data->tx_queues[queue_id];
--
--			nb_tx = (*vf_dev->tx_pkt_burst)
--					(sub_q, tx_pkts, nb_pkts);
--			rte_rwlock_read_unlock(&hv->vf_lock);
--			return nb_tx;
--		}
-+	rte_rwlock_read_lock(&hv->vf_lock);
-+	vf_dev = hn_get_vf_dev(hv);
-+	if (hv->vf_ctx.vf_vsc_switched && vf_dev &&
-+	    vf_dev->data->dev_started) {
-+		void *sub_q = vf_dev->data->tx_queues[queue_id];
++/* Spinlock for netvsc_shared_data */
++static rte_spinlock_t netvsc_shared_data_lock = RTE_SPINLOCK_INITIALIZER;
 +
-+		nb_tx = (*vf_dev->tx_pkt_burst)
-+				(sub_q, tx_pkts, nb_pkts);
- 		rte_rwlock_read_unlock(&hv->vf_lock);
-+		return nb_tx;
- 	}
-+	rte_rwlock_read_unlock(&hv->vf_lock);
- 
- 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
- 		struct rte_mbuf *m = tx_pkts[nb_tx];
-@@ -1684,17 +1682,15 @@ hn_recv_pkts(void *prxq, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 					   (void **)rx_pkts, nb_pkts, NULL);
- 
- 	/* If VF is available, check that as well */
--	if (hv->vf_ctx.vf_vsc_switched) {
--		rte_rwlock_read_lock(&hv->vf_lock);
--		vf_dev = hn_get_vf_dev(hv);
--		if (hv->vf_ctx.vf_vsc_switched && vf_dev &&
--		    vf_dev->data->dev_started)
--			nb_rcv += hn_recv_vf(vf_dev->data->port_id, rxq,
--					     rx_pkts + nb_rcv,
--					     nb_pkts - nb_rcv);
-+	rte_rwlock_read_lock(&hv->vf_lock);
-+	vf_dev = hn_get_vf_dev(hv);
-+	if (hv->vf_ctx.vf_vsc_switched && vf_dev &&
-+	    vf_dev->data->dev_started)
-+		nb_rcv += hn_recv_vf(vf_dev->data->port_id, rxq,
-+				     rx_pkts + nb_rcv,
-+				     nb_pkts - nb_rcv);
-+	rte_rwlock_read_unlock(&hv->vf_lock);
- 
--		rte_rwlock_read_unlock(&hv->vf_lock);
--	}
- 	return nb_rcv;
++static struct netvsc_shared_data {
++	RTE_ATOMIC(uint32_t) secondary_cnt;
++} *netvsc_shared_data;
++
++static const struct rte_memzone *netvsc_shared_mz;
++#define MZ_NETVSC_SHARED_DATA "netvsc_shared_data"
++
++static struct netvsc_local_data {
++	bool init_done;
++	unsigned int primary_cnt;
++	unsigned int secondary_cnt;
++} netvsc_local_data;
++
++#define NETVSC_MP_NAME "net_netvsc_mp"
++#define NETVSC_MP_REQ_TIMEOUT_SEC 5
++
++struct netvsc_mp_param {
++	enum netvsc_mp_req_type type;
++	int vf_port;
++	int result;
++};
++
+ #define HN_TX_OFFLOAD_CAPS (RTE_ETH_TX_OFFLOAD_IPV4_CKSUM | \
+ 			    RTE_ETH_TX_OFFLOAD_TCP_CKSUM  | \
+ 			    RTE_ETH_TX_OFFLOAD_UDP_CKSUM  | \
+@@ -1503,6 +1528,213 @@ static void remove_cache_list(void)
+ 	rte_spinlock_unlock(&netvsc_lock);
  }
  
-diff --git a/drivers/net/netvsc/hn_var.h b/drivers/net/netvsc/hn_var.h
-index 17c1d5d07b..ef55dee28e 100644
---- a/drivers/net/netvsc/hn_var.h
-+++ b/drivers/net/netvsc/hn_var.h
-@@ -239,6 +239,7 @@ hn_get_vf_dev(const struct hn_data *hv)
- int	hn_vf_info_get(struct hn_data *hv,
- 		       struct rte_eth_dev_info *info);
- int	hn_vf_add(struct rte_eth_dev *dev, struct hn_data *hv);
-+int	hn_vf_add_unlocked(struct rte_eth_dev *dev, struct hn_data *hv);
- int	hn_vf_configure_locked(struct rte_eth_dev *dev,
- 			       const struct rte_eth_conf *dev_conf);
- const uint32_t *hn_vf_supported_ptypes(struct rte_eth_dev *dev,
-diff --git a/drivers/net/netvsc/hn_vf.c b/drivers/net/netvsc/hn_vf.c
-index 0ecfaf54ea..64c89130f5 100644
---- a/drivers/net/netvsc/hn_vf.c
-+++ b/drivers/net/netvsc/hn_vf.c
-@@ -59,8 +59,8 @@ static int hn_vf_attach(struct rte_eth_dev *dev, struct hn_data *hv)
- 	int port, ret;
- 
- 	if (hv->vf_ctx.vf_attached) {
--		PMD_DRV_LOG(ERR, "VF already attached");
--		return 0;
-+		PMD_DRV_LOG(NOTICE, "VF already attached");
-+		return -EEXIST;
- 	}
- 
- 	port = hn_vf_match(dev);
-@@ -91,10 +91,30 @@ static int hn_vf_attach(struct rte_eth_dev *dev, struct hn_data *hv)
- 	PMD_DRV_LOG(DEBUG, "Attach VF device %u", port);
- 	hv->vf_ctx.vf_attached = true;
- 	hv->vf_ctx.vf_port = port;
++static int
++netvsc_mp_primary_handle(const struct rte_mp_msg *mp_msg __rte_unused,
++			  const void *peer __rte_unused)
++{
++	/* Stub function required for multi-process message handling registration */
++	return 0;
++}
 +
-+	ret = rte_eth_dev_callback_register(hv->vf_ctx.vf_port,
-+					    RTE_ETH_EVENT_INTR_RMV,
-+					    hn_eth_rmv_event_callback,
-+					    hv);
-+	if (ret) {
-+		/* Rollback state changes on callback registration failure */
-+		hv->vf_ctx.vf_attached = false;
-+		hv->vf_ctx.vf_port = 0;
++static void
++mp_init_msg(struct rte_mp_msg *msg, enum netvsc_mp_req_type type, int vf_port)
++{
++	struct netvsc_mp_param *param;
 +
-+		/* Release port ownership */
-+		if (rte_eth_dev_owner_unset(port, hv->owner.id) < 0)
-+			PMD_DRV_LOG(ERR, "Failed to unset owner for port %d", port);
++	strlcpy(msg->name, NETVSC_MP_NAME, sizeof(msg->name));
++	msg->len_param = sizeof(*param);
 +
-+		PMD_DRV_LOG(ERR,
-+			    "Registering callback failed for vf port %d ret %d",
-+			    port, ret);
-+		return ret;
++	param = (struct netvsc_mp_param *)msg->param;
++	param->type = type;
++	param->vf_port = vf_port;
++}
++
++static int netvsc_secondary_handle_device_remove(int vf_port)
++{
++	if (!rte_eth_dev_is_valid_port(vf_port)) {
++		/* VF not probed in this secondary — nothing to release */
++		PMD_DRV_LOG(DEBUG, "VF port %u not present in secondary, skipping",
++			    vf_port);
++		return 0;
 +	}
 +
- 	return 0;
- }
- 
--static void hn_vf_remove(struct hn_data *hv);
-+static void hn_vf_remove_unlocked(struct hn_data *hv);
- 
- static void hn_remove_delayed(void *args)
- {
-@@ -104,12 +124,12 @@ static void hn_remove_delayed(void *args)
- 	int ret;
- 	bool all_eth_removed;
- 
--	/* Tell VSP to switch data path to synthetic */
--	hn_vf_remove(hv);
--
- 	PMD_DRV_LOG(NOTICE, "Start to remove port %d", port_id);
- 	rte_rwlock_write_lock(&hv->vf_lock);
- 
-+	/* Tell VSP to switch data path to synthetic */
-+	hn_vf_remove_unlocked(hv);
-+
- 	/* Give back ownership */
- 	ret = rte_eth_dev_owner_unset(port_id, hv->owner.id);
- 	if (ret)
-@@ -213,36 +233,35 @@ static int hn_setup_vf_queues(int port, struct rte_eth_dev *dev)
- 	return ret;
- }
- 
--int hn_vf_add(struct rte_eth_dev *dev, struct hn_data *hv);
-+int hn_vf_configure(struct rte_eth_dev *dev,
-+		    const struct rte_eth_conf *dev_conf);
- 
--static void hn_vf_add_retry(void *args)
-+/* Undo hn_vf_attach() on configure/start failure */
-+static void hn_vf_detach(struct hn_data *hv)
- {
--	struct rte_eth_dev *dev = args;
--	struct hn_data *hv = dev->data->dev_private;
-+	uint16_t port = hv->vf_ctx.vf_port;
- 
--	hn_vf_add(dev, hv);
--}
-+	rte_eth_dev_callback_unregister(port, RTE_ETH_EVENT_INTR_RMV,
-+					hn_eth_rmv_event_callback, hv);
- 
--int hn_vf_configure(struct rte_eth_dev *dev,
--		    const struct rte_eth_conf *dev_conf);
-+	if (rte_eth_dev_owner_unset(port, hv->owner.id) < 0)
-+		PMD_DRV_LOG(ERR, "Failed to unset owner for port %d", port);
- 
--/* Add new VF device to synthetic device */
--int hn_vf_add(struct rte_eth_dev *dev, struct hn_data *hv)
-+	hv->vf_ctx.vf_attached = false;
-+	hv->vf_ctx.vf_port = 0;
++	PMD_DRV_LOG(DEBUG, "Secondary releasing VF port %d", vf_port);
++	return rte_eth_dev_release_port(&rte_eth_devices[vf_port]);
 +}
 +
-+/* Add new VF device to synthetic device, unlocked version */
-+int hn_vf_add_unlocked(struct rte_eth_dev *dev, struct hn_data *hv)
- {
--	int ret, port;
-+	int ret = 0, port;
- 
- 	if (!hv->vf_ctx.vf_vsp_reported || hv->vf_ctx.vf_vsc_switched)
--		return 0;
--
--	rte_rwlock_write_lock(&hv->vf_lock);
-+		goto exit;
- 
- 	ret = hn_vf_attach(dev, hv);
--	if (ret) {
--		PMD_DRV_LOG(NOTICE,
--			    "RNDIS reports VF but device not found, retrying");
--		rte_eal_alarm_set(1000000, hn_vf_add_retry, dev);
-+	if (ret && ret != -EEXIST)
- 		goto exit;
--	}
- 
- 	port = hv->vf_ctx.vf_port;
- 
-@@ -252,7 +271,7 @@ int hn_vf_add(struct rte_eth_dev *dev, struct hn_data *hv)
- 	if (dev->data->dev_started) {
- 		if (rte_eth_devices[port].data->dev_started) {
- 			PMD_DRV_LOG(ERR, "VF already started on hot add");
--			goto exit;
-+			goto switch_data_path;
- 		}
- 
- 		PMD_DRV_LOG(NOTICE, "configuring VF port %d", port);
-@@ -260,7 +279,7 @@ int hn_vf_add(struct rte_eth_dev *dev, struct hn_data *hv)
- 		if (ret) {
- 			PMD_DRV_LOG(ERR, "Failed to configure VF port %d",
- 				    port);
--			goto exit;
-+			goto detach;
- 		}
- 
- 		ret = hn_setup_vf_queues(port, dev);
-@@ -268,13 +287,13 @@ int hn_vf_add(struct rte_eth_dev *dev, struct hn_data *hv)
- 			PMD_DRV_LOG(ERR,
- 				    "Failed to configure VF queues port %d",
- 				    port);
--			goto exit;
-+			goto detach;
- 		}
- 
- 		ret = rte_eth_dev_set_mtu(port, dev->data->mtu);
- 		if (ret) {
- 			PMD_DRV_LOG(ERR, "Failed to set VF MTU");
--			goto exit;
-+			goto detach;
- 		}
- 
- 		PMD_DRV_LOG(NOTICE, "Starting VF port %d", port);
-@@ -282,31 +301,41 @@ int hn_vf_add(struct rte_eth_dev *dev, struct hn_data *hv)
- 		if (ret) {
- 			PMD_DRV_LOG(ERR, "rte_eth_dev_start failed ret=%d",
- 				    ret);
--			goto exit;
-+			goto detach;
- 		}
- 		hv->vf_ctx.vf_state = vf_started;
- 	}
- 
-+switch_data_path:
- 	ret = hn_nvs_set_datapath(hv, NVS_DATAPATH_VF);
- 	if (ret == 0)
- 		hv->vf_ctx.vf_vsc_switched = true;
- 
- exit:
--	rte_rwlock_write_unlock(&hv->vf_lock);
-+	return ret;
++static int
++netvsc_mp_secondary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
++{
++	struct rte_mp_msg mp_res = { 0 };
++	struct netvsc_mp_param *res = (struct netvsc_mp_param *)mp_res.param;
++	const struct netvsc_mp_param *param =
++		(const struct netvsc_mp_param *)mp_msg->param;
++	int ret = 0;
 +
-+detach:
-+	hn_vf_detach(hv);
- 	return ret;
- }
- 
--/* Switch data path to VF device */
--static void hn_vf_remove(struct hn_data *hv)
-+/* Add new VF device to synthetic device, locked version */
-+int hn_vf_add(struct rte_eth_dev *dev, struct hn_data *hv)
- {
- 	int ret;
- 
--	if (!hv->vf_ctx.vf_vsc_switched) {
--		PMD_DRV_LOG(ERR, "VF path not active");
--		return;
--	}
--
- 	rte_rwlock_write_lock(&hv->vf_lock);
-+	ret = hn_vf_add_unlocked(dev, hv);
-+	rte_rwlock_write_unlock(&hv->vf_lock);
++	mp_init_msg(&mp_res, param->type, param->vf_port);
++
++	switch (param->type) {
++	case NETVSC_MP_REQ_VF_REMOVE:
++		res->result = netvsc_secondary_handle_device_remove(param->vf_port);
++		ret = rte_mp_reply(&mp_res, peer);
++		break;
++
++	default:
++		PMD_DRV_LOG(ERR, "Unknown primary MP type %u", param->type);
++		ret = -EINVAL;
++	}
 +
 +	return ret;
 +}
 +
-+/* Switch data path to synthetic, unlocked version */
-+static void hn_vf_remove_unlocked(struct hn_data *hv)
++static int netvsc_mp_init_primary(void)
 +{
 +	int ret;
++	ret = rte_mp_action_register(NETVSC_MP_NAME, netvsc_mp_primary_handle);
++	if (ret && rte_errno != ENOTSUP) {
++		PMD_DRV_LOG(ERR, "Failed to register primary handler %d %d",
++			ret, rte_errno);
++		return -1;
++	}
 +
- 	if (!hv->vf_ctx.vf_vsc_switched) {
- 		PMD_DRV_LOG(ERR, "VF path not active");
- 	} else {
-@@ -314,9 +343,10 @@ static void hn_vf_remove(struct hn_data *hv)
- 		ret = hn_nvs_set_datapath(hv, NVS_DATAPATH_SYNTHETIC);
- 		if (ret)
- 			PMD_DRV_LOG(ERR, "Failed to switch to synthetic");
++	return 0;
++}
 +
-+		/* Clear switched flag regardless — VF is being removed */
- 		hv->vf_ctx.vf_vsc_switched = false;
- 	}
--	rte_rwlock_write_unlock(&hv->vf_lock);
- }
- 
- /* Handle VF association message from host */
-@@ -338,14 +368,17 @@ hn_nvs_handle_vfassoc(struct rte_eth_dev *dev,
- 		    vf_assoc->allocated ? "add to" : "remove from",
- 		    dev->data->port_id);
- 
--	hv->vf_ctx.vf_vsp_reported = vf_assoc->allocated;
-+	rte_rwlock_write_lock(&hv->vf_lock);
- 
-+	hv->vf_ctx.vf_vsp_reported = vf_assoc->allocated;
- 	if (dev->state == RTE_ETH_DEV_ATTACHED) {
- 		if (vf_assoc->allocated)
--			hn_vf_add(dev, hv);
-+			hn_vf_add_unlocked(dev, hv);
- 		else
--			hn_vf_remove(hv);
-+			hn_vf_remove_unlocked(hv);
- 	}
++static void netvsc_mp_uninit_primary(void)
++{
++	rte_mp_action_unregister(NETVSC_MP_NAME);
++}
 +
-+	rte_rwlock_write_unlock(&hv->vf_lock);
- }
++static int netvsc_mp_init_secondary(void)
++{
++	return rte_mp_action_register(NETVSC_MP_NAME, netvsc_mp_secondary_handle);
++}
++
++static void netvsc_mp_uninit_secondary(void)
++{
++	rte_mp_action_unregister(NETVSC_MP_NAME);
++}
++
++int netvsc_mp_req_vf(struct hn_data *hv, enum netvsc_mp_req_type type,
++		     int vf_port)
++{
++	struct rte_mp_msg mp_req = { 0 };
++	struct rte_mp_msg *mp_res;
++	struct rte_mp_reply mp_rep = { 0 };
++	struct netvsc_mp_param *res;
++	struct timespec ts = {.tv_sec = NETVSC_MP_REQ_TIMEOUT_SEC, .tv_nsec = 0};
++	int i, ret;
++
++	/* if secondary count is 0, return */
++	if (rte_atomic_load_explicit(&netvsc_shared_data->secondary_cnt,
++			rte_memory_order_acquire) == 0)
++		return 0;
++
++	mp_init_msg(&mp_req, type, vf_port);
++
++	ret = rte_mp_request_sync(&mp_req, &mp_rep, &ts);
++	if (ret) {
++		if (rte_errno != ENOTSUP)
++			PMD_DRV_LOG(ERR, "port %u failed to request VF remove",
++				    hv->port_id);
++		else
++			ret = 0;
++		goto exit;
++	}
++
++	if (mp_rep.nb_sent != mp_rep.nb_received) {
++		PMD_DRV_LOG(ERR, "port %u not all secondaries responded type %d",
++			    hv->port_id, type);
++		ret = -1;
++		goto exit;
++	}
++	for (i = 0; i < mp_rep.nb_received; i++) {
++		mp_res = &mp_rep.msgs[i];
++		res = (struct netvsc_mp_param *)mp_res->param;
++		if (res->result) {
++			PMD_DRV_LOG(ERR, "port %u request failed on secondary %d",
++				    hv->port_id, i);
++			ret = -1;
++			goto exit;
++		}
++	}
++
++exit:
++	free(mp_rep.msgs);
++	return ret;
++}
++
++static int netvsc_init_once(void)
++{
++	int ret = 0;
++	const struct rte_memzone *secondary_mz;
++
++	if (netvsc_local_data.init_done)
++		return 0;
++
++	switch (rte_eal_process_type()) {
++	case RTE_PROC_PRIMARY:
++		netvsc_shared_mz = rte_memzone_reserve(MZ_NETVSC_SHARED_DATA,
++				sizeof(*netvsc_shared_data), SOCKET_ID_ANY, 0);
++		if (!netvsc_shared_mz) {
++			PMD_DRV_LOG(ERR, "Cannot allocate netvsc shared data");
++			return -rte_errno;
++		}
++		netvsc_shared_data = netvsc_shared_mz->addr;
++		rte_atomic_store_explicit(&netvsc_shared_data->secondary_cnt,
++				0, rte_memory_order_release);
++
++		ret = netvsc_mp_init_primary();
++		if (ret) {
++			rte_memzone_free(netvsc_shared_mz);
++			break;
++		}
++
++		PMD_DRV_LOG(DEBUG, "MP INIT PRIMARY");
++		netvsc_local_data.init_done = true;
++		break;
++
++	case RTE_PROC_SECONDARY:
++		secondary_mz = rte_memzone_lookup(MZ_NETVSC_SHARED_DATA);
++		if (!secondary_mz) {
++			PMD_DRV_LOG(ERR, "Cannot attach netvsc shared data");
++			return -rte_errno;
++		}
++		netvsc_shared_data = secondary_mz->addr;
++		ret = netvsc_mp_init_secondary();
++		if (ret)
++			break;
++
++		PMD_DRV_LOG(DEBUG, "MP INIT SECONDARY");
++		netvsc_local_data.init_done = true;
++		break;
++
++	default:
++		/* Impossible */
++		ret = -EPROTO;
++		break;
++	}
++
++	return ret;
++}
++
++static void netvsc_uninit_once(void)
++{
++	if (netvsc_local_data.primary_cnt ||
++	    netvsc_local_data.secondary_cnt)
++		return;
++
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		netvsc_mp_uninit_primary();
++		rte_memzone_free(netvsc_shared_mz);
++		netvsc_shared_mz = NULL;
++		netvsc_shared_data = NULL;
++	} else {
++		netvsc_mp_uninit_secondary();
++	}
++	netvsc_local_data.init_done = false;
++}
++
+ static int eth_hn_probe(struct rte_vmbus_driver *drv __rte_unused,
+ 			struct rte_vmbus_device *dev)
+ {
+@@ -1516,10 +1748,26 @@ static int eth_hn_probe(struct rte_vmbus_driver *drv __rte_unused,
+ 	if (ret)
+ 		return ret;
  
- static void
-@@ -426,29 +459,12 @@ int hn_vf_configure(struct rte_eth_dev *dev,
- 	vf_conf.intr_conf.rmv = 1;
- 
- 	if (hv->vf_ctx.vf_attached) {
--		ret = rte_eth_dev_callback_register(hv->vf_ctx.vf_port,
--						    RTE_ETH_EVENT_INTR_RMV,
--						    hn_eth_rmv_event_callback,
--						    hv);
--		if (ret) {
--			PMD_DRV_LOG(ERR,
--				    "Registering callback failed for vf port %d ret %d",
--				    hv->vf_ctx.vf_port, ret);
--			return ret;
--		}
--
- 		ret = rte_eth_dev_configure(hv->vf_ctx.vf_port,
- 					    dev->data->nb_rx_queues,
- 					    dev->data->nb_tx_queues,
- 					    &vf_conf);
- 		if (ret) {
- 			PMD_DRV_LOG(ERR, "VF configuration failed: %d", ret);
--
--			rte_eth_dev_callback_unregister(hv->vf_ctx.vf_port,
--							RTE_ETH_EVENT_INTR_RMV,
--							hn_eth_rmv_event_callback,
--							hv);
--
- 			return ret;
- 		}
- 
-@@ -555,9 +571,7 @@ int hn_vf_close(struct rte_eth_dev *dev)
- 	int ret = 0;
- 	struct hn_data *hv = dev->data->dev_private;
- 
--	rte_eal_alarm_cancel(hn_vf_add_retry, dev);
--
--	rte_rwlock_read_lock(&hv->vf_lock);
-+	rte_rwlock_write_lock(&hv->vf_lock);
- 	if (hv->vf_ctx.vf_attached) {
- 		rte_eth_dev_callback_unregister(hv->vf_ctx.vf_port,
- 						RTE_ETH_EVENT_INTR_RMV,
-@@ -567,7 +581,7 @@ int hn_vf_close(struct rte_eth_dev *dev)
- 		ret = rte_eth_dev_close(hv->vf_ctx.vf_port);
- 		hv->vf_ctx.vf_attached = false;
++	rte_spinlock_lock(&netvsc_shared_data_lock);
++	ret = netvsc_init_once();
++	if (!ret) {
++		if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++			netvsc_local_data.primary_cnt++;
++		} else {
++			rte_atomic_fetch_add_explicit(
++				&netvsc_shared_data->secondary_cnt,
++				1, rte_memory_order_release);
++			netvsc_local_data.secondary_cnt++;
++		}
++	}
++	rte_spinlock_unlock(&netvsc_shared_data_lock);
++	if (ret)
++		goto fail;
++
+ 	ret = rte_dev_event_monitor_start();
+ 	if (ret) {
+ 		PMD_DRV_LOG(ERR, "Failed to start device event monitoring");
+-		goto fail;
++		goto init_once_failed;
  	}
--	rte_rwlock_read_unlock(&hv->vf_lock);
-+	rte_rwlock_write_unlock(&hv->vf_lock);
  
+ 	eth_dev = eth_dev_vmbus_allocate(dev, sizeof(struct hn_data));
+@@ -1545,6 +1793,7 @@ static int eth_hn_probe(struct rte_vmbus_driver *drv __rte_unused,
+ 		goto dev_init_failed;
+ 
+ 	rte_eth_dev_probing_finish(eth_dev);
++
  	return ret;
+ 
+ dev_init_failed:
+@@ -1556,6 +1805,19 @@ static int eth_hn_probe(struct rte_vmbus_driver *drv __rte_unused,
+ vmbus_alloc_failed:
+ 	rte_dev_event_monitor_stop();
+ 
++init_once_failed:
++	rte_spinlock_lock(&netvsc_shared_data_lock);
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		netvsc_local_data.primary_cnt--;
++	} else {
++		rte_atomic_fetch_sub_explicit(
++			&netvsc_shared_data->secondary_cnt,
++			1, rte_memory_order_release);
++		netvsc_local_data.secondary_cnt--;
++	}
++	netvsc_uninit_once();
++	rte_spinlock_unlock(&netvsc_shared_data_lock);
++
+ fail:
+ 	remove_cache_list();
+ 	return ret;
+@@ -1569,6 +1831,17 @@ static int eth_hn_remove(struct rte_vmbus_device *dev)
+ 
+ 	PMD_INIT_FUNC_TRACE();
+ 
++	rte_spinlock_lock(&netvsc_shared_data_lock);
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		netvsc_local_data.primary_cnt--;
++	} else {
++		rte_atomic_fetch_sub_explicit(&netvsc_shared_data->secondary_cnt,
++				1, rte_memory_order_release);
++		netvsc_local_data.secondary_cnt--;
++	}
++	netvsc_uninit_once();
++	rte_spinlock_unlock(&netvsc_shared_data_lock);
++
+ 	eth_dev = rte_eth_dev_allocated(dev->device.name);
+ 	if (!eth_dev)
+ 		return 0; /* port already released */
+diff --git a/drivers/net/netvsc/hn_nvs.h b/drivers/net/netvsc/hn_nvs.h
+index bf10621927..67dbfd7be7 100644
+--- a/drivers/net/netvsc/hn_nvs.h
++++ b/drivers/net/netvsc/hn_nvs.h
+@@ -243,3 +243,9 @@ hn_nvs_send_sglist(struct hn_data *hv, struct vmbus_channel *chan,
+ 	return rte_vmbus_chan_send_sglist(hn_nvs_get_vmbus_device(hv), chan, sg, sglen, nvs_msg,
+ 					  nvs_msglen, (uint64_t)sndc, need_sig);
  }
++
++enum netvsc_mp_req_type {
++	NETVSC_MP_REQ_VF_REMOVE = 1,
++};
++int netvsc_mp_req_vf(struct hn_data *hv, enum netvsc_mp_req_type type,
++		     int vf_port);
+diff --git a/drivers/net/netvsc/hn_vf.c b/drivers/net/netvsc/hn_vf.c
+index 64c89130f5..f837a52b00 100644
+--- a/drivers/net/netvsc/hn_vf.c
++++ b/drivers/net/netvsc/hn_vf.c
+@@ -155,6 +155,10 @@ static void hn_remove_delayed(void *args)
+ 		PMD_DRV_LOG(ERR, "rte_eth_dev_close failed port_id=%u ret=%d",
+ 			    port_id, ret);
+ 
++	ret = netvsc_mp_req_vf(hv, NETVSC_MP_REQ_VF_REMOVE, port_id);
++	if (ret)
++		PMD_DRV_LOG(ERR, "failed to request secondary VF remove");
++
+ 	/* Remove the rte device when all its eth devices are removed */
+ 	all_eth_removed = true;
+ 	RTE_ETH_FOREACH_DEV_OF(port_id, dev) {
 -- 
 2.43.0
 
