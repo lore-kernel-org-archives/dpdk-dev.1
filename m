@@ -2,74 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94060FD8FF5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 18:51:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBA1FD8FF5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 19:09:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C718402ED;
-	Thu, 26 Feb 2026 19:51:19 +0100 (CET)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
- [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id D96E94027F
- for <dev@dpdk.org>; Thu, 26 Feb 2026 19:51:17 +0100 (CET)
-Received: by mail-qv1-f43.google.com with SMTP id
- 6a1803df08f44-896f4627dffso19064646d6.0
- for <dev@dpdk.org>; Thu, 26 Feb 2026 10:51:17 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id AAAD44027F;
+	Thu, 26 Feb 2026 20:09:39 +0100 (CET)
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+ by mails.dpdk.org (Postfix) with ESMTP id 1F19F400D6
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 20:09:38 +0100 (CET)
+Received: by mail-dl1-f49.google.com with SMTP id
+ a92af1059eb24-1271195d2a7so1916048c88.0
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 11:09:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772131877;
- x=1772736677; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772132977;
+ x=1772737777; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0vk9sisQ76Jdd9HrhfsP9tw8Zouxx0exk3uCTXL+/Fc=;
- b=VnMTfRA1Jy53oR2CpkT7pt+dt6tB4S/E37nFgJNfIsnnRisrwjn2IiNt/SUsjr5Fhy
- JFc4DklqKp7RMjr+2JPcZIS+nCpt7oeQw0bNkI83YctJITlmyszxaDYbzZOpiaPL5Dqv
- af/IbLwH9w2fQtwg0zbGzHuZC4yCm9hLKDxGqBrFsOsbU6GieoHMctvjmDf7Txf6bso9
- PMSBCZI97wfpqr5bFilv6E2/VMdNeKO+VWX6Gh7It9dvHwKR9RhO1yTbHZKqlTSVrS4i
- TmYhT/E4JNJ6btdyMLsve7f97bIe0Vj8FH9rsM3P+cj4yM1YlKh/UEeY2tOyS9KYFcOw
- A9LA==
+ bh=Qvgp0O4YWZv+r0j5zMHsKK22fhHjfyCQ1oo37KITyrU=;
+ b=PrvBRLoyYTaExEQpz37HBW052MI/IEd/6bAinIIPNFoYBxjMs5wr3ef9k1J/rb5fvO
+ lVHjLlh6hzYeO4Iuj7s9crdQp4TBi3leCd4oyw76yxRTxf/YimmZHg86smekbZ9EJt7o
+ /38mVGDq3gpS4xrCfj+cLOJ8jdiGC5DWdwbkmu8V5edCUhiKzauP39rPk8hTi2UwS9jo
+ qyC5H2yYFI3sUIWCK6KzduvriSa3yfid7i/dMOhJw4PYTAUmt7JQLgl/eIYbdwEN4DB6
+ E7h09E02LbbWkvSkJoDQQx8iBHCoIxCdZwpu4zFByrSkE95Cmm4VnQtpaLHqLHUMDI8y
+ QpvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772131877; x=1772736677;
+ d=1e100.net; s=20230601; t=1772132977; x=1772737777;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=0vk9sisQ76Jdd9HrhfsP9tw8Zouxx0exk3uCTXL+/Fc=;
- b=Sg0EjtESdQE3P3ACUMLF7FdS4ZL63wV1TbaQgQl7KCQZWSo/Qb0+SHxtXdp4uHWkRz
- N1QjFYl2nKbSqc5lMKUjfrvb+vyLTWwr1DMQNCbugIdZ5grZIFhzJGDpORglpuVZbrsJ
- 1Up5F9csMGxb9tZPlxdul0HGltYCpU0zWiPqTRn0eOApgvptWEIw2/qIFjn8/wUCPAKh
- GZpQKPQ5OAFdJB/GhEzqPLvztqapNcYoGPl2zrWe0DEp+qniL2bmCFsji3eBtpY6du9J
- OgWDF1Yxjj70gk3i4rlpObE2eSWtfDWy8R8Qmd0Y1UDjcRkQkBdRKbBzfHi6FCAgy4jE
- AWUQ==
-X-Gm-Message-State: AOJu0Yy5bMudWIZepv4MVoRDCsIWGBzBsq5Gaegkb/ctX18KIS6PnR4k
- ubAGMQIXqwWUIKO5g0kUhDOVVOZFUZmwj51t8GZ4tAFoJ1JmSoJXOqWinfI7z9fNZGE=
-X-Gm-Gg: ATEYQzylcl6DcsQrG7UKMa0vVo1Ttt+dTdHgyvn0jRjgE+a3vhOShAlk6aksfEmKXYA
- pdfZPzr666pjo2vDwmB7xgeW2Ws7KI/GOhAVG13QrRWBk5b3zPvdmzd5xpxYigjYm/X36d1chkR
- ogD9ssjCgrSEKXGIVedSuGvjrszSd5iBhIWrH9GWPd7lTdrjkrUiNkDIh6UYCHfaY+IHRrSp3Bh
- kRHNTPvyG8hw4DtHAca1oR60C132VSeryVBDrZNGL1ARiwyCxbla/6CazaJPm0/uAP/ATM+y/Ki
- byK9h4+KLepSJhyis9vDBvO0Yfgw6gbksi63EUrTtVNtoxgEE7skq/TfKmOctCsyIMrM6uEv4vC
- ADU5lM4RNrq9CSYcE994Je8/h7EEw0A9EuMzbVfla1Kp94EL3WHYdiR1n1VEbaQ3yc0/LY3cdon
- vEzZKlkfy6zdaI6D6K3jJh3yckNUhKPedzhQ0Odw2rYJUoN+pQ3a05qqUQ+hgyrS25HWXY7f4B0
- ec=
-X-Received: by 2002:a05:6214:1c4a:b0:884:6f86:e06e with SMTP id
- 6a1803df08f44-899d1da5f4cmr1925326d6.16.1772131876880; 
- Thu, 26 Feb 2026 10:51:16 -0800 (PST)
+ bh=Qvgp0O4YWZv+r0j5zMHsKK22fhHjfyCQ1oo37KITyrU=;
+ b=ZLp43P5h3/iBukLNvN5OHbTvKti9MKjg7UBe8AZOu4Cyz1eGprWZ7Q1jg6MIP+FUck
+ Ub+OcFV3FubGd4XBIDQmv35fHzDtv0JqJ9uP7mvKIbIg6SPVyvw4yCY0s6XLGoF+m9DZ
+ xB+f9sAVaoUgVVyuzINKOo2Nrrd2wd7Nv2INQ7LKKKwXQCeXJKNfKdll4WjUZM7KiLlg
+ WGLgekXFARdFR6c1ySN2yozGjregUNbHxLAgAUtbSwZ/RgMO44O2YlBRCohWFpr8ARM0
+ j5kGkKl4mObhDtGsEMLw5CmmvXbzVGM4CFWFhiepxNoON19t85AbmfKlYyicjiCgox58
+ E6fQ==
+X-Gm-Message-State: AOJu0YyXMz0clQRbo7xakYHlF4LScVSCmzqwq8PHgj+IiE3V8oy0x9Zn
+ pkjOLsvmcJVKUN1rMIxjCmE5kmwEGtZ7XxWqLM+IRymG/CQqaBMHfTY1/4iSTIBage0=
+X-Gm-Gg: ATEYQzz2X2Nhksz7EeEGrMovTiof5iTsrWS8AcOIa4RMqkJrEWHfc6ZuGIaJIm7lTOM
+ OdwtVypSedsnklXd11TSAO2NFxf8tj5N4XCyoVBby1R8F27ECE+UfMO7bFLGILiL+uL15uZ2gOq
+ k+Hpqt6GySzdD7om3aea924CdJOM3NlNk3AG+c68cnU3/MX79P4KNOnonNl1wrJsNV04a0+dWK6
+ waxuDKOk9ExMLl5ueWMlnz1opEJo2ffygwUkDPe3HQiiqVr185xuX9NHNR+hCUPe7JBQM+IxVRx
+ KZPf4SEdR5Xt+LG1ElthNycTLDcxN4ZOFEH3hnHvy06eCrE1m3D2p1WX3qSOvCo8NYs4uJxhSZY
+ iwbuf+H5EfVBENoZJ2rUbdMnznaVecF8ug29nqkdwmtgsKxZZ50b53UmNLoRbI7Rm1AJq9PiKZg
+ swxFB59ACYy1KpVTW569mIllovsUI3I1pHAIdXMEXEAYJBN0FzLewKHOtuleTby7/b
+X-Received: by 2002:a05:7022:e0a:b0:127:3915:76b2 with SMTP id
+ a92af1059eb24-1278fcf48f7mr2395c88.27.1772132976966; 
+ Thu, 26 Feb 2026 11:09:36 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cbbf732bc1sm268524185a.46.2026.02.26.10.51.15
+ a92af1059eb24-127899d49c1sm4104606c88.1.2026.02.26.11.09.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 26 Feb 2026 10:51:16 -0800 (PST)
-Date: Thu, 26 Feb 2026 10:51:13 -0800
+ Thu, 26 Feb 2026 11:09:36 -0800 (PST)
+Date: Thu, 26 Feb 2026 11:09:33 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: longli@linux.microsoft.com
-Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, stable@dpdk.org, Dariusz
- Sosnowski <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
- <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>, Long Li <longli@microsoft.com>
-Subject: Re: [PATCH v4 2/7] net/netvsc: add multi-process VF device removal
- support
-Message-ID: <20260226105113.45bbdf8f@phoenix.local>
-In-Reply-To: <20260226023940.961844-3-longli@linux.microsoft.com>
-References: <20260226023940.961844-1-longli@linux.microsoft.com>
- <20260226023940.961844-3-longli@linux.microsoft.com>
+To: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
+Cc: <dev@dpdk.org>, <Selwin.Sebastian@amd.com>
+Subject: Re: [PATCH v3 1/3] net/axgbe: add external PHY read/write functions
+Message-ID: <20260226110933.1b5758ff@phoenix.local>
+In-Reply-To: <20260226164638.1381-1-ashokkumar.natarajan@amd.com>
+References: <20260225124456.1871-1-ashokkumar.natarajan@amd.com>
+ <20260226164638.1381-1-ashokkumar.natarajan@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -86,16 +80,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 25 Feb 2026 18:39:33 -0800
-longli@linux.microsoft.com wrote:
+On Thu, 26 Feb 2026 22:16:36 +0530
+Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com> wrote:
 
-> /* Spinlock for netvsc_shared_data */
-> +static rte_spinlock_t netvsc_shared_data_lock = RTE_SPINLOCK_INITIALIZER;
-> +
-> +static struct netvsc_shared_data {
-> +	RTE_ATOMIC(uint32_t) secondary_cnt;
-> +} *netvsc_shared_data;
-> +
+> +	ret = pdata->hw_if.read_ext_mii_regs_c22(pdata,
+> +			phy_data->mdio_addr, reg, value);
+> +	if (ret)
+> +		PMD_DRV_LOG_LINE(ERR, "mdio read failed %s",
+> +				strerror(ret));
 
-This looks a lot like a sequence lock (spin lock + atomic).
-Might be clearer with that.
+Shouldn't this be strerror(-ret) here?
+It looks like the driver uses the negative errno values to indicate errors.
