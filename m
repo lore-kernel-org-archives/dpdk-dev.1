@@ -2,62 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D659EFD8FD4
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 16:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 812A5FD8FD3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 16:21:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9ED4140669;
-	Thu, 26 Feb 2026 17:21:34 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E250F4067A;
+	Thu, 26 Feb 2026 17:21:35 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id CF82E40649
- for <dev@dpdk.org>; Thu, 26 Feb 2026 17:21:32 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 49A8440649
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 17:21:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772122892;
+ s=mimecast20190719; t=1772122893;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=GcISnb8oEY/tPBUKLRcZvCWhDYW1VbaxPZWaqLFT1AA=;
- b=BfmPAl6qmfDlC6gBh7zc6s3WVqv4VadVpHJ59n8xsN5jUVgjTlP5TAhYFSwohS6P1CX+/Z
- tL9sy0ZCi16ALPl2AsZvJYqtIM96nR+faRbA7hikF5MVZUtIOLdKNJTYsaGQ+mciuzuTn6
- URo5zf9nUXocAtbgLYKXQn2kD4l1dyQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ bh=cOEiDOAmy2vdiOJkR5t/ykbxsmUcS7N0eS6+RAG/7N4=;
+ b=g3p7x2UvTxNk0zq5Pq9PTyt+9zoX76Ww8PV+6/3L4lYo+aRePBoyKllmOKiVdh+6Xq6BWI
+ tpwjWsoF/Q0ERAmAnlkl6Q1QvhmTxjyke35yuBL5kEEB6hJchvvmUwnIiZwFRpzxZgACnb
+ +tGP0nLU2py28VDLqHKPg3cKNyzRbdU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-628-OHc6G7pJOTmgw36eH0qsig-1; Thu,
- 26 Feb 2026 11:21:26 -0500
-X-MC-Unique: OHc6G7pJOTmgw36eH0qsig-1
-X-Mimecast-MFC-AGG-ID: OHc6G7pJOTmgw36eH0qsig_1772122884
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-257-eLqj5c7fPqqNIWWZVudD8A-1; Thu,
+ 26 Feb 2026 11:21:29 -0500
+X-MC-Unique: eLqj5c7fPqqNIWWZVudD8A-1
+X-Mimecast-MFC-AGG-ID: eLqj5c7fPqqNIWWZVudD8A_1772122889
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 620A318004BB; Thu, 26 Feb 2026 16:21:24 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id B628D1800473; Thu, 26 Feb 2026 16:21:28 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.32.223])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 1C6DD19560B5; Thu, 26 Feb 2026 16:21:19 +0000 (UTC)
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 541BB1956056; Thu, 26 Feb 2026 16:21:27 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
- Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>,
- Tomasz Duszynski <tduszynski@marvell.com>,
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
- Wei Hu <weh@microsoft.com>, Bruce Richardson <bruce.richardson@intel.com>,
- Kevin Laatz <kevin.laatz@intel.com>
-Subject: [RFC v2 4/5] bus: factorize device selection
-Date: Thu, 26 Feb 2026 17:20:55 +0100
-Message-ID: <20260226162057.207202-5-david.marchand@redhat.com>
+Cc: Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [RFC v2 5/5] eal: configure initial device probing
+Date: Thu, 26 Feb 2026 17:20:56 +0100
+Message-ID: <20260226162057.207202-6-david.marchand@redhat.com>
 In-Reply-To: <20260226162057.207202-1-david.marchand@redhat.com>
 References: <20260225112922.3982104-1-david.marchand@redhat.com>
  <20260226162057.207202-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: YoI9KoFfw6hhBfbHz3SX17bS34K9j2DF239oB6SjFgU_1772122884
+X-Mimecast-MFC-PROC-ID: fvzB25OgMI4vqdxxqupZ0kx-9vKoZtD5Ebt54MUDZtw_1772122889
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -74,479 +68,190 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All buses (thankfully) implement the same logic when it comes to
-selecting the devices to probe based on -a/-b options.
-As we want to adjust how devices are selected, provide a common helper
-in EAL and use it in the buses.
+Some applications use port hotplug as their primary way for using DPDK
+resources.
+Having a systematic device probing is a problem when not all available
+resources will be used by the application, as such applications won't set
+an explicit allow list at startup.
+
+This is the case for OVS on systems with multiple mlx5 devices:
+one device can be used by the kernel while the other(s) are used by DPDK.
+In such a setup, the kernel used device may get reconfigured in
+unexpected ways and trigger issues like the one described by Kevin
+not so long ago in bugzilla 1873.
+
+Add an EAL option so that we can change the default behavior from
+block-listing to allow-listing.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/bus/auxiliary/auxiliary_common.c | 15 +----------
- drivers/bus/cdx/cdx.c                    | 21 +---------------
- drivers/bus/dpaa/dpaa_bus.c              | 24 ++++++------------
- drivers/bus/fslmc/fslmc_bus.c            | 22 ++++++----------
- drivers/bus/pci/pci_common.c             | 15 +----------
- drivers/bus/platform/platform.c          | 28 ++-------------------
- drivers/bus/uacce/uacce.c                | 22 +---------------
- drivers/bus/vmbus/vmbus_common.c         | 21 +---------------
- drivers/dma/idxd/idxd_bus.c              | 32 +++++++++---------------
- lib/eal/common/eal_common_bus.c          | 18 +++++++++++++
- lib/eal/include/bus_driver.h             |  7 ++++++
- 11 files changed, 58 insertions(+), 167 deletions(-)
+Changes since RFC v1:
+- changed approach following Bruce suggestion,
 
-diff --git a/drivers/bus/auxiliary/auxiliary_common.c b/drivers/bus/auxiliary/auxiliary_common.c
-index ac766e283e..5baf76441a 100644
---- a/drivers/bus/auxiliary/auxiliary_common.c
-+++ b/drivers/bus/auxiliary/auxiliary_common.c
-@@ -399,20 +399,7 @@ auxiliary_dma_unmap(struct rte_device *dev, void *addr, uint64_t iova,
- bool
- auxiliary_is_ignored_device(const char *name)
- {
--	struct rte_devargs *devargs = auxiliary_devargs_lookup(name);
--
--	switch (auxiliary_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--	return true;
-+	return rte_bus_is_ignored_device(&auxiliary_bus.bus, auxiliary_devargs_lookup(name));
- }
+---
+ app/test/test_eal_flags.c                 |  9 ++++++++
+ devtools/test-null.sh                     |  2 +-
+ doc/guides/linux_gsg/eal_args.include.rst |  6 ++++++
+ lib/eal/common/eal_common_bus.c           | 25 +++++++++++++++++------
+ lib/eal/common/eal_common_options.c       |  3 +++
+ lib/eal/common/eal_option_list.h          |  1 +
+ lib/eal/common/eal_private.h              |  6 ++++++
+ 7 files changed, 45 insertions(+), 7 deletions(-)
+
+diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
+index b3a8d0ae6f..a58d0b9c06 100644
+--- a/app/test/test_eal_flags.c
++++ b/app/test/test_eal_flags.c
+@@ -1030,6 +1030,10 @@ test_misc_flags(void)
+ 	const char * const argv28[] = {prgname, prefix, mp_flag, eal_debug_logs,
+ 				       "--log-color=invalid" };
  
- static enum rte_iova_mode
-diff --git a/drivers/bus/cdx/cdx.c b/drivers/bus/cdx/cdx.c
-index 729d54337c..ce0da41b82 100644
---- a/drivers/bus/cdx/cdx.c
-+++ b/drivers/bus/cdx/cdx.c
-@@ -164,25 +164,6 @@ cdx_devargs_lookup(const char *dev_name)
- 	return NULL;
- }
++	/* Try running with --allow-explicitly */
++	const char * const argv29[] = {prgname, prefix, mp_flag, eal_debug_logs,
++				       "--allow-explicitly" };
++
+ 	/* run all tests also applicable to FreeBSD first */
  
--static bool
--cdx_ignore_device(const char *dev_name)
--{
--	struct rte_devargs *devargs = cdx_devargs_lookup(dev_name);
--
--	switch (rte_cdx_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--	return true;
--}
--
- /*
-  * Scan one cdx sysfs entry, and fill the devices list from it.
-  * It checks if the CDX device is bound to vfio-cdx driver. In case
-@@ -282,7 +263,7 @@ cdx_scan(void)
- 		if (e->d_name[0] == '.')
- 			continue;
- 
--		if (cdx_ignore_device(e->d_name))
-+		if (rte_bus_is_ignored_device(&rte_cdx_bus.bus, cdx_devargs_lookup(e->d_name)))
- 			continue;
- 
- 		snprintf(dirname, sizeof(dirname), "%s/%s",
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 5e0f32bfe8..bc1dbf3592 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -717,7 +717,6 @@ rte_dpaa_bus_probe(void)
- 	struct rte_dpaa_driver *drv;
- 	FILE *svr_file = NULL;
- 	uint32_t svr_ver;
--	int probe_all = rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
- 	static int process_once;
- 	char *penv;
- 
-@@ -725,9 +724,6 @@ rte_dpaa_bus_probe(void)
- 	if (!rte_dpaa_bus.detected)
- 		return 0;
- 
--	if (rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST)
--		probe_all = true;
--
- 	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
- 	if (svr_file) {
- 		if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
-@@ -809,21 +805,15 @@ rte_dpaa_bus_probe(void)
- 			if (rte_dev_is_probed(&dev->device))
- 				continue;
- 
--			if (dev->device.devargs &&
--			    dev->device.devargs->policy == RTE_DEV_BLOCKED)
-+			if (rte_bus_is_ignored_device(&rte_dpaa_bus.bus, dev->device.devargs))
- 				continue;
- 
--			if (probe_all ||
--			    (dev->device.devargs &&
--			     dev->device.devargs->policy == RTE_DEV_ALLOWED)) {
--				ret = drv->probe(drv, dev);
--				if (ret) {
--					DPAA_BUS_ERR("unable to probe:%s",
--						     dev->name);
--				} else {
--					dev->driver = drv;
--					dev->device.driver = &drv->driver;
--				}
-+			ret = drv->probe(drv, dev);
-+			if (ret) {
-+				DPAA_BUS_ERR("unable to probe: %s", dev->name);
-+			} else {
-+				dev->driver = drv;
-+				dev->device.driver = &drv->driver;
- 			}
- 			break;
- 		}
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index ac9fb7a08c..27ef84659a 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -410,7 +410,6 @@ static int
- rte_fslmc_probe(void)
- {
- 	int ret = 0;
--	int probe_all;
- 
- 	struct rte_dpaa2_device *dev;
- 	struct rte_dpaa2_driver *drv;
-@@ -457,8 +456,6 @@ rte_fslmc_probe(void)
- 		return 0;
+ 	if (launch_proc(argv0) == 0) {
+@@ -1176,6 +1180,11 @@ test_misc_flags(void)
+ 			__LINE__);
+ 		goto fail;
  	}
++	if (launch_proc(argv29) != 0) {
++		printf("Error (line %d) - process did not run ok with --allow-explicitly parameter\n",
++			__LINE__);
++		goto fail;
++	}
  
--	probe_all = rte_fslmc_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
--
- 	TAILQ_FOREACH(dev, &rte_fslmc_bus.device_list, next) {
- 		TAILQ_FOREACH(drv, &rte_fslmc_bus.driver_list, next) {
- 			ret = rte_fslmc_match(drv, dev);
-@@ -468,23 +465,18 @@ rte_fslmc_probe(void)
- 			if (rte_dev_is_probed(&dev->device))
- 				continue;
+ 	rmdir(hugepath_dir3);
+ 	rmdir(hugepath_dir2);
+diff --git a/devtools/test-null.sh b/devtools/test-null.sh
+index 8f21189262..37b8760f60 100755
+--- a/devtools/test-null.sh
++++ b/devtools/test-null.sh
+@@ -30,7 +30,7 @@ logfile=$build/test-null.log
+ (sleep 1 && echo stop) |
+ # testpmd only needs 20M, make it x2 (default number of cores) for NUMA systems
+ $testpmd -l $corelist --no-huge -m 40 \
+-	$libs -a 0:0.0 --vdev net_null1 --vdev net_null2 $eal_options -- \
++	$libs --allow-explicitly --vdev net_null1 --vdev net_null2 $eal_options -- \
+ 	--no-mlockall --total-num-mbufs=2048 $testpmd_options -ia | tee $logfile
  
--			if (dev->device.devargs &&
--			    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
-+			if (rte_bus_is_ignored_device(&rte_fslmc_bus.bus, dev->device.devargs)) {
- 				DPAA2_BUS_LOG(DEBUG, "%s Blocked, skipping",
- 					      dev->device.name);
- 				continue;
- 			}
+ # we expect two ports and some traffic is received and transmitted
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 4a3c4d9b5f..f6e56468b5 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -101,6 +101,12 @@ Lcore-related options
+ Device-related options
+ ~~~~~~~~~~~~~~~~~~~~~~
  
--			if (probe_all ||
--			   (dev->device.devargs &&
--			    dev->device.devargs->policy == RTE_DEV_ALLOWED)) {
--				ret = drv->probe(drv, dev);
--				if (ret) {
--					DPAA2_BUS_ERR("Unable to probe");
--				} else {
--					dev->driver = drv;
--					dev->device.driver = &drv->driver;
--				}
-+			ret = drv->probe(drv, dev);
-+			if (ret) {
-+				DPAA2_BUS_ERR("Unable to probe");
-+			} else {
-+				dev->driver = drv;
-+				dev->device.driver = &drv->driver;
- 			}
- 			break;
- 		}
-diff --git a/drivers/bus/pci/pci_common.c b/drivers/bus/pci/pci_common.c
-index bf5df3d94e..c5cc9db9cf 100644
---- a/drivers/bus/pci/pci_common.c
-+++ b/drivers/bus/pci/pci_common.c
-@@ -721,20 +721,7 @@ pci_dma_unmap(struct rte_device *dev, void *addr, uint64_t iova, size_t len)
- bool
- rte_pci_ignore_device(const struct rte_pci_addr *pci_addr)
- {
--	struct rte_devargs *devargs = pci_devargs_lookup(pci_addr);
--
--	switch (rte_pci_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--	return true;
-+	return rte_bus_is_ignored_device(&rte_pci_bus.bus, pci_devargs_lookup(pci_addr));
- }
++*   ``--allow-explicitly``
++
++    By default, EAL probes all devices on every available bus, unless some ``-a``/``-b``/``--vdev``
++    options are passed.
++    However, when an application relies on hotplug, it may want to plug each device explicitly.
++
+ *   ``-b, --block <[domain:]bus:devid.func>``
  
- enum rte_iova_mode
-diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
-index f6673cf181..21f8240e28 100644
---- a/drivers/bus/platform/platform.c
-+++ b/drivers/bus/platform/platform.c
-@@ -56,30 +56,6 @@ dev_devargs(const char *dev_name)
- 	return NULL;
- }
+     Skip probing a PCI device to prevent EAL from using it.
+diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_bus.c
+index fbe20cfe35..9a29c6a062 100644
+--- a/lib/eal/common/eal_common_bus.c
++++ b/lib/eal/common/eal_common_bus.c
+@@ -15,6 +15,8 @@
+ #include <eal_export.h>
+ #include "eal_private.h"
  
--static bool
--dev_allowed(const char *dev_name)
--{
--	struct rte_devargs *devargs;
--
--	devargs = dev_devargs(dev_name);
--	if (devargs == NULL)
--		return true;
--
--	switch (platform_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs->policy == RTE_DEV_ALLOWED)
--			return true;
--		break;
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs->policy == RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--
--	return true;
--}
--
- static int
- dev_add(const char *dev_name)
- {
-@@ -173,7 +149,7 @@ platform_bus_scan(void)
- 		if (dev_name[0] == '.')
- 			continue;
++static bool allow_explicitly;
++
+ static struct rte_bus_list rte_bus_list =
+ 	TAILQ_HEAD_INITIALIZER(rte_bus_list);
  
--		if (!dev_allowed(dev_name))
-+		if (rte_bus_is_ignored_device(&platform_bus.bus, dev_devargs(dev_name)))
- 			continue;
- 
- 		if (!dev_is_bound_vfio_platform(dev_name))
-@@ -497,7 +473,7 @@ platform_bus_plug(struct rte_device *dev)
- {
- 	struct rte_platform_device *pdev;
- 
--	if (!dev_allowed(dev->name))
-+	if (rte_bus_is_ignored_device(&platform_bus.bus, dev->devargs))
- 		return -EPERM;
- 
- 	if (!dev_is_bound_vfio_platform(dev->name))
-diff --git a/drivers/bus/uacce/uacce.c b/drivers/bus/uacce/uacce.c
-index 79f990c54c..bf04e22057 100644
---- a/drivers/bus/uacce/uacce.c
-+++ b/drivers/bus/uacce/uacce.c
-@@ -84,26 +84,6 @@ uacce_devargs_lookup(const char *dev_name)
- 	return NULL;
- }
- 
--static bool
--uacce_ignore_device(const char *dev_name)
--{
--	struct rte_devargs *devargs = uacce_devargs_lookup(dev_name);
--
--	switch (uacce_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--
--	return true;
--}
--
- /*
-  * Returns the number of bytes read (removed last newline) on success.
-  * Otherwise negative value is returned.
-@@ -310,7 +290,7 @@ uacce_scan(void)
- 			continue;
- 		}
- 
--		if (uacce_ignore_device(e->d_name))
-+		if (rte_bus_is_ignored_device(&uacce_bus.bus, uacce_devargs_lookup(e->d_name)))
- 			continue;
- 
- 		if (uacce_scan_one(e->d_name) < 0)
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index a787d8b18d..c386bf02c4 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -168,25 +168,6 @@ vmbus_probe_all_drivers(struct rte_vmbus_device *dev)
- 	return 1;
- }
- 
--static bool
--vmbus_ignore_device(struct rte_vmbus_device *dev)
--{
--	struct rte_devargs *devargs = vmbus_devargs_lookup(dev);
--
--	switch (rte_vmbus_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--	return true;
--}
--
- /*
-  * Scan the vmbus, and call the devinit() function for
-  * all registered drivers that have a matching entry in its id_table
-@@ -205,7 +186,7 @@ rte_vmbus_probe(void)
- 
- 		rte_uuid_unparse(dev->device_id, ubuf, sizeof(ubuf));
- 
--		if (vmbus_ignore_device(dev))
-+		if (rte_bus_is_ignored_device(&rte_vmbus_bus.bus, vmbus_devargs_lookup((dev))))
- 			continue;
- 
- 		if (vmbus_probe_all_drivers(dev) < 0) {
-diff --git a/drivers/dma/idxd/idxd_bus.c b/drivers/dma/idxd/idxd_bus.c
-index 9a8213bbbe..2e96039334 100644
---- a/drivers/dma/idxd/idxd_bus.c
-+++ b/drivers/dma/idxd/idxd_bus.c
-@@ -6,6 +6,7 @@
- #include <fcntl.h>
- #include <unistd.h>
- #include <sys/mman.h>
-+#include <stdbool.h>
- #include <libgen.h>
- 
- #include <bus_driver.h>
-@@ -247,40 +248,32 @@ idxd_probe_dsa(struct rte_dsa_device *dev)
+@@ -98,6 +100,12 @@ rte_bus_probe(void)
  	return 0;
  }
  
--static int search_devargs(const char *name)
-+static const struct rte_devargs *search_devargs(const char *name)
- {
- 	struct rte_devargs *devargs;
- 	RTE_EAL_DEVARGS_FOREACH(dsa_bus.bus.name, devargs) {
- 		if (strcmp(devargs->name, name) == 0)
--			return 1;
-+			return devargs;
- 	}
--	return 0;
-+	return NULL;
- }
- 
--static int
-+static bool
- is_for_this_process_use(struct rte_dsa_device *dev, const char *name)
- {
- 	char prefix[256];
--	int retval = 0;
- 	size_t prefixlen;
- 
- 	prefixlen = rte_basename(rte_eal_get_runtime_dir(), prefix, sizeof(prefix));
- 	if (prefixlen >= sizeof(prefix) || strcmp(prefix, ".") == 0)
--		return retval;
--
--	if (strncmp(name, "dpdk_", 5) == 0)
--		retval = 1;
--	if (strncmp(name, prefix, prefixlen) == 0 && name[prefixlen] == '_')
--		retval = 1;
--
--	if (retval && dsa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_UNDEFINED) {
--		if (dsa_bus.bus.conf.scan_mode == RTE_BUS_SCAN_ALLOWLIST)
--			retval = search_devargs(dev->device.name);
--		else
--			retval = !search_devargs(dev->device.name);
-+		return false;
-+
-+	if (strncmp(name, "dpdk_", 5) == 0 ||
-+			(strncmp(name, prefix, prefixlen) == 0 && name[prefixlen] == '_')) {
-+		return !rte_bus_is_ignored_device(&dsa_bus.bus, search_devargs(dev->device.name));
- 	}
- 
--	return retval;
-+	return false;
- }
- 
- static int
-@@ -295,8 +288,7 @@ dsa_probe(void)
- 				read_wq_string(dev, "name", name, sizeof(name)) < 0)
- 			continue;
- 
--		if (strncmp(type, "user", 4) == 0 &&
--				is_for_this_process_use(dev, name)) {
-+		if (strncmp(type, "user", 4) == 0 && is_for_this_process_use(dev, name)) {
- 			dev->device.driver = &dsa_bus.driver;
- 			idxd_probe_dsa(dev);
- 			continue;
-diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_bus.c
-index 0a2311a342..fbe20cfe35 100644
---- a/lib/eal/common/eal_common_bus.c
-+++ b/lib/eal/common/eal_common_bus.c
-@@ -8,6 +8,7 @@
- 
- #include <bus_driver.h>
- #include <rte_debug.h>
-+#include <rte_devargs.h>
- #include <rte_string_fns.h>
- #include <rte_errno.h>
- 
-@@ -226,6 +227,23 @@ rte_bus_find_by_device_name(const char *str)
- 	return rte_bus_find(NULL, bus_can_parse, name);
- }
- 
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_is_ignored_device)
-+bool
-+rte_bus_is_ignored_device(const struct rte_bus *bus, const struct rte_devargs *devargs)
++void
++eal_bus_set_allow_explicitly(void)
 +{
-+	switch (bus->conf.scan_mode) {
-+	case RTE_BUS_SCAN_ALLOWLIST:
-+		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
-+			return false;
-+		break;
-+	case RTE_BUS_SCAN_UNDEFINED:
-+	case RTE_BUS_SCAN_BLOCKLIST:
-+		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
-+			return false;
-+		break;
-+	}
-+	return true;
++	allow_explicitly = true;
 +}
++
+ /* Clean up all devices of all buses */
+ int
+ eal_bus_cleanup(void)
+@@ -231,16 +239,21 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_is_ignored_device)
+ bool
+ rte_bus_is_ignored_device(const struct rte_bus *bus, const struct rte_devargs *devargs)
+ {
+-	switch (bus->conf.scan_mode) {
+-	case RTE_BUS_SCAN_ALLOWLIST:
++	enum rte_bus_scan_mode scan_mode = bus->conf.scan_mode;
++
++	if (scan_mode == RTE_BUS_SCAN_UNDEFINED) {
++		if (allow_explicitly)
++			scan_mode = RTE_BUS_SCAN_ALLOWLIST;
++		else
++			scan_mode = RTE_BUS_SCAN_BLOCKLIST;
++	}
++
++	if (scan_mode == RTE_BUS_SCAN_ALLOWLIST) {
+ 		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
+ 			return false;
+-		break;
+-	case RTE_BUS_SCAN_UNDEFINED:
+-	case RTE_BUS_SCAN_BLOCKLIST:
++	} else {
+ 		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
+ 			return false;
+-		break;
+ 	}
+ 	return true;
+ }
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index aad676a004..3f75f2c436 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -1972,6 +1972,9 @@ eal_parse_args(void)
+ 		}
+ 	}
  
- /*
-  * Get iommu class of devices on the bus.
-diff --git a/lib/eal/include/bus_driver.h b/lib/eal/include/bus_driver.h
-index 60527b75b6..1ec1ff57bb 100644
---- a/lib/eal/include/bus_driver.h
-+++ b/lib/eal/include/bus_driver.h
-@@ -302,6 +302,13 @@ RTE_INIT_PRIO(businitfn_ ##nm, BUS) \
- __rte_internal
- void rte_bus_unregister(struct rte_bus *bus);
++	if (args.allow_explicitly)
++		eal_bus_set_allow_explicitly();
++
+ 	/* device -a/-b/-vdev options*/
+ 	TAILQ_FOREACH(arg, &args.allow, next)
+ 		if (eal_option_device_add(RTE_DEVTYPE_ALLOWED, arg->arg) < 0)
+diff --git a/lib/eal/common/eal_option_list.h b/lib/eal/common/eal_option_list.h
+index abee16340b..4e02766500 100644
+--- a/lib/eal/common/eal_option_list.h
++++ b/lib/eal/common/eal_option_list.h
+@@ -32,6 +32,7 @@
+  * Format of each entry: long name, short name, help string, struct member name.
+  */
+ /* (Alphabetical) List of common options first */
++BOOL_ARG("--allow-explicitly", NULL, "Change EAL device probing to consider only allowed devices", allow_explicitly)
+ LIST_ARG("--allow", "-a", "Add device to allow-list, causing DPDK to only use specified devices", allow)
+ STR_ARG("--base-virtaddr", NULL, "Base virtual address to reserve memory", base_virtaddr)
+ LIST_ARG("--block", "-b", "Add device to block-list, preventing DPDK from using the device", block)
+diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
+index e032dd10c9..0bad3de56c 100644
+--- a/lib/eal/common/eal_private.h
++++ b/lib/eal/common/eal_private.h
+@@ -469,6 +469,12 @@ int rte_eal_memory_detach(void);
+  */
+ struct rte_bus *rte_bus_find_by_device_name(const char *str);
  
 +/**
-+ * Indicate if a device referenced by some devargs should be skipped during
-+ * probing of a bus.
++ * Change behavior of rte_bus_probe() from a block-listing approach
++ * to an allow-listing approach.
 + */
-+__rte_internal
-+bool rte_bus_is_ignored_device(const struct rte_bus *bus, const struct rte_devargs *devargs);
++void eal_bus_set_allow_explicitly(void);
 +
- #ifdef __cplusplus
- }
- #endif
+ /**
+  * For each device on the buses, call the driver-specific function for
+  * device cleanup.
 -- 
 2.53.0
 
