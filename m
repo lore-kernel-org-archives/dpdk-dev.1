@@ -2,88 +2,95 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512BFFD8FD8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 16:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC42FD8FD8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 16:50:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9CE7E40655;
-	Thu, 26 Feb 2026 17:50:31 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id D04DB402B2
- for <dev@dpdk.org>; Thu, 26 Feb 2026 17:50:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772124629;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=CvD7bot5s+LSKPk4XFrRTFlEedCvkupubXBY0ROnjKU=;
- b=h2wERxXEKi691OHT0e8B7aPdxyjCOh2XFjUjswEtoNkkeceEdtqoI0H0RVu3kq3+LUlyvI
- Ly8sKVyLUr7xEuM3N7BCCkZza8YRjYAvsw02+DLaqh4qDINgT9tCtYmkJMyNe8NduRg3Pd
- WzI23yBat63oTpWgKpZH7w23yC4w12Q=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-42-bCE0pOS8OEeSGp7DLLQxDQ-1; Thu, 26 Feb 2026 11:50:27 -0500
-X-MC-Unique: bCE0pOS8OEeSGp7DLLQxDQ-1
-X-Mimecast-MFC-AGG-ID: bCE0pOS8OEeSGp7DLLQxDQ_1772124627
-Received: by mail-wm1-f72.google.com with SMTP id
- 5b1f17b1804b1-483786a09b1so11091545e9.3
- for <dev@dpdk.org>; Thu, 26 Feb 2026 08:50:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772124626; x=1772729426;
- h=in-reply-to:references:user-agent:from:cc:subject:to:message-id
- :date:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=puXqYlr6DLB3KpR+62OB6v6l//l3oOE3XgCpThTWUwI=;
- b=F9A7P40KsFHqpbTSEw5vEyA4p7oWekB1rhnOC0yS2auHkDgvWVwfsYx84GluGwtPSh
- 0VV33lTRzZYe7x1UP9PdAgJXQUpujlf6JsbcK5Wq7BO5tycDm4QBBhLygoEhAXI8yG2b
- cDmK5f9xtqmaktwzjt7ia8wWn055TBzH+FTZqotL8JUFu8Dg0KYoe8cfWNLO1qVVcVYL
- lJGyzrgUg9tFcDRaC78viUF7wbtGDlF/Wv+exKcJLW9FWhYaUzpBqR0UI8ZaDLFaAcLr
- PZXDiZLeO2uegMuX+wyRH06fpE6HYK1zsv/cKBN+gZMJ/hjE7bFsu/TGVhUkCWF1Dc2p
- lyWQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXhZplVun7BDcczXNKKZwTGKzSLlVpzLEAoD3AofDZS4pDFE+n5F4j4wrRI/CJJkEI6Y+0=@dpdk.org
-X-Gm-Message-State: AOJu0Yxap0AauMJITlv0kpC7eyuXd9W/oOd7wve/Ux7Z0jbqbuwkG/t5
- +OcQYtMQ55SKEdqbGVoLcfypb0CcCq19y2ftg7eiUNMIVywSFtHvs4nn91xJ3ou5dS8CkCu5Dsn
- IFNdEl45TKMQBkSKk0XrtNNbXHh11VSQmmi4QqdntNFV2
-X-Gm-Gg: ATEYQzyGErTs9YzoPptvRCbPSMBXlXh2udngpt/MpMQ9s9stXJDxbwYeMJUYFVMdz7u
- 5WrbbIx48MKYZ+xiyYr+IpGJjjFtqWERGFcADPZNC5cMO1vETBrcYeg3E3qNgjKFGaWLbDLskga
- /l9LTPQQF5zG1IUOw7Wkh0OOBg7xNWfW0iF/xWmSjZ2ZBA11uf7PjIllAHefmM0cjRajb0TN0Bd
- 48yWoDj5q41LEuvwSL2ghuAps0DKWBbm4yCpmfMOcoI10FxUeIpk7hNr/ULkOmlocwzBimLlSqf
- hNSvs9RBHOIF3v/wvk+X9R2/SAUJZptWbSCIt7uoEbxcpm3TK9sAgYAL0FSNADmdadN4thGEPXT
- lBxvBU1Lsjez/MN6L5XvkjzRXPYrvDN+Q6+KhLyE8571FwuiYw5cpsynp2dNYEoZxC8yl52ErQI
- rtN/jR
-X-Received: by 2002:a05:600c:3e0e:b0:477:8985:4036 with SMTP id
- 5b1f17b1804b1-483c3db2184mr53746585e9.1.1772124626442; 
- Thu, 26 Feb 2026 08:50:26 -0800 (PST)
-X-Received: by 2002:a05:600c:3e0e:b0:477:8985:4036 with SMTP id
- 5b1f17b1804b1-483c3db2184mr53746185e9.1.1772124625881; 
- Thu, 26 Feb 2026 08:50:25 -0800 (PST)
-Received: from localhost (2a01cb00021ec000b06e6b63494bd4c5.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:b06e:6b63:494b:d4c5])
- by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4399c60e40fsm703694f8f.7.2026.02.26.08.50.25
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 26 Feb 2026 08:50:25 -0800 (PST)
-Mime-Version: 1.0
-Date: Thu, 26 Feb 2026 17:50:24 +0100
-Message-Id: <DGP1R1WJWJGI.1TU6RUU13GBYQ@redhat.com>
-To: "David Marchand" <david.marchand@redhat.com>, <dev@dpdk.org>
-Subject: Re: [RFC v2 5/5] eal: configure initial device probing
-Cc: "Thomas Monjalon" <thomas@monjalon.net>, "Andrew Rybchenko"
- <andrew.rybchenko@oktetlabs.ru>
-From: "Robin Jarry" <rjarry@redhat.com>
-User-Agent: aerc/0.21.0-98-g3a0874577a2a
-References: <20260225112922.3982104-1-david.marchand@redhat.com>
- <20260226162057.207202-1-david.marchand@redhat.com>
- <20260226162057.207202-6-david.marchand@redhat.com>
-In-Reply-To: <20260226162057.207202-6-david.marchand@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -S7U-V4iBt4wuDqYQo0TmHo-vh5MA9s2QBgY3Tf3-8o_1772124627
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id 84A034066C;
+	Thu, 26 Feb 2026 17:50:33 +0100 (CET)
+Received: from BL0PR03CU003.outbound.protection.outlook.com
+ (mail-eastusazon11012020.outbound.protection.outlook.com [52.101.53.20])
+ by mails.dpdk.org (Postfix) with ESMTP id B453A40669;
+ Thu, 26 Feb 2026 17:50:32 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JUCcl+qMF1EFcYU1pb4dV+CMjrUfmNBzbvCtRUaa+xDc9VRPg2KXVGClXr8S4PzchqEz11PbJ8gIKbfN5RNlNkASlpYaHuImoArI0SthfB8E8BL22gn+rQ10kwArlMyDFQKX6ZfOAulEheyIm2c4IHZQIR3n3tvxWalrCrtJZrg4I00D1E8cYM0Fx/BCSJVmx3meLn2XAiHi6XoGhYfb5LFSLUsF+3Z9UI1oTXR/+3s4smor7jxM0LIC9F2ZJKa2iCY+Pr1KDMGDAMPop8zVbf7yjvm7tIpJjzviUuHCxF95Ojp95g/MrN1aV0YOOFaJhbW7si083dpWs097AjDOAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MYWHJTxE3fwVBNf9YJ+NfR+uOieLAb+YQ9r7dNsXlXc=;
+ b=pgABiHAcJ3xe6KMu6onvdc256EtpDO+LXONxigyR8ODIgeYsuSzB7zhtUtiruBG4ctqEd5rgqjkqfsJMb28yFi4IeggMnCS68UlB12aEK4NGibplNSL4t4nIUChVL09uwuVtEJeRxIQq6q+tFGhvwMs6oF2vDO22qmtfGpVN2YHEic60o6MU1ip5sJomKLH5TNnlYtLwcb69B+N6Awx1ibmXLfEclxVrc9e181JRuGXJH9/UlAVa+IAr5Ehd77eM7omzmkhV+e+xT+RWR1k36zoy+3SvXAeuWfALtKQrZ8kLvHxK+8RFU6YONAGTRPC6eP+oUc7Zt3O/a1lu+KvD9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MYWHJTxE3fwVBNf9YJ+NfR+uOieLAb+YQ9r7dNsXlXc=;
+ b=z6VBN1ZMsCXjwbSzRFwSxfbG6QD1WRki+N74w45Iyo8IfihpTig30UD368C1zzoxAU34faiHDj7sJ2MbPvEfL+mnQMtJJxtycUOTL3CdMoZcwb5o13EfOBiRE1CwuiZ0gmahEBXfiJT+EswnK4uSzVrx8cflO+piTsyq72IZShs=
+Received: from BY3PR03CA0006.namprd03.prod.outlook.com (2603:10b6:a03:39a::11)
+ by SA5PPF8BD1FB094.namprd12.prod.outlook.com
+ (2603:10b6:80f:fc04::8d3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9632.22; Thu, 26 Feb
+ 2026 16:50:27 +0000
+Received: from SJ5PEPF000001F1.namprd05.prod.outlook.com
+ (2603:10b6:a03:39a:cafe::3f) by BY3PR03CA0006.outlook.office365.com
+ (2603:10b6:a03:39a::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.24 via Frontend Transport; Thu,
+ 26 Feb 2026 16:50:27 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ5PEPF000001F1.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9632.12 via Frontend Transport; Thu, 26 Feb 2026 16:50:27 +0000
+Received: from BLRASNATARA.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 26 Feb
+ 2026 10:50:24 -0600
+From: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
+To: <dev@dpdk.org>
+CC: <Selwin.Sebastian@amd.com>, Ashok Kumar Natarajan
+ <ashokkumar.natarajan@amd.com>, <stable@dpdk.org>
+Subject: [PATCH v3 3/3] net/axgbe: fix 100M SGMII mode
+Date: Thu, 26 Feb 2026 22:19:01 +0530
+Message-ID: <20260226164903.1421-1-ashokkumar.natarajan@amd.com>
+X-Mailer: git-send-email 2.53.0.windows.1
+In-Reply-To: <20260225124901.1911-1-ashokkumar.natarajan@amd.com>
+References: <20260225124901.1911-1-ashokkumar.natarajan@amd.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F1:EE_|SA5PPF8BD1FB094:EE_
+X-MS-Office365-Filtering-Correlation-Id: bd186fed-b9f0-4d6a-c55a-08de755724bd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|36860700013|1800799024|82310400026; 
+X-Microsoft-Antispam-Message-Info: wo+phiGUmrkzCP51Rafdy7imok9UsKGUeB2qz+KbSovpErR3TEb5UG+rWOYgVD0n60GV+IlIN9iT9pWYZNJlHiEg9sA+vdcHCFTQI0xJzLjbfEZDgB5Bu33TZHNG55BQFpXeIuoIwEYZayoyxjM3ZlkoqLDtQxCeg1LChnatjBLoIiczNwoRfckdJsuTlRFUQQ+9Nc84eluCaP9HmfV3aMU1ULcO1B0NDztE/zOZfzymKoxAvMIJEHvJgMX2fhX500sfIY6s19NMSAZzDdpg7Itmoa62O9IDfs3C20DlclkkuC69iFUxdrGA7ZtI0LmHA2WOjWMP1KoJqaEiXN1A8sL9Cr/4IY/vwiTqr0iUkGHyeOoHno8s099IlXc/slx1CO1ZlFQ66JQa2zN71jZxngIcEwgVO+R5THKBrYR4XBbibTyYySEo5kMQKax+nWEeMs38RbxvjtL3PMfeLqOMBuf41eR5H+jDZVIgHpHedyzHmP4/ERtIxHs1B9WKVc919TJSayDSFfMrc9Zdf46FbPGWRN1Esfiz+VLLARBYTWpzOi7CCdvICx8EjU/XSWxteV0AGRgqScpFtLoqXqDGvHYUkKDBJD+tzYAgLQswstprqJoD8+kIQHYGxTNK+p4Zw8uBk7C5tIyl5ISJoWCH/wKmoQJH3JpuNSOVDQ0uZYR59CayjUoIwiUBrjEsQ0yideSB83Cbhzva4m5irC5oDteV0YVapxfJ1rtbgwqUrUTKZ7v989lb+IiHVaWzDyqPzw/rU/4U3fqNx6Nt+3keOCtisD301DTnHbv4gFAJUPRL5+00YCsk0Xdt6IAp//AoH9FxJ9ltLon7Nkfbq45pwA==
+X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026); DIR:OUT;
+ SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: +jzWV63z7Vo2NWq2qGTM11RkxTrZwr+b/d/Iy2Gh04vwpbdJrDrM0QGnW9NTRogKmhKveMPd40/Ua0akEy2crC7ctHvfX6uU6GEr6aXqUTZdS4/fu+eHitDSLM+57m1P1BEC0/EWK08uzDx/SxiFkbwCKaYu74WiSY2OwCE/Z60BQw2npd/Hrj/jpfI2TWqgKiKb0WE7MWRg4teDxHZdBDSizNlpFOfDQryJxd+G7V2qme8HR+btuMrHU6dP4XB/ZmniMB70Dd2opyoTkY6hdZD+iVUa6x6YfdmWqwGn44A87Ix2Z7YtlPaLTeOdGxS+ejlOQ/fZtEzjoUfWxjfpS6kPcg7hjIYbvnuXBohOmNIMpBkawQx84Jd6O288W/vZfpZVdd4BcGYJlHYXXkkSofaUwyWMKX3BdQhnQPaGAeGoNMs9bU459qEg9QVtj9F9
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2026 16:50:27.0822 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bd186fed-b9f0-4d6a-c55a-08de755724bd
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
+ Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001F1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA5PPF8BD1FB094
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,240 +104,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-David Marchand, Feb 26, 2026 at 17:20:
-> Some applications use port hotplug as their primary way for using DPDK
-> resources.
-> Having a systematic device probing is a problem when not all available
-> resources will be used by the application, as such applications won't set
-> an explicit allow list at startup.
->
-> This is the case for OVS on systems with multiple mlx5 devices:
-> one device can be used by the kernel while the other(s) are used by DPDK.
-> In such a setup, the kernel used device may get reconfigured in
-> unexpected ways and trigger issues like the one described by Kevin
-> not so long ago in bugzilla 1873.
->
-> Add an EAL option so that we can change the default behavior from
-> block-listing to allow-listing.
->
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
-> ---
-> Changes since RFC v1:
-> - changed approach following Bruce suggestion,
+In SGMII 100M mode, set MAC speed to 100M instead of 1G,
+and add the PHY implementation for SGMII 100 mode.
 
-Hey David,
+Fixes: a5c7273771e8 ("net/axgbe: add phy programming APIs")
+Cc: stable@dpdk.org
 
-thanks for the patch. The idea looks much nicer than some magic PCI bus
-value that disables auto probing.
+Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
+---
+ drivers/net/axgbe/axgbe_mdio.c     |  4 ++--
+ drivers/net/axgbe/axgbe_phy_impl.c | 15 +++++++++++++++
+ 2 files changed, 17 insertions(+), 2 deletions(-)
 
-I have a few cosmetic remarks below:
-
->
-> ---
->  app/test/test_eal_flags.c                 |  9 ++++++++
->  devtools/test-null.sh                     |  2 +-
->  doc/guides/linux_gsg/eal_args.include.rst |  6 ++++++
->  lib/eal/common/eal_common_bus.c           | 25 +++++++++++++++++------
->  lib/eal/common/eal_common_options.c       |  3 +++
->  lib/eal/common/eal_option_list.h          |  1 +
->  lib/eal/common/eal_private.h              |  6 ++++++
->  7 files changed, 45 insertions(+), 7 deletions(-)
->
-> diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-> index b3a8d0ae6f..a58d0b9c06 100644
-> --- a/app/test/test_eal_flags.c
-> +++ b/app/test/test_eal_flags.c
-> @@ -1030,6 +1030,10 @@ test_misc_flags(void)
->  =09const char * const argv28[] =3D {prgname, prefix, mp_flag, eal_debug_=
-logs,
->  =09=09=09=09       "--log-color=3Dinvalid" };
-> =20
-> +=09/* Try running with --allow-explicitly */
-> +=09const char * const argv29[] =3D {prgname, prefix, mp_flag, eal_debug_=
-logs,
-> +=09=09=09=09       "--allow-explicitly" };
-
-I am not convinced by the option name. What do you think of:
-
-=09--no-autoprobe
-
-That would match the Linux sriov_drivers_autoprobe sysfs.
-
-> +
->  =09/* run all tests also applicable to FreeBSD first */
-> =20
->  =09if (launch_proc(argv0) =3D=3D 0) {
-> @@ -1176,6 +1180,11 @@ test_misc_flags(void)
->  =09=09=09__LINE__);
->  =09=09goto fail;
->  =09}
-> +=09if (launch_proc(argv29) !=3D 0) {
-> +=09=09printf("Error (line %d) - process did not run ok with --allow-expl=
-icitly parameter\n",
-> +=09=09=09__LINE__);
-> +=09=09goto fail;
-> +=09}
-> =20
->  =09rmdir(hugepath_dir3);
->  =09rmdir(hugepath_dir2);
-> diff --git a/devtools/test-null.sh b/devtools/test-null.sh
-> index 8f21189262..37b8760f60 100755
-> --- a/devtools/test-null.sh
-> +++ b/devtools/test-null.sh
-> @@ -30,7 +30,7 @@ logfile=3D$build/test-null.log
->  (sleep 1 && echo stop) |
->  # testpmd only needs 20M, make it x2 (default number of cores) for NUMA =
-systems
->  $testpmd -l $corelist --no-huge -m 40 \
-> -=09$libs -a 0:0.0 --vdev net_null1 --vdev net_null2 $eal_options -- \
-> +=09$libs --allow-explicitly --vdev net_null1 --vdev net_null2 $eal_optio=
-ns -- \
->  =09--no-mlockall --total-num-mbufs=3D2048 $testpmd_options -ia | tee $lo=
-gfile
-> =20
->  # we expect two ports and some traffic is received and transmitted
-> diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux=
-_gsg/eal_args.include.rst
-> index 4a3c4d9b5f..f6e56468b5 100644
-> --- a/doc/guides/linux_gsg/eal_args.include.rst
-> +++ b/doc/guides/linux_gsg/eal_args.include.rst
-> @@ -101,6 +101,12 @@ Lcore-related options
->  Device-related options
->  ~~~~~~~~~~~~~~~~~~~~~~
-> =20
-> +*   ``--allow-explicitly``
-> +
-> +    By default, EAL probes all devices on every available bus, unless so=
-me ``-a``/``-b``/``--vdev``
-> +    options are passed.
-> +    However, when an application relies on hotplug, it may want to plug =
-each device explicitly.
-
-Can you reword this to make it explicit what the flag does? E.g.:
-
-=09Disable automatic probing of non-blocked devices.
-
-> +
->  *   ``-b, --block <[domain:]bus:devid.func>``
-> =20
->      Skip probing a PCI device to prevent EAL from using it.
-> diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_=
-bus.c
-> index fbe20cfe35..9a29c6a062 100644
-> --- a/lib/eal/common/eal_common_bus.c
-> +++ b/lib/eal/common/eal_common_bus.c
-> @@ -15,6 +15,8 @@
->  #include <eal_export.h>
->  #include "eal_private.h"
-> =20
-> +static bool allow_explicitly;
-> +
->  static struct rte_bus_list rte_bus_list =3D
->  =09TAILQ_HEAD_INITIALIZER(rte_bus_list);
-> =20
-> @@ -98,6 +100,12 @@ rte_bus_probe(void)
->  =09return 0;
->  }
-> =20
-> +void
-> +eal_bus_set_allow_explicitly(void)
-> +{
-> +=09allow_explicitly =3D true;
-> +}
-> +
->  /* Clean up all devices of all buses */
->  int
->  eal_bus_cleanup(void)
-> @@ -231,16 +239,21 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_is_ignored_devic=
-e)
->  bool
->  rte_bus_is_ignored_device(const struct rte_bus *bus, const struct rte_de=
-vargs *devargs)
->  {
-> -=09switch (bus->conf.scan_mode) {
-> -=09case RTE_BUS_SCAN_ALLOWLIST:
-> +=09enum rte_bus_scan_mode scan_mode =3D bus->conf.scan_mode;
-> +
-> +=09if (scan_mode =3D=3D RTE_BUS_SCAN_UNDEFINED) {
-> +=09=09if (allow_explicitly)
-> +=09=09=09scan_mode =3D RTE_BUS_SCAN_ALLOWLIST;
-> +=09=09else
-> +=09=09=09scan_mode =3D RTE_BUS_SCAN_BLOCKLIST;
-> +=09}
-> +
-> +=09if (scan_mode =3D=3D RTE_BUS_SCAN_ALLOWLIST) {
->  =09=09if (devargs && devargs->policy =3D=3D RTE_DEV_ALLOWED)
->  =09=09=09return false;
-> -=09=09break;
-> -=09case RTE_BUS_SCAN_UNDEFINED:
-> -=09case RTE_BUS_SCAN_BLOCKLIST:
-> +=09} else {
->  =09=09if (devargs =3D=3D NULL || devargs->policy !=3D RTE_DEV_BLOCKED)
->  =09=09=09return false;
-> -=09=09break;
->  =09}
->  =09return true;
->  }
-> diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_com=
-mon_options.c
-> index aad676a004..3f75f2c436 100644
-> --- a/lib/eal/common/eal_common_options.c
-> +++ b/lib/eal/common/eal_common_options.c
-> @@ -1972,6 +1972,9 @@ eal_parse_args(void)
->  =09=09}
->  =09}
-> =20
-> +=09if (args.allow_explicitly)
-> +=09=09eal_bus_set_allow_explicitly();
-> +
->  =09/* device -a/-b/-vdev options*/
->  =09TAILQ_FOREACH(arg, &args.allow, next)
->  =09=09if (eal_option_device_add(RTE_DEVTYPE_ALLOWED, arg->arg) < 0)
-> diff --git a/lib/eal/common/eal_option_list.h b/lib/eal/common/eal_option=
-_list.h
-> index abee16340b..4e02766500 100644
-> --- a/lib/eal/common/eal_option_list.h
-> +++ b/lib/eal/common/eal_option_list.h
-> @@ -32,6 +32,7 @@
->   * Format of each entry: long name, short name, help string, struct memb=
-er name.
->   */
->  /* (Alphabetical) List of common options first */
-> +BOOL_ARG("--allow-explicitly", NULL, "Change EAL device probing to consi=
-der only allowed devices", allow_explicitly)
-
-Depending on what option name we settle on, could you add a short flag
-too? E.g.:
-
-BOOL_ARG("--no-autoprobe", "-N", "Disable automatic probing of non-blocked =
-devices", no_autoprobe)
-
-Or:
-
-BOOL_ARG("--no-autoprobe", "-P", "Disable automatic probing of non-blocked =
-devices", no_autoprobe)
-
->  LIST_ARG("--allow", "-a", "Add device to allow-list, causing DPDK to onl=
-y use specified devices", allow)
->  STR_ARG("--base-virtaddr", NULL, "Base virtual address to reserve memory=
-", base_virtaddr)
->  LIST_ARG("--block", "-b", "Add device to block-list, preventing DPDK fro=
-m using the device", block)
-> diff --git a/lib/eal/common/eal_private.h b/lib/eal/common/eal_private.h
-> index e032dd10c9..0bad3de56c 100644
-> --- a/lib/eal/common/eal_private.h
-> +++ b/lib/eal/common/eal_private.h
-> @@ -469,6 +469,12 @@ int rte_eal_memory_detach(void);
->   */
->  struct rte_bus *rte_bus_find_by_device_name(const char *str);
-> =20
-> +/**
-> + * Change behavior of rte_bus_probe() from a block-listing approach
-> + * to an allow-listing approach.
-> + */
-> +void eal_bus_set_allow_explicitly(void);
-> +
->  /**
->   * For each device on the buses, call the driver-specific function for
->   * device cleanup.
+diff --git a/drivers/net/axgbe/axgbe_mdio.c b/drivers/net/axgbe/axgbe_mdio.c
+index 952a0add62..a37cd8b80d 100644
+--- a/drivers/net/axgbe/axgbe_mdio.c
++++ b/drivers/net/axgbe/axgbe_mdio.c
+@@ -155,8 +155,8 @@ static void axgbe_sgmii_10_mode(struct axgbe_port *pdata)
+ static void axgbe_sgmii_100_mode(struct axgbe_port *pdata)
+ {
+ 
+-	/* Set MAC to 1G speed */
+-	pdata->hw_if.set_speed(pdata, SPEED_1000);
++	/* Set MAC to 100M speed */
++	pdata->hw_if.set_speed(pdata, SPEED_100);
+ 
+ 	/* Call PHY implementation support to complete rate change */
+ 	pdata->phy_if.phy_impl.set_mode(pdata, AXGBE_MODE_SGMII_100);
+diff --git a/drivers/net/axgbe/axgbe_phy_impl.c b/drivers/net/axgbe/axgbe_phy_impl.c
+index 8635a53a6d..8e94be399d 100644
+--- a/drivers/net/axgbe/axgbe_phy_impl.c
++++ b/drivers/net/axgbe/axgbe_phy_impl.c
+@@ -1643,6 +1643,18 @@ static void axgbe_phy_sgmii_1000_mode(struct axgbe_port *pdata)
+ 	phy_data->cur_mode = AXGBE_MODE_SGMII_1000;
+ }
+ 
++static void axgbe_phy_sgmii_100_mode(struct axgbe_port *pdata)
++{
++	struct axgbe_phy_data *phy_data = pdata->phy_data;
++
++	axgbe_phy_set_redrv_mode(pdata);
++
++	/* 100M/SGMII */
++	axgbe_phy_perform_ratechange(pdata, AXGBE_MB_CMD_SET_1G, AXGBE_MB_SUBCMD_100MBITS);
++
++	phy_data->cur_mode = AXGBE_MODE_SGMII_100;
++}
++
+ static void axgbe_phy_sgmii_10_mode(struct axgbe_port *pdata)
+ {
+ 	struct axgbe_phy_data *phy_data = pdata->phy_data;
+@@ -1840,6 +1852,9 @@ static void axgbe_phy_set_mode(struct axgbe_port *pdata, enum axgbe_mode mode)
+ 	case AXGBE_MODE_SGMII_1000:
+ 		axgbe_phy_sgmii_1000_mode(pdata);
+ 		break;
++	case AXGBE_MODE_SGMII_100:
++		axgbe_phy_sgmii_100_mode(pdata);
++		break;
+ 	case AXGBE_MODE_SGMII_10:
+ 		axgbe_phy_sgmii_10_mode(pdata);
+ 		break;
+-- 
+2.34.1
 
