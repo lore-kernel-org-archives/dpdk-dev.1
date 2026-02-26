@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F770FCE078
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 13:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC99FCE078
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 13:19:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3EF4C4065C;
-	Thu, 26 Feb 2026 14:18:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 39FFD4067B;
+	Thu, 26 Feb 2026 14:18:52 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id AAC6040676
- for <dev@dpdk.org>; Thu, 26 Feb 2026 14:18:45 +0100 (CET)
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id 2E67D40677
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 14:18:51 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
  by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 61Q6u4vf1363432 for <dev@dpdk.org>; Thu, 26 Feb 2026 05:18:45 -0800
+ 61QDBdvI096637 for <dev@dpdk.org>; Thu, 26 Feb 2026 05:18:50 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=P
- 47PDgcgMoUZ9DF96CxNNnGzRPdBaXCvo8oPd6yKkH0=; b=Dev8yVNnONwMc5V3T
- AzeZbE8xHn58OMgWBvj8nnmEy05bp5iCGTArBIxXXNxg1Fqog//N3JTy/95VnmhW
- 6rWBAbjEB57M4wpiMzj+XHsDHktL7//Rkp+85RptAReooEmy+nZwNFBUDAlJpE7d
- xV8kHMW3Dji/8NOYbHslQfPkqfVBRZfrjZJamN5BloUXnJ3uvUw+YfOFBzoh7iru
- RTcns4+qAObUBofh21V9PPoZxbSNoLRuvhXQ5iGDR5ErO81ekgfrfe9CjLz8wg24
- mCNohDOxVvAVQPino2e4eqT9GQXuuZKacK3bMFrwj7hxjiLdNse8OwWlI1ftodpl
- dTHKw==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=e
+ VVsU75CtBabcQwNUfpzVM1WaOgl2p5a9thYQWRXsXU=; b=OkPOWOGlHfYlqsivT
+ IGkypTk27fGF8me6HZ/C1vUcp8zIEpBphAmH5EOFHe7wH8SQO5emDJtQcUtpm7RL
+ uDjyow3XoYapafHv9Bendc74BKQuj86bXpDY7E2Usct7An/6mtw0Dffd4eV0KqHK
+ 9TRUqPHdMp1djFjxIoOZ+lXr6RQn+yaXoOAKAbrFXD6krG4opUy2fsCmSjCoqMSj
+ G2ToAuHvMldYx4wmPvfBs0lCNINCR6twJGZVVKympEJK2TUJgzgnJJSzEJvx3Y5+
+ GaCnzIbl7cGWfrPE5qATLo4E8hazwe1ILXROMxrZ6jggF2DXrIK5kbeTWqw0tV4E
+ JHcLg==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4chqcyveuw-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4cjpuhg0q7-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 26 Feb 2026 05:18:44 -0800 (PST)
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 05:18:50 -0800 (PST)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 26 Feb 2026 05:18:43 -0800
+ 15.2.1544.25; Thu, 26 Feb 2026 05:18:49 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 26 Feb 2026 05:18:43 -0800
+ Transport; Thu, 26 Feb 2026 05:18:49 -0800
 Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 751513F70D4;
- Thu, 26 Feb 2026 05:18:41 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id B992C3F70D4;
+ Thu, 26 Feb 2026 05:18:46 -0800 (PST)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
-CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH v2 7/8] net/cnxk: flow rule update for non-in-place IPsec
-Date: Thu, 26 Feb 2026 18:47:14 +0530
-Message-ID: <20260226131715.2851091-7-rbhansali@marvell.com>
+CC: <jerinj@marvell.com>, Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Subject: [PATCH v2 8/8] common/cnxk: enable CPT CQ for inline IPsec inbound
+Date: Thu, 26 Feb 2026 18:47:15 +0530
+Message-ID: <20260226131715.2851091-8-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260226131715.2851091-1-rbhansali@marvell.com>
 References: <20260219090847.3257753-1-rbhansali@marvell.com>
@@ -53,20 +53,20 @@ References: <20260219090847.3257753-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: N3t_a-QH6hBzfpX8ff0P2ScQGKe7iiud
-X-Proofpoint-ORIG-GUID: N3t_a-QH6hBzfpX8ff0P2ScQGKe7iiud
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI2MDEyMCBTYWx0ZWRfX/UusgnbT6jup
- HH1xF11Jy33i+ivJnAL0w4M7TVbhL5Kk2Jt4JcFR+WLNZ0gjIkGU7wp696xDuSAcnwU3BuJdyEx
- 7mAkqWc6nE/BGG55cfXnj125CTMj/QeJ7McqFLAPfw6xH/YNL+p9dCuD181cpBTvYc2v2EijWiQ
- uMkmSvKFp7fEAHfXcm5UW2KT7VX84tQqLX7e+6IBELXYn/e7+u4UjFiUeaG/uXh9+wT0oJ59P7s
- 8t/ki8shMwc49/uDsZMH8KATHUoFRTqGh/r4M3Y4LH0fDuxT5DjuNi+1I7nP9iqFW1XqDIAReWc
- 2mvMa2a+Xf37CICXWd+hcLkawdyyT2vGWLQTuOQDrMP/FvPfTHtouE8tFGxhhNziDg42POyxPMq
- uK6PbTHGwFwtyWwd9ZpYtL/9TQlasN5bZqOZZeCWmAPZtcLgSdDUl8Tth5G0IOu2Dvbj4MBQi0i
- NTrARgZC+yfEEVJQegw==
-X-Authority-Analysis: v=2.4 cv=B/S0EetM c=1 sm=1 tr=0 ts=69a04834 cx=c_pps
+X-Proofpoint-ORIG-GUID: 1vOOdqHIpkxhqDz0HOGrO-P48CVSuvKz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI2MDExOSBTYWx0ZWRfXxTnnfGjCpkMw
+ LdC2fw2mDr7APC8k7NKS9wjoGxemIfQOQwnLTeoL8+ginELUw9yqckRuptYmzRAej/ATeTXj/2k
+ v0p3ZaWayPwxxywQNcw2gPOdcZcINmTZJbQtdndKL+M8uYitiCrYdJzek2tnL0zIAHgz5CURdMK
+ YHBrGRTnO7MBeS4H9I7K5FGKS8Aw18aWmeXZFNg6BD9zHayK08MeTKmOd4iQcQdXvn0q2C4P6Xh
+ e/lPS25/liJzYICJ6dAvNqz1IB8RoDEyRP/T0Nk7cc6dxedQzsK/VLdmlC8uT9GRRIqfSO1JQvN
+ 8s1ARZ6UK8XFbJOOcRzCfSRb+jn6GQybW1u5HzVnJhIpOX6mneOUno6GBcOoAbu/1NN0AthivKb
+ pN11E9ZUZzb0LaWt3jstvyw8Foh75sl65eQj1icavkFRJRHIpFAPHyZNaXB9o+DDp1EFGqzN+Vw
+ P58YD1Sk6vaU3o2B75A==
+X-Proofpoint-GUID: 1vOOdqHIpkxhqDz0HOGrO-P48CVSuvKz
+X-Authority-Analysis: v=2.4 cv=f7JFxeyM c=1 sm=1 tr=0 ts=69a0483a cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=EDlb0x0Qip4Iq_TPoc0A:9
+ a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=o9YzJbAGbcaYcfIrg-EA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
@@ -84,257 +84,479 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Updates flow rule based of inbound non-inplace (Out-Of-Place)
-config of IPsec session.
+From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
+Added support of CPT CQ configurations for inline inbound IPsec.
+
+Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 ---
-Changes in v2: No changes.
+Changes in v2: fix cleanup on configuration failure case.
 
- drivers/net/cnxk/cn9k_flow.c        |  2 +-
- drivers/net/cnxk/cnxk_ethdev.h      |  6 +++---
- drivers/net/cnxk/cnxk_ethdev_sec.c  |  3 +--
- drivers/net/cnxk/cnxk_flow.c        | 31 +++++++++++++++++++++--------
- drivers/net/cnxk/cnxk_flow.h        |  8 ++++++--
- drivers/net/cnxk/cnxk_flow_common.c | 12 ++++++++++-
- drivers/net/cnxk/cnxk_rep_flow.c    |  4 ++--
- drivers/net/cnxk/rte_pmd_cnxk.h     |  1 +
- 8 files changed, 48 insertions(+), 19 deletions(-)
+ drivers/common/cnxk/roc_nix_inl.c         |  8 +-
+ drivers/common/cnxk/roc_nix_inl.h         |  3 +-
+ drivers/common/cnxk/roc_nix_inl_dev.c     | 90 ++++++++++++++++++++---
+ drivers/common/cnxk/roc_nix_inl_dev_irq.c | 19 +++--
+ drivers/net/cnxk/cn20k_ethdev_sec.c       | 54 +++++++++-----
+ 5 files changed, 136 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/net/cnxk/cn9k_flow.c b/drivers/net/cnxk/cn9k_flow.c
-index ae4629ea69..c39564201d 100644
---- a/drivers/net/cnxk/cn9k_flow.c
-+++ b/drivers/net/cnxk/cn9k_flow.c
-@@ -18,7 +18,7 @@ cn9k_flow_create(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 	int vtag_actions = 0;
- 	int mark_actions;
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index 911c349604..26be1adac9 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -486,6 +486,7 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
+ 	} else {
+ 		struct nix_rx_inl_lf_cfg_req *lf_cfg;
+ 		uint64_t def_cptq = 0;
++		uint64_t cpt_cq_ena = 0;
 
--	flow = cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, false);
-+	flow = cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, false, 0);
- 	if (!flow)
- 		return NULL;
+ 		/* Setup device specific inb SA table */
+ 		lf_cfg = mbox_alloc_msg_nix_rx_inl_lf_cfg(mbox);
+@@ -508,9 +509,10 @@ nix_inl_inb_ipsec_sa_tbl_setup(struct roc_nix *roc_nix)
+ 		if (res_addr_offset)
+ 			res_addr_offset |= (1UL << 56);
 
-diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
-index 1b63b02ad8..e3edf39a5c 100644
---- a/drivers/net/cnxk/cnxk_ethdev.h
-+++ b/drivers/net/cnxk/cnxk_ethdev.h
-@@ -747,9 +747,9 @@ int cnxk_nix_inline_inbound_mode_setup(struct cnxk_eth_dev *dev);
-
- struct cnxk_eth_sec_sess *cnxk_eth_sec_sess_get_by_sa_idx(struct cnxk_eth_dev *dev,
- 							  uint32_t sa_idx, bool inb);
--struct cnxk_eth_sec_sess *
--cnxk_eth_sec_sess_get_by_sess(struct cnxk_eth_dev *dev,
--			      struct rte_security_session *sess);
-+struct cnxk_eth_sec_sess *cnxk_eth_sec_sess_get_by_sess(struct cnxk_eth_dev *dev,
-+							const struct rte_security_session *sess);
-+
- int cnxk_nix_inl_meta_pool_cb(uint64_t *aura_handle, uintptr_t *mpool, uint32_t buf_sz,
- 			      uint32_t nb_bufs, bool destroy, const char *mempool_name);
- int cnxk_nix_inl_custom_meta_pool_cb(uintptr_t pmpool, uintptr_t *mpool, const char *mempool_name,
-diff --git a/drivers/net/cnxk/cnxk_ethdev_sec.c b/drivers/net/cnxk/cnxk_ethdev_sec.c
-index 59a00408ad..abb50d32de 100644
---- a/drivers/net/cnxk/cnxk_ethdev_sec.c
-+++ b/drivers/net/cnxk/cnxk_ethdev_sec.c
-@@ -287,8 +287,7 @@ cnxk_eth_sec_sess_get_by_sa_idx(struct cnxk_eth_dev *dev, uint32_t sa_idx, bool
- }
-
- struct cnxk_eth_sec_sess *
--cnxk_eth_sec_sess_get_by_sess(struct cnxk_eth_dev *dev,
--			      struct rte_security_session *sess)
-+cnxk_eth_sec_sess_get_by_sess(struct cnxk_eth_dev *dev, const struct rte_security_session *sess)
- {
- 	struct cnxk_eth_sec_sess *eth_sec = NULL;
-
-diff --git a/drivers/net/cnxk/cnxk_flow.c b/drivers/net/cnxk/cnxk_flow.c
-index 33501310e0..c1c48eb7ab 100644
---- a/drivers/net/cnxk/cnxk_flow.c
-+++ b/drivers/net/cnxk/cnxk_flow.c
-@@ -465,7 +465,7 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 		 const struct rte_flow_action actions[], struct roc_npc_action in_actions[],
- 		 struct roc_npc_action_sample *in_sample_actions, uint32_t *flowkey_cfg,
- 		 uint16_t *dst_pf_func, uint64_t *npc_default_action, uint8_t has_tunnel_pattern,
--		 bool is_rep, uint8_t rep_pattern, uint64_t *free_allocs)
-+		 bool is_rep, uint8_t rep_pattern, uint64_t *free_allocs, uint32_t flow_flags)
- {
- 	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
- 	const struct rte_flow_action_queue *act_q = NULL;
-@@ -614,6 +614,8 @@ cnxk_map_actions(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 		case RTE_FLOW_ACTION_TYPE_SECURITY:
- 			in_actions[i].type = ROC_NPC_ACTION_TYPE_SEC;
- 			in_actions[i].conf = actions->conf;
-+			in_actions[i].is_non_inp = flow_flags & CNXK_FLOW_NON_INPLACE;
-+			in_actions[i].no_sec_action = flow_flags & CNXK_FLOW_NO_SEC_ACTION;
- 			break;
- 		case RTE_FLOW_ACTION_TYPE_OF_POP_VLAN:
- 			in_actions[i].type = ROC_NPC_ACTION_TYPE_VLAN_STRIP;
-@@ -803,7 +805,8 @@ cnxk_map_flow_data(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr
- 		   struct roc_npc_attr *in_attr, struct roc_npc_item_info in_pattern[],
- 		   struct roc_npc_action in_actions[],
- 		   struct roc_npc_action_sample *in_sample_actions, uint32_t *flowkey_cfg,
--		   uint16_t *dst_pf_func, uint64_t *def_action, bool is_rep, uint64_t *free_allocs)
-+		   uint16_t *dst_pf_func, uint64_t *def_action, bool is_rep, uint64_t *free_allocs,
-+		   uint32_t flow_flags)
- {
- 	uint8_t has_tunnel_pattern = 0, rep_pattern = 0;
- 	int rc;
-@@ -842,14 +845,14 @@ cnxk_map_flow_data(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr
-
- 	return cnxk_map_actions(eth_dev, attr, actions, in_actions, in_sample_actions, flowkey_cfg,
- 				dst_pf_func, def_action, has_tunnel_pattern, is_rep, rep_pattern,
--				free_allocs);
-+				free_allocs, flow_flags);
- }
-
- int
- cnxk_flow_validate_common(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 			  const struct rte_flow_item pattern[],
- 			  const struct rte_flow_action actions[], struct rte_flow_error *error,
--			  bool is_rep)
-+			  bool is_rep, uint32_t flow_flags)
- {
- 	struct roc_npc_item_info in_pattern[ROC_NPC_ITEM_TYPE_END + 1];
- 	struct roc_npc_action in_actions[ROC_NPC_MAX_ACTION_COUNT];
-@@ -891,7 +894,7 @@ cnxk_flow_validate_common(struct rte_eth_dev *eth_dev, const struct rte_flow_att
++		cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
+ 		lf_cfg->enable = 1;
+ 		lf_cfg->profile_id = profile_id; /* IPsec profile is 0th one */
+-		lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id];
++		lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id] | cpt_cq_ena;
+ 		lf_cfg->rx_inline_cfg0 =
+ 			((def_cptq << 57) | res_addr_offset | ((uint64_t)SSO_TT_ORDERED << 44) |
+ 			 (sa_pow2_sz << 16) | lenm1_max);
+@@ -588,6 +590,7 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
+ 	uint64_t max_sa = 1, sa_pow2_sz;
+ 	uint64_t sa_idx_w, lenm1_max;
+ 	uint64_t res_addr_offset = 0;
++	uint64_t cpt_cq_ena = 0;
+ 	uint64_t def_cptq = 0;
+ 	size_t inb_sa_sz = 1;
+ 	uint8_t profile_id;
+@@ -637,9 +640,10 @@ nix_inl_reass_inb_sa_tbl_setup(struct roc_nix *roc_nix)
+ 			res_addr_offset |= (1UL << 56);
  	}
- 	rc = cnxk_map_flow_data(eth_dev, attr, pattern, actions, &in_attr, in_pattern, in_actions,
- 				&in_sample_action, &flowkey_cfg, &dst_pf_func, &npc_default_action,
--				is_rep, free_allocs);
-+				is_rep, free_allocs, flow_flags);
- 	if (rc) {
- 		rte_flow_error_set(error, 0, RTE_FLOW_ERROR_TYPE_ACTION_NUM, NULL,
- 				   "Failed to map flow data");
-@@ -919,14 +922,26 @@ cnxk_flow_validate(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr
- 		   const struct rte_flow_item pattern[], const struct rte_flow_action actions[],
- 		   struct rte_flow_error *error)
- {
--	return cnxk_flow_validate_common(eth_dev, attr, pattern, actions, error, false);
-+	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
-+	struct cnxk_eth_sec_sess *eth_sec = NULL;
-+	uint32_t flow_flags = 0;
+
++	cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
+ 	lf_cfg->enable = 1;
+ 	lf_cfg->profile_id = profile_id;
+-	lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id];
++	lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id] | cpt_cq_ena;
+ 	lf_cfg->rx_inline_cfg0 =
+ 		((def_cptq << 57) | res_addr_offset | ((uint64_t)SSO_TT_ORDERED << 44) |
+ 		 (sa_pow2_sz << 16) | lenm1_max);
+diff --git a/drivers/common/cnxk/roc_nix_inl.h b/drivers/common/cnxk/roc_nix_inl.h
+index 596f12d1c7..d1a08a4495 100644
+--- a/drivers/common/cnxk/roc_nix_inl.h
++++ b/drivers/common/cnxk/roc_nix_inl.h
+@@ -44,7 +44,8 @@
+ #define ROC_NIX_INL_RXC_QUE_BLK_THR 0x40UL
+
+ enum nix_inl_event_type {
+-	NIX_INL_CPT_CQ = 1,
++	NIX_INL_INB_CPT_CQ = 1,
++	NIX_INL_OUTB_CPT_CQ,
+ 	NIX_INL_SSO,
+ 	NIX_INL_SOFT_EXPIRY_THRD,
+ };
+diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
+index 35528efa46..246dd4612f 100644
+--- a/drivers/common/cnxk/roc_nix_inl_dev.c
++++ b/drivers/common/cnxk/roc_nix_inl_dev.c
+@@ -382,6 +382,7 @@ nix_inl_nix_ipsec_cfg(struct nix_inl_dev *inl_dev, bool ena)
+ 		struct nix_rx_inl_lf_cfg_req *lf_cfg;
+ 		uint64_t res_addr_offset;
+ 		uint64_t def_cptq;
++		uint64_t cpt_cq_ena;
+
+ 		lf_cfg = mbox_alloc_msg_nix_rx_inl_lf_cfg(mbox);
+ 		if (lf_cfg == NULL) {
+@@ -401,7 +402,9 @@ nix_inl_nix_ipsec_cfg(struct nix_inl_dev *inl_dev, bool ena)
+ 		lf_cfg->profile_id = inl_dev->ipsec_prof_id;
+ 		if (ena) {
+ 			lf_cfg->enable = 1;
+-			lf_cfg->rx_inline_sa_base = (uintptr_t)inl_dev->inb_sa_base[profile_id];
++			cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
++			lf_cfg->rx_inline_sa_base =
++				(uintptr_t)inl_dev->inb_sa_base[profile_id] | (cpt_cq_ena);
+ 			lf_cfg->rx_inline_cfg0 =
+ 				((def_cptq << 57) | res_addr_offset |
+ 				 ((uint64_t)SSO_TT_ORDERED << 44) | (sa_pow2_sz << 16) | lenm1_max);
+@@ -482,13 +485,33 @@ nix_inl_cpt_setup(struct nix_inl_dev *inl_dev, bool inl_dev_sso)
+ lf_fini:
+ 	for (i = 0; i < inl_dev->nb_cptlf; i++) {
+ 		struct roc_cpt_lf *lf = &inl_dev->cpt_lf[i];
+-		cpt_lf_fini(lf, lf->cpt_cq_ena);
++		cpt_lf_fini(lf, false);
+ 	}
+ lf_free:
+ 	rc |= cpt_lfs_free(dev);
+ 	return rc;
+ }
+
++static int
++nix_inl_cpt_cq_inb_release(struct nix_inl_dev *inl_dev)
++{
++	int i;
 +
-+	if (actions[0].type == RTE_FLOW_ACTION_TYPE_SECURITY) {
-+		eth_sec = cnxk_eth_sec_sess_get_by_sess(dev, actions[0].conf);
-+		if (eth_sec != NULL) {
-+			flow_flags = eth_sec->inb_oop ? CNXK_FLOW_NON_INPLACE : 0;
-+			flow_flags |= CNXK_FLOW_NO_SEC_ACTION;
++	if (!inl_dev || !inl_dev->cpt_cq_ena)
++		return 0;
++	for (i = 0; i < inl_dev->nb_inb_cptlfs; i++) {
++		uint8_t slot_id = inl_dev->inb_cpt_lf_id + i;
++		struct roc_cpt_lf *lf = &inl_dev->cpt_lf[slot_id];
++
++		if (lf->cpt_cq_ena) {
++			cpt_lf_cq_fini(lf);
++			cpt_lf_unregister_irqs(lf, cpt_lf_misc_irq, nix_inl_cpt_done_irq);
 +		}
 +	}
 +
-+	return cnxk_flow_validate_common(eth_dev, attr, pattern, actions, error, false, flow_flags);
++	return 0;
++}
++
+ static int
+ nix_inl_cpt_release(struct nix_inl_dev *inl_dev)
+ {
+@@ -625,6 +648,7 @@ nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
+ 	uint64_t max_sa, sa_w, sa_pow2_sz, lenm1_max;
+ 	struct nix_rx_inl_lf_cfg_req *lf_cfg;
+ 	uint64_t res_addr_offset;
++	uint64_t cpt_cq_ena;
+ 	uint64_t def_cptq;
+ 	size_t inb_sa_sz;
+ 	void *sa;
+@@ -665,7 +689,8 @@ nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
+
+ 	lf_cfg->enable = 1;
+ 	lf_cfg->profile_id = profile_id;
+-	lf_cfg->rx_inline_sa_base = (uintptr_t)inl_dev->inb_sa_base[profile_id];
++	cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
++	lf_cfg->rx_inline_sa_base = (uintptr_t)inl_dev->inb_sa_base[profile_id] | cpt_cq_ena;
+ 	lf_cfg->rx_inline_cfg0 =
+ 		((def_cptq << 57) | res_addr_offset | ((uint64_t)SSO_TT_ORDERED << 44) |
+ 		 (sa_pow2_sz << 16) | lenm1_max);
+@@ -716,6 +741,42 @@ nix_inl_nix_profile_release(struct nix_inl_dev *inl_dev, uint8_t profile_id)
+ 	return rc;
  }
 
- struct roc_npc_flow *
- cnxk_flow_create_common(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 			const struct rte_flow_item pattern[],
- 			const struct rte_flow_action actions[], struct rte_flow_error *error,
--			bool is_rep)
-+			bool is_rep, uint32_t flow_flags)
- {
- 	struct roc_npc_item_info in_pattern[ROC_NPC_ITEM_TYPE_END + 1] = {0};
- 	struct roc_npc_action in_actions[ROC_NPC_MAX_ACTION_COUNT] = {0};
-@@ -962,7 +977,7 @@ cnxk_flow_create_common(struct rte_eth_dev *eth_dev, const struct rte_flow_attr
- 	memset(&in_attr, 0, sizeof(struct roc_npc_attr));
- 	rc = cnxk_map_flow_data(eth_dev, attr, pattern, actions, &in_attr, in_pattern, in_actions,
- 				&in_sample_action, &npc->flowkey_cfg_state, &dst_pf_func,
--				&npc_default_action, is_rep, free_allocs);
-+				&npc_default_action, is_rep, free_allocs, flow_flags);
- 	if (rc) {
- 		rte_flow_error_set(error, rc, RTE_FLOW_ERROR_TYPE_ACTION_NUM, NULL,
- 				   "Failed to map flow data");
-diff --git a/drivers/net/cnxk/cnxk_flow.h b/drivers/net/cnxk/cnxk_flow.h
-index 80b8d2c36a..2986ea81d1 100644
---- a/drivers/net/cnxk/cnxk_flow.h
-+++ b/drivers/net/cnxk/cnxk_flow.h
-@@ -20,6 +20,9 @@ struct cnxk_rte_flow_action_info {
- 	uint16_t conf_size;
- };
-
-+#define CNXK_FLOW_NO_SEC_ACTION BIT(0)
-+#define CNXK_FLOW_NON_INPLACE	BIT(1)
++static int
++nix_inl_cpt_cq_inb_setup(struct nix_inl_dev *inl_dev)
++{
++	int i, rc;
 +
- extern const struct cnxk_rte_flow_term_info term[];
-
- int cnxk_flow_destroy(struct rte_eth_dev *dev, struct roc_npc_flow *flow,
-@@ -29,11 +32,12 @@ struct roc_npc_flow *cnxk_flow_create_common(struct rte_eth_dev *eth_dev,
- 					     const struct rte_flow_attr *attr,
- 					     const struct rte_flow_item pattern[],
- 					     const struct rte_flow_action actions[],
--					     struct rte_flow_error *error, bool is_rep);
-+					     struct rte_flow_error *error, bool is_rep,
-+					     uint32_t flow_flags);
- int cnxk_flow_validate_common(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 			      const struct rte_flow_item pattern[],
- 			      const struct rte_flow_action actions[], struct rte_flow_error *error,
--			      bool is_rep);
-+			      bool is_rep, uint32_t flow_flags);
- int cnxk_flow_destroy_common(struct rte_eth_dev *eth_dev, struct roc_npc_flow *flow,
- 			     struct rte_flow_error *error, bool is_rep);
- int cnxk_flow_flush_common(struct rte_eth_dev *eth_dev, struct rte_flow_error *error, bool is_rep);
-diff --git a/drivers/net/cnxk/cnxk_flow_common.c b/drivers/net/cnxk/cnxk_flow_common.c
-index 59aa920d91..14ac3b5b65 100644
---- a/drivers/net/cnxk/cnxk_flow_common.c
-+++ b/drivers/net/cnxk/cnxk_flow_common.c
-@@ -122,7 +122,9 @@ cnxk_flow_create(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 	const struct rte_flow_action *action_rss = NULL;
- 	const struct rte_flow_action_meter *mtr = NULL;
- 	const struct rte_flow_action *act_q = NULL;
-+	struct cnxk_eth_sec_sess *eth_sec = NULL;
- 	struct roc_npc_flow *flow;
-+	uint32_t flow_flags = 0;
- 	void *mcs_flow = NULL;
- 	uint32_t req_act = 0;
- 	int i, rc;
-@@ -183,7 +185,15 @@ cnxk_flow_create(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *attr,
- 		return mcs_flow;
- 	}
-
--	flow = cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, false);
-+	if (actions[0].type == RTE_FLOW_ACTION_TYPE_SECURITY) {
-+		eth_sec = cnxk_eth_sec_sess_get_by_sess(dev, actions[0].conf);
-+		if (eth_sec != NULL) {
-+			flow_flags = eth_sec->inb_oop ? CNXK_FLOW_NON_INPLACE : 0;
-+			flow_flags |= CNXK_FLOW_NO_SEC_ACTION;
++	if (!inl_dev->cpt_cq_ena)
++		return 0;
++
++	for (i = 0; i < inl_dev->nb_inb_cptlfs; i++) {
++		uint8_t slot_id = inl_dev->inb_cpt_lf_id + i;
++		struct roc_cpt_lf *lf = &inl_dev->cpt_lf[slot_id];
++
++		lf->dq_ack_ena = true;
++		lf->cpt_cq_ena = true;
++		lf->cq_entry_size = 0;
++		lf->cq_all = 0;
++		lf->cq_size = lf->nb_desc;
++		lf->dev = &inl_dev->dev;
++		lf->cq_head = 1;
++
++		rc = cpt_lf_cq_init(lf);
++		if (rc)
++			return rc;
++
++		rc = cpt_lf_register_irqs(lf, cpt_lf_misc_irq, nix_inl_cpt_done_irq);
++		if (rc) {
++			cpt_lf_cq_fini(lf);
++			return rc;
 +		}
++
++		roc_cpt_cq_enable(lf);
 +	}
 +
-+	flow = cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, false, flow_flags);
- 	if (!flow) {
- 		if (mtr)
- 			nix_mtr_chain_reset(eth_dev, mtr->mtr_id);
-diff --git a/drivers/net/cnxk/cnxk_rep_flow.c b/drivers/net/cnxk/cnxk_rep_flow.c
-index f1cf81a90c..1b013ce598 100644
---- a/drivers/net/cnxk/cnxk_rep_flow.c
-+++ b/drivers/net/cnxk/cnxk_rep_flow.c
-@@ -547,7 +547,7 @@ cnxk_rep_flow_create_native(struct rte_eth_dev *eth_dev, const struct rte_flow_a
- 	uint16_t new_entry;
- 	int rc;
++	return 0;
++}
++
+ static int
+ nix_inl_nix_reass_setup(struct nix_inl_dev *inl_dev)
+ {
+@@ -1451,11 +1512,17 @@ roc_nix_inl_dev_init(struct roc_nix_inl_dev *roc_inl_dev)
+ 	if (rc)
+ 		goto sso_release;
 
--	flow = cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, true);
-+	flow = cnxk_flow_create_common(eth_dev, attr, pattern, actions, error, true, 0);
- 	if (!flow) {
- 		plt_err("Fail to create flow");
- 		goto fail;
-@@ -632,7 +632,7 @@ cnxk_rep_flow_validate(struct rte_eth_dev *eth_dev, const struct rte_flow_attr *
++	if (roc_feature_nix_has_cpt_cq_support()) {
++		rc = nix_inl_cpt_cq_inb_setup(inl_dev);
++		if (rc)
++			goto cpt_release;
++	}
++
+ 	/* Setup device specific inb SA table */
+ 	rc = nix_inl_nix_ipsec_cfg(inl_dev, true);
+ 	if (rc) {
+ 		plt_err("Failed to setup NIX Inbound SA conf, rc=%d", rc);
+-		goto cpt_release;
++		goto cpt_cq_inb_release;
  	}
 
- 	if (rep_dev->native_repte)
--		return cnxk_flow_validate_common(eth_dev, attr, pattern, actions, error, true);
-+		return cnxk_flow_validate_common(eth_dev, attr, pattern, actions, error, true, 0);
+ 	/* Setup Reassembly */
+@@ -1464,20 +1531,20 @@ roc_nix_inl_dev_init(struct roc_nix_inl_dev *roc_inl_dev)
 
- 	rc = process_flow_rule(rep_dev, attr, pattern, actions, &adata, CNXK_REP_MSG_FLOW_VALIDATE);
- 	if (!rc || adata.u.sval < 0) {
-diff --git a/drivers/net/cnxk/rte_pmd_cnxk.h b/drivers/net/cnxk/rte_pmd_cnxk.h
-index b186b529fa..d344137dd5 100644
---- a/drivers/net/cnxk/rte_pmd_cnxk.h
-+++ b/drivers/net/cnxk/rte_pmd_cnxk.h
-@@ -82,6 +82,7 @@ struct rte_pmd_cnxk_sec_action {
- 	 * XOR.
- 	 */
- 	enum rte_pmd_cnxk_sec_action_alg alg;
-+	bool is_non_inp;
- };
+ 		rc = nix_inl_nix_reass_setup(inl_dev);
+ 		if (rc)
+-			goto cpt_release;
++			goto cpt_cq_inb_release;
+ 	}
 
- #define RTE_PMD_CNXK_CTX_MAX_CKEY_LEN	   32
+ 	if (inl_dev->set_soft_exp_poll) {
+ 		rc = nix_inl_outb_poll_thread_setup(inl_dev);
+ 		if (rc)
+-			goto cpt_release;
++			goto cpt_cq_inb_release;
+ 	}
+
+ 	/* Perform selftest if asked for */
+ 	if (inl_dev->selftest) {
+ 		rc = nix_inl_selftest();
+ 		if (rc)
+-			goto cpt_release;
++			goto cpt_cq_inb_release;
+ 	}
+ 	inl_dev->max_ipsec_rules = roc_inl_dev->max_ipsec_rules;
+
+@@ -1486,14 +1553,14 @@ roc_nix_inl_dev_init(struct roc_nix_inl_dev *roc_inl_dev)
+ 			plt_zmalloc(sizeof(int) * inl_dev->max_ipsec_rules, PLT_CACHE_LINE_SIZE);
+ 		if (inl_dev->ipsec_index == NULL) {
+ 			rc = NPC_ERR_NO_MEM;
+-			goto cpt_release;
++			goto cpt_cq_inb_release;
+ 		}
+ 		rc = npc_mcam_alloc_entries(inl_dev->dev.mbox, inl_dev->max_ipsec_rules,
+ 					    inl_dev->ipsec_index, inl_dev->max_ipsec_rules,
+ 					    NPC_MCAM_HIGHER_PRIO, &resp_count, 1);
+ 		if (rc) {
+ 			plt_free(inl_dev->ipsec_index);
+-			goto cpt_release;
++			goto cpt_cq_inb_release;
+ 		}
+
+ 		start_index = inl_dev->ipsec_index[0];
+@@ -1507,6 +1574,8 @@ roc_nix_inl_dev_init(struct roc_nix_inl_dev *roc_inl_dev)
+ 	idev->nix_inl_dev = inl_dev;
+
+ 	return 0;
++cpt_cq_inb_release:
++	rc |= nix_inl_cpt_cq_inb_release(inl_dev);
+ cpt_release:
+ 	rc |= nix_inl_cpt_release(inl_dev);
+ sso_release:
+@@ -1558,8 +1627,9 @@ roc_nix_inl_dev_fini(struct roc_nix_inl_dev *roc_inl_dev)
+ 	/* Flush Inbound CTX cache entries */
+ 	nix_inl_cpt_ctx_cache_sync(inl_dev);
+
++	rc = nix_inl_cpt_cq_inb_release(inl_dev);
+ 	/* Release CPT */
+-	rc = nix_inl_cpt_release(inl_dev);
++	rc |= nix_inl_cpt_release(inl_dev);
+
+ 	/* Release SSO */
+ 	rc |= nix_inl_sso_release(inl_dev);
+diff --git a/drivers/common/cnxk/roc_nix_inl_dev_irq.c b/drivers/common/cnxk/roc_nix_inl_dev_irq.c
+index 89155a1f7d..30986e780a 100644
+--- a/drivers/common/cnxk/roc_nix_inl_dev_irq.c
++++ b/drivers/common/cnxk/roc_nix_inl_dev_irq.c
+@@ -49,10 +49,11 @@ static void
+ nix_inl_cpt_cq_cb(struct roc_cpt_lf *lf)
+ {
+ 	struct roc_nix *roc_nix = (struct roc_nix *)lf->dev->roc_nix;
++	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
+ 	struct idev_cfg *idev = idev_get_cfg();
+ 	uint32_t port_id = roc_nix->port_id;
+ 	struct nix_inl_dev *inl_dev = NULL;
+-	struct roc_ow_ipsec_outb_sa *sa;
++	enum nix_inl_event_type cq_type;
+ 	union cpt_lf_cq_base cq_base;
+ 	union cpt_lf_cq_ptr cq_ptr;
+ 	struct cpt_cq_s *cq_s;
+@@ -60,6 +61,7 @@ nix_inl_cpt_cq_cb(struct roc_cpt_lf *lf)
+ 	uint32_t count, head;
+ 	uint32_t nq_ptr;
+ 	uint64_t i;
++	void *sa;
+
+ 	if (idev)
+ 		inl_dev = idev->nix_inl_dev;
+@@ -75,23 +77,30 @@ nix_inl_cpt_cq_cb(struct roc_cpt_lf *lf)
+ 	count = cq_ptr.s.count;
+ 	nq_ptr = cq_ptr.s.nq_ptr;
+
++	if (lf->dev == &inl_dev->dev)
++		cq_type = NIX_INL_INB_CPT_CQ;
++	else if (lf->dev == &nix->dev)
++		cq_type = NIX_INL_OUTB_CPT_CQ;
++	else
++		return;
++
+ 	for (i = 0; i < count; i++) {
+ 		cq_s = (struct cpt_cq_s *)(uintptr_t)(((cq_base.s.addr << 7)) + (head << 5));
+
+ 		if (cq_s->w0.s.uc_compcode && cq_s->w0.s.compcode) {
+ 			switch (cq_s->w2.s.fmt & fmt_msk) {
+ 			case WQE_PTR_CPTR:
+-				sa = (struct roc_ow_ipsec_outb_sa *)cq_s->w1.esn;
++				sa = (void *)cq_s->w1.esn;
+ 				break;
+ 			case CPTR_WQE_PTR:
+-				sa = (struct roc_ow_ipsec_outb_sa *)cq_s->w3.comp_ptr;
++				sa = (void *)cq_s->w3.comp_ptr;
+ 				break;
+ 			default:
+ 				plt_err("Invalid event Received ");
+ 				goto done;
+ 			}
+ 			uint64_t tmp = ~(uint32_t)0x0;
+-			inl_dev->work_cb(&tmp, sa, NIX_INL_CPT_CQ, (void *)cq_s, port_id);
++			inl_dev->work_cb(&tmp, sa, cq_type, (void *)cq_s, port_id);
+ 		}
+ done:
+ 		head = (head + 1) % lf->cq_size;
+@@ -165,7 +174,7 @@ nix_inl_sso_hws_irq(void *param)
+ void
+ nix_inl_cpt_done_irq(void *param)
+ {
+-	struct roc_cpt_lf *lf = param;
++	struct roc_cpt_lf *lf = (struct roc_cpt_lf *)param;
+ 	uint64_t done_wait;
+ 	uint64_t intr;
+
+diff --git a/drivers/net/cnxk/cn20k_ethdev_sec.c b/drivers/net/cnxk/cn20k_ethdev_sec.c
+index eab06be68f..5d0debb81d 100644
+--- a/drivers/net/cnxk/cn20k_ethdev_sec.c
++++ b/drivers/net/cnxk/cn20k_ethdev_sec.c
+@@ -439,18 +439,31 @@ cnxk_pktmbuf_free_no_cache(struct rte_mbuf *mbuf)
+ }
+
+ static void
+-cn20k_eth_sec_post_event(struct rte_eth_dev *eth_dev, struct roc_ow_ipsec_outb_sa *sa,
++cn20k_eth_sec_post_event(struct rte_eth_dev *eth_dev, void *sa, enum nix_inl_event_type type,
+ 			 uint16_t uc_compcode, uint16_t compcode, struct rte_mbuf *mbuf)
+ {
+ 	struct rte_eth_event_ipsec_desc desc;
+ 	struct cn20k_sec_sess_priv sess_priv;
+-	struct cn20k_outb_priv_data *priv;
++	struct cn20k_outb_priv_data *outb_priv;
++	struct cn20k_inb_priv_data *inb_priv;
+ 	static uint64_t warn_cnt;
++	uint64_t life_unit;
+
+ 	memset(&desc, 0, sizeof(desc));
+-	priv = roc_nix_inl_ow_ipsec_outb_sa_sw_rsvd(sa);
+ 	sess_priv.u64 = 0;
+
++	if (type == NIX_INL_INB_CPT_CQ) {
++		struct roc_ow_ipsec_inb_sa *inb_sa = (struct roc_ow_ipsec_inb_sa *)sa;
++		inb_priv = roc_nix_inl_ow_ipsec_inb_sa_sw_rsvd(sa);
++		desc.metadata = (uint64_t)inb_priv->userdata;
++		life_unit = inb_sa->w2.s.life_unit;
++	} else {
++		struct roc_ow_ipsec_outb_sa *outb_sa = (struct roc_ow_ipsec_outb_sa *)sa;
++		outb_priv = roc_nix_inl_ow_ipsec_outb_sa_sw_rsvd(sa);
++		desc.metadata = (uint64_t)outb_priv->userdata;
++		life_unit = outb_sa->w2.s.life_unit;
++	}
++
+ 	if (mbuf)
+ 		sess_priv.u64 = *rte_security_dynfield(mbuf);
+
+@@ -459,14 +472,14 @@ cn20k_eth_sec_post_event(struct rte_eth_dev *eth_dev, struct roc_ow_ipsec_outb_s
+ 		desc.subtype = RTE_ETH_EVENT_IPSEC_ESN_OVERFLOW;
+ 		break;
+ 	case ROC_IE_OW_UCC_ERR_SA_EXPIRED:
+-		if (sa->w2.s.life_unit == ROC_IE_OW_SA_LIFE_UNIT_PKTS)
++		if (life_unit == ROC_IE_OW_SA_LIFE_UNIT_PKTS)
+ 			desc.subtype = RTE_ETH_EVENT_IPSEC_SA_PKT_HARD_EXPIRY;
+ 		else
+ 			desc.subtype = RTE_ETH_EVENT_IPSEC_SA_BYTE_HARD_EXPIRY;
+ 		break;
+ 	case ROC_IE_OW_UCC_SUCCESS_SA_SOFTEXP_FIRST:
+ 	case ROC_IE_OW_UCC_SUCCESS_SA_SOFTEXP_AGAIN:
+-		if (sa->w2.s.life_unit == ROC_IE_OW_SA_LIFE_UNIT_PKTS)
++		if (life_unit == ROC_IE_OW_SA_LIFE_UNIT_PKTS)
+ 			desc.subtype = RTE_ETH_EVENT_IPSEC_SA_PKT_EXPIRY;
+ 		else
+ 			desc.subtype = RTE_ETH_EVENT_IPSEC_SA_BYTE_EXPIRY;
+@@ -490,7 +503,6 @@ cn20k_eth_sec_post_event(struct rte_eth_dev *eth_dev, struct roc_ow_ipsec_outb_s
+ 		break;
+ 	}
+
+-	desc.metadata = (uint64_t)priv->userdata;
+ 	rte_eth_dev_callback_process(eth_dev, RTE_ETH_EVENT_IPSEC, &desc);
+ }
+
+@@ -498,12 +510,15 @@ static const char *
+ get_inl_event_type(enum nix_inl_event_type type)
+ {
+ 	switch (type) {
+-	case NIX_INL_CPT_CQ:
+-		return "NIX_INL_CPT_CQ";
++	case NIX_INL_OUTB_CPT_CQ:
++		return "NIX_INL_OUTB_CPT_CQ";
++	case NIX_INL_INB_CPT_CQ:
++		return "NIX_INL_INB_CPT_CQ";
+ 	case NIX_INL_SSO:
+ 		return "NIX_INL_SSO";
+ 	case NIX_INL_SOFT_EXPIRY_THRD:
+ 		return "NIX_INL_SOFT_EXPIRY_THRD";
++
+ 	default:
+ 		return "Unknown event";
+ 	}
+@@ -515,8 +530,8 @@ cn20k_eth_sec_sso_work_cb(uint64_t *gw, void *args, enum nix_inl_event_type type
+ {
+ 	struct rte_eth_event_ipsec_desc desc;
+ 	struct cn20k_sec_sess_priv sess_priv;
+-	struct cn20k_outb_priv_data *priv;
+-	struct roc_ow_ipsec_outb_sa *sa;
++	struct cn20k_outb_priv_data *outb_priv;
++	struct roc_ow_ipsec_outb_sa *outb_sa;
+ 	struct cpt_cn20k_res_s *res;
+ 	struct rte_eth_dev *eth_dev;
+ 	struct cnxk_eth_dev *dev;
+@@ -546,20 +561,19 @@ cn20k_eth_sec_sso_work_cb(uint64_t *gw, void *args, enum nix_inl_event_type type
+ 		/* Fall through */
+ 	default:
+ 		if (type) {
+-			sa = (struct roc_ow_ipsec_outb_sa *)args;
+-			priv = roc_nix_inl_ow_ipsec_outb_sa_sw_rsvd(sa);
+-			desc.metadata = (uint64_t)priv->userdata;
+ 			eth_dev = &rte_eth_devices[port_id];
+-			if (type == NIX_INL_CPT_CQ) {
+-				struct cpt_cq_s *cqs = (struct cpt_cq_s *)cq_s;
+-
+-				cn20k_eth_sec_post_event(eth_dev, sa,
++			struct cpt_cq_s *cqs = (struct cpt_cq_s *)cq_s;
++			if (type < NIX_INL_SSO) {
++				cn20k_eth_sec_post_event(eth_dev, args, type,
+ 							 (uint16_t)cqs->w0.s.uc_compcode,
+ 							 (uint16_t)cqs->w0.s.compcode, NULL);
+ 				return;
+ 			}
+ 			if (type == NIX_INL_SOFT_EXPIRY_THRD) {
+-				if (sa->w2.s.life_unit == ROC_IE_OW_SA_LIFE_UNIT_PKTS)
++				outb_sa = (struct roc_ow_ipsec_outb_sa *)args;
++				outb_priv = roc_nix_inl_ow_ipsec_outb_sa_sw_rsvd(outb_sa);
++				desc.metadata = (uint64_t)outb_priv->userdata;
++				if (outb_sa->w2.s.life_unit == ROC_IE_OW_SA_LIFE_UNIT_PKTS)
+ 					desc.subtype = RTE_ETH_EVENT_IPSEC_SA_PKT_EXPIRY;
+ 				else
+ 					desc.subtype = RTE_ETH_EVENT_IPSEC_SA_BYTE_EXPIRY;
+@@ -596,9 +610,9 @@ cn20k_eth_sec_sso_work_cb(uint64_t *gw, void *args, enum nix_inl_event_type type
+ 	sess_priv.u64 = *rte_security_dynfield(mbuf);
+
+ 	sa_base = dev->outb.sa_base;
+-	sa = roc_nix_inl_ow_ipsec_outb_sa(sa_base, sess_priv.sa_idx);
++	outb_sa = roc_nix_inl_ow_ipsec_outb_sa(sa_base, sess_priv.sa_idx);
+
+-	cn20k_eth_sec_post_event(eth_dev, sa, res->uc_compcode, res->compcode, mbuf);
++	cn20k_eth_sec_post_event(eth_dev, outb_sa, type, res->uc_compcode, res->compcode, mbuf);
+
+ 	cnxk_pktmbuf_free_no_cache(mbuf);
+ }
 --
 2.34.1
 
