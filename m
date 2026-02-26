@@ -2,90 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3CABFD461A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 05:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C8AFC5901
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 06:56:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8FB24021F;
-	Thu, 26 Feb 2026 06:05:56 +0100 (CET)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
- [209.85.160.181])
- by mails.dpdk.org (Postfix) with ESMTP id C7D93400D6
- for <dev@dpdk.org>; Thu, 26 Feb 2026 06:05:55 +0100 (CET)
-Received: by mail-qt1-f181.google.com with SMTP id
- d75a77b69052e-5069df1de6fso4123591cf.3
- for <dev@dpdk.org>; Wed, 25 Feb 2026 21:05:55 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772082355; cv=none;
- d=google.com; s=arc-20240605;
- b=GDM98sEHjRC4p9ZNOx5bxVVSpCVl2RKvQ4Nw6T6CTbLJuyVo4E+zqknu1G1t2vF7sG
- rWuhXVrmarjVqyoo4fFsVTq+diDg0huk0BRuRuxnYr80z0dMUcR5tlTqnJWD++L9Nebp
- yr7mcKzSnWD3TUccE0pc4r0oEDz/feIvDzs1iWZbUaySAFeNzYe8R/fpgIoYO1+9Dq55
- NfEmNClPSdSBGlG2MMzosHMZc7W5VQq577UfKcZ4NQkCRhbkmDlTDFGpkSRr8px1R0Cc
- QzPoap1nzLvb4Acjt3n8wVre5MtS9Uvy7BO/q8r9REZIfpz71eDYK03WEfnX1Ssk6H1f
- 5xEQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=XjXZqEOP8xGRryu8ETb8mTdwO8l58WUPUEE+xJe6qPM=;
- fh=AWWq3WD50/hRgQhFlOlyY9e4SLNDsnHrLOnnoS81ZUI=;
- b=BiBBTOCXa0EF3+MxfyeinAZ0B6CB/ABSNkNjQNDDzXwl84jCXlcPUnOY/r5Kvv4V+d
- 4SHFUrXMxuIrTP2kY6fp32SnuoIrvmpC2QPQb463CImi8eqyUdZ4PS5aIJ5mdEl27PD5
- NfNhz8IHvIfeZ/NIkTP+lY+EmZwwgi0Q6dQlgSV+W4tFszl9fT+IjYVTOtZf7QKWTVdb
- BnePhjAovzHBSgq2/f6aciK6/PqZgZhOnaY5NmY11/jmzR65J5FCFpx3wQidQDAjqB2F
- KHz8OFpA8pXZsGadlIkxf38RPRjCRqtdcf5MCdRk3hkTfTbItVsHICjE/QNPot8A5F4w
- 8LzQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1772082355; x=1772687155; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=XjXZqEOP8xGRryu8ETb8mTdwO8l58WUPUEE+xJe6qPM=;
- b=MObnk3EV5jf9nu2jFrGCG9XsFVDkrsGEpGu/ayrjLOGOlwCEWGKidrdaDaVSJLL8Ah
- DM2zmKaAelUPVeQFf6XpCSvnz0ykvQTkNBGit1o1dU46FwFmnNlXCiQ58Ugf5JZqSKC3
- XrKcslrOCNZkbn0OZdpaXBePQzVYDspmDISUkhVGwwVtyRZtphs0vXIUgRFikmrj/YdX
- YvYzYSRrbTXWTDWUnxpHMsnueUgC6wtAQ06kRbvZ1XBPkg2S8oN2i0ISuLfM0jyCbdlZ
- j+WWAMPcoWJ8IZKaMMmdV0YoFni5NYI/TJz2zAUdcznHb+PnltnAJAkxj7MGFw9/AME4
- apSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772082355; x=1772687155;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=XjXZqEOP8xGRryu8ETb8mTdwO8l58WUPUEE+xJe6qPM=;
- b=VQWK1KlfV9SwhpfLeC7++x5lCIvr4sjFduyhXlZZnVKCyVYzPA9MuzK7AG9EGSJArV
- Xla06srsTpNbacLrOe3Qs06vDGQAGKn7LEz7nBoe/NNfmYu8bSPjGDKr2uWHtOot+Y4i
- EOpstHX0NAvN373WoOrWRW5Ow+nXsz8z+M+bdocUo9akOCZatrGq5XAFR3mtPcGHOYJY
- ivDDpZfWgLEsk+sgGaEpnpaWSdoYWXwUKj1WtM88BX+MG7AHoYL5onko428X822MVYGg
- F4f1AoC8FOKsbfEPjrU0Vv4Uva8YIgW0KksWF69Dkc7aB5P7OCtiQ9UW7KyBevqaMIp/
- OzEA==
-X-Gm-Message-State: AOJu0Yysm3rumCJLmpLgesO7fH/cT7mrRabr4GFCS7T8Z/UfHBCB+rQ8
- +AGwZBH0UA8euIvsUpFcaoI3yhq0rHfw0/ONQGaHJxSQqwgsOC9XH5AF/MZYreT3xzzI1S0UUgA
- g+Ypua61zWp/5Nwzx3/OkuVAuWRzqcNI=
-X-Gm-Gg: ATEYQzw22tonJPJ0VPX7ScjteNbx1SXt3dICbRLzYzXsnbErFZdozk4Iv9Qa2XG+7Jx
- G3+YKqVCYbGKN4TDYsVvedJvc1esYgg/6pkbc/2NTvlZpZNR2CJ4hujJM67Pt64ekqHJtkmUIjJ
- IKHrCevgVpO+h7CSWyYUdvA9u5ZH8BY7NHe2ZEuKG1qNXc9/UvMMrPtpeAdg/VOF9wBuDsNkDlW
- GrRN7jH4wBa8LVeQyxmButb1o/8Wkg37+9UgOuDjZsek7P8sCF6AaferoHKbt85dF2zC6D0/6xW
- VDz3o/e7CZF8HGcbjg==
-X-Received: by 2002:ac8:7f46:0:b0:501:17a1:4ccf with SMTP id
- d75a77b69052e-50741f0614cmr41270141cf.3.1772082354965; Wed, 25 Feb 2026
- 21:05:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4FD7A4021F;
+	Thu, 26 Feb 2026 07:56:01 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 58C4D400D6
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 07:55:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1772088959; x=1803624959;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=UlIC9kpg9FNc8YDgDD/MTlmlcwRAL2P3WUiMAQRFBJQ=;
+ b=n1MIRTeCe8JpzpxPhTvt4gGyfBbORPWifQLHobSb2svP2aqFqnQ2rLdE
+ 5rjHYa5cR1g1Q42oESD1yfTJ3yrfVjU0cZLCSGnmnKJAGvKXBNRFxgfhi
+ +S+H30GrA7SKwO8x/QL2O85Omax87r/2KxFs6cYFHOVvrLwbqVszNnWr+
+ aEgpPw9JYFTJRUjCTdYjvVSoI0p5j/r+6mcoNhGWh963PVHvIWLjupwZ3
+ SBMvbceSoSqgVs+KZHb3HfdV29N0m/qZksrUuRwRyNy4JA01lufv8WKFM
+ 6ea1Aix0uuUKAVMGzjf/2RRbKg04NFeDgHZ4y0nn4MDfvwxFKA7HclVSl g==;
+X-CSE-ConnectionGUID: xrXf7GoES4Smi/AoMTnPhg==
+X-CSE-MsgGUID: pQEkLmRbRTyU6mUBUFFFBg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11712"; a="73322758"
+X-IronPort-AV: E=Sophos;i="6.21,311,1763452800"; d="scan'208";a="73322758"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Feb 2026 22:55:57 -0800
+X-CSE-ConnectionGUID: cRaFPNj6TL+TMNHGvH/10A==
+X-CSE-MsgGUID: iIrpBFKHQ32I+qYdg5Xxaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,311,1763452800"; d="scan'208";a="214723464"
+Received: from unknown (HELO sprmax15..) ([10.138.182.128])
+ by fmviesa007.fm.intel.com with ESMTP; 25 Feb 2026 22:55:57 -0800
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Subject: [PATCH v13 0/3] net/idpf: enable AVX2 for split queue Rx/Tx
+Date: Thu, 26 Feb 2026 12:22:30 +0530
+Message-Id: <20260226065233.917107-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250917052658.582872-1-shaiq.wani@intel.com>
+References: <20250917052658.582872-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
-References: <20260219090847.3257753-1-rbhansali@marvell.com>
- <20260219090847.3257753-8-rbhansali@marvell.com>
-In-Reply-To: <20260219090847.3257753-8-rbhansali@marvell.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Thu, 26 Feb 2026 10:35:28 +0530
-X-Gm-Features: AaiRm520k9fy2oXpmr6roUJhN5JqvWnnzY9iQkOHoBYjQKQinRjn20kOc9LkOF8
-Message-ID: <CALBAE1MnJxTLS91-d2w7anjJjZG3uJX=0Tjcwz49z5ZExti+XQ@mail.gmail.com>
-Subject: Re: [PATCH 8/8] common/cnxk: enable CPT CQ for inline IPSec inbound
-To: Rahul Bhansali <rbhansali@marvell.com>
-Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
- Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
- Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
- jerinj@marvell.com, Rakesh Kudurumalla <rkudurumalla@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -99,30 +60,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Feb 19, 2026 at 2:39=E2=80=AFPM Rahul Bhansali <rbhansali@marvell.c=
-om> wrote:
->
-> From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
->
-> Added support of CPT CQ configurations for inline inbound IPsec.
->
-> Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+In case some CPUs don't support AVX512. Enable AVX2 for them to
+get better per-core performance.
 
-Fix
+In the single queue model, the same descriptor queue is used by SW
+to post descriptors to the device and used by device to report completed
+descriptors to SW. While as the split queue model separates them into
+different queues for parallel processing and improved performance.
 
-Wrong headline case:
-                        "common/cnxk: enable CPT CQ for inline IPSec
-inbound": IPSec --> IPsec
+v13:
+*reworked the recv_pkts() function.
+- the driver datapath can now receive any number
+- of packets available not just multiples of 4.
 
-Invalid patch(es) found - checked 8 patches
-check-git-log failed
+v12:
+*Addressed AI generated comments.
+*Rebased on latest next-net-intel tree.
+*Included a release note entry.
 
-### [PATCH] net/cnxk: support of plain packet reassembly
 
-__rte_internal must appear alone on the line immediately preceding the
-return type of a function.
-__rte_internal must appear alone on the line immediately preceding the
-return type of a function.
+v11:
+*Fixed indentation issues.
 
-7/8 valid patches
-checkpatch failed
+v10:
+*Changed desc reading style in Rx path.
+
+v9:
+*Some minor fixes.
+
+v8:
+*Reworked the receive func to avoid race conditions in Rx path.
+*Removed unnecessary compiler barriers.
+
+v7:
+*Removed (char) casts, ifdef block as suggested.
+*Fixed indentation, line wrapping.
+*Did blind write of data to avoid branching.
+*changed desc building and writing  order for Tx.
+
+v6:
+*used single load/store in splitq_recv_pkts function.
+*removed x86-specific intrinsics from common code.
+
+v5:
+*Fixed CI errors.
+*Used defined constants instead of numbers.
+
+v4:
+*moved splitq_rearm_common to a common location.
+*reduced duplication of code.
+*fixed splitq_recv_pkts function.
+
+v3:
+*Fixed some indentation issues.
+*Collapsed wrapper and core function into one.
+*Fixed some pointer casting and naming inconsistency issues.
+
+v2:
+*Fixed CI build related issues.
+*Rebased on top of idpf/cpfl rx path selection simplication patch.
+
+
+Shaiq Wani (3):
+  net/idpf: enable AVX2 for split queue Rx
+  net/idpf: enable AVX2 for split queue Tx
+  doc: add note on unsupported completion queue sharing
+
+ doc/guides/nics/idpf.rst                      |   5 +
+ doc/guides/rel_notes/release_26_03.rst        |   4 +
+ drivers/net/intel/idpf/idpf_common_device.h   |   2 +
+ drivers/net/intel/idpf/idpf_common_rxtx.c     |  67 ++++
+ drivers/net/intel/idpf/idpf_common_rxtx.h     |   8 +
+ .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 324 ++++++++++++++++++
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  |  56 ---
+ 7 files changed, 410 insertions(+), 56 deletions(-)
+
+-- 
+2.34.1
+
