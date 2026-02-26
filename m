@@ -2,95 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3084FD8FD8
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 16:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE81FD8FD3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 16:48:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47DEB402BB;
-	Thu, 26 Feb 2026 17:48:25 +0100 (CET)
-Received: from SN4PR0501CU005.outbound.protection.outlook.com
- (mail-southcentralusazon11011060.outbound.protection.outlook.com
- [40.93.194.60]) by mails.dpdk.org (Postfix) with ESMTP id 74400402B2
- for <dev@dpdk.org>; Thu, 26 Feb 2026 17:48:23 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HSrfZ6WAWOGNqDtuz7ken/2mdQLatjMhpTlu0q9IPetFddGNYIUJ47ue7Yraw6jLhledvD5je3iMd275r85QQNKhpfZblJYZ3h9/Hl3gAhDU22QyLRQbgEaD/oAaOlxYy4CrsBPyNdPWh9KMFiZBAWmXnLAivsPLA/bJfkZj2uUeCBKeeFQs0DCBMUmc1lNoeR+mtizPR3WRXhp43f1Q3afKrPGU4BjD4l37+ovsNdkfAUSEe7+M6I/14KwS4MaX0zkjg/87zEB+BSqjdTsW8Tp8CJz8pZLYejPlHTmswYUMqqYNHtDz1WOjhG/lS57nc68Ui/BHWwb0Nut94SooLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u9rF2SaWSsNfMQpaJ5+MsAUIJoHnXFECv1QqIEHYxoI=;
- b=Gs5mvKI4lprd/QDPQPeq+ueHPVW4FVpnUdgToZHNUwSmTHKEyeyZ7/guTI7kOncFcdxXDKzs0vXY5/feYtw2saSZenAK97ntveAqOWzBG1HK8doVlcJL88C3s6o48fXMkkyIj7EFWhZZmwm9WtRH/0cMESd2xo+cd0o5+g9sNd7QYg4uEXmMGsLUXdDDX8ETDl4+eFHYTP43awcSLwf1RBB0F5sa1q32CUfpV6rzN5y6ATMnCPg5jgiW984mdaQXmZmn0tyHK3pp7a0SSacr5hMuNC8ON36CJWgDjIVN8wXWXsfPKw6SKeXQM2Qx/jLrUoNXU7JntRfPhLGuzC96Jg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u9rF2SaWSsNfMQpaJ5+MsAUIJoHnXFECv1QqIEHYxoI=;
- b=dwzpdJnUqNmtf5hgZqG0FNhNEZZPdvxawMPP583uKLQyW3As9oTfm6ScPLl6rJ11ZAmBS81BSDHMqYS4GkTrT14CWES+8KtTAMVlOendiwDNxdOeDHmd7O4m3EtnTbG5dZdsJwW01GbPbQB+8lMV3G26FhH+kDn8vtsNPQSpjg4=
-Received: from BY5PR17CA0040.namprd17.prod.outlook.com (2603:10b6:a03:167::17)
- by MN2PR12MB4174.namprd12.prod.outlook.com (2603:10b6:208:15f::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.15; Thu, 26 Feb
- 2026 16:48:16 +0000
-Received: from BY1PEPF0001AE19.namprd04.prod.outlook.com
- (2603:10b6:a03:167:cafe::f2) by BY5PR17CA0040.outlook.office365.com
- (2603:10b6:a03:167::17) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.25 via Frontend Transport; Thu,
- 26 Feb 2026 16:48:18 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- BY1PEPF0001AE19.mail.protection.outlook.com (10.167.242.101) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.12 via Frontend Transport; Thu, 26 Feb 2026 16:48:15 +0000
-Received: from BLRASNATARA.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 26 Feb
- 2026 10:48:09 -0600
-From: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-To: <dev@dpdk.org>
-CC: <Selwin.Sebastian@amd.com>, Ashok Kumar Natarajan
- <ashokkumar.natarajan@amd.com>
-Subject: [PATCH v3 2/3] net/axgbe: add support for marvell m88e1512 PHY
-Date: Thu, 26 Feb 2026 22:17:39 +0530
-Message-ID: <20260226164740.1401-1-ashokkumar.natarajan@amd.com>
-X-Mailer: git-send-email 2.53.0.windows.1
-In-Reply-To: <20260225124706.1891-1-ashokkumar.natarajan@amd.com>
-References: <20260225124706.1891-1-ashokkumar.natarajan@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9074A4065E;
+	Thu, 26 Feb 2026 17:48:49 +0100 (CET)
+Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com
+ [209.85.222.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C473402B2
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 17:48:48 +0100 (CET)
+Received: by mail-qk1-f193.google.com with SMTP id
+ af79cd13be357-8cbb6d5f780so106758085a.1
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 08:48:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772124528;
+ x=1772729328; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=iX9NsMt5DSOcZGw3BLt1xGpNE6zHlEb3L5mZlRqA+DU=;
+ b=CtLvlErzLdpHSblgObtrhQWCp4pYkuRmaVZ54DOqkQxU4LPtGvC9Ji9lxkD9HVulU0
+ cvS9Zz87cdZmrXKudpKSSXJNBtPdPGgjIpLjJ0DkFbJuJ7ZxWfb4DBdl5rzhU94Si5NS
+ Fo/f1Cw/HzV913ZSewMnJdG4xvXtz3p9pc0RCM9iBh2DCNAzWG9+dsS3b/JIvheYtAml
+ jL6xmCuZ/3stPoe9jPMDvl8i7Mu9OYVoZfQ5tH25Zuo07g3/9n3sadWe8L74Ke48te5x
+ 2x006GY8QM7AF3XOETmbUAsXAarsfU3vHBRhXFEaHffpm2X8CKvyTUm448xs9bSBfAKa
+ zAOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772124528; x=1772729328;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=iX9NsMt5DSOcZGw3BLt1xGpNE6zHlEb3L5mZlRqA+DU=;
+ b=h17djrA1AhSFiZixvajoBcEyTB7Ubid7DNJRT5S5M6lgEDyqQeAsmHsPqKDULdnNwL
+ eXA2bbRpw+9OWbNLfSW+e7PgizYGYsn6vVWM5QcLzbvftIkFSaxtXp1KSPJhNRxza4as
+ md6wdgBUbkiqRFR5fdOAtF70B6mBUH52yuHjDnxxkRQtpIeM1+bPaE/MjCPmpHt3Fb1/
+ uXGBo+E37YF9DZO2F386GtQ45Uas031pPCuhEmDS5NU9z34OaoiYLdpYMiJJJkX7WtIf
+ qn+0YYf1e9eg6jNX58HybcCD8qlt5UNCFslGlzW1+ySdZxCp/hXa6qTWaMnyAJYyh8IH
+ wRcw==
+X-Gm-Message-State: AOJu0YwdSqOHvgjrVV62TlfQ5czozs8D9kwCYx5FC1YTo3e3BqdDKLpw
+ Kf0dWml200EPhwSgk/CHQQmEqSuCRw1u6WaZz54oADAYUDgVR8b3btJRJBVCLpVeCmfIpdjwhQH
+ cCtH4
+X-Gm-Gg: ATEYQzzbBol6wTAZWSph4OpA5GPladXGTFOG4kzDl+E5+w6i7WG9os1rUiqoHkffdXI
+ eGVxV+gOKqc0zb5a9JPP547NMbrFylL0+TZTrNrWZFJSvS+5sAijmqpjG5zLfsirlJP0tNdvU90
+ lQ9x5P10LUeRoKk+/Nj9uxyChdHu/ARMfFsgwH+CgjEhX7Mrn99GTuiDg5W88hl2Ih2x7qp8iF8
+ B98jTdSRcPxS02C3sUZeREF4gZf+iW2+SR9B6EYVWj/Zn8sXFARiY51siyeKSGwpNMg6GP5qb6+
+ vn3X1Wx/D5LMcmPt7jjBdAOIWGksMLxbp3k4sDSpM/7LLK8pIZ31IBMt3Vs+sYeh41UNyRTWRiD
+ 3SsPirc2wTnpjQDFOChjivNF12JJx3E0az+6xcM8P11iGXd6+ReLb0fNUUGIBMgs0MTp18oTJS+
+ kFIev7yZAGKOxZbX+Vbb0gJksSZ3I8Q1zBunjzOpkk/iZybQhkNX57m8fsslLmSVj/rKvorGbS
+X-Received: by 2002:ac8:5905:0:b0:501:3b8c:7d72 with SMTP id
+ d75a77b69052e-50741f385efmr57660551cf.27.1772124527547; 
+ Thu, 26 Feb 2026 08:48:47 -0800 (PST)
+Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-50744afbba3sm26227431cf.33.2026.02.26.08.48.46
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 26 Feb 2026 08:48:47 -0800 (PST)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Luca Boccassi <bluca@debian.org>
+Subject: [PATCH] test/memcpy: reduce alignment offset coverage to fix timeout
+Date: Thu, 26 Feb 2026 08:48:43 -0800
+Message-ID: <20260226164843.183959-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE19:EE_|MN2PR12MB4174:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0c6aa448-48ad-4254-36eb-08de7556d686
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|376014|82310400026|1800799024; 
-X-Microsoft-Antispam-Message-Info: j81DcP4meSAlsksOb+5Ge0DoZ30WHzsNbP8VX505DVjNucqnYzB/WFJCibr8cd52ya/b0XAK+58szJEM6xOQNXff5Fe+iJ4AuOmyrZvPZzFAU3LRDcoO2J5IFkYCJoaVdnO9fSwcS03CjIYC0owMiZwk2ybW3i2RmQgcEJFZVxkI2W1IRnPb3shiYVhVLuyby13F21nU8dj/oE/YQUfV4V2Q1lAkbFv3ZFpaLOs0r+8sKneStgXd790LxfZ6Y6u6UOECbg0Tg9cqjSXEMvSJKC9KZLt4cvPuy5j9OzWkPMBrsCReF+XBqKWLb+Ge9MGfdAVp+q7nx625zdv6tWb3xjfF1xcsQeWi0YHopDfdXZbi/Sl+/MffDTM9N732pRrgEmEo34ICU9je0ARgSayz3/YS1xuJ7OP4zJOuWQgW7XeMi6KbHr327i1M7rg/MNuaKSvo0pN++q2WWgSX39QuV1DZd/pmEbD9I8URIjOmf4hSlABhkcjrKDOBCwh/gW+JXaC4Y+e+Kq5vJEIPeRcnlIhlh/oqUT2F7isA2yHPYa79nLOCKlvRa75OIoLU6ix7YPXBmMpZWS2Oh7XPsXgy0WKZSrYi3bQ3CnLNkGJU5T2X8iMGC3EokWqCxdCXnRtXSSLe+nj8M0/YtPO80JB9AejwbIv6eJIYHEQl6YCUrVH9IW5UbBvYn2rNnnnx5Qsnp46uJQy3uo3GzVsYIlQLXSkLeLVKK/Y3CMdpiA+3JtlyTt6LoVl5x2rq3XToGs7oeFr0Utj7LAmzw/E2VCDjp3+qaLFC8EXXrwbUKy7BjfPP5AftgJmw3TBWaVz9SyDaWzFjMzqlUybLMms8uIxI6A==
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 26CjxP3k2cRoNX6M/KaM6mYTnPwcdf8bGDUs9jUYsBTM/ObbfRYa5Ot+qgQQq4f7WmXyRd4vl8GYo1miKUqNbVyUercNZzncHabKsc7GUnLNPyV1VWYKzEjFnSdF9TGr4JCAocmS3QWyTxBN9m8m157xcSqyvW6Aoz3xF93FTxFkbf0RMpuLxZp5akqkvnrTaDn+BwVuVaFrywDcC7CONtEUQKlD42zolySTSArgJ7fVYBzcByzCFWQJnzdz2zslE30dDINsN2mgWMrjLicP7plFamAQ8V5SrH2c3uzAx4ULkOs27tO817vsLWjhJqTffMhUJZXg1ywzU0Lbi5xpOybHgjyfkKR5+y7ZDQhWMgZN3z8A9TEWydwd9aXuJkPaB8SsVpWZVqaxdfwnm/wF4RRKt7GCppKVKM0JTKuWKQBQQgXrcX6i9Fka3Wpwoy+F
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2026 16:48:15.9204 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0c6aa448-48ad-4254-36eb-08de7556d686
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BY1PEPF0001AE19.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4174
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -104,552 +79,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for the Marvell M88E1512 PHY in the axgbe driver. This patch
-implements device identification and basic initialization required to
-operate with this PHY. Only the M88E1512 model is supported in this
-update.
+The memcpy test sweeps all 32x32 src/dst alignment offset pairs which
+causes it to timeout on slow emulated 32-bit build environments [1].
 
-Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
+Replace with a curated set of 7 offsets {0, 1, 7, 15, 16, 17, 31}
+that cover the interesting alignment boundaries. This reduces the
+iterations from 38912 to 1862 while covering the same code paths.
+
+[1] https://build.opensuse.org/package/live_build_log/home:bluca:dpdk/dpdk/Debian_Testing/i586
+
+Reported-by: Luca Boccassi <bluca@debian.org>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/axgbe/axgbe_phy.h      |  44 ++++
- drivers/net/axgbe/axgbe_phy_impl.c | 389 ++++++++++++++++++++++++++++-
- 2 files changed, 429 insertions(+), 4 deletions(-)
+ app/test/test_memcpy.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/axgbe/axgbe_phy.h b/drivers/net/axgbe/axgbe_phy.h
-index eee3afc370..1bedd8e132 100644
---- a/drivers/net/axgbe/axgbe_phy.h
-+++ b/drivers/net/axgbe/axgbe_phy.h
-@@ -63,6 +63,29 @@
- #define BMCR_RESET		0x8000	/* Reset to default state      */
- #define BMCR_SPEED10		0x0000	/* Select 10Mbps               */
+diff --git a/app/test/test_memcpy.c b/app/test/test_memcpy.c
+index 7273c17a06..12e491034f 100644
+--- a/app/test/test_memcpy.c
++++ b/app/test/test_memcpy.c
+@@ -36,6 +36,16 @@ static size_t buf_sizes[TEST_VALUE_RANGE];
+ /* Data is aligned on this many bytes (power of 2) */
+ #define ALIGNMENT_UNIT          32
  
-+/* Advertisement control register. */
-+#define ADVERTISE_SLCT          0x001f  /* Selector bits               */
-+#define ADVERTISE_CSMA          0x0001  /* Only selector supported     */
-+#define ADVERTISE_10HALF        0x0020  /* Try for 10mbps half-duplex  */
-+#define ADVERTISE_1000XFULL     0x0020  /* Try for 1000BASE-X full-duplex */
-+#define ADVERTISE_10FULL        0x0040  /* Try for 10mbps full-duplex  */
-+#define ADVERTISE_1000XHALF     0x0040  /* Try for 1000BASE-X half-duplex */
-+#define ADVERTISE_100HALF       0x0080  /* Try for 100mbps half-duplex */
-+#define ADVERTISE_1000XPAUSE    0x0080  /* Try for 1000BASE-X pause    */
-+#define ADVERTISE_100FULL       0x0100  /* Try for 100mbps full-duplex */
-+#define ADVERTISE_1000XPSE_ASYM 0x0100  /* Try for 1000BASE-X asym pause */
-+#define ADVERTISE_100BASE4      0x0200  /* Try for 100mbps 4k packets  */
-+#define ADVERTISE_PAUSE_CAP     0x0400  /* Try for pause               */
-+#define ADVERTISE_PAUSE_ASYM    0x0800  /* Try for asymmetric pause     */
-+#define ADVERTISE_RESV          0x1000  /* Unused...                   */
-+#define ADVERTISE_RFAULT        0x2000  /* Say we can detect faults    */
-+#define ADVERTISE_LPACK         0x4000  /* Ack link partners response  */
-+#define ADVERTISE_NPAGE         0x8000  /* Next page bit               */
-+
-+#define ADVERTISE_FULL          (ADVERTISE_100FULL | ADVERTISE_10FULL | \
-+		ADVERTISE_CSMA)
-+#define ADVERTISE_ALL           (ADVERTISE_10HALF | ADVERTISE_10FULL | \
-+		ADVERTISE_100HALF | ADVERTISE_100FULL)
++/*
++ * Subset of offsets to test. These values cover the structurally
++ * interesting alignment cases for SSE/AVX/AVX512 copy paths:
++ * aligned (0), off-by-one (1), partial vector (7, 15, 17),
++ * vector boundaries (16, 31). Testing all 1024 src x dst
++ * combinations of offsets 0..31 is unnecessary since many
++ * map to the same code paths, and causes the test to timeout
++ * on slow (e.g. emulated 32-bit) build environments.
++ */
++static const unsigned int test_offsets[] = {0, 1, 7, 15, 16, 17, 31};
  
- /* MDIO Manageable Devices (MMDs). */
- #define MDIO_MMD_PMAPMD		1	/* Physical Medium Attachment
-@@ -114,6 +137,26 @@
- #define MDIO_AN_10GBT_CTRL	32	/* 10GBASE-T auto-negotiation control */
- #define MDIO_AN_10GBT_STAT	33	/* 10GBASE-T auto-negotiation status */
- 
-+#define M88E1512_E_PHY_ID		0x01410DD0
-+#define AXGBE_M88E1512_PAGE_ADDR	0x0016
-+#define AXGBE_M88E1512_CFG_REG_1	0x0010
-+#define AXGBE_M88E1512_CFG_REG_2	0x0011
-+#define AXGBE_M88E1512_CFG_REG_3	0x0007
-+#define AXGBE_M88E1512_MODE		0x0014
-+
-+#define AXGBE_M88E1512_PHY_PAGE		22
-+#define AXGBE_M88E1512_COPPER_PAGE	0x00
-+#define AXGBE_M88E1512_LED_PAGE		0x03
-+#define AXGBE_M88E1512_MODE_PAGE	0x12
-+
-+#define AXGBE_M88E1512_MODE_RGMII_COPPER	0
-+#define AXGBE_M88E1512_MODE_SGMII_COPPER	1
-+#define AXGBE_M88E1512_MODE_RGMII_1000BX	2
-+#define AXGBE_M88E1512_MODE_RGMII_100BFX	3
-+#define AXGBE_M88E1512_MODE_RGMII_SGMII		4
-+#define AXGBE_M88E1512_MODE_SW_RESET		0x8000
-+
-+
- /* Control register 1. */
- /* Enable extended speed selection */
- #define MDIO_CTRL1_SPEEDSELEXT		(BMCR_SPEED1000 | BMCR_SPEED100)
-@@ -190,5 +233,6 @@
- #define DUPLEX_FULL             0x01
- #define DUPLEX_UNKNOWN          0xff
- 
-+#define AXGBE_PHY_REVISION_MASK 0xfffffff0
- #endif
- /* PHY */
-diff --git a/drivers/net/axgbe/axgbe_phy_impl.c b/drivers/net/axgbe/axgbe_phy_impl.c
-index 5bee7fec7a..8635a53a6d 100644
---- a/drivers/net/axgbe/axgbe_phy_impl.c
-+++ b/drivers/net/axgbe/axgbe_phy_impl.c
-@@ -3,6 +3,7 @@
-  *   Copyright(c) 2018 Synopsys, Inc. All rights reserved.
-  */
- 
-+#include <rte_cycles.h>
- #include "axgbe_ethdev.h"
- #include "axgbe_common.h"
- #include "axgbe_phy.h"
-@@ -204,6 +205,7 @@ struct axgbe_phy_data {
- 	unsigned int rrc_count;
- 
- 	uint8_t mdio_addr;
-+	uint32_t phy_id;
- 
- 	/* SFP Support */
- 	enum axgbe_sfp_comm sfp_comm;
-@@ -253,6 +255,8 @@ static void axgbe_phy_rrc(struct axgbe_port *pdata);
- 
- static int axgbe_phy_get_comm_ownership(struct axgbe_port *pdata);
- static void axgbe_phy_put_comm_ownership(struct axgbe_port *pdata);
-+static int axgbe_get_ext_phy_link_status(struct axgbe_port *pdata,
-+		bool *linkup);
- 
- static int axgbe_phy_i2c_xfer(struct axgbe_port *pdata,
- 			      struct axgbe_i2c_op *i2c_op)
-@@ -297,6 +301,83 @@ static int axgbe_phy_write(struct axgbe_port *pdata, u16 reg, u16 value)
- 	return ret;
- }
- 
-+static int axgbe_phy_config_advert(struct axgbe_port *pdata)
-+{
-+	u16 advert;
-+	int ret;
-+
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_ADVERTISE, &advert);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to read ADVERTISE register");
-+		return ret;
-+	}
-+
-+	advert |= ADVERTISE_FULL;
-+	advert |= ADVERTISE_PAUSE_CAP;
-+
-+	ret = pdata->phy_if.phy_impl.write(pdata, MII_ADVERTISE, advert);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to write ADVERTISE register");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int axgbe_phy_set_speed(struct axgbe_port *pdata)
-+{
-+	struct axgbe_phy_data *phy_data = pdata->phy_data;
-+	u16 bmcr;
-+	int ret;
-+
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to read BMCR register");
-+		return ret;
-+	}
-+
-+	bmcr &= ~(MDIO_CTRL1_SPEEDSELEXT);
-+	switch (phy_data->cur_mode) {
-+	case AXGBE_MODE_SGMII_1000:
-+		bmcr |= BMCR_SPEED1000;
-+		break;
-+	case AXGBE_MODE_SGMII_100:
-+		bmcr |= BMCR_SPEED100;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	ret = pdata->phy_if.phy_impl.write(pdata, MII_BMCR, bmcr);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to write BMCR register");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int axgbe_phy_config_aneg(struct axgbe_port *pdata)
-+{
-+	u16 bmcr;
-+	int ret;
-+
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to read BMCR register");
-+		return ret;
-+	}
-+
-+	bmcr &= ~(BMCR_ANENABLE);
-+	if (pdata->phy.autoneg == AUTONEG_ENABLE)
-+		bmcr |=  BMCR_ANENABLE | BMCR_ANRESTART;
-+
-+	ret = pdata->phy_if.phy_impl.write(pdata, MII_BMCR, bmcr);
-+
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to write BMCR register");
-+		return ret;
-+	}
-+	return 0;
-+}
- 
- static int axgbe_phy_redrv_write(struct axgbe_port *pdata, unsigned int reg,
- 				 unsigned int val)
-@@ -1132,10 +1213,35 @@ static unsigned int axgbe_phy_an_advertising(struct axgbe_port *pdata)
- 
- static int axgbe_phy_an_config(struct axgbe_port *pdata __rte_unused)
+ /*
+  * Create two buffers, and initialise one with random values. These are copied
+@@ -103,13 +113,15 @@ static int
+ func_test(void)
  {
-+	struct axgbe_phy_data *phy_data = pdata->phy_data;
-+	int ret;
-+
-+	/* Auto-negotiation config is implemented only for 1000BASE-T */
-+	if (phy_data->port_mode != AXGBE_PORT_MODE_1000BASE_T)
-+		return 0;
-+
-+	/* Supports only Marvell M88E1512 PHY for now*/
-+	if (phy_data->phy_id == M88E1512_E_PHY_ID) {
-+		ret = axgbe_phy_config_advert(pdata);
-+		if (ret) {
-+			PMD_DRV_LOG_LINE(ERR, "PHY ADVERTISE config failed");
-+			return ret;
-+		}
-+
-+		ret = axgbe_phy_set_speed(pdata);
-+		if (ret) {
-+			PMD_DRV_LOG_LINE(ERR, "PHY set speed failed");
-+			return ret;
-+		}
-+
-+		ret = axgbe_phy_config_aneg(pdata);
-+		if (ret) {
-+			PMD_DRV_LOG_LINE(ERR, "PHY AN config failed");
-+			return ret;
-+		}
-+		PMD_DRV_LOG_LINE(DEBUG, "M88E1512 PHY AN config done");
-+	}
- 	return 0;
--	/* Dummy API since there is no case to support
--	 * external phy devices registered through kernel APIs
--	 */
- }
+ 	unsigned int off_src, off_dst, i;
++	unsigned int n_offsets = RTE_DIM(test_offsets);
+ 	int ret;
  
- static enum axgbe_an_mode axgbe_phy_an_sfp_mode(struct axgbe_phy_data *phy_data)
-@@ -1880,10 +1986,12 @@ static bool axgbe_phy_use_mode(struct axgbe_port *pdata, enum axgbe_mode mode)
- 	}
- }
- 
-+/* return 0 means link down, 1 means link up */
- static int axgbe_phy_link_status(struct axgbe_port *pdata, int *an_restart)
- {
- 	struct axgbe_phy_data *phy_data = pdata->phy_data;
--	unsigned int reg;
-+	uint32_t reg;
-+	bool ext_phy_link_up = false;
- 
- 	*an_restart = 0;
- 
-@@ -1903,6 +2011,26 @@ static int axgbe_phy_link_status(struct axgbe_port *pdata, int *an_restart)
- 		}
- 	}
- 
-+	if (phy_data->port_mode == AXGBE_PORT_MODE_1000BASE_T) {
-+		if (phy_data->phy_id == M88E1512_E_PHY_ID) {
-+			if (axgbe_get_ext_phy_link_status(pdata,
-+						&ext_phy_link_up)) {
-+				PMD_DRV_LOG_LINE(ERR,
-+						"Get link status failed");
-+				goto out;
-+			}
-+
-+			if (ext_phy_link_up) {
-+				PMD_DRV_LOG_LINE(DEBUG,
-+						"M88E1512 PHY link is up");
-+			} else {
-+				PMD_DRV_LOG_LINE(DEBUG,
-+						"M88E1512 PHY link is not up");
-+				goto out;
-+			}
-+		}
-+	}
-+
- 	/* Link status is latched low, so read once to clear
- 	 * and then read again to get current state
- 	 */
-@@ -1946,6 +2074,7 @@ static int axgbe_phy_link_status(struct axgbe_port *pdata, int *an_restart)
- 		axgbe_phy_rrc(pdata);
- 	}
- 
-+out:
- 	return 0;
- }
- 
-@@ -2303,6 +2432,243 @@ static int axgbe_phy_reset(struct axgbe_port *pdata)
- 	return 0;
- }
- 
-+static int axgbe_get_phy_id(struct axgbe_port *pdata)
-+{
-+	struct axgbe_phy_data *phy_data = pdata->phy_data;
-+	u16 phy_id_1;
-+	u16 phy_id_2;
-+	int ret;
-+
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_PHYSID1,
-+			&phy_id_1);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to read PHYSID1 register");
-+		return ret;
-+	}
-+
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_PHYSID2,
-+			&phy_id_2);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to read PHYSID2 register");
-+		return ret;
-+	}
-+
-+	phy_data->phy_id = (u32)phy_id_1 << 16;
-+	phy_data->phy_id |= phy_id_2;
-+	phy_data->phy_id &= AXGBE_PHY_REVISION_MASK;
-+
-+	if (phy_data->phy_id == AXGBE_PHY_REVISION_MASK) {
-+		PMD_DRV_LOG_LINE(ERR, "Invalid PHY id (0x%x)",
-+				phy_data->phy_id);
-+		return -EINVAL;
-+	}
-+	PMD_DRV_LOG_LINE(DEBUG, "PHY id (0x%x)", phy_data->phy_id);
-+	return 0;
-+}
-+
-+static int axgbe_phy_poll_reset(struct axgbe_port *pdata)
-+{
-+	const uint64_t timeout_ms  = 2000;
-+	const uint64_t interval_ms = 1;
-+	const uint64_t hz          = rte_get_timer_hz();
-+	const uint64_t start       = rte_get_timer_cycles();
-+
-+	u16 bmcr = 0;
-+	int ret;
-+
-+	for (;;) {
-+		ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
-+		if (ret) {
-+			PMD_DRV_LOG_LINE(ERR, "PHY read BMCR failed");
-+			return ret;
-+		}
-+		if (!(bmcr & BMCR_RESET))
-+			return 0;
-+
-+		uint64_t elapsed_ms =
-+			((rte_get_timer_cycles() - start) * 1000) / hz;
-+		if (elapsed_ms >= timeout_ms)
-+			break;
-+
-+		rte_delay_us_block(interval_ms * 1000);
-+	}
-+	return -ETIMEDOUT;
-+}
-+
-+
-+static int axgbe_phy_soft_reset(struct axgbe_port *pdata)
-+{
-+	int ret;
-+	u16 bmcr;
-+
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to read BMCR register");
-+		return ret;
-+	}
-+
-+	bmcr |= BMCR_RESET;
-+
-+	ret = pdata->phy_if.phy_impl.write(pdata, MII_BMCR, bmcr);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Failed to write BMCR register");
-+		return ret;
-+	}
-+
-+	ret = axgbe_phy_poll_reset(pdata);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "Poll for PHY reset done failed");
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int axgbe_m88e1512_set_page(struct axgbe_port *pdata, u16 page)
-+{
-+	int ret;
-+
-+	ret = pdata->phy_if.phy_impl.write(pdata,
-+			AXGBE_M88E1512_PAGE_ADDR, page);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR,
-+				"PHY set page failed for page 0x%x", page);
-+	}
-+	return ret;
-+}
-+
-+static const struct {
-+	u16 reg17, reg16;
-+} errata_vals[] = {
-+	{ 0x214b, 0x2144 },
-+	{ 0x0c28, 0x2146 },
-+	{ 0xb233, 0x214d },
-+	{ 0xcc0c, 0x2159 },
-+};
-+
-+static int axgbe_m88e1512_init(struct axgbe_port *pdata)
-+{
-+	int ret;
-+	u8 i;
-+
-+	PMD_DRV_LOG_LINE(DEBUG, "Initialize M88E1512 phy");
-+
-+	/* Switch to PHY page 0xFF */
-+	ret = axgbe_m88e1512_set_page(pdata, 0xff);
-+	if (ret)
-+		goto err_out;
-+
-+	/* Configure M88E1512 errata registers */
-+	for (i = 0; i < ARRAY_SIZE(errata_vals); i++) {
-+		ret = pdata->phy_if.phy_impl.write(pdata,
-+				AXGBE_M88E1512_CFG_REG_2,
-+				errata_vals[i].reg17);
-+		if (ret) {
-+			PMD_DRV_LOG_LINE(ERR, "Config M88E1512 errata failed");
-+			goto err_set_copper_page;
-+		}
-+
-+		ret = pdata->phy_if.phy_impl.write(pdata,
-+				AXGBE_M88E1512_CFG_REG_1,
-+				errata_vals[i].reg16);
-+		if (ret) {
-+			PMD_DRV_LOG_LINE(ERR, "Config M88E1512 errata failed");
-+			goto err_set_copper_page;
-+		}
-+	}
-+
-+	/* Switch to PHY page 0xFB */
-+	ret = axgbe_m88e1512_set_page(pdata, 0xfb);
-+	if (ret)
-+		goto err_set_copper_page;
-+
-+	ret = pdata->phy_if.phy_impl.write(pdata,
-+			AXGBE_M88E1512_CFG_REG_3, 0xC00D);
-+	if (ret)
-+		goto err_set_copper_page;
-+
-+	/* Switch to PHY copper page */
-+	ret = axgbe_m88e1512_set_page(pdata, AXGBE_M88E1512_COPPER_PAGE);
-+	if (ret)
-+		goto err_out;
-+
-+	/* SGMII-to-Copper mode initialization */
-+
-+	/* Switch to PHY mode page */
-+	ret = axgbe_m88e1512_set_page(pdata, AXGBE_M88E1512_MODE_PAGE);
-+	if (ret)
-+		goto err_set_copper_page;
-+
-+	ret = pdata->phy_if.phy_impl.write(pdata,
-+			AXGBE_M88E1512_MODE,
-+			(AXGBE_M88E1512_MODE_SW_RESET |
-+			 AXGBE_M88E1512_MODE_SGMII_COPPER));
-+	if (ret)
-+		goto err_set_copper_page;
-+
-+	/* Switch to PHY copper page */
-+	ret = axgbe_m88e1512_set_page(pdata, AXGBE_M88E1512_COPPER_PAGE);
-+	if (ret)
-+		goto err_out;
-+
-+	ret = axgbe_phy_soft_reset(pdata);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "M88E1512 PHY soft reset failed");
-+		goto err_out;
-+	}
-+
-+	PMD_DRV_LOG_LINE(DEBUG, "M88E1512 phy init done");
-+	return 0;
-+
-+err_set_copper_page:
-+	/* Switch to PHY page 0 */
-+	axgbe_m88e1512_set_page(pdata, AXGBE_M88E1512_COPPER_PAGE);
-+err_out:
-+	PMD_DRV_LOG_LINE(ERR, "M88E1512 PHY initialization failed");
-+	return ret;
-+}
-+
-+
-+static int axgbe_get_ext_phy_link_status(struct axgbe_port *pdata, bool *linkup)
-+{
-+	int ret;
-+	u16 bmcr;
-+	u16 bmsr;
-+
-+	*linkup = false;
-+
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "PHY read failed for BMCR register");
-+		return ret;
-+	}
-+
-+	/* Autoneg is being started, therefore disregard BMSR value and
-+	 * report link as down.
-+	 */
-+	if (bmcr & BMCR_ANRESTART)
-+		return 0;
-+
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMSR, &bmsr);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "PHY read failed for BMSR register");
-+		return ret;
-+	}
-+
-+	if (bmsr & BMSR_LSTATUS)
-+		goto done;
-+
-+	/* Read link status */
-+	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMSR, &bmsr);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "PHY read failed for BMSR register");
-+		return ret;
-+	}
-+done:
-+	*linkup = (bmsr & BMSR_LSTATUS) ? true : false;
-+	return 0;
-+}
-+
-+
- static int axgbe_phy_init(struct axgbe_port *pdata)
- {
- 	struct axgbe_phy_data *phy_data;
-@@ -2556,6 +2922,21 @@ static int axgbe_phy_init(struct axgbe_port *pdata)
- 	}
- 
- 	phy_data->phy_cdr_delay = AXGBE_CDR_DELAY_INIT;
-+
-+	ret = axgbe_get_phy_id(pdata);
-+	if (ret) {
-+		PMD_DRV_LOG_LINE(ERR, "failed to get PHY id");
-+		return ret;
-+	}
-+
-+	PMD_DRV_LOG_LINE(DEBUG, "PHY ID = 0x%x", phy_data->phy_id);
-+
-+	if (phy_data->phy_id == M88E1512_E_PHY_ID) {
-+		ret = axgbe_m88e1512_init(pdata);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- void axgbe_init_function_ptrs_phy_v2(struct axgbe_phy_if *phy_if)
+-	for (off_src = 0; off_src < ALIGNMENT_UNIT; off_src++) {
+-		for (off_dst = 0; off_dst < ALIGNMENT_UNIT; off_dst++) {
++	for (off_src = 0; off_src < n_offsets; off_src++) {
++		for (off_dst = 0; off_dst < n_offsets; off_dst++) {
+ 			for (i = 0; i < RTE_DIM(buf_sizes); i++) {
+-				ret = test_single_memcpy(off_src, off_dst,
+-				                         buf_sizes[i]);
++				ret = test_single_memcpy(test_offsets[off_src],
++							 test_offsets[off_dst],
++							 buf_sizes[i]);
+ 				if (ret != 0)
+ 					return -1;
+ 			}
 -- 
-2.34.1
+2.51.0
 
