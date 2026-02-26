@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D8DFCE095
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 14:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCE8FCE095
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 14:35:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2E8940DCE;
-	Thu, 26 Feb 2026 15:34:20 +0100 (CET)
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com
- [209.85.221.48]) by mails.dpdk.org (Postfix) with ESMTP id D4A384060C
- for <dev@dpdk.org>; Thu, 26 Feb 2026 15:34:11 +0100 (CET)
-Received: by mail-wr1-f48.google.com with SMTP id
- ffacd0b85a97d-43996323357so503026f8f.0
- for <dev@dpdk.org>; Thu, 26 Feb 2026 06:34:11 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id E867840DD0;
+	Thu, 26 Feb 2026 15:34:21 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id 988B54060C
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 15:34:12 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-483770e0b25so8872575e9.0
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 06:34:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1772116451; x=1772721251; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1772116452; x=1772721252; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=RoYWhldEM4zw2qNpd2HCWFvKqIfixPN2sblp0Ta17bc=;
- b=gKlxX1AljJQqaDq1YXi6iMrGfmgTTW2jbHMQ+ubRJMHOPSOTBCaFg2hIBF+2WHALj1
- eXc/tPt/TPv8hx5KjJ/aNq63NZSPQ/SsRL/atRBuJs+T5QYnUwHni2znqTrKxBd/zQJ1
- N/cLNePyr/qh0q0vaMdPhOQoiVCajHf4PTrqU+ByhjvW8sgjin4ef8h8h6Djsqz9ulxR
- hrzGxQbGBCWHljbMZtf30yn1GRLsMtZzRWmtaCasvY2DKbLiILMB04fDsp3yyi13/jJx
- n264s+Yaou7pGWSFKCYEJ2DK8j+ZU5H6b+EMe/0C3qMLtn08419IniYVfsgVW+avEha9
- noBg==
+ bh=JNHxAXhg+1LTd1XjDocL2VFCklIkAYZseGvdrxbgqLI=;
+ b=afVQHopNpg4lLI2V7AGPAdcUNFz6nqJbKgnPgDX7QQ5++bjPbK8LxqX/SgNF0X+1wX
+ 98CNdWVbOWDFX+hzYekE4XljOGPvJCS4zhXm5eLBZ2afL7GMhIHriw9hKW2PSrW+Ey0T
+ trahx0mt6ueETIs7UzCAbIf4Yta6yndxhmvJJ0QSgGTaZDEujheZKYlS/O7I+xgBkvtU
+ XmqjKRXVARzN3oEMq/wTnPFbrMTKgrS4qgkwK3ZcMvGgI+bUGFKbLqtUbA11+7BIDePX
+ iF3zZUUOz4OiAeDPULNJN3mwmGtyzTWA3dBG6LIr+igeS5Mb/51GtIbNwR+WvXHVl/5k
+ Biuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772116451; x=1772721251;
+ d=1e100.net; s=20230601; t=1772116452; x=1772721252;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=RoYWhldEM4zw2qNpd2HCWFvKqIfixPN2sblp0Ta17bc=;
- b=nZZDAsZUsEFNIeCUX+phy8tqREIcMGrdPu3MrdGOVbx43D3Hj4+VJ3Umt8vPAwzOh2
- yxMVSSSW7rzi/1vR6qS8WUFPVv7afwtUOMmTUafS/bKBF8PT1lv7XNjiGKKCA41spJNa
- UZ4etFNcCaIaLIdot7Op8my9T40S3tRodxWHIZAEg1Dr4TOMbevpczNQuev3/KYu0CrB
- SDoptQ7hHGXZy1D2A6/qQMai5zXKuZS9M5MOb6Ck0stI79zstk9ZpAeT0W31gUEG/inG
- fNEIx5+ZeGY1TVeAIundE9Sx5fpSpXQTG84qVEoaw6Wc4EkXbg4rF6UkY5LJpJduWgOW
- H8UA==
-X-Gm-Message-State: AOJu0YyWwor4Cx7Ppykmn8GSzW5XnyOWIE/I1EJDabY/yJ+7jnzPeem9
- rVh4cpR0tiWCGsxxRcGtFXs0UsLJWyh/U4rdI7zffhYPMBGis6Yxl8hsgNf26g==
-X-Gm-Gg: ATEYQzwM5+pAocQaQ9Kx90lzYWF5OEbPydmG/LUz45gocVp08qZfyazJAcL+90srwuN
- ZBKnjb2q4bKFq9Pi6XVoSzrLkgNSm/0LPuCD8GC5Pa7VYXtw74DEKwsdHqFBuZplPVMCYrbPdpE
- v9L2t9YFKr8LLhoZOMW5H7g1EZ9dFSEl5ZqC+baOHG2ym0uRwKZIa1rqGXw5SHO3qiIomwpf6XE
- moSsnEUkI/lQhN0u1uJABwlK42elzHw01T9Wn9qcDqitWi1B+JA7iriipq0o9kRRCmJEEY5or5/
- 7puNO5BsVSPRsd9PqPHkpCdwBXxy9ni+3+IDzr2DZRajHhZZOd+DN+c4hwlq4f3DjEFaRvuLpRB
- 3pATrv/qKIZv+IKu6BZs0t6IAN59KWjCtxv8/mTEjU0MvSFC6oyIoungwPpPmc3vC+TanhjdzVJ
- S3y1nCtkY18wF+ngKSEyajiUuiZg==
-X-Received: by 2002:a05:6000:1acd:b0:436:2fdf:b599 with SMTP id
- ffacd0b85a97d-4396f167865mr39133987f8f.21.1772116451348; 
- Thu, 26 Feb 2026 06:34:11 -0800 (PST)
+ bh=JNHxAXhg+1LTd1XjDocL2VFCklIkAYZseGvdrxbgqLI=;
+ b=JgtTAF1V6C2kNO5jDpokAi4HPCU+taG6RRWuCuQLdAPsJLTEmCYT7iU7upyYdiByaz
+ My/5NVm+ZgHYt9uupAWd7Tq94qVMfQab9sfRH2d/0vQzsj9xxt6vvKujD8GUugtmbPId
+ m5uibRp4ScS/p41JqHxnzayP692mzQdetEB9XznjAm8J9uZUlUeHO+OVqzByuB7GNEpP
+ mhN91Di6lAmcifKUvdLV3CADbZpSX2uYmN8uHA7rrfAi7GgOtdQNe9+mCZ9dsQ+Qrpj/
+ j0Y2L1EAVetYjL0dTWyA0TLKD8apZb69ip3BEp9Z/KrewNx5caC7BgemdYvx3vWWNCVW
+ YetA==
+X-Gm-Message-State: AOJu0YzRusb+EHHGsT8ZS3iYQr4gIU98+NLFj5nTO3JuUikp+IPy6FUs
+ +LKGW4P7/gnwxACvKuWydeI/ABK8lCyW/RFcAHw5gnASb1v6lgv+dDZu4ij3pg==
+X-Gm-Gg: ATEYQzyK+mQC5HtIvsgeC3p1FclRQlPJmOkOHuou1sczhuyZ8T4g6Vo8QFeo5c+L4ps
+ 8JUnXN/O+VjTVyR2MvYyf85lh1yt4d3707+Iy/GPpMs9lPAKHjtS+wq6xI4tJAQByEczZbkhz5l
+ YJDL+/UAJV6D5/oWmNXN6mSbkK2yIQ/SpJakgnZ4Zdr9U8ZSuAeHBFTuX4UuD7vIT1lWvJj961H
+ +6lKMCQQ32bUpASMMx5JDU4Pu8z4dnWmieKmnv6XPhZDybtzUkfWxpmXVqs1d9lT/c7IzDCcOKG
+ NdXKHG6Pxp7Fh1jI7dPY7nTLORw54g/DyCWOIREKAiN4Snx48qpJzqymDaC+NkpzJXRcoUpDpVx
+ 2mhPNv48xwRzvb5oDGH+cTwa7dH4KOMsmkaUrx8efDgd6i2oGJJec+exolhcseH0svbLWcQDAoR
+ QGl3nlj0HKi/Bo872dqgNeU2EuVw==
+X-Received: by 2002:a05:600c:3587:b0:483:a27e:6706 with SMTP id
+ 5b1f17b1804b1-483a95fc063mr344511135e9.9.1772116452079; 
+ Thu, 26 Feb 2026 06:34:12 -0800 (PST)
 Received: from freepad.iliad.local ([213.36.9.96])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4398bb96b90sm17993866f8f.9.2026.02.26.06.34.10
+ ffacd0b85a97d-4398bb96b90sm17993866f8f.9.2026.02.26.06.34.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 26 Feb 2026 06:34:10 -0800 (PST)
+ Thu, 26 Feb 2026 06:34:11 -0800 (PST)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com, stephen@networkplumber.org,
  david.marchand@redhat.com, Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org
-Subject: [PATCH v2 10/17] net/dpaa2: fix L3/L4 checksum offload flags
-Date: Thu, 26 Feb 2026 15:33:34 +0100
-Message-ID: <20260226143341.282188-11-maxime@leroys.fr>
+Subject: [PATCH v2 11/17] net/dpaa2: fix software taildrop buffer access
+Date: Thu, 26 Feb 2026 15:33:35 +0100
+Message-ID: <20260226143341.282188-12-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260218160453.142311-1-maxime@leroys.fr>
 References: <20260218160453.142311-1-maxime@leroys.fr>
@@ -80,66 +80,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The WRIOP FAS (Frame Annotation Status) field provides independent
-bits for L3/L4 checksum validation (L3CV/L4CV) and error (L3CE/L4CE).
+The sw_td path in dpaa2_dev_tx() reads from the wrong position in the
+bufs array. When the goto fires, bufs has already been advanced past
+the num_tx successfully sent packets. The first loop then reads num_tx
+more entries starting from bufs, going past the end of the input array.
+Additionally, the buf_to_free segments for already-enqueued packets
+are never freed, leaking memory.
 
-Two problems:
-
-1. The driver used 'else if' between the L3 and L4 error checks, so
-   when both checksums were bad only the L3 error was reported and
-   the L4 error was silently lost. Use two independent 'if' statements
-   instead, matching how other drivers (i40e, ixgbe, bnxt) handle this.
-
-2. The driver never reported GOOD checksums. When validation was
-   performed (L3CV/L4CV set) but no error was flagged (L3CE/L4CE
-   clear), report RTE_MBUF_F_RX_IP_CKSUM_GOOD / RTE_MBUF_F_RX_L4_CKSUM_GOOD.
-
-Fix both issues in dpaa2_dev_rx_parse_slow() and dpaa2_dev_rx_parse().
+Replace the buggy sw_td code with the same pattern used in
+dpaa2_dev_tx_ordered(): free buf_to_free segments first, then use
+rte_pktmbuf_free_bulk() to drop remaining unsent packets.
 
 Not tested, found by code review.
 
 Cc: stable@dpdk.org
-Fixes: 870354264644 ("net/dpaa2: fix L3/L4 checksum results")
+Fixes: c3ffe74d85be ("net/dpaa2: support software taildrop")
 
+Reported-by: Stephen Hemminger <stephen@networkplumber.org>
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- drivers/net/dpaa2/dpaa2_rxtx.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ drivers/net/dpaa2/dpaa2_rxtx.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-index 9c908f87b1..689e5e7ee7 100644
+index 689e5e7ee7..8275ba9780 100644
 --- a/drivers/net/dpaa2/dpaa2_rxtx.c
 +++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-@@ -203,8 +203,13 @@ dpaa2_dev_rx_parse_slow(struct rte_mbuf *mbuf,
+@@ -1517,21 +1517,15 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  
- 	if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L3CE))
- 		mbuf->ol_flags |= RTE_MBUF_F_RX_IP_CKSUM_BAD;
--	else if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L4CE))
-+	else if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L3CV))
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_IP_CKSUM_GOOD;
+ 	return num_tx;
+ sw_td:
+-	loop = 0;
+-	while (loop < num_tx) {
+-		if (unlikely(RTE_MBUF_HAS_EXTBUF(*bufs)))
+-			rte_pktmbuf_free(*bufs);
+-		bufs++;
+-		loop++;
++	for (loop = 0; loop < free_count; loop++) {
++		if (buf_to_free[loop].pkt_id < num_tx)
++			rte_pktmbuf_free_seg(buf_to_free[loop].seg);
+ 	}
+ 
+ 	/* free the pending buffers */
+-	while (nb_pkts) {
+-		rte_pktmbuf_free(*bufs);
+-		bufs++;
+-		nb_pkts--;
+-		num_tx++;
+-	}
++	rte_pktmbuf_free_bulk(bufs, nb_pkts);
 +
-+	if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L4CE))
- 		mbuf->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_BAD;
-+	else if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L4CV))
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_GOOD;
++	num_tx += nb_pkts;
+ 	dpaa2_q->tx_pkts += num_tx;
  
- 	if (BIT_ISSET_AT_POS(annotation->word4, L3_IP_1_FIRST_FRAGMENT |
- 	    L3_IP_1_MORE_FRAGMENT |
-@@ -240,8 +245,13 @@ dpaa2_dev_rx_parse(struct rte_mbuf *mbuf, void *hw_annot_addr)
- 
- 	if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L3CE))
- 		mbuf->ol_flags |= RTE_MBUF_F_RX_IP_CKSUM_BAD;
--	else if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L4CE))
-+	else if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L3CV))
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_IP_CKSUM_GOOD;
-+
-+	if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L4CE))
- 		mbuf->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_BAD;
-+	else if (BIT_ISSET_AT_POS(annotation->word1, DPAA2_ETH_FAS_L4CV))
-+		mbuf->ol_flags |= RTE_MBUF_F_RX_L4_CKSUM_GOOD;
- 
- 	if (unlikely(dpaa2_print_parser_result))
- 		dpaa2_print_parse_result(annotation);
+ 	return num_tx;
 -- 
 2.43.0
 
