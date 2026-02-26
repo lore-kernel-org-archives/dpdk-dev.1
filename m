@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 293ECFCE08D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 14:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70097FCE087
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 14:19:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D12C740A79;
-	Thu, 26 Feb 2026 15:18:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CC64C40A81;
+	Thu, 26 Feb 2026 15:18:13 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
- by mails.dpdk.org (Postfix) with ESMTP id F4103406FF
- for <dev@dpdk.org>; Thu, 26 Feb 2026 15:18:07 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 96AEF40A6B
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 15:18:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1772115488; x=1803651488;
+ t=1772115489; x=1803651489;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=PgY9RVVw40ON8zA8NEjmnZgAg0kRB24dM8yVGjghL08=;
- b=Z3Gi1F+/wHv7FSJtAjMx/yxKIH+OchYwnZ8OaGz74ENu83TKWv1QbPxJ
- EFQoiLZPqLXkMhsZzkB7pOLB585yvOrOuSTbo2S6j8gaPF04oeXfidrH0
- yeApw1h1MJZHmZ4ihZdWVgPoAeUaB0C9gL4S38gTTTkBf528WfBgFUbrr
- eIYcyfLwvtW1Ckmq80nEtSkyF/4qa5xv53kOHMIRqQCGez8o7YIJgZCRB
- RoIK+ny9z2V3iZThDeZe1ArsKY2raKGea4RMYouqzUOGM1y5KXsQEu/av
- f5eTmrrgTUMf/Lzrbmz+PB++3Jawf0kRjIH1AT+yLX4fCvPnfVb3RKT9R g==;
-X-CSE-ConnectionGUID: BMy2Ve4mS/S8dP7fXnUa1g==
-X-CSE-MsgGUID: kGzFZ0zaQg2bU87dJHhjXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11713"; a="84271146"
-X-IronPort-AV: E=Sophos;i="6.21,312,1763452800"; d="scan'208";a="84271146"
+ bh=nwIgj9PDmbdUl3bpaGGCX7JJ1JQ7CR//Inm1lGWsPUc=;
+ b=GDmzq4g/yIy6f+k9YfP9EWSRQGHAl1kXH5m5rEA7XaOIm2kEqLjOBG3I
+ DrcTkHXBLFxHOVj0dF2p3n6bQopeCX0Hr1b55yLkEGphxXBIaA0XnoGlU
+ 5EjklwHasSbEn6RwYcybRCdlqmvKvgnNcp4kK2ttNOs2IyJQH2i3CXrJN
+ MOwD7lCRZRS9/LMD4KW+t1WaIPBMIYPXM48USCggvUQH5knJeKjOMNXbO
+ t4+ACp6QcBCjQ7xiRw7XDKsJ+TURBSSs1Y0Vbv50TVtIRxYsT1DbRGqWe
+ UmkRXIkKlq6mCELJrTMg814fagtJFGeF4ilA1JM41mUpC9P3ezlc55J+0 Q==;
+X-CSE-ConnectionGUID: 0uwIDgCOSFyg1DXlA93nUg==
+X-CSE-MsgGUID: Cx0MPhdHSIq9mUufMa8Szg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11713"; a="84271152"
+X-IronPort-AV: E=Sophos;i="6.21,312,1763452800"; d="scan'208";a="84271152"
 Received: from orviesa003.jf.intel.com ([10.64.159.143])
  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Feb 2026 06:18:07 -0800
-X-CSE-ConnectionGUID: rlxvNGrZQvGUl/khEZhUAQ==
-X-CSE-MsgGUID: gSh4zCp1SRWlVmselrbOmA==
+ 26 Feb 2026 06:18:08 -0800
+X-CSE-ConnectionGUID: lL7s+9s4S1K+qHDJwpecnw==
+X-CSE-MsgGUID: p2QGhy1ZR5KlVCPEDpNPcQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,312,1763452800"; d="scan'208";a="220719441"
+X-IronPort-AV: E=Sophos;i="6.21,312,1763452800"; d="scan'208";a="220719452"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa003.jf.intel.com with ESMTP; 26 Feb 2026 06:18:07 -0800
+ by orviesa003.jf.intel.com with ESMTP; 26 Feb 2026 06:18:08 -0800
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>
-Subject: [PATCH v7 14/18] bus/fslmc: use the new VFIO mode API
-Date: Thu, 26 Feb 2026 14:17:37 +0000
-Message-ID: <3f01db6aaaa900ed372938882e98cb29ffa4c423.1772115412.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Feifei Wang <wangfeifei40@huawei.com>
+Subject: [PATCH v7 15/18] net/hinic3: use the new VFIO mode API
+Date: Thu, 26 Feb 2026 14:17:38 +0000
+Message-ID: <c53695601eb38decdccd00d2214b82d477ab5e5a.1772115412.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1772115411.git.anatoly.burakov@intel.com>
  <cover.1772115411.git.anatoly.burakov@intel.com>
@@ -60,58 +60,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-FSLMC bus only supports operating in group mode, and relies on no-IOMMU
-mode checks. Use the new VFIO API's to query no-IOMMU status, as well as
-protect the bus from initializing in non-group mode.
+Use new VFIO mode API to query no-IOMMU status.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/fslmc/fslmc_bus.c  | 10 +++++++++-
- drivers/bus/fslmc/fslmc_vfio.c |  2 +-
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ drivers/net/hinic3/base/hinic3_hwdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index abdb0ad50d..d486c41ef1 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -335,6 +335,13 @@ rte_fslmc_scan(void)
- 		goto scan_fail;
- 	}
+diff --git a/drivers/net/hinic3/base/hinic3_hwdev.c b/drivers/net/hinic3/base/hinic3_hwdev.c
+index 668bbf4a0e..c5bf2bc8a4 100644
+--- a/drivers/net/hinic3/base/hinic3_hwdev.c
++++ b/drivers/net/hinic3/base/hinic3_hwdev.c
+@@ -77,7 +77,7 @@ bool
+ hinic3_is_vfio_iommu_enable(const struct rte_eth_dev *rte_dev)
+ {
+ 	return ((RTE_ETH_DEV_TO_PCI(rte_dev)->kdrv == RTE_PCI_KDRV_VFIO) &&
+-		(rte_vfio_noiommu_is_enabled() != 1));
++		(rte_vfio_get_mode() != RTE_VFIO_MODE_NOIOMMU));
+ }
  
-+	/* for container groups to work, VFIO must be in group mode */
-+	if (rte_vfio_get_mode() != RTE_VFIO_MODE_GROUP &&
-+			rte_vfio_get_mode() != RTE_VFIO_MODE_NOIOMMU) {
-+		ret = -EINVAL;
-+		goto scan_fail;
-+	}
-+
- 	ret = fslmc_get_container_group(group_name, &groupid);
- 	if (ret != 0)
- 		goto scan_fail;
-@@ -582,7 +589,8 @@ rte_dpaa2_get_iommu_class(void)
- 		return RTE_IOVA_DC;
- 
- 	/* check if all devices on the bus support Virtual addressing or not */
--	if (fslmc_all_device_support_iova() != 0 && rte_vfio_noiommu_is_enabled() == 0)
-+	if (fslmc_all_device_support_iova() != 0 &&
-+			rte_vfio_get_mode() != RTE_VFIO_MODE_NOIOMMU)
- 		return RTE_IOVA_VA;
- 
- 	return RTE_IOVA_PA;
-diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-index 4b11b38322..afde967e34 100644
---- a/drivers/bus/fslmc/fslmc_vfio.c
-+++ b/drivers/bus/fslmc/fslmc_vfio.c
-@@ -192,7 +192,7 @@ fslmc_vfio_add_group(int vfio_group_fd,
- 	group->fd = vfio_group_fd;
- 	group->groupid = iommu_group_num;
- 	rte_strscpy(group->group_name, group_name, sizeof(group->group_name));
--	if (rte_vfio_noiommu_is_enabled() > 0)
-+	if (rte_vfio_get_mode() == RTE_VFIO_MODE_NOIOMMU)
- 		group->iommu_type = VFIO_NOIOMMU_IOMMU;
- 	else
- 		group->iommu_type = VFIO_TYPE1_IOMMU;
+ int
 -- 
 2.47.3
 
