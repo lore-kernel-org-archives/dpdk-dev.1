@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A69FC5900
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 06:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5B0FC5901
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 06:56:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1617E402EF;
-	Thu, 26 Feb 2026 07:56:05 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 33F0F4064F;
+	Thu, 26 Feb 2026 07:56:07 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 579AD402BC
- for <dev@dpdk.org>; Thu, 26 Feb 2026 07:56:01 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 97D09402E4
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 07:56:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1772088961; x=1803624961;
+ t=1772088963; x=1803624963;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=00Lid23omRrQzEWhI6IZgZ7a/eNH0NZ2RZ/BqmeVRgE=;
- b=PMpBVAaPIqKNJ5QNc+e2r8zrDkNbbW+tWhhptNh+ejD+LrxcGK4kn0sB
- 9R5nQfA8DHlxQ9YfFtccjIJFXrazXR9Y/mAKPH0OCS9xa3zbW55z6yarB
- ytOEP+iy018aLEmm4/aX2DPPP94m5Kj70vQfWsYMjRpoFaqV7ixJx8YiJ
- 782T9wWhM/RXYVP1wFLCb9wwqHXUW+PSUExD6rwtLMik4aNP/hl80xLSX
- L+rFPeznWeO1D1fFyiHoupzbvNYPG884z9v8ly8/J03Oe8JYk6MWJBssB
- RfZhuNIITiQC0hFLi1HtRha8/EPciT0vqVuxEQi7OlxOPmw5ncklPG9u0 Q==;
-X-CSE-ConnectionGUID: GkG808a8T7CrAdoPOwDMyw==
-X-CSE-MsgGUID: k/yBKwrKSLy2j33EZcOopA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11712"; a="73322789"
-X-IronPort-AV: E=Sophos;i="6.21,311,1763452800"; d="scan'208";a="73322789"
+ bh=nFyefTlaRAU1GnBcAOo+tvD1ERX45eVKLfU+oH4YVhU=;
+ b=hE5laRNfq3RnDnv0gnd2AmhSK06kdxeZf9aR+9+GRZ52MADRE+VHBycS
+ PVySj+kj4YYIbwV9lg/q/bYsmrI0Lx0qAtJb2BCqbQXsj3LMYrlbP4Fa8
+ NUbxQD2XFyhPMuJ6KtsyrrUyDGLCKoiuNSZ/2vOyVcng817jMM/8UDiJL
+ EoPg03PWBjVt9O7+AY1n5vi4agihU4i79RnaWCAiVIQyvEg0mGhBk//5G
+ YZkXj2WtuRZKC4FgKwf/k0pSgHBUKir5Mid8FpEwJFKW0GTQPve3Udu4i
+ YX6FT3LQijN9Lnx9KwvpdKewHGywd28Ca4Bu1bAqXhWUdLf0l8o3sy+dZ g==;
+X-CSE-ConnectionGUID: VoNpgS+HQ0qp7KNX+/GUaQ==
+X-CSE-MsgGUID: WBA5VtfSTeqxPisS2N8x4Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11712"; a="73322800"
+X-IronPort-AV: E=Sophos;i="6.21,311,1763452800"; d="scan'208";a="73322800"
 Received: from fmviesa007.fm.intel.com ([10.60.135.147])
  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Feb 2026 22:56:00 -0800
-X-CSE-ConnectionGUID: pUyLNkKlR5uM7T84y1QVWQ==
-X-CSE-MsgGUID: GVDNZrOWTYCLHrfjZokqTw==
+ 25 Feb 2026 22:56:02 -0800
+X-CSE-ConnectionGUID: tQ7LtghORn2QDIspTOCkmg==
+X-CSE-MsgGUID: UV02mMKISiOE9T5lwWIJeQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,311,1763452800"; d="scan'208";a="214723483"
+X-IronPort-AV: E=Sophos;i="6.21,311,1763452800"; d="scan'208";a="214723487"
 Received: from unknown (HELO sprmax15..) ([10.138.182.128])
- by fmviesa007.fm.intel.com with ESMTP; 25 Feb 2026 22:56:00 -0800
+ by fmviesa007.fm.intel.com with ESMTP; 25 Feb 2026 22:56:01 -0800
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH v13 2/3] net/idpf: enable AVX2 for split queue Tx
-Date: Thu, 26 Feb 2026 12:22:32 +0530
-Message-Id: <20260226065233.917107-3-shaiq.wani@intel.com>
+Subject: [PATCH v13 3/3] doc: add note on unsupported completion queue sharing
+Date: Thu, 26 Feb 2026 12:22:33 +0530
+Message-Id: <20260226065233.917107-4-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260226065233.917107-1-shaiq.wani@intel.com>
 References: <20250917052658.582872-1-shaiq.wani@intel.com>
@@ -61,259 +61,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add AVX2 vectorized split queue Tx path with
-completion queue scanning support.
+Added a note in the IDPF Poll Mode Driver documentation
+to clarify that sharing a completion queue among multiple
+TX queues serviced by different CPU cores is not supported
+in split queue mode.
 
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
- doc/guides/rel_notes/release_26_03.rst        |   4 +
- drivers/net/intel/idpf/idpf_common_device.h   |   1 +
- drivers/net/intel/idpf/idpf_common_rxtx.c     |   8 +
- drivers/net/intel/idpf/idpf_common_rxtx.h     |   3 +
- .../net/intel/idpf/idpf_common_rxtx_avx2.c    | 173 ++++++++++++++++++
- 5 files changed, 189 insertions(+)
+ doc/guides/nics/idpf.rst | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index b4499ec066..2c78b62632 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -77,6 +77,10 @@ New Features
+diff --git a/doc/guides/nics/idpf.rst b/doc/guides/nics/idpf.rst
+index b99cc18188..47e38fcb13 100644
+--- a/doc/guides/nics/idpf.rst
++++ b/doc/guides/nics/idpf.rst
+@@ -79,6 +79,11 @@ Runtime Configuration
+   Then the PMD will configure Tx queue with single queue mode.
+   Otherwise, split queue mode is chosen by default.
  
-   * Added support for pre and post VF reset callbacks.
++.. note::
++
++  In split queue mode, sharing a completion queue among multiple TX queues that are
++  serviced by different CPU cores is not supported.
++
  
-+* **Updated Intel idpf driver.**
-+
-+  * Added AVX2 vectorized split queue Rx and Tx paths.
-+
- * **Updated Marvell cnxk net driver.**
- 
-   * Added out-of-place support for CN20K SoC.
-diff --git a/drivers/net/intel/idpf/idpf_common_device.h b/drivers/net/intel/idpf/idpf_common_device.h
-index 1424046a16..6f3dfbc3fc 100644
---- a/drivers/net/intel/idpf/idpf_common_device.h
-+++ b/drivers/net/intel/idpf/idpf_common_device.h
-@@ -81,6 +81,7 @@ enum idpf_tx_func_type {
- 	IDPF_TX_SINGLEQ,
- 	IDPF_TX_SINGLEQ_SIMPLE,
- 	IDPF_TX_SINGLEQ_AVX2,
-+	IDPF_TX_AVX2,
- 	IDPF_TX_AVX512,
- 	IDPF_TX_SINGLEQ_AVX512,
- 	/* Need a max value defined as array values in are defined
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index ead31fd0f8..8e964bef5c 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -1620,6 +1620,14 @@ const struct ci_tx_path_info idpf_tx_path_infos[] = {
- 			.single_queue = true
- 		}
- 	},
-+	[IDPF_TX_AVX2] = {
-+		.pkt_burst = idpf_dp_splitq_xmit_pkts_avx2,
-+		.info = "Split AVX2",
-+		.features = {
-+			.tx_offloads = IDPF_TX_VECTOR_OFFLOADS,
-+			.simd_width = RTE_VECT_SIMD_256
-+		}
-+	},
- #ifdef CC_AVX512_SUPPORT
- 	[IDPF_TX_AVX512] = {
- 		.pkt_burst = idpf_dp_splitq_xmit_pkts_avx512,
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.h b/drivers/net/intel/idpf/idpf_common_rxtx.h
-index 256e9ff54c..2c4ebb21e4 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.h
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.h
-@@ -257,6 +257,9 @@ __rte_internal
- uint16_t idpf_dp_singleq_recv_scatter_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			  uint16_t nb_pkts);
- __rte_internal
-+uint16_t idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+				       uint16_t nb_pkts);
-+__rte_internal
- uint16_t idpf_dp_singleq_recv_pkts_avx2(void *rx_queue,
- 					struct rte_mbuf **rx_pkts,
- 					uint16_t nb_pkts);
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index 0122c82951..7e0c3adcc9 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -780,3 +780,176 @@ idpf_dp_singleq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
- 
- 	return nb_tx;
- }
-+
-+static __rte_always_inline void
-+idpf_splitq_scan_cq_ring(struct ci_tx_queue *cq)
-+{
-+	struct idpf_splitq_tx_compl_desc *compl_ring;
-+	struct ci_tx_queue *txq;
-+	uint16_t genid, txq_qid, cq_qid, i;
-+	uint8_t ctype;
-+
-+	cq_qid = cq->tx_tail;
-+
-+	for (i = 0; i < IDPD_TXQ_SCAN_CQ_THRESH; i++) {
-+		if (cq_qid == cq->nb_tx_desc) {
-+			cq_qid = 0;
-+			cq->expected_gen_id ^= 1;  /* toggle generation bit */
-+		}
-+
-+		compl_ring = &cq->compl_ring[cq_qid];
-+
-+		genid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+				 IDPF_TXD_COMPLQ_GEN_M) >> IDPF_TXD_COMPLQ_GEN_S;
-+
-+		if (genid != cq->expected_gen_id)
-+			break;
-+
-+		ctype = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+				 IDPF_TXD_COMPLQ_COMPL_TYPE_M) >> IDPF_TXD_COMPLQ_COMPL_TYPE_S;
-+		txq_qid = (rte_le_to_cpu_16(compl_ring->qid_comptype_gen) &
-+				   IDPF_TXD_COMPLQ_QID_M) >> IDPF_TXD_COMPLQ_QID_S;
-+
-+		txq = cq->txqs[txq_qid - cq->tx_start_qid];
-+		if (ctype == IDPF_TXD_COMPLT_RS)
-+			txq->rs_compl_count++;
-+
-+		cq_qid++;
-+	}
-+
-+	cq->tx_tail = cq_qid;
-+}
-+
-+static __rte_always_inline void
-+idpf_splitq_vtx1_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf *pkt, uint64_t flags)
-+{
-+	uint64_t high_qw =
-+		IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE |
-+		((uint64_t)flags) |
-+		((uint64_t)pkt->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+	__m128i descriptor = _mm_set_epi64x(high_qw,
-+						pkt->buf_iova + pkt->data_off);
-+	_mm_storeu_si128((__m128i *)txdp, descriptor);
-+}
-+
-+static inline void
-+idpf_splitq_vtx_avx2(struct idpf_flex_tx_sched_desc *txdp,
-+				struct rte_mbuf **pkt, uint16_t nb_pkts, uint64_t flags)
-+{
-+	const uint64_t hi_qw_tmpl = IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE | ((uint64_t)flags);
-+
-+	/* align if needed */
-+	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++, pkt++, nb_pkts--;
-+	}
-+
-+	for (; nb_pkts >= IDPF_VPMD_DESCS_PER_LOOP; txdp += IDPF_VPMD_DESCS_PER_LOOP,
-+			pkt += IDPF_VPMD_DESCS_PER_LOOP, nb_pkts -= IDPF_VPMD_DESCS_PER_LOOP) {
-+		uint64_t hi_qw0 = hi_qw_tmpl |
-+			((uint64_t)pkt[0]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw1 = hi_qw_tmpl |
-+			((uint64_t)pkt[1]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw2 = hi_qw_tmpl |
-+			((uint64_t)pkt[2]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+		uint64_t hi_qw3 = hi_qw_tmpl |
-+			((uint64_t)pkt[3]->data_len << IDPF_TXD_QW1_TX_BUF_SZ_S);
-+
-+		__m256i desc0_1 = _mm256_set_epi64x(hi_qw1,
-+			pkt[1]->buf_iova + pkt[1]->data_off,
-+			hi_qw0,
-+			pkt[0]->buf_iova + pkt[0]->data_off);
-+		__m256i desc2_3 = _mm256_set_epi64x(hi_qw3,
-+			pkt[3]->buf_iova + pkt[3]->data_off,
-+			hi_qw2,
-+			pkt[2]->buf_iova + pkt[2]->data_off);
-+
-+		_mm256_storeu_si256((__m256i *)(txdp + 0), desc0_1);
-+		_mm256_storeu_si256((__m256i *)(txdp + 2), desc2_3);
-+	}
-+
-+	while (nb_pkts--) {
-+		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
-+		txdp++;
-+		pkt++;
-+	}
-+}
-+
-+static inline uint16_t
-+idpf_splitq_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	struct idpf_flex_tx_sched_desc *txdp;
-+	struct ci_tx_entry_vec *txep;
-+	uint16_t n, nb_commit;
-+	uint64_t cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_EOP;
-+	uint16_t tx_id = txq->tx_tail;
-+
-+	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
-+	nb_pkts = nb_commit;
-+	if (unlikely(nb_pkts == 0))
-+		return 0;
-+
-+	txdp = (struct idpf_flex_tx_sched_desc *)&txq->desc_ring[tx_id];
-+	txep = &txq->sw_ring_vec[tx_id];
-+
-+	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
-+
-+	n = (uint16_t)(txq->nb_tx_desc - tx_id);
-+	if (nb_commit >= n) {
-+		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
-+
-+		idpf_splitq_vtx_avx2(txdp, tx_pkts, n - 1, cmd_dtype);
-+		tx_pkts += (n - 1);
-+		txdp += (n - 1);
-+
-+		idpf_splitq_vtx1_avx2(txdp, *tx_pkts++, cmd_dtype);
-+
-+		nb_commit = (uint16_t)(nb_commit - n);
-+		tx_id = 0;
-+
-+		txdp = &txq->desc_ring[tx_id];
-+		txep = (void *)txq->sw_ring;
-+	}
-+
-+	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
-+
-+	idpf_splitq_vtx_avx2(txdp, tx_pkts, nb_commit, cmd_dtype);
-+
-+	tx_id = (uint16_t)(tx_id + nb_commit);
-+	txq->tx_tail = tx_id;
-+
-+	IDPF_PCI_REG_WRITE(txq->qtx_tail, txq->tx_tail);
-+
-+	return nb_pkts;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(idpf_dp_splitq_xmit_pkts_avx2)
-+uint16_t
-+idpf_dp_splitq_xmit_pkts_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
-+					uint16_t nb_pkts)
-+{
-+	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
-+	uint16_t nb_tx = 0;
-+
-+	while (nb_pkts) {
-+		uint16_t ret, num;
-+		idpf_splitq_scan_cq_ring(txq->complq);
-+
-+		if (txq->rs_compl_count > txq->tx_free_thresh) {
-+			ci_tx_free_bufs_vec(txq, idpf_tx_desc_done, false);
-+			txq->rs_compl_count -= txq->tx_rs_thresh;
-+		}
-+
-+		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
-+		ret = idpf_splitq_xmit_fixed_burst_vec_avx2(tx_queue, &tx_pkts[nb_tx], num);
-+		nb_tx += ret;
-+		nb_pkts -= ret;
-+		if (ret < num)
-+			break;
-+	}
-+
-+	return nb_tx;
-+}
+ Driver compilation and testing
+ ------------------------------
 -- 
 2.34.1
 
