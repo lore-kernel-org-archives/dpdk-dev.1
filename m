@@ -2,40 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 027C1FD8FD7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 16:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3084FD8FD8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 16:48:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37140402BB;
-	Thu, 26 Feb 2026 17:47:15 +0100 (CET)
-Received: from BL0PR03CU003.outbound.protection.outlook.com
- (mail-eastusazon11012021.outbound.protection.outlook.com [52.101.53.21])
- by mails.dpdk.org (Postfix) with ESMTP id 57C3E402BB
- for <dev@dpdk.org>; Thu, 26 Feb 2026 17:47:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 47DEB402BB;
+	Thu, 26 Feb 2026 17:48:25 +0100 (CET)
+Received: from SN4PR0501CU005.outbound.protection.outlook.com
+ (mail-southcentralusazon11011060.outbound.protection.outlook.com
+ [40.93.194.60]) by mails.dpdk.org (Postfix) with ESMTP id 74400402B2
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 17:48:23 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kyf2eDi5ZrwEEUYvOmmODr2d/adDSU59EYVWXg13YGgKo6EElhGTkdPP6kGw1P8V5vp4uh9d6YpAXeS1qQAXepwz3rGoFuu5+toS9qU9tCFvYbb9oFfac9m9GDy3WLT/zi9j/mOSX8uabWjc5rDGXk0/Sf/bfG+kR5P/BWi3xk7/R8Xxe/L8nwzfyq7eKSYQsI8/Enr3WJhbzn9qFcfG0DuVfnuYcrFGYQx8db2j9GYaCmhxowmFUQ7KI83o/77UNC+DplBeBLZCYKvfP6IuU1+5GCnd9CZK1SShHcYxwre/cFWV6l9RTx9WfJv2VyfoEKMXXJJv06soknYbDK1Dxw==
+ b=HSrfZ6WAWOGNqDtuz7ken/2mdQLatjMhpTlu0q9IPetFddGNYIUJ47ue7Yraw6jLhledvD5je3iMd275r85QQNKhpfZblJYZ3h9/Hl3gAhDU22QyLRQbgEaD/oAaOlxYy4CrsBPyNdPWh9KMFiZBAWmXnLAivsPLA/bJfkZj2uUeCBKeeFQs0DCBMUmc1lNoeR+mtizPR3WRXhp43f1Q3afKrPGU4BjD4l37+ovsNdkfAUSEe7+M6I/14KwS4MaX0zkjg/87zEB+BSqjdTsW8Tp8CJz8pZLYejPlHTmswYUMqqYNHtDz1WOjhG/lS57nc68Ui/BHWwb0Nut94SooLA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qGGaoz0dRcrgnkoopH/0ciQbGg5jP/2B2YFFxRDggpY=;
- b=O/QxsIKG4Wnatqk9h9q1faQg+S593v0LPkULWDD8gLsEoIDJ9aVpYoyl6pwQv9F21OJ0g+9kTZGeoQhaWnUxXDAMIv/5bkJxqImCSziUfRU0LMoyQMgfg0dix2Mfft+8vS4D/pVQbWU1P5/sfDZpdVE+VPff1Y7U9xLqPmFRNEkub9V50VRQ0rFavu5g8azBxriE05Gvty4CbipqTGoTh/ghlInCiSMCtDNx9EA0b9UQ8S8PyuOAoTjr767rQV7pEp3Q2wjaZkXDcqDJLEqu7+2ksXsQvHvA/bCf8+uRA+Yb7VqIJfkYO3Vzw5YKwSFEihUwWIHD6o8yWEWarR3NsA==
+ bh=u9rF2SaWSsNfMQpaJ5+MsAUIJoHnXFECv1QqIEHYxoI=;
+ b=Gs5mvKI4lprd/QDPQPeq+ueHPVW4FVpnUdgToZHNUwSmTHKEyeyZ7/guTI7kOncFcdxXDKzs0vXY5/feYtw2saSZenAK97ntveAqOWzBG1HK8doVlcJL88C3s6o48fXMkkyIj7EFWhZZmwm9WtRH/0cMESd2xo+cd0o5+g9sNd7QYg4uEXmMGsLUXdDDX8ETDl4+eFHYTP43awcSLwf1RBB0F5sa1q32CUfpV6rzN5y6ATMnCPg5jgiW984mdaQXmZmn0tyHK3pp7a0SSacr5hMuNC8ON36CJWgDjIVN8wXWXsfPKw6SKeXQM2Qx/jLrUoNXU7JntRfPhLGuzC96Jg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qGGaoz0dRcrgnkoopH/0ciQbGg5jP/2B2YFFxRDggpY=;
- b=ujq5DdKNjtDitEHwj3wY47ockujAyk73vG+zM1VoEUkAMQn+a79+GRpxZHdTYOrRTBHGnLdMVR7UTEOWG4b2h/miAK311gup43XbOngBUVcGkqKHFVW1i81b/VZm6Nwkc/O9zeiG/o1CS4vFJBt32dTaYL4towCnjhxzTtrl9+8=
-Received: from BYAPR05CA0046.namprd05.prod.outlook.com (2603:10b6:a03:74::23)
- by PH7PR12MB8796.namprd12.prod.outlook.com (2603:10b6:510:272::22)
+ bh=u9rF2SaWSsNfMQpaJ5+MsAUIJoHnXFECv1QqIEHYxoI=;
+ b=dwzpdJnUqNmtf5hgZqG0FNhNEZZPdvxawMPP583uKLQyW3As9oTfm6ScPLl6rJ11ZAmBS81BSDHMqYS4GkTrT14CWES+8KtTAMVlOendiwDNxdOeDHmd7O4m3EtnTbG5dZdsJwW01GbPbQB+8lMV3G26FhH+kDn8vtsNPQSpjg4=
+Received: from BY5PR17CA0040.namprd17.prod.outlook.com (2603:10b6:a03:167::17)
+ by MN2PR12MB4174.namprd12.prod.outlook.com (2603:10b6:208:15f::12)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.11; Thu, 26 Feb
- 2026 16:47:10 +0000
-Received: from BY1PEPF0001AE1A.namprd04.prod.outlook.com
- (2603:10b6:a03:74:cafe::dc) by BYAPR05CA0046.outlook.office365.com
- (2603:10b6:a03:74::23) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.22 via Frontend Transport; Thu,
- 26 Feb 2026 16:47:10 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9611.15; Thu, 26 Feb
+ 2026 16:48:16 +0000
+Received: from BY1PEPF0001AE19.namprd04.prod.outlook.com
+ (2603:10b6:a03:167:cafe::f2) by BY5PR17CA0040.outlook.office365.com
+ (2603:10b6:a03:167::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.25 via Frontend Transport; Thu,
+ 26 Feb 2026 16:48:18 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -43,54 +43,54 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
 Received: from satlexmb07.amd.com (165.204.84.17) by
- BY1PEPF0001AE1A.mail.protection.outlook.com (10.167.242.102) with Microsoft
+ BY1PEPF0001AE19.mail.protection.outlook.com (10.167.242.101) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9632.12 via Frontend Transport; Thu, 26 Feb 2026 16:47:10 +0000
+ 15.20.9632.12 via Frontend Transport; Thu, 26 Feb 2026 16:48:15 +0000
 Received: from BLRASNATARA.amd.com (10.180.168.240) by satlexmb07.amd.com
  (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 26 Feb
- 2026 10:47:04 -0600
+ 2026 10:48:09 -0600
 From: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
 To: <dev@dpdk.org>
 CC: <Selwin.Sebastian@amd.com>, Ashok Kumar Natarajan
  <ashokkumar.natarajan@amd.com>
-Subject: [PATCH v3 1/3] net/axgbe: add external PHY read/write functions
-Date: Thu, 26 Feb 2026 22:16:36 +0530
-Message-ID: <20260226164638.1381-1-ashokkumar.natarajan@amd.com>
+Subject: [PATCH v3 2/3] net/axgbe: add support for marvell m88e1512 PHY
+Date: Thu, 26 Feb 2026 22:17:39 +0530
+Message-ID: <20260226164740.1401-1-ashokkumar.natarajan@amd.com>
 X-Mailer: git-send-email 2.53.0.windows.1
-In-Reply-To: <20260225124456.1871-1-ashokkumar.natarajan@amd.com>
-References: <20260225124456.1871-1-ashokkumar.natarajan@amd.com>
+In-Reply-To: <20260225124706.1891-1-ashokkumar.natarajan@amd.com>
+References: <20260225124706.1891-1-ashokkumar.natarajan@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [10.180.168.240]
 X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
  (10.181.42.216)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1A:EE_|PH7PR12MB8796:EE_
-X-MS-Office365-Filtering-Correlation-Id: 321b4501-0353-4127-24d8-08de7556af4b
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE19:EE_|MN2PR12MB4174:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c6aa448-48ad-4254-36eb-08de7556d686
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|36860700013|1800799024; 
-X-Microsoft-Antispam-Message-Info: ztgxHYSU57dVXsn25GsTOA+d8B8Pw0N9nv2fXKLiS/ZUmouPAcjxBbCVbNJ9vaU5TUa3DCYLc9n+3iP1Y8kQM95vk4JJ4sq2D20gdG93dK5ACq/pm3utrTKz4JxGcx+q0Su2zYGjJtuO3Kd2G/KqA/TnbCGT7yAsTtfkTuO5TH+px/RzKbywlFa11gGTtK2Q292ktOgF+D/ZYCI7/bZRx548MtQ+QTRP4NZYlMjFoz8H80x3Qspjds1baoQW3cs84J/aOF+rc/f1PtddWDb4Un5ZHBT4mkjrjcDGtx8Bk/bTrQife6w7SxTv/h/aYoOhjhCfElEeST323GGKno2vLV3qslaCBXc2wO1Mytsm9F78kj8JrdM3HtC/9JowKF5oYAO/5EPAJkFy3JyiTmI9KMHg66yNDaxbGP2KM3vOPhftVgvNAp8QBjGjzDcjtD+vNwIjM08Tm5lEaXRO/7S8IdsGt6YkxSPc3RWHtbjhzUvpFbBwPYJP39A4fF93VZEz/8y7SG2zoiSh/WtD7r+A/Q8011AFNHFQVLPd/YUo9SpyWZwJM4y6pzsH/QmxJixKicUtFeBXRPfOXhSBaqydyhfBqwxvKVLYo11SacieibZ7xaRGgmmzE0LjiUocC/hQWhFLYFIj5WEEmMlbdTZ3vinNh3t6HcweHpqTlSZ5G1hDaKCE4CbEdWWW2W4vxSrOfN8DEB0xEx++jjrl9pJAlDi4zFyNUYF/zj1/XkLskXRE1PWUbJZiyJ9H2K3OopKhOgVw7aJ/tvH1El9T91orHxY/PZVIsvM0Mp7V6fb7+82wNOyA8/a7VlNY9mYcQ41sSveafgAkhG5/6HtIzvZCwQ==
+ ARA:13230040|36860700013|376014|82310400026|1800799024; 
+X-Microsoft-Antispam-Message-Info: j81DcP4meSAlsksOb+5Ge0DoZ30WHzsNbP8VX505DVjNucqnYzB/WFJCibr8cd52ya/b0XAK+58szJEM6xOQNXff5Fe+iJ4AuOmyrZvPZzFAU3LRDcoO2J5IFkYCJoaVdnO9fSwcS03CjIYC0owMiZwk2ybW3i2RmQgcEJFZVxkI2W1IRnPb3shiYVhVLuyby13F21nU8dj/oE/YQUfV4V2Q1lAkbFv3ZFpaLOs0r+8sKneStgXd790LxfZ6Y6u6UOECbg0Tg9cqjSXEMvSJKC9KZLt4cvPuy5j9OzWkPMBrsCReF+XBqKWLb+Ge9MGfdAVp+q7nx625zdv6tWb3xjfF1xcsQeWi0YHopDfdXZbi/Sl+/MffDTM9N732pRrgEmEo34ICU9je0ARgSayz3/YS1xuJ7OP4zJOuWQgW7XeMi6KbHr327i1M7rg/MNuaKSvo0pN++q2WWgSX39QuV1DZd/pmEbD9I8URIjOmf4hSlABhkcjrKDOBCwh/gW+JXaC4Y+e+Kq5vJEIPeRcnlIhlh/oqUT2F7isA2yHPYa79nLOCKlvRa75OIoLU6ix7YPXBmMpZWS2Oh7XPsXgy0WKZSrYi3bQ3CnLNkGJU5T2X8iMGC3EokWqCxdCXnRtXSSLe+nj8M0/YtPO80JB9AejwbIv6eJIYHEQl6YCUrVH9IW5UbBvYn2rNnnnx5Qsnp46uJQy3uo3GzVsYIlQLXSkLeLVKK/Y3CMdpiA+3JtlyTt6LoVl5x2rq3XToGs7oeFr0Utj7LAmzw/E2VCDjp3+qaLFC8EXXrwbUKy7BjfPP5AftgJmw3TBWaVz9SyDaWzFjMzqlUybLMms8uIxI6A==
 X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024); DIR:OUT;
+ SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024); DIR:OUT;
  SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 4lkxjuKJ04v0VkSmJXYiMF3bJvOfbYMjidJ7wfFNFFsCTi6TZJmgyFNCNl4rUIQ3Rd1n7qQK28fCM97JM7fDUX9jsw/zCu1ncG0L73MBHdZHiuFs5yB5j/th7zDWvyYYPlOPpxQzu6UFoPyhSJdHpKl6US9g/m7sU1anKBCnN9UUYfRZEeCdRyLcr25A4+wGhRpG/YTDRoV7KyWCVcTC+ognuiiS1cI9r3x0sm3n1jANPu0I+UBJRqnxKnGqZkqXRVFBtGCPFp6SYS93+/AN3kW4j7S1BCCV8/N5sJUU78QiqN3X/k/L5sM0zmslW0iTqLDnp/AkFToQANz5lq1N3MVggpW5aLzRMJO/RWvm8tUGGTbSKTh0QtXcVY/XMB2puVdI3foMrfwjHOeFiWBLXeT6eynjwbWET9k0q1AUPBN3SzOiapEufcTA4liG7d1p
+X-MS-Exchange-AntiSpam-MessageData-0: 26CjxP3k2cRoNX6M/KaM6mYTnPwcdf8bGDUs9jUYsBTM/ObbfRYa5Ot+qgQQq4f7WmXyRd4vl8GYo1miKUqNbVyUercNZzncHabKsc7GUnLNPyV1VWYKzEjFnSdF9TGr4JCAocmS3QWyTxBN9m8m157xcSqyvW6Aoz3xF93FTxFkbf0RMpuLxZp5akqkvnrTaDn+BwVuVaFrywDcC7CONtEUQKlD42zolySTSArgJ7fVYBzcByzCFWQJnzdz2zslE30dDINsN2mgWMrjLicP7plFamAQ8V5SrH2c3uzAx4ULkOs27tO817vsLWjhJqTffMhUJZXg1ywzU0Lbi5xpOybHgjyfkKR5+y7ZDQhWMgZN3z8A9TEWydwd9aXuJkPaB8SsVpWZVqaxdfwnm/wF4RRKt7GCppKVKM0JTKuWKQBQQgXrcX6i9Fka3Wpwoy+F
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2026 16:47:10.0680 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 321b4501-0353-4127-24d8-08de7556af4b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Feb 2026 16:48:15.9204 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c6aa448-48ad-4254-36eb-08de7556d686
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
  Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: BY1PEPF0001AE1A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: BY1PEPF0001AE19.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8796
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4174
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -104,268 +104,552 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce helper functions to perform external PHY register read and
-write operations. These helpers currently support only IEEE Clause 22
-PHY access, providing a simple and consistent API for accessing
-standard 16‑bit MII registers on external PHY devices.
+Add support for the Marvell M88E1512 PHY in the axgbe driver. This patch
+implements device identification and basic initialization required to
+operate with this PHY. Only the M88E1512 model is supported in this
+update.
 
 Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
 ---
- .mailmap                           |  1 +
- drivers/net/axgbe/axgbe_dev.c      | 56 ++++++++++++++++--------------
- drivers/net/axgbe/axgbe_ethdev.h   | 16 ++++++---
- drivers/net/axgbe/axgbe_phy_impl.c | 45 +++++++++++++++++++++++-
- 4 files changed, 85 insertions(+), 33 deletions(-)
+ drivers/net/axgbe/axgbe_phy.h      |  44 ++++
+ drivers/net/axgbe/axgbe_phy_impl.c | 389 ++++++++++++++++++++++++++++-
+ 2 files changed, 429 insertions(+), 4 deletions(-)
 
-diff --git a/.mailmap b/.mailmap
-index 6c4c977dde..5c8b47f1a9 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -165,6 +165,7 @@ Ashish Paul <apaul@juniper.net>
- Ashish Sadanandan <ashish.sadanandan@gmail.com>
- Ashish Shah <ashish.n.shah@intel.com>
- Ashok Kaladi <ashok.k.kaladi@intel.com>
-+Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
- Ashwin Sekhar T K <asekhar@marvell.com> <ashwin.sekhar@caviumnetworks.com>
- Asim Jamshed <asim.jamshed@gmail.com>
- Atul Patel <atul.patel@intel.com>
-diff --git a/drivers/net/axgbe/axgbe_dev.c b/drivers/net/axgbe/axgbe_dev.c
-index 634d4ee4a5..10a99aeac2 100644
---- a/drivers/net/axgbe/axgbe_dev.c
-+++ b/drivers/net/axgbe/axgbe_dev.c
-@@ -63,9 +63,9 @@ static int mdio_complete(struct axgbe_port *pdata)
- 	return 0;
- }
+diff --git a/drivers/net/axgbe/axgbe_phy.h b/drivers/net/axgbe/axgbe_phy.h
+index eee3afc370..1bedd8e132 100644
+--- a/drivers/net/axgbe/axgbe_phy.h
++++ b/drivers/net/axgbe/axgbe_phy.h
+@@ -63,6 +63,29 @@
+ #define BMCR_RESET		0x8000	/* Reset to default state      */
+ #define BMCR_SPEED10		0x0000	/* Select 10Mbps               */
  
--static unsigned int axgbe_create_mdio_sca_c22(int port, int reg)
-+static unsigned int axgbe_create_mdio_sca_c22(u8 port, u16 reg)
- {
--	unsigned int mdio_sca;
-+	u32 mdio_sca;
- 
- 	mdio_sca = 0;
- 	AXGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, RA, reg);
-@@ -74,20 +74,20 @@ static unsigned int axgbe_create_mdio_sca_c22(int port, int reg)
- 	return mdio_sca;
- }
- 
--static unsigned int axgbe_create_mdio_sca_c45(int port, unsigned int da, int reg)
-+static unsigned int axgbe_create_mdio_sca_c45(u8 port, u8 dev_addr, u16 reg)
- {
--	unsigned int mdio_sca;
-+	u32 mdio_sca;
- 
- 	mdio_sca = 0;
- 	AXGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, RA, reg);
- 	AXGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, PA, port);
--	AXGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, DA, da);
-+	AXGMAC_SET_BITS(mdio_sca, MAC_MDIOSCAR, DA, dev_addr);
- 
- 	return mdio_sca;
- }
- 
- static int axgbe_write_ext_mii_regs(struct axgbe_port *pdata,
--						unsigned int mdio_sca, u16 val)
-+		u32 mdio_sca, u16 value)
- {
- 	unsigned int mdio_sccd;
- 	uint64_t timeout;
-@@ -95,7 +95,7 @@ static int axgbe_write_ext_mii_regs(struct axgbe_port *pdata,
- 	AXGMAC_IOWRITE(pdata, MAC_MDIOSCAR, mdio_sca);
- 
- 	mdio_sccd = 0;
--	AXGMAC_SET_BITS(mdio_sccd, MAC_MDIOSCCDR, DATA, val);
-+	AXGMAC_SET_BITS(mdio_sccd, MAC_MDIOSCCDR, DATA, value);
- 	AXGMAC_SET_BITS(mdio_sccd, MAC_MDIOSCCDR, CMD, 1);
- 	AXGMAC_SET_BITS(mdio_sccd, MAC_MDIOSCCDR, BUSY, 1);
- 	AXGMAC_IOWRITE(pdata, MAC_MDIOSCCDR, mdio_sccd);
-@@ -113,28 +113,28 @@ static int axgbe_write_ext_mii_regs(struct axgbe_port *pdata,
- 
- 
- static int axgbe_write_ext_mii_regs_c22(struct axgbe_port *pdata,
--							int addr, int reg, u16 val)
-+		u8 phy_addr, u16 reg, u16 value)
- {
--	unsigned int mdio_sca;
-+	u32 mdio_sca;
- 
--	mdio_sca = axgbe_create_mdio_sca_c22(addr, reg);
-+	mdio_sca = axgbe_create_mdio_sca_c22(phy_addr, reg);
- 
--	return axgbe_write_ext_mii_regs(pdata, mdio_sca, val);
-+	return axgbe_write_ext_mii_regs(pdata, mdio_sca, value);
- }
- 
- static int axgbe_write_ext_mii_regs_c45(struct axgbe_port *pdata,
--					int addr, int devad, int reg, u16 val)
-+	       u8 phy_addr, u8 dev_addr, u16 reg, u16 value)
- {
--	unsigned int mdio_sca;
-+	u32 mdio_sca;
- 
--	mdio_sca = axgbe_create_mdio_sca_c45(addr, devad, reg);
-+	mdio_sca = axgbe_create_mdio_sca_c45(phy_addr, dev_addr, reg);
- 
--	return axgbe_write_ext_mii_regs(pdata, mdio_sca, val);
-+	return axgbe_write_ext_mii_regs(pdata, mdio_sca, value);
- }
- 
- 
--static int axgbe_read_ext_mii_regs(struct axgbe_port *pdata,
--							unsigned int mdio_sca)
-+static int axgbe_read_ext_mii_regs(struct axgbe_port *pdata, u32 mdio_sca,
-+		u16 *value)
- {
- 	unsigned int mdio_sccd;
- 	uint64_t timeout;
-@@ -158,26 +158,28 @@ static int axgbe_read_ext_mii_regs(struct axgbe_port *pdata,
- 	return -ETIMEDOUT;
- 
- success:
--	return AXGMAC_IOREAD_BITS(pdata, MAC_MDIOSCCDR, DATA);
-+	*value = AXGMAC_IOREAD_BITS(pdata, MAC_MDIOSCCDR, DATA);
-+	return 0;
- }
- 
--static int axgbe_read_ext_mii_regs_c22(struct axgbe_port *pdata, int addr, int reg)
-+static int axgbe_read_ext_mii_regs_c22(struct axgbe_port *pdata, u8 phy_addr,
-+		u16 reg, u16 *value)
- {
--	unsigned int mdio_sca;
-+	u32 mdio_sca;
- 
--	mdio_sca = axgbe_create_mdio_sca_c22(addr, reg);
-+	mdio_sca = axgbe_create_mdio_sca_c22(phy_addr, reg);
- 
--	return axgbe_read_ext_mii_regs(pdata, mdio_sca);
-+	return axgbe_read_ext_mii_regs(pdata, mdio_sca, value);
- }
- 
--static int axgbe_read_ext_mii_regs_c45(struct axgbe_port *pdata, int addr,
--								int devad, int reg)
-+static int axgbe_read_ext_mii_regs_c45(struct axgbe_port *pdata, u8 phy_addr,
-+		u8 dev_addr, u16 reg, u16 *value)
- {
--	unsigned int mdio_sca;
-+	u32 mdio_sca;
- 
--	mdio_sca = axgbe_create_mdio_sca_c45(addr, devad, reg);
-+	mdio_sca = axgbe_create_mdio_sca_c45(phy_addr, dev_addr, reg);
- 
--	return axgbe_read_ext_mii_regs(pdata, mdio_sca);
-+	return axgbe_read_ext_mii_regs(pdata, mdio_sca, value);
- }
- 
- static int axgbe_set_ext_mii_mode(struct axgbe_port *pdata, unsigned int port,
-diff --git a/drivers/net/axgbe/axgbe_ethdev.h b/drivers/net/axgbe/axgbe_ethdev.h
-index b94a7f3562..24336f31f6 100644
---- a/drivers/net/axgbe/axgbe_ethdev.h
-+++ b/drivers/net/axgbe/axgbe_ethdev.h
-@@ -327,11 +327,14 @@ struct axgbe_hw_if {
- 
- 	int (*set_ext_mii_mode)(struct axgbe_port *, unsigned int,
- 				enum axgbe_mdio_mode);
--	int (*read_ext_mii_regs_c22)(struct axgbe_port *pdata, int addr, int reg);
--	int (*write_ext_mii_regs_c22)(struct axgbe_port *pdata, int addr, int reg, uint16_t val);
--	int (*read_ext_mii_regs_c45)(struct axgbe_port *pdata, int addr, int devad, int reg);
--	int (*write_ext_mii_regs_c45)(struct axgbe_port *pdata, int addr, int devad,
--									int reg, uint16_t val);
-+	int (*read_ext_mii_regs_c22)(struct axgbe_port *pdata, u8 phy_addr,
-+			u16 reg, u16 *value);
-+	int (*write_ext_mii_regs_c22)(struct axgbe_port *pdata, u8 phy_addr,
-+			u16 reg, u16 value);
-+	int (*read_ext_mii_regs_c45)(struct axgbe_port *pdata, u8 phy_addr,
-+			u8 dev_addr, u16 reg, u16 *value);
-+	int (*write_ext_mii_regs_c45)(struct axgbe_port *pdata, u8 phy_addr,
-+			u8 dev_addr, u16 reg, u16 value);
- 
- 	/* For FLOW ctrl */
- 	int (*config_tx_flow_control)(struct axgbe_port *);
-@@ -398,6 +401,9 @@ struct axgbe_phy_impl_if {
- 	/* Pre/Post KR training enablement support */
- 	void (*kr_training_pre)(struct axgbe_port *);
- 	void (*kr_training_post)(struct axgbe_port *);
++/* Advertisement control register. */
++#define ADVERTISE_SLCT          0x001f  /* Selector bits               */
++#define ADVERTISE_CSMA          0x0001  /* Only selector supported     */
++#define ADVERTISE_10HALF        0x0020  /* Try for 10mbps half-duplex  */
++#define ADVERTISE_1000XFULL     0x0020  /* Try for 1000BASE-X full-duplex */
++#define ADVERTISE_10FULL        0x0040  /* Try for 10mbps full-duplex  */
++#define ADVERTISE_1000XHALF     0x0040  /* Try for 1000BASE-X half-duplex */
++#define ADVERTISE_100HALF       0x0080  /* Try for 100mbps half-duplex */
++#define ADVERTISE_1000XPAUSE    0x0080  /* Try for 1000BASE-X pause    */
++#define ADVERTISE_100FULL       0x0100  /* Try for 100mbps full-duplex */
++#define ADVERTISE_1000XPSE_ASYM 0x0100  /* Try for 1000BASE-X asym pause */
++#define ADVERTISE_100BASE4      0x0200  /* Try for 100mbps 4k packets  */
++#define ADVERTISE_PAUSE_CAP     0x0400  /* Try for pause               */
++#define ADVERTISE_PAUSE_ASYM    0x0800  /* Try for asymmetric pause     */
++#define ADVERTISE_RESV          0x1000  /* Unused...                   */
++#define ADVERTISE_RFAULT        0x2000  /* Say we can detect faults    */
++#define ADVERTISE_LPACK         0x4000  /* Ack link partners response  */
++#define ADVERTISE_NPAGE         0x8000  /* Next page bit               */
 +
-+	int (*read)(struct axgbe_port *pdata, u16 reg, u16 *value);
-+	int (*write)(struct axgbe_port *pdata, u16 reg, u16 value);
- };
++#define ADVERTISE_FULL          (ADVERTISE_100FULL | ADVERTISE_10FULL | \
++		ADVERTISE_CSMA)
++#define ADVERTISE_ALL           (ADVERTISE_10HALF | ADVERTISE_10FULL | \
++		ADVERTISE_100HALF | ADVERTISE_100FULL)
  
- struct axgbe_phy_if {
+ /* MDIO Manageable Devices (MMDs). */
+ #define MDIO_MMD_PMAPMD		1	/* Physical Medium Attachment
+@@ -114,6 +137,26 @@
+ #define MDIO_AN_10GBT_CTRL	32	/* 10GBASE-T auto-negotiation control */
+ #define MDIO_AN_10GBT_STAT	33	/* 10GBASE-T auto-negotiation status */
+ 
++#define M88E1512_E_PHY_ID		0x01410DD0
++#define AXGBE_M88E1512_PAGE_ADDR	0x0016
++#define AXGBE_M88E1512_CFG_REG_1	0x0010
++#define AXGBE_M88E1512_CFG_REG_2	0x0011
++#define AXGBE_M88E1512_CFG_REG_3	0x0007
++#define AXGBE_M88E1512_MODE		0x0014
++
++#define AXGBE_M88E1512_PHY_PAGE		22
++#define AXGBE_M88E1512_COPPER_PAGE	0x00
++#define AXGBE_M88E1512_LED_PAGE		0x03
++#define AXGBE_M88E1512_MODE_PAGE	0x12
++
++#define AXGBE_M88E1512_MODE_RGMII_COPPER	0
++#define AXGBE_M88E1512_MODE_SGMII_COPPER	1
++#define AXGBE_M88E1512_MODE_RGMII_1000BX	2
++#define AXGBE_M88E1512_MODE_RGMII_100BFX	3
++#define AXGBE_M88E1512_MODE_RGMII_SGMII		4
++#define AXGBE_M88E1512_MODE_SW_RESET		0x8000
++
++
+ /* Control register 1. */
+ /* Enable extended speed selection */
+ #define MDIO_CTRL1_SPEEDSELEXT		(BMCR_SPEED1000 | BMCR_SPEED100)
+@@ -190,5 +233,6 @@
+ #define DUPLEX_FULL             0x01
+ #define DUPLEX_UNKNOWN          0xff
+ 
++#define AXGBE_PHY_REVISION_MASK 0xfffffff0
+ #endif
+ /* PHY */
 diff --git a/drivers/net/axgbe/axgbe_phy_impl.c b/drivers/net/axgbe/axgbe_phy_impl.c
-index 9249e11335..5bee7fec7a 100644
+index 5bee7fec7a..8635a53a6d 100644
 --- a/drivers/net/axgbe/axgbe_phy_impl.c
 +++ b/drivers/net/axgbe/axgbe_phy_impl.c
-@@ -203,7 +203,7 @@ struct axgbe_phy_data {
+@@ -3,6 +3,7 @@
+  *   Copyright(c) 2018 Synopsys, Inc. All rights reserved.
+  */
  
++#include <rte_cycles.h>
+ #include "axgbe_ethdev.h"
+ #include "axgbe_common.h"
+ #include "axgbe_phy.h"
+@@ -204,6 +205,7 @@ struct axgbe_phy_data {
  	unsigned int rrc_count;
  
--	unsigned int mdio_addr;
-+	uint8_t mdio_addr;
+ 	uint8_t mdio_addr;
++	uint32_t phy_id;
  
  	/* SFP Support */
  	enum axgbe_sfp_comm sfp_comm;
-@@ -251,6 +251,8 @@ static void axgbe_phy_perform_ratechange(struct axgbe_port *pdata,
- 		enum axgbe_mb_cmd cmd, enum axgbe_mb_subcmd sub_cmd);
- static void axgbe_phy_rrc(struct axgbe_port *pdata);
+@@ -253,6 +255,8 @@ static void axgbe_phy_rrc(struct axgbe_port *pdata);
  
-+static int axgbe_phy_get_comm_ownership(struct axgbe_port *pdata);
-+static void axgbe_phy_put_comm_ownership(struct axgbe_port *pdata);
+ static int axgbe_phy_get_comm_ownership(struct axgbe_port *pdata);
+ static void axgbe_phy_put_comm_ownership(struct axgbe_port *pdata);
++static int axgbe_get_ext_phy_link_status(struct axgbe_port *pdata,
++		bool *linkup);
  
  static int axgbe_phy_i2c_xfer(struct axgbe_port *pdata,
  			      struct axgbe_i2c_op *i2c_op)
-@@ -258,6 +260,44 @@ static int axgbe_phy_i2c_xfer(struct axgbe_port *pdata,
- 	return pdata->i2c_if.i2c_xfer(pdata, i2c_op);
+@@ -297,6 +301,83 @@ static int axgbe_phy_write(struct axgbe_port *pdata, u16 reg, u16 value)
+ 	return ret;
  }
  
-+static int axgbe_phy_read(struct axgbe_port *pdata, u16 reg, u16 *value)
++static int axgbe_phy_config_advert(struct axgbe_port *pdata)
 +{
-+	struct axgbe_phy_data *phy_data = pdata->phy_data;
++	u16 advert;
 +	int ret;
 +
-+	ret = axgbe_phy_get_comm_ownership(pdata);
-+	if (ret)
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_ADVERTISE, &advert);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to read ADVERTISE register");
 +		return ret;
++	}
 +
-+	ret = pdata->hw_if.read_ext_mii_regs_c22(pdata,
-+			phy_data->mdio_addr, reg, value);
-+	if (ret)
-+		PMD_DRV_LOG_LINE(ERR, "mdio read failed %s",
-+				strerror(ret));
++	advert |= ADVERTISE_FULL;
++	advert |= ADVERTISE_PAUSE_CAP;
 +
-+	axgbe_phy_put_comm_ownership(pdata);
-+	return ret;
++	ret = pdata->phy_if.phy_impl.write(pdata, MII_ADVERTISE, advert);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to write ADVERTISE register");
++		return ret;
++	}
++	return 0;
 +}
 +
-+static int axgbe_phy_write(struct axgbe_port *pdata, u16 reg, u16 value)
++static int axgbe_phy_set_speed(struct axgbe_port *pdata)
 +{
 +	struct axgbe_phy_data *phy_data = pdata->phy_data;
++	u16 bmcr;
 +	int ret;
-+	ret = axgbe_phy_get_comm_ownership(pdata);
-+	if (ret)
++
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to read BMCR register");
 +		return ret;
++	}
 +
-+	ret = pdata->hw_if.write_ext_mii_regs_c22(pdata,
-+			phy_data->mdio_addr, reg, value);
-+	if (ret)
-+		PMD_DRV_LOG_LINE(ERR, "mdio write failed %s",
-+				strerror(ret));
++	bmcr &= ~(MDIO_CTRL1_SPEEDSELEXT);
++	switch (phy_data->cur_mode) {
++	case AXGBE_MODE_SGMII_1000:
++		bmcr |= BMCR_SPEED1000;
++		break;
++	case AXGBE_MODE_SGMII_100:
++		bmcr |= BMCR_SPEED100;
++		break;
++	default:
++		break;
++	}
 +
-+	axgbe_phy_put_comm_ownership(pdata);
-+	return ret;
++	ret = pdata->phy_if.phy_impl.write(pdata, MII_BMCR, bmcr);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to write BMCR register");
++		return ret;
++	}
++	return 0;
 +}
 +
++static int axgbe_phy_config_aneg(struct axgbe_port *pdata)
++{
++	u16 bmcr;
++	int ret;
 +
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to read BMCR register");
++		return ret;
++	}
++
++	bmcr &= ~(BMCR_ANENABLE);
++	if (pdata->phy.autoneg == AUTONEG_ENABLE)
++		bmcr |=  BMCR_ANENABLE | BMCR_ANRESTART;
++
++	ret = pdata->phy_if.phy_impl.write(pdata, MII_BMCR, bmcr);
++
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to write BMCR register");
++		return ret;
++	}
++	return 0;
++}
+ 
  static int axgbe_phy_redrv_write(struct axgbe_port *pdata, unsigned int reg,
  				 unsigned int val)
- {
-@@ -2542,4 +2582,7 @@ void axgbe_init_function_ptrs_phy_v2(struct axgbe_phy_if *phy_if)
+@@ -1132,10 +1213,35 @@ static unsigned int axgbe_phy_an_advertising(struct axgbe_port *pdata)
  
- 	phy_impl->kr_training_pre	= axgbe_phy_kr_training_pre;
- 	phy_impl->kr_training_post	= axgbe_phy_kr_training_post;
+ static int axgbe_phy_an_config(struct axgbe_port *pdata __rte_unused)
+ {
++	struct axgbe_phy_data *phy_data = pdata->phy_data;
++	int ret;
 +
-+	phy_impl->read			= axgbe_phy_read;
-+	phy_impl->write			= axgbe_phy_write;
++	/* Auto-negotiation config is implemented only for 1000BASE-T */
++	if (phy_data->port_mode != AXGBE_PORT_MODE_1000BASE_T)
++		return 0;
++
++	/* Supports only Marvell M88E1512 PHY for now*/
++	if (phy_data->phy_id == M88E1512_E_PHY_ID) {
++		ret = axgbe_phy_config_advert(pdata);
++		if (ret) {
++			PMD_DRV_LOG_LINE(ERR, "PHY ADVERTISE config failed");
++			return ret;
++		}
++
++		ret = axgbe_phy_set_speed(pdata);
++		if (ret) {
++			PMD_DRV_LOG_LINE(ERR, "PHY set speed failed");
++			return ret;
++		}
++
++		ret = axgbe_phy_config_aneg(pdata);
++		if (ret) {
++			PMD_DRV_LOG_LINE(ERR, "PHY AN config failed");
++			return ret;
++		}
++		PMD_DRV_LOG_LINE(DEBUG, "M88E1512 PHY AN config done");
++	}
+ 	return 0;
+-	/* Dummy API since there is no case to support
+-	 * external phy devices registered through kernel APIs
+-	 */
  }
+ 
+ static enum axgbe_an_mode axgbe_phy_an_sfp_mode(struct axgbe_phy_data *phy_data)
+@@ -1880,10 +1986,12 @@ static bool axgbe_phy_use_mode(struct axgbe_port *pdata, enum axgbe_mode mode)
+ 	}
+ }
+ 
++/* return 0 means link down, 1 means link up */
+ static int axgbe_phy_link_status(struct axgbe_port *pdata, int *an_restart)
+ {
+ 	struct axgbe_phy_data *phy_data = pdata->phy_data;
+-	unsigned int reg;
++	uint32_t reg;
++	bool ext_phy_link_up = false;
+ 
+ 	*an_restart = 0;
+ 
+@@ -1903,6 +2011,26 @@ static int axgbe_phy_link_status(struct axgbe_port *pdata, int *an_restart)
+ 		}
+ 	}
+ 
++	if (phy_data->port_mode == AXGBE_PORT_MODE_1000BASE_T) {
++		if (phy_data->phy_id == M88E1512_E_PHY_ID) {
++			if (axgbe_get_ext_phy_link_status(pdata,
++						&ext_phy_link_up)) {
++				PMD_DRV_LOG_LINE(ERR,
++						"Get link status failed");
++				goto out;
++			}
++
++			if (ext_phy_link_up) {
++				PMD_DRV_LOG_LINE(DEBUG,
++						"M88E1512 PHY link is up");
++			} else {
++				PMD_DRV_LOG_LINE(DEBUG,
++						"M88E1512 PHY link is not up");
++				goto out;
++			}
++		}
++	}
++
+ 	/* Link status is latched low, so read once to clear
+ 	 * and then read again to get current state
+ 	 */
+@@ -1946,6 +2074,7 @@ static int axgbe_phy_link_status(struct axgbe_port *pdata, int *an_restart)
+ 		axgbe_phy_rrc(pdata);
+ 	}
+ 
++out:
+ 	return 0;
+ }
+ 
+@@ -2303,6 +2432,243 @@ static int axgbe_phy_reset(struct axgbe_port *pdata)
+ 	return 0;
+ }
+ 
++static int axgbe_get_phy_id(struct axgbe_port *pdata)
++{
++	struct axgbe_phy_data *phy_data = pdata->phy_data;
++	u16 phy_id_1;
++	u16 phy_id_2;
++	int ret;
++
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_PHYSID1,
++			&phy_id_1);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to read PHYSID1 register");
++		return ret;
++	}
++
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_PHYSID2,
++			&phy_id_2);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to read PHYSID2 register");
++		return ret;
++	}
++
++	phy_data->phy_id = (u32)phy_id_1 << 16;
++	phy_data->phy_id |= phy_id_2;
++	phy_data->phy_id &= AXGBE_PHY_REVISION_MASK;
++
++	if (phy_data->phy_id == AXGBE_PHY_REVISION_MASK) {
++		PMD_DRV_LOG_LINE(ERR, "Invalid PHY id (0x%x)",
++				phy_data->phy_id);
++		return -EINVAL;
++	}
++	PMD_DRV_LOG_LINE(DEBUG, "PHY id (0x%x)", phy_data->phy_id);
++	return 0;
++}
++
++static int axgbe_phy_poll_reset(struct axgbe_port *pdata)
++{
++	const uint64_t timeout_ms  = 2000;
++	const uint64_t interval_ms = 1;
++	const uint64_t hz          = rte_get_timer_hz();
++	const uint64_t start       = rte_get_timer_cycles();
++
++	u16 bmcr = 0;
++	int ret;
++
++	for (;;) {
++		ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
++		if (ret) {
++			PMD_DRV_LOG_LINE(ERR, "PHY read BMCR failed");
++			return ret;
++		}
++		if (!(bmcr & BMCR_RESET))
++			return 0;
++
++		uint64_t elapsed_ms =
++			((rte_get_timer_cycles() - start) * 1000) / hz;
++		if (elapsed_ms >= timeout_ms)
++			break;
++
++		rte_delay_us_block(interval_ms * 1000);
++	}
++	return -ETIMEDOUT;
++}
++
++
++static int axgbe_phy_soft_reset(struct axgbe_port *pdata)
++{
++	int ret;
++	u16 bmcr;
++
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to read BMCR register");
++		return ret;
++	}
++
++	bmcr |= BMCR_RESET;
++
++	ret = pdata->phy_if.phy_impl.write(pdata, MII_BMCR, bmcr);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Failed to write BMCR register");
++		return ret;
++	}
++
++	ret = axgbe_phy_poll_reset(pdata);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "Poll for PHY reset done failed");
++		return ret;
++	}
++	return 0;
++}
++
++static int axgbe_m88e1512_set_page(struct axgbe_port *pdata, u16 page)
++{
++	int ret;
++
++	ret = pdata->phy_if.phy_impl.write(pdata,
++			AXGBE_M88E1512_PAGE_ADDR, page);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR,
++				"PHY set page failed for page 0x%x", page);
++	}
++	return ret;
++}
++
++static const struct {
++	u16 reg17, reg16;
++} errata_vals[] = {
++	{ 0x214b, 0x2144 },
++	{ 0x0c28, 0x2146 },
++	{ 0xb233, 0x214d },
++	{ 0xcc0c, 0x2159 },
++};
++
++static int axgbe_m88e1512_init(struct axgbe_port *pdata)
++{
++	int ret;
++	u8 i;
++
++	PMD_DRV_LOG_LINE(DEBUG, "Initialize M88E1512 phy");
++
++	/* Switch to PHY page 0xFF */
++	ret = axgbe_m88e1512_set_page(pdata, 0xff);
++	if (ret)
++		goto err_out;
++
++	/* Configure M88E1512 errata registers */
++	for (i = 0; i < ARRAY_SIZE(errata_vals); i++) {
++		ret = pdata->phy_if.phy_impl.write(pdata,
++				AXGBE_M88E1512_CFG_REG_2,
++				errata_vals[i].reg17);
++		if (ret) {
++			PMD_DRV_LOG_LINE(ERR, "Config M88E1512 errata failed");
++			goto err_set_copper_page;
++		}
++
++		ret = pdata->phy_if.phy_impl.write(pdata,
++				AXGBE_M88E1512_CFG_REG_1,
++				errata_vals[i].reg16);
++		if (ret) {
++			PMD_DRV_LOG_LINE(ERR, "Config M88E1512 errata failed");
++			goto err_set_copper_page;
++		}
++	}
++
++	/* Switch to PHY page 0xFB */
++	ret = axgbe_m88e1512_set_page(pdata, 0xfb);
++	if (ret)
++		goto err_set_copper_page;
++
++	ret = pdata->phy_if.phy_impl.write(pdata,
++			AXGBE_M88E1512_CFG_REG_3, 0xC00D);
++	if (ret)
++		goto err_set_copper_page;
++
++	/* Switch to PHY copper page */
++	ret = axgbe_m88e1512_set_page(pdata, AXGBE_M88E1512_COPPER_PAGE);
++	if (ret)
++		goto err_out;
++
++	/* SGMII-to-Copper mode initialization */
++
++	/* Switch to PHY mode page */
++	ret = axgbe_m88e1512_set_page(pdata, AXGBE_M88E1512_MODE_PAGE);
++	if (ret)
++		goto err_set_copper_page;
++
++	ret = pdata->phy_if.phy_impl.write(pdata,
++			AXGBE_M88E1512_MODE,
++			(AXGBE_M88E1512_MODE_SW_RESET |
++			 AXGBE_M88E1512_MODE_SGMII_COPPER));
++	if (ret)
++		goto err_set_copper_page;
++
++	/* Switch to PHY copper page */
++	ret = axgbe_m88e1512_set_page(pdata, AXGBE_M88E1512_COPPER_PAGE);
++	if (ret)
++		goto err_out;
++
++	ret = axgbe_phy_soft_reset(pdata);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "M88E1512 PHY soft reset failed");
++		goto err_out;
++	}
++
++	PMD_DRV_LOG_LINE(DEBUG, "M88E1512 phy init done");
++	return 0;
++
++err_set_copper_page:
++	/* Switch to PHY page 0 */
++	axgbe_m88e1512_set_page(pdata, AXGBE_M88E1512_COPPER_PAGE);
++err_out:
++	PMD_DRV_LOG_LINE(ERR, "M88E1512 PHY initialization failed");
++	return ret;
++}
++
++
++static int axgbe_get_ext_phy_link_status(struct axgbe_port *pdata, bool *linkup)
++{
++	int ret;
++	u16 bmcr;
++	u16 bmsr;
++
++	*linkup = false;
++
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMCR, &bmcr);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "PHY read failed for BMCR register");
++		return ret;
++	}
++
++	/* Autoneg is being started, therefore disregard BMSR value and
++	 * report link as down.
++	 */
++	if (bmcr & BMCR_ANRESTART)
++		return 0;
++
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMSR, &bmsr);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "PHY read failed for BMSR register");
++		return ret;
++	}
++
++	if (bmsr & BMSR_LSTATUS)
++		goto done;
++
++	/* Read link status */
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_BMSR, &bmsr);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "PHY read failed for BMSR register");
++		return ret;
++	}
++done:
++	*linkup = (bmsr & BMSR_LSTATUS) ? true : false;
++	return 0;
++}
++
++
+ static int axgbe_phy_init(struct axgbe_port *pdata)
+ {
+ 	struct axgbe_phy_data *phy_data;
+@@ -2556,6 +2922,21 @@ static int axgbe_phy_init(struct axgbe_port *pdata)
+ 	}
+ 
+ 	phy_data->phy_cdr_delay = AXGBE_CDR_DELAY_INIT;
++
++	ret = axgbe_get_phy_id(pdata);
++	if (ret) {
++		PMD_DRV_LOG_LINE(ERR, "failed to get PHY id");
++		return ret;
++	}
++
++	PMD_DRV_LOG_LINE(DEBUG, "PHY ID = 0x%x", phy_data->phy_id);
++
++	if (phy_data->phy_id == M88E1512_E_PHY_ID) {
++		ret = axgbe_m88e1512_init(pdata);
++		if (ret)
++			return ret;
++	}
++
+ 	return 0;
+ }
+ void axgbe_init_function_ptrs_phy_v2(struct axgbe_phy_if *phy_if)
 -- 
 2.34.1
 
