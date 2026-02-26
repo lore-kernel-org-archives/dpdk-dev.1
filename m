@@ -2,56 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D83FCE095
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 14:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0CDFCE095
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 14:34:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 538114066F;
-	Thu, 26 Feb 2026 15:34:10 +0100 (CET)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
- [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id 215CB402E4
- for <dev@dpdk.org>; Thu, 26 Feb 2026 15:34:06 +0100 (CET)
-Received: by mail-wr1-f52.google.com with SMTP id
- ffacd0b85a97d-436e87589e8so919580f8f.3
- for <dev@dpdk.org>; Thu, 26 Feb 2026 06:34:06 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C9C3140A4B;
+	Thu, 26 Feb 2026 15:34:13 +0100 (CET)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com
+ [209.85.221.47]) by mails.dpdk.org (Postfix) with ESMTP id 8C79A4060C
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 15:34:07 +0100 (CET)
+Received: by mail-wr1-f47.google.com with SMTP id
+ ffacd0b85a97d-4398f9e3b40so900150f8f.1
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 06:34:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1772116446; x=1772721246; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1772116447; x=1772721247; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EjDdbf+eAjbLdgG/yexqas3+XFV2wX2tkLagCUlKWPs=;
- b=GehbJWpFPxurvCd8rjmKqZ/Re1/2Ty9/e+EdVHGKQmguGlsoMvJphmb0wE+4aqt0Yi
- qP6pA8eHaXfbePXDH7rW9fKXKbI7VdEvt31tDzHdGZK3tiX6k16KTOBsj7IXadSIx4tH
- UITxtSH7SO43mLaPbeXvshuF/kFXBRgVKYFBG6eSth/sb4Zl9wqWwqKny0Z1YA2SDVqu
- VBCrsUC7/dl/ZztwKkvvL02W+sSkIhGUnsemWPZCiVLQozXhX1JlVRF0dq9ZMRhiuJB3
- m0RY6U35BFdgC06zzLowcRBy9cM4kXEQHcdRjuclDQgyNC64jJ5L7twxaAgaYXegcS3O
- w0RQ==
+ bh=KRPH6vpFoQVJz5/wx2skp5qzpIe9crg1cbFFpYMoAFE=;
+ b=m+3TLdpzNkXlJJTEBGFk51LEaEgBjlzESJzndyq/8QLdaPH+OUWfYR+sKqmgXXOqN1
+ K6K1LmLfSlvMKe0XllVYf8vyauWcrwpPbXA0ppKvh68yqe3ky1DlyPy4wEcdrB1JBaI1
+ Wd3QfntLh/2hQ0vDMWmEsO0KGhhhqXnwAYmXFUo4dimlNNp+ZiGleQkyJvJBNCCQvRDd
+ 5xH/upQgF1JYq/2mRV4R7y5OZKcTLCOwjIPtcU3yW2cWqFg1RapzhqNrzY56OG9pY88w
+ zCNdoCuWboy00PchekZ8Ai/WVkdPUgEfVvpjQwq+klUigpsVS7m9nNPDF8EZYjo7SEsa
+ hPWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772116446; x=1772721246;
+ d=1e100.net; s=20230601; t=1772116447; x=1772721247;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=EjDdbf+eAjbLdgG/yexqas3+XFV2wX2tkLagCUlKWPs=;
- b=jJIi/nWiDu/m1A4dtDZVBAkmx7SDdKtUNDmjwlvAwGg6wSsXZIw6Dd1r6EAThuoEAj
- 2Xw22qqI4U9LCM5iqXb6wQSHBR9Y311u2vPxja4tdPMOe5kEXZpRkvSDJNYXFXPL3ylr
- Uq+0E4V5SKjAkWZ3KohFWk0fyh1HG6E6UIg6nDB5PTBoVG50i89FPxp9ARg+ANW2wPbC
- ugmGZ1W5sOOgOsRPtRPnD1rAO6PG3G8ZDiy4eTVV4UNqEkq6yF3mMlJ/67StSb9qCTXn
- eB3hdMiMuem+SiagdceBJz5FKd36Qwtx1CgiT0OzxV9MoTri9gctPNk8fYNQVU72SrN4
- GE/w==
-X-Gm-Message-State: AOJu0YwFItDbm1H6+M+4Nk8iAEuc0ht89ZibOeAQsCBTMEMAgv8U3d51
- k6XUAA5PCoXwohfYs7us025ObbQ0HLopJ/M5dE3yTz88mzBuVc5p+ZbL+iRRJQ==
-X-Gm-Gg: ATEYQzxUbQsirKqdkAVYZbBkaplqLGTO2086hJ6rEBbTzJnOSS7hNvgm6AS095/nfE9
- LggFnYURCAr3KHTqdwErVBCXKya2N8SDlklF2jcCtzCXwSom1WYkUhykjkEJa0GZd7sW2e1EgJB
- 6kFOBlY7CvokJ//6znS+G0EHtu0nF/Rj3puht6UHMjRYEMe3yJWPkjx3kJQIZrc/r1HxXXtyhEd
- LOfoy12B07cL6yaAEQ7TEHh7Jr8XjaulNCkLwuSwRmvdfTc1ldFp2n1eGMEeRiXSPN9iaPVXcVd
- DiMJIdNh2/Nt9SZ+RuHD1haeYeeUb97B2Nh46wI2qROGPgxh3ODiXhsV1wYwxI37/t+L3yazGau
- jat+MpzquFrZZxpJF0B1ivNR1VYa4VF2i0UiVm7XMyMm0IMQaPRHnxUoBwBasvMT1sMxT7Yje+Q
- L8+NO4KwwQl/n6iIuV2IJqKPQ3uJm11I60tB5f
-X-Received: by 2002:a05:6000:24c1:b0:435:ad52:31e0 with SMTP id
- ffacd0b85a97d-4396f15b26amr38530414f8f.16.1772116445526; 
- Thu, 26 Feb 2026 06:34:05 -0800 (PST)
+ bh=KRPH6vpFoQVJz5/wx2skp5qzpIe9crg1cbFFpYMoAFE=;
+ b=mQJvwoP5pIHoW9RHDyaj/HsKcVDDLRwVXcLAJiNdmeSLwMnTJCXc5A/HCxp8N6kpR0
+ RSozPLC5wTdxyy3sd8zuB4lCETHI1sh/GDAVu3FJTSt8TNrVGPH2kFFC51GJMync2pRM
+ A6Ly5H4phUk+9KjSEjYz4W2xcnuyNewxZNw43CpURc70UehwAQ+r+VcSJ/d88H/mff8x
+ 57yo9v1zcFv7Bf9nBOLnu8+rHqMrR3pmKc4eFXDrd3SneTIcLlhXMfSQVnOBG+iIaap6
+ GVPr+6H+1DVJe+a0sFiUEg10gOtwO229F58HbYCWeWdlM3MbRMg6Mj85kT+PcKKyWARC
+ wVAQ==
+X-Gm-Message-State: AOJu0Yyxktd/LUJwLLn4/fJMnGFdbp9RMvxnXlpripaQ38Ca6fxc2jZ6
+ HXc4AffjmFPeS3Zg/XB0OAeF60IrKaRM6gcISvRmAvnjSXMNb7SyHWFfozD1Fg==
+X-Gm-Gg: ATEYQzyGnXLYVM/qXw7iP6a1u40+8P2hdis/2qFrYk/piHAekJeaKU+a8vldeX49u39
+ VQtDKYdMGnhEP+i1Y43+JFwFn3YdNrXIAmkxUi7w3TWZOBbUW2GH7NQIfTyQ3YailkMvddTd16+
+ A5EMh0C8wCi3QL0LcjxEazrVcWH6gW4Il/huWCEvrJ/5czgR6/1OOHZM21LyhLJEZU6h6mPobia
+ gBQw/fof7WdinyxDH/gXB37TKHU2PmHRNrcHSiiPWS5cO2enip5k/j4vEVpYzSQ6p8Y4FF2GlWT
+ /qaI0BzC5X74J6GDZ6JIiSUMM0OcdM9owQ3exD5nBNMjkurodjfxYy7R9fSJvu4MAnefZi2R1n0
+ DZHLkr/MY0RQbZ0wEg6Lsj0rpQy7wo1ZJdAy3IaxFyHLpFmZNJk0Q02VtRO7JXBr9qY0Cgse4ND
+ Ms8Tl5YsqOzUCgw7BBQEP8QPYSIg==
+X-Received: by 2002:a05:6000:420c:b0:436:3536:f698 with SMTP id
+ ffacd0b85a97d-43997f37caemr4456314f8f.30.1772116446524; 
+ Thu, 26 Feb 2026 06:34:06 -0800 (PST)
 Received: from freepad.iliad.local ([213.36.9.96])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4398bb96b90sm17993866f8f.9.2026.02.26.06.34.04
+ ffacd0b85a97d-4398bb96b90sm17993866f8f.9.2026.02.26.06.34.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
  Thu, 26 Feb 2026 06:34:05 -0800 (PST)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
@@ -59,10 +59,9 @@ From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com, stephen@networkplumber.org,
  david.marchand@redhat.com, Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org
-Subject: [PATCH v2 03/17] net/dpaa2: warn on rx descriptor limit only in high
- perf buffer mode
-Date: Thu, 26 Feb 2026 15:33:27 +0100
-Message-ID: <20260226143341.282188-4-maxime@leroys.fr>
+Subject: [PATCH v2 04/17] net/dpaa2: fix resource leak on softparser failure
+Date: Thu, 26 Feb 2026 15:33:28 +0100
+Message-ID: <20260226143341.282188-5-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260218160453.142311-1-maxime@leroys.fr>
 References: <20260218160453.142311-1-maxime@leroys.fr>
@@ -81,86 +80,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Rx descriptor count warning fires unconditionally when the total
-exceeds 11264, but this limit only applies when the DPNI is created
-with the high performance buffer option (0x80000000). When using normal
-buffers, there is no such limit and the warning is
-misleading noise.
+When soft parser loading or enabling fails during probe, the error
+path returns directly instead of going through the init_err label.
+This skips dpaa2_dev_close() and leaks all resources allocated during
+probe (queues, MAC addresses, extract params).
 
-Check the DPNI options to only warn when the high performance buffer
-mode is active.
-
-Fixes: 35dc25d12792 ("net/dpaa2: warn on high Rx descriptor number")
+Fixes: 72ec7a678e70 ("net/dpaa2: add soft parser driver")
 Cc: stable@dpdk.org
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
-Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 18 +++++++++++-------
- drivers/net/dpaa2/mc/fsl_dpni.h  |  6 ++++++
- 2 files changed, 17 insertions(+), 7 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index eb8333458e..61dcfafff6 100644
+index 61dcfafff6..3658e24dd2 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -74,8 +74,9 @@ int dpaa2_timestamp_dynfield_offset = -1;
+@@ -3164,7 +3164,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 		if (ret < 0) {
+ 			DPAA2_PMD_ERR(" Error(%d) in loading softparser",
+ 				      ret);
+-			return ret;
++			goto init_err;
+ 		}
  
- bool dpaa2_print_parser_result;
- 
-+/* Rx descriptor limit when DPNI uses high performance buffers */
- #define MAX_NB_RX_DESC		11264
--int total_nb_rx_desc;
-+static int total_nb_rx_desc;
- 
- int dpaa2_valid_dev;
- struct rte_mempool *dpaa2_tx_sg_pool;
-@@ -904,11 +905,13 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
- 	DPAA2_PMD_DEBUG("dev =%p, queue =%d, pool = %p, conf =%p",
- 			dev, rx_queue_id, mb_pool, rx_conf);
- 
--	total_nb_rx_desc += nb_rx_desc;
--	if (total_nb_rx_desc > MAX_NB_RX_DESC) {
--		DPAA2_PMD_WARN("Total nb_rx_desc exceeds %d limit. Please use Normal buffers",
--			       MAX_NB_RX_DESC);
--		DPAA2_PMD_WARN("To use Normal buffers, run 'export DPNI_NORMAL_BUF=1' before running dynamic_dpl.sh script");
-+	if (priv->options & DPNI_OPT_HIGH_PERF_BUFFER) {
-+		total_nb_rx_desc += nb_rx_desc;
-+		if (total_nb_rx_desc > MAX_NB_RX_DESC) {
-+			DPAA2_PMD_WARN("Total nb_rx_desc exceeds %d limit. Please use Normal buffers",
-+				       MAX_NB_RX_DESC);
-+			DPAA2_PMD_WARN("To use Normal buffers, run 'export DPNI_NORMAL_BUF=1' before running dynamic_dpl.sh script");
-+		}
+ 		ret = dpaa2_eth_enable_wriop_soft_parser(priv,
+@@ -3172,7 +3172,7 @@ dpaa2_dev_init(struct rte_eth_dev *eth_dev)
+ 		if (ret < 0) {
+ 			DPAA2_PMD_ERR(" Error(%d) in enabling softparser",
+ 				      ret);
+-			return ret;
++			goto init_err;
+ 		}
  	}
  
- 	if (!priv->bp_list || priv->bp_list->mp != mb_pool) {
-@@ -1213,7 +1216,8 @@ dpaa2_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t rx_queue_id)
- 	memset(&cfg, 0, sizeof(struct dpni_queue));
- 	PMD_INIT_FUNC_TRACE();
- 
--	total_nb_rx_desc -= dpaa2_q->nb_desc;
-+	if (priv->options & DPNI_OPT_HIGH_PERF_BUFFER)
-+		total_nb_rx_desc -= dpaa2_q->nb_desc;
- 
- 	if (dpaa2_q->cgid != DPAA2_INVALID_CGID) {
- 		options = DPNI_QUEUE_OPT_CLEAR_CGID;
-diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
-index fcc6d4726e..82d6830acc 100644
---- a/drivers/net/dpaa2/mc/fsl_dpni.h
-+++ b/drivers/net/dpaa2/mc/fsl_dpni.h
-@@ -121,6 +121,12 @@ struct fsl_mc_io;
-  * The stashing is enabled by default.
-  */
- #define DPNI_OPT_STASHING_DIS			0x002000
-+/*
-+ * High performance buffer mode.
-+ * The total number of Rx descriptors is limited to 11264 in this mode.
-+ * When not set, the DPNI uses normal buffers and has no such limit.
-+ */
-+#define DPNI_OPT_HIGH_PERF_BUFFER		0x80000000
- /**
-  * Software sequence maximum layout size
-  */
 -- 
 2.43.0
 
