@@ -2,50 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28116FCE078
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 13:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC794FCE078
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 13:18:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 309DE4065A;
-	Thu, 26 Feb 2026 14:18:23 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7C5E0402CE
- for <dev@dpdk.org>; Thu, 26 Feb 2026 14:18:21 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 61Q6NBaO3056423 for <dev@dpdk.org>; Thu, 26 Feb 2026 05:18:20 -0800
+	by mails.dpdk.org (Postfix) with ESMTP id 171624065C;
+	Thu, 26 Feb 2026 14:18:28 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id D24754065C
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 14:18:26 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 61QDBdR4096651 for <dev@dpdk.org>; Thu, 26 Feb 2026 05:18:26 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=t
- k9cs2s84f+JyrYTBoEZ5GtlpBGS8gl9bD+o9gayf8o=; b=Jn0najWaSrQuUsMdO
- d++1mTtc2U1qGhMdtKgMmUUbHpkqpyM7yMm0o13k2QN2pAlv4A1X9JFmoDW1Sjt/
- 0Fwwe9DmNauL9SWPvXRWDe76jsG+fv6rlOQ4+avtUGGMaXJAI3a4eRnJ2qDQnIn5
- ahj1EYAefwsQPDGdfChfGjE5b2xu0t91Ljptgdab0Tn5rejaVYh5XTShrBqOs35E
- DFlQnG7uPsjrhRToKJ9qiXAHmEiXt3edoeeiTWOvGEhzmFacWrYc6MI44giMtrzW
- 7+syRHBCDd9n2+oFrgpsHo6g59UREmyP0uiBtQd2ImuF+ALE+zJV++Grqs/+lpit
- fwvRQ==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4chnp8vpgj-2
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=f
+ CsKOsXF9kjNcqakvppiAhkNGlcO3/bUp6fYB/coBkI=; b=PF+rV5bb1h4Df/KOo
+ SqTWUrB9Radu/INGtWhJpjWbzarwY5kS7V6MPTgPnAjrocgVbyx7EcfQqQPHBV0/
+ BAwRE0yDbeJOyNZ6NQ/IwGoZuZQJQ3YQShCg2kapDLdNu6giQQGPCq+gMoVZZTSJ
+ iaXX0ALD9sJvFJHilkE45F7vJqjcPArJaD9WYNnXthkg810PuRCUYoW4/x1LuVOW
+ F4bOnhavMO1JJqthqChefnQKLJjT6jaTFOC5ksmE7kjW13IxapNZB3W9vSTmXIub
+ 44mMgPZwmi69RXktFn/1mIoF4GYs4yeVr5+nW9MYPN7F8NtvE+hsgN42VJ2ZiHlJ
+ jBrMw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4cjpuhg0mf-2
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Thu, 26 Feb 2026 05:18:20 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Thu, 26 Feb 2026 05:18:26 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 26 Feb 2026 05:18:19 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 26 Feb 2026 05:18:19 -0800
+ 15.2.1544.25; Thu, 26 Feb 2026 05:18:24 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 26 Feb 2026 05:18:24 -0800
 Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id 1F3B73F70D4;
- Thu, 26 Feb 2026 05:18:16 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id ECF8E3F70D4;
+ Thu, 26 Feb 2026 05:18:21 -0800 (PST)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH v2 3/8] common/cnxk: update platform features
-Date: Thu, 26 Feb 2026 18:47:10 +0530
-Message-ID: <20260226131715.2851091-3-rbhansali@marvell.com>
+Subject: [PATCH v2 4/8] common/cnxk: add RQ PB and WQE cache config
+Date: Thu, 26 Feb 2026 18:47:11 +0530
+Message-ID: <20260226131715.2851091-4-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260226131715.2851091-1-rbhansali@marvell.com>
 References: <20260219090847.3257753-1-rbhansali@marvell.com>
@@ -53,21 +53,21 @@ References: <20260219090847.3257753-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: CxJQrG6PPK0fi7xwMr57qW9TVuOxdrXr
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI2MDEyMCBTYWx0ZWRfX+gahzmsQPoxr
- acUOZtbUmlOfHsYDEjrDBcJOlhXw3/6ORShzv9WspO0XX00oRNxsXGCk7fp+P4T6gBKJK6OphT6
- jyqSzeESIHWFwVPoBRHjkM+dVygM0D8hHJEC0GwPa57L2qQrFrC61oxSxgUN3OLUQYeOg0P7CyY
- 1fA5pQAwB93a4ky7dLyddP631PZz6N1DYC1O+QSe19U7eKb6WYv3uSOcZrASQtvp3eXmKjRwfZj
- PL6GAv1tyHIclFq6EqMAlX93zrk7Hzd+YloIYLbfruLQx9Wvvo/xoSrpMczCBpmSY2VVrGQkLC6
- 3+mIewyB1arvJpvSZ2Iq4xhAgnIHktbEh+ky9WyepBOgad7y2juQON7x1UqAo0Da9FfcWgBKRev
- RlX0mg3+tuaHIGDgSxjx52+mqLahkNetF8mNau2Wz2bnA/at/WUZA+LkuaR56WNE7QKZhi4hf+T
- vFJ3oIB+gmHukCRPuBQ==
-X-Authority-Analysis: v=2.4 cv=bNYb4f+Z c=1 sm=1 tr=0 ts=69a0481c cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+X-Proofpoint-ORIG-GUID: YW0t1OvLgZJYZjwnRm6W3ufhqMYn_TpP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMjI2MDExOSBTYWx0ZWRfX8LctQvsQZlvm
+ a3HGdOuV8746FQmUCVpnSVfHFiEpknJ4XsKe/W4g4MPvM4sBQOFCvtgIhVx/eDoatsrSwPc177v
+ GX+lh9Cst8ypCFOSizm9NOBYqSlm8Q9nkI2kB7BPW1Q912NvBpLdWsQ+rsVgJMbLB2DTsZkF8AZ
+ UYoQ1NlSd5fgzI2qaarFh5DLX5/LZU/SabIYvX0gC4FqBKhhI+qZ0sLDDNh5Q1YKzgcriJjFatR
+ CNm9zelPDBhvK9ucgJV8EAub9CO8AMZZZOziA6qZqRMu7JY32PB8P0bBKrASNFLp5+9SWW2jhHD
+ iHxrwbW0zojhEz4GKqLnaT5NLtzmawA1lJoM9xr/g7T3QRqbiqn3tLZuKwFCGsEpXfIeNOcAX2j
+ 65yNzr1u9SCSuIDuMoaQ0LgDco0OdmJJGcmRhLweKLjFbvb6VUbLokW2gFnmmxIqtddeyW0uJLF
+ bfnFPapfGxvJM369dLA==
+X-Proofpoint-GUID: YW0t1OvLgZJYZjwnRm6W3ufhqMYn_TpP
+X-Authority-Analysis: v=2.4 cv=f7JFxeyM c=1 sm=1 tr=0 ts=69a04822 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=HzLeVaNsDn8A:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8 a=v69dt79VaSGfBV6H58AA:9
+ a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=QR93-xR_87IXRqM-4vsA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: CxJQrG6PPK0fi7xwMr57qW9TVuOxdrXr
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-02-25_04,2026-02-26_01,2025-10-01_01
@@ -84,29 +84,139 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Adds cnf20ka platform check for plain packet reassembly
-features.
+Adds RQ's PB (Packet buffer) and WQE cache configuration
+options.
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
 Changes in v2: No changes.
 
- drivers/common/cnxk/roc_features.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/common/cnxk/roc_nix.h       | 14 ++++++++++++++
+ drivers/common/cnxk/roc_nix_inl.c   |  2 ++
+ drivers/common/cnxk/roc_nix_queue.c | 16 ++++++++--------
+ 3 files changed, 24 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/common/cnxk/roc_features.h b/drivers/common/cnxk/roc_features.h
-index 3c34041d76..57a51c4db3 100644
---- a/drivers/common/cnxk/roc_features.h
-+++ b/drivers/common/cnxk/roc_features.h
-@@ -117,7 +117,7 @@ roc_feature_nix_has_inl_profile(void)
- static inline bool
- roc_feature_nix_has_plain_pkt_reassembly(void)
- {
--	return roc_model_is_cn20k();
-+	return roc_model_is_cn20k() && !roc_model_is_cnf20ka();
- }
+diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
+index ffa1a706f9..7bc3e1f5c6 100644
+--- a/drivers/common/cnxk/roc_nix.h
++++ b/drivers/common/cnxk/roc_nix.h
+@@ -34,6 +34,16 @@
+ #define ROC_NIX_LSO_FORMAT_IDX_TSOV6 1
+ #define ROC_NIX_LSO_FORMAT_IDX_IPV4  2
 
- static inline bool
++#define ROC_NIX_RQ_MAX_PB_CACHING_VAL 3
++
++/* First aligned cache block is allocated into the LLC.
++ * All remaining cache blocks are not allocated.
++ */
++#define ROC_NIX_RQ_DEFAULT_PB_CACHING 2
++
++/* Writes of WQE data are allocated into LLC. */
++#define ROC_NIX_RQ_DEFAULT_WQE_CACHING 1
++
+ enum roc_nix_rss_reta_sz {
+ 	ROC_NIX_RSS_RETA_SZ_64 = 64,
+ 	ROC_NIX_RSS_RETA_SZ_128 = 128,
+@@ -448,6 +458,10 @@ struct roc_nix_rq {
+ 	bool spb_drop_ena;
+ 	/* XQE drop enable */
+ 	bool xqe_drop_ena;
++	/* RQ PB caching */
++	uint8_t pb_caching;
++	/* RQ WQE caching */
++	uint8_t wqe_caching;
+ 	/* End of Input parameters */
+ 	struct roc_nix *roc_nix;
+ 	uint64_t meta_aura_handle;
+diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
+index a21c40acf1..911c349604 100644
+--- a/drivers/common/cnxk/roc_nix_inl.c
++++ b/drivers/common/cnxk/roc_nix_inl.c
+@@ -1838,6 +1838,8 @@ roc_nix_inl_dev_rq_get(struct roc_nix_rq *rq, bool enable)
+ 	inl_rq->spb_ena = rq->spb_ena;
+ 	inl_rq->spb_aura_handle = rq->spb_aura_handle;
+ 	inl_rq->spb_size = rq->spb_size;
++	inl_rq->pb_caching = rq->pb_caching;
++	inl_rq->wqe_caching = rq->wqe_caching;
+
+ 	if (roc_errata_nix_no_meta_aura()) {
+ 		uint64_t aura_limit =
+diff --git a/drivers/common/cnxk/roc_nix_queue.c b/drivers/common/cnxk/roc_nix_queue.c
+index ab3a71ec60..ef9b651022 100644
+--- a/drivers/common/cnxk/roc_nix_queue.c
++++ b/drivers/common/cnxk/roc_nix_queue.c
+@@ -499,7 +499,7 @@ nix_rq_cn9k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints,
+ 		aq->rq.sso_grp = rq->hwgrp;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+
+ 		aq->rq.good_utag = rq->tag_mask >> 24;
+ 		aq->rq.bad_utag = rq->tag_mask >> 24;
+@@ -530,7 +530,7 @@ nix_rq_cn9k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints,
+ 	aq->rq.lpb_sizem1 = rq->lpb_size / 8;
+ 	aq->rq.lpb_sizem1 -= 1; /* Expressed in size minus one */
+ 	aq->rq.ena = ena;
+-	aq->rq.pb_caching = 0x2; /* First cache aligned block to LLC */
++	aq->rq.pb_caching = rq->pb_caching;
+ 	aq->rq.xqe_imm_size = 0; /* No pkt data copy to CQE */
+ 	aq->rq.rq_int_ena = 0;
+ 	/* Many to one reduction */
+@@ -616,7 +616,7 @@ nix_rq_cn10k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cf
+ 		aq->rq.sso_grp = rq->hwgrp;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+
+ 		aq->rq.xqe_drop_ena = 0;
+ 		aq->rq.good_utag = rq->tag_mask >> 24;
+@@ -647,7 +647,7 @@ nix_rq_cn10k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cf
+ 		aq->rq.ipsecd_drop_en = 1;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+ 	}
+
+ 	aq->rq.lpb_aura = roc_npa_aura_handle_to_aura(rq->aura_handle);
+@@ -683,7 +683,7 @@ nix_rq_cn10k_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cf
+ 		aq->rq.spb_ena = 0;
+ 	}
+
+-	aq->rq.pb_caching = 0x2; /* First cache aligned block to LLC */
++	aq->rq.pb_caching = rq->pb_caching;
+ 	aq->rq.xqe_imm_size = 0; /* No pkt data copy to CQE */
+ 	aq->rq.rq_int_ena = 0;
+ 	/* Many to one reduction */
+@@ -797,7 +797,7 @@ nix_rq_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cfg, boo
+ 		aq->rq.sso_grp = rq->hwgrp;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+
+ 		aq->rq.good_utag = rq->tag_mask >> 24;
+ 		aq->rq.bad_utag = rq->tag_mask >> 24;
+@@ -816,7 +816,7 @@ nix_rq_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cfg, boo
+ 		aq->rq.ipsecd_drop_en = 1;
+ 		aq->rq.ena_wqwd = 1;
+ 		aq->rq.wqe_skip = rq->wqe_skip;
+-		aq->rq.wqe_caching = 1;
++		aq->rq.wqe_caching = rq->wqe_caching;
+ 	}
+
+ 	aq->rq.lpb_aura = roc_npa_aura_handle_to_aura(rq->aura_handle);
+@@ -852,7 +852,7 @@ nix_rq_cfg(struct dev *dev, struct roc_nix_rq *rq, uint16_t qints, bool cfg, boo
+ 		aq->rq.spb_ena = 0;
+ 	}
+
+-	aq->rq.pb_caching = 0x2; /* First cache aligned block to LLC */
++	aq->rq.pb_caching = rq->pb_caching;
+ 	aq->rq.xqe_imm_size = 0; /* No pkt data copy to CQE */
+ 	aq->rq.rq_int_ena = 0;
+ 	/* Many to one reduction */
 --
 2.34.1
 
