@@ -2,119 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C05FD9E25
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Feb 2026 23:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B26E0FD9E1F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 00:03:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C63914028E;
-	Fri, 27 Feb 2026 00:51:32 +0100 (CET)
-Received: from PH7PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11020141.outbound.protection.outlook.com [52.101.201.141])
- by mails.dpdk.org (Postfix) with ESMTP id AB36040265
- for <dev@dpdk.org>; Fri, 27 Feb 2026 00:51:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2D47E40657;
+	Fri, 27 Feb 2026 01:03:22 +0100 (CET)
+Received: from BYAPR05CU005.outbound.protection.outlook.com
+ (mail-westusazon11020082.outbound.protection.outlook.com [52.101.85.82])
+ by mails.dpdk.org (Postfix) with ESMTP id 60AF640265;
+ Fri, 27 Feb 2026 01:03:20 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oOJbuieWgnmZppNNjvvWlri4w+QUoXvVOYy9JFaP6hxUc+Wl8YrTsdFNYz0J1AtnMF5Mk4vBZXFHx+0SIsu9nmUmSg7gIUT0/EwpLGxpJjHok2YyInj3WCnID9LzAFEO/TcGew71xNZqXwdsx98OUm/aKg0HAkJC9OZHBDp1Fn4m7RH/wJZvYOrWnt5AI7PPjKml+Och2XzhXHn1hWNvIRa77TfGKqB2dw7hCHIXqcDaV9UQcr1lRAQbH7Y5tT/XvrJVJQ13xVqSWGBOdlFH9SNqBcWWKfNnXe8+k8ifJF9NHSMFmk+fZZWqFfpW9zpR3B6uKNThvaAjIAk50dBsmg==
+ b=Uhs7vSzx3A5xx8SV7b/iapMEwTLJo5yD47qMFluInvt0HHQRqJq4qcWmBj+BDoM3fb/wgcf699AwjaLG6Ph2k+tY0BYwQJUKvI/9NHJsFBfiKFFLVLKQf3TA6RFEkuhpHz+YRyBEhpgzSQNl/MKDRTlAc+PXGIc0G3rHYhgoA3M3i7gpEltLWEs131wq8Lo7JhphaK398JrFbvGeyuxiWVU6t4fk50ouGPGjtFtu3SJL4GFCHvBiXaE7BrudHHpEUwXwLzRcb2bhOPGN3+mXCITmClyrY6QR+u+K6ikPJVklW3OXs16WZJk0NUSFSaXa/fpp8+Hskhqpnl/yvhUzBw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jj6Q8zeDa/Tl6haHwYDbvkMR+GPril/fwPmUNgrBEd8=;
- b=inBF22kVB8sPxkksgA6LN2qaxCSxQoUjo8tWU8thtGzduu58ysUGJSNIS3eXzGFmEykyRhjrrJo2Ef1n3EtMrRs+r2mMd1U4EomGMl1bJIU5s06OkQSroYLhbLFzbu1PEumuuzh5aZUyivQhcwmZLB/jblF60wxW/WsP8hzYTLR52ic0oujH1QvBqJ692BnAohi7Z4EeSMW5SxHTqO1szknk4Qm1NnTyjwKgPI4WwVqG9h3fknVRcbKNVxUivQx18C6m2CyInEVnoFMw8Wh9U2h6AXaIWIirz+eSEZl+c6cc/0a0kBXhAqBLY/f/BHe3jTccokThsGv/S9VxIL5K7w==
+ bh=a2zYa7NpDBXIRatHPm64r+THFz+hFdQ/HsWwfrH3yhg=;
+ b=dlpRCdEkn+i7Sn1/35p2KWN1YZjaFYZuk2CcSZHZZGeniIUa4ond+mpqibeFiIAEOA4XSNDEnaxFGQJpFYuxPtLOWg7s5hDWed9Qha2ssGZiUN29zwy2vFubjxKVoFI0bB6N7t6tDcOQbAtePKF9q9oL1g4oQce5QE4nwZDz3RlZOiIYyNk4nuNkq8gwVfkB7zk4RypqZQlA1CLPFJrTXT7VKGrvbznREDPLoycuzIVbH0m5TH6I6wtIHs/zWJQlK3OE2XQmF7/0J35rqGaOyDn1yQW1NwuB8Oqhq4ZpZj7XGhrYq+zsiKyVj7BXNo//6V5ZQoJpzxeqFJ6aqS2SdQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=microsoft.com; dmarc=pass action=none
  header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jj6Q8zeDa/Tl6haHwYDbvkMR+GPril/fwPmUNgrBEd8=;
- b=VBdBZNlhNPPHj6Q4U7yyKVuTKG3aWwx90XbpPUe21RQCxMgEU3Q52FF3+DfeYuKPlUd0LEBjSq4eaw7KcT40mL4xCWkJCDc08E+ZdeWFBD96QbkwzpCeOwniFb0Z6zven1W385V45EKjpCTQzriKFfAgsv0qzfLns55eORQricQ=
+ bh=a2zYa7NpDBXIRatHPm64r+THFz+hFdQ/HsWwfrH3yhg=;
+ b=KfE8oVDWY0ExTiJGR12R3b8ILaa7cGYs3OrTACTAfPDaY0WUWcWdrrT7JNIQZepT2RgbUhJ+lwe4vLPEpARkFgI0/2SsvNTu9WbgtyP8dR7ygKFLDpHZvd7vHr5HWzOZbDvFsRDS0/qyDMCAD55PZ3gYrlrGyetdCn1VwtF9Dgc=
 Received: from DS3PR21MB5735.namprd21.prod.outlook.com (2603:10b6:8:2e0::20)
- by DS4PR21MB6486.namprd21.prod.outlook.com (2603:10b6:8:2ed::18) with
+ by DS4PR21MB5393.namprd21.prod.outlook.com (2603:10b6:8:2a0::17) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.6; Thu, 26 Feb
- 2026 23:51:27 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.13; Fri, 27 Feb
+ 2026 00:03:16 +0000
 Received: from DS3PR21MB5735.namprd21.prod.outlook.com
  ([fe80::a3f4:6107:de7c:5925]) by DS3PR21MB5735.namprd21.prod.outlook.com
- ([fe80::a3f4:6107:de7c:5925%5]) with mapi id 15.20.9654.007; Thu, 26 Feb 2026
- 23:51:27 +0000
+ ([fe80::a3f4:6107:de7c:5925%5]) with mapi id 15.20.9654.007; Fri, 27 Feb 2026
+ 00:03:16 +0000
 From: Long Li <longli@microsoft.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-Subject: RE: [EXTERNAL] [RFC] app/testpmd: add configurable flow count for
- txonly multi-flow
-Thread-Topic: [EXTERNAL] [RFC] app/testpmd: add configurable flow count for
- txonly multi-flow
-Thread-Index: AQHcp3btiOJwJ8Dd3kG6iwi0sffRhrWVpn3g
-Date: Thu, 26 Feb 2026 23:51:27 +0000
-Message-ID: <DS3PR21MB57353E44A4187ADE53DEAED7CE72A@DS3PR21MB5735.namprd21.prod.outlook.com>
-References: <20260226191625.1049670-1-longli@microsoft.com>
- <20260226232323.545972-1-stephen@networkplumber.org>
-In-Reply-To: <20260226232323.545972-1-stephen@networkplumber.org>
+To: Stephen Hemminger <stephen@networkplumber.org>,
+ "longli@linux.microsoft.com" <longli@linux.microsoft.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Wei Hu <weh@microsoft.com>,
+ "stable@dpdk.org" <stable@dpdk.org>, Dariusz Sosnowski
+ <dsosnowski@nvidia.com>, Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing
+ Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Subject: RE: [EXTERNAL] Re: [PATCH v4 2/7] net/netvsc: add multi-process VF
+ device removal support
+Thread-Topic: [EXTERNAL] Re: [PATCH v4 2/7] net/netvsc: add multi-process VF
+ device removal support
+Thread-Index: AQHcpskwDy6mOHm02Ue9qVLncXBGKbWVVC+AgABU+sA=
+Date: Fri, 27 Feb 2026 00:03:16 +0000
+Message-ID: <DS3PR21MB57353C604452E0A0A27FAACFCE73A@DS3PR21MB5735.namprd21.prod.outlook.com>
+References: <20260226023940.961844-1-longli@linux.microsoft.com>
+ <20260226023940.961844-3-longli@linux.microsoft.com>
+ <20260226105113.45bbdf8f@phoenix.local>
+In-Reply-To: <20260226105113.45bbdf8f@phoenix.local>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=f3fbbe47-8820-4b3e-8022-f441748176e4;
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=04a6886d-1a29-4796-a5bd-b2258a8a85bd;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-02-26T23:50:38Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-02-26T23:55:21Z;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
  MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=microsoft.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DS3PR21MB5735:EE_|DS4PR21MB6486:EE_
-x-ms-office365-filtering-correlation-id: 9fce3454-afe5-4292-9a60-08de7591f50e
+x-ms-traffictypediagnostic: DS3PR21MB5735:EE_|DS4PR21MB5393:EE_
+x-ms-office365-filtering-correlation-id: bcdfab3a-9dc8-4ece-95cb-08de75939bb5
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0; ARA:13230040|366016|376014|1800799024|38070700021;
-x-microsoft-antispam-message-info: Zvhmez3EzV0JlNzp4BUnuuewJqOZDD4lH45Jt6rJs6lmyUfjSa1XMrfVfS7UxvBf+GbzdyvX0n6USsK5DEkgyx3qb0Pfsd/1Q88oyubXFPRJXPBEBD9c+3Dn/wItSif+NT1URJbZKBO7bJkpvOq2nqRK9NekWe5ks1yj+P4zsDByIidvWe3SAnOi/FrtoNwFSL8w/XRsr74s2SNdg0VkDO7Sy8e8JlVS/wA/UqXdJS/41kSna7v2bOkYFb6RuqEMERAT3W9P44bezr9oydRCh8qLlpWny9TLlq8OHu4+bo2dqaucWJlbr5vdVtLSTPaT/WDZkNtLG9rOqFZP3x8i5y1d+1wZmhDu3Rg7l7etSHn55e5PqKWJAHxxr3drP5niA/pq/zZuRqcHC2L/urhBs0n2j1KqN8rMrEl02mpovQOlT/DBQqTTsPYjy4qu0E2PkBv2Nw7oNVkoL+RCa3VHSGe956hzI76xYa1d/na4y5P/P69ADw8Tcd0DMDNtIaiEW5ynN32yx5GXf3NfTUSo6BmmVdDMvBfSOSIjzMZHdW93/v5H39UdxrI4MP0HIgCsuVhuSxADIsXp6YyzTunv1loFKrqey14zPwYZh4l7bVOd2KRLX6BQKndhUEx9LiVY08+HKbpalpwXKrz+QNJUzzgc4bw+uKZ4LE7hYowDhClJArJYRC76/eVq0kJddYaR+6V7QYISFcAMR+lBepK5mqvXCo8U880vnf1GZo8XM0k9k7xzJ5bPnF8bvgwFEiG2s5jEwxZHoS2FYXdkAZA7BoAklbYzUiTlTH6MGr6kV5U=
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700021;
+x-microsoft-antispam-message-info: b+0Y7K6aBg5KNoaz808/6hZJ0BtK3Fe7todi+f4W1EDvRS8+9Cl0nhLS/Howx1PPI5ROOShCeWzVCEDzQ9lmc/YJSVjn+ygLVHc/UqlznEGOnLDYXEA/rZL2L8XwWD/ielSOjnDsZH/uUnDVrCMFhPA/dS/+/sPoPCnnaVtR3AH/iVISd0UPd+ejXIEdnLe5/pGE+8NdPydNo7+AhA7v/FSkjnU5c4+SdyM61wfPcKvBYnm4wdPo5MIcRxJcRUOtjhGQIzAcVYIFPWkV0WoXc7485pOqdKc0HQbRPJLHVmmaOoXebQAQpV61ItZX6z2qZz2mI51MeDGu24ym3oaZHBhPXBuVPco4i9atRR9rIBLUcIOnEZQleXuv08ivoudXAxHLy6c2m0fl04ogwm3nB7UwFEX4JDUn2wQfRfDq3/twTDBB+T3lgws7YwraReYsdkspV6xBDrKl/ilEnNpCsuE+K5NWj631JsCWrRFNWxcqiU8Ev3rccCkFXkPxHL62c9TWQKHUgiAkp1nrQ4/6ZpobSU9E4/oycrQ89uxFcpeMF+Gwx1e9Mhw4Nhx2MoGceYQK2IJ9EuzXIY03tAVeiB6JSBTLSmFDW9D2Wu9f1hR1omn//zh9cu7Aujk/CSBJgevPGmzxFM3/zP5gjNNukdTWG6KUtCGgPTogVU1evugVxlYsn6rKv6Ay+F1aolZ01684yvjyUb6KDvk+zL0H9C9iGQpjxf/W4/ZFoddOzlepkS5A2OokwL3lj+HX3ENrvay86s4u0lZIDxdAo7o1SS+TTj7K0e/XuREXHKLU2LE=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS3PR21MB5735.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(38070700021); DIR:OUT; SFP:1102; 
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700021); DIR:OUT; SFP:1102; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ZxIpQdbbVNmL6ShkbmrN/7lXw4g4PVYymPFUl2XKBm20tiFaBx+LGlULbwV+?=
- =?us-ascii?Q?MjFXkB1oK0QI7cFlqtRLner61nUxfL1l9iB58MRQvFwk3WmSNEgl/IGljonD?=
- =?us-ascii?Q?SXyhdE2+IiNTj9d8l+ySvKJTMklUOWYOifkAnHBn5EOAKHcnk82GDVUqR8yg?=
- =?us-ascii?Q?IdATqArKJpEp2anJJHKO2QnP8PMo1dyc3xLWXjdHy9FwSk9DEjowhq+xShYH?=
- =?us-ascii?Q?i6dz7e/MA7FkDEL8iUvDRGiVYwM2OFmEpltBp2OCgG0xXis2p7YkNSsXDreP?=
- =?us-ascii?Q?O6zrBGT9KqEGfBI2EstzjdVGfG6hT7kchMLAtxx/L2e6i95ousy5qpBbNudp?=
- =?us-ascii?Q?A/riWyymNx6K4PTcUDDsluHQUf87cVxLlnl5lnntI3l5WxmFHNNfUkpBS6U3?=
- =?us-ascii?Q?k/qUQKZT2RVWNvtK3jmoB31GLf2YjFoppT3PMD68sjZ0uren1Q/ToscstPX0?=
- =?us-ascii?Q?bbLvbGP+LNNFMwj5Qet8yBfMwTBxWVN3hxKv9+CzFkynkQpG6fMep3JY1TGz?=
- =?us-ascii?Q?nL8ZI35AeYcgx8MJ4PCnoJamUx4yme2/l4WR6Wfos6q9wo8v2MBJ0HopBC4/?=
- =?us-ascii?Q?SfSb6wICacK8HL3ck5jXPlA0oxjMR/iL4SrDUn6uxMCIRBZ8Le+DAUjxmO6I?=
- =?us-ascii?Q?WgkziorfyxSDP/ex0QE2JqvlCUn7dBT/qnOIB8nivlLEflCx16a/QvmMMhr8?=
- =?us-ascii?Q?KiZyVnfXASyRh3TzF1OwOPWL76oGV1Fm5PlJ1TTn+yU50vpQ/YBz1G5pAcYK?=
- =?us-ascii?Q?eqtn9CvVCex8c5Hzohmnxs+zVEriFmJGF0ok56iXfEob8C9DUx85WjbIVVwc?=
- =?us-ascii?Q?LXnzkxtIGfEeQPHXAZ5VLk0pozTw+VKPIOTvUhB0aGa4A2gGAKmOXPpzXhV1?=
- =?us-ascii?Q?dLemkYZ2iKiO+azaHt6naBatIVYgmqVzp2/yJVZzw8lykY6PnjRbSWCL/AQR?=
- =?us-ascii?Q?UYUk0lAF7UpXotQvRBlZcbWbV3hIuiQJlyyUTI621fkrCGJTRhUf62PP1Gxs?=
- =?us-ascii?Q?6sJJj90xxXY68wOKJdPiRhZKmh4H2JQ7+zbdAp1vq0Yk7rU8kJ9mS7l35iHw?=
- =?us-ascii?Q?wrrSfCSRuYpCA9HQrFkILxSiUk4tVEftxmxtXrVg5Hhb94Vvan4wjF3ymikh?=
- =?us-ascii?Q?RFEQmX/ucLImNYCd3HNgXWooCeA4hbM72fjgWmBVGC8LANRiYds9SRRgap7l?=
- =?us-ascii?Q?Phc3lj796jtJGYjaTVLQTO6S9kMdP39oRWulZzCMoXfzQ+G+4KrZHdxQGJ90?=
- =?us-ascii?Q?LdPZ8DdvrrR0dO26H7VplqqGxxh7/GGaU8SwXS54tON6M8EfUKLQCBQutoXm?=
- =?us-ascii?Q?XCeVhA6Os1Cxw28cMXcNKyhU0n/lC4tduqIxxe17nwbATu0U4luftSwmYohw?=
- =?us-ascii?Q?mWbk1v2IMlNwDtrSuuNWcn4j4kEiSc30FN4ELUHKpnUq/sEn63ZWlkKlLItB?=
- =?us-ascii?Q?a3SLHS1NezWHnXKyIIMbtfgQAPQ51G748Sfk1ghNP4E9GDi8yU8p5mYLaHJv?=
- =?us-ascii?Q?4lT+YLPwpXbgB61IdpBKOXR1yyhniJTDvLcPOTtfl846FgCFt2KEwnHqVJX+?=
- =?us-ascii?Q?3QKi1IJeJDpaQqrdB82uy+HR3MyjKHFdCzX7MReoszWMFKeUr7mPaGwXHIF+?=
- =?us-ascii?Q?jd7bPDkgv+H5enmXrIU4kM/hTcXQ2Y2ppbheX52QIF0UvMZUNEMcL36kenRn?=
- =?us-ascii?Q?0Bw0r9kuIUjrqmYwATBSj9Ry+8CcI8TpOoYzyepPwjsfyFx1?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?5XEhQBjOISrV/tPkXe4NQ8TcOErMMQp5/jUrZ2k8l32/0Y+wvriMcYXtC15S?=
+ =?us-ascii?Q?HUgA+LGzGHbDO6R92imiusnj2exROmayZyz7HSHdFp1tkk9DzovZbi87qhIK?=
+ =?us-ascii?Q?7/IH72SoCYtHutSYewqzbiw1RpPaxrJx/5cFoBIXB7DdQKDDr4CxiHoJtLBP?=
+ =?us-ascii?Q?igY7r+mJcOl9ziQDWtvykNGxIrl1atKDkUBgv53w7H3m26IDB4Sr/qK1BheF?=
+ =?us-ascii?Q?6xF7b+t3IK6E2EPytim6Ut0kd9Pxx8PjtdCzdHd1pqv7g8WQqX/lOYCbCCll?=
+ =?us-ascii?Q?g/82m8OSqMTenhPnwoPFyrg48gyiOidBkR9+fMsLNMsqJaFMwrh+ByTdziFi?=
+ =?us-ascii?Q?qw81uE+SS0ubaqZy44YILGPA9FrdOCpT1iGCqku3RmcAS1IoXLHcCVkb3doQ?=
+ =?us-ascii?Q?hQoDNFSBsE1J8GRlX98+7Nbh5qvJIgZlcN+ifJdw5H/eBRYYzvC0j0QHTvqK?=
+ =?us-ascii?Q?OfXdlgBF1aOQ6bnLKHXGRpWwtasMcfZXZQBQR1ught4dmha3BHQpRiMi2I3m?=
+ =?us-ascii?Q?tE6izs/+mJtEppqW/GPXXLAAXb+1a4JGx4jbhwiWAP3khU17b6RAcaiwmX2Q?=
+ =?us-ascii?Q?b5cGwavDSANyaW9KYRG71yEp+153OmTfasYlECiBK0L7chcM/arEPcWN8yRJ?=
+ =?us-ascii?Q?MyaLNQcR8UeVcpMETpf9TffzB9r2ZilJxFjFJHzwLYgfZGwbOrNfnJF+NyHU?=
+ =?us-ascii?Q?vFZkA8DoDErZGgiz1ouQgWlfaUFK0kPKrHsXnBEGDeFZwlRx1toCVmHjztZ7?=
+ =?us-ascii?Q?KfNYRXX7Tmn6ffkhda1BmA+oDc/oZ3MC+rX/LGQvEjlRAfk5hHhWKDEXn5Jv?=
+ =?us-ascii?Q?kzitiV1SfrptXUIDHKPc+Xe1X5eLbA7VRnnPHGZt/JTBXzCSq4vJbeigB+xw?=
+ =?us-ascii?Q?WXaL/4pPgA6k0UBE7PGiwRLMRPOllwvYKKyjYczzVjt4Lx23ZW8YWXtxhpjX?=
+ =?us-ascii?Q?gOUBD5UtXGyOLr8sGRIt2+X4VQAIa21a0EBd+UbjQ12nyX9c5TPFdKTe7pnA?=
+ =?us-ascii?Q?hvi5IksjSQqZTrIKGON666xXFRPNEBKgWhzEoj0s3yGM4nbBuDHpviorucqq?=
+ =?us-ascii?Q?21YHQim35yetJ8ayj9hQeJd0JiMh3mXGMBYPvXF2orvdYs4WA2QDBQASYL/e?=
+ =?us-ascii?Q?4Mk/DpGYMZsWen+rtraZFqIQJUexrg+cUxqnCglMWaXijir7jONkD/E+aiST?=
+ =?us-ascii?Q?WAbP2OEiyLiFJNvr1DtODA4oq4RDdiW+G3A+63rQSNXQZtXjjq2ONngiA6P2?=
+ =?us-ascii?Q?y9SOl8ldjUkX4SFuyqhu4yFm7Dnu5N0VWeh2X/Jox4RP6asoQLBvjjqYhomI?=
+ =?us-ascii?Q?dE1K8HnOZFK2USj6NwdpqNxEVAFSKq/TBtrZzX9VB8dREgGf3AnuTQoAzpm1?=
+ =?us-ascii?Q?lXtVacwpLF36OA9Oq6opew3xlV7r+q7AqWNxCYZMrGVt2SKgDRldnvgXhDKj?=
+ =?us-ascii?Q?l2Q9erDkcdUvccF6iI20sKrzIP184P3Kil1l7BwfnO7+IKA1zXzDX8Y9MbIk?=
+ =?us-ascii?Q?dfypmTt95a2Uky05PHT7isdXd1f7Qi+iUoHDQ2oNUvXcu16t9cdDAR2LMMSZ?=
+ =?us-ascii?Q?tPXIzlTAxMJRMy9xlFDyTKckOcL667u8uQ4Xp9OspoPn+9tpbtIawh3mtMg0?=
+ =?us-ascii?Q?gr4iqu1/krVTy/A5+s70EYsT21EqmW+6YfMlQdJzpFOjFgGUpRYNSMvi++Ze?=
+ =?us-ascii?Q?tEjS3wZ28AyeYYtsxHPOLMDCHcORjUMMEg8MPDFVe4sInXaP?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: microsoft.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: DS3PR21MB5735.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fce3454-afe5-4292-9a60-08de7591f50e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2026 23:51:27.5036 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcdfab3a-9dc8-4ece-95cb-08de75939bb5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Feb 2026 00:03:16.5874 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AbNWgZVqbzYc/GkS7l+GnFR0curbEulC3U1VfWweoroQlOCYkf0xuIumNA7itCy3R4VqzMOfMESeyHl/uWFTEQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR21MB6486
+X-MS-Exchange-CrossTenant-userprincipalname: qFE3YgTgrZ9bqe9ugiK7y7f3TcsxtXNqi1a7v72/aB0Qvnb8CYvfxGRX/jAJ55KHRqZT7X13V9MhHDqWsGYFcg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PR21MB5393
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -128,290 +134,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> Subject: [EXTERNAL] [RFC] app/testpmd: add configurable flow count for tx=
-only
-> multi-flow
+> Subject: [EXTERNAL] Re: [PATCH v4 2/7] net/netvsc: add multi-process VF d=
+evice
+> removal support
 >=20
-> Started with Long's patch to change port and added a parameter.
-> This is suggestion only *DO NOT MERGE*
-> Not sure what good name for parameter is, this is just a quick hack.
+> On Wed, 25 Feb 2026 18:39:33 -0800
+> longli@linux.microsoft.com wrote:
 >=20
-> The txonly multi-flow mode generates 64 unique UDP source ports per lcore=
- by
-> cycling the high byte from 0xC0 to 0xFF. On SmartNICs with limited hardwa=
-re
-> flow table caching, this fixed count can exhaust the flow cache and degra=
-de
-> receive-side performance.
+> > /* Spinlock for netvsc_shared_data */
+> > +static rte_spinlock_t netvsc_shared_data_lock =3D RTE_SPINLOCK_INITIAL=
+IZER;
+> > +
+> > +static struct netvsc_shared_data {
+> > +	RTE_ATOMIC(uint32_t) secondary_cnt;
+> > +} *netvsc_shared_data;
+> > +
 >=20
-> Add --txonly-nb-flows=3DN command line parameter and 'set txonly-nb-flows=
-'
-> runtime command to limit the number of unique source ports per lcore to
-> between 1 and 64. The default remains 64 to preserve existing behavior.
->=20
-> The source port encoding is unchanged: the low byte carries the lcore ID =
-(avoiding
-> atomics) and the high byte cycles through N values starting at 0xC0. Tota=
-l unique
-> flows =3D txonly_nb_flows * active_lcores.
->=20
-> Reported-by: Long Li <longli@microsoft.com>
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> This looks a lot like a sequence lock (spin lock + atomic).
+> Might be clearer with that.
 
-Thank you, worked well for Azure VM at 200Gb/s.
+The spinlock netvsc_shared_data_lock also guards other shared data initiali=
+zation.
 
-Tested-by: Long Li <longli@microsoft.com>
+MLX4 and MLX5 use a similar pattern (they have mlx4_shared_data_lock and ml=
+x5_shared_data_lock, similar design)
 
-
-> ---
->=20
->  app/test-pmd/cmdline.c                      | 49 +++++++++++++++++++++
->  app/test-pmd/parameters.c                   | 13 ++++++
->  app/test-pmd/testpmd.c                      |  3 ++
->  app/test-pmd/testpmd.h                      |  1 +
->  app/test-pmd/txonly.c                       | 24 +++++-----
->  doc/guides/testpmd_app_ug/run_app.rst       |  8 ++++
->  doc/guides/testpmd_app_ug/testpmd_funcs.rst | 16 +++++++
->  7 files changed, 104 insertions(+), 10 deletions(-)
->=20
-> diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c index
-> c33c66f327..debd226762 100644
-> --- a/app/test-pmd/cmdline.c
-> +++ b/app/test-pmd/cmdline.c
-> @@ -384,6 +384,10 @@ static void cmd_help_long_parsed(void *parsed_result=
-,
->  			"    Set the scheduling on timestamps"
->  			" timings for the TXONLY mode\n\n"
->=20
-> +			"set txonly-nb-flows (N)\n"
-> +			"    Set the number of flows per lcore in"
-> +			" txonly multi-flow mode (1-64)\n\n"
-> +
->  			"set corelist (x[,y]*)\n"
->  			"    Set the list of forwarding cores.\n\n"
->=20
-> @@ -4612,6 +4616,50 @@ static cmdline_parse_inst_t cmd_set_txtimes =3D {
->  	},
->  };
->=20
-> +/* *** SET NUMBER OF FLOWS IN TXONLY MULTI-FLOW MODE *** */
-> +
-> +struct cmd_set_txonly_nb_flows_result {
-> +	cmdline_fixed_string_t cmd_keyword;
-> +	cmdline_fixed_string_t name;
-> +	uint16_t value;
-> +};
-> +
-> +static void
-> +cmd_set_txonly_nb_flows_parsed(void *parsed_result,
-> +			       __rte_unused struct cmdline *cl,
-> +			       __rte_unused void *data)
-> +{
-> +	struct cmd_set_txonly_nb_flows_result *res =3D parsed_result;
-> +
-> +	if (res->value < 1 || res->value > 64) {
-> +		fprintf(stderr, "txonly-nb-flows must be >=3D 1 and <=3D 64\n");
-> +		return;
-> +	}
-> +	txonly_nb_flows =3D res->value;
-> +}
-> +
-> +static cmdline_parse_token_string_t cmd_set_txonly_nb_flows_keyword =3D
-> +	TOKEN_STRING_INITIALIZER(struct cmd_set_txonly_nb_flows_result,
-> +				 cmd_keyword, "set");
-> +static cmdline_parse_token_string_t cmd_set_txonly_nb_flows_name =3D
-> +	TOKEN_STRING_INITIALIZER(struct cmd_set_txonly_nb_flows_result,
-> +				 name, "txonly-nb-flows");
-> +static cmdline_parse_token_num_t cmd_set_txonly_nb_flows_value =3D
-> +	TOKEN_NUM_INITIALIZER(struct cmd_set_txonly_nb_flows_result,
-> +			      value, RTE_UINT16);
-> +
-> +static cmdline_parse_inst_t cmd_set_txonly_nb_flows =3D {
-> +	.f =3D cmd_set_txonly_nb_flows_parsed,
-> +	.data =3D NULL,
-> +	.help_str =3D "set txonly-nb-flows <N>",
-> +	.tokens =3D {
-> +		(void *)&cmd_set_txonly_nb_flows_keyword,
-> +		(void *)&cmd_set_txonly_nb_flows_name,
-> +		(void *)&cmd_set_txonly_nb_flows_value,
-> +		NULL,
-> +	},
-> +};
-> +
->  /* *** ADD/REMOVE ALL VLAN IDENTIFIERS TO/FROM A PORT VLAN RX FILTER
-> *** */  struct cmd_rx_vlan_filter_all_result {
->  	cmdline_fixed_string_t rx_vlan;
-> @@ -14102,6 +14150,7 @@ static cmdline_parse_ctx_t builtin_ctx[] =3D {
->  	&cmd_set_txpkts,
->  	&cmd_set_txsplit,
->  	&cmd_set_txtimes,
-> +	&cmd_set_txonly_nb_flows,
->  	&cmd_set_fwd_list,
->  	&cmd_set_fwd_mask,
->  	&cmd_set_fwd_mode,
-> diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c index
-> f2037925c2..2432d720fb 100644
-> --- a/app/test-pmd/parameters.c
-> +++ b/app/test-pmd/parameters.c
-> @@ -193,6 +193,8 @@ enum {
->  	TESTPMD_OPT_MULTI_RX_MEMPOOL_NUM,
->  #define TESTPMD_OPT_TXONLY_MULTI_FLOW "txonly-multi-flow"
->  	TESTPMD_OPT_TXONLY_MULTI_FLOW_NUM,
-> +#define TESTPMD_OPT_TXONLY_NB_FLOWS "txonly-nb-flows"
-> +	TESTPMD_OPT_TXONLY_NB_FLOWS_NUM,
->  #define TESTPMD_OPT_RXQ_SHARE "rxq-share"
->  	TESTPMD_OPT_RXQ_SHARE_NUM,
->  #define TESTPMD_OPT_ETH_LINK_SPEED "eth-link-speed"
-> @@ -348,6 +350,7 @@ static const struct option long_options[] =3D {
->  	REQUIRED_ARG(TESTPMD_OPT_TXPKTS),
->  	NO_ARG(TESTPMD_OPT_MULTI_RX_MEMPOOL),
->  	NO_ARG(TESTPMD_OPT_TXONLY_MULTI_FLOW),
-> +	REQUIRED_ARG(TESTPMD_OPT_TXONLY_NB_FLOWS),
->  	OPTIONAL_ARG(TESTPMD_OPT_RXQ_SHARE),
->  	REQUIRED_ARG(TESTPMD_OPT_ETH_LINK_SPEED),
->  	NO_ARG(TESTPMD_OPT_DISABLE_LINK_CHECK),
-> @@ -499,6 +502,8 @@ usage(char* progname)
->  		" or total packet length.\n");
->  	printf("  --multi-rx-mempool: enable multi-rx-mempool support\n");
->  	printf("  --txonly-multi-flow: generate multiple flows in txonly mode\n=
-");
-> +	printf("  --txonly-nb-flows=3DN: number of flows per lcore in txonly"
-> +	       " multi-flow mode (1-64, default 64)\n");
->  	printf("  --tx-ip=3Dsrc,dst: IP addresses in Tx-only mode\n");
->  	printf("  --tx-udp=3Dsrc[,dst]: UDP ports in Tx-only mode\n");
->  	printf("  --eth-link-speed: force link speed.\n"); @@ -1566,6 +1571,14
-> @@ launch_args_parse(int argc, char** argv)
->  		case TESTPMD_OPT_TXONLY_MULTI_FLOW_NUM:
->  			txonly_multi_flow =3D 1;
->  			break;
-> +		case TESTPMD_OPT_TXONLY_NB_FLOWS_NUM:
-> +			n =3D atoi(optarg);
-> +			if (n >=3D 1 && n <=3D 64)
-> +				txonly_nb_flows =3D (uint16_t)n;
-> +			else
-> +				rte_exit(EXIT_FAILURE,
-> +					 "txonly-nb-flows must be >=3D 1 and <=3D
-> 64\n");
-> +			break;
->  		case TESTPMD_OPT_RXQ_SHARE_NUM:
->  			if (optarg =3D=3D NULL) {
->  				rxq_share =3D UINT32_MAX;
-> diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c index
-> fbacee89ea..6661bf16cd 100644
-> --- a/app/test-pmd/testpmd.c
-> +++ b/app/test-pmd/testpmd.c
-> @@ -287,6 +287,9 @@ enum tx_pkt_split tx_pkt_split =3D TX_PKT_SPLIT_OFF;
-> uint8_t txonly_multi_flow;  /**< Whether multiple flows are generated in
-> TXONLY mode. */
->=20
-> +uint16_t txonly_nb_flows =3D 64;
-> +/**< Number of unique flows per lcore in TXONLY multi-flow mode. */
-> +
->  uint32_t tx_pkt_times_inter;
->  /**< Timings for send scheduling in TXONLY mode, time between bursts. */
->=20
-> diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h index
-> f319471c73..13c3915848 100644
-> --- a/app/test-pmd/testpmd.h
-> +++ b/app/test-pmd/testpmd.h
-> @@ -673,6 +673,7 @@ enum tx_pkt_split {
->  extern enum tx_pkt_split tx_pkt_split;
->=20
->  extern uint8_t txonly_multi_flow;
-> +extern uint16_t txonly_nb_flows; /**< Number of flows in txonly
-> +multi-flow */
->=20
->  extern uint32_t rxq_share;
->=20
-> diff --git a/app/test-pmd/txonly.c b/app/test-pmd/txonly.c index
-> bdcf6ea660..7ba9abf656 100644
-> --- a/app/test-pmd/txonly.c
-> +++ b/app/test-pmd/txonly.c
-> @@ -223,18 +223,22 @@ pkt_burst_prepare(struct rte_mbuf *pkt, struct
-> rte_mempool *mbp,
->  				sizeof(struct rte_ether_hdr) +
->  				sizeof(struct rte_ipv4_hdr));
->  		/*
-> -		 * Generate multiple flows by varying UDP source port.
-> -		 * This enables packets are well distributed by RSS in
-> -		 * receiver side if any and txonly mode can be a decent
-> -		 * packet generator for developer's quick performance
-> -		 * regression test.
-> +		 * Generate a configurable number of flows per lcore by
-> +		 * varying the UDP source port. The low byte is the lcore
-> +		 * ID, ensuring each lcore produces unique ports without
-> +		 * atomic operations. The high byte cycles through
-> +		 * txonly_nb_flows values starting at 0xC0, keeping ports
-> +		 * in the ephemeral range 49152-65535 (RFC 6335).
->  		 *
-> -		 * Only ports in the range 49152 (0xC000) and 65535 (0xFFFF)
-> -		 * will be used, with the least significant byte representing
-> -		 * the lcore ID. As such, the most significant byte will cycle
-> -		 * through 0xC0 and 0xFF.
-> +		 * Total unique flows =3D txonly_nb_flows * active_lcores.
-> +		 *
-> +		 * Note: lcore IDs above 255 will alias in the low byte,
-> +		 * causing flow overlap between those lcores. This is
-> +		 * acceptable as the total flow count at that scale
-> +		 * already exceeds typical hardware flow table sizes.
->  		 */
-> -		src_port =3D ((src_var++ | 0xC0) << 8) + rte_lcore_id();
-> +		src_port =3D (((src_var++ % txonly_nb_flows) + 0xC0) << 8)
-> +			   + rte_lcore_id();
->  		udp_hdr->src_port =3D rte_cpu_to_be_16(src_port);
->  		RTE_PER_LCORE(_src_port_var) =3D src_var;
->  	}
-> diff --git a/doc/guides/testpmd_app_ug/run_app.rst
-> b/doc/guides/testpmd_app_ug/run_app.rst
-> index 97d6c75716..a4a57ea383 100644
-> --- a/doc/guides/testpmd_app_ug/run_app.rst
-> +++ b/doc/guides/testpmd_app_ug/run_app.rst
-> @@ -386,6 +386,14 @@ The command line options are:
->=20
->      Generate multiple flows in txonly mode.
->=20
-> +*   ``--txonly-nb-flows=3DN``
-> +
-> +    Set the number of unique flows per lcore when txonly multi-flow mode
-> +    is enabled. Valid range is 1 to 64. Default is 64, which preserves
-> +    the original behavior. Reducing this value limits the number of uniq=
-ue
-> +    UDP source ports generated, which can prevent exhaustion of hardware
-> +    flow table entries on SmartNICs.
-> +
->  *   ``--rxq-share=3D[X]``
->=20
->      Create queues in shared Rx queue mode if device supports.
-> diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-> b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-> index 62bb167d56..ff1c8a444d 100644
-> --- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-> +++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-> @@ -924,6 +924,22 @@ Where:
->=20
->  * ``rand`` same as 'on', but number of segments per each packet is a ran=
-dom
-> value between 1 and total number of segments.
->=20
-> +set txonly-nb-flows
-> +~~~~~~~~~~~~~~~~~~~
-> +
-> +Set the number of unique flows per lcore in txonly multi-flow mode::
-> +
-> +   testpmd> set txonly-nb-flows <N>
-> +
-> +Where ``N`` is the number of unique UDP source port values each lcore
-> +will cycle through, in the range 1 to 64. Default is 64.
-> +
-> +Each lcore generates unique flows by combining the flow index with its
-> +lcore ID, so the total number of unique flows across the system is
-> +``txonly-nb-flows * active_lcores``. Reducing this value can prevent
-> +exhaustion of hardware flow table entries on SmartNICs that have
-> +limited flow caching capacity.
-> +
->  set corelist
->  ~~~~~~~~~~~~
->=20
-> --
-> 2.51.0
+I suggest leave this code as is.
 
