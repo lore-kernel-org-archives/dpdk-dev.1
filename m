@@ -2,17 +2,17 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D062FFD9E2D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 02:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC56FFD9E29
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 02:00:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB13F4067E;
-	Fri, 27 Feb 2026 02:59:47 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 510DD40693;
+	Fri, 27 Feb 2026 02:59:49 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id E4AFD40663;
- Fri, 27 Feb 2026 02:59:42 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 58EA240668;
+ Fri, 27 Feb 2026 02:59:43 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 51AB220B6F03; Thu, 26 Feb 2026 17:59:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 51AB220B6F03
+ id 06A3B20B6F02; Thu, 26 Feb 2026 17:59:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 06A3B20B6F02
 From: Long Li <longli@microsoft.com>
 To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
@@ -21,9 +21,9 @@ To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
  Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH v5 3/7] net/mana: fix PD resource leak on device close
-Date: Thu, 26 Feb 2026 17:59:23 -0800
-Message-ID: <20260227015928.14338-4-longli@microsoft.com>
+Subject: [PATCH v5 4/7] net/netvsc: fix devargs memory leak on hotplug
+Date: Thu, 26 Feb 2026 17:59:24 -0800
+Message-ID: <20260227015928.14338-5-longli@microsoft.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260227015928.14338-1-longli@microsoft.com>
 References: <20260227015928.14338-1-longli@microsoft.com>
@@ -42,48 +42,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Protection Domains (PDs) allocated during device initialization
-were not being deallocated on device close, causing a resource leak.
+Device arguments (devargs) allocated during VF hotplug were not being
+freed when the hotplug context was cleaned up, causing a memory leak.
 
-Deallocate both ib_parent_pd and ib_pd in mana_dev_close() before
-closing the IB device context. Log errors if deallocation fails,
-which would indicate orphaned child resources (QPs, MRs). The close
-proceeds regardless because ibv_close_device() will force kernel
-cleanup of any remaining resources.
+The devargs are allocated in netvsc_hotadd_callback() via
+rte_devargs_parse() and stored in the hotadd context structure. They
+must be freed with rte_devargs_reset() before freeing the context.
 
-Fixes: 2f5749ead13a ("net/mana: add basic driver with build environment")
+Free devargs in both cleanup paths:
+- netvsc_hotplug_retry() after hotplug attempt completes
+- hn_dev_close() when canceling pending hotplug operations
+
+Fixes: 7fc4c0997b04 ("net/netvsc: fix hot adding multiple VF PCI devices")
 Cc: stable@dpdk.org
-
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/mana/mana.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/net/netvsc/hn_ethdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/mana/mana.c b/drivers/net/mana/mana.c
-index b7ae01b152..67396cda1f 100644
---- a/drivers/net/mana/mana.c
-+++ b/drivers/net/mana/mana.c
-@@ -282,6 +282,20 @@ mana_dev_close(struct rte_eth_dev *dev)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
+index d22595ce95..791e832d5d 100644
+--- a/drivers/net/netvsc/hn_ethdev.c
++++ b/drivers/net/netvsc/hn_ethdev.c
+@@ -712,6 +712,7 @@ static void netvsc_hotplug_retry(void *args)
+ 	LIST_REMOVE(hot_ctx, list);
+ 	rte_spinlock_unlock(&hv->hotadd_lock);
  
-+	if (priv->ib_parent_pd) {
-+		int err = ibv_dealloc_pd(priv->ib_parent_pd);
-+		if (err)
-+			DRV_LOG(ERR, "Failed to deallocate parent PD: %d", err);
-+		priv->ib_parent_pd = NULL;
-+	}
-+
-+	if (priv->ib_pd) {
-+		int err = ibv_dealloc_pd(priv->ib_pd);
-+		if (err)
-+			DRV_LOG(ERR, "Failed to deallocate PD: %d", err);
-+		priv->ib_pd = NULL;
-+	}
-+
- 	ret = ibv_close_device(priv->ib_ctx);
- 	if (ret) {
- 		ret = errno;
++	rte_devargs_reset(d);
+ 	free(hot_ctx);
+ }
+ 
+@@ -1127,6 +1128,7 @@ hn_dev_close(struct rte_eth_dev *dev)
+ 		hot_ctx = LIST_FIRST(&hv->hotadd_list);
+ 		rte_eal_alarm_cancel(netvsc_hotplug_retry, hot_ctx);
+ 		LIST_REMOVE(hot_ctx, list);
++		rte_devargs_reset(&hot_ctx->da);
+ 		free(hot_ctx);
+ 	}
+ 	rte_spinlock_unlock(&hv->hotadd_lock);
 -- 
 2.43.0
 
