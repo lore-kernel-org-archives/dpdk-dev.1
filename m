@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76606104891F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 22:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A48A104891F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 22:52:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E1AB4060F;
-	Fri, 27 Feb 2026 23:44:12 +0100 (CET)
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com
- [209.85.219.41]) by mails.dpdk.org (Postfix) with ESMTP id 6EFDC402C6
- for <dev@dpdk.org>; Fri, 27 Feb 2026 23:44:10 +0100 (CET)
-Received: by mail-qv1-f41.google.com with SMTP id
- 6a1803df08f44-899a5cb04f9so34189866d6.2
- for <dev@dpdk.org>; Fri, 27 Feb 2026 14:44:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 4139C4060F;
+	Fri, 27 Feb 2026 23:52:39 +0100 (CET)
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com
+ [209.85.222.172])
+ by mails.dpdk.org (Postfix) with ESMTP id 3AA4E402C6
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 23:52:37 +0100 (CET)
+Received: by mail-qk1-f172.google.com with SMTP id
+ af79cd13be357-8cbc593a67aso195838585a.2
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 14:52:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772232249;
- x=1772837049; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772232756;
+ x=1772837556; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ZzRc52OJ7OU6JlxwkUsHGJssvnpn6iZzeZpmVESut3k=;
- b=x6VJMaUglpSlubzpLzkGYkSJ5ustxcW6nIU6JhZxZOqOafOWujhs7YmHklrnm92b4r
- fqMSLkdbZW78xjIQkLraRBaaaJWb07UMBfG0V8chnsNN0VAXjAqC2eYLMPhy6wUopyWB
- S2H2Stja+biNl/GO6+ExNDAFM98tuVr6jm1Xj/xXAne5r6roKy7MjMISDrVktH7KWuTJ
- p6GjNyQOdzugPMViH8tp1Y5hcIQi1Jkdfj//aS590qqkVJf0ggM94Z485F90043Q5BLU
- OoMNoAReDLTzVMnrDhB5KgVbM6VmkqQt9l+Gl3o5c+ehbXt7vu7Zx0dvd0k8k8PyUViZ
- NUgg==
+ bh=CrDzXY2m2uMH70d/6UC1cIIBwGVmF01mE9/XPkVo1Cc=;
+ b=APmXz1Xidw/Wm0tJEF+ISnrqhZyKZkX8cPMIHr/URPK6MVJgbXE7N8lU26/08GVkVO
+ fIMIVsEcnf5josYEnUCOGNS23qnOLUTh297myjf3++PGgQZE5b80tLR1U6acA9ihXO55
+ bzx2j289qDz1rhcUJlUNEIJc0gt+QHN1JqzjUypDmLcTkiwZCTkaSZYnum3h2u2tra1L
+ yeQmXQVQ5y6SAfq42eWLbTSalMwl1fl6nT51s2xYjwJ4E1kYA0Fj4Wf8P3liIlLbUUMP
+ tP8c5mQn2FRtBqfsSXNacJ3sovcXsIZCQUiZbpo2LO1nYag9uUmVqFJPbGu2HW0B3ReQ
+ dcPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772232249; x=1772837049;
+ d=1e100.net; s=20230601; t=1772232756; x=1772837556;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ZzRc52OJ7OU6JlxwkUsHGJssvnpn6iZzeZpmVESut3k=;
- b=jjNWFBhCLsIzXHfjQv+KP+XUhNXl+qaxs3wOF5nsepuX0KNWtQ1ovNE6tPk01Kke2Y
- KkxfW7sMNwQjc2ZK0bLXcYw6AzH6870jU3nUOSM49KIuMMDXdRBGBYdm1wsmZezu3n7C
- GPJ6xpUxYMvN6FKf/0XmY4fVQZkv4GrmgJwdrhAhr28JpTiawcu+o1z3lFjuRnJjnmWK
- XTzv58+KQYf9ZIGB5tD+UJTrqTrs6jhW42VYpo7VcL0N5ACPAr5Igey4vzktnCLaZrq/
- sJGuzxNQbgUEDAx3EiLh4DlFs7W7mctr0lVABY+6ZjMRJCYEOSkeaiZcSHTIicdcUQ0z
- mmGw==
-X-Gm-Message-State: AOJu0Yx+Z6u0/tAyREcCVyGjTD7uwEXnxcw9XzXKgIpvhvMG0dJGxfwW
- 4a/2dX6ytd5y5MK33PipClOKMUG1fgVHum8tq+ockfB/2R+shxQI8Rjq0tavcwPgZMzUw8PgI/o
- gWGxr
-X-Gm-Gg: ATEYQzzzet1LA9XU3BWzwIkTy6wMILVOGek4fnhL4li1QhFKCsIOxta9QRmakxsIBbf
- sbZlf9c+vtOjW/aYWK42qpYtRGAyUFsA+PTEplemYoEHdh3Rg5cp2TrBb5jF2OlX5vfR89IW2mD
- b5KgGl+FPLltfOm0E5WNJjHAvLIJ8oVJNMBpzelBBKtoK2R2tHxLALm2P1+Us0p4XCLcopKZMBR
- GoKQloTYwPz9jVsFcQCSxZLjuThEV66g0n5Zg3K6qR/THodzpryBdfrBGTEjm7PfHVugWT5yPus
- X8HrX+/Rv4Ely7pE5y0ruX6zAZA2dp4NBCiOeyC4m22pcHJbNsNheIrdA6erqAcgh6t6CGc2Si1
- +q/buRHFulzzLI7QpPTknVvzD6QK54/2GX0U5l4rjrVtD7QV+9tSd60/3yCn9nGDVOCc1zHfBaZ
- v9GMRzUiWKFbcpxCgP/ASpJEZRY8AlRps3PGcKRirJkes+pIuXFr5IWIAUcBspvw==
-X-Received: by 2002:a05:6214:300b:b0:897:b90:3628 with SMTP id
- 6a1803df08f44-899d1d75b7bmr71099516d6.7.1772232249569; 
- Fri, 27 Feb 2026 14:44:09 -0800 (PST)
-Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
+ bh=CrDzXY2m2uMH70d/6UC1cIIBwGVmF01mE9/XPkVo1Cc=;
+ b=WsWsiBnGND+6ncNFAelH5h4nvCEcanXHq0mMrEDNpLclu4qw5Kmw4Y1rCc5hmWE12Q
+ FgIUEf6euz7ygj1VuMYFlzYBu7+IS7ohRX184eUCgkEXXAaDZILdfAJaX+3oTu6rDpDI
+ PJBTgwLAJHWNN+QcfzuyQGiULJGx8mhINguO4+/bpMo7opej3oAV8vXMPGysMw0dr7nn
+ T5cWq93ufeqpbpMsGXWk5Ts79LWiKygHSpZMW1bQAyEzlkCWPEeofhRGwiOcrOZAePFf
+ fVNLMwWyg0nTCaH6kTJY2SqMH6K/4JDT4Rq57ef1ODkYKtat3evqxTe5XewKr0KeHVAU
+ GHpA==
+X-Gm-Message-State: AOJu0Yz2wwvqunJgeCarE68TwpziCbhTY8NzIjVh67EoWEsuBPVQRwqH
+ iHwoRZC8oboDqQSCIiQ3JGb6uYG++Ac6WPtIZ+0T0unBZnRGz+AvBrZsYmf6LLIlxhw=
+X-Gm-Gg: ATEYQzwEB+LbNyL3/HCR5UVboxwUUfZIp7gnnuRNxET3Hl2yID5+QAVYuzn6+hvFY9G
+ E0ybNIHwSBFPfbv7nWL9NjBa/ghNhULdvGVsS6g2xlKTlfWLzUlfuP7AyCILlfRUQ/R/xQ3Y2j/
+ 6T9is2qhLNE70xd4VcFpi8/W55ee29/Be7u2RQCObFfLPhNO740zFXJfwrS4z2VdMMscvh5NTSa
+ sa54i5YzdTb1TULwxXp7SJSeoWxxDBNssleplq528fhhn4lIxdRVDhzFmhUO1EnUAgpj+yDGrX8
+ Yh92+ku9Zdf+LyQwGga+grDahH85ZGIXgf4flkaSiyPnnBPr75T4nC4gA2Y57k9++ohFfQQqyUe
+ imcFyYwelvyXIi+IJCSf27l32Q+pvmS3MA5VOxcRbpl2lzVllM6qqkY88rQA+Ce8cDR5n9BJvRR
+ V/M05uDPMHddYxbQrHvfzvN+BneLqiPnPiMTVGw4swM/4RNzzLh6Fbi3Uqpm0nSBx0
+X-Received: by 2002:a05:620a:4511:b0:8c6:b19a:5a46 with SMTP id
+ af79cd13be357-8cbc8df6f03mr586264785a.47.1772232756396; 
+ Fri, 27 Feb 2026 14:52:36 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cbbf6f926csm578154285a.32.2026.02.27.14.44.08
+ af79cd13be357-8cbbf658f70sm562939085a.7.2026.02.27.14.52.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 27 Feb 2026 14:44:09 -0800 (PST)
+ Fri, 27 Feb 2026 14:52:36 -0800 (PST)
+Date: Fri, 27 Feb 2026 14:52:33 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Long Li <longli@microsoft.com>, Aman Singh <aman.deep.singh@intel.com>
-Subject: [PATCH v2] app/testpmd: add configurable flow count for txonly
- multi-flow
-Date: Fri, 27 Feb 2026 14:43:19 -0800
-Message-ID: <20260227224405.61074-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260226191625.1049670-1-longli@microsoft.com>
-References: <20260226191625.1049670-1-longli@microsoft.com>
+To: "Jasper Tran O'Leary" <jtranoleary@google.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/4] net/gve: add flow steering support
+Message-ID: <20260227145233.002b87e1@phoenix.local>
+In-Reply-To: <20260227195126.3545607-1-jtranoleary@google.com>
+References: <20260227195126.3545607-1-jtranoleary@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,257 +80,334 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The txonly multi-flow mode generates 64 unique UDP source ports per
-lcore by cycling the high byte from 0xC0 to 0xFF. On SmartNICs with
-limited hardware flow table caching, this fixed count can exhaust the
-flow cache and degrade receive-side performance.
+On Fri, 27 Feb 2026 19:51:22 +0000
+"Jasper Tran O'Leary" <jtranoleary@google.com> wrote:
 
-Add --txonly-flows=N command line parameter and 'set txonly-flows'
-runtime command to limit the number of unique source ports per lcore
-to between 1 and 64. The default remains 64 to preserve existing
-behavior.
+> This patch series adds flow steering support to the Google Virtual
+> Ethernet (gve) driver. This functionality allows traffic to be directed
+> to specific receive queues based on user-specified flow patterns.
+>=20
+> The series includes foundational support for extended admin queue
+> commands needed to handle flow rules, the specific adminqueue commands
+> for flow rule management, and the integration with the DPDK rte_flow
+> API. The series adds support flow matching on the following protocols:
+> IPv4, IPv6, TCP, UDP, SCTP, ESP, and AH.
+>=20
+> Patch Overview:
+>=20
+> 1. "net/gve: add flow steering device option" checks for and enables
+>    the flow steering capability in the device options during
+>    initialization.
+> 2. "net/gve: introduce extended adminq command" adds infrastructure
+>    for sending extended admin queue commands. These commands use a
+>    flexible buffer descriptor format required for flow rule management.
+> 3. "net/gve: add adminq commands for flow steering" implements the
+>    specific admin queue commands to add and remove flow rules on the
+>    device, including handling of rule IDs and parameters.
+> 4. "net/gve: add rte flow API integration" exposes the flow steering
+>    functionality via the DPDK rte_flow API. This includes strict
+>    pattern validation, rule parsing, and lifecycle management (create,
+>    destroy, flush). It ensures thread-safe access to the flow subsystem
+>    and proper resource cleanup during device reset.
+>=20
+> Jasper Tran O'Leary (2):
+>   net/gve: add adminq commands for flow steering
+>   net/gve: add rte flow API integration
+>=20
+> Vee Agarwal (2):
+>   net/gve: add flow steering device option
+>   net/gve: introduce extended adminq command
+>=20
+>  doc/guides/nics/features/gve.ini       |  12 +
+>  doc/guides/nics/gve.rst                |  20 +
+>  doc/guides/rel_notes/release_26_03.rst |   1 +
+>  drivers/net/gve/base/gve.h             |   3 +-
+>  drivers/net/gve/base/gve_adminq.c      | 118 ++++-
+>  drivers/net/gve/base/gve_adminq.h      |  57 +++
+>  drivers/net/gve/gve_ethdev.c           |  87 +++-
+>  drivers/net/gve/gve_ethdev.h           |  46 ++
+>  drivers/net/gve/gve_flow_rule.c        | 645 +++++++++++++++++++++++++
+>  drivers/net/gve/gve_flow_rule.h        |  64 +++
+>  drivers/net/gve/meson.build            |   1 +
+>  11 files changed, 1049 insertions(+), 5 deletions(-)
+>  create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.c
+>  create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.h
+>=20
 
-The source port encoding is unchanged: the low byte carries the lcore
-ID (avoiding atomics) and the high byte cycles through N values
-starting at 0xC0. Total unique flows = txonly_nb_flows * active_lcores.
+There is a lot here, so sent AI to take a look.
 
-Reported-by: Long Li <longli@microsoft.com>
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Tested-by: Long Li <longli@microsoft.com>
+Summary:
+Error 1 =E2=80=94 Resource leak: If gve_flush_flow_rules fails and disables=
+ the
+flow subsystem via gve_clear_flow_subsystem_ok(), the bitmap memory
+(avail_flow_rule_bmp_mem) is never freed because both gve_dev_close and
+gve_dev_reset gate their teardown on gve_get_flow_subsystem_ok()
+returning true. The guard needs to check for allocated memory rather
+than subsystem state.
+
+Error 2 =E2=80=94 pthread_mutex_init with NULL attributes in shared memory:=
+ The
+flow_rule_lock lives in dev_private (DPDK shared memory) but is
+initialized without PTHREAD_PROCESS_SHARED. This will cause undefined
+behavior with secondary processes. Switching to rte_spinlock_t would be
+the simplest fix since the critical sections are short (bitmap scan +
+TAILQ operations).
+
+Patches 1=E2=80=933 are clean. The overall structure and error handling in =
+patch 4 is solid =E2=80=94 the allocation-before-lock pattern, bitmap rollb=
+ack on adminq failure, and defense-in-depth validation in destroy are all w=
+ell done.
+Long form:
+# Code Review: GVE Flow Steering Patch Series (4 patches)
+
+**Series**: `[PATCH 1/4]` through `[PATCH 4/4]`
+**Author**: Jasper Tran O'Leary / Vee Agarwal (Google)
+**Subject**: Add receive flow steering (RFS) support to the GVE driver
 
 ---
-v2 - rename to shorter command line option
 
- app/test-pmd/cmdline.c                      | 49 +++++++++++++++++++++
- app/test-pmd/parameters.c                   | 12 +++++
- app/test-pmd/testpmd.c                      |  3 ++
- app/test-pmd/testpmd.h                      |  1 +
- app/test-pmd/txonly.c                       | 19 ++++----
- doc/guides/testpmd_app_ug/run_app.rst       |  6 +++
- doc/guides/testpmd_app_ug/testpmd_funcs.rst | 17 +++++++
- 7 files changed, 97 insertions(+), 10 deletions(-)
+## Summary
 
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index c33c66f327..a0d6ee37aa 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -384,6 +384,10 @@ static void cmd_help_long_parsed(void *parsed_result,
- 			"    Set the scheduling on timestamps"
- 			" timings for the TXONLY mode\n\n"
- 
-+			"set txflows (N)\n"
-+			"    Set the number of flows per lcore in"
-+			" txonly multi-flow mode (1-64)\n\n"
-+
- 			"set corelist (x[,y]*)\n"
- 			"    Set the list of forwarding cores.\n\n"
- 
-@@ -4612,6 +4616,50 @@ static cmdline_parse_inst_t cmd_set_txtimes = {
- 	},
- };
- 
-+/* *** SET NUMBER OF FLOWS IN TXONLY MULTI-FLOW MODE *** */
-+
-+struct cmd_set_txflows_result {
-+	cmdline_fixed_string_t cmd_keyword;
-+	cmdline_fixed_string_t name;
-+	uint16_t value;
-+};
-+
-+static void
-+cmd_set_txflows_parsed(void *parsed_result,
-+			       __rte_unused struct cmdline *cl,
-+			       __rte_unused void *data)
-+{
-+	struct cmd_set_txflows_result *res = parsed_result;
-+
-+	if (res->value < 1 || res->value > 64) {
-+		fprintf(stderr, "txonly-flows must be >= 1 and <= 64\n");
-+		return;
-+	}
-+	txonly_flows = res->value;
-+}
-+
-+static cmdline_parse_token_string_t cmd_set_txflows_keyword =
-+	TOKEN_STRING_INITIALIZER(struct cmd_set_txflows_result,
-+				 cmd_keyword, "set");
-+static cmdline_parse_token_string_t cmd_set_txflows_name =
-+	TOKEN_STRING_INITIALIZER(struct cmd_set_txflows_result,
-+				 name, "txonly-flows");
-+static cmdline_parse_token_num_t cmd_set_txflows_value =
-+	TOKEN_NUM_INITIALIZER(struct cmd_set_txflows_result,
-+			      value, RTE_UINT16);
-+
-+static cmdline_parse_inst_t cmd_set_txflows = {
-+	.f = cmd_set_txflows_parsed,
-+	.data = NULL,
-+	.help_str = "set txonly-flows <N>",
-+	.tokens = {
-+		(void *)&cmd_set_txflows_keyword,
-+		(void *)&cmd_set_txflows_name,
-+		(void *)&cmd_set_txflows_value,
-+		NULL,
-+	},
-+};
-+
- /* *** ADD/REMOVE ALL VLAN IDENTIFIERS TO/FROM A PORT VLAN RX FILTER *** */
- struct cmd_rx_vlan_filter_all_result {
- 	cmdline_fixed_string_t rx_vlan;
-@@ -14099,6 +14147,7 @@ static cmdline_parse_ctx_t builtin_ctx[] = {
- 	&cmd_set_rxoffs,
- 	&cmd_set_rxpkts,
- 	&cmd_set_rxhdrs,
-+	&cmd_set_txflows,
- 	&cmd_set_txpkts,
- 	&cmd_set_txsplit,
- 	&cmd_set_txtimes,
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index f2037925c2..3617860830 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -193,6 +193,8 @@ enum {
- 	TESTPMD_OPT_MULTI_RX_MEMPOOL_NUM,
- #define TESTPMD_OPT_TXONLY_MULTI_FLOW "txonly-multi-flow"
- 	TESTPMD_OPT_TXONLY_MULTI_FLOW_NUM,
-+#define TESTPMD_OPT_TXONLY_FLOWS "txonly-flows"
-+	TESTPMD_OPT_TXONLY_FLOWS_NUM,
- #define TESTPMD_OPT_RXQ_SHARE "rxq-share"
- 	TESTPMD_OPT_RXQ_SHARE_NUM,
- #define TESTPMD_OPT_ETH_LINK_SPEED "eth-link-speed"
-@@ -348,6 +350,7 @@ static const struct option long_options[] = {
- 	REQUIRED_ARG(TESTPMD_OPT_TXPKTS),
- 	NO_ARG(TESTPMD_OPT_MULTI_RX_MEMPOOL),
- 	NO_ARG(TESTPMD_OPT_TXONLY_MULTI_FLOW),
-+	REQUIRED_ARG(TESTPMD_OPT_TXONLY_FLOWS),
- 	OPTIONAL_ARG(TESTPMD_OPT_RXQ_SHARE),
- 	REQUIRED_ARG(TESTPMD_OPT_ETH_LINK_SPEED),
- 	NO_ARG(TESTPMD_OPT_DISABLE_LINK_CHECK),
-@@ -499,6 +502,8 @@ usage(char* progname)
- 		" or total packet length.\n");
- 	printf("  --multi-rx-mempool: enable multi-rx-mempool support\n");
- 	printf("  --txonly-multi-flow: generate multiple flows in txonly mode\n");
-+	printf("  --txonly-nb-flows=N: number of flows per lcore in txonly"
-+	       " multi-flow mode (1-64, default 64)\n");
- 	printf("  --tx-ip=src,dst: IP addresses in Tx-only mode\n");
- 	printf("  --tx-udp=src[,dst]: UDP ports in Tx-only mode\n");
- 	printf("  --eth-link-speed: force link speed.\n");
-@@ -1566,6 +1571,13 @@ launch_args_parse(int argc, char** argv)
- 		case TESTPMD_OPT_TXONLY_MULTI_FLOW_NUM:
- 			txonly_multi_flow = 1;
- 			break;
-+		case TESTPMD_OPT_TXONLY_FLOWS_NUM:
-+			n = atoi(optarg);
-+			if (n >= 1 && n <= 64)
-+				txonly_flows = (uint16_t)n;
-+			else
-+				rte_exit(EXIT_FAILURE, "txonly-flows must be >= 1 and <= 64\n");
-+			break;
- 		case TESTPMD_OPT_RXQ_SHARE_NUM:
- 			if (optarg == NULL) {
- 				rxq_share = UINT32_MAX;
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index fbacee89ea..aad880aa34 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -287,6 +287,9 @@ enum tx_pkt_split tx_pkt_split = TX_PKT_SPLIT_OFF;
- uint8_t txonly_multi_flow;
- /**< Whether multiple flows are generated in TXONLY mode. */
- 
-+uint16_t txonly_flows = 64;
-+/**< Number of unique flows per lcore in TXONLY multi-flow mode. */
-+
- uint32_t tx_pkt_times_inter;
- /**< Timings for send scheduling in TXONLY mode, time between bursts. */
- 
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index f319471c73..af185540c3 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -673,6 +673,7 @@ enum tx_pkt_split {
- extern enum tx_pkt_split tx_pkt_split;
- 
- extern uint8_t txonly_multi_flow;
-+extern uint16_t txonly_flows;
- 
- extern uint32_t rxq_share;
- 
-diff --git a/app/test-pmd/txonly.c b/app/test-pmd/txonly.c
-index bdcf6ea660..64893fa205 100644
---- a/app/test-pmd/txonly.c
-+++ b/app/test-pmd/txonly.c
-@@ -223,18 +223,17 @@ pkt_burst_prepare(struct rte_mbuf *pkt, struct rte_mempool *mbp,
- 				sizeof(struct rte_ether_hdr) +
- 				sizeof(struct rte_ipv4_hdr));
- 		/*
--		 * Generate multiple flows by varying UDP source port.
--		 * This enables packets are well distributed by RSS in
--		 * receiver side if any and txonly mode can be a decent
--		 * packet generator for developer's quick performance
--		 * regression test.
-+		 * Generate a configurable number of flows per lcore by
-+		 * varying the UDP source port. The low byte is the lcore
-+		 * ID, ensuring each lcore produces unique ports without
-+		 * atomic operations. The high byte cycles through
-+		 * txonly_flows values starting at 0xC0, keeping ports
-+		 * in the ephemeral range 49152-65535 (RFC 6335).
- 		 *
--		 * Only ports in the range 49152 (0xC000) and 65535 (0xFFFF)
--		 * will be used, with the least significant byte representing
--		 * the lcore ID. As such, the most significant byte will cycle
--		 * through 0xC0 and 0xFF.
-+		 * Total unique flows = txonly_flows * active_lcores.
- 		 */
--		src_port = ((src_var++ | 0xC0) << 8) + rte_lcore_id();
-+		src_port = (((src_var++ % txonly_flows) + 0xC0) << 8)
-+			   + rte_lcore_id();
- 		udp_hdr->src_port = rte_cpu_to_be_16(src_port);
- 		RTE_PER_LCORE(_src_port_var) = src_var;
- 	}
-diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
-index 97d6c75716..0340b3e2b3 100644
---- a/doc/guides/testpmd_app_ug/run_app.rst
-+++ b/doc/guides/testpmd_app_ug/run_app.rst
-@@ -386,6 +386,12 @@ The command line options are:
- 
-     Generate multiple flows in txonly mode.
- 
-+*   ``--txonly-flows=N``
-+
-+    Set the number of unique flows per lcore when txonly multi-flow mode
-+    is enabled. Valid range is 1 to 64. Default is 64.
-+    Reducing this value limits the number of unique UDP source ports generated.
-+
- *   ``--rxq-share=[X]``
- 
-     Create queues in shared Rx queue mode if device supports.
-diff --git a/doc/guides/testpmd_app_ug/testpmd_funcs.rst b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-index 62bb167d56..6695940dd2 100644
---- a/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-+++ b/doc/guides/testpmd_app_ug/testpmd_funcs.rst
-@@ -924,6 +924,23 @@ Where:
- 
- * ``rand`` same as 'on', but number of segments per each packet is a random value between 1 and total number of segments.
- 
-+set txonly-flows
-+~~~~~~~~~~~~~~~~
-+
-+Set the number of unique flows per lcore in txonly multi-flow mode::
-+
-+   testpmd> set txonly-flows <N>
-+
-+Where ``N`` is the number of unique UDP source port values each lcore will
-+cycle through, in the range 1 to 64. Default is 64. The UDP port value
-+is in ephemeral range 49152-65535 (RFC 6335). The least signficant byte
-+of the port is the core id, and the most significant byte cycles throgh
-+the range of ``N``.
-+
-+Each lcore generates unique flows by combining the flow index with its lcore
-+ID, so the total number of unique flows across the system is
-+``txonly-flows * active_lcores``.
-+
- set corelist
- ~~~~~~~~~~~~
- 
--- 
-2.51.0
+This series adds n-tuple flow steering to the GVE (Google Virtual Ethernet)=
+ driver via the `rte_flow` API. The implementation is cleanly structured ac=
+ross four patches: device option discovery (1/4), extended adminq infrastru=
+cture (2/4), flow rule adminq commands (3/4), and full rte_flow integration=
+ (4/4). The code quality is generally good with thorough validation, proper=
+ locking, and well-structured error handling.
 
+Two correctness issues were identified: a resource leak when the flow subsy=
+stem is disabled on error, and a missing `PTHREAD_PROCESS_SHARED` attribute=
+ on a mutex in shared memory.
+
+---
+
+## Patch 1/4: `net/gve: add flow steering device option`
+
+### Errors
+
+None.
+
+### Warnings
+
+None.
+
+This patch is clean. The device option parsing follows the established patt=
+ern for existing options (modify_ring, jumbo_frames), the byte-swap of `max=
+_flow_rules` is correct, and the zero-check on the big-endian value before =
+byte-swap is valid (non-zero in any byte order is still non-zero).
+
+---
+
+## Patch 2/4: `net/gve: introduce extended adminq command`
+
+### Errors
+
+None.
+
+### Warnings
+
+None.
+
+The extended command mechanism is straightforward: allocate DMA memory for =
+the inner command, copy the command in, set up the outer wrapper with the D=
+MA address, execute, and free. The error path is correct =E2=80=94 `gve_fre=
+e_dma_mem` is called after `gve_adminq_execute_cmd` regardless of success o=
+r failure.
+
+---
+
+## Patch 3/4: `net/gve: add adminq commands for flow steering`
+
+### Errors
+
+None.
+
+### Warnings
+
+**1. `gve_flow_rule.h` copyright appears to be copied from an Intel driver =
+file.**
+
+```c
+/* SPDX-License-Identifier: BSD-3-Clause
+ * Copyright(C) 2022 Intel Corporation
+ */
+```
+
+This is a new file in the Google GVE driver. The Intel copyright and 2022 d=
+ate look like they were carried over from whichever file was used as a temp=
+late. This should be updated to reflect the actual author.
+
+---
+
+## Patch 4/4: `net/gve: add rte flow API integration`
+
+This is the largest patch (815 lines added) and where the significant findi=
+ngs are.
+
+### Errors
+
+**1. Resource leak: bitmap memory leaked when flow subsystem is disabled on=
+ error.**
+
+In `gve_flush_flow_rules`, if either `gve_free_flow_rules()` or `gve_flow_i=
+nit_bmp()` fails, the code disables the subsystem:
+
+```c
+gve_clear_flow_subsystem_ok(priv);
+```
+
+However, in both `gve_dev_close` and `gve_dev_reset`, teardown is gated on =
+the flag:
+
+```c
+if (gve_get_flow_subsystem_ok(priv))
+    gve_teardown_flow_subsystem(priv);
+```
+
+If the subsystem was disabled by a failed flush, `gve_teardown_flow_subsyst=
+em` is never called, and `priv->avail_flow_rule_bmp_mem` is never freed. Th=
+is is a memory leak.
+
+**Suggested fix**: Either (a) always call `gve_flow_free_bmp(priv)` in clos=
+e/reset regardless of the flag, or (b) have the flush error path free the b=
+itmap memory itself, or (c) unconditionally call teardown in close/reset:
+
+```c
+/* In gve_dev_close / gve_dev_reset: */
+if (priv->avail_flow_rule_bmp_mem)
+    gve_teardown_flow_subsystem(priv);
+```
+
+**2. `pthread_mutex_init` without `PTHREAD_PROCESS_SHARED` on a mutex in sh=
+ared memory.**
+
+In `gve_dev_init`:
+
+```c
+pthread_mutex_init(&priv->flow_rule_lock, NULL);
+```
+
+`priv` is `dev->data->dev_private`, which is allocated in DPDK shared memor=
+y accessible by both primary and secondary processes. A pthread mutex in sh=
+ared memory initialized with `NULL` attributes has undefined behavior when =
+used across processes. It may appear to work in testing but fail in product=
+ion with secondary processes.
+
+**Suggested fix**: Either use `PTHREAD_PROCESS_SHARED`:
+
+```c
+pthread_mutexattr_t attr;
+pthread_mutexattr_init(&attr);
+pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
+pthread_mutex_init(&priv->flow_rule_lock, &attr);
+pthread_mutexattr_destroy(&attr);
+```
+
+Or switch to `rte_spinlock_t` which works correctly in shared memory withou=
+t special initialization (appropriate here since the critical sections are =
+short =E2=80=94 bitmap scan, TAILQ insert/remove):
+
+```c
+rte_spinlock_t flow_rule_lock;
+/* ... */
+rte_spinlock_init(&priv->flow_rule_lock);
+```
+
+### Warnings
+
+**3. Implicit pointer comparisons throughout `gve_flow_rule.c`.**
+
+Several places use `!pointer` instead of `pointer =3D=3D NULL`:
+
+```c
+if (!flow) {          /* line ~1641, ~1710 */
+if (!action->conf) {  /* line ~1510 */
+if (!attr) {          /* line ~1173 */
+if (!actions) {       /* line ~1498 */
+if (!pattern) {       /* line ~1329 */
+```
+
+DPDK coding style requires explicit comparison with NULL for pointers. The =
+idiomatic form is `if (flow =3D=3D NULL)`.
+
+**4. `rte_zmalloc` used for flow rule metadata that does not require hugepa=
+ge memory.**
+
+The `gve_flow` structs (8 bytes: a `uint32_t` + TAILQ pointers) are allocat=
+ed via `rte_zmalloc`. These are small control-plane structures not accessed=
+ by DMA and not requiring NUMA placement. Standard `malloc` would be more a=
+ppropriate per DPDK guidelines and would not consume limited hugepage resou=
+rces.
+
+Similarly, `priv->avail_flow_rule_bmp_mem` is allocated with `rte_zmalloc`.=
+ Since `rte_bitmap` may require specific alignment, this one is more defens=
+ible, but worth considering whether standard allocation would suffice.
+
+**5. Standalone `rte_atomic_thread_fence()` in flow subsystem flag accessor=
+s.**
+
+The `gve_get_flow_subsystem_ok` / `gve_set_flow_subsystem_ok` / `gve_clear_=
+flow_subsystem_ok` functions use standalone fences with `rte_bit_relaxed_*`=
+ operations:
+
+```c
+static inline bool
+gve_get_flow_subsystem_ok(struct gve_priv *priv)
+{
+    bool ret;
+    ret =3D !!rte_bit_relaxed_get32(GVE_PRIV_FLAGS_FLOW_SUBSYSTEM_OK,
+                                  &priv->state_flags);
+    rte_atomic_thread_fence(rte_memory_order_acquire);
+    return ret;
+}
+```
+
+These follow the existing pattern for other state flags in the driver, so t=
+his is consistent. However, it's worth noting that in every call site in th=
+is patch, the flag is checked while holding `flow_rule_lock`, which already=
+ provides the necessary memory ordering. The fences are redundant in those =
+paths (but harmless).
+
+**6. RST documentation uses simple bullet lists where definition lists woul=
+d be cleaner.**
+
+In `doc/guides/nics/gve.rst`:
+
+```rst
+Supported Patterns:
+  - IPv4/IPv6 source and destination addresses.
+  - TCP/UDP/SCTP source and destination ports.
+  - ESP/AH SPI.
+```
+
+These term+list groupings would read better as RST definition lists. This i=
+s minor given the lists are short.
+
+### Design Notes (Info)
+
+**Well-structured error handling in `gve_create_flow_rule`**: The allocatio=
+n-before-lock pattern avoids holding the mutex during memory allocation, an=
+d the `free_flow_and_unlock` goto label correctly handles all error paths. =
+The bitmap-set-on-error rollback in the adminq failure case is also correct.
+
+**`gve_destroy_flow_rule` double-validates flow state**: The function check=
+s both the flow pointer for NULL and verifies `rule_id < max_flow_rules` be=
+fore checking the bitmap. This defense-in-depth is good practice.
+
+**IPv6 word-reversal in `gve_parse_ipv6`**: The comment explaining the devi=
+ce's expected word order is clear and the implementation correctly reverses=
+ the 32-bit words. This is the kind of hardware-specific detail that benefi=
+ts from the inline comment.
+
+---
+
+## Cross-Patch Observations
+
+The series is well-ordered: each patch builds incrementally and the depende=
+ncies flow naturally (device option =E2=86=92 extended command infrastructu=
+re =E2=86=92 flow rule commands =E2=86=92 rte_flow integration). The docume=
+ntation, feature matrix, and release notes are all updated in patch 4/4 tog=
+ether with the code, which is correct per DPDK guidelines.
+
+The `Co-developed-by` / `Signed-off-by` tag sequences are correctly formatt=
+ed per Linux kernel convention.
