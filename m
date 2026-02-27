@@ -2,57 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D85FD5316
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 09:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E4EFD531B
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 09:23:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 454984027F;
-	Fri, 27 Feb 2026 10:20:15 +0100 (CET)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
- by mails.dpdk.org (Postfix) with ESMTP id E35204003C
- for <dev@dpdk.org>; Fri, 27 Feb 2026 10:20:13 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=R+hmh0XS3wx1brfThcg87StgihN2f+ipGhLlOB5/Qvo=;
- b=ARUdpG+u3fo4yvSXhTNb7Yhf4muTbG9bvzEL6fq0a7DxHUpl8yr4Co/lfPRcnM+gRmnpD4BOV
- rjnKMiVeAKUIZzb5fp1jQEMmCvCNI30+7WegezmKyEq7Knt24LJjvGzVEOMJUSIgHvt6rs9KrO/
- xvA4NJHB3lGUIsYCSUoPjB4=
-Received: from canpmsgout01.his.huawei.com (unknown [172.19.92.178])
- by szxga01-in.huawei.com (SkyGuard) with ESMTPS id 4fMjTK73jjz1BG3v
- for <dev@dpdk.org>; Fri, 27 Feb 2026 17:19:49 +0800 (CST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=R+hmh0XS3wx1brfThcg87StgihN2f+ipGhLlOB5/Qvo=;
- b=ARUdpG+u3fo4yvSXhTNb7Yhf4muTbG9bvzEL6fq0a7DxHUpl8yr4Co/lfPRcnM+gRmnpD4BOV
- rjnKMiVeAKUIZzb5fp1jQEMmCvCNI30+7WegezmKyEq7Knt24LJjvGzVEOMJUSIgHvt6rs9KrO/
- xvA4NJHB3lGUIsYCSUoPjB4=
-Received: from mail.maildlp.com (unknown [172.19.162.223])
- by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4fMjN253J5z1T4Fq;
- Fri, 27 Feb 2026 17:15:14 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 51B7740569;
- Fri, 27 Feb 2026 17:20:09 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 27 Feb 2026 17:20:08 +0800
-Message-ID: <78c276d7-6d80-408c-a1f2-a92f1a89a9ea@huawei.com>
-Date: Fri, 27 Feb 2026 17:20:08 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id C07F04068E;
+	Fri, 27 Feb 2026 10:23:47 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 52D304067C
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 10:23:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1772184225;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=Xtp1AYAR8bPq+/f5kjMXNEIDRQOlnCRCzFgTjzclSDQ=;
+ b=VtnD5vd0zTsdGHXIDRbNnaOckHtJP7hueYlEyie+6/dGL+BQkgWNbsQ3FQKJyi/DJHPuSf
+ r5cLeU2lwF6niO55BnYKdSdl3VSca6GYGSaDOouriV1fE72+4nPzoHc610wiDM1wGGlfOS
+ oXoNuUy+TGwtQO2jT3V0l/sVaPKX0xI=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-363-8XzJm_2HOf6WDYqU4C1XMQ-1; Fri, 27 Feb 2026 04:23:43 -0500
+X-MC-Unique: 8XzJm_2HOf6WDYqU4C1XMQ-1
+X-Mimecast-MFC-AGG-ID: 8XzJm_2HOf6WDYqU4C1XMQ_1772184222
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-38704a51eddso15518361fa.1
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 01:23:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772184222; x=1772789022;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Xtp1AYAR8bPq+/f5kjMXNEIDRQOlnCRCzFgTjzclSDQ=;
+ b=kUibvlT30+Lhm014ds+jng15EveoxAq5Ux5RuALu6MIqsGsbw3iM7LfWdHsNXA8svg
+ pKl+G5Z8vyngEXpMszgi74DqaebDmAtPJxN1kNiiiZTJVadzNn8I8tC1ZJTuzB9mo4Q8
+ i6bxKuW5+uCtDSMTmNl/JN0yBhMKldm7/eSev2eaiBQXWR9HIIV3n2NQo2iUnYJcKteR
+ btAnC8rxJ7uiHXrgVuc6805WGFRMiU2j7Gtf9hlvnT5LNsTgH1japlQFh1XhRBVu3lhh
+ sbcKVqe1YF7I0eE9ZHUnsmVB6zkWBNDxBKgj8WqLjQ284MrA8xEquGncewNmXDw/1pXC
+ b3Tg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVSGI/HrZKfV2QlGBIUYRlYP00E+hQ4TW1n5/viCEokApMtZ+5zzJCyGNvB+Qrjikguc5s=@dpdk.org
+X-Gm-Message-State: AOJu0YxSGfj13ftfzn97k93Mic7LdGmgs5juB1vl/Va/gos25HSiqquN
+ kVQ/aJpI9SJoouYZSQv23T5cSDPiS5Tbho8YX76PfweL4vegCWBKeqVlSw9MN1r8uvmgsfk3M2H
+ B/kVf7IuIrJys+PoBfYDpz0uszB18tOFK7zGH0Vu1qJBAu+23npD14nInFOH8GcSFuarOyCCJHV
+ I6bu0/wfpuAcpmdzFYvJs=
+X-Gm-Gg: ATEYQzxpPnA/LN2Me4nz16Oo9ER/WDzk1yq0sC68eGvf6fpbE1/O+VRl0PMGom0sZzf
+ iwa4pKvtk9XYmsSituQNxcPbo0upbJy/D1CZ+6TMJYLUMqtI/gs9ET6Ug8f5BnQv+qu7FaVLcUs
+ DSDDOU+JbXvBWUBoGOC9Boa4JwKP2POIeYtZCh8ViPwYUstBqtIdMT19HSBBiwt5zmA8YNv8ZRc
+ 05Etf9ORn5RtW1igz93dPDtm2s6v2d9uja8tGoGBIdBQDOe3nISIc1eaXTFLHzSM9eXPw==
+X-Received: by 2002:a2e:b907:0:b0:389:e2e8:4f4c with SMTP id
+ 38308e7fff4ca-389f1e3756fmr18443891fa.21.1772184222137; 
+ Fri, 27 Feb 2026 01:23:42 -0800 (PST)
+X-Received: by 2002:a2e:b907:0:b0:389:e2e8:4f4c with SMTP id
+ 38308e7fff4ca-389f1e3756fmr18443731fa.21.1772184221660; Fri, 27 Feb 2026
+ 01:23:41 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mempool: introduce statistics reset function
-To: =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>, Andrew
- Rybchenko <andrew.rybchenko@oktetlabs.ru>, Stephen Hemminger
- <stephen@networkplumber.org>, <dev@dpdk.org>
-References: <20260223102054.336350-1-mb@smartsharesystems.com>
- <20260224092802.359592-1-mb@smartsharesystems.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260224092802.359592-1-mb@smartsharesystems.com>
+References: <20260218160453.142311-1-maxime@leroys.fr>
+ <20260226143341.282188-12-maxime@leroys.fr>
+ <20260226112154.7b2c51d0@phoenix.local>
+In-Reply-To: <20260226112154.7b2c51d0@phoenix.local>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 27 Feb 2026 10:23:30 +0100
+X-Gm-Features: AaiRm53_udQ5f5BbcNyoTQom8fGC0CMuw8XUNwHF4S6w04HTq5QzLqeBDQsV6Zw
+Message-ID: <CAJFAV8z0L-KLsNq6JCgaWsEmEaWUqH1rcH_rHcwWVkVisUAMfA@mail.gmail.com>
+Subject: Re: [PATCH v2 11/17] net/dpaa2: fix software taildrop buffer access
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Maxime Leroy <maxime@leroys.fr>, dev@dpdk.org, hemant.agrawal@nxp.com,
+ stable@dpdk.org, =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: l7WYtQaO_9opdRwmWcgkenWrWFzGC7dDyux-8v2mMzE_1772184222
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,177 +87,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+On Thu, 26 Feb 2026 at 20:22, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Thu, 26 Feb 2026 15:33:35 +0100
+> Maxime Leroy <maxime@leroys.fr> wrote:
+>
+> > The sw_td path in dpaa2_dev_tx() reads from the wrong position in the
+> > bufs array. When the goto fires, bufs has already been advanced past
+> > the num_tx successfully sent packets. The first loop then reads num_tx
+> > more entries starting from bufs, going past the end of the input array.
+> > Additionally, the buf_to_free segments for already-enqueued packets
+> > are never freed, leaking memory.
+> >
+> > Replace the buggy sw_td code with the same pattern used in
+> > dpaa2_dev_tx_ordered(): free buf_to_free segments first, then use
+> > rte_pktmbuf_free_bulk() to drop remaining unsent packets.
+> >
+> > Not tested, found by code review.
+> >
+> > Cc: stable@dpdk.org
+> > Fixes: c3ffe74d85be ("net/dpaa2: support software taildrop")
+> >
+> > Reported-by: Stephen Hemminger <stephen@networkplumber.org>
+> > Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+> > ---
+> >  drivers/net/dpaa2/dpaa2_rxtx.c | 18 ++++++------------
+> >  1 file changed, 6 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
+> > index 689e5e7ee7..8275ba9780 100644
+> > --- a/drivers/net/dpaa2/dpaa2_rxtx.c
+> > +++ b/drivers/net/dpaa2/dpaa2_rxtx.c
+> > @@ -1517,21 +1517,15 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+> >
+> >       return num_tx;
+> >  sw_td:
+> > -     loop = 0;
+> > -     while (loop < num_tx) {
+> > -             if (unlikely(RTE_MBUF_HAS_EXTBUF(*bufs)))
+> > -                     rte_pktmbuf_free(*bufs);
+> > -             bufs++;
+> > -             loop++;
+> > +     for (loop = 0; loop < free_count; loop++) {
+> > +             if (buf_to_free[loop].pkt_id < num_tx)
+> > +                     rte_pktmbuf_free_seg(buf_to_free[loop].seg);
+> >       }
+> >
+> >       /* free the pending buffers */
+> > -     while (nb_pkts) {
+> > -             rte_pktmbuf_free(*bufs);
+> > -             bufs++;
+> > -             nb_pkts--;
+> > -             num_tx++;
+> > -     }
+> > +     rte_pktmbuf_free_bulk(bufs, nb_pkts);
+>
+> It is unsafe to use free_bulk on transmit path because packets in
+> burst might come from different pools. An example would be a router
+> forwarding from two incoming NIC's to one outgoing NIC.
 
-Another question:
-   How about the overload of mempool stats, If the cost is low, can we
-   remove the debug macro? As far as I know, some DPDK applications enable
-   mempool statistics (maybe self-impl) in the production environment,
-   which is mainly used to help locate problems.
+Is it?
 
-On 2/24/2026 5:28 PM, Morten Brørup wrote:
-> Populating a mempool with objects is accounted for in the statistics.
-> When analyzing mempool cache statistics, this may distort the data.
-> In order to simplify mempool cache statistics analysis, a mempool
-> statistics reset function was added.
-> 
-> Furthermore, details about average burst sizes and mempool cache miss
-> rates were added to the statistics shown when dumping a mempool.
-> 
-> Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
-> ---
-> v2:
-> * Added detailed usage instructions to the function description. (Andrew)
-> * Added DEBUG log message to the function. (Andrew)
-> ---
->  lib/mempool/mempool_trace.h        |  7 ++++
->  lib/mempool/mempool_trace_points.c |  4 +++
->  lib/mempool/rte_mempool.c          | 51 ++++++++++++++++++++++++++++--
->  lib/mempool/rte_mempool.h          | 29 +++++++++++++++++
->  4 files changed, 89 insertions(+), 2 deletions(-)
-> 
-> diff --git a/lib/mempool/mempool_trace.h b/lib/mempool/mempool_trace.h
-> index c595a3116b..23cda1473c 100644
-> --- a/lib/mempool/mempool_trace.h
-> +++ b/lib/mempool/mempool_trace.h
-> @@ -104,6 +104,13 @@ RTE_TRACE_POINT(
->  	rte_trace_point_emit_string(mempool->name);
->  )
->  
-> +RTE_TRACE_POINT(
-> +	rte_mempool_trace_stats_reset,
-> +	RTE_TRACE_POINT_ARGS(struct rte_mempool *mempool),
-> +	rte_trace_point_emit_ptr(mempool);
-> +	rte_trace_point_emit_string(mempool->name);
-> +)
-> +
->  RTE_TRACE_POINT(
->  	rte_mempool_trace_cache_create,
->  	RTE_TRACE_POINT_ARGS(uint32_t size, int socket_id,
-> diff --git a/lib/mempool/mempool_trace_points.c b/lib/mempool/mempool_trace_points.c
-> index ec465780f4..8249981502 100644
-> --- a/lib/mempool/mempool_trace_points.c
-> +++ b/lib/mempool/mempool_trace_points.c
-> @@ -60,6 +60,10 @@ RTE_TRACE_POINT_REGISTER(rte_mempool_trace_populate_default,
->  RTE_TRACE_POINT_REGISTER(rte_mempool_trace_populate_anon,
->  	lib.mempool.populate.anon)
->  
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(__rte_mempool_trace_stats_reset, 26.03)
-> +RTE_TRACE_POINT_REGISTER(rte_mempool_trace_stats_reset,
-> +	lib.mempool.stats_reset)
-> +
->  RTE_TRACE_POINT_REGISTER(rte_mempool_trace_cache_create,
->  	lib.mempool.cache_create)
->  
-> diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-> index 3042d94c14..d33ea15157 100644
-> --- a/lib/mempool/rte_mempool.c
-> +++ b/lib/mempool/rte_mempool.c
-> @@ -1049,6 +1049,29 @@ rte_mempool_in_use_count(const struct rte_mempool *mp)
->  	return mp->size - rte_mempool_avail_count(mp);
->  }
->  
-> +/* Reset the statistics of a mempool. */
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_mempool_stats_reset, 26.03)
-> +void
-> +rte_mempool_stats_reset(struct rte_mempool *mp)
-> +{
-> +	RTE_ASSERT(mp != NULL);
-> +
-> +#ifdef RTE_LIBRTE_MEMPOOL_STATS
-> +	memset(&mp->stats, 0, sizeof(mp->stats));
-> +	if (mp->cache_size != 0) {
-> +		for (unsigned int lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
-> +			memset(&mp->local_cache[lcore_id].stats, 0,
-> +					sizeof(mp->local_cache[lcore_id].stats));
-> +		}
-> +	}
-> +
-> +	RTE_MEMPOOL_LOG(DEBUG, "<%s>@%p: statistics reset", mp->name, mp);
-> +	rte_mempool_trace_stats_reset(mp);
-> +#else
-> +	RTE_SET_USED(mp);
-> +#endif
-> +}
-> +
->  /* dump the cache status */
->  static unsigned
->  rte_mempool_dump_cache(FILE *f, const struct rte_mempool *mp)
-> @@ -1327,10 +1350,34 @@ rte_mempool_dump(FILE *f, struct rte_mempool *mp)
->  	fprintf(f, "    get_fail_bulk=%"PRIu64"\n", sum.get_fail_bulk);
->  	fprintf(f, "    get_fail_objs=%"PRIu64"\n", sum.get_fail_objs);
->  	if (info.contig_block_size > 0) {
-> -		fprintf(f, "    get_success_blks=%"PRIu64"\n",
-> -			sum.get_success_blks);
-> +		fprintf(f, "    get_success_blks=%"PRIu64"\n", sum.get_success_blks);
->  		fprintf(f, "    get_fail_blks=%"PRIu64"\n", sum.get_fail_blks);
->  	}
-> +	fprintf(f, "    avg objs/bulk put=%#Lf, get=%#Lf, get_fail=%#Lf\n",
-> +			sum.put_bulk != 0 ? (long double)sum.put_objs / sum.put_bulk : 0,
-> +			sum.get_success_bulk != 0 ?
-> +			(long double)sum.get_success_objs / sum.get_success_bulk : 0,
-> +			sum.get_fail_bulk != 0 ?
-> +			(long double)sum.get_fail_objs / sum.get_fail_bulk : 0);
-> +	fprintf(f, "    avg common_pool objs/bulk put=%#Lf, get=%#Lf\n",
-> +			sum.put_common_pool_bulk != 0 ?
-> +			(long double)sum.put_common_pool_objs / sum.put_common_pool_bulk : 0,
-> +			sum.get_common_pool_bulk != 0 ?
-> +			(long double)sum.get_common_pool_objs / sum.get_common_pool_bulk : 0);
-> +	fprintf(f, "    avg cache miss rate put_objs=%s%#Lf, get_objs=%s%#Lf\n",
-> +			sum.put_common_pool_objs != 0 ? "1/" : "",
-> +			sum.put_common_pool_objs != 0 ?
-> +			(long double)sum.put_objs / sum.put_common_pool_objs : 0,
-> +			sum.get_common_pool_objs != 0 ? "1/" : "",
-> +			sum.get_common_pool_objs != 0 ?
-> +			(long double)sum.get_success_objs / sum.get_common_pool_objs : 0);
-> +	fprintf(f, "    avg cache miss rate put_bulk=%s%#Lf, get_bulk=%s%#Lf\n",
-> +			sum.put_common_pool_bulk != 0 ? "1/" : "",
-> +			sum.put_common_pool_bulk != 0 ?
-> +			(long double)sum.put_bulk / sum.put_common_pool_bulk : 0,
-> +			sum.get_common_pool_bulk != 0 ? "1/" : "",
-> +			sum.get_common_pool_bulk != 0 ?
-> +			(long double)sum.get_success_bulk / sum.get_common_pool_bulk : 0);
->  #else
->  	fprintf(f, "  no statistics available\n");
->  #endif
-> diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-> index 1144dca58a..0b62837534 100644
-> --- a/lib/mempool/rte_mempool.h
-> +++ b/lib/mempool/rte_mempool.h
-> @@ -1288,6 +1288,35 @@ uint32_t rte_mempool_obj_iter(struct rte_mempool *mp,
->  uint32_t rte_mempool_mem_iter(struct rte_mempool *mp,
->  	rte_mempool_mem_cb_t *mem_cb, void *mem_cb_arg);
->  
-> +/**
-> + * @warning
-> + * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-> + *
-> + * Reset the statistics of a mempool.
-> + *
-> + * This function is intended for use when analyzing mempool statistics
-> + * without counting any mempool operations performed during application
-> + * initialization.
-> + * For example, populating the mempool counts as put operations into the
-> + * common pool, and setting up ethdev Rx queues counts as get operations.
-> + *
-> + * This function should only be called after application initialization,
-> + * before the data path is started; otherwise, the mempool statistics may
-> + * become inconsistent.
-> + *
-> + * For a perfectly clean slate, the local caches of the mempools used
-> + * during application initialization should be flushed before resetting
-> + * the mempool statistics.
-> + * For example, mbuf pools used by ethdev Rx queues.
-> + *
-> + * @see rte_mempool_cache_flush()
-> + *
-> + * @param mp
-> + *   A pointer to the mempool structure.
-> + */
-> +__rte_experimental
-> +void rte_mempool_stats_reset(struct rte_mempool *mp);
-> +
->  /**
->   * Dump the status of the mempool to a file.
->   *
+IIUC, this helper was added specifically to handle mbufs from multiple mempools.
+
+static void
+__rte_pktmbuf_free_seg_via_array(struct rte_mbuf *m,
+        struct rte_mbuf ** const pending, unsigned int * const
+nb_pending,
+        const unsigned int pending_sz)
+{
+        m = rte_pktmbuf_prefree_seg(m);
+        if (likely(m != NULL)) {
+                if (*nb_pending == pending_sz ||
+                    (*nb_pending > 0 && m->pool != pending[0]->pool))
+{
+                        rte_mempool_put_bulk(pending[0]->pool,
+                                        (void **)pending,
+*nb_pending);
+                        *nb_pending = 0;
+                }
+
+                pending[(*nb_pending)++] = m;
+        }
+}
+
+void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int
+count)
+        for (idx = 0; idx < count; idx++) {
+                m = mbufs[idx];
+                do {
+                        m_next = m->next;
+                        __rte_pktmbuf_free_seg_via_array(m,
+                                        pending, &nb_pending,
+                                        RTE_PKTMBUF_FREE_PENDING_SZ);
+                        m = m_next;
+                } while (m != NULL);
+}
+
+
+-- 
+David Marchand
 
