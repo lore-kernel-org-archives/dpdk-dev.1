@@ -2,17 +2,17 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC56FFD9E29
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 02:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E6DFD9E26
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 02:00:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 510DD40693;
-	Fri, 27 Feb 2026 02:59:49 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 181DD406BC;
+	Fri, 27 Feb 2026 02:59:51 +0100 (CET)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 58EA240668;
- Fri, 27 Feb 2026 02:59:43 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4D15A4066B;
+ Fri, 27 Feb 2026 02:59:44 +0100 (CET)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 06A3B20B6F02; Thu, 26 Feb 2026 17:59:43 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 06A3B20B6F02
+ id A8D0920B6F03; Thu, 26 Feb 2026 17:59:43 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A8D0920B6F03
 From: Long Li <longli@microsoft.com>
 To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
@@ -21,9 +21,9 @@ To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
  Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH v5 4/7] net/netvsc: fix devargs memory leak on hotplug
-Date: Thu, 26 Feb 2026 17:59:24 -0800
-Message-ID: <20260227015928.14338-5-longli@microsoft.com>
+Subject: [PATCH v5 5/7] net/mana: fix fast-path ops setup in secondary process
+Date: Thu, 26 Feb 2026 17:59:25 -0800
+Message-ID: <20260227015928.14338-6-longli@microsoft.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260227015928.14338-1-longli@microsoft.com>
 References: <20260227015928.14338-1-longli@microsoft.com>
@@ -42,44 +42,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Device arguments (devargs) allocated during VF hotplug were not being
-freed when the hotplug context was cleaned up, causing a memory leak.
+On hotplug, the secondary process is not able to set rte_eth_fp_ops
+because the primary process has not finished setting up the device
+for datapath.
 
-The devargs are allocated in netvsc_hotadd_callback() via
-rte_devargs_parse() and stored in the hotadd context structure. They
-must be freed with rte_devargs_reset() before freeing the context.
+Fix this by properly setting up rte_eth_fp_ops in the secondary
+process when the primary requests to start datapath. Set both
+rxq.data and txq.data to point to the device's RX/TX queue arrays,
+enabling the fast-path operations to access queues correctly.
 
-Free devargs in both cleanup paths:
-- netvsc_hotplug_retry() after hotplug attempt completes
-- hn_dev_close() when canceling pending hotplug operations
+Also update rte_eth_fp_ops burst function pointers in the STOP_RXTX
+handler. Without this, the secondary's rte_eth_fp_ops retains stale
+burst function pointers after stop, since rte_eth_fp_ops is
+process-local and eth_dev_fp_ops_reset() in rte_eth_dev_stop() only
+affects the primary.
 
-Fixes: 7fc4c0997b04 ("net/netvsc: fix hot adding multiple VF PCI devices")
+Without this fix, the secondary process cannot transmit or receive
+packets because the fast-path queue data pointers are NULL.
+
+Fixes: 62724d1a3981 ("net/mana: start/stop device")
 Cc: stable@dpdk.org
+
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/netvsc/hn_ethdev.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/mana/mp.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index d22595ce95..791e832d5d 100644
---- a/drivers/net/netvsc/hn_ethdev.c
-+++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -712,6 +712,7 @@ static void netvsc_hotplug_retry(void *args)
- 	LIST_REMOVE(hot_ctx, list);
- 	rte_spinlock_unlock(&hv->hotadd_lock);
+diff --git a/drivers/net/mana/mp.c b/drivers/net/mana/mp.c
+index 5467d385ce..72417fc0c7 100644
+--- a/drivers/net/mana/mp.c
++++ b/drivers/net/mana/mp.c
+@@ -145,6 +145,11 @@ mana_mp_secondary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
+ 		dev->tx_pkt_burst = mana_tx_burst;
+ 		dev->rx_pkt_burst = mana_rx_burst;
  
-+	rte_devargs_reset(d);
- 	free(hot_ctx);
- }
++		rte_eth_fp_ops[param->port_id].rx_pkt_burst = mana_rx_burst;
++		rte_eth_fp_ops[param->port_id].tx_pkt_burst = mana_tx_burst;
++		rte_eth_fp_ops[param->port_id].rxq.data = dev->data->rx_queues;
++		rte_eth_fp_ops[param->port_id].txq.data = dev->data->tx_queues;
++
+ 		rte_mb();
  
-@@ -1127,6 +1128,7 @@ hn_dev_close(struct rte_eth_dev *dev)
- 		hot_ctx = LIST_FIRST(&hv->hotadd_list);
- 		rte_eal_alarm_cancel(netvsc_hotplug_retry, hot_ctx);
- 		LIST_REMOVE(hot_ctx, list);
-+		rte_devargs_reset(&hot_ctx->da);
- 		free(hot_ctx);
- 	}
- 	rte_spinlock_unlock(&hv->hotadd_lock);
+ 		res->result = 0;
+@@ -154,6 +159,9 @@ mana_mp_secondary_handle(const struct rte_mp_msg *mp_msg, const void *peer)
+ 	case MANA_MP_REQ_STOP_RXTX:
+ 		DRV_LOG(INFO, "Port %u stopping datapath", dev->data->port_id);
+ 
++		rte_eth_fp_ops[param->port_id].rx_pkt_burst = mana_rx_burst_removed;
++		rte_eth_fp_ops[param->port_id].tx_pkt_burst = mana_tx_burst_removed;
++
+ 		dev->tx_pkt_burst = mana_tx_burst_removed;
+ 		dev->rx_pkt_burst = mana_rx_burst_removed;
+ 
 -- 
 2.43.0
 
