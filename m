@@ -2,89 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C0CFEFB77
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 18:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ED89FEFB7C
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 19:18:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4AF8F402E7;
-	Fri, 27 Feb 2026 19:36:11 +0100 (CET)
-Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
- [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 818DA402C6
- for <dev@dpdk.org>; Fri, 27 Feb 2026 19:36:09 +0100 (CET)
-Received: by mail-dy1-f181.google.com with SMTP id
- 5a478bee46e88-2bdbd13ca01so4301139eec.0
- for <dev@dpdk.org>; Fri, 27 Feb 2026 10:36:09 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772217368; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id B601D402E7;
+	Fri, 27 Feb 2026 20:18:25 +0100 (CET)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com
+ [209.85.208.46]) by mails.dpdk.org (Postfix) with ESMTP id 94624402C6
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 20:18:23 +0100 (CET)
+Received: by mail-ed1-f46.google.com with SMTP id
+ 4fb4d7f45d1cf-65c0d2f5fe1so4949968a12.3
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 11:18:23 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772219903; cv=none;
  d=google.com; s=arc-20240605;
- b=XCdAK3FeRt4FqtYoJhM4OpVn4vnWNHJBODO3lyYOqmgbqLoN1cBt7THmu47AEuELO4
- iiRTDgaqwtJJq1n7Ho5RgA67BkCVxZwh3fCN/u7WlDMy3JyejtWymqEAS3ej896QZ8Vg
- 63PLBPh4hK+JHHg26mDw6gRsy0biwT0uCQ7wjMntCjS9+LXhLMJCtI1oCGB64Kx5SH6K
- eTYD9+Yyrq11D3TPIXvGLbVpR2Jvh2irm+lGkzzQbx4wWZWuKZYOWKm3d4sJQqBHxlQ0
- g5v7Q1/mGgnyAt89yr9W8SZVs5WDiKz2aRbzT6hLQC/AAvEP/RoPdUM58wTzSF9Ci3qR
- ZLkw==
+ b=Lz4BUhSPLJytDSOlaIVhm0F9IOn2BbKwYdyZnew4WKptz4PeQF8mEsjxkn0gT1p2tJ
+ eVYNnWzFeo6iBY/1S4aSJ+ZpnzPBX++B61NqO4B9ihGAfhssCj8P4FR4RgEe8Rwl9PN2
+ Xfq8zl24FWxtcn6E26sVFjHt6W1CW8icSqG0oJ+oBVd0gqJSnqBF3eAtv/TAJHKUIbga
+ QcGONY7Jzj6ZFJ4c+jhMLZTmufwT2lKciW5UeKaustsezEEZmjVPR47Woef+QDuBuaus
+ Ytr4qwTuvmFl6VHKD+SoLaI341eem6VhXensiyiXaJYyUFdE+xHStl28hh3Kmp/41wUU
+ Vp7Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=juE8zorOrcoMRVQ4KhNTS3zN8BVb0xIj81gwVZw0jEg=;
- fh=eLUhPcdTwViIVwq22ojPhr2Ps5FSjeS7ZYvySgDAq5A=;
- b=WOm2xRB8OxIJ6pFEI3i/KXl+vJseZX/jSYGygl6/lNEG/x4lTmZ+RrDboFD5S/vsto
- vbc2VpiOd4295qTw79wuLUq7EGdw7YFu4nxuniD5TJ2H3OPqwL/ge6ii4u83Oli+iTAD
- JxF7wps8At8eM9UWWR+tR8I2hEDnjRaxQV71xGlImFfwg8JlxxUfTPQBIPAQlJHVeccD
- Rd31WLgTDtrr27Z/pz+c8QtdOEXpGpVZCaU6fhrNxwap7Ylc6ahp3BvjZI+iLywgaALU
- sLTSvNmbmJVEm0vUkWQFW+FbMrCKglKIoWoZFuWBwnYY2TXoTqHxn+Po7yy/g0hfBG5+
- JA9w==; darn=dpdk.org
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=DgToaoDHWXKMXCJNJqw9xbmQUa/fg4tvYe1Q75ND0mY=;
+ fh=ODzzjCetwo0Jol/iq6nP6LutWjTdm2mB3Why6xZx2Ug=;
+ b=kNYs4YklGTVRO/OWG9ETkUx4EMzJ71a4oZ43zVk2y6Dwu9ATyyYPcTPcfj9PnIJJ9b
+ 2ljbxkH4VXWnVik+sHj+d88h+ZdrPK0M2MxQ2Izx2kX1K6eH1uwyC5T9Yi3C5KVJaTgk
+ HXByxNZnHkQPxI3sMCUpLWTXp3DKAsZKFi6WAQ3FUR835EM7f6j6O0CbtGRY1h2NoGE5
+ oYkLIfUZkcDeQ+hfwI0G/LmMeafiDGWaXMz8pQJ4on99BCoXxwBbsQFkZW2rp7o1C1zu
+ zZc63qLBVnbKbrEedOdoQI2RL1ZicPgwiahsss/V+ya7BwlCO2ZSxUaZscvbYfFbop1w
+ rUuA==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1772217368; x=1772822168; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=juE8zorOrcoMRVQ4KhNTS3zN8BVb0xIj81gwVZw0jEg=;
- b=VL1fo2H7s2AOMR1n7N3Db5c1fA0DBozgl7ottOd5h+MSH6MRWRrqOM2VxB4AD4GCWj
- 008WBwUTu4TUw6R+oF0OkzKtMx7z0TLghh2USCkiSEQ645Yv+q0ZILG6fH0B/v0EFkrI
- /icFFFa11cjAhMi2MdEZx5co775vvrGV65i8E=
+ d=iol.unh.edu; s=unh-iol; t=1772219903; x=1772824703; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=DgToaoDHWXKMXCJNJqw9xbmQUa/fg4tvYe1Q75ND0mY=;
+ b=KnbJLhwrOU31AYmGuN3MkuBeQ+JyKPSMNfO2q80wdVLmojrTg3HdUYMjfGtVQ+WqVX
+ 4W/ppNUxNuft4OTU7+Y3dOZ5yugcdFFA6xRHT8T6jVQ1R9twngO8mDtaajn7L8xqr7EU
+ uDn49bvOz93LZGEQ3+wwTVRq03uqJe7TomkGA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772217368; x=1772822168;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=juE8zorOrcoMRVQ4KhNTS3zN8BVb0xIj81gwVZw0jEg=;
- b=LMy6/t3zix6pw7/Tvj0cWVH6HMUgr9/TCjaTnIpBC6D9ZufeH0kwhZni3rHvJ+4Xh0
- mvNs60MXwtVGuaBNAyP0OLDZI8k4yROGM8mw101KZ811Ru0yJ2pTTrlj3dPD44KeHqsT
- KJo7RXqFbK7Tdl5WY56ySnzTtPkxbeuZ4JN+fQkr7+/bKNwXT4P2nwIU5WwA0ySsG6kl
- S2xSFh85YizLv+znMUscoMMYHHG2VtiLu20GT7U2w42DvIsVlXbJM1BAvfZtvCTcaw7w
- WZsPABYfJrQQ9UfiqNLo7zci9bISoEZt0oijByJU/kOjzBspd0XASWtOZ3cIG+IQi99R
- DbAA==
+ d=1e100.net; s=20230601; t=1772219903; x=1772824703;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=DgToaoDHWXKMXCJNJqw9xbmQUa/fg4tvYe1Q75ND0mY=;
+ b=OLWWfS6KwECjnjhQOO80QsowPJUmp9eCO8tCPwoWUs3G3oZJwjzQhP9n8K3cx/Xjca
+ QDe0AQmNLUJs97RB1HCorsiHtVONIMw680McO4P7aFW9vIhKil1ejGZ81pL8kWWfSfAQ
+ HmKmxMKlKgtw903HkRmZJfgqM8y6G3ueSfjzeqtiIMvPmJkrfACPbE9E5Qz/08K40Jso
+ idhYfLWK1Oye9sVAbt71t+FsQF4tD0zjRqA4/bYwduiEket0//+qUNianYiEt3NrYcxF
+ l/GaZrTr7/6arxOhT/zKPvBz5mOOEUdxsVjK7b5bxYRhfbN6jogqQ/hLV7yHL//UrvQD
+ L2/w==
 X-Forwarded-Encrypted: i=1;
- AJvYcCW3GrYR2P0A3CtTgy1eUd1fX8ex4ahmofZaQ2wCwrPP2TDIcxJwUPrVvX50Gb4lWlUOqxc=@dpdk.org
-X-Gm-Message-State: AOJu0YydNWuJmfeTHWKeA8b4vqIVHggipVY6dtsJThgnaV5+R61wnolV
- uQucDtyQtcZAvyGFBfkeBH0HTz1r/TkNSjFVYQx2QDCAdoyEDo1Loa6XqRce7sX3a88bz7pU+K7
- yC+qiL41WrkeRTBpQTxl3xX993yUI9PTD0WUb0EF3LQ==
-X-Gm-Gg: ATEYQzzgNuvLsnhXzvwMSffsiCezHnCZ8TEpN9Zm4UoQemnIwY8ZSexY75axYuQhV/B
- LOP8j7ZqiKcA9YOg7TmSX7Wjld8KkHuEENHPm0MV1IyadlJPIRvVHCpv6ipd5Vd0QryTOvbLEW7
- U3UbsVvjeR91C2eaqbQBAQp9sI3PCATJhLNisSjQIjanSP8vxX6agUFswqGonDBvfZcHogWFfeu
- ntpoI1qIvBJ5eRykhfnXpQos4gu+s4jgDx1hmgqW3az7+7wWBnhO+/8gIz60Cv32NHxK/Si2pd4
- NtAPeHRCEvVH012YHrsjtA8gIpgAyrR+oviZoXY1QTznmT2YvIjNTowmDo5e5lrG
-X-Received: by 2002:a05:693c:300f:b0:2b7:2bbd:95ae with SMTP id
- 5a478bee46e88-2bde1d6f227mr1462795eec.37.1772217368455; Fri, 27 Feb 2026
- 10:36:08 -0800 (PST)
+ AJvYcCUUC2Y/O4QSb6uZNu5xA29wCKaR9j6HrlMf5pp3epkFiVhXC51CMCXeJv1TaZQs8QfSOHY=@dpdk.org
+X-Gm-Message-State: AOJu0YzOsgEKyP2YAtm+bIWBhN7jRXmteVXJLH5vaF+VGsxwuGWFS5c5
+ dKrkn9tRQRcYV1eqRlpfD3RzqmJ1/NPYWSVmDG5eRHYFa80kfw0BZPH/l+jorPSnHU2QWX0xL9Q
+ pnF1puBX/ndLSSphc1RqeiO00FPtJldW8zxAhD53nkA==
+X-Gm-Gg: ATEYQzxDu4kyml5GLCXDjtsG+849hNftXG308bKUB6iqpfaiYWjt53stUpk/NADYUYW
+ P3kURwPddvc2AWe91bbXEXgZmGcBlgy2idSG/Tr6OXAXo4QgKGvYqtzH34mRdLpjLA7wQ0Kvw6z
+ TU5zOONf5/yDjcwAkC3JeLS7kBmrVeTBepS2gAYYQB70qA8+qge3eL+vwffKTtCc0STFZ2hf4fI
+ rKhx9XdeiYrRdxkONS2i0HU3EWPX0Si82Ku3WT/xSL5fvMgUJDR+P6y+ToKNOcPjt5HM1+Dhdte
+ 6Sv1iwkfTPt7tkOB6Jhx5o35JnEDlcWkbUZlOoiH
+X-Received: by 2002:a17:907:97c6:b0:b93:31d0:a865 with SMTP id
+ a640c23a62f3a-b93765c781amr303205566b.58.1772219903038; Fri, 27 Feb 2026
+ 11:18:23 -0800 (PST)
 MIME-Version: 1.0
 References: <20260210193448.69423-1-abailey@iol.unh.edu>
  <20260213193539.103858-1-abailey@iol.unh.edu>
- <20260213193539.103858-6-abailey@iol.unh.edu>
-In-Reply-To: <20260213193539.103858-6-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Fri, 27 Feb 2026 13:33:17 -0500
-X-Gm-Features: AaiRm52sjipfBqlI749Wz_kIMo0d_mK_wzkkQPzvpqU6zakS-2Sr2G71hYLiZZI
-Message-ID: <CAJvnSUC38DBfXpMMupxXsAmiHwES7q5yeKA7MQvS=tmYoGCd-g@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] dts: automate VFIO-PCI modprobe in node setup
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org, 
- "Ji, Kai" <kai.ji@intel.com>,
- Dharmik Jayesh Thakkar <dharmikjayesh.thakkar@arm.com>, 
- David Marchand <david.marchand@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+ <20260213193539.103858-5-abailey@iol.unh.edu>
+ <CAJvnSUCG39GRuw_==7B_Atd91h21ZOyr-rqtGoYskOsxUdBauQ@mail.gmail.com>
+In-Reply-To: <CAJvnSUCG39GRuw_==7B_Atd91h21ZOyr-rqtGoYskOsxUdBauQ@mail.gmail.com>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Fri, 27 Feb 2026 14:18:09 -0500
+X-Gm-Features: AaiRm52NfbOq1ugNFdi2PmOpxVTGl7GSfAG8Zxj9hqIcd0WzMtThpSTatUxurKI
+Message-ID: <CABJ3N2WQ45834P7Kqu8O+L3c6T8WGSRwA-ACXQe=aKOqbGjyDg@mail.gmail.com>
+Subject: Re: [PATCH v3 4/5] dts: add crypto test decorator
+To: Patrick Robb <probb@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="000000000000c8e4c8064bd31939"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,102 +94,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Feb 13, 2026 at 2:36=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu>=
- wrote:
->
-> Currently, users must modprobe VFIO-PCI before running DTS when using a
-> non-mellanox NIC. This patch automates the process on test run start up.
-> In addition, if the SUT is expected to use a subset of a few QAT devices,
-> VFIO-PCI must be loaded in a separate manner. This patch adds this
-> distinction.
->
-> Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
-> ---
->  dts/framework/testbed_model/linux_session.py | 24 ++++++++++++++++++++
->  dts/framework/testbed_model/os_session.py    |  4 ++++
->  2 files changed, 28 insertions(+)
->
-> diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework=
-/testbed_model/linux_session.py
-> index 27a5f48ecf..a761ca11fe 100644
-> --- a/dts/framework/testbed_model/linux_session.py
-> +++ b/dts/framework/testbed_model/linux_session.py
-> @@ -224,6 +224,30 @@ def devbind_script_path(self) -> PurePath:
->          """
->          raise InternalError("Accessed devbind script path before setup."=
-)
->
-> +    def load_vfio(self, pf_port: Port) -> None:
-> +        """Overrides :meth:`~os_session.OSSession,load_vfio`."""
-> +        cmd_result =3D self.send_command(f"lspci -nn -s {pf_port.pci}")
-> +        device =3D re.search(r":([0-9a-fA-F]{4})\]", cmd_result.stdout)
-> +        if device and device.group(1) in ["37c8", "0435", "19e2"]:
-> +            self.send_command(
-> +                "modprobe -r vfio_iommu_type1; modprobe -r vfio_pci",
-> +                privileged=3DTrue,
-> +            )
-> +            self.send_command(
-> +                "modprobe -r vfio_virqfd; modprobe -r vfio",
-> +                privileged=3DTrue,
-> +            )
-> +            self.send_command(
-> +                "modprobe vfio-pci disable_denylist=3D1 enable_sriov=3D1=
-", privileged=3DTrue
-> +            )
-> +            self.send_command(
-> +                "echo 1 | tee /sys/module/vfio/parameters/enable_unsafe_=
-noiommu_mode",
-> +                privileged=3DTrue,
-> +            )
-> +        else:
-> +            self.send_command("modprobe vfio-pci")
-> +        self.refresh_lshw()
-> +
->      def create_crypto_vfs(self, pf_port: list[Port]) -> None:
->          """Overrides :meth:`~os_session.OSSession.create_crypto_vfs`.
->
-> diff --git a/dts/framework/testbed_model/os_session.py b/dts/framework/te=
-stbed_model/os_session.py
-> index 2eeeea6967..4a4fc1f34a 100644
-> --- a/dts/framework/testbed_model/os_session.py
-> +++ b/dts/framework/testbed_model/os_session.py
-> @@ -615,6 +615,10 @@ def configure_port_mtu(self, mtu: int, port: Port) -=
-> None:
->              port: Port to set `mtu` on.
->          """
->
-> +    @abstractmethod
-> +    def load_vfio(self, pf_port: Port) -> None:
-> +        """Load the vfio module according to the device type of the give=
-n port."""
-> +
->      @abstractmethod
->      def create_crypto_vfs(self, pf_ports: list[Port]) -> None:
->          """Creatues virtual functions for each port in 'pf_ports'.
+--000000000000c8e4c8064bd31939
+Content-Type: text/plain; charset="UTF-8"
 
-typo
-
-> --
-> 2.50.1
 >
+>
+> Have you tested this by running an execution that includes both
+> cryptodev tests and ethdev tests (both func and perf)?
+>
+> Yes, this has been tested and runs cryptodev tests alongside perf/func
+tests
+with no issues. I will submit a ticket documenting this concern.
 
-Adding Dharmik and David since they were the ones interested in this
-custom vfio-pci loading way back when I added the support to legacy
-DTS a couple years ago. And also Kai Ji since he is QAT maintainer and
-must be familiar with the custom vfio-pci loading requirement for QAT
-8970 and other cards.
+--000000000000c8e4c8064bd31939
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In DPDK, your individual patches need to be "non-breaking" if they are
-applied in chronological order. I.e. if only patch 1 is applied
-nothing breaks, if patches 1 and 2 are applied nothing breaks etc.
-It's challenging but let's make a best effort to comply. In the case
-of this patch, it breaks the rule since load_vfio() is called in the
-2/5 patch but does not exist until this 5/5 patch. So, I think the
-easiest fix would be to move this 5/5 patch to be in between the
-current 1/5 and current 2/5 patch.
+<div dir=3D"ltr"><div class=3D"gmail_quote gmail_quote_container"><blockquo=
+te class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px =
+solid rgb(204,204,204);padding-left:1ex"><br>
+Have you tested this by running an execution that includes both<br>
+cryptodev tests and ethdev tests (both func and perf)?<br><br></blockquote>=
+<div>Yes, this has been tested and runs cryptodev tests alongside perf/func=
+ tests<br>with no issues. I will submit a ticket documenting this concern.<=
+/div><div>=C2=A0</div></div></div>
 
-I think the content of the patch looks good otherwise. Let's make sure
-we run the testsuites on the 8970 card to validate the correct
-"custom" vfio-pci loading.
-
-Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+--000000000000c8e4c8064bd31939--
