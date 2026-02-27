@@ -2,78 +2,157 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E4EFD531B
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 09:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 079C0FD5323
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 09:44:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C07F04068E;
-	Fri, 27 Feb 2026 10:23:47 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 52D304067C
- for <dev@dpdk.org>; Fri, 27 Feb 2026 10:23:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772184225;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=Xtp1AYAR8bPq+/f5kjMXNEIDRQOlnCRCzFgTjzclSDQ=;
- b=VtnD5vd0zTsdGHXIDRbNnaOckHtJP7hueYlEyie+6/dGL+BQkgWNbsQ3FQKJyi/DJHPuSf
- r5cLeU2lwF6niO55BnYKdSdl3VSca6GYGSaDOouriV1fE72+4nPzoHc610wiDM1wGGlfOS
- oXoNuUy+TGwtQO2jT3V0l/sVaPKX0xI=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-363-8XzJm_2HOf6WDYqU4C1XMQ-1; Fri, 27 Feb 2026 04:23:43 -0500
-X-MC-Unique: 8XzJm_2HOf6WDYqU4C1XMQ-1
-X-Mimecast-MFC-AGG-ID: 8XzJm_2HOf6WDYqU4C1XMQ_1772184222
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-38704a51eddso15518361fa.1
- for <dev@dpdk.org>; Fri, 27 Feb 2026 01:23:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772184222; x=1772789022;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Xtp1AYAR8bPq+/f5kjMXNEIDRQOlnCRCzFgTjzclSDQ=;
- b=kUibvlT30+Lhm014ds+jng15EveoxAq5Ux5RuALu6MIqsGsbw3iM7LfWdHsNXA8svg
- pKl+G5Z8vyngEXpMszgi74DqaebDmAtPJxN1kNiiiZTJVadzNn8I8tC1ZJTuzB9mo4Q8
- i6bxKuW5+uCtDSMTmNl/JN0yBhMKldm7/eSev2eaiBQXWR9HIIV3n2NQo2iUnYJcKteR
- btAnC8rxJ7uiHXrgVuc6805WGFRMiU2j7Gtf9hlvnT5LNsTgH1japlQFh1XhRBVu3lhh
- sbcKVqe1YF7I0eE9ZHUnsmVB6zkWBNDxBKgj8WqLjQ284MrA8xEquGncewNmXDw/1pXC
- b3Tg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVSGI/HrZKfV2QlGBIUYRlYP00E+hQ4TW1n5/viCEokApMtZ+5zzJCyGNvB+Qrjikguc5s=@dpdk.org
-X-Gm-Message-State: AOJu0YxSGfj13ftfzn97k93Mic7LdGmgs5juB1vl/Va/gos25HSiqquN
- kVQ/aJpI9SJoouYZSQv23T5cSDPiS5Tbho8YX76PfweL4vegCWBKeqVlSw9MN1r8uvmgsfk3M2H
- B/kVf7IuIrJys+PoBfYDpz0uszB18tOFK7zGH0Vu1qJBAu+23npD14nInFOH8GcSFuarOyCCJHV
- I6bu0/wfpuAcpmdzFYvJs=
-X-Gm-Gg: ATEYQzxpPnA/LN2Me4nz16Oo9ER/WDzk1yq0sC68eGvf6fpbE1/O+VRl0PMGom0sZzf
- iwa4pKvtk9XYmsSituQNxcPbo0upbJy/D1CZ+6TMJYLUMqtI/gs9ET6Ug8f5BnQv+qu7FaVLcUs
- DSDDOU+JbXvBWUBoGOC9Boa4JwKP2POIeYtZCh8ViPwYUstBqtIdMT19HSBBiwt5zmA8YNv8ZRc
- 05Etf9ORn5RtW1igz93dPDtm2s6v2d9uja8tGoGBIdBQDOe3nISIc1eaXTFLHzSM9eXPw==
-X-Received: by 2002:a2e:b907:0:b0:389:e2e8:4f4c with SMTP id
- 38308e7fff4ca-389f1e3756fmr18443891fa.21.1772184222137; 
- Fri, 27 Feb 2026 01:23:42 -0800 (PST)
-X-Received: by 2002:a2e:b907:0:b0:389:e2e8:4f4c with SMTP id
- 38308e7fff4ca-389f1e3756fmr18443731fa.21.1772184221660; Fri, 27 Feb 2026
- 01:23:41 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2944F4027F;
+	Fri, 27 Feb 2026 10:44:59 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 52C2B4003C;
+ Fri, 27 Feb 2026 10:44:57 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1772185498; x=1803721498;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=YYb5OgxA865JD797g39glujB5FnSvK2KAXCPMkIMg2A=;
+ b=WIk0HXjDbQbPPXLth1TOQva+gAacqt0chpPB8Ky/zobHXufNapH2VZCo
+ 8FmmH91CbhUrKzkZiXkJgC0XzjX6+E4e1EKXQEX1+3t+QTR4pUr0elkNc
+ TGweMwQKUg9KIBybRSG5HVOuXIv/bcJrvwe1lDI0tzHF/MR7i0jN73D8P
+ sUG6E/ZaCob/nPtIEDdbEyCSqXzzWA6a/n5z7j+DbJ6zZs+s+2dvT8LjK
+ XXNeHlAUXw/TWfCN3YMtdSDnJ/L7XLz6TKYNJ/4blh+BafupeoUyQZxym
+ 5WdlrBKRnDVYBWz0xnyfxtJZsvy4E4IJKtTUfkIaaAAPT9gj9yl3BhQrX w==;
+X-CSE-ConnectionGUID: 9l1iWy3AQQmw5E+hEQgvTg==
+X-CSE-MsgGUID: HP0q+hFPRqSNETwVCSrrcw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11713"; a="90841645"
+X-IronPort-AV: E=Sophos;i="6.21,313,1763452800"; d="scan'208";a="90841645"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Feb 2026 01:44:56 -0800
+X-CSE-ConnectionGUID: 5ex4to1BSSiE3c4uBuaxQw==
+X-CSE-MsgGUID: kZ+cjRbtRea7p5vWu/MT7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,313,1763452800"; d="scan'208";a="215970773"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 27 Feb 2026 01:44:56 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Fri, 27 Feb 2026 01:44:55 -0800
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Fri, 27 Feb 2026 01:44:55 -0800
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.6) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Fri, 27 Feb 2026 01:44:55 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T8fuZi4jwxv2VqDpv0zVtnuxQdFL6jVQnXAQ2I2y/NR4MtkyVYpHL3PZP2wqaXi23IxTEaK5/s4qBvdgsAkF4sSRerEH/KYcGHuJALUDS4VLQvE5WuBimHQ5QioEYd7P3TT7b6p4KU1KZ9raeg/5CxIhqlDshqxyV6beTVnS+BUmbcB7nQXtu2x5dox9ZjRC+Qm9e+51IuIsaff+fAec1jcFl6jOxGZhwcxPxkeTo1H1XHjHs9XfQ4UHkvzKZNQSd9bhCWZ4AQ7sMLoow02iR05PTxU+ENnQICbR1ZLXVjwK3yqSZFKW5Waew0NS9ZFnRVRtyQmW26c2PQPmCKUmnA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bYcJWxcDiN7+k7CYPh7dz2ylfSOnt2oqq2UyGhvGC30=;
+ b=tpuZo4DKq76Yak0FFMU6urymYVC+1Nz/HaWEDzONm482QDHgMHkar067xPiDqNEgOuqojKzWc2gr/5zw4KM3WR2iP9BjMTDrS7wyBUyWvKVBR5QhhamFySzDXXb9OTApAFLZkWK987wHjrO+GV/fLyK9Wveej7ytNJQULCASR7fifLOYVrOVZ0Vf9WcflSIRbk7tM9XYSw5I1MrVa4bp+28wiJztAIOjjS9PdTQOlhGGeB1grhvNAQJdXz2Laqm0nujGU6GiXKlW5MNRznVQ+E94aHAQjHrffvoOe/5vo7pXJRuMXGtwgAp+lAp6xPLOkE2rqz69luyDx0P7iYBmYw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com (2603:10b6:8:25::8) by
+ PH7PR11MB7051.namprd11.prod.outlook.com (2603:10b6:510:20e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.13; Fri, 27 Feb
+ 2026 09:44:53 +0000
+Received: from DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa]) by DM8PR11MB5653.namprd11.prod.outlook.com
+ ([fe80::74e3:c0eb:29ee:fffa%4]) with mapi id 15.20.9654.014; Fri, 27 Feb 2026
+ 09:44:53 +0000
+Message-ID: <a77c313f-a90b-4ccb-ad77-bf48ee5695cc@intel.com>
+Date: Fri, 27 Feb 2026 09:44:48 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hash: fix pointer alignment
+To: Bruce Richardson <bruce.richardson@intel.com>
+CC: Marat Khalili <marat.khalili@huawei.com>, "stable@dpdk.org"
+ <stable@dpdk.org>, "stephen@networkplumber.org" <stephen@networkplumber.org>, 
+ Yipeng Wang <yipeng1.wang@intel.com>, Sameh Gobriel
+ <sameh.gobriel@intel.com>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>, 
+ Pablo de Lara <pablo.de.lara.guarch@intel.com>, Yerden Zhumabekov
+ <e_zhumabekov@sts.kz>, "dev@dpdk.org" <dev@dpdk.org>
+References: <20260226142206.860737-1-radu.nicolau@intel.com>
+ <cc3138af2b6d4f4ebb806db04affd487@huawei.com>
+ <b28a0e99-8642-499d-95a8-a6ed30f939d4@intel.com>
+ <aaCjRvcjabv2PFuO@bricha3-mobl1.ger.corp.intel.com>
+Content-Language: en-US
+From: Radu Nicolau <radu.nicolau@intel.com>
+In-Reply-To: <aaCjRvcjabv2PFuO@bricha3-mobl1.ger.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DB3PR06CA0014.eurprd06.prod.outlook.com (2603:10a6:8:1::27)
+ To DM8PR11MB5653.namprd11.prod.outlook.com
+ (2603:10b6:8:25::8)
 MIME-Version: 1.0
-References: <20260218160453.142311-1-maxime@leroys.fr>
- <20260226143341.282188-12-maxime@leroys.fr>
- <20260226112154.7b2c51d0@phoenix.local>
-In-Reply-To: <20260226112154.7b2c51d0@phoenix.local>
-From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 27 Feb 2026 10:23:30 +0100
-X-Gm-Features: AaiRm53_udQ5f5BbcNyoTQom8fGC0CMuw8XUNwHF4S6w04HTq5QzLqeBDQsV6Zw
-Message-ID: <CAJFAV8z0L-KLsNq6JCgaWsEmEaWUqH1rcH_rHcwWVkVisUAMfA@mail.gmail.com>
-Subject: Re: [PATCH v2 11/17] net/dpaa2: fix software taildrop buffer access
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Maxime Leroy <maxime@leroys.fr>, dev@dpdk.org, hemant.agrawal@nxp.com,
- stable@dpdk.org, =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: l7WYtQaO_9opdRwmWcgkenWrWFzGC7dDyux-8v2mMzE_1772184222
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM8PR11MB5653:EE_|PH7PR11MB7051:EE_
+X-MS-Office365-Filtering-Correlation-Id: 20f76642-6aca-4267-01f4-08de75e4dbac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7142099003;
+X-Microsoft-Antispam-Message-Info: U5SY5BBOHA7l86CaUJyBPdav4BTOD+Pj0Z1qNSH+KN1h4f3G90JtT0IJNGmfayH3XqQEaUv3ZjRGtWvq3Wv6oRcQfxx91eE5GTS6xasLF86wkl8gFMujO17ktzuh7WLKt+iHs8j1RHDKkW6EI8KjQw22VXiF8WspkTSjNbZA74OUUACEd1v0bMIaPOBdy1aBmfy7ExWDKBTiadl/EudApdnnHup9pP/I3XsHpC6VdK8Q4mdOV2fD4LdAzf4R7MnhduvbvKhz7sm4bJSk5UlrcOjZ20c9333/naNc7Dt8T9Mt3DSUcd4ksyHREUvEVKdWQciu5yYwYmtH+SONnJJRasm8lZjFe5RkQdIybaZFHFo3Eh95wV5C57awNPqV+9C9OnC2Gk++Nm6FfIAOpAqlc1W11Zk9SQKMo2y0M8wsPiVBeTHtIQvmr8HpPgh+w7UFde8rnZKGRFdLaDa6sPLuxiOMwjx+T8rpIOrke9pcXATcuJgwGM8FoPFMUPCB4sTC3wa0gbzR21sOBgvVgZm1yFYEtAL4EED8OSXs8MGAORZMAKQ+o2Gqof5Hi9p1ql5RXXaFjvDK/TAFEGhMZJtt+zc7nCYrevDniEUpzx5NpqNK4Mokp9mgatooebb+tUuixkUtYq4rV+pYTISlUyG1oenQTZQGYkz9kIlQIib7ZYUStOyUUnTtgSqR/bg1uSXudREemt+sXnxo3yDJBK04BJ6dBlmy2HhZJnK4zgzDEmE=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DM8PR11MB5653.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(366016)(1800799024)(7142099003); DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VHUwaDAvWGNoQ2RhbjNFeERPM2N0UTRick1ZaTQxYWpHdkJzUXg4TDBCOTk1?=
+ =?utf-8?B?UWREVno2WlRWeG0xODQyM3Rra1ZNbTFLUWtKQm9sV1c5UkdoYXphNXo4a0xL?=
+ =?utf-8?B?ZithNVl1ZU93a0wwUTlJbWNJZDNOUnpDK09lUGdkKzRRSVdqMFkzdlNCc3lS?=
+ =?utf-8?B?SDUxMlhRVnNEVDM1NlBlNXhPbFY3YlkxR0tZRk9EeVF2cWhoNWIzdzhEbVdz?=
+ =?utf-8?B?VE1FM1FyclI5L05wS0tQaWFpK1JtR3pCVXo5eGRxVEVxL3U4SE5qS1o4cGhV?=
+ =?utf-8?B?U0NjM1NQL1g5TGRpcDViUTlScklHUi93V3hWOGc0NFZ1aWpJRUkxdGtpdTUx?=
+ =?utf-8?B?T1Fzc3FJN2JUUWorUjNUb01tY01MYnZ0ZVg1RjRMZTRUWEoxTkhqN0pXOWdT?=
+ =?utf-8?B?Zkd1d1JTVnpIYzRKamd3YWNSdnFPd1N1MWFHMDI4aHA1QnF4SndQOVpSd3Mr?=
+ =?utf-8?B?bG5hSTIzOXNKTTVuTDFVa3d3aEVIR1VaWkZWSE1laEVOTHl3S1A2MWpmdXFi?=
+ =?utf-8?B?TWExNlJ5dm81V01hbTB3MmRWeEdNYUowSCtrOFRGM2hTRFpPZjVpZHZzUHBo?=
+ =?utf-8?B?U1NsUm4zeThwM2VvdTNnZUtHRDZKYTh6U0F2VU1UUEl1WjhEYlAvVHg1cnhz?=
+ =?utf-8?B?alJYYnFGVUVwSklVZytWTFBQWS85aHpoMnBiRnBJRVdiUVZqWjJJMUd4SEJl?=
+ =?utf-8?B?S0E5VjRITU13cE9sYnlUanNzK0dZdUJBSWNldkNsU0pLSkJ3TmYxZ1A1NlpC?=
+ =?utf-8?B?YzY0Y3FPcEl5cEhRTU5RblphR3JwS3k2V2daek9aUy9oMjhUbGpteUFMQXVK?=
+ =?utf-8?B?am1FemI1T0JoS0NWL2RoUDQwMjlkZ1pBblFTdUxHUHpZdWZiK0o3b0dndlMr?=
+ =?utf-8?B?eG1NbkFmRSsxUVg4c3Jzd1dHWWovVm4yTFMzdzFlb1BlckxmSXlmNlJvcmFU?=
+ =?utf-8?B?dml4R0hxUXZJNzZoOEhvWjVaUEtXUFBwSXJmeFFoTWgzTS9yV0RjcGRvYkpV?=
+ =?utf-8?B?NUxKelRZQityNHNOQVRjK3BBWjZvV3FwSkp2TnpPcndMR1U0c1N1VWRCUnRq?=
+ =?utf-8?B?TjZwVWxDOTA5cTVLTFp3K1Z5eVRVb0dXdWV5YzdOSVN4Skp3aDlnMmhLd3dZ?=
+ =?utf-8?B?SG1kNGRTZ2k0WEsyY0NmOWRmUDN0d3NQcC9YRDJwZWd3V3NhSjUyMmEydjFU?=
+ =?utf-8?B?ZDc2Y0xwWFoyRTRBdVNiRHFwWittelFtNVl3TWJUMHN3RGFkYjYyb21RNm5y?=
+ =?utf-8?B?aWdSSi9wb0JBd1E2RVdOK3lIeUVzZ3JQRVVvd2JML2d2K2duUWVhMWU4T1VY?=
+ =?utf-8?B?YjdZME9ENncveTBTckxtSDRNTXlMZWxQeWUxdlRLcjUxVzlTRTJ6dk9mRzVM?=
+ =?utf-8?B?emFsSEVlNFpkd2NPc3l0ZmcyNXBjR2ZqT2xMaXlwcXJUYWFnVGhZWnVySFZz?=
+ =?utf-8?B?c1VjbHlDSXE0OXN3RWloTy95a21oUXd3cGQvODNreHFmUTdnc0VUWkRFV3Fj?=
+ =?utf-8?B?bi9pV240T3J4SC9FUmFqVWZScnM1c0FQZWZvSlBvTzgzdGFZazlIdHBmdXJS?=
+ =?utf-8?B?SERzVE1rN2ovQnBidzBxU0E4ZDFNWEptZWNGenh4bDMzY2NweFVUZm1mMUx3?=
+ =?utf-8?B?Uk9FMFh6Mk1IMXFIelRBSE1WWmNBd0FBamZzMXZacUV0ZGN0OW84dnYrRXht?=
+ =?utf-8?B?aEZDcjU0WjhGU3FpOVROcXpYTTByNEZDNzFTeEpRODJmY0FjYWJ1Ym4wa090?=
+ =?utf-8?B?dXI5b0ljYkF0eGpuRWdWcHBWZFowckh1M2E4dS9hb0pyaGc0aUgxNXlVZTJk?=
+ =?utf-8?B?UVpPK1lIeUpGSmJBMHZuNUxxd0dvTFhZdjFlVm5BUmozam9SNHVmT0xUTHhw?=
+ =?utf-8?B?bVBpRitPL0xpTk9wKzZZdTVRWENUUkdYcG1RS1J4L2pZdnR2aEQ0enN2VVo4?=
+ =?utf-8?B?RVh4eEdISkJLOFR3Y3AxY3hSUmlPbUJiQzlUUGI0SVdocGQzQVZDOU9FdHkx?=
+ =?utf-8?B?SmpKMDJXTUxaYmx6YVdKR2Rhd085MkF6di9HdGc3YWc5TkgrcVJRL2phQjRX?=
+ =?utf-8?B?N1pvRFVFazZ5QUxIRmFUQzQ4SDYybVBsWVNEVEdPUXFPL1RGZlpVOGwzOVo4?=
+ =?utf-8?B?VlhnbVZVTXVyMzU3WXlzMWt6aEhnalFoNmxwU3h1M0FuajBCWnBBRHV2NFhx?=
+ =?utf-8?B?c1NMS21CK0w0VHN6Wk4xWThQQ0lhUHhlYlRMN21oQVJFSmFCNjBLc2g0K0JC?=
+ =?utf-8?B?eE5WbUppZFpLb3lTNzY0cnRnWjhoMHBvb1JQaFJlNklkY2RrUW0vQStMSHF5?=
+ =?utf-8?B?Y2h6UGdHaVlJZjVyL3dESUkxVTBIM1djYlpHelhLRU9qS0I3MWpmZz09?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20f76642-6aca-4267-01f4-08de75e4dbac
+X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5653.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Feb 2026 09:44:53.4204 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2ge7sNb+rWnfUJOaxKxXL6+LR61mslagpcJzgowHCfWsbaQcbs45Ecbu8Htr9UuieCs+Cc6yKKqdRJCHmg2taw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7051
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,105 +166,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 26 Feb 2026 at 20:22, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Thu, 26 Feb 2026 15:33:35 +0100
-> Maxime Leroy <maxime@leroys.fr> wrote:
->
-> > The sw_td path in dpaa2_dev_tx() reads from the wrong position in the
-> > bufs array. When the goto fires, bufs has already been advanced past
-> > the num_tx successfully sent packets. The first loop then reads num_tx
-> > more entries starting from bufs, going past the end of the input array.
-> > Additionally, the buf_to_free segments for already-enqueued packets
-> > are never freed, leaking memory.
-> >
-> > Replace the buggy sw_td code with the same pattern used in
-> > dpaa2_dev_tx_ordered(): free buf_to_free segments first, then use
-> > rte_pktmbuf_free_bulk() to drop remaining unsent packets.
-> >
-> > Not tested, found by code review.
-> >
-> > Cc: stable@dpdk.org
-> > Fixes: c3ffe74d85be ("net/dpaa2: support software taildrop")
-> >
-> > Reported-by: Stephen Hemminger <stephen@networkplumber.org>
-> > Signed-off-by: Maxime Leroy <maxime@leroys.fr>
-> > ---
-> >  drivers/net/dpaa2/dpaa2_rxtx.c | 18 ++++++------------
-> >  1 file changed, 6 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/drivers/net/dpaa2/dpaa2_rxtx.c b/drivers/net/dpaa2/dpaa2_rxtx.c
-> > index 689e5e7ee7..8275ba9780 100644
-> > --- a/drivers/net/dpaa2/dpaa2_rxtx.c
-> > +++ b/drivers/net/dpaa2/dpaa2_rxtx.c
-> > @@ -1517,21 +1517,15 @@ dpaa2_dev_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
-> >
-> >       return num_tx;
-> >  sw_td:
-> > -     loop = 0;
-> > -     while (loop < num_tx) {
-> > -             if (unlikely(RTE_MBUF_HAS_EXTBUF(*bufs)))
-> > -                     rte_pktmbuf_free(*bufs);
-> > -             bufs++;
-> > -             loop++;
-> > +     for (loop = 0; loop < free_count; loop++) {
-> > +             if (buf_to_free[loop].pkt_id < num_tx)
-> > +                     rte_pktmbuf_free_seg(buf_to_free[loop].seg);
-> >       }
-> >
-> >       /* free the pending buffers */
-> > -     while (nb_pkts) {
-> > -             rte_pktmbuf_free(*bufs);
-> > -             bufs++;
-> > -             nb_pkts--;
-> > -             num_tx++;
-> > -     }
-> > +     rte_pktmbuf_free_bulk(bufs, nb_pkts);
->
-> It is unsafe to use free_bulk on transmit path because packets in
-> burst might come from different pools. An example would be a router
-> forwarding from two incoming NIC's to one outgoing NIC.
 
-Is it?
-
-IIUC, this helper was added specifically to handle mbufs from multiple mempools.
-
-static void
-__rte_pktmbuf_free_seg_via_array(struct rte_mbuf *m,
-        struct rte_mbuf ** const pending, unsigned int * const
-nb_pending,
-        const unsigned int pending_sz)
-{
-        m = rte_pktmbuf_prefree_seg(m);
-        if (likely(m != NULL)) {
-                if (*nb_pending == pending_sz ||
-                    (*nb_pending > 0 && m->pool != pending[0]->pool))
-{
-                        rte_mempool_put_bulk(pending[0]->pool,
-                                        (void **)pending,
-*nb_pending);
-                        *nb_pending = 0;
-                }
-
-                pending[(*nb_pending)++] = m;
-        }
-}
-
-void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int
-count)
-        for (idx = 0; idx < count; idx++) {
-                m = mbufs[idx];
-                do {
-                        m_next = m->next;
-                        __rte_pktmbuf_free_seg_via_array(m,
-                                        pending, &nb_pending,
-                                        RTE_PKTMBUF_FREE_PENDING_SZ);
-                        m = m_next;
-                } while (m != NULL);
-}
-
-
--- 
-David Marchand
-
+On 26-Feb-26 7:47 PM, Bruce Richardson wrote:
+> On Thu, Feb 26, 2026 at 04:43:26PM +0000, Radu Nicolau wrote:
+>> On 26-Feb-26 4:22 PM, Marat Khalili wrote:
+>>>> diff --git a/lib/hash/rte_hash_crc.h b/lib/hash/rte_hash_crc.h
+>>>> index fa07c97685..66f11fafcd 100644
+>>>> --- a/lib/hash/rte_hash_crc.h
+>>>> +++ b/lib/hash/rte_hash_crc.h
+>>>> @@ -127,6 +127,24 @@ rte_hash_crc(const void *data, uint32_t data_len, uint32_t init_val)
+>>>>    	unsigned i;
+>>>>    	uintptr_t pd = (uintptr_t) data;
+>>>>
+>>>> +	/* align input to 8 byte boundary if needed */
+>>>> +	if ((pd & 0x7) && data_len >= 8) {
+>>> Perhaps the case data_len < 8 should also be included, with each of the if's below checking and correcting data_len individually?
+>> No need to include this case; if data_len < 8 it will skip the for loop and
+>> fall through those 3 if's, and get processed there.
+>>
+>>
+>>>> +		uintptr_t unaligned_bytes = 8 - (pd & 0x7);
+>>>> +		data_len -= unaligned_bytes;
+>>>> +		if (unaligned_bytes & 0x4) {
+>>>> +			init_val = rte_hash_crc_4byte(*(const uint32_t *)pd, init_val);
+>>>> +			pd += 4;
+>>>> +		}
+>>>> +		if (unaligned_bytes & 0x2) {
+>>>> +			init_val = rte_hash_crc_2byte(*(const uint16_t *)pd, init_val);
+>>>> +			pd += 2;
+>>>> +		}
+>>>> +		if (unaligned_bytes & 0x1) {
+>>>> +			init_val = rte_hash_crc_1byte(*(const uint8_t *)pd, init_val);
+>>>> +			pd += 1;
+>>>> +		}
+>>> Shouldn't the order be the opposite?
+>> As long as we process the right number of bytes the order doesn't matter.
+> But if we reverse the order we get more natural alignment. If the data
+> pointer is off-by-one, e.g. 0x65, and unaligned_bytes == 7, if we do as
+> here, we calculate the 4-byte version and 2-byte versions with 1-byte
+> alignment of the data. By reversing the order, we would do the 2-byte
+> calculation on 2-byte aligned data, and the 4-byte calc on 4-byte aligned
+> data etc.
+Yes, that is correct, I will send a v2.
