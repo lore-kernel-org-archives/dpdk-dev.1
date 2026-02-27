@@ -2,57 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8D5FEFB4F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 14:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABB0FEFB54
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 14:17:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AFB6A406BC;
-	Fri, 27 Feb 2026 15:01:36 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id ABC5E4027F;
- Fri, 27 Feb 2026 15:01:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1772200895; x=1803736895;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=ZBWiiT9HzEKCJhiEo5QU4H82zQn5+qDZOkrzC1dy7kk=;
- b=PvPPnSebHbzoe81JHIRU/5+DtZSoVv//kY79OdwDKm5fQCExWoyhftZ6
- JEZbVvLiVfkV4vfDWHTcKsNjb3jJ3hASKbQzY1a54RFtwll4zCT/cb9D1
- VS9lrfIL+0Z2Ksi7WJXvkAkYPwu3CRNcPA6QGIb/KR2MSHr4ayHEgLYv8
- /vFR4Ni80saNczGGcfGqX2TzX9qpgTVc95bb4uT8MyB8Y/JYzF+KIU488
- d9a+/qvvCp8Fc2dNTUvwort5MjCpvy9HOIPxcrOxZ0TOxY+CFYcR3XFg8
- HDdeII9uzihKuAxJxCzi5cSIe0gIzlTO22L7jLvqNIZKxMXPxd+7sX1u8 A==;
-X-CSE-ConnectionGUID: /cB7Q1N8QmeQims22xZnpw==
-X-CSE-MsgGUID: yT1zw0SASSW3udCWkzSd4w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11714"; a="73326514"
-X-IronPort-AV: E=Sophos;i="6.21,314,1763452800"; d="scan'208";a="73326514"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Feb 2026 06:01:33 -0800
-X-CSE-ConnectionGUID: 1C47ue1eTYO2tGaZp6FwZA==
-X-CSE-MsgGUID: TNgtz7CWQze2udy1B2Jtcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,314,1763452800"; d="scan'208";a="216144355"
-Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
- by orviesa010.jf.intel.com with ESMTP; 27 Feb 2026 06:01:31 -0800
-From: Radu Nicolau <radu.nicolau@intel.com>
-To: dev@dpdk.org
-Cc: marat.khalili@huawei.com, Radu Nicolau <radu.nicolau@intel.com>,
- stable@dpdk.org, stephen@networkplumber.org,
- Yipeng Wang <yipeng1.wang@intel.com>,
- Sameh Gobriel <sameh.gobriel@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Yerden Zhumabekov <e_zhumabekov@sts.kz>,
- Pablo de Lara <pablo.de.lara.guarch@intel.com>
-Subject: [PATCH v3] hash: fix pointer alignment
-Date: Fri, 27 Feb 2026 13:59:32 +0000
-Message-ID: <20260227140128.1083814-1-radu.nicolau@intel.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260226142206.860737-1-radu.nicolau@intel.com>
-References: <20260226142206.860737-1-radu.nicolau@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 21F08402C5;
+	Fri, 27 Feb 2026 15:17:46 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 0DA154027F
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 15:17:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1772201863;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=SEaqFxkTJtGJPvALytC8ryIspRLSZ4U4xcCAa6lX2YM=;
+ b=eio0DIynkRYbPbQ6jGPS1loBEPnBtgiDuEWbzJ4b9NFx/jzcZJtJO0OqctjJtgRemzIA4U
+ KpxsDh8bbSz19bvJQ3wIlyNGM2G8/tL1zzQmh3OllTLIlZtSUBReii6L7COmXa3FJeYtgg
+ PWel2gYcUQpFnezMGlCM4ccAvGY9udo=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-191-Yc8mKByQM0ClNtODW-wuRw-1; Fri, 27 Feb 2026 09:17:42 -0500
+X-MC-Unique: Yc8mKByQM0ClNtODW-wuRw-1
+X-Mimecast-MFC-AGG-ID: Yc8mKByQM0ClNtODW-wuRw_1772201861
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-389e1a6dd67so16213111fa.2
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 06:17:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772201860; x=1772806660;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=SEaqFxkTJtGJPvALytC8ryIspRLSZ4U4xcCAa6lX2YM=;
+ b=dYLWeFXNaCy8Knx50E0m+AGs4TbEaqdh7v3urw043w1xCIdb1pIErdSAyj95tOlzTG
+ HcAJZ7O85IX7l1ciqoeL6qh+XDEoulNK32ZFsLTtKJg+uXBBuS99fgC7RlM9P/y3aINz
+ zXnCFGu8IBWdHRVsS5DsrXHoMeF6QE64Yi7pvo19zbd9cwS84sm3WtzAPgOq8wI/LYla
+ jY9am11xcN/EIjffaNubrElAYUXhjejPPEDBnR+RmTLflZ/UGtnauyU2twDUVTKZN4oQ
+ nzwN47PH9vbMZ5CwnbYDRTnuFalO5ha585sLnZZMDqvV6FnX754p89HEwlChuBf6DtuM
+ 5Tkg==
+X-Gm-Message-State: AOJu0Yz177+4Mpp10QOtA7WnMViSvh0ihYzol0DB0NEYpS8Yh8W1TlNB
+ N5EnpOBV60uVKv/ryncLpXWUf/zjU3obAv0kV7P9awHhstI0pXhoBafPdw5is30Zg5VuZqW0iwx
+ XftTrN7qTqVEa+OgEaZN3QEwz0KfQt7qkH8/cTrwV0CYS7eJaW/ta71g1nC2D8Le5eHSaPuLij6
+ eIsA4JLPRkAwrzRVthqms=
+X-Gm-Gg: ATEYQzzMxNpnPq/BxlxRS3eZpQF52eDCybC5Goz4GqRIynjaH6EgzaeIA4aoZF/W280
+ lr+Q0KmM1/PinTYYwcceJhjfLAPl1qJif+64dsrVdk2X3unDJXAeHb6lvm1kVIfrrSCTccRTy5A
+ JYaXtUmwvclVr3DJLq21iFBp9dUrtbn/Gb3ecVhsXzMIIJCXCBbgDC9qy4ZxdhOjmg7HNM3JBCG
+ uUMjz4KevNzvykR5+yC7GK+Xx2OsR4s5tq1nV/B/M8Pr/StrQqGZDrW8jXDucXHSRstEA==
+X-Received: by 2002:a2e:a991:0:b0:385:bb24:d0eb with SMTP id
+ 38308e7fff4ca-389ff36c5dbmr21038431fa.34.1772201860520; 
+ Fri, 27 Feb 2026 06:17:40 -0800 (PST)
+X-Received: by 2002:a2e:a991:0:b0:385:bb24:d0eb with SMTP id
+ 38308e7fff4ca-389ff36c5dbmr21038061fa.34.1772201860033; Fri, 27 Feb 2026
+ 06:17:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260225112922.3982104-1-david.marchand@redhat.com>
+ <20260226162057.207202-1-david.marchand@redhat.com>
+ <20260226162057.207202-5-david.marchand@redhat.com>
+ <aaB1dz2s2adE8ZCO@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <aaB1dz2s2adE8ZCO@bricha3-mobl1.ger.corp.intel.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Fri, 27 Feb 2026 15:17:27 +0100
+X-Gm-Features: AaiRm53e_BPUal_2B1X1K_iPb_tfUQOtw-mh2AttLpm7XnOe8apDBdFi0N60BM0
+Message-ID: <CAJFAV8ymk6hScCT8x+sPC7o=3AdFxCXN7BywjvkPiprs_BjM2Q@mail.gmail.com>
+Subject: Re: [RFC v2 4/5] bus: factorize device selection
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Parav Pandit <parav@nvidia.com>,
+ Xueming Li <xuemingl@nvidia.com>, 
+ Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, 
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, 
+ Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>, 
+ Wei Hu <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: dLaTLYEVfo3EU_68QXxQ44vs6MCYiAxh9pLU1LfYDbQ_1772201861
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,46 +91,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_hash_crc assumes input pointer address is 8 byte aligned
-which may not be always the case.
-This fix aligns the input pointer before proceeding to process it
-in 8 byte chunks.
+On Thu, 26 Feb 2026 at 17:32, Bruce Richardson
+<bruce.richardson@intel.com> wrote:
+> > +RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_is_ignored_device)
+> > +bool
+> > +rte_bus_is_ignored_device(const struct rte_bus *bus, const struct rte_devargs *devargs)
+> > +{
+> > +     switch (bus->conf.scan_mode) {
+> > +     case RTE_BUS_SCAN_ALLOWLIST:
+> > +             if (devargs && devargs->policy == RTE_DEV_ALLOWED)
+> > +                     return false;
+> > +             break;
+> > +     case RTE_BUS_SCAN_UNDEFINED:
+> > +     case RTE_BUS_SCAN_BLOCKLIST:
+> > +             if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
+> > +                     return false;
+> > +             break;
+> > +     }
+> > +     return true;
+> > +}
+>
+> I think this could do with more comments. Am I right in thinking that
+> devargs is NULL on input if the device in question is not referenced by any
+> devargs passed to the app? This seems a little obscure form of input
+> parameter, so I definitely think it needs documenting.
 
-Bugzilla ID: 1892
-Fixes: 504a29af13a7 ("hash: fix strict-aliasing for CRC")
-Cc: stable@dpdk.org
-Cc: stephen@networkplumber.org
-
-Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
----
-v3: revert alignment code to simple loop, it was getting too complex for a corner case
+Yes the handling of a NULL devargs is implicit, I can add a comment.
 
 
- lib/hash/rte_hash_crc.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> Is there any way the search for the device name that returns the devargs
+> null/non-null pointer can be similarly generalized?
 
-diff --git a/lib/hash/rte_hash_crc.h b/lib/hash/rte_hash_crc.h
-index fa07c97685..f60f4598d8 100644
---- a/lib/hash/rte_hash_crc.h
-+++ b/lib/hash/rte_hash_crc.h
-@@ -127,6 +127,16 @@ rte_hash_crc(const void *data, uint32_t data_len, uint32_t init_val)
- 	unsigned i;
- 	uintptr_t pd = (uintptr_t) data;
- 
-+	/* align input to 8 byte boundary if needed */
-+	if (pd & 0x7) {
-+		unsigned int unaligned_bytes = RTE_MIN(8 - (pd & 0x7), data_len);
-+		for (i = 0; i < unaligned_bytes; i++) {
-+			init_val = rte_hash_crc_1byte(*(const uint8_t *)pd, init_val);
-+			pd++;
-+			data_len--;
-+		}
-+	}
-+
- 	for (i = 0; i < data_len / 8; i++) {
- 		init_val = rte_hash_crc_8byte(*(const uint64_t *)pd, init_val);
- 		pd += 8;
+I also wondered about that and it would be better, but I stopped
+quickly when I looked at the bus specific devargs_lookup functions,
+preparing the v2.
+
+For example with the pci bus, names for pci devices can take various
+forms, so the pci bus uses its device specific representation for
+identifying the devargs.
+        rte_pci_device_name(&dev->addr,
+                        dev->name, sizeof(dev->name));
+        devargs = pci_devargs_lookup(&dev->addr);
+
+And:
+        RTE_EAL_DEVARGS_FOREACH("pci", devargs) {
+                devargs->bus->parse(devargs->name, &addr);
+                if (!rte_pci_addr_cmp(pci_addr, &addr))
+                        return devargs;
+        }
+
+I suspect vmbus is the same, with this uuid stuff.
+
+And others bus need investigation too.
+I could try to normalize the devargs names for this lookup.. ?
+
+
 -- 
-2.52.0
+David Marchand
 
