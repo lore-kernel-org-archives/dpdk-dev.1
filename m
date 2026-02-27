@@ -2,41 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28974FD9E29
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 01:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B8E7FD9E29
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 01:59:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F8294028E;
-	Fri, 27 Feb 2026 02:45:12 +0100 (CET)
-Received: from out28-193.mail.aliyun.com (out28-193.mail.aliyun.com
- [115.124.28.193])
- by mails.dpdk.org (Postfix) with ESMTP id ACAE740265
- for <dev@dpdk.org>; Fri, 27 Feb 2026 02:45:09 +0100 (CET)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07439661|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_news_journal|0.225158-0.000134011-0.774708;
- FP=16307887843415012928|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033045018182; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=4; RT=4; SR=0; TI=W4_0.2.3_212503D3_1772156702467_o7001c1803; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_212503D3_1772156702467_o7001c1803]
- cluster:ay29) at Fri, 27 Feb 2026 09:45:02 +0800
-Date: Fri, 27 Feb 2026 09:45:02 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: "dev" <dev@dpdk.org>, "Kyo Liu" <kyo.liu@nebula-matrix.com>,
- "Leon" <leon.yu@nebula-matrix.com>, "Sam" <sam.chen@nebula-matrix.com>
-Message-ID: <514811be-388a-48a8-a150-9ad3766b8ca9.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIIHYzIDEvMV0gbmV0L25ibDogYWRkIGlnYiB1aW8gc3VwcG9ydCBm?=
- =?UTF-8?B?b3IgTkJMIFZGIGRldmljZXM=?=
-X-Mailer: [Alimail-Mailagent revision 498588272][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id 8C3714028E;
+	Fri, 27 Feb 2026 02:59:36 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id E4D2440265;
+ Fri, 27 Feb 2026 02:59:35 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+ id 352C020B6F02; Thu, 26 Feb 2026 17:59:35 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 352C020B6F02
+From: Long Li <longli@microsoft.com>
+To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH v5 0/7] multi-process and VF hotplug fixes
+Date: Thu, 26 Feb 2026 17:59:20 -0800
+Message-ID: <20260227015928.14338-1-longli@microsoft.com>
+X-Mailer: git-send-email 2.43.7
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20260211024029.33810-1-dimon.zhao@nebula-matrix.com>	<20260225033943.30751-1-dimon.zhao@nebula-matrix.com>	<20260225033943.30751-2-dimon.zhao@nebula-matrix.com>,
- <20260225085021.4182499e@phoenix.local>
-x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4yLjEwLVJlbGVhc2UuMjYwMjAzMDA3KSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQgd2ViRHQvUEM=uL
-In-Reply-To: <20260225085021.4182499e@phoenix.local>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_1136_7fa6661d0700_69a0f71e_297510"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,184 +38,62 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_1136_7fa6661d0700_69a0f71e_297510
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Fix several issues with VF hotplug and multi-process support in
+netvsc, mana, mlx5, and mlx4 drivers:
 
-SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB5b3VyIHJlbWluZGVyLgpPdXIgTklDIHN1cHBvcnRz
-IFZGSU8gbm8taW9tbXUgbW9kZS4KR2l2ZW4gdGhhdCB0aGUgaWdiX3VpbyBkcml2ZXIgaXMgZGVw
-cmVjYXRlZCBhbmQgaGFzIGtub3duIGlzc3Vlcywgd2UgZG8gbm90IHBsYW4gdG8gc3VwcG9ydCBQ
-RiB3aXRoIGlnYl91aW8uClRoZXJlZm9yZSwgSSB3aWxsIG1vZGlmeSB0aGUgcGF0Y2ggdG8gcmVt
-b3ZlIHRoZSBpZ2JfdWlvIHJlbGF0ZWQgY29kZSBhbmQgc2ltcGx5IGFkZCBhIG5vdGUgdG8gdGhl
-IGRvY3VtZW50YXRpb24uCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQrlj5Hku7bkurrvvJpTdGVwaGVuIEhlbW1pbmdlciA8
-c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+CuWPkemAgeaXtumXtO+8mjIwMjblubQy5pyIMjbm
-l6Uo5ZGo5ZubKSAwMDo1MArmlLbku7bkurrvvJpEaW1vbjxkaW1vbi56aGFvQG5lYnVsYS1tYXRy
-aXguY29tPgrmioTjgIDpgIHvvJpkZXY8ZGV2QGRwZGsub3JnPjsgS3lvIExpdTxreW8ubGl1QG5l
-YnVsYS1tYXRyaXguY29tPjsgTGVvbjxsZW9uLnl1QG5lYnVsYS1tYXRyaXguY29tPjsgU2FtPHNh
-bS5jaGVuQG5lYnVsYS1tYXRyaXguY29tPgrkuLvjgIDpopjvvJpSZTogW1BBVENIIHYzIDEvMV0g
-bmV0L25ibDogYWRkIGlnYiB1aW8gc3VwcG9ydCBmb3IgTkJMIFZGIGRldmljZXMKT24gVHVlLCAy
-NCBGZWIgMjAyNiAxOTozOTo0MiAtMDgwMApEaW1vbiBaaGFvIDxkaW1vbi56aGFvQG5lYnVsYS1t
-YXRyaXguY29tPiB3cm90ZToKPiBEdWUgdG8gYSBjaGlwIGRlc2lnbiBsaW1pdGF0aW9uLCBvbmx5
-IHRoZSBWRgo+IHN1cHBvcnRzIHRoZSBpZ2JfdWlvIGRyaXZlci4gVGhlIFBGIGRvZXMgbm90Lgo+
-IAo+IFRoZSBpZ2JfdWlvIGRyaXZlciByZXF1aXJlcyBhbGxvY2F0aW5nIGludGVycnVwdHMgYW5k
-IGNvbmZpZ3VyaW5nIHRoZQo+IFBDSWUgTVNJLVggdGFibGUgYmVmb3JlIHRoZSBkcml2ZXIncyBw
-cm9iZSBmdW5jdGlvbiBpcyBjYWxsZWQuCj4gVGhpcyBwcmUtcHJvYmUgY29uZmlndXJhdGlvbiBp
-cyBvbmx5IHBvc3NpYmxlIG9uIHRoZSBWRiBkdWUgdG8gdGhlCj4gaGFyZHdhcmUgbGltaXRhdGlv
-bjsgdGhlIFBGIGNhbiBvbmx5IGNvbmZpZ3VyZSB0aGUgTVNJLVggdGFibGUgZHVyaW5nCj4gaXRz
-IHByb2JlIHByb2Nlc3MuCj4gCj4gVGhlcmVmb3JlLCB1c2luZyBpZ2JfdWlvIG9uIHRoZSBQRiB3
-aWxsIGZhaWwuCj4gVGhpcyBjb21taXQgY2xhcmlmaWVzIHRoaXMgcmVzdHJpY3Rpb24uCj4gCj4g
-U2lnbmVkLW9mZi1ieTogRGltb24gWmhhbyA8ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbT4K
-PiAtLS0KPiBkb2MvZ3VpZGVzL25pY3MvbmJsLnJzdCB8IDExICsrKysKPiBkb2MvZ3VpZGVzL3Jl
-bF9ub3Rlcy9yZWxlYXNlXzI2XzAzLnJzdCB8IDQgKysKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2Nv
-cmUuYyB8IDIgKwo+IGRyaXZlcnMvbmV0L25ibC9uYmxfZGV2L25ibF9kZXYuYyB8IDMzICsrKysr
-KysrKystLQo+IGRyaXZlcnMvbmV0L25ibC9uYmxfZGV2L25ibF9kZXYuaCB8IDMgKysKPiBkcml2
-ZXJzL25ldC9uYmwvbmJsX2Rpc3BhdGNoLmMgfCA1MCArKysrKysrKysrKysrKysrKysrCj4gZHJp
-dmVycy9uZXQvbmJsL25ibF9ldGhkZXYuYyB8IDEzICsrKysrCj4gLi4uL25ibF9ody9uYmxfaHdf
-bGVvbmlzL25ibF9od19sZW9uaXNfc25pYy5jIHwgMTIgKysrKysKPiAuLi4vbmJsX2h3L25ibF9o
-d19sZW9uaXMvbmJsX2h3X2xlb25pc19zbmljLmggfCA5ICsrKysKPiAuLi4vbmJsL25ibF9ody9u
-YmxfaHdfbGVvbmlzL25ibF9yZXNfbGVvbmlzLmMgfCAxMCArKysrCj4gZHJpdmVycy9uZXQvbmJs
-L25ibF9pbmNsdWRlL25ibF9kZWZfY2hhbm5lbC5oIHwgNSArKwo+IC4uLi9uZXQvbmJsL25ibF9p
-bmNsdWRlL25ibF9kZWZfZGlzcGF0Y2guaCB8IDMgKysKPiBkcml2ZXJzL25ldC9uYmwvbmJsX2lu
-Y2x1ZGUvbmJsX2RlZl9ody5oIHwgMyArKwo+IC4uLi9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9k
-ZWZfcmVzb3VyY2UuaCB8IDMgKysKPiAxNCBmaWxlcyBjaGFuZ2VkLCAxNTcgaW5zZXJ0aW9ucygr
-KSwgNCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZG9jL2d1aWRlcy9uaWNzL25ibC5y
-c3QgYi9kb2MvZ3VpZGVzL25pY3MvbmJsLnJzdAo+IGluZGV4IGJhMGExMTlkZmQuLmM3NDgyNmEz
-YzIgMTAwNjQ0Cj4gLS0tIGEvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3QKPiArKysgYi9kb2MvZ3Vp
-ZGVzL25pY3MvbmJsLnJzdAo+IEBAIC0xMDEsMyArMTAxLDE0IEBAIExpbWl0YXRpb25zIG9yIEtu
-b3duIElzc3Vlcwo+IDMyLWJpdCBhcmNoaXRlY3R1cmVzIGFyZSBub3Qgc3VwcG9ydGVkLgo+IAo+
-IFdpbmRvd3MgYW5kIEJTRCBhcmUgbm90IHN1cHBvcnRlZCB5ZXQuCj4gKwo+ICsqKmlnYl91aW8g
-RHJpdmVyIFN1cHBvcnQqKgo+ICsKPiArRHVlIHRvIGNoaXAgZGVzaWduIGxpbWl0YXRpb25zLCBv
-bmx5IHRoZSBWRiBzdXBwb3J0cyB0aGUgYGBpZ2JfdWlvYGAgZHJpdmVyLAo+ICtQRiBkb2VzIG5v
-dCBzdXBwb3J0IHRoaXMgZHJpdmVyLgo+ICsKPiArKip1aW9fcGNpX2dlbmVyaWMgRHJpdmVyIFN1
-cHBvcnQqKgo+ICsKPiArVGhlIGBgdWlvX3BjaV9nZW5lcmljYGAgZHJpdmVyIGlzIG5vdCBzdXBw
-b3J0ZWQgb24gZWl0aGVyIFBGIG9yIFZGIGRldmljZXMuCj4gK1RoaXMgaXMgYmVjYXVzZSB0aGUg
-TkJMIFBNRCByZXF1aXJlcyBNU0ktWCBpbnRlcnJ1cHRzIHRvIHJlY2VpdmUgbWFpbGJveAo+ICtt
-ZXNzYWdlcywgYnV0IHRoZSBgYHVpb19wY2lfZ2VuZXJpY2BgIGRyaXZlciBkb2VzIG5vdCBzdXBw
-b3J0IE1TSS1YIGludGVycnVwdHMuClRoZSBpZ2JfdWlvIGRyaXZlciBpcyBkZXByZWNhdGVkIGF0
-IHRoaXMgcG9pbnQsIGl0IGlzIG5vdCB1cHN0cmVhbSBhbmQgaGFzCmxvdHMgb2YgaXNzdWVzLiBD
-YW4gVkZJTyBiZSB1c2VkIGluIG5vIElPTU1VIG1vZGUgZm9yIHRoaXMgaW5zdGVhZD8K
-------=ALIBOUNDARY_1136_7fa6661d0700_69a0f71e_297510
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+- Fix race conditions between VSP notifications and DPDK device events
+  during VF add/remove, with proper locking of VF-related fields
+- Add multi-process communication infrastructure for coordinating VF
+  removal across primary and secondary processes
+- Fix Protection Domain resource leak on device close in mana
+- Fix devargs memory leak during VF hotplug in netvsc
+- Fix fast-path ops (rte_eth_fp_ops) setup in secondary processes for
+  mana, mlx5, and mlx4, ensuring burst function pointers are restored
+  after STOP->START cycles
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
-Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuID5IaSZuYnNwOzxzcGFuICBzdHlsZT0iY29s
-b3I6IHJnYigwLCAwLCAwKTsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNp
-bVN1bjsgZm9udC1zaXplOiAxNHB4OyBmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFudC1s
-aWdhdHVyZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWlnaHQ6
-IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQtaW5k
-ZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3b3JkLXNwYWNpbmc6IDBweDsgd2hpdGUt
-c3BhY2U6IG5vcm1hbDsgYmFja2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0ZXh0
-LWRlY29yYXRpb24tdGhpY2tuZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6IGlu
-aXRpYWw7IHRleHQtZGVjb3JhdGlvbi1jb2xvcjogaW5pdGlhbDsgZmxvYXQ6IG5vbmU7IGRpc3Bs
-YXk6IGlubGluZSAhaW1wb3J0YW50OyI+U3RlcGhlbiw8L3NwYW4+PC9zcGFuPjwvc3Bhbj48L2Rp
-dj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9t
-YSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gPjxzcGFuICBzdHlsZT0i
-Y29sb3I6IHJnYigwLCAwLCAwKTsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGks
-IFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBmb250LXN0eWxlOiBub3JtYWw7IGZvbnQtdmFyaWFu
-dC1saWdhdHVyZXM6IG5vcm1hbDsgZm9udC12YXJpYW50LWNhcHM6IG5vcm1hbDsgZm9udC13ZWln
-aHQ6IDQwMDsgbGV0dGVyLXNwYWNpbmc6IG5vcm1hbDsgdGV4dC1hbGlnbjogc3RhcnQ7IHRleHQt
-aW5kZW50OiAwcHg7IHRleHQtdHJhbnNmb3JtOiBub25lOyB3b3JkLXNwYWNpbmc6IDBweDsgd2hp
-dGUtc3BhY2U6IG5vcm1hbDsgYmFja2dyb3VuZC1jb2xvcjogcmdiKDI1NSwgMjU1LCAyNTUpOyB0
-ZXh0LWRlY29yYXRpb24tdGhpY2tuZXNzOiBpbml0aWFsOyB0ZXh0LWRlY29yYXRpb24tc3R5bGU6
-IGluaXRpYWw7IHRleHQtZGVjb3JhdGlvbi1jb2xvcjogaW5pdGlhbDsgZmxvYXQ6IG5vbmU7IGRp
-c3BsYXk6IGlubGluZSAhaW1wb3J0YW50OyI+PGJyID48L3NwYW4+PC9zcGFuPjwvc3Bhbj48L2Rp
-dj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9t
-YSwgQXJpYWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PHNwYW4gPlRoYW5rIHlvdSBmb3Ig
-eW91ciByZW1pbmRlci48YnIgPjwvc3Bhbj48L3NwYW4+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3Ro
-OyI+PGJyID48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij5PdXIgTklDIHN1cHBvcnRz
-IFZGSU8gbm8taW9tbXUgbW9kZS48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij5HaXZl
-biB0aGF0IHRoZSBpZ2JfdWlvIGRyaXZlciBpcyBkZXByZWNhdGVkIGFuZCBoYXMga25vd24gaXNz
-dWVzLCB3ZSBkbyBub3QgcGxhbiB0byBzdXBwb3J0IFBGIHdpdGggaWdiX3Vpby48L2Rpdj48ZGl2
-ID48c3BhbiA+VGhlcmVmb3JlLCBJIHdpbGwgbW9kaWZ5IHRoZSBwYXRjaCB0byByZW1vdmUgdGhl
-IGlnYl91aW8gcmVsYXRlZCBjb2RlIGFuZCBzaW1wbHkgYWRkIGEgbm90ZSB0byB0aGUgZG9jdW1l
-bnRhdGlvbi48L3NwYW4+PC9kaXY+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBB
-cmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48ZGl2ICBz
-dHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0Mt
-TGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWws
-IFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48L3NwYW4+PC9kaXY+PGJsb2NrcXVvdGUg
-IF9xdW90ZT0iMSIgc3R5bGU9Im1hcmdpbi1yaWdodDogMHB4OyBtYXJnaW4tdG9wOiAwcHg7IG1h
-cmdpbi1ib3R0b206IDBweDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNp
-bVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGRpdiAgY2xhc3M9
-ImFsaW1haWwtcXVvdGUiPjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPi0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLTwvZGl2
-PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkeS7tuS6uu+8mlN0ZXBoZW4gSGVtbWluZ2Vy
-ICZsdDtzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyZndDs8L2Rpdj48ZGl2ICBzdHlsZT0iY2xl
-YXI6IGJvdGg7Ij7lj5HpgIHml7bpl7TvvJoyMDI25bm0MuaciDI25pelKOWRqOWbmykgMDA6NTA8
-L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij7mlLbku7bkurrvvJpEaW1vbiZsdDtkaW1v
-bi56aGFvQG5lYnVsYS1tYXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90
-aDsiPuaKhOOAgOmAge+8mmRldiZsdDtkZXZAZHBkay5vcmcmZ3Q7OyBLeW8gTGl1Jmx0O2t5by5s
-aXVAbmVidWxhLW1hdHJpeC5jb20mZ3Q7OyBMZW9uJmx0O2xlb24ueXVAbmVidWxhLW1hdHJpeC5j
-b20mZ3Q7OyBTYW0mbHQ7c2FtLmNoZW5AbmVidWxhLW1hdHJpeC5jb20mZ3Q7PC9kaXY+PGRpdiAg
-c3R5bGU9ImNsZWFyOiBib3RoOyI+5Li744CA6aKY77yaUmU6IFtQQVRDSCB2MyAxLzFdIG5ldC9u
-Ymw6IGFkZCBpZ2IgdWlvIHN1cHBvcnQgZm9yIE5CTCBWRiBkZXZpY2VzPC9kaXY+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyI+PGJyID48L2Rpdj5PbiBUdWUsIDI0IEZlYiAyMDI2IDE5OjM5OjQy
-IC0wODAwPGJyID5EaW1vbiBaaGFvICZsdDtkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tJmd0
-OyB3cm90ZTo8YnIgPjxiciA+Jmd0OyBEdWUgdG8gYSBjaGlwIGRlc2lnbiBsaW1pdGF0aW9uLCBv
-bmx5IHRoZSBWRjxiciA+Jmd0OyBzdXBwb3J0cyB0aGUgaWdiX3VpbyBkcml2ZXIuIFRoZSBQRiBk
-b2VzIG5vdC48YnIgPiZndDsgPGJyID4mZ3Q7IFRoZSBpZ2JfdWlvIGRyaXZlciByZXF1aXJlcyBh
-bGxvY2F0aW5nIGludGVycnVwdHMgYW5kIGNvbmZpZ3VyaW5nIHRoZTxiciA+Jmd0OyBQQ0llIE1T
-SS1YIHRhYmxlIGJlZm9yZSB0aGUgZHJpdmVyJ3MgcHJvYmUgZnVuY3Rpb24gaXMgY2FsbGVkLjxi
-ciA+Jmd0OyBUaGlzIHByZS1wcm9iZSBjb25maWd1cmF0aW9uIGlzIG9ubHkgcG9zc2libGUgb24g
-dGhlIFZGIGR1ZSB0byB0aGU8YnIgPiZndDsgaGFyZHdhcmUgbGltaXRhdGlvbjsgdGhlIFBGIGNh
-biBvbmx5IGNvbmZpZ3VyZSB0aGUgTVNJLVggdGFibGUgZHVyaW5nPGJyID4mZ3Q7IGl0cyBwcm9i
-ZSBwcm9jZXNzLjxiciA+Jmd0OyA8YnIgPiZndDsgVGhlcmVmb3JlLCB1c2luZyBpZ2JfdWlvIG9u
-IHRoZSBQRiB3aWxsIGZhaWwuPGJyID4mZ3Q7IFRoaXMgY29tbWl0IGNsYXJpZmllcyB0aGlzIHJl
-c3RyaWN0aW9uLjxiciA+Jmd0OyA8YnIgPiZndDsgU2lnbmVkLW9mZi1ieTogRGltb24gWmhhbyAm
-bHQ7ZGltb24uemhhb0BuZWJ1bGEtbWF0cml4LmNvbSZndDs8YnIgPiZndDsgLS0tPGJyID4mZ3Q7
-Jm5ic3A7IGRvYy9ndWlkZXMvbmljcy9uYmwucnN0ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNw
-OyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgfCAxMSAr
-KysrPGJyID4mZ3Q7Jm5ic3A7IGRvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMDMucnN0
-Jm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwmbmJzcDsgNCArKzxiciA+Jmd0OyZuYnNwOyBk
-cml2ZXJzL25ldC9uYmwvbmJsX2NvcmUuYyZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJz
-cDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyB8Jm5ic3A7IDIgKzxiciA+Jmd0
-OyZuYnNwOyBkcml2ZXJzL25ldC9uYmwvbmJsX2Rldi9uYmxfZGV2LmMgJm5ic3A7ICZuYnNwOyAm
-bmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgfCAzMyArKysrKysrKysrLS08YnIgPiZndDsmbmJz
-cDsgZHJpdmVycy9uZXQvbmJsL25ibF9kZXYvbmJsX2Rldi5oICZuYnNwOyAmbmJzcDsgJm5ic3A7
-ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwmbmJzcDsgMyArKzxiciA+Jmd0OyZuYnNwOyBkcml2ZXJz
-L25ldC9uYmwvbmJsX2Rpc3BhdGNoLmMmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7
-ICZuYnNwOyAmbmJzcDsgJm5ic3A7IHwgNTAgKysrKysrKysrKysrKysrKysrKzxiciA+Jmd0OyZu
-YnNwOyBkcml2ZXJzL25ldC9uYmwvbmJsX2V0aGRldi5jJm5ic3A7ICZuYnNwOyAmbmJzcDsgJm5i
-c3A7ICZuYnNwOyAmbmJzcDsgJm5ic3A7ICZuYnNwOyAmbmJzcDsgfCAxMyArKysrKzxiciA+Jmd0
-OyZuYnNwOyAuLi4vbmJsX2h3L25ibF9od19sZW9uaXMvbmJsX2h3X2xlb25pc19zbmljLmMgfCAx
-MiArKysrKzxiciA+Jmd0OyZuYnNwOyAuLi4vbmJsX2h3L25ibF9od19sZW9uaXMvbmJsX2h3X2xl
-b25pc19zbmljLmggfCZuYnNwOyA5ICsrKys8YnIgPiZndDsmbmJzcDsgLi4uL25ibC9uYmxfaHcv
-bmJsX2h3X2xlb25pcy9uYmxfcmVzX2xlb25pcy5jIHwgMTAgKysrKzxiciA+Jmd0OyZuYnNwOyBk
-cml2ZXJzL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9jaGFubmVsLmggfCZuYnNwOyA1ICsr
-PGJyID4mZ3Q7Jm5ic3A7IC4uLi9uZXQvbmJsL25ibF9pbmNsdWRlL25ibF9kZWZfZGlzcGF0Y2gu
-aCZuYnNwOyAmbmJzcDsgfCZuYnNwOyAzICsrPGJyID4mZ3Q7Jm5ic3A7IGRyaXZlcnMvbmV0L25i
-bC9uYmxfaW5jbHVkZS9uYmxfZGVmX2h3LmgmbmJzcDsgJm5ic3A7ICZuYnNwOyB8Jm5ic3A7IDMg
-Kys8YnIgPiZndDsmbmJzcDsgLi4uL25ldC9uYmwvbmJsX2luY2x1ZGUvbmJsX2RlZl9yZXNvdXJj
-ZS5oJm5ic3A7ICZuYnNwOyB8Jm5ic3A7IDMgKys8YnIgPiZndDsmbmJzcDsgMTQgZmlsZXMgY2hh
-bmdlZCwgMTU3IGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pPGJyID4mZ3Q7IDxiciA+Jmd0
-OyBkaWZmIC0tZ2l0IGEvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3QgYi9kb2MvZ3VpZGVzL25pY3Mv
-bmJsLnJzdDxiciA+Jmd0OyBpbmRleCBiYTBhMTE5ZGZkLi5jNzQ4MjZhM2MyIDEwMDY0NDxiciA+
-Jmd0OyAtLS0gYS9kb2MvZ3VpZGVzL25pY3MvbmJsLnJzdDxiciA+Jmd0OyArKysgYi9kb2MvZ3Vp
-ZGVzL25pY3MvbmJsLnJzdDxiciA+Jmd0OyBAQCAtMTAxLDMgKzEwMSwxNCBAQCBMaW1pdGF0aW9u
-cyBvciBLbm93biBJc3N1ZXM8YnIgPiZndDsmbmJzcDsgMzItYml0IGFyY2hpdGVjdHVyZXMgYXJl
-IG5vdCBzdXBwb3J0ZWQuPGJyID4mZ3Q7Jm5ic3A7IDxiciA+Jmd0OyZuYnNwOyBXaW5kb3dzIGFu
-ZCBCU0QgYXJlIG5vdCBzdXBwb3J0ZWQgeWV0LjxiciA+Jmd0OyArPGJyID4mZ3Q7ICsqKmlnYl91
-aW8gRHJpdmVyIFN1cHBvcnQqKjxiciA+Jmd0OyArPGJyID4mZ3Q7ICtEdWUgdG8gY2hpcCBkZXNp
-Z24gbGltaXRhdGlvbnMsIG9ubHkgdGhlIFZGIHN1cHBvcnRzIHRoZSBgYGlnYl91aW9gYCBkcml2
-ZXIsPGJyID4mZ3Q7ICtQRiBkb2VzIG5vdCBzdXBwb3J0IHRoaXMgZHJpdmVyLjxiciA+Jmd0OyAr
-PGJyID4mZ3Q7ICsqKnVpb19wY2lfZ2VuZXJpYyBEcml2ZXIgU3VwcG9ydCoqPGJyID4mZ3Q7ICs8
-YnIgPiZndDsgK1RoZSBgYHVpb19wY2lfZ2VuZXJpY2BgIGRyaXZlciBpcyBub3Qgc3VwcG9ydGVk
-IG9uIGVpdGhlciBQRiBvciBWRiBkZXZpY2VzLjxiciA+Jmd0OyArVGhpcyBpcyBiZWNhdXNlIHRo
-ZSBOQkwgUE1EIHJlcXVpcmVzIE1TSS1YIGludGVycnVwdHMgdG8gcmVjZWl2ZSBtYWlsYm94PGJy
-ID4mZ3Q7ICttZXNzYWdlcywgYnV0IHRoZSBgYHVpb19wY2lfZ2VuZXJpY2BgIGRyaXZlciBkb2Vz
-IG5vdCBzdXBwb3J0IE1TSS1YIGludGVycnVwdHMuPGJyID48YnIgPlRoZSBpZ2JfdWlvIGRyaXZl
-ciBpcyBkZXByZWNhdGVkIGF0IHRoaXMgcG9pbnQsIGl0IGlzIG5vdCB1cHN0cmVhbSBhbmQgaGFz
-PGJyID5sb3RzIG9mIGlzc3Vlcy4gQ2FuIFZGSU8gYmUgdXNlZCBpbiBubyBJT01NVSBtb2RlIGZv
-ciB0aGlzIGluc3RlYWQ/PC9kaXY+PC9ibG9ja3F1b3RlPjxkaXYgIHN0eWxlPSJsaW5lLWhlaWdo
-dDogMjBweDsgY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjwvZGl2PjwvZGl2Pg==
-------=ALIBOUNDARY_1136_7fa6661d0700_69a0f71e_297510--
+v5:
+- Patches 5,6,7: Also restore rte_eth_fp_ops burst function pointers
+  (rx_pkt_burst, tx_pkt_burst) in START_RXTX handler, not just queue
+  data pointers. Without this, after a STOP->START cycle the secondary
+  process burst pointers remain set to dummy functions.
+
+v4:
+- Patch 1: Check hn_vf_add() return value in netvsc_hotplug_retry
+- Patch 1: Track fresh_attach to avoid tearing down original VF
+  attachment when configure/start fails on an -EEXIST path
+- Patch 2: Move counter decrement and netvsc_uninit_once() after device
+  cleanup in eth_hn_remove() to prevent use-after-free of shared data
+- Patch 2: Clear netvsc_shared_data on init failure paths to prevent
+  dangling pointer
+
+v3:
+- Fix review comments from v2
+
+v2:
+- Initial rework of VF add/remove locking
+
+Long Li (7):
+  net/netvsc: fix race conditions on VF add/remove events
+  net/netvsc: add multi-process VF device removal support
+  net/mana: fix PD resource leak on device close
+  net/netvsc: fix devargs memory leak on hotplug
+  net/mana: fix fast-path ops setup in secondary process
+  net/mlx5: fix fast-path ops setup in secondary process
+  net/mlx4: fix fast-path ops setup in secondary process
+
+ drivers/net/mana/mana.c             |  14 ++
+ drivers/net/mana/mp.c               |   8 +
+ drivers/net/mlx4/mlx4_mp.c          |   6 +
+ drivers/net/mlx5/linux/mlx5_mp_os.c |   6 +
+ drivers/net/netvsc/hn_ethdev.c      | 300 +++++++++++++++++++++++++++-
+ drivers/net/netvsc/hn_nvs.h         |   6 +
+ drivers/net/netvsc/hn_rxtx.c        |  40 ++--
+ drivers/net/netvsc/hn_var.h         |   1 +
+ drivers/net/netvsc/hn_vf.c          | 148 ++++++++------
+ 9 files changed, 437 insertions(+), 92 deletions(-)
+
+-- 
+2.43.0
 
