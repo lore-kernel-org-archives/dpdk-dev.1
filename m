@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338D9FD9E1C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 05:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F36FD9E34
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Feb 2026 06:03:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45F8C402C6;
-	Fri, 27 Feb 2026 06:08:15 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
- by mails.dpdk.org (Postfix) with ESMTP id E53B34028E
- for <dev@dpdk.org>; Fri, 27 Feb 2026 06:08:13 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2BE3E402C6;
+	Fri, 27 Feb 2026 07:03:15 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 290E64028E
+ for <dev@dpdk.org>; Fri, 27 Feb 2026 07:03:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1772168894; x=1803704894;
+ t=1772172194; x=1803708194;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=MN8oh4/61yC+THvYVuNpflqxkCV5f859BoWIIfC7Sto=;
- b=fWV6nT9ozPBFAKCseepKGJbzMMK9HmmLghMuGg6Qaj0+1cyraJITL9ht
- Z5ck4C+BP0P/sjt1x9509GCmX28u41JzvI3O+CNmVsiUinGGMoPXikaWo
- LgC+254wZauLFl8kdIqm0Cck3IrBWVZivO89jQKci79UYo5KHgiTxiKU6
- GXAkVxtOjxKaUikhKM4rcoQheihKpmFTCbCNcXIfwS5IvsTX6OnawcJIv
- WlQmC1GICwhD4oFreJeO2Kk9WncMTrRHarPmoAz8tm6z9HzIYjOfMzrHj
- jTj9Wds26UGChjRau9Eq5VJcDfDDB+WvQ+EJn/J2OTcjqd2NfdgQXt1Qo Q==;
-X-CSE-ConnectionGUID: bpuWZPgrRrydjP0u7/lvug==
-X-CSE-MsgGUID: dOVcFIFSSkGG5Pr9t6wbVA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11713"; a="73313147"
-X-IronPort-AV: E=Sophos;i="6.21,313,1763452800"; d="scan'208";a="73313147"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Feb 2026 21:08:11 -0800
-X-CSE-ConnectionGUID: j+9WYbf8TrOsSgtFg05ozA==
-X-CSE-MsgGUID: JEMJCzVPRyKJKgN6gfnquw==
+ bh=U/W7UUhxF/1TpRYUt+JJhz/gXb6kGCgRzQ1a5vsgBqM=;
+ b=ka0K1PZweSZBrMbFnQmu3CkOR84iG2yxP1Yn1zu7sM/e04IaZtoyqHpL
+ n6GN/PZld7ACBDGwaleXFrGrHj5CWxWvJuluKI8tuOI/ERwsftUqsU4xm
+ 8q/pSS16PjSy99LQeV5SQJXJF6O4oGdlJUDULZxipJmkbVlYzjk0CvWqo
+ 8BkuwSWN2a2+QWNK0cPm5N3S13X3IWfWL6gqKUTmpVSkLncTtWmDpXbEd
+ hDUWU55lcz0xIIAG3VLwdhSQh5YDAo7iMHCHg2gi7E6tl/QBP4KSLTtuM
+ 7SgxWr7Hr2rikzwlMGXxkS8xMZ7k2TmVQsoA2NGuOCvM5Stytb4m7W8dK Q==;
+X-CSE-ConnectionGUID: RHAZhzrrTEa0pv7toimsSA==
+X-CSE-MsgGUID: GZeGwf1oSEyOh61uA6hbDw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11713"; a="60825848"
+X-IronPort-AV: E=Sophos;i="6.21,313,1763452800"; d="scan'208";a="60825848"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Feb 2026 22:03:13 -0800
+X-CSE-ConnectionGUID: Ub9FR5NUR5iMmiD8D8AdKA==
+X-CSE-MsgGUID: YkGh7UhvRUq5AfDcOlQm5Q==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.21,313,1763452800"; d="scan'208";a="215915029"
+X-IronPort-AV: E=Sophos;i="6.21,313,1763452800"; d="scan'208";a="216705740"
 Received: from icx005.iind.intel.com (HELO icx005..) ([10.190.212.217])
- by orviesa006.jf.intel.com with ESMTP; 26 Feb 2026 21:08:10 -0800
+ by orviesa009.jf.intel.com with ESMTP; 26 Feb 2026 22:03:12 -0800
 From: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
  shaiq.wani@intel.com,
  Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-Subject: [PATCH v3] doc: improve e1000 driver documentation
-Date: Fri, 27 Feb 2026 15:26:58 +0000
-Message-ID: <20260227152700.16762-1-chaitanyababux.talluri@intel.com>
+Subject: [PATCH v4] doc: improve e1000 driver documentation
+Date: Fri, 27 Feb 2026 16:21:59 +0000
+Message-ID: <20260227162200.23972-1-chaitanyababux.talluri@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260216195533.2030568-1-chaitanyababux.talluri@intel.com>
 References: <20260216195533.2030568-1-chaitanyababux.talluri@intel.com>
@@ -66,10 +66,12 @@ Add an overview of the e1000 driver for Intel 1G devices.
 
 Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
 ---
-v3:
+v4:
 * Fixed RST structure, single top-level title.
 * Used ASCII "PCIe".
 * Adjusted commit message to match content.
+
+v3: Resolved apply patch failure.
 
 v2: Addressed review comments.
 ---
