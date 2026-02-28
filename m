@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558D6FEE4F4
-	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Feb 2026 17:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B017CFEE4F2
+	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Feb 2026 17:56:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4374B402C5;
-	Sat, 28 Feb 2026 18:56:06 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2A97240B9D;
+	Sat, 28 Feb 2026 18:56:07 +0100 (CET)
 Received: from mail-dy1-f181.google.com (mail-dy1-f181.google.com
- [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id 012374013F
- for <dev@dpdk.org>; Sat, 28 Feb 2026 18:56:04 +0100 (CET)
+ [74.125.82.181]) by mails.dpdk.org (Postfix) with ESMTP id BB91E402C5
+ for <dev@dpdk.org>; Sat, 28 Feb 2026 18:56:05 +0100 (CET)
 Received: by mail-dy1-f181.google.com with SMTP id
- 5a478bee46e88-2bd9a485bd6so6508737eec.1
- for <dev@dpdk.org>; Sat, 28 Feb 2026 09:56:04 -0800 (PST)
+ 5a478bee46e88-2ba9c484e5eso3023570eec.1
+ for <dev@dpdk.org>; Sat, 28 Feb 2026 09:56:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772301364;
- x=1772906164; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772301365;
+ x=1772906165; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ayF0COSuhjbGQe00Lej7pcMyoYC5ulFVeef2rsmqBSs=;
- b=1UfAbOh2mSQ0R1XoPaadfLsPAJvY290wzF0XuuLJ3c8OZvklrPDqJpxl1Loxg69POM
- LHjyQrbRLJD07NYssFSz4bfNxMD9ak+9DLMYw0oquRI4Hw07H1arGxHVUjNF4NCgGEBz
- 6mmgxasQezSR8qaj3W3Vhqrd7cT1Dd5XGZG9VfzfwbXrMu46vFoosaq3u7KiDiUAHcg+
- NoDK3jQbCWvuGHs3RnqOGDl/FsJugGiw5F2kHhj9u914ZPXtXXr3MmPMIngSY85NJsgG
- /V7QDwqZhTcMOf9oX3Qk7meJtaVjiUanHccXu/U9qGkoYmVPk5y91jD1hme5N1pYJXfr
- hx6g==
+ bh=v90z5pVm19smAuPI5Y18MucsAHQ1zmuNHvYNuiKNpo0=;
+ b=PRDqV7izlqHkvnETNZdHer94ro0MIuNrLl4ey11ULfXdVVAN5arY52IjNPFr1sLGpu
+ M9VtflP70h+o1Fa7nqpldA9ne1CWS6tzka/YekEV9kkImXzV6+Bxvpq7xn/siZ0cekHq
+ X0AwRidFWE2HoVsVziVfphJFbs0J5G25n9ufOX8HeBSYtUzLVZ98sNT+mxNmymAGq8CE
+ 1fsjLaWpZLRvlIyXFAWVRDAeyE+5n3qCLV9EnFbxTHIHe6VJ9qT9QbLFHC/Hd2cF1TGD
+ /B0XYGlqnd+JcF6vdibKkYgIsaX/IqcWUBNeXPLUDwndi7s1lfflS0M8RPrpYXtIW6+n
+ CmmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772301364; x=1772906164;
+ d=1e100.net; s=20230601; t=1772301365; x=1772906165;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ayF0COSuhjbGQe00Lej7pcMyoYC5ulFVeef2rsmqBSs=;
- b=bprpgcnXuDxNEYepQDkH47fVThA0YTyWOxqG+RPv4XntsCxBj423RSxUKg6SjIsRUp
- 9tHWim2M5Q1FivXcZI2N+wMMCw7iQOHOgrBmmpzbz/o5Fe3sl6aSVEiUMFH1e1u480Ku
- m1fiE/ttEmIVFL94sO8lV1FzMcvbIvgAcTcHvOJUYvF6M7eJ2UTLFs1O3kdIq5RGfYGa
- 9uhfpl7lT5Jw+368J/cBHAB41LyCiyq51GfTl0/qXWL9x23NcsmKh5deLri7J90LMoEB
- LqikVuCziHMiyR9iM3ze3npLW47PwJ0N15CmktLbH0TyG8Al5Hd0HvzKYgqrK5P1Bdss
- KJrQ==
-X-Gm-Message-State: AOJu0YzLrogklNyjXtp86qs0v0Q0MGTSzH1Dgt8LYzWNj4edFDC4GiWh
- YGXYqEtHCSYwIR1O2bUp6HjEyxmpzzAptHePOIKhHytEHaOPtJ/zy9AukROuMOSbxEpX4oogHfk
- xF0Q7
-X-Gm-Gg: ATEYQzwNJUjW3yPfSyyhQOCwl/yPpito0iQ0cwhQPSgJnc8hlNgQLnQp/kjU1Z6iGgb
- y99tbp6l+6rIepJhVbsVrPc1vvyvzOc3mG1U0nvW5E2OmoZEcOa6f0D7x8nYkWfFNX0hrr+JGQf
- bcHC7L2Uh+hNVGdRokW6BV6/TYpLOD3pO9asIcZ30JAX6fwxppSVCyN9COSU81iOo/otBYo1wNh
- uScg2cUTH1zGgtBSkTbOe+c11AxUH7Tqz6rIANNsWsr39RBsIO6JFZUi3y9wugmXifo/AWv8DmO
- Nmd6EAk6lNW+hqSfo0tw7SGhRbeJi+HFjrWGaxI/xytnkzFC7vbM15EzY4JgpFYprolSpdn/Qlu
- l2kF/nsil0Ka8B7p3qAyKajTB657aZfRuGCBQMOrifTuZHRLqFpv/bYr12vFOlqFMPBRiaRsC6X
- L/gATXmJwmSwwipnsf3Pdf++1muQHEm+ZwhQ8qG3DCC9BI6bBX4jUiGcKeyYcBxA==
-X-Received: by 2002:a05:7300:72d0:b0:2b7:32a6:82d1 with SMTP id
- 5a478bee46e88-2bde1b574e2mr3043536eec.13.1772301363792; 
- Sat, 28 Feb 2026 09:56:03 -0800 (PST)
+ bh=v90z5pVm19smAuPI5Y18MucsAHQ1zmuNHvYNuiKNpo0=;
+ b=M7PyBTosDJ46wFvl0ya9B+4yaMEBpL8YL3zpqFEG+riS+37/0eHI9nkLfefqM8V/t+
+ wciym3fo0x9TCgXMQ8ChmG56LgwnaDApziEDTt74naWSSma80oSe9PFDWvoGSoPR9WgO
+ hXxo0KcXFbficFNtt4dmyRSQDtNk91Cx4RSj7PHwnLoQ+taFIHhU8IV9S7m4fvMFv2bj
+ hFi1qoKl5ClTJm+hqKrqn2l3An/lT6x8CDOAZ4KL8H1+b4trew2HQSnsbeie14VHt1ja
+ spd1dpZ5oIQYsmfrxOE3kA72nJ7e+lMeasoyk4ZUKNl3fZ/IxAriivYtBuMtQEaFxsLN
+ BujA==
+X-Gm-Message-State: AOJu0Yxq6ghqH7fslYQTW2uXXQVpDmiCSEElZyfZf02uSSd1PA2Et+7F
+ vr5GKGDXejWG7JqPpatjPRQkzjzqwlHiMro/53ji4XECLg5O4EJn/Sx2FLtc19AKWiXT0Ro3wO6
+ g8jAx
+X-Gm-Gg: ATEYQzxjzuD35leN/W8tq2TsvPHA/xwKLDU3A3xwRO9j0sxgUpm7D7S0z3fYxyJmPAn
+ sGooysYFF3U1VdYQ2oQdnqMf62KIppjqLoSi65Gte0piHpgbv1ticqNRNmRT05ZQVK/WYB2e+8z
+ P/85fCNC9Mt2lt4J/5PzZzBkxAfhW2NTJ80Wo/hHCEuQkkFb4/2b46fxPgxtN/C8Vh32DA/gSLB
+ mwFJcUk5dEx08TPGZbBTZpqc9CpNzdjHcMiBxgbceu1RXGSbYw3AJS/67RZc9k6zVL2ccWXL/Ar
+ t5LUfyFE9TpoIhoiCcuTrZ+JE7/5JzuHZ9amc8LoyEIZjoeNzpji5XxmNio94F8TH2gFlQ1xkLB
+ PtngFrLFq1RTJsLtCc/BKXz7dXGDbBoDPh4sMJX2pSa5cZRiwLo3YXLrE76sQ/TitGt/Nf38jEc
+ WHK1HXwzC7E4H8S2KWR6z0qoyNXVSIQcWbzwUicaLRD1EdceZeJULXrnqqSb+S9A==
+X-Received: by 2002:a05:7300:6c24:b0:2b7:1abc:a6eb with SMTP id
+ 5a478bee46e88-2bde1b50817mr1886345eec.7.1772301364643; 
+ Sat, 28 Feb 2026 09:56:04 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2bdfb3f898asm824584eec.29.2026.02.28.09.56.02
+ 5a478bee46e88-2bdfb3f898asm824584eec.29.2026.02.28.09.56.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 28 Feb 2026 09:56:03 -0800 (PST)
+ Sat, 28 Feb 2026 09:56:04 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 0/5] pcapng: fixes for Windows and timestamps
-Date: Sat, 28 Feb 2026 09:34:59 -0800
-Message-ID: <20260228175601.585102-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+	stable@dpdk.org
+Subject: [PATCH v3 1/5] test: fix pcapng test to work on Windows
+Date: Sat, 28 Feb 2026 09:35:00 -0800
+Message-ID: <20260228175601.585102-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260220184255.306368-1-stephen@networkplumber.org>
+In-Reply-To: <20260228175601.585102-1-stephen@networkplumber.org>
 References: <20260220184255.306368-1-stephen@networkplumber.org>
+ <20260228175601.585102-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,39 +82,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix pcapng test and library issues:
+The pcapng test needs additional wrappers to be able to
+build and run on Windows.
 
-The test did not build on Windows because it used POSIX-only
-APIs (clock_gettime, mkstemps, unlink). Add Windows wrappers
-and use portable alternatives where possible.
+This is a pre-existing problem, only exposed when the
+test was enabled on Windows builds, and when libpcap
+is setup on Windows.
 
-The test timing was tied to TSC frequency which could make
-it run excessively long on slow emulated platforms. Use a
-fixed time bound instead.
+Fixes: 0edc1f408a8b ("test: enable subset of tests on Windows")
+Cc: stable@dpdk.org
 
-The test was mixing stdout and stderr making CI log analysis
-confusing. Consolidate on stdout and switch to UTC timestamps.
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ app/test/test_pcapng.c | 65 +++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 61 insertions(+), 4 deletions(-)
 
-The library timestamp conversion produced bogus values if
-rte_pcapng_copy() was called before rte_pcapng_fdopen(),
-since the unsigned TSC delta wraps. Handle the case where
-the packet TSC precedes the clock baseline.
-
-Add a regression test for the pre-open timestamp fix.
-
-v3 - improve test log output
-
-Stephen Hemminger (5):
-  test: fix pcapng test to work on Windows
-  test: use fixed time length for write packet test
-  test: better logging for pcapng test
-  pcapng: handle packets copied before file open
-  test: add pcapng test for copy before open
-
- app/test/test_pcapng.c  | 224 ++++++++++++++++++++++++++++++++++------
- lib/pcapng/rte_pcapng.c |  10 +-
- 2 files changed, 197 insertions(+), 37 deletions(-)
-
+diff --git a/app/test/test_pcapng.c b/app/test/test_pcapng.c
+index ad9ad51f4c..f0faead728 100644
+--- a/app/test/test_pcapng.c
++++ b/app/test/test_pcapng.c
+@@ -4,7 +4,16 @@
+ 
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
++
++#ifdef RTE_EXEC_ENV_WINDOWS
++#include <winsock2.h>
++#include <io.h>
++#include <fcntl.h>
++#include <windows.h>
++#else
+ #include <unistd.h>
++#endif
+ 
+ #include <rte_bus_vdev.h>
+ #include <rte_ethdev.h>
+@@ -23,6 +32,52 @@
+ 
+ #include "test.h"
+ 
++#ifdef RTE_EXEC_ENV_WINDOWS
++static uint64_t
++current_timestamp(void)
++{
++	FILETIME ft;
++	ULARGE_INTEGER ul;
++
++	GetSystemTimeAsFileTime(&ft);
++	ul.LowPart = ft.dwLowDateTime;
++	ul.HighPart = ft.dwHighDateTime;
++	/* FILETIME is 100ns intervals since 1601-01-01, convert to ns since Unix epoch */
++	return (ul.QuadPart - 116444736000000000ULL) * 100;
++}
++
++/*
++ * Create temporary file with suffix for Windows.
++ * Returns file descriptor or -1 on failure.
++ */
++static int
++mkstemps(char *tmpl, int suffixlen)
++{
++	char temp_dir[MAX_PATH];
++	char temp_file[MAX_PATH];
++	DWORD ret;
++
++	ret = GetTempPathA(sizeof(temp_dir), temp_dir);
++	if (ret == 0 || ret > sizeof(temp_dir))
++		return -1;
++
++	if (GetTempFileNameA(temp_dir, "pcap", 0, temp_file) == 0)
++		return -1;
++
++	/*
++	 * GetTempFileNameA with uUnique=0 creates the file to reserve the name.
++	 * Remove it since we open a different name with the original suffix appended.
++	 */
++	DeleteFileA(temp_file);
++
++	/* Append the original suffix (e.g. ".pcapng") to the temp file */
++	strlcat(temp_file, tmpl + strlen(tmpl) - suffixlen, sizeof(temp_file));
++	strlcpy(tmpl, temp_file, PATH_MAX);
++
++	return _open(tmpl, _O_RDWR | _O_BINARY | _O_CREAT | _O_EXCL, 0666);
++}
++#endif /* RTE_EXEC_ENV_WINDOWS */
++
+ #define PCAPNG_TEST_DEBUG 0
+ 
+ #define TOTAL_PACKETS	10000
+@@ -344,6 +399,7 @@ parse_pcap_packet(u_char *user, const struct pcap_pkthdr *h,
+ 	pcap_breakloop(ctx->pcap);
+ }
+ 
++#ifndef RTE_EXEC_ENV_WINDOWS
+ static uint64_t
+ current_timestamp(void)
+ {
+@@ -352,6 +408,7 @@ current_timestamp(void)
+ 	clock_gettime(CLOCK_REALTIME, &ts);
+ 	return rte_timespec_to_ns(&ts);
+ }
++#endif
+ 
+ /*
+  * Open the resulting pcapng file with libpcap
+@@ -395,7 +452,7 @@ valid_pcapng_file(const char *file_name, uint64_t started, unsigned int expected
+ static int
+ test_add_interface(void)
+ {
+-	char file_name[] = "/tmp/pcapng_test_XXXXXX.pcapng";
++	char file_name[PATH_MAX] = "/tmp/pcapng_test_XXXXXX.pcapng";
+ 	static rte_pcapng_t *pcapng;
+ 	int ret, tmp_fd;
+ 	uint64_t now = current_timestamp();
+@@ -444,7 +501,7 @@ test_add_interface(void)
+ 	ret = valid_pcapng_file(file_name, now, 0);
+ 	/* if test fails want to investigate the file */
+ 	if (ret == 0)
+-		unlink(file_name);
++		remove(file_name);
+ 
+ 	return ret;
+ 
+@@ -456,7 +513,7 @@ test_add_interface(void)
+ static int
+ test_write_packets(void)
+ {
+-	char file_name[] = "/tmp/pcapng_test_XXXXXX.pcapng";
++	char file_name[PATH_MAX] = "/tmp/pcapng_test_XXXXXX.pcapng";
+ 	rte_pcapng_t *pcapng = NULL;
+ 	int ret, tmp_fd, count;
+ 	uint64_t now = current_timestamp();
+@@ -508,7 +565,7 @@ test_write_packets(void)
+ 	ret = valid_pcapng_file(file_name, now, count);
+ 	/* if test fails want to investigate the file */
+ 	if (ret == 0)
+-		unlink(file_name);
++		remove(file_name);
+ 
+ 	return ret;
+ 
 -- 
 2.51.0
 
