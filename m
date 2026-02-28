@@ -2,95 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA7C0FEE4ED
-	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Feb 2026 15:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88435FEE4ED
+	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Feb 2026 17:03:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 14A0940B8F;
-	Sat, 28 Feb 2026 16:35:51 +0100 (CET)
-Received: from SN4PR2101CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11012033.outbound.protection.outlook.com
- [40.93.195.33]) by mails.dpdk.org (Postfix) with ESMTP id 151434013F;
- Sat, 28 Feb 2026 16:35:50 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kOKuNOilGu01rvYiKdsawTv+XQ42vyU4mrOJP8CyLw8xCTmpUOR/vleDcOPn6ucHF8t05PeN//SZDGXRPOM8p6zfW2rQQoJHauTarqStD/QJTMwaobDAVkJFrRpjtYYMKO/c7XkK5PA1Xd7oMpah5lL8LHRfOpX9UMda523gDuX8/cMwoXM3atzmBHA4StORPpuTj89HpMt10dKmSUfPONlB7hLE6S2MDgKCvSs7koyGQ4DXC9PGKVwtyp4LH16xNeYUMdp+6mrWDLlsW9bsKeMIjkxNOEBAuMAyFBEkLzEn3F1CYocJhpjV8qfvptvOz0RKBDNr5EdL4PVEFotTWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xcX/9oAJuNUfdcuG0qSiDEnV6Uj5VItmMC5xev4/LMQ=;
- b=U33SG5Tni3XEBGBegDAauO0k6hhQPk9CT6DprRJqxuN9Vu8QL/j+e8bmJJUj6X1n21AF/hUWUguAs/XbHcRUrTcNlvAMA0oZB3Xn0Iub35WTA7UeoAQ1VHejEENdaYJG8xn0Xbz8QOAWiPaxNwBFwkDMqwhrGEiqBnEKWEGLhHmqoo/kM6QF9vRT0yk3p6kjGOOihlSp3ld6/2lL2P+02qOyzgeCg9vpyITd22LBljIng2mOvOszlHiyG3xc2m/0hmINjpNxS30va7h/zZ6Di9/rjaDEHuAxw2lonnNau66RdOAQUZNK2Qkl/mT+i7GGPEfqFtJET5vN4ZjIG3B48Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xcX/9oAJuNUfdcuG0qSiDEnV6Uj5VItmMC5xev4/LMQ=;
- b=lweDLEPvEEQQMkrrdzOAW3o2lo2ZMrQpmGZdxADOSy/ip3ki37dBKPPO4nmHsojB84AhlfiPayJR4AWuym02cOgb572oRBSXE0qrq1lnH4WDDLyxOgeaMgMNd/y6g/zsc++dwq1Z2g4nhqJ+Oc8kyc1zMvWDP0W+iDxM94xEtqg=
-Received: from SJ0P220CA0015.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::19)
- by CH2PR12MB4312.namprd12.prod.outlook.com (2603:10b6:610:af::14)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.17; Sat, 28 Feb
- 2026 15:35:43 +0000
-Received: from SJ1PEPF000023CE.namprd02.prod.outlook.com
- (2603:10b6:a03:41b:cafe::4f) by SJ0P220CA0015.outlook.office365.com
- (2603:10b6:a03:41b::19) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.26 via Frontend Transport; Sat,
- 28 Feb 2026 15:35:37 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- SJ1PEPF000023CE.mail.protection.outlook.com (10.167.244.10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9654.16 via Frontend Transport; Sat, 28 Feb 2026 15:35:43 +0000
-Received: from BLRASNATARA.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Sat, 28 Feb
- 2026 09:35:41 -0600
-From: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-To: <dev@dpdk.org>
-CC: <Selwin.Sebastian@amd.com>, Ashok Kumar Natarajan
- <ashokkumar.natarajan@amd.com>, <stable@dpdk.org>
-Subject: [PATCH v5 3/3] net/axgbe: fix 100M SGMII mode
-Date: Sat, 28 Feb 2026 20:10:33 +0530
-Message-ID: <20260228144035.666-1-ashokkumar.natarajan@amd.com>
-X-Mailer: git-send-email 2.53.0.windows.1
-In-Reply-To: <20260227084546.729-1-ashokkumar.natarajan@amd.com>
-References: <20260227084546.729-1-ashokkumar.natarajan@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 81647402CA;
+	Sat, 28 Feb 2026 18:03:42 +0100 (CET)
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
+ [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id A34164013F
+ for <dev@dpdk.org>; Sat, 28 Feb 2026 18:03:40 +0100 (CET)
+Received: by mail-dy1-f170.google.com with SMTP id
+ 5a478bee46e88-2bdcfbd0779so3426844eec.0
+ for <dev@dpdk.org>; Sat, 28 Feb 2026 09:03:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772298219;
+ x=1772903019; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=LVs+pstFMccCNJZEf/PE/RlVZiqoQCmTPz4jTSx1jug=;
+ b=f0M6Uwjo1eVzWFKKJfk4yuZBk7iWEVt+11ITY/6zZI0cj6qtTEnjpf4rDZkQk3Az8Q
+ HIHsG2MtUrQtZjsgcUQz+NcBvJBLd2D53X5g2HU4c52y3kG4VTXq7svINmsQOPHnmYcL
+ ewTEvdZHXZoPlRMBEAHdZwh3rugnpuLGhEDIXj1G14u7PMxHOmBjvtIgyf6EMhtqKwTx
+ afgqYW1zLEFtCq8DrswBCeejjChScZzYMlfPNkiSXxdU94hDqqeOtVvO9JofiQt3wNZU
+ RClpwRLSMiNc1CRVlJsMMqKakRdz3YN/O17ZWIBmnACztSXVwkjwGPheIHZKjPjktzgq
+ yPEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772298219; x=1772903019;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=LVs+pstFMccCNJZEf/PE/RlVZiqoQCmTPz4jTSx1jug=;
+ b=Uu3jH+WXiA5BhFZLGRhMN5HZwCjS1aNH+Mp5M5vJr64cnbdURktsQuH19000ZVxarS
+ 3dSs4kgobjtFkKUkFhNxUnqYrnhiXJBS29RWSsOLLHPXsuQPPv1wS6wsTK8GjnDiZPNc
+ +nuWh6P29vMYV/T6tQqNIyOeB5E8EU2NdyMCFFuta5OW5BT9Z22d+3h6d9P5htFUaOQ7
+ g9PIQ4BXNsxvZNrf0LaFFr90P/Pze+7MuQHAEFoGRYYsxjj4ayuy8vEFT2yQ7nicf6zQ
+ l/uHFwcjv8BbfOYi3CdgcSd+CJnS4W/zc4Xuwy4gJxLHzVNgTdQfg4Ifzr/sam0x8/vd
+ QJeg==
+X-Gm-Message-State: AOJu0YwK07MxZ3ugtoJIrbYeuZsIe8wArkOs2+Rpcsu1kh9+asJGpTHt
+ 3gcv+ctoZwVZG3svRYySGbe5Jhi/xp6L70QT6Uiyhz6orOANTuSQeQI0VGv2d5rro2g=
+X-Gm-Gg: ATEYQzwmWgbnse2CoaLxHSf7s93hv13vcJ0WnfAT6VeZxIvLLLlsepNtcOdhTtbZ6RF
+ W2kgjyrKZX0PAy4W5pqeR1YKJ7qMOZYtTsB8K0ndC6P7pWk7WG6mTYIP2okhsRtnI4LxhWeATzw
+ 0Uci7/Gv5Xfx6tC5LzGlrYDmpwEym7F8gKN/vZ/0kc1ap7z9lFy5ktDK0yanq/pRtiqzWf1oqHA
+ JE3fbf15r+QK9xWupPO7SI80E49L9Bd/8JBgBKQw3YXg+itab3SJTRmdjzTSXftyd13QH4jUo/4
+ hMDkYShOAAF5dTe3KXBApR2pTyI3Kg/VmqTqPc3KqIGXUhiaCX4a/3JmcuCKiDpUdczmduxlCHS
+ GYsBY9tzyAuy4MDZiFA71+LvSzovUYEWASd/w+w+j48kxRQtWwySP7SWtWlO+ln224djcM0Wg4X
+ O1lFRvB8xzOqSN/72apUpqACUi8C5ZwfB8rVURFvvy8Axj3+loGzG209/3QbWviREj
+X-Received: by 2002:a05:7301:6084:b0:2ba:9835:112d with SMTP id
+ 5a478bee46e88-2bde1b4e170mr2869755eec.3.1772298219310; 
+ Sat, 28 Feb 2026 09:03:39 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2bdd1cf0045sm5715637eec.11.2026.02.28.09.03.38
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 28 Feb 2026 09:03:39 -0800 (PST)
+Date: Sat, 28 Feb 2026 09:03:35 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Long Li <longli@microsoft.com>
+Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, stable@dpdk.org, Dariusz
+ Sosnowski <dsosnowski@nvidia.com>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: Re: [PATCH v5 0/7] multi-process and VF hotplug fixes
+Message-ID: <20260228090335.222ffa79@phoenix.local>
+In-Reply-To: <20260227015928.14338-1-longli@microsoft.com>
+References: <20260227015928.14338-1-longli@microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CE:EE_|CH2PR12MB4312:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7a7a6500-e21c-484a-957c-08de76df0913
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|36860700013|1800799024|82310400026|376014; 
-X-Microsoft-Antispam-Message-Info: JXm3rDmc2t1lcaBFo7sMkTJI4O6O6caTV4DhhXdoi9qR4b/2ecdXsX87OEIkwP5aHcvZoooz8BRkdBjBbFCvlUpkkPC/YCcJNpIg520fEKqqMZxK8Pgm6adVEPvC6NQtal0Y2LEtidh1W0Z3pTsJzgDt5DpHqmhocnP4ulLsEmjfztmykUzHQoqW2s0SfSsYj1FPp61VZeX9P7/kBuJomLVSj7C+OYUhV3FbHUKM8qN5tQQdaRPKEio+GrOTVSPjCTYmkugIY2mbRS7GlETiAdu4wnIDlTgg9FQr+9ecksS9t+p5z0fceXLQHshJgktquMHNMUV2NdqtcEk8uMcqge5bH8fOMvJl71NMGDnYDwK2ixTmK0FP/+GJgoNN1SbCjS1DpiYiakqTF5/5H3WAjrmOzgD9mgSM7i4+uayBdGj7NjwNv+EIkwMZhmRCy5mm4qLAstV6K9RcEf4BVj5SrH4wyDEFoddEkBuwjv/3aqbePfZC5lbhoy0jkVIBExVVVabQAP8JwrXwU3Jxq/qtc3zeW/qZJ9yjoSNjyz6Sr4DJ3RTAIj1hGrYOUSSv+/yYHaL4HcA/s9/oLTRUaPs8Oo2w+8Z9x7ui/xMqdDibKk+HEw8p8AvSsgYlj6QueSFr/LDob0lGZw1NvFj8Kt/jJMlGY2Yx0WBJV3h9ss/eUacbfiPC6HWh9Qsx7hqQDYfH1zMxhQ/tzRH8k6/TOmI3XkcEF8wN+a0SJ88+zz+kTTjru6SfrVa5Fc5jAifPzPoBkbPvl7tABqVFOvwFgLBfY3+1XdGdT4UPAauh+/hth1zqlT6lZmzLu5xB2v4IMNxzUZL6ciJNllfrpmwu+mIU7Q==
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014); DIR:OUT;
- SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: mM3y0UJ02si+C2QVitFZpJASgLB5mLzb6jpY/rUCkHvfVon5tVgq8QpP7RN9tBNt/N3TkQMm8NRvaXEmgSpk0nZryPpCGULDOrVbqozWEKufSRW4jN2SZ1IYTv1ng6WujI9cpT+SF1zgaz3mRnD5vDNkn3/7h8Yvs+/6p2sPXyjkEdB0Dn3tajD8eO7LOEhQKlsxNNNUloeIN3vlbRP6PQ/jDBUtae3o7exavrwcMpBBz6wd0ES3keoEgs7l2K7MRI57muuSviRY0K6s1RO4EKb2bEVicLQWFI8bjGp/ds5dZKnDg5inV5KiMxTLb3BS7raPw45aN7OEZJaIH9mEQioQaOSqBEKN6w9a2AaYXoxOJ6aPY+AYeeYmZXo1c1EjS18X+f/UQnK5luUY2bPMEnUMSzvnkd9B+HAD6rl+rh2bFfC9Gkp8IY9WPJUJdYwk
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2026 15:35:43.3984 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a7a6500-e21c-484a-957c-08de76df0913
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000023CE.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4312
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -104,66 +83,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In SGMII 100M mode, set MAC speed to 100M instead of 1G,
-and add the PHY implementation for SGMII 100 mode.
+On Thu, 26 Feb 2026 17:59:20 -0800
+Long Li <longli@microsoft.com> wrote:
 
-Fixes: a5c7273771e8 ("net/axgbe: add phy programming APIs")
-Cc: stable@dpdk.org
+> Fix several issues with VF hotplug and multi-process support in
+> netvsc, mana, mlx5, and mlx4 drivers:
+> 
+> - Fix race conditions between VSP notifications and DPDK device events
+>   during VF add/remove, with proper locking of VF-related fields
+> - Add multi-process communication infrastructure for coordinating VF
+>   removal across primary and secondary processes
+> - Fix Protection Domain resource leak on device close in mana
+> - Fix devargs memory leak during VF hotplug in netvsc
+> - Fix fast-path ops (rte_eth_fp_ops) setup in secondary processes for
+>   mana, mlx5, and mlx4, ensuring burst function pointers are restored
+>   after STOP->START cycles
+> 
+> v5:
+> - Patches 5,6,7: Also restore rte_eth_fp_ops burst function pointers
+>   (rx_pkt_burst, tx_pkt_burst) in START_RXTX handler, not just queue
+>   data pointers. Without this, after a STOP->START cycle the secondary
+>   process burst pointers remain set to dummy functions.
+> 
+> v4:
+> - Patch 1: Check hn_vf_add() return value in netvsc_hotplug_retry
+> - Patch 1: Track fresh_attach to avoid tearing down original VF
+>   attachment when configure/start fails on an -EEXIST path
+> - Patch 2: Move counter decrement and netvsc_uninit_once() after device
+>   cleanup in eth_hn_remove() to prevent use-after-free of shared data
+> - Patch 2: Clear netvsc_shared_data on init failure paths to prevent
+>   dangling pointer
+> 
+> v3:
+> - Fix review comments from v2
+> 
+> v2:
+> - Initial rework of VF add/remove locking
+> 
+> Long Li (7):
+>   net/netvsc: fix race conditions on VF add/remove events
+>   net/netvsc: add multi-process VF device removal support
+>   net/mana: fix PD resource leak on device close
+>   net/netvsc: fix devargs memory leak on hotplug
+>   net/mana: fix fast-path ops setup in secondary process
+>   net/mlx5: fix fast-path ops setup in secondary process
+>   net/mlx4: fix fast-path ops setup in secondary process
+> 
+>  drivers/net/mana/mana.c             |  14 ++
+>  drivers/net/mana/mp.c               |   8 +
+>  drivers/net/mlx4/mlx4_mp.c          |   6 +
+>  drivers/net/mlx5/linux/mlx5_mp_os.c |   6 +
+>  drivers/net/netvsc/hn_ethdev.c      | 300 +++++++++++++++++++++++++++-
+>  drivers/net/netvsc/hn_nvs.h         |   6 +
+>  drivers/net/netvsc/hn_rxtx.c        |  40 ++--
+>  drivers/net/netvsc/hn_var.h         |   1 +
+>  drivers/net/netvsc/hn_vf.c          | 148 ++++++++------
+>  9 files changed, 437 insertions(+), 92 deletions(-)
 
-Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
----
- drivers/net/axgbe/axgbe_mdio.c     |  4 ++--
- drivers/net/axgbe/axgbe_phy_impl.c | 15 +++++++++++++++
- 2 files changed, 17 insertions(+), 2 deletions(-)
+Applied to next-net.
+The SHA hashes of those fixes tags was off; fixed them by
+matching on the subject.
 
-diff --git a/drivers/net/axgbe/axgbe_mdio.c b/drivers/net/axgbe/axgbe_mdio.c
-index 952a0add62..a37cd8b80d 100644
---- a/drivers/net/axgbe/axgbe_mdio.c
-+++ b/drivers/net/axgbe/axgbe_mdio.c
-@@ -155,8 +155,8 @@ static void axgbe_sgmii_10_mode(struct axgbe_port *pdata)
- static void axgbe_sgmii_100_mode(struct axgbe_port *pdata)
- {
- 
--	/* Set MAC to 1G speed */
--	pdata->hw_if.set_speed(pdata, SPEED_1000);
-+	/* Set MAC to 100M speed */
-+	pdata->hw_if.set_speed(pdata, SPEED_100);
- 
- 	/* Call PHY implementation support to complete rate change */
- 	pdata->phy_if.phy_impl.set_mode(pdata, AXGBE_MODE_SGMII_100);
-diff --git a/drivers/net/axgbe/axgbe_phy_impl.c b/drivers/net/axgbe/axgbe_phy_impl.c
-index e180fd28e1..369d766884 100644
---- a/drivers/net/axgbe/axgbe_phy_impl.c
-+++ b/drivers/net/axgbe/axgbe_phy_impl.c
-@@ -1643,6 +1643,18 @@ static void axgbe_phy_sgmii_1000_mode(struct axgbe_port *pdata)
- 	phy_data->cur_mode = AXGBE_MODE_SGMII_1000;
- }
- 
-+static void axgbe_phy_sgmii_100_mode(struct axgbe_port *pdata)
-+{
-+	struct axgbe_phy_data *phy_data = pdata->phy_data;
-+
-+	axgbe_phy_set_redrv_mode(pdata);
-+
-+	/* 100M/SGMII */
-+	axgbe_phy_perform_ratechange(pdata, AXGBE_MB_CMD_SET_1G, AXGBE_MB_SUBCMD_100MBITS);
-+
-+	phy_data->cur_mode = AXGBE_MODE_SGMII_100;
-+}
-+
- static void axgbe_phy_sgmii_10_mode(struct axgbe_port *pdata)
- {
- 	struct axgbe_phy_data *phy_data = pdata->phy_data;
-@@ -1840,6 +1852,9 @@ static void axgbe_phy_set_mode(struct axgbe_port *pdata, enum axgbe_mode mode)
- 	case AXGBE_MODE_SGMII_1000:
- 		axgbe_phy_sgmii_1000_mode(pdata);
- 		break;
-+	case AXGBE_MODE_SGMII_100:
-+		axgbe_phy_sgmii_100_mode(pdata);
-+		break;
- 	case AXGBE_MODE_SGMII_10:
- 		axgbe_phy_sgmii_10_mode(pdata);
- 		break;
--- 
-2.34.1
+Also fixed a couple checkpatch warnings for:
+
+CHECK:OPEN_ENDED_LINE: Lines should not end with a '('
+#295: FILE: drivers/net/netvsc/hn_ethdev.c:1763:
++			rte_atomic_fetch_add_explicit(
 
