@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F580FD0049
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Mar 2026 02:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F77FD0049
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Mar 2026 02:09:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A5F4140E42;
-	Sun,  1 Mar 2026 03:07:53 +0100 (CET)
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com
- [209.85.222.172])
- by mails.dpdk.org (Postfix) with ESMTP id 997D440E3A
- for <dev@dpdk.org>; Sun,  1 Mar 2026 03:07:49 +0100 (CET)
-Received: by mail-qk1-f172.google.com with SMTP id
- af79cd13be357-8cb38e6d164so436258985a.3
- for <dev@dpdk.org>; Sat, 28 Feb 2026 18:07:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id DD1F540E48;
+	Sun,  1 Mar 2026 03:07:54 +0100 (CET)
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com
+ [209.85.222.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 9556640E34
+ for <dev@dpdk.org>; Sun,  1 Mar 2026 03:07:50 +0100 (CET)
+Received: by mail-qk1-f181.google.com with SMTP id
+ af79cd13be357-8cbb2329e7eso360121085a.0
+ for <dev@dpdk.org>; Sat, 28 Feb 2026 18:07:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772330869;
- x=1772935669; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772330870;
+ x=1772935670; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=m3BSEcyAE4hAH0DHyYFANof64fCIUYZ7CWr6++MfuSk=;
- b=2Jpg4iM1vk85Z9y6crjnonx0P+vxMD96vOgft1mWYbITL6SIzYwXdUyQT50W0rkmPl
- zzZbx2UXgMUMRpfduQSBj6kQ7lSeur+3OOgGtfAZcOPl9ogNYnvBY9nGb7VcviX9458Y
- 0mKbDwo2FMBtQqY2KEynvMHGWkfyeaWLBspW8ZUhnCiVrT2FxBfWlGX4F4q3O/kBLzoB
- bL5RMN80YzoTdfoqsCEbwgsRZOaIiX9qRgNnlMH0Uf8OcKU4xx7simbrg2hWA4ehdHoh
- E0pXqYHK/sGucmWMAi2+2K7xjGiRnj8UN/9dxYkFlW32qoQgjOCQ7oRlGiyjRP3znIyH
- IEvg==
+ bh=Xt6cHLcLIwjxZ/iBj0ykKyHlF0K/nocYWmqJGmqWBZg=;
+ b=ThCP+HwM+G0xlf1NZhxbnT/knlAtOwzaaDoWKwFkk/DESYH4lGauCbJYHqUlNYDfuD
+ izZnYpMS9nafN8iYLRojCZ9KAASZ2/TyL7Ti24iZ6Op+Z3TI05tlGI0dD9fJ0U7s8ls8
+ O/JcX1TZT3qBbBYE6ppsgMfWmTxUwyft0GeoFY8807XChiBo6J+HnyrPL8m0U2rf7R6r
+ 6V5nJJFJa1AyJQpv3bSDMeaZLJu+1HA8rGZpnzJmMf9BCfdrHXvsVjTF4YRIJvedUS3V
+ DiVZVkDnWihaI85scVOR6hUkB2JlgKVy7lednjS5Oy455okx+8spenOOysmAPyl6sybp
+ qOxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772330869; x=1772935669;
+ d=1e100.net; s=20230601; t=1772330870; x=1772935670;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=m3BSEcyAE4hAH0DHyYFANof64fCIUYZ7CWr6++MfuSk=;
- b=Y16homP7/HtmGbrCKt81HiovoFtX1zHnvDjDo2ZnW6C6QZwPgYwBJVXJ3adVI30OCV
- BfUHZEvXh1g/qXYj4Sh4L8QaZ2eZAe/0JYI0zThmF/ebRwUorPdcyA0G4TCcfLsRRYyd
- mZft2JBsRWl5XMtAxi6S3Q59MwDxDX32QOQFZPdfIf5pitRyVtok+LddBWpPbNvPOVnN
- rUcZzyY/63l1w6lwKOAXFrw8UXczns4V4OtIEI/bXmpjF5UEpSMkPQ5AZ9w41MF261wR
- noHu8yljHnFMQY3qZ2pZiuUyGrc4HFak6Y/uSJmjIEksUDeSoYl3TsPjMb3uQHd/WmMU
- 1OtQ==
-X-Gm-Message-State: AOJu0YxG2hYxB3LB4qiUp82/xErRCAEr+WWssHXbwtWDqBBX5sNPEZkw
- SUaWVUOdlvb+3a5puFUtnw5G7m4YJmC4qcj6TtwywvdvTYHddvuhRl4ihyEifbIvUHEu5xBL+Y1
- nHi8i
-X-Gm-Gg: ATEYQzx8OGgen4sjShnaqG/bvDKkwmwWuelWUvi80PaDYpRrlk1g4ZNLryY2mnQAGlb
- vYPjDpKMljtEf0OKcI8TUolKFf5UjpZVWjZeRgs96qEXZxMo06mZz8YQlO/uJPlv3ICKeI7TL5h
- sQP8r1B17pVN/ExmHqjH5Xm6Ya3DasoQaCCvGMp4yv0aBXe9W2HJ+blnNNi9e28zGf6H47JdZBD
- G56G+1y9zy9OSEjGI42CJD6yK01qvvqXLT0s4jL6IFqKiDhAxiPKngzghl5H1TLLj8+/K56rPIn
- GYAnKC+R81MIiGIXV0oD3tHbCsjsLrLGBnDZxoXpl0WGmNJq81Dn4fb9Cj/ZqGz+M0nL3eMR8wV
- 33X8bSQYggDJWDfFxYZQyq2OSrd+Qm921k65B6qYdvIuYnb3JIGMApT2D9OAYegxWb7uMemtfQ2
- gdr8oSX51Yh6tR2zXkOsiKJL85fxlNW4OL5rwdtEMFYMTxfUUm5m5rxsW3u1Oj1Q==
-X-Received: by 2002:a05:620a:171e:b0:8ca:1107:1215 with SMTP id
- af79cd13be357-8cbc8dc499bmr862435485a.9.1772330868724; 
- Sat, 28 Feb 2026 18:07:48 -0800 (PST)
+ bh=Xt6cHLcLIwjxZ/iBj0ykKyHlF0K/nocYWmqJGmqWBZg=;
+ b=gfYreMOSJ7u2CH5Rgy3iH3o/hpRo8/nzvlm7NM2WX6QJ2rWV/fYQVoinb6V7TX+6fn
+ SjQkW+o6QMKuEHdLM/X3fVzhsOyxSU2hbyUptrIwm5MaanqMao7OuVFXm3zvHCrtjhX+
+ HRdvFAOLpl85mtGYFAh3X/dbPDFvn6o1mzLOgXwLhtx9Rsami9jmg7XPjBDDx9VUv9CJ
+ tZ0MJOpgMf/0YvGOeZgr6TGNsycUakqqK7k0T+oVE7jN7/a4Jm/qn2RsObtoomGQAnND
+ efc3yG7qgN86osvhIdEND0j4GUXuv9UovY/q6PMs61yyEvoqJPgS8GqaAl26SU+N18vH
+ /YxA==
+X-Gm-Message-State: AOJu0Yy5KmJJufIwUY9C96yfDr0XsYRwTDrK4IiZxdr8LzgNEMOXPz3b
+ lB4VMecSeV6JjRoO45szWwPLC2yyglQleRP5Dgl+DDwThiW+aCiGZtRxufMluhV3JzbkcuLKa6K
+ tzb8t
+X-Gm-Gg: ATEYQzyTlzBQvvIrQ/k5cwJt1t2DCVAEszuINfaJ6Hx19MdaFflbX2DKFAIED5kyXbL
+ HQXQi/j2xYRcsIfd0ex9a1Qou8GgkuGnItNnOX0/ehO7/RQcWhaz3pZGsjl93cViFQPqDpKYxKS
+ ZuyZypkJvJ1ITPUafwVLFT7whdTfGZYk/3p6yprNm1xAMi02jQQfDHqmneV0Q1IuUEK5SoacNG9
+ q4t1v4CyT05REzHbRKSilxwSWvEUoaonQqu5eO+Bkkwz6Yu5ewR5IxdzT2h9Qd9npxQCsByoguA
+ kfwFF882ltTdazfql36O9B89kXXboPYlU1liagsjghYkhH0izL2B9L01RyREydrS057tgmN7QbZ
+ Rdmekkqom5IEilt28Q7emVAIho1bvctc36/Xr/qpWJgVrdzsV0uyVsIr76IBqvR8XNZY3DEr03b
+ Cbj0rbRIacygavw4upCzGLqiNwxgyRGRo0GLiTgVsgT2TIw6sFGqoUV7T+imi79Q==
+X-Received: by 2002:a05:620a:4503:b0:8ca:2baa:6656 with SMTP id
+ af79cd13be357-8cbc8e64bc4mr1130729585a.55.1772330869841; 
+ Sat, 28 Feb 2026 18:07:49 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cbbf736bffsm802292985a.50.2026.02.28.18.07.47
+ af79cd13be357-8cbbf736bffsm802292985a.50.2026.02.28.18.07.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 28 Feb 2026 18:07:48 -0800 (PST)
+ Sat, 28 Feb 2026 18:07:49 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v18 13/23] net/pcap: add link status for interface mode
-Date: Sat, 28 Feb 2026 18:05:46 -0800
-Message-ID: <20260301020726.852401-14-stephen@networkplumber.org>
+Subject: [PATCH v18 14/23] net/pcap: support nanosecond timestamp precision
+Date: Sat, 28 Feb 2026 18:05:47 -0800
+Message-ID: <20260301020726.852401-15-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260301020726.852401-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -82,317 +82,347 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the PCAP PMD is used in pass-through mode with a physical
-interface (iface=X), the link status was always reported with
-hardcoded values regardless of the actual interface state.
+Enable nanosecond-precision timestamps for both live capture and pcap
+file reading.
 
-Add OS-dependent function to query the real link state from
-the underlying interface.
+Replace pcap_open_live() with the pcap_create()/pcap_activate() API,
+which allows setting PCAP_TSTAMP_PRECISION_NANO before
+activation. Similarly, use pcap_open_offline_with_tstamp_precision()
+for reading pcap files. The pcap_pkthdr timestamp field, despite being
+declared as struct timeval, actually contains nanoseconds (not
+microseconds) when nanosecond precision is requested.
 
-Linux and FreeBSD use SIOCGIFFLAGS to check IFF_UP and
-IFF_RUNNING. Windows uses GetAdaptersAddresses() to check
-OperStatus.
+Make receive timestamp offloading conditional: timestamps are now only
+written to the mbuf dynamic field when RTE_ETH_RX_OFFLOAD_TIMESTAMP is
+enabled. Previously, timestamps were unconditionally added to every
+received packet.
+
+Other related changes:
+* Add read_clock dev_op returning current UTC time for timestamp
+  correlation.
+* Move per-burst timestamp calculation outside the packet loop in
+  tx_dumper.
+* Enable immediate mode and improve error reporting
+  in live capture setup.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- doc/guides/rel_notes/release_26_03.rst |  1 +
- drivers/net/pcap/pcap_ethdev.c         | 38 +++++++++-----
- drivers/net/pcap/pcap_osdep.h          | 12 +++++
- drivers/net/pcap/pcap_osdep_freebsd.c  | 31 ++++++++++++
- drivers/net/pcap/pcap_osdep_linux.c    | 27 ++++++++++
- drivers/net/pcap/pcap_osdep_windows.c  | 68 +++++++++++++++++++++-----
- 6 files changed, 154 insertions(+), 23 deletions(-)
+ doc/guides/nics/pcap.rst               |   3 +
+ doc/guides/rel_notes/release_26_03.rst |   1 +
+ drivers/net/pcap/pcap_ethdev.c         | 156 +++++++++++++++++++------
+ 3 files changed, 126 insertions(+), 34 deletions(-)
 
+diff --git a/doc/guides/nics/pcap.rst b/doc/guides/nics/pcap.rst
+index bed5006a42..2709c6d017 100644
+--- a/doc/guides/nics/pcap.rst
++++ b/doc/guides/nics/pcap.rst
+@@ -258,3 +258,6 @@ Features and Limitations
+ *  The PMD will transparently insert a VLAN tag to transmitted packets if
+    ``RTE_ETH_TX_OFFLOAD_VLAN_INSERT`` is enabled and the mbuf has ``RTE_MBUF_F_TX_VLAN``
+    set.
++
++*  The PMD will insert the pcap header packet timestamp with nanoseconds resolution and
++   UNIX origin, i.e. time since 1-JAN-1970 UTC, if ``RTE_ETH_RX_OFFLOAD_TIMESTAMP`` is enabled.
 diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 63f554878d..f117c4975e 100644
+index f117c4975e..494cd78f9f 100644
 --- a/doc/guides/rel_notes/release_26_03.rst
 +++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -109,6 +109,7 @@ New Features
- * **Updated PCAP ethernet driver.**
+@@ -110,6 +110,7 @@ New Features
  
    * Added support for VLAN insertion and stripping.
-+  * Added support for reporting link state in ``iface`` mode.
+   * Added support for reporting link state in ``iface`` mode.
++  * Receive timestamps support nanosecond precision.
  
  
  Removed Items
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index f1f148ce3a..86e0380536 100644
+index 86e0380536..f14a7d93dd 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -150,13 +150,6 @@ static const char *valid_arguments[] = {
- 	NULL
- };
- 
--static struct rte_eth_link pmd_link = {
--		.link_speed = RTE_ETH_SPEED_NUM_10G,
--		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
--		.link_status = RTE_ETH_LINK_DOWN,
--		.link_autoneg = RTE_ETH_LINK_FIXED,
--};
--
- RTE_LOG_REGISTER_DEFAULT(eth_pcap_logtype, NOTICE);
- 
- static struct queue_missed_stat*
-@@ -952,10 +945,28 @@ eth_dev_close(struct rte_eth_dev *dev)
- }
- 
- static int
--eth_link_update(struct rte_eth_dev *dev __rte_unused,
--		int wait_to_complete __rte_unused)
-+eth_link_update(struct rte_eth_dev *dev, int wait_to_complete __rte_unused)
- {
--	return 0;
-+	struct pmd_internals *internals = dev->data->dev_private;
-+	struct rte_eth_link link = {
-+		.link_speed = RTE_ETH_SPEED_NUM_10G,
-+		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
-+		.link_autoneg = RTE_ETH_LINK_FIXED,
-+	};
-+
-+	/*
-+	 * For pass-through mode (single_iface), query whether the
-+	 * underlying interface is up. Otherwise use default values.
-+	 */
-+	if (internals->single_iface) {
-+		link.link_status = (osdep_iface_link_status(internals->rx_queue[0].name) > 0) ?
-+			RTE_ETH_LINK_UP : RTE_ETH_LINK_DOWN;
-+	} else {
-+		link.link_status = dev->data->dev_started ?
-+			RTE_ETH_LINK_UP : RTE_ETH_LINK_DOWN;
-+	}
-+
-+	return rte_eth_linkstatus_set(dev, &link);
- }
- 
- static int
-@@ -1370,7 +1381,12 @@ pmd_init_internals(struct rte_vdev_device *vdev,
- 	data = (*eth_dev)->data;
- 	data->nb_rx_queues = (uint16_t)nb_rx_queues;
- 	data->nb_tx_queues = (uint16_t)nb_tx_queues;
--	data->dev_link = pmd_link;
-+	data->dev_link = (struct rte_eth_link) {
-+		.link_speed = RTE_ETH_SPEED_NUM_NONE,
-+		.link_duplex = RTE_ETH_LINK_FULL_DUPLEX,
-+		.link_status = RTE_ETH_LINK_DOWN,
-+		.link_autoneg = RTE_ETH_LINK_FIXED,
-+	};
- 	data->mac_addrs = &(*internals)->eth_addr;
- 	data->promiscuous = 1;
- 	data->all_multicast = 1;
-diff --git a/drivers/net/pcap/pcap_osdep.h b/drivers/net/pcap/pcap_osdep.h
-index fe7399ff9f..18e63c6f2b 100644
---- a/drivers/net/pcap/pcap_osdep.h
-+++ b/drivers/net/pcap/pcap_osdep.h
-@@ -10,6 +10,7 @@
- 
- #define PMD_LOG(level, ...) \
- 	RTE_LOG_LINE_PREFIX(level, ETH_PCAP, "%s(): ", __func__, __VA_ARGS__)
-+
- extern int eth_pcap_logtype;
- #define RTE_LOGTYPE_ETH_PCAP eth_pcap_logtype
- 
-@@ -30,4 +31,15 @@ extern int eth_pcap_logtype;
- int osdep_iface_index_get(const char *name);
- int osdep_iface_mac_get(const char *name, struct rte_ether_addr *mac);
- 
-+/**
-+ * Get link status for a network interface.
-+ *
-+ * @param name
-+ *   Interface name (e.g., "eth0" on Linux, "{GUID}" on Windows).
-+ * @return
-+ *   1 if link is up, 0 if link is down, -1 on error.
-+ */
-+int osdep_iface_link_status(const char *name);
-+
-+
- #endif
-diff --git a/drivers/net/pcap/pcap_osdep_freebsd.c b/drivers/net/pcap/pcap_osdep_freebsd.c
-index 0185665f0b..9c4186aadc 100644
---- a/drivers/net/pcap/pcap_osdep_freebsd.c
-+++ b/drivers/net/pcap/pcap_osdep_freebsd.c
-@@ -5,8 +5,13 @@
-  */
- 
- #include <string.h>
-+#include <stdlib.h>
-+#include <unistd.h>
- #include <net/if.h>
- #include <net/if_dl.h>
-+#include <net/if_media.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
- #include <sys/sysctl.h>
+@@ -27,13 +27,11 @@
+ #include <rte_mbuf_dyn.h>
+ #include <bus_vdev_driver.h>
+ #include <rte_os_shim.h>
++#include <rte_time.h>
  
  #include "pcap_osdep.h"
-@@ -55,3 +60,29 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
- 	free(buf);
- 	return 0;
- }
-+
-+int
-+osdep_iface_link_status(const char *if_name)
-+{
-+	struct ifmediareq ifmr;
-+	int fd, status = 0;
-+
-+	fd = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (fd == -1)
-+		return -1;
-+
-+	memset(&ifmr, 0, sizeof(ifmr));
-+	strlcpy(ifmr.ifm_name, if_name, sizeof(ifmr.ifm_name));
-+
-+	if (ioctl(fd, SIOCGIFMEDIA, &ifmr) == 0) {
-+		/* IFM_AVALID means status is valid, IFM_ACTIVE means link up */
-+		if ((ifmr.ifm_status & IFM_AVALID) &&
-+		    (ifmr.ifm_status & IFM_ACTIVE))
-+			status = 1;
-+	} else {
-+		status = -1;
-+	}
-+
-+	close(fd);
-+	return status;
-+}
-diff --git a/drivers/net/pcap/pcap_osdep_linux.c b/drivers/net/pcap/pcap_osdep_linux.c
-index df976417cb..f61b7bd146 100644
---- a/drivers/net/pcap/pcap_osdep_linux.c
-+++ b/drivers/net/pcap/pcap_osdep_linux.c
-@@ -40,3 +40,30 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
- 	close(if_fd);
- 	return 0;
- }
-+
-+int
-+osdep_iface_link_status(const char *if_name)
-+{
-+	struct ifreq ifr;
-+	int fd, status = 0;
-+
-+	fd = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (fd == -1)
-+		return -1;
-+
-+	rte_strscpy(ifr.ifr_name, if_name, sizeof(ifr.ifr_name));
-+	if (ioctl(fd, SIOCGIFFLAGS, &ifr) == 0) {
-+		/*
-+		 * IFF_UP means administratively up.
-+		 * IFF_RUNNING means operationally up (carrier detected).
-+		 * Both must be set for link to be considered up.
-+		 */
-+		if ((ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING))
-+			status = 1;
-+	} else {
-+		status = -1;
-+	}
-+
-+	close(fd);
-+	return status;
-+}
-diff --git a/drivers/net/pcap/pcap_osdep_windows.c b/drivers/net/pcap/pcap_osdep_windows.c
-index 0965c2f5c9..e7a49c47e0 100644
---- a/drivers/net/pcap/pcap_osdep_windows.c
-+++ b/drivers/net/pcap/pcap_osdep_windows.c
-@@ -61,38 +61,56 @@ osdep_iface_index_get(const char *device_name)
- }
  
- /*
-- * libpcap takes device names like "\Device\NPF_{GUID}",
-- * GetAdaptersAddresses() returns names in "{GUID}" form.
-- * Try to extract GUID from device name, fall back to original device name.
-+ * Helper function to get adapter information by name.
-+ * Returns adapter info on success, NULL on failure.
-+ * Caller must free the returned buffer.
-  */
--int
--osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
-+static IP_ADAPTER_ADDRESSES *
-+get_adapter_addresses(void)
- {
--	IP_ADAPTER_ADDRESSES *info = NULL, *cur = NULL;
--	ULONG size, sys_ret;
--	const char *adapter_name;
--	int ret = -1;
-+	IP_ADAPTER_ADDRESSES *info = NULL;
-+	ULONG size;
-+	DWORD sys_ret;
+ #define RTE_ETH_PCAP_SNAPSHOT_LEN 65535
+-#define RTE_ETH_PCAP_SNAPLEN RTE_ETHER_MAX_JUMBO_FRAME_LEN
+-#define RTE_ETH_PCAP_PROMISC 1
+-#define RTE_ETH_PCAP_TIMEOUT -1
  
- 	sys_ret = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, NULL, &size);
- 	if (sys_ret != ERROR_BUFFER_OVERFLOW) {
- 		PMD_LOG(ERR, "GetAdapterAddresses() = %lu, expected %lu",
- 			sys_ret, ERROR_BUFFER_OVERFLOW);
--		return -1;
-+		return NULL;
- 	}
+ #define ETH_PCAP_RX_PCAP_ARG  "rx_pcap"
+ #define ETH_PCAP_TX_PCAP_ARG  "tx_pcap"
+@@ -77,6 +75,7 @@ struct pcap_rx_queue {
+ 	uint16_t port_id;
+ 	uint16_t queue_id;
+ 	bool vlan_strip;
++	bool timestamp_offloading;
+ 	struct rte_mempool *mb_pool;
+ 	struct queue_stat rx_stat;
+ 	struct queue_missed_stat missed_stat;
+@@ -108,6 +107,7 @@ struct pmd_internals {
+ 	bool phy_mac;
+ 	bool infinite_rx;
+ 	bool vlan_strip;
++	bool timestamp_offloading;
+ };
  
- 	info = (IP_ADAPTER_ADDRESSES *)malloc(size);
- 	if (info == NULL) {
- 		PMD_LOG(ERR, "Cannot allocate adapter address info");
--		return -1;
-+		return NULL;
- 	}
+ struct pmd_process_private {
+@@ -269,6 +269,15 @@ eth_pcap_rx_infinite(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		if (pcap_q->vlan_strip)
+ 			rte_vlan_strip(bufs[i]);
  
- 	sys_ret = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, info, &size);
- 	if (sys_ret != ERROR_SUCCESS) {
- 		PMD_LOG(ERR, "GetAdapterAddresses() = %lu", sys_ret);
- 		free(info);
--		return -1;
-+		return NULL;
- 	}
- 
-+	return info;
-+}
++		if (pcap_q->timestamp_offloading) {
++			struct timespec ts;
 +
-+/*
-+ * libpcap takes device names like "\Device\NPF_{GUID}",
-+ * GetAdaptersAddresses() returns names in "{GUID}" form.
-+ * Try to extract GUID from device name, fall back to original device name.
-+ */
-+int
-+osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
-+{
-+	IP_ADAPTER_ADDRESSES *info = NULL, *cur = NULL;
-+	const char *adapter_name;
-+	int ret = -1;
-+
-+	info = get_adapter_addresses();
-+	if (info == NULL)
-+		return -1;
-+
- 	adapter_name = iface_guid(device_name);
- 	if (adapter_name == NULL)
- 		adapter_name = device_name;
-@@ -116,3 +134,29 @@ osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
- 	free(info);
- 	return ret;
- }
-+
-+int
-+osdep_iface_link_status(const char *device_name)
-+{
-+	IP_ADAPTER_ADDRESSES *info, *cur;
-+	const char *adapter_name;
-+	int ret = -1;
-+
-+	info = get_adapter_addresses();
-+	if (info == NULL)
-+		return -1;
-+
-+	adapter_name = iface_guid(device_name);
-+	if (adapter_name == NULL)
-+		adapter_name = device_name;
-+
-+	for (cur = info; cur != NULL; cur = cur->Next) {
-+		if (strcmp(cur->AdapterName, adapter_name) == 0) {
-+			ret = (cur->OperStatus == IfOperStatusUp) ? 1 : 0;
-+			break;
++			timespec_get(&ts, TIME_UTC);
++			*RTE_MBUF_DYNFIELD(bufs[i], timestamp_dynfield_offset,
++					   rte_mbuf_timestamp_t *) = rte_timespec_to_ns(&ts);
++			bufs[i]->ol_flags |= timestamp_rx_dynflag;
 +		}
++
+ 		rx_bytes += bufs[i]->data_len;
+ 
+ 		/* Enqueue packet back on ring to allow infinite rx. */
+@@ -339,10 +348,21 @@ eth_pcap_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		if (pcap_q->vlan_strip)
+ 			rte_vlan_strip(mbuf);
+ 
+-		uint64_t us = (uint64_t)header->ts.tv_sec * US_PER_S + header->ts.tv_usec;
++		if (pcap_q->timestamp_offloading) {
++			/*
++			 * The use of tv_usec as nanoseconds is not a bug here.
++			 * Interface is always created with nanosecond precision, and
++			 * that is how pcap API bodged in nanoseconds support.
++			 */
++			uint64_t ns = (uint64_t)header->ts.tv_sec * NSEC_PER_SEC
++				+  header->ts.tv_usec;
++
++			*RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset,
++					   rte_mbuf_timestamp_t *) = ns;
++
++			mbuf->ol_flags |= timestamp_rx_dynflag;
++		}
+ 
+-		*RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset, rte_mbuf_timestamp_t *) = us;
+-		mbuf->ol_flags |= timestamp_rx_dynflag;
+ 		mbuf->port = pcap_q->port_id;
+ 		bufs[num_rx] = mbuf;
+ 		num_rx++;
+@@ -362,14 +382,19 @@ eth_null_rx(void *queue __rte_unused,
+ 	return 0;
+ }
+ 
+-#define NSEC_PER_SEC	1000000000L
+-
+ /*
+- * This function stores nanoseconds in `tv_usec` field of `struct timeval`,
+- * because `ts` goes directly to nanosecond-precision dump.
++ * Calculate current timestamp in nanoseconds by computing
++ * offset from starting time value.
++ *
++ * Note: it is not a bug that this code is putting nanosecond
++ * value into microsecond timeval field. The pcap API is old
++ * and nanoseconds were bodged on as an after thought.
++ * As long as the pcap stream is set to nanosecond precision
++ * it expects nanoseconds here.
+  */
+ static inline void
+-calculate_timestamp(struct timeval *ts) {
++calculate_timestamp(struct timeval *ts)
++{
+ 	uint64_t cycles;
+ 	struct timespec cur_time;
+ 
+@@ -440,8 +465,10 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 	if (dumper == NULL || nb_pkts == 0)
+ 		return 0;
+ 
+-	/* writes the nb_pkts packets to the previously opened pcap file
+-	 * dumper */
++	/* all packets in burst have same timestamp */
++	calculate_timestamp(&header.ts);
++
++	/* writes the nb_pkts packets to the previously opened pcap file dumper */
+ 	for (i = 0; i < nb_pkts; i++) {
+ 		struct rte_mbuf *mbuf = bufs[i];
+ 		uint32_t len, caplen;
+@@ -450,8 +477,6 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		len = rte_pktmbuf_pkt_len(mbuf);
+ 		caplen = RTE_MIN(len, RTE_ETH_PCAP_SNAPSHOT_LEN);
+ 
+-		calculate_timestamp(&header.ts);
+-
+ 		header.len = len;
+ 		header.caplen = caplen;
+ 
+@@ -580,22 +605,62 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+  * pcap_open_live wrapper function
+  */
+ static inline int
+-open_iface_live(const char *iface, pcap_t **pcap) {
+-	*pcap = pcap_open_live(iface, RTE_ETH_PCAP_SNAPLEN,
+-			RTE_ETH_PCAP_PROMISC, RTE_ETH_PCAP_TIMEOUT, errbuf);
++open_iface_live(const char *iface, pcap_t **pcap)
++{
++	pcap_t *pc;
++	int status;
+ 
+-	if (*pcap == NULL) {
+-		PMD_LOG(ERR, "Couldn't open %s: %s", iface, errbuf);
+-		return -1;
++	pc = pcap_create(iface, errbuf);
++	if (pc == NULL) {
++		PMD_LOG(ERR, "Couldn't create %s: %s", iface, errbuf);
++		goto error;
 +	}
 +
-+	free(info);
-+	return ret;
++	status = pcap_set_tstamp_precision(pc, PCAP_TSTAMP_PRECISION_NANO);
++	if (status != 0) {
++		PMD_LOG(ERR, "%s: Could not set to ns precision: %s",
++			iface, pcap_statustostr(status));
++		goto error;
++	}
++
++	status = pcap_set_immediate_mode(pc, 1);
++	if (status != 0)
++		PMD_LOG(WARNING, "%s: Could not set to immediate mode: %s",
++			iface, pcap_statustostr(status));
++
++	status = pcap_set_promisc(pc, 1);
++	if (status != 0)
++		PMD_LOG(WARNING, "%s: Could not set to promiscuous: %s",
++			iface, pcap_statustostr(status));
++
++	status = pcap_set_snaplen(pc, RTE_ETH_PCAP_SNAPSHOT_LEN);
++	if (status != 0)
++		PMD_LOG(WARNING, "%s: Could not set snapshot length: %s",
++			iface, pcap_statustostr(status));
++
++	status = pcap_activate(pc);
++	if (status < 0) {
++		char *cp = pcap_geterr(pc);
++
++		if (status == PCAP_ERROR)
++			PMD_LOG(ERR, "%s: could not activate: %s", iface, cp);
++		else
++			PMD_LOG(ERR, "%s: %s (%s)", iface, pcap_statustostr(status), cp);
++		goto error;
+ 	}
+ 
+-	if (pcap_setnonblock(*pcap, 1, errbuf)) {
++	if (pcap_setnonblock(pc, 1, errbuf)) {
+ 		PMD_LOG(ERR, "Couldn't set non-blocking on %s: %s", iface, errbuf);
+-		pcap_close(*pcap);
+-		return -1;
++		goto error;
+ 	}
+ 
++	*pcap = pc;
+ 	return 0;
++
++error:
++	if (pc != NULL)
++		pcap_close(pc);
++	return -1;
+ }
+ 
+ static int
+@@ -642,7 +707,8 @@ open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper)
+ static int
+ open_single_rx_pcap(const char *pcap_filename, pcap_t **pcap)
+ {
+-	*pcap = pcap_open_offline(pcap_filename, errbuf);
++	*pcap = pcap_open_offline_with_tstamp_precision(pcap_filename,
++							PCAP_TSTAMP_PRECISION_NANO, errbuf);
+ 	if (*pcap == NULL) {
+ 		PMD_LOG(ERR, "Couldn't open %s: %s", pcap_filename,
+ 			errbuf);
+@@ -801,6 +867,7 @@ eth_dev_configure(struct rte_eth_dev *dev)
+ 	const struct rte_eth_rxmode *rxmode = &dev_conf->rxmode;
+ 
+ 	internals->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
++	internals->timestamp_offloading = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP);
+ 	return 0;
+ }
+ 
+@@ -818,7 +885,8 @@ eth_dev_info(struct rte_eth_dev *dev,
+ 	dev_info->min_rx_bufsize = 0;
+ 	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
+ 		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
+-	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
++		RTE_ETH_RX_OFFLOAD_TIMESTAMP;
+ 
+ 	return 0;
+ }
+@@ -985,6 +1053,7 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 	pcap_q->queue_id = rx_queue_id;
+ 	pcap_q->vlan_strip = internals->vlan_strip;
+ 	dev->data->rx_queues[rx_queue_id] = pcap_q;
++	pcap_q->timestamp_offloading = internals->timestamp_offloading;
+ 
+ 	if (internals->infinite_rx) {
+ 		struct pmd_process_private *pp;
+@@ -1123,6 +1192,17 @@ eth_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 	return 0;
+ }
+ 
++/* Timestamp values in receive packets from libpcap are in nanoseconds */
++static int
++eth_dev_read_clock(struct rte_eth_dev *dev __rte_unused, uint64_t *timestamp)
++{
++	struct timespec cur_time;
++
++	timespec_get(&cur_time, TIME_UTC);
++	*timestamp = rte_timespec_to_ns(&cur_time);
++	return 0;
 +}
++
+ static int
+ eth_vlan_offload_set(struct rte_eth_dev *dev, int mask)
+ {
+@@ -1149,6 +1229,7 @@ static const struct eth_dev_ops ops = {
+ 	.dev_close = eth_dev_close,
+ 	.dev_configure = eth_dev_configure,
+ 	.dev_infos_get = eth_dev_info,
++	.read_clock = eth_dev_read_clock,
+ 	.rx_queue_setup = eth_rx_queue_setup,
+ 	.tx_queue_setup = eth_tx_queue_setup,
+ 	.tx_queue_release = eth_tx_queue_release,
+@@ -1565,15 +1646,22 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+ 	name = rte_vdev_device_name(dev);
+ 	PMD_LOG(INFO, "Initializing pmd_pcap for %s", name);
+ 
+-	timespec_get(&start_time, TIME_UTC);
+-	start_cycles = rte_get_timer_cycles();
+-	hz = rte_get_timer_hz();
++	/* Record info for timestamps on first probe */
++	if (hz == 0) {
++		hz = rte_get_timer_hz();
++		if (hz == 0) {
++			PMD_LOG(ERR, "Reported hz is zero!");
++			return -1;
++		}
+ 
+-	ret = rte_mbuf_dyn_rx_timestamp_register(&timestamp_dynfield_offset,
+-			&timestamp_rx_dynflag);
+-	if (ret != 0) {
+-		PMD_LOG(ERR, "Failed to register Rx timestamp field/flag");
+-		return -1;
++		ret = rte_mbuf_dyn_rx_timestamp_register(&timestamp_dynfield_offset,
++							 &timestamp_rx_dynflag);
++		if (ret != 0) {
++			PMD_LOG(ERR, "Failed to register Rx timestamp field/flag");
++			return ret;
++		}
++		timespec_get(&start_time, TIME_UTC);
++		start_cycles = rte_get_timer_cycles();
+ 	}
+ 
+ 	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
 -- 
 2.51.0
 
