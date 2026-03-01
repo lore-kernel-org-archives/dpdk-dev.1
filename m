@@ -2,68 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6DAFD0049
-	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Mar 2026 02:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C9D6FD0048
+	for <dpdk-dev@archiver.kernel.org>; Sun,  1 Mar 2026 02:09:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90C2540E72;
-	Sun,  1 Mar 2026 03:07:57 +0100 (CET)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
- [209.85.222.177])
- by mails.dpdk.org (Postfix) with ESMTP id C1D5B40E44
- for <dev@dpdk.org>; Sun,  1 Mar 2026 03:07:52 +0100 (CET)
-Received: by mail-qk1-f177.google.com with SMTP id
- af79cd13be357-8cb39f64348so327655585a.0
- for <dev@dpdk.org>; Sat, 28 Feb 2026 18:07:52 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8DF4840ED3;
+	Sun,  1 Mar 2026 03:07:58 +0100 (CET)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com
+ [209.85.222.180])
+ by mails.dpdk.org (Postfix) with ESMTP id B9F3040E48
+ for <dev@dpdk.org>; Sun,  1 Mar 2026 03:07:53 +0100 (CET)
+Received: by mail-qk1-f180.google.com with SMTP id
+ af79cd13be357-8cb4136d865so438918785a.1
+ for <dev@dpdk.org>; Sat, 28 Feb 2026 18:07:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772330872;
- x=1772935672; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772330873;
+ x=1772935673; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=dATQtTsshYsZ/M2L/LffGTH+TjSBx0tHK5rA3zh0RQg=;
- b=YISv9md8ubJc+/jG+GcJRvNVc5qq0IgAo6+iBcJSEvywgXQR4sk0A+jtGAvcT3xyps
- SNjTLar9UuwsIuvNCxJtXCHYF/OzwxVDH+i+wHZwsE66z7YBOpfExSV81XJZFMOQ/djF
- LR42sisoXRdLg+j3gCuyDZhe4gqp7rEpsYLAPGfvQtnRSUwpc6YeOmq7AGTlJ+9YhZoU
- ZKEpf05k0r5QfvoL76cYiDGGghTglz8xz117zVHn3Di77h2Nm9RBZMa+KVnFSPY+WDdH
- 4qE/P/M1GNNRzBgG/xZhhg4yWBuvW6BCnsYID2TEPHhzA0CDIzBLTNIloNz7rS57RTjd
- kMvA==
+ bh=w98bzxAWFbtsalPfUIzvmoUwTVFRfnPZXyXtstNz1g4=;
+ b=e+6L9S737PFnmyr/QQ5Y/HARd2mirp5VlfOhQGkFnQctPVlgDstf75zZbL1fOI9a3U
+ Y9rwKxuhG9XkGMUM1F6V19zStrDLxgfF+qURxhF+96tkd+yVNW8eDFs2cYX/R1wsF8I2
+ DXS6Neag7gENzztQCtnFmQFu4UEbBU1nNkyX0R3FzOxg11VnJm0PSOtOnpdL0+SzLf2U
+ xuctSuss4mReE8zhRCKICFwce+nrQSh0OiZR8h+v4ZAHVRDPv1AZzNCUQmLydfuCcE3Z
+ wjPMfjgPcLtdaM39f0l2gqtUZo1SS7z+iSsP6tTyokM69MEP4o+WNkHqM/2V1tjo+Nuz
+ BogQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772330872; x=1772935672;
+ d=1e100.net; s=20230601; t=1772330873; x=1772935673;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=dATQtTsshYsZ/M2L/LffGTH+TjSBx0tHK5rA3zh0RQg=;
- b=ZYDfkMHjux16AxOjO71YmB2vMEKsIg6Pz3rEcLY1HTjSkjcw6HKMIAcl9gUT7rB2R6
- RcwMTXjfqxqP+ZbfmKM+36JwEDPEa7iQdEUMPj+pRvbTyGwhXTNJB7MF/leB5MRQJuZ0
- Ll7Prp2ABeM7WRmNJ8B1dIsDmPKs7yR2woa3ZgXv3+VHXGCgMQ+Nd2I77+iRYjo9V1zG
- D/FSFOBeiyX9u8D9StwKO7mIJ4ukkNzWlyHN2SN78iuA0dR8XQFG2x88ZfNlLnf1Flco
- 4S33shfI7emXnp43hiRSkkf48XjK5hrhxVcPgl0YpDMV4aJzoio3++/m5LX2x44jYeTJ
- wc2Q==
-X-Gm-Message-State: AOJu0YzUNxhnEze6Zd3Wxyyce0laquGpK32viThXXzc/FX9yS5S7I21q
- VgKFL7aYmWTaLjH9+dwnrTR8NkluiuWDYhfEGDEPS3537jQRi/3PMJNZ/RW6J7Qpu/9dch6nO+B
- /t6vI
-X-Gm-Gg: ATEYQzxnb99XcINe1DQL8XHAEMvt5uD3xwMTTZBg7LjghFARW2eK3hle4Zw51u8dx2w
- UYdGdYzQpRDMlTy8e1iG+SDaZGF7kGrSRPwFPRydDodnckYd9XjpoBqABfjfvOUKuPsAXWblXOq
- RO4xrzZ3yvgyMDzgo0xniqTCFHG6kYb6tQBsdMeBKxnexeohIQ7oFHsCPI4UnqUrNeFs8ShCDz5
- t4j+3tL3bYS5JG9AuGGd2bnET9DuVmThzyAwW11iXrb0JsOSd8v6sweSfp4G6cW2b8/J3mh580c
- sXhmoIPa3g3jLA110p0GGeMO29t1BNYxbEWBVzMPNuZs5ukmBDnNN6cnkVuPyOxoy70x72iaI+L
- TsIDtBU+8L+0Ydko1j0nEmw08yzOvCZgtIJ0+zyu+pZiVGqJqjdusvW5+mrN8RumJf4b6cbwLAI
- OPid/EuYWZ/MWpX0Bj65siIcBJBPKnc1lRDvwzgv1orL0BIC8NePcLWdD/OXB/zA==
-X-Received: by 2002:a05:620a:1915:b0:8cb:4d18:bb6b with SMTP id
- af79cd13be357-8cbc8e34581mr1126186185a.73.1772330872009; 
- Sat, 28 Feb 2026 18:07:52 -0800 (PST)
+ bh=w98bzxAWFbtsalPfUIzvmoUwTVFRfnPZXyXtstNz1g4=;
+ b=kaN9g0wLG9IY8oEPZXFuI4o/9XFI8xdnY3TqTSNpnSxY8a5huHd8HBUX5HJhAWIwGw
+ RYpX+t1AYZwgP1gB4mtN6K4lQ2ZbMIwcx99Hlkomne1lY0h2UHCrSYyYYpmy7p/K1cxg
+ HWtooI4mmXXXcJYICc3ylakTqx8RK9V6UHg4J2sM3Qx+vlsSR9+6PKOHvgcoCh4ZRDLn
+ nqpmP21VMmoBxKhqQO2gC2ut20OLOup8nUaeq+mJzPrZDth2Ba46STc4UL33E+Frie40
+ dQk4dGgg48DV77twu0boszP8sFYrkwmVCcXdk5o82ujRuIERwSERViJTDIsBXgiaqWLB
+ 0W/Q==
+X-Gm-Message-State: AOJu0Yxwet9ThRTemdklnGnchic2g6fpFd1EU2T7GhQxW3PSbGPZTrXx
+ cESA1jX7J7nvCEXFZ+eumxsx9CL8JtEga7VhK7fiSA4T/PoWTuhrUgMyTuVHr0uDPPRgVPuWQe7
+ l6UOz
+X-Gm-Gg: ATEYQzwXTyCaYz2r7ejKFgqyXSEri37MM1VHG4Tp22YYv97+yZVENdvCngm4HbTgzGA
+ doJOltOXrclmog5OszY1ZxkSSB8rQkLw/Z2FZR5xD/C9CLFmvF4WjWQGSYcTB3inVbUWovJy1Py
+ ZSsWQrLzYAupNyNwwV25ik31t/oNu5c+3hHtBdauzFMmJRAjXO1vuAeWP5y4VUQUalSme/UljMz
+ VB5AJYm/Uzqs05mvqPIkeQghfNQJdVsWSAu+KBU6Jg+7aotqQGj1j0F6E6mcG6icrAn4pIuUl6F
+ 0yAKuDzwMFteJnUj0eTohZ245gXP3fSJo9fiw73TzWgn4D5g12Zf1n9qaEIGPKbKbL6ZgU1b5sV
+ e2jBW/43JYa/qfDuMzNp1QZHFWpWLfJd0kI+sJ3CLI4vtiVvq/993Cq/i/ojwql/IPnwu3k/hwl
+ fHjLFeioLA8cx4w71AuzmT7MFLFmcu/G4IJ0c9WNqKEOEs0OVSFejLidMdEHom9A==
+X-Received: by 2002:a05:620a:4720:b0:8cb:5442:d539 with SMTP id
+ af79cd13be357-8cbc8dc28b1mr1082595785a.2.1772330873096; 
+ Sat, 28 Feb 2026 18:07:53 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cbbf736bffsm802292985a.50.2026.02.28.18.07.51
+ af79cd13be357-8cbbf736bffsm802292985a.50.2026.02.28.18.07.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 28 Feb 2026 18:07:51 -0800 (PST)
+ Sat, 28 Feb 2026 18:07:52 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Marat Khalili <marat.khalili@huawei.com>
-Subject: [PATCH v18 16/23] net/pcap: reduce scope of file-level variables
-Date: Sat, 28 Feb 2026 18:05:49 -0800
-Message-ID: <20260301020726.852401-17-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v18 17/23] net/pcap: avoid use of volatile
+Date: Sat, 28 Feb 2026 18:05:50 -0800
+Message-ID: <20260301020726.852401-18-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260301020726.852401-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -83,61 +82,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Move errbuf from file scope to local variables in the two functions that
-use it (open_iface_live and open_single_rx_pcap). This avoids potential
-issues if these functions were called concurrently, since each call now
-has its own error buffer.  Move iface_idx to a static local variable
-within pmd_init_internals(), the only function that uses it. The
-variable remains static to preserve the MAC address uniqueness counter
-across calls.
+Using volatile for statistics is not necessary since only one
+thread is allowed to operate on a queue at a time.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- drivers/net/pcap/pcap_ethdev.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 1b927b3c35..1a9db50990 100644
+index 1a9db50990..14edafb581 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -46,11 +46,9 @@
- 
- #define RTE_PMD_PCAP_MAX_QUEUES 16
- 
--static char errbuf[PCAP_ERRBUF_SIZE];
- static struct timespec start_time;
- static uint64_t start_cycles;
- static uint64_t hz;
--static uint8_t iface_idx;
- 
- static uint64_t timestamp_rx_dynflag;
+@@ -54,10 +54,10 @@ static uint64_t timestamp_rx_dynflag;
  static int timestamp_dynfield_offset = -1;
-@@ -607,6 +605,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- static inline int
- open_iface_live(const char *iface, pcap_t **pcap)
- {
-+	char errbuf[PCAP_ERRBUF_SIZE];
- 	pcap_t *pc;
- 	int status;
  
-@@ -718,6 +717,8 @@ open_single_tx_pcap(const char *pcap_filename, pcap_dumper_t **dumper)
- static int
- open_single_rx_pcap(const char *pcap_filename, pcap_t **pcap)
+ struct queue_stat {
+-	volatile unsigned long pkts;
+-	volatile unsigned long bytes;
+-	volatile unsigned long err_pkts;
+-	volatile unsigned long rx_nombuf;
++	uint64_t pkts;
++	uint64_t bytes;
++	uint64_t err_pkts;
++	uint64_t rx_nombuf;
+ };
+ 
+ struct queue_missed_stat {
+@@ -908,11 +908,11 @@ eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
+ 	      struct eth_queue_stats *qstats)
  {
-+	char errbuf[PCAP_ERRBUF_SIZE];
-+
- 	*pcap = pcap_open_offline_with_tstamp_precision(pcap_filename,
- 							PCAP_TSTAMP_PRECISION_NANO, errbuf);
- 	if (*pcap == NULL) {
-@@ -1466,6 +1467,7 @@ pmd_init_internals(struct rte_vdev_device *vdev,
- 	 * derived from: 'locally administered':'p':'c':'a':'p':'iface_idx'
- 	 * where the middle 4 characters are converted to hex.
- 	 */
-+	static uint8_t iface_idx;
- 	(*internals)->eth_addr = (struct rte_ether_addr) {
- 		.addr_bytes = { 0x02, 0x70, 0x63, 0x61, 0x70, iface_idx++ }
- 	};
+ 	unsigned int i;
+-	unsigned long rx_packets_total = 0, rx_bytes_total = 0;
+-	unsigned long rx_missed_total = 0;
+-	unsigned long rx_nombuf_total = 0, rx_err_total = 0;
+-	unsigned long tx_packets_total = 0, tx_bytes_total = 0;
+-	unsigned long tx_packets_err_total = 0;
++	uint64_t rx_packets_total = 0, rx_bytes_total = 0;
++	uint64_t rx_missed_total = 0;
++	uint64_t rx_nombuf_total = 0, rx_err_total = 0;
++	uint64_t tx_packets_total = 0, tx_bytes_total = 0;
++	uint64_t tx_packets_err_total = 0;
+ 	const struct pmd_internals *internal = dev->data->dev_private;
+ 
+ 	for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS &&
 -- 
 2.51.0
 
