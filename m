@@ -2,67 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 163BAEB362F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 19:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CFBEB3624
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 19:50:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DCCB40A76;
-	Mon,  2 Mar 2026 20:41:47 +0100 (CET)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id 73F0740A76
- for <dev@dpdk.org>; Mon,  2 Mar 2026 20:41:45 +0100 (CET)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-124a635476fso5659754c88.0
- for <dev@dpdk.org>; Mon, 02 Mar 2026 11:41:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772480504;
- x=1773085304; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:subject:cc:to
- :from:date:from:to:cc:subject:date:message-id:reply-to;
- bh=2V/zgx+4tg5bXSbfhfhDyna+FpdxWDSlzZJBmh0hIVA=;
- b=jqE0ouJ0uoHiyKbSPMDVUIDPN00B8xVnlaRfPUB//sJKXh7yX7egYtrqmkwq/fQpMm
- ckDT5Yqxs0/olKQ67y0dtlj0SVFpfR5m32M8u1nbKqOxhgM4HFLdi2ix0nwiQEhvYyPH
- BoCL9iblMh6d7qXLmkVvX7JHacHa9Kfk8sw5uhKmBe2w4zEKMTcorG8X9QDc0EYdUFaJ
- N5UW084rqqrW8RgMS3KMy7QxX0b6TmDUsAr573e0J2ZCxNGOa7CnW1m3OR6j2lj2ccrc
- NBoFwY8TkjSn8UuWCtXUD0iF/XSgxwAtYqiVYh96XAHu90rSxqGbMj0Tm7wpKZHM+G1e
- lkdQ==
+	by mails.dpdk.org (Postfix) with ESMTP id A9761402AA;
+	Mon,  2 Mar 2026 20:50:52 +0100 (CET)
+Received: from mail-yx1-f100.google.com (mail-yx1-f100.google.com
+ [74.125.224.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 3977E4028C
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 20:50:51 +0100 (CET)
+Received: by mail-yx1-f100.google.com with SMTP id
+ 956f58d0204a3-64ca6595c8aso4450044d50.0
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 11:50:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772480504; x=1773085304;
- h=content-transfer-encoding:mime-version:message-id:subject:cc:to
- :from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=2V/zgx+4tg5bXSbfhfhDyna+FpdxWDSlzZJBmh0hIVA=;
- b=FqdCGyD68xQxdAgm6jFF161ce0FfP1saF75nRgQLq6/ZpMxghCayhHm7kRlsJ0QRst
- 98Mtql8Ar0PedORi/XsIC2Wzq/f3v0cOS0IVVXLTBP3kmbpoHKay+j1iD2jcr2GdsUjx
- aJJ9iI9rj8arD39E5lgCmDhdGWRPLKhAF/1b3q7WGIA8Mh2z0SMM9iD4Jk/OrDY1CWNz
- 0BxrVw1OBx7B5n+dY0Weu42kevjYyKAmV67ZJLrf23seYN5ebnOrybZ2kw8wF6LOOLQI
- fRi7sgW5fXBpfhsmf0MetgtgiR+OhpVNMnDC6b31WCFX7tfV0b5hwIYHaS7bOUKqHVi9
- W5eg==
-X-Gm-Message-State: AOJu0YxMs4rlnVcsFFnLOd5o8MnMk48eb0Oh5kFyiQENBSVJXGFRl64o
- 4Dk8s0vN3LZyQedJVVHUpFaL2abBt706e0fQnVzMt+RcyqjVqLcb1Vwh2sAkd2vqFKo=
-X-Gm-Gg: ATEYQzxSvieWMka+hBTQ4fmemq2Hf5ez5OaWTsuAVsXZLV3eirN98yjMnPUyMg/kwuS
- iyNsivibuekkLBZCZXA7nDvff006hwl9w+gTFHbhXLFGiYaa4IVvQU5n87kvUzRq4jI1aY2e05a
- GAeHYm2umNUyxIVGL/uTCDCT87Q7pZAD/ChDpeXBukLCoFNwspP445szN3F81vxuFflAiGJPyzf
- NgRU3e548JJv7CTM/sgdt8rMF69vXE0hKa5CEeTVg2swUflecz+j5EDlj3JjJ780Nm3LvD/fOyD
- XQ/XS+FsRY94l2Txt4ghX4vsuKGzrt6CBJTzXiEMOVrQjOYridAUX/0iU4gtJaeABUxaE/AEtmk
- JcuEunuQuyEjcEYvWqDsekd3mqfaW39WdRfSYg/CA1807im4E4n8KtjInP/C2OefxS+RYQlyXY0
- vwMkcCZfjHUmmOGrGZzRXc5M2+DbNP++7VXoB0B3yd8iMrfLXLeSMhP5alS2v6fqnq
-X-Received: by 2002:a05:693c:2c13:b0:2ba:9835:1113 with SMTP id
- 5a478bee46e88-2bde1eb3a43mr5200200eec.36.1772480504271; 
- Mon, 02 Mar 2026 11:41:44 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ d=1e100.net; s=20230601; t=1772481050; x=1773085850;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=gTQJEKPYZV683ido3AoS3q5Q2dUaHJcSMyeGqETfpgI=;
+ b=sWSxtBVZTWHdHQLvA3pcncWnmqJ6zOjWdwUUwl3M5YQWwElAdljmWy3L2a9oCVs3mo
+ YCKBpdokF9zxZcI4RbSxVpPI6S2A9mVMYRzEF7DZAxBiI6YtDliy99nyp/tadw9Lv7+h
+ gBm20kLOXJyr4hq7DteQduj8YhGIan+CRe/MzRTI19Rezmv6kyTdUjVaMNujiiiN7KS3
+ Y79Dc5CTt8Z/oiWNTr+rT6M9/0LitGD6uq7q1BDGLqLizfkYPivi4d+x/E9CVxpdpRq/
+ 3WEGU6EYdltZnjWyZPB3Fda+Gh+pUhaaeedR37q6Hw6h+BMR7Rjv5xMh6eagiacdIk+n
+ P4GQ==
+X-Gm-Message-State: AOJu0Yy7GageqRGVG03jkCBKPFMY3hPLWhJQ2L3eEoZMz2IQ5oKWU7w5
+ UmTJv5WaU84T1pkFTvkmyDoNIVlUpKeYNzY3TSlgvPQobvJb1mFDPPW6Wf8ZmRwy/F3cTHlXB2W
+ U9bSC9ZnU38SFBuYfkJh2sMWro/BwSQqzalK5qGKZBS7CjuX79zF8KzgCWlcAISFLrxzFtINUvL
+ lRHzi1tA0ErLLZbipN25MKrkw2DO/5nbx7WE4yj5vcWi5Fv61vFvUKPAV4J0Co/dDxFFZnqv4Mz
+ sVEiVmRrj2b
+X-Gm-Gg: ATEYQzx++d2WwkJSlpQca8BtPsBbo7QRmdgqwm4gtMUn4Qb8iXVSqOdXYYyv7TornbR
+ x3O4gwd+jbKbngUKqm+4zZvF0D9elzvmMVLTnBTgWSpHAMND/Qsg29yukaNNqDgbLSIhaXJKNa6
+ vVdqHnANvsUZnQDJUlK87LxMF9HkZq1eL3+Bb3uZ8ZhN7uySm0EEAu7v69ugYDH11EL2BzVi85v
+ ejjgXWxRDT7IM1JeZWpE+OSpRZbylY/oPvRQn4ZJXyzX9hLo1bx9kU6hZhp7utWBLxi2JiCMEUx
+ v9CanPcrEIWCknR6f92M8U7xTiebxSl4KB1Iif24KB4ChTJDtRtSZdwygAE1eR7E9aZxXYNuP0a
+ aaKk7qe7oV1ACiQyeJGV6pQHgcYGC6bil7e+zqSX4qUhYmS+l6y/qIkFZzKX7Ie8ji7QpJHKR0v
+ cv2jIhBXTUcThwMw8VsNqk8evIEQ8ce5USZ1XVt7mP6n+rl13c3jKO6Lx0AbENLSNJ9aPv7Vqjr
+ A==
+X-Received: by 2002:a53:cf0d:0:b0:64a:ced1:4fa6 with SMTP id
+ 956f58d0204a3-64cc207eb33mr8564662d50.12.1772481050311; 
+ Mon, 02 Mar 2026 11:50:50 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
+ (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
+ by smtp-relay.gmail.com with ESMTPS id
+ 956f58d0204a3-64cb75fb6bfsm1400201d50.8.2026.03.02.11.50.50
+ for <dev@dpdk.org>
+ (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+ Mon, 02 Mar 2026 11:50:50 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-qv1-f72.google.com with SMTP id
+ 6a1803df08f44-89463017976so449261226d6.2
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 11:50:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=broadcom.com; s=google; t=1772481049; x=1773085849; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=gTQJEKPYZV683ido3AoS3q5Q2dUaHJcSMyeGqETfpgI=;
+ b=PfbJ3L4g4+GIP3Ret2yjszLjNfOx+fktuve7U4D4Pk4LNSGgnTw1HWOd19KNui5Jg2
+ /dujogCaythpErpouCkpWCbbPkLfjtGuohtHaHGkqZIXku6JIYRW7xNuRqezXCPEgPQf
+ TrlB6S5ICp5Q+OCJT+u+inn6/oXu3ozELU0GU=
+X-Received: by 2002:a05:620a:d8d:b0:8c7:eb5:8528 with SMTP id
+ af79cd13be357-8cbc8d733e0mr1700260885a.1.1772481049234; 
+ Mon, 02 Mar 2026 11:50:49 -0800 (PST)
+X-Received: by 2002:a05:620a:d8d:b0:8c7:eb5:8528 with SMTP id
+ af79cd13be357-8cbc8d733e0mr1700256385a.1.1772481048433; 
+ Mon, 02 Mar 2026 11:50:48 -0800 (PST)
+Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2bdd1f48c77sm12953033eec.26.2026.03.02.11.41.43
+ af79cd13be357-8cbbf66c515sm1226939685a.11.2026.03.02.11.50.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Mar 2026 11:41:44 -0800 (PST)
-Date: Mon, 2 Mar 2026 11:41:41 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Elena Agostini <eagostini@nvidia.com>
-Cc: dev@dpdk.org
-Subject: Bug analysis of gpudev library
-Message-ID: <20260302114141.29d25e19@phoenix.local>
+ Mon, 02 Mar 2026 11:50:48 -0800 (PST)
+From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+X-Google-Original-From: Mohammad Shuab Siddique
+ <Mohammad-Shuab.Siddique@broadcom.com>
+To: dev@dpdk.org
+Cc: kishore.padmanabha@broadcom.com,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>, stable@dpdk.org,
+ Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+Subject: [PATCH] net/bnxt: allow get stats when port is stopped
+Date: Mon,  2 Mar 2026 12:51:57 -0700
+Message-ID: <20260302195208.103202-1-Mohammad-Shuab.Siddique@broadcom.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,194 +100,300 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since the gpudev library is untested in current CI and there are no unit te=
-sts;
-sent AI off bug hunting into this library. It found a lot there.
-Is anyone outside of Nvidia proprietary even using it?
+From: Ajit Khaparde <ajit.khaparde@broadcom.com>
 
-Here's a thorough bug analysis of the DPDK gpudev library:
+Currently the driver returns an error if stats are requested
+when the port is stopped.
+But some applications may need to get the port stats even if
+the port is stopped.
+Allow the get stats command to show the existing stats
+if the port is stopped.
+When the port is started the driver will get the stats from
+the firmware.
 
+Cc: stable@dpdk.org
+
+Signed-off-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
+ drivers/net/bnxt/bnxt_ethdev.c | 47 ++++++++++-------
+ drivers/net/bnxt/bnxt_hwrm.c   | 94 +++++++++++++++++++++++++++++++---
+ drivers/net/bnxt/bnxt_stats.c  |  3 --
+ 3 files changed, 114 insertions(+), 30 deletions(-)
 
-## 1. Memory Leak in `rte_gpu_comm_create_list`
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index 3c618c6e82..6601ddf575 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -786,7 +786,7 @@ static int bnxt_update_phy_setting(struct bnxt *bp)
+ 	return rc;
+ }
+ 
+-static void bnxt_free_prev_ring_stats(struct bnxt *bp)
++static void bnxt_free_prev_ring_stats_ext(struct bnxt *bp)
+ {
+ 	/* tpa v2 devices use ext variant local struct */
+ 	if (BNXT_TPA_V2_P7(bp)) {
+@@ -796,6 +796,10 @@ static void bnxt_free_prev_ring_stats(struct bnxt *bp)
+ 		bp->prev_tx_ring_stats_ext = NULL;
+ 		return;
+ 	}
++}
++
++static void bnxt_free_prev_ring_stats(struct bnxt *bp)
++{
+ 	rte_free(bp->prev_rx_ring_stats);
+ 	rte_free(bp->prev_tx_ring_stats);
+ 	bp->prev_rx_ring_stats = NULL;
+@@ -804,17 +808,19 @@ static void bnxt_free_prev_ring_stats(struct bnxt *bp)
+ 
+ static int bnxt_alloc_prev_ring_ext_stats(struct bnxt *bp)
+ {
+-	bp->prev_rx_ring_stats_ext = rte_zmalloc("bnxt_prev_rx_ring_stats_ext",
+-						 sizeof(struct bnxt_ring_stats_ext) *
+-						 bp->rx_cp_nr_rings,
+-						 0);
++	if (bp->prev_rx_ring_stats_ext == NULL)
++		bp->prev_rx_ring_stats_ext = rte_zmalloc("bnxt_prev_rx_ring_stats_ext",
++							 sizeof(struct bnxt_ring_stats_ext) *
++							 bp->rx_cp_nr_rings,
++							 0);
+ 	if (bp->prev_rx_ring_stats_ext == NULL)
+ 		return -ENOMEM;
+ 
+-	bp->prev_tx_ring_stats_ext = rte_zmalloc("bnxt_prev_tx_ring_stats_ext",
+-						 sizeof(struct bnxt_ring_stats_ext) *
+-						 bp->tx_cp_nr_rings,
+-						 0);
++	if (bp->prev_tx_ring_stats_ext == NULL)
++		bp->prev_tx_ring_stats_ext = rte_zmalloc("bnxt_prev_tx_ring_stats_ext",
++							 sizeof(struct bnxt_ring_stats_ext) *
++							 bp->tx_cp_nr_rings,
++							 0);
+ 
+ 	if (bp->tx_cp_nr_rings > 0 && bp->prev_tx_ring_stats_ext == NULL)
+ 		goto error;
+@@ -831,24 +837,26 @@ static int bnxt_alloc_prev_ring_stats(struct bnxt *bp)
+ 	if (BNXT_TPA_V2_P7(bp))
+ 		return bnxt_alloc_prev_ring_ext_stats(bp);
+ 
+-	bp->prev_rx_ring_stats =  rte_zmalloc("bnxt_prev_rx_ring_stats",
+-					      sizeof(struct bnxt_ring_stats) *
+-					      bp->rx_cp_nr_rings,
+-					      0);
++	if (bp->prev_rx_ring_stats == NULL)
++		bp->prev_rx_ring_stats =  rte_zmalloc("bnxt_prev_rx_ring_stats",
++						      sizeof(struct bnxt_ring_stats) *
++						      bp->rx_cp_nr_rings,
++						      0);
+ 	if (bp->prev_rx_ring_stats == NULL)
+ 		return -ENOMEM;
+ 
+-	bp->prev_tx_ring_stats = rte_zmalloc("bnxt_prev_tx_ring_stats",
+-					     sizeof(struct bnxt_ring_stats) *
+-					     bp->tx_cp_nr_rings,
+-					     0);
++	if (bp->prev_tx_ring_stats == NULL)
++		bp->prev_tx_ring_stats = rte_zmalloc("bnxt_prev_tx_ring_stats",
++						     sizeof(struct bnxt_ring_stats) *
++						     bp->tx_cp_nr_rings,
++						     0);
+ 	if (bp->tx_cp_nr_rings > 0 && bp->prev_tx_ring_stats == NULL)
+ 		goto error;
+ 
+ 	return 0;
+ 
+ error:
+-	bnxt_free_prev_ring_stats(bp);
++	bnxt_free_prev_ring_stats_ext(bp);
+ 	return -ENOMEM;
+ }
+ 
+@@ -1758,7 +1766,6 @@ static int bnxt_dev_stop(struct rte_eth_dev *eth_dev)
+ 	bnxt_shutdown_nic(bp);
+ 	bnxt_hwrm_if_change(bp, false);
+ 
+-	bnxt_free_prev_ring_stats(bp);
+ 	rte_free(bp->mark_table);
+ 	bp->mark_table = NULL;
+ 
+@@ -1966,6 +1973,8 @@ static int bnxt_dev_close_op(struct rte_eth_dev *eth_dev)
+ 	if (eth_dev->data->dev_started)
+ 		ret = bnxt_dev_stop(eth_dev);
+ 
++	bnxt_free_prev_ring_stats_ext(bp);
++	bnxt_free_prev_ring_stats(bp);
+ 	bnxt_uninit_resources(bp, false);
+ 
+ 	bnxt_drv_uninit(bp);
+diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
+index 0cef22b5ec..ac5cbbae0c 100644
+--- a/drivers/net/bnxt/bnxt_hwrm.c
++++ b/drivers/net/bnxt/bnxt_hwrm.c
+@@ -5356,13 +5356,54 @@ static void bnxt_update_prev_stat(uint64_t *cntr, uint64_t *prev_cntr)
+ 		*prev_cntr = *cntr;
+ }
+ 
++static void bnxt_get_prev_tx_stats(struct bnxt_ring_stats *ring_stats,
++				   struct bnxt_ring_stats *prev_stats)
++{
++	ring_stats->tx_ucast_pkts = prev_stats->tx_ucast_pkts;
++	ring_stats->tx_mcast_pkts = prev_stats->tx_mcast_pkts;
++	ring_stats->tx_bcast_pkts = prev_stats->tx_bcast_pkts;
++	ring_stats->tx_ucast_bytes = prev_stats->tx_ucast_bytes;
++	ring_stats->tx_mcast_bytes = prev_stats->tx_mcast_bytes;
++	ring_stats->tx_bcast_bytes = prev_stats->tx_bcast_bytes;
++	ring_stats->tx_discard_pkts = prev_stats->tx_discard_pkts;
++}
++
++static void bnxt_get_prev_rx_stats(struct bnxt_ring_stats *ring_stats,
++				   struct bnxt_ring_stats *prev_stats)
++{
++	ring_stats->rx_ucast_pkts = prev_stats->rx_ucast_pkts;
++	ring_stats->rx_mcast_pkts = prev_stats->rx_mcast_pkts;
++	ring_stats->rx_bcast_pkts = prev_stats->rx_bcast_pkts;
++	ring_stats->rx_ucast_bytes = prev_stats->rx_ucast_bytes;
++	ring_stats->rx_mcast_bytes = prev_stats->rx_mcast_bytes;
++	ring_stats->rx_bcast_bytes = prev_stats->rx_bcast_bytes;
++	ring_stats->rx_discard_pkts = prev_stats->rx_discard_pkts;
++	ring_stats->rx_error_pkts = prev_stats->rx_error_pkts;
++	ring_stats->rx_agg_pkts = prev_stats->rx_agg_pkts;
++	ring_stats->rx_agg_bytes = prev_stats->rx_agg_bytes;
++	ring_stats->rx_agg_events = prev_stats->rx_agg_events;
++	ring_stats->rx_agg_aborts = prev_stats->rx_agg_aborts;
++}
++
+ int bnxt_hwrm_ring_stats(struct bnxt *bp, uint32_t cid, int idx,
+ 			 struct bnxt_ring_stats *ring_stats, bool rx)
+ {
+ 	int rc = 0;
+ 	struct hwrm_stat_ctx_query_input req = {.req_type = 0};
+ 	struct hwrm_stat_ctx_query_output *resp = bp->hwrm_cmd_resp_addr;
++	struct bnxt_ring_stats *prev_stats = &bp->prev_rx_ring_stats[idx];
+ 
++	if (!rx)
++		prev_stats = &bp->prev_tx_ring_stats[idx];
++
++	if (!bp->eth_dev->data->dev_started) {
++		if (rx)
++			bnxt_get_prev_rx_stats(ring_stats, prev_stats);
++		else
++			bnxt_get_prev_tx_stats(ring_stats, prev_stats);
++
++		return 0;
++	}
+ 	HWRM_PREP(&req, HWRM_STAT_CTX_QUERY, BNXT_USE_CHIMP_MB);
+ 
+ 	req.stat_ctx_id = rte_cpu_to_le_32(cid);
+@@ -5372,8 +5413,6 @@ int bnxt_hwrm_ring_stats(struct bnxt *bp, uint32_t cid, int idx,
+ 	HWRM_CHECK_RESULT();
+ 
+ 	if (rx) {
+-		struct bnxt_ring_stats *prev_stats = &bp->prev_rx_ring_stats[idx];
+-
+ 		ring_stats->rx_ucast_pkts = rte_le_to_cpu_64(resp->rx_ucast_pkts);
+ 		bnxt_update_prev_stat(&ring_stats->rx_ucast_pkts,
+ 				      &prev_stats->rx_ucast_pkts);
+@@ -5422,8 +5461,6 @@ int bnxt_hwrm_ring_stats(struct bnxt *bp, uint32_t cid, int idx,
+ 		bnxt_update_prev_stat(&ring_stats->rx_agg_aborts,
+ 				      &prev_stats->rx_agg_aborts);
+ 	} else {
+-		struct bnxt_ring_stats *prev_stats = &bp->prev_tx_ring_stats[idx];
+-
+ 		ring_stats->tx_ucast_pkts = rte_le_to_cpu_64(resp->tx_ucast_pkts);
+ 		bnxt_update_prev_stat(&ring_stats->tx_ucast_pkts,
+ 				      &prev_stats->tx_ucast_pkts);
+@@ -5458,6 +5495,38 @@ int bnxt_hwrm_ring_stats(struct bnxt *bp, uint32_t cid, int idx,
+ 	return rc;
+ }
+ 
++static void bnxt_get_prev_rx_stats_ext(struct bnxt_ring_stats_ext *ring_stats,
++				       struct bnxt_ring_stats_ext *prev_stats)
++{
++	ring_stats->rx_ucast_pkts = prev_stats->rx_ucast_pkts;
++	ring_stats->rx_mcast_pkts = prev_stats->rx_mcast_pkts;
++	ring_stats->rx_bcast_pkts = prev_stats->rx_bcast_pkts;
++	ring_stats->rx_ucast_bytes = prev_stats->rx_ucast_bytes;
++	ring_stats->rx_mcast_bytes = prev_stats->rx_mcast_bytes;
++	ring_stats->rx_bcast_bytes = prev_stats->rx_bcast_bytes;
++	ring_stats->rx_discard_pkts = prev_stats->rx_discard_pkts;
++	ring_stats->rx_error_pkts = prev_stats->rx_error_pkts;
++	ring_stats->rx_tpa_eligible_pkt = prev_stats->rx_tpa_eligible_pkt;
++	ring_stats->rx_tpa_eligible_bytes = prev_stats->rx_tpa_eligible_bytes;
++	ring_stats->rx_tpa_pkt = prev_stats->rx_tpa_pkt;
++	ring_stats->rx_tpa_bytes = prev_stats->rx_tpa_bytes;
++	ring_stats->rx_tpa_errors = prev_stats->rx_tpa_errors;
++	ring_stats->rx_tpa_events = prev_stats->rx_tpa_events;
++}
++
++static void bnxt_get_prev_tx_stats_ext(struct bnxt_ring_stats_ext *ring_stats,
++				       struct bnxt_ring_stats_ext *prev_stats)
++{
++	ring_stats->tx_ucast_pkts = prev_stats->tx_ucast_pkts;
++	ring_stats->tx_mcast_pkts = prev_stats->tx_mcast_pkts;
++	ring_stats->tx_bcast_pkts = prev_stats->tx_bcast_pkts;
++	ring_stats->tx_ucast_bytes = prev_stats->tx_ucast_bytes;
++	ring_stats->tx_mcast_bytes = prev_stats->tx_mcast_bytes;
++	ring_stats->tx_bcast_bytes = prev_stats->tx_bcast_bytes;
++	ring_stats->tx_discard_pkts = prev_stats->tx_discard_pkts;
++	ring_stats->tx_error_pkts = prev_stats->tx_error_pkts;
++}
++
+ int bnxt_hwrm_ring_stats_ext(struct bnxt *bp, uint32_t cid, int idx,
+ 			     struct bnxt_ring_stats_ext *ring_stats, bool rx)
+ {
+@@ -5465,6 +5534,19 @@ int bnxt_hwrm_ring_stats_ext(struct bnxt *bp, uint32_t cid, int idx,
+ 	struct hwrm_stat_ext_ctx_query_input req = {.req_type = 0};
+ 	struct hwrm_stat_ext_ctx_query_output *resp = bp->hwrm_cmd_resp_addr;
+ 
++	struct bnxt_ring_stats_ext *prev_stats = &bp->prev_rx_ring_stats_ext[idx];
++
++	if (!rx)
++		prev_stats = &bp->prev_tx_ring_stats_ext[idx];
++
++	if (!bp->eth_dev->data->dev_started) {
++		if (rx)
++			bnxt_get_prev_rx_stats_ext(ring_stats, prev_stats);
++		else
++			bnxt_get_prev_tx_stats_ext(ring_stats, prev_stats);
++
++		return 0;
++	}
+ 	HWRM_PREP(&req, HWRM_STAT_EXT_CTX_QUERY, BNXT_USE_CHIMP_MB);
+ 
+ 	req.stat_ctx_id = rte_cpu_to_le_32(cid);
+@@ -5473,8 +5555,6 @@ int bnxt_hwrm_ring_stats_ext(struct bnxt *bp, uint32_t cid, int idx,
+ 	HWRM_CHECK_RESULT();
+ 
+ 	if (rx) {
+-		struct bnxt_ring_stats_ext *prev_stats = &bp->prev_rx_ring_stats_ext[idx];
+-
+ 		ring_stats->rx_ucast_pkts = rte_le_to_cpu_64(resp->rx_ucast_pkts);
+ 		bnxt_update_prev_stat(&ring_stats->rx_ucast_pkts,
+ 				      &prev_stats->rx_ucast_pkts);
+@@ -5531,8 +5611,6 @@ int bnxt_hwrm_ring_stats_ext(struct bnxt *bp, uint32_t cid, int idx,
+ 		bnxt_update_prev_stat(&ring_stats->rx_tpa_events,
+ 				      &prev_stats->rx_tpa_events);
+ 	} else {
+-		struct bnxt_ring_stats_ext *prev_stats = &bp->prev_tx_ring_stats_ext[idx];
+-
+ 		ring_stats->tx_ucast_pkts = rte_le_to_cpu_64(resp->tx_ucast_pkts);
+ 		bnxt_update_prev_stat(&ring_stats->tx_ucast_pkts,
+ 				      &prev_stats->tx_ucast_pkts);
+diff --git a/drivers/net/bnxt/bnxt_stats.c b/drivers/net/bnxt/bnxt_stats.c
+index 88cfbaf9ff..7b96cf0df9 100644
+--- a/drivers/net/bnxt/bnxt_stats.c
++++ b/drivers/net/bnxt/bnxt_stats.c
+@@ -717,9 +717,6 @@ int bnxt_stats_get_op(struct rte_eth_dev *eth_dev,
+ 	if (rc)
+ 		return rc;
+ 
+-	if (!eth_dev->data->dev_started)
+-		return -EIO;
+-
+ 	if (BNXT_TPA_V2_P7(bp))
+ 		return bnxt_stats_get_ext(eth_dev, bnxt_stats, qstats);
+ 
+-- 
+2.47.3
 
-This is the most serious issue. The function has multiple early-return erro=
-r paths that leak previously allocated resources.
-
-**Example path:** If the `rte_gpu_mem_register` for `pkt_list` fails partwa=
-y through the loop, all previously allocated `pkt_list` entries, `mbufs` en=
-tries, the `status_h`/`status_d` allocations, and `comm_list` itself are le=
-aked =E2=80=94 none are freed.
-
-```c
-for (idx_l =3D 0; idx_l < num_comm_items; idx_l++) {
-    comm_list[idx_l].pkt_list =3D rte_zmalloc(NULL, ...);
-    if (comm_list[idx_l].pkt_list =3D=3D NULL) {
-        rte_errno =3D ENOMEM;
-        return NULL;  // leaks everything allocated so far
-    }
-    ret =3D rte_gpu_mem_register(dev_id, ..., comm_list[idx_l].pkt_list);
-    if (ret < 0) {
-        rte_errno =3D ENOMEM;
-        return NULL;  // leaks pkt_list just allocated + all prior items
-    }
-    // same pattern for mbufs allocation...
-}
-```
-
-The same problem exists for the earlier allocations of `comm_list` itself, =
-`status_d`, and `status_h`. Every `return NULL` after the first successful =
-`rte_zmalloc` is a leak. The fix would be a `goto cleanup` pattern that unw=
-inds in reverse order.
-
----
-
-## 2. Missing Status Initialization for Index 0 in `rte_gpu_comm_create_lis=
-t`
-
-The loop that sets status only runs `rte_gpu_comm_set_status` when `idx_l >=
- 0`:
-
-```c
-if (idx_l > 0) {
-    comm_list[idx_l].status_h =3D &(comm_list[0].status_h[idx_l]);
-    comm_list[idx_l].status_d =3D &(comm_list[0].status_d[idx_l]);
-    ret =3D rte_gpu_comm_set_status(&comm_list[idx_l], RTE_GPU_COMM_LIST_FR=
-EE);
-    ...
-}
-```
-
-Element 0 never has `rte_gpu_comm_set_status` called on it. It relies on `r=
-te_zmalloc` zeroing the memory, which happens to match `RTE_GPU_COMM_LIST_F=
-REE =3D=3D 0`. However, when `status_d` comes from `rte_gpu_mem_alloc` (the=
- GPU memory path), there's no guarantee the GPU driver zeros the memory. If=
- it doesn't, `comm_list[0]` starts with an undefined status. This is fragil=
-e at best and a latent bug if a driver doesn't zero-fill.
-
----
-
-## 3. Stale `ret` Check After `rte_gpu_mem_alloc`
-
-```c
-comm_list[0].status_d =3D rte_gpu_mem_alloc(dev_id, ...);
-if (ret < 0) {   // <-- checks old 'ret' from rte_gpu_mem_register above
-    rte_errno =3D ENOMEM;
-    return NULL;
-}
-```
-
-`rte_gpu_mem_alloc` returns a pointer, not an int. The variable `ret` still=
- holds the return value from the previous `rte_gpu_mem_register` call. The =
-check should be `if (comm_list[0].status_d =3D=3D NULL)`. As written, a fai=
-led GPU allocation is silently ignored and the code proceeds with a NULL `s=
-tatus_d`, which will crash when dereferenced later.
-
----
-
-## 4. Bug in `rte_gpu_close` =E2=80=94 Uninitialized `firsterr`
-
-```c
-int firsterr, binerr;
-int *lasterr =3D &firsterr;
-```
-
-If `dev->ops.dev_close` is NULL, the code skips to `*lasterr =3D rte_gpu_re=
-lease(dev)`, which writes to `firsterr`. That's fine. But if `dev_close` is=
- non-NULL and succeeds (`*lasterr =3D 0`), then `lasterr` is **not** reassi=
-gned to `&binerr`, so the subsequent `rte_gpu_release` result overwrites `f=
-irsterr`. This means the close error is lost. And if `dev_close` fails, `la=
-sterr` is moved to `&binerr`, and `rte_gpu_release`'s result goes into `bin=
-err` =E2=80=94 but then `firsterr` is returned, discarding the release erro=
-r. The logic works for preserving the *first* error, but the variable `firs=
-terr` can be used uninitialized if there's a code path I'm missing (though =
-in practice the current paths do assign before reading).
-
-More practically: `rte_errno =3D -firsterr` at the end assumes `firsterr` i=
-s negative on error, but `GPU_DRV_RET` returns negative values while `rte_g=
-pu_release` also returns negative. So `rte_errno =3D -firsterr` would set e=
-rrno to a positive value. This is correct but the double-pointer indirectio=
-n is needlessly fragile and hard to audit.
-
----
-
-## 5. `rte_gpu_comm_cleanup_list` Doesn't Free mbufs
-
-The function zeroes out the packet list entries and sets `mbufs[idx] =3D NU=
-LL`, but never calls `rte_pktmbuf_free()` on the mbufs. This means whoever =
-populated the list via `rte_gpu_comm_populate_list_pkts` transferred mbuf o=
-wnership to the comm list, but cleanup just drops the references. The doc c=
-omment says "mbufs are returned to the pool" but the code doesn't do that:
-
-```c
-for (idx =3D 0; idx < RTE_GPU_COMM_LIST_PKTS_MAX; idx++) {
-    if (comm_list_item->pkt_list[idx].addr =3D=3D 0)
-        break;
-    comm_list_item->pkt_list[idx].addr =3D 0;
-    comm_list_item->pkt_list[idx].size =3D 0;
-    comm_list_item->mbufs[idx] =3D NULL;  // mbuf pointer dropped without f=
-ree
-}
-```
-
-If the caller is expected to free mbufs before calling cleanup, the documen=
-tation is misleading.
-
----
-
-## 6. `rte_gpu_comm_destroy_list` Doesn't Free Status in All Paths
-
-In the "CPU map not supported" fallback path during creation, `status_d` is=
- set equal to `status_h`. During destroy:
-
-```c
-ret =3D rte_gpu_mem_cpu_unmap(dev_id, comm_list[0].status_d);
-if (ret =3D=3D 0) {
-    rte_gpu_mem_free(dev_id, comm_list[0].status_d);
-} else {
-    rte_gpu_mem_unregister(dev_id, comm_list[0].status_h);
-    rte_free(comm_list[0].status_h);
-}
-```
-
-This relies on `rte_gpu_mem_cpu_unmap` failing to distinguish the two alloc=
-ation paths. That's an implicit protocol rather than an explicit flag, whic=
-h is brittle =E2=80=94 if a driver's unmap succeeds on a pointer that was n=
-ever mapped (returning 0), the code takes the wrong path and calls `rte_gpu=
-_mem_free` on CPU-allocated memory.
-
----
-
-## 7. Thread Safety of `gpu_count`
-
-`gpu_count` is a plain `int16_t` modified with `gpu_count++` and `gpu_count=
---` in `rte_gpu_allocate`, `rte_gpu_attach`, and `rte_gpu_release` without =
-any locking. The header says "The API is not thread-safe" and "Device manag=
-ement must be done by a single thread," so this is by-design, but `rte_gpu_=
-count_avail()` can be called from any thread and reads `gpu_count` without =
-a barrier or atomic, which is a data race if management happens concurrentl=
-y from another thread.
-
----
-
-## 8. Inconsistent `dev_id` Types
-
-`rte_gpu_comm_create_flag` and `rte_gpu_comm_create_list` take `uint16_t de=
-v_id`, while all other public APIs take `int16_t dev_id`. This means negati=
-ve error IDs (like `RTE_GPU_ID_NONE =3D -1`) can't be detected =E2=80=94 th=
-ey'd wrap to 65535 and silently pass validation or index out of bounds in `=
-gpu_get_by_id`.
-
----
-
-## Summary by Severity
-
-**High:** Items 1 (memory leaks in create_list) and 3 (stale ret check =E2=
-=86=92 NULL deref) are real, exploitable bugs. Item 5 is a likely mbuf leak=
- depending on usage contract.
-
-**Medium:** Items 2 (status_d not zeroed), 6 (destroy path fragility), and =
-8 (type mismatch) could cause issues under specific driver behaviors or edg=
-e cases.
-
-**Low:** Items 4 and 7 are code quality / maintainability concerns.
