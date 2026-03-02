@@ -2,78 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B088E9B36A
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 11:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1A8E9B365
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 11:47:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EEF004028C;
-	Mon,  2 Mar 2026 12:41:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 99D7F4028C;
+	Mon,  2 Mar 2026 12:47:14 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 61BFC400D7
- for <dev@dpdk.org>; Mon,  2 Mar 2026 12:41:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 3305C400D7
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 12:47:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772451668;
+ s=mimecast20190719; t=1772452032;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=6OhCi9U+gM0a1m4bEQ3nPBR4neyjCHTfqv/oB0UGAKY=;
- b=YNGFKQHITWGfMlcExkhyXMtQ/bqTTyn17yQElRVYjT+6uMEpVYldfQKqHUdIRrm67fZh3y
- +pemCJdpZ1sgMnzArQMFCh7m7ysPDPl8heEq/3cdW8nhGzZVX0jVLzdudk3NjXaZB1xRTe
- xv0gW2bMcbvNHsydXC6hH2tDiwobRT4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=LQz8w/I2X3+f+169GwA0jeSPVZi1tC2bm4DH5f+W2TE=;
+ b=B8sDTkmKDrUv/avkzjyYcXGbNeBYEbKq0Q6kr3ce3WHUurQAjh0SBPNB0DEoWYTfrR+jjq
+ jBow25HP+A8/a6wTL3qzqtC+ElucIIPh+LSjqPa1okUcARTNTSuKJZzM56vuqm7Hg6Atep
+ 6xph5p66dOOHEjYZgLditstrv+w0+1Q=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-327-a7IJnm3KP4WbWKTi4r-sFw-1; Mon, 02 Mar 2026 06:41:07 -0500
-X-MC-Unique: a7IJnm3KP4WbWKTi4r-sFw-1
-X-Mimecast-MFC-AGG-ID: a7IJnm3KP4WbWKTi4r-sFw_1772451666
-Received: by mail-wr1-f70.google.com with SMTP id
- ffacd0b85a97d-439a85831e5so1107003f8f.0
- for <dev@dpdk.org>; Mon, 02 Mar 2026 03:41:07 -0800 (PST)
+ us-mta-153-XC03B6wxMIaPF-P7-SpYog-1; Mon, 02 Mar 2026 06:47:11 -0500
+X-MC-Unique: XC03B6wxMIaPF-P7-SpYog-1
+X-Mimecast-MFC-AGG-ID: XC03B6wxMIaPF-P7-SpYog_1772452030
+Received: by mail-wm1-f72.google.com with SMTP id
+ 5b1f17b1804b1-4836c819456so29880795e9.3
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 03:47:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772451666; x=1773056466;
+ d=1e100.net; s=20230601; t=1772452030; x=1773056830;
  h=content-transfer-encoding:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=6OhCi9U+gM0a1m4bEQ3nPBR4neyjCHTfqv/oB0UGAKY=;
- b=vli3eVZi0CfE11HyP2Q4BWvGOJ1fV9zJ+poq0NiCTXBOS+xg9N+Jm2lwUmjGdR/Vix
- LeUiC0fj5Q5vk6ZuVyG9vNp39W8zCCVteYmwO1d6vcYndwKDL96fz6PzKrJss1eNEARV
- 8QLVnVNdegmt5ln/V/JLJLWqXu/cdLKGlh5zMeWZtKV0GcBic2lqLRRsQIlqH5ATfOCc
- wafC9J9nNdMFS9slMPhj6TGIb0BdqMEE754dX5bFqfBbYvdKHELm3j1THCsjUAFbYO7f
- ALeEXQfLhy+9JDzXjE2lc+guSlrxRkI6F3WLPVs8yVfS25fFVxbPYihgfsduGMGUzu/O
- lFUA==
-X-Gm-Message-State: AOJu0Yx/9dicgebQavHDW8kB4fjgkh8USin5nOjI+9m0FwREQb4sgiaX
- TPM3qwtTxkrDhQltewXNCbNzZamk0fMwLnBSlV/JCj8SG2VDpNNDa7bjncycQMRc4hXdi56Oz3o
- JjsG6NGo+vkIRDcWDYncS4R81V8PQ5g/POYRY9d+ZwHO3
-X-Gm-Gg: ATEYQzyrmTEOBeOcDLtgd5+CYWJkuB9O7M9c3f0X+UnBB7/0c3M+hrTo5R4LzQkMCL+
- L71C/D7+BfsXWFb0tYOgMc/FQPYTsTi9hbfQsIbKo+Co+sSXGB4twXrQwLag0k+A45vKkfx18/4
- VizEPQmb2xuKxe8cq+cbFZBkr5/Di5odhNBMy5gHf6FZDXAGdtPyWhrv+663rAfokeMy8Rh0cQd
- 4pI6R7LSw+pJ+GOPKJPis6fzwq7zA9x2DbgV5n/0Wv9WR/bSEYA/5nrfSmBEp2EBcvWi2AyBT/N
- Efuom6HJFvDiaRVSg52KcT72PqUS82IBqt1aHs6Nuaj2lr+24Qm7hJYWGdJDif+FrYM5J2AUSOj
- z+OPybaPiLjMipEzFtBPyW/O+
-X-Received: by 2002:a05:6000:4411:b0:439:ba4d:bf3d with SMTP id
- ffacd0b85a97d-439ba4dc1fbmr2185953f8f.59.1772451666378; 
- Mon, 02 Mar 2026 03:41:06 -0800 (PST)
-X-Received: by 2002:a05:6000:4411:b0:439:ba4d:bf3d with SMTP id
- ffacd0b85a97d-439ba4dc1fbmr2185902f8f.59.1772451665806; 
- Mon, 02 Mar 2026 03:41:05 -0800 (PST)
+ bh=LQz8w/I2X3+f+169GwA0jeSPVZi1tC2bm4DH5f+W2TE=;
+ b=fn5hnWDynK6Kepafb7Lh4vAb+VMna3gNfvOKzL7/9eGaLjysfWDkAeUvA8LkawAXNp
+ 5x8nBDOZjaFt2ucXiIo68FfVZ0ug6/fedrGvGhY5hSJtwcf9uOP7RFp2HCZpberwxuK7
+ ItprDAIrBig9orVrV1Na3sxffwavnOLgpiCZk7rRTu1RmES7nSwqwGL4Ig5YZg4Btcx0
+ 68LeoUp5gbg5TRxPMh2LFl2YxB6yJMXKEJq3uXAKAzmUfw1iBB07CDP9n20SOW+wY7Xi
+ 0mp2P3Giza7mkcyfF6KVZnQYKXMMJbynikZ/f2cJmOX6I6h1R2WOQrkhnr4LvxJYD8bM
+ 6/Yg==
+X-Gm-Message-State: AOJu0YyQGAqRtdUQp+rytlONVa8aCJPzv+woXVVTJotX0tIBkB7dh+aT
+ 86uk1wrPih3jZgxJKBZ+3CfiY0y7IoQeSat1ZJHFW3nlDrMN22qkLCyaQdjkERyCQwIM5XFnFtG
+ PeyzzlJ/6O8iFBMue130P4OlcvuhcvbVj2DMkdvlFlqoG
+X-Gm-Gg: ATEYQzxVtWk3+o0C/K1DUmNMVZMgj7soZKSwQx2/8+WJjdHYl9Jv74bPQYpXScRWHRc
+ W042zaOMohqxVS/c9CT8XgCzZyqtLLPS5nIHP/FMY/39Hvcotk4GN7ipKbAfV7xb6fzCTvWTzqH
+ IgnZXliBYhgHCQ0iOdUfFxKNrhBCOgCdzKLwypudLTmYOJHDFPBa7M94Hi9G7MJL2L//yg3r+qc
+ kABNoHf5qAV2dZlonjGcEoxClRJ8lyeq6GScsLKglXpDafbslA9WqG3Jq5tt3Rp5HqzMCBmN5NC
+ DZTJ/WAnmpuc1umd6uXHETr98u2KSDQAoQo9Ks0bLEULjHBC7K8WixcLaHWXYpFGGA/MeP5jUhU
+ uLKA3xjW94gWmcb5w+TPU03fN
+X-Received: by 2002:a05:600c:630d:b0:477:a1a2:d829 with SMTP id
+ 5b1f17b1804b1-483c9bdb68emr221730735e9.13.1772452030198; 
+ Mon, 02 Mar 2026 03:47:10 -0800 (PST)
+X-Received: by 2002:a05:600c:630d:b0:477:a1a2:d829 with SMTP id
+ 5b1f17b1804b1-483c9bdb68emr221730035e9.13.1772452029740; 
+ Mon, 02 Mar 2026 03:47:09 -0800 (PST)
 Received: from [192.168.0.65] ([78.16.129.161])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-439ad3daf89sm28194751f8f.20.2026.03.02.03.41.04
+ 5b1f17b1804b1-483bfec1a5bsm159911015e9.29.2026.03.02.03.47.08
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Mon, 02 Mar 2026 03:41:05 -0800 (PST)
-Message-ID: <af147029-820f-41b5-bb09-4e52bb7b297b@redhat.com>
-Date: Mon, 2 Mar 2026 11:41:02 +0000
+ Mon, 02 Mar 2026 03:47:08 -0800 (PST)
+Message-ID: <95057ac2-2dfe-4d44-af13-0ce7a947f2ea@redhat.com>
+Date: Mon, 2 Mar 2026 11:47:07 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/3] interrupt disconnect/error event handling
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, thomas@monjalon.net, david.marchand@redhat.com,
- dsosnowski@nvidia.com, viacheslavo@nvidia.com, hkalra@marvell.com
+Subject: Re: [PATCH v4 2/3] eal/interrupt: add interrupt event info
+To: David Marchand <david.marchand@redhat.com>, viacheslavo@nvidia.com,
+ dsosnowski@nvidia.com
+Cc: dev@dpdk.org, thomas@monjalon.net, hkalra@marvell.com
 References: <20260128122055.192104-1-ktraynor@redhat.com>
  <20260219143852.200722-1-ktraynor@redhat.com>
- <20260219105252.2b807358@phoenix.local>
+ <20260219143852.200722-3-ktraynor@redhat.com>
+ <CAJFAV8y7F1taC9bP4693x0PcstJxW-E45o0DpV2Mw==YGd2+Kg@mail.gmail.com>
 From: Kevin Traynor <ktraynor@redhat.com>
 Autocrypt: addr=ktraynor@redhat.com; keydata=
  xsFNBF2J2awBEADUEPNhgNI+nJNgiTAUcw4YIgVXEoHlsNPyyzG1BEXkWXALy0Y3fNTiw6+r
@@ -118,9 +119,9 @@ Autocrypt: addr=ktraynor@redhat.com; keydata=
  yWzMcVrcGJDQLC9JLKEpoyUF6gdTKaiDL2Vao4+XRIA3Y57b6MO35a3HuzAv7+i5Z0mnDEJO
  XxXqTOmKYpMIGexzM/PtuA0712sT1abG9tAJ17ao/B7cqMW5IkKkalemFbWfI2unns4Papvo
  tk9igVqyp6EJDU98z5TJioCVojwK2laDaoIjTJk9YYv3iwCsqPd5feU=
-In-Reply-To: <20260219105252.2b807358@phoenix.local>
+In-Reply-To: <CAJFAV8y7F1taC9bP4693x0PcstJxW-E45o0DpV2Mw==YGd2+Kg@mail.gmail.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: B_jnE6AU7SVUZF2WHbQkbk_66PVjhRqpJ2rGrY38TL8_1772451666
+X-Mimecast-MFC-PROC-ID: cozGqFEY4YdAVmvtTbfc9eqOqN8iBpNapUy3qNqE7-8_1772452030
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
@@ -138,63 +139,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 2/19/26 6:52 PM, Stephen Hemminger wrote:
-> On Thu, 19 Feb 2026 14:38:49 +0000
-> Kevin Traynor <ktraynor@redhat.com> wrote:
+On 2/26/26 3:41 PM, David Marchand wrote:
+> On Thu, 19 Feb 2026 at 15:39, Kevin Traynor <ktraynor@redhat.com> wrote:
+>>
+>> Add RTE_INTR_EVENT_* defines and a new API rte_intr_active_events()
+>> in order to retrieve them.
+>>
+>> As the events are in the context of the current interrupt,
+>> rte_intr_active_events() must be called from the context of
+>> an interrupt callback.
+>>
+>> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
 > 
->> These patches are to fix some issues with epoll event handling for
->> EPOLLERR/EPOLLRDHUP/EPOLLHUP.
->>
->> 1/3: handles these disconnect/error events for interrupts that are read
->> in eal
->>
->> 2/3: provides an API for interrupt callbacks to get the interrupt events
->> for the active interrupt
->>
->> 3/3: deal with the observed issue as reported in
->> https://bugs.dpdk.org/show_bug.cgi?id=1873 where mlx5 devx interrupts
->> cause a busy-loop and 100% CPU of dpdk-intr thread.
->>
->> v4:
->> Updated to allow for case where devx interrupt handler may handle
->> multiple completions during one interrupt call, leading to no data being
->> read in a subsequent call as flagged by Slava.
->>
->> - 1/3 No change
->> - 2/3 New API rte_intr_active_events() to get interrupt events
->> - 3/3 Use new API in mlx5 devx interrupt handler to detect if
->>   disconnect/error events and if so unregister the callback
->>
->> v3:
->> - 1/2 and 2/2 fix some coding nits (Stephen/AI/David)
->> - 2/2 Make log level consistant (David)
->>
->> v2:
->> - Only handle disconnect/error epoll events when the read is done in eal
->>   interrupt code. This is to allow interrupt handlers like virtio deal
->>   with disconnects in an appropriate
->> - Detect if not data is read in the mlx dex interrupt and if so unregister
->>   the callback
->>
->> Kevin Traynor (3):
->>   eal/linux: handle interrupt epoll events
->>   eal/interrupt: add interrupt event info
->>   net/mlx5: check devx disconnect/error interrupt events
->>
->>  drivers/net/mlx5/linux/mlx5_ethdev_os.c |  20 +++++
->>  lib/eal/freebsd/eal_interrupts.c        |   7 ++
->>  lib/eal/include/rte_interrupts.h        |  23 ++++++
->>  lib/eal/linux/eal_interrupts.c          | 103 +++++++++++++++++-------
->>  lib/eal/windows/eal_interrupts.c        |   7 ++
->>  5 files changed, 133 insertions(+), 27 deletions(-)
->>
-> 
-> Series-Acked-by: Stephen Hemminger <stephen@networkplumber.org>
-> 
-> FYI - AI review gives long winded version of "this is patch is good"
-> The only worthwhile feedback was that there should be a release note for
-> a new API.
+> I have mixed feelings about letting this API in the open.
+> We only have one user (the mlx5 driver), so I would mark it internal
+> for now, and open later if some external user asks for it.
 > 
 
-Thanks Stephen. I will address this on the next version.
+Sounds good to me. I think it's generic enough to be public, but as you
+say the only known use at present is for mlx5, so let's keep internal so
+we are less restricted if we wanted to change it etc.
+
+> And on the name itself, maybe: rte_intr_active_event_flags() ?
+> 
+
+Fine for me, it adds a bit more description.
+
+> [snip]
+> 
+>> diff --git a/lib/eal/include/rte_interrupts.h b/lib/eal/include/rte_interrupts.h
+>> index 1b9a0b2a78..bff4f98f85 100644
+>> --- a/lib/eal/include/rte_interrupts.h
+>> +++ b/lib/eal/include/rte_interrupts.h
+>> @@ -40,4 +40,10 @@ struct rte_intr_handle;
+>>  #define RTE_INTR_VEC_RXTX_OFFSET      1
+>>
+>> +/** Interrupt event flags returned by rte_intr_active_events() */
+>> +#define RTE_INTR_EVENT_IN    (1 << 0)  /**< Data available to read */
+>> +#define RTE_INTR_EVENT_ERR   (1 << 1)  /**< Error condition on fd */
+>> +#define RTE_INTR_EVENT_HUP   (1 << 2)  /**< Hang up / disconnect */
+>> +#define RTE_INTR_EVENT_RDHUP (1 << 3)  /**< Read Hang up / disconnect */
+> 
+> Nit: RTE_BIT32()
+> 
+> 
+
+Ack. I will update on next version. Thanks David.
+
+Slava/Dariusz, does this address your concerns from previous version,
+any other concerns/comments from mlx5 perspective?
 
