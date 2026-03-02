@@ -2,71 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01ABCD58E43
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 00:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 462B3D58E47
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 03:28:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD43E402B0;
-	Mon,  2 Mar 2026 01:53:00 +0100 (CET)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id 2797A4028C
- for <dev@dpdk.org>; Mon,  2 Mar 2026 01:52:40 +0100 (CET)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-1271257ae53so4499939c88.1
- for <dev@dpdk.org>; Sun, 01 Mar 2026 16:52:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772412759;
- x=1773017559; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=r6gDdgYTHm/V4YpvZjeEqgtBhSKJYkHwpULaVjXC4Cg=;
- b=tGwSxJ1jFg9eogIHw+u+b2fhnPEXiqbiOhWGf7G9+inFNjObu/n3nfOdS0wjs5aYaq
- iC5rck8k9OoWBWiaW03y92yeqRSGbrvtvqhwdjVCblnx8DqzQOiV3sYreN/36SjY1Tm/
- RGWRyDZHHToILhGKIV01QlrawNGmPkE0FLZrpwEzSJ4/5HxPzcvoIa2i0STP9sZuuDlT
- h/qiLGS3AQxpKxmramIW9MBXjrFVb02nyHSUfsrfXXrNVZKll/MQ5gRd5GspQanXxb/+
- D2J0DnLL4uXZVnaJ8kJdWEOjr+/9nN9zfiFlCebgjsoowBFaHcTT7QC6lCwHqzdlt9xR
- Y7lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772412759; x=1773017559;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=r6gDdgYTHm/V4YpvZjeEqgtBhSKJYkHwpULaVjXC4Cg=;
- b=SqRKeAaGnUKfFrG6V2ZIY88DzAgt70Ovs57ZNQjvHswYWovZttlz1sKli/66Vl4kbW
- uOByH/pBNA5hBhuyQY3iCSjzuFdMb8v0FEY2lOSchSlLQP8JsLJvMnFE1KK8BFTWAF9N
- kum7mZdDEGN1+mdx9htZ569QgKGwvzV/Ef3jM0fbUhbcX//6cFx+rNfWoPLdTVuaNqW1
- 2LEufwstRC1g2riIeMyFOZek4PhDmpJ8WCbD9wUnUgorzSxzz2Sl1SySScjNw3hbHC4R
- EndQlYJnQBdH343aanOUou475Dw9ZRLtVXihLfeWDEOSUFfLitJsWTnYQcqJTeAsh+d/
- qflQ==
-X-Gm-Message-State: AOJu0YwGJ2v6bMRypJSKFFMiynu0XTapN263qtVD6NT/+nXSvTxU+y2o
- eRvNq0I2XkMhHssoN5/SjkPI9F1waq5HVIfuVmcjh4eJOJeyTfW9mYb5YVAhAvzgZFQ=
-X-Gm-Gg: ATEYQzw+3sROebwkZXMi/k3OrnRyeYcx7gT5xmDdEnHxfZduIOnE8LuaSTW5h4I5aSc
- eUxDekn063EbGmYKmeWWKNqPTUzVgC6sQJ2osh+/b39H0xltsUym4xaLZmCmox34fkIBpoZJbRr
- H62lRMVt3s3SSRkpzyALBFjawNI1Vft3Oee8jU9hcTk+bfd9qctVbivIhXUFNf66qlpQopLtJfB
- mZZFyJtI9cTXIzczVaCVgwiYPU0pW1s4RGa0bJEaA7zcSi2GtfgE3a/oZL4F0eh9N47fhOi2YS9
- B56IUpkVbJ0hX/opWJfb2ZZRXnpMKhVncdeBC9DJyHWhkYaFByk0EusdB3skHI2Dgy/ayplDMum
- Mh2GGM7mRYdgXhABX0R+EWjdxuJXbRcic3Zc1l2yNoJXrxXRi+jBDuYpw5a8Hjlm3ub+zf+5YIu
- +j3BJ1uefwBecEwqaSa76YzeGSUGpaWgHZjyQDuItpDEfrhAN3PZrCgC6lEU9FLo2G
-X-Received: by 2002:a05:7022:922:b0:11b:9d52:9102 with SMTP id
- a92af1059eb24-1278fb7e384mr4840507c88.6.1772412758984; 
- Sun, 01 Mar 2026 16:52:38 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12789a32863sm11558718c88.10.2026.03.01.16.52.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 01 Mar 2026 16:52:38 -0800 (PST)
-Date: Sun, 1 Mar 2026 16:52:35 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Maxime Peim <maxime.peim@gmail.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2] test/flow: add support for async API
-Message-ID: <20260301165235.1aa2003e@phoenix.local>
-In-Reply-To: <20260301232931.444294-1-maxime.peim@gmail.com>
-References: <20260225142310.51f75f4d@phoenix.local>
- <20260301232931.444294-1-maxime.peim@gmail.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 831A0402EE;
+	Mon,  2 Mar 2026 04:28:22 +0100 (CET)
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
+ [113.46.200.227])
+ by mails.dpdk.org (Postfix) with ESMTP id 2B9F84028C;
+ Mon,  2 Mar 2026 04:28:20 +0100 (CET)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=IpSj507dMxgzcMBQC/4S+VavowkkjDosUvx7QYvZIeQ=;
+ b=lcghwMl/UagIYvCeTYGvzYGZMWB6kiTeG3Cu8pe7xsvb6326X4O8KXnpGmLY7QC0hIF1OpHII
+ KH+tJnqwqrKzcnPVQPukgL3CpD6mkbYfcYAajTmWtadOMKIwmeUiUCFsRZBifG8bqFRYHCtjGc+
+ sXpH9HBew9YKJbSdHHtajMg=
+Received: from mail.maildlp.com (unknown [172.19.162.92])
+ by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4fPPR04btBznTVK;
+ Mon,  2 Mar 2026 11:23:40 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 6527940568;
+ Mon,  2 Mar 2026 11:28:18 +0800 (CST)
+Received: from [10.67.121.161] (10.67.121.161) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 2 Mar 2026 11:28:12 +0800
+Message-ID: <c2c5f638-b634-4f66-9c70-a973ac8dfa29@huawei.com>
+Date: Mon, 2 Mar 2026 11:28:11 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v18 02/23] net/pcap: fix build on Windows
+To: Stephen Hemminger <stephen@networkplumber.org>, <dev@dpdk.org>
+CC: <stable@dpdk.org>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Thomas Monjalon <thomas@monjalon.net>, David Marchand
+ <david.marchand@redhat.com>
+References: <20260106182823.192350-1-stephen@networkplumber.org>
+ <20260301020726.852401-1-stephen@networkplumber.org>
+ <20260301020726.852401-3-stephen@networkplumber.org>
+Content-Language: en-US
+From: fengchengwen <fengchengwen@huawei.com>
+In-Reply-To: <20260301020726.852401-3-stephen@networkplumber.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.121.161]
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,30 +60,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  2 Mar 2026 00:29:30 +0100
-Maxime Peim <maxime.peim@gmail.com> wrote:
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
-> +		switch (items[i].type) {
-> +		case RTE_FLOW_ITEM_TYPE_IPV4:
-> +			((struct rte_flow_item_ipv4 *)(uintptr_t)items[i].spec)->hdr.src_addr =
-> +				RTE_BE32(counter);
-Since spec is a void * you don't have to make it so opaque via uintptr_t.
+On 3/1/2026 10:05 AM, Stephen Hemminger wrote:
+> The log messages in the pcap OS dependent code for Windows
+> was never converted during the last release.
+> 
+> It looks like the osdep part of pcap was not being built.
+> Building requires have libpcap for Windows built which is not
+> part of the CI infrastructure.
+> 
+> Fixes: 2b843cac232e ("drivers: use per line logging in helpers")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-
-> +			break;
-> +		case RTE_FLOW_ITEM_TYPE_IPV6: {
-> +			struct rte_flow_item_ipv6 *spec =
-> +				(struct rte_flow_item_ipv6 *)(uintptr_t)items[i].spec;
-
-ditto
-
-> +			uint8_t j;
-> +			for (j = 0; j < 4; j++)
-> +				spec->hdr.src_addr.a[15 - j] = counter >> (j * 8);
-> +			break;
-> +		}
-> +		default:
-> +			break;
-> +		}
-
-Every time I see a cast my "spidey sense" tingles and look for code issues.
