@@ -2,75 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CB8D58E5D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 06:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A2ED58E5F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 06:37:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A8C4D402B0;
-	Mon,  2 Mar 2026 07:18:14 +0100 (CET)
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 7FBE34028C;
- Mon,  2 Mar 2026 07:18:12 +0100 (CET)
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 621Nvn981306167; Sun, 1 Mar 2026 22:18:11 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
- NjV1gNhC2sY4WXpOCa3ugQdvsCz6anASH3BpuiJUWs=; b=UojOqTGYzGtY6itnS
- XAELN86PBYfPeIJhlYe6Iju6dALv/x/WK76rMRpoQlkwBpS7JlTlr0NxqB4fRsIz
- AZE4naFRUE0guZEhszhAv3PCae+BcO/rX9kLJI2xD1aDyqfaVv/A1eReHbgpA+Ak
- v7SVC56PFuND0eZpxheRxvpAAtDHxFSVNUp8xdUiLQWokV5eA4VwYq2hXMyKqm2o
- 7yJt45wzIDNIZDefhnsnNfiFa2/fdnzffDZa5Ah6UlXz30mn7c1P2BD4Uzxe5w+d
- Qs5jndKC7AkK4rLsACnLiBBIgIESeKZDFhMnzN7xZQisMD/0rP1qjoOYBl7UFKdB
- agVgA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4cmng8s4jp-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Sun, 01 Mar 2026 22:18:11 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Sun, 1 Mar 2026 22:18:10 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Sun, 1 Mar 2026 22:18:10 -0800
-Received: from localhost.localdomain (unknown [10.28.36.154])
- by maili.marvell.com (Postfix) with ESMTP id 89A273F7077;
- Sun,  1 Mar 2026 22:18:08 -0800 (PST)
-From: rkudurumalla <rkudurumalla@marvell.com>
-To: Pawel Wodkowski <pawelwod@gmail.com>, Pablo de Lara
- <pablo.de.lara.guarch@intel.com>
-CC: <dev@dpdk.org>, <jerinj@marvell.com>, <ndabilpuram@marvell.com>, "Rakesh
- Kudurumalla" <rkudurumalla@marvell.com>, <stable@dpdk.org>
-Subject: [PATCH v6 1/1] examples/l2fwd-jobstats: fix timer stats display with
- lock contention
-Date: Mon, 2 Mar 2026 11:48:05 +0530
-Message-ID: <20260302061805.1666176-1-rkudurumalla@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240811155957.576645-1-rkudurumalla@marvell.com>
-References: <20240811155957.576645-1-rkudurumalla@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4E433402B0;
+	Mon,  2 Mar 2026 07:37:04 +0100 (CET)
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
+ [209.85.160.178])
+ by mails.dpdk.org (Postfix) with ESMTP id EC7144028C
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 07:37:02 +0100 (CET)
+Received: by mail-qt1-f178.google.com with SMTP id
+ d75a77b69052e-506aa68065eso41801981cf.1
+ for <dev@dpdk.org>; Sun, 01 Mar 2026 22:37:02 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772433422; cv=none;
+ d=google.com; s=arc-20240605;
+ b=Ez6h4GVEdDUx/hodLkrizSXOUONkCTwc6DC4dZ0FnhzGZ36J/72JYfg1qZFlG/tes1
+ z1RxE1fPza5T+NhNiROo+wYg6xy1lGBUnDWCLm+LRdc1gPuRueZHgSdb0dHQu57gRuYk
+ Afo+RR4GG297rPsxSmQ1urRnO6NhZBLk5GPyPGvOn18GemlhSfCRKEPX7Ijr17QvrsOq
+ HAMqtUoSU43hnhpLlmGnOHQVb8agp/KPkc4HHqxxWIufiEU5p96RLVkQXvJ5MsKqGRBo
+ kEBIiRCnUOhXVSMvswE7fSVWo4f5GMboLjS+aWRSr2QXd/HghTMzLUj2IHYWzDvuAJRT
+ A5zw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=P3SIyvXUd6XNmRhrFCNzFE/j3kTY/kmNCgOtcHWVEdc=;
+ fh=AWWq3WD50/hRgQhFlOlyY9e4SLNDsnHrLOnnoS81ZUI=;
+ b=aN89Ep+JJ1jZlNgtYpXyvk2ve/c7bkaSzcpjleU9wmDrvqe28h/mWuRNPGnhV/HQ39
+ YqAUrmhyoMENYhwKBqhUGE07H7TNqceZ96FRtqQ/oiJB+K5YCDpowxuRmYPThkHX2EHv
+ TSOuA81PEBKUhsaM5xzVLHhPPw1yVJh3X6fzOvakACC8/RPdDL/LrcEoxdExgYgMrzpk
+ 3TRdYxLgBMl56jT+7xmFg2S5cLqTyXxaBaJ7NiZ+oJAuSjpOy1Qkv4OkliKJacJL82PE
+ UAniKzc7Mxnowf8dHSZG29orlVkNdPDBO2v1M1vpgz+1UJg+6qezjnRRH9V9RngFND5l
+ NRIQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1772433422; x=1773038222; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=P3SIyvXUd6XNmRhrFCNzFE/j3kTY/kmNCgOtcHWVEdc=;
+ b=cQMlNGaUqGUGF/trdJzlcwL3vMt60/Uom+WhBp9zJBrVulQpdMION3ZIqY6+7Kh/n7
+ EhGf2LzqStF4Xi9yzYUx/AwJNfmIt9z66lRM3RK6AYD5qy9DY6VhEGM04kXKy8WoYLG8
+ gzEM4+jiAfdsMHi1exeN9TspbSrqmwtUTrsGG4+OU09k/qGxUsnMkCaaLb9sfOGS4nGT
+ xqcjKIo7WF6kFpeGFYi63vxUCq4iNwxH4/MWd80M90MQ/8kOy/M+sDGK7Jk5ltluvYwg
+ eeeoBRUMEtP/mcW0XJCEg8vx/7eifkvs06zMchBZIQxYuKHaylLnqGD0+gOc1+wPUh9/
+ 3vjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772433422; x=1773038222;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=P3SIyvXUd6XNmRhrFCNzFE/j3kTY/kmNCgOtcHWVEdc=;
+ b=dyve003At7XdQUIGH4GJDWtazem68LLfa4oZiu8ttfxRgC2B/UXZbQCFvPUIB6cn4s
+ Lo3AKIye6gqXm9e0ZA2RG7u903B4F+YSbEnKLWGQ03/wH7KoFpaJVT0TCDY7FKOCSmPc
+ js0uBLWT7WNAh3htXTnYZORctYq+PjolJkMeySWY5Cv2XRYDMsD2+3NsGNTKdm3s54gN
+ Rn7D8eF4qh1ubewk+oI1cGf6li3Gcj/o6Gw1HOSVGkWdT0NyGdpFCrWrpge+DjHeJY2e
+ PjKon29GYme06P6/L0i4MlyBJOpaJRywGM6OF5WFpDojJZLSPs7QvkhkTQiVNUP17Zqs
+ /bcA==
+X-Gm-Message-State: AOJu0YzS7NycAMODX9u1giKK/FXMcFtgvbsMgt7QELQ1ukLXP60Y+F3j
+ t47Ipym9npXgQrzaadnEEpVT3DkhP0hEFsrzfkbUmn6FH69Wdg3yResfB9zuKjbrfVtQ+Il9725
+ Lyqq9+1U8fC4SM/MwPZZ3PF9uuTMoSms=
+X-Gm-Gg: ATEYQzx8u2Uv9ZDQ+1GALz8k36ZjzOXWM/TEBdO8A/1mJur2Op3PwvU8Z4eb2REqBdG
+ cknr1+es6gaBfavpJRhljb31e4aTX7V5FwbZNsJVDYhRCwtIm9g7gbE7ILYAIY0E4P8/+gY/q0P
+ Y1IjwZqEY1hjt92KUckiqOQCH+wpBE/bUufMFnkl1S297M8+O3NqRsOzinpa4eOww0wO2lQvGD6
+ z7hKt3uGSUMToOeaOL1k010ove9eYrCJ2rNZlJxQl2YFnN4vk51v0vBT2pCYjDNnX8P4keqw3e4
+ 0VQYueogGjZdsQpwIA==
+X-Received: by 2002:a05:622a:4d2:b0:501:863a:a881 with SMTP id
+ d75a77b69052e-50752a2bc24mr133644561cf.75.1772433422120; Sun, 01 Mar 2026
+ 22:37:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: k5MAMXilNRQ_WRg9RusE6_12UroqySjm
-X-Proofpoint-GUID: k5MAMXilNRQ_WRg9RusE6_12UroqySjm
-X-Authority-Analysis: v=2.4 cv=UeZciaSN c=1 sm=1 tr=0 ts=69a52ba3 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=TtqV-g6YmW1Jfm2GSLaY:22 a=M5GUcnROAAAA:8 a=8rWy6zfcAAAA:8
- a=IMbF4wEfJt4oOEi9Lk4A:9 a=OBjm3rFKGHvpk9ecZwUJ:22 a=YjdVzJdQTyZRADMV7wFX:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzAyMDA1MyBTYWx0ZWRfXx/K4ATVv93Qc
- skC14s8vBjPyI8W1gRQlz5d3WvFV8V9cCWhKh8NL5ttWAbyKFkEfkHXkgadP1KngkUhepVGMjXg
- 39+LkTIYCGg9dqAOkdlIuYyr199U+c39v2q2LRm9M90cR/vzlJkqumeN2a3vSu/mcjZfWseSdEq
- kKiX7VrEqS2BKUTN2dtbgi/TmaSwIIb9VU8LhUQzfUfRHn+Kn+O/YxqX2xO0vocuU5DXeibR7aI
- kpsc40b1qxgfoIvuNI6jbRpWfqIxplZOBcq4SAe2FuR37j0J6rPuBI9A/8amH+WR/e+i1rKJv4d
- SUYLo93saOsVAo0tDe+g44Zum/UZGWPrkm3W9Nttwhz79VMKwDb5O/1uWBmyveS/BFROJcNm4gb
- Bne3CxPzQ0B4ExR3lS6OUNShjtQaQ6RUXEj/6y7yvZis5vT7NHfLE4Kdk0+pZbIy1e6TikHMGUz
- B0ad9u7DaIrEqRxwPTQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-03-02_02,2026-02-27_03,2025-10-01_01
+References: <20260219090847.3257753-1-rbhansali@marvell.com>
+ <20260227043723.1986183-1-rbhansali@marvell.com>
+ <20260227043723.1986183-8-rbhansali@marvell.com>
+In-Reply-To: <20260227043723.1986183-8-rbhansali@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Mon, 2 Mar 2026 12:06:36 +0530
+X-Gm-Features: AaiRm50KOPH4fpqZXdQkzlRl8FqBtnumaSeDNq2Sae3mJRzfl9yTVaQoyowF3_w
+Message-ID: <CALBAE1Nz9gFRiUL45SBeEyvcqjUPqj8DNdTLtp53pf5wU9NNhQ@mail.gmail.com>
+Subject: Re: [PATCH v3 8/8] common/cnxk: enable CPT CQ for inline IPsec inbound
+To: Rahul Bhansali <rbhansali@marvell.com>
+Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ jerinj@marvell.com, Rakesh Kudurumalla <rkudurumalla@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,42 +100,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+On Fri, Feb 27, 2026 at 10:08=E2=80=AFAM Rahul Bhansali <rbhansali@marvell.=
+com> wrote:
+>
+> From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+>
+> Added support of CPT CQ configurations for inline inbound IPsec.
+>
+> Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+> ---
+> Changes in v2: fix cleanup on configuration failure case.
+> Changes in v3: No change.
 
-Race condition between jobstats and time metrics
-for forwarding and flushing is maintained using spinlock.
-Timer metrics are not displayed properly due to the
-frequent unavailability of the lock.
 
-This patch fixes the issue by introducing a delay before
-acquiring the lock in the loop. This delay allows for better
-availability of the lock, ensuring that show_lcore_stats() can
-periodically update the statistics even when forwarding
-jobs are running.
-
-Fixes: 204896f8d66c ("examples/l2fwd-jobstats: add new example")
-Cc: stable@dpdk.org
-
-Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
----
- examples/l2fwd-jobstats/main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/examples/l2fwd-jobstats/main.c b/examples/l2fwd-jobstats/main.c
-index a7cd5b4840..036bd4f951 100644
---- a/examples/l2fwd-jobstats/main.c
-+++ b/examples/l2fwd-jobstats/main.c
-@@ -541,7 +541,9 @@ l2fwd_main_loop(void)
- 		} while (likely(stats_read_pending == 0));
- 
- 		rte_spinlock_unlock(&qconf->lock);
--		rte_pause();
-+		while (rte_atomic_load_explicit(&qconf->stats_read_pending,
-+					rte_memory_order_relaxed) != 0)
-+			rte_pause();
- 	}
- 	/* >8 End of minimize impact of stats reading. */
- }
--- 
-2.25.1
-
+Series applied to dpdk-next-net-mrvl/for-main. Thanks
