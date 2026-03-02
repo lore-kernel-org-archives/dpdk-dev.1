@@ -2,77 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0115FEB3622
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 17:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFDEEB3622
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 17:11:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0BB7040E3B;
-	Mon,  2 Mar 2026 18:11:42 +0100 (CET)
-Received: from mail-pg1-f225.google.com (mail-pg1-f225.google.com
- [209.85.215.225])
- by mails.dpdk.org (Postfix) with ESMTP id E3BD940E26
- for <dev@dpdk.org>; Mon,  2 Mar 2026 18:11:39 +0100 (CET)
-Received: by mail-pg1-f225.google.com with SMTP id
- 41be03b00d2f7-c70bb8ffb24so1706230a12.1
- for <dev@dpdk.org>; Mon, 02 Mar 2026 09:11:39 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 89FDD40E4A;
+	Mon,  2 Mar 2026 18:11:51 +0100 (CET)
+Received: from mail-qt1-f227.google.com (mail-qt1-f227.google.com
+ [209.85.160.227])
+ by mails.dpdk.org (Postfix) with ESMTP id D42A440E3F
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 18:11:49 +0100 (CET)
+Received: by mail-qt1-f227.google.com with SMTP id
+ d75a77b69052e-5069b3e0c66so79343041cf.1
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 09:11:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772471499; x=1773076299;
+ d=1e100.net; s=20230601; t=1772471509; x=1773076309;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=DNqog7/c6k383A8xaah7UlmoO2xhAdysH7Mt/VX6hXk=;
- b=NWO1TOCquZXlZ3y1vM0RjjRgrnmT+R/YyKxkk/ZhEgsSLkRQyixATvEsa6EbKlOIQw
- McuK4ZcBX6CSulBDv3knxa0vQ0cGnEhvnCmx+BZQKtfZubAGkZ5hKbwgzTIRyZCoJUts
- PLe2Ud2Q+2D7ob+CFDdF9a+IzJYTiaIXqXsKEZnr9hzwzA5CPV7qp4E2wTfAISPJ/qmN
- ogp20+/UYFHLwN3jcQSfWpaXCbaCa/UJvH21jmIdmBJWvq8WgF4Hz9WepbWZ66ckOXq+
- gr4UNvwNH+mxLrU0xTkXE8CocBevFqd+Fe3IofmsHaLe4/oLe0s9/Cf8DJQsTgJP1qgD
- PI4g==
-X-Gm-Message-State: AOJu0YwAknwmQP5UFmwHRJ2OPPC8KTqRTwDhMMKRaAffets8m8pc9ooF
- qz7rpsaz405eoFMs2zDdPkMMiW0rUSHA2m0aLvkpkq1SIxOGqn73migbpy3PlURNmSIR2s5f54x
- hFkgHlTHvunEa0Emm3Hvd7NllvmVc6wRNt7QlafEVKs6qE9OK07tPohcx4d/Gmt5eYeNN84I+yA
- eeDOTXfyAqtqC5VqTJ9pPW27PXXI9S26WzXm0aAEVxjGCsKP1pJNqltt99WcXguY7sg5XpxpDR5
- 6qYdsCQ4GzN
-X-Gm-Gg: ATEYQzxhFgwgdk7gFylXQ/aTh35fR59tq5ov40w6/KCUFu6bYelZTGSWUWvN8YhAXKk
- gK2FFojBZby70bLIVIHTqJnv6ZUGxluCp3ef9PQbcFuCxi3Crj9+e1R0YePLkgEckhWsHL/QsVD
- /fEvjXjrnbuxUHwd4fLUlJuKITmIEQUyznTNzpMBfe+QuPniyz1h1w4iZMMqj33qEwf6lv1st7T
- +iTxzlXxhiCd+HBux+SJAtg8Wfz0hFpb0TQy6V2UqR2RyEUGcOMt7uSrnkvD0yhuiwW1tLQMtQx
- mW6oOLg/9xCHDH9nhliwsGyK82g4XlZeb7msUmvbH8dpbVMPRvawdZAwOUidLkFHCSHSZn+tmKM
- fxBGu/CfH/qJEEx3YtrqjDCiKDNHc6dX1FZ6N8zpX4gDaWUkvPDVDXCaQ/XkD1Z6LdUm3k/2Qgz
- FmR+M/wosRAcI5t8BmrP8Qe4ASI+mOJRgwKqV9GfrzZMH5XzMOCZbikP+JA4kca14TkJgA
-X-Received: by 2002:a17:90b:3c88:b0:359:7e05:cc8d with SMTP id
- 98e67ed59e1d1-3597e05ccb3mr6198851a91.8.1772471498927; 
- Mon, 02 Mar 2026 09:11:38 -0800 (PST)
+ bh=hVmbnyO1dfZsO5EzEpEwEXNSVnWx49U1Mf387zwh+VQ=;
+ b=RXFr42jNs5tEjv073IZo8W6+jRyGF0fLvwowFdoRoLZqJBLqZajd6nQ9qDi5aTmPdx
+ UtqYKa0I6gGeepEeYyZHj38rmxtJLGJPeeD/2t8F9qsIE2IGlYD9XS953/OYPTHRO4HI
+ uVKXNf8uMtccE6NxzFHpwu/ymCV6naV3YriJ+QdI3dVYl42knpC4Mzzk6ExqSo5aKrr5
+ vPY4JJSI+0Xk3t+YwhdjyTHTLqOownLwlUs/amTsBm1MKigUlMnU0pibhca1ucHEiU+m
+ 5DoJADcYLwI8gmuT7q8F5ArrW0Tx27RjYF3lGjT+PrdRmNvXGXPxsectnfvFp3z/cWMw
+ vjHQ==
+X-Gm-Message-State: AOJu0YxRk9UuHdyBudLx16wOQC9IP15t+gqHAz7EJCVvp1MyDdN+4HXE
+ rx3wM1HtuDadCzJBzIZcwwEBBMt808+ppEO6uMuPESMDuForwwR/Hxhrpjxj0wjcYkTeBSbOa1z
+ TGYPaCq/7vgxbLqvinh/ranoUHm0j/0WvFZ4pU2ky0tCSCNUgjOXQQ868RSmDSYnWvEPGzLpCX0
+ IKXFw5ccMaTbLBxM9p8AD6WZiOccnMskKNmS/oK8ETdK4ob3pmrkULePJgabyglZN6mj0L8S0Zf
+ O2JLoEKfPUh
+X-Gm-Gg: ATEYQzx7srPe1b68eaZDWF32U2W5uDBXZOMCrglPWA4aNYVBp1Etf0YoSfFQN399OAp
+ aDgrzNlNlhl5LboA1Yy6eiBnuLKh3/S2pbzKjK1kOF4E5j4FndnIjcEuXHY+JUr64abMbg14QbO
+ 9Cqrl6QPJWnBj6ecpbJsXo4+HKSEp3awjXJ+manea4aMoe8To4TTHxCKori+PIBGt5al8Hhe6/3
+ qWLVw493Kl2qf7zfdHtVMJ4kQpwieLpliki82LsEMHUHQOwGulps1v7mN6iNQ+1XLbpd06EK/Co
+ 7miVCPlQ8uprclwOw/Msf5r+N0MBpaxxMH6esmO6hgdVeYNud0GgOb1f47QijBlz5Mk/PSCN0Xr
+ bJgnRaRFTfZWJ4tz54HGghHlXHL7ok51XFzH4dONfG26IjUZ+ilYX/aegdTyN3vQ3lXhIlCqtsU
+ Yafvx5JHkzxZdKhbl09dnDprOGV/5nJh7pOIrPSLLNRsccGobAt6g/d2ehFVB+jwT6zE2b/iTeg
+ Q==
+X-Received: by 2002:ac8:5d07:0:b0:501:4c42:ee15 with SMTP id
+ d75a77b69052e-5074433e728mr208583191cf.1.1772471508865; 
+ Mon, 02 Mar 2026 09:11:48 -0800 (PST)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
+ (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3598c04a8basm586208a91.6.2026.03.02.09.11.38
+ 6a1803df08f44-899ec546d4esm7428966d6.15.2026.03.02.09.11.48
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 02 Mar 2026 09:11:38 -0800 (PST)
+ Mon, 02 Mar 2026 09:11:48 -0800 (PST)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-dl1-f70.google.com with SMTP id
- a92af1059eb24-1275c6fc58aso9731551c88.0
- for <dev@dpdk.org>; Mon, 02 Mar 2026 09:11:38 -0800 (PST)
+Received: by mail-dl1-f72.google.com with SMTP id
+ a92af1059eb24-127876be621so2805526c88.1
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 09:11:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1772471497; x=1773076297; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1772471507; x=1773076307; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DNqog7/c6k383A8xaah7UlmoO2xhAdysH7Mt/VX6hXk=;
- b=PXhGstQ3EU2Hc8I8Fhvcc0l3WKlpHwufhZDiUZtzKqzLnwx4LobGLzk92AvrgWTik4
- wlrpMK72+cvSrGAddvaAKHwLezEYzkXedADtBtbyrAUUJWpEKusOT7oM3tEX68OJN67N
- 3SYop65joKAKTYLI8VQ6n0IYqb9/ofcw+EXH4=
-X-Received: by 2002:a05:7022:6624:b0:11b:b3a1:714a with SMTP id
- a92af1059eb24-1278fb78dd9mr4186884c88.12.1772471496706; 
- Mon, 02 Mar 2026 09:11:36 -0800 (PST)
-X-Received: by 2002:a05:7022:6624:b0:11b:b3a1:714a with SMTP id
- a92af1059eb24-1278fb78dd9mr4186868c88.12.1772471495949; 
- Mon, 02 Mar 2026 09:11:35 -0800 (PST)
+ bh=hVmbnyO1dfZsO5EzEpEwEXNSVnWx49U1Mf387zwh+VQ=;
+ b=S/xN29DB2DPprIVwcB+DbnOH83/u4s7qSvFmp2UYN1Ylp/Si+x9atf34KsmgBTRAZY
+ LJ8ZSvJuuLqVJGjrpn0VaTLvKX0s7O7rvEnpoaKZPow81UpL6iuvxjynRwum1UD0poWz
+ W1QCrnD9fZdf+FuEPD1g2JklwlPu+kihIEaao=
+X-Received: by 2002:a05:7022:49b:b0:124:9acd:3160 with SMTP id
+ a92af1059eb24-12788fe1836mr6343789c88.0.1772471507453; 
+ Mon, 02 Mar 2026 09:11:47 -0800 (PST)
+X-Received: by 2002:a05:7022:49b:b0:124:9acd:3160 with SMTP id
+ a92af1059eb24-12788fe1836mr6343768c88.0.1772471506777; 
+ Mon, 02 Mar 2026 09:11:46 -0800 (PST)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12789962f89sm13910511c88.0.2026.03.02.09.11.35
+ a92af1059eb24-12789962f89sm13910511c88.0.2026.03.02.09.11.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Mar 2026 09:11:35 -0800 (PST)
+ Mon, 02 Mar 2026 09:11:46 -0800 (PST)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
@@ -80,9 +81,9 @@ To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
  Ajit Khaparde <ajit.khaparde@broadcom.com>, stable@dpdk.org,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Subject: [PATCH 1/4] net/bnxt: support handling PTP frames in Rx
-Date: Mon,  2 Mar 2026 10:12:33 -0700
-Message-ID: <20260302171236.98625-2-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH 3/4] net/bnxt: support timestamp parsing in Tx
+Date: Mon,  2 Mar 2026 10:12:35 -0700
+Message-ID: <20260302171236.98625-4-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260302171236.98625-1-Mohammad-Shuab.Siddique@broadcom.com>
 References: <20260302171236.98625-1-Mohammad-Shuab.Siddique@broadcom.com>
@@ -104,70 +105,99 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Ajit Khaparde <ajit.khaparde@broadcom.com>
 
-Support handling of PTP frames in the Rx path.
-This feature is available in scalar mode data path.
-If the Rx completion indicates a PTP timesync packet,
-update the mbuf ol_flags accordingly.
+Support timestamp parsing in Tx completions.
+Check the mbuf ol_flags to see if a PTP packet is being transmitted.
+Set the request for timestamp in the Tx descriptor.
 
-This feature is not available in the compressed Rx CQE mode.
+If the port transmits a PTP packet, the hardware will capture the
+timestamp at the time of the transmit and indicate it in the Tx
+completion on the corresponding Tx ring.
+
+Parse the timestamp info from the Tx completion entry and cache it
+for indicating to the application when needed.
 
 Cc: stable@dpdk.org
 
 Signed-off-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_rxr.c | 11 ++++++++++-
- drivers/net/bnxt/bnxt_rxr.h |  2 +-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ drivers/net/bnxt/bnxt_ethdev.c | 23 +++++++++++++++++++++++
+ drivers/net/bnxt/bnxt_txq.c    |  6 ++++++
+ drivers/net/bnxt/bnxt_txq.h    |  1 +
+ 3 files changed, 30 insertions(+)
 
-diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c
-index c94abefa01..ac4c61b850 100644
---- a/drivers/net/bnxt/bnxt_rxr.c
-+++ b/drivers/net/bnxt/bnxt_rxr.c
-@@ -724,7 +724,7 @@ bnxt_set_ol_flags(struct bnxt_rx_ring_info *rxr, struct rx_pkt_cmpl *rxcmp,
- 		     RX_PKT_CMPL_FLAGS_ITYPE_PTP_W_TIMESTAMP))
- 		ol_flags |= RTE_MBUF_F_RX_IEEE1588_PTP | RTE_MBUF_F_RX_IEEE1588_TMST;
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index c75cd05d99..6f962f8b73 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -1827,6 +1827,8 @@ int bnxt_dev_start_op(struct rte_eth_dev *eth_dev)
+ 	struct rte_eth_link *link = &eth_dev->data->dev_link;
+ 	int vlan_mask = 0;
+ 	int rc, retry_cnt = BNXT_IF_CHANGE_RETRY_COUNT;
++	struct bnxt_tx_queue *txq;
++	uint16_t queue_idx;
  
--	mbuf->ol_flags = ol_flags;
-+	mbuf->ol_flags |= ol_flags;
- }
+ 	if (bp->rx_cp_nr_rings > RTE_ETHDEV_QUEUE_STAT_CNTRS)
+ 		PMD_DRV_LOG_LINE(ERR,
+@@ -1910,6 +1912,27 @@ int bnxt_dev_start_op(struct rte_eth_dev *eth_dev)
+ 	if (BNXT_P5_PTP_TIMESYNC_ENABLED(bp))
+ 		bnxt_schedule_ptp_alarm(bp);
  
- static void
-@@ -1182,6 +1182,7 @@ static int bnxt_rx_pkt(struct rte_mbuf **rx_pkt,
- 	if (mbuf == NULL)
- 		return -EBUSY;
- 
-+	mbuf->ol_flags = 0;
- 	mbuf->data_off = RTE_PKTMBUF_HEADROOM;
- 	mbuf->nb_segs = 1;
- 	mbuf->next = NULL;
-@@ -1199,6 +1200,14 @@ static int bnxt_rx_pkt(struct rte_mbuf **rx_pkt,
- 		bnxt_parse_csum_v3(mbuf, rxcmp1);
- 		bnxt_parse_pkt_type_v3(mbuf, rxcmp, rxcmp1);
- 		bnxt_rx_vlan_v3(mbuf, rxcmp, rxcmp1);
-+		/* Packet cannot be a PTP ethertype if it is detected as L4 */
-+		if (mbuf->ol_flags & RTE_MBUF_F_RX_L4_CKSUM_GOOD)
-+			mbuf->ol_flags &= ~RTE_MBUF_F_RX_IEEE1588_PTP;
++	/* There are a few conditions for which fast free is not supported.
++	 * PTP can be enabled/disabled without restarting some programs.
++	 */
++	for (queue_idx = 0; queue_idx < bp->tx_nr_rings; queue_idx++) {
++		txq = eth_dev->data->tx_queues[queue_idx];
++		if (BNXT_P5_PTP_TIMESYNC_ENABLED(bp) || bp->ieee_1588) {
++			txq->offloads &= ~RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
++			if (BNXT_P5_PTP_TIMESYNC_ENABLED(bp) || bp->ieee_1588)
++				txq->tx_free_thresh = RTE_BNXT_MIN_TX_BURST;
++			else
++				txq->tx_free_thresh =
++					RTE_MIN(rte_align32pow2(txq->nb_tx_desc) / 4,
++						RTE_BNXT_MAX_TX_BURST);
++		} else {
++			txq->offloads |= RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
++			txq->tx_free_thresh =
++				RTE_MIN(rte_align32pow2(txq->nb_tx_desc) / 4,
++					RTE_BNXT_MAX_TX_BURST);
++		}
++	}
 +
-+		/* If its a PTP frame, ptype cannot be L2_ETHER */
-+		if (mbuf->ol_flags & RTE_MBUF_F_RX_IEEE1588_PTP)
-+			mbuf->packet_type = RTE_PTYPE_L2_ETHER_TIMESYNC;
-+
- 		if (BNXT_TRUFLOW_EN(bp))
- 			mark_id = bnxt_ulp_set_mark_in_mbuf_v3(rxq->bp, rxcmp1,
- 							       mbuf, &vfr_flag);
-diff --git a/drivers/net/bnxt/bnxt_rxr.h b/drivers/net/bnxt/bnxt_rxr.h
-index 7357ca4427..5e5496964f 100644
---- a/drivers/net/bnxt/bnxt_rxr.h
-+++ b/drivers/net/bnxt/bnxt_rxr.h
-@@ -535,6 +535,6 @@ bnxt_parse_csum_v3(struct rte_mbuf *mbuf, struct rx_pkt_cmpl_hi *rxcmp1)
- 	uint16_t error_v2 = rte_le_to_cpu_16(v3_cmp->errors_v2);
- 	uint32_t flags2 = rte_le_to_cpu_32(v3_cmp->flags2);
+ 	return 0;
  
--	mbuf->ol_flags = bnxt_parse_csum_fields_v3(flags2, error_v2);
-+	mbuf->ol_flags |= bnxt_parse_csum_fields_v3(flags2, error_v2);
- }
- #endif /*  _BNXT_RXR_H_ */
+ error:
+diff --git a/drivers/net/bnxt/bnxt_txq.c b/drivers/net/bnxt/bnxt_txq.c
+index 3938ebc709..7752f06eb7 100644
+--- a/drivers/net/bnxt/bnxt_txq.c
++++ b/drivers/net/bnxt/bnxt_txq.c
+@@ -172,8 +172,14 @@ int bnxt_tx_queue_setup_op(struct rte_eth_dev *eth_dev,
+ 	txq->nb_tx_desc = nb_desc;
+ 	txq->tx_free_thresh =
+ 		RTE_MIN(rte_align32pow2(nb_desc) / 4, RTE_BNXT_MAX_TX_BURST);
++	/* For PTP packets, process the completion sooner */
++	if (bp->ptp_cfg != NULL)
++		txq->tx_free_thresh = RTE_BNXT_MIN_TX_BURST;
+ 	txq->offloads = eth_dev->data->dev_conf.txmode.offloads |
+ 			tx_conf->offloads;
++	/* mbuf fast free not supported for the following. Reset the bit */
++	if (bp->ieee_1588)
++		txq->offloads &= ~RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
+ 
+ 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
+ 
+diff --git a/drivers/net/bnxt/bnxt_txq.h b/drivers/net/bnxt/bnxt_txq.h
+index 69652bbaaa..ac8af91c57 100644
+--- a/drivers/net/bnxt/bnxt_txq.h
++++ b/drivers/net/bnxt/bnxt_txq.h
+@@ -8,6 +8,7 @@
+ 
+ /* Maximum transmit burst for vector mode.  */
+ #define RTE_BNXT_MAX_TX_BURST		64U
++#define RTE_BNXT_MIN_TX_BURST		1U
+ 
+ struct bnxt_tx_ring_info;
+ struct bnxt_cp_ring_info;
 -- 
 2.47.3
 
