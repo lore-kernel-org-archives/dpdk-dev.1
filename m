@@ -2,94 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA50EB3624
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 17:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B74EB362E
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 18:55:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A29B240E1E;
-	Mon,  2 Mar 2026 18:26:17 +0100 (CET)
-Received: from mail-oi1-f226.google.com (mail-oi1-f226.google.com
- [209.85.167.226])
- by mails.dpdk.org (Postfix) with ESMTP id A796E4028C
- for <dev@dpdk.org>; Mon,  2 Mar 2026 18:26:16 +0100 (CET)
-Received: by mail-oi1-f226.google.com with SMTP id
- 5614622812f47-463a94f8475so3884807b6e.0
- for <dev@dpdk.org>; Mon, 02 Mar 2026 09:26:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772472376; x=1773077176;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=XTjLdcEcjke6VBGp+hXnVc27KUWlsUXK7rYvl66V+6k=;
- b=cA+dw6l/UK0fPbXEdB5aiPmwfFXPQsYRKruHk+LGh/t97THyXlMauLA0D4/6llYCP8
- qOmsze2kE9IzB4eWVj2CgzS7t/pkglOvSdymsmSw12zz4DCFGeLQDf/6SnJs2k0dBDpC
- ER+Oza8rGJliC5ePtf0CvKMQU/QENYd7W4Ry0ValjzTsa6XK1qkGxtoHxhKO67bQGj0m
- mTiCnI1Xzs9GESkvQAm2JYQKdT+ihnKGagdWGRTFLikQjLin2DhUhNK4Uv1/bTjcSyfb
- V0sCL4bbHX/OFrBOI11JSwj9iVFBr5wVHpr9nJSmdhBJx8DPFUlS8/LG4ixFHAT2ji0D
- XaHw==
-X-Gm-Message-State: AOJu0YzvnPxYGmfFcNSkJQ2HLhx9QrGoFEse5mndlkkOtMCZ+dhQoF/a
- p68DAVd7LqAbvvsZuzDkCVG6S831ZYezlciCKsRvpDzItMNxkr/vFKRByiGIdJpi0XCsW+J9exw
- VNdcL1ouhIoJX0tVGyB+/IIFylTvJzweYV1Xlti4pYwXfNBVzQTY/ElyLeXra+YqWHadC10QUvB
- YyIkKBhvjufyLhLKnhPx3ijnnDT3SKIli40RTXFJ/K4+Lhx5xHDI+UzMVhJ/8HPqfl2foKy5n+o
- tL+M/8KkY7R
-X-Gm-Gg: ATEYQzzKTSRRCGWfyVdwjX+3zZsqdlGV5V/VSvfMEhjOv0LIKZ6EJY0j4d+PH4pkBVn
- zWGubYilwMwntYbSjTaDONGLW2T/T3HtwicEm8y9BfTWlO2GrTlwUGGK6L/6DkPCCBdRw6kWdaY
- fNrgM4+3QQAD6NOwnZT0W3mTqnHbFv/4sV2eH9WDp5JbxkmICkT3y29ZM47nE7A8a7T4bxIevV/
- nj3HRFJE0E22MxjvDKOH/lBjosj+FE0E4oocR/MUZHjJeO2cLTQwIoLyGj3IeSAJcqetAR/Bl/g
- 4jgqs3HBW/SKB4Iru9cv8Qli3t5mUMSqwsmHiZNLxi8dpOBO9YW2GZFs6Fh4FEqUvDQTpNGkMde
- quWkXahJYUiX77ZfZgxYeZfjkV7Q8CfDfx4ME4ELSJpSmxK123VdrFFjS8ADSqDUlxmhbsqId2J
- g/Gi75yqKSJRgCTmiFXai4yaikqtL62c4LlgW1A34gQeTmJBz6BXOEFm1We7BUTpgzaIlsXrnKb
- g==
-X-Received: by 2002:a05:6808:1645:b0:45a:6adf:4d44 with SMTP id
- 5614622812f47-464a5dac614mr8674297b6e.12.1772472375598; 
- Mon, 02 Mar 2026 09:26:15 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
- by smtp-relay.gmail.com with ESMTPS id
- 586e51a60fabf-4160cf72dabsm1821075fac.4.2026.03.02.09.26.15
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 02 Mar 2026 09:26:15 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-dl1-f72.google.com with SMTP id
- a92af1059eb24-1273dfdaf5dso3252229c88.0
- for <dev@dpdk.org>; Mon, 02 Mar 2026 09:26:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 48BAA4028C;
+	Mon,  2 Mar 2026 19:54:59 +0100 (CET)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
+ [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id CFE31400D7
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 19:54:57 +0100 (CET)
+Received: by mail-qv1-f51.google.com with SMTP id
+ 6a1803df08f44-899aede64e8so45499606d6.1
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 10:54:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1772472374; x=1773077174; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1772477697; x=1773082497; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=XTjLdcEcjke6VBGp+hXnVc27KUWlsUXK7rYvl66V+6k=;
- b=YqEjv7NCNzHpRibBIcTBP1/+TJkfonRBdzbpkP9SGtf2DeFUmbAyxosa2XI4zL3bNk
- OBqusPOTMC7bb0gMKF8v24anTRaWIqdt8+Z3QlHdAQXGbHLBUvuQdQHrCFpSq1OOP3fQ
- IoJHPQlEP98GDchphIUxJUA+xbZE4lLO7DcGM=
-X-Received: by 2002:a05:7022:61d:b0:124:9f56:832e with SMTP id
- a92af1059eb24-127890fc341mr6175233c88.18.1772472373977; 
- Mon, 02 Mar 2026 09:26:13 -0800 (PST)
-X-Received: by 2002:a05:7022:61d:b0:124:9f56:832e with SMTP id
- a92af1059eb24-127890fc341mr6175206c88.18.1772472373155; 
- Mon, 02 Mar 2026 09:26:13 -0800 (PST)
-Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
+ bh=488eUAyPxCDjdvapqIYOt4rr+RJZzVD3zArqArLwD5g=;
+ b=gbBr/Hc4gwbs1wte615fmyLHo5JBqITzlY3ijOFiMvBWls5HDQwNHn4ln+2nwQ4vUW
+ REqPJGjn7Yb5dFtjTPiCTh0cX/LTx6lNiQMchUgpIpuvXj0tAdlPzFW52whC1Db2cakQ
+ v3VuH3r12I4jonB5BoQC6UZRTO9qdygJ51IPg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772477697; x=1773082497;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=488eUAyPxCDjdvapqIYOt4rr+RJZzVD3zArqArLwD5g=;
+ b=Pp3p1zl4hGWrX8lQ2203fV0PgtgLBPnuRwHE6WWRhHjJm5cYDTSoCN0PF27ePAFC6P
+ XgbeD8i9tslQeHn/8dBXLZL2ntHfGHm7ZE5VzLRCgy0+j3XSuA2rOkD8m1uIZBhNomPh
+ mW/cx7KFNI/jJhTByYk3GBYc5sIEnvmB5PoK8vwXA98lt8eOpXai+MBoc/O321odCGJx
+ sRplaKcbC/iSqrd7WRU80ZE6aK82UnD7ZnFjm4SB2y2vcik+mxTxq174qdlQwYxhrwr2
+ psoQsBdoEBl6/Rt7vjR/T7uhHqjYL3F+JB8dK7wXH51zQDQOOLoItCtfqGdCylO2Mbgk
+ MTkw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCU5hi1EcTCFI+OQrPLsi3YLGAVfmEctg476YstfsdqVLsdZK0Vp/C3NVpSH9sIlhT1Z0is=@dpdk.org
+X-Gm-Message-State: AOJu0YwQxYSC95Bmfd+EA6UDnsohhHbNh3oDyvFpHFcHMKchcTfg3SIB
+ sJVNvkB/erHx5kLEhfVeJ7IaFNr/WFvTpXD8noB12b/ERyKh0g7ZnxFGjq9l2qmThKM=
+X-Gm-Gg: ATEYQzyTR71shl1uLajQQfakUSNz0Xgy6XDZcx8WmTSrP2ARvoOHPavHe+EpFBndxlW
+ r2GDrNbw+V06i5soxZfKG5zd6oZ39nGiqUz02ae9LVN5E5mb/ewQEr/c8jTsCfaaldG5KEBhiFp
+ RVqMWWvHzfY1fcPDgrX9Kku8SqJhNxnp+REbEa22hvPw+S29Csx9417CgvpbIuQCARyz28D8xW+
+ z4HP7Nh6dSuffvGcnoZeBjp61nrrnsM0aPC0pDcao4pocxxYaSk3i34miu4f33Zi1UdZT+i0cbD
+ UklZVfn6m++jzokAnu1542n+ELBTdajuKId/Mn5c8t1HRckSs3dDo4xNRGlnowpdkGkpK/penxt
+ cRL9tpy1U+HTwRUpQw//MumdmhPUX2tpE1U+8vkC4y4D4XLX4jP9uMovsexiCvWn7GUiMT6bQh1
+ f+LmpgV0EllPzg8uRtcYk1hIrDHz9XwW1UBsnzL2JX3o1OOkhHVgi/ZExULgzBIHs1
+X-Received: by 2002:a05:6214:226c:b0:899:a85a:f083 with SMTP id
+ 6a1803df08f44-899d1f1b2damr196440056d6.12.1772477697085; 
+ Mon, 02 Mar 2026 10:54:57 -0800 (PST)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12789a52ab0sm19075530c88.15.2026.03.02.09.26.12
+ 6a1803df08f44-899eed12615sm46719586d6.8.2026.03.02.10.54.55
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Mar 2026 09:26:12 -0800 (PST)
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-X-Google-Original-From: Mohammad Shuab Siddique
- <Mohammad-Shuab.Siddique@broadcom.com>
-To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
- stable@dpdk.org
-Subject: [PATCH v2 4/4] net/bnxt: add ptp_cfg struct support for Thor 2 VFs
-Date: Mon,  2 Mar 2026 10:26:42 -0700
-Message-ID: <20260302172710.98978-1-Mohammad-Shuab.Siddique@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260302171236.98625-5-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260302171236.98625-5-Mohammad-Shuab.Siddique@broadcom.com>
+ Mon, 02 Mar 2026 10:54:56 -0800 (PST)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: probb@iol.unh.edu
+Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org, gakhil@marvell.com,
+ kai.ji@intel.com, dharmikjayesh@arm.com, david.marchand@redhat.com,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v4 0/5] dts: add cryptodev testing support
+Date: Mon,  2 Mar 2026 13:54:33 -0500
+Message-ID: <20260302185438.122584-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260210193448.69423-1-abailey@iol.unh.edu>
+References: <20260210193448.69423-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,42 +79,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+This patch series adds support to use the dpdk-test-crypto-perf
+application. This application utilizes crypto devices that must be
+listed in the format of a port under the `cryptodevs:` label. Along
+with this, the application does not utilize a traffic generator and
+therefore a new test suite decorator has been made to signify this.
+Crypto tests must be enabled in test_run.yaml as `crypto: true`.
+It is not supported to enable crypto testing along with functional
+or performance testing. Specific capabilities of a crypto device
+cannot be gathered at setup and therefore, non-relevant tests skip at
+runtime. Finally, the application must be run with virtual functions
+and the process of creating and binding them has been automated within
+this series.
 
-Modified ptp_cfg initialization to create the struct for Thor 2 VFs,
-enabling RX/TX timestamp support. VFs on pre-Thor 2 devices remain
-unaffected.
-
-Previously, VFs lacked timestamp support, causing "RX/TX timestamp
-registers not valid" errors in testpmd ieee1588 fwd mode.
-
-RelnoteHeadline: Add PTP timestamp support for Thor 2 VFs
-RelnoteDescChg: DPDK driver now creates ptp_cfg struct for Thor 2 VFs,
-enabling PTP timestamp functionality in ieee1588 forwarding mode
-RelnoteIssueDesc: RX/TX timestamp registers were not valid for VFs,
-causing ieee1588 forwarding mode to fail on Thor 2 VFs
-RelnoteVisibility: Default
-
-Cc: stable@dpdk.org
-
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt_hwrm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2:
+* Updated example yaml files for test_run and tests_config.
+* Expanded test suite coverage.
+* Resolved git problems where patches were removing code added by the
+  previous commit.
+* Updated test suite to only run tests that are configured in the
+  tests_config yaml.
+v3:
+* Fixed some tests that were being run with incorrect arguments.
+* Updated crypto-device pci paths for driver binding and VF creation.
+* Updated example yaml files for tests_config and nodes files.
+v4:
+* Updated how virtual functions are allocated to a run of the cryptodev
+  application.
+* Updated config files to be more readable.
+* Reduced total commands sent to SUT node for crypto VF creation.
+* Fixed various typos and docstring issues.
+* Updated a vdev test case to use the correct devtype.
 
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 0cef22b5ec..3632bebbd6 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -1258,7 +1258,7 @@ static int __bnxt_hwrm_func_qcaps(struct bnxt *bp)
- 	 * sends another hwrm msg.
- 	 */
- 	if (flags & HWRM_FUNC_QCAPS_OUTPUT_FLAGS_PTP_SUPPORTED) {
--		if (BNXT_CHIP_P5(bp) || BNXT_PF(bp)) {
-+		if (BNXT_CHIP_P5_P7(bp) || BNXT_PF(bp)) {
- 			bp->flags |= BNXT_FLAG_PTP_SUPPORTED;
- 			PMD_DRV_LOG_LINE(DEBUG, "PTP SUPPORTED");
- 			HWRM_UNLOCK();
--- 
-2.47.3
+
+Andrew Bailey (5):
+  dts: add find float method to text parser
+  dts: automate VFIO-PCI modprobe in node setup
+  dts: add cryptodev package to DTS
+  dts: add cryptodev throughput test suite
+  dts: add crypto test decorator
+
+ .../tests.TestSuite_cryptodev_throughput.rst  |   8 +
+ dts/api/cryptodev/__init__.py                 | 137 ++++
+ dts/api/cryptodev/config.py                   | 508 +++++++++++++
+ dts/api/cryptodev/types.py                    | 185 +++++
+ dts/configurations/nodes.example.yaml         |  14 +
+ dts/configurations/test_run.example.yaml      |   1 +
+ dts/configurations/tests_config.example.yaml  |   8 +
+ dts/framework/config/node.py                  |   4 +
+ dts/framework/config/test_run.py              |   3 +
+ dts/framework/params/types.py                 |  65 ++
+ dts/framework/parser.py                       |  28 +
+ dts/framework/remote_session/dpdk_shell.py    |   5 +-
+ dts/framework/test_run.py                     |   5 +
+ dts/framework/test_suite.py                   |   6 +
+ dts/framework/testbed_model/linux_session.py  |  69 ++
+ dts/framework/testbed_model/node.py           |  10 +
+ dts/framework/testbed_model/os_session.py     |  34 +
+ dts/framework/testbed_model/topology.py       |  78 +-
+ dts/tests/TestSuite_cryptodev_throughput.py   | 695 ++++++++++++++++++
+ 19 files changed, 1860 insertions(+), 3 deletions(-)
+ create mode 100644 doc/api/dts/tests.TestSuite_cryptodev_throughput.rst
+ create mode 100644 dts/api/cryptodev/__init__.py
+ create mode 100644 dts/api/cryptodev/config.py
+ create mode 100644 dts/api/cryptodev/types.py
+ create mode 100644 dts/tests/TestSuite_cryptodev_throughput.py
+
+--
+2.50.1
 
