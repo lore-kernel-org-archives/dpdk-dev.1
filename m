@@ -2,90 +2,91 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5159CEB3622
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 17:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA50EB3624
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 17:26:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA43640EA5;
-	Mon,  2 Mar 2026 18:11:53 +0100 (CET)
-Received: from mail-vk1-f227.google.com (mail-vk1-f227.google.com
- [209.85.221.227])
- by mails.dpdk.org (Postfix) with ESMTP id 1B7EE40E40
- for <dev@dpdk.org>; Mon,  2 Mar 2026 18:11:51 +0100 (CET)
-Received: by mail-vk1-f227.google.com with SMTP id
- 71dfb90a1353d-56a88bfd4e3so3294619e0c.3
- for <dev@dpdk.org>; Mon, 02 Mar 2026 09:11:51 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A29B240E1E;
+	Mon,  2 Mar 2026 18:26:17 +0100 (CET)
+Received: from mail-oi1-f226.google.com (mail-oi1-f226.google.com
+ [209.85.167.226])
+ by mails.dpdk.org (Postfix) with ESMTP id A796E4028C
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 18:26:16 +0100 (CET)
+Received: by mail-oi1-f226.google.com with SMTP id
+ 5614622812f47-463a94f8475so3884807b6e.0
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 09:26:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772471510; x=1773076310;
+ d=1e100.net; s=20230601; t=1772472376; x=1773077176;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=3V5wDf6fOTQk1SO/CmDH8Wx9lfg+7COQYv+Uj6jReDA=;
- b=OV7qwGZD6P2Sb1k/yGjqkhiSre4HZoIw/Rx8hIAGWDJ0r+/uOTgu5G4oxJiP0JTZmZ
- Vg4tsDQ6I0/ueXf+WJRvOg2pk5gcqBLAIAHR0jvg+Q7m/n8is+pTMRG6D1hMUQA9D5ea
- bxg12KjFRjE88XkDuxkRY5f7ZGXsdf3nXIxuj4KPx/zpzOohslOb297GGPjNvZMWg6Mv
- XXDX0dAuCL17viSJge1OFjDNxG3kJ7QqIbVxjWdhhJbrAmDXd7f9k4PmzsHhWFpyJoxN
- SLdn6MdeBZMBqF2LJPJjJONo9bUtc9vu+X56gXHDz7K4So81ADlx1dVqqFERpTf2m9XM
- 3zkQ==
-X-Gm-Message-State: AOJu0YxbqwoHsl3tCitHMc4WC7IjqLW3Z7HAJR09pO+TUhlBD1ih0sOY
- XcETtpahkneJD9x10VaMF1/3BILTqbMKJSMK7a3tonMM91YznunTx7nyivTVOSj+rAoH58//5He
- bMFzrue97wtZn+2Cl4NpbrdpKh0l5mqORmxtBpzca6ICLNrrwLDKAHuGApnfnQLCOKOYtSOWxqW
- FnwN6PZwi7Pod0XKS6nfbIxuv8BR4KwoUFV1DnuNNwEsNMqiwfXK5QNBPNwYI4FfaXZSYko1IXi
- uZqzz/Dicgc
-X-Gm-Gg: ATEYQzxUPpaQ1sQM+ILja1tYCEPzautMZ/gKI+uvdNcNaDT/IVz5VV0olEikV1U8z2e
- 60GcQkGaIHTQbKVSg7WoJmb2+B2aoGx5YsXZyzShFb28ZGaZsmTmWOb/G4QOqMixt1BXlEd0Wkq
- 2jpFC4nOwEZm9nl7SAfL+B3S1iqd3bUYZS1zYcKNkk9YvWXjJiTbWCgXQD6u74wiqfQTsHZB6k4
- evwLi8wheGj+R+y50BOlNi/R0928N5+Zmi5bvr9Kt0OdrEFnTaBYEo8A+6m+xCJ1UKDoX2M5Uwl
- IN8xXJ21nqZOAdSVhc0wjHzFFjOKcBsDlCMLStzSLnCcECNLWpLgjBOdIP8J6bNamj+BWtoTwlM
- 2q/+rEM9kxL34M0n//GfteEmcZz8SlZ955qAGd0YtGIb7O8YrBhLZkaXXS/VpVWGoP2eraJdrIJ
- VvN5akBq//RXcUkMGmo4UPs5q1thwPY3uxY3+1w8PWtdXzpWdD+8GKwbie43/gZx6itdOvFVtfl
- w==
-X-Received: by 2002:a05:6122:29c5:b0:56a:9f03:1719 with SMTP id
- 71dfb90a1353d-56aa0a2a3bamr6292186e0c.7.1772471510006; 
- Mon, 02 Mar 2026 09:11:50 -0800 (PST)
+ bh=XTjLdcEcjke6VBGp+hXnVc27KUWlsUXK7rYvl66V+6k=;
+ b=cA+dw6l/UK0fPbXEdB5aiPmwfFXPQsYRKruHk+LGh/t97THyXlMauLA0D4/6llYCP8
+ qOmsze2kE9IzB4eWVj2CgzS7t/pkglOvSdymsmSw12zz4DCFGeLQDf/6SnJs2k0dBDpC
+ ER+Oza8rGJliC5ePtf0CvKMQU/QENYd7W4Ry0ValjzTsa6XK1qkGxtoHxhKO67bQGj0m
+ mTiCnI1Xzs9GESkvQAm2JYQKdT+ihnKGagdWGRTFLikQjLin2DhUhNK4Uv1/bTjcSyfb
+ V0sCL4bbHX/OFrBOI11JSwj9iVFBr5wVHpr9nJSmdhBJx8DPFUlS8/LG4ixFHAT2ji0D
+ XaHw==
+X-Gm-Message-State: AOJu0YzvnPxYGmfFcNSkJQ2HLhx9QrGoFEse5mndlkkOtMCZ+dhQoF/a
+ p68DAVd7LqAbvvsZuzDkCVG6S831ZYezlciCKsRvpDzItMNxkr/vFKRByiGIdJpi0XCsW+J9exw
+ VNdcL1ouhIoJX0tVGyB+/IIFylTvJzweYV1Xlti4pYwXfNBVzQTY/ElyLeXra+YqWHadC10QUvB
+ YyIkKBhvjufyLhLKnhPx3ijnnDT3SKIli40RTXFJ/K4+Lhx5xHDI+UzMVhJ/8HPqfl2foKy5n+o
+ tL+M/8KkY7R
+X-Gm-Gg: ATEYQzzKTSRRCGWfyVdwjX+3zZsqdlGV5V/VSvfMEhjOv0LIKZ6EJY0j4d+PH4pkBVn
+ zWGubYilwMwntYbSjTaDONGLW2T/T3HtwicEm8y9BfTWlO2GrTlwUGGK6L/6DkPCCBdRw6kWdaY
+ fNrgM4+3QQAD6NOwnZT0W3mTqnHbFv/4sV2eH9WDp5JbxkmICkT3y29ZM47nE7A8a7T4bxIevV/
+ nj3HRFJE0E22MxjvDKOH/lBjosj+FE0E4oocR/MUZHjJeO2cLTQwIoLyGj3IeSAJcqetAR/Bl/g
+ 4jgqs3HBW/SKB4Iru9cv8Qli3t5mUMSqwsmHiZNLxi8dpOBO9YW2GZFs6Fh4FEqUvDQTpNGkMde
+ quWkXahJYUiX77ZfZgxYeZfjkV7Q8CfDfx4ME4ELSJpSmxK123VdrFFjS8ADSqDUlxmhbsqId2J
+ g/Gi75yqKSJRgCTmiFXai4yaikqtL62c4LlgW1A34gQeTmJBz6BXOEFm1We7BUTpgzaIlsXrnKb
+ g==
+X-Received: by 2002:a05:6808:1645:b0:45a:6adf:4d44 with SMTP id
+ 5614622812f47-464a5dac614mr8674297b6e.12.1772472375598; 
+ Mon, 02 Mar 2026 09:26:15 -0800 (PST)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
+ (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
  by smtp-relay.gmail.com with ESMTPS id
- 71dfb90a1353d-56a92049305sm2123398e0c.7.2026.03.02.09.11.49
+ 586e51a60fabf-4160cf72dabsm1821075fac.4.2026.03.02.09.26.15
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Mon, 02 Mar 2026 09:11:50 -0800 (PST)
+ Mon, 02 Mar 2026 09:26:15 -0800 (PST)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-dl1-f70.google.com with SMTP id
- a92af1059eb24-127337c8e52so3215354c88.1
- for <dev@dpdk.org>; Mon, 02 Mar 2026 09:11:49 -0800 (PST)
+Received: by mail-dl1-f72.google.com with SMTP id
+ a92af1059eb24-1273dfdaf5dso3252229c88.0
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 09:26:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1772471508; x=1773076308; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1772472374; x=1773077174; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=3V5wDf6fOTQk1SO/CmDH8Wx9lfg+7COQYv+Uj6jReDA=;
- b=J3COgHfNmvuO6ZP2xDZCkvnIZkgwnJwLeD/MzJz+vwEwR+erDyBeLLY+c4xjOaUqGD
- 51L18N4pI1dsvsn5y7kktd+qTfL8lWIFg9wWmm1n0Wbtfvb+C5IMUESD4mwQK8nzhIDl
- SIi+hBHFYFvnBYiEYBy+O05+3e84PmS/uL2XU=
-X-Received: by 2002:a05:7022:6629:b0:119:e56b:957d with SMTP id
- a92af1059eb24-1278fc28c5emr5797009c88.2.1772471508419; 
- Mon, 02 Mar 2026 09:11:48 -0800 (PST)
-X-Received: by 2002:a05:7022:6629:b0:119:e56b:957d with SMTP id
- a92af1059eb24-1278fc28c5emr5796984c88.2.1772471507625; 
- Mon, 02 Mar 2026 09:11:47 -0800 (PST)
+ bh=XTjLdcEcjke6VBGp+hXnVc27KUWlsUXK7rYvl66V+6k=;
+ b=YqEjv7NCNzHpRibBIcTBP1/+TJkfonRBdzbpkP9SGtf2DeFUmbAyxosa2XI4zL3bNk
+ OBqusPOTMC7bb0gMKF8v24anTRaWIqdt8+Z3QlHdAQXGbHLBUvuQdQHrCFpSq1OOP3fQ
+ IoJHPQlEP98GDchphIUxJUA+xbZE4lLO7DcGM=
+X-Received: by 2002:a05:7022:61d:b0:124:9f56:832e with SMTP id
+ a92af1059eb24-127890fc341mr6175233c88.18.1772472373977; 
+ Mon, 02 Mar 2026 09:26:13 -0800 (PST)
+X-Received: by 2002:a05:7022:61d:b0:124:9f56:832e with SMTP id
+ a92af1059eb24-127890fc341mr6175206c88.18.1772472373155; 
+ Mon, 02 Mar 2026 09:26:13 -0800 (PST)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12789962f89sm13910511c88.0.2026.03.02.09.11.47
+ a92af1059eb24-12789a52ab0sm19075530c88.15.2026.03.02.09.26.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Mar 2026 09:11:47 -0800 (PST)
+ Mon, 02 Mar 2026 09:26:12 -0800 (PST)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com,
- Mohammad Shuab Siddique <root@nic1-cos.dhcp.broadcom.net>, stable@dpdk.org
-Subject: [PATCH 4/4] net/bnxt: add ptp_cfg struct support for Thor 2 VFs
-Date: Mon,  2 Mar 2026 10:12:36 -0700
-Message-ID: <20260302171236.98625-5-Mohammad-Shuab.Siddique@broadcom.com>
+ Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
+ stable@dpdk.org
+Subject: [PATCH v2 4/4] net/bnxt: add ptp_cfg struct support for Thor 2 VFs
+Date: Mon,  2 Mar 2026 10:26:42 -0700
+Message-ID: <20260302172710.98978-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260302171236.98625-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260302171236.98625-1-Mohammad-Shuab.Siddique@broadcom.com>
+In-Reply-To: <20260302171236.98625-5-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260302171236.98625-5-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
@@ -102,7 +103,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Mohammad Shuab Siddique <root@nic1-cos.dhcp.broadcom.net>
+From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 
 Modified ptp_cfg initialization to create the struct for Thor 2 VFs,
 enabling RX/TX timestamp support. VFs on pre-Thor 2 devices remain
@@ -120,7 +121,7 @@ RelnoteVisibility: Default
 
 Cc: stable@dpdk.org
 
-Signed-off-by: Mohammad Shuab Siddique <root@nic1-cos.dhcp.broadcom.net>
+Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 ---
  drivers/net/bnxt/bnxt_hwrm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
