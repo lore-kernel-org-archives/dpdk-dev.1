@@ -2,65 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FBCEC1431
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 13:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AFDEC1438
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 13:22:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A4EA402B0;
-	Tue,  3 Mar 2026 14:22:10 +0100 (CET)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com
- [209.85.208.47]) by mails.dpdk.org (Postfix) with ESMTP id C84284025F
- for <dev@dpdk.org>; Mon,  2 Mar 2026 11:58:29 +0100 (CET)
-Received: by mail-ed1-f47.google.com with SMTP id
- 4fb4d7f45d1cf-65b9d8d6b7dso6982102a12.2
- for <dev@dpdk.org>; Mon, 02 Mar 2026 02:58:29 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0440F40E2F;
+	Tue,  3 Mar 2026 14:22:11 +0100 (CET)
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com
+ [209.85.208.43]) by mails.dpdk.org (Postfix) with ESMTP id 73B9E400D7
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 15:35:39 +0100 (CET)
+Received: by mail-ed1-f43.google.com with SMTP id
+ 4fb4d7f45d1cf-65c0d2f5fe1so9049246a12.3
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 06:35:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1772449109; x=1773053909; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1772462139; x=1773066939; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=rVVdDwK5L99Gv2KgmJxrOoKrVOlraWDVOQVpOQ82a2o=;
- b=KHFjj1pLBjLgIwYIivCcsffITlObWcvsraPF4gpaTICs6759ZTJLuILrs2jvoZ7gJ/
- /1hNlUo/cE/N4imEyYMEt5KcprNjRIrNX8bRQ6qMYrGmZIMtOEnP0SjDKJcm5ViuSh1r
- YvAx/tmrWYh42P9V6fJ5WYsBfocJ8mRdV3o3ZTBbIlcDxhEGS1w6/QwpOqghKNokbDek
- HmgQ6OiW8TVDLip4VRRhcIHfXfyylfqOah91a1Z1iqAiPMLRl8nNMlwPrDChlBsF3mnV
- n/JvEFiFsSMQjfe0uahGYT3vmFuMWcgY7w219PzxDhCz5oomnaIONGR1EbtqDqbMhAoC
- VVPA==
+ bh=hqlAyZPBjU1EO/hHaV9P7ZwZCHmlxOWclAaF6Vq09O8=;
+ b=FWIRVqJaGmGqu9OrqD+O6Q00T1fbSiI2flPIzs9qbJq2ThrlGLkpTgR0OEZrIV/P67
+ /LucN5AWK/Dw9J0mND3QUI/3ilSM8GGwEk/pYA+lmtbqD2y9Y7RrPGKessaEtNWkQmGk
+ gLU850+9iL6msaMwWzLYI2Kmf0IYVqCh2xtjXMmjUPNncip/w2OthCSbShR9eCedic3z
+ WDgEoE25bBvr7f8SSDR9gR+GRH9aBrTThwdMVBfY4I6j5p9NXDbCzorV652xKHzEDyUG
+ MPYAhr/cVSnsFUNGmCKMCARFCmBWjz4ReRyzq0EfJz8KxwiuY4QKtBhdpTgL/TWSV9RU
+ dgYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772449109; x=1773053909;
+ d=1e100.net; s=20230601; t=1772462139; x=1773066939;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=rVVdDwK5L99Gv2KgmJxrOoKrVOlraWDVOQVpOQ82a2o=;
- b=gTyUX2ExBJRTlliy9A6miacyNIW+4k1sEEW+++PiPWfvgceHStSQ9UJoZ3SWfer6Vo
- dktxARO5GKRgVhUb2L9LaJYj9WM0nblAl6UNqjtqe+bV8NjEr9eKDa4ByOUKcNO1C0G7
- t8P2yHo8aQG4x2Jlo05i1YnNfEfYV1U2zEHOPxxZRJQcxHM6S70iI6h1g1v5LvP77NlG
- WZrMznY4MilpAbCqStp6+2ck0KfjqXksjP6egSTAm7VOG4fbbvbF1LupZ24ERJpWlmmj
- jW1Q66fkxviH/CdIMZenqIt2j+ukwhiStx0FbRBz3P2mxtIyXkdQZzMjuqnLdLREYGiv
- G3Wg==
-X-Gm-Message-State: AOJu0YxIdXe61XCKgWefxwMCt/dGC0sAc+K3d75Kekl9aJGMxb3BolCs
- pEFy9cDZuyOLo6+KX9EjzaGBjHY20RtugklzeAXhrj0AR1jS1t+tc+xtChHnRwANltc=
-X-Gm-Gg: ATEYQzyRM5xvbK4JH9VHefsHAbIhqykXXXWekinEVdzV1FsCKpP9CoXa++aMI51HvC5
- a4Gm2vKdpESbPIe6mzmfnr/eEzaMIAz1rLT+fcj7aWJCbpjrujWmv7dSN1tCY8AlAoPZ4HMOPIe
- PhmIjL7yTr8leMUeGJpoOeTolxLNdaWGAR/IRn/VBqkiC5WxECSxH2MrojE2criG1Bj/96Uf9z+
- cljU+oPBnG0gmsXi57eWVNgjPVEWEyexNX0PqRxhrJ3V2duatLrdKxwuvw2mgzsDUz1W74Hbvtv
- nXdm27Ov6+2otuybTobJE7snxeAAdikQr7/68pWd8wvL3kGXvm8P2geuj9JKyCifAPl/RJHGoNT
- EDoYttq64wa8wIltSQBwcDSPlZDJWjbBgpKbWL3mP39y1ydt9cg+Ey1E3R8AxVA+1QK/0iDxYU2
- 7+F89aSm3UZAKfCErse2RHzRHMQBgxgjNNzFsf1dsuKrBZBtrTDyQB8XOYVwUkWqEgL5Cupbg8M
- vw=
-X-Received: by 2002:a17:907:86ac:b0:b93:c5a9:a5ea with SMTP id
- a640c23a62f3a-b93c5a9ba3amr27645366b.2.1772449108565; 
- Mon, 02 Mar 2026 02:58:28 -0800 (PST)
+ bh=hqlAyZPBjU1EO/hHaV9P7ZwZCHmlxOWclAaF6Vq09O8=;
+ b=Y0H8CltculByQ57i60rNt5j1uE0tUNIPQsFwMsqQCHBbdVIjgyhAv/E/et5zc/NTgY
+ gd2rMemf0hcC66AexvlIQ+Sc7aydI0rmYECND4TDZIF+6d7TqxWc+yg5Bzd4T5rWQbnZ
+ 2NtGBLrtOHjnZfM9tlwNaluiN5Gde1u8/0+1Lpnya+ZvbJzrAZFCsJg0g+mKiW0rx3X1
+ SmFjk/duh1Mb7oeDRyQ08cohl0uCeNPsz0rvyQ/dWhWaze0icO7AypJ2ewzcJ1sjSPC/
+ G3+IYUZ1qDOdlHIF5wcbAo6HZ1Wly6r8miBr96LvkezWL7szgYLt307Ax9bfUN4hE1Br
+ Fstw==
+X-Gm-Message-State: AOJu0Yx+If5RwUwF7NShppUUh2OGOgwi9xJOP7nOVr4eVVfFYQixl+T9
+ 4ncORouzUnIKu6zNswuvDBD3EbiM9hvyUqR8vqU65by85arAZjQxhn9P
+X-Gm-Gg: ATEYQzwoiAKEU+ecA+SXRlY1hWqZDOf2pwcmSuV2yeoMXklR33BJexHFFUFsrV4y/ke
+ ovWzddxRWTu9b8mZcuTs5wSiFC1/dXqHJIHYkMJIU0OwWsTXZqsCMVcf01Bl2EXuGXj36Ddeh4a
+ j9RmBsxA6LlZMjD+cru0ozaF5YoifTx1Fapp2+8Y1WbXfTVMWOVX1zxHMtGjyh9zHVwtiZs+VIC
+ /uTp/GD41ut4OHJ5AwMpn+/TsbQzHYYudjRZZJD+jwdjNhBwWcuS3kIUsj4m9m4pTEKXR404hb5
+ +ucvuG4270GpOq2CMMSQ6unYKPICGCrzeOAOAkk5WDp+PxuVCYZJBfz8tHvkfYPfBPLJdr4T2Ls
+ /S2FGaoXrf8SluE8VFAK/Mgk1eh/8Sn04eMAdZSIQOqGv3D0sCCqS+OBr/a9I+WsfFHjSmpjbu5
+ yMknhIoYERsMveTuKsPpl4O4HJIPDZe7kTk65QMC4cShbWKZ7bORkaC5v1u0uFa4+2
+X-Received: by 2002:a05:6402:440a:b0:65f:aa20:23d1 with SMTP id
+ 4fb4d7f45d1cf-65fdd4cafd2mr7940215a12.4.1772462138213; 
+ Mon, 02 Mar 2026 06:35:38 -0800 (PST)
 Received: from work.cisco.com ([2001:420:44f5:1250:14a7:2a07:58ff:b5b4])
  by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-b9385836a84sm318364466b.59.2026.03.02.02.58.27
+ 4fb4d7f45d1cf-65fac07c09fsm3515678a12.32.2026.03.02.06.35.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Mar 2026 02:58:28 -0800 (PST)
+ Mon, 02 Mar 2026 06:35:37 -0800 (PST)
 From: Maxime Peim <maxime.peim@gmail.com>
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org
-Subject: [PATCH v3] test/flow: add support for async API
-Date: Mon,  2 Mar 2026 11:57:50 +0100
-Message-ID: <20260302105751.1092403-1-maxime.peim@gmail.com>
+Subject: [PATCH v4] test/flow: add support for async API
+Date: Mon,  2 Mar 2026 15:35:12 +0100
+Message-ID: <20260302143513.1702071-1-maxime.peim@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260225142310.51f75f4d@phoenix.local>
 References: <20260225142310.51f75f4d@phoenix.local>
@@ -111,17 +110,28 @@ v3:
   - Remove cast from void* to uintptr_t
   - Add name to mailmap and maintainers
 
+v4:
+  - Use RTE_CAST_PTR for void pointer casts (const-correctness)
+  - Simplify init_slot_pool, fill_items_template, and
+    fill_actions_template signatures; export item_spec_size and
+    action_conf_size helpers
+  - Use goto-based centralized error cleanup
+  - Remove redundant queue_id variable, use core_id directly
+  - Make push_counter a function-local static
+  - Narrow n_items/n_actions from uint32_t to uint8_t
+  - Consistent conf variable naming in action slot-fill handlers
+
  .mailmap                         |   1 +
  MAINTAINERS                      |   1 +
- app/test-flow-perf/actions_gen.c | 281 +++++++++++-
+ app/test-flow-perf/actions_gen.c | 276 ++++++++++-
  app/test-flow-perf/actions_gen.h |  31 ++
- app/test-flow-perf/async_flow.c  | 758 +++++++++++++++++++++++++++++++
+ app/test-flow-perf/async_flow.c  | 783 +++++++++++++++++++++++++++++++
  app/test-flow-perf/async_flow.h  |  54 +++
- app/test-flow-perf/items_gen.c   |  58 +++
+ app/test-flow-perf/items_gen.c   |  56 +++
  app/test-flow-perf/items_gen.h   |   6 +
- app/test-flow-perf/main.c        | 303 +++++++++++-
+ app/test-flow-perf/main.c        | 283 ++++++++++-
  app/test-flow-perf/meson.build   |   7 +
- 10 files changed, 1460 insertions(+), 40 deletions(-)
+ 10 files changed, 1458 insertions(+), 40 deletions(-)
  create mode 100644 app/test-flow-perf/async_flow.c
  create mode 100644 app/test-flow-perf/async_flow.h
 
@@ -150,7 +160,7 @@ index 1b2f1ed2ba..d4c01037c8 100644
  F: doc/guides/tools/flow-perf.rst
  
 diff --git a/app/test-flow-perf/actions_gen.c b/app/test-flow-perf/actions_gen.c
-index 9d102e3af4..4a5b6fb2ff 100644
+index 9d102e3af4..624ecfdf43 100644
 --- a/app/test-flow-perf/actions_gen.c
 +++ b/app/test-flow-perf/actions_gen.c
 @@ -36,27 +36,7 @@ struct additional_para {
@@ -182,12 +192,12 @@ index 9d102e3af4..4a5b6fb2ff 100644
  
  static void
  add_mark(struct rte_flow_action *actions,
-@@ -1165,3 +1145,262 @@ fill_actions(struct rte_flow_action *actions, uint64_t *flow_actions,
+@@ -1165,3 +1145,257 @@ fill_actions(struct rte_flow_action *actions, uint64_t *flow_actions,
  	free(queues);
  	free(hairpin_queues);
  }
 +
-+static size_t
++size_t
 +action_conf_size(enum rte_flow_action_type type)
 +{
 +	switch (type) {
@@ -256,7 +266,7 @@ index 9d102e3af4..4a5b6fb2ff 100644
 +void
 +fill_actions_template(struct rte_flow_action *actions, struct rte_flow_action *masks,
 +		      uint64_t *flow_actions, struct rte_flow_port_attr *port_attr,
-+		      bool *need_wire_orig_table, size_t *conf_sizes, uint32_t *n_actions_out)
++		      bool *need_wire_orig_table)
 +{
 +	uint8_t actions_counter = 0;
 +	uint8_t i, j;
@@ -432,21 +442,16 @@ index 9d102e3af4..4a5b6fb2ff 100644
 +			actions[actions_counter].conf = template_actions[i].action_conf;
 +			masks[actions_counter].type = template_actions[i].type;
 +			masks[actions_counter].conf = template_actions[i].action_mask;
-+			conf_sizes[actions_counter] = action_conf_size(template_actions[i].type);
 +			*need_wire_orig_table |= template_actions[i].need_wire_orig_table;
-+			actions_counter++;
 +			break;
 +		}
 +	}
 +
 +	actions[actions_counter].type = RTE_FLOW_ACTION_TYPE_END;
 +	masks[actions_counter].type = RTE_FLOW_ACTION_TYPE_END;
-+
-+	/* take END into account */
-+	*n_actions_out = actions_counter + 1;
 +}
 diff --git a/app/test-flow-perf/actions_gen.h b/app/test-flow-perf/actions_gen.h
-index 9e13b164f9..3ac0ffed59 100644
+index 9e13b164f9..cd4d1753bc 100644
 --- a/app/test-flow-perf/actions_gen.h
 +++ b/app/test-flow-perf/actions_gen.h
 @@ -17,9 +17,40 @@
@@ -482,20 +487,20 @@ index 9e13b164f9..3ac0ffed59 100644
  	uint64_t encap_data, uint64_t decap_data, uint8_t core_idx,
  	bool unique_data, uint8_t rx_queues_count, uint16_t dst_port);
  
-+/* Fill actions template for async flow API (types only, no values).
-+ * If conf_sizes is non-NULL, populates per-action conf sizes and n_actions_out.
-+ */
++/* Fill actions template for async flow API (types only, no values) */
 +void fill_actions_template(struct rte_flow_action *actions, struct rte_flow_action *masks,
 +			   uint64_t *flow_actions, struct rte_flow_port_attr *port_attr,
-+			   bool *need_wire_orig_table, size_t *conf_sizes, uint32_t *n_actions_out);
++			   bool *need_wire_orig_table);
++
++size_t action_conf_size(enum rte_flow_action_type type);
 +
  #endif /* FLOW_PERF_ACTION_GEN */
 diff --git a/app/test-flow-perf/async_flow.c b/app/test-flow-perf/async_flow.c
 new file mode 100644
-index 0000000000..71728845cc
+index 0000000000..3ead41393c
 --- /dev/null
 +++ b/app/test-flow-perf/async_flow.c
-@@ -0,0 +1,758 @@
+@@ -0,0 +1,783 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright 2026 Maxime Peim <maxime.peim@gmail.com>
 + *
@@ -540,7 +545,7 @@ index 0000000000..71728845cc
 +
 +		switch (actions[i].type) {
 +		case RTE_FLOW_ACTION_TYPE_RSS: {
-+			struct action_rss_data *rss = actions[i].conf;
++			struct action_rss_data *rss = RTE_CAST_PTR(typeof(rss), actions[i].conf);
 +			rss->conf.func = RTE_ETH_HASH_FUNCTION_DEFAULT;
 +			rss->conf.level = 0;
 +			rss->conf.types = GET_RSS_HF();
@@ -551,12 +556,14 @@ index 0000000000..71728845cc
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_RAW_ENCAP: {
-+			struct action_raw_encap_data *encap = actions[i].conf;
++			struct action_raw_encap_data *encap =
++				RTE_CAST_PTR(typeof(encap), actions[i].conf);
 +			encap->conf.data = encap->data;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_RAW_DECAP: {
-+			struct action_raw_decap_data *decap = actions[i].conf;
++			struct action_raw_decap_data *decap =
++				RTE_CAST_PTR(typeof(decap), actions[i].conf);
 +			decap->conf.data = decap->data;
 +			break;
 +		}
@@ -570,7 +577,7 @@ index 0000000000..71728845cc
 +			 *   struct rte_flow_item_udp
 +			 *   struct rte_flow_item_vxlan
 +			 */
-+			uint8_t *base = actions[i].conf;
++			uint8_t *base = RTE_CAST_PTR(typeof(base), actions[i].conf);
 +			struct rte_flow_action_vxlan_encap *ve =
 +				(struct rte_flow_action_vxlan_encap *)base;
 +			struct rte_flow_item *items =
@@ -625,29 +632,38 @@ index 0000000000..71728845cc
 + */
 +static int
 +init_slot_pool(struct async_flow_resources *res, uint32_t nb_queues, uint32_t queue_size,
-+	       const struct rte_flow_item *pattern, uint32_t n_items, const size_t *item_spec_sizes,
-+	       const struct rte_flow_action *template_actions, uint32_t n_actions,
-+	       const size_t *action_conf_sizes)
++	       const struct rte_flow_item *pattern, const struct rte_flow_action *template_actions)
 +{
++	size_t item_spec_sizes[MAX_ITEMS_NUM], action_conf_sizes[MAX_ACTIONS_NUM];
 +	uint32_t items_array_bytes, actions_array_bytes;
-+	uint32_t spec_data_bytes, conf_data_bytes, mask_data_bytes;
++	uint32_t spec_data_bytes, conf_data_bytes;
 +	uint32_t slot_size, num_slots;
 +	uint32_t s, i;
++	uint8_t n_items, n_actions;
 +	uint8_t *mptr;
++	int ret = 0;
 +
 +	/* Compute shared mask size */
-+	mask_data_bytes = 0;
-+	for (i = 0; i < n_items; i++)
-+		mask_data_bytes += item_spec_sizes[i];
++	spec_data_bytes = 0;
++	for (n_items = 0; pattern[n_items].type != RTE_FLOW_ITEM_TYPE_END; n_items++) {
++		item_spec_sizes[n_items] = item_spec_size(pattern[n_items].type);
++		spec_data_bytes += item_spec_sizes[n_items];
++	}
 +
-+	/* specs and masks have the same size */
-+	spec_data_bytes = mask_data_bytes;
++	/* END */
++	item_spec_sizes[n_items++] = 0;
 +
 +	conf_data_bytes = 0;
-+	for (i = 0; i < n_actions; i++)
-+		conf_data_bytes += action_conf_sizes[i];
++	for (n_actions = 0; template_actions[n_actions].type != RTE_FLOW_ACTION_TYPE_END;
++	     n_actions++) {
++		action_conf_sizes[n_actions] = action_conf_size(template_actions[n_actions].type);
++		conf_data_bytes += action_conf_sizes[n_actions];
++	}
 +
-+	/* Compute per-slot layout sizes (+ 1 for END sentinel) */
++	/* END */
++	action_conf_sizes[n_actions++] = 0;
++
++	/* Compute per-slot layout sizes */
 +	items_array_bytes = n_items * sizeof(struct rte_flow_item);
 +	actions_array_bytes = n_actions * sizeof(struct rte_flow_action);
 +
@@ -665,22 +681,21 @@ index 0000000000..71728845cc
 +	res->n_actions = n_actions;
 +
 +	/* Allocate shared masks */
-+	if (mask_data_bytes > 0) {
-+		res->shared_masks = aligned_alloc(
-+			RTE_CACHE_LINE_SIZE, RTE_ALIGN_CEIL(mask_data_bytes, RTE_CACHE_LINE_SIZE));
++	if (spec_data_bytes > 0) {
++		res->shared_masks = aligned_alloc(RTE_CACHE_LINE_SIZE, spec_data_bytes);
 +		if (res->shared_masks == NULL) {
 +			fprintf(stderr, "Failed to allocate shared masks (%u bytes)\n",
-+				mask_data_bytes);
++				spec_data_bytes);
 +			return -ENOMEM;
 +		}
-+		memset(res->shared_masks, 0, mask_data_bytes);
++		memset(res->shared_masks, 0, spec_data_bytes);
 +
 +		/* Copy mask data from template pattern */
 +		mptr = res->shared_masks;
 +		for (i = 0; i < n_items; i++) {
 +			if (item_spec_sizes[i] > 0 && pattern[i].mask != NULL)
 +				memcpy(mptr, pattern[i].mask, item_spec_sizes[i]);
-+			mptr += RTE_ALIGN_CEIL(item_spec_sizes[i], 8);
++			mptr += item_spec_sizes[i];
 +		}
 +	}
 +
@@ -690,9 +705,8 @@ index 0000000000..71728845cc
 +	if (res->slot_pool == NULL) {
 +		fprintf(stderr, "Failed to allocate slot pool (%u slots * %u bytes)\n", num_slots,
 +			slot_size);
-+		free(res->shared_masks);
-+		res->shared_masks = NULL;
-+		return -ENOMEM;
++		ret = -ENOMEM;
++		goto free_shared_masks;
 +	}
 +	memset(res->slot_pool, 0, (size_t)num_slots * slot_size);
 +
@@ -715,7 +729,6 @@ index 0000000000..71728845cc
 +				mptr += item_spec_sizes[i];
 +			}
 +		}
-+		items[n_items].type = RTE_FLOW_ITEM_TYPE_END;
 +
 +		/* Pre-set actions: conf → per-slot data */
 +		for (i = 0; i < n_actions; i++) {
@@ -725,7 +738,6 @@ index 0000000000..71728845cc
 +				data += action_conf_sizes[i];
 +			}
 +		}
-+		actions[n_actions].type = RTE_FLOW_ACTION_TYPE_END;
 +
 +		/* Initialize compound action types (RSS, RAW_ENCAP, etc.) */
 +		init_slot_compound_actions(actions, n_actions, action_conf_sizes);
@@ -736,11 +748,8 @@ index 0000000000..71728845cc
 +		aligned_alloc(RTE_CACHE_LINE_SIZE, nb_queues * sizeof(struct async_flow_queue));
 +	if (res->queues == NULL) {
 +		fprintf(stderr, "Failed to allocate queue structs (%u queues)\n", nb_queues);
-+		free(res->slot_pool);
-+		res->slot_pool = NULL;
-+		free(res->shared_masks);
-+		res->shared_masks = NULL;
-+		return -ENOMEM;
++		ret = -ENOMEM;
++		goto free_slot_pool;
 +	}
 +	memset(res->queues, 0, nb_queues * sizeof(struct async_flow_queue));
 +	for (s = 0; s < nb_queues; s++) {
@@ -749,9 +758,19 @@ index 0000000000..71728845cc
 +	}
 +
 +	printf(":: Slot pool: %u slots * %u bytes = %u KB (shared masks: %u bytes)\n", num_slots,
-+	       slot_size, (num_slots * slot_size) / 1024, mask_data_bytes);
++	       slot_size, (num_slots * slot_size) / 1024, spec_data_bytes);
 +
 +	return 0;
++
++free_slot_pool:
++	free(res->slot_pool);
++	res->slot_pool = NULL;
++free_shared_masks:
++	if (res->shared_masks) {
++		free(res->shared_masks);
++		res->shared_masks = NULL;
++	}
++	return ret;
 +}
 +
 +/*
@@ -766,12 +785,12 @@ index 0000000000..71728845cc
 +	for (i = 0; items[i].type != RTE_FLOW_ITEM_TYPE_END; i++) {
 +		switch (items[i].type) {
 +		case RTE_FLOW_ITEM_TYPE_IPV4: {
-+			struct rte_flow_item_ipv4 *spec = items[i].spec;
++			struct rte_flow_item_ipv4 *spec = RTE_CAST_PTR(typeof(spec), items[i].spec);
 +			spec->hdr.src_addr = RTE_BE32(counter);
 +			break;
 +		}
 +		case RTE_FLOW_ITEM_TYPE_IPV6: {
-+			struct rte_flow_item_ipv6 *spec = items[i].spec;
++			struct rte_flow_item_ipv6 *spec = RTE_CAST_PTR(typeof(spec), items[i].spec);
 +			uint8_t j;
 +			for (j = 0; j < 4; j++)
 +				spec->hdr.src_addr.a[15 - j] = counter >> (j * 8);
@@ -796,23 +815,26 @@ index 0000000000..71728845cc
 +	for (i = 0; actions[i].type != RTE_FLOW_ACTION_TYPE_END; i++) {
 +		switch (actions[i].type) {
 +		case RTE_FLOW_ACTION_TYPE_MARK: {
-+			struct rte_flow_action_mark *conf = actions[i].conf;
++			struct rte_flow_action_mark *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			conf->id = (counter % 255) + 1;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_QUEUE: {
-+			struct rte_flow_action_queue *conf = actions[i].conf;
++			struct rte_flow_action_queue *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			conf->index = hairpinq ? (counter % hairpinq) + rx_queues_count :
 +						 counter % rx_queues_count;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_METER: {
-+			struct rte_flow_action_meter *conf = actions[i].conf;
++			struct rte_flow_action_meter *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			conf->mtr_id = counter;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_RSS: {
-+			struct action_rss_data *conf = actions[i].conf;
++			struct action_rss_data *conf = RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint16_t q;
 +			if (hairpinq) {
 +				conf->conf.queue_num = hairpinq;
@@ -827,7 +849,8 @@ index 0000000000..71728845cc
 +		}
 +		case RTE_FLOW_ACTION_TYPE_SET_MAC_SRC:
 +		case RTE_FLOW_ACTION_TYPE_SET_MAC_DST: {
-+			struct rte_flow_action_set_mac *conf = actions[i].conf;
++			struct rte_flow_action_set_mac *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint32_t val = unique_data ? counter : 1;
 +			uint8_t j;
 +			for (j = 0; j < RTE_ETHER_ADDR_LEN; j++) {
@@ -838,14 +861,16 @@ index 0000000000..71728845cc
 +		}
 +		case RTE_FLOW_ACTION_TYPE_SET_IPV4_SRC:
 +		case RTE_FLOW_ACTION_TYPE_SET_IPV4_DST: {
-+			struct rte_flow_action_set_ipv4 *conf = actions[i].conf;
++			struct rte_flow_action_set_ipv4 *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint32_t ip = unique_data ? counter : 1;
 +			conf->ipv4_addr = RTE_BE32(ip + 1);
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_SET_IPV6_SRC:
 +		case RTE_FLOW_ACTION_TYPE_SET_IPV6_DST: {
-+			struct rte_flow_action_set_ipv6 *conf = actions[i].conf;
++			struct rte_flow_action_set_ipv6 *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint32_t val = unique_data ? counter : 1;
 +			uint8_t j;
 +			for (j = 0; j < 16; j++) {
@@ -855,14 +880,16 @@ index 0000000000..71728845cc
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_SET_TP_SRC: {
-+			struct rte_flow_action_set_tp *conf = actions[i].conf;
++			struct rte_flow_action_set_tp *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint32_t tp = unique_data ? counter : 100;
 +			tp = tp % 0xffff;
 +			conf->port = RTE_BE16(tp & 0xffff);
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_SET_TP_DST: {
-+			struct rte_flow_action_set_tp *conf = actions[i].conf;
++			struct rte_flow_action_set_tp *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint32_t tp = unique_data ? counter : 100;
 +			if (tp > 0xffff)
 +				tp >>= 16;
@@ -873,32 +900,36 @@ index 0000000000..71728845cc
 +		case RTE_FLOW_ACTION_TYPE_DEC_TCP_ACK:
 +		case RTE_FLOW_ACTION_TYPE_INC_TCP_SEQ:
 +		case RTE_FLOW_ACTION_TYPE_DEC_TCP_SEQ: {
-+			rte_be32_t *conf = actions[i].conf;
++			rte_be32_t *conf = RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint32_t val = unique_data ? counter : 1;
 +			*conf = RTE_BE32(val);
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_SET_TTL: {
-+			struct rte_flow_action_set_ttl *conf = actions[i].conf;
++			struct rte_flow_action_set_ttl *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint32_t val = unique_data ? counter : 1;
 +			conf->ttl_value = val % 0xff;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_SET_IPV4_DSCP:
 +		case RTE_FLOW_ACTION_TYPE_SET_IPV6_DSCP: {
-+			struct rte_flow_action_set_dscp *conf = actions[i].conf;
++			struct rte_flow_action_set_dscp *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			uint32_t val = unique_data ? counter : 1;
 +			conf->dscp = val % 0xff;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_PORT_ID: {
-+			struct rte_flow_action_port_id *conf = actions[i].conf;
++			struct rte_flow_action_port_id *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			conf->id = dst_port;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_RAW_ENCAP: {
-+			struct action_raw_encap_data *encap = actions[i].conf;
-+			uint8_t *header = encap->data;
++			struct action_raw_encap_data *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
++			uint8_t *header = conf->data;
 +			struct rte_ether_hdr eth_hdr;
 +			struct rte_ipv4_hdr ipv4_hdr;
 +			struct rte_udp_hdr udp_hdr;
@@ -934,12 +965,13 @@ index 0000000000..71728845cc
 +				memcpy(header, &udp_hdr, sizeof(udp_hdr));
 +				header += sizeof(udp_hdr);
 +			}
-+			encap->conf.size = header - encap->data;
++			conf->conf.size = header - conf->data;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_RAW_DECAP: {
-+			struct action_raw_decap_data *decap_d = actions[i].conf;
-+			uint8_t *header = decap_d->data;
++			struct action_raw_decap_data *conf =
++				RTE_CAST_PTR(typeof(conf), actions[i].conf);
++			uint8_t *header = conf->data;
 +			struct rte_ether_hdr eth_hdr;
 +
 +			memset(&eth_hdr, 0, sizeof(eth_hdr));
@@ -951,15 +983,16 @@ index 0000000000..71728845cc
 +				memcpy(header, &eth_hdr, sizeof(eth_hdr));
 +				header += sizeof(eth_hdr);
 +			}
-+			decap_d->conf.size = header - decap_d->data;
++			conf->conf.size = header - conf->data;
 +			break;
 +		}
 +		case RTE_FLOW_ACTION_TYPE_VXLAN_ENCAP: {
-+			uint8_t *base = actions[i].conf;
++			uint8_t *conf = RTE_CAST_PTR(typeof(conf), actions[i].conf);
 +			struct rte_flow_item *vitems =
 +				(struct rte_flow_item
-+					 *)(base + sizeof(struct rte_flow_action_vxlan_encap));
-+			struct rte_flow_item_ipv4 *spec = vitems[1].spec;
++					 *)(conf + sizeof(struct rte_flow_action_vxlan_encap));
++			struct rte_flow_item_ipv4 *spec =
++				RTE_CAST_PTR(typeof(spec), vitems[1].spec);
 +			uint32_t ip_dst = unique_data ? counter : 1;
 +			/* vitems[1] is IPV4 */
 +			spec->hdr.dst_addr = RTE_BE32(ip_dst);
@@ -988,9 +1021,6 @@ index 0000000000..71728845cc
 +	struct rte_flow_item pattern[MAX_ITEMS_NUM];
 +	struct rte_flow_action actions[MAX_ACTIONS_NUM];
 +	struct rte_flow_action action_masks[MAX_ACTIONS_NUM];
-+	size_t item_spec_sizes[MAX_ITEMS_NUM];
-+	size_t action_conf_sizes[MAX_ACTIONS_NUM];
-+	uint32_t n_items, n_actions;
 +	struct async_flow_resources *res;
 +	bool need_wire_orig_table = false;
 +	uint32_t i;
@@ -1049,14 +1079,14 @@ index 0000000000..71728845cc
 +	memset(action_masks, 0, sizeof(action_masks));
 +
 +	/* Fill templates and gather per-item/action sizes */
-+	fill_items_template(pattern, flow_items, 0, 0, item_spec_sizes, &n_items);
++	fill_items_template(pattern, flow_items, 0, 0);
 +
 +	at_attr.ingress = pt_attr.ingress;
 +	at_attr.egress = pt_attr.egress;
 +	at_attr.transfer = pt_attr.transfer;
 +
 +	fill_actions_template(actions, action_masks, flow_actions, &port_attr,
-+			      &need_wire_orig_table, action_conf_sizes, &n_actions);
++			      &need_wire_orig_table);
 +
 +	/*
 +	 * fill_actions_template count the number of actions that require each kind of object,
@@ -1113,9 +1143,8 @@ index 0000000000..71728845cc
 +	if (res->actions_template == NULL) {
 +		fprintf(stderr, "Port %u: actions template create failed: %s\n", port_id,
 +			error.message ? error.message : "(no message)");
-+		rte_flow_pattern_template_destroy(port_id, res->pattern_template, &error);
-+		res->pattern_template = NULL;
-+		return -1;
++		ret = -1;
++		goto free_pattern;
 +	}
 +
 +	/* Create template table */
@@ -1124,25 +1153,15 @@ index 0000000000..71728845cc
 +	if (res->table == NULL) {
 +		fprintf(stderr, "Port %u: template table create failed: %s\n", port_id,
 +			error.message ? error.message : "(no message)");
-+		rte_flow_actions_template_destroy(port_id, res->actions_template, &error);
-+		rte_flow_pattern_template_destroy(port_id, res->pattern_template, &error);
-+		res->pattern_template = NULL;
-+		res->actions_template = NULL;
-+		return -1;
++		ret = -1;
++		goto free_actions;
 +	}
 +
 +	/* Allocate and pre-initialize per-slot flat buffers */
-+	ret = init_slot_pool(res, nb_queues, queue_size, pattern, n_items, item_spec_sizes, actions,
-+			     n_actions, action_conf_sizes);
++	ret = init_slot_pool(res, nb_queues, queue_size, pattern, actions);
 +	if (ret != 0) {
 +		fprintf(stderr, "Port %u: slot pool init failed\n", port_id);
-+		rte_flow_template_table_destroy(port_id, res->table, &error);
-+		rte_flow_actions_template_destroy(port_id, res->actions_template, &error);
-+		rte_flow_pattern_template_destroy(port_id, res->pattern_template, &error);
-+		res->table = NULL;
-+		res->actions_template = NULL;
-+		res->pattern_template = NULL;
-+		return ret;
++		goto free_table;
 +	}
 +
 +	res->table_capacity = rules_count;
@@ -1152,6 +1171,17 @@ index 0000000000..71728845cc
 +	       nb_queues, queue_size);
 +
 +	return 0;
++
++free_table:
++	rte_flow_template_table_destroy(port_id, res->table, &error);
++	res->table = NULL;
++free_actions:
++	rte_flow_actions_template_destroy(port_id, res->actions_template, &error);
++	res->actions_template = NULL;
++free_pattern:
++	rte_flow_pattern_template_destroy(port_id, res->pattern_template, &error);
++	res->pattern_template = NULL;
++	return ret;
 +}
 +
 +struct rte_flow *
@@ -1256,7 +1286,7 @@ index 0000000000..71728845cc
 +}
 diff --git a/app/test-flow-perf/async_flow.h b/app/test-flow-perf/async_flow.h
 new file mode 100644
-index 0000000000..8c12924bc6
+index 0000000000..8ef8883107
 --- /dev/null
 +++ b/app/test-flow-perf/async_flow.h
 @@ -0,0 +1,54 @@
@@ -1293,9 +1323,9 @@ index 0000000000..8c12924bc6
 +	uint32_t slot_size;	  /* bytes per slot (cache-line aligned) */
 +	uint32_t slots_per_queue; /* = queue_size */
 +	uint32_t nb_queues;
-+	uint32_t n_items;   /* item count (excl. END) */
-+	uint32_t n_actions; /* action count (excl. END) */
 +	uint32_t table_capacity;
++	uint8_t n_items;   /* item count (excl. END) */
++	uint8_t n_actions; /* action count (excl. END) */
 +	bool initialized;
 +};
 +
@@ -1315,15 +1345,15 @@ index 0000000000..8c12924bc6
 +
 +#endif /* FLOW_PERF_ASYNC_FLOW */
 diff --git a/app/test-flow-perf/items_gen.c b/app/test-flow-perf/items_gen.c
-index c740e1838f..58f1c16cf8 100644
+index c740e1838f..13af05cbb5 100644
 --- a/app/test-flow-perf/items_gen.c
 +++ b/app/test-flow-perf/items_gen.c
-@@ -389,3 +389,61 @@ fill_items(struct rte_flow_item *items,
+@@ -389,3 +389,59 @@ fill_items(struct rte_flow_item *items,
  
  	items[items_counter].type = RTE_FLOW_ITEM_TYPE_END;
  }
 +
-+static size_t
++size_t
 +item_spec_size(enum rte_flow_item_type type)
 +{
 +	switch (type) {
@@ -1364,39 +1394,37 @@ index c740e1838f..58f1c16cf8 100644
 +
 +void
 +fill_items_template(struct rte_flow_item *items, uint64_t *flow_items, uint32_t outer_ip_src,
-+		    uint8_t core_idx, size_t *spec_sizes, uint32_t *n_items_out)
++		    uint8_t core_idx)
 +{
-+	uint32_t count;
++	uint32_t i;
 +
 +	fill_items(items, flow_items, outer_ip_src, core_idx);
 +
-+	/* Count items before END */
-+	for (count = 0; items[count].type != RTE_FLOW_ITEM_TYPE_END; count++) {
-+		spec_sizes[count] = item_spec_size(items[count].type);
-+		/* For templates, set spec to NULL - only mask matters for template matching */
-+		items[count].spec = NULL;
++	/* For templates, set spec to NULL - only mask matters for template matching */
++	for (i = 0; items[i].type != RTE_FLOW_ITEM_TYPE_END; i++) {
++		items[i].spec = NULL;
 +	}
 +
-+	/* take END into account */
-+	*n_items_out = count + 1;
++	/* END */
++	items[i].spec = NULL;
 +}
 diff --git a/app/test-flow-perf/items_gen.h b/app/test-flow-perf/items_gen.h
-index f4b0e9a981..0987f7be3c 100644
+index f4b0e9a981..85d08ef35b 100644
 --- a/app/test-flow-perf/items_gen.h
 +++ b/app/test-flow-perf/items_gen.h
 @@ -15,4 +15,10 @@
  void fill_items(struct rte_flow_item *items, uint64_t *flow_items,
  	uint32_t outer_ip_src, uint8_t core_idx);
  
-+/* Fill items template for async flow API (masks only, no spec values).
-+ * If spec_sizes is non-NULL, populates per-item spec sizes and n_items_out.
-+ */
++/* Fill items template for async flow API (masks only, no spec values) */
 +void fill_items_template(struct rte_flow_item *items, uint64_t *flow_items, uint32_t outer_ip_src,
-+			 uint8_t core_idx, size_t *spec_sizes, uint32_t *n_items_out);
++			 uint8_t core_idx);
++
++size_t item_spec_size(enum rte_flow_item_type type);
 +
  #endif /* FLOW_PERF_ITEMS_GEN */
 diff --git a/app/test-flow-perf/main.c b/app/test-flow-perf/main.c
-index 6636d1517f..bf420b397b 100644
+index 6636d1517f..691020c719 100644
 --- a/app/test-flow-perf/main.c
 +++ b/app/test-flow-perf/main.c
 @@ -37,11 +37,15 @@
@@ -1434,7 +1462,7 @@ index 6636d1517f..bf420b397b 100644
  
  static uint8_t rx_queues_count;
  static uint8_t tx_queues_count;
-@@ -598,6 +604,29 @@ usage(char *progname)
+@@ -598,6 +604,13 @@ usage(char *progname)
  		"Encapped data is fixed with pattern: ether,ipv4,udp,vxlan\n"
  		"With fixed values\n");
  	printf("  --vxlan-decap: add vxlan_decap action to flow actions\n");
@@ -1445,26 +1473,10 @@ index 6636d1517f..bf420b397b 100644
 +	       " default is 1024\n");
 +	printf("  --async-push-batch=N: flows to batch before push,"
 +	       " default is 256\n");
-+}
-+
-+static inline uint32_t
-+prev_power_of_two(uint32_t x)
-+{
-+	uint32_t saved = x;
-+	x--;
-+	x |= x >> 1;
-+	x |= x >> 2;
-+	x |= x >> 4;
-+	x |= x >> 8;
-+	x |= x >> 16;
-+	x++;
-+	if (x == saved)
-+		return x;
-+	return x >> 1;
  }
  
  static void
-@@ -734,6 +763,9 @@ args_parse(int argc, char **argv)
+@@ -734,6 +747,9 @@ args_parse(int argc, char **argv)
  		{ "policy-mtr",                 1, 0, 0 },
  		{ "meter-profile",              1, 0, 0 },
  		{ "packet-mode",                0, 0, 0 },
@@ -1474,7 +1486,7 @@ index 6636d1517f..bf420b397b 100644
  		{ 0, 0, 0, 0 },
  	};
  
-@@ -913,8 +945,7 @@ args_parse(int argc, char **argv)
+@@ -913,8 +929,7 @@ args_parse(int argc, char **argv)
  					rte_exit(EXIT_FAILURE, "Invalid hairpin config mask\n");
  				hairpin_conf_mask = hp_conf;
  			}
@@ -1484,7 +1496,7 @@ index 6636d1517f..bf420b397b 100644
  				uint16_t port_idx = 0;
  
  				token = strtok(optarg, ",");
-@@ -981,6 +1012,26 @@ args_parse(int argc, char **argv)
+@@ -981,6 +996,26 @@ args_parse(int argc, char **argv)
  			}
  			if (strcmp(lgopts[opt_idx].name, "packet-mode") == 0)
  				packet_mode = true;
@@ -1511,7 +1523,7 @@ index 6636d1517f..bf420b397b 100644
  			break;
  		default:
  			usage(argv[0]);
-@@ -1457,10 +1508,10 @@ query_flows(int port_id, uint8_t core_id, struct rte_flow **flows_list)
+@@ -1457,10 +1492,10 @@ query_flows(int port_id, uint8_t core_id, struct rte_flow **flows_list)
  	mc_pool.flows_record.query[port_id][core_id] = cpu_time_used;
  }
  
@@ -1525,7 +1537,7 @@ index 6636d1517f..bf420b397b 100644
  	struct rte_flow_error error;
  	clock_t start_batch, end_batch;
  	double first_flow_latency;
-@@ -1485,8 +1536,7 @@ insert_flows(int port_id, uint8_t core_id, uint16_t dst_port_id)
+@@ -1485,8 +1520,7 @@ insert_flows(int port_id, uint8_t core_id, uint16_t dst_port_id)
  	global_items[0] = FLOW_ITEM_MASK(RTE_FLOW_ITEM_TYPE_ETH);
  	global_actions[0] = FLOW_ITEM_MASK(RTE_FLOW_ACTION_TYPE_JUMP);
  
@@ -1535,7 +1547,7 @@ index 6636d1517f..bf420b397b 100644
  	if (flows_list == NULL)
  		rte_exit(EXIT_FAILURE, "No Memory available!\n");
  
-@@ -1524,6 +1574,11 @@ insert_flows(int port_id, uint8_t core_id, uint16_t dst_port_id)
+@@ -1524,6 +1558,11 @@ insert_flows(int port_id, uint8_t core_id, uint16_t dst_port_id)
  			core_id, rx_queues_count,
  			unique_data, max_priority, &error);
  
@@ -1547,7 +1559,7 @@ index 6636d1517f..bf420b397b 100644
  		if (!counter) {
  			first_flow_latency = (double) (rte_get_timer_cycles() - start_batch);
  			first_flow_latency /= rte_get_timer_hz();
-@@ -1537,11 +1592,6 @@ insert_flows(int port_id, uint8_t core_id, uint16_t dst_port_id)
+@@ -1537,11 +1576,6 @@ insert_flows(int port_id, uint8_t core_id, uint16_t dst_port_id)
  		if (force_quit)
  			counter = end_counter;
  
@@ -1559,20 +1571,19 @@ index 6636d1517f..bf420b397b 100644
  		flows_list[flow_index++] = flow;
  
  		/*
-@@ -1575,7 +1625,204 @@ insert_flows(int port_id, uint8_t core_id, uint16_t dst_port_id)
+@@ -1575,7 +1609,200 @@ insert_flows(int port_id, uint8_t core_id, uint16_t dst_port_id)
  		port_id, core_id, rules_count_per_core, cpu_time_used);
  
  	mc_pool.flows_record.insertion[port_id][core_id] = cpu_time_used;
 -	return flows_list;
 +}
 +
-+static uint32_t push_counter[RTE_MAX_LCORE];
-+
 +static inline int
-+push_pull_flows_async(int port_id, int queue_id, int core_id, uint32_t enqueued, bool empty,
-+		      bool check_op_status, struct rte_flow_error *error)
++push_pull_flows_async(int port_id, int core_id, uint32_t enqueued, bool empty, bool check_op_status,
++		      struct rte_flow_error *error)
 +{
 +	static struct rte_flow_op_result results[RTE_MAX_LCORE][MAX_ASYNC_QUEUE_SIZE];
++	static uint32_t push_counter[RTE_MAX_LCORE] = {0};
 +	uint32_t to_pull = (empty || async_push_batch > enqueued) ? enqueued : async_push_batch;
 +	uint32_t pulled_complete = 0;
 +	uint32_t retries = 0;
@@ -1580,7 +1591,7 @@ index 6636d1517f..bf420b397b 100644
 +	int ret = 0;
 +
 +	/* Push periodically to give HW work to do */
-+	ret = rte_flow_push(port_id, queue_id, error);
++	ret = rte_flow_push(port_id, core_id, error);
 +	if (ret)
 +		return ret;
 +	push_counter[core_id]++;
@@ -1590,7 +1601,7 @@ index 6636d1517f..bf420b397b 100644
 +		return 0;
 +
 +	while (to_pull > 0) {
-+		pulled = rte_flow_pull(port_id, queue_id, results[core_id], to_pull, error);
++		pulled = rte_flow_pull(port_id, core_id, results[core_id], to_pull, error);
 +		if (pulled < 0) {
 +			return -1;
 +		} else if (pulled == 0) {
@@ -1638,7 +1649,6 @@ index 6636d1517f..bf420b397b 100644
 +	int rules_batch_idx;
 +	int rules_count_per_core;
 +	uint32_t enqueued = 0;
-+	uint32_t queue_id = core_id;
 +	bool first_batch = true;
 +	int pulled;
 +
@@ -1654,7 +1664,6 @@ index 6636d1517f..bf420b397b 100644
 +
 +	cpu_time_used = 0;
 +	flow_index = 0;
-+	push_counter[core_id] = 0;
 +
 +	if (flow_group > 0 && core_id == 0) {
 +		/*
@@ -1688,7 +1697,7 @@ index 6636d1517f..bf420b397b 100644
 +		for (batch_counter = 0; batch_counter < async_push_batch && counter < end_counter;
 +		     batch_counter++, counter++) {
 +			/* Create flow with postpone=true to batch operations */
-+			flow = async_generate_flow(port_id, queue_id, counter, hairpin_queues_num,
++			flow = async_generate_flow(port_id, core_id, counter, hairpin_queues_num,
 +						   encap_data, decap_data, dst_port_id, core_id,
 +						   rx_queues_count, unique_data, true, &error);
 +
@@ -1719,8 +1728,7 @@ index 6636d1517f..bf420b397b 100644
 +			}
 +		}
 +
-+		pulled = push_pull_flows_async(port_id, queue_id, core_id, enqueued, false, true,
-+					       &error);
++		pulled = push_pull_flows_async(port_id, core_id, enqueued, false, true, &error);
 +		if (pulled < 0) {
 +			print_flow_error(error);
 +			rte_exit(EXIT_FAILURE, "Error push/pull async operations\n");
@@ -1740,7 +1748,7 @@ index 6636d1517f..bf420b397b 100644
 +		}
 +	}
 +
-+	if (push_pull_flows_async(port_id, queue_id, core_id, enqueued, true, true, &error) < 0) {
++	if (push_pull_flows_async(port_id, core_id, enqueued, true, true, &error) < 0) {
 +		print_flow_error(error);
 +		rte_exit(EXIT_FAILURE, "Error final push/pull async operations\n");
 +	}
@@ -1765,7 +1773,7 @@ index 6636d1517f..bf420b397b 100644
  }
  
  static void
-@@ -1585,12 +1832,18 @@ flows_handler(uint8_t core_id)
+@@ -1585,12 +1812,18 @@ flows_handler(uint8_t core_id)
  	uint16_t port_idx = 0;
  	uint16_t nr_ports;
  	int port_id;
@@ -1784,7 +1792,7 @@ index 6636d1517f..bf420b397b 100644
  	printf(":: Rules Count per port: %d\n\n", rules_count);
  
  	for (port_id = 0; port_id < nr_ports; port_id++) {
-@@ -1602,10 +1855,10 @@ flows_handler(uint8_t core_id)
+@@ -1602,10 +1835,10 @@ flows_handler(uint8_t core_id)
  		mc_pool.last_alloc[core_id] = (int64_t)dump_socket_mem(stdout);
  		if (has_meter())
  			meters_handler(port_id, core_id, METER_CREATE);
@@ -1799,7 +1807,7 @@ index 6636d1517f..bf420b397b 100644
  		mc_pool.current_alloc[core_id] = (int64_t)dump_socket_mem(stdout);
  
  		if (query_flag)
-@@ -2212,6 +2465,16 @@ init_port(void)
+@@ -2212,6 +2445,16 @@ init_port(void)
  			}
  		}
  
@@ -1816,7 +1824,7 @@ index 6636d1517f..bf420b397b 100644
  		ret = rte_eth_dev_start(port_id);
  		if (ret < 0)
  			rte_exit(EXIT_FAILURE,
-@@ -2291,6 +2554,8 @@ main(int argc, char **argv)
+@@ -2291,6 +2534,8 @@ main(int argc, char **argv)
  
  	RTE_ETH_FOREACH_DEV(port) {
  		rte_flow_flush(port, &error);
