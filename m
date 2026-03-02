@@ -2,68 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9696DEA4E04
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 13:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34359EA4E04
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 13:53:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6B67F4025F;
-	Mon,  2 Mar 2026 14:53:28 +0100 (CET)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+	by mails.dpdk.org (Postfix) with ESMTP id 3AFE540A76;
+	Mon,  2 Mar 2026 14:53:33 +0100 (CET)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
  [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id 1F182400D7
- for <dev@dpdk.org>; Mon,  2 Mar 2026 14:53:26 +0100 (CET)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id 5277040A76
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 14:53:31 +0100 (CET)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
  by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 621Mv1sv1475925 for <dev@dpdk.org>; Mon, 2 Mar 2026 05:53:26 -0800
+ 621NirBs1283095 for <dev@dpdk.org>; Mon, 2 Mar 2026 05:53:30 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=1F2An7A4u0igi2x+e5kFt8O
- VEPFlJMdTb+SNTWwJilE=; b=TA4nRUKwWL7x+gjVUDUKKive8Gc+JX17Nz536d8
- mcUCH9bmvMlvULfmxI7VIUs3pV/ZxdvjjjemnyFQ+23+B831J09wEDFO6x1V+vAY
- MEDsIQ4x/+X6U+SFzMgdu2w6YxQlvFMW/UfOIwDIWUz9dCltrFG1CToq0W0kavN1
- p6gGlfoaI9/KuiC82zr6ej2OXgz4g/U5jFAvEzPUSrkqYEQBa14yi4fDptFHVXC9
- gT7cgR2t2bSacieeexdjumCQ8eHnx01fmSaQPPILFLCxUK3ZfRLwNgeG6ecBBcTD
- sJXRrtRELhIkUjKIfmSOQ6h8vSTJ+2jE0EpVqF6pTgIiMuw==
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=e
+ /OlsBalM091xPYKQZWRK079ScO6fN9mn8veEIMJ2u8=; b=EuadDmQou1HkuZ1td
+ 3V72L/lVAp/tJeYeYhn987ZT7Xy7rknvajTJm5h1dwtapZySm+j5kSnPhnZU/bAW
+ qS45W9lCC/46Zn0URhufYq8xDNis20CpZsHZV/N/QBFaDoeHdb8WP1bhZL8yK1bC
+ a7vclC0kLQzFCs4BjGYhord1+EnRHnbSwWIxwQTQeqdhy3Qhtt6HukvqvCRLbBjw
+ 6PVikqueKQlU2jFCHg0fD0wpV+Z2a7E2Wee4Gx6z2/o/3rWzfK9IUVg8xBqRLop6
+ CFqterACBpIU3/xevJsrPdae8EtjPCMJhLXVLvSUVaLeh1bH0MZa4Fgsjbwi0unj
+ /mhEA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4ckxkp3fuk-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4cmng8t184-2
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Mon, 02 Mar 2026 05:53:26 -0800 (PST)
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 05:53:30 -0800 (PST)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 2 Mar 2026 05:53:25 -0800
+ 15.2.1544.25; Mon, 2 Mar 2026 05:53:29 -0800
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 2 Mar 2026 05:53:25 -0800
+ Transport; Mon, 2 Mar 2026 05:53:29 -0800
 Received: from cavium-RAHUL-BM.. (unknown [10.28.36.48])
- by maili.marvell.com (Postfix) with ESMTP id BB3523F70CF;
- Mon,  2 Mar 2026 05:53:22 -0800 (PST)
+ by maili.marvell.com (Postfix) with ESMTP id ED4A33F70DF;
+ Mon,  2 Mar 2026 05:53:26 -0800 (PST)
 From: Rahul Bhansali <rbhansali@marvell.com>
 To: <dev@dpdk.org>, Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <jerinj@marvell.com>, Rahul Bhansali <rbhansali@marvell.com>
-Subject: [PATCH 1/2] common/cnxk: update RXC time config
-Date: Mon, 2 Mar 2026 19:23:18 +0530
-Message-ID: <20260302135319.1971488-1-rbhansali@marvell.com>
+Subject: [PATCH 2/2] net/cnxk: config option for RXC time step
+Date: Mon, 2 Mar 2026 19:23:19 +0530
+Message-ID: <20260302135319.1971488-2-rbhansali@marvell.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260302135319.1971488-1-rbhansali@marvell.com>
+References: <20260302135319.1971488-1-rbhansali@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-GUID: 9aevYCFr3aosHVqXc5Vw4NtWx9YP9679
-X-Authority-Analysis: v=2.4 cv=eYUwvrEH c=1 sm=1 tr=0 ts=69a59656 cx=c_pps
+X-Proofpoint-ORIG-GUID: qePCa6FdD3smoMqJ1lpONgJe8ArqH3MP
+X-Proofpoint-GUID: qePCa6FdD3smoMqJ1lpONgJe8ArqH3MP
+X-Authority-Analysis: v=2.4 cv=UeZciaSN c=1 sm=1 tr=0 ts=69a5965a cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=EAYMVhzMl8SCOHhVQcBL:22 a=M5GUcnROAAAA:8 a=dagZlYKSuQ3BrJktfyAA:9
+ a=TtqV-g6YmW1Jfm2GSLaY:22 a=M5GUcnROAAAA:8 a=aLfi41Bu5ofLkWKDA9kA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: 9aevYCFr3aosHVqXc5Vw4NtWx9YP9679
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzAyMDExNyBTYWx0ZWRfX4IUjOqtK+0z3
- xx+aV9o43ra5koFoU+Xq25p0CM9SbUPfxD+E1vX1BV+DMM3gdk47V+lLblAipmaj+NfqAMV0LBL
- 5rduFvAHD+C+ydK1bBxDoR5U+7LtQPZ/PVmzcbxh8Bo6S2g526uBBDfrUwWsngV9BKt2Vd8qakp
- 1sSSUQKX3ala2fDiyE181AE3jGNww8Z8VVupuJiGvk/yLDzMCesZ3BwMrYZlcdCOn1x7Uqlv3PZ
- e8MHBYIWmo1qg4W+Ah2aEI4VE22n0Ps2H7kRJvwd0aine8sFFH83psAFspHHCTw6EblJcqcOq2o
- IbdoK7FYDpAAclTDd//4kaxoY037amHEpGAtwb7iguXXfxeBU+8gkTo76ngdFSkauAGlOtuys7o
- uaxOTehH3yi+rijXa0r7nqXLP4RWz/xf1S5rmkpizDNhAB61xuFyBQm+7TJGlBU0jq3sDGpRzD1
- FMx4uNdfRwvcJHyFzow==
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzAyMDExNyBTYWx0ZWRfX7Rt4lecJykm8
+ z1eirbLlRb3fAzuVpMlR4ngfVgnD2+hkOCSbXZPREXcRLjsK+IQG+09mLcmumLv7FYerjPCx+Ud
+ 3v0vRenqD+gEu8vxQQNWFjfJ/n27Vmu36NU84UTo+8jrn28p2PHjlhKXX/PH3Gt+9fhFZRIBpT/
+ 8ndLlrYW6TxddTIoyqiO0YK/RvVuEOmKtwxfsK+acEnB2ALprcAP7Y3dn5E4V3x5EJvx5xQxYJ6
+ gRzm6URLXfarTaYo7mu6rzp2dlHIqFSgoT13CscFQ10Oo8E74UBvxHGb4quCCCiLoshSwr0hIEN
+ c/q/YBrZO8TcMx10P4XEcB6HM+lXUe8H3YUGxtzJFA4Fa8DfOcoWz3T6G6yOlEWmUHd4PJFp9oS
+ UxS2kb8+ffGx79G4DIj6jvksZaWdipimfPTjLR34o628/T5UO7QpsXe9I2kWfGQQ/vWOYQkQPvj
+ /q8u2cocX+ffcHP/tDQ==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-02_03,2026-03-02_01,2025-10-01_01
@@ -80,98 +83,125 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For CN20k platform, CPT RXC time config is common across
-all RXC queues. Reassembly configurations are updated to
-have fix granularity and variable active limit time for
-reassembly entries.
+Provide devarg option to configure RXC time granularity
+for reassembly handling.
+
+It will be set as rxc_step=<val> for nix device.
+e.g.: 0002:02:00.0,rxc_step=10000
 
 Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 ---
- drivers/common/cnxk/roc_nix.h     |  1 +
- drivers/common/cnxk/roc_nix_inl.c | 21 +++++++++++++++++----
- drivers/common/cnxk/roc_nix_inl.h |  2 ++
- 3 files changed, 20 insertions(+), 4 deletions(-)
+ doc/guides/nics/cnxk.rst               | 14 ++++++++++++++
+ drivers/net/cnxk/cn20k_ethdev.c        |  1 +
+ drivers/net/cnxk/cnxk_ethdev_devargs.c | 26 +++++++++++++++++++++++++-
+ 3 files changed, 40 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/common/cnxk/roc_nix.h b/drivers/common/cnxk/roc_nix.h
-index 7bc3e1f5c6..8ba8b3e0b6 100644
---- a/drivers/common/cnxk/roc_nix.h
-+++ b/drivers/common/cnxk/roc_nix.h
-@@ -605,6 +605,7 @@ struct roc_nix {
- 	bool dis_xqe_drop;
- 	bool sq_resize_ena;
- 	uint8_t def_first_skip;
-+	uint32_t rxc_step;
- 	/* End of input parameters */
- 	/* LMT line base for "Per Core Tx LMT line" mode*/
- 	uintptr_t lmt_base;
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index 26be1adac9..0c6211e68e 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -973,19 +973,16 @@ roc_nix_reassembly_configure(struct roc_cpt_rxc_time_cfg *req_cfg, uint32_t max_
- 	struct roc_cpt_rxc_time_cfg cfg;
- 	struct roc_cpt *roc_cpt;
- 	struct mbox *mbox;
-+	uint32_t val;
- 	int rc;
+diff --git a/doc/guides/nics/cnxk.rst b/doc/guides/nics/cnxk.rst
+index 9e758a1b5e..c43c70b275 100644
+--- a/doc/guides/nics/cnxk.rst
++++ b/doc/guides/nics/cnxk.rst
+@@ -494,6 +494,20 @@ Runtime Config Options
  
- 	if (!idev)
- 		return -EFAULT;
+       -a 0002:02:00.0,disable_xqe_drop=1
  
--	cfg.step = req_cfg->step ? req_cfg->step :
--				   (max_wait_time * 1000 / ROC_NIX_INL_REAS_ACTIVE_LIMIT);
- 	cfg.zombie_limit =
- 		req_cfg->zombie_limit ? req_cfg->zombie_limit : ROC_NIX_INL_REAS_ZOMBIE_LIMIT;
- 	cfg.zombie_thres =
- 		req_cfg->zombie_thres ? req_cfg->zombie_thres : ROC_NIX_INL_REAS_ZOMBIE_THRESHOLD;
--	cfg.active_limit =
--		req_cfg->active_limit ? req_cfg->active_limit : ROC_NIX_INL_REAS_ACTIVE_LIMIT;
- 	cfg.active_thres =
- 		req_cfg->active_thres ? req_cfg->active_thres : ROC_NIX_INL_REAS_ACTIVE_THRESHOLD;
++- ``Configure RXC time step`` (default ``1000``)
++
++   RXC time step/granularity for reassembly can be specified by
++   ``rxc_step`` ``devargs`` parameter.
++
++   For example::
++
++      -a 0002:02:00.0,rxc_step=10000
++
++   With the above configuration, reassembly time step will be set to 10000
++   microseconds. Default RXC time step will be set to 1000 microseconds
++   when reassembly is configured.
++   It will be used for OCTEON CN20K SoC family.
++
+ .. note::
  
-@@ -995,6 +992,12 @@ roc_nix_reassembly_configure(struct roc_cpt_rxc_time_cfg *req_cfg, uint32_t max_
- 			plt_err("Cryptodev not probed");
- 			return -ENOTSUP;
+    Above devarg parameters are configurable per device, user needs to pass the
+diff --git a/drivers/net/cnxk/cn20k_ethdev.c b/drivers/net/cnxk/cn20k_ethdev.c
+index 4a3d163c75..f08079f612 100644
+--- a/drivers/net/cnxk/cn20k_ethdev.c
++++ b/drivers/net/cnxk/cn20k_ethdev.c
+@@ -705,6 +705,7 @@ cn20k_nix_reassembly_conf_set(struct rte_eth_dev *eth_dev,
  		}
-+
-+		val = max_wait_time ? (max_wait_time * 1000 / ROC_NIX_INL_REAS_ACTIVE_LIMIT) : 0;
-+		cfg.step = req_cfg->step ? req_cfg->step : val;
-+		cfg.active_limit = req_cfg->active_limit ? req_cfg->active_limit :
-+							   ROC_NIX_INL_REAS_ACTIVE_LIMIT;
-+
- 		return roc_cpt_rxc_time_cfg(roc_cpt, &cfg);
  	}
  
-@@ -1012,6 +1015,16 @@ roc_nix_reassembly_configure(struct roc_cpt_rxc_time_cfg *req_cfg, uint32_t max_
- 		goto exit;
- 	}
++	rxc_time_cfg.step = dev->nix.rxc_step;
+ 	rc = roc_nix_reassembly_configure(&rxc_time_cfg, conf->timeout_ms);
+ 	if (rc) {
+ 		plt_err("Nix reassembly_configure failed rc=%d", rc);
+diff --git a/drivers/net/cnxk/cnxk_ethdev_devargs.c b/drivers/net/cnxk/cnxk_ethdev_devargs.c
+index 68e6b1d190..da8fc83f9d 100644
+--- a/drivers/net/cnxk/cnxk_ethdev_devargs.c
++++ b/drivers/net/cnxk/cnxk_ethdev_devargs.c
+@@ -64,6 +64,25 @@ parse_ipsec_in_spi_range(const char *key, const char *value, void *extra_args)
+ 	return 0;
+ }
  
-+	/* For CN20K, Configure step size fix and active limit per RXC queue,
-+	 * Default CPT_AF_RXC_TIME_CFG::AGE_STEP will be 1ms, so max reassembly
-+	 * timeout can be up to 4095 ms.
-+	 */
-+	cfg.step = req_cfg->step ? req_cfg->step : ROC_NIX_INL_REAS_STEP_DFLT;
-+	val = max_wait_time ? (max_wait_time * 1000 / cfg.step) : 0;
-+	cfg.active_limit = req_cfg->active_limit ? req_cfg->active_limit : val;
-+	if (cfg.active_limit > ROC_NIX_INL_REAS_ACTIVE_LIMIT)
-+		cfg.active_limit = ROC_NIX_INL_REAS_ACTIVE_LIMIT;
++static int
++parse_rxc_step(const char *key, const char *value, void *extra_args)
++{
++	RTE_SET_USED(key);
++	uint32_t val;
 +
- 	req->blkaddr = 0;
- 	req->queue_id = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
- 	req->step = cfg.step;
-diff --git a/drivers/common/cnxk/roc_nix_inl.h b/drivers/common/cnxk/roc_nix_inl.h
-index d1a08a4495..82dae4b1ba 100644
---- a/drivers/common/cnxk/roc_nix_inl.h
-+++ b/drivers/common/cnxk/roc_nix_inl.h
-@@ -36,6 +36,8 @@
- #define ROC_NIX_INL_INB_CUSTOM_SA_SZ 512
++	errno = 0;
++	val = strtoul(value, NULL, 0);
++	if (errno)
++		return -EINVAL;
++
++	if (val > ROC_NIX_INL_REAS_STEP_MAX)
++		return -EINVAL;
++
++	*(uint32_t *)extra_args = val;
++
++	return 0;
++}
++
+ static int
+ parse_ipsec_out_max_sa(const char *key, const char *value, void *extra_args)
+ {
+@@ -283,6 +302,7 @@ parse_val_u16(const char *key, const char *value, void *extra_args)
+ #define CNXK_CUSTOM_INB_SA	  "custom_inb_sa"
+ #define CNXK_FORCE_TAIL_DROP	  "force_tail_drop"
+ #define CNXK_DIS_XQE_DROP	  "disable_xqe_drop"
++#define CNXK_RXC_STEP		  "rxc_step"
  
- /* Reassembly configuration */
-+#define ROC_NIX_INL_REAS_STEP_MAX	  0xFFFFF
-+#define ROC_NIX_INL_REAS_STEP_DFLT	  0x3E8 /* 1 ms */
- #define ROC_NIX_INL_REAS_ACTIVE_LIMIT	  0xFFF
- #define ROC_NIX_INL_REAS_ACTIVE_THRESHOLD 10
- #define ROC_NIX_INL_REAS_ZOMBIE_LIMIT	  0xFFF
+ int
+ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
+@@ -314,6 +334,7 @@ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
+ 	uint16_t lock_rx_ctx = 0;
+ 	uint16_t rx_inj_ena = 0;
+ 	uint16_t no_inl_dev = 0;
++	uint32_t rxc_step = 0;
+ 
+ 	memset(&sdp_chan, 0, sizeof(sdp_chan));
+ 	memset(&pre_l2_info, 0, sizeof(struct flow_pre_l2_size_info));
+@@ -370,6 +391,7 @@ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
+ 	rte_kvargs_process(kvlist, CNXK_CUSTOM_INB_SA, &parse_flag, &custom_inb_sa);
+ 	rte_kvargs_process(kvlist, CNXK_FORCE_TAIL_DROP, &parse_flag, &force_tail_drop);
+ 	rte_kvargs_process(kvlist, CNXK_DIS_XQE_DROP, &parse_flag, &dis_xqe_drop);
++	rte_kvargs_process(kvlist, CNXK_RXC_STEP, &parse_rxc_step, &rxc_step);
+ 	rte_kvargs_free(kvlist);
+ 
+ null_devargs:
+@@ -413,6 +435,7 @@ cnxk_ethdev_parse_devargs(struct rte_devargs *devargs, struct cnxk_eth_dev *dev)
+ 		dev->nix.rx_inj_ena = rx_inj_ena;
+ 	dev->nix.force_tail_drop = force_tail_drop;
+ 	dev->nix.dis_xqe_drop = !!dis_xqe_drop;
++	dev->nix.rxc_step = rxc_step;
+ 	return 0;
+ exit:
+ 	return -EINVAL;
+@@ -439,4 +462,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_cnxk,
+ 			      CNXK_NIX_RX_INJ_ENABLE "=1"
+ 			      CNXK_CUSTOM_META_AURA_DIS "=1"
+ 			      CNXK_FORCE_TAIL_DROP "=1"
+-			      CNXK_DIS_XQE_DROP "=1");
++			      CNXK_DIS_XQE_DROP "=1"
++			      CNXK_RXC_STEP "=<0-1048575>");
 -- 
 2.34.1
 
