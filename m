@@ -2,67 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B70EB362C
-	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 19:31:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 568E3EB362F
+	for <dpdk-dev@archiver.kernel.org>; Mon,  2 Mar 2026 19:36:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DDB5740A76;
-	Mon,  2 Mar 2026 20:31:56 +0100 (CET)
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
- by mails.dpdk.org (Postfix) with ESMTP id 83EA04028C
- for <dev@dpdk.org>; Mon,  2 Mar 2026 20:31:55 +0100 (CET)
-Received: by mail-dl1-f44.google.com with SMTP id
- a92af1059eb24-1275750cfc7so955568c88.0
- for <dev@dpdk.org>; Mon, 02 Mar 2026 11:31:55 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A6F340A76;
+	Mon,  2 Mar 2026 20:36:31 +0100 (CET)
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+ by mails.dpdk.org (Postfix) with ESMTP id 385694028C
+ for <dev@dpdk.org>; Mon,  2 Mar 2026 20:36:30 +0100 (CET)
+Received: by mail-dl1-f42.google.com with SMTP id
+ a92af1059eb24-1275750cf9cso3846867c88.0
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 11:36:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772479914;
- x=1773084714; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:subject:cc:to
- :from:date:from:to:cc:subject:date:message-id:reply-to;
- bh=V+hMlH6nds2LDCe8c4KL00LY6v+UnEi0M8SCMah+I5I=;
- b=pS8SEOo2HqmcLrmuDoAI1S0eiqGUteta3P5Eq1Ab9vc3bwTFNxI32BLwj2xswt/iTj
- EkZb3barZ59J9WRmzxk/OOQP8C01GoZQIiqPwL6gFN04fAKh2dxGijlLpFtlTaCAchFK
- a+VAM6EPlvLbiI3o/MLmDTZ7P2lWsneNycZOOhg3W9aBZ9Ob70rCvWL+k8Wg/kJ0a727
- fCjyed21LYgRb+0w56aXuW+MqNGCf9hXnXy3CS8I1bgDSo5R6yHHCLF+yl4bPzTGBMRX
- qPqeTyk4c+r798X4qHHdOoSmMzvXLrervq+Mi6ndr482jCFpuaFaaPpe0IB8SzyKhHGP
- vXTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772479914; x=1773084714;
- h=content-transfer-encoding:mime-version:message-id:subject:cc:to
- :from:date:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772480189;
+ x=1773084989; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=V+hMlH6nds2LDCe8c4KL00LY6v+UnEi0M8SCMah+I5I=;
- b=IFKgucNgmRx/4ZeJgs3WwJ3mkhU/XRtVHu11FxN1BHBrL5wIaDo6jBqp01Gmac6R4n
- gY8hUAHw0LLufKOuJ4W9mil3tvZmi8RI+6lfxSTqanX1A4ZuFkMYDcgESTGopcUPaT9n
- oPHAWVwkke6O2awJXagfzeirtfTiHIUoYkzM9zwXuuv8T/hUrPuclisYnFBGCH9R2v/9
- 0F/Hkdr9sitd1XVEGzdV7hj79VzpacaxaxkTcUhDHwmuIJBHQw07Gy1e5CtTZJhOwgN1
- 634kxmd5z+CduH6djphNMBrWHnSuIxiPXk9n5gTx2ymbX5YatK5EifAREsDbNh3yt7yI
- 6LAw==
-X-Gm-Message-State: AOJu0YwcEu1TWLmJRmV9w3yQLQ6Sxi0h3WYU05thQgOshb6u/XwtjUIo
- B072y6xL5UbS9H1sT9ZdQTsnUJ+s8SEvxcIpUHiiiwqLywvftYaqhMB/vpTo4rnlk1I=
-X-Gm-Gg: ATEYQzyVoviHfGKGYr6r+PqEHFxcpRfdzCkfCSF9bPw2C2JuxZowWoC+8JXptCPhBx1
- KzFmJvUmrdCjCVC7nqt8+gQyUtbDvKxTCEDaeUQSYUbXTPW9Lsssbnb2ZMo01EnArgKrvPpk4iI
- WT8pEBgXMDvvd/Y5Gb3aaqwhMn1KzRxjkAYuxD9jedEY4ruucgfyR24Yfx5uvNe9/t1SdN/Lcqp
- 8VuAXvC/+gfeVjuLOV3AH4NTKrJrU9hapqADCW477qOhSEJ2dzK04PAT2YmLKeNpvXP2na9RxC+
- d81DkG7vjGvllbZnbrSjQr7yGb4Ty/Bs09ekATI5RcWn8Evg8upJJh6+IkgdyMIcqusEv91YYwu
- xA5oSgx1m1UtddkOonmEh/ZH27sFdiovbX4oX3catkGi03YyKbDaPKOOG9IFfRTimM9rNR3xv4R
- z6mhCfSbiOjVEJ1rhiZphfQW5xHTyqc/euQ7L/joUa5WEPsVMK7oKO6TrI8IqVm+4Q
-X-Received: by 2002:a05:7022:421:b0:124:11af:7b75 with SMTP id
- a92af1059eb24-1278fd21ac1mr6312756c88.34.1772479914174; 
- Mon, 02 Mar 2026 11:31:54 -0800 (PST)
+ bh=HigNlsuIlyTfEtCAcIuUUp3+lRWVSfPToLU6fLQY7iw=;
+ b=WAVsO2w2EYeHss14datSZMXCv5sAkP39pNeHN2RjwFdxXZoIzOO/V3Zcez2H8B9BQ0
+ eP+nMx2jHaAhiyC5UMvf1JT4fg36HTomv88YSMf4bLjT0ikznxyjTiK+BuXZQTbgmL+J
+ mah9QX8asCM2bViRWkRNJXWjVS993KyYuZkkMnDeFB2vvpYsXq+t9CkhVxjyy4IjmOSH
+ K4t2IczxiAfq0S1LbbPkdo+gX8xt+7ein67O0H0Oa5urQpYjMKcAVHXmqfrA4NgGg1q7
+ mCGL0WHEKU+TpxV7GCfUQiTnP2kEYN5fFUfXtfho7+vBeEOLPrlbN4m2py/S/7ZxE1/p
+ 9wig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772480189; x=1773084989;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=HigNlsuIlyTfEtCAcIuUUp3+lRWVSfPToLU6fLQY7iw=;
+ b=JarX8c06mkhFJgrsxUAHT8XDrn8h5pM4HEHvpYrVQwN3+JydNSV1tots+rAioZRm1/
+ A1Skc+4M1xHJQ1QDv2N1Mrj4xs+s0Uk7caiqyHN5bMcywSzCqmrXtHo6E3XH3ZWq93Cy
+ 1JFBdIkyaN606vQqkLoFBlLVV7m6qlbkMhFcs0DSZaNu5D1MFBOzgyyIBpz50NGDqKvA
+ Dzz9OzcMSkUswhs/awq6uiglkQFO8klLSrETZCdwThXdHK9DYqUX+J8j9pJwbQQqIPT0
+ f1+yiP4WQbAbZ3uzeJNppYEqCR1gb9o/FdVkKOEejy02obbVG6Kuq5akPYXKHG5H2p5Y
+ upiw==
+X-Gm-Message-State: AOJu0YwGi91CJq4jgTXeGJToG2O7KHMSCH5aSCLTsm8CQ/uKivFgTlk7
+ r+SqZX67sIorSwOoM2I7vW60fngSfWVmrPA76CK4aY7zIa0rrapP18Yup2wquyxj0mA=
+X-Gm-Gg: ATEYQzxRslCpDSjeXtuSUpIsRtZwfXQhhg4gJU5EUsA7DHEDyXOXRo40cs38hzhPRpd
+ NTO6URkCTdd92BAF4Z6+t1nUmcrLv5/mzQgkAstFsf97co7g9p0rTxBbxkTaBpwjTRq/JBruE0d
+ XReFXML2HlJjVquS45o0eDvMRb+jVL/g6zEP+dq0xE/LEGnpelN/TuNVnsEdRMjrmEUiqjzSfTJ
+ NuJahw4HRBj3RR+Biqsu/8GKgNlptCONjR9G3rHBh35c67ydoWH8EDmVqGquE4LDhyWr/Ml+4gt
+ GWH9moLMZqY/8MYLwBk0X10iol9tYSdg6dv+0v/7DmXIxohZe9orcz3Xp8K6NnCVPJC95hleaNg
+ YwUJsv7jGjp/OUtj67qzsfoPhEVPQV4VvHUw4tfqGVUOtXBUVl4ReQbUr8tMfBGZrcZbLQ1kBJ/
+ HeBsDFNMP0lL4SwTzcpKw23OUkUPW7w26z8x2XsiwRNORpFYYnxlwImBwvdcqR5oBk
+X-Received: by 2002:a05:7022:68d:b0:123:3103:b22a with SMTP id
+ a92af1059eb24-1278fb68a91mr5376273c88.3.1772480189233; 
+ Mon, 02 Mar 2026 11:36:29 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-127899d49c1sm19987179c88.1.2026.03.02.11.31.53
+ a92af1059eb24-12789a32633sm17284144c88.9.2026.03.02.11.36.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 02 Mar 2026 11:31:53 -0800 (PST)
-Date: Mon, 2 Mar 2026 11:31:50 -0800
+ Mon, 02 Mar 2026 11:36:29 -0800 (PST)
+Date: Mon, 2 Mar 2026 11:36:26 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ori Kam <orika@nvidia.com>
-Cc: dev@dpdk.org
-Subject: Bug analysis of regexdev library
-Message-ID: <20260302113150.61c9c150@phoenix.local>
+To: Tejasree Kondoj <ktejasree@marvell.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, Nithin Kumar Dabilpuram
+ <ndabilpuram@marvell.com>, Kiran Kumar Kokkilagadda
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha
+ Koteswara Rao Kottidi <skoteshwar@marvell.com>, Harman Kalra
+ <hkalra@marvell.com>
+Subject: Re: [EXTERNAL] [PATCH v6 1/6] common/cnxk: replace variable length
+ state array
+Message-ID: <20260302113626.7197873e@phoenix.local>
+In-Reply-To: <PH7PR18MB5177D9FC140A12E555D8B5FDA87EA@PH7PR18MB5177.namprd18.prod.outlook.com>
+References: <20260120195418.466318-1-stephen@networkplumber.org>
+ <20260205175750.653353-1-stephen@networkplumber.org>
+ <20260205175750.653353-2-stephen@networkplumber.org>
+ <PH7PR18MB5177D9FC140A12E555D8B5FDA87EA@PH7PR18MB5177.namprd18.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -76,159 +87,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Since nobody uses it, thought I would test AI review of regexdev library.
+On Mon, 2 Mar 2026 19:06:19 +0000
+Tejasree Kondoj <ktejasree@marvell.com> wrote:
 
-It found many things, and not to mention there are no regression tests for =
-the library.
-Is anyone using or maintaining this? Can it be deprecated in 26.07 and remo=
-ved in 26.11?
+> > diff --git a/drivers/common/cnxk/roc_aes.c b/drivers/common/cnxk/roc_aes.c
+> > index d84feb546a..babf149ccf 100644
+> > --- a/drivers/common/cnxk/roc_aes.c
+> > +++ b/drivers/common/cnxk/roc_aes.c
+> > @@ -157,9 +157,10 @@ static void
+> >  cipher(uint8_t *in, uint8_t *out, uint32_t *ks, uint32_t key_rounds, uint8_t
+> > in_len)
+> >  {
+> >  	uint8_t data_word_len = in_len / sizeof(uint32_t);
+> > -	uint32_t state[data_word_len];
+> > +	uint32_t state[AES_HASH_KEY_LEN / sizeof(uint32_t)];  
+> [Tejasree] This line needs to be moved up to maintain reverse xmas tree.
 
-Here's a thorough bug analysis of the DPDK regexdev library:
-
-## Critical Bugs
-
-**1. Wrong comparison operator in `rte_regexdev_get_dev_id()`** (`rte_regex=
-dev.c`)
-
-This is the most serious bug. The function uses `strcmp()` without negation=
-, so it matches on names that are *different* rather than equal:
-
-```c
-if (strcmp(name, rte_regex_devices[i].data->dev_name)) {
-    id =3D rte_regex_devices[i].data->dev_id;
-    break;
-}
-```
-
-`strcmp()` returns 0 (falsy) on match. This should be `!strcmp(...)` or `st=
-rcmp(...) =3D=3D 0`, exactly as done correctly in `regexdev_allocated()`. A=
-s written, this returns the ID of the first device whose name *doesn't* mat=
-ch.
-
-**2. Wrong `memset` value on re-registration** (`rte_regexdev.c`, `rte_rege=
-xdev_register()`)
-
-```c
-if (dev->data =3D=3D NULL)
-    dev->data =3D &rte_regexdev_shared_data->data[dev_id];
-else
-    memset(dev->data, 1, sizeof(*dev->data));
-```
-
-The `else` branch fills the data structure with byte value `1` (0x01 repeat=
-ing), not zero. This is almost certainly meant to be `memset(dev->data, 0, =
-...)`. A fill value of `1` corrupts every field: `dev_id` becomes garbage, =
-`dev_name` becomes non-NUL junk, `dev_started` becomes 1 (true), etc. The `=
-if` branch also has a problem =E2=80=94 newly assigned data from the shared=
- array is never zeroed, so it relies on the one-time `memset` in `regexdev_=
-shared_data_prepare()`.
-
-**3. `rte_regexdev_stop()` ignores driver return value** (`rte_regexdev.c`)
-
-```c
-dev->dev_ops->dev_stop(dev);
-dev->data->dev_started =3D 0;
-return 0;
-```
-
-The `dev_stop` callback returns `int`, but the return value is discarded. I=
-f the driver fails to stop, the library unconditionally marks the device as=
- stopped and returns success. Compare with `dev_start`, which correctly che=
-cks the return value before updating state.
-
-## Moderate Bugs
-
-**4. `rte_regexdev_close()` doesn't check driver return** (`rte_regexdev.c`)
-
-Same pattern as stop =E2=80=94 `dev_close()` return is ignored, and the dev=
-ice is unconditionally marked `UNUSED` and `dev_started =3D 0` regardless o=
-f whether the driver succeeded.
-
-**5. Duplicate `dev_started` check in `rte_regexdev_queue_pair_setup()`** (=
-`rte_regexdev.c`)
-
-The `dev->data->dev_started` check appears twice, identically:
-
-```c
-if (dev->data->dev_started) {  // first check
-    ...
-    return -EBUSY;
-}
-if (queue_pair_id >=3D dev->data->dev_conf.nb_queue_pairs) {
-    ...
-}
-if (dev->data->dev_started) {  // redundant duplicate
-    ...
-    return -EBUSY;
-}
-```
-
-This is dead code =E2=80=94 the second check is unreachable unless there's =
-a concurrent modification, and the library explicitly states it's not threa=
-d-safe.
-
-**6. `rte_regexdev_configure()` allows `nb_max_matches =3D=3D 0` despite do=
-c** (`rte_regexdev.h` vs `.c`)
-
-The header comment for `rte_regexdev_config::nb_max_matches` says "The valu=
-e 0 is allowed, in which case, value 1 used." But the implementation explic=
-itly rejects zero:
-
-```c
-if (cfg->nb_max_matches =3D=3D 0) {
-    RTE_REGEXDEV_LOG_LINE(ERR, "Dev %u num of matches must be > 0", dev_id);
-    return -EINVAL;
-}
-```
-
-Either the doc or the code is wrong.
-
-**7. Similarly, `nb_rules_per_group =3D=3D 0` rejection contradicts doc**
-
-The header says "The value 0 is allowed, in which case, `max_rules_per_grou=
-p` used." But the code rejects it with `-EINVAL`.
-
-## Design / Robustness Issues
-
-**8. `rte_regexdev_xstats_names_get()` rejects NULL but API says NULL retur=
-ns capacity**
-
-The header states: "If set to NULL, function returns required capacity." Bu=
-t the implementation returns `-EINVAL` on NULL, making it impossible to que=
-ry the required size.
-
-**9. `rte_regexdev_xstats_reset()` rejects NULL `ids` but API says NULL res=
-ets all**
-
-The header says: "When NULL, all statistics will be reset." The implementat=
-ion returns `-EINVAL` on NULL.
-
-**10. Missing `#include <stdio.h>` dependency** (`rte_regexdev_core.h`)
-
-The `regexdev_dump_t` typedef uses `FILE *f` but the header doesn't include=
- `<stdio.h>`. It works by accident through transitive includes, but it's te=
-chnically a missing dependency.
-
-**11. Type mismatch on `nb_rules`**
-
-In `rte_regexdev.h`, `rte_regexdev_rule_db_update()` declares `nb_rules` as=
- `uint32_t`. In `rte_regexdev_core.h`, the callback typedef `regexdev_rule_=
-db_update_t` declares it as `uint16_t`. This silently truncates rule counts=
- above 65535.
-
-**12. `regexdev_capa` field is `uint32_t` but capability flags can exceed 3=
-2 bits**
-
-Capability `RTE_REGEXDEV_CAPA_QUEUE_PAIR_OOS_F` is defined as `(1ULL << 22)=
-` with `ULL` suffix suggesting 64-bit intent, yet `struct rte_regexdev_info=
-::regexdev_capa` is `uint32_t`. Currently the highest bit is 22, so it fits=
-, but the `ULL` suffix signals the original developers may have intended a =
-64-bit field, and any future flag at bit 32+ would be silently dropped.
-
----
-
-The `strcmp` inversion (bug #1) and the `memset(..., 1, ...)` (bug #2) are =
-the most impactful =E2=80=94 one breaks device lookup by name entirely, the=
- other corrupts device state on re-registration. The xstats NULL-handling m=
-ismatches (#8, #9) and the `nb_rules` type mismatch (#11) are likely to bit=
-e real driver consumers.
+That is a Linux netdev thing, DPDK doesn't care about that.
