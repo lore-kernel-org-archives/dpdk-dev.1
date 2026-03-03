@@ -2,84 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B095CEB3641
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 01:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8415EB3648
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 01:49:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B436402AB;
-	Tue,  3 Mar 2026 02:01:14 +0100 (CET)
-Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com
- [74.125.224.52]) by mails.dpdk.org (Postfix) with ESMTP id 8265940289
- for <dev@dpdk.org>; Tue,  3 Mar 2026 02:01:12 +0100 (CET)
-Received: by mail-yx1-f52.google.com with SMTP id
- 956f58d0204a3-64ad9238d8fso4873494d50.3
- for <dev@dpdk.org>; Mon, 02 Mar 2026 17:01:12 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772499672; cv=none;
- d=google.com; s=arc-20240605;
- b=D883mUUPLev6EISUxB7tOK6+wJjYKraPbR7aTDxHeUcUFa2vcFw32TYy5aCFoFJ8y8
- OdMmoIjNdknWf/JVFBOjqrojyfDP3BUQJN9Q3uATIqo0tH+2UAM8x1kzh6QEcrM9A9gt
- ukG+16yzrKZFCyfRpOhSF8N0wdvopQL/tfuIPiz7XL6de8Q15DRxySgSLQsbOTTxl4C8
- hDUp2JPy7psnIwWvLLBMJAdX+/oCscqbDZYVzvu1kPYa4HcL/Rt1R6G/0ZGxcWxXFiX9
- HaAf4NSuSufOY31+ks+0X2g/nqDqd7F6SlbaTOHmXESTistcuwRqb0yFbNN4mcO/A0cr
- qW0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=L3XJ5Zy0JWpEZOgS5gFoWy3h1IP4zdGncQ/9A6zjptg=;
- fh=0E6rhHenMJTx7iCVaVeG4mOH4i93OFLcPVvmIeKwsk8=;
- b=ESjDAjXIc3FUkP9McxVEeKUmpnYw6wR/EYOK4RY3QmytW6EfAVspVXrVFQmSP42bAD
- EUtL773CTcdOcjjYuOmLucQcW6dJnRCd6tQbu4PGPtkBnhlofGFCSbdtfKEhIQqlLvjb
- gLdbX53luHpcIMN0KXiMgG9n8/0yWCDCDeu/a7aNe5bxf5XLN1plZFZTHmo0OJiSiOyK
- yHVaEwHZ9PFFemExdJxmVPAIRTURZllDS2BX0EaH1E81vYdFzu5/mF/SQsuCBlIyvvkI
- 9715XfObrVu6v9CFXitZb41RDEZxWrF+V/oR9oUeQeMPDTPWmQ8KsQDHb60hQyg74X1L
- BCzg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1772499672; x=1773104472; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=L3XJ5Zy0JWpEZOgS5gFoWy3h1IP4zdGncQ/9A6zjptg=;
- b=NvP/MW8Qw6E5nZgJ2mjvulCIfFUm1B97JBSkVoNSOuX7dudHQQNv5K1nUnwnseA4eF
- p+x+SyR3nxoYklSYhOd8aT48GDPFXskt8gc3BneTwIAPFJ75xslPr3rXzBlR/bKgQUqG
- IiFnLe3UVPwU3klZoaQK4jVK7hjjyQ3bWHEO2tN0ysPmQMEermolv5i0mbiZ3DmqxF7t
- T8c5UGBOHTFSKE9dV3hn3tcVTySVbvk4ksvARKY5qXU4kjI8pbXXM0jyX6eIi+xbbydV
- djd8wcmu0VnuwcXoYjXs5twbkmDn6xd6PJfLE+cV0xytyiJCK8CJEWPFcdAnWIXSE3vu
- K5vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772499672; x=1773104472;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=L3XJ5Zy0JWpEZOgS5gFoWy3h1IP4zdGncQ/9A6zjptg=;
- b=wTx4FWNMEmBLE6Koy2eS4DpUrK7h8kaxM2wjSHG5HlJ12s1PTEGrU//g/7pwlpkX+g
- c24zhETNLFnsyYhGdkic7VvydcmDERdoTtACcWq+kstjMOP3VwJNeEHw6U3LzzSH0hx6
- BqNCKp62gRFaBzQX9hCI9ZyEKx2ihEFxRBWrXptHeERA1J1CMHaVWcWzHPQqKfzuVMs3
- Ttx3v7HSbDja6f3uc+jh/HwmvqWg44/88gb9jEC8wnR1uasRWi7nqSDdL8LNkiwq5768
- xDR2QEm34tEj+ok/x6ta/r3eAnC9O8LxZ75bddY16pH0RILv3XZy7Q01Gywfxf6+MzNJ
- p/qA==
-X-Gm-Message-State: AOJu0YwTX6WnHxtIHTJuCGbpKr/gu7C96u2dku1jlpU678g/Hwoo8ZWa
- Eo8NEStBbrhBrN34mI/jFGE2x2G3o8h00J4JWdlMV6RbDLC8DwGL7G8Q7tQGAREwuK06zJUK9Q2
- RyJCOEFET1XQt9u0ivw/AZWRP4YBKQcL4x2zjescd
-X-Gm-Gg: ATEYQzxDd+MR2wXmVSw3mlAVdrUhmYtLDcqFTdwf+7NVopUZkMXWUtsWIauUNNMGJxH
- 6EhgYD/5PgPi3t9FYOM56d9/s0KL50kkEZxm/NEF9QlM9XPLACcTKCW53aI+74umGhfZ/4k7uGm
- NuobXG0uYAFJWmEVgfNZtxpWN74RSPilkOrIqqnTp1JJsvTP9E8eanA9HgS7Vj/n/yO8qePpBWh
- fhE/G2WJVxVG0SUWArRD9/Ps+njjUJwKGrBQF56dO6TN4qDh88mpg5RSyKFAQyKX6SADGzdpkID
- 5UBnTCTYWOM7aQ2j2NHbGpmp2jI2ua+Evtngdw==
-X-Received: by 2002:a53:cc45:0:b0:64c:9fcf:2ad6 with SMTP id
- 956f58d0204a3-64cc2303a81mr9039697d50.74.1772499670810; Mon, 02 Mar 2026
- 17:01:10 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id A0568402AB;
+	Tue,  3 Mar 2026 02:49:56 +0100 (CET)
+Received: from out28-101.mail.aliyun.com (out28-101.mail.aliyun.com
+ [115.124.28.101])
+ by mails.dpdk.org (Postfix) with ESMTP id DE83740289
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 02:49:53 +0100 (CET)
+X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07607654|-1; CH=green;
+ DM=|CONTINUE|false|;
+ DS=CONTINUE|ham_regular_dialog|0.0258933-9.23533e-05-0.974014;
+ FP=14155176150475314178|0|0|0|0|-1|-1|-1;
+ HT=maildocker-contentspam033037071049; MF=dimon.zhao@nebula-matrix.com; NM=1;
+ PH=DW; RN=4; RT=4; SR=0; TI=W4_0.2.3_21250554_1772502586173_o7001c60c; 
+Received: from WS-web
+ (dimon.zhao@nebula-matrix.com[W4_0.2.3_21250554_1772502586173_o7001c60c]
+ cluster:ay29) at Tue, 03 Mar 2026 09:49:46 +0800
+Date: Tue, 03 Mar 2026 09:49:46 +0800
+From: "Dimon" <dimon.zhao@nebula-matrix.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+  "dev" <dev@dpdk.org>
+Cc: "Kyo Liu" <kyo.liu@nebula-matrix.com>, "Leon" <leon.yu@nebula-matrix.com>,
+ "Sam" <sam.chen@nebula-matrix.com>
+Message-ID: <d6fe409a-d28c-4ce3-b812-bbad2c449df7.dimon.zhao@nebula-matrix.com>
+Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIXSBkb2M6IGZpeCBkb2N1bWVudGF0aW9uIGZvciBOQkwgUE1E?=
+X-Mailer: [Alimail-Mailagent revision 1106][W4_0.2.3][null][Chrome]
 MIME-Version: 1.0
-References: <20260227195126.3545607-1-jtranoleary@google.com>
- <20260227145233.002b87e1@phoenix.local>
-In-Reply-To: <20260227145233.002b87e1@phoenix.local>
-From: "Jasper Tran O'Leary" <jtranoleary@google.com>
-Date: Mon, 2 Mar 2026 17:00:59 -0800
-X-Gm-Features: AaiRm52ayHFOj5H4iAkFpAVX8j4AIpdPjq5iYYIWCgrkQ5I9Z4BPMXM1t-nmATA
-Message-ID: <CAAESxLK38Jiv1ef3-eLeRaSg=09k+pXw_pYZLTYfvixxWmP1GA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] net/gve: add flow steering support
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
-Content-Type: multipart/alternative; boundary="0000000000003fcf4e064c143d2d"
+x-aliyun-im-through: {"version":"v1.0"}
+References: <20260302202144.253145-1-stephen@networkplumber.org>
+x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4yLjEwLVJlbGVhc2UuMjYwMjAzMDA3KSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQgd2ViRHQvUEM=uL
+In-Reply-To: <20260302202144.253145-1-stephen@networkplumber.org>
+Content-Type: multipart/alternative;
+ boundary="----=ALIBOUNDARY_2483_7efe19224700_69a63e3a_ec6f7"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,782 +47,158 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
---0000000000003fcf4e064c143d2d
+------=ALIBOUNDARY_2483_7efe19224700_69a63e3a_ec6f7
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-Thanks for the notes, I've addressed the issues as follows and submitted a
-v2 revision.
-
-[Patch 3/4]
-
-1. Updated copyright header in `gve_flow_rule.h`.
-
-[Patch 4/4]
-
-0. Similar to patch 3, updated the copyright header in `gve_flow_rule.c`.
-1. Fixed the memory leak in rule flush by freeing the bitmap on flush
-failure. This preserves the invariant where `gve_get_flow_subsystem_okay`
-is true if and only if the flow ID bitmap and flow rule tail queue are
-initialized.
-2. Added a `mutexattr_t` with `PTHREAD_PROCESS_SHARED` to the flow mutex
-initialization.
-3. Changed the aforementioned instances of `(!pointer)` and a few others to
-use `pointer =3D=3D NULL`.
-4. Retained the use of `rte_zmalloc` for both `struct gve_flow` and
-`priv->avail_flow_rule_bmp_mem` because this memory is shared between
-processes.
-5. Retained memory barriers in case we call the flag checks from
-non-critical paths in the future.
-6. Updated the documentation to use a definition list for supported
-protocols, and made minor formatting adjustments to make the definition
-list look more natural in the flow steering subsection.
-
-On Fri, Feb 27, 2026 at 2:52=E2=80=AFPM Stephen Hemminger <
-stephen@networkplumber.org> wrote:
-
-> On Fri, 27 Feb 2026 19:51:22 +0000
-> "Jasper Tran O'Leary" <jtranoleary@google.com> wrote:
->
-> > This patch series adds flow steering support to the Google Virtual
-> > Ethernet (gve) driver. This functionality allows traffic to be directed
-> > to specific receive queues based on user-specified flow patterns.
-> >
-> > The series includes foundational support for extended admin queue
-> > commands needed to handle flow rules, the specific adminqueue commands
-> > for flow rule management, and the integration with the DPDK rte_flow
-> > API. The series adds support flow matching on the following protocols:
-> > IPv4, IPv6, TCP, UDP, SCTP, ESP, and AH.
-> >
-> > Patch Overview:
-> >
-> > 1. "net/gve: add flow steering device option" checks for and enables
-> >    the flow steering capability in the device options during
-> >    initialization.
-> > 2. "net/gve: introduce extended adminq command" adds infrastructure
-> >    for sending extended admin queue commands. These commands use a
-> >    flexible buffer descriptor format required for flow rule management.
-> > 3. "net/gve: add adminq commands for flow steering" implements the
-> >    specific admin queue commands to add and remove flow rules on the
-> >    device, including handling of rule IDs and parameters.
-> > 4. "net/gve: add rte flow API integration" exposes the flow steering
-> >    functionality via the DPDK rte_flow API. This includes strict
-> >    pattern validation, rule parsing, and lifecycle management (create,
-> >    destroy, flush). It ensures thread-safe access to the flow subsystem
-> >    and proper resource cleanup during device reset.
-> >
-> > Jasper Tran O'Leary (2):
-> >   net/gve: add adminq commands for flow steering
-> >   net/gve: add rte flow API integration
-> >
-> > Vee Agarwal (2):
-> >   net/gve: add flow steering device option
-> >   net/gve: introduce extended adminq command
-> >
-> >  doc/guides/nics/features/gve.ini       |  12 +
-> >  doc/guides/nics/gve.rst                |  20 +
-> >  doc/guides/rel_notes/release_26_03.rst |   1 +
-> >  drivers/net/gve/base/gve.h             |   3 +-
-> >  drivers/net/gve/base/gve_adminq.c      | 118 ++++-
-> >  drivers/net/gve/base/gve_adminq.h      |  57 +++
-> >  drivers/net/gve/gve_ethdev.c           |  87 +++-
-> >  drivers/net/gve/gve_ethdev.h           |  46 ++
-> >  drivers/net/gve/gve_flow_rule.c        | 645 +++++++++++++++++++++++++
-> >  drivers/net/gve/gve_flow_rule.h        |  64 +++
-> >  drivers/net/gve/meson.build            |   1 +
-> >  11 files changed, 1049 insertions(+), 5 deletions(-)
-> >  create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.c
-> >  create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.h
-> >
->
-> There is a lot here, so sent AI to take a look.
->
-> Summary:
-> Error 1 =E2=80=94 Resource leak: If gve_flush_flow_rules fails and disabl=
-es the
-> flow subsystem via gve_clear_flow_subsystem_ok(), the bitmap memory
-> (avail_flow_rule_bmp_mem) is never freed because both gve_dev_close and
-> gve_dev_reset gate their teardown on gve_get_flow_subsystem_ok()
-> returning true. The guard needs to check for allocated memory rather
-> than subsystem state.
->
-> Error 2 =E2=80=94 pthread_mutex_init with NULL attributes in shared memor=
-y: The
-> flow_rule_lock lives in dev_private (DPDK shared memory) but is
-> initialized without PTHREAD_PROCESS_SHARED. This will cause undefined
-> behavior with secondary processes. Switching to rte_spinlock_t would be
-> the simplest fix since the critical sections are short (bitmap scan +
-> TAILQ operations).
->
-> Patches 1=E2=80=933 are clean. The overall structure and error handling i=
-n patch 4
-> is solid =E2=80=94 the allocation-before-lock pattern, bitmap rollback on=
- adminq
-> failure, and defense-in-depth validation in destroy are all well done.
-> Long form:
-> # Code Review: GVE Flow Steering Patch Series (4 patches)
->
-> **Series**: `[PATCH 1/4]` through `[PATCH 4/4]`
-> **Author**: Jasper Tran O'Leary / Vee Agarwal (Google)
-> **Subject**: Add receive flow steering (RFS) support to the GVE driver
->
-> ---
->
-> ## Summary
->
-> This series adds n-tuple flow steering to the GVE (Google Virtual
-> Ethernet) driver via the `rte_flow` API. The implementation is cleanly
-> structured across four patches: device option discovery (1/4), extended
-> adminq infrastructure (2/4), flow rule adminq commands (3/4), and full
-> rte_flow integration (4/4). The code quality is generally good with
-> thorough validation, proper locking, and well-structured error handling.
->
-> Two correctness issues were identified: a resource leak when the flow
-> subsystem is disabled on error, and a missing `PTHREAD_PROCESS_SHARED`
-> attribute on a mutex in shared memory.
->
-> ---
->
-> ## Patch 1/4: `net/gve: add flow steering device option`
->
-> ### Errors
->
-> None.
->
-> ### Warnings
->
-> None.
->
-> This patch is clean. The device option parsing follows the established
-> pattern for existing options (modify_ring, jumbo_frames), the byte-swap o=
-f
-> `max_flow_rules` is correct, and the zero-check on the big-endian value
-> before byte-swap is valid (non-zero in any byte order is still non-zero).
->
-> ---
->
-> ## Patch 2/4: `net/gve: introduce extended adminq command`
->
-> ### Errors
->
-> None.
->
-> ### Warnings
->
-> None.
->
-> The extended command mechanism is straightforward: allocate DMA memory fo=
-r
-> the inner command, copy the command in, set up the outer wrapper with the
-> DMA address, execute, and free. The error path is correct =E2=80=94
-> `gve_free_dma_mem` is called after `gve_adminq_execute_cmd` regardless of
-> success or failure.
->
-> ---
->
-> ## Patch 3/4: `net/gve: add adminq commands for flow steering`
->
-> ### Errors
->
-> None.
->
-> ### Warnings
->
-> **1. `gve_flow_rule.h` copyright appears to be copied from an Intel drive=
-r
-> file.**
->
-> ```c
-> /* SPDX-License-Identifier: BSD-3-Clause
->  * Copyright(C) 2022 Intel Corporation
->  */
-> ```
->
-> This is a new file in the Google GVE driver. The Intel copyright and 2022
-> date look like they were carried over from whichever file was used as a
-> template. This should be updated to reflect the actual author.
->
-> ---
->
-> ## Patch 4/4: `net/gve: add rte flow API integration`
->
-> This is the largest patch (815 lines added) and where the significant
-> findings are.
->
-> ### Errors
->
-> **1. Resource leak: bitmap memory leaked when flow subsystem is disabled
-> on error.**
->
-> In `gve_flush_flow_rules`, if either `gve_free_flow_rules()` or
-> `gve_flow_init_bmp()` fails, the code disables the subsystem:
->
-> ```c
-> gve_clear_flow_subsystem_ok(priv);
-> ```
->
-> However, in both `gve_dev_close` and `gve_dev_reset`, teardown is gated o=
-n
-> the flag:
->
-> ```c
-> if (gve_get_flow_subsystem_ok(priv))
->     gve_teardown_flow_subsystem(priv);
-> ```
->
-> If the subsystem was disabled by a failed flush,
-> `gve_teardown_flow_subsystem` is never called, and
-> `priv->avail_flow_rule_bmp_mem` is never freed. This is a memory leak.
->
-> **Suggested fix**: Either (a) always call `gve_flow_free_bmp(priv)` in
-> close/reset regardless of the flag, or (b) have the flush error path free
-> the bitmap memory itself, or (c) unconditionally call teardown in
-> close/reset:
->
-> ```c
-> /* In gve_dev_close / gve_dev_reset: */
-> if (priv->avail_flow_rule_bmp_mem)
->     gve_teardown_flow_subsystem(priv);
-> ```
->
-> **2. `pthread_mutex_init` without `PTHREAD_PROCESS_SHARED` on a mutex in
-> shared memory.**
->
-> In `gve_dev_init`:
->
-> ```c
-> pthread_mutex_init(&priv->flow_rule_lock, NULL);
-> ```
->
-> `priv` is `dev->data->dev_private`, which is allocated in DPDK shared
-> memory accessible by both primary and secondary processes. A pthread mute=
-x
-> in shared memory initialized with `NULL` attributes has undefined behavio=
-r
-> when used across processes. It may appear to work in testing but fail in
-> production with secondary processes.
->
-> **Suggested fix**: Either use `PTHREAD_PROCESS_SHARED`:
->
-> ```c
-> pthread_mutexattr_t attr;
-> pthread_mutexattr_init(&attr);
-> pthread_mutexattr_setpshared(&attr, PTHREAD_PROCESS_SHARED);
-> pthread_mutex_init(&priv->flow_rule_lock, &attr);
-> pthread_mutexattr_destroy(&attr);
-> ```
->
-> Or switch to `rte_spinlock_t` which works correctly in shared memory
-> without special initialization (appropriate here since the critical
-> sections are short =E2=80=94 bitmap scan, TAILQ insert/remove):
->
-> ```c
-> rte_spinlock_t flow_rule_lock;
-> /* ... */
-> rte_spinlock_init(&priv->flow_rule_lock);
-> ```
->
-> ### Warnings
->
-> **3. Implicit pointer comparisons throughout `gve_flow_rule.c`.**
->
-> Several places use `!pointer` instead of `pointer =3D=3D NULL`:
->
-> ```c
-> if (!flow) {          /* line ~1641, ~1710 */
-> if (!action->conf) {  /* line ~1510 */
-> if (!attr) {          /* line ~1173 */
-> if (!actions) {       /* line ~1498 */
-> if (!pattern) {       /* line ~1329 */
-> ```
->
-> DPDK coding style requires explicit comparison with NULL for pointers. Th=
-e
-> idiomatic form is `if (flow =3D=3D NULL)`.
->
-> **4. `rte_zmalloc` used for flow rule metadata that does not require
-> hugepage memory.**
->
-> The `gve_flow` structs (8 bytes: a `uint32_t` + TAILQ pointers) are
-> allocated via `rte_zmalloc`. These are small control-plane structures not
-> accessed by DMA and not requiring NUMA placement. Standard `malloc` would
-> be more appropriate per DPDK guidelines and would not consume limited
-> hugepage resources.
->
-> Similarly, `priv->avail_flow_rule_bmp_mem` is allocated with
-> `rte_zmalloc`. Since `rte_bitmap` may require specific alignment, this on=
-e
-> is more defensible, but worth considering whether standard allocation wou=
-ld
-> suffice.
->
-> **5. Standalone `rte_atomic_thread_fence()` in flow subsystem flag
-> accessors.**
->
-> The `gve_get_flow_subsystem_ok` / `gve_set_flow_subsystem_ok` /
-> `gve_clear_flow_subsystem_ok` functions use standalone fences with
-> `rte_bit_relaxed_*` operations:
->
-> ```c
-> static inline bool
-> gve_get_flow_subsystem_ok(struct gve_priv *priv)
-> {
->     bool ret;
->     ret =3D !!rte_bit_relaxed_get32(GVE_PRIV_FLAGS_FLOW_SUBSYSTEM_OK,
->                                   &priv->state_flags);
->     rte_atomic_thread_fence(rte_memory_order_acquire);
->     return ret;
-> }
-> ```
->
-> These follow the existing pattern for other state flags in the driver, so
-> this is consistent. However, it's worth noting that in every call site in
-> this patch, the flag is checked while holding `flow_rule_lock`, which
-> already provides the necessary memory ordering. The fences are redundant =
-in
-> those paths (but harmless).
->
-> **6. RST documentation uses simple bullet lists where definition lists
-> would be cleaner.**
->
-> In `doc/guides/nics/gve.rst`:
->
-> ```rst
-> Supported Patterns:
->   - IPv4/IPv6 source and destination addresses.
->   - TCP/UDP/SCTP source and destination ports.
->   - ESP/AH SPI.
-> ```
->
-> These term+list groupings would read better as RST definition lists. This
-> is minor given the lists are short.
->
-> ### Design Notes (Info)
->
-> **Well-structured error handling in `gve_create_flow_rule`**: The
-> allocation-before-lock pattern avoids holding the mutex during memory
-> allocation, and the `free_flow_and_unlock` goto label correctly handles a=
-ll
-> error paths. The bitmap-set-on-error rollback in the adminq failure case =
-is
-> also correct.
->
-> **`gve_destroy_flow_rule` double-validates flow state**: The function
-> checks both the flow pointer for NULL and verifies `rule_id <
-> max_flow_rules` before checking the bitmap. This defense-in-depth is good
-> practice.
->
-> **IPv6 word-reversal in `gve_parse_ipv6`**: The comment explaining the
-> device's expected word order is clear and the implementation correctly
-> reverses the 32-bit words. This is the kind of hardware-specific detail
-> that benefits from the inline comment.
->
-> ---
->
-> ## Cross-Patch Observations
->
-> The series is well-ordered: each patch builds incrementally and the
-> dependencies flow naturally (device option =E2=86=92 extended command
-> infrastructure =E2=86=92 flow rule commands =E2=86=92 rte_flow integratio=
-n). The
-> documentation, feature matrix, and release notes are all updated in patch
-> 4/4 together with the code, which is correct per DPDK guidelines.
->
-> The `Co-developed-by` / `Signed-off-by` tag sequences are correctly
-> formatted per Linux kernel convention.
->
-
---0000000000003fcf4e064c143d2d
+SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2ggYW5kIHRoZSBkZXRhaWxlZCBpbXBy
+b3ZlbWVudHMgdG8gdGhlIE5CTCBkb2N1bWVudGF0aW9uLgpUaGUgY2hhbmdlcyBsb29rIGdvb2Qg
+dG8gbWUuCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLQrlj5Hku7bkurrvvJpTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBu
+ZXR3b3JrcGx1bWJlci5vcmc+CuWPkemAgeaXtumXtO+8mjIwMjblubQz5pyIM+aXpSjlkajkuowp
+IDA0OjIxCuaUtuS7tuS6uu+8mmRldjxkZXZAZHBkay5vcmc+CuaKhOOAgOmAge+8mlN0ZXBoZW4g
+SGVtbWluZ2VyPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPjsgRGltb248ZGltb24uemhhb0Bu
+ZWJ1bGEtbWF0cml4LmNvbT47IEt5byBMaXU8a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbT47IExl
+b248bGVvbi55dUBuZWJ1bGEtbWF0cml4LmNvbT47IFNhbTxzYW0uY2hlbkBuZWJ1bGEtbWF0cml4
+LmNvbT4K5Li744CA6aKY77yaW1BBVENIXSBkb2M6IGZpeCBkb2N1bWVudGF0aW9uIGZvciBOQkwg
+UE1EClRoZSByZXZpc2VkIGRvY3VtZW50YXRpb24gaGFkIHNvbWUgaXNzdWVzIHdpdGggZm9ybWF0
+dGluZyBhbmQKc2V0dGluZyB1cCB2ZmlvLXBjaSB3YXMgbm90IGRlc2NyaWJlZC4gVXNlIHRoZSBl
+eGlzdGluZyBFTkEKZG9jdW1lbnRhdGlvbiBhcyBhIHRlbXBsYXRlIHRvIHJlc29sdmUgdGhlc2Ug
+ZGlzY3JlcGFuY2llcy4KU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBoZW5A
+bmV0d29ya3BsdW1iZXIub3JnPgotLS0KIGRvYy9ndWlkZXMvbmljcy9uYmwucnN0IHwgNDIgKysr
+KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAx
+OSBpbnNlcnRpb25zKCspLCAyMyBkZWxldGlvbnMoLSkKZGlmZiAtLWdpdCBhL2RvYy9ndWlkZXMv
+bmljcy9uYmwucnN0IGIvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3QKaW5kZXggYTlmNDM5YWU5Ni4u
+ZGE0NjA0NzgxZSAxMDA2NDQKLS0tIGEvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3QKKysrIGIvZG9j
+L2d1aWRlcy9uaWNzL25ibC5yc3QKQEAgLTc4LDQwICs3OCwzNiBAQCBpdCBpcyBuZWNlc3Nhcnkg
+dG8gZm9yY2UgSS9PIHZpcnR1YWwgYWRkcmVzcyAoSU9WQSkKIHRvIGJlIG1hcHBlZCB0byBwaHlz
+aWNhbCBhZGRyZXNzIChQQSkKIHdpdGggdGhlIEVBTCBjb21tYW5kIGxpbmUgb3B0aW9uIGBgLS1p
+b3ZhLW1vZGU9cGFgYC4KLU9ubHkgUEYgc3VwcG9ydHMgQ29leGlzdGVuY2UgQmV0d2VlbiBEUERL
+IEFuZCBLZXJuZWwgRHJpdmVyLCBWRiBkb2VzIG5vdC4KK09ubHkgUEYgc3VwcG9ydHMgY29leGlz
+dGVuY2UgYmV0d2VlbiBEUERLIGFuZCBrZXJuZWwgZHJpdmVyOyBWRiBkb2VzIG5vdC4KIFByZXJl
+cXVpc2l0ZXMKIC0tLS0tLS0tLS0tLS0KLS0gRm9sbG93IHRoZSBEUERLIDpyZWY6YEdldHRpbmcg
+U3RhcnRlZCBHdWlkZSBmb3IgTGludXggPGxpbnV4X2dzZz5gCi0gdG8gc2V0dXAgdGhlIGJhc2lj
+IERQREsgZW52aXJvbm1lbnQuCisjLiBGb2xsb3cgdGhlIERQREsgOnJlZjpgR2V0dGluZyBTdGFy
+dGVkIEd1aWRlIGZvciBMaW51eCA8bGludXhfZ3NnPmAKKyB0byBzZXR1cCB0aGUgYmFzaWMgRFBE
+SyBlbnZpcm9ubWVudC4KLS0gTGVhcm4gYWJvdXQgYE5lYnVsYW1hdHJpeCBTZXJpZXMgTklDcwot
+IDxodHRwczovL3d3dy5uZWJ1bGEtbWF0cml4LmNvbS9tYWluPiA8aHR0cHM6Ly93d3cubmVidWxh
+LW1hdHJpeC5jb20vbWFpbj4gPmBfLgorIy4gTkJMIFBNRCByZXF1aXJlcyB0aGUgYGB2ZmlvLXBj
+aWBgIGtlcm5lbCBkcml2ZXIuCisgVGhlIGBgaWdiX3Vpb2BgIGFuZCBgYHVpb19wY2lfZ2VuZXJp
+Y2BgIGRyaXZlcnMgYXJlIG5vdCBzdXBwb3J0ZWQuCisgSW5zZXJ0IHRoZSBgYHZmaW8tcGNpYGAg
+a2VybmVsIG1vZHVsZSB1c2luZyB0aGUgY29tbWFuZCBgYG1vZHByb2JlIHZmaW8tcGNpYGAuCisg
+UGxlYXNlIG1ha2Ugc3VyZSB0aGF0IElPTU1VIGlzIGVuYWJsZWQgaW4geW91ciBzeXN0ZW0sCisg
+b3IgdXNlIGBgdmZpby1wY2lgYCBpbiBgYG5vaW9tbXVgYCBtb2RlOjoKLU11bHRpcGxlIFByb2Nl
+c3NlcwotLS0tLS0tLS0tLS0tLS0tLS0tCisgZWNobyAxID4gL3N5cy9tb2R1bGUvdmZpby9wYXJh
+bWV0ZXJzL2VuYWJsZV91bnNhZmVfbm9pb21tdV9tb2RlCi1UaGUgTkJMIFBNRCBkb2VzIG5vdCBz
+dXBwb3J0IG11bHRpcGxlIHByb2Nlc3Nlcy4KKyBOb3RlIHRoYXQgVkYgcmVxdWlyZXMgYGB2Zmlv
+LXBjaWBgIGluIGBgbm9pb21tdWBgIG1vZGUKKyB3aGVuIG5vIElPTU1VIGlzIGF2YWlsYWJsZSBv
+biB0aGUgc3lzdGVtLgorIy4gQmluZCB0aGUgaW50ZW5kZWQgTkJMIGRldmljZSB0byBgYHZmaW8t
+cGNpYGAuCi1MaW1pdGF0aW9ucyBvciBLbm93biBJc3N1ZXMKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLQotCi0zMi1iaXQgYXJjaGl0ZWN0dXJlcyBhcmUgbm90IHN1cHBvcnRlZC4KLQotV2lu
+ZG93cyBhbmQgQlNEIGFyZSBub3Qgc3VwcG9ydGVkIHlldC4KLQotKippZ2JfdWlvIERyaXZlciBT
+dXBwb3J0KioKKyMuIExlYXJuIGFib3V0IGBOZWJ1bGFtYXRyaXggU2VyaWVzIE5JQ3MKKyA8aHR0
+cHM6Ly93d3cubmVidWxhLW1hdHJpeC5jb20vbWFpbj4gPGh0dHBzOi8vd3d3Lm5lYnVsYS1tYXRy
+aXguY29tL21haW4+ID5gXy4KLVRoZSBgYGlnYl91aW9gYCBkcml2ZXIgaXMgbm90IHN1cHBvcnRl
+ZC4KLSoqdWlvX3BjaV9nZW5lcmljIERyaXZlciBTdXBwb3J0KioKLQotVGhlIGBgdWlvX3BjaV9n
+ZW5lcmljYGAgZHJpdmVyIGlzIG5vdCBzdXBwb3J0ZWQuCi0KLSoqVkZJTyBuby1JT01NVSBtb2Rl
+KioKLUlmIHRoZXJlIGlzIG5vIElPTU1VIGF2YWlsYWJsZSBvbiB0aGUgc3lzdGVtLCBWRiBtdXN0
+IHVzZSBgYHZmaW9gYCBkcml2ZXIgaW4gYGBub2lvbW11YGAgbW9kZS4KK0xpbWl0YXRpb25zIG9y
+IEtub3duIElzc3VlcworLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCistIDMyLWJpdCBhcmNo
+aXRlY3R1cmVzIGFyZSBub3Qgc3VwcG9ydGVkLgorLSBXaW5kb3dzIGFuZCBCU0QgYXJlIG5vdCBz
+dXBwb3J0ZWQgeWV0LgorLSBNdWx0aXBsZSBwcm9jZXNzZXMgYXJlIG5vdCBzdXBwb3J0ZWQuCi0t
+IAoyLjUxLjAK
+------=ALIBOUNDARY_2483_7efe19224700_69a63e3a_ec6f7
 Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-<div dir=3D"ltr">Thanks for the notes, I&#39;ve addressed the issues as fol=
-lows and submitted a v2 revision.<br><br>[Patch 3/4]<br><br>1. Updated copy=
-right header in `gve_flow_rule.h`.<br><br>[Patch 4/4]<br><br>0. Similar to =
-patch 3, updated the copyright header in `gve_flow_rule.c`.<br>1. Fixed the=
- memory leak in rule flush by freeing the bitmap on flush failure. This pre=
-serves the invariant where `gve_get_flow_subsystem_okay` is true if and onl=
-y if the flow ID bitmap and flow rule tail queue are initialized.<br>2. Add=
-ed a `mutexattr_t` with `PTHREAD_PROCESS_SHARED` to the flow mutex initiali=
-zation.<br>3. Changed the aforementioned instances of `(!pointer)` and a fe=
-w others to use `pointer =3D=3D NULL`.<br>4. Retained the use of `rte_zmall=
-oc` for both `struct gve_flow` and `priv-&gt;avail_flow_rule_bmp_mem` becau=
-se this memory is shared between processes.<br>5. Retained memory barriers =
-in case we call the flag checks from non-critical paths in the future.<br>6=
-. Updated the documentation to use a definition list for supported protocol=
-s, and made minor formatting adjustments to make the definition list look m=
-ore natural in the flow steering subsection.<br></div><br><div class=3D"gma=
-il_quote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Fr=
-i, Feb 27, 2026 at 2:52=E2=80=AFPM Stephen Hemminger &lt;<a href=3D"mailto:=
-stephen@networkplumber.org">stephen@networkplumber.org</a>&gt; wrote:<br></=
-div><blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;bor=
-der-left:1px solid rgb(204,204,204);padding-left:1ex">On Fri, 27 Feb 2026 1=
-9:51:22 +0000<br>
-&quot;Jasper Tran O&#39;Leary&quot; &lt;<a href=3D"mailto:jtranoleary@googl=
-e.com" target=3D"_blank">jtranoleary@google.com</a>&gt; wrote:<br>
-<br>
-&gt; This patch series adds flow steering support to the Google Virtual<br>
-&gt; Ethernet (gve) driver. This functionality allows traffic to be directe=
-d<br>
-&gt; to specific receive queues based on user-specified flow patterns.<br>
-&gt; <br>
-&gt; The series includes foundational support for extended admin queue<br>
-&gt; commands needed to handle flow rules, the specific adminqueue commands=
-<br>
-&gt; for flow rule management, and the integration with the DPDK rte_flow<b=
-r>
-&gt; API. The series adds support flow matching on the following protocols:=
-<br>
-&gt; IPv4, IPv6, TCP, UDP, SCTP, ESP, and AH.<br>
-&gt; <br>
-&gt; Patch Overview:<br>
-&gt; <br>
-&gt; 1. &quot;net/gve: add flow steering device option&quot; checks for and=
- enables<br>
-&gt;=C2=A0 =C2=A0 the flow steering capability in the device options during=
-<br>
-&gt;=C2=A0 =C2=A0 initialization.<br>
-&gt; 2. &quot;net/gve: introduce extended adminq command&quot; adds infrast=
-ructure<br>
-&gt;=C2=A0 =C2=A0 for sending extended admin queue commands. These commands=
- use a<br>
-&gt;=C2=A0 =C2=A0 flexible buffer descriptor format required for flow rule =
-management.<br>
-&gt; 3. &quot;net/gve: add adminq commands for flow steering&quot; implemen=
-ts the<br>
-&gt;=C2=A0 =C2=A0 specific admin queue commands to add and remove flow rule=
-s on the<br>
-&gt;=C2=A0 =C2=A0 device, including handling of rule IDs and parameters.<br=
->
-&gt; 4. &quot;net/gve: add rte flow API integration&quot; exposes the flow =
-steering<br>
-&gt;=C2=A0 =C2=A0 functionality via the DPDK rte_flow API. This includes st=
-rict<br>
-&gt;=C2=A0 =C2=A0 pattern validation, rule parsing, and lifecycle managemen=
-t (create,<br>
-&gt;=C2=A0 =C2=A0 destroy, flush). It ensures thread-safe access to the flo=
-w subsystem<br>
-&gt;=C2=A0 =C2=A0 and proper resource cleanup during device reset.<br>
-&gt; <br>
-&gt; Jasper Tran O&#39;Leary (2):<br>
-&gt;=C2=A0 =C2=A0net/gve: add adminq commands for flow steering<br>
-&gt;=C2=A0 =C2=A0net/gve: add rte flow API integration<br>
-&gt; <br>
-&gt; Vee Agarwal (2):<br>
-&gt;=C2=A0 =C2=A0net/gve: add flow steering device option<br>
-&gt;=C2=A0 =C2=A0net/gve: introduce extended adminq command<br>
-&gt; <br>
-&gt;=C2=A0 doc/guides/nics/features/gve.ini=C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=
-=A0 12 +<br>
-&gt;=C2=A0 doc/guides/nics/gve.rst=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 |=C2=A0 20 +<br>
-&gt;=C2=A0 doc/guides/rel_notes/release_26_03.rst |=C2=A0 =C2=A01 +<br>
-&gt;=C2=A0 drivers/net/gve/base/gve.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0|=C2=A0 =C2=A03 +-<br>
-&gt;=C2=A0 drivers/net/gve/base/gve_adminq.c=C2=A0 =C2=A0 =C2=A0 | 118 ++++=
--<br>
-&gt;=C2=A0 drivers/net/gve/base/gve_adminq.h=C2=A0 =C2=A0 =C2=A0 |=C2=A0 57=
- +++<br>
-&gt;=C2=A0 drivers/net/gve/gve_ethdev.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0|=C2=A0 87 +++-<br>
-&gt;=C2=A0 drivers/net/gve/gve_ethdev.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0|=C2=A0 46 ++<br>
-&gt;=C2=A0 drivers/net/gve/gve_flow_rule.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 | 645=
- +++++++++++++++++++++++++<br>
-&gt;=C2=A0 drivers/net/gve/gve_flow_rule.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 |=C2=
-=A0 64 +++<br>
-&gt;=C2=A0 drivers/net/gve/meson.build=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 |=C2=A0 =C2=A01 +<br>
-&gt;=C2=A0 11 files changed, 1049 insertions(+), 5 deletions(-)<br>
-&gt;=C2=A0 create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.c<br>
-&gt;=C2=A0 create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.h<br>
-&gt; <br>
-<br>
-There is a lot here, so sent AI to take a look.<br>
-<br>
-Summary:<br>
-Error 1 =E2=80=94 Resource leak: If gve_flush_flow_rules fails and disables=
- the<br>
-flow subsystem via gve_clear_flow_subsystem_ok(), the bitmap memory<br>
-(avail_flow_rule_bmp_mem) is never freed because both gve_dev_close and<br>
-gve_dev_reset gate their teardown on gve_get_flow_subsystem_ok()<br>
-returning true. The guard needs to check for allocated memory rather<br>
-than subsystem state.<br>
-<br>
-Error 2 =E2=80=94 pthread_mutex_init with NULL attributes in shared memory:=
- The<br>
-flow_rule_lock lives in dev_private (DPDK shared memory) but is<br>
-initialized without PTHREAD_PROCESS_SHARED. This will cause undefined<br>
-behavior with secondary processes. Switching to rte_spinlock_t would be<br>
-the simplest fix since the critical sections are short (bitmap scan +<br>
-TAILQ operations).<br>
-<br>
-Patches 1=E2=80=933 are clean. The overall structure and error handling in =
-patch 4 is solid =E2=80=94 the allocation-before-lock pattern, bitmap rollb=
-ack on adminq failure, and defense-in-depth validation in destroy are all w=
-ell done.<br>
-Long form:<br>
-# Code Review: GVE Flow Steering Patch Series (4 patches)<br>
-<br>
-**Series**: `[PATCH 1/4]` through `[PATCH 4/4]`<br>
-**Author**: Jasper Tran O&#39;Leary / Vee Agarwal (Google)<br>
-**Subject**: Add receive flow steering (RFS) support to the GVE driver<br>
-<br>
----<br>
-<br>
-## Summary<br>
-<br>
-This series adds n-tuple flow steering to the GVE (Google Virtual Ethernet)=
- driver via the `rte_flow` API. The implementation is cleanly structured ac=
-ross four patches: device option discovery (1/4), extended adminq infrastru=
-cture (2/4), flow rule adminq commands (3/4), and full rte_flow integration=
- (4/4). The code quality is generally good with thorough validation, proper=
- locking, and well-structured error handling.<br>
-<br>
-Two correctness issues were identified: a resource leak when the flow subsy=
-stem is disabled on error, and a missing `PTHREAD_PROCESS_SHARED` attribute=
- on a mutex in shared memory.<br>
-<br>
----<br>
-<br>
-## Patch 1/4: `net/gve: add flow steering device option`<br>
-<br>
-### Errors<br>
-<br>
-None.<br>
-<br>
-### Warnings<br>
-<br>
-None.<br>
-<br>
-This patch is clean. The device option parsing follows the established patt=
-ern for existing options (modify_ring, jumbo_frames), the byte-swap of `max=
-_flow_rules` is correct, and the zero-check on the big-endian value before =
-byte-swap is valid (non-zero in any byte order is still non-zero).<br>
-<br>
----<br>
-<br>
-## Patch 2/4: `net/gve: introduce extended adminq command`<br>
-<br>
-### Errors<br>
-<br>
-None.<br>
-<br>
-### Warnings<br>
-<br>
-None.<br>
-<br>
-The extended command mechanism is straightforward: allocate DMA memory for =
-the inner command, copy the command in, set up the outer wrapper with the D=
-MA address, execute, and free. The error path is correct =E2=80=94 `gve_fre=
-e_dma_mem` is called after `gve_adminq_execute_cmd` regardless of success o=
-r failure.<br>
-<br>
----<br>
-<br>
-## Patch 3/4: `net/gve: add adminq commands for flow steering`<br>
-<br>
-### Errors<br>
-<br>
-None.<br>
-<br>
-### Warnings<br>
-<br>
-**1. `gve_flow_rule.h` copyright appears to be copied from an Intel driver =
-file.**<br>
-<br>
-```c<br>
-/* SPDX-License-Identifier: BSD-3-Clause<br>
-=C2=A0* Copyright(C) 2022 Intel Corporation<br>
-=C2=A0*/<br>
-```<br>
-<br>
-This is a new file in the Google GVE driver. The Intel copyright and 2022 d=
-ate look like they were carried over from whichever file was used as a temp=
-late. This should be updated to reflect the actual author.<br>
-<br>
----<br>
-<br>
-## Patch 4/4: `net/gve: add rte flow API integration`<br>
-<br>
-This is the largest patch (815 lines added) and where the significant findi=
-ngs are.<br>
-<br>
-### Errors<br>
-<br>
-**1. Resource leak: bitmap memory leaked when flow subsystem is disabled on=
- error.**<br>
-<br>
-In `gve_flush_flow_rules`, if either `gve_free_flow_rules()` or `gve_flow_i=
-nit_bmp()` fails, the code disables the subsystem:<br>
-<br>
-```c<br>
-gve_clear_flow_subsystem_ok(priv);<br>
-```<br>
-<br>
-However, in both `gve_dev_close` and `gve_dev_reset`, teardown is gated on =
-the flag:<br>
-<br>
-```c<br>
-if (gve_get_flow_subsystem_ok(priv))<br>
-=C2=A0 =C2=A0 gve_teardown_flow_subsystem(priv);<br>
-```<br>
-<br>
-If the subsystem was disabled by a failed flush, `gve_teardown_flow_subsyst=
-em` is never called, and `priv-&gt;avail_flow_rule_bmp_mem` is never freed.=
- This is a memory leak.<br>
-<br>
-**Suggested fix**: Either (a) always call `gve_flow_free_bmp(priv)` in clos=
-e/reset regardless of the flag, or (b) have the flush error path free the b=
-itmap memory itself, or (c) unconditionally call teardown in close/reset:<b=
-r>
-<br>
-```c<br>
-/* In gve_dev_close / gve_dev_reset: */<br>
-if (priv-&gt;avail_flow_rule_bmp_mem)<br>
-=C2=A0 =C2=A0 gve_teardown_flow_subsystem(priv);<br>
-```<br>
-<br>
-**2. `pthread_mutex_init` without `PTHREAD_PROCESS_SHARED` on a mutex in sh=
-ared memory.**<br>
-<br>
-In `gve_dev_init`:<br>
-<br>
-```c<br>
-pthread_mutex_init(&amp;priv-&gt;flow_rule_lock, NULL);<br>
-```<br>
-<br>
-`priv` is `dev-&gt;data-&gt;dev_private`, which is allocated in DPDK shared=
- memory accessible by both primary and secondary processes. A pthread mutex=
- in shared memory initialized with `NULL` attributes has undefined behavior=
- when used across processes. It may appear to work in testing but fail in p=
-roduction with secondary processes.<br>
-<br>
-**Suggested fix**: Either use `PTHREAD_PROCESS_SHARED`:<br>
-<br>
-```c<br>
-pthread_mutexattr_t attr;<br>
-pthread_mutexattr_init(&amp;attr);<br>
-pthread_mutexattr_setpshared(&amp;attr, PTHREAD_PROCESS_SHARED);<br>
-pthread_mutex_init(&amp;priv-&gt;flow_rule_lock, &amp;attr);<br>
-pthread_mutexattr_destroy(&amp;attr);<br>
-```<br>
-<br>
-Or switch to `rte_spinlock_t` which works correctly in shared memory withou=
-t special initialization (appropriate here since the critical sections are =
-short =E2=80=94 bitmap scan, TAILQ insert/remove):<br>
-<br>
-```c<br>
-rte_spinlock_t flow_rule_lock;<br>
-/* ... */<br>
-rte_spinlock_init(&amp;priv-&gt;flow_rule_lock);<br>
-```<br>
-<br>
-### Warnings<br>
-<br>
-**3. Implicit pointer comparisons throughout `gve_flow_rule.c`.**<br>
-<br>
-Several places use `!pointer` instead of `pointer =3D=3D NULL`:<br>
-<br>
-```c<br>
-if (!flow) {=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* line ~1641, ~1710 */<br>
-if (!action-&gt;conf) {=C2=A0 /* line ~1510 */<br>
-if (!attr) {=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* line ~1173 */<br>
-if (!actions) {=C2=A0 =C2=A0 =C2=A0 =C2=A0/* line ~1498 */<br>
-if (!pattern) {=C2=A0 =C2=A0 =C2=A0 =C2=A0/* line ~1329 */<br>
-```<br>
-<br>
-DPDK coding style requires explicit comparison with NULL for pointers. The =
-idiomatic form is `if (flow =3D=3D NULL)`.<br>
-<br>
-**4. `rte_zmalloc` used for flow rule metadata that does not require hugepa=
-ge memory.**<br>
-<br>
-The `gve_flow` structs (8 bytes: a `uint32_t` + TAILQ pointers) are allocat=
-ed via `rte_zmalloc`. These are small control-plane structures not accessed=
- by DMA and not requiring NUMA placement. Standard `malloc` would be more a=
-ppropriate per DPDK guidelines and would not consume limited hugepage resou=
-rces.<br>
-<br>
-Similarly, `priv-&gt;avail_flow_rule_bmp_mem` is allocated with `rte_zmallo=
-c`. Since `rte_bitmap` may require specific alignment, this one is more def=
-ensible, but worth considering whether standard allocation would suffice.<b=
-r>
-<br>
-**5. Standalone `rte_atomic_thread_fence()` in flow subsystem flag accessor=
-s.**<br>
-<br>
-The `gve_get_flow_subsystem_ok` / `gve_set_flow_subsystem_ok` / `gve_clear_=
-flow_subsystem_ok` functions use standalone fences with `rte_bit_relaxed_*`=
- operations:<br>
-<br>
-```c<br>
-static inline bool<br>
-gve_get_flow_subsystem_ok(struct gve_priv *priv)<br>
-{<br>
-=C2=A0 =C2=A0 bool ret;<br>
-=C2=A0 =C2=A0 ret =3D !!rte_bit_relaxed_get32(GVE_PRIV_FLAGS_FLOW_SUBSYSTEM=
-_OK,<br>
-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 &amp;priv-&gt;state_flags);<b=
-r>
-=C2=A0 =C2=A0 rte_atomic_thread_fence(rte_memory_order_acquire);<br>
-=C2=A0 =C2=A0 return ret;<br>
-}<br>
-```<br>
-<br>
-These follow the existing pattern for other state flags in the driver, so t=
-his is consistent. However, it&#39;s worth noting that in every call site i=
-n this patch, the flag is checked while holding `flow_rule_lock`, which alr=
-eady provides the necessary memory ordering. The fences are redundant in th=
-ose paths (but harmless).<br>
-<br>
-**6. RST documentation uses simple bullet lists where definition lists woul=
-d be cleaner.**<br>
-<br>
-In `doc/guides/nics/gve.rst`:<br>
-<br>
-```rst<br>
-Supported Patterns:<br>
-=C2=A0 - IPv4/IPv6 source and destination addresses.<br>
-=C2=A0 - TCP/UDP/SCTP source and destination ports.<br>
-=C2=A0 - ESP/AH SPI.<br>
-```<br>
-<br>
-These term+list groupings would read better as RST definition lists. This i=
-s minor given the lists are short.<br>
-<br>
-### Design Notes (Info)<br>
-<br>
-**Well-structured error handling in `gve_create_flow_rule`**: The allocatio=
-n-before-lock pattern avoids holding the mutex during memory allocation, an=
-d the `free_flow_and_unlock` goto label correctly handles all error paths. =
-The bitmap-set-on-error rollback in the adminq failure case is also correct=
-.<br>
-<br>
-**`gve_destroy_flow_rule` double-validates flow state**: The function check=
-s both the flow pointer for NULL and verifies `rule_id &lt; max_flow_rules`=
- before checking the bitmap. This defense-in-depth is good practice.<br>
-<br>
-**IPv6 word-reversal in `gve_parse_ipv6`**: The comment explaining the devi=
-ce&#39;s expected word order is clear and the implementation correctly reve=
-rses the 32-bit words. This is the kind of hardware-specific detail that be=
-nefits from the inline comment.<br>
-<br>
----<br>
-<br>
-## Cross-Patch Observations<br>
-<br>
-The series is well-ordered: each patch builds incrementally and the depende=
-ncies flow naturally (device option =E2=86=92 extended command infrastructu=
-re =E2=86=92 flow rule commands =E2=86=92 rte_flow integration). The docume=
-ntation, feature matrix, and release notes are all updated in patch 4/4 tog=
-ether with the code, which is correct per DPDK guidelines.<br>
-<br>
-The `Co-developed-by` / `Signed-off-by` tag sequences are correctly formatt=
-ed per Linux kernel convention.<br>
-</blockquote></div>
+PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
+ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
+bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
+Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
+VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuID5IaSBTdGVwaGVuLDxiciA+PC9zcGFuPjwv
+c3Bhbj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJj
+bGVhcjogYm90aDsiPlRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoIGFuZCB0aGUgZGV0YWlsZWQgaW1w
+cm92ZW1lbnRzIHRvIHRoZSBOQkwgZG9jdW1lbnRhdGlvbi48YnIgPjwvZGl2PjxkaXYgIHN0eWxl
+PSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+PGRpdiA+PHNwYW4gPlRoZSBjaGFuZ2VzIGxvb2sg
+Z29vZCB0byBtZS48L3NwYW4+PC9kaXY+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21h
+LCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48ZGl2
+ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRp
+U0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJp
+YWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48L3NwYW4+PC9kaXY+PGJsb2NrcXVv
+dGUgIF9xdW90ZT0iMSIgc3R5bGU9Im1hcmdpbi1yaWdodDogMHB4OyBtYXJnaW4tdG9wOiAwcHg7
+IG1hcmdpbi1ib3R0b206IDBweDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGks
+IFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGRpdiAgY2xh
+c3M9ImFsaW1haWwtcXVvdGUiPjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPi0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLTwv
+ZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkeS7tuS6uu+8mlN0ZXBoZW4gSGVtbWlu
+Z2VyICZsdDtzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyZndDs8L2Rpdj48ZGl2ICBzdHlsZT0i
+Y2xlYXI6IGJvdGg7Ij7lj5HpgIHml7bpl7TvvJoyMDI25bm0M+aciDPml6Uo5ZGo5LqMKSAwNDoy
+MTwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuaUtuS7tuS6uu+8mmRldiZsdDtkZXZA
+ZHBkay5vcmcmZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5oqE44CA6YCB77ya
+U3RlcGhlbiBIZW1taW5nZXImbHQ7c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmcmZ3Q7OyBEaW1v
+biZsdDtkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tJmd0OzsgS3lvIExpdSZsdDtreW8ubGl1
+QG5lYnVsYS1tYXRyaXguY29tJmd0OzsgTGVvbiZsdDtsZW9uLnl1QG5lYnVsYS1tYXRyaXguY29t
+Jmd0OzsgU2FtJmx0O3NhbS5jaGVuQG5lYnVsYS1tYXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0
+eWxlPSJjbGVhcjogYm90aDsiPuS4u+OAgOmimO+8mltQQVRDSF0gZG9jOiBmaXggZG9jdW1lbnRh
+dGlvbiBmb3IgTkJMIFBNRDwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9k
+aXY+VGhlIHJldmlzZWQgZG9jdW1lbnRhdGlvbiBoYWQgc29tZSBpc3N1ZXMgd2l0aCBmb3JtYXR0
+aW5nIGFuZDxiciA+c2V0dGluZyB1cCB2ZmlvLXBjaSB3YXMgbm90IGRlc2NyaWJlZC4gVXNlIHRo
+ZSBleGlzdGluZyBFTkE8YnIgPmRvY3VtZW50YXRpb24gYXMgYSB0ZW1wbGF0ZSB0byByZXNvbHZl
+IHRoZXNlIGRpc2NyZXBhbmNpZXMuPGJyID48YnIgPlNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gSGVt
+bWluZ2VyICZsdDtzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyZndDs8YnIgPi0tLTxiciA+IGRv
+Yy9ndWlkZXMvbmljcy9uYmwucnN0IHwgNDIgKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS08YnIgPiAxIGZpbGUgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKSwgMjMgZGVs
+ZXRpb25zKC0pPGJyID48YnIgPmRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL25pY3MvbmJsLnJzdCBi
+L2RvYy9ndWlkZXMvbmljcy9uYmwucnN0PGJyID5pbmRleCBhOWY0MzlhZTk2Li5kYTQ2MDQ3ODFl
+IDEwMDY0NDxiciA+LS0tIGEvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3Q8YnIgPisrKyBiL2RvYy9n
+dWlkZXMvbmljcy9uYmwucnN0PGJyID5AQCAtNzgsNDAgKzc4LDM2IEBAIGl0IGlzIG5lY2Vzc2Fy
+eSB0byBmb3JjZSBJL08gdmlydHVhbCBhZGRyZXNzIChJT1ZBKTxiciA+IHRvIGJlIG1hcHBlZCB0
+byBwaHlzaWNhbCBhZGRyZXNzIChQQSk8YnIgPiB3aXRoIHRoZSBFQUwgY29tbWFuZCBsaW5lIG9w
+dGlvbiBgYC0taW92YS1tb2RlPXBhYGAuPGJyID4gPGJyID4tT25seSBQRiBzdXBwb3J0cyBDb2V4
+aXN0ZW5jZSBCZXR3ZWVuIERQREsgQW5kIEtlcm5lbCBEcml2ZXIsIFZGIGRvZXMgbm90LjxiciA+
+K09ubHkgUEYgc3VwcG9ydHMgY29leGlzdGVuY2UgYmV0d2VlbiBEUERLIGFuZCBrZXJuZWwgZHJp
+dmVyOyBWRiBkb2VzIG5vdC48YnIgPiA8YnIgPiA8YnIgPiBQcmVyZXF1aXNpdGVzPGJyID4gLS0t
+LS0tLS0tLS0tLTxiciA+IDxiciA+LS0gRm9sbG93IHRoZSBEUERLIDpyZWY6YEdldHRpbmcgU3Rh
+cnRlZCBHdWlkZSBmb3IgTGludXggJmx0O2xpbnV4X2dzZyZndDtgPGJyID4tJm5ic3A7IHRvIHNl
+dHVwIHRoZSBiYXNpYyBEUERLIGVudmlyb25tZW50LjxiciA+KyMuIEZvbGxvdyB0aGUgRFBESyA6
+cmVmOmBHZXR0aW5nIFN0YXJ0ZWQgR3VpZGUgZm9yIExpbnV4ICZsdDtsaW51eF9nc2cmZ3Q7YDxi
+ciA+KyAmbmJzcDsgdG8gc2V0dXAgdGhlIGJhc2ljIERQREsgZW52aXJvbm1lbnQuPGJyID4gPGJy
+ID4tLSBMZWFybiBhYm91dCBgTmVidWxhbWF0cml4IFNlcmllcyBOSUNzPGJyID4tJm5ic3A7ICZs
+dDs8YSAgaHJlZj0iaHR0cHM6Ly93d3cubmVidWxhLW1hdHJpeC5jb20vbWFpbiZndDsiIHRhcmdl
+dD0iX2JsYW5rIj5odHRwczovL3d3dy5uZWJ1bGEtbWF0cml4LmNvbS9tYWluJmd0OzwvYT5gXy48
+YnIgPisjLiBOQkwgUE1EIHJlcXVpcmVzIHRoZSBgYHZmaW8tcGNpYGAga2VybmVsIGRyaXZlci48
+YnIgPisgJm5ic3A7IFRoZSBgYGlnYl91aW9gYCBhbmQgYGB1aW9fcGNpX2dlbmVyaWNgYCBkcml2
+ZXJzIGFyZSBub3Qgc3VwcG9ydGVkLjxiciA+IDxiciA+KyAmbmJzcDsgSW5zZXJ0IHRoZSBgYHZm
+aW8tcGNpYGAga2VybmVsIG1vZHVsZSB1c2luZyB0aGUgY29tbWFuZCBgYG1vZHByb2JlIHZmaW8t
+cGNpYGAuPGJyID4rICZuYnNwOyBQbGVhc2UgbWFrZSBzdXJlIHRoYXQgSU9NTVUgaXMgZW5hYmxl
+ZCBpbiB5b3VyIHN5c3RlbSw8YnIgPisgJm5ic3A7IG9yIHVzZSBgYHZmaW8tcGNpYGAgaW4gYGBu
+b2lvbW11YGAgbW9kZTo6PGJyID4gPGJyID4tTXVsdGlwbGUgUHJvY2Vzc2VzPGJyID4tLS0tLS0t
+LS0tLS0tLS0tLS0tPGJyID4rICZuYnNwOyAmbmJzcDsgZWNobyAxICZndDsgL3N5cy9tb2R1bGUv
+dmZpby9wYXJhbWV0ZXJzL2VuYWJsZV91bnNhZmVfbm9pb21tdV9tb2RlPGJyID4gPGJyID4tVGhl
+IE5CTCBQTUQgZG9lcyBub3Qgc3VwcG9ydCBtdWx0aXBsZSBwcm9jZXNzZXMuPGJyID4rICZuYnNw
+OyBOb3RlIHRoYXQgVkYgcmVxdWlyZXMgYGB2ZmlvLXBjaWBgIGluIGBgbm9pb21tdWBgIG1vZGU8
+YnIgPisgJm5ic3A7IHdoZW4gbm8gSU9NTVUgaXMgYXZhaWxhYmxlIG9uIHRoZSBzeXN0ZW0uPGJy
+ID4gPGJyID4rIy4gQmluZCB0aGUgaW50ZW5kZWQgTkJMIGRldmljZSB0byBgYHZmaW8tcGNpYGAu
+PGJyID4gPGJyID4tTGltaXRhdGlvbnMgb3IgS25vd24gSXNzdWVzPGJyID4tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tPGJyID4tPGJyID4tMzItYml0IGFyY2hpdGVjdHVyZXMgYXJlIG5vdCBz
+dXBwb3J0ZWQuPGJyID4tPGJyID4tV2luZG93cyBhbmQgQlNEIGFyZSBub3Qgc3VwcG9ydGVkIHll
+dC48YnIgPi08YnIgPi0qKmlnYl91aW8gRHJpdmVyIFN1cHBvcnQqKjxiciA+KyMuIExlYXJuIGFi
+b3V0IGBOZWJ1bGFtYXRyaXggU2VyaWVzIE5JQ3M8YnIgPisgJm5ic3A7ICZsdDs8YSAgaHJlZj0i
+aHR0cHM6Ly93d3cubmVidWxhLW1hdHJpeC5jb20vbWFpbiZndDsiIHRhcmdldD0iX2JsYW5rIj5o
+dHRwczovL3d3dy5uZWJ1bGEtbWF0cml4LmNvbS9tYWluJmd0OzwvYT5gXy48YnIgPiA8YnIgPi1U
+aGUgYGBpZ2JfdWlvYGAgZHJpdmVyIGlzIG5vdCBzdXBwb3J0ZWQuPGJyID4gPGJyID4tKip1aW9f
+cGNpX2dlbmVyaWMgRHJpdmVyIFN1cHBvcnQqKjxiciA+LTxiciA+LVRoZSBgYHVpb19wY2lfZ2Vu
+ZXJpY2BgIGRyaXZlciBpcyBub3Qgc3VwcG9ydGVkLjxiciA+LTxiciA+LSoqVkZJTyBuby1JT01N
+VSBtb2RlKio8YnIgPi1JZiB0aGVyZSBpcyBubyBJT01NVSBhdmFpbGFibGUgb24gdGhlIHN5c3Rl
+bSwgVkYgbXVzdCB1c2UgYGB2ZmlvYGAgZHJpdmVyIGluIGBgbm9pb21tdWBgIG1vZGUuPGJyID4r
+TGltaXRhdGlvbnMgb3IgS25vd24gSXNzdWVzPGJyID4rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tPGJyID4gPGJyID4rLSAzMi1iaXQgYXJjaGl0ZWN0dXJlcyBhcmUgbm90IHN1cHBvcnRlZC48
+YnIgPistIFdpbmRvd3MgYW5kIEJTRCBhcmUgbm90IHN1cHBvcnRlZCB5ZXQuPGJyID4rLSBNdWx0
+aXBsZSBwcm9jZXNzZXMgYXJlIG5vdCBzdXBwb3J0ZWQuPGJyID4tLSA8YnIgPjIuNTEuMDwvZGl2
+PjwvYmxvY2txdW90ZT48ZGl2ICBzdHlsZT0ibGluZS1oZWlnaHQ6IDIwcHg7IGNsZWFyOiBib3Ro
+OyI+PGJyID48L2Rpdj48L2Rpdj48L2Rpdj4=
+------=ALIBOUNDARY_2483_7efe19224700_69a63e3a_ec6f7--
 
---0000000000003fcf4e064c143d2d--
