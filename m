@@ -2,112 +2,111 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB84EDA6BE
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 18:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DB6EB362F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 18:04:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1AAE040E13;
-	Tue,  3 Mar 2026 19:02:16 +0100 (CET)
-Received: from mail-dl1-f98.google.com (mail-dl1-f98.google.com [74.125.82.98])
- by mails.dpdk.org (Postfix) with ESMTP id 9BA23402AA
- for <dev@dpdk.org>; Tue,  3 Mar 2026 19:02:14 +0100 (CET)
-Received: by mail-dl1-f98.google.com with SMTP id
- a92af1059eb24-1270ac5d3efso5820382c88.1
- for <dev@dpdk.org>; Tue, 03 Mar 2026 10:02:14 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8AD6740268;
+	Tue,  3 Mar 2026 19:04:50 +0100 (CET)
+Received: from mail-qv1-f97.google.com (mail-qv1-f97.google.com
+ [209.85.219.97]) by mails.dpdk.org (Postfix) with ESMTP id 60F9140268
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 19:04:49 +0100 (CET)
+Received: by mail-qv1-f97.google.com with SMTP id
+ 6a1803df08f44-899fb030812so32828896d6.2
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 10:04:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772560933; x=1773165733;
+ d=1e100.net; s=20230601; t=1772561089; x=1773165889;
  h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
  :references:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to
  :cc:subject:date:message-id:reply-to;
- bh=TzgYfmtkxm8S0u1fx27b8sXaQy36DH2x9TCYGW2YVUs=;
- b=hdPzM1odqP8P0BVfvJZz/gYcz1LYitzik9M/cZxVPrBVYE4OGwMsmJ8PVKoKv6vwgy
- nLSuj/mmEHhIQ5S/sOeA5U9fIx0WmD894BUH4Eqf/1KzyyIRWpZ1j/yWwgyx/kR36fsf
- /RYwxknQwgdZId4CMoEQ9HRhQE4U3dSscLXBbcQu4N/2W2T5eOoERFMoxmv4kWiPn1yR
- GEGPpAtMNyWQ8V8x8x1Ns+ZwUzWxv8fmAMAqo+38rIRGDFWUrm4s0EYgbqbvJYYjdQJC
- czjmnnUatUoNbeGz+nYVxEgwgb0IKsWQpZj9xnGJHEtgN5F4kO6QHRpSsony3J6CmepK
- cFuw==
+ bh=W70b5aSz0/nBNwLYfmcEEsZbBzaqz+6T6MZ0qlmQ3ac=;
+ b=EdaK0bmdHHXvdi+vFizMV3OfbvmhsAIopxgDInh8zaizjtfY3Y0IbLG05LVHlYUB9y
+ 818ax4uC6Dh61KUL7Yrb0ubClZtf7DPIW3kXwiHC9o0vvLbhmN/SuOZDJCpD+M0h5nRg
+ IgiIz79MSyfDCa4OdyLqnJVWkl1cYm/h3ebo9HqHaQ5fqQ/cIqAniLfQ0JFy1G/6XH+o
+ 3KP0zlNqIPeXnFKkO+h1vQStw82d/e5KmNKm2da/C8AgQAJD/lXTaKVOiI2YtYUY42mV
+ Fq4cYDDNvvKRpftk5ZIN24vByFdtnlEYdPTibisXICzurjufvYKBfMSu3Loqk6MYMUFo
+ k26A==
 X-Forwarded-Encrypted: i=2;
- AJvYcCUpEhAqdRhaj6mB0+vl4DIUqLxMbguOUOiFI+Uw1zqk/fr3z2A2TB4r4WOc/66LsA2xfEY=@dpdk.org
-X-Gm-Message-State: AOJu0YyBo3qiSeYhLjVoVKhKazUWwseOL4wNV0OZ/ozpIxYaA1D34f6p
- UwrXMK86QChLZtJXFxa6UQS1VLCiRS7+aeKSi5Yq6ldr9GbdAdA5PlSmb45Z1CrVwsUqLHFXipA
- jU5WxuG2QWY8+zyNPmd8gIlPzgTmsijNXnCpUiOShlHCFHzCQ04ncwf8g4Gdb9Lbc/gsqhBZqZL
- 5vXBMRpYlIYS9rolARmmPhmFk4A+3JL5UdFbS6dVJj7q6UDSE2BZv9NsBSTRzldM3sZOlasSAxh
- v2zjw==
-X-Gm-Gg: ATEYQzxbfcGUE3WzoMEMAdOrTQj8tzchEVe42T4DBksP6r4uTG4dPEVg2gvd1y4WORa
- wDAIxia0SQHlivavrrMREggwEyM8u7v/r/sbyHBasY2Z7c5IRZnTdeZVFgWOxEMD31udZ/tKn2X
- Lvu3uYwav5qfWuy1vIMiUKiJRgEfMZ2i4ktRl9zuKljFccKQ1BGGk8vY1NZxFHnsr7fsHiScyip
- 0WMUFWQTtGJzTt3k1lSoiz/Hp9XXjTRNZC6pNmLQ1CXYE43gtD1VZtiPHAozH/6/nJlCy6NxR71
- 066CDlRf06BlJgCAZonXWOHCNVrjR0hDI4v+0QpowsMP7Sme0XsbW3heVALQ1bBYXJxIFsVFi59
- DFfniLqosJCSNQ9a7ATCf8JLCIcP2yKiT3Q8Ym7IiKFVnlHbSb+fWhIJIkOx4bF7rC48nwPI9NR
- Hfh9OAmwiALzwqMUtaYFCduj1cHDk2V7L4x7EeBdD8Funt2Q8YncE48/u0+N8vbA==
-X-Received: by 2002:a05:7022:51e:b0:127:5cda:aaf2 with SMTP id
- a92af1059eb24-1278fb77ea5mr8007327c88.10.1772560933182; 
- Tue, 03 Mar 2026 10:02:13 -0800 (PST)
+ AJvYcCUXNXohXYtIHutsvBHQMsOok8uQEnTImsl0ukX2iSDUe6TvsldC5wHmECdgxccG9Jelb1Y=@dpdk.org
+X-Gm-Message-State: AOJu0YwWb+GAaSn82G+BUqNagTE0NosERDWJEIEq4j/c6/HpUKz3LG6A
+ +3rQgKlT3iGD3wK3B9hXBQxQRnmAEyZVt1AEw0wMym8VYcOz0BLJ1HQg4IuN/BVeaWWUOsEHCpA
+ E4MQPBfqP9TqVpsStTTXEwjs+9tjgta7oPke2qpGTlwJ/r6ofQYFMWas837RZDVYu3AvvToy7mS
+ mYL4VH26DF2tNd7nWHCGECTqEPd/+fojEkrgCm8qL7I4hoXkpoOrRHNCmOk5UM0hcgp146IRvFt
+ nishA==
+X-Gm-Gg: ATEYQzyjsCZtoOo5bYSiDocSjKVDeflkvMsI30ngHarMx3dBQIXyuxI77uimEMOqWlb
+ tE4EArA6oHzA6mbwfWYV+rxnJUNrBSmm0vijuTc4QieysDVACZis449H6gZyAqp4PilChtINB+x
+ 0fP+jB5nFGgH26m+Mw4UpRgNAiPr3w/AeES8HuCZJJTkIUcnT0d8SnLtdVcfSleeq40R3lB2HuV
+ TGv+eOJkKOht8pQeWObhH0985wU8XHsCZK/5etBhFLvrhkfxggRjAkgGoChc9WphL3/Lwx3ivcn
+ bJhO2P1XpQfRYNY8qWdBRrPU1ID37yufBLX7efZcz6cmDv+5wWKuDjwGhQY8BdKA/zOfz8Hf0Me
+ omU5cFM5GpMKtXpVJtQSwA4DRr8xn2PtZr221wJ8Tur680COj0xs45XLEpEC3qmgmlzuKCQ0LKK
+ UvXijvXLvzckG/nYHMcSIHkvxs72oWbcstru6FH2YFYK1tjDTbXAZpChyn3lL3mwqshIc=
+X-Received: by 2002:a05:6214:5013:b0:89a:116b:e67c with SMTP id
+ 6a1803df08f44-89a116bf2a6mr28012906d6.45.1772561088327; 
+ Tue, 03 Mar 2026 10:04:48 -0800 (PST)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
+ (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
  by smtp-relay.gmail.com with ESMTPS id
- 5a478bee46e88-2be2c2cba38sm63835eec.2.2026.03.03.10.02.12
+ d75a77b69052e-5074e4d1418sm20339211cf.0.2026.03.03.10.04.47
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 03 Mar 2026 10:02:13 -0800 (PST)
+ Tue, 03 Mar 2026 10:04:48 -0800 (PST)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-ed1-f69.google.com with SMTP id
- 4fb4d7f45d1cf-65f767a8d6cso6392832a12.2
- for <dev@dpdk.org>; Tue, 03 Mar 2026 10:02:12 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772560931; cv=none;
+Received: by mail-ed1-f71.google.com with SMTP id
+ 4fb4d7f45d1cf-660a2f72c01so1040627a12.1
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 10:04:47 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772561087; cv=none;
  d=google.com; s=arc-20240605;
- b=Gp09J+ZN+yM4ictxrxKIx/DBTViOFrWzdHu2zHvRMEYNP7SJ1FwfQZMyE6JCJxV9kS
- FHkbkJlTKx/jmQvDldVgwyey+SNCriT7WKaOjhW/pD151RdJUj5LgDLpofphkF0nIfdM
- Uq6DfBvAonY+1Cl/WDexc0a3akn8v87ZuXh24+18QrIgrmrn4g6ldsOmEL/2g+JloYff
- BajaATBfZ8fgKr7qDskBzzKgyfggcXWhlFs8Sk88Y76x2D4LE9U3O6PrGvHivzJec+Vh
- 6p8gvuvmGGcwP8SCOVsDngE1CvcNweBDv21qLCHs+5cNpHgaUnVs/YMXpoaHwZ0EXHWp
- gGYg==
+ b=f2Wl0u5+MhxajrRXZsVVjZDwqUonYXVgGsKRTAMOICkNGg1IBCInJvlxjMqxXYTQ2t
+ wqfjjRUx1i2P2i4intgHj3JdK313hoFM3k4C9Qnc/l7ed7CicQvxGiHHVqLs95fREZ7w
+ zoJ3hZR6R4Cvn7bvtHKnhtO1kw+82A8UhxWMrIbBcJX53+hBppGgXXeDUmse/e54TR47
+ gHx3VV+GF1NyQVJ/di39ULUlt8QM3zmv2DA/trSXHIEMFRvk/g/ZJcX4VTGiUZPqxsKL
+ 1CMuKiuxmouy01SP8AE/fRJCr4y5gSV6nSY+BMKqWRVL+TCKfj1zhDBdvRarv1ZrTqty
+ uLdw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
  :references:from:dkim-signature;
- bh=TzgYfmtkxm8S0u1fx27b8sXaQy36DH2x9TCYGW2YVUs=;
- fh=fepYQINKgfIfKsbjsAdsqsLHASxEPIbll6/ZbJvU0mY=;
- b=VWI0jTP9NEswCi8v11Put+RMA1UdFM6DCdH88d+eKhXVNisFKQxoWc1c2Oa2P6YErC
- cfbxdeN49Bu/nAS4pVB2SWvjEbt4YwaNB0ITR9HmWtjyvRWqPPlbktXlPSw5Spj9ILny
- 0pcwGf3TyXjPg71wWCEk4Zi1snJKFclQEOs8utjz/ysg8jgMSnXhFeU/O8akj3bc6NkU
- s1Li0CY+jkkTwLRkjnf6qhHs8i6PRDtUAjbdKkoDNekh5gIdJ1snN02ErQh3Q06WjI0q
- Q+2oS/SvHWA+Qf3+7XLEH+GyGHD+WGy2vb5iM0dphkcXSR4y0BLX73N+HwriynbdIngO
- hF5A==; darn=dpdk.org
+ bh=W70b5aSz0/nBNwLYfmcEEsZbBzaqz+6T6MZ0qlmQ3ac=;
+ fh=iT8uAPCOV0jhViw9/XjEENs4o6sfsAmZpf++6pX78sI=;
+ b=BYHV79hjOymZ8x/H3B/DQ2o6eaO5YuZZmjaRDLR05+O997aGHny501S09lxlNlHvSR
+ yjarntPUagTdscVIGnIRw3TCvOlwmonTvphAkbaibqza1+gk5lcuao0ztcihFEtBQbYA
+ BR+ONpTHLANjEjR43UDWEmkg5zvn/7y6hFhNL9zJf0KBLaFgutw0HPkSZKgB472Pr8TA
+ dl06jnc8JaIUrk9kaLZFOYwxbd8TJnvu39WO9NiAn9pJHBxaFLsbNDlwbB6JIMm85/LP
+ Ozty3Oa9xbMKk67eTpL+2n+pNtcR9UB3YtwN0lKe/Nn6ww8qlWjoIBD8xKsFM+UGw6GE
+ HfHA==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1772560931; x=1773165731; darn=dpdk.org;
+ d=broadcom.com; s=google; t=1772561087; x=1773165887; darn=dpdk.org;
  h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
  :references:from:from:to:cc:subject:date:message-id:reply-to;
- bh=TzgYfmtkxm8S0u1fx27b8sXaQy36DH2x9TCYGW2YVUs=;
- b=DcPxUC2AyPD3bFVh9ZS9/9lIPa06Yz8A6+ebWTMYdocrxVClFCCHRDOYeNB8HWR99R
- HB4dPnSofQ1htYnXybj9SqoNb82CP1z9CQTvP+8R1sYztQHP4c/7RjjLY13PTLdM5qUP
- wicM3G7jPKmsa/VA/Hc8RpvNLseFy32YdIIAU=
+ bh=W70b5aSz0/nBNwLYfmcEEsZbBzaqz+6T6MZ0qlmQ3ac=;
+ b=cVDMeaLzcYEOegMBs+pu6r0i0CDMonAbr20xA2qVuMEMo/AniZloz7YMEcl4BNK+v3
+ +L5GkXxn55O8ZBDF1Ho6RC2Po1znpKNJuYotyBiTjjGPRiE0V9lCnGB0jrBt0LX8QQQq
+ uCYZM3PHcOX3sR2WAZyn7sNkt0/raKCpJn7Q8=
 X-Forwarded-Encrypted: i=1;
- AJvYcCW9MtDW2fAwBon9rD3gEgr0jtyAULCTac7g6ON5IaV0tKFNKS42e3uuINAgo4cEih13lF0=@dpdk.org
-X-Received: by 2002:a05:6402:1444:b0:658:d541:9675 with SMTP id
- 4fb4d7f45d1cf-65fddaf6c6fmr10212426a12.18.1772560931009; 
- Tue, 03 Mar 2026 10:02:11 -0800 (PST)
-X-Received: by 2002:a05:6402:1444:b0:658:d541:9675 with SMTP id
- 4fb4d7f45d1cf-65fddaf6c6fmr10212415a12.18.1772560930500; Tue, 03 Mar 2026
- 10:02:10 -0800 (PST)
+ AJvYcCXnC/OHlu83TVs7L2ITRVgEXazOOiqTeYDQ/v0t+94iL/X6xmKaMznxrMJIUlEAEX3UZEE=@dpdk.org
+X-Received: by 2002:a05:6402:270e:b0:65a:507b:c7bd with SMTP id
+ 4fb4d7f45d1cf-65fddceeb96mr10449181a12.26.1772561086660; 
+ Tue, 03 Mar 2026 10:04:46 -0800 (PST)
+X-Received: by 2002:a05:6402:270e:b0:65a:507b:c7bd with SMTP id
+ 4fb4d7f45d1cf-65fddceeb96mr10449158a12.26.1772561086181; Tue, 03 Mar 2026
+ 10:04:46 -0800 (PST)
 From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-References: <20260227195410.70511-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260227200025.70591-1-Mohammad-Shuab.Siddique@broadcom.com>
-In-Reply-To: <20260227200025.70591-1-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260227202042.71404-1-Mohammad-Shuab.Siddique@broadcom.com>
+In-Reply-To: <20260227202042.71404-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQOSgaad32RFT0Kl7jgsfz7bfZ+m6QKDMRLMsh1SsjA=
-Date: Tue, 3 Mar 2026 13:02:06 -0500
-X-Gm-Features: AaiRm52z46R2MTHEwp_jAPjQPyeOX9E1sWhGXa_VACw1DpKpIFIELirzCA9Kqi8
-Message-ID: <c17fda9f565e7e5b9ef2a19cc6716aed@mail.gmail.com>
-Subject: RE: [PATCH v3] net/bnxt: fix clang wcomma warnings in ULP
+Thread-Index: AQHgLdtHSxwFvtxZe6yO6IdLohDdzbWWFK7g
+Date: Tue, 3 Mar 2026 13:04:42 -0500
+X-Gm-Features: AaiRm52b9Dp1C1XH-DkfuSMis89zt7w4nUmrA91oNSbREQfAQbd_F3GhFcz3SkA
+Message-ID: <6ec6e43a646c4ae0c22ac3330d4c346b@mail.gmail.com>
+Subject: RE: [PATCH] net/bnxt: fix reported VLAN stripped flag for Thor 2
 To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
  dev@dpdk.org
 Cc: Keegan Freyhof <keegan.freyhof@broadcom.com>, stable@dpdk.org
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000a84a94064c2280b2"
+ micalg=sha-256; boundary="000000000000ef88d3064c22894a"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -121,59 +120,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000a84a94064c2280b2
+--000000000000ef88d3064c22894a
 Content-Type: text/plain; charset="UTF-8"
 
 Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
 
 -----Original Message-----
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Sent: Friday, February 27, 2026 3:00 PM
+Sent: Friday, February 27, 2026 3:20 PM
 To: dev@dpdk.org
 Cc: kishore.padmanabha@broadcom.com; Keegan Freyhof
-<keegan.freyhof@broadcom.com>; stable@dpdk.org
-Subject: [PATCH v3] net/bnxt: fix clang wcomma warnings in ULP
+<keegan.freyhof@broadcom.com>; stable@dpdk.org; Mohammad Shuab Siddique
+<mohammad-shuab.siddique@broadcom.com>
+Subject: [PATCH] net/bnxt: fix reported VLAN stripped flag for Thor 2
 
 From: Keegan Freyhof <keegan.freyhof@broadcom.com>
 
-Fix compile warnings seen when using clang with the -Wcomma flag in the
-bnxt ULP driver code by replacing commas with semicolons.
+Modified the way that the scalar path reports VLAN TCI and the
+RTE_MBUF_F_RX_VLAN_STRIPPED flag.
 
-Bugzilla ID: 1807
-Fixes: dd0191d5e70d ("net/bnxt/tf_ulp: support Thor2 ULP layer")
+Bugzilla ID: 1868
+Fixes: 65d2b0557ba3 ("net/bnxt: support Rx completion v3")
+Fixes: daa02b5cddbb ("mbuf: add namespace to offload flags")
 Cc: stable@dpdk.org
 
 Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
 Signed-off-by: Mohammad Shuab Siddique
-<Mohammad-Shuab.Siddique@broadcom.com>
+<mohammad-shuab.siddique@broadcom.com>
 ---
- drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/bnxt/bnxt_rxr.c | 3 ++-
+ drivers/net/bnxt/bnxt_rxr.h | 7 +++++--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-index 38cb5c8b31..bc347de202 100644
---- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-+++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
-@@ -1296,10 +1296,10 @@ ulp_tf_global_cfg_update(struct bnxt *bp,
- 	struct tf *tfp;
+diff --git a/drivers/net/bnxt/bnxt_rxr.c b/drivers/net/bnxt/bnxt_rxr.c
+index c94abefa01..eb01132f48 100644
+--- a/drivers/net/bnxt/bnxt_rxr.c
++++ b/drivers/net/bnxt/bnxt_rxr.c
+@@ -1115,6 +1115,7 @@ static int bnxt_rx_pkt(struct rte_mbuf **rx_pkt,
+ 	uint16_t cmp_type;
+ 	uint32_t vfr_flag = 0, mark_id = 0;
+ 	struct bnxt *bp = rxq->bp;
++	struct bnxt_vnic_info *vnic = rxq->vnic;
 
- 	/* Initialize the params */
--	parms.dir = dir,
--	parms.type = type,
--	parms.offset = offset,
--	parms.config = (uint8_t *)&global_cfg,
-+	parms.dir = dir;
-+	parms.type = type;
-+	parms.offset = offset;
-+	parms.config = (uint8_t *)&global_cfg;
- 	parms.config_sz_in_bytes = sizeof(global_cfg);
+ 	rxcmp = (struct rx_pkt_cmpl *)
+ 	    &cpr->cp_desc_ring[cp_cons];
+@@ -1198,7 +1199,7 @@ static int bnxt_rx_pkt(struct rte_mbuf **rx_pkt,
+ 	if (cmp_type == CMPL_BASE_TYPE_RX_L2_V3) {
+ 		bnxt_parse_csum_v3(mbuf, rxcmp1);
+ 		bnxt_parse_pkt_type_v3(mbuf, rxcmp, rxcmp1);
+-		bnxt_rx_vlan_v3(mbuf, rxcmp, rxcmp1);
++		bnxt_rx_vlan_v3(mbuf, rxcmp, rxcmp1, vnic->vlan_strip);
+ 		if (BNXT_TRUFLOW_EN(bp))
+ 			mark_id = bnxt_ulp_set_mark_in_mbuf_v3(rxq->bp,
+rxcmp1,
+ 							       mbuf,
+&vfr_flag);
+diff --git a/drivers/net/bnxt/bnxt_rxr.h b/drivers/net/bnxt/bnxt_rxr.h
+index 7357ca4427..f6d1e3ddfb 100644
+--- a/drivers/net/bnxt/bnxt_rxr.h
++++ b/drivers/net/bnxt/bnxt_rxr.h
+@@ -474,11 +474,14 @@ bnxt_parse_pkt_type_v2(struct rte_mbuf *mbuf,
 
- 	tfp = bnxt_ulp_bp_tfp_get(bp, BNXT_ULP_SESSION_TYPE_DEFAULT);
+ static inline void bnxt_rx_vlan_v3(struct rte_mbuf *mbuf,
+ 	struct rx_pkt_cmpl *rxcmp,
+-	struct rx_pkt_cmpl_hi *rxcmp1)
++	struct rx_pkt_cmpl_hi *rxcmp1,
++	bool stripped)
+ {
+ 	if (RX_CMP_V3_VLAN_VALID(rxcmp)) {
+ 		mbuf->vlan_tci = RX_CMP_V3_METADATA0_VID(rxcmp1);
+-		mbuf->ol_flags |= RTE_MBUF_F_RX_VLAN |
+RTE_MBUF_F_RX_VLAN_STRIPPED;
++		mbuf->ol_flags |= RTE_MBUF_F_RX_VLAN;
++		if (stripped)
++			mbuf->ol_flags |= RTE_MBUF_F_RX_VLAN_STRIPPED;
+ 	}
+ }
+
 --
 2.47.3
 
---000000000000a84a94064c2280b2
+--000000000000ef88d3064c22894a
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -267,13 +294,13 @@ W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
 6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
 YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
 YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCBezvSZ3fTpSSsVTyaPMB0UOKZpiz1kZaYp4X5LzaofpjAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjAzMDMxODAyMTFaMFwGCSqG
+oIHHMC8GCSqGSIb3DQEJBDEiBCAle5uT3eYkdoqfrTItQlbcgy9FIiUAK4XGfrWlcqDaDzAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjAzMDMxODA0NDdaMFwGCSqG
 SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCeZvirWUMy
-n/pvZ232LTPc9Hv3Ki6U3v68LcTeTBVdKtG17Q1877N9KH1vEuda/19aPxl9A1EMcLF4pgpto+gs
-P/hILcEZwHJ/dcUp+92iYjbpUjPRTKpBJcueUYoevnLJDvTI4lH/YaR6i0teQ8XEHsE37DKIX554
-whvCK33qjfHt8iQZkfbYI2AYTLOg7G3+zSszpM5lfynuCnsZlcbTPM0qO9W89uz4qFLiKflIq5yl
-PW60EOcVN2xK8tyPY6TtYqsa5Z8mmoSxBlB7Xq7ghvHGS3N6GFWGN9B8gNySd26U8+3x69M2zaK2
-029r/INjBP0vwqW57q7InAwGgNhX
---000000000000a84a94064c2280b2--
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAGpPDSK+Oh
+wAM68ZRSWj5ABzQdGriVGiMQOgtrS2UdxUqXuEPwFTN/nwC8Ozy3aWh6p9DnjpHXdMGoB5OO2fR4
+8jWii0+zVTH20w/yTKjBBEnTjVgXSB2opZt/eLmn5Btk4rEUAZq3iGc7aPjzMJEKPrV84J6GSTwA
+0nWvYOAyDWUFwTw+C8N65GWRKu0cKc8WB+7SMu2gzATZrqaMUpp/BelqZVqwujvPVevuIBrrsQsA
+VG8qvSfbadPXh9tRdAXKfXDvU++OshFTsjy7hBGZK5T4C1z3jfbCQd0eDk3xJ+xj2M6SSzFDlHiY
+GMZIhA2IbbrOJ/gRER1Hm9CZPFs3
+--000000000000ef88d3064c22894a--
