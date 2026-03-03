@@ -2,35 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5753EC0462
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 09:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA500EC0461
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 09:11:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0E3C9402B0;
+	by mails.dpdk.org (Postfix) with ESMTP id E957040E1B;
 	Tue,  3 Mar 2026 10:11:05 +0100 (CET)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 4FAB840288
+ by mails.dpdk.org (Postfix) with ESMTP id 9393C40B9C
  for <dev@dpdk.org>; Tue,  3 Mar 2026 10:11:01 +0100 (CET)
 Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-01 (Coremail) with SMTP id qwCowAC3Ym6ipaZpYi4sCQ--.16406S8;
+ by APP-01 (Coremail) with SMTP id qwCowAC3Ym6ipaZpYi4sCQ--.16406S11;
  Tue, 03 Mar 2026 17:10:59 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v18 06/13] net/sxe: add filter function
-Date: Tue,  3 Mar 2026 17:10:50 +0800
-Message-Id: <20260303091057.2952214-7-liujie5@linkdatatechnology.com>
+Subject: [PATCH v18 09/13] net/sxe: support ptp
+Date: Tue,  3 Mar 2026 17:10:53 +0800
+Message-Id: <20260303091057.2952214-10-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
 In-Reply-To: <20260303091057.2952214-1-liujie5@linkdatatechnology.com>
 References: <20260209012458.506200-13-liujie5@linkdatatechnology.com>
  <20260303091057.2952214-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: qwCowAC3Ym6ipaZpYi4sCQ--.16406S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxtr1DKr4kCw17ArW3Wr43GFg_yoW3Cr18pF
- W8ua4qkFy3XFnrXanrtr409F13C3ZYg34jqry3Cay29aySqr45XrykJFyUAayvk3sxWr43
- XF4v93ZrGr1Fk3DanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID: qwCowAC3Ym6ipaZpYi4sCQ--.16406S11
+X-Coremail-Antispam: 1UD129KBjvJXoWxtr4fGrWrGFy7Cr45tF4xJFb_yoW3WF1rpF
+ Z8Ca4YyrWxtFsFgFWfCF4Dury5KFsYqr92gF9ayw43Z34xCrW8Wry09r1UtFn5G34kJw13
+ A3ZYqanxWr1rXF7anT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
  9KBjDU0xBIdaVrnRJUUUQa14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
  rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+ kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
  z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
  1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
  JwAaw2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I
@@ -41,7 +41,7 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxtr1DKr4kCw17ArW3Wr43GFg_yoW3Cr18pF
  80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0
  I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
  k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7Cj
- xVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRNBM_UUUUU=
+ xVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUIZXrUUUUU=
 X-Originating-IP: [221.238.36.162]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,283 +59,263 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add filter function.
+Add ptp module.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe/pf/sxe_filter.c | 191 ++++++++++++++++++++++++++++++++
- drivers/net/sxe/pf/sxe_filter.h |  29 +++++
- drivers/net/sxe/pf/sxe_main.c   |   1 +
- 3 files changed, 221 insertions(+)
+ drivers/net/sxe/pf/sxe_ptp.c | 209 +++++++++++++++++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_ptp.h |  26 +++++
+ 2 files changed, 235 insertions(+)
+ create mode 100644 drivers/net/sxe/pf/sxe_ptp.c
+ create mode 100644 drivers/net/sxe/pf/sxe_ptp.h
 
-diff --git a/drivers/net/sxe/pf/sxe_filter.c b/drivers/net/sxe/pf/sxe_filter.c
-index 8e3f6b6b29..df583c960a 100644
---- a/drivers/net/sxe/pf/sxe_filter.c
-+++ b/drivers/net/sxe/pf/sxe_filter.c
-@@ -82,6 +82,47 @@ static void sxe_default_mac_addr_get(struct sxe_adapter *adapter)
- 	rte_ether_addr_copy(&mac_addr, &adapter->mac_filter_ctxt.fc_mac_addr);
- }
- 
-+static u8 sxe_sw_uc_entry_add(struct rte_eth_dev *eth_dev, u8 index,
-+	u8 *mac_addr)
+diff --git a/drivers/net/sxe/pf/sxe_ptp.c b/drivers/net/sxe/pf/sxe_ptp.c
+new file mode 100644
+index 0000000000..4116dbb37e
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_ptp.c
+@@ -0,0 +1,209 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#include "sxe.h"
++#include "sxe_logs.h"
++#include "sxe_hw.h"
++#include "sxe_ptp.h"
++
++#define SXE_CYCLECOUNTER_MASK   0xffffffffffffffffULL
++
++static void sxe_timecounters_start(struct rte_eth_dev *dev)
 +{
-+	u8 i, pool;
-+	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-+	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++	struct sxe_adapter *adapter = dev->data->dev_private;
 +
-+	pool = sxe_vf_num_get(eth_dev);
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		if (!uc_table[i].used) {
-+			uc_table[i].pool_idx = pool;
-+			uc_table[i].used = true;
-+			uc_table[i].rar_idx = i;
-+			uc_table[i].original_index = index;
-+			uc_table[i].type = SXE_PF;
-+			rte_memcpy(uc_table[i].addr, mac_addr, SXE_MAC_ADDR_LEN);
-+			break;
-+		}
-+	}
++	u32 shift = 0;
 +
-+	return i;
++	memset(&adapter->ptp_ctxt.systime_tc, 0, sizeof(struct rte_timecounter));
++	memset(&adapter->ptp_ctxt.rx_tstamp_tc, 0, sizeof(struct rte_timecounter));
++	memset(&adapter->ptp_ctxt.tx_tstamp_tc, 0, sizeof(struct rte_timecounter));
++
++	adapter->ptp_ctxt.systime_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.systime_tc.cc_shift = shift;
++	adapter->ptp_ctxt.systime_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.rx_tstamp_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.rx_tstamp_tc.cc_shift = shift;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.tx_tstamp_tc.cc_mask = SXE_CYCLECOUNTER_MASK;
++	adapter->ptp_ctxt.tx_tstamp_tc.cc_shift = shift;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec_mask = (1ULL << shift) - 1;
++
++	adapter->ptp_ctxt.tx_hwtstamp_nsec = 0;
++	adapter->ptp_ctxt.tx_hwtstamp_sec = 0;
 +}
 +
-+static u8 sxe_sw_uc_entry_del(struct sxe_adapter *adapter, u8 index)
++s32 sxe_timesync_enable(struct rte_eth_dev *dev)
 +{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 tses = SXE_TSES_TXES_V2_ALL | SXE_TSES_RXES_V2_ALL;
++
++	struct timespec ts;
++
++	memset(&ts, 0, sizeof(struct timespec));
++
++	clock_gettime(CLOCK_REALTIME, &ts);
++
++	sxe_hw_ptp_init(hw);
++
++
++	sxe_hw_ptp_timestamp_mode_set(hw, true, 0, tses);
++
++	sxe_hw_ptp_timestamp_enable(hw);
++
++	sxe_hw_ptp_rx_timestamp_clear(hw);
++
++	sxe_hw_ptp_systime_init(hw);
++
++	sxe_timecounters_start(dev);
++
++
++	sxe_timesync_write_time(dev, &ts);
++
++	return 0;
++}
++
++s32 sxe_timesync_disable(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++
++	sxe_hw_ptp_timestamp_disable(hw);
++
++	sxe_hw_ptp_timestamp_mode_set(hw, false, 0, 0);
++
++	sxe_hw_ptp_time_inc_stop(hw);
++
++	return 0;
++}
++
++s32 sxe_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp,
++				 u32 flags __rte_unused)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns;
++	s32 ret = 0;
++	bool is_valid;
++	u64 rx_tstamp_cycles;
++
++	is_valid = sxe_hw_ptp_is_rx_timestamp_valid(hw);
++	if (!is_valid) {
++		PMD_LOG_ERR(DRV, "no valid ptp timestamp in rx register");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	rx_tstamp_cycles = sxe_hw_ptp_rx_timestamp_get(hw);
++	ns = rte_timecounter_update(&adapter->ptp_ctxt.rx_tstamp_tc, rx_tstamp_cycles);
++	PMD_LOG_DEBUG(DRV, "got rx_tstamp_cycles = %" SXE_PRIU64 "ns=%" SXE_PRIU64,
++			rx_tstamp_cycles, ns);
++	*timestamp = rte_ns_to_timespec(ns);
++
++l_end:
++	return ret;
++}
++
++static u64 sxe_timesync_tx_tstamp_cycles_get(struct sxe_adapter *adapter)
++{
++	return SXE_TIME_TO_NS(adapter->ptp_ctxt.tx_hwtstamp_nsec,
++				adapter->ptp_ctxt.tx_hwtstamp_sec);
++}
++
++s32 sxe_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns;
++	s32 ret = 0;
++	u64 tx_tstamp_cycles;
++	u32 ts_sec;
++	u32 ts_ns;
++	u32 last_sec;
++	u32 last_ns;
++	bool tx_tstamp_valid = true;
 +	u8 i;
-+	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
 +
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		if (!uc_table[i].used || uc_table[i].type != SXE_PF)
-+			continue;
++	sxe_hw_ptp_tx_timestamp_get(hw, &ts_sec, &ts_ns);
++	if (ts_ns  != adapter->ptp_ctxt.tx_hwtstamp_nsec ||
++		ts_sec != adapter->ptp_ctxt.tx_hwtstamp_sec) {
++		for (i = 0; i < SXE_TXTS_POLL_CHECK; i++)
++			sxe_hw_ptp_tx_timestamp_get(hw, &last_sec, &last_ns);
 +
-+		if (uc_table[i].original_index == index) {
-+			uc_table[i].used = false;
-+			break;
++		for (; i < SXE_TXTS_POLL; i++) {
++			sxe_hw_ptp_tx_timestamp_get(hw, &ts_sec, &ts_ns);
++			if (last_ns != ts_ns || last_sec != ts_sec) {
++				tx_tstamp_valid = false;
++				break;
++			}
 +		}
 +	}
 +
-+	return i;
-+}
-+
- s32 sxe_mac_addr_init(struct rte_eth_dev *eth_dev)
- {
- 	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-@@ -149,6 +190,156 @@ s32 sxe_mac_addr_init(struct rte_eth_dev *eth_dev)
- 	goto l_out;
- }
- 
-+static void sxe_pf_promisc_mac_update(struct rte_eth_dev *dev, bool enable)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
-+	u16 pf_pool = sxe_vf_num_get(dev);
-+	s32 i;
-+
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		if (uc_table[i].used && uc_table[i].type != SXE_PF) {
-+			if (enable)
-+				sxe_hw_uc_addr_pool_enable(&adapter->hw,
-+					uc_table[i].rar_idx, pf_pool);
-+			else
-+				sxe_hw_uc_addr_pool_del(&adapter->hw,
-+					uc_table[i].rar_idx, pf_pool);
-+		}
-+	}
-+}
-+
-+s32 sxe_promiscuous_enable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 flt_ctrl;
-+	u32 vm_l2_ctrl = 0;
-+	u16 vf_num;
-+
-+	flt_ctrl = sxe_hw_rx_mode_get(hw);
-+	PMD_LOG_DEBUG(DRV, "read flt_ctrl=0x%x", flt_ctrl);
-+
-+	flt_ctrl |= (SXE_FCTRL_UPE | SXE_FCTRL_MPE);
-+
-+	vf_num = sxe_vf_num_get(dev);
-+	if (vf_num != 0) {
-+		vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num) |
-+				SXE_VMOLR_ROMPE | SXE_VMOLR_MPE;
-+		sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
-+
-+		sxe_pf_promisc_mac_update(dev, true);
-+	}
-+
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x vmolr=0x%x", flt_ctrl, vm_l2_ctrl);
-+	sxe_hw_rx_mode_set(hw, flt_ctrl);
-+	adapter->mac_filter_ctxt.promiscuous_mode = true;
-+
-+	return 0;
-+}
-+
-+s32 sxe_promiscuous_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 flt_ctrl;
-+	u32 vm_l2_ctrl = 0;
-+	u16 vf_num;
-+
-+	flt_ctrl = sxe_hw_rx_mode_get(hw);
-+	PMD_LOG_DEBUG(DRV, "read flt_ctrl=0x%x", flt_ctrl);
-+
-+	flt_ctrl &= (~SXE_FCTRL_UPE);
-+	if (dev->data->all_multicast == 1)
-+		flt_ctrl |= SXE_FCTRL_MPE;
-+	else
-+		flt_ctrl &= (~SXE_FCTRL_MPE);
-+
-+	vf_num = sxe_vf_num_get(dev);
-+	if (vf_num != 0) {
-+		vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num);
-+		if (dev->data->all_multicast == 0) {
-+			vm_l2_ctrl &= ~SXE_VMOLR_MPE;
-+			if ((sxe_hw_mc_filter_get(hw) & SXE_MCSTCTRL_MFE) == 0)
-+				vm_l2_ctrl &= ~SXE_VMOLR_ROMPE;
-+		}
-+		sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
-+		sxe_pf_promisc_mac_update(dev, false);
-+	}
-+
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x vmolr=0x%x", flt_ctrl, vm_l2_ctrl);
-+	sxe_hw_rx_mode_set(hw, flt_ctrl);
-+	adapter->mac_filter_ctxt.promiscuous_mode = false;
-+
-+	return 0;
-+}
-+
-+s32 sxe_allmulticast_enable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 flt_ctrl;
-+	u32 vm_l2_ctrl = 0;
-+	u16 vf_num;
-+
-+	flt_ctrl = sxe_hw_rx_mode_get(hw);
-+	PMD_LOG_DEBUG(DRV, "read flt_ctrl=0x%x", flt_ctrl);
-+
-+	flt_ctrl |= SXE_FCTRL_MPE;
-+
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x", flt_ctrl);
-+	sxe_hw_rx_mode_set(hw, flt_ctrl);
-+
-+	vf_num = sxe_vf_num_get(dev);
-+	if (vf_num != 0) {
-+		vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num) |
-+				SXE_VMOLR_MPE | SXE_VMOLR_ROMPE;
-+		sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
-+	}
-+
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x vmolr=0x%x",
-+			flt_ctrl, vm_l2_ctrl);
-+
-+	return 0;
-+}
-+
-+s32 sxe_allmulticast_disable(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 flt_ctrl;
-+	u32 vm_l2_ctrl = 0;
-+	u16 vf_num;
-+
-+	if (dev->data->promiscuous == 1) {
-+		PMD_LOG_DEBUG(DRV, "promiscuous is enable, allmulticast must be enabled.");
-+		goto l_out;
-+	}
-+
-+	flt_ctrl = sxe_hw_rx_mode_get(hw);
-+	PMD_LOG_DEBUG(DRV, "read flt_ctrl=0x%x", flt_ctrl);
-+
-+	flt_ctrl &= (~SXE_FCTRL_MPE);
-+
-+	vf_num = sxe_vf_num_get(dev);
-+	if (vf_num != 0) {
-+		vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num) &
-+					(~SXE_VMOLR_MPE);
-+		if ((sxe_hw_mc_filter_get(hw) & SXE_MCSTCTRL_MFE) == 0)
-+			vm_l2_ctrl &= ~SXE_VMOLR_ROMPE;
-+
-+		sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
++	if (!tx_tstamp_valid || (ts_ns == adapter->ptp_ctxt.tx_hwtstamp_nsec &&
++			ts_sec == adapter->ptp_ctxt.tx_hwtstamp_sec)) {
++		PMD_LOG_DEBUG(DRV, "no valid ptp timestamp in tx register");
++		ret = -EINVAL;
++		goto l_end;
 +	} else {
-+		sxe_hw_rx_mode_set(hw, flt_ctrl);
++		adapter->ptp_ctxt.tx_hwtstamp_nsec = ts_ns;
++		adapter->ptp_ctxt.tx_hwtstamp_sec  = ts_sec;
++		tx_tstamp_cycles =
++			sxe_timesync_tx_tstamp_cycles_get(adapter);
++		ns = rte_timecounter_update(&adapter->ptp_ctxt.tx_tstamp_tc,
++						tx_tstamp_cycles);
++		PMD_LOG_DEBUG(DRV, "got tx_tstamp_cycles = %"
++			SXE_PRIU64 "ns=%" SXE_PRIU64, tx_tstamp_cycles, ns);
++		*timestamp = rte_ns_to_timespec(ns);
 +	}
 +
-+	PMD_LOG_DEBUG(DRV, "write flt_ctrl=0x%x vmolr=0x%x",
-+			flt_ctrl, vm_l2_ctrl);
++l_end:
++	return ret;
++}
 +
-+l_out:
++s32 sxe_timesync_adjust_time(struct rte_eth_dev *dev, s64 delta)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++
++	PMD_LOG_DEBUG(DRV, "got delta = %" SXE_PRID64, delta);
++
++	adapter->ptp_ctxt.systime_tc.nsec += delta;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec += delta;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec += delta;
++
 +	return 0;
 +}
 +
- s32 sxe_mac_addr_add(struct rte_eth_dev *dev,
- 				 struct rte_ether_addr *mac_addr,
- 				 u32 index, u32 pool)
-diff --git a/drivers/net/sxe/pf/sxe_filter.h b/drivers/net/sxe/pf/sxe_filter.h
-index 51df05ac8e..2b7c91a9bd 100644
---- a/drivers/net/sxe/pf/sxe_filter.h
-+++ b/drivers/net/sxe/pf/sxe_filter.h
-@@ -18,6 +18,27 @@ struct sxe_adapter;
- 		RTE_ALIGN((SXE_HW_TXRX_RING_NUM_MAX / (sizeof(u32) * BYTE_BIT_NUM)), \
- 		sizeof(u32))
- 
-+struct sxe_vlan_context {
-+	u32 vlan_hash_table[SXE_VFT_TBL_SIZE];
-+	u32 strip_bitmap[SXE_VLAN_STRIP_BITMAP_SIZE];
-+	u32  vlan_table_size;
-+};
++s32 sxe_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 ns, systime_cycles;
 +
-+enum sxe_uc_addr_src_type {
-+	SXE_PF = 0,
-+	SXE_VF,
-+	SXE_VF_MACVLAN
-+};
++	systime_cycles = sxe_hw_ptp_systime_get(hw);
++	ns = rte_timecounter_update(&adapter->ptp_ctxt.systime_tc, systime_cycles);
++	PMD_LOG_DEBUG(DRV, "got systime_cycles = %" SXE_PRIU64 "ns=%" SXE_PRIU64,
++			systime_cycles, ns);
++	*ts = rte_ns_to_timespec(ns);
 +
-+struct sxe_uc_addr_table {
-+	u8 rar_idx;
-+	u8 pool_idx;
-+	u8 type;
-+	u8 original_index;
-+	bool used;
-+	u8 addr[SXE_MAC_ADDR_LEN];
-+};
++	return 0;
++}
 +
- struct sxe_mac_filter_context {
- 	struct rte_ether_addr def_mac_addr;
- 	struct rte_ether_addr cur_mac_addr;
-@@ -34,6 +55,14 @@ struct sxe_mac_filter_context {
- 
- s32 sxe_mac_addr_init(struct rte_eth_dev *eth_dev);
- 
-+s32 sxe_promiscuous_enable(struct rte_eth_dev *dev);
++s32 sxe_timesync_write_time(struct rte_eth_dev *dev,
++					const struct timespec *ts)
++{
++	u64 ns;
++	struct sxe_adapter *adapter = dev->data->dev_private;
 +
-+s32 sxe_promiscuous_disable(struct rte_eth_dev *dev);
++	ns = rte_timespec_to_ns(ts);
++	PMD_LOG_DEBUG(DRV, "set systime ns = %" SXE_PRIU64, ns);
++	adapter->ptp_ctxt.systime_tc.nsec = ns;
++	adapter->ptp_ctxt.rx_tstamp_tc.nsec = ns;
++	adapter->ptp_ctxt.tx_tstamp_tc.nsec = ns;
 +
-+s32 sxe_allmulticast_enable(struct rte_eth_dev *dev);
++	return 0;
++}
+diff --git a/drivers/net/sxe/pf/sxe_ptp.h b/drivers/net/sxe/pf/sxe_ptp.h
+new file mode 100644
+index 0000000000..14971b2d50
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_ptp.h
+@@ -0,0 +1,26 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
 +
-+s32 sxe_allmulticast_disable(struct rte_eth_dev *dev);
++#ifndef __SXE_PTP_H__
++#define __SXE_PTP_H__
 +
- s32 sxe_mac_addr_add(struct rte_eth_dev *dev,
- 				 struct rte_ether_addr *mac_addr,
- 				 u32 rar_idx, u32 pool);
-diff --git a/drivers/net/sxe/pf/sxe_main.c b/drivers/net/sxe/pf/sxe_main.c
-index 6ea261a0cb..f595cbf090 100644
---- a/drivers/net/sxe/pf/sxe_main.c
-+++ b/drivers/net/sxe/pf/sxe_main.c
-@@ -148,6 +148,7 @@ s32 sxe_hw_reset(struct sxe_hw *hw)
- 		goto l_end;
- 	}
- 
-+	sxe_hw_uc_addr_clear(hw);
- l_end:
- 	return ret;
- }
++s32 sxe_timesync_enable(struct rte_eth_dev *dev);
++
++s32 sxe_timesync_disable(struct rte_eth_dev *dev);
++
++s32 sxe_timesync_read_rx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp,
++				 u32 flags __rte_unused);
++
++s32 sxe_timesync_read_tx_timestamp(struct rte_eth_dev *dev,
++				 struct timespec *timestamp);
++
++s32 sxe_timesync_adjust_time(struct rte_eth_dev *dev, s64 delta);
++
++s32 sxe_timesync_read_time(struct rte_eth_dev *dev, struct timespec *ts);
++
++s32 sxe_timesync_write_time(struct rte_eth_dev *dev,
++					const struct timespec *ts);
++
++#endif
 -- 
 2.18.2
 
