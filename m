@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B219EC0462
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 09:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FD8EC0461
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 09:11:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F40740ED9;
-	Tue,  3 Mar 2026 10:11:09 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7BFD5410D3;
+	Tue,  3 Mar 2026 10:11:10 +0100 (CET)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id B556940E3E
- for <dev@dpdk.org>; Tue,  3 Mar 2026 10:11:02 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 3DC4940E3F
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 10:11:03 +0100 (CET)
 Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-01 (Coremail) with SMTP id qwCowAC3Ym6ipaZpYi4sCQ--.16406S3;
- Tue, 03 Mar 2026 17:10:58 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowAC3Ym6ipaZpYi4sCQ--.16406S13;
+ Tue, 03 Mar 2026 17:11:00 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v18 01/13] net/sxe: add base driver directory and doc
-Date: Tue,  3 Mar 2026 17:10:45 +0800
-Message-Id: <20260303091057.2952214-2-liujie5@linkdatatechnology.com>
+Subject: [PATCH v18 11/13] net/sxe: add custom cmd led ctrl
+Date: Tue,  3 Mar 2026 17:10:55 +0800
+Message-Id: <20260303091057.2952214-12-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
 In-Reply-To: <20260303091057.2952214-1-liujie5@linkdatatechnology.com>
 References: <20260209012458.506200-13-liujie5@linkdatatechnology.com>
  <20260303091057.2952214-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: qwCowAC3Ym6ipaZpYi4sCQ--.16406S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxtFWrWFyDXFWxZw1kZF4ruFg_yoW3CrWDpa
- 18CFWSkryfJ3W7X3ZIy3WUuF4rAa1vya4Uuw1I934FqF98Cry8Xw4YqFy8t3srXFyYvw1F
- vF1avrW7uF15X3DanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUQF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
- x26xkF7I0E14v26r1Y6r1xM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
- Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l84
- ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAa
- w2AFwI0_Jrv_JF1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
- C2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
- 7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2
- x0rVAKj4xxMxkF7I0En4kS14v26r126r1DMxkIecxEwVAFwVW8uwCF04k20xvY0x0EwIxG
- rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
- vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IY
- x2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26c
- xKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAF
- wI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUV89_UUUUU=
+X-CM-TRANSID: qwCowAC3Ym6ipaZpYi4sCQ--.16406S13
+X-Coremail-Antispam: 1UD129KBjvJXoWxKF4rtrWruFykZF1kWF18AFb_yoWfXF48pF
+ 45Cr15W3WfJFyIka1fJF4DZF1rCa1jqFWDWF9F9w4Svas2yr1UJF4qgFsIy34Fv3y8Gry2
+ va12vFy5Kwn5K3DanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUQS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+ kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+ z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
+ 1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWx
+ Jr1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c
+ 02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE
+ 4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4
+ kE6xkIj40Ew7xC0wCY1x0262kKe7AKxVWUAVWUtwCY02Avz4vE14v_GFWl42xK82IYc2Ij
+ 64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+ 8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAKI48JMIIF0xvE
+ 2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42
+ xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
+ 7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU0SdyUUUUU
 X-Originating-IP: [221.238.36.162]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,288 +59,341 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Adding a minimum maintainable directory structure for the
-network driver and request maintenance of the sxe driver.
+Add custom cmd led ctrl.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- MAINTAINERS                            |  6 +++
- doc/guides/nics/features/sxe.ini       | 55 ++++++++++++++++++++
- doc/guides/nics/features/sxe_vf.ini    | 37 ++++++++++++++
- doc/guides/nics/index.rst              |  1 +
- doc/guides/nics/sxe.rst                | 71 ++++++++++++++++++++++++++
- doc/guides/rel_notes/release_26_03.rst |  6 +++
- drivers/net/sxe/meson.build            |  9 ++++
- drivers/net/sxe/pf/sxe_ethdev.c        |  3 ++
- drivers/net/sxe/pf/sxe_ethdev.h        |  3 ++
- 9 files changed, 191 insertions(+)
- create mode 100644 doc/guides/nics/features/sxe.ini
- create mode 100644 doc/guides/nics/features/sxe_vf.ini
- create mode 100644 doc/guides/nics/sxe.rst
- create mode 100644 drivers/net/sxe/meson.build
- create mode 100644 drivers/net/sxe/pf/sxe_ethdev.c
- create mode 100644 drivers/net/sxe/pf/sxe_ethdev.h
+ drivers/net/sxe/include/sxe/sxe_cli.h   | 218 ++++++++++++++++++++++++
+ drivers/net/sxe/include/sxe/sxe_ioctl.h |  21 +++
+ drivers/net/sxe/sxe_testpmd.c           |  66 +++++++
+ 3 files changed, 305 insertions(+)
+ create mode 100644 drivers/net/sxe/include/sxe/sxe_cli.h
+ create mode 100644 drivers/net/sxe/include/sxe/sxe_ioctl.h
+ create mode 100644 drivers/net/sxe/sxe_testpmd.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1b2f1ed2ba..55a98dfad0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -859,6 +859,12 @@ F: drivers/net/intel/ipn3ke/
- F: doc/guides/nics/ipn3ke.rst
- F: doc/guides/nics/features/ipn3ke.ini
- 
-+Linkdata sxe
-+M: Jie Li <lijie@linkdatatechnology.com>
-+F: drivers/net/sxe/
-+F: doc/guides/nics/sxe.rst
-+F: doc/guides/nics/features/sxe*.ini
-+
- Marvell cnxk
- M: Nithin Dabilpuram <ndabilpuram@marvell.com>
- M: Kiran Kumar K <kirankumark@marvell.com>
-diff --git a/doc/guides/nics/features/sxe.ini b/doc/guides/nics/features/sxe.ini
+diff --git a/drivers/net/sxe/include/sxe/sxe_cli.h b/drivers/net/sxe/include/sxe/sxe_cli.h
 new file mode 100644
-index 0000000000..a700ba3dc9
+index 0000000000..b278a67907
 --- /dev/null
-+++ b/doc/guides/nics/features/sxe.ini
-@@ -0,0 +1,55 @@
-+;
-+; Supported features of the 'sxe' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Speed capabilities   = Y
-+Link speed configuration = Y
-+Link status          = Y
-+Link status event    = Y
-+Rx interrupt         = Y
-+Queue start/stop     = Y
-+Power mgmt address monitor = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+LRO                  = Y
-+TSO                  = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+Multicast MAC filter = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VMDq                 = Y
-+SR-IOV               = Y
-+DCB                  = Y
-+VLAN filter          = Y
-+Flow control         = Y
-+Rate limitation      = Y
-+Traffic manager      = Y
-+Inline crypto        = Y
-+CRC offload          = P
-+VLAN offload         = P
-+QinQ offload         = P
-+L3 checksum offload  = P
-+L4 checksum offload  = P
-+MACsec offload       = P
-+Inner L3 checksum    = P
-+Inner L4 checksum    = P
-+Packet type parsing  = Y
-+Timesync             = Y
-+Rx descriptor status = Y
-+Tx descriptor status = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+Stats per queue      = Y
-+FW version           = Y
-+EEPROM dump          = Y
-+Module EEPROM dump   = Y
-+Registers dump       = Y
-+Multiprocess aware   = Y
-+Linux                = Y
-+ARMv8                = Y
-+x86-64               = Y
-diff --git a/doc/guides/nics/features/sxe_vf.ini b/doc/guides/nics/features/sxe_vf.ini
-new file mode 100644
-index 0000000000..7caf5435ae
---- /dev/null
-+++ b/doc/guides/nics/features/sxe_vf.ini
-@@ -0,0 +1,37 @@
-+;
-+; Supported features of the 'sxe_vf' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+[Features]
-+Link status          = Y
-+Rx interrupt         = Y
-+Power mgmt address monitor = Y
-+MTU update           = Y
-+Scattered Rx         = Y
-+LRO                  = Y
-+TSO                  = Y
-+Promiscuous mode     = Y
-+Allmulticast mode    = Y
-+Unicast MAC filter   = Y
-+RSS hash             = Y
-+RSS key update       = Y
-+RSS reta update      = Y
-+VLAN filter          = Y
-+Inline crypto        = Y
-+CRC offload          = P
-+VLAN offload         = P
-+QinQ offload         = P
-+L3 checksum offload  = P
-+L4 checksum offload  = P
-+Inner L3 checksum    = P
-+Inner L4 checksum    = P
-+Packet type parsing  = Y
-+Rx descriptor status = Y
-+Tx descriptor status = Y
-+Basic stats          = Y
-+Extended stats       = Y
-+Registers dump       = Y
-+Linux                = Y
-+ARMv8                = Y
-+x86-64               = Y
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index cb818284fe..ace3caa8c4 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -68,6 +68,7 @@ Network Interface Controller Drivers
-     rnp
-     sfc_efx
-     softnic
-+    sxe
-     tap
-     thunderx
-     txgbe
-diff --git a/doc/guides/nics/sxe.rst b/doc/guides/nics/sxe.rst
-new file mode 100644
-index 0000000000..6f8b56d91c
---- /dev/null
-+++ b/doc/guides/nics/sxe.rst
-@@ -0,0 +1,71 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+
-+SXE Poll Mode Driver
-+======================
-+
-+The SXE PMD (librte_pmd_sxe) provides poll mode driver support
-+for Linkdata 1160-2X 10GE Ethernet Adapter.
-+
-+Features
-+--------
-+- PXE boot
-+- PTP(Precision Time Protocol)
-+- VMDq(Virtual Machine Device Queues)
-+- SR-IOV,max 2PF,63VF per PF
-+- 128 L2 Ethernet MAC Address Filters (unicast and multicast)
-+- 64 L2 VLAN filters
-+- pldm over mctp over smbus
-+- 802.1q VLAN
-+- Low Latency Interrupts
-+- LRO
-+- Promiscuous mode
-+- Multicast mode
-+- Multiple queues for TX and RX
-+- Receiver Side Scaling (RSS)
-+- MAC/VLAN filtering
-+- Packet type information
-+- Checksum offload
-+- VLAN/QinQ stripping and inserting
-+- TSO offload
-+- Port hardware statistics
-+- Link state information
-+- Link flow control
-+- Interrupt mode for RX
-+- Scattered and gather for TX and RX
-+- DCB
-+- IEEE 1588
-+- FW version
-+- Generic flow API
-+
-+Configuration
-+-------------
-+
-+Dynamic Logging Parameters
-+~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+One may leverage EAL option "--log-level" to change default levels
-+for the log types supported by the driver. The option is used with
-+an argument typically consisting of two parts separated by a colon.
-+
-+SXE PMD provides the following log types available for control:
-+
-+- ``pmd.net.sxe.drv`` (default level is **INFO**)
-+
-+  Affects driver-wide messages unrelated to any particular devices.
-+
-+- ``pmd.net.sxe.init`` (default level is **INFO**)
-+
-+  Extra logging of the messages during PMD initialization.
-+
-+- ``pmd.net.sxe.rx`` (default level is **INFO**)
-+
-+  Affects rx-wide messages.
-+- ``pmd.net.sxe.tx`` (default level is **INFO**)
-+
-+  Affects tx-wide messages.
-+
-+------------------------------
-+
-+Refer to the document :ref:`compiling and testing a PMD for a NIC <pmd_build_and_test>`
-+for details.
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index b4499ec066..41b69267b9 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -106,6 +106,12 @@ New Features
-   Added handling of the key combination Control+L
-   to clear the screen before redisplaying the prompt.
- 
-+* **Added Linkdata sxe ethernet driver.**
-+
-+  Added support for Linkdata NIC series, including 1160-2X (supporting 10G).
-+  As these new models share hardware similarities with the existing 10G Sapphire NICs,
-+  many of the existing configurations and practices are expected to apply.
-+
- Removed Items
- -------------
- 
-diff --git a/drivers/net/sxe/meson.build b/drivers/net/sxe/meson.build
-new file mode 100644
-index 0000000000..dad9ee44a0
---- /dev/null
-+++ b/drivers/net/sxe/meson.build
-@@ -0,0 +1,9 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright (C), 2020, Wuxi Stars Micro System Technologies Co., Ltd.
-+
-+deps += ['hash']
-+sources = files(
-+        'pf/sxe_ethdev.c',
-+)
-+
-+includes += include_directories('pf')
-diff --git a/drivers/net/sxe/pf/sxe_ethdev.c b/drivers/net/sxe/pf/sxe_ethdev.c
-new file mode 100644
-index 0000000000..e31a23deeb
---- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_ethdev.c
-@@ -0,0 +1,3 @@
++++ b/drivers/net/sxe/include/sxe/sxe_cli.h
+@@ -0,0 +1,218 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2015-2024
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
-diff --git a/drivers/net/sxe/pf/sxe_ethdev.h b/drivers/net/sxe/pf/sxe_ethdev.h
++
++#ifndef __SXE_CLI_H__
++#define __SXE_CLI_H__
++
++#ifdef SXE_HOST_DRIVER
++#include "sxe_drv_type.h"
++#endif
++
++#define SXE_CODE_VERSION_LEN			(32)
++#define SXE_MAC_NUM				(128)
++#define SXE_PORT_TRANSCEIVER_LEN		(32)
++#define SXE_PORT_VENDOR_LEN			(32)
++#define SXE_CHIP_TYPE_LEN			(32)
++#define SXE_VPD_SN_LEN				(16)
++#define SXE_SOC_RST_TIME			(0x93A80)
++#define SXE_SFP_TEMP_THRESHOLD_INTERVAL		(3)
++#define MGC_TERMLOG_INFO_MAX_LEN		(12 * 1024)
++#define SXE_REGS_DUMP_MAX_LEN			(12 * 1024)
++#define SXE_PRODUCT_NAME_LEN			(32)
++
++typedef enum sxe_led_mode {
++	SXE_IDENTIFY_LED_BLINK_ON = 0,
++	SXE_IDENTIFY_LED_BLINK_OFF,
++	SXE_IDENTIFY_LED_ON,
++	SXE_IDENTIFY_LED_OFF,
++	SXE_IDENTIFY_LED_RESET,
++} sxe_led_mode_s;
++
++typedef struct sxe_led_ctrl {
++	U32	mode;
++	U32	duration;
++
++} sxe_led_ctrl_s;
++
++typedef struct sxe_led_ctrl_resp {
++	U32	ack;
++} sxe_led_ctrl_resp_s;
++
++typedef enum port_link_speed {
++	PORT_LINK_NO	= 0,
++	PORT_LINK_100M	= 1,
++	PORT_LINK_1G	= 2,
++	PORT_LINK_10G	= 3,
++} port_link_speed_e;
++
++typedef struct sys_soc_info {
++	S8	fw_ver[SXE_CODE_VERSION_LEN];
++	S8	opt_ver[SXE_CODE_VERSION_LEN];
++	U8	soc_status;
++	U8	pad[3];
++	S32	soc_temp;
++	U64	chipid;
++	S8	chip_type[SXE_CHIP_TYPE_LEN];
++	S8	pba[SXE_VPD_SN_LEN];
++	S8	product_name[SXE_PRODUCT_NAME_LEN];
++} sys_soc_info_s;
++
++typedef struct sys_port_info {
++	U64	mac[SXE_MAC_NUM];
++	U8	is_port_abs;
++	U8	link_stat;
++	U8	link_speed;
++
++
++	U8	is_sfp:1;
++	U8	is_get_info:1;
++	U8	rvd:6;
++	S8	optical_mod_temp;
++	U8	pad[3];
++	S8	transceiver_type[SXE_PORT_TRANSCEIVER_LEN];
++	S8	vendor_name[SXE_PORT_VENDOR_LEN];
++	S8	vendor_pn[SXE_PORT_VENDOR_LEN];
++} sys_port_info_s;
++
++typedef struct sys_info_resp {
++	sys_soc_info_s	soc_info;
++	sys_port_info_s	port_info;
++} sys_info_resp_s;
++
++typedef enum sfp_temp_td_mode {
++	SFP_TEMP_THRESHOLD_MODE_ALARM   = 0,
++	SFP_TEMP_THRESHOLD_MODE_WARN,
++} sfp_temp_td_mode_e;
++
++typedef struct sfp_temp_td_set {
++	U8	mode;
++	U8	pad[3];
++	S8	hthreshold;
++	S8	lthreshold;
++} sfp_temp_td_set_s;
++
++typedef struct sxe_log_export_resp {
++	U16	cur_log_len;
++	U8	is_end;
++	U8	pad;
++	S32	session_id;
++	S8	data[0];
++} sxe_log_export_resp_s;
++
++typedef enum sxe_log_export_type  {
++	SXE_LOG_EXPORT_REQ	= 0,
++	SXE_LOG_EXPORT_FIN,
++	SXE_LOG_EXPORT_ABORT,
++} sxe_log_export_type_e;
++
++typedef struct sxe_log_export_req {
++	U8	is_all_log;
++	U8	cmdtype;
++	U8	is_begin;
++	U8	pad;
++	S32	session_id;
++	U32	log_len;
++} sxe_log_export_req_s;
++
++typedef struct soc_rst_req {
++	U32	time;
++} soc_rst_req_s;
++
++typedef struct regs_dump_resp {
++	U32	curdw_len;
++	U8	data[0];
++} regs_dump_resp_s;
++
++enum {
++	SXE_MFG_PART_NUMBER_LEN   = 8,
++	SXE_MFG_SERIAL_NUMBER_LEN = 16,
++	SXE_MFG_REVISION_LEN	  = 4,
++	SXE_MFG_OEM_STR_LEN	   = 64,
++	SXE_MFG_SXE_BOARD_ASSEMBLY_LEN  = 32,
++	SXE_MFG_SXE_BOARD_TRACE_NUM_LEN = 16,
++	SXE_MFG_SXE_MAC_ADDR_CNT		= 2,
++};
++
++typedef struct sxe_mfg_info {
++	U8 part_number[SXE_MFG_PART_NUMBER_LEN];
++	U8 serial_number[SXE_MFG_SERIAL_NUMBER_LEN];
++	U32 mfg_date;
++	U8 revision[SXE_MFG_REVISION_LEN];
++	U32 rework_date;
++	U8 pad[4];
++	U64 mac_addr[SXE_MFG_SXE_MAC_ADDR_CNT];
++	U8 board_trace_num[SXE_MFG_SXE_BOARD_TRACE_NUM_LEN];
++	U8 board_assembly[SXE_MFG_SXE_BOARD_ASSEMBLY_LEN];
++	U8 extra1[SXE_MFG_OEM_STR_LEN];
++	U8 extra2[SXE_MFG_OEM_STR_LEN];
++} sxe_mfg_info_t;
++
++typedef struct sxe_lldp_info {
++	U8	lldp_state;
++	U8	pad[3];
++} sxe_lldp_info_t;
++
++typedef struct regs_dump_req {
++	U32	base_addr;
++	U32	dw_len;
++} regs_dump_req_s;
++
++typedef enum sxe_pcs_mode {
++	SXE_PCS_MODE_1000BASE_KX_WO = 0,
++	SXE_PCS_MODE_1000BASE_KX_W,
++	SXE_PCS_MODE_SGMII,
++	SXE_PCS_MODE_10GBASE_KR_WO,
++	SXE_PCS_MODE_AUTO_NEGT_73,
++	SXE_PCS_MODE_LPBK_PHY_TX2RX,
++	SXE_PCS_MODE_LPBK_PHY_RX2TX,
++	SXE_PCS_MODE_LPBK_PCS_RX2TX,
++	SXE_PCS_MODE_BUTT,
++} sxe_pcs_mode_e;
++
++typedef enum sxe_remote_fault_mode {
++	SXE_REMOTE_FALUT_NO_ERROR		= 0,
++	SXE_REMOTE_FALUT_OFFLINE,
++	SXE_REMOTE_FALUT_LINK_FAILURE,
++	SXE_REMOTE_FALUT_AUTO_NEGOTIATION,
++	SXE_REMOTE_UNKNOWN,
++} sxe_remote_fault_e;
++
++typedef struct sxe_phy_cfg {
++	sxe_pcs_mode_e mode;
++	U32 mtu;
++} sxe_pcs_cfg_s;
++
++typedef enum sxe_an_speed {
++	SXE_AN_SPEED_NO_LINK = 0,
++	SXE_AN_SPEED_100M,
++	SXE_AN_SPEED_1G,
++	SXE_AN_SPEED_10G,
++	SXE_AN_SPEED_UNKNOWN,
++} sxe_an_speed_e;
++
++typedef enum sxe_phy_pause_cap {
++	SXE_PAUSE_CAP_NO_PAUSE	= 0,
++	SXE_PAUSE_CAP_ASYMMETRIC_PAUSE,
++	SXE_PAUSE_CAP_SYMMETRIC_PAUSE,
++	SXE_PAUSE_CAP_BOTH_PAUSE,
++	SXE_PAUSE_CAP_UNKNOWN,
++} sxe_phy_pause_cap_e;
++
++typedef enum sxe_phy_duplex_type {
++	SXE_FULL_DUPLEX	= 0,
++	SXE_HALF_DUPLEX	= 1,
++	SXE_UNKNOWN_DUPLEX,
++} sxe_phy_duplex_type_e;
++
++typedef struct sxe_phy_an_cap {
++	sxe_remote_fault_e   remote_fault;
++	sxe_phy_pause_cap_e  pause_cap;
++	sxe_phy_duplex_type_e duplex_cap;
++} sxe_phy_an_cap_s;
++
++typedef struct sxe_an_cap {
++	sxe_phy_an_cap_s local;
++	sxe_phy_an_cap_s peer;
++} sxe_an_cap_s;
++#endif
+diff --git a/drivers/net/sxe/include/sxe/sxe_ioctl.h b/drivers/net/sxe/include/sxe/sxe_ioctl.h
 new file mode 100644
-index 0000000000..e31a23deeb
+index 0000000000..4a4b0bc304
 --- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_ethdev.h
-@@ -0,0 +1,3 @@
++++ b/drivers/net/sxe/include/sxe/sxe_ioctl.h
+@@ -0,0 +1,21 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2015-2024
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
++#ifndef _SXE_IOCTL_H_
++#define _SXE_IOCTL_H_
++
++#ifdef SXE_HOST_DRIVER
++#include "sxe_drv_type.h"
++#endif
++
++struct sxe_ioctl_sync_cmd {
++	U64   traceid;
++	void *in_data;
++	U32   in_len;
++	void *out_data;
++	U32   out_len;
++};
++
++#define SXE_CMD_IOCTL_SYNC_CMD _IOWR('M', 1, struct sxe_ioctl_sync_cmd)
++
++#endif
+diff --git a/drivers/net/sxe/sxe_testpmd.c b/drivers/net/sxe/sxe_testpmd.c
+new file mode 100644
+index 0000000000..6974bfe002
+--- /dev/null
++++ b/drivers/net/sxe/sxe_testpmd.c
+@@ -0,0 +1,66 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++#include <ethdev_driver.h>
++#include "sxe_drv_type.h"
++#include "sxe_ethdev.h"
++#include "rte_pmd_sxe.h"
++
++#include <cmdline_parse_etheraddr.h>
++#include <cmdline_parse_num.h>
++#include <cmdline_parse_string.h>
++
++#include "testpmd.h"
++
++struct led_ctrl_result {
++	cmdline_fixed_string_t port;
++	uint16_t port_id;
++	cmdline_fixed_string_t led;
++	cmdline_fixed_string_t action;
++};
++
++cmdline_parse_token_string_t cmd_led_ctrl_port =
++	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, port, "port");
++cmdline_parse_token_num_t cmd_led_ctrl_port_id =
++	TOKEN_NUM_INITIALIZER(struct led_ctrl_result, port_id, RTE_UINT16);
++cmdline_parse_token_string_t cmd_led_ctrl_led =
++	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, led, "led");
++cmdline_parse_token_string_t cmd_led_ctrl_action =
++	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, action, "on#off");
++
++static void cmd_led_ctrl_parsed(void *parsed_result,
++			__rte_unused struct cmdline *cl,
++			__rte_unused void *data)
++{
++	struct led_ctrl_result *res = parsed_result;
++
++	if (strcmp(res->action, "on") == 0)
++		rte_eth_led_on(res->port_id);
++	else
++		rte_eth_led_off(res->port_id);
++}
++
++cmdline_parse_inst_t  cmd_led_ctrl = {
++	.f = cmd_led_ctrl_parsed,
++	.data = NULL,
++	.help_str = "port <port_id> led on|off",
++	.tokens = {
++		(void *)&cmd_led_ctrl_port,
++		(void *)&cmd_led_ctrl_port_id,
++		(void *)&cmd_led_ctrl_led,
++		(void *)&cmd_led_ctrl_action,
++		NULL,
++	},
++};
++
++static struct testpmd_driver_commands sxe_cmds = {
++	.commands = {
++		{
++			&cmd_led_ctrl,
++			"port <port_id> led on|off\n"
++			"	Set led on or off.\n",
++		},
++		{ NULL, NULL },
++	},
++};
++TESTPMD_ADD_DRIVER_COMMANDS(sxe_cmds)
 -- 
 2.18.2
 
