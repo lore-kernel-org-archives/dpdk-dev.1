@@ -2,57 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95E7EDEBE6
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 18:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48E6EDEBE6
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 18:58:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A9FF40A6D;
-	Tue,  3 Mar 2026 19:58:36 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2F5D3410E3;
+	Tue,  3 Mar 2026 19:58:41 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id DA71140268
- for <dev@dpdk.org>; Tue,  3 Mar 2026 19:58:34 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1626E410DD
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 19:58:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772564314;
+ s=mimecast20190719; t=1772564319;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=lPYk7HYUP7vV3SpE3P9+DQxD9Ue8F76kGfC/3e2pSGg=;
- b=QOUoRut1bHHJSUICpt5IbhusFsD9QgjGgF/5PJLQwa3GfzNdvrcblC64vsu2txj+JUpMJq
- JCv7q1lr+GI+3NU2AunKis6dA2ZWsppo89PIEcSp46pjTLy+B7GVZ1LMS53C7anQb48xbC
- AOyglc4bHuFkFiZ6Yaq3ZSsAgimCknE=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ bh=64sNpXIBg/yfU7kWE4A7jdYbIgInBTy1rM17RQ2s23A=;
+ b=W0w0EeavMAkwXl72ySNv0fTnb08ROZuuXj1oU0c5LOzhYKPsyyIUXRTPmgqNbdyzdvuVN0
+ MwV93m6ZzLCfXCyf1no7lQF5x+O1r05YnYx3wmK1btgnpEpk0QKTlex2pPbOStbGr2JDWB
+ K2gXSVTiZ77GHoMrPCygu7ilF7lQyS8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-4iR2ThyVM3-NdIVJmK0iMQ-1; Tue,
- 03 Mar 2026 13:58:33 -0500
-X-MC-Unique: 4iR2ThyVM3-NdIVJmK0iMQ-1
-X-Mimecast-MFC-AGG-ID: 4iR2ThyVM3-NdIVJmK0iMQ_1772564312
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-320-seQJXiFEOb2zfhhOgm16yw-1; Tue,
+ 03 Mar 2026 13:58:36 -0500
+X-MC-Unique: seQJXiFEOb2zfhhOgm16yw-1
+X-Mimecast-MFC-AGG-ID: seQJXiFEOb2zfhhOgm16yw_1772564315
 Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 97C6E1956094; Tue,  3 Mar 2026 18:58:31 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 2478A1956089; Tue,  3 Mar 2026 18:58:35 +0000 (UTC)
 Received: from rh.redhat.com (unknown [10.45.224.158])
  by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 914E71800576; Tue,  3 Mar 2026 18:58:28 +0000 (UTC)
+ id 1B01C1800590; Tue,  3 Mar 2026 18:58:31 +0000 (UTC)
 From: Kevin Traynor <ktraynor@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, david.marchand@redhat.com, dsosnowski@nvidia.com,
  viacheslavo@nvidia.com, hkalra@marvell.com, stephen@networkplumber.org,
  Kevin Traynor <ktraynor@redhat.com>, stable@dpdk.org
-Subject: [PATCH v5 1/3] eal/linux: handle interrupt epoll events
-Date: Tue,  3 Mar 2026 18:58:16 +0000
-Message-ID: <20260303185818.28689-2-ktraynor@redhat.com>
+Subject: [PATCH v5 2/3] eal/interrupt: add interrupt event info
+Date: Tue,  3 Mar 2026 18:58:17 +0000
+Message-ID: <20260303185818.28689-3-ktraynor@redhat.com>
 In-Reply-To: <20260303185818.28689-1-ktraynor@redhat.com>
 References: <20260128122055.192104-1-ktraynor@redhat.com>
  <20260303185818.28689-1-ktraynor@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 4AeofEKW-Za4G8SJ5oWjUlwaEyNmehVqv6r6kJdWZZ4_1772564312
+X-Mimecast-MFC-PROC-ID: 6ymh1fdSlo6AGS7KOYES0XJARD3-r-M2vyTIaAnC9yU_1772564315
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -69,126 +69,147 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add handling for epoll error and disconnect conditions EPOLLERR,
-EPOLLHUP and EPOLLRDHUP.
+Add RTE_INTR_EVENT_* defines and a new internal API
+rte_intr_active_events_flags() in order to retrieve them.
 
-These events indicate that the interrupt file descriptor is in
-an error state or there has been a hangup.
+As the events are in the context of the current interrupt,
+rte_intr_active_events_flags() must be called from the context of
+an interrupt callback.
 
-Only do this for interrupts that are read in eal. Interrupts that
-are read outside eal should deal with disconnect/error events
-appropriate to their functionality. e.g. virtio interrupt handling
-has reconnect mechanisms for some cases.
-
-Also, treat no bytes read as an error condition.
-
-Bugzilla ID: 1873
-Fixes: af75078fece3 ("first public release")
 Cc: stable@dpdk.org
 
 Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
-Acked-by: David Marchand <david.marchand@redhat.com>
 Acked-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eal/linux/eal_interrupts.c | 72 ++++++++++++++++++++++------------
- 1 file changed, 46 insertions(+), 26 deletions(-)
+ lib/eal/freebsd/eal_interrupts.c |  7 +++++++
+ lib/eal/include/rte_interrupts.h | 21 +++++++++++++++++++++
+ lib/eal/linux/eal_interrupts.c   | 31 ++++++++++++++++++++++++++++++-
+ lib/eal/windows/eal_interrupts.c |  7 +++++++
+ 4 files changed, 65 insertions(+), 1 deletion(-)
 
+diff --git a/lib/eal/freebsd/eal_interrupts.c b/lib/eal/freebsd/eal_interrupts.c
+index 5c3ab6699e..bb2bc529f2 100644
+--- a/lib/eal/freebsd/eal_interrupts.c
++++ b/lib/eal/freebsd/eal_interrupts.c
+@@ -769,2 +769,9 @@ int rte_thread_is_intr(void)
+ 	return rte_thread_equal(intr_thread, rte_thread_self());
+ }
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_active_events_flags)
++uint32_t
++rte_intr_active_events_flags(void)
++{
++	return 0;
++}
+diff --git a/lib/eal/include/rte_interrupts.h b/lib/eal/include/rte_interrupts.h
+index 1b9a0b2a78..0ae16bbe19 100644
+--- a/lib/eal/include/rte_interrupts.h
++++ b/lib/eal/include/rte_interrupts.h
+@@ -40,4 +40,10 @@ struct rte_intr_handle;
+ #define RTE_INTR_VEC_RXTX_OFFSET      1
+ 
++/** Interrupt event flags returned by rte_intr_active_events_flags() */
++#define RTE_INTR_EVENT_IN    RTE_BIT32(0)  /**< Data available to read */
++#define RTE_INTR_EVENT_ERR   RTE_BIT32(1)  /**< Error condition on fd */
++#define RTE_INTR_EVENT_HUP   RTE_BIT32(2)  /**< Hang up / disconnect */
++#define RTE_INTR_EVENT_RDHUP RTE_BIT32(3)  /**< Read hang up / disconnect */
++
+ /**
+  * The interrupt source type, e.g. UIO, VFIO, ALARM etc.
+@@ -197,4 +203,19 @@ int rte_intr_ack(const struct rte_intr_handle *intr_handle);
+ int rte_thread_is_intr(void);
+ 
++/**
++ * @internal
++ * Return the event flags for the interrupt currently being processed.
++ *
++ * Must be called from an interrupt callback running on the EAL
++ * interrupt thread. The returned value is a bitmask of
++ * RTE_INTR_EVENT_* flags.
++ *
++ * @return
++ *   Active event flags, or 0 if not in interrupt context or
++ *   on platforms that do not support this feature.
++ */
++__rte_internal
++uint32_t rte_intr_active_events_flags(void);
++
+ /**
+  * It allocates memory for interrupt instance. API takes flag as an argument
 diff --git a/lib/eal/linux/eal_interrupts.c b/lib/eal/linux/eal_interrupts.c
-index 9db978923a..f3f6bdd01d 100644
+index f3f6bdd01d..5d0607effe 100644
 --- a/lib/eal/linux/eal_interrupts.c
 +++ b/lib/eal/linux/eal_interrupts.c
-@@ -887,4 +887,26 @@ rte_intr_disable(const struct rte_intr_handle *intr_handle)
+@@ -41,4 +41,6 @@
+ static RTE_DEFINE_PER_LCORE(int, _epfd) = -1; /**< epoll fd per thread */
+ 
++static uint32_t active_events; /**< events for active interrupt */
++
+ /**
+  * union for pipe fds.
+@@ -887,4 +889,20 @@ rte_intr_disable(const struct rte_intr_handle *intr_handle)
  }
  
-+static void
-+eal_intr_source_remove_and_free(struct rte_intr_source *src)
++static uint32_t
++epoll_to_intr_events(uint32_t epoll_events)
 +{
-+	struct rte_intr_callback *cb, *next;
++	uint32_t ev = 0;
 +
-+	/* Remove the interrupt source */
-+	rte_spinlock_lock(&intr_lock);
-+	TAILQ_REMOVE(&intr_sources, src, next);
-+	rte_spinlock_unlock(&intr_lock);
-+
-+	/* Free callbacks */
-+	for (cb = TAILQ_FIRST(&src->callbacks); cb; cb = next) {
-+		next = TAILQ_NEXT(cb, next);
-+		TAILQ_REMOVE(&src->callbacks, cb, next);
-+		free(cb);
-+	}
-+
-+	/* Free the interrupt source */
-+	rte_intr_instance_free(src->intr_handle);
-+	free(src);
++	if (epoll_events & EPOLLIN)
++		ev |= RTE_INTR_EVENT_IN;
++	if (epoll_events & EPOLLERR)
++		ev |= RTE_INTR_EVENT_ERR;
++	if (epoll_events & EPOLLHUP)
++		ev |= RTE_INTR_EVENT_HUP;
++	if (epoll_events & EPOLLRDHUP)
++		ev |= RTE_INTR_EVENT_RDHUP;
++	return ev;
 +}
 +
- static int
- eal_intr_process_interrupts(struct epoll_event *events, int nfds)
-@@ -952,40 +974,38 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
+ static void
+ eal_intr_source_remove_and_free(struct rte_intr_source *src)
+@@ -1014,5 +1032,5 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
  
- 		if (bytes_read > 0) {
--			/**
-+			/*
-+			 * Check for epoll error or disconnect events for
-+			 * interrupts that are read directly in eal.
-+			 */
-+			if (events[n].events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
-+				EAL_LOG(ERR, "Disconnect condition on fd %d "
-+					"(events=0x%x), removing from epoll",
-+					events[n].data.fd, events[n].events);
-+				eal_intr_source_remove_and_free(src);
-+				return -1;
-+			}
-+
-+			/*
- 			 * read out to clear the ready-to-be-read flag
- 			 * for epoll_wait.
- 			 */
- 			bytes_read = read(events[n].data.fd, &buf, bytes_read);
--			if (bytes_read < 0) {
-+			if (bytes_read > 0) {
-+				call = true;
-+			} else if (bytes_read < 0) {
- 				if (errno == EINTR || errno == EWOULDBLOCK)
- 					continue;
- 
--				EAL_LOG(ERR, "Error reading from file "
--					"descriptor %d: %s",
-+				EAL_LOG(ERR, "Error reading from file descriptor %d: %s",
- 					events[n].data.fd,
- 					strerror(errno));
--				/*
--				 * The device is unplugged or buggy, remove
--				 * it as an interrupt source and return to
--				 * force the wait list to be rebuilt.
--				 */
--				rte_spinlock_lock(&intr_lock);
--				TAILQ_REMOVE(&intr_sources, src, next);
--				rte_spinlock_unlock(&intr_lock);
+ 		if (call) {
 -
--				for (cb = TAILQ_FIRST(&src->callbacks); cb;
--							cb = next) {
--					next = TAILQ_NEXT(cb, next);
--					TAILQ_REMOVE(&src->callbacks, cb, next);
--					free(cb);
--				}
--				rte_intr_instance_free(src->intr_handle);
--				free(src);
-+			} else {
-+				EAL_LOG(ERR, "Read nothing from file descriptor %d",
-+					events[n].data.fd);
-+			}
-+			if (bytes_read <= 0) {
-+				eal_intr_source_remove_and_free(src);
- 				return -1;
--			} else if (bytes_read == 0)
--				EAL_LOG(ERR, "Read nothing from file "
--					"descriptor %d", events[n].data.fd);
--			else
--				call = true;
-+			}
++			active_events = epoll_to_intr_events(events[n].events);
+ 			/* Finally, call all callbacks. */
+ 			TAILQ_FOREACH(cb, &src->callbacks, next) {
+@@ -1028,4 +1046,5 @@ eal_intr_process_interrupts(struct epoll_event *events, int nfds)
+ 				rte_spinlock_lock(&intr_lock);
+ 			}
++			active_events = 0;
  		}
+ 		/* we done with that interrupt source, release it. */
+@@ -1642,2 +1661,12 @@ int rte_thread_is_intr(void)
+ 	return rte_thread_equal(intr_thread, rte_thread_self());
+ }
++
++RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_active_events_flags)
++uint32_t
++rte_intr_active_events_flags(void)
++{
++	if (rte_thread_is_intr())
++		return active_events;
++
++	return 0;
++}
+diff --git a/lib/eal/windows/eal_interrupts.c b/lib/eal/windows/eal_interrupts.c
+index 5ff30c7631..5650b84d1f 100644
+--- a/lib/eal/windows/eal_interrupts.c
++++ b/lib/eal/windows/eal_interrupts.c
+@@ -117,4 +117,11 @@ rte_thread_is_intr(void)
+ }
  
++RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_active_events_flags)
++uint32_t
++rte_intr_active_events_flags(void)
++{
++	return 0;
++}
++
+ RTE_EXPORT_INTERNAL_SYMBOL(rte_intr_rx_ctl)
+ int
 -- 
 2.53.0
 
