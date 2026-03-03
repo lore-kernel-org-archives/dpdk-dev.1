@@ -2,29 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625D7EDEBF0
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 20:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F13EDEBFA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 22:16:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5341B42759;
-	Tue,  3 Mar 2026 21:54:28 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 44E754113C;
- Tue,  3 Mar 2026 21:54:25 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id C5ACF20B6F02; Tue,  3 Mar 2026 12:54:24 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C5ACF20B6F02
-From: Long Li <longli@microsoft.com>
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org, longli@microsoft.com, weh@microsoft.com,
- stable@dpdk.org
-Subject: [PATCH v4 6/6] net/netvsc: support runtime queue count reconfiguration
-Date: Tue,  3 Mar 2026 12:54:09 -0800
-Message-ID: <20260303205411.325585-7-longli@microsoft.com>
-X-Mailer: git-send-email 2.43.7
+	by mails.dpdk.org (Postfix) with ESMTP id 20095402E6;
+	Tue,  3 Mar 2026 23:16:10 +0100 (CET)
+Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
+ by mails.dpdk.org (Postfix) with ESMTP id 0BEEA402AA
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 23:16:08 +0100 (CET)
+Received: by mail-dl1-f54.google.com with SMTP id
+ a92af1059eb24-1270adc5121so7830522c88.0
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 14:16:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772576168;
+ x=1773180968; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=aDbKqpfHN6rbSN5FdLdydx6O1s9vy+bbRiTTXcoNDT4=;
+ b=F7fmrBfoHx5QTOwkRFCfejdvHL4eDZ52SpfqKohTeUTDsvrwzEOK6RlyZKjZTT82pp
+ YU2t5YVF0PIyrPJYQc1tGrUOcHh+NiEYvMQiM0KAmqfiKsi9JavqLYyl2ZijikGRWfNy
+ KA7Syj0ZNU3zcD8+4JCQJwUo5Yh8L5DKf+pDVUQuBRVWvrDAuQQoCrrAeQJjfGf4ZUPd
+ wU5/4ySdZhli27M0Hq3hWDvG9HNZNe40pupysonZgxU9OLfbWo4r/S4dUZ3WZrNZM4Nk
+ ENnfDiP9GLJoWx+ZhYgpF+hyzSgv+MomWClJqubJa8LsQE+zWb63oXYZAxa4EAnkWnrg
+ nrfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772576168; x=1773180968;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=aDbKqpfHN6rbSN5FdLdydx6O1s9vy+bbRiTTXcoNDT4=;
+ b=U/nWZPMVfF2EBqAO08mzf4z3cPNwUEUbR8/uexQLLoF5Q2OhNsEmbJjIUxpS/bzypB
+ OYsLzC59i8Z2b5spVQFovZBEbEgN9GbkESTSvrMb70l6kakmRmjeYkBhUmbcmCGgeuCT
+ 05eJWAO5KjCuKGNw1H1/2YNpM9+DVOfCvKju5BdwTcpDPyzfjOXNb7Zo4mx1EdERDXnH
+ UG5Mwz+9/TAd4molcoX28N48G8O8kNDbyfne0awTKdpt6hsLrGYtFo9M3ol+YI/LfGkE
+ miEhiwfq+twmFifu8Lai73gvtVEneR6w+DBsehZtqtUfz18P9I+gOAdc1gD3hXuqCAqA
+ I5Tg==
+X-Gm-Message-State: AOJu0Ywpxnej8tahNDCP9avdBlNqNFKSmyOcjKsSnb49SfkWxnTwwqpK
+ X9pAK7N+Xl18OuCLxghLQloPt7h+4rucmpPfmdzMn7cysp/XrWvtIzytC7D0KLg4xy0=
+X-Gm-Gg: ATEYQzzUzl0HW7yLh6mjCsJZoL3IKLu2BW7Sho1zo6cpDD2tHT3qbAps3kZOjB8xkDQ
+ 3jaSneD2OoGC5w+7F7QfS5zbYjyykyf6CJ5XV1yyDxlXeSmTEqk0dHQ9HNlf8gJA/FpKEqSVrVJ
+ +0V7dCWiN0fhYQGn6gupejW+ZCFrAvRx4uterJBnkbqWvsZIX9PNjeFMmPf/bVCMpuRP9AQFdS8
+ iOj0gbYWzkuVNzBzyjuehbjfBhdQquBMYZer6ltRFx6c/X1ht3LVhbFYiNYxfIlHPCFUlEPSJ4h
+ t1Bd60V/wlQQoM9ATS8ffoCRa4JRz3uM95kgHooJt73vScSIM9aKq49+EEfYf8r3ZuHkdbaVnnE
+ rfDHrPyTMqNvtkr53XOIWQZxxtfV87Uq73vPEGwQ7b/AWgz8v2/C0fN5WZ0IzPlLcRe/U1N9qRc
+ dvnjxYoAYxtQBtSA6oWkvPQbhtvr/mYnceLCmAYVl2zOFVy4nHm3HJZ26Qg4bPoX6a
+X-Received: by 2002:a05:693c:8151:b0:2be:2b16:b99f with SMTP id
+ 5a478bee46e88-2be2b170190mr447670eec.13.1772576167744; 
+ Tue, 03 Mar 2026 14:16:07 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2be2ae7a2f5sm970051eec.33.2026.03.03.14.16.07
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 03 Mar 2026 14:16:07 -0800 (PST)
+Date: Tue, 3 Mar 2026 14:16:05 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Long Li <longli@microsoft.com>
+Cc: dev@dpdk.org, weh@microsoft.com, stable@dpdk.org
+Subject: Re: [PATCH v4 0/6] net/netvsc: bug fixes and runtime queue
+ reconfiguration
+Message-ID: <20260303141605.02edf0e7@phoenix.local>
 In-Reply-To: <20260303205411.325585-1-longli@microsoft.com>
 References: <20260303205411.325585-1-longli@microsoft.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -38,340 +80,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for changing the number of RX/TX queues at runtime
-via port stop/configure/start. When the queue count changes,
-perform a full NVS/RNDIS teardown and reinit to allocate fresh
-VMBus subchannels matching the new queue count, then reconfigure
-RSS indirection table accordingly.
+On Tue,  3 Mar 2026 12:54:03 -0800
+Long Li <longli@microsoft.com> wrote:
 
-Key changes:
-- hn_dev_configure: detect queue count changes and perform full
-  NVS session reinit with subchannel teardown/recreation
-- hn_dev_stop: drain pending TX completions (up to 1s) to prevent
-  stale completions from corrupting queue state after reconfig
-- hn_vf_tx/rx_queue_release: use write lock when nulling VF queue
-  pointers to prevent use-after-free with concurrent fast-path
-  readers
+> This series fixes several resource management bugs in the netvsc PMD and
+> adds support for runtime queue count reconfiguration.
+>=20
+> Patches 1-5 are bug fixes:
+>   1. Subchannel leak on device removal =E2=80=94 subchannels allocated du=
+ring
+>      configure are never closed in uninit.
+>   2. Double-free of primary Rx queue =E2=80=94 hn_dev_free_queues() alrea=
+dy
+>      frees hv->primary, then uninit frees it again.
+>   3. Init error path leaks =E2=80=94 hv->primary and hv->channels[0] not =
+freed
+>      on failure after allocation.
+>   4. Event callback leak =E2=80=94 device event callback not unregistered=
+ when
+>      rxfilter or vf_start fails in hn_dev_start().
+>   5. MTU change path leaks =E2=80=94 missing chimney bitmap teardown/rebu=
+ild,
+>      rxbuf_info leak, stale subchannel pointers, and VMBus channel
+>      close before free.
+>=20
+> Patch 6 adds runtime queue count reconfiguration via port
+> stop/configure/start, with full NVS/RNDIS session teardown and reinit
+> when the queue count changes.
+>=20
+> Tested:
+>   - Queue reconfig: 4=E2=86=922=E2=86=928 queues, all transitions success=
+ful
+>   - MTU changes: 1500=E2=86=924000=E2=86=928000 with rxd/txd=3D2048, no c=
+rashes
+>   - TX pps: 15.5M (1500B), 6.1M (4000B), 3.1M (8000B)
+>   - RX pps: 7.6M (1500B), 2.7M (4000B), 1.4M (8000B)
 
-Signed-off-by: Long Li <longli@microsoft.com>
----
-v4: No changes.
-v3: Fix subchan_cleanup to call hn_rndis_conf_offload. Fix recovery
-    path to set hv->primary->chan and call hn_chim_init.
-v2: Split subchannel leak fix to separate patch. Fix reinit_failed
-    recovery to re-map before chan_open. Move hn_rndis_conf_offload
-    after reinit block. Use write lock in VF queue release. Reset
-    RSS table in subchan_cleanup error path.
----
- drivers/net/netvsc/hn_ethdev.c | 194 +++++++++++++++++++++++++++++++--
- drivers/net/netvsc/hn_vf.c     |  16 ++-
- 2 files changed, 194 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index 23114a7c22..0b3eeb23cc 100644
---- a/drivers/net/netvsc/hn_ethdev.c
-+++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -745,6 +745,9 @@ netvsc_hotadd_callback(const char *device_name, enum rte_dev_event_type type,
- 	}
- }
- 
-+static void hn_detach(struct hn_data *hv);
-+static int hn_attach(struct hn_data *hv, unsigned int mtu);
-+
- static int hn_dev_configure(struct rte_eth_dev *dev)
- {
- 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
-@@ -754,6 +757,8 @@ static int hn_dev_configure(struct rte_eth_dev *dev)
- 	struct hn_data *hv = dev->data->dev_private;
- 	uint64_t unsupported;
- 	int i, err, subchan;
-+	uint32_t old_subchans = 0;
-+	bool device_unmapped = false;
- 
- 	PMD_INIT_FUNC_TRACE();
- 
-@@ -778,36 +783,111 @@ static int hn_dev_configure(struct rte_eth_dev *dev)
- 
- 	hv->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
- 
--	err = hn_rndis_conf_offload(hv, txmode->offloads,
--				    rxmode->offloads);
--	if (err) {
--		PMD_DRV_LOG(NOTICE,
--			    "offload configure failed");
--		return err;
--	}
-+	/* If queue count unchanged, skip subchannel teardown/reinit */
-+	if (RTE_MAX(dev->data->nb_rx_queues,
-+		    dev->data->nb_tx_queues) == hv->num_queues)
-+		goto skip_reinit;
- 
- 	hv->num_queues = RTE_MAX(dev->data->nb_rx_queues,
- 				 dev->data->nb_tx_queues);
- 
-+	/* Close all existing subchannels */
-+	for (i = 1; i < HN_MAX_CHANNELS; i++) {
-+		if (hv->channels[i] != NULL) {
-+			rte_vmbus_chan_close(hv->channels[i]);
-+			hv->channels[i] = NULL;
-+			old_subchans++;
-+		}
-+	}
-+
-+	/*
-+	 * If subchannels existed, do a full NVS/RNDIS teardown
-+	 * and vmbus re-init to ensure a clean NVS session.
-+	 * Cannot re-send NVS subchannel request on the same
-+	 * session without invalidating the data path.
-+	 */
-+	if (old_subchans > 0) {
-+		PMD_DRV_LOG(NOTICE,
-+			    "reinit NVS (had %u subchannels)",
-+			    old_subchans);
-+
-+		hn_chim_uninit(dev);
-+		rte_free(hv->primary->rxbuf_info);
-+		hv->primary->rxbuf_info = NULL;
-+		hn_detach(hv);
-+
-+		rte_vmbus_chan_close(hv->channels[0]);
-+		rte_free(hv->channels[0]);
-+		hv->channels[0] = NULL;
-+
-+		rte_vmbus_unmap_device(hv->vmbus);
-+		device_unmapped = true;
-+		err = rte_vmbus_map_device(hv->vmbus);
-+		if (err) {
-+			PMD_DRV_LOG(ERR,
-+				    "Could not re-map vmbus device!");
-+			goto reinit_failed;
-+		}
-+		device_unmapped = false;
-+
-+		hv->rxbuf_res = hv->vmbus->resource[HV_RECV_BUF_MAP];
-+		hv->chim_res  = hv->vmbus->resource[HV_SEND_BUF_MAP];
-+
-+		err = rte_vmbus_chan_open(hv->vmbus, &hv->channels[0]);
-+		if (err) {
-+			PMD_DRV_LOG(ERR,
-+				    "Could not re-open vmbus channel!");
-+			goto reinit_failed;
-+		}
-+
-+		hv->primary->chan = hv->channels[0];
-+
-+		rte_vmbus_set_latency(hv->vmbus, hv->channels[0],
-+				      hv->latency);
-+
-+		err = hn_attach(hv, dev->data->mtu);
-+		if (err) {
-+			rte_vmbus_chan_close(hv->channels[0]);
-+			rte_free(hv->channels[0]);
-+			hv->channels[0] = NULL;
-+			PMD_DRV_LOG(ERR,
-+				    "NVS reinit failed: %d", err);
-+			goto reinit_failed;
-+		}
-+
-+		err = hn_chim_init(dev);
-+		if (err) {
-+			hn_detach(hv);
-+			rte_vmbus_chan_close(hv->channels[0]);
-+			rte_free(hv->channels[0]);
-+			hv->channels[0] = NULL;
-+			PMD_DRV_LOG(ERR,
-+				    "chim reinit failed: %d", err);
-+			goto reinit_failed;
-+		}
-+	}
-+
- 	for (i = 0; i < NDIS_HASH_INDCNT; i++)
- 		hv->rss_ind[i] = i % dev->data->nb_rx_queues;
- 
- 	hn_rss_hash_init(hv, rss_conf);
- 
- 	subchan = hv->num_queues - 1;
-+
-+	/* Allocate fresh subchannels and configure RSS */
- 	if (subchan > 0) {
- 		err = hn_subchan_configure(hv, subchan);
- 		if (err) {
- 			PMD_DRV_LOG(NOTICE,
- 				    "subchannel configuration failed");
--			return err;
-+			goto subchan_cleanup;
- 		}
- 
- 		err = hn_rndis_conf_rss(hv, NDIS_RSS_FLAG_DISABLE);
- 		if (err) {
- 			PMD_DRV_LOG(NOTICE,
- 				"rss disable failed");
--			return err;
-+			goto subchan_cleanup;
- 		}
- 
- 		if (rss_conf->rss_hf != 0) {
-@@ -815,12 +895,82 @@ static int hn_dev_configure(struct rte_eth_dev *dev)
- 			if (err) {
- 				PMD_DRV_LOG(NOTICE,
- 					    "initial RSS config failed");
--				return err;
-+				goto subchan_cleanup;
- 			}
- 		}
- 	}
- 
-+skip_reinit:
-+	/* Apply offload config after reinit so it targets the final RNDIS session */
-+	err = hn_rndis_conf_offload(hv, txmode->offloads,
-+				    rxmode->offloads);
-+	if (err) {
-+		PMD_DRV_LOG(NOTICE,
-+			    "offload configure failed");
-+		return err;
-+	}
-+
- 	return hn_vf_configure_locked(dev, dev_conf);
-+
-+subchan_cleanup:
-+	for (i = 1; i < HN_MAX_CHANNELS; i++) {
-+		if (hv->channels[i] != NULL) {
-+			rte_vmbus_chan_close(hv->channels[i]);
-+			hv->channels[i] = NULL;
-+		}
-+	}
-+	hv->num_queues = 1;
-+	for (i = 0; i < NDIS_HASH_INDCNT; i++)
-+		hv->rss_ind[i] = 0;
-+
-+	/* Apply offload config so device is usable on primary queue */
-+	hn_rndis_conf_offload(hv, txmode->offloads, rxmode->offloads);
-+	return err;
-+
-+reinit_failed:
-+	/*
-+	 * Device is in a broken state after failed reinit.
-+	 * Try to re-establish minimal connectivity.
-+	 */
-+	PMD_DRV_LOG(ERR,
-+		    "reinit failed (err %d), attempting recovery", err);
-+	if (hv->channels[0] == NULL) {
-+		if (device_unmapped) {
-+			if (rte_vmbus_map_device(hv->vmbus)) {
-+				hv->num_queues = 0;
-+				PMD_DRV_LOG(ERR,
-+					    "recovery failed, could not re-map device");
-+				return err;
-+			}
-+			hv->rxbuf_res = hv->vmbus->resource[HV_RECV_BUF_MAP];
-+			hv->chim_res  = hv->vmbus->resource[HV_SEND_BUF_MAP];
-+		}
-+		if (rte_vmbus_chan_open(hv->vmbus, &hv->channels[0]) == 0) {
-+			if (hn_attach(hv, dev->data->mtu) == 0) {
-+				hv->primary->chan = hv->channels[0];
-+				if (hn_chim_init(dev) != 0)
-+					PMD_DRV_LOG(WARNING,
-+						    "chim reinit failed during recovery");
-+				hv->num_queues = 1;
-+				PMD_DRV_LOG(NOTICE,
-+					    "recovery successful on primary channel");
-+			} else {
-+				rte_vmbus_chan_close(hv->channels[0]);
-+				rte_free(hv->channels[0]);
-+				hv->channels[0] = NULL;
-+				hv->num_queues = 0;
-+				PMD_DRV_LOG(ERR,
-+					    "recovery failed, device unusable");
-+			}
-+		} else {
-+			hv->num_queues = 0;
-+			PMD_DRV_LOG(ERR,
-+				    "recovery failed, device unusable");
-+		}
-+	} else {
-+		hv->num_queues = 1;
-+	}
-+	return err;
- }
- 
- static int hn_dev_stats_get(struct rte_eth_dev *dev,
-@@ -1073,6 +1223,7 @@ hn_dev_stop(struct rte_eth_dev *dev)
- {
- 	struct hn_data *hv = dev->data->dev_private;
- 	int i, ret;
-+	unsigned int retry;
- 
- 	PMD_INIT_FUNC_TRACE();
- 	dev->data->dev_started = 0;
-@@ -1081,6 +1232,29 @@ hn_dev_stop(struct rte_eth_dev *dev)
- 	hn_rndis_set_rxfilter(hv, 0);
- 	ret = hn_vf_stop(dev);
- 
-+	/*
-+	 * Drain pending TX completions to prevent stale completions
-+	 * from corrupting queue state after port reconfiguration.
-+	 */
-+	for (retry = 0; retry < 100; retry++) {
-+		uint32_t pending = 0;
-+
-+		for (i = 0; i < hv->num_queues; i++) {
-+			struct hn_tx_queue *txq = dev->data->tx_queues[i];
-+
-+			if (txq == NULL)
-+				continue;
-+			hn_process_events(hv, i, 0);
-+			pending += rte_mempool_in_use_count(txq->txdesc_pool);
-+		}
-+		if (pending == 0)
-+			break;
-+		rte_delay_ms(10);
-+	}
-+	if (retry >= 100)
-+		PMD_DRV_LOG(WARNING,
-+			    "Failed to drain all TX completions");
-+
- 	for (i = 0; i < hv->num_queues; i++) {
- 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
- 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-diff --git a/drivers/net/netvsc/hn_vf.c b/drivers/net/netvsc/hn_vf.c
-index 0ecfaf54ea..e77232bfb3 100644
---- a/drivers/net/netvsc/hn_vf.c
-+++ b/drivers/net/netvsc/hn_vf.c
-@@ -637,12 +637,14 @@ void hn_vf_tx_queue_release(struct hn_data *hv, uint16_t queue_id)
- {
- 	struct rte_eth_dev *vf_dev;
- 
--	rte_rwlock_read_lock(&hv->vf_lock);
-+	rte_rwlock_write_lock(&hv->vf_lock);
- 	vf_dev = hn_get_vf_dev(hv);
--	if (vf_dev && vf_dev->dev_ops->tx_queue_release)
-+	if (vf_dev && vf_dev->dev_ops->tx_queue_release) {
- 		(*vf_dev->dev_ops->tx_queue_release)(vf_dev, queue_id);
-+		vf_dev->data->tx_queues[queue_id] = NULL;
-+	}
- 
--	rte_rwlock_read_unlock(&hv->vf_lock);
-+	rte_rwlock_write_unlock(&hv->vf_lock);
- }
- 
- int hn_vf_rx_queue_setup(struct rte_eth_dev *dev,
-@@ -669,11 +671,13 @@ void hn_vf_rx_queue_release(struct hn_data *hv, uint16_t queue_id)
- {
- 	struct rte_eth_dev *vf_dev;
- 
--	rte_rwlock_read_lock(&hv->vf_lock);
-+	rte_rwlock_write_lock(&hv->vf_lock);
- 	vf_dev = hn_get_vf_dev(hv);
--	if (vf_dev && vf_dev->dev_ops->rx_queue_release)
-+	if (vf_dev && vf_dev->dev_ops->rx_queue_release) {
- 		(*vf_dev->dev_ops->rx_queue_release)(vf_dev, queue_id);
--	rte_rwlock_read_unlock(&hv->vf_lock);
-+		vf_dev->data->rx_queues[queue_id] = NULL;
-+	}
-+	rte_rwlock_write_unlock(&hv->vf_lock);
- }
- 
- int hn_vf_stats_get(struct rte_eth_dev *dev,
--- 
-2.43.0
+Looks good, applied to next-net.
 
+PS: had to argue with Claude to get it to understand relationship
+between queues and vmbus channels
