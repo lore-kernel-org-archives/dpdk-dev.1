@@ -2,93 +2,112 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E58EDA6BE
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 17:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB84EDA6BE
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 18:02:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B41A3402AA;
-	Tue,  3 Mar 2026 18:41:06 +0100 (CET)
-Received: from mail-qv1-f99.google.com (mail-qv1-f99.google.com
- [209.85.219.99]) by mails.dpdk.org (Postfix) with ESMTP id 04CE940268
- for <dev@dpdk.org>; Tue,  3 Mar 2026 18:41:04 +0100 (CET)
-Received: by mail-qv1-f99.google.com with SMTP id
- 6a1803df08f44-899fc265126so30654316d6.1
- for <dev@dpdk.org>; Tue, 03 Mar 2026 09:41:04 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1AAE040E13;
+	Tue,  3 Mar 2026 19:02:16 +0100 (CET)
+Received: from mail-dl1-f98.google.com (mail-dl1-f98.google.com [74.125.82.98])
+ by mails.dpdk.org (Postfix) with ESMTP id 9BA23402AA
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 19:02:14 +0100 (CET)
+Received: by mail-dl1-f98.google.com with SMTP id
+ a92af1059eb24-1270ac5d3efso5820382c88.1
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 10:02:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772559664; x=1773164464;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=OwAlsXu1exn4yadCEr1u6ZenBltA1eRAzwV/N6kxXaE=;
- b=PbSu9cGD+pHff1mJYBAhYqFGebnR8jwKWOm/+pANf7HDbl1DYIMqVq+yHpa3WMzanJ
- tfbdLhlxRPgsYh19lyhQSispZnfvpR/YXPROMGveN//JtaTkeMWqRnnAd+brrJXqMvqm
- 4mYEVFb2GUyVL2IzpnEwQjmixFFwCNTlNZlzsTkdokcCYBpsNq/TV6ohgtWiyLEfqvfN
- ojbguYVbFvEGxr3K2tpfcXOfJJ7ThF3SImRm+LK9y4UCBuykkAiszMbuGx1WmjUMqtm6
- 0sK3seztAU/VatrXLMCEHsu/8vkODlGG8dqCIsQyjdH6kC4cb8ZRp7yOZ6ZF3sk7B/cJ
- mTkw==
-X-Gm-Message-State: AOJu0YwT9FtBgTdAaE5zi3Ns6QPGK4ioPPakK5xy9MPOELEnAAYQDxjA
- B4sb3HudeArWTJFhBs8KK0oDTGmwf/VIBBl15T/42xuc4Xhq1DPqGrDhjliJSnLO+9lMlPflKyN
- waU5f7rAip5uLdyGGQxmTEcjs0drgfdZ9OypTKoy7gHfPqp/wuzNj+qbNftJIuC9DAzgV6UHgbN
- e79ko7/eFsiEX8B/XaWMplZIIEvjhXtZc25pWTTOayzTjGxylZ0gDh4AeUb9uFhJ2rPkn+0ueS2
- mJFQhONyqzO
-X-Gm-Gg: ATEYQzzmoO4+bxdrX8VcaAAwQoBFVvvr7AaMRLA+xhJtEI+HSpJTyOl+PTGR4aqM6PI
- WGeAAduE8Q8MnWEZnBOfy6UdRumsnzIUnUGjbul4B+i9CVPC8TyCkyiEi27xcJj/5zg33RO6DfM
- n7625CytELyCDc0jKY6mKN/6w+elzyedbWqRljTjaVylHjcOFlJEweVssk3YY6iWctkV0AsmjsE
- Tk+AHo9XIXiEZ6dghLTnSjaDPpm4MHP0V8hPd5HmHJ5gp7s+crQzedd0vfqViSklEM/sBLrup93
- C709KacaDIK1uSzEaArjiW9pC4NBI73nEE24HlIaURHEk0XGvTwOtgIBoHLu7HszqTuO7S1KAiv
- icsdFgGY1PdBNi0bL5u8JoMbbVb0SnjiLHW4QSbE84/YEYYGjV2Vddrts9Vt1UQjSLUfNmrBYt3
- wMnTIVcFLV/fu8XyxRtIFpYgBLokupHm8dWN9ZkGL7vMW/MTTtg12bSHKo/KmBwvIUTCZE43Pr3
- w==
-X-Received: by 2002:ad4:5bc8:0:b0:89a:14ce:4e35 with SMTP id
- 6a1803df08f44-89a14ce54d2mr13620356d6.21.1772559664124; 
- Tue, 03 Mar 2026 09:41:04 -0800 (PST)
+ d=1e100.net; s=20230601; t=1772560933; x=1773165733;
+ h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
+ :references:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to
+ :cc:subject:date:message-id:reply-to;
+ bh=TzgYfmtkxm8S0u1fx27b8sXaQy36DH2x9TCYGW2YVUs=;
+ b=hdPzM1odqP8P0BVfvJZz/gYcz1LYitzik9M/cZxVPrBVYE4OGwMsmJ8PVKoKv6vwgy
+ nLSuj/mmEHhIQ5S/sOeA5U9fIx0WmD894BUH4Eqf/1KzyyIRWpZ1j/yWwgyx/kR36fsf
+ /RYwxknQwgdZId4CMoEQ9HRhQE4U3dSscLXBbcQu4N/2W2T5eOoERFMoxmv4kWiPn1yR
+ GEGPpAtMNyWQ8V8x8x1Ns+ZwUzWxv8fmAMAqo+38rIRGDFWUrm4s0EYgbqbvJYYjdQJC
+ czjmnnUatUoNbeGz+nYVxEgwgb0IKsWQpZj9xnGJHEtgN5F4kO6QHRpSsony3J6CmepK
+ cFuw==
+X-Forwarded-Encrypted: i=2;
+ AJvYcCUpEhAqdRhaj6mB0+vl4DIUqLxMbguOUOiFI+Uw1zqk/fr3z2A2TB4r4WOc/66LsA2xfEY=@dpdk.org
+X-Gm-Message-State: AOJu0YyBo3qiSeYhLjVoVKhKazUWwseOL4wNV0OZ/ozpIxYaA1D34f6p
+ UwrXMK86QChLZtJXFxa6UQS1VLCiRS7+aeKSi5Yq6ldr9GbdAdA5PlSmb45Z1CrVwsUqLHFXipA
+ jU5WxuG2QWY8+zyNPmd8gIlPzgTmsijNXnCpUiOShlHCFHzCQ04ncwf8g4Gdb9Lbc/gsqhBZqZL
+ 5vXBMRpYlIYS9rolARmmPhmFk4A+3JL5UdFbS6dVJj7q6UDSE2BZv9NsBSTRzldM3sZOlasSAxh
+ v2zjw==
+X-Gm-Gg: ATEYQzxbfcGUE3WzoMEMAdOrTQj8tzchEVe42T4DBksP6r4uTG4dPEVg2gvd1y4WORa
+ wDAIxia0SQHlivavrrMREggwEyM8u7v/r/sbyHBasY2Z7c5IRZnTdeZVFgWOxEMD31udZ/tKn2X
+ Lvu3uYwav5qfWuy1vIMiUKiJRgEfMZ2i4ktRl9zuKljFccKQ1BGGk8vY1NZxFHnsr7fsHiScyip
+ 0WMUFWQTtGJzTt3k1lSoiz/Hp9XXjTRNZC6pNmLQ1CXYE43gtD1VZtiPHAozH/6/nJlCy6NxR71
+ 066CDlRf06BlJgCAZonXWOHCNVrjR0hDI4v+0QpowsMP7Sme0XsbW3heVALQ1bBYXJxIFsVFi59
+ DFfniLqosJCSNQ9a7ATCf8JLCIcP2yKiT3Q8Ym7IiKFVnlHbSb+fWhIJIkOx4bF7rC48nwPI9NR
+ Hfh9OAmwiALzwqMUtaYFCduj1cHDk2V7L4x7EeBdD8Funt2Q8YncE48/u0+N8vbA==
+X-Received: by 2002:a05:7022:51e:b0:127:5cda:aaf2 with SMTP id
+ a92af1059eb24-1278fb77ea5mr8007327c88.10.1772560933182; 
+ Tue, 03 Mar 2026 10:02:13 -0800 (PST)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
+ (address-144-49-247-0.dlp.protect.broadcom.com. [144.49.247.0])
  by smtp-relay.gmail.com with ESMTPS id
- 6a1803df08f44-899c7146747sm17363466d6.1.2026.03.03.09.41.03
+ 5a478bee46e88-2be2c2cba38sm63835eec.2.2026.03.03.10.02.12
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 03 Mar 2026 09:41:04 -0800 (PST)
+ Tue, 03 Mar 2026 10:02:13 -0800 (PST)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-dl1-f70.google.com with SMTP id
- a92af1059eb24-1277896014fso98081238c88.1
- for <dev@dpdk.org>; Tue, 03 Mar 2026 09:41:03 -0800 (PST)
+Received: by mail-ed1-f69.google.com with SMTP id
+ 4fb4d7f45d1cf-65f767a8d6cso6392832a12.2
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 10:02:12 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772560931; cv=none;
+ d=google.com; s=arc-20240605;
+ b=Gp09J+ZN+yM4ictxrxKIx/DBTViOFrWzdHu2zHvRMEYNP7SJ1FwfQZMyE6JCJxV9kS
+ FHkbkJlTKx/jmQvDldVgwyey+SNCriT7WKaOjhW/pD151RdJUj5LgDLpofphkF0nIfdM
+ Uq6DfBvAonY+1Cl/WDexc0a3akn8v87ZuXh24+18QrIgrmrn4g6ldsOmEL/2g+JloYff
+ BajaATBfZ8fgKr7qDskBzzKgyfggcXWhlFs8Sk88Y76x2D4LE9U3O6PrGvHivzJec+Vh
+ 6p8gvuvmGGcwP8SCOVsDngE1CvcNweBDv21qLCHs+5cNpHgaUnVs/YMXpoaHwZ0EXHWp
+ gGYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
+ :references:from:dkim-signature;
+ bh=TzgYfmtkxm8S0u1fx27b8sXaQy36DH2x9TCYGW2YVUs=;
+ fh=fepYQINKgfIfKsbjsAdsqsLHASxEPIbll6/ZbJvU0mY=;
+ b=VWI0jTP9NEswCi8v11Put+RMA1UdFM6DCdH88d+eKhXVNisFKQxoWc1c2Oa2P6YErC
+ cfbxdeN49Bu/nAS4pVB2SWvjEbt4YwaNB0ITR9HmWtjyvRWqPPlbktXlPSw5Spj9ILny
+ 0pcwGf3TyXjPg71wWCEk4Zi1snJKFclQEOs8utjz/ysg8jgMSnXhFeU/O8akj3bc6NkU
+ s1Li0CY+jkkTwLRkjnf6qhHs8i6PRDtUAjbdKkoDNekh5gIdJ1snN02ErQh3Q06WjI0q
+ Q+2oS/SvHWA+Qf3+7XLEH+GyGHD+WGy2vb5iM0dphkcXSR4y0BLX73N+HwriynbdIngO
+ hF5A==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1772559663; x=1773164463; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=OwAlsXu1exn4yadCEr1u6ZenBltA1eRAzwV/N6kxXaE=;
- b=LtWTO5JimdYhimUzt9gmS5PyBgKxhUXWoEcJc0Nle9/61p6s8scQryCass/0SS/5SK
- dXIjn+GypL/vQFbXkOVFaMCL908cKUPqO3jeg902wvs+uV2a8Bh0cxIEHFepxgUlpi1y
- uN8KjqerW3NSj+r3agQHmmBMYB34quN24Ww8Q=
-X-Received: by 2002:a05:7022:4389:b0:119:e569:fba9 with SMTP id
- a92af1059eb24-1278fd42de2mr6430724c88.24.1772559662498; 
- Tue, 03 Mar 2026 09:41:02 -0800 (PST)
-X-Received: by 2002:a05:7022:4389:b0:119:e569:fba9 with SMTP id
- a92af1059eb24-1278fd42de2mr6430696c88.24.1772559661622; 
- Tue, 03 Mar 2026 09:41:01 -0800 (PST)
-Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-127899d49ccsm19956752c88.3.2026.03.03.09.41.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 03 Mar 2026 09:41:01 -0800 (PST)
-From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-X-Google-Original-From: Mohammad Shuab Siddique
- <Mohammad-Shuab.Siddique@broadcom.com>
-To: dev@dpdk.org
-Cc: kishore.padmanabha@broadcom.com,
- Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
- stable@dpdk.org
-Subject: [PATCH v2] net/bnxt: add multi-doorbell support
-Date: Tue,  3 Mar 2026 10:42:16 -0700
-Message-ID: <20260303174219.204977-1-Mohammad-Shuab.Siddique@broadcom.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260303173156.204872-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260303173156.204872-1-Mohammad-Shuab.Siddique@broadcom.com>
+ d=broadcom.com; s=google; t=1772560931; x=1773165731; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:thread-index:mime-version:in-reply-to
+ :references:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=TzgYfmtkxm8S0u1fx27b8sXaQy36DH2x9TCYGW2YVUs=;
+ b=DcPxUC2AyPD3bFVh9ZS9/9lIPa06Yz8A6+ebWTMYdocrxVClFCCHRDOYeNB8HWR99R
+ HB4dPnSofQ1htYnXybj9SqoNb82CP1z9CQTvP+8R1sYztQHP4c/7RjjLY13PTLdM5qUP
+ wicM3G7jPKmsa/VA/Hc8RpvNLseFy32YdIIAU=
+X-Forwarded-Encrypted: i=1;
+ AJvYcCW9MtDW2fAwBon9rD3gEgr0jtyAULCTac7g6ON5IaV0tKFNKS42e3uuINAgo4cEih13lF0=@dpdk.org
+X-Received: by 2002:a05:6402:1444:b0:658:d541:9675 with SMTP id
+ 4fb4d7f45d1cf-65fddaf6c6fmr10212426a12.18.1772560931009; 
+ Tue, 03 Mar 2026 10:02:11 -0800 (PST)
+X-Received: by 2002:a05:6402:1444:b0:658:d541:9675 with SMTP id
+ 4fb4d7f45d1cf-65fddaf6c6fmr10212415a12.18.1772560930500; Tue, 03 Mar 2026
+ 10:02:10 -0800 (PST)
+From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+References: <20260227195410.70511-1-Mohammad-Shuab.Siddique@broadcom.com>
+ <20260227200025.70591-1-Mohammad-Shuab.Siddique@broadcom.com>
+In-Reply-To: <20260227200025.70591-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQOSgaad32RFT0Kl7jgsfz7bfZ+m6QKDMRLMsh1SsjA=
+Date: Tue, 3 Mar 2026 13:02:06 -0500
+X-Gm-Features: AaiRm52z46R2MTHEwp_jAPjQPyeOX9E1sWhGXa_VACw1DpKpIFIELirzCA9Kqi8
+Message-ID: <c17fda9f565e7e5b9ef2a19cc6716aed@mail.gmail.com>
+Subject: RE: [PATCH v3] net/bnxt: fix clang wcomma warnings in ULP
+To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
+ dev@dpdk.org
+Cc: Keegan Freyhof <keegan.freyhof@broadcom.com>, stable@dpdk.org
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: multipart/signed; protocol="application/pkcs7-signature";
+ micalg=sha-256; boundary="000000000000a84a94064c2280b2"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -102,518 +121,159 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+--000000000000a84a94064c2280b2
+Content-Type: text/plain; charset="UTF-8"
+
+Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+
+-----Original Message-----
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+Sent: Friday, February 27, 2026 3:00 PM
+To: dev@dpdk.org
+Cc: kishore.padmanabha@broadcom.com; Keegan Freyhof
+<keegan.freyhof@broadcom.com>; stable@dpdk.org
+Subject: [PATCH v3] net/bnxt: fix clang wcomma warnings in ULP
 
-Add multi-doorbell support to spread doorbell accesses across
-multiple doorbell pages for improved performance on P5/P7 chips.
+From: Keegan Freyhof <keegan.freyhof@broadcom.com>
 
-Detect capability via HWRM_FUNC_QCAPS
-Round-robin DPI assignment for NQ rings per device
-TX rings inherit DPI from parent NQ
-RX/CQ rings use privileged DPI 0
-P7: DPI 0=legacy, DPI 1=push, DPI 2+ for multi-DB
-P5: DPI 0=legacy, DPI 1+ for multi-DB
+Fix compile warnings seen when using clang with the -Wcomma flag in the
+bnxt ULP driver code by replacing commas with semicolons.
 
+Bugzilla ID: 1807
+Fixes: dd0191d5e70d ("net/bnxt/tf_ulp: support Thor2 ULP layer")
 Cc: stable@dpdk.org
 
-Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
+Signed-off-by: Keegan Freyhof <keegan.freyhof@broadcom.com>
+Signed-off-by: Mohammad Shuab Siddique
+<Mohammad-Shuab.Siddique@broadcom.com>
 ---
- drivers/net/bnxt/bnxt.h                | 13 +++++
- drivers/net/bnxt/bnxt_cpr.h            |  1 +
- drivers/net/bnxt/bnxt_hwrm.c           | 51 +++++++++++++++++--
- drivers/net/bnxt/bnxt_hwrm.h           |  2 +-
- drivers/net/bnxt/bnxt_mpc.c            |  4 +-
- drivers/net/bnxt/bnxt_ring.c           | 70 ++++++++++++++++++--------
- drivers/net/bnxt/bnxt_ring.h           |  3 +-
- drivers/net/bnxt/bnxt_rxr.h            |  1 +
- drivers/net/bnxt/bnxt_txr.h            |  1 +
- drivers/net/bnxt/hsi_struct_def_dpdk.h | 30 +++++++++++
- 10 files changed, 147 insertions(+), 29 deletions(-)
+ drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
-index 83ae151066..30baabcf92 100644
---- a/drivers/net/bnxt/bnxt.h
-+++ b/drivers/net/bnxt/bnxt.h
-@@ -433,6 +433,13 @@ struct bnxt_coal {
- #define DB_PF_OFFSET			0x10000
- #define DB_VF_OFFSET			0x4000
- 
-+#define BNXT_PRIVILEGED_DPI		0
-+#define BNXT_RESERVED_DPI_ONE		1
-+#define BNXT_RESERVED_DPI_TWO		2
-+#define BNXT_DEFAULT_DB_PAGE_SIZE	4096
-+
-+#define BNXT_KB_TO_BYTES(kb)		((kb) * 1024)
-+
- #define BNXT_RSS_TBL_SIZE_P5		512U
- #define BNXT_RSS_ENTRIES_PER_CTX_P5	64
- #define BNXT_MAX_RSS_CTXTS_P5 \
-@@ -873,6 +880,7 @@ struct bnxt {
- #define BNXT_FW_CAP_RX_ALL_PKT_TS	BIT(11)
- #define BNXT_FW_CAP_BACKING_STORE_V2	BIT(12)
- #define BNXT_FW_CAP_RX_RATE_PROFILE	BIT(17)
-+#define BNXT_FW_CAP_MULTI_DB		BIT(18)
- #define BNXT_FW_BACKING_STORE_V2_EN(bp)	\
- 	((bp)->fw_cap & BNXT_FW_CAP_BACKING_STORE_V2)
- #define BNXT_FW_BACKING_STORE_V1_EN(bp)	\
-@@ -1079,6 +1087,11 @@ struct bnxt {
- 	struct rte_eth_rss_conf	rss_conf; /* RSS configuration. */
- 	uint16_t		tunnel_disable_flag; /* tunnel stateless offloads status */
- 	uint8_t			chip_rev;
-+	uint16_t		l2_db_multi_page_size_kb;	/* Multi-L2 DB BAR size in KB */
-+	uint16_t		db_page_size;			/* DB page size (typically 4KB) */
-+	uint8_t			nq_dpi_start;			/* Starting DPI for NQ rings */
-+	uint8_t			nq_dpi_count;			/* Number of DPI pages for NQ */
-+	uint8_t			nq_dpi_counter;			/* Round-robin counter for NQ DPI */
- };
- 
- static
-diff --git a/drivers/net/bnxt/bnxt_cpr.h b/drivers/net/bnxt/bnxt_cpr.h
-index 94f449e8b5..858ee15c47 100644
---- a/drivers/net/bnxt/bnxt_cpr.h
-+++ b/drivers/net/bnxt/bnxt_cpr.h
-@@ -89,6 +89,7 @@ struct bnxt_cp_ring_info {
- 	struct bnxt_ring	*cp_ring_struct;
- 	bool			valid;
- 	uint32_t                epoch;
-+	uint8_t			dpi;
- };
- 
- #define RX_CMP_L2_ERRORS						\
-diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-index 0cef22b5ec..7c58727e59 100644
---- a/drivers/net/bnxt/bnxt_hwrm.c
-+++ b/drivers/net/bnxt/bnxt_hwrm.c
-@@ -1254,6 +1254,9 @@ static int __bnxt_hwrm_func_qcaps(struct bnxt *bp)
- 	if (flags_ext3 & HWRM_FUNC_QCAPS_OUTPUT_FLAGS_EXT3_RX_RATE_PROFILE_SEL_SUPPORTED)
- 		bp->fw_cap |= BNXT_FW_CAP_RX_RATE_PROFILE;
- 
-+	if (flags_ext3 & HWRM_FUNC_QCAPS_OUTPUT_FLAGS_EXT3_MULTI_L2_DB_SUPPORTED)
-+		bp->fw_cap |= BNXT_FW_CAP_MULTI_DB;
-+
- 	/* This block should be kept at the end of this function because it
- 	 * sends another hwrm msg.
- 	 */
-@@ -2176,7 +2179,7 @@ int bnxt_hwrm_ring_alloc(struct bnxt *bp,
- 			 struct bnxt_ring *ring,
- 			 uint32_t ring_type, uint32_t map_index,
- 			 uint32_t stats_ctx_id, uint32_t cmpl_ring_id,
--			 uint16_t tx_cosq_id)
-+			 uint16_t tx_cosq_id, uint16_t dpi)
- {
- 	int rc = 0;
- 	uint32_t enables = 0;
-@@ -2280,6 +2283,11 @@ int bnxt_hwrm_ring_alloc(struct bnxt *bp,
- 		HWRM_UNLOCK();
- 		return -EINVAL;
- 	}
-+
-+	if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB) {
-+		req.dpi = rte_cpu_to_le_16(dpi);
-+		enables |= HWRM_RING_ALLOC_INPUT_ENABLES_DPI_VALID;
-+	}
- 	req.enables = rte_cpu_to_le_32(enables);
- 
- 	rc = bnxt_hwrm_send_message(bp, &req, sizeof(req), BNXT_USE_CHIMP_MB);
-@@ -4195,12 +4203,15 @@ int bnxt_set_hwrm_link_config(struct bnxt *bp, bool link_up)
- 
- int bnxt_hwrm_func_qcfg(struct bnxt *bp, uint16_t *mtu)
- {
--	struct hwrm_func_qcfg_input req = {0};
- 	struct hwrm_func_qcfg_output *resp = bp->hwrm_cmd_resp_addr;
-+	struct hwrm_func_qcfg_input req = {0};
-+	uint16_t l2_db_multi_kb;
-+	uint16_t total_pages;
-+	uint16_t svif_info;
- 	uint16_t flags;
- 	int rc = 0;
-+
- 	bp->func_svif = BNXT_SVIF_INVALID;
--	uint16_t svif_info;
- 
- 	HWRM_PREP(&req, HWRM_FUNC_QCFG, BNXT_USE_CHIMP_MB);
- 	req.fid = rte_cpu_to_le_16(0xffff);
-@@ -4246,9 +4257,39 @@ int bnxt_hwrm_func_qcfg(struct bnxt *bp, uint16_t *mtu)
- 		bp->flags &= ~BNXT_FLAG_NPAR_PF;
- 		break;
- 	}
--
- 	bp->legacy_db_size =
--		rte_le_to_cpu_16(resp->legacy_l2_db_size_kb) * 1024;
-+		BNXT_KB_TO_BYTES(rte_le_to_cpu_16(resp->legacy_l2_db_size_kb));
-+
-+	/* Configure multi-doorbell if supported */
-+	if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB) {
-+		l2_db_multi_kb = rte_le_to_cpu_16(resp->l2_db_multi_page_size_kb);
-+		bp->l2_db_multi_page_size_kb = l2_db_multi_kb ? l2_db_multi_kb :
-+			rte_le_to_cpu_16(resp->l2_doorbell_bar_size_kb);
-+
-+		if (bp->l2_db_multi_page_size_kb > 0) {
-+			bp->db_page_size = BNXT_DEFAULT_DB_PAGE_SIZE;
-+			total_pages = BNXT_KB_TO_BYTES(bp->l2_db_multi_page_size_kb) /
-+					bp->db_page_size;
-+
-+			/* P7: DPI 0=legacy, DPI 1=push reserved; P5: DPI 0=legacy */
-+			bp->nq_dpi_start = BNXT_CHIP_P7(bp) ?
-+				BNXT_RESERVED_DPI_TWO : BNXT_RESERVED_DPI_ONE;
-+			bp->nq_dpi_count = (total_pages > bp->nq_dpi_start) ?
-+				(total_pages - bp->nq_dpi_start) : 0;
-+			bp->nq_dpi_counter = 0;
-+			PMD_DRV_LOG_LINE(INFO,
-+					"Multi-doorbell: %u KB, "
-+					"DPI range %u-%u (%u pages)",
-+					bp->l2_db_multi_page_size_kb,
-+					bp->nq_dpi_start,
-+					bp->nq_dpi_start + bp->nq_dpi_count - 1,
-+					bp->nq_dpi_count);
-+		} else {
-+			PMD_DRV_LOG_LINE(INFO,
-+					"Multi-doorbell supported "
-+					"but no pages allocated");
-+		}
-+	}
- 
- 	HWRM_UNLOCK();
- 
-diff --git a/drivers/net/bnxt/bnxt_hwrm.h b/drivers/net/bnxt/bnxt_hwrm.h
-index ecb6335b3d..fc56223ab4 100644
---- a/drivers/net/bnxt/bnxt_hwrm.h
-+++ b/drivers/net/bnxt/bnxt_hwrm.h
-@@ -221,7 +221,7 @@ int bnxt_hwrm_ring_alloc(struct bnxt *bp,
- 			 struct bnxt_ring *ring,
- 			 uint32_t ring_type, uint32_t map_index,
- 			 uint32_t stats_ctx_id, uint32_t cmpl_ring_id,
--			 uint16_t tx_cosq_id);
-+			 uint16_t tx_cosq_id, uint16_t dpi);
- int bnxt_hwrm_ring_free(struct bnxt *bp,
- 			struct bnxt_ring *ring, uint32_t ring_type,
- 			uint16_t cp_ring_id);
-diff --git a/drivers/net/bnxt/bnxt_mpc.c b/drivers/net/bnxt/bnxt_mpc.c
-index 259066fa61..d77f9dd308 100644
---- a/drivers/net/bnxt/bnxt_mpc.c
-+++ b/drivers/net/bnxt/bnxt_mpc.c
-@@ -502,7 +502,7 @@ static int bnxt_mpc_ring_alloc_one(struct bnxt *bp, enum bnxt_mpc_chnl chnl_id)
- 				  map_index,
- 				  cpr->hw_stats_ctx_id,
- 				  cp_ring->fw_ring_id,
--				  MPC_HW_COS_ID);
-+				  MPC_HW_COS_ID, BNXT_PRIVILEGED_DPI);
- 	if (rc) {
- 		PMD_DRV_LOG_LINE(ERR, "mpc ring %d tx ring alloc failed rc:%d!",
- 			    chnl_id, rc);
-@@ -510,7 +510,7 @@ static int bnxt_mpc_ring_alloc_one(struct bnxt *bp, enum bnxt_mpc_chnl chnl_id)
- 	}
- 
- 	bnxt_set_db(bp, &mpr->db, HWRM_RING_ALLOC_INPUT_RING_TYPE_TX, chnl_id,
--		    ring->fw_ring_id, ring->ring_mask);
-+		    ring->fw_ring_id, ring->ring_mask, BNXT_PRIVILEGED_DPI);
- 
- 	bnxt_hwrm_set_ring_coal(bp, &coal, cp_ring->fw_ring_id);
- 
-diff --git a/drivers/net/bnxt/bnxt_ring.c b/drivers/net/bnxt/bnxt_ring.c
-index b6d411a931..ccca779b97 100644
---- a/drivers/net/bnxt/bnxt_ring.c
-+++ b/drivers/net/bnxt/bnxt_ring.c
-@@ -353,8 +353,11 @@ void bnxt_set_db(struct bnxt *bp,
- 		 uint32_t ring_type,
- 		 uint32_t map_idx,
- 		 uint32_t fid,
--		 uint32_t ring_mask)
-+		 uint32_t ring_mask,
-+		 uint16_t dpi)
- {
-+	uint64_t dpi_offset;
-+
- 	if (BNXT_CHIP_P5_P7(bp)) {
- 		int db_offset = DB_PF_OFFSET;
- 		switch (ring_type) {
-@@ -379,8 +382,14 @@ void bnxt_set_db(struct bnxt *bp,
- 		} else if (BNXT_VF(bp)) {
- 			db_offset = DB_VF_OFFSET;
- 		}
--
- 		db->doorbell = (char *)bp->doorbell_base + db_offset;
-+
-+		if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB &&
-+				dpi != BNXT_PRIVILEGED_DPI) {
-+			dpi_offset = (dpi - bp->nq_dpi_start) *
-+					bp->db_page_size;
-+			db->doorbell = (char *)db->doorbell + dpi_offset;
-+		}
- 		db->db_key64 |= (uint64_t)fid << DBR_XID_SFT;
- 		db->db_64 = true;
- 	} else {
-@@ -404,32 +413,33 @@ void bnxt_set_db(struct bnxt *bp,
- int bnxt_alloc_cmpl_ring(struct bnxt *bp, int queue_index,
- 			 struct bnxt_cp_ring_info *cpr)
- {
--	struct bnxt_ring *cp_ring = cpr->cp_ring_struct;
--	uint32_t nq_ring_id = HWRM_NA_SIGNATURE;
- 	int cp_ring_index = queue_index + BNXT_RX_VEC_START;
- 	struct bnxt_cp_ring_info *nqr = bp->rxtx_nq_ring;
-+	struct bnxt_ring *cp_ring = cpr->cp_ring_struct;
-+	uint32_t nq_ring_id = HWRM_NA_SIGNATURE;
-+	uint8_t dpi = BNXT_PRIVILEGED_DPI;
- 	uint8_t ring_type;
- 	int rc = 0;
- 
- 	ring_type = HWRM_RING_ALLOC_INPUT_RING_TYPE_L2_CMPL;
- 
- 	if (BNXT_HAS_NQ(bp)) {
--		if (nqr) {
--			nq_ring_id = nqr->cp_ring_struct->fw_ring_id;
--		} else {
-+		if (!nqr) {
- 			PMD_DRV_LOG_LINE(ERR, "NQ ring is NULL");
- 			return -EINVAL;
- 		}
-+		nq_ring_id = nqr->cp_ring_struct->fw_ring_id;
- 	}
- 
-+	cpr->dpi = dpi;
- 	rc = bnxt_hwrm_ring_alloc(bp, cp_ring, ring_type, cp_ring_index,
--				  HWRM_NA_SIGNATURE, nq_ring_id, 0);
-+				  HWRM_NA_SIGNATURE, nq_ring_id, 0, dpi);
- 	if (rc)
- 		return rc;
- 
- 	cpr->cp_raw_cons = 0;
- 	bnxt_set_db(bp, &cpr->cp_db, ring_type, cp_ring_index,
--		    cp_ring->fw_ring_id, cp_ring->ring_mask);
-+		    cp_ring->fw_ring_id, cp_ring->ring_mask, dpi);
- 	bnxt_db_cq(cpr);
- 
- 	return 0;
-@@ -437,10 +447,12 @@ int bnxt_alloc_cmpl_ring(struct bnxt *bp, int queue_index,
- 
- int bnxt_alloc_rxtx_nq_ring(struct bnxt *bp)
- {
-+	int ring_index = BNXT_NUM_ASYNC_CPR(bp);
-+	uint8_t dpi = BNXT_PRIVILEGED_DPI;
- 	struct bnxt_cp_ring_info *nqr;
- 	struct bnxt_ring *ring;
--	int ring_index = BNXT_NUM_ASYNC_CPR(bp);
- 	uint8_t ring_type;
-+	uint8_t offset;
- 	int rc = 0;
- 
- 	if (!BNXT_HAS_NQ(bp) || bp->rxtx_nq_ring)
-@@ -481,8 +493,18 @@ int bnxt_alloc_rxtx_nq_ring(struct bnxt *bp)
- 
- 	ring_type = HWRM_RING_ALLOC_INPUT_RING_TYPE_NQ;
- 
-+	/* Assign DPI using round-robin if multi-doorbell is enabled */
-+	if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB && bp->nq_dpi_count > 0) {
-+		offset = bp->nq_dpi_counter % bp->nq_dpi_count;
-+		dpi = bp->nq_dpi_start + offset;
-+		bp->nq_dpi_counter++;
-+		PMD_DRV_LOG_LINE(DEBUG, "NQ ring assigned DPI %u", dpi);
-+	}
-+
-+	nqr->dpi = dpi;
-+
- 	rc = bnxt_hwrm_ring_alloc(bp, ring, ring_type, ring_index,
--				  HWRM_NA_SIGNATURE, HWRM_NA_SIGNATURE, 0);
-+				  HWRM_NA_SIGNATURE, HWRM_NA_SIGNATURE, 0, dpi);
- 	if (rc) {
- 		rte_free(ring);
- 		rte_free(nqr);
-@@ -490,7 +512,7 @@ int bnxt_alloc_rxtx_nq_ring(struct bnxt *bp)
- 	}
- 
- 	bnxt_set_db(bp, &nqr->cp_db, ring_type, ring_index,
--		    ring->fw_ring_id, ring->ring_mask);
-+		    ring->fw_ring_id, ring->ring_mask, dpi);
- 	bnxt_db_nq(nqr);
- 
- 	bp->rxtx_nq_ring = nqr;
-@@ -523,13 +545,16 @@ static int bnxt_alloc_rx_ring(struct bnxt *bp, int queue_index)
- 	struct bnxt_rx_ring_info *rxr = rxq->rx_ring;
- 	struct bnxt_ring *ring = rxr->rx_ring_struct;
- 	uint8_t ring_type;
-+	uint16_t dpi;
- 	int rc = 0;
- 
- 	ring_type = HWRM_RING_ALLOC_INPUT_RING_TYPE_RX;
-+	dpi = BNXT_PRIVILEGED_DPI;
-+	rxr->dpi = dpi;
- 
- 	rc = bnxt_hwrm_ring_alloc(bp, ring, ring_type,
- 				  queue_index, cpr->hw_stats_ctx_id,
--				  cp_ring->fw_ring_id, 0);
-+				  cp_ring->fw_ring_id, 0, dpi);
- 	if (rc)
- 		return rc;
- 
-@@ -537,7 +562,7 @@ static int bnxt_alloc_rx_ring(struct bnxt *bp, int queue_index)
- 	if (BNXT_HAS_RING_GRPS(bp))
- 		bp->grp_info[queue_index].rx_fw_ring_id = ring->fw_ring_id;
- 	bnxt_set_db(bp, &rxr->rx_db, ring_type, queue_index, ring->fw_ring_id,
--		    ring->ring_mask);
-+		    ring->ring_mask, dpi);
- 	bnxt_db_write(&rxr->rx_db, rxr->rx_raw_prod);
- 
- 	return 0;
-@@ -568,7 +593,8 @@ static int bnxt_alloc_rx_agg_ring(struct bnxt *bp, int queue_index)
- 	}
- 
- 	rc = bnxt_hwrm_ring_alloc(bp, ring, ring_type, map_idx,
--				  hw_stats_ctx_id, cp_ring->fw_ring_id, 0);
-+				  hw_stats_ctx_id, cp_ring->fw_ring_id, 0,
-+				  BNXT_PRIVILEGED_DPI);
- 
- 	if (rc)
- 		return rc;
-@@ -578,7 +604,7 @@ static int bnxt_alloc_rx_agg_ring(struct bnxt *bp, int queue_index)
- 	if (BNXT_HAS_RING_GRPS(bp))
- 		bp->grp_info[queue_index].ag_fw_ring_id = ring->fw_ring_id;
- 	bnxt_set_db(bp, &rxr->ag_db, ring_type, map_idx, ring->fw_ring_id,
--		    ring->ring_mask);
-+		    ring->ring_mask, BNXT_PRIVILEGED_DPI);
- 	bnxt_db_write(&rxr->ag_db, rxr->ag_raw_prod);
- 
- 	return 0;
-@@ -796,14 +822,16 @@ int bnxt_alloc_async_cp_ring(struct bnxt *bp)
- 		ring_type = HWRM_RING_ALLOC_INPUT_RING_TYPE_L2_CMPL;
- 
- 	rc = bnxt_hwrm_ring_alloc(bp, cp_ring, ring_type, 0,
--				  HWRM_NA_SIGNATURE, HWRM_NA_SIGNATURE, 0);
-+				  HWRM_NA_SIGNATURE, HWRM_NA_SIGNATURE, 0,
-+				  BNXT_PRIVILEGED_DPI);
- 
- 	if (rc)
- 		return rc;
- 
- 	cpr->cp_raw_cons = 0;
-+	cpr->dpi = BNXT_PRIVILEGED_DPI;
- 	bnxt_set_db(bp, &cpr->cp_db, ring_type, 0,
--		    cp_ring->fw_ring_id, cp_ring->ring_mask);
-+		    cp_ring->fw_ring_id, cp_ring->ring_mask, BNXT_PRIVILEGED_DPI);
- 
- 	if (BNXT_HAS_NQ(bp))
- 		bnxt_db_nq(cpr);
-@@ -900,17 +928,19 @@ int bnxt_alloc_hwrm_tx_ring(struct bnxt *bp, int queue_index)
- 	else
- 		tx_cosq_id = bp->tx_cosq_id[0];
- 
-+	/* TX ring inherits DPI from parent NQ */
-+	txr->dpi = bp->rxtx_nq_ring ? bp->rxtx_nq_ring->dpi : BNXT_PRIVILEGED_DPI;
- 	rc = bnxt_hwrm_ring_alloc(bp, ring,
- 				  HWRM_RING_ALLOC_INPUT_RING_TYPE_TX,
- 				  queue_index, cpr->hw_stats_ctx_id,
- 				  cp_ring->fw_ring_id,
--				  tx_cosq_id);
-+				  tx_cosq_id, txr->dpi);
- 	if (rc)
- 		goto err_out;
- 
- 	bnxt_set_db(bp, &txr->tx_db, HWRM_RING_ALLOC_INPUT_RING_TYPE_TX,
- 		    queue_index, ring->fw_ring_id,
--		    ring->ring_mask);
-+		    ring->ring_mask, txr->dpi);
- 	txq->index = idx;
- 
- 	return rc;
-diff --git a/drivers/net/bnxt/bnxt_ring.h b/drivers/net/bnxt/bnxt_ring.h
-index 3e2bd634a8..496c3e111f 100644
---- a/drivers/net/bnxt/bnxt_ring.h
-+++ b/drivers/net/bnxt/bnxt_ring.h
-@@ -89,7 +89,8 @@ void bnxt_set_db(struct bnxt *bp,
- 		 uint32_t ring_type,
- 		 uint32_t map_idx,
- 		 uint32_t fid,
--		 uint32_t ring_mask);
-+		 uint32_t ring_mask,
-+		 uint16_t dpi);
- 
- static inline void bnxt_db_write(struct bnxt_db_info *db, uint32_t idx)
- {
-diff --git a/drivers/net/bnxt/bnxt_rxr.h b/drivers/net/bnxt/bnxt_rxr.h
-index 7357ca4427..82d6b86fa5 100644
---- a/drivers/net/bnxt/bnxt_rxr.h
-+++ b/drivers/net/bnxt/bnxt_rxr.h
-@@ -142,6 +142,7 @@ struct bnxt_rx_ring_info {
- 
- 	uint32_t ol_flags_table[BNXT_OL_FLAGS_TBL_DIM];
- 	uint32_t ol_flags_err_table[BNXT_OL_FLAGS_ERR_TBL_DIM];
-+	uint8_t			dpi;  /* Doorbell page index for multi-doorbell support */
- };
- 
- uint16_t bnxt_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
-diff --git a/drivers/net/bnxt/bnxt_txr.h b/drivers/net/bnxt/bnxt_txr.h
-index 09078d545d..fd92a242c3 100644
---- a/drivers/net/bnxt/bnxt_txr.h
-+++ b/drivers/net/bnxt/bnxt_txr.h
-@@ -26,6 +26,7 @@ struct bnxt_tx_ring_info {
- 
- 	unsigned short          *nr_bds;
- 	struct bnxt_ring	*tx_ring_struct;
-+	uint8_t			dpi;  /* Doorbell page index for multi-doorbell support */
- };
- 
- static inline uint32_t bnxt_tx_bds_in_hw(struct bnxt_tx_queue *txq)
-diff --git a/drivers/net/bnxt/hsi_struct_def_dpdk.h b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-index 06c61cba8f..26d5e9ca78 100644
---- a/drivers/net/bnxt/hsi_struct_def_dpdk.h
-+++ b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-@@ -15744,6 +15744,15 @@ struct __rte_packed_begin hwrm_func_qcaps_output {
- 	 */
- 	#define HWRM_FUNC_QCAPS_OUTPUT_FLAGS_EXT3_MIRROR_ON_ROCE_SUPPORTED \
- 		UINT32_C(0x20)
-+	/*
-+	 * When this bit is '1', it indicates that, when rx/tx/cq/nq l2
-+	 * rings are allocated, each ring can be associated with a
-+	 * non-common doorbell page index. When '0', a common doorbell
-+	 * page is used for all rings on a PF. This bit is only set on a
-+	 * PF.
-+	 */
-+	#define HWRM_FUNC_QCAPS_OUTPUT_FLAGS_EXT3_MULTI_L2_DB_SUPPORTED \
-+		UINT32_C(0x200)
- 	/*
- 	 * The number of VFs that can be used for RoCE on the function. If less
- 	 * than max_vfs, roce vfs will be assigned to the first VF of the
-@@ -16268,6 +16277,12 @@ struct __rte_packed_begin hwrm_func_qcfg_output {
- 	 * of the doorbell BAR between L2 and RoCE is required.
- 	 */
- 	uint16_t	l2_doorbell_bar_size_kb;
-+	/*
-+	 * The size of the doorbell BAR in KBytes reserved for multi-L2
-+	 * doorbell pages. This area is a subset of l2_doorbell_bar_size_kb,
-+	 * which is size of the total doorbell BAR space reserved for L2.
-+	 */
-+	uint16_t	l2_db_multi_page_size_kb;
- 	/*
- 	 * A bitmask indicating the active endpoints. Each bit represents a
- 	 * specific endpoint, with bit 0 indicating EP 0 and bit 3 indicating
-@@ -45464,6 +45479,13 @@ struct __rte_packed_begin hwrm_ring_alloc_input {
- 	 */
- 	#define HWRM_RING_ALLOC_INPUT_ENABLES_RX_RATE_PROFILE_VALID \
- 		UINT32_C(0x1000)
-+	/*
-+	 * This bit must be '1' for the dpi field to be configured.
-+	 * This should only be used when 'multi_l2_db_supported'
-+	 * bit is set in flags_ext3 field of FUNC_QCAPS response.
-+	 */
-+	#define HWRM_RING_ALLOC_INPUT_ENABLES_DPI_VALID \
-+		UINT32_C(0x2000)
- 	/* Ring Type. */
- 	uint8_t	ring_type;
- 	/* L2 Completion Ring (CR) */
-@@ -45831,6 +45853,14 @@ struct __rte_packed_begin hwrm_ring_alloc_input {
- 	 * record.
- 	 */
- 	uint64_t	cq_handle;
-+	/*
-+	 * The "doorbell page index" is specified when allocating a l2 ring.
-+	 * It is applicable for rx/tx/completion/nq rings, and should only be
-+	 * used when 'multi_l2_db_supported' bit is set in flags_ext3 field of
-+	 * FUNC_QCAPS response.
-+	 */
-+	uint16_t	dpi;
-+	uint16_t	unused_5[3];
- } __rte_packed_end;
- 
- /* hwrm_ring_alloc_output (size:128b/16B) */
--- 
+diff --git a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+index 38cb5c8b31..bc347de202 100644
+--- a/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
++++ b/drivers/net/bnxt/tf_ulp/bnxt_ulp_tf.c
+@@ -1296,10 +1296,10 @@ ulp_tf_global_cfg_update(struct bnxt *bp,
+ 	struct tf *tfp;
+
+ 	/* Initialize the params */
+-	parms.dir = dir,
+-	parms.type = type,
+-	parms.offset = offset,
+-	parms.config = (uint8_t *)&global_cfg,
++	parms.dir = dir;
++	parms.type = type;
++	parms.offset = offset;
++	parms.config = (uint8_t *)&global_cfg;
+ 	parms.config_sz_in_bytes = sizeof(global_cfg);
+
+ 	tfp = bnxt_ulp_bp_tfp_get(bp, BNXT_ULP_SESSION_TYPE_DEFAULT);
+--
 2.47.3
 
+--000000000000a84a94064c2280b2
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIVcQYJKoZIhvcNAQcCoIIVYjCCFV4CAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghLeMIIGqDCCBJCgAwIBAgIQfofDCS7XZu8vIeKo0KeY9DANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNTNaFw0yOTA0MTkwMDAwMDBaMFIxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBS
+NiBTTUlNRSBDQSAyMDIzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwjAEbSkPcSyn
+26Zn9VtoE/xBvzYmNW29bW1pJZ7jrzKwPJm/GakCvy0IIgObMsx9bpFaq30X1kEJZnLUzuE1/hlc
+hatYqyORVBeHlv5V0QRSXY4faR0dCkIhXhoGknZ2O0bUJithcN1IsEADNizZ1AJIaWsWbQ4tYEYj
+ytEdvfkxz1WtX3SjtecZR+9wLJLt6HNa4sC//QKdjyfr/NhDCzYrdIzAssoXFnp4t+HcMyQTrj0r
+pD8KkPj96sy9axzegLbzte7wgTHbWBeJGp0sKg7BAu+G0Rk6teO1yPd75arbCvfY/NaRRQHk6tmG
+71gpLdB1ZhP9IcNYyeTKXIgfMh2tVK9DnXGaksYCyi6WisJa1Oa+poUroX2ESXO6o03lVxiA1xyf
+G8lUzpUNZonGVrUjhG5+MdY16/6b0uKejZCLbgu6HLPvIyqdTb9XqF4XWWKu+OMDs/rWyQ64v3mv
+Sa0te5Q5tchm4m9K0Pe9LlIKBk/gsgfaOHJDp4hYx4wocDr8DeCZe5d5wCFkxoGc1ckM8ZoMgpUc
+4pgkQE5ShxYMmKbPvNRPa5YFzbFtcFn5RMr1Mju8gt8J0c+dxYco2hi7dEW391KKxGhv7MJBcc+0
+x3FFTnmhU+5t6+CnkKMlrmzyaoeVryRTvOiH4FnTNHtVKUYDsCM0CLDdMNgoxgkCAwEAAaOCAX4w
+ggF6MA4GA1UdDwEB/wQEAwIBhjBMBgNVHSUERTBDBggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQB
+gjcUAgIGCisGAQQBgjcKAwwGCisGAQQBgjcKAwQGCSsGAQQBgjcVBjASBgNVHRMBAf8ECDAGAQH/
+AgEAMB0GA1UdDgQWBBQAKTaeXHq6D68tUC3boCOFGLCgkjAfBgNVHSMEGDAWgBSubAWjkxPioufi
+1xzWx/B/yGdToDB7BggrBgEFBQcBAQRvMG0wLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9i
+YWxzaWduLmNvbS9yb290cjYwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjYuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yNi5jcmwwEQYDVR0gBAowCDAGBgRVHSAAMA0GCSqGSIb3DQEBDAUAA4IC
+AQCRkUdr1aIDRmkNI5jx5ggapGUThq0KcM2dzpMu314mJne8yKVXwzfKBtqbBjbUNMODnBkhvZcn
+bHUStur2/nt1tP3ee8KyNhYxzv4DkI0NbV93JChXipfsan7YjdfEk5vI2Fq+wpbGALyyWBgfy79Y
+IgbYWATB158tvEh5UO8kpGpjY95xv+070X3FYuGyeZyIvao26mN872FuxRxYhNLwGHIy38N9ASa1
+Q3BTNKSrHrZngadofHglG5W3TMFR11JOEOAUHhUgpbVVvgCYgGA6dSX0y5z7k3rXVyjFOs7KBSXr
+dJPKadpl4vqYphH7+P40nzBRcxJHrv5FeXlTrb+drjyXNjZSCmzfkOuCqPspBuJ7vab0/9oeNERg
+nz6SLCjLKcDXbMbKcRXgNhFBlzN4OUBqieSBXk80w2Nzx12KvNj758WavxOsXIbX0Zxwo1h3uw75
+AI2v8qwFWXNclO8qW2VXoq6kihWpeiuvDmFfSAwRLxwwIjgUuzG9SaQ+pOomuaC7QTKWMI0hL0b4
+mEPq9GsPPQq1UmwkcYFJ/Z4I93DZuKcXmKMmuANTS6wxwIEw8Q5MQ6y9fbJxGEOgOgYL4QIqNULb
+5CYPnt2LeiIiEnh8Uuh8tawqSjnR0h7Bv5q4mgo3L1Z9QQuexUntWD96t4o0q1jXWLyrpgP7Zcnu
+CzCCBYMwggNroAMCAQICDkXmuwODM8OFZUjm/0VRMA0GCSqGSIb3DQEBDAUAMEwxIDAeBgNVBAsT
+F0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpH
+bG9iYWxTaWduMB4XDTE0MTIxMDAwMDAwMFoXDTM0MTIxMDAwMDAwMFowTDEgMB4GA1UECxMXR2xv
+YmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2Jh
+bFNpZ24wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCVB+hzymb57BTKezz3DQjxtEUL
+LIK0SMbrWzyug7hBkjMUpG9/6SrMxrCIa8W2idHGsv8UzlEUIexK3RtaxtaH7k06FQbtZGYLkoDK
+RN5zlE7zp4l/T3hjCMgSUG1CZi9NuXkoTVIaihqAtxmBDn7EirxkTCEcQ2jXPTyKxbJm1ZCatzEG
+xb7ibTIGph75ueuqo7i/voJjUNDwGInf5A959eqiHyrScC5757yTu21T4kh8jBAHOP9msndhfuDq
+jDyqtKT285VKEgdt/Yyyic/QoGF3yFh0sNQjOvddOsqi250J3l1ELZDxgc1Xkvp+vFAEYzTfa5MY
+vms2sjnkrCQ2t/DvthwTV5O23rL44oW3c6K4NapF8uCdNqFvVIrxclZuLojFUUJEFZTuo8U4lptO
+TloLR/MGNkl3MLxxN+Wm7CEIdfzmYRY/d9XZkZeECmzUAk10wBTt/Tn7g/JeFKEEsAvp/u6P4W4L
+sgizYWYJarEGOmWWWcDwNf3J2iiNGhGHcIEKqJp1HZ46hgUAntuA1iX53AWeJ1lMdjlb6vmlodiD
+D9H/3zAR+YXPM0j1ym1kFCx6WE/TSwhJxZVkGmMOeT31s4zKWK2cQkV5bg6HGVxUsWW2v4yb3BPp
+DW+4LtxnbsmLEbWEFIoAGXCDeZGXkdQaJ783HjIH2BRjPChMrwIDAQABo2MwYTAOBgNVHQ8BAf8E
+BAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUrmwFo5MT4qLn4tcc1sfwf8hnU6AwHwYD
+VR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwDQYJKoZIhvcNAQEMBQADggIBAIMl7ejR/ZVS
+zZ7ABKCRaeZc0ITe3K2iT+hHeNZlmKlbqDyHfAKK0W63FnPmX8BUmNV0vsHN4hGRrSMYPd3hckSW
+tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
+2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
+phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
+a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
+ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
+07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
+SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
+rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGpzCCBI+g
+AwIBAgIMTxuM8PbwRQIs9uJeMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
+ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
+MDIzMB4XDTI1MDYyMDEzNTIxOFoXDTI3MDYyMTEzNTIxOFowgekxCzAJBgNVBAYTAlVTMRMwEQYD
+VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
+MDExNzETMBEGA1UEBBMKUGFkbWFuYWJoYTEQMA4GA1UEKhMHS2lzaG9yZTEWMBQGA1UEChMNQlJP
+QURDT00gSU5DLjEoMCYGA1UEAwwfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTEuMCwG
+CSqGSIb3DQEJARYfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBALtFWP+ax39qiJZsJuukdoqMyp0GWGaJ6MdaHvAxXWiEY5zmTiVU
+QnpmNYp5SO1Cd1cBqDB0dcelQbiQ1qh+lnlUchJLR63y0ysUvUNvqV493q8+pHCm/2jPb0/R9rec
+/jxwM9jaPAVkhGBwvudSfOAQlMPORtAHZyLHKFINcsNfLrGP/3lx+zj30v5tmDN7isOLWos7Jm/U
+qRdC7UuUiXgX7q8xXd1MQlA95O73IY/Qb/y0ChEjGPb+U1wr+OsAWJ5fcjQXA/ffBb2GmMp9OUOs
+wVNq8iHfie9nzNaaRw+yoyn0ovoiq2W3Q6r+U53ha/lz0itqCrJZN+G0MFf+cX8CAwEAAaOCAeMw
+ggHfMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggr
+BgEFBQcwAoY6aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1l
+Y2EyMDIzLmNydDA5BggrBgEFBQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2Ny
+NnNtaW1lY2EyMDIzMGUGA1UdIAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGg
+MgoDAjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5
+LzBBBgNVHR8EOjA4MDagNKAyhjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWlt
+ZWNhMjAyMy5jcmwwKgYDVR0RBCMwIYEfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTAT
+BgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNV
+HQ4EFgQURIyot+ZP/mdwQsofZexqAvOm5pMwDQYJKoZIhvcNAQELBQADggIBAKc5gYnhyTf+f6cm
+kAHy1a4cLIWou43yaS+M/r69Pv44EVYvHxqt0mMvKh3U40Y+pHKph+VCjdoINKCd1SaqAFIqqEO4
+XHWrFi3QAI3snUB6spPIoHN/srAcpX9tdrnAlyK593pq+H+mTMoFIGBP/oc8XCtaDgHp37rpuK9Q
+qhF9h5cEJWgShmD7/Q02YydW3jsioy8HdTUD9fib1fRwiSc9uGq8JV5NJsYiJsi9FUz7kTUPohO0
+h6U9tRUVmAf9gPbU46rin9By5X4Lt1jKge5O0vFEawCTr/pLmDcIf7CqRZfBoNalKOsBDovoeAOf
+pXmQzQEMhnaf93MvbFvZaxC9Ir92DR45BH42xZuLKcQVUsqyLKwC6kEZg81AnZsRAUVpMvqiGbVb
+hZnabsHragNY7Br3VCA2OaWk9yRRjt1UwzfIEEMNWqZeQzzAqKIR3XdXIrqAUlMQOX42tSV9FaIv
+PSmR3uaH2M0/bRtz4TE1qRuTsLlr+XEGMxHssK7u7+WYM7EGF3ueZLcE7WmnwXEFli5Y5QX0SnmT
+W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
+6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
+YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
+YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
+oIHHMC8GCSqGSIb3DQEJBDEiBCBezvSZ3fTpSSsVTyaPMB0UOKZpiz1kZaYp4X5LzaofpjAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjAzMDMxODAyMTFaMFwGCSqG
+SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
+hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQCeZvirWUMy
+n/pvZ232LTPc9Hv3Ki6U3v68LcTeTBVdKtG17Q1877N9KH1vEuda/19aPxl9A1EMcLF4pgpto+gs
+P/hILcEZwHJ/dcUp+92iYjbpUjPRTKpBJcueUYoevnLJDvTI4lH/YaR6i0teQ8XEHsE37DKIX554
+whvCK33qjfHt8iQZkfbYI2AYTLOg7G3+zSszpM5lfynuCnsZlcbTPM0qO9W89uz4qFLiKflIq5yl
+PW60EOcVN2xK8tyPY6TtYqsa5Z8mmoSxBlB7Xq7ghvHGS3N6GFWGN9B8gNySd26U8+3x69M2zaK2
+029r/INjBP0vwqW57q7InAwGgNhX
+--000000000000a84a94064c2280b2--
