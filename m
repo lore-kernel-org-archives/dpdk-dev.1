@@ -2,29 +2,130 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABBA7EB365B
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 02:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 728ADEB365A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 02:55:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD32B40E8A;
-	Tue,  3 Mar 2026 03:54:20 +0100 (CET)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id 9E66340ED2;
- Tue,  3 Mar 2026 03:54:16 +0100 (CET)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 3E55B20B6F03; Mon,  2 Mar 2026 18:54:16 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3E55B20B6F03
+	by mails.dpdk.org (Postfix) with ESMTP id D0F8B40B9B;
+	Tue,  3 Mar 2026 03:55:12 +0100 (CET)
+Received: from PH8PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11022088.outbound.protection.outlook.com [40.107.209.88])
+ by mails.dpdk.org (Postfix) with ESMTP id 9E8CD402B0;
+ Tue,  3 Mar 2026 03:55:10 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PPEEfFi7E+t5x4RpWBk83rhicogZnu/o9s2Nb/ClSznDsJK6VyXj7jTzhjD6h7OrsxEfnf5WovoSyoRzXmjNCALWncmV4b83N9jWUAgfalAxo2o7tY5cS2Un9rwcAZOV+GhIHjRn/lWC1eNb8AqguDjYHVnsP76mnoJJNultY0lJjFSXRbEHkoFwemEEq25XQxiLc1yS4UwVaOuDrQCUVZ+MnQWw83SBbIdxEukBfja8AvE6yka6hxD6G5nI6Fq505oivo5PSLvPRdqzrsb0LAXu3QpkIbfQE/2FF+OP7sOPilrgtP1ARyvu6e1hxMFznxXRCsA2rWFokrG3AmAsWA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=67PZQ/P6dwc1dWdrEvUxqcMda2WsRtsbMgBKLrBebGQ=;
+ b=XCBTra6pP+GIyKJIHqHDJHYmkdfW7bbGD0LK5OxuR3Sx8nEy+T9k+XygpJ6LCzbK821ELDjx1ncf17pKEPG2ADMM0/7Zj5COkgLUGWKRdD3A4OHmnxO2J9iVxmHm4PGa2pReGkIeaiIXgfyF4zkYRETul6b93VB3Df83U8I/6BHoFtitqZu/tDW/z6Mg1fes7aOR14yFSjeKtAYLQ1Ny/jaN1gUFdRpOj3XzVsxJfPVFYLAI/Wgua0x4gOQP32SlDLG1zCFVmoD9E7FlrPTjJ7c+ah7Cuq9ND+wH6Fe+qNaRn+8+FsSj/VvK4Tx+FkLTI6BW2yOw85yQZcSlJFiZBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=67PZQ/P6dwc1dWdrEvUxqcMda2WsRtsbMgBKLrBebGQ=;
+ b=jrpLIhGDBhyfcA3lnh8wN+HiCQj6rUdJGV0j6iGvjxj1MXEYjxphKI+cdxAhFktERxJaPoEOCvN6ZgRkgP25xsXrkH/5fNZD/Attt9zlhUfruuCx1v7YnzbLCcvdpP5RnqxtnxzDIU3cTH8fQn4sh887wuT51g4kbJlfZ3rh9Gg=
+Received: from LV2PR21MB3374.namprd21.prod.outlook.com (2603:10b6:408:14c::21)
+ by LV9PR21MB5574.namprd21.prod.outlook.com (2603:10b6:408:2ec::5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.3; Tue, 3 Mar
+ 2026 02:54:59 +0000
+Received: from LV2PR21MB3374.namprd21.prod.outlook.com
+ ([fe80::f2b8:576a:8c2f:ae46]) by LV2PR21MB3374.namprd21.prod.outlook.com
+ ([fe80::f2b8:576a:8c2f:ae46%5]) with mapi id 15.20.9678.006; Tue, 3 Mar 2026
+ 02:55:07 +0000
 From: Long Li <longli@microsoft.com>
-To: dev@dpdk.org
-Cc: stephen@networkplumber.org, longli@microsoft.com, weh@microsoft.com,
- stable@dpdk.org
-Subject: [PATCH v3 6/6] net/netvsc: support runtime queue count reconfiguration
-Date: Mon,  2 Mar 2026 18:54:01 -0800
-Message-ID: <20260303025403.269182-7-longli@microsoft.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20260303025403.269182-1-longli@microsoft.com>
-References: <20260303025403.269182-1-longli@microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Wei Hu <weh@microsoft.com>,
+ "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [EXTERNAL] Re: [PATCH v2 0/2] net/netvsc: runtime queue
+ reconfiguration and fixes
+Thread-Topic: [EXTERNAL] Re: [PATCH v2 0/2] net/netvsc: runtime queue
+ reconfiguration and fixes
+Thread-Index: AQHcptfL9uePDKiJq0qJjUxaofagV7Wbqq2AgAB5vAA=
+Date: Tue, 3 Mar 2026 02:55:07 +0000
+Message-ID: <LV2PR21MB33742CC75F8ED818C26AB7BCCE7FA@LV2PR21MB3374.namprd21.prod.outlook.com>
+References: <20260226042414.965994-1-longli@microsoft.com>
+ <20260302113845.1dc61524@phoenix.local>
+In-Reply-To: <20260302113845.1dc61524@phoenix.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=fc00b990-2260-4dca-a3cc-5188bf17c534;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-03-03T02:54:27Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: LV2PR21MB3374:EE_|LV9PR21MB5574:EE_
+x-ms-office365-filtering-correlation-id: c3fe4e05-82e9-4882-de9b-08de78d04763
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0; ARA:13230040|366016|1800799024|376014|38070700021;
+x-microsoft-antispam-message-info: T0hRYZsbetloF9toD6l+Y0pk0krVTrK+NSvuxgXoBgP0OmK2Xt+pgIHkqr8vQmJcz5C1xkQE/EsC0B1XGe230wlnmAEF/xmHS9wSdebYp8PBnfwfuVrCWNMYoXfby11RE5dxorhEoH6qAiSdIT3rTqjOokLawHMyZAha1cv+K4KMmAhE+UrYPE6dw3po9y21E9MXKe4gSDVHmgwl+xnXGamcRU57P/b2tCA10e5uwl97/fLceMeMY3E+CcUFQKVL4S4/6ZOeViQLUT+HzswE/k55I6tTfZUDrPBSr6vjQmzuxn/xtqMb/SIT2QsLjHKH0f2iX39LPjhlBvujuUC3l1RFbdHg5gt0gsaGG0EknP78sLiq+VVn/EWv7G6oWpuMtjRm5kz8ngdxjMlszwjsdosbRaF2UhMTDVwT7AMfjpBZYIROFkhs1zrdREjLjHOh+Ymfw2E7gw5Aq1khB3Lvs3jtK1AQsq1JdxzaqkqXX/sGEGjy/P8I/BykjC8rVK3OPYgT0InuWkbeUaGhaktYHQhz84xFhBvfQGUoFeJePI7nIQ+37ggrpHSfZoO0rxrj9q46nwpFvdzPv4f/COSXL0m9P7qFhVRnbxqFm9phhaF1QDJdiL25R3QZKzubHPNW7d8GI3P0lO1+F8EChUOZ8q6iaYz9XMFTdE2Nx7Xb1ZlaZ3dEEz4NYI9sCO40LpXkPtTnXKJLzlKcv4hhHb8ib3G1JlZQ8nhGEuZxt8w1diHo62OTj7HbWaoJMojTBuMBZqONJ/fj3u20SlcdCTszLec7R+ok98+Z14ZtwnMwOkk=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:LV2PR21MB3374.namprd21.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700021); DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MytwN0VRMEdKdHNOeUk5YnZmUHREYzQ1dklEbFRjSFhaWmVVTVZGN0FUZmk3?=
+ =?utf-8?B?R0h1ZnVrdGdoTkppSWtUaEt3a21pb2xQOFJwRjN3aVQwMUdhSmlNWmY0cXgz?=
+ =?utf-8?B?eVQveCtIbkYyT0ZOTEpwOXV6ZDZGTjREeTh0U1F0cSttZXYyK2hKK3ViMkRu?=
+ =?utf-8?B?U0dQY3BnQ3IzTCtmNmpIaGh6VUJxVTJqZDJWNUVoaW1OMHgwOUMvaGtMLytT?=
+ =?utf-8?B?L0ltZFVxVVZVdDN6bThnbFJwZmxTdzV0M1lYNGpzTkFwNC83MC9EeTNKclJ4?=
+ =?utf-8?B?SU5wMWpIS20xNjZaU3BWS29lb1pITkd1N2lSN2Q2YjlqeUZXcEZSNW80MmV4?=
+ =?utf-8?B?WnlhMVNVQ081MFVnWEFxak93QXJqZm15dk1QVUNSbmxTb1FOUGYrYVJFQWZ3?=
+ =?utf-8?B?Q2w2YzlkbXpPK1dydFRWTU1XTHhQUWtBai9uWnZNZExiaEN5VzJqWWhsVWZ3?=
+ =?utf-8?B?N2NhSitxdzlJL293WjdkRlV4TkUrRHNMeE4vZHB0dGIxT2svTklOL3NSNTBp?=
+ =?utf-8?B?TTZGckVIbGJhbnhKR1JJeDhhWkJWb0ROb0RkcEJSL3JhUG9JTHUwaHpKNnly?=
+ =?utf-8?B?OWRtZ3VHVW00TlJsbTROTmt5ZXhiczdaeHlZNFRjVUVweGh0Zkd5M2V5VVZ3?=
+ =?utf-8?B?WXJtaW1uQnIwVVNKZWtuSUE0NWNmSXZNYW4rTTA3K1ZJL1BTcmxTRzlqWVp0?=
+ =?utf-8?B?bkFxUWs4NE5ueUg3MlA5RlJ6Nk5ZUVNiZ2I3UXB4bFlzbTZPdElHUkkxSE04?=
+ =?utf-8?B?OFBwTzBMNVNWQ05ESUJFQ1dYVlZoc1ZSTVhtSGRGcmgrUjNwR1hSaThTcXA3?=
+ =?utf-8?B?QXM3T0ZUUFZuVVZUTjV3RDFMSCtmYmNEVmVkTS95dEQvV096OC8rckdPN1Bv?=
+ =?utf-8?B?VENGcDBzVmZRZ3BJeGFLRUNzeDVmc3RsWkM1RGhickc0cEI4SGx4dDdtSXhY?=
+ =?utf-8?B?SUF6MnpNN3RZY3ZWdjlmVU56TGJjb0pKb1o1eWZaWjVBTjBGd0YrZHJqNk5R?=
+ =?utf-8?B?NmNQZElCbkxjeGJZdVB1Q3ZDSHV3dTVEVUswWXFDS1pybllTMEEyU2FzUFFs?=
+ =?utf-8?B?TWdaNHpYRmJ0YWpJVzVaNUQzWFlPUHBhUmRZZFV6Q3NrOUFXSzQ2eU5zWVNv?=
+ =?utf-8?B?S0s3MFlaNDQwZXcxUEo2UEJZbTdOZGU3eDVtOVg1b1IwMGx5UnAvdklPQS92?=
+ =?utf-8?B?S2NYRm1UVHBSWXdOd1FRYVJZVmVwMmhPTk1WQUFtbFdWSHhxTnpaZitpVVBU?=
+ =?utf-8?B?MmRtS2pCZzkrbGw2M1Z0QWxCYTVSUWdXeVhQSUZMUnBta0NDSHFBak5SNWdL?=
+ =?utf-8?B?dnVMUks3a0I4K0JEMnN0ZTJSK3JhL1VwU2ZCY1NiSWNzTWVZbHQvdVFSMnk2?=
+ =?utf-8?B?cVdHU3llTEUxWjZuNTFiM3B1cm56ejEyVXZqVUtKSCtJSTREZFRpUWx3d0VL?=
+ =?utf-8?B?di9LVTZNd0tNTzgzbXNqNEtyMkpXZnp4cExiN2cydGZWZWlPU2R6WTdOMmFk?=
+ =?utf-8?B?UDk2RTEycURPZXRCYjVlbUNKYzJ5RzJqcjIvaUt3T1BnSEpaeEhZMFRhVFFV?=
+ =?utf-8?B?SUozVEw4cUt5V1JFTkg5cUYwVnNmNnZmRFVaS3M5cDB0K0YzdXRTY29uVkRS?=
+ =?utf-8?B?a1hGcFZSQ1N5aU1LZndlbTU3bFFSY29RK3Y3YTRmVzB4bmZIVitzcG5YOXNx?=
+ =?utf-8?B?Q0NVN3pIeDlvRDdYOVZiS1RwZEhPN1V5WW56Ulk1aXZBa1V4WVV0UFBYU3du?=
+ =?utf-8?B?bklvUXhaMWdGeDVhcWZkMFA5QnRnK1oySjJpUnluWWFhaVloV3lobm1rdExM?=
+ =?utf-8?B?YjQ4U3Y3alBqd2ZaU25lSlEvSUtXcEt6bSthSFducmpJWFhCZElLMWV0bld3?=
+ =?utf-8?B?VGVnT0VWWWRiRXBwanNjTXdZVVlVZmlhelh2OUhzS0M1N0w0aE9zMXJFVHh5?=
+ =?utf-8?B?TE1GV1crbEZjRXM4UWc2YVk3TzhhbE5WcGFnbU1xMzJMeUpEem9ROVU1bHMz?=
+ =?utf-8?B?ZWo3QjVWR05WcHZBbVovb295Y09Yc2loTHFKQjUzc0w0VFpQZlBVWjI0OURr?=
+ =?utf-8?B?NG96SG9yTzJUMjNsb3hnMkJZOFNtZXFYa3JMSWpqQUVHWmNFazE0TkRmK01u?=
+ =?utf-8?B?M002cFRpeFRUY3RBanlFa1lmcHU1a0k1OU9sUkJydFJ3Vzh4cWcwbWc5Snl0?=
+ =?utf-8?B?cW1jcHNxWHVTUU45ZmFJUWd2RGRKbk54UFFMR0ZVVHp6ejMzUjRDUVBhb3VE?=
+ =?utf-8?B?bzY5cXg0Ui9xNXFsaFY5SWp6QW9Qd1ZoUHUveXA3WXR0MVBVR3VMMnE5eXNp?=
+ =?utf-8?Q?jmnVn7R/UvgFdAcvjN?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR21MB3374.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3fe4e05-82e9-4882-de9b-08de78d04763
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Mar 2026 02:55:07.9206 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6KvWS7wD+POjXgtF9MYT6pE4mgBU73NEwlx04MeWKQoRSD+1G1qJkS6iZEWEWc0C1FCuPa/BTaucZdtaMvQj0g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV9PR21MB5574
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -38,348 +139,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add support for changing the number of RX/TX queues at runtime
-via port stop/configure/start. When the queue count changes,
-perform a full NVS/RNDIS teardown and reinit to allocate fresh
-VMBus subchannels matching the new queue count, then reconfigure
-RSS indirection table accordingly.
-
-Key changes:
-- hn_dev_configure: detect queue count changes and perform full
-  NVS session reinit with subchannel teardown/recreation
-- hn_dev_stop: drain pending TX completions (up to 1s) to prevent
-  stale completions from corrupting queue state after reconfig
-- hn_vf_tx/rx_queue_release: use write lock when nulling VF queue
-  pointers to prevent use-after-free with concurrent fast-path
-  readers
-
-Signed-off-by: Long Li <longli@microsoft.com>
----
-v3:
-- Fix subchan_cleanup to call hn_rndis_conf_offload so device retains
-  offload config on partial subchannel failure
-- Fix recovery path to set hv->primary->chan = hv->channels[0] after
-  re-opening channel, preventing use-after-free of stale pointer
-- Add hn_chim_init in recovery path to rebuild chimney bitmap
-v2:
-- Fix reinit_failed recovery: re-map device before chan_open when device
-  is unmapped to prevent undefined behavior on unmapped ring buffers
-- Move hn_rndis_conf_offload() to after reinit block so offload config
-  targets the final RNDIS session instead of being lost on teardown
-- Use write lock in hn_vf_tx/rx_queue_release() to prevent race with
-  concurrent fast-path readers holding read lock
-- Reset RSS indirection table to queue 0 in subchan_cleanup error path
-- Fix multi-line comment style to follow DPDK convention
----
- drivers/net/netvsc/hn_ethdev.c | 194 +++++++++++++++++++++++++++++++--
- drivers/net/netvsc/hn_vf.c     |  16 ++-
- 2 files changed, 194 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index 45d69272aa..78ad566309 100644
---- a/drivers/net/netvsc/hn_ethdev.c
-+++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -745,6 +745,9 @@ netvsc_hotadd_callback(const char *device_name, enum rte_dev_event_type type,
- 	}
- }
- 
-+static void hn_detach(struct hn_data *hv);
-+static int hn_attach(struct hn_data *hv, unsigned int mtu);
-+
- static int hn_dev_configure(struct rte_eth_dev *dev)
- {
- 	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
-@@ -754,6 +757,8 @@ static int hn_dev_configure(struct rte_eth_dev *dev)
- 	struct hn_data *hv = dev->data->dev_private;
- 	uint64_t unsupported;
- 	int i, err, subchan;
-+	uint32_t old_subchans = 0;
-+	bool device_unmapped = false;
- 
- 	PMD_INIT_FUNC_TRACE();
- 
-@@ -778,36 +783,111 @@ static int hn_dev_configure(struct rte_eth_dev *dev)
- 
- 	hv->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
- 
--	err = hn_rndis_conf_offload(hv, txmode->offloads,
--				    rxmode->offloads);
--	if (err) {
--		PMD_DRV_LOG(NOTICE,
--			    "offload configure failed");
--		return err;
--	}
-+	/* If queue count unchanged, skip subchannel teardown/reinit */
-+	if (RTE_MAX(dev->data->nb_rx_queues,
-+		    dev->data->nb_tx_queues) == hv->num_queues)
-+		goto skip_reinit;
- 
- 	hv->num_queues = RTE_MAX(dev->data->nb_rx_queues,
- 				 dev->data->nb_tx_queues);
- 
-+	/* Close all existing subchannels */
-+	for (i = 1; i < HN_MAX_CHANNELS; i++) {
-+		if (hv->channels[i] != NULL) {
-+			rte_vmbus_chan_close(hv->channels[i]);
-+			hv->channels[i] = NULL;
-+			old_subchans++;
-+		}
-+	}
-+
-+	/*
-+	 * If subchannels existed, do a full NVS/RNDIS teardown
-+	 * and vmbus re-init to ensure a clean NVS session.
-+	 * Cannot re-send NVS subchannel request on the same
-+	 * session without invalidating the data path.
-+	 */
-+	if (old_subchans > 0) {
-+		PMD_DRV_LOG(NOTICE,
-+			    "reinit NVS (had %u subchannels)",
-+			    old_subchans);
-+
-+		hn_chim_uninit(dev);
-+		rte_free(hv->primary->rxbuf_info);
-+		hv->primary->rxbuf_info = NULL;
-+		hn_detach(hv);
-+
-+		rte_vmbus_chan_close(hv->channels[0]);
-+		rte_free(hv->channels[0]);
-+		hv->channels[0] = NULL;
-+
-+		rte_vmbus_unmap_device(hv->vmbus);
-+		device_unmapped = true;
-+		err = rte_vmbus_map_device(hv->vmbus);
-+		if (err) {
-+			PMD_DRV_LOG(ERR,
-+				    "Could not re-map vmbus device!");
-+			goto reinit_failed;
-+		}
-+		device_unmapped = false;
-+
-+		hv->rxbuf_res = hv->vmbus->resource[HV_RECV_BUF_MAP];
-+		hv->chim_res  = hv->vmbus->resource[HV_SEND_BUF_MAP];
-+
-+		err = rte_vmbus_chan_open(hv->vmbus, &hv->channels[0]);
-+		if (err) {
-+			PMD_DRV_LOG(ERR,
-+				    "Could not re-open vmbus channel!");
-+			goto reinit_failed;
-+		}
-+
-+		hv->primary->chan = hv->channels[0];
-+
-+		rte_vmbus_set_latency(hv->vmbus, hv->channels[0],
-+				      hv->latency);
-+
-+		err = hn_attach(hv, dev->data->mtu);
-+		if (err) {
-+			rte_vmbus_chan_close(hv->channels[0]);
-+			rte_free(hv->channels[0]);
-+			hv->channels[0] = NULL;
-+			PMD_DRV_LOG(ERR,
-+				    "NVS reinit failed: %d", err);
-+			goto reinit_failed;
-+		}
-+
-+		err = hn_chim_init(dev);
-+		if (err) {
-+			hn_detach(hv);
-+			rte_vmbus_chan_close(hv->channels[0]);
-+			rte_free(hv->channels[0]);
-+			hv->channels[0] = NULL;
-+			PMD_DRV_LOG(ERR,
-+				    "chim reinit failed: %d", err);
-+			goto reinit_failed;
-+		}
-+	}
-+
- 	for (i = 0; i < NDIS_HASH_INDCNT; i++)
- 		hv->rss_ind[i] = i % dev->data->nb_rx_queues;
- 
- 	hn_rss_hash_init(hv, rss_conf);
- 
- 	subchan = hv->num_queues - 1;
-+
-+	/* Allocate fresh subchannels and configure RSS */
- 	if (subchan > 0) {
- 		err = hn_subchan_configure(hv, subchan);
- 		if (err) {
- 			PMD_DRV_LOG(NOTICE,
- 				    "subchannel configuration failed");
--			return err;
-+			goto subchan_cleanup;
- 		}
- 
- 		err = hn_rndis_conf_rss(hv, NDIS_RSS_FLAG_DISABLE);
- 		if (err) {
- 			PMD_DRV_LOG(NOTICE,
- 				"rss disable failed");
--			return err;
-+			goto subchan_cleanup;
- 		}
- 
- 		if (rss_conf->rss_hf != 0) {
-@@ -815,12 +895,82 @@ static int hn_dev_configure(struct rte_eth_dev *dev)
- 			if (err) {
- 				PMD_DRV_LOG(NOTICE,
- 					    "initial RSS config failed");
--				return err;
-+				goto subchan_cleanup;
- 			}
- 		}
- 	}
- 
-+skip_reinit:
-+	/* Apply offload config after reinit so it targets the final RNDIS session */
-+	err = hn_rndis_conf_offload(hv, txmode->offloads,
-+				    rxmode->offloads);
-+	if (err) {
-+		PMD_DRV_LOG(NOTICE,
-+			    "offload configure failed");
-+		return err;
-+	}
-+
- 	return hn_vf_configure_locked(dev, dev_conf);
-+
-+subchan_cleanup:
-+	for (i = 1; i < HN_MAX_CHANNELS; i++) {
-+		if (hv->channels[i] != NULL) {
-+			rte_vmbus_chan_close(hv->channels[i]);
-+			hv->channels[i] = NULL;
-+		}
-+	}
-+	hv->num_queues = 1;
-+	for (i = 0; i < NDIS_HASH_INDCNT; i++)
-+		hv->rss_ind[i] = 0;
-+
-+	/* Apply offload config so device is usable on primary queue */
-+	hn_rndis_conf_offload(hv, txmode->offloads, rxmode->offloads);
-+	return err;
-+
-+reinit_failed:
-+	/*
-+	 * Device is in a broken state after failed reinit.
-+	 * Try to re-establish minimal connectivity.
-+	 */
-+	PMD_DRV_LOG(ERR,
-+		    "reinit failed (err %d), attempting recovery", err);
-+	if (hv->channels[0] == NULL) {
-+		if (device_unmapped) {
-+			if (rte_vmbus_map_device(hv->vmbus)) {
-+				hv->num_queues = 0;
-+				PMD_DRV_LOG(ERR,
-+					    "recovery failed, could not re-map device");
-+				return err;
-+			}
-+			hv->rxbuf_res = hv->vmbus->resource[HV_RECV_BUF_MAP];
-+			hv->chim_res  = hv->vmbus->resource[HV_SEND_BUF_MAP];
-+		}
-+		if (rte_vmbus_chan_open(hv->vmbus, &hv->channels[0]) == 0) {
-+			if (hn_attach(hv, dev->data->mtu) == 0) {
-+				hv->primary->chan = hv->channels[0];
-+				if (hn_chim_init(dev) != 0)
-+					PMD_DRV_LOG(WARNING,
-+						    "chim reinit failed during recovery");
-+				hv->num_queues = 1;
-+				PMD_DRV_LOG(NOTICE,
-+					    "recovery successful on primary channel");
-+			} else {
-+				rte_vmbus_chan_close(hv->channels[0]);
-+				rte_free(hv->channels[0]);
-+				hv->channels[0] = NULL;
-+				hv->num_queues = 0;
-+				PMD_DRV_LOG(ERR,
-+					    "recovery failed, device unusable");
-+			}
-+		} else {
-+			hv->num_queues = 0;
-+			PMD_DRV_LOG(ERR,
-+				    "recovery failed, device unusable");
-+		}
-+	} else {
-+		hv->num_queues = 1;
-+	}
-+	return err;
- }
- 
- static int hn_dev_stats_get(struct rte_eth_dev *dev,
-@@ -1073,6 +1223,7 @@ hn_dev_stop(struct rte_eth_dev *dev)
- {
- 	struct hn_data *hv = dev->data->dev_private;
- 	int i, ret;
-+	unsigned int retry;
- 
- 	PMD_INIT_FUNC_TRACE();
- 	dev->data->dev_started = 0;
-@@ -1081,6 +1232,29 @@ hn_dev_stop(struct rte_eth_dev *dev)
- 	hn_rndis_set_rxfilter(hv, 0);
- 	ret = hn_vf_stop(dev);
- 
-+	/*
-+	 * Drain pending TX completions to prevent stale completions
-+	 * from corrupting queue state after port reconfiguration.
-+	 */
-+	for (retry = 0; retry < 100; retry++) {
-+		uint32_t pending = 0;
-+
-+		for (i = 0; i < hv->num_queues; i++) {
-+			struct hn_tx_queue *txq = dev->data->tx_queues[i];
-+
-+			if (txq == NULL)
-+				continue;
-+			hn_process_events(hv, i, 0);
-+			pending += rte_mempool_in_use_count(txq->txdesc_pool);
-+		}
-+		if (pending == 0)
-+			break;
-+		rte_delay_ms(10);
-+	}
-+	if (retry >= 100)
-+		PMD_DRV_LOG(WARNING,
-+			    "Failed to drain all TX completions");
-+
- 	for (i = 0; i < hv->num_queues; i++) {
- 		dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
- 		dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STOPPED;
-diff --git a/drivers/net/netvsc/hn_vf.c b/drivers/net/netvsc/hn_vf.c
-index 0ecfaf54ea..e77232bfb3 100644
---- a/drivers/net/netvsc/hn_vf.c
-+++ b/drivers/net/netvsc/hn_vf.c
-@@ -637,12 +637,14 @@ void hn_vf_tx_queue_release(struct hn_data *hv, uint16_t queue_id)
- {
- 	struct rte_eth_dev *vf_dev;
- 
--	rte_rwlock_read_lock(&hv->vf_lock);
-+	rte_rwlock_write_lock(&hv->vf_lock);
- 	vf_dev = hn_get_vf_dev(hv);
--	if (vf_dev && vf_dev->dev_ops->tx_queue_release)
-+	if (vf_dev && vf_dev->dev_ops->tx_queue_release) {
- 		(*vf_dev->dev_ops->tx_queue_release)(vf_dev, queue_id);
-+		vf_dev->data->tx_queues[queue_id] = NULL;
-+	}
- 
--	rte_rwlock_read_unlock(&hv->vf_lock);
-+	rte_rwlock_write_unlock(&hv->vf_lock);
- }
- 
- int hn_vf_rx_queue_setup(struct rte_eth_dev *dev,
-@@ -669,11 +671,13 @@ void hn_vf_rx_queue_release(struct hn_data *hv, uint16_t queue_id)
- {
- 	struct rte_eth_dev *vf_dev;
- 
--	rte_rwlock_read_lock(&hv->vf_lock);
-+	rte_rwlock_write_lock(&hv->vf_lock);
- 	vf_dev = hn_get_vf_dev(hv);
--	if (vf_dev && vf_dev->dev_ops->rx_queue_release)
-+	if (vf_dev && vf_dev->dev_ops->rx_queue_release) {
- 		(*vf_dev->dev_ops->rx_queue_release)(vf_dev, queue_id);
--	rte_rwlock_read_unlock(&hv->vf_lock);
-+		vf_dev->data->rx_queues[queue_id] = NULL;
-+	}
-+	rte_rwlock_write_unlock(&hv->vf_lock);
- }
- 
- int hn_vf_stats_get(struct rte_eth_dev *dev,
--- 
-2.43.0
-
+PiBTdWJqZWN0OiBbRVhURVJOQUxdIFJlOiBbUEFUQ0ggdjIgMC8yXSBuZXQvbmV0dnNjOiBydW50
+aW1lIHF1ZXVlDQo+IHJlY29uZmlndXJhdGlvbiBhbmQgZml4ZXMNCj4gDQo+IE9uIFdlZCwgMjUg
+RmViIDIwMjYgMjA6MjQ6MTIgLTA4MDANCj4gTG9uZyBMaSA8bG9uZ2xpQG1pY3Jvc29mdC5jb20+
+IHdyb3RlOg0KPiANCj4gPiBUaGlzIHNlcmllcyBhZGRzIHN1cHBvcnQgZm9yIHJ1bnRpbWUgcXVl
+dWUgY291bnQgcmVjb25maWd1cmF0aW9uIGluDQo+ID4gdGhlIG5ldHZzYyBQTUQsIGFsb25nIHdp
+dGggYSBwcmVyZXF1aXNpdGUgYnVnIGZpeC4NCj4gPg0KPiA+IFBhdGNoIDEgZml4ZXMgYSBwcmUt
+ZXhpc3Rpbmcgc3ViY2hhbm5lbCByZXNvdXJjZSBsZWFrIGluDQo+ID4gZXRoX2huX2Rldl91bmlu
+aXQoKSB3aGVyZSBzdWJjaGFubmVscyBhcmUgbmV2ZXIgY2xvc2VkIGJlZm9yZSB0aGUNCj4gPiBw
+cmltYXJ5IGNoYW5uZWwuDQo+ID4NCj4gPiBQYXRjaCAyIGFkZHMgcnVudGltZSBxdWV1ZSBjb3Vu
+dCByZWNvbmZpZ3VyYXRpb24gdmlhIHBvcnQNCj4gPiBzdG9wL2NvbmZpZ3VyZS9zdGFydCwgd2l0
+aCBmdWxsIE5WUy9STkRJUyBzZXNzaW9uIHRlYXJkb3duIGFuZCByZWluaXQNCj4gPiB3aGVuIHRo
+ZSBxdWV1ZSBjb3VudCBjaGFuZ2VzLg0KPiA+DQo+ID4gdjI6DQo+ID4gLSBTcGxpdCBzdWJjaGFu
+bmVsIGxlYWsgZml4IGludG8gc2VwYXJhdGUgcGF0Y2ggd2l0aCBGaXhlcyB0YWcgKHBhdGNoDQo+
+ID4gMSkNCj4gPiAtIEZpeCByZWluaXRfZmFpbGVkIHJlY292ZXJ5OiByZS1tYXAgZGV2aWNlIGJl
+Zm9yZSBjaGFuX29wZW4gd2hlbiBkZXZpY2UNCj4gPiAgIGlzIHVubWFwcGVkIHRvIHByZXZlbnQg
+dW5kZWZpbmVkIGJlaGF2aW9yIG9uIHVubWFwcGVkIHJpbmcgYnVmZmVycw0KPiA+IC0gTW92ZSBo
+bl9ybmRpc19jb25mX29mZmxvYWQoKSB0byBhZnRlciByZWluaXQgYmxvY2sgc28gb2ZmbG9hZCBj
+b25maWcNCj4gPiAgIHRhcmdldHMgdGhlIGZpbmFsIFJORElTIHNlc3Npb24gaW5zdGVhZCBvZiBi
+ZWluZyBsb3N0IG9uIHRlYXJkb3duDQo+ID4gLSBVc2Ugd3JpdGUgbG9jayBpbiBobl92Zl90eC9y
+eF9xdWV1ZV9yZWxlYXNlKCkgdG8gcHJldmVudCByYWNlIHdpdGgNCj4gPiAgIGNvbmN1cnJlbnQg
+ZmFzdC1wYXRoIHJlYWRlcnMgaG9sZGluZyByZWFkIGxvY2sNCj4gPiAtIFJlc2V0IFJTUyBpbmRp
+cmVjdGlvbiB0YWJsZSB0byBxdWV1ZSAwIGluIHN1YmNoYW5fY2xlYW51cCBlcnJvciBwYXRoDQo+
+ID4gLSBGaXggbXVsdGktbGluZSBjb21tZW50IHN0eWxlIHRvIGZvbGxvdyBEUERLIGNvbnZlbnRp
+b24NCj4gPg0KPiA+IExvbmcgTGkgKDIpOg0KPiA+ICAgbmV0L25ldHZzYzogZml4IHN1YmNoYW5u
+ZWwgbGVhayBvbiBkZXZpY2UgcmVtb3ZhbA0KPiA+ICAgbmV0L25ldHZzYzogc3VwcG9ydCBydW50
+aW1lIHF1ZXVlIGNvdW50IHJlY29uZmlndXJhdGlvbg0KPiA+DQo+ID4gIGRyaXZlcnMvbmV0L25l
+dHZzYy9obl9ldGhkZXYuYyB8IDE4MSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0N
+Cj4gPiAgZHJpdmVycy9uZXQvbmV0dnNjL2huX3ZmLmMgICAgIHwgIDE2ICstLQ0KPiA+ICAyIGZp
+bGVzIGNoYW5nZWQsIDE4MSBpbnNlcnRpb25zKCspLCAxNiBkZWxldGlvbnMoLSkNCj4gPg0KPiAN
+Cj4gQWZ0ZXIgYSBjb3VwbGUgb2YgY3ljbGVzIHdpdGggQ2xhdWRlLCByZWR1Y2VkIHRoZSBpc3N1
+ZXMgdG8gbW9yZSBjb25jaXNlDQo+IHN1bW1hcnkuDQo+IFdvcmsgaXMgc3RpbGwgbmVlZGVkLg0K
+DQpJIGhhdmUgc2VudCB2MyBhZGRyZXNzaW5nIHRob3NlIGlzc3Vlcy4NCg0KVGhhbmsgeW91LA0K
+TG9uZw0KDQoNCg0KDQoNCj4gDQo+IC0tLQ0KPiANCj4gDQo+IA0KPiAjIyBQYXRjaCAxOiAiZml4
+IHN1YmNoYW5uZWwgbGVhayBvbiBkZXZpY2UgcmVtb3ZhbCINCj4gDQo+IEFkZHMgYSBsb29wIGlu
+IGBldGhfaG5fZGV2X3VuaW5pdGAgdG8gY2xvc2Ugc3ViY2hhbm5lbHMgYmVmb3JlIGNsb3Npbmcg
+dGhlDQo+IHByaW1hcnkgY2hhbm5lbC4gVGhpcyBmaXhlcyBhIHJlYWwgcmVzb3VyY2UgbGVhayBJ
+IGRpZG4ndCBleHBsaWNpdGx5IGNhbGwgb3V0DQo+IChzdWJjaGFubmVscyBhbGxvY2F0ZWQgaW4g
+YGhuX3N1YmNoYW5fY29uZmlndXJlYCB3ZXJlIG5ldmVyIGNsb3NlZCBvbiByZW1vdmFsKS4NCj4g
+DQo+ICMjIFBhdGNoIDI6ICJzdXBwb3J0IHJ1bnRpbWUgcXVldWUgY291bnQgcmVjb25maWd1cmF0
+aW9uIg0KPiANCj4gTWFqb3IgcmV3b3JrIG9mIGBobl9kZXZfY29uZmlndXJlYCB0byBzdXBwb3J0
+IGNoYW5naW5nIHF1ZXVlIGNvdW50cyBhdCBydW50aW1lLA0KPiBwbHVzIFRYIGRyYWluIGluIGBo
+bl9kZXZfc3RvcGAsIHBsdXMgd3JpdGUtbG9jayBmaXggaW4gVkYgcXVldWUgcmVsZWFzZS4NCj4g
+DQo+IC0tLQ0KPiANCj4gIyMgUmUtZXZhbHVhdGlvbiBvZiBteSBvcmlnaW5hbCBmaW5kaW5ncw0K
+PiANCj4gIyMjIEZpbmRpbmcgIzE6IERvdWJsZS1mcmVlIG9mIGBodi0+cHJpbWFyeWAg4oCUIFNU
+SUxMIFBSRVNFTlQNCj4gDQo+IE5laXRoZXIgcGF0Y2ggY2hhbmdlcyB0aGlzLiBUaGUgZmxvdyBp
+cyBzdGlsbDoNCj4gDQo+IDEuIGBldGhfaG5fZGV2X3VuaW5pdGAg4oaSIGBobl9kZXZfY2xvc2Vg
+IOKGkiBgaG5fZGV2X2ZyZWVfcXVldWVzYCB3aGljaCBjYWxscw0KPiBgaG5fcnhfcXVldWVfZnJl
+ZShyeHEsIGZhbHNlKWAg4oCUIHRoaXMgZnJlZXMgYGh2LT5wcmltYXJ5YCB2aWENCj4gYGhuX3J4
+X3F1ZXVlX2ZyZWVfY29tbW9uYCAyLiBgZXRoX2huX2Rldl91bmluaXRgIHRoZW4gZG9lcyBgcnRl
+X2ZyZWUoaHYtDQo+ID5wcmltYXJ5KWAgYXQgbGluZSAxNDQ4IOKAlCBkb3VibGUtZnJlZQ0KPiAN
+Cj4gIyMjIEZpbmRpbmcgIzI6IEluaXQgZXJyb3IgcGF0aCBsZWFrcyBgaHYtPnByaW1hcnlgIGFu
+ZCBgY2hhbm5lbHNbMF1gIOKAlCBTVElMTA0KPiBQUkVTRU5UDQo+IA0KPiBUaGUgYGZhaWxlZDpg
+IGxhYmVsIGluIGBldGhfaG5fZGV2X2luaXRgIHN0aWxsIG9ubHkgY2FsbHMgYGhuX2NoaW1fdW5p
+bml0YCBhbmQNCj4gYGhuX2RldGFjaGAuIEl0IG5ldmVyIGZyZWVzIGBodi0+cHJpbWFyeWAgb3Ig
+Y2xvc2VzIGBodi0+Y2hhbm5lbHNbMF1gLg0KPiANCj4gIyMjIEZpbmRpbmcgIzM6IGBodi0+cHJp
+bWFyeWAgYWxsb2MgZmFpbHVyZSBsZWFrcyBgY2hhbm5lbHNbMF1gIOKAlCBTVElMTCBQUkVTRU5U
+DQo+IA0KPiBMaW5lcyAxMzc2LTEzODAgYXJlIHVudG91Y2hlZC4NCj4gDQo+ICMjIyBGaW5kaW5n
+ICM0OiBgbWF4X2NoYW4gPD0gMGAganVtcHMgdG8gYGZhaWxlZGAgd2l0aCBgZXJyYCBwb3NzaWJs
+eSB6ZXJvIOKAlCBTVElMTA0KPiBQUkVTRU5UDQo+IA0KPiBMaW5lcyAxNDA2LTE0MDcgYXJlIHVu
+dG91Y2hlZC4gYGVycmAgaXMgMCBmcm9tIHRoZSBzdWNjZXNzZnVsDQo+IGBobl9ybmRpc19nZXRf
+ZWFkZHJgIGNhbGwsIHNvIHRoZSBgZmFpbGVkOmAgcGF0aCB0ZWFycyBkb3duIHRoZSBkZXZpY2Ug
+YW5kIHJldHVybnMNCj4gc3VjY2Vzcy4NCj4gDQo+ICMjIyBGaW5kaW5nICM1OiBgaG5fZGV2X3N0
+YXJ0YCBsZWFrcyBldmVudCBjYWxsYmFjayBvbiByeGZpbHRlciBmYWlsdXJlIOKAlCBTVElMTA0K
+PiBQUkVTRU5UDQo+IA0KPiBMaW5lcyAxMDM1LTEwNDcgYXJlIHVudG91Y2hlZC4NCj4gDQo+IC0t
+LQ0KPiANCj4gIyMgTmV3IGlzc3VlcyBpbnRyb2R1Y2VkIGJ5IFBhdGNoIDINCj4gDQo+ICMjIyBO
+ZXcgSXNzdWUgQTogYGhuX2Rldl9jb25maWd1cmVgIHJlaW5pdCBwYXRoIGRvZXNuJ3QgdXBkYXRl
+IGBodi0+cHJpbWFyeS0NCj4gPmNoYW5gDQo+IA0KPiBXaGVuIHRoZSByZWluaXQgcGF0aCBjbG9z
+ZXMgdGhlIHByaW1hcnkgY2hhbm5lbCBhbmQgb3BlbnMgYSBuZXcgb25lIChsaW5lcyBpbg0KPiB0
+aGUgcGF0Y2ggYXJvdW5kIGBydGVfdm1idXNfY2hhbl9jbG9zZShodi0+Y2hhbm5lbHNbMF0pYCAu
+Li4NCj4gYHJ0ZV92bWJ1c19jaGFuX29wZW4oaHYtPnZtYnVzLCAmaHYtPmNoYW5uZWxzWzBdKWAp
+LCB0aGUgYGh2LT5wcmltYXJ5YCByeA0KPiBxdWV1ZSBzdHJ1Y3Qgc3RpbGwgaG9sZHMgYSBzdGFs
+ZSBgY2hhbmAgcG9pbnRlciBmcm9tIHRoZSBvbGQgY2hhbm5lbC4gYGh2LT5wcmltYXJ5LQ0KPiA+
+Y2hhbmAgd2FzIHNldCBkdXJpbmcgYGhuX3J4X3F1ZXVlX2FsbG9jYCBhdCBpbml0IHRpbWUgYW5k
+IGlzIG5ldmVyIHVwZGF0ZWQgaGVyZS4NCj4gVGhlIG5leHQgY29udHJvbCBvcGVyYXRpb24gdXNp
+bmcgYGh2LT5wcmltYXJ5YCAod2hpY2ggdXNlcw0KPiBgaG5fcHJpbWFyeV9jaGFuKGh2KWAgaW5k
+aXJlY3RseSB0aHJvdWdoIGBobl9udnNfZXhlY3V0ZWAg4oaSIGByeHEtPnJpbmdfbG9ja2ApDQo+
+IHdvdWxkIG9wZXJhdGUgb24gdGhlIG5ldyBjaGFubmVsIGNvcnJlY3RseSBiZWNhdXNlIGBobl9w
+cmltYXJ5X2NoYW4oKWAgcmVhZHMNCj4gZnJvbSBgaHYtPmNoYW5uZWxzWzBdYCwgYnV0IGBodi0+
+cHJpbWFyeS0+Y2hhbmAgaXMgc3RhbGUuIFRoaXMgbWF0dGVycyBpZiBhbnl0aGluZw0KPiB1c2Vz
+IGByeHEtPmNoYW5gIGRpcmVjdGx5IGZvciB0aGUgcHJpbWFyeSBxdWV1ZS4NCj4gDQo+ICMjIyBO
+ZXcgSXNzdWUgQjogYGhuX2NoaW1fdW5pbml0YC9gaG5fY2hpbV9pbml0YCBub3QgY2FsbGVkIGR1
+cmluZyByZWluaXQNCj4gDQo+IFRoZSByZWluaXQgcGF0aCBpbiBgaG5fZGV2X2NvbmZpZ3VyZWAg
+Y2FsbHMgYGhuX2RldGFjaGAgKHdoaWNoIGNhbGxzDQo+IGBobl9udnNfZGV0YWNoYCDihpIgYGhu
+X252c19kaXNjb25uX3J4YnVmYCArIGBobl9udnNfZGlzY29ubl9jaGltYCkgYW5kIHRoZW4NCj4g
+YGhuX2F0dGFjaGAgKHdoaWNoIGNhbGxzIGBobl9udnNfYXR0YWNoYCDihpIgYGhuX252c19jb25u
+X2NoaW1gKS4gQWZ0ZXIgcmVpbml0LCBgaHYtDQo+ID5jaGltX2NudGAgYW5kIGBodi0+Y2hpbV9z
+em1heGAgZ2V0IHVwZGF0ZWQgYnkgYGhuX252c19jb25uX2NoaW1gLCBidXQgdGhlDQo+IGNoaW1u
+ZXkgYml0bWFwIChgaHYtPmNoaW1fYm1hcGApIHN0aWxsIHJlZmxlY3RzIHRoZSBvbGQgYWxsb2Nh
+dGlvbiBzdGF0ZS4gSWYNCj4gYGNoaW1fY250YCBjaGFuZ2VzIGFjcm9zcyB0aGUgcmVpbml0LCB0
+aGUgYml0bWFwIGlzIHRoZSB3cm9uZyBzaXplLiBUaGlzIGNvdWxkIGxlYWQNCj4gdG8gb3V0LW9m
+LWJvdW5kcyBiaXRtYXAgYWNjZXNzLg0KPiANCj4gIyMjIE5ldyBJc3N1ZSBDOiBgcmVpbml0X2Zh
+aWxlZGAgcmVjb3ZlcnkgZG9lc24ndCByZXN0b3JlIGBodi0+cHJpbWFyeS0NCj4gPnJ4YnVmX2lu
+Zm9gDQo+IA0KPiBXaGVuIGBobl9hdHRhY2hgIHN1Y2NlZWRzIGluIHRoZSByZWluaXQgcGF0aCwg
+YGhuX252c19jb25uX3J4YnVmYCBhbGxvY2F0ZXMgYQ0KPiAqbmV3KiBgcnhidWZfaW5mb2AgZm9y
+IGBodi0+cHJpbWFyeWAuIEJ1dCBgaG5fZGV0YWNoYCAoY2FsbGVkIGVhcmxpZXIpIGRvZXNuJ3Qg
+ZnJlZQ0KPiB0aGUgb2xkIGByeGJ1Zl9pbmZvYC4gU28gdGhlIG9sZCBvbmUgbGVha3MsIGFuZCB0
+aGUgcG9pbnRlciBpcyBvdmVyd3JpdHRlbi4gSW4gdGhlDQo+IHJlY292ZXJ5IHBhdGgsIGlmIGBo
+bl9hdHRhY2hgIHN1Y2NlZWRzIHRoZXJlIHRvbywgYW5vdGhlciBgcnhidWZfaW5mb2AgaXMgYWxs
+b2NhdGVkLA0KPiBsZWFraW5nIHRoZSBwcmV2aW91cyBvbmUuDQo+IA0KPiAjIyMgTmV3IElzc3Vl
+IEQ6IFZGIHF1ZXVlIHJlbGVhc2UgTlVMTC1zZXRzIFZGIHF1ZXVlcyBidXQgVkYgc2V0dXAgZG9l
+c24ndCByZS0NCj4gc2V0IHRoZW0NCj4gDQo+IEluIGBobl92Zl90eF9xdWV1ZV9yZWxlYXNlYCwg
+dGhlIHBhdGNoIGFkZHMgYHZmX2Rldi0+ZGF0YS0NCj4gPnR4X3F1ZXVlc1txdWV1ZV9pZF0gPSBO
+VUxMYC4gVGhpcyBpcyBnb29kIGZvciBwcmV2ZW50aW5nIHVzZS1hZnRlci1mcmVlLg0KPiBIb3dl
+dmVyLCB0aGUgY29ycmVzcG9uZGluZyBgaG5fdmZfdHhfcXVldWVfc2V0dXBgIGNhbGxzDQo+IGBy
+dGVfZXRoX3R4X3F1ZXVlX3NldHVwYCBvbiB0aGUgVkYgd2hpY2ggaW50ZXJuYWxseSBzZXRzIHRo
+ZSBWRidzIHF1ZXVlIHBvaW50ZXIuDQo+IFNvIHRoaXMgc2hvdWxkIGJlIGZpbmUgb24gcmUtc2V0
+dXAg4oCUIG5vdCBhIGJ1ZywganVzdCBub3RpbmcgdGhlIGFzeW1tZXRyeSBpcw0KPiBpbnRlbnRp
+b25hbC4NCj4gDQo+IC0tLQ0KPiANCj4gIyMgU3VtbWFyeQ0KPiANCj4gQWxsIGZpdmUgb3JpZ2lu
+YWwgZmluZGluZ3MgcmVtYWluIHVuZml4ZWQgYnkgdGhlc2UgcGF0Y2hlcy4gVGhlIHBhdGNoZXMg
+YWRkcmVzcw0KPiBkaWZmZXJlbnQgKGxlZ2l0aW1hdGUpIHByb2JsZW1zOiBzdWJjaGFubmVsIGxl
+YWtzIGFuZCBydW50aW1lIHF1ZXVlIHJlY29uZmlnLg0KPiBUaGUgbW9zdCBjcml0aWNhbCBvdXRz
+dGFuZGluZyBpc3N1ZSBpcyBzdGlsbCB0aGUgZG91YmxlLWZyZWUgb2YgYGh2LT5wcmltYXJ5YCAo
+IzEpLA0KPiBhbmQgdGhlIG5ldyByZWluaXQgcGF0aCBpbiBQYXRjaCAyIGludHJvZHVjZXMgcG90
+ZW50aWFsIGNvbmNlcm5zIGFyb3VuZCBzdGFsZQ0KPiBjaGltbmV5IGJpdG1hcCBzdGF0ZSAoI0Ip
+IGFuZCBsZWFrZWQgYHJ4YnVmX2luZm9gICgjQykuDQo=
