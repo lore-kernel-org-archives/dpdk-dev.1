@@ -2,73 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B45EC1459
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 14:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9510FEB362F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 15:00:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 32CF440E4A;
-	Tue,  3 Mar 2026 15:38:20 +0100 (CET)
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com
- [74.125.82.178]) by mails.dpdk.org (Postfix) with ESMTP id EACBB402B0
- for <dev@dpdk.org>; Tue,  3 Mar 2026 15:38:18 +0100 (CET)
-Received: by mail-dy1-f178.google.com with SMTP id
- 5a478bee46e88-2bdfc4b191fso2126465eec.1
- for <dev@dpdk.org>; Tue, 03 Mar 2026 06:38:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772548698;
- x=1773153498; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ue4gw0SLSRqnNzVd6eV31N+URXu40qZRKtBz//xHq20=;
- b=wY66j3Bwrrr7/ypWPi9hP1m0k16po0OconagiQldzXs+BVww/sCVGDG/uoLKtrohvf
- 1PcOvXRmyNzl02zAl8yIWt+xj4jT0wivOKII4w8IeuilH/V6U20kYSUbu7AER3X8td8H
- mVY7QdLAK4/AeqXHpejkhOT7t+cDCWM5Uldnu19P3wFAb4pBXV8F0dgpx2Elw528lNVv
- 0W9anzsZrYzf8tG1d2Grkd1ZzFWM3LSOQN/QuxggJrx0wOg7MHou4iSBfnrUnwgTmuYY
- dD/mUd4XDXrFwjAl4GhmnZ1SVPGW8W99R5boeDN+D0UdXdvYlz9aNpcD9PrFnJ8I1PhF
- VR9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772548698; x=1773153498;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=ue4gw0SLSRqnNzVd6eV31N+URXu40qZRKtBz//xHq20=;
- b=fYSyR3h9NfoIFaq29pFCVI5ZJVDkXsmxu8ZB7WwvYmC/FfC6Yv0Cq0AO7bAikNJTGT
- O66QBadYhvrFxo8jdoMfi2JIBQ//63dUMijdUQPj4q0N96W8f3d/8TcelV066m84rxy6
- j9Nq0DzE2CpeirPtY/wAdjayRnoWB33z05jqjRCXfm+jXL1hyk65OPMlh+QzbsWIURKa
- mpL2PjvOEjzRGF/hipFroLsYQZN7SFUEGeU/kO54X+IdjTrJBs2CTvj37ugK8jgzakJU
- jHzWJX2dHJESErqbnhevL0wl3Qr1zHXrISWWpnGTTWs0B8X1TXGu/fPODyDq5TVt8Cw9
- ZKwA==
-X-Gm-Message-State: AOJu0Yx45W87q+/Ky/+Ez2POnn1apYHk6mZSw5EFRG+TlOK+hpUDee3Q
- NHECftCY8u6TqhqZTE2KkfUaT7p3KRVysIn2zm61JfQtiCgFaaBV/cQm3eIqcTzfiBA=
-X-Gm-Gg: ATEYQzyvnWD/KVjrcmS9ApUCS9KmYEx2atzDOm9hOYRz+oOXPkx1mwDVHt2+RR3XQwh
- Cxsn7QqSy2uMSbgrPKfbiuY+jZ2YwuE67fwGyKETqRadykDMrI6oYayeJeHs/EH7ENpwEaIKz9x
- RkBAmYp1OfdD9XUCli8E2ai18gv16IyGoZWi6IitAc2aXZdj1CqFWUy+UdLtFBbhJ6DXYFbkPZA
- t/hM04p8bNSWkdSHtlGQbR/XVqCCkvL2QPGOI4E4eHxQ21pRja64TOkHdQZyWTILvt1XMTjz4Lh
- VPb9fr2gbq22uhSi0kTgcaoYHHQDVDcbfSgRgB4K0RsAKUdFi/4airx365AayK/Aj4o0fVR+O8e
- eV7YPeVT/SXVtTiER2Jz/KR4Bg9ochJdQnwtrw/zXhjEOt7FCCpuZFg4L710BI1U8Qr3aidJ7+L
- gYaQLjCtYMc9KR6n/19dMb9MHiHcraSuPIzwAqsisr9Awl97xdD48wlwrVFgNQjetpfQKvh/ES+
- 4Y=
-X-Received: by 2002:a05:7300:1348:b0:2be:22b0:8bf3 with SMTP id
- 5a478bee46e88-2be22b090e8mr816448eec.30.1772548697936; 
- Tue, 03 Mar 2026 06:38:17 -0800 (PST)
-Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2be220eb5e5sm1467853eec.17.2026.03.03.06.38.16
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 03 Mar 2026 06:38:17 -0800 (PST)
-Date: Tue, 3 Mar 2026 06:38:15 -0800
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon
- Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH v1 1/1] net/nbl: fix queue count issue on port restart
-Message-ID: <20260303063815.2bb8500c@phoenix.local>
-In-Reply-To: <20260228021211.71166-2-dimon.zhao@nebula-matrix.com>
-References: <20260228021211.71166-1-dimon.zhao@nebula-matrix.com>
- <20260228021211.71166-2-dimon.zhao@nebula-matrix.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 972B6402B0;
+	Tue,  3 Mar 2026 16:00:45 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 59BB240268;
+ Tue,  3 Mar 2026 16:00:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1772550044; x=1804086044;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=gF2Im5Rn5nc91hZiYJmB4Yv0m9Lzv+XlyvlF7U626Y0=;
+ b=Vz9hVHRk19DvXNcvHj2ODkd6gK8dqmaaJ5dqChvDwMgaslGmFdJH1a8A
+ Pb0PqNrW6O7AJ9krcysnCkNy3lYDPEK5EjjeyF7dJtb7DSfLUQf/9nXqS
+ 1SvmWmFqDPamHhGgPhtCN1ILmewhiJSBc9ligDJn9rKfvTW+Xl2hZIKk4
+ dLhSoO7jeAgdOAu5JoTpU+snjhvFLHbuu4keYXFxh4JubdH0pIW9hUsEf
+ vo12bC2tLrEkQEusAQBqdSqATLrMvQJG/sYnuMQAXcr5RjSTCc782C4T+
+ l/slLBDC2EWg9ezS5jPmS9y4RpLiUG3nLl/IauOYniA9fK0Ow4DBaXQK3 Q==;
+X-CSE-ConnectionGUID: oo8qRtofRuuM3/66mCIUkA==
+X-CSE-MsgGUID: 02XHyO0eTTmtIlYFEOlT1Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11718"; a="73640201"
+X-IronPort-AV: E=Sophos;i="6.21,322,1763452800"; d="scan'208";a="73640201"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Mar 2026 07:00:39 -0800
+X-CSE-ConnectionGUID: guWefQ5PQqmE70reLqOCKQ==
+X-CSE-MsgGUID: 464mrS6RTCitywOFThWlog==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,322,1763452800"; d="scan'208";a="217970446"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa009.jf.intel.com with ESMTP; 03 Mar 2026 07:00:37 -0800
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>, stable@dpdk.org,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>,
+ Xiaoyun Li <xiaoyun.li@intel.com>, Beilei Xing <beilei.xing@intel.com>,
+ Junfeng Guo <junfengg@nvidia.com>
+Subject: [PATCH] net/idpf: handle Tx of mbuf segments larger than 16k
+Date: Tue,  3 Mar 2026 15:00:26 +0000
+Message-ID: <20260303150026.1601461-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,23 +61,167 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 27 Feb 2026 18:12:11 -0800
-Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
+Recent rework of the Tx single-queue path in idpf aligned that path with
+that of other drivers, meaning it now supports segments of size greater
+than 16k. Rework the split-queue path to similarly support those large
+segments.
 
-> Remove tx_ring_num and rx_ring_num from struct nbl_txrx_mgt to fix
-> an issue where these counts keep increasing during port stop/start cycles.
-> 
-> The counts were incremented in tx_queue_setup/rx_queue_setup, but never
-> decremented. This causes incorrect queue counts after multiple port
-> restarts. Since the actual queue counts are already available via
-> eth_dev->data->nb_tx_queues and nb_rx_queues, use those instead.
-> 
-> Update nbl_res_txrx_get_xstats() to use eth_dev->data->nb_rx_queues.
-> 
-> Fixes: 661c0ccf2512 ("net/nbl: support statistics")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
-> ---
+Fixes: 770f4dfe0f79 ("net/idpf: support basic Tx data path")
+Cc: stable@dpdk.org
 
-Applied to next-net
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ drivers/net/intel/idpf/idpf_common_rxtx.c | 98 ++++++++++++++---------
+ 1 file changed, 60 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index b8f6418d4a..981b4b8eee 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -890,7 +890,7 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	volatile struct idpf_flex_tx_sched_desc *txd;
+ 	struct ci_tx_entry *sw_ring;
+ 	union ci_tx_offload tx_offload = {0};
+-	struct ci_tx_entry *txe, *txn;
++	struct ci_tx_entry *txe;
+ 	uint16_t nb_used, tx_id, sw_id;
+ 	struct rte_mbuf *tx_pkt;
+ 	uint16_t nb_to_clean;
+@@ -911,44 +911,44 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
+ 		tx_pkt = tx_pkts[nb_tx];
+ 
+-		if (txq->nb_tx_free <= txq->tx_free_thresh) {
+-			/* TODO: Need to refine
+-			 * 1. free and clean: Better to decide a clean destination instead of
+-			 * loop times. And don't free mbuf when RS got immediately, free when
+-			 * transmit or according to the clean destination.
+-			 * Now, just ignore the RE write back, free mbuf when get RS
+-			 * 2. out-of-order rewrite back haven't be supported, SW head and HW head
+-			 * need to be separated.
+-			 **/
+-			nb_to_clean = 2 * txq->tx_rs_thresh;
+-			while (nb_to_clean--)
+-				idpf_split_tx_free(txq->complq);
+-		}
+-
+-		if (txq->nb_tx_free < tx_pkt->nb_segs)
+-			break;
+-
+ 		cmd_dtype = 0;
+ 		ol_flags = tx_pkt->ol_flags;
+ 		tx_offload.l2_len = tx_pkt->l2_len;
+ 		tx_offload.l3_len = tx_pkt->l3_len;
+ 		tx_offload.l4_len = tx_pkt->l4_len;
+ 		tx_offload.tso_segsz = tx_pkt->tso_segsz;
++
+ 		/* Calculate the number of context descriptors needed. */
+ 		uint64_t cd_qw0 = 0, cd_qw1 = 0;
+ 		nb_ctx = idpf_set_tso_ctx(ol_flags, tx_pkt, &tx_offload, txq,
+ 					  &cd_qw0, &cd_qw1);
+ 
+-		/* Calculate the number of TX descriptors needed for
+-		 * each packet. For TSO packets, use ci_calc_pkt_desc as
+-		 * the mbuf data size might exceed max data size that hw allows
+-		 * per tx desc.
++		/* Calculate the number of TX descriptors needed for each packet.
++		 * For TSO packets, use ci_calc_pkt_desc as the mbuf data size
++		 * might exceed the max data size that hw allows per tx desc.
+ 		 */
+-		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
++		if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
+ 			nb_used = ci_calc_pkt_desc(tx_pkt) + nb_ctx;
+ 		else
+ 			nb_used = tx_pkt->nb_segs + nb_ctx;
+ 
++		if (txq->nb_tx_free <= txq->tx_free_thresh) {
++			/* TODO: Need to refine
++			 * 1. free and clean: Better to decide a clean destination instead of
++			 * loop times. And don't free mbuf when RS got immediately, free when
++			 * transmit or according to the clean destination.
++			 * Now, just ignore the RE write back, free mbuf when get RS
++			 * 2. out-of-order rewrite back haven't be supported, SW head and HW head
++			 * need to be separated.
++			 **/
++			nb_to_clean = 2 * txq->tx_rs_thresh;
++			while (nb_to_clean--)
++				idpf_split_tx_free(txq->complq);
++		}
++
++		if (txq->nb_tx_free < nb_used)
++			break;
++
+ 		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
+ 			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
+ 
+@@ -959,30 +959,52 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			ctx_desc[0] = cd_qw0;
+ 			ctx_desc[1] = cd_qw1;
+ 
+-			tx_id++;
+-			if (tx_id == txq->nb_tx_desc)
++			if (++tx_id == txq->nb_tx_desc)
+ 				tx_id = 0;
+ 		}
+ 
++		cmd_dtype |= IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
++		struct rte_mbuf *m_seg = tx_pkt;
+ 		do {
+-			txd = &txr[tx_id];
+-			txn = &sw_ring[txe->next_id];
+-			txe->mbuf = tx_pkt;
++			uint64_t buf_dma_addr = rte_mbuf_data_iova(m_seg);
++			uint16_t slen = m_seg->data_len;
++
++			txe->mbuf = m_seg;
++
++			/* For TSO, split large segments that exceed the
++			 * per-descriptor data limit, matching the behaviour of
++			 * ci_xmit_pkts() on the singleq path.
++			 */
++			while ((ol_flags & (RTE_MBUF_F_TX_TCP_SEG |
++					    RTE_MBUF_F_TX_UDP_SEG)) &&
++					unlikely(slen > CI_MAX_DATA_PER_TXD)) {
++				txd = &txr[tx_id];
++				txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
++				txd->qw1.cmd_dtype = cmd_dtype;
++				txd->qw1.rxr_bufsize = CI_MAX_DATA_PER_TXD;
++				txd->qw1.compl_tag = sw_id;
++				buf_dma_addr += CI_MAX_DATA_PER_TXD;
++				slen -= CI_MAX_DATA_PER_TXD;
++				if (++tx_id == txq->nb_tx_desc)
++					tx_id = 0;
++				sw_id = txe->next_id;
++				txe = &sw_ring[sw_id];
++				/* sub-descriptor slots do not own the mbuf */
++				txe->mbuf = NULL;
++			}
+ 
+-			/* Setup TX descriptor */
+-			txd->buf_addr =
+-				rte_cpu_to_le_64(rte_mbuf_data_iova(tx_pkt));
+-			cmd_dtype |= IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
++			/* Write the final (or only) descriptor for this segment */
++			txd = &txr[tx_id];
++			txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
+ 			txd->qw1.cmd_dtype = cmd_dtype;
+-			txd->qw1.rxr_bufsize = tx_pkt->data_len;
++			txd->qw1.rxr_bufsize = slen;
+ 			txd->qw1.compl_tag = sw_id;
+-			tx_id++;
+-			if (tx_id == txq->nb_tx_desc)
++			if (++tx_id == txq->nb_tx_desc)
+ 				tx_id = 0;
+ 			sw_id = txe->next_id;
+-			txe = txn;
+-			tx_pkt = tx_pkt->next;
+-		} while (tx_pkt);
++			txe = &sw_ring[sw_id];
++			m_seg = m_seg->next;
++		} while (m_seg);
+ 
+ 		/* fill the last descriptor with End of Packet (EOP) bit */
+ 		txd->qw1.cmd_dtype |= IDPF_TXD_FLEX_FLOW_CMD_EOP;
+-- 
+2.51.0
+
