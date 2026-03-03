@@ -2,57 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FA2EB3648
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 00:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C24A5EB3648
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 00:58:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C527402AB;
-	Tue,  3 Mar 2026 01:58:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D29A740A76;
+	Tue,  3 Mar 2026 01:58:11 +0100 (CET)
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com
- [209.85.216.74]) by mails.dpdk.org (Postfix) with ESMTP id 9400240289
- for <dev@dpdk.org>; Tue,  3 Mar 2026 01:58:08 +0100 (CET)
+ [209.85.216.74]) by mails.dpdk.org (Postfix) with ESMTP id 0B2E6402C9
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 01:58:11 +0100 (CET)
 Received: by mail-pj1-f74.google.com with SMTP id
- 98e67ed59e1d1-3598007eb74so13212147a91.3
- for <dev@dpdk.org>; Mon, 02 Mar 2026 16:58:08 -0800 (PST)
+ 98e67ed59e1d1-3598d4b19deso6121808a91.2
+ for <dev@dpdk.org>; Mon, 02 Mar 2026 16:58:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1772499488; x=1773104288; darn=dpdk.org;
+ d=google.com; s=20230601; t=1772499490; x=1773104290; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=up6HmZ/2vHemxzi4wKefaaewt9YSgDl0FHjpSSjIWOQ=;
- b=EVpyMNLKoqGLda7zjU/kNaBLwXlEkIZKf3OCYhe1pt7y+sxvI3YWKZk0DID/ldme3S
- NQUdS5ckI8edQprQ1zqxg6trnQPPggyBtqqR80kH1RNNPfCln5AdUUJ8rNyR25ZpJN8E
- pQl9DzneheM67Ow4sBArayOpyb9aSPD/FD698HlW61a4jz17PO1TzYJ9uS9jbMxUlV7W
- LdNLzW7wPcRbHRLcT1UD4YogGqgxJ681H2OaZyYKs+oTnQ0p0wfpuIpWU70uHbRqN+bl
- +H96h8zIKZHI7jqLCvyWzh6QF82ulsmI3VrSMNklABQkndch1kjnuKPvqvJnn1s/JNvN
- Hx0g==
+ bh=dXKamBqiGYaY3SqTuBG6LyoNhL0kpwjm4ayNX4g/efw=;
+ b=H3eeEB2kZPQ5jtGi0TBx+L/J8zKBU57eJWccZ3iYawHCSRwNM00h9xxmblhegaKLW4
+ 7qwvsehLRPO3bEOKNyBlTcmUDiWxA0ymeG2BfXhy0RPjd1Lf5OELQ78v+wxVOh5dO4OD
+ xfrVTa/ALtbmcwIvR2ytxYCBG/57zVhTZbDNaQw4Zea5l5YCDvg80eL/Qq4P22JCE/DG
+ NWXC2cwqKHeHEuNxhq8fVcsO683ZL9MVtvhN7ItLVLePsG4O2eb8u9bzWLv+ge598S5y
+ 9KB//VDpP5vpFaWJSya3DrD1uR4DnEQFzfwvICFvKF9R31kwWb7jOXrhDazZmsxhr5F3
+ QB+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772499488; x=1773104288;
+ d=1e100.net; s=20230601; t=1772499490; x=1773104290;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=up6HmZ/2vHemxzi4wKefaaewt9YSgDl0FHjpSSjIWOQ=;
- b=n2gfHa3exEvZ1OVDZzJ8ykMgyY7AF5M0K3xzpy65YkqYjN2Gxe3r9JF7q0mEoET1DM
- Mv4t9U9Y+dq74mC6yIUYc3bsnaYCOzA2e+AS4W3lCtoj2A59HEdswyhH6A90HUQSGgP9
- jJ+JRVPCCXTHlYWZaTqKsWFKo8Icy50ST735NvoBTydXvhohUcwACkv9iNg1hu+yYnlV
- hoh2fA+osDY+mzWIyxpOaGdDcKBQD1DK2ousw1OYtxOEbt6FCOa96kMyX+HjBmUOl1jD
- ySXvU1+S86jpB7wi6AwZLxVggXxBR6Cntaz3Pe8ulpz+Ln8Fz+Dwsq+Uh8nnxuLgBxNM
- 0kfw==
-X-Gm-Message-State: AOJu0YyayH+8zNU5jq/vipgHUv0BPKGGVQ01oo01EZOutbFYIFLLfEKG
- 2F2rWgfjrghjIEPFeZyiwtHkstAttnl6Hdvc1u/hFHchgLxONsNl/0+D6JGAbV8pF+vu27FWGjJ
- ztmqV3v1IsPWNp5iFCVW3bZI7uQ==
-X-Received: from pjbgp2.prod.google.com ([2002:a17:90a:df02:b0:359:8467:cdd7])
+ bh=dXKamBqiGYaY3SqTuBG6LyoNhL0kpwjm4ayNX4g/efw=;
+ b=Zi5TTJqBRk6oXkMrE/mw2bgZGmCsiew0nNVHX98J/K72z42H/2FSFnc1jDoOVjsNOI
+ HtPSsRbLKAirkOv6jibDs/r4w60U45U24BcejJbY/44jEfs+V+kIy7IryqQL5e+JDklj
+ BB5tHZeNL2YQytB1ds3+7s4O3mjyWbln/L3ZSueb8xwx2K5uPz6NYp1PEaKTzpK5P3f2
+ 0ObsP5v61Y4PDPL8C6Qvksbmpb49N5cfawEIo4DFS4SHgyygSzYwXCY1gNSgNhrX/spb
+ cPxcxl1nNVQbs0IAiJmro1hgIn4dt1QHH6qQDx1z30hJFr1nBAr8BWnyqgCSKe9EbDVf
+ kVfA==
+X-Gm-Message-State: AOJu0Yw74jWJozK2Lbf/e3kE07GC6B6oNz251pTEqglVxeuhfyPZ460Q
+ r7pkB5XDcDNClY9Ad9yKhQuaSja1k+wjxNqhT7uCkYudEjwtdgVUZrctG5/kqjJiQf2a8Offhqc
+ 4ouYlm5zUOG/8r4KqXmoNi3xtfg==
+X-Received: from pjbgm24.prod.google.com ([2002:a17:90b:1018:b0:359:979d:cee5])
  (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:e18f:b0:356:8719:f516 with SMTP id
- 98e67ed59e1d1-35965ceaf7dmr13079165a91.24.1772499487418; 
- Mon, 02 Mar 2026 16:58:07 -0800 (PST)
-Date: Tue,  3 Mar 2026 00:58:00 +0000
-In-Reply-To: <20260227195126.3545607-1-jtranoleary@google.com>
+ 2002:a17:90b:4b49:b0:359:7eb:d91d with SMTP id
+ 98e67ed59e1d1-35965ceb5d7mr12757615a91.26.1772499490025; 
+ Mon, 02 Mar 2026 16:58:10 -0800 (PST)
+Date: Tue,  3 Mar 2026 00:58:01 +0000
+In-Reply-To: <20260303005804.924545-1-jtranoleary@google.com>
 Mime-Version: 1.0
 References: <20260227195126.3545607-1-jtranoleary@google.com>
+ <20260303005804.924545-1-jtranoleary@google.com>
 X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
-Message-ID: <20260303005804.924545-1-jtranoleary@google.com>
-Subject: [PATCH v2 0/4] net/gve: add flow steering support
+Message-ID: <20260303005804.924545-2-jtranoleary@google.com>
+Subject: [PATCH v2 1/4] net/gve: add flow steering device option
 From: "Jasper Tran O'Leary" <jtranoleary@google.com>
 To: stephen@networkplumber.org
-Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>
+Cc: dev@dpdk.org, Vee Agarwal <veethebee@google.com>, 
+ "Jasper Tran O'Leary" <jtranoleary@google.com>,
+ Joshua Washington <joshwash@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,56 +70,176 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch series adds flow steering support to the Google Virtual
-Ethernet (gve) driver. This functionality allows traffic to be directed
-to specific receive queues based on user-specified flow patterns.
+From: Vee Agarwal <veethebee@google.com>
 
-The series includes foundational support for extended admin queue
-commands needed to handle flow rules, the specific adminqueue commands
-for flow rule management, and the integration with the DPDK rte_flow
-API. The series adds support flow matching on the following protocols:
-IPv4, IPv6, TCP, UDP, SCTP, ESP, and AH.
+Add a new device option to signal to the driver that the device supports
+flow steering. This device option also carries the maximum number of
+flow steering rules that the device can store.
 
-Patch Overview:
+Signed-off-by: Vee Agarwal <veethebee@google.com>
+Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
+Reviewed-by: Joshua Washington <joshwash@google.com>
+---
+ drivers/net/gve/base/gve_adminq.c | 36 ++++++++++++++++++++++++++++---
+ drivers/net/gve/base/gve_adminq.h | 11 ++++++++++
+ drivers/net/gve/gve_ethdev.h      |  2 ++
+ 3 files changed, 46 insertions(+), 3 deletions(-)
 
-1. "net/gve: add flow steering device option" checks for and enables
-   the flow steering capability in the device options during
-   initialization.
-2. "net/gve: introduce extended adminq command" adds infrastructure
-   for sending extended admin queue commands. These commands use a
-   flexible buffer descriptor format required for flow rule management.
-3. "net/gve: add adminq commands for flow steering" implements the
-   specific admin queue commands to add and remove flow rules on the
-   device, including handling of rule IDs and parameters.
-4. "net/gve: add rte flow API integration" exposes the flow steering
-   functionality via the DPDK rte_flow API. This includes strict
-   pattern validation, rule parsing, and lifecycle management (create,
-   destroy, flush). It ensures thread-safe access to the flow subsystem
-   and proper resource cleanup during device reset.
-
-Jasper Tran O'Leary (2):
-  net/gve: add adminq commands for flow steering
-  net/gve: add rte flow API integration
-
-Vee Agarwal (2):
-  net/gve: add flow steering device option
-  net/gve: introduce extended adminq command
-
- doc/guides/nics/features/gve.ini       |  12 +
- doc/guides/nics/gve.rst                |  26 +
- doc/guides/rel_notes/release_26_03.rst |   1 +
- drivers/net/gve/base/gve.h             |   3 +-
- drivers/net/gve/base/gve_adminq.c      | 118 ++++-
- drivers/net/gve/base/gve_adminq.h      |  57 +++
- drivers/net/gve/gve_ethdev.c           |  83 +++-
- drivers/net/gve/gve_ethdev.h           |  46 ++
- drivers/net/gve/gve_flow_rule.c        | 656 +++++++++++++++++++++++++
- drivers/net/gve/gve_flow_rule.h        |  65 +++
- drivers/net/gve/meson.build            |   1 +
- 11 files changed, 1063 insertions(+), 5 deletions(-)
- create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.c
- create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.h
-
+diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
+index 6bd98d5..64b9468 100644
+--- a/drivers/net/gve/base/gve_adminq.c
++++ b/drivers/net/gve/base/gve_adminq.c
+@@ -36,6 +36,7 @@ void gve_parse_device_option(struct gve_priv *priv,
+ 			     struct gve_device_option_gqi_rda **dev_op_gqi_rda,
+ 			     struct gve_device_option_gqi_qpl **dev_op_gqi_qpl,
+ 			     struct gve_device_option_dqo_rda **dev_op_dqo_rda,
++			     struct gve_device_option_flow_steering **dev_op_flow_steering,
+ 			     struct gve_device_option_modify_ring **dev_op_modify_ring,
+ 			     struct gve_device_option_jumbo_frames **dev_op_jumbo_frames)
+ {
+@@ -109,6 +110,22 @@ void gve_parse_device_option(struct gve_priv *priv,
+ 		}
+ 		*dev_op_dqo_rda = RTE_PTR_ADD(option, sizeof(*option));
+ 		break;
++	case GVE_DEV_OPT_ID_FLOW_STEERING:
++		if (option_length < sizeof(**dev_op_flow_steering) ||
++		    req_feat_mask != GVE_DEV_OPT_REQ_FEAT_MASK_FLOW_STEERING) {
++			PMD_DRV_LOG(WARNING, GVE_DEVICE_OPTION_ERROR_FMT,
++				    "Flow Steering", (int)sizeof(**dev_op_flow_steering),
++				    GVE_DEV_OPT_REQ_FEAT_MASK_FLOW_STEERING,
++				    option_length, req_feat_mask);
++			break;
++		}
++
++		if (option_length > sizeof(**dev_op_flow_steering)) {
++			PMD_DRV_LOG(WARNING,
++				    GVE_DEVICE_OPTION_TOO_BIG_FMT, "Flow Steering");
++		}
++		*dev_op_flow_steering = RTE_PTR_ADD(option, sizeof(*option));
++		break;
+ 	case GVE_DEV_OPT_ID_MODIFY_RING:
+ 		/* Min ring size bound is optional. */
+ 		if (option_length < (sizeof(**dev_op_modify_ring) -
+@@ -167,6 +184,7 @@ gve_process_device_options(struct gve_priv *priv,
+ 			   struct gve_device_option_gqi_rda **dev_op_gqi_rda,
+ 			   struct gve_device_option_gqi_qpl **dev_op_gqi_qpl,
+ 			   struct gve_device_option_dqo_rda **dev_op_dqo_rda,
++			   struct gve_device_option_flow_steering **dev_op_flow_steering,
+ 			   struct gve_device_option_modify_ring **dev_op_modify_ring,
+ 			   struct gve_device_option_jumbo_frames **dev_op_jumbo_frames)
+ {
+@@ -188,8 +206,8 @@ gve_process_device_options(struct gve_priv *priv,
+ 
+ 		gve_parse_device_option(priv, dev_opt,
+ 					dev_op_gqi_rda, dev_op_gqi_qpl,
+-					dev_op_dqo_rda, dev_op_modify_ring,
+-					dev_op_jumbo_frames);
++					dev_op_dqo_rda, dev_op_flow_steering,
++					dev_op_modify_ring, dev_op_jumbo_frames);
+ 		dev_opt = next_opt;
+ 	}
+ 
+@@ -777,9 +795,19 @@ gve_set_max_desc_cnt(struct gve_priv *priv,
+ 
+ static void gve_enable_supported_features(struct gve_priv *priv,
+ 	u32 supported_features_mask,
++	const struct gve_device_option_flow_steering *dev_op_flow_steering,
+ 	const struct gve_device_option_modify_ring *dev_op_modify_ring,
+ 	const struct gve_device_option_jumbo_frames *dev_op_jumbo_frames)
+ {
++	if (dev_op_flow_steering &&
++	    (supported_features_mask & GVE_SUP_FLOW_STEERING_MASK) &&
++	    dev_op_flow_steering->max_flow_rules) {
++		priv->max_flow_rules =
++			be32_to_cpu(dev_op_flow_steering->max_flow_rules);
++		PMD_DRV_LOG(INFO,
++			    "FLOW STEERING device option enabled with max rule limit of %u.",
++			    priv->max_flow_rules);
++	}
+ 	if (dev_op_modify_ring &&
+ 	    (supported_features_mask & GVE_SUP_MODIFY_RING_MASK)) {
+ 		PMD_DRV_LOG(INFO, "MODIFY RING device option enabled.");
+@@ -802,6 +830,7 @@ int gve_adminq_describe_device(struct gve_priv *priv)
+ {
+ 	struct gve_device_option_jumbo_frames *dev_op_jumbo_frames = NULL;
+ 	struct gve_device_option_modify_ring *dev_op_modify_ring = NULL;
++	struct gve_device_option_flow_steering *dev_op_flow_steering = NULL;
+ 	struct gve_device_option_gqi_rda *dev_op_gqi_rda = NULL;
+ 	struct gve_device_option_gqi_qpl *dev_op_gqi_qpl = NULL;
+ 	struct gve_device_option_dqo_rda *dev_op_dqo_rda = NULL;
+@@ -829,6 +858,7 @@ int gve_adminq_describe_device(struct gve_priv *priv)
+ 
+ 	err = gve_process_device_options(priv, descriptor, &dev_op_gqi_rda,
+ 					 &dev_op_gqi_qpl, &dev_op_dqo_rda,
++					 &dev_op_flow_steering,
+ 					 &dev_op_modify_ring,
+ 					 &dev_op_jumbo_frames);
+ 	if (err)
+@@ -884,7 +914,7 @@ int gve_adminq_describe_device(struct gve_priv *priv)
+ 	priv->default_num_queues = be16_to_cpu(descriptor->default_num_queues);
+ 
+ 	gve_enable_supported_features(priv, supported_features_mask,
+-				      dev_op_modify_ring,
++				      dev_op_flow_steering, dev_op_modify_ring,
+ 				      dev_op_jumbo_frames);
+ 
+ free_device_descriptor:
+diff --git a/drivers/net/gve/base/gve_adminq.h b/drivers/net/gve/base/gve_adminq.h
+index 6a3d469..e237353 100644
+--- a/drivers/net/gve/base/gve_adminq.h
++++ b/drivers/net/gve/base/gve_adminq.h
+@@ -117,6 +117,14 @@ struct gve_ring_size_bound {
+ 
+ GVE_CHECK_STRUCT_LEN(4, gve_ring_size_bound);
+ 
++struct gve_device_option_flow_steering {
++	__be32 supported_features_mask;
++	__be32 reserved;
++	__be32 max_flow_rules;
++};
++
++GVE_CHECK_STRUCT_LEN(12, gve_device_option_flow_steering);
++
+ struct gve_device_option_modify_ring {
+ 	__be32 supported_features_mask;
+ 	struct gve_ring_size_bound max_ring_size;
+@@ -148,6 +156,7 @@ enum gve_dev_opt_id {
+ 	GVE_DEV_OPT_ID_DQO_RDA = 0x4,
+ 	GVE_DEV_OPT_ID_MODIFY_RING = 0x6,
+ 	GVE_DEV_OPT_ID_JUMBO_FRAMES = 0x8,
++	GVE_DEV_OPT_ID_FLOW_STEERING = 0xb,
+ };
+ 
+ enum gve_dev_opt_req_feat_mask {
+@@ -155,6 +164,7 @@ enum gve_dev_opt_req_feat_mask {
+ 	GVE_DEV_OPT_REQ_FEAT_MASK_GQI_RDA = 0x0,
+ 	GVE_DEV_OPT_REQ_FEAT_MASK_GQI_QPL = 0x0,
+ 	GVE_DEV_OPT_REQ_FEAT_MASK_DQO_RDA = 0x0,
++	GVE_DEV_OPT_REQ_FEAT_MASK_FLOW_STEERING = 0x0,
+ 	GVE_DEV_OPT_REQ_FEAT_MASK_MODIFY_RING = 0x0,
+ 	GVE_DEV_OPT_REQ_FEAT_MASK_JUMBO_FRAMES = 0x0,
+ };
+@@ -162,6 +172,7 @@ enum gve_dev_opt_req_feat_mask {
+ enum gve_sup_feature_mask {
+ 	GVE_SUP_MODIFY_RING_MASK = 1 << 0,
+ 	GVE_SUP_JUMBO_FRAMES_MASK = 1 << 2,
++	GVE_SUP_FLOW_STEERING_MASK = 1 << 5,
+ };
+ 
+ #define GVE_DEV_OPT_LEN_GQI_RAW_ADDRESSING 0x0
+diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
+index f7cc781..3a810b6 100644
+--- a/drivers/net/gve/gve_ethdev.h
++++ b/drivers/net/gve/gve_ethdev.h
+@@ -332,6 +332,8 @@ struct gve_priv {
+ 
+ 	struct gve_rss_config rss_config;
+ 	struct gve_ptype_lut *ptype_lut_dqo;
++
++	uint32_t max_flow_rules;
+ };
+ 
+ static inline bool
 -- 
 2.53.0.473.g4a7958ca14-goog
 
