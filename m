@@ -2,40 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8415EB3648
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 01:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92302EB365B
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 02:54:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0568402AB;
-	Tue,  3 Mar 2026 02:49:56 +0100 (CET)
-Received: from out28-101.mail.aliyun.com (out28-101.mail.aliyun.com
- [115.124.28.101])
- by mails.dpdk.org (Postfix) with ESMTP id DE83740289
- for <dev@dpdk.org>; Tue,  3 Mar 2026 02:49:53 +0100 (CET)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.07607654|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_regular_dialog|0.0258933-9.23533e-05-0.974014;
- FP=14155176150475314178|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033037071049; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=4; RT=4; SR=0; TI=W4_0.2.3_21250554_1772502586173_o7001c60c; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_21250554_1772502586173_o7001c60c]
- cluster:ay29) at Tue, 03 Mar 2026 09:49:46 +0800
-Date: Tue, 03 Mar 2026 09:49:46 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>,
-  "dev" <dev@dpdk.org>
-Cc: "Kyo Liu" <kyo.liu@nebula-matrix.com>, "Leon" <leon.yu@nebula-matrix.com>,
- "Sam" <sam.chen@nebula-matrix.com>
-Message-ID: <d6fe409a-d28c-4ce3-b812-bbad2c449df7.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1BBVENIXSBkb2M6IGZpeCBkb2N1bWVudGF0aW9uIGZvciBOQkwgUE1E?=
-X-Mailer: [Alimail-Mailagent revision 1106][W4_0.2.3][null][Chrome]
+	by mails.dpdk.org (Postfix) with ESMTP id 01E5340B9B;
+	Tue,  3 Mar 2026 03:54:13 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 64B9D40289;
+ Tue,  3 Mar 2026 03:54:11 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+ id AFDD420B6F02; Mon,  2 Mar 2026 18:54:10 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AFDD420B6F02
+From: Long Li <longli@microsoft.com>
+To: dev@dpdk.org
+Cc: stephen@networkplumber.org, longli@microsoft.com, weh@microsoft.com,
+ stable@dpdk.org
+Subject: [PATCH v3 0/6] net/netvsc: bug fixes and runtime queue reconfiguration
+Date: Mon,  2 Mar 2026 18:53:55 -0800
+Message-ID: <20260303025403.269182-1-longli@microsoft.com>
+X-Mailer: git-send-email 2.43.7
 MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20260302202144.253145-1-stephen@networkplumber.org>
-x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4yLjEwLVJlbGVhc2UuMjYwMjAzMDA3KSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQgd2ViRHQvUEM=uL
-In-Reply-To: <20260302202144.253145-1-stephen@networkplumber.org>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_2483_7efe19224700_69a63e3a_ec6f7"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,158 +35,65 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_2483_7efe19224700_69a63e3a_ec6f7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+This series fixes several resource management bugs in the netvsc PMD and
+adds support for runtime queue count reconfiguration.
 
-SGkgU3RlcGhlbiwKVGhhbmsgeW91IGZvciB0aGUgcGF0Y2ggYW5kIHRoZSBkZXRhaWxlZCBpbXBy
-b3ZlbWVudHMgdG8gdGhlIE5CTCBkb2N1bWVudGF0aW9uLgpUaGUgY2hhbmdlcyBsb29rIGdvb2Qg
-dG8gbWUuCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQrlj5Hku7bkurrvvJpTdGVwaGVuIEhlbW1pbmdlciA8c3RlcGhlbkBu
-ZXR3b3JrcGx1bWJlci5vcmc+CuWPkemAgeaXtumXtO+8mjIwMjblubQz5pyIM+aXpSjlkajkuowp
-IDA0OjIxCuaUtuS7tuS6uu+8mmRldjxkZXZAZHBkay5vcmc+CuaKhOOAgOmAge+8mlN0ZXBoZW4g
-SGVtbWluZ2VyPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPjsgRGltb248ZGltb24uemhhb0Bu
-ZWJ1bGEtbWF0cml4LmNvbT47IEt5byBMaXU8a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbT47IExl
-b248bGVvbi55dUBuZWJ1bGEtbWF0cml4LmNvbT47IFNhbTxzYW0uY2hlbkBuZWJ1bGEtbWF0cml4
-LmNvbT4K5Li744CA6aKY77yaW1BBVENIXSBkb2M6IGZpeCBkb2N1bWVudGF0aW9uIGZvciBOQkwg
-UE1EClRoZSByZXZpc2VkIGRvY3VtZW50YXRpb24gaGFkIHNvbWUgaXNzdWVzIHdpdGggZm9ybWF0
-dGluZyBhbmQKc2V0dGluZyB1cCB2ZmlvLXBjaSB3YXMgbm90IGRlc2NyaWJlZC4gVXNlIHRoZSBl
-eGlzdGluZyBFTkEKZG9jdW1lbnRhdGlvbiBhcyBhIHRlbXBsYXRlIHRvIHJlc29sdmUgdGhlc2Ug
-ZGlzY3JlcGFuY2llcy4KU2lnbmVkLW9mZi1ieTogU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBoZW5A
-bmV0d29ya3BsdW1iZXIub3JnPgotLS0KIGRvYy9ndWlkZXMvbmljcy9uYmwucnN0IHwgNDIgKysr
-KysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAx
-OSBpbnNlcnRpb25zKCspLCAyMyBkZWxldGlvbnMoLSkKZGlmZiAtLWdpdCBhL2RvYy9ndWlkZXMv
-bmljcy9uYmwucnN0IGIvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3QKaW5kZXggYTlmNDM5YWU5Ni4u
-ZGE0NjA0NzgxZSAxMDA2NDQKLS0tIGEvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3QKKysrIGIvZG9j
-L2d1aWRlcy9uaWNzL25ibC5yc3QKQEAgLTc4LDQwICs3OCwzNiBAQCBpdCBpcyBuZWNlc3Nhcnkg
-dG8gZm9yY2UgSS9PIHZpcnR1YWwgYWRkcmVzcyAoSU9WQSkKIHRvIGJlIG1hcHBlZCB0byBwaHlz
-aWNhbCBhZGRyZXNzIChQQSkKIHdpdGggdGhlIEVBTCBjb21tYW5kIGxpbmUgb3B0aW9uIGBgLS1p
-b3ZhLW1vZGU9cGFgYC4KLU9ubHkgUEYgc3VwcG9ydHMgQ29leGlzdGVuY2UgQmV0d2VlbiBEUERL
-IEFuZCBLZXJuZWwgRHJpdmVyLCBWRiBkb2VzIG5vdC4KK09ubHkgUEYgc3VwcG9ydHMgY29leGlz
-dGVuY2UgYmV0d2VlbiBEUERLIGFuZCBrZXJuZWwgZHJpdmVyOyBWRiBkb2VzIG5vdC4KIFByZXJl
-cXVpc2l0ZXMKIC0tLS0tLS0tLS0tLS0KLS0gRm9sbG93IHRoZSBEUERLIDpyZWY6YEdldHRpbmcg
-U3RhcnRlZCBHdWlkZSBmb3IgTGludXggPGxpbnV4X2dzZz5gCi0gdG8gc2V0dXAgdGhlIGJhc2lj
-IERQREsgZW52aXJvbm1lbnQuCisjLiBGb2xsb3cgdGhlIERQREsgOnJlZjpgR2V0dGluZyBTdGFy
-dGVkIEd1aWRlIGZvciBMaW51eCA8bGludXhfZ3NnPmAKKyB0byBzZXR1cCB0aGUgYmFzaWMgRFBE
-SyBlbnZpcm9ubWVudC4KLS0gTGVhcm4gYWJvdXQgYE5lYnVsYW1hdHJpeCBTZXJpZXMgTklDcwot
-IDxodHRwczovL3d3dy5uZWJ1bGEtbWF0cml4LmNvbS9tYWluPiA8aHR0cHM6Ly93d3cubmVidWxh
-LW1hdHJpeC5jb20vbWFpbj4gPmBfLgorIy4gTkJMIFBNRCByZXF1aXJlcyB0aGUgYGB2ZmlvLXBj
-aWBgIGtlcm5lbCBkcml2ZXIuCisgVGhlIGBgaWdiX3Vpb2BgIGFuZCBgYHVpb19wY2lfZ2VuZXJp
-Y2BgIGRyaXZlcnMgYXJlIG5vdCBzdXBwb3J0ZWQuCisgSW5zZXJ0IHRoZSBgYHZmaW8tcGNpYGAg
-a2VybmVsIG1vZHVsZSB1c2luZyB0aGUgY29tbWFuZCBgYG1vZHByb2JlIHZmaW8tcGNpYGAuCisg
-UGxlYXNlIG1ha2Ugc3VyZSB0aGF0IElPTU1VIGlzIGVuYWJsZWQgaW4geW91ciBzeXN0ZW0sCisg
-b3IgdXNlIGBgdmZpby1wY2lgYCBpbiBgYG5vaW9tbXVgYCBtb2RlOjoKLU11bHRpcGxlIFByb2Nl
-c3NlcwotLS0tLS0tLS0tLS0tLS0tLS0tCisgZWNobyAxID4gL3N5cy9tb2R1bGUvdmZpby9wYXJh
-bWV0ZXJzL2VuYWJsZV91bnNhZmVfbm9pb21tdV9tb2RlCi1UaGUgTkJMIFBNRCBkb2VzIG5vdCBz
-dXBwb3J0IG11bHRpcGxlIHByb2Nlc3Nlcy4KKyBOb3RlIHRoYXQgVkYgcmVxdWlyZXMgYGB2Zmlv
-LXBjaWBgIGluIGBgbm9pb21tdWBgIG1vZGUKKyB3aGVuIG5vIElPTU1VIGlzIGF2YWlsYWJsZSBv
-biB0aGUgc3lzdGVtLgorIy4gQmluZCB0aGUgaW50ZW5kZWQgTkJMIGRldmljZSB0byBgYHZmaW8t
-cGNpYGAuCi1MaW1pdGF0aW9ucyBvciBLbm93biBJc3N1ZXMKLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQotCi0zMi1iaXQgYXJjaGl0ZWN0dXJlcyBhcmUgbm90IHN1cHBvcnRlZC4KLQotV2lu
-ZG93cyBhbmQgQlNEIGFyZSBub3Qgc3VwcG9ydGVkIHlldC4KLQotKippZ2JfdWlvIERyaXZlciBT
-dXBwb3J0KioKKyMuIExlYXJuIGFib3V0IGBOZWJ1bGFtYXRyaXggU2VyaWVzIE5JQ3MKKyA8aHR0
-cHM6Ly93d3cubmVidWxhLW1hdHJpeC5jb20vbWFpbj4gPGh0dHBzOi8vd3d3Lm5lYnVsYS1tYXRy
-aXguY29tL21haW4+ID5gXy4KLVRoZSBgYGlnYl91aW9gYCBkcml2ZXIgaXMgbm90IHN1cHBvcnRl
-ZC4KLSoqdWlvX3BjaV9nZW5lcmljIERyaXZlciBTdXBwb3J0KioKLQotVGhlIGBgdWlvX3BjaV9n
-ZW5lcmljYGAgZHJpdmVyIGlzIG5vdCBzdXBwb3J0ZWQuCi0KLSoqVkZJTyBuby1JT01NVSBtb2Rl
-KioKLUlmIHRoZXJlIGlzIG5vIElPTU1VIGF2YWlsYWJsZSBvbiB0aGUgc3lzdGVtLCBWRiBtdXN0
-IHVzZSBgYHZmaW9gYCBkcml2ZXIgaW4gYGBub2lvbW11YGAgbW9kZS4KK0xpbWl0YXRpb25zIG9y
-IEtub3duIElzc3VlcworLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCistIDMyLWJpdCBhcmNo
-aXRlY3R1cmVzIGFyZSBub3Qgc3VwcG9ydGVkLgorLSBXaW5kb3dzIGFuZCBCU0QgYXJlIG5vdCBz
-dXBwb3J0ZWQgeWV0LgorLSBNdWx0aXBsZSBwcm9jZXNzZXMgYXJlIG5vdCBzdXBwb3J0ZWQuCi0t
-IAoyLjUxLjAK
-------=ALIBOUNDARY_2483_7efe19224700_69a63e3a_ec6f7
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Patches 1-5 are bug fixes:
+  1. Subchannel leak on device removal — subchannels allocated during
+     configure are never closed in uninit.
+  2. Double-free of primary Rx queue — hn_dev_free_queues() already
+     frees hv->primary, then uninit frees it again.
+  3. Init error path leaks — hv->primary and hv->channels[0] not freed
+     on failure after allocation.
+  4. Event callback leak — device event callback not unregistered when
+     rxfilter or vf_start fails in hn_dev_start().
+  5. MTU change path leaks — missing chimney bitmap teardown/rebuild,
+     rxbuf_info leak, and VMBus channel close before free.
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyBmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aVNDLUxp
-Z2h0LCBTaW1TdW47Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpU0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuID5IaSBTdGVwaGVuLDxiciA+PC9zcGFuPjwv
-c3Bhbj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48YnIgPjwvZGl2PjxkaXYgIHN0eWxlPSJj
-bGVhcjogYm90aDsiPlRoYW5rIHlvdSBmb3IgdGhlIHBhdGNoIGFuZCB0aGUgZGV0YWlsZWQgaW1w
-cm92ZW1lbnRzIHRvIHRoZSBOQkwgZG9jdW1lbnRhdGlvbi48YnIgPjwvZGl2PjxkaXYgIHN0eWxl
-PSJjbGVhcjogYm90aDsiPjxiciA+PC9kaXY+PGRpdiA+PHNwYW4gPlRoZSBjaGFuZ2VzIGxvb2sg
-Z29vZCB0byBtZS48L3NwYW4+PC9kaXY+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21h
-LCBBcmlhbCwgU1RIZWl0aVNDLUxpZ2h0LCBTaW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48ZGl2
-ICBzdHlsZT0iY2xlYXI6IGJvdGg7IGZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRp
-U0MtTGlnaHQsIFNpbVN1bjsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJp
-YWwsIFNUSGVpdGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48L3NwYW4+PC9kaXY+PGJsb2NrcXVv
-dGUgIF9xdW90ZT0iMSIgc3R5bGU9Im1hcmdpbi1yaWdodDogMHB4OyBtYXJnaW4tdG9wOiAwcHg7
-IG1hcmdpbi1ib3R0b206IDBweDsgZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGks
-IFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGRpdiAgY2xh
-c3M9ImFsaW1haWwtcXVvdGUiPjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPi0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLTwv
-ZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuWPkeS7tuS6uu+8mlN0ZXBoZW4gSGVtbWlu
-Z2VyICZsdDtzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyZndDs8L2Rpdj48ZGl2ICBzdHlsZT0i
-Y2xlYXI6IGJvdGg7Ij7lj5HpgIHml7bpl7TvvJoyMDI25bm0M+aciDPml6Uo5ZGo5LqMKSAwNDoy
-MTwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPuaUtuS7tuS6uu+8mmRldiZsdDtkZXZA
-ZHBkay5vcmcmZ3Q7PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+5oqE44CA6YCB77ya
-U3RlcGhlbiBIZW1taW5nZXImbHQ7c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmcmZ3Q7OyBEaW1v
-biZsdDtkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tJmd0OzsgS3lvIExpdSZsdDtreW8ubGl1
-QG5lYnVsYS1tYXRyaXguY29tJmd0OzsgTGVvbiZsdDtsZW9uLnl1QG5lYnVsYS1tYXRyaXguY29t
-Jmd0OzsgU2FtJmx0O3NhbS5jaGVuQG5lYnVsYS1tYXRyaXguY29tJmd0OzwvZGl2PjxkaXYgIHN0
-eWxlPSJjbGVhcjogYm90aDsiPuS4u+OAgOmimO+8mltQQVRDSF0gZG9jOiBmaXggZG9jdW1lbnRh
-dGlvbiBmb3IgTkJMIFBNRDwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxiciA+PC9k
-aXY+VGhlIHJldmlzZWQgZG9jdW1lbnRhdGlvbiBoYWQgc29tZSBpc3N1ZXMgd2l0aCBmb3JtYXR0
-aW5nIGFuZDxiciA+c2V0dGluZyB1cCB2ZmlvLXBjaSB3YXMgbm90IGRlc2NyaWJlZC4gVXNlIHRo
-ZSBleGlzdGluZyBFTkE8YnIgPmRvY3VtZW50YXRpb24gYXMgYSB0ZW1wbGF0ZSB0byByZXNvbHZl
-IHRoZXNlIGRpc2NyZXBhbmNpZXMuPGJyID48YnIgPlNpZ25lZC1vZmYtYnk6IFN0ZXBoZW4gSGVt
-bWluZ2VyICZsdDtzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyZndDs8YnIgPi0tLTxiciA+IGRv
-Yy9ndWlkZXMvbmljcy9uYmwucnN0IHwgNDIgKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS08YnIgPiAxIGZpbGUgY2hhbmdlZCwgMTkgaW5zZXJ0aW9ucygrKSwgMjMgZGVs
-ZXRpb25zKC0pPGJyID48YnIgPmRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL25pY3MvbmJsLnJzdCBi
-L2RvYy9ndWlkZXMvbmljcy9uYmwucnN0PGJyID5pbmRleCBhOWY0MzlhZTk2Li5kYTQ2MDQ3ODFl
-IDEwMDY0NDxiciA+LS0tIGEvZG9jL2d1aWRlcy9uaWNzL25ibC5yc3Q8YnIgPisrKyBiL2RvYy9n
-dWlkZXMvbmljcy9uYmwucnN0PGJyID5AQCAtNzgsNDAgKzc4LDM2IEBAIGl0IGlzIG5lY2Vzc2Fy
-eSB0byBmb3JjZSBJL08gdmlydHVhbCBhZGRyZXNzIChJT1ZBKTxiciA+IHRvIGJlIG1hcHBlZCB0
-byBwaHlzaWNhbCBhZGRyZXNzIChQQSk8YnIgPiB3aXRoIHRoZSBFQUwgY29tbWFuZCBsaW5lIG9w
-dGlvbiBgYC0taW92YS1tb2RlPXBhYGAuPGJyID4gPGJyID4tT25seSBQRiBzdXBwb3J0cyBDb2V4
-aXN0ZW5jZSBCZXR3ZWVuIERQREsgQW5kIEtlcm5lbCBEcml2ZXIsIFZGIGRvZXMgbm90LjxiciA+
-K09ubHkgUEYgc3VwcG9ydHMgY29leGlzdGVuY2UgYmV0d2VlbiBEUERLIGFuZCBrZXJuZWwgZHJp
-dmVyOyBWRiBkb2VzIG5vdC48YnIgPiA8YnIgPiA8YnIgPiBQcmVyZXF1aXNpdGVzPGJyID4gLS0t
-LS0tLS0tLS0tLTxiciA+IDxiciA+LS0gRm9sbG93IHRoZSBEUERLIDpyZWY6YEdldHRpbmcgU3Rh
-cnRlZCBHdWlkZSBmb3IgTGludXggJmx0O2xpbnV4X2dzZyZndDtgPGJyID4tJm5ic3A7IHRvIHNl
-dHVwIHRoZSBiYXNpYyBEUERLIGVudmlyb25tZW50LjxiciA+KyMuIEZvbGxvdyB0aGUgRFBESyA6
-cmVmOmBHZXR0aW5nIFN0YXJ0ZWQgR3VpZGUgZm9yIExpbnV4ICZsdDtsaW51eF9nc2cmZ3Q7YDxi
-ciA+KyAmbmJzcDsgdG8gc2V0dXAgdGhlIGJhc2ljIERQREsgZW52aXJvbm1lbnQuPGJyID4gPGJy
-ID4tLSBMZWFybiBhYm91dCBgTmVidWxhbWF0cml4IFNlcmllcyBOSUNzPGJyID4tJm5ic3A7ICZs
-dDs8YSAgaHJlZj0iaHR0cHM6Ly93d3cubmVidWxhLW1hdHJpeC5jb20vbWFpbiZndDsiIHRhcmdl
-dD0iX2JsYW5rIj5odHRwczovL3d3dy5uZWJ1bGEtbWF0cml4LmNvbS9tYWluJmd0OzwvYT5gXy48
-YnIgPisjLiBOQkwgUE1EIHJlcXVpcmVzIHRoZSBgYHZmaW8tcGNpYGAga2VybmVsIGRyaXZlci48
-YnIgPisgJm5ic3A7IFRoZSBgYGlnYl91aW9gYCBhbmQgYGB1aW9fcGNpX2dlbmVyaWNgYCBkcml2
-ZXJzIGFyZSBub3Qgc3VwcG9ydGVkLjxiciA+IDxiciA+KyAmbmJzcDsgSW5zZXJ0IHRoZSBgYHZm
-aW8tcGNpYGAga2VybmVsIG1vZHVsZSB1c2luZyB0aGUgY29tbWFuZCBgYG1vZHByb2JlIHZmaW8t
-cGNpYGAuPGJyID4rICZuYnNwOyBQbGVhc2UgbWFrZSBzdXJlIHRoYXQgSU9NTVUgaXMgZW5hYmxl
-ZCBpbiB5b3VyIHN5c3RlbSw8YnIgPisgJm5ic3A7IG9yIHVzZSBgYHZmaW8tcGNpYGAgaW4gYGBu
-b2lvbW11YGAgbW9kZTo6PGJyID4gPGJyID4tTXVsdGlwbGUgUHJvY2Vzc2VzPGJyID4tLS0tLS0t
-LS0tLS0tLS0tLS0tPGJyID4rICZuYnNwOyAmbmJzcDsgZWNobyAxICZndDsgL3N5cy9tb2R1bGUv
-dmZpby9wYXJhbWV0ZXJzL2VuYWJsZV91bnNhZmVfbm9pb21tdV9tb2RlPGJyID4gPGJyID4tVGhl
-IE5CTCBQTUQgZG9lcyBub3Qgc3VwcG9ydCBtdWx0aXBsZSBwcm9jZXNzZXMuPGJyID4rICZuYnNw
-OyBOb3RlIHRoYXQgVkYgcmVxdWlyZXMgYGB2ZmlvLXBjaWBgIGluIGBgbm9pb21tdWBgIG1vZGU8
-YnIgPisgJm5ic3A7IHdoZW4gbm8gSU9NTVUgaXMgYXZhaWxhYmxlIG9uIHRoZSBzeXN0ZW0uPGJy
-ID4gPGJyID4rIy4gQmluZCB0aGUgaW50ZW5kZWQgTkJMIGRldmljZSB0byBgYHZmaW8tcGNpYGAu
-PGJyID4gPGJyID4tTGltaXRhdGlvbnMgb3IgS25vd24gSXNzdWVzPGJyID4tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tPGJyID4tPGJyID4tMzItYml0IGFyY2hpdGVjdHVyZXMgYXJlIG5vdCBz
-dXBwb3J0ZWQuPGJyID4tPGJyID4tV2luZG93cyBhbmQgQlNEIGFyZSBub3Qgc3VwcG9ydGVkIHll
-dC48YnIgPi08YnIgPi0qKmlnYl91aW8gRHJpdmVyIFN1cHBvcnQqKjxiciA+KyMuIExlYXJuIGFi
-b3V0IGBOZWJ1bGFtYXRyaXggU2VyaWVzIE5JQ3M8YnIgPisgJm5ic3A7ICZsdDs8YSAgaHJlZj0i
-aHR0cHM6Ly93d3cubmVidWxhLW1hdHJpeC5jb20vbWFpbiZndDsiIHRhcmdldD0iX2JsYW5rIj5o
-dHRwczovL3d3dy5uZWJ1bGEtbWF0cml4LmNvbS9tYWluJmd0OzwvYT5gXy48YnIgPiA8YnIgPi1U
-aGUgYGBpZ2JfdWlvYGAgZHJpdmVyIGlzIG5vdCBzdXBwb3J0ZWQuPGJyID4gPGJyID4tKip1aW9f
-cGNpX2dlbmVyaWMgRHJpdmVyIFN1cHBvcnQqKjxiciA+LTxiciA+LVRoZSBgYHVpb19wY2lfZ2Vu
-ZXJpY2BgIGRyaXZlciBpcyBub3Qgc3VwcG9ydGVkLjxiciA+LTxiciA+LSoqVkZJTyBuby1JT01N
-VSBtb2RlKio8YnIgPi1JZiB0aGVyZSBpcyBubyBJT01NVSBhdmFpbGFibGUgb24gdGhlIHN5c3Rl
-bSwgVkYgbXVzdCB1c2UgYGB2ZmlvYGAgZHJpdmVyIGluIGBgbm9pb21tdWBgIG1vZGUuPGJyID4r
-TGltaXRhdGlvbnMgb3IgS25vd24gSXNzdWVzPGJyID4rLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tPGJyID4gPGJyID4rLSAzMi1iaXQgYXJjaGl0ZWN0dXJlcyBhcmUgbm90IHN1cHBvcnRlZC48
-YnIgPistIFdpbmRvd3MgYW5kIEJTRCBhcmUgbm90IHN1cHBvcnRlZCB5ZXQuPGJyID4rLSBNdWx0
-aXBsZSBwcm9jZXNzZXMgYXJlIG5vdCBzdXBwb3J0ZWQuPGJyID4tLSA8YnIgPjIuNTEuMDwvZGl2
-PjwvYmxvY2txdW90ZT48ZGl2ICBzdHlsZT0ibGluZS1oZWlnaHQ6IDIwcHg7IGNsZWFyOiBib3Ro
-OyI+PGJyID48L2Rpdj48L2Rpdj48L2Rpdj4=
-------=ALIBOUNDARY_2483_7efe19224700_69a63e3a_ec6f7--
+Patch 6 adds runtime queue count reconfiguration via port
+stop/configure/start, with full NVS/RNDIS session teardown and reinit
+when the queue count changes.
+
+v3:
+- Split into 6 patches: 5 bug fixes (patches 1-5) + 1 feature (patch 6)
+- New patch 2: fix double-free of primary Rx queue on uninit
+- New patch 3: fix resource leak in init error path
+- New patch 4: fix event callback leak on rxfilter/vf_start failure
+- New patch 5: fix resource leaks in MTU change path (chimney bitmap,
+  rxbuf_info leak, missing VMBus chan close before free)
+- Patch 6 (reconfig): fix subchan_cleanup to call hn_rndis_conf_offload
+  so device retains offload config on partial failure
+- Patch 6 (reconfig): fix recovery path to set hv->primary->chan after
+  re-opening channel, preventing use-after-free of stale pointer
+- Patch 6 (reconfig): add hn_chim_init in recovery path to rebuild
+  chimney bitmap after successful recovery
+- Fix Fixes tag on patch 5 to point to correct MTU support commit
+
+v2:
+- Split subchannel leak fix into separate patch with Fixes tag (patch 1)
+- Fix reinit_failed recovery: re-map device before chan_open when device
+  is unmapped to prevent undefined behavior on unmapped ring buffers
+- Move hn_rndis_conf_offload() to after reinit block so offload config
+  targets the final RNDIS session instead of being lost on teardown
+- Use write lock in hn_vf_tx/rx_queue_release() to prevent race with
+  concurrent fast-path readers holding read lock
+- Reset RSS indirection table to queue 0 in subchan_cleanup error path
+- Fix multi-line comment style to follow DPDK convention
+
+Long Li (6):
+  net/netvsc: fix subchannel leak on device removal
+  net/netvsc: fix double-free of primary Rx queue on uninit
+  net/netvsc: fix resource leak in init error path
+  net/netvsc: fix event callback leak on rxfilter failure
+  net/netvsc: fix resource leaks in MTU change path
+  net/netvsc: support runtime queue count reconfiguration
+
+ drivers/net/netvsc/hn_ethdev.c | 243 ++++++++++++++++++++++++++++++---
+ drivers/net/netvsc/hn_vf.c     |  16 ++-
+ 2 files changed, 234 insertions(+), 25 deletions(-)
+
+-- 
+2.43.0
 
