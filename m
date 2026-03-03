@@ -2,70 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649E4EC145E
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 14:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B45EC1459
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 14:38:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1FDA3402B0;
-	Tue,  3 Mar 2026 15:37:36 +0100 (CET)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id ABB7D40268
- for <dev@dpdk.org>; Tue,  3 Mar 2026 15:37:34 +0100 (CET)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-2be06c02f66so5358505eec.1
- for <dev@dpdk.org>; Tue, 03 Mar 2026 06:37:34 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 32CF440E4A;
+	Tue,  3 Mar 2026 15:38:20 +0100 (CET)
+Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com
+ [74.125.82.178]) by mails.dpdk.org (Postfix) with ESMTP id EACBB402B0
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 15:38:18 +0100 (CET)
+Received: by mail-dy1-f178.google.com with SMTP id
+ 5a478bee46e88-2bdfc4b191fso2126465eec.1
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 06:38:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772548653;
- x=1773153453; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772548698;
+ x=1773153498; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Bl6+Mp8WqWTYo/GoL9WZNCIS+T9u8+MLF5hTpSQ94Wo=;
- b=j2IMkwul3h7nwUcBrCAGwJ556qzo1jA+AjiSppdztaU4Nn3qIkiujf3XVkpQqofIkz
- wjdm3UQ9yhWxQ766kMDBPLPOZFX86RsmCbhdpxV4Ust+39BhdUga/BPwDVUVipssHGuS
- w8hrxZEC+RsYrVtegLgsAsqas8L7I3WgLF7xSxE4O+nqAT5XlquNvrbkrZbrjEJrrgoW
- 7wwg5ADvNFIpQxBqEWt6VpDKf8oLFMGEqz6wNqUCXe6WaPWBmFBf9FDVQH2eAt6q3NCQ
- NH7Ewxib3W/Z9Ct5RN4HsKM+ITYxJ5mMP1TSm0J66AceklrMM/6k28j6mlsEyEohv7ib
- Lhmg==
+ bh=ue4gw0SLSRqnNzVd6eV31N+URXu40qZRKtBz//xHq20=;
+ b=wY66j3Bwrrr7/ypWPi9hP1m0k16po0OconagiQldzXs+BVww/sCVGDG/uoLKtrohvf
+ 1PcOvXRmyNzl02zAl8yIWt+xj4jT0wivOKII4w8IeuilH/V6U20kYSUbu7AER3X8td8H
+ mVY7QdLAK4/AeqXHpejkhOT7t+cDCWM5Uldnu19P3wFAb4pBXV8F0dgpx2Elw528lNVv
+ 0W9anzsZrYzf8tG1d2Grkd1ZzFWM3LSOQN/QuxggJrx0wOg7MHou4iSBfnrUnwgTmuYY
+ dD/mUd4XDXrFwjAl4GhmnZ1SVPGW8W99R5boeDN+D0UdXdvYlz9aNpcD9PrFnJ8I1PhF
+ VR9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772548653; x=1773153453;
+ d=1e100.net; s=20230601; t=1772548698; x=1773153498;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Bl6+Mp8WqWTYo/GoL9WZNCIS+T9u8+MLF5hTpSQ94Wo=;
- b=tz9G3xsjLq90I6DJu0aJheXzz7zJTEFfJGPmOpmD0SgcQUDGrKByTVg4tjtcanxZ37
- dti2uzoLQ3Z8+0H97NmCr3DQzzERuDIWol0E1bSRbmrs07xVTG76Qk+MWJ3NFI+LUCu0
- s6vcamBobUwJ485aYe+GXSmx1FGDE0bIko2xFBOVGU7dhOSz4hNH6Gjj89FN/fARgUwA
- HWEdo3++SbPPpGQKGjCl/lrOIDeiihWZA0zgHsw13sPYp5Bvtbd6vWc9Ne7kYITVc7Nt
- TEDbKeRufwEDMQ4Xx0UFeJNWBFNtvC2cIoqAcdE9596K4avIvVEjAWnQ+N5P78QsVnCP
- uHuA==
-X-Gm-Message-State: AOJu0Yxgdj7kX8MFibyClNBmi84xfRvE/D8wAbiryJs04+GuNoJ8fSVj
- zvlbLz4/yKIODjpu5BUmsR7rW2/w79Po/xk5v6SDMVc0l60zUo7k47hNM9+siQMJDn1YT1H79qh
- UEEm9
-X-Gm-Gg: ATEYQzxf9XI8Z8Y7PZZbTZiNk17NNErid6bS8mGZNRdxDeWSTtggJ+naj80t77/YnTR
- RcM/Yo8rzesaSVHIjUyJWcKH2gMrkoKctPs1CXuULSNzG9GI+MYnDRmMvGvpbO2xia7PNuDrOgW
- CCZFddaPHpoMEGH5KGrYN/DpKDZMYFyD/S/fDt9rPZKSSCcqTR+z3NO6AI7BvwOQ+iVhlLfwo4Z
- coj4EoUanhFD5+MnO098PmK4sWvXo5GrFV5KA6rCxDE6Y6gbPClVFoTq1wpgNE02DpD4/jBAjyG
- O/jBPtcY6R/sRLydZnz1krgmAOKcofgY6ljtG6CEbh8Keg0seAE4caFqnDjpj4snnHSEsztpCl6
- cVkAYH1EJgpYsPKlVbSbNkL7QlCrnTN/EJCQqdXjCVRxhbQ4AeARXJRRxhaqCwUNS8Wrpl0TFaJ
- ggPJ0D5fkHCtfSuBrJY4HEzB1wD2D+o/BZ5SAA//eSHHJJJmZ2bh4N5nUdph9gf0Q7
-X-Received: by 2002:a05:7300:2325:b0:2b8:66f3:2502 with SMTP id
- 5a478bee46e88-2bde1c0e786mr7224671eec.1.1772548653281; 
- Tue, 03 Mar 2026 06:37:33 -0800 (PST)
+ bh=ue4gw0SLSRqnNzVd6eV31N+URXu40qZRKtBz//xHq20=;
+ b=fYSyR3h9NfoIFaq29pFCVI5ZJVDkXsmxu8ZB7WwvYmC/FfC6Yv0Cq0AO7bAikNJTGT
+ O66QBadYhvrFxo8jdoMfi2JIBQ//63dUMijdUQPj4q0N96W8f3d/8TcelV066m84rxy6
+ j9Nq0DzE2CpeirPtY/wAdjayRnoWB33z05jqjRCXfm+jXL1hyk65OPMlh+QzbsWIURKa
+ mpL2PjvOEjzRGF/hipFroLsYQZN7SFUEGeU/kO54X+IdjTrJBs2CTvj37ugK8jgzakJU
+ jHzWJX2dHJESErqbnhevL0wl3Qr1zHXrISWWpnGTTWs0B8X1TXGu/fPODyDq5TVt8Cw9
+ ZKwA==
+X-Gm-Message-State: AOJu0Yx45W87q+/Ky/+Ez2POnn1apYHk6mZSw5EFRG+TlOK+hpUDee3Q
+ NHECftCY8u6TqhqZTE2KkfUaT7p3KRVysIn2zm61JfQtiCgFaaBV/cQm3eIqcTzfiBA=
+X-Gm-Gg: ATEYQzyvnWD/KVjrcmS9ApUCS9KmYEx2atzDOm9hOYRz+oOXPkx1mwDVHt2+RR3XQwh
+ Cxsn7QqSy2uMSbgrPKfbiuY+jZ2YwuE67fwGyKETqRadykDMrI6oYayeJeHs/EH7ENpwEaIKz9x
+ RkBAmYp1OfdD9XUCli8E2ai18gv16IyGoZWi6IitAc2aXZdj1CqFWUy+UdLtFBbhJ6DXYFbkPZA
+ t/hM04p8bNSWkdSHtlGQbR/XVqCCkvL2QPGOI4E4eHxQ21pRja64TOkHdQZyWTILvt1XMTjz4Lh
+ VPb9fr2gbq22uhSi0kTgcaoYHHQDVDcbfSgRgB4K0RsAKUdFi/4airx365AayK/Aj4o0fVR+O8e
+ eV7YPeVT/SXVtTiER2Jz/KR4Bg9ochJdQnwtrw/zXhjEOt7FCCpuZFg4L710BI1U8Qr3aidJ7+L
+ gYaQLjCtYMc9KR6n/19dMb9MHiHcraSuPIzwAqsisr9Awl97xdD48wlwrVFgNQjetpfQKvh/ES+
+ 4Y=
+X-Received: by 2002:a05:7300:1348:b0:2be:22b0:8bf3 with SMTP id
+ 5a478bee46e88-2be22b090e8mr816448eec.30.1772548697936; 
+ Tue, 03 Mar 2026 06:38:17 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2be220eb5e5sm1466768eec.17.2026.03.03.06.37.32
+ 5a478bee46e88-2be220eb5e5sm1467853eec.17.2026.03.03.06.38.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 03 Mar 2026 06:37:32 -0800 (PST)
-Date: Tue, 3 Mar 2026 06:37:30 -0800
+ Tue, 03 Mar 2026 06:38:17 -0800 (PST)
+Date: Tue, 3 Mar 2026 06:38:15 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Dimon Zhao <dimon.zhao@nebula-matrix.com>, Kyo Liu
- <kyo.liu@nebula-matrix.com>, Leon Yu <leon.yu@nebula-matrix.com>, Sam Chen
- <sam.chen@nebula-matrix.com>
-Subject: Re: [PATCH] doc: fix documentation for NBL PMD
-Message-ID: <20260303063730.5eb4e8d6@phoenix.local>
-In-Reply-To: <20260302202144.253145-1-stephen@networkplumber.org>
-References: <20260302202144.253145-1-stephen@networkplumber.org>
+To: Dimon Zhao <dimon.zhao@nebula-matrix.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Kyo Liu <kyo.liu@nebula-matrix.com>, Leon
+ Yu <leon.yu@nebula-matrix.com>, Sam Chen <sam.chen@nebula-matrix.com>
+Subject: Re: [PATCH v1 1/1] net/nbl: fix queue count issue on port restart
+Message-ID: <20260303063815.2bb8500c@phoenix.local>
+In-Reply-To: <20260228021211.71166-2-dimon.zhao@nebula-matrix.com>
+References: <20260228021211.71166-1-dimon.zhao@nebula-matrix.com>
+ <20260228021211.71166-2-dimon.zhao@nebula-matrix.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -82,13 +82,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  2 Mar 2026 12:21:44 -0800
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Fri, 27 Feb 2026 18:12:11 -0800
+Dimon Zhao <dimon.zhao@nebula-matrix.com> wrote:
 
-> The revised documentation had some issues with formatting and
-> setting up vfio-pci was not described. Use the existing ENA
-> documentation as a template to resolve these discrepancies.
+> Remove tx_ring_num and rx_ring_num from struct nbl_txrx_mgt to fix
+> an issue where these counts keep increasing during port stop/start cycles.
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> The counts were incremented in tx_queue_setup/rx_queue_setup, but never
+> decremented. This causes incorrect queue counts after multiple port
+> restarts. Since the actual queue counts are already available via
+> eth_dev->data->nb_tx_queues and nb_rx_queues, use those instead.
+> 
+> Update nbl_res_txrx_get_xstats() to use eth_dev->data->nb_rx_queues.
+> 
+> Fixes: 661c0ccf2512 ("net/nbl: support statistics")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Dimon Zhao <dimon.zhao@nebula-matrix.com>
 > ---
-Queued to next-net
+
+Applied to next-net
