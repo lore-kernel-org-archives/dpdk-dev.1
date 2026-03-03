@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D2AEDA688
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 15:21:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2519EDA68D
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 15:42:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 176C7402AA;
-	Tue,  3 Mar 2026 16:21:22 +0100 (CET)
-Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
- [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 3A9BA40268
- for <dev@dpdk.org>; Tue,  3 Mar 2026 16:21:21 +0100 (CET)
-Received: by mail-dy1-f182.google.com with SMTP id
- 5a478bee46e88-2be1c918173so2523710eec.1
- for <dev@dpdk.org>; Tue, 03 Mar 2026 07:21:21 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id D675F40E8A;
+	Tue,  3 Mar 2026 16:42:16 +0100 (CET)
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com
+ [209.85.219.42]) by mails.dpdk.org (Postfix) with ESMTP id EAE8840ED3
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 16:42:15 +0100 (CET)
+Received: by mail-qv1-f42.google.com with SMTP id
+ 6a1803df08f44-89a1347051aso5302496d6.2
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 07:42:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772551280;
- x=1773156080; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772552535;
+ x=1773157335; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=b1G42PzYh1UGC8n3V/1k5/PfbZWDq4tw1wUvMjeFUo8=;
- b=gjb8sabZZcmGVh7lQ2wHw2+p7rmV5FgrkP6iN6KPqklfeBC4zdYJM0q0m+Mj2xB72Z
- Ky+gyKGZ21xpZfxq3LqLolrEekZKgmiI5LmxJNKUC7VS/q+mjFjpDc2+SlicaCyKQZH/
- jikmIAiuiPf20rFddH+0TdWWECBhxQS4sojd1YE6Pdw3da5oro3ujQV0VnJj3up0Os78
- 7utZd8epkta+mKDOL/nWmjSvfKM0rSx8p+ikXY53PtoFVpPPkPBcQ0KMJVAzB7V7QLlv
- lIXMn0l+9sIVda61L4Ab6aDCqxKtzbKh7uUJ7bjEtiGQB7psEcWPscKe3GnOaifP45cC
- ftMw==
+ bh=yw6DEqNyRGOrbtxWu5EjQrYbFTRM2xVc1rf01P+xFhg=;
+ b=pGUJKYlp6Yuz1CmGnGyFuQQfktpuC0MaJLunlIAgpEdN6V7/kSzWvluRykwp7M0dsM
+ osBEeXQUhgMOkXBwlZAR+AAy0cu52Zb0zOPjTDV85ihj7pkv5NVrB7fVNO3HTeGM8bH0
+ gHgaQVmz+uSPoJ86LzTKrsmUc/LTDr/U/1pEuNN0zSbkQe/yyqQN8lpWbQfOzRoM78bL
+ CoNUj1YDAFp1iaGloeOx8d9PX+G4VL3XrPQIkEVnQ+uFiEUt/NrktsQI3wJgcg6EIICg
+ zczQIBFY4XCeo0i9ah8vjPpVVOsLLu3rQ7yiVduRP/NX3iZA7J+ZYj36woUT0qYIqIEj
+ xPlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772551280; x=1773156080;
+ d=1e100.net; s=20230601; t=1772552535; x=1773157335;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=b1G42PzYh1UGC8n3V/1k5/PfbZWDq4tw1wUvMjeFUo8=;
- b=smHxe+wqloQNU59wi62OQYsW1dJfb3BsE/Q290x6Z6CaG5s7k4+Ra1lVr/58qcH7W5
- ZsJTaRjT3dP7M3Hf43yLeqwGUtk3Zqj4JlMnlihTYgfHynnDWSEwaTkvx/3vVk0PT7vf
- 7Hgf+7YgCaWA3vnAVqoqAuwTLMjVNv7dcNnOe56lD9eDwK1VTM/moxkGPry+MoHl6+9g
- ut2o814cNyciMLaI8+jCEAP4DyAnML2kELMmxHPoUsIl0nqkkI3Tn7LVTFP0yhwwC8En
- zJ9+q4og5DxWTy4C6Y9FW7te2VAkUufFvbnX2jc2GjeTBbHposTKbFvGwpLAkCi6Rth5
- MyeA==
-X-Gm-Message-State: AOJu0YwIqkBDkKdhlq3wwvMIp7vVlZrH13KTAUmknY/DmDFxLW1AUOfr
- oxo/+IwjjllmSclREzRvvLAlDQ2VZgVIBNxLUYCuOUyLupTy/N8mrt5HS1cZv8TNFN8=
-X-Gm-Gg: ATEYQzzA/ZR0v1E+vgI9vkyqmg83gugDtWLlqsXwJYn+wGKtbBSFuVQW5jR6w4twu/T
- i2ZIlemv4NYhrrY8jCiMGhstOuek8OTASAODKWsEq1s3YHDwlO2QmMPHezuuPkqSIqGk4wCAlF1
- 9IibGIWDggobFolS6qJnRZ242o/XBjXhJWXLQSxRrRyGUx0lnmHj4E25gjdJLvTPx62sYwSEb/a
- wSpk0Ps+e5/qb3R6JqnzQXj7gQSrrCFYyX5GK9I+hdUiQntfPptU8GBafLr6/Dh8X1Bi5LyRcYQ
- M1yTGhZOLHL8VpIGkn1zBOZ1ExQmEMZBSwamQInDRvupwxNyFMcw2MIx92fVVWloE/2AIUktsIN
- x3t8NLiEXepu3GbGacv7G4b35fFU7K9PKuL0SLvVVLEyXiB/bbWyBTBrP71VeoOJCv7glxI1bba
- AGO6ufArobs4IxRWE90p8LwnIAoPj0QN+XmUzdpFcUurv8S/CAGiKNwifwRHn7tC+1
-X-Received: by 2002:a05:7300:cd90:b0:2b7:2bf3:ce05 with SMTP id
- 5a478bee46e88-2bde1e84307mr6484790eec.28.1772551279986; 
- Tue, 03 Mar 2026 07:21:19 -0800 (PST)
+ bh=yw6DEqNyRGOrbtxWu5EjQrYbFTRM2xVc1rf01P+xFhg=;
+ b=c7np/WVlP+ptA5mmDoMtpiWvOWryF6lMJBGMWZCEJtSYFDErbKvx/I6qCOMFSvjtgp
+ VzvjvyhMHQdx1NkfOIF3AaP0jNLIrWL115/85pPurlrkVVjtt3yG+KulygRWaZQCA45m
+ 3855wUOI8lEUpUiFBFgGyZOkFs45a+mCD5X2Mzqa09sI9RDyK2LVDhPYvCd0K2u29/ay
+ e431J5HGnURkaw3oHpnCMOgvDHRXw/nzrpXzaof8UwjTeocL/E/EjK9i5O1R8Z+dH/W0
+ 3x+cefOGiKcBCPw6vdPnm78fsNk7GLZMkGvsombJeO5ML12fFerVg0NhtErWinb4z34k
+ nemA==
+X-Gm-Message-State: AOJu0YxueYABJ+PApgYz+OtV+2VSsfdwhKgaNBYa3Mm3EI/+QXQMnU/B
+ ym7KeYSi6lYQgqPy2pxMC/W1S25gnNwFWeyUpqrn6VPEKY1KeZ9ae3NTtgJdjZb4rgOoMjQ9WqG
+ 638AQ
+X-Gm-Gg: ATEYQzwFML29zHZL6AUEFqtY76wkt9FRkRpdqfAiLI9StxI812Yg+DScRiFtkS95qzd
+ M89BhMnw0MR67cEOMvus3Ws2CXaxFqhXyJUeBi6H4pi/T5vB7lWdIBOuRUNpa6RjdlKfHUjZzt7
+ QItMgYRW4tAwDTfy5+CZDhXPbkuCRaRAkutSBhd1PdWjfd6X8kaWhCcAalL35uur20g7lgEd3si
+ KVFpgtJyf8ub7UrWmj3q6DCsQhha7xEG4NTfmzWMZZOEtTFaiyOSmvxTpY4zX1PZKpiu6fBcyGL
+ e1EKkNcSFsSo3K44I4OGz/DSUZ+tAWxd5APZNj3zlAmze/RyB+3MDaUcWBvtqCshzGGhtcu5vaY
+ YhhhcwwScsk9t79qaZvBIXdvNXf1TjlkJs+/Pe7nRQVCOS74/QcC8RJ2xQidqkl6vruoNZddJy6
+ 2pdVqWIpyciZnsyHbNL02iNMpil2cV/+PjIU3Zjvhu/yICYhpCjMHF2FhVG0Sjpij/
+X-Received: by 2002:a05:6214:528e:b0:88f:d4b1:4c2d with SMTP id
+ 6a1803df08f44-899d1e93553mr243493616d6.60.1772552535081; 
+ Tue, 03 Mar 2026 07:42:15 -0800 (PST)
 Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2be2c357d6bsm47582eec.20.2026.03.03.07.21.19
+ 6a1803df08f44-899ffdd4a41sm40833506d6.26.2026.03.03.07.42.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 03 Mar 2026 07:21:19 -0800 (PST)
-Date: Tue, 3 Mar 2026 07:21:16 -0800
+ Tue, 03 Mar 2026 07:42:14 -0800 (PST)
+Date: Tue, 3 Mar 2026 07:42:10 -0800
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Jasper Tran O'Leary" <jtranoleary@google.com>
+To: liujie5@linkdatatechnology.com
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/4] net/gve: add flow steering support
-Message-ID: <20260303072116.37d58a4f@phoenix.local>
-In-Reply-To: <20260303005804.924545-1-jtranoleary@google.com>
-References: <20260227195126.3545607-1-jtranoleary@google.com>
- <20260303005804.924545-1-jtranoleary@google.com>
+Subject: Re: [PATCH v18 00/13] net/sxe: added Linkdata sxe ethernet driver
+Message-ID: <20260303074210.24a54a15@phoenix.local>
+In-Reply-To: <20260303091057.2952214-1-liujie5@linkdatatechnology.com>
+References: <20260209012458.506200-13-liujie5@linkdatatechnology.com>
+ <20260303091057.2952214-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -80,120 +81,100 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue,  3 Mar 2026 00:58:00 +0000
-"Jasper Tran O'Leary" <jtranoleary@google.com> wrote:
+On Tue,  3 Mar 2026 17:10:44 +0800
+liujie5@linkdatatechnology.com wrote:
 
-> This patch series adds flow steering support to the Google Virtual
-> Ethernet (gve) driver. This functionality allows traffic to be directed
-> to specific receive queues based on user-specified flow patterns.
+> From: Jie Liu <liujie5@linkdatatechnology.com>
 >=20
-> The series includes foundational support for extended admin queue
-> commands needed to handle flow rules, the specific adminqueue commands
-> for flow rule management, and the integration with the DPDK rte_flow
-> API. The series adds support flow matching on the following protocols:
-> IPv4, IPv6, TCP, UDP, SCTP, ESP, and AH.
+> This patch set implements core functionality for the SXE PMD,
+> including basic driver framework, data path setup, and advanced
+> offload features (VLAN, RSS, DCB, PTP etc.).
 >=20
-> Patch Overview:
->=20
-> 1. "net/gve: add flow steering device option" checks for and enables
->    the flow steering capability in the device options during
->    initialization.
-> 2. "net/gve: introduce extended adminq command" adds infrastructure
->    for sending extended admin queue commands. These commands use a
->    flexible buffer descriptor format required for flow rule management.
-> 3. "net/gve: add adminq commands for flow steering" implements the
->    specific admin queue commands to add and remove flow rules on the
->    device, including handling of rule IDs and parameters.
-> 4. "net/gve: add rte flow API integration" exposes the flow steering
->    functionality via the DPDK rte_flow API. This includes strict
->    pattern validation, rule parsing, and lifecycle management (create,
->    destroy, flush). It ensures thread-safe access to the flow subsystem
->    and proper resource cleanup during device reset.
->=20
-> Jasper Tran O'Leary (2):
->   net/gve: add adminq commands for flow steering
->   net/gve: add rte flow API integration
->=20
-> Vee Agarwal (2):
->   net/gve: add flow steering device option
->   net/gve: introduce extended adminq command
->=20
->  doc/guides/nics/features/gve.ini       |  12 +
->  doc/guides/nics/gve.rst                |  26 +
->  doc/guides/rel_notes/release_26_03.rst |   1 +
->  drivers/net/gve/base/gve.h             |   3 +-
->  drivers/net/gve/base/gve_adminq.c      | 118 ++++-
->  drivers/net/gve/base/gve_adminq.h      |  57 +++
->  drivers/net/gve/gve_ethdev.c           |  83 +++-
->  drivers/net/gve/gve_ethdev.h           |  46 ++
->  drivers/net/gve/gve_flow_rule.c        | 656 +++++++++++++++++++++++++
->  drivers/net/gve/gve_flow_rule.h        |  65 +++
->  drivers/net/gve/meson.build            |   1 +
->  11 files changed, 1063 insertions(+), 5 deletions(-)
->  create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.c
->  create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.h
->=20
+> v18:
+>  - Addressed AI comments
 
-Automated review spotted a few things:
+Thanks for the revision.  I still see some things which AI found
+that are worth addressing.  Rather than bore you with the long
+version here is the summary. Ask if you want more detail.
 
-1. rte_bitmap_scan usage is incorrect.
-2. Using rte_malloc where not necessary
-3. Grammar in the release note.
-
-I can fix the last one when merging, the second one is not a big issue
-but would be good to have.
 
 ---
 
+**Errors (must fix):**
 
-Error: Incorrect rte_bitmap_scan usage =E2=80=94 wrong rule ID allocation (=
-~85% confidence)
+1. **Bitwise vs logical AND** =E2=80=94 `sxe_hw.c`, `sxe_hw_uc_addr_pool_di=
+sable()`: `if (!hi & !low)` should be `if (!hi && !low)`. Numerically equiv=
+alent here but wrong operator.
 
-In gve_create_flow_rule():
-c
+2. **Off-by-one bounds check** =E2=80=94 `sxe_hw.c`, `sxe_hw_uc_addr_pool_e=
+nable()`: uses `rar_idx > SXE_UC_ENTRY_NUM_MAX` but `sxe_hw_uc_addr_add()` =
+correctly uses `>=3D`. One of them is wrong.
 
-uint64_t bmp_slab __rte_unused;
-...
-if (rte_bitmap_scan(priv->avail_flow_rule_bmp, &flow->rule_id,
-        &bmp_slab) =3D=3D 1) {
-    rte_bitmap_clear(priv->avail_flow_rule_bmp, flow->rule_id);
-}
+3. **Data race on global `sxe_trace_id`** =E2=80=94 `sxe_common.c`: `sxe_tr=
+ace_id++` is called from `sxe_driver_cmd_trans()` before the HDC spinlock i=
+s acquired. Multiple threads can race on this non-atomic increment.
 
-rte_bitmap_scan() writes the slab base position to pos and the slab bit pat=
-tern to slab. The actual bit position of the first available rule is pos + =
-__builtin_ctzll(slab), not pos alone. The __rte_unused annotation on bmp_sl=
-ab confirms the slab value is being ignored entirely.
+4. **`#define false 0` / `#define true 1`** =E2=80=94 `sxe_compat_platform.=
+h`: conflicts with `<stdbool.h>` which is included elsewhere. UB per C99 =
+=C2=A77.1.3. Remove these and use `<stdbool.h>`.
 
-After the first rule allocation clears bit 0, a subsequent scan returns the=
- same slab base (pos=3D0) with bit 0 now clear in the slab. The code would =
-again set rule_id=3D0 and attempt to clear an already-clear bit, then try t=
-o create a duplicate rule on the device.
+5. **Spinlock held 2.5+ seconds** =E2=80=94 `sxe_pmd_hdc.c`, `sxe_hdc_cmd_p=
+rocess()`: `rte_spinlock_t` (busy-wait) held across 250 retries =C3=97 10ms=
+. Other lcores burn CPU spinning. Use a sleeping lock or release between re=
+tries.
 
-Suggested fix:
-c
+6. **Wrong length in multi-packet HDC response** =E2=80=94 `sxe_pmd_hdc.c`,=
+ `hdc_resp_process()`: passes total `resp_len` to `hdc_resp_data_rcv()` for=
+ every packet instead of `resp_len - offset`. The last-dword partial-copy (=
+`out_len % 4`) logic is wrong for packets after the first.
 
-uint64_t bmp_slab;
-uint32_t pos;
-...
-if (rte_bitmap_scan(priv->avail_flow_rule_bmp, &pos,
-        &bmp_slab) =3D=3D 1) {
-    flow->rule_id =3D pos + __builtin_ctzll(bmp_slab);
-    rte_bitmap_clear(priv->avail_flow_rule_bmp, flow->rule_id);
-}
+7. **MAINTAINERS name/email mismatch** =E2=80=94 Lists "Jie Li <lijie@...>"=
+ but all patches are from "Jie Liu <liujie5@...>". Different person and dif=
+ferent address.
 
-Warning: rte_zmalloc used for ordinary control structures
+8. **Double hardware reset in `sxe_dev_close()`** =E2=80=94 Calls `sxe_hw_r=
+eset()` directly, then calls `sxe_dev_stop()` which calls `sxe_hw_reset()` =
+again. Second reset may fail since HDC channel state was already altered.
 
-Both avail_flow_rule_bmp_mem and individual gve_flow structures are allocat=
-ed with rte_zmalloc, but they don't require DMA access, NUMA placement, or =
-multi-process shared memory. Standard calloc/malloc would be more appropria=
-te and wouldn't consume limited hugepage resources.
+---
 
-Warning: Release notes tense inconsistency
-rst
+**Warnings (should fix):**
 
-* Added application-initiated device reset.
-+ * Add support for receive flow steering.
+1. **`set_bit`/`clear_bit`/`test_and_clear_bit` are not atomic** =E2=80=94 =
+`sxe_compat_platform.h`: plain read-modify-write on `int *`. If used from m=
+ultiple threads, these are racy.
 
-"Added" (past tense) vs "Add" (imperative). Both entries should use the sam=
-e tense for consistency. The DPDK convention is imperative mood.
+2. **Non-const lookup tables in hot path** =E2=80=94 `sxe_rx.h`: `error_to_=
+pkt_flags_map`, `ip_rss_types_map` should be `static const`.
 
+3. **Dead code in `sxe_dev_configure()`** =E2=80=94 Unused variables `adapt=
+er`, `irq` and unreachable `l_end` label.
+
+4. **Misleading macro name** =E2=80=94 `SXE_USEC_PER_MS` is 1000000 (nanose=
+conds per millisecond). Should be `SXE_NSEC_PER_MS`.
+
+5. **`strlcpy` off-by-one** =E2=80=94 `sxe_hw_base_init()`: `strlcpy(adapte=
+r->name, ..., sizeof(adapter->name) - 1)` wastes one byte. `strlcpy` alread=
+y null-terminates; pass `sizeof(adapter->name)`.
+
+6. **`sxe_fw_version_get`** =E2=80=94 `resp.fw_version` from HDC `memcpy` m=
+ay not be null-terminated. `snprintf` will read past the field.
+
+7. **HDC channel lifecycle not multi-device safe** =E2=80=94 `sxe_hdc_chann=
+el_init()` initializes a single global spinlock. `sxe_remove()` calls `sxe_=
+hdc_channel_uninit()` =E2=80=94 if two SXE devices are probed, removing the=
+ first destroys the channel while the second still uses it.
+
+8. **Feature matrix overclaims** =E2=80=94 `sxe.ini` marks Traffic Manager,=
+ Inline Crypto, MACsec, Rate Limitation as Y/P, but none of the 13 patches =
+implement these features.
+
+9. **`#ifdef __KERNEL__` dead code** =E2=80=94 `base/sxe_hw.c`, `base/sxevf=
+_hw.c` contain thousands of lines of Linux kernel code paths. Strip before =
+submission to DPDK.
+
+10. **`sxe_vf_rss_rxq_num_validate` return value check is inverted** =E2=80=
+=94 `sxe_queue.c`: `if ((rx_q_num <=3D ...) && sxe_vf_rss_rxq_num_validate(=
+dev, rx_q_num))` =E2=80=94 the validate function returns 0 on success and n=
+egative on error, but the `if` treats a truthy (error) return as the succes=
+s path for entering the error log. The condition logic needs review.
