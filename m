@@ -2,105 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E95EDEBE0
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 18:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F927EDEBE0
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 18:41:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8313440EE7;
-	Tue,  3 Mar 2026 19:14:38 +0100 (CET)
-Received: from mail-ua1-f98.google.com (mail-ua1-f98.google.com
- [209.85.222.98]) by mails.dpdk.org (Postfix) with ESMTP id 14E4F40268
- for <dev@dpdk.org>; Tue,  3 Mar 2026 19:14:37 +0100 (CET)
-Received: by mail-ua1-f98.google.com with SMTP id
- a1e0cc1a2514c-94dcf70af41so1359562241.1
- for <dev@dpdk.org>; Tue, 03 Mar 2026 10:14:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772561676; x=1773166476;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=V6slqBePXR2XhQIJ0g4MUC87pU6zjzPLQveBqDaQ9eU=;
- b=cD3ui7VAvRIJ608bPLgushoyigr/Due8zaovXr5QZKaXdeJVT+d5mi7XutY6Xo2TE1
- de6L47WEVxt6Se+2MTIXmY77TI9NZkl0GGxym88xmzgQ/fGhKZzQcQsTfQAJDwwJwUii
- P7VBejbulSRSsUpqWtZVreOxQYtLllN7y9LNrSrmGSGh3ufZ/MK0xliGAe59yOlykoug
- rNRPRaWV5jhnJTxwCHKpaffQ1I3Ri0h82Tcd6hPA5AOepTmJnSORaVSUkqvkKIA6RL6O
- EYd3hPABUnc3ZNqgEi2ZrZsxgcbcmCvTLecFVoem1ZPMUQZgcg2HrvIVqD0e6jucgt5P
- uWSg==
-X-Gm-Message-State: AOJu0YzuI0PBGWXbBY8bmZDaRw22eSjzz+q1hJg1izSlarIyxA1HlJI8
- hjdeowZMRHAQVhj0W+8lWUzPdj/RW99Q8DPhquMwqACX7GlXVC1at6M0N1aDewlG43QqVvS44hk
- CMZwlL4a3FOAdVmD8MdwjYQy5UIwn3OLtfOxg3DCtrXPxpcV2nc2Vwit6QVhX5GDY/y28uiLSTa
- KZ+KAL4yEW+/dVN4jMDqrSCaSAgsOhiGD1WaeIl2ywxHL0gASBOZgi/XR+W1GJbhAWHZ4g30VY4
- 0XT9w==
-X-Gm-Gg: ATEYQzxqPkdjr23oVdJXB8tZ7X4n30mbgHdoojN7wLRo9vKCnZ74+yIljR3r8v/2bfe
- JB6/PK0qbKRTVyPneSI8dKd+yDj0U0JTkMvBpAO5Sp0NiasexS8QL8YrKqA9dXlVtr8WexOY1Rh
- xhb89EAmjUIMcpHiDYMdXKN92JWzz6frucp3i/RiVcB2ArZHnC9MYbjwW7ntdy0sjIwWRipPS3q
- nfP7E0itQEAIy70sNSqsJIkb2jXPlgJ2NtNnISaHvEsTa0nHYtvLko/lP7VbKkotBVVxDB6/j/y
- flTMAuQnhc9Sw4TZRTiuccSYZ0zOekXiXwRUPDQj4nKsvBH2+3m4JpFFg10lb7MSmFW1ATJqtsf
- 0YiDMAiBdJgczq75pAwD0dmTy0Z6kumHbKXmOgq8Lq+DgNLbfufJJKHXC/TO//YI0HI+OhXLfJK
- UtFzxhwdKwRXRqykmRD0mo1mh9AG97U3nkyG9ZzJKhdEsIPUz6NAshJ9saiAmT2r+KkgU=
-X-Received: by 2002:a05:6102:3a11:b0:5de:db29:5c07 with SMTP id
- ada2fe7eead31-5ff324d892dmr6527037137.19.1772561676050; 
- Tue, 03 Mar 2026 10:14:36 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-103.dlp.protect.broadcom.com. [144.49.247.103])
- by smtp-relay.gmail.com with ESMTPS id
- ada2fe7eead31-5ff1e9f156fsm1809204137.4.2026.03.03.10.14.35
- for <dev@dpdk.org>
- (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 03 Mar 2026 10:14:36 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-ed1-f71.google.com with SMTP id
- 4fb4d7f45d1cf-65ba5ca08eeso1826867a12.0
- for <dev@dpdk.org>; Tue, 03 Mar 2026 10:14:35 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772561674; cv=none;
- d=google.com; s=arc-20240605;
- b=QZ4cuN4Sz0obWmhPhUoCsrByuHaEtqO5p2/Heexq6XJ4Z00U88TnYhfnAPR/BMNFKq
- Wd4HvBhKP4Dgh/U/QV5WJ+4GXWmEeYHfxeIjQUnpiRY0i0Dib/o32rAcBBYuXnb0sgoy
- lEwR5t5GBjPpYK6HU5ipW5z4gVtXI6PvOW2Lz3Jkd+1qm6fqQZ1YBBtiwQzOdaSrLLRD
- fpFrn5TfwGp64KB2OEjZCJxn5enY2D1WDPWnthVfMGtD+M4vhuQ0FoVQiA8EFJZhuAr1
- LanKGShotkWU1xk6LCF1golcnkMWKMLeJW+jG1Cdh35JMe1eQ2CoCMtd2brW0cRDtO8D
- MjpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=V6slqBePXR2XhQIJ0g4MUC87pU6zjzPLQveBqDaQ9eU=;
- fh=ZM/Q+maMBufmZ4AECQZKz7wfFKp42pv804lz4VHaNO8=;
- b=IVwlIAEDnXSenpi2fZoMBwW3NbN7bU3BK7ntlFLaMKROnJRWvU6ApixDf35N80RSE+
- 8jsjVQuX+lwoNSjPLbbCax/p41CfVtRF7hJ4fJPwNbDpjFZhMUz4MU5Tvs6ymRf1kMQV
- R9Qmzh/trTgzPKVP+SaATz0unEvD2sWc1DvhFK2LK4geVySGExkWW18c2EAb454mBL6q
- N4FFre2NhRJ9spkxvMejPpkJtmECkvGwP2ssAIEXY8WN7jvamOG/2y3XZN2Rlo1aryp5
- gtbvqqkGq7ZwGbQ6vgH6WPIj7Pp463g6DGgL7uF69BjqavDrQ+da1KbBzw6gBA4Kgig4
- F53g==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id BF5B24027C;
+	Tue,  3 Mar 2026 19:41:36 +0100 (CET)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com
+ [209.85.222.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 50FFA40268
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 19:41:35 +0100 (CET)
+Received: by mail-qk1-f173.google.com with SMTP id
+ af79cd13be357-8cbc593a67aso543363185a.2
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 10:41:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1772561674; x=1773166474; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=V6slqBePXR2XhQIJ0g4MUC87pU6zjzPLQveBqDaQ9eU=;
- b=hIDfNVg+xfwtavanLr5nbIOr4TPsENVMdEB3M9iXNQhl0BOSCenkzfT0GrpFWtHeN7
- jEVzWOelcQIjc08j5B0zKu36PCvgUrB4/dCmtWBN4cLdVmlIEA7kQm3eGYaM2XNuq1i0
- 6sCZIAzhtMbvbqY/UVVM0xqHzGie/0kipSyl4=
-X-Received: by 2002:a05:6402:3988:b0:65c:23f0:a7f7 with SMTP id
- 4fb4d7f45d1cf-65fdddef448mr7297332a12.20.1772561674217; 
- Tue, 03 Mar 2026 10:14:34 -0800 (PST)
-X-Received: by 2002:a05:6402:3988:b0:65c:23f0:a7f7 with SMTP id
- 4fb4d7f45d1cf-65fdddef448mr7297311a12.20.1772561673541; Tue, 03 Mar 2026
- 10:14:33 -0800 (PST)
+ d=iol.unh.edu; s=unh-iol; t=1772563294; x=1773168094; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=TIn1+iN0XJZAQomvirQaFAeFQbCXCRhlW0eCeAW93aY=;
+ b=R4Z15CUz2ePYhdqWtMWkQLxuCazKB+fqqvRX9IdkTt31kFHmS9e7iqrFIdB4DIzTUU
+ ubTd49kV0jXHO6ItFtM2N4L8HiyW9wbTSbBBoIedmRl+zAdC1L0lDaMYEngTPNaqysO+
+ MiQd+vUgaNXbhBrwo191qPV6oACVUJ9+TriR0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772563294; x=1773168094;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=TIn1+iN0XJZAQomvirQaFAeFQbCXCRhlW0eCeAW93aY=;
+ b=GmX1acD4eVsSFDEGiBf17dHKrdIbpmw5EbiHE5nu9kXwNJ8pzMIvvdGfxPLBKbiWpF
+ TUt6aOSjaM0enP4L6bY5+/YskOIgpRcIhcKTicP2u1FRE5hjbaez3JSalXxsVXzMAeDp
+ rPdteZt0LMIZrprN9huUW/e9Ed9++iBrBkgWgY1tiQ23n3dvLOJgye7DzjryUK4zLhTa
+ KArKIWaPpSGg+zFycT9Vta9YB8SWVuHh3Iadl35PLDxxJoPP4udhKokFOHgxFkbDBjQg
+ 7F5jKjeXVXbiDLDS1fKzRKlkWJ2wFdcuVlz6llC2jZKyniGi3AK83tB8ZB4vGtLRUIpV
+ DJmQ==
+X-Gm-Message-State: AOJu0Yz4MRCayJ89ZOI1RfnhvLO1xT3fqZfAepYj/UulEzs1VqZ/cRtR
+ nmOB1t6WyLl7KNQnn6kaT6gZsoSfruPZWzSG0l9svgH5nK5NsENIK8KOO7LtvAArjLA=
+X-Gm-Gg: ATEYQzxLhox/qHv1MHc/heXLBBDoIhIZ9xej57u615oorY8TFUbYrrCjFX7xM4z02kJ
+ P8sxwmsZwV25WyZ3Ww20YTdtgJyoQcZZ+Um4UfB7IqrT8voB+dDyUO++iSWJcLUd2eOkPL7jsaH
+ tg8EzSUb+5/UD+kwajMeU6CbVP4IsYFwHR12TYzo6K8329aPHPdHGSKiGeypm4sECV9UzuEXOOb
+ p5JFbtBgO+7jSeLfKLCHobusl2c02zFgUVTCoAUiTYsWT7tsnadKatSilQU3J259Yie4Qs/Pewl
+ h+e3QEZQs9YQDjBRlRYxI+K6R0qNxh6+x+8orVCTEh40QeguJtMAGc1jstlBXRBHBKKpwl2Heei
+ A8cas2La5NvtVZ7EsVkUSNbu7USBJWkFS9xlf8EYQXL2KMY1LRNtjvKzCS3HcMWfEmHs23hEGSs
+ GjZTSyPmIwRU9V9NNL5tg4aJiBrWaUUtJbCCRe/N7zFmryjiCLULRUsD+8/Xee8Q==
+X-Received: by 2002:a05:620a:1a90:b0:8a2:bff5:40d9 with SMTP id
+ af79cd13be357-8cbc8d70e4amr2136638785a.16.1772563294138; 
+ Tue, 03 Mar 2026 10:41:34 -0800 (PST)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-8cbbf71ae8esm1417532985a.41.2026.03.03.10.41.33
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 03 Mar 2026 10:41:33 -0800 (PST)
+From: Dean Marx <dmarx@iol.unh.edu>
+To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
+Cc: dev@dpdk.org,
+	Dean Marx <dmarx@iol.unh.edu>
+Subject: [PATCH v4] dts: refactor flow suite with generator pattern
+Date: Tue,  3 Mar 2026 13:41:31 -0500
+Message-ID: <20260303184131.514380-1-dmarx@iol.unh.edu>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260303170136.509304-1-dmarx@iol.unh.edu>
+References: <20260303170136.509304-1-dmarx@iol.unh.edu>
 MIME-Version: 1.0
-References: <20260303173156.204872-1-Mohammad-Shuab.Siddique@broadcom.com>
- <20260303174219.204977-1-Mohammad-Shuab.Siddique@broadcom.com>
-In-Reply-To: <20260303174219.204977-1-Mohammad-Shuab.Siddique@broadcom.com>
-From: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-Date: Tue, 3 Mar 2026 13:14:16 -0500
-X-Gm-Features: AaiRm52v9QeDBzuDqckZY5qZ83fBtf3hopgO1QsEMoySyjbFqw_RFJwMycdoRYU
-Message-ID: <CA+BST0nENuxNg5R3cgec8b6T8++bA_puqsPNoqL_G2bQ3xZNcQ@mail.gmail.com>
-Subject: Re: [PATCH v2] net/bnxt: add multi-doorbell support
-To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Cc: dev@dpdk.org, stable@dpdk.org
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
-Content-Type: multipart/signed; protocol="application/pkcs7-signature";
- micalg=sha-256; boundary="000000000000f81996064c22acc7"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,692 +78,1822 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000f81996064c22acc7
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Refactor current flow test suite to utilize a generator
+method, which dynamically creates flow rules from a
+dictionary of pattern and action fields during runtime.
+This allows for much more extensive testing of the flow
+API without exponential code growth.
 
-On Tue, Mar 3, 2026 at 12:41=E2=80=AFPM Mohammad Shuab Siddique
-<mohammad-shuab.siddique@broadcom.com> wrote:
->
-> From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
->
-> Add multi-doorbell support to spread doorbell accesses across
-> multiple doorbell pages for improved performance on P5/P7 chips.
->
-> Detect capability via HWRM_FUNC_QCAPS
-> Round-robin DPI assignment for NQ rings per device
-> TX rings inherit DPI from parent NQ
-> RX/CQ rings use privileged DPI 0
-> P7: DPI 0=3Dlegacy, DPI 1=3Dpush, DPI 2+ for multi-DB
-> P5: DPI 0=3Dlegacy, DPI 1+ for multi-DB
->
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.=
-com>
-Acked-by: Kishore Padmanabha <kishore.padmanabha@broadcom.com>
-> ---
->  drivers/net/bnxt/bnxt.h                | 13 +++++
->  drivers/net/bnxt/bnxt_cpr.h            |  1 +
->  drivers/net/bnxt/bnxt_hwrm.c           | 51 +++++++++++++++++--
->  drivers/net/bnxt/bnxt_hwrm.h           |  2 +-
->  drivers/net/bnxt/bnxt_mpc.c            |  4 +-
->  drivers/net/bnxt/bnxt_ring.c           | 70 ++++++++++++++++++--------
->  drivers/net/bnxt/bnxt_ring.h           |  3 +-
->  drivers/net/bnxt/bnxt_rxr.h            |  1 +
->  drivers/net/bnxt/bnxt_txr.h            |  1 +
->  drivers/net/bnxt/hsi_struct_def_dpdk.h | 30 +++++++++++
->  10 files changed, 147 insertions(+), 29 deletions(-)
->
-> diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
-> index 83ae151066..30baabcf92 100644
-> --- a/drivers/net/bnxt/bnxt.h
-> +++ b/drivers/net/bnxt/bnxt.h
-> @@ -433,6 +433,13 @@ struct bnxt_coal {
->  #define DB_PF_OFFSET                   0x10000
->  #define DB_VF_OFFSET                   0x4000
->
-> +#define BNXT_PRIVILEGED_DPI            0
-> +#define BNXT_RESERVED_DPI_ONE          1
-> +#define BNXT_RESERVED_DPI_TWO          2
-> +#define BNXT_DEFAULT_DB_PAGE_SIZE      4096
-> +
-> +#define BNXT_KB_TO_BYTES(kb)           ((kb) * 1024)
-> +
->  #define BNXT_RSS_TBL_SIZE_P5           512U
->  #define BNXT_RSS_ENTRIES_PER_CTX_P5    64
->  #define BNXT_MAX_RSS_CTXTS_P5 \
-> @@ -873,6 +880,7 @@ struct bnxt {
->  #define BNXT_FW_CAP_RX_ALL_PKT_TS      BIT(11)
->  #define BNXT_FW_CAP_BACKING_STORE_V2   BIT(12)
->  #define BNXT_FW_CAP_RX_RATE_PROFILE    BIT(17)
-> +#define BNXT_FW_CAP_MULTI_DB           BIT(18)
->  #define BNXT_FW_BACKING_STORE_V2_EN(bp)        \
->         ((bp)->fw_cap & BNXT_FW_CAP_BACKING_STORE_V2)
->  #define BNXT_FW_BACKING_STORE_V1_EN(bp)        \
-> @@ -1079,6 +1087,11 @@ struct bnxt {
->         struct rte_eth_rss_conf rss_conf; /* RSS configuration. */
->         uint16_t                tunnel_disable_flag; /* tunnel stateless =
-offloads status */
->         uint8_t                 chip_rev;
-> +       uint16_t                l2_db_multi_page_size_kb;       /* Multi-=
-L2 DB BAR size in KB */
-> +       uint16_t                db_page_size;                   /* DB pag=
-e size (typically 4KB) */
-> +       uint8_t                 nq_dpi_start;                   /* Starti=
-ng DPI for NQ rings */
-> +       uint8_t                 nq_dpi_count;                   /* Number=
- of DPI pages for NQ */
-> +       uint8_t                 nq_dpi_counter;                 /* Round-=
-robin counter for NQ DPI */
->  };
->
->  static
-> diff --git a/drivers/net/bnxt/bnxt_cpr.h b/drivers/net/bnxt/bnxt_cpr.h
-> index 94f449e8b5..858ee15c47 100644
-> --- a/drivers/net/bnxt/bnxt_cpr.h
-> +++ b/drivers/net/bnxt/bnxt_cpr.h
-> @@ -89,6 +89,7 @@ struct bnxt_cp_ring_info {
->         struct bnxt_ring        *cp_ring_struct;
->         bool                    valid;
->         uint32_t                epoch;
-> +       uint8_t                 dpi;
->  };
->
->  #define RX_CMP_L2_ERRORS                                               \
-> diff --git a/drivers/net/bnxt/bnxt_hwrm.c b/drivers/net/bnxt/bnxt_hwrm.c
-> index 0cef22b5ec..7c58727e59 100644
-> --- a/drivers/net/bnxt/bnxt_hwrm.c
-> +++ b/drivers/net/bnxt/bnxt_hwrm.c
-> @@ -1254,6 +1254,9 @@ static int __bnxt_hwrm_func_qcaps(struct bnxt *bp)
->         if (flags_ext3 & HWRM_FUNC_QCAPS_OUTPUT_FLAGS_EXT3_RX_RATE_PROFIL=
-E_SEL_SUPPORTED)
->                 bp->fw_cap |=3D BNXT_FW_CAP_RX_RATE_PROFILE;
->
-> +       if (flags_ext3 & HWRM_FUNC_QCAPS_OUTPUT_FLAGS_EXT3_MULTI_L2_DB_SU=
-PPORTED)
-> +               bp->fw_cap |=3D BNXT_FW_CAP_MULTI_DB;
-> +
->         /* This block should be kept at the end of this function because =
-it
->          * sends another hwrm msg.
->          */
-> @@ -2176,7 +2179,7 @@ int bnxt_hwrm_ring_alloc(struct bnxt *bp,
->                          struct bnxt_ring *ring,
->                          uint32_t ring_type, uint32_t map_index,
->                          uint32_t stats_ctx_id, uint32_t cmpl_ring_id,
-> -                        uint16_t tx_cosq_id)
-> +                        uint16_t tx_cosq_id, uint16_t dpi)
->  {
->         int rc =3D 0;
->         uint32_t enables =3D 0;
-> @@ -2280,6 +2283,11 @@ int bnxt_hwrm_ring_alloc(struct bnxt *bp,
->                 HWRM_UNLOCK();
->                 return -EINVAL;
->         }
-> +
-> +       if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB) {
-> +               req.dpi =3D rte_cpu_to_le_16(dpi);
-> +               enables |=3D HWRM_RING_ALLOC_INPUT_ENABLES_DPI_VALID;
-> +       }
->         req.enables =3D rte_cpu_to_le_32(enables);
->
->         rc =3D bnxt_hwrm_send_message(bp, &req, sizeof(req), BNXT_USE_CHI=
-MP_MB);
-> @@ -4195,12 +4203,15 @@ int bnxt_set_hwrm_link_config(struct bnxt *bp, bo=
-ol link_up)
->
->  int bnxt_hwrm_func_qcfg(struct bnxt *bp, uint16_t *mtu)
->  {
-> -       struct hwrm_func_qcfg_input req =3D {0};
->         struct hwrm_func_qcfg_output *resp =3D bp->hwrm_cmd_resp_addr;
-> +       struct hwrm_func_qcfg_input req =3D {0};
-> +       uint16_t l2_db_multi_kb;
-> +       uint16_t total_pages;
-> +       uint16_t svif_info;
->         uint16_t flags;
->         int rc =3D 0;
-> +
->         bp->func_svif =3D BNXT_SVIF_INVALID;
-> -       uint16_t svif_info;
->
->         HWRM_PREP(&req, HWRM_FUNC_QCFG, BNXT_USE_CHIMP_MB);
->         req.fid =3D rte_cpu_to_le_16(0xffff);
-> @@ -4246,9 +4257,39 @@ int bnxt_hwrm_func_qcfg(struct bnxt *bp, uint16_t =
-*mtu)
->                 bp->flags &=3D ~BNXT_FLAG_NPAR_PF;
->                 break;
->         }
-> -
->         bp->legacy_db_size =3D
-> -               rte_le_to_cpu_16(resp->legacy_l2_db_size_kb) * 1024;
-> +               BNXT_KB_TO_BYTES(rte_le_to_cpu_16(resp->legacy_l2_db_size=
-_kb));
-> +
-> +       /* Configure multi-doorbell if supported */
-> +       if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB) {
-> +               l2_db_multi_kb =3D rte_le_to_cpu_16(resp->l2_db_multi_pag=
-e_size_kb);
-> +               bp->l2_db_multi_page_size_kb =3D l2_db_multi_kb ? l2_db_m=
-ulti_kb :
-> +                       rte_le_to_cpu_16(resp->l2_doorbell_bar_size_kb);
-> +
-> +               if (bp->l2_db_multi_page_size_kb > 0) {
-> +                       bp->db_page_size =3D BNXT_DEFAULT_DB_PAGE_SIZE;
-> +                       total_pages =3D BNXT_KB_TO_BYTES(bp->l2_db_multi_=
-page_size_kb) /
-> +                                       bp->db_page_size;
-> +
-> +                       /* P7: DPI 0=3Dlegacy, DPI 1=3Dpush reserved; P5:=
- DPI 0=3Dlegacy */
-> +                       bp->nq_dpi_start =3D BNXT_CHIP_P7(bp) ?
-> +                               BNXT_RESERVED_DPI_TWO : BNXT_RESERVED_DPI=
-_ONE;
-> +                       bp->nq_dpi_count =3D (total_pages > bp->nq_dpi_st=
-art) ?
-> +                               (total_pages - bp->nq_dpi_start) : 0;
-> +                       bp->nq_dpi_counter =3D 0;
-> +                       PMD_DRV_LOG_LINE(INFO,
-> +                                       "Multi-doorbell: %u KB, "
-> +                                       "DPI range %u-%u (%u pages)",
-> +                                       bp->l2_db_multi_page_size_kb,
-> +                                       bp->nq_dpi_start,
-> +                                       bp->nq_dpi_start + bp->nq_dpi_cou=
-nt - 1,
-> +                                       bp->nq_dpi_count);
-> +               } else {
-> +                       PMD_DRV_LOG_LINE(INFO,
-> +                                       "Multi-doorbell supported "
-> +                                       "but no pages allocated");
-> +               }
-> +       }
->
->         HWRM_UNLOCK();
->
-> diff --git a/drivers/net/bnxt/bnxt_hwrm.h b/drivers/net/bnxt/bnxt_hwrm.h
-> index ecb6335b3d..fc56223ab4 100644
-> --- a/drivers/net/bnxt/bnxt_hwrm.h
-> +++ b/drivers/net/bnxt/bnxt_hwrm.h
-> @@ -221,7 +221,7 @@ int bnxt_hwrm_ring_alloc(struct bnxt *bp,
->                          struct bnxt_ring *ring,
->                          uint32_t ring_type, uint32_t map_index,
->                          uint32_t stats_ctx_id, uint32_t cmpl_ring_id,
-> -                        uint16_t tx_cosq_id);
-> +                        uint16_t tx_cosq_id, uint16_t dpi);
->  int bnxt_hwrm_ring_free(struct bnxt *bp,
->                         struct bnxt_ring *ring, uint32_t ring_type,
->                         uint16_t cp_ring_id);
-> diff --git a/drivers/net/bnxt/bnxt_mpc.c b/drivers/net/bnxt/bnxt_mpc.c
-> index 259066fa61..d77f9dd308 100644
-> --- a/drivers/net/bnxt/bnxt_mpc.c
-> +++ b/drivers/net/bnxt/bnxt_mpc.c
-> @@ -502,7 +502,7 @@ static int bnxt_mpc_ring_alloc_one(struct bnxt *bp, e=
-num bnxt_mpc_chnl chnl_id)
->                                   map_index,
->                                   cpr->hw_stats_ctx_id,
->                                   cp_ring->fw_ring_id,
-> -                                 MPC_HW_COS_ID);
-> +                                 MPC_HW_COS_ID, BNXT_PRIVILEGED_DPI);
->         if (rc) {
->                 PMD_DRV_LOG_LINE(ERR, "mpc ring %d tx ring alloc failed r=
-c:%d!",
->                             chnl_id, rc);
-> @@ -510,7 +510,7 @@ static int bnxt_mpc_ring_alloc_one(struct bnxt *bp, e=
-num bnxt_mpc_chnl chnl_id)
->         }
->
->         bnxt_set_db(bp, &mpr->db, HWRM_RING_ALLOC_INPUT_RING_TYPE_TX, chn=
-l_id,
-> -                   ring->fw_ring_id, ring->ring_mask);
-> +                   ring->fw_ring_id, ring->ring_mask, BNXT_PRIVILEGED_DP=
-I);
->
->         bnxt_hwrm_set_ring_coal(bp, &coal, cp_ring->fw_ring_id);
->
-> diff --git a/drivers/net/bnxt/bnxt_ring.c b/drivers/net/bnxt/bnxt_ring.c
-> index b6d411a931..ccca779b97 100644
-> --- a/drivers/net/bnxt/bnxt_ring.c
-> +++ b/drivers/net/bnxt/bnxt_ring.c
-> @@ -353,8 +353,11 @@ void bnxt_set_db(struct bnxt *bp,
->                  uint32_t ring_type,
->                  uint32_t map_idx,
->                  uint32_t fid,
-> -                uint32_t ring_mask)
-> +                uint32_t ring_mask,
-> +                uint16_t dpi)
->  {
-> +       uint64_t dpi_offset;
-> +
->         if (BNXT_CHIP_P5_P7(bp)) {
->                 int db_offset =3D DB_PF_OFFSET;
->                 switch (ring_type) {
-> @@ -379,8 +382,14 @@ void bnxt_set_db(struct bnxt *bp,
->                 } else if (BNXT_VF(bp)) {
->                         db_offset =3D DB_VF_OFFSET;
->                 }
-> -
->                 db->doorbell =3D (char *)bp->doorbell_base + db_offset;
-> +
-> +               if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB &&
-> +                               dpi !=3D BNXT_PRIVILEGED_DPI) {
-> +                       dpi_offset =3D (dpi - bp->nq_dpi_start) *
-> +                                       bp->db_page_size;
-> +                       db->doorbell =3D (char *)db->doorbell + dpi_offse=
-t;
-> +               }
->                 db->db_key64 |=3D (uint64_t)fid << DBR_XID_SFT;
->                 db->db_64 =3D true;
->         } else {
-> @@ -404,32 +413,33 @@ void bnxt_set_db(struct bnxt *bp,
->  int bnxt_alloc_cmpl_ring(struct bnxt *bp, int queue_index,
->                          struct bnxt_cp_ring_info *cpr)
->  {
-> -       struct bnxt_ring *cp_ring =3D cpr->cp_ring_struct;
-> -       uint32_t nq_ring_id =3D HWRM_NA_SIGNATURE;
->         int cp_ring_index =3D queue_index + BNXT_RX_VEC_START;
->         struct bnxt_cp_ring_info *nqr =3D bp->rxtx_nq_ring;
-> +       struct bnxt_ring *cp_ring =3D cpr->cp_ring_struct;
-> +       uint32_t nq_ring_id =3D HWRM_NA_SIGNATURE;
-> +       uint8_t dpi =3D BNXT_PRIVILEGED_DPI;
->         uint8_t ring_type;
->         int rc =3D 0;
->
->         ring_type =3D HWRM_RING_ALLOC_INPUT_RING_TYPE_L2_CMPL;
->
->         if (BNXT_HAS_NQ(bp)) {
-> -               if (nqr) {
-> -                       nq_ring_id =3D nqr->cp_ring_struct->fw_ring_id;
-> -               } else {
-> +               if (!nqr) {
->                         PMD_DRV_LOG_LINE(ERR, "NQ ring is NULL");
->                         return -EINVAL;
->                 }
-> +               nq_ring_id =3D nqr->cp_ring_struct->fw_ring_id;
->         }
->
-> +       cpr->dpi =3D dpi;
->         rc =3D bnxt_hwrm_ring_alloc(bp, cp_ring, ring_type, cp_ring_index=
-,
-> -                                 HWRM_NA_SIGNATURE, nq_ring_id, 0);
-> +                                 HWRM_NA_SIGNATURE, nq_ring_id, 0, dpi);
->         if (rc)
->                 return rc;
->
->         cpr->cp_raw_cons =3D 0;
->         bnxt_set_db(bp, &cpr->cp_db, ring_type, cp_ring_index,
-> -                   cp_ring->fw_ring_id, cp_ring->ring_mask);
-> +                   cp_ring->fw_ring_id, cp_ring->ring_mask, dpi);
->         bnxt_db_cq(cpr);
->
->         return 0;
-> @@ -437,10 +447,12 @@ int bnxt_alloc_cmpl_ring(struct bnxt *bp, int queue=
-_index,
->
->  int bnxt_alloc_rxtx_nq_ring(struct bnxt *bp)
->  {
-> +       int ring_index =3D BNXT_NUM_ASYNC_CPR(bp);
-> +       uint8_t dpi =3D BNXT_PRIVILEGED_DPI;
->         struct bnxt_cp_ring_info *nqr;
->         struct bnxt_ring *ring;
-> -       int ring_index =3D BNXT_NUM_ASYNC_CPR(bp);
->         uint8_t ring_type;
-> +       uint8_t offset;
->         int rc =3D 0;
->
->         if (!BNXT_HAS_NQ(bp) || bp->rxtx_nq_ring)
-> @@ -481,8 +493,18 @@ int bnxt_alloc_rxtx_nq_ring(struct bnxt *bp)
->
->         ring_type =3D HWRM_RING_ALLOC_INPUT_RING_TYPE_NQ;
->
-> +       /* Assign DPI using round-robin if multi-doorbell is enabled */
-> +       if (bp->fw_cap & BNXT_FW_CAP_MULTI_DB && bp->nq_dpi_count > 0) {
-> +               offset =3D bp->nq_dpi_counter % bp->nq_dpi_count;
-> +               dpi =3D bp->nq_dpi_start + offset;
-> +               bp->nq_dpi_counter++;
-> +               PMD_DRV_LOG_LINE(DEBUG, "NQ ring assigned DPI %u", dpi);
-> +       }
-> +
-> +       nqr->dpi =3D dpi;
-> +
->         rc =3D bnxt_hwrm_ring_alloc(bp, ring, ring_type, ring_index,
-> -                                 HWRM_NA_SIGNATURE, HWRM_NA_SIGNATURE, 0=
-);
-> +                                 HWRM_NA_SIGNATURE, HWRM_NA_SIGNATURE, 0=
-, dpi);
->         if (rc) {
->                 rte_free(ring);
->                 rte_free(nqr);
-> @@ -490,7 +512,7 @@ int bnxt_alloc_rxtx_nq_ring(struct bnxt *bp)
->         }
->
->         bnxt_set_db(bp, &nqr->cp_db, ring_type, ring_index,
-> -                   ring->fw_ring_id, ring->ring_mask);
-> +                   ring->fw_ring_id, ring->ring_mask, dpi);
->         bnxt_db_nq(nqr);
->
->         bp->rxtx_nq_ring =3D nqr;
-> @@ -523,13 +545,16 @@ static int bnxt_alloc_rx_ring(struct bnxt *bp, int =
-queue_index)
->         struct bnxt_rx_ring_info *rxr =3D rxq->rx_ring;
->         struct bnxt_ring *ring =3D rxr->rx_ring_struct;
->         uint8_t ring_type;
-> +       uint16_t dpi;
->         int rc =3D 0;
->
->         ring_type =3D HWRM_RING_ALLOC_INPUT_RING_TYPE_RX;
-> +       dpi =3D BNXT_PRIVILEGED_DPI;
-> +       rxr->dpi =3D dpi;
->
->         rc =3D bnxt_hwrm_ring_alloc(bp, ring, ring_type,
->                                   queue_index, cpr->hw_stats_ctx_id,
-> -                                 cp_ring->fw_ring_id, 0);
-> +                                 cp_ring->fw_ring_id, 0, dpi);
->         if (rc)
->                 return rc;
->
-> @@ -537,7 +562,7 @@ static int bnxt_alloc_rx_ring(struct bnxt *bp, int qu=
-eue_index)
->         if (BNXT_HAS_RING_GRPS(bp))
->                 bp->grp_info[queue_index].rx_fw_ring_id =3D ring->fw_ring=
-_id;
->         bnxt_set_db(bp, &rxr->rx_db, ring_type, queue_index, ring->fw_rin=
-g_id,
-> -                   ring->ring_mask);
-> +                   ring->ring_mask, dpi);
->         bnxt_db_write(&rxr->rx_db, rxr->rx_raw_prod);
->
->         return 0;
-> @@ -568,7 +593,8 @@ static int bnxt_alloc_rx_agg_ring(struct bnxt *bp, in=
-t queue_index)
->         }
->
->         rc =3D bnxt_hwrm_ring_alloc(bp, ring, ring_type, map_idx,
-> -                                 hw_stats_ctx_id, cp_ring->fw_ring_id, 0=
-);
-> +                                 hw_stats_ctx_id, cp_ring->fw_ring_id, 0=
-,
-> +                                 BNXT_PRIVILEGED_DPI);
->
->         if (rc)
->                 return rc;
-> @@ -578,7 +604,7 @@ static int bnxt_alloc_rx_agg_ring(struct bnxt *bp, in=
-t queue_index)
->         if (BNXT_HAS_RING_GRPS(bp))
->                 bp->grp_info[queue_index].ag_fw_ring_id =3D ring->fw_ring=
-_id;
->         bnxt_set_db(bp, &rxr->ag_db, ring_type, map_idx, ring->fw_ring_id=
-,
-> -                   ring->ring_mask);
-> +                   ring->ring_mask, BNXT_PRIVILEGED_DPI);
->         bnxt_db_write(&rxr->ag_db, rxr->ag_raw_prod);
->
->         return 0;
-> @@ -796,14 +822,16 @@ int bnxt_alloc_async_cp_ring(struct bnxt *bp)
->                 ring_type =3D HWRM_RING_ALLOC_INPUT_RING_TYPE_L2_CMPL;
->
->         rc =3D bnxt_hwrm_ring_alloc(bp, cp_ring, ring_type, 0,
-> -                                 HWRM_NA_SIGNATURE, HWRM_NA_SIGNATURE, 0=
-);
-> +                                 HWRM_NA_SIGNATURE, HWRM_NA_SIGNATURE, 0=
-,
-> +                                 BNXT_PRIVILEGED_DPI);
->
->         if (rc)
->                 return rc;
->
->         cpr->cp_raw_cons =3D 0;
-> +       cpr->dpi =3D BNXT_PRIVILEGED_DPI;
->         bnxt_set_db(bp, &cpr->cp_db, ring_type, 0,
-> -                   cp_ring->fw_ring_id, cp_ring->ring_mask);
-> +                   cp_ring->fw_ring_id, cp_ring->ring_mask, BNXT_PRIVILE=
-GED_DPI);
->
->         if (BNXT_HAS_NQ(bp))
->                 bnxt_db_nq(cpr);
-> @@ -900,17 +928,19 @@ int bnxt_alloc_hwrm_tx_ring(struct bnxt *bp, int qu=
-eue_index)
->         else
->                 tx_cosq_id =3D bp->tx_cosq_id[0];
->
-> +       /* TX ring inherits DPI from parent NQ */
-> +       txr->dpi =3D bp->rxtx_nq_ring ? bp->rxtx_nq_ring->dpi : BNXT_PRIV=
-ILEGED_DPI;
->         rc =3D bnxt_hwrm_ring_alloc(bp, ring,
->                                   HWRM_RING_ALLOC_INPUT_RING_TYPE_TX,
->                                   queue_index, cpr->hw_stats_ctx_id,
->                                   cp_ring->fw_ring_id,
-> -                                 tx_cosq_id);
-> +                                 tx_cosq_id, txr->dpi);
->         if (rc)
->                 goto err_out;
->
->         bnxt_set_db(bp, &txr->tx_db, HWRM_RING_ALLOC_INPUT_RING_TYPE_TX,
->                     queue_index, ring->fw_ring_id,
-> -                   ring->ring_mask);
-> +                   ring->ring_mask, txr->dpi);
->         txq->index =3D idx;
->
->         return rc;
-> diff --git a/drivers/net/bnxt/bnxt_ring.h b/drivers/net/bnxt/bnxt_ring.h
-> index 3e2bd634a8..496c3e111f 100644
-> --- a/drivers/net/bnxt/bnxt_ring.h
-> +++ b/drivers/net/bnxt/bnxt_ring.h
-> @@ -89,7 +89,8 @@ void bnxt_set_db(struct bnxt *bp,
->                  uint32_t ring_type,
->                  uint32_t map_idx,
->                  uint32_t fid,
-> -                uint32_t ring_mask);
-> +                uint32_t ring_mask,
-> +                uint16_t dpi);
->
->  static inline void bnxt_db_write(struct bnxt_db_info *db, uint32_t idx)
->  {
-> diff --git a/drivers/net/bnxt/bnxt_rxr.h b/drivers/net/bnxt/bnxt_rxr.h
-> index 7357ca4427..82d6b86fa5 100644
-> --- a/drivers/net/bnxt/bnxt_rxr.h
-> +++ b/drivers/net/bnxt/bnxt_rxr.h
-> @@ -142,6 +142,7 @@ struct bnxt_rx_ring_info {
->
->         uint32_t ol_flags_table[BNXT_OL_FLAGS_TBL_DIM];
->         uint32_t ol_flags_err_table[BNXT_OL_FLAGS_ERR_TBL_DIM];
-> +       uint8_t                 dpi;  /* Doorbell page index for multi-do=
-orbell support */
->  };
->
->  uint16_t bnxt_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts,
-> diff --git a/drivers/net/bnxt/bnxt_txr.h b/drivers/net/bnxt/bnxt_txr.h
-> index 09078d545d..fd92a242c3 100644
-> --- a/drivers/net/bnxt/bnxt_txr.h
-> +++ b/drivers/net/bnxt/bnxt_txr.h
-> @@ -26,6 +26,7 @@ struct bnxt_tx_ring_info {
->
->         unsigned short          *nr_bds;
->         struct bnxt_ring        *tx_ring_struct;
-> +       uint8_t                 dpi;  /* Doorbell page index for multi-do=
-orbell support */
->  };
->
->  static inline uint32_t bnxt_tx_bds_in_hw(struct bnxt_tx_queue *txq)
-> diff --git a/drivers/net/bnxt/hsi_struct_def_dpdk.h b/drivers/net/bnxt/hs=
-i_struct_def_dpdk.h
-> index 06c61cba8f..26d5e9ca78 100644
-> --- a/drivers/net/bnxt/hsi_struct_def_dpdk.h
-> +++ b/drivers/net/bnxt/hsi_struct_def_dpdk.h
-> @@ -15744,6 +15744,15 @@ struct __rte_packed_begin hwrm_func_qcaps_output=
- {
->          */
->         #define HWRM_FUNC_QCAPS_OUTPUT_FLAGS_EXT3_MIRROR_ON_ROCE_SUPPORTE=
-D \
->                 UINT32_C(0x20)
-> +       /*
-> +        * When this bit is '1', it indicates that, when rx/tx/cq/nq l2
-> +        * rings are allocated, each ring can be associated with a
-> +        * non-common doorbell page index. When '0', a common doorbell
-> +        * page is used for all rings on a PF. This bit is only set on a
-> +        * PF.
-> +        */
-> +       #define HWRM_FUNC_QCAPS_OUTPUT_FLAGS_EXT3_MULTI_L2_DB_SUPPORTED \
-> +               UINT32_C(0x200)
->         /*
->          * The number of VFs that can be used for RoCE on the function. I=
-f less
->          * than max_vfs, roce vfs will be assigned to the first VF of the
-> @@ -16268,6 +16277,12 @@ struct __rte_packed_begin hwrm_func_qcfg_output =
-{
->          * of the doorbell BAR between L2 and RoCE is required.
->          */
->         uint16_t        l2_doorbell_bar_size_kb;
-> +       /*
-> +        * The size of the doorbell BAR in KBytes reserved for multi-L2
-> +        * doorbell pages. This area is a subset of l2_doorbell_bar_size_=
-kb,
-> +        * which is size of the total doorbell BAR space reserved for L2.
-> +        */
-> +       uint16_t        l2_db_multi_page_size_kb;
->         /*
->          * A bitmask indicating the active endpoints. Each bit represents=
- a
->          * specific endpoint, with bit 0 indicating EP 0 and bit 3 indica=
-ting
-> @@ -45464,6 +45479,13 @@ struct __rte_packed_begin hwrm_ring_alloc_input =
-{
->          */
->         #define HWRM_RING_ALLOC_INPUT_ENABLES_RX_RATE_PROFILE_VALID \
->                 UINT32_C(0x1000)
-> +       /*
-> +        * This bit must be '1' for the dpi field to be configured.
-> +        * This should only be used when 'multi_l2_db_supported'
-> +        * bit is set in flags_ext3 field of FUNC_QCAPS response.
-> +        */
-> +       #define HWRM_RING_ALLOC_INPUT_ENABLES_DPI_VALID \
-> +               UINT32_C(0x2000)
->         /* Ring Type. */
->         uint8_t ring_type;
->         /* L2 Completion Ring (CR) */
-> @@ -45831,6 +45853,14 @@ struct __rte_packed_begin hwrm_ring_alloc_input =
-{
->          * record.
->          */
->         uint64_t        cq_handle;
-> +       /*
-> +        * The "doorbell page index" is specified when allocating a l2 ri=
-ng.
-> +        * It is applicable for rx/tx/completion/nq rings, and should onl=
-y be
-> +        * used when 'multi_l2_db_supported' bit is set in flags_ext3 fie=
-ld of
-> +        * FUNC_QCAPS response.
-> +        */
-> +       uint16_t        dpi;
-> +       uint16_t        unused_5[3];
->  } __rte_packed_end;
->
->  /* hwrm_ring_alloc_output (size:128b/16B) */
-> --
-> 2.47.3
->
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+Reviewed-by: Patrick Robb <probb@iol.unh.edu>
+---
+ dts/tests/TestSuite_rte_flow.py | 1692 ++++++++++++++++++-------------
+ 1 file changed, 1012 insertions(+), 680 deletions(-)
 
---000000000000f81996064c22acc7
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+diff --git a/dts/tests/TestSuite_rte_flow.py b/dts/tests/TestSuite_rte_flow.py
+index 207cbce2d3..009333771c 100644
+--- a/dts/tests/TestSuite_rte_flow.py
++++ b/dts/tests/TestSuite_rte_flow.py
+@@ -10,507 +10,885 @@
+ 
+ """
+ 
+-from collections.abc import Callable
+-from itertools import zip_longest
+-from typing import Any, Iterator, cast
++from dataclasses import dataclass
++from itertools import product
++from typing import Any, Callable, Optional
+ 
+-from scapy.layers.inet import IP, TCP, UDP
++from scapy.layers.inet import ICMP, IP, TCP, UDP
+ from scapy.layers.inet6 import IPv6
+-from scapy.layers.l2 import Dot1Q, Ether
++from scapy.layers.l2 import ARP, Dot1Q, Ether
++from scapy.layers.sctp import SCTP
+ from scapy.packet import Packet, Raw
+ 
+-from api.capabilities import (
+-    NicCapability,
+-    requires_nic_capability,
+-)
++from api.capabilities import NicCapability, requires_nic_capability
+ from api.packet import send_packet_and_capture
+-from api.test import fail, log, verify, verify_else_skip
++from api.test import fail, log, verify
+ from api.testpmd import TestPmd
+ from api.testpmd.types import FlowRule
+-from framework.exception import InteractiveCommandExecutionError
++from framework.exception import (
++    InteractiveCommandExecutionError,
++    SkippedTestException,
++    TestCaseVerifyError,
++)
+ from framework.test_suite import TestSuite, func_test
+ 
+ 
+-@requires_nic_capability(NicCapability.FLOW_CTRL)
+-class TestRteFlow(TestSuite):
+-    """RTE Flow test suite.
+-
+-    This suite consists of 12 test cases:
+-    1. Queue Action Ethernet: Verifies queue actions with ethernet patterns
+-    2. Queue Action IP: Verifies queue actions with IPv4 and IPv6 patterns
+-    3. Queue Action L4: Verifies queue actions with TCP and UDP patterns
+-    4. Queue Action VLAN: Verifies queue actions with VLAN patterns
+-    5. Drop Action Eth: Verifies drop action with ethernet patterns
+-    6. Drop Action IP: Verifies drop actions with IPV4 and IPv6 patterns
+-    7. Drop Action L4: Verifies drop actions with TCP and UDP patterns
+-    8. Drop Action VLAN: Verifies drop actions with VLAN patterns
+-    9. Modify Field Action: Verifies packet modification patterns
+-    10. Egress Rules: Verifies previously covered rules are still valid as egress
+-    11. Jump Action: Verifies packet behavior given grouped flows
+-    12. Priority Attribute: Verifies packet behavior given flows with different priorities
++@dataclass
++class PatternField:
++    """Specification for a single matchable field within a protocol layer."""
+ 
+-    """
+-
+-    def _runner(
++    scapy_field: str
++    pattern_field: str
++    test_parameters: list[Any]
++
++
++@dataclass
++class Protocol:
++    """Complete specification for a protocol layer."""
++
++    name: str
++    scapy_class: type[Packet]
++    pattern_name: str
++    fields: list[PatternField]
++
++    def build_scapy_layer(self, field_values: dict[str, Any]) -> Packet:
++        """Construct a Scapy layer with the given field values."""
++        return self.scapy_class(**field_values)
++
++
++@dataclass
++class Action:
++    """Specification for a flow action."""
++
++    name: str
++    action_format: str
++    verification_type: str
++    param_builder: Callable[[Any], dict[str, Any]]
++
++    def build_action_string(self, value: Any = None) -> str:
++        """Generate the action string for a flow rule."""
++        if value is not None and "{value}" in self.action_format:
++            return self.action_format.format(value=value)
++        return self.action_format
++
++    def build_verification_params(self, value: Any = None) -> dict[str, Any]:
++        """Generate verification parameters for this action."""
++        return self.param_builder(value)
++
++
++@dataclass
++class FlowTest:
++    """A complete flow test ready for execution."""
++
++    flow_rule: FlowRule
++    packet: Packet
++    verification_type: str
++    verification_params: dict[str, Any]
++    description: str = ""
++
++
++@dataclass
++class FlowTestResult:
++    """Result of a single test case execution."""
++
++    description: str
++    passed: bool
++    failure_reason: str = ""
++    flow_rule_pattern: str = ""
++    skipped: bool = False
++    sent_packet: Optional["Packet"] = None
++
++
++@dataclass
++class ModifyTestCase:
++    """A single hardcoded modify action test case."""
++
++    description: str
++    pattern: str
++    action: str
++    packet: Packet
++    expected_ipv4_dst: str | None = None
++    expected_mac_dst: str | None = None
++
++
++@dataclass
++class JumpTestCase:
++    """A single hardcoded jump action test case."""
++
++    description: str
++    group0_pattern: str
++    group1_pattern: str
++    group1_action: str
++    matching_packet: Packet
++    non_matching_packet: Packet
++    target_queue: int
++
++
++PROTOCOLS: dict[str, Protocol] = {
++    "eth": Protocol(
++        name="eth",
++        scapy_class=Ether,
++        pattern_name="eth",
++        fields=[
++            PatternField("src", "src", ["02:00:00:00:00:00"]),
++            PatternField("dst", "dst", ["02:00:00:00:00:02"]),
++        ],
++    ),
++    "ipv4": Protocol(
++        name="ipv4",
++        scapy_class=IP,
++        pattern_name="ipv4",
++        fields=[
++            PatternField("src", "src", ["192.168.1.1"]),
++            PatternField("dst", "dst", ["192.168.1.2"]),
++            PatternField("ttl", "ttl", [64, 128]),
++            PatternField("tos", "tos", [0, 4]),
++        ],
++    ),
++    "ipv6": Protocol(
++        name="ipv6",
++        scapy_class=IPv6,
++        pattern_name="ipv6",
++        fields=[
++            PatternField("src", "src", ["2001:db8::1"]),
++            PatternField("dst", "dst", ["2001:db8::2"]),
++            PatternField("tc", "tc", [0, 4]),
++            PatternField("hlim", "hop", [64, 128]),
++        ],
++    ),
++    "tcp": Protocol(
++        name="tcp",
++        scapy_class=TCP,
++        pattern_name="tcp",
++        fields=[
++            PatternField("sport", "src", [1234, 8080]),
++            PatternField("dport", "dst", [80, 443]),
++            PatternField("flags", "flags", [2, 16]),
++        ],
++    ),
++    "udp": Protocol(
++        name="udp",
++        scapy_class=UDP,
++        pattern_name="udp",
++        fields=[
++            PatternField("sport", "src", [5000]),
++            PatternField("dport", "dst", [53, 123]),
++        ],
++    ),
++    "vlan": Protocol(
++        name="vlan",
++        scapy_class=Dot1Q,
++        pattern_name="vlan",
++        fields=[
++            PatternField("vlan", "vid", [100, 200]),
++            PatternField("prio", "pcp", [0, 7]),
++        ],
++    ),
++    "icmp": Protocol(
++        name="icmp",
++        scapy_class=ICMP,
++        pattern_name="icmp",
++        fields=[
++            PatternField("type", "type", [8, 0]),
++            PatternField("code", "code", [0]),
++            PatternField("id", "ident", [0, 1234]),
++            PatternField("seq", "seq", [0, 1]),
++        ],
++    ),
++    "sctp": Protocol(
++        name="sctp",
++        scapy_class=SCTP,
++        pattern_name="sctp",
++        fields=[
++            PatternField("sport", "src", [2905, 3868]),
++            PatternField("dport", "dst", [2905, 3868]),
++            PatternField("tag", "tag", [1, 12346]),
++        ],
++    ),
++    "arp": Protocol(
++        name="arp",
++        scapy_class=ARP,
++        pattern_name="arp_eth_ipv4",
++        fields=[
++            PatternField("psrc", "spa", ["192.168.1.1"]),
++            PatternField("pdst", "tpa", ["192.168.1.2"]),
++            PatternField("op", "opcode", [1, 2]),
++        ],
++    ),
++}
++
++
++ACTIONS: dict[str, Action] = {
++    "queue": Action(
++        name="queue",
++        action_format="queue index {value}",
++        verification_type="queue",
++        param_builder=lambda queue_id: {"queue_id": queue_id},
++    ),
++    "drop": Action(
++        name="drop",
++        action_format="drop",
++        verification_type="drop",
++        param_builder=lambda _: {},
++    ),
++}
++
++PROTOCOL_STACKS = [
++    [("eth", True)],
++    [("eth", False), ("ipv4", True)],
++    [("eth", False), ("ipv4", True), ("tcp", True)],
++    [("eth", False), ("ipv4", True), ("udp", True)],
++    [("eth", False), ("ipv4", True), ("icmp", True)],
++    [("eth", False), ("ipv4", True), ("sctp", True)],
++    [("eth", False), ("ipv6", True)],
++    [("eth", False), ("ipv6", True), ("tcp", True)],
++    [("eth", False), ("ipv6", True), ("udp", True)],
++    [("eth", False), ("ipv6", True), ("sctp", True)],
++    [("eth", False), ("vlan", True)],
++    [("eth", False), ("vlan", True), ("ipv4", True)],
++    [("eth", False), ("vlan", False), ("ipv4", True), ("tcp", True)],
++    [("eth", False), ("vlan", False), ("ipv4", True), ("udp", True)],
++    [("eth", False), ("vlan", False), ("ipv4", True), ("sctp", True)],
++    [("eth", False), ("vlan", True), ("ipv6", True)],
++    [("eth", False), ("vlan", False), ("ipv6", True), ("tcp", True)],
++    [("eth", False), ("vlan", False), ("ipv6", True), ("udp", True)],
++    [("eth", False), ("arp", True)],
++]
++
++MODIFY_TEST_CASES: list[ModifyTestCase] = [
++    ModifyTestCase(
++        description="ipv4[src=192.168.1.1] -> set_ipv4_dst",
++        pattern="eth / ipv4 src is 192.168.1.1",
++        action="set_ipv4_dst ipv4_addr 192.168.2.1 / queue index 0",
++        packet=Ether() / IP(src="192.168.1.1", dst="10.0.0.1") / UDP() / Raw(load="X" * 5),
++        expected_ipv4_dst="192.168.2.1",
++    ),
++    ModifyTestCase(
++        description="ipv4[dst=192.168.1.2] -> set_ipv4_dst",
++        pattern="eth / ipv4 dst is 192.168.1.2",
++        action="set_ipv4_dst ipv4_addr 192.168.2.1 / queue index 0",
++        packet=Ether() / IP(src="10.0.0.1", dst="192.168.1.2") / UDP() / Raw(load="X" * 5),
++        expected_ipv4_dst="192.168.2.1",
++    ),
++    ModifyTestCase(
++        description="ipv4[ttl=64] -> set_ipv4_dst",
++        pattern="eth / ipv4 ttl is 64",
++        action="set_ipv4_dst ipv4_addr 192.168.2.1 / queue index 0",
++        packet=Ether() / IP(ttl=64) / UDP() / Raw(load="X" * 5),
++        expected_ipv4_dst="192.168.2.1",
++    ),
++    ModifyTestCase(
++        description="ipv4[ttl=128] -> set_ipv4_dst",
++        pattern="eth / ipv4 ttl is 128",
++        action="set_ipv4_dst ipv4_addr 192.168.2.1 / queue index 0",
++        packet=Ether() / IP(ttl=128) / UDP() / Raw(load="X" * 5),
++        expected_ipv4_dst="192.168.2.1",
++    ),
++    ModifyTestCase(
++        description="ipv4[tos=0] -> set_ipv4_dst",
++        pattern="eth / ipv4 tos is 0",
++        action="set_ipv4_dst ipv4_addr 192.168.2.1 / queue index 0",
++        packet=Ether() / IP(tos=0) / UDP() / Raw(load="X" * 5),
++        expected_ipv4_dst="192.168.2.1",
++    ),
++    ModifyTestCase(
++        description="ipv4[tos=4] -> set_ipv4_dst",
++        pattern="eth / ipv4 tos is 4",
++        action="set_ipv4_dst ipv4_addr 192.168.2.1 / queue index 0",
++        packet=Ether() / IP(tos=4) / UDP() / Raw(load="X" * 5),
++        expected_ipv4_dst="192.168.2.1",
++    ),
++    ModifyTestCase(
++        description="eth[src=02:00:00:00:00:00] -> set_mac_dst",
++        pattern="eth src is 02:00:00:00:00:00",
++        action="set_mac_dst mac_addr 02:00:00:00:00:02 / queue index 0",
++        packet=Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:01") / Raw(load="X" * 5),
++        expected_mac_dst="02:00:00:00:00:02",
++    ),
++    ModifyTestCase(
++        description="eth[dst=02:00:00:00:00:02] -> set_mac_dst",
++        pattern="eth dst is 02:00:00:00:00:02",
++        action="set_mac_dst mac_addr 02:00:00:00:00:02 / queue index 0",
++        packet=Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02") / Raw(load="X" * 5),
++        expected_mac_dst="02:00:00:00:00:02",
++    ),
++]
++
++JUMP_TEST_CASES: list[JumpTestCase] = [
++    JumpTestCase(
++        description="eth[src=02:00:00:00:00:00] -> jump -> ipv4[dst=192.168.1.2] -> queue 2",
++        group0_pattern="eth src is 02:00:00:00:00:00",
++        group1_pattern="ipv4 dst is 192.168.1.2",
++        group1_action="queue index 2",
++        matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="192.168.1.1", dst="192.168.1.2")
++            / UDP(sport=5000, dport=53)
++            / Raw(load="X" * 5)
++        ),
++        non_matching_packet=(
++            Ether(src="02:00:00:00:00:01", dst="02:00:00:00:00:02")
++            / IP(src="192.168.1.1", dst="192.168.1.2")
++            / UDP(sport=5000, dport=53)
++            / Raw(load="X" * 5)
++        ),
++        target_queue=2,
++    ),
++    JumpTestCase(
++        description="eth[dst=02:00:00:00:00:02] -> jump -> ipv4[src=192.168.1.1] -> queue 3",
++        group0_pattern="eth dst is 02:00:00:00:00:02",
++        group1_pattern="ipv4 src is 192.168.1.1",
++        group1_action="queue index 3",
++        matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="192.168.1.1", dst="192.168.1.2")
++            / UDP(sport=5000, dport=53)
++            / Raw(load="X" * 5)
++        ),
++        non_matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:03")
++            / IP(src="192.168.1.1", dst="192.168.1.2")
++            / UDP(sport=5000, dport=53)
++            / Raw(load="X" * 5)
++        ),
++        target_queue=3,
++    ),
++    JumpTestCase(
++        description="ipv4[src=10.0.0.1] -> jump -> tcp[dst=443] -> queue 1",
++        group0_pattern="eth / ipv4 src is 10.0.0.1",
++        group1_pattern="ipv4 / tcp dst is 443",
++        group1_action="queue index 1",
++        matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="10.0.0.1", dst="10.0.0.2")
++            / TCP(sport=12345, dport=443)
++            / Raw(load="X" * 5)
++        ),
++        non_matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="10.0.0.99", dst="10.0.0.2")
++            / TCP(sport=12345, dport=443)
++            / Raw(load="X" * 5)
++        ),
++        target_queue=1,
++    ),
++    JumpTestCase(
++        description="ipv4[dst=172.16.0.1] -> jump -> udp[dst=123] -> queue 2",
++        group0_pattern="eth / ipv4 dst is 172.16.0.1",
++        group1_pattern="ipv4 / udp dst is 123",
++        group1_action="queue index 2",
++        matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="172.16.0.100", dst="172.16.0.1")
++            / UDP(sport=5000, dport=123)
++            / Raw(load="X" * 5)
++        ),
++        non_matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="172.16.0.100", dst="172.16.0.99")
++            / UDP(sport=5000, dport=123)
++            / Raw(load="X" * 5)
++        ),
++        target_queue=2,
++    ),
++    JumpTestCase(
++        description="eth[src=02:00:00:00:00:00] -> jump -> udp[dst=53] -> queue 3",
++        group0_pattern="eth src is 02:00:00:00:00:00",
++        group1_pattern="ipv4 / udp dst is 53",
++        group1_action="queue index 3",
++        matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="192.168.1.1", dst="192.168.1.2")
++            / UDP(sport=5000, dport=53)
++            / Raw(load="X" * 5)
++        ),
++        non_matching_packet=(
++            Ether(src="02:00:00:00:00:01", dst="02:00:00:00:00:02")
++            / IP(src="192.168.1.1", dst="192.168.1.2")
++            / UDP(sport=5000, dport=53)
++            / Raw(load="X" * 5)
++        ),
++        target_queue=3,
++    ),
++    JumpTestCase(
++        description="ipv4[tos=4] -> jump -> tcp[dst=80] -> queue 1",
++        group0_pattern="eth / ipv4 tos is 4",
++        group1_pattern="ipv4 / tcp dst is 80",
++        group1_action="queue index 1",
++        matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="10.0.0.1", dst="10.0.0.2", tos=4)
++            / TCP(sport=54321, dport=80)
++            / Raw(load="X" * 5)
++        ),
++        non_matching_packet=(
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:02")
++            / IP(src="10.0.0.1", dst="10.0.0.2", tos=0)
++            / TCP(sport=54321, dport=80)
++            / Raw(load="X" * 5)
++        ),
++        target_queue=1,
++    ),
++]
++
++
++class FlowTestGenerator:
++    """Generates test cases by combining patterns and actions."""
++
++    def __init__(self, protocols: dict[str, Protocol], actions: dict[str, Action]):
++        """Initialize the generator with protocol and action specifications."""
++        self.protocols = protocols
++        self.actions = actions
++
++    def _build_multi_layer_packet(
+         self,
+-        verification_method: Callable[..., Any],
+-        flows: list[FlowRule],
+-        packets: list[Packet],
+-        port_id: int,
+-        expected_packets: list[Packet] | None = None,
+-        *args: Any,
+-        **kwargs: Any,
+-    ) -> None:
+-        """Runner method that validates each flow using the corresponding verification method.
+-
+-        Args:
+-            verification_method: Callable that performs verification logic.
+-            flows: List of flow rules to create and test.
+-            packets: List of packets corresponding to each flow.
+-            port_id: Number representing the port to create flows on.
+-            expected_packets: List of packets to check sent packets against in modification cases.
+-            *args: Additional positional arguments to pass to the verification method.
+-            **kwargs: Additional keyword arguments to pass to the verification method.
++        protocol_stack: list[str],
++        all_field_values: dict[str, dict[str, Any]],
++        add_payload: bool = True,
++    ) -> Packet:
++        """Build a packet from multiple protocol layers.
++
++        Raises:
++            ValueError: If protocol_stack is empty.
+         """
++        packet: Packet | None = None
+ 
+-        def zip_lists(
+-            rules: list[FlowRule],
+-            packets1: list[Packet],
+-            packets2: list[Packet] | None,
+-        ) -> Iterator[tuple[FlowRule, Packet, Packet | None]]:
+-            """Method that creates an iterable zip containing lists used in runner.
+-
+-            Args:
+-                rules: List of flow rules.
+-                packets1: List of packets.
+-                packets2: Optional list of packets, excluded from zip if not passed to runner.
+-            """
+-            return cast(
+-                Iterator[tuple[FlowRule, Packet, Packet | None]],
+-                zip_longest(rules, packets1, packets2 or [], fillvalue=None),
+-            )
+-
+-        with TestPmd(rx_queues=4, tx_queues=4) as testpmd:
+-            for flow, packet, expected_packet in zip_lists(flows, packets, expected_packets):
+-                is_valid = testpmd.flow_validate(flow_rule=flow, port_id=port_id)
+-                verify_else_skip(is_valid, "flow rule failed validation.")
++        for protocol_name in protocol_stack:
++            protocol_spec = self.protocols[protocol_name]
++            values = all_field_values.get(protocol_name, {})
++            layer = protocol_spec.build_scapy_layer(values)
+ 
+-                try:
+-                    flow_id = testpmd.flow_create(flow_rule=flow, port_id=port_id)
+-                except InteractiveCommandExecutionError:
+-                    log("Flow rule validation passed, but flow creation failed.")
+-                    fail("Failed flow creation")
++            if packet is None:
++                packet = layer
++            else:
++                packet = packet / layer
+ 
+-                if verification_method == self._send_packet_and_verify:
+-                    verification_method(packet=packet, *args, **kwargs)
++        if add_payload:
++            packet = packet / Raw(load="X" * 5)
+ 
+-                elif verification_method == self._send_packet_and_verify_queue:
+-                    verification_method(
+-                        packet=packet, test_queue=kwargs["test_queue"], testpmd=testpmd
+-                    )
++        if packet is None:
++            raise ValueError("Protocol stack cannot be empty.")
+ 
+-                elif verification_method == self._send_packet_and_verify_modification:
+-                    verification_method(packet=packet, expected_packet=expected_packet)
++        return packet
+ 
+-                testpmd.flow_delete(flow_id, port_id=port_id)
+-
+-    def _send_packet_and_verify(self, packet: Packet, should_receive: bool = True) -> None:
+-        """Generate a packet, send to the DUT, and verify it is forwarded back.
++    def generate(
++        self,
++        protocol_stack: list[tuple[str, bool]],
++        action_name: str,
++        action_value: Any = None,
++        group_id: int = 0,
++    ) -> list[FlowTest]:
++        """Generate test cases for patterns matching fields across multiple protocols.
+ 
+         Args:
+-            packet: Scapy packet to send and verify.
+-            should_receive: Indicate whether the packet should be received.
++            protocol_stack: List of (protocol_name, test_fields) tuples.
++                If test_fields is True, iterate through field combinations.
++                If False, include protocol in pattern as wildcard match only.
++            action_name: Name of the action to apply.
++            action_value: Optional value for parameterized actions.
++            group_id: Flow group ID.
++
++        Returns:
++            List of FlowTest objects ready for execution.
+         """
+-        received = send_packet_and_capture(packet)
+-        contains_packet = any(
+-            packet.haslayer(Raw) and b"xxxxx" in packet.load for packet in received
+-        )
+-        verify(
+-            should_receive == contains_packet,
+-            f"Packet was {'dropped' if should_receive else 'received'}",
+-        )
++        action_spec = self.actions[action_name]
+ 
+-    def _send_packet_and_verify_queue(
+-        self, packet: Packet, test_queue: int, testpmd: TestPmd
+-    ) -> None:
+-        """Send packet and verify queue stats show packet was received.
++        wildcard_protocols = [name for name, test_fields in protocol_stack if not test_fields]
++        field_test_protocols = [name for name, test_fields in protocol_stack if test_fields]
++        all_protocol_names = [name for name, _ in protocol_stack]
+ 
+-        Args:
+-            packet: Scapy packet to send to the SUT.
+-            test_queue: Represents the queue the test packet is being sent to.
+-            testpmd: TestPmd instance being used to send test packet.
+-        """
+-        testpmd.set_verbose(level=8)
+-        testpmd.start()
+-        send_packet_and_capture(packet=packet)
+-        verbose_output = testpmd.extract_verbose_output(testpmd.stop())
+-        received = False
+-        for testpmd_packet in verbose_output:
+-            if testpmd_packet.queue_id == test_queue:
+-                received = True
+-        verify(received, f"Expected packet was not received on queue {test_queue}")
++        wildcard_pattern_parts = [self.protocols[name].pattern_name for name in wildcard_protocols]
+ 
+-    def _send_packet_and_verify_modification(self, packet: Packet, expected_packet: Packet) -> None:
+-        """Send packet and verify the expected modifications are present upon reception.
++        if not field_test_protocols:
++            pattern = " / ".join(wildcard_pattern_parts)
++            flow_rule = FlowRule(
++                direction="ingress",
++                pattern=[pattern],
++                actions=[action_spec.build_action_string(action_value)],
++                group_id=group_id,
++            )
++            packet = self._build_multi_layer_packet(all_protocol_names, {}, add_payload=True)
++
++            return [
++                FlowTest(
++                    flow_rule=flow_rule,
++                    packet=packet,
++                    verification_type=action_spec.verification_type,
++                    verification_params=action_spec.build_verification_params(action_value),
++                    description=" / ".join(wildcard_pattern_parts) + f" -> {action_spec.name}",
++                )
++            ]
++
++        protocol_field_specs = []
++        for protocol_name in field_test_protocols:
++            protocol_spec = self.protocols[protocol_name]
++            protocol_field_specs.append([(protocol_spec, f) for f in protocol_spec.fields])
++
++        test_cases = []
++
++        for field_combo in product(*protocol_field_specs):
++            max_vals = max(len(f_spec.test_parameters) for _, f_spec in field_combo)
++
++            for i in range(max_vals):
++                field_pattern_parts = []
++                all_field_values: dict[str, dict[str, Any]] = {}
++                desc_parts = []
++
++                for protocol_spec, field_spec in field_combo:
++                    val = field_spec.test_parameters[i % len(field_spec.test_parameters)]
++
++                    field_pattern_parts.append(
++                        f"{protocol_spec.pattern_name} {field_spec.pattern_field} is {val}"
++                    )
+ 
+-        Args:
+-            packet: Scapy packet to send to the SUT.
+-            expected_packet: Scapy packet that should match the received packet.
+-        """
+-        received = send_packet_and_capture(packet)
++                    if protocol_spec.name not in all_field_values:
++                        all_field_values[protocol_spec.name] = {}
++                    all_field_values[protocol_spec.name][field_spec.scapy_field] = val
+ 
+-        # verify reception
+-        verify(received != [], "Packet was never received.")
++                    desc_parts.append(f"{protocol_spec.name}[{field_spec.scapy_field}={val}]")
+ 
+-        log(f"SENT PACKET:     {packet.summary()}")
+-        log(f"EXPECTED PACKET: {expected_packet.summary()}")
+-        for packet in received:
+-            log(f"RECEIVED PACKET: {packet.summary()}")
++                full_pattern = " / ".join(wildcard_pattern_parts + field_pattern_parts)
+ 
+-        expected_ip_dst = expected_packet[IP].dst if IP in expected_packet else None
+-        received_ip_dst = received[IP].dst if IP in received else None
++                flow_rule = FlowRule(
++                    direction="ingress",
++                    pattern=[full_pattern],
++                    actions=[action_spec.build_action_string(action_value)],
++                    group_id=group_id,
++                )
+ 
+-        expected_mac_dst = expected_packet[Ether].dst if Ether in expected_packet else None
+-        received_mac_dst = received[Ether].dst if Ether in received else None
++                packet = self._build_multi_layer_packet(
++                    all_protocol_names, all_field_values, add_payload=True
++                )
+ 
+-        # verify modification
+-        if expected_ip_dst is not None:
+-            verify(
+-                received_ip_dst == expected_ip_dst,
+-                f"IPv4 dst mismatch: expected {expected_ip_dst}, got {received_ip_dst}",
+-            )
++                wildcard_desc = " / ".join(wildcard_pattern_parts)
++                field_desc = " / ".join(desc_parts)
++                full_desc = f"{wildcard_desc} / {field_desc}" if wildcard_desc else field_desc
+ 
+-        if expected_mac_dst is not None:
+-            verify(
+-                received_mac_dst == expected_mac_dst,
+-                f"MAC dst mismatch: expected {expected_mac_dst}, got {received_mac_dst}",
+-            )
++                test_cases.append(
++                    FlowTest(
++                        flow_rule=flow_rule,
++                        packet=packet,
++                        verification_type=action_spec.verification_type,
++                        verification_params=action_spec.build_verification_params(action_value),
++                        description=full_desc + f" -> {action_spec.name}",
++                    )
++                )
+ 
+-    def _send_packet_and_verify_jump(
+-        self,
+-        packets: list[Packet],
+-        flow_rules: list[FlowRule],
+-        test_queues: list[int],
+-        testpmd: TestPmd,
+-    ) -> None:
+-        """Create a testpmd session with every rule in the given list, verify jump behavior.
++        return test_cases
+ 
+-        Args:
+-            packets: List of packets to send.
+-            flow_rules: List of flow rules to create in the same session.
+-            test_queues: List of Rx queue IDs each packet should be received on.
+-            testpmd: TestPmd instance to create flows on.
+-        """
+-        testpmd.set_verbose(level=8)
+-        for flow in flow_rules:
+-            is_valid = testpmd.flow_validate(flow_rule=flow, port_id=0)
+-            verify_else_skip(is_valid, "flow rule failed validation.")
+-
+-            try:
+-                testpmd.flow_create(flow_rule=flow, port_id=0)
+-            except InteractiveCommandExecutionError:
+-                log("Flow validation passed, but flow creation failed.")
+-                fail("Failed flow creation")
+-
+-        for packet, test_queue in zip(packets, test_queues):
+-            testpmd.start()
+-            send_packet_and_capture(packet=packet)
+-            verbose_output = testpmd.extract_verbose_output(testpmd.stop())
+-            received = False
+-            for testpmd_packet in verbose_output:
+-                if testpmd_packet.queue_id == test_queue:
+-                    received = True
+-            verify(received, f"Expected packet was not received on queue {test_queue}")
+ 
+-    @func_test
+-    def queue_action_ETH(self) -> None:
+-        """Validate flow rules with queue actions and ethernet patterns.
++@requires_nic_capability(NicCapability.FLOW_CTRL)
++class TestRteFlow(TestSuite):
++    """RTE Flow test suite.
+ 
+-        Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++    This suite consists of 4 test cases:
++    1. Queue Action: Verifies queue actions with multi-protocol patterns
++    2. Drop Action: Verifies drop actions with multi-protocol patterns
++    3. Modify Field Action: Verifies modify_field actions with hardcoded patterns
++    4. Jump Action: Verifies jump action between flow groups
+ 
+-        Verify:
+-            * Each packet is received on the appropriate queue.
+-        """
+-        packet_list = [
+-            Ether(src="02:00:00:00:00:00"),
+-            Ether(dst="02:00:00:00:00:00"),
+-            Ether(type=0x0800) / IP(),
+-        ]
+-        flow_list = [
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth src is 02:00:00:00:00:00"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth dst is 02:00:00:00:00:00"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress", pattern=["eth type is 0x0800"], actions=["queue index 2"]
+-            ),
+-        ]
+-        self._runner(
+-            verification_method=self._send_packet_and_verify_queue,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            test_queue=2,
+-        )
++    """
+ 
+-    @func_test
+-    def queue_action_IP(self) -> None:
+-        """Validate flow rules with queue actions and IPv4/IPv6 patterns.
++    def set_up_suite(self) -> None:
++        """Initialize the test generator and result tracking."""
++        self.generator = FlowTestGenerator(PROTOCOLS, ACTIONS)
++        self.test_suite_results: list[FlowTestResult] = []
++        self.test_case_results: list[FlowTestResult] = []
+ 
+-        Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++    def _validate_and_create_flow(
++        self,
++        rule: FlowRule,
++        description: str,
++        testpmd: TestPmd,
++        port_id: int = 0,
++        sent_packet: Packet | None = None,
++    ) -> int | None:
++        """Validate and create a flow rule, recording results.
+ 
+-        Verify:
+-            * Each packet is received on the appropriate queue.
++        Args:
++            rule: The flow rule to validate and create.
++            description: Description for the test result.
++            testpmd: Active TestPmd session.
++            port_id: Port ID for flow operations.
++            sent_packet: Optional packet associated with this test.
++
++        Returns:
++            Flow ID if successful, None if validation or creation failed.
+         """
+-        packet_list = [
+-            Ether() / IP(src="192.168.1.1"),
+-            Ether() / IP(dst="192.168.1.1"),
+-            Ether() / IP(ttl=64),
+-            Ether() / IPv6(src="2001:db8::1"),
+-            Ether() / IPv6(dst="2001:db8::2"),
+-            Ether() / IPv6() / UDP(),
+-        ]
+-        flow_list = [
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv4 src is 192.168.1.1"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv4 dst is 192.168.1.1"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv4 ttl is 64"], actions=["queue index 2"]
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv6 src is 2001:db8::1"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv6 dst is 2001:db8::2"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv6 proto is 17"], actions=["queue index 2"]
+-            ),
+-        ]
+-        self._runner(
+-            verification_method=self._send_packet_and_verify_queue,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            test_queue=2,
++        result = FlowTestResult(
++            description=description,
++            passed=False,
++            flow_rule_pattern=" / ".join(rule.pattern),
++            sent_packet=sent_packet,
+         )
+ 
+-    @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+-    @func_test
+-    def queue_action_L4(self) -> None:
+-        """Validate flow rules with queue actions and TCP/UDP patterns.
+-
+-        Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++        is_valid = testpmd.flow_validate(flow_rule=rule, port_id=port_id)
++        if not is_valid:
++            result.skipped = True
++            result.failure_reason = "Flow rule failed validation"
++            self.test_suite_results.append(result)
++            self.test_case_results.append(result)
++            return None
++
++        try:
++            flow_id = testpmd.flow_create(flow_rule=rule, port_id=port_id)
++        except InteractiveCommandExecutionError:
++            result.failure_reason = "Hardware validated but failed to create flow rule"
++            self.test_suite_results.append(result)
++            self.test_case_results.append(result)
++            return None
++
++        result.passed = True
++        self.test_suite_results.append(result)
++        self.test_case_results.append(result)
++        return flow_id
++
++    def _record_failure(self, reason: str) -> None:
++        """Record a verification failure in both result lists."""
++        self.test_suite_results[-1].passed = False
++        self.test_suite_results[-1].failure_reason = reason
++        self.test_case_results[-1].passed = False
++        self.test_case_results[-1].failure_reason = reason
++
++    def _record_skip(self, reason: str) -> None:
++        """Record a skipped test in both result lists."""
++        self.test_suite_results[-1].passed = False
++        self.test_suite_results[-1].skipped = True
++        self.test_suite_results[-1].failure_reason = f"Skipped: {reason}"
++        self.test_case_results[-1].passed = False
++        self.test_case_results[-1].skipped = True
++        self.test_case_results[-1].failure_reason = f"Skipped: {reason}"
++
++    def _verify_basic_transmission(self, action_type: str) -> None:
++        """Verify that non-matching packets are unaffected by flow rules.
++
++        Creates a flow rule for the specified action, then sends a packet that
++        should NOT match the rule to confirm:
++        - For 'drop': non-matching packets ARE received (not dropped)
++        - For 'queue': non-matching packets are NOT steered to the target queue
++        - For 'modify': non-matching packets arrive unmodified
++
++        This ensures flow rules only affect matching traffic before
++        running the actual action tests.
+ 
+-        Verify:
+-            * Each packet is received on the appropriate queue.
++        Args:
++            action_type: The action being tested ('drop', 'queue', 'modify').
+         """
+-        packet_list = [
+-            Ether() / IP() / TCP(sport=1234),
+-            Ether() / IP() / TCP(dport=80),
+-            Ether() / IP() / TCP(flags=0x02),
+-            Ether() / IP() / UDP(sport=5000),
+-            Ether() / IP() / UDP(dport=53),
+-        ]
+-        flow_list = [
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv4 / tcp src is 1234"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv4 / tcp dst is 80"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv4 / tcp flags is 0x02"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv4 / udp src is 5000"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                pattern=["eth / ipv4 / udp dst is 53"],
+-                actions=["queue index 2"],
+-            ),
+-        ]
+-        self._runner(
+-            verification_method=self._send_packet_and_verify_queue,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            test_queue=2,
++        non_matching_packet = (
++            Ether(src="02:00:00:00:00:00", dst="02:00:00:00:00:01")
++            / IP(src="192.168.100.1", dst="192.168.100.2")
++            / UDP(sport=9999, dport=9998)
++            / Raw(load="X" * 5)
+         )
+ 
+-    @func_test
+-    def queue_action_VLAN(self) -> None:
+-        """Validate flow rules with queue actions and VLAN patterns.
++        with TestPmd(rx_queues=4, tx_queues=4) as testpmd:
++            if action_type == "drop":
++                rule = FlowRule(
++                    direction="ingress",
++                    pattern=["eth / ipv4 src is 192.168.1.1 / udp dst is 53"],
++                    actions=["drop"],
++                )
++                flow_id = self._validate_and_create_flow(
++                    rule,
++                    f"Basic transmission check ({action_type})",
++                    testpmd,
++                    sent_packet=non_matching_packet,
++                )
++                if flow_id is None:
++                    return
+ 
+-        Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++                testpmd.start()
++                received = send_packet_and_capture(non_matching_packet)
++                testpmd.stop()
++                contains_packet = any(
++                    p.haslayer(Raw) and b"XXXXX" in bytes(p[Raw].load) for p in received
++                )
++                testpmd.flow_delete(flow_id, port_id=0)
++                verify(
++                    contains_packet,
++                    "Basic transmission check failed: non-matching packet dropped",
++                )
++
++            elif action_type == "queue":
++                rule = FlowRule(
++                    direction="ingress",
++                    pattern=[
++                        "eth src is aa:bb:cc:dd:ee:ff / ipv4 src is 10.255.255.254 "
++                        "dst is 10.255.255.253 / udp src is 12345 dst is 54321"
++                    ],
++                    actions=["queue index 3"],
++                )
++                flow_id = self._validate_and_create_flow(
++                    rule,
++                    f"Basic transmission check ({action_type})",
++                    testpmd,
++                    sent_packet=non_matching_packet,
++                )
++                if flow_id is None:
++                    return
++
++                testpmd.set_verbose(level=8)
++                testpmd.start()
++                send_packet_and_capture(non_matching_packet)
++                verbose_output = testpmd.extract_verbose_output(testpmd.stop())
++                received_on_target = any(p.queue_id == 3 for p in verbose_output)
++                testpmd.flow_delete(flow_id, port_id=0)
++                verify(
++                    not received_on_target,
++                    "Basic transmission check failed: non-matching packet steered to queue 3",
++                )
++
++            elif action_type == "modify":
++                rule = FlowRule(
++                    direction="ingress",
++                    pattern=["eth / ipv4 src is 192.168.1.1 / udp dst is 53"],
++                    actions=["set_ipv4_dst ipv4_addr 192.168.2.1 / queue index 0"],
++                )
++                flow_id = self._validate_and_create_flow(
++                    rule,
++                    f"Basic transmission check ({action_type})",
++                    testpmd,
++                    sent_packet=non_matching_packet,
++                )
++                if flow_id is None:
++                    return
+ 
+-        Verify:
+-            * Each packet is received on the appropriate queue.
+-        """
+-        packet_list = [Ether() / Dot1Q(vlan=100), Ether() / Dot1Q(type=0x0800)]
+-        flow_list = [
+-            FlowRule(direction="ingress", pattern=["eth / vlan"], actions=["queue index 2"]),
+-            FlowRule(direction="ingress", pattern=["eth / vlan"], actions=["queue index 2"]),
+-        ]
+-        self._runner(
+-            verification_method=self._send_packet_and_verify_queue,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            test_queue=2,
+-        )
++                testpmd.start()
++                received = send_packet_and_capture(non_matching_packet)
++                testpmd.stop()
++                testpmd.flow_delete(flow_id, port_id=0)
++
++                test_packet = next(
++                    (p for p in received if p.haslayer(Raw) and b"XXXXX" in bytes(p[Raw].load)),
++                    None,
++                )
++                if (
++                    test_packet is not None
++                    and non_matching_packet is not None
++                    and IP in test_packet
++                    and IP in non_matching_packet
++                ):
++                    verify(
++                        test_packet[IP].dst == non_matching_packet[IP].dst,
++                        "Basic transmission check failed: non-matching packet was modified",
++                    )
+ 
+-    @func_test
+-    def drop_action_ETH(self) -> None:
+-        """Validate flow rules with drop actions and ethernet patterns.
++        log(f"Basic transmission check passed for '{action_type}' action")
+ 
+-        Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++    def _verify_queue(self, packet: Packet, queue_id: int, testpmd: TestPmd, **kwargs: Any) -> None:
++        """Verify packet is received on the expected queue."""
++        send_packet_and_capture(packet)
++        verbose_output = testpmd.extract_verbose_output(testpmd.stop())
++        received_on_queue = any(p.queue_id == queue_id for p in verbose_output)
++        verify(received_on_queue, f"Packet not received on queue {queue_id}")
+ 
+-        Verify:
+-            * Packet is dropped.
++    def _verify_drop(self, packet: Packet, **kwargs: Any) -> None:
++        """Verify packet is dropped."""
++        received = send_packet_and_capture(packet)
++        contains_packet = any(p.haslayer(Raw) and b"XXXXX" in bytes(p[Raw].load) for p in received)
++        verify(not contains_packet, "Packet was not dropped")
+ 
+-        One packet will be sent as a confidence check, to ensure packets are being
+-        received under normal circumstances.
+-        """
+-        packet_list = [
+-            Ether(src="02:00:00:00:00:00") / Raw(load="xxxxx"),
+-            Ether(dst="02:00:00:00:00:00") / Raw(load="xxxxx"),
+-            Ether(type=0x0800) / Raw(load="xxxxx"),
+-        ]
+-        flow_list = [
+-            FlowRule(
+-                direction="ingress", pattern=["eth src is 02:00:00:00:00:00"], actions=["drop"]
+-            ),
+-            FlowRule(
+-                direction="ingress", pattern=["eth dst is 02:00:00:00:00:00"], actions=["drop"]
+-            ),
+-            FlowRule(direction="ingress", pattern=["eth type is 0x0800"], actions=["drop"]),
+-        ]
+-        # verify reception with test packet
+-        packet = Ether() / IP() / Raw(load="xxxxx")
+-        with TestPmd() as testpmd:
+-            testpmd.start()
+-            received = send_packet_and_capture(packet)
+-            verify(received != [], "Test packet was never received.")
+-        self._runner(
+-            verification_method=self._send_packet_and_verify,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            should_receive=False,
+-        )
++    def _run_tests(
++        self,
++        test_cases: list[FlowTest],
++        port_id: int = 0,
++    ) -> None:
++        """Execute a sequence of generated test cases."""
++        with TestPmd(rx_queues=4, tx_queues=4) as testpmd:
++            for test_case in test_cases:
++                log(f"Testing: {test_case.description}")
++
++                flow_id = self._validate_and_create_flow(
++                    test_case.flow_rule,
++                    test_case.description,
++                    testpmd,
++                    port_id,
++                    sent_packet=test_case.packet,
++                )
++                if flow_id is None:
++                    continue
+ 
+-    @func_test
+-    def drop_action_IP(self) -> None:
+-        """Validate flow rules with drop actions and ethernet patterns.
++                try:
++                    verification_method = getattr(self, f"_verify_{test_case.verification_type}")
+ 
+-        Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++                    if test_case.verification_type == "queue":
++                        testpmd.set_verbose(level=8)
++                        testpmd.start()
+ 
+-        Verify:
+-            * Packet is dropped.
++                    verification_method(
++                        packet=test_case.packet,
++                        testpmd=testpmd,
++                        **test_case.verification_params,
++                    )
+ 
+-        One packet will be sent as a confidence check, to ensure packets are being
+-        received under normal circumstances.
+-        """
+-        packet_list = [
+-            Ether() / IP(src="192.168.1.1") / Raw(load="xxxxx"),
+-            Ether() / IP(dst="192.168.1.1") / Raw(load="xxxxx"),
+-            Ether() / IP(ttl=64) / Raw(load="xxxxx"),
+-            Ether() / IPv6(src="2001:db8::1") / Raw(load="xxxxx"),
+-            Ether() / IPv6(dst="2001:db8::1") / Raw(load="xxxxx"),
+-            Ether() / IPv6() / UDP() / Raw(load="xxxxx"),
+-        ]
+-        flow_list = [
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv4 src is 192.168.1.1"], actions=["drop"]
+-            ),
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv4 dst is 192.168.1.1"], actions=["drop"]
+-            ),
+-            FlowRule(direction="ingress", pattern=["eth / ipv4 ttl is 64"], actions=["drop"]),
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv6 src is 2001:db8::1"], actions=["drop"]
+-            ),
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv6 dst is 2001:db8::2"], actions=["drop"]
+-            ),
+-            FlowRule(direction="ingress", pattern=["eth / ipv6 proto is 17"], actions=["drop"]),
+-        ]
+-        # verify reception with test packet
+-        packet = Ether() / IP() / Raw(load="xxxxx")
+-        with TestPmd() as testpmd:
+-            testpmd.start()
+-            received = send_packet_and_capture(packet)
+-            verify(received != [], "Test packet was never received.")
+-        self._runner(
+-            verification_method=self._send_packet_and_verify,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            should_receive=False,
+-        )
++                except SkippedTestException as e:
++                    self._record_skip(str(e))
++
++                except TestCaseVerifyError as e:
++                    self._record_failure(str(e))
++
++                finally:
++                    testpmd.flow_delete(flow_id, port_id=port_id)
++
++    def _log_test_suite_summary(self) -> None:
++        """Log a summary of all test results."""
++        if not self.test_suite_results:
++            return
++
++        passed_rules = [r for r in self.test_suite_results if r.passed]
++        skipped_rules = [r for r in self.test_suite_results if r.skipped]
++        failed_rules = [r for r in self.test_suite_results if not r.passed and not r.skipped]
++
++        log(f"Total tests run: {len(self.test_suite_results)}")
++        log(f"Passed: {len(passed_rules)}")
++        log(f"Skipped: {len(skipped_rules)}")
++        log(f"Failed: {len(failed_rules)}")
++
++        if passed_rules:
++            log("\nPASSED RULES:")
++            for result in passed_rules:
++                log(f"  {result.description}")
++                log(f"    Sent Packet: {result.sent_packet}")
++
++        if skipped_rules:
++            log("\nSKIPPED RULES:")
++            for result in skipped_rules:
++                log(f"  {result.description}")
++                log(f"    Pattern: {result.flow_rule_pattern}")
++                log(f"    Reason: {result.failure_reason}")
++                log(f"    Sent Packet: {result.sent_packet}")
++
++        if failed_rules:
++            log("\nFAILED RULES:")
++            for result in failed_rules:
++                log(f"  {result.description}")
++                log(f"    Pattern: {result.flow_rule_pattern}")
++                log(f"    Reason: {result.failure_reason}")
++                log(f"    Sent Packet: {result.sent_packet}")
++
++    def _check_test_case_failures(self) -> None:
++        """Fail the test case if any flow rules failed creation or verification."""
++        failures = [r for r in self.test_case_results if not r.passed and not r.skipped]
++        self.test_case_results = []
++
++        if failures:
++            details = "\n".join(
++                f"\t{r.description}\n"
++                f"\t  Pattern: {r.flow_rule_pattern}\n"
++                f"\t  Reason: {r.failure_reason}\n"
++                f"\t  Sent Packet: {r.sent_packet}"
++                for r in failures
++            )
++            fail(f"Flow rules failed:\n{details}")
++
++    # -------------------- Generator Test Cases --------------------
+ 
+     @func_test
+-    def drop_action_L4(self) -> None:
+-        """Validate flow rules with drop actions and ethernet patterns.
++    def queue_action(self) -> None:
++        """Validate flow rules with queue actions and multi-protocol patterns.
+ 
+         Steps:
++            * Run basic transmission check to verify baseline packet reception.
+             * Create a list of packets to test, with a corresponding flow list.
+             * Launch testpmd.
+             * Create first flow rule in flow list.
+@@ -518,50 +896,24 @@ def drop_action_L4(self) -> None:
+             * Delete flow rule, repeat for all flows/packets.
+ 
+         Verify:
+-            * Packet is dropped.
+-
+-        One packet will be sent as a confidence check, to ensure packets are being
+-        received under normal circumstances.
++            * Each packet is received on the appropriate queue.
+         """
+-        packet_list = [
+-            Ether() / IP() / TCP(sport=1234) / Raw(load="xxxxx"),
+-            Ether() / IP() / TCP(dport=80) / Raw(load="xxxxx"),
+-            Ether() / IP() / TCP(flags=0x02) / Raw(load="xxxxx"),
+-            Ether() / IP() / UDP(sport=5000) / Raw(load="xxxxx"),
+-            Ether() / IP() / UDP(dport=53) / Raw(load="xxxxx"),
+-        ]
+-        flow_list = [
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv4 / tcp src is 1234"], actions=["drop"]
+-            ),
+-            FlowRule(direction="ingress", pattern=["eth / ipv4 / tcp dst is 80"], actions=["drop"]),
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv4 / tcp flags is 0x02"], actions=["drop"]
+-            ),
+-            FlowRule(
+-                direction="ingress", pattern=["eth / ipv4 / udp src is 5000"], actions=["drop"]
+-            ),
+-            FlowRule(direction="ingress", pattern=["eth / ipv4 / udp dst is 53"], actions=["drop"]),
+-        ]
+-        # verify reception with test packet
+-        packet = Ether() / IP() / Raw(load="xxxxx")
+-        with TestPmd() as testpmd:
+-            testpmd.start()
+-            received = send_packet_and_capture(packet)
+-            verify(received != [], "Test packet was never received.")
+-        self._runner(
+-            verification_method=self._send_packet_and_verify,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            should_receive=False,
+-        )
++        self._verify_basic_transmission("queue")
++        for stack in PROTOCOL_STACKS:
++            test_cases = self.generator.generate(
++                protocol_stack=stack,
++                action_name="queue",
++                action_value=2,
++            )
++            self._run_tests(test_cases)
++        self._check_test_case_failures()
+ 
+     @func_test
+-    def drop_action_VLAN(self) -> None:
+-        """Validate flow rules with drop actions and ethernet patterns.
++    def drop_action(self) -> None:
++        """Validate flow rules with drop actions and multi-protocol patterns.
+ 
+         Steps:
++            * Run basic transmission check to verify packets are received without drop rules.
+             * Create a list of packets to test, with a corresponding flow list.
+             * Launch testpmd.
+             * Create first flow rule in flow list.
+@@ -570,228 +922,208 @@ def drop_action_VLAN(self) -> None:
+ 
+         Verify:
+             * Packet is dropped.
+-
+-        One packet will be sent as a confidence check, to ensure packets are being
+-        received under normal circumstances.
+         """
+-        packet_list = [
+-            Ether() / Dot1Q(vlan=100) / Raw(load="xxxxx"),
+-            Ether() / Dot1Q(type=0x0800) / Raw(load="xxxxx"),
+-        ]
+-        flow_list = [
+-            FlowRule(direction="ingress", pattern=["eth / vlan"], actions=["drop"]),
+-            FlowRule(direction="ingress", pattern=["eth / vlan"], actions=["drop"]),
+-        ]
+-        # verify reception with test packet
+-        packet = Ether() / IP() / Raw(load="xxxxx")
+-        with TestPmd() as testpmd:
+-            testpmd.start()
+-            received = send_packet_and_capture(packet)
+-            verify(received != [], "Test packet was never received.")
+-        self._runner(
+-            verification_method=self._send_packet_and_verify,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            should_receive=False,
+-        )
++        self._verify_basic_transmission("drop")
++        for stack in PROTOCOL_STACKS:
++            test_cases = self.generator.generate(
++                protocol_stack=stack,
++                action_name="drop",
++            )
++            self._run_tests(test_cases)
++        self._check_test_case_failures()
++
++    # -------------------- Hard Coded Test Cases --------------------
+ 
+     @func_test
+-    def modify_actions(self) -> None:
+-        """Validate flow rules with actions that modify that packet during transmission.
++    def modify_field_action(self) -> None:
++        """Validate flow rules with modify_field actions and hardcoded patterns.
+ 
+         Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++            * Run basic transmission check to verify packets arrive unmodified.
++            * For each test case in MODIFY_TEST_CASES, create the flow rule.
++            * Send the corresponding packet and capture the received packet.
++            * Verify the expected field was modified correctly.
++            * Delete the flow rule and repeat for all test cases.
+ 
+         Verify:
+-            * Verify packet is received with the new attributes.
++            * Each packet is modified correctly according to its action.
+         """
+-        packet_list = [Ether() / IP(src="192.68.1.1"), Ether(src="02:00:00:00:00:00")]
+-        flow_list = [
+-            # rule to copy IPv4 src to IPv4 dst
+-            FlowRule(
+-                direction="ingress",
+-                group_id=1,
+-                pattern=["eth"],
+-                actions=[
+-                    "modify_field op set dst_type ipv4_dst src_type ipv4_src width 32"
+-                    " / queue index 0"
+-                ],
+-            ),
+-            # rule to copy src MAC to dst MAC
+-            FlowRule(
+-                direction="ingress",
+-                group_id=1,
+-                pattern=["eth"],
+-                actions=[
+-                    "modify_field op set dst_type mac_dst src_type mac_src width 48 / queue index 0"
+-                ],
+-            ),
+-        ]
+-        expected_packet_list = [Ether() / IP(dst="192.68.1.1"), Ether(dst="02:00:00:00:00:00")]
+-        self._runner(
+-            verification_method=self._send_packet_and_verify_modification,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=0,
+-            expected_packets=expected_packet_list,
+-        )
++        port_id = 0
++        self._verify_basic_transmission("modify")
+ 
+-    @func_test
+-    def egress_rules(self) -> None:
+-        """Validate flow rules with egress directions.
++        with TestPmd(rx_queues=4, tx_queues=4) as testpmd:
++            for test_case in MODIFY_TEST_CASES:
++                log(f"Testing: {test_case.description}")
++
++                rule = FlowRule(
++                    direction="ingress",
++                    pattern=[test_case.pattern],
++                    actions=[test_case.action],
++                )
++
++                flow_id = self._validate_and_create_flow(
++                    rule,
++                    test_case.description,
++                    testpmd,
++                    port_id,
++                    sent_packet=test_case.packet,
++                )
++                if flow_id is None:
++                    continue
+ 
+-        Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++                try:
++                    testpmd.start()
++                    received = send_packet_and_capture(test_case.packet)
++                    testpmd.stop()
+ 
+-        Verify:
+-            * Packet is dropped.
++                    test_packet = next(
++                        (p for p in received if p.haslayer(Raw) and b"XXXXX" in bytes(p[Raw].load)),
++                        None,
++                    )
+ 
+-        One packet will be sent as a confidence check, to ensure packets are being
+-        received under normal circumstances.
+-        """
+-        packet_list = [
+-            Ether(src="02:00:00:00:00:00"),
+-            Ether() / IP(src="192.168.1.1"),
+-            IP() / TCP(sport=1234),
+-            IP() / UDP(sport=5000),
+-        ]
+-        flow_list = [
+-            FlowRule(
+-                direction="egress", pattern=["eth src is 02:00:00:00:00:00"], actions=["drop"]
+-            ),
+-            FlowRule(direction="egress", pattern=["ipv4 src is 192.168.1.1"], actions=["drop"]),
+-            FlowRule(direction="egress", pattern=["tcp src is 1234"], actions=["drop"]),
+-            FlowRule(direction="egress", pattern=["udp src is 5000"], actions=["drop"]),
+-        ]
+-        # verify reception with test packet
+-        packet = Ether() / IP() / Raw(load="xxxxx")
+-        with TestPmd() as testpmd:
+-            testpmd.start()
+-            received = send_packet_and_capture(packet)
+-            verify(received != [], "Test packet was never received.")
+-        self._runner(
+-            verification_method=self._send_packet_and_verify,
+-            flows=flow_list,
+-            packets=packet_list,
+-            port_id=1,
+-            should_receive=False,
+-        )
++                    verify(
++                        test_packet is not None,
++                        f"{test_case.description}: Packet not received",
++                    )
++
++                    if (
++                        test_packet
++                        and test_case.expected_ipv4_dst is not None
++                        and IP in test_packet
++                    ):
++                        verify(
++                            test_packet[IP].dst == test_case.expected_ipv4_dst,
++                            f"{test_case.description}: IPv4 dst mismatch: "
++                            f"expected {test_case.expected_ipv4_dst}, "
++                            f"got {test_packet[IP].dst}",
++                        )
++                    if (
++                        test_packet
++                        and test_case.expected_mac_dst is not None
++                        and Ether in test_packet
++                    ):
++                        verify(
++                            test_packet[Ether].dst == test_case.expected_mac_dst,
++                            f"{test_case.description}: MAC dst mismatch: "
++                            f"expected {test_case.expected_mac_dst}, "
++                            f"got {test_packet[Ether].dst}",
++                        )
++
++                except SkippedTestException as e:
++                    self._record_skip(str(e))
++
++                except TestCaseVerifyError as e:
++                    self._record_failure(str(e))
++
++                finally:
++                    testpmd.flow_delete(flow_id, port_id=port_id)
++
++        self._check_test_case_failures()
+ 
+     @func_test
+     def jump_action(self) -> None:
+-        """Validate flow rules with different group levels and jump actions.
++        """Validate flow rules with jump action between groups.
+ 
+-        Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd with the necessary configuration.
+-            * Create each flow rule in testpmd.
+-            * Send each packet in the list, check Rx queue ID.
+-
+-        Verify:
+-            * Check that each packet is received on the appropriate Rx queue.
+-        """
+-        packet_list = [Ether() / IP(), Ether() / IP() / TCP(), Ether() / IP() / UDP()]
+-        flow_list = [
+-            FlowRule(
+-                direction="ingress",
+-                group_id=0,
+-                pattern=["eth / ipv4 / tcp"],
+-                actions=["jump group 1"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                group_id=0,
+-                pattern=["eth / ipv4 / udp"],
+-                actions=["jump group 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                group_id=1,
+-                pattern=["eth / ipv4 / tcp"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                group_id=2,
+-                pattern=["eth / ipv4 / udp"],
+-                actions=["queue index 3"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                group_id=0,
+-                pattern=["eth / ipv4"],
+-                actions=["queue index 1"],
+-            ),
+-        ]
+-        expected_queue_list = [1, 2, 3]
+-        with TestPmd(rx_queues=4, tx_queues=4) as testpmd:
+-            self._send_packet_and_verify_jump(
+-                packets=packet_list,
+-                flow_rules=flow_list,
+-                test_queues=expected_queue_list,
+-                testpmd=testpmd,
+-            )
++        The jump action redirects matched packets from one flow group to another.
++        Only flow rules in group 0 are guaranteed to be matched against initially;
++        subsequent groups can only be reached via jump actions.
+ 
+-    @func_test
+-    def priority_attribute(self) -> None:
+-        """Validate flow rules with queue actions and ethernet patterns.
++        For each test case in JUMP_TEST_CASES, this creates a two-stage pipeline:
++        - Group 0: Match on a pattern, jump to group 1
++        - Group 1: Match on a second pattern, forward to a specific queue
+ 
+         Steps:
+-            * Create a list of packets to test, with a corresponding flow list.
+-            * Launch testpmd.
+-            * Create first flow rule in flow list.
+-            * Send first packet in packet list, capture verbose output.
+-            * Delete flow rule, repeat for all flows/packets.
++            * Launch testpmd with multiple queues.
++            * For each test case, create group 0 rule (match + jump) and group 1 rule
++              (match + queue).
++            * Send matching packet and verify it arrives on the target queue.
++            * Send non-matching packet and verify it does not reach the target queue.
++            * Delete both flow rules and repeat for all test cases.
+ 
+         Verify:
+-            * Each packet is received on the appropriate queue.
++            * Packet matching both rules is received on the target queue.
++            * Packet not matching group 0 rule does not reach the target queue.
+         """
+-        test_packet = Ether() / IP() / Raw()
+-        flow_list = [
+-            FlowRule(
+-                direction="ingress",
+-                priority_level=3,
+-                pattern=["eth / ipv4"],
+-                actions=["queue index 1"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                priority_level=2,
+-                pattern=["eth / ipv4"],
+-                actions=["queue index 2"],
+-            ),
+-            FlowRule(
+-                direction="ingress",
+-                priority_level=1,
+-                pattern=["eth / ipv4"],
+-                actions=["queue index 3"],
+-            ),
+-        ]
+-        expected_queue_list = [1, 2, 3]
++        port_id = 0
++
+         with TestPmd(rx_queues=4, tx_queues=4) as testpmd:
+-            testpmd.set_verbose(level=8)
+-            for flow, expected_queue in zip(flow_list, expected_queue_list):
+-                is_valid = testpmd.flow_validate(flow_rule=flow, port_id=0)
+-                verify_else_skip(is_valid, "flow rule failed validation.")
++            for test_case in JUMP_TEST_CASES:
++                log(f"Testing: {test_case.description}")
++
++                jump_rule = FlowRule(
++                    direction="ingress",
++                    group_id=0,
++                    pattern=[test_case.group0_pattern],
++                    actions=["jump group 1"],
++                )
++
++                queue_rule = FlowRule(
++                    direction="ingress",
++                    group_id=1,
++                    pattern=[test_case.group1_pattern],
++                    actions=[test_case.group1_action],
++                )
++
++                jump_flow_id = self._validate_and_create_flow(
++                    jump_rule,
++                    f"{test_case.description} (group 0 -> jump)",
++                    testpmd,
++                    port_id,
++                    sent_packet=test_case.matching_packet,
++                )
++                if jump_flow_id is None:
++                    continue
++
++                queue_flow_id = self._validate_and_create_flow(
++                    queue_rule,
++                    f"{test_case.description} (group 1 -> queue)",
++                    testpmd,
++                    port_id,
++                    sent_packet=test_case.matching_packet,
++                )
++                if queue_flow_id is None:
++                    testpmd.flow_delete(jump_flow_id, port_id=port_id)
++                    continue
++
+                 try:
+-                    testpmd.flow_create(flow_rule=flow, port_id=0)
+-                except InteractiveCommandExecutionError:
+-                    log("Flow rule validation passed, but flow creation failed.")
+-                    fail("Failed flow creation")
+-                testpmd.start()
+-                send_packet_and_capture(test_packet)
+-                verbose_output = testpmd.extract_verbose_output(testpmd.stop())
+-                received = False
+-                for testpmd_packet in verbose_output:
+-                    if testpmd_packet.queue_id == expected_queue:
+-                        received = True
+-                verify(received, f"Packet was not received on queue {expected_queue}")
++                    testpmd.set_verbose(level=8)
++                    testpmd.start()
++
++                    send_packet_and_capture(test_case.matching_packet)
++                    verbose_output = testpmd.extract_verbose_output(testpmd.stop())
++                    received_on_target = any(
++                        p.queue_id == test_case.target_queue for p in verbose_output
++                    )
++                    verify(
++                        received_on_target,
++                        f"{test_case.description}: Matching packet not received on "
++                        f"queue {test_case.target_queue} after jump",
++                    )
++
++                    testpmd.start()
++                    send_packet_and_capture(test_case.non_matching_packet)
++                    verbose_output = testpmd.extract_verbose_output(testpmd.stop())
++                    non_matching_on_target = any(
++                        p.queue_id == test_case.target_queue for p in verbose_output
++                    )
++                    verify(
++                        not non_matching_on_target,
++                        f"{test_case.description}: Non-matching packet incorrectly "
++                        f"received on queue {test_case.target_queue}",
++                    )
++
++                except SkippedTestException as e:
++                    self._record_skip(str(e))
++
++                except TestCaseVerifyError as e:
++                    self._record_failure(str(e))
++
++                finally:
++                    testpmd.flow_delete(queue_flow_id, port_id=port_id)
++                    testpmd.flow_delete(jump_flow_id, port_id=port_id)
++
++        self._check_test_case_failures()
++
++    def tear_down_suite(self) -> None:
++        """Log test summary at the end of the suite."""
++        self._log_test_suite_summary()
+-- 
+2.52.0
 
-MIIVcQYJKoZIhvcNAQcCoIIVYjCCFV4CAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghLeMIIGqDCCBJCgAwIBAgIQfofDCS7XZu8vIeKo0KeY9DANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNTNaFw0yOTA0MTkwMDAwMDBaMFIxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBS
-NiBTTUlNRSBDQSAyMDIzMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAwjAEbSkPcSyn
-26Zn9VtoE/xBvzYmNW29bW1pJZ7jrzKwPJm/GakCvy0IIgObMsx9bpFaq30X1kEJZnLUzuE1/hlc
-hatYqyORVBeHlv5V0QRSXY4faR0dCkIhXhoGknZ2O0bUJithcN1IsEADNizZ1AJIaWsWbQ4tYEYj
-ytEdvfkxz1WtX3SjtecZR+9wLJLt6HNa4sC//QKdjyfr/NhDCzYrdIzAssoXFnp4t+HcMyQTrj0r
-pD8KkPj96sy9axzegLbzte7wgTHbWBeJGp0sKg7BAu+G0Rk6teO1yPd75arbCvfY/NaRRQHk6tmG
-71gpLdB1ZhP9IcNYyeTKXIgfMh2tVK9DnXGaksYCyi6WisJa1Oa+poUroX2ESXO6o03lVxiA1xyf
-G8lUzpUNZonGVrUjhG5+MdY16/6b0uKejZCLbgu6HLPvIyqdTb9XqF4XWWKu+OMDs/rWyQ64v3mv
-Sa0te5Q5tchm4m9K0Pe9LlIKBk/gsgfaOHJDp4hYx4wocDr8DeCZe5d5wCFkxoGc1ckM8ZoMgpUc
-4pgkQE5ShxYMmKbPvNRPa5YFzbFtcFn5RMr1Mju8gt8J0c+dxYco2hi7dEW391KKxGhv7MJBcc+0
-x3FFTnmhU+5t6+CnkKMlrmzyaoeVryRTvOiH4FnTNHtVKUYDsCM0CLDdMNgoxgkCAwEAAaOCAX4w
-ggF6MA4GA1UdDwEB/wQEAwIBhjBMBgNVHSUERTBDBggrBgEFBQcDAgYIKwYBBQUHAwQGCisGAQQB
-gjcUAgIGCisGAQQBgjcKAwwGCisGAQQBgjcKAwQGCSsGAQQBgjcVBjASBgNVHRMBAf8ECDAGAQH/
-AgEAMB0GA1UdDgQWBBQAKTaeXHq6D68tUC3boCOFGLCgkjAfBgNVHSMEGDAWgBSubAWjkxPioufi
-1xzWx/B/yGdToDB7BggrBgEFBQcBAQRvMG0wLgYIKwYBBQUHMAGGImh0dHA6Ly9vY3NwMi5nbG9i
-YWxzaWduLmNvbS9yb290cjYwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
-b20vY2FjZXJ0L3Jvb3QtcjYuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vcm9vdC1yNi5jcmwwEQYDVR0gBAowCDAGBgRVHSAAMA0GCSqGSIb3DQEBDAUAA4IC
-AQCRkUdr1aIDRmkNI5jx5ggapGUThq0KcM2dzpMu314mJne8yKVXwzfKBtqbBjbUNMODnBkhvZcn
-bHUStur2/nt1tP3ee8KyNhYxzv4DkI0NbV93JChXipfsan7YjdfEk5vI2Fq+wpbGALyyWBgfy79Y
-IgbYWATB158tvEh5UO8kpGpjY95xv+070X3FYuGyeZyIvao26mN872FuxRxYhNLwGHIy38N9ASa1
-Q3BTNKSrHrZngadofHglG5W3TMFR11JOEOAUHhUgpbVVvgCYgGA6dSX0y5z7k3rXVyjFOs7KBSXr
-dJPKadpl4vqYphH7+P40nzBRcxJHrv5FeXlTrb+drjyXNjZSCmzfkOuCqPspBuJ7vab0/9oeNERg
-nz6SLCjLKcDXbMbKcRXgNhFBlzN4OUBqieSBXk80w2Nzx12KvNj758WavxOsXIbX0Zxwo1h3uw75
-AI2v8qwFWXNclO8qW2VXoq6kihWpeiuvDmFfSAwRLxwwIjgUuzG9SaQ+pOomuaC7QTKWMI0hL0b4
-mEPq9GsPPQq1UmwkcYFJ/Z4I93DZuKcXmKMmuANTS6wxwIEw8Q5MQ6y9fbJxGEOgOgYL4QIqNULb
-5CYPnt2LeiIiEnh8Uuh8tawqSjnR0h7Bv5q4mgo3L1Z9QQuexUntWD96t4o0q1jXWLyrpgP7Zcnu
-CzCCBYMwggNroAMCAQICDkXmuwODM8OFZUjm/0VRMA0GCSqGSIb3DQEBDAUAMEwxIDAeBgNVBAsT
-F0dsb2JhbFNpZ24gUm9vdCBDQSAtIFI2MRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpH
-bG9iYWxTaWduMB4XDTE0MTIxMDAwMDAwMFoXDTM0MTIxMDAwMDAwMFowTDEgMB4GA1UECxMXR2xv
-YmFsU2lnbiBSb290IENBIC0gUjYxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2Jh
-bFNpZ24wggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCVB+hzymb57BTKezz3DQjxtEUL
-LIK0SMbrWzyug7hBkjMUpG9/6SrMxrCIa8W2idHGsv8UzlEUIexK3RtaxtaH7k06FQbtZGYLkoDK
-RN5zlE7zp4l/T3hjCMgSUG1CZi9NuXkoTVIaihqAtxmBDn7EirxkTCEcQ2jXPTyKxbJm1ZCatzEG
-xb7ibTIGph75ueuqo7i/voJjUNDwGInf5A959eqiHyrScC5757yTu21T4kh8jBAHOP9msndhfuDq
-jDyqtKT285VKEgdt/Yyyic/QoGF3yFh0sNQjOvddOsqi250J3l1ELZDxgc1Xkvp+vFAEYzTfa5MY
-vms2sjnkrCQ2t/DvthwTV5O23rL44oW3c6K4NapF8uCdNqFvVIrxclZuLojFUUJEFZTuo8U4lptO
-TloLR/MGNkl3MLxxN+Wm7CEIdfzmYRY/d9XZkZeECmzUAk10wBTt/Tn7g/JeFKEEsAvp/u6P4W4L
-sgizYWYJarEGOmWWWcDwNf3J2iiNGhGHcIEKqJp1HZ46hgUAntuA1iX53AWeJ1lMdjlb6vmlodiD
-D9H/3zAR+YXPM0j1ym1kFCx6WE/TSwhJxZVkGmMOeT31s4zKWK2cQkV5bg6HGVxUsWW2v4yb3BPp
-DW+4LtxnbsmLEbWEFIoAGXCDeZGXkdQaJ783HjIH2BRjPChMrwIDAQABo2MwYTAOBgNVHQ8BAf8E
-BAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUrmwFo5MT4qLn4tcc1sfwf8hnU6AwHwYD
-VR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwDQYJKoZIhvcNAQEMBQADggIBAIMl7ejR/ZVS
-zZ7ABKCRaeZc0ITe3K2iT+hHeNZlmKlbqDyHfAKK0W63FnPmX8BUmNV0vsHN4hGRrSMYPd3hckSW
-tJVewHuOmXgWQxNWV7Oiszu1d9xAcqyj65s1PrEIIaHnxEM3eTK+teecLEy8QymZjjDTrCHg4x36
-2AczdlQAIiq5TSAucGja5VP8g1zTnfL/RAxEZvLS471GABptArolXY2hMVHdVEYcTduZlu8aHARc
-phXveOB5/l3bPqpMVf2aFalv4ab733Aw6cPuQkbtwpMFifp9Y3s/0HGBfADomK4OeDTDJfuvCp8g
-a907E48SjOJBGkh6c6B3ace2XH+CyB7+WBsoK6hsrV5twAXSe7frgP4lN/4Cm2isQl3D7vXM3PBQ
-ddI2aZzmewTfbgZptt4KCUhZh+t7FGB6ZKppQ++Rx0zsGN1s71MtjJnhXvJyPs9UyL1n7KQPTEX/
-07kwIwdMjxC/hpbZmVq0mVccpMy7FYlTuiwFD+TEnhmxGDTVTJ267fcfrySVBHioA7vugeXaX3yL
-SqGQdCWnsz5LyCxWvcfI7zjiXJLwefechLp0LWEBIH5+0fJPB1lfiy1DUutGDJTh9WZHeXfVVFsf
-rSQ3y0VaTqBESMjYsJnFFYQJ9tZJScBluOYacW6gqPGC6EU+bNYC1wpngwVayaQQMIIGpzCCBI+g
-AwIBAgIMTxuM8PbwRQIs9uJeMA0GCSqGSIb3DQEBCwUAMFIxCzAJBgNVBAYTAkJFMRkwFwYDVQQK
-ExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlNRSBDQSAy
-MDIzMB4XDTI1MDYyMDEzNTIxOFoXDTI3MDYyMTEzNTIxOFowgekxCzAJBgNVBAYTAlVTMRMwEQYD
-VQQIEwpDYWxpZm9ybmlhMREwDwYDVQQHEwhTYW4gSm9zZTEZMBcGA1UEYRMQTlRSVVMrREUtNjYx
-MDExNzETMBEGA1UEBBMKUGFkbWFuYWJoYTEQMA4GA1UEKhMHS2lzaG9yZTEWMBQGA1UEChMNQlJP
-QURDT00gSU5DLjEoMCYGA1UEAwwfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTEuMCwG
-CSqGSIb3DQEJARYfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcN
-AQEBBQADggEPADCCAQoCggEBALtFWP+ax39qiJZsJuukdoqMyp0GWGaJ6MdaHvAxXWiEY5zmTiVU
-QnpmNYp5SO1Cd1cBqDB0dcelQbiQ1qh+lnlUchJLR63y0ysUvUNvqV493q8+pHCm/2jPb0/R9rec
-/jxwM9jaPAVkhGBwvudSfOAQlMPORtAHZyLHKFINcsNfLrGP/3lx+zj30v5tmDN7isOLWos7Jm/U
-qRdC7UuUiXgX7q8xXd1MQlA95O73IY/Qb/y0ChEjGPb+U1wr+OsAWJ5fcjQXA/ffBb2GmMp9OUOs
-wVNq8iHfie9nzNaaRw+yoyn0ovoiq2W3Q6r+U53ha/lz0itqCrJZN+G0MFf+cX8CAwEAAaOCAeMw
-ggHfMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMIGTBggrBgEFBQcBAQSBhjCBgzBGBggr
-BgEFBQcwAoY6aHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1l
-Y2EyMDIzLmNydDA5BggrBgEFBQcwAYYtaHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2Ny
-NnNtaW1lY2EyMDIzMGUGA1UdIAReMFwwCQYHZ4EMAQUDAzALBgkrBgEEAaAyASgwQgYKKwYBBAGg
-MgoDAjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5
-LzBBBgNVHR8EOjA4MDagNKAyhjBodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjZzbWlt
-ZWNhMjAyMy5jcmwwKgYDVR0RBCMwIYEfa2lzaG9yZS5wYWRtYW5hYmhhQGJyb2FkY29tLmNvbTAT
-BgNVHSUEDDAKBggrBgEFBQcDBDAfBgNVHSMEGDAWgBQAKTaeXHq6D68tUC3boCOFGLCgkjAdBgNV
-HQ4EFgQURIyot+ZP/mdwQsofZexqAvOm5pMwDQYJKoZIhvcNAQELBQADggIBAKc5gYnhyTf+f6cm
-kAHy1a4cLIWou43yaS+M/r69Pv44EVYvHxqt0mMvKh3U40Y+pHKph+VCjdoINKCd1SaqAFIqqEO4
-XHWrFi3QAI3snUB6spPIoHN/srAcpX9tdrnAlyK593pq+H+mTMoFIGBP/oc8XCtaDgHp37rpuK9Q
-qhF9h5cEJWgShmD7/Q02YydW3jsioy8HdTUD9fib1fRwiSc9uGq8JV5NJsYiJsi9FUz7kTUPohO0
-h6U9tRUVmAf9gPbU46rin9By5X4Lt1jKge5O0vFEawCTr/pLmDcIf7CqRZfBoNalKOsBDovoeAOf
-pXmQzQEMhnaf93MvbFvZaxC9Ir92DR45BH42xZuLKcQVUsqyLKwC6kEZg81AnZsRAUVpMvqiGbVb
-hZnabsHragNY7Br3VCA2OaWk9yRRjt1UwzfIEEMNWqZeQzzAqKIR3XdXIrqAUlMQOX42tSV9FaIv
-PSmR3uaH2M0/bRtz4TE1qRuTsLlr+XEGMxHssK7u7+WYM7EGF3ueZLcE7WmnwXEFli5Y5QX0SnmT
-W8uDQvdvRdxXg4lkBLyifOudYTP3fULjpD6RWQPFlUPlh8F5QQEdKlfKW94rGD+O0u4sWi/msZw0
-6VTvZ6C2BbUMJAo7coFff48NkW2xfICC8Kn1eU1eiWCrPSAls8STm9q25wOQMYICVzCCAlMCAQEw
-YjBSMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTEoMCYGA1UEAxMfR2xv
-YmFsU2lnbiBHQ0MgUjYgU01JTUUgQ0EgMjAyMwIMTxuM8PbwRQIs9uJeMA0GCWCGSAFlAwQCAQUA
-oIHHMC8GCSqGSIb3DQEJBDEiBCBPJchHrlicAm8wog17IUB2rOVd8wJ8itSsEDzeBeVNSDAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNjAzMDMxODE0MzRaMFwGCSqG
-SIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZI
-hvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBojh6NnV2z
-P0KB8jZEkQDTiwh09jbCdrSZiqZpKPpV7zTTRi8DYaJqk7ikProKb/luM2NJ/Rq60Yg9TZP2SmbD
-dB3RwXXpVDHKOGjP7rJri0lWIvwg/h2pBl1HZedT43E7/RGIeQEwUXVK/cLI7TF2XOhwugghYwqp
-lhLB0dJLRECqIgR5gz2lNl3OH2Plzf8m20I4RbYoXi3t+zOgsw31Ic1uS9f0P8m9DYJ0aY3YPFcM
-1jGQiS+ADhLUk1cicpczSAjSDr7v2VUdg96X5M9lQO79Kw0b4zPWZrOhUmFPDfGJavo+Ux5dnXsJ
-xOnotsIuqzISmFqZspe9qKy+5nSB
---000000000000f81996064c22acc7--
