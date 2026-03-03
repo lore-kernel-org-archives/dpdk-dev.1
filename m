@@ -2,88 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8C8EEDA6BE
-	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 17:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E58EDA6BE
+	for <dpdk-dev@archiver.kernel.org>; Tue,  3 Mar 2026 17:41:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 78F1140E8A;
-	Tue,  3 Mar 2026 18:30:40 +0100 (CET)
-Received: from mail-pj1-f100.google.com (mail-pj1-f100.google.com
- [209.85.216.100])
- by mails.dpdk.org (Postfix) with ESMTP id 5CCE140268
- for <dev@dpdk.org>; Tue,  3 Mar 2026 18:30:39 +0100 (CET)
-Received: by mail-pj1-f100.google.com with SMTP id
- 98e67ed59e1d1-3599019ae92so1286011a91.0
- for <dev@dpdk.org>; Tue, 03 Mar 2026 09:30:39 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id B41A3402AA;
+	Tue,  3 Mar 2026 18:41:06 +0100 (CET)
+Received: from mail-qv1-f99.google.com (mail-qv1-f99.google.com
+ [209.85.219.99]) by mails.dpdk.org (Postfix) with ESMTP id 04CE940268
+ for <dev@dpdk.org>; Tue,  3 Mar 2026 18:41:04 +0100 (CET)
+Received: by mail-qv1-f99.google.com with SMTP id
+ 6a1803df08f44-899fc265126so30654316d6.1
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 09:41:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772559038; x=1773163838;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:dkim-signature:x-gm-gg:x-gm-message-state:from:to:cc
- :subject:date:message-id:reply-to;
- bh=DOhWNFWNoCeWQChpMjEMbM7/JPk2LXs2Jg1ZusHP0nE=;
- b=BoB1l8OB4KQx0+AxbifRXW0jM+NEixk6ykTd7RfPngIfoA0N4nFpYcSAWGB4z3SHNn
- QXomYrPsCIQhgwBt2yFWzOj4c8DjnS6N0IiyC/me9sTn73zvwsnxHqQqrqKLIDzYBSUK
- 2oFBk2Kp/dGqqkSetYwoVCBE5zC0KpNnD4/3Bwfu4eqAB0eHTZclQms4LzkeWQqijC7P
- QFdLD9UtE3BsSkBoxIcj8cgO6CO/gNcuUbNESw/cWrtxe6xhkHU07yVQY2eDZZdMdHie
- iDdQlwdzln32OFtUQWxbV2ak3LID5ef0oYCpOyMr8jrdx/mbqAQpcD04HFLKyMS5i8Eb
- 9KMg==
-X-Gm-Message-State: AOJu0YzFOyePprvnNJzQSftaJIRNeIiCjbFe3nWGlKGXE4WJt98smi19
- 2EyIK/5d6i/caNr/3KY/j8yD3PfcOpDPHzu2yzPubQiSZsAAUIkHM+kAZMBa4ZaP9QIJI3EW1xs
- 7ZWTxFKTHtwlJn3V1HRXPU+18nYI7w6++pD5+ZfJG+1FqqexcF0blgpdD0pqbgQchp1i8yDu9zY
- 4sJof9qPibaEM/DssqfNjan6cwHohpIpatxktbBcouqQfE8B/OhfoyT//GgkSfSi0clJnLvC1BU
- ACfRrZVt7c3
-X-Gm-Gg: ATEYQzxBkmfJQSxv31c+sxjh0Araa+ysnwePK88nZ6YSPKgW89aKCQQCnips6BRBzO2
- VAxPs2+ef369b7wR1PBYH0y5Ptqzbc6gBm0+zN/mDDiQp0Y8x0QWET+Y4adLTN2q6i8EyQRs5y2
- RRF6tp0Ex8ho/k/IqyTcGHjcVpRnF24EohCB5Nx2Ajhd3WFGQ74h3NADc4GWnV6l9gXUzBNG472
- w7YDPFqs0RrJQnUdW87l9HvIsAgILl9rwhbHVxS9803bNfnRVeWXwFqqX+7Qzt0DqtBUZa56R7N
- R2SH4JIhEe3VrnNuFkXZeWSsT7/uCcci3Cme8dFM9rme9i8anvY7jgrcQQB327wlPrHkPkjafvO
- /96XP7H7q1d/ktARE+9kIt9KuhAxTOgnlsWulPEYjttu8hwJHLGKHNkq+yais7Cf/2hiDa3lxOI
- C01Az85H3Imd36a0AcgUZlUPLRfywZ42LKyH2M8ChUYDIiHRre9U9TiFFxblVRF9m/ZhtD8LLWM
- g==
-X-Received: by 2002:a17:90b:1ccd:b0:359:1063:6aed with SMTP id
- 98e67ed59e1d1-35965c92637mr11937975a91.22.1772559038071; 
- Tue, 03 Mar 2026 09:30:38 -0800 (PST)
+ d=1e100.net; s=20230601; t=1772559664; x=1773164464;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:dkim-signature:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=OwAlsXu1exn4yadCEr1u6ZenBltA1eRAzwV/N6kxXaE=;
+ b=PbSu9cGD+pHff1mJYBAhYqFGebnR8jwKWOm/+pANf7HDbl1DYIMqVq+yHpa3WMzanJ
+ tfbdLhlxRPgsYh19lyhQSispZnfvpR/YXPROMGveN//JtaTkeMWqRnnAd+brrJXqMvqm
+ 4mYEVFb2GUyVL2IzpnEwQjmixFFwCNTlNZlzsTkdokcCYBpsNq/TV6ohgtWiyLEfqvfN
+ ojbguYVbFvEGxr3K2tpfcXOfJJ7ThF3SImRm+LK9y4UCBuykkAiszMbuGx1WmjUMqtm6
+ 0sK3seztAU/VatrXLMCEHsu/8vkODlGG8dqCIsQyjdH6kC4cb8ZRp7yOZ6ZF3sk7B/cJ
+ mTkw==
+X-Gm-Message-State: AOJu0YwT9FtBgTdAaE5zi3Ns6QPGK4ioPPakK5xy9MPOELEnAAYQDxjA
+ B4sb3HudeArWTJFhBs8KK0oDTGmwf/VIBBl15T/42xuc4Xhq1DPqGrDhjliJSnLO+9lMlPflKyN
+ waU5f7rAip5uLdyGGQxmTEcjs0drgfdZ9OypTKoy7gHfPqp/wuzNj+qbNftJIuC9DAzgV6UHgbN
+ e79ko7/eFsiEX8B/XaWMplZIIEvjhXtZc25pWTTOayzTjGxylZ0gDh4AeUb9uFhJ2rPkn+0ueS2
+ mJFQhONyqzO
+X-Gm-Gg: ATEYQzzmoO4+bxdrX8VcaAAwQoBFVvvr7AaMRLA+xhJtEI+HSpJTyOl+PTGR4aqM6PI
+ WGeAAduE8Q8MnWEZnBOfy6UdRumsnzIUnUGjbul4B+i9CVPC8TyCkyiEi27xcJj/5zg33RO6DfM
+ n7625CytELyCDc0jKY6mKN/6w+elzyedbWqRljTjaVylHjcOFlJEweVssk3YY6iWctkV0AsmjsE
+ Tk+AHo9XIXiEZ6dghLTnSjaDPpm4MHP0V8hPd5HmHJ5gp7s+crQzedd0vfqViSklEM/sBLrup93
+ C709KacaDIK1uSzEaArjiW9pC4NBI73nEE24HlIaURHEk0XGvTwOtgIBoHLu7HszqTuO7S1KAiv
+ icsdFgGY1PdBNi0bL5u8JoMbbVb0SnjiLHW4QSbE84/YEYYGjV2Vddrts9Vt1UQjSLUfNmrBYt3
+ wMnTIVcFLV/fu8XyxRtIFpYgBLokupHm8dWN9ZkGL7vMW/MTTtg12bSHKo/KmBwvIUTCZE43Pr3
+ w==
+X-Received: by 2002:ad4:5bc8:0:b0:89a:14ce:4e35 with SMTP id
+ 6a1803df08f44-89a14ce54d2mr13620356d6.21.1772559664124; 
+ Tue, 03 Mar 2026 09:41:04 -0800 (PST)
 Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com
- (address-144-49-247-118.dlp.protect.broadcom.com. [144.49.247.118])
+ (address-144-49-247-117.dlp.protect.broadcom.com. [144.49.247.117])
  by smtp-relay.gmail.com with ESMTPS id
- 98e67ed59e1d1-3599c47564bsm401615a91.4.2026.03.03.09.30.37
+ 6a1803df08f44-899c7146747sm17363466d6.1.2026.03.03.09.41.03
  for <dev@dpdk.org>
  (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
- Tue, 03 Mar 2026 09:30:38 -0800 (PST)
+ Tue, 03 Mar 2026 09:41:04 -0800 (PST)
 X-Relaying-Domain: broadcom.com
 X-CFilter-Loop: Reflected
-Received: by mail-qt1-f200.google.com with SMTP id
- d75a77b69052e-504888a2a1dso445815021cf.0
- for <dev@dpdk.org>; Tue, 03 Mar 2026 09:30:37 -0800 (PST)
+Received: by mail-dl1-f70.google.com with SMTP id
+ a92af1059eb24-1277896014fso98081238c88.1
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 09:41:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=broadcom.com; s=google; t=1772559036; x=1773163836; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=DOhWNFWNoCeWQChpMjEMbM7/JPk2LXs2Jg1ZusHP0nE=;
- b=TqfFQ5xoSz8lz0K9TorXQzJ8/99BkWgQoEWNVx1G0DUkeCCa2Ys17meVeT73JMavIG
- EJ5J2ady/Kk7OOEXjBJnHi+XFkGtmW3AP6pVDPh5V9Pb3/ZJBqTEuzpAF5s8gGbf+Z4i
- ewxJtJilFqqPEP9ZgodIc8tzZ2TLttBXPOQ3Q=
-X-Received: by 2002:a05:622a:1181:b0:501:4858:a6d0 with SMTP id
- d75a77b69052e-507529db89dmr231150561cf.56.1772559036268; 
- Tue, 03 Mar 2026 09:30:36 -0800 (PST)
-X-Received: by 2002:a05:622a:1181:b0:501:4858:a6d0 with SMTP id
- d75a77b69052e-507529db89dmr231148911cf.56.1772559035010; 
- Tue, 03 Mar 2026 09:30:35 -0800 (PST)
+ d=broadcom.com; s=google; t=1772559663; x=1773164463; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=OwAlsXu1exn4yadCEr1u6ZenBltA1eRAzwV/N6kxXaE=;
+ b=LtWTO5JimdYhimUzt9gmS5PyBgKxhUXWoEcJc0Nle9/61p6s8scQryCass/0SS/5SK
+ dXIjn+GypL/vQFbXkOVFaMCL908cKUPqO3jeg902wvs+uV2a8Bh0cxIEHFepxgUlpi1y
+ uN8KjqerW3NSj+r3agQHmmBMYB34quN24Ww8Q=
+X-Received: by 2002:a05:7022:4389:b0:119:e569:fba9 with SMTP id
+ a92af1059eb24-1278fd42de2mr6430724c88.24.1772559662498; 
+ Tue, 03 Mar 2026 09:41:02 -0800 (PST)
+X-Received: by 2002:a05:7022:4389:b0:119:e569:fba9 with SMTP id
+ a92af1059eb24-1278fd42de2mr6430696c88.24.1772559661622; 
+ Tue, 03 Mar 2026 09:41:01 -0800 (PST)
 Received: from nic1-cos.dhcp.broadcom.net ([192.19.220.253])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-50744ad028esm136756121cf.25.2026.03.03.09.30.34
+ a92af1059eb24-127899d49ccsm19956752c88.3.2026.03.03.09.41.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 03 Mar 2026 09:30:34 -0800 (PST)
+ Tue, 03 Mar 2026 09:41:01 -0800 (PST)
 From: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
 X-Google-Original-From: Mohammad Shuab Siddique
  <Mohammad-Shuab.Siddique@broadcom.com>
 To: dev@dpdk.org
-Cc: =kishore.padmanabha@broadcom.com,
+Cc: kishore.padmanabha@broadcom.com,
  Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>,
  stable@dpdk.org
-Subject: [PATCH] net/bnxt: add multi-doorbell support
-Date: Tue,  3 Mar 2026 10:31:53 -0700
-Message-ID: <20260303173156.204872-1-Mohammad-Shuab.Siddique@broadcom.com>
+Subject: [PATCH v2] net/bnxt: add multi-doorbell support
+Date: Tue,  3 Mar 2026 10:42:16 -0700
+Message-ID: <20260303174219.204977-1-Mohammad-Shuab.Siddique@broadcom.com>
 X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260303173156.204872-1-Mohammad-Shuab.Siddique@broadcom.com>
+References: <20260303173156.204872-1-Mohammad-Shuab.Siddique@broadcom.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
@@ -129,7 +131,7 @@ Signed-off-by: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
  10 files changed, 147 insertions(+), 29 deletions(-)
 
 diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
-index 83ae151066..53a97eb095 100644
+index 83ae151066..30baabcf92 100644
 --- a/drivers/net/bnxt/bnxt.h
 +++ b/drivers/net/bnxt/bnxt.h
 @@ -433,6 +433,13 @@ struct bnxt_coal {
@@ -159,7 +161,7 @@ index 83ae151066..53a97eb095 100644
  	uint16_t		tunnel_disable_flag; /* tunnel stateless offloads status */
  	uint8_t			chip_rev;
 +	uint16_t		l2_db_multi_page_size_kb;	/* Multi-L2 DB BAR size in KB */
-+	uint16_t		db_page_size;			/* Doorbell page size (typically 4KB) */
++	uint16_t		db_page_size;			/* DB page size (typically 4KB) */
 +	uint8_t			nq_dpi_start;			/* Starting DPI for NQ rings */
 +	uint8_t			nq_dpi_count;			/* Number of DPI pages for NQ */
 +	uint8_t			nq_dpi_counter;			/* Round-robin counter for NQ DPI */
