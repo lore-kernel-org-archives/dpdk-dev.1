@@ -2,75 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEEEEB7ECA
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 11:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F843EB7EB8
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 11:16:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2F90402E4;
-	Wed,  4 Mar 2026 12:09:55 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id EBDC6402A9
- for <dev@dpdk.org>; Wed,  4 Mar 2026 12:09:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772622593;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=gltW7gUk8XHR7SKbRUSEZEbF3xYCZbZLy2Sicbapq1c=;
- b=DFraUb1dl3cgMrclFqZr9BPThL9xY/uParVC1fPGhLczHO9NyEhLQ8jnTaEAwQVvB+YY63
- 1NvlylRLh1a1LChE6V0QwcLunWChpBdUZMDqgYJm4lokShdRWl1W+rR4oILaeZB7tE3CXr
- vdMk4AjCtyYag34dIcTRjWt2QiyrjkM=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-183-JwSz21oFP-ip9lEDmf-3Xw-1; Wed, 04 Mar 2026 06:09:51 -0500
-X-MC-Unique: JwSz21oFP-ip9lEDmf-3Xw-1
-X-Mimecast-MFC-AGG-ID: JwSz21oFP-ip9lEDmf-3Xw_1772622590
-Received: by mail-lj1-f198.google.com with SMTP id
- 38308e7fff4ca-389fef1b721so55623891fa.2
- for <dev@dpdk.org>; Wed, 04 Mar 2026 03:09:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772622590; x=1773227390;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=gltW7gUk8XHR7SKbRUSEZEbF3xYCZbZLy2Sicbapq1c=;
- b=ZKxQZw3Lz0zqFX5Q83ZnFWeMafp9q7ySS5+JxMzizb3wN6+aS/1RDI8ytQ3dNBHYUG
- ayTWl05WrW4GhbQAmHG8L0W0tAyyQZryFt/IuphDbTA5jr4BU+0SeznkiBURzbZkcbH1
- ZYbiorgXPM2aET1RugTBnC35mQpo6omy5cJKS7VUbg+xOeNg++3z40Wh2sAALOilbbKk
- PiPc1+AuPVx+nT/dhBe0h4ci+wiYq126birDlVp5gUdXC/O2w7O4S3JdOTcVgehViIWs
- jsJmYIGgyhbpulxODK9F2R/KR6SFmsJb5ylDPfSSgOPd+A+mJqQv3A7yo/Z2RFtVfEsK
- ukCg==
-X-Gm-Message-State: AOJu0YyliW/cWi9tZWdl2eP23QqQqAUaYwg+RGld71T/JBZa5QhBb8z2
- q4a8fEUUBWB+9E5p+GccNcLQRIN9dORUsTQmHEVHSTZT2upSyyliQadLqY+6QS7O4wxE7rZuOrI
- epip+Uzmd808nbThyubw8h7HC1RPksgROmQrbnrebZYB7IceERoszCtdfm9ZXyyzXfPBImgFUhD
- r2ke4EalAJdqbSvH6KZmE=
-X-Gm-Gg: ATEYQzzcmUyJz3SYx/54u9akklAKtJ2LImjfSTkdpuvI4BsjFaA0GymKUexojCrF3OD
- YPGw3psLouUVpiOYe+ZY1GVWpjJ84OdMKU3ng71ReVn8K+WuPx1ds8O4QYY7E0w8SXss3bKCl1D
- 0PjyaZL2Et3HIPxcd9dCuUgY6o50YaDbncxLmct8nPSesVsdDiwJiOcZdmCG4K8LJSUANUolYaC
- DdfM/OODG+j0tfhfNAVcA30f45irqwx2i00BguBzChuCNfRT6AHKBggU8l5snPKlNZpWA==
-X-Received: by 2002:a05:651c:1545:b0:386:91a1:f207 with SMTP id
- 38308e7fff4ca-38a2c55f9cfmr13947171fa.2.1772622590191; 
- Wed, 04 Mar 2026 03:09:50 -0800 (PST)
-X-Received: by 2002:a05:651c:1545:b0:386:91a1:f207 with SMTP id
- 38308e7fff4ca-38a2c55f9cfmr13946901fa.2.1772622589730; Wed, 04 Mar 2026
- 03:09:49 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id BF22C4066C;
+	Wed,  4 Mar 2026 12:16:40 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+ by mails.dpdk.org (Postfix) with ESMTP id A249B4003C;
+ Wed,  4 Mar 2026 12:16:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1772622999; x=1804158999;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=ojdk+BthBxB6PPbRobadIrD9ljabZRc8xDB3LmLZ7KE=;
+ b=jcB9nJcQtz1Ee6qgggDvlSkYshqw7l1wCn3kntJP7DLGcGHx6h0j7UQM
+ weOzyrYOTbUN5gUZBuDNDmn/xmFH5n2Ymr1mOjvpTLOksKdWUn1/kCunQ
+ Gr66YQ7XjFh0etFihYQpcT8eVGSbh9IOnUJ2D8tnz7yuwO4OjEjfWP31R
+ ZTjNjyfpYDyJvXy+/VT2pwK49AyLfO9F6XPpaNgtNbfRYaz9pUh535upw
+ o0Nv4rc3RZaCMxnNqP3GfOWKy5aE8vTQ1hfNUxwUNd3n1gqXhArjhkduF
+ 5/6c+qgiCJnBylvqtltaw2BeNtnnBsuqZiayikBTXWt5rRx7fR6BwePMz g==;
+X-CSE-ConnectionGUID: g6vaydL9Sw+9r5VQNrzuAA==
+X-CSE-MsgGUID: jnhDdFIgTfi/QcmCFgtNdw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11718"; a="73587943"
+X-IronPort-AV: E=Sophos;i="6.21,323,1763452800"; d="scan'208";a="73587943"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 04 Mar 2026 03:16:38 -0800
+X-CSE-ConnectionGUID: SntvednkSUifpDfnPNnMQg==
+X-CSE-MsgGUID: H4YyqEOeQZeXwTRxDo3ipw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.21,323,1763452800"; d="scan'208";a="222808408"
+Received: from pae-14.iind.intel.com ([10.190.203.153])
+ by orviesa004.jf.intel.com with ESMTP; 04 Mar 2026 03:16:36 -0800
+From: Anurag Mandal <anurag.mandal@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, vladimir.medvedkin@intel.com,
+ albe19021990@gmail.com, Anurag Mandal <anurag.mandal@intel.com>,
+ stable@dpdk.org
+Subject: [PATCH] net/iavf: fix old primary MAC deletion
+Date: Wed,  4 Mar 2026 11:16:06 +0000
+Message-Id: <20260304111606.283035-1-anurag.mandal@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20260128122055.192104-1-ktraynor@redhat.com>
- <20260303185818.28689-1-ktraynor@redhat.com>
-In-Reply-To: <20260303185818.28689-1-ktraynor@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 4 Mar 2026 12:09:38 +0100
-X-Gm-Features: AaiRm51rY7cK-PEjKI02EEIhZ4AGDFJL6yWlzB1jn8QjoyaAEfTxloAqbz2-pYg
-Message-ID: <CAJFAV8xJgahk5n7AZUvJo7YHUJ+Ax1sxYYX7+Jjc8oK1gFw=Jw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/3] interrupt disconnect/error event handling
-To: Kevin Traynor <ktraynor@redhat.com>
-Cc: dev@dpdk.org, thomas@monjalon.net, dsosnowski@nvidia.com, 
- viacheslavo@nvidia.com, hkalra@marvell.com, stephen@networkplumber.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: oIrSsS4g7ePXkdMbSZqgwsbmCZm39E0vDE7Alsh23kg_1772622590
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,62 +59,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 3 Mar 2026 at 19:58, Kevin Traynor <ktraynor@redhat.com> wrote:
->
-> These patches are to fix some issues with epoll event handling for
-> EPOLLERR/EPOLLRDHUP/EPOLLHUP.
->
-> 1/3: handles these disconnect/error events for interrupts that are read
-> in eal
->
-> 2/3: provides an internal API for interrupt callbacks to get the interrupt
-> events for the active interrupt
->
-> 3/3: deal with the observed issue as reported in
-> https://bugs.dpdk.org/show_bug.cgi?id=1873 where mlx5 devx interrupts
-> cause a busy-loop and 100% CPU of dpdk-intr thread.
->
-> v5:
-> - 2/3 changed API to rte_intr_active_event_flags() and made internal.
->   used RTE_BIT32() for defines. Added Cc: stable. Kept Acks as no
->   functional changes.
->
-> v4:
-> Updated to allow for case where devx interrupt handler may handle
-> multiple completions during one interrupt call, leading to no data being
-> read in a subsequent call as flagged by Slava.
->
-> - 1/3 No change
-> - 2/3 New API rte_intr_active_events() to get interrupt events
-> - 3/3 Use new API in mlx5 devx interrupt handler to detect if
->   disconnect/error events and if so unregister the callback
->
-> v3:
-> - 1/2 and 2/2 fix some coding nits (Stephen/AI/David)
-> - 2/2 Make log level consistant (David)
->
-> v2:
-> - Only handle disconnect/error epoll events when the read is done in eal
->   interrupt code. This is to allow interrupt handlers like virtio deal
->   with disconnects in an appropriate
-> - Detect if not data is read in the mlx dex interrupt and if so unregister
->   the callback
->
-> Kevin Traynor (3):
->   eal/linux: handle interrupt epoll events
->   eal/interrupt: add interrupt event info
->   net/mlx5: check devx disconnect/error interrupt events
->
->  drivers/net/mlx5/linux/mlx5_ethdev_os.c |  20 +++++
->  lib/eal/freebsd/eal_interrupts.c        |   7 ++
->  lib/eal/include/rte_interrupts.h        |  21 +++++
->  lib/eal/linux/eal_interrupts.c          | 103 +++++++++++++++++-------
->  lib/eal/windows/eal_interrupts.c        |   7 ++
->  5 files changed, 131 insertions(+), 27 deletions(-)
+Old Primary MAC removal operation fails while trying to set the
+default MAC address on a VF via rte_eth_dev_default_mac_addr_set()
+when VF is yet to be started post initialization.
+This happens due to non-assignment of the old MAC as
+VIRTCHNL_ETHER_ADDR_PRIMARY MAC on the VF as it did not
+invoke iavf_dev_start() yet to do the same post initialization.
+Logs indicate old primary MAC removal failure even though
+rte_eth_dev_default_mac_addr_set() returns success causing ambiguity.
 
-Series applied, thanks Kevin.
+This patch fixes the issue by introducing the flag "mac_primary_set"
+in the iavf_adapter & is set to 'false' upon VF initialization.
+It is set to 'true' when any MAC address gets assigned as
+VIRTCHNL_ETHER_ADDR_PRIMARY MAC on the VF. This flags gets enabled
+only once for a VF.
 
+Bugzilla ID: 1897
+Fixes: b335e7203475 ("net/iavf: fix lack of MAC type when set MAC address")
+Cc: stable@dpdk.org
 
+Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
+---
+ drivers/net/intel/iavf/iavf.h        |  1 +
+ drivers/net/intel/iavf/iavf_ethdev.c | 19 ++++++++++++++-----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 33ba3115d0..f7f3522d6b 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -383,6 +383,7 @@ struct iavf_adapter {
+ 	enum iavf_tx_func_type tx_func_type;
+ 	uint16_t fdir_ref_cnt;
+ 	struct iavf_devargs devargs;
++	bool mac_primary_set;
+ };
+ 
+ /* IAVF_DEV_PRIVATE_TO */
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index c1160c8967..7da92bd31e 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -1042,6 +1042,9 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ 	/* Set all mac addrs */
+ 	iavf_add_del_all_mac_addr(adapter, true);
+ 
++	if (!adapter->mac_primary_set)
++		adapter->mac_primary_set = true;
++
+ 	/* Set all multicast addresses */
+ 	iavf_add_del_mc_addr_list(adapter, vf->mc_addrs, vf->mc_addrs_num,
+ 				  true);
+@@ -1718,11 +1721,13 @@ iavf_dev_set_default_mac_addr(struct rte_eth_dev *dev,
+ 	if (rte_is_same_ether_addr(old_addr, mac_addr))
+ 		return 0;
+ 
+-	ret = iavf_add_del_eth_addr(adapter, old_addr, false, VIRTCHNL_ETHER_ADDR_PRIMARY);
+-	if (ret)
+-		PMD_DRV_LOG(ERR, "Fail to delete old MAC:"
+-			    RTE_ETHER_ADDR_PRT_FMT,
+-				RTE_ETHER_ADDR_BYTES(old_addr));
++	if (adapter->mac_primary_set) {  /* delete old PRIMARY MAC only if set */
++		ret = iavf_add_del_eth_addr(adapter, old_addr, false, VIRTCHNL_ETHER_ADDR_PRIMARY);
++		if (ret)
++			PMD_DRV_LOG(ERR, "Fail to delete old MAC:"
++				    RTE_ETHER_ADDR_PRT_FMT,
++					RTE_ETHER_ADDR_BYTES(old_addr));
++	}
+ 
+ 	ret = iavf_add_del_eth_addr(adapter, mac_addr, true, VIRTCHNL_ETHER_ADDR_PRIMARY);
+ 	if (ret)
+@@ -1733,6 +1738,9 @@ iavf_dev_set_default_mac_addr(struct rte_eth_dev *dev,
+ 	if (ret)
+ 		return -EIO;
+ 
++	if (!adapter->mac_primary_set)
++		adapter->mac_primary_set = true;
++
+ 	rte_ether_addr_copy(mac_addr, (struct rte_ether_addr *)hw->mac.addr);
+ 	return 0;
+ }
+@@ -2789,6 +2797,7 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 	hw->back = IAVF_DEV_PRIVATE_TO_ADAPTER(eth_dev->data->dev_private);
+ 	adapter->dev_data = eth_dev->data;
+ 	adapter->stopped = 1;
++	adapter->mac_primary_set = false;
+ 
+ 	if (iavf_dev_event_handler_init())
+ 		goto init_vf_err;
 -- 
-David Marchand
+2.34.1
 
