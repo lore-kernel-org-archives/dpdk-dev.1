@@ -2,59 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BF3EF8FF4
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 15:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA712EF8FF4
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 15:17:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5660D406BA;
-	Wed,  4 Mar 2026 16:16:33 +0100 (CET)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net
- [13.76.78.106]) by mails.dpdk.org (Postfix) with ESMTP id 5C75140265
- for <dev@dpdk.org>; Wed,  4 Mar 2026 08:06:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=whu.edu.cn; s=dkim; h=Received:Received:From:To:Cc:Subject:
- Date:Message-ID:MIME-Version:Content-Transfer-Encoding; bh=djJkC
- fFsmk9VSWCr7FhmY+NX/56JjLAhIXcy/Qp3HvU=; b=V80ie3c9sF5sljj5258tR
- gUG9Q8EA1wQh9VIV1AtgpgDD+z8x7Ha/te4o7ntzIDcix3P/jNpajS6c9mZPVlAs
- CfswLMxQZBZwaw2zrxRRWviQpOo8MyBXNflPi9ICPhXP6U+BSpoISKrGFgAp5PMO
- X0nGoaXITQevKaTqwNG9mM=
-Received: from whu.edu.cn (unknown [10.1.14.9])
- by app2 (Coremail) with SMTP id Bw4BCgCHUBvv2adpWot_AQ--.2674S2;
- Wed, 04 Mar 2026 15:06:23 +0800 (CST)
-Received: from localhost.localdomain (unknown [210.73.43.101])
- by mtasvr (Coremail) with SMTP id _____wBn5qTf2adp1kAYAA--.23626S2;
- Wed, 04 Mar 2026 15:06:23 +0800 (CST)
-From: P1erreCashon <2022302111412@whu.edu.cn>
-To: Yipeng Wang <yipeng1.wang@intel.com>,
- =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
- Sun Yuechi <sunyuechi@iscas.ac.cn>
-Cc: dev@dpdk.org, P1erreCashon <2022302111412@whu.edu.cn>,
- gong-flying <gongxiaofei24@iscas.ac.cn>
-Subject: [PATCH v2] efd: lookup with RISC-V vector extension
-Date: Wed,  4 Mar 2026 15:06:05 +0800
-Message-ID: <20260304070605.1150502-1-2022302111412@whu.edu.cn>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id ACD4A40A6B;
+	Wed,  4 Mar 2026 16:17:05 +0100 (CET)
+Received: from fhigh-b6-smtp.messagingengine.com
+ (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+ by mails.dpdk.org (Postfix) with ESMTP id 0A5974067B
+ for <dev@dpdk.org>; Wed,  4 Mar 2026 16:17:05 +0100 (CET)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 573837A01C1;
+ Wed,  4 Mar 2026 10:17:04 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-11.internal (MEProxy); Wed, 04 Mar 2026 10:17:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:content-transfer-encoding:content-type:content-type:date:date
+ :from:from:in-reply-to:message-id:mime-version:reply-to:subject
+ :subject:to:to; s=fm1; t=1772637424; x=1772723824; bh=hrLvh6nYdg
+ 1gkSrwRaSeSc8T+LYwHRJFqmBAOAzmxI4=; b=MmVOsVXUT4XFf18s95E6Xsmjj5
+ BDAlI34wGi6d88iWt1X/nuAP5j4SGjfqPAeu3hG1fHybJhzDqs1kDFdbQe9FsQTu
+ DHZ+4gBxJxnkpFnkUS4hjuIo2M2BGRdB7fTm50byqs5ocQCWwPKrzvNT5hFoY6IY
+ JbEOtgJDrOoLJuyUYS3e1GrCcLrUpRvIL+9YoPfXuv6GYPYrsKtQFJTsdWpqTwzr
+ KXqnTMcyjL+bjxbhRs2/5jdS9NdDZv8d+umSYOt3S2oF5kEZ1XjXWs7MjB1bM7PN
+ Wj0BhAuvJyWk6nGLBzmvFF63BR2a59SYAEGqkO60elUI/SZwFviOgjSaqHbA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:content-transfer-encoding:content-type
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+ 1772637424; x=1772723824; bh=hrLvh6nYdg1gkSrwRaSeSc8T+LYwHRJFqmB
+ AOAzmxI4=; b=hsddgPNxOxOpHuiGyEywKE9f34T10fpwgod2o1uvjJTtwqEobmQ
+ zEFM2nCZZ2fMAA/ajRAaxTeINs7CLrXHOwTWraG4flas845TS7+PXShKZ3dP7Z7P
+ Uj7DG2iyY7igSNIqPyoV42ZPFF6eCUo3ekMS+tgHxvgLGvJ7aHecH8XGKrrvgYhC
+ s3TZKjaoFnHiDF+L06Iw/fkcdqZXX0GZoKnJwbTZkQHDjnZ4yNo3Ek/YcdGx627T
+ IjNKYFICK4+jPFhQE4RUZ356y2H9MUfnHsQbLj04KywfNbfACv6rNteovDnb+1ie
+ K6PyeH/lKatJ5UY8LKdWr9/W3EosyFZ9zVA==
+X-ME-Sender: <xms:70yoac7LF8F6RDPTCHFGyTOMwaTWGikq0zJZh-ZhokU8p0ly_jsEGA>
+ <xme:70yoaTxswpBlc2199z-QnTvvj422jMi-F9ma0Xi0qjRyie2lUgHKX80Ur93XOygoQ
+ QCm3HMZsmdV6lbgd4RRYYRO5ywEqdVoYQeS3C8is4H85RL_8cCDQw>
+X-ME-Received: <xmr:70yoaWjKBijxg8O-lOXCywfZ-5FmfUuuiMcFhWCDI_5idAEs6Vay962oIorkbHooX7_HNMshFzZxghhF2wO9NifcFg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvieefkeefucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucenucfjughrpefhvffufffkggfgtgesthhqredttddtje
+ enucfhrhhomhepvfhhohhmrghsucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhj
+ rghlohhnrdhnvghtqeenucggtffrrghtthgvrhhnpefhteeulefhheevudetvdeuleehie
+ evudetheehveevtdfguefffffgfefftdfgleenucffohhmrghinheplhhinhhugihfohhu
+ nhgurghtihhonhdrohhrghdpughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+ enucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgv
+ thdpnhgspghrtghpthhtohepuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
+ gvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:70yoad-yPZO5oYBxKDTO-hwHRZBWD5oQRrNA7pDBjef8hgmgqOgGyQ>
+ <xmx:70yoaTvur-PIZ-W8mIkYHeEO5kY3Z56m-bvudXs9xfXFWrhdloHS_w>
+ <xmx:70yoaUbyyjK00XMHYqwxqMo4e6E9HH-VavZxBdQkyyLWdFVRO9pxkA>
+ <xmx:70yoaToBwaPzdL1gSOXpAPErQiCIAzz_UR7QDChvD6acISKKtVu3jg>
+ <xmx:8EyoaZrzEXh5qah2yac8WfahoRKmi-6OID4T2OlxK7JVlk0fWRlGWahY>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA for <dev@dpdk.org>; 
+ Wed, 4 Mar 2026 10:17:03 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Subject: Minutes of DPDK Technical Board Meeting, 2026-02-18
+Date: Wed, 04 Mar 2026 16:17:01 +0100
+Message-ID: <4728809.Us1k9K0G1Y@thomas>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Bw4BCgCHUBvv2adpWot_AQ--.2674S2
-Authentication-Results: app2; spf=neutral smtp.mail=2022302111412@whu. edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr45ZryUKr48Gr1rZw1fZwb_yoW7JF1rpF
- WDJFWSyryUJ3W3G3ySvw1UXF1rCFyIyrsFkrZFga4rC3yfZ3s7urs7JryjkFZ8trWxu3y7
- Xr45Wr1UWF1UZw7anT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUU92b7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
- cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
- v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
- 6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
- 126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
- 12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x8ErcxFaVAv8VW8Cw
- Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l
- c2xSY4AK6svPMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GF4l4I8I3I0E4I
- kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
- WwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
- 0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
- JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYx
- BIdaVFxhVjvjDU0xZFpf9x07UzSoJUUUUU=
-X-CM-SenderInfo: qsqsjjyqsriiqursq4lkxovvfxof0/
-X-Mailman-Approved-At: Wed, 04 Mar 2026 16:16:28 +0100
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,171 +81,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement EFD lookup internal function for RISC-V architecture
-using RISC-V Vector Extension instruction set
+Members Attending: 8/10
+        - Aaron Conole
+        - Bruce Richardson
+        - Kevin Traynor
+        - Konstantin Ananyev
+        - Maxime Coquelin
+        - Morten Br=C3=B8rup
+        - Stephen Hemminger
+        - Thomas Monjalon (Chair)
 
-Performance results (EFD perf autotest)
-These performance results are the average of five test runs.
-Results (in CPU cycles/operation):
+NOTE: The Technical Board meetings take place every second Wednesday at 3 p=
+m UTC
+on https://zoom-lfx.platform.linuxfoundation.org/meeting/96459488340?passwo=
+rd=3Dd808f1f6-0a28-4165-929e-5a5bcae7efeb
+Meetings are public, and DPDK community members are welcome to attend.
+Agenda and minutes can be found at http://core.dpdk.org/techboard/minutes
+The next meeting will happen on March 4 and will be chaired by Aaron Conole.
 
-Before optimization:
-Keysize           Add               Lookup            Lookup_bulk       Delete
-4                 136.0            5.6               5.0               25.6
-8                 149.4            6.0               6.0               31.4
-16                156.8           8.0               7.0               36.8
-32                179.2           13.0             14.0              45.4
-48                205.8           13.0             15.0              45.6
-64                214.4           16.0            18.4               46.6
-9                 152.8             6.2              6.0               30.0
-13                160.6            7.2               7.0               35.0
-37                191.2            12.0             13.0              44.2
-40                195.0            12.0             13.6              43.2
 
-After optimization:
-Keysize           Add               Lookup            Lookup_bulk       Delete
-4                 131.6             5.0               5.0               26.6
-8                 143.6             6.0               6.2               33.0
-16                153.2            7.0               7.0               35.8
-32                173.6            14.0             14.0             45.0
-48                201.6            12.6             14.0             46.2
-64                211.4            15.0             16.0             46.8
-9                 146.6             6.0               6.0              30.6
-13                154.8            7.0               7.0               35.0
-37                189.2            11.0             12.2             45.4
-40                191.8            11.0             12.4             43.8
+1/ Summit CFP status
 
-This patch is co-developed with Gong Xiaofei.
+Decided to extend for one more week (until March 1).
 
-Signed-off-by: gong-flying <gongxiaofei24@iscas.ac.cn>
-Signed-off-by: P1erreCashon <2022302111412@whu.edu.cn>
----
- lib/efd/rte_efd.c     | 20 +++++++++++++-
- lib/efd/rte_efd_rvv.h | 64 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 83 insertions(+), 1 deletion(-)
- create mode 100644 lib/efd/rte_efd_rvv.h
 
-diff --git a/lib/efd/rte_efd.c b/lib/efd/rte_efd.c
-index 4dfc0ec9a4..053ee4f232 100644
---- a/lib/efd/rte_efd.c
-+++ b/lib/efd/rte_efd.c
-@@ -29,6 +29,9 @@
- #include "rte_efd_x86.h"
- #elif defined(RTE_ARCH_ARM64)
- #include "rte_efd_arm64.h"
-+#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
-+#include <riscv_vector.h>
-+#include "rte_efd_rvv.h"
- #endif
- 
- RTE_LOG_REGISTER_DEFAULT(efd_logtype, INFO);
-@@ -85,7 +88,8 @@ enum efd_lookup_internal_function {
- 	EFD_LOOKUP_SCALAR = 0,
- 	EFD_LOOKUP_AVX2,
- 	EFD_LOOKUP_NEON,
--	EFD_LOOKUP_NUM
-+	EFD_LOOKUP_NUM,
-+	EFD_LOOKUP_RVV
- };
- 
- TAILQ_HEAD(rte_efd_list, rte_tailq_entry);
-@@ -675,6 +679,12 @@ rte_efd_create(const char *name, uint32_t max_num_rules, uint32_t key_len,
- 			rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
- 		table->lookup_fn = EFD_LOOKUP_NEON;
- 	else
-+#endif
-+#if defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
-+	if (RTE_EFD_VALUE_NUM_BITS > 16 &&
-+		__riscv_vsetvl_e32m1(4) == 4)
-+		table->lookup_fn = EFD_LOOKUP_RVV;
-+	else
- #endif
- 		table->lookup_fn = EFD_LOOKUP_SCALAR;
- 
-@@ -1305,6 +1315,14 @@ efd_lookup_internal(const struct efd_online_group_entry * const group,
- 					hash_val_a,
- 					hash_val_b);
- 		break;
-+#endif
-+#if defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
-+	case EFD_LOOKUP_RVV:
-+		return efd_lookup_internal_rvv(group->hash_idx,
-+				group->lookup_table,
-+				hash_val_a,
-+				hash_val_b);
-+		break;
- #endif
- 	case EFD_LOOKUP_SCALAR:
- 	/* Fall-through */
-diff --git a/lib/efd/rte_efd_rvv.h b/lib/efd/rte_efd_rvv.h
-new file mode 100644
-index 0000000000..7facefd4ae
---- /dev/null
-+++ b/lib/efd/rte_efd_rvv.h
-@@ -0,0 +1,64 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Institute of Software Chinese Academy of Sciences (ISCAS).
-+ */
-+
-+#ifndef __RTE_EFD_RISCV_H__
-+#define __RTE_EFD_RISCV_H__
-+
-+#include <riscv_vector.h>
-+
-+static inline efd_value_t
-+efd_lookup_internal_rvv(const efd_hashfunc_t *group_hash_idx,
-+				const efd_lookuptbl_t *group_lookup_table,
-+				const uint32_t hash_val_a, const uint32_t hash_val_b)
-+{
-+		efd_value_t value = 0;
-+		const uint32_t N = RTE_EFD_VALUE_NUM_BITS;
-+		size_t vl = 4;
-+		vuint32m1_t vhash_val_a = __riscv_vmv_v_x_u32m1(hash_val_a, vl);
-+		vuint32m1_t vhash_val_b = __riscv_vmv_v_x_u32m1(hash_val_b, vl);
-+		vuint32m1_t vshift = __riscv_vid_v_u32m1(vl);
-+		vuint32m1_t vmask = __riscv_vmv_v_x_u32m1(0x1, vl);
-+		vuint32m1_t vincr = __riscv_vmv_v_x_u32m1(4, vl);
-+		for (unsigned int i = 0; i < N; i += vl) {
-+			vuint16mf2_t vhash_idx16 =
-+				__riscv_vle16_v_u16mf2(
-+					(const uint16_t *)&group_hash_idx[i], vl);
-+
-+			vuint32m1_t vhash_idx =
-+				__riscv_vwcvtu_x_x_v_u32m1(vhash_idx16, vl);
-+
-+			vuint16mf2_t vlookup16 =
-+				__riscv_vle16_v_u16mf2(
-+					(const uint16_t *)&group_lookup_table[i], vl);
-+
-+			vuint32m1_t vlookup =
-+				__riscv_vwcvtu_x_x_v_u32m1(vlookup16, vl);
-+
-+			vuint32m1_t vhash =
-+				__riscv_vmadd_vv_u32m1(vhash_idx, vhash_val_b, vhash_val_a, vl);
-+
-+			vuint32m1_t vbucket =
-+				__riscv_vsrl_vx_u32m1(vhash, EFD_LOOKUPTBL_SHIFT, vl);
-+
-+			vuint32m1_t vresult =
-+				__riscv_vsrl_vv_u32m1(vlookup, vbucket, vl);
-+
-+			vresult = __riscv_vand_vv_u32m1(vresult, vmask, vl);
-+
-+			vresult = __riscv_vsll_vv_u32m1(vresult, vshift, vl);
-+
-+			vuint32m1_t vzero = __riscv_vmv_v_x_u32m1(0, vl);
-+
-+			vuint32m1_t vsum =
-+				__riscv_vredsum_vs_u32m1_u32m1(vresult, vzero, vl);
-+
-+			value |= __riscv_vmv_x_s_u32m1_u32(vsum);
-+
-+			vshift = __riscv_vadd_vv_u32m1(vshift, vincr, vl);
-+		}
-+
-+		return value;
-+}
-+
-+#endif /* __RTE_EFD_RISCV_H__ */
--- 
-2.43.0
+2/ Reviewer / Contributor campaign
+
+Ben Thomas is launching a new marketing campaign to encourage code contribu=
+tions and reviews.
+The website shows how quickly it is possible to be involved.
+There is also an AI chat to assist in the process.
+
+
+3/ AI review of existing code
+
+The AI tools (especially Claude) can produce interesting bug reports.
+
+The main challenge is how/where to report hundreds of issues from these too=
+ls?
+Bugzilla does not fit well as it is more dedicated to issues found by human=
+s.
+Stephen proposed to publish AI reports on a static web page.
+
+It raised the question of Bugzilla triage and maintenance.
+We can send more reminders about open bugs.
+A new tool could help for this maintenance work.
+
 
