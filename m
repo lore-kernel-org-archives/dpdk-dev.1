@@ -2,71 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F4FEFCE4F
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 22:50:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B54EFCE53
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 23:31:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38EAA402EB;
-	Wed,  4 Mar 2026 23:50:55 +0100 (CET)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
- [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id 441EA402E7
- for <dev@dpdk.org>; Wed,  4 Mar 2026 23:50:54 +0100 (CET)
-Received: by mail-qv1-f49.google.com with SMTP id
- 6a1803df08f44-899e87b04d8so74793586d6.3
- for <dev@dpdk.org>; Wed, 04 Mar 2026 14:50:54 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 304324067C;
+	Thu,  5 Mar 2026 00:31:28 +0100 (CET)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id CA59F4029D
+ for <dev@dpdk.org>; Thu,  5 Mar 2026 00:31:26 +0100 (CET)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-1273349c56bso9146167c88.0
+ for <dev@dpdk.org>; Wed, 04 Mar 2026 15:31:26 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772667086; cv=none;
+ d=google.com; s=arc-20240605;
+ b=dW2oFgEdfO4nBFga1rcsdPZXrprQQmGjmoUhcZCBIAQMBZB1ws8oTpwXK7IXM0Z/aU
+ dYMf7pO0S9aCFspVuPYZWkyWP4g8NZWVup9jC8Kjr5g08rt+Gza1NBJRSAxgDE7f5Naz
+ shWTBynPr15tWsWDR6rkk3ogMBnJpiszN29oMM42bg6UpiMlbyg/h8nIw/oVAQxiyuq0
+ Efhrb8GIotoxOJ7woxQDWXX+sqs+Ku/4jnN4o2uhg8KyDXJSCPTgHrddyIkUBDGLI7lc
+ OGUuKKA6id5YzLswkimEmuq8+yTXOoVJF0R5EC+ZxJxEEg3L3PaBYoeynBf1paQCvpdl
+ iAhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :mime-version:dkim-signature;
+ bh=E8TTnYt/tR9gTRuGjFqTZWOe/F8p33nz5wDsLlXM3eA=;
+ fh=6iNmakO698nAyEze7EQZkGAKcKkZGLflACmRw2xLbpA=;
+ b=hnD3X7Yt7E5itWXsy1Ss/Em3amfya1ljjMA74aKzYCgU4Ld3UDROdbNfuk17hX1UZQ
+ wwzrvTGaH6565HgGuznQwr0G3zlCHUSg/IGhfoKi2UJnvj3vfb37ObHeiU8GqY6hlf8v
+ z/2xU5s+/4xw9Y3hJAOs7j7MyksqRXzGoy205gwvvQSfALlJqw93UeVAxGBt5I7UGjnW
+ ofkkKo7+XrIsHDsmje/tTHQ+Zd1Mrz5/nkLSlUNHkNHydfOZTrJJBsJ92YAezZRcuMsz
+ 3huvPdIR5HcM717Cf+YfwabBdd1KsiHsWfUiZjZPEBy8zjQLhIM+3u8T+ZwqIULwsN21
+ uahg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mauricegreenjr.com; s=google; t=1772664653; x=1773269453; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=KMUzzuLZ4/K6SvcWGuRJjpVCk1S0jHUbtTj/krOgLi0=;
- b=I2qHtsUTrnIqYmxfs/Dkb3YphNMrKN5VlZHh6yVSt0DWJSBU2mn9C0DeWIAR1mDuQS
- jMii5lxhRsDhDlwFBBMSCmNVwbP5ZBaqeBL4DsMHS4I+AVSStTZ60UISORsvRApHvYXm
- aXuEHDfXHGhy+ryru7ygqJgyQb4kgNgCu4/hFwY2TuTam+ThT9YAd9LkHGl0RsKMwIYy
- 0mPd2rAfm42CMAXwcg2DerLzrlS1NjhFQurCkQyLcEb/aYaBdekw8nqLubgH9PqBvl7N
- wtzUtx1BBgH+ttXN2M5OS10b5OIirlrZq2LXPDcsDuuxUUlkwgOuTa0AwZdDiC4NOEUM
- vwow==
+ d=iol.unh.edu; s=unh-iol; t=1772667086; x=1773271886; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=E8TTnYt/tR9gTRuGjFqTZWOe/F8p33nz5wDsLlXM3eA=;
+ b=a0QQlEHjse3556Q8zNCjMcAJQeU2NzhisXgqxNGk9wVH2KPVbNiALMpdlegrkTuwCk
+ SijJ5I9UHlKlqYU/KYTmD9Wn36KyzzdhzHCgrnYPlXdZQFnPT2uSmbNqiC3cZqncAMMi
+ Lw3ww2jJApMgdykT2m7YtkIcvv9orzX9zghUg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772664653; x=1773269453;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=KMUzzuLZ4/K6SvcWGuRJjpVCk1S0jHUbtTj/krOgLi0=;
- b=WNJHoGQqBq+I6Wfd52buR6y4BIZIszx9sSCFwLjt7SR8J92zjPgR7f4fE0ztSMixXt
- bEeGFFeeXME0DU0sfnXg7F9R6UxH9SibPEVPZXj/U64ul4XtN0XWgWgCuL/t4lagnaXk
- 6fcIoQ62h9vctStp3wuhlR1gK7Gmk6k3wH0FBtS7w9L9BTORk1e8tabkvPFQbejVweSn
- nCzeiCw3037hQFpbEefox8LOUMsi8GlDXCBWWCThxvS48k5xvnQh7sYxO1Aa7MePUtrL
- VORWbLcm+j3HiBVqv+qN2Y6GS98tdgGTJOsiFd6Fdk5LPwKztOQp5+sPiw/xOdawlo2a
- VIDw==
-X-Gm-Message-State: AOJu0Yw8yAWTTtaoyccQNZYTrI95U6lZRFE3zIHq8A3HIvQ7Uh5pI2WG
- Gx83mZLuqfjgZgQ1gvQ9GN7t2o6XOnjxMhyQ4cmH5BfiqI8Xpe7dBZlauMZP3Y4SR9k=
-X-Gm-Gg: ATEYQzwELDrKq2GBI8R4RgmbQMIqAFzw6s9GdaIwuR49YHRbwgMe8+Z/ezEOyT6OCOt
- Fxq1RDxT1o4ai38BEK62HILYk9t6T4vg/WLMlS/R+f6Laar/SOHCDFgNWwMmiHvLB5/FgJvkKsl
- IAL9S+UjFgx/yfyV3Av2oAcCIFSKOKUucB1mdATHuvRT3fB+NU65QOjlX1EstfLN240C80QEl+8
- PyTp9U6vy2AJ85y71TtjDKebzFA9IfxHVHxIsO03HAyoVBcYPz7ZrOK/fAbRH2JsNa7PP6Qr4+y
- eOknuQUpS2qTogPmxoyB3HjYBaqDrpUszSZjuAoxjHAQhuRc7Fd3sjN8+YbdOe55fgK8o0X6ZOI
- dTsZinjJF+c3yp5m6G6Q/a6sQI6ZVgmcOSpvebytFerg5hjJhF+383yS+e0uRyUGdZQbeV96SjW
- 06lm6QmvyZ3ZCOxt7voDYg4dhqeBlIxE0+tlpgrTIDZVRdyr1yC0lg/WtcaLoW0SJ6NUanFQ0bd
- jZ3
-X-Received: by 2002:a05:6214:5017:b0:89a:181a:80bf with SMTP id
- 6a1803df08f44-89a19e44bd7mr45387116d6.54.1772664653466; 
- Wed, 04 Mar 2026 14:50:53 -0800 (PST)
-Received: from localhost.localdomain ([2601:152:281:a9e0:2164:d51c:5b80:c83f])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cbbf6f940fsm1761455785a.23.2026.03.04.14.50.52
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 04 Mar 2026 14:50:52 -0800 (PST)
-From: Maurice Green <maurice.green@mauricegreenjr.com>
-To: thomas@monjalon.net
-Cc: dev@dpdk.org, eagostini@nvidia.com, getelson@nvidia.com,
- mkashani@nvidia.com, rasland@nvidia.com
-Subject: Re: [PATCH 7/9] gpu/cuda: extend NVIDIA GPU device ID list
-Date: Wed,  4 Mar 2026 17:50:51 -0500
-Message-ID: <20260304225051.26238-1-maurice.green@mauricegreenjr.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <6937723.QfHCVqEBuz@thomas>
-References: <6937723.QfHCVqEBuz@thomas>
+ d=1e100.net; s=20230601; t=1772667086; x=1773271886;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=E8TTnYt/tR9gTRuGjFqTZWOe/F8p33nz5wDsLlXM3eA=;
+ b=uNeQPcWGQp6483elXXDyqeOVr0qWI1OXXTwZIy7lIygwTRXqReOwsC+csCltbtMvDc
+ VUPdesB//80+0xfTK70zaazFWhoVTOu4qRJgBkVBggczNej9S1Rs7e2utlx0xZ+wd45I
+ iARdJzW5GJoso76O0G+gaabfk/ohqxiKKl4HjnVYhr4/KEvh+YPtCeViRXX8iW94nYgU
+ 6hN07tOwYL1tuirblJl/rUM5EicRbXBXZTVgwCD0KofGW6njGDWCItVP9xMRgROz7cGp
+ N06kbfSLPhIyJYMwQdKPNPvrkdG/NrtNXQTyBdzECtFZyRMRQuOkG83rhjxr8QsTU94y
+ 7wVA==
+X-Gm-Message-State: AOJu0YxHeE9TDFW4KQwZMvxvGPPEpcLwyy0RPPAAxwM0AKjvr0zsUZ65
+ px1AqBmMm+OQb+jbrL5hf2Ig34BuBHA4ZaB8fVkpkYECaTEv0US+x9E3CpJuVCK+6NsAUfuhSo0
+ f9HuIV/sXW0xJaqJvHYscAGaOlbdb7A9zjXOHIqxvZlztlStQAk+/koyiPg==
+X-Gm-Gg: ATEYQzzmAL/YZjcifig87loBsZQrSdcOoZMprA1PL5tKZ4IXZTM4Nc0fvoOedDfB9GX
+ sf3cLADlh1Ll5CkPTWSJPIyEixiFmAv6Cq5wrCpv8UqsyJ0JwZDxjKPlihwvjsn23sq4dql8w9H
+ TSCnnZGO1mpOhKJL9l9lQY5gl2Pe45wdFnVj+q36cNRLFseXWUjKBa9Klc5SpBq6emohxSZwP59
+ 0/6Q8kZ61RrYZ/Pf6vmml+ut2JWRienkcLqqqPv6eI/Td3Z2qWmH+wWC4zh8mUBmfzhg1Fytsvj
+ wVNIRFAX8pnN9HMuM2QV21pQU637CDD8g4u9MFgpeYr07UidirSiz0Rmm6HVZUKJQANWbEEZ
+X-Received: by 2002:a05:7022:6999:b0:11b:9386:8265 with SMTP id
+ a92af1059eb24-128b70fd6d0mr1502619c88.42.1772667085484; Wed, 04 Mar 2026
+ 15:31:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Wed, 4 Mar 2026 18:28:28 -0500
+X-Gm-Features: AaiRm52GbTdvbjE4K5ItAWF1N32mKLqUUh_m1H3wVA46NRvRwUEwHiWcXOFwmzw
+Message-ID: <CAJvnSUCWGBeOeU5AQj4fPJCGv7FKMVzJc1hikC=31XUG4Ae-cQ@mail.gmail.com>
+Subject: DTS WG Meeting Minutes - January 29, 2026
+To: dev <dev@dpdk.org>
+Cc: ci@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,25 +88,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> +#define NVIDIA_GPU_GH100      0x2335 /* H200 SXM 141GB */
-> 
-> As you can see it requires knowledge to get the right name for each ID.
-> Not everything is in https://pci-ids.ucw.cz/
-> https://github.com/NVIDIA/open-gpu-kernel-modules is a good source but not perfect as well.
+January 29, 2026
 
-Right, the naming is a little tricky since neither source is fully complete.
-I wrote a sync script that cross-references the PCI ID DB and OKM repo to 
-construct unique macro names. For the few entries with totally identical
-descriptions across both sources, the device ID is appended as a fallback. 
-Here is an example for the GH100 family:
+Attendees
+* Patrick Robb
+* Luca Vizzarro
+* Matthew Labrecque
 
-#define NVIDIA_GPU_GH100_H20                       0x2329  /* H20 */
-#define NVIDIA_GPU_GH100_H20_HBM3E                 0x232c  /* H20 HBM3e */
-#define NVIDIA_GPU_GH100_H100_SXM5_80GB            0x2330  /* H100 SXM5 80GB */
-#define NVIDIA_GPU_GH100_H100_PCIE                 0x2331  /* H100 PCIe */
-#define NVIDIA_GPU_GH100_H200_SXM_141GB            0x2335  /* H200 SXM 141GB */
-#define NVIDIA_GPU_GH100_H100                      0x2336  /* H100 */
+Minutes
 
+General Discussion
+* The release candidate 1 (RC1) date is 9 February 2026
 
-The script also updates pci_id_cuda_map[] in cuda.c and I wrote a
-test to verify both files are consistent.
+Patch discussions
+* Cryptodev testing:
+   * https://patchwork.dpdk.org/project/dpdk/list/?series=3D37138
+   * Andrew working on v2
+      * User to provide the dpdk-crypto-perf=E2=80=99s =E2=80=93devtype par=
+ameter via
+the tests_config.yaml
+      * Extending test coverage to include:
+         * Additional virtual devices
+         * A greater matrix of ciphers, authentication algorithms, and devi=
+ces
+      * What about the vdev value which is set in the DTS config test_run.y=
+aml?
+         * What is does is it adds a vdev argument to EAL arguments in DTS
+         * We would have a need for this if we needed to parameterize
+any vdev values within testsuitse or broadly run DPDK apps (testpmd
+etc.) with a particular vdev, but this is not a need/scenario for
+testing we are aware of.
+            * So, Andrew/Patrick to check in on this and most likely
+remove the vdev value from test_run.yaml
+* Flow offload testing:
+   * Patrick reviewed, Dean to work on a new version
+   * Noting that the new flow offload test takes about 15 minutes to
+run due to the 1000+ rules to validate.
+      * Patrick is asking for more protocol fieldparameters and
+protocols to be added to the next version, so all else being equal
+this will increase even further
+      * Is this an issue? Is there a need to introduce a =E2=80=9Cfast test=
+s=E2=80=9D
+option to DTS where a user sets DTS to only run the quick tests
+(basically everything other than flow offload and RSS tests)
+         * https://bugs.dpdk.org/show_bug.cgi?id=3D1872
+      * Should we maintain the =E2=80=9Cminimal-rule-set=E2=80=9D testsuite=
+ (what is
+on mainline right now) and add in this =E2=80=9Ccomprehensive-rule-set=E2=
+=80=9D
+testsuite that has a long execution time as separate testsuites, or
+remove the minimal testsuite entirely.
+      * What happens when the confidence check (send a non-matching
+packet) =E2=80=9Cfails?=E2=80=9D Skipped testcase? Anything else?
+      * What about asynchronous API? Is there a goal to add some
+support for this in 26.07? Should we get started now?
+* Can be merged:
+   * https://patchwork.dpdk.org/project/dpdk/list/?series=3D37136
+   * https://patchwork.dpdk.org/project/dpdk/list/?series=3D36907
+   * (requires final review)
+https://patchwork.dpdk.org/project/dpdk/list/?series=3D36896
+
+Bugzilla discussions
+* N/A
+
+Any other business
+* Roadmap review: Looks pretty good, there are some items which are
+=E2=80=9Csmall=E2=80=9D and we can toggle to soon when the big testsuites a=
+re merged
+to next-dts
+   * There are also some medium sized bullets which we need to discuss
+more imminently:
+      * 1. Add support for producing code coverage reports from a DTS
+testrun (so, show how much of the DPDK code the testsuites are
+touching)
+         * Raise this at the CI meeting next Thursday
+      * 2. asynchronous API testing in flow offload testsuite(s)
+* Next meeting is Feb 12, 2026
