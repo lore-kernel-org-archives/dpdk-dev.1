@@ -2,60 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9CEEDEBE7
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 01:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95A1EDEBE7
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 01:49:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E800C4064E;
-	Wed,  4 Mar 2026 02:49:29 +0100 (CET)
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com
- [209.85.216.73]) by mails.dpdk.org (Postfix) with ESMTP id D86874064C
- for <dev@dpdk.org>; Wed,  4 Mar 2026 02:49:28 +0100 (CET)
-Received: by mail-pj1-f73.google.com with SMTP id
- 98e67ed59e1d1-358df8fbd1cso5578534a91.0
- for <dev@dpdk.org>; Tue, 03 Mar 2026 17:49:28 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8185B40A79;
+	Wed,  4 Mar 2026 02:49:31 +0100 (CET)
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com
+ [209.85.216.74]) by mails.dpdk.org (Postfix) with ESMTP id E760B40659
+ for <dev@dpdk.org>; Wed,  4 Mar 2026 02:49:30 +0100 (CET)
+Received: by mail-pj1-f74.google.com with SMTP id
+ 98e67ed59e1d1-3598007eb74so18399836a91.3
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 17:49:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1772588968; x=1773193768; darn=dpdk.org;
+ d=google.com; s=20230601; t=1772588970; x=1773193770; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=NnGbv9WqT21uC+gKK69VBvZ6i8sa+7ojbQOnUnBVDFo=;
- b=Mz5mUq4dRcv/9s03odK8gknTQX++BQhWDFaMAyIX85iYLbbECgxcH+vCyiW8XiBwzm
- pBjw5e4B9nvFYTch4C2oN8V9MGA7PLCi1bvJlzc/bSEUBOaDl4YeJqJpvxgrZZlaWbD1
- Q+n1/zu2au0HZcQ8LmXP7BK+GYMHozcneF3fht0xZCmWsiD4Z6yXR634lOZR14rrGQJ0
- SdSMjmSL1ZjibGM0u001Sw6m5sKN+gQf6YUbCYGIOlkIb6xvwMgiibfwn0HvBVuQePBy
- WijxISoxCL58mTxsLYaApokUqyHHdDSOHX1uJUS0uLBev1aRyNbdJVeeAyEKhOi5Axc5
- ZYGA==
+ bh=Tum/HL3aBc3Pp1X0Cwvh2jCb23D9X8wFVZhaAPjgfTY=;
+ b=IyiE9od9HYHUzsEgSG5FHdhjjCyfMLUVreemhn7mh9rZvtd9nxxQkH8Emnb+48Oq5Y
+ BAlhWmP4R9fkD5OsB8AvrTmfW71VqECDB7CdaaOcFb/SYc1MtXDX8iJHAFVQM47QXF6T
+ C2C7lI18y2bBDTy63SLeMCXQ/2yARNUyimarr5QIL98NAG0xxDHx7zmDY22I3VfRxGUR
+ RkjJDUTIguxCWlweM3yDdf/iO5UVN57OmBeE5f9iJFGHpOnRmUd1PyNV+/aLZzPjp+n+
+ znfDI4PxQdlaZ/6GruSFKPrcPqRclyKv5RtQduQV+RjJQqVvQ7/3jwwFo+0o6MfitglE
+ aY7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772588968; x=1773193768;
+ d=1e100.net; s=20230601; t=1772588970; x=1773193770;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=NnGbv9WqT21uC+gKK69VBvZ6i8sa+7ojbQOnUnBVDFo=;
- b=mz4NGjIZ6YvXzv1FtzOX+2H/0vCeluaej7HoSoX/28ujjG0zJB/UxtkIQhTiL4P1am
- PG73oowM+q/tkpn7PtqzbTIGYeXIzhm9zaUs8aN3YmRD66iChYjaxY8iUV7DWkqdWgwQ
- 3Li9vW8Yhd/Q33f6nrs/EBGcMDu4WhHc6TE2vuab6YcUidjSzL7r9wvg6HNxEoZnznUM
- ErpbfMMwhCW1xvRMp0NldQYZ4SrZ0HfNNQqjJpvubHuUPeh7n/I8YwfYHl4ZINEScDio
- Gz2Sq2JHCHIPUZ4QL42LKLiYtjMKxCzkrT7gh/ihEKJ0SEoHeLVF8SZcgIfmBq6ycWnV
- BmGQ==
-X-Gm-Message-State: AOJu0Ywgv9E+IO+e766IxcyLQMYXbJb4Hfi8WuiwS8hhBJC1boH6lqvz
- Kfw1bM5h4hC2IH2/rXuMtSXh51KOqdH3zQOHqYcpOd5jRCaoT03Gq3YdCvnWViuPcVlafGRyAUy
- 9rOzXjdPp3R/SWF32U7q1UMyjfg==
-X-Received: from pjbms20.prod.google.com ([2002:a17:90b:2354:b0:359:8d4a:7276])
+ bh=Tum/HL3aBc3Pp1X0Cwvh2jCb23D9X8wFVZhaAPjgfTY=;
+ b=V5CTwF/SFgG3b9OLkfx2FvC/08gnE1qq6Dsbkr9rko4j5iNHZDbhnkyWES0yLWpZDE
+ KTNeBh6YLn4qpyLrhht3TqDaFcEv8ubw840l5GkM3rihc3h4vXuATwm6jTI1E62FXV4q
+ cxSGWhZOQV8KZRZTY5fWRX81ifygbhTFDsjE6Z0ppdjOHJzOXk/hPdxrey2UGSTgFufJ
+ uQG3e0Wf6VhOf9jntV0ccya4zAeb+4bvXwmTnEWmC6z7czVgmqxijf3Beysra7sQW9TR
+ yK4HmfVdu89PoQItsPanBAuvxFx+o4Vl55StHQ/0ikVsttCQciyV6R/a1wtmTehKdmLH
+ 17hw==
+X-Gm-Message-State: AOJu0YySaE1LTI9Nrs6FhV8s/ypjE9J55oM+JwKTstKh0IIL6awbKcXP
+ 4/YdbHqWJMUAg78dv+Hnt97TFTAngtl4/6z+WOo9BJTHAM+EBRnW8YujfOPLsKGjN5vEUBeYbJ+
+ JU78y9GbbskB35sOfaidSrw8zDQ==
+X-Received: from pjbco6.prod.google.com ([2002:a17:90a:fe86:b0:359:814e:3d3b])
  (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:3bc7:b0:359:8812:7c07 with SMTP id
- 98e67ed59e1d1-359a69cadfemr470266a91.14.1772588967828; 
- Tue, 03 Mar 2026 17:49:27 -0800 (PST)
-Date: Wed,  4 Mar 2026 01:46:22 +0000
+ 2002:a17:90b:1a91:b0:359:99e4:c3fb with SMTP id
+ 98e67ed59e1d1-359a6a7e12dmr486533a91.33.1772588969915; 
+ Tue, 03 Mar 2026 17:49:29 -0800 (PST)
+Date: Wed,  4 Mar 2026 01:46:23 +0000
 In-Reply-To: <20260304014624.1297874-1-jtranoleary@google.com>
 Mime-Version: 1.0
 References: <20260303005804.924545-1-jtranoleary@google.com>
  <20260304014624.1297874-1-jtranoleary@google.com>
 X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
-Message-ID: <20260304014624.1297874-3-jtranoleary@google.com>
-Subject: [PATCH v3 2/4] net/gve: introduce extended adminq command
+Message-ID: <20260304014624.1297874-4-jtranoleary@google.com>
+Subject: [PATCH v3 3/4] net/gve: add adminq commands for flow steering
 From: "Jasper Tran O'Leary" <jtranoleary@google.com>
 To: stephen@networkplumber.org
-Cc: dev@dpdk.org, Vee Agarwal <veethebee@google.com>, 
- "Jasper Tran O'Leary" <jtranoleary@google.com>,
- Joshua Washington <joshwash@google.com>
+Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>, 
+ Vee Agarwal <veethebee@google.com>, Joshua Washington <joshwash@google.com>
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -70,114 +69,239 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vee Agarwal <veethebee@google.com>
+Add new adminq commands for the driver to configure flow rules that are
+stored in the device. For configuring flow rules, 3 sub commands are
+supported.
+- create: creates a new flow rule with a specific rule_id.
+- destroy: deletes an existing flow rule with the specified rule_id.
+- flush: clears and deletes all currently active flow rules.
 
-Flow steering adminq commands are too large to fit into a normal adminq
-command buffer which accepts at most 56 bytes. As a result, introduce
-extended adminq commands which permit larger command buffers using
-indirection. Namely, extended command operations point to inner command
-buffers allocated at a specified DMA address. As specified with the
-device, all extended commands will use inner opcodes larger than 0xFF.
-
+Co-developed-by: Vee Agarwal <veethebee@google.com>
 Signed-off-by: Vee Agarwal <veethebee@google.com>
 Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
 Reviewed-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/gve/base/gve_adminq.c | 30 ++++++++++++++++++++++++++++++
- drivers/net/gve/base/gve_adminq.h | 16 ++++++++++++++++
- 2 files changed, 46 insertions(+)
+ drivers/net/gve/base/gve_adminq.c | 52 +++++++++++++++++++++++++++
+ drivers/net/gve/base/gve_adminq.h | 30 ++++++++++++++++
+ drivers/net/gve/gve_ethdev.h      |  1 +
+ drivers/net/gve/gve_flow_rule.h   | 59 +++++++++++++++++++++++++++++++
+ 4 files changed, 142 insertions(+)
+ create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.h
 
 diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
-index 64b9468..0cc6d44 100644
+index 0cc6d44..9a94591 100644
 --- a/drivers/net/gve/base/gve_adminq.c
 +++ b/drivers/net/gve/base/gve_adminq.c
-@@ -438,6 +438,8 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
+@@ -239,6 +239,7 @@ int gve_adminq_alloc(struct gve_priv *priv)
+ 	priv->adminq_report_stats_cnt = 0;
+ 	priv->adminq_report_link_speed_cnt = 0;
+ 	priv->adminq_get_ptype_map_cnt = 0;
++	priv->adminq_cfg_flow_rule_cnt = 0;
  
- 	memcpy(cmd, cmd_orig, sizeof(*cmd_orig));
- 	opcode = be32_to_cpu(READ_ONCE32(cmd->opcode));
-+	if (opcode == GVE_ADMINQ_EXTENDED_COMMAND)
-+		opcode = be32_to_cpu(READ_ONCE32(cmd->extended_command.inner_opcode));
- 
- 	switch (opcode) {
- 	case GVE_ADMINQ_DESCRIBE_DEVICE:
-@@ -516,6 +518,34 @@ static int gve_adminq_execute_cmd(struct gve_priv *priv,
- 	return gve_adminq_kick_and_wait(priv);
+ 	/* Setup Admin queue with the device */
+ 	rte_pci_read_config(priv->pci_dev, &pci_rev_id, sizeof(pci_rev_id),
+@@ -487,6 +488,9 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
+ 	case GVE_ADMINQ_VERIFY_DRIVER_COMPATIBILITY:
+ 		priv->adminq_verify_driver_compatibility_cnt++;
+ 		break;
++	case GVE_ADMINQ_CONFIGURE_FLOW_RULE:
++		priv->adminq_cfg_flow_rule_cnt++;
++		break;
+ 	default:
+ 		PMD_DRV_LOG(ERR, "unknown AQ command opcode %d", opcode);
+ 	}
+@@ -546,6 +550,54 @@ static int gve_adminq_execute_extended_cmd(struct gve_priv *priv, u32 opcode,
+ 	return err;
  }
  
-+static int gve_adminq_execute_extended_cmd(struct gve_priv *priv, u32 opcode,
-+					   size_t cmd_size, void *cmd_orig)
++static int
++gve_adminq_configure_flow_rule(struct gve_priv *priv,
++			       struct gve_adminq_configure_flow_rule *flow_rule_cmd)
 +{
-+	union gve_adminq_command cmd;
-+	struct gve_dma_mem inner_cmd_dma_mem;
-+	void *inner_cmd;
-+	int err;
++	int err = gve_adminq_execute_extended_cmd(priv,
++			GVE_ADMINQ_CONFIGURE_FLOW_RULE,
++			sizeof(struct gve_adminq_configure_flow_rule),
++			flow_rule_cmd);
 +
-+	inner_cmd = gve_alloc_dma_mem(&inner_cmd_dma_mem, cmd_size);
-+	if (!inner_cmd)
-+		return -ENOMEM;
++	return err;
++}
 +
-+	memcpy(inner_cmd, cmd_orig, cmd_size);
-+
-+	memset(&cmd, 0, sizeof(cmd));
-+	cmd.opcode = cpu_to_be32(GVE_ADMINQ_EXTENDED_COMMAND);
-+	cmd.extended_command = (struct gve_adminq_extended_command) {
-+		.inner_opcode = cpu_to_be32(opcode),
-+		.inner_length = cpu_to_be32(cmd_size),
-+		.inner_command_addr = cpu_to_be64(inner_cmd_dma_mem.pa),
++int gve_adminq_add_flow_rule(struct gve_priv *priv,
++			     struct gve_flow_rule_params *rule, u32 loc)
++{
++	struct gve_adminq_configure_flow_rule flow_rule_cmd = {
++		.opcode = cpu_to_be16(GVE_FLOW_RULE_CFG_ADD),
++		.location = cpu_to_be32(loc),
++		.rule = {
++			.flow_type = cpu_to_be16(rule->flow_type),
++			.action = cpu_to_be16(rule->action),
++			.key = rule->key,
++			.mask = rule->mask,
++		},
 +	};
 +
-+	err = gve_adminq_execute_cmd(priv, &cmd);
++	return gve_adminq_configure_flow_rule(priv, &flow_rule_cmd);
++}
 +
-+	gve_free_dma_mem(&inner_cmd_dma_mem);
-+	return err;
++int gve_adminq_del_flow_rule(struct gve_priv *priv, u32 loc)
++{
++	struct gve_adminq_configure_flow_rule flow_rule_cmd = {
++		.opcode = cpu_to_be16(GVE_FLOW_RULE_CFG_DEL),
++		.location = cpu_to_be32(loc),
++	};
++
++	return gve_adminq_configure_flow_rule(priv, &flow_rule_cmd);
++}
++
++int gve_adminq_reset_flow_rules(struct gve_priv *priv)
++{
++	struct gve_adminq_configure_flow_rule flow_rule_cmd = {
++		.opcode = cpu_to_be16(GVE_FLOW_RULE_CFG_RESET),
++	};
++
++	return gve_adminq_configure_flow_rule(priv, &flow_rule_cmd);
 +}
 +
  /* The device specifies that the management vector can either be the first irq
   * or the last irq. ntfy_blk_msix_base_idx indicates the first irq assigned to
   * the ntfy blks. It if is 0 then the management vector is last, if it is 1 then
 diff --git a/drivers/net/gve/base/gve_adminq.h b/drivers/net/gve/base/gve_adminq.h
-index e237353..f52658e 100644
+index f52658e..d8e5e6a 100644
 --- a/drivers/net/gve/base/gve_adminq.h
 +++ b/drivers/net/gve/base/gve_adminq.h
-@@ -25,8 +25,15 @@ enum gve_adminq_opcodes {
- 	GVE_ADMINQ_REPORT_LINK_SPEED		= 0xD,
- 	GVE_ADMINQ_GET_PTYPE_MAP		= 0xE,
- 	GVE_ADMINQ_VERIFY_DRIVER_COMPATIBILITY	= 0xF,
-+	/* For commands that are larger than 56 bytes */
-+	GVE_ADMINQ_EXTENDED_COMMAND		= 0xFF,
- };
+@@ -7,6 +7,7 @@
+ #define _GVE_ADMINQ_H
  
-+/* The normal adminq command is restricted to be 56 bytes at maximum. For the
-+ * longer adminq command, it is wrapped by GVE_ADMINQ_EXTENDED_COMMAND with
-+ * inner opcode of gve_adminq_extended_cmd_opcodes specified. The inner command
-+ * is written in the dma memory allocated by GVE_ADMINQ_EXTENDED_COMMAND.
-+ */
+ #include "gve_osdep.h"
++#include "../gve_flow_rule.h"
+ 
+ /* Admin queue opcodes */
+ enum gve_adminq_opcodes {
+@@ -34,6 +35,10 @@ enum gve_adminq_opcodes {
+  * inner opcode of gve_adminq_extended_cmd_opcodes specified. The inner command
+  * is written in the dma memory allocated by GVE_ADMINQ_EXTENDED_COMMAND.
+  */
++enum gve_adminq_extended_cmd_opcodes {
++	GVE_ADMINQ_CONFIGURE_FLOW_RULE	= 0x101,
++};
++
  /* Admin queue status codes */
  enum gve_adminq_statuses {
  	GVE_ADMINQ_COMMAND_UNSET			= 0x0,
-@@ -194,6 +201,14 @@ enum gve_driver_capbility {
- #define GVE_DRIVER_CAPABILITY_FLAGS3 0x0
- #define GVE_DRIVER_CAPABILITY_FLAGS4 0x0
+@@ -434,6 +439,26 @@ struct gve_adminq_configure_rss {
+ 	__be64 indir_addr;
+ };
  
-+struct gve_adminq_extended_command {
-+	__be32 inner_opcode;
-+	__be32 inner_length;
-+	__be64 inner_command_addr;
++/* Flow rule definition for the admin queue using network byte order (big
++ * endian). This struct represents the hardware wire format and should not be
++ * used outside of admin queue contexts.
++ */
++struct gve_adminq_flow_rule {
++	__be16 flow_type;
++	__be16 action; /* RX queue id */
++	struct gve_flow_spec key;
++	struct gve_flow_spec mask;
 +};
 +
-+GVE_CHECK_STRUCT_LEN(16, gve_adminq_extended_command);
++struct gve_adminq_configure_flow_rule {
++	__be16 opcode;
++	u8 padding[2];
++	struct gve_adminq_flow_rule rule;
++	__be32 location;
++};
 +
- struct gve_driver_info {
- 	u8 os_type;	/* 0x05 = DPDK */
- 	u8 driver_major;
-@@ -440,6 +455,7 @@ union gve_adminq_command {
- 			struct gve_adminq_get_ptype_map get_ptype_map;
- 			struct gve_adminq_verify_driver_compatibility
- 				verify_driver_compatibility;
-+			struct gve_adminq_extended_command extended_command;
- 		};
- 	};
- 	u8 reserved[64];
++GVE_CHECK_STRUCT_LEN(92, gve_adminq_configure_flow_rule);
++
+ union gve_adminq_command {
+ 	struct {
+ 		__be32 opcode;
+@@ -499,4 +524,9 @@ int gve_adminq_verify_driver_compatibility(struct gve_priv *priv,
+ int gve_adminq_configure_rss(struct gve_priv *priv,
+ 			     struct gve_rss_config *rss_config);
+ 
++int gve_adminq_add_flow_rule(struct gve_priv *priv,
++			     struct gve_flow_rule_params *rule, u32 loc);
++int gve_adminq_del_flow_rule(struct gve_priv *priv, u32 loc);
++int gve_adminq_reset_flow_rules(struct gve_priv *priv);
++
+ #endif /* _GVE_ADMINQ_H */
+diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
+index 3a810b6..4e07ca8 100644
+--- a/drivers/net/gve/gve_ethdev.h
++++ b/drivers/net/gve/gve_ethdev.h
+@@ -314,6 +314,7 @@ struct gve_priv {
+ 	uint32_t adminq_report_link_speed_cnt;
+ 	uint32_t adminq_get_ptype_map_cnt;
+ 	uint32_t adminq_verify_driver_compatibility_cnt;
++	uint32_t adminq_cfg_flow_rule_cnt;
+ 	volatile uint32_t state_flags;
+ 
+ 	/* Gvnic device link speed from hypervisor. */
+diff --git a/drivers/net/gve/gve_flow_rule.h b/drivers/net/gve/gve_flow_rule.h
+new file mode 100644
+index 0000000..8c17ddd
+--- /dev/null
++++ b/drivers/net/gve/gve_flow_rule.h
+@@ -0,0 +1,59 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(C) 2026 Google LLC
++ */
++
++#ifndef _GVE_FLOW_RULE_H_
++#define _GVE_FLOW_RULE_H_
++
++#include "base/gve_osdep.h"
++
++enum gve_adminq_flow_rule_cfg_opcode {
++	GVE_FLOW_RULE_CFG_ADD	= 0,
++	GVE_FLOW_RULE_CFG_DEL	= 1,
++	GVE_FLOW_RULE_CFG_RESET	= 2,
++};
++
++enum gve_adminq_flow_type {
++	GVE_FLOW_TYPE_TCPV4,
++	GVE_FLOW_TYPE_UDPV4,
++	GVE_FLOW_TYPE_SCTPV4,
++	GVE_FLOW_TYPE_AHV4,
++	GVE_FLOW_TYPE_ESPV4,
++	GVE_FLOW_TYPE_TCPV6,
++	GVE_FLOW_TYPE_UDPV6,
++	GVE_FLOW_TYPE_SCTPV6,
++	GVE_FLOW_TYPE_AHV6,
++	GVE_FLOW_TYPE_ESPV6,
++};
++
++struct gve_flow_spec {
++	__be32 src_ip[4];
++	__be32 dst_ip[4];
++	union {
++		struct {
++			__be16 src_port;
++			__be16 dst_port;
++		};
++		__be32 spi;
++	};
++	union {
++		u8 tos;
++		u8 tclass;
++	};
++};
++
++/* Flow rule parameters using mixed endianness.
++ * - flow_type and action are guest endian.
++ * - key and mask are in network byte order (big endian), matching rte_flow.
++ * This struct is used by the driver when validating and creating flow rules;
++ * guest endian fields are only converted to network byte order within admin
++ * queue functions.
++ */
++struct gve_flow_rule_params {
++	u16 flow_type;
++	u16 action; /* RX queue id */
++	struct gve_flow_spec key;
++	struct gve_flow_spec mask;
++};
++
++#endif /* _GVE_FLOW_RULE_H_ */
 -- 
 2.53.0.473.g4a7958ca14-goog
 
