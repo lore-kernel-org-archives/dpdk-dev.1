@@ -2,39 +2,60 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C53EDEBE7
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 01:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A034EDEBFD
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 01:47:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3E6D140269;
-	Wed,  4 Mar 2026 02:41:51 +0100 (CET)
-Received: from out28-217.mail.aliyun.com (out28-217.mail.aliyun.com
- [115.124.28.217])
- by mails.dpdk.org (Postfix) with ESMTP id B39F740041
- for <dev@dpdk.org>; Wed,  4 Mar 2026 02:41:48 +0100 (CET)
-X-Alimail-AntiSpam: AC=CONTINUE; BC=0.08683348|-1; CH=green;
- DM=|CONTINUE|false|;
- DS=CONTINUE|ham_enroll_verification|0.00346614-0.000253919-0.99628;
- FP=14584428827446365888|0|0|0|0|-1|-1|-1;
- HT=maildocker-contentspam033068005250; MF=dimon.zhao@nebula-matrix.com; NM=1;
- PH=DW; RN=3; RT=3; SR=0; TI=W4_0.2.3_21251295_1772588501528_o7001c710; 
-Received: from WS-web
- (dimon.zhao@nebula-matrix.com[W4_0.2.3_21251295_1772588501528_o7001c710]
- cluster:ay29) at Wed, 04 Mar 2026 09:41:41 +0800
-Date: Wed, 04 Mar 2026 09:41:41 +0800
-From: "Dimon" <dimon.zhao@nebula-matrix.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>,
-  "dev" <dev@dpdk.org>
-Cc: "Thomas Monjalon" <thomas@monjalon.net>
-Message-ID: <9b0fe13f-bc19-40a8-9a7e-99bf4bf325ca.dimon.zhao@nebula-matrix.com>
-Subject: =?UTF-8?B?5Zue5aSN77yaW1JGQ10gTUFJTlRBSU5FUlM6IHVwZGF0ZSBOQkwgbWFpbnRhaW5lcnM=?=
-X-Mailer: [Alimail-Mailagent revision 1106][W4_0.2.3][null][Chrome]
-MIME-Version: 1.0
-x-aliyun-im-through: {"version":"v1.0"}
-References: <20260303151425.20121-1-stephen@networkplumber.org>
-x-aliyun-mail-creator: W4_0.2.3_null_EuMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzMy4wLjY5NDMuMTQyIFNhZmFyaS81MzcuMzYgZGluZ3RhbGstd2luLzEuMC4wIG53KDAuMTQuNykgRGluZ1RhbGsoOC4yLjEwLVJlbGVhc2UuMjYwMjAzMDA3KSBNb2pvLzEuMC4wIE5hdGl2ZSBBcHBUeXBlKHJlbGVhc2UpIENoYW5uZWwvMjAxMjAwIEFyY2hpdGVjdHVyZS94ODZfNjQgd2ViRHQvUEM=uL
-In-Reply-To: <20260303151425.20121-1-stephen@networkplumber.org>
-Content-Type: multipart/alternative;
- boundary="----=ALIBOUNDARY_2801_7f7be8aef700_69a78dd5_1480dc"
+	by mails.dpdk.org (Postfix) with ESMTP id 9F71540269;
+	Wed,  4 Mar 2026 02:47:31 +0100 (CET)
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com
+ [209.85.214.201])
+ by mails.dpdk.org (Postfix) with ESMTP id 3C4AE40041
+ for <dev@dpdk.org>; Wed,  4 Mar 2026 02:47:30 +0100 (CET)
+Received: by mail-pl1-f201.google.com with SMTP id
+ d9443c01a7336-2ae415b68b1so37037585ad.2
+ for <dev@dpdk.org>; Tue, 03 Mar 2026 17:47:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20230601; t=1772588849; x=1773193649; darn=dpdk.org;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=ycb4sNu4DFRed9AeZeqc5gHJ3cQ8e/csHusJbs3c3Fg=;
+ b=JRze1+oSfvS+KbmpD3t02c/48tLm9PQ2V+svKJaSmRAqWuPpaQyVaQYESZIEFhAhRV
+ vgDXOVEvWv6dIdAP9B8zuOhJ6AvYHf1bPZy7dYbJVoxbHxd+VnGwwwVFJ4N0wma/RL2B
+ 8r95k5enBpo8Ys6UPm87lQoNEQKWAglUnmtKnKgBPM0d5F7XdOH4zXQIoiyjYbw8PXN9
+ 0eP0mumMHZgnDyLEIYQ1eBLu0VtnKAu2jWbllv5zg7uOLitlpbUK0IGpDBPSwBgX0fO6
+ LO52yiT9CiK3e9dy9ZZ8hH8oOnlXdPZr9vxEkBH8RNdOzG5mfR5Bbn9AqZ8vVuHcU9I9
+ o6fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772588849; x=1773193649;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=ycb4sNu4DFRed9AeZeqc5gHJ3cQ8e/csHusJbs3c3Fg=;
+ b=XIM0AdFQVFD5N0oW6+DPSojCn9mrGsbIDVo/QCkIP/h9W7wZUNQ6D3u9birQSOGY4p
+ fOH6IE7Q5zu2AGzRSSWGJF/uM6HC0FNFokgueIu2lHgqWH92c381FBOS590v5Gp5gfgh
+ W7q7MFKdR4sLo/HhQHi9LMthGj4gkFR1MP0wFlMrrddXbJypJJ0M5EZ93osi/Z1grBtU
+ inZplkS8C+y5WEd4oO+BNfAOXxmhaOM0ClNWU2iNvHSqlt/cumykm00MGRpzm4gP0Aa4
+ YGjp4+nKj0/PeIsM5FGV779mnVi/ePmeEv9L78BwpRiQR2Is7QZsU0j/tKUzSPsdrROh
+ cULg==
+X-Gm-Message-State: AOJu0Yzo0qZfXaTozwKY5h/sArtGVDUztmNW7I5xgAfFKqxYwhrtMF4Q
+ tfS90JzMd3t18KdHOqrSF8zVNYTHT6B1Km4ALdYtP7w3CXRuXKeq4Ng3UWpJN9mTqZz/BZAMUAa
+ 7WSRkpUiYVm1XgszKktQoRRqDmQ==
+X-Received: from plbjf2.prod.google.com ([2002:a17:903:2682:b0:2a9:6366:197c])
+ (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:8c5:b0:2aa:daf7:84f6 with SMTP id
+ d9443c01a7336-2ae6abdd127mr4077695ad.55.1772588849050; 
+ Tue, 03 Mar 2026 17:47:29 -0800 (PST)
+Date: Wed,  4 Mar 2026 01:46:20 +0000
+In-Reply-To: <20260303005804.924545-1-jtranoleary@google.com>
+Mime-Version: 1.0
+References: <20260303005804.924545-1-jtranoleary@google.com>
+X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
+Message-ID: <20260304014624.1297874-1-jtranoleary@google.com>
+Subject: [PATCH v3 0/4] net/gve: add flow steering support
+From: "Jasper Tran O'Leary" <jtranoleary@google.com>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>, 
+ Joshua Washington <joshwash@google.com>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -46,165 +67,58 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: Dimon <dimon.zhao@nebula-matrix.com>
 Errors-To: dev-bounces@dpdk.org
 
-------=ALIBOUNDARY_2801_7f7be8aef700_69a78dd5_1480dc
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+This patch series adds flow steering support to the Google Virtual
+Ethernet (gve) driver. This functionality allows traffic to be directed
+to specific receive queues based on user-specified flow patterns.
 
-SGkgU3RlcGhlbiwKVGhhbmtzIGZvciB5b3VyIGhlbHAuIFlvdSdyZSBjb3JyZWN0IHRoYXQga3lv
-LmxpdUBuZWJ1bGEtbWF0cml4LmNvbSBpcyBubyBsb25nZXIgdmFsaWQgYXMgaGUgaGFzIGxlZnQg
-dGhlIGNvbXBhbnkuCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLQrlj5Hku7bkurrvvJpTdGVwaGVuIEhlbW1pbmdlciA8c3Rl
-cGhlbkBuZXR3b3JrcGx1bWJlci5vcmc+CuWPkemAgeaXtumXtO+8mjIwMjblubQz5pyIM+aXpSjl
-kajkuowpIDIzOjE0CuaUtuS7tuS6uu+8mmRldjxkZXZAZHBkay5vcmc+CuaKhOOAgOmAge+8mlN0
-ZXBoZW4gSGVtbWluZ2VyPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPjsgVGhvbWFzIE1vbmph
-bG9uPHRob21hc0Btb25qYWxvbi5uZXQ+CuS4u+OAgOmimO+8mltSRkNdIE1BSU5UQUlORVJTOiB1
-cGRhdGUgTkJMIG1haW50YWluZXJzClRoZSBlbWFpbCBmb3Iga3lvLmxpdUBuZWJ1bGEtbWF0cml4
-LmNvbSBib3VuY2VzLgpEcm9wIGFzIG1haW50YWluZXIgZm9yIE5CTCBkcml2ZXIuClNpZ25lZC1v
-ZmYtYnk6IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4KLS0t
-CiBNQUlOVEFJTkVSUyB8IDEgLQogMSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkKZGlmZiAt
-LWdpdCBhL01BSU5UQUlORVJTIGIvTUFJTlRBSU5FUlMKaW5kZXggMWIyZjFlZDJiYS4uODhiNTJi
-ZGFhNCAxMDA2NDQKLS0tIGEvTUFJTlRBSU5FUlMKKysrIGIvTUFJTlRBSU5FUlMKQEAgLTEwMjAs
-NyArMTAyMCw2IEBAIEY6IGRvYy9ndWlkZXMvbmljcy9mZWF0dXJlcy9ybnAuaW5pCiBOZWJ1bGFt
-YXRyaXggbmJsCiBNOiBEaW1vbiBaaGFvIDxkaW1vbi56aGFvQG5lYnVsYS1tYXRyaXguY29tPgot
-TTogS3lvIExpdSA8a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbT4KIE06IExlb24gWXUgPGxlb24u
-eXVAbmVidWxhLW1hdHJpeC5jb20+CiBNOiBTYW0gQ2hlbiA8c2FtLmNoZW5AbmVidWxhLW1hdHJp
-eC5jb20+CiBGOiBkcml2ZXJzL25ldC9uYmwvCi0tIAoyLjUxLjAK
-------=ALIBOUNDARY_2801_7f7be8aef700_69a78dd5_1480dc
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+The series includes foundational support for extended admin queue
+commands needed to handle flow rules, the specific adminqueue commands
+for flow rule management, and the integration with the DPDK rte_flow
+API. The series adds support flow matching on the following protocols:
+IPv4, IPv6, TCP, UDP, SCTP, ESP, and AH.
 
-PGRpdiBjbGFzcz0iX19hbGl5dW5fZW1haWxfYm9keV9ibG9jayI+PGRpdiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpU0MtTGlnaHQsIFNpbVN1biI+PGRpdiAgc3R5
-bGU9ImNsZWFyOiBib3RoOyI+PHAgIGNsYXNzPSIiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6
-IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjog
-cmdiKDAsIDAsIDApOyI+SGkgU3RlcGhlbiw8L3NwYW4+PC9wPjxwICBjbGFzcz0iIj48c3BhbiAg
-c3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQt
-c2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPlRoYW5rcyBmb3IgeW91ciBoZWxwLiBZ
-b3UncmUgY29ycmVjdCB0aGF0Jm5ic3A7a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbSZuYnNwO2lz
-IG5vIGxvbmdlciB2YWxpZCBhcyBoZSBoYXMgbGVmdCB0aGUgY29tcGFueS48L3NwYW4+PC9wPjxk
-aXYgPjwvZGl2PjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVp
-dGlTQy1MaWdodCwgU2ltU3VuOyI+PGJyID48L3NwYW4+PC9kaXY+PGRpdiAgc3R5bGU9ImNsZWFy
-OiBib3RoOyI+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0
-aVNDLUxpZ2h0LCBTaW1TdW47Ij48YnIgPjwvc3Bhbj48L2Rpdj48YmxvY2txdW90ZSAgX3F1b3Rl
-PSIxIiBzdHlsZT0ibWFyZ2luLXJpZ2h0OiAwcHg7IG1hcmdpbi10b3A6IDBweDsgbWFyZ2luLWJv
-dHRvbTogMHB4OyI+PGRpdiAgY2xhc3M9ImFsaW1haWwtcXVvdGUiPjxkaXYgIHN0eWxlPSJjbGVh
-cjogYm90aDsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVp
-dGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+LS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tPC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxzcGFuICBzdHlsZT0i
-Zm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAx
-NHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+5Y+R5Lu25Lq677yaU3RlcGhlbiBIZW1taW5nZXIg
-Jmx0O3N0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnJmd0Ozwvc3Bhbj48L2Rpdj48ZGl2ICBzdHls
-ZT0iY2xlYXI6IGJvdGg7Ij48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFs
-LCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsi
-PuWPkemAgeaXtumXtO+8mjIwMjblubQz5pyIM+aXpSjlkajkuowpIDIzOjE0PC9zcGFuPjwvZGl2
-PjxkaXYgIHN0eWxlPSJjbGVhcjogYm90aDsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRh
-aG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdi
-KDAsIDAsIDApOyI+5pS25Lu25Lq677yaZGV2Jmx0O2RldkBkcGRrLm9yZyZndDs8L3NwYW4+PC9k
-aXY+PGRpdiAgc3R5bGU9ImNsZWFyOiBib3RoOyI+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTog
-VGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiBy
-Z2IoMCwgMCwgMCk7Ij7mioTjgIDpgIHvvJpTdGVwaGVuIEhlbW1pbmdlciZsdDtzdGVwaGVuQG5l
-dHdvcmtwbHVtYmVyLm9yZyZndDs7IFRob21hcyBNb25qYWxvbiZsdDt0aG9tYXNAbW9uamFsb24u
-bmV0Jmd0Ozwvc3Bhbj48L2Rpdj48ZGl2ICBzdHlsZT0iY2xlYXI6IGJvdGg7Ij48c3BhbiAgc3R5
-bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6
-ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPuS4u+OAgOmimO+8mltSRkNdIE1BSU5UQUlO
-RVJTOiB1cGRhdGUgTkJMIG1haW50YWluZXJzPC9zcGFuPjwvZGl2PjxkaXYgIHN0eWxlPSJjbGVh
-cjogYm90aDsiPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVp
-dGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGJyID48
-L3NwYW4+PC9kaXY+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RI
-ZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij5UaGUg
-ZW1haWwgZjwvc3Bhbj48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBT
-VEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPm9y
-IGt5by5saXVAbmVidWxhLW1hdHJpeC5jb20gYm91bmNlcy48L3NwYW4+PHNwYW4gIHN0eWxlPSJm
-b250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0
-cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij48YnIgPjwvc3Bhbj48c3BhbiAgc3R5bGU9ImZvbnQt
-ZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsg
-Y29sb3I6IHJnYigwLCAwLCAwKTsiPkRyb3AgYXMgbWFpbnRhaW5lciBmb3IgTkJMIGRyaXZlci48
-L3NwYW4+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwg
-U2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij48YnIgPjwvc3Bh
-bj48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1T
-dW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxiciA+PC9zcGFuPjxz
-cGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsg
-Zm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+U2lnbmVkLW9mZi1ieTogU3Rl
-cGhlbiBIZW1taW5nZXIgJmx0O3N0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnJmd0Ozwvc3Bhbj48
-c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47
-IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxiciA+PC9zcGFuPjxzcGFu
-ICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9u
-dC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+LS0tPC9zcGFuPjxzcGFuICBzdHls
-ZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXpl
-OiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGJyID48L3NwYW4+PHNwYW4gIHN0eWxlPSJm
-b250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0
-cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4gTUFJTlRBSU5FUlMgfCAxIC08L3NwYW4+PHNwYW4g
-IHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250
-LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij48YnIgPjwvc3Bhbj48c3BhbiAgc3R5
-bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6
-ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPiAxIGZpbGUgY2hhbmdlZCwgMSBkZWxldGlv
-bigtKTwvc3Bhbj48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhl
-aXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxiciA+
-PC9zcGFuPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGks
-IFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGJyID48L3Nw
-YW4+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2lt
-U3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij5kaWZmIC0tZ2l0IGEv
-TUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVSUzwvc3Bhbj48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5
-OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6
-IHJnYigwLCAwLCAwKTsiPjxiciA+PC9zcGFuPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRh
-aG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdi
-KDAsIDAsIDApOyI+aW5kZXggMWIyZjFlZDJiYS4uODhiNTJiZGFhNCAxMDA2NDQ8L3NwYW4+PHNw
-YW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBm
-b250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij48YnIgPjwvc3Bhbj48c3BhbiAg
-c3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQt
-c2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPi0tLSBhL01BSU5UQUlORVJTPC9zcGFu
-PjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1
-bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGJyID48L3NwYW4+PHNw
-YW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBm
-b250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4rKysgYi9NQUlOVEFJTkVSUzwv
-c3Bhbj48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBT
-aW1TdW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxiciA+PC9zcGFu
-PjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1
-bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+QEAgLTEwMjAsNyArMTAy
-MCw2IEBAIEY6IGRvYy9ndWlkZXMvbmljcy9mZWF0dXJlcy9ybnAuaW5pPC9zcGFuPjxzcGFuICBz
-dHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1z
-aXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGJyID48L3NwYW4+PHNwYW4gIHN0eWxl
-PSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6
-IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4gPC9zcGFuPjxzcGFuICBzdHlsZT0iZm9udC1m
-YW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBj
-b2xvcjogcmdiKDAsIDAsIDApOyI+PGJyID48L3NwYW4+PHNwYW4gIHN0eWxlPSJmb250LWZhbWls
-eTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9y
-OiByZ2IoMCwgMCwgMCk7Ij4gTmVidWxhbWF0cml4IG5ibDwvc3Bhbj48c3BhbiAgc3R5bGU9ImZv
-bnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRw
-eDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjxiciA+PC9zcGFuPjxzcGFuICBzdHlsZT0iZm9udC1m
-YW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBj
-b2xvcjogcmdiKDAsIDAsIDApOyI+IE06IERpbW9uIFpoYW8gJmx0O2RpbW9uLnpoYW9AbmVidWxh
-LW1hdHJpeC5jb20mZ3Q7PC9zcGFuPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwg
-QXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAs
-IDApOyI+PGJyID48L3NwYW4+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlh
-bCwgU1RIZWl0aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7
-Ij4tTTogS3lvIExpdSAmbHQ7a3lvLmxpdUBuZWJ1bGEtbWF0cml4LmNvbSZndDs8L3NwYW4+PHNw
-YW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2ltU3VuOyBm
-b250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij48YnIgPjwvc3Bhbj48c3BhbiAg
-c3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQt
-c2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPiBNOiBMZW9uIFl1ICZsdDtsZW9uLnl1
-QG5lYnVsYS1tYXRyaXguY29tJmd0Ozwvc3Bhbj48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBU
-YWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJn
-YigwLCAwLCAwKTsiPjxiciA+PC9zcGFuPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9t
-YSwgQXJpYWwsIFNUSGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAs
-IDAsIDApOyI+IE06IFNhbSBDaGVuICZsdDtzYW0uY2hlbkBuZWJ1bGEtbWF0cml4LmNvbSZndDs8
-L3NwYW4+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwg
-U2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij48YnIgPjwvc3Bh
-bj48c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1T
-dW47IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPiBGOiBkcml2ZXJzL25l
-dC9uYmwvPC9zcGFuPjxzcGFuICBzdHlsZT0iZm9udC1mYW1pbHk6IFRhaG9tYSwgQXJpYWwsIFNU
-SGVpdGksIFNpbVN1bjsgZm9udC1zaXplOiAxNHB4OyBjb2xvcjogcmdiKDAsIDAsIDApOyI+PGJy
-ID48L3NwYW4+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0
-aSwgU2ltU3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij4tLSA8L3Nw
-YW4+PHNwYW4gIHN0eWxlPSJmb250LWZhbWlseTogVGFob21hLCBBcmlhbCwgU1RIZWl0aSwgU2lt
-U3VuOyBmb250LXNpemU6IDE0cHg7IGNvbG9yOiByZ2IoMCwgMCwgMCk7Ij48YnIgPjwvc3Bhbj48
-c3BhbiAgc3R5bGU9ImZvbnQtZmFtaWx5OiBUYWhvbWEsIEFyaWFsLCBTVEhlaXRpLCBTaW1TdW47
-IGZvbnQtc2l6ZTogMTRweDsgY29sb3I6IHJnYigwLCAwLCAwKTsiPjIuNTEuMDwvc3Bhbj48L2Rp
-dj48L2Jsb2NrcXVvdGU+PGRpdiAgc3R5bGU9ImxpbmUtaGVpZ2h0OiAyMHB4OyBjbGVhcjogYm90
-aDsiPjxiciA+PC9kaXY+PC9kaXY+PC9kaXY+
-------=ALIBOUNDARY_2801_7f7be8aef700_69a78dd5_1480dc--
+Patch Overview:
+
+1. "net/gve: add flow steering device option" checks for and enables
+   the flow steering capability in the device options during
+   initialization.
+2. "net/gve: introduce extended adminq command" adds infrastructure
+   for sending extended admin queue commands. These commands use a
+   flexible buffer descriptor format required for flow rule management.
+3. "net/gve: add adminq commands for flow steering" implements the
+   specific admin queue commands to add and remove flow rules on the
+   device, including handling of rule IDs and parameters.
+4. "net/gve: add rte flow API integration" exposes the flow steering
+   functionality via the DPDK rte_flow API. This includes strict
+   pattern validation, rule parsing, and lifecycle management (create,
+   destroy, flush). It ensures thread-safe access to the flow subsystem
+   and proper resource cleanup during device reset.
+
+Jasper Tran O'Leary (2):
+  net/gve: add adminq commands for flow steering
+  net/gve: add rte flow API integration
+
+Vee Agarwal (2):
+  net/gve: add flow steering device option
+  net/gve: introduce extended adminq command
+
+ doc/guides/nics/features/gve.ini       |  12 +
+ doc/guides/nics/gve.rst                |  27 +
+ doc/guides/rel_notes/release_26_03.rst |   1 +
+ drivers/net/gve/base/gve.h             |   3 +-
+ drivers/net/gve/base/gve_adminq.c      | 118 ++++-
+ drivers/net/gve/base/gve_adminq.h      |  57 +++
+ drivers/net/gve/gve_ethdev.c           |  83 +++-
+ drivers/net/gve/gve_ethdev.h           |  46 ++
+ drivers/net/gve/gve_flow_rule.c        | 658 +++++++++++++++++++++++++
+ drivers/net/gve/gve_flow_rule.h        |  65 +++
+ drivers/net/gve/meson.build            |   1 +
+ 11 files changed, 1066 insertions(+), 5 deletions(-)
+ create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.c
+ create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.h
+
+-- 
+2.53.0.473.g4a7958ca14-goog
 
