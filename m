@@ -2,57 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 815BCEF8FF4
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 15:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BF3EF8FF4
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 15:16:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6D84F4069F;
-	Wed,  4 Mar 2026 16:16:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5660D406BA;
+	Wed,  4 Mar 2026 16:16:33 +0100 (CET)
 Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net
- [13.75.44.102]) by mails.dpdk.org (Postfix) with ESMTP id 88BBD40265
- for <dev@dpdk.org>; Wed,  4 Mar 2026 07:16:05 +0100 (CET)
+ [13.76.78.106]) by mails.dpdk.org (Postfix) with ESMTP id 5C75140265
+ for <dev@dpdk.org>; Wed,  4 Mar 2026 08:06:25 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=whu.edu.cn; s=dkim; h=Received:Received:From:To:Cc:Subject:
- Date:Message-ID:MIME-Version:Content-Transfer-Encoding; bh=81kWb
- RDhrQS8asCxqCI2EipgMxxWEMxCS7PgZwwQA2o=; b=DwpXM2jwTMaVuq5felhbL
- JIqRBP7tZa3TmjEGjwtn1ogekns74SNKTke99phQRc0PcIuiJ/J2qG8u9tdwS9Ul
- V0603aBubTO9TANdKFQ4/9OID1QQT8FqghVPAW1yzYxSmVQrNSyRhUFRJE41wEMv
- jD46fYTfVnEMAnjNHbZZZk=
+ Date:Message-ID:MIME-Version:Content-Transfer-Encoding; bh=djJkC
+ fFsmk9VSWCr7FhmY+NX/56JjLAhIXcy/Qp3HvU=; b=V80ie3c9sF5sljj5258tR
+ gUG9Q8EA1wQh9VIV1AtgpgDD+z8x7Ha/te4o7ntzIDcix3P/jNpajS6c9mZPVlAs
+ CfswLMxQZBZwaw2zrxRRWviQpOo8MyBXNflPi9ICPhXP6U+BSpoISKrGFgAp5PMO
+ X0nGoaXITQevKaTqwNG9mM=
 Received: from whu.edu.cn (unknown [10.1.14.9])
- by app1 (Coremail) with SMTP id Bg4BCgB3hjAizqdpOpQEAg--.30013S2;
- Wed, 04 Mar 2026 14:16:02 +0800 (CST)
+ by app2 (Coremail) with SMTP id Bw4BCgCHUBvv2adpWot_AQ--.2674S2;
+ Wed, 04 Mar 2026 15:06:23 +0800 (CST)
 Received: from localhost.localdomain (unknown [210.73.43.101])
- by mtasvr (Coremail) with SMTP id _____wCnlxwYzqdpUSUYAA--.24598S2;
- Wed, 04 Mar 2026 14:16:02 +0800 (CST)
+ by mtasvr (Coremail) with SMTP id _____wBn5qTf2adp1kAYAA--.23626S2;
+ Wed, 04 Mar 2026 15:06:23 +0800 (CST)
 From: P1erreCashon <2022302111412@whu.edu.cn>
 To: Yipeng Wang <yipeng1.wang@intel.com>,
  =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>,
  Sun Yuechi <sunyuechi@iscas.ac.cn>
 Cc: dev@dpdk.org, P1erreCashon <2022302111412@whu.edu.cn>,
  gong-flying <gongxiaofei24@iscas.ac.cn>
-Subject: [PATCH] efd: lookup with RISC-V vector extension
-Date: Wed,  4 Mar 2026 14:15:49 +0800
-Message-ID: <20260304061550.1109972-1-2022302111412@whu.edu.cn>
+Subject: [PATCH v2] efd: lookup with RISC-V vector extension
+Date: Wed,  4 Mar 2026 15:06:05 +0800
+Message-ID: <20260304070605.1150502-1-2022302111412@whu.edu.cn>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: Bg4BCgB3hjAizqdpOpQEAg--.30013S2
-Authentication-Results: app1; spf=neutral smtp.mail=2022302111412@whu. edu.cn;
+X-CM-TRANSID: Bw4BCgCHUBvv2adpWot_AQ--.2674S2
+Authentication-Results: app2; spf=neutral smtp.mail=2022302111412@whu. edu.cn;
 X-Coremail-Antispam: 1UD129KBjvJXoWxAr45ZryUKr48Gr1rZw1fZwb_yoW7JF1rpF
- WDJFWSyryUJ3W3G3ySvw1UXF1rCFyIyrsFkrZFga4rC3yfZ3s7urs7JryjkFZ8trWxurW7
- Xr45Wr1UWF15Zw7anT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUU9Sb7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
+ WDJFWSyryUJ3W3G3ySvw1UXF1rCFyIyrsFkrZFga4rC3yfZ3s7urs7JryjkFZ8trWxu3y7
+ Xr45Wr1UWF1UZw7anT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUU92b7Iv0xC_Zr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
  cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
- v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vE
- x4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AFwI0_Jr
- v_JF1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF
- 0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E74AGY7Cv6cx26r4xMc
- Ij6xkF7I0En7xvr7AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vI
- r41lc2xSY4AK6svPMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GF4l4I8I3I
- 0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWU
- GVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI
- 0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0
- rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r
- 4UYxBIdaVFxhVjvjDU0xZFpf9x07U-VyxUUUUU=
+ v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
+ 6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
+ 126r1DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
+ 12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x8ErcxFaVAv8VW8Cw
+ Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l
+ c2xSY4AK6svPMxAIw28IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GF4l4I8I3I0E4I
+ kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+ WwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+ 0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+ JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYx
+ BIdaVFxhVjvjDU0xZFpf9x07UzSoJUUUUU=
 X-CM-SenderInfo: qsqsjjyqsriiqursq4lkxovvfxof0/
 X-Mailman-Approved-At: Wed, 04 Mar 2026 16:16:28 +0100
 X-BeenThere: dev@dpdk.org
@@ -165,7 +165,7 @@ index 4dfc0ec9a4..053ee4f232 100644
  	/* Fall-through */
 diff --git a/lib/efd/rte_efd_rvv.h b/lib/efd/rte_efd_rvv.h
 new file mode 100644
-index 0000000000..e8ea6e0343
+index 0000000000..7facefd4ae
 --- /dev/null
 +++ b/lib/efd/rte_efd_rvv.h
 @@ -0,0 +1,64 @@
@@ -190,7 +190,7 @@ index 0000000000..e8ea6e0343
 +		vuint32m1_t vhash_val_b = __riscv_vmv_v_x_u32m1(hash_val_b, vl);
 +		vuint32m1_t vshift = __riscv_vid_v_u32m1(vl);
 +		vuint32m1_t vmask = __riscv_vmv_v_x_u32m1(0x1, vl);
-+		vuint32m1_t vincr = __riscv_vmv_v_x_u32m1(0, vl);
++		vuint32m1_t vincr = __riscv_vmv_v_x_u32m1(4, vl);
 +		for (unsigned int i = 0; i < N; i += vl) {
 +			vuint16mf2_t vhash_idx16 =
 +				__riscv_vle16_v_u16mf2(
