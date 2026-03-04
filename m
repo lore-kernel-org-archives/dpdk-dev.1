@@ -2,61 +2,112 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39FE3EDEC04
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 04:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24FD6D58E4D
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 07:27:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 779C940698;
-	Wed,  4 Mar 2026 05:50:52 +0100 (CET)
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com
- [209.85.214.201])
- by mails.dpdk.org (Postfix) with ESMTP id 449F540A79
- for <dev@dpdk.org>; Wed,  4 Mar 2026 05:50:50 +0100 (CET)
-Received: by mail-pl1-f201.google.com with SMTP id
- d9443c01a7336-2ae502a1dd9so38175905ad.3
- for <dev@dpdk.org>; Tue, 03 Mar 2026 20:50:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20230601; t=1772599849; x=1773204649; darn=dpdk.org;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:from:to:cc:subject:date:message-id:reply-to;
- bh=X7Min2QKqFRZm4nganxd4d3Z+ZrPWJfswhf5J8mBw+E=;
- b=n8Wtc5xxuRVhu0aX/xG6cT7jf6bcUt5CThSJtHEB5VPFYrmyt5LQlmV6UVINTj38wD
- JrxKW9RxljHmUxxkhNdcEq/2LHxKNKJ7L8sctcWfk89Po28kyR/Z+4c6j38M+uIdh5Gi
- PpAcRQwnLqRumfxv8X1IMYw7lab8f3+taRq1Ul53X4/957bhHihxF41531NrIo/ss9wa
- GZ3/uNwmxrKt7PcQrTPoLHPqIn36BkSaNGc8cfGxpTTXZ6zxeuDfMpGinIw5BqWJjz5Z
- 54yDoOZ1bPK/x4Lb5CyigeJvuzKULiH972kZ5ziIPvGPxDrnh+H0bY+MHmaaZjOAsUW7
- iVVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772599849; x=1773204649;
- h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
- :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=X7Min2QKqFRZm4nganxd4d3Z+ZrPWJfswhf5J8mBw+E=;
- b=qBH4cHhcLqKVFw8+CFfXadqopojPE1PcjM/HSjZbJyC5apFIphXpQcowzOY+IDAUbX
- /AvrwuxVzD6Yk8ayB21Nz00K7chEpuzIb+TvIsI3waQcd+6YLDUyMB//9WwCDyWymr39
- KNyZZ4Ynx0i+YocpZD01yuBSBcmwwZUMAj4shXrNK3rkfnbxwCMxnjNgTJltm1Zlk376
- 7GLRd0yvOOPC8da8Vaig3KReuIs8pfPWZnUBYxNgAq4bol3VTwX2v6IsY5q6gjyPG8Li
- JnQ64zy7V5U/XHq7IEa/Msu3nVUteAgaj4f07ijUwSd/UllGq1sdbewwWm6Q7+K28bV4
- +3lA==
-X-Gm-Message-State: AOJu0YyDfYrvc96YIZLzGsSCZixOr8253GXoTmwiCmLJZuSwxWiFVWbX
- lMs7qN8ObsL/8cgQSSshU5Hn3cZ5+yZ4fH6jAA9jECFKwpZTzjGytqYkHHSEJysYPt7nGfGRrlh
- KHnbgzdMm9jhNmOrNNUjI/wXC+w==
-X-Received: from pjbha10.prod.google.com ([2002:a17:90a:f3ca:b0:359:9d71:88ef])
- (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:d44f:b0:354:a09a:1016 with SMTP id
- 98e67ed59e1d1-359a6a9f53dmr824830a91.30.1772599849234; 
- Tue, 03 Mar 2026 20:50:49 -0800 (PST)
-Date: Wed,  4 Mar 2026 04:50:33 +0000
-In-Reply-To: <20260304045033.1340269-1-jtranoleary@google.com>
-Mime-Version: 1.0
-References: <20260304014624.1297874-1-jtranoleary@google.com>
- <20260304045033.1340269-1-jtranoleary@google.com>
-X-Mailer: git-send-email 2.53.0.473.g4a7958ca14-goog
-Message-ID: <20260304045033.1340269-5-jtranoleary@google.com>
-Subject: [PATCH v4 4/4] net/gve: add rte flow API integration
-From: "Jasper Tran O'Leary" <jtranoleary@google.com>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>, 
- Vee Agarwal <veethebee@google.com>, Joshua Washington <joshwash@google.com>
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 1199B40269;
+	Wed,  4 Mar 2026 08:27:03 +0100 (CET)
+Received: from PH7PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11010021.outbound.protection.outlook.com [52.101.201.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 1EAB140265
+ for <dev@dpdk.org>; Wed,  4 Mar 2026 08:27:01 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KtW9AFkjrRm3aXlMCHdQJ6yjnGGGJXInktG5xu7HLHw+5giR/YE3Je2JH/e47UCt7gm+LS6ozmtNIcQ2Vkg6uh36/ahYEvjAsJFIPl1KS2nKXbGlD75l8CWRBFYVlX9J8llJ5nAk/lhvhMIBvbCgklyhZ+0JFwhWaeSa0y0w8R0oVRznosBozI5mBeiYcNRzgShMFXEYHZDkK3XSP9Wpo0UTUwsndOn/7ZYOHs5Nvg7AjM1BW7jBlPOgTuVTmOKw9vubaSJOGJzQ+65v1Yg4ZKa20ZbWLS+NLluVzSr+Ja+/SY36tEKnIHlMyONFeIT2LclvCPLtky2n3aveM+SZBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PtB92AddUasJY5AvSyNQBJqrpQtZU/tfZ6D1GJWMWK0=;
+ b=jIlTSfN/rfMnLY53OToEBsLfUxK9BX1s4KfGYtL1ayIMxGYe0RxypmEUcV0KlQViRQu0GceVWYkB7mdAhr9w3l0tz44qa2mgHTrelIP75XNn2HuMHrIjtiYlBDgDFfd5QbF6/7awxOyK8cmT2kEt8bSN6VbYu71Fv2JAlF0BFV/fkInaB3lWW7hELaJ1+sBWtKOXs1PTrjrq3eQy4dkNiHRupuFNWqf5BLW0J6ceqJ/27C6CQJlSXpaAd0AFyOok3ouDnaAA4BFQ+07J3+HEFYrdbzkp7DgRm0OhksfOwAeRO8pfXyq8RnPqi0i4b8tbOKDeua/6F164je7fOBNdLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PtB92AddUasJY5AvSyNQBJqrpQtZU/tfZ6D1GJWMWK0=;
+ b=PwAdKvQdmBsULm4/PakTXJ0TvJJfOrZi0ScMNGYSdp/H360wRFaIZ1CIJ3/8W5+v5LwKX4myvcADvgcNuJ9Sxf0uiOMasLiJaXExd9FRrYv4kWXYrfUpneNqHxpPbBYI/AsZYYOv18FgIvZkGrL3MVXvhtlzDyzK4mEw2ebB2SiZxekrByzrbHWqdd9AdSaEeZHb9p5bZ0I+hU3HX+IQtZ+U1WavvbXMSvHjHorPSJpuygFUJOnwTqYQs3rsf0mvp9MPkKPAbRDCCUd0C7uJ6m8XrzI/GFTIR9QZXJdwhwdzkc7LSdlPB+AXJ0jV/VPfjer4SH0HgPobiMNSvNNfwg==
+Received: from IA4PR12MB9763.namprd12.prod.outlook.com (2603:10b6:208:55a::20)
+ by IA1PR12MB8077.namprd12.prod.outlook.com (2603:10b6:208:3f4::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.22; Wed, 4 Mar
+ 2026 07:26:58 +0000
+Received: from IA4PR12MB9763.namprd12.prod.outlook.com
+ ([fe80::3d3c:bcd3:d413:7f7b]) by IA4PR12MB9763.namprd12.prod.outlook.com
+ ([fe80::3d3c:bcd3:d413:7f7b%3]) with mapi id 15.20.9678.016; Wed, 4 Mar 2026
+ 07:26:57 +0000
+From: Bing Zhao <bingz@nvidia.com>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>, Slava Ovsiienko
+ <viacheslavo@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>
+Subject: RE: [PATCH 0/5] net/mlx5: add BlueField socket direct support
+Thread-Topic: [PATCH 0/5] net/mlx5: add BlueField socket direct support
+Thread-Index: AQHcqjin/PGcmm9Q1Ue9+noJOSlnQbWd+7kA
+Date: Wed, 4 Mar 2026 07:26:57 +0000
+Message-ID: <IA4PR12MB976381AA36EABE0C20DD5030D07CA@IA4PR12MB9763.namprd12.prod.outlook.com>
+References: <20260302113443.16648-1-dsosnowski@nvidia.com>
+In-Reply-To: <20260302113443.16648-1-dsosnowski@nvidia.com>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA4PR12MB9763:EE_|IA1PR12MB8077:EE_
+x-ms-office365-filtering-correlation-id: ac427f98-b9cd-4a27-3020-08de79bf6b29
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|38070700021|7053199007; 
+x-microsoft-antispam-message-info: sQkd8z7vxhODMM1IRJLeXeYjmAkmDt3r8NFQ70vXJJ33Op/yRKE+mxzsNYeCo1u/vWjkbBFk/4j0OaubchN9/kLDfxxhbA+hp7qk/TE0Id/3H1gI/IBNOmuy1OltL540Fprs6O5xaktR+d9gFxfg7exODYrC2ZdVxO00ejP72RjHRZIquP5NOP0PSzTgB/vgUr1XLjnI9T3PpMRd3yVsr7uyfoMYPo6EvzV5ngG3+Z7yossFTpfrqXMo1SZzWt6UogKb4lDwPV8q/svFVJOqqz6CEPPFaN8Xz78kYcJGXtD1zZ92qWqib4ZjhMGZkRYRleb8T0DTZAVc69z1LZcV5vDmsaAbs+zdKglrh79JCrqAk0hZMywVZ9vYN5Ajk21fbNqcv/sjxTtpzw5izMaLsJIjquDWhrBLOy7S2wxZplegeufdG6NTXyakqUExz3GhSz/9cFMsQ2I2oo48zv0oUgWb0Vz+pvhrifcpBNlhId9vp85t2crwiFW9TPDpYKbhlygInJYnnK/Lmg3JH2uVT5nGaXk71ceWQizKsJBrPX5YUlKzj+/DUPxnFnmVFvl9pX9YyJ6DpGfjQWAkHpunBgjIfDJ0Hu0rN68/Vqpy9j2ASMXXkGx0SBgdSaLoC3/NHY5seRjRenHP9fFMC4IjFLRbktFti5ec6CgkbegM4Xj0JOCyksrYi61kpTcXXKIMeNfqyAinrNMHhRKheIDyuEC02lgNIQW0YCd1A0S7jBqtP3Ohj5lGvogId+OaCK2W6RuZHtbtH8KBozFHU8u1Q/Tg227F45IKcHxzY656eNc=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA4PR12MB9763.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700021)(7053199007); DIR:OUT;
+ SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zY3oBRZXLfFZ7uK0ZGGJ/vGekoe0GZ9yUoAB0Wbwrt7DgIQ344UlASGPilvG?=
+ =?us-ascii?Q?bDEo4xwR0ivL1kNHuA7/swmepzcWxwGKbPpVudqedWt+ovpbqX/QLYYtSWpX?=
+ =?us-ascii?Q?FAi988ZBvQ+hqNgHkAtpfaDxf3L/l7zeChit+HRf2NJSQIlS5qWly4vzXvws?=
+ =?us-ascii?Q?iZMQQU0dpNeQ7evpnXGWMWjDQ3GXwoBRfOiVuTNNFB3bVumKyEyTQhUbpHLw?=
+ =?us-ascii?Q?7VehxEE95oFW1qiAQ7+Z5WSM3j0Pam3TJ66Iq72TRGARZ2bq4gGPJrH7NrRp?=
+ =?us-ascii?Q?cM21/5IqBjPlqERVmb6LpuJeTghKk3xqYI5uVSH/QGZFGAsrJKMv4Q8FrzgV?=
+ =?us-ascii?Q?FXOLtl8mO35fB2KUpmTggwsHgaezsg7hX1S5TNOiBOsZeQTLxI/LypfMA46r?=
+ =?us-ascii?Q?O/CV9zX1m9zZGz5jKq7CnIUVkekTWLGmwOfMItWVQdDdm1JUXZP+BKoiZ+wV?=
+ =?us-ascii?Q?kfRia+t48c8kjFKrt5VgmsmwVXp3R2vU5ALAOUNnNhJyZ+sx3cIMFuia3d0t?=
+ =?us-ascii?Q?zrpl1A6Hca5LzOMQSncetoKuyD+cXw1LJ05YLbTqJkx1huB5EDq1QKvgbEL0?=
+ =?us-ascii?Q?styfybmH0O2ca9/vMV3Rv8rEgIZyyrg7m0eMbNRUHDqUjI3259wMCrD9/O/o?=
+ =?us-ascii?Q?Al9rFMWQO8j9edPt3hhMv8Z4HG3LC4wK67xd5YRCfnXZbKJ8CSkWZMowTYy/?=
+ =?us-ascii?Q?i8kGh9u9mk//wpDAnrYViJumALLIRH4ckpDKSAXThGbLZQMhUtA6NYdPRk8j?=
+ =?us-ascii?Q?1wHgATehV9szyC9m/IXiNmcgkKeeClefUb8f4g2w3hoLvwMzpti3EHZPWX7Z?=
+ =?us-ascii?Q?EQaDFQQkv+kf7RmDUpz//e+15TOjkETAiBPNiLdFIt6AX4XXzTZx4PouCAsY?=
+ =?us-ascii?Q?WtBsZsQjJWiGkw+q1G0MkvfKPB6wyFtH37nbs9oU5XcqjU4cx1JDFjavqpIB?=
+ =?us-ascii?Q?XyVkZULOBpk4RRILv64Y9qlAf+oHzOQ+a9gBiXSF0ppAB1aH2DifZmAAn5In?=
+ =?us-ascii?Q?ZVqw+olXYBOeii6giKUmJ7k3Ef3gQz/Sjsikunizo81CzjzfxKWwKKSwDZAz?=
+ =?us-ascii?Q?cBaJplPd5TaSPQC0TKp16vBKiAC34pmqAEZGYubHgPfFUYOOB3b02tbCTtx1?=
+ =?us-ascii?Q?hDCT0U4HwYNS1T9BkRuWldJlImX44w4PYibjDtxNg4Cef+lfDaDqlT+66+1Y?=
+ =?us-ascii?Q?9B4BkgwmKGxc3W2cck+xPKJd5AO4TZIMSpFULPcdXd1D0qmQgZZ4LSGA2oSb?=
+ =?us-ascii?Q?E7vEkza0A0VbT06dtGdXYHhv6c2vFJOVreZPgXPc9qAc4czSs+5aFHkt8zVt?=
+ =?us-ascii?Q?g90gZsT+SPQKPv01UNtLv7fxf5dO8Hp/umYcQuMp40vwIDVdDcO2S3xe8G9T?=
+ =?us-ascii?Q?BPEDMBtBbDZu/sH7d/OhBGC2DSY3GSadv/Sckxeawr78Fo6sNPOC0z3q0hne?=
+ =?us-ascii?Q?LxfNR1nNxsQHq03V0cjt+SzwnxunSm67l/rjJ19scHdyNUyO6P1ErSRb74XJ?=
+ =?us-ascii?Q?pckLMRaJnwIJcqc1GdKg/V+bHplJ1qHi7T65Vgph6eDc95f76BghlEG3Nq9R?=
+ =?us-ascii?Q?OzyO6waLaKEwpsGPxdxDA5VLywgnpk86/VqoOsmByXWXQXnykwX/wj0/reaZ?=
+ =?us-ascii?Q?QAgcX825So9YVLocGxT7phSKPqO/54q+PoqN1+g5ewnGK7bbD282HALQ5sgI?=
+ =?us-ascii?Q?z2XqtADVVeXA443ZQ2C9vv9qiHqWdZikEN3hwlv9pkkQqyb/?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR12MB9763.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac427f98-b9cd-4a27-3020-08de79bf6b29
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2026 07:26:57.6236 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: FC5XJxYbX10spoOGDXGCxsCVlqVv5WGD/Ub3Axht5jZDz9R51rJP+OG4nNXMkPZCbw+hB8QualuRXxt3zWu81A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8077
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,1042 +121,119 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement driver callbacks for the following rte flow operations:
-create, destroy, and flush. This change enables receive flow steering
-(RFS) for n-tuple based flow rules for the gve driver.
+Hi,
 
-The implementation supports matching ingress IPv4/IPv6 traffic combined
-with TCP, UDP, SCTP, ESP, or AH protocols. Supported fields for
-matching include IP source/destination addresses, L4 source/destination
-ports (for TCP/UDP/SCTP), and SPI (for ESP/AH). The only supported
-action is RTE_FLOW_ACTION_TYPE_QUEUE, which steers matching packets to
-a specified rx queue.
+> -----Original Message-----
+> From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+> Sent: Monday, March 2, 2026 7:35 PM
+> To: Slava Ovsiienko <viacheslavo@nvidia.com>; Bing Zhao
+> <bingz@nvidia.com>; Ori Kam <orika@nvidia.com>; Suanming Mou
+> <suanmingm@nvidia.com>; Matan Azrad <matan@nvidia.com>
+> Cc: dev@dpdk.org; Raslan Darawsheh <rasland@nvidia.com>
+> Subject: [PATCH 0/5] net/mlx5: add BlueField socket direct support
+>=20
+> Goal of this patchset is to prepare probing logic in mlx5 networking PMD
+> for support of BlueField DPUs with Socket Direct.
+> In such use case, BlueField DPU will be connected through PCI to 2
+> different CPUs on the host.
+> Each host CPU sees 2 PFs.
+> Each PF is connected to one of the physical ports.
+>=20
+>     +--------+               +--------+
+>     |CPU 0   |               |CPU 1   |
+>     |        |               |        |
+>     |    pf0 |               |    pf0 |
+>     |        |               |        |
+>     |    pf1 |               |    pf1 |
+>     |        |               |        |
+>     +---+----+               +-+------+
+>         |                      |
+>         |                      |
+>         |                      |
+>         +----+           +-----+
+>              |           |
+>              |           |
+>              |           |
+>          +---+-----------+----+
+>          |BF3 DPU             |
+>          |                    |
+>          | pf0hpf      pf1hpf |
+>          |                    |
+>          | pf2hpf      pf3hpf |
+>          |                    |
+>          |  p0          p1    |
+>          +------+------+------+
+>          | phy0 |      | phy1 |
+>          +------+      +------+
+>=20
+>=20
+> On BlueField DPU ARM Linux netdevs map to PFs/ports as follows:
+>=20
+> - p0 and p1 to physical ports 0 and 1 respectively,
+> - pf0hpf and pf2hpf to CPU0 pf0 and CPU1 pf0 respectively,
+> - pf1hpf and pf3hpf to CPU0 pf1 and CPU1 pf1 respectively.
+>=20
+> There are several possible ways to use such a setup:
+>=20
+> - Single E-Switch (embedded switch) per each CPU PF to
+>   physical port connection.
+> - Shared E-Switch for related CPU PFs:
+>     - For example, both pf0hpf and pf2hpf are in the same E-Switch domain=
+.
+> - Multiport E-Switch.
+>     - All host PFs and physical ports are in the same E-Switch domain.
+>=20
+> When a DPDK application would be run on BlueField ARM it should be
+> possible for application to probe all the relevant representors
+> (corresponding to available netdevs).
+> Using testpmd syntax users will be able to do the following:
+>=20
+>     # Probe both physical ports
+>     port attach 03:00.0,dv_flow_en=3D2,representor=3Dpf0-1
+>=20
+>     # Probe both host PF 0 from CPU 0
+>     # (VF representor index -1 is special encoding for host PF)
+>     port attach 03:00.0,dv_flow_en=3D2,representor=3Dpf0vf65535
+>     # or with explicit controller index
+>     port attach 03:00.0,dv_flow_en=3D2,representor=3Dc1pf0vf65535
+>=20
+>     # Probe both host PF 0 from CPU 1
+>     port attach 03:00.0,dv_flow_en=3D2,representor=3Dpf2vf65535
+>     # or with explicit controller index
+>     port attach 03:00.0,dv_flow_en=3D2,representor=3Dc2pf2vf65535
+>=20
+> Patches overview:
+>=20
+> - Patch 1 and 2 - Fixes bond detection logic.
+>   Previously mlx5 PMD relied on "bond" appearing in IB device name
+>   which is not always the case. Moved to sysfs checks for bonding devices=
+.
+> - Patch 3 - Add calculation of number of physical ports and host PFs.
+>   This information will be used to determine
+>   how DPDK port name is generated, instead of relying on
+>   specific setup type.
+> - Patch 4 - Change "representor to IB port" matching logic to directly
+>   compare ethdev devargs values to IB port info.
+>   Added optional matching on controller index.
+> - Patch 5 - Make DPDK port name generation dynamic and dependent on
+>   types/number of ports, instead of specific setup type.
+>   This allows more generic probing, independent of setup topology.
+>=20
+> Dariusz Sosnowski (5):
+>   common/mlx5: fix bond check
+>   net/mlx5: fix bond check
+>   net/mlx5: calculate number of uplinks and host PFs
+>   net/mlx5: compare representors explicitly
+>   net/mlx5: build port name dynamically
+>=20
+>  drivers/common/mlx5/linux/mlx5_common_os.c |  86 ++++-
+>  drivers/common/mlx5/linux/mlx5_common_os.h |   9 +
+>  drivers/net/mlx5/linux/mlx5_os.c           | 356 ++++++++++++++-------
+>  drivers/net/mlx5/mlx5.h                    |   2 +
+>  4 files changed, 338 insertions(+), 115 deletions(-)
+>=20
+> --
+> 2.47.3
 
-Co-developed-by: Vee Agarwal <veethebee@google.com>
-Signed-off-by: Vee Agarwal <veethebee@google.com>
-Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
-Reviewed-by: Joshua Washington <joshwash@google.com>
----
- doc/guides/nics/features/gve.ini       |  12 +
- doc/guides/nics/gve.rst                |  27 +
- doc/guides/rel_notes/release_26_03.rst |   1 +
- drivers/net/gve/base/gve.h             |   3 +-
- drivers/net/gve/gve_ethdev.c           |  83 +++-
- drivers/net/gve/gve_ethdev.h           |  43 ++
- drivers/net/gve/gve_flow_rule.c        | 658 +++++++++++++++++++++++++
- drivers/net/gve/gve_flow_rule.h        |   6 +
- drivers/net/gve/meson.build            |   1 +
- 9 files changed, 832 insertions(+), 2 deletions(-)
- create mode 100644 dpdk/drivers/net/gve/gve_flow_rule.c
-
-diff --git a/doc/guides/nics/features/gve.ini b/doc/guides/nics/features/gve.ini
-index ed040a0..89c97fd 100644
---- a/doc/guides/nics/features/gve.ini
-+++ b/doc/guides/nics/features/gve.ini
-@@ -19,3 +19,15 @@ Linux                = Y
- x86-32               = Y
- x86-64               = Y
- Usage doc            = Y
-+
-+[rte_flow items]
-+ah                   = Y
-+esp                  = Y
-+ipv4                 = Y
-+ipv6                 = Y
-+sctp                 = Y
-+tcp                  = Y
-+udp                  = Y
-+
-+[rte_flow actions]
-+queue                = Y
-diff --git a/doc/guides/nics/gve.rst b/doc/guides/nics/gve.rst
-index 6b4d1f7..8367ca9 100644
---- a/doc/guides/nics/gve.rst
-+++ b/doc/guides/nics/gve.rst
-@@ -103,6 +103,33 @@ the redirection table will be available for querying upon initial hash configura
- When performing redirection table updates,
- it is possible to update individual table entries.
- 
-+Flow Steering
-+^^^^^^^^^^^^^
-+
-+The driver supports receive flow steering (RFS) via the standard ``rte_flow``
-+API. This allows applications to steer traffic to specific queues based on
-+5-tuple matching. 3-tuple matching may be supported in future releases.
-+
-+**Supported Patterns**
-+
-+L3 Protocols
-+  IPv4/IPv6 source and destination addresses.
-+L4 Protocols
-+  TCP/UDP/SCTP source and destination ports.
-+Security Protocols
-+  ESP/AH SPI.
-+
-+**Supported Actions**
-+
-+- ``RTE_FLOW_ACTION_TYPE_QUEUE``: Steer packets to a specific Rx queue.
-+
-+**Limitations**
-+
-+- Flow steering operations are only supported in the primary process.
-+- Only ingress flow rules are allowed.
-+- Flow priorities are not supported (must be 0).
-+- Masking is limited to full matches i.e. 0x00...0 or 0xFF...F.
-+
- Application-Initiated Reset
- ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
- The driver allows an application to reset the gVNIC device.
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 1855d90..b643809 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -78,6 +78,7 @@ New Features
- * **Updated Google Virtual Ethernet (gve) driver.**
- 
-   * Added application-initiated device reset.
-+  * Added support for receive flow steering.
- 
- * **Updated Intel iavf driver.**
- 
-diff --git a/drivers/net/gve/base/gve.h b/drivers/net/gve/base/gve.h
-index 99514cb..18363fa 100644
---- a/drivers/net/gve/base/gve.h
-+++ b/drivers/net/gve/base/gve.h
-@@ -50,7 +50,8 @@ enum gve_state_flags_bit {
- 	GVE_PRIV_FLAGS_ADMIN_QUEUE_OK		= 1,
- 	GVE_PRIV_FLAGS_DEVICE_RESOURCES_OK	= 2,
- 	GVE_PRIV_FLAGS_DEVICE_RINGS_OK		= 3,
--	GVE_PRIV_FLAGS_NAPI_ENABLED		= 4,
-+	GVE_PRIV_FLAGS_FLOW_SUBSYSTEM_OK	= 4,
-+	GVE_PRIV_FLAGS_NAPI_ENABLED		= 5,
- };
- 
- enum gve_rss_hash_algorithm {
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index 5912fec..6ce3ef3 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -510,6 +510,49 @@ gve_free_ptype_lut_dqo(struct gve_priv *priv)
- 	}
- }
- 
-+static int
-+gve_setup_flow_subsystem(struct gve_priv *priv)
-+{
-+	int err;
-+
-+	priv->flow_rule_bmp_size =
-+			rte_bitmap_get_memory_footprint(priv->max_flow_rules);
-+	priv->avail_flow_rule_bmp_mem = rte_zmalloc("gve_flow_rule_bmp",
-+			priv->flow_rule_bmp_size, 0);
-+	if (!priv->avail_flow_rule_bmp_mem) {
-+		PMD_DRV_LOG(ERR, "Failed to alloc bitmap for flow rules.");
-+		err = -ENOMEM;
-+		goto free_flow_rule_bmp;
-+	}
-+
-+	err = gve_flow_init_bmp(priv);
-+	if (err) {
-+		PMD_DRV_LOG(ERR, "Failed to initialize flow rule bitmap.");
-+		goto free_flow_rule_bmp;
-+	}
-+
-+	TAILQ_INIT(&priv->active_flows);
-+	gve_set_flow_subsystem_ok(priv);
-+
-+	return 0;
-+
-+free_flow_rule_bmp:
-+	gve_flow_free_bmp(priv);
-+	return err;
-+}
-+
-+static void
-+gve_teardown_flow_subsystem(struct gve_priv *priv)
-+{
-+	pthread_mutex_lock(&priv->flow_rule_lock);
-+
-+	gve_clear_flow_subsystem_ok(priv);
-+	gve_flow_free_bmp(priv);
-+	gve_free_flow_rules(priv);
-+
-+	pthread_mutex_unlock(&priv->flow_rule_lock);
-+}
-+
- static void
- gve_teardown_device_resources(struct gve_priv *priv)
- {
-@@ -519,7 +562,9 @@ gve_teardown_device_resources(struct gve_priv *priv)
- 	if (gve_get_device_resources_ok(priv)) {
- 		err = gve_adminq_deconfigure_device_resources(priv);
- 		if (err)
--			PMD_DRV_LOG(ERR, "Could not deconfigure device resources: err=%d", err);
-+			PMD_DRV_LOG(ERR,
-+				"Could not deconfigure device resources: err=%d",
-+				err);
- 	}
- 
- 	gve_free_ptype_lut_dqo(priv);
-@@ -543,6 +588,11 @@ gve_dev_close(struct rte_eth_dev *dev)
- 			PMD_DRV_LOG(ERR, "Failed to stop dev.");
- 	}
- 
-+	if (gve_get_flow_subsystem_ok(priv))
-+		gve_teardown_flow_subsystem(priv);
-+
-+	pthread_mutex_destroy(&priv->flow_rule_lock);
-+
- 	gve_free_queues(dev);
- 	gve_teardown_device_resources(priv);
- 	gve_adminq_free(priv);
-@@ -566,6 +616,9 @@ gve_dev_reset(struct rte_eth_dev *dev)
- 	}
- 
- 	/* Tear down all device resources before re-initializing. */
-+	if (gve_get_flow_subsystem_ok(priv))
-+		gve_teardown_flow_subsystem(priv);
-+
- 	gve_free_queues(dev);
- 	gve_teardown_device_resources(priv);
- 	gve_adminq_free(priv);
-@@ -1094,6 +1147,18 @@ gve_rss_reta_query(struct rte_eth_dev *dev,
- 	return 0;
- }
- 
-+static int
-+gve_flow_ops_get(struct rte_eth_dev *dev, const struct rte_flow_ops **ops)
-+{
-+	struct gve_priv *priv = dev->data->dev_private;
-+
-+	if (!gve_get_flow_subsystem_ok(priv))
-+		return -ENOTSUP;
-+
-+	*ops = &gve_flow_ops;
-+	return 0;
-+}
-+
- static const struct eth_dev_ops gve_eth_dev_ops = {
- 	.dev_configure        = gve_dev_configure,
- 	.dev_start            = gve_dev_start,
-@@ -1109,6 +1174,7 @@ static const struct eth_dev_ops gve_eth_dev_ops = {
- 	.tx_queue_start       = gve_tx_queue_start,
- 	.rx_queue_stop        = gve_rx_queue_stop,
- 	.tx_queue_stop        = gve_tx_queue_stop,
-+	.flow_ops_get         = gve_flow_ops_get,
- 	.link_update          = gve_link_update,
- 	.stats_get            = gve_dev_stats_get,
- 	.stats_reset          = gve_dev_stats_reset,
-@@ -1136,6 +1202,7 @@ static const struct eth_dev_ops gve_eth_dev_ops_dqo = {
- 	.tx_queue_start       = gve_tx_queue_start_dqo,
- 	.rx_queue_stop        = gve_rx_queue_stop_dqo,
- 	.tx_queue_stop        = gve_tx_queue_stop_dqo,
-+	.flow_ops_get         = gve_flow_ops_get,
- 	.link_update          = gve_link_update,
- 	.stats_get            = gve_dev_stats_get,
- 	.stats_reset          = gve_dev_stats_reset,
-@@ -1303,6 +1370,14 @@ gve_init_priv(struct gve_priv *priv, bool skip_describe_device)
- 		    priv->max_nb_txq, priv->max_nb_rxq);
- 
- setup_device:
-+	if (priv->max_flow_rules) {
-+		err = gve_setup_flow_subsystem(priv);
-+		if (err)
-+			PMD_DRV_LOG(WARNING,
-+				    "Failed to set up flow subsystem: err=%d, flow steering will be disabled.",
-+				    err);
-+	}
-+
- 	err = gve_setup_device_resources(priv);
- 	if (!err)
- 		return 0;
-@@ -1318,6 +1393,7 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
- 	int max_tx_queues, max_rx_queues;
- 	struct rte_pci_device *pci_dev;
- 	struct gve_registers *reg_bar;
-+	pthread_mutexattr_t mutexattr;
- 	rte_be32_t *db_bar;
- 	int err;
- 
-@@ -1377,6 +1453,11 @@ gve_dev_init(struct rte_eth_dev *eth_dev)
- 
- 	eth_dev->data->mac_addrs = &priv->dev_addr;
- 
-+	pthread_mutexattr_init(&mutexattr);
-+	pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);
-+	pthread_mutex_init(&priv->flow_rule_lock, &mutexattr);
-+	pthread_mutexattr_destroy(&mutexattr);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 4e07ca8..2d570d0 100644
---- a/drivers/net/gve/gve_ethdev.h
-+++ b/drivers/net/gve/gve_ethdev.h
-@@ -9,6 +9,8 @@
- #include <ethdev_pci.h>
- #include <rte_ether.h>
- #include <rte_pci.h>
-+#include <pthread.h>
-+#include <rte_bitmap.h>
- 
- #include "base/gve.h"
- 
-@@ -252,6 +254,13 @@ struct gve_rx_queue {
- 	uint8_t is_gqi_qpl;
- };
- 
-+struct gve_flow {
-+	uint32_t rule_id;
-+	TAILQ_ENTRY(gve_flow) list_handle;
-+};
-+
-+extern const struct rte_flow_ops gve_flow_ops;
-+
- struct gve_priv {
- 	struct gve_irq_db *irq_dbs; /* array of num_ntfy_blks */
- 	const struct rte_memzone *irq_dbs_mz;
-@@ -334,7 +343,13 @@ struct gve_priv {
- 	struct gve_rss_config rss_config;
- 	struct gve_ptype_lut *ptype_lut_dqo;
- 
-+	/* Flow rule management */
- 	uint32_t max_flow_rules;
-+	uint32_t flow_rule_bmp_size;
-+	struct rte_bitmap *avail_flow_rule_bmp; /* Tracks available rule IDs (1 = available) */
-+	void *avail_flow_rule_bmp_mem; /* Backing memory for the bitmap */
-+	pthread_mutex_t flow_rule_lock; /* Lock for bitmap and tailq access */
-+	TAILQ_HEAD(, gve_flow) active_flows;
- };
- 
- static inline bool
-@@ -407,6 +422,34 @@ gve_clear_device_rings_ok(struct gve_priv *priv)
- 				&priv->state_flags);
- }
- 
-+static inline bool
-+gve_get_flow_subsystem_ok(struct gve_priv *priv)
-+{
-+	bool ret;
-+
-+	ret = !!rte_bit_relaxed_get32(GVE_PRIV_FLAGS_FLOW_SUBSYSTEM_OK,
-+				      &priv->state_flags);
-+	rte_atomic_thread_fence(rte_memory_order_acquire);
-+
-+	return ret;
-+}
-+
-+static inline void
-+gve_set_flow_subsystem_ok(struct gve_priv *priv)
-+{
-+	rte_atomic_thread_fence(rte_memory_order_release);
-+	rte_bit_relaxed_set32(GVE_PRIV_FLAGS_FLOW_SUBSYSTEM_OK,
-+			      &priv->state_flags);
-+}
-+
-+static inline void
-+gve_clear_flow_subsystem_ok(struct gve_priv *priv)
-+{
-+	rte_atomic_thread_fence(rte_memory_order_release);
-+	rte_bit_relaxed_clear32(GVE_PRIV_FLAGS_FLOW_SUBSYSTEM_OK,
-+				&priv->state_flags);
-+}
-+
- int
- gve_rx_queue_setup(struct rte_eth_dev *dev, uint16_t queue_id, uint16_t nb_desc,
- 		   unsigned int socket_id, const struct rte_eth_rxconf *conf,
-diff --git a/drivers/net/gve/gve_flow_rule.c b/drivers/net/gve/gve_flow_rule.c
-new file mode 100644
-index 0000000..1266e19
---- /dev/null
-+++ b/drivers/net/gve/gve_flow_rule.c
-@@ -0,0 +1,658 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(C) 2026 Google LLC
-+ */
-+
-+#include <rte_flow.h>
-+#include <rte_flow_driver.h>
-+#include "base/gve_adminq.h"
-+#include "gve_ethdev.h"
-+
-+static int
-+gve_validate_flow_attr(const struct rte_flow_attr *attr,
-+		       struct rte_flow_error *error)
-+{
-+	if (attr == NULL) {
-+		rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ATTR, NULL,
-+				"Invalid flow attribute");
-+		return -EINVAL;
-+	}
-+	if (attr->egress || attr->transfer) {
-+		rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ATTR, attr,
-+				"Only ingress is supported");
-+		return -EINVAL;
-+	}
-+	if (!attr->ingress) {
-+		rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ATTR_INGRESS, attr,
-+				"Ingress attribute must be set");
-+		return -EINVAL;
-+	}
-+	if (attr->priority != 0) {
-+		rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY, attr,
-+				"Priority levels are not supported");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static void
-+gve_parse_ipv4(const struct rte_flow_item *item,
-+	       struct gve_flow_rule_params *rule)
-+{
-+	if (item->spec) {
-+		const struct rte_flow_item_ipv4 *spec = item->spec;
-+		const struct rte_flow_item_ipv4 *mask =
-+			item->mask ? item->mask : &rte_flow_item_ipv4_mask;
-+
-+		rule->key.src_ip[0] = spec->hdr.src_addr;
-+		rule->key.dst_ip[0] = spec->hdr.dst_addr;
-+		rule->mask.src_ip[0] = mask->hdr.src_addr;
-+		rule->mask.dst_ip[0] = mask->hdr.dst_addr;
-+	}
-+}
-+
-+static void
-+gve_parse_ipv6(const struct rte_flow_item *item,
-+	       struct gve_flow_rule_params *rule)
-+{
-+	if (item->spec) {
-+		const struct rte_flow_item_ipv6 *spec = item->spec;
-+		const struct rte_flow_item_ipv6 *mask =
-+			item->mask ? item->mask : &rte_flow_item_ipv6_mask;
-+		const __be32 *src_ip = (const __be32 *)&spec->hdr.src_addr;
-+		const __be32 *src_mask = (const __be32 *)&mask->hdr.src_addr;
-+		const __be32 *dst_ip = (const __be32 *)&spec->hdr.dst_addr;
-+		const __be32 *dst_mask = (const __be32 *)&mask->hdr.dst_addr;
-+		int i;
-+
-+		/*
-+		 * The device expects IPv6 addresses as an array of 4 32-bit words
-+		 * in reverse word order (the MSB word at index 3 and the LSB word
-+		 * at index 0). We must reverse the DPDK network byte order array.
-+		 */
-+		for (i = 0; i < 4; i++) {
-+			rule->key.src_ip[3 - i] = src_ip[i];
-+			rule->key.dst_ip[3 - i] = dst_ip[i];
-+			rule->mask.src_ip[3 - i] = src_mask[i];
-+			rule->mask.dst_ip[3 - i] = dst_mask[i];
-+		}
-+	}
-+}
-+
-+static void
-+gve_parse_udp(const struct rte_flow_item *item,
-+	      struct gve_flow_rule_params *rule)
-+{
-+	if (item->spec) {
-+		const struct rte_flow_item_udp *spec = item->spec;
-+		const struct rte_flow_item_udp *mask =
-+			item->mask ? item->mask : &rte_flow_item_udp_mask;
-+
-+		rule->key.src_port = spec->hdr.src_port;
-+		rule->key.dst_port = spec->hdr.dst_port;
-+		rule->mask.src_port = mask->hdr.src_port;
-+		rule->mask.dst_port = mask->hdr.dst_port;
-+	}
-+}
-+
-+static void
-+gve_parse_tcp(const struct rte_flow_item *item,
-+	      struct gve_flow_rule_params *rule)
-+{
-+	if (item->spec) {
-+		const struct rte_flow_item_tcp *spec = item->spec;
-+		const struct rte_flow_item_tcp *mask =
-+			item->mask ? item->mask : &rte_flow_item_tcp_mask;
-+
-+		rule->key.src_port = spec->hdr.src_port;
-+		rule->key.dst_port = spec->hdr.dst_port;
-+		rule->mask.src_port = mask->hdr.src_port;
-+		rule->mask.dst_port = mask->hdr.dst_port;
-+	}
-+}
-+
-+static void
-+gve_parse_sctp(const struct rte_flow_item *item,
-+	       struct gve_flow_rule_params *rule)
-+{
-+	if (item->spec) {
-+		const struct rte_flow_item_sctp *spec = item->spec;
-+		const struct rte_flow_item_sctp *mask =
-+			item->mask ? item->mask : &rte_flow_item_sctp_mask;
-+
-+		rule->key.src_port = spec->hdr.src_port;
-+		rule->key.dst_port = spec->hdr.dst_port;
-+		rule->mask.src_port = mask->hdr.src_port;
-+		rule->mask.dst_port = mask->hdr.dst_port;
-+	}
-+}
-+
-+static void
-+gve_parse_esp(const struct rte_flow_item *item,
-+	      struct gve_flow_rule_params *rule)
-+{
-+	if (item->spec) {
-+		const struct rte_flow_item_esp *spec = item->spec;
-+		const struct rte_flow_item_esp *mask =
-+			item->mask ? item->mask : &rte_flow_item_esp_mask;
-+
-+		rule->key.spi = spec->hdr.spi;
-+		rule->mask.spi = mask->hdr.spi;
-+	}
-+}
-+
-+static void
-+gve_parse_ah(const struct rte_flow_item *item, struct gve_flow_rule_params *rule)
-+{
-+	if (item->spec) {
-+		const struct rte_flow_item_ah *spec = item->spec;
-+		const struct rte_flow_item_ah *mask =
-+			item->mask ? item->mask : &rte_flow_item_ah_mask;
-+
-+		rule->key.spi = spec->spi;
-+		rule->mask.spi = mask->spi;
-+	}
-+}
-+
-+static int
-+gve_validate_and_parse_flow_pattern(const struct rte_flow_item pattern[],
-+				    struct rte_flow_error *error,
-+				    struct gve_flow_rule_params *rule)
-+{
-+	const struct rte_flow_item *item = pattern;
-+	enum rte_flow_item_type l3_type = RTE_FLOW_ITEM_TYPE_VOID;
-+	enum rte_flow_item_type l4_type = RTE_FLOW_ITEM_TYPE_VOID;
-+
-+	if (pattern == NULL) {
-+		rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM_NUM, NULL,
-+				"Invalid flow pattern");
-+		return -EINVAL;
-+	}
-+
-+	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
-+		if (item->last) {
-+			/* Last and range are not supported as match criteria. */
-+			rte_flow_error_set(error, EINVAL,
-+					   RTE_FLOW_ERROR_TYPE_ITEM,
-+					   item,
-+					   "No support for range");
-+			return -EINVAL;
-+		}
-+		switch (item->type) {
-+		case RTE_FLOW_ITEM_TYPE_VOID:
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_IPV4:
-+			if (l3_type != RTE_FLOW_ITEM_TYPE_VOID) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Multiple L3 items not supported");
-+				return -EINVAL;
-+			}
-+			gve_parse_ipv4(item, rule);
-+			l3_type = item->type;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_IPV6:
-+			if (l3_type != RTE_FLOW_ITEM_TYPE_VOID) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Multiple L3 items not supported");
-+				return -EINVAL;
-+			}
-+			gve_parse_ipv6(item, rule);
-+			l3_type = item->type;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_UDP:
-+			if (l4_type != RTE_FLOW_ITEM_TYPE_VOID) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Multiple L4 items not supported");
-+				return -EINVAL;
-+			}
-+			gve_parse_udp(item, rule);
-+			l4_type = item->type;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_TCP:
-+			if (l4_type != RTE_FLOW_ITEM_TYPE_VOID) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Multiple L4 items not supported");
-+				return -EINVAL;
-+			}
-+			gve_parse_tcp(item, rule);
-+			l4_type = item->type;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_SCTP:
-+			if (l4_type != RTE_FLOW_ITEM_TYPE_VOID) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Multiple L4 items not supported");
-+				return -EINVAL;
-+			}
-+			gve_parse_sctp(item, rule);
-+			l4_type = item->type;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_ESP:
-+			if (l4_type != RTE_FLOW_ITEM_TYPE_VOID) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Multiple L4 items not supported");
-+				return -EINVAL;
-+			}
-+			gve_parse_esp(item, rule);
-+			l4_type = item->type;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_AH:
-+			if (l4_type != RTE_FLOW_ITEM_TYPE_VOID) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ITEM,
-+						   item,
-+						   "Multiple L4 items not supported");
-+				return -EINVAL;
-+			}
-+			gve_parse_ah(item, rule);
-+			l4_type = item->type;
-+			break;
-+		default:
-+			rte_flow_error_set(error, EINVAL,
-+				   RTE_FLOW_ERROR_TYPE_ITEM, item,
-+				   "Unsupported flow pattern item type");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	switch (l3_type) {
-+	case RTE_FLOW_ITEM_TYPE_IPV4:
-+		switch (l4_type) {
-+		case RTE_FLOW_ITEM_TYPE_TCP:
-+			rule->flow_type = GVE_FLOW_TYPE_TCPV4;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_UDP:
-+			rule->flow_type = GVE_FLOW_TYPE_UDPV4;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_SCTP:
-+			rule->flow_type = GVE_FLOW_TYPE_SCTPV4;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_AH:
-+			rule->flow_type = GVE_FLOW_TYPE_AHV4;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_ESP:
-+			rule->flow_type = GVE_FLOW_TYPE_ESPV4;
-+			break;
-+		default:
-+			goto unsupported_flow;
-+		}
-+		break;
-+	case RTE_FLOW_ITEM_TYPE_IPV6:
-+		switch (l4_type) {
-+		case RTE_FLOW_ITEM_TYPE_TCP:
-+			rule->flow_type = GVE_FLOW_TYPE_TCPV6;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_UDP:
-+			rule->flow_type = GVE_FLOW_TYPE_UDPV6;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_SCTP:
-+			rule->flow_type = GVE_FLOW_TYPE_SCTPV6;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_AH:
-+			rule->flow_type = GVE_FLOW_TYPE_AHV6;
-+			break;
-+		case RTE_FLOW_ITEM_TYPE_ESP:
-+			rule->flow_type = GVE_FLOW_TYPE_ESPV6;
-+			break;
-+		default:
-+			goto unsupported_flow;
-+		}
-+		break;
-+	default:
-+		goto unsupported_flow;
-+	}
-+
-+	return 0;
-+
-+unsupported_flow:
-+	rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM,
-+			   NULL, "Unsupported L3/L4 combination");
-+	return -EINVAL;
-+}
-+
-+static int
-+gve_validate_and_parse_flow_actions(struct rte_eth_dev *dev,
-+				    const struct rte_flow_action actions[],
-+				    struct rte_flow_error *error,
-+				    struct gve_flow_rule_params *rule)
-+{
-+	const struct rte_flow_action_queue *action_queue;
-+	const struct rte_flow_action *action = actions;
-+	int num_queue_actions = 0;
-+
-+	if (actions == NULL) {
-+		rte_flow_error_set(error, EINVAL,
-+				   RTE_FLOW_ERROR_TYPE_ACTION_NUM, NULL,
-+				   "Invalid flow actions");
-+		return -EINVAL;
-+	}
-+
-+	while (action->type != RTE_FLOW_ACTION_TYPE_END) {
-+		switch (action->type) {
-+		case RTE_FLOW_ACTION_TYPE_VOID:
-+			break;
-+		case RTE_FLOW_ACTION_TYPE_QUEUE:
-+			if (action->conf == NULL) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ACTION_CONF,
-+						   action,
-+						   "QUEUE action config cannot be NULL.");
-+				return -EINVAL;
-+			}
-+
-+			action_queue = action->conf;
-+			if (action_queue->index >= dev->data->nb_rx_queues) {
-+				rte_flow_error_set(error, EINVAL,
-+						   RTE_FLOW_ERROR_TYPE_ACTION_CONF,
-+						   action, "Invalid Queue ID");
-+				return -EINVAL;
-+			}
-+
-+			rule->action = action_queue->index;
-+			num_queue_actions++;
-+			break;
-+		default:
-+			rte_flow_error_set(error, ENOTSUP,
-+					   RTE_FLOW_ERROR_TYPE_ACTION,
-+					   action,
-+					   "Unsupported action. Only QUEUE is permitted.");
-+			return -ENOTSUP;
-+		}
-+		action++;
-+	}
-+
-+	if (num_queue_actions == 0) {
-+		rte_flow_error_set(error, EINVAL,
-+				   RTE_FLOW_ERROR_TYPE_ACTION_NUM,
-+				   NULL, "A QUEUE action is required.");
-+		return -EINVAL;
-+	}
-+
-+	if (num_queue_actions > 1) {
-+		rte_flow_error_set(error, EINVAL,
-+				   RTE_FLOW_ERROR_TYPE_ACTION_NUM,
-+				   NULL, "Only a single QUEUE action is allowed.");
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+gve_validate_and_parse_flow(struct rte_eth_dev *dev,
-+			    const struct rte_flow_attr *attr,
-+			    const struct rte_flow_item pattern[],
-+			    const struct rte_flow_action actions[],
-+			    struct rte_flow_error *error,
-+			    struct gve_flow_rule_params *rule)
-+{
-+	int err;
-+
-+	err = gve_validate_flow_attr(attr, error);
-+	if (err)
-+		return err;
-+
-+	err = gve_validate_and_parse_flow_pattern(pattern, error, rule);
-+	if (err)
-+		return err;
-+
-+	err = gve_validate_and_parse_flow_actions(dev, actions, error, rule);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
-+int
-+gve_flow_init_bmp(struct gve_priv *priv)
-+{
-+	priv->avail_flow_rule_bmp = rte_bitmap_init_with_all_set(priv->max_flow_rules,
-+			priv->avail_flow_rule_bmp_mem, priv->flow_rule_bmp_size);
-+	if (priv->avail_flow_rule_bmp == NULL) {
-+		PMD_DRV_LOG(ERR, "Flow subsystem failed: cannot init bitmap.");
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+void
-+gve_flow_free_bmp(struct gve_priv *priv)
-+{
-+	rte_free(priv->avail_flow_rule_bmp_mem);
-+	priv->avail_flow_rule_bmp_mem = NULL;
-+	priv->avail_flow_rule_bmp = NULL;
-+}
-+
-+/*
-+ * The caller must acquire the flow rule lock before calling this function.
-+ */
-+int
-+gve_free_flow_rules(struct gve_priv *priv)
-+{
-+	struct gve_flow *flow;
-+	int err = 0;
-+
-+	if (!TAILQ_EMPTY(&priv->active_flows)) {
-+		err = gve_adminq_reset_flow_rules(priv);
-+		if (err) {
-+			PMD_DRV_LOG(ERR,
-+				"Failed to reset flow rules, internal device err=%d",
-+				err);
-+		}
-+
-+		/* Free flows even if AQ fails to avoid leaking memory. */
-+		while (!TAILQ_EMPTY(&priv->active_flows)) {
-+			flow = TAILQ_FIRST(&priv->active_flows);
-+			TAILQ_REMOVE(&priv->active_flows, flow, list_handle);
-+			free(flow);
-+		}
-+	}
-+
-+	return err;
-+}
-+
-+static struct rte_flow *
-+gve_create_flow_rule(struct rte_eth_dev *dev,
-+		     const struct rte_flow_attr *attr,
-+		     const struct rte_flow_item pattern[],
-+		     const struct rte_flow_action actions[],
-+		     struct rte_flow_error *error)
-+{
-+	struct gve_priv *priv = dev->data->dev_private;
-+	struct gve_flow_rule_params rule = {0};
-+	uint64_t slab_bits = 0;
-+	uint32_t slab_idx = 0;
-+	struct gve_flow *flow;
-+	int err;
-+
-+	err = gve_validate_and_parse_flow(dev, attr, pattern, actions, error,
-+					  &rule);
-+	if (err)
-+		return NULL;
-+
-+	flow = calloc(1, sizeof(struct gve_flow));
-+	if (flow == NULL) {
-+		rte_flow_error_set(error, ENOMEM,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Failed to allocate memory for flow rule.");
-+		return NULL;
-+	}
-+
-+	pthread_mutex_lock(&priv->flow_rule_lock);
-+
-+	if (!gve_get_flow_subsystem_ok(priv)) {
-+		rte_flow_error_set(error, ENOTSUP,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Failed to create flow, flow subsystem not initialized.");
-+		goto free_flow_and_unlock;
-+	}
-+
-+	/* Try to allocate a new rule ID from the bitmap. */
-+	if (rte_bitmap_scan(priv->avail_flow_rule_bmp, &slab_idx,
-+			&slab_bits) == 1) {
-+		flow->rule_id = slab_idx + rte_ctz64(slab_bits);
-+		rte_bitmap_clear(priv->avail_flow_rule_bmp, flow->rule_id);
-+	} else {
-+		rte_flow_error_set(error, ENOMEM,
-+				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				"Failed to create flow, could not allocate a new rule ID.");
-+		goto free_flow_and_unlock;
-+	}
-+
-+	err = gve_adminq_add_flow_rule(priv, &rule, flow->rule_id);
-+	if (err) {
-+		rte_bitmap_set(priv->avail_flow_rule_bmp, flow->rule_id);
-+		rte_flow_error_set(error, -err,
-+				   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+				   "Failed to create flow rule, internal device error.");
-+		goto free_flow_and_unlock;
-+	}
-+
-+	TAILQ_INSERT_TAIL(&priv->active_flows, flow, list_handle);
-+
-+	pthread_mutex_unlock(&priv->flow_rule_lock);
-+
-+	return (struct rte_flow *)flow;
-+
-+free_flow_and_unlock:
-+	free(flow);
-+	pthread_mutex_unlock(&priv->flow_rule_lock);
-+	return NULL;
-+}
-+
-+static int
-+gve_destroy_flow_rule(struct rte_eth_dev *dev, struct rte_flow *flow_handle,
-+		      struct rte_flow_error *error)
-+{
-+	struct gve_priv *priv = dev->data->dev_private;
-+	struct gve_flow *flow;
-+	bool flow_rule_active;
-+	int err;
-+
-+	pthread_mutex_lock(&priv->flow_rule_lock);
-+
-+	if (!gve_get_flow_subsystem_ok(priv)) {
-+		rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+			"Failed to destroy flow, flow subsystem not initialized.");
-+		err = -ENOTSUP;
-+		goto unlock;
-+	}
-+
-+	flow = (struct gve_flow *)flow_handle;
-+
-+	if (flow == NULL) {
-+		rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+			"Failed to destroy flow, invalid flow provided.");
-+		err = -EINVAL;
-+		goto unlock;
-+	}
-+
-+	if (flow->rule_id >= priv->max_flow_rules) {
-+		PMD_DRV_LOG(ERR,
-+			"Cannot destroy flow rule with invalid ID %d.",
-+			flow->rule_id);
-+		rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+			"Failed to destroy flow, rule ID is invalid.");
-+		err = -EINVAL;
-+		goto unlock;
-+	}
-+
-+	flow_rule_active = !rte_bitmap_get(priv->avail_flow_rule_bmp,
-+					   flow->rule_id);
-+
-+	if (!flow_rule_active) {
-+		rte_flow_error_set(error, EINVAL,
-+			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+			"Failed to destroy flow, handle not found in active list.");
-+		err = -EINVAL;
-+		goto unlock;
-+	}
-+
-+	err = gve_adminq_del_flow_rule(priv, flow->rule_id);
-+	if (err) {
-+		rte_flow_error_set(error, -err,
-+			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+			"Failed to destroy flow, internal device error.");
-+		goto unlock;
-+	}
-+
-+	rte_bitmap_set(priv->avail_flow_rule_bmp, flow->rule_id);
-+	TAILQ_REMOVE(&priv->active_flows, flow, list_handle);
-+	free(flow);
-+
-+	err = 0;
-+
-+unlock:
-+	pthread_mutex_unlock(&priv->flow_rule_lock);
-+	return err;
-+}
-+
-+static int
-+gve_flush_flow_rules(struct rte_eth_dev *dev, struct rte_flow_error *error)
-+{
-+	struct gve_priv *priv = dev->data->dev_private;
-+	int err;
-+
-+	pthread_mutex_lock(&priv->flow_rule_lock);
-+
-+	if (!gve_get_flow_subsystem_ok(priv)) {
-+		rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+			"Failed to flush rules, flow subsystem not initialized.");
-+		err = -ENOTSUP;
-+		goto unlock;
-+	}
-+
-+	err = gve_free_flow_rules(priv);
-+	if (err) {
-+		rte_flow_error_set(error, -err,
-+			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+			"Failed to flush rules due to internal device error, disabling flow subsystem.");
-+		goto disable_and_free;
-+	}
-+
-+	err = gve_flow_init_bmp(priv);
-+	if (err) {
-+		rte_flow_error_set(error, -err,
-+			RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
-+			"Failed to re-initialize rule ID bitmap, disabling flow subsystem.");
-+		goto disable_and_free;
-+	}
-+
-+	pthread_mutex_unlock(&priv->flow_rule_lock);
-+
-+	return 0;
-+
-+disable_and_free:
-+	gve_clear_flow_subsystem_ok(priv);
-+	gve_flow_free_bmp(priv);
-+unlock:
-+	pthread_mutex_unlock(&priv->flow_rule_lock);
-+	return err;
-+}
-+
-+const struct rte_flow_ops gve_flow_ops = {
-+	.create = gve_create_flow_rule,
-+	.destroy = gve_destroy_flow_rule,
-+	.flush = gve_flush_flow_rules,
-+};
-diff --git a/drivers/net/gve/gve_flow_rule.h b/drivers/net/gve/gve_flow_rule.h
-index 8c17ddd..d597a6c 100644
---- a/drivers/net/gve/gve_flow_rule.h
-+++ b/drivers/net/gve/gve_flow_rule.h
-@@ -56,4 +56,10 @@ struct gve_flow_rule_params {
- 	struct gve_flow_spec mask;
- };
- 
-+struct gve_priv;
-+
-+int gve_flow_init_bmp(struct gve_priv *priv);
-+void gve_flow_free_bmp(struct gve_priv *priv);
-+int gve_free_flow_rules(struct gve_priv *priv);
-+
- #endif /* _GVE_FLOW_RULE_H_ */
-diff --git a/drivers/net/gve/meson.build b/drivers/net/gve/meson.build
-index c6a9f36..7074988 100644
---- a/drivers/net/gve/meson.build
-+++ b/drivers/net/gve/meson.build
-@@ -16,5 +16,6 @@ sources = files(
-         'gve_ethdev.c',
-         'gve_version.c',
-         'gve_rss.c',
-+        'gve_flow_rule.c',
- )
- includes += include_directories('base')
--- 
-2.53.0.473.g4a7958ca14-goog
+Series Acked-by: Bing Zhao <bingz@nvidia.com>
 
