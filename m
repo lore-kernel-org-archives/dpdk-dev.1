@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EB8EB7ECD
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 10:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E407EB7ECE
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 10:57:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 31C01402E4;
-	Wed,  4 Mar 2026 11:57:51 +0100 (CET)
-Received: from SJ2PR03CU001.outbound.protection.outlook.com
- (mail-westusazon11012018.outbound.protection.outlook.com [52.101.43.18])
- by mails.dpdk.org (Postfix) with ESMTP id 1D25F402A9
- for <dev@dpdk.org>; Wed,  4 Mar 2026 11:57:50 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2AF1640664;
+	Wed,  4 Mar 2026 11:57:53 +0100 (CET)
+Received: from BL2PR02CU003.outbound.protection.outlook.com
+ (mail-eastusazon11011051.outbound.protection.outlook.com [52.101.52.51])
+ by mails.dpdk.org (Postfix) with ESMTP id 63DED40651;
+ Wed,  4 Mar 2026 11:57:51 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EGaici/3RrErXM/pKv4Kbm2lC/1Ea6cPOINquScHXRBH2lb+heSYv612sYw5Y/yOtn2MxuSD7xBTnHVZwPcojU0UEbXq4Y2sMlUeIoQbbnoiEs4JLHRH3sQBzLa/ILNTfQZWQwRxSHK/DfsxL8Qryc/s9oPoeq2EIZ3v+r+WE49b1gdzd2/dcWhg87aGCAay32AA2TYPfQoxAXbIHxaC8N6IgXguZsNPGlrm5s3k9JUL849YLLLKrThUpR38DrjZtVn1aZ89N6fquwo1wYStOmjvG+5GZUIR8u+Wmee2hIzr8yNw0ZU5jBBzyWE0ymtz+IFNi85zZgZo4AaZm73Ffw==
+ b=UKd8a6WfT4OtXfjEEmvL4F/wR08eJEwNQV/V5qpqoqrk+fNn+UovccV11GaQsSv0blk5ZoyNpPLM3OEE+24/NHDZGnwyEZ9UbL1TYz7sxVHrvVdBunjnb+H5dTBgRg/nBaQF7PZiEv19uy6yDTgxwC8z1M7/sYrIosh4e655yqdNwDrNf7StHstErZyU784eEA3Y1fVmrY0x0OzSWk3WYg+BXlVBt5879TOSSuylfIU0PKAC0fHI8HRDrP9z8U4sI+0AFlssoAHy6XpcdtYVYzozPlxJCteAoBgjsqxN23ZBsRBE6Zo6BzJLeXvaI6zKmpZ8uzOWbw7MAhJAWQMWTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9y2sZgKPDIPUmfuGUhh/kBMwE3CH2UZtrpxaK01dOys=;
- b=OE1L8j+YWfAnoQCD6sulLYs0Wsbp5erJE2XnOCQZaFyI9FXDUFfgzpyRQesgfz9hYAaLsc61xXaN3VehS7TBO2voWpHgoqfTzRO4uJ3lkROKsJQWiWAtN3FPbkP3rbNs50nQLzN7P7j9cqD4Id/CaUnStNv/9AYWc++LbZi7lR2aP5efKQYUK7FXyTFISc/rptIe9Qp/530WsTjuVT+ydS1V52dneoz6nwi/+gHuSoc0NpA8noCbWdfx4UxwfYWHffcxcOachdhNetbal1XkCyL+bOGUFq0YECRx5UpXX61I4XvlpqEb1yWusnlVtweOnHjivCbH3rvKYNRM9IQkKA==
+ bh=s33YJLlDvAWappQt08nRUT5S8/l7ML34b+XMhI5OfI4=;
+ b=qBt1JTm0QXwGyvRmWBsFdqA9qDXslpnqTTm3cGnumww2HtjV0PhKpZOzQyK6jYurfV7U/S5UrlIP6Udlz96DOWLyn0Nth1DFo+Ze25FtQQlm+WR+W5d7s9jw15mxbmfuU0s/BcXG22T83tiqYfGP9MF0oDbh+txU+ju34BZdQnLADlr9/rHSxt+xKmZloefEo6nIpn3YUdGoNKJr58z+oA/dId1UK8L/WfrKGtRknPo6Qz53uqBcXOSIWXLg5fACV9P841vflyyVv/8sjqr6PHtIw4/kf8/QpO2C4K2kzRyyJp1WVQOZdu2bVfiG42wLXfA4FMu/eUCf+YYazsZymA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,17 +25,17 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9y2sZgKPDIPUmfuGUhh/kBMwE3CH2UZtrpxaK01dOys=;
- b=pZfbG0Yr8mF9OXQv6+24pOpy4mQHdf8T9w8w4zTYecqgKRqMC4WhS9WeYVIy4TeCWRqjgvxcs+n8OXTE/WS8AAe+V7iOXDcLHqJxw22I+dKyd/svukitLKX3Ia8sTwRgIktRFojO8ooUlr9HIpd5zSi3uYKQQFgtnh5j2Gush+3BY/uySQdg4/csqIeQL0TboTxjJhdjbiIQKL+D57+ajUOVN9dKgCNgu4QtWQayas7VbygbAdgkYgfTrTZKdD2sUgUBp99ibKyTpTi22ZLrBWJCyy9dJkwHmua3HSv+v12VWvjoq28Je1xEPl6jxrz/n4tFz5MLn8LuVOfuwoKbaw==
-Received: from BYAPR03CA0015.namprd03.prod.outlook.com (2603:10b6:a02:a8::28)
- by SA1PR12MB8842.namprd12.prod.outlook.com (2603:10b6:806:378::9)
+ bh=s33YJLlDvAWappQt08nRUT5S8/l7ML34b+XMhI5OfI4=;
+ b=cAekzmJPiyA01nZoKdmZt4BZTRgZfgsIeafc5wSoQg6Qkfs3uQhxiwTNRmxIunkmuwyVkw9Otkw4JvbTX0+FngYDw/28IGwHnOGQX1xpoP1EagHZRo9UsmgmrWstrikRj3xLx9DJh3LrMVoeWiA4PwKKhHqBOCr9CPxfPjHTFnZjkZ5y2jFay+vGV+RuGUsX+m2M4BH8CZ0cnttG8DILcRwrqfRxbwwm5/5uRwqn2WTjnlIXs6de8F27kEYTsloEJqezQjlcl6VUhyEWIrh50TMwrrHwKaG+1wiU2sxUgI1PN8t/cFoJAPVjDGmwQ6avsYD6BaXK3gCWFfa3AzBElg==
+Received: from BY5PR13CA0030.namprd13.prod.outlook.com (2603:10b6:a03:180::43)
+ by CY8PR12MB7561.namprd12.prod.outlook.com (2603:10b6:930:94::22)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9654.21; Wed, 4 Mar
- 2026 10:57:45 +0000
-Received: from SJ5PEPF000001F4.namprd05.prod.outlook.com
- (2603:10b6:a02:a8:cafe::ee) by BYAPR03CA0015.outlook.office365.com
- (2603:10b6:a02:a8::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9632.27 via Frontend Transport; Wed,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.17; Wed, 4 Mar
+ 2026 10:57:48 +0000
+Received: from SJ5PEPF000001F2.namprd05.prod.outlook.com
+ (2603:10b6:a03:180:cafe::14) by BY5PR13CA0030.outlook.office365.com
+ (2603:10b6:a03:180::43) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.13 via Frontend Transport; Wed,
  4 Mar 2026 10:57:47 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
@@ -45,29 +45,30 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001F4.mail.protection.outlook.com (10.167.242.72) with Microsoft
+ SJ5PEPF000001F2.mail.protection.outlook.com (10.167.242.70) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9654.16 via Frontend Transport; Wed, 4 Mar 2026 10:57:45 +0000
+ 15.20.9678.18 via Frontend Transport; Wed, 4 Mar 2026 10:57:47 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 4 Mar
- 2026 02:57:33 -0800
+ 2026 02:57:36 -0800
 Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 4 Mar
- 2026 02:57:31 -0800
+ 2026 02:57:33 -0800
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
  <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
-CC: <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>
-Subject: [PATCH v2 0/3] net/mlx5: net/mlx5: fix probing to allow BlueField
- Socket Direct
-Date: Wed, 4 Mar 2026 11:57:15 +0100
-Message-ID: <20260304105718.93412-1-dsosnowski@nvidia.com>
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Rongwei Liu
+ <rongweil@nvidia.com>
+CC: <dev@dpdk.org>, Raslan Darawsheh <rasland@nvidia.com>, <stable@dpdk.org>
+Subject: [PATCH v2 1/3] common/mlx5: fix bond check
+Date: Wed, 4 Mar 2026 11:57:16 +0100
+Message-ID: <20260304105718.93412-2-dsosnowski@nvidia.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260302113443.16648-1-dsosnowski@nvidia.com>
+In-Reply-To: <20260304105718.93412-1-dsosnowski@nvidia.com>
 References: <20260302113443.16648-1-dsosnowski@nvidia.com>
+ <20260304105718.93412-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -76,29 +77,29 @@ X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F4:EE_|SA1PR12MB8842:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67841dc9-935c-475b-aecd-08de79dcdda2
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F2:EE_|CY8PR12MB7561:EE_
+X-MS-Office365-Filtering-Correlation-Id: 77714904-c4b2-462b-35cd-08de79dcdf36
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|1800799024|36860700016|376014|13003099007; 
-X-Microsoft-Antispam-Message-Info: GSvcqrCYQjRSQZIVnAjhr3BaA+Nm8GidZ0AHCm5hmOsGoejM53VaA9id23E8+d/hTZ1eQUn7apMXLbt3PcXp9OkKrO8EpkrYLUsjXox+3he6bOLdqahGs47+kXJIhk4K1eUAZGLVduMpISkScBV8tn+BqnP+jx254tJUdujRfB+gJh84tpWl1TwNHJPvCcsa4KyHlqD8khMiD0yyJUV3a6vMeGJkh6nanctPFbDS05uYSDDYMKgRvzuJiMQ4I5nx7naCA0/kBfBKrnDXqGt2At2rjIfPRVVcdmz2d9jJv8pdqpVNXRwGUx6IWQDdGTIp8FlJCvSzBfPEAL1GmyNs6aXG8Vbta6+evuzeigWBTOIj5srLqAhnjzr8gmKVyh+e9BkKRuGnD0/U30uxIR+KzLQrb31i+1KiboNoEPijTLkbZZKIkV4ipHArxJ2vJ0j0obhia9jXToQ17RTBmhZkKBw/y49OTpAmyuQeHmGpSjpH63ILk0QOLHdqamUC+PxP2dx3IKsgv9wbA5aqa/dxf6kvN2v+N5cSnZclDoYEkRVgszD46g0cpaOZWKYAwpaVLyie3NHfyAISDEHQ4ptqDSffYaqBJGs8Ru4io2ymGGYQkTi+0tq29Kz0uFyONZFLyBwsSpN3W7CmNKPE8llAxhWHYUq204viBE14l+MQ4HuMn2dLRRpv+bNZ8sXzakTZvjoGDZf+CqJLPkTsgV0Y1we5pK8qGiG2YyMXurAKOd6F83TjwICk+C9vQZkBMA8Xexs04LjWMNIzkMKZ5+OpHQ==
+ ARA:13230040|36860700016|82310400026|1800799024|376014; 
+X-Microsoft-Antispam-Message-Info: yfHmEv5t6Ge/TL1KZJzJIhFVXcRJ2Kxwqzs3E2Da76UKYXmx6q4xyKXDOYM1/sizvt1rMWMCsrO3klF9zH2TWaXhc6NmK3sTpyWMPgSv4I1gq9HLqrUjjrkbpDp7gELSHQng2PaFyOOCPIJQKQSiYJ6KWx5q6YeydCQb53RNfVBGxiIIm1xNc1G02qo23a85UhDfBJGGVm9bSzVaNi2X8tj7Bs1JROZ8gKI6vCv24rukxzw6txx4Tb5d/V3a5RBrx/UyU4Pg9le93EDEBb3bzVzV5hdtt2mLKPJBSLZGHhUrQ5OVOb76CUUE2AIqgtkzaDEGjBnTSTTGiG0bQewCoax/U00oIoqnRLmo4PHSI6hAd9vj8p+aAolVW0uWf/AuStyiSjR5Hj3LEzxehXJH+Mfz+X2kmKCgM+yYCDF0dZQAJRT+7Ft1x+Wg4UXWQKRaUn+GoQUu2DqDi58pCAVrsW1RVLqg1jrG19d3rW7XuOs1CEFR0EH5yMmRFfmBnKaCk6OOwGZ+A5dUo0gviwESJVdGox4hdrtdspteFNIv+PzB0+7PWDLXPpeIulfp5LpAeiI+nTyn3anZ3YlAfDcjpR9B0XEkcVeez4ArowhOBY41A3r9cSEgZeLYK3fbEnlBYJfO6uNTQeTUtnMqHILzLw8khSdEzJWPmxI8uGK2XfhM2J8bfnXO7XTPgkqYs+u/lwpB9YevhM9StCpugvM+Cf/Dk6Nuv7tQ0SthHU164JDMcWgWBJ0zE4jrvrRQRMtmXAspKHtZnrVMWZuABVqdLQ==
 X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(1800799024)(36860700016)(376014)(13003099007);
- DIR:OUT; SFP:1101; 
+ SFS:(13230040)(36860700016)(82310400026)(1800799024)(376014); DIR:OUT;
+ SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: B95XZoeeAXUigdd/FWGgcG+l6PWhMnK96dr7ztHcUDeToKaAlp6BQKG91RNIUbeREf15Jwdfmd5kmR4ujaWE9nFChG6lTwCboAbhK62G5KD6nfYQQTBRQ/Jom+ghXppS8fol2Za6ppCSqgexKb7OJigZZGj4S3Noi2JhQ9t2Iks3hhR2Tb5seMO/isIY0PNlXNDCMRZcol+qcqAybOIWv011pi7uNvo5QIdKUV8qpP5ORG72y4VCwMG7a91ZZE3Jf9VAbblvQo8jZ3blOwa7sZNnBifKiOXIFP43W5lZB2Z69Nb94mQ6eXtkKCRt8pWyk/LYc1QjBgjRBIjLSOffDHQ+uwfIEfXwgBiBjuh1Fzt2ipzdu+K5n+XdFmcvTAMelr51ra9sTrm/lINlsAgHYSokPHwBEXnpRa5fGj46e4+WlATrQx9gDu4uuFf7/Zfe
+X-MS-Exchange-AntiSpam-MessageData-0: E+YKESVIa0FEkMWKIiMPsQNwf5pyo+3+1SqutWNznHX7ioTrZfDqbr8vE7kEM9Y//5YwpG5aEDu1fawsjJIVz4ZDY2iWFpuAD7UkSYo7sh30Eb15jotcTvUDpIbg/IbEQrqf/0Ldg838D1Ol1Tr+anWm1EOH6PIbXCHmvA8BNwvqqzEq4NHexXXzSHjjBX8ied8rlwsIA9LI19W/yNzfu4B4ien9aITVgL6PpfBNUGfmE/E4zctWCf+3LVS03CvsxEEgNzwmVxaWcqDAKV0Uso8+OY98ug3a+6hsciRGYn01x/Fv/1OelEoqOqtSOe4C9j1+zwkWTj13ktN3fvDLEeEapRYTZLZ3yXd8dknxO4JafMHiQToKNaIKAsqe739AmpU2TZ2PHjqEGL2H1bT9rwYLB432wnc3z1JsnpEK6+K6IGjSFEsvEEH5Rk+NX/M9
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2026 10:57:45.1102 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67841dc9-935c-475b-aecd-08de79dcdda2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2026 10:57:47.7558 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77714904-c4b2-462b-35cd-08de79dcdf36
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001F4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: SJ5PEPF000001F2.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8842
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7561
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,117 +113,163 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Goal of this patchset is to fix probing logic in mlx5 networking PMD
-to allow support of BlueField DPUs with Socket Direct.
-In such use case, BlueField DPU will be connected through PCI
-to 2 different CPUs on the host.
-Each host CPU sees 2 PFs.
-Each PF is connected to one of the physical ports.
+mlx5 PMD supports probing a device where PF kernel netdevs
+are part of a netdev bonding device in the Linux kernel.
+In such scenario, there is only IB device exposed
+which mlx5 PMD later uses to configure the device.
+This IB device is created only one of the PFs.
+PMD allowed probing this device by any of the PFs.
 
-    +--------+               +--------+
-    |CPU 0   |               |CPU 1   |
-    |        |               |        |
-    |    pf0 |               |    pf0 |
-    |        |               |        |
-    |    pf1 |               |    pf1 |
-    |        |               |        |
-    +---+----+               +-+------+
-        |                      |
-        |                      |
-        |                      |
-        +----+           +-----+
-             |           |
-             |           |
-             |           |
-         +---+-----------+----+
-         |BF3 DPU             |
-         |                    |
-         | pf0hpf      pf1hpf |
-         |                    |
-         | pf2hpf      pf3hpf |
-         |                    |
-         |  p0          p1    |
-         +------+------+------+
-         | phy0 |      | phy1 |
-         +------+      +------+
+As part of the logic for allowing this, mlx5 common driver
+checked if the name of IB device contained "bond", but this is not
+always the case and depends on existence of specific udev rules.
+This patch fixes that by attempting to resolve, through sysfs,
+if any of the netdevs related to probed PCI device
+are part of the bonding netdev, instead of relying on device name.
 
-On BlueField DPU ARM Linux netdevs map to PFs/ports as follows:
+Fixes: f956d3d4c33c ("net/mlx5: fix probing with secondary bonding member")
+Cc: rongweil@nvidia.com
+Cc: stable@dpdk.org
 
-- p0 and p1 to physical ports 0 and 1 respectively,
-- pf0hpf and pf2hpf to CPU0 pf0 and CPU1 pf0 respectively,
-- pf1hpf and pf3hpf to CPU0 pf1 and CPU1 pf1 respectively.
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Acked-by: Bing Zhao <bingz@nvidia.com>
+---
+ drivers/common/mlx5/linux/mlx5_common_os.c | 86 ++++++++++++++++++++--
+ drivers/common/mlx5/linux/mlx5_common_os.h |  9 +++
+ 2 files changed, 90 insertions(+), 5 deletions(-)
 
-There are several possible ways to use such a setup:
-
-- Single E-Switch (embedded switch) per each CPU PF to
-  physical port connection.
-- Shared E-Switch for related CPU PFs:
-    - For example, both pf0hpf and pf2hpf are in the same E-Switch.
-- Multiport E-Switch.
-
-Existing probing logic in mlx5 PMD did not support case (2).
-In this case there is one physical port (uplink in mlx5 naming)
-and 2 host PFs.
-On such a setup mlx5 generated port names with the following syntax:
-
-    03:00.0_representor_vfX
-
-Port name syntax was selected based on specific setup type.
-Since setup was not recognized as neither bond nor MPESW,
-mlx5 selected the default name without PF index.
-Since BlueField with Socket Direct would have 2 host PFs,
-such probing logic caused DPDK port name collisions
-on the attempt to probe 2 host PFs at the same time.
-
-More over there were some false positives during probing on systems
-with or without specific udev rules which change mlx5 IB device
-name to include "bond" in the name.
-
-This patchset addresses the above:
-
-- Patch 1 and 2 - Fixes bond detection logic.
-  Previously mlx5 PMD relied on "bond" appearing in IB device name
-  which is not always the case. Moved to sysfs checks.
-- Patch 3 - Fixed uplink and host PF probing logic.
-  Previously mlx5 PMD relied on specific setup type.
-  With this patch probing is more generic and based on
-  types and number of available ports on the E-Switch.
-
-With this patchset, a DPDK application run on BlueField ARM is able to
-probe all the relevant representors (corresponding to available netdevs).
-Using testpmd syntax users will be able to do the following:
-
-    # Probe both physical ports
-    port attach 03:00.0,dv_flow_en=2,representor=pf0-1
-
-    # Probe both host PF 0 from CPU 0
-    # (VF representor index -1 is special encoding for host PF)
-    port attach 03:00.0,dv_flow_en=2,representor=pf0vf65535
-    # or with explicit controller index
-    port attach 03:00.0,dv_flow_en=2,representor=c1pf0vf65535
-
-    # Probe both host PF 0 from CPU 1
-    port attach 03:00.0,dv_flow_en=2,representor=pf2vf65535
-    # or with explicit controller index
-    port attach 03:00.0,dv_flow_en=2,representor=c2pf2vf65535
-
-v1: https://patches.dpdk.org/project/dpdk/cover/20260302113443.16648-1-dsosnowski@nvidia.com/
-
-v1->v2:
-- Squash patches 3-5 and add Fixes tag,
-  since these patches fix existing probing logic.
-
-Dariusz Sosnowski (3):
-  common/mlx5: fix bond check
-  net/mlx5: fix bond check
-  net/mlx5: fix probing to allow BlueField Socket Direct
-
- drivers/common/mlx5/linux/mlx5_common_os.c |  86 ++++-
- drivers/common/mlx5/linux/mlx5_common_os.h |   9 +
- drivers/net/mlx5/linux/mlx5_os.c           | 356 ++++++++++++++-------
- drivers/net/mlx5/mlx5.h                    |   2 +
- 4 files changed, 338 insertions(+), 115 deletions(-)
-
---
+diff --git a/drivers/common/mlx5/linux/mlx5_common_os.c b/drivers/common/mlx5/linux/mlx5_common_os.c
+index 926b56e419..fc7e9ecddc 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_os.c
++++ b/drivers/common/mlx5/linux/mlx5_common_os.c
+@@ -560,6 +560,14 @@ mlx5_os_pd_prepare(struct mlx5_common_device *cdev)
+ #endif /* HAVE_IBV_FLOW_DV_SUPPORT */
+ }
+ 
++static bool
++pci_addr_partial_match(const struct rte_pci_addr *addr1, const struct rte_pci_addr *addr2)
++{
++	return addr1->domain == addr2->domain &&
++	       addr1->bus == addr2->bus &&
++	       addr1->devid == addr2->devid;
++}
++
+ static struct ibv_device *
+ mlx5_os_get_ibv_device(const struct rte_pci_device *pci_dev)
+ {
+@@ -581,17 +589,23 @@ mlx5_os_get_ibv_device(const struct rte_pci_device *pci_dev)
+ 	}
+ 	ret1 = mlx5_get_device_guid(addr, guid1, sizeof(guid1));
+ 	while (n-- > 0) {
++		bool pci_partial_match;
++		bool guid_match;
++		bool bond_match;
++
+ 		DRV_LOG(DEBUG, "Checking device \"%s\"..", ibv_list[n]->name);
+ 		if (mlx5_get_pci_addr(ibv_list[n]->ibdev_path, &paddr) != 0)
+ 			continue;
+ 		if (ret1 > 0)
+ 			ret2 = mlx5_get_device_guid(&paddr, guid2, sizeof(guid2));
++		guid_match = ret1 > 0 && ret2 > 0 && memcmp(guid1, guid2, sizeof(guid1)) == 0;
++		pci_partial_match = pci_addr_partial_match(addr, &paddr);
+ 		/* Bond device can bond secondary PCIe */
+-		if ((strstr(ibv_list[n]->name, "bond") && !is_vf_dev &&
+-		     ((ret1 > 0 && ret2 > 0 && !memcmp(guid1, guid2, sizeof(guid1))) ||
+-		      (addr->domain == paddr.domain && addr->bus == paddr.bus &&
+-		       addr->devid == paddr.devid))) ||
+-		    !rte_pci_addr_cmp(addr, &paddr)) {
++		bond_match = !is_vf_dev &&
++			     mlx5_os_is_device_bond(ibv_list[n]) &&
++			     (guid_match || pci_partial_match);
++		/* IB device matches either through bond or directly. */
++		if (bond_match || !rte_pci_addr_cmp(addr, &paddr)) {
+ 			ibv_match = ibv_list[n];
+ 			break;
+ 		}
+@@ -1160,3 +1174,65 @@ mlx5_os_interrupt_handler_destroy(struct rte_intr_handle *intr_handle,
+ 		mlx5_intr_callback_unregister(intr_handle, cb, cb_arg);
+ 	rte_intr_instance_free(intr_handle);
+ }
++
++RTE_EXPORT_INTERNAL_SYMBOL(mlx5_os_is_device_bond)
++bool
++mlx5_os_is_device_bond(const void *dev)
++{
++	const struct ibv_device *ibdev;
++	char path[PATH_MAX];
++	struct dirent *e;
++	DIR *net_dir;
++	bool result;
++	int ret;
++
++	if (dev == NULL)
++		return false;
++	ibdev = dev;
++
++	DRV_LOG(DEBUG, "Checking if %s ibdev belongs to bond", ibdev->name);
++
++	ret = snprintf(path, sizeof(path), "%s/device/net", ibdev->ibdev_path);
++	if (ret < 0 || ret >= (int)sizeof(path)) {
++		DRV_LOG(DEBUG, "Unable to get netdevs path for IB device %s", ibdev->name);
++		return false;
++	}
++
++	net_dir = opendir(path);
++	if (net_dir == NULL) {
++		DRV_LOG(DEBUG, "Unable to open directory %s (%s)", path, rte_strerror(errno));
++		return false;
++	}
++
++	result = false;
++	while ((e = readdir(net_dir)) != NULL) {
++		if (e->d_name[0] == '.')
++			continue;
++
++		DRV_LOG(DEBUG, "Checking if %s netdev related to %s ibdev belongs to bond",
++			e->d_name, ibdev->name);
++
++		ret = snprintf(path, sizeof(path), "/sys/class/net/%s/master/bonding", e->d_name);
++		if (ret < 0 || ret >= (int)sizeof(path)) {
++			DRV_LOG(DEBUG, "Unable to get bond path for %s netdev", e->d_name);
++			continue;
++		}
++
++		if (access(path, F_OK) == 0) {
++			/* At least one associated netdev is part of a bond. */
++			DRV_LOG(DEBUG, "Bonding path exists for %s netdev", e->d_name);
++			result = true;
++			goto end;
++		}
++
++		DRV_LOG(DEBUG, "Unable to access bond path for %s netdev (%s)",
++			e->d_name, rte_strerror(errno));
++	}
++
++	DRV_LOG(DEBUG, "No bonded netdev related to %s ibdev found",
++		ibdev->name);
++
++end:
++	closedir(net_dir);
++	return result;
++}
+diff --git a/drivers/common/mlx5/linux/mlx5_common_os.h b/drivers/common/mlx5/linux/mlx5_common_os.h
+index 2e2c54f1fa..7d4e3c5fe8 100644
+--- a/drivers/common/mlx5/linux/mlx5_common_os.h
++++ b/drivers/common/mlx5/linux/mlx5_common_os.h
+@@ -317,4 +317,13 @@ void
+ mlx5_os_interrupt_handler_destroy(struct rte_intr_handle *intr_handle,
+ 				  rte_intr_callback_fn cb, void *cb_arg);
+ 
++/**
++ * Return true if given IB device is associated with a networking bond.
++ *
++ * @param dev[in]
++ *   Pointer to IB device.
++ */
++__rte_internal
++bool mlx5_os_is_device_bond(const void *dev);
++
+ #endif /* RTE_PMD_MLX5_COMMON_OS_H_ */
+-- 
 2.47.3
 
