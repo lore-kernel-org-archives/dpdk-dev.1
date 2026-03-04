@@ -2,93 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15B8EEB7ECF
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 12:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74450EF8FE1
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 13:18:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 10D85402A9;
-	Wed,  4 Mar 2026 13:50:07 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id D0C804003C
- for <dev@dpdk.org>; Wed,  4 Mar 2026 13:50:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772628604;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=Vk4YFBlWq+vcXxMzL4Dpim3yrBMPEPprhSIKDG9Brag=;
- b=PZomJ8tSfIt4615ituvTQgHMDhzWqVQZtwdei3aErYptuKfD8JnFOEDvcXzBn0kF9A9g+J
- n5WmrXMe7nOlPys3Q1rry5si6OoR+8i4+jiW9dQ0TeOlwHCts8eS+KqQnbBPj2QrlzrtWC
- aFG2WnXPfwCyHurVx19TEElFsX/0lDk=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-392-4BPmpOlFNx22KD7t76FKvg-1; Wed, 04 Mar 2026 07:50:03 -0500
-X-MC-Unique: 4BPmpOlFNx22KD7t76FKvg-1
-X-Mimecast-MFC-AGG-ID: 4BPmpOlFNx22KD7t76FKvg_1772628602
-Received: by mail-wm1-f70.google.com with SMTP id
- 5b1f17b1804b1-4836cf00787so69196665e9.1
- for <dev@dpdk.org>; Wed, 04 Mar 2026 04:50:02 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 73321402A9;
+	Wed,  4 Mar 2026 14:18:02 +0100 (CET)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
+ [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id BDA7F4003C
+ for <dev@dpdk.org>; Wed,  4 Mar 2026 14:18:00 +0100 (CET)
+Received: by mail-qv1-f54.google.com with SMTP id
+ 6a1803df08f44-89a00e8dc04so28942656d6.0
+ for <dev@dpdk.org>; Wed, 04 Mar 2026 05:18:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mauricegreenjr.com; s=google; t=1772630280; x=1773235080; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=cb612FMRYF5NoKDs6sJiCqOurpqbyICU0qyIIvrnq2o=;
+ b=s9b4ibXohkQdKTw0azbQ6iCm1NjbH2TKG+eeqNqdaY72aR+ZkYEIBFp74LasjL0Bfp
+ 4nLbDJohDGNl11I/5J8Bem7jk3rFnWCNfS8JeUnLGlV6T9cecyD3cwRL6qA5FPI8Vlpd
+ bEXCfjLQW/HQJftCcOJsEPgN/Tvq0ZaoJvjPf6+zyTLwdlcahyjkEaOkQXJzRD44PsS4
+ UHEodW2m48fmhjAPk6EIDz1jL6srcMy0S5pPC/+NHD+Gkws6b5GW2qvlFhe7N5mk/7Mf
+ MjBz6vRU1sDxf0IiKR4JxuVw+jpljTKp6WPA8DuIwAMWTpk0apNMdH4bD3frYc+L/ps3
+ zygg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772628602; x=1773233402;
- h=in-reply-to:references:user-agent:from:cc:subject:to:message-id
- :date:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=Vk4YFBlWq+vcXxMzL4Dpim3yrBMPEPprhSIKDG9Brag=;
- b=tvzy2xu128G6VFZKLEjXk44mOwDat7+lK3nvPx69cfRKK3pX8yk6ecea4o5Ok11Kgj
- sAz7tYhnt/NC7gQdZfizD7WUY35H1zn29GbfAPMIyXv+ZL3R/4aoMKX0/USRcr/dlDiN
- BNllcNoSBgM400m0mWnGglmH+dbfKZkR9d5P5s+k1DdFenrLm2Vvk8oS5bs7SOr1lZ/L
- mhOlGWerumzGERcWw29apFDKyI2o/pd5uIAOpd87C+RaEazKC9bI1XRnn8dZ6/ymCcnc
- 95ztGS9ZRDt6tg7BG5rtF2l1WdJo5KYklprffvqEGkMfN2IOKCy+/dE2E2ERcmiXK5XX
- FVKA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCW7pbzrs18n9O1rPseMlX3I7DfI6lPiqCuWWfrVxADRdS0oNItJoN+XpYpku7EKpTdvEow=@dpdk.org
-X-Gm-Message-State: AOJu0Yxh7MxaC4NprtX5cMGUBlWfN6frsjYWswdJGpQEBsr50A6iGLZq
- /PyVwUZ7LmccskUm3cXw1gpe5TseKE+K/MVlffStq4Oz1cEoSqYBk9EZeLoqgMGo8A5bXrX3f5U
- OdEamYYIJA+eKpeNbc9bPB5QRfYhqma+J5tOYgS8NPOhV
-X-Gm-Gg: ATEYQzxSeUd9HjUo5v1i124K+ltOiaBXt0KoArc8k9e1tvh4VyjBP3/4HMMj4CWfNKE
- 2l99gwo2Zbc265S4Ddxtx2RcS6p0OYwIISK70x3LSXQN0zGTXCR+3DT9v7PcQn1frtvxsxtN1se
- jgvRn/UWjQdDdJmQIO2InsoKC1rqqNbMwjdcVpfuE5Ef96IYQEt+rXgyKLc62/f5psah34JTex3
- dfFQ9iaKtcq2HYhrcn7eb79WInnusT5p8A8AkxSKmUu83o7ZaYK+zHnuSllL7wTRwe+rHjutPGZ
- b4tzj+v7ik69yrSzUl8mpHF+hE3DY7tq3RGX2QyBFoHU9Xb3McJCMuUbAwru/qH0tQ+i818zCLO
- 7Mn6Mk96Meo3BY0BUqD3BvGE4zegsLN0hMr76tRpb3yb60cmU2iWuVeZupE7n3owj4T/ki34zld
- GAqOXP
-X-Received: by 2002:a05:600c:3542:b0:47e:e2b8:66e6 with SMTP id
- 5b1f17b1804b1-485198ee3admr30364595e9.14.1772628601730; 
- Wed, 04 Mar 2026 04:50:01 -0800 (PST)
-X-Received: by 2002:a05:600c:3542:b0:47e:e2b8:66e6 with SMTP id
- 5b1f17b1804b1-485198ee3admr30364045e9.14.1772628601291; 
- Wed, 04 Mar 2026 04:50:01 -0800 (PST)
-Received: from localhost (2a01cb00021ec000b06e6b63494bd4c5.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:b06e:6b63:494b:d4c5])
+ d=1e100.net; s=20230601; t=1772630280; x=1773235080;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=cb612FMRYF5NoKDs6sJiCqOurpqbyICU0qyIIvrnq2o=;
+ b=J8axvk0ir7rvziTjtATKYn7FzzLflSoexKTZgF2mv2BYE+dQ820PhL6Q9pA+CkU3H8
+ zWBPXaGErNCS7qgI8l8TgOf0OPluAHzKmevrU0fhVWxivBMSIB7E85dnXAUJUAKHi3l8
+ Mamtn0W6XL9RkcTdzjr+VQheaUFab+a4lRgYoc3cwdWOOmr6SGHLIpV2NOz1yVYWP6bR
+ iX1Bx2wPtO5tzMLZ7TPdgmF0H0Xn4iAX1JSocNxU9S2dfUM57xR8C0YKWGmhgI8GIMxP
+ 37EECxhCyUX4pL8SEny6wKDcoMKLstk69m5cyEpj2qj2V5Ux0JzukfiaQX7RR44qtA+S
+ whiA==
+X-Gm-Message-State: AOJu0Yz9U4BQh3PmjDhtbXWZEqGdZ0/eImMnwCV55C6Mc39KWWyNb0Hf
+ r6xn/cdXGsaJL4ju29lLpU2hhMbcNC5qb6/fpn0qZao3dWosiP61i9NJkDHQcSZifJI=
+X-Gm-Gg: ATEYQzwhMWRdyADJjTgyCoOP8E+G6Vj8LtK0K+2WlEXWwFpy15d6PQJVZyK5crbJ2Ju
+ seX8uDjln5PR9XIiKXCZceUqYl/RLV8/K7iCp6xoZbev2Pbq9nQMI9O1gRH440Vdl3NOj7gtW2O
+ ncJA2GHXZ9JQi4jA9V2COE39P/95azk5Hx7hvvdyj8m5w9Eh1D6V/v8UhvO2PMhHsAnoqPsj42f
+ Cms2wPFntWkimavA/wwGeAJDRcbYLG2XtXeVCXlhUKzQFk8TyN3K89mB9lzlBEh6utn7ciAelT4
+ rJr1486El8/GyjIR1Q6xPen0DW+kzKwr5Us0rMW9JUg9AYNLKZKkzxZfSDQ2BefSpLDneSGx1Bd
+ mLvOs0WNFTWSv3DwSCs2btrQhJTerPOHnYnH9dW/z42EE95gCT0n74TLZKjjDxEdBGwPxsHVTYg
+ 3W6/H06BvmebtfIOqEYQKS4wBVrO8IIruBQ+8HLwJdnmljSe9Q116MAVDI+D5I5lzVUo2qxotif
+ u3j
+X-Received: by 2002:ac8:7c44:0:b0:501:3df2:fd60 with SMTP id
+ d75a77b69052e-508db2a4b2emr22715921cf.12.1772630279984; 
+ Wed, 04 Mar 2026 05:17:59 -0800 (PST)
+Received: from localhost.localdomain ([2601:152:281:a9e0:2164:d51c:5b80:c83f])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4851a8aa589sm13184165e9.5.2026.03.04.04.50.00
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 04 Mar 2026 04:50:00 -0800 (PST)
-Mime-Version: 1.0
-Date: Wed, 04 Mar 2026 13:50:00 +0100
-Message-Id: <DGU0E8VWSIQ6.3RHJBZWHB2IW3@redhat.com>
-To: "Konstantin Ananyev" <konstantin.ananyev@huawei.com>, "dev@dpdk.org"
- <dev@dpdk.org>, "Yipeng Wang" <yipeng1.wang@intel.com>, "Sameh Gobriel"
- <sameh.gobriel@intel.com>, "Bruce Richardson" <bruce.richardson@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH dpdk v2 2/3] hash: free replaced data on overwrite when
- RCU is configured
-Cc: "Stephen Hemminger" <stephen@networkplumber.org>
-From: "Robin Jarry" <rjarry@redhat.com>
-User-Agent: aerc/0.21.0-98-g3a0874577a2a
-References: <20260212213313.1376294-5-rjarry@redhat.com>
- <20260213103441.1505659-1-rjarry@redhat.com>
- <20260213103441.1505659-3-rjarry@redhat.com>
- <2630d756f843466dbe1da67f2a65c7d7@huawei.com>
- <DGTZ14W21JCH.3PCYCDEHF1XGF@redhat.com>
-In-Reply-To: <DGTZ14W21JCH.3PCYCDEHF1XGF@redhat.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 6ftxDqiELg6ldEPfKbfy5-tF4AjgZ17d74FB76nx-Dg_1772628602
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+ af79cd13be357-8cbbf732bc1sm1627244485a.46.2026.03.04.05.17.59
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 04 Mar 2026 05:17:59 -0800 (PST)
+From: Maurice Green <maurice.green@mauricegreenjr.com>
+To: getelson@nvidia.com
+Cc: dev@dpdk.org, eagostini@nvidia.com, mkashani@nvidia.com,
+ rasland@nvidia.com, Maurice Green <maurice.green@mauricegreenjr.com>
+Subject: Re: [PATCH 6/9] gpu/cuda: more gpu ID for h100 and l40
+Date: Wed,  4 Mar 2026 08:17:54 -0500
+Message-ID: <20260304131754.12096-1-maurice.green@mauricegreenjr.com>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20250915144137.54858-6-getelson@nvidia.com>
+References: <20250915144137.54858-6-getelson@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -102,19 +80,8 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Robin Jarry, Mar 04, 2026 at 12:45:
->> With multiple goto labels that function becomes even more complicated.
->> Can we just add old_data as an extra parameter:=20
->> __rte_hash_add_key_with_hash(const struct rte_hash *h, const void *key,
->>                    hash_sig_t sig, void *data, void **old_data)
->> And make the callers to invoke __hash_rcu_auto_free_old_data()?
->
-> I'll see what I can do for v3.
+Tested-by: Maurice Green <maurice.green@mauricegreenjr.com>
 
-Unfortunately, I need to pass old_data in order to make the new replace
-API work.
-
-Maybe we can drop the new API altogether and have a much simpler patch.
-
-What do you think?
-
+Tested with H100 (device ID 0x2331). Confirmed GPU detection and
+memory allocation. Still building my program, but no issues so far.
+Happy to help test further to get these patches approved.
