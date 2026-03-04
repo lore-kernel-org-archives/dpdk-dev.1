@@ -2,71 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 345DBEF8FE2
-	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 13:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26158EF8FE7
+	for <dpdk-dev@archiver.kernel.org>; Wed,  4 Mar 2026 14:06:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17667402A9;
-	Wed,  4 Mar 2026 14:28:44 +0100 (CET)
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com
- [209.85.219.46]) by mails.dpdk.org (Postfix) with ESMTP id 8FF984003C
- for <dev@dpdk.org>; Wed,  4 Mar 2026 14:28:42 +0100 (CET)
-Received: by mail-qv1-f46.google.com with SMTP id
- 6a1803df08f44-899fa7d0780so33663396d6.3
- for <dev@dpdk.org>; Wed, 04 Mar 2026 05:28:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mauricegreenjr.com; s=google; t=1772630922; x=1773235722; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=6L4P378vVA8vwfmWA0c4UqPc/ClMji43rA2c9X3fnko=;
- b=qDhPsdPFEHINmwsyFcT9z0g17onhAZawBrrvzXIvj0er55Vw4BMW/rXd1FPtSiVz4q
- Nuwi5pgOUlx+WkwlA5MHTYnEJRUfg/5XaGGR8Ah1pfjNgtBND2fMkeuoWw3iWSgLv4d6
- bxX2FoIFQJKQECi61PJm86OSaoGyIyFpMHOUUUVYDn2t8TjF7BCSS6hlD1v6V3C1sCOY
- XU4XKwDL088nKsTruC1AdeInVPeUY8YuQgKW6gsJIwc3WnofCSA/l/G9ZyNDnzA1zN5I
- OC6lu6Cq5Lj7amPJ0Fb8OHkYeWexhjT1xVGV3QpgT0Kk1BVBxowpEHACMYks6hponjF6
- rDmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772630922; x=1773235722;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=6L4P378vVA8vwfmWA0c4UqPc/ClMji43rA2c9X3fnko=;
- b=gjjVLgT3ZdkuGZorxhyBN/UK59rBCW0CBm8lC6Q2RKgIsHCH41bgeN8e+CBQ+asnVl
- V/73r9WiAuVaxVTpPOhZwJ6Q6fGBq0XlovsZXzazDulCi4AOMLSXl9WoQDc8x+pg9LX6
- b+PVcaCcNdOydm5sH45C1Zh7Q8wabGeATw2CQxizUlNtHSzwlPm7dLYmBldXBKC9x396
- R9Dl4K/UJAzoeD+UAT/oJC7tdywb3RSiAZqqA8C++e7TzhE8decIGs7YLBjs5G8xaAsb
- aNFQvtJFQekfI+0BHs7+4rfVjYEGunLLW66Zksp0+uAuJ+tvo+HwyiJe0gr7DwxWOkfa
- 9ABA==
-X-Gm-Message-State: AOJu0YwW3BcerL0Q9NjByInNDNUPMOryMwmHFwPAGgE+mEMeyuxdo6gQ
- JEyVXTy6tL7N9P4uZ8D69BQ5bx1HShIiTDlXv9ljYG40ymFxhT7dVoSaq+GHo/ckn3k=
-X-Gm-Gg: ATEYQzyksSvehpM0YHJAvVExFklaJ6oFiqdDISkZasjgGUwTOtdZaY9EybapnZg2Rvv
- Qn55zz3nAX2qVGN0agGJP13LgQo4+Itc1xZL59RFKxAxHH2v1nhXYjIldOjIuM3K4osiVhCHbV5
- cgfz3MpwdCjB0cGPrrGl2YYaL7mwXAE/+Bq3ngpYFU7jhKKnS0O3sCqIAy8n7V/SlkU4vaeVW+S
- OY4qRBoj6Aqqh5CLQKu3+T3MJp7aPA3EmEkxH5rVu1P9/KOC5mFd9EeLTw7SAaRW8l4+je7mXbX
- EX8lZWr2RgfVFmmNfYJZoeHtbfL7ehDbhGxk7b7SWCs895+ZFVHc8K7gnwIqCGHMG11v9/SG827
- TSb+GMy9QdAOo5dOknzYisnfuG9eTWK9tnplB4WdaxJnK4Y/BGaqP21l99XNJho2lkWuFClR8sw
- 0p7lr9rmFPXCB+fW/M0s1pUtjQ1vbllb9DboCwQeB1zqKeIP7NnTxB5jMXl8AP+TGlPRYToqGqE
- 4Yr
-X-Received: by 2002:ad4:5aa6:0:b0:899:f30a:6d99 with SMTP id
- 6a1803df08f44-89a19ab67c5mr23165986d6.25.1772630921658; 
- Wed, 04 Mar 2026 05:28:41 -0800 (PST)
-Received: from localhost.localdomain ([2601:152:281:a9e0:2164:d51c:5b80:c83f])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-89a08f23e9asm43506086d6.4.2026.03.04.05.28.40
- (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
- Wed, 04 Mar 2026 05:28:41 -0800 (PST)
-From: Maurice Green <maurice.green@mauricegreenjr.com>
-To: thomas@monjalon.net
+	by mails.dpdk.org (Postfix) with ESMTP id 3D050402A9;
+	Wed,  4 Mar 2026 15:06:10 +0100 (CET)
+Received: from fhigh-b6-smtp.messagingengine.com
+ (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+ by mails.dpdk.org (Postfix) with ESMTP id 7D87A4003C
+ for <dev@dpdk.org>; Wed,  4 Mar 2026 15:06:08 +0100 (CET)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 8094A7A01A4;
+ Wed,  4 Mar 2026 09:06:07 -0500 (EST)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-10.internal (MEProxy); Wed, 04 Mar 2026 09:06:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1772633167;
+ x=1772719567; bh=gs2v0wF+ckip9e08ea2Ssy1k+mYk2XxmWICsfIQAr54=; b=
+ XXJWSxr1+GTJTLue/nqYSzmhzyVPjsSDIGyDVENSTMX6ALc1sD1cXNeHxHbPnb2t
+ 8szouOSK8qBFfA1a8i0riTIo86JQ1/sltA9OU1cvw909wlLPHycbdQ00mTf1EW5A
+ xUV/a5ROV8Idzb7ksexpmR/0NVja/u2jjL05s14bo4ITUyDSGUPTiR5RgCaIP0+F
+ W0xM+dXLDTbNSLKIgaKP3eukvT/a30JRzg+ocPN8E5b6P8TmpN8CuyyvJRqcxKOE
+ LSmPnyIIHep5UFQxaDQfORRmwepmi4YyKexGonyPHzYYrb1Yde28SxrI6YP6QUl5
+ Kw/WPgQUP5bJ9wJ7DWzbsg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1772633167; x=
+ 1772719567; bh=gs2v0wF+ckip9e08ea2Ssy1k+mYk2XxmWICsfIQAr54=; b=s
+ miKGM94nIsO6tMWYY3sP0uGPrPdEP2F5LmXImApcRt/t6V56JtfmFhx1Ron37+GT
+ lBuyQXE6Xoq605PuO4YXkR/GweZXrv7Hgk8zwKgUDHwkIRmFdb69IMEkhGdnNicJ
+ /fFtjEmnSXR0K2hcJU9AuXwfD93BLkIpHbVl1Ml6PSdGixN9ElqnL1ui7pztmAJw
+ I+Hnc52y+eC0AlizsYnJxKj2ZXAqCmwdIadjZuJiPTqGa9xxApKXLvmpfnTVKmA/
+ +5preh9xtVuG4nq7Hg6WZbAXaHYURE3yAXS+5k/om3LaNHesqNlBGjY+rZhK2jGc
+ uDzT4MtMgb64wVkgQlcEw==
+X-ME-Sender: <xms:TzyoafPCEW9TfpH7gdLAOZ8YjrQMYpNGy1bTh2DTyI0eiocwC-SqgQ>
+ <xme:TzyoaS6ttrWdTl_Q0G_O6qYvtrV9FWdMaGyGxdeH5NiWIgwhezLw-SGpWPmKnw7WB
+ _md9EMk0zNGp5XFhRKBg0fW8Sb1-k0exaKkQvDe94gF-Wfwtw-p>
+X-ME-Received: <xmr:TzyoaZ1YAF-UjhwA75fU5j6HyfCO8GQQFjFVEDb3oW4QKGljYEzlH4R8tZfxF_jBdmwEulX5l8bqYTf4n-o5JN6k5Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvieefieejucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpedvkeetheduvdeukeetjeetledvfeelfeetkeeujeffjefhlefftdev
+ fffgueetteenucffohhmrghinhepuhgtfidrtgiipdhgihhthhhusgdrtghomhenucevlh
+ hushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehthhhomhgrshes
+ mhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpoh
+ huthdprhgtphhtthhopehmrghurhhitggvrdhgrhgvvghnsehmrghurhhitggvghhrvggv
+ nhhjrhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhope
+ gvrghgohhsthhinhhisehnvhhiughirgdrtghomhdprhgtphhtthhopehgvghtvghlshho
+ nhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepmhhkrghshhgrnhhisehnvhhiughirg
+ drtghomhdprhgtphhtthhopehrrghslhgrnhgusehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:TzyoaTwK8JD1FVXgYG_3A7HngqDZ-fCfLH8gff3WemIWlkVt3-GG9g>
+ <xmx:TzyoaTueeR_9T-1D5fzZu9_kzp8QlgG3Czdr54WODiX0_Mvv_TjxIw>
+ <xmx:TzyoadzQQpfDXhsIiad-gqkSPgzco0wNsQo1WNnW3Wwei7gCixW4ZA>
+ <xmx:TzyoaeBkXihb2bSAisaHoVitSu_OhlRP8wbnFeOM1UvKNiscnOLTZA>
+ <xmx:TzyoaYqPCbZxse5lY8AppKeo8OdGnBJG-6jOuF-1rVQPrOwkXdJktPM_>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 4 Mar 2026 09:06:06 -0500 (EST)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Maurice Green <maurice.green@mauricegreenjr.com>
 Cc: dev@dpdk.org, eagostini@nvidia.com, getelson@nvidia.com,
  mkashani@nvidia.com, rasland@nvidia.com
 Subject: Re: [PATCH 7/9] gpu/cuda: extend NVIDIA GPU device ID list
-Date: Wed,  4 Mar 2026 08:28:40 -0500
-Message-ID: <20260304132840.12740-1-maurice.green@mauricegreenjr.com>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <2884915.PYKUYFuaPT@thomas>
+Date: Wed, 04 Mar 2026 15:06:04 +0100
+Message-ID: <6937723.QfHCVqEBuz@thomas>
+In-Reply-To: <20260304132840.12740-1-maurice.green@mauricegreenjr.com>
 References: <2884915.PYKUYFuaPT@thomas>
+ <20260304132840.12740-1-maurice.green@mauricegreenjr.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,13 +92,56 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 17 Sep 2025, Thomas Monjalon wrote:
-> I feel we can scratch all these patches and do 1 well synchronized,
-> and documenting a sync command as code comment.
+04/03/2026 14:28, Maurice Green:
+> On Wed, 17 Sep 2025, Thomas Monjalon wrote:
+> > I feel we can scratch all these patches and do 1 well synchronized,
+> > and documenting a sync command as code comment.
+> 
+> Agreed. I also noticed 0x1df6 in this patch is already present in 
+> main. I would be happy to submit a replacement patch doing a full
+> sync with the NVIDIA open kernel modules device list if that is useful.
+> Having the updated device IDs for this driver would really help.
+> 
+> Maurice Green <maurice.green@mauricegreenjr.com>
 
-Agreed. I also noticed 0x1df6 in this patch is already present in 
-main. I would be happy to submit a replacement patch doing a full
-sync with the NVIDIA open kernel modules device list if that is useful.
-Having the updated device IDs for this driver would really help.
+I had started to work on it.
 
-Maurice Green <maurice.green@mauricegreenjr.com>
+An abstract to see how it looks like:
+
++#define NVIDIA_GPU_GV100GL_TESLA_SXM2_16      0x1db0 /* Tesla V100 SXM2 16GB */
++#define NVIDIA_GPU_GV100GL_TESLA_SXM2_16_LS   0x1db1 /* Tesla V100 SXM2 16GB LS / GRID V100X */
++#define NVIDIA_GPU_GV100GL_TESLA_DGXS_16      0x1db2 /* Tesla V100 DGXS 16GB */
++#define NVIDIA_GPU_GV100GL_TESLA_FHHL_16      0x1db3 /* Tesla V100 FHHL 16GB / GRID V100L */
++#define NVIDIA_GPU_GV100GL_TESLA_PCIE_16_LS   0x1db4 /* Tesla V100 PCIe 16GB LS / GRID V100 */
++#define NVIDIA_GPU_GV100GL_TESLA_SXM2_32_LS   0x1db5 /* Tesla V100 SXM2 32GB LS / GRID V100DX */
++#define NVIDIA_GPU_GV100GL_TESLA_PCIE_32      0x1db6 /* Tesla V100 PCIe 32GB / GRID V100D */
++#define NVIDIA_GPU_GV100GL_TESLA_DGXS_32      0x1db7 /* Tesla V100 DGXS 32GB */
++#define NVIDIA_GPU_GV100GL_TESLA_SXM3_32_H    0x1db8 /* Tesla V100 SXM3 32GB H */
+
+And others with partial name:
+
++#define NVIDIA_GPU_GA100      0x20b8 /* A100X 80GB DPU */
++#define NVIDIA_GPU_GA100      0x20b9 /* A30X 24GB DPU */
++#define NVIDIA_GPU_GA100      0x20bb /* DRIVE A100 PROD */
++#define NVIDIA_GPU_GA100      0x20bd /* A800 SXM4 40GB */
++#define NVIDIA_GPU_GA100      0x20be /* GRID A100A */
++#define NVIDIA_GPU_GA100      0x20bf /* GRID A100B */
++#define NVIDIA_GPU_GA100      0x20c2 /* CMP 170HX */
++#define NVIDIA_GPU_GA100      0x20f0 /* A100 PG506-207 */
++#define NVIDIA_GPU_GA100      0x20f1 /* A100 PCIe 40GB / GRID A100 */
++#define NVIDIA_GPU_GA100      0x20f2 /* A100 PG506-217 */
++#define NVIDIA_GPU_GA100      0x20f3 /* A800 SXM4 80GB / GRID A800DX */
++#define NVIDIA_GPU_GA100      0x20f5 /* A800 80GB PCIe / GRID A800D */
++#define NVIDIA_GPU_GA100      0x20f6 /* A800 40GB PCIe / GRID A800 */
++#define NVIDIA_GPU_GA100      0x20fd /* AX800 Converged Accelerator */
+[...]
++#define NVIDIA_GPU_GH100      0x232c /* H20 HBM3e */
++#define NVIDIA_GPU_GH100      0x2330 /* H100 SXM5 80GB */
++#define NVIDIA_GPU_GH100      0x2331 /* H100 PCIe */
++#define NVIDIA_GPU_GH100      0x2335 /* H200 SXM 141GB */
+
+As you can see it requires knowledge to get the right name for each ID.
+Not everything is in https://pci-ids.ucw.cz/
+https://github.com/NVIDIA/open-gpu-kernel-modules is a good source but not perfect as well.
+
+
