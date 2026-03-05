@@ -2,82 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B53EF3D337
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 17:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E633AF3D33C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 17:17:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D535F402CC;
-	Thu,  5 Mar 2026 18:10:27 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 8BF824029D
- for <dev@dpdk.org>; Thu,  5 Mar 2026 18:10:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772730625;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=DFcgiy8PeK9GwBlcI76mDKcuhMlvhS4LTOrFwNwDx0Y=;
- b=HcD5qFBDSOkik1AO5ejH61J5jsgbE7mUaymvPq8nPdT4Z1uUKaFiiG4S339PFI3FYTH7tr
- jujXVZJj/xrI/TtkdmlaLl80vqOiB0lZuZKrHpcX5gNySNfoPtLfAJbh0MsWvlL7xyg78s
- TDY26Z+3xT9SxT0fQUMh5BOMsP6gQr8=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-204-HJJ00EnIO1Wj5TtsPxdoSw-1; Thu, 05 Mar 2026 12:10:23 -0500
-X-MC-Unique: HJJ00EnIO1Wj5TtsPxdoSw-1
-X-Mimecast-MFC-AGG-ID: HJJ00EnIO1Wj5TtsPxdoSw_1772730622
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-3870692ea5cso80863561fa.0
- for <dev@dpdk.org>; Thu, 05 Mar 2026 09:10:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772730622; x=1773335422;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+	by mails.dpdk.org (Postfix) with ESMTP id 320564029D;
+	Thu,  5 Mar 2026 18:17:08 +0100 (CET)
+Received: from mail-yx1-f42.google.com (mail-yx1-f42.google.com
+ [74.125.224.42]) by mails.dpdk.org (Postfix) with ESMTP id F220D40287
+ for <dev@dpdk.org>; Thu,  5 Mar 2026 18:17:06 +0100 (CET)
+Received: by mail-yx1-f42.google.com with SMTP id
+ 956f58d0204a3-64cb577e79cso8747902d50.0
+ for <dev@dpdk.org>; Thu, 05 Mar 2026 09:17:06 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772731026; cv=none;
+ d=google.com; s=arc-20240605;
+ b=BCUoN4YGv3VzVabpJtYfcpn0YRMgeNKPjsu4JGKiAQ1Q2szy7nWJP1IJr8mk4wlWle
+ bgBR5YxYT2qXhY1Opvx4fu0260wdcIcZoX0JpJdn5VHlRP41IzUddJXNb+ukcAHg4Ftc
+ Y83cZKQrYTKw21dv9u6KSmUvlIj1wRL8QatIwpkkYaaKYB8/Hd88NIz16Ger1BYz5hpk
+ sTA6iQAz80FlT0ONJGlhbuVhApVuIq2tM/PsIiJhfUeQZ1kQIFxhrMzqUN3O97TCYTR/
+ Upv8ls7UbLrI7CxyuSR/UhfvHcOJ+M4NC405hwvN0+ykoq+EA2IGqwuPBz+/bsoEXXuA
+ Y6ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=8FaqFaU83qae7m6zgyxzQsOQlv2NM8i4JCShr9wSf8w=;
+ fh=CSEddOqJAZO31yaJPqNdqswyIYLuI09OkyhI4mP5Zi4=;
+ b=U5shfpt8KmXHZqD0UAPUaZj65Ie1FJxHdeXNYNhF9sci/Tg+8aEq+QY75KlnfRQLzY
+ Ct7i73V/zdZnnjydEtGjCnNsU8QuHLiXyFMNQzyctowsMZzfzGStsZf4BQ8g8o85pFn6
+ xAEeRaLwOu/B62ieN3EKgnKMg3ml3yXWIpgie+Ku0Wj5z1ymGqHwUpYLmQyZtjCNKZtQ
+ ymVQiHcBcV8ZqPiLmrzySc0oK/+NSlAA8/pPVGyNcYVGMee+PlDsrq17CLC/ISUUS26s
+ AGJHrB6DRcixtHzGfb/vnuXbEQe3rhEVSzvgvk5bCPdQ9SqkPwkbC6pFBY7n7PI3cXMA
+ E8CQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1772731026; x=1773335826; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DFcgiy8PeK9GwBlcI76mDKcuhMlvhS4LTOrFwNwDx0Y=;
- b=YVH+0ArMxVLg3xFEJIM1KzNtg0Wl+bto1R63HY7qdsZQkW9c2CbdzCcx3NIqfz+q9C
- wUu3lGzVu6GkBaQQk/Ui5r0WzMRONxsP9dvF/kaIudDd2QsozUbce8ILbkfP0JnnEt5b
- Me+KzFP7W9vFo/5u23GXuSxah3aFE2yZBFFxngwgom0WWlf28Du+iF5/deIu7C7igICd
- qEBFKdq+P1HErgBG53uy9cml4gBZKrYKLZBvTHTABlK3q37mnRBAQG73PuvmIrhtL7tU
- vm1yLrxX9GGMikd9xU4ql4Q/d4spLbNQKHNZcWAFEkwji0HD6yTtoJsf1lc/cHDt24cW
- XmbQ==
-X-Gm-Message-State: AOJu0YyBGOUHAYNiv1mcocm7e4KBWHGo0iiDZBMfM6jMCsYDGWqW6ISf
- Zzt6dkA1Ns+lmYTtNmkiaYoLTjpLXKZ6s3L11NzRpQjwKfDiAioO/UlqdFwoqgRhZ2eb3htjO4S
- e4Wp4ejMSYolSO4YY6FFKFW8K1ceWLyL1NaVlgt5ljtcMmHbxYmTK0qh4ustPCheYiih1GPD5u/
- kS1kwAxfBA1RzyGTK3+tQ=
-X-Gm-Gg: ATEYQzyc2jgkYL77rPsDJNRMhNUjqLrDnIZd9M/oFYLOFxg1eJyF/GPkoqqk/mtCWZY
- utljHk81MgJ+ikaPNZq32j4CAlXVBTsdaXQlDXMkKhE+KMdja6N1SwnlSUwmGoWwSwViWn7Yy4G
- 2VmqEu/gucL7uFYb+DwmHvqKCbua0pcJ2HgnqPKKli768bIJObZct1t+Oxtrh8UnXO/LgE/suN/
- GJS4g/tpjg3a9SSppJJi+Zl03VOh+ahZNrHsoWqNoj/yWQ+2OSde33XaDEWUBZ9mhSmmg==
-X-Received: by 2002:a2e:a903:0:b0:38a:269e:fbe5 with SMTP id
- 38308e7fff4ca-38a2c580586mr35152091fa.18.1772730622149; 
- Thu, 05 Mar 2026 09:10:22 -0800 (PST)
-X-Received: by 2002:a2e:a903:0:b0:38a:269e:fbe5 with SMTP id
- 38308e7fff4ca-38a2c580586mr35151871fa.18.1772730621607; Thu, 05 Mar 2026
- 09:10:21 -0800 (PST)
+ bh=8FaqFaU83qae7m6zgyxzQsOQlv2NM8i4JCShr9wSf8w=;
+ b=Ozwp/27a81nc6cAJIOi9R4EtVCjyeWFbV6GRL2NdZgDmTqhaVG7YviVQv2zXBD7k3M
+ ltV8uhBsLUc4VCW3GmM1JpDr4eJ4C5s2lzUVNfxEev7L5jlFjp0SZmtskbhFNUuyfrvP
+ cC6yadE8VdTmLLQN5zQn1FCC0oiOWP6Tdj+fo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772731026; x=1773335826;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=8FaqFaU83qae7m6zgyxzQsOQlv2NM8i4JCShr9wSf8w=;
+ b=FRj+7uls3rYk2OwzHvwSgcQE8O/YDgHphqdj/DZTMeFwqtHpyWDKWJEXNucmFQTdmx
+ Z7gY6nXI5iotEKoaijh1ME2EAEu+plmLVbcJ9GPL0uUQDNHPff8QcUAsIkILD3rImf44
+ Q5kkM/aVeXYyVjrDYQ7BmyGCiEk0C2Yg/aEZ8lkzUQJBXBG7hLs0KqdWRXTqSFvIw3a1
+ TsQubfuKr27UyIJgrkuPdtFja2xJRde5G1z7WPqT8baFXiksXKQXiZTNnxYeFOcj1+sS
+ bXPAGAetRuHTZoIPtiYNEUOEM/3MnlpZ9vkcppsgigLPOsNf1LAH/BUyriYEYSbywewu
+ sCsQ==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXuPq8wdF4vJilV3M5Qmy3Fe/5LvuBx6rUPsWtXSFVjhYrG79B5viXhA0BBISAWPIJkiFY=@dpdk.org
+X-Gm-Message-State: AOJu0Yz2iIG2at8DSF/AGNZgUgIa6uWBMZObfdK8fRgPPnueF2ZXHnyR
+ vREE8IMocdh1ccaTj5NvsszAk8UC36LkOmOxfUEUNQ9MVPxEgEJSIsx0XQmuJ1ff4l8XLM/4ohP
+ oMjNQSopjijHIZUWY2i8r7kF8A19VUnVTB2FnBqRO2A==
+X-Gm-Gg: ATEYQzwxoc2gM70y7R1/ndDCi895OPwv6y+Bc2115COstqHEAL8a17ft4IKjJVZdeNr
+ WqSNsVwcvU0QavqYaOAunnshg5SL8A/5ME5pJWdKUNjeWWdoBKK1SSAfGOB+LJT7pT81yu2u+oc
+ TCOit+Q00RdHE69XSeb2OhHzwhbXvZ04XMe0+GPgYz4FomamdmVhj+BMt2Q3oy9hchYhcxzQYP0
+ CBWqTxSS5dVT5hv6dIxQhTn1YDKzbAlG1WlKU9irJm5YnrSp2xyd4T5h+A6iDjWXY4zfq+OxMaf
+ mckPu/ZJLlucjW9p2ptzGg==
+X-Received: by 2002:a05:690e:1518:b0:64c:c616:c324 with SMTP id
+ 956f58d0204a3-64cf9b9cf3amr5483865d50.40.1772731026035; Thu, 05 Mar 2026
+ 09:17:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20260225112922.3982104-1-david.marchand@redhat.com>
- <20260305164550.2067453-1-david.marchand@redhat.com>
- <20260305164550.2067453-6-david.marchand@redhat.com>
- <aam4A98jJsuhgTYG@bricha3-mobl1.ger.corp.intel.com>
-In-Reply-To: <aam4A98jJsuhgTYG@bricha3-mobl1.ger.corp.intel.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 5 Mar 2026 18:10:10 +0100
-X-Gm-Features: AaiRm51hh2VpNxxBlC3RwuvLuJvYpXuj6WT6W2PmRJ0P3SQR5VPKS786j8mxCnk
-Message-ID: <CAJFAV8wOAJiL3b2fSyUKhyUYe6LGQknsF5_ZnEF9FVRyvCHE9g@mail.gmail.com>
-Subject: Re: [RFC v3 5/7] bus: factorize devargs lookup
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Parav Pandit <parav@nvidia.com>,
- Xueming Li <xuemingl@nvidia.com>, 
- Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, 
- Hemant Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>,
- Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>, 
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>, 
- Wei Hu <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: -NmYFbl3zqgczUk_bYsgCLs5lWHK7UkjNwTjax2jB8c_1772730622
-X-Mimecast-Originator: redhat.com
+References: <20260106213803.205934-1-dmarx@iol.unh.edu>
+ <20260227192016.495703-1-dmarx@iol.unh.edu>
+ <CAJvnSUB00qRvEORQi9GYhca6i_Li7gsNgQ0S1PZ1HDumBeUzSw@mail.gmail.com>
+In-Reply-To: <CAJvnSUB00qRvEORQi9GYhca6i_Li7gsNgQ0S1PZ1HDumBeUzSw@mail.gmail.com>
+From: Dean Marx <dmarx@iol.unh.edu>
+Date: Thu, 5 Mar 2026 12:16:55 -0500
+X-Gm-Features: AaiRm51M6mOR3xnpjMDPhHPhYwHZJjKdvVjD6aBgaGmGNGAdRkLyC1Mkcn6UmU4
+Message-ID: <CABD7UXOKSVs828tV0XApo1MkMeV1Owx_OY5SFYLhRmd2XX-MYw@mail.gmail.com>
+Subject: Re: [PATCH v2] dts: refactor flow suite with generator pattern
+To: Patrick Robb <probb@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -91,154 +96,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 5 Mar 2026 at 18:06, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
+On Thu, Mar 5, 2026 at 11:46=E2=80=AFAM Patrick Robb <probb@iol.unh.edu> wr=
+ote:
 >
-> On Thu, Mar 05, 2026 at 05:45:47PM +0100, David Marchand wrote:
-> > Each bus reimplements some similar devargs lookup code.
+> On Fri, Feb 27, 2026 at 2:20=E2=80=AFPM Dean Marx <dmarx@iol.unh.edu> wro=
+te:
 > >
-> > The differences are in how some bus (PCI, VMBUS etc...) normalizes the
-> > device names. We can't use the .parse existing handler from outside the
-> > bus code itself, as the size of the bus specific device location address
-> > is unknown.
-> > Introduce a bus specific helper to compare two device names and
-> > hide this ugly detail.
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > ---
->
-> Looks generally good. Couple of minor naming suggestions inline below.
->
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
->
->
-> >  drivers/bus/auxiliary/auxiliary_common.c | 16 ++-------
-> >  drivers/bus/cdx/cdx.c                    | 14 +-------
-> >  drivers/bus/dpaa/dpaa_bus.c              | 41 +++++++++++++-----------
-> >  drivers/bus/fslmc/fslmc_bus.c            | 34 ++++++++++----------
-> >  drivers/bus/pci/pci_common.c             | 38 +++++++++++-----------
-> >  drivers/bus/platform/platform.c          | 17 ++--------
-> >  drivers/bus/uacce/uacce.c                | 19 ++---------
-> >  drivers/bus/vmbus/linux/vmbus_bus.c      |  2 +-
-> >  drivers/bus/vmbus/private.h              |  3 --
-> >  drivers/bus/vmbus/vmbus_common.c         | 30 ++++++++---------
-> >  drivers/dma/idxd/idxd_bus.c              | 14 ++------
-> >  lib/eal/common/eal_common_bus.c          | 20 ++++++++++++
-> >  lib/eal/include/bus_driver.h             | 31 ++++++++++++++++++
-> >  13 files changed, 132 insertions(+), 147 deletions(-)
-> >
->
-> <snip>
->
-> > diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_bus.c
-> > index 0a2311a342..863c7418bb 100644
-> > --- a/lib/eal/common/eal_common_bus.c
-> > +++ b/lib/eal/common/eal_common_bus.c
-> > @@ -8,6 +8,7 @@
-> >
-> >  #include <bus_driver.h>
-> >  #include <rte_debug.h>
-> > +#include <rte_devargs.h>
-> >  #include <rte_string_fns.h>
-> >  #include <rte_errno.h>
-> >
-> > @@ -205,6 +206,25 @@ rte_bus_find_by_name(const char *busname)
-> >       return rte_bus_find(NULL, cmp_bus_name, (const void *)busname);
-> >  }
-> >
-> > +RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_find_devargs)
-> > +struct rte_devargs *
-> > +rte_bus_find_devargs(const struct rte_bus *bus, const char *name)
-> > +{
-> > +     rte_bus_devname_compare_t cmp = bus->devname_compare;
-> > +     struct rte_devargs *devargs;
+> > +@dataclass
+> > +class FlowTest:
+> > +    """A complete flow test ready for execution."""
 > > +
-> > +     if (cmp == NULL)
-> > +             cmp = strcmp;
+> > +    flow_rule: FlowRule
+> > +    packet: Packet
+> > +    verification_type: str
+> > +    verification_params: dict[str, Any]
+> > +    description: str =3D ""
 > > +
-> > +     RTE_EAL_DEVARGS_FOREACH(rte_bus_name(bus), devargs) {
-> > +             if (cmp(name, devargs->name) != 0)
-> > +                     continue;
-> > +             return devargs;
-> > +     }
 > > +
-> > +     return NULL;
-> > +}
+> > +@dataclass
+> > +class FlowTestResult:
+> > +    """Result of a single test case execution."""
 > > +
-> >  static int
-> >  bus_can_parse(const struct rte_bus *bus, const void *_name)
-> >  {
-> > diff --git a/lib/eal/include/bus_driver.h b/lib/eal/include/bus_driver.h
-> > index 60527b75b6..430906772d 100644
-> > --- a/lib/eal/include/bus_driver.h
-> > +++ b/lib/eal/include/bus_driver.h
-> > @@ -118,6 +118,21 @@ typedef int (*rte_bus_unplug_t)(struct rte_device *dev);
-> >   */
-> >  typedef int (*rte_bus_parse_t)(const char *name, void *addr);
-> >
-> > +/**
-> > + * Bus specific device name comparison function.
-> > + * Bus can normalize the names of devices using an internal representation.
-> > + * This helper makes it possible to check whether two names refer to the same device.
-> > + *
-> > + * @param[in] name1
-> > + *   device information location address,
-> > + * @param[in] name2
-> > + *   device information location address,
-> > + *
-> > + * @return
-> > + *      true or false
-> > + */
-> > +typedef int (*rte_bus_devname_compare_t)(const char *name1, const char *name2);
+> > +    description: str
+> > +    passed: bool
+> > +    failure_reason: str =3D ""
+> > +    flow_rule_pattern: str =3D ""
+> > +    skipped: bool =3D False
+> > +    sent_packet: Packet | None =3D None
 > > +
+> > +
+> > +@dataclass
+> > +class ModifyTestCase:
 >
-> This is a good addition.
->
-> >  /**
-> >   * Parse bus part of the device arguments.
-> >   *
-> > @@ -258,6 +273,7 @@ struct rte_bus {
-> >       rte_bus_plug_t plug;         /**< Probe single device for drivers */
-> >       rte_bus_unplug_t unplug;     /**< Remove single device from driver */
-> >       rte_bus_parse_t parse;       /**< Parse a device name */
-> > +     rte_bus_devname_compare_t devname_compare; /**< Compare two device names */
-> >       rte_bus_devargs_parse_t devargs_parse; /**< Parse bus devargs */
-> >       rte_dev_dma_map_t dma_map;   /**< DMA map for device in the bus */
-> >       rte_dev_dma_unmap_t dma_unmap; /**< DMA unmap for device in the bus */
-> > @@ -281,6 +297,21 @@ struct rte_bus {
-> >  __rte_internal
-> >  void rte_bus_register(struct rte_bus *bus);
-> >
-> > +/**
-> > + * Find the devargs associated to a device.
-> > + *
-> > + * @param bus
-> > + *   A pointer to a rte_bus structure describing the bus
-> > + *   to be unregistered.
-> > + * @param dev_name
-> > + *   A device name.
-> > + *
-> > + * @return
-> > + *   Pointer to the devargs, or NULL if none found.
-> > + */
-> > +__rte_internal
-> > +struct rte_devargs *rte_bus_find_devargs(const struct rte_bus *bus, const char *name);
-> > +
->
-> The doxygen says the parameter is dev_name, while the prototype only uses
-> name. I'd prefer this to be "dev_name". [I nearly one if the function
-> itself should have an extra "_" and be "find_dev_args", as it's finding
-> the args for a particular device, rather than finding the "devargs" for the
-> bus itself.]
+> Don't just rename FlowTestCase to FlowTest - also drop Case from this
+> class, and JumpTestCase etc.
 
-Good catch.
-
-Err well, on doxygen / prototype misalignment.. documentation
-generation should fail if it is not aligned.
-Strange I did not see this.
-Ah.. it is a driver header, so we probably don't generate any doc for this.
-
-
--- 
-David Marchand
-
+Makes sense, I'll add to the next version
