@@ -2,87 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1202F47CBA
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 19:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E63F47CBD
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 19:33:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDDFC402CC;
-	Thu,  5 Mar 2026 20:29:53 +0100 (CET)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id 9F6F64029D
- for <dev@dpdk.org>; Thu,  5 Mar 2026 20:29:52 +0100 (CET)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-12732165d1eso9277535c88.1
- for <dev@dpdk.org>; Thu, 05 Mar 2026 11:29:52 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772738991; cv=none;
- d=google.com; s=arc-20240605;
- b=DB+AOpijtifL/1QfbTWj/1JlNuhLUaPSkML2crGdX4MqPmhUpmccLDr0cWLP1Z7PbB
- K4YmDHlokkDjK40094IWKXWeyKmXsXZMeJhyU+6MLGGQ1s1KXV3c07p99nPmiPmfXSET
- ZhJkvzor/NgVVRi4mVlZtVlY6NUvHj8Q5ZOPQGJv1hxALBJAeX52AEi9cBct2dJYsJf2
- VFbgbarggt1JszimKFdKo901QSxStu57/jc02ZilVx+mCzfjstg/LptrOMvcNfXUqUic
- 41eZ63ueW2vqSeoxXVAhTXclJMfM+4mAd0QgLEkGEqthT+P7sny4Pg9Eg/JouyyFAyca
- sZnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=Bullda/xMgwXnyaQqoSxt2WkgUTJKYBlvP/uKrJqbpw=;
- fh=4W2N8S/7y4PInWzrAs0ECbgUPDsi7aK/UjA6yz/I58c=;
- b=iU88QV/xbZpHFuScrE9F3hunpWAVepOjWB7hHpTWWCUl6fIKCVw5HnSc0tCIGF9Ewe
- 1VLNVqZaAN5t+kqe/ZZaqqzyoWiJeaP+S/JhL2u5IDe0C1YiamM7HwGCSVxTsuQ5pygY
- /UXIRf97sGZZb0Q9EjhT287ksrwVmvFrhIJhzyus7H9BoD5B5oOhmbqkV52fmNKdX/Zf
- M/ZGsN3S3Cm9ZbBsc4GmIaoNxMzJ0F9x6FrFE+EzGBSB+X0AABHJGox4G+G6h/WAM2NJ
- DkI8+481Ur2YvUZ425fKD2CeL/7Kz+vh5OstcB9/m6Uu98ke8t6EPdgjEdv8eF+TkpOy
- W/Iw==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 69DAB402CC;
+	Thu,  5 Mar 2026 20:33:40 +0100 (CET)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
+ [209.85.222.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 5917F4029D
+ for <dev@dpdk.org>; Thu,  5 Mar 2026 20:33:39 +0100 (CET)
+Received: by mail-qk1-f177.google.com with SMTP id
+ af79cd13be357-8c70b5594f4so866514885a.1
+ for <dev@dpdk.org>; Thu, 05 Mar 2026 11:33:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1772738991; x=1773343791; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1772739218; x=1773344018; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Bullda/xMgwXnyaQqoSxt2WkgUTJKYBlvP/uKrJqbpw=;
- b=RTbi60tTBjafmaCs17aZrKUDq5OrfkxbuEbeyL6BzcziVg9JFsedWdBUub83ac90ux
- PWA5f4JlrQaPtsvGO5nZV1d3bQ+yqB/BAQFyrL8lnYUDf0KDe4N+niXfAtLAPfaAQgbl
- yGTXwF7fKVBHM+CCpKPo5cNi2zQokyshqr7+g=
+ bh=E68gHKFXXgMPiupO+XRYMqgd1udWZygz8ECaYBJFz3k=;
+ b=bXgF++aN7X/FMfTRWoCeZ/5qfmr3DiRSlc+zcA3pqjPT5z+kQ5yY2t/C6LVsDLxYSx
+ BLHF23er4y4ZrJsHsoR2PQWwfKPzIEOzh0sXbDIgaXgZDtDTg2DCliry9mZ+JBrZM0P+
+ s0Vb1lUZzTgio9GKDm1XoflTYVMX5HqQwr/u0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772738991; x=1773343791;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1772739218; x=1773344018;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Bullda/xMgwXnyaQqoSxt2WkgUTJKYBlvP/uKrJqbpw=;
- b=dkmHa7chfq2zivHtu6kTd6eC/oG36om5+XNmNS0m77lPKGSgS4V/5UE2SADTzJk9bG
- vw54xmeakmi/kWTaPFO5oHDl93RHX9KEWlC0409ZTWt2EsCiMfeFcnhQbbB5u8RwiCZ8
- 3URiKreyK0TiDNFLF5vcuBzJ+926/BCIm7h4oI1QnxGbrH5R5y+P43pmWiDJkyzSYujR
- KrtWPdpXDjl+DrKUFDxLlBCxB9QJYi3tquJFwduplja2p1OmE5HH6L71LKl39oopkkpX
- 5W2cI5rmX23daGHgJKZJsup81KFdpusgsEw9wBgJ2YXfXsQoNVH4ZDdnGyGmChaZvwyC
- GWOw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWwciQaOJE7urgkjzeNnhVYtOZwiCIMcueVV1LHbpIqdL8+35CglJJGhbLuZ7fU4AdRIB0=@dpdk.org
-X-Gm-Message-State: AOJu0Yz0TQscu2b5IsLPHzDPgslBWwK/2oIL+hFVaGVqlPH6cvZX8Kfu
- H8lUPYhikCFu7eWd1NNNV6osL/Oz7Z/IJL33d9ngXJ2NxL7rPqbO5NzGrr58LvtoHmMO7Sd1i+g
- MhkH3MSjlkM3I740hgT1mTvxFqRNc4RYuVoxLu/wXFQ==
-X-Gm-Gg: ATEYQzxhdvhgf6jx4Efi7MGhQ/01rWWkXngRFv3KpxNvCd9FELKyD31M5TCZR5VYgSa
- HUyaAzQQjgBg2Rie6k+w3F3U3u8IeFQIszE/3M1MWb468fMOdYK7kOdxBza6D5sVF7NxIiWDOOw
- KRiel6I0AKNwTk5SSRIYyfnnsoWmSllPDp5yHEoJvFyYjouJbFuViTlGdg+pgFr5l0AfN73afbj
- NNVvnRtGxdW1oh3WTAF3ha21J6hjHzONb/fG8muJH0eXfLBxujE5cbj+CNH5KuvfGUn7v4gC02j
- RRV1IMDN4DcsBJlGPIjFnLXn17w2vgH1mEBlfbzDwpD2x3QEbBMSZqusvRsC4P+PIjulETUZ
-X-Received: by 2002:a05:7022:1288:b0:128:bae0:e036 with SMTP id
- a92af1059eb24-128c1164913mr456565c88.27.1772738991502; Thu, 05 Mar 2026
- 11:29:51 -0800 (PST)
+ bh=E68gHKFXXgMPiupO+XRYMqgd1udWZygz8ECaYBJFz3k=;
+ b=mBhRGvgWu6oZ3gx/05rIAsYJENlZAlaEy+HQduvYoUZuby6owwBBCYBdQkAohg2OIK
+ Hb7Toxn0ehuxr00TozNDa9jVOsxaZUVflH3hbid9PVC9vIXaVFoSYNIuYyB2bfWWmsPS
+ SrwCS43hfmqrOPruxlnvBstDDmMRlr+SlygYabw9vpfH5phoQVJOuQgS0C245nyaW1hJ
+ aJjTmrtPTTu7/U1w0s4SZD6l57E1UdjAUF80Ewpx0uRSzifFQgnTNNCraoH3lRLHXyIQ
+ ehyc5ASJXUxVpotUQ8jV73C5TfQlBtP1epXawbZwkztIzkiMBnUrmHya55ezCzpskFYz
+ IubQ==
+X-Gm-Message-State: AOJu0YxmE99Ub5y63ByWCTzmvQUIL4SP1mX1s8o9jHolamDRE4MC/2sC
+ 9ZjKuXA+t39zOnJ3tTTKRg9cVMr1ahC441IWZ1aFhN3tj/kV8j+8a8ow1veKyuYFabQ=
+X-Gm-Gg: ATEYQzw8ASNQ5wSsHPzr9BbuN2Qu2WyahLsupPRTKOVRzW11LdL3/NBL+/oI/KI9J2r
+ Wb6JtXzw5JrBZ2oHnMo6YW4nY8xEGYA9pqlhQSrrd/zlzcBqHGxRyVa0RSpPVyZPYrdNZzgDZOH
+ oKtLES5M02m7u8ZpDGE5aeYgoeGIXMF9kUAgwU5/jBTtBljSD0ty8aW2uGsphTDBAk88HR67m6F
+ FDlWnzM2rOBeZMyffGWnBumF+DaU4nvHeit48Ad3T3MMFNJd2P0egAM1FMtmAqY5zNdI3lmipLX
+ I8QddAOOIUSQbqJS5pWVozh6O7Ic50fO41HATXrqjaTtEEA1t1iqq+3dKkdEk7FDephX/5NRfWD
+ bU1plAWczKSxHx3o/Vw7XFdmUMWhm5Kd45uJ4c+2y144ybFFTJ2amdN7ErUJwEW593Xxg5eWNA5
+ +4g8jE1n/ofcUyaSC01XzrGNCzMfgv5ghA2pSRMRb3FCW/oHO7Y6vnX2p+wYBiSRwx
+X-Received: by 2002:a05:620a:25cc:b0:891:7008:f2e0 with SMTP id
+ af79cd13be357-8cd63409339mr417485385a.8.1772739218478; 
+ Thu, 05 Mar 2026 11:33:38 -0800 (PST)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ by smtp.gmail.com with ESMTPSA id
+ 6a1803df08f44-89a20471119sm44384926d6.40.2026.03.05.11.33.37
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 05 Mar 2026 11:33:37 -0800 (PST)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: probb@iol.unh.edu
+Cc: dev@dpdk.org, luca.vizzarro@arm.com, dmarx@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v2] dts: update yaml configs
+Date: Thu,  5 Mar 2026 14:33:35 -0500
+Message-ID: <20260305193335.150598-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260226204322.87944-1-abailey@iol.unh.edu>
+References: <20260226204322.87944-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
-References: <20260210193448.69423-1-abailey@iol.unh.edu>
- <20260302185438.122584-1-abailey@iol.unh.edu>
- <20260302185438.122584-5-abailey@iol.unh.edu>
-In-Reply-To: <20260302185438.122584-5-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 5 Mar 2026 14:26:53 -0500
-X-Gm-Features: AaiRm52AIN4uQVzVmkW462QdGWLjv6Wu04EtPL2IdEQZxORLfVjurF2eCrl0ixs
-Message-ID: <CAJvnSUDQ=j4Z0nTceFBExnhNK66nnCgfM_8oi1kPUgpPnZpgew@mail.gmail.com>
-Subject: Re: [PATCH v4 4/5] dts: add cryptodev throughput test suite
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, dmarx@iol.unh.edu, dev@dpdk.org, gakhil@marvell.com,
- kai.ji@intel.com, dharmikjayesh@arm.com, david.marchand@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,109 +77,149 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Mar 2, 2026 at 1:55=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu> =
-wrote:
->
->
-> +config_list: list[dict[str, int | float | str]] =3D [
-> +    {"buff_size": 64, "Gbps": 1.00},
-> +    {"buff_size": 512, "Gbps": 1.00},
-> +    {"buff_size": 2048, "Gbps": 1.00},
+Previously, optional arguments and the descriptions of them had no clear
+format. This patch adds an optional fields section to all yaml
+configuration files to improve readability. Additionally, the vdev
+argument in the test run config had minimal usage in DTS. This patch
+comments the argument out by default.
 
-Either Gbps needs to become gbps or the gbps field from
-tests_config.example.yaml needs to be updated.
+Bugzilla ID: 1896
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ dts/configurations/nodes.example.yaml        |  7 ++-
+ dts/configurations/test_run.example.yaml     | 48 +++++++++++++-------
+ dts/configurations/tests_config.example.yaml |  7 +++
+ 3 files changed, 44 insertions(+), 18 deletions(-)
 
-> +]
-> +
-> +TOTAL_OPS =3D 10_000_000
-> +
-> +
-> +class Config(BaseConfig):
-> +    """Performance test metrics.
-> +
-> +    Attributes:
-> +        delta_tolerance: The allowed tolerance below a given baseline.
-> +        throughput_test_parameters: The test parameters to use in the te=
-st suite.
-> +    """
-> +
-> +    delta_tolerance: float =3D 0.05
-> +
-> +    throughput_test_parameters: dict[str, list[dict[str, int | float | s=
-tr]]] =3D {
-> +        "aes_cbc": config_list,
-> +        "aes_cbc_sha1": config_list,
-> +        "aes_cbc_sha2": config_list,
-> +        "aes_cbc_sha2_digest_16": config_list,
-> +        "aead_aes_gcm": config_list,
-> +        "aes_docsisbpi": config_list,
-> +        "sha1_hmac": config_list,
-> +        "snow3g_uea2_snow3g_uia2": config_list,
-> +        "zuc_eea3_zuc_eia3": config_list,
-> +        "kasumi_f8_kasumi_f9": config_list,
-> +        "open_ssl_vdev": config_list,
-> +        "aesni_mb_vdev": config_list,
-> +        "aesni_gcm_vdev": config_list,
-> +        "kasumi_vdev": config_list,
-> +        "zuc_vdev": config_list,
-> +        "snow3g_vdev": config_list,
-> +    }
-> +
-> +
-> +@requires_link_topology(LinkTopology.NO_LINK)
-> +class TestCryptodevThroughput(TestSuite):
-> +    """DPDK Crypto Device Testing Suite."""
-> +
-> +    config: Config
-> +
-> +    def set_up_suite(self) -> None:
-> +        """Set up the test suite."""
-> +        self.throughput_test_parameters: dict[str, list[dict[str, int | =
-float | str]]] =3D (
-> +            self.config.throughput_test_parameters
-> +        )
-> +        self.delta_tolerance: float =3D self.config.delta_tolerance
-> +        self.driver: DeviceType | None =3D get_device_from_str(
-> +            str(get_ctx().sut_node.crypto_device_type)
-> +        )
-> +        self.buffer_sizes =3D {}
-> +
-> +        for k, v in self.throughput_test_parameters.items():
-> +            self.buffer_sizes[k] =3D ListWrapper([int(run["buff_size"]) =
-for run in v])
-> +
-> +    def _print_stats(self, test_vals: list[dict[str, int | float | str]]=
-) -> None:
-> +        element_len =3D len("Delta Tolerance")
-> +        border_len =3D (element_len + 1) * (len(test_vals[0]))
-> +
-> +        print(f"{'Throughput Results'.center(border_len)}\n{'=3D' * bord=
-er_len}")
-> +        for k, v in test_vals[0].items():
-> +            print(f"|{k.title():<{element_len}}", end=3D"")
-> +        print(f"|\n{'=3D'*border_len}")
-> +
-> +        for test_val in test_vals:
-> +            for k, v in test_val.items():
-> +                print(f"|{v:<{element_len}}", end=3D"")
-> +            print(f"|\n{'=3D'*border_len}")
-> +
-> +    def _verify_throughput(
-> +        self,
-> +        results: list[CryptodevResults],
-> +        key: str,
-> +    ) -> list[dict[str, int | float | str]]:
-> +        result_list: list[dict[str, int | float | str]] =3D []
-> +
-> +        for result in results:
-> +            # get the corresponding baseline for the current buffer size
-> +            parameters: dict[str, int | float | str] =3D list(
-> +                filter(
-> +                    lambda x: x["buff_size"] =3D=3D result.buffer_size,
-> +                    self.throughput_test_parameters[key],
-> +                )
-> +            )[0]
-> +            test_result =3D True
-> +            expected_gbps =3D parameters["Gbps"]
+diff --git a/dts/configurations/nodes.example.yaml b/dts/configurations/nodes.example.yaml
+index 3f23df11ec..4da5585318 100644
+--- a/dts/configurations/nodes.example.yaml
++++ b/dts/configurations/nodes.example.yaml
+@@ -2,6 +2,9 @@
+ # Copyright 2022-2023 The DPDK contributors
+ # Copyright 2023 Arm Limited
+ 
++# Optional Fields:
++#   `hugepages_2mb`: if removed, will use system hugepage configuration
++
+ # Define a system under test node, having two network ports physically
+ # connected to the corresponding ports in TG 1 (the peer node)
+ - name: "SUT 1"
+@@ -17,7 +20,7 @@
+       pci: "0000:00:08.1"
+       os_driver_for_dpdk: vfio-pci
+       os_driver: i40e
+-  hugepages_2mb: # optional; if removed, will use system hugepage configuration
++  hugepages_2mb: # see 'Optional Fields'
+       number_of: 256
+       force_first_numa: false
+ # Define a Scapy traffic generator node, having two network ports
+@@ -35,6 +38,6 @@
+       pci: "0000:00:08.1"
+       os_driver_for_dpdk: rdma
+       os_driver: rdma
+-  hugepages_2mb: # optional; if removed, will use system hugepage configuration
++  hugepages_2mb: # see 'Optional Fields'
+       number_of: 256
+       force_first_numa: false
+diff --git a/dts/configurations/test_run.example.yaml b/dts/configurations/test_run.example.yaml
+index c8035fccf0..707a3104ed 100644
+--- a/dts/configurations/test_run.example.yaml
++++ b/dts/configurations/test_run.example.yaml
+@@ -2,27 +2,44 @@
+ # Copyright 2022-2023 The DPDK contributors
+ # Copyright 2023 Arm Limited
+ 
++# Optional Fields:
++#   `dpdk_tree` & `tarball`:
++#       Either `dpdk_tree` or `tarball` can be defined, but not both. dpdk_tree is
++#       for an uncompressed DPDK directory while tarball is a compressed DPDK.
++#   `remote`:
++#       Optional, Defaults to false. If it's true, the `dpdk_tree` or `tarball`
++#       is located on the SUT node, instead of the execution host.
++#   `precompiled_build_dir` & `build_options`:
++#       If `precompiled_build_dir` is defined, DPDK has been pre-built
++#       and the build directory is in a subdirectory of DPDK tree root directory.
++#       Otherwise, will be using the `build_options` to build the DPDK from source. Either
++#       `precompiled_build_dir` or `build_options` can be defined, but not both.
++#   `compiler_wrapper`:
++#       Optional, adds a compiler wrapper if present.
++#   `func_traffic_generator` & `perf_traffic_generator`:
++#       Define `func_traffic_generator` when `func` set to true.
++#       Define `perf_traffic_generator` when `perf` set to true.
++#   `skip_smoke_tests`:
++#       Defaults to true. If it's false, smoke tests will run.
++#   `test_suites`:
++#       By removing the `test_suites` field, this test run will run every test suite available.
++#   `vdevs`:
++#       Uncomment to add a specific virtual device to run on the SUT node.
++
+ # Define the test run environment
+ dpdk:
+   lcores: "" # use all available logical cores (Skips first core)
+   memory_channels: 4 # tells DPDK to use 4 memory channels
+   build:
+     dpdk_location:
+-      # dpdk_tree: Commented out because `tarball` is defined.
++      # dpdk_tree: see `Optional Fields`
+       tarball: dpdk-tarball.tar.xz
+-      # Either `dpdk_tree` or `tarball` can be defined, but not both.
+-      remote: false # Optional, defaults to false. If it's true, the `dpdk_tree` or `tarball`
+-                    # is located on the SUT node, instead of the execution host.
+-
+-    # precompiled_build_dir: Commented out because `build_options` is defined.
++      remote: false # see `Optional Fields`
++    # precompiled_build_dir: see `Optional Fields`
+     build_options:
+       # the combination of the following two makes CC="ccache gcc"
+       compiler: gcc
+-      compiler_wrapper: ccache # Optional.
+-    # If `precompiled_build_dir` is defined, DPDK has been pre-built and the build directory is
+-    # in a subdirectory of DPDK tree root directory. Otherwise, will be using the `build_options`
+-    # to build the DPDK from source. Either `precompiled_build_dir` or `build_options` can be
+-    # defined, but not both.
++      compiler_wrapper: ccache # see `Optional Fields`
+ func_traffic_generator:
+   type: SCAPY
+ # perf_traffic_generator:
+@@ -32,12 +49,11 @@ func_traffic_generator:
+ perf: false # disable performance testing
+ func: true # enable functional testing
+ use_virtual_functions: false # use virtual functions (VFs) instead of physical functions
+-skip_smoke_tests: true # optional
+-# by removing the `test_suites` field, this test run will run every test suite available
+-test_suites: # the following test suites will be run in their entirety
++skip_smoke_tests: true # see `Optional Fields`
++test_suites: # see `Optional Fields`; the following test suites will be run in their entirety
+   - hello_world
+-vdevs: # optional; if removed, vdevs won't be used in the execution
+-  - "crypto_openssl"
++# vdevs: # see `Optional Fields`
++#   - "crypto_openssl"
+ # The machine running the DPDK test executable
+ system_under_test_node: "SUT 1"
+ # Traffic generator node to use for this execution environment
+diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
+index 64fa630aa0..39e96660a5 100644
+--- a/dts/configurations/tests_config.example.yaml
++++ b/dts/configurations/tests_config.example.yaml
+@@ -1,5 +1,8 @@
+ # SPDX-License-Identifier: BSD-3-Clause
+ 
++# Optional Fields:
++#   All fields are optional, uncomment a test suite to run it with a specific configuration.
++
+ # Define the custom test suite configurations
+ hello_world:
+   msg: A custom hello world to you!
+@@ -15,3 +18,7 @@ hello_world:
+ #       num_descriptors: 1024
+ #       expected_mpps: 1.0
+ #   delta_tolerance: 0.05
++# pmd_rss:
++#   NUM_QUEUES: 4
++#   ACTUAL_KEY_SIZE: 52
++#   ACTUAL_RETA_SIZE: 512
+-- 
+2.50.1
 
-Gbps <-> gbps misalignment with tests_config.example.yaml
