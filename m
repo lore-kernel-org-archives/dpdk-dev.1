@@ -2,16 +2,16 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DA2F47CA4
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 17:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBF2F47CA4
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 17:54:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8B9E44278D;
-	Thu,  5 Mar 2026 18:53:38 +0100 (CET)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com
- [209.85.219.43]) by mails.dpdk.org (Postfix) with ESMTP id C2EF1411F3
+	by mails.dpdk.org (Postfix) with ESMTP id 8703642799;
+	Thu,  5 Mar 2026 18:53:39 +0100 (CET)
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
+ [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id D91DA4161A
  for <dev@dpdk.org>; Thu,  5 Mar 2026 18:53:36 +0100 (CET)
-Received: by mail-qv1-f43.google.com with SMTP id
- 6a1803df08f44-899f27df3d1so49952656d6.3
+Received: by mail-qv1-f49.google.com with SMTP id
+ 6a1803df08f44-89a018cbbf8so53787646d6.0
  for <dev@dpdk.org>; Thu, 05 Mar 2026 09:53:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772733216;
@@ -19,50 +19,50 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=F8jT3Q9nZStSTUClrk8nBUjdLW0vrarjG4jUS7cYM+I=;
- b=PFnz7/U0nGVCYvvy+mQBh0/IqzHpD5w5kR96O+Gw01mxMud8t95A8t2BsmOFKWZlpS
- xM6QI/FKnFfZ6zPg/kfdQvPYAJ75qtWRGGa6PimVFqXwsWuTO+ObCzVwklu/SSzAXOUJ
- iPWwl3DtAXzyjHOXigI1SMKe6LpPPvN5f3QdnJqIL2WnplTdLiptPDmo0W1bTa/1KArr
- dMejQq1kNdvLpx6qfxS/SjkCzmtLrGdvRvlw9vo/Z8FouX9QpNbvfXiWOYncOR2tphnW
- 5goCiM2uDd2lg+/s+ZDg0hOTTo3sJZV6KPOdu74vSsLyjAQXMUg5GtbmHOSZlUsMLSen
- mT9Q==
+ bh=Atpkl4TkxDMFQA6crCiBRVUUNoVBkPUFlCvPi9/50YQ=;
+ b=IsvZjG68JuXK/VJtq6k5foeSn6vm7RaF+UdPi1+524HZeF+C5Ogd0NvP/Z76LTEZg2
+ t9yuQa9meyUaLYVVXyWd6t/e1NB42ua9NVDwCoduvD7flvn5whAfCenMq0b5EdwNndJY
+ qA9LSNsHxpqgVtS6ptfrSOhug9MkPKfHCduzD9TIof1l9/aPy1GZbUvNfFfGgUfeENfQ
+ CUQz8qbg+YS9uKFIMpMwaCSOOUT4YiSNSFi/Mn7psIOGHFG0SNWoVRrI21OWvEPV48vt
+ 1StXicI74Nbbzl7iwoKqyLw9mHVxQ6ze1V5Xy9gVtAjzUdOFOCJXml5fRie3Ld7pxD7x
+ 4nJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=1e100.net; s=20230601; t=1772733216; x=1773338016;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=F8jT3Q9nZStSTUClrk8nBUjdLW0vrarjG4jUS7cYM+I=;
- b=xPL4lxrc5eJ/G8sgA6ohwgvJYgDVMgVBmZkfBY96LvTMx98fonrVfJ97BoyxOB0bgG
- 3s5aA6X1/O+buPbuKT4hB2ZWqA7eAoiZk2oE1DsriKjxww/zEJIYwBXPVQjqgpJ/bzmZ
- Jd74pNDDPJbAailICVN5CEOOx7aqW/Cv/WxBPPnhaVvs1mzYPNsxt4j3gAPwesIRgyYt
- Dib1G/ZG8z8ltDGll+72KJwWm2gLr/+antf8Qw4n8VRW2Vx5Ps7LQADnnjZ7A4386drW
- 7EhFApIwQO8WZzZvxpZk7QYYTMJmVWesdMGHbCttq15W/MfgQlI6CW8MO+nYlFt5d0Ny
- mFgQ==
-X-Gm-Message-State: AOJu0YwOHJhkht8NAD3YWk9udvH1fdUfzfTRhzJTrxU/SUIVL5rIG0nW
- 1W4ACNVBrixHpC7nsB9dJncuMwVSM4T4CawIu1dkMawxHR/eepud6Vkm82Aj2KI+cqnFHuVcS5Y
- dBKQ/
-X-Gm-Gg: ATEYQzy3czh9jF6zrVlOfneP6bpsAyj+saZ6R/0BR4dC0+UVxs0hsRXMN/2SJBTaELg
- aMtrn8Yd6c8e99x/CraA8tI5sFcPqrpL84dmkf0oDpS3bbRt17YLKfw9m8BECu5r/voGwjkg/YF
- Qh3gH+YsSigEdYCptBTZ1CT4rsneAic8DALsq0Tn/VNEuC0MdVaAPdihppELnVKAxijPhGnlma2
- LlI7xOxVYX8+wcyt/PtTZZzJ8+hZdseqkLt1T1i7/YCGuLrLK2TfhbobFJKK5lPN3oWF1uRv2Ss
- 3CXXm5yRHcgJNZChF1d1N8nFMZvBGg7KK7+Ede/c6DqzAR0cRxrDZCURltOwojbtob150aYMVgp
- iGnrk2Xnad8NPqBKucBF69uWCP1iufXnz2O5OyBa3E58jz1ZYxACHUJOpt0oC0oGc9VLKWGJf3r
- eqOdh/k1YHbHh6lBJ1bbDRaU5AGMAAzv8WVQaZsj5R6yg9bgOM0e5ON0UpOOEgLg==
-X-Received: by 2002:ad4:574f:0:b0:899:f24d:1244 with SMTP id
- 6a1803df08f44-89a199ac00amr88313346d6.25.1772733214827; 
- Thu, 05 Mar 2026 09:53:34 -0800 (PST)
+ bh=Atpkl4TkxDMFQA6crCiBRVUUNoVBkPUFlCvPi9/50YQ=;
+ b=aWf1fPMWSUIHWjGnHCAwlVp+MlMB4V/vBjY9ZzOj9L3axAVqKeh5ftI15mAQGEUzA5
+ tJsNbZQfVDJC/e8HQP1KgbDXsTnJvxGmYt+nclqlYnDdwDyjFZZilEz0h1ULkRrs8Q0Y
+ pnoIoebxAhq9ns+N4RP582wigo4bS+IKKlaiwy/ntmTzvTBo7dTOHlJ+QZPbzieEISKb
+ c8Faarhp11SNYj5e1Yqh1twsMa3Err4D+VGYgConpbr8RuzNDcSJby3l0Tnwlgq8fHk9
+ NaD/axvGfgPzZ3FULP7UhGFGT35hXEjdK0BVrncUedD9tHe8zSuSZKHrLbDdpw5lODUk
+ JQew==
+X-Gm-Message-State: AOJu0Yw4txvh1Ob4Ri8vXZpsmXCmNq8K6i7ln96HgjzAclR2eq0i8Uv9
+ +IO3FQLJ03qFU+fSRAAf7lehoTnkReYN1KaD2ct/7EE5UZtTbktznCwJXGjCj/IhdNOim/JNOc3
+ 1Ys5W
+X-Gm-Gg: ATEYQzzaXtGHKq0DC1E3eCrIOQH4RVFtlS2gm/C1W0cOLxru6dQrysi1tcAF/4y0NAT
+ RYYjk+Xaim06ll6QWZeM2Bb/JOGR/CT2BPcNN1fyI643QCC8T7/FVrnQ6W8VCm1PQyXevWDIRli
+ wXpicWNl0NOkFXcQYzPLzyIxiVMlZvcq7E0u/kfD+EfzqEoFvN4OxVj2Wn865JSm/jBgB9/NzsE
+ 8gFwcTNAeHWAwZ9iSuBpBJMA6HXVbFpsuYIV2DEr6RSG2LDU/iM/ZR5h7TMdHFu5LJQAvuk9g8L
+ /geEQ6sydG8RzXwfGWWmRprvLu3vgv50FzPB2ArW27+X0qSRNUbditl1U9xGp84+3v77u/rMCd+
+ W/J1PuA+3JSiMCEB+uN5W3BUc/mwu1Lcm8RwytRIAdSvUhiCAecduY7mJBLhXElgCkSI7ebLd7z
+ 5yRrLr224v2ekFkFRlJEOhdgyfzV0i7AI7cxrkDKRlTdAmvdCUWI7xTjaNjep6sw==
+X-Received: by 2002:ad4:5c4a:0:b0:899:ea4f:12f2 with SMTP id
+ 6a1803df08f44-89a2459cff4mr49293436d6.4.1772733216123; 
+ Thu, 05 Mar 2026 09:53:36 -0800 (PST)
 Received: from phoenix.lan (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-89a05b72186sm80667766d6.50.2026.03.05.09.53.33
+ 6a1803df08f44-89a05b72186sm80667766d6.50.2026.03.05.09.53.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 05 Mar 2026 09:53:34 -0800 (PST)
+ Thu, 05 Mar 2026 09:53:35 -0800 (PST)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
 	stable@dpdk.org
-Subject: [PATCH v4 04/11] test/stack: scale test based on number of cores
-Date: Thu,  5 Mar 2026 09:50:58 -0800
-Message-ID: <20260305175326.279891-5-stephen@networkplumber.org>
+Subject: [PATCH v4 05/11] test/timer: scale test based on number of cores
+Date: Thu,  5 Mar 2026 09:50:59 -0800
+Message-ID: <20260305175326.279891-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260305175326.279891-1-stephen@networkplumber.org>
 References: <20260118201223.323024-1-stephen@networkplumber.org>
@@ -82,71 +82,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This test uses loops to synchronize but has problems on systems
-with high number of cores. Scale iterations to the number of
-cores.
+With large core system this would end up taking too long and
+test would time out. Scale the number of timers based on
+the number lcores available.
 
-Fixes: 5e2e61b99e91 ("test/stack: check stack API")
+Add a check that mempool_get succeeds.
+
+Fixes: 50247fe03fe0 ("test/timer: exercise new APIs in secondary process")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test/test_stack.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ app/test/test_timer_secondary.c | 17 +++++++++++------
+ 1 file changed, 11 insertions(+), 6 deletions(-)
 
-diff --git a/app/test/test_stack.c b/app/test/test_stack.c
-index abc3114729..5517982774 100644
---- a/app/test/test_stack.c
-+++ b/app/test/test_stack.c
-@@ -268,10 +268,12 @@ test_free_null(void)
- 	return 0;
- }
+diff --git a/app/test/test_timer_secondary.c b/app/test/test_timer_secondary.c
+index 0fc07dcbad..c80dee9c6c 100644
+--- a/app/test/test_timer_secondary.c
++++ b/app/test/test_timer_secondary.c
+@@ -27,7 +27,8 @@ test_timer_secondary(void)
  
--#define NUM_ITERS_PER_THREAD 100000
-+#define NUM_ITERS_BASE  100000u
-+#define NUM_ITERS_MIN   1000u
+ #include "process.h"
  
- struct test_args {
- 	struct rte_stack *s;
-+	unsigned int num_iters;
+-#define NUM_TIMERS		(1 << 20) /* ~1M timers */
++#define NUM_TIMERS_MAX		(1 << 20) /* ~1M timers */
++#define NUM_TIMERS_MIN		(1 << 14) /* 16K minimum */
+ #define NUM_LCORES_NEEDED	3
+ #define TEST_INFO_MZ_NAME	"test_timer_info_mz"
+ #define MSECPERSEC		1E3
+@@ -38,11 +39,12 @@ struct test_info {
+ 	unsigned int main_lcore;
+ 	unsigned int mgr_lcore;
+ 	unsigned int sec_lcore;
++	unsigned int num_timers;
+ 	uint32_t timer_data_id;
+ 	volatile int expected_count;
+ 	volatile int expired_count;
+ 	struct rte_mempool *tim_mempool;
+-	struct rte_timer *expired_timers[NUM_TIMERS];
++	struct rte_timer *expired_timers[NUM_TIMERS_MAX];
+ 	int expired_timers_idx;
+ 	volatile int exit_flag;
  };
+@@ -134,8 +136,10 @@ test_timer_secondary(void)
+ 				     "test data");
+ 		test_info = mz->addr;
  
- static struct test_args thread_test_args;
-@@ -280,9 +282,9 @@ static int
- stack_thread_push_pop(__rte_unused void *args)
- {
- 	void *obj_table[MAX_BULK];
--	int i;
-+	unsigned int i;
++		test_info->num_timers = test_scale_iterations(NUM_TIMERS_MAX, NUM_TIMERS_MIN);
++
+ 		test_info->tim_mempool = rte_mempool_create("test_timer_mp",
+-				NUM_TIMERS, sizeof(struct rte_timer), 0, 0,
++				test_info->num_timers, sizeof(struct rte_timer), 0, 0,
+ 				NULL, NULL, NULL, NULL, rte_socket_id(), 0);
  
--	for (i = 0; i < NUM_ITERS_PER_THREAD; i++) {
-+	for (i = 0; i < thread_test_args.num_iters; i++) {
- 		unsigned int num;
+ 		ret = rte_timer_data_alloc(&test_info->timer_data_id);
+@@ -174,15 +178,16 @@ test_timer_secondary(void)
+ 	} else if (proc_type == RTE_PROC_SECONDARY) {
+ 		uint64_t ticks, timeout_ms;
+ 		struct rte_timer *tim;
+-		int i;
++		unsigned int i;
  
- 		num = rte_rand() % MAX_BULK;
-@@ -308,12 +310,14 @@ test_stack_multithreaded(uint32_t flags)
- {
- 	unsigned int lcore_id;
- 	struct rte_stack *s;
-+	unsigned int iterations;
- 	int result = 0;
+ 		mz = rte_memzone_lookup(TEST_INFO_MZ_NAME);
+ 		TEST_ASSERT_NOT_NULL(mz, "Couldn't lookup memzone for "
+ 				     "test info");
+ 		test_info = mz->addr;
  
- 	if (rte_lcore_count() < 2) {
- 		printf("Not enough cores for test_stack_multithreaded, expecting at least 2\n");
- 		return TEST_SKIPPED;
- 	}
-+	iterations = test_scale_iterations(NUM_ITERS_BASE, NUM_ITERS_MIN);
+-		for (i = 0; i < NUM_TIMERS; i++) {
+-			rte_mempool_get(test_info->tim_mempool, (void **)&tim);
++		for (i = 0; i < test_info->num_timers; i++) {
++			ret = rte_mempool_get(test_info->tim_mempool, (void **)&tim);
++			TEST_ASSERT_SUCCESS(ret, "Couldn't get timer from mempool");
  
- 	printf("[%s():%u] Running with %u lcores\n",
- 	       __func__, __LINE__, rte_lcore_count());
-@@ -325,6 +329,7 @@ test_stack_multithreaded(uint32_t flags)
- 		return -1;
- 	}
+ 			rte_timer_init(tim);
  
-+	thread_test_args.num_iters = iterations;
- 	thread_test_args.s = s;
- 
- 	if (rte_eal_mp_remote_launch(stack_thread_push_pop, NULL, CALL_MAIN))
 -- 
 2.51.0
 
