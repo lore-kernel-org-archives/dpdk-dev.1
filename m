@@ -2,77 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5145FF30955
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 12:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21480F3092C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 12:23:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4733A406B6;
-	Thu,  5 Mar 2026 13:20:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4BAE8402CC;
+	Thu,  5 Mar 2026 13:23:44 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id A3E14402CC
- for <dev@dpdk.org>; Thu,  5 Mar 2026 13:20:08 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B29BC4029D
+ for <dev@dpdk.org>; Thu,  5 Mar 2026 13:23:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772713208;
+ s=mimecast20190719; t=1772713422;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=ZXnDqfi/vKZEjpvUHWDSHVkBQobPDNCyIJ07J36/wZ8=;
- b=BwxJLjHXJgib4ol+fDRc2+6KncvI0ag3PT7YGqHIPNgOrluyHJR7ehpRnTcBoUC3bAcuug
- DYQksaHsmGVq7odFNjAF6XTTYmzOjXDnoA6G1RcO8SJKHAtKCF5i+bjpzadVsaK+XtJUcG
- Mlcr6Omer94igj+uJi6euGgGMB7Iics=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=iQ70QQSNgeoeXXWgUrbNR4bOVAGUZWboodciC/B0tyA=;
+ b=Vt7VZ1I/u5ROi+4J/JkLNHEVqHTd7uJXKDwoVRiI1yEm6+26XIW6f/8XJpIJ+IV+LHAloP
+ UcxWThWc1aKtqxqpyPDL2pKyiTUP4aob1fmf3dGTqfnJ1m2wYCJi8w9iM4jNmbTJabogdT
+ gQ15fOD9OHWWThVRmC5a/rHdE6Yt9Gw=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-548-jFsdJQa_NoaS16DK6zL-XA-1; Thu, 05 Mar 2026 07:20:06 -0500
-X-MC-Unique: jFsdJQa_NoaS16DK6zL-XA-1
-X-Mimecast-MFC-AGG-ID: jFsdJQa_NoaS16DK6zL-XA_1772713205
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-38a34c834c0so3663651fa.2
- for <dev@dpdk.org>; Thu, 05 Mar 2026 04:20:06 -0800 (PST)
+ us-mta-283-J3eygRtzOpq2qKsojYmvug-1; Thu, 05 Mar 2026 07:23:41 -0500
+X-MC-Unique: J3eygRtzOpq2qKsojYmvug-1
+X-Mimecast-MFC-AGG-ID: J3eygRtzOpq2qKsojYmvug_1772713419
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5a12e8e6767so384689e87.1
+ for <dev@dpdk.org>; Thu, 05 Mar 2026 04:23:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772713205; x=1773318005;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=ZXnDqfi/vKZEjpvUHWDSHVkBQobPDNCyIJ07J36/wZ8=;
- b=uNCUaOiOgmNTE75wo//I4KUr/i+mDc3pSyksOAGIytwTOPHvXCgX4kjL3qpl47BTYi
- 6cu5aLWAcAIjyaYKxjkdAGGtmia0XhLEqbHr9YirVYDMuxUlVhS+nAUgSsnh2d5+A/DE
- hfPHRGSWO2YCNLhnDQWl+hRUZ66S0PgDt/CA/KHUOowDlPR8/7OFJ3rcCgVqiWscnTYU
- YuyUE8a/+f90VIk8yUap8GbjcurF7PiJDXQWxYi5ZfPe2GW4Ovd29T11GqgAbCQAmvgt
- doKClD4bVFZm8Jd7FP9mgGLHBKsGQqwf7emzoxO8IFYBhrh9CbGMGtqvCAMPFRvkHwHG
- 63LA==
-X-Gm-Message-State: AOJu0Yy8pdeFpcTgOPBHwkdBnI8k7l35ejM79YV04NqIlDrE1Yq4q486
- YIOAdI7yx+haEKESILgtNF/+0KK3qdz9FehM2F9wxIRYFHB3s253oZ2cfZmA1KtgdnvP7f+ppaN
- eLHiWdaLzrA6laG/0lEbTfNXI/67gT72yBtssMKRijKF0vl6yiM9jLrKrWtbF4NwxkaZBYbTjA7
- XgygCGNGIVQ0auX5hwacY=
-X-Gm-Gg: ATEYQzz8NIRtxw9NEN7VpQQlgnIDXqJkQlk3Pelipnr9h24UoVF4G9EE9AzVXMctict
- n8BVnlqaeVu30PSLFf5ad71myF6LlxuB4dTHv0WDULXUXpKPjY3xTc6bVhKM/yThAnPAOKKMcb6
- pH1VZvAKP7wrqYaPZOAOZekn28OSp0zz2xa9YdyTSEiJBKeZyF4fdpUahLFnk7OcVSj8ynfKo8Z
- NrOYGd/REPL2iJhbCsFM8ywne/ZTHYf1Nzv68HM/iMPyNj+iyU/KyCyS2W2gAXpAy+8CQ==
-X-Received: by 2002:a2e:8a96:0:b0:386:fa6b:44e0 with SMTP id
- 38308e7fff4ca-38a2c597bf5mr32962021fa.10.1772713205158; 
- Thu, 05 Mar 2026 04:20:05 -0800 (PST)
-X-Received: by 2002:a2e:8a96:0:b0:386:fa6b:44e0 with SMTP id
- 38308e7fff4ca-38a2c597bf5mr32961861fa.10.1772713204668; Thu, 05 Mar 2026
- 04:20:04 -0800 (PST)
+ d=1e100.net; s=20230601; t=1772713419; x=1773318219;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=iQ70QQSNgeoeXXWgUrbNR4bOVAGUZWboodciC/B0tyA=;
+ b=SjlmtfgQ4cRXenqqnTA2wCjIWuj2YY4Xme0uy+wDlW7x0TtNr3nDvU3sS1X1ok0hgz
+ tZgUp9zglE04s6SfdXqqQgBluJ8nElKEQG6n/jr4qVY18SrzZtsQ/IJM/GBoR6G901kP
+ ObvYmT+t8jFhQqtK9eRrPJ756trZsqljHOYf2EdxFgnP09jG3HGmGbIM1Pp2s9x8l8QL
+ 5D5eVP81AdHXb+kh3Z7xdJtWN/TI4u+2UqoaV6z61+Koh8I0yyjdJj/LbWbQUsgj9j9x
+ 2IZXcRHKTdyov8F8AlumhUEDK21CX1w8RS8twAV6Lo7QoDpXhU36MFQtce2QZUjzM3iD
+ wMww==
+X-Gm-Message-State: AOJu0YzIhWsY+l35XsBdRTW39yfec1bwlMK+G+BmxyBQdcXdhSFvANgj
+ vkdG2cakQikVFC14l+MlNoyFZwoHxMCUwQg3M9+kWaIdsiSgkRw7lX/LTouxCLNCAATN0icvG51
+ arZh3o4tP14zEU55mCZfQFOvNI8buep/sY+wDIo/FoF9qzg8kSi9nrbHm2/FBmbQ3rf75nx8vSy
+ kthmSR0XE1lsBNSvyhaOU=
+X-Gm-Gg: ATEYQzxUDhX5t6sHYaAGoDC55Xmbc/x5AC8bCdL2UzgiTrRTFqqjZFBPmDKOXYMR6nO
+ K+FaPe+FUd+3o0PGFuSPdaESgqRQW+Kn6uU/JLXayWVOequ3ChQvAbEuDCZNFjkGNvHdfVhAZso
+ 3Cphxbze4MkHtQsR/X3KQIL79hfrM3QutBOu/2S1R+Fu3arojoeXAnkMvthhKWVy2vGsgs6WguM
+ E1EAQ1DR4w8Lyct+ppHZEh0TGARxQj9agB18JZl59iewtKID8tW/E/hIGazLpDVuv+WFg==
+X-Received: by 2002:a05:6512:1088:b0:5a1:1640:d366 with SMTP id
+ 2adb3069b0e04-5a131f249dbmr757160e87.19.1772713419387; 
+ Thu, 05 Mar 2026 04:23:39 -0800 (PST)
+X-Received: by 2002:a05:6512:1088:b0:5a1:1640:d366 with SMTP id
+ 2adb3069b0e04-5a131f249dbmr757155e87.19.1772713418901; Thu, 05 Mar 2026
+ 04:23:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20260220143933.2553112-1-bruce.richardson@intel.com>
- <20260227130245.194400-1-bruce.richardson@intel.com>
-In-Reply-To: <20260227130245.194400-1-bruce.richardson@intel.com>
+References: <20260218101859.3028581-1-david.marchand@redhat.com>
+In-Reply-To: <20260218101859.3028581-1-david.marchand@redhat.com>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 5 Mar 2026 13:19:52 +0100
-X-Gm-Features: AaiRm53PqCB8Gz6RvjTICZFF26zxk_dToqM9bfApvh4C3obtaQXp_hC9N0s-2qE
-Message-ID: <CAJFAV8wP2ZcZHctx8RgmPzch72JrEEHGhiaz+_LnyND6yVPBZQ@mail.gmail.com>
-Subject: Re: [PATCH v3] hash: fix overflow of 32-bit offsets
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, stable@dpdk.org,
- =?UTF-8?Q?Morten_Br=C3=B8rup?= <mb@smartsharesystems.com>
+Date: Thu, 5 Mar 2026 13:23:27 +0100
+X-Gm-Features: AaiRm504Sju4KAUNXDVztLCiX9NXB-h4AxdubueUqKBMQGvDI5ZU3itxVm7Fmro
+Message-ID: <CAJFAV8xoT+rV3J1JR_zy0hCQhM6cW6J50dcd1s=LBft1qrdMKA@mail.gmail.com>
+Subject: Re: [PATCH] eal/linux: fix HPET symbols export
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Chengwen Feng <fengchengwen@huawei.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: piSkY0baKyi_HjB4S0upH3OmWwmGyG_0HRVsS1ihp3c_1772713205
+X-Mimecast-MFC-PROC-ID: vsa5joYQQ1czEnk9ny4sxylx833bjwjpqQPds3XsjRg_1772713419
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,32 +82,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 27 Feb 2026 at 14:03, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
+On Wed, 18 Feb 2026 at 11:19, David Marchand <david.marchand@redhat.com> wrote:
 >
-> When computing the offset inside the overall hash structure by adding an
-> offset to a base pointer, the offset was generally calculated by
-> multiplying two 32-bit values, which could then overflow. Prevent
-> overflow by using (size_t) casts on the elements being multiplied to
-> ensure they are 64-bit on 64-bit systems.
+> The .map generation script has no clue about build configuration as it
+> relies only on the presence of RTE_EXPORT* and RTE_VERSION* markers in
+> a source file.
 >
-> Fixes: b26473ff8f4a ("hash: add reset function")
-> Fixes: 406da3dfb3b5 ("hash: move duplicated code into functions")
-> Fixes: 9eca8bd7a61c ("hash: separate lock-free and r/w lock lookup")
-> Fixes: 4d9ca3ed2133 ("hash: use ordered loads only if signature matches")
-> Fixes: 769b2de7fb52 ("hash: implement RCU resources reclamation")
-> Fixes: e605a1d36ca7 ("hash: add lock-free r/w concurrency")
-> Fixes: 6dc34e0afe7a ("hash: retrieve a key given its position")
-> Fixes: f9edbc9bb6bc ("hash: add iterate function")
-> Fixes: 75706568a7eb ("hash: add extendable bucket feature")
-> Cc: stable@dpdk.org
+> As a consequence, Linux eal_exports.map contains references to
+> HPET symbols regardless of the use_hpet meson option value.
 >
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> $ meson configure build -Duse_hpet=false
+> $ ninja -C build
+> ...
+> $ grep hpet build/lib/eal_exports.map
+>         rte_eal_hpet_init;
+>         rte_get_hpet_cycles;
+>         rte_get_hpet_hz;
+>
+> As far as I have seen, superfluous exports have no impact on generating
+> a shared library with the GNU linker, yet it might be different with
+> other linkers (MSVC linker would complain, for example).
+>
+> Moving those symbols to a dedicated source file solves this (non?) issue.
+>
+> Fixes: 57c194d142d9 ("build: use dynamically generated version maps")
+>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 
 Applied, thanks.
 
 
---=20
+-- 
 David Marchand
 
