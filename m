@@ -2,59 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD34F3D332
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 16:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B95BF3D332
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 16:47:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3044440E28;
-	Thu,  5 Mar 2026 17:46:47 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id F379A40B92
- for <dev@dpdk.org>; Thu,  5 Mar 2026 17:46:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772729205;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=lOCfFbMAHqArB43J0Tspv4GGPX/qMBV+qWnZDrNPJIM=;
- b=b+YvjnJf1XjSrg3waeEtogjZ6hm+EJzswpBUwIk6b6LWLbOi/QgPfdjmykOhYhb3dlbAe0
- gIWRX3Vw49c/9jKg50WHVDwLZ/Qa1FB+7HTeT40vmTasHLfaDnv5/dMoJO11vsMdTIzI5l
- uceXPrqJ0yQVvmt+p4T1dGx9acOGugk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-462-AIsQD1QxNZauspfDDgiF2A-1; Thu,
- 05 Mar 2026 11:46:42 -0500
-X-MC-Unique: AIsQD1QxNZauspfDDgiF2A-1
-X-Mimecast-MFC-AGG-ID: AIsQD1QxNZauspfDDgiF2A_1772729201
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 3D5841956052; Thu,  5 Mar 2026 16:46:41 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.45.224.121])
- by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 42E301800673; Thu,  5 Mar 2026 16:46:39 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [RFC v3 7/7] eal: configure initial device probing
-Date: Thu,  5 Mar 2026 17:45:49 +0100
-Message-ID: <20260305164550.2067453-8-david.marchand@redhat.com>
-In-Reply-To: <20260305164550.2067453-1-david.marchand@redhat.com>
-References: <20260225112922.3982104-1-david.marchand@redhat.com>
- <20260305164550.2067453-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5ACA84275B;
+	Thu,  5 Mar 2026 17:46:48 +0100 (CET)
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+ by mails.dpdk.org (Postfix) with ESMTP id 7098641611
+ for <dev@dpdk.org>; Thu,  5 Mar 2026 17:46:47 +0100 (CET)
+Received: by mail-dl1-f49.google.com with SMTP id
+ a92af1059eb24-128b9b7e3edso308640c88.0
+ for <dev@dpdk.org>; Thu, 05 Mar 2026 08:46:47 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1772729206; cv=none;
+ d=google.com; s=arc-20240605;
+ b=RlyfKmZtuz2hEWIccfSnA6QUe16QFgXvLjpw0Zmh7LIPzbmHTHAh4gPaz1gBh6Rg8t
+ tFkTQvxXxrFSE6zLMuEtasBUqXbjVSvY6ieH1wom72WzbLkQtnv2/grR7WFjJVIqLbIr
+ ovvwYqTteE/6OcgdfYx7eTGpw5sTpQ4fuI4gu7kalEOXDh4s+TV8YI27UmrQTIOIF0jf
+ iTBzy3HXbPumJa5zkRa2IofKeZfbB5AeY06x9g5RjrfucH/upWegzyJ0hKyWY2LKQWdu
+ S2LQ14PxTG0hr83EAetlnhZnmnYEfU1Qkv4ykqE1ep7/R1h1PL6e8dTtK4G34HhLsEkm
+ ZISw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=YiVt6CXaTWMdL6Z43Dhfv7P3Ux2W8CTmRbyH9v5v6IA=;
+ fh=25SdM/CB6s478YHw6js0MDhEv9N6K/9s9niqLU264Uk=;
+ b=iGkieJzkJNeeivrjcuOiqlScck8zwwIB4AYTJlI9aDv2ailXmZ5L/Lf+hMURK1KDO/
+ IX2As2YYH7JHtCEdBg/piIYSO2SwNRLKLvVXOZulwGcS7bt0VSUF/ddQKkPLE+KTHNNi
+ UH8zYdSQQCCEadb7L9er8Oy8qd0zQd54k7VefQb1Xnwr2WUN1+6oN7hFiFgLp7OHNCSu
+ gCUViYkXz3Zwpvm0TYFiTF1gseyt5aXfOXs6MQ5fkeuZjT7569CQhBkoxitsR6657Fkk
+ SuoJdr/HgRtlj6yRNqB4pqWziL5UpF953uDsJnrJt92UVCyZYr8J8RyYCQe4ZZcjvqdK
+ lInw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1772729206; x=1773334006; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=YiVt6CXaTWMdL6Z43Dhfv7P3Ux2W8CTmRbyH9v5v6IA=;
+ b=AVzFAnYLNj3FbBM3zcdgad4gNgHaaG3ESZK3MVGB9ZR+URlVHFkjamnRIWBGv3zCZs
+ TcH3yzC/rzEO7f71xPsyvID2wmVQpmA+NMXbcmJ3tDY9pcnmTJg8hEqvLyb1muflXRim
+ EkbWmI1MtWOtYOhGyRvgJLN+VZK9tU97QtzbA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1772729206; x=1773334006;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=YiVt6CXaTWMdL6Z43Dhfv7P3Ux2W8CTmRbyH9v5v6IA=;
+ b=r/xYprZaA1PV9mKw+X/L/JjmVpCxlEZ5hPzianU1hip055TZOTfJgQlCmtch1i+Db/
+ PdhgUpVimkpaohRCQ1Fhaw5DSr0Mlk9bhGL1pnPCbogI75DCrKz4hGTtFhauuL9EREg3
+ AhHd0NqtdPepaO9AcRa57AusGRV3I1LW0Ets+3PGlLtsrSXUQdYTL6hII5NEK/jkm59y
+ 1J4hpIIjbqNnQSqnR8naljeNcScBSM8B8p/PDcb6h3MiejmJfBS0ETBgucN0VzORPZIF
+ 54BJhdhuKrQIID+OpndBgsBUZJRu07oY8u1PmiC7nvBpxkqySsH3Olp62DFdHSTiab8w
+ Jk1w==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUs4XHUW/Q/B3uJWM3FAGzSMcmbM8vcwBBLqtHMLRu9Dpclx/K5Qab8fYfvY+RfU25dkIA=@dpdk.org
+X-Gm-Message-State: AOJu0Yyqcj9ExIaBMmKt3NiMeFGvDyKeQ3Hl1ZfJD8n2u/7ZHh9Wu8bl
+ FetRR4dwbvUevSBoNOJz7UwRENstyKplZEFXsRfokuSaE26PWXPVHmfTCQZQoJBpxW6t8YziY4W
+ 1KU5pjTaiWId9ws5j5BNXIy1GBx4Ht7AZJnTksaXSZQ==
+X-Gm-Gg: ATEYQzw0XZng5WXetu15YM/rR9Pt+adN4aH7ldDTlpQmcvYvtFhoEAuuIwADl9c/17B
+ v2Co0PpHXJmWgN1nKFqYzeuAXwpFH06kZFKu8l8jt7WX1Mzw1nTriJlTDNucXFHEvTQE0/IsugB
+ F1LseoIBukQtSvaT+mIHaApHQm+TCwWjFAdPFDsaa98DZBXLbeYl5HZlFFyqbUOpSdqGty2oKSg
+ R1dOkU42rTlTA+1xkPqK2xki5dWpiwhM1/5M+blv18pTudpb08fVOws6DzmA8shdkvagT5BAMHL
+ O5c5wuxrBa441sRckJQ5KgGplqoNLUOU5eZeHLtDy07VfNuhXCXuZcOcJBAqIVea7gN2iVMN
+X-Received: by 2002:a05:7022:525:b0:122:345:a948 with SMTP id
+ a92af1059eb24-128b70fdee7mr3353165c88.46.1772729206315; Thu, 05 Mar 2026
+ 08:46:46 -0800 (PST)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 1MGcZC1C31imsvZbGnNY9Jw_fyv2YxE5CFbUlEAp8Bk_1772729201
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+References: <20260106213803.205934-1-dmarx@iol.unh.edu>
+ <20260227192016.495703-1-dmarx@iol.unh.edu>
+In-Reply-To: <20260227192016.495703-1-dmarx@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 5 Mar 2026 11:43:49 -0500
+X-Gm-Features: AaiRm50qi3jROlz68JMk79Ibk_Th-8IGGsBMnmy5fN1YI3svXS_0hMOqDuqoJ9c
+Message-ID: <CAJvnSUB00qRvEORQi9GYhca6i_Li7gsNgQ0S1PZ1HDumBeUzSw@mail.gmail.com>
+Subject: Re: [PATCH v2] dts: refactor flow suite with generator pattern
+To: Dean Marx <dmarx@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,306 +95,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some applications use port hotplug as their primary way for using DPDK
-resources.
-Having a systematic device probing is a problem when not all available
-resources will be used by the application, as such applications won't set
-an explicit allow list at startup.
+On Fri, Feb 27, 2026 at 2:20=E2=80=AFPM Dean Marx <dmarx@iol.unh.edu> wrote=
+:
+>
+> +@dataclass
+> +class FlowTest:
+> +    """A complete flow test ready for execution."""
+> +
+> +    flow_rule: FlowRule
+> +    packet: Packet
+> +    verification_type: str
+> +    verification_params: dict[str, Any]
+> +    description: str =3D ""
+> +
+> +
+> +@dataclass
+> +class FlowTestResult:
+> +    """Result of a single test case execution."""
+> +
+> +    description: str
+> +    passed: bool
+> +    failure_reason: str =3D ""
+> +    flow_rule_pattern: str =3D ""
+> +    skipped: bool =3D False
+> +    sent_packet: Packet | None =3D None
+> +
+> +
+> +@dataclass
+> +class ModifyTestCase:
 
-This is the case for OVS on systems with multiple mlx5 devices:
-one device can be used by the kernel while the other(s) are used by DPDK.
-In such a setup, the kernel used device may get reconfigured in
-unexpected ways and trigger issues like the one described by Kevin
-not so long ago in bugzilla 1873.
-
-Add an EAL option so that we can change the default behavior from
-block-listing to allow-listing which can be summed up as disabling
-automatic probing.
-In case some applications want to require automatic probing, add the
-opposite option.
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
-Changes since RFC v2:
-- added -A short option alias as it seems intuitive to use with -a,
-- renamed option to --no-auto-probing (half Robin and half Thomas
-  suggestions),
-- made -A and -b conflicting options,
-- added opposite option in case an application wants an explicit behavior,
-- updated unit tests accordingly,
-- updated documentation (namely some detail on --vdev),
-
-Changes since RFC v1:
-- changed approach following Bruce suggestion,
-
----
- app/test/test_eal_flags.c                 | 63 +++++++++++++++++++++++
- devtools/test-null.sh                     |  2 +-
- doc/guides/linux_gsg/eal_args.include.rst | 13 +++++
- lib/eal/common/eal_common_bus.c           | 17 +++---
- lib/eal/common/eal_common_options.c       | 10 ++++
- lib/eal/common/eal_internal_cfg.h         |  1 +
- lib/eal/common/eal_option_list.h          |  2 +
- 7 files changed, 101 insertions(+), 7 deletions(-)
-
-diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-index b3a8d0ae6f..0fa0e1997e 100644
---- a/app/test/test_eal_flags.c
-+++ b/app/test/test_eal_flags.c
-@@ -119,6 +119,8 @@ test_misc_flags(void)
- #define no_hpet "--no-hpet"
- #define no_huge "--no-huge"
- #define no_shconf "--no-shconf"
-+#define auto_probing "--auto-probing"
-+#define no_auto_probing "--no-auto-probing"
- #define allow "--allow"
- #define vdev "--vdev"
- #define no_pci "--no-pci"
-@@ -338,6 +340,14 @@ test_allow_flag(void)
- 			allow, "09:0B.3,type=test",
- 			allow, "08:00.1,type=normal",
- 	};
-+	const char *wlval4[] = {prgname, prefix, mp_flag, eal_debug_logs,
-+			no_auto_probing };
-+	const char *wlval5[] = {prgname, prefix, mp_flag, eal_debug_logs,
-+			no_auto_probing, allow, "00FF:09:0B.3"};
-+	const char *wlval6[] = {prgname, prefix, mp_flag, eal_debug_logs,
-+			auto_probing };
-+	const char *wlval7[] = {prgname, prefix, mp_flag, eal_debug_logs,
-+			auto_probing, allow, "00FF:09:0B.3"};
- 
- 	for (i = 0; i < RTE_DIM(wlinval); i++) {
- 		if (launch_proc(wlinval[i]) == 0) {
-@@ -360,6 +370,26 @@ test_allow_flag(void)
- 			__LINE__);
- 		return -1;
- 	}
-+	if (launch_proc(wlval4) != 0 ) {
-+		printf("Error (line %d) - process did not run ok with no-auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
-+	if (launch_proc(wlval5) != 0 ) {
-+		printf("Error (line %d) - process did not run ok with no-auto-probing + allow\n",
-+			__LINE__);
-+		return -1;
-+	}
-+	if (launch_proc(wlval6) != 0 ) {
-+		printf("Error (line %d) - process did not run ok with auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
-+	if (launch_proc(wlval7) != 0 ) {
-+		printf("Error (line %d) - process did not run ok with auto-probing + allow\n",
-+			__LINE__);
-+		return -1;
-+	}
- 
- 	return 0;
- }
-@@ -383,6 +413,11 @@ test_invalid_b_flag(void)
- 		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "error0:0:0.1"},
- 		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0:0.1.2"},
- 	};
-+	const char *blinval_probing[] =
-+		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0.0", auto_probing};
-+	const char *blinval_probing_inval[] =
-+		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0.0", no_auto_probing};
-+
- 	/* Test with valid blocklist option */
- 	const char *blval[] = {prgname, prefix, mp_flag, eal_debug_logs,
- 			       "-b", "FF:09:0B.3"};
-@@ -396,6 +431,16 @@ test_invalid_b_flag(void)
- 			return -1;
- 		}
- 	}
-+	if (launch_proc(blinval_probing) != 0) {
-+		printf("Error (line %d) - process did not run ok with blocklist and auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
-+	if (launch_proc(blinval_probing_inval) == 0) {
-+		printf("Error (line %d) - process did run ok with blocklist and no-auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
- 	if (launch_proc(blval) != 0) {
- 		printf("Error (line %d) - process did not run ok with valid blocklist value\n",
- 			__LINE__);
-@@ -434,6 +479,12 @@ test_invalid_vdev_flag(void)
- 	const char *vdevval3[] = {prgname, prefix, no_huge, eal_debug_logs,
- 				bus_debug_logs, no_pci, vdev, "net_ring0,nodeaction=r1:0:CREATE"};
- 
-+	const char *vdevval4[] = {prgname, prefix, no_huge, eal_debug_logs,
-+				bus_debug_logs, no_auto_probing, vdev, "net_ring0"};
-+
-+	const char *vdevval5[] = {prgname, prefix, no_huge, eal_debug_logs,
-+				bus_debug_logs, auto_probing, vdev, "net_ring0"};
-+
- 	if (launch_proc(vdevinval) == 0) {
- 		printf("Error (line %d) - process did run ok with invalid vdev parameter\n",
- 			__LINE__);
-@@ -457,6 +508,18 @@ test_invalid_vdev_flag(void)
- 			__LINE__);
- 		return -1;
- 	}
-+
-+	if (launch_proc(vdevval4) != 0) {
-+		printf("Error (line %d) - process did not run ok with valid vdev value and no-auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
-+
-+	if (launch_proc(vdevval5) != 0) {
-+		printf("Error (line %d) - process did not run ok with valid vdev value and auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
- 	return 0;
- #else
- 	return TEST_SKIPPED;
-diff --git a/devtools/test-null.sh b/devtools/test-null.sh
-index 8f21189262..5e8a1b20cd 100755
---- a/devtools/test-null.sh
-+++ b/devtools/test-null.sh
-@@ -30,7 +30,7 @@ logfile=$build/test-null.log
- (sleep 1 && echo stop) |
- # testpmd only needs 20M, make it x2 (default number of cores) for NUMA systems
- $testpmd -l $corelist --no-huge -m 40 \
--	$libs -a 0:0.0 --vdev net_null1 --vdev net_null2 $eal_options -- \
-+	$libs -A --vdev net_null1 --vdev net_null2 $eal_options -- \
- 	--no-mlockall --total-num-mbufs=2048 $testpmd_options -ia | tee $logfile
- 
- # we expect two ports and some traffic is received and transmitted
-diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
-index 4a3c4d9b5f..db9eff9321 100644
---- a/doc/guides/linux_gsg/eal_args.include.rst
-+++ b/doc/guides/linux_gsg/eal_args.include.rst
-@@ -101,6 +101,19 @@ Lcore-related options
- Device-related options
- ~~~~~~~~~~~~~~~~~~~~~~
- 
-+*   ``-A, --no-auto-probing``
-+
-+    By default, EAL probes all devices on every available bus, unless some ``-a``/``-b``
-+    options are passed.
-+    Disable automatic probing of non-blocked devices.
-+
-+.. Note::
-+    Block list cannot be used when auto probing is disabled.
-+
-+    On the other hand, disabling auto probing does not affect the VDEV bus.
-+    The VDEV bus is not concerned by automatic probing and requires explicit
-+    ``-a`` or ``--vdev``.
-+
- *   ``-b, --block <[domain:]bus:devid.func>``
- 
-     Skip probing a PCI device to prevent EAL from using it.
-diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_bus.c
-index 2ca0af7914..47ba303468 100644
---- a/lib/eal/common/eal_common_bus.c
-+++ b/lib/eal/common/eal_common_bus.c
-@@ -250,18 +250,23 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_is_ignored_device)
- bool
- rte_bus_is_ignored_device(const struct rte_bus *bus, const char *dev_name)
- {
-+	const struct internal_config *internal_conf = eal_get_internal_configuration();
- 	struct rte_devargs *devargs = rte_bus_find_devargs(bus, dev_name);
-+	enum rte_bus_scan_mode scan_mode = bus->conf.scan_mode;
- 
--	switch (bus->conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
-+	if (scan_mode == RTE_BUS_SCAN_UNDEFINED) {
-+		if (internal_conf->no_auto_probing != 0)
-+			scan_mode = RTE_BUS_SCAN_ALLOWLIST;
-+		else
-+			scan_mode = RTE_BUS_SCAN_BLOCKLIST;
-+	}
-+
-+	if (scan_mode == RTE_BUS_SCAN_ALLOWLIST) {
- 		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
- 			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
-+	} else {
- 		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
- 			return false;
--		break;
- 	}
- 	return true;
- }
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index aad676a004..290386dc63 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -233,10 +233,15 @@ eal_collate_args(int argc, char **argv)
- 		EAL_LOG(ERR, "Options allow (-a) and block (-b) can't be used at the same time");
- 		return -1;
- 	}
-+	if (args.no_auto_probing && !TAILQ_EMPTY(&args.block)) {
-+		EAL_LOG(ERR, "Options no-auto-probing and block (-b) can't be used at the same time");
-+		return -1;
-+	}
- 
- 	/* for non-list args, we can just check for zero/null values using macro */
- 	if (CONFLICTING_OPTIONS(args, coremask, lcores) ||
- 			CONFLICTING_OPTIONS(args, service_coremask, service_corelist) ||
-+			CONFLICTING_OPTIONS(args, no_auto_probing, auto_probing) ||
- 			CONFLICTING_OPTIONS(args, no_telemetry, telemetry) ||
- 			CONFLICTING_OPTIONS(args, memory_size, numa_mem) ||
- 			CONFLICTING_OPTIONS(args, no_huge, numa_mem) ||
-@@ -518,6 +523,8 @@ eal_reset_internal_config(struct internal_config *internal_cfg)
- 	memset(internal_cfg->vfio_vf_token, 0,
- 			sizeof(internal_cfg->vfio_vf_token));
- 
-+	internal_cfg->no_auto_probing = 0;
-+
- #ifdef RTE_LIBEAL_USE_HPET
- 	internal_cfg->no_hpet = 0;
- #else
-@@ -1972,6 +1979,9 @@ eal_parse_args(void)
- 		}
- 	}
- 
-+	if (args.no_auto_probing)
-+		int_cfg->no_auto_probing = 1;
-+
- 	/* device -a/-b/-vdev options*/
- 	TAILQ_FOREACH(arg, &args.allow, next)
- 		if (eal_option_device_add(RTE_DEVTYPE_ALLOWED, arg->arg) < 0)
-diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
-index 95d327a613..fac45cbe66 100644
---- a/lib/eal/common/eal_internal_cfg.h
-+++ b/lib/eal/common/eal_internal_cfg.h
-@@ -104,6 +104,7 @@ struct internal_config {
- 	struct simd_bitwidth max_simd_bitwidth;
- 	/**< max simd bitwidth path to use */
- 	size_t huge_worker_stack_size; /**< worker thread stack size */
-+	unsigned int no_auto_probing; /**< true to switch from block-listing to allow-listing */
- };
- 
- void eal_reset_internal_config(struct internal_config *internal_cfg);
-diff --git a/lib/eal/common/eal_option_list.h b/lib/eal/common/eal_option_list.h
-index abee16340b..6a5ddfd8d1 100644
---- a/lib/eal/common/eal_option_list.h
-+++ b/lib/eal/common/eal_option_list.h
-@@ -32,6 +32,7 @@
-  * Format of each entry: long name, short name, help string, struct member name.
-  */
- /* (Alphabetical) List of common options first */
-+BOOL_ARG("--auto-probing", NULL, "Let EAL probe all available devices unless some -a/-b option is set.", auto_probing)
- LIST_ARG("--allow", "-a", "Add device to allow-list, causing DPDK to only use specified devices", allow)
- STR_ARG("--base-virtaddr", NULL, "Base virtual address to reserve memory", base_virtaddr)
- LIST_ARG("--block", "-b", "Add device to block-list, preventing DPDK from using the device", block)
-@@ -51,6 +52,7 @@ STR_ARG("--mbuf-pool-ops-name", NULL, "User defined mbuf default pool ops name",
- STR_ARG("--memory-channels", "-n", "Number of memory channels per socket", memory_channels)
- STR_ARG("--memory-ranks", "-r", "Force number of memory ranks (don't detect)", memory_ranks)
- STR_ARG("--memory-size", "-m", "Total size of memory to allocate initially", memory_size)
-+BOOL_ARG("--no-auto-probing", "-A", "Do not probe any devices unless some -a option is set", no_auto_probing)
- BOOL_ARG("--no-hpet", NULL, "Disable HPET timer", no_hpet)
- BOOL_ARG("--no-huge", NULL, "Disable hugetlbfs support", no_huge)
- BOOL_ARG("--no-pci", NULL, "Disable all PCI devices", no_pci)
--- 
-2.53.0
-
+Don't just rename FlowTestCase to FlowTest - also drop Case from this
+class, and JumpTestCase etc.
