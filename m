@@ -2,73 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFF4F3D32E
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 16:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA07BF3D330
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 16:40:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 605C94029D;
-	Thu,  5 Mar 2026 17:35:27 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A63FE4029D;
+	Thu,  5 Mar 2026 17:40:01 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3069240287
- for <dev@dpdk.org>; Thu,  5 Mar 2026 17:35:26 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AA90B40287
+ for <dev@dpdk.org>; Thu,  5 Mar 2026 17:39:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1772728525;
+ s=mimecast20190719; t=1772728799;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  in-reply-to:in-reply-to:references:references;
- bh=gqHwWXNhv9z1w20EihdkD9Q+3tlY/D4RECCtMGiFgSU=;
- b=DwOqXvJ0Vpac9HpvllPfmj+F2c3IYL9VJ272eArSs6DMdpNV/9OevW7WEpynvyOL4JGKiZ
- n8U5sn6z9EmJK3T8k1DFYVfG41qWJwpBlWTt6lx+Gj5VB1jbDg9iGdHpZGfo8IekWwjYGO
- 6tR72uh4+CvRfxndkm+3rZ5enuVeK68=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=b2n5Vo7LF4Ou+6lXv0M7f93TiBvoeQZOwY+70vQJ9OY=;
+ b=JDkvO74Q+sCgNGmgy5s53tux4BBH+kWQhbB6n5zueq2DVOW213whiSS0sLzyuOh71+E7sy
+ 2DnFnNcTGQS6qTRHLj01wedfEzy2KRlqfXRby+WkszFYHHMJeiWq//9EneUdWItxmZQpSF
+ TjEq9H/i1bN0FRp1PbCTsRvnLdwiZ3o=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-531-T9228S4EPaOeARw_652q3w-1; Thu, 05 Mar 2026 11:35:24 -0500
-X-MC-Unique: T9228S4EPaOeARw_652q3w-1
-X-Mimecast-MFC-AGG-ID: T9228S4EPaOeARw_652q3w_1772728523
-Received: by mail-lf1-f72.google.com with SMTP id
- 2adb3069b0e04-5a1324aeb32so917095e87.3
- for <dev@dpdk.org>; Thu, 05 Mar 2026 08:35:24 -0800 (PST)
+ us-mta-533-9QADjC7yMcGDSdcgWHvuTw-1; Thu, 05 Mar 2026 11:39:51 -0500
+X-MC-Unique: 9QADjC7yMcGDSdcgWHvuTw-1
+X-Mimecast-MFC-AGG-ID: 9QADjC7yMcGDSdcgWHvuTw_1772728790
+Received: by mail-lj1-f197.google.com with SMTP id
+ 38308e7fff4ca-3870b9ec9a0so68107761fa.1
+ for <dev@dpdk.org>; Thu, 05 Mar 2026 08:39:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772728523; x=1773333323;
+ d=1e100.net; s=20230601; t=1772728790; x=1773333590;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gqHwWXNhv9z1w20EihdkD9Q+3tlY/D4RECCtMGiFgSU=;
- b=S245VAJckke9/XiJDgZLalNWawWKUgOwFJLkgp55MM1TRFULgJZNlfnKSrc06RP311
- qAL0Aexos6QAA+J54/f44P7A4F/vQZJnpruSEPIFoT0K4ZdxKyNK/mS2tvO4tA6n6lKq
- 1F/+VQzn6opHQIXkJt2vJNYTYCA2v1TRHfik4vpdJfUZ3r5GIhjhzaHg2zqJRuXneoql
- 6CY1H2lfXpyEvtJ1g491T7q60TqiNkQcYEtLuG/BlZkqsWlSydWtz51XEVN2pxhBv8Tw
- p5jgX+9F3ups9+H88SvPeXimYQkkXWCcb0W5HTmtBORL0ZqDUCUQsEQx8Otr48PRk3Y6
- 1qcg==
-X-Gm-Message-State: AOJu0YxomhxHkcK0yyER+ZMO4na4+ZJobqHWIqiOAWsksJ3gX2bxMzUJ
- fIRzKFv+fapst/m8SmDRTUX2K/HC7ddDmu6zPvbD+iTOO60sl0iO9Wwp+1Jwozgvho0J0UnfveZ
- NB6HBRsfea0AG3Y1jJAH8U/dEBUWrMLif8XSfS2NJ7O6VjAMNG5i0eTYR0GHeTbWC1LKVAlYdEI
- Q/t61zDl4akOte+AKaK2Q=
-X-Gm-Gg: ATEYQzwO0ruA7R8lFoFaJC2wJufCeOogdxOAZ6j4uEElAIsQdVbASsgHF9KlQ+C3xPd
- ogZljZwvjaAGaLipXzdNNK5b9vUrG4ooPtTxeur4lTZl9jNcEf3kGwT+2SndWwyYz7/AQxeKJUe
- XkWxjxKrZ4quFzNgvChe4RtS/bwOwW9q5pqWVCI38+TyWdKaCxEzVf/xEMR3Qfly0VRBO6c3jky
- NztyTCgHl4yeMZiFlueUFTh1H3rANmbFXCWLKeYunXxzewLpZIcUit7mjYZyNI3OCc6Eg==
-X-Received: by 2002:a05:6512:3c94:b0:5a0:ff97:4374 with SMTP id
- 2adb3069b0e04-5a12c27b159mr1001345e87.7.1772728522682; 
- Thu, 05 Mar 2026 08:35:22 -0800 (PST)
-X-Received: by 2002:a05:6512:3c94:b0:5a0:ff97:4374 with SMTP id
- 2adb3069b0e04-5a12c27b159mr1001337e87.7.1772728522175; Thu, 05 Mar 2026
- 08:35:22 -0800 (PST)
+ bh=b2n5Vo7LF4Ou+6lXv0M7f93TiBvoeQZOwY+70vQJ9OY=;
+ b=Pnpyb06sdJeONkOjMGAGpp1cFWJtSt/ndHdnc7Bxw8hHY1PNMYGmPDMTIQTSNci/ps
+ tkpBzjQBfpFOWZhgjS6VMYQdP84Y5Vwq2kUag+AQYhR8IcuXbriw46skKdd5+TKewY2v
+ gzP99gff9d8CcBQgo8RtIbHQBMCl/F6UFtJ6/eZFjEJ4GrKvWZ2kip/CQ4AGfWxusCkF
+ lzzWwcSKsJZePrmLVazt8YNIQhe4DbXZdSiXnLuTnu8cr14zmcLjMNanW/W4H8Z7WDZP
+ 1jYMTSZyXVimbt2VSTxg0Tm5GtA4Cz73M57kwF5MTx6uk5rmxIgb5kvzEfSrvKUf1UIf
+ FWAA==
+X-Gm-Message-State: AOJu0Ywdq8XE8qvT0WRCX3LkguSt0e44k3k6LQ4sT1WNi2xGNnlrBqv0
+ mPnlT69v4cujRLFk/YQ2QkmUtv8QPqq9IlcoUo5YrmneL9pZic+oObUw8KB9mDNMPVpG66v3BeK
+ V3Yyy/VbETiQjgIkNZuV98loyX/8QeS72LBOpWMGzxdb3jb2rRytvZkCnLGivEaryUxxscd9/nc
+ Y+9PvZrfy/wXZB2FaJzPEoy045iMI=
+X-Gm-Gg: ATEYQzzOz0/YjAdCqpdHUSxphV9HRxTcpx49czb3pqGDq1IOK8EWbNFDLcHzPJVrwpB
+ FM81081+GXp1ZwJ+3gW01ZGd0XTLOZHwt3omzkRxuIBtLKqZsfyeL/wGASf4lBZUB+q8JIvGr70
+ nsuwk0qfvn0wt/pfHbXOZokxl6CWCQGfgeycBCWztcdz2WuP4bSBuV0hjiAz2MRpGpTKNP1E14k
+ 4kxMYep4JE/STX5XYJrNRXEEma81CTy+oLGxRFQ23yVYOC4/Jqu4chm6ay1ouMo48QkSg==
+X-Received: by 2002:a05:651c:4103:b0:38a:2c06:a270 with SMTP id
+ 38308e7fff4ca-38a2c7af6b9mr26256181fa.30.1772728790227; 
+ Thu, 05 Mar 2026 08:39:50 -0800 (PST)
+X-Received: by 2002:a05:651c:4103:b0:38a:2c06:a270 with SMTP id
+ 38308e7fff4ca-38a2c7af6b9mr26256121fa.30.1772728789692; Thu, 05 Mar 2026
+ 08:39:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20260220174952.2647744-1-bruce.richardson@intel.com>
- <20260225162044.3670045-1-bruce.richardson@intel.com>
- <20260225162044.3670045-2-bruce.richardson@intel.com>
-In-Reply-To: <20260225162044.3670045-2-bruce.richardson@intel.com>
+References: <20260118201223.323024-1-stephen@networkplumber.org>
+ <20260122005356.1168221-1-stephen@networkplumber.org>
+In-Reply-To: <20260122005356.1168221-1-stephen@networkplumber.org>
 From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 5 Mar 2026 17:35:10 +0100
-X-Gm-Features: AaiRm52zyHWKLYyYrtr2uWeBein5xXIL8p0LTA64bgD5o6AKET03DI5_pmscUos
-Message-ID: <CAJFAV8xnjLN625Q7tmfv_WiZpiJj7N8zVsgXTCAUeBv2L=bP8g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] app/test: simplify getting the current file prefix
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, Marat Khalili <marat.khalili@huawei.com>
+Date: Thu, 5 Mar 2026 17:39:38 +0100
+X-Gm-Features: AaiRm50yiZr0h_uhanLPkjYR-4jBNfCcanL4WLUr1IlDiAo7Ji5doOQy34tpciY
+Message-ID: <CAJFAV8w9nWFccrTKCLOEgBwHbE0eKAt-Tkwkn0ZcsxnOMkdM4Q@mail.gmail.com>
+Subject: Re: [PATCH v3 00/14] test: fix test failures on high cores
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: HIuBWFoupHZY-t9cyZgvH2wdKWEJG9faBiVhQkN_eIw_1772728523
+X-Mimecast-MFC-PROC-ID: n0B4qVrGOVOw7zy5DSx2f014_4t2dPZBrAh8gWBqvjY_1772728790
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
@@ -84,19 +83,89 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 25 Feb 2026 at 17:21, Bruce Richardson
-<bruce.richardson@intel.com> wrote:
+On Thu, 22 Jan 2026 at 01:54, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
 >
-> Rather than opening particular fd's in the /proc directory, just use the
-> rte_eal_get_runtime_dir() function to derive the file-prefix in use.
-> Since the runtime dir call cannot return NULL, we can simplify/remove
-> the error handling where it's used.
+> This series addresses several categories of test infrastructure issues:
 >
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> Acked-by: Marat Khalili <marat.khalili@huawei.com>
-> Tested-by: Marat Khalili <marat.khalili@huawei.com>
+> 1. Spinloop synchronization fixes (patch 1)
+>
+>    Tests using tight spinloops for thread synchronization cause sporadic
+>    failures on high core count AMD Zen systems. The loops starve SMT
+>    sibling threads and create race conditions. Adding rte_pause() to
+>    all synchronization spinloops fixes these issues.
+>
+> 2. Test scaling for high core count systems (patches 2-5)
+>
+>    Several tests use fixed iteration counts that cause timeouts on
+>    systems with many cores due to increased lock contention. A new
+>    helper function test_scale_iterations() scales iterations inversely
+>    with core count to maintain roughly constant test duration.
+>
+>    Affected tests:
+>    - atomic_autotest (Bugzilla #952)
+>    - mcslock_autotest
+>    - stack_autotest
+>    - timer_secondary_autotest
+>
+> 3. BPF test fixes (patches 6-8, 14)
+>
+>    - Fix missing error handling in ELF load tests
+>    - Fix clang 20+ compatibility by restricting to BPF v2 instruction
+>      set (Bugzilla #1844)
+>    - Skip ELF test gracefully if null PMD is disabled
+>    - Fix incorrect size parameter in Rx/Tx load tests
+>
+> 4. Parallel test execution fixes (patches 9-10)
+>
+>    Multiple tests colliding on the default "rte" file-prefix causes EAL
+>    initialization failures when running tests in parallel. Restore unique
+>    file-prefix for all fast-tests on Linux, including a separate prefix
+>    for trace_autotest_with_traces.
+>
+> 5. Test skip conditions (patches 11-13)
+>
+>    Tests that depend on optional drivers (null PMD, eventdev) should skip
+>    gracefully when those drivers are disabled via -Ddisable_drivers=
+>    rather than failing.
+>
+> v4 - add additional scaling for failures reported on 96 core system
+>    - gracefully handle case where null PMD disabled in build
+>
+> Stephen Hemminger (14):
+>   test: add pause to synchronization spinloops
+>   test: scale atomic test based on core count
+>   test/mcslock: scale test based on number of cores
+>   test/stack: scale test based on number of cores
+>   test/timer: scale test based on number of cores
+>   test/bpf: fix error handling in ELF load tests
+>   test/bpf: fix unsupported BPF instructions in ELF load test
+>   test/bpf: skip ELF test if null PMD disabled
+>   test: add file-prefix for all fast-tests on Linux
+>   test: fix trace_autotest_with_traces parallel execution
+>   test/eventdev: skip test if eventdev driver disabled
+>   test/pcapng: skip test if null driver missing
+>   test/vdev: skip test if no null PMD
+>   test/bpf: pass correct size for Rx/Tx load tests
+>
+>  app/test/bpf/meson.build             |  3 +-
+>  app/test/meson.build                 |  4 +-
+>  app/test/suites/meson.build          | 19 +++++---
+>  app/test/test.h                      | 19 ++++++++
+>  app/test/test_atomic.c               | 66 ++++++++++++++++------------
+>  app/test/test_bpf.c                  | 13 ++++--
+>  app/test/test_event_eth_tx_adapter.c | 11 +++--
+>  app/test/test_mcslock.c              | 10 +++--
+>  app/test/test_stack.c                |  8 ++--
+>  app/test/test_threads.c              | 17 +++----
+>  app/test/test_timer_secondary.c      | 14 +++---
+>  11 files changed, 121 insertions(+), 63 deletions(-)
 
-Series applied, thanks Bruce.
+I think there is some overlap with some other merged patches (like a
+conflict on the meson side).
+Please check and rebase this series.
+
+Thanks.
 
 
 -- 
