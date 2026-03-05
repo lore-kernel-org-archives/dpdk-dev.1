@@ -2,83 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE12F3D332
-	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 16:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5984AF3D331
+	for <dpdk-dev@archiver.kernel.org>; Thu,  5 Mar 2026 16:55:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7617A40A89;
-	Thu,  5 Mar 2026 17:50:43 +0100 (CET)
-Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
- by mails.dpdk.org (Postfix) with ESMTP id F353F4029D
- for <dev@dpdk.org>; Thu,  5 Mar 2026 17:50:41 +0100 (CET)
-Received: by mail-dl1-f52.google.com with SMTP id
- a92af1059eb24-12732e6a123so448315c88.1
- for <dev@dpdk.org>; Thu, 05 Mar 2026 08:50:41 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1772729441; cv=none;
- d=google.com; s=arc-20240605;
- b=XK+feYN3pKMTuReENAahmY3qUDqJ91KG7xE4MtrVUXygU1ORTf5w2aHj9kdGpni6AT
- 7PoRfkdfeXndxWSkR2vZKcnqj5+UB3fPvjRkgW1HKxNORf0TsrXg9QWyMRUzS8IrJDve
- wYRdE06y2vPDh7m9CvP0S4c7Rznfglckz0H2UbAJBUlITJRkcS/WcEYEM9CJO+yNBFKr
- qdtscgPGHN47p4CTLsfz841s+lqxFbjN0ozS70qYhMpQTrs4VpwTFaVzMRXTm+xyozf6
- VEBOcxFmKQGaBfCSq6G0EYuz1Z3HPwfXSrHZ96QX3fLHv2t3zxLXhlVZT1fvHBITSYDd
- WAtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=uX6yVoQaujyAtc0B9PO7k9/PqfeC6FCP3rIm/gLNT4I=;
- fh=EmIcb+uVPOlPBF1BpgYQmLwFYQnXG5S0p2dyMBWTb1s=;
- b=XrTZvUfGzj/nyrwvLe2DCYwKM/eSBmEs4SH2k59Qsg1r1VfgtSUgHilsYqUTDqBr90
- pqT/jPcSyYQBKzDsfcPuEQ55zluZVJF2/YeJhRF2sdhYe+WIOWEYryOe5IRLv93D+lQQ
- Uue6PDO7WO1rX+5uv7jUuBqMTqArhU55nbgfKQotFspdSD78SdCs1mNE+HineGmbyMNP
- 3EGeFcqNYBLdfCxnYQHeNqVUH9I9GEzXwm6OhHKwRGsI/KfJXeUp8Y3ekW4URHEcPlgy
- 2ZpXi6tHLfyf4HJOGfkV9pnsoDsPUSVOdtCz78fx6BnkTyW327mNmTacwCc2kstrY1+a
- DL4g==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1772729441; x=1773334241; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=uX6yVoQaujyAtc0B9PO7k9/PqfeC6FCP3rIm/gLNT4I=;
- b=azFeHibNkdbjmueRZDqOBYNMbju5wo9K8X/Cpgwp+6+xHYywIUXnsEf+tLma11TZCH
- 59jpUj8Pl4V6ahOW/2XjA5A7JfWOW8hTh25tdM/k0+fcInwUX9kvOJdiygQtx/wQ/TvQ
- d4TjfiyE6oCF00xlvwAZC9yeT/SA6HdL6VEXo=
+	by mails.dpdk.org (Postfix) with ESMTP id B597640A7F;
+	Thu,  5 Mar 2026 17:55:56 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 766394029D
+ for <dev@dpdk.org>; Thu,  5 Mar 2026 17:55:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1772729755;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=DRqFOPasYzui6le6qj09Hs90ivYR8CZcBKw9o/fk/5Y=;
+ b=JUl0hfjGZHKh63I27XvVpg69V4uU98PhfdjXWOtKx6QsbI4zsOxZO6NfasCeAotXYjp0CG
+ WfKkHhkka/e77l1a/yR7yCpzIlc5uqBAyI7/NYngfxVzka+iAnuBUH+r91pqXBmV8iDP/W
+ 9jf7nX5iVFNjay4+C1KzgIiC8y6s65U=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-684-7jXUSPDIM72j3egXyKMWxw-1; Thu, 05 Mar 2026 11:55:53 -0500
+X-MC-Unique: 7jXUSPDIM72j3egXyKMWxw-1
+X-Mimecast-MFC-AGG-ID: 7jXUSPDIM72j3egXyKMWxw_1772729752
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-38a32088ed1so13055241fa.1
+ for <dev@dpdk.org>; Thu, 05 Mar 2026 08:55:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772729441; x=1773334241;
+ d=1e100.net; s=20230601; t=1772729752; x=1773334552;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=uX6yVoQaujyAtc0B9PO7k9/PqfeC6FCP3rIm/gLNT4I=;
- b=r4RSLjxQdxMwISk4/rwIdWga9ykZpO+oG9v6HWNoU1Qql30gYPukDcGUbsDYvW4pNT
- GZe8K80MAAJD0s60WYBAJ7ANMqAz3m9SGve86WeUT941L5MWtIYtBA+i1CuVb0Z5kAoA
- h8k5ZxPyAY+1xTeHutnEhSDAqBLNRd5ZkkLPjSeLDakdC2L32UkzbmuPNhHVWRi3dYmc
- v2sl9BWRdWGkTsKh5BKqoVc/Q8TaDgRie1evRJjfrFykAMRa5OH29PG2L5+YEdU5upCu
- KZhMikNw91xcCHZzQs9o8PeidqsC7+mhTvtz/rx9oEYFmOHLWN51PWgmN+/hyknyT+Db
- 1fSw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVVjHwDwepb0ZaBY+UMftggek3NqiBckU4yYEIfeTXi3Bx0gf1N5j2TqJjgge83kxD1ACQ=@dpdk.org
-X-Gm-Message-State: AOJu0YzTlnPRdxXtC6fNvO2M4yiRdgxNUtswb2MaZrEuZ8ZOAn+IAz3Y
- 9ZKc2W31Y2dyRwQQhe/SOqh1DxfMBSfuHUrD+u2mNu7uw035O4Zzmp65sQhlCXiFIPbs4w0Kkkw
- 4CH2yU2qd9y1bLtJ4lZa09IML8wYxdUgiQ1EC9pEDDQ==
-X-Gm-Gg: ATEYQzzEgi8VE0p573HhCdRO7jmq6kNC8G0/eveS/T84nWrMt3ex4Do8qHfcqN0htGl
- V2MhkDdR6Yb7+wrX69KyoUawBXgzHdxYSU+2pUbxhKmrsGJcVo80IQMlJyQ7GGuXOCVgDadoxDW
- qy5n74omjdz810lQv88yaihEKVK4Y2sIP9e+VGTBAEux8JQVIeM9xjxhXkuSn4JgdlavfPqwUfz
- pd3gvL84qyacymQ3/9QZBQsFqCTtbGVt4VJE7ntv3hqq+0TZxhxa/EYYp/gOOmmhExBEh4E/dLT
- CYPPMF6KgVgZArLBE5jzVKMQ3DqrBhzGSW9kb1wJaPnjmTifVJEBwMuQA0bo2evKWYJYOmN2
-X-Received: by 2002:a05:7022:2207:b0:127:3b1b:dcd with SMTP id
- a92af1059eb24-128b70d11a7mr2560325c88.23.1772729440823; Thu, 05 Mar 2026
- 08:50:40 -0800 (PST)
+ bh=DRqFOPasYzui6le6qj09Hs90ivYR8CZcBKw9o/fk/5Y=;
+ b=EwdpHkphtusC1yiMe+1jLfr6KXZT9BECgy6hR+eVTX5d9hkCDMKm5dYt7oWWiu6/77
+ L21U+vbiuwYr1i7v0l4cWCz3SBIO/a1uwc1Snz3KQRvGmYDAfW5DNQPfwpLqV04k2hFG
+ QEF3jXE8H55fyEABbYLDK4JOl6qXZba7EVQ+Zwpv8urT83aoRkLphGCkwbYM9fNNN+f0
+ hv3jTCEokFsI8eLzJUZ+yoOLHcRKmbTMls1EoLc+rC6dlKvDBefux59DU/ums4c9PP7r
+ R10/CnNe7uqyjlz7mfOp6/mZ+RUUKdsKZUdVGEyDyjUPydZfbAMoksi2xOG2v55XkcYe
+ v/ww==
+X-Gm-Message-State: AOJu0YyI1LsGCs9YEPlFXd4TmPiYEnWvOiSk+v/GzjV/7WbyzGIzq9x/
+ uIw8cHE2sAEMOLyFl7fZIM9lq66HtZnaMtvEAulfZ/I1o9RzWLVxDm9vww+nDrqULYedvNK6fM0
+ LOrDkJGAXRjtXzh9npJm37P2WJclJ/KYuI+HxgkusV5JfwWAViKulfZmAPO5mI0J2WJw9k748KT
+ 3gNyXj0ONwSHsJAbMHsg0=
+X-Gm-Gg: ATEYQzx2RGmuiR6J/nkHZ6xkaRaUouFlYGGdheyZsbNicCKU73xFbeF+q5N/ULHnLHo
+ HeyYAX36nyMV7XxsViqGld7lUBvKfjFAO4FVGNrGwsskeFnbRA2C0MGoz5YbNQVIL1AYEvmI3A3
+ g8S43ezzN4Di+KODGIUC5klaUmKyB/Ga9cGzJ0a2zRvWNHvmdv/AfzberEEdxyqIG7QOeEMrmJe
+ YYCw7AvCjzdE7Q2EVkp0AI+gjYWcYOAAjYccWeUG5v101GX31hhPQk/eUPEmpLFlxiIhg==
+X-Received: by 2002:a05:651c:1473:b0:386:78ba:efda with SMTP id
+ 38308e7fff4ca-38a352bc56fmr12451541fa.19.1772729752216; 
+ Thu, 05 Mar 2026 08:55:52 -0800 (PST)
+X-Received: by 2002:a05:651c:1473:b0:386:78ba:efda with SMTP id
+ 38308e7fff4ca-38a352bc56fmr12451391fa.19.1772729751718; Thu, 05 Mar 2026
+ 08:55:51 -0800 (PST)
 MIME-Version: 1.0
-References: <20260303170136.509304-1-dmarx@iol.unh.edu>
- <20260303184131.514380-1-dmarx@iol.unh.edu>
-In-Reply-To: <20260303184131.514380-1-dmarx@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 5 Mar 2026 11:47:43 -0500
-X-Gm-Features: AaiRm5009JDJRejShsE5k4T0wGXbbRtqBMfB3IdPum2j8iKCF62N28ZoZNER2mU
-Message-ID: <CAJvnSUCYgph9OuFS7fWkyu6kLOqxoA7QZPjB51_XMZv-am7LMw@mail.gmail.com>
-Subject: Re: [PATCH v4] dts: refactor flow suite with generator pattern
-To: Dean Marx <dmarx@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org
+References: <20260218160453.142311-1-maxime@leroys.fr>
+ <20260226143341.282188-1-maxime@leroys.fr>
+ <20260226112551.7ec09c50@phoenix.local>
+In-Reply-To: <20260226112551.7ec09c50@phoenix.local>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 5 Mar 2026 17:55:39 +0100
+X-Gm-Features: AaiRm517b-OaXIjvdqF4Hn2q43VYh7xyY5OnhQHgnwJI5GEJs-g96CDix9s8jIU
+Message-ID: <CAJFAV8yFRfHOoBha12Vistp48reyhdgNxaxZpys66eC_MOz5Tw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] net/dpaa2: fixes and improvements
+To: Maxime Leroy <maxime@leroys.fr>,
+ Stephen Hemminger <stephen@networkplumber.org>, hemant.agrawal@nxp.com
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: BnZ9sUHqJ-ammVfUBZdtNskpHouXHpUNoDHpm2SwDZc_1772729752
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -93,43 +85,82 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -    @func_test
-> -    def drop_action_IP(self) -> None:
-> -        """Validate flow rules with drop actions and ethernet patterns.
-> +                try:
-> +                    verification_method = getattr(self, f"_verify_{test_case.verification_type}")
+On Thu, 26 Feb 2026 at 20:26, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
 >
-> -        Steps:
-> -            * Create a list of packets to test, with a corresponding flow list.
-> -            * Launch testpmd.
-> -            * Create first flow rule in flow list.
-> -            * Send first packet in packet list, capture verbose output.
-> -            * Delete flow rule, repeat for all flows/packets.
-> +                    if test_case.verification_type == "queue":
-> +                        testpmd.set_verbose(level=8)
-> +                        testpmd.start()
+> On Thu, 26 Feb 2026 15:33:24 +0100
+> Maxime Leroy <maxime@leroys.fr> wrote:
 >
-> -        Verify:
-> -            * Packet is dropped.
-> +                    verification_method(
-> +                        packet=test_case.packet,
-> +                        testpmd=testpmd,
-> +                        **test_case.verification_params,
-> +                    )
+> > Various fixes and improvements for the dpaa2 net driver and fslmc bus.
+> >
+> > Patches 1-6 fix resource leaks on port close, error paths, link status
+> > and devargs propagation on hotplug.
+> >
+> > Patches 7-14 fix additional bugs: spurious VLAN insertion, error packet
+> > dump crash, packet type classification, checksum offload flags, software
+> > taildrop buffer access, burst mode info reporting, SG table walk bounds,
+> > and MAC stats DMA allocation.
+> >
+> > Patch 15 is a minor cleanup in the link status area.
+> >
+> > Patches 16-17 add devargs alternatives for getenv-based configuration
+> > of taildrop and data stashing options.
+> >
+> > Changes since v1:
+> > - Add Cc: stable@dpdk.org on patches with Fixes: tags (Stephen)
+> > - Reorder series: fixes first, then improvements (Stephen)
+> > - Patch 2: squash with former patch 4 (Hemant)
+> > - Patch 6: move devargs refresh from plug to scan rescan path (David)
+> > - Patch 17: keep getenv for backward compatibility, add devargs as
+> >   alternative instead of replacement
+> > - Drop former patch 11 (bus/fslmc: remove dead blocklist check) to
+> >   avoid disaligning with other buses (David)
+> > - New patches 8, 11-14 fixing issues reported by Stephen
+> > - New patches 7, 9-10 fixing VLAN insertion and packet classification
+> >   issues
+> >
+> > Maxime Leroy (17):
+> >   net/dpaa2: fix queue block memory leak on port close
+> >   net/dpaa2: fix rx error queue memory leaks
+> >   net/dpaa2: warn on rx descriptor limit only in high perf buffer mode
+> >   net/dpaa2: fix resource leak on softparser failure
+> >   net/dpaa2: fix link not up after port stop/start
+> >   bus/fslmc: fix devargs not propagated on hotplug
+> >   net/dpaa2: fix spurious VLAN insertion on non-VLAN packets
+> >   net/dpaa2: fix error packet dump crash and memory leak
+> >   net/dpaa2: fix L4 packet type classification in slow parse path
+> >   net/dpaa2: fix L3/L4 checksum offload flags
+> >   net/dpaa2: fix software taildrop buffer access
+> >   net/dpaa2: fix burst mode info to report active burst function
+> >   net/dpaa2: add SG table walk upper bound in Rx path
+> >   net/dpaa2: fix MAC stats DMA buffer allocation per xstats call
+> >   net/dpaa2: use CHECK_INTERVAL macro in set_link_down
+> >   net/dpaa2: add devargs to disable Rx taildrop
+> >   net/dpaa2: add devargs alternative for data stashing getenv
+> >
+> >  drivers/bus/fslmc/fslmc_bus.c           |   4 +
+> >  drivers/bus/fslmc/portal/dpaa2_hw_pvt.h |  16 +-
+> >  drivers/net/dpaa2/dpaa2_ethdev.c        | 211 ++++++++++++------------
+> >  drivers/net/dpaa2/dpaa2_ethdev.h        |   3 +
+> >  drivers/net/dpaa2/dpaa2_rxtx.c          |  85 +++++-----
+> >  drivers/net/dpaa2/mc/fsl_dpni.h         |   6 +
+> >  6 files changed, 164 insertions(+), 161 deletions(-)
+> >
+>
+> Please fix the free bulk bug on Transmit and revise
 
-Is testpmd.start() only being called for queue tests, but not drop
-tests? Do you need to pull the testpmd.start() outside of the "if
-test_case.verification_type == "queue":" block?
+As I replied in other thread, I see no bug on usage of free bulk (not
+the raw helper).
 
->
-> -        One packet will be sent as a confidence check, to ensure packets are being
-> -        received under normal circumstances.
-> -        """
-> -        packet_list = [
-> -            Ether() / IP(src="192.168.1.1") / Raw(load="xxxxx"),
-> -            Ether() / IP(dst="192.168.1.1") / Raw(load="xxxxx"),
-> -            Ether() / IP(ttl=64) / Raw(load="xxxxx"),
-> -            Ether() / IPv6(src="2001:db8::1") / Raw(load="xxxxx"),
-> -            Ether() / IPv6(dst="2001:db8::1") / Raw(load="xxxxx"),
-> -            Ether() / IPv6() / UDP() / Raw(load="xxxxx"),
-> -        ]
+> patches so that check-git-log.sh does not complain so much.
+
+Maxime, this will need a new revision on those warnings.
+
+Hemant, in the mean time, could NXP review/test on real hw?
+
+
+Thanks.
+
+-- 
+David Marchand
+
