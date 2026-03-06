@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F9FF0182F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 13:31:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F22EF0182F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 13:31:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A11C410D4;
-	Fri,  6 Mar 2026 14:30:48 +0100 (CET)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
- [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id B3F5240E4C
- for <dev@dpdk.org>; Fri,  6 Mar 2026 14:30:47 +0100 (CET)
-Received: by mail-wr1-f49.google.com with SMTP id
- ffacd0b85a97d-439c5cce2c6so3116661f8f.3
- for <dev@dpdk.org>; Fri, 06 Mar 2026 05:30:47 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5DDF14111B;
+	Fri,  6 Mar 2026 14:30:52 +0100 (CET)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 18CEC410F6
+ for <dev@dpdk.org>; Fri,  6 Mar 2026 14:30:50 +0100 (CET)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-483bd7354efso120780215e9.2
+ for <dev@dpdk.org>; Fri, 06 Mar 2026 05:30:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1772803847; x=1773408647; darn=dpdk.org;
+ d=gmail.com; s=20230601; t=1772803850; x=1773408650; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=3vt8PICzTXkD6tqnZ9Uj/2dpldyb3jBsCGizuoHJd/A=;
- b=kWwFGBl/AtHFwYpwu8NvOymSlBaoYJC+ehC94WLvDyJFTt34gUPgbwUZTFhZRx6sRo
- GpGI52K2+QFJ/9IvOMaluhka4XGHtNxyu0A1iLtPe3hsM2Kjv2TnL3PXWyaJ7g0n9Ei7
- gOzONb8Qcypql+yhM0Cv7QDwQUB+7YDDcEJWzPMB8iL5LUcnUziSOLD8xoTf1FoZ6ZXT
- l3gQ0Kgr/dpVcbDKH9VIHPnpscNHk0hsRuXdZxD/yfdA8xb/FScED+0p+uz6gggKtQYT
- 3/qgwRGNCw/J6VBCSZdlXrQwbVComkqILgGzMRKvE2eB9si9qBM/wIdYZ/LcutKcZbi4
- 9pEA==
+ bh=EjDdbf+eAjbLdgG/yexqas3+XFV2wX2tkLagCUlKWPs=;
+ b=QpyewJ1BK9sU0ZdfQjJnpUxVODhUvZ84rMcS4Qqysg2ykVtbMAoObc5Bl1e7rI/vQU
+ ceCeMzBV+LqKOpQFpnfMk9U7pDxsfaEKzVanWgtlIvB5VIQbnkat5eCokd9er0kNM/tN
+ f82GrrYPlVj0/nuleW9fzJUU+b+mkUs15IZayp/eScGLqOb7ggzGlNT15HAmQzJ1F4R6
+ +r9Vuf/wqte+WOzYoOvoqRNqdAA53+Eub/od21KoPxFH4OIgdhzmUi+H5PLKknm3TbLm
+ 2+zF+1ZCVnJfZzk5uVOPAXi2cEdDf7toi04Jkn71Bce+hdyxM9+IPtUiOinBOg5/cN4l
+ xT1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772803847; x=1773408647;
+ d=1e100.net; s=20230601; t=1772803850; x=1773408650;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=3vt8PICzTXkD6tqnZ9Uj/2dpldyb3jBsCGizuoHJd/A=;
- b=eaSv3J0ADQKJikgZzlyhUgit7OfDASEGY2fgky6wh7nRGoWI1K1Xu3awCwWAQljPtC
- kBYi4+pFx2oLoabMDLDlQWNw3eSEpExouHF3mOU5l3dApnb7qGa0AeQxLLIUzGQm1yQB
- 3ZHaFDPjdbx/GpOoa33K7StwNZ+939jqX7qOK3UYhaQPwGIhUFeZiYSL4ITCRK4rV6hO
- hCI60mmFGGSjtotbc98ks/ICWszH6XfxBf4/Hud0IoLE51y6TCOjwRLMaBMMxrGHZ12D
- 4oAqFlQWn5kMRvDfYukHf+vRpQNUzl4WgwxfrNoPY28gjMqcfNwSca1G/eTaO0uIM+6v
- 508g==
-X-Gm-Message-State: AOJu0YygFjomANaSfropfJsilM8mcPgAnClWr8DNcF0QTalqRg0/V7CU
- Rw8McmffERKYuYxBE/seH6QTeU/KeyT3NlaDCEq3QmiMuswa3BKR+BBa6yfsXL6V
-X-Gm-Gg: ATEYQzyP6VdVN2n5tK5KcyZG1UspJCapXZIgHaJm0QT5d9VLA5mu/mLeQXkCmTKng4e
- 4iwDYHTTzo/Cwd5hueRelmhBb5ZEntp3PTkjsr27GNY7o5DVGsoNISEUpG/HfrV+QmNotVSYnkz
- 8WJ1A24qigG3ZyhLvEjN+Md3rfActYs1Y+ZzXaN7QPoUdiPZEAlQUFht3RUXuLJL4sSc4qqazkd
- aSbHA2dRI6DeWofRlEVW3zpLlsTJbe5WrfaVvQtS7WotanvU139wU7yxvGQB3sfvW/pDVqQyEuL
- GtHypoBr5KFz0Ghe/qw4vyMwHAxgyeK5H24fs6yA3TkPkgZUOjg7BA0+CDgBZS7yyXuxexLdkCC
- UHEQdq0McHmsXJ1WrrwuLMbRO3OjqlRPa3HOPbL2xtZZRWTMyICPgXT9Wcjatxlc9ZwExXrobtF
- E+M0EluvquK7EhVt0aFzXKbTiN2iM=
-X-Received: by 2002:a05:600c:8115:b0:477:a219:cdb7 with SMTP id
- 5b1f17b1804b1-485268bd69fmr37546775e9.0.1772803847064; 
- Fri, 06 Mar 2026 05:30:47 -0800 (PST)
+ bh=EjDdbf+eAjbLdgG/yexqas3+XFV2wX2tkLagCUlKWPs=;
+ b=U1N8y62d/8BswaB5xrt577uNyhNM6YHxij0RnDrJJKsFZYvF8WGSZ/WTHILvJhs24L
+ bIBm15goL3QTBzKm6q+UDuTrdHWjnrcbsUn42RunWo7p0E0C564c1DUYdyx9+WYN1o22
+ y59gIqUhh7vqfJkyxa9j3kwSEUPkl2+ifaVUKpi9CmtjdB3QmthQks4br6NSrP/FyakU
+ 93E0dN/vC5QUBAxiuqBfIhzrDBSBSsUgNLw+LdwzIegy5nEmJ/hfaVWACohgOHATBFa/
+ B/1+wAR5Epwnxal/JTWy3EgkhDZkXb8caDacJ9/nY9kiV4VI9H1BrKi6yzME79KaPDyJ
+ cuyQ==
+X-Gm-Message-State: AOJu0YybYIfW3dN4iL4/iADtr6Cyi6Wo3pjcCMxrjd1epJo4s0hHxH9o
+ H+umUMdcaKvYEX39y7fEl0TAdNaGiIW4Yu4bPlOM3dmZLRhmsc/Jd/4fiJCr3j/B
+X-Gm-Gg: ATEYQzxq7lA/TaeCFWJluS/dFOQQumIwubqg27cqgwb+LQIW6JIslCEpx4zZ0+mIARJ
+ H0t/G52KApDRwW3gfCpgUcU0wWgRHYlh0SXNuxdiRjCxyXCxiiTmNoAVFfEAycow/6mEwJ1ATeO
+ pOFXAFy/rFA0tqa507sKCla4BwGE+TQbSiMxm7IFIWM07sTECoxrmMzaO+sx2XxBGj+wupAESmd
+ 5rvrcu//9OK2Le6AXFsGoMoUleS9kWqTaO3o335c0MMo59fCqiaJmXWQPmmnNhJaEHELCCgkMxj
+ oG/17iYterDB3cLWCSXBIVn5gD50GNUDsPLLjRpGcPK+lzP7K+EwV4hymshGdxw8FROKvVE+DA7
+ kTuc2rhB5y/eiUqbwdDGR0JLwX2VHJbOSBPAtRg01DKPiizuj+t3NQtVn098zufgPaIs8VJ+PAI
+ F+kOHb7JVWe1JMFskntCUjzZsiQVQ=
+X-Received: by 2002:a05:600c:34d2:b0:480:4a4f:c363 with SMTP id
+ 5b1f17b1804b1-48526922ba2mr33253725e9.9.1772803849445; 
+ Fri, 06 Mar 2026 05:30:49 -0800 (PST)
 Received: from freepad.iliad.local ([213.36.9.102])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48527686fa9sm44025805e9.8.2026.03.06.05.30.46
+ 5b1f17b1804b1-48527681e2bsm38133125e9.5.2026.03.06.05.30.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 06 Mar 2026 05:30:46 -0800 (PST)
+ Fri, 06 Mar 2026 05:30:48 -0800 (PST)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com, stephen@networkplumber.org,
  david.marchand@redhat.com, Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org
-Subject: [PATCH v3 02/17] net/dpaa2: fix Rx error queue memory leaks
-Date: Fri,  6 Mar 2026 14:30:20 +0100
-Message-ID: <20260306133035.179709-3-maxime@leroys.fr>
+Subject: [PATCH v3 03/17] net/dpaa2: warn on Rx descriptor limit in high perf
+ mode
+Date: Fri,  6 Mar 2026 14:30:21 +0100
+Message-ID: <20260306133035.179709-4-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260226143341.282188-1-maxime@leroys.fr>
 References: <20260226143341.282188-1-maxime@leroys.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -81,97 +81,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rx_err_vq is allocated separately with rte_zmalloc() in
-dpaa2_alloc_rx_tx_queues(), but is never properly freed in two paths:
+The Rx descriptor count warning fires unconditionally when the total
+exceeds 11264, but this limit only applies when the DPNI is created
+with the high performance buffer option (0x80000000). When using normal
+buffers, there is no such limit and the warning is
+misleading noise.
 
-1. On port close: dpaa2_free_rx_tx_queues() only frees the q_storage
-contents via dpaa2_queue_storage_free() — the dpaa2_queue struct itself
-is never freed, leaking memory on every port close.
+Check the DPNI options to only warn when the high performance buffer
+mode is active.
 
-2. On allocation error: the fail: path frees the error queue's
-   q_storage but never frees the rx_err_vq struct itself, which was
-   separately allocated with rte_zmalloc(). This has been missing
-   since the error queue was first introduced.
-
-Add the missing rte_free() calls and NULL assignments in both paths.
-
-Also replace the DPAAX_RX_ERROR_QUEUE_FLAG check with a direct
-priv->rx_err_vq NULL check, which is safe because rx_err_vq is
-zero-initialized and only set when the flag is active. This avoids a
-NULL dereference if rx_err_vq allocation itself fails and also
-simplifies the cleanup in dpaa2_free_rx_tx_queues() for consistency.
-
-As a defensive measure, also add a NULL guard to the
-dpaa2_queue_storage_free() macro to prevent NULL pointer dereference
-from callers in error paths.
-
-Fixes: 46d02eeaaeb8 ("net/dpaa2: fix queue freeing")
-Fixes: 4690a6114ff6 ("net/dpaa2: enable error queues optionally")
+Fixes: 35dc25d12792 ("net/dpaa2: warn on high Rx descriptor number")
 Cc: stable@dpdk.org
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/bus/fslmc/portal/dpaa2_hw_pvt.h | 16 +++++++++-------
- drivers/net/dpaa2/dpaa2_ethdev.c        |  8 ++++++--
- 2 files changed, 15 insertions(+), 9 deletions(-)
+ drivers/net/dpaa2/dpaa2_ethdev.c | 18 +++++++++++-------
+ drivers/net/dpaa2/mc/fsl_dpni.h  |  6 ++++++
+ 2 files changed, 17 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-index 10bc191645..e625a5c035 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-@@ -223,13 +223,15 @@ struct swp_active_dqs {
- 
- #define dpaa2_queue_storage_free(q, num) \
- ({ \
--	int i; \
--	\
--	for (i = 0; i < (num); i++) { \
--		if ((q)->q_storage[i]) { \
--			dpaa2_free_dq_storage((q)->q_storage[i]); \
--			rte_free((q)->q_storage[i]); \
--			(q)->q_storage[i] = NULL; \
-+	if (q) { \
-+		int i; \
-+		\
-+		for (i = 0; i < (num); i++) { \
-+			if ((q)->q_storage[i]) { \
-+				dpaa2_free_dq_storage((q)->q_storage[i]); \
-+				rte_free((q)->q_storage[i]); \
-+				(q)->q_storage[i] = NULL; \
-+			} \
- 		} \
- 	} \
- })
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index cef819650b..eb8333458e 100644
+index eb8333458e..61dcfafff6 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -620,9 +620,11 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
- 		priv->rx_vq[i--] = NULL;
+@@ -74,8 +74,9 @@ int dpaa2_timestamp_dynfield_offset = -1;
+ 
+ bool dpaa2_print_parser_result;
+ 
++/* Rx descriptor limit when DPNI uses high performance buffers */
+ #define MAX_NB_RX_DESC		11264
+-int total_nb_rx_desc;
++static int total_nb_rx_desc;
+ 
+ int dpaa2_valid_dev;
+ struct rte_mempool *dpaa2_tx_sg_pool;
+@@ -904,11 +905,13 @@ dpaa2_dev_rx_queue_setup(struct rte_eth_dev *dev,
+ 	DPAA2_PMD_DEBUG("dev =%p, queue =%d, pool = %p, conf =%p",
+ 			dev, rx_queue_id, mb_pool, rx_conf);
+ 
+-	total_nb_rx_desc += nb_rx_desc;
+-	if (total_nb_rx_desc > MAX_NB_RX_DESC) {
+-		DPAA2_PMD_WARN("Total nb_rx_desc exceeds %d limit. Please use Normal buffers",
+-			       MAX_NB_RX_DESC);
+-		DPAA2_PMD_WARN("To use Normal buffers, run 'export DPNI_NORMAL_BUF=1' before running dynamic_dpl.sh script");
++	if (priv->options & DPNI_OPT_HIGH_PERF_BUFFER) {
++		total_nb_rx_desc += nb_rx_desc;
++		if (total_nb_rx_desc > MAX_NB_RX_DESC) {
++			DPAA2_PMD_WARN("Total nb_rx_desc exceeds %d limit. Please use Normal buffers",
++				       MAX_NB_RX_DESC);
++			DPAA2_PMD_WARN("To use Normal buffers, run 'export DPNI_NORMAL_BUF=1' before running dynamic_dpl.sh script");
++		}
  	}
  
--	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
-+	if (priv->rx_err_vq) {
- 		dpaa2_q = priv->rx_err_vq;
- 		dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
-+		rte_free(dpaa2_q);
-+		priv->rx_err_vq = NULL;
- 	}
+ 	if (!priv->bp_list || priv->bp_list->mp != mb_pool) {
+@@ -1213,7 +1216,8 @@ dpaa2_dev_rx_queue_release(struct rte_eth_dev *dev, uint16_t rx_queue_id)
+ 	memset(&cfg, 0, sizeof(struct dpni_queue));
+ 	PMD_INIT_FUNC_TRACE();
  
- 	rte_free(mc_q);
-@@ -688,9 +690,11 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
- 				priv->tx_conf_vq[i] = NULL;
- 			}
- 		}
--		if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
-+		if (priv->rx_err_vq) {
- 			dpaa2_q = priv->rx_err_vq;
- 			dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
-+			rte_free(dpaa2_q);
-+			priv->rx_err_vq = NULL;
- 		}
+-	total_nb_rx_desc -= dpaa2_q->nb_desc;
++	if (priv->options & DPNI_OPT_HIGH_PERF_BUFFER)
++		total_nb_rx_desc -= dpaa2_q->nb_desc;
  
- 		/*free memory for all queues (RX+TX) */
+ 	if (dpaa2_q->cgid != DPAA2_INVALID_CGID) {
+ 		options = DPNI_QUEUE_OPT_CLEAR_CGID;
+diff --git a/drivers/net/dpaa2/mc/fsl_dpni.h b/drivers/net/dpaa2/mc/fsl_dpni.h
+index fcc6d4726e..82d6830acc 100644
+--- a/drivers/net/dpaa2/mc/fsl_dpni.h
++++ b/drivers/net/dpaa2/mc/fsl_dpni.h
+@@ -121,6 +121,12 @@ struct fsl_mc_io;
+  * The stashing is enabled by default.
+  */
+ #define DPNI_OPT_STASHING_DIS			0x002000
++/*
++ * High performance buffer mode.
++ * The total number of Rx descriptors is limited to 11264 in this mode.
++ * When not set, the DPNI uses normal buffers and has no such limit.
++ */
++#define DPNI_OPT_HIGH_PERF_BUFFER		0x80000000
+ /**
+  * Software sequence maximum layout size
+  */
 -- 
 2.43.0
 
