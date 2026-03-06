@@ -2,70 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AEE4FCB622
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 16:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07CBFCB621
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 16:43:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 952784278E;
-	Fri,  6 Mar 2026 17:40:40 +0100 (CET)
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com
- [209.85.222.170])
- by mails.dpdk.org (Postfix) with ESMTP id 5596A42799
- for <dev@dpdk.org>; Fri,  6 Mar 2026 17:40:38 +0100 (CET)
-Received: by mail-qk1-f170.google.com with SMTP id
- af79cd13be357-8cb38e6d164so1215504285a.3
- for <dev@dpdk.org>; Fri, 06 Mar 2026 08:40:38 -0800 (PST)
+	by mails.dpdk.org (Postfix) with ESMTP id C45124113C;
+	Fri,  6 Mar 2026 17:43:05 +0100 (CET)
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com
+ [209.85.161.48]) by mails.dpdk.org (Postfix) with ESMTP id B6630402E3
+ for <dev@dpdk.org>; Fri,  6 Mar 2026 17:43:03 +0100 (CET)
+Received: by mail-oo1-f48.google.com with SMTP id
+ 006d021491bc7-662f91bba0fso7718254eaf.0
+ for <dev@dpdk.org>; Fri, 06 Mar 2026 08:43:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1772815238; x=1773420038; darn=dpdk.org;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1772815383;
+ x=1773420183; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=lG6IqjeNoY6GWT6bm6GFh7dmMkgg8t81YMrojlXU4sc=;
- b=NxhRT0ii6aDB+rO3SMfvZbzDD3UHATq/I1i+IIXU903LgXNu+8oyaafAWckSRk7JyE
- VyFSOuL6QG5cHUw5fKeu6YTtgzlSg8zP42VEJ87AsT7ssA+mH73RFkXvWI7uWcmk2VBo
- NSGXhPtzVp6kPtCGfqB/GRntxM7oTQGOwwbvg=
+ bh=d+CV36tho0SS9btMpvxQ3a2p1Wvu+jugLebLMrfgems=;
+ b=VWqNEPv2o+R07nbCI19ps5EDoWAIcHWYPSbuSlh2Lwg+ytiNR7+CkrudWC6SZaU2aK
+ IbhCcFF5+JN7+O9y1nVc/KwVOwxCJ0tqpx2cFVOEaNHMjxxw90f2v1gyU1ylW48KvpAb
+ 7TTUVit7cS8yPclJ7KJm52ueQvL1gny5js4tLgSfIBTdn0xmKhtB6V0kae2qgzBjX2/3
+ GkWjQG0T6H1PgUHfoclGLBpknTslEYA076zoONhnWPbhICNIBsAvLoZrC92mXMihOhcm
+ ZcQ9eZf0ZBuDStj9YmDPhZsKwbdUMVdCPXS1+endDch+RfHnr5uyEBZi+r1n2lteAJxk
+ /7iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1772815238; x=1773420038;
+ d=1e100.net; s=20230601; t=1772815383; x=1773420183;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=lG6IqjeNoY6GWT6bm6GFh7dmMkgg8t81YMrojlXU4sc=;
- b=oP+hwVkKCuykydKk8vo83/pcQDA62wvXhgrNlTA224C4UNauQs1J3D3QUYnCEyiMlW
- GfxsQD3H20NILXH/+RjX6XqRy+8HpldRjkm3+0n4mQGmYsMWNswqFWAp0iV40yOyhRE6
- SeV+XwS8HJVXmvVBGed7V2fAc5vUvKe+TPJUsF4MMqO2LPj8M8qr3uY+JPkWSS+xKjB7
- UivT2wfiEOyccOaZCo/vi3Gk+0CMWrost/5kCS/DYqLFVcGFp1x3Yn9uo9LorG29d/S5
- XlocrpQ4LRCA5qyPzdPoDV3mHGGxduwyVcVjahYtIsorqlJf8y24R1m9QU+A5ZH74xOT
- /lNQ==
-X-Gm-Message-State: AOJu0YxaZRSh8qEL7nxeZ3jT98Vg3U7RAamH3tOiOJpGRtyFZuFMOsqt
- NKAwVK7D0g7hAS4xxSWP9CIRLAkwXxBksa8heY7U5jiz70jONRAE+eevwl9Bnjs0ZXM=
-X-Gm-Gg: ATEYQzx8y3z1XUwVlGdfbgvayjKNFwjs+O1Si7tSt9GW6ILTdXOYXs73EvuKFExUREy
- 8ZdiJKjVipyNwVUxh3Ecf8d2fzW8yySwq/yPDJUYbqUvi3EGu78smHRYtpFl/gD5VExH1IBA2iH
- nes4LZZEO7M5ysDJLkRYE1MOlRHNrPLQHx7x+N6ggfTeDRNEQbh7ilPIY8Jddj6q7W2ZiTPdLwo
- ybMCUHGo9NbFg5XsN6mfcMPN5tgJ959WKcD2TeE63alMyCSBh/PYxt7xD23b6S2l9YEspsrDvaT
- 6A8yMle0chVdox6aiONDNPsy/I8pd97sHsoUWWJknOWOfnhyr53+Il/qku+4O1Hd3UqPxjvLHAj
- zOV+iM2ABvT4rZ2droRwN/iAh9yFBzO1b+XxsI1zC2SOk15n99Dc5NfkZbaBnDuxPbWdT2oiEOm
- oz5f+fzL15FYWIvcGfjdhxcWPgdEwB6PeuW7xV2eWjZzOLKP9LaMdPFh2qMxZD1gBV
-X-Received: by 2002:a05:620a:4688:b0:8ca:2cf9:81a0 with SMTP id
- af79cd13be357-8cd6d4cc0c5mr353838785a.51.1772815237514; 
- Fri, 06 Mar 2026 08:40:37 -0800 (PST)
-Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ bh=d+CV36tho0SS9btMpvxQ3a2p1Wvu+jugLebLMrfgems=;
+ b=XgKaBxhymrLEFEZtfcRbnPcFlpOVb89mC5WBA6o6o0YrND+HTyPnw/0pBjlEnJc4sg
+ lTCYVIb0muVB9OFI/K4VCTLmSxuQ6E6gQLeUqNGe44h/etXQ5AUcY5hG3cjAs/nLn2D0
+ jefMjH/WzeNA1oUE1nNPGNJEuesti4kjQNMGOIFDQyov0PKUo1QmFKMYqQ+Dhp/X973H
+ PNKRxLCgsXnO4ctNFdcR5/Ja+H2/tWbHP20rS7BK5LVMiWpZVrpUJrttEPqHUPb6x1s1
+ 3w++5j1bqGpeBdsqUC0EfbDS619wOLroDDdj13rVMjcADyxq5XtSFFU6Lwb5wBRYn3lQ
+ UOoQ==
+X-Gm-Message-State: AOJu0Yz4MeCukCAx2lX9RNO8eQxUW78Dz7RdiGMZdJvzS3RnH6TL1Mgw
+ wF4CJrPb59WX5bwGyADvgPygn0RMQDZnxcTUuxwpvlw/Sas3nwXhIdzfvPCL60EjenY=
+X-Gm-Gg: ATEYQzyVdTGPzR1otDppWlmBRekpdSz4cWMf2I8/xJ/mzFxZ0wDgsFKmQO5YnbukWC+
+ jozB3HS5aLpcEE82ZOc7iinbpTjmkvgNIrrYd9J8z0BmqOG7Bsd7iJ+AlEj7rZ9dyeSsN7tr2Kg
+ 70tS74lh2G/uXI26l9bNhJ45++G4VwXqFKvTKHk8h4gzPKKWYxJMv1hrujzTvu6i5xIhT7dRggw
+ gqZR9C8ZS9MwgLYrJARpw8R4C3/778G0oBxhSGPfn+G5ezhDLGuRB3vYoXT/3vl4Olun9muRjYv
+ vBhBEfEyu9mQKlL8agkflTSzFiyghd0ZzmeGK1Bo2V257Jjs2BDJjWGSJa3mAubEOMe6wsHmDFB
+ gxLSG+CHj1MXE/Sxl+UDAoFCRxlhBB18Nvz+sU4EhEymixFNJsoJBPPTQbcY07I+gfxMCEwIV5M
+ bMMpXTrM10vPV8SJfXItpp4Y4y1Qh0tidvKAtDrXVlhHchLdwgfGLW3N/1JBp5dsqd
+X-Received: by 2002:a4a:e915:0:b0:67a:54b:3dcf with SMTP id
+ 006d021491bc7-67b9c3f3a8bmr1430295eaf.20.1772815382898; 
+ Fri, 06 Mar 2026 08:43:02 -0800 (PST)
+Received: from phoenix.local (204-195-96-226.wavecable.com. [204.195.96.226])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cd6f566fd5sm144608185a.43.2026.03.06.08.40.36
+ 006d021491bc7-67b9d460813sm1138626eaf.7.2026.03.06.08.43.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 06 Mar 2026 08:40:36 -0800 (PST)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: probb@iol.unh.edu
-Cc: dev@dpdk.org, luca.vizzarro@arm.com, dmarx@iol.unh.edu, kai.ji@intel.com,
- dharmikjayesh.thakkar@arm.com, david.marchand@redhat.com,
- gakhil@marvell.com, Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v5 5/5] dts: add crypto test decorator
-Date: Fri,  6 Mar 2026 11:40:27 -0500
-Message-ID: <20260306164027.171723-6-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260306164027.171723-1-abailey@iol.unh.edu>
-References: <20260210193448.69423-1-abailey@iol.unh.edu>
- <20260306164027.171723-1-abailey@iol.unh.edu>
+ Fri, 06 Mar 2026 08:43:02 -0800 (PST)
+Date: Fri, 6 Mar 2026 08:42:59 -0800
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Mounika Kalamandala <mounikax.kalamandala@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com,
+ shaiq.wani@intel.com
+Subject: Re: [PATCH] eal: clean runtime directory files on exit
+Message-ID: <20260306084259.02a70675@phoenix.local>
+In-Reply-To: <20260306060822.328329-1-mounikax.kalamandala@intel.com>
+References: <20260306060822.328329-1-mounikax.kalamandala@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,242 +80,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, a test case is decorated to signify whether to use Scapy or
-TREX. This change allows test suites that do not use a traffic generator
-to avoid the overhead of initializing either one.
+On Fri,  6 Mar 2026 06:08:22 +0000
+Mounika Kalamandala <mounikax.kalamandala@intel.com> wrote:
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+> Add cleanup of EAL runtime directory artifacts during rte_eal_cleanup().
+> This removes runtime files created during initialization and ensures
+> that no stale files remain under /var/run/dpdk/<file-prefix> after the
+> application terminates.
+>=20
+> Update the documentation in multi_proc_support.rst to describe the
+> secondary process lifetime requirement when the primary process exits.
+>=20
+> Signed-off-by: Mounika Kalamandala <mounikax.kalamandala@intel.com>
+> ---
+
+AI has more corrections here. It does raise the point that primary
+process does know if secondary is still running. Also the more unfortunate
+and common case happens when primary crashes.
+
+Normally eal_clean_runtime_dir() is called on eal_init, not exit.
+Also, clean_runtime_dir does a test flock() of the file and will
+fail if it is in use, so it may leave things on shutdown.
+
+Overall, this patch is a no from me.
 ---
- dts/configurations/test_run.example.yaml    |  1 +
- dts/framework/config/test_run.py            |  3 +++
- dts/framework/test_run.py                   |  2 +-
- dts/framework/test_suite.py                 |  6 +++++
- dts/tests/TestSuite_cryptodev_throughput.py | 30 +++++++++++----------
- 5 files changed, 27 insertions(+), 15 deletions(-)
 
-diff --git a/dts/configurations/test_run.example.yaml b/dts/configurations/test_run.example.yaml
-index 707a3104ed..ee641f5dce 100644
---- a/dts/configurations/test_run.example.yaml
-+++ b/dts/configurations/test_run.example.yaml
-@@ -48,6 +48,7 @@ func_traffic_generator:
- #   config: "/opt/trex_config/trex_config.yaml" # Additional configuration files. (Leave blank if not required)
- perf: false # disable performance testing
- func: true # enable functional testing
-+crypto: false # disable cryptographic testing
- use_virtual_functions: false # use virtual functions (VFs) instead of physical functions
- skip_smoke_tests: true # see `Optional Fields`
- test_suites: # see `Optional Fields`; the following test suites will be run in their entirety
-diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
-index 6c292a3675..39f2c7cdf6 100644
---- a/dts/framework/config/test_run.py
-+++ b/dts/framework/config/test_run.py
-@@ -481,6 +481,8 @@ class TestRunConfiguration(FrozenModel):
-     perf: bool
-     #: Whether to run functional tests.
-     func: bool
-+    #: Whether to run cryptography tests.
-+    crypto: bool
-     #: Whether to run the testing with virtual functions instead of physical functions
-     use_virtual_functions: bool
-     #: Whether to skip smoke tests.
-@@ -522,6 +524,7 @@ def filter_tests(
-                     for tt in t.test_cases
-                     if (tt.test_type is TestCaseType.FUNCTIONAL and self.func)
-                     or (tt.test_type is TestCaseType.PERFORMANCE and self.perf)
-+                    or (tt.test_type is TestCaseType.CRYPTO and self.crypto)
-                 ),
-             )
-             for t in test_suites
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index 494eb40046..94dc6023a7 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -349,7 +349,7 @@ def next(self) -> State | None:
- 
-         if test_run.config.use_virtual_functions:
-             test_run.ctx.topology.instantiate_vf_ports()
--        if test_run.ctx.sut_node.cryptodevs:
-+        if test_run.ctx.sut_node.cryptodevs and test_run.config.crypto:
-             test_run.ctx.topology.instantiate_crypto_ports()
-             test_run.ctx.topology.bind_cryptodevs("dpdk")
- 
-diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
-index 9c57e343ac..e86096cefe 100644
---- a/dts/framework/test_suite.py
-+++ b/dts/framework/test_suite.py
-@@ -174,6 +174,8 @@ def filter_test_cases(
-                     perf_test_cases.add(test_case)
-                 case TestCaseType.FUNCTIONAL:
-                     func_test_cases.add(test_case)
-+                case TestCaseType.CRYPTO:
-+                    pass
- 
-         if test_case_sublist_copy:
-             raise ConfigurationError(
-@@ -279,6 +281,8 @@ class TestCaseType(Enum):
-     FUNCTIONAL = auto()
-     #:
-     PERFORMANCE = auto()
-+    #:
-+    CRYPTO = auto()
- 
- 
- class TestCase(TestProtocol, Protocol[TestSuiteMethodType]):
-@@ -331,6 +335,8 @@ def _decorator(func: TestSuiteMethodType) -> type[TestCase]:
- func_test: Callable = TestCase.make_decorator(TestCaseType.FUNCTIONAL)
- #: The decorator for performance test cases.
- perf_test: Callable = TestCase.make_decorator(TestCaseType.PERFORMANCE)
-+#: The decorator for cryptography test cases.
-+crypto_test: Callable = TestCase.make_decorator(TestCaseType.CRYPTO)
- 
- 
- @dataclass
-diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
-index 638a52ac74..af0a5680ab 100644
---- a/dts/tests/TestSuite_cryptodev_throughput.py
-+++ b/dts/tests/TestSuite_cryptodev_throughput.py
-@@ -32,7 +32,7 @@
- from api.test import verify
- from framework.context import get_ctx
- from framework.exception import SkippedTestException
--from framework.test_suite import BaseConfig, TestSuite, func_test
-+from framework.test_suite import BaseConfig, TestSuite, crypto_test
- from framework.testbed_model.virtual_device import VirtualDevice
- 
- config_list: list[dict[str, int | float | str]] = [
-@@ -145,7 +145,7 @@ def _verify_throughput(
-             )
-         return result_list
- 
--    @func_test
-+    @crypto_test
-     def aes_cbc(self) -> None:
-         """aes_cbc test.
- 
-@@ -175,6 +175,7 @@ def aes_cbc(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
-+    @crypto_test
-     def aes_cbc_sha1(self) -> None:
-         """aes_cbc_sha1 test.
- 
-@@ -209,6 +210,7 @@ def aes_cbc_sha1(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
-+    @crypto_test
-     def aes_cbc_sha2(self) -> None:
-         """aes_cbc_sha2 test.
- 
-@@ -242,7 +244,7 @@ def aes_cbc_sha2(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def aes_cbc_sha2_digest_16(self) -> None:
-         """aes_cbc_sha2_digest_16 test.
- 
-@@ -276,7 +278,7 @@ def aes_cbc_sha2_digest_16(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def aead_aes_gcm(self) -> None:
-         """aead_aes_gcm test.
- 
-@@ -308,7 +310,7 @@ def aead_aes_gcm(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def aes_docsisbpi(self) -> None:
-         """aes_docsisbpi test.
- 
-@@ -369,7 +371,7 @@ def sha1_hmac(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def snow3g_uea2_snow3g_uia2(self) -> None:
-         """snow3g_uea2_snow3g_uia2 test.
- 
-@@ -404,7 +406,7 @@ def snow3g_uea2_snow3g_uia2(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def zuc_eea3_zuc_eia3(self) -> None:
-         """zuc_eea3_zuc_eia3 test.
- 
-@@ -439,7 +441,7 @@ def zuc_eea3_zuc_eia3(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def kasumi_f8_kasumi_f9(self) -> None:
-         """kasumi_f8 kasumi_f9 test.
- 
-@@ -476,7 +478,7 @@ def kasumi_f8_kasumi_f9(self) -> None:
- 
-     # BEGIN VDEV TESTS
- 
--
-+    @crypto_test
-     def aesni_mb_vdev(self) -> None:
-         """aesni_mb virtual device test.
- 
-@@ -513,7 +515,7 @@ def aesni_mb_vdev(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def aesni_gcm_vdev(self):
-         """aesni_gcm virtual device test.
- 
-@@ -546,7 +548,7 @@ def aesni_gcm_vdev(self):
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def kasumi_vdev(self) -> None:
-         """Kasmumi virtual device test.
- 
-@@ -582,7 +584,7 @@ def kasumi_vdev(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def snow3g_vdev(self) -> None:
-         """snow3g virtual device test.
- 
-@@ -619,7 +621,7 @@ def snow3g_vdev(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def zuc_vdev(self) -> None:
-         """Zuc virtual device test.
- 
-@@ -656,7 +658,7 @@ def zuc_vdev(self) -> None:
-         for result in results:
-             verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
- 
--    @func_test
-+    @crypto_test
-     def open_ssl_vdev(self) -> None:
-         """open_ssl virtual device test.
- 
--- 
-2.50.1
+**Patch: eal: clean runtime directory files on exit**
 
+## Errors
+
+**1. Runtime directory cleanup while secondary processes may still be runni=
+ng (potential correctness issue, ~60% confidence)**
+
+The code unconditionally calls `eal_clean_runtime_dir()` in the primary pro=
+cess cleanup path. While the new documentation states secondaries "must be =
+terminated" before the primary exits, the code does not enforce or verify t=
+his. If a secondary process is still running when the primary calls `rte_ea=
+l_cleanup()`, this removes runtime files (the config, hugepage info, socket=
+ files) from under the secondary process, which could cause crashes, SIGBUS=
+ on hugepage access, or silent corruption. The documentation addition descr=
+ibes the requirement but the code provides no defense.
+
+Consider at minimum logging a warning if secondary processes are detected a=
+s still active, or skipping the directory cleanup when secondaries are stil=
+l connected. A best-effort check via the mp socket or `/proc` scan for proc=
+esses with the same file-prefix would make this safer.
+
+**2. Ordering: `eal_clean_runtime_dir()` placed after memory detach**
+
+`eal_clean_runtime_dir()` is called after `rte_eal_memory_detach()` and `rt=
+e_eal_malloc_heap_cleanup()`. This means the hugepage mapping files are alr=
+eady detached from this process, which is fine for the primary itself. Howe=
+ver, the runtime directory also contains the mp socket and config file. Ver=
+ify that `eal_clean_runtime_dir()` does not rely on any state cleaned up by=
+ the preceding two calls. If it only uses `internal_conf->runtime_dir` (a s=
+tack/heap string, not hugepage-backed), the ordering is acceptable =E2=80=
+=94 but this deserves confirmation since the function wasn't previously cal=
+led at this point in the sequence.
+
+## Warnings
+
+**1. Documentation says "must be terminated" but the patch creates a new fa=
+ilure mode rather than preventing it**
+
+The commit message says the patch "ensures that no stale files remain," but=
+ it also creates a new hazard: a clean `rte_eal_cleanup()` in the primary n=
+ow destroys the runtime directory that running secondaries depend on. Previ=
+ously, stale files were a nuisance; now, a primary exiting with secondaries=
+ still running actively destroys their runtime state. The commit message an=
+d documentation should acknowledge this behavioral change more clearly, sin=
+ce operators who previously relied on secondaries surviving a primary resta=
+rt will now face a harder failure.
+
+**2. RST indentation suggests this is inside the existing `.. note::` block=
+ =E2=80=94 verify placement**
+
+The added text is indented with 4 spaces, matching the indentation of the p=
+receding `.. note::` directive content. If intentional, this is fine. But t=
+he content describes a general lifecycle requirement, not just a note about=
+ device access options. It might be clearer as a standalone paragraph or it=
+s own admonition (e.g., `.. warning::`) rather than appended to the note ab=
+out allow/block options.
+
+**3. Commit body starts with "Add" =E2=80=94 consider whether this needs a =
+"why"**
+
+The commit body describes *what* the patch does but not *why*. What problem=
+ was observed with stale runtime files? Under what circumstances do they ca=
+use issues? A sentence of motivation (e.g., "After unclean shutdown, stale =
+files in /var/run/dpdk prevent re-initialization") would help reviewers and=
+ future readers understand the necessity.
+
+## Info
+
+The subject line is 42 characters, well within the 60-character limit. Tag =
+ordering and format are correct. Copyright year update to 2026 is within va=
+lid range.
