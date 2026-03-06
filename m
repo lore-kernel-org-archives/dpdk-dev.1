@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00B23F0182E
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 11:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6947F01830
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 11:52:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C920840DD2;
-	Fri,  6 Mar 2026 12:52:29 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id B4F2B40E09;
+	Fri,  6 Mar 2026 12:52:30 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id 9740F40278
+ by mails.dpdk.org (Postfix) with ESMTP id 7237B402D3
  for <dev@dpdk.org>; Fri,  6 Mar 2026 12:52:27 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1772797948; x=1804333948;
+ t=1772797947; x=1804333947;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=+tJOEEpB0vzaQu9nWK4RUz5BC+llIrtUwlIi1haCzX4=;
- b=ZJEGWN4TNSidY2TC0NGng+meEArQ5u+H/qly3F3ffKD9i2e77FBC96r8
- jgBu2f3k0bnGDlcVXA5pug4zVq1semO9sLOcDnrhQv2+z/OyNeUp2wpja
- D4w8o982Zg0REmyz1cxPEm7VgpydBgL+pBIrmKN73lxyvR9Irps6s96uA
- 3Qf21iTxqydfu9FBwPYNjwumCxPLB4CTxqyc5SPJWJGPsc/QgKDoIiwOR
- UL0KuYwEtVdEPBEzP9LSyv6XF+APVz6c15Yz0I5/a02K6MzvSZfY79GTC
- gEBzIf/gyxWQTpMOMfpQdXYQCuJA+NXTIFtZIjdxyn6t2veu5qoW0VuUY Q==;
-X-CSE-ConnectionGUID: rQNXwhxrRQac+UtsJOvcvA==
-X-CSE-MsgGUID: Q6I3pLkwQ/iGEd7r/Cb76w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11720"; a="99374633"
-X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="99374633"
+ bh=/2r/DG1YaFpnyj+Mde56HF+8EDGbGdqJ2Jal6vSCN4U=;
+ b=YNn3+APzlMrM7Dlq+bhG7uSS9fEVde193VJQ+hZxkrumhLOyyNwyjKSk
+ nkaegAkR3CTy7V3KchR/SIGJMO7F4K/by6pip+BxH6f2PMy1DdVMP/X0P
+ ImW9bSVM6EfTPk4abV9PVGmEyGF3eH8XeexiEyd0rbjg5ZYvYFr35ulSS
+ xFkjXstI2n4ycKzSgKqPND0dCl51wgr+deoAnyxAqntZHBEFgUS8XC/jR
+ a9oPBUED8se05FzQ9dVYyItwiJoWVviR1xyUS47H9eK4S27ytv01n7T0N
+ rDj5IVJjHZlVnSK/1IOob8FpPo1dqDkFts0y0yVtGQ7smox1qPbOGOkcr w==;
+X-CSE-ConnectionGUID: Q3ed7QAeRM64WRQBNAHLzg==
+X-CSE-MsgGUID: u83C7BsOTWOWDJffdM1dnw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11720"; a="99374632"
+X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="99374632"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Mar 2026 03:52:24 -0800
-X-CSE-ConnectionGUID: LEXLku9gT4q+XD9FI2OV7Q==
-X-CSE-MsgGUID: ++VSmXbiR9y9gejDNANY4A==
+ 06 Mar 2026 03:52:23 -0800
+X-CSE-ConnectionGUID: IvKTLF44TfiPGo+H8dzfrA==
+X-CSE-MsgGUID: YG7nDGAeQa+uNim+7yT1cg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="218982443"
+X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="218982440"
 Received: from silpixa00401921.ir.intel.com ([10.20.224.96])
- by orviesa008.jf.intel.com with ESMTP; 06 Mar 2026 03:52:23 -0800
+ by orviesa008.jf.intel.com with ESMTP; 06 Mar 2026 03:52:22 -0800
 From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
 Cc: Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH v2 3/3] doc: announce change to LLDP packet detection in iavf
- PMD
-Date: Fri,  6 Mar 2026 11:52:14 +0000
-Message-ID: <20260306115214.467033-4-ciara.loftus@intel.com>
+Subject: [PATCH v2 2/3] net/iavf: add AVX2 context descriptor Tx paths
+Date: Fri,  6 Mar 2026 11:52:13 +0000
+Message-ID: <20260306115214.467033-3-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260306115214.467033-1-ciara.loftus@intel.com>
 References: <20260209152049.1640121-1-ciara.loftus@intel.com>
@@ -61,29 +60,487 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The iavf PMD transmit paths currently use two methods to
-identify if an mbuf holds an LLDP packet: a dynamic mbuf
-field and the mbuf ptype. A future release will remove the
-dynamic mbuf field approach at which point the ptype will be
-the only approach used.
+Prior to this commit the transmit paths implemented for AVX2 used the
+transmit descriptor only, making some offloads and features unavailable
+on the AVX2 path, like LLDP. Enable two new AVX2 transmit paths, both
+of which support using a context descriptor, one which performs offload
+and the other which does not.
 
 Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- doc/guides/rel_notes/deprecation.rst | 4 ++++
- 1 file changed, 4 insertions(+)
+ doc/guides/rel_notes/release_26_03.rst      |   1 +
+ drivers/net/intel/iavf/iavf.h               |   2 +
+ drivers/net/intel/iavf/iavf_rxtx.c          |  18 +
+ drivers/net/intel/iavf/iavf_rxtx.h          |   4 +
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c | 386 ++++++++++++++++++++
+ 5 files changed, 411 insertions(+)
 
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index ac667e91a6..e450f9e56d 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -139,3 +139,7 @@ Deprecation Notices
- * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
-   ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
-   Those API functions are used internally by DPDK core and netvsc PMD.
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 5ad531aef5..bf21bd9d01 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -81,6 +81,7 @@ New Features
+ 
+   * Added support for pre and post VF reset callbacks.
+   * Added support for transmitting LLDP packets based on mbuf packet type.
++  * Implemented AVX2 context descriptor transmit paths.
+ 
+ * **Updated Intel ice driver.**
+ 
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 403c61e2e8..153275a51b 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -357,6 +357,8 @@ enum iavf_tx_func_type {
+ 	IAVF_TX_DEFAULT,
+ 	IAVF_TX_AVX2,
+ 	IAVF_TX_AVX2_OFFLOAD,
++	IAVF_TX_AVX2_CTX,
++	IAVF_TX_AVX2_CTX_OFFLOAD,
+ 	IAVF_TX_AVX512,
+ 	IAVF_TX_AVX512_OFFLOAD,
+ 	IAVF_TX_AVX512_CTX,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
+index 4ff6c18dc4..6079d2e030 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.c
++++ b/drivers/net/intel/iavf/iavf_rxtx.c
+@@ -3616,6 +3616,24 @@ static const struct ci_tx_path_info iavf_tx_path_infos[] = {
+ 			.simd_width = RTE_VECT_SIMD_256
+ 		}
+ 	},
++	[IAVF_TX_AVX2_CTX] = {
++		.pkt_burst = iavf_xmit_pkts_vec_avx2_ctx,
++		.info = "Vector AVX2 Ctx",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_256,
++			.ctx_desc = true
++		}
++	},
++	[IAVF_TX_AVX2_CTX_OFFLOAD] = {
++		.pkt_burst = iavf_xmit_pkts_vec_avx2_ctx_offload,
++		.info = "Vector AVX2 Ctx Offload",
++		.features = {
++			.tx_offloads = IAVF_TX_VECTOR_CTX_OFFLOAD_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_256,
++			.ctx_desc = true
++		}
++	},
+ #ifdef CC_AVX512_SUPPORT
+ 	[IAVF_TX_AVX512] = {
+ 		.pkt_burst = iavf_xmit_pkts_vec_avx512,
+diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
+index 1db1267eec..6729cd4d45 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx.h
++++ b/drivers/net/intel/iavf/iavf_rxtx.h
+@@ -587,6 +587,10 @@ uint16_t iavf_xmit_pkts_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				 uint16_t nb_pkts);
+ uint16_t iavf_xmit_pkts_vec_avx2_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 					 uint16_t nb_pkts);
++uint16_t iavf_xmit_pkts_vec_avx2_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
++				  uint16_t nb_pkts);
++uint16_t iavf_xmit_pkts_vec_avx2_ctx_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
++				  uint16_t nb_pkts);
+ int iavf_get_monitor_addr(void *rx_queue, struct rte_power_monitor_cond *pmc);
+ int iavf_rx_vec_dev_check(struct rte_eth_dev *dev);
+ int iavf_tx_vec_dev_check(struct rte_eth_dev *dev);
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+index db0462f0f5..2e7fe96d2b 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
+@@ -1763,6 +1763,392 @@ iavf_xmit_fixed_burst_vec_avx2(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 	return nb_pkts;
+ }
+ 
++static inline void
++iavf_fill_ctx_desc_tunneling_avx2(uint64_t *low_ctx_qw, struct rte_mbuf *pkt)
++{
++	if (pkt->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
++		uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
++		uint64_t eip_len = 0;
++		uint64_t eip_noinc = 0;
++		/* Default - IP_ID is increment in each segment of LSO */
 +
-+* net/iavf: The method of detecting an LLDP packet on the transmit path
-+  in the iavf PMD will be changed. Instead of using either a dynamic mbuf
-+  field or the mbuf ptype, only the mbuf ptype will be used.
++		switch (pkt->ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 |
++				RTE_MBUF_F_TX_OUTER_IPV6 |
++				RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
++		case RTE_MBUF_F_TX_OUTER_IPV4:
++			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_NO_CHECKSUM_OFFLOAD;
++			eip_len = pkt->outer_l3_len >> 2;
++		break;
++		case RTE_MBUF_F_TX_OUTER_IPV4 | RTE_MBUF_F_TX_OUTER_IP_CKSUM:
++			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_CHECKSUM_OFFLOAD;
++			eip_len = pkt->outer_l3_len >> 2;
++		break;
++		case RTE_MBUF_F_TX_OUTER_IPV6:
++			eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV6;
++			eip_len = pkt->outer_l3_len >> 2;
++		break;
++		}
++
++		/* L4TUNT: L4 Tunneling Type */
++		switch (pkt->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
++		case RTE_MBUF_F_TX_TUNNEL_IPIP:
++			/* for non UDP / GRE tunneling, set to 00b */
++			break;
++		case RTE_MBUF_F_TX_TUNNEL_VXLAN:
++		case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++		case RTE_MBUF_F_TX_TUNNEL_GTP:
++		case RTE_MBUF_F_TX_TUNNEL_GENEVE:
++			eip_typ |= IAVF_TXD_CTX_UDP_TUNNELING;
++			break;
++		case RTE_MBUF_F_TX_TUNNEL_GRE:
++			eip_typ |= IAVF_TXD_CTX_GRE_TUNNELING;
++			break;
++		default:
++			PMD_TX_LOG(ERR, "Tunnel type not supported");
++			return;
++		}
++
++		/* L4TUNLEN: L4 Tunneling Length, in Words
++		 *
++		 * We depend on app to set rte_mbuf.l2_len correctly.
++		 * For IP in GRE it should be set to the length of the GRE
++		 * header;
++		 * For MAC in GRE or MAC in UDP it should be set to the length
++		 * of the GRE or UDP headers plus the inner MAC up to including
++		 * its last Ethertype.
++		 * If MPLS labels exists, it should include them as well.
++		 */
++		eip_typ |= (pkt->l2_len >> 1) << IAVF_TXD_CTX_QW0_NATLEN_SHIFT;
++
++		/**
++		 * Calculate the tunneling UDP checksum.
++		 * Shall be set only if L4TUNT = 01b and EIPT is not zero
++		 */
++		if ((eip_typ & (IAVF_TX_CTX_EXT_IP_IPV4 |
++					IAVF_TX_CTX_EXT_IP_IPV6 |
++					IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
++				(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
++				(pkt->ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
++			eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
++
++		*low_ctx_qw = eip_typ << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_SHIFT |
++			eip_len << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_SHIFT |
++			eip_noinc << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_SHIFT;
++
++	} else {
++		*low_ctx_qw = 0;
++	}
++}
++
++static inline void
++iavf_fill_ctx_desc_tunneling_field(volatile uint64_t *qw0,
++		const struct rte_mbuf *m)
++{
++	uint64_t eip_typ = IAVF_TX_CTX_DESC_EIPT_NONE;
++	uint64_t eip_len = 0;
++	uint64_t eip_noinc = 0;
++	/* Default - IP_ID is increment in each segment of LSO */
++
++	switch (m->ol_flags & (RTE_MBUF_F_TX_OUTER_IPV4 |
++			RTE_MBUF_F_TX_OUTER_IPV6 |
++			RTE_MBUF_F_TX_OUTER_IP_CKSUM)) {
++	case RTE_MBUF_F_TX_OUTER_IPV4:
++		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_NO_CHECKSUM_OFFLOAD;
++		eip_len = m->outer_l3_len >> 2;
++	break;
++	case RTE_MBUF_F_TX_OUTER_IPV4 | RTE_MBUF_F_TX_OUTER_IP_CKSUM:
++		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV4_CHECKSUM_OFFLOAD;
++		eip_len = m->outer_l3_len >> 2;
++	break;
++	case RTE_MBUF_F_TX_OUTER_IPV6:
++		eip_typ = IAVF_TX_CTX_DESC_EIPT_IPV6;
++		eip_len = m->outer_l3_len >> 2;
++	break;
++	}
++
++	/* L4TUNT: L4 Tunneling Type */
++	switch (m->ol_flags & RTE_MBUF_F_TX_TUNNEL_MASK) {
++	case RTE_MBUF_F_TX_TUNNEL_IPIP:
++		/* for non UDP / GRE tunneling, set to 00b */
++		break;
++	case RTE_MBUF_F_TX_TUNNEL_VXLAN:
++	case RTE_MBUF_F_TX_TUNNEL_VXLAN_GPE:
++	case RTE_MBUF_F_TX_TUNNEL_GTP:
++	case RTE_MBUF_F_TX_TUNNEL_GENEVE:
++		eip_typ |= IAVF_TXD_CTX_UDP_TUNNELING;
++		break;
++	case RTE_MBUF_F_TX_TUNNEL_GRE:
++		eip_typ |= IAVF_TXD_CTX_GRE_TUNNELING;
++		break;
++	default:
++		PMD_TX_LOG(ERR, "Tunnel type not supported");
++		return;
++	}
++
++	/* L4TUNLEN: L4 Tunneling Length, in Words
++	 *
++	 * We depend on app to set rte_mbuf.l2_len correctly.
++	 * For IP in GRE it should be set to the length of the GRE
++	 * header;
++	 * For MAC in GRE or MAC in UDP it should be set to the length
++	 * of the GRE or UDP headers plus the inner MAC up to including
++	 * its last Ethertype.
++	 * If MPLS labels exists, it should include them as well.
++	 */
++	eip_typ |= (m->l2_len >> 1) << IAVF_TXD_CTX_QW0_NATLEN_SHIFT;
++
++	/**
++	 * Calculate the tunneling UDP checksum.
++	 * Shall be set only if L4TUNT = 01b and EIPT is not zero
++	 */
++	if ((eip_typ & (IAVF_TX_CTX_EXT_IP_IPV6 |
++				IAVF_TX_CTX_EXT_IP_IPV4 |
++				IAVF_TX_CTX_EXT_IP_IPV4_NO_CSUM)) &&
++			(eip_typ & IAVF_TXD_CTX_UDP_TUNNELING) &&
++			(m->ol_flags & RTE_MBUF_F_TX_OUTER_UDP_CKSUM))
++		eip_typ |= IAVF_TXD_CTX_QW0_L4T_CS_MASK;
++
++	*qw0 = eip_typ << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPT_SHIFT |
++		eip_len << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIPLEN_SHIFT |
++		eip_noinc << IAVF_TXD_CTX_QW0_TUN_PARAMS_EIP_NOINC_SHIFT;
++}
++
++static __rte_always_inline void
++ctx_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
++		uint64_t flags, bool offload, uint8_t vlan_flag)
++{
++	uint64_t high_ctx_qw = IAVF_TX_DESC_DTYPE_CONTEXT;
++	uint64_t low_ctx_qw = 0;
++
++	if (offload) {
++		iavf_fill_ctx_desc_tunneling_avx2(&low_ctx_qw, pkt);
++#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
++		if (pkt->ol_flags & RTE_MBUF_F_TX_QINQ) {
++			uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
++				(uint64_t)pkt->vlan_tci_outer :
++				(uint64_t)pkt->vlan_tci;
++			high_ctx_qw |= IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
++			low_ctx_qw |= qinq_tag << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
++		} else if ((pkt->ol_flags & RTE_MBUF_F_TX_VLAN) &&
++				vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
++			high_ctx_qw |= IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
++			low_ctx_qw |= (uint64_t)pkt->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
++		}
++#endif
++	}
++	if (IAVF_CHECK_TX_LLDP(pkt))
++		high_ctx_qw |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
++	uint64_t high_data_qw = (IAVF_TX_DESC_DTYPE_DATA |
++				((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT) |
++				((uint64_t)pkt->data_len << IAVF_TXD_QW1_TX_BUF_SZ_SHIFT));
++	if (offload)
++		iavf_txd_enable_offload(pkt, &high_data_qw, vlan_flag);
++
++	__m256i ctx_data_desc = _mm256_set_epi64x(high_data_qw, pkt->buf_iova + pkt->data_off,
++							high_ctx_qw, low_ctx_qw);
++
++	_mm256_storeu_si256(RTE_CAST_PTR(__m256i *, txdp), ctx_data_desc);
++}
++
++static __rte_always_inline void
++ctx_vtx(volatile struct ci_tx_desc *txdp,
++		struct rte_mbuf **pkt, uint16_t nb_pkts, uint64_t flags,
++		bool offload, uint8_t vlan_flag)
++{
++	uint64_t hi_data_qw_tmpl = (IAVF_TX_DESC_DTYPE_DATA |
++					((uint64_t)flags  << IAVF_TXD_QW1_CMD_SHIFT));
++
++	/* if unaligned on 32-bit boundary, do one to align */
++	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
++		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag);
++		nb_pkts--, txdp++, pkt++;
++	}
++
++	for (; nb_pkts > 1; txdp += 4, pkt += 2, nb_pkts -= 2) {
++		uint64_t hi_ctx_qw1 = IAVF_TX_DESC_DTYPE_CONTEXT;
++		uint64_t hi_ctx_qw0 = IAVF_TX_DESC_DTYPE_CONTEXT;
++		uint64_t low_ctx_qw1 = 0;
++		uint64_t low_ctx_qw0 = 0;
++		uint64_t hi_data_qw1 = 0;
++		uint64_t hi_data_qw0 = 0;
++
++		hi_data_qw1 = hi_data_qw_tmpl |
++				((uint64_t)pkt[1]->data_len <<
++					IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
++		hi_data_qw0 = hi_data_qw_tmpl |
++				((uint64_t)pkt[0]->data_len <<
++					IAVF_TXD_QW1_TX_BUF_SZ_SHIFT);
++
++#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
++		if (offload) {
++			if (pkt[1]->ol_flags & RTE_MBUF_F_TX_QINQ) {
++				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
++					(uint64_t)pkt[1]->vlan_tci_outer :
++					(uint64_t)pkt[1]->vlan_tci;
++				hi_ctx_qw1 |= IAVF_TX_CTX_DESC_IL2TAG2 <<
++						IAVF_TXD_CTX_QW1_CMD_SHIFT;
++				low_ctx_qw1 |= qinq_tag << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
++			} else if (pkt[1]->ol_flags & RTE_MBUF_F_TX_VLAN &&
++					vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
++				hi_ctx_qw1 |=
++					IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
++				low_ctx_qw1 |=
++					(uint64_t)pkt[1]->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
++			}
++		}
++#endif
++		if (IAVF_CHECK_TX_LLDP(pkt[1]))
++			hi_ctx_qw1 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
++
++#ifdef IAVF_TX_VLAN_QINQ_OFFLOAD
++		if (offload) {
++			if (pkt[0]->ol_flags & RTE_MBUF_F_TX_QINQ) {
++				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
++					(uint64_t)pkt[0]->vlan_tci_outer :
++					(uint64_t)pkt[0]->vlan_tci;
++				hi_ctx_qw0 |= IAVF_TX_CTX_DESC_IL2TAG2 <<
++						IAVF_TXD_CTX_QW1_CMD_SHIFT;
++				low_ctx_qw0 |= qinq_tag << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
++			} else if (pkt[0]->ol_flags & RTE_MBUF_F_TX_VLAN &&
++					vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2) {
++				hi_ctx_qw0 |=
++					IAVF_TX_CTX_DESC_IL2TAG2 << IAVF_TXD_CTX_QW1_CMD_SHIFT;
++				low_ctx_qw0 |=
++					(uint64_t)pkt[0]->vlan_tci << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
++			}
++		}
++#endif
++		if (IAVF_CHECK_TX_LLDP(pkt[0]))
++			hi_ctx_qw0 |= IAVF_TX_CTX_DESC_SWTCH_UPLINK << IAVF_TXD_CTX_QW1_CMD_SHIFT;
++
++		if (offload) {
++			iavf_txd_enable_offload(pkt[1], &hi_data_qw1, vlan_flag);
++			iavf_txd_enable_offload(pkt[0], &hi_data_qw0, vlan_flag);
++			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw1, pkt[1]);
++			iavf_fill_ctx_desc_tunneling_field(&low_ctx_qw0, pkt[0]);
++		}
++
++		__m256i desc2_3 =
++			_mm256_set_epi64x
++				(hi_data_qw1, pkt[1]->buf_iova + pkt[1]->data_off,
++				 hi_ctx_qw1, low_ctx_qw1);
++		__m256i desc0_1 =
++			_mm256_set_epi64x
++				(hi_data_qw0, pkt[0]->buf_iova + pkt[0]->data_off,
++				 hi_ctx_qw0, low_ctx_qw0);
++		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp + 2), desc2_3);
++		_mm256_store_si256(RTE_CAST_PTR(__m256i *, txdp), desc0_1);
++	}
++
++	if (nb_pkts)
++		ctx_vtx1(txdp, *pkt, flags, offload, vlan_flag);
++}
++
++static __rte_always_inline uint16_t
++iavf_xmit_fixed_burst_vec_avx2_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
++				 uint16_t nb_pkts, bool offload)
++{
++	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
++	volatile struct ci_tx_desc *txdp;
++	struct ci_tx_entry_vec *txep;
++	uint16_t n, nb_commit, nb_mbuf, tx_id;
++	/* bit2 is reserved and must be set to 1 according to Spec */
++	uint64_t flags = IAVF_TX_DESC_CMD_EOP | IAVF_TX_DESC_CMD_ICRC;
++	uint64_t rs = IAVF_TX_DESC_CMD_RS | flags;
++
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		ci_tx_free_bufs_vec(txq, iavf_tx_desc_done, true);
++
++	nb_commit = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts << 1);
++	nb_commit &= 0xFFFE;
++	if (unlikely(nb_commit == 0))
++		return 0;
++
++	nb_pkts = nb_commit >> 1;
++	tx_id = txq->tx_tail;
++	txdp = &txq->ci_tx_ring[tx_id];
++	txep = (void *)txq->sw_ring;
++	txep += (tx_id >> 1);
++
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_commit);
++	n = (uint16_t)(txq->nb_tx_desc - tx_id);
++
++	if (n != 0 && nb_commit >= n) {
++		nb_mbuf = n >> 1;
++		ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
++
++		ctx_vtx(txdp, tx_pkts, nb_mbuf - 1, flags, offload, txq->vlan_flag);
++		tx_pkts += (nb_mbuf - 1);
++		txdp += (n - 2);
++		ctx_vtx1(txdp, *tx_pkts++, rs, offload, txq->vlan_flag);
++
++		nb_commit = (uint16_t)(nb_commit - n);
++
++		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
++		tx_id = 0;
++		/* avoid reach the end of ring */
++		txdp = txq->ci_tx_ring;
++		txep = (void *)txq->sw_ring;
++	}
++
++	nb_mbuf = nb_commit >> 1;
++	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_mbuf);
++
++	ctx_vtx(txdp, tx_pkts, nb_mbuf, flags, offload, txq->vlan_flag);
++	tx_id = (uint16_t)(tx_id + nb_commit);
++
++	if (tx_id > txq->tx_next_rs) {
++		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
++			rte_cpu_to_le_64(((uint64_t)IAVF_TX_DESC_CMD_RS) <<
++					 IAVF_TXD_QW1_CMD_SHIFT);
++		txq->tx_next_rs =
++			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
++	}
++
++	txq->tx_tail = tx_id;
++
++	IAVF_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
++	return nb_pkts;
++}
++
++static __rte_always_inline uint16_t
++iavf_xmit_pkts_vec_avx2_ctx_cmn(void *tx_queue, struct rte_mbuf **tx_pkts,
++				  uint16_t nb_pkts, bool offload)
++{
++	uint16_t nb_tx = 0;
++	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
++
++	while (nb_pkts) {
++		uint16_t ret, num;
++
++		/* cross rs_thresh boundary is not allowed */
++		num = (uint16_t)RTE_MIN(nb_pkts << 1, txq->tx_rs_thresh);
++		num = num >> 1;
++		ret = iavf_xmit_fixed_burst_vec_avx2_ctx(tx_queue, &tx_pkts[nb_tx],
++						       num, offload);
++		nb_tx += ret;
++		nb_pkts -= ret;
++		if (ret < num)
++			break;
++	}
++
++	return nb_tx;
++}
++
++uint16_t
++iavf_xmit_pkts_vec_avx2_ctx(void *tx_queue, struct rte_mbuf **tx_pkts,
++				  uint16_t nb_pkts)
++{
++	return iavf_xmit_pkts_vec_avx2_ctx_cmn(tx_queue, tx_pkts, nb_pkts, false);
++}
++
++uint16_t
++iavf_xmit_pkts_vec_avx2_ctx_offload(void *tx_queue, struct rte_mbuf **tx_pkts,
++				  uint16_t nb_pkts)
++{
++	return iavf_xmit_pkts_vec_avx2_ctx_cmn(tx_queue, tx_pkts, nb_pkts, true);
++}
++
+ static __rte_always_inline uint16_t
+ iavf_xmit_pkts_vec_avx2_common(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 			       uint16_t nb_pkts, bool offload)
 -- 
 2.43.0
 
