@@ -2,152 +2,152 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD77F01832
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 13:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC788F0183C
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 14:03:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D9B1B402D3;
-	Fri,  6 Mar 2026 14:45:13 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
- by mails.dpdk.org (Postfix) with ESMTP id A9EB740262;
- Fri,  6 Mar 2026 14:45:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C412940E27;
+	Fri,  6 Mar 2026 15:03:39 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 4C8FF40E27;
+ Fri,  6 Mar 2026 15:03:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1772804712; x=1804340712;
- h=message-id:date:subject:to:cc:references:from:
+ t=1772805818; x=1804341818;
+ h=message-id:date:subject:from:to:cc:references:
  in-reply-to:content-transfer-encoding:mime-version;
- bh=1BieFev2F8j/yjVdeY9FCZoT2D2qRQLYc4LUpWyv6D0=;
- b=PwVXcKdg8b+BvzaWz+pR+uGBefSXH45ICrLENFhfMWgLY7d2o+QEO85T
- GSFrjL4bMh07div7EGW6EjnOqxPmRVxooL+9dlrz8WPL62QZzgSIApsTE
- YHQ678Bie3V0HYTpD0FU/rep42TJ9hVDU98cpE4gA/XNd2ry7e99QtPny
- Bt7uLQtz0BkxTPfcvJPYb1IHmmn4SFLf4PYyIlii/98/N96CpPB75vPM0
- gU5CQYB1ZemGH2ib+rbzu7+hQA/gdXffc7Rgvur7FRYvhGfETHjKCZL7D
- 30YL3IcD/m5Yg69egWn58Njm6oqlDDV+TPgIbKxwSYVal8HfDFeDYbNwm Q==;
-X-CSE-ConnectionGUID: p6m6jGocSMGUDR9G1rGI7w==
-X-CSE-MsgGUID: NJ6zFyAyRQaRluGk8fDpTg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11721"; a="73610787"
-X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="73610787"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Mar 2026 05:45:10 -0800
-X-CSE-ConnectionGUID: UdIiGT9sTuWG4Oys3mXBfA==
-X-CSE-MsgGUID: 7G+01H7GT5amzfddFile/A==
+ bh=bNWFw0yEAajMBwRauSzqNOksWd6n2UZO9k9G0kuc4Fg=;
+ b=hBk4QmvenTr7Rajx5C9wUepOUtPQwKPz9fV5569kUEB+QCuUGD+MArxB
+ kLSyEIDQ3PKInuodNL6RO7HgufwXUuvV4X9KH+TjsyeYYjPwIQj15Ov+p
+ NONTuQr6DFpDAZp6KZFz8Uh4L62setKMLjTPepR5W+RXy8sUBpD52+Ix8
+ spbuXq8kzSmPUt/piDYvLBIbDnLNTowuSuIL7w5T27qdSIhtnsygxCHgB
+ s4LKvDUK+YxBFXtuq1wHls2aJhf9qFJwk9RxvvJViiImSbvAX8MQ2Jgas
+ w0AC4rX3e4fFEJSNXL0qLDdxvisJRt/mJlt7HQ/T6btTNseI6zQ7An6Th A==;
+X-CSE-ConnectionGUID: t3AN5oLIRhCjjRdTV7t9Cw==
+X-CSE-MsgGUID: ux1iBFFwR7C6+EvFPPG75Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11721"; a="84549047"
+X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="84549047"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Mar 2026 06:03:37 -0800
+X-CSE-ConnectionGUID: P3tfJiYhRMiwzj40RMiYSg==
+X-CSE-MsgGUID: bLDQvk05QgieYQC3QUohkg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="219145513"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Mar 2026 05:45:10 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="218171089"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+ by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Mar 2026 06:03:37 -0800
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 6 Mar 2026 05:45:09 -0800
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 15.2.2562.37; Fri, 6 Mar 2026 06:03:36 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Fri, 6 Mar 2026 05:45:09 -0800
-Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.21) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.37 via Frontend Transport; Fri, 6 Mar 2026 06:03:36 -0800
+Received: from BL2PR02CU003.outbound.protection.outlook.com (52.101.52.7) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 6 Mar 2026 05:45:09 -0800
+ 15.2.2562.37; Fri, 6 Mar 2026 06:03:36 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OwpYGXatehd+/rpIf68K7UOVdp0/TgqbswbMv8/Npoqj/rMj7ezslq7vFzljzaKvVJrxXoEkhM03+VgYYVWkTSiHUKtYDwY0gC4nXiSfj65/+mdG0bnceJdtCd9Ucwo1HlrF+IqO4TKIPMjcAWQjVc8zFHP2J7QmyPbVfohsuUiZkjD4SI4sipKQoy1QDIAW5DWRTo/BUED92KpJVMUueQ4+UzXE0bRAI4FPijdWyL5eBkGQlPxfkjcxhVWTbK4B4xXegvDxMkLQUutbK+oZzpukMGgVeASY7Suc57fnqPF+4DJzAajmaMLLei2SNoe74rNTmbKIMPUvktWmvJdY+w==
+ b=DjtLhVz+r9PhIYYhnO6ogurfCaUjDMiqygpleO/jOyGLhAMyH48eHZUuu4u3Xg5tS3E4IpcEzz9a9JO254kV4c51rjIq/TpDXc9NYMenJmULwjhTUpoUZf607GIXDUYDk9dGvNJ8XZB5hfvX3BBSEr+mAep5FIRIz9reCLcxlcH5laBG46b1rxQEOHNBCafOZxK9zFUAiGWKcStwp1/ff2jd+KGRmAipcjKqsTu9sGvYFpc0HZQy42xMIjJtVCIRNloGCFosZ2ZTstbeFoZXPyckua96pLrwllHN64+zCu3SFkCZOgGl9bCwS/gBvkOxu9M6u3JC5jKDP5pq1XUkww==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BP3SlqzeVa0vycxLLguCgnWVmjnUK+EZJaAUkPiHYRU=;
- b=OJwGKs+40HV6z445SxR4ZAWRmpondnv/ZVcHRqFMv+54porYjQUi40BtIxEsTgSwojpKGPwfX2BbABhYvTVcBCiaJ1UFvMHFzG5pCdfaIsPCVTrLZu3wpLKgzmjYxLY6HB/w0MJtnG5t3b+1stjjwgiC0hwbPPb2Aw7REiZNJF4yLDRQMSuRMkDwuEvHBiIs934Lyy7xcZmpThedw8GGajDzC+WBROX1tA4GvUN5F6Njfv0x2JjhfYjqMXi8H7XtKxtZMzfeyetq/4RiRNvzzH/QiRCIPnD9Ws52NsJsuZeU9NTXZsMNKaGYtuJ0wrPgh4TorW3JTmDluPsyVdZp7g==
+ bh=yLjXGfw5zoQpMYZms2iXj3oactJMkGecnJgrXAwprFQ=;
+ b=lQQ40CqqcfdHT812s4IUMN4Ypwq5CID5Fu8fT90d/a99Spm9dDPyXT4jAIgLZ+zZ3pY2+e9Y18B4Lc9vqDb5Ur7VmvuoVvYm0zsbw6if5E0u+HOpOqa/bmSqIMrOMoacrAx0E/PPi0A2LtnP48KQqVlt9MC6HnD8ffN5QoXt8O9YbLCcyMSy9G61jJ8jBYr5XpaopcaqIojF9Y1vgm0DeHNJ+ighn/70LCerKR017mvYmE5jPaMACvFb0N2hgtG8W9etCAnragTJIZHIjblMT2+pETTKdJKm+aGBzy5CqqLn5gG1dwPIhy3GYSWsSeWeVW0BcNyozGS18gKMlGmpbg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- CH3PR11MB7297.namprd11.prod.outlook.com (2603:10b6:610:140::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.5; Fri, 6 Mar
- 2026 13:45:06 +0000
+ DS0PR11MB7683.namprd11.prod.outlook.com (2603:10b6:8:df::10) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9678.18; Fri, 6 Mar 2026 14:03:33 +0000
 Received: from DM4PR11MB6502.namprd11.prod.outlook.com
  ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
  ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.20.9700.003; Fri, 6 Mar 2026
- 13:45:06 +0000
-Message-ID: <f46aa723-75a0-41dc-a063-d79420365b3a@intel.com>
-Date: Fri, 6 Mar 2026 14:45:00 +0100
+ 14:03:33 +0000
+Message-ID: <02e2c11f-d280-48bb-bb6f-7c28bc3c89ac@intel.com>
+Date: Fri, 6 Mar 2026 15:03:27 +0100
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] net/idpf: handle Tx of mbuf segments larger than 16k
+From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
 To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
 CC: <stable@dpdk.org>, Jingjing Wu <jingjing.wu@intel.com>, Praveen Shetty
  <praveen.shetty@intel.com>, Xiaoyun Li <xiaoyun.li@intel.com>, Beilei Xing
  <beilei.xing@intel.com>, Junfeng Guo <junfengg@nvidia.com>
 References: <20260303150026.1601461-1-bruce.richardson@intel.com>
+ <f46aa723-75a0-41dc-a063-d79420365b3a@intel.com>
 Content-Language: en-US
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-In-Reply-To: <20260303150026.1601461-1-bruce.richardson@intel.com>
+In-Reply-To: <f46aa723-75a0-41dc-a063-d79420365b3a@intel.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DU6P191CA0053.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:53e::23) To DM4PR11MB6502.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0192.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:311::20) To DM4PR11MB6502.namprd11.prod.outlook.com
  (2603:10b6:8:89::7)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|CH3PR11MB7297:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb2cbfc9-23ff-4f71-7cd8-08de7b86937e
+X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|DS0PR11MB7683:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3466e13-9a38-4c9f-a9bc-08de7b892728
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: OYvXmyM/6JoUZeALtz9V02MWBAhp2tztepVS9rO2HzE2mdo6AbLw5wI8wG9QN/3E6iBIRsX36cgU6Xujv0oN9S+vCGiKpmmtwliTATWfifR2JQqzn/y7hWeyo4wahklPzadKV9dvsfVuCJHw6Azx+yXKhw0+MSXfW2PZpKJd+RzcAQJlZXuKEiEhvTnX8frxd/DIMLNX4/bnHRkufOK8+Ygs25vYflq3pA5YduDxZPp4SRpYVmfB0uDM4QujzJGTGPUAiB0aCdqMMlO9BJt5ujOvCK9lcOZ50Mpk+kErgrxf7dE8LEkdW2gvShf00adElcoXvcXm7d9OsHiO13jF35lSbqiSaL42BQS0Gjfl3qRXxcuaRbLNBAaHaXAx+rCl1XEolXQGvTr92V545eJpWy9519LyvTeK+rOprpUm5E+Qo4s6CHQV7atOyZhpcwHqJj+uxKMP6YBwIKw+mulqgzafjfZ1LsCky39W8F2gDVGkUrhWJRLvXaDJVM6oQx4s2gMf4DoUPJZMlCVKrt1MuYagAtp90dU/izywGDg3gIn/dl+9PbD8oSHDiiWoz0qolmIpX9DWn/xvFaG6Q+YBEsiP+MvP9oNI/bMw4xIzMRPwURoqlI56WQd9I0DFfED5xeuixu1NzeO2W6B7S05ANTpOKs/Ywl5BF9Yx8k/MR8xJ9PezxXqfj6UIQMO03Kk7nBP+wNnHw5/QcUFHEYuK5FN/1seOeq57AR6cMeWC1uc=
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info: 6aHk1zsLHzySMc0I96Ibu4XsFxmYB68f+49Ssc8TwnSpwRZphaNsQL60XpKta7snxrCKwwv0y46SEjZWh3wlHXlRjEnLvRetAUUV90s2aROwUZ//Iq4lggzo8OLup5xb4BH+UO7ns2I4PGgJDBjRGtBhr/4GG0vj7MQ0w6B2zlvbE3nywLbRD2Nqn2SI7yIdacQnqX8H9ufccuh/9PTFn0jrfJOpUhkJn8ciESJQDajeKUa6D4wn/GWkQ6LScYZLwSsWDiQVIJ1xLzOofdGEP69VHcUMTp9txtb5boA7MlEDB0rt7N3XFjg9YElvOivAyDgD8EOkvx3Ou8zKVjymyzx/QtQH6KUrM/zdVe0NxRQ61H7ldehObaY5/+i/ZaB7+9X7etLIPvLeNDZvgtkw4O0swiL+KkasUCi0tJSYOs22RB04Zdu7dcmMVivkRBzyTtOOA3IsYS1cj0LVJwyM34Q4q/62KMoORwBG1f8O9gR1RbqCdhEyOE8v22yhOWMuO3GTXLk+Zawgs3Cbws84MWEbUckvG2hVsMgEw00/JduLZZv6mFGzJGoN6LA6NF2Fmlba8v4K5ZFhMe+AuR6ESq+2kRwGUbjh8priYh8s/K4PuHdGIMtiysbp8v/NZ93pl1/UdOKVtgXLGmdOOSriZiJU0xg3ZDPrt0NCun2T/KM9hD4DOw5j7KUL1h2n1lWbkx0QYSg4faRX9e3nxOM9PWnMFGQwl8LOc1VQeFvjjs4=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014); DIR:OUT; SFP:1101; 
+ SFS:(13230040)(1800799024)(366016)(376014); DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Q1B6cy9ib00yaFpNVmZRNGtxSWs0SjMwdDVHL0ZQRUEzdzRaYW52SDlLdzN4?=
- =?utf-8?B?ZkVSYm1EK01LbjJEZDZiaUYraUdja2w3S2dvek50Q0lDVTBmR28rTXJjVVZR?=
- =?utf-8?B?VlQrYXJvN2dlMkNURTZaRkppSENPQUhZOFc0MzcxS0ZTZGxXeEFrRllyWTlv?=
- =?utf-8?B?NlBvbXFBcCtRT1YzQ1RVQTZCWDRZMFlONitiNTcrdms1bXIyakwvQXBqZ2t2?=
- =?utf-8?B?UWVJYzZXSDBBL0hRZHdGSEhIeTJ5eE5lTEFoWHJRS2xIRlphMUZYejlPQndT?=
- =?utf-8?B?cTREYSttN2dKUzhqQ0JlQldIbUZtQzFRZXhRcGpvSUlZUk1aWmd6cS9PQlR6?=
- =?utf-8?B?dlJGZGVYN1JGSXNPRC9RbVBqQ3M5RGptMTdoZ0pqTDk2bjg2cDFYTGEvdDJH?=
- =?utf-8?B?c01NNzB1RnhhN0VxZEJTUTlmN0JpWmhsdTYrcjlRZEJ2UTJnUWxYQjVnaHVq?=
- =?utf-8?B?SVpnNG11ZzRKVEJGc0FFbTJnd0NZcDdGVlZvdWZza2FUVjVFcWNGeGh0SkRn?=
- =?utf-8?B?OXMwQjBSNURBdHZtNDFvaHRSQnJCUzZFbGdkSFpQdTAraWQ0SmRrMHdzeUdR?=
- =?utf-8?B?RVl3Vzc2WmhEa0FMUXBoKzFKekJ2d0lwc3NidUJwOFVqYXhaRzFodkZoUjZL?=
- =?utf-8?B?Ty8wUVJWcWYyQkFPcStOejlJK1FRM0NiUThEN2U2RzJ0ZXJDMUdFYUJUaGlR?=
- =?utf-8?B?eDhjcWFQOW1pSmFWVVFvSmtVaVVMQjVJa3NkemRkZ3M5LzEwMFBDOFlLcEVt?=
- =?utf-8?B?KysrRHNEdXRueGNsL2swaVkrWERPYURNanZSOGlvMndsazFMTW9yODZKOVh3?=
- =?utf-8?B?TDZhWnRSSWNVSWNDOVVWaG9Ldi8zc1I4cTk1WTI2ZTF5bEJZL3ZDUGQwbE95?=
- =?utf-8?B?dGZ3ZXp5bEFaVVI5MGlJRFVlMlBmUGYrNk1GY245c0RBdURLRFhrd2ZSSzB0?=
- =?utf-8?B?Ny8xcmN1SVNBZ29EOGZBWVJBSlNoaWJ2TGlnSlFhRmJCOENYUFROdEM3bUUr?=
- =?utf-8?B?RmRNekhxQjlXMzhwRWJlNmJwRFRGNm5qV01hTjZGME9kRjJpZGV2dXovcG9E?=
- =?utf-8?B?NDdMdDRZQ04yUDF1SVV6Vyttb05QalpWYklaV3l5R3dHQm1EVlVxMWVqWEFa?=
- =?utf-8?B?OGN2bkhlR3Nadzl2TjE3SEF2RU1PaXhpWWhYM3NZelA1ak5lQ2lwdnBiSTJo?=
- =?utf-8?B?c1dqbTJGVy9aWFl1eTlRbHNzSmlYYjM3LzhqOU1ETll6ZnpLcUtrczBMYTJx?=
- =?utf-8?B?dnNpNzRVenh2NkNNQ1FFam5sTmhBdXQ5MStmVnViTGh4d3l0RGZtZ25XeUJB?=
- =?utf-8?B?YWgwSTlmcGJaTkZMZkZ4b3V5TjgvK2FTNEVjYmFnTlM4Y2FKeGNraWttWXRp?=
- =?utf-8?B?c2lOMmF1WlVmQ0FmNDRGUDVOd2JpK3JzTmFQZmgzODVZQ3JiYWZJQUFhVFYy?=
- =?utf-8?B?Mm5Yb1ZMTkYweW4rOWdvSHFXS0x0eFBUYXhpK3dySnFvdi93MEtadzBZQnR1?=
- =?utf-8?B?dkZCYUZvK1JCOG1pWm9tZU51REVtdnhPQmxNclBWOEhrcTZyTmdtdm1rU0lS?=
- =?utf-8?B?OFBCb3hLaXV6bzBqdXlmbEhYWnhSZWNTS3ZZOE82c2hHQjdsbUEzeGdac3Vi?=
- =?utf-8?B?cnVQWUtQZnJRWGZXMktxV0pmblRSUVNveUZCblJCTzd5cXFvck5YeU9xWmE2?=
- =?utf-8?B?UHFwdEFaVU5GSkZJeTdCdlkrdW96dkhpYkNsSkNHcE95TC9hWGppd3VBWVhh?=
- =?utf-8?B?UEhlSEd2bWZBWkZpVDNldllyUitHODRGVUpoeStuMURSM3N4R3VXWmFTckJr?=
- =?utf-8?B?UVFoYlpQWnloY0U2M3RDQ0xOcEsvLzd5bHpvUUQ3UEtScmk0VmJKK2hmMnNK?=
- =?utf-8?B?ZkJZRGgzMGdvYzI0NFdmOG8rQTBZTEE0dC9zNlRHOVpWSEdVMHVsanlwV3Vp?=
- =?utf-8?B?bGs2cU1qQTExN0NBK1FjZDJPMVd0S3JaTUtQRW1xNFNodXd0eGJIanpXWlQ4?=
- =?utf-8?B?QTFZcmNvYnFSb1I1b0crZUduK3dKTktwNEVoTmd3RWZ3M3dSVEx5KzBVOC9z?=
- =?utf-8?B?S1RML0grcnRuNlNCRGVXV09vQ1JlTlMwYmFaTDU1cHVvTUVvK1FJUDhhQkZx?=
- =?utf-8?B?MnUxWkgzRGZHdTA0S240YXU1ZDVSOHNsWEFITy9YQkNEdkJRSXZIV0Jkang2?=
- =?utf-8?B?Y2JLSS9FT2RlVjF3cVREaUhmK015TGhydDBYMW41Q2FhRGp0RU8vV292NldD?=
- =?utf-8?B?M1hERHNGZ0xDQzZWNHk2bWVQNVRVd1FYeGtySllWdnlrTDBkeGhrREdwVmd5?=
- =?utf-8?B?TXRmcjF2bEtsNWpPZ3dDdTFUcFRGWHJQU1RHYXRBeUhoaGFKVVRod1BOck9X?=
- =?utf-8?Q?YART9jOAdwoUeYPw=3D?=
-X-Exchange-RoutingPolicyChecked: PoOkMB5RnAgukspm6qpUkNE3MUoYsa0wysuxwmmhEuceP8dtMVY9+tb7pf5qod3G3shw9bW3LcUNTtQXCPj9azVVjBHOIuYxAG7ADOkcSPS9oLE5c+FtRYkeVbGB0NheBO8BZ14rpiHeBsm++6yRhM8NmnGlg6TjBM0O+hPalOjunlQWEmrEqP+niH8K2hiu7/BVmQIwMKdLBzOp/foEo0pGsaZhqmyfkeSRi0/lzafXWxDBgRxMh9rnIyzm450xYyBuEKWEO6EZfFY/MfqZs7BOyBMBc/mw8eSv3QZ2Ea389mf0rB81a6xbTp7Llqff4mWmMJw0fC5CKSe97/yIOg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb2cbfc9-23ff-4f71-7cd8-08de7b86937e
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZUJselVTVzZZSWpMbXBUSEZiUGJLb09JTjdwWW9zcmNLeEpiaHhIR24xRFQ1?=
+ =?utf-8?B?dU83Vk5ueUdsMURIUWZWVXpaZnovbE5kL0ZrUFVkT1Z3UUoydDNyc2xYOVRU?=
+ =?utf-8?B?ZUd2SVJDRnAzMjFjN2txK080UVBWc0F3eFc0eG1DWTRMQUlMcWN6Y3pVMTh5?=
+ =?utf-8?B?cTl4S1FTN3BLWE1mZWVaQlR6K1d5OVQ2eWtmaEVHcmpRTDN5ckl3WDgycGFs?=
+ =?utf-8?B?Z1VFSEtHTmtpRGs4dWJLZ3V2Z1dsdmxLcmxVWmU3ZExXU3NYTWx6Vkg2VXlQ?=
+ =?utf-8?B?NlYwcWRFQkhXNy9OTG5KZ2g0cjU3ei9VWmljVDN4QkxHOVEra01iTnZjWUMw?=
+ =?utf-8?B?Z2JNZVdWQXp2UTd5cU1VZVJjdXhXZEwvRG1pTW9CREUwQjRIU09tbE1iSnlx?=
+ =?utf-8?B?T3hNbzRoSHA2a2xGYndyYTVuV0FMbTN5akZ6T0lMenJhMlNvcW13emJhTkFF?=
+ =?utf-8?B?YTlQQlNTd1pEZVNlb0dBNkszM3JNaGlacW1UQjZWcEpVS0xZTnk4RFhnRlJl?=
+ =?utf-8?B?ZDBlUnJXeENydTg0RjdmSGpEL3dCL25JdVJDSjEwS0lkaHRuR3g4eVlOWHBJ?=
+ =?utf-8?B?S2tJV3UwSlFyQVR3R1NoaEFXZVB6N3lTWTF1OWt4SVhYbjBvdFNsRHBOV0g4?=
+ =?utf-8?B?RlFPeXgzeEd6aWcvWStYV0tRVHRXcU5uVnN5OXZNaThUTTlaQW5MV2ZqK0NE?=
+ =?utf-8?B?VldweWVwZlVEeDhOcEF0bC9SNHB0RUwvVEJESVV6Yk1BRzBkdFk2akJNRThU?=
+ =?utf-8?B?ZVhYTkl1UWxFZDlPMlpiZW5BYXcvalN3TWJhNkVzemJSaTRLZ3FxVnEyL2NR?=
+ =?utf-8?B?a3dOQllGWEZVVE1nTlRCZmFySFpZNnNYRmFqNEN5Z1IvaUhKSzI3Y3NRbjRU?=
+ =?utf-8?B?L2MrbWpNNFA0ZWp2ZVBnQ3FVd0NFdVF4cmZrWjVzc0VnRStkNld4aFF5eUor?=
+ =?utf-8?B?cWk5L25QNnd1SE5nSnZxekplY1NwY1JtYzNURGZWOXpyZmxTNnpyNmlxMWhM?=
+ =?utf-8?B?V2s3UloyZFFOc3lYRHFnZC9qR0tvZWpJbGxqNWZERlRkajdEMXhzK0tpQy8x?=
+ =?utf-8?B?QmQ4K2YvVkhXaTQvMGVGODlNVWl4R2QzTy9icWZvVW52MmthOExVU2REK0NJ?=
+ =?utf-8?B?V1Y1RlZiUkJTM2NZWERSTXo5MDdVbVJDMUwyeUh2MWNCRUJpY1M2VVpheG9Z?=
+ =?utf-8?B?TENVMXBrTDBJQkNUYWR3V0JRV0xaa2l4ZHNtdGNNS1E1c1dqY1ZUWFJhTTBv?=
+ =?utf-8?B?blphUll2RjNvcTA5c21lRzFjTlAyZWt5V21Ta0g0aFdDUFhCekN2cENuTUlE?=
+ =?utf-8?B?cWJjUFd5TjB4cnlBMnJVOXpyT05jR1ZLYTRheERGcUJzbXE3TDRWQ0NwTFNC?=
+ =?utf-8?B?MjkrNEM2ZnRONlc0NnB3b1k4ajJhbjQyTGpqbEQxNSswZHZVSFJCanFTcFZp?=
+ =?utf-8?B?dU9SK0NaQk0vRHRDS1l5MnpmUEFEVnVFNFJZbFpjQWRkZ0N2aGJibkhQWVhp?=
+ =?utf-8?B?bjUrR09aWnlFYUI5ci9GOGJYRG1yb0pDK3ZVRjZjK1d6TDlsNGllMmI3b1I2?=
+ =?utf-8?B?WG43ZlZMQUZwRjJuaVlEeGlIZ01nOWh5N0FuMWJUcHZNUVdnY1FDV0hNcVZJ?=
+ =?utf-8?B?QWpwcDRJRWdTaU5WMUVTUmhHa0wrcWphbEpKQXZpSEFsSW83dWZ5T2VjS3dt?=
+ =?utf-8?B?alMvaE5yUUlBRnhVY0xRZGJLUmMzM2VzR0pMTHR1T2FjKzhuL1k4UGZLVHFC?=
+ =?utf-8?B?RWt5V2toNWxDS0drM0hiVjNSdEg3bVpad3hQVzRkbjRsZlJPeUk1QjFNSENF?=
+ =?utf-8?B?NjY4Mk5OUDBIVGdSZEtYcEVMZW1qajJsSUpOcjRHZlo2OEhNMGJxUUExSkEx?=
+ =?utf-8?B?WXpoQTM0OWFCeExKMHBYZlRTYVV2NUVQandubldZdjFBbmxuS0NxYW9CdkQ2?=
+ =?utf-8?B?VmlzVnRGc3B2MXpsRHdBMzRQV0tEWjI5RDk1c3R2VXBVdHAzNlRXdHMyamNi?=
+ =?utf-8?B?RXlndEd3R3Bpc2hNb05QTHdyUlQ3ZUdzM1ZydHdHVlBiVllkM2lJVVNZTk9N?=
+ =?utf-8?B?bWxjUHFRNExvSG03cWY4QUFYa1lCd0UwOUhyclBPYzc0TG1CNktWMU1ISXZl?=
+ =?utf-8?B?Nlg4VW9vMlYzSG1lVkpON2o4b1hhNEsrcFNQNXBRSXVabnFwVjVEOVk4ZUlj?=
+ =?utf-8?B?RXZENEk5ZzZLZG0zWkhFYWhEeURVNGlrYnZwbjAzdTB1cEM0dTJTKzBwWFFU?=
+ =?utf-8?B?bU56dHdaays3Qmd4OXhKZlpYRGhOUmZRbUxHRUQ4a0R3V2JqRGtJV3R2YTQv?=
+ =?utf-8?B?SnYwYnFqOG1MN21PZmpqVDJneUJqNE1UUWZqNWNlTDR2eXFoUUYwYW9sSm40?=
+ =?utf-8?Q?0u9iQsEJsHEy+5JM=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3466e13-9a38-4c9f-a9bc-08de7b892728
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2026 13:45:06.5524 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2026 14:03:33.2764 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4Lj9qHqFK+oEFjWIUP+h5Bo8TbSTX0HUuLiJEpTzGdHlpbyu4js4UxeUKZoq9Oc3Pr3yjeOFHNHazy7MDMDA8ASKCQX/TihjUAI2VE19ahI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7297
+X-MS-Exchange-CrossTenant-UserPrincipalName: HMrI0pBdHruy8a5j2Q4bzU2F2u0SpWvVOsHqH+s9hbvBDafqJu0YaOUjplMWFywq87hxu5V7E8E4iQN/Pw4rAOO/t7Uv94u1oGkLTEZFVlU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7683
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -162,138 +162,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 3/3/2026 4:00 PM, Bruce Richardson wrote:
-> Recent rework of the Tx single-queue path in idpf aligned that path with
-> that of other drivers, meaning it now supports segments of size greater
-> than 16k. Rework the split-queue path to similarly support those large
-> segments.
+
+> CodeRabbit picked up on something here, and I think it's worth 
+> highlighting.
 > 
-> Fixes: 770f4dfe0f79 ("net/idpf: support basic Tx data path")
-> Cc: stable@dpdk.org
+> When we're splitting segments, we assign txe->mbuf to the first segment...
 > 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
+> <snip>
+> 
+>> +                txe = &sw_ring[sw_id];
+>> +                /* sub-descriptor slots do not own the mbuf */
+>> +                txe->mbuf = NULL;
+> 
+> ...then set subsequent segments to NULL...
+> 
+>> +            }
+>> -            /* Setup TX descriptor */
+>> -            txd->buf_addr =
+>> -                rte_cpu_to_le_64(rte_mbuf_data_iova(tx_pkt));
+>> -            cmd_dtype |= IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
+>> +            /* Write the final (or only) descriptor for this segment */
+>> +            txd = &txr[tx_id];
+>> +            txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
+>>               txd->qw1.cmd_dtype = cmd_dtype;
+>> -            txd->qw1.rxr_bufsize = tx_pkt->data_len;
+>> +            txd->qw1.rxr_bufsize = slen;
+>>               txd->qw1.compl_tag = sw_id;
+> 
+> ...and we're supposed to write the final descriptor here, but we've 
+> stored the mbuf pointer in the *first* descriptor, not in the *last* 
+> one, which means when this descriptor gets to processing completions, 
+> the mbuf pointer of that descriptor will be NULL? Is that intended?
 
-<snip>
-
->   		uint64_t cd_qw0 = 0, cd_qw1 = 0;
->   		nb_ctx = idpf_set_tso_ctx(ol_flags, tx_pkt, &tx_offload, txq,
->   					  &cd_qw0, &cd_qw1);
->   
-> -		/* Calculate the number of TX descriptors needed for
-> -		 * each packet. For TSO packets, use ci_calc_pkt_desc as
-> -		 * the mbuf data size might exceed max data size that hw allows
-> -		 * per tx desc.
-> +		/* Calculate the number of TX descriptors needed for each packet.
-> +		 * For TSO packets, use ci_calc_pkt_desc as the mbuf data size
-> +		 * might exceed the max data size that hw allows per tx desc.
->   		 */
-> -		if (ol_flags & RTE_MBUF_F_TX_TCP_SEG)
-> +		if (ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
-
-This looks like a drive-by fix for an unrelated issue. That particular 
-code was introduced here:
-
-2904020f8313 ("net/intel: add common function to calculate needed descs")
-
-There are other drivers that check TSO flags but only look at TCP_SEG 
-but not UDP_SEG - should they all look for both? Perhaps this should be 
-looked at and fixed across all our PMD's that support TSO.
-
-(to be clear, this is a general question, I'm not implying these changes 
-must be part of this patchset)
-
->   			nb_used = ci_calc_pkt_desc(tx_pkt) + nb_ctx;
->   		else
->   			nb_used = tx_pkt->nb_segs + nb_ctx;
->   
-> +		if (txq->nb_tx_free <= txq->tx_free_thresh) {
-> +			/* TODO: Need to refine
-> +			 * 1. free and clean: Better to decide a clean destination instead of
-> +			 * loop times. And don't free mbuf when RS got immediately, free when
-> +			 * transmit or according to the clean destination.
-> +			 * Now, just ignore the RE write back, free mbuf when get RS
-> +			 * 2. out-of-order rewrite back haven't be supported, SW head and HW head
-> +			 * need to be separated.
-> +			 **/
-> +			nb_to_clean = 2 * txq->tx_rs_thresh;
-> +			while (nb_to_clean--)
-> +				idpf_split_tx_free(txq->complq);
-> +		}
-> +
-> +		if (txq->nb_tx_free < nb_used)
-> +			break;
-> +
->   		if (ol_flags & CI_TX_CKSUM_OFFLOAD_MASK)
->   			cmd_dtype = IDPF_TXD_FLEX_FLOW_CMD_CS_EN;
->   
-> @@ -959,30 +959,52 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
->   			ctx_desc[0] = cd_qw0;
->   			ctx_desc[1] = cd_qw1;
->   
-> -			tx_id++;
-> -			if (tx_id == txq->nb_tx_desc)
-> +			if (++tx_id == txq->nb_tx_desc)
->   				tx_id = 0;
->   		}
->   
-> +		cmd_dtype |= IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
-> +		struct rte_mbuf *m_seg = tx_pkt;
->   		do {
-> -			txd = &txr[tx_id];
-> -			txn = &sw_ring[txe->next_id];
-> -			txe->mbuf = tx_pkt;
-> +			uint64_t buf_dma_addr = rte_mbuf_data_iova(m_seg);
-> +			uint16_t slen = m_seg->data_len;
-> +
-> +			txe->mbuf = m_seg;
-
-CodeRabbit picked up on something here, and I think it's worth highlighting.
-
-When we're splitting segments, we assign txe->mbuf to the first segment...
-
-<snip>
-
-> +				txe = &sw_ring[sw_id];
-> +				/* sub-descriptor slots do not own the mbuf */
-> +				txe->mbuf = NULL;
-
-...then set subsequent segments to NULL...
-
-> +			}
->   
-> -			/* Setup TX descriptor */
-> -			txd->buf_addr =
-> -				rte_cpu_to_le_64(rte_mbuf_data_iova(tx_pkt));
-> -			cmd_dtype |= IDPF_TX_DESC_DTYPE_FLEX_FLOW_SCHE;
-> +			/* Write the final (or only) descriptor for this segment */
-> +			txd = &txr[tx_id];
-> +			txd->buf_addr = rte_cpu_to_le_64(buf_dma_addr);
->   			txd->qw1.cmd_dtype = cmd_dtype;
-> -			txd->qw1.rxr_bufsize = tx_pkt->data_len;
-> +			txd->qw1.rxr_bufsize = slen;
->   			txd->qw1.compl_tag = sw_id;
-
-...and we're supposed to write the final descriptor here, but we've 
-stored the mbuf pointer in the *first* descriptor, not in the *last* 
-one, which means when this descriptor gets to processing completions, 
-the mbuf pointer of that descriptor will be NULL? Is that intended?
-
-
-> -			tx_id++;
-> -			if (tx_id == txq->nb_tx_desc)
-> +			if (++tx_id == txq->nb_tx_desc)
->   				tx_id = 0;
->   			sw_id = txe->next_id;
-> -			txe = txn;
-> -			tx_pkt = tx_pkt->next;
-> -		} while (tx_pkt);
-> +			txe = &sw_ring[sw_id];
-> +			m_seg = m_seg->next;
-> +		} while (m_seg);
->   
->   		/* fill the last descriptor with End of Packet (EOP) bit */
->   		txd->qw1.cmd_dtype |= IDPF_TXD_FLEX_FLOW_CMD_EOP;
+Actually, digging in, I don't see where we free mbufs at all in splitq 
+path? Am I missing something here?
 
 -- 
 Thanks,
