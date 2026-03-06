@@ -2,50 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A85F01834
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 12:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280ADF01834
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 13:17:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5EA3F402D3;
-	Fri,  6 Mar 2026 13:51:06 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 0CF5840262;
- Fri,  6 Mar 2026 13:51:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EC905402D3;
+	Fri,  6 Mar 2026 14:17:37 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D20540262
+ for <dev@dpdk.org>; Fri,  6 Mar 2026 14:17:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1772801465; x=1804337465;
+ t=1772803057; x=1804339057;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=qs16EPQQHEERzmos+Jf55tAqMSyrwaEHg1WxiKIr0BQ=;
- b=ZRlnkwcdwgj6rp+l375dfdH6musCjJMnnu9AKf07YBGcwpWaGxljwmLS
- NCsd17dlVhOU5dSnH5AB2zLrA1j5pl5uWjjQF4u6417DKwHR+BEfRTrw8
- VBaqUgb8A7DAU+zkS4LvODgO5EbJxg5FduKNh2Nk4vdkH8pfm+jMD57rs
- UskJzwyedX7EI+yYadizUgkO2rN+X0jLOqLO6JXgR6OtlrgB6muWR6K4O
- UzC8c0f9pl34Xda0xxwmOVZHYW3mOaGM4XGFiEu54tf4YaYC0wzwpA50j
- SATzLVUNTWy5oSMuPpnO8CgMjcDx3C3blipYSD15r9GiIC7wdTvAW0loq g==;
-X-CSE-ConnectionGUID: VJAzXESISPC4dhUtxyvCKQ==
-X-CSE-MsgGUID: cely4wloS/W8h/bnektw2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11720"; a="84544057"
-X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="84544057"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 Mar 2026 04:51:03 -0800
-X-CSE-ConnectionGUID: xE/AtVyRQj6gU4JGlcFxkw==
-X-CSE-MsgGUID: VBdO75cCStCGXshrmhNNfw==
+ bh=T8mZFhzBZ/sJF8BS7zt/g7prmRAP51GyVel0/EbEHng=;
+ b=TXzoxAFcIIwwRM34v1GoHh1Og3xhCDSjocZv/oR5rOZR0aw5La+0KZ81
+ dZjyyPl2bfZmdbOGoM8j1r4XIjdcbCPIM8dGpDaNI+xd2FiTquA69ZOQy
+ zQirFJ0/z//82OaH9PQj896rsEoZrq5N4hzkBHLiPFBs0MD2A2lF1uH5g
+ +R+WoX8XerykBk3iVG1akyCM9EFTH6KMc9jiaIZrpCwDsogJIMjJp3Pzd
+ 72JSQldebSLJHzS3Y+d6aKMNmRN6hb3oite6U/q0/f6bHu5sN97xLi+hf
+ OVCDCZh8vfun0UWYJWqBGIC0DTEnaoRvA+bpiaNsroJWijrYfDX7ViaX9 A==;
+X-CSE-ConnectionGUID: OBjrc1l8SpKX5mzHXGi3BA==
+X-CSE-MsgGUID: mmzoejWoQ7mWv23s9KdQxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11720"; a="73983719"
+X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="73983719"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Mar 2026 05:17:36 -0800
+X-CSE-ConnectionGUID: 412F2NH/Q1exg2TXttlQSw==
+X-CSE-MsgGUID: 6rniKY9LRtOOkejPC8slAw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="219137633"
-Received: from silpixa00400465.ir.intel.com ([10.20.224.190])
- by orviesa007.jf.intel.com with ESMTP; 06 Mar 2026 04:51:02 -0800
-From: Kai Ji <kai.ji@intel.com>
-To: dev@dpdk.org
-Cc: gakhil@marvell.com,
-	stable@dpdk.org,
-	Kai Ji <kai.ji@intel.com>
-Subject: [dpdk-dev v2] doc: update Multi-buffer library version for DPDK
-Date: Fri,  6 Mar 2026 12:50:59 +0000
-Message-ID: <20260306125059.2451999-1-kai.ji@intel.com>
+X-IronPort-AV: E=Sophos;i="6.23,104,1770624000"; d="scan'208";a="223491190"
+Received: from icx005.iind.intel.com (HELO icx005..) ([10.190.212.217])
+ by orviesa004.jf.intel.com with ESMTP; 06 Mar 2026 05:17:34 -0800
+From: AKSHATHA S <akshathax.s@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Cc: shaiq.wani@intel.com,
+	AKSHATHA S <akshathax.s@intel.com>
+Subject: [PATCH v2] net/e1000: align link updates in em igb and igc
+Date: Fri,  6 Mar 2026 23:36:14 +0000
+Message-ID: <20260306233614.11379-1-akshathax.s@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260302164742.2230427-1-kai.ji@intel.com>
-References: <20260302164742.2230427-1-kai.ji@intel.com>
+In-Reply-To: <20260305165142.89960-1-akshathax.s@intel.com>
+References: <20260305165142.89960-1-akshathax.s@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,84 +62,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update the supported Intel Multi-buffer library version for
-DPDK 24.11+ in the cryptodev guides for aesni_mb, aesni_gcm,
-chacha20_poly1305, snow3g and zuc.
+The em, igb, and igc PMDs currently update the auto-neg status only
+during specific link transitions. Updated the auto-neg status regardless
+of link transition so that it is consistent with ixgbe, i40e, and iavf
+drivers.
 
-Signed-off-by: Kai Ji <kai.ji@intel.com>
+Signed-off-by: AKSHATHA S <akshathax.s@intel.com>
+
+v2: Addressed review comments
 ---
- doc/guides/cryptodevs/aesni_gcm.rst         | 2 +-
- doc/guides/cryptodevs/aesni_mb.rst          | 2 +-
- doc/guides/cryptodevs/chacha20_poly1305.rst | 2 +-
- doc/guides/cryptodevs/snow3g.rst            | 2 +-
- doc/guides/cryptodevs/zuc.rst               | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/intel/e1000/em_ethdev.c  | 5 ++---
+ drivers/net/intel/e1000/igb_ethdev.c | 5 ++---
+ drivers/net/intel/e1000/igc_ethdev.c | 5 ++---
+ 3 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/doc/guides/cryptodevs/aesni_gcm.rst b/doc/guides/cryptodevs/aesni_gcm.rst
-index 16bdaf3cb4..0b1f2262fb 100644
---- a/doc/guides/cryptodevs/aesni_gcm.rst
-+++ b/doc/guides/cryptodevs/aesni_gcm.rst
-@@ -75,7 +75,7 @@ and the external crypto libraries supported by them:
-    =============  ================================
-    20.11 - 21.08  Multi-buffer library 0.53 - 1.3
-    21.11 - 24.07  Multi-buffer library 1.0  - 1.5
--   24.11+         Multi-buffer library 1.4  - 1.5
-+   24.11+         Multi-buffer library 1.4+
-    =============  ================================
+diff --git a/drivers/net/intel/e1000/em_ethdev.c b/drivers/net/intel/e1000/em_ethdev.c
+index ec3924bf6b..9e15e882b9 100644
+--- a/drivers/net/intel/e1000/em_ethdev.c
++++ b/drivers/net/intel/e1000/em_ethdev.c
+@@ -1240,14 +1240,13 @@ eth_em_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+ 				RTE_ETH_LINK_HALF_DUPLEX;
+ 		link.link_speed = speed;
+ 		link.link_status = RTE_ETH_LINK_UP;
+-		link.link_autoneg = !(dev->data->dev_conf.link_speeds &
+-				RTE_ETH_LINK_SPEED_FIXED);
+ 	} else {
+ 		link.link_speed = RTE_ETH_SPEED_NUM_NONE;
+ 		link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 		link.link_status = RTE_ETH_LINK_DOWN;
+-		link.link_autoneg = RTE_ETH_LINK_FIXED;
+ 	}
++	link.link_autoneg = !(dev->data->dev_conf.link_speeds &
++			RTE_ETH_LINK_SPEED_FIXED);
  
- Initialization
-diff --git a/doc/guides/cryptodevs/aesni_mb.rst b/doc/guides/cryptodevs/aesni_mb.rst
-index d58ce20ff4..7ce92305d1 100644
---- a/doc/guides/cryptodevs/aesni_mb.rst
-+++ b/doc/guides/cryptodevs/aesni_mb.rst
-@@ -139,7 +139,7 @@ and the Multi-Buffer library version supported by them:
-    ==============  ============================
-    20.11 - 21.08   0.53 - 1.3
-    21.11 - 24.07   1.0  - 1.5
--   24.11+          1.4  - 1.5
-+   24.11+          1.4+
-    ==============  ============================
+ 	return rte_eth_linkstatus_set(dev, &link);
+ }
+diff --git a/drivers/net/intel/e1000/igb_ethdev.c b/drivers/net/intel/e1000/igb_ethdev.c
+index 1f51ba6406..ef1599ac38 100644
+--- a/drivers/net/intel/e1000/igb_ethdev.c
++++ b/drivers/net/intel/e1000/igb_ethdev.c
+@@ -2568,14 +2568,13 @@ eth_igb_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+ 				RTE_ETH_LINK_HALF_DUPLEX;
+ 		link.link_speed = speed;
+ 		link.link_status = RTE_ETH_LINK_UP;
+-		link.link_autoneg = !(dev->data->dev_conf.link_speeds &
+-				RTE_ETH_LINK_SPEED_FIXED);
+ 	} else if (!link_check) {
+ 		link.link_speed = 0;
+ 		link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 		link.link_status = RTE_ETH_LINK_DOWN;
+-		link.link_autoneg = RTE_ETH_LINK_FIXED;
+ 	}
++	link.link_autoneg = !(dev->data->dev_conf.link_speeds &
++			RTE_ETH_LINK_SPEED_FIXED);
  
- Initialization
-diff --git a/doc/guides/cryptodevs/chacha20_poly1305.rst b/doc/guides/cryptodevs/chacha20_poly1305.rst
-index b5a980b247..37d9d2e8af 100644
---- a/doc/guides/cryptodevs/chacha20_poly1305.rst
-+++ b/doc/guides/cryptodevs/chacha20_poly1305.rst
-@@ -67,7 +67,7 @@ and the external crypto libraries supported by them:
-    DPDK version   Crypto library version
-    =============  ================================
-    21.11 - 24.07  Multi-buffer library 1.0  - 1.5
--   24.11+         Multi-buffer library 1.4  - 1.5
-+   24.11+         Multi-buffer library 1.4+
-    =============  ================================
+ 	return rte_eth_linkstatus_set(dev, &link);
+ }
+diff --git a/drivers/net/intel/e1000/igc_ethdev.c b/drivers/net/intel/e1000/igc_ethdev.c
+index 2155a67268..727ea36c2b 100644
+--- a/drivers/net/intel/e1000/igc_ethdev.c
++++ b/drivers/net/intel/e1000/igc_ethdev.c
+@@ -549,8 +549,6 @@ eth_igc_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+ 				RTE_ETH_LINK_HALF_DUPLEX;
+ 		link.link_speed = speed;
+ 		link.link_status = RTE_ETH_LINK_UP;
+-		link.link_autoneg = !(dev->data->dev_conf.link_speeds &
+-				RTE_ETH_LINK_SPEED_FIXED);
  
- Initialization
-diff --git a/doc/guides/cryptodevs/snow3g.rst b/doc/guides/cryptodevs/snow3g.rst
-index bde30de1b5..0fe914ffd3 100644
---- a/doc/guides/cryptodevs/snow3g.rst
-+++ b/doc/guides/cryptodevs/snow3g.rst
-@@ -90,7 +90,7 @@ and the external crypto libraries supported by them:
-    =============  ================================
-    20.02 - 21.08  Multi-buffer library 0.53 - 1.3
-    21.11 - 24.07  Multi-buffer library 1.0  - 1.5
--   24.11+         Multi-buffer library 1.4  - 1.5
-+   24.11+         Multi-buffer library 1.4+
-    =============  ================================
+ 		if (speed == SPEED_2500) {
+ 			uint32_t tipg = E1000_READ_REG(hw, E1000_TIPG);
+@@ -564,8 +562,9 @@ eth_igc_link_update(struct rte_eth_dev *dev, int wait_to_complete)
+ 		link.link_speed = 0;
+ 		link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
+ 		link.link_status = RTE_ETH_LINK_DOWN;
+-		link.link_autoneg = RTE_ETH_LINK_FIXED;
+ 	}
++	link.link_autoneg = !(dev->data->dev_conf.link_speeds &
++			RTE_ETH_LINK_SPEED_FIXED);
  
- Initialization
-diff --git a/doc/guides/cryptodevs/zuc.rst b/doc/guides/cryptodevs/zuc.rst
-index 1bede0498b..7c6b83e7eb 100644
---- a/doc/guides/cryptodevs/zuc.rst
-+++ b/doc/guides/cryptodevs/zuc.rst
-@@ -89,7 +89,7 @@ and the external crypto libraries supported by them:
-    =============  ================================
-    20.02 - 21.08  Multi-buffer library 0.53 - 1.3
-    21.11 - 24.07  Multi-buffer library 1.0  - 1.5
--   24.11+         Multi-buffer library 1.4  - 1.5
-+   24.11+         Multi-buffer library 1.4+
-    =============  ================================
- 
- Initialization
+ 	return rte_eth_linkstatus_set(dev, &link);
+ }
 -- 
 2.43.0
 
