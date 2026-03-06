@@ -2,29 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD8AAEF36F7
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 07:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF8AEF36F8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 07:47:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C176B40281;
-	Mon,  9 Mar 2026 08:47:44 +0100 (CET)
-Received: from 1.mo15.mail-out.ovh.net (1.mo15.mail-out.ovh.net [5.135.90.178])
- by mails.dpdk.org (Postfix) with ESMTP id 8A1A540278
- for <dev@dpdk.org>; Fri,  6 Mar 2026 10:20:30 +0100 (CET)
-Received: from DAGFR7EX1.OVH.local (unknown [10.110.58.22])
- by mo15.mail-out.ovh.net (Postfix) with ESMTPS id 4fS18t0gt6z3wnm;
- Fri,  6 Mar 2026 09:20:30 +0000 (UTC)
+	by mails.dpdk.org (Postfix) with ESMTP id CC645402E2;
+	Mon,  9 Mar 2026 08:47:45 +0100 (CET)
+Received: from 2.mo15.mail-out.ovh.net (2.mo15.mail-out.ovh.net [5.135.90.179])
+ by mails.dpdk.org (Postfix) with ESMTP id A99B0402D3;
+ Fri,  6 Mar 2026 10:20:35 +0100 (CET)
+Received: from DAGFR7EX1.OVH.local (unknown [10.110.0.38])
+ by mo15.mail-out.ovh.net (Postfix) with ESMTPS id 4fS18z38mWz3wnm;
+ Fri,  6 Mar 2026 09:20:35 +0000 (UTC)
 Received: from laptop1704918.desk.int.gns.ovh.net (109.190.254.56) by
  DAGFR7EX1.OVH.local (172.16.2.20) with Microsoft SMTP Server (version=TLS1_2, 
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Fri, 6 Mar
- 2026 10:20:29 +0100
+ 2026 10:20:35 +0100
 From: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
 To: <dev@dpdk.org>
-CC: <linville@tuxdriver.com>, Xavier Guillaume <xavier.guillaume@ovhcloud.com>
-Subject: [PATCH v1 0/3] net/af_packet: fix MTU handling and add jumbo frame
- support
-Date: Fri, 6 Mar 2026 10:20:10 +0100
-Message-ID: <20260306092013.2205076-1-xavier.guillaume@ovhcloud.com>
+CC: <linville@tuxdriver.com>, Xavier Guillaume
+ <xavier.guillaume@ovhcloud.com>, <stable@dpdk.org>
+Subject: [PATCH v1 1/3] net/af_packet: fix MTU set data size calculation
+Date: Fri, 6 Mar 2026 10:20:11 +0100
+Message-ID: <20260306092013.2205076-2-xavier.guillaume@ovhcloud.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260306092013.2205076-1-xavier.guillaume@ovhcloud.com>
+References: <20260306092013.2205076-1-xavier.guillaume@ovhcloud.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -32,16 +34,16 @@ X-Originating-IP: [109.190.254.56]
 X-ClientProxiedBy: CAS1.OVH.local (172.16.1.1) To DAGFR7EX1.OVH.local
  (172.16.2.20)
 X-OVH-CORPLIMIT-SKIP: true
-x-ovh-tracer-id: 11267443319424430390
+x-ovh-tracer-id: 11268850694662336881
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: dmFkZTFxYDeYAwVXsd+Inefgn09/5NzDCbP32110fUH0aQK50ja0+0kw0Y6JCpmMOCOpyXnY+8wvKTmveppyz9LYpnhq0jf1yEnqAbuFDVET3w6ZdKe/xTPzRtF6sQ0rIQIOlEGbmYC3UYqrfEZF6pk67DlLx5WGnUto4WDBn4XGddk9bbTVYcA6Oid9gECrNkmsT6jwWjYmLD//Dy7YyttHbNMd7l6N1z/6WC+8oFsvyj0/sQFELT89Tsa20xbspgIkakPgkbReJufL6ZDVCHhywjCwxBH2MpS0SZkIV/rAnuToc43H87177f5E5pwUxzjI7TXbnP3lkYi8VZY4Mp+4yddWj6j4V6gzhl442CMrUjp3u5l5GZXx62NaqWRQiW/qSphMuJkefou0/3ZGkrx/gEmqNcO7s2msmgBi0EC0qODNzZUZVJv6Mex0FrhhLuvhshRMwR8QCcHOQOrcDMswgHt36y4dIeIRJRtOIB4V63mUP7T8guiVVWuKfP+DJ5Qf46MQDINRVWXgbqp2FmrTYeoEYMU7m23B5a6EKdZc2gWXZi5aKesqNsVVBClA3YaG/VT1HT5wJNnl3LsE7hUJgyilDo8Ah9HBC+PInWMctIBTomgpR7JfuqXf9qVMMZuevVWqw7rpyNR93QIuJ0Tqp1hk59tMNXv4+3sQSOSejQJ7Jg
-DKIM-Signature: a=rsa-sha256; bh=jWOrW4f1h4TbwxwMjwBJLYcRHOrTos70qnGdcrap8JE=; 
+X-VR-SPAMCAUSE: dmFkZTFh2na8x+FrMpf+EgdYNge5r9uU32ke3iCP3EMXSFIoZiTre7rOZ/BWKW9uA07tfM07psGiPYyolTGbuk4HuGhYH9Yv887NykBIT4jL52wsAZZvQ02AlBBroQRMjfgWQhIP/nqOusNmxHuYQBlcZQWzNCkECe0BGeltl1mawXW5DcfyquxN17rV4LCad1QYGlozPEdm4tHQ2fvwKCvNZMA6gWiiPJjL3dhy2M/DNpT0ELXD2CDEV0AZBRBBnjVegFp7omvHx+1G9OgU8LEwmnF1KpkSoDRUBhejmzqn/Q+df97ukiujgOuiKx2eKmZCaR2sQRKtyk0gzVjsWqZ8WVAtE+XRDDxqk7magmykrf8z+hzuPJMjfGQZwc8gE1Kn1L0ifhrJMakW9Qm97qPai+ceFZLkjZGyZTFCj6Je8DEjcn0aaFSCLh4rFhG12L8TV4c/Xl07k9aY27Wcqe5m/j0nUlp+fqZL+avKlR8hKYneOhp9NFZ8uShPux2kZxD/ftB34+nzvEPtXLCigkl6eHyQ3incc6AwUiSTHmcl8wFF5P00h+a5bo5JLaZoyrz1+EtvhFVWAyuNBicv0HiDSvLKBPBznZVjXPhdK4irz/ik48JLT5hu9odTOdSy8QYUNVOq6aLj928N6/W/aCHi9dXkZ6gtvBThxN9c8KU0AkPGhw
+DKIM-Signature: a=rsa-sha256; bh=fG5zSILIBKer+isDgKUubVt0gqC2KM7+Mt3hO877aUU=; 
  c=relaxed/relaxed; d=ovhcloud.com; h=From; s=mailout;
- t=1772788830; v=1; 
- b=KkywsOjrUQP8rXDgwQdIgNK/4rbuKsB/efAI/JmI4yL5WWpyNxjNC9RftbGTLwiBTx1IYQyY
- 1+E26UT9psNQCBx1xjCvjHMMa4HPODnPpTRJ3tRhVlOF5yAenJtq4J6eBdRxbbd/qs6N0CiA6y9
- JBgqaQELDevBv7AaZwyiio4o=
+ t=1772788835; v=1; 
+ b=cJS6Ux30MLOYEM1pssbBqegNoChCVE/yddSuVMNPx9LIOULizx8A78jmFHgj5d5QZblJPDym
+ UcASbKbz0xLEgfRE90zTpS2HnybESa4hnvriOg3ognrw/cUy6tkiax8lZvW4s6OIilB0bLfZFmD
+ FjhP9ZolLoVzExyWxGmCTJ+4=
 X-Mailman-Approved-At: Mon, 09 Mar 2026 08:47:43 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -57,33 +59,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Reply-To: xavier.guillaume@ovhcloud.com
 Errors-To: dev-bounces@dpdk.org
 
-This series fixes two bugs in the af_packet PMD related to frame
-size calculations and buffer safety, then enables jumbo frame
-support by deriving the advertised capabilities from the actual
-TPACKET ring configuration.
+The data_size in eth_dev_mtu_set() is calculated as:
+  tp_frame_size - TPACKET2_HDRLEN
 
-Patch 1 fixes the data size calculation in eth_dev_mtu_set() which
-is too restrictive due to TPACKET2_HDRLEN including sizeof(struct
-sockaddr_ll) even though the sockaddr_ll does not consume frame
-data space. The formula is now consistent with the RX and TX paths.
+Since TPACKET2_HDRLEN is defined as:
+  TPACKET_ALIGN(sizeof(struct tpacket2_hdr)) + sizeof(struct sockaddr_ll)
 
-Patch 2 adds a bounds check in the RX path to prevent a heap buffer
-overflow when the kernel delivers a packet larger than the mbuf data
-room (e.g. if the kernel interface MTU is raised externally).
+it includes sizeof(struct sockaddr_ll), but the actual packet data
+in the TPACKET ring starts at TPACKET_ALIGN(sizeof(struct tpacket2_hdr)).
+The sockaddr_ll does not consume frame data space. This makes the
+current formula 20 bytes too restrictive, matching neither the
+RX queue setup nor the TX queue init path, which both correctly use:
+  tp_frame_size - TPACKET2_HDRLEN + sizeof(struct sockaddr_ll)
 
-Patch 3 replaces the static max_rx_pktlen (RTE_ETHER_MAX_LEN) and
-adds max_mtu, both derived from the configured TPACKET frame size.
-This enables jumbo frame support when the user specifies a larger
-framesz devarg at vdev creation time.
+Fix the calculation to be consistent and accept all valid MTU values.
 
-Xavier Guillaume (3):
-  net/af_packet: fix MTU set data size calculation
-  net/af_packet: fix receive buffer overflow
-  net/af_packet: support jumbo frames
+Fixes: 8020573894a8 ("net/af_packet: fix setting MTU decrements sockaddr twice")
+Cc: stable@dpdk.org
 
- drivers/net/af_packet/rte_eth_af_packet.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+Signed-off-by: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
+---
+ drivers/net/af_packet/rte_eth_af_packet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index c0ba3381ea..bfa68297a6 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -612,7 +612,7 @@ eth_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
+ 	int ret;
+ 	int s;
+ 	unsigned int data_size = internals->req.tp_frame_size -
+-				 TPACKET2_HDRLEN;
++				 TPACKET2_HDRLEN + sizeof(struct sockaddr_ll);
+ 
+ 	if (mtu > data_size)
+ 		return -EINVAL;
 -- 
 2.34.1
 
