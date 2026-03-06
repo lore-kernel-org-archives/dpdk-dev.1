@@ -2,52 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5B81FCB604
-	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 14:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E10DFCB60B
+	for <dpdk-dev@archiver.kernel.org>; Fri,  6 Mar 2026 15:10:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BC3B140A80;
-	Fri,  6 Mar 2026 15:53:04 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id CFAB740262
- for <dev@dpdk.org>; Fri,  6 Mar 2026 15:53:03 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BF9E720B9F;
- Fri,  6 Mar 2026 15:53:01 +0100 (CET)
-Subject: RE: [PATCH v8 3/3] mbuf: optimize reset of reinitialized mbufs
+	by mails.dpdk.org (Postfix) with ESMTP id 489AE40A80;
+	Fri,  6 Mar 2026 16:10:46 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id CDD6540262;
+ Fri,  6 Mar 2026 16:10:44 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1772809846; x=1804345846;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=q9eJQwFwp2HOcYmfOI+DVxaf+trHM7WL8FEWuqiqPZc=;
+ b=HVCCjo0Yiiqa/1gne6lvkTXF+Vqr/nXkYEzIngzKcTI0avDLjiAg6x0d
+ 895FB5of6aBSokL4jYDSuai+k3L/is7iPMN8stpp6XxAS436M/Xs+yxQy
+ Zde6KgzwK7vJh7V4ITb7RkuhYqE9AgCw6N4zdGdjjRMIAU3ifZOdDSVws
+ HWBRrkSFiBzDqHucu4N8xxxiJOK2BjCTrSYRSmURgC9dXRqs/AnYSKHUn
+ VGGB7sHCmuxd3C7q4dfQ3rvXZ1VwjW0Dhznw5zn7xG/F4PQa83MAKp4mP
+ krhFUuqUMIl371wEiE1ni5uGYwytuCh8pRnTWqCuPzMdEZ9qLosN2qWS6 A==;
+X-CSE-ConnectionGUID: piONg+SnRVSPKUWKjLdVgg==
+X-CSE-MsgGUID: sfcxyqCATum4f5N/gaTyjQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11721"; a="73887325"
+X-IronPort-AV: E=Sophos;i="6.23,105,1770624000"; d="scan'208";a="73887325"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 Mar 2026 07:10:44 -0800
+X-CSE-ConnectionGUID: coKDNHUrT0+5rYmwh/39KQ==
+X-CSE-MsgGUID: LC7dz6CMSza31pkBt0keUQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,105,1770624000"; d="scan'208";a="224011079"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by orviesa005.jf.intel.com with ESMTP; 06 Mar 2026 07:10:43 -0800
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH] net/iavf: fix order of tags for AVX512 Tx QinQ offload
+Date: Fri,  6 Mar 2026 15:10:32 +0000
+Message-ID: <20260306151032.2640579-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Date: Fri, 6 Mar 2026 15:53:00 +0100
-Content-class: urn:content-classes:message
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65760@smartserver.smartshare.dk>
-In-Reply-To: <CO6PR18MB384426DC59281E2B4D46A3E8B87AA@CO6PR18MB3844.namprd18.prod.outlook.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v8 3/3] mbuf: optimize reset of reinitialized mbufs
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Thread-Index: AdytYffR9gpoKOZiTN+m6V5/PoZ1fQAEyfBQ
-References: <20250821150250.16959-1-mb@smartsharesystems.com>
- <20250823063002.24326-1-mb@smartsharesystems.com>
- <20250823063002.24326-4-mb@smartsharesystems.com>
- <aOftoMl0edarmSGB@bricha3-mobl1.ger.corp.intel.com>
- <20251019134545.203741d9@phoenix.lan>
- <aPX29qp0AcY4fzmL@bricha3-mobl1.ger.corp.intel.com>
- <CO6PR18MB384426DC59281E2B4D46A3E8B87AA@CO6PR18MB3844.namprd18.prod.outlook.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Rahul Bhansali" <rbhansali@marvell.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>,
- "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>,
- "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
- "Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>,
- "Ivan Malov" <ivan.malov@arknetworks.am>,
- "Chengwen Feng" <fengchengwen@huawei.com>,
- "Jerin Jacob" <jerinj@marvell.com>,
- "Nithin Kumar Dabilpuram" <ndabilpuram@marvell.com>,
- "Ashwin Sekhar T K" <asekhar@marvell.com>
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,130 +58,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBSYWh1bCBCaGFuc2FsaSBbbWFpbHRvOnJiaGFuc2FsaUBtYXJ2ZWxsLmNvbV0NCj4g
-U2VudDogRnJpZGF5LCA2IE1hcmNoIDIwMjYgMTMuMTkNCj4gDQo+IFBsZWFzZSBzZWUgaW5saW5l
-Lg0KPiANCj4gPiBGcm9tOiBCcnVjZSBSaWNoYXJkc29uIDxicnVjZS5yaWNoYXJkc29uQGludGVs
-LmNvbT4NCj4gPiBTZW50OiBNb25kYXksIE9jdG9iZXIgMjAsIDIwMjUgMjoxNyBQTQ0KPiA+DQo+
-ID4gT24gU3VuLCBPY3QgMTksIDIwMjUgYXQgMDE64oCKNDU64oCKNDVQTSAtMDcwMCwgU3RlcGhl
-biBIZW1taW5nZXIgd3JvdGU6DQo+ID4gT24gVGh1LCA5IE9jdCAyMDI1IDE4OuKAijE1OuKAijEy
-ICswMTAwID4gQnJ1Y2UgUmljaGFyZHNvbg0KPiA+IDxicnVjZS7igIpyaWNoYXJkc29uQOKAimlu
-dGVsLuKAimNvbT4gd3JvdGU6ID4gPiA+IE9uIFNhdCwgQXVnIDIzLCAyMDI1IGF0DQo+IDA2OuKA
-ijMwOuKAijAyQU0gKzAwMDAsIE1vcnRlbiBCcsO4cnVwDQo+ID4gT24gU3VuLCBPY3QgMTksIDIw
-MjUgYXQgMDE6NDU6NDVQTSAtMDcwMCwgU3RlcGhlbiBIZW1taW5nZXIgd3JvdGU6DQo+ID4gPiBP
-biBUaHUsIDkgT2N0IDIwMjUgMTg6MTU6MTIgKzAxMDANCj4gPiA+IEJydWNlIFJpY2hhcmRzb24g
-PG1haWx0bzpicnVjZS5yaWNoYXJkc29uQGludGVsLmNvbT4gd3JvdGU6DQo+ID4gPg0KPiA+ID4g
-PiBPbiBTYXQsIEF1ZyAyMywgMjAyNSBhdCAwNjozMDowMkFNICswMDAwLCBNb3J0ZW4gQnLDuHJ1
-cCB3cm90ZToNCj4gPiA+ID4gPiBBbiBvcHRpbWl6ZWQgZnVuY3Rpb24gZm9yIHJlc2V0dGluZyBh
-IGJ1bGsgb2YgbmV3bHkgYWxsb2NhdGVkDQo+ID4gPiA+ID4gcmVpbml0aWFsaXplZCBtYnVmcyAo
-YS5rLmEuIHJhdyBtYnVmcykgd2FzIGFkZGVkLg0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gQ29tcGFy
-ZWQgdG8gdGhlIG5vcm1hbCBwYWNrZXQgbWJ1ZiByZXNldCBmdW5jdGlvbiwgaXQgdGFrZXMNCj4g
-YWR2YW50YWdlIG9mDQo+ID4gPiA+ID4gdGhlIGZvbGxvd2luZyB0d28gZGV0YWlsczoNCj4gPiA+
-ID4gPiAxLiBUaGUgJ25leHQnIGFuZCAnbmJfc2VncycgZmllbGRzIGFyZSBhbHJlYWR5IHJlc2V0
-LCBzbw0KPiByZXNldHRpbmcgdGhlbQ0KPiA+ID4gPiA+IGhhcyBiZWVuIG9taXR0ZWQuDQo+ID4g
-PiA+ID4gMi4gV2hlbiByZXNldHRpbmcgdGhlIG1idWYsIHRoZSAnb2xfZmxhZ3MnIGZpZWxkIG11
-c3QgaW5kaWNhdGUNCj4gd2hldGhlciB0aGUNCj4gPiA+ID4gPiBtYnVmIHVzZXMgYW4gZXh0ZXJu
-YWwgYnVmZmVyLCBhbmQgdGhlICdkYXRhX29mZicgZmllbGQgbXVzdCBub3QNCj4gZXhjZWVkIHRo
-ZQ0KPiA+ID4gPiA+IGRhdGEgcm9vbSBzaXplIHdoZW4gcmVzZXR0aW5nIHRoZSBkYXRhIG9mZnNl
-dCB0byBpbmNsdWRlIHRoZQ0KPiBkZWZhdWx0DQo+ID4gPiA+ID4gaGVhZHJvb20uDQo+ID4gPiA+
-ID4gVW5saWtlIHRoZSBub3JtYWwgcGFja2V0IG1idWYgcmVzZXQgZnVuY3Rpb24sIHdoaWNoIHJl
-YWRzIHRoZQ0KPiBtYnVmIGl0c2VsZg0KPiA+ID4gPiA+IHRvIGdldCB0aGUgaW5mb3JtYXRpb24g
-cmVxdWlyZWQgZm9yIHJlc2V0dGluZyB0aGVzZSB0d28gZmllbGRzLA0KPiB0aGlzDQo+ID4gPiA+
-ID4gZnVuY3Rpb24gZ2V0cyB0aGUgaW5mb3JtYXRpb24gZnJvbSB0aGUgbWVtcG9vbC4NCj4gPiA+
-ID4gPg0KPiA+ID4gPiA+IFRoaXMgbWFrZXMgdGhlIGZ1bmN0aW9uIHdyaXRlLW9ubHkgb2YgdGhl
-IG1idWYsIHVubGlrZSB0aGUNCj4gbm9ybWFsIHBhY2tldA0KPiA+ID4gPiA+IG1idWYgcmVzZXQg
-ZnVuY3Rpb24sIHdoaWNoIGlzIHJlYWQtbW9kaWZ5LXdyaXRlIG9mIHRoZSBtYnVmLg0KPiA+ID4g
-PiA+DQo+ID4gPiA+ID4gU2lnbmVkLW9mZi1ieTogTW9ydGVuIEJyw7hydXAgPG1haWx0bzptYkBz
-bWFydHNoYXJlc3lzdGVtcy5jb20+DQo+ID4gPiA+ID4gLS0tDQo+ID4gPiA+ID4gIGxpYi9tYnVm
-L3J0ZV9tYnVmLmggfCA3NCArKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tDQo+
-IC0tLS0tLS0tDQo+ID4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCA0NiBpbnNlcnRpb25zKCspLCAy
-OCBkZWxldGlvbnMoLSkNCj4gPiA+ID4gPg0KPiA+ID4gPiA+IGRpZmYgLS1naXQgYS9saWIvbWJ1
-Zi9ydGVfbWJ1Zi5oIGIvbGliL21idWYvcnRlX21idWYuaA0KPiA+ID4gPiA+IGluZGV4IDQ5Yzkz
-YWIzNTYuLjZmMzdhMmU5MWUgMTAwNjQ0DQo+ID4gPiA+ID4gLS0tIGEvbGliL21idWYvcnRlX21i
-dWYuaA0KPiA+ID4gPiA+ICsrKyBiL2xpYi9tYnVmL3J0ZV9tYnVmLmgNCj4gPiA+ID4gPiBAQCAt
-OTU0LDYgKzk1NCw1MCBAQCBzdGF0aWMgaW5saW5lIHZvaWQNCj4gcnRlX3BrdG1idWZfcmVzZXRf
-aGVhZHJvb20oc3RydWN0IHJ0ZV9tYnVmICptKQ0KPiA+ID4gPiA+ICAJCQkJCSh1aW50MTZfdClt
-LT5idWZfbGVuKTsNCj4gPiA+ID4gPiAgfQ0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gKy8qKg0KPiA+
-ID4gPiA+ICsgKiBSZXNldCB0aGUgZmllbGRzIG9mIGEgYnVsayBvZiBwYWNrZXQgbWJ1ZnMgdG8g
-dGhlaXIgZGVmYXVsdA0KPiB2YWx1ZXMuDQo+ID4gPiA+ID4gKyAqDQo+ID4gPiA+ID4gKyAqIFRo
-ZSBjYWxsZXIgbXVzdCBlbnN1cmUgdGhhdCB0aGUgbWJ1ZnMgY29tZSBmcm9tIHRoZQ0KPiBzcGVj
-aWZpZWQgbWVtcG9vbCwNCj4gPiA+ID4gPiArICogYXJlIGRpcmVjdCBhbmQgcHJvcGVybHkgcmVp
-bml0aWFsaXplZCAocmVmY250PTEsIG5leHQ9TlVMTCwNCj4gbmJfc2Vncz0xKSwNCj4gDQo+IFtS
-YWh1bF0gRm9yIE1hcnZlbGwncyBDTnh4IFNvQ3MsIG1idWYgcG9pbnRlcnMgYWxsb2MgYW5kIGZy
-ZWUgYXJlDQo+IG9mZmxvYWRlZCB0byBIVyBmb3IgUngvVHgsIHNvIHRoZXNlIGZpZWxkcyAibmV4
-dCBhbmQgbmJfc2VncyIgd2lsbCBub3QNCj4gYmUgcmVzZXQgdG8gZGVmYXVsdCB2YWx1ZXMgYnkg
-SFcuDQo+IFdoZW4gcGFja2V0cyBhcmUgY29taW5nIGZyb20gd2lyZSwgd2UgcmVzZXQgdGhlc2Ug
-ZmllbGRzIGluIFJ4DQo+IGZhc3RwYXRoLCBidXQgaW4gY2FzZSBvZiBTVyBhbGxvY2F0ZWQgbWJ1
-Ziwgd2UgY2Fubm90IGRvIGl0IGluDQo+IE1hcnZlbGwncyBtZW1wb29sIGRyaXZlciBhcyB0aGF0
-IGlzIHVuYXdhcmUgb2YgbWJ1Zi4NCg0KSXQgaGFzIGFsd2F5cyBiZWVuIGFuIGludmFyaWFudCB0
-aGF0IG1idWZzIHN0b3JlZCBpbiBhIG1lbXBvb2wgaGF2ZSB0aGVpciAibmV4dCIgYW5kICJuYl9z
-ZWdzIiBmaWVsZHMgcmVzZXQuDQpUaGlzIG1lYW5zIHRoYXQgdGhlc2UgZmllbGRzIG11c3QgYmUg
-cmVzZXQgYmVmb3JlIGZyZWUuDQoNCkluIGFuIGV0aGRldiBkcml2ZXIncyBub3JtYWwgVHggcGF0
-aCwgdGhlIGRyaXZlciBjYWxscyBydGVfcGt0bWJ1Zl9wcmVmcmVlX3NlZygpIGJlZm9yZSBmcmVl
-aW5nIGFuIG1idWYuDQpEb2VzIHlvdXIgZXRoZGV2IGRyaXZlciBub3QgZG8gdGhhdD8NCg0KPiBJ
-cyBpdCBwb3NzaWJsZSB0byByZXNldCB0aGVzZSBhbHNvIGluIHJ0ZV9tYnVmX3Jhd19yZXNldF9i
-dWxrKCkgaXRzZWxmDQo+IGZvciBtYnVmIGFsbG9jIHJlcXVlc3RzID8NCg0KRHVlIHRvIHRoZSBp
-bnZhcmlhbnQgKGFib3V0IG1idWZzIHN0b3JlZCBpbiBhIG1lbXBvb2wgaGF2aW5nIHRoZWlyICJu
-ZXh0IiBhbmQgIm5iX3NlZ3MiIGZpZWxkcyByZXNldCksIHJlc2V0dGluZyB0aGVtIGFnYWluIGlu
-IHJ0ZV9tYnVmX3Jhd19yZXNldF9idWxrKCkgYWZ0ZXIgZmV0Y2hpbmcgdGhlIG1idWZzIGZyb20g
-dGhlIG1lbXBvb2wgKGkuZS4gYWZ0ZXIgY2FsbGluZyBydGVfbWVtcG9vbF9nZXRfYnVsaygpKSBp
-cyBjb25zaWRlcmVkIHVubmVjZXNzYXJ5Lg0KDQpQUzoNCkkgd2lzaCBmb3IgYSByb2FkbWFwIHRv
-d2FyZHMgZWxpbWluYXRpbmcgdGhpcyBpbnZhcmlhbnQsIGFuZCBpbnN0ZWFkIHJlcXVpcmUgdGhl
-IGV0aGRldiBkcml2ZXJzIHRvIHJlc2V0IHRoZSAibmJfc2VncyIgYW5kICJuZXh0IiBmaWVsZHMg
-aW4gdGhlIFJ4IGZhc3RwYXRoIGluc3RlYWQgLSB3aGVyZSB0aGUgZHJpdmVyIGlzIGluaXRpYWxp
-emluZyBtYW55IG90aGVyIG1idWYgZmllbGRzIGFueXdheSwgYW5kIHRoZSBhZGRpdGlvbmFsIGNv
-c3QgaXMgbmVhci16ZXJvLg0KT25lIG9mIHRoZSBzdGVwcyBpbiBzdWNoIGEgcm9hZG1hcCBjb3Vs
-ZCBiZSB0byByZXNldCB0aGUgIm5iX3NlZ3MiIGFuZCAibmV4dCIgZmllbGRzIGluIHRoZSBydGVf
-bWJ1Zl9yYXdfcmVzZXRfYnVsaygpIGZ1bmN0aW9uLCBmb3IgZXRoZGV2IGRyaXZlcnMgd2hpY2gg
-aGFzbid0IGltcGxlbWVudGVkIGl0IHlldC4NCg0KPiANCj4gPiA+ID4gPiArICogYXMgZG9uZSBi
-eSBydGVfcGt0bWJ1Zl9wcmVmcmVlX3NlZygpLg0KPiA+ID4gPiA+ICsgKg0KPiA+ID4gPiA+ICsg
-KiBUaGlzIGZ1bmN0aW9uIHNob3VsZCBiZSB1c2VkIHdpdGggY2FyZSwgd2hlbiBvcHRpbWl6YXRp
-b24NCj4gaXMgcmVxdWlyZWQuDQo+ID4gPiA+ID4gKyAqIEZvciBzdGFuZGFyZCBuZWVkcywgcHJl
-ZmVyIHJ0ZV9wa3RtYnVmX3Jlc2V0KCkuDQo+ID4gPiA+ID4gKyAqDQo+ID4gPiA+ID4gKyAqIEBw
-YXJhbSBtcA0KPiA+ID4gPiA+ICsgKiAgIFRoZSBtZW1wb29sIHRvIHdoaWNoIHRoZSBtYnVmIGJl
-bG9uZ3MuDQo+ID4gPiA+ID4gKyAqIEBwYXJhbSBtYnVmcw0KPiA+ID4gPiA+ICsgKiAgIEFycmF5
-IG9mIHBvaW50ZXJzIHRvIHBhY2tldCBtYnVmcy4NCj4gPiA+ID4gPiArICogICBUaGUgYXJyYXkg
-bXVzdCBub3QgY29udGFpbiBOVUxMIHBvaW50ZXJzLg0KPiA+ID4gPiA+ICsgKiBAcGFyYW0gY291
-bnQNCj4gPiA+ID4gPiArICogICBBcnJheSBzaXplLg0KPiA+ID4gPiA+ICsgKi8NCj4gPiA+ID4g
-PiArc3RhdGljIGlubGluZSB2b2lkDQo+ID4gPiA+ID4gK3J0ZV9tYnVmX3Jhd19yZXNldF9idWxr
-KHN0cnVjdCBydGVfbWVtcG9vbCAqbXAsIHN0cnVjdA0KPiBydGVfbWJ1ZiAqKm1idWZzLCB1bnNp
-Z25lZCBpbnQgY291bnQpDQo+ID4gPiA+ID4gK3sNCj4gPiA+ID4gPiArCXVpbnQ2NF90IG9sX2Zs
-YWdzID0gKHJ0ZV9wa3RtYnVmX3ByaXZfZmxhZ3MobXApICYNCj4gUlRFX1BLVE1CVUZfUE9PTF9G
-X1BJTk5FRF9FWFRfQlVGKSA/DQo+ID4gPiA+ID4gKwkJCVJURV9NQlVGX0ZfRVhURVJOQUwgOiAw
-Ow0KPiA+ID4gPiA+ICsJdWludDE2X3QgZGF0YV9vZmYgPSBSVEVfTUlOX1QoUlRFX1BLVE1CVUZf
-SEVBRFJPT00sDQo+IHJ0ZV9wa3RtYnVmX2RhdGFfcm9vbV9zaXplKG1wKSwNCj4gPiA+ID4gPiAr
-CQkJdWludDE2X3QpOw0KPiA+ID4gPiA+ICsNCj4gPiA+ID4gPiArCWZvciAodW5zaWduZWQgaW50
-IGlkeCA9IDA7IGlkeCA8IGNvdW50OyBpZHgrKykgew0KPiA+ID4gPiA+ICsJCXN0cnVjdCBydGVf
-bWJ1ZiAqbSA9IG1idWZzW2lkeF07DQo+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ICsJCW0tPnBrdF9s
-ZW4gPSAwOw0KPiA+ID4gPiA+ICsJCW0tPnR4X29mZmxvYWQgPSAwOw0KPiA+ID4gPiA+ICsJCW0t
-PnZsYW5fdGNpID0gMDsNCj4gPiA+ID4gPiArCQltLT52bGFuX3RjaV9vdXRlciA9IDA7DQo+ID4g
-PiA+ID4gKwkJbS0+cG9ydCA9IFJURV9NQlVGX1BPUlRfSU5WQUxJRDsNCj4gPiA+ID4NCj4gPiA+
-ID4gSGF2ZSB5b3UgY29uc2lkZXJlZCBkb2luZyBhbGwgaW5pdGlhbGl6YXRpb24gdXNpbmcgNjQt
-Yml0IHN0b3Jlcz8NCj4gSXQncw0KPiA+ID4gPiBnZW5lcmFsbHkgY2hlYXBlciB0byBkbyBhIHNp
-bmdsZSA2NC1iaXQgc3RvcmUgdGhhbiBlLmcuIHNldCBvZg0KPiAxNi1iaXQgb25lcy4NCj4gPiA+
-ID4gVGhpcyBhbHNvIG1lYW5zIHRoYXQgd2UgY291bGQgcmVtb3ZlIHRoZSByZXN0cmljdGlvbiBv
-biBoYXZpbmcNCj4gcmVmY250IGFuZA0KPiA+ID4gPiBuYl9zZWdzIGFscmVhZHkgc2V0LiBBcyBp
-biBQTURzLCBhIHNpbmdsZSBzdG9yZSBjYW4gaW5pdA0KPiBkYXRhX29mZiwgcmVmX2NudCwNCj4g
-PiA+ID4gbmJfc2VncyBhbmQgcG9ydC4NCj4gPiA+ID4NCj4gPiA+ID4gU2ltaWxhcmx5IGZvciBw
-YWNrZXRfdHlwZSBhbmQgcGt0X2xlbiwgYW5kIGRhdGFfbGVuL3ZsYW5fdGNpIGFuZA0KPiByc3Mg
-ZmllbGRzDQo+ID4gPiA+IGV0Yy4gRm9yIG1heCBwZXJmb3JtYW5jZSwgdGhlIHdob2xlIG9mIHRo
-ZSBtYnVmIGNsZWFyZWQgaGVyZSBjYW4NCj4gYmUgZG9uZSBpbg0KPiA+ID4gPiA0MCBieXRlcywg
-b3IgNSA2NC1iaXQgc3RvcmVzLiBJZiB3ZSBkbyB0aGUgc3RvcmVzIGluIG9yZGVyLA0KPiBwb3Nz
-aWJseSB0aGUNCj4gPiA+ID4gY29tcGlsZXIgY2FuIGV2ZW4gb3Bwb3J0dW5pc3RpY2FsbHkgY29h
-bGVzY2UgbW9yZSBzdG9yZXMsIHNvIHdlDQo+IGNvdWxkIGV2ZW4NCj4gPiA+ID4gZW5kIHVwIGdl
-dHRpbmcgMTI4LWJpdCBvciBsYXJnZXIgc3RvcmVzIGRlcGVuZGluZyBvbiB0aGUgSVNBDQo+IGNv
-bXBpbGVkIGZvci4NCj4gPiA+ID4gW01heWJlIHRoZSBjb21waWxlciB3aWxsIGRvIHRoaXMgZXZl
-biBpZiB0aGV5IGFyZSBub3QgaW4gb3JkZXIsDQo+IGJ1dCBJJ2QNCj4gPiA+ID4gbGlrZSB0byBt
-YXhpbWl6ZSBteSBjaGFuY2VzIGhlcmUhIDotKV0NCj4gPiA+ID4NCj4gPiA+ID4gL0JydWNlDQo+
-ID4gPg0KPiA+ID4gQWx0aG91Z2ggaXQgaXMgcG9zc2libGUgdG8gdXNlIGxlc3MgQ1BVIGluc3Ry
-dWN0aW9ucywgdGhlDQo+IHBlcmZvcm1hbmNlDQo+ID4gPiBsaW1pdGluZyBmYWN0b3IgaXMgd2hp
-Y2ggZmllbGRzIGFyZSBpbiBjYWNoZS4NCj4gPg0KPiA+IFllcywgdGhlIGNhY2hlIHByZXNlbmNl
-IG9mIHRoZSB0YXJnZXQgb2YgdGhlIHN0b3JlcyBoYXMgYSBtYXNzaXZlDQo+IGVmZmVjdCBvbg0K
-PiA+IGhvdyB3ZWxsIHRoZSBjb2RlIHdpbGwgcGVyZm9ybS4gSG93ZXZlciwgdGhlIG51bWJlciBv
-ZiBzdG9yZXMgY2FuDQo+IG1ha2UgYQ0KPiA+IGRpZmZlcmVuY2UgdG9vIC0gZXNwZWNpYWxseSBp
-ZiB5b3UgYXJlIGluIHN0b3JlLWhlYXZ5IGNvZGUuIENvbnNpZGVyDQo+IHRoZQ0KPiA+IG51bWJl
-ciBvZiBzdG9yZSBvcGVyYXRpb25zIHdoaWNoIHdvdWxkIGJlIGdlbmVyYXRlZCBieSBzdG9yaW5n
-DQo+ID4gZmllbGQtYnktZmllbGQgdG8gYSBidXJzdCBvZiAzMiBwYWNrZXRzLiBXaXRoIHRoZSBw
-cmV2aW91cyB3b3JrIHdlDQo+IGhhdmUNCj4gPiBkb25lIG9uIG91ciBQTURzLCBhbmQgdmVjdG9y
-aXppbmcgdGhlbSwgd2UgZ290IGEgbm90aWNpYmxlIGJlbmVmaXQNCj4gZnJvbQ0KPiA+IGRvaW5n
-IGxhcmdlciB2ZWN0b3Igc3RvcmVzIGNvbXBhcmVkIHRvIHNtYWxsZXIgb25lcyENCj4gPg0KPiA+
-IC9CcnVjZQ0K
+The tags were not inserted the correct order in the bulk context
+descriptor function on the AVX512 path. Fix it so that it is consistent
+with the single packet function and the scalar path implementation.
+
+Fixes: 23ef9b485dec ("net/iavf: fix conditions for AVX-512 VLAN offload")
+Cc: stable@dpdk.org
+
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+index 9a93a0b062..4e8bf94fa0 100644
+--- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
++++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
+@@ -2125,8 +2125,8 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 		if (offload) {
+ 			if (pkt[1]->ol_flags & RTE_MBUF_F_TX_QINQ) {
+ 				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
+-					(uint64_t)pkt[1]->vlan_tci :
+-					(uint64_t)pkt[1]->vlan_tci_outer;
++					(uint64_t)pkt[1]->vlan_tci_outer :
++					(uint64_t)pkt[1]->vlan_tci;
+ 				hi_ctx_qw1 |= CI_TX_CTX_DESC_IL2TAG2 << CI_TXD_QW1_CMD_S;
+ 				low_ctx_qw1 |= qinq_tag << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
+ 			} else if (pkt[1]->ol_flags & RTE_MBUF_F_TX_VLAN &&
+@@ -2145,8 +2145,8 @@ ctx_vtx(volatile struct ci_tx_desc *txdp,
+ 		if (offload) {
+ 			if (pkt[0]->ol_flags & RTE_MBUF_F_TX_QINQ) {
+ 				uint64_t qinq_tag = vlan_flag & IAVF_TX_FLAGS_VLAN_TAG_LOC_L2TAG2 ?
+-					(uint64_t)pkt[0]->vlan_tci :
+-					(uint64_t)pkt[0]->vlan_tci_outer;
++					(uint64_t)pkt[0]->vlan_tci_outer :
++					(uint64_t)pkt[0]->vlan_tci;
+ 				hi_ctx_qw0 |= IAVF_TX_CTX_DESC_IL2TAG2 << CI_TXD_QW1_CMD_S;
+ 				low_ctx_qw0 |= qinq_tag << IAVF_TXD_CTX_QW0_L2TAG2_PARAM;
+ 			} else if (pkt[0]->ol_flags & RTE_MBUF_F_TX_VLAN &&
+-- 
+2.43.0
+
