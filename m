@@ -2,66 +2,63 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30955FCA16D
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 17:57:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D28D0FCA16A
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 18:08:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1C2A7402BE;
-	Mon,  9 Mar 2026 18:57:23 +0100 (CET)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com
- [209.85.222.176])
- by mails.dpdk.org (Postfix) with ESMTP id 22A9D40261
- for <dev@dpdk.org>; Mon,  9 Mar 2026 18:57:22 +0100 (CET)
-Received: by mail-qk1-f176.google.com with SMTP id
- af79cd13be357-8cbb6d5f780so1205802185a.1
- for <dev@dpdk.org>; Mon, 09 Mar 2026 10:57:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 16A65402BE;
+	Mon,  9 Mar 2026 19:08:08 +0100 (CET)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
+ [209.85.160.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 835D340261
+ for <dev@dpdk.org>; Mon,  9 Mar 2026 19:08:06 +0100 (CET)
+Received: by mail-qt1-f180.google.com with SMTP id
+ d75a77b69052e-509061dab77so23705351cf.2
+ for <dev@dpdk.org>; Mon, 09 Mar 2026 11:08:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1773079041; x=1773683841; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1773079686; x=1773684486; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=l3H+BHbtYRMAoxONqOSgtufMHfnVvKQxlWXqlzt4ccM=;
- b=OhfHyBJ++gVdi6ctucRQ7Ubg8MTGkeFCt+gT2PusR7uUWi8ULl91kBYHNbK1Z5kC12
- ZqbCtHls+GVQP33zUNGE1tZ3rKXqVMLmcIJQQ3SHM+pil88+Uxo9VU/q+FUUdUZ4L/xd
- ci9ZASgkHzoaUA/IbK5Tth7HgNsfS8ZcuYTus=
+ bh=qJPEvsrAKpH31V0n7s/sCZM043Z1BuBvpjhx0SIgRiA=;
+ b=UzXvrrLgIzmhEqeCh1dmMe5HZziOatCCVyBDXrP7rqFnQr8edVqkfsC4kQNdwNPkyB
+ LItcoBy67RlLmciQ3l7bOtgdfJqJSXTsUArZJegCm5JSb5sD6DOayV8tirkX5FzQ0sGr
+ 0iAxn7AxfeZwV1GCB0pdsP2FCH9d3/AF9u7fA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773079041; x=1773683841;
+ d=1e100.net; s=20230601; t=1773079686; x=1773684486;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=l3H+BHbtYRMAoxONqOSgtufMHfnVvKQxlWXqlzt4ccM=;
- b=QyAuqgr4YuF+B+gIkOHsF6BE5QIFaMXmYfhJu7YJxqOPiwGGaQzRunQNIBt1UaxytN
- qajV9L4mStkYjp+VL1QYHvPTLVw9fygTywX0XJdKSpFHBGgTfMOAnO+1G/0Kl2RgWv3o
- BmEDNbHrT9U96D8V25W+0t2AYN0NgmbH+9VQNl0t0DlQel/JZtU0L7JOCkxqKoo1gJwB
- yV87+zgSA5GFwQ1dnYM3zO39JCgZLat8N/OuExpfmXsH3kbd2etIOUn1zs5AinAkdSzw
- I36x+kH+xTBWUOUaCK+BwfHFnTSwjk4abTiL34KVQF6sDHyNwBdfc9PklvXwtf2D/3DH
- CcsA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCU44ua1GYsCDgVys2ZSJJsECUhcN5LPFWzCXlnG8DdwX89OpSKoRws1B7SXibSTLaDpuAg=@dpdk.org
-X-Gm-Message-State: AOJu0YzloOlRyozBdRy1nabu5Fk5kekiixphM4YTby+NU+4CF9JeJsjs
- v0hWB6nXC5MUDeOK+lLB9D9H/WdsBTJ2VUDvtp8xO/hY4Vjya8AybSsgDk/l/WHuRfU=
-X-Gm-Gg: ATEYQzwZPvrtQJs6qSQ76ahz5LwtVTMxEpWW8/2RqC8UOpa6qGxFR4Ov8z1sgMuEUs4
- avBIquWjmnZh2Bfj8GurKkw6SQa4YYaVfIK8wn1kBxkG91KapqoGw9fdYa2+vPxPHlNo5NID9Q2
- 5IZZdjlJdMW9gf4nsdFYvRiWOM1KScPdFZqtp7Csuvg9U9Sbruxu1TjBysZjWOdPLYHJz6DNrTO
- z07y7Mdz/9KzVi9w4Vr6IDgeehYCBkI/ER5ATC4Fa56jD1wKi+KdDlj5321W4iY72tjiF7GqhIZ
- GUuAyxTnhVIhut02I9YQOyWHUzUf0geq6K4qbxC7n7x3bf24MQhtrXS4Sfnqu/dY3mEgXmxRc9p
- QD+b/QYv6ph0o32jZrfGW9XxpatMIACFrSyqHiDEfJq4XmQq40zkMrwlhrauewf4eU8NumcWyYv
- cuYpiUltHZbfYcvzyoN7jf8uDwuVNKlwEPSBUWhIAk0sh9xVtZZsbQ9tqYlM73b0xX2drkqD6Y8
- cM=
-X-Received: by 2002:a05:620a:444e:b0:8cd:8fb7:7aed with SMTP id
- af79cd13be357-8cd8fb77ed8mr288174585a.49.1773079041298; 
- Mon, 09 Mar 2026 10:57:21 -0700 (PDT)
+ bh=qJPEvsrAKpH31V0n7s/sCZM043Z1BuBvpjhx0SIgRiA=;
+ b=kOt23PwqkiVWSRpOj1ad5Ltr8VfI2S1ReVkYtemknRofUrdhLAn46Mu+tEqQC3qFxa
+ lyTjBUqc4sjHitZAWrAgvjfFVN05LxS8Zi98UCI7NBuUFEG09ZVbxvQUlstiSxTDfOTh
+ lj9i99fzRTCuC7dXvwi58CTAc60KXFubo0s2bEV5nNiHwmfcstte11IAW2rwSI6d781b
+ lqZK6Ri3/ejkREhP3F5yul7laLozBz8FXEjqax91VWtxiXHb3xo0bzZpLqL4tEfXg5hR
+ 14lWlK+Vh5CSnOgEiKjXyJyCkNWX3Wf9WIijNqn0HmDEOT+/t+8NZLAUa75o7dH3OqjG
+ 8ihA==
+X-Gm-Message-State: AOJu0Yxy1X/z0zhFbqVbCJ+gLc4Bp8H0fsnlRLtCucGmo/604J2Dnnmx
+ FRRwOK0AR8Ut8HejQOYg1ajIlziB6/ZFsVj+lObwB60JlmWEDr6B34Ch4QYbBgPt6Y4=
+X-Gm-Gg: ATEYQzyDwoNSSONk2Gr839IBR/2RWzfdwiSTPx18zRbKnFbizqxysLkMo/4vGeKH6aa
+ qEiAX2Ot2c4nlGPx5YycsutLCg6vMU+pYWmDfkye6fdhwGLwjaUcd0m5opd0y+VqsB3bDesL3DI
+ rQ812hLgdjS6wOcwUwnu6XqXm8hNQRR4NOgl36tnvM4bBsU/ljHjY6COF/+JasudTuvE52iOP64
+ PWOjzrnq7mTBSJVebsNp9tG1ktqUvuWQkr3rqR+3JpGnODKu+kPTsOhj1EKPxgJg1X/+MfHO2ZR
+ ++ufUn2Y/LLl1C5+ZxZKei4BiAcYwLuJ81L82tkUDtYJLDyaVov6d2ZpoaD+fmQpndZc1JsCWcx
+ 29fgxJXvG98eUwto9p7JDcBWAXnaKZG721z9+xntDiEqGbxtYaD0y/N+cvgLVZvwhxe5bo8V9X+
+ /gDLzcUdjEIQhKDqeJq5K4gcmAHeFoTD/DCx5b2zD50jMTlRn3UWqMJsb9n3swXZ3I
+X-Received: by 2002:ac8:59cb:0:b0:4f4:e6b7:df20 with SMTP id
+ d75a77b69052e-508f49096bdmr149671141cf.32.1773079685648; 
+ Mon, 09 Mar 2026 11:08:05 -0700 (PDT)
 Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cd6f57291esm795230985a.50.2026.03.09.10.57.20
+ d75a77b69052e-508f651440dsm69074881cf.5.2026.03.09.11.08.04
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Mar 2026 10:57:20 -0700 (PDT)
+ Mon, 09 Mar 2026 11:08:05 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: probb@iol.unh.edu
-Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v4] dts: port speed capabilities test suite to next DTS
-Date: Mon,  9 Mar 2026 13:57:18 -0400
-Message-ID: <20260309175718.188998-1-abailey@iol.unh.edu>
+Cc: dev@dpdk.org,
+	Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v5] dts: port speed capabilities test suite to next DTS
+Date: Mon,  9 Mar 2026 14:08:02 -0400
+Message-ID: <20260309180802.189956-1-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20260225182616.71972-1-abailey@iol.unh.edu>
 References: <20260225182616.71972-1-abailey@iol.unh.edu>
@@ -109,7 +106,7 @@ index 0000000000..de6dc42757
 +   :members:
 +   :show-inheritance:
 diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
-index 209d7dd393..82f0c312c4 100644
+index 209d7dd393..a41e65f2b4 100644
 --- a/dts/configurations/tests_config.example.yaml
 +++ b/dts/configurations/tests_config.example.yaml
 @@ -29,4 +29,8 @@ hello_world:
@@ -121,7 +118,7 @@ index 209d7dd393..82f0c312c4 100644
 +#        Gbps: 20.0
 +# port_speed_capabilities:
 +#   test_parameters:
-+#     0 : 100 Gbps # Assign an expected link speed to a port ID in Gbps 
++#     0 : 100 Gbps # Assign an expected link speed to a port ID in Gbps
 +#     1 : 100 Gbps
 \ No newline at end of file
 diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
