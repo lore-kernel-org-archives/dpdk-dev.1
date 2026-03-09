@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02B3FCA17F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 20:16:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14004FCA187
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 20:29:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C532A402BE;
-	Mon,  9 Mar 2026 21:16:18 +0100 (CET)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com
- [209.85.210.53]) by mails.dpdk.org (Postfix) with ESMTP id 1C270402BE
- for <dev@dpdk.org>; Mon,  9 Mar 2026 21:16:17 +0100 (CET)
-Received: by mail-ot1-f53.google.com with SMTP id
- 46e09a7af769-7d73dd9cb9bso1212924a34.1
- for <dev@dpdk.org>; Mon, 09 Mar 2026 13:16:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0B57D402BE;
+	Mon,  9 Mar 2026 21:29:33 +0100 (CET)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com
+ [209.85.222.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 11E0440261
+ for <dev@dpdk.org>; Mon,  9 Mar 2026 21:29:32 +0100 (CET)
+Received: by mail-qk1-f178.google.com with SMTP id
+ af79cd13be357-8cd80f56b27so194586385a.1
+ for <dev@dpdk.org>; Mon, 09 Mar 2026 13:29:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773087377;
- x=1773692177; darn=dpdk.org; 
+ d=iol.unh.edu; s=unh-iol; t=1773088171; x=1773692971; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=z+8IdmL+wAS9bPC1Dk7zMDMdwJuEJWYSP+P5EWlQqRE=;
- b=G+3wgQe8vftorECyJgvWGHpfw4Jba8CYMFgwIERheAEI3yNGeWlTiacL8QBakTH4Ht
- x/fvaTLJyTG7W4shBKL3jNBdwZ0/EimIVrxOkcYv13Ez5yYAkH1PgrcJFe6Zl2/KuakR
- sfLlTdTAfU5y3nfDns4onx3oO7lvgHnsTIWNA73zKpI82ZwneTkZeHQQoZqYjI8bB25f
- tlCteLaSLuZm8GMmU7thghASrzadX1L43yL1pCs+rxiygc9bRSvQtZfeWRTXghOvK53h
- YA4WH3wR5Ev8nvKnkEnu9IgYVHJ3aadK8gg9OeWapZUL+os1MjGmD7LXOCWDC/6jvSfD
- TKew==
+ bh=D4hMGOmzhtMkcmdkTdo6xeEqdUKzab0/z4hTOSgIRiY=;
+ b=XzKXwui9ByqZLk1fIzYPVcXAzJMUVfaSH5U1wtK1q5/hhlqphV0/Uc7ccNHvsWom1v
+ 8Rg9KX+4voWft8nLmg4XeUAXya2jd0wgAeizK8umB/OVyvVoY0VZwVsN6FG1FJu84kM9
+ BowVDdZT+LBl8ZEmSCP9OmFvTGzaXe7uIEDkY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773087377; x=1773692177;
+ d=1e100.net; s=20230601; t=1773088171; x=1773692971;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=z+8IdmL+wAS9bPC1Dk7zMDMdwJuEJWYSP+P5EWlQqRE=;
- b=fudGbzhPlxtKliYXIKjGWlNUM8QCwP64DB/z4BRRCbFFeY3lLhKWX9nqnl6Gq45pRl
- UiX3REDNE8syLUz8CO+Fc8PXJfZaNlFnAeeiiIBWEU+YFj0XCICHJDpXJbkYWZWB+dRN
- eNwUTA0iNamB+zyPNE8KA9oG6RhGhM1laFZKj5vf9R/RfJl0SOwQtZzWKg5ZPOeNKgCA
- JdtH+f9gLkaikaaXyoVKQ2/ubO70M3VDv1nBO7nL6aBZ/5S3kVu1HKLgDwQdB0T/bXfp
- U8eFz/Vs5peuDtmeVACvXd6vAl8plnMlSdyACqLkQxEbKqcBz/I9ZzGJMUEaRrj0jys0
- 1yMQ==
-X-Gm-Message-State: AOJu0Yxfhs8ku6CPdjLvxllCLDTgLMbeVD6fJ6VtKHQwfAq0Nami00pW
- fJFSoC263x5nBHvjw9eActN2zEwx9jeFZXewjeVQb3rbp7o5Lb/MLiA91f2MjRvgMUw=
-X-Gm-Gg: ATEYQzzQZH1GAdydGty05rHqs93m8Mx509YtDs7/Mgm62BU0sF/y65WDY1W9pT//ccp
- df/xkzzYLvOdAWKqshYgoT+FrFxWuG66xLMcVM1wZmBWi6bKA+nmKaaVA4hNGwa1Ocjab3IUcvT
- QbiGkvbmqiWSeBv3zyGk1unbemf/5ZDZtjNwdVy/r9hxUNyHxeOsHSnNngVsl1abWW1BseJT1HU
- KiMe4v6g12ONUDUw1QHSwuOYoAmmePKbAvG4aEdgD38uJQQzcgCyp++mOJY005M73B2ZOinkmLj
- uPv5yhsN0ZkE+lIRbCeCiBteKmX8eSaxlQrJKdT52KGHoXW0rKmeVcfn6QQbH3NMxBDXckWZTMK
- R8O2zqKh6yLDTHFVF5bWQvKTVjReADxmTHJz2Bm1avOTv8pGvDYicHwlc5v3wzxPf+mED7tdAs1
- P3xy1zDxeHcWmuyx9K5vLVzZc6FUWYXip3rGymkWxbuq2v7A==
-X-Received: by 2002:a05:6830:442a:b0:7d7:55c2:d768 with SMTP id
- 46e09a7af769-7d755c2db84mr1497515a34.18.1773087377158; 
- Mon, 09 Mar 2026 13:16:17 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
+ bh=D4hMGOmzhtMkcmdkTdo6xeEqdUKzab0/z4hTOSgIRiY=;
+ b=WobyQ6/i2tnDp+8mW8MF7qgpnhzIPkyuAGKVlAjlwT2rL4haqfKhNlc30o5UcPhpby
+ 9vFpNYc+NJFLxQICpttJJJFo87aBbDxtR3pWVinR6nrZGDmXwo80pshKOTIDHzIsbwH/
+ HVME5y9wgg1zkAhga9YhSgIdG0vG5Kq9YREpapNPLTw4vivEoQ3Xz/otgbaedXUaNt8r
+ vUyD9mMAeKZit9vKYTsEfGGfBOFiJ6Zn0FA7XWVQKrJLXwXmcYXUjG3mJTLSPoUD23+z
+ ixXiOXww5hNSAy8kgjmowdVKsa86+FPsAEKQG/mZqubNTiI87hvztHUWTpbaQXMAkKpJ
+ Gm5A==
+X-Gm-Message-State: AOJu0YxzsBMhOWxb3UGbHkhaXUJs54n4W+IVxCR7rqlmgLrSy3UJOwQ3
+ Kdh6bk8MMwjmIY3qr6ryCQwxBpgnibV2ePFyrS9FPmZrViKeX30MeHfXBOOc58J0nZQ=
+X-Gm-Gg: ATEYQzw4TrREWTgSCaiBCsVbHgI57vubYjz0OEPvynlH5jUyHpm3xJ76M4gq0g2Njh2
+ 5i/1sXPelX5B8nQFthQH/4I8WbJgTrYaC+vrMN8tJI3rMleDeUsf2fX1VXLzUhdB0I8O7B9MY9y
+ eJKYLSA2z7Pl/igXfh7bJgxPqC2lML3kWprNto6dJ20mO1+6B8bwdv91JqHLU7wIegI3MM5q+FJ
+ zfxA+Ng0vYdxbzwZl9pWalIJ5t2K38dQLTIQ74iVFRelx6fqkvICvW+6DBD1/Du8/UXimkSJQrx
+ tMeAZd3G7N+ES1gcBxGc4zIQB+CsUCaajaCaqD3wEHjHGM/IVu+nI0JAfIMMj2ObvMrizL7jtgg
+ b9AjWOXBotLP0OYgKfezlJFmYT40rnp94Ag/4MtwfXM44s7vz6B9eEUUt8MHqLpY3yFjCdP1jiz
+ AeDHb2mMV7Wy6aeq70HtL7GENsc6VP02OooVcU/PNCnpYCmgvMVXgKVnm9E73YE0qE
+X-Received: by 2002:a05:620a:4588:b0:8c9:ea1c:f21e with SMTP id
+ af79cd13be357-8cd6d40b0a0mr1527029885a.10.1773088171272; 
+ Mon, 09 Mar 2026 13:29:31 -0700 (PDT)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d75039b811sm1737323a34.16.2026.03.09.13.16.16
+ af79cd13be357-8cd7e15ce57sm457408085a.3.2026.03.09.13.29.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Mar 2026 13:16:17 -0700 (PDT)
-Date: Mon, 9 Mar 2026 13:16:14 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
-Cc: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: Re: [PATCH v2 0/3] net/af_packet: fix MTU handling and add jumbo
- frame support
-Message-ID: <20260309131614.18300719@phoenix.local>
-In-Reply-To: <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
-References: <20260306092013.2205076-1-xavier.guillaume@ovhcloud.com>
- <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
+ Mon, 09 Mar 2026 13:29:30 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: probb@iol.unh.edu
+Cc: dev@dpdk.org,
+	dmarx@iol.unh.edu,
+	Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v6] dts: port speed capabilities test suite to next DTS
+Date: Mon,  9 Mar 2026 16:29:28 -0400
+Message-ID: <20260309202928.200755-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260225182616.71972-1-abailey@iol.unh.edu>
+References: <20260225182616.71972-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,31 +78,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 9 Mar 2026 17:10:18 +0100
-Xavier Guillaume <xavier.guillaume@ovhcloud.com> wrote:
+This commit ports the speed capabilities test suite from old DTS to next
+DTS.
 
-> This series fixes two bugs in the af_packet PMD related to frame
-> size calculations and buffer safety, then enables jumbo frame
-> support by deriving the advertised capabilities from the actual
-> TPACKET ring configuration.
-> 
-> Patch 1 fixes the data size calculation in eth_dev_mtu_set() which
-> is too restrictive due to TPACKET2_HDRLEN including sizeof(struct
-> sockaddr_ll) even though the sockaddr_ll does not consume frame
-> data space. The formula is now consistent with the RX and TX paths.
-> 
-> Patch 2 adds a bounds check in the RX path to prevent a heap buffer
-> overflow when the kernel delivers a packet larger than the mbuf data
-> room (e.g. if the kernel interface MTU is raised externally).
-> 
-> Patch 3 replaces the static max_rx_pktlen (RTE_ETHER_MAX_LEN) and
-> adds max_mtu, both derived from the configured TPACKET frame size.
-> This enables jumbo frame support when the user specifies a larger
-> framesz devarg at vdev creation time.
-> 
-> v2:
->   - patch 2/3: fix Fixes tag to use 12-char SHA (checkpatch warning)
+Bugzilla ID: 1494
 
-FYI - I have another series that addresses different things in af_packet.
-It adds standalone tests and it would be good if the test there also check jumbo.
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ .../tests.TestSuite_speed_capabilities.rst    |  8 +++
+ dts/configurations/tests_config.example.yaml  |  6 +-
+ dts/tests/TestSuite_speed_capabilities.py     | 67 +++++++++++++++++++
+ 3 files changed, 80 insertions(+), 1 deletion(-)
+ create mode 100644 doc/api/dts/tests.TestSuite_speed_capabilities.rst
+ create mode 100644 dts/tests/TestSuite_speed_capabilities.py
+
+diff --git a/doc/api/dts/tests.TestSuite_speed_capabilities.rst b/doc/api/dts/tests.TestSuite_speed_capabilities.rst
+new file mode 100644
+index 0000000000..de6dc42757
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_speed_capabilities.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++speed_capabilities Test Suite
++=============================
++
++.. automodule:: tests.TestSuite_speed_capabilities
++   :members:
++   :show-inheritance:
+diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
+index 209d7dd393..a41e65f2b4 100644
+--- a/dts/configurations/tests_config.example.yaml
++++ b/dts/configurations/tests_config.example.yaml
+@@ -29,4 +29,8 @@ hello_world:
+ #      - buff_size: 64
+ #        Gbps: 2.0 # Set gigabits per second according to your devices throughput for this given buffer size
+ #      - buff_size: 512
+-#        Gbps: 20.0
+\ No newline at end of file
++#        Gbps: 20.0
++# port_speed_capabilities:
++#   test_parameters:
++#     0 : 100 Gbps # Assign an expected link speed to a port ID in Gbps
++#     1 : 100 Gbps
+\ No newline at end of file
+diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
+new file mode 100644
+index 0000000000..7b63a3ead1
+--- /dev/null
++++ b/dts/tests/TestSuite_speed_capabilities.py
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 University of New Hampshire
++
++"""Speed capability test suite.
++
++This test suite ensures that testpmd recognizes the expected speed from a link in Gbps.
++"""
++
++from typing import Literal
++
++from api.capabilities import (
++    LinkTopology,
++    requires_link_topology,
++)
++from api.test import verify
++from api.testpmd import TestPmd
++from framework.test_suite import BaseConfig, TestSuite, func_test
++
++
++class Config(BaseConfig):
++    """Performance test metrics."""
++
++    test_parameters: dict[
++        int,
++        Literal[
++            "1 Gbps",
++            "10 Gbps",
++            "25 Gbps",
++            "40 Gbps",
++            "100 Gbps",
++            "200 Gbps",
++            "400 Gbps",
++            "800 Gbps",
++            "1600 Gbps",
++        ],
++    ] = {
++        0: "100 Gbps",
++    }
++
++
++@requires_link_topology(LinkTopology.ONE_LINK)
++class TestSpeedCapabilities(TestSuite):
++    """Speed capabilities test suite."""
++
++    config: Config
++
++    def set_up_suite(self):
++        """Set up the test suite."""
++        self.test_parameters = self.config.test_parameters
++
++    @func_test
++    def validate_port_speed(self) -> None:
++        """Validate expected port speed is also the observed port speed.
++
++        Steps:
++            * Show port info for each available port
++
++        Verify:
++            * The resulting link speeds are equal to the configured link speeds
++        """
++        with TestPmd() as testpmd:
++            for k, v in self.test_parameters:
++                link_speed = testpmd.show_port_info(k).link_speed
++                verify(
++                    link_speed == v,
++                    f"port {k} speed {link_speed} does not match configured '{v}'",
++                )
+-- 
+2.50.1
 
