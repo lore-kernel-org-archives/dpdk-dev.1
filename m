@@ -2,48 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49899F4180E
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 16:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF01BF41807
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 16:19:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC56E40678;
-	Mon,  9 Mar 2026 17:13:51 +0100 (CET)
-Received: from 2.mo508.mail-out.ovh.net (2.mo508.mail-out.ovh.net
- [5.135.90.177]) by mails.dpdk.org (Postfix) with ESMTP id BBC024066D
- for <dev@dpdk.org>; Mon,  9 Mar 2026 17:13:49 +0100 (CET)
-Received: from DAGFR7EX1.OVH.local (unknown [10.110.43.220])
- by mo508.mail-out.ovh.net (Postfix) with ESMTPS id 4fV2BP4grxz7tDg;
- Mon,  9 Mar 2026 16:13:49 +0000 (UTC)
-Received: from laptop1704918.desk.int.gns.ovh.net (109.190.254.56) by
- DAGFR7EX1.OVH.local (172.16.2.20) with Microsoft SMTP Server (version=TLS1_2, 
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Mon, 9 Mar
- 2026 17:13:49 +0100
-From: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
-To: <dev@dpdk.org>
-CC: <stable@dpdk.org>, Xavier Guillaume <xavier.guillaume@ovhcloud.com>
-Subject: [PATCH v2 3/3] net/af_packet: support jumbo frames
-Date: Mon, 9 Mar 2026 17:10:21 +0100
-Message-ID: <20260309161021.2790684-4-xavier.guillaume@ovhcloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
-References: <20260306092013.2205076-1-xavier.guillaume@ovhcloud.com>
- <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F1362402BE;
+	Mon,  9 Mar 2026 17:19:22 +0100 (CET)
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+ by mails.dpdk.org (Postfix) with ESMTP id CF21B40261
+ for <dev@dpdk.org>; Mon,  9 Mar 2026 17:19:21 +0100 (CET)
+Received: by mail-dl1-f41.google.com with SMTP id
+ a92af1059eb24-1271195d2a7so7574041c88.0
+ for <dev@dpdk.org>; Mon, 09 Mar 2026 09:19:21 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773073161; cv=none;
+ d=google.com; s=arc-20240605;
+ b=j/+hTE0r/2NAoPfloFmkzpXVMSyAiy2J/XR7mi1DpM5QNI+4nM3h3ImUx4vBkGtNil
+ XqKu0QofeZHgH7uQ0zCLsQFZ6mm94ruvk6X60cDPsEG8Kj6BXdl6vHOYoRGfJ/uz2C3D
+ lTLADwEaf0gxmKIF0DhRiK+kvvUmRGKQBK1k8CH6SoZ6B6IZaFvaTsKVWiuJGItOGslM
+ Y5aI2ROc1orjmF9j6PJcVlUrD5sTu9fguRwvUFEFda1io/OrX/rWXA+JESMCzwznrSsU
+ CpPtIF33PT4CLABTIl+eQO3vdNH5Oqy3NVy1h6F+bMGqn19JUTH/NJ7eSI5ANbv1CRXB
+ tKRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=vw/tFDHH6tkHYG1KT4Yz8h3xeGDEdLvwRhR6BDP7lCo=;
+ fh=tdFIS2wXfwPa7g55pm/jbYnj3BHrVEI4ImHIcekhxAc=;
+ b=Q3kAWL2k4R1Zbuc4Ihvc0DFpj0x18TzAAUV/8VSHlf6E7BoR1tgGZxdz7btc73BMEA
+ 87pR+tnSJlHBlHeJJ6+2RNJOGAhRrmjWcU+KqwPk+al7Wq5ETExv9Jii90kELHyNX3jU
+ ahRsUsQjBo3VPwKzr2vgYxMp1G88ej59Si0Ie5KaB1HxraXGINBb+FLt4otUmvduFEbK
+ R3WeZma/WJyErIY5Hsfn+RQeYGIT9+rSU4IbaFQRzG7EKIvvrW/0qUnHI615HmJCp9+b
+ qn12kkkLpdFY6KYNXuTAmOddok20rkFcblVynYB6VMKFf+s0WaUgZE/Tgk+yVCYhmzLP
+ gFfg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1773073161; x=1773677961; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=vw/tFDHH6tkHYG1KT4Yz8h3xeGDEdLvwRhR6BDP7lCo=;
+ b=g1qHi3k/xc6f+wkYCBAqbEXVhwfTDyOT393HFSxdSDn32VHf3RVpE2gy+9T4jDGqFf
+ /er+2sTmc6KKNQE7dndzFBF3uUpzCO+ERU+YgAK7R7nuFCFRue/a1mfVLF9I7SkZ/Eur
+ L2Ue3y/1xi7ZC+0JbJbZveV8+mM5Bes0BxsVU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773073161; x=1773677961;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=vw/tFDHH6tkHYG1KT4Yz8h3xeGDEdLvwRhR6BDP7lCo=;
+ b=KcgNXQWgjBGj//L1a34454srLooIPyfm7bCE7dtYtBxmyir2qS22Yk4fchPHTJNv4h
+ K6cjx8NFArCtlYeLxeS0iZhodzlxDwGfnjAQ9iApfs60pcVj9sJN18OuT7WF9Dj+4bIV
+ as0+c1tk/pVQ6SdHVaNxUpyiViWKvpa0W5avyhr1VDl9s5qSay9IJq1L1SeVtBuk6wk8
+ v8TCQRBIDhkpybIIq3Q0QxXGOA41MUv4ouI/s6CJsUw7C3xkrfgVErn02qHjtKmhrupR
+ SROvdT1H6gkTabfzVwHsRE8DW8TqBEYrPbmN4aVmxwQF6Zqn96i+3Q3qIi3NJa7w+PDr
+ SKVw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXkipi7dudUt16YAReKihoaVOfL3XY5hfAdxgFSJeq6YAb0rdk/ZW6J4uhDFL7+2s4DF/w=@dpdk.org
+X-Gm-Message-State: AOJu0YzqX2H2ZJBXFaLUrU1+DtVqdHVzS2C71/CoTvBtZxZ5iTGLKe3q
+ FarxaSDdAKYRMKIHEBNcJqIpJ9NVesCKPTD9XDUWBTdgCbT1JKyOBYNL8v8otcKfRKqi8e51lyr
+ 29BT5jkCXB/aOsP5ZrgPFHTdVTw+N9ujJBf2Tybz4PQ==
+X-Gm-Gg: ATEYQzx86OOSImHuZ8yvnm8FYirdt8f/y0we6cK05IabuFu4zkb70nAQwokT0qZXEZZ
+ KxdyxX6H5gaKoSxBytIBjBcJbYs7Rix9HnsrAQUBx0jARn1Yo2OnGGh3sroOr+NGBVPZid7zXDT
+ f00500qww2qfVj2q5D84YU7sDMK2FAPTOI8z32KvRW2i9iYAbLllDlXfeLG4iqTOi77oG/9FDu8
+ GOrpHgYIPfjv2MVeh92HT0iihrhCPJBdxKkgG1npnq7xWf2uu6brk0EdTwAeoUl7cfuHvQfS2qq
+ NdWuw/iZ3aDNVG5F/38CWlKYQA+YYCqMExggyrBjH3WQv0goEUILjcU=
+X-Received: by 2002:a05:7022:211:b0:11b:9386:a3be with SMTP id
+ a92af1059eb24-128c2ebd33bmr5127912c88.41.1773073160618; Mon, 09 Mar 2026
+ 09:19:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [109.190.254.56]
-X-ClientProxiedBy: CAS1.OVH.local (172.16.1.1) To DAGFR7EX1.OVH.local
- (172.16.2.20)
-X-OVH-CORPLIMIT-SKIP: true
-x-ovh-tracer-id: 17419078935494799729
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: dmFkZTGytR4gYtPt7e0e4kfqLZmo0v9gtknYBMZjqwx2qwke15EDYC11TeVqSDWlD0Akj9LuFZYQJ/AT0EOt01NOdo17IAOJ/KG7R+JK3Zo/OVA7vCNg+o/7rNuz+3Kcz6XpvkYOMiuzhp4QKcXyxdUhYPx/0eLRqpVR6Iuejg1BwwQeGpu8H3A9Y/77W02dZIh/wRFdphLpfs6WquRLhVsnKJ+aXT9dIQY6NWQnjGqN9bkBjNJdQI6zWVHsfjY1YWH9iDPEI+LnyVLYJ18TH5t7zOSaIwhlB8OCGKPItfqaxzR2dyL5qrBAuZZBbTK2R0cFA9gZaDXVX83IPA5Z6s55iVSGRLYssvyVFRvPK4oiSEVOtfiiHxVMUvlIN/66JCXN3CXCwItijkjbJxTVu1+kwvmtC+sweBuVpl/OHGAIZ9MN7NoXVM6IITW/vB1ENv4hZfuBEKVO27Hchv2TVDJ11Yz7m6os89hgVfRqWFP4SZ3hQMrRKcxq1Bpr26lwqDS21aYQoPn3EpNUgWYKM5ndK0NGcL7p/lsjNarN241DDjS3nMqncwuUX87RY4kkk/oejgAOEDgX2Jo1Krie/0DgqMmx3m7u/+di6RkOE93t0UlHzOPcMBnKDGbJIRnMceL71LZVgMWYEZ6R56ozBu+CcZOHRXR55D81ZtdgPJyUuXpgVw
-DKIM-Signature: a=rsa-sha256; bh=C0b7Ex/CONdxoUTtQXpGd5czZ2zhWNZq0kA0XnNBd9o=; 
- c=relaxed/relaxed; d=ovhcloud.com; h=From; s=mailout;
- t=1773072829; v=1; 
- b=RGjVft+YlMJGbHsbi8ySae7JgwgPNe47Cz6MzjPdvDz+xIflBn1hi7mtaOwajhBLkZg7HSnc
- /r69RxRGrT7njnvwANS/sw7CpUygBpaYcIBnlu2Isnf2i/9IVUoGXzKGihA7HG/WDIAiOXq0cEp
- 9P4OrrbG/WnF+sDwtS3ZCaOs=
+References: <20260220192510.37163-1-abailey@iol.unh.edu>
+ <20260224163200.39360-1-abailey@iol.unh.edu>
+In-Reply-To: <20260224163200.39360-1-abailey@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Mon, 9 Mar 2026 12:16:19 -0400
+X-Gm-Features: AaiRm53bw05-NOhaRtHBml8kCdsSDsGV7xTyjThiEFpMM5ZzkLIyjDAbaRqC-7M
+Message-ID: <CAJvnSUCXZhntBmPJYpXobBpCwkBmRWhMPZhH9Sm0W9GiQD_ZVQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dts: add support for no link topology
+To: Andrew Bailey <abailey@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,41 +90,6 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: xavier.guillaume@ovhcloud.com
 Errors-To: dev-bounces@dpdk.org
 
-Derive max_rx_pktlen and max_mtu from the actual TPACKET ring
-frame size rather than the static RTE_ETHER_MAX_LEN (1518).
-This allows jumbo frame support when the user specifies a
-larger framesz devarg at vdev creation time, for example:
-
-  --vdev=net_af_packet0,iface=eth0,framesz=9216
-
-The advertised capabilities now accurately reflect what the
-configured ring can handle, avoiding both false limitations
-with large frames and false promises with small ones.
-
-Signed-off-by: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
----
- drivers/net/af_packet/rte_eth_af_packet.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index b04987aaf7..bfd2693a69 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -402,7 +402,10 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 
- 	dev_info->if_index = internals->if_index;
- 	dev_info->max_mac_addrs = 1;
--	dev_info->max_rx_pktlen = RTE_ETHER_MAX_LEN;
-+	dev_info->max_rx_pktlen = internals->req.tp_frame_size -
-+		TPACKET2_HDRLEN + sizeof(struct sockaddr_ll);
-+	dev_info->max_mtu = dev_info->max_rx_pktlen -
-+		RTE_ETHER_HDR_LEN - RTE_ETHER_CRC_LEN;
- 	dev_info->max_rx_queues = (uint16_t)internals->nb_queues;
- 	dev_info->max_tx_queues = (uint16_t)internals->nb_queues;
- 	dev_info->min_rx_bufsize = 0;
--- 
-2.34.1
-
+Recheck-request: iol-unit-arm64-testing
