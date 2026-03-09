@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C82DFCA188
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 20:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563DBFCA187
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 21:02:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0163340269;
-	Mon,  9 Mar 2026 21:49:19 +0100 (CET)
-Received: from DU2PR03CU002.outbound.protection.outlook.com
- (mail-northeuropeazon11011039.outbound.protection.outlook.com [52.101.65.39])
- by mails.dpdk.org (Postfix) with ESMTP id 167E440261
- for <dev@dpdk.org>; Mon,  9 Mar 2026 21:49:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 76F4D40269;
+	Mon,  9 Mar 2026 22:02:46 +0100 (CET)
+Received: from OSPPR02CU001.outbound.protection.outlook.com
+ (mail-norwayeastazon11013035.outbound.protection.outlook.com [40.107.159.35])
+ by mails.dpdk.org (Postfix) with ESMTP id 4AD2740261
+ for <dev@dpdk.org>; Mon,  9 Mar 2026 22:02:44 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VlBOc4Tj+ws+O/2K9DK1KDSLbqx4jGplcxggmTBteJrsw373hG1cqO4jZboDCzRGl9PiDPxDJXcShYxtBSmVpOn+c/aTrj6bJfhiAsRGhUvG78KtY59hCoI4VTiHceNPtvb+tffM2OsDRCDyr8lDYcF2+G6UZPlzl/C+rUKdZ1KuCftrwkY9FQ1B8fAZClEF+MXUGNc9CBPwy2F6jdKiYbn7Jc86U7l6Rkb5lm3j/2B+RZZgFBFLRi3TDG8oGKLI7e+TDEJEGewZmatMblKGH1nWPKAkFEFAJavodqsVwjrDNwyk74dsH8kLTV9bvEyFd32eL9RtmgLD2kQ65XD32Q==
+ b=j7uesOHxzktzt3ZdpIYSpl9EjKYY3ZlM8yuMPh43u+ndz9RTlwsFUv77CrR0v1flYl3uO2sCI1yGWdpZuHJX+s7p2saIivv0M0C+XNist1hg4bVhwM1ypDIPTE/ECVxPaAYkmUNQymzr68YctFP0q2z0yABMXexxx4hfIRFiYyhF0SEoLNRZcS99+k45rnVlw6+iR7k0nWruZYWICcXrDRneL3sV+KjrPV3JQOq2O+mxnJ3/ESlshrA8hUdeNLoswxsnjI9aAvfxm3XRjQoynRx3njE0syHVH3W2FDWwBf3l5tScuZ8Z5N0p5cuOnhtaHJwj/GfrIGV2Qw8sPLcsEw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X9gWWDewIOFTeXg1gporgtfKZ2t9m3Uupgq/j5fAQ08=;
- b=Sf7bn/Fdba25mFZQH5c/ZBOQvoNgcVd29NR3Rxc9tyDJKY2DRbD9P888K7UvSZorl/+sI9PZW1HR0sYrBmC05h8vZREkaGKPlhvsyqRD/xIX6RJqbSaW/lmAvXb/aAvuIdMnFHUjr4RGgueu2u6CzyayVoGend9zOmK4WbnE/ZZNRslJvBWjG6UPkOA6nE6A1aW0cJ+PKSwjMFp3bHjKJcYAnIm4fy7bqWl4I8d6l2cI/9m5NmWt0hCzneDf9L7MQgpEebxddYd6G886r7qEOdx9SNgL5Cx1oJXHqMVFm059D4hoqpaBMfThSu9YmhPB+8kNjefLCr2Qb1/4FqNoEg==
+ bh=juvVUGtZytyFokge3WptvNggK9GMdSxOilgOCDIt5jM=;
+ b=lU6dkxilFU7mdQ3rtECe2clcJNyL2Y7PpKIqyZUc3R7rlFxzXrMZ6EwOjUu9+4QYMgA+pO3UVVFZnJysluvEgIDkdAmh+B6K2AyNAXO1kfBGu0X+lr5fNMWZ8UCIBQdhtzcZLpsioZbI8BEAXCxejoy51sjwk7hp7EnFuG9g4iitf2IxfZ3wJbIZ79PpEZbzhkKZ/Vw85MBYxJFUv1sF/L8ghbXowa7eNjXy9rz7y5OgdnJLUqwDnf387vqQIiY86PqOD4XkeSWkbb3y401hlrav8whdsRo2U5wrdOFbVZ7BvZNFoHR6aS2X92zoCRE+g/fDlbDapaVHI/qzoWstjg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  192.176.1.74) smtp.rcpttodomain=dpdk.org smtp.mailfrom=ericsson.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X9gWWDewIOFTeXg1gporgtfKZ2t9m3Uupgq/j5fAQ08=;
- b=SLL64INBCS3A+WkJziMJhzWDcHQII4H4DAcZNjEM2gcRwkmWOGK4e/e63W46oVCw187V9FWOqs3MnEYcWpwY5HYqlOHpmPHTAkG7TjzBYfHgigQGmKT9zSBh7qMkncXO3M57ifcVsgHe8P5HFhAXVKdKGWDIZ2fnc1JHS89Zzu9NCvqInrQERHhqaQ4I1AhhKI1NfeYlV/oF0SscWqpGrs5yCvpONKf1lhlbkG93RQRoMMfKDOk2xofxKfu5mZ/sPmyz+57Swo3eXWCF6CxeAtGVceCju/JIQoYM0sKEhIJdnFlDr2VTCNyAGh+v1VqWjVRx9V4Jq2M296PZfpZ9vg==
-Received: from DB9PR06CA0023.eurprd06.prod.outlook.com (2603:10a6:10:1db::28)
- by DB9PR07MB9128.eurprd07.prod.outlook.com (2603:10a6:10:3d4::13)
+ bh=juvVUGtZytyFokge3WptvNggK9GMdSxOilgOCDIt5jM=;
+ b=GsGiNTifDG5+sqpo5LTngLzy6cqrN1Ugb4wWeO110l3/3NqDtHdct8ynklVmuXG3iBaIL31KK9K03EfoaWNEh/Qkae3ny/oTUhreo9DuaH7UDiTgWIQL0pZo/lK/kOWI3Q9xabRxyGYXkZT4L+oomW+W2DylkYrqP1ch5TWzUcTujoYMumsvNym2QaHMUpZrigZhAqZgGPrNPmzGOKTgkuCRDO1lD0GZ/qyYtka/piZ3q3P1cDT1tPvcqvIm3n49Ii9mPEdAPUwM49DQlbmKEIfkYcbKeMpnprbgGZ93wxpqN7En+7JjcZk0cC/60WY8X2SALf4quM2fUXKqxJenSw==
+Received: from AS4P195CA0006.EURP195.PROD.OUTLOOK.COM (2603:10a6:20b:5e2::11)
+ by DU4PR07MB10298.eurprd07.prod.outlook.com (2603:10a6:10:5ee::9)
  with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.23; Mon, 9 Mar
- 2026 20:49:13 +0000
-Received: from DB1PEPF000509E6.eurprd03.prod.outlook.com
- (2603:10a6:10:1db:cafe::62) by DB9PR06CA0023.outlook.office365.com
- (2603:10a6:10:1db::28) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.23 via Frontend Transport; Mon,
- 9 Mar 2026 20:49:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9678.24; Mon, 9 Mar
+ 2026 21:02:41 +0000
+Received: from AM1PEPF000252DA.eurprd07.prod.outlook.com
+ (2603:10a6:20b:5e2:cafe::2b) by AS4P195CA0006.outlook.office365.com
+ (2603:10a6:20b:5e2::11) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9678.25 via Frontend Transport; Mon,
+ 9 Mar 2026 21:02:37 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
  smtp.mailfrom=ericsson.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=ericsson.com;
@@ -45,57 +45,58 @@ Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
  receiver=protection.outlook.com; 
  client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
 Received: from oa.msg.ericsson.com (192.176.1.74) by
- DB1PEPF000509E6.mail.protection.outlook.com (10.167.242.56) with Microsoft
+ AM1PEPF000252DA.mail.protection.outlook.com (10.167.16.52) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9654.16 via Frontend Transport; Mon, 9 Mar 2026 20:49:13 +0000
-Received: from seliius19697.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.64) with Microsoft SMTP Server
+ 15.20.9678.18 via Frontend Transport; Mon, 9 Mar 2026 21:02:41 +0000
+Received: from seliius19819.seli.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.62) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Mon, 9 Mar 2026 21:49:12 +0100
+ 15.2.2562.29; Mon, 9 Mar 2026 22:02:41 +0100
 Received: from seliiuvd10563.seli.gic.ericsson.se
  (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
- by seliius19697.seli.gic.ericsson.se (Postfix) with ESMTP id 7D8E24020B41;
- Mon,  9 Mar 2026 21:49:12 +0100 (CET)
+ by seliius19819.seli.gic.ericsson.se (Postfix) with ESMTP id C71D04020AB6;
+ Mon,  9 Mar 2026 22:02:40 +0100 (CET)
 Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
- id 6579B616EA2C; Mon,  9 Mar 2026 21:49:12 +0100 (CET)
+ id ADE8C62B1399; Mon,  9 Mar 2026 22:02:40 +0100 (CET)
 From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 To: <dev@dpdk.org>
 CC: <xavier.guillaume@ovhcloud.com>, <stephen@networkplumber.org>, "Sriram
  Yagnaraman" <sriram.yagnaraman@ericsson.com>
-Subject: [PATCH] net/af_packet: add multi-segment mbuf support for jumbo frames
-Date: Mon, 9 Mar 2026 21:49:10 +0100
-Message-ID: <20260309204910.1657193-1-sriram.yagnaraman@ericsson.com>
+Subject: [PATCH v2] net/af_packet: add multi-segment mbuf support for jumbo
+ frames
+Date: Mon, 9 Mar 2026 22:02:10 +0100
+Message-ID: <20260309210210.1665888-1-sriram.yagnaraman@ericsson.com>
 X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
-References: <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
+In-Reply-To: <20260309204910.1657193-1-sriram.yagnaraman@ericsson.com>
+References: <20260309204910.1657193-1-sriram.yagnaraman@ericsson.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB1PEPF000509E6:EE_|DB9PR07MB9128:EE_
-X-MS-Office365-Filtering-Correlation-Id: 042caaa8-20ce-4f96-5139-08de7e1d524f
+X-MS-TrafficTypeDiagnostic: AM1PEPF000252DA:EE_|DU4PR07MB10298:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec69cd50-8dd3-4ff2-d23e-08de7e1f341f
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|82310400026|36860700016|1800799024; 
-X-Microsoft-Antispam-Message-Info: 40+gr3fYk+pPlwwX18b877EgkTjGCSYuKyZtjQMwB0nKNAxTbRraY74l1PJTdc9PnLPnTdeWzORmtN2S7UC+Pg30uJFLNPNVT+0hoTGGXI8YAf/98s4gECqkUNlG1pCYsI+c++6W90ZIqSSRL5Ffm5hlJ6GovCAv48vN8VYqgpzb0gCa4DFY3J6hvNe4byWHo1pZ0N0R33MQpQ8BFG3QOAZX2wE2ndNatW/LFW0k+2Hai5Vq17WUOkjLyZVjg/el+itlxBOVka6Zjk7Wza/41JYSyKFtAc+ina6TjhQvosQQbWVNdSZfYz7MRBIgZOHS/XiwooFABrxGFZisGVF6Sg1yKy4lrEOW+8XdxmF+8mPABism3L7Kv2PpVHN12pvuOeRFwBsl5ItGZR4+hgeDNKmShquMffSgrmOQItSDSfDz1ZGegT15BuoV4PRpLh25M4LDqYQzryMigPtNL6P4EOjXxFHe4qfFJHHiPJpknKHJI07F5ga6pawUcQyUyF+a1MCdEyspDWB/xR2sW1JadLWaQs4QD+3g17wXGmQB6dcVzj8Gm/6ar0QBTwnusB7FM3i/OHsnLWhEIF3IbuwLIda5+Fwai6KxdAmhw38XSy1I3bfUmDKaNUKD9TMqN9/c4Chpcj2oX7J7NITdje8+Ze/R1IPRePQxUn1BH/xtFP+x6vcNKjAA0GJUssXi6kTLtlVkVBfhTxJi5bGufltVy5Px8yMx0qMAUoLM9609sn/RIaR+LWmZRYlLc1E1MQRG+kib9tKxOEtPwhcX/650Og==
+ ARA:13230040|1800799024|376014|82310400026|36860700016; 
+X-Microsoft-Antispam-Message-Info: 7+vB5I9B4uXizcf7yN7hJu1hCVaaBxMqumUaQMkdTKfSILuwsCOzOcYUVCV0Xp3CWcrsgC/j93wA0yksp/gqizUKEspH2SYmTy/2FBkSE9OCfMka5tVgoEw0RQTr0FHr3kpV/XfEWhuFYTfRFJjiZldtkbF3/7EENG8TVXzY50SkfZfnhBEqi+vvywl+sOkW4ArmbACuXppWWvfEOoa+e1VyyxFwwruvP/9xg625l0H49bkTUYUKWlUv/HaqARQ5nReYUB3mer89OIiTk4bVC3JAOj3saNx0lV7P5jOWwSfp+6lglgsZEmeDduXT0kmteW2aONKPEErpUsXK+eIVqrljvN4NaC+xga+K6iBYNjVjhwte/hpH+ONapZn9pZR3uX+8QgXD4mrOKf1vEAKmlsvXXn1TuF7Jict/s474XHZWwV1gXjP46HpJFDdeck5fCemQKK/nbZ5QjCXCs0sc0eDmhfH0EALn1lKfzQtWwHEEPMt7W7+mkXzOMArO3P/QHXYzKck2zc240PiVm2TQ9hf1YUF+giH5xY+nVZ/gHRowkfUv/opWZIZ6r8psgXrLdKyge9+Oipk2lq19LZf5sotw2Lq9saF383PZvukms4j4Qxisnu8++oZfSIYPoM9kw2+pupLAwsRQ+zOrcXQBbM27FYVl4BO0Pzdlm/dPCLXnnTBS5nNvozxX5nMCE98OXqTWiTaChJOP8onemWSDRZDMuA6vLmybTPSgLq4L/soEbK6dla/XW/47PemtvSodhlhATjv2m6Vf4MPAL134tA==
 X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE; SFS:(13230040)(376014)(82310400026)(36860700016)(1800799024);
+ CAT:NONE; SFS:(13230040)(1800799024)(376014)(82310400026)(36860700016);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: VA77Grpuzom4WeSRhkttOdf1y/RFpGrc8fUGj1+OT1B4FG7NdFg8olGnzByaKUl+xZD2X2Sq3FnuOP8zs5JBZ4VoPc801vxT4CZKyazX1bBhYZkSb+d439+oHWdJdKMjC+LX+e+/nG+LwY2JogN2jkfDDc1pMryIkAzQPOtI2I62NH9E5UVPrYnNV1T/ijP7Nipa7rlzv+WgxSLzWOXvSLl6dx/PL0lcKTA6tOeU4gkVJ0TpGG1EM+ezXKX4zYMBkAvBgYybQm9oYm8DZl6jjNSucTw6SOwJXsGUJ73hk6LC5CdfUp1S36ZudS0w6XkJSUUMiCZ4hgox6873xpEFlgtGAXB8aruMJwjYKWh34lzDsuHOM3SjJ5Xjwc0JVVD8Ljo3pe8Q1FhjHAhCdNqiiSyX25WS4DdZASy5gOp77rW0oRT8YyRSGvThJw/Z2zUR
+X-MS-Exchange-AntiSpam-MessageData-0: AkeEa2VT+W+LKci2iFafMDXw3g//pwQ+Gb+geqLBniMzuRHp6q6Y9go+5800LpwzdLrLJA3nx75vyajHtL5m0yudILKRjISJi27v8TthDTjwQIC2nfYi6XWw8wVBD5NMzTe7L68IA9XIegu3HeZCPLhWgM7b+WtaY0Fu/42aXeaUyXFkUXy1F8G5K8krT6SOYFaal0f57XHQVow5zP/dYRHiVurZm5OC7q6btJud1V+z8SHbl2nhoZFGbiLevPIGXNVkdSj03K3Ijx3Y9SbTwfTGeMLotKvq+4uYyfr8MfjBbvOBPPPQE90EqGmj9aCFYR10ZK42Fm/s522dPy3iyrUS2jhcX4bzoMDkjBrf690xzBqS34bVo0ecXQ6+wkIT4BmLSPxxP361gx+afvURuw5MT+FcccNfSEsoyluLsmM4U5/fyYThWOA/pOXmAL5M
 X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 20:49:13.2518 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 042caaa8-20ce-4f96-5139-08de7e1d524f
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Mar 2026 21:02:41.6223 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec69cd50-8dd3-4ff2-d23e-08de7e1f341f
 X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
  Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: DB1PEPF000509E6.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: AM1PEPF000252DA.eurprd07.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR07MB9128
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR07MB10298
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -116,7 +117,7 @@ The RX path now:
 - Copies first segment up to mbuf tailroom
 - Allocates and chains additional segments for remaining data
 - Properly maintains nb_segs, next pointers, and pkt_len
-- Drops packets only on mbuf allocation failure
+- Silently drops packets on mbuf allocation failure
 
 This allows receiving 9KB jumbo frames using standard 2KB mbufs,
 chaining ~5 segments per jumbo packet. No need for custom mbuf
@@ -131,11 +132,11 @@ Note: Implementation generated with AI assistance.
 
 Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
 ---
- drivers/net/af_packet/rte_eth_af_packet.c | 53 ++++++++++++++++++-----
- 1 file changed, 43 insertions(+), 10 deletions(-)
+ drivers/net/af_packet/rte_eth_af_packet.c | 55 ++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index d9fafd4..a18bc41 100644
+index d9fafd4..184d2c1 100644
 --- a/drivers/net/af_packet/rte_eth_af_packet.c
 +++ b/drivers/net/af_packet/rte_eth_af_packet.c
 @@ -121,12 +121,13 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
@@ -153,7 +154,7 @@ index d9fafd4..a18bc41 100644
  
  	if (unlikely(nb_pkts == 0))
  		return 0;
-@@ -148,10 +149,36 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+@@ -148,10 +149,45 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  		if (unlikely(mbuf == NULL))
  			break;
  
@@ -175,7 +176,11 @@ index d9fafd4..a18bc41 100644
 +			seg = rte_pktmbuf_alloc(pkt_q->mb_pool);
 +			if (unlikely(seg == NULL)) {
 +				rte_pktmbuf_free(mbuf);
-+				goto drop;
++				/* release frame and break from outer loop */
++				ppd->tp_status = TP_STATUS_KERNEL;
++				if (++framenum >= framecount)
++					framenum = 0;
++				goto next_pkt;
 +			}
 +
 +			data_len = RTE_MIN(remaining, rte_pktmbuf_tailroom(seg));
@@ -189,38 +194,36 @@ index d9fafd4..a18bc41 100644
 +			mbuf->nb_segs++;
 +		}
 +
++		/* release incoming frame and advance ring buffer */
++		ppd->tp_status = TP_STATUS_KERNEL;
++		if (++framenum >= framecount)
++			framenum = 0;
++
 +		rte_pktmbuf_pkt_len(mbuf) = pkt_len;
  
  		/* check for vlan info */
  		if (ppd->tp_status & TP_STATUS_VLAN_VALID) {
-@@ -172,16 +199,21 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+@@ -172,16 +208,14 @@ eth_af_packet_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  			mbuf->ol_flags |= timestamp_dynflag;
  		}
  
-+drop:
- 		/* release incoming frame and advance ring buffer */
- 		ppd->tp_status = TP_STATUS_KERNEL;
- 		if (++framenum >= framecount)
- 			framenum = 0;
--		mbuf->port = pkt_q->in_port;
+-		/* release incoming frame and advance ring buffer */
+-		ppd->tp_status = TP_STATUS_KERNEL;
+-		if (++framenum >= framecount)
+-			framenum = 0;
+ 		mbuf->port = pkt_q->in_port;
  
--		/* account for the receive frame */
+ 		/* account for the receive frame */
 -		bufs[i] = mbuf;
--		num_rx++;
--		num_rx_bytes += mbuf->pkt_len;
-+		if (mbuf != NULL) {
-+			mbuf->port = pkt_q->in_port;
-+			/* account for the receive frame */
-+			bufs[num_rx] = mbuf;
-+			num_rx++;
-+			num_rx_bytes += mbuf->pkt_len;
-+		} else {
-+			pkt_q->rx_dropped_pkts++;
-+		}
++		bufs[num_rx] = mbuf;
+ 		num_rx++;
+ 		num_rx_bytes += mbuf->pkt_len;
++next_pkt:
++		;
  	}
  	pkt_q->framenum = framenum;
  	pkt_q->rx_pkts += num_rx;
-@@ -411,7 +443,8 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+@@ -411,7 +445,8 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
  	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
  		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
  	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
