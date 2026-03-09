@@ -2,46 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDC6EF36F8
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 07:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 162D2EF36F8
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 07:50:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B6DF7402EF;
-	Mon,  9 Mar 2026 08:48:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1AAC2402DC;
+	Mon,  9 Mar 2026 08:50:18 +0100 (CET)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id BE4AD40281;
- Mon,  9 Mar 2026 08:48:58 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fTpzp2nMGzHnH4s;
- Mon,  9 Mar 2026 15:48:54 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (unknown [7.214.147.241])
- by mail.maildlp.com (Postfix) with ESMTPS id B017140572;
- Mon,  9 Mar 2026 15:48:57 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 5AF8940281
+ for <dev@dpdk.org>; Mon,  9 Mar 2026 08:50:16 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fTq0Y3H3xzJ4692;
+ Mon,  9 Mar 2026 15:49:33 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id 1139E40585;
+ Mon,  9 Mar 2026 15:50:16 +0800 (CST)
 Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500001.china.huawei.com (7.214.147.241) with Microsoft SMTP Server
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 9 Mar 2026 07:48:57 +0000
+ 15.2.1544.11; Mon, 9 Mar 2026 07:50:15 +0000
 Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
  dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Mon, 9 Mar 2026 07:48:57 +0000
+ Mon, 9 Mar 2026 07:50:15 +0000
 From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Robin Jarry <rjarry@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>, "Yipeng
- Wang" <yipeng1.wang@intel.com>, Sameh Gobriel <sameh.gobriel@intel.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>, Ray Kinsella <mdr@ashroe.eu>, Ruifeng Wang
- <ruifeng.wang@arm.com>, Dharmik Thakkar <dharmikjayesh.thakkar@arm.com>
-CC: "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [PATCH dpdk v3 2/2] hash: free replaced data on overwrite when
- RCU is configured
-Thread-Topic: [PATCH dpdk v3 2/2] hash: free replaced data on overwrite when
- RCU is configured
-Thread-Index: AQHcrUXnWQN/pYas8EynXYWGlT0VyrWl16WQ
-Date: Mon, 9 Mar 2026 07:48:57 +0000
-Message-ID: <d96d3cb1bd804cfc90e0fff6d7f2c594@huawei.com>
+To: Robin Jarry <rjarry@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH dpdk v3 0/2] hash: safe data replacement on overwrite
+Thread-Topic: [PATCH dpdk v3 0/2] hash: safe data replacement on overwrite
+Thread-Index: AQHcrUXi4ZBN5LlCak+VAMvKtWPN2bWl18/w
+Date: Mon, 9 Mar 2026 07:50:15 +0000
+Message-ID: <540b570f12bb458997f4b8a1a4322dff@huawei.com>
 References: <20260212213313.1376294-5-rjarry@redhat.com>
  <20260306084710.492520-4-rjarry@redhat.com>
- <20260306084710.492520-6-rjarry@redhat.com>
-In-Reply-To: <20260306084710.492520-6-rjarry@redhat.com>
+In-Reply-To: <20260306084710.492520-4-rjarry@redhat.com>
 Accept-Language: en-GB, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -65,23 +56,54 @@ Errors-To: dev-bounces@dpdk.org
 
 
 
-> When rte_hash_add_key_data() overwrites an existing key, the old data
-> pointer is silently lost. With RCU-protected readers still potentially
-> accessing the old data, the application has no safe way to free it.
+> When rte_hash_add_key_data() is called with an existing key, the old
+> data pointer is silently overwritten. With RCU-protected readers still
+> potentially accessing the old data, the application cannot safely free
+> it since the old pointer is never returned.
 >=20
-> When RCU is configured with a free_key_data_func callback, automatically
-> enqueue the old data for deferred freeing via the RCU defer queue on
-> overwrite. In SYNC mode, synchronize and call free_key_data_func
-> directly.
+> This series fixes the issue in two places:
 >=20
-> Cc: stable@dpdk.org
-> Fixes: 769b2de7fb52 ("hash: implement RCU resources reclamation")
+> * When RCU is configured with a free_key_data_func callback,
+>   rte_hash_add_key_data() now automatically defers freeing the old data
+>   on overwrite. No caller changes are needed.
 >=20
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
-> ---
+> * If rte_hash_del_key() fails to enqueue the deleted entry in
+>   RTE_HASH_QSBR_MODE_DQ, it falls back on RTE_HASH_QSBR_MODE_SYNC to
+>   avoid leaking slots and data pointers.
+>=20
+> v3:
+>=20
+> * Use rte_atomic_exchange_explicit() to swap the new data pointer with
+>   the old one in search_and_update().
+>=20
+> * Removed the rte_hash_replace_key_data() API=20
 
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>=20
+That's a pity - I think it is a useful one.
 
+> which required to bubble
+>   a potential old_data pointer from search_and_update() to all
+>   intermediate callers down to __rte_hash_add_key_with_hash(). It made
+>   an already complex code even more obscure.
+>=20
+> v2:
+>=20
+> * New patch to fallback to SYNC mode when DQ fails on delete.
+> * Check key_idx =3D=3D EMPTY_SLOT in DQ mode to differentiate when old_da=
+ta
+>   is NULL.
+> * Also fallback to SYNC mode when DQ fails on replace.
+>=20
+> Robin Jarry (2):
+>   hash: avoid leaking entries on RCU defer queue failure
+>   hash: free replaced data on overwrite when RCU is configured
+>=20
+>  app/test/test_hash.c                   | 134 +++++++++++++++++++++++++
+>  doc/guides/rel_notes/release_26_03.rst |   7 ++
+>  lib/hash/rte_cuckoo_hash.c             |  47 +++++++--
+>  lib/hash/rte_hash.h                    |   8 +-
+>  4 files changed, 187 insertions(+), 9 deletions(-)
+>=20
+> --
 > 2.53.0
 >=20
 
