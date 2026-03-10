@@ -2,141 +2,148 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2311BFD4F04
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 16:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E12FD4F03
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 17:05:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45D7F40672;
-	Tue, 10 Mar 2026 17:56:35 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 73AFA40662
- for <dev@dpdk.org>; Tue, 10 Mar 2026 17:56:33 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D7CDA40672;
+	Tue, 10 Mar 2026 18:05:00 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 6F09340662
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 18:04:58 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773161793; x=1804697793;
- h=date:from:to:cc:subject:message-id:references:
+ t=1773162299; x=1804698299;
+ h=from:to:cc:subject:date:message-id:references:
  in-reply-to:mime-version;
- bh=qdJwxC+CG7LZUyppXSY8ME70KQzA/xpeOEdczT3pXaY=;
- b=nmmSEO9EubYZHMxze2DlK+BW6TMfu55qrSJRlDyFGXOAW8uWx4y0ksS9
- VzekbmWQUo27r44EehLZWFwC7EE6iKnMWaw1VBnPog6e1dkRnAn241J7Q
- BKlmuoovA4iUm9LQXB6uwA3emtmKmkR1/yLKqMyuBSc6KQ5a/CtADaSQf
- Bc/sYmEDX1+ZX0NkUNPKySMmudYtcCsX/Nl8YiI6mX9FccDt/RWGqcSaP
- OyiZmK0Pjj5DlTz23PXGSsGBTvyxnog9qQ4i6NBSiJyqsm8BrzQuz9fQ6
- 7lOd/OCL2ku19l/SGntyWiB2+uicYP/7tE0n+GFxqSG1KJdw5fMEJVvEg g==;
-X-CSE-ConnectionGUID: NTZVpxOlTCuM3F6GzbhY2g==
-X-CSE-MsgGUID: VxOBvnlaRbe3wiHeIYSfqw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11725"; a="91599344"
-X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208";a="91599344"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Mar 2026 09:56:32 -0700
-X-CSE-ConnectionGUID: JbeisGrQRBa6ql1SiL6YiQ==
-X-CSE-MsgGUID: fseTlr55Q9u9sd54+0O0Zw==
+ bh=DghNu4eyDzRm+KCyQ6AT3/USRyoCUIngIkkgrFm50Uo=;
+ b=fm89wn1vXEEximhYPn9CuMfYgCWQYDNcPpuN0Gly7GlpDLDNJgDQ3ynI
+ 0l3TrksmCtIj4neBE0y+I4NFyznkYCOmzJvYSY2RtJETgF0awbs61CnYU
+ aUCHt81Db4BXL/z6fxCzljkQsd1v8jMR37fDD633drUh3WY5BuEysclQ6
+ 4fgUeIpY/wV6etuaDEfDXZ5VaLppbuOMrr/ihUpMzxRTA1auT/UpUaeb8
+ 2mO76Bv6zF9olZwbb91xUXFmSSv0JbbQagYOjF5VDHRvpBEWfTg5Ubf3+
+ iKqjqjEPyjpjJ16SpGKCgFtsvotkU7Lqjf1Ld2UjU/eWKAOW3O7VGXK6F A==;
+X-CSE-ConnectionGUID: WPx9j6K9RyW2TcrPEjQu0g==
+X-CSE-MsgGUID: Iv6FnxXrSfGFnqzU/3DBmg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11725"; a="78074296"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208,217";a="78074296"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Mar 2026 10:04:58 -0700
+X-CSE-ConnectionGUID: 305xKVpCTTmpC6VI76kLmQ==
+X-CSE-MsgGUID: FZ4S7cxySwmaa4Not5bqpg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208";a="224874673"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Mar 2026 09:56:32 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; 
+ d="scan'208,217";a="220231444"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Mar 2026 10:04:57 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 10 Mar 2026 09:56:31 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 15.2.2562.37; Tue, 10 Mar 2026 10:04:55 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 10 Mar 2026 09:56:31 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.26) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.37 via Frontend Transport; Tue, 10 Mar 2026 10:04:55 -0700
+Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.46) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 10 Mar 2026 09:56:30 -0700
+ 15.2.2562.37; Tue, 10 Mar 2026 10:04:55 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kmcAnRDw4dcmmnU6swVzRFT9GsOPWaMZDWKvn2yTy9fUGk5xSDq2Ux9bZbzQ2x2Fo7BKseCJP73NmuBlP7UNZ9JORXUwCGOZfc1OB1UsGdPkuVU+DmY7xn/Jt14KzEN1nKITUAHHwL0h6oF2k+ObnPydxRPqXEG+hIOkmUp3XPfloc/AqMnCq4ySku9vbu3u6H3+3DCvZU9tm9c3/SW0VGGRPslIBxATQtdEeDtRpbyrXOg/17b4IfLtcSUKtd6NOnFgSQC58NuDUe62kDeeiRPmQm9IhDCoc3CuSp3nWCG9hAwMy4unqMe5UrooTaIJWA1QXj92DisvNiWUt8MUhw==
+ b=p9+63HvdlD2gDormpq+llq9ouJtDk2mWIfGixTPfYJyISZWaht5qD6XGLUt7TWGgqNsuyb0G6ba10CrdhrLn2CfNFJ1psryX7b96M8Fipn2hNR5laQbuDSN/2hO8dBFpJhTQrtufSN0otvJUyIC2BiHqFg+vTi4NxdCc4i72REOEZ84vwxS0rSHOFceGoOIIrbTGe8PG18a6crRYeL1HgDTv/O8Qw2ZkMvnoWiDGwqfvOQriW2OVmMBZLDhl3UnJbgOpv1AGwqQivOkvZgRG5vr+lFchIB2TJrgbb1MzY8MPg04RImbBQTMwM+nu4rbYlITVGMom3KD1Vk63kYhEvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ynngPK1VYozJCSvC5X9/0Dy8+FR3/pU7s5A+V2Sbaqk=;
- b=PF0lbHsmbq8Lbfet/31HWNourJ4121BR0VCu+eJOv/K39nAFiv/syVcNiMz/Rd8Mnys/88nC7sF83uG9n2ojitQUfUmk9yXvVmSCSWAe2vT+O3w4XeYzqbC9oQ0tfJQyrgWyyhVm6ywPndFcV4TknnIqJ1s5VEobqGDd4GnzHzebhVxWbvXXUJNt3wf9TuAPJlGBP9Xj8FyeX0ROwXLJT0SCDc8M52AHc//EXguit2u/PTmISaj/DLQgU2PjYblyfTM5skN2l7sQ5AEHgecsnz8SHrIR0BsDFJquwMXseSTLwcrDNchL6eTi0FucwhSLeHfUfSzdTgzx2yp+d5PbVw==
+ bh=KrUESXqTi91cjZjeEd1v99fPw9FxcCnem8P3aEmqyMk=;
+ b=W6mbejuEppPP4bG7SKP7e/uhsMogVev3DpGmfoShRHT+0VafLHCWu7aM0gW1CZAKJ9Fw3YK1fUNFPs3d57s0vvoGh3kduHbfwOuqT520+9N+M0zGnHZYLcmO69gDFdc42hzzgdYvABNdmyPq1wZ00s1fRtsW4eNIR5PuISAT4skN8UboCZQIM3AoQkYU8hxo6/zz6Pi2E5MKAE4XAksCE23Y6r3Y52Mv3eMnDt73O+7vYbCRgLL2JWyJ/YlRmzGbNCkRuWFAS2eCJxjn0JezZPtBP5LbqB9r8/rrTSy7wl9rt9MT68Pgac0Z94NpRET/mHm4abQZZkYIpwZBmgf/RQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by LV8PR11MB8772.namprd11.prod.outlook.com (2603:10b6:408:200::7) with
+Received: from DS0PR11MB7458.namprd11.prod.outlook.com (2603:10b6:8:145::13)
+ by SN7PR11MB6677.namprd11.prod.outlook.com (2603:10b6:806:26b::6) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.11; Tue, 10 Mar
- 2026 16:56:25 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9700.010; Tue, 10 Mar 2026
- 16:56:24 +0000
-Date: Tue, 10 Mar 2026 16:56:19 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Mingjin Ye <mingjinx.ye@intel.com>
-CC: <dev@dpdk.org>, Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v2] net/ice: enable link status polling
-Message-ID: <abBNM1j-y6JfeQY0@bricha3-mobl1.ger.corp.intel.com>
-References: <20241118085150.2587595-1-mingjinx.ye@intel.com>
- <20260213085728.3106335-1-mingjinx.ye@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260213085728.3106335-1-mingjinx.ye@intel.com>
-X-ClientProxiedBy: DB9PR01CA0019.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:1d8::24) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|LV8PR11MB8772:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2f38869e-4abf-45b0-295a-08de7ec5f67e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|18002099003|56012099003|22082099003; 
-X-Microsoft-Antispam-Message-Info: Xs/11/+DHO1NqrTPIXELGl6nbh6aeT/yQCgkP1aTKVVv5h2DHTWMiKEKITdiVxmvyrl9xpQAB9m2TLFAuwVcKxsYHjmx9QSjQpaVCAdg6lKgEkD/4yQjlfpugyF3jE4RHGS8bWPvHU43WyOblbgwO3NAE5/uMufYfeiRFkcKqEaEjwAO9DsDF9O819c4Mxv5dw2iF/mXDwOTMrmoaN7K7tE6pBDLPforsJGhlu95scY6tKPSahCiQ5mljcSddPrWspp0YzI7UNL0TelGfHW6jZh0EPjdH5gTgG9n1J0a7dSQamRx/U8A9RT1AOQS8aIZgOS/SoCW7t+yMO61DdFUoLPGqw1MxA1y+RPqo6IoMnM0NLf5tklYdD/uiOtPNoOnegirHlkzoa2yybTreXE7zm4ulZ6T3UzEmG9ZdlwkYiXbMFxRpYQr/uTUkIlomjiAPqEsY0VFq3J1mPed0V/P8OkPGh5bZMYPlMP0/nCYl4yodfY42XaIay3gikjD5vma7VJuSeXz3baqxVA234GHl6PG1touclr8xzCHEz2SVVk4KK9FWM1EisVvaB/ao5ZyRqn4qSIapUH1R9IjNnZrf89yuenKf6hATg/q8+zgRNL9n78o5QQAbvgW8uoK9rp7YjlKQJHDlS2jRrnZLTPkvPuTve3Qic+rDiXTeqzEyeGhtqR87+rwo1X+Vc/YG8R5
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(18002099003)(56012099003)(22082099003);
+ 2026 17:04:51 +0000
+Received: from DS0PR11MB7458.namprd11.prod.outlook.com
+ ([fe80::6d78:37d8:c835:540]) by DS0PR11MB7458.namprd11.prod.outlook.com
+ ([fe80::6d78:37d8:c835:540%4]) with mapi id 15.20.9700.010; Tue, 10 Mar 2026
+ 17:04:51 +0000
+From: "Ji, Kai" <kai.ji@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Luca Boccassi <bluca@debian.org>
+Subject: Re: [PATCH] test/memcpy: reduce alignment offset coverage to fix
+ timeout
+Thread-Topic: [PATCH] test/memcpy: reduce alignment offset coverage to fix
+ timeout
+Thread-Index: AQHcpz/c1ptHPSmY20KlAXk0rOx9trWoDz+r
+Date: Tue, 10 Mar 2026 17:04:51 +0000
+Message-ID: <DS0PR11MB74580F7BC395E2044587F9628146A@DS0PR11MB7458.namprd11.prod.outlook.com>
+References: <20260226164843.183959-1-stephen@networkplumber.org>
+In-Reply-To: <20260226164843.183959-1-stephen@networkplumber.org>
+Accept-Language: en-GB, en-US, en-IE
+Content-Language: en-GB
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS0PR11MB7458:EE_|SN7PR11MB6677:EE_
+x-ms-office365-filtering-correlation-id: afe861aa-04e3-483a-9481-08de7ec724a0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|42112799006|1800799024|366016|8096899003|13003099007|38070700021|7053199007|22082099003|18002099003|56012099003;
+x-microsoft-antispam-message-info: +/Tsp1Iz6w17WDfox23TFRYy+qdMZvlU2w6KixpctCBUU8XV4uwvsRBKSb/jF3M4ctdmjMhRNt1F0wRQYqH2yetldGeeMi7nkIpg7e/hRFh2VVKDV/LSp0w6k+J3xg6wNUdc6dkZasuoS5Zq7ZQBqcPmoRwXS2IDtmAObyf1j89Ii3LgOmIOua+l44L/aeyyyagWLdKlZZKW5SzRHkZS95Z7nFFNbZxoH5cLbfvvW1eJY3b+mvARFM3fcdhAYHBsWmHw5CKsfeUSCCokd9W2pNFwktk+KPtT6VIwhdEtfSUOuKXr7z6vk3P4LZ7Gyr4twQMxkeG5dX63fBwk9r+6iQt3evUNqOf6yqDnvvu1p6FPtbTSliFXVhp7R6r2NYFXJCPfAGV88Kkvvw+pvUTtc9UicuT7SAq5S0RuHBywPGM0uoTwZKO/QZ/XBby2pzA2GklyuItqZCbUm9n3BoNrIaOFexoZYqqq/VDH7+2xKUjgyrrFAXFKl6W+WXQod+bxqFYyMJg4U4dbjGHR8eI1rH7MfTQGyGcvzmV+3xE1sc0uto5vxwcwLgX1YR4IVHobfddCLprYcJjt+R8HCLuhMiidOmvrXOSRVRC3pt6X6kvAavyOoo1rNgM3AyFnXLHAlJBuK0+1xmhCbOkazdIyU4aeze5o4WJaCGJ2sYqkjBu8f9SNNGOdzoRG4S40g1RKFnAKSDvK2pAjnNl5UtdMycr9s7R5xtymvzHXYfLfITz9q6oyZpdk72ztI3gM/3jY
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7458.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(42112799006)(1800799024)(366016)(8096899003)(13003099007)(38070700021)(7053199007)(22082099003)(18002099003)(56012099003);
  DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?iHBvOKByGkaMxO6P7UhIWoFu3uTiWqbwcR+eK6iLf8tMPStRbJzYWWKuvTrw?=
- =?us-ascii?Q?aL/I24pIUg+/5oxVIKScBCxsYZ7RB9Lg8f6F12Ozos3EHJ5sJQp9ALeysBvd?=
- =?us-ascii?Q?+mmXiUt0Y0qdxJ82ck9wvbIpsAd+JzCI3cGzUN44yjnJp2ltU5YkASliBIpj?=
- =?us-ascii?Q?+Gg/6ucf602Q7W/WCEHuO2YE2QeIRLm3Xwhluy9bzj+OyZCiXqYN0kGWv5Hh?=
- =?us-ascii?Q?7DYwHcjm4JcNrJwt2j6V1kG/mQqxEXYqLb9s/vvgUFJ0Mb7iDZXY/W4YqP72?=
- =?us-ascii?Q?DZMwdEdfcEAR4zopqzZSdlfKlcc9FCZwS3gcQEd1MVin/+d1+S7wFyLTR9OX?=
- =?us-ascii?Q?sMNLjQm+safIEF68dS2f6iS2ACBYwliT7qLLEoc4/BYwzpPdq2QdXKM5Kpih?=
- =?us-ascii?Q?r79dFn5jTxMqSi1nr4dm9T7YdM+t4elrRjQY5wvLPqKk88XjYVaGUhELJ41l?=
- =?us-ascii?Q?IPKtWdxFuGl7+yaxip/VpfS/nqPmhbwQIbC0Cpgg8e1mSkGTBg89Qp5eYtHD?=
- =?us-ascii?Q?UXsYXQa/VW76R0Aq7q3NyXdZm9ky0/+bWFQc5Uq+ZFYU+zei3mdah+XfMjBx?=
- =?us-ascii?Q?hZPQdfSn3Ai/uiml326JFsmuy9bVeDgBnW5z75M8nnKkjs9940rTr/iDf/7G?=
- =?us-ascii?Q?HLwWy2n69U/PEzk5OJXbv61kzofCX+NG1sdoNr9X70LCnPWHa2BasgVEsfx5?=
- =?us-ascii?Q?HffB9yO5qKYcoDOTWV6w9tKlRpvujUjJhJDFiFncp2hTv9I4wcmZCA+OcfWn?=
- =?us-ascii?Q?vMMEDPhTNcYueLdoT9ed9dVVYYvoMkpf2sUw5rwzKS1LCFBQN0sh9K8m0Mw2?=
- =?us-ascii?Q?B2whZixKZQtEi9JiOi+nRKFYYlFYPOvQ9Do2do8Nu1/n02pZelehI+ct2BfF?=
- =?us-ascii?Q?CqlpdPdRZfoJU5vCBDRVjrNt7kKQo9cXJYwJrpCPUyoRyUMWsvYCSjXUOYEh?=
- =?us-ascii?Q?SQo0cd7ba/zvnaMp++d4xGSk1nQfHH3H2ucxKTMLZKPPNCoxZTvh16h5Ne4k?=
- =?us-ascii?Q?ihmwpdqHvwkNbYwfQI4AkJ4pACm8M2g7aOeTglh/NYn9A9YsAoq+T3Q8cvFg?=
- =?us-ascii?Q?Q9c73mOF7059wKeDlPz7twMq5BjBhb5Ae9A8z0NMi5oab78tuz2Utm2N8bVI?=
- =?us-ascii?Q?hium05XMv7UsmDz64AITmlxmIOn5DOP6EioMzQLKX/CPKxKtrH+f9pWtMlN4?=
- =?us-ascii?Q?f2ZWjU+zhwNTDsX5w4IHDlt7iezkEui+3IQbDceLOFLjW1sPyC924IZQaMix?=
- =?us-ascii?Q?9zqH9nLT62v3+TTc7iIg9NN3JxVVj8mC3TnVAn4A63b7VQ8MpgaMc+QYJfIX?=
- =?us-ascii?Q?8Og8eYVy4XSoVviM6KEH0jYK70uFeIxFZjFB7KEWhT482BFZaBX4Xi3TLqV1?=
- =?us-ascii?Q?/ECUWTZLxObfcH3JEVXWI5rJ6h2KUe+VWs1LjT+JXcw87J7oVz/dxiYbqx7o?=
- =?us-ascii?Q?7I+R8dQhqyCaH/nKoxLWvi9kx9wZ9JO1Mcq69GfbDdG0i8kdktiOgyl6L3A4?=
- =?us-ascii?Q?GTolte7JNcnH+lPReEWh2EBN0HlshMZsg4Mof6xedYxDt8N4GbwbAvE3hYq+?=
- =?us-ascii?Q?ON79nGH8bwovZ9JigVL94TuVRjy04MTnKIl6ovTXJwYDyIUjc0Xq4BrSev4N?=
- =?us-ascii?Q?Bg1LscbQoJAg/or4xPpvvu3cryponLazNeBVgf+2UQorHWttyWjhphkkYoDF?=
- =?us-ascii?Q?E1jn8cthn/RIC8NdiCkrx8oaMOj0OS5Q0BPIRsynrUHgKrqH05X4hYj3pMVx?=
- =?us-ascii?Q?C07m0m+EEXC3rRZCQ4yxSRqC5T1+dEQ=3D?=
-X-Exchange-RoutingPolicyChecked: dlD1Zu8vy+4/Sj6C7Emh+LD1sDPZNJ6Nw6pSwflxVFg0C/6Dtqsum2pQxFVLWg0R5WgaZTtI6RxVsJYB9UcrzeAEH+PTs0tXxi/eVB6bkelKV0egWt7XMhEGWn0xQBWt6VrMkGmNBwu+SYR1bGe+B+BM9NBI1BascBCOVh+jIaeB9TSGpRmVR9/Y8Dn+xopSjgyM1lwp3PNJrGyoLKSiwkZpPkHQC0+waCeHgk2k7CO2mdTNIe9cMUsIBNexQn+QGWFO3z6yNWZiqCmCaffBsbkQGwssQpa37lqPrY9PKr7LSCO/jUUK+5lmHwpOEiMsUwl8VvrjdexoApbawpl+UQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f38869e-4abf-45b0-295a-08de7ec5f67e
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?ijlmgrxTL/E5br7uQXgeq6a7x0DKfO5kPPKFWIsSd0K+RnJVm6/mq4B0gr?=
+ =?iso-8859-1?Q?fZBniTTK/YuPhCknjYRr+nZa2u6kD7StAK4P+T9sslHcHMj0mq7X2FlyrY?=
+ =?iso-8859-1?Q?zHznwBo3FF3g/Lw8+M+MX/WHCtZW5h7SZoDUFOde+C/+sPY1Hyt1Ijo1Nz?=
+ =?iso-8859-1?Q?3nisDMgyihcHV7xaBlK2zcmHTmVqxpqfeyRVvy8O7BIjB0H9Z5/gWyraXF?=
+ =?iso-8859-1?Q?0DUFJHh8ZOX9buSFMujaA0/6xPqvtyjDR9nP1MKXVJ2LE3AFKZeU+FjExi?=
+ =?iso-8859-1?Q?zK9YpgRG21bjLQ1/PGDKorKjIMQIHF4zYhaVVLpdC2cyJBI1pbMRYwJNON?=
+ =?iso-8859-1?Q?P+ZGmV6ccufxcXRFnWdPha6+AYUWq6Vi32QBQa2iE5SMj/ov3SwZsBL7W/?=
+ =?iso-8859-1?Q?CIJEO8OPqfV5Y8D2mTprMLPEBbHL0l3Nt5e0f4UMyiKPnLzLZvzggGkzUm?=
+ =?iso-8859-1?Q?PZ4lL++Ie1ctzqwBhJIx10dJ9LF2u3MpMb4/KsNSMSdpEHCau0ujLBaref?=
+ =?iso-8859-1?Q?juNmqw8Z5anl19Z+tLcx+H+0HNqhyX12EUpvx0YzJi+rBO+IXlkRF+RZux?=
+ =?iso-8859-1?Q?ItdoLyAGKaTYunkpRaEECmesl+PoWOWzum20dSkf4byqpgDeYmkeGIfJfm?=
+ =?iso-8859-1?Q?01zt51Qjn6Qt1jjiotJ1FKLgr+kXordcAwSdKBXyfPe5gt44ADavsgGddA?=
+ =?iso-8859-1?Q?apPCk+PaNTPL19Qd+RicvwOF9RNR7ktrFz3gRG+t/Y3XXrZVgppiUz7N79?=
+ =?iso-8859-1?Q?hNEigaXcYgbjCoGieBTTTqS+QMKNC9srOmJPlqbDeJcqus/LDPDHcSXmTz?=
+ =?iso-8859-1?Q?6iP4bMstOn2IFoEaW/J8hVp8jdi8qk3YQZpMtl94f2pYHSaW1cj5Axjrjk?=
+ =?iso-8859-1?Q?cdfJ9JdNFc1QNtgIJRRYMVyUvqd0RVM4YHDgdPCVYuruI8uy2P10w4I8jR?=
+ =?iso-8859-1?Q?biPOunVX9igockOfnPqGt9/TYKgM6nr2sfWdK2hqn/z9u4ZcrswmpPKoXW?=
+ =?iso-8859-1?Q?/ObjnNi6chhrtsckv3O8zZnRHvua+tWe8tW4R38VTB3YRmg8JHJ9XwIUjJ?=
+ =?iso-8859-1?Q?Y3JrDtC/NLdfDZIckdxzh6oafHBbddLukI3LYYyeHn+CDma9U7mAPVlf5R?=
+ =?iso-8859-1?Q?RqifJGgmZVWBQIgUTVCXFhJ7Gds2HFEGnqDFWQW2OAdC63WG1YNiCLoR72?=
+ =?iso-8859-1?Q?C8Jhja3TQs3rV8c9DPiRVjfi6jw9Z9nqAhSA1cxLZoEssoNKe4+DfWjhm9?=
+ =?iso-8859-1?Q?jiHSAQNA5zeArfTFhmGJrl7sYXaIjT3KgwNTYqa9C6Za0ktCS9SnW7DRG5?=
+ =?iso-8859-1?Q?2HST3zBqJNuTCYkw5bd/C9IRZPTOGGwGFTY2cFEyjItJzNs17fKb5iElAJ?=
+ =?iso-8859-1?Q?Aol7eIhhnG3Dif2AwXh/FqqHNvh9+LC/9sDHF1cCtgTp14JbzBDaNyZ77p?=
+ =?iso-8859-1?Q?uCFSbtv5P5VVgTEnKySk16QqoTvRh3S2Hcyqr3ylSlTNdUPfFW/SgtFUEP?=
+ =?iso-8859-1?Q?jzBQVnhTUQ0O3AVU1Z0B81G/vAhYF3c9tlGYi/puEkyfT0QG+XsJg0C/tP?=
+ =?iso-8859-1?Q?S6G0OoSJgK8XuTuYYBpIIZgpB81QFPOzt3j9bxn4VfqXIgD0MEFl+Etisf?=
+ =?iso-8859-1?Q?wxzf/Toh8QOLJiZoUnCJQLbozRz0AnrW4wtRpVazaqIwBnY5khmkropOCN?=
+ =?iso-8859-1?Q?HrELlb7jrJ0OZ0QZ0Y6qhsHR04SOYGkUWeHkwOgZf8VBBUTOFvzgC1u/Dj?=
+ =?iso-8859-1?Q?5vRKggAU1b8c0/s42yyYRuNudBhLEhhpA/7tzyfgB8PfHx?=
+Content-Type: multipart/alternative;
+ boundary="_000_DS0PR11MB74580F7BC395E2044587F9628146ADS0PR11MB7458namp_"
+MIME-Version: 1.0
+X-Exchange-RoutingPolicyChecked: USRlswFBNebiiFqaxTRlJEtv4D3hEkC0trNuE95UAa3ioG8Pnjf20cKyKXALlkb0UP07BNKjjLSuT1JMR0j5EoCD6IDIAn2Qr0fczYgoM9wIlmUnMV+M5WRhPaKYWCL/0k2fsuWqSBAdvt45nC+JYvk4gJegm0b/dVX8yMBZAkyR58k/cwC8DWzz/KYjxY+2a5030HVo+YrR38fRPv0xHP2imskzJeT6ZsU+3jm+ro18CxyxkgtemfK+7RWZ0EHBiVRg0pJjpsQ9B/+HsM72luoKE4LW/S6kRi2z+6I6AKMQrw8y0ohCeo+BJrCjReYbBP67yLhNN7nG+NtV+Az7/w==
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2026 16:56:24.4598 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mP1suERyzjqIwi902YohjycmMKpQN3b8/Q7KBKkK03ufHSEug9RhLi0jn6fZFYrBNYm6VGq3N3P0SMDRIX430r3djt7YQgXUG4HjCFtTha4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8772
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7458.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: afe861aa-04e3-483a-9481-08de7ec724a0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Mar 2026 17:04:51.0285 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Ox1pRJ/H/VCPaU+LOZyGOgxv+TqakRPZwZoPzA+Q+kzVOlOSirXV9du9kbc7HrcTk3vy2ANfDqcRwznlU37Dxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6677
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -151,25 +158,269 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Feb 13, 2026 at 08:57:28AM +0000, Mingjin Ye wrote:
-> Add the `link_status_poll_ms` devargs parameter (in milliseconds).
-> If greater than zero, ICE PF uses an alarm handler to poll link
-> status periodically.
-> 
-> Signed-off-by: Mingjin Ye <mingjinx.ye@intel.com>
-> ---
-> v2: fix: address issues reported in v1 review.
-> ---
->  doc/guides/nics/ice.rst            |   7 ++
->  drivers/net/intel/ice/ice_ethdev.c | 109 +++++++++++++++++++++++++++--
->  drivers/net/intel/ice/ice_ethdev.h |   2 +
->  3 files changed, 114 insertions(+), 4 deletions(-)
-> 
-I suspect this patch may not be necessary following commit [1]. Please
-submit a v3 if that commit does not cover all scenarios sufficiently well.
-Marking this v2 as "not applicable" in patchwork.
+--_000_DS0PR11MB74580F7BC395E2044587F9628146ADS0PR11MB7458namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-/Bruce
+LGTM,
 
-[1] https://github.com/DPDK/dpdk/commit/e01265e4a9bf259e5ec26010a38d66eec0415559
+I'm not AVX-512 expert, but I think AVX-512 might expect  64-bytes alignmen=
+t,.
+As the original  ALIGNMENT_UNIT is 32, so I think the selection of offsets =
+is no problem.
+Maybe remove AVX-512 from the comments ?
+
+Regards
+
+Kai
+
+
+
+________________________________
+From: Stephen Hemminger <stephen@networkplumber.org>
+Sent: Thursday, February 26, 2026 16:48
+To: dev@dpdk.org <dev@dpdk.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>; Luca Boccassi <bluca@de=
+bian.org>
+Subject: [PATCH] test/memcpy: reduce alignment offset coverage to fix timeo=
+ut
+
+The memcpy test sweeps all 32x32 src/dst alignment offset pairs which
+causes it to timeout on slow emulated 32-bit build environments [1].
+
+Replace with a curated set of 7 offsets {0, 1, 7, 15, 16, 17, 31}
+that cover the interesting alignment boundaries. This reduces the
+iterations from 38912 to 1862 while covering the same code paths.
+
+[1] https://build.opensuse.org/package/live_build_log/home:bluca:dpdk/dpdk/=
+Debian_Testing/i586
+
+Reported-by: Luca Boccassi <bluca@debian.org>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ app/test/test_memcpy.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/app/test/test_memcpy.c b/app/test/test_memcpy.c
+index 7273c17a06..12e491034f 100644
+--- a/app/test/test_memcpy.c
++++ b/app/test/test_memcpy.c
+@@ -36,6 +36,16 @@ static size_t buf_sizes[TEST_VALUE_RANGE];
+ /* Data is aligned on this many bytes (power of 2) */
+ #define ALIGNMENT_UNIT          32
+
++/*
++ * Subset of offsets to test. These values cover the structurally
++ * interesting alignment cases for SSE/AVX/AVX512 copy paths:
++ * aligned (0), off-by-one (1), partial vector (7, 15, 17),
++ * vector boundaries (16, 31). Testing all 1024 src x dst
++ * combinations of offsets 0..31 is unnecessary since many
++ * map to the same code paths, and causes the test to timeout
++ * on slow (e.g. emulated 32-bit) build environments.
++ */
++static const unsigned int test_offsets[] =3D {0, 1, 7, 15, 16, 17, 31};
+
+ /*
+  * Create two buffers, and initialise one with random values. These are co=
+pied
+@@ -103,13 +113,15 @@ static int
+ func_test(void)
+ {
+         unsigned int off_src, off_dst, i;
++       unsigned int n_offsets =3D RTE_DIM(test_offsets);
+         int ret;
+
+-       for (off_src =3D 0; off_src < ALIGNMENT_UNIT; off_src++) {
+-               for (off_dst =3D 0; off_dst < ALIGNMENT_UNIT; off_dst++) {
++       for (off_src =3D 0; off_src < n_offsets; off_src++) {
++               for (off_dst =3D 0; off_dst < n_offsets; off_dst++) {
+                         for (i =3D 0; i < RTE_DIM(buf_sizes); i++) {
+-                               ret =3D test_single_memcpy(off_src, off_dst=
+,
+-                                                        buf_sizes[i]);
++                               ret =3D test_single_memcpy(test_offsets[off=
+_src],
++                                                        test_offsets[off_d=
+st],
++                                                        buf_sizes[i]);
+                                 if (ret !=3D 0)
+                                         return -1;
+                         }
+--
+2.51.0
+
+
+--_000_DS0PR11MB74580F7BC395E2044587F9628146ADS0PR11MB7458namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+LGTM,</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+<br>
+</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+I'm not AVX-512 expert, but I think AVX-512 might expect&nbsp; 64-bytes ali=
+gnment,.</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+As the original&nbsp; ALIGNMENT_UNIT is 32, so I think the selection of off=
+sets is no problem.&nbsp;</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+Maybe remove AVX-512 from the comments ?&nbsp;</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+<br>
+</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+Regards</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+<br>
+</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+Kai&nbsp;</div>
+<div style=3D"font-family: &quot;IntelOne Text&quot;; font-size: 10pt; colo=
+r: rgb(0, 0, 0);" class=3D"elementToProof">
+<br>
+</div>
+<div><br>
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<hr style=3D"display: inline-block; width: 98%;">
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<b>From:</b>&nbsp;Stephen Hemminger &lt;stephen@networkplumber.org&gt;<br>
+<b>Sent:</b>&nbsp;Thursday, February 26, 2026 16:48<br>
+<b>To:</b>&nbsp;dev@dpdk.org &lt;dev@dpdk.org&gt;<br>
+<b>Cc:</b>&nbsp;Stephen Hemminger &lt;stephen@networkplumber.org&gt;; Luca =
+Boccassi &lt;bluca@debian.org&gt;<br>
+<b>Subject:</b>&nbsp;[PATCH] test/memcpy: reduce alignment offset coverage =
+to fix timeout
+</div>
+<div style=3D"font-family: Calibri, Arial, Helvetica, sans-serif; font-size=
+: 12pt; color: rgb(0, 0, 0);">
+<br>
+</div>
+<div style=3D"font-size: 11pt;">The memcpy test sweeps all 32x32 src/dst al=
+ignment offset pairs which<br>
+causes it to timeout on slow emulated 32-bit build environments [1].<br>
+<br>
+Replace with a curated set of 7 offsets {0, 1, 7, 15, 16, 17, 31}<br>
+that cover the interesting alignment boundaries. This reduces the<br>
+iterations from 38912 to 1862 while covering the same code paths.<br>
+<br>
+[1] <a data-auth=3D"NotApplicable" class=3D"OWAAutoLink" id=3D"OWAda924304-=
+6866-50fb-d3fd-14b10fce3146" href=3D"https://build.opensuse.org/package/liv=
+e_build_log/home:bluca:dpdk/dpdk/Debian_Testing/i586">
+https://build.opensuse.org/package/live_build_log/home:bluca:dpdk/dpdk/Debi=
+an_Testing/i586</a><br>
+<br>
+Reported-by: Luca Boccassi &lt;bluca@debian.org&gt;<br>
+Signed-off-by: Stephen Hemminger &lt;stephen@networkplumber.org&gt;<br>
+---<br>
+&nbsp;app/test/test_memcpy.c | 20 ++++++++++++++++----<br>
+&nbsp;1 file changed, 16 insertions(+), 4 deletions(-)<br>
+<br>
+diff --git a/app/test/test_memcpy.c b/app/test/test_memcpy.c<br>
+index 7273c17a06..12e491034f 100644<br>
+--- a/app/test/test_memcpy.c<br>
++++ b/app/test/test_memcpy.c<br>
+@@ -36,6 +36,16 @@ static size_t buf_sizes[TEST_VALUE_RANGE];<br>
+&nbsp;/* Data is aligned on this many bytes (power of 2) */<br>
+&nbsp;#define ALIGNMENT_UNIT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp; 32<br>
+&nbsp;<br>
++/*<br>
++ * Subset of offsets to test. These values cover the structurally<br>
++ * interesting alignment cases for SSE/AVX/AVX512 copy paths:<br>
++ * aligned (0), off-by-one (1), partial vector (7, 15, 17),<br>
++ * vector boundaries (16, 31). Testing all 1024 src x dst<br>
++ * combinations of offsets 0..31 is unnecessary since many<br>
++ * map to the same code paths, and causes the test to timeout<br>
++ * on slow (e.g. emulated 32-bit) build environments.<br>
++ */<br>
++static const unsigned int test_offsets[] =3D {0, 1, 7, 15, 16, 17, 31};<br=
+>
+&nbsp;<br>
+&nbsp;/*<br>
+&nbsp; * Create two buffers, and initialise one with random values. These a=
+re copied<br>
+@@ -103,13 +113,15 @@ static int<br>
+&nbsp;func_test(void)<br>
+&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int off_src, off_=
+dst, i;<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; unsigned int n_offsets =3D RTE_DIM(te=
+st_offsets);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; int ret;<br>
+&nbsp;<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (off_src =3D 0; off_src &lt; ALIG=
+NMENT_UNIT; off_src++) {<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; for (off_dst =3D 0; off_dst &lt; ALIGNMENT_UNIT; off_dst++) {<br=
+>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (off_src =3D 0; off_src &lt; n_of=
+fsets; off_src++) {<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp; for (off_dst =3D 0; off_dst &lt; n_offsets; off_dst++) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; for (=
+i =3D 0; i &lt; RTE_DIM(buf_sizes); i++) {<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ret =3D test_single_memcpy(off_src, off_dst=
+,<br>
+-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; buf_sizes[i]);<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ret =3D test_single_memcpy(test_offsets[off=
+_src],<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; test_offsets[off_dst],<br>
++&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp=
+;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; buf_sizes[i]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if (ret !=3D 0)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp; return -1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nb=
+sp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+--<br>
+2.51.0<br>
+<br>
+</div>
+</body>
+</html>
+
+--_000_DS0PR11MB74580F7BC395E2044587F9628146ADS0PR11MB7458namp_--
