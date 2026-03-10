@@ -2,72 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D48FFCC9A8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 01:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDCAFCC9A8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 01:59:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA294402C9;
-	Tue, 10 Mar 2026 02:55:14 +0100 (CET)
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com
- [209.85.160.48]) by mails.dpdk.org (Postfix) with ESMTP id AC6A740285
- for <dev@dpdk.org>; Tue, 10 Mar 2026 02:55:13 +0100 (CET)
-Received: by mail-oa1-f48.google.com with SMTP id
- 586e51a60fabf-4152698e745so2787127fac.1
- for <dev@dpdk.org>; Mon, 09 Mar 2026 18:55:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 357C140285;
+	Tue, 10 Mar 2026 02:59:15 +0100 (CET)
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com
+ [209.85.167.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 011094014F
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 02:59:13 +0100 (CET)
+Received: by mail-oi1-f174.google.com with SMTP id
+ 5614622812f47-466ec4c6852so1626540b6e.3
+ for <dev@dpdk.org>; Mon, 09 Mar 2026 18:59:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773107713;
- x=1773712513; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773107953;
+ x=1773712753; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=TNQZ4UNirz+vgQGLGWxqelCtZesTLwnRRHFl9uSP/8s=;
- b=l4J0pkNXzFJxDmQn0vbbJ/zhqic+qbdgPBvq8OCnVBvWic1WJN8iyCtSdSQIqFqk1u
- lrzbcxqDUJaxGfnReKofULdLArrBsEds92O/ViqMV9u9Da2GPasTWrPEutYgcLBG864Y
- Lvo46eXWwwsiX6aHe+K3RpydGjhvUT+izfQ+lo5hcp4F6AxDevV403YoNhObipXOFAC2
- EqxL47cIn6V0RyU1s//cEwNTar7nP2pVwRpTeXRCY7qpQWdHOtMIxfNZCHrTksrC9/GS
- HSFWiaff/3uR8ItvEov5uQFCiD4Z6xnTN17dhLk9O4kQr+TNGDOw8/tLTDbO0STl7p96
- GwHA==
+ bh=zYzRyjG0ILlx88jCoXGc11TA7D1MKEekJJJvzd6RXjo=;
+ b=Zd6ZGEJY0dDc2+OhfdNqICG0aTHO9Nug5++4qG3LYo2HUch5Hb2H7y6aaSOONLlKZj
+ aNz2nJK1VDN4Wy8DLxxFb4cyUDX+TMNYNWP2gAhWDf8P1majfNfJmLQk0Z+jnq9MI3gK
+ ePkLc6D1M867jMcZ2nbDerW9G7kw3IS85uhF3wil+QjZTNqbj1eiy5B4hOgF3yMNnk37
+ gkoTDFdkoS5nI3g7OwkV3jeYvGpM+g+NKxKWwlOlqjfba6sYDo9jxpwcZIy8Ib873PkY
+ 5WYBIsa+/SZ8snRmce72MOdp/aDwFRnp2BPqtftKgbucWmA7xOzwsrKprfmjYr30jCe3
+ Ng1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773107713; x=1773712513;
+ d=1e100.net; s=20230601; t=1773107953; x=1773712753;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=TNQZ4UNirz+vgQGLGWxqelCtZesTLwnRRHFl9uSP/8s=;
- b=J5VgFc6aAdXDRsR1lUAKtN1Ki6fNbtsUDdfuyd08VZwM8K0meR/J/K0UsTg3hsJT5k
- AUmA/ptFuwfCUNMtFxZ2hjcMLUKyMF6VMKZFeG2LE9m6m6lWcsHZHqgKHhXHwXKkIcbW
- NygQGRJHVMQCIzGPcrRuGLTAqLWuMOsGP+iVO5H/cr01AwdJpf64SjC8paa/kDMaVADV
- wWLr5gZYNxIpzUgKIT8m6IM4C5rZfaJ9DGGrKtWIYh1R7QkicfzUbGamZ903FPGs5dyk
- YreLxp0KzoR8ajRcVFIL9yZzYVqhZ2gOMayq6PKOGNAPcOY3x/7rDsv+ETnTrHJBY2IE
- cXMg==
-X-Gm-Message-State: AOJu0YyXZrxn0at0D33M3evZvSuq8gA/2AzMym0sVPiSQ6NzS7KVzw4S
- 2qJuSnTjeHdLPwaHl3xj9MPUEI3NpBYl/C3C8htAZ+ES1+H+vhBaY8Jwe7DwyCief6E=
-X-Gm-Gg: ATEYQzws4cTwikJCYaN2pcGrO9XhSv0Iy3Gb25U7JaY0wpIGg+5o+hjNDemVtMpbcxE
- DG3Fl5C6njQuhH9lTinxLd3ue6CBYBe1bfNnOrM893jgvH1XiRtsp1pOjTEX0xlagzII01e6YJc
- +Y0qEhU/34pa6XCuFvu3Vko1U7l8qMu9OchlNHTvViU3gUGDilSFN2rUiqu5cdALZAR4vupdshg
- zio2FP7T/zkV0FethOBSIktz/tslp6gZff2ZqVSGksu1DWxFbu8ZB/kmk6ykMoSARgyPWkV/bWs
- M42ziwz/BXN3Ejskse6nwZMShyP3xsZGscS0xkc1iUsG5D54RlmP+0/yyIRfQcs9SN8XwJmK9Wv
- wM6nSeerDyYL4X7Jei81J7sJxIRT+2gY2E/wWyVvNORQADV1pC6A/bQNuWMCfaS+/bTwnidqFhk
- ffM/vrIHVffpQF9nlSi63diDAh3S8rAVNRczI=
-X-Received: by 2002:a05:6871:68f:b0:417:58c1:6878 with SMTP id
- 586e51a60fabf-41758c1ba47mr908208fac.0.1773107712596; 
- Mon, 09 Mar 2026 18:55:12 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-41756dbc7afsm1206080fac.14.2026.03.09.18.55.11
+ bh=zYzRyjG0ILlx88jCoXGc11TA7D1MKEekJJJvzd6RXjo=;
+ b=rXpC1w6b6OzKTY8B8Lt6aEaGVTmm3d6v34KEuzg+kKIZr3etncsR4SG1ocGxUhxqi3
+ mRsRG+OvMmnWiScweLjpSYAh2LbOcqc04X7DL0EkLVVjQK6yHCNkaPRDRZvv2p5Ky2TP
+ So/WYBcB6NeBiUEoM1Rpcdf4cFLG/pNuBxfbuEpFchrxkwDj/RIz6Fc+1VVSpsMgv3eO
+ 2Ve6vi+KVeqHZaiSPBIap6lO+/rX6KwHz4EAYoXq8javuR4iZCdQUZAOVH4TTxB4Px+T
+ ZgIoLex3lqaORrNdviZj1aC3v5xSZTt/y4lq57kk4RStUuxRM2bMHAeIEOqIbgyRQ07H
+ ARJw==
+X-Gm-Message-State: AOJu0Yzu+e8aEi5CqRPq+KpqjaD5FB4GzNLqpHlAAHxp/oSy8UDrt9cY
+ 36laupPTDMUcfHJLtuN4gvPGlfuS7CvY7Csjjfzdoojmx/6A1obEdz9+gldYKfwlvboNkU8ACey
+ 5b4e0BZY=
+X-Gm-Gg: ATEYQzzl2ajEBFoBfuKWiUPWqCsMxnrweI9aTQNgGQv4R+hTEkkIk3oMvBDL19ISEdA
+ dCj+TFzXY/Ke21Y11fqoksm1hmifHaFom/1Kejcli3wvV05awBu0RzNMLAAJFQNN8900QYWy0t3
+ UrAOjsZOFVfbrHWoFBzs8yXJZszHrN58BZjbPz5ugBIv8jverL/vB/7luB5qCA64q/+K/SrAIgT
+ l43U9iI/Sp3PyGsaKUxbwl4N6QaIphc5fM3GUbVF2npsD6m5QxUroVbRgZ+Uq8MSotA2VQjNu4C
+ R7M0lG0oFQ+LCv9KxSFrPBXaJmcTIk9N+ZJUzlw6V4Z0Yc0pAqLA+VMI+FzFnKN3S/sIz225aCt
+ c/mUbMwb0bn3Qppi46I76Fqnya2AKfeEzBnyGHY6z1H+JSZsNVVmXkIg89ZyHl4MnYbPKqRj8QJ
+ mcoifmtMPRJMAPiLNiaHUjT2M8wj/rj3HA
+X-Received: by 2002:a05:6808:6a83:b0:467:1e7b:72d0 with SMTP id
+ 5614622812f47-4671e7c0b65mr788544b6e.5.1773107953065; 
+ Mon, 09 Mar 2026 18:59:13 -0700 (PDT)
+Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
+ 586e51a60fabf-41756d4c0e0sm1172716fac.13.2026.03.09.18.59.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Mar 2026 18:55:12 -0700 (PDT)
-Date: Mon, 9 Mar 2026 18:55:09 -0700
+ Mon, 09 Mar 2026 18:59:12 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
-Cc: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: Re: [PATCH v2 0/3] net/af_packet: fix MTU handling and add jumbo
- frame support
-Message-ID: <20260309185509.194f38a6@phoenix.local>
-In-Reply-To: <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
-References: <20260306092013.2205076-1-xavier.guillaume@ovhcloud.com>
- <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v10 0/6] Add AGENTS and scripts for AI code review
+Date: Mon,  9 Mar 2026 18:57:20 -0700
+Message-ID: <20260310015910.331784-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260126184205.104629-1-stephen@networkplumber.org>
+References: <20260126184205.104629-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,64 +80,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 9 Mar 2026 17:10:18 +0100
-Xavier Guillaume <xavier.guillaume@ovhcloud.com> wrote:
+Add guidelines and tooling for AI-assisted code review of DPDK
+patches.
 
-> This series fixes two bugs in the af_packet PMD related to frame
-> size calculations and buffer safety, then enables jumbo frame
-> support by deriving the advertised capabilities from the actual
-> TPACKET ring configuration.
-> 
-> Patch 1 fixes the data size calculation in eth_dev_mtu_set() which
-> is too restrictive due to TPACKET2_HDRLEN including sizeof(struct
-> sockaddr_ll) even though the sockaddr_ll does not consume frame
-> data space. The formula is now consistent with the RX and TX paths.
-> 
-> Patch 2 adds a bounds check in the RX path to prevent a heap buffer
-> overflow when the kernel delivers a packet larger than the mbuf data
-> room (e.g. if the kernel interface MTU is raised externally).
-> 
-> Patch 3 replaces the static max_rx_pktlen (RTE_ETHER_MAX_LEN) and
-> adds max_mtu, both derived from the configured TPACKET frame size.
-> This enables jumbo frame support when the user specifies a larger
-> framesz devarg at vdev creation time.
-> 
-> v2:
->   - patch 2/3: fix Fixes tag to use 12-char SHA (checkpatch warning)
-> 
-> Xavier Guillaume (3):
->   net/af_packet: fix MTU set data size calculation
->   net/af_packet: fix receive buffer overflow
->   net/af_packet: support jumbo frames
-> 
->  drivers/net/af_packet/rte_eth_af_packet.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
+AGENTS.md provides a two-tier review framework: correctness bugs
+(resource leaks, use-after-free, race conditions) are reported at
+>=50% confidence; style issues require >80% with false positive
+suppression. Mechanical checks handled by checkpatches.sh are
+excluded to avoid redundant findings.
 
-Looks good to me, so sent AI off to look at the fine details around MTU.
-The one observation from me is that the new check for data_size is redundnt
-and should be removed or turned into RTE_ASSERT()
+The analyze-patch.py script supports multiple AI providers
+(Anthropic, OpenAI, xAI, Google) with mbox splitting, prompt
+caching, and direct SMTP sending.
 
-**Patch 1/3 - fix MTU set data size calculation**
+v10 - add more checks about mtu, buffer size and scatter
+      based of Ferruh's revision in 2024.
 
-The sockaddr_ll fix is correct. The formula now matches the Rx and Tx
-queue setup paths. Good commit message explaining the TPACKET2_HDRLEN
-decomposition.
+v9 - update AGENTS to reduce false positives
+   - remove commit message/SPDX items from prompt (checkpatch's job).
+   - update contributing guide text to match actual AGENTS.md coverage.
 
-Minor: now that patch 3 reports max_mtu correctly, the ethdev layer
-validates mtu <= max_mtu before calling the PMD callback
-(eth_dev_validate_mtu in rte_ethdev.c). The data_size check here
-becomes redundant dead code. Consider removing it to keep the driver
-simple and avoid confusing future readers.
+Stephen Hemminger (6):
+  doc: add AGENTS.md for AI code review tools
+  devtools: add multi-provider AI patch review script
+  devtools: add compare-reviews.sh for multi-provider analysis
+  devtools: add multi-provider AI documentation review script
+  doc: add AI-assisted patch review to contributing guide
+  MAINTAINERS: add section for AI review tools
 
-**Patch 2/3 - fix receive buffer overflow**
+ AGENTS.md                              | 2115 ++++++++++++++++++++++++
+ MAINTAINERS                            |    8 +
+ devtools/analyze-patch.py              | 1348 +++++++++++++++
+ devtools/compare-reviews.sh            |  192 +++
+ devtools/review-doc.py                 | 1099 ++++++++++++
+ doc/guides/contributing/new_driver.rst |    2 +
+ doc/guides/contributing/patches.rst    |   59 +
+ 7 files changed, 4823 insertions(+)
+ create mode 100644 AGENTS.md
+ create mode 100755 devtools/analyze-patch.py
+ create mode 100755 devtools/compare-reviews.sh
+ create mode 100755 devtools/review-doc.py
 
-Good catch. Real buffer overflow when kernel MTU is raised externally
-past the TPACKET ring capacity. The tailroom check, frame return to
-kernel, and dropped counter are all correct.
+-- 
+2.51.0
 
-**Patch 3/3 - support jumbo frames**
-
-The max_rx_pktlen and max_mtu derivation from the actual TPACKET ring
-frame size is correct and consistent with the data_size formula in
-patches 1 and 2.
