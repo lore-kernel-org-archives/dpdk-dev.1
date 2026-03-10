@@ -2,91 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B559F53D87
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 18:39:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F80F53D8B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 19:12:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 770614025E;
-	Mon, 16 Mar 2026 19:39:42 +0100 (CET)
-Received: from fhigh-a1-smtp.messagingengine.com
- (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
- by mails.dpdk.org (Postfix) with ESMTP id 2C554400D5;
- Mon, 16 Mar 2026 19:39:41 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 88F2A140025E;
- Mon, 16 Mar 2026 14:39:40 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Mon, 16 Mar 2026 14:39:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773686380;
- x=1773772780; bh=iBZWxlrt7kwUPEJVyrjNhDPMOnnDZVbP9nKJ1lGH2yE=; b=
- D4dnbVCCd9wVL3TGdBK1VmBDuHzEWyPzi6b0T72lqZ/2pXgg+cYjBnX4RabGoo20
- J3rF3qDhdMbrz5DwLgv76OyKyAJK2UM6gmTkNaTGumtN9X2LsJqo8boQFYtGixyq
- tnLmqC8kpjzQnBNcTH4GbuXA32VmGBWDzEBVX2moZAM40rg8/QgSJz0xTnIGEjJy
- LA2N7T0nf9yElmD7gBC3boqwGpDkGJrb2I+NErPWS9vcoiM0SfBrSl0U1r9EAWR1
- T+g0XROt8uBSNlpjC6wz++GV2BUE1rbHQMYVGnAyC2FSoOGRkzLR2AAjiUp9t7p+
- JBBurVancl3dRMSFO2lDYw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773686380; x=
- 1773772780; bh=iBZWxlrt7kwUPEJVyrjNhDPMOnnDZVbP9nKJ1lGH2yE=; b=V
- KtHfZjNAsLwXlEPD25HHSWN5aQ8hXWcb5aG3akqBgZjgOeaKruLPi90T4SwUaEUJ
- PMStkts8US7cLr67xgA1xa1Otaa4Vo2hhOuATPrdWYLcr4a21IJ1VcczGCAo0B6s
- MJWALU+jycyjMvpHSwLuBJ9BtA10RTwTh44gPF6M8GfC1PUkMzOMiCOJIcJok0tH
- 7di9ek7zsDD2zbyM+/wmWTsM0c1w0y6Jqm1jrXhh2/Xhaf49iaz1rHqmptzrioxu
- ZQEogl/Fx5I8Gi9x/gi1B6OhtcVE7XPonrcJ1miwWn5iDWa2J26Yy5D873gcbRBW
- XErwhBz9/VYS9hrZhaGYA==
-X-ME-Sender: <xms:bE64acC9pauLCgf7-DUUClHWAWFNz_GyCJXNDA4UdV8dTDG6jAYutQ>
- <xme:bE64aahIxEu0-s_tF9CEGxhyopdc8Qi9K0qnLA96h5JL59QqwWa_8aToSds2YzHEw
- NeyFiPTKebMJIvqTPidULMLgUMOY2aMInQiNM6Y7C4_bhfyL7eO5w>
-X-ME-Received: <xmr:bE64aRwwfck8dFIPov4YXOvz6Zz7iGP1aYMKAr1TdOs2vNd8MCU8eJmP30ZvQ0NpMGvAXEtmAXmQNIad_tpGyff5TA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvleeluddvucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeelpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopehkthhrrgihnhhorhesrhgvughhrghtrdgt
- ohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhtrggslh
- gvseguphgukhdrohhrghdprhgtphhtthhopehkihhshhhorhgvrdhprggumhgrnhgrsghh
- rgessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheprghjihhtrdhkhhgrphgrrhguvg
- essghrohgruggtohhmrdgtohhmpdhrtghpthhtohepshhhuhgrnhhglhhinhdrfigrnhhg
- segsrhhorggutghomhdrtghomhdprhgtphhtthhopehsrhhihhgrrhhshhgrrdgsrghsrg
- hvrghprghtnhgrsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehpvghtvghrrdhs
- phhrvggruggsohhrohhughhhsegsrhhorggutghomhdrtghomh
-X-ME-Proxy: <xmx:bE64aT2EChi2lZlELE_5FomkUYtsU2LA4EGV_Q4qqwNpljKoAMfUZA>
- <xmx:bE64ae_wogR_FboWtE-sX0qecVpYjSQ4_Ldd--GPX_gI5KygYjOk-g>
- <xmx:bE64aToFuMnCG63ff2qQqzH0rTP7aYqi95TY7czGlYchXffA5qbETg>
- <xmx:bE64aYSFBNeRyjOP03P3kBOhXQMz44C0RHyOSmycSABV0gXRl8v4kQ>
- <xmx:bE64aRO-LDNDWRmETRrvHC40WgvY4Z58BzRwarSMzc2RGV2D9dwbtpPB>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 16 Mar 2026 14:39:38 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: Kevin Traynor <ktraynor@redhat.com>, dev@dpdk.org, stable@dpdk.org,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Shuanglin Wang <shuanglin.wang@broadcom.com>,
- Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
- Peter Spreadborough <peter.spreadborough@broadcom.com>
-Subject: Re: [PATCH 2/4] net/bnxt: fix uninitialized read
-Date: Mon, 16 Mar 2026 19:39:36 +0100
-Message-ID: <1921315.atdPhlSkOF@thomas>
-In-Reply-To: <20260312095722.54ecf61d@phoenix.local>
-References: <20260312103606.702617-1-ktraynor@redhat.com>
- <20260312103606.702617-3-ktraynor@redhat.com>
- <20260312095722.54ecf61d@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id 83DC34025E;
+	Mon, 16 Mar 2026 20:12:48 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 3B74F400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 20:12:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773688366;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=+0DTuhIrcKwUAczl0Pd+mpipTT4PpmRui+GKv1bw2eA=;
+ b=elKgTiNKhY/tx7mqjAjbHSw+WW5k2P6gXHyBbu6Ukdn8bcftYvBSalhpnm0cyssL1rEeK6
+ FIrEUuICicPBaoyhNRbLpi5PXHWICDD71w28tJ2+ByH+fkhCF37yPEprp+qLYm/bJ8ghCO
+ 0GcpljssudGkLnjnNAyT3plCTfvyclU=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-382-Y1FUfVZdPLi9PA5H_dbYQw-1; Mon,
+ 16 Mar 2026 15:12:43 -0400
+X-MC-Unique: Y1FUfVZdPLi9PA5H_dbYQw-1
+X-Mimecast-MFC-AGG-ID: Y1FUfVZdPLi9PA5H_dbYQw_1773688362
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A2CCF195604F; Mon, 16 Mar 2026 19:12:41 +0000 (UTC)
+Received: from fedora-linux-42 (unknown [10.44.32.8])
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id D29AC180075B; Mon, 16 Mar 2026 19:12:39 +0000 (UTC)
+From: Christophe Fontaine <cfontain@redhat.com>
+To: dev@dpdk.org
+Cc: Christophe Fontaine <cfontain@redhat.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Marat Khalili <marat.khalili@huawei.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>
+Subject: [PATCH] bpf/arm64: support packet data load instructions
+Date: Tue, 10 Mar 2026 13:20:44 +0100
+Message-ID: <20260310122045.4057836-1-cfontain@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: g-BanNzfXgF__-0srybTNp0-d-1vLMbDYYdizjQQWgU_1773688362
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -100,24 +66,191 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-12/03/2026 17:57, Stephen Hemminger:
-> On Thu, 12 Mar 2026 10:36:04 +0000
-> Kevin Traynor <ktraynor@redhat.com> wrote:
-> 
-> > batch_info->enabled is read in tfc_mpc_batch_start() before it is
-> > initialized.
-> > 
-> > Initialize batch_info to avoid this.
-> > 
-> > Fixes: 67ad40007cd6 ("net/bnxt/tf_ulp: fix VFR cleanup and stats lockup")
-> > Cc: stable@dpdk.org
-> > 
-> > Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
-> 
-> This needs to go through next-net-brcm so will delegate it.
+arm64 jit compiler didn't support reading from a packet.
+Enable arm64 JIT to generate native code for
+(BPF_ABS | <size> | BPF_LD) and (BPF_IND | <size> | BPF_LD)
+instructions.
 
-Please avoid breaking series, it makes tracking confusing.
-The whole series can go in next-net.
+Compared to the x86_64 HIT, only a "slow path" is implemented,
+'__rte_pktmbuf_read' is systematically called.
 
+Signed-off-by: Christophe Fontaine <cfontain@redhat.com>
+---
+ app/test/test_bpf.c     | 42 ++++++++++++++++++++++++++
+ lib/bpf/bpf_jit_arm64.c | 65 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 107 insertions(+)
 
+diff --git a/app/test/test_bpf.c b/app/test/test_bpf.c
+index 093cf5fe1d..8d5c0d6de1 100644
+--- a/app/test/test_bpf.c
++++ b/app/test/test_bpf.c
+@@ -2750,6 +2750,30 @@ static const struct rte_bpf_xsym test_call5_xsym[] = {
+ 	},
+ };
+ 
++/* load mbuf (BPF_ABS/BPF_IND) test-cases */
++static const struct ebpf_insn test_ld_mbuf0_prog[] = {
++	/* BPF_ABS/BPF_IND implicitly expect mbuf ptr in R6 */
++	{
++		.code = (EBPF_ALU64 | EBPF_MOV | BPF_X),
++		.dst_reg = EBPF_REG_6,
++		.src_reg = EBPF_REG_1,
++	},
++	/* load IPv4 version and IHL */
++	{
++		.code = (BPF_LD | BPF_ABS | BPF_B),
++		.imm = offsetof(struct rte_ipv4_hdr, version_ihl),
++	},
++	{
++		.code = (BPF_JMP | EBPF_EXIT),
++	},
++};
++
++static int
++test_ld_mbuf0_check(uint64_t rc, const void *arg)
++{
++	return cmp_res(__func__, 0x45, rc, arg, arg, 0);
++}
++
+ /* load mbuf (BPF_ABS/BPF_IND) test-cases */
+ static const struct ebpf_insn test_ld_mbuf1_prog[] = {
+ 
+@@ -3417,6 +3441,22 @@ static const struct bpf_test tests[] = {
+ 		/* for now don't support function calls on 32 bit platform */
+ 		.allow_fail = (sizeof(uint64_t) != sizeof(uintptr_t)),
+ 	},
++	{
++		.name = "test_ld_mbuf0",
++		.arg_sz = sizeof(struct dummy_mbuf),
++		.prm = {
++			.ins = test_ld_mbuf0_prog,
++			.nb_ins = RTE_DIM(test_ld_mbuf0_prog),
++			.prog_arg = {
++				.type = RTE_BPF_ARG_PTR_MBUF,
++				.buf_size = sizeof(struct dummy_mbuf),
++			},
++		},
++		.prepare = test_ld_mbuf1_prepare,
++		.check_result = test_ld_mbuf0_check,
++		/* mbuf as input argument is not supported on 32 bit platform */
++		.allow_fail = (sizeof(uint64_t) != sizeof(uintptr_t)),
++	},
+ 	{
+ 		.name = "test_ld_mbuf1",
+ 		.arg_sz = sizeof(struct dummy_mbuf),
+@@ -3491,6 +3531,7 @@ run_test(const struct bpf_test *tst)
+ 	if (ret != 0) {
+ 		printf("%s@%d: check_result(%s) failed, error: %d(%s);\n",
+ 			__func__, __LINE__, tst->name, ret, strerror(ret));
++		return -1;
+ 	}
+ 
+ 	/* repeat the same test with jit, when possible */
+@@ -3506,6 +3547,7 @@ run_test(const struct bpf_test *tst)
+ 				"error: %d(%s);\n",
+ 				__func__, __LINE__, tst->name,
+ 				rv, strerror(rv));
++			return -1;
+ 		}
+ 	}
+ 
+diff --git a/lib/bpf/bpf_jit_arm64.c b/lib/bpf/bpf_jit_arm64.c
+index a04ef33a9c..5d5710b876 100644
+--- a/lib/bpf/bpf_jit_arm64.c
++++ b/lib/bpf/bpf_jit_arm64.c
+@@ -8,6 +8,7 @@
+ 
+ #include <rte_common.h>
+ #include <rte_byteorder.h>
++#include <rte_mbuf.h>
+ 
+ #include "bpf_impl.h"
+ 
+@@ -965,6 +966,54 @@ emit_return_zero_if_src_zero(struct a64_jit_ctx *ctx, bool is64, uint8_t src)
+ 	emit_b(ctx, jump_to_epilogue);
+ }
+ 
++/*
++ * Emit code for BPF_LD | BPF_ABS/IND: load from packet.
++ * Calls __rte_pktmbuf_read(mbuf, off, len, buf).
++ */
++static void
++emit_ld_mbuf(struct a64_jit_ctx *ctx, uint32_t op, uint8_t tmp1, uint8_t tmp2,
++	uint8_t src, uint32_t imm)
++{
++	uint8_t r0 = ebpf_to_a64_reg(ctx, EBPF_REG_0);
++	uint8_t r6 = ebpf_to_a64_reg(ctx, EBPF_REG_6);
++	uint32_t mode = BPF_MODE(op);
++	uint32_t opsz = BPF_SIZE(op);
++	uint32_t sz = bpf_size(opsz);
++	int16_t jump_to_epilogue;
++
++	/* r0 = mbuf (R6) */
++	emit_mov_64(ctx, A64_R(0), r6);
++
++	/* r1 = off: for ABS use imm, for IND use src + imm */
++	if (mode == BPF_ABS) {
++		emit_mov_imm(ctx, 1, A64_R(1), imm);
++	} else {
++		emit_mov_imm(ctx, 1, tmp2, imm);
++		emit_add(ctx, 1, tmp2, src);
++		emit_mov_64(ctx, A64_R(1), tmp2);
++	}
++
++	/* r2 = len */
++	emit_mov_imm(ctx, 1, A64_R(2), sz);
++
++	/* r3 = buf (SP) */
++	emit_mov_64(ctx, A64_R(3), A64_SP);
++
++	/* call __rte_pktmbuf_read */
++	emit_call(ctx, tmp1, __rte_pktmbuf_read);
++	/* check return value of __rte_pktmbuf_read */
++	emit_cbnz(ctx, 1, A64_R(0), 3);
++	emit_mov_imm(ctx, 1, r0, 0);
++	jump_to_epilogue = (ctx->program_start + ctx->program_sz) - ctx->idx;
++	emit_b(ctx, jump_to_epilogue);
++
++	/* r0 points to the data, load 1/2/4 bytes */
++	emit_ldr(ctx, opsz, A64_R(0), A64_R(0), A64_ZR);
++	if (sz != sizeof(uint8_t))
++		emit_be(ctx, A64_R(0), sz * CHAR_BIT);
++	emit_mov_64(ctx, r0, A64_R(0));
++}
++
+ static void
+ emit_stadd(struct a64_jit_ctx *ctx, bool is64, uint8_t rs, uint8_t rn)
+ {
+@@ -1137,6 +1186,13 @@ check_program_has_call(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
+ 		switch (op) {
+ 		/* Call imm */
+ 		case (BPF_JMP | EBPF_CALL):
++		/* BPF_LD | BPF_ABS/IND use __rte_pktmbuf_read */
++		case (BPF_LD | BPF_ABS | BPF_B):
++		case (BPF_LD | BPF_ABS | BPF_H):
++		case (BPF_LD | BPF_ABS | BPF_W):
++		case (BPF_LD | BPF_IND | BPF_B):
++		case (BPF_LD | BPF_IND | BPF_H):
++		case (BPF_LD | BPF_IND | BPF_W):
+ 			ctx->foundcall = 1;
+ 			return;
+ 		}
+@@ -1338,6 +1394,15 @@ emit(struct a64_jit_ctx *ctx, struct rte_bpf *bpf)
+ 			emit_mov_imm(ctx, 1, dst, u64);
+ 			i++;
+ 			break;
++		/* load absolute/indirect from packet */
++		case (BPF_LD | BPF_ABS | BPF_B):
++		case (BPF_LD | BPF_ABS | BPF_H):
++		case (BPF_LD | BPF_ABS | BPF_W):
++		case (BPF_LD | BPF_IND | BPF_B):
++		case (BPF_LD | BPF_IND | BPF_H):
++		case (BPF_LD | BPF_IND | BPF_W):
++			emit_ld_mbuf(ctx, op, tmp1, tmp2, src, imm);
++			break;
+ 		/* *(size *)(dst + off) = src */
+ 		case (BPF_STX | BPF_MEM | BPF_B):
+ 		case (BPF_STX | BPF_MEM | BPF_H):
+-- 
+2.53.0
 
