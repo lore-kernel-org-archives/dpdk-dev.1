@@ -2,38 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DD5EA8550
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 09:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9E4EA8550
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 09:21:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4043040B8D;
-	Tue, 10 Mar 2026 10:21:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 12C8940A6B;
+	Tue, 10 Mar 2026 10:21:23 +0100 (CET)
 Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
- by mails.dpdk.org (Postfix) with ESMTP id 9E37840B8D
- for <dev@dpdk.org>; Tue, 10 Mar 2026 10:21:08 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5FF9B4014F
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 10:21:21 +0100 (CET)
 Received: from localhost.localdomain (unknown [82.65.104.223])
  (Authenticated sender: vjardin@free.fr)
- by smtp6-g21.free.fr (Postfix) with ESMTPSA id AF9F3780502;
- Tue, 10 Mar 2026 10:20:55 +0100 (CET)
+ by smtp6-g21.free.fr (Postfix) with ESMTPSA id BD90A780507;
+ Tue, 10 Mar 2026 10:21:08 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1773134468;
- bh=zE7qaft71v4HC4cSgiPVs6wwce4YjB6tHrwr70k86v0=;
+ s=smtp-20201208; t=1773134481;
+ bh=wXfYN7Rr7QFUVo6XaG5rS3ksa4s08IozWwm69oIKlsI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=LQLYM5GlG0PCqI+2zwRlsVP9iGeXCIvol3mOk3wlUQrN9olVRX92EPjwaxhKLuLlT
- NJmBICMlIkhiByQRM8+AFi5GbYQM4VCCtO5vDTMp3Bv5S51IGjnCXYYEE6oC3k+68X
- 1EhTwNuY8mNSlZ9NFHQn1FHQClOpb3Z2/Pj3ydYBhEIG4zpA+JL3GsH5Ot3afYhGBQ
- m/az6p1MlzDSVy4vHsEYDTC3wJH01fkddRsuPGdrTS7Kwtra+Bv59h/vSdKExOyppu
- IbtoysJ2T82bUux5OuR2B8ugGsOR7SdhzvZwmnGFQfgfh0zcThhH8nfqd1tuQEPa0c
- bGRu6hTbrpAeQ==
+ b=A+UxvzFvPfaOktQAm69xejCkMOqpwaomvr8Qy5bywP3YrqbfJYgOrhiYSccAg2pMf
+ O9CTMqMz+7P747dwuPjjLyPjzEZJeNw0ad0/a3qMPRXqotdt7v3tIJFgAaq5vNVPjF
+ 9+9PywJRozzuon8grq3qoFVZeu2rO0OcV879pQv+LRNUc5xOzmgFfZurtmS1zaEsnv
+ nhwZDZ27DvGlcNbolFOgcUJAqUKQzSFpJBlvdOWYRsxMhMlGHBv/Y/D0Icn51wY6l4
+ u1JqdeOd9557LgV7kuoaXxgPH7EoWbdtikwGhpwv1iclqfq/MUqvpTylhVFQILsCp4
+ yyen3fi29T+/w==
 From: Vincent Jardin <vjardin@free.fr>
 To: dev@dpdk.org
 Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
  dsosnowski@nvidia.com, viacheslavo@nvidia.com, bingz@nvidia.com,
  orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
  Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v1 02/10] common/mlx5: query packet pacing rate table
- capabilities
-Date: Tue, 10 Mar 2026 10:20:06 +0100
-Message-ID: <20260310092014.2762894-3-vjardin@free.fr>
+Subject: [PATCH v1 03/10] common/mlx5: extend SQ modify to support rate limit
+ update
+Date: Tue, 10 Mar 2026 10:20:07 +0100
+Message-ID: <20260310092014.2762894-4-vjardin@free.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260310092014.2762894-1-vjardin@free.fr>
 References: <20260310092014.2762894-1-vjardin@free.fr>
@@ -52,79 +52,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Query additional QoS packet pacing capabilities from HCA attributes:
-- packet_pacing_burst_bound: HW supports burst_upper_bound parameter
-- packet_pacing_typical_size: HW supports typical_packet_size parameter
-- packet_pacing_max_rate / packet_pacing_min_rate: rate range in kbps
-- packet_pacing_rate_table_size: number of HW rate table entries
+Add rl_update and packet_pacing_rate_limit_index fields to
+mlx5_devx_modify_sq_attr. When rl_update is set, the modify SQ
+command sets modify_bitmask bit 0 and writes the PP index into
+the SQ context, allowing dynamic rate changes on a live RDY SQ
+without teardown.
 
-These capabilities are needed by the upcoming per-queue rate limiting
-feature to validate devarg values and report HW limits.
+modify_sq_in.modify_bitmask[0x40] bit 0 controls the
+packet_pacing_rate_limit_index.
 
 Supported hardware:
-- ConnectX-6 Dx and later (different boards expose different subsets)
-- ConnectX-5 reports packet_pacing but not all extended fields
-- ConnectX-7/8 report the full capability set
-- BlueField-2 and later DPUs also report these capabilities
+- ConnectX-6 Dx: per-SQ rate via packet_pacing_rate_limit_index
+- ConnectX-7/8: same SQ context field, also supports wait-on-time
+- BlueField-2/3: same modify_sq command support
 
 Not supported:
-- ConnectX-4 Lx and earlier (no packet_pacing capability at all)
-- ConnectX-5 Ex may not report burst_bound or typical_size
+- ConnectX-5: supports packet_pacing but only at SQ creation time,
+  dynamic modify_bitmask update may not be supported on all FW
+- ConnectX-4 Lx and earlier: no packet_pacing support
 
 Signed-off-by: Vincent Jardin <vjardin@free.fr>
 ---
- drivers/common/mlx5/mlx5_devx_cmds.c | 15 +++++++++++++++
- drivers/common/mlx5/mlx5_devx_cmds.h | 11 ++++++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ drivers/common/mlx5/mlx5_devx_cmds.c | 5 +++++
+ drivers/common/mlx5/mlx5_devx_cmds.h | 3 +++
+ 2 files changed, 8 insertions(+)
 
 diff --git a/drivers/common/mlx5/mlx5_devx_cmds.c b/drivers/common/mlx5/mlx5_devx_cmds.c
-index d12ebf8487..8f53303fa7 100644
+index 8f53303fa7..17378e1753 100644
 --- a/drivers/common/mlx5/mlx5_devx_cmds.c
 +++ b/drivers/common/mlx5/mlx5_devx_cmds.c
-@@ -1244,6 +1244,21 @@ mlx5_devx_cmd_query_hca_attr(void *ctx,
- 				MLX5_GET(qos_cap, hcattr, packet_pacing);
- 		attr->qos.wqe_rate_pp =
- 				MLX5_GET(qos_cap, hcattr, wqe_rate_pp);
-+		attr->qos.packet_pacing_burst_bound =
-+				MLX5_GET(qos_cap, hcattr,
-+					packet_pacing_burst_bound);
-+		attr->qos.packet_pacing_typical_size =
-+				MLX5_GET(qos_cap, hcattr,
-+					packet_pacing_typical_size);
-+		attr->qos.packet_pacing_max_rate =
-+				MLX5_GET(qos_cap, hcattr,
-+					packet_pacing_max_rate);
-+		attr->qos.packet_pacing_min_rate =
-+				MLX5_GET(qos_cap, hcattr,
-+					packet_pacing_min_rate);
-+		attr->qos.packet_pacing_rate_table_size =
-+				MLX5_GET(qos_cap, hcattr,
-+					packet_pacing_rate_table_size);
- 		if (attr->qos.flow_meter_aso_sup) {
- 			attr->qos.log_meter_aso_granularity =
- 				MLX5_GET(qos_cap, hcattr,
+@@ -2129,6 +2129,11 @@ mlx5_devx_cmd_modify_sq(struct mlx5_devx_obj *sq,
+ 	MLX5_SET(sqc, sq_ctx, state, sq_attr->state);
+ 	MLX5_SET(sqc, sq_ctx, hairpin_peer_rq, sq_attr->hairpin_peer_rq);
+ 	MLX5_SET(sqc, sq_ctx, hairpin_peer_vhca, sq_attr->hairpin_peer_vhca);
++	if (sq_attr->rl_update) {
++		MLX5_SET64(modify_sq_in, in, modify_bitmask, 1);
++		MLX5_SET(sqc, sq_ctx, packet_pacing_rate_limit_index,
++			 sq_attr->packet_pacing_rate_limit_index);
++	}
+ 	ret = mlx5_glue->devx_obj_modify(sq->obj, in, sizeof(in),
+ 					 out, sizeof(out));
+ 	if (ret) {
 diff --git a/drivers/common/mlx5/mlx5_devx_cmds.h b/drivers/common/mlx5/mlx5_devx_cmds.h
-index da50fc686c..930ae2c072 100644
+index 930ae2c072..82d949972b 100644
 --- a/drivers/common/mlx5/mlx5_devx_cmds.h
 +++ b/drivers/common/mlx5/mlx5_devx_cmds.h
-@@ -67,7 +67,16 @@ struct mlx5_hca_qos_attr {
- 	/* Power of the maximum allocation granularity Object. */
- 	uint32_t log_max_num_meter_aso:5;
- 	/* Power of the maximum number of supported objects. */
--
-+	uint32_t packet_pacing_burst_bound:1;
-+	/* HW supports burst_upper_bound PP parameter. */
-+	uint32_t packet_pacing_typical_size:1;
-+	/* HW supports typical_packet_size PP parameter. */
-+	uint32_t packet_pacing_max_rate;
-+	/* Maximum supported pacing rate in kbps. */
-+	uint32_t packet_pacing_min_rate;
-+	/* Minimum supported pacing rate in kbps. */
-+	uint16_t packet_pacing_rate_table_size;
-+	/* Number of entries in the HW rate table. */
+@@ -519,6 +519,9 @@ struct mlx5_devx_modify_sq_attr {
+ 	uint32_t state:4;
+ 	uint32_t hairpin_peer_rq:24;
+ 	uint32_t hairpin_peer_vhca:16;
++	uint32_t rl_update:1;
++	/* Set to update packet_pacing_rate_limit_index on a live SQ. */
++	uint32_t packet_pacing_rate_limit_index:16;
  };
  
- struct mlx5_hca_vdpa_attr {
+ 
 -- 
 2.43.0
 
