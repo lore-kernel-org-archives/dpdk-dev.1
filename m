@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3389FCC9A8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 02:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FE2FCC9AE
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 02:49:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8893B4069F;
-	Tue, 10 Mar 2026 02:59:23 +0100 (CET)
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com
- [209.85.160.52]) by mails.dpdk.org (Postfix) with ESMTP id DB86F40698
- for <dev@dpdk.org>; Tue, 10 Mar 2026 02:59:20 +0100 (CET)
-Received: by mail-oa1-f52.google.com with SMTP id
- 586e51a60fabf-40ede943bf0so4144872fac.2
- for <dev@dpdk.org>; Mon, 09 Mar 2026 18:59:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AF1CA4065E;
+	Tue, 10 Mar 2026 03:49:30 +0100 (CET)
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com
+ [209.85.210.48]) by mails.dpdk.org (Postfix) with ESMTP id 930D64014F
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 03:49:29 +0100 (CET)
+Received: by mail-ot1-f48.google.com with SMTP id
+ 46e09a7af769-7d75d698ee6so98744a34.3
+ for <dev@dpdk.org>; Mon, 09 Mar 2026 19:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773107960;
- x=1773712760; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773110968;
+ x=1773715768; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1gVRilbtEBuiCuBfPvgGSxQx8MO/vNDZx0iQln2wnIY=;
- b=v8k6OQP+7N6V8pxkytIos+StwXR37Hfj72IP1iBDc0pCIo6IrHOyq4L9UsEePqJWAg
- cMvXAPEpGo5o2TfmiUmVMYzz3g6B+cSmCpH1IjSp4zraGbCjI2oQstPbb8ru9bCQwa5+
- f8odMPXloZrYqEzCYN/JzsKU/kgqCY1Oj8OY/Ee1vylCbuVxTPJkHg/W9wRwsjz5cW+Y
- WqM92gieLwfel67LI8rF073BV9MwTMnCsHbdJ50HjjWLVZVGP29VpWG2cjaRdMds6yQm
- neeSrT3HbM1mMBM9ExceK0xuiwFXdhgFoaVVKCb8b/uDiq6iQcOFMvtT0wPOdWwEkQc5
- ivxA==
+ bh=nqHBK611c2GoXfTEGmSUJzW+a+pUzrp5tgE83vpmLVo=;
+ b=0Y/78fRXAocowumvlZOipgTdR4UAQkBZU7C56K4vsxuX1B7M3T35SJ1urd/yAIHfvt
+ RjhFHpXtxZPakjeVLj9CyI4Pocl8CgCDVN2b7ST8JdTeCxR6rB36dYszY0jUTFtNrev0
+ uPt3OgFqHG6PrA3eoMjV6KKYTY7azWkTf8TO/ARCRJkIKTQzzQbB7GBPN2cCpRLe5ykc
+ M00DbrdrLe7njo6Uen/KfIOvfNmIx65zZ6haq7VSvl9lzmY2lipfZM8dUkN8LbACCgC7
+ gc/E+ycztWqnOyU4KqINqxzKw3QKsgPQNwS2IdYadUXw9E1+sKi4W8Zsx8mkwueTGtRR
+ TfqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773107960; x=1773712760;
+ d=1e100.net; s=20230601; t=1773110968; x=1773715768;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=1gVRilbtEBuiCuBfPvgGSxQx8MO/vNDZx0iQln2wnIY=;
- b=F2fjonNHicqyaFgjRvLT+d5VhieZsTGpllGgw5iBYeCx6Uqn88nKwb9TCE4D5LQyqP
- RnbvYrum2rIzETaX3Rh8nUYui0QOYA2ttaK2FC0C/kbgc4axenSJQo+aNB6PTBQfb4GV
- V9pOSLO2OQgyNywVf6aW3aHWBO5KKdS/CItnMuAaaV63lCDDL4H2egGOQNu82YQX9aHy
- UZI75vr7XVv0ASDt3xQPx5CAJ4H+kw/69Uc7fveldf/dWCsLyP0Dk7QOqcVbf/q6OG9z
- JvFs0AlWX36mNJN9v/4Kg1i6TsQPqA39FGHSVuuV4UoE/XWTn3ifgTykREURELlFkH/1
- p4bQ==
-X-Gm-Message-State: AOJu0YxH6mnJ1Tce+tP8+kAVw7fPocS9S9guCzx0SG3y0pzfRDa2sNLy
- Kcf2x5vd/2iCVPLjWJY42T2C2UD9fDNEtY5PmyoVHFIGkLpTPzm1MlqAl1LHuwZHus0L6EvtXdL
- 4cacOZ/g=
-X-Gm-Gg: ATEYQzxnXtS3ZegIeNvpM4Z09unlDqSvEDor2NT6oUyjk8DjWbprYceFzasPVxDxYwF
- MNNi6RzXIiU/sYr6LRDwJcceDLpVn5Zmmd6Pc0hqup7qaBDoqVq3MNjDkvulVTye44jYvBU+/A6
- C241uo2bA8BbOynsdYoh2/0bCvNjB1gjF3ITq2rmsTOJKtdUV0r0eCZI5YfDpLgtG+nfvE/Lhw3
- RqjvLMODvm5vM7nYclm5HNg6JLac74Cz6cmL+eBLOh6g391g235eaLGPgTwO5eCN5PAncbtgzF4
- IWc9kQBz40kDWuOmtan+JpPxwSFG1de9UGypY24bifNnfRBNS9kN1r9PgHhMZPpTnCO7h5MWDXs
- v/RVQkLRMelVQU/3zq8ABVkq8q3wpfRcywKtn+iJ5gFzm2Sl6Uku6GMh/ZUfIK5Eha1G4jvd/Rp
- bPpD5JhiP5USSIrf8bqsq0fsoooyyzim/X
-X-Received: by 2002:a05:6870:4e84:b0:417:36a5:23a8 with SMTP id
- 586e51a60fabf-41736b47523mr2963034fac.14.1773107960107; 
- Mon, 09 Mar 2026 18:59:20 -0700 (PDT)
+ bh=nqHBK611c2GoXfTEGmSUJzW+a+pUzrp5tgE83vpmLVo=;
+ b=uRdQmIzWqAjR1py1+mc0UqOspUXHXh0o6TaSiuafGr7O7Jkocn6suxwEtWWkCO47Mj
+ gxVJ/0NQlob4CiCsxwrdAIfNOZ3v1EINlOItICBLmCmnwSfc4ybxQmfbVWBrBi/WvyQH
+ TW5pFAKIxvNiVtJZw87XZT+b7ZMbH6LgYlQ6lGx65g35OhI+6bLNEAjlQLwge3os+P1Q
+ YimyZXWdAlyvZVkSGLena0AvP9Sy2jkM0BOefhIgckL9mFbydb2Z7l1eUIx15gCiKbDg
+ nzt8Kaa2CLiy96y+Nm89jBSQ+/54TaXNE4e1TQQZYQGqclLfJEyWVl2O144Ye53s7d0C
+ IiqA==
+X-Gm-Message-State: AOJu0YwecC4sDcd9/C6KkypYnfQn9qrygZaENJMCp/Q7WXxvG1LbOLfC
+ ujGItkFbx4QrQYpUV4dYtM3QFgaqGq2SnxdH4X+dQJThLmsdjyBM/UVBoJTzEhIzx6gtg8CBjBV
+ bl1MF4sA=
+X-Gm-Gg: ATEYQzz7NENsQdjAsLsl2DkY7w5ceBlKwpJNUQHIecbThExW4sO6uFlR0pe6XrcGhvZ
+ N6MEDCYJEFLUOm0PNb6hO8kwsEOt5yh3LaL8wzaEUCAXnbk6fponPB0wtqxTxs55L/BR22ixQxZ
+ /HRsgNRNXAJBodI6GS7FrnHXTSmL1gB+oknb3GwVmi2+pqW+BwT7dh46WVxDFcEMHBSl+SN0r+2
+ gVG6+TbdtzvIbR4yl9IfrkJX5NuxPLRJrmtZRuYgKZxwlOA2N61ncNda9ZMd3Ecxp0wxryOmR7g
+ 6+E8hgVEbbxMdQdLLRZqUiCyx8Mt1HndyTX7luA1yPmdE6l7x0Fy96+xO1gKDqgECpOt9VTsVGi
+ OcJoicnRRZ6ru7Fs/6KNgrGXGDHZW/B33laNMkcGNhgviX4NKhRVmncu56nyXysvffN2bq7y7fR
+ MtyiOmPy8ex/WnK1FvFZf+wB5EQon9HQlE
+X-Received: by 2002:a05:6830:81ca:b0:7d7:55c2:d772 with SMTP id
+ 46e09a7af769-7d755c2db56mr1554715a34.4.1773110968441; 
+ Mon, 09 Mar 2026 19:49:28 -0700 (PDT)
 Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-41756d4c0e0sm1172716fac.13.2026.03.09.18.59.19
+ 46e09a7af769-7d728d1238csm7808572a34.15.2026.03.09.19.49.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Mar 2026 18:59:19 -0700 (PDT)
+ Mon, 09 Mar 2026 19:49:27 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v10 6/6] MAINTAINERS: add section for AI review tools
-Date: Mon,  9 Mar 2026 18:57:26 -0700
-Message-ID: <20260310015910.331784-7-stephen@networkplumber.org>
+Subject: [PATCH v19 00/24] net/pcap: fixes, test, and enhancements
+Date: Mon,  9 Mar 2026 19:47:35 -0700
+Message-ID: <20260310024925.476543-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260310015910.331784-1-stephen@networkplumber.org>
-References: <20260126184205.104629-1-stephen@networkplumber.org>
- <20260310015910.331784-1-stephen@networkplumber.org>
+In-Reply-To: <20260106182823.192350-1-stephen@networkplumber.org>
+References: <20260106182823.192350-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,34 +79,135 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add maintainer entries for the AI-assisted code review tooling:
-AGENTS.md, analyze-patch.py, compare-reviews.sh, and
-review-doc.py.
+This series contains improvements to the PCAP PMD including new
+features, bug fixes, code cleanup, and a comprehensive test suite.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- MAINTAINERS | 8 ++++++++
- 1 file changed, 8 insertions(+)
+New features:
+  - VLAN tag insertion on Tx (via tx_prepare) and stripping on Rx
+  - Runtime VLAN offload configuration via vlan_offload_set callback
+  - Nanosecond precision timestamps (when libpcap supports it)
+  - Link state reporting in interface mode
+  - Link status change (LSC) interrupt support in interface mode
+  - EOF notification via link status change for rx_pcap mode
+  - Advertise RTE_ETH_TX_OFFLOAD_MULTI_SEGS capability
+  - Configurable snapshot length via snaplen devarg
+  - Rx scatter offload support with mbuf pool validation
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5eb8e9dc22..7c1a84274f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -109,6 +109,14 @@ F: license/
- F: .editorconfig
- F: .mailmap
- 
-+AI review tools
-+M: Stephen Hemminger <stephen@networkplumber.org>
-+M: Aaron Conole <aconole@redhat.com>
-+F: AGENTS.md
-+F: devtools/analyze-patch.py
-+F: devtools/compare-reviews.sh
-+F: devtools/review-doc.py
-+
- Linux kernel uAPI headers
- M: Maxime Coquelin <maxime.coquelin@redhat.com>
- F: devtools/linux-uapi.sh
+Bug fixes:
+  - Fix build on Windows from RTE_LOG_LINE changes.
+  - Fix multi-segment transmit to dynamically allocate instead of
+    silently truncating packets larger than 9K stack buffer
+  - Fix Tx burst error handling: distinguish malformed mbufs (counted
+    as errors) from pcap_sendpacket backpressure (break and retry)
+  - Reject non-Ethernet interfaces to prevent malformed packets
+    and kernel warnings on FreeBSD/macOS loopback
+  - Fix infinite_rx ring fill applying VLAN strip and timestamp
+    offloads to template packets, preventing those offloads from
+    working correctly during packet delivery
+
+Code cleanup:
+  - Convert internal flags from int to bool
+  - Remove unnecessary casts of void* from rte_zmalloc
+  - Replace rte_malloc/rte_memcpy with libc equivalents in osdep code
+  - Include headers explicitly rather than relying on indirect includes
+  - Remove unnecessary volatile qualifier on statistics
+  - Reduce scope of file-level variables
+
+Testing:
+  - Add comprehensive unit test suite covering basic file I/O,
+    timestamps, jumbo frames, VLAN strip/insert, multi-queue,
+    scatter receive, snaplen, EOF notification, and link status
+  - Test discovers network interfaces using pcap_findalldevs API
+    for portable interface enumeration across Linux, FreeBSD, macOS,
+    and Windows
+  - Tests use packet_burst_generator for standardized test packet
+    creation
+
+v19:
+  - Restore Rx scatter offload patch
+  - minor fix to tx_burst
+
+v18:
+  - Move VLAN insert from tx burst path to tx_prepare callback,
+    consistent with virtio and af_packet driver patterns
+  - Simplify link status patch to just report UP/DOWN state;
+    remove speed and duplex querying that had cross-platform
+    portability issues (FreeBSD ifmedia_baudrate not available
+    in userspace, Windows GetIfEntry2 linking issues)
+  - Fix test_vlan_insert_tx to call rte_eth_tx_prepare() before
+    rte_eth_tx_burst() to match the new tx_prepare VLAN insert
+    implementation
+
+Stephen Hemminger (24):
+  maintainers: update for pcap driver
+  net/pcap: fix build on Windows
+  doc: update features for PCAP PMD
+  net/pcap: include used headers
+  net/pcap: remove unnecessary casts
+  net/pcap: avoid using rte_malloc and rte_memcpy
+  net/pcap: advertise Tx multi segment
+  net/pcap: replace stack bounce buffer
+  net/pcap: fix error accounting and backpressure on transmit
+  net/pcap: add datapath debug logging
+  net/pcap: consolidate boolean flag handling
+  net/pcap: support VLAN strip and insert offloads
+  net/pcap: add link status for interface mode
+  net/pcap: support nanosecond timestamp precision
+  net/pcap: reject non-Ethernet interfaces
+  net/pcap: reduce scope of file-level variables
+  net/pcap: avoid use of volatile
+  net/pcap: clarify maximum received packet
+  eal/windows: add wrapper for access function
+  net/pcap: add snapshot length devarg
+  net/pcap: add Rx scatter offload
+  net/pcap: add link status change support for iface mode
+  net/pcap: add EOF notification via link status change
+  test: add comprehensive test suite for pcap PMD
+
+
+Stephen Hemminger (25):
+  maintainers: update for pcap driver
+  net/pcap: fix build on Windows
+  doc: update features for PCAP PMD
+  net/pcap: include used headers
+  net/pcap: remove unnecessary casts
+  net/pcap: avoid using rte_malloc and rte_memcpy
+  net/pcap: advertise Tx multi segment
+  net/pcap: replace stack bounce buffer
+  net/pcap: fix error accounting and backpressure on transmit
+  net/pcap: add datapath debug logging
+  net/pcap: consolidate boolean flag handling
+  net/pcap: support VLAN strip and insert offloads
+  net/pcap: add link status for interface mode
+  net/pcap: support nanosecond timestamp precision
+  net/pcap: reject non-Ethernet interfaces
+  net/pcap: reduce scope of file-level variables
+  net/pcap: avoid use of volatile
+  net/pcap: clarify maximum received packet
+  eal/windows: add wrapper for access function
+  net/pcap: add snapshot length devarg
+  net/pcap: add Rx scatter offload
+  net/pcap: add link status change support for iface mode
+  net/pcap: add EOF notification via link status change
+  test: add comprehensive test suite for pcap PMD
+  check patch warn in test
+
+ MAINTAINERS                            |    1 +
+ app/test/meson.build                   |    2 +
+ app/test/test_pmd_pcap.c               | 3755 ++++++++++++++++++++++++
+ doc/guides/nics/features/pcap.ini      |    9 +
+ doc/guides/nics/pcap.rst               |   48 +
+ doc/guides/rel_notes/release_26_03.rst |   12 +
+ drivers/net/pcap/pcap_ethdev.c         |  850 ++++--
+ drivers/net/pcap/pcap_osdep.h          |   27 +
+ drivers/net/pcap/pcap_osdep_freebsd.c  |   43 +-
+ drivers/net/pcap/pcap_osdep_linux.c    |   33 +-
+ drivers/net/pcap/pcap_osdep_windows.c  |   76 +-
+ lib/eal/windows/include/rte_os_shim.h  |    1 +
+ lib/eal/windows/include/unistd.h       |    7 +
+ 13 files changed, 4643 insertions(+), 221 deletions(-)
+ create mode 100644 app/test/test_pmd_pcap.c
+
 -- 
 2.51.0
 
