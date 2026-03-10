@@ -2,72 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2710FD2D9C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 14:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E389FFD2D9F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 14:08:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C5D4F402DC;
-	Tue, 10 Mar 2026 15:02:57 +0100 (CET)
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com
- [209.85.210.44]) by mails.dpdk.org (Postfix) with ESMTP id 4E66E402BA
- for <dev@dpdk.org>; Tue, 10 Mar 2026 15:02:57 +0100 (CET)
-Received: by mail-ot1-f44.google.com with SMTP id
- 46e09a7af769-7d744d9abdaso2113229a34.0
- for <dev@dpdk.org>; Tue, 10 Mar 2026 07:02:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773151376;
- x=1773756176; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=QlJWtQajq9qfB23v92Nhn9hqIOT4iui8S/h4PxRze74=;
- b=e6lWm+CrqKObivjUzfO9O5OuZwCKa0Ug/mYUnW20LGmWPsIbDKbJTd+Ck49ugdHc/j
- 1aOOgCt+2AmBOHJzjQ02e8W744Vdz4jvFPfioFv8AyMJ1bAfG1G8t7FP9Sa8wruwwTdJ
- TLL67APJbuJ2W9HAkvHoEl7P3ALQr7cxe53VWjtKzOKRZpIMF89e8CtmqoQOZ5FBWeTB
- NmStvqyKLU9i/9Y5zrjlQiOYL7NFkq3olW6FXRxTKHn2F9x4mJxQiwRwJh01CMxDEMw7
- V8moefuzmfeRRPjBJyTYgj3xDHFBtMqD3+qDzXWha6ucpJc7eg87G7NvREDADTwJJNnD
- UahQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773151376; x=1773756176;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=QlJWtQajq9qfB23v92Nhn9hqIOT4iui8S/h4PxRze74=;
- b=nlkboai1qaOEbc7HacWvClqBO33jfpV/McCfAWRawDvp1u0g3hNIwpK7Ys37r7jYaL
- BqXtZHLH1XMjC1dN95jMgGQLixeHc3J1jp7sLa6lE0KUEGoHypiJ/rZ0JQje1PJZ+Xci
- ayn0XgQhGCluk60xxM9HYL9VE3ZMBgDMmitHqIcyrbJAp2iwAdXqNzne/PI3rmUCAw0C
- qBITYqcYy61OO5JEDJAF8NyWRqbNQnfin/8YKI0jgJU+oEIFZv9SWe/OhDlLKBRs/zrv
- k7iJVzcofoKbR1vWxbCNZ+1kk0K03dsm/RlldPba+UKONyMO8BCDcs27SJrRwYMogDUR
- xilA==
-X-Gm-Message-State: AOJu0YznUTwCtlQCoA+bNqlg8A62sL2cqjv4hMlcUfzbuFzV5yBTPE5g
- BFwQEfJA5X66arkeLemjEutaFNbb7sj6ZxBgzjttAFmZLLy+a4cD8/h6aUd+A/HyBvM=
-X-Gm-Gg: ATEYQzx67aQ9odiRMa7R6T7sy+bFKCOzxd4yHmSvG3AvTv2wzkeB/g4CbjrMqHl4/fZ
- 3AhlzK9HOf7XScBYPsP/yB+q9uKukg8MUaJaLDA4f44I47ErrZg8yTyZ+BEUtuizIWgVEmf2GJR
- eWeHVT+IXPM33jwMQkl/OxojlagWQljGrbAaR+yPZLKuHkmSd2LBud8jtsQrpr36/QzXGXzY2R9
- qP6ofXapHV6M7h7fCjbmRFzwRIZTc2LaCv16JimZj6EOx68o4bPJTb1iK0riS5dfXSDtxBFcpN1
- o3qxpifWDFdGcW8hZhuIMwx6griRb3S4psO4YPhOlJJr/5DPr5Q3mmN6Gosj0g94WNmPZCm3FfR
- BkUuThi+EbVABu5iWgBlE96C6EqSSlobhEcKi5bv03cNYMJfb9eTp0DIRv0ZdlanO3rTa1rK9eG
- bjKSWUvx4jsGK70my2Dv+qZPauVPCK9bFAUpA=
-X-Received: by 2002:a05:6808:1481:b0:467:697:7bb2 with SMTP id
- 5614622812f47-4670697a32cmr4233527b6e.59.1773151376065; 
- Tue, 10 Mar 2026 07:02:56 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 5614622812f47-466df93e85fsm7593870b6e.2.2026.03.10.07.02.54
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Mar 2026 07:02:55 -0700 (PDT)
-Date: Tue, 10 Mar 2026 07:02:51 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-Cc: <dev@dpdk.org>, <xavier.guillaume@ovhcloud.com>
-Subject: Re: [PATCH v2] net/af_packet: add multi-segment mbuf support for
- jumbo frames
-Message-ID: <20260310070251.17c934ea@phoenix.local>
-In-Reply-To: <20260309210210.1665888-1-sriram.yagnaraman@ericsson.com>
-References: <20260309204910.1657193-1-sriram.yagnaraman@ericsson.com>
- <20260309210210.1665888-1-sriram.yagnaraman@ericsson.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CFAD0402DC;
+	Tue, 10 Mar 2026 15:08:58 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id F0F26402BA
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 15:08:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1773151737; x=1804687737;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=3COAmr8eELSxKI8rkJlzEH/rfPO62cC41tzr/d4iU0A=;
+ b=dVbwkK2OrCvSCLflxh/F3pmFQRpLMdQd5Lkk+uKMdjiqdt7DlV/1tICQ
+ RAYHztfQppx2yJycJGepGtBZyreHPETy+DLPvy07ixL9RFzH6QhEw8h1c
+ b1f9yeFPTk1Wfg4u2M8oSLJBOoRZVoNbbbEkwsBp1/sXU+sFBj8Jr10Vf
+ 1ciFKBpK608TD7FTC03vVnp8a2IwDzkJKmCT6r4Poy1N/xJ2TijIZfBU6
+ dRQbnobql7/LSp8qFuOAPHpl4zzyjllkcqB0fp6i/UJwI2CbUtbQ6yIgq
+ 6jB6KJi4+PoYO8coaJjE/Ee9R+1ZYA1TB9Bm87Cpui97oZJmCbASkllC6 g==;
+X-CSE-ConnectionGUID: deMiwMDiTrW7BfTwhtQGmw==
+X-CSE-MsgGUID: c8mp/FrgRxGusTlkMT3f6g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11725"; a="74277048"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208";a="74277048"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Mar 2026 07:08:55 -0700
+X-CSE-ConnectionGUID: oEqWm9DLRcusmDdaB6oFew==
+X-CSE-MsgGUID: SGgkHpLGTs2JdKm1mQ/zMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208";a="219254663"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Mar 2026 07:08:54 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 10 Mar 2026 07:08:54 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Tue, 10 Mar 2026 07:08:54 -0700
+Received: from BN8PR05CU002.outbound.protection.outlook.com (52.101.57.56) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 10 Mar 2026 07:08:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lcJbQRm+hVxxP75Tg+JrGfNdN4HUhTtQ+OR5VWmqduFsiw9vaRXWPI/sj82E6eZiKIaLur4Mle3WhPpp5mIJ68EEYDwhNp1xKu4symOP7mpv+OwKGH2y9NzcQAjbIrj+xaSQF4lu0YyfpqhpeLHDT3PWxjcePNDamY1uN8vJ7ZoLRt388N0640b+LQF25XBbtSxvWJagMAhyinKRX3Ylk55bv8H4qmKxuERn4WbIaHJYB+0Ho9sovWFClHNdz1Z6zN+fBHzdsirdERHKc/W80UGH2FBWdbygkypYKdk7AHbxNj5k2+9/Ge/F9EuCQDLGxcDwEEey6ynF81+R9M87rQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P4sVfCNDyww9FNo9fYuqb1+DMofMK3BR54IrcFSXGkY=;
+ b=X3YYoSXd7+Z30Yb5rN/wiIjxk3gkJaCIon7K8NoHcv56rnkwnFegZ1Lo9v6XXVSFOfCKEHYVQVnGbI6b7HKjBpcf6UStyDhfjSdj7cBCGzbKdrKcrowMw4AhaQo1TRlNAkf4ViYaJbzgW6gA4QvhouRGBikyUn0rZ/9NvqHme3Gpk0Odks0QOcV8W4NdrD0fX4g/lK+dOK+6PWqC5mahTVGH16F2CTVY+vJ4KoQH7arRfHRY+6F1GYopv4ywz5Y7c2XJ6mjH7LFXqB6yDt3cDUfyhHOGVYqW1Oqgab3gAEB/1s88RNnKAPpVD3xO2VziZGx734M9Ok0uBYJSTsugLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by PH8PR11MB6729.namprd11.prod.outlook.com (2603:10b6:510:1c5::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.9; Tue, 10 Mar
+ 2026 14:08:45 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9700.010; Tue, 10 Mar 2026
+ 14:08:45 +0000
+Date: Tue, 10 Mar 2026 14:08:40 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Soumyadeep Hore <soumyadeep.hore@intel.com>
+CC: <manoj.kumar.subbarao@intel.com>, <aman.deep.singh@intel.com>,
+ <dev@dpdk.org>
+Subject: Re: [PATCH v1 0/6] Update ICE Base Driver
+Message-ID: <abAl6HmyKhiUdPyt@bricha3-mobl1.ger.corp.intel.com>
+References: <20260310095218.703423-1-soumyadeep.hore@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260310095218.703423-1-soumyadeep.hore@intel.com>
+X-ClientProxiedBy: DUZPR01CA0040.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:468::18) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH8PR11MB6729:EE_
+X-MS-Office365-Filtering-Correlation-Id: f9b1b4cc-a186-45ff-dac4-08de7eae8ad9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|366016|18002099003|22082099003|56012099003; 
+X-Microsoft-Antispam-Message-Info: nEW12ghTeFVFg8zcZLxYsk1Vkt7IRRfZ0Xz+3AMlMYlGqhUSeW4nxnUhJD/9YYR3O1STuE11la3bQnzMDBcNlqZKVUtpwCZh+nLVvcKmrKMWNnDmyLSo0/HwdKw4BucRKroAdtKztd/c9Y8JDn2zSKeBMnhWhVuoKmjdeD4zENxpjGQsm+apLMaYskPWcc9VO9XsIbqBHpoSL8YTsyAZR6Ey5Fi9Nv8Mgr09Qg1aY7q4EdK2Z7rIygw3OxUphMv/+t32kny1Dcy4tR/MqEMx8i1qforEF8CosBXMlfuUdeJfVkq99/UReZF2e4hS5KWy5Y2s1TBOqiQEDJNUO4kjC+8mKfy3YE2k3erNG+XdkYUWlqe6BN7gJpJj0dZ+T6Wmf5C97qwNw4dHBzM/7agCLsNy2p3pPQmw6tu5p9JXn3a8fCkHC07iPhfU1YjVINgPIsOySHB3YQzIAmbLRIP1qIv47dpSPnCL7ouGGfPOphqkpkSHgkZOitHjoDyiMfFpDmBwqvaiOdlxMl5gGykZZrLC00SYQKqupIvwi20Uqwlx4xK0995bHdujzmSxSoMLz3RpxAkqcHFGJPKX0G0T/DmTgd7c5ygvM+wmWiHCTYbBcthBitO27YHk+lZdvb+Tj6aDhCs2aX/X1bULIdVLn2tmCcE5L4T3Lu4B0O6HZIJFEBxBTCWv6VTBIukb+ap7YW4y6fCvW5QryGwpEQr34otUbfOJaiENw3kzbX/rwCc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(18002099003)(22082099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ERcwH2jbdU/JQAqCafmeWFHNfYcQwvBa8/tU1s9KFafnhTlvK4RBCqKRAD/4?=
+ =?us-ascii?Q?f6XuIcB+QfTQxWohSsVui6SZTterTBploYQiIqjpZPWNqnhtutc//dEsOTrX?=
+ =?us-ascii?Q?Cbd7kmhub2L9LbHP4igo8MH3ghWzKzJy3jpb4YfYw+tWFGM42EXT0Pb39lvc?=
+ =?us-ascii?Q?wZ7Dpc1T4FKay8r2mAGhVwE42bIk8MwJzxC88/+yXKOiCgZiB0xq6IM/lHw8?=
+ =?us-ascii?Q?7hLlmwCWoEXLMSvI6x+s77Kf0BDVlZqrYxRVEgZjX4nNVd5QHM9bC5VtHX1G?=
+ =?us-ascii?Q?p9tYXWImgjKQztddn/WEX+XWtRHnNTVRLSVLJpIp7U+kZeaDLvasAJpNFBUp?=
+ =?us-ascii?Q?iqw1v2V7zf04DpllrlJxk8FPTzKhGaaNoJVW5B3Ib4YMugH+SoaPCL+48n2t?=
+ =?us-ascii?Q?5r9ViS422laHh8qYc74376tjlOftf2cplDeFZgNpKP1KyiLQlyHIx2/ptzzS?=
+ =?us-ascii?Q?ZDU/7QaXUtStksCvenHBPqIV1q8JzOhlx/yDq0Vgze+JXFw7byyYbPmpQnSj?=
+ =?us-ascii?Q?mWCU+pqZYipOoo04PxzzxLRzFPU6p47gKfDpCfyOs8pU3GiGmMgqHFjwf/ps?=
+ =?us-ascii?Q?apvk/qeNv2/oKQTsKg8ta0RvvwkfkEGAn6MHKwOMUu5u/Dm7grCm5N3mojY2?=
+ =?us-ascii?Q?CTrl3vYZ4qgrhAoBzpFUJVW/VFDra1zIe0rWfWmBWTDR6hv6JnFv9/r96CE7?=
+ =?us-ascii?Q?uw4wn8/ZZkrtaH4Wy6WkoXETZskWitjym/SBoCltD7OhG+5vm/8/oo5+HHhs?=
+ =?us-ascii?Q?XDZAxoSIu5UH1xhDYW7MGprZlRsprlmbUUUTyN7Kr4jgemIQwu86sXQ/9lEo?=
+ =?us-ascii?Q?vdiaw5d0hdeosRw187ZbqaBnohln5pjGp+a7W8QcSDfVmDljRWdUxHRjrN9e?=
+ =?us-ascii?Q?w2kVwkV/otgPZcoD0dbAwPz4tC0uxeG5TVgYFHrOKgbnZ7DQ8rhbIsXZw8tF?=
+ =?us-ascii?Q?52BGV2w4wrI9Dz2B3n243yDk3RMT4DOGS4Tu2UXrQ++b25LToeIbEsteGXyF?=
+ =?us-ascii?Q?bMWZKRjPL6MOuQhxeYADEBTvP7gwr3Nn/ft+bbmnM4hYKZVthzGM9hHkpzkB?=
+ =?us-ascii?Q?kFTrc88ru1cqRj3CzFBifTupFyuqki8HonjB55SZMxruhhlPdLdnI27N9C9A?=
+ =?us-ascii?Q?/DhQIQhTey/XTXz7PEi6jMnrIoMTWkXbOndUjJp8amMQUsGK86QMobleR3xy?=
+ =?us-ascii?Q?m5abAGOyT8nMSGASCWnycEqFk1AnoFotJ5tSRbVNs9A3rG3tPv3lQBq8Quso?=
+ =?us-ascii?Q?nc1pOI3nyKgNEo04pz9ahmPUKVq1c8IdBlZSV7hYbUMGvdW0ki3LqkDGEjDu?=
+ =?us-ascii?Q?Tl91VWW4IIQnf5oX5zn4UHeqYER7+Dv+pD0ZdbSGv0wX69OMr3wY21iJOH/O?=
+ =?us-ascii?Q?z7Trv5SYQ/NSiHzI21gPX88fZ4ek6Wmuqr9TUpg4S568BTe0ssLAZEXwvlyO?=
+ =?us-ascii?Q?C9k67pppm95B//vcnAsRb+bO4AnKTLS2uMDActeKeOnuM6OkvyJLeXqW7vDG?=
+ =?us-ascii?Q?iIrdlMRSrMwhKUd3ZwF4XBf9g2XG+4TmGwXddtDs0UwGrgLYiiJqwcWqFmKt?=
+ =?us-ascii?Q?VoPccLgvTunSgyi9joq+UUo/8huiSPHiNYZXV3NzUZZVxH0iItPAZZPib7jt?=
+ =?us-ascii?Q?mxtrZ3j1QwewuHnNBe98KWvh7zvNN0lkMEbWG54e72GY3bme67W885C7nyxp?=
+ =?us-ascii?Q?/e9sPGdY3rsC3vXWnNaM6nOO8AUL3pNmtIWosYCUAoHf6HW36uIVf+py478Q?=
+ =?us-ascii?Q?+6uxZbLSvJs5iAWpXcppUOsFtQ9LBFQ=3D?=
+X-Exchange-RoutingPolicyChecked: XWdB8RMyliVnWXuNsS28zE1leTQDyuwzN30e0ZuAznGEW5AuoE/GSplSHoxb4iieFU7wmHOs3mMVSyTA0Sq2LtVB/AKVnK/h2mbJi4/k/rH3Zuk2mD6nAYqRqn8mCJOg5JFtbpCfDYlqTy+ZxWHmOUgF6DBdlG6+vs/DZcSSaoSKTOPvzas6bCEpbgUSBiUwswYgqd9YMS/bbnMpRXXWnMKP4oIlMgRPrkR4rO/+MHoQVzPBS6zAATCFt+rtKEDpwrM3CotryhijCwgVYBHjDfKndR4cRHlymUZY+dua4e6P9MzyR8qil8pej5zK6QLuskJfUDEbOIvzuO3fyHt++w==
+X-MS-Exchange-CrossTenant-Network-Message-Id: f9b1b4cc-a186-45ff-dac4-08de7eae8ad9
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Mar 2026 14:08:45.4123 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xvgjyTeXjR0BR8Oz+tQI8WyYhElkLxl6UtL9SW9JG8v+5VGUjUy0tmDFiHWmoGKoqc4DxtgeIncmwrnq5KTOvbkYlYbBCVwx31EI9MGQda8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6729
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,146 +151,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 9 Mar 2026 22:02:10 +0100
-Sriram Yagnaraman <sriram.yagnaraman@ericsson.com> wrote:
+On Tue, Mar 10, 2026 at 05:52:03AM -0400, Soumyadeep Hore wrote:
+> This series updates shared code of ICE PMD.
+> 
+> Aleksandr Loktionov (1):
+>   net/ice/base: enable LLDP filter control for E830
+> 
+> Grzegorz Nitka (1):
+>   net/ice/base: fix 'adjust' timer programming for E830
+> 
+> Maciej Paczkowski (1):
+>   net/ice/base: resolve comparison-with-wider-type violations
+> 
+> Paul Greenwalt (2):
+>   net/ice/base: update crash on invalid topology
+>   net/ice/base: support RDMA on 4+ ports of E830
+> 
+> Pawel Sobczyk (1):
+>   net/ice/base: add pending admin queue events API
+> 
+Series-acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-> Enable jumbo frame reception with default mbuf data room size by
-> chaining multiple mbufs when packet exceeds single mbuf tailroom.
->=20
-> The RX path now:
-> - Copies first segment up to mbuf tailroom
-> - Allocates and chains additional segments for remaining data
-> - Properly maintains nb_segs, next pointers, and pkt_len
-> - Silently drops packets on mbuf allocation failure
->=20
-> This allows receiving 9KB jumbo frames using standard 2KB mbufs,
-> chaining ~5 segments per jumbo packet. No need for custom mbuf
-> pools with large data room.
->=20
-> Advertises RTE_ETH_RX_OFFLOAD_SCATTER capability.
->=20
-> Depends-on: series-34567 ("net/af_packet: fix MTU handling and add
-> jumbo frame support")
->=20
-> Note: Implementation generated with AI assistance.
->=20
-> Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+Series applied to dpdk-next-net-intel, except patch 4 which is a no-op
+change for DPDK itself.
 
-Using AI patch review finds several issues.
-
-I'll start by reading the patch and the relevant AGENTS.md section.Now let =
-me check AGENTS.md for any `RTE_ETH_RX_OFFLOAD_SCATTER` guidance:No specifi=
-c guidance on `RTE_ETH_RX_OFFLOAD_SCATTER` in AGENTS.md. Let me now look mo=
-re closely at the original code to understand the loop structure better:The=
- `for` loop itself isn't in the diff context =E2=80=94 it's the existing `f=
-or (i =3D 0; i < nb_pkts; i++)` loop. Let me check the existing code to und=
-erstand the full picture:Now let me look at the current upstream code to un=
-derstand the existing loop structure:GitHub rendered HTML, not useful. I ha=
-ve enough context from the patch and the search results to do a thorough re=
-view. Let me now analyze the patch carefully.
-
-Here's my review of the v2 patch:
-
----
-
-**Patch: net/af_packet: add multi-segment mbuf support for jumbo frames**
-
-### Error
-
-**1. Scatter capability unconditionally advertised but RX path does not che=
-ck if the application enabled it.**
-
-The patch adds `RTE_ETH_RX_OFFLOAD_SCATTER` to `rx_offload_capa` in `eth_de=
-v_info()`, which correctly advertises the *capability*. However, the multi-=
-segment chaining code in `eth_af_packet_rx()` executes unconditionally =E2=
-=80=94 it will scatter into multiple mbufs even if the application did not =
-request `RTE_ETH_RX_OFFLOAD_SCATTER` in its `rxmode.offloads`. When an appl=
-ication has not enabled scatter, it expects single-segment mbufs only and m=
-ay not walk `mbuf->next` chains. The driver should check whether scatter wa=
-s actually requested (via the queue or port config) and fall back to the ol=
-d behavior (drop packets that exceed single-mbuf tailroom) when scatter is =
-not enabled.
-
-Other PMDs (e.g., ixgbe, i40e, mlx5) guard their scatter path behind a chec=
-k of the configured offloads. Without this, applications that haven't opted=
- into scatter will silently receive chained mbufs they don't expect, leadin=
-g to data truncation or corruption at the application layer.
-
-**2. `goto next_pkt` skips the loop increment =E2=80=94 `i` still increment=
-s but `num_rx` does not, causing the outer `for` loop to consume ring frame=
-s without delivering packets, potentially skipping valid frames.**
-
-The outer loop is `for (i =3D 0; i < nb_pkts; i++)`. When the `goto next_pk=
-t` path is taken (mbuf alloc failure in the scatter loop), the code correct=
-ly releases the ring frame and advances `framenum`, then jumps to `next_pkt=
-`. On the next iteration, `i` increments but the loop re-reads `ppd` from t=
-he *new* `framenum` =E2=80=94 this part is fine.
-
-However, the original code indexed `bufs[i]` and the patch changes it to `b=
-ufs[num_rx]`, which is correct. But consider: the loop variable `i` counts =
-iterations including failures, while the loop condition is `i < nb_pkts`. T=
-his means the function will stop after `nb_pkts` ring-frame inspections reg=
-ardless of how many were dropped. If several frames fail allocation, the fu=
-nction returns fewer packets than it could have =E2=80=94 the ring may have=
- more ready frames that will be delayed until the next call. This is a beha=
-vioral change from the original code (which also had `bufs[i]` so never had=
- drops mid-loop), but it's minor =E2=80=94 not a bug per se, just worth not=
-ing.
-
-### Warning
-
-**3. No `err_pkts` counter increment on allocation failure.**
-
-When `rte_pktmbuf_alloc()` fails for a scatter segment, the head mbuf is fr=
-eed and the ring frame released, but `pkt_q->err_pkts` is not incremented. =
-The original code (before this patch) also doesn't increment `err_pkts` on =
-the initial alloc failure `break`, but that's an existing limitation. For t=
-he new scatter path, a silent drop with no counter update makes diagnosis d=
-ifficult. Consider:
-
-```c
-if (unlikely(seg =3D=3D NULL)) {
-    rte_pktmbuf_free(mbuf);
-    pkt_q->err_pkts++;
-    ...
-```
-
-**4. No guard against zero tailroom causing an infinite loop.**
-
-If `rte_pktmbuf_tailroom(seg)` returns 0 for a freshly allocated mbuf (theo=
-retically possible if headroom equals the entire buffer), the `while (remai=
-ning > 0)` loop would allocate mbufs endlessly with `data_len =3D 0`, never=
- decrementing `remaining`. In practice this shouldn't happen with normal me=
-mpool configurations, but a defensive check would be prudent:
-
-```c
-data_len =3D RTE_MIN(remaining, rte_pktmbuf_tailroom(seg));
-if (unlikely(data_len =3D=3D 0)) {
-    rte_pktmbuf_free(seg);
-    rte_pktmbuf_free(mbuf);
-    /* handle error */
-    goto next_pkt;
-}
-```
-
-**5. Missing `Cc: stable@dpdk.org` if this targets an LTS branch, and missi=
-ng `Fixes:` tag if it addresses a known limitation.**
-
-The commit message doesn't indicate this is a bug fix (it's a new feature),=
- so this may be intentional. But the `Depends-on:` references a fix series =
-=E2=80=94 if that series targets stable, this patch should clarify that it =
-does not.
-
-### Info
-
-**6. The `bufs[num_rx]` fix is a good correctness improvement.** The origin=
-al code used `bufs[i]` which only worked because the original loop never ha=
-d a `continue`/`goto` path that could skip a slot. The new indexing with `n=
-um_rx` is correct for the new drop path.
-
-**7. Regarding `RTE_ETH_RX_OFFLOAD_SCATTER` and AGENTS.md** =E2=80=94 there=
-'s no specific guidance in AGENTS.md about scatter offload. This is a gap w=
-orth considering: a pattern section could note that drivers advertising sca=
-tter capability should conditionally enable the scatter code path based on =
-whether the application actually requested it, since applications that don'=
-t request scatter expect only single-segment mbufs.
+Thanks,
+/Bruce
