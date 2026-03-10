@@ -2,65 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0998FCC9AE
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 02:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7D54FCC9AA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 02:50:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47A6F40A72;
-	Tue, 10 Mar 2026 03:49:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 60E9D40A7A;
+	Tue, 10 Mar 2026 03:49:40 +0100 (CET)
 Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com
- [209.85.210.52]) by mails.dpdk.org (Postfix) with ESMTP id D6E82406BC
- for <dev@dpdk.org>; Tue, 10 Mar 2026 03:49:35 +0100 (CET)
+ [209.85.210.52]) by mails.dpdk.org (Postfix) with ESMTP id 05E8440A6E
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 03:49:37 +0100 (CET)
 Received: by mail-ot1-f52.google.com with SMTP id
- 46e09a7af769-7d74c1157a4so1546469a34.1
- for <dev@dpdk.org>; Mon, 09 Mar 2026 19:49:35 -0700 (PDT)
+ 46e09a7af769-7d75e74f5adso57961a34.3
+ for <dev@dpdk.org>; Mon, 09 Mar 2026 19:49:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773110975;
- x=1773715775; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773110976;
+ x=1773715776; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=SouYZ6tU1paU16EOu15PvoChOiKXSP39Pj0QBhi2WFQ=;
- b=R0dR2Wyu2oquU9sI6f2PSH4HPF8AJNrDgHGZizJESEwaHwxrZrDWnvOz/wx45KFxLW
- EjT9EMlbkl8N2J9ppFheVg2bjlOdYbjsqTwzt85ZT//Ak8NOAlH/GYKblI3c9UKF9SY2
- MY0egD2FwG++7TMVAibB+VgCo4FKRlqhStHzRvD6KqSuqDysnQNs2uGYhuReO7gw13xb
- esE7PnQyXpkVt7zEQj4+5H1zXtJx7/1KOThycUlYF5RCPwyE7bbzPZt5gP+44LiVBqod
- 6nlWXyPeQFuqmnNNG0xs1TiCpU36Ntbrxn1AamXWI2mEnHPVp185muUFkSxcrBH3m7ov
- kG7g==
+ bh=vsZUQf7xFcuhfRxCgyvdKClsn03gmCq61Jm0Lq6UINs=;
+ b=hQiq0SAtYKIthYUjRwcT4Xi5Yf5/JunFFn6TmH2jz2tepAJUhXfybhe3hQsk6b6cES
+ TRy8Z8zabulD/akGLHIFmqtlsD6/y24kV+ENiU9enjnEolsgSSa7ys7RWp5tIELv2c1r
+ iirR5GeWVuWHCElkNHE1ThnRkKIMTuVk/5g5njfGR/OKmOYdNySaDUOZnRVbzxNwV/3f
+ /3WORElLKV56mRdqgrdPrBfgNJOEknMZGWPndZ9Qs0i0iYThvl7ueclUa3uhGvH1Xw4M
+ iF6xGW7RcjHHHqsAL+CvhCF0vWwUxYdPlYLVtcG5cbo7ixbifOa9SGjJb4dlNfBEBkxQ
+ M02g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773110975; x=1773715775;
+ d=1e100.net; s=20230601; t=1773110976; x=1773715776;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=SouYZ6tU1paU16EOu15PvoChOiKXSP39Pj0QBhi2WFQ=;
- b=mBzAmH++u9CwGvigGiUa18sLYPu0Kg5RGSzXMm01gWooXtrSeGkXvsWJYHaBuLB1Pv
- lQqeKJ6KKzAcShCnduDD+0nnk3Cw9RDVKWLe2yma8M8Oae7UHMnYleTREHtdqcMaYeso
- 2XxQKWJ3nhi4VodxR5hvvrPzQ++wgUoT97tjvpW0ChdqvOmlmvQGZJuiAh+3z/xvjt5F
- 63uE3G+jSYMixmdP7DGKB8tbVtkzTC47Gq3GseNuyKjN3CtaTsoHcoKVS8jGW0tw8Xcc
- nowJX7eDmg7KQh4wr7XbMKRVMzuyl6dBd89Q5d/ckJJnG/9FAZFSbqF4dNpvO+OJud2S
- bIVg==
-X-Gm-Message-State: AOJu0YxGf7PSiqPDg7qqnOr6Sd++L5FcPP3qeXGr40Mol5pxEwJFvEuQ
- tQ6/ujPQp5EzSbsQaHDI8B4I4PueFrY3x1XG4GQVm6roioQ/k/mX6rvCKKSEIg1gZ/AzHAutqE0
- ZpsKFa8c=
-X-Gm-Gg: ATEYQzxPd9oQ3KluQsjFVivp2nbRqh24+mpfpE0srb+WToRlpBvWGej8Mm0/tyycdPc
- lx85UUirdcwrd/umIA0oenP4YwxArTYJPq79L45ZQlNqbuH4TvFnww7xqKuLFgM2yHECT2hU6Uc
- +31pTeOOll9kpGogp+t8itTesyVvu2ze798VpU9w8hrKEL0o7f/wFtGBiU8ebFLPXazwUlGk72i
- RHnt3ul+/S6Ai5liawFZLwHWyPSVow7vs/4Y36nPJw/jCs1ikfJBppzOf3K0qD5LoCeAV9DNR9b
- 9g+oWWLik63RBD51cldNSaFqdYI5bchSCTc43TyTzJBl6zXUM7m0DxIbIKqRQtbdTKg5fypjJ/P
- UeflmG0M45/PBrKOtMwJjBqf+KpFfb2llWwnhWjkNYlMDQtimY7GKlNLYC2A6H2W31zcnM5vFZg
- vkYLmkjCzGH4Td4OCh8X5aTfD3fXAt+/dZ
-X-Received: by 2002:a05:6830:370c:b0:7d7:5d66:4700 with SMTP id
- 46e09a7af769-7d75d664d5cmr356546a34.3.1773110975213; 
- Mon, 09 Mar 2026 19:49:35 -0700 (PDT)
+ bh=vsZUQf7xFcuhfRxCgyvdKClsn03gmCq61Jm0Lq6UINs=;
+ b=jyPTCLTuOswORz1PDMgV8Ch4GgtHxiC2C98F/2gWit5Vyqx4gQEJs0SfymcZts3Cp7
+ /YsS2Vzm4gEGqOKmcG8OqK/b966MDsl8n1VwUxI1to8aAjv98PgKNV9Pq4UHBK/JIEKj
+ fxEiOphGCAmZKIybtWDbc4wbVPtVtDCkWEmzSmOgpDNSkZ8+LF15Z3BK1B63RJbqKXR/
+ VkBYIdPaNoGi49HZoXApBqW8Ra4+bvzGCYbNM4/aZen9WJE4+j6iO11XKdkwMmI2XX0o
+ xfn8Sc47ADVBgFr2AU3iRwmS7bZWuEdF/M0PMyein7vQYfAiLwr0O15SvScvXYDXJa/v
+ dX8Q==
+X-Gm-Message-State: AOJu0Yx6LDhyT/+mBGrhGBLwtRkw7BqwsdeFo6w55qLJd3PxlsMn05sE
+ X9tN13+cmHkQJocaQxRjCLi32qTxB3pmcjNOJjCiIQ+L+fP2OfcYPLSSk5Yze6oDeJJrSlcKPA5
+ R8hcc8T4=
+X-Gm-Gg: ATEYQzyJ5TK4zFh9bwFcCelQEXs+2Aiv7wOSeye9v8RE/b1UO+Hx1zGyNPCWDMGTBxX
+ vHQ82BtRSkv6+vfXbCaOxhBxIuoDWY2xbb4qpdNz5anB6T5QdlB+GZ6v0h09TuzM2gpJFnhlmFt
+ 8i1cxCRLpFS5lCvLYJNkuCGTzNiTkMR4YC8tqXV4yiQVcVTHoxaLzEEP7A/CDSZqyYQ7CetZXOs
+ 4ZhQm04tsU+pYzt4hqX9+pi3s8cCqPdkG+3Px2O0g73osgVt4EkKJ/RJqy03WJQJzTz8i4Fv+ym
+ 2vDG7X0ckez4ziNU2ACWPhVVa8Lioa1/rpcErl9n+c22Gbcgox1eBKBKHEB9FDGqM5yas9fJrgq
+ DMKuAGQ14M6xGeEXcjDYGmnzWIVilHac3NA4pAujLeNsXj2Be8N0VJreVf7yRbBd3wdhFKlIYUg
+ GFFf9w+sXu0IbfRXpXau39fKtaPnlqFrQD
+X-Received: by 2002:a05:6830:2aa0:b0:7cf:dc3f:6b34 with SMTP id
+ 46e09a7af769-7d726f8b89amr9332034a34.20.1773110976307; 
+ Mon, 09 Mar 2026 19:49:36 -0700 (PDT)
 Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d728d1238csm7808572a34.15.2026.03.09.19.49.34
+ 46e09a7af769-7d728d1238csm7808572a34.15.2026.03.09.19.49.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 09 Mar 2026 19:49:34 -0700 (PDT)
+ Mon, 09 Mar 2026 19:49:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v19 06/25] net/pcap: avoid using rte_malloc and rte_memcpy
-Date: Mon,  9 Mar 2026 19:47:41 -0700
-Message-ID: <20260310024925.476543-7-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ David Marchand <david.marchand@redhat.com>,
+ Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v19 07/25] net/pcap: advertise Tx multi segment
+Date: Mon,  9 Mar 2026 19:47:42 -0700
+Message-ID: <20260310024925.476543-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260310024925.476543-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -80,108 +82,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-No need to use rte_malloc or rte_memcpy in the short
-code to get MAC address.
+The driver supports multi-segment transmit, but the did not set
+the offload flag. Therefore applications would not know about
+that capability.
+
+Fixes: fbbbf553f268 ("net/pcap: fix concurrent multiseg Tx")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c        |  3 ++-
- drivers/net/pcap/pcap_osdep_freebsd.c | 12 +++++-------
- drivers/net/pcap/pcap_osdep_linux.c   |  6 +++---
- 3 files changed, 10 insertions(+), 11 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index fbd1021c39..806451dc99 100644
+index 806451dc99..fedf461be4 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -6,6 +6,7 @@
+@@ -753,6 +753,7 @@ eth_dev_info(struct rte_eth_dev *dev,
+ 	dev_info->max_rx_queues = dev->data->nb_rx_queues;
+ 	dev_info->max_tx_queues = dev->data->nb_tx_queues;
+ 	dev_info->min_rx_bufsize = 0;
++	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
  
- #include <stdio.h>
- #include <stdlib.h>
-+#include <string.h>
- #include <time.h>
- #include <inttypes.h>
- #include <errno.h>
-@@ -1288,7 +1289,7 @@ eth_pcap_update_mac(const char *if_name, struct rte_eth_dev *eth_dev,
- 		return -1;
- 
- 	PMD_LOG(INFO, "Setting phy MAC for %s", if_name);
--	rte_memcpy(mac_addrs, mac.addr_bytes, RTE_ETHER_ADDR_LEN);
-+	memcpy(mac_addrs, mac.addr_bytes, RTE_ETHER_ADDR_LEN);
- 	eth_dev->data->mac_addrs = mac_addrs;
  	return 0;
  }
-diff --git a/drivers/net/pcap/pcap_osdep_freebsd.c b/drivers/net/pcap/pcap_osdep_freebsd.c
-index 20556b3e92..0185665f0b 100644
---- a/drivers/net/pcap/pcap_osdep_freebsd.c
-+++ b/drivers/net/pcap/pcap_osdep_freebsd.c
-@@ -4,13 +4,11 @@
-  * All rights reserved.
-  */
- 
-+#include <string.h>
- #include <net/if.h>
- #include <net/if_dl.h>
- #include <sys/sysctl.h>
- 
--#include <rte_malloc.h>
--#include <rte_memcpy.h>
--
- #include "pcap_osdep.h"
- 
- int
-@@ -41,19 +39,19 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
- 	if (len == 0)
- 		return -1;
- 
--	buf = rte_malloc(NULL, len, 0);
-+	buf = malloc(len);
- 	if (!buf)
- 		return -1;
- 
- 	if (sysctl(mib, 6, buf, &len, NULL, 0) < 0) {
--		rte_free(buf);
-+		free(buf);
- 		return -1;
- 	}
- 	ifm = (struct if_msghdr *)buf;
- 	sdl = (struct sockaddr_dl *)(ifm + 1);
- 
--	rte_memcpy(mac->addr_bytes, LLADDR(sdl), RTE_ETHER_ADDR_LEN);
-+	memcpy(mac->addr_bytes, LLADDR(sdl), RTE_ETHER_ADDR_LEN);
- 
--	rte_free(buf);
-+	free(buf);
- 	return 0;
- }
-diff --git a/drivers/net/pcap/pcap_osdep_linux.c b/drivers/net/pcap/pcap_osdep_linux.c
-index 97033f57c5..df976417cb 100644
---- a/drivers/net/pcap/pcap_osdep_linux.c
-+++ b/drivers/net/pcap/pcap_osdep_linux.c
-@@ -4,12 +4,12 @@
-  * All rights reserved.
-  */
- 
-+#include <string.h>
-+#include <unistd.h>
- #include <net/if.h>
- #include <sys/ioctl.h>
- #include <sys/socket.h>
--#include <unistd.h>
- 
--#include <rte_memcpy.h>
- #include <rte_string_fns.h>
- 
- #include "pcap_osdep.h"
-@@ -35,7 +35,7 @@ osdep_iface_mac_get(const char *if_name, struct rte_ether_addr *mac)
- 		return -1;
- 	}
- 
--	rte_memcpy(mac->addr_bytes, ifr.ifr_hwaddr.sa_data, RTE_ETHER_ADDR_LEN);
-+	memcpy(mac->addr_bytes, ifr.ifr_hwaddr.sa_data, RTE_ETHER_ADDR_LEN);
- 
- 	close(if_fd);
- 	return 0;
 -- 
 2.51.0
 
