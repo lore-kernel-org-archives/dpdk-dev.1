@@ -2,83 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C10FD4F23
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 19:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46605FD4F16
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 19:16:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B6B0F4067E;
-	Tue, 10 Mar 2026 20:08:09 +0100 (CET)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id B201F40672
- for <dev@dpdk.org>; Tue, 10 Mar 2026 20:08:08 +0100 (CET)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-127380532eeso922421c88.1
- for <dev@dpdk.org>; Tue, 10 Mar 2026 12:08:08 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773169688; cv=none;
- d=google.com; s=arc-20240605;
- b=VnRXd8rWm4RiKFDaEfQWllqu0PVlfuh5DeyPC7i5I7BMYKkiNz+RaEjEQr86we/UG6
- /IUmD+kSIE9uaKNJO5epHF8wmCDtpTI3cfRd+BmZsywn3vSmlyh+rphQ0VR2lGyEopji
- 4mx9K0KJixES3ZuEilKDkdxWTURCk0kg5ESmfZG6hTHyJ5IMwi5E1jUwBPHSUVb01Lmr
- 1cMZQFJkhQ++uuQS9TptrgHAOiKGf+jpIzfIIpB8gpwACqGkDY9ivqWbyQr5A2lvNudY
- EnjGb8Mw85EOgVtZ7bU+L7r5qdoC4sQ+wfdkt6pi8e/I9YZq5cEDclhI5yIvNIje8TfT
- UO4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=rd+GTpHzn0RDeq0il+AZX8kViysEZqlWOAWZcbVjT3c=;
- fh=E0kIeMKsE7pDAfp0OfD0pCB8hlnJNVan3MhEntQzdB8=;
- b=ljAW9PlZ9QltqcxJlMaD6kDFTgtGaXXgWHeLr5ls0GYHT8ff7zgOnRolxwykul50Ev
- kRPnq8mbIIT4KrTLNCtH2DirYn7DM2KWqnzxde5LgXbSoKmMLwyuFM5LhT8/XXncntsK
- t7j7Zpwac92elf4GY9mituuCXUpu7DiBWzkjY8SbycrR4xiQz5B0PcY3RRQMtIQD2kTh
- tOz8GH4rHgPVFaen8cxPwBL944of2hbhut00b9fD2OQ/muzjlQH1Mm3pkHDnikguuOQC
- Yqk/JS1/5TmLExaUqowidghk1eDKwXqXz8J0tbcfpMkXKzOIQVhCb5vrvNsbngN/SWFO
- rRhA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1773169688; x=1773774488; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=rd+GTpHzn0RDeq0il+AZX8kViysEZqlWOAWZcbVjT3c=;
- b=Aft/Ra88iDZO6a7vh2Rc1x+QCdOr0Mr6yhPWUK5Idz/pQvJYut4k5FYkHIDJnNL941
- jEtc8k3tlkA0RyWQvdNxmh/Qff3C8tyEZAscQAAwwiSBSHonMSgUhhaJPjPTx3LBhXGP
- 6nVkJpbG0p0OHntrepC5iYIDURbP6cnSPsors=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773169688; x=1773774488;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=rd+GTpHzn0RDeq0il+AZX8kViysEZqlWOAWZcbVjT3c=;
- b=DXL4lMjS4hTNXpYb7UoEObtNRs0KrfFgeB7bNlH8CumQLjwrsreHAsZSU1l6jDvcwA
- Q32BNDmrGbkteji3y1wfw4I2SjlWwLHF/f08zF1q7+RTMU2HHrBMdfs44NHrpwwK7dMh
- NAQfHGDAWvLOleaH68LJry57dv1hcdry0XFu3dci/l8UjIeXBIlSmN/+Z46wyQPPE22q
- elQUvb41nqk8WElM6U3n/GxkVzETdTGsy5bB8Zpz2Igi8Ni7DRRvLRhKvFFlwJ7qO7Co
- 0M3B7xxyxJMEC8+zwCW2lMnJRY1h9lmde13kxa6KoJOvIHxtjNyG/qqpv1NqNa6woJQ7
- ifYg==
-X-Gm-Message-State: AOJu0YzfiE9bs1d4ty/o/0886AhlGvvNJYoHDtajOLeOzs8jv2pi20tK
- TwmwfB+SIW5vgP67tQD+ODw9UpmNX/xcKGqvTuTkBsdSDKVvHG6xp8sLNaLFXcBLKUJHR5d2vAs
- LfoqjlaHlfnx7xFqt443SqZpf7FfLqQViHLg8lbczow==
-X-Gm-Gg: ATEYQzxgAhqqDhdrVxlzLbFi4WLLA9fovEqSSBIpN+QgKgENzCVaY/CjNwOfTWlfOLE
- i2iuH2mvx1oOzhKT7rnIEp/gNNL/HMTyagilfcOem6nEhmxtj1D7vn/JYerZKG/agK9mVzIZsyj
- BHuEApQRJN22SlnSFO06voD31qfSeJzabwUnAMLO4f9K2dzDvuXU3xk3p3SCtUfA54Q12W5qNBZ
- Ocd/KkWdfjlkyWbcGMLM4WqZEU5lWraqoVzfr2sz32BXU/iJb1mey3VMZ8xMzAHwp4C7Lq167c3
- QqRsoGom4Whzs76hv4umBgEKrY30XPUhqHPlOWL1Fe25Sp6KLbC6CJGHJgHzHTjj4UJvIWQR
-X-Received: by 2002:a05:701b:2914:b0:128:ce44:be8f with SMTP id
- a92af1059eb24-128ce44c005mr2829751c88.2.1773169687627; Tue, 10 Mar 2026
- 12:08:07 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 70A2740672;
+	Tue, 10 Mar 2026 20:16:54 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 5E94440612
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 20:16:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773170212;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=U7AvtG10uCnwNuQ1++9uyDFNAp6oC2dN0qQuOdVvjik=;
+ b=CgqYtncgz3PgLkHxfg2+Xf+jz/vWWAewhvqjp8elOn05JdN679n+ZkGCXnarLWW+y3dydJ
+ dsizoyvM4uxiez10d/wq7Raqg6/O/PupmJQL5L2eWGsphOvbevsIdX3eW2NCtzYqij6GOU
+ 4uMlqgJnCyB/Te6RppKNaBLPB/UOgyA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-553-_gw8LfbiOEqKjNVSXDnQFQ-1; Tue,
+ 10 Mar 2026 15:16:51 -0400
+X-MC-Unique: _gw8LfbiOEqKjNVSXDnQFQ-1
+X-Mimecast-MFC-AGG-ID: _gw8LfbiOEqKjNVSXDnQFQ_1773170210
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A20EC1955F3B; Tue, 10 Mar 2026 19:16:50 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.44.32.202])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 77DD51955D71; Tue, 10 Mar 2026 19:16:46 +0000 (UTC)
+From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+To: Maxime Coquelin <maxime.coquelin@redhat.com>
+Cc: david.marchand@redhat.com, mst@redhat.com, chenbox@nvidia.com,
+ Yongji Xie <xieyongji@bytedance.com>, jasowang@redhat.com, dev@dpdk.org
+Subject: [RFC v2 00/10] Add vduse live migration features
+Date: Tue, 10 Mar 2026 20:16:35 +0100
+Message-ID: <20260310191645.1104892-1-eperezma@redhat.com>
 MIME-Version: 1.0
-References: <20260225182616.71972-1-abailey@iol.unh.edu>
- <20260309202928.200755-1-abailey@iol.unh.edu>
-In-Reply-To: <20260309202928.200755-1-abailey@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Tue, 10 Mar 2026 15:05:06 -0400
-X-Gm-Features: AaiRm53h-gPOic8onLQA0bEwMDpwhombdL7sTWrbm0Gtx4pOHLbnjX7DAMvoMoc
-Message-ID: <CAJvnSUDHk88avG5-0ExPb6k9hLuQujxE=nQ=SHFkD6bd0QbKiw@mail.gmail.com>
-Subject: Re: [PATCH v6] dts: port speed capabilities test suite to next DTS
-To: Andrew Bailey <abailey@iol.unh.edu>
-Cc: dev@dpdk.org, dmarx@iol.unh.edu
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: RoPA7upUky_PvC64_qwjicAmQuV_fCVoejAg1W36D1c_1773170210
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -92,43 +64,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Mar 9, 2026 at 4:29=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu> =
-wrote:
->
-> +
-> +@requires_link_topology(LinkTopology.ONE_LINK)
-> +class TestSpeedCapabilities(TestSuite):
-> +    """Speed capabilities test suite."""
-> +
-> +    config: Config
-> +
-> +    def set_up_suite(self):
-> +        """Set up the test suite."""
-> +        self.test_parameters =3D self.config.test_parameters
-> +
-> +    @func_test
-> +    def validate_port_speed(self) -> None:
-> +        """Validate expected port speed is also the observed port speed.
-> +
-> +        Steps:
-> +            * Show port info for each available port
-> +
-> +        Verify:
-> +            * The resulting link speeds are equal to the configured link=
- speeds
-> +        """
-> +        with TestPmd() as testpmd:
-> +            for k, v in self.test_parameters:
+This series introduces features to the VDUSE (vDPA Device in Userspace) driver
+to support Live Migration.
 
-Looks good except you do actually need self.test_parameters.items()
-(contrary to what I said yesterday)...
+Currently, DPDK does not support VDUSE devices live migration because the
+driver lacks a mechanism to suspend the device and quiesce the rings to
+initiate the switchover.  This series implements the suspend operation to
+address this limitation.
 
-> +                link_speed =3D testpmd.show_port_info(k).link_speed
-> +                verify(
-> +                    link_speed =3D=3D v,
-> +                    f"port {k} speed {link_speed} does not match configu=
-red '{v}'",
-> +                )
-> --
-> 2.50.1
->
+Furthermore, enabling Live Migration for devices with control virtqueue needs
+two additional features.  Both of them are included in this series.
+
+* Address Spaces (ASID) support: This allows QEMU to isolate and intercept the
+  device's CVQ. By doing so, QEMU is able to migrate the device status
+  transparently, without requiring the device to support state save and
+  restore.
+* QUEUE_ENABLE: This allows QEMU to control when the dataplane virtqueues are
+  enabled.  This ensures the dataplane is started after the device
+  configuration has been fully restores via the CVQ.
+
+Last but not least, it enables the VIRTIO_NET_F_STATUS feature.  This allows the
+device to signal the driver that it needs to send gratuitous ARP with
+VIRTIO_NET_S_ANNOUNCE, reducing the Live Migration downtime.
+
+v2:
+* Following latest comments on kernel series about VDUSE features, not checking
+  API version but only check if VDUSE_GET_FEATURES success.
+* Move the start and last declarations in the braces as gcc 8 does not like
+  them interleaved with statements. Actually, I think the move was a mistake in
+  the first version.
+  https://mails.dpdk.org/archives/test-report/2026-February/958175.html
+
+Eugenio Pérez (1):
+  uapi: align VDUSE header for ASID
+
+Maxime Coquelin (6):
+  vhost: introduce ASID support
+  vhost: add VDUSE API version negotiation
+  vhost: add virtqueues groups support to VDUSE
+  vhost: add ASID support to VDUSE IOTLB operations
+  vhost: claim VDUSE support for API version 1
+  vhost: add net status feature to VDUSE
+
+Super User (3):
+  uapi: Align vduse.h for enable and suspend VDUSE messages
+  vhost: Support VDUSE QUEUE_READY feature
+  vhost: Support vduse suspend feature
+
+ kernel/linux/uapi/linux/vduse.h | 114 +++++++++++++++-
+ lib/vhost/iotlb.c               | 226 ++++++++++++++++++++------------
+ lib/vhost/iotlb.h               |  14 +-
+ lib/vhost/vduse.c               | 197 +++++++++++++++++++++++++---
+ lib/vhost/vduse.h               |   3 +-
+ lib/vhost/vhost.c               |  16 +--
+ lib/vhost/vhost.h               |  16 +--
+ lib/vhost/vhost_user.c          |  11 +-
+ 8 files changed, 460 insertions(+), 137 deletions(-)
+
+-- 
+2.53.0
+
