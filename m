@@ -2,46 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E4C9FCA18E
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 21:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B8FFCA18E
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 21:18:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C480840269;
-	Mon,  9 Mar 2026 22:17:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BD20140664;
+	Mon,  9 Mar 2026 22:18:31 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 7632240261
- for <dev@dpdk.org>; Mon,  9 Mar 2026 22:17:38 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id DEC4240269
+ for <dev@dpdk.org>; Mon,  9 Mar 2026 22:18:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773091058; x=1804627058;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=XfxsBB7Bq+k6smMR5+Q3Dzf6iXlxcBSbf/dg6S6Kx2M=;
- b=efW2o2k6Cvky6RfIvPHuNV79UqL2hiCiyIZuX3Wb6qkJ/3mlONtOLZUG
- 5CvWN0N70DWdUVKF/AM/Lx2Cyy01NFwKXDxXRMy9MlXI7Hyr3KdMFay9s
- dw/5fNbbmDw48ZZi9l/AjnOzZ7YJMsTiJ6RmILWPmlGKf9YnNf1fXwuD5
- n4R6Sh+3Wq4i/L6+Iz9z5ezJ86Jt1igBtpTNuLEB2WLhP+K73HkKyZj57
- k2OgY2rrocCpKkLxObx55Ii1e4tdBr9FLxhlUvD0bDQ9P2SSMDsg4x4Dn
- pa5slVdV0DNl8CkddZBNoDnMDBVWd07WbHl6x6DOE/vU07znmPibpiYMx w==;
-X-CSE-ConnectionGUID: wKiWQvdsTLmpiAt8/vA65w==
-X-CSE-MsgGUID: X319AAlkR+uVzqs+XidrOw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74240879"
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="74240879"
+ t=1773091110; x=1804627110;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=gJm/ad99Q1iP6yhuzoFzp39LNx5ndEmvNtv9fgMBAPc=;
+ b=j7ur5usDmpU6jSt7DXWoLIYb6r9gK8/MsTM0QvK+Ht12go1zDRcDH6JK
+ xZ3zvoO4LyXTfhaVm9NuDuBJDJdzEHc9vz0kRtRWxD3WA7G8poArMfi2A
+ QqsCqUmjLRobhJqJ4LbT+LewHaTh6t9bbMvxyI0scs+gspledjIpRit4m
+ A7juBHIgIEeMpjkWDp7SkKOggsrcgT0HywO19j9CWRC1q4h30jKbfHwTN
+ MaWa8R1E3270N5U3bAZZBIQMCLyHUnaP0MDi1kszbKsfH0NWEiAO2Posk
+ K39xIeBLb0vm4NGnelfLICflMshlUsLEk4roVNlDvQdP8aoeeBrzl3Vok g==;
+X-CSE-ConnectionGUID: 0dlpR7eNQtKxByX/r8N+/w==
+X-CSE-MsgGUID: hxruFx3AStWPINJT7JYOBw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74240942"
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="74240942"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Mar 2026 14:17:37 -0700
-X-CSE-ConnectionGUID: aMIhWWp0QqKP4aAOW/EXrg==
-X-CSE-MsgGUID: dBls39AkT6i3NQN/anbUqQ==
+ 09 Mar 2026 14:18:29 -0700
+X-CSE-ConnectionGUID: TZsv9cZZQVCfvlqG7n+IPA==
+X-CSE-MsgGUID: GuDWcOUNTuOjn2nx9b4GeQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="219015753"
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="219015952"
 Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
- by orviesa006.jf.intel.com with ESMTP; 09 Mar 2026 14:17:35 -0700
+ by orviesa006.jf.intel.com with ESMTP; 09 Mar 2026 14:18:26 -0700
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
  aman.deep.singh@intel.com, dev@dpdk.org
-Subject: [PATCH v1 0/6] Update ICE Base Driver
-Date: Tue, 10 Mar 2026 05:52:03 -0400
-Message-ID: <20260310095218.703423-1-soumyadeep.hore@intel.com>
+Cc: Paul Greenwalt <paul.greenwalt@intel.com>
+Subject: [PATCH v1 1/6] net/ice/base: update crash on invalid topology
+Date: Tue, 10 Mar 2026 05:52:05 -0400
+Message-ID: <20260310095218.703423-3-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20260310095218.703423-1-soumyadeep.hore@intel.com>
+References: <20260310095218.703423-1-soumyadeep.hore@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -57,36 +60,46 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series updates shared code of ICE PMD.
+From: Paul Greenwalt <paul.greenwalt@intel.com>
 
-Aleksandr Loktionov (1):
-  net/ice/base: enable LLDP filter control for E830
+In some cases, after NVM update finish and triggers EMPR, FW will return
+invalid information about Tx Scheduler topology
+(in reply to ice_sched_query_res_alloc(), we end up with 0 as a number
+children to allocate in 4th layer, then adding 5th layer nodes would
+crash).
 
-Grzegorz Nitka (1):
-  net/ice/base: fix 'adjust' timer programming for E830
+As in this scenario we need to reboot the platform anyway, it is safe to
+just fail building the scheduler tree.
 
-Maciej Paczkowski (1):
-  net/ice/base: resolve comparison-with-wider-type violations
+Add a warning, so we will be sure that this was the case.
 
-Paul Greenwalt (2):
-  net/ice/base: update crash on invalid topology
-  net/ice/base: support RDMA on 4+ ports of E830
+Signed-off-by: Paul Greenwalt <paul.greenwalt@intel.com>
+Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
+---
+ drivers/net/intel/ice/base/ice_sched.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Pawel Sobczyk (1):
-  net/ice/base: add pending admin queue events API
-
- drivers/net/intel/ice/base/ice_acl_ctrl.c |  6 +++---
- drivers/net/intel/ice/base/ice_bitops.h   | 14 +++++++-------
- drivers/net/intel/ice/base/ice_common.c   | 22 ++++++++++++++++------
- drivers/net/intel/ice/base/ice_common.h   |  1 +
- drivers/net/intel/ice/base/ice_controlq.c | 16 ++++++++++++++++
- drivers/net/intel/ice/base/ice_dcb.c      |  8 ++++----
- drivers/net/intel/ice/base/ice_ptp_hw.c   |  6 +++---
- drivers/net/intel/ice/base/ice_sched.c    | 13 ++++++++++++-
- drivers/net/intel/ice/base/ice_switch.c   |  2 +-
- drivers/net/intel/ice/base/ice_type.h     |  7 ++++++-
- 10 files changed, 69 insertions(+), 26 deletions(-)
-
+diff --git a/drivers/net/intel/ice/base/ice_sched.c b/drivers/net/intel/ice/base/ice_sched.c
+index be9393a7d6..3a0907eda7 100644
+--- a/drivers/net/intel/ice/base/ice_sched.c
++++ b/drivers/net/intel/ice/base/ice_sched.c
+@@ -174,6 +174,16 @@ ice_sched_add_node(struct ice_port_info *pi, u8 layer,
+ 		return ICE_ERR_PARAM;
+ 	}
+ 
++	/* After NVM update FW will(in some cases) not return proper
++	 * topology, bail out early in such cases
++	 * (as there is a need of platform reboot anyway).
++	 */
++	if (!parent->children) {
++		ice_debug(hw, ICE_DBG_SCHED, "Parent (teid = 0x%x) hasn't prepared to have children, aborting\n",
++			LE32_TO_CPU(info->parent_teid));
++		return ICE_ERR_PARAM;
++	}
++
+ 	/* query the current node information from FW before adding it
+ 	 * to the SW DB
+ 	 */
 -- 
 2.47.1
 
