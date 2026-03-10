@@ -2,52 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB34EFCA18E
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 21:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D48FFCC9A8
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 01:55:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2FBF14067E;
-	Mon,  9 Mar 2026 22:19:47 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id B7BF84067E;
- Mon,  9 Mar 2026 22:19:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773091185; x=1804627185;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=k6nc8kLiV+ywIIvrQYjOzQWm1i85FZmGXPqUEkXeE58=;
- b=kS2ocSPm6sXfSJ3IHFsixu4HM/HkaFzZzwZWV7Rpt2AHCoIuxPFpC9kG
- Lg6Y9fWzjHy/kFxkwEuDbLedy1QihQTF6YoTVJyZLR1+tLnWDb8uSiEIj
- 2UQdVSUQo2a6M9hE0CEx/wn29o+5sx3yIsgA+KUTiAeJZGtf+n0g52E3w
- eWA0OpEAz4eFONuoOtIxIc3Re+c+PfZ9w6+PXh4KtOmupJD9Yx57xGtd0
- vPpDCUYaJqc7tn7DAPbtxWp23kWeWrrXV3Bz2N9zbNr5CkKH7F9pNiRtS
- +Vh77ySkist0ne2WN6n0g2voGDZ7wBURPn6w8vATdCzsGG6WT4Q5gNI8i w==;
-X-CSE-ConnectionGUID: Rcy1AIwrRcCs5xj09j4Ejg==
-X-CSE-MsgGUID: tBA0Sd2+Scu05/Ok6yeiAA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74241084"
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="74241084"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Mar 2026 14:19:44 -0700
-X-CSE-ConnectionGUID: I7INptiXTOmf5hkYmDuoGA==
-X-CSE-MsgGUID: TrDmm7fsTVWmDPkIYyo+Bw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="219016190"
-Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
- by orviesa006.jf.intel.com with ESMTP; 09 Mar 2026 14:19:42 -0700
-From: Soumyadeep Hore <soumyadeep.hore@intel.com>
-To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
- aman.deep.singh@intel.com, dev@dpdk.org
-Cc: Grzegorz Nitka <grzegorz.nitka@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH v1 6/6] net/ice/base: fix 'adjust' timer programming for E830
-Date: Tue, 10 Mar 2026 05:52:18 -0400
-Message-ID: <20260310095218.703423-16-soumyadeep.hore@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20260310095218.703423-1-soumyadeep.hore@intel.com>
-References: <20260310095218.703423-1-soumyadeep.hore@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id AA294402C9;
+	Tue, 10 Mar 2026 02:55:14 +0100 (CET)
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com
+ [209.85.160.48]) by mails.dpdk.org (Postfix) with ESMTP id AC6A740285
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 02:55:13 +0100 (CET)
+Received: by mail-oa1-f48.google.com with SMTP id
+ 586e51a60fabf-4152698e745so2787127fac.1
+ for <dev@dpdk.org>; Mon, 09 Mar 2026 18:55:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773107713;
+ x=1773712513; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=TNQZ4UNirz+vgQGLGWxqelCtZesTLwnRRHFl9uSP/8s=;
+ b=l4J0pkNXzFJxDmQn0vbbJ/zhqic+qbdgPBvq8OCnVBvWic1WJN8iyCtSdSQIqFqk1u
+ lrzbcxqDUJaxGfnReKofULdLArrBsEds92O/ViqMV9u9Da2GPasTWrPEutYgcLBG864Y
+ Lvo46eXWwwsiX6aHe+K3RpydGjhvUT+izfQ+lo5hcp4F6AxDevV403YoNhObipXOFAC2
+ EqxL47cIn6V0RyU1s//cEwNTar7nP2pVwRpTeXRCY7qpQWdHOtMIxfNZCHrTksrC9/GS
+ HSFWiaff/3uR8ItvEov5uQFCiD4Z6xnTN17dhLk9O4kQr+TNGDOw8/tLTDbO0STl7p96
+ GwHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773107713; x=1773712513;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=TNQZ4UNirz+vgQGLGWxqelCtZesTLwnRRHFl9uSP/8s=;
+ b=J5VgFc6aAdXDRsR1lUAKtN1Ki6fNbtsUDdfuyd08VZwM8K0meR/J/K0UsTg3hsJT5k
+ AUmA/ptFuwfCUNMtFxZ2hjcMLUKyMF6VMKZFeG2LE9m6m6lWcsHZHqgKHhXHwXKkIcbW
+ NygQGRJHVMQCIzGPcrRuGLTAqLWuMOsGP+iVO5H/cr01AwdJpf64SjC8paa/kDMaVADV
+ wWLr5gZYNxIpzUgKIT8m6IM4C5rZfaJ9DGGrKtWIYh1R7QkicfzUbGamZ903FPGs5dyk
+ YreLxp0KzoR8ajRcVFIL9yZzYVqhZ2gOMayq6PKOGNAPcOY3x/7rDsv+ETnTrHJBY2IE
+ cXMg==
+X-Gm-Message-State: AOJu0YyXZrxn0at0D33M3evZvSuq8gA/2AzMym0sVPiSQ6NzS7KVzw4S
+ 2qJuSnTjeHdLPwaHl3xj9MPUEI3NpBYl/C3C8htAZ+ES1+H+vhBaY8Jwe7DwyCief6E=
+X-Gm-Gg: ATEYQzws4cTwikJCYaN2pcGrO9XhSv0Iy3Gb25U7JaY0wpIGg+5o+hjNDemVtMpbcxE
+ DG3Fl5C6njQuhH9lTinxLd3ue6CBYBe1bfNnOrM893jgvH1XiRtsp1pOjTEX0xlagzII01e6YJc
+ +Y0qEhU/34pa6XCuFvu3Vko1U7l8qMu9OchlNHTvViU3gUGDilSFN2rUiqu5cdALZAR4vupdshg
+ zio2FP7T/zkV0FethOBSIktz/tslp6gZff2ZqVSGksu1DWxFbu8ZB/kmk6ykMoSARgyPWkV/bWs
+ M42ziwz/BXN3Ejskse6nwZMShyP3xsZGscS0xkc1iUsG5D54RlmP+0/yyIRfQcs9SN8XwJmK9Wv
+ wM6nSeerDyYL4X7Jei81J7sJxIRT+2gY2E/wWyVvNORQADV1pC6A/bQNuWMCfaS+/bTwnidqFhk
+ ffM/vrIHVffpQF9nlSi63diDAh3S8rAVNRczI=
+X-Received: by 2002:a05:6871:68f:b0:417:58c1:6878 with SMTP id
+ 586e51a60fabf-41758c1ba47mr908208fac.0.1773107712596; 
+ Mon, 09 Mar 2026 18:55:12 -0700 (PDT)
+Received: from phoenix.local ([104.202.29.139])
+ by smtp.gmail.com with ESMTPSA id
+ 586e51a60fabf-41756dbc7afsm1206080fac.14.2026.03.09.18.55.11
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 09 Mar 2026 18:55:12 -0700 (PDT)
+Date: Mon, 9 Mar 2026 18:55:09 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: Re: [PATCH v2 0/3] net/af_packet: fix MTU handling and add jumbo
+ frame support
+Message-ID: <20260309185509.194f38a6@phoenix.local>
+In-Reply-To: <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
+References: <20260306092013.2205076-1-xavier.guillaume@ovhcloud.com>
+ <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,52 +81,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Grzegorz Nitka <grzegorz.nitka@intel.com>
+On Mon, 9 Mar 2026 17:10:18 +0100
+Xavier Guillaume <xavier.guillaume@ovhcloud.com> wrote:
 
-Fix incorrect 'adjust the timer' programming sequence for E830 devices
-series. Only shadow registers GLTSYN_SHADJ were programmed in the current
-implementation. According to the specification [1], write to command
-GLTSYN_CMD register is also required with CMD field set to "Adjust the
-Time" value, for the timer adjustment to take the effect.
+> This series fixes two bugs in the af_packet PMD related to frame
+> size calculations and buffer safety, then enables jumbo frame
+> support by deriving the advertised capabilities from the actual
+> TPACKET ring configuration.
+> 
+> Patch 1 fixes the data size calculation in eth_dev_mtu_set() which
+> is too restrictive due to TPACKET2_HDRLEN including sizeof(struct
+> sockaddr_ll) even though the sockaddr_ll does not consume frame
+> data space. The formula is now consistent with the RX and TX paths.
+> 
+> Patch 2 adds a bounds check in the RX path to prevent a heap buffer
+> overflow when the kernel delivers a packet larger than the mbuf data
+> room (e.g. if the kernel interface MTU is raised externally).
+> 
+> Patch 3 replaces the static max_rx_pktlen (RTE_ETHER_MAX_LEN) and
+> adds max_mtu, both derived from the configured TPACKET frame size.
+> This enables jumbo frame support when the user specifies a larger
+> framesz devarg at vdev creation time.
+> 
+> v2:
+>   - patch 2/3: fix Fixes tag to use 12-char SHA (checkpatch warning)
+> 
+> Xavier Guillaume (3):
+>   net/af_packet: fix MTU set data size calculation
+>   net/af_packet: fix receive buffer overflow
+>   net/af_packet: support jumbo frames
+> 
+>  drivers/net/af_packet/rte_eth_af_packet.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
 
-The flow was broken for the adjustment less than S32_MAX/MIN range
-(around +/- 2 seconds). For bigger adjustment, non-atomic programming
-flow is used, involving set timer programming. Non-atomic flow is
-implemented correctly.
+Looks good to me, so sent AI off to look at the fine details around MTU.
+The one observation from me is that the new check for data_size is redundnt
+and should be removed or turned into RTE_ASSERT()
 
-Fixes: 881169950d80 ("net/ice/base: implement initial PTP support for E830")
-Cc: stable@dpdk.org
+**Patch 1/3 - fix MTU set data size calculation**
 
-Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
-Signed-off-by: Grzegorz Nitka <grzegorz.nitka@intel.com>
----
- drivers/net/intel/ice/base/ice_ptp_hw.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The sockaddr_ll fix is correct. The formula now matches the Rx and Tx
+queue setup paths. Good commit message explaining the TPACKET2_HDRLEN
+decomposition.
 
-diff --git a/drivers/net/intel/ice/base/ice_ptp_hw.c b/drivers/net/intel/ice/base/ice_ptp_hw.c
-index 7d16965674..5688f969ce 100644
---- a/drivers/net/intel/ice/base/ice_ptp_hw.c
-+++ b/drivers/net/intel/ice/base/ice_ptp_hw.c
-@@ -6083,7 +6083,7 @@ int ice_ptp_write_incval_locked(struct ice_hw *hw, u64 incval,
-  */
- int ice_ptp_adj_clock(struct ice_hw *hw, s32 adj, bool lock_sbq)
- {
--	int err;
-+	int err = 0;
- 	u8 tmr_idx;
- 
- 	tmr_idx = hw->func_caps.ts_func_info.tmr_index_owned;
-@@ -6101,8 +6101,8 @@ int ice_ptp_adj_clock(struct ice_hw *hw, s32 adj, bool lock_sbq)
- 		err = ice_ptp_prep_phy_adj_eth56g(hw, adj, lock_sbq);
- 		break;
- 	case ICE_PHY_E830:
--		/* E830 sync PHYs automatically after setting GLTSYN_SHADJ */
--		return 0;
-+		/* E830 sync PHYs automatically after setting cmd register */
-+		break;
- 	case ICE_PHY_E810:
- 		err = ice_ptp_prep_phy_adj_e810(hw, adj, lock_sbq);
- 		break;
--- 
-2.47.1
+Minor: now that patch 3 reports max_mtu correctly, the ethdev layer
+validates mtu <= max_mtu before calling the PMD callback
+(eth_dev_validate_mtu in rte_ethdev.c). The data_size check here
+becomes redundant dead code. Consider removing it to keep the driver
+simple and avoid confusing future readers.
 
+**Patch 2/3 - fix receive buffer overflow**
+
+Good catch. Real buffer overflow when kernel MTU is raised externally
+past the TPACKET ring capacity. The tailroom check, frame return to
+kernel, and dropped counter are all correct.
+
+**Patch 3/3 - support jumbo frames**
+
+The max_rx_pktlen and max_mtu derivation from the actual TPACKET ring
+frame size is correct and consistent with the data_size formula in
+patches 1 and 2.
