@@ -2,43 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B99EFD88CE
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 23:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC7EBFD88CF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 23:32:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF72440E1C;
-	Wed, 11 Mar 2026 00:29:54 +0100 (CET)
-Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
- by mails.dpdk.org (Postfix) with ESMTP id D50A840E1C
- for <dev@dpdk.org>; Wed, 11 Mar 2026 00:29:53 +0100 (CET)
-Received: from localhost.localdomain (unknown [82.65.104.223])
- (Authenticated sender: vjardin@free.fr)
- by smtp6-g21.free.fr (Postfix) with ESMTPSA id 32370780368;
- Wed, 11 Mar 2026 00:29:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1773185393;
- bh=pfpwb02eMWJCACtklT49GsQrGRRngosh6WUQrSYBfGI=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=fMEhA1bxpFa+1c8IvUkYFO1Tt0x9sLDstZwE3gOJwbB10XER57xoSrXRgKXp2EhU5
- GjU2XjzIfe7HRb9BIY1jt6/B9qfu+xDMvmbJQ3adG9raqADxV1MHyHOfWHSp/hlgDf
- F2B8FbwJl/kt7Ma6m39ZYWvgi0f90DOTv8lN4cp2t/iyEbM3fg3StOw37K4nl/4oZH
- j+zPz5BQx1joI2YD50IMs+aOWZBSro4lCOfXX/1ln4KoHipUCzyoWGNcazl7QOpdcx
- IZGRT77/jXSCXPQ3CrSeU9TFlGaTz7nJgTIwmE2NnxkPX4ez7ZQ+y0xN+Kugr2Zfp4
- lGDKM85qIvQDQ==
-From: Vincent Jardin <vjardin@free.fr>
-To: dev@dpdk.org
-Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
- dsosnowski@nvidia.com, viacheslavo@nvidia.com, bingz@nvidia.com,
- orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
- stephen@networkplumber.org, Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v2 10/10] net/mlx5: add rate table capacity query API
-Date: Wed, 11 Mar 2026 00:26:53 +0100
-Message-ID: <20260310232653.2935764-11-vjardin@free.fr>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260310232653.2935764-1-vjardin@free.fr>
-References: <20260310092014.2762894-1-vjardin@free.fr>
- <20260310232653.2935764-1-vjardin@free.fr>
+	by mails.dpdk.org (Postfix) with ESMTP id 1EB6D40E1C;
+	Wed, 11 Mar 2026 00:32:04 +0100 (CET)
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com
+ [209.85.210.49]) by mails.dpdk.org (Postfix) with ESMTP id B1E1D40E1C
+ for <dev@dpdk.org>; Wed, 11 Mar 2026 00:32:02 +0100 (CET)
+Received: by mail-ot1-f49.google.com with SMTP id
+ 46e09a7af769-7d74aa6bcdbso1492099a34.2
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 16:32:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773185522;
+ x=1773790322; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Hq77T9a76vAIV9SViVR8B3Msif+0ftqkNilkeZyBe9c=;
+ b=JXQS7Tae+KZe+knAkF6CsBxH92rvZEVA6uBf9561QYtfKcoddykivajqdMEDckxUsr
+ aImOLAgzLJz/3DOTCMYrhcMEjPdvb5ZA79MpTsSxJwEmJqkmKDzSWPNSY9o5cjNB/rP6
+ 0QtoiNd+GVZnerYdap6kK5B2MnyroxsCV3VcGaV5YQ562+viBkvXejlUG28nhoKZe2N8
+ yf5R7LQsukSTtyJlqua+c2ehSP2iCMnLC23nZi0n4GeUHbHvMFer8PPhZqyxLKQ18N9m
+ zv52NzKFAs1ym5JwqMPwVvz8tsm7VR1v1WjqnDWlddNwzYgtA1/gDAGpcmwcCn7LgXde
+ NioQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773185522; x=1773790322;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=Hq77T9a76vAIV9SViVR8B3Msif+0ftqkNilkeZyBe9c=;
+ b=OerTlgVuS4II1QvsGVCxLbbq9GsVdO4gyOM2/mkpxWkrgGNV64UI/BOlaIAflO5u4J
+ 8Yjt4gTYc6gZw3qWXtwht0fZR2P7gLHTp3JN8jO7Xv5iK0hmGX3KREx+drPfU6ksP81u
+ I4fPl8VNgVFW/FG5eWjvkiLu3I7yYEWxtWFKrENXmQTSJpwF86dabUSxYDclfn89e99P
+ ZgJDDFmHBj6bS4lEz9eP79hNIrRz48NBgV0mZZulmqAtEJD9GtnCmH/0DOUBMHL70CVm
+ T3qWFwfL/8LiX1jLGihFfQLIr4Yv4KDbf4It9DlvpJajwdZoLddxoxnejfsJ2ukbZsvv
+ uiDg==
+X-Gm-Message-State: AOJu0YxLQi0e/0TzjT8U1MR21wDNDg2yDQAwddYI/T9yLqDhjnrLwDSi
+ YwGOzIYBemnZ0u1TXGc8s2IGHyw9fV26AEq3KMfDUOqOgw3k36FtV3lZwZwt2UPtaLs=
+X-Gm-Gg: ATEYQzxxcRMwMOrymsC/aUpgqan/o58cBUXBmj69UGicw0EtRzE49336FQkISCUBsR1
+ Tuc+j2U9RsM3zOMkO68Nyi6YjttQ7cQUGdY1YTCxccdo2UoKLhGzDqWADDi6YEuv5uIKmdfsrD/
+ 1ONUxrIU7N3NF7pU8PG7r2Haf8hDxtZv0XIjBtviMiYWGctEJskNbwaWeBS+Fe6sDLT1NItTMci
+ IdM5PF6/mXSJqRf4mwOU5SSWurSCTqPwsP7Sf1IhBEveGh+UjyAib7rduHGxMsWuswBNRtjjchx
+ ogU/EyjnGi7xMal+fMcC99KTC0oHEBIdbPYlWxIVgDkKaQ3Yp5NYbSjILFBeEI5dmTfeo05Lfst
+ ytpi2nzjeJRMhn3OiJz/kAaPCvtFJqHY2tSFy2Dx9Q/QpdCiGJMl285GkZbrkp03yvIsH7s5QaC
+ r5kapAqdji39aQtrTwlhRb2zBxtD8ORiYInLw=
+X-Received: by 2002:a05:6830:828f:b0:7d7:54d5:c6f8 with SMTP id
+ 46e09a7af769-7d76a75a7fbmr514183a34.17.1773185521827; 
+ Tue, 10 Mar 2026 16:32:01 -0700 (PDT)
+Received: from phoenix.local ([104.202.29.139])
+ by smtp.gmail.com with ESMTPSA id
+ 46e09a7af769-7d76ac32913sm445907a34.5.2026.03.10.16.32.00
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 10 Mar 2026 16:32:01 -0700 (PDT)
+Date: Tue, 10 Mar 2026 16:31:58 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
+Cc: <dev@dpdk.org>, <stable@dpdk.org>
+Subject: Re: [PATCH v2 3/3] net/af_packet: support jumbo frames
+Message-ID: <20260310163158.4832e4b1@phoenix.local>
+In-Reply-To: <20260309161021.2790684-4-xavier.guillaume@ovhcloud.com>
+References: <20260306092013.2205076-1-xavier.guillaume@ovhcloud.com>
+ <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
+ <20260309161021.2790684-4-xavier.guillaume@ovhcloud.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,159 +81,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add rte_pmd_mlx5_pp_rate_table_query() to report the HW packet
-pacing rate table size and how many entries are currently in use.
+On Mon, 9 Mar 2026 17:10:21 +0100
+Xavier Guillaume <xavier.guillaume@ovhcloud.com> wrote:
 
-The total comes from the HCA QoS capability
-packet_pacing_rate_table_size. The used count is derived by
-collecting unique non-zero PP indices across all TX queues.
+> Derive max_rx_pktlen and max_mtu from the actual TPACKET ring
+> frame size rather than the static RTE_ETHER_MAX_LEN (1518).
+> This allows jumbo frame support when the user specifies a
+> larger framesz devarg at vdev creation time, for example:
+> 
+>   --vdev=net_af_packet0,iface=eth0,framesz=9216
+> 
+> The advertised capabilities now accurately reflect what the
+> configured ring can handle, avoiding both false limitations
+> with large frames and false promises with small ones.
+> 
+> Signed-off-by: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
 
-Signed-off-by: Vincent Jardin <vjardin@free.fr>
----
- doc/guides/rel_notes/release_26_03.rst |  5 ++
- drivers/net/mlx5/mlx5_tx.c             | 65 ++++++++++++++++++++++++++
- drivers/net/mlx5/rte_pmd_mlx5.h        | 32 +++++++++++++
- 3 files changed, 102 insertions(+)
-
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 5afb2fd6d9..44ff897b65 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -86,6 +86,11 @@ New Features
- 
-   * Added out-of-place support for CN20K SoC.
- 
-+* **Updated NVIDIA mlx5 net driver.**
-+
-+  * Added per-queue Tx rate limiting using hardware packet pacing.
-+  * Added PMD-specific API to query per-queue rate limit and rate table capacity.
-+
- * **Updated ZTE zxdh ethernet driver.**
- 
-   * Added support for modifying queue depth.
-diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
-index fa57d3ef98..cf3f93e635 100644
---- a/drivers/net/mlx5/mlx5_tx.c
-+++ b/drivers/net/mlx5/mlx5_tx.c
-@@ -19,6 +19,7 @@
- 
- #include <mlx5_prm.h>
- #include <mlx5_common.h>
-+#include <mlx5_malloc.h>
- 
- #include "mlx5_autoconf.h"
- #include "mlx5_defs.h"
-@@ -886,3 +887,67 @@ int rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
- 				     packet_pacing_rate_limit_index);
- 	return 0;
- }
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_pp_rate_table_query, 26.07)
-+int rte_pmd_mlx5_pp_rate_table_query(uint16_t port_id,
-+				     struct rte_pmd_mlx5_pp_rate_table_info *info)
-+{
-+	struct rte_eth_dev *dev;
-+	struct mlx5_priv *priv;
-+	uint16_t used = 0;
-+	uint16_t *seen;
-+	unsigned int i;
-+
-+	if (info == NULL)
-+		return -EINVAL;
-+	if (!rte_eth_dev_is_valid_port(port_id))
-+		return -ENODEV;
-+	dev = &rte_eth_devices[port_id];
-+	priv = dev->data->dev_private;
-+	if (!priv->sh->cdev->config.hca_attr.qos.packet_pacing) {
-+		rte_errno = ENOTSUP;
-+		return -ENOTSUP;
-+	}
-+	info->total = priv->sh->cdev->config.hca_attr.qos
-+			.packet_pacing_rate_table_size;
-+	if (priv->txqs == NULL || priv->txqs_n == 0) {
-+		info->used = 0;
-+		return 0;
-+	}
-+	seen = mlx5_malloc(MLX5_MEM_ZERO, priv->txqs_n * sizeof(*seen),
-+			   0, SOCKET_ID_ANY);
-+	if (seen == NULL)
-+		return -ENOMEM;
-+	/*
-+	 * Count unique non-zero PP indices across this port's TX queues.
-+	 * Note: the count reflects only queues on this port; other ports
-+	 * sharing the same device may also consume rate table entries.
-+	 */
-+	for (i = 0; i < priv->txqs_n; i++) {
-+		struct mlx5_txq_data *txq_data;
-+		struct mlx5_txq_ctrl *txq_ctrl;
-+		uint16_t pp_id;
-+		uint16_t j;
-+		bool dup;
-+
-+		if ((*priv->txqs)[i] == NULL)
-+			continue;
-+		txq_data = (*priv->txqs)[i];
-+		txq_ctrl = container_of(txq_data, struct mlx5_txq_ctrl, txq);
-+		pp_id = txq_ctrl->rl.pp_id;
-+		if (pp_id == 0)
-+			continue;
-+		dup = false;
-+		for (j = 0; j < used; j++) {
-+			if (seen[j] == pp_id) {
-+				dup = true;
-+				break;
-+			}
-+		}
-+		if (!dup)
-+			seen[used++] = pp_id;
-+	}
-+	mlx5_free(seen);
-+	info->used = used;
-+	return 0;
-+}
-diff --git a/drivers/net/mlx5/rte_pmd_mlx5.h b/drivers/net/mlx5/rte_pmd_mlx5.h
-index 698d7d2032..f7970dd7fb 100644
---- a/drivers/net/mlx5/rte_pmd_mlx5.h
-+++ b/drivers/net/mlx5/rte_pmd_mlx5.h
-@@ -450,6 +450,38 @@ int
- rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
- 				  struct rte_pmd_mlx5_txq_rate_limit_info *info);
- 
-+/**
-+ * Packet pacing rate table capacity information.
-+ */
-+struct rte_pmd_mlx5_pp_rate_table_info {
-+	uint16_t total;		/**< Total HW rate table entries. */
-+	uint16_t used;		/**< Currently allocated entries. */
-+};
-+
-+/**
-+ * Query packet pacing rate table capacity.
-+ *
-+ * The ``used`` count reflects only the queried port's TX queues.
-+ * Other ports sharing the same physical device may also consume
-+ * rate table entries that are not included in this count.
-+ *
-+ * @param[in] port_id
-+ *   Port ID.
-+ * @param[out] info
-+ *   Rate table capacity information.
-+ *
-+ * @return
-+ *   0 on success, negative errno on failure:
-+ *   - -ENODEV: invalid port_id.
-+ *   - -EINVAL: info is NULL.
-+ *   - -ENOTSUP: packet pacing not supported.
-+ *   - -ENOMEM: allocation failure.
-+ */
-+__rte_experimental
-+int
-+rte_pmd_mlx5_pp_rate_table_query(uint16_t port_id,
-+				 struct rte_pmd_mlx5_pp_rate_table_info *info);
-+
- /** Type of mlx5 driver event for which custom callback is called. */
- enum rte_pmd_mlx5_driver_event_cb_type {
- 	/** Called after HW Rx queue is created. */
--- 
-2.43.0
-
+I wonder if TPACKET header could go in mbuf headroom.
+And also, could the copy on receive be avoided?
