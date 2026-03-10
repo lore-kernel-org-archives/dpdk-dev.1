@@ -2,65 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA560FD4F05
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 16:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1572BFD4F05
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 16:16:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C366D410D0;
-	Tue, 10 Mar 2026 17:14:23 +0100 (CET)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com
- [209.85.210.49]) by mails.dpdk.org (Postfix) with ESMTP id 03DF640ED0
- for <dev@dpdk.org>; Tue, 10 Mar 2026 17:14:20 +0100 (CET)
-Received: by mail-ot1-f49.google.com with SMTP id
- 46e09a7af769-7d741f61ee5so2245363a34.1
- for <dev@dpdk.org>; Tue, 10 Mar 2026 09:14:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D44ED410D3;
+	Tue, 10 Mar 2026 17:14:24 +0100 (CET)
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com
+ [209.85.210.46]) by mails.dpdk.org (Postfix) with ESMTP id 1859E40E30
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 17:14:22 +0100 (CET)
+Received: by mail-ot1-f46.google.com with SMTP id
+ 46e09a7af769-7d7653db148so181565a34.2
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 09:14:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773159259;
- x=1773764059; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773159261;
+ x=1773764061; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=aG1CyKepXEeqW4kVyyzrPlO6qLZA9IPA0s0ufpcM0HA=;
- b=OEG2Cl2fWG07rfFDuumzDpQNcyA9eHx8sjwtGW0hEykqWHGqSWio3PBuMaU3n9c19s
- 9GQUuG88n4NZtilYFeRwyzWwR2MYa4cG9M9FH8KAxznKN6QzHJLnxVhELptvFo+NhiQW
- 75aZtC5tub9mHWnfoiDO/WAz7eSwn6yzMw1OaIdGS/GCPharB0fwCCtq/74Hxvfq0cyY
- xW2ulRzLadberHNugeWogsUShFk4N+Km25n5uBXjUjdnWVWaeC+wRSRvbHUhaeA5czFF
- N7/Nsrhd3poE22hI8rz35pgqZ8xI4L8QV1NHj84B+rOAWrqhMZMXfoMLKmvHKxmBejdO
- qdyQ==
+ bh=7IkUl/0NLxrFpIz53KeZT2r+t1cZtUzoYXS3/PCXg6I=;
+ b=t9ev2Uvk6c4+eEgPaq4kkpSXOxkB8C78etY0KIKLM6DcXLABPcryWZZRnVsR0Yzlb5
+ WRAiloEyxwAkuIZYkSB2j+KeDqm5KCxkFnjnCQzYcaV3FQi6FJTeC0x9ArOXyppUsACH
+ nnXNKMOzYL5EmTX9i+hwUEEWtvHCgqCVtVAUMy1He/XZFOk9tMBPGKVA+nLZV3qoElBa
+ 0VRN8bNawvXcDDzZD4o9n25EOU388aNVCsh2ZpsRmYus1xusjzX7gd3a7a06Wj4h7+ip
+ IWUb7zsHYoHgxBTRILoiAHiLcHO/WUcxl//0CGaq6ijMX7K10aFNc9l/cIoIxg8ZxsHj
+ Ct8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773159259; x=1773764059;
+ d=1e100.net; s=20230601; t=1773159261; x=1773764061;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=aG1CyKepXEeqW4kVyyzrPlO6qLZA9IPA0s0ufpcM0HA=;
- b=r7b5pKvaPsC2S178hcgfl3VQBauO0FU2pMpcZYuH47ymvbzmO7H/4OIKNwsUFv5nRm
- NRa4GSa8AItPsqiXdtp3BJBO4uuSAa7gRhhSKUsmTWVR93Jyl6iomO1p1ykJnwOBzKXT
- cSAnpkBdGozhrxYcctdZv2kCtrqvq7DOLyw+NAWxMAxiExTRm+RwQuc95ve9LLoEx3k9
- wnYOWto5Ryg7vKC0OUn6oo5jtWj15IeLTYi9RVAXfflQDZZCkZC1DKorI9MpWdUljT+0
- 0OO1PSibCStMfmQ6sGxXq1P1oaU61/ySTqMUYPJkrUPgnKWLEeUPG6g2EuSt6nlhV1oK
- 7mEg==
-X-Gm-Message-State: AOJu0YwX+m3vefnBEwDIGfiwvtY6vHQtRfiNxDxlse3DcHWQTnA0A4bW
- WqAJl9RBPEDxEjniENcNQhuPEC6y7dXoswd3HkqI7LawzhGMy2p+Rec2NWn+0BIhB04OMSPHtvQ
- 87Lp0rXY=
-X-Gm-Gg: ATEYQzxgzTf6lDojUd4pD0lxFldXpiwpjg2sXkC63kyBI3Y3g0cvmk5oYVmFOFM8Qmy
- Tw3BcKFti7hjvoIWhXQZeVRa8Cm9d6tMExBKlUq4ZM5OKQZNJWneCvTp/AT9axIE0K64bJ+g/1x
- nzLUPMQrjUjNa9lkXWVJaSniAYFUncThPIIvFp2iPkkIobe8eT1XjHYtWDPOLpUOHYoQixAr1Zo
- mueY09zWCmvCpyxfUI6L5Rn/pRbmldCdV14g8LfAMm2TY80FOE4pXgYouZDMZOkzagqEa5vmHej
- Q93MdpCMI+USd3oStyIilB+BuhNFeUwaFqpkpuKIR1AqHHHoBa7bSxvLUFvBmjTWNsjqYhoOwq6
- KPLVt9TkAt9cS0AOR2ICNyedblp0X9X7PtBGdjTiq7t51H9k+NBIz8nL3FNi2Jr6EzUMwNFKYBw
- Mr7ToMmRUwIcP+tmBnjRyOh1zgtCye/gS+
-X-Received: by 2002:a05:6830:620f:b0:7d1:9516:6858 with SMTP id
- 46e09a7af769-7d72702d2a3mr10356571a34.24.1773159259331; 
- Tue, 10 Mar 2026 09:14:19 -0700 (PDT)
+ bh=7IkUl/0NLxrFpIz53KeZT2r+t1cZtUzoYXS3/PCXg6I=;
+ b=i7A5zqGdoDa+Qn4qQDrjxegH+HWW6ZVNfcU+qHPbSAA3wuifiCQz+kBl28a8wCUlkj
+ AiWNWIQuejedk6yxC+1lCDUTiaIqMWB8P42xqnmp6A0BlV+wviFaxt96N+1j45U3XQCl
+ sViq/k2mMzT62788ahFvl+gZ+gjmqbPduBP/isRr6oDFhPMUnSMqzVYxlB5e/Py5YUmd
+ S2jc9NKqc+grOLG5qJDArehvsODlMJ3CBNr4sS3uh1EWH3RL14D8ct5efoMzzMloW1/Z
+ cFMyeuE+iR1yJz0f3NGsBjYSjL4Es6vqumZsfhBEBJQIIlEmrEevhOiF3dD5RlzdM2Z8
+ MR9g==
+X-Gm-Message-State: AOJu0YxuxlDvbvllEgmy8YibNitd8xw1AFWe7IZB6ADTO68Px73WIFTC
+ LzkPDbxEdDBrkzyGAse53DgcbynXjbsff2zAPAMZ71CDIgqIT9YgCDgHyoNiY/yak5CHCahdoGg
+ WbCkQnO4=
+X-Gm-Gg: ATEYQzzo3UDlbbsi0rhre4jNNNogMB3LxFkvqZS0OABRn5d+md6JIjyD7Eq5431WmM1
+ XRbgpIoXfcfpILgDjw0q7MGx9l+n8fc+MuuegVNXPvEpD6k5gJclWs7jrA77cp3If8BlQXWc5TL
+ jgzbwVDgGK28Jsoq4/1bqDWDqhgzZUWNrUSu6JxmJvIVM8hPib38Z7y4Zdg73mDbgIlm2wnu9TO
+ MyNybIBk7PhI71YUnZPAAAuHVL5k1nZS8vBQoBHqKUtYgbwvQ0cT+FWj4sp2auo7z1m529SBfIO
+ og9zjDjdgy9zqWn5jVYtfhjSXKQbJ8+yA0TcCanD0Pkiad8fJsc+vQAMYffc/DVcjyy0KVw33DS
+ o9G4Aqo9TuIYotm8KbBxbp/ejY/gsb789uLQZUwAFMDl29ghYd0ZwCpvZyBmrqqyA4sDvExr15A
+ oaBpj2Ppw/VXfeI1vuJsMnuR0c20GOx2SZ
+X-Received: by 2002:a05:6830:828f:b0:7d7:4ff4:c16b with SMTP id
+ 46e09a7af769-7d74ff4d0cdmr4652310a34.11.1773159261377; 
+ Tue, 10 Mar 2026 09:14:21 -0700 (PDT)
 Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d738e3f421sm7304004a34.25.2026.03.10.09.14.18
+ 46e09a7af769-7d738e3f421sm7304004a34.25.2026.03.10.09.14.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Mar 2026 09:14:19 -0700 (PDT)
+ Tue, 10 Mar 2026 09:14:21 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v20 17/25] net/pcap: avoid use of volatile
-Date: Tue, 10 Mar 2026 09:09:55 -0700
-Message-ID: <20260310161356.194553-18-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Subject: [PATCH v20 19/25] eal/windows: add wrapper for access function
+Date: Tue, 10 Mar 2026 09:09:57 -0700
+Message-ID: <20260310161356.194553-20-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260310161356.194553-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -80,50 +81,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Using volatile for statistics is not necessary since only one
-thread is allowed to operate on a queue at a time.
+Like other Posix functions in unistd.h add wrapper
+using the Windows equivalent.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ lib/eal/windows/include/rte_os_shim.h | 1 +
+ lib/eal/windows/include/unistd.h      | 7 +++++++
+ 2 files changed, 8 insertions(+)
 
-diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 8be3a59690..20e4b8e6aa 100644
---- a/drivers/net/pcap/pcap_ethdev.c
-+++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -54,10 +54,10 @@ static uint64_t timestamp_rx_dynflag;
- static int timestamp_dynfield_offset = -1;
+diff --git a/lib/eal/windows/include/rte_os_shim.h b/lib/eal/windows/include/rte_os_shim.h
+index f16b2230c8..44664a5062 100644
+--- a/lib/eal/windows/include/rte_os_shim.h
++++ b/lib/eal/windows/include/rte_os_shim.h
+@@ -33,6 +33,7 @@
+ #define unlink(path) _unlink(path)
+ #define fileno(f) _fileno(f)
+ #define isatty(fd) _isatty(fd)
++#define access(path, mode) _access(path, mode)
  
- struct queue_stat {
--	volatile unsigned long pkts;
--	volatile unsigned long bytes;
--	volatile unsigned long err_pkts;
--	volatile unsigned long rx_nombuf;
-+	uint64_t pkts;
-+	uint64_t bytes;
-+	uint64_t err_pkts;
-+	uint64_t rx_nombuf;
- };
+ #define IPVERSION	4
  
- struct queue_missed_stat {
-@@ -901,11 +901,11 @@ eth_stats_get(struct rte_eth_dev *dev, struct rte_eth_stats *stats,
- 	      struct eth_queue_stats *qstats)
- {
- 	unsigned int i;
--	unsigned long rx_packets_total = 0, rx_bytes_total = 0;
--	unsigned long rx_missed_total = 0;
--	unsigned long rx_nombuf_total = 0, rx_err_total = 0;
--	unsigned long tx_packets_total = 0, tx_bytes_total = 0;
--	unsigned long tx_packets_err_total = 0;
-+	uint64_t rx_packets_total = 0, rx_bytes_total = 0;
-+	uint64_t rx_missed_total = 0;
-+	uint64_t rx_nombuf_total = 0, rx_err_total = 0;
-+	uint64_t tx_packets_total = 0, tx_bytes_total = 0;
-+	uint64_t tx_packets_err_total = 0;
- 	const struct pmd_internals *internal = dev->data->dev_private;
+diff --git a/lib/eal/windows/include/unistd.h b/lib/eal/windows/include/unistd.h
+index 78150c6480..f95888f4e1 100644
+--- a/lib/eal/windows/include/unistd.h
++++ b/lib/eal/windows/include/unistd.h
+@@ -23,4 +23,11 @@
+ #define STDERR_FILENO _fileno(stderr)
+ #endif
  
- 	for (i = 0; i < RTE_ETHDEV_QUEUE_STAT_CNTRS &&
++/* Mode values for the _access() function.  */
++#ifndef F_OK
++#define	F_OK		0	/* test for existence of file */
++#define	W_OK		0x02	/* test for write permission */
++#define	R_OK		0x04	/* test for read permission */
++#endif
++
+ #endif /* _UNISTD_H_ */
 -- 
 2.51.0
 
