@@ -2,50 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBB7EB1041
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 10:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18086EB1043
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 10:50:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A8FD4067E;
-	Tue, 10 Mar 2026 11:20:16 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id C0B02402DC
- for <dev@dpdk.org>; Tue, 10 Mar 2026 11:20:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E68D14060A;
+	Tue, 10 Mar 2026 11:50:01 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 9D851402DC;
+ Tue, 10 Mar 2026 11:49:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773138015; x=1804674015;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=TXMcY+RhWh3iYDE6sSEDXfrUOAS+C+80bY8qsCizi1g=;
- b=GgO+jKtXRKyBdUIEJFqfwZJ2zCaFGbDwt1aGj3kBVYLDgGDNSK7GSm03
- 4gQfJ3P55MYjKVdTg0abtasW9UgcGpV211Ymdykqod66aVLlKVSij2Ms4
- 0aMzYmvmMM8RQmtyzeK9VdcF/agrjSld5UO1DUtcNzPOytTWnQvBUUp2A
- ES10NgwnEUyJC4IZQC9GQyapFIxk5W7Qmbs4+GLppHrSMcp0bvoNeWulY
- HtafvuTi+Jpkd1PS6uyG0druASqXtjbC656rjP/+mwT2dhplOIy1dXiBU
- j+vGlnggNQKhl8+J9gUeO+hx+M0K/7EiFM/qYQQJ2UWc7a+xHfyzu+Ivr g==;
-X-CSE-ConnectionGUID: cuneRto2QByTCNddP/hHkg==
-X-CSE-MsgGUID: 3hTHjfxZTV+O/BEb/evTgg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="78033173"
-X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208";a="78033173"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Mar 2026 03:20:14 -0700
-X-CSE-ConnectionGUID: jlg55Y5+SDCBBBl0ihgwcQ==
-X-CSE-MsgGUID: sQGMa1t0RpubR5593ynJJA==
+ t=1773139800; x=1804675800;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=qojtGjyu23H3Kup0iq49a7+mcBbF+DjhR4syQlBbxyY=;
+ b=j29A3yO5FhWm++nZ9xPhh9dPMoFHXN+xzre0DTrPxmUuQ9WfRNBIRFqw
+ hbQvIhA17cpugaqKGVew5AgMKI93fUxUefhuaCUoAHkE7r0P+WHNatMaQ
+ ca7AUwt33qxPCQuRo12AjQ38iRCq916WAWFRzI6yVrIRvAYlI3MHmb79D
+ L4f9seeiBPpUJkeaUktPMJi5ft8gAFG6edVpjKKOH116qokK9SQIOvEPg
+ jrdBT5bbrl4ykLRIuj+0sH0CrftsaIp5LI03TzDJWrlnVEokcEjz4cxB8
+ Z/jXlxa/RxnPEUNPnUlDbGME1sJLq/bXoDKHO4lOeQMGSSbv0Jxs35Ijr A==;
+X-CSE-ConnectionGUID: 5uhM7V3MRReiVi1TdcWo4A==
+X-CSE-MsgGUID: eJnjYhz/QFWWfbMH/0OIqA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74224053"
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208";a="74224053"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 10 Mar 2026 03:49:57 -0700
+X-CSE-ConnectionGUID: QdhY+wD7RH2zR7QuLrr1Mw==
+X-CSE-MsgGUID: Jcz5wga+SmaGT9QC8a5xWg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208";a="220242734"
-Received: from silpixa00401454.ir.intel.com ([10.20.224.230])
- by orviesa007.jf.intel.com with ESMTP; 10 Mar 2026 03:20:13 -0700
-From: Emma Finn <emma.finn@intel.com>
-To: Kai Ji <kai.ji@intel.com>
-Cc: dev@dpdk.org,
-	gakhil@marvell.com,
-	Emma Finn <emma.finn@intel.com>
-Subject: [v4] crypto/openssl: Add support for SHA3 algorithms
-Date: Tue, 10 Mar 2026 10:20:09 +0000
-Message-ID: <20260310102010.1175294-1-emma.finn@intel.com>
+X-IronPort-AV: E=Sophos;i="6.23,112,1770624000"; d="scan'208";a="224759557"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by fmviesa005.fm.intel.com with ESMTP; 10 Mar 2026 03:49:56 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH] doc: remove references to obsolete testpmd flag
+Date: Tue, 10 Mar 2026 10:49:45 +0000
+Message-ID: <20260310104945.3271920-1-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260211114735.2594969-1-emma.finn@intel.com>
-References: <20260211114735.2594969-1-emma.finn@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,337 +58,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add SHA3-224, SHA3-256, SHA3-384, and SHA3-512
-support to the OpenSSL PMD, including both hash
-and HMAC variants.
+The packet-filter-mode flag was removed in a previous commit. Remove
+references to it in the documentation.
 
-Signed-off-by: Emma Finn <emma.finn@intel.com>
----
-v2:
-* Updated documentation
-v3:
-* rebase
-v4:
-* rebase
----
- doc/guides/cryptodevs/features/openssl.ini   |   8 +
- doc/guides/cryptodevs/openssl.rst            |   8 +
- doc/guides/rel_notes/release_26_03.rst       |   2 +
- drivers/crypto/openssl/rte_openssl_pmd.c     |  36 ++++
- drivers/crypto/openssl/rte_openssl_pmd_ops.c | 168 +++++++++++++++++++
- 5 files changed, 222 insertions(+)
+Fixes: 5007ac13189d ("ethdev: remove deprecated Flow Director configuration")
+Cc: stable@dpdk.org
 
-diff --git a/doc/guides/cryptodevs/features/openssl.ini b/doc/guides/cryptodevs/features/openssl.ini
-index 536557e9e0..bcc0c39c2f 100644
---- a/doc/guides/cryptodevs/features/openssl.ini
-+++ b/doc/guides/cryptodevs/features/openssl.ini
-@@ -45,6 +45,14 @@ SHA384       = Y
- SHA384 HMAC  = Y
- SHA512       = Y
- SHA512 HMAC  = Y
-+SHA3_224        = Y
-+SHA3_224 HMAC   = Y
-+SHA3_256        = Y
-+SHA3_256 HMAC   = Y
-+SHA3_384        = Y
-+SHA3_384 HMAC   = Y
-+SHA3_512        = Y
-+SHA3_512 HMAC   = Y
- SHAKE_128    = Y
- SHAKE_256    = Y
- AES GMAC     = Y
-diff --git a/doc/guides/cryptodevs/openssl.rst b/doc/guides/cryptodevs/openssl.rst
-index 921592ba2d..9d94668a9a 100644
---- a/doc/guides/cryptodevs/openssl.rst
-+++ b/doc/guides/cryptodevs/openssl.rst
-@@ -35,12 +35,20 @@ Supported authentication algorithms:
- * ``RTE_CRYPTO_AUTH_SHA256``
- * ``RTE_CRYPTO_AUTH_SHA384``
- * ``RTE_CRYPTO_AUTH_SHA512``
-+* ``RTE_CRYPTO_AUTH_SHA3_224``
-+* ``RTE_CRYPTO_AUTH_SHA3_256``
-+* ``RTE_CRYPTO_AUTH_SHA3_384``
-+* ``RTE_CRYPTO_AUTH_SHA3_512``
- * ``RTE_CRYPTO_AUTH_MD5_HMAC``
- * ``RTE_CRYPTO_AUTH_SHA1_HMAC``
- * ``RTE_CRYPTO_AUTH_SHA224_HMAC``
- * ``RTE_CRYPTO_AUTH_SHA256_HMAC``
- * ``RTE_CRYPTO_AUTH_SHA384_HMAC``
- * ``RTE_CRYPTO_AUTH_SHA512_HMAC``
-+* ``RTE_CRYPTO_AUTH_SHA3_224_HMAC``
-+* ``RTE_CRYPTO_AUTH_SHA3_256_HMAC``
-+* ``RTE_CRYPTO_AUTH_SHA3_384_HMAC``
-+* ``RTE_CRYPTO_AUTH_SHA3_512_HMAC``
- * ``RTE_CRYPTO_AUTH_SHAKE_128``
- * ``RTE_CRYPTO_AUTH_SHAKE_256``
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+---
+ doc/guides/nics/i40e.rst | 4 ++--
+ doc/guides/nics/igc.rst  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/doc/guides/nics/i40e.rst b/doc/guides/nics/i40e.rst
+index 0b6527b4ed..0c52807f26 100644
+--- a/doc/guides/nics/i40e.rst
++++ b/doc/guides/nics/i40e.rst
+@@ -436,12 +436,12 @@ The default input set of each flow type is::
  
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index b4499ec066..2c3a318dba 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -100,6 +100,8 @@ New Features
+ The flex payload is selected from offset 0 to 15 of packet's payload by default, while it is masked out from matching.
  
-   * Added support for AES-XTS cipher algorithm.
-   * Added support for SHAKE-128 and SHAKE-256 authentication algorithms.
-+  * Added support for SHA3-224, SHA3-256, SHA3-384, and SHA3-512 hash algorithms
-+    and their HMAC variants.
+-Start ``testpmd`` with ``--disable-rss`` and ``--pkt-filter-mode=perfect``:
++Start ``testpmd`` with ``--disable-rss``:
  
- * **Added Ctrl+L support to cmdline library.**
+ .. code-block:: console
  
-diff --git a/drivers/crypto/openssl/rte_openssl_pmd.c b/drivers/crypto/openssl/rte_openssl_pmd.c
-index e5fa1a4eeb..c34efb8ad0 100644
---- a/drivers/crypto/openssl/rte_openssl_pmd.c
-+++ b/drivers/crypto/openssl/rte_openssl_pmd.c
-@@ -92,6 +92,14 @@ digest_name_get(enum rte_crypto_auth_algorithm algo)
- 		return OSSL_DIGEST_NAME_SHA2_384;
- 	case RTE_CRYPTO_AUTH_SHA512_HMAC:
- 		return OSSL_DIGEST_NAME_SHA2_512;
-+	case RTE_CRYPTO_AUTH_SHA3_224_HMAC:
-+		return OSSL_DIGEST_NAME_SHA3_224;
-+	case RTE_CRYPTO_AUTH_SHA3_256_HMAC:
-+		return OSSL_DIGEST_NAME_SHA3_256;
-+	case RTE_CRYPTO_AUTH_SHA3_384_HMAC:
-+		return OSSL_DIGEST_NAME_SHA3_384;
-+	case RTE_CRYPTO_AUTH_SHA3_512_HMAC:
-+		return OSSL_DIGEST_NAME_SHA3_512;
- 	default:
- 		return NULL;
- 	}
-@@ -282,6 +290,22 @@ get_auth_algo(enum rte_crypto_auth_algorithm sessalgo,
- 		case RTE_CRYPTO_AUTH_SHA512_HMAC:
- 			*algo = EVP_sha512();
- 			break;
-+		case RTE_CRYPTO_AUTH_SHA3_224:
-+		case RTE_CRYPTO_AUTH_SHA3_224_HMAC:
-+			*algo = EVP_sha3_224();
-+			break;
-+		case RTE_CRYPTO_AUTH_SHA3_256:
-+		case RTE_CRYPTO_AUTH_SHA3_256_HMAC:
-+			*algo = EVP_sha3_256();
-+			break;
-+		case RTE_CRYPTO_AUTH_SHA3_384:
-+		case RTE_CRYPTO_AUTH_SHA3_384_HMAC:
-+			*algo = EVP_sha3_384();
-+			break;
-+		case RTE_CRYPTO_AUTH_SHA3_512:
-+		case RTE_CRYPTO_AUTH_SHA3_512_HMAC:
-+			*algo = EVP_sha3_512();
-+			break;
- #if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
- 		case RTE_CRYPTO_AUTH_SHAKE_128:
- 			*algo = EVP_shake128();
-@@ -680,6 +704,10 @@ openssl_set_session_auth_parameters(struct openssl_session *sess,
- 	case RTE_CRYPTO_AUTH_SHA256:
- 	case RTE_CRYPTO_AUTH_SHA384:
- 	case RTE_CRYPTO_AUTH_SHA512:
-+	case RTE_CRYPTO_AUTH_SHA3_224:
-+	case RTE_CRYPTO_AUTH_SHA3_256:
-+	case RTE_CRYPTO_AUTH_SHA3_384:
-+	case RTE_CRYPTO_AUTH_SHA3_512:
- #if (OPENSSL_VERSION_NUMBER >= 0x30000000L)
- 	case RTE_CRYPTO_AUTH_SHAKE_128:
- 	case RTE_CRYPTO_AUTH_SHAKE_256:
-@@ -739,6 +767,10 @@ openssl_set_session_auth_parameters(struct openssl_session *sess,
- 	case RTE_CRYPTO_AUTH_SHA256_HMAC:
- 	case RTE_CRYPTO_AUTH_SHA384_HMAC:
- 	case RTE_CRYPTO_AUTH_SHA512_HMAC:
-+	case RTE_CRYPTO_AUTH_SHA3_224_HMAC:
-+	case RTE_CRYPTO_AUTH_SHA3_256_HMAC:
-+	case RTE_CRYPTO_AUTH_SHA3_384_HMAC:
-+	case RTE_CRYPTO_AUTH_SHA3_512_HMAC:
- 		sess->auth.mode = OPENSSL_AUTH_AS_HMAC;
+    ./<build_dir>/app/dpdk-testpmd -l 0-15 -- -i --disable-rss \
+-                 --pkt-filter-mode=perfect --rxq=8 --txq=8 --nb-cores=8 \
++                 --rxq=8 --txq=8 --nb-cores=8 \
+                  --nb-ports=1
  
- 		algo = digest_name_get(xform->auth.algo);
-@@ -769,6 +801,10 @@ openssl_set_session_auth_parameters(struct openssl_session *sess,
- 	case RTE_CRYPTO_AUTH_SHA256_HMAC:
- 	case RTE_CRYPTO_AUTH_SHA384_HMAC:
- 	case RTE_CRYPTO_AUTH_SHA512_HMAC:
-+	case RTE_CRYPTO_AUTH_SHA3_224_HMAC:
-+	case RTE_CRYPTO_AUTH_SHA3_256_HMAC:
-+	case RTE_CRYPTO_AUTH_SHA3_384_HMAC:
-+	case RTE_CRYPTO_AUTH_SHA3_512_HMAC:
- 		sess->auth.mode = OPENSSL_AUTH_AS_HMAC;
- 		sess->auth.hmac.ctx = HMAC_CTX_new();
- 		if (get_auth_algo(xform->auth.algo,
-diff --git a/drivers/crypto/openssl/rte_openssl_pmd_ops.c b/drivers/crypto/openssl/rte_openssl_pmd_ops.c
-index 0f2b82ec00..6133622f1b 100644
---- a/drivers/crypto/openssl/rte_openssl_pmd_ops.c
-+++ b/drivers/crypto/openssl/rte_openssl_pmd_ops.c
-@@ -269,6 +269,174 @@ static const struct rte_cryptodev_capabilities openssl_pmd_capabilities[] = {
- 			}, }
- 		}, }
- 	},
-+	{	/* SHA3_224 HMAC */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SHA3_224_HMAC,
-+				.block_size = 144,
-+				.key_size = {
-+					.min = 1,
-+					.max = 144,
-+					.increment = 1
-+				},
-+				.digest_size = {
-+					.min = 1,
-+					.max = 28,
-+					.increment = 1
-+				},
-+				.iv_size = { 0 }
-+			}, }
-+		}, }
-+	},
-+	{	/* SHA3_224 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SHA3_224,
-+				.block_size = 144,
-+				.key_size = {
-+					.min = 0,
-+					.max = 0,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 28,
-+					.max = 28,
-+					.increment = 0
-+				},
-+				.iv_size = { 0 }
-+			}, }
-+		}, }
-+	},
-+	{	/* SHA3_256 HMAC */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SHA3_256_HMAC,
-+				.block_size = 136,
-+				.key_size = {
-+					.min = 1,
-+					.max = 136,
-+					.increment = 1
-+				},
-+				.digest_size = {
-+					.min = 1,
-+					.max = 32,
-+					.increment = 1
-+				},
-+				.iv_size = { 0 }
-+			}, }
-+		}, }
-+	},
-+	{	/* SHA3_256 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SHA3_256,
-+				.block_size = 136,
-+				.key_size = {
-+					.min = 0,
-+					.max = 0,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 32,
-+					.max = 32,
-+					.increment = 0
-+				},
-+				.iv_size = { 0 }
-+			}, }
-+		}, }
-+	},
-+	{	/* SHA3_384 HMAC */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SHA3_384_HMAC,
-+				.block_size = 104,
-+				.key_size = {
-+					.min = 1,
-+					.max = 104,
-+					.increment = 1
-+				},
-+				.digest_size = {
-+					.min = 1,
-+					.max = 48,
-+					.increment = 1
-+				},
-+				.iv_size = { 0 }
-+			}, }
-+		}, }
-+	},
-+	{	/* SHA3_384 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SHA3_384,
-+				.block_size = 104,
-+				.key_size = {
-+					.min = 0,
-+					.max = 0,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 48,
-+					.max = 48,
-+					.increment = 0
-+				},
-+				.iv_size = { 0 }
-+			}, }
-+		}, }
-+	},
-+	{	/* SHA3_512 HMAC */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SHA3_512_HMAC,
-+				.block_size = 72,
-+				.key_size = {
-+					.min = 1,
-+					.max = 72,
-+					.increment = 1
-+				},
-+				.digest_size = {
-+					.min = 1,
-+					.max = 64,
-+					.increment = 1
-+				},
-+				.iv_size = { 0 }
-+			}, }
-+		}, }
-+	},
-+	{	/* SHA3_512 */
-+		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
-+		{.sym = {
-+			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
-+			{.auth = {
-+				.algo = RTE_CRYPTO_AUTH_SHA3_512,
-+				.block_size = 72,
-+				.key_size = {
-+					.min = 0,
-+					.max = 0,
-+					.increment = 0
-+				},
-+				.digest_size = {
-+					.min = 64,
-+					.max = 64,
-+					.increment = 0
-+				},
-+				.iv_size = { 0 }
-+			}, }
-+		}, }
-+	},
- 	{	/* AES XTS */
- 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
- 		{.sym = {
+ Add a rule to direct ``ipv4-udp`` packet whose ``dst_ip=2.2.2.5, src_ip=2.2.2.3, src_port=32, dst_port=32`` to queue 1:
+diff --git a/doc/guides/nics/igc.rst b/doc/guides/nics/igc.rst
+index 9790b58102..d19a572b83 100644
+--- a/doc/guides/nics/igc.rst
++++ b/doc/guides/nics/igc.rst
+@@ -79,7 +79,7 @@ Start ``testpmd``:
+ 
+ .. code-block:: console
+ 
+-   ./dpdk-testpmd -l 4-8 -- i --rxq=4 --txq=4 --pkt-filter-mode=perfect --disable-rss
++   ./dpdk-testpmd -l 4-8 -- i --rxq=4 --txq=4 --disable-rss
+ 
+ Add a rule to direct packet whose ``ether-type=0x801`` to queue 1:
+ 
 -- 
 2.43.0
 
