@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04776FCA188
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 21:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D3BFCA188
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 21:19:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3521E4066F;
-	Mon,  9 Mar 2026 22:19:32 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2795740676;
+	Mon,  9 Mar 2026 22:19:41 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 3804840269
- for <dev@dpdk.org>; Mon,  9 Mar 2026 22:19:31 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 526ED4066E
+ for <dev@dpdk.org>; Mon,  9 Mar 2026 22:19:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773091171; x=1804627171;
+ t=1773091180; x=1804627180;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=SJ3ya6uLIgCLUuORMHXQGw46SFoUi82/3jTOdyO9ULA=;
- b=RM1zrXCjvjrK7ODVOh4yN3xbP0zHiRMi7U6oHUdedwQJsTcXdWzwVVNy
- Z7Y/SbN8ez6FTpkBI0B85iZBmvDU1kOeMMIo84cln32YuCUjgyKR/nw3+
- X9O4v/1qaw6xIZzlP6qv/VRJpyj5lNv8NHDRmkR/5HVA/A9CHX5vmZghi
- 7xvXdzOJRnGGzTH99wYUVpusekq7ojMxusFGsADiO+GaRmbiE5Y/TxBAC
- 3cQnyqcGVIUCCmbwurU4uM6Zdxi1VRCiCNX4NynaisYDsG9Hes/eLZSmU
- H7rG1TJ4CTgLadPh1S2fz0GVO0dTAbiro3LdVIuAH/xmaBgK8h1ZxYE37 w==;
-X-CSE-ConnectionGUID: YPfaZHt9Q/23IxxXyFWVDA==
-X-CSE-MsgGUID: U5Eg/u8VQ9WjzZJtj73IKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74241052"
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="74241052"
+ bh=c5mWnp50xKXpW8GkBbACN2R+eOQWBN5UvHkhKf+KJ3g=;
+ b=M/pHRr09YhkwN4BE8yu/72d9KmMLAX4JYdOHtn6PkWFnrU6w+QWG+P/a
+ K4mzlMpncgevE+02M00/5o2E0MZKN1W4c9MowV2wJBSlbbeel0I2Vfdbx
+ 2enketBxX0PBNn/xFk0E2rdl+N8HhGFnD2qM3aSjaijgzZNILPqdnlZHq
+ kGLGk+p7hKwPl99YIjXTuPJty/uuG8W3m8yT+WAfDbWMlUcWGZk4kXfz+
+ NJTmNQ1WUQ/rnQAUsPSheqpURKQ99yJqVGFp504DTYO1OXE4qSQx4XUdS
+ HBq6SU8bBCGpODf7vu5Vo5QhPrWQ1U7tUWyOjrRBgQhoMKh5w8nR5cTlm A==;
+X-CSE-ConnectionGUID: TQWt3ujxRz2d7IHfGGtJFQ==
+X-CSE-MsgGUID: T8YdKh1qRbKfXzAgmUaGsQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74241073"
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="74241073"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Mar 2026 14:19:30 -0700
-X-CSE-ConnectionGUID: T13Ubc2hTnW5Iunn8zTDVA==
-X-CSE-MsgGUID: LkZDAewjSs+D/B+/J9esZA==
+ 09 Mar 2026 14:19:39 -0700
+X-CSE-ConnectionGUID: muSs465ZRMGHTT/2x4j0xw==
+X-CSE-MsgGUID: iDgSw6+ZTcyGlxpi8FU37g==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="219016140"
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="219016178"
 Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
- by orviesa006.jf.intel.com with ESMTP; 09 Mar 2026 14:19:28 -0700
+ by orviesa006.jf.intel.com with ESMTP; 09 Mar 2026 14:19:37 -0700
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
  aman.deep.singh@intel.com, dev@dpdk.org
-Cc: Paul Greenwalt <paul.greenwalt@intel.com>
-Subject: [PATCH v1 4/6] net/ice/base: support RDMA on 4+ ports of E830
-Date: Tue, 10 Mar 2026 05:52:16 -0400
-Message-ID: <20260310095218.703423-14-soumyadeep.hore@intel.com>
+Cc: Pawel Sobczyk <pawel.sobczyk@intel.com>
+Subject: [PATCH v1 5/6] net/ice/base: add pending admin queue events API
+Date: Tue, 10 Mar 2026 05:52:17 -0400
+Message-ID: <20260310095218.703423-15-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20260310095218.703423-1-soumyadeep.hore@intel.com>
 References: <20260310095218.703423-1-soumyadeep.hore@intel.com>
@@ -60,33 +60,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Paul Greenwalt <paul.greenwalt@intel.com>
+From: Pawel Sobczyk <pawel.sobczyk@intel.com>
 
-E810/E82X devices do not support RDMA on 4+ ports configurations. This is
-not true for E830 devices.
+Adds a new API ice_ctrlq_pending() to check if there
+are pending messages in the admin control queue. The
+function is intended to be called after clearing the
+ADMINQ_EVENT_PENDING flag to ensure all pending
+messages are processed before re-enabling interrupts.
 
-During device capability discovery do not apply RDMA limitation when
-the device is E830.
-
-Signed-off-by: Paul Greenwalt <paul.greenwalt@intel.com>
+Signed-off-by: Pawel Sobczyk <pawel.sobczyk@intel.com>
 Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
- drivers/net/intel/ice/base/ice_common.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/intel/ice/base/ice_common.h   |  1 +
+ drivers/net/intel/ice/base/ice_controlq.c | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+)
 
-diff --git a/drivers/net/intel/ice/base/ice_common.c b/drivers/net/intel/ice/base/ice_common.c
-index 7d8f677c99..934e0c2d5b 100644
---- a/drivers/net/intel/ice/base/ice_common.c
-+++ b/drivers/net/intel/ice/base/ice_common.c
-@@ -2668,6 +2668,8 @@ ice_recalc_port_limited_caps(struct ice_hw *hw, struct ice_hw_common_caps *caps)
- 		caps->maxtc = 4;
- 		ice_debug(hw, ICE_DBG_INIT, "reducing maxtc to %u (based on #ports)\n",
- 			  caps->maxtc);
-+		if (hw->mac_type == ICE_MAC_E830)
-+			return;
- 	}
+diff --git a/drivers/net/intel/ice/base/ice_common.h b/drivers/net/intel/ice/base/ice_common.h
+index 884b8f7834..3e9d3c2f80 100644
+--- a/drivers/net/intel/ice/base/ice_common.h
++++ b/drivers/net/intel/ice/base/ice_common.h
+@@ -148,6 +148,7 @@ ice_aq_ena_dis_txtimeq(struct ice_hw *hw, u16 txtimeq, u16 q_count, bool q_ena,
+ extern const struct ice_ctx_ele ice_txtime_ctx_info[];
+ 
+ bool ice_check_sq_alive(struct ice_hw *hw, struct ice_ctl_q_info *cq);
++bool ice_ctrlq_pending(struct ice_hw *hw, struct ice_ctl_q_info *cq);
+ int ice_aq_q_shutdown(struct ice_hw *hw, bool unloading);
+ void ice_fill_dflt_direct_cmd_desc(struct ice_aq_desc *desc, u16 opcode);
+ extern const struct ice_ctx_ele ice_tlan_ctx_info[];
+diff --git a/drivers/net/intel/ice/base/ice_controlq.c b/drivers/net/intel/ice/base/ice_controlq.c
+index b210495827..d68e603a8c 100644
+--- a/drivers/net/intel/ice/base/ice_controlq.c
++++ b/drivers/net/intel/ice/base/ice_controlq.c
+@@ -965,6 +965,22 @@ static bool ice_sq_done(struct ice_hw *hw, struct ice_ctl_q_info *cq)
+ 	return rd32(hw, cq->sq.head) == cq->sq.next_to_use;
  }
  
++/**
++ * ice_ctrlq_pending - check if there are pending messages on the control queue
++ * @hw: pointer to the HW struct
++ * @cq: pointer to the specific Control queue
++ *
++ * Returns: true if there are pending messages in a queue (i.e. next_to_clean
++ *          does not match the hardware head register), false otherwise
++ */
++bool ice_ctrlq_pending(struct ice_hw *hw, struct ice_ctl_q_info *cq)
++{
++	u16 ntu;
++
++	ntu = (u16)(rd32(hw, cq->rq.head) & cq->rq.head_mask);
++	return cq->rq.next_to_clean != ntu;
++}
++
+ /**
+  * ice_sq_send_cmd_nolock - send command to a control queue
+  * @hw: pointer to the HW struct
 -- 
 2.47.1
 
