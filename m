@@ -2,37 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3445AFCC9DB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 09:22:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F01C1EA8550
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 09:22:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6429140BA2;
-	Tue, 10 Mar 2026 10:22:26 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4CBA540A87;
+	Tue, 10 Mar 2026 10:22:39 +0100 (CET)
 Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
- by mails.dpdk.org (Postfix) with ESMTP id C907140BA2
- for <dev@dpdk.org>; Tue, 10 Mar 2026 10:22:24 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id AC5E74060A
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 10:22:37 +0100 (CET)
 Received: from localhost.localdomain (unknown [82.65.104.223])
  (Authenticated sender: vjardin@free.fr)
- by smtp6-g21.free.fr (Postfix) with ESMTPSA id 5D2CF780389;
- Tue, 10 Mar 2026 10:22:12 +0100 (CET)
+ by smtp6-g21.free.fr (Postfix) with ESMTPSA id E7A4678035E;
+ Tue, 10 Mar 2026 10:22:24 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1773134544;
- bh=+AXFG/SKn4BYQzUFI+r7WSijen8o2SRxnbXrPz5VqrQ=;
+ s=smtp-20201208; t=1773134557;
+ bh=YlQ7Rj+HGpd9OmNo3TqrhbFhpj8k0KVTcGJIi04MjoU=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=bMeTFXDq9zX1/7sDI0dcISalv/pLOw5lHEtJR6+zngZXAyDF9Ofo1pkVzsjGWs/jD
- gWxAzvcMTDb/YYZx1U1Hq/1Xwrz2pxqlXsmNc+Xr7d2xc9oqgD9/l1arWaYD0PNVyC
- xds//OJFbdagc8TLpPvfQLRFK2UdYjlwA1/8KLVtguJYz0/L1cS64PC8wpTXYixUfn
- E6XWWsBbgcqw/b3WqY9aFqC0PIrNUCus8CyZ+Ax2sQwNcr3uciXY1mZYfEs3BXtyco
- xqP7XcjJhxlpN3sUIy6HQawt4x9+q3TgAZTlAqBWyeskbVh0BXIOdM8x0//nND4upt
- Pwjw1oJ8d/Zjw==
+ b=H9k5SycT7gCjLlQhJnvpcveSTqLDV5sVwT0vhBbHTwWmNafiWtV2NG2CkHu+iauPQ
+ VBj7LK7etZRY0y09ChcAcYtfIr/7sh1Cj6khCVh4tVaG2oSQTHWBwcn6S2JrGAsGEQ
+ hDdNq05mGwN2q2awHDnKWkhM0BYH2dS94t7NyrsUtvvgFSgIiJ2fSNgXVz6v1mzkvP
+ SBVUaQBVy6Iu1ZvhHm1xwWqlUdMJJK+FTCKJtmSy6k/n0Ko95KwptG2NoJQKVUdlmf
+ G2BhjxhsnXP8mDhhDDTI3P9q/aUqyIMv6DHlYWJCEVv/Hc/3xFOjGPHnMnW8Z1LxIW
+ l1keFITZndxgQ==
 From: Vincent Jardin <vjardin@free.fr>
 To: dev@dpdk.org
 Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
  dsosnowski@nvidia.com, viacheslavo@nvidia.com, bingz@nvidia.com,
  orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
  Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v1 08/10] ethdev: add getter for per-queue Tx rate limit
-Date: Tue, 10 Mar 2026 10:20:12 +0100
-Message-ID: <20260310092014.2762894-9-vjardin@free.fr>
+Subject: [PATCH v1 9/10] net/mlx5: share pacing rate table entries across
+ queues
+Date: Tue, 10 Mar 2026 10:20:13 +0100
+Message-ID: <20260310092014.2762894-10-vjardin@free.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260310092014.2762894-1-vjardin@free.fr>
 References: <20260310092014.2762894-1-vjardin@free.fr>
@@ -51,208 +52,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The existing rte_eth_set_queue_rate_limit() API allows setting a
-per-queue Tx rate but provides no way to read it back. Applications
-such as grout are forced to maintain a shadow copy of the rate to
-be able to report it.
+Allocating PP contexts with MLX5DV_PP_ALLOC_FLAGS_DEDICATED_INDEX
+forces one HW rate table entry per TX queue. On ConnectX-6 Dx the
+rate table is small (typically 128 entries), so setting the same rate
+on many queues exhausts it quickly and returns ENOSPC.
 
-Add rte_eth_get_queue_rate_limit() as the symmetric getter, following
-the established DPDK pattern (e.g. rte_eth_dev_set_mtu/get_mtu,
-rte_eth_dev_set_vlan_offload/get_vlan_offload).
-
-This adds:
-- eth_get_queue_rate_limit_t driver callback in ethdev_driver.h
-- rte_eth_get_queue_rate_limit() public experimental API (26.07)
-- mlx5 PMD implementation reading from the existing per-queue
-  rate_mbps tracking field
+Without the dedicated flag, the kernel mlx5 driver shares a single
+rate table entry across all PP contexts with identical parameters
+(rate, burst, packet size) using internal refcounting. Each queue
+still gets its own PP handle for proper cleanup, but the underlying
+HW index is shared.
 
 Signed-off-by: Vincent Jardin <vjardin@free.fr>
 ---
- drivers/net/mlx5/mlx5.c     |  2 ++
- drivers/net/mlx5/mlx5_tx.h  |  2 ++
- drivers/net/mlx5/mlx5_txq.c | 34 ++++++++++++++++++++++++++++++++++
- lib/ethdev/ethdev_driver.h  |  7 +++++++
- lib/ethdev/rte_ethdev.c     | 28 ++++++++++++++++++++++++++++
- lib/ethdev/rte_ethdev.h     | 24 ++++++++++++++++++++++++
- 6 files changed, 97 insertions(+)
+ drivers/net/mlx5/mlx5_txpp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
-index f399e0d5c9..6e21ed31f3 100644
---- a/drivers/net/mlx5/mlx5.c
-+++ b/drivers/net/mlx5/mlx5.c
-@@ -2721,6 +2721,7 @@ const struct eth_dev_ops mlx5_dev_ops = {
- 	.rx_metadata_negotiate = mlx5_flow_rx_metadata_negotiate,
- 	.get_restore_flags = mlx5_get_restore_flags,
- 	.set_queue_rate_limit = mlx5_set_queue_rate_limit,
-+	.get_queue_rate_limit = mlx5_get_queue_rate_limit,
- };
- 
- /* Available operations from secondary process. */
-@@ -2815,6 +2816,7 @@ const struct eth_dev_ops mlx5_dev_ops_isolate = {
- 	.map_aggr_tx_affinity = mlx5_map_aggr_tx_affinity,
- 	.get_restore_flags = mlx5_get_restore_flags,
- 	.set_queue_rate_limit = mlx5_set_queue_rate_limit,
-+	.get_queue_rate_limit = mlx5_get_queue_rate_limit,
- };
- 
- /**
-diff --git a/drivers/net/mlx5/mlx5_tx.h b/drivers/net/mlx5/mlx5_tx.h
-index 3a37f5bb4d..46e199d93e 100644
---- a/drivers/net/mlx5/mlx5_tx.h
-+++ b/drivers/net/mlx5/mlx5_tx.h
-@@ -224,6 +224,8 @@ int mlx5_txq_releasable(struct rte_eth_dev *dev, uint16_t idx);
- int mlx5_txq_verify(struct rte_eth_dev *dev);
- int mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
- 			      uint32_t tx_rate);
-+int mlx5_get_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
-+			      uint32_t *tx_rate);
- int mlx5_txq_get_sqn(struct mlx5_txq_ctrl *txq);
- void mlx5_txq_alloc_elts(struct mlx5_txq_ctrl *txq_ctrl);
- void mlx5_txq_free_elts(struct mlx5_txq_ctrl *txq_ctrl);
-diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
-index 0e051b0839..4065585ce7 100644
---- a/drivers/net/mlx5/mlx5_txq.c
-+++ b/drivers/net/mlx5/mlx5_txq.c
-@@ -1472,6 +1472,40 @@ mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
- 	return 0;
- }
- 
-+/**
-+ * Get per-queue packet pacing rate limit.
-+ *
-+ * @param dev
-+ *   Pointer to Ethernet device.
-+ * @param queue_idx
-+ *   TX queue index.
-+ * @param[out] tx_rate
-+ *   Pointer to store the TX rate in Mbps, 0 if rate limiting is disabled.
-+ *
-+ * @return
-+ *   0 on success, a negative errno value otherwise and rte_errno is set.
-+ */
-+int
-+mlx5_get_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
-+			  uint32_t *tx_rate)
-+{
-+	struct mlx5_priv *priv = dev->data->dev_private;
-+	struct mlx5_txq_ctrl *txq_ctrl;
-+
-+	if (queue_idx >= dev->data->nb_tx_queues) {
-+		rte_errno = EINVAL;
-+		return -rte_errno;
-+	}
-+	if (priv->txqs == NULL || (*priv->txqs)[queue_idx] == NULL) {
-+		rte_errno = EINVAL;
-+		return -rte_errno;
-+	}
-+	txq_ctrl = container_of((*priv->txqs)[queue_idx],
-+				struct mlx5_txq_ctrl, txq);
-+	*tx_rate = txq_ctrl->rl.rate_mbps;
-+	return 0;
-+}
-+
- /**
-  * Verify if the queue can be released.
-  *
-diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
-index 1255cd6f2c..0f336f9567 100644
---- a/lib/ethdev/ethdev_driver.h
-+++ b/lib/ethdev/ethdev_driver.h
-@@ -762,6 +762,11 @@ typedef int (*eth_set_queue_rate_limit_t)(struct rte_eth_dev *dev,
- 				uint16_t queue_idx,
- 				uint32_t tx_rate);
- 
-+/** @internal Get queue Tx rate. */
-+typedef int (*eth_get_queue_rate_limit_t)(struct rte_eth_dev *dev,
-+				uint16_t queue_idx,
-+				uint32_t *tx_rate);
-+
- /** @internal Add tunneling UDP port. */
- typedef int (*eth_udp_tunnel_port_add_t)(struct rte_eth_dev *dev,
- 					 struct rte_eth_udp_tunnel *tunnel_udp);
-@@ -1522,6 +1527,8 @@ struct eth_dev_ops {
- 
- 	/** Set queue rate limit */
- 	eth_set_queue_rate_limit_t set_queue_rate_limit;
-+	/** Get queue rate limit */
-+	eth_get_queue_rate_limit_t get_queue_rate_limit;
- 
- 	/** Configure RSS hash protocols and hashing key */
- 	rss_hash_update_t          rss_hash_update;
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 2edc7a362e..c6ad399033 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -5694,6 +5694,34 @@ int rte_eth_set_queue_rate_limit(uint16_t port_id, uint16_t queue_idx,
- 	return ret;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_get_queue_rate_limit, 26.07)
-+int rte_eth_get_queue_rate_limit(uint16_t port_id, uint16_t queue_idx,
-+					uint32_t *tx_rate)
-+{
-+	struct rte_eth_dev *dev;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
-+	dev = &rte_eth_devices[port_id];
-+
-+	if (tx_rate == NULL) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+			"Get queue rate limit:port %u: NULL tx_rate pointer",
-+			port_id);
-+		return -EINVAL;
-+	}
-+
-+	if (queue_idx >= dev->data->nb_tx_queues) {
-+		RTE_ETHDEV_LOG_LINE(ERR,
-+			"Get queue rate limit:port %u: invalid queue ID=%u",
-+			port_id, queue_idx);
-+		return -EINVAL;
-+	}
-+
-+	if (dev->dev_ops->get_queue_rate_limit == NULL)
-+		return -ENOTSUP;
-+	return eth_err(port_id, dev->dev_ops->get_queue_rate_limit(dev, queue_idx, tx_rate));
-+}
-+
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_rx_avail_thresh_set, 22.07)
- int rte_eth_rx_avail_thresh_set(uint16_t port_id, uint16_t queue_id,
- 			       uint8_t avail_thresh)
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index 0d8e2d0236..e525217b77 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -4817,6 +4817,30 @@ int rte_eth_dev_uc_all_hash_table_set(uint16_t port_id, uint8_t on);
- int rte_eth_set_queue_rate_limit(uint16_t port_id, uint16_t queue_idx,
- 			uint32_t tx_rate);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change, or be removed, without prior notice.
-+ *
-+ * Get the rate limitation for a queue on an Ethernet device.
-+ *
-+ * @param port_id
-+ *   The port identifier of the Ethernet device.
-+ * @param queue_idx
-+ *   The queue ID.
-+ * @param[out] tx_rate
-+ *   A pointer to retrieve the Tx rate in Mbps.
-+ *   0 means rate limiting is disabled.
-+ * @return
-+ *   - (0) if successful.
-+ *   - (-ENOTSUP) if hardware doesn't support this feature.
-+ *   - (-ENODEV) if *port_id* invalid.
-+ *   - (-EIO) if device is removed.
-+ *   - (-EINVAL) if bad parameter.
-+ */
-+__rte_experimental
-+int rte_eth_get_queue_rate_limit(uint16_t port_id, uint16_t queue_idx,
-+			uint32_t *tx_rate);
-+
- /**
-  * Configuration of Receive Side Scaling hash computation of Ethernet device.
-  *
+diff --git a/drivers/net/mlx5/mlx5_txpp.c b/drivers/net/mlx5/mlx5_txpp.c
+index 5327af8d75..e40ee539f2 100644
+--- a/drivers/net/mlx5/mlx5_txpp.c
++++ b/drivers/net/mlx5/mlx5_txpp.c
+@@ -174,8 +174,7 @@ mlx5_txq_alloc_pp_rate_limit(struct mlx5_dev_ctx_shared *sh,
+ 		MLX5_SET(set_pp_rate_limit_context, &pp,
+ 			 typical_packet_size, sh->config.tx_typical_pkt_sz);
+ 	rl->pp = mlx5_glue->dv_alloc_pp
+-				(sh->cdev->ctx, sizeof(pp), &pp,
+-				 MLX5DV_PP_ALLOC_FLAGS_DEDICATED_INDEX);
++				(sh->cdev->ctx, sizeof(pp), &pp, 0);
+ 	if (rl->pp == NULL) {
+ 		DRV_LOG(ERR, "Failed to allocate PP index for rate %u Mbps.",
+ 			rate_mbps);
 -- 
 2.43.0
 
