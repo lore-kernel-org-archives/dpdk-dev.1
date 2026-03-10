@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7741FFCA18E
-	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 21:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04776FCA188
+	for <dpdk-dev@archiver.kernel.org>; Mon,  9 Mar 2026 21:19:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C6D6E4066E;
-	Mon,  9 Mar 2026 22:19:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3521E4066F;
+	Mon,  9 Mar 2026 22:19:32 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 6BDE640269
- for <dev@dpdk.org>; Mon,  9 Mar 2026 22:19:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 3804840269
+ for <dev@dpdk.org>; Mon,  9 Mar 2026 22:19:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773091155; x=1804627155;
+ t=1773091171; x=1804627171;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=OVSfF5OLkzswplguiJLnptE9Aan2F7T1c5AnKdhndDg=;
- b=ho0EJ48ookqYAbAlot0G0JunMHQYKtiptcfrq1fq1+MMVJakyxH2DQcU
- XQYyrfqPiM0k0Xo69+isn9owWbe9RXZd42jSthPYkv9rV2Ym6OBQDUW7Y
- N6FrXAYZ8RCsHxo4Ua51m/rs3OpAQlZn+3VLi0VO7UiE1nYMWEC+rfdFz
- dBFs5C06f8nvT3z8hhVmU7SoitaOkKy1+ENXgYeOY3ACkwGHj1YbjBVuX
- PsXr+O75HCyG7zFUm12WKtxbEj2pW0xpe7vFR8JSLpk2jLyPFwqH2NCzF
- L2Y2si7mSxCm8cWWFt2fBhC/knWJcTtZ3namr6aGQyvI5JZrDQZvzGCCC A==;
-X-CSE-ConnectionGUID: mVTSJ0kPRS6Gb6dE//K76w==
-X-CSE-MsgGUID: sxgXv9xBSc+b+M4a8hHgfw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74241019"
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="74241019"
+ bh=SJ3ya6uLIgCLUuORMHXQGw46SFoUi82/3jTOdyO9ULA=;
+ b=RM1zrXCjvjrK7ODVOh4yN3xbP0zHiRMi7U6oHUdedwQJsTcXdWzwVVNy
+ Z7Y/SbN8ez6FTpkBI0B85iZBmvDU1kOeMMIo84cln32YuCUjgyKR/nw3+
+ X9O4v/1qaw6xIZzlP6qv/VRJpyj5lNv8NHDRmkR/5HVA/A9CHX5vmZghi
+ 7xvXdzOJRnGGzTH99wYUVpusekq7ojMxusFGsADiO+GaRmbiE5Y/TxBAC
+ 3cQnyqcGVIUCCmbwurU4uM6Zdxi1VRCiCNX4NynaisYDsG9Hes/eLZSmU
+ H7rG1TJ4CTgLadPh1S2fz0GVO0dTAbiro3LdVIuAH/xmaBgK8h1ZxYE37 w==;
+X-CSE-ConnectionGUID: YPfaZHt9Q/23IxxXyFWVDA==
+X-CSE-MsgGUID: U5Eg/u8VQ9WjzZJtj73IKw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11724"; a="74241052"
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="74241052"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Mar 2026 14:19:14 -0700
-X-CSE-ConnectionGUID: IcOOvXmJQu+btnswRrMAOw==
-X-CSE-MsgGUID: fpHiKnCISjOLkRvvE5V/Ow==
+ 09 Mar 2026 14:19:30 -0700
+X-CSE-ConnectionGUID: T13Ubc2hTnW5Iunn8zTDVA==
+X-CSE-MsgGUID: LkZDAewjSs+D/B+/J9esZA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="219016091"
+X-IronPort-AV: E=Sophos;i="6.23,109,1770624000"; d="scan'208";a="219016140"
 Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
- by orviesa006.jf.intel.com with ESMTP; 09 Mar 2026 14:19:12 -0700
+ by orviesa006.jf.intel.com with ESMTP; 09 Mar 2026 14:19:28 -0700
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
  aman.deep.singh@intel.com, dev@dpdk.org
-Cc: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
-Subject: [PATCH v1 3/6] net/ice/base: enable LLDP filter control for E830
-Date: Tue, 10 Mar 2026 05:52:13 -0400
-Message-ID: <20260310095218.703423-11-soumyadeep.hore@intel.com>
+Cc: Paul Greenwalt <paul.greenwalt@intel.com>
+Subject: [PATCH v1 4/6] net/ice/base: support RDMA on 4+ ports of E830
+Date: Tue, 10 Mar 2026 05:52:16 -0400
+Message-ID: <20260310095218.703423-14-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20260310095218.703423-1-soumyadeep.hore@intel.com>
 References: <20260310095218.703423-1-soumyadeep.hore@intel.com>
@@ -60,93 +60,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+From: Paul Greenwalt <paul.greenwalt@intel.com>
 
-The ice_fw_supports_lldp_fltr_ctrl() function previously restricted the
-LLDP filter control API (admin queue command 0x0A0A) to E810 devices
-only. This limitation prevented newer hardware like E830 from using the
-more efficient LLDP packet filtering method, even when firmware support
-was available.
+E810/E82X devices do not support RDMA on 4+ ports configurations. This is
+not true for E830 devices.
 
-Remove the hardware type restriction and implement hardware-specific
-firmware API version checks to determine LLDP filter control support.
-E810 and E82x cards require firmware API version >= 1.7.1, while E830
-cards require firmware API version >= 1.7.11. This enables E830 and
-future hardware to utilize the improved filtering mechanism when
-supported by firmware.
+During device capability discovery do not apply RDMA limitation when
+the device is E830.
 
-Additionally, add fallback logic in ice_cfg_sw_lldp() to automatically
-fall back to the legacy ethernet filter method if the new LLDP filter
-control API fails. This provides resilience against buggy firmware that
-may report API support but fail during actual command execution.
-
-The try-fallback pattern ensures LLDP configuration succeeds regardless
-of firmware quirks, improving driver robustness across hardware
-generations and firmware versions.
-
-Signed-off-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+Signed-off-by: Paul Greenwalt <paul.greenwalt@intel.com>
 Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
- drivers/net/intel/ice/base/ice_common.c | 20 ++++++++++++++------
- drivers/net/intel/ice/base/ice_type.h   |  7 ++++++-
- 2 files changed, 20 insertions(+), 7 deletions(-)
+ drivers/net/intel/ice/base/ice_common.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/net/intel/ice/base/ice_common.c b/drivers/net/intel/ice/base/ice_common.c
-index 72f84d49cd..7d8f677c99 100644
+index 7d8f677c99..934e0c2d5b 100644
 --- a/drivers/net/intel/ice/base/ice_common.c
 +++ b/drivers/net/intel/ice/base/ice_common.c
-@@ -6561,15 +6561,23 @@ ice_aq_set_lldp_mib(struct ice_hw *hw, u8 mib_type, void *buf, u16 buf_size,
- /**
-  * ice_fw_supports_lldp_fltr_ctrl - check NVM version supports lldp_fltr_ctrl
-  * @hw: pointer to HW struct
-+ *
-+ * Check if firmware supports the LLDP filter control feature (AQ command 0x0A0A).
-+ * Different hardware families require different minimum firmware versions:
-+ * - E810 and E82x cards require API version 1.7.1 or later
-+ * - E830 cards require API version 1.7.11 or later
-  */
- bool ice_fw_supports_lldp_fltr_ctrl(struct ice_hw *hw)
- {
--	if (hw->mac_type != ICE_MAC_E810 && hw->mac_type != ICE_MAC_GENERIC)
--		return false;
--
--	return ice_is_fw_api_min_ver(hw, ICE_FW_API_LLDP_FLTR_MAJ,
--				     ICE_FW_API_LLDP_FLTR_MIN,
--				     ICE_FW_API_LLDP_FLTR_PATCH);
-+	if (hw->mac_type == ICE_MAC_E830)
-+		return ice_is_fw_api_min_ver(hw, ICE_FW_API_LLDP_FLTR_MAJ_E830,
-+					     ICE_FW_API_LLDP_FLTR_MIN_E830,
-+					     ICE_FW_API_LLDP_FLTR_PATCH_E830);
-+	if (hw->mac_type == ICE_MAC_E810 || hw->mac_type == ICE_MAC_GENERIC)
-+		return ice_is_fw_api_min_ver(hw, ICE_FW_API_LLDP_FLTR_MAJ,
-+					     ICE_FW_API_LLDP_FLTR_MIN,
-+					     ICE_FW_API_LLDP_FLTR_PATCH);
-+	return false;
+@@ -2668,6 +2668,8 @@ ice_recalc_port_limited_caps(struct ice_hw *hw, struct ice_hw_common_caps *caps)
+ 		caps->maxtc = 4;
+ 		ice_debug(hw, ICE_DBG_INIT, "reducing maxtc to %u (based on #ports)\n",
+ 			  caps->maxtc);
++		if (hw->mac_type == ICE_MAC_E830)
++			return;
+ 	}
  }
  
- /**
-diff --git a/drivers/net/intel/ice/base/ice_type.h b/drivers/net/intel/ice/base/ice_type.h
-index 4b05a800af..6d8c187689 100644
---- a/drivers/net/intel/ice/base/ice_type.h
-+++ b/drivers/net/intel/ice/base/ice_type.h
-@@ -1718,11 +1718,16 @@ struct ice_aq_get_set_rss_lut_params {
- #define GLPCI_LBARCTRL_VF_PE_DB_SIZE_8KB 0x1
- #define GLPCI_LBARCTRL_VF_PE_DB_SIZE_64KB 0x2
- 
--/* AQ API version for LLDP_FILTER_CONTROL */
-+/* AQ API version for LLDP_FILTER_CONTROL - E810 and E82x */
- #define ICE_FW_API_LLDP_FLTR_MAJ	1
- #define ICE_FW_API_LLDP_FLTR_MIN	7
- #define ICE_FW_API_LLDP_FLTR_PATCH	1
- 
-+/* AQ API version for LLDP_FILTER_CONTROL - E830 */
-+#define ICE_FW_API_LLDP_FLTR_MAJ_E830	1
-+#define ICE_FW_API_LLDP_FLTR_MIN_E830	7
-+#define ICE_FW_API_LLDP_FLTR_PATCH_E830	11
-+
- /* AQ API version for report default configuration */
- #define ICE_FW_API_REPORT_DFLT_CFG_MAJ		1
- #define ICE_FW_API_REPORT_DFLT_CFG_MIN		7
 -- 
 2.47.1
 
