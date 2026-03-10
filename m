@@ -2,64 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0230FD4F16
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 18:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C10FD4F23
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 19:08:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 634AB4067E;
-	Tue, 10 Mar 2026 19:44:54 +0100 (CET)
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com
- [209.85.219.47]) by mails.dpdk.org (Postfix) with ESMTP id 9C76A40662
- for <dev@dpdk.org>; Tue, 10 Mar 2026 19:44:53 +0100 (CET)
-Received: by mail-qv1-f47.google.com with SMTP id
- 6a1803df08f44-899eabc5292so99329346d6.0
- for <dev@dpdk.org>; Tue, 10 Mar 2026 11:44:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B6B0F4067E;
+	Tue, 10 Mar 2026 20:08:09 +0100 (CET)
+Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
+ by mails.dpdk.org (Postfix) with ESMTP id B201F40672
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 20:08:08 +0100 (CET)
+Received: by mail-dl1-f53.google.com with SMTP id
+ a92af1059eb24-127380532eeso922421c88.1
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 12:08:08 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773169688; cv=none;
+ d=google.com; s=arc-20240605;
+ b=VnRXd8rWm4RiKFDaEfQWllqu0PVlfuh5DeyPC7i5I7BMYKkiNz+RaEjEQr86we/UG6
+ /IUmD+kSIE9uaKNJO5epHF8wmCDtpTI3cfRd+BmZsywn3vSmlyh+rphQ0VR2lGyEopji
+ 4mx9K0KJixES3ZuEilKDkdxWTURCk0kg5ESmfZG6hTHyJ5IMwi5E1jUwBPHSUVb01Lmr
+ 1cMZQFJkhQ++uuQS9TptrgHAOiKGf+jpIzfIIpB8gpwACqGkDY9ivqWbyQr5A2lvNudY
+ EnjGb8Mw85EOgVtZ7bU+L7r5qdoC4sQ+wfdkt6pi8e/I9YZq5cEDclhI5yIvNIje8TfT
+ UO4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=rd+GTpHzn0RDeq0il+AZX8kViysEZqlWOAWZcbVjT3c=;
+ fh=E0kIeMKsE7pDAfp0OfD0pCB8hlnJNVan3MhEntQzdB8=;
+ b=ljAW9PlZ9QltqcxJlMaD6kDFTgtGaXXgWHeLr5ls0GYHT8ff7zgOnRolxwykul50Ev
+ kRPnq8mbIIT4KrTLNCtH2DirYn7DM2KWqnzxde5LgXbSoKmMLwyuFM5LhT8/XXncntsK
+ t7j7Zpwac92elf4GY9mituuCXUpu7DiBWzkjY8SbycrR4xiQz5B0PcY3RRQMtIQD2kTh
+ tOz8GH4rHgPVFaen8cxPwBL944of2hbhut00b9fD2OQ/muzjlQH1Mm3pkHDnikguuOQC
+ Yqk/JS1/5TmLExaUqowidghk1eDKwXqXz8J0tbcfpMkXKzOIQVhCb5vrvNsbngN/SWFO
+ rRhA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1773168293; x=1773773093; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=6Yp/vDAanmep1UtYUlviz56QRV9aZhEJpfJNvcSX0lk=;
- b=UMXvswIhNspqp3ePOtfZqMO1hwTdstTTGhGaeEbE7cTN/o/sqWqnc74XD7fNx4aWFj
- kfLXahOfMm4ZawH6mcAOb9WK20ZZ3j775DQhysnirUA3rsl2865fNpXb4nguoYge2QwH
- zO3jqmVKW2+I/v4jkdtehLaiLEHlk6D0IpgFM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773168293; x=1773773093;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1773169688; x=1773774488; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=6Yp/vDAanmep1UtYUlviz56QRV9aZhEJpfJNvcSX0lk=;
- b=dixf6zcvJxtma9tkcWcg9dAg/baO5Esq+iW2zix+xru7kGT5U08lpzDpTMBcz3A8P4
- 7PSnnOmiN6NrysOsdAlw+MERfkguvZV3K1DeyZEhf/aMzLbX+Q8SXmqtzjD35+DQ8QMd
- L2JgbRQyU0XX1xikLpmG5PEjnqzk3B8ngBbZfxVZHoJgs8JH+lm/32Z11DzoZLZqclEq
- GfvqC3ZpJOxrRGTQwyIPHJhxS1okOa8y3wkGh3YdXbYnH2BEVYS5mY1vifanPXx67n3D
- cLhL8xQgvHNb7aDukoTdIQcyla6ap0+3ui/naKAkMTOGQTmop0fOdzSUlOXDdHvv8TOg
- +ISA==
-X-Gm-Message-State: AOJu0Ywyyf4u3VR+7q0vYFhcd5DsoMZVevep5gzGp6yF8+0WysYLmwWA
- OLoO64611K2ZGaJ81dGcXsIqDgFIfHYNi6sg5jcVJGHwZbKisw72u0nTX/eNo3bRyrE=
-X-Gm-Gg: ATEYQzzgvcBhqN2WlyXCQ1a/gdqaFGQzDnzJ7C9WITtT2S/J1OHLoniN90NmTrp8lJt
- QJZAx88I2QIi7yQnqSUBxe7GGLuOidbBrhte9LuSglXqE0FGtwSgAhtYtYmCnT+FU7JNzkAcet0
- JIm409fYpgag3BRpTbxy6u8FIsEGzE+xD3HcgtdHAhDrzpcR9iDl2WUo9oLjHhcl5C+Qvv5OyIy
- gR92b+xDupHrJeQVHJF7sFeFncfRWLkzYej7ShdIiE5BIzgUOs6ITD+D8omdaPEryl3p584c5ux
- sgP/7iTPPDHAc5T+Ff/uOaVU+01cXtrUYCDImCuDSto6I2gPDOLh/0omTVO66DfR0gUWjF8+dQd
- EiGVtJK4O4qUDsx47XLIuweudRMYHSddywLIZZwfQEx8WvMddmhQehhwNlUeJ+VdFOCMtmN7Uy1
- PE+GoAy5d9iw0jAVFhHnefnaPWz3QogbtFdOe0tKM30O7YX64QH8P8MDkkkp32KA==
-X-Received: by 2002:a05:6214:4105:b0:899:fd64:1b72 with SMTP id
- 6a1803df08f44-89a30ace8e2mr244237486d6.41.1773168292697; 
- Tue, 10 Mar 2026 11:44:52 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1220:a136:b4d:e75:44c4])
- by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-89a57c2c482sm24070926d6.42.2026.03.10.11.44.51
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 10 Mar 2026 11:44:52 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: probb@iol.unh.edu
-Cc: dev@dpdk.org, luca.vizzarro@arm.com, dmarx@iol.unh.edu,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v1] dts: add default values for queue info
-Date: Tue, 10 Mar 2026 14:44:15 -0400
-Message-ID: <20260310184416.216482-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
+ bh=rd+GTpHzn0RDeq0il+AZX8kViysEZqlWOAWZcbVjT3c=;
+ b=Aft/Ra88iDZO6a7vh2Rc1x+QCdOr0Mr6yhPWUK5Idz/pQvJYut4k5FYkHIDJnNL941
+ jEtc8k3tlkA0RyWQvdNxmh/Qff3C8tyEZAscQAAwwiSBSHonMSgUhhaJPjPTx3LBhXGP
+ 6nVkJpbG0p0OHntrepC5iYIDURbP6cnSPsors=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773169688; x=1773774488;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=rd+GTpHzn0RDeq0il+AZX8kViysEZqlWOAWZcbVjT3c=;
+ b=DXL4lMjS4hTNXpYb7UoEObtNRs0KrfFgeB7bNlH8CumQLjwrsreHAsZSU1l6jDvcwA
+ Q32BNDmrGbkteji3y1wfw4I2SjlWwLHF/f08zF1q7+RTMU2HHrBMdfs44NHrpwwK7dMh
+ NAQfHGDAWvLOleaH68LJry57dv1hcdry0XFu3dci/l8UjIeXBIlSmN/+Z46wyQPPE22q
+ elQUvb41nqk8WElM6U3n/GxkVzETdTGsy5bB8Zpz2Igi8Ni7DRRvLRhKvFFlwJ7qO7Co
+ 0M3B7xxyxJMEC8+zwCW2lMnJRY1h9lmde13kxa6KoJOvIHxtjNyG/qqpv1NqNa6woJQ7
+ ifYg==
+X-Gm-Message-State: AOJu0YzfiE9bs1d4ty/o/0886AhlGvvNJYoHDtajOLeOzs8jv2pi20tK
+ TwmwfB+SIW5vgP67tQD+ODw9UpmNX/xcKGqvTuTkBsdSDKVvHG6xp8sLNaLFXcBLKUJHR5d2vAs
+ LfoqjlaHlfnx7xFqt443SqZpf7FfLqQViHLg8lbczow==
+X-Gm-Gg: ATEYQzxgAhqqDhdrVxlzLbFi4WLLA9fovEqSSBIpN+QgKgENzCVaY/CjNwOfTWlfOLE
+ i2iuH2mvx1oOzhKT7rnIEp/gNNL/HMTyagilfcOem6nEhmxtj1D7vn/JYerZKG/agK9mVzIZsyj
+ BHuEApQRJN22SlnSFO06voD31qfSeJzabwUnAMLO4f9K2dzDvuXU3xk3p3SCtUfA54Q12W5qNBZ
+ Ocd/KkWdfjlkyWbcGMLM4WqZEU5lWraqoVzfr2sz32BXU/iJb1mey3VMZ8xMzAHwp4C7Lq167c3
+ QqRsoGom4Whzs76hv4umBgEKrY30XPUhqHPlOWL1Fe25Sp6KLbC6CJGHJgHzHTjj4UJvIWQR
+X-Received: by 2002:a05:701b:2914:b0:128:ce44:be8f with SMTP id
+ a92af1059eb24-128ce44c005mr2829751c88.2.1773169687627; Tue, 10 Mar 2026
+ 12:08:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260225182616.71972-1-abailey@iol.unh.edu>
+ <20260309202928.200755-1-abailey@iol.unh.edu>
+In-Reply-To: <20260309202928.200755-1-abailey@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Tue, 10 Mar 2026 15:05:06 -0400
+X-Gm-Features: AaiRm53h-gPOic8onLQA0bEwMDpwhombdL7sTWrbm0Gtx4pOHLbnjX7DAMvoMoc
+Message-ID: <CAJvnSUDHk88avG5-0ExPb6k9hLuQujxE=nQ=SHFkD6bd0QbKiw@mail.gmail.com>
+Subject: Re: [PATCH v6] dts: port speed capabilities test suite to next DTS
+To: Andrew Bailey <abailey@iol.unh.edu>
+Cc: dev@dpdk.org, dmarx@iol.unh.edu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,86 +92,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, an error is raised on some environments when running the
-queue start stop test suite due to fields failing to populate with no
-default. These fields are not accessed by the test suite and this commit
-handles this case gracefully by setting the default to None instead of
-crashing.
+On Mon, Mar 9, 2026 at 4:29=E2=80=AFPM Andrew Bailey <abailey@iol.unh.edu> =
+wrote:
+>
+> +
+> +@requires_link_topology(LinkTopology.ONE_LINK)
+> +class TestSpeedCapabilities(TestSuite):
+> +    """Speed capabilities test suite."""
+> +
+> +    config: Config
+> +
+> +    def set_up_suite(self):
+> +        """Set up the test suite."""
+> +        self.test_parameters =3D self.config.test_parameters
+> +
+> +    @func_test
+> +    def validate_port_speed(self) -> None:
+> +        """Validate expected port speed is also the observed port speed.
+> +
+> +        Steps:
+> +            * Show port info for each available port
+> +
+> +        Verify:
+> +            * The resulting link speeds are equal to the configured link=
+ speeds
+> +        """
+> +        with TestPmd() as testpmd:
+> +            for k, v in self.test_parameters:
 
-Bugzilla ID: 1901
+Looks good except you do actually need self.test_parameters.items()
+(contrary to what I said yesterday)...
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
- dts/api/testpmd/__init__.py |  8 +++++++-
- dts/api/testpmd/types.py    | 28 +++++++++++++++++++++-------
- 2 files changed, 28 insertions(+), 8 deletions(-)
-
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-index 703cae487e..a9724df7e4 100644
---- a/dts/api/testpmd/__init__.py
-+++ b/dts/api/testpmd/__init__.py
-@@ -1293,9 +1293,15 @@ def start_port_queue(
-                 )
- 
-     def get_queue_ring_size(self, port_id: int, queue_id: int, is_rx_queue: bool) -> int:
--        """Returns the current size of the ring on the specified queue."""
-+        """Returns the current size of the ring on the specified queue.
-+
-+        Raises:
-+            ValueError: If ring size could not be parsed from test pmd.
-+        """
-         command = f"show {'rxq' if is_rx_queue else 'txq'} info {port_id} {queue_id}"
-         queue_info = TestPmdQueueInfo.parse(self.send_command(command))
-+        if queue_info.ring_size is None:
-+            raise ValueError("Ring size could not be gathered from test pmd.")
-         return queue_info.ring_size
- 
-     def set_queue_ring_size(
-diff --git a/dts/api/testpmd/types.py b/dts/api/testpmd/types.py
-index 0d322aece2..a6cfcccfa0 100644
---- a/dts/api/testpmd/types.py
-+++ b/dts/api/testpmd/types.py
-@@ -400,19 +400,33 @@ class TestPmdQueueInfo(TextParser):
-     """Dataclass representation of the common parts of the testpmd `show rxq/txq info` commands."""
- 
-     #:
--    prefetch_threshold: int = field(metadata=TextParser.find_int(r"prefetch threshold: (\d+)"))
-+    prefetch_threshold: int | None = field(
-+        default=None, metadata=TextParser.find_int(r"prefetch threshold: (\d+)")
-+    )
-     #:
--    host_threshold: int = field(metadata=TextParser.find_int(r"host threshold: (\d+)"))
-+    host_threshold: int | None = field(
-+        default=None, metadata=TextParser.find_int(r"host threshold: (\d+)")
-+    )
-     #:
--    writeback_threshold: int = field(metadata=TextParser.find_int(r"writeback threshold: (\d+)"))
-+    writeback_threshold: int | None = field(
-+        default=None, metadata=TextParser.find_int(r"writeback threshold: (\d+)")
-+    )
-     #:
--    free_threshold: int = field(metadata=TextParser.find_int(r"free threshold: (\d+)"))
-+    free_threshold: int | None = field(
-+        default=None, metadata=TextParser.find_int(r"free threshold: (\d+)")
-+    )
-     #:
--    deferred_start: bool = field(metadata=TextParser.find("deferred start: on"))
-+    deferred_start: bool | None = field(
-+        default=None, metadata=TextParser.find("deferred start: on")
-+    )
-     #: The number of RXD/TXDs is just the ring size of the queue.
--    ring_size: int = field(metadata=TextParser.find_int(r"Number of (?:RXDs|TXDs): (\d+)"))
-+    ring_size: int | None = field(
-+        default=None, metadata=TextParser.find_int(r"Number of (?:RXDs|TXDs): (\d+)")
-+    )
-     #:
--    is_queue_started: bool = field(metadata=TextParser.find("queue state: started"))
-+    is_queue_started: bool | None = field(
-+        default=None, metadata=TextParser.find("queue state: started")
-+    )
-     #:
-     burst_mode: str | None = field(
-         default=None, metadata=TextParser.find(r"Burst mode: ([^\r\n]+)")
--- 
-2.50.1
-
+> +                link_speed =3D testpmd.show_port_info(k).link_speed
+> +                verify(
+> +                    link_speed =3D=3D v,
+> +                    f"port {k} speed {link_speed} does not match configu=
+red '{v}'",
+> +                )
+> --
+> 2.50.1
+>
