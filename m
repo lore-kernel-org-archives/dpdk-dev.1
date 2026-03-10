@@ -2,48 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA48EB104B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 11:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839BFFD2D84
+	for <dpdk-dev@archiver.kernel.org>; Tue, 10 Mar 2026 13:35:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BA68E40B9C;
-	Tue, 10 Mar 2026 12:21:47 +0100 (CET)
-Received: from 2.mo15.mail-out.ovh.net (2.mo15.mail-out.ovh.net [5.135.90.179])
- by mails.dpdk.org (Postfix) with ESMTP id 7629740A6B
- for <dev@dpdk.org>; Tue, 10 Mar 2026 12:21:43 +0100 (CET)
-Received: from DAGFR7EX1.OVH.local (unknown [10.110.0.234])
- by mo15.mail-out.ovh.net (Postfix) with ESMTPS id 4fVWfv25j6z3wwJ
- for <dev@dpdk.org>; Tue, 10 Mar 2026 11:21:43 +0000 (UTC)
-Received: from laptop1704918.desk.int.gns.ovh.net (109.190.254.56) by
- DAGFR7EX1.OVH.local (172.16.2.20) with Microsoft SMTP Server (version=TLS1_2, 
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.37; Tue, 10 Mar
- 2026 12:21:43 +0100
-From: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
-To: <dev@dpdk.org>
-CC: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
-Subject: [PATCH v3 3/3] net/af_packet: support jumbo frames
-Date: Tue, 10 Mar 2026 12:21:22 +0100
-Message-ID: <20260310112122.2930093-4-xavier.guillaume@ovhcloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260310112122.2930093-1-xavier.guillaume@ovhcloud.com>
-References: <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
- <20260310112122.2930093-1-xavier.guillaume@ovhcloud.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 943C3402DC;
+	Tue, 10 Mar 2026 14:35:36 +0100 (CET)
+Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com
+ [209.85.210.195])
+ by mails.dpdk.org (Postfix) with ESMTP id 71F15402BA
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 14:35:35 +0100 (CET)
+Received: by mail-pf1-f195.google.com with SMTP id
+ d2e1a72fcca58-82735a41920so4776314b3a.2
+ for <dev@dpdk.org>; Tue, 10 Mar 2026 06:35:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1773149734; x=1773754534; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=YuboJcMiaty0c2AWsRuJtO+85mtUbcZjnZPsFtsh7L8=;
+ b=lpGMqVxdeIVScWNpl96PqdzuUh5lLvVCH1XAgG90ZpBgfg7WsBqXKfJ12jrK5sunRO
+ r7ELjVqf4bXDvMW28AEcSi+9SxU7nt6PfCljaHCRo3rl9N5XC4kTVF3nQgw3F75IyMua
+ yc7irGNPVHgEbFwIsWOeisvnJbfl7VZhlwd8+xTHiKWeNktMu+8KTQYXFtrybEpJ7fwS
+ pG+qQHqmXpRsRQcDy/nsFdLbvemvuDRzQG07U+5iMM6e+2hnhY4HZEKXRujWh0bQsHuy
+ phL13tk1hDLA/mJNnXkYjYDOnjgZRcICdwNuNk35jRyQKtF+MnLDUrT21NEqIQQ1jEbZ
+ 75VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773149734; x=1773754534;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=YuboJcMiaty0c2AWsRuJtO+85mtUbcZjnZPsFtsh7L8=;
+ b=Tiqv7moXWE51nmSwShhLOfr7+CGd2s0v5uDb1XzPg8uhmAaUNyK4Kgv3oGbgR05MeK
+ 9oK2IcvjjAWKCO4HyxdKoPv3jebN/Gn8s8xV8rjgmZVIjKi44NoyJxAJ5b5Dkjj7z7id
+ Oau5q/CCLbWjMySA/o4n9itV6nnDv5DCVi/JzQkjHrd9tIDM2gj/tAJIm1G5U4d5zs1Q
+ 9PEyg0z34xRLxmPQ0NAYmJmFlKtZFNXBr3SOqVBl7OAGY/q06Wzr22d8Tky92LRd5HAW
+ nPSO5owfyoZWDXVLSHWWTgLOKhyugnmZbvknLJ+jw0KZXxBIh76XqlbeU3l+4D2yr/GM
+ WW3Q==
+X-Gm-Message-State: AOJu0YxWxoE1x86EOFp29GLz8lSUCzihWfjll1dgpz3U5GRNd9qxAPQz
+ ZnMJMD8ALYTq8Aw2wIlC7YCvcBXmZE0d4c7yqkntWnbHj2/QLts4yCGpUZ21B1nejPWRpsLNp7o
+ =
+X-Gm-Gg: ATEYQzxrC5Z1Ic8V6q5RX6ZF9Z5eMELapGniywwWIJAs07xfxxD4rkOJwEERdoVzN+6
+ cPWEnkepJzwGbyFX6TFy/LExOd1ZY1vBOA/00VxFDJOo58xoTLMZLbcsqXm7fcNzxrthZWr8iNV
+ 4dc11Lfuih1cxbASOoQsE3h2ZO11QRPHClf6NxmL6xwMA2nQGHAK1kUHprLJGeODvHl48fXtf5c
+ aG15dY9Wa01gpj+C6DEu6p0afiqlZROoZmN6zg+rhEQuHeFSUnxbq8C1C7WA8nbZYCJmWsHN4sP
+ nARdWR/4d0g0pc4lIdd3Petoyf+V9lFxbQOF+xdPv6tjuZpNDAfJZ1syTY6X+LQV/H8DN2vGLaw
+ ySvuZoqfbBriVGMx/nFdZcqEQZXfZugqeMmgUmQnIKAItKf9zQZCZ2NBHLEQ7q9m4U3v4mK4kk1
+ qJEI3OnKe+mCgIxQ5weNwgPBQCRibyNj1vPAtmtVOEQQXCQLD0Y145
+X-Received: by 2002:a05:6a00:2d1e:b0:827:3845:921 with SMTP id
+ d2e1a72fcca58-829a2e16119mr12023959b3a.27.1773149734212; 
+ Tue, 10 Mar 2026 06:35:34 -0700 (PDT)
+Received: from localhost.localdomain ([218.2.114.155])
+ by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-829a48a249bsm13747829b3a.44.2026.03.10.06.35.30
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 10 Mar 2026 06:35:33 -0700 (PDT)
+From: dangshiwei <1138222970gg@gmail.com>
+To: dev@dpdk.org
+Cc: stanislaw.kardach@gmail.com, sunyuechi@iscas.ac.cn,
+ stephen@networkplumber.org, david.marchand@redhat.com,
+ dangshiwei <1138222970gg@gmail.com>
+Subject: [PATCH] eal/riscv: implement prefetch using __builtin_prefetch
+Date: Tue, 10 Mar 2026 21:35:24 +0800
+Message-ID: <20260310133524.28087-1-1138222970gg@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [109.190.254.56]
-X-ClientProxiedBy: CAS1.OVH.local (172.16.1.1) To DAGFR7EX1.OVH.local
- (172.16.2.20)
-X-OVH-CORPLIMIT-SKIP: true
-x-ovh-tracer-id: 18358642409434984864
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: 0
-X-VR-SPAMCAUSE: dmFkZTGUMtlrB8NvDWyrIFgd9vPeh5wE/1Aq8XERSU6szKcyggOJOK+CKqoxMRqHt3FDT8sgDJ4nC8uCCj6gi8Ml3gtQFLe3+Z7Vem0JQ8RLloqFz4MuC8q3/pXsEcad2VpLAndiGH3Bjd7E9jeCSDe0qUqmxad+Ae6weDCbq8o3eJRh/gVxRBVBwNJN6tSEo0R2d88jUzizjrIY8/4dbjcRn3nw+9NYzkibyVRCqHFxkoVNAGzlh1Uu3HPH1jfrT1Jh1mYPEgi1gLSQb+WtTwc417pNmESPXNqGAQq6801IeXvqHYBSt/YND61juaJhPVFAM5Unmtcx2AUdyI06tJV33DIFm/5ZQGrf+bskJGx3Noyzq16ceueqls8iWPJy0bgNN39Idi43FlL/LhwybgxTj4tIeTo4i2UyVx3P5snGDWShfNxksRRL0cr83GvgAlvpCRG7Wwu0+sdroXDfrOFlthVe89OTOlxycLgIdZwpAJNQkcc3PmImPatiFJCMlcPS9sADpgc9KiOw0TNDSx1EtjRE6PvNaiXk6bKjJ4b3VMeL65F4nCsd1KU2tgbSVldNnu/3BrOwaXCVmcJvEBj5+FUySToeLvMiwRm0rlPcayMMszS+laxUCew/cmt+6y+5qimvvDBzBWEXpgx+xLze214L0QlHwAzwG7bPjvFkUq/E6w
-DKIM-Signature: a=rsa-sha256; bh=qRTlv6/JgHQLEnNEvTGEV/tp2kAJrgc08gSe7KpD3f8=; 
- c=relaxed/relaxed; d=ovhcloud.com; h=From; s=mailout;
- t=1773141703; v=1; 
- b=jqAHoknQcKcJ14Z04UBsI3lvegLPXa62rWELeza0BINC5iQ1ZNO3FdunYL5TxQSbiTepLQaz
- bDim7vbDCn+0LzetaRS4xxeaopQqegxEGPTDSJ21W6X67vRj2nIiJv4ZpjpA6fA4OhDHdURPcNU
- W90wnG+e3eZAyLDVla4p++7M=
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,56 +77,61 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: xavier.guillaume@ovhcloud.com
 Errors-To: dev-bounces@dpdk.org
 
-Derive max_rx_pktlen and max_mtu from the actual TPACKET ring
-frame size rather than the static RTE_ETHER_MAX_LEN (1518).
-This allows jumbo frame support when the user specifies a
-larger framesz devarg at vdev creation time, for example:
+RISC-V currently has no-op implementations of the rte_prefetch*
+functions. Use __builtin_prefetch() to allow the compiler to emit
+Zicbop prefetch instructions when the target supports them (GCC
+13.1+, Clang 17.0.1+ with -march=rv*_zicbop).
 
-  --vdev=net_af_packet0,iface=eth0,framesz=9216
+The Zicbop extension has no cache-level hints, so rte_prefetch1()
+and rte_prefetch2() fall back to rte_prefetch0(). The volatile
+qualifier is stripped via uintptr_t cast to satisfy
+__builtin_prefetch()'s const void * parameter without triggering
+-Wdiscarded-qualifiers.
 
-The advertised capabilities now accurately reflect what the
-configured ring can handle, avoiding both false limitations
-with large frames and false promises with small ones.
+This replaces the abandoned v1 series by Daniel Gregory
+(Message-ID: 20240530171948.19763-1-daniel.gregory@bytedance.com)
+addressing reviewer feedback from Kardach and Hemminger.
 
-Since the ethdev layer now validates mtu <= max_mtu before
-calling the PMD callback, convert the data_size bounds check
-in eth_dev_mtu_set() from a runtime error to RTE_ASSERT().
-
-Signed-off-by: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
+Signed-off-by: dangshiwei <1138222970gg@gmail.com>
 ---
- drivers/net/af_packet/rte_eth_af_packet.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ lib/eal/riscv/include/rte_prefetch.h | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index b04987aaf7..e132dc387b 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -402,7 +402,10 @@ eth_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+diff --git a/lib/eal/riscv/include/rte_prefetch.h b/lib/eal/riscv/include/rte_prefetch.h
+index 42146491ea..37b4787387 100644
+--- a/lib/eal/riscv/include/rte_prefetch.h
++++ b/lib/eal/riscv/include/rte_prefetch.h
+@@ -18,22 +18,24 @@ extern "C" {
  
- 	dev_info->if_index = internals->if_index;
- 	dev_info->max_mac_addrs = 1;
--	dev_info->max_rx_pktlen = RTE_ETHER_MAX_LEN;
-+	dev_info->max_rx_pktlen = internals->req.tp_frame_size -
-+		TPACKET2_HDRLEN + sizeof(struct sockaddr_ll);
-+	dev_info->max_mtu = dev_info->max_rx_pktlen -
-+		RTE_ETHER_HDR_LEN - RTE_ETHER_CRC_LEN;
- 	dev_info->max_rx_queues = (uint16_t)internals->nb_queues;
- 	dev_info->max_tx_queues = (uint16_t)internals->nb_queues;
- 	dev_info->min_rx_bufsize = 0;
-@@ -624,8 +627,8 @@ eth_dev_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- 	unsigned int data_size = internals->req.tp_frame_size -
- 				 TPACKET2_HDRLEN + sizeof(struct sockaddr_ll);
+ static inline void rte_prefetch0(const volatile void *p)
+ {
+-	RTE_SET_USED(p);
++	__builtin_prefetch((const void *)(uintptr_t)p);
+ }
  
--	if (mtu > data_size)
--		return -EINVAL;
-+	/* ethdev layer validates mtu <= max_mtu before calling this */
-+	RTE_ASSERT(mtu <= data_size);
+ static inline void rte_prefetch1(const volatile void *p)
+ {
+-	RTE_SET_USED(p);
++	/* Zicbop has no cache-level hints, fallback to rte_prefetch0 */
++	rte_prefetch0(p);
+ }
  
- 	s = socket(PF_INET, SOCK_DGRAM, 0);
- 	if (s < 0)
+ static inline void rte_prefetch2(const volatile void *p)
+ {
+-	RTE_SET_USED(p);
++	/* Zicbop has no cache-level hints, fallback to rte_prefetch0 */
++	rte_prefetch0(p);
+ }
+ 
+ static inline void rte_prefetch_non_temporal(const volatile void *p)
+ {
+-	/* non-temporal version not available, fallback to rte_prefetch0 */
++	/* Zicbop has no non-temporal hint, fallback to rte_prefetch0 */
+ 	rte_prefetch0(p);
+ }
+ 
 -- 
-2.34.1
+2.43.0
 
