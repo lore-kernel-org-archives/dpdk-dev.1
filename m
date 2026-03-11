@@ -2,79 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54ADB1125866
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Mar 2026 18:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B8E41125866
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Mar 2026 18:29:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1B76040A76;
-	Wed, 11 Mar 2026 19:29:39 +0100 (CET)
-Received: from fhigh-b7-smtp.messagingengine.com
- (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
- by mails.dpdk.org (Postfix) with ESMTP id 698244060A
- for <dev@dpdk.org>; Wed, 11 Mar 2026 19:29:38 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 460DE7A017B;
- Wed, 11 Mar 2026 14:29:37 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Wed, 11 Mar 2026 14:29:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773253777;
- x=1773340177; bh=5OPRB2cbyZBPS9IeL8IoJAtla4XmiD2VDN/Vau5Nmz4=; b=
- M4WR25/XQ3G3kub4YZvvbQyM0SSst9t+hpp9y4j1eLYb+FjFxlzW7PXmcm6CTdNx
- KQ41nXmQlgSaVDFb3LJsi1Hp5Q+Da0usuvrX4QU7jrtSqAYAMx5Gm6lhhQfGN7GW
- +8tAqg/qdGzhhjOMHUt4Psa7WzjNxFEUjezVpmFFX76dAVmiT55SDrj4ZW2ek2Dw
- eZXCR4tQM0hGxTQTDZ+C5V/UwrSmAwr32TzabM/S+Xf06TpUV4aSMXkKQJyWPuYR
- 2sxXq3zHTyPpQ6ppqJkXRhwZRTVDw1tShvL9zmK8wQRIg6t3vsJ2BbmCotKN7vyQ
- CynMPhl/9HOaxlawNaSIZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773253777; x=
- 1773340177; bh=5OPRB2cbyZBPS9IeL8IoJAtla4XmiD2VDN/Vau5Nmz4=; b=X
- ENtVhd6QqeFAKY7VBGfHWNS3fVA96cQC5eLqqqG2/AxSBFX3rXyCpQSjLC4zPIrr
- UEc3iovyChyEGQ+YEYyMuZDzOXNuBQBeK9DCy0HDZVKU7L6xwREMCimvWHP1O+Nf
- HXtFvT91YZNFWG1+1QSnx/8jWH+GsoCJN21s45uzGeU+aoMEeoe/6R7JLCdw8F5Y
- iXpdF3qoXY0mJehJNrqVASRkRf/Aci6t/8I/g5h8wIU+TCaPrjc3m2QQC1K1hNHC
- xCy1fGcnhGCGCT8zIktOEElsiwu+/Cdrxbc3RF7fczqARrnBBHL+Gx3H6lvvVHcO
- FW5YN8PZLKz6WBVSLQL6g==
-X-ME-Sender: <xms:kLSxaTlIP06R28YZEe0TxGYaTQFE72CdrqJbBD4EvM_HFHHjSOg2eg>
- <xme:kLSxabLh-MvWBoQ3ZSYFi6BTQkecVbzM_WCs4i3D9SsoKKvjZlLoNyxEeO0cFX5yP
- CKl73Ow53LMbWCnZN7ZsNJiJlcsPQ1KI2zJihSCAduVR9egoFe3GA>
-X-ME-Received: <xmr:kLSxaYy3arsgnvj0wiqODj-1gm8FFK3dbZxOE8ePAgt949ix2C-tp_qHxRhJaPRjBXHQUz-PgwkKNICfb_6yFKhdoA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvkeegiedvucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmohhhrghmmhgrugdqshhhuhgrsgdrsh
- hiugguihhquhgvsegsrhhorggutghomhdrtghomhdprhgtphhtthhopeguvghvseguphgu
- khdrohhrghdprhgtphhtthhopehkihhshhhorhgvrdhprggumhgrnhgrsghhrgessghroh
- gruggtohhmrdgtohhm
-X-ME-Proxy: <xmx:kLSxaTvmOfySHn3ughduvOZZiN1l5QHI10dbV43kkVQ2HOtPlpV9eg>
- <xmx:kLSxaXsRYgYTvNspWju5OV22MxsQXCzjPQP-ZQQ-jAlmw-Wh_DbeTg>
- <xmx:kLSxaQN3pIOV7w7HZywdTqVc2mkmnSRT4xcBQBcx2amd8DvbkAIbbA>
- <xmx:kLSxad3ZGIuAeWvnsME_Sc4zZ7YW-p_HeEeA_kuUlHSYLpXDuxJ3xA>
- <xmx:kbSxaTJqZJ3mcTupmstoL3noDDBTulDSTnakwfQofFNkT9JywOHjs21C>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 11 Mar 2026 14:29:36 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Mohammad Shuab Siddique <mohammad-shuab.siddique@broadcom.com>
-Cc: dev@dpdk.org, kishore.padmanabha@broadcom.com
-Subject: Re: [PATCH 0/4] net/bnxt: PTP support series
-Date: Wed, 11 Mar 2026 19:29:33 +0100
-Message-ID: <2401272.ElGaqSPkdT@thomas>
-In-Reply-To: <20260302171236.98625-1-Mohammad-Shuab.Siddique@broadcom.com>
-References: <20260302171236.98625-1-Mohammad-Shuab.Siddique@broadcom.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0FCFD410D0;
+	Wed, 11 Mar 2026 19:29:41 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 21ECF40EF0
+ for <dev@dpdk.org>; Wed, 11 Mar 2026 19:29:40 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id EC46720A38;
+ Wed, 11 Mar 2026 19:29:39 +0100 (CET)
+Content-class: urn:content-classes:message
+Subject: RE: [PATCH v7] eal/x86: optimize memcpy of small sizes
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 11 Mar 2026 19:29:38 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6577E@smartserver.smartshare.dk>
+In-Reply-To: <abGfSARwKc4TV_dU@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH v7] eal/x86: optimize memcpy of small sizes
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Thread-Index: AdyxeF5VSAlf5NnOQICw9RagTe1E4AACcbCQ
+References: <20251120114554.950287-1-mb@smartsharesystems.com>
+ <20260220110824.235784-1-mb@smartsharesystems.com>
+ <abGfSARwKc4TV_dU@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>, "Konstantin Ananyev" <konstantin.v.ananyev@yandex.ru>,
+ "Vipin Varghese" <vipin.varghese@amd.com>,
+ "Stephen Hemminger" <stephen@networkplumber.org>,
+ "Liangxing Wang" <wangliangxing@hygon.cn>,
+ "Thiyagarajan P" <Thiyagarajan.P@amd.com>,
+ "Bala Murali Krishna" <Bala.MuraliKrishna@amd.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,32 +53,194 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-02/03/2026 18:12, Mohammad Shuab Siddique:
-> This series adds and extends PTP (IEEE 1588) support for the BNXT PMD:
-> 
-> - Patch 1: Support handling of PTP frames in the Rx path (scalar path),
->   including ol_flags and packet_type updates for PTP timesync packets.
-> 
-> - Patch 2: Pass Rx timestamp to the application via the mbuf dynfield
->   and add ptp_cfg NULL checks to avoid segfault when ptp_cfg is not
->   created.
-> 
-> - Patch 3: Support timestamp parsing in Tx (tx_free_thresh, fast-free
->   handling at dev_start and in queue setup when PTP/ieee_1588 is enabled).
-> 
-> - Patch 4: Enable PTP for Thor 2 VFs by creating ptp_cfg when the device
->   reports PTP support (BNXT_CHIP_P5_P7), fixing "RX/TX timestamp
->   registers not valid" in testpmd ieee1588 fwd mode on VFs.
-> 
-> Ajit Khaparde (3):
->   net/bnxt: support handling PTP frames in Rx
->   net/bnxt: pass Rx timestamp in mbuf
->   net/bnxt: support timestamp parsing in Tx
-> 
-> Mohammad Shuab Siddique (1):
->   net/bnxt: add ptp_cfg struct support for Thor 2 VFs
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Wednesday, 11 March 2026 17.59
+>=20
+> On Fri, Feb 20, 2026 at 11:08:24AM +0000, Morten Br=F8rup wrote:
+> > The implementation for copying up to 64 bytes does not depend on
+> address
+> > alignment with the size of the CPU's vector registers. Nonetheless,
+> the
+> > exact same code for copying up to 64 bytes was present in both the
+> aligned
+> > copy function and all the CPU vector register size specific variants
+> of
+> > the unaligned copy functions.
+> > With this patch, the implementation for copying up to 64 bytes was
+> > consolidated into one instance, located in the common copy function,
+> > before checking alignment requirements.
+> > This provides three benefits:
+> > 1. No copy-paste in the source code.
+> > 2. A performance gain for copying up to 64 bytes, because the
+> > address alignment check is avoided in this case.
+> > 3. Reduced instruction memory footprint, because the compiler only
+> > generates one instance of the function for copying up to 64 bytes,
+> instead
+> > of two instances (one in the unaligned copy function, and one in the
+> > aligned copy function).
+> >
+> > Furthermore, the function for copying less than 16 bytes was =
+replaced
+> with
+> > a smarter implementation using fewer branches and potentially fewer
+> > load/store operations.
+> > This function was also extended to handle copying of up to 16 bytes,
+> > instead of up to 15 bytes.
+> > This small extension reduces the code path, and thus improves the
+> > performance, for copying two pointers on 64-bit architectures and
+> four
+> > pointers on 32-bit architectures.
+> >
+> > Also, __rte_restrict was added to source and destination addresses.
+> >
+> > And finally, the missing implementation of rte_mov48() was added.
+> >
+> > Regarding performance, the memcpy performance test showed cache-to-
+> cache
+> > copying of up to 32 bytes now takes 2 cycles, versus ca. 6.5 cycles
+> before
+> > this patch.
+> > Copying 64 bytes now takes 4 cycles, versus 7 cycles before.
+> >
+> > Signed-off-by: Morten Br=F8rup <mb@smartsharesystems.com>
+> > ---
+> > v7:
+> > * Updated patch description. Mainly to clarify that the changes
+> related to
+> >   copying up to 64 bytes simply replaces multiple instances of copy-
+> pasted
+> >   code with one common instance.
+> > * Fixed copy of build time known 16 bytes in rte_mov17_to_32().
+> (Vipin)
+> > * Rebased.
+> > v6:
+> > * Went back to using rte_uintN_alias structures for copying instead
+> of
+> >   using memcpy(). They were there for a reason.
+> >   (Inspired by the discussion about optimizing the checksum
+> function.)
+> > * Removed note about copying uninitialized data.
+> > * Added __rte_restrict to source and destination addresses.
+> >   Updated function descriptions from "should" to "must" not overlap.
+> > * Changed rte_mov48() AVX implementation to copy 32+16 bytes instead
+> of
+> >   copying 32 + 32 overlapping bytes. (Konstantin)
+> > * Ignoring "-Wstringop-overflow" is not needed, so it was removed.
+> > v5:
+> > * Reverted v4: Replace SSE2 _mm_loadu_si128() with SSE3
+> _mm_lddqu_si128().
+> >   It was slower.
+> > * Improved some comments. (Konstantin Ananyev)
+> > * Moved the size range 17..32 inside the size <=3D 64 branch, so =
+when
+> >   building for SSE, the generated code can start copying the first
+> >   16 bytes before comparing if the size is greater than 32 or not.
+> > * Just require RTE_MEMCPY_AVX for using rte_mov32() in
+> rte_mov33_to_64().
+> > v4:
+> > * Replace SSE2 _mm_loadu_si128() with SSE3 _mm_lddqu_si128().
+> > v3:
+> > * Fixed typo in comment.
+> > v2:
+> > * Updated patch title to reflect that the performance is improved.
+> > * Use the design pattern of two overlapping stores for small copies
+> too.
+> > * Expanded first branch from size < 16 to size <=3D 16.
+> > * Handle more build time constant copy sizes.
+> > ---
+> >  lib/eal/x86/include/rte_memcpy.h | 526 =
+++++++++++++++++++++---------
+> --
+> >  1 file changed, 348 insertions(+), 178 deletions(-)
+> >
+>=20
+> I'm a little unhappy to see the amount of memcpy code growing rather
+> than
+> shrinking, but since it improves performance I'm ok with it. We should
+> keep
+> it under constant review though.
 
-Applied, thanks.
+Agree!
 
+I just counted; 149 of the added lines are for handling =
+__rte_constant(n). So it's not as bad as it looks.
+But still growing, which was not the intention.
+When I started working on this patch, the intention was to consolidate =
+the copy-pasted instances for handling up to 64 bytes into one instance. =
+This should have reduced the amount of code.
+But then it somehow grew anyway.
 
+>=20
+> > diff --git a/lib/eal/x86/include/rte_memcpy.h
+> b/lib/eal/x86/include/rte_memcpy.h
+> > index 46d34b8081..ed8e5f8dc4 100644
+> > --- a/lib/eal/x86/include/rte_memcpy.h
+> > +++ b/lib/eal/x86/include/rte_memcpy.h
+> > @@ -22,11 +22,6 @@
+> >  extern "C" {
+> >  #endif
+> >
+> > -#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >=3D 100000)
+> > -#pragma GCC diagnostic push
+> > -#pragma GCC diagnostic ignored "-Wstringop-overflow"
+> > -#endif
+> > -
+> >  /*
+> >   * GCC older than version 11 doesn't compile AVX properly, so use
+> SSE instead.
+> >   * There are no problems with AVX2.
+> > @@ -40,9 +35,6 @@ extern "C" {
+> >  /**
+> >   * Copy bytes from one location to another. The locations must not
+> overlap.
+> >   *
+> > - * @note This is implemented as a macro, so it's address should not
+> be taken
+> > - * and care is needed as parameter expressions may be evaluated
+> multiple times.
+> > - *
+>=20
+> I'd be wary about completely removing this comment, as we may well =
+want
+> to
+> go back to a macro in the future, e.g. if we decide to remove the
+> custom
+> rte_memcpy altogether. Therefore, rather than removing the comment, =
+can
+> we
+> tweak it to say "This may be implemented as a macro..."
+
+The comment is still present in the "generic" header file used for the =
+Doxygen documentation:
+https://elixir.bootlin.com/dpdk/v26.03-rc1/source/lib/eal/include/generic=
+/rte_memcpy.h#L99
+
+All other architectures rely on the "generic" header file, and have no =
+Doxygen comments at all.
+We could also remove them from the x86 implementation.
+That would shrink the file even more. ;-)
+But I'd rather keep the comments - at least for now.
+
+>=20
+>=20
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
+Thank you for quick response, Bruce.
+
+>=20
+> PS: If we want a little further cleanup, I'd consider removing the
+> RTE_MEMCPY_AVX macro and replacing it with a straight check for
+> __AVX2__.
+> CPUs with AVX2 was introduced in 2013, and checking Claude and
+> Wikipedia
+> says that AMD parts started having it in 2015, meaning that there were
+> only
+> a few generations of CPUs >10 years ago which had AVX but not AVX2.
+> [There
+> were later CPUs e.g. lower-end parts, which didn't have AVX2, but they
+> didn't have AVX1 either, so SSE is the only choice there]
+> Not a big cleanup if we did remove it, but sometimes every little
+> helps!
+
+Good idea. But let's not do it now.
 
