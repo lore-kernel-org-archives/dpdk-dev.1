@@ -2,54 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26362FD063C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Mar 2026 06:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D93FD063C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Mar 2026 06:55:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F32F74067C;
-	Wed, 11 Mar 2026 07:55:52 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E1DB940DD1;
+	Wed, 11 Mar 2026 07:55:57 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0F42F40431
- for <dev@dpdk.org>; Wed, 11 Mar 2026 07:55:50 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id C738140DD1
+ for <dev@dpdk.org>; Wed, 11 Mar 2026 07:55:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1773212150;
+ s=mimecast20190719; t=1773212155;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=wujKqScV2AYIkU+eqKdvoapb2zuRGdOGad/DBuR6KFo=;
- b=jE7rODvMAm5ka8WZ3Zk5NOlX1iMx3y7cEizWSiuzb/2kLSeRulhFf5tyDueWj/LnyqvLsv
- LQQQZlJwKujY/kphxhoFo/lvSU66v6WCl48sACkF0eBxx4dIRYH7fyBJDbqu69PRE/eFhm
- rOd7qQvdeD+iyRgFrVq1z/N5RNxUEJY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=bf++UyrWQbo10bJFSoDzENRjty/Z3xGxhpMcwSgcsfM=;
+ b=gFk3fj5xGoLbEYIJsIbQBrcE79GribSgOGv2qN1WJ86vAuc5ECF2wsQh8mMgBk2dVSuU9d
+ uWOS7BFI1GZTkZC14UIbwB4oeoCQr3isyzou765DIPt6AnAxmqxWb3nJ3/TEkvUfleRBaP
+ YuB/KzmLepBj8sZ056bolWcXu/Zjd7o=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-436-X2ei6QGTMGSXkqEXvSUo9w-1; Wed,
- 11 Mar 2026 02:55:49 -0400
-X-MC-Unique: X2ei6QGTMGSXkqEXvSUo9w-1
-X-Mimecast-MFC-AGG-ID: X2ei6QGTMGSXkqEXvSUo9w_1773212148
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-156-T2BpD2MEN7eLmU_KqOpW3g-1; Wed,
+ 11 Mar 2026 02:55:52 -0400
+X-MC-Unique: T2BpD2MEN7eLmU_KqOpW3g-1
+X-Mimecast-MFC-AGG-ID: T2BpD2MEN7eLmU_KqOpW3g_1773212151
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id AC6B31956089; Wed, 11 Mar 2026 06:55:47 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id E9B561956096; Wed, 11 Mar 2026 06:55:50 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.44.32.190])
  by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id A75B119560A6; Wed, 11 Mar 2026 06:55:44 +0000 (UTC)
+ id 3A61D19560B7; Wed, 11 Mar 2026 06:55:47 +0000 (UTC)
 From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>
 Cc: chenbox@nvidia.com, jasowang@redhat.com, david.marchand@redhat.com,
  dev@dpdk.org, Yongji Xie <xieyongji@bytedance.com>, mst@redhat.com
-Subject: [RFC v3 00/10] Add vduse live migration features
-Date: Wed, 11 Mar 2026 07:55:33 +0100
-Message-ID: <20260311065543.1354037-1-eperezma@redhat.com>
+Subject: [RFC v3 01/10] uapi: align VDUSE header for ASID
+Date: Wed, 11 Mar 2026 07:55:34 +0100
+Message-ID: <20260311065543.1354037-2-eperezma@redhat.com>
+In-Reply-To: <20260311065543.1354037-1-eperezma@redhat.com>
+References: <20260311065543.1354037-1-eperezma@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: O4NhzyL2cj1hWJxjsDxyNOTKRmmX4IzWKyL_1lPAny0_1773212148
+X-Mimecast-MFC-PROC-ID: nLrBcGMD2TaQHyMd8joawVZ6hDQ9IQ29WdH08SuUOD0_1773212151
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,66 +67,217 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series introduces features to the VDUSE (vDPA Device in Userspace) driver
-to support Live Migration.
+Add all the ioctls and argument struct definitions so we can call them
+in next patches.
 
-Currently, DPDK does not support VDUSE devices live migration because the
-driver lacks a mechanism to suspend the device and quiesce the rings to
-initiate the switchover.  This series implements the suspend operation to
-address this limitation.
+These headers are not in Linux master at the moment, but they're planned
+for 7.0.
 
-Furthermore, enabling Live Migration for devices with control virtqueue needs
-two additional features.  Both of them are included in this series.
+Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
+---
+ kernel/linux/uapi/linux/vduse.h | 87 ++++++++++++++++++++++++++++++---
+ 1 file changed, 81 insertions(+), 6 deletions(-)
 
-* Address Spaces (ASID) support: This allows QEMU to isolate and intercept the
-  device's CVQ. By doing so, QEMU is able to migrate the device status
-  transparently, without requiring the device to support state save and
-  restore.
-* QUEUE_ENABLE: This allows QEMU to control when the dataplane virtqueues are
-  enabled.  This ensures the dataplane is started after the device
-  configuration has been fully restores via the CVQ.
-
-Last but not least, it enables the VIRTIO_NET_F_STATUS feature.  This allows the
-device to signal the driver that it needs to send gratuitous ARP with
-VIRTIO_NET_S_ANNOUNCE, reducing the Live Migration downtime.
-
-v3:
-* Replace incorrect '%lx' DEBUG print format specifier with PRIx64
-
-v2:
-* Following latest comments on kernel series about VDUSE features, not checking
-  API version but only check if VDUSE_GET_FEATURES success.
-* Move the start and last declarations in the braces as gcc 8 does not like
-  them interleaved with statements. Actually, I think the move was a mistake in
-  the first version.
-  https://mails.dpdk.org/archives/test-report/2026-February/958175.html
-
-Eugenio Pérez (1):
-  uapi: align VDUSE header for ASID
-
-Maxime Coquelin (6):
-  vhost: introduce ASID support
-  vhost: add VDUSE API version negotiation
-  vhost: add virtqueues groups support to VDUSE
-  vhost: add ASID support to VDUSE IOTLB operations
-  vhost: claim VDUSE support for API version 1
-  vhost: add net status feature to VDUSE
-
-Super User (3):
-  uapi: Align vduse.h for enable and suspend VDUSE messages
-  vhost: Support VDUSE QUEUE_READY feature
-  vhost: Support vduse suspend feature
-
- kernel/linux/uapi/linux/vduse.h | 114 +++++++++++++++-
- lib/vhost/iotlb.c               | 226 ++++++++++++++++++++------------
- lib/vhost/iotlb.h               |  14 +-
- lib/vhost/vduse.c               | 197 +++++++++++++++++++++++++---
- lib/vhost/vduse.h               |   3 +-
- lib/vhost/vhost.c               |  16 +--
- lib/vhost/vhost.h               |  16 +--
- lib/vhost/vhost_user.c          |  11 +-
- 8 files changed, 460 insertions(+), 137 deletions(-)
-
+diff --git a/kernel/linux/uapi/linux/vduse.h b/kernel/linux/uapi/linux/vduse.h
+index f46269af349a..e19b3c0f51b5 100644
+--- a/kernel/linux/uapi/linux/vduse.h
++++ b/kernel/linux/uapi/linux/vduse.h
+@@ -10,6 +10,10 @@
+ 
+ #define VDUSE_API_VERSION	0
+ 
++/* VQ groups and ASID support */
++
++#define VDUSE_API_VERSION_1	1
++
+ /*
+  * Get the version of VDUSE API that kernel supported (VDUSE_API_VERSION).
+  * This is used for future extension.
+@@ -27,6 +31,8 @@
+  * @features: virtio features
+  * @vq_num: the number of virtqueues
+  * @vq_align: the allocation alignment of virtqueue's metadata
++ * @ngroups: number of vq groups that VDUSE device declares
++ * @nas: number of address spaces that VDUSE device declares
+  * @reserved: for future use, needs to be initialized to zero
+  * @config_size: the size of the configuration space
+  * @config: the buffer of the configuration space
+@@ -41,7 +47,9 @@ struct vduse_dev_config {
+ 	__u64 features;
+ 	__u32 vq_num;
+ 	__u32 vq_align;
+-	__u32 reserved[13];
++	__u32 ngroups; /* if VDUSE_API_VERSION >= 1 */
++	__u32 nas; /* if VDUSE_API_VERSION >= 1 */
++	__u32 reserved[11];
+ 	__u32 config_size;
+ 	__u8 config[];
+ };
+@@ -118,14 +126,18 @@ struct vduse_config_data {
+  * struct vduse_vq_config - basic configuration of a virtqueue
+  * @index: virtqueue index
+  * @max_size: the max size of virtqueue
+- * @reserved: for future use, needs to be initialized to zero
++ * @reserved1: for future use, needs to be initialized to zero
++ * @group: virtqueue group
++ * @reserved2: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_VQ_SETUP ioctl to setup a virtqueue.
+  */
+ struct vduse_vq_config {
+ 	__u32 index;
+ 	__u16 max_size;
+-	__u16 reserved[13];
++	__u16 reserved1;
++	__u32 group;
++	__u16 reserved2[10];
+ };
+ 
+ /*
+@@ -156,6 +168,16 @@ struct vduse_vq_state_packed {
+ 	__u16 last_used_idx;
+ };
+ 
++/**
++ * struct vduse_vq_group_asid - virtqueue group ASID
++ * @group: Index of the virtqueue group
++ * @asid: Address space ID of the group
++ */
++struct vduse_vq_group_asid {
++	__u32 group;
++	__u32 asid;
++};
++
+ /**
+  * struct vduse_vq_info - information of a virtqueue
+  * @index: virtqueue index
+@@ -215,6 +237,7 @@ struct vduse_vq_eventfd {
+  * @uaddr: start address of userspace memory, it must be aligned to page size
+  * @iova: start of the IOVA region
+  * @size: size of the IOVA region
++ * @asid: Address space ID of the IOVA region
+  * @reserved: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_IOTLB_REG_UMEM and VDUSE_IOTLB_DEREG_UMEM
+@@ -224,7 +247,8 @@ struct vduse_iova_umem {
+ 	__u64 uaddr;
+ 	__u64 iova;
+ 	__u64 size;
+-	__u64 reserved[3];
++	__u32 asid;
++	__u32 reserved[5];
+ };
+ 
+ /* Register userspace memory for IOVA regions */
+@@ -237,7 +261,8 @@ struct vduse_iova_umem {
+  * struct vduse_iova_info - information of one IOVA region
+  * @start: start of the IOVA region
+  * @last: last of the IOVA region
+- * @capability: capability of the IOVA regsion
++ * @capability: capability of the IOVA region
++ * @asid: Address space ID of the IOVA region, only if device API version >= 1
+  * @reserved: for future use, needs to be initialized to zero
+  *
+  * Structure used by VDUSE_IOTLB_GET_INFO ioctl to get information of
+@@ -248,7 +273,8 @@ struct vduse_iova_info {
+ 	__u64 last;
+ #define VDUSE_IOVA_CAP_UMEM (1 << 0)
+ 	__u64 capability;
+-	__u64 reserved[3];
++	__u32 asid; /* Only if device API version >= 1 */
++	__u32 reserved[5];
+ };
+ 
+ /*
+@@ -257,6 +283,32 @@ struct vduse_iova_info {
+  */
+ #define VDUSE_IOTLB_GET_INFO	_IOWR(VDUSE_BASE, 0x1a, struct vduse_iova_info)
+ 
++/**
++ * struct vduse_iotlb_entry_v2 - entry of IOTLB to describe one IOVA region
++ *
++ * @v1: the original vduse_iotlb_entry
++ * @asid: address space ID of the IOVA region
++ * @reserved: for future use, needs to be initialized to zero
++ *
++ * Structure used by VDUSE_IOTLB_GET_FD2 ioctl to find an overlapped IOVA region.
++ */
++struct vduse_iotlb_entry_v2 {
++	__u64 offset;
++	__u64 start;
++	__u64 last;
++	__u8 perm;
++	__u8 padding[7];
++	__u32 asid;
++	__u32 reserved[11];
++};
++
++/*
++ * Same as VDUSE_IOTLB_GET_FD but with vduse_iotlb_entry_v2 argument that
++ * support extra fields.
++ */
++#define VDUSE_IOTLB_GET_FD2	_IOWR(VDUSE_BASE, 0x1b, struct vduse_iotlb_entry_v2)
++
++
+ /* The control messages definition for read(2)/write(2) on /dev/vduse/$NAME */
+ 
+ /**
+@@ -265,11 +317,14 @@ struct vduse_iova_info {
+  * @VDUSE_SET_STATUS: set the device status
+  * @VDUSE_UPDATE_IOTLB: Notify userspace to update the memory mapping for
+  *                      specified IOVA range via VDUSE_IOTLB_GET_FD ioctl
++ * @VDUSE_SET_VQ_GROUP_ASID: Notify userspace to update the address space of a
++ *                           virtqueue group.
+  */
+ enum vduse_req_type {
+ 	VDUSE_GET_VQ_STATE,
+ 	VDUSE_SET_STATUS,
+ 	VDUSE_UPDATE_IOTLB,
++	VDUSE_SET_VQ_GROUP_ASID,
+ };
+ 
+ /**
+@@ -304,6 +359,19 @@ struct vduse_iova_range {
+ 	__u64 last;
+ };
+ 
++/**
++ * struct vduse_iova_range_v2 - IOVA range [start, last] if API_VERSION >= 1
++ * @start: start of the IOVA range
++ * @last: last of the IOVA range
++ * @asid: address space ID of the IOVA range
++ */
++struct vduse_iova_range_v2 {
++	__u64 start;
++	__u64 last;
++	__u32 asid;
++	__u32 padding;
++};
++
+ /**
+  * struct vduse_dev_request - control request
+  * @type: request type
+@@ -312,6 +380,8 @@ struct vduse_iova_range {
+  * @vq_state: virtqueue state, only index field is available
+  * @s: device status
+  * @iova: IOVA range for updating
++ * @iova_v2: IOVA range for updating if API_VERSION >= 1
++ * @vq_group_asid: ASID of a virtqueue group
+  * @padding: padding
+  *
+  * Structure used by read(2) on /dev/vduse/$NAME.
+@@ -324,6 +394,11 @@ struct vduse_dev_request {
+ 		struct vduse_vq_state vq_state;
+ 		struct vduse_dev_status s;
+ 		struct vduse_iova_range iova;
++		/* Following members but padding exist only if vduse api
++		 * version >= 1
++		 */
++		struct vduse_iova_range_v2 iova_v2;
++		struct vduse_vq_group_asid vq_group_asid;
+ 		__u32 padding[32];
+ 	};
+ };
 -- 
 2.53.0
 
