@@ -2,75 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC21112584F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Mar 2026 16:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7997C104BEC9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Mar 2026 16:54:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C555A40A84;
-	Wed, 11 Mar 2026 17:35:46 +0100 (CET)
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com
- [209.85.161.41]) by mails.dpdk.org (Postfix) with ESMTP id 3C391402E7
- for <dev@dpdk.org>; Wed, 11 Mar 2026 17:35:45 +0100 (CET)
-Received: by mail-oo1-f41.google.com with SMTP id
- 006d021491bc7-67bb87f866bso56925eaf.2
- for <dev@dpdk.org>; Wed, 11 Mar 2026 09:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773246944;
- x=1773851744; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=AIdafhg9I1VECcKoB61zccdaWu5NZRi5/sE51e2e4Oo=;
- b=laSxEKXBjD7AuZUCs1AFJyeJU+mRWOw/Zo0axQxKsXStC1RuXJUwP86/DSyxf5MmQ+
- FKr1ggkeBNgFe0OS+/SxIyA5GnfINHEwQZy3Db/t0Di/CTkXy8lV1FtD6dlADI6omVZH
- u5pA+Sohsj4gnBKXoLsB5y2wjbtMAOxNMz7PvSEXt0ssmF/gneZwg3jzaUJdUFdAxu9+
- Qc3kcE/P436pbpI87uq2ce1wImzWfnM8b34iQ3bZCUOHYkDAwTDilr3ON8fYGt0adskT
- 0HkE6NE0NkxwFkrM6fiBbKD1XwZoy1yTQ0+yZgEQ7/gqNgH80G6wlLC4LPASFXb0JLkA
- O1ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773246944; x=1773851744;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=AIdafhg9I1VECcKoB61zccdaWu5NZRi5/sE51e2e4Oo=;
- b=HaJZ3oTZla5yi6hp0kZmYBHbiztE4s9ATxws3sKK2WYvE8NWesVO8lhH+y8oQNw76A
- xoGb4B+/zvxQcmHdD12wVZWo0b0vDGUvrmJOsxMSt/ATaeErb0yAHBZjZfB6TXFsDRIx
- Xrx6TZhn0E0hUrkMvmhOZVkyi+Hzh2L1n294nZhSN0RRFacBLCwTbaM6E8r1Dusftz/q
- GEsuw86//Fx7YmwgNgxnkGLYeuUfV9uiCCnhQV27SserWCho7AfLM7wD84v0l7fkBT49
- CX10PT8QLPR3zu7ydq6G0eW3kuzgVVgxZo1LfX4fCd4ndS8VZR6ov3wm7sNRPdD43Ds+
- CdsA==
-X-Gm-Message-State: AOJu0YyTs2tfnq3dgyXIOFtbXkz3YrJ4KB8GjcUfI0kivRZF6AuPe88Y
- m+Yn6BXzPmm9DUR2WkTSAlU2r6iZrLWEbrQ6r5DLyMM2vE2+vWEdKgf7mLqyvKsJoxQ=
-X-Gm-Gg: ATEYQzyJlKPsLCdQNVy4kCkb59Ed9ndp2QxCAWLsPR0ArvTG1eJfMcaNGVAU3yUjS78
- HCy7Ayhm9Cij3MQGook39fmUcMHhio26Mbv63J0c2ECSfVwgeVb0Ks33ktZnTm4BJjJhtbWn8il
- zreF+Xy390UDWVZozOt+rfa1o4OlB0ZgXYsy7E9HPnbldsLaOKez/qMd5Q8wvwSM6aZ2PD33V8g
- MyltDlN2HY3YwTH+Gs7pzmQQ03d3uAnNXIacJ+GvBXxqANdGu2EMVF6iFj/68AV1YplREGuLPeJ
- NMC4cvujQ7VHLn6m/+6z8QIVhjWfeMCdmDEhFsCYEEbzfc9oBJbAX3qEkF+7QmQs4Y5dxd+Is0N
- KINLMua1HWvy+WzZJ0x2ESZApTMiKa8Q0808AQ4eMqNJUwJFHfNY1soTVp4eL6q+7t76kE2+3Rn
- cw7v+mtB5pVk4ZDqF5+pdeAPtCH2h0Z7RxGks=
-X-Received: by 2002:a05:6820:168e:b0:67b:b182:19e with SMTP id
- 006d021491bc7-67bc889874emr2178339eaf.11.1773246944338; 
- Wed, 11 Mar 2026 09:35:44 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 006d021491bc7-67bc9118bc7sm1743197eaf.6.2026.03.11.09.35.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 11 Mar 2026 09:35:44 -0700 (PDT)
-Date: Wed, 11 Mar 2026 09:35:40 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Vincent Jardin <vjardin@free.fr>
-Cc: dev@dpdk.org, rasland@nvidia.com, thomas@monjalon.net,
- andrew.rybchenko@oktetlabs.ru, dsosnowski@nvidia.com,
- viacheslavo@nvidia.com, bingz@nvidia.com, orika@nvidia.com,
- suanmingm@nvidia.com, matan@nvidia.com
-Subject: Re: [PATCH v2 10/10] net/mlx5: add rate table capacity query API
-Message-ID: <20260311093540.5ada20a3@phoenix.local>
-In-Reply-To: <20260310232653.2935764-11-vjardin@free.fr>
-References: <20260310092014.2762894-1-vjardin@free.fr>
- <20260310232653.2935764-1-vjardin@free.fr>
- <20260310232653.2935764-11-vjardin@free.fr>
+	by mails.dpdk.org (Postfix) with ESMTP id 6CB7A40A76;
+	Wed, 11 Mar 2026 17:54:28 +0100 (CET)
+Received: from fhigh-b3-smtp.messagingengine.com
+ (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+ by mails.dpdk.org (Postfix) with ESMTP id B261A4060A
+ for <dev@dpdk.org>; Wed, 11 Mar 2026 17:54:26 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id B90057A00FC;
+ Wed, 11 Mar 2026 12:54:25 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Wed, 11 Mar 2026 12:54:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1773248065;
+ x=1773334465; bh=Ywj6PHZSAXpsEzbR0B1fSI0V5yBSEQBL/GcdMGJ+4Uw=; b=
+ AQOvVZ/v9h4+sVZF5iLlzjEmoavYdKy5GxrAko0GzJRoc+TPOeutq8JDb7LsC82f
+ gHI7PS6MyOIqO0D2Tl3Yehu/kXQk0/saY0bqYZJeZzBImbbbDvyuQK2AZdMjcG+k
+ bGIwoR189zul0CRh9YMkwUvMYAXOp7N0eYGVkcooNEPgBRRsqSpXdIx/SMF2KsHs
+ lIplTorXA8631TzEK7RgcvEDOU9qI4uCOtGe5GOjaziZr4k338NJfAIRfMMb2yOZ
+ 4UqM1+t1ipu75v9iospfchH/P3gWtdjmzvNyfjh1k+BK7VGQEZjpdJju2RbTimI3
+ mlP2MbYd/o4+1pi69WI2Rg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773248065; x=
+ 1773334465; bh=Ywj6PHZSAXpsEzbR0B1fSI0V5yBSEQBL/GcdMGJ+4Uw=; b=X
+ PBlUTHaFerFkOUk8BqE6PXo/rtdTvKiLgojl6SG6wPg6QUoO/42igC3Vs4mkHTzN
+ EMJUZSwAMxc/RBiOzU8KY/44Wpsu2Mrri7woYR1tnQrix7YjKGccMYpUJMODH9oF
+ f05npCR6IPr0z8Ys4OSocYC0ojaGPjXzD5ZLaa2uNzSAuSrpeuZTwBWHnvA9UBFV
+ GfHkHquDAsDooZIZcIww3jX3uDV2es1566jfNoZ3TziXp4IuUqWtcCmPyfhDKydI
+ X0e7FZuZPu9KhRwHbrFu0NJ96hHAimO5Uaz9d3j0czu7U3pa3XsFEqIrtSpYxvcO
+ 6n1GIaEsx5zQ9DSPF94eg==
+X-ME-Sender: <xms:QZ6xaRN9mhZnUSF_35TTopNh2p0mcDDqECzkshfNEaGJaHJTNBG6MA>
+ <xme:QZ6xaeCy94Wrj16Lel34riQX-ruu9f4qX56xrZXE1Ttn2nBNlJ-0Td5XMb_Pvh4Rv
+ qQCvY6XFCZT8azVPKheR7eGmhm9iER6y9rMRerTJKrggYRKSvOziQ>
+X-ME-Received: <xmr:QZ6xaQLFhi_llRqDrEodU-njfGvnQOiDkwEpdfMJZwEwqXbYb5IQXm9AtEeeUwzinVFGnwsfLeb_J198EwYmzDIQpA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvkeeggeefucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopegrjhhithdrkhhhrghprghruggvsegsrhho
+ rggutghomhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtth
+ hopehshhhurghnghhlihhnrdifrghnghessghrohgruggtohhmrdgtohhmpdhrtghpthht
+ ohepfhgrrhgrhhdrshhmihhthhessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepsh
+ hhrghhrghjihdrsghhohhslhgvsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehs
+ rhhihhgrrhhshhgrrdgsrghsrghvrghprghtnhgrsegsrhhorggutghomhdrtghomhdprh
+ gtphhtthhopehkihhshhhorhgvrdhprggumhgrnhgrsghhrgessghrohgruggtohhmrdgt
+ ohhm
+X-ME-Proxy: <xmx:QZ6xafOoojm_6KSBCzrkzZeXRx1uhzNSdaIoBWrsaKoo4K8dMPe2mQ>
+ <xmx:QZ6xaW7_nLutG_stm6FS9wyM0RFTLDRFFm84--nlJJhM-4_1hRN4Iw>
+ <xmx:QZ6xaZ6zpkFoneBrVBgFbldLC1HcEZVsyJ8V3fGAEFbNRYsyIWNG-A>
+ <xmx:QZ6xacH8QHtiTkndzClUn1pcanlB9lWQuE9r167AIHTNYEc3TfCefw>
+ <xmx:QZ6xaUIwRj75VnBjjHaVByDqaYjRKaWN7GUmmSE0DjaUVcHkbamCcp9z>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 11 Mar 2026 12:54:23 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: Ajit Khaparde <ajit.khaparde@broadcom.com>, dev@dpdk.org,
+ shuanglin.wang@broadcom.com, Farah Smith <farah.smith@broadcom.com>,
+ Shahaji Bhosle <shahaji.bhosle@broadcom.com>,
+ Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>
+Subject: Re: [PATCH] net/bnxt: remove unbuilt source files
+Date: Wed, 11 Mar 2026 17:54:22 +0100
+Message-ID: <2820895.mvXUDI8C0e@thomas>
+In-Reply-To: <CA+BST0=5mgHmmzjiTrar3-ufTgZjOtUWgZhuKTc6U0Xnq9SLug@mail.gmail.com>
+References: <20251114175112.1103784-1-stephen@networkplumber.org>
+ <CACZ4nhtooChGsnDsSHfDy_ZYcFGzqKxuWMO-GagGkUHrbDgNQg@mail.gmail.com>
+ <CA+BST0=5mgHmmzjiTrar3-ufTgZjOtUWgZhuKTc6U0Xnq9SLug@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,47 +99,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 11 Mar 2026 00:26:53 +0100
-Vincent Jardin <vjardin@free.fr> wrote:
+> > > Several C files are never used or built.
+> > > Looks like they were converted to header files but the old source
+> > > was never removed.
+> > >
+> > > Fixes: aa49b38fa7c3 ("net/bnxt/tf_core: cleanup external EM support")
+> > > Cc: shuanglin.wang@broadcom.com
+> > >
+> > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > Acked-by: Ajit Khaparde <ajit.khaparde@broadcom.com>
+> Acked-by: Kishore Padmanabha<kishore.padmanabha@broadcom.com>
 
-> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_pp_rate_table_query, 26.07)
-> +int rte_pmd_mlx5_pp_rate_table_query(uint16_t port_id,
-> +				     struct rte_pmd_mlx5_pp_rate_table_info *info)
-> +{
-> +	struct rte_eth_dev *dev;
-> +	struct mlx5_priv *priv;
-> +	uint16_t used = 0;
-> +	uint16_t *seen;
-> +	unsigned int i;
-> +
-> +	if (info == NULL)
-> +		return -EINVAL;
+Applied, thanks.
 
-Prefer NULL checks in ethdev layer
 
-> +	if (!rte_eth_dev_is_valid_port(port_id))
-> +		return -ENODEV;
-
-Ditto checks for port_id should be at ethdev
-
-> +	dev = &rte_eth_devices[port_id];
-> +	priv = dev->data->dev_private;
-> +	if (!priv->sh->cdev->config.hca_attr.qos.packet_pacing) {
-> +		rte_errno = ENOTSUP;
-> +		return -ENOTSUP;
-> +	}
-> +	info->total = priv->sh->cdev->config.hca_attr.qos
-> +			.packet_pacing_rate_table_size;
-
-Since DPDK allows 100 character lines now, don't need line break
-
-> +	if (priv->txqs == NULL || priv->txqs_n == 0) {
-> +		info->used = 0;
-> +		return 0;
-> +	}
-> +	seen = mlx5_malloc(MLX5_MEM_ZERO, priv->txqs_n * sizeof(*seen),
-> +			   0, SOCKET_ID_ANY);
-
-Since this only has lifetime of this function, use calloc() instead
-since that avoids using huge page memory, and compiler and other checkers
-"know about" malloc functions and engage more checks.
