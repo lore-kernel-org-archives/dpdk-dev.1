@@ -2,55 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD82FD0636
-	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Mar 2026 06:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DADBFD0636
+	for <dpdk-dev@archiver.kernel.org>; Wed, 11 Mar 2026 06:56:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C3E4D40E1C;
-	Wed, 11 Mar 2026 07:56:10 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A33E840E45;
+	Wed, 11 Mar 2026 07:56:14 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0CF7540E34
- for <dev@dpdk.org>; Wed, 11 Mar 2026 07:56:08 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 1F77340E4F
+ for <dev@dpdk.org>; Wed, 11 Mar 2026 07:56:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1773212168;
+ s=mimecast20190719; t=1773212172;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=eniXkJtfSF2xzOvmFjw9D+wv/lX3azesHkv7Jie631Q=;
- b=K149jdcejE8hizvWb4ai2n654x/cPVLSNJ2o2XD7mv/tdSaizLMtvuJRBjYwp89PHMvkWn
- u5E1dPqj/ietJepsEhFgzUGhjbqblIcXivQZ5L1/RboFBaWIW1NXkKzlpVTnYY/Ew/+h3V
- RaKy7aO8ataxGmUumjgzmvjfHCMJvtQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ bh=l3IpC9XR7b/hOeVa4dSJzIBfxfc4ub4+4aA88Uh/Zf8=;
+ b=B/LUphL7aHyVKKMr9SL+0/ajEXT3CsnkZNaJM12E2VTVRj2h94O38nj/GT2tr+kxV524Pm
+ DqnkV7fs/kOKMmEtlQ1n6I62c/sL1LEZ71nRF+/YTsi1Tw5nKWuqVfJwbBfzNZu41sLu9q
+ dQLl4xFx02cFrVEl4p7/9a4Yob5o6Tk=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-107-8zvum5U3MgumOReIF8emTw-1; Wed,
- 11 Mar 2026 02:56:05 -0400
-X-MC-Unique: 8zvum5U3MgumOReIF8emTw-1
-X-Mimecast-MFC-AGG-ID: 8zvum5U3MgumOReIF8emTw_1773212164
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-kcro0MWYNHWk7fOGu7ke_g-1; Wed,
+ 11 Mar 2026 02:56:08 -0400
+X-MC-Unique: kcro0MWYNHWk7fOGu7ke_g-1
+X-Mimecast-MFC-AGG-ID: kcro0MWYNHWk7fOGu7ke_g_1773212167
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
  (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 6A0DE195608D; Wed, 11 Mar 2026 06:56:04 +0000 (UTC)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 9C18A18002CD; Wed, 11 Mar 2026 06:56:07 +0000 (UTC)
 Received: from fedora.redhat.com (unknown [10.44.32.190])
  by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 6AB7119560A6; Wed, 11 Mar 2026 06:56:01 +0000 (UTC)
+ id EC7BB19560A6; Wed, 11 Mar 2026 06:56:04 +0000 (UTC)
 From: =?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
 To: Maxime Coquelin <maxime.coquelin@redhat.com>
 Cc: chenbox@nvidia.com, jasowang@redhat.com, david.marchand@redhat.com,
  dev@dpdk.org, Yongji Xie <xieyongji@bytedance.com>, mst@redhat.com
-Subject: [RFC v3 05/10] vhost: add ASID support to VDUSE IOTLB operations
-Date: Wed, 11 Mar 2026 07:55:38 +0100
-Message-ID: <20260311065543.1354037-6-eperezma@redhat.com>
+Subject: [RFC v3 06/10] vhost: claim VDUSE support for API version 1
+Date: Wed, 11 Mar 2026 07:55:39 +0100
+Message-ID: <20260311065543.1354037-7-eperezma@redhat.com>
 In-Reply-To: <20260311065543.1354037-1-eperezma@redhat.com>
 References: <20260311065543.1354037-1-eperezma@redhat.com>
 MIME-Version: 1.0
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: GajKhPywRIbqW6oPJ0KEJAPBgLLjEsiyAan1Hqp9Hxc_1773212164
+X-Mimecast-MFC-PROC-ID: jfjI_fFktOGyKfxuaUOx9x91nkk70zVXkErzoL26yb0_1773212167
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -69,81 +69,25 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-Make use of the newly introduced address space ID when
-calling Vhost IOTLB API.
-
 Signed-off-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 Signed-off-by: Eugenio Pérez <eperezma@redhat.com>
-
 ---
-Eugenio Pérez changes:
-* Use the new GET_FD2 ioctl.
-* Adapt the entry.v1 accesses to new format
----
- lib/vhost/vduse.c | 28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ lib/vhost/vduse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/lib/vhost/vduse.c b/lib/vhost/vduse.c
-index bb3a4363baad..4e1920f9441e 100644
+index 4e1920f9441e..80020d3d5413 100644
 --- a/lib/vhost/vduse.c
 +++ b/lib/vhost/vduse.c
-@@ -71,7 +71,7 @@ vduse_iotlb_remove_notify(uint64_t addr, uint64_t offset, uint64_t size)
- static int
- vduse_iotlb_miss(struct virtio_net *dev, int asid, uint64_t iova, uint8_t perm __rte_unused)
- {
--	struct vduse_iotlb_entry entry;
-+	struct vduse_iotlb_entry_v2 entry = {};
- 	uint64_t size, page_size;
- 	struct stat stat;
- 	void *mmap_addr;
-@@ -79,8 +79,9 @@ vduse_iotlb_miss(struct virtio_net *dev, int asid, uint64_t iova, uint8_t perm _
+@@ -25,7 +25,7 @@
+ #include "vhost.h"
+ #include "virtio_net_ctrl.h"
  
- 	entry.start = iova;
- 	entry.last = iova + 1;
-+	entry.asid = asid;
+-#define VHOST_VDUSE_API_VERSION 0ULL
++#define VHOST_VDUSE_API_VERSION 1ULL
+ #define VDUSE_CTRL_PATH "/dev/vduse/control"
  
--	ret = ioctl(dev->vduse_dev_fd, VDUSE_IOTLB_GET_FD, &entry);
-+	ret = ioctl(dev->vduse_dev_fd, VDUSE_IOTLB_GET_FD2, &entry);
- 	if (ret < 0) {
- 		VHOST_CONFIG_LOG(dev->ifname, ERR, "Failed to get IOTLB entry for 0x%" PRIx64,
- 				iova);
-@@ -90,6 +91,7 @@ vduse_iotlb_miss(struct virtio_net *dev, int asid, uint64_t iova, uint8_t perm _
- 	fd = ret;
- 
- 	VHOST_CONFIG_LOG(dev->ifname, DEBUG, "New IOTLB entry:");
-+	VHOST_CONFIG_LOG(dev->ifname, DEBUG, "\tASID: %d", entry.asid);
- 	VHOST_CONFIG_LOG(dev->ifname, DEBUG, "\tIOVA: %" PRIx64 " - %" PRIx64,
- 			(uint64_t)entry.start, (uint64_t)entry.last);
- 	VHOST_CONFIG_LOG(dev->ifname, DEBUG, "\toffset: %" PRIx64, (uint64_t)entry.offset);
-@@ -458,10 +460,24 @@ vduse_events_handler(int fd, void *arg, int *close __rte_unused)
- 		resp.result = VDUSE_REQ_RESULT_OK;
- 		break;
- 	case VDUSE_UPDATE_IOTLB:
--		VHOST_CONFIG_LOG(dev->ifname, INFO, "\tIOVA range: %" PRIx64 " - %" PRIx64,
--				(uint64_t)req.iova.start, (uint64_t)req.iova.last);
--		vhost_user_iotlb_cache_remove(dev, 0, req.iova.start,
--				req.iova.last - req.iova.start + 1); /* ToDo: use ASID once API available, using 0 for now */
-+		{
-+			uint64_t start, last;
-+			uint32_t asid;
-+
-+			if (dev->vduse_api_ver < 1) {
-+				start = req.iova.start;
-+				last = req.iova.last;
-+				asid = 0;
-+			} else {
-+				start = req.iova_v2.start;
-+				last = req.iova_v2.last;
-+				asid = req.iova_v2.asid;
-+			}
-+
-+			VHOST_CONFIG_LOG(dev->ifname, INFO, "\t(ASID %d) IOVA range: %" PRIx64 " - %" PRIx64,
-+				asid, start, last);
-+			vhost_user_iotlb_cache_remove(dev, asid, start, last - start + 1);
-+		}
- 		resp.result = VDUSE_REQ_RESULT_OK;
- 		break;
- 	case VDUSE_SET_VQ_GROUP_ASID:
+ struct vduse {
 -- 
 2.53.0
 
