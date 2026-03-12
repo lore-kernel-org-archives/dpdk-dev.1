@@ -2,65 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D49103E2F5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 00:21:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D767B103E2F5
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 00:21:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B1D7C40ED1;
-	Thu, 12 Mar 2026 01:21:34 +0100 (CET)
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com
- [209.85.160.45]) by mails.dpdk.org (Postfix) with ESMTP id 7FB5740264
- for <dev@dpdk.org>; Thu, 12 Mar 2026 01:21:30 +0100 (CET)
-Received: by mail-oa1-f45.google.com with SMTP id
- 586e51a60fabf-4152698e745so223411fac.1
- for <dev@dpdk.org>; Wed, 11 Mar 2026 17:21:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B1852410D4;
+	Thu, 12 Mar 2026 01:21:35 +0100 (CET)
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com
+ [209.85.160.41]) by mails.dpdk.org (Postfix) with ESMTP id 9BDFC40E4D
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 01:21:31 +0100 (CET)
+Received: by mail-oa1-f41.google.com with SMTP id
+ 586e51a60fabf-40ee9b945d5so331963fac.0
+ for <dev@dpdk.org>; Wed, 11 Mar 2026 17:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773274889;
- x=1773879689; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773274891;
+ x=1773879691; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=UDOpUOWbfiXY09Bhjt9SnMDFoZHw/eJf0zuQeJ5dLrc=;
- b=Sl8CtnHhAgxJhzR1cpfYmP4OoffF9ZqTZGCVNglCw55hsjYJJvtdp9nNgsNJCndUMS
- mfGtCjwYu8YCCrT/bKGik4cYs6d75IN8dOtqj6Te2X63bXaDGbPn9HWkHMHFIksFtPl2
- 0tJ+7JQc32ClXYua86LRWu6elJuV5Khb1yWzcUlFs2LF/ddJv7eJYsx+WHXJbQmaWy6b
- 1eFKs+ZB5xkYIavYDb+IgxnlsrEXVsD0BnmkP5KBoHg1UBBO2Wq4PJpa4gCFkxEmFPHW
- 5QMxJVZpU/xib5Wss3gtHVHwESX7P6ofJXl5nDQmoINiYUs5pNy9lDfKd/XiSbLsevB8
- awXQ==
+ bh=lHtFf//xfmBkeSgDwNbgojnphmysX3unR7mUQCFyIxY=;
+ b=FUTTJaHnqOh7XZjYqaAXlUENB3/QTn92A732pOVTJtFIJMVT2LMGRrSQaEUb8Wxp6O
+ unvuJlguu4RuT5gawr5JTWafal0RSVOX6LnQ4TLT6/f0TbJEhIMW0FKKp0t2T3VEUv0+
+ tNtih4L2p1meqza/cwA47Ve0Idy8moEjmoV9p7aWIWPinX8mmvi9Y3nH4DmK8Vti9Uy5
+ y875Bh5nRGPpzWMyaQ+sUCQb0HOWU8ctcYQhdFQAbe0Xfb1vcWTtXHDu8SuLB/s0QhQS
+ 3awB46SVlK6iCXeH0gxBZqf0oRypVR0cz42pxJJ/dPAxNfUqeNGscQ4arjBigqaGcws4
+ dqjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773274889; x=1773879689;
+ d=1e100.net; s=20230601; t=1773274891; x=1773879691;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=UDOpUOWbfiXY09Bhjt9SnMDFoZHw/eJf0zuQeJ5dLrc=;
- b=VrAhW/7JJpqTl/zVK9xqPurDAc7azG9m3mbXlYFOxRs+78EgwLVgtgRx1nE9FByIDZ
- Jbe9eq8xyiAeso3XL4b0DvY/Ai9dl29N87cDJ7jav2sSxsCAc7E/8E0Z59qghCRXAkNL
- Z7pjtcyf4HRT7qo+lwWWMev+pKM8Db4P4RLG2W+UqG3w07JQlxkmTGwCbHMffyzR/hYi
- bPcq1FGaK9Jra9a43uTBHspLRirHPD/fKrrN4U7/8MLQ3Zi4SqgC9tPPKB9CPgmoGHil
- B2f8itTXybvZK9jhq0zDHZxRSAhZuYR/6HYdtaz3lHWpFlqmBoX1E8m1SLjsBE7qsPk0
- Q12Q==
-X-Gm-Message-State: AOJu0YyRWXmJHGPvulZJOnm9y5ukdUv6avD+eCZFJTvePW9nE4vdS51S
- yeBYuubj5upDWDUQ2w2P4GLdIySy+lXDmzxFVfZtZy/Q6HiaiE2owSPG8AKVBwg3OitkRXEKRvB
- 1mdYGXzA=
-X-Gm-Gg: ATEYQzwSrzXlMdKipoO/TKOj/AphtUwzC/O61cprYr4dFuZjcmqJ+xH4Hy2SW1yb3pM
- wXiKj3agMXrDlHyCoQpfrpiMKjCEisZ4w6nDvUS5nfSVru0gXh+iHImsIV+haJnoz0KG4nxaRl7
- X8ypkry9KXhk/fitd+mYOVGs+e9fuT1nhdvzUibPjr34hGg6RK1CtGafuB+nz316Zwc+X+J/4aF
- 2ErWzoR7tiMq8gClpphmr7vd8Y8sAEFAR+CU3Jq2dGFHk9MqG+dhQFQxQ3qrzG9wOnTfujZ4ooW
- bhC0fuP2U56dZkPckV1FU4FJ0cDgxh+vH/vWyxENs94eZvqSSZiQ3D5D3/JerNVH/ZWCBVVK/uG
- zeEgOxHYDnzJRHpSrMZPmFkpwg4HITAs9MhwzsOEx9qjx6OZ6yb8c5Du4L/XQaEutoONnpCW7vs
- DvJa6WUBEHIfOV/IK7eiRCzagDaDJji08Z
-X-Received: by 2002:a05:6871:4143:b0:417:5c29:ace7 with SMTP id
- 586e51a60fabf-4177c5c8da2mr2797612fac.2.1773274889421; 
- Wed, 11 Mar 2026 17:21:29 -0700 (PDT)
+ bh=lHtFf//xfmBkeSgDwNbgojnphmysX3unR7mUQCFyIxY=;
+ b=rRUcss0mYy029I+nunoYHeQhxM2/NZU/detfxm2RxFrWsVUOwguRBiNSNvMWcT8yqz
+ DlvPe1MRpau26BHicNM5DnyVQ0dSnAyJcY/Mty1hfnWjKvQVwVlUKeFpsgfEs2OLbM3S
+ hpWf/aUrwT13DDicDXHrVxHtSrzhWVCowK9RGeDgYe/G8QdoXjqhcW5TlC5Oxo34YOia
+ Hi87L+TxeIgy9Ssz9p7WAd8oBiochbFdIWjvzwmgeGhpSoZfr1MsNuSFxyyZTHMpHHE3
+ AvjL4vSG3okB4Gswc2gnX33Ol1R00nl85r9BoWHfr2OxeYR8BCxtFLzVLZm15ctra9hJ
+ 5FEw==
+X-Gm-Message-State: AOJu0YzJfTuEbTw2LikgbPpfYGGzGbZj4Tjeckpb8GncZRGGUqRHFqIp
+ 0LfbW4lZeQVDH1LTNjdwN/1YHU8OXy+JPug4y5T8J/T1XrSp18qoVrK98n5nVrgaesLkZQKYNmT
+ vT/MLO+M=
+X-Gm-Gg: ATEYQzyk6P8BB8MI/bRLvxaESAHfUYhn2xcx+JjmBL7lGJV7toc3UikDToYuEDJ9Iio
+ VgecH6IVCorfe47oPaZMOgDjMpbBRHVYiHJ3CXRd3wW85AVx1pwWfuu8lQ1m3BTx3DXHdQRmwTL
+ PtpYAMDPPPPk9okCfVHpWK6CFnTeF6WJUQqXLfNqghg9g22LOz0aDj0HgZV8/2rRygdOHavffb6
+ L4rFIQ6u560uOgZvHJ2MBztxj5ooAo7X9P7DhxHTmjHUbVlqLh7V3lmhX515APphT7j5Sz2Zsb6
+ j0TStEC0mF4WaeYSZW9q87LHtO4wWwaKf3OBaVoKYBUEMoDvlGsQsUahvfTVfnZJK+3u7nl64p9
+ eOJFrJeW3F2EVL3VnQqZwSQTPMtaF4zZ7lyeWaL+y+eV929xCZukIZfLYuAJ3dSebX97uJOWPEw
+ 6RlccJooNupeyVfIEfnHi+TaVIKf+fDXX3
+X-Received: by 2002:a05:6870:b14e:b0:417:68c7:56a6 with SMTP id
+ 586e51a60fabf-4177c258494mr2910597fac.0.1773274890766; 
+ Wed, 11 Mar 2026 17:21:30 -0700 (PDT)
 Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-4177e26e2c6sm3779484fac.7.2026.03.11.17.21.28
+ 586e51a60fabf-4177e26e2c6sm3779484fac.7.2026.03.11.17.21.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 11 Mar 2026 17:21:29 -0700 (PDT)
+ Wed, 11 Mar 2026 17:21:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 1/2] eal: add RTE_MIN4 and RTE_MAX4 macros
-Date: Wed, 11 Mar 2026 17:20:26 -0700
-Message-ID: <20260312002123.867357-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>
+Subject: [PATCH 2/2] net/bnxt: fix shadow variable warnings
+Date: Wed, 11 Mar 2026 17:20:27 -0700
+Message-ID: <20260312002123.867357-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260312002123.867357-1-stephen@networkplumber.org>
 References: <20260312002123.867357-1-stephen@networkplumber.org>
@@ -79,53 +81,87 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-These are analogous to the existing RTE_MIN3 macros and allow
-drivers to take compute minimum of four values without invoking
-the shadow warning gods.
+Fix things flagged as warnings about shadowed variables.
+If the variable was harmless overlap then just drop the shadowed
+version. For min values case use RTE_MIN3() and RTE_MIN4().
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eal/include/rte_common.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/net/bnxt/bnxt.h        | 6 +++---
+ drivers/net/bnxt/bnxt_ethdev.c | 3 +--
+ drivers/net/bnxt/bnxt_rxq.c    | 6 ++----
+ drivers/net/bnxt/bnxt_txr.c    | 3 ---
+ 4 files changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/lib/eal/include/rte_common.h b/lib/eal/include/rte_common.h
-index 573bf4f2ce..79364170d6 100644
---- a/lib/eal/include/rte_common.h
-+++ b/lib/eal/include/rte_common.h
-@@ -812,6 +812,16 @@ __extension__ typedef uint64_t RTE_MARKER64[0];
- 			(_b_min3 < _c_min3 ? _b_min3 : _c_min3); \
- 	})
+diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
+index 7515f0564f..8b81c11b32 100644
+--- a/drivers/net/bnxt/bnxt.h
++++ b/drivers/net/bnxt/bnxt.h
+@@ -1110,9 +1110,9 @@ inline uint16_t bnxt_max_rings(struct bnxt *bp)
+ 	 * max Tx rings == max Rx rings, one stat ctx for each.
+ 	 */
+ 	if (BNXT_STINGRAY(bp)) {
+-		max_rx_rings = RTE_MIN(RTE_MIN(max_rx_rings / 2U,
+-					       MAX_STINGRAY_RINGS),
+-				       bp->max_stat_ctx / 2U);
++		max_rx_rings = RTE_MIN3(max_rx_rings / 2U,
++					MAX_STINGRAY_RINGS,
++					bp->max_stat_ctx / 2U);
+ 	} else {
+ 		max_rx_rings = RTE_MIN(max_rx_rings / 2U,
+ 				       bp->max_stat_ctx / 2U);
+diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
+index b677f9491d..f033c34aab 100644
+--- a/drivers/net/bnxt/bnxt_ethdev.c
++++ b/drivers/net/bnxt/bnxt_ethdev.c
+@@ -473,7 +473,7 @@ static int bnxt_setup_one_vnic(struct bnxt *bp, uint16_t vnic_id)
  
-+/**
-+ * Macro to return the minimum of four numbers
-+ */
-+#define RTE_MIN4(a, b, c, d) \
-+	__extension__ ({ \
-+		typeof (a) _min4_ab = RTE_MIN((a), (b)); \
-+		typeof (c) _min4_cd = RTE_MIN((c), (d)); \
-+		RTE_MIN(_min4_ab, _min4_cd); \
-+	})
-+
- /**
-  * Macro to return the minimum of two numbers
-  *
-@@ -845,6 +855,16 @@ __extension__ typedef uint64_t RTE_MARKER64[0];
- 			(_b_max3 > _c_max3 ? _b_max3 : _c_max3); \
- 	})
+ 	/* Alloc RSS context only if RSS mode is enabled */
+ 	if (dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_RSS) {
+-		int j, nr_ctxs = bnxt_rss_ctxts(bp);
++		unsigned int nr_ctxs = bnxt_rss_ctxts(bp);
  
-+/**
-+ * Macro to return the maximum of four numbers
-+ */
-+#define RTE_MAX4(a, b, c, d) \
-+	__extension__ ({ \
-+		typeof (a) _max4_ab = RTE_MAX((a), (b)); \
-+		typeof (c) _max4_cd = RTE_MAX((c), (d)); \
-+		RTE_MAX(_max4_ab, _max4_cd); \
-+	})
-+
- /**
-  * Macro to return the maximum of two numbers
-  *
+ 		/* RSS table size in P5 is 512.
+ 		 * Cap max Rx rings to same value
+@@ -3560,7 +3560,6 @@ bnxt_rx_descriptor_status_op(void *rx_queue, uint16_t offset)
+ 	 */
+ #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
+ 	if (bp->flags & BNXT_FLAG_RX_VECTOR_PKT_MODE) {
+-		struct rx_pkt_cmpl *rxcmp;
+ 		uint32_t cons;
+ 
+ 		/* Check status of completion descriptor. */
+diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c
+index 91b3555df6..df9ed391c4 100644
+--- a/drivers/net/bnxt/bnxt_rxq.c
++++ b/drivers/net/bnxt/bnxt_rxq.c
+@@ -98,10 +98,8 @@ int bnxt_mq_rx_configure(struct bnxt *bp)
+ 			/* ETH_8/64_POOLs */
+ 			pools = conf->nb_queue_pools;
+ 			/* For each pool, allocate MACVLAN CFA rule & VNIC */
+-			max_pools = RTE_MIN(bp->max_vnics,
+-					    RTE_MIN(bp->max_l2_ctx,
+-					    RTE_MIN(bp->max_rsscos_ctx,
+-						    RTE_ETH_64_POOLS)));
++			max_pools = RTE_MIN4(bp->max_vnics, bp->max_l2_ctx,
++					    bp->max_rsscos_ctx, RTE_ETH_64_POOLS);
+ 			PMD_DRV_LOG_LINE(DEBUG,
+ 				    "pools = %u max_pools = %u",
+ 				    pools, max_pools);
+diff --git a/drivers/net/bnxt/bnxt_txr.c b/drivers/net/bnxt/bnxt_txr.c
+index 27758898b0..498778aae0 100644
+--- a/drivers/net/bnxt/bnxt_txr.c
++++ b/drivers/net/bnxt/bnxt_txr.c
+@@ -179,9 +179,6 @@ bnxt_check_pkt_needs_ts(struct rte_mbuf *m)
+ 		if (proto == RTE_ETHER_TYPE_ECPRI)
+ 			return true;
+ 		if (proto == RTE_ETHER_TYPE_VLAN) {
+-			const struct rte_vlan_hdr *vh;
+-			struct rte_vlan_hdr vh_copy;
+-
+ 			vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
+ 			if (unlikely(vh == NULL))
+ 				return false;
 -- 
 2.51.0
 
