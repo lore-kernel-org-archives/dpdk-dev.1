@@ -2,69 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36336106ACD6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 18:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D10106ACD6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 18:54:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79158402AC;
-	Thu, 12 Mar 2026 19:53:35 +0100 (CET)
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
- [209.85.160.180])
- by mails.dpdk.org (Postfix) with ESMTP id 9164940275
- for <dev@dpdk.org>; Thu, 12 Mar 2026 19:53:34 +0100 (CET)
-Received: by mail-qt1-f180.google.com with SMTP id
- d75a77b69052e-506362ac5f7so13410271cf.1
- for <dev@dpdk.org>; Thu, 12 Mar 2026 11:53:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D24C740666;
+	Thu, 12 Mar 2026 19:54:08 +0100 (CET)
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com
+ [209.85.210.46]) by mails.dpdk.org (Postfix) with ESMTP id 62EDF402AC
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 19:54:07 +0100 (CET)
+Received: by mail-ot1-f46.google.com with SMTP id
+ 46e09a7af769-7d749f99691so760335a34.3
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 11:54:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1773341614; x=1773946414; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=xWjo/2hV/ekqvK2Vygl8a8b4cz3bD0iXfpKj1t33EDs=;
- b=RG48KbLKOMIZCBk6bMMige3tAENr3NLY7o5K++jkpzu1SLoT6pvfWkQs0S9AZ4Aqyu
- izV4Kwo11Zjx9TVo7RSsWOtQC+ezuiaCZjnl2HjocTGMYp9zMJgAE8Xg9knJ8kwir/CS
- Uz+i/wX0AZC45EmWftMYiSwsBj+k1Jvtk8JDQ=
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773341646;
+ x=1773946446; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=yNNBWrHBR+Y9kqbTHRRDprEAhwvxcmlhjsD66RdJT4k=;
+ b=wmP4HuCI6LKT2NxnJlGL4ozt7KXwCgKtGj7MwjntaMu7ZGIe7yXMXjRpzNTspAblIn
+ VTHRsHmZDXiOxWVYuC2Z3m+bn1Om//LqtCtTQJBi7nkaYQGO8vycRcryTEesvKUDBJXP
+ +aaLaShWTwJ60fVhKwcegUiFgeR1SnQmXaKCxRb6QikfMfw9WnZXxwJDbgW0PRq4VI97
+ 76XziyIKP8e8zhVlA6/L+KHkS5cYEVo0SmIhX/7H5gOzpl+UgC5BjZ+qukv4jZ06g+ns
+ 0xsCUIP8ReeFgMqSOSOMthsyiH6EW165Q+84zJJCFB1Z+c21pqLlg5a5ixfmMx6ZmFgL
+ 8wJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773341614; x=1773946414;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=xWjo/2hV/ekqvK2Vygl8a8b4cz3bD0iXfpKj1t33EDs=;
- b=rfG64UnVAMaQeOyuFZK20DA7SeK5e2n+WOhrVnXhmLhIdm+EKm717I6aC8APfYDsWu
- 8CRlv526dUvkQ8NDGTPjkeGFIGhbSgu8oQVpFhj5c1w4Q8TyX80eS9J4EC8AjkTsS3K3
- RLh9qz/GjJAEjiE2zheuxUI+nE7YGWllsjIC2F9+p/USiXi5/KoZRWsQgR0Yx9GOBPUw
- oHYgMMh6vmgggCGwIVZxNFrLFbeV+MpysF32wQ6cB7jduw5IUfsqjv1VgfCmxMjvFwYB
- OLXGff1MUxi4H0LIr4f8mVSRyq2tCUx+7RIWvTTQ6vhyMEKE9lPL9x32Sj+DJ1qtTneu
- /heQ==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWYljq+7hArn1npM7Q+u+gPXSQSz+S9jMO3d7OghKhPtrNJiTKKQJxcwFp8ck1qShKziGM=@dpdk.org
-X-Gm-Message-State: AOJu0Yxm4hcWwkwryklHrkZK6wX7PU/WQVLPiC541VitjjAWAOpv3DAS
- JPmnkSlNmE39LmtmmeWoJlsSiKayWrPYEpsohtywrfqIg42yj2tquCbXiJPlqAzTe9Oute6Txwt
- 8rbYU
-X-Gm-Gg: ATEYQzwiN/3POYIUAMdSvKDXJXPOHsGhSrf7uziIWJXQWriF6PKd/AIzNnFnWPGMVmH
- M4eGr6sWZb50griUcvslhvfaE3mP7At1KJeVsXqTDQU4OYbo/dbJZ+xvM/wABB/T0+DFg8idGtd
- Th2y2mtaDqetvkTxFxaTwXYTd4r7gXGISjEBHW5FNPSQYGVyDZovATyYHghkGBDML+34SjzTsa2
- PaZATqGUlM2h4VynUo/LhIa8sUa5C0Bd4Ap1uN8/1ytu36MyItuGbLfI3T0BpiO2O7IR7500gSz
- 8fBiWCH8lOfEbsilCP8Q7Ktr6MT7MWLIY+R3XwBIygRr3kTvge7r84cqJpE7PgfZZoyB9xNHM1a
- ZcG5TUNFkGE2tXcuLsBkXmyc0gQ292BGIE6oZX7oPbot8pvpigB9FvB35rV+xil8XId1AERIo1Z
- znn58Yq1W8b+tOVAOT1AwEiXNrQzrxYQ79XWg/e/1rfuOvHrWPNBMAXcWc7A39mTE4
-X-Received: by 2002:ac8:5f8c:0:b0:509:1f95:f3c2 with SMTP id
- d75a77b69052e-50957b890eamr7777891cf.13.1773341613793; 
- Thu, 12 Mar 2026 11:53:33 -0700 (PDT)
-Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-50939ce2f3dsm39365891cf.0.2026.03.12.11.53.32
+ d=1e100.net; s=20230601; t=1773341646; x=1773946446;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=yNNBWrHBR+Y9kqbTHRRDprEAhwvxcmlhjsD66RdJT4k=;
+ b=Qd+du3wqKKBig3KNA2lPKW5QDN3FRxVZBeYIz0nfTbstU+JiG0ycD0U7oo5FeO4FAe
+ zYL/kGQOf1Vdm9ZJx0oLg4D47bjPVbbobuQwWjML9H9lqHCcUkanTgA0ats/2NRn11vm
+ 7Se7Z374gjgMhN6rsHYCJVv87aYb7zSBwcRebOxauP9ks+E7Gxuw1reiYPr7QMJxYH4w
+ z+7YrESFGrKIplFcti0PgfCBo0QRmv8Jd4el0bGbs7LEVbnve3rSNc7bH0suHbka7CiQ
+ WTV1LfG2MlgNsdIL+Wtcri5B2rft56tMqeFRK7mgqrPl3Ot1sxmdZupmXnlT08So2P0t
+ 62Bg==
+X-Gm-Message-State: AOJu0YxdIoat/DV+o+g+dNKXnm/l+3M7kLdgIVgadvWijSFRa+J5ZSTG
+ DyC/grV6Cy+BqmrdesNmZJtbWgbIM8CnS2hfWQayHu9eqCuPJDlpokk+bOtzgfC2Jp03cxQqluT
+ h3cGa
+X-Gm-Gg: ATEYQzya/HB50c25hiO3OQwwNwKDfZdlZXqH92IUOoSQYN/EN+3+SfZ76us3MExadN0
+ oeQOae9b7aXiIQtSyTwVmIMgjMomsb4QJskjneIFdtnxH0XWu+UdOlRnCxTsGW6qRRb20jro5I8
+ k8c/O0G4z7Glq3eDXFezWWWvP9GmguQsYu4Yrfu1Iw9+nMixpY9WpjAFosliLywQmmCM6flLx4b
+ DLqq7XvIgSLh/AuvlILNzjQCrvgyK52gVNjkTrr+kMchoMj82NBKrDaWMlA4F0XLfNIj3ocWLjb
+ NMRALIOk5qe+ZS47GPnN6agfTKWVXIsL8QkXefd+n3jqLPAcop57JB2I3dp2xiL3YHVtU1+ttmW
+ S8ETOCsXtpNsV0OC5WoNDku6lm9JNuFoHlIfY5Go1EeW3lSzXWWJGTh8HppDcS5YO3xDhrdvFP3
+ a2ZQam7amTjdynlvD/P44FBWQM/0SJa+AQ
+X-Received: by 2002:a05:6830:44ac:b0:7d7:5e62:4f0f with SMTP id
+ 46e09a7af769-7d7825a098bmr326038a34.34.1773341646350; 
+ Thu, 12 Mar 2026 11:54:06 -0700 (PDT)
+Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
+ 46e09a7af769-7d77a60d664sm1856537a34.6.2026.03.12.11.54.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Mar 2026 11:53:33 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: probb@iol.unh.edu
-Cc: dmarx@iol.unh.edu, luca.vizzarro@arm.com, dev@dpdk.org,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v8] dts: port speed capabilities test suite to next DTS
-Date: Thu, 12 Mar 2026 14:53:30 -0400
-Message-ID: <20260312185330.226227-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260225182616.71972-1-abailey@iol.unh.edu>
-References: <20260225182616.71972-1-abailey@iol.unh.edu>
+ Thu, 12 Mar 2026 11:54:06 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH] devtools: add Co-developed-by to commit log check
+Date: Thu, 12 Mar 2026 11:54:03 -0700
+Message-ID: <20260312185403.1051832-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,123 +77,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit ports the speed capabilities test suite from old DTS to next
-DTS.
+Add Co-developed-by to the recognized tag pattern and tag
+sequence order in check-git-log.sh.
 
-Bugzilla ID: 1494
-
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- .../tests.TestSuite_speed_capabilities.rst    |  8 +++
- dts/configurations/tests_config.example.yaml  |  6 +-
- dts/tests/TestSuite_speed_capabilities.py     | 67 +++++++++++++++++++
- 3 files changed, 80 insertions(+), 1 deletion(-)
- create mode 100644 doc/api/dts/tests.TestSuite_speed_capabilities.rst
- create mode 100644 dts/tests/TestSuite_speed_capabilities.py
+ devtools/check-git-log.sh | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/doc/api/dts/tests.TestSuite_speed_capabilities.rst b/doc/api/dts/tests.TestSuite_speed_capabilities.rst
-new file mode 100644
-index 0000000000..de6dc42757
---- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_speed_capabilities.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+speed_capabilities Test Suite
-+=============================
-+
-+.. automodule:: tests.TestSuite_speed_capabilities
-+   :members:
-+   :show-inheritance:
-diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
-index 209d7dd393..a41e65f2b4 100644
---- a/dts/configurations/tests_config.example.yaml
-+++ b/dts/configurations/tests_config.example.yaml
-@@ -29,4 +29,8 @@ hello_world:
- #      - buff_size: 64
- #        Gbps: 2.0 # Set gigabits per second according to your devices throughput for this given buffer size
- #      - buff_size: 512
--#        Gbps: 20.0
-\ No newline at end of file
-+#        Gbps: 20.0
-+# port_speed_capabilities:
-+#   test_parameters:
-+#     0 : 100 Gbps # Assign an expected link speed to a port ID in Gbps
-+#     1 : 100 Gbps
-\ No newline at end of file
-diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
-new file mode 100644
-index 0000000000..9cbd6f1ef7
---- /dev/null
-+++ b/dts/tests/TestSuite_speed_capabilities.py
-@@ -0,0 +1,67 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 University of New Hampshire
-+
-+"""Speed capability test suite.
-+
-+This test suite ensures that testpmd recognizes the expected speed from a link in Gbps.
-+"""
-+
-+from typing import Literal
-+
-+from api.capabilities import (
-+    LinkTopology,
-+    requires_link_topology,
-+)
-+from api.test import verify
-+from api.testpmd import TestPmd
-+from framework.test_suite import BaseConfig, TestSuite, func_test
-+
-+
-+class Config(BaseConfig):
-+    """Performance test metrics."""
-+
-+    test_parameters: dict[
-+        int,
-+        Literal[
-+            "1 Gbps",
-+            "10 Gbps",
-+            "25 Gbps",
-+            "40 Gbps",
-+            "100 Gbps",
-+            "200 Gbps",
-+            "400 Gbps",
-+            "800 Gbps",
-+            "1600 Gbps",
-+        ],
-+    ] = {
-+        0: "100 Gbps",
-+    }
-+
-+
-+@requires_link_topology(LinkTopology.ONE_LINK)
-+class TestSpeedCapabilities(TestSuite):
-+    """Speed capabilities test suite."""
-+
-+    config: Config
-+
-+    def set_up_suite(self):
-+        """Set up the test suite."""
-+        self.test_parameters = self.config.test_parameters
-+
-+    @func_test
-+    def validate_port_speed(self) -> None:
-+        """Validate expected port speed is also the observed port speed.
-+
-+        Steps:
-+            * Show port info for each available port
-+
-+        Verify:
-+            * The resulting link speeds are equal to the configured link speeds
-+        """
-+        with TestPmd() as testpmd:
-+            for k, v in self.test_parameters.items():
-+                link_speed = testpmd.show_port_info(k).link_speed
-+                verify(
-+                    link_speed == v,
-+                    f"port {k} speed {link_speed} does not match configured '{v}'",
-+                )
+diff --git a/devtools/check-git-log.sh b/devtools/check-git-log.sh
+index 45a58fab4f..dee4056dad 100755
+--- a/devtools/check-git-log.sh
++++ b/devtools/check-git-log.sh
+@@ -53,7 +53,7 @@ bodylines=$(git log --format='%b' --reverse $range)
+ fixes=$(git log --format='%h %s' --reverse $range | grep -i ': *fix' | cut -d' ' -f1)
+ stablefixes=$($selfdir/git-log-fixes.sh $range | sed '/(N\/A)$/d'  | cut -d' ' -f2)
+ tags=$(git log --format='%b' --reverse $range | grep -i -e 'by *:' -e 'fix.*:')
+-bytag='\(Reported\|Suggested\|Signed-off\|Acked\|Reviewed\|Tested\)-by:'
++bytag='\(Co-developed\|Reported\|Suggested\|Signed-off\|Acked\|Reviewed\|Tested\)-by:'
+ reltag='Coverity issue:\|Bugzilla ID:\|Fixes:\|Cc:'
+ 
+ failure=false
+@@ -233,10 +233,11 @@ bad=$(for commit in $commits; do
+ 		SEQ[4] = "^$";
+ 		SEQ[5] = "Reported-by";
+ 		SEQ[6] = "Suggested-by";
+-		SEQ[7] = "Signed-off-by";
+-		SEQ[8] = "Acked-by";
+-		SEQ[9] = "Reviewed-by";
+-		SEQ[10] = "Tested-by";
++		SEQ[7] = "Co-developed-by";
++		SEQ[8] = "Signed-off-by";
++		SEQ[9] = "Acked-by";
++		SEQ[10] = "Reviewed-by";
++		SEQ[11] = "Tested-by";
+ 		latest = 0;
+ 		chronological = 0;
+ 	}
 -- 
-2.50.1
+2.51.0
 
