@@ -2,72 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D2F106ACDB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 18:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F23D106ACDB
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 18:48:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 19A12402AC;
-	Thu, 12 Mar 2026 19:46:33 +0100 (CET)
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com
- [209.85.160.49]) by mails.dpdk.org (Postfix) with ESMTP id 4A61240275
- for <dev@dpdk.org>; Thu, 12 Mar 2026 19:46:31 +0100 (CET)
-Received: by mail-oa1-f49.google.com with SMTP id
- 586e51a60fabf-409de4132b5so872422fac.1
- for <dev@dpdk.org>; Thu, 12 Mar 2026 11:46:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2100A402AC;
+	Thu, 12 Mar 2026 19:48:55 +0100 (CET)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com
+ [209.85.218.50]) by mails.dpdk.org (Postfix) with ESMTP id 353D140275
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 19:48:54 +0100 (CET)
+Received: by mail-ej1-f50.google.com with SMTP id
+ a640c23a62f3a-b7cf4a975d2so180442766b.2
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 11:48:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773341334; cv=none;
+ d=google.com; s=arc-20240605;
+ b=LGbqyPsJ9IxeaaTGXWsktuhe3xWijAwm7Mey/8nOUM/C69urRNnpU6Ynz+0juMxZra
+ a+2PPSK6ua+lU21UYVkseh8TyPjVAMxmnReHDATFqkiiMw+KTnQ0pKcRyF8bHFxA7qeM
+ YREhh3zSuxiEKXH1bklCnybpyTR7QL98OFYCHAPk/3cFXvhk9B2BkyhMBxfmGXxmxOev
+ Qztn9oWhqDRlrwo0ZHNfrnwKha7dMF/N4sWj0bHIMti5aKPCm4LwMqxWJVGUfA0hefS3
+ p2brkbtBA7XNFPa20SzI73vgj0NreE1RrziRwnHiwGIhG1R6o/yFDMyyibuG31SwfuQp
+ 6bAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=vnvKl7hbYfEOQEG+glO+VtastQnECEdRn2T9+JD6+aM=;
+ fh=JmUyFF46ov/5obm1JP05q7Yz5ZjgvokKZboQOsoqaLk=;
+ b=U7EhmC1Qd7I4fHp5vWWNHWmLckLKTDtEZiLGuFY6kRGlVPuBtnfC9VFwAtpN8YxGID
+ Z5mQ8l7OhcfkKJ3ZJJYEq78LXCQwwTx8xd+PPceCmoWzgTxwXAPlyUqcCQJb/sfs5N8s
+ zy9P8HHIVwmHkoOF6Cfa464m98NGmDrCnmBWSBt8+3bYAJ+ivrJaxrzZ1ajpR6s/4U4F
+ uyKO1z7x8BrjIGYwXLkMWFqWgaWRYQ/SEnukCDC/rAxUsKC71yGlc8Y9x7UgEyO7xUWu
+ Jz8dAj1oYxu1kI5UZNFN6eK5a9A1wDudFN2qeGhTt4VAJQWAbyqVd97eFxauA5lkpxLm
+ 3ZAg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773341190;
- x=1773945990; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=L0gifONoD6C6tlp6NFpgQHjtk5byQARCBPO/2zTn9Fk=;
- b=Vc+Mr6jAmSKw61I0aM8DTPnhIDZ2YZV4bIPjF8JzqyFHAgVfUTeQY1j+HFfLXtfb0O
- qp6jIHujKt9uVz4RK7/iENX64pDwZ5bnz61m8VNFQcs7zXrSUIrVRaZUfXES4rbRbzgh
- ySq36yzx90xjDHD5eAEg/cOa79noRaHFyaGzgTryaeGgtiEp8uE5Q7VJpdOHp+Sz3dpu
- hoCXIG53UC/ht+nBasH1qOhpOfsZCls6EDeAMLiAgv/J/eR4U3m7KfJDAu4N9czVx7TO
- IsQgrCdqDe1VAw1rWSR91XUI1C7sYHTFs1lBZzq+NFs9GZCI3R3sFomoGMjrxkhmbz30
- 3JuA==
+ d=iol.unh.edu; s=unh-iol; t=1773341334; x=1773946134; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=vnvKl7hbYfEOQEG+glO+VtastQnECEdRn2T9+JD6+aM=;
+ b=Ziod5BFFCE6KylJEkabSJQAUivuSPquC8jP9yhQBaF71pWhzfN4VViU+OX6JyLySqQ
+ vTn06db4E5B9XQIIhta6PgP/pb1Hck3Op6rwlQA1vNH3bR7BZ2NerH1vyrZATbl6HK1G
+ m64Kglz9tFjjEQ2mwHRRKii4jl1zgo21M765Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773341190; x=1773945990;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=L0gifONoD6C6tlp6NFpgQHjtk5byQARCBPO/2zTn9Fk=;
- b=rxIThG4U6UDBJ60fq+BuKV+RD8ZlYDiEnbuc2PE+Z6JjZZE477CMnj2lSsrQTAoO7A
- EzfaRNIQW31OmDUelUAWNtvHISKGa0kv4fxkGc8UjHicXw08PfGE9lkKqC/m85htpg0J
- 9XnLiJxhW06rWw67gXBDx6d2fcmWR6p3ctJk2D4ks76YidP5oJM1eoSzZDl8Nl7AW07P
- c2vzcI9Krzel52sKG8OZ00WLiAYVNr0uH3s3yH3/5aDw+G11MjaxMSu0whIC4yopJ8Vg
- TBm4DM/JI7TCFdRwPsTFJzyjFff9B3PkuthFAO51SV++x3y2TQjVyxuhWj87Q2ceOCXn
- +rdQ==
-X-Gm-Message-State: AOJu0YwajzHhmQyGAlbRJMmFKJZccwq9S2XEOgdgCXXKBSroRXXIQa1Z
- baOqUr3Js/Rj9RSKPlBxK+6mNWH4OALTRuAPWoNOH5OdAFmeSIAOyBmFBQ5cWAZQByE=
-X-Gm-Gg: ATEYQzymrSf/ax8nelqoL66OctUVzlaLR+kjNl+dtxxTrGY9hbYvavgBq0ll8A5qMDL
- fmwNjCv88CXaRM7BEiQJOif1dWPqhMZ96ZXWDrW5SKg5Yfw8G+vsHURudDQZi7D1SNggpACBB8j
- VRxk7V9uNEOwaJOS3FTRKY6LpmLPiWSnf/icr7hhLZzJFCrD8rlnCXP5XaJF2RZT0s3T81uuRCj
- 8K8q2gQRc+ElnzULuxmYS15s/HbOcY5gJXBYVsgFtTRhgFAp9rohWb3d/ZeAFvTQYp/Jjjs2dvq
- adiJ0rqaOPdsY+toSM5c1ooPG4Hr+nrrdl8fkgZ25gRmvd2D/HffjEdofQerSataDxs3p6We/sY
- LUmSM9pNlrx1SrvVL7yqCLa71i+qEUOW+ztCN2o8uJ63/7uTC4KHNpbNczD5if/47WV5+L5ZDRe
- mAbfQxKj9DojJ78hqLnVYSDBvlhdcryjVrbDw=
-X-Received: by 2002:a05:6870:c244:b0:417:70c2:8537 with SMTP id
- 586e51a60fabf-417b94025e6mr248591fac.25.1773341190495; 
- Thu, 12 Mar 2026 11:46:30 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-4177e26e2c6sm6049046fac.7.2026.03.12.11.46.29
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Mar 2026 11:46:30 -0700 (PDT)
-Date: Thu, 12 Mar 2026 11:46:28 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Xavier Guillaume <xavier.guillaume@ovhcloud.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH v3 0/3] net/af_packet: fix MTU handling and add jumbo
- frame support
-Message-ID: <20260312114628.662c88b3@phoenix.local>
-In-Reply-To: <20260310112122.2930093-1-xavier.guillaume@ovhcloud.com>
-References: <20260309161021.2790684-1-xavier.guillaume@ovhcloud.com>
- <20260310112122.2930093-1-xavier.guillaume@ovhcloud.com>
+ d=1e100.net; s=20230601; t=1773341334; x=1773946134;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=vnvKl7hbYfEOQEG+glO+VtastQnECEdRn2T9+JD6+aM=;
+ b=EcB+IaEcVS2EslEcUqkkK6ZqnDorhZ2f2NTd3AsZIgip9gUzbng+pKZrOedX3jGVvE
+ E/rIPj4q/wp7bCFSoZD2br2FUm+XGwQNRDhjF37CejuxsNxvrdgyXBKEEkeQUnArTxzA
+ ZRivOFWkMYOThe+MaJWw0GG4kQaoKhPM8XAeOAJUifBaVH7D7QeCf5MrS7DaYIoYLcUQ
+ aIvbmH9yTspFa5qrR1OmoSP35MKQ2Lm/6M/Vry2UjhJTi0BqTveosUfK4aoJ21XpXNTm
+ SUmyFmLw/x6RLo5oSm7PV6oTYgvJ3oFlIHINEMSJGIo7nQB52apz6+7xd9EQVqfCAsvp
+ 2Sag==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVgVn0KM5l9aDZUYb7kblH1dJiL2nUinh4Z9kAVvJcddOq/aaj+wdMtbfH6tSvvgiKNT10=@dpdk.org
+X-Gm-Message-State: AOJu0YzssjFnc2MgLjUlouIN3ktACMZgVyag10JsV1EQsmuo54l4D2C7
+ /g66dilHgdA0F2pDD9hNFAL4ZNGHAELJvUCLC+/bXodduEZd1UXMAuToXPipykx72r/cUo/qmCw
+ FbOv8Lv6EnTTNnQhZAizq3U7FBEcayDRLxbkdOinzwA==
+X-Gm-Gg: ATEYQzx6HkbtZh0T6dflrZ+Xgv4DiOZhvVrF/Em6PSfL6lPHZ8ddZHlL1VCZb5/M0n/
+ 2ri0zuFzi2ggpQy6OxapbbzBoOVBB0/mXOtCNY87FmVVJL9Tr3ee6T+sNz8Hdp1NImbtxuhMn7V
+ feGrUaP/y1ACcxTy9s3A7zd2tqSEZw0AUik8tw7lUSFlcPgI02yB1OYZanoOlXBcRLH4374Dy1J
+ sMkTrwgyNSno8KulXtvD1uqEUytz0TYYEYRW2wHwaoNDPaKTqd7NVsTy7hdHicbIo4poSTZD3ze
+ KgPC/tGHwdLsfLb7QJf+J8thInjF/yiZYKDTUuby
+X-Received: by 2002:a17:907:94d3:b0:b96:edcd:cd04 with SMTP id
+ a640c23a62f3a-b976530e917mr27392666b.49.1773341333643; Thu, 12 Mar 2026
+ 11:48:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260210193448.69423-1-abailey@iol.unh.edu>
+ <20260306164027.171723-1-abailey@iol.unh.edu>
+ <20260306164027.171723-6-abailey@iol.unh.edu> <8652174.T7Z3S40VBb@thomas>
+In-Reply-To: <8652174.T7Z3S40VBb@thomas>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Thu, 12 Mar 2026 14:48:42 -0400
+X-Gm-Features: AaiRm52fqV1VgFL6_Omy9M92Eo35rLdxke9ohLghunk2IIEzy5Q6vAAPFXdXVRA
+Message-ID: <CABJ3N2XxFso=mKLObZzy5bPiLDRewNmNU=15WCh2koz=4EdnqA@mail.gmail.com>
+Subject: Re: [PATCH v5 5/5] dts: add crypto test decorator
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: probb@iol.unh.edu, dev@dpdk.org, luca.vizzarro@arm.com, dmarx@iol.unh.edu, 
+ kai.ji@intel.com, dharmikjayesh.thakkar@arm.com, david.marchand@redhat.com,
+ gakhil@marvell.com
+Content-Type: multipart/alternative; boundary="00000000000041f118064cd834f4"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,28 +95,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 10 Mar 2026 12:21:19 +0100
-Xavier Guillaume <xavier.guillaume@ovhcloud.com> wrote:
+--00000000000041f118064cd834f4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> This series fixes two bugs in the af_packet PMD related to frame
-> size calculations and buffer safety, then enables jumbo frame
-> support by deriving the advertised capabilities from the actual
-> TPACKET ring configuration.
-> 
-> Patch 1 fixes the data size calculation in eth_dev_mtu_set() which
-> is too restrictive due to TPACKET2_HDRLEN including sizeof(struct
-> sockaddr_ll) even though the sockaddr_ll does not consume frame
-> data space. The formula is now consistent with the RX and TX paths.
-> 
-> Patch 2 adds a bounds check in the RX path to prevent a heap buffer
-> overflow when the kernel delivers a packet larger than the mbuf data
-> room (e.g. if the kernel interface MTU is raised externally).
-> 
-> Patch 3 replaces the static max_rx_pktlen (RTE_ETHER_MAX_LEN) and
-> adds max_mtu, both derived from the configured TPACKET frame size.
-> This enables jumbo frame support when the user specifies a larger
-> framesz devarg at vdev creation time. Since the ethdev layer now
-> validates mtu <= max_mtu before calling the PMD, the data_size
-> bounds check in eth_dev_mtu_set() is converted to RTE_ASSERT().
+On Thu, Mar 12, 2026 at 2:08=E2=80=AFPM Thomas Monjalon <thomas@monjalon.ne=
+t> wrote:
 
-Applied to next-net and added your email to .mailmap as needed.
+> That's a bit strange to read,
+> because a crypto test can be functional or performance.
+> I suppose we can re-discuss the classification of the tests.
+> If the only need here is about the traffic generator,
+> we could make it "raw input" or something like that?
+>
+
+I agree that "crypto" is not exactly a true description of the
+purpose for this test type. It is probably better for the test type
+to explicitly describe it's purpose. maybe NO_GEN/NO_GENERATOR
+or NO_TG. It just so happens with this series that crypto tests are the
+only cases with this type, which was the cause for the initial name
+but should change in the future. Furthermore, we could divide this
+into performance and functional versions of this flag.
+
+--00000000000041f118064cd834f4
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div dir=3D"ltr"><br></div><br><div class=3D"gmail_quote g=
+mail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Mar 12,=
+ 2026 at 2:08=E2=80=AFPM Thomas Monjalon &lt;<a href=3D"mailto:thomas@monja=
+lon.net">thomas@monjalon.net</a>&gt; wrote:</div><blockquote class=3D"gmail=
+_quote" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204=
+,204);padding-left:1ex">
+That&#39;s a bit strange to read,<br>
+because a crypto test can be functional or performance.<br>
+I suppose we can re-discuss the classification of the tests.<br>
+If the only need here is about the traffic generator,<br>
+we could make it &quot;raw input&quot; or something like that?<br></blockqu=
+ote><div><br>I agree that &quot;crypto&quot; is not exactly a true descript=
+ion of the <br>purpose for this test type. It is probably better for the te=
+st type<br>to explicitly describe it&#39;s purpose. maybe NO_GEN/NO_GENERAT=
+OR<br>or NO_TG. It just so happens with this series that crypto tests are t=
+he<br>only cases with this type, which was the cause for the initial name<b=
+r>but should change in the future. Furthermore, we could divide this<br>int=
+o performance and functional versions of this flag.<br><br></div></div></di=
+v>
+
+--00000000000041f118064cd834f4--
