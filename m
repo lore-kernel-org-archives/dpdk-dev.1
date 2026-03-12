@@ -2,74 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27AB7106ACCB
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 16:33:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF4A106ACC9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 16:35:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4D3CD402C9;
-	Thu, 12 Mar 2026 17:33:31 +0100 (CET)
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com
- [209.85.167.176])
- by mails.dpdk.org (Postfix) with ESMTP id 3A3E2402AC
- for <dev@dpdk.org>; Thu, 12 Mar 2026 17:33:29 +0100 (CET)
-Received: by mail-oi1-f176.google.com with SMTP id
- 5614622812f47-4648447e29bso503397b6e.0
- for <dev@dpdk.org>; Thu, 12 Mar 2026 09:33:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 688CB402C9;
+	Thu, 12 Mar 2026 17:35:01 +0100 (CET)
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com
+ [209.85.210.45]) by mails.dpdk.org (Postfix) with ESMTP id 19239402AC
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 17:35:00 +0100 (CET)
+Received: by mail-ot1-f45.google.com with SMTP id
+ 46e09a7af769-7d74dbfe84cso852297a34.1
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 09:35:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773333208;
- x=1773938008; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773333299;
+ x=1773938099; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DO6ZXL3v5SlEA8q99IScZBlfecTgr4ZFHrrAvfQBNZ4=;
- b=QdnCHtHEYS+GEao1cq8w1g9LZKnQowLLKyLb3duw3fmymVpP9sf8FJwWcbTaJfXX95
- 1UWC7L+jwySSZpWNcMCZ8y7R7I+qzk2p2cGiBw2owtn7e0amdz7R348n4d0TNPISEgHg
- wyktc2RrDX67Q6OmfpBoXozNJ/cNu6eih619ewN5JtXxG5852o08o74F8zqgBM3ZGz6V
- bf3mwei/zEIjt38UwjgVnR2JOveytOZcsSGktQusgu8aAOK4/GynrvQBuas9X3qD4yQm
- pSI7hD4wsV/k2blVXKwqEEvIf+kCRK3X/vRU6qTjikA5b4ihj0zjRVw0nNm9MKR/F13Q
- q3iA==
+ bh=iP3wgpl0BsdWEPdvcrGD5f89pVQxSNl2qkl46NShn5I=;
+ b=gNCJ/6+lK9Hb8wqR5SS6ERSn1RTPAa+ag89xBuJjZo5GYDDjgXwbrMse9PALW+mzSK
+ ZaQdsjUhdtCP5PA8NTzudnfWmYAtLFH/nUaTKIC1GQeKoJlEJtqVHPR8xsCGpjUgNGIq
+ o71s6JDMxkx1FbkZ8adEKhRdnWFgYAYo/dqht8QTJYjKXCHKH6yB17HNs5zCoieGOQfG
+ L+GmngJHcDj9CHjcBoWE3PP36VhwS7dRgrvr6eiRYvPcTmeACqIY1WtGMs8CWBJCjOmp
+ 64yeYXEi+KnTQ8h9l3HyfgCe3mJOSMhJwUcXs5rJay39dTfNlUYTNsxY/IYQpVChuNHR
+ 7fsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773333208; x=1773938008;
+ d=1e100.net; s=20230601; t=1773333299; x=1773938099;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=DO6ZXL3v5SlEA8q99IScZBlfecTgr4ZFHrrAvfQBNZ4=;
- b=PxuPZMWCqOAAuugvETl6Z2CVJHhMGTb88SjYhfwTMylQ8NFLHSatQ+gyxSmFnbhtTR
- NIGsal7fCF+6Xpi8sVZUqGC3+7qpkQqNwtrfN4MWJ5LKbeXgdkvlEsDRtfhgqPCfUM4C
- z6w+CmLsk4Q2VVBC0NfuWlkVXBTz6wHuTgcRIgS2bJYoQdKHrOlUPkl9g/lvrReoyEcB
- E3rDQpg7mITav0oIKxHq2D2CsarqRZ5qQH793ThTQ5S+Ozjc3R0EU+RgbJJ7eDhWwIrg
- VRVbj7f0MR0RI/WM9MmBiCxlnKozu2P5UrfFMEMkLuSu7S9AR5qgpM3xvsGY5kEt92xP
- A6Aw==
-X-Gm-Message-State: AOJu0YynBIeNDG5tfJS/JNqCSS+dMttvUA9v0b2hImFdeVDKdn581XsC
- nryhNXv+e2BuVfScqFZ6Ak4+qny6Ja97f0X6z9mU1qeK/7rS98vhuX2mJZMPKsX3TqE=
-X-Gm-Gg: ATEYQzyF6KOwNLplUqOF1PB0EJVyOGl4cb8DuPzN4nSW+MpcYTmEWJ5vyzR+DZI7fDm
- slj+wF24cdHUyl2xbuNSKxzWVhwYIVGzqhKJMG44RnQmMZHF6fUXiYdMoxxn4fugk5KjER1bH7c
- 3ZePdTIyX80jUeFfKX5RFL82JWJXorg0MZY9iSNdReZZn9k+LfTyXbNRBbBM1qOW4A/Cl2mFGFp
- hyfaFIAlWvaNeN/N/6gEtbJf+tdUUE0Krav26wBBzkJgAM1gaeaAdJBFJ/0+jg/54xen4BlyPrl
- vMO0Se2kSlCdnR2+u2Blo+5EkpYulW4qLB43tbGioPZhM89i3aSjZ0Z9yyPdNwumIOKIaJHRuRi
- CMSty9u7mDIeBLouZ4LAplCxv+J254tRgS8XBhpgwzt0ef3Ne9EJFrp2ievIUYOe7sPkAezs2Ed
- OZ3ZLzahU6hIq7I6RRy3QXhZkbqhVlfUkFmvc=
-X-Received: by 2002:a05:6808:8911:10b0:467:42ab:2f69 with SMTP id
- 5614622812f47-46742ab443bmr1790719b6e.34.1773333208377; 
- Thu, 12 Mar 2026 09:33:28 -0700 (PDT)
+ bh=iP3wgpl0BsdWEPdvcrGD5f89pVQxSNl2qkl46NShn5I=;
+ b=Hp2MSj59tsdbMBeRKbIg8rhbaA9WnIlQT5zErUNjAO2SM+xYt8OX073rvKUQ4qgdNx
+ RbUkIbKsNUe1/oMKtlkUzWIy6cevSa+aJd3mwGySnLQeHASteVuT6s1cxSFmVmah/rpL
+ wStAW7VUFtOssAKgZVCFd46SYrETZlwloaTiay9eQfwqpSaOlLumr9g+kRc7AncQV+GT
+ TlUQ60jBp8Jz+zeknte2K/alAV0c3+7Iah/5L2/GML/uXJIPSwUSp7l0AuLHBW7/pSiE
+ irBqEeih6kSz4ZsOkHLx/RRzd/g4zupJo1uxfNzRbC2MuFz6QkijfJA4lsYjVXYeeFU5
+ 5eOQ==
+X-Gm-Message-State: AOJu0YyNovlx0NHw2NYqbhVbY+vF9m3NH7b/E9OYW0UbJagmm6yEwXW6
+ /OmALQgCqJsWno3o6g7LtvYCvRWCeKNKeHQDTRqJehPeI68JYV6evnIFh6NnHV6WKWk=
+X-Gm-Gg: ATEYQzyOvelTSX/qKNEQBnv/17sjgeUwZw2adR8mUpGtK8nqcbxcB0/IRWQcoSfV+6u
+ +c5bbj35qVq3lsf7wzT3AK1R6f4p85x1GjvKBQsfeW45Qnm0IyHPr87/Rb+DVB9v+B/wdWNQgcb
+ FMn3X5sPFuEOcKUrJ0wlYhkRyILn+6vHC0jpxP7o+OUrJTqjtVsZFcLcu+BppPwlhke+hlTQASD
+ Lg43pPghjuI2eQ38vTpXNsR1pZrM0OyvqWDAnsfw5/QZ76KhudOdIMYGsyg2oMz+lWB9DMRXFdJ
+ 0Qz9mChxuhl169P352Fhn5LXaFNBuE4UjjuXoaEj1nXl9UVmvK6dO0EfAd2SqI98/rtShvAEdMx
+ 7NS49JOATKsQXy/rtV4dJcU12ADqaUFBNFSaNu4MFHfzeWiCRbwHQERAANj/CrenlRyh3YdIqwb
+ gF4Fp1dR+Q4+jCSAuICj5cWdhfSUs9duozgFw=
+X-Received: by 2002:a05:6820:3085:b0:67b:c5ef:abc4 with SMTP id
+ 006d021491bc7-67bda9da8cdmr22088eaf.31.1773333299143; 
+ Thu, 12 Mar 2026 09:34:59 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-41791432d87sm4575579fac.1.2026.03.12.09.33.27
+ 006d021491bc7-67bc9354e59sm3385518eaf.16.2026.03.12.09.34.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Mar 2026 09:33:28 -0700 (PDT)
-Date: Thu, 12 Mar 2026 09:33:25 -0700
+ Thu, 12 Mar 2026 09:34:59 -0700 (PDT)
+Date: Thu, 12 Mar 2026 09:34:56 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>, Rosen Xu <rosen.xu@altera.com>
-Subject: Re: [PATCH] raw/ifpga: fix comma warnings
-Message-ID: <20260312093325.3603220b@phoenix.local>
-In-Reply-To: <abLpp8jbldpWY8Bf@bricha3-mobl1.ger.corp.intel.com>
-References: <20260312002337.867771-1-stephen@networkplumber.org>
- <abKELl_UQ8uLhSTY@bricha3-mobl1.ger.corp.intel.com>
- <20260312090303.359d871a@phoenix.local>
- <abLpp8jbldpWY8Bf@bricha3-mobl1.ger.corp.intel.com>
+To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+Cc: <dev@dpdk.org>, <xavier.guillaume@ovhcloud.com>, <robin.l.lin@ericsson.com>
+Subject: Re: [PATCH v3] net/af_packet: add multi-segment mbuf support for
+ jumbo frames
+Message-ID: <20260312093456.5d4d2f48@phoenix.local>
+In-Reply-To: <20260312073403.4018157-1-sriram.yagnaraman@ericsson.com>
+References: <20260312073403.4018157-1-sriram.yagnaraman@ericsson.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,50 +80,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 12 Mar 2026 16:28:23 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+On Thu, 12 Mar 2026 08:34:03 +0100
+Sriram Yagnaraman <sriram.yagnaraman@ericsson.com> wrote:
 
-> Yes, it's disabled for the drivers, but if we enable it for raw/ifpga
-> driver, how come this macro doesn't give the warning when it uses the exa=
-ct
-> same structure as the original code?
+> Enable jumbo frame reception with default mbuf data room size by
+> chaining multiple mbufs when packet exceeds single mbuf tailroom.
+> 
+> Scatter Rx is only enabled when RTE_ETH_RX_OFFLOAD_SCATTER is
+> requested. Packets are dropped if they exceed single mbuf size
+> and scatter is not enabled, or if mbuf allocation fails during
+> chaining. Error counter rx_dropped_pkts tracks all drops.
+> 
+> This allows receiving 9KB jumbo frames using standard 2KB mbufs,
+> chaining ~5 segments per jumbo packet.
+> ---
 
-Short answer, clang treats macros as special case for comma operator.
-
-As always AI has longer answer...
-
-
-Great question =E2=80=94 this is a well-known Clang behavior that trips peo=
-ple up.
-
-Clang's `-Wcomma` warning fires when it sees a comma operator where the lef=
-t-hand side result is discarded, since that's often a bug (someone meant `&=
-&` or `;` instead of `,`). The expression `(tmp =3D TAILQ_NEXT(dfl, node), =
-1)` is a textbook trigger: the assignment result is discarded and only the =
-`1` is used.
-
-However, Clang deliberately suppresses most warnings =E2=80=94 including `-=
-Wcomma` =E2=80=94 for code that originates from macro expansions. The ratio=
-nale is that macro-expanded code is an established idiom the user didn't wr=
-ite directly at that call site, so warning on it would generate noise that =
-the caller can't reasonably fix. The warning logic checks whether the expre=
-ssion's source location traces back to a macro expansion and, if so, skips =
-the diagnostic.
-
-So the two cases are semantically identical after preprocessing, but Clang'=
-s diagnostic engine distinguishes them by source location:
-
-**Inline version** =E2=80=94 the comma operator appears directly in your so=
-urce code =E2=86=92 Clang assumes you wrote it intentionally and warns you =
-in case you didn't.
-
-**Macro version** =E2=80=94 the comma operator is inside `TAILQ_FOREACH_SAF=
-E`'s expansion =E2=86=92 Clang sees the macro origin, treats it as an inten=
-tional idiom, and suppresses the warning.
-
-If you want to silence it in the inline case without rewriting the loop, yo=
-u have a few options: cast the left side to `void` explicitly =E2=80=94 `((=
-void)(tmp =3D TAILQ_NEXT(dfl, node)), 1)` =E2=80=94 which signals to Clang =
-that the discard is intentional, or use a pragma to locally disable `-Wcomm=
-a`, or just use the macro (which is the idiomatic approach for TAILQ iterat=
-ion anyway).
+Project does not accept patches without DCO (ie. Signed-off-by)
