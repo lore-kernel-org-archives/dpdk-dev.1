@@ -2,88 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 975FA106ACE3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 19:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51665106ACE7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 20:10:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C0BE402AC;
-	Thu, 12 Mar 2026 20:57:27 +0100 (CET)
-Received: from mail-dl1-f54.google.com (mail-dl1-f54.google.com [74.125.82.54])
- by mails.dpdk.org (Postfix) with ESMTP id 47FFB40275
- for <dev@dpdk.org>; Thu, 12 Mar 2026 20:57:25 +0100 (CET)
-Received: by mail-dl1-f54.google.com with SMTP id
- a92af1059eb24-1279eced0b9so1944055c88.0
- for <dev@dpdk.org>; Thu, 12 Mar 2026 12:57:25 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773345444; cv=none;
- d=google.com; s=arc-20240605;
- b=X1PCaUayuhiwaX5hrLUsHtpIxoVYV8ysqcZqYbQjxMrdkBx0K2fPpKJE/5AXO2xMkW
- OVFrrI6JoulzPeNHhH+WbctLarnFBd1w1rCGskDK4KusaQyyf7+/3wh7HVjTGVOE9OxS
- PtUGc+dHrJnPWokmUqYN7umGWqMysCdgULNf5F2xXbr7OSADay5/Sc+thZ6/lmKwfsJc
- i3i/SRdIIHwn8CNF/jol99eWQ8jE6Nlz9ZeueDZdh8DLT0HL9xjn+wnAAL9LpmfoMpTh
- rRYvwmvhlhAfT4JVqA0jOdgUKgcsFEVgdqrcaNLEDKG3hY6SjuN+plO9xTXCHmO3n29M
- WE1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=gxsC5d1vV/qhoBSPKdmeKewpCVQcEnR+SR7PKMRUTmA=;
- fh=3DlKQUBkh3BvmM9EBvBbtQsbHO0icDdrV2qCF6YN1d4=;
- b=IjVwK+YFs9zikYTn6+XTE/fM3WhueHy5CUhgQjJg+4B1I/32adn1Gi4PEh31CFW+iR
- NDcbqXBgQWK0DI9ecP/RJ6atqYcPbTlIXhaGvywP7euL8KuiGd9wOTtMW50wWHfwlm9d
- yVYRYgnIMD7mucqUKX9C9Lh0L1HlSf95hetV7vMqA9Gmgpx5e2QD3U87XAAVzW/60SHa
- KDsSELSZjsNwVHRkg1O8E+5eR2djG6LvkvcAkaNrs3iAh1ze9LZAyO3oeJ7nAL8hcxua
- 2239tI0/8VIGy4jTsuiei/M2hR4XkPjyZUBp2LS62oVN905Ioy4jP74rsO48YBxJLkAh
- TMJA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 3792D402AC;
+	Thu, 12 Mar 2026 21:10:44 +0100 (CET)
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com
+ [209.85.210.44]) by mails.dpdk.org (Postfix) with ESMTP id 5959140275
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 21:10:43 +0100 (CET)
+Received: by mail-ot1-f44.google.com with SMTP id
+ 46e09a7af769-7d1872504cbso1612908a34.0
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 13:10:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1773345444; x=1773950244; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773346242;
+ x=1773951042; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=gxsC5d1vV/qhoBSPKdmeKewpCVQcEnR+SR7PKMRUTmA=;
- b=HXBhIh8IaHE75E4VGB1clN0U0ZcjgJ5eYLQYON3wGeEbwPn/3GXH3M9yTSEUmJ32Er
- ruVk7JI15l1KFfwsG9ucpvPystRHzarOhus/AWME8+CQ9p3/ZvtScIbzjJCxcFN7fZml
- 8RrSesSt8NJ+VruLlUbVUNvfnz4dWyYDNSuLg=
+ bh=gUj9d5zYXKMHo5UBZUI1I7FY0ASYrfGIYhft9Ge8IYk=;
+ b=JW066uUNudCX5T7OJ5Ta8E9x35GgjexljWgQo898YEw4+l7abOQkn5AXQ1HR1bZu3c
+ tIannLAaxCmjrAutN/q+NygLPk1ui8O+/oKUlncJKEKNvSuunvV9BGvbRfeZtT82lpS/
+ 02uheuF1Ic5tj8EI4QRtAYXfgiBz30SVkqDDuntIEouG7lxOfKco6qKO7cFiOpu+oaU6
+ F0HV1jqQ9nJAlH+1i7wRUEOCA/X5RYr2e5UCcYy1r0qiwib2Xg1xpERDgu7xtZeXmttK
+ raN0KJxkbAVGYbruiDPCJehWVu8AgOTiBJjbtDjdeDvCaEvWP22Np2yCVJ9f8J1BgFvv
+ AdZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773345444; x=1773950244;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20230601; t=1773346242; x=1773951042;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=gxsC5d1vV/qhoBSPKdmeKewpCVQcEnR+SR7PKMRUTmA=;
- b=cDa93XzuIC1+WnoGo/IPwQs4Gg5Hucdl86EXC0d6Xt2O8SdPHY0lzXf/6wi6Lx8tpz
- On2uSJeDn166mG6M6r8UW9bVa2A/1USS0Rr21qfCelGWhTvFSHI6DYW+lYFEeaTE76yL
- qh4brIuHKdZu8AbowQi2RVDm1sfBnoVyDPJ6XAeWa66Tn0ZG9fKDoEi8bU6bLOfnDOG0
- 6Q0RhWymt8z2xf+lIQG/Ub47ryH7slS3eflD6e6TAMigNVjkRJ+3LiToo87yZgYy1w0G
- lrN5qCz27k7J9yiGoukRLx1UoF2kVVvBo5heDT770ZxTezP3BBjhXJdq+NRy56moTDaD
- UgcA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXyhSUIWpao4vaRO/Z458S0XQs+oaKlH1jFhq600aHg59TXArHd/4TfL/50hYn3M50vkJ0=@dpdk.org
-X-Gm-Message-State: AOJu0Yy0p4LwfD/JpYEcVtQPbtODzZNfWzWTzzjmktYKKUmdBv0WgCTw
- CzB5OMhDjsDCKDW+krkYghmB0hYygrEy0iFgt2IXJqcvo4TaRc+EIdbWUASmRq83joyvmYG7nW5
- aa6ld4O/vsZhaGbh3dGqGCqTEGiLon1FdQIe0GeGLOQ==
-X-Gm-Gg: ATEYQzw7se00ej5yYNTjEpBWWaRlxJHwDGVAv2BcvlAVZWx1iF+gZtuGlXK6baYTs3g
- C1QjHOGYUjM/OVLgCs/5dGZWtBmWbbEQJdUYZWMXLV9QvCcTPn3xB4IkPtR6AJFFHPjILlTC2y2
- 6hll0dI/SIA5gOJcw8R+ueCyiswICOaqpWoCppDUWu97hFZfvyOUlqqg1iQ4H9I/5lfH5CCJLyS
- m0O6TnwBuvDy6e4wGpYhL/5XHHYBZeVcbtcMqwZolZm1S5vWCdrpiTh1D/N12xVF3jWLmdiWcQV
- ydyPoHXY2riYcwSOM7pQWDXq83If38iER9P9y9qd7LKGVf++E7Sd1SROvO34OdJku2RJkXeStlr
- FkKBOOAU=
-X-Received: by 2002:a05:7022:4397:b0:128:cf70:9042 with SMTP id
- a92af1059eb24-128f3dc1edcmr410619c88.18.1773345444117; Thu, 12 Mar 2026
- 12:57:24 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260210193448.69423-1-abailey@iol.unh.edu>
- <20260306164027.171723-1-abailey@iol.unh.edu>
- <20260306164027.171723-6-abailey@iol.unh.edu> <8652174.T7Z3S40VBb@thomas>
-In-Reply-To: <8652174.T7Z3S40VBb@thomas>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Thu, 12 Mar 2026 15:54:18 -0400
-X-Gm-Features: AaiRm52kx-cEqASeS7XslEKg9EeyUTc9iCh-L55pP6-WtF_pswTSb0BLzZXL8m4
-Message-ID: <CAJvnSUDXGacdubwUaWWK3zZNx6zXPmoJLQm5_AdT7=u-mEqiWQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] dts: add crypto test decorator
+ bh=gUj9d5zYXKMHo5UBZUI1I7FY0ASYrfGIYhft9Ge8IYk=;
+ b=GafBzKpMujya2h1lqSb0AgyxqDt841t24gtYf9vupgd/U4T/mYDf1OFRVIJs1HTW5b
+ EEoX+jZKbTzned1pkXef/2DoKy1xTAjZBbcqpsXVvh0tLNvjwb+Ss9rzTApnrAud5qLW
+ SqyMijasjcRMeV6UBWTxkYz/fhMDKccmGGz87Ssa76YQk2sDQVWSBe3TbIXkBL/ADMa3
+ euzECOrOO0lriiDirBchVCi1WEd/ibHvrY6lOZ4P3X09rRF9a3yAwglenlSQmcjWHZVy
+ c6IK1EeNu6Kf9s6g0iMia/pu2LakhzVQ+FimjDEGDAjG6mjBQ2cXWhM8JO+IUWd/d0RD
+ Ix+Q==
+X-Gm-Message-State: AOJu0Yx3u2oh/ngHv/jgNtVpaA1Ue97V+FK6gXdDY1pAhmgHxK+RSpNL
+ CGZqp9zrs16Hqo3AFMc55wcaR1meymBp1Y+hlbqopQR6zrX5WcKNlBqg4E0X9dBKRHTCU2bQkTZ
+ RTvb8
+X-Gm-Gg: ATEYQzzuhm6trAX2nxgwEqpLV+albNXPUMIjZ1Y3NSOIjs1OsdvY77oolb+L1fmYNpd
+ THQOJRgUh+D7jy4JUDmSOrm30RVProhze9D5O7YbdaYYWmbEQmg0nKOrRPb7Rkx+laUfB32sIj4
+ wN3o8Ti7LLQumWkKkeRIuI91m1tXRoR0ig4t3mOE0ReFnxOEiV3xoroqJ7iuoTVgXtqkgz7xLe/
+ KiYaZA1NExms/Qpwv0cWx0KdszYTUVsi5dWJ4fZlym0xo4BFskyPZqZop5wyiW0Ze8yk9vcBYMo
+ vHeMaDCbr4mIqcRz1SF+cePdYYgg9gIwBbgdl3USFz6MgNHSltkJHfoIw87F14+aOH+hugIJiAq
+ GuLb/+My9FRXjCHNhS/ruiiyt3t0P9Jj71pB4JqBjxkp7BsblSqKgcc9siuZtPaB25UlSPkB/CF
+ Tk05Ju/Ezy/1d271vd3dj13/nS3u52zNqX4R4=
+X-Received: by 2002:a05:6830:1041:b0:7d7:3ed3:cc8d with SMTP id
+ 46e09a7af769-7d776b844f6mr2135489a34.6.1773346242370; 
+ Thu, 12 Mar 2026 13:10:42 -0700 (PDT)
+Received: from phoenix.local ([104.202.29.139])
+ by smtp.gmail.com with ESMTPSA id
+ 46e09a7af769-7d76ac3230fsm4681015a34.4.2026.03.12.13.10.41
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 12 Mar 2026 13:10:42 -0700 (PDT)
+Date: Thu, 12 Mar 2026 13:10:39 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: Thomas Monjalon <thomas@monjalon.net>
-Cc: Andrew Bailey <abailey@iol.unh.edu>, dev@dpdk.org, luca.vizzarro@arm.com, 
- dmarx@iol.unh.edu, kai.ji@intel.com, dharmikjayesh.thakkar@arm.com, 
- david.marchand@redhat.com, gakhil@marvell.com
-Content-Type: text/plain; charset="UTF-8"
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] devtools: add Co-developed-by to commit log check
+Message-ID: <20260312131039.6ec4ddf3@phoenix.local>
+In-Reply-To: <23032153.EfDdHjke4D@thomas>
+References: <20260312185403.1051832-1-stephen@networkplumber.org>
+ <23032153.EfDdHjke4D@thomas>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -98,67 +81,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 12, 2026 at 2:08=E2=80=AFPM Thomas Monjalon <thomas@monjalon.ne=
-t> wrote:
->
-> 06/03/2026 17:40, Andrew Bailey:
-> > Currently, a test case is decorated to signify whether to use Scapy or
-> > TREX. This change allows test suites that do not use a traffic generato=
-r
-> > to avoid the overhead of initializing either one.
-> [...]
-> >                      if (tt.test_type is TestCaseType.FUNCTIONAL and se=
-lf.func)
-> >                      or (tt.test_type is TestCaseType.PERFORMANCE and s=
-elf.perf)
-> > +                    or (tt.test_type is TestCaseType.CRYPTO and self.c=
-rypto)
->
-> That's a bit strange to read,
-> because a crypto test can be functional or performance.
-> I suppose we can re-discuss the classification of the tests.
-> If the only need here is about the traffic generator,
+On Thu, 12 Mar 2026 19:56:25 +0100
+Thomas Monjalon <thomas@monjalon.net> wrote:
 
-In my opinion this is not quite true. There is another (and more
-important) need associated with the test categories, which is allowing
-users to run only a sub-category of tests according to their interest
-or hardware setup. I.e. we can expect some people to show up and
-desire only to run functional testcases (perhaps they have a minimal
-hardware setup which is not good for performance, or they are only
-working on resolving functional issues) and the test type categories
-allow the users this flexibility with regards to what kinds of DTS
-tests are run.
+> 12/03/2026 19:54, Stephen Hemminger:
+> > Add Co-developed-by to the recognized tag pattern and tag
+> > sequence order in check-git-log.sh. =20
+>=20
+> Why using such tag? Signed-off-by is not enough?
+>=20
+>=20
 
-> we could make it "raw input" or something like that?
->
->
+The tags were inherited from the kernel development process.
+=EF=BF=BC
+Signed-off-by is the DCO (Developer Certificate of Origin) attestation.=20
+It says "I certify that I have the right to submit this code under the proj=
+ect's license.
 
-In any case I agree with Thomas and Andrew that the situation with
-regards to test type classification/organization could use a review
-and a tweak in the 26.07 release. Right now every single crypto_test
-is a performance test (i.e. it runs a crypto workload, compares the
-Gbps output against the Gbps baseline the user set in
-tests_config.yaml for each testcast). But, some open questions for the
-future:
+Co-developed-by explicitly marks someone as a co-author of the patch.=20
+Without it, there's only one author recorded in the git metadata.
 
-1. Is there a need for users to select only functional crypto cases vs
-only perf crypto cases? Or we can just leave all crypto cases in 1
-bucket?
-2. If the above is true, should we switch the testcase decorators over to:
+I just wanted check-git-log.sh to be quiet if it was used.
 
-    a. ethdev_func
-    b. ethdev_perf
-    c. cryptodev_func
-    d. cryptodev_perf
+The Co-developed-by is new, and probably came about because some people
+need/want to have their contributions recorded in the git statistics.
+Silly corporate overlords count contributions and it matters to them...
 
-and every testcase gets one of these decorators
-
-OR
-
-We apply multiple decorators to each testcase (i.e. add both
-crypto_test and func_test to a testcase) and have the framework code
-read the whole set of testcase type decorators and setup accordingly.
-
-Thomas, is what we have right now in terms of testcase classification
-okay for the 26.03 release, and we can tweak it in 26.07, or do you
-want us to do something in the immediate term?
+PS: If DPDK was exactly following the kernel process, every time a patch wa=
+s merged into a sub-tree
+it would get a Signed-off-by from a maintainer. Because the maintainer is v=
+alidating that
+the submitter had the correct rights.
