@@ -2,75 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044C1106ACCD
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 17:03:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FFD1106ACD6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 18:08:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF00E40662;
-	Thu, 12 Mar 2026 18:03:21 +0100 (CET)
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com
- [209.85.210.47]) by mails.dpdk.org (Postfix) with ESMTP id EC94140275
- for <dev@dpdk.org>; Thu, 12 Mar 2026 18:03:20 +0100 (CET)
-Received: by mail-ot1-f47.google.com with SMTP id
- 46e09a7af769-7d743cd9e5bso869170a34.2
- for <dev@dpdk.org>; Thu, 12 Mar 2026 10:03:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773335000;
- x=1773939800; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=jVwtzATwz/9iRlT/3K0VAxf9faVB6PxwjVdiJTv9XEo=;
- b=vGLXiw+7ZoSSorufpcnFsoYYhTiTjtZC+haRTlh99Qop7OvfKbDijKwSVyZeMy7Qhx
- JLHSGizdbyUrCPqAhiQrT+khj9pBBHEC3evlQ8OUNc8IS1C06b3L94yUcPaeHqPupBPD
- t0MXe69pZuzmDPHmDNgBNbn+hoX1AxucSy2C1cPcvLE2K9zCv3TgpFIOxSEVmgRSdYA+
- 8V9leNVKf3VZdDItUsc8Vs93xhbzqPvDwwtKrHbY4CQA9sHeSo4M0kGMe5JO3/EAj1bJ
- wpY5/iv81a4xFo4Y50TFM5sDSCnA/It/uVkIUfZsS7nIM+PqtZL6OqiPvVrb3EAIH4xd
- 0ORw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773335000; x=1773939800;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=jVwtzATwz/9iRlT/3K0VAxf9faVB6PxwjVdiJTv9XEo=;
- b=wmQ9/K1xSWwCPtzgs05FtlsKiLE1msxKbWOkW1D+KsegwLTUltehly1MBz7zDGUgGG
- j2HC4rCSDFPoKnA3tMuAExHV5EKeE47RWXnuGxvBGloAW8+w+pCgbOJEEs/nsKcHgM6M
- qnwhUQ2QELifFHFGBX4C0hElBmIPeNER49QdUTLQRXwDYEhbyD8WOVFA3ToLJN2Tek54
- kkCfPwEMei0RJbt6Sw8l2eTPQ9ghq6aP7z9h5NSwgQbTp4n7QeYcU1F59xo9qVYQGsAc
- DG3fGjheLRr7OS+T85Xg4Wh7MRYWIWeatsefQ6SzM8djw1cLvN51AY5JCmIVkPvUvN/P
- ZTkA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCWmRa+m411rPuI4BSJ7vSKpZuIV9QHbDdHXpd1mdZ5GA0LQKiZzQZIy+d5PvCwmeOvrN9g=@dpdk.org
-X-Gm-Message-State: AOJu0YzQ+8GmHLkzSXsnERuqF2TRDPB3ifN5p7+D4eh39LstRx69dBIC
- /LKa/hvGKln4mn2XymJNEYEPhfwyRhz3gYmcJz0Ck+y8/ch0n1TgFryFWAwnr1bPbPo=
-X-Gm-Gg: ATEYQzxEz+8Rl/xRhCSXOWufrhvXtAP1LB+M9rmBiHOMsMrh6/9AHpUJquuTjczIMGm
- qrI8rQ9DkJkEcOiFwc0T+EPTldwbc51fqLy9fAjzdCOPQbQ3M4QVNS9hhqdvXSKGcXR1Hqf068P
- /bcWy4ZsE4hOVKwHaKmLlTeyTbcHvCzhY9e83DBfG++/a7G0Ps8dHEXR/meF3pYKJEOZ0iSPhkm
- Zya2nlgV5qPKMD82UTVBKKL2HXffoy+qTEc9JtdLZdjqPN8VBzfFLynb2zfiIeL2EynOyZ97jvp
- MPszCHVJOXO46OKp60L2xWes412XoyitQBFSFrFVHUziqGLglf3wZqLL434qcDwiU6VqxZAabYD
- 4vhfx9VHLFG1Ta+8Rj9Za+9cKAMKLTuT8vyBhMrMk4+eYlcg8ydXw1At8PqE4pMDN8Wj7ZvfSf8
- T5sl4CEsy3usIrVNAPM/qI1ZrtcnrvFg3PXio=
-X-Received: by 2002:a05:6830:7301:b0:7d7:7a70:cf5e with SMTP id
- 46e09a7af769-7d782603d1emr52127a34.28.1773335000139; 
- Thu, 12 Mar 2026 10:03:20 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7d76ae6a361sm4346858a34.20.2026.03.12.10.03.19
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Mar 2026 10:03:19 -0700 (PDT)
-Date: Thu, 12 Mar 2026 10:03:17 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: fengchengwen <fengchengwen@huawei.com>
-Cc: Kevin Traynor <ktraynor@redhat.com>, <dev@dpdk.org>, <stable@dpdk.org>,
- Aman Singh <aman.deep.singh@intel.com>
-Subject: Re: [PATCH 3/4] app/testpmd: check for no arguments
-Message-ID: <20260312100317.5b06a849@phoenix.local>
-In-Reply-To: <51026e44-1045-47ef-add5-7a98c3ad4eac@huawei.com>
-References: <20260312103606.702617-1-ktraynor@redhat.com>
- <20260312103606.702617-4-ktraynor@redhat.com>
- <51026e44-1045-47ef-add5-7a98c3ad4eac@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0FACE402AC;
+	Thu, 12 Mar 2026 19:08:24 +0100 (CET)
+Received: from fhigh-a7-smtp.messagingengine.com
+ (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D66040275
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 19:08:22 +0100 (CET)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 6AE5D1400277;
+ Thu, 12 Mar 2026 14:08:21 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-11.internal (MEProxy); Thu, 12 Mar 2026 14:08:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1773338901;
+ x=1773425301; bh=Xor/b4JtonGPEUjYEd8u0RlKNF/GMbXjcdWVK/YcD1w=; b=
+ mv+QfY0kjJl+zML60r+9gawF64v3/bri+DEvsSmicT/oKmSxzm4nhdozyr3Xq51B
+ PhnTXhR0CoaC4f9y4w7R9a0IqvkT2UhK9XoW0qvdPB4YvHcJZsGz7A3dGGzkmIZS
+ cTXQwwL1DBHO7c2LwdUSqZ3Nb58S3z5ibngSPpq13Nd7pCbvB7Wk8ep2AVUO67+a
+ Ul37+3OgfBZwG1P3vI2xAvfAd98P/nbUfsf2FQmAu+fs8XLQuSLan3CpuvSBDmbI
+ pEmqqfmg+dS+Oi5DJv/apjpMqJCAz7rOtdPpp5ZZW88KKWCYWVq1xaXFQI08Mqcq
+ mMxQYV4rxUo7/v4jDHrGHw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773338901; x=
+ 1773425301; bh=Xor/b4JtonGPEUjYEd8u0RlKNF/GMbXjcdWVK/YcD1w=; b=z
+ anX9LSMkg90FeTB6ENoqy+jlOlOD1s6fv/MPiAHlSqFpi+B9ICTyW0gkDVRSwXfn
+ UB7GcTN1crMiirBAPdZE1wFEiodYRBX0TEjeKyoozXR0AGMa4RblgEEVeBmi1lWW
+ yPl/XvaykjaSSXzN8Ph4BkGj0/zeTdUqnMAYIuBpXxn9DpBvwJXbDT6ck4iUt2qT
+ 0wsWFNzuW293ZAraUZshdZ7mMaWpDVYBbb8rja0RKCXNTzF4G7W2pAi6xHr9/7cW
+ 3qbesnQYSfh93uL6+XJIQc2nZwjHdF86lzbWil8OciDkI2NwwUL0K25kc3QuV+oM
+ BpmFwH5fzPeCPqp3xfXEA==
+X-ME-Sender: <xms:FAGzaWvDwRhZqd9CxinLg7bxf0LlGlq2zOyddiQFoEUPY8pibWheCw>
+ <xme:FAGzab4MWKJ-NCxbpbn4Ozs5Ibkd0JEavE_CKOB8_U8aNie-rdPT303o86omu8RoM
+ magnb_EKeLPR3z8XWSeW04ToPtKck8Zz69VvAXDUD2weQo1ZG83nA>
+X-ME-Received: <xmr:FAGzaScdH4eNHA_3kHtPAnxUgV6X0NrvkR9JEbslSeG9CcC2oFkM0oMNsP7KeVguDZsbPDJrI-iyIaNxq8rGqVPUJw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgddvkeejgeeiucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeelpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehprhhosggssehiohhlrdhunhhhrdgvug
+ hupdhrtghpthhtoheprggsrghilhgvhiesihholhdruhhnhhdrvgguuhdprhgtphhtthho
+ peguvghvseguphgukhdrohhrghdprhgtphhtthhopehluhgtrgdrvhhiiiiirghrrhhose
+ grrhhmrdgtohhmpdhrtghpthhtohepughmrghrgiesihholhdruhhnhhdrvgguuhdprhgt
+ phhtthhopehkrghirdhjihesihhnthgvlhdrtghomhdprhgtphhtthhopeguhhgrrhhmih
+ hkjhgrhigvshhhrdhthhgrkhhkrghrsegrrhhmrdgtohhmpdhrtghpthhtohepuggrvhhi
+ ugdrmhgrrhgthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehgrghkhhhilh
+ esmhgrrhhvvghllhdrtghomh
+X-ME-Proxy: <xmx:FAGzaYxaMKYEeNh_vwqYF4kJeMfXrmfI27TONzaiOOp45k0i_q-IGQ>
+ <xmx:FQGzaX-OpogOVbK5PYRn-J_Zyar8EXOxO3-jImwB99brdSS-wYRoZQ>
+ <xmx:FQGzaWzHeYJLpNio3oTMqlA4rseVv7sXy77PRbDevgLSnS4RfsvzGw>
+ <xmx:FQGzafrIstJhZUB9AwAIgoh9EnHq9sT9F1e4qm2EJLPmryLIWDfevA>
+ <xmx:FQGzaQnpCb5XY4bOaW0fFVcYYUmleFXcSPyIC0hTeElKCbVVJQoPVS4j>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 12 Mar 2026 14:08:19 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: probb@iol.unh.edu, Andrew Bailey <abailey@iol.unh.edu>
+Cc: dev@dpdk.org, luca.vizzarro@arm.com, dmarx@iol.unh.edu, kai.ji@intel.com, 
+ dharmikjayesh.thakkar@arm.com, david.marchand@redhat.com,
+ gakhil@marvell.com
+Subject: Re: [PATCH v5 5/5] dts: add crypto test decorator
+Date: Thu, 12 Mar 2026 19:08:17 +0100
+Message-ID: <8652174.T7Z3S40VBb@thomas>
+In-Reply-To: <20260306164027.171723-6-abailey@iol.unh.edu>
+References: <20260210193448.69423-1-abailey@iol.unh.edu>
+ <20260306164027.171723-1-abailey@iol.unh.edu>
+ <20260306164027.171723-6-abailey@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,19 +96,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 12 Mar 2026 20:37:42 +0800
-fengchengwen <fengchengwen@huawei.com> wrote:
+06/03/2026 17:40, Andrew Bailey:
+> Currently, a test case is decorated to signify whether to use Scapy or
+> TREX. This change allows test suites that do not use a traffic generator
+> to avoid the overhead of initializing either one.
+[...]
+>                      if (tt.test_type is TestCaseType.FUNCTIONAL and self.func)
+>                      or (tt.test_type is TestCaseType.PERFORMANCE and self.perf)
+> +                    or (tt.test_type is TestCaseType.CRYPTO and self.crypto)
 
-> Hi Kevin,
-> 
-> On 3/12/2026 6:36 PM, Kevin Traynor wrote:
-> > For the case where token is NULL, there are no arguments
-> > and split_str[0] is used uninitialized.  
-> 
-> In which case the token is NULL, if there are no arguments, the cmdline's
-> callback won't be invoke.
-> 
-> Thanks
+That's a bit strange to read,
+because a crypto test can be functional or performance.
+I suppose we can re-discuss the classification of the tests.
+If the only need here is about the traffic generator,
+we could make it "raw input" or something like that?
 
-It still maybe possible to get there with an empty string ""
-which would evaluate to no arguments?
+
