@@ -2,46 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32448106705A
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 15:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB431067058
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 16:01:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3964240613;
-	Thu, 12 Mar 2026 16:55:00 +0100 (CET)
-Received: from smtp5-g21.free.fr (smtp5-g21.free.fr [212.27.42.5])
- by mails.dpdk.org (Postfix) with ESMTP id 9B443402AC
- for <dev@dpdk.org>; Thu, 12 Mar 2026 16:54:58 +0100 (CET)
-Received: from L30177.local (unknown [213.36.7.12])
- (Authenticated sender: vjardin@free.fr)
- by smtp5-g21.free.fr (Postfix) with ESMTPSA id C8D146013B;
- Thu, 12 Mar 2026 16:54:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1773330898;
- bh=FU1Z/x4fEGURAEiwYKlAPLh5TeWadj2OV7u3oo7WLrs=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=m0Bb+V1iVN0rbcQsXyVKcPcJD63Yt27sPFUbaJqk93RBf0aBcnt5T145c1gqCSQtf
- kIbWMegqjCYVJaz48LtgzYjcWBEVyei9j5T4dMq0maJ9a3lNoUj4gZcYULnkq38KuK
- KH1yS7VaC7zq/WeSffInai5+pEFFaFqTSjUo4u4w/phMhr5DQ7etWGGZMeKZXeLDA+
- 3+EwM944AbUyLHZ5i1EH5hiuJ17EjYxAThoxLs+DmplPBa5zKdAN37NThpAqWBzHO1
- il0FxoxpjKNrfoMyhFdLMPNRf1H3chYgwf/FlaJJJvtEsvqiftLHJlrDk11WFO31G0
- EX66Th2zL8qWg==
-Date: Thu, 12 Mar 2026 16:54:45 +0100
-From: Vincent Jardin <vjardin@free.fr>
-To: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id B439C40613;
+	Thu, 12 Mar 2026 17:01:27 +0100 (CET)
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com
+ [209.85.210.41]) by mails.dpdk.org (Postfix) with ESMTP id 0BA0E402AC
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 17:01:25 +0100 (CET)
+Received: by mail-ot1-f41.google.com with SMTP id
+ 46e09a7af769-7d74dbfe84cso825742a34.1
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 09:01:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773331285;
+ x=1773936085; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=SJxsBIHex8kkMZ9dPlivoJgrHpKPpVcW4rflydP2WQ4=;
+ b=YOdqg0oNi59/Q9xkwKoAyrc71ZV3Xcx7LsDkJsIm4F2H56uaxU5BKAqwtuUDwtpjZl
+ tt3By3150inQNIaWia8fO4o99k/HFujhsWw8LoXgzLmNApVgtBglQxjOfnukbZUWmEll
+ lT23YdopoLxoHwPsP6OF6paVFgypM7dnqVngSP7LgbW2N8nh+gEnHEToaTioHXcwbObY
+ AYUl6duQ7tkaji/v+WsTqwFkYfG/eu9eiiC9ka+oqWOevY2ovOiAf06Di/TIX06Pj1z7
+ /Df5iRli2Mf6/MJRWQ3KN2FzTN3CD1+ZbQgAFDyX/G0MrY4T+Y8e9hllKo+GW8xomLnE
+ kLAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773331285; x=1773936085;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=SJxsBIHex8kkMZ9dPlivoJgrHpKPpVcW4rflydP2WQ4=;
+ b=hAfhJ3ZMId+1AyVe2Sr7vEbClo+WgNhbtmaiNMAgGxX1bKA4y+9hGWFRFNp37kiHPl
+ cZwZjFnmlAIl3xvobq0LkpojBxB93jMDIfPHR35UXWkdyH2UShSPXw4MFaagfns06CQZ
+ 5Zqo/Hhl5wN+lOf2kb6FwVR9BcaYnbQ0A2Cw9WWF5bmz74FDAPwHRrW/jLRd7fRQDkmh
+ F3vZv1AJWufiiQaIAZQwjfMl0hPdh4Q40fFEDHI7ObDGzPX9aql7dJvPza0Fhmu5YkHN
+ zZGVM2UwE3RmyiPggSFi8wJ/OvFNtPZGM9rBzQGu4gGA0WbBl/2ZqPTfN90UmWu+Bt4S
+ E9wA==
+X-Gm-Message-State: AOJu0YxBUjhlu8PPDK4Ijm5JeSfHbC09HEFDBACxbULn4jMMNgAiS8TB
+ YDhKg1eo4ao6h2aVra8xJPXZmCM++QxNlKLEu8rmvi7X+7D3eC3gefBAtTuMa7JsrHQ=
+X-Gm-Gg: ATEYQzxXBiRma2flR24+OHcp710b4gmri96MHnz0o4frJ1m6oQVx9kJuxPiCyskCVlN
+ /hING8zUa/HtXKDTCulnLRKPuQFGr/cOaUeqmLMIcYTLPn+IBfJ44TnlbBe6qxDHLiIn+L+W/ZF
+ MXZhWQqjtficwjWNwB1nWMUfpAjT8z5d9MEk4huzADjfgo/yo8QqyZvaMNThOgqymVwZwmsrZ0X
+ 8zQp2IPRGvbN+vQUqf1qgH0Xlo9Dj+M1lJ7efY7/l47hmOzSxfowkqBU8nb3T+u5t3Y0oYIj02S
+ 0Wc3J41maLURb9TjO1Jndqi+t3DjHuTizwb2IlITmrsAjBp+WtTkYL/9nsBqlgcaRzVYDkaKBCc
+ 8l8J/0QZO7okPPtZ04WjCDpB4tKcIkqFtzo+oVDzDJJ/AQtM64GV4nKsTwkBLFvcqfR39WFSZQ/
+ TsG6dDsBewzPTB8C0o97qJoeWYciNyh3dH5Ho=
+X-Received: by 2002:a4a:e914:0:b0:679:dd87:3bb6 with SMTP id
+ 006d021491bc7-67bc88ae11amr4518327eaf.22.1773331283561; 
+ Thu, 12 Mar 2026 09:01:23 -0700 (PDT)
+Received: from phoenix.local ([104.202.29.139])
+ by smtp.gmail.com with ESMTPSA id
+ 006d021491bc7-67bc9332686sm3438846eaf.13.2026.03.12.09.01.22
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 12 Mar 2026 09:01:23 -0700 (PDT)
+Date: Thu, 12 Mar 2026 09:01:19 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Vincent Jardin <vjardin@free.fr>
 Cc: dev@dpdk.org, rasland@nvidia.com, thomas@monjalon.net,
  andrew.rybchenko@oktetlabs.ru, dsosnowski@nvidia.com,
  viacheslavo@nvidia.com, bingz@nvidia.com, orika@nvidia.com,
  suanmingm@nvidia.com, matan@nvidia.com
-Subject: Re: [PATCH v2 08/10] ethdev: add getter for per-queue Tx rate limit
-Message-ID: <abLhxcU98iNuyXjN@L30177.local>
+Subject: Re: [PATCH v2 10/10] net/mlx5: add rate table capacity query API
+Message-ID: <20260312090119.791fc185@phoenix.local>
+In-Reply-To: <abLWPxI8j49C2voo@L30177.local>
 References: <20260310092014.2762894-1-vjardin@free.fr>
  <20260310232653.2935764-1-vjardin@free.fr>
- <20260310232653.2935764-9-vjardin@free.fr>
- <20260311092648.7f22eb67@phoenix.local>
+ <20260310232653.2935764-11-vjardin@free.fr>
+ <20260311093540.5ada20a3@phoenix.local>
+ <abLWPxI8j49C2voo@L30177.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260311092648.7f22eb67@phoenix.local>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,71 +86,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+On Thu, 12 Mar 2026 16:05:35 +0100
+Vincent Jardin <vjardin@free.fr> wrote:
 
-Thanks for the review, see below.
-
-Le 11/03/26 09:26, Stephen Hemminger a écrit :
-> A couple of observations about this new API.
+> >   
+> > > +	if (!rte_eth_dev_is_valid_port(port_id))
+> > > +		return -ENODEV;  
+> > 
+> > Ditto checks for port_id should be at ethdev  
 > 
-> 1. The queue index validation is duplicated in both ethdev and mlx5
-> driver. Since this is a new API, the ethdev layer should be the single place
-> that validates queue_idx < nb_tx_queues and rejects NULL output
-> pointers - the driver callbacks should be able to assume these
-> preconditions are met. The same applies to the existing
-> mlx5_set_queue_rate_limit() which re-checks bounds that
-> rte_eth_set_queue_rate_limit() already validates. Remove the redundant
-> checks from the driver.
-
-You are right. In v3, I'll:
-
-- rte_eth_get_queue_rate_limit() - validate queue_idx
-  and NULL tx_rate pointer before calling the driver op. This is the
-  single validation point.
-
-- mlx5_get_queue_rate_limit() - no longer check queue_idx bounds or
-  NULL -- it trusts the ethdev preconditions.
-
-- mlx5_set_queue_rate_limit() - also set a redundant queue_idx bounds
-  check that duplicated what rte_eth_set_queue_rate_limit() already
-  does -- removed as well.
-
-The only driver-level checks that remain are things the ethdev layer
-cannot know about and whether the HW supports packet_pacing since
-it seems a bit specific. Later on, it could be revisisted.
-
+> This function is a PMD-specific API declared in rte_pmd_mlx5.h, not an ethdev op.
+>   application -> rte_pmd_mlx5_pp_rate_table_query() -> mlx5 internals
 > 
-> 2. The new rte_eth_get_queue_rate_limit() API uses uint32_t for the
-> rate. Since this is a brand-new experimental API with no backward
-> compatibility constraint, use uint64_t for the rate value to
-> accommodate future devices with rates exceeding 4 Gbps. This applies to
-> both the getter and the setter callback - adding a new getter that
-> already needs a type change next year defeats the purpose of getting
-> the API right now.
-
-No, it would break API symmetry which I do not like.
-
-The rate unit is Mbps, not bps. This is documented in both the setter and getter,
-and matches how rte_eth_set_queue_rate_limit().
-
-uint32_t in Mbps covers up to about 4.3 Tbps. Current top-end NICs are 800 Gbps
-aggregate; per-queue rates are a fraction of that. We are more than
-three orders of magnitude away from saturating uint32_t.
-
-Changing the getter to uint64_t would break API symmetry -- the existing
-setter is:
-   int rte_eth_set_queue_rate_limit(uint16_t port_id, uint16_t queue_idx,
-                                    uint32_t tx_rate);
-
-The day per-queue rates approach the Tbps range, both setter and getter
-would need to evolve together as part of a broader ethdev ABI revision.
-Until then, let's keep it consistent.
-
+> Therefore, the function must validate its own inputs:
+>  - port_id validity (via rte_eth_dev_get_by_name() / rte_eth_dev_is_valid_port())
+>  - info != NULL
 > 
-> Surprising to me, that AI review found nits, but totally missed
-> several architectural issues.
+> Adding a generic ethdev op (ex eth_rate_table_query_t) for a concept
+> only one driver supports would be over-engineering.  If other drivers later
+> expose a similar rate table concept, that would be the time to factor out a
+> generic ethdev API.
 
-+1, AI helps, but it is appreciated with the human reviews too ;) so we can have our flavours.
-
-Best regards,
-  Vincent
+OK, but I have a different point view than most DPDK developers.
+Allowing and having driver specific API's in the first place was a mistake.
+It encourages one off API's and makes applications locked in to a specific
+NIC; which is good for NIC vendors but bad design pattern.
