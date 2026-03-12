@@ -2,37 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D5B106ACEE
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 22:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ABA0106ACEE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 22:03:21 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8F37F40285;
-	Thu, 12 Mar 2026 23:03:06 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A9514060B;
+	Thu, 12 Mar 2026 23:03:20 +0100 (CET)
 Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
- by mails.dpdk.org (Postfix) with ESMTP id 1FA4940275
- for <dev@dpdk.org>; Thu, 12 Mar 2026 23:03:05 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 0665D40275
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 23:03:19 +0100 (CET)
 Received: from localhost.localdomain (unknown [82.65.104.223])
  (Authenticated sender: vjardin@free.fr)
- by smtp6-g21.free.fr (Postfix) with ESMTPSA id 03D9E78034E;
- Thu, 12 Mar 2026 23:02:50 +0100 (CET)
+ by smtp6-g21.free.fr (Postfix) with ESMTPSA id 3E14C78035B;
+ Thu, 12 Mar 2026 23:03:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1773352985;
- bh=oltNskGDdXTuGBxIWx1d2Yn+qgv2hV2YFoiSVq+A7KE=;
+ s=smtp-20201208; t=1773352999;
+ bh=LlLs39mVUnBHfMh6iOz6kNfKYYIvZlHEjgSyVXFETWI=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=akA8s0BubJXRosMbT0xfepogf1Fbov/Wox6cZEOtj3eHaAJKQY5YQRKA4wAiy4Cu+
- 9JIHLW5p8bucxmy9ckKnFfybI9crsZDLhZ1xS05sbSUqN6y+fkYbdLH0OXMmR8EStj
- R3AEZYg31S95Bs0wVsoBlpIxwaJlSWqhEcpkXm3xx4Vvz80IES8zIPvklX4XLNQOs/
- LCn4PrZ7gmJYuzr6c0f1nfkxD0XhqgTA1ioAfi43kPcM6vQOJCY32uzbm9djSYS+d9
- mutRsdGSoEF4xIOGDpX+nBroG5uQlfrfVeMcg4hufMleUxbS5OBji40m75vFgRdCiw
- K+x3PGqgfqvNw==
+ b=iwv7U0FukZ/gadkmbVI4++IdDoEUEbitkhbbd+RVabX8AwVKoR/Y/9lC5teO94plH
+ s0kAjq6nLQ4+6tNdSjpk6Md+NyoCIq6K0gs/7WhQI9XrBSpRuVUpBZLks0niaHOKCd
+ rKFJ3gMRFRo95OuLrbPBMoDe61bd5eidAx4xpHJoeqnrW2xScp94cAn7XpSP/2l/1p
+ 1ZShCT4BdTppQvYFD0zVVWLtUUX2tTDGWZO1e/QKOtUf/C4+iKz3DQiTx0wLCbjsVb
+ dRT+64ZWYkEPJeA9PpwtCGAClBXpOuoFAoI1yi7jDTR33ahYRj6MClnT/9PhtlFuPX
+ WmiT/LY4em8pA==
 From: Vincent Jardin <vjardin@free.fr>
 To: dev@dpdk.org
 Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
  dsosnowski@nvidia.com, viacheslavo@nvidia.com, bingz@nvidia.com,
  orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
  stephen@networkplumber.org, Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v3 06/9] net/mlx5: add burst pacing devargs
-Date: Thu, 12 Mar 2026 23:01:17 +0100
-Message-ID: <20260312220120.3256755-7-vjardin@free.fr>
+Subject: [PATCH v3 07/9] net/mlx5: add testpmd command to query per-queue rate
+ limit
+Date: Thu, 12 Mar 2026 23:01:18 +0100
+Message-ID: <20260312220120.3256755-8-vjardin@free.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260312220120.3256755-1-vjardin@free.fr>
 References: <20260310092014.2762894-1-vjardin@free.fr>
@@ -52,194 +53,278 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Expose burst_upper_bound and typical_packet_size from the PRM
-set_pp_rate_limit_context as devargs:
-- tx_burst_bound=<bytes>: max burst before rate evaluation kicks in
-- tx_typical_pkt_sz=<bytes>: typical packet size for accuracy
+Add a new testpmd command to display the per-queue packet pacing
+rate limit state, including the PP index from both driver state
+and FW SQ context readback:
 
-These parameters apply to both per-queue rate limiting
-(rte_eth_set_queue_rate_limit) and Clock Queue pacing (tx_pp).
+  testpmd> mlx5 port <port_id> txq <queue_id> rate show
 
-Values are validated against HCA capabilities
-(packet_pacing_burst_bound and packet_pacing_typical_size).
-If the HW does not support them, a warning is logged and the
-value is silently zeroed. Test mode still overrides both values.
+This helps verify that the FW actually applied the PP index to
+the SQ after setting a per-queue rate limit.
 
-Shared context mismatch checks ensure all ports on the same
-device use the same burst parameters.
-
-Supported hardware:
-- ConnectX-6 Dx: burst_upper_bound and typical_packet_size
-  reported via packet_pacing_burst_bound / packet_pacing_typical_size
-  QoS capability bits
-- ConnectX-7/8: full support for both parameters
-- BlueField-2/3: same capabilities as host-side ConnectX
-
-Not supported:
-- ConnectX-5: may not report burst_bound or typical_size caps
-- ConnectX-4 Lx and earlier: no packet_pacing at all
+Expose a new PMD API rte_pmd_mlx5_txq_rate_limit_query() that
+queries txq_ctrl->rl for driver state and mlx5_devx_cmd_query_sq()
+for the FW packet_pacing_rate_limit_index field.
 
 Signed-off-by: Vincent Jardin <vjardin@free.fr>
 ---
- doc/guides/nics/mlx5.rst     | 16 ++++++++++++++
- drivers/net/mlx5/mlx5.c      | 42 ++++++++++++++++++++++++++++++++++++
- drivers/net/mlx5/mlx5.h      |  2 ++
- drivers/net/mlx5/mlx5_txpp.c | 12 +++++++++++
- 4 files changed, 72 insertions(+)
+ drivers/net/mlx5/mlx5_testpmd.c | 93 +++++++++++++++++++++++++++++++++
+ drivers/net/mlx5/mlx5_tx.c      | 40 +++++++++++++-
+ drivers/net/mlx5/mlx5_txq.c     | 19 +++++--
+ drivers/net/mlx5/rte_pmd_mlx5.h | 30 +++++++++++
+ 4 files changed, 178 insertions(+), 4 deletions(-)
 
-diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
-index 5b097dbc90..2507fae846 100644
---- a/doc/guides/nics/mlx5.rst
-+++ b/doc/guides/nics/mlx5.rst
-@@ -580,6 +580,22 @@ for an additional list of options shared with other mlx5 drivers.
-   (with ``tx_pp``) and ConnectX-7+ (wait-on-time) scheduling modes.
-   The default value is zero.
- 
-+- ``tx_burst_bound`` parameter [int]
-+
-+  Specifies the burst upper bound in bytes for packet pacing rate evaluation.
-+  When set, the hardware considers this burst size when enforcing the configured
-+  rate limit. Only effective when the HCA reports ``packet_pacing_burst_bound``
-+  capability. Applies to both per-queue rate limiting
-+  (``rte_eth_set_queue_rate_limit()``) and Clock Queue pacing (``tx_pp``).
-+  The default value is zero (hardware default).
-+
-+- ``tx_typical_pkt_sz`` parameter [int]
-+
-+  Specifies the typical packet size in bytes for packet pacing rate accuracy
-+  improvement. Only effective when the HCA reports
-+  ``packet_pacing_typical_size`` capability. Applies to both per-queue rate
-+  limiting and Clock Queue pacing. The default value is zero (hardware default).
-+
- - ``tx_vec_en`` parameter [int]
- 
-   A nonzero value enables Tx vector with ConnectX-5 NICs and above.
-diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
-index c390406ac7..f399e0d5c9 100644
---- a/drivers/net/mlx5/mlx5.c
-+++ b/drivers/net/mlx5/mlx5.c
-@@ -119,6 +119,18 @@
-  */
- #define MLX5_TX_SKEW "tx_skew"
- 
-+/*
-+ * Device parameter to specify burst upper bound in bytes
-+ * for packet pacing rate evaluation.
-+ */
-+#define MLX5_TX_BURST_BOUND "tx_burst_bound"
-+
-+/*
-+ * Device parameter to specify typical packet size in bytes
-+ * for packet pacing rate accuracy improvement.
-+ */
-+#define MLX5_TX_TYPICAL_PKT_SZ "tx_typical_pkt_sz"
-+
- /*
-  * Device parameter to enable hardware Tx vector.
-  * Deprecated, ignored (no vectorized Tx routines anymore).
-@@ -1405,6 +1417,10 @@ mlx5_dev_args_check_handler(const char *key, const char *val, void *opaque)
- 		config->tx_pp = tmp;
- 	} else if (strcmp(MLX5_TX_SKEW, key) == 0) {
- 		config->tx_skew = tmp;
-+	} else if (strcmp(MLX5_TX_BURST_BOUND, key) == 0) {
-+		config->tx_burst_bound = tmp;
-+	} else if (strcmp(MLX5_TX_TYPICAL_PKT_SZ, key) == 0) {
-+		config->tx_typical_pkt_sz = tmp;
- 	} else if (strcmp(MLX5_L3_VXLAN_EN, key) == 0) {
- 		config->l3_vxlan_en = !!tmp;
- 	} else if (strcmp(MLX5_VF_NL_EN, key) == 0) {
-@@ -1518,8 +1534,10 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
- 				struct mlx5_sh_config *config)
- {
- 	const char **params = (const char *[]){
-+		MLX5_TX_BURST_BOUND,
- 		MLX5_TX_PP,
- 		MLX5_TX_SKEW,
-+		MLX5_TX_TYPICAL_PKT_SZ,
- 		MLX5_L3_VXLAN_EN,
- 		MLX5_VF_NL_EN,
- 		MLX5_DV_ESW_EN,
-@@ -1626,6 +1644,18 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
- 		DRV_LOG(WARNING,
- 			"\"tx_skew\" doesn't affect without \"tx_pp\".");
+diff --git a/drivers/net/mlx5/mlx5_testpmd.c b/drivers/net/mlx5/mlx5_testpmd.c
+index 1bb5a89559..fd3efecc5d 100644
+--- a/drivers/net/mlx5/mlx5_testpmd.c
++++ b/drivers/net/mlx5/mlx5_testpmd.c
+@@ -1365,6 +1365,94 @@ cmdline_parse_inst_t mlx5_cmd_dump_rq_context_options = {
  	}
-+	if (config->tx_burst_bound &&
-+	    !sh->cdev->config.hca_attr.qos.packet_pacing_burst_bound) {
-+		DRV_LOG(WARNING,
-+			"HW does not support burst_upper_bound, ignoring.");
-+		config->tx_burst_bound = 0;
-+	}
-+	if (config->tx_typical_pkt_sz &&
-+	    !sh->cdev->config.hca_attr.qos.packet_pacing_typical_size) {
-+		DRV_LOG(WARNING,
-+			"HW does not support typical_packet_size, ignoring.");
-+		config->tx_typical_pkt_sz = 0;
-+	}
- 	/* Check for LRO support. */
- 	if (mlx5_devx_obj_ops_en(sh) && sh->cdev->config.hca_attr.lro_cap) {
- 		/* TBD check tunnel lro caps. */
-@@ -3260,6 +3290,18 @@ mlx5_probe_again_args_validate(struct mlx5_common_device *cdev,
- 			sh->ibdev_name);
- 		goto error;
- 	}
-+	if (sh->config.tx_burst_bound != config->tx_burst_bound) {
-+		DRV_LOG(ERR, "\"tx_burst_bound\" "
-+			"configuration mismatch for shared %s context.",
-+			sh->ibdev_name);
-+		goto error;
-+	}
-+	if (sh->config.tx_typical_pkt_sz != config->tx_typical_pkt_sz) {
-+		DRV_LOG(ERR, "\"tx_typical_pkt_sz\" "
-+			"configuration mismatch for shared %s context.",
-+			sh->ibdev_name);
-+		goto error;
-+	}
- 	if (sh->config.txq_mem_algn != config->txq_mem_algn) {
- 		DRV_LOG(ERR, "\"TxQ memory alignment\" "
- 			"configuration mismatch for shared %s context. %u - %u",
-diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
-index c48c3072d1..a8d71482ac 100644
---- a/drivers/net/mlx5/mlx5.h
-+++ b/drivers/net/mlx5/mlx5.h
-@@ -382,6 +382,8 @@ struct mlx5_port_config {
- struct mlx5_sh_config {
- 	int tx_pp; /* Timestamp scheduling granularity in nanoseconds. */
- 	int tx_skew; /* Tx scheduling skew between WQE and data on wire. */
-+	uint32_t tx_burst_bound; /* Burst upper bound in bytes, 0 = default. */
-+	uint32_t tx_typical_pkt_sz; /* Typical packet size in bytes, 0 = default. */
- 	uint32_t reclaim_mode:2; /* Memory reclaim mode. */
- 	uint32_t dv_esw_en:1; /* Enable E-Switch DV flow. */
- 	/* Enable DV flow. 1 means SW steering, 2 means HW steering. */
-diff --git a/drivers/net/mlx5/mlx5_txpp.c b/drivers/net/mlx5/mlx5_txpp.c
-index 0a883b0a94..756a772cc5 100644
---- a/drivers/net/mlx5/mlx5_txpp.c
-+++ b/drivers/net/mlx5/mlx5_txpp.c
-@@ -88,6 +88,12 @@ mlx5_txpp_alloc_pp_index(struct mlx5_dev_ctx_shared *sh)
- 	rate = NS_PER_S / sh->txpp.tick;
- 	if (rate * sh->txpp.tick != NS_PER_S)
- 		DRV_LOG(WARNING, "Packet pacing frequency is not precise.");
-+	if (sh->config.tx_burst_bound)
-+		MLX5_SET(set_pp_rate_limit_context, &pp,
-+			 burst_upper_bound, sh->config.tx_burst_bound);
-+	if (sh->config.tx_typical_pkt_sz)
-+		MLX5_SET(set_pp_rate_limit_context, &pp,
-+			 typical_packet_size, sh->config.tx_typical_pkt_sz);
- 	if (sh->txpp.test) {
- 		uint32_t len;
+ };
  
-@@ -172,6 +178,12 @@ mlx5_txq_alloc_pp_rate_limit(struct mlx5_dev_ctx_shared *sh,
- 	memset(&pp, 0, sizeof(pp));
- 	MLX5_SET(set_pp_rate_limit_context, &pp, rate_limit, (uint32_t)rate_kbps);
- 	MLX5_SET(set_pp_rate_limit_context, &pp, rate_mode, MLX5_DATA_RATE);
-+	if (sh->config.tx_burst_bound)
-+		MLX5_SET(set_pp_rate_limit_context, &pp,
-+			 burst_upper_bound, sh->config.tx_burst_bound);
-+	if (sh->config.tx_typical_pkt_sz)
-+		MLX5_SET(set_pp_rate_limit_context, &pp,
-+			 typical_packet_size, sh->config.tx_typical_pkt_sz);
- 	rl->pp = mlx5_glue->dv_alloc_pp(sh->cdev->ctx, sizeof(pp), &pp, 0);
- 	if (rl->pp == NULL) {
- 		DRV_LOG(ERR, "Failed to allocate PP index for rate %u Mbps.",
++/* Show per-queue rate limit PP index for a given port/queue */
++struct mlx5_cmd_show_rate_limit_options {
++	cmdline_fixed_string_t mlx5;
++	cmdline_fixed_string_t port;
++	portid_t port_id;
++	cmdline_fixed_string_t txq;
++	queueid_t queue_id;
++	cmdline_fixed_string_t rate;
++	cmdline_fixed_string_t show;
++};
++
++cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_mlx5 =
++	TOKEN_STRING_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
++				 mlx5, "mlx5");
++cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_port =
++	TOKEN_STRING_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
++				 port, "port");
++cmdline_parse_token_num_t mlx5_cmd_show_rate_limit_port_id =
++	TOKEN_NUM_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
++			      port_id, RTE_UINT16);
++cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_txq =
++	TOKEN_STRING_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
++				 txq, "txq");
++cmdline_parse_token_num_t mlx5_cmd_show_rate_limit_queue_id =
++	TOKEN_NUM_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
++			      queue_id, RTE_UINT16);
++cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_rate =
++	TOKEN_STRING_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
++				 rate, "rate");
++cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_show =
++	TOKEN_STRING_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
++				 show, "show");
++
++static void
++mlx5_cmd_show_rate_limit_parsed(void *parsed_result,
++				__rte_unused struct cmdline *cl,
++				__rte_unused void *data)
++{
++	struct mlx5_cmd_show_rate_limit_options *res = parsed_result;
++	struct rte_pmd_mlx5_txq_rate_limit_info info;
++	int ret;
++
++	ret = rte_pmd_mlx5_txq_rate_limit_query(res->port_id, res->queue_id,
++						 &info);
++	switch (ret) {
++	case 0:
++		break;
++	case -ENODEV:
++		fprintf(stderr, "invalid port_id %u\n", res->port_id);
++		return;
++	case -EINVAL:
++		fprintf(stderr, "invalid queue index (%u), out of range\n",
++			res->queue_id);
++		return;
++	case -EIO:
++		fprintf(stderr, "failed to query SQ context\n");
++		return;
++	default:
++		fprintf(stderr, "query failed (%d)\n", ret);
++		return;
++	}
++	fprintf(stdout, "Port %u Txq %u rate limit info:\n",
++		res->port_id, res->queue_id);
++	if (info.rate_mbps > 0)
++		fprintf(stdout, "  Configured rate: %u Mbps\n",
++			info.rate_mbps);
++	else
++		fprintf(stdout, "  Configured rate: disabled\n");
++	fprintf(stdout, "  PP index (driver): %u\n", info.pp_index);
++	fprintf(stdout, "  PP index (FW readback): %u\n", info.fw_pp_index);
++}
++
++cmdline_parse_inst_t mlx5_cmd_show_rate_limit = {
++	.f = mlx5_cmd_show_rate_limit_parsed,
++	.data = NULL,
++	.help_str = "mlx5 port <port_id> txq <queue_id> rate show",
++	.tokens = {
++		(void *)&mlx5_cmd_show_rate_limit_mlx5,
++		(void *)&mlx5_cmd_show_rate_limit_port,
++		(void *)&mlx5_cmd_show_rate_limit_port_id,
++		(void *)&mlx5_cmd_show_rate_limit_txq,
++		(void *)&mlx5_cmd_show_rate_limit_queue_id,
++		(void *)&mlx5_cmd_show_rate_limit_rate,
++		(void *)&mlx5_cmd_show_rate_limit_show,
++		NULL,
++	}
++};
++
+ static struct testpmd_driver_commands mlx5_driver_cmds = {
+ 	.commands = {
+ 		{
+@@ -1440,6 +1528,11 @@ static struct testpmd_driver_commands mlx5_driver_cmds = {
+ 			.help = "mlx5 port (port_id) queue (queue_id) dump rq_context (file_name)\n"
+ 				"    Dump mlx5 RQ Context\n\n",
+ 		},
++		{
++			.ctx = &mlx5_cmd_show_rate_limit,
++			.help = "mlx5 port (port_id) txq (queue_id) rate show\n"
++				"    Show per-queue rate limit PP index\n\n",
++		},
+ 		{
+ 			.ctx = NULL,
+ 		},
+diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
+index 8085b5c306..fa57d3ef98 100644
+--- a/drivers/net/mlx5/mlx5_tx.c
++++ b/drivers/net/mlx5/mlx5_tx.c
+@@ -800,7 +800,7 @@ int rte_pmd_mlx5_txq_dump_contexts(uint16_t port_id, uint16_t queue_id, const ch
+ 	if (!rte_eth_dev_is_valid_port(port_id))
+ 		return -ENODEV;
+ 
+-	if (rte_eth_tx_queue_is_valid(port_id, queue_id))
++	if (rte_eth_tx_queue_is_valid(port_id, queue_id) != 0)
+ 		return -EINVAL;
+ 
+ 	fd = fopen(path, "w");
+@@ -848,3 +848,41 @@ int rte_pmd_mlx5_txq_dump_contexts(uint16_t port_id, uint16_t queue_id, const ch
+ 	fclose(fd);
+ 	return ret;
+ }
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_txq_rate_limit_query, 26.07)
++int rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
++				       struct rte_pmd_mlx5_txq_rate_limit_info *info)
++{
++	struct rte_eth_dev *dev;
++	struct mlx5_priv *priv;
++	struct mlx5_txq_data *txq_data;
++	struct mlx5_txq_ctrl *txq_ctrl;
++	uint32_t sq_out[MLX5_ST_SZ_DW(query_sq_out)] = {0};
++	int ret;
++
++	if (info == NULL)
++		return -EINVAL;
++	if (!rte_eth_dev_is_valid_port(port_id))
++		return -ENODEV;
++	if (rte_eth_tx_queue_is_valid(port_id, queue_id) != 0)
++		return -EINVAL;
++	dev = &rte_eth_devices[port_id];
++	priv = dev->data->dev_private;
++	txq_data = (*priv->txqs)[queue_id];
++	txq_ctrl = container_of(txq_data, struct mlx5_txq_ctrl, txq);
++	info->rate_mbps = txq_ctrl->rl.rate_mbps;
++	info->pp_index = txq_ctrl->rl.pp_id;
++	if (txq_ctrl->obj == NULL) {
++		info->fw_pp_index = 0;
++		return 0;
++	}
++	ret = mlx5_devx_cmd_query_sq(txq_ctrl->obj->sq_obj.sq,
++				     sq_out, sizeof(sq_out));
++	if (ret)
++		return -EIO;
++	info->fw_pp_index = MLX5_GET(sqc,
++				     MLX5_ADDR_OF(query_sq_out, sq_out,
++						  sq_context),
++				     packet_pacing_rate_limit_index);
++	return 0;
++}
+diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
+index f2ed2454a0..f0881f3560 100644
+--- a/drivers/net/mlx5/mlx5_txq.c
++++ b/drivers/net/mlx5/mlx5_txq.c
+@@ -1406,7 +1406,20 @@ mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		rte_errno = EINVAL;
+ 		return -rte_errno;
+ 	}
+-	if (txq_ctrl->obj == NULL || txq_ctrl->obj->sq == NULL) {
++	if (txq_ctrl->obj == NULL) {
++		DRV_LOG(ERR, "Port %u Tx queue %u not initialized.",
++			dev->data->port_id, queue_idx);
++		rte_errno = EINVAL;
++		return -rte_errno;
++	}
++	/*
++	 * For non-hairpin queues the SQ DevX object lives in
++	 * obj->sq_obj.sq (used by DevX/HWS mode), while hairpin
++	 * queues use obj->sq directly.  These are different members
++	 * of a union inside mlx5_txq_obj.
++	 */
++	struct mlx5_devx_obj *sq_devx = txq_ctrl->obj->sq_obj.sq;
++	if (sq_devx == NULL) {
+ 		DRV_LOG(ERR, "Port %u Tx queue %u SQ not ready.",
+ 			dev->data->port_id, queue_idx);
+ 		rte_errno = EINVAL;
+@@ -1420,7 +1433,7 @@ mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 		sq_attr.state = MLX5_SQC_STATE_RDY;
+ 		sq_attr.rl_update = 1;
+ 		sq_attr.packet_pacing_rate_limit_index = 0;
+-		ret = mlx5_devx_cmd_modify_sq(txq_ctrl->obj->sq, &sq_attr);
++		ret = mlx5_devx_cmd_modify_sq(sq_devx, &sq_attr);
+ 		if (ret) {
+ 			DRV_LOG(ERR,
+ 				"Port %u Tx queue %u failed to clear rate.",
+@@ -1444,7 +1457,7 @@ mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
+ 	sq_attr.state = MLX5_SQC_STATE_RDY;
+ 	sq_attr.rl_update = 1;
+ 	sq_attr.packet_pacing_rate_limit_index = new_rl.pp_id;
+-	ret = mlx5_devx_cmd_modify_sq(txq_ctrl->obj->sq, &sq_attr);
++	ret = mlx5_devx_cmd_modify_sq(sq_devx, &sq_attr);
+ 	if (ret) {
+ 		DRV_LOG(ERR, "Port %u Tx queue %u failed to set rate %u Mbps.",
+ 			dev->data->port_id, queue_idx, tx_rate);
+diff --git a/drivers/net/mlx5/rte_pmd_mlx5.h b/drivers/net/mlx5/rte_pmd_mlx5.h
+index 7acfdae97d..698d7d2032 100644
+--- a/drivers/net/mlx5/rte_pmd_mlx5.h
++++ b/drivers/net/mlx5/rte_pmd_mlx5.h
+@@ -420,6 +420,36 @@ __rte_experimental
+ int
+ rte_pmd_mlx5_txq_dump_contexts(uint16_t port_id, uint16_t queue_id, const char *filename);
+ 
++/**
++ * Per-queue rate limit information.
++ */
++struct rte_pmd_mlx5_txq_rate_limit_info {
++	uint32_t rate_mbps;	/**< Configured rate in Mbps, 0 = disabled. */
++	uint16_t pp_index;	/**< PP index from driver state. */
++	uint16_t fw_pp_index;	/**< PP index read back from FW SQ context. */
++};
++
++/**
++ * Query per-queue rate limit state for a given Tx queue.
++ *
++ * @param[in] port_id
++ *   Port ID.
++ * @param[in] queue_id
++ *   Tx queue ID.
++ * @param[out] info
++ *   Rate limit information.
++ *
++ * @return
++ *   0 on success, negative errno on failure:
++ *   - -ENODEV: invalid port_id.
++ *   - -EINVAL: invalid queue_id.
++ *   - -EIO: FW query failed.
++ */
++__rte_experimental
++int
++rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
++				  struct rte_pmd_mlx5_txq_rate_limit_info *info);
++
+ /** Type of mlx5 driver event for which custom callback is called. */
+ enum rte_pmd_mlx5_driver_event_cb_type {
+ 	/** Called after HW Rx queue is created. */
 -- 
 2.43.0
 
