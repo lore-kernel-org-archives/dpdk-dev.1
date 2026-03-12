@@ -2,70 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D767B103E2F5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 00:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A47103E2F7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 00:23:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B1852410D4;
-	Thu, 12 Mar 2026 01:21:35 +0100 (CET)
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com
- [209.85.160.41]) by mails.dpdk.org (Postfix) with ESMTP id 9BDFC40E4D
- for <dev@dpdk.org>; Thu, 12 Mar 2026 01:21:31 +0100 (CET)
-Received: by mail-oa1-f41.google.com with SMTP id
- 586e51a60fabf-40ee9b945d5so331963fac.0
- for <dev@dpdk.org>; Wed, 11 Mar 2026 17:21:31 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3206440E4D;
+	Thu, 12 Mar 2026 01:23:41 +0100 (CET)
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com
+ [209.85.210.43]) by mails.dpdk.org (Postfix) with ESMTP id A392440264
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 01:23:40 +0100 (CET)
+Received: by mail-ot1-f43.google.com with SMTP id
+ 46e09a7af769-7d743ba241aso296967a34.1
+ for <dev@dpdk.org>; Wed, 11 Mar 2026 17:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773274891;
- x=1773879691; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=lHtFf//xfmBkeSgDwNbgojnphmysX3unR7mUQCFyIxY=;
- b=FUTTJaHnqOh7XZjYqaAXlUENB3/QTn92A732pOVTJtFIJMVT2LMGRrSQaEUb8Wxp6O
- unvuJlguu4RuT5gawr5JTWafal0RSVOX6LnQ4TLT6/f0TbJEhIMW0FKKp0t2T3VEUv0+
- tNtih4L2p1meqza/cwA47Ve0Idy8moEjmoV9p7aWIWPinX8mmvi9Y3nH4DmK8Vti9Uy5
- y875Bh5nRGPpzWMyaQ+sUCQb0HOWU8ctcYQhdFQAbe0Xfb1vcWTtXHDu8SuLB/s0QhQS
- 3awB46SVlK6iCXeH0gxBZqf0oRypVR0cz42pxJJ/dPAxNfUqeNGscQ4arjBigqaGcws4
- dqjw==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773275020;
+ x=1773879820; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=Yey3bOlzzkaPoOQqLy2DLIwkzkLEpz6J0G7Ucpm2ifc=;
+ b=KVFVMJi3kU1vyYInGnZZWdFxPcraMtDRl6LRnXOOTzirqrvIrW+F6AWKw/RFgOf80a
+ 8iOJSrnpqz9nq+I72im348pV3eFn2dOeCkMc8e6VkwhB2MR5Jszb49dxLmbRTRAAz+fM
+ DwZDvND6fbpkNjX5E7BnGfla2jtXvgtHDCJZO48jnzP9owOxS4uhvn2fM/Z0iLxIrHQx
+ pnsbDgcGu7MvFqfZPwQd6wwjw2To3Idi9F0fRzrn64Di0yL7g0taffj2YDtcxpuH0lUJ
+ 8Gg8XEYLkGmlnOJSaNniCsMIo2F5HUKI5bD2PIUSZn0G0u1sgCYho7IuHnnoAo5Tcu49
+ 6eAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773274891; x=1773879691;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=lHtFf//xfmBkeSgDwNbgojnphmysX3unR7mUQCFyIxY=;
- b=rRUcss0mYy029I+nunoYHeQhxM2/NZU/detfxm2RxFrWsVUOwguRBiNSNvMWcT8yqz
- DlvPe1MRpau26BHicNM5DnyVQ0dSnAyJcY/Mty1hfnWjKvQVwVlUKeFpsgfEs2OLbM3S
- hpWf/aUrwT13DDicDXHrVxHtSrzhWVCowK9RGeDgYe/G8QdoXjqhcW5TlC5Oxo34YOia
- Hi87L+TxeIgy9Ssz9p7WAd8oBiochbFdIWjvzwmgeGhpSoZfr1MsNuSFxyyZTHMpHHE3
- AvjL4vSG3okB4Gswc2gnX33Ol1R00nl85r9BoWHfr2OxeYR8BCxtFLzVLZm15ctra9hJ
- 5FEw==
-X-Gm-Message-State: AOJu0YzJfTuEbTw2LikgbPpfYGGzGbZj4Tjeckpb8GncZRGGUqRHFqIp
- 0LfbW4lZeQVDH1LTNjdwN/1YHU8OXy+JPug4y5T8J/T1XrSp18qoVrK98n5nVrgaesLkZQKYNmT
- vT/MLO+M=
-X-Gm-Gg: ATEYQzyk6P8BB8MI/bRLvxaESAHfUYhn2xcx+JjmBL7lGJV7toc3UikDToYuEDJ9Iio
- VgecH6IVCorfe47oPaZMOgDjMpbBRHVYiHJ3CXRd3wW85AVx1pwWfuu8lQ1m3BTx3DXHdQRmwTL
- PtpYAMDPPPPk9okCfVHpWK6CFnTeF6WJUQqXLfNqghg9g22LOz0aDj0HgZV8/2rRygdOHavffb6
- L4rFIQ6u560uOgZvHJ2MBztxj5ooAo7X9P7DhxHTmjHUbVlqLh7V3lmhX515APphT7j5Sz2Zsb6
- j0TStEC0mF4WaeYSZW9q87LHtO4wWwaKf3OBaVoKYBUEMoDvlGsQsUahvfTVfnZJK+3u7nl64p9
- eOJFrJeW3F2EVL3VnQqZwSQTPMtaF4zZ7lyeWaL+y+eV929xCZukIZfLYuAJ3dSebX97uJOWPEw
- 6RlccJooNupeyVfIEfnHi+TaVIKf+fDXX3
-X-Received: by 2002:a05:6870:b14e:b0:417:68c7:56a6 with SMTP id
- 586e51a60fabf-4177c258494mr2910597fac.0.1773274890766; 
- Wed, 11 Mar 2026 17:21:30 -0700 (PDT)
+ d=1e100.net; s=20230601; t=1773275020; x=1773879820;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Yey3bOlzzkaPoOQqLy2DLIwkzkLEpz6J0G7Ucpm2ifc=;
+ b=RU5u4aTHJffCA35Y25YThWZCpjYFOjfPop9fOSeBizjzVNlV1eCqReo6KgdhMbhATZ
+ gGFJrAQzQuXIbJOfCwdhiNynSSnZTFDP8ccxuHAgxdRi5TKneEjb+1uODmHDae4Voi9C
+ KH1bl1Ox4c4rgmSXp8Lm/McpJsjY5eh//mSH1Oj+BD+mQ9swUvLGkdz2sw3vcoE0AOPk
+ 1l6K3rNdOQeaLJaxxVwg3S4cP/BkLQLsUHVL0JSj2HbvMp9wUpJ1iUI9GGTND4ssRnQz
+ gMI9U6bPds5yMg7eEOstI2vR8OVqJ0ogO4lwiV+ja9ZmjexAmHRJeH2tGcZYt6e71n+I
+ aeGw==
+X-Gm-Message-State: AOJu0YyhWknVt40SJHayrvmMo3aTB9S2l5k+TYY7hoxNqrdqWh19wtOq
+ 0k6c478NRaj+cYBj5EHda1QiTeuP0BQzxuRXERi1dsjn1mTjEXnRwgTSQJ4aESROmzayEkcgkHd
+ NGdFP
+X-Gm-Gg: ATEYQzykWcDjdoCEvkDxPWXqIOjrUyGaP6DyEk55DLuLo1yh4q2QryqaLrgXhM3/icZ
+ 7n5tC6UyJLKPZ6bi4GbBD3POVmPY4hj+2wU6iWpYAk/jxvx/Sb3ou/yXzszl6RsSOrwh5De3GW0
+ P2jVGqH9+AW9vsJlh52L9zgcK4C0I1XRaZFdVeljSqWNwz+mVAU0I4Bm8JwAMOF0eYJd8ELnHe1
+ yz2V+N6L2zBt3xQyUYuR3yp42yXtLY9CGy6kdxojaJmGxM9zBalQvwuYhHEAvTbMZND8H5XbTRl
+ YEkWQuVKNmOJ43VKWbNKFPMmuW9pXRBHtLra9YDCMW3JxJn4dygzNS9xiSWfEKOTf8+rtI1BP99
+ IExy8SainQmwpKa9bm5SgXI/o8+YVLvyY3RkffX3WmblKwCQgoUL8MwFsB9ffbCxHYLMdrjoI0H
+ ypguryicjxUbgKZxVZyyFZB4Ge8jeAU4He
+X-Received: by 2002:a05:6820:1895:b0:67b:b718:1a44 with SMTP id
+ 006d021491bc7-67bc88d16fcmr2534498eaf.31.1773275019819; 
+ Wed, 11 Mar 2026 17:23:39 -0700 (PDT)
 Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-4177e26e2c6sm3779484fac.7.2026.03.11.17.21.29
+ 006d021491bc7-67bc9354e59sm2260976eaf.16.2026.03.11.17.23.39
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 11 Mar 2026 17:21:30 -0700 (PDT)
+ Wed, 11 Mar 2026 17:23:39 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>
-Subject: [PATCH 2/2] net/bnxt: fix shadow variable warnings
-Date: Wed, 11 Mar 2026 17:20:27 -0700
-Message-ID: <20260312002123.867357-3-stephen@networkplumber.org>
+ Rosen Xu <rosen.xu@altera.com>
+Subject: [PATCH] raw/ifpga: fix comma warnings
+Date: Wed, 11 Mar 2026 17:23:36 -0700
+Message-ID: <20260312002337.867771-1-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260312002123.867357-1-stephen@networkplumber.org>
-References: <20260312002123.867357-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,87 +77,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix things flagged as warnings about shadowed variables.
-If the variable was harmless overlap then just drop the shadowed
-version. For min values case use RTE_MIN3() and RTE_MIN4().
+The driver was open coding TAILQ_FOREACH_SAFE() in a manner
+that triggered warnings. Replace it with the standard one
+from bsd queue.h.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bnxt/bnxt.h        | 6 +++---
- drivers/net/bnxt/bnxt_ethdev.c | 3 +--
- drivers/net/bnxt/bnxt_rxq.c    | 6 ++----
- drivers/net/bnxt/bnxt_txr.c    | 3 ---
- 4 files changed, 6 insertions(+), 12 deletions(-)
+ drivers/raw/ifpga/base/ifpga_enumerate.c | 4 +---
+ drivers/raw/ifpga/base/opae_hw_api.h     | 7 +++++++
+ 2 files changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/bnxt/bnxt.h b/drivers/net/bnxt/bnxt.h
-index 7515f0564f..8b81c11b32 100644
---- a/drivers/net/bnxt/bnxt.h
-+++ b/drivers/net/bnxt/bnxt.h
-@@ -1110,9 +1110,9 @@ inline uint16_t bnxt_max_rings(struct bnxt *bp)
- 	 * max Tx rings == max Rx rings, one stat ctx for each.
- 	 */
- 	if (BNXT_STINGRAY(bp)) {
--		max_rx_rings = RTE_MIN(RTE_MIN(max_rx_rings / 2U,
--					       MAX_STINGRAY_RINGS),
--				       bp->max_stat_ctx / 2U);
-+		max_rx_rings = RTE_MIN3(max_rx_rings / 2U,
-+					MAX_STINGRAY_RINGS,
-+					bp->max_stat_ctx / 2U);
- 	} else {
- 		max_rx_rings = RTE_MIN(max_rx_rings / 2U,
- 				       bp->max_stat_ctx / 2U);
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index b677f9491d..f033c34aab 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -473,7 +473,7 @@ static int bnxt_setup_one_vnic(struct bnxt *bp, uint16_t vnic_id)
+diff --git a/drivers/raw/ifpga/base/ifpga_enumerate.c b/drivers/raw/ifpga/base/ifpga_enumerate.c
+index 61eb6601ea..085fb6db40 100644
+--- a/drivers/raw/ifpga/base/ifpga_enumerate.c
++++ b/drivers/raw/ifpga/base/ifpga_enumerate.c
+@@ -725,9 +725,7 @@ static void dfl_fpga_enum_info_free(struct dfl_fpga_enum_info *info)
+ 		return;
  
- 	/* Alloc RSS context only if RSS mode is enabled */
- 	if (dev_conf->rxmode.mq_mode & RTE_ETH_MQ_RX_RSS) {
--		int j, nr_ctxs = bnxt_rss_ctxts(bp);
-+		unsigned int nr_ctxs = bnxt_rss_ctxts(bp);
+ 	/* remove all device feature lists in the list. */
+-	for (dfl = TAILQ_FIRST(&info->dfls);
+-		dfl && (tmp = TAILQ_NEXT(dfl, node), 1);
+-		dfl = tmp) {
++	TAILQ_FOREACH_SAFE(dfl, &info->dfls, node, tmp) {
+ 		TAILQ_REMOVE(&info->dfls, dfl, node);
+ 		opae_free(dfl);
+ 	}
+diff --git a/drivers/raw/ifpga/base/opae_hw_api.h b/drivers/raw/ifpga/base/opae_hw_api.h
+index 57750022dd..63cb616731 100644
+--- a/drivers/raw/ifpga/base/opae_hw_api.h
++++ b/drivers/raw/ifpga/base/opae_hw_api.h
+@@ -10,6 +10,13 @@
+ #include <stdio.h>
+ #include <sys/queue.h>
  
- 		/* RSS table size in P5 is 512.
- 		 * Cap max Rx rings to same value
-@@ -3560,7 +3560,6 @@ bnxt_rx_descriptor_status_op(void *rx_queue, uint16_t offset)
- 	 */
- #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
- 	if (bp->flags & BNXT_FLAG_RX_VECTOR_PKT_MODE) {
--		struct rx_pkt_cmpl *rxcmp;
- 		uint32_t cons;
- 
- 		/* Check status of completion descriptor. */
-diff --git a/drivers/net/bnxt/bnxt_rxq.c b/drivers/net/bnxt/bnxt_rxq.c
-index 91b3555df6..df9ed391c4 100644
---- a/drivers/net/bnxt/bnxt_rxq.c
-+++ b/drivers/net/bnxt/bnxt_rxq.c
-@@ -98,10 +98,8 @@ int bnxt_mq_rx_configure(struct bnxt *bp)
- 			/* ETH_8/64_POOLs */
- 			pools = conf->nb_queue_pools;
- 			/* For each pool, allocate MACVLAN CFA rule & VNIC */
--			max_pools = RTE_MIN(bp->max_vnics,
--					    RTE_MIN(bp->max_l2_ctx,
--					    RTE_MIN(bp->max_rsscos_ctx,
--						    RTE_ETH_64_POOLS)));
-+			max_pools = RTE_MIN4(bp->max_vnics, bp->max_l2_ctx,
-+					    bp->max_rsscos_ctx, RTE_ETH_64_POOLS);
- 			PMD_DRV_LOG_LINE(DEBUG,
- 				    "pools = %u max_pools = %u",
- 				    pools, max_pools);
-diff --git a/drivers/net/bnxt/bnxt_txr.c b/drivers/net/bnxt/bnxt_txr.c
-index 27758898b0..498778aae0 100644
---- a/drivers/net/bnxt/bnxt_txr.c
-+++ b/drivers/net/bnxt/bnxt_txr.c
-@@ -179,9 +179,6 @@ bnxt_check_pkt_needs_ts(struct rte_mbuf *m)
- 		if (proto == RTE_ETHER_TYPE_ECPRI)
- 			return true;
- 		if (proto == RTE_ETHER_TYPE_VLAN) {
--			const struct rte_vlan_hdr *vh;
--			struct rte_vlan_hdr vh_copy;
--
- 			vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
- 			if (unlikely(vh == NULL))
- 				return false;
++#ifndef TAILQ_FOREACH_SAFE
++#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
++	for ((var) = TAILQ_FIRST((head));				\
++	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
++	    (var) = (tvar))
++#endif
++
+ #include "opae_osdep.h"
+ #include "opae_intel_max10.h"
+ #include "opae_eth_group.h"
 -- 
 2.51.0
 
