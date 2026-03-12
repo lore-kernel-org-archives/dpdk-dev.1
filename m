@@ -2,66 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A47103E2F7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 00:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2850FED2D7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 06:09:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3206440E4D;
-	Thu, 12 Mar 2026 01:23:41 +0100 (CET)
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com
- [209.85.210.43]) by mails.dpdk.org (Postfix) with ESMTP id A392440264
- for <dev@dpdk.org>; Thu, 12 Mar 2026 01:23:40 +0100 (CET)
-Received: by mail-ot1-f43.google.com with SMTP id
- 46e09a7af769-7d743ba241aso296967a34.1
- for <dev@dpdk.org>; Wed, 11 Mar 2026 17:23:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773275020;
- x=1773879820; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=Yey3bOlzzkaPoOQqLy2DLIwkzkLEpz6J0G7Ucpm2ifc=;
- b=KVFVMJi3kU1vyYInGnZZWdFxPcraMtDRl6LRnXOOTzirqrvIrW+F6AWKw/RFgOf80a
- 8iOJSrnpqz9nq+I72im348pV3eFn2dOeCkMc8e6VkwhB2MR5Jszb49dxLmbRTRAAz+fM
- DwZDvND6fbpkNjX5E7BnGfla2jtXvgtHDCJZO48jnzP9owOxS4uhvn2fM/Z0iLxIrHQx
- pnsbDgcGu7MvFqfZPwQd6wwjw2To3Idi9F0fRzrn64Di0yL7g0taffj2YDtcxpuH0lUJ
- 8Gg8XEYLkGmlnOJSaNniCsMIo2F5HUKI5bD2PIUSZn0G0u1sgCYho7IuHnnoAo5Tcu49
- 6eAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773275020; x=1773879820;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=Yey3bOlzzkaPoOQqLy2DLIwkzkLEpz6J0G7Ucpm2ifc=;
- b=RU5u4aTHJffCA35Y25YThWZCpjYFOjfPop9fOSeBizjzVNlV1eCqReo6KgdhMbhATZ
- gGFJrAQzQuXIbJOfCwdhiNynSSnZTFDP8ccxuHAgxdRi5TKneEjb+1uODmHDae4Voi9C
- KH1bl1Ox4c4rgmSXp8Lm/McpJsjY5eh//mSH1Oj+BD+mQ9swUvLGkdz2sw3vcoE0AOPk
- 1l6K3rNdOQeaLJaxxVwg3S4cP/BkLQLsUHVL0JSj2HbvMp9wUpJ1iUI9GGTND4ssRnQz
- gMI9U6bPds5yMg7eEOstI2vR8OVqJ0ogO4lwiV+ja9ZmjexAmHRJeH2tGcZYt6e71n+I
- aeGw==
-X-Gm-Message-State: AOJu0YyhWknVt40SJHayrvmMo3aTB9S2l5k+TYY7hoxNqrdqWh19wtOq
- 0k6c478NRaj+cYBj5EHda1QiTeuP0BQzxuRXERi1dsjn1mTjEXnRwgTSQJ4aESROmzayEkcgkHd
- NGdFP
-X-Gm-Gg: ATEYQzykWcDjdoCEvkDxPWXqIOjrUyGaP6DyEk55DLuLo1yh4q2QryqaLrgXhM3/icZ
- 7n5tC6UyJLKPZ6bi4GbBD3POVmPY4hj+2wU6iWpYAk/jxvx/Sb3ou/yXzszl6RsSOrwh5De3GW0
- P2jVGqH9+AW9vsJlh52L9zgcK4C0I1XRaZFdVeljSqWNwz+mVAU0I4Bm8JwAMOF0eYJd8ELnHe1
- yz2V+N6L2zBt3xQyUYuR3yp42yXtLY9CGy6kdxojaJmGxM9zBalQvwuYhHEAvTbMZND8H5XbTRl
- YEkWQuVKNmOJ43VKWbNKFPMmuW9pXRBHtLra9YDCMW3JxJn4dygzNS9xiSWfEKOTf8+rtI1BP99
- IExy8SainQmwpKa9bm5SgXI/o8+YVLvyY3RkffX3WmblKwCQgoUL8MwFsB9ffbCxHYLMdrjoI0H
- ypguryicjxUbgKZxVZyyFZB4Ge8jeAU4He
-X-Received: by 2002:a05:6820:1895:b0:67b:b718:1a44 with SMTP id
- 006d021491bc7-67bc88d16fcmr2534498eaf.31.1773275019819; 
- Wed, 11 Mar 2026 17:23:39 -0700 (PDT)
-Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- 006d021491bc7-67bc9354e59sm2260976eaf.16.2026.03.11.17.23.39
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 11 Mar 2026 17:23:39 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Rosen Xu <rosen.xu@altera.com>
-Subject: [PATCH] raw/ifpga: fix comma warnings
-Date: Wed, 11 Mar 2026 17:23:36 -0700
-Message-ID: <20260312002337.867771-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
+	by mails.dpdk.org (Postfix) with ESMTP id A486E40430;
+	Thu, 12 Mar 2026 07:09:24 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id ABFD6402E0
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 07:09:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1773295763; x=1804831763;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=seEzupPuTA0KK5QNh+utGS+rHmIZmedQb/F4UCTdbOI=;
+ b=Qa7efuD8nrtlrIod+p1mSwbFEZxNFzUy5gjcNdh8uNaBSYkLGJ/4DJdw
+ r5+sEW+n32xxkm7l6QmELwqa723aYFjtNIHLED6zGjJfFt/de+Re99fvQ
+ 9arHvbmEXcWe56j3Nb7a15zX66nWiYV00aXymAbXB0a1q6I+7WseYpDBO
+ Ev3VfbJ2ycDC+PbmqCWR7uIkOItB8mHbUxHCIMcDYmMjmcwfo0shvX8AC
+ yYDzGIf7DNrN+9cI6cdfuokDQKOdMh5dSQTLnumnPb/mqVZJztu+SK2Pm
+ 4GV0TEGsk+F2klbDnY3KIq2SZ1lmUtl267Z97pfbo8ELu+/i66n5WNGzF Q==;
+X-CSE-ConnectionGUID: Wi4kefn8TsigGzEFbl/oSA==
+X-CSE-MsgGUID: JexdKvCITq+b0vuCfpawYQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11726"; a="78269315"
+X-IronPort-AV: E=Sophos;i="6.23,115,1770624000"; d="scan'208";a="78269315"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 11 Mar 2026 23:09:21 -0700
+X-CSE-ConnectionGUID: IzljeDknRmqeSscmZCMuGQ==
+X-CSE-MsgGUID: Kjjr66u7Qm6xpeYKqzdMNg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,115,1770624000"; d="scan'208";a="225677762"
+Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
+ by orviesa005.jf.intel.com with ESMTP; 11 Mar 2026 23:09:19 -0700
+From: Soumyadeep Hore <soumyadeep.hore@intel.com>
+To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
+ aman.deep.singh@intel.com, dev@dpdk.org, rajesh3.kumar@intel.com
+Subject: [PATCH v1] net/idpf: harden PTP frequency adjustment
+Date: Thu, 12 Mar 2026 14:43:44 -0400
+Message-ID: <20260312184344.1475052-1-soumyadeep.hore@intel.com>
+X-Mailer: git-send-email 2.47.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,49 +57,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The driver was open coding TAILQ_FOREACH_SAFE() in a manner
-that triggered warnings. Replace it with the standard one
-from bsd queue.h.
+Normalize ppm to an unsigned magnitude before using it in the
+increment value scaling path.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+This avoids negating INT64_MIN and also prevents subtracting 62
+from the reduced log sum unless the sum is still above the
+overflow threshold reported by Coverity.
+
+Coverity issue: 501832
+
+Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
- drivers/raw/ifpga/base/ifpga_enumerate.c | 4 +---
- drivers/raw/ifpga/base/opae_hw_api.h     | 7 +++++++
- 2 files changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/intel/idpf/idpf_ethdev.c | 32 +++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/raw/ifpga/base/ifpga_enumerate.c b/drivers/raw/ifpga/base/ifpga_enumerate.c
-index 61eb6601ea..085fb6db40 100644
---- a/drivers/raw/ifpga/base/ifpga_enumerate.c
-+++ b/drivers/raw/ifpga/base/ifpga_enumerate.c
-@@ -725,9 +725,7 @@ static void dfl_fpga_enum_info_free(struct dfl_fpga_enum_info *info)
- 		return;
+diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
+index 5e57a45775..1c5bd2ee12 100644
+--- a/drivers/net/intel/idpf/idpf_ethdev.c
++++ b/drivers/net/intel/idpf/idpf_ethdev.c
+@@ -1007,7 +1007,7 @@ idpf_timesync_adjust_freq(struct rte_eth_dev *dev, int64_t ppm)
+ 	struct idpf_ptp *ptp = adapter->ptp;
+ 	int64_t incval, diff = 0;
+ 	bool negative = false;
+-	uint64_t div, rem;
++	uint64_t abs_ppm, div, rem;
+ 	uint64_t divisor = 1000000ULL << 16;
+ 	int shift;
+ 	int ret;
+@@ -1016,26 +1016,34 @@ idpf_timesync_adjust_freq(struct rte_eth_dev *dev, int64_t ppm)
  
- 	/* remove all device feature lists in the list. */
--	for (dfl = TAILQ_FIRST(&info->dfls);
--		dfl && (tmp = TAILQ_NEXT(dfl, node), 1);
--		dfl = tmp) {
-+	TAILQ_FOREACH_SAFE(dfl, &info->dfls, node, tmp) {
- 		TAILQ_REMOVE(&info->dfls, dfl, node);
- 		opae_free(dfl);
+ 	if (ppm < 0) {
+ 		negative = true;
+-		ppm = -ppm;
++		abs_ppm = ppm == INT64_MIN ? (uint64_t)INT64_MAX + 1 :
++			(uint64_t)(-ppm);
++	} else {
++		abs_ppm = (uint64_t)ppm;
  	}
-diff --git a/drivers/raw/ifpga/base/opae_hw_api.h b/drivers/raw/ifpga/base/opae_hw_api.h
-index 57750022dd..63cb616731 100644
---- a/drivers/raw/ifpga/base/opae_hw_api.h
-+++ b/drivers/raw/ifpga/base/opae_hw_api.h
-@@ -10,6 +10,13 @@
- #include <stdio.h>
- #include <sys/queue.h>
  
-+#ifndef TAILQ_FOREACH_SAFE
-+#define	TAILQ_FOREACH_SAFE(var, head, field, tvar)			\
-+	for ((var) = TAILQ_FIRST((head));				\
-+	    (var) && ((tvar) = TAILQ_NEXT((var), field), 1);		\
-+	    (var) = (tvar))
-+#endif
+ 	/* can incval * ppm overflow ? */
+-	if (rte_log2_u64(incval) + rte_log2_u64(ppm) > 62) {
+-		rem = ppm % divisor;
+-		div = ppm / divisor;
++	if (rte_log2_u64(incval) + rte_log2_u64(abs_ppm) > 62) {
++		rem = abs_ppm % divisor;
++		div = abs_ppm / divisor;
+ 		diff = div * incval;
+-		ppm = rem;
++		abs_ppm = rem;
 +
- #include "opae_osdep.h"
- #include "opae_intel_max10.h"
- #include "opae_eth_group.h"
++		if (abs_ppm != 0) {
++			uint32_t log_sum;
+ 
+-		shift = rte_log2_u64(incval) + rte_log2_u64(ppm) - 62;
+-		if (shift > 0) {
+-			/* drop precision */
+-			ppm >>= shift;
+-			divisor >>= shift;
++			log_sum = rte_log2_u64(incval) + rte_log2_u64(abs_ppm);
++			if (log_sum > 62) {
++				shift = log_sum - 62;
++				/* drop precision */
++				abs_ppm >>= shift;
++				divisor >>= shift;
++			}
+ 		}
+ 	}
+ 
+ 	if (divisor)
+-		diff = diff + incval * ppm / divisor;
++		diff = diff + incval * abs_ppm / divisor;
+ 
+ 	if (negative)
+ 		incval -= diff;
 -- 
-2.51.0
+2.47.1
 
