@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01FDA106ACC9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 16:43:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E15106ACCF
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 16:48:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B285402AC;
-	Thu, 12 Mar 2026 17:43:50 +0100 (CET)
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com
- [209.85.167.180])
- by mails.dpdk.org (Postfix) with ESMTP id C0FBB40275
- for <dev@dpdk.org>; Thu, 12 Mar 2026 17:43:48 +0100 (CET)
-Received: by mail-oi1-f180.google.com with SMTP id
- 5614622812f47-466f1c3c627so897338b6e.1
- for <dev@dpdk.org>; Thu, 12 Mar 2026 09:43:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 35F45402AC;
+	Thu, 12 Mar 2026 17:48:42 +0100 (CET)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
+ [209.85.160.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 2BC9E40275
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 17:48:40 +0100 (CET)
+Received: by mail-qt1-f179.google.com with SMTP id
+ d75a77b69052e-5062fc5d86aso11429731cf.1
+ for <dev@dpdk.org>; Thu, 12 Mar 2026 09:48:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773333828;
- x=1773938628; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=dO91Iyem3VTaCroq+jkIF77zyPw1/QtukP3O3F6YO9U=;
- b=UneSfL8ipL7eQaamKYybOac5FL44VV38/c9186SvoqldlPon3W3ksfOn6HtsrbGiVy
- 5nbDFNf25uyie2e7I8Gp+3PCPKtJf8/zijZ51lBhmeJtE43N+g86Z1NqE5ZiHX586/PJ
- 9mmMLBxxBWqWsLVmYVp5mdaJOWqpGgjxEyCx1ESJLW5z8kmlZEU4VSYOSBt+iUfbuzYy
- ypLLzSxqTdSCArHSr6KVofZeh3NZuy/9C8YpId0FNHqIOv40gqD+58EJHzyhlhC+ryZI
- fshbJ4rOAiPsR3Y4tCx0de/rWHdgJ52pmKBKPxjAMT/M2D0P6SHtAeDB81Pg4LQz1Fp0
- xYZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20230601; t=1773333828; x=1773938628;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=iol.unh.edu; s=unh-iol; t=1773334119; x=1773938919; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=dO91Iyem3VTaCroq+jkIF77zyPw1/QtukP3O3F6YO9U=;
- b=a+4P7vpltr7JrlOmvb2z5z3zDXLFTqo35a0C3VT/qrgah3ZtPeDQru0hTonH8cart2
- sOaBJ1rKpZk708Oar0AIX8dcBsS4f22Y2wPy6IEBKHBq9N4iZy937uVJp5D1xQ8SJmhA
- 3/CG7EJwRMaDbHncLs2KsVWWWnHRocaw6vZ6d/aKzDd5Ru1UBKqzbdM6lbHyvWhN8M1M
- jbAqN9cE35f6mGpwnvTWFUM9YBX2P3C1QzYCq2z+eXIyeeq/PJtV+xITD0S5TiJ2Y2Vm
- CesPg4xKzrJtGVXxfJe2MY0WUtpZ9cGBexeHNPGu5jSxRmoctAd44pfRoz3dPsg4ZBgv
- 5Oqw==
-X-Gm-Message-State: AOJu0YxRbctxCAqJQ8gikoUDcRjroFPTVfDcs7PZZHHT8nG8EDbb4RxK
- 41a7Y+tdEx0YHpu1l7bscMglywsYndJtsP/ug/3pDDChjF9CaTXNzYVUOTk4E7EjlRSb2xj/BvT
- DUvMc
-X-Gm-Gg: ATEYQzynNSVNIVxsgwKQkLKXtMu0k1tdIBkjzUQI72ZD5CqrLwcuE1Q6WrD6iZZ/szo
- BatIiq0ugGMg0qUqL5wogknG1Rdv1x2WcTde9Q2n167XgWdtX3KkuX1gmQ+Y1+I+u6c0n0xhg02
- +2nIAJxw4cfy/2lPU4KMFWw0WE6bi8Ht26P3RLKvklLfqTMg2v2siyDOIX+vfihYvIAMYesRYGK
- iCQARLdAU5SF4tldXrN7c7pGicEC5jcoeLwZjM7ia5EVvOyAXh35b2yjryJ8ZLz68QZaWwgQ9n1
- YrUbiuXTCEtocRPl2Rd0z/PfiLJM7Mc65n3AKdPFwulrRldOGz73D+hMRHlUdRgkmManKfWyJm9
- LWBMjFikLugWYT845vWrEIBi9NTE03cXh24gyW8Mmuvs9A+Qeo5/dNNGinhHpAuXyKqAZVD3rup
- QtOHB7BK2kDfAdP2HnJ7ybMevrQPyIhe0T
-X-Received: by 2002:a05:6808:4f6a:b0:467:bfa:bd9d with SMTP id
- 5614622812f47-467333dd969mr3910607b6e.18.1773333827886; 
- Thu, 12 Mar 2026 09:43:47 -0700 (PDT)
-Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- 5614622812f47-46744873a6asm1700340b6e.9.2026.03.12.09.43.46
+ bh=xWjo/2hV/ekqvK2Vygl8a8b4cz3bD0iXfpKj1t33EDs=;
+ b=AfWKliI+0QZfjtAJxyhz0vMnL2XLsFW71kOvj6oNISGyrZE42JzghKkb7hrOCPeacW
+ UaKGBrf2NXvtVZTHCjZXioK7C3wffPvSeFgCEv+eM84cT8aErB/9WiyZ/l5hyogKtHU2
+ tu3pLSK3dc6VNbapmiRb5SfU/nnyDCOFFePgE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20230601; t=1773334119; x=1773938919;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=xWjo/2hV/ekqvK2Vygl8a8b4cz3bD0iXfpKj1t33EDs=;
+ b=dpfFFYaLKewTEZYH4oRqLneQ9eSNpzqaZieb07O3VNtIV/9gUHESSeXdPLzqS7JN/A
+ jyOEclCaMBEzWbr6uU2bHCwF3bLpVhSZ9DJrqmCt8cIXkk3I9EiALrOB2uF61RpO7I0z
+ hMKCcWd8Qb2OC8Bd1BE11XWiaGFE6mkQa7igcL4/61oLetPdKC7QrSdI9xnqhBtwYTPU
+ gStdWCdxtbsVDzeMER2ZnWYq6Gy64gFReMFruWlGVZjNiB/+hMvUuglEBj/qQziFbiCg
+ EiZhenYPeyUf5bjmPbaoU0NkBnlxnEZ/6+fFTFGirTMPvi+96uSxCAVyKWE2ey6fYt+c
+ gO2Q==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCXqOQKN6Tvw4Xkv8igNVW3tyUJnJoC8N1jvfCcwxEThWBNIudX6/i4HTF5qhEuEz+cyuGE=@dpdk.org
+X-Gm-Message-State: AOJu0Yz+SCXj17To/CaQfzb1IK8/Oz4EW1MSBzJnzTfTuQN2nKxTUNZq
+ 3TrqZFxPvYYEGTXXVz0FcPRsOSZ23C3tx3cANxnE0GsZer1rEi/btXI/KixeoOeAIrw=
+X-Gm-Gg: ATEYQzx+dzEi6//1faNKuTBkns8BSwoSoqB6N3q+aF6hf+nVACvZhb9dsyHk/HWWhrI
+ EAIRr7lGxsxY3LU6b+cTMYykvMKmUcMPC+CAAChAU6UY2qGHJhT9ZDy5S2bX0/oQJPVKnmFrjT5
+ 7lilVA6/FFW93obVVH23UIri2tQKJG2w3oLYJuImI7hoZi+JvkMNjYBCXsfp4zZFmu1YaHc5eNx
+ 3PUp/joxpK2UG56fpk3UXzRyt1nhJ9esA7wcfX5zcyloVQ5isBSRpNFjuAKRm8IDlDIEyfk5P7W
+ dPCwkI60B+aTYxnekNBXFqhvsROziewc8GbUJdAsV/hHSCfX1fIFnCm5jbHw4g2mqA1NHHkV4D2
+ 6WOyPPp1rm3BMOcjesX85b+YD+pEqHhwBYVlJPZBvGPgv6UXljmtphfym/rztw6ZGPWHSUpGuE/
+ BSjl0HZCPgd2UXLT0M/jhieHNpkMj48IvnjAai1ybMMnmhyhwueEoU8FXo4oJT+UJj
+X-Received: by 2002:ac8:5795:0:b0:509:2786:fa6c with SMTP id
+ d75a77b69052e-50957e37990mr1136041cf.59.1773334119190; 
+ Thu, 12 Mar 2026 09:48:39 -0700 (PDT)
+Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-50939ec5017sm34926831cf.8.2026.03.12.09.48.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 12 Mar 2026 09:43:47 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>,
- Shaiq Wani <shaiq.wani@intel.com>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH] net/idpf: fix comma operator warning
-Date: Thu, 12 Mar 2026 09:43:44 -0700
-Message-ID: <20260312164344.957967-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.51.0
+ Thu, 12 Mar 2026 09:48:38 -0700 (PDT)
+From: Andrew Bailey <abailey@iol.unh.edu>
+To: probb@iol.unh.edu
+Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v7] dts: port speed capabilities test suite to next DTS
+Date: Thu, 12 Mar 2026 12:48:30 -0400
+Message-ID: <20260312164830.218785-1-abailey@iol.unh.edu>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20260225182616.71972-1-abailey@iol.unh.edu>
+References: <20260225182616.71972-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,29 +79,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix comma operator misuse warnings with clang compiler in idpf that
-was missed in previous change. Shows up  when -Wcomma enabled.
+This commit ports the speed capabilities test suite from old DTS to next
+DTS.
 
-Fixes: 57560a92167a ("net/idpf: add AVX2 Tx path for split queue config")
+Bugzilla ID: 1494
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- drivers/net/intel/idpf/idpf_common_rxtx_avx2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../tests.TestSuite_speed_capabilities.rst    |  8 +++
+ dts/configurations/tests_config.example.yaml  |  6 +-
+ dts/tests/TestSuite_speed_capabilities.py     | 67 +++++++++++++++++++
+ 3 files changed, 80 insertions(+), 1 deletion(-)
+ create mode 100644 doc/api/dts/tests.TestSuite_speed_capabilities.rst
+ create mode 100644 dts/tests/TestSuite_speed_capabilities.py
 
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-index 4e1062f22d..db7728afad 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx2.c
-@@ -842,7 +842,7 @@ idpf_splitq_vtx_avx2(struct idpf_flex_tx_sched_desc *txdp,
- 	/* align if needed */
- 	if (((uintptr_t)txdp & 0x1F) != 0 && nb_pkts != 0) {
- 		idpf_splitq_vtx1_avx2(txdp, *pkt, flags);
--		txdp++, pkt++, nb_pkts--;
-+		txdp++; pkt++; nb_pkts--;
- 	}
- 
- 	for (; nb_pkts >= IDPF_VPMD_DESCS_PER_LOOP; txdp += IDPF_VPMD_DESCS_PER_LOOP,
+diff --git a/doc/api/dts/tests.TestSuite_speed_capabilities.rst b/doc/api/dts/tests.TestSuite_speed_capabilities.rst
+new file mode 100644
+index 0000000000..de6dc42757
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_speed_capabilities.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++speed_capabilities Test Suite
++=============================
++
++.. automodule:: tests.TestSuite_speed_capabilities
++   :members:
++   :show-inheritance:
+diff --git a/dts/configurations/tests_config.example.yaml b/dts/configurations/tests_config.example.yaml
+index 209d7dd393..a41e65f2b4 100644
+--- a/dts/configurations/tests_config.example.yaml
++++ b/dts/configurations/tests_config.example.yaml
+@@ -29,4 +29,8 @@ hello_world:
+ #      - buff_size: 64
+ #        Gbps: 2.0 # Set gigabits per second according to your devices throughput for this given buffer size
+ #      - buff_size: 512
+-#        Gbps: 20.0
+\ No newline at end of file
++#        Gbps: 20.0
++# port_speed_capabilities:
++#   test_parameters:
++#     0 : 100 Gbps # Assign an expected link speed to a port ID in Gbps
++#     1 : 100 Gbps
+\ No newline at end of file
+diff --git a/dts/tests/TestSuite_speed_capabilities.py b/dts/tests/TestSuite_speed_capabilities.py
+new file mode 100644
+index 0000000000..9cbd6f1ef7
+--- /dev/null
++++ b/dts/tests/TestSuite_speed_capabilities.py
+@@ -0,0 +1,67 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 University of New Hampshire
++
++"""Speed capability test suite.
++
++This test suite ensures that testpmd recognizes the expected speed from a link in Gbps.
++"""
++
++from typing import Literal
++
++from api.capabilities import (
++    LinkTopology,
++    requires_link_topology,
++)
++from api.test import verify
++from api.testpmd import TestPmd
++from framework.test_suite import BaseConfig, TestSuite, func_test
++
++
++class Config(BaseConfig):
++    """Performance test metrics."""
++
++    test_parameters: dict[
++        int,
++        Literal[
++            "1 Gbps",
++            "10 Gbps",
++            "25 Gbps",
++            "40 Gbps",
++            "100 Gbps",
++            "200 Gbps",
++            "400 Gbps",
++            "800 Gbps",
++            "1600 Gbps",
++        ],
++    ] = {
++        0: "100 Gbps",
++    }
++
++
++@requires_link_topology(LinkTopology.ONE_LINK)
++class TestSpeedCapabilities(TestSuite):
++    """Speed capabilities test suite."""
++
++    config: Config
++
++    def set_up_suite(self):
++        """Set up the test suite."""
++        self.test_parameters = self.config.test_parameters
++
++    @func_test
++    def validate_port_speed(self) -> None:
++        """Validate expected port speed is also the observed port speed.
++
++        Steps:
++            * Show port info for each available port
++
++        Verify:
++            * The resulting link speeds are equal to the configured link speeds
++        """
++        with TestPmd() as testpmd:
++            for k, v in self.test_parameters.items():
++                link_speed = testpmd.show_port_info(k).link_speed
++                verify(
++                    link_speed == v,
++                    f"port {k} speed {link_speed} does not match configured '{v}'",
++                )
 -- 
-2.51.0
+2.50.1
 
