@@ -2,50 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C935105A57C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 11:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E57105A583
+	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 11:05:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61C614065D;
-	Thu, 12 Mar 2026 12:00:27 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
- by mails.dpdk.org (Postfix) with ESMTP id 8272B402AC;
- Thu, 12 Mar 2026 12:00:25 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C6484402C9;
+	Thu, 12 Mar 2026 12:05:55 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 2C1E5402AC;
+ Thu, 12 Mar 2026 12:05:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773313225; x=1804849225;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=WhCgNO6pR2esodxIs5403bhjgbKnbVU6cav1cFhCc5o=;
- b=MXIgrSLA2dtvpzircNZNqmUUhKYOGr+GEoXofaes3LGbYoo/+1IXiAvd
- FNggzd9622NlUpQfGbmrzjTzyJ2vz1PsQkQbXlcDne8zxQXajAhjK/0Hi
- HBLFnjIzbgt5cONR/b1Bfeagykb1JlpbaZ3mlhfcELuajDuA6nJSDrJuQ
- d2QEx+1cf2+K/I+AYlTZ9Xz4adgrBzFmlDxZWoUY6abGhWoZ/OOK8AEM4
- 9RvcHiUGVGy5K6Emtkf2ig9Dzyz+S7sB/3lZcV73C7LTgHkss4liI6mSq
- vAd+LNbEZ4VhrLfNXfHK1d951dyWiy0Ay7eKUCgSnlfnM6MJfiRzoPVng g==;
-X-CSE-ConnectionGUID: PIyMx0N3T1yhjh4FQN564w==
-X-CSE-MsgGUID: j3uwNTiSRoKB+Hl0WwooKA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11726"; a="78292169"
-X-IronPort-AV: E=Sophos;i="6.23,116,1770624000"; d="scan'208";a="78292169"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 12 Mar 2026 04:00:24 -0700
-X-CSE-ConnectionGUID: j2yTBxNHTdSuEGNGqYdNJw==
-X-CSE-MsgGUID: Nja4pU+YRMKdsVbXuHJucw==
+ t=1773313555; x=1804849555;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=R74QBs9mso9ceBZUdtxw5YCBYBmSOMsFSFmpJVlT074=;
+ b=QMMEQoddxutZ0A5cUnfOfZOiwGZVdXHrC1NHys4+6V1mEeBl4JwCGNNY
+ joFu84XsIqM7rbMGn3I9opfoOdJNO5DBxq8/1N/xkCUU9Bp2YnTdAnoK8
+ Q3LCk/zhbDG/Hno7olr27Zv1OFFm/bblO2RT6qKhm1NBOcfzwYUqe6OzO
+ KM/+BJQWtoyqNEl0G+1tT4xDPNKCRkV2i8J/Ed11dpcALdwkkH7gFT675
+ UZ8WXX/oPEIW78Z3VpjLlHrv4X+54KaEMMhXAoTBSQ/w6Ki0kHSmSuDdN
+ D9FxaJQjvGhY0QuNC2Dp+TFQJryubcIpnMyX0zByu5d5JeORWH/lIpdHE w==;
+X-CSE-ConnectionGUID: MfVAyXIKQPq81+A26pbSaQ==
+X-CSE-MsgGUID: SvQB791oQD2Y0ZNqch+lZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11726"; a="73418595"
+X-IronPort-AV: E=Sophos;i="6.23,116,1770624000"; d="scan'208";a="73418595"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 12 Mar 2026 04:05:53 -0700
+X-CSE-ConnectionGUID: NquoP8QfTJKFJuhnv13b+g==
+X-CSE-MsgGUID: ffesiFsmTHqXSZ4Lg95qFA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,116,1770624000"; d="scan'208";a="224927509"
-Received: from unknown (HELO srv13..) ([10.190.213.143])
- by orviesa003.jf.intel.com with ESMTP; 12 Mar 2026 04:00:22 -0700
-From: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-To: dev@dpdk.org, bruce.richardson@intel.com, stephen@networkplumber.org,
- aman.deep.singh@intel.com
-Cc: shaiq.wani@intel.com,
- Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>, stable@dpdk.org
-Subject: [PATCH v2] app/testpmd: fix DCB forwarding TC mask and queue guard
-Date: Thu, 12 Mar 2026 10:36:15 +0000
-Message-ID: <20260312103615.1282874-1-chaitanyababux.talluri@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260311083751.1107404-1-chaitanyababux.talluri@intel.com>
-References: <20260311083751.1107404-1-chaitanyababux.talluri@intel.com>
+X-IronPort-AV: E=Sophos;i="6.23,116,1770624000"; d="scan'208";a="251280227"
+Received: from unknown (HELO sprmax15..) ([10.138.182.128])
+ by orviesa002.jf.intel.com with ESMTP; 12 Mar 2026 04:05:51 -0700
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Cc: stable@dpdk.org
+Subject: [PATCH v1] net/intel: fix mbuf leak in idpf split queue Tx path
+Date: Thu, 12 Mar 2026 16:31:33 +0530
+Message-Id: <20260312110133.629246-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,86 +59,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update forwarding TC mask based on configured traffic classes to properly
-handle both 4 TC and 8 TC modes. The bitmask calculation (1u << nb_tcs) - 1
-correctly creates masks for all available traffic classes (0xF for 4 TCs,
-0xFF for 8 TCs).
+RS completion only frees the EOP entry's mbuf, leaking preceding
+segments of multi-segment packets. Add a first_id field to the Tx
+entry struct, record the first sw_id at the EOP entry during submit,
+and walk forward from first to EOP to free all segments on completion.
 
-When the mask is not updated after a TC configuration change, it stays at
-the default 0xFF, which causes dcb_fwd_tc_update_dcb_info() to skip the
-compress logic entirely (early return when mask ==
-DEFAULT_DCB_FWD_TC_MASK).
-This can lead to inconsistent queue allocations.
-
-Additionally, the existing VMDQ pool guard in dcb_fwd_config_setup() only
-checks RX queue counts, missing the case where the TX port has zero queues
-for a given pool/TC combination. When nb_tx_queue is 0, the expression
-"j % nb_tx_queue" triggers a SIGFPE (integer division by zero).
-
-Fix this by:
-1. Updating dcb_fwd_tc_mask after port DCB reconfiguration using the
-   user requested num_tcs value, so fwd_config_setup() sees the correct
-   mask.
-2. Extending the existing pool guard to also check TX queue counts.
-3. Adding a defensive break after the division by dcb_fwd_tc_cores to
-   catch integer truncation to zero.
-
-Fixes: 0ecbf93f5001 ("app/testpmd: add command to disable DCB")
+Fixes: 8c6098afa075 ("common/idpf: add Rx/Tx data path")
 Cc: stable@dpdk.org
 
-Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
+ drivers/net/intel/common/tx.h             |  1 +
+ drivers/net/intel/idpf/idpf_common_rxtx.c | 26 ++++++++++++++++++++---
+ 2 files changed, 24 insertions(+), 3 deletions(-)
 
-v2:
-* Used res->num_tcs to derive dcb_fwd_tc_mask.
-* Removed redundant rte_eth_dev_get_dcb_info().
----
- app/test-pmd/cmdline.c | 3 +++
- app/test-pmd/config.c  | 9 ++++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index c33c66f327..19766cc633 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -3682,6 +3682,9 @@ cmd_config_dcb_parsed(void *parsed_result,
- 		return;
- 	}
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 283bd58d5d..53e61c0b62 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -121,6 +121,7 @@ struct ci_tx_queue;
+ struct ci_tx_entry {
+ 	struct rte_mbuf *mbuf; /* mbuf associated with TX desc, if any. */
+ 	uint16_t next_id; /* Index of next descriptor in ring. */
++	uint16_t first_id; /* Split-queue: first sw_id of packet at EOP entry. */
+ };
  
-+	/* Update forwarding TC mask to match the configured number of TCs. */
-+	dcb_fwd_tc_mask = (1u << res->num_tcs) - 1;
+ /**
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
+index f73716e57c..bc0677f2ee 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
+@@ -825,11 +825,23 @@ idpf_split_tx_free(struct ci_tx_queue *cq)
+ 		txq->last_desc_cleaned = q_head;
+ 		break;
+ 	case IDPF_TXD_COMPLT_RS:
+-		/* q_head indicates sw_id when ctype is 2 */
++		/* Walk from first segment to EOP, freeing each segment. */
+ 		txe = &txq->sw_ring[q_head];
+ 		if (txe->mbuf != NULL) {
+-			rte_pktmbuf_free_seg(txe->mbuf);
+-			txe->mbuf = NULL;
++			uint16_t first = txe->first_id;
++			uint16_t idx = first;
++			uint16_t end = (q_head + 1 == txq->sw_nb_desc) ?
++					0 : q_head + 1;
 +
- 	fwd_config_setup();
++			do {
++				txe = &txq->sw_ring[idx];
++				if (txe->mbuf != NULL) {
++					rte_pktmbuf_free_seg(txe->mbuf);
++					txe->mbuf = NULL;
++				}
++				idx = (idx + 1 == txq->sw_nb_desc) ?
++					0 : idx + 1;
++			} while (idx != end);
+ 		}
+ 		break;
+ 	default:
+@@ -979,9 +991,14 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 				tx_id = 0;
+ 		}
  
- 	cmd_reconfig_device_queue(port_id, 1, 1);
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index f9f3c542a6..9b201ac241 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -5450,7 +5450,8 @@ dcb_fwd_config_setup(void)
- 			/* if the nb_queue is zero, means this tc is
- 			 * not enabled on the POOL
- 			 */
--			if (rxp_dcb_info.tc_queue.tc_rxq[i][tc].nb_queue == 0)
-+			if (rxp_dcb_info.tc_queue.tc_rxq[i][tc].nb_queue == 0 ||
-+			    txp_dcb_info.tc_queue.tc_txq[i][tc].nb_queue == 0)
- 				break;
- 			k = fwd_lcores[lc_id]->stream_nb +
- 				fwd_lcores[lc_id]->stream_idx;
-@@ -5458,6 +5459,12 @@ dcb_fwd_config_setup(void)
- 						dcb_fwd_tc_cores;
- 			nb_tx_queue = txp_dcb_info.tc_queue.tc_txq[i][tc].nb_queue /
- 						dcb_fwd_tc_cores;
-+			/* guard against integer truncation to zero (e.g.
-+			 * nb_queue=1, dcb_fwd_tc_cores=2) to prevent SIGFPE
-+			 * from "j % nb_tx_queue" below.
-+			 */
-+			if (nb_rx_queue == 0 || nb_tx_queue == 0)
-+				break;
- 			rxq = rxp_dcb_info.tc_queue.tc_rxq[i][tc].base + nb_rx_queue * sub_core_idx;
- 			txq = txp_dcb_info.tc_queue.tc_txq[i][tc].base + nb_tx_queue * sub_core_idx;
- 			for (j = 0; j < nb_rx_queue; j++) {
++		uint16_t first_sw_id = sw_id;
++
+ 		do {
+ 			txd = &txr[tx_id];
+ 			txn = &sw_ring[txe->next_id];
++
++			if (txe->mbuf != NULL)
++				rte_pktmbuf_free_seg(txe->mbuf);
+ 			txe->mbuf = tx_pkt;
+ 
+ 			/* Setup TX descriptor */
+@@ -1002,6 +1019,9 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
+ 		/* fill the last descriptor with End of Packet (EOP) bit */
+ 		txd->qw1.cmd_dtype |= IDPF_TXD_FLEX_FLOW_CMD_EOP;
+ 
++		/* Record first sw_id at EOP so completion can walk forward. */
++		sw_ring[txd->qw1.compl_tag].first_id = first_sw_id;
++
+ 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
+ 		txq->rs_compl_count += nb_used;
+ 
 -- 
-2.43.0
+2.34.1
 
