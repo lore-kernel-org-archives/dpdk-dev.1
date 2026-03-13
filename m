@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71EBE107BCD0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Mar 2026 18:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 714FF107BCE4
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Mar 2026 21:00:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 56A36402BB;
-	Fri, 13 Mar 2026 19:22:44 +0100 (CET)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
- [209.85.160.175])
- by mails.dpdk.org (Postfix) with ESMTP id 94BDE402A2
- for <dev@dpdk.org>; Fri, 13 Mar 2026 19:22:43 +0100 (CET)
-Received: by mail-qt1-f175.google.com with SMTP id
- d75a77b69052e-50905b779dfso28458521cf.3
- for <dev@dpdk.org>; Fri, 13 Mar 2026 11:22:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A0EF7402CC;
+	Fri, 13 Mar 2026 22:00:49 +0100 (CET)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id CDAC6402BB
+ for <dev@dpdk.org>; Fri, 13 Mar 2026 22:00:48 +0100 (CET)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-2bea03c64c1so1481291eec.0
+ for <dev@dpdk.org>; Fri, 13 Mar 2026 14:00:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1773426163; x=1774030963; darn=dpdk.org;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773435648;
+ x=1774040448; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wfLTmxbX1C9zuDEpkLB8zviOTISUMgh3TpOq/9xU8XM=;
- b=iM+I0beAQAQIKrFNsuip3zTOO+1Q4HVOjrOakXJj4m5PMAtjrS5kKTpXpOjGPka0FQ
- OmCb7CPv4RMk9j0CIF3CeD71Z6Oi7aK7/yWpysXH+t9rlERBHGUzkmd5sfwZl9H+fQbL
- c5HBOruxfG3mlrKVCPMwFobNabOEABtTYKKFo=
+ bh=NyBWtP4iE6r+JxV8bq2DoS1Abo7ZLCQaa0k/GgwOdk8=;
+ b=yPzq0Audu6ehNI3acuNcKZCnBO7vwrsBWRnCUoS2G8bFC+mUsXuDqol5hj5HiS8v/Y
+ LZW2Kw/PLdP5+uDa0CEcGIs6h0ZMU/MmAlvTFG9SMzLJbMrvOVRdDxVgsHml+EeWAGdh
+ Kql/ZcsDcimqtjmMqHUsqaHWjU2UibRb9r4sTrb66x4i+ueQXdmbXbJuQmJ/9ramMsh4
+ wnoLAKokrGSFXSkfxxxJu6b1Y9jaGVR3RFpWYK2DzCW4/jUB4Z3vXqFfjZ6Dd5nrXQVs
+ QorA9CRoTPV8OxeDBx6Tfc5+aBXHSsgXb02vT0+6BOfn4hWamjgbYfe0aBgWMfct57gI
+ 0/iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773426163; x=1774030963;
+ d=1e100.net; s=20251104; t=1773435648; x=1774040448;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=wfLTmxbX1C9zuDEpkLB8zviOTISUMgh3TpOq/9xU8XM=;
- b=GP7KhA2oz2XGYtgDcXBdCpcd0WZpjWFlRTpkYRwwEMDf2vHQ5nFqhXUrkX1hiVLFSL
- FTqrhAj6eQO8Nr6wFHttoIslVlpotEh2nWvFaXfJtQnUMrFXcQEvtu0tWsBqAaQMqIsu
- 6XKp6Q6PrepXWekuV4J7dSDr7X1C85tVgqpCFiqQMujJvTIcTIOq6nZJBjuTGzNGqHR+
- 8uIE+v+pbwprolF4xyzTWS9W241NXxlTF3Q+4okOJhw7qGdcO29CEHQ72l3g1W6DUhiy
- y6CrcdH/fnv4M0KSen/oRNfa43jSgXW69dKZFBfayNF7VNizlPpA6+zZdsmhpy9HZjBP
- jHyQ==
-X-Gm-Message-State: AOJu0YzaImHhJ2w5/98xglskXH+qdbpDWqdKaKqBYsHWYaT+LPc2PtPc
- qN766X1CocMuJsEr6VQ9HgF3+7Bic07pWLQLAkicQrRxj4ZRKp/bfYBq1ZuxIZOAXYo=
-X-Gm-Gg: ATEYQzxsnhQvX+QQLdH9T34nnjXx7zF917sB4MgayGDTK1uwsXkm9EyHZRsZw5IhBE8
- T3iGZ18be/cgGZyPE7TQ5tlzYPXv668Z7qvx5a+Iwpxq+hl5gJ66UAD2WMx/FAhGFlCdL1wBaVo
- E1Tiz657at09U4HP6YJpglzFmtw9zPn1m949Q0PvJgJXpkfESD5watyzhyh8Aip0F5Q7IyIS9t+
- t1AYANOgrFybZVTHbYXNKUI/Ge5Y4mHXEvwW3EQl77hiAkERzmKXhOuJJSb1psdhtIywATjE1SF
- gnuonh7jpG8vDHiQDbPTWb9ae7VtbsRmmU3AUJn93iDDifqAZtLgZ/RTAREwKRa4LdQU7u0FNO9
- yLOkb38UBHOY7DSrv+QolVo1FnuLGD9UAYPOS3k02JiyxZUGGhaSAI4Tmx/b3SKcWoqTzLgm4CY
- i/SpNRZ8NkZWH/VSpR2Xhls0ZQbU1PmxB6MoiT0CArvZhWpY1B5NIsgmP3R2c24g==
-X-Received: by 2002:ac8:5814:0:b0:4ee:1b0e:861a with SMTP id
- d75a77b69052e-50957b78e16mr55463881cf.13.1773426162768; 
- Fri, 13 Mar 2026 11:22:42 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
+ bh=NyBWtP4iE6r+JxV8bq2DoS1Abo7ZLCQaa0k/GgwOdk8=;
+ b=p+rAnFjxDmQizmyaWsX1hPkbeCkAOG4hWiBuls4FS2bMy158KxKXX23OFCJV11APX+
+ DiC/KBfb49m+RFxTlDm7qA+ovO2+oL+9LI+sbiI+usdKOUK/jnlCBEVgoiB9DD4vGz32
+ Z8rZINDOaTKEU4AuOBS7dBbG19y93nZewFmcVk9dq2U9uFqSypO/QxPrAz/CGkNGRXAG
+ wp9lwsddB04nDLN+Qggbplw3f61bHoU+cqejiV3NzKGYLvD01pTnAsGqxrYFlwxW3TvI
+ WN7ugCPZUY+IR2pEUsSvG2qPl9KO+0Re1Lictl4q0sHkgwt2SF+tCjFbFPghBKsu7nal
+ pYOQ==
+X-Gm-Message-State: AOJu0Ywa8TTNbBO+A6W0IfJ11NRxT9/p0cgJ1CECBAZuZGoXxkfMDkqv
+ 07DH4n6UvmoyB18Vim9HO8pzuF9EUTp/SaFPOEUxReRdYoek2PrZIC4hLGKCIT0RPiw=
+X-Gm-Gg: ATEYQzw6bw/QvilY/kqLvUYUeKI36YiFIS4pgrOkA4dJ6Dt8WkcGwIL/jZHmywsf9tm
+ 0n2xHoDezTVkIi0l2qeME6f/19s2MZPuIWFDyetIaKGJi2aPdGk75c7LXKyOm0jtBiEwlSjUc3w
+ DwIyAMYqpJPSkEV6y2fVWGM3skMNK9oLr5UKZtpZ+KbRrMr+KvNjMmGZtkRt2fhSWw4jhxIg9zf
+ NBgdTOzrFCgWB6hA4TxyCWjhlksgGaM7IvEri4rZgEbvBnUBqHihvfLoY8VO7trAxws+n0rx8lY
+ D50cCrn9ku9/BTja1mcb5Q5FhUGBq205ansOylpc9MfNNN4pSH7sHjeIdNVArOdYYXUB/ga8DY3
+ CCyc7Un+FE29rHcqZnf5oyV6PSH6VRbvBTYNTlO4MZQlRPObEj9Pc5vBmUzaIJZz/ezZB7HNTyH
+ XPmx0Ct4J2TlyxJ0gRwWO9GgeguAm9XHsEXc8=
+X-Received: by 2002:a05:7301:3f0a:b0:2be:1a8e:10bb with SMTP id
+ 5a478bee46e88-2bea54e71bcmr2035579eec.12.1773435647473; 
+ Fri, 13 Mar 2026 14:00:47 -0700 (PDT)
+Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-50939e8e0ecsm60162881cf.5.2026.03.13.11.22.41
+ 5a478bee46e88-2beab5702e5sm4664662eec.29.2026.03.13.14.00.46
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 13 Mar 2026 11:22:42 -0700 (PDT)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: probb@iol.unh.edu, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
-Cc: dev@dpdk.org, Dean Marx <dmarx@iol.unh.edu>,
- Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2] dts: update overall result pass/skip logic
-Date: Fri, 13 Mar 2026 14:22:40 -0400
-Message-ID: <20260313182240.130379-1-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260313155601.112819-1-dmarx@iol.unh.edu>
-References: <20260313155601.112819-1-dmarx@iol.unh.edu>
+ Fri, 13 Mar 2026 14:00:47 -0700 (PDT)
+Date: Fri, 13 Mar 2026 14:00:44 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: KAVYA AV <kavyax.a.v@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com,
+ vladimir.medvedkin@intel.com, shaiq.wani@intel.com, stable@dpdk.org
+Subject: Re: [PATCH] app/testpmd: fix DCB queue allocation for VMDq devices
+Message-ID: <20260313140044.3ff14294@phoenix.local>
+In-Reply-To: <20260313101553.1827216-1-kavyax.a.v@intel.com>
+References: <20260313101553.1827216-1-kavyax.a.v@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,60 +80,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update overall result of test suites such that
-when some cases skip and at least one passes,
-the result is a pass instead of a skip. Only
-when all cases skip is the result a skip.
+On Fri, 13 Mar 2026 10:15:53 +0000
+KAVYA AV <kavyax.a.v@intel.com> wrote:
 
-Bugzilla ID: 1899
+> diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+> index fbacee89ea..70be52d36f 100644
+> --- a/app/test-pmd/testpmd.c
+> +++ b/app/test-pmd/testpmd.c
+> @@ -4444,9 +4444,11 @@ init_port_dcb_config(portid_t pid,
+>  			if (rte_port->dev_info.vmdq_pool_base == 0) {
+>  				nb_rxq = rte_port->dev_info.max_rx_queues;
+>  				nb_txq = rte_port->dev_info.max_tx_queues;
+> -			} else {
+> -				nb_rxq = (queueid_t)num_tcs;
+> -				nb_txq = (queueid_t)num_tcs;
+> +			}
+> +			/* Use device queue count to prevent null pointer errors */
+> +			else {
+> +				nb_rxq = rte_port->dev_info.nb_rx_queues;
+> +				nb_txq = rte_port->dev_info.nb_tx_queues;
+>  			}
+>  		}
+>  	}
 
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
-Tested-by: Andrew Bailey <abailey@iol.unh.edu>
-Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
----
- dts/framework/test_result.py | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
-
-diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
-index c6bddc55a9..e05663f90e 100644
---- a/dts/framework/test_result.py
-+++ b/dts/framework/test_result.py
-@@ -187,18 +187,23 @@ def serialize_model(self) -> dict[str, Any]:
- 
-     def get_overall_result(self) -> ResultLeaf:
-         """The overall result of the underlying results."""
--
--        def extract_result(value: ResultNode | ResultLeaf) -> ResultLeaf:
--            match value:
--                case ResultNode():
--                    return value.get_overall_result()
--                case ResultLeaf():
--                    return value
--
--        return max(
--            (extract_result(child) for child in self.children),
--            default=ResultLeaf(result=Result.PASS),
--        )
-+        results = [
-+            child.get_overall_result() if isinstance(child, ResultNode) else child
-+            for child in self.children
-+        ]
-+        max_result = max(results, default=ResultLeaf(result=Result.PASS))
-+
-+        if max_result.result != Result.SKIP:
-+            return max_result
-+
-+        if any(
-+            r.result == Result.PASS
-+            for child, r in zip(self.children, results)
-+            if not (isinstance(child, ResultNode) and child.label in self.__ignore_steps)
-+        ):
-+            return ResultLeaf(result=Result.PASS)
-+
-+        return max_result
- 
-     def make_summary(self) -> Counter[Result]:
-         """Make the summary of the underlying results while ignoring special nodes."""
--- 
-2.52.0
-
+Please don't break up  "} else {" with a comment.
+The comment is associated with the next two lines anyway.
