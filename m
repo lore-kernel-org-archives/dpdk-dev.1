@@ -2,47 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 425DE107BCC6
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Mar 2026 16:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 968DC107BCC9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Mar 2026 16:06:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 06938402BB;
-	Fri, 13 Mar 2026 17:06:44 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0074D402D4;
+	Fri, 13 Mar 2026 17:06:45 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id DA6184026C
- for <dev@dpdk.org>; Fri, 13 Mar 2026 17:06:42 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 9B80D4026C
+ for <dev@dpdk.org>; Fri, 13 Mar 2026 17:06:43 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773418003; x=1804954003;
+ t=1773418004; x=1804954004;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=RZJ9FVfpz9JFUta2I9foc3uJ8c0EvSCaY1A+xwQ3SAQ=;
- b=DGC4tjZbBDpLKKGTrMz3mn5H8jBsAh3/HbUnKb5ACOr7utaQwCXf3eyY
- eDId1tX9Mgch85daq6OErEEYj17IhEWBu7bIsBw1YrfWc2rfKZqhI8pRl
- c0cfyKrb8VaB5WqW+Tv2doMQEPrE235YUHMWaDL1cURRhADnf5gi0eWnO
- aaIF2Iw3p3eP3qu59xBxeKIBITiGR+v74DaVl42YFsaEJF5KBdS7uSVlC
- cst0up9v9WbNwRYw0Kq5CIPfgPwREpasLQJepkRstZ8kXSUX3IWpB/ExG
- pchNJ6WKSVO/Z9uvPVESYt+s2cdOn860fUi9hde7K/Ry7OG24IThxWvCp g==;
-X-CSE-ConnectionGUID: ZH+vlQtMQYSE4JpSFnTsSA==
-X-CSE-MsgGUID: CLKJLM+QTmWuQnlCGeYOWw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11728"; a="74563515"
-X-IronPort-AV: E=Sophos;i="6.23,118,1770624000"; d="scan'208";a="74563515"
+ bh=zXC1GeaGRxKol6GI8yU6Zbi9GfWLKP8xMqEjgT5KBVM=;
+ b=ma6CkkJVRK9b5f3MZsoSqz3AGFcPq8rnJKijA+0iTHFNTY6U+TovmXf0
+ AfMSZiBnCXIzV/DgNGDuq/qjt+KiGi906J6ZYWWY8SeCFtjhVD9m5zYun
+ MTFIPeTTcXvs3WPBfUb8Ssyes1xB71emS4F5HUt2G0sI5BrfnisvuiVIp
+ rZ0K9XTaGPJWchUmK++gXySuaXDKQ9FWrm7qC1mE31txtaaT/dt1b0QM/
+ q0F8+OYPXu1Ac27RzIVYIoi/tGSbLNZ4GoCqVxnSesBGR0YtgD/Oed9JJ
+ 9OZVAelrEUIpIvZKwIKYdE27A3yF3bUCRySq6pYum3DK6gHfRByKsdx7i A==;
+X-CSE-ConnectionGUID: fVIDfeaEQ62B0P1vMvhIsw==
+X-CSE-MsgGUID: l7tzvSjbSBmx/7WxDrrfcQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11728"; a="74563520"
+X-IronPort-AV: E=Sophos;i="6.23,118,1770624000"; d="scan'208";a="74563520"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
  13 Mar 2026 09:06:42 -0700
-X-CSE-ConnectionGUID: gtJ7d8AOQEuvimk9KV8PkA==
-X-CSE-MsgGUID: mZVlnqwmTgy+81Asa0FFZQ==
+X-CSE-ConnectionGUID: Cy9mpwayTluE9Mu5X50Qyw==
+X-CSE-MsgGUID: 1pN3GIyFTSmMpMEPz/iOgQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,118,1770624000"; d="scan'208";a="246377237"
+X-IronPort-AV: E=Sophos;i="6.23,118,1770624000"; d="scan'208";a="246377238"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa001.fm.intel.com with ESMTP; 13 Mar 2026 09:06:40 -0700
+ by fmviesa001.fm.intel.com with ESMTP; 13 Mar 2026 09:06:41 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org
-Subject: [PATCH v2 0/6] Make VA reservation limits configurable
-Date: Fri, 13 Mar 2026 16:06:31 +0000
-Message-ID: <cover.1773417833.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 1/6] eal: reject non-numeric input in str to size
+Date: Fri, 13 Mar 2026 16:06:32 +0000
+Message-ID: <9a66399f084c1e1b4deb0ed61210c7918c9ac2a9.1773417833.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1773225702.git.anatoly.burakov@intel.com>
-References: <cover.1773225702.git.anatoly.burakov@intel.com>
+In-Reply-To: <cover.1773417833.git.anatoly.burakov@intel.com>
+ <cover.1773417833.git.anatoly.burakov@intel.com>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,107 +59,174 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the VA space reservation is governed by a combination of a few
-values:
+Add a check in rte_str_to_size validating that strtoull() consumed at least
+one character. If not, set errno to EINVAL and return 0.
 
-- Total max VA space (512G for most platforms, 1T for some, 2G for 32-bit) - Max
-memory per memory type - Max pages per memory type
+Also move rte_str_to_size unit coverage from malloc tests to
+string_autotest, where string utility tests belong, and add a new test to
+test for handling invalid numerical input.
 
-The "memory" type is defined as unique combination of NUMA node and page size.
-The reason why there are two limits is because for large pages, having large
-segment limit causes runaway multi-terabyte reservations, while for smaller
-pages, having large memory limit causes hundreds of thousands of huge page
-slots. The total maximum memory size was originally intended as a safeguard
-against discontiguous NUMA nodes, but this has since been fixed by EAL API
-explicitly supporting discontiguous NUMA nodes, so this is no longer a problem.
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+ app/test/test_malloc.c                 | 30 ------------
+ app/test/test_string_fns.c             | 66 ++++++++++++++++++++++++++
+ lib/eal/common/eal_common_string_fns.c |  4 ++
+ 3 files changed, 70 insertions(+), 30 deletions(-)
 
-In addition to that, each memory type was split into multiple segment lists,
-with the idea that it should be easier for a secondary process to reserve
-multiple smaller chunks at discontiguous addresses than it is to reserve a large
-single chunk of memory. It is unknown whether this actually makes a difference,
-but what *is* known is that it's a source of additional complexity with memory
-reservation, as well as a source of gratuitous memory reservation limits placed
-on DPDK.
-
-This patchset attempts to simplify and improve this situation in a few key
-areas:
-
-- Get rid of global memory limits
-
-Total memory usage can, and should, scale with NUMA sockets, and so now it does.
-
-- Get rid of multiple segment lists per memory type
-
-This removes two config options, and makes the address space reservations a lot
-simpler.
-
-- Allocate all memory segment lists as one big blob of memory
-
-This further simplifies address space reservations.
-
-- Use memory size limits instead of segments limits
-
-Despite smaller page sizes still needing limits on number of segments, they are
-directly translated into memory size limits at init time, so that all limits the
-VA space reservation ever sees are expressed in bytes, not segments. This
-reduces complexity in how we manage the VA space reservations and work with our
-limits.
-
-- Do not use config constants directly
-
-We switch to only invoking these constants once - at startup, when we are
-discovering hugepage sizes available to the system. This allows us to be more
-flexible in how we manage these limits.
-
-- Add EAL command-line option to set per-page size limits
-
-The final piece of the puzzle - the "more flexible in how we manage these
-limits" part. This new parameter affords us more flexible VA space management,
-including disabling specific page sizes entirely (by specifying 0 as the limit).
-This allows increasing/decreasing VA space reservation limits without
-recompiling DPDK.
-
-v1 -> v2:
-- Fix str_to_size not handling invalid input properly
-- Move str_to_size autotests to string autotests file
-- Fix hugepage file segment indexing to not use global constants
-- More validation around VA reservation
-
-Anatoly Burakov (6):
-  eal: reject non-numeric input in str to size
-  eal/memory: remove per-list segment and memory limits
-  eal/memory: allocate all VA space in one go
-  eal/memory: get rid of global VA space limits
-  eal/memory: store default segment limits in config
-  eal/memory: add page size VA limits EAL parameter
-
- app/test/test.c                               |   1 +
- app/test/test_eal_flags.c                     | 126 ++++++++++++
- app/test/test_malloc.c                        |  30 ---
- app/test/test_string_fns.c                    |  66 ++++++
- config/arm/meson.build                        |   1 -
- config/meson.build                            |   5 -
- config/rte_config.h                           |   2 -
- doc/guides/linux_gsg/linux_eal_parameters.rst |  13 ++
- .../prog_guide/env_abstraction_layer.rst      |  33 ++-
- lib/eal/common/eal_common_dynmem.c            | 192 ++++++++----------
- lib/eal/common/eal_common_memory.c            |  28 ++-
- lib/eal/common/eal_common_options.c           | 141 +++++++++++++
- lib/eal/common/eal_common_string_fns.c        |   4 +
- lib/eal/common/eal_filesystem.h               |  13 ++
- lib/eal/common/eal_internal_cfg.h             |   8 +
- lib/eal/common/eal_memcfg.h                   |   6 +
- lib/eal/common/eal_option_list.h              |   1 +
- lib/eal/common/eal_options.h                  |   1 +
- lib/eal/common/eal_private.h                  |  19 +-
- lib/eal/freebsd/eal.c                         |   6 +
- lib/eal/freebsd/eal_memory.c                  | 101 +++------
- lib/eal/linux/eal.c                           |   6 +
- lib/eal/linux/eal_memalloc.c                  |   4 +-
- lib/eal/linux/eal_memory.c                    | 170 ++++++++++------
- lib/eal/windows/eal.c                         |   6 +
- 25 files changed, 687 insertions(+), 296 deletions(-)
-
+diff --git a/app/test/test_malloc.c b/app/test/test_malloc.c
+index 344a730e28..da868c8091 100644
+--- a/app/test/test_malloc.c
++++ b/app/test/test_malloc.c
+@@ -271,35 +271,6 @@ test_reordered_free(void)
+ 	return ret;
+ }
+ 
+-/* test function inside the malloc lib*/
+-static int
+-test_str_to_size(void)
+-{
+-	struct {
+-		const char *str;
+-		uint64_t value;
+-	} test_values[] =
+-	{{ "5G", (uint64_t)5 * 1024 * 1024 *1024 },
+-			{"0x20g", (uint64_t)0x20 * 1024 * 1024 *1024},
+-			{"10M", 10 * 1024 * 1024},
+-			{"050m", 050 * 1024 * 1024},
+-			{"8K", 8 * 1024},
+-			{"15k", 15 * 1024},
+-			{"0200", 0200},
+-			{"0x103", 0x103},
+-			{"432", 432},
+-			{"-1", 0}, /* negative values return 0 */
+-			{"  -2", 0},
+-			{"  -3MB", 0},
+-			{"18446744073709551616", 0} /* ULLONG_MAX + 1 == out of range*/
+-	};
+-	unsigned i;
+-	for (i = 0; i < RTE_DIM(test_values); i++)
+-		if (rte_str_to_size(test_values[i].str) != test_values[i].value)
+-			return -1;
+-	return 0;
+-}
+-
+ static int
+ test_multi_alloc_statistics(void)
+ {
+@@ -1145,7 +1116,6 @@ test_free_sensitive(void)
+ static struct unit_test_suite test_suite = {
+ 	.suite_name = "Malloc test suite",
+ 	.unit_test_cases = {
+-		TEST_CASE(test_str_to_size),
+ 		TEST_CASE(test_zero_aligned_alloc),
+ 		TEST_CASE(test_malloc_bad_params),
+ 		TEST_CASE(test_realloc),
+diff --git a/app/test/test_string_fns.c b/app/test/test_string_fns.c
+index 786eda9e49..697cb7ed15 100644
+--- a/app/test/test_string_fns.c
++++ b/app/test/test_string_fns.c
+@@ -5,6 +5,7 @@
+ #include <stdio.h>
+ #include <stdarg.h>
+ #include <stddef.h>
++#include <inttypes.h>
+ #include <errno.h>
+ #include <string.h>
+ 
+@@ -314,6 +315,69 @@ test_rte_basename(void)
+ 	return 0;
+ }
+ 
++static int
++test_rte_str_to_size(void)
++{
++	struct {
++		const char *str;
++		uint64_t value;
++	} valid_values[] = {
++		{"5G", (uint64_t)5 * 1024 * 1024 * 1024},
++		{"0x20g", (uint64_t)0x20 * 1024 * 1024 * 1024},
++		{"10M", 10 * 1024 * 1024},
++		{"050m", 050 * 1024 * 1024},
++		{"8K", 8 * 1024},
++		{"15k", 15 * 1024},
++		{"0200", 0200},
++		{"0x103", 0x103},
++		{"432", 432},
++		{"-1", 0},
++		{"  -2", 0},
++		{"  -3MB", 0},
++	};
++	struct {
++		const char *str;
++	} invalid_values[] = {
++		/* we can only check for invalid input at the start of the string */
++		{"garbage"},
++		{""},
++		{"   "},
++	};
++	unsigned int i;
++	uint64_t value;
++
++	LOG("Checking valid rte_str_to_size inputs\n");
++
++	for (i = 0; i < RTE_DIM(valid_values); i++) {
++		errno = 0;
++		value = rte_str_to_size(valid_values[i].str);
++		if (value != valid_values[i].value) {
++			LOG("FAIL: valid input '%s'\n", valid_values[i].str);
++			return -1;
++		}
++		LOG("PASS: valid input '%s' -> %" PRIu64 "\n",
++			valid_values[i].str, value);
++	}
++
++	LOG("Checking invalid rte_str_to_size inputs\n");
++
++	for (i = 0; i < RTE_DIM(invalid_values); i++) {
++		errno = 0;
++		(void)rte_str_to_size(invalid_values[i].str);
++		if (errno == 0) {
++			LOG("FAIL: invalid input '%s' did not set errno\n",
++				invalid_values[i].str);
++			return -1;
++		}
++		LOG("PASS: invalid input '%s' set errno=%d\n",
++			invalid_values[i].str, errno);
++	}
++
++	LOG("%s - PASSED\n", __func__);
++
++	return 0;
++}
++
+ static int
+ test_string_fns(void)
+ {
+@@ -325,6 +389,8 @@ test_string_fns(void)
+ 		return -1;
+ 	if (test_rte_basename() < 0)
+ 		return -1;
++	if (test_rte_str_to_size() < 0)
++		return -1;
+ 	return 0;
+ }
+ 
+diff --git a/lib/eal/common/eal_common_string_fns.c b/lib/eal/common/eal_common_string_fns.c
+index fa87831c3a..e0dc48bd80 100644
+--- a/lib/eal/common/eal_common_string_fns.c
++++ b/lib/eal/common/eal_common_string_fns.c
+@@ -85,6 +85,10 @@ rte_str_to_size(const char *str)
+ 
+ 	errno = 0;
+ 	size = strtoull(str, &endptr, 0);
++	if (endptr == str) {
++		errno = EINVAL;
++		return 0;
++	}
+ 	if (errno)
+ 		return 0;
+ 
 -- 
 2.47.3
 
