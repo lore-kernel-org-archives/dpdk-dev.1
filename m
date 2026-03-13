@@ -2,50 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39132FED2F5
-	for <dpdk-dev@archiver.kernel.org>; Thu, 12 Mar 2026 23:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9B1FED2F5
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Mar 2026 00:19:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3D9BB40279;
-	Fri, 13 Mar 2026 00:59:13 +0100 (CET)
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com
- [113.46.200.224])
- by mails.dpdk.org (Postfix) with ESMTP id B74CF4026C;
- Fri, 13 Mar 2026 00:59:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id AEEA040279;
+	Fri, 13 Mar 2026 01:19:29 +0100 (CET)
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com
+ [113.46.200.221])
+ by mails.dpdk.org (Postfix) with ESMTP id C3B754026C;
+ Fri, 13 Mar 2026 01:19:27 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=WrMAWJA55zQV3WC119+AXCSY/oOf1ej0uZP71/SXFWQ=;
- b=EViF/nO7FAIF/YjCSN9X4MnFn5o//Gfr70KrmTqzU7KzmMpOt89Klg/93j4x314cXEaChW81p
- W/w7nIBDINwhxJfyaSEFb4LMw6c7ozr4H3rWGwZewwGKRZ3cAcRZeQpQCfBeFT1hedner3RUMGW
- SAs7mPwbPhj68854QWM3i0E=
-Received: from mail.maildlp.com (unknown [172.19.163.163])
- by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4fX4GF3TcPz1cyPF;
- Fri, 13 Mar 2026 07:54:13 +0800 (CST)
+ bh=JyUXCmTVZjQwIsQhL8bKaDa138CofOGeFr0/VlP1rbg=;
+ b=flotL3kXdyqDVj6ITYWl5YTQD+Zl/R3enu7ru7d87q3droRR3ewi19t8bC8rEkznX9t40VPjF
+ Wp3yv0XdfLvYu+b1cztPePwyfAVHMgw6yG66KNgMivJwMHyCJvib9VNGIEA/TTF4Jbs81/i6vjY
+ DUCjXKBtvv/e8/hhscyuEik=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+ by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4fX4jd3dsdzRhQS;
+ Fri, 13 Mar 2026 08:14:29 +0800 (CST)
 Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 842654048B;
- Fri, 13 Mar 2026 07:59:09 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 0A89540561;
+ Fri, 13 Mar 2026 08:19:25 +0800 (CST)
 Received: from [10.67.121.161] (10.67.121.161) by
  kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 13 Mar 2026 07:59:09 +0800
-Message-ID: <37ff0e85-3f46-4b51-bf56-5d03b4910fac@huawei.com>
-Date: Fri, 13 Mar 2026 07:59:08 +0800
+ 15.2.1544.11; Fri, 13 Mar 2026 08:19:24 +0800
+Message-ID: <4fd815c8-4ce1-4182-af8b-57b7b92291a8@huawei.com>
+Date: Fri, 13 Mar 2026 08:19:24 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] app/testpmd: check for no arguments
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Kevin Traynor <ktraynor@redhat.com>, <dev@dpdk.org>, <stable@dpdk.org>,
- Aman Singh <aman.deep.singh@intel.com>
-References: <20260312103606.702617-1-ktraynor@redhat.com>
- <20260312103606.702617-4-ktraynor@redhat.com>
- <51026e44-1045-47ef-add5-7a98c3ad4eac@huawei.com>
- <20260312100317.5b06a849@phoenix.local>
+Subject: Re: [PATCH v2] app/testpmd: fix DCB forwarding TC mask and queue guard
+To: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>, <dev@dpdk.org>, 
+ <bruce.richardson@intel.com>, <stephen@networkplumber.org>,
+ <aman.deep.singh@intel.com>
+CC: <shaiq.wani@intel.com>, <stable@dpdk.org>
+References: <20260311083751.1107404-1-chaitanyababux.talluri@intel.com>
+ <20260312103615.1282874-1-chaitanyababux.talluri@intel.com>
 Content-Language: en-US
 From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260312100317.5b06a849@phoenix.local>
+In-Reply-To: <20260312103615.1282874-1-chaitanyababux.talluri@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
  kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -60,33 +59,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 3/13/2026 1:03 AM, Stephen Hemminger wrote:
-> On Thu, 12 Mar 2026 20:37:42 +0800
-> fengchengwen <fengchengwen@huawei.com> wrote:
+On 3/12/2026 6:36 PM, Talluri Chaitanyababu wrote:
+> Update forwarding TC mask based on configured traffic classes to properly
+> handle both 4 TC and 8 TC modes. The bitmask calculation (1u << nb_tcs) - 1
+> correctly creates masks for all available traffic classes (0xF for 4 TCs,
+> 0xFF for 8 TCs).
 > 
->> Hi Kevin,
->>
->> On 3/12/2026 6:36 PM, Kevin Traynor wrote:
->>> For the case where token is NULL, there are no arguments
->>> and split_str[0] is used uninitialized.  
->>
->> In which case the token is NULL, if there are no arguments, the cmdline's
->> callback won't be invoke.
->>
->> Thanks
+> When the mask is not updated after a TC configuration change, it stays at
+> the default 0xFF, which causes dcb_fwd_tc_update_dcb_info() to skip the
+> compress logic entirely (early return when mask ==
+> DEFAULT_DCB_FWD_TC_MASK).
+> This can lead to inconsistent queue allocations.
+
+Sorry, I cannot understand your question. Could you please provide some steps
+to reproduce the issue and the problem phenomenon?
+
 > 
-> It still maybe possible to get there with an empty string ""
-> which would evaluate to no arguments?
+> Additionally, the existing VMDQ pool guard in dcb_fwd_config_setup() only
+> checks RX queue counts, missing the case where the TX port has zero queues
+> for a given pool/TC combination. When nb_tx_queue is 0, the expression
+> "j % nb_tx_queue" triggers a SIGFPE (integer division by zero).
 
-No, as tested below:
+The dcb_fwd_check_cores_per_tc() check this case. So please provide the steps.
 
-testpmd> port config  dcb vt on 4 pfc ""
-Bad arguments
-testpmd> port config  dcb vt on 4 pfc ''
-Bad arguments
-testpmd> port config  dcb vt on 4 pfc '
-Bad arguments
-testpmd> port config  dcb vt on 4 pfc
-Bad arguments
-
-
+> 
+> Fix this by:
+> 1. Updating dcb_fwd_tc_mask after port DCB reconfiguration using the
+>    user requested num_tcs value, so fwd_config_setup() sees the correct
+>    mask.
+> 2. Extending the existing pool guard to also check TX queue counts.
+> 3. Adding a defensive break after the division by dcb_fwd_tc_cores to
+>    catch integer truncation to zero.
+> 
+> Fixes: 0ecbf93f5001 ("app/testpmd: add command to disable DCB")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
+> Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+> ---
