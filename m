@@ -2,50 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4D7105F787
-	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Mar 2026 10:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2860105F794
+	for <dpdk-dev@archiver.kernel.org>; Fri, 13 Mar 2026 10:35:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DAFF840279;
-	Fri, 13 Mar 2026 11:12:10 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id 61BB34026C;
- Fri, 13 Mar 2026 11:12:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773396730; x=1804932730;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=aeYkVidnEXnn6StlqTdr+uWmB3TQGkAYjWNLFCaKjTc=;
- b=m+0BMy8T1BQKNse8U3HHMnwnb2d8pv7qcsiuu4zywRLZQ2FdAqCkjaR3
- EsChw82QhgTrHb/Wsgh2WBD8/CH7NxQME37JSYzq4oICN6rEZ9I/ghVT5
- JzyEXCZ0MAyxocwgpIFZwVDkrn7DLRSDpp1pFk0q/oQpB++rByGpqUSu2
- Y5Jk1qcng+cwYvt+OE1WcJTjJXgJTShOKoyX5sYC5xn7GiDMYS1m+Ua+q
- 3YNHR6lrhPNtFkEtEl0Gdpwc4BzGhtOFM26YYFj81lj41i17b1MKzvvzQ
- 2htovwjIJ3zn/vb0qZi15zAQNb66qBNYDJclFNIAXkO8XTUdrk+eklNSG Q==;
-X-CSE-ConnectionGUID: 31VOHRSxSgWCl21xwgJ7FQ==
-X-CSE-MsgGUID: QYnRRyZrSnSHIf7iBidxzg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11727"; a="85983189"
-X-IronPort-AV: E=Sophos;i="6.23,118,1770624000"; d="scan'208";a="85983189"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 13 Mar 2026 03:12:09 -0700
-X-CSE-ConnectionGUID: 2KC/aeT4Ruid2qO3g1UYpg==
-X-CSE-MsgGUID: L2DzdE3URR22EW9TqJklJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,118,1770624000"; d="scan'208";a="221331928"
-Received: from icx009.iind.intel.com ([10.190.212.240])
- by orviesa007.jf.intel.com with ESMTP; 13 Mar 2026 03:12:06 -0700
-From: KAVYA AV <kavyax.a.v@intel.com>
-To: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com,
- vladimir.medvedkin@intel.com
-Cc: shaiq.wani@intel.com,
-	KAVYA AV <kavyax.a.v@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] app/testpmd: fix DCB queue allocation for VMDq devices
-Date: Fri, 13 Mar 2026 10:15:53 +0000
-Message-ID: <20260313101553.1827216-1-kavyax.a.v@intel.com>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id A92FB40279;
+	Fri, 13 Mar 2026 11:35:43 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BA7594026C
+ for <dev@dpdk.org>; Fri, 13 Mar 2026 11:35:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773398142;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=JoVy/QHp5IyQyrX03yZXwVxiNsw/fLErMr9ojptbIgU=;
+ b=Ik0dRI/a+YrO15/KJkNqFQ4H7kkZTqtHxosTP5N7FR/mEWUnR6UwNf31SPxQ5mj9Lf77nF
+ tVUdRAViHerPkWbLGB0DJPlKN6368bMfdGGfVR4HbaWD3G8NzM5CrGsfdFu4IBJQCo13X+
+ KZWpLdu9xXX8rylm8vQ9Wn+USKWvqf8=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-114-NGISmJdWN9ap9RAVVOlLJg-1; Fri,
+ 13 Mar 2026 06:35:41 -0400
+X-MC-Unique: NGISmJdWN9ap9RAVVOlLJg-1
+X-Mimecast-MFC-AGG-ID: NGISmJdWN9ap9RAVVOlLJg_1773398140
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id D2E0219560B0; Fri, 13 Mar 2026 10:35:39 +0000 (UTC)
+Received: from rh.redhat.com (unknown [10.45.224.40])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id B176219540C5; Fri, 13 Mar 2026 10:35:37 +0000 (UTC)
+From: Kevin Traynor <ktraynor@redhat.com>
+To: dev@dpdk.org
+Cc: Kevin Traynor <ktraynor@redhat.com>, stable@dpdk.org,
+ Radu Nicolau <radu.nicolau@intel.com>, Akhil Goyal <gakhil@marvell.com>
+Subject: [PATCH] examples/ipsec-secgw: fix discarded-qualifers warnings
+Date: Fri, 13 Mar 2026 10:35:23 +0000
+Message-ID: <20260313103523.1094309-1-ktraynor@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: BFmBoZJNWAPMB405x51OQnSvwg21hLbN07z-5WlP-zA_1773398140
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -60,46 +64,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When using DCB mode with VT disabled and requesting more queues than
-traffic classes (e.g., rxq=64 with 8 TCs), testpmd crashes with null
-pointer errors because it artificially limits queue allocation to
-num_tcs.
+glibc 2.42 has const-preserving functions.
 
-For VMDq devices, use device-specific queue count (nb_rx_queues/
-nb_tx_queues) instead of limiting to num_tcs. This allows VMDq devices
-to utilize their full queue capacity while maintaining compatibility
-with non VMDq devices.
+This leads to warnings when there is a const argument
+and an assignment to a non-const variable.
 
-Fixes null pointer dereference when queue structures are accessed
-beyond the allocated range.
+Example with GCC 16.0.1 and glibc 2.43 on Fedora Rawhide (F45).
 
-Fixes: 2169699b15fc ("app/testpmd: add queue restriction in DCB command")
+/examples/ipsec-secgw/parser.c: In function ‘parse_ipv4_addr’:
+../examples/ipsec-secgw/parser.c:53:13:
+warning: assignment discards ‘const’ qualifier from pointer target type
+[-Wdiscarded-qualifiers]
+   53 |         pch = strchr(token, '/');
+      |             ^
+
 Cc: stable@dpdk.org
 
-Signed-off-by: KAVYA AV <kavyax.a.v@intel.com>
+Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
 ---
- app/test-pmd/testpmd.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ examples/ipsec-secgw/parser.c | 4 ++--
+ examples/ipsec-secgw/sa.c     | 2 +-
+ examples/ipsec-secgw/sp4.c    | 2 +-
+ examples/ipsec-secgw/sp6.c    | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index fbacee89ea..70be52d36f 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -4444,9 +4444,11 @@ init_port_dcb_config(portid_t pid,
- 			if (rte_port->dev_info.vmdq_pool_base == 0) {
- 				nb_rxq = rte_port->dev_info.max_rx_queues;
- 				nb_txq = rte_port->dev_info.max_tx_queues;
--			} else {
--				nb_rxq = (queueid_t)num_tcs;
--				nb_txq = (queueid_t)num_tcs;
-+			}
-+			/* Use device queue count to prevent null pointer errors */
-+			else {
-+				nb_rxq = rte_port->dev_info.nb_rx_queues;
-+				nb_txq = rte_port->dev_info.nb_tx_queues;
- 			}
- 		}
- 	}
+diff --git a/examples/ipsec-secgw/parser.c b/examples/ipsec-secgw/parser.c
+index cb463c704f..29c4d3cb3d 100644
+--- a/examples/ipsec-secgw/parser.c
++++ b/examples/ipsec-secgw/parser.c
+@@ -49,5 +49,5 @@ parse_ipv4_addr(const char *token, struct in_addr *ipv4, uint32_t *mask)
+ {
+ 	char ip_str[INET_ADDRSTRLEN] = {0};
+-	char *pch;
++	const char *pch;
+ 
+ 	pch = strchr(token, '/');
+@@ -79,5 +79,5 @@ parse_ipv6_addr(const char *token, struct rte_ipv6_addr *ipv6, uint32_t *mask)
+ {
+ 	char ip_str[256] = {0};
+-	char *pch;
++	const char *pch;
+ 
+ 	pch = strchr(token, '/');
+diff --git a/examples/ipsec-secgw/sa.c b/examples/ipsec-secgw/sa.c
+index 86aeb25a49..a1a996dee8 100644
+--- a/examples/ipsec-secgw/sa.c
++++ b/examples/ipsec-secgw/sa.c
+@@ -1676,5 +1676,5 @@ sa_spi_present(struct sa_ctx *sa_ctx, uint32_t spi, int inbound)
+ {
+ 	uint32_t num;
+-	struct ipsec_sa *sa;
++	const struct ipsec_sa *sa;
+ 	struct ipsec_sa tmpl;
+ 	const struct ipsec_sa *sar;
+diff --git a/examples/ipsec-secgw/sp4.c b/examples/ipsec-secgw/sp4.c
+index fc4101a4a2..9c0badd062 100644
+--- a/examples/ipsec-secgw/sp4.c
++++ b/examples/ipsec-secgw/sp4.c
+@@ -611,5 +611,5 @@ sp4_spi_present(uint32_t spi, int inbound, struct ip_addr ip_addr[2],
+ {
+ 	uint32_t num;
+-	struct acl4_rules *rule;
++	const struct acl4_rules *rule;
+ 	const struct acl4_rules *acr;
+ 	struct acl4_rules tmpl;
+diff --git a/examples/ipsec-secgw/sp6.c b/examples/ipsec-secgw/sp6.c
+index ebc47dfe49..8aff843812 100644
+--- a/examples/ipsec-secgw/sp6.c
++++ b/examples/ipsec-secgw/sp6.c
+@@ -755,5 +755,5 @@ sp6_spi_present(uint32_t spi, int inbound, struct ip_addr ip_addr[2],
+ {
+ 	uint32_t num;
+-	struct acl6_rules *rule;
++	const struct acl6_rules *rule;
+ 	const struct acl6_rules *acr;
+ 	struct acl6_rules tmpl;
 -- 
-2.43.0
+2.53.0
 
