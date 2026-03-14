@@ -2,44 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A499D105F79E
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Mar 2026 08:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB04105F79E
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Mar 2026 08:52:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D054F402E6;
-	Sat, 14 Mar 2026 09:52:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C9CAE402F2;
+	Sat, 14 Mar 2026 09:52:13 +0100 (CET)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 3F0A84027B
- for <dev@dpdk.org>; Sat, 14 Mar 2026 09:52:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 5B6DE402D8
+ for <dev@dpdk.org>; Sat, 14 Mar 2026 09:52:10 +0100 (CET)
 Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-03 (Coremail) with SMTP id rQCowAB3ktm2IbVp1GKhCg--.37229S2;
- Sat, 14 Mar 2026 16:52:06 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAB3ktm2IbVp1GKhCg--.37229S9;
+ Sat, 14 Mar 2026 16:52:07 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v19 00/13] net/sxe: added Linkdata sxe ethernet driver
-Date: Sat, 14 Mar 2026 16:51:52 +0800
-Message-Id: <20260314085205.2419952-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v19 07/13] net/sxe: support rss offload
+Date: Sat, 14 Mar 2026 16:51:59 +0800
+Message-Id: <20260314085205.2419952-8-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
-In-Reply-To: <20260303091057.2952214-14-liujie5@linkdatatechnology.com>
+In-Reply-To: <20260314085205.2419952-1-liujie5@linkdatatechnology.com>
 References: <20260303091057.2952214-14-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: rQCowAB3ktm2IbVp1GKhCg--.37229S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3KFWfXw4kKw1xur15tFW3GFg_yoWDXw1rpF
- 48AryxZr13JFWYqa95JF48uFy5J3ZrWry5K34a93s3XF92yFy7Jrs0gFyUC393ZFy7Jw1I
- vrnIyr17Gr1fAaUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUv214x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
- 6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
- 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
- I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
- 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
- c2xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
- 0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
- XVWUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcV
- CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
- wI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
- 7VUjLID7UUUUU==
+ <20260314085205.2419952-1-liujie5@linkdatatechnology.com>
+X-CM-TRANSID: rQCowAB3ktm2IbVp1GKhCg--.37229S9
+X-Coremail-Antispam: 1UD129KBjvJXoW3Cr4Dtr1ktr43Wr1kKrW8Crg_yoWDuF18pF
+ WkG3W8trWftF1Sgw15Aa1UuF13Wr1vka1UKa93J3yfAa1UJF1xJryYya4UKw1rt3sxXr1k
+ JFZYqa45GF1kuFJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUPa14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
+ kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
+ z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
+ 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
+ M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
+ v20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
+ F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCY02
+ Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
+ x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r
+ 17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF
+ 7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
+ W8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
+ 5l1vDUUUU
 X-Originating-IP: [221.238.36.162]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -57,213 +59,397 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This patch set implements core functionality for the SXE PMD,
-including basic driver framework, data path setup, and advanced
-offload features (VLAN, RSS, DCB, PTP etc.).
+Support rss offload.
 
-V19:
- - Addressed AI comments
+Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+---
+ drivers/net/sxe/base/sxe_offload_common.c |   3 +-
+ drivers/net/sxe/pf/sxe_offload.c          | 299 ++++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_offload.h          |  33 +++
+ 3 files changed, 334 insertions(+), 1 deletion(-)
 
-v18:
- - Addressed AI comments
-
-Jie Liu (13):
-  net/sxe: add base driver directory and doc
-  net/sxe: add ethdev probe and remove
-  net/sxe: add tx rx setup and data path
-  net/sxe: add link and mac layer operations
-  net/sxe: support vlan filter
-  net/sxe: add filter function
-  net/sxe: support rss offload
-  net/sxe: add dcb function
-  net/sxe: support ptp
-  net/sxe: add xstats function
-  net/sxe: add custom cmd led ctrl
-  net/sxe: add simd function
-  net/sxe: add virtual function
-
- MAINTAINERS                                |    6 +
- doc/guides/nics/features/sxe.ini           |   51 +
- doc/guides/nics/features/sxe_vf.ini        |   37 +
- doc/guides/nics/index.rst                  |    1 +
- doc/guides/nics/sxe.rst                    |   71 +
- doc/guides/rel_notes/release_26_03.rst     |    6 +
- drivers/net/meson.build                    |    1 +
- drivers/net/sxe/base/sxe_common.c          |   45 +
- drivers/net/sxe/base/sxe_common.h          |   13 +
- drivers/net/sxe/base/sxe_compat_platform.h |   73 +
- drivers/net/sxe/base/sxe_compat_version.h  |   34 +
- drivers/net/sxe/base/sxe_errno.h           |   61 +
- drivers/net/sxe/base/sxe_hw.c              | 3271 ++++++++++++++++++++
- drivers/net/sxe/base/sxe_hw.h              | 1010 ++++++
- drivers/net/sxe/base/sxe_logs.h            |  105 +
- drivers/net/sxe/base/sxe_offload_common.c  |   54 +
- drivers/net/sxe/base/sxe_offload_common.h  |   14 +
- drivers/net/sxe/base/sxe_queue_common.c    |  450 +++
- drivers/net/sxe/base/sxe_queue_common.h    |  240 ++
- drivers/net/sxe/base/sxe_rx_common.c       |  358 +++
- drivers/net/sxe/base/sxe_rx_common.h       |   17 +
- drivers/net/sxe/base/sxe_tx_common.c       |   40 +
- drivers/net/sxe/base/sxe_tx_common.h       |   12 +
- drivers/net/sxe/base/sxe_types.h           |   40 +
- drivers/net/sxe/base/sxevf_hw.c            |  819 +++++
- drivers/net/sxe/base/sxevf_hw.h            |  318 ++
- drivers/net/sxe/base/sxevf_regs.h          |  119 +
- drivers/net/sxe/include/drv_msg.h          |   18 +
- drivers/net/sxe/include/sxe/sxe_cli.h      |  218 ++
- drivers/net/sxe/include/sxe/sxe_hdc.h      |   43 +
- drivers/net/sxe/include/sxe/sxe_ioctl.h    |   21 +
- drivers/net/sxe/include/sxe/sxe_msg.h      |  135 +
- drivers/net/sxe/include/sxe/sxe_regs.h     | 1270 ++++++++
- drivers/net/sxe/include/sxe_type.h         |  795 +++++
- drivers/net/sxe/include/sxe_version.h      |   29 +
- drivers/net/sxe/meson.build                |   65 +
- drivers/net/sxe/pf/rte_pmd_sxe.h           |   19 +
- drivers/net/sxe/pf/sxe.h                   |   93 +
- drivers/net/sxe/pf/sxe_dcb.c               |  945 ++++++
- drivers/net/sxe/pf/sxe_dcb.h               |   99 +
- drivers/net/sxe/pf/sxe_ethdev.c            |  928 ++++++
- drivers/net/sxe/pf/sxe_ethdev.h            |   28 +
- drivers/net/sxe/pf/sxe_filter.c            |  923 ++++++
- drivers/net/sxe/pf/sxe_filter.h            |  109 +
- drivers/net/sxe/pf/sxe_flow_ctrl.c         |   98 +
- drivers/net/sxe/pf/sxe_flow_ctrl.h         |   16 +
- drivers/net/sxe/pf/sxe_irq.c               |  516 +++
- drivers/net/sxe/pf/sxe_irq.h               |   48 +
- drivers/net/sxe/pf/sxe_main.c              |  196 ++
- drivers/net/sxe/pf/sxe_offload.c           |  336 ++
- drivers/net/sxe/pf/sxe_offload.h           |   51 +
- drivers/net/sxe/pf/sxe_phy.c               |  953 ++++++
- drivers/net/sxe/pf/sxe_phy.h               |  117 +
- drivers/net/sxe/pf/sxe_pmd_hdc.c           |  661 ++++
- drivers/net/sxe/pf/sxe_pmd_hdc.h           |   42 +
- drivers/net/sxe/pf/sxe_ptp.c               |  209 ++
- drivers/net/sxe/pf/sxe_ptp.h               |   26 +
- drivers/net/sxe/pf/sxe_queue.c             |  774 +++++
- drivers/net/sxe/pf/sxe_queue.h             |  132 +
- drivers/net/sxe/pf/sxe_rx.c                | 1459 +++++++++
- drivers/net/sxe/pf/sxe_rx.h                |  188 ++
- drivers/net/sxe/pf/sxe_stats.c             |  586 ++++
- drivers/net/sxe/pf/sxe_stats.h             |   69 +
- drivers/net/sxe/pf/sxe_tx.c                | 1051 +++++++
- drivers/net/sxe/pf/sxe_tx.h                |   50 +
- drivers/net/sxe/pf/sxe_vec_common.h        |  321 ++
- drivers/net/sxe/pf/sxe_vec_neon.c          |  600 ++++
- drivers/net/sxe/pf/sxe_vec_sse.c           |  622 ++++
- drivers/net/sxe/pf/sxe_vf.c                | 1199 +++++++
- drivers/net/sxe/pf/sxe_vf.h                |  200 ++
- drivers/net/sxe/sxe_drv_type.h             |   15 +
- drivers/net/sxe/sxe_testpmd.c              |  196 ++
- drivers/net/sxe/vf/sxevf.h                 |   42 +
- drivers/net/sxe/vf/sxevf_ethdev.c          |  752 +++++
- drivers/net/sxe/vf/sxevf_ethdev.h          |   16 +
- drivers/net/sxe/vf/sxevf_filter.c          |  493 +++
- drivers/net/sxe/vf/sxevf_filter.h          |   70 +
- drivers/net/sxe/vf/sxevf_irq.c             |  432 +++
- drivers/net/sxe/vf/sxevf_irq.h             |   34 +
- drivers/net/sxe/vf/sxevf_main.c            |   82 +
- drivers/net/sxe/vf/sxevf_msg.c             |  624 ++++
- drivers/net/sxe/vf/sxevf_msg.h             |  201 ++
- drivers/net/sxe/vf/sxevf_offload.c         |   30 +
- drivers/net/sxe/vf/sxevf_offload.h         |   16 +
- drivers/net/sxe/vf/sxevf_queue.c           |  208 ++
- drivers/net/sxe/vf/sxevf_queue.h           |   69 +
- drivers/net/sxe/vf/sxevf_rx.c              |  162 +
- drivers/net/sxe/vf/sxevf_rx.h              |   18 +
- drivers/net/sxe/vf/sxevf_stats.c           |  162 +
- drivers/net/sxe/vf/sxevf_stats.h           |   31 +
- drivers/net/sxe/vf/sxevf_tx.c              |   46 +
- drivers/net/sxe/vf/sxevf_tx.h              |   14 +
- 92 files changed, 27237 insertions(+)
- create mode 100644 doc/guides/nics/features/sxe.ini
- create mode 100644 doc/guides/nics/features/sxe_vf.ini
- create mode 100644 doc/guides/nics/sxe.rst
- create mode 100644 drivers/net/sxe/base/sxe_common.c
- create mode 100644 drivers/net/sxe/base/sxe_common.h
- create mode 100644 drivers/net/sxe/base/sxe_compat_platform.h
- create mode 100644 drivers/net/sxe/base/sxe_compat_version.h
- create mode 100644 drivers/net/sxe/base/sxe_errno.h
- create mode 100644 drivers/net/sxe/base/sxe_hw.c
- create mode 100644 drivers/net/sxe/base/sxe_hw.h
- create mode 100644 drivers/net/sxe/base/sxe_logs.h
- create mode 100644 drivers/net/sxe/base/sxe_offload_common.c
- create mode 100644 drivers/net/sxe/base/sxe_offload_common.h
- create mode 100644 drivers/net/sxe/base/sxe_queue_common.c
- create mode 100644 drivers/net/sxe/base/sxe_queue_common.h
- create mode 100644 drivers/net/sxe/base/sxe_rx_common.c
- create mode 100644 drivers/net/sxe/base/sxe_rx_common.h
- create mode 100644 drivers/net/sxe/base/sxe_tx_common.c
- create mode 100644 drivers/net/sxe/base/sxe_tx_common.h
- create mode 100644 drivers/net/sxe/base/sxe_types.h
- create mode 100644 drivers/net/sxe/base/sxevf_hw.c
- create mode 100644 drivers/net/sxe/base/sxevf_hw.h
- create mode 100644 drivers/net/sxe/base/sxevf_regs.h
- create mode 100644 drivers/net/sxe/include/drv_msg.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_cli.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_hdc.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_ioctl.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_msg.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_regs.h
- create mode 100644 drivers/net/sxe/include/sxe_type.h
- create mode 100644 drivers/net/sxe/include/sxe_version.h
- create mode 100644 drivers/net/sxe/meson.build
- create mode 100644 drivers/net/sxe/pf/rte_pmd_sxe.h
- create mode 100644 drivers/net/sxe/pf/sxe.h
- create mode 100644 drivers/net/sxe/pf/sxe_dcb.c
- create mode 100644 drivers/net/sxe/pf/sxe_dcb.h
- create mode 100644 drivers/net/sxe/pf/sxe_ethdev.c
- create mode 100644 drivers/net/sxe/pf/sxe_ethdev.h
- create mode 100644 drivers/net/sxe/pf/sxe_filter.c
- create mode 100644 drivers/net/sxe/pf/sxe_filter.h
- create mode 100644 drivers/net/sxe/pf/sxe_flow_ctrl.c
- create mode 100644 drivers/net/sxe/pf/sxe_flow_ctrl.h
- create mode 100644 drivers/net/sxe/pf/sxe_irq.c
- create mode 100644 drivers/net/sxe/pf/sxe_irq.h
- create mode 100644 drivers/net/sxe/pf/sxe_main.c
- create mode 100644 drivers/net/sxe/pf/sxe_offload.c
- create mode 100644 drivers/net/sxe/pf/sxe_offload.h
- create mode 100644 drivers/net/sxe/pf/sxe_phy.c
- create mode 100644 drivers/net/sxe/pf/sxe_phy.h
- create mode 100644 drivers/net/sxe/pf/sxe_pmd_hdc.c
- create mode 100644 drivers/net/sxe/pf/sxe_pmd_hdc.h
- create mode 100644 drivers/net/sxe/pf/sxe_ptp.c
- create mode 100644 drivers/net/sxe/pf/sxe_ptp.h
- create mode 100644 drivers/net/sxe/pf/sxe_queue.c
- create mode 100644 drivers/net/sxe/pf/sxe_queue.h
- create mode 100644 drivers/net/sxe/pf/sxe_rx.c
- create mode 100644 drivers/net/sxe/pf/sxe_rx.h
- create mode 100644 drivers/net/sxe/pf/sxe_stats.c
- create mode 100644 drivers/net/sxe/pf/sxe_stats.h
- create mode 100644 drivers/net/sxe/pf/sxe_tx.c
- create mode 100644 drivers/net/sxe/pf/sxe_tx.h
- create mode 100644 drivers/net/sxe/pf/sxe_vec_common.h
- create mode 100644 drivers/net/sxe/pf/sxe_vec_neon.c
- create mode 100644 drivers/net/sxe/pf/sxe_vec_sse.c
- create mode 100644 drivers/net/sxe/pf/sxe_vf.c
- create mode 100644 drivers/net/sxe/pf/sxe_vf.h
- create mode 100644 drivers/net/sxe/sxe_drv_type.h
- create mode 100644 drivers/net/sxe/sxe_testpmd.c
- create mode 100644 drivers/net/sxe/vf/sxevf.h
- create mode 100644 drivers/net/sxe/vf/sxevf_ethdev.c
- create mode 100644 drivers/net/sxe/vf/sxevf_ethdev.h
- create mode 100644 drivers/net/sxe/vf/sxevf_filter.c
- create mode 100644 drivers/net/sxe/vf/sxevf_filter.h
- create mode 100644 drivers/net/sxe/vf/sxevf_irq.c
- create mode 100644 drivers/net/sxe/vf/sxevf_irq.h
- create mode 100644 drivers/net/sxe/vf/sxevf_main.c
- create mode 100644 drivers/net/sxe/vf/sxevf_msg.c
- create mode 100644 drivers/net/sxe/vf/sxevf_msg.h
- create mode 100644 drivers/net/sxe/vf/sxevf_offload.c
- create mode 100644 drivers/net/sxe/vf/sxevf_offload.h
- create mode 100644 drivers/net/sxe/vf/sxevf_queue.c
- create mode 100644 drivers/net/sxe/vf/sxevf_queue.h
- create mode 100644 drivers/net/sxe/vf/sxevf_rx.c
- create mode 100644 drivers/net/sxe/vf/sxevf_rx.h
- create mode 100644 drivers/net/sxe/vf/sxevf_stats.c
- create mode 100644 drivers/net/sxe/vf/sxevf_stats.h
- create mode 100644 drivers/net/sxe/vf/sxevf_tx.c
- create mode 100644 drivers/net/sxe/vf/sxevf_tx.h
-
+diff --git a/drivers/net/sxe/base/sxe_offload_common.c b/drivers/net/sxe/base/sxe_offload_common.c
+index f7c7363a2e..4eb4e03a4d 100644
+--- a/drivers/net/sxe/base/sxe_offload_common.c
++++ b/drivers/net/sxe/base/sxe_offload_common.c
+@@ -27,7 +27,8 @@ u64 __sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev)
+ 			RTE_ETH_RX_OFFLOAD_KEEP_CRC	|
+ 			RTE_ETH_RX_OFFLOAD_VLAN_FILTER |
+ 			RTE_ETH_RX_OFFLOAD_VLAN_EXTEND |
+-			RTE_ETH_RX_OFFLOAD_SCATTER;
++			RTE_ETH_RX_OFFLOAD_SCATTER |
++			RTE_ETH_RX_OFFLOAD_RSS_HASH;
+ 
+ 	if (!RTE_ETH_DEV_SRIOV(dev).active)
+ 		rx_offload_capa |= RTE_ETH_RX_OFFLOAD_TCP_LRO;
+diff --git a/drivers/net/sxe/pf/sxe_offload.c b/drivers/net/sxe/pf/sxe_offload.c
+index 0fa3f4822a..d34cf7ecc8 100644
+--- a/drivers/net/sxe/pf/sxe_offload.c
++++ b/drivers/net/sxe/pf/sxe_offload.c
+@@ -9,11 +9,26 @@
+ #include "sxe_queue_common.h"
+ #include "sxe_offload_common.h"
+ 
++static u8 rss_sxe_key[40] = {
++	0x6D, 0x5A, 0x56, 0xDA, 0x25, 0x5B, 0x0E, 0xC2,
++	0x41, 0x67, 0x25, 0x3D, 0x43, 0xA3, 0x8F, 0xB0,
++	0xD0, 0xCA, 0x2B, 0xCB, 0xAE, 0x7B, 0x30, 0xB4,
++	0x77, 0xCB, 0x2D, 0xA3, 0x80, 0x30, 0xF2, 0x0C,
++	0x6A, 0x42, 0xB7, 0x3B, 0xBE, 0xAC, 0x01, 0xFA,
++};
++
+ #define SXE_4_BIT_WIDTH  (CHAR_BIT / 2)
+ #define SXE_4_BIT_MASK   RTE_LEN2MASK(SXE_4_BIT_WIDTH, u8)
+ #define SXE_8_BIT_WIDTH  CHAR_BIT
+ #define SXE_8_BIT_MASK   UINT8_MAX
+ 
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
++u8 *sxe_rss_hash_key_get(void)
++{
++	return rss_sxe_key;
++}
++#endif
++
+ u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev)
+ {
+ 	return __sxe_rx_queue_offload_capa_get(dev);
+@@ -35,3 +50,287 @@ u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev)
+ {
+ 	return __sxe_tx_port_offload_capa_get(dev);
+ }
++
++void sxe_rss_disable(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++
++	PMD_INIT_FUNC_TRACE();
++
++	sxe_hw_rss_cap_switch(hw, false);
++}
++
++void sxe_rss_hash_set(struct sxe_hw *hw,
++				struct rte_eth_rss_conf *rss_conf)
++{
++	u8  *hash_key;
++	u32 rss_key[SXE_MAX_RSS_KEY_ENTRIES];
++	u16 i;
++	u64 rss_hf;
++	u32 rss_field = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	hash_key = rss_conf->rss_key;
++	if (hash_key != NULL) {
++		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
++			rss_key[i]  = hash_key[(i * 4)];
++			rss_key[i] |= hash_key[(i * 4) + 1] << 8;
++			rss_key[i] |= hash_key[(i * 4) + 2] << 16;
++			rss_key[i] |= hash_key[(i * 4) + 3] << 24;
++		}
++		sxe_hw_rss_key_set_all(hw, rss_key);
++	}
++
++	rss_hf = rss_conf->rss_hf;
++	if (rss_hf & RTE_ETH_RSS_IPV4)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV4;
++
++	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_TCP)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_TCP;
++
++	if (rss_hf & RTE_ETH_RSS_IPV6)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV6;
++
++	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_TCP)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_TCP;
++
++	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV4_UDP)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV4_UDP;
++
++	if (rss_hf & RTE_ETH_RSS_NONFRAG_IPV6_UDP)
++		rss_field |= SXE_MRQC_RSS_FIELD_IPV6_UDP;
++
++	sxe_hw_rss_field_set(hw, rss_field);
++
++	sxe_hw_rss_cap_switch(hw, true);
++}
++
++void sxe_rss_configure(struct rte_eth_dev *dev)
++{
++	struct rte_eth_rss_conf *rss_conf;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u16 i;
++	u16 j;
++	u8  rss_indir_tbl[SXE_MAX_RETA_ENTRIES];
++
++	PMD_INIT_FUNC_TRACE();
++
++	if (!adapter->rss_reta_updated) {
++		for (i = 0, j = 0; i < SXE_MAX_RETA_ENTRIES; i++, j++) {
++			if (j == dev->data->nb_rx_queues)
++				j = 0;
++
++			rss_indir_tbl[i] = j;
++		}
++
++		sxe_hw_rss_redir_tbl_set_all(hw, rss_indir_tbl);
++	}
++
++	rss_conf = &dev->data->dev_conf.rx_adv_conf.rss_conf;
++	if ((rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL) == 0) {
++		PMD_LOG_INFO(INIT, "user rss config match hw supports is 0");
++		sxe_rss_disable(dev);
++		return;
++	}
++
++	if (rss_conf->rss_key == NULL)
++		rss_conf->rss_key = rss_sxe_key;
++
++	sxe_rss_hash_set(hw, rss_conf);
++}
++
++s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_reta_entry64 *reta_conf,
++			u16 reta_size)
++{
++	u16 i;
++	u8 j, mask;
++	u32 reta, r;
++	u16 idx, shift;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct rte_eth_dev_data *dev_data = dev->data;
++	struct sxe_hw *hw = &adapter->hw;
++	s32 ret = 0;
++
++	PMD_INIT_FUNC_TRACE();
++
++	if (!dev_data->dev_started) {
++		PMD_LOG_ERR(DRV,
++			"port %d must be started before rss reta update",
++			 dev_data->port_id);
++		ret = -EIO;
++		goto l_end;
++	}
++
++	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
++		PMD_LOG_ERR(DRV, "The size of hash lookup table configured "
++			"(%d) doesn't match the number hardware can supported "
++			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
++		idx = i / RTE_ETH_RETA_GROUP_SIZE;
++		shift = i % RTE_ETH_RETA_GROUP_SIZE;
++		mask = (u8)((reta_conf[idx].mask >> shift) &
++						SXE_4_BIT_MASK);
++		if (!mask)
++			continue;
++
++		if (mask == SXE_4_BIT_MASK)
++			r = 0;
++		else
++			r = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
++
++		for (j = 0, reta = 0; j < SXE_4_BIT_WIDTH; j++) {
++			if (mask & (0x1 << j)) {
++				reta |= reta_conf[idx].reta[shift + j] <<
++						(CHAR_BIT * j);
++			} else {
++				reta |= r & (SXE_8_BIT_MASK <<
++					(CHAR_BIT * j));
++			}
++		}
++
++		sxe_hw_rss_redir_tbl_set_by_idx(hw, i, reta);
++	}
++	adapter->rss_reta_updated = true;
++
++l_end:
++	return ret;
++}
++
++s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
++			 struct rte_eth_rss_reta_entry64 *reta_conf,
++			 u16 reta_size)
++{
++	u16 i;
++	u8 j, mask;
++	u32 reta;
++	u16 idx, shift;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	s32 ret = 0;
++
++	PMD_INIT_FUNC_TRACE();
++	if (reta_size != RTE_ETH_RSS_RETA_SIZE_128) {
++		PMD_LOG_ERR(DRV, "the size of hash lookup table configured "
++			"(%d) doesn't match the number hardware can supported "
++			"(%d)", reta_size, RTE_ETH_RSS_RETA_SIZE_128);
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	for (i = 0; i < reta_size; i += SXE_4_BIT_WIDTH) {
++		idx = i / RTE_ETH_RETA_GROUP_SIZE;
++		shift = i % RTE_ETH_RETA_GROUP_SIZE;
++		mask = (u8)((reta_conf[idx].mask >> shift) &
++						SXE_4_BIT_MASK);
++		if (!mask)
++			continue;
++
++		reta = sxe_hw_rss_redir_tbl_get_by_idx(hw, i);
++		for (j = 0; j < SXE_4_BIT_WIDTH; j++) {
++			if (mask & (0x1 << j)) {
++				reta_conf[idx].reta[shift + j] =
++					((reta >> (CHAR_BIT * j)) &
++						SXE_8_BIT_MASK);
++			}
++		}
++	}
++
++l_end:
++	return ret;
++}
++
++s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u64 rss_hf;
++	s32 ret = 0;
++
++	rss_hf = (rss_conf->rss_hf & SXE_RSS_OFFLOAD_ALL);
++
++	if (!sxe_hw_is_rss_enabled(hw)) {
++		if (rss_hf != 0) {
++			PMD_LOG_ERR(DRV, "rss not init but want set");
++			ret = -EINVAL;
++			goto l_end;
++		}
++
++		goto l_end;
++	}
++
++	if (rss_hf == 0) {
++		PMD_LOG_ERR(DRV, "rss init but want disable it");
++		ret = -EINVAL;
++		goto l_end;
++	}
++
++	sxe_rss_hash_set(hw, rss_conf);
++
++l_end:
++	return ret;
++}
++
++s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
++				struct rte_eth_rss_conf *rss_conf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u8 *hash_key;
++	u32 rss_field;
++	u32 rss_key;
++	u64 rss_hf;
++	u16 i;
++
++	hash_key = rss_conf->rss_key;
++	if (hash_key != NULL) {
++		for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++) {
++			rss_key = sxe_hw_rss_key_get_by_idx(hw, i);
++			hash_key[(i * 4)] = rss_key & 0x000000FF;
++			hash_key[(i * 4) + 1] = (rss_key >> 8) & 0x000000FF;
++			hash_key[(i * 4) + 2] = (rss_key >> 16) & 0x000000FF;
++			hash_key[(i * 4) + 3] = (rss_key >> 24) & 0x000000FF;
++		}
++	}
++
++
++	if (!sxe_hw_is_rss_enabled(hw)) {
++		rss_conf->rss_hf = 0;
++		PMD_LOG_INFO(DRV, "rss not enabled, return 0");
++		goto l_end;
++	}
++
++	rss_hf = 0;
++	rss_field = sxe_hw_rss_field_get(hw);
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4)
++		rss_hf |= RTE_ETH_RSS_IPV4;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_TCP)
++		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_TCP;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV4_UDP)
++		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV4_UDP;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6)
++		rss_hf |= RTE_ETH_RSS_IPV6;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_TCP)
++		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_TCP;
++
++	if (rss_field & SXE_MRQC_RSS_FIELD_IPV6_UDP)
++		rss_hf |= RTE_ETH_RSS_NONFRAG_IPV6_UDP;
++
++	PMD_LOG_DEBUG(DRV, "got rss hash func=0x%" SXE_PRIX64, rss_hf);
++	rss_conf->rss_hf = rss_hf;
++
++l_end:
++	return 0;
++}
+diff --git a/drivers/net/sxe/pf/sxe_offload.h b/drivers/net/sxe/pf/sxe_offload.h
+index a70d6bf94b..458b6464c5 100644
+--- a/drivers/net/sxe/pf/sxe_offload.h
++++ b/drivers/net/sxe/pf/sxe_offload.h
+@@ -7,6 +7,21 @@
+ 
+ #include "sxe_hw.h"
+ 
++#define SXE_RSS_OFFLOAD_ALL ( \
++		RTE_ETH_RSS_IPV4 | \
++		RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
++		RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
++		RTE_ETH_RSS_IPV6 | \
++		RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
++		RTE_ETH_RSS_NONFRAG_IPV6_UDP)
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
++u8 *sxe_rss_hash_key_get(void);
++#endif
++
++void sxe_rss_hash_set(struct sxe_hw *hw,
++				struct rte_eth_rss_conf *rss_conf);
++
+ u64 sxe_rx_queue_offload_capa_get(struct rte_eth_dev *dev);
+ 
+ u64 sxe_rx_port_offload_capa_get(struct rte_eth_dev *dev);
+@@ -15,4 +30,22 @@ u64 sxe_tx_queue_offload_capa_get(struct rte_eth_dev *dev);
+ 
+ u64 sxe_tx_port_offload_capa_get(struct rte_eth_dev *dev);
+ 
++void sxe_rss_disable(struct rte_eth_dev *dev);
++
++void sxe_rss_configure(struct rte_eth_dev *dev);
++
++s32 sxe_rss_reta_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_reta_entry64 *reta_conf,
++			u16 reta_size);
++
++s32 sxe_rss_reta_query(struct rte_eth_dev *dev,
++			 struct rte_eth_rss_reta_entry64 *reta_conf,
++			 u16 reta_size);
++
++s32 sxe_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf);
++
++s32 sxe_rss_hash_conf_get(struct rte_eth_dev *dev,
++				struct rte_eth_rss_conf *rss_conf);
++
+ #endif
 -- 
 2.18.2
 
