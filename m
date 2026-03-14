@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 085AB107BCF8
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Mar 2026 08:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99083105F79E
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Mar 2026 08:52:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C34C040430;
-	Sat, 14 Mar 2026 09:52:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9ACEC4060C;
+	Sat, 14 Mar 2026 09:52:15 +0100 (CET)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 662A1402E2
+ by mails.dpdk.org (Postfix) with ESMTP id 5EF07402DE
  for <dev@dpdk.org>; Sat, 14 Mar 2026 09:52:09 +0100 (CET)
 Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-03 (Coremail) with SMTP id rQCowAB3ktm2IbVp1GKhCg--.37229S13;
+ by APP-03 (Coremail) with SMTP id rQCowAB3ktm2IbVp1GKhCg--.37229S12;
  Sat, 14 Mar 2026 16:52:07 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v19 11/13] net/sxe: add custom cmd led ctrl
-Date: Sat, 14 Mar 2026 16:52:03 +0800
-Message-Id: <20260314085205.2419952-12-liujie5@linkdatatechnology.com>
+Subject: [PATCH v19 10/13] net/sxe: add xstats function
+Date: Sat, 14 Mar 2026 16:52:02 +0800
+Message-Id: <20260314085205.2419952-11-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
 In-Reply-To: <20260314085205.2419952-1-liujie5@linkdatatechnology.com>
 References: <20260303091057.2952214-14-liujie5@linkdatatechnology.com>
  <20260314085205.2419952-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: rQCowAB3ktm2IbVp1GKhCg--.37229S13
-X-Coremail-Antispam: 1UD129KBjvJXoWxKF4rtrWruFykZF1kWF18AFb_yoWfXF48pF
- 45Cr15W3WfJFyIka1fJF4DZF1rCa1jqFWDWF9F9w4Svas2yr1UJF4qgFsIy34Fv3y8Gry2
- va12vFy5Kwn5K3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUPa14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
- M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
- v20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
- F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCY02
- Avz4vE14v_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
- x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r
- 17MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Xr0_Ar1lIxAIcVC0I7IYx2IY6xkF
- 7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxV
- W8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU
- 5l1vDUUUU
+X-CM-TRANSID: rQCowAB3ktm2IbVp1GKhCg--.37229S12
+X-Coremail-Antispam: 1UD129KBjvAXoWfuw4rtw1rWr43Cr1UZr4DXFb_yoW8ZFWrXo
+ W2qrsxt3WrCryxCrWvqrn5JF9rua1qgryUGr1Fvrs8CanxAw1Uury7Kw43J3Z0gw4rtF1D
+ X3s2ya4Sgrs5G3yrn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUOn7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
+ j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
+ Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+ 84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ 4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4U
+ JwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
+ IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
+ M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24lc2
+ xSY4AK67AK6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E
+ 5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXV
+ WUAwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY
+ 1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
+ 0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7V
+ Ubo7K3UUUUU==
 X-Originating-IP: [221.238.36.162]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,341 +59,713 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add custom cmd led ctrl.
+Add xstats function.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe/include/sxe/sxe_cli.h   | 218 ++++++++++++++++++++++++
- drivers/net/sxe/include/sxe/sxe_ioctl.h |  21 +++
- drivers/net/sxe/sxe_testpmd.c           |  66 +++++++
- 3 files changed, 305 insertions(+)
- create mode 100644 drivers/net/sxe/include/sxe/sxe_cli.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_ioctl.h
- create mode 100644 drivers/net/sxe/sxe_testpmd.c
+ drivers/net/sxe/pf/sxe_main.c  |   7 +
+ drivers/net/sxe/pf/sxe_stats.c | 586 +++++++++++++++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_stats.h |  69 ++++
+ 3 files changed, 662 insertions(+)
+ create mode 100644 drivers/net/sxe/pf/sxe_stats.c
+ create mode 100644 drivers/net/sxe/pf/sxe_stats.h
 
-diff --git a/drivers/net/sxe/include/sxe/sxe_cli.h b/drivers/net/sxe/include/sxe/sxe_cli.h
+diff --git a/drivers/net/sxe/pf/sxe_main.c b/drivers/net/sxe/pf/sxe_main.c
+index e3f4d466a4..4950ba24ef 100644
+--- a/drivers/net/sxe/pf/sxe_main.c
++++ b/drivers/net/sxe/pf/sxe_main.c
+@@ -19,10 +19,12 @@
+ #include "sxe_ethdev.h"
+ #include "sxe.h"
+ #include "drv_msg.h"
++#include "sxe_cli.h"
+ #include "sxe_queue.h"
+ #include "sxe_errno.h"
+ #include "sxe_compat_platform.h"
+ #include "sxe_pmd_hdc.h"
++#include "sxe_vf.h"
+ #include "sxe_queue.h"
+ 
+ static const struct rte_pci_id sxe_pci_tbl[] = {
+@@ -154,6 +156,11 @@ s32 sxe_hw_reset(struct sxe_hw *hw)
+ void sxe_hw_start(struct sxe_hw *hw)
+ {
+ 	sxe_hw_vlan_filter_array_clear(hw);
++
++	sxe_hw_stats_regs_clean(hw);
++
++	sxe_hw_no_snoop_disable(hw);
++
+ 	sxe_hw_dcb_rate_limiter_clear(hw, SXE_TXRX_RING_NUM_MAX);
+ 
+ 	sxe_fc_autoneg_localcap_set(hw);
+diff --git a/drivers/net/sxe/pf/sxe_stats.c b/drivers/net/sxe/pf/sxe_stats.c
 new file mode 100644
-index 0000000000..b278a67907
+index 0000000000..bf35832ec8
 --- /dev/null
-+++ b/drivers/net/sxe/include/sxe/sxe_cli.h
-@@ -0,0 +1,218 @@
++++ b/drivers/net/sxe/pf/sxe_stats.c
+@@ -0,0 +1,586 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
++#include "sxe_stats.h"
++#include "sxe.h"
++#include "sxe_logs.h"
++#include "sxe_errno.h"
++#include "sxe_queue.h"
++#include "sxe_compat_platform.h"
++#include <rte_string_fns.h>
 +
-+#ifndef __SXE_CLI_H__
-+#define __SXE_CLI_H__
++#define SXE_STAT_MAP_WIDTH 8
++#define SXE_STAT_MAP_CNT 4
++#define SXE_STAT_MAP_MASK 0x0F
 +
-+#ifdef SXE_HOST_DRIVER
-+#include "sxe_drv_type.h"
-+#endif
++#define SXE_QUEUE_STAT_COUNT ARRAY_SIZE(stats_info->hw_stats.qprc)
 +
-+#define SXE_CODE_VERSION_LEN			(32)
-+#define SXE_MAC_NUM				(128)
-+#define SXE_PORT_TRANSCEIVER_LEN		(32)
-+#define SXE_PORT_VENDOR_LEN			(32)
-+#define SXE_CHIP_TYPE_LEN			(32)
-+#define SXE_VPD_SN_LEN				(16)
-+#define SXE_SOC_RST_TIME			(0x93A80)
-+#define SXE_SFP_TEMP_THRESHOLD_INTERVAL		(3)
-+#define MGC_TERMLOG_INFO_MAX_LEN		(12 * 1024)
-+#define SXE_REGS_DUMP_MAX_LEN			(12 * 1024)
-+#define SXE_PRODUCT_NAME_LEN			(32)
-+
-+typedef enum sxe_led_mode {
-+	SXE_IDENTIFY_LED_BLINK_ON = 0,
-+	SXE_IDENTIFY_LED_BLINK_OFF,
-+	SXE_IDENTIFY_LED_ON,
-+	SXE_IDENTIFY_LED_OFF,
-+	SXE_IDENTIFY_LED_RESET,
-+} sxe_led_mode_s;
-+
-+typedef struct sxe_led_ctrl {
-+	U32	mode;
-+	U32	duration;
-+
-+} sxe_led_ctrl_s;
-+
-+typedef struct sxe_led_ctrl_resp {
-+	U32	ack;
-+} sxe_led_ctrl_resp_s;
-+
-+typedef enum port_link_speed {
-+	PORT_LINK_NO	= 0,
-+	PORT_LINK_100M	= 1,
-+	PORT_LINK_1G	= 2,
-+	PORT_LINK_10G	= 3,
-+} port_link_speed_e;
-+
-+typedef struct sys_soc_info {
-+	S8	fw_ver[SXE_CODE_VERSION_LEN];
-+	S8	opt_ver[SXE_CODE_VERSION_LEN];
-+	U8	soc_status;
-+	U8	pad[3];
-+	S32	soc_temp;
-+	U64	chipid;
-+	S8	chip_type[SXE_CHIP_TYPE_LEN];
-+	S8	pba[SXE_VPD_SN_LEN];
-+	S8	product_name[SXE_PRODUCT_NAME_LEN];
-+} sys_soc_info_s;
-+
-+typedef struct sys_port_info {
-+	U64	mac[SXE_MAC_NUM];
-+	U8	is_port_abs;
-+	U8	link_stat;
-+	U8	link_speed;
-+
-+
-+	U8	is_sfp:1;
-+	U8	is_get_info:1;
-+	U8	rvd:6;
-+	S8	optical_mod_temp;
-+	U8	pad[3];
-+	S8	transceiver_type[SXE_PORT_TRANSCEIVER_LEN];
-+	S8	vendor_name[SXE_PORT_VENDOR_LEN];
-+	S8	vendor_pn[SXE_PORT_VENDOR_LEN];
-+} sys_port_info_s;
-+
-+typedef struct sys_info_resp {
-+	sys_soc_info_s	soc_info;
-+	sys_port_info_s	port_info;
-+} sys_info_resp_s;
-+
-+typedef enum sfp_temp_td_mode {
-+	SFP_TEMP_THRESHOLD_MODE_ALARM   = 0,
-+	SFP_TEMP_THRESHOLD_MODE_WARN,
-+} sfp_temp_td_mode_e;
-+
-+typedef struct sfp_temp_td_set {
-+	U8	mode;
-+	U8	pad[3];
-+	S8	hthreshold;
-+	S8	lthreshold;
-+} sfp_temp_td_set_s;
-+
-+typedef struct sxe_log_export_resp {
-+	U16	cur_log_len;
-+	U8	is_end;
-+	U8	pad;
-+	S32	session_id;
-+	S8	data[0];
-+} sxe_log_export_resp_s;
-+
-+typedef enum sxe_log_export_type  {
-+	SXE_LOG_EXPORT_REQ	= 0,
-+	SXE_LOG_EXPORT_FIN,
-+	SXE_LOG_EXPORT_ABORT,
-+} sxe_log_export_type_e;
-+
-+typedef struct sxe_log_export_req {
-+	U8	is_all_log;
-+	U8	cmdtype;
-+	U8	is_begin;
-+	U8	pad;
-+	S32	session_id;
-+	U32	log_len;
-+} sxe_log_export_req_s;
-+
-+typedef struct soc_rst_req {
-+	U32	time;
-+} soc_rst_req_s;
-+
-+typedef struct regs_dump_resp {
-+	U32	curdw_len;
-+	U8	data[0];
-+} regs_dump_resp_s;
-+
-+enum {
-+	SXE_MFG_PART_NUMBER_LEN   = 8,
-+	SXE_MFG_SERIAL_NUMBER_LEN = 16,
-+	SXE_MFG_REVISION_LEN	  = 4,
-+	SXE_MFG_OEM_STR_LEN	   = 64,
-+	SXE_MFG_SXE_BOARD_ASSEMBLY_LEN  = 32,
-+	SXE_MFG_SXE_BOARD_TRACE_NUM_LEN = 16,
-+	SXE_MFG_SXE_MAC_ADDR_CNT		= 2,
++static const struct sxe_stats_field sxe_xstats_sw_field[] = {
++	{"rx_l3_l4_xsum_error", offsetof(struct sxe_sw_stats,
++		hw_csum_rx_error)},
 +};
 +
-+typedef struct sxe_mfg_info {
-+	U8 part_number[SXE_MFG_PART_NUMBER_LEN];
-+	U8 serial_number[SXE_MFG_SERIAL_NUMBER_LEN];
-+	U32 mfg_date;
-+	U8 revision[SXE_MFG_REVISION_LEN];
-+	U32 rework_date;
-+	U8 pad[4];
-+	U64 mac_addr[SXE_MFG_SXE_MAC_ADDR_CNT];
-+	U8 board_trace_num[SXE_MFG_SXE_BOARD_TRACE_NUM_LEN];
-+	U8 board_assembly[SXE_MFG_SXE_BOARD_ASSEMBLY_LEN];
-+	U8 extra1[SXE_MFG_OEM_STR_LEN];
-+	U8 extra2[SXE_MFG_OEM_STR_LEN];
-+} sxe_mfg_info_t;
++static const struct sxe_stats_field sxe_xstats_mac_field[] = {
++	{"rx_crc_errors", offsetof(struct sxe_mac_stats, crcerrs)},
++	{"rx_error_bytes", offsetof(struct sxe_mac_stats, errbc)},
++	{"rx_length_errors", offsetof(struct sxe_mac_stats, rlec)},
++	{"rx_size_64_packets", offsetof(struct sxe_mac_stats, prc64)},
++	{"rx_size_65_to_127_packets", offsetof(struct sxe_mac_stats, prc127)},
++	{"rx_size_128_to_255_packets", offsetof(struct sxe_mac_stats, prc255)},
++	{"rx_size_256_to_511_packets", offsetof(struct sxe_mac_stats, prc511)},
++	{"rx_size_512_to_1023_packets", offsetof(struct sxe_mac_stats,
++		prc1023)},
++	{"rx_size_1024_to_max_packets", offsetof(struct sxe_mac_stats,
++		prc1522)},
++	{"rx_broadcast_packets", offsetof(struct sxe_mac_stats, bprc)},
++	{"rx_multicast_packets", offsetof(struct sxe_mac_stats, mprc)},
++	{"rx_fragment_errors", offsetof(struct sxe_mac_stats, rfc)},
++	{"rx_undersize_errors", offsetof(struct sxe_mac_stats, ruc)},
++	{"rx_oversize_errors", offsetof(struct sxe_mac_stats, roc)},
++	{"rx_jabber_errors", offsetof(struct sxe_mac_stats, rjc)},
++	{"rx_size_packets", offsetof(struct sxe_mac_stats, tpr)},
++	{"rx_size_bytes", offsetof(struct sxe_mac_stats, tor)},
++	{"tx_size_packets", offsetof(struct sxe_mac_stats, tpt)},
++	{"tx_size_64_packets", offsetof(struct sxe_mac_stats, ptc64)},
++	{"tx_size_65_to_127_packets", offsetof(struct sxe_mac_stats, ptc127)},
++	{"tx_size_128_to_255_packets", offsetof(struct sxe_mac_stats, ptc255)},
++	{"tx_size_256_to_511_packets", offsetof(struct sxe_mac_stats, ptc511)},
++	{"tx_size_512_to_1023_packets", offsetof(struct sxe_mac_stats,
++		ptc1023)},
++	{"tx_size_1024_to_max_packets", offsetof(struct sxe_mac_stats,
++		ptc1522)},
++	{"tx_multicast_packets", offsetof(struct sxe_mac_stats, mptc)},
++	{"tx_broadcast_packets", offsetof(struct sxe_mac_stats, bptc)},
 +
-+typedef struct sxe_lldp_info {
-+	U8	lldp_state;
-+	U8	pad[3];
-+} sxe_lldp_info_t;
-+
-+typedef struct regs_dump_req {
-+	U32	base_addr;
-+	U32	dw_len;
-+} regs_dump_req_s;
-+
-+typedef enum sxe_pcs_mode {
-+	SXE_PCS_MODE_1000BASE_KX_WO = 0,
-+	SXE_PCS_MODE_1000BASE_KX_W,
-+	SXE_PCS_MODE_SGMII,
-+	SXE_PCS_MODE_10GBASE_KR_WO,
-+	SXE_PCS_MODE_AUTO_NEGT_73,
-+	SXE_PCS_MODE_LPBK_PHY_TX2RX,
-+	SXE_PCS_MODE_LPBK_PHY_RX2TX,
-+	SXE_PCS_MODE_LPBK_PCS_RX2TX,
-+	SXE_PCS_MODE_BUTT,
-+} sxe_pcs_mode_e;
-+
-+typedef enum sxe_remote_fault_mode {
-+	SXE_REMOTE_FALUT_NO_ERROR		= 0,
-+	SXE_REMOTE_FALUT_OFFLINE,
-+	SXE_REMOTE_FALUT_LINK_FAILURE,
-+	SXE_REMOTE_FALUT_AUTO_NEGOTIATION,
-+	SXE_REMOTE_UNKNOWN,
-+} sxe_remote_fault_e;
-+
-+typedef struct sxe_phy_cfg {
-+	sxe_pcs_mode_e mode;
-+	U32 mtu;
-+} sxe_pcs_cfg_s;
-+
-+typedef enum sxe_an_speed {
-+	SXE_AN_SPEED_NO_LINK = 0,
-+	SXE_AN_SPEED_100M,
-+	SXE_AN_SPEED_1G,
-+	SXE_AN_SPEED_10G,
-+	SXE_AN_SPEED_UNKNOWN,
-+} sxe_an_speed_e;
-+
-+typedef enum sxe_phy_pause_cap {
-+	SXE_PAUSE_CAP_NO_PAUSE	= 0,
-+	SXE_PAUSE_CAP_ASYMMETRIC_PAUSE,
-+	SXE_PAUSE_CAP_SYMMETRIC_PAUSE,
-+	SXE_PAUSE_CAP_BOTH_PAUSE,
-+	SXE_PAUSE_CAP_UNKNOWN,
-+} sxe_phy_pause_cap_e;
-+
-+typedef enum sxe_phy_duplex_type {
-+	SXE_FULL_DUPLEX	= 0,
-+	SXE_HALF_DUPLEX	= 1,
-+	SXE_UNKNOWN_DUPLEX,
-+} sxe_phy_duplex_type_e;
-+
-+typedef struct sxe_phy_an_cap {
-+	sxe_remote_fault_e   remote_fault;
-+	sxe_phy_pause_cap_e  pause_cap;
-+	sxe_phy_duplex_type_e duplex_cap;
-+} sxe_phy_an_cap_s;
-+
-+typedef struct sxe_an_cap {
-+	sxe_phy_an_cap_s local;
-+	sxe_phy_an_cap_s peer;
-+} sxe_an_cap_s;
-+#endif
-diff --git a/drivers/net/sxe/include/sxe/sxe_ioctl.h b/drivers/net/sxe/include/sxe/sxe_ioctl.h
-new file mode 100644
-index 0000000000..4a4b0bc304
---- /dev/null
-+++ b/drivers/net/sxe/include/sxe/sxe_ioctl.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#ifndef _SXE_IOCTL_H_
-+#define _SXE_IOCTL_H_
-+
-+#ifdef SXE_HOST_DRIVER
-+#include "sxe_drv_type.h"
-+#endif
-+
-+struct sxe_ioctl_sync_cmd {
-+	U64   traceid;
-+	void *in_data;
-+	U32   in_len;
-+	void *out_data;
-+	U32   out_len;
++	{"flow_navigator_add_filters", offsetof(struct sxe_mac_stats,
++		fnavadd)},
++	{"flow_navigator_remove_filters", offsetof(struct sxe_mac_stats,
++		fnavrmv)},
++	{"flow_navigator_filters_add_errs", offsetof(struct sxe_mac_stats,
++		fnavadderr)},
++	{"flow_navigator_filters_remove_errs", offsetof(struct sxe_mac_stats,
++		fnavrmverr)},
++	{"flow_navigator_matched_filters", offsetof(struct sxe_mac_stats,
++		fnavmatch)},
++	{"flow_navigator_missed_filters", offsetof(struct sxe_mac_stats,
++		fnavmiss)},
 +};
 +
-+#define SXE_CMD_IOCTL_SYNC_CMD _IOWR('M', 1, struct sxe_ioctl_sync_cmd)
-+
-+#endif
-diff --git a/drivers/net/sxe/sxe_testpmd.c b/drivers/net/sxe/sxe_testpmd.c
-new file mode 100644
-index 0000000000..6974bfe002
---- /dev/null
-+++ b/drivers/net/sxe/sxe_testpmd.c
-@@ -0,0 +1,66 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#include <ethdev_driver.h>
-+#include "sxe_drv_type.h"
-+#include "sxe_ethdev.h"
-+#include "rte_pmd_sxe.h"
-+
-+#include <cmdline_parse_etheraddr.h>
-+#include <cmdline_parse_num.h>
-+#include <cmdline_parse_string.h>
-+
-+#include "testpmd.h"
-+
-+struct led_ctrl_result {
-+	cmdline_fixed_string_t port;
-+	uint16_t port_id;
-+	cmdline_fixed_string_t led;
-+	cmdline_fixed_string_t action;
++static const struct sxe_stats_field sxe_xstats_fc_field[] = {
++	{"dropped", offsetof(struct sxe_mac_stats, mpc)},
++	{"rx_xon_xoff_packets", offsetof(struct sxe_mac_stats, prcpf)},
++	{"tx_xon_xoff_packets", offsetof(struct sxe_mac_stats, pfct)},
 +};
 +
-+cmdline_parse_token_string_t cmd_led_ctrl_port =
-+	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, port, "port");
-+cmdline_parse_token_num_t cmd_led_ctrl_port_id =
-+	TOKEN_NUM_INITIALIZER(struct led_ctrl_result, port_id, RTE_UINT16);
-+cmdline_parse_token_string_t cmd_led_ctrl_led =
-+	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, led, "led");
-+cmdline_parse_token_string_t cmd_led_ctrl_action =
-+	TOKEN_STRING_INITIALIZER(struct led_ctrl_result, action, "on#off");
++#define SXE_XSTAT_SW_CNT  ARRAY_SIZE(sxe_xstats_sw_field)
 +
-+static void cmd_led_ctrl_parsed(void *parsed_result,
-+			__rte_unused struct cmdline *cl,
-+			__rte_unused void *data)
++#define SXE_XSTAT_MAC_CNT ARRAY_SIZE(sxe_xstats_mac_field)
++
++#define SXE_XSTAT_FC_CNT ARRAY_SIZE(sxe_xstats_fc_field)
++
++#define SXE_FC_PRIO_VALUES 8
++
++#define SXE_XSTAT_CNT  (SXE_XSTAT_MAC_CNT + SXE_XSTAT_SW_CNT + \
++			SXE_XSTAT_FC_CNT * SXE_FC_PRIO_VALUES)
++
++#ifdef SXE_TEST
++u32 sxe_xstats_cnt_get(void)
 +{
-+	struct led_ctrl_result *res = parsed_result;
++	return SXE_XSTAT_CNT;
++}
++#endif
 +
-+	if (strcmp(res->action, "on") == 0)
-+		rte_eth_led_on(res->port_id);
-+	else
-+		rte_eth_led_off(res->port_id);
++int sxe_eth_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
++		      struct eth_queue_stats *qstats)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_stats_info *stats_info = &adapter->stats_info;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 i;
++	u64 rx_packets = 0;
++	u64 rx_bytes = 0;
++	s32 ret = 0;
++
++	sxe_hw_stats_get(hw, &stats_info->hw_stats);
++
++	if (stats == NULL) {
++		ret = -EINVAL;
++		PMD_LOG_ERR(DRV, "input param stats is null.");
++		goto l_out;
++	}
++
++	for (i = 0; i < SXE_QUEUE_STAT_COUNT; i++) {
++		rx_packets += stats_info->hw_stats.qprc[i];
++		rx_bytes += stats_info->hw_stats.qbrc[i];
++		if (qstats && i < RTE_ETHDEV_QUEUE_STAT_CNTRS) {
++			qstats->q_ipackets[i] = stats_info->hw_stats.qprc[i];
++			qstats->q_opackets[i] = stats_info->hw_stats.qptc[i];
++			qstats->q_ibytes[i] = stats_info->hw_stats.qbrc[i];
++			qstats->q_obytes[i] = stats_info->hw_stats.qbtc[i];
++			qstats->q_errors[i] = stats_info->hw_stats.qprdc[i];
++		}
++	}
++
++	stats->ipackets = rx_packets;
++	stats->ibytes = rx_bytes;
++	stats->opackets = stats_info->hw_stats.gptc;
++	stats->obytes = stats_info->hw_stats.gotc;
++
++	stats->imissed  = 0;
++	stats->ierrors  = stats_info->hw_stats.crcerrs +
++			  stats_info->hw_stats.rlec +
++			  stats_info->hw_stats.ruc +
++			  stats_info->hw_stats.roc +
++			  stats_info->hw_stats.rfc;
++
++	stats->oerrors  = 0;
++
++l_out:
++	return ret;
 +}
 +
-+cmdline_parse_inst_t  cmd_led_ctrl = {
-+	.f = cmd_led_ctrl_parsed,
-+	.data = NULL,
-+	.help_str = "port <port_id> led on|off",
-+	.tokens = {
-+		(void *)&cmd_led_ctrl_port,
-+		(void *)&cmd_led_ctrl_port_id,
-+		(void *)&cmd_led_ctrl_led,
-+		(void *)&cmd_led_ctrl_action,
-+		NULL,
-+	},
++static s32 sxe_hw_xstat_offset_get(u32 id, u32 *offset)
++{
++	s32 ret = 0;
++	u32 size = SXE_XSTAT_MAC_CNT;
++
++	if (id < size) {
++		*offset = sxe_xstats_mac_field[id].offset;
++	} else {
++		ret = -SXE_ERR_PARAM;
++		PMD_LOG_ERR(DRV, "invalid id:%u exceed stats size cnt:%u.",
++				id, size);
++	}
++
++	return ret;
++}
++
++static s32 sxe_sw_xstat_offset_get(u32 id, u32 *offset)
++{
++	s32 ret = 0;
++	u32 size = SXE_XSTAT_SW_CNT;
++
++	if (id < size) {
++		*offset = sxe_xstats_sw_field[id].offset;
++	} else {
++		ret = -SXE_ERR_PARAM;
++		PMD_LOG_ERR(DRV, "invalid id:%u exceed stats size cnt:%u.",
++				id, size);
++	}
++
++	return ret;
++}
++
++static s32 sxe_fc_xstat_field_offset_get(u32 id, u8 priority, u32 *offset)
++{
++	s32 ret = 0;
++	u32 size = SXE_XSTAT_FC_CNT;
++
++	if (id < size) {
++		*offset = sxe_xstats_fc_field[id].offset + (sizeof(u64) * priority);
++	} else {
++		ret = -SXE_ERR_PARAM;
++		PMD_LOG_ERR(DRV, "invalid id:%u exceed stats size cnt:%u.",
++				id, size);
++	}
++
++	return ret;
++}
++
++static void sxe_sw_stats_get(struct rte_eth_dev *eth_dev,
++				struct sxe_sw_stats *stats)
++{
++	u32 i;
++	u64 hw_csum_rx_error = 0;
++	sxe_rx_queue_s *rxq;
++
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
++		rxq = eth_dev->data->rx_queues[i];
++		hw_csum_rx_error += rxq->rx_stats.csum_err;
++	}
++	stats->hw_csum_rx_error = hw_csum_rx_error;
++}
++
++int sxe_xstats_get(struct rte_eth_dev *eth_dev,
++				struct rte_eth_xstat *xstats,
++				u32 usr_cnt)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_stats_info *stats_info = &adapter->stats_info;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 i;
++	u32 cnt;
++	s32 ret;
++	u32 offset;
++	u8 prio;
++
++	cnt = SXE_XSTAT_CNT;
++	PMD_LOG_INFO(DRV, "xstat size:%u. hw xstat field cnt: %" SXE_PRIU64
++			"fc xstat field cnt: %" SXE_PRIU64, cnt,
++			(u64)SXE_XSTAT_MAC_CNT, (u64)SXE_XSTAT_FC_CNT);
++
++	if (usr_cnt < cnt) {
++		ret = cnt;
++		PMD_LOG_ERR(DRV, "user usr_cnt:%u less than stats cnt:%u.",
++				usr_cnt, cnt);
++		goto l_out;
++	}
++
++	sxe_hw_stats_get(hw, &stats_info->hw_stats);
++	sxe_sw_stats_get(eth_dev, &stats_info->sw_stats);
++
++	if (xstats == NULL) {
++		ret = 0;
++		PMD_LOG_ERR(DRV, "usr_cnt:%u, input param xstats is null.", usr_cnt);
++		goto l_out;
++	}
++
++	cnt = 0;
++	for (i = 0; i < SXE_XSTAT_MAC_CNT; i++) {
++		sxe_hw_xstat_offset_get(i, &offset);
++		xstats[cnt].value = *(u64 *)(((s8 *)(&stats_info->hw_stats)) + offset);
++		xstats[cnt].id = cnt;
++		cnt++;
++	}
++
++	for (i = 0; i < SXE_XSTAT_SW_CNT; i++) {
++		sxe_sw_xstat_offset_get(i, &offset);
++		xstats[cnt].value = *(u64 *)(((s8 *)(&stats_info->sw_stats)) + offset);
++		xstats[cnt].id = cnt;
++		cnt++;
++	}
++
++	for (i = 0; i < SXE_XSTAT_FC_CNT; i++) {
++		for (prio = 0; prio < SXE_FC_PRIO_VALUES; prio++) {
++			sxe_fc_xstat_field_offset_get(i, prio, &offset);
++			xstats[cnt].value = *(u64 *)(((s8 *)(&stats_info->hw_stats))
++					  + offset);
++			xstats[cnt].id = cnt;
++			cnt++;
++		}
++	}
++
++	ret = cnt;
++	PMD_LOG_INFO(DRV, "usr_cnt:%u stats cnt:%u stats done.", usr_cnt, cnt);
++
++l_out:
++	return ret;
++}
++
++int sxe_stats_reset(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_stats_info *stats_info = &adapter->stats_info;
++	struct sxe_hw *hw = &adapter->hw;
++	sxe_rx_queue_s *rxq;
++	u32 i;
++
++	sxe_eth_stats_get(eth_dev, NULL, NULL);
++	sxe_hw_stats_seq_clean(hw, &stats_info->hw_stats);
++
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
++		rxq = eth_dev->data->rx_queues[i];
++		memset(&rxq->rx_stats, 0, sizeof(rxq->rx_stats));
++	}
++
++	memset(&stats_info->hw_stats, 0, sizeof(stats_info->hw_stats));
++	memset(&stats_info->sw_stats, 0, sizeof(stats_info->sw_stats));
++
++	return 0;
++}
++
++int sxe_xstats_reset(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_stats_info *stats_info = &adapter->stats_info;
++	struct sxe_hw *hw = &adapter->hw;
++	sxe_rx_queue_s *rxq;
++	u32 size = SXE_XSTAT_CNT;
++	u32 i;
++
++	sxe_xstats_get(eth_dev, NULL, size);
++	sxe_hw_stats_seq_clean(hw, &stats_info->hw_stats);
++
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
++		rxq = eth_dev->data->rx_queues[i];
++		memset(&rxq->rx_stats, 0, sizeof(rxq->rx_stats));
++	}
++
++	memset(&stats_info->hw_stats, 0, sizeof(stats_info->hw_stats));
++	memset(&stats_info->sw_stats, 0, sizeof(stats_info->sw_stats));
++
++	return 0;
++}
++
++int sxe_xstats_names_get(__rte_unused struct rte_eth_dev *dev,
++	struct rte_eth_xstat_name *xstats_names, __rte_unused unsigned int usr_cnt)
++{
++	u32 i = 0;
++	u32 cnt = 0;
++	s32 ret;
++	u8 prio;
++
++	if (xstats_names == NULL) {
++		ret = SXE_XSTAT_CNT;
++		PMD_LOG_INFO(DRV, "xstats field size:%u.", ret);
++		goto l_out;
++	}
++
++	if (usr_cnt < SXE_XSTAT_CNT) {
++		ret = -SXE_ERR_PARAM;
++		PMD_LOG_ERR(DRV, "max: %" SXE_PRIU64 " usr_cnt:%u invalid.(err:%d)",
++				(u64)SXE_XSTAT_CNT, usr_cnt, ret);
++		goto l_out;
++	}
++
++	for (i = 0; i < SXE_XSTAT_MAC_CNT; i++) {
++		strlcpy(xstats_names[cnt].name,
++			sxe_xstats_mac_field[i].name,
++			sizeof(xstats_names[cnt].name));
++		cnt++;
++	}
++
++	for (i = 0; i < SXE_XSTAT_SW_CNT; i++) {
++		strlcpy(xstats_names[cnt].name,
++			sxe_xstats_sw_field[i].name,
++			sizeof(xstats_names[cnt].name));
++		cnt++;
++	}
++
++	for (i = 0; i < SXE_XSTAT_FC_CNT; i++) {
++		for (prio = 0; prio < SXE_FC_PRIO_VALUES; prio++) {
++			snprintf(xstats_names[cnt].name,
++				sizeof(xstats_names[cnt].name),
++				"priority%u_%s", prio,
++				sxe_xstats_fc_field[i].name);
++			cnt++;
++		}
++	}
++
++	ret = cnt;
++
++l_out:
++	return ret;
++}
++
++static s32 sxe_all_xstats_value_get(struct rte_eth_dev *eth_dev,
++						u64 *values, u32 usr_cnt)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_stats_info *stats_info = &adapter->stats_info;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 size = SXE_XSTAT_CNT;
++	s32 ret;
++	u32 offset;
++	u32 cnt = 0;
++	u32 i;
++	u8 prio;
++
++	if (usr_cnt < size) {
++		PMD_LOG_WARN(DRV, "ids null usr_cnt:%u less than xstats"
++				 " cnt:%u, return xstat cnt.",
++				  usr_cnt, size);
++		ret = size;
++		goto l_out;
++	}
++
++	sxe_hw_stats_get(hw, &stats_info->hw_stats);
++	sxe_sw_stats_get(eth_dev, &stats_info->sw_stats);
++
++	if (values == NULL) {
++		PMD_LOG_WARN(DRV, "ids and values null, "
++				 "read clean stats regs");
++		ret = 0;
++		goto l_out;
++	}
++
++	for (i = 0; i < SXE_XSTAT_MAC_CNT; i++) {
++		sxe_hw_xstat_offset_get(i, &offset);
++		values[cnt] = *(u64 *)(((s8 *)(&stats_info->hw_stats)) + offset);
++		cnt++;
++	}
++
++	for (i = 0; i < SXE_XSTAT_SW_CNT; i++) {
++		sxe_sw_xstat_offset_get(i, &offset);
++		values[cnt] = *(u64 *)(((s8 *)(&stats_info->sw_stats)) + offset);
++		cnt++;
++	}
++
++	for (i = 0; i < SXE_XSTAT_FC_CNT; i++) {
++		for (prio = 0; prio < SXE_FC_PRIO_VALUES; prio++) {
++			sxe_fc_xstat_field_offset_get(i, prio, &offset);
++			values[cnt] = *(u64 *)(((s8 *)(&stats_info->hw_stats))
++					  + offset);
++			cnt++;
++		}
++	}
++
++	ret = cnt;
++
++l_out:
++	return ret;
++}
++
++int sxe_xstats_get_by_id(struct rte_eth_dev *eth_dev,
++					const u64 *ids,
++					u64 *values, u32 usr_cnt)
++{
++	s32 ret;
++	u32 size = SXE_XSTAT_CNT;
++	u32 i;
++	u64 *value_all = (u64 *)malloc(size * sizeof(u64));
++	if (value_all == NULL) {
++		perror("value_all malloc failed");
++		return -ENOMEM;
++	}
++
++	if (ids == NULL) {
++		ret = sxe_all_xstats_value_get(eth_dev, values, usr_cnt);
++		goto l_out;
++	}
++
++	if (values == NULL) {
++		ret = -EINVAL;
++		PMD_LOG_ERR(DRV, "invalid param values.");
++		goto l_out;
++	}
++
++	sxe_all_xstats_value_get(eth_dev, value_all, size);
++
++	for (i = 0; i < usr_cnt; i++) {
++		if (ids[i] >= size) {
++			PMD_LOG_ERR(DRV, "index:%u invalid ids:%" SXE_PRIU64, i, ids[i]);
++			ret = -EINVAL;
++			goto l_out;
++		}
++		values[i] = value_all[ids[i]];
++	}
++
++	ret = usr_cnt;
++
++l_out:
++	if (value_all != NULL)
++		free(value_all);
++
++	return ret;
++}
++
++int sxe_xstats_names_get_by_id(struct rte_eth_dev *eth_dev,
++	const u64 *ids,
++	struct rte_eth_xstat_name *xstats_names,
++	u32 usr_cnt)
++{
++	s32 ret;
++	u32 i;
++	u32 size = SXE_XSTAT_CNT;
++	struct rte_eth_xstat_name *xstat_names_all =
++	(struct rte_eth_xstat_name *)malloc(size * sizeof(struct rte_eth_xstat_name));
++	if (xstat_names_all == NULL) {
++		perror("xstat_names_all malloc failed");
++		return -ENOMEM;
++	}
++
++	if (ids == NULL) {
++		ret = sxe_xstats_names_get(eth_dev, xstats_names, usr_cnt);
++		goto l_out;
++	}
++
++	sxe_xstats_names_get(eth_dev, xstat_names_all, size);
++	for (i = 0; i < usr_cnt; i++) {
++		if (ids[i] >= size) {
++			PMD_LOG_ERR(DRV, "index:%u invalid ids:%" SXE_PRIU64, i, ids[i]);
++			ret = -EINVAL;
++			goto l_out;
++		}
++		strlcpy(xstats_names[ids[i]].name,
++			xstat_names_all[ids[i]].name,
++			sizeof(xstats_names[ids[i]].name));
++	}
++
++	ret = usr_cnt;
++
++l_out:
++	if (xstat_names_all != NULL)
++		free(xstat_names_all);
++
++	return ret;
++}
++
++int sxe_queue_stats_mapping_set(struct rte_eth_dev *eth_dev,
++				  u16 queue_id,
++				  u8 stat_reg_idx,
++				  u8 is_rx)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_stats_map *stats_map = &adapter->stats_info.stats_map;
++	u32 qsmr_mask = 0;
++	u32 map_mask = SXE_STAT_MAP_MASK;
++	u8 reg_idx;
++	u8 map_idx;
++	s32 ret = 0;
++
++	reg_idx = queue_id / SXE_STAT_MAP_CNT;
++	if (reg_idx >= SXE_QUEUE_STATS_MAP_REG_NUM) {
++		ret = -EIO;
++		PMD_LOG_ERR(DRV, "invalid queue_id:%u reg_idx exceeded "
++				"max map cnt:%u.(err:%d)",
++				queue_id, SXE_QUEUE_STATS_MAP_REG_NUM, ret);
++		goto l_out;
++	}
++
++	map_idx = (u8)(queue_id % SXE_STAT_MAP_CNT);
++	map_mask <<= (SXE_STAT_MAP_WIDTH * map_idx);
++
++	if (!is_rx)
++		stats_map->txq_stats_map[reg_idx] &= ~map_mask;
++	else
++		stats_map->rxq_stats_map[reg_idx] &= ~map_mask;
++
++	qsmr_mask = (stat_reg_idx & SXE_STAT_MAP_MASK) << (SXE_STAT_MAP_WIDTH * map_idx);
++	if (!is_rx) {
++		stats_map->txq_stats_map[reg_idx] |= qsmr_mask;
++		sxe_hw_txq_stat_map_set(hw, reg_idx, stats_map->txq_stats_map[reg_idx]);
++	} else {
++		stats_map->rxq_stats_map[reg_idx] |= qsmr_mask;
++		sxe_hw_rxq_stat_map_set(hw, reg_idx, stats_map->rxq_stats_map[reg_idx]);
++	}
++
++	PMD_LOG_INFO(DRV, "port %u %s queue_id %d stat map to stat reg[%u] "
++			 "%s[%u] 0x%08x ",
++			 (u16)(eth_dev->data->port_id), is_rx ? "RX" : "TX",
++			 queue_id, stat_reg_idx,
++			 is_rx ? "RQSMR" : "TQSM", reg_idx,
++			 is_rx ? stats_map->rxq_stats_map[reg_idx] :
++			 stats_map->txq_stats_map[reg_idx]);
++
++l_out:
++	return ret;
++}
++
++void sxe_queue_stats_map_restore(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_stats_map *stats_map = &adapter->stats_info.stats_map;
++	u8 reg_idx;
++
++	for (reg_idx = 0; reg_idx < SXE_QUEUE_STATS_MAP_REG_NUM; reg_idx++) {
++		sxe_hw_txq_stat_map_set(hw, reg_idx, stats_map->txq_stats_map[reg_idx]);
++		sxe_hw_rxq_stat_map_set(hw, reg_idx, stats_map->rxq_stats_map[reg_idx]);
++	}
++}
++
++void sxe_queue_stats_map_reset(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u8 reg_idx;
++
++	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
++
++	for (reg_idx = 0; reg_idx < SXE_QUEUE_STATS_MAP_REG_NUM; reg_idx++) {
++		sxe_hw_txq_stat_map_set(hw, reg_idx, 0);
++		sxe_hw_rxq_stat_map_set(hw, reg_idx, 0);
++	}
++}
+diff --git a/drivers/net/sxe/pf/sxe_stats.h b/drivers/net/sxe/pf/sxe_stats.h
+new file mode 100644
+index 0000000000..8bbc5e0e03
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_stats.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXE_STATS_H__
++#define __SXE_STATS_H__
++
++#include <rte_ethdev.h>
++#include <rte_ethdev_core.h>
++#include <ethdev_driver.h>
++#include "sxe_hw.h"
++
++#define SXE_STATS_FIELD_NAME_SIZE  50
++
++struct sxe_sw_stats {
++	u64 hw_csum_rx_error;
 +};
 +
-+static struct testpmd_driver_commands sxe_cmds = {
-+	.commands = {
-+		{
-+			&cmd_led_ctrl,
-+			"port <port_id> led on|off\n"
-+			"	Set led on or off.\n",
-+		},
-+		{ NULL, NULL },
-+	},
++struct sxe_stats_map {
++	u32 txq_stats_map[SXE_QUEUE_STATS_MAP_REG_NUM];
++	u32 rxq_stats_map[SXE_QUEUE_STATS_MAP_REG_NUM];
 +};
-+TESTPMD_ADD_DRIVER_COMMANDS(sxe_cmds)
++
++struct sxe_stats_info {
++	struct sxe_sw_stats  sw_stats;
++	struct sxe_mac_stats hw_stats;
++	struct sxe_stats_map stats_map;
++};
++
++struct sxe_stats_field {
++	s8  name[SXE_STATS_FIELD_NAME_SIZE];
++	u32 offset;
++};
++
++int sxe_eth_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
++		      struct eth_queue_stats *qstats);
++
++int sxe_stats_reset(struct rte_eth_dev *eth_dev);
++
++int sxe_xstats_get(struct rte_eth_dev *eth_dev,
++				struct rte_eth_xstat *xstats,
++				u32 cnt);
++
++int sxe_xstats_reset(struct rte_eth_dev *eth_dev);
++
++
++int sxe_xstats_names_get(__rte_unused struct rte_eth_dev *dev,
++	struct rte_eth_xstat_name *xstats_names, __rte_unused unsigned int size);
++
++int sxe_xstats_get_by_id(struct rte_eth_dev *eth_dev,
++					const u64 *ids,
++					u64 *values, u32 usr_cnt);
++
++int sxe_xstats_names_get_by_id(struct rte_eth_dev *eth_dev,
++	const u64 *ids,
++	struct rte_eth_xstat_name *xstats_names,
++	u32 usr_cnt);
++
++
++int sxe_queue_stats_mapping_set(struct rte_eth_dev *eth_dev,
++				  u16 queue_id,
++				  u8 stat_reg_idx,
++				  u8 is_rx);
++
++void sxe_queue_stats_map_restore(struct rte_eth_dev *eth_dev);
++
++void sxe_queue_stats_map_reset(struct rte_eth_dev *eth_dev);
++
++#endif
 -- 
 2.18.2
 
