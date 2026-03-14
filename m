@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62182105F79E
-	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Mar 2026 08:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543DC106ACD1
+	for <dpdk-dev@archiver.kernel.org>; Sat, 14 Mar 2026 08:53:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC6C24066C;
-	Sat, 14 Mar 2026 09:52:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id CE43B40670;
+	Sat, 14 Mar 2026 09:52:25 +0100 (CET)
 Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 62A5B402DF
- for <dev@dpdk.org>; Sat, 14 Mar 2026 09:52:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 2FC4A402A3
+ for <dev@dpdk.org>; Sat, 14 Mar 2026 09:52:11 +0100 (CET)
 Received: from mail.cstnet.cn (unknown [221.238.36.162])
- by APP-03 (Coremail) with SMTP id rQCowAB3ktm2IbVp1GKhCg--.37229S4;
- Sat, 14 Mar 2026 16:52:06 +0800 (CST)
+ by APP-03 (Coremail) with SMTP id rQCowAB3ktm2IbVp1GKhCg--.37229S15;
+ Sat, 14 Mar 2026 16:52:07 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v19 02/13] net/sxe: add ethdev probe and remove
-Date: Sat, 14 Mar 2026 16:51:54 +0800
-Message-Id: <20260314085205.2419952-3-liujie5@linkdatatechnology.com>
+Subject: [PATCH v19 13/13] net/sxe: add virtual function
+Date: Sat, 14 Mar 2026 16:52:05 +0800
+Message-Id: <20260314085205.2419952-14-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.18.2
 In-Reply-To: <20260314085205.2419952-1-liujie5@linkdatatechnology.com>
 References: <20260303091057.2952214-14-liujie5@linkdatatechnology.com>
  <20260314085205.2419952-1-liujie5@linkdatatechnology.com>
-X-CM-TRANSID: rQCowAB3ktm2IbVp1GKhCg--.37229S4
-X-Coremail-Antispam: 1UD129KBjvAXoWkJr4kur4ftrW7AF4DZr4Dtwb_yoWDWw45Zo
- WfXF15G3WrZryxCrs8G3yxGFyI9rnFkayYqrsYyrW8ua4DZ3y8Gr17Ka13Arn8Wr1rKr9Y
- yasF9F9xJr1jvas5n29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUYr7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20EY4v20xva
- j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r15M28IrcIa0x
- kI8VCY1x0267AKxVWUCVW8JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84AC
- jcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM2
- 8EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS
- 0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
- IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
- x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_GFyl4I8I3I0E4IkC6x0Yz7v_Jr0_Gr
- 1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE
- 14v26r1Y6r17MIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
- v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
- JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeHqcUU
- UUU
+X-CM-TRANSID: rQCowAB3ktm2IbVp1GKhCg--.37229S15
+X-Coremail-Antispam: 1UD129KBjvAXoWkJryxGrWUGF13Zry5Ar45trb_yoWDAF4fWo
+ WfXFnxJF4ruryxCFZ5Jw1xGa47Zr42g345Aws8Zr4kuasxA34fKr1fGr13AFnxWF1rtryD
+ JwnFv39rJr4UWF4rn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUY27AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
+ j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
+ Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+ 84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r
+ 4UJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JVW8
+ Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2I
+ x0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8
+ JwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r43MxC20s026xCaFVCjc4AY6r
+ 1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+ b7AF67AKxVWUXVWUAwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF0xvE2Ix0cI8IcVCY1x
+ 0267AKxVWxJVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
+ 6r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0J
+ U9F4iUUUUU=
 X-Originating-IP: [221.238.36.162]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -58,1755 +58,557 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add basic modules: logs and hardware communication and common components
-and support basic PCIe ethdev probe and remove.
+Add virtual function.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe/base/sxe_common.c          |   45 +
- drivers/net/sxe/base/sxe_common.h          |   13 +
- drivers/net/sxe/base/sxe_compat_platform.h |   75 +
- drivers/net/sxe/base/sxe_compat_version.h  |   34 +
- drivers/net/sxe/base/sxe_errno.h           |   61 +
- drivers/net/sxe/base/sxe_hw.c              | 3271 ++++++++++++++++++++
- drivers/net/sxe/base/sxe_hw.h              | 1010 ++++++
- drivers/net/sxe/base/sxe_logs.h            |  105 +
- drivers/net/sxe/base/sxe_types.h           |   40 +
- drivers/net/sxe/include/drv_msg.h          |   18 +
- drivers/net/sxe/include/sxe/sxe_hdc.h      |   43 +
- drivers/net/sxe/include/sxe/sxe_msg.h      |  135 +
- drivers/net/sxe/include/sxe/sxe_regs.h     | 1270 ++++++++
- drivers/net/sxe/include/sxe_version.h      |   29 +
- drivers/net/sxe/meson.build                |   17 +
- drivers/net/sxe/pf/sxe.h                   |   56 +
- drivers/net/sxe/pf/sxe_ethdev.c            |  302 ++
- drivers/net/sxe/pf/sxe_ethdev.h            |   25 +
- drivers/net/sxe/pf/sxe_irq.c               |  118 +
- drivers/net/sxe/pf/sxe_irq.h               |   39 +
- drivers/net/sxe/pf/sxe_main.c              |  178 ++
- drivers/net/sxe/pf/sxe_phy.h               |   38 +
- drivers/net/sxe/pf/sxe_pmd_hdc.c           |  661 ++++
- drivers/net/sxe/pf/sxe_pmd_hdc.h           |   42 +
- drivers/net/sxe/sxe_drv_type.h             |   15 +
- 25 files changed, 7640 insertions(+)
- create mode 100644 drivers/net/sxe/base/sxe_common.c
- create mode 100644 drivers/net/sxe/base/sxe_common.h
- create mode 100644 drivers/net/sxe/base/sxe_compat_platform.h
- create mode 100644 drivers/net/sxe/base/sxe_compat_version.h
- create mode 100644 drivers/net/sxe/base/sxe_errno.h
- create mode 100644 drivers/net/sxe/base/sxe_hw.c
- create mode 100644 drivers/net/sxe/base/sxe_hw.h
- create mode 100644 drivers/net/sxe/base/sxe_logs.h
- create mode 100644 drivers/net/sxe/base/sxe_types.h
- create mode 100644 drivers/net/sxe/include/drv_msg.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_hdc.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_msg.h
- create mode 100644 drivers/net/sxe/include/sxe/sxe_regs.h
- create mode 100644 drivers/net/sxe/include/sxe_version.h
- create mode 100644 drivers/net/sxe/pf/sxe.h
- create mode 100644 drivers/net/sxe/pf/sxe_irq.c
- create mode 100644 drivers/net/sxe/pf/sxe_irq.h
- create mode 100644 drivers/net/sxe/pf/sxe_main.c
- create mode 100644 drivers/net/sxe/pf/sxe_phy.h
- create mode 100644 drivers/net/sxe/pf/sxe_pmd_hdc.c
- create mode 100644 drivers/net/sxe/pf/sxe_pmd_hdc.h
- create mode 100644 drivers/net/sxe/sxe_drv_type.h
+ drivers/net/sxe/base/sxe_compat_platform.h |    2 -
+ drivers/net/sxe/base/sxe_queue_common.c    |    4 +
+ drivers/net/sxe/base/sxevf_hw.c            |  819 +++++++++++++
+ drivers/net/sxe/base/sxevf_hw.h            |  318 ++++++
+ drivers/net/sxe/base/sxevf_regs.h          |  119 ++
+ drivers/net/sxe/include/sxe/sxe_msg.h      |    4 +-
+ drivers/net/sxe/pf/rte_pmd_sxe.h           |    1 +
+ drivers/net/sxe/pf/sxe_filter.c            |  177 +++
+ drivers/net/sxe/pf/sxe_filter.h            |   15 +
+ drivers/net/sxe/pf/sxe_phy.h               |    1 +
+ drivers/net/sxe/pf/sxe_tx.c                |    2 +-
+ drivers/net/sxe/pf/sxe_vf.c                | 1199 ++++++++++++++++++++
+ drivers/net/sxe/pf/sxe_vf.h                |  200 ++++
+ drivers/net/sxe/sxe_testpmd.c              |  130 +++
+ drivers/net/sxe/vf/sxevf.h                 |   42 +
+ drivers/net/sxe/vf/sxevf_ethdev.c          |  752 ++++++++++++
+ drivers/net/sxe/vf/sxevf_ethdev.h          |   16 +
+ drivers/net/sxe/vf/sxevf_filter.c          |  493 ++++++++
+ drivers/net/sxe/vf/sxevf_filter.h          |   70 ++
+ drivers/net/sxe/vf/sxevf_irq.c             |  432 +++++++
+ drivers/net/sxe/vf/sxevf_irq.h             |   34 +
+ drivers/net/sxe/vf/sxevf_main.c            |   82 ++
+ drivers/net/sxe/vf/sxevf_msg.c             |  624 ++++++++++
+ drivers/net/sxe/vf/sxevf_msg.h             |  201 ++++
+ drivers/net/sxe/vf/sxevf_offload.c         |   30 +
+ drivers/net/sxe/vf/sxevf_offload.h         |   16 +
+ drivers/net/sxe/vf/sxevf_queue.c           |  208 ++++
+ drivers/net/sxe/vf/sxevf_queue.h           |   69 ++
+ drivers/net/sxe/vf/sxevf_rx.c              |  162 +++
+ drivers/net/sxe/vf/sxevf_rx.h              |   18 +
+ drivers/net/sxe/vf/sxevf_stats.c           |  162 +++
+ drivers/net/sxe/vf/sxevf_stats.h           |   31 +
+ drivers/net/sxe/vf/sxevf_tx.c              |   46 +
+ drivers/net/sxe/vf/sxevf_tx.h              |   14 +
+ 34 files changed, 6488 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/net/sxe/base/sxevf_hw.c
+ create mode 100644 drivers/net/sxe/base/sxevf_hw.h
+ create mode 100644 drivers/net/sxe/base/sxevf_regs.h
+ create mode 100644 drivers/net/sxe/pf/sxe_vf.c
+ create mode 100644 drivers/net/sxe/pf/sxe_vf.h
+ create mode 100644 drivers/net/sxe/vf/sxevf.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_ethdev.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_ethdev.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_filter.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_filter.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_irq.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_irq.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_main.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_msg.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_msg.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_offload.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_offload.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_queue.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_queue.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_rx.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_rx.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_stats.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_stats.h
+ create mode 100644 drivers/net/sxe/vf/sxevf_tx.c
+ create mode 100644 drivers/net/sxe/vf/sxevf_tx.h
 
-diff --git a/drivers/net/sxe/base/sxe_common.c b/drivers/net/sxe/base/sxe_common.c
-new file mode 100644
-index 0000000000..8f3e80fae3
---- /dev/null
-+++ b/drivers/net/sxe/base/sxe_common.c
-@@ -0,0 +1,45 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#include <pthread.h>
-+#include <sys/time.h>
-+#include <sys/types.h>
-+#include <unistd.h>
-+#include <rte_common.h>
-+#include <rte_cycles.h>
-+#include <time.h>
-+#include "sxe_types.h"
-+#include "sxe_common.h"
-+
-+#define SXE_SEC_TO_MS(sec) ((sec) * 1000ULL)
-+
-+#define SXE_NSEC_PER_MS		  1000000
-+
-+RTE_ATOMIC(uint64_t) sxe_trace_id;
-+
-+u64 sxe_time_get_real_ms(void)
-+{
-+	u64 ms = 0;
-+	struct timespec ts;
-+	s32 ret = clock_gettime(CLOCK_MONOTONIC, &ts);
-+	if (ret < 0)
-+		goto l_end;
-+
-+	ms = SXE_SEC_TO_MS(ts.tv_sec) + ts.tv_nsec / SXE_NSEC_PER_MS;
-+
-+l_end:
-+	return ms;
-+}
-+
-+void sxe_trace_id_gen(void)
-+{
-+	sxe_trace_id = 0;
-+	return;
-+}
-+
-+u64 sxe_trace_id_get(void)
-+{
-+	return rte_atomic_fetch_add_explicit((uint64_t __rte_atomic *)&sxe_trace_id,
-+			1, rte_memory_order_relaxed);
-+}
-diff --git a/drivers/net/sxe/base/sxe_common.h b/drivers/net/sxe/base/sxe_common.h
-new file mode 100644
-index 0000000000..7196eb08bf
---- /dev/null
-+++ b/drivers/net/sxe/base/sxe_common.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#ifndef __SXE_DPDK_COMMON_H__
-+#define __SXE_DPDK_COMMON_H__
-+
-+void sxe_trace_id_gen(void);
-+
-+u64 sxe_trace_id_get(void);
-+
-+u64 sxe_time_get_real_ms(void);
-+
-+#endif
 diff --git a/drivers/net/sxe/base/sxe_compat_platform.h b/drivers/net/sxe/base/sxe_compat_platform.h
-new file mode 100644
-index 0000000000..ef22fe7797
---- /dev/null
+index ef22fe7797..0c0b2d9220 100644
+--- a/drivers/net/sxe/base/sxe_compat_platform.h
 +++ b/drivers/net/sxe/base/sxe_compat_platform.h
-@@ -0,0 +1,75 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#ifndef __SXE_COMPAT_PLATFORM_H__
-+#define __SXE_COMPAT_PLATFORM_H__
-+
-+#include <rte_cycles.h>
-+#include <rte_branch_prediction.h>
-+#include <rte_byteorder.h>
-+#include <rte_io.h>
-+#include <rte_common.h>
-+
-+#include "sxe_types.h"
-+
-+#ifndef DIV_ROUND_UP
-+#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
+@@ -20,8 +20,6 @@
+ #define __iomem
+ #define __force
+ 
+-#define min(a, b)	RTE_MIN(a, b)
+-
+ #define cpu_to_be16(o) rte_cpu_to_be_16(o)
+ #define cpu_to_be32(o) rte_cpu_to_be_32(o)
+ #define cpu_to_be64(o) rte_cpu_to_be_64(o)
+diff --git a/drivers/net/sxe/base/sxe_queue_common.c b/drivers/net/sxe/base/sxe_queue_common.c
+index 991b374667..15e086b45e 100644
+--- a/drivers/net/sxe/base/sxe_queue_common.c
++++ b/drivers/net/sxe/base/sxe_queue_common.c
+@@ -12,11 +12,15 @@
+ #include "sxe_tx.h"
+ #include "sxe_logs.h"
+ #include "sxe_regs.h"
++#include "sxevf_regs.h"
+ #include "sxe.h"
+ #if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
+ #include "sxe_vec_common.h"
+ #include <rte_vect.h>
+ #endif
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++#include "sxevf.h"
 +#endif
-+
-+#define __iomem
-+#define __force
-+
-+#define min(a, b)	RTE_MIN(a, b)
-+
-+#define cpu_to_be16(o) rte_cpu_to_be_16(o)
-+#define cpu_to_be32(o) rte_cpu_to_be_32(o)
-+#define cpu_to_be64(o) rte_cpu_to_be_64(o)
-+#define cpu_to_le32(o) rte_cpu_to_le_32(o)
-+#define be16_to_cpu(o) rte_be_to_cpu_16(o)
-+#define be32_to_cpu(o) rte_be_to_cpu_32(o)
-+#define be64_to_cpu(o) rte_be_to_cpu_64(o)
-+#define le32_to_cpu(o) rte_le_to_cpu_32(o)
-+
-+#ifndef ntohs
-+#define ntohs(o) be16_to_cpu(o)
-+#endif
-+
-+#ifndef ntohl
-+#define ntohl(o) be32_to_cpu(o)
-+#endif
-+
-+#ifndef htons
-+#define htons(o) cpu_to_be16(o)
-+#endif
-+
-+#ifndef htonl
-+#define htonl(o) cpu_to_be32(o)
-+#endif
-+#define mdelay rte_delay_ms
-+#define sxe_udelay rte_delay_us
-+#define usleep_range(min, max) rte_delay_us(min)
-+#define msleep(x)			 rte_delay_us((x) * 1000)
-+
-+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-+#define BIT(x)	(1UL << (x))
-+#define DMA_BIT_MASK(n)	(((n) == 64) ? ~0ULL : ((1ULL << (n)) - 1))
-+
-+#define NSEC_PER_SEC	1000000000L
-+
-+#define ETH_P_1588	0x88F7
-+
-+#define VLAN_PRIO_SHIFT		13
-+
-+static __rte_always_inline void
-+writeq(uint64_t value, volatile void *addr)
-+{
-+	rte_write64(rte_cpu_to_le_64(value), addr);
-+}
-+
-+static inline void  sxe_write_addr(u32 value, volatile void *addr)
-+{
-+	rte_write32((rte_cpu_to_le_32(value)), addr);
-+}
-+
-+#endif
-diff --git a/drivers/net/sxe/base/sxe_compat_version.h b/drivers/net/sxe/base/sxe_compat_version.h
+ #include "sxe_queue_common.h"
+ #include "sxe_queue.h"
+ 
+diff --git a/drivers/net/sxe/base/sxevf_hw.c b/drivers/net/sxe/base/sxevf_hw.c
 new file mode 100644
-index 0000000000..7eb9f37da6
+index 0000000000..1629579d63
 --- /dev/null
-+++ b/drivers/net/sxe/base/sxe_compat_version.h
-@@ -0,0 +1,34 @@
++++ b/drivers/net/sxe/base/sxevf_hw.c
+@@ -0,0 +1,819 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
-+
-+#ifndef __SXE_COMPAT_VERSION_H__
-+#define __SXE_COMPAT_VERSION_H__
-+
-+#include <stdbool.h>
-+
-+struct rte_eth_dev;
-+enum rte_eth_event_type;
-+
-+int sxe_eth_dev_callback_process(struct rte_eth_dev *dev,
-+	enum rte_eth_event_type event, void *ret_param);
-+
-+#define PCI_REG_WC_WRITE
-+
-+#ifndef PCI_REG_WC_WRITE
-+#define rte_write32_wc rte_write32
-+#define rte_write32_wc_relaxed rte_write32_relaxed
-+#endif
-+
-+#define SXE_PCI_INTR_HANDLE(pci_dev) \
-+	((pci_dev)->intr_handle)
-+#define SXE_DEV_FNAV_CONF(dev) \
-+	(&((struct sxe_adapter *)(dev)->data->dev_private)->fnav_conf)
-+#define RTE_ADAPTER_HAVE_FNAV_CONF
-+#define SXE_GET_FRAME_SIZE(dev) \
-+	((dev)->data->mtu + SXE_ETH_OVERHEAD)
-+
-+#define DEV_RX_OFFLOAD_CHECKSUM RTE_ETH_RX_OFFLOAD_CHECKSUM
-+#define ETH_DCB_NUM_USER_PRIORITIES RTE_ETH_DCB_NUM_USER_PRIORITIES
-+
-+#endif
-diff --git a/drivers/net/sxe/base/sxe_errno.h b/drivers/net/sxe/base/sxe_errno.h
-new file mode 100644
-index 0000000000..85f70ed176
---- /dev/null
-+++ b/drivers/net/sxe/base/sxe_errno.h
-@@ -0,0 +1,61 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#ifndef __SXE_ERRNO_H__
-+#define __SXE_ERRNO_H__
-+
-+#define SXE_ERR_MODULE_STANDARD			0
-+#define SXE_ERR_MODULE_PF				1
-+#define SXE_ERR_MODULE_VF				2
-+#define SXE_ERR_MODULE_HDC				3
-+
-+#define SXE_ERR_MODULE_OFFSET	16
-+#define SXE_ERR_MODULE(module, errcode)		\
-+	(((module) << SXE_ERR_MODULE_OFFSET) | (errcode))
-+#define SXE_ERR_PF(errcode)		SXE_ERR_MODULE(SXE_ERR_MODULE_PF, errcode)
-+#define SXE_ERR_VF(errcode)		SXE_ERR_MODULE(SXE_ERR_MODULE_VF, errcode)
-+#define SXE_ERR_HDC(errcode)	SXE_ERR_MODULE(SXE_ERR_MODULE_HDC, errcode)
-+
-+#define SXE_ERR_CONFIG						EINVAL
-+#define SXE_ERR_PARAM						 EINVAL
-+#define SXE_ERR_RESET_FAILED				  EPERM
-+#define SXE_ERR_NO_SPACE					  ENOSPC
-+#define SXE_ERR_FNAV_CMD_INCOMPLETE		   EBUSY
-+#define SXE_ERR_MBX_LOCK_FAIL				 EBUSY
-+#define SXE_ERR_OPRATION_NOT_PERM			 EPERM
-+#define SXE_ERR_LINK_STATUS_INVALID		   EINVAL
-+#define SXE_ERR_LINK_SPEED_INVALID			EINVAL
-+#define SXE_ERR_DEVICE_NOT_SUPPORTED		  EOPNOTSUPP
-+#define SXE_ERR_HDC_LOCK_BUSY				 EBUSY
-+#define SXE_ERR_HDC_FW_OV_TIMEOUT			 ETIMEDOUT
-+#define SXE_ERR_MDIO_CMD_TIMEOUT			  ETIMEDOUT
-+#define SXE_ERR_INVALID_LINK_SETTINGS		 EINVAL
-+#define SXE_ERR_FNAV_REINIT_FAILED			EIO
-+#define SXE_ERR_CLI_FAILED					EIO
-+#define SXE_ERR_MASTER_REQUESTS_PENDING	   SXE_ERR_PF(1)
-+#define SXE_ERR_SFP_NO_INIT_SEQ_PRESENT	   SXE_ERR_PF(2)
-+#define SXE_ERR_ENABLE_SRIOV_FAIL			 SXE_ERR_PF(3)
-+#define SXE_ERR_IPSEC_SA_STATE_NOT_EXSIT	  SXE_ERR_PF(4)
-+#define SXE_ERR_SFP_NOT_PERSENT			   SXE_ERR_PF(5)
-+#define SXE_ERR_PHY_NOT_PERSENT			   SXE_ERR_PF(6)
-+#define SXE_ERR_PHY_RESET_FAIL				SXE_ERR_PF(7)
-+#define SXE_ERR_FC_NOT_NEGOTIATED			 SXE_ERR_PF(8)
-+#define SXE_ERR_SFF_NOT_SUPPORTED			 SXE_ERR_PF(9)
-+
-+#define SXEVF_ERR_MAC_ADDR_INVALID			  EINVAL
-+#define SXEVF_ERR_RESET_FAILED				  EIO
-+#define SXEVF_ERR_ARGUMENT_INVALID			  EINVAL
-+#define SXEVF_ERR_NOT_READY					 EBUSY
-+#define SXEVF_ERR_POLL_ACK_FAIL				 EIO
-+#define SXEVF_ERR_POLL_MSG_FAIL				 EIO
-+#define SXEVF_ERR_MBX_LOCK_FAIL				 EBUSY
-+#define SXEVF_ERR_REPLY_INVALID				 EINVAL
-+#define SXEVF_ERR_IRQ_NUM_INVALID			   EINVAL
-+#define SXEVF_ERR_PARAM						 EINVAL
-+#define SXEVF_ERR_MAILBOX_FAIL				  SXE_ERR_VF(1)
-+#define SXEVF_ERR_MSG_HANDLE_ERR				SXE_ERR_VF(2)
-+#define SXEVF_ERR_DEVICE_NOT_SUPPORTED		  SXE_ERR_VF(3)
-+#define SXEVF_ERR_IPSEC_SA_STATE_NOT_EXSIT	  SXE_ERR_VF(4)
-+
-+#endif
-diff --git a/drivers/net/sxe/base/sxe_hw.c b/drivers/net/sxe/base/sxe_hw.c
-new file mode 100644
-index 0000000000..6e04a1b7ce
---- /dev/null
-+++ b/drivers/net/sxe/base/sxe_hw.c
-@@ -0,0 +1,3271 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#include <rte_byteorder.h>
 +#include "sxe_errno.h"
 +#include "sxe_logs.h"
-+#include "sxe.h"
-+#include "sxe_hw.h"
++#include "sxe_compat_version.h"
++#include "sxevf.h"
++#include "sxevf_hw.h"
 +
-+#define SXE_PFMSG_MASK  (0xFF00)
-+#define SXE_MSGID_MASK  (0xFFFFFFFF)
-+#define SXE_CTRL_MSG_MASK		  (0x700)
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++struct sxevf_adapter;
++#endif
 +
-+#define SXE_RING_WAIT_LOOP		10
-+#define SXE_LPBK_EN			   0x00000001
-+#define SXE_RSS_FIELD_MASK		0xffff0000
-+#define SXE_MRQE_MASK			 0x0000000f
++#define DMA_BIT_MASK(n)	(((n) == 64) ? ~0ULL : ((1ULL << (n)) - 1))
++#define DMA_MASK_NONE	0x0ULL
 +
-+static u32 sxe_read_reg(struct sxe_hw *hw, u32 reg);
-+static void sxe_write_reg(struct sxe_hw *hw, u32 reg, u32 value);
-+static void sxe_write_reg64(struct sxe_hw *hw, u32 reg, u64 value);
++#define SXEVF_REG_READ_CNT	5
 +
-+#define SXE_WRITE_REG_ARRAY_32(a, reg, offset, value) \
-+	sxe_write_reg(a, (reg) + ((offset) << 2), value)
-+#define SXE_READ_REG_ARRAY_32(a, reg, offset) \
-+	sxe_read_reg(a, (reg) + ((offset) << 2))
++#define SXE_REG_READ_FAIL	0xffffffffU
 +
-+#define SXE_REG_READ(hw, addr)		sxe_read_reg(hw, addr)
-+#define SXE_REG_WRITE(hw, reg, value) sxe_write_reg(hw, reg, value)
-+#define SXE_WRITE_FLUSH(a) sxe_read_reg(a, SXE_STATUS)
-+#define SXE_REG64_WRITE(a, reg, value) sxe_write_reg64((a), (reg), (value))
++#define SXEVF_RING_WAIT_LOOP	(100)
++#define SXEVF_MAX_RX_DESC_POLL	(10)
 +
-+static u32 sxe_read_reg(struct sxe_hw *hw, u32 reg)
++
++#define SXEVF_REG_READ(hw, addr)	sxevf_reg_read(hw, addr)
++#define SXEVF_REG_WRITE(hw, reg, value)	sxevf_reg_write(hw, reg, value)
++#define SXEVF_WRITE_FLUSH(a)		sxevf_reg_read(a, SXE_VFSTATUS)
++
++static u32 sxevf_reg_read(struct sxevf_hw *hw, u32 reg)
 +{
 +	u32 i, value;
 +	u8  __iomem *base_addr = hw->reg_base_addr;
 +
 +	value = rte_le_to_cpu_32(rte_read32(base_addr + reg));
-+	if (unlikely(value == SXE_REG_READ_FAIL)) {
-+		value = rte_le_to_cpu_32(rte_read32(base_addr + SXE_STATUS));
-+		if (unlikely(value != SXE_REG_READ_FAIL)) {
++	if (unlikely(value == SXEVF_REG_READ_FAIL)) {
++		for (i = 0; i < SXEVF_REG_READ_CNT; i++) {
++			LOG_ERROR("reg[0x%x] read failed, value=%#x",
++							reg, value);
 +			value = rte_le_to_cpu_32(rte_read32(base_addr + reg));
-+		} else {
-+			LOG_ERROR("reg[0x%x] and reg[0x%x] read failed, ret=%#x",
-+							reg, SXE_STATUS, value);
-+			for (i = 0; i < SXE_REG_READ_RETRY; i++) {
-+				value = rte_le_to_cpu_32(rte_read32(base_addr + SXE_STATUS));
-+				if (unlikely(value != SXE_REG_READ_FAIL)) {
-+					value = rte_le_to_cpu_32(rte_read32(base_addr + reg));
-+					LOG_INFO("reg[0x%x] read ok, value=%#x",
-+									reg, value);
-+					break;
-+				}
-+				LOG_ERROR("reg[0x%x] and reg[0x%x] read failed, ret=%#x",
-+						reg, SXE_STATUS, value);
-+
-+				mdelay(3);
++			if (value != SXEVF_REG_READ_FAIL) {
++				LOG_INFO("reg[0x%x] read ok, value=%#x",
++								reg, value);
++				break;
 +			}
++
++			mdelay(3);
 +		}
 +	}
 +
 +	return value;
 +}
 +
-+static void sxe_write_reg(struct sxe_hw *hw, u32 reg, u32 value)
++static void sxevf_reg_write(struct sxevf_hw *hw, u32 reg, u32 value)
 +{
 +	u8 __iomem *base_addr = hw->reg_base_addr;
 +
 +	rte_write32((rte_cpu_to_le_32(value)), (base_addr + reg));
 +}
 +
-+static void sxe_write_reg64(struct sxe_hw *hw, u32 reg, u64 value)
++void sxevf_hw_stop(struct sxevf_hw *hw)
 +{
-+	u8 __iomem *reg_addr = hw->reg_base_addr;
-+
-+	writeq(value, reg_addr + reg);
-+}
-+
-+void sxe_hw_no_snoop_disable(struct sxe_hw *hw)
-+{
-+	u32 ctrl_ext;
-+
-+	ctrl_ext = SXE_REG_READ(hw, SXE_CTRL_EXT);
-+	ctrl_ext |= SXE_CTRL_EXT_NS_DIS;
-+	SXE_REG_WRITE(hw, SXE_CTRL_EXT, ctrl_ext);
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+void sxe_hw_uc_addr_pool_del(struct sxe_hw *hw, u32 rar_idx, u32 pool_idx)
-+{
++	u8 i;
 +	u32 value;
 +
-+	if (pool_idx < 32) {
-+		value = SXE_REG_READ(hw, SXE_MPSAR_LOW(rar_idx));
-+		value &= ~BIT(pool_idx);
-+		SXE_REG_WRITE(hw, SXE_MPSAR_LOW(rar_idx), value);
-+	} else {
-+		value = SXE_REG_READ(hw, SXE_MPSAR_HIGH(rar_idx));
-+		value &= ~BIT(pool_idx - 32);
-+		SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(rar_idx), value);
++	for (i = 0; i < SXEVF_TXRX_RING_NUM_MAX; i++) {
++		value = SXEVF_REG_READ(hw, SXE_VFRXDCTL(i));
++		if (value & SXE_VFRXDCTL_ENABLE) {
++			value &= ~SXE_VFRXDCTL_ENABLE;
++			SXEVF_REG_WRITE(hw, SXE_VFRXDCTL(i), value);
++		}
 +	}
 +
-+	return;
-+}
++	SXEVF_WRITE_FLUSH(hw);
 +
-+s32 sxe_hw_uc_addr_pool_enable(struct sxe_hw *hw, u8 rar_idx, u8 pool_idx)
-+{
-+	s32 ret = 0;
-+	u32 value;
-+	struct sxe_adapter *adapter = hw->adapter;
++	SXEVF_REG_WRITE(hw, SXE_VFEIMC, SXEVF_VFEIMC_IRQ_MASK);
++	SXEVF_REG_READ(hw, SXE_VFEICR);
 +
-+	if (rar_idx >= SXE_UC_ENTRY_NUM_MAX) {
-+		ret = -SXE_ERR_PARAM;
-+		LOG_DEV_ERR("pool_idx:%d rar_idx:%d invalid.",
-+			  pool_idx, rar_idx);
-+		goto l_end;
-+	}
-+
-+	if (pool_idx < 32) {
-+		value = SXE_REG_READ(hw, SXE_MPSAR_LOW(rar_idx));
-+		value |= BIT(pool_idx);
-+		SXE_REG_WRITE(hw, SXE_MPSAR_LOW(rar_idx), value);
-+	} else {
-+		value = SXE_REG_READ(hw, SXE_MPSAR_HIGH(rar_idx));
-+		value |= BIT(pool_idx - 32);
-+		SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(rar_idx), value);
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static s32 sxe_hw_uc_addr_pool_disable(struct sxe_hw *hw, u8 rar_idx)
-+{
-+	u32 hi;
-+	u32 low;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	hi = SXE_REG_READ(hw, SXE_MPSAR_HIGH(rar_idx));
-+	low = SXE_REG_READ(hw, SXE_MPSAR_LOW(rar_idx));
-+
-+	if (!hi && !low) {
-+		LOG_DEBUG_BDF("no need clear rar-pool relation register.");
-+		goto l_end;
-+	}
-+
-+	if (low)
-+		SXE_REG_WRITE(hw, SXE_MPSAR_LOW(rar_idx), 0);
-+
-+	if (hi)
-+		SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(rar_idx), 0);
-+
-+
-+l_end:
-+	return 0;
-+}
-+
-+s32 sxe_hw_nic_reset(struct sxe_hw *hw)
-+{
-+	s32 ret = 0;
-+	u32 ctrl, i;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	ctrl = SXE_CTRL_RST;
-+	ctrl |= SXE_REG_READ(hw, SXE_CTRL);
-+	ctrl &= ~SXE_CTRL_GIO_DIS;
-+	SXE_REG_WRITE(hw, SXE_CTRL, ctrl);
-+
-+	SXE_WRITE_FLUSH(hw);
-+	usleep_range(1000, 1200);
-+
-+	for (i = 0; i < 10; i++) {
-+		ctrl = SXE_REG_READ(hw, SXE_CTRL);
-+		if (!(ctrl & SXE_CTRL_RST_MASK))
-+			break;
-+
-+		sxe_udelay(1);
-+	}
-+
-+	if (ctrl & SXE_CTRL_RST_MASK) {
-+		ret = -SXE_ERR_RESET_FAILED;
-+		LOG_DEV_ERR("reset polling failed to complete");
-+	}
-+
-+	return ret;
-+}
-+
-+void sxe_hw_pf_rst_done_set(struct sxe_hw *hw)
-+{
-+	u32 value;
-+
-+	value = SXE_REG_READ(hw, SXE_CTRL_EXT);
-+	value |= SXE_CTRL_EXT_PFRSTD;
-+	SXE_REG_WRITE(hw, SXE_CTRL_EXT, value);
-+}
-+
-+u32 sxe_hw_pending_irq_read_clear(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_EICR);
-+}
-+
-+void sxe_hw_pending_irq_write_clear(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_EICR, value);
-+}
-+
-+u32 sxe_hw_irq_cause_get(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_EICS);
-+}
-+
-+void sxe_hw_ring_irq_auto_disable(struct sxe_hw *hw,
-+					bool is_msix)
-+{
-+	if (is_msix) {
-+		SXE_REG_WRITE(hw, SXE_EIAM_EX(0), 0xFFFFFFFF);
-+		SXE_REG_WRITE(hw, SXE_EIAM_EX(1), 0xFFFFFFFF);
-+	} else {
-+		SXE_REG_WRITE(hw, SXE_EIAM, SXE_EICS_RTX_QUEUE);
++	for (i = 0; i < SXEVF_TXRX_RING_NUM_MAX; i++) {
++		value = SXEVF_REG_READ(hw, SXE_VFTXDCTL(i));
++		if (value & SXE_VFTXDCTL_ENABLE) {
++			value &= ~SXE_VFTXDCTL_ENABLE;
++			SXEVF_REG_WRITE(hw, SXE_VFTXDCTL(i), value);
++		}
 +	}
 +}
 +
-+void sxe_hw_irq_general_reg_set(struct sxe_hw *hw, u32 value)
++void sxevf_msg_write(struct sxevf_hw *hw, u8 index, u32 msg)
 +{
-+	SXE_REG_WRITE(hw, SXE_GPIE, value);
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	SXEVF_REG_WRITE(hw, SXE_VFMBMEM + (index << 2), msg);
++
++	LOG_DEBUG_BDF("index:%u write mbx mem:0x%x.", index, msg);
 +}
 +
-+u32 sxe_hw_irq_general_reg_get(struct sxe_hw *hw)
++u32 sxevf_msg_read(struct sxevf_hw *hw, u8 index)
 +{
-+	return SXE_REG_READ(hw, SXE_GPIE);
++	u32 value = SXEVF_REG_READ(hw, SXE_VFMBMEM + (index << 2));
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	LOG_DEBUG_BDF("index:%u read mbx mem:0x%x.", index, value);
++
++	return value;
 +}
 +
-+void sxe_hw_event_irq_map(struct sxe_hw *hw, u8 offset, u16 irq_idx)
++u32 sxevf_mailbox_read(struct sxevf_hw *hw)
++{
++	return SXEVF_REG_READ(hw, SXE_VFMAILBOX);
++}
++
++void sxevf_mailbox_write(struct sxevf_hw *hw, u32 value)
++{
++	SXEVF_REG_WRITE(hw, SXE_VFMAILBOX, value);
++}
++
++void sxevf_pf_req_irq_trigger(struct sxevf_hw *hw)
++{
++	SXEVF_REG_WRITE(hw, SXE_VFMAILBOX, SXE_VFMAILBOX_REQ);
++}
++
++void sxevf_pf_ack_irq_trigger(struct sxevf_hw *hw)
++{
++	SXEVF_REG_WRITE(hw, SXE_VFMAILBOX, SXE_VFMAILBOX_ACK);
++}
++
++void sxevf_event_irq_map(struct sxevf_hw *hw, u16 vector)
++{
++	u8  allocation;
++	u32 ivar;
++
++	allocation = vector | SXEVF_IVAR_ALLOC_VALID;
++
++	ivar = SXEVF_REG_READ(hw, SXE_VFIVAR_MISC);
++	ivar &= ~0xFF;
++	ivar |= allocation;
++
++	SXEVF_REG_WRITE(hw, SXE_VFIVAR_MISC, ivar);
++}
++
++void sxevf_specific_irq_enable(struct sxevf_hw *hw, u32 value)
++{
++	SXEVF_REG_WRITE(hw, SXE_VFEIMS, value);
++}
++
++void sxevf_irq_enable(struct sxevf_hw *hw, u32 mask)
++{
++	SXEVF_REG_WRITE(hw, SXE_VFEIAM, mask);
++	SXEVF_REG_WRITE(hw, SXE_VFEIMS, mask);
++}
++
++void sxevf_irq_disable(struct sxevf_hw *hw)
++{
++	SXEVF_REG_WRITE(hw, SXE_VFEIAM, 0);
++	SXEVF_REG_WRITE(hw, SXE_VFEIMC, ~0);
++
++	SXEVF_WRITE_FLUSH(hw);
++}
++
++void sxevf_hw_ring_irq_map(struct sxevf_hw *hw, bool is_tx, u16 hw_ring_idx, u16 vector)
 +{
 +	u8  allocation;
 +	u32 ivar, position;
 +
-+	allocation = irq_idx | SXE_IVAR_ALLOC_VALID;
++	allocation = vector | SXEVF_IVAR_ALLOC_VALID;
 +
-+	position = (offset & 1) * 8;
++	position = ((hw_ring_idx & 1) * 16) + (8 * is_tx);
 +
-+	ivar = SXE_REG_READ(hw, SXE_IVAR_MISC);
++	ivar = SXEVF_REG_READ(hw, SXE_VFIVAR(hw_ring_idx >> 1));
 +	ivar &= ~(0xFF << position);
 +	ivar |= (allocation << position);
 +
-+	SXE_REG_WRITE(hw, SXE_IVAR_MISC, ivar);
++	SXEVF_REG_WRITE(hw, SXE_VFIVAR(hw_ring_idx >> 1), ivar);
 +}
 +
-+void sxe_hw_ring_irq_map(struct sxe_hw *hw, bool is_tx,
-+						u16 reg_idx, u16 irq_idx)
++void sxevf_ring_irq_interval_set(struct sxevf_hw *hw, u16 irq_idx, u32 interval)
 +{
-+	u8  allocation;
-+	u32 ivar, position;
++	u32 eitr = interval & SXEVF_EITR_ITR_MASK;
 +
-+	allocation = irq_idx | SXE_IVAR_ALLOC_VALID;
++	eitr |= SXEVF_EITR_CNT_WDIS;
 +
-+	position = ((reg_idx & 1) * 16) + (8 * is_tx);
-+
-+	ivar = SXE_REG_READ(hw, SXE_IVAR(reg_idx >> 1));
-+	ivar &= ~(0xFF << position);
-+	ivar |= (allocation << position);
-+
-+	SXE_REG_WRITE(hw, SXE_IVAR(reg_idx >> 1), ivar);
++	SXEVF_REG_WRITE(hw, SXE_VFEITR(irq_idx), eitr);
 +}
 +
-+void sxe_hw_ring_irq_interval_set(struct sxe_hw *hw,
-+						u16 irq_idx, u32 interval)
++static void sxevf_event_irq_interval_set(struct sxevf_hw *hw, u16 irq_idx, u32 value)
 +{
-+	u32 eitr = interval & SXE_EITR_ITR_MASK;
-+
-+	eitr |= SXE_EITR_CNT_WDIS;
-+
-+	SXE_REG_WRITE(hw, SXE_EITR(irq_idx), eitr);
++	SXEVF_REG_WRITE(hw, SXE_VFEITR(irq_idx), value);
 +}
 +
-+void sxe_hw_event_irq_auto_clear_set(struct sxe_hw *hw, u32 value)
++static void sxevf_pending_irq_clear(struct sxevf_hw *hw)
 +{
-+	SXE_REG_WRITE(hw, SXE_EIAC, value);
++	SXEVF_REG_READ(hw, SXE_VFEICR);
 +}
 +
-+void sxe_hw_specific_irq_disable(struct sxe_hw *hw, u32 value)
++static void sxevf_ring_irq_trigger(struct sxevf_hw *hw, u64 eics)
 +{
-+	SXE_REG_WRITE(hw, SXE_EIMC, value);
++	SXEVF_REG_WRITE(hw, SXE_VFEICS, eics);
 +}
 +
-+void sxe_hw_specific_irq_enable(struct sxe_hw *hw, u32 value)
++static const struct sxevf_irq_operations sxevf_irq_ops = {
++	.ring_irq_interval_set	= sxevf_ring_irq_interval_set,
++	.event_irq_interval_set	= sxevf_event_irq_interval_set,
++	.ring_irq_map		= sxevf_hw_ring_irq_map,
++	.event_irq_map		= sxevf_event_irq_map,
++	.pending_irq_clear	= sxevf_pending_irq_clear,
++	.ring_irq_trigger	= sxevf_ring_irq_trigger,
++	.specific_irq_enable	= sxevf_specific_irq_enable,
++	.irq_enable		= sxevf_irq_enable,
++	.irq_disable		= sxevf_irq_disable,
++};
++
++void sxevf_hw_reset(struct sxevf_hw *hw)
 +{
-+	SXE_REG_WRITE(hw, SXE_EIMS, value);
++	SXEVF_REG_WRITE(hw, SXE_VFCTRL, SXE_VFCTRL_RST);
++	SXEVF_WRITE_FLUSH(hw);
 +}
 +
-+void sxe_hw_all_irq_disable(struct sxe_hw *hw)
++static bool sxevf_hw_rst_done(struct sxevf_hw *hw)
 +{
-+	SXE_REG_WRITE(hw, SXE_EIMC, 0xFFFF0000);
-+
-+	SXE_REG_WRITE(hw, SXE_EIMC_EX(0), ~0);
-+	SXE_REG_WRITE(hw, SXE_EIMC_EX(1), ~0);
-+
-+	SXE_WRITE_FLUSH(hw);
++	return !(SXEVF_REG_READ(hw, SXE_VFCTRL) & SXE_VFCTRL_RST);
 +}
 +
-+u32 sxe_hw_link_speed_get(struct sxe_hw *hw)
++u32 sxevf_link_state_get(struct sxevf_hw *hw)
 +{
-+	u32 speed, value;
-+	struct sxe_adapter *adapter = hw->adapter;
-+	value = SXE_REG_READ(hw, SXE_COMCTRL);
-+
-+	if ((value & SXE_COMCTRL_SPEED_10G) == SXE_COMCTRL_SPEED_10G)
-+		speed = SXE_LINK_SPEED_10GB_FULL;
-+	else if ((value & SXE_COMCTRL_SPEED_1G) == SXE_COMCTRL_SPEED_1G)
-+		speed = SXE_LINK_SPEED_1GB_FULL;
-+	else
-+		speed = SXE_LINK_SPEED_UNKNOWN;
-+
-+	LOG_DEBUG_BDF("hw link speed=%x, (0x80=10G, 0x20=1G), reg=%x",
-+			speed, value);
-+
-+	return speed;
++	return SXEVF_REG_READ(hw, SXE_VFLINKS);
 +}
 +
-+bool sxe_hw_is_link_state_up(struct sxe_hw *hw)
++u32 sxe_dump_regs[] = {
++	SXE_VFCTRL,
++};
++
++u16 sxevf_reg_dump_num_get(void)
 +{
-+	bool ret = false;
-+	u32 links_reg, link_speed;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	links_reg  = SXE_REG_READ(hw, SXE_LINKS);
-+
-+	LOG_DEBUG_BDF("nic link reg: 0x%x", links_reg);
-+
-+	if (links_reg & SXE_LINKS_UP) {
-+		ret = true;
-+
-+		link_speed = sxe_hw_link_speed_get(hw);
-+		if (link_speed == SXE_LINK_SPEED_10GB_FULL &&
-+			links_reg & SXE_10G_LINKS_DOWN)
-+			ret = false;
-+	}
-+
-+	return ret;
++	return ARRAY_SIZE(sxe_dump_regs);
 +}
 +
-+void sxe_hw_mac_pad_enable(struct sxe_hw *hw)
-+{
-+	u32 ctl;
-+
-+	ctl = SXE_REG_READ(hw, SXE_MACCFG);
-+	ctl |= SXE_MACCFG_PAD_EN;
-+	SXE_REG_WRITE(hw, SXE_MACCFG, ctl);
-+}
-+
-+s32 sxe_hw_fc_enable(struct sxe_hw *hw)
-+{
-+	s32 ret = 0;
-+	u8  i;
-+	u32 reg;
-+	u32 flctrl_val;
-+	u32 fcrtl, fcrth;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	flctrl_val = SXE_REG_READ(hw, SXE_FLCTRL);
-+	flctrl_val &= ~(SXE_FCTRL_TFCE_MASK | SXE_FCTRL_RFCE_MASK |
-+			   SXE_FCTRL_TFCE_FCEN_MASK | SXE_FCTRL_TFCE_XONE_MASK);
-+
-+	switch (hw->fc.current_mode) {
-+	case SXE_FC_NONE:
-+		break;
-+	case SXE_FC_RX_PAUSE:
-+		flctrl_val |= SXE_FCTRL_RFCE_LFC_EN;
-+		break;
-+	case SXE_FC_TX_PAUSE:
-+		flctrl_val |= SXE_FCTRL_TFCE_LFC_EN;
-+		break;
-+	case SXE_FC_FULL:
-+		flctrl_val |= SXE_FCTRL_RFCE_LFC_EN;
-+		flctrl_val |= SXE_FCTRL_TFCE_LFC_EN;
-+		break;
-+	default:
-+		LOG_DEV_DEBUG("flow control param set incorrectly");
-+		ret = -SXE_ERR_CONFIG;
-+		goto l_ret;
-+	}
-+
-+	for (i = 0; i < MAX_TRAFFIC_CLASS; i++) {
-+		if ((hw->fc.current_mode & SXE_FC_TX_PAUSE) &&
-+			hw->fc.high_water[i]) {
-+			fcrtl = (hw->fc.low_water[i] << 9) | SXE_FCRTL_XONE;
-+			SXE_REG_WRITE(hw, SXE_FCRTL(i), fcrtl);
-+			fcrth = (hw->fc.high_water[i] << 9) | SXE_FCRTH_FCEN;
-+		} else {
-+			SXE_REG_WRITE(hw, SXE_FCRTL(i), 0);
-+			fcrth = (SXE_REG_READ(hw, SXE_RXPBSIZE(i)) - 24576) >> 1;
-+		}
-+
-+		SXE_REG_WRITE(hw, SXE_FCRTH(i), fcrth);
-+	}
-+
-+	flctrl_val |= SXE_FCTRL_TFCE_DPF_EN;
-+
-+	if ((hw->fc.current_mode & SXE_FC_TX_PAUSE))
-+		flctrl_val |= (SXE_FCTRL_TFCE_FCEN_MASK | SXE_FCTRL_TFCE_XONE_MASK);
-+
-+	SXE_REG_WRITE(hw, SXE_FLCTRL, flctrl_val);
-+
-+	reg = SXE_REG_READ(hw, SXE_PFCTOP);
-+	reg &= ~SXE_PFCTOP_FCOP_MASK;
-+	reg |= SXE_PFCTOP_FCT;
-+	reg |= SXE_PFCTOP_FCOP_LFC;
-+	SXE_REG_WRITE(hw, SXE_PFCTOP, reg);
-+
-+	reg = hw->fc.pause_time * 0x00010001U;
-+	for (i = 0; i < (MAX_TRAFFIC_CLASS / 2); i++)
-+		SXE_REG_WRITE(hw, SXE_FCTTV(i), reg);
-+
-+	SXE_REG_WRITE(hw, SXE_FCRTV, hw->fc.pause_time / 2);
-+
-+l_ret:
-+	return ret;
-+}
-+
-+void sxe_fc_autoneg_localcap_set(struct sxe_hw *hw)
-+{
-+	u32 reg = 0;
-+
-+	if (hw->fc.requested_mode == SXE_FC_DEFAULT)
-+		hw->fc.requested_mode = SXE_FC_FULL;
-+
-+	reg = SXE_REG_READ(hw, SXE_PCS1GANA);
-+
-+	switch (hw->fc.requested_mode) {
-+	case SXE_FC_NONE:
-+		reg &= ~(SXE_PCS1GANA_SYM_PAUSE | SXE_PCS1GANA_ASM_PAUSE);
-+		break;
-+	case SXE_FC_TX_PAUSE:
-+		reg |= SXE_PCS1GANA_ASM_PAUSE;
-+		reg &= ~SXE_PCS1GANA_SYM_PAUSE;
-+		break;
-+	case SXE_FC_RX_PAUSE:
-+	case SXE_FC_FULL:
-+		reg |= SXE_PCS1GANA_SYM_PAUSE | SXE_PCS1GANA_ASM_PAUSE;
-+		break;
-+	default:
-+		LOG_ERROR("Flow control param set incorrectly.");
-+		break;
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_PCS1GANA, reg);
-+}
-+
-+s32 sxe_hw_pfc_enable(struct sxe_hw *hw, u8 tc_idx)
-+{
-+	s32 ret = 0;
-+	u8  i;
-+	u32 reg;
-+	u32 flctrl_val;
-+	u32 fcrtl, fcrth;
-+	struct sxe_adapter *adapter = hw->adapter;
-+	u8 rx_en_num;
-+
-+	flctrl_val = SXE_REG_READ(hw, SXE_FLCTRL);
-+	flctrl_val &= ~(SXE_FCTRL_TFCE_MASK | SXE_FCTRL_RFCE_MASK |
-+			   SXE_FCTRL_TFCE_FCEN_MASK | SXE_FCTRL_TFCE_XONE_MASK);
-+
-+	switch (hw->fc.current_mode) {
-+	case SXE_FC_NONE:
-+		rx_en_num = 0;
-+		for (i = 0; i < MAX_TRAFFIC_CLASS; i++) {
-+			reg = SXE_REG_READ(hw, SXE_FCRTH(i));
-+			if (reg & SXE_FCRTH_FCEN)
-+				rx_en_num++;
-+		}
-+		if (rx_en_num > 1)
-+			flctrl_val |= SXE_FCTRL_TFCE_PFC_EN;
-+
-+		break;
-+
-+	case SXE_FC_RX_PAUSE:
-+		flctrl_val |= SXE_FCTRL_RFCE_PFC_EN;
-+
-+		rx_en_num = 0;
-+		for (i = 0; i < MAX_TRAFFIC_CLASS; i++) {
-+			reg = SXE_REG_READ(hw, SXE_FCRTH(i));
-+			if (reg & SXE_FCRTH_FCEN)
-+				rx_en_num++;
-+		}
-+
-+		if (rx_en_num > 1)
-+			flctrl_val |= SXE_FCTRL_TFCE_PFC_EN;
-+
-+		break;
-+	case SXE_FC_TX_PAUSE:
-+		flctrl_val |= SXE_FCTRL_TFCE_PFC_EN;
-+		break;
-+	case SXE_FC_FULL:
-+		flctrl_val |= SXE_FCTRL_RFCE_PFC_EN;
-+		flctrl_val |= SXE_FCTRL_TFCE_PFC_EN;
-+		break;
-+	default:
-+		LOG_DEV_DEBUG("flow control param set incorrectly");
-+		ret = -SXE_ERR_CONFIG;
-+		goto l_ret;
-+	}
-+
-+	if ((hw->fc.current_mode & SXE_FC_TX_PAUSE) &&
-+		hw->fc.high_water[tc_idx]) {
-+		fcrtl = (hw->fc.low_water[tc_idx] << 9) | SXE_FCRTL_XONE;
-+		SXE_REG_WRITE(hw, SXE_FCRTL(tc_idx), fcrtl);
-+		fcrth = (hw->fc.high_water[tc_idx] << 9) | SXE_FCRTH_FCEN;
-+	} else {
-+		SXE_REG_WRITE(hw, SXE_FCRTL(tc_idx), 0);
-+		fcrth = (SXE_REG_READ(hw, SXE_RXPBSIZE(tc_idx)) - 24576) >> 1;
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_FCRTH(tc_idx), fcrth);
-+
-+	flctrl_val |= SXE_FCTRL_TFCE_DPF_EN;
-+
-+	if ((hw->fc.current_mode & SXE_FC_TX_PAUSE)) {
-+		flctrl_val |= (BIT(tc_idx) << 16) & SXE_FCTRL_TFCE_FCEN_MASK;
-+		flctrl_val |= (BIT(tc_idx) << 24) & SXE_FCTRL_TFCE_XONE_MASK;
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_FLCTRL, flctrl_val);
-+
-+	reg = SXE_REG_READ(hw, SXE_PFCTOP);
-+	reg &= ~SXE_PFCTOP_FCOP_MASK;
-+	reg |= SXE_PFCTOP_FCT;
-+	reg |= SXE_PFCTOP_FCOP_PFC;
-+	SXE_REG_WRITE(hw, SXE_PFCTOP, reg);
-+
-+	reg = hw->fc.pause_time * 0x00010001U;
-+	for (i = 0; i < (MAX_TRAFFIC_CLASS / 2); i++)
-+		SXE_REG_WRITE(hw, SXE_FCTTV(i), reg);
-+
-+	SXE_REG_WRITE(hw, SXE_FCRTV, hw->fc.pause_time / 2);
-+
-+l_ret:
-+	return ret;
-+}
-+
-+void sxe_hw_loopback_switch(struct sxe_hw *hw, bool is_enable)
-+{
-+	u32 value;
-+
-+	value = is_enable ? SXE_LPBK_EN : 0;
-+
-+	SXE_REG_WRITE(hw, SXE_LPBKCTRL, value);
-+}
-+
-+void sxe_hw_mac_txrx_enable(struct sxe_hw *hw)
-+{
-+	u32 ctl;
-+
-+	ctl = SXE_REG_READ(hw, SXE_COMCTRL);
-+	ctl |= SXE_COMCTRL_TXEN | SXE_COMCTRL_RXEN | SXE_COMCTRL_EDSEL;
-+	SXE_REG_WRITE(hw, SXE_COMCTRL, ctl);
-+}
-+
-+u32 sxe_hw_mac_max_frame_get(struct sxe_hw *hw)
-+{
-+	u32 maxfs = SXE_REG_READ(hw, SXE_MAXFS);
-+
-+	maxfs &= SXE_MAXFS_MFS_MASK;
-+	maxfs >>= SXE_MAXFS_MFS_SHIFT;
-+
-+	return maxfs;
-+}
-+
-+void sxe_hw_fc_tc_high_water_mark_set(struct sxe_hw *hw, u8 tc_idx, u32 mark)
-+{
-+	hw->fc.high_water[tc_idx] = mark;
-+}
-+
-+void sxe_hw_fc_tc_low_water_mark_set(struct sxe_hw *hw, u8 tc_idx, u32 mark)
-+{
-+	hw->fc.low_water[tc_idx] = mark;
-+}
-+
-+bool sxe_hw_is_fc_autoneg_disabled(struct sxe_hw *hw)
-+{
-+	return hw->fc.disable_fc_autoneg;
-+}
-+
-+void sxe_hw_fc_autoneg_disable_set(struct sxe_hw *hw, bool is_disabled)
-+{
-+	hw->fc.disable_fc_autoneg = is_disabled;
-+}
-+
-+void sxe_hw_fc_requested_mode_set(struct sxe_hw *hw,
-+						enum sxe_fc_mode mode)
-+{
-+	hw->fc.requested_mode = mode;
-+}
-+
-+u32 sxe_hw_rx_mode_get(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_FCTRL);
-+}
-+
-+u32 sxe_hw_pool_rx_mode_get(struct sxe_hw *hw, u16 pool_idx)
-+{
-+	return SXE_REG_READ(hw, SXE_VMOLR(pool_idx));
-+}
-+
-+void sxe_hw_rx_mode_set(struct sxe_hw *hw, u32 filter_ctrl)
-+{
-+	SXE_REG_WRITE(hw, SXE_FCTRL, filter_ctrl);
-+}
-+
-+void sxe_hw_pool_rx_mode_set(struct sxe_hw *hw, u32 vmolr, u16 pool_idx)
-+{
-+	SXE_REG_WRITE(hw, SXE_VMOLR(pool_idx), vmolr);
-+}
-+
-+void sxe_hw_rx_lro_enable(struct sxe_hw *hw, bool is_enable)
-+{
-+	u32 rfctl = SXE_REG_READ(hw, SXE_RFCTL);
-+	rfctl &= ~SXE_RFCTL_LRO_DIS;
-+
-+	if (!is_enable)
-+		rfctl |= SXE_RFCTL_LRO_DIS;
-+
-+	SXE_REG_WRITE(hw, SXE_RFCTL, rfctl);
-+}
-+
-+void sxe_hw_rx_nfs_filter_disable(struct sxe_hw *hw)
-+{
-+	u32 rfctl = 0;
-+
-+	rfctl |= (SXE_RFCTL_NFSW_DIS | SXE_RFCTL_NFSR_DIS);
-+	SXE_REG_WRITE(hw, SXE_RFCTL, rfctl);
-+}
-+
-+void sxe_hw_rx_udp_frag_checksum_disable(struct sxe_hw *hw)
-+{
-+	u32 rxcsum;
-+
-+	rxcsum = SXE_REG_READ(hw, SXE_RXCSUM);
-+	rxcsum |= SXE_RXCSUM_PCSD;
-+	SXE_REG_WRITE(hw, SXE_RXCSUM, rxcsum);
-+}
-+
-+void sxe_hw_fc_mac_addr_set(struct sxe_hw *hw, u8 *mac_addr)
-+{
-+	u32 mac_addr_h, mac_addr_l;
-+
-+	mac_addr_l = ((u32)mac_addr[5] |
-+			((u32)mac_addr[4] << 8) |
-+			((u32)mac_addr[3] << 16) |
-+			((u32)mac_addr[2] << 24));
-+	mac_addr_h = (((u32)mac_addr[1] << 16) |
-+			((u32)mac_addr[0] << 24));
-+
-+	SXE_REG_WRITE(hw, SXE_SACONH, mac_addr_h);
-+	SXE_REG_WRITE(hw, SXE_SACONL, mac_addr_l);
-+}
-+
-+s32 sxe_hw_uc_addr_add(struct sxe_hw *hw, u32 rar_idx,
-+					u8 *addr, u32 pool_idx)
-+{
-+	s32 ret = 0;
-+	u32 rar_low, rar_high;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	if (rar_idx >= SXE_UC_ENTRY_NUM_MAX) {
-+		LOG_DEV_DEBUG("RAR rar_idx %d is out of range:%u.",
-+			rar_idx, SXE_UC_ENTRY_NUM_MAX);
-+		ret = -SXE_ERR_PARAM;
-+		goto l_end;
-+	}
-+
-+	sxe_hw_uc_addr_pool_enable(hw, rar_idx, pool_idx);
-+
-+	rar_low = ((u32)addr[0] |
-+		   ((u32)addr[1] << 8) |
-+		   ((u32)addr[2] << 16) |
-+		   ((u32)addr[3] << 24));
-+
-+	rar_high = SXE_REG_READ(hw, SXE_RAH(rar_idx));
-+	rar_high &= ~(0x0000FFFF | SXE_RAH_AV);
-+	rar_high |= ((u32)addr[4] | ((u32)addr[5] << 8));
-+
-+	rar_high |= SXE_RAH_AV;
-+
-+	SXE_REG_WRITE(hw, SXE_RAL(rar_idx), rar_low);
-+	SXE_WRITE_FLUSH(hw);
-+	SXE_REG_WRITE(hw, SXE_RAH(rar_idx), rar_high);
-+
-+	LOG_DEBUG_BDF("rar_idx:%d pool_idx:%u addr:%pM add to rar done",
-+		rar_idx, pool_idx, addr);
-+
-+l_end:
-+	return ret;
-+}
-+
-+s32 sxe_hw_uc_addr_del(struct sxe_hw *hw, u32 index)
-+{
-+	s32 ret = 0;
-+	u32 rar_high;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	if (index >= SXE_UC_ENTRY_NUM_MAX) {
-+		ret = -SXE_ERR_PARAM;
-+		LOG_ERROR_BDF("uc_entry_num:%d index:%u invalid.(err:%d)",
-+			  SXE_UC_ENTRY_NUM_MAX, index, ret);
-+		goto l_end;
-+	}
-+
-+	rar_high = SXE_REG_READ(hw, SXE_RAH(index));
-+	rar_high &= ~(0x0000FFFF | SXE_RAH_AV);
-+
-+	SXE_REG_WRITE(hw, SXE_RAH(index), rar_high);
-+	SXE_WRITE_FLUSH(hw);
-+	SXE_REG_WRITE(hw, SXE_RAL(index), 0);
-+
-+	sxe_hw_uc_addr_pool_disable(hw, index);
-+
-+l_end:
-+	return ret;
-+}
-+
-+void sxe_hw_mta_hash_table_set(struct sxe_hw *hw, u8 index, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_MTA(index), value);
-+}
-+
-+void sxe_hw_mta_hash_table_update(struct sxe_hw *hw, u8 reg_idx, u8 bit_idx)
-+{
-+	u32 value = SXE_REG_READ(hw, SXE_MTA(reg_idx));
-+
-+	value |= BIT(bit_idx);
-+
-+	LOG_INFO("mta update value:0x%x.", value);
-+	SXE_REG_WRITE(hw, SXE_MTA(reg_idx), value);
-+}
-+
-+u32 sxe_hw_mc_filter_get(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_MCSTCTRL);
-+}
-+
-+void sxe_hw_mc_filter_enable(struct sxe_hw *hw)
-+{
-+	u32 value = SXE_MC_FILTER_TYPE0 | SXE_MCSTCTRL_MFE;
-+
-+	SXE_REG_WRITE(hw, SXE_MCSTCTRL, value);
-+}
-+
-+void sxe_hw_uc_addr_clear(struct sxe_hw *hw)
++static u32 sxevf_reg_dump(struct sxevf_hw *hw, u32 *regs_buff, u32 buf_size)
 +{
 +	u32 i;
-+	struct sxe_adapter *adapter = hw->adapter;
++	u32 regs_num = buf_size / sizeof(u32);
 +
-+	sxe_hw_uc_addr_pool_disable(hw, 0);
++	for (i = 0; i < regs_num; i++)
++		regs_buff[i] = SXEVF_REG_READ(hw, sxe_dump_regs[i]);
 +
-+	LOG_DEV_DEBUG("clear uc filter addr register:0-%d",
-+		   SXE_UC_ENTRY_NUM_MAX - 1);
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		SXE_REG_WRITE(hw, SXE_RAL(i), 0);
-+		SXE_REG_WRITE(hw, SXE_RAH(i), 0);
-+	}
-+
-+	LOG_DEV_DEBUG("clear %u uta filter addr register",
-+			SXE_UTA_ENTRY_NUM_MAX);
-+	for (i = 0; i < SXE_UTA_ENTRY_NUM_MAX; i++)
-+		SXE_REG_WRITE(hw, SXE_UTA(i), 0);
-+
-+	SXE_REG_WRITE(hw, SXE_MCSTCTRL, SXE_MC_FILTER_TYPE0);
-+
-+	LOG_DEV_DEBUG("clear %u mta filter addr register",
-+			SXE_MTA_ENTRY_NUM_MAX);
-+	for (i = 0; i < SXE_MTA_ENTRY_NUM_MAX; i++)
-+		SXE_REG_WRITE(hw, SXE_MTA(i), 0);
++	return i;
 +}
 +
-+void sxe_hw_vt_ctrl_cfg(struct sxe_hw *hw, u8 default_pool)
++#define PATTERN_TEST	1
++#define SET_READ_TEST	2
++#define WRITE_NO_TEST	3
++#define TABLE32_TEST	4
++#define TABLE64_TEST_LO	5
++#define TABLE64_TEST_HI	6
++
++struct sxevf_self_test_reg {
++	u32 reg;
++	u8  array_len;
++	u8  test_type;
++	u32 mask;
++	u32 write;
++};
++
++static const struct sxevf_self_test_reg self_test_reg[] = {
++	{ SXE_VFRDBAL(0), 2, PATTERN_TEST, 0xFFFFFF80, 0xFFFFFF80 },
++	{ SXE_VFRDBAH(0), 2, PATTERN_TEST, 0xFFFFFFFF, 0xFFFFFFFF },
++	{ SXE_VFRDLEN(0), 2, PATTERN_TEST, 0x000FFFFF, 0x000FFFFF },
++	{ SXE_VFRXDCTL(0), 2, WRITE_NO_TEST, 0, SXEVF_RXDCTL_ENABLE },
++	{ SXE_VFRDT(0), 2, PATTERN_TEST, 0x0000FFFF, 0x0000FFFF },
++	{ SXE_VFRXDCTL(0), 2, WRITE_NO_TEST, 0, 0 },
++	{ SXE_VFTDBAL(0), 2, PATTERN_TEST, 0xFFFFFF80, 0xFFFFFFFF },
++	{ SXE_VFTDBAH(0), 2, PATTERN_TEST, 0xFFFFFFFF, 0xFFFFFFFF },
++	{ SXE_VFTDLEN(0), 2, PATTERN_TEST, 0x000FFF80, 0x000FFF80 },
++	{ .reg = 0 }
++};
++
++static s32 sxevf_reg_pattern_test(struct sxevf_hw *hw, u32 reg,
++				u32 mask, u32 write)
 +{
-+	u32 ctrl;
++	s32 ret = 0;
++	u32 pat, val, before;
++	static const u32 test_pattern[] = {
++		0x5A5A5A5A, 0xA5A5A5A5, 0x00000000, 0xFFFFFFFE};
++	struct sxevf_adapter *adapter = hw->adapter;
 +
-+	ctrl = SXE_REG_READ(hw, SXE_VT_CTL);
++	for (pat = 0; pat < ARRAY_SIZE(test_pattern); pat++) {
++		before = SXEVF_REG_READ(hw, reg);
 +
-+	ctrl |= SXE_VT_CTL_VT_ENABLE;
-+	ctrl &= ~SXE_VT_CTL_POOL_MASK;
-+	ctrl |= default_pool << SXE_VT_CTL_POOL_SHIFT;
-+	ctrl |= SXE_VT_CTL_REPLEN;
-+
-+	SXE_REG_WRITE(hw, SXE_VT_CTL, ctrl);
-+}
-+
-+void sxe_hw_vlan_filter_array_write(struct sxe_hw *hw,
-+					u16 reg_index, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_VFTA(reg_index), value);
-+}
-+
-+u32 sxe_hw_vlan_filter_array_read(struct sxe_hw *hw, u16 reg_index)
-+{
-+	return SXE_REG_READ(hw, SXE_VFTA(reg_index));
-+}
-+
-+void sxe_hw_vlan_filter_switch(struct sxe_hw *hw, bool is_enable)
-+{
-+	u32 vlnctrl;
-+
-+	vlnctrl = SXE_REG_READ(hw, SXE_VLNCTRL);
-+	if (is_enable)
-+		vlnctrl |= SXE_VLNCTRL_VFE;
-+	else
-+		vlnctrl &= ~SXE_VLNCTRL_VFE;
-+
-+	SXE_REG_WRITE(hw, SXE_VLNCTRL, vlnctrl);
-+}
-+
-+s32 sxe_hw_vlvf_slot_find(struct sxe_hw *hw, u32 vlan, bool vlvf_bypass)
-+{
-+	s32 ret, regindex, first_empty_slot;
-+	u32 bits;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	if (vlan == 0) {
-+		ret = 0;
-+		goto l_end;
-+	}
-+
-+	first_empty_slot = vlvf_bypass ? -SXE_ERR_NO_SPACE : 0;
-+
-+	vlan |= SXE_VLVF_VIEN;
-+
-+	for (regindex = SXE_VLVF_ENTRIES; --regindex;) {
-+		bits = SXE_REG_READ(hw, SXE_VLVF(regindex));
-+		if (bits == vlan) {
-+			ret = regindex;
++		SXEVF_REG_WRITE(hw, reg, test_pattern[pat] & write);
++		val = SXEVF_REG_READ(hw, reg);
++		if (val != (test_pattern[pat] & write & mask)) {
++			LOG_MSG_ERR(drv, "pattern test reg %04X failed: "
++					"got 0x%08X expected 0x%08X",
++				reg, val, (test_pattern[pat] & write & mask));
++			SXEVF_REG_WRITE(hw, reg, before);
++			ret = -SXEVF_DIAG_REG_PATTERN_TEST_ERR;
 +			goto l_end;
 +		}
 +
-+		if (!first_empty_slot && !bits)
-+			first_empty_slot = regindex;
++		SXEVF_REG_WRITE(hw, reg, before);
 +	}
 +
-+	if (!first_empty_slot)
-+		LOG_DEV_WARN("no space in VLVF.");
-+
-+	ret = first_empty_slot ? : -SXE_ERR_NO_SPACE;
 +l_end:
 +	return ret;
 +}
 +
-+s32 sxe_hw_vlan_filter_configure(struct sxe_hw *hw, u32 vid, u32 pool,
-+				 bool vlan_on, bool vlvf_bypass)
++static s32 sxevf_reg_set_and_check(struct sxevf_hw *hw, int reg,
++				u32 mask, u32 write)
 +{
 +	s32 ret = 0;
-+	u32 regidx, vfta_delta, vfta, bits;
-+	s32 vlvf_index;
++	u32 val, before;
++	struct sxevf_adapter *adapter = hw->adapter;
 +
-+	LOG_DEBUG("vid: %u, pool: %u, vlan_on: %d, vlvf_bypass: %d",
-+		vid, pool, vlan_on, vlvf_bypass);
-+
-+	if (vid > 4095 || pool > 63) {
-+		ret = -SXE_ERR_PARAM;
++	before = SXEVF_REG_READ(hw, reg);
++	SXEVF_REG_WRITE(hw, reg, write & mask);
++	val = SXEVF_REG_READ(hw, reg);
++	if ((write & mask) != (val & mask)) {
++		LOG_DEV_ERR("set/check reg %04X test failed: "
++				"got 0x%08X expected 0x%08X",
++			reg, (val & mask), (write & mask));
++		SXEVF_REG_WRITE(hw, reg, before);
++		ret = -SXEVF_DIAG_CHECK_REG_TEST_ERR;
 +		goto l_end;
 +	}
 +
-+	regidx = vid / 32;
-+	vfta_delta = BIT(vid % 32);
-+	vfta = SXE_REG_READ(hw, SXE_VFTA(regidx));
-+
-+	vfta_delta &= vlan_on ? ~vfta : vfta;
-+	vfta ^= vfta_delta;
-+
-+	if (!(SXE_REG_READ(hw, SXE_VT_CTL) & SXE_VT_CTL_VT_ENABLE))
-+		goto vfta_update;
-+
-+	vlvf_index = sxe_hw_vlvf_slot_find(hw, vid, vlvf_bypass);
-+	if (vlvf_index < 0) {
-+		if (vlvf_bypass)
-+			goto vfta_update;
-+
-+		ret = vlvf_index;
-+		goto l_end;
-+	}
-+
-+	bits = SXE_REG_READ(hw, SXE_VLVFB(vlvf_index * 2 + pool / 32));
-+
-+	bits |= BIT(pool % 32);
-+	if (vlan_on)
-+		goto vlvf_update;
-+
-+	bits ^= BIT(pool % 32);
-+
-+	if (!bits &&
-+		!SXE_REG_READ(hw, SXE_VLVFB(vlvf_index * 2 + 1 - pool / 32))) {
-+		if (vfta_delta)
-+			SXE_REG_WRITE(hw, SXE_VFTA(regidx), vfta);
-+
-+		SXE_REG_WRITE(hw, SXE_VLVF(vlvf_index), 0);
-+		SXE_REG_WRITE(hw, SXE_VLVFB(vlvf_index * 2 + pool / 32), 0);
-+
-+		goto l_end;
-+	}
-+
-+	vfta_delta = 0;
-+
-+vlvf_update:
-+	SXE_REG_WRITE(hw, SXE_VLVFB(vlvf_index * 2 + pool / 32), bits);
-+	SXE_REG_WRITE(hw, SXE_VLVF(vlvf_index), SXE_VLVF_VIEN | vid);
-+
-+vfta_update:
-+	if (vfta_delta)
-+		SXE_REG_WRITE(hw, SXE_VFTA(regidx), vfta);
++	SXEVF_REG_WRITE(hw, reg, before);
 +
 +l_end:
 +	return ret;
 +}
 +
-+void sxe_hw_vlan_filter_array_clear(struct sxe_hw *hw)
-+{
-+	u32 offset;
-+
-+	for (offset = 0; offset < SXE_VFT_TBL_SIZE; offset++)
-+		SXE_REG_WRITE(hw, SXE_VFTA(offset), 0);
-+
-+	for (offset = 0; offset < SXE_VLVF_ENTRIES; offset++) {
-+		SXE_REG_WRITE(hw, SXE_VLVF(offset), 0);
-+		SXE_REG_WRITE(hw, SXE_VLVFB(offset * 2), 0);
-+		SXE_REG_WRITE(hw, SXE_VLVFB(offset * 2 + 1), 0);
-+	}
-+}
-+
-+static void sxe_hw_rx_pkt_buf_switch(struct sxe_hw *hw, bool is_on)
-+{
-+	u32 dbucfg = SXE_REG_READ(hw, SXE_DRXCFG);
-+
-+	if (is_on)
-+		dbucfg |= SXE_DRXCFG_DBURX_START;
-+	else
-+		dbucfg &= ~SXE_DRXCFG_DBURX_START;
-+
-+	SXE_REG_WRITE(hw, SXE_DRXCFG, dbucfg);
-+}
-+
-+u32 sxe_hw_rx_pkt_buf_size_get(struct sxe_hw *hw, u8 pb)
-+{
-+	return SXE_REG_READ(hw, SXE_RXPBSIZE(pb));
-+}
-+
-+void sxe_hw_rx_multi_ring_configure(struct sxe_hw *hw, u8 tcs,
-+				    bool is_4q_per_pool, bool sriov_enable)
-+{
-+	u32 mrqc = SXE_REG_READ(hw, SXE_MRQC);
-+
-+	mrqc &= ~SXE_MRQE_MASK;
-+
-+	if (sriov_enable) {
-+		if (tcs > 4)
-+			mrqc |= SXE_MRQC_VMDQRT8TCEN;
-+		else if (tcs > 1)
-+			mrqc |= SXE_MRQC_VMDQRT4TCEN;
-+		else if (is_4q_per_pool)
-+			mrqc |= SXE_MRQC_VMDQRSS32EN;
-+		else
-+			mrqc |= SXE_MRQC_VMDQRSS64EN;
-+
-+	} else {
-+		if (tcs > 4)
-+			mrqc |= SXE_MRQC_RTRSS8TCEN;
-+		else if (tcs > 1)
-+			mrqc |= SXE_MRQC_RTRSS4TCEN;
-+		else
-+			mrqc |= SXE_MRQC_RSSEN;
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_MRQC, mrqc);
-+}
-+
-+void sxe_hw_rss_key_set_all(struct sxe_hw *hw, u32 *rss_key)
++static s32 sxevf_regs_test(struct sxevf_hw *hw)
 +{
 +	u32 i;
++	s32 ret = 0;
++	const struct sxevf_self_test_reg *test = self_test_reg;
++	struct sxevf_adapter *adapter = hw->adapter;
 +
-+	for (i = 0; i < SXE_MAX_RSS_KEY_ENTRIES; i++)
-+		SXE_REG_WRITE(hw, SXE_RSSRK(i), rss_key[i]);
-+}
++	while (test->reg) {
++		for (i = 0; i < test->array_len; i++) {
++			switch (test->test_type) {
++			case PATTERN_TEST:
++				ret = sxevf_reg_pattern_test(hw,
++					test->reg + (i * 0x40),
++					test->mask, test->write);
++				break;
++			case TABLE32_TEST:
++				ret = sxevf_reg_pattern_test(hw,
++					test->reg + (i * 4),
++					test->mask, test->write);
++				break;
++			case TABLE64_TEST_LO:
++				ret = sxevf_reg_pattern_test(hw,
++					test->reg + (i * 8),
++					test->mask, test->write);
++				break;
++			case TABLE64_TEST_HI:
++				ret = sxevf_reg_pattern_test(hw,
++					(test->reg + 4) + (i * 8),
++					test->mask, test->write);
++				break;
++			case SET_READ_TEST:
++				ret = sxevf_reg_set_and_check(hw,
++					test->reg + (i * 0x40),
++					test->mask, test->write);
++				break;
++			case WRITE_NO_TEST:
++				SXEVF_REG_WRITE(hw, test->reg + (i * 0x40),
++						test->write);
++				break;
++			default:
++				LOG_ERROR_BDF("reg test mod err, type=%d",
++						test->test_type);
++				break;
++			}
 +
-+void sxe_hw_rss_redir_tbl_reg_write(struct sxe_hw *hw,
-+						u16 reg_idx, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_RETA(reg_idx >> 2), value);
-+}
-+
-+void sxe_hw_rss_redir_tbl_set_all(struct sxe_hw *hw, u8 *redir_tbl)
-+{
-+	u32 i;
-+	u32 tbl = 0;
-+	u32 indices_multi = 0x1;
-+
-+
-+	for (i = 0; i < SXE_MAX_RETA_ENTRIES; i++) {
-+		tbl |= indices_multi * redir_tbl[i] << (i & 0x3) * 8;
-+		if ((i & 3) == 3) {
-+			sxe_hw_rss_redir_tbl_reg_write(hw, i, tbl);
-+			tbl = 0;
++			if (ret)
++				goto l_end;
 +		}
-+	}
-+}
-+
-+void sxe_hw_rx_cap_switch_on(struct sxe_hw *hw)
-+{
-+	u32 rxctrl;
-+
-+	if (hw->mac.set_lben) {
-+		u32 pfdtxgswc = SXE_REG_READ(hw, SXE_PFDTXGSWC);
-+		pfdtxgswc |= SXE_PFDTXGSWC_VT_LBEN;
-+		SXE_REG_WRITE(hw, SXE_PFDTXGSWC, pfdtxgswc);
-+		hw->mac.set_lben = false;
++		test++;
 +	}
 +
-+	rxctrl = SXE_REG_READ(hw, SXE_RXCTRL);
-+	rxctrl |= SXE_RXCTRL_RXEN;
-+	SXE_REG_WRITE(hw, SXE_RXCTRL, rxctrl);
++l_end:
++	return ret;
 +}
 +
-+void sxe_hw_rx_cap_switch_off(struct sxe_hw *hw)
++static const struct sxevf_setup_operations sxevf_setup_ops = {
++	.reset		= sxevf_hw_reset,
++	.hw_stop	= sxevf_hw_stop,
++	.regs_test	= sxevf_regs_test,
++	.regs_dump	= sxevf_reg_dump,
++	.link_state_get	= sxevf_link_state_get,
++	.reset_done = sxevf_hw_rst_done,
++};
++
++static void sxevf_tx_ring_desc_configure(struct sxevf_hw *hw, u32 desc_mem_len,
++				u64 desc_dma_addr, u8 reg_idx)
 +{
-+	u32 rxctrl;
-+
-+	rxctrl = SXE_REG_READ(hw, SXE_RXCTRL);
-+	if (rxctrl & SXE_RXCTRL_RXEN) {
-+		u32 pfdtxgswc = SXE_REG_READ(hw, SXE_PFDTXGSWC);
-+		if (pfdtxgswc & SXE_PFDTXGSWC_VT_LBEN) {
-+			pfdtxgswc &= ~SXE_PFDTXGSWC_VT_LBEN;
-+			SXE_REG_WRITE(hw, SXE_PFDTXGSWC, pfdtxgswc);
-+			hw->mac.set_lben = true;
-+		} else {
-+			hw->mac.set_lben = false;
-+		}
-+		rxctrl &= ~SXE_RXCTRL_RXEN;
-+		SXE_REG_WRITE(hw, SXE_RXCTRL, rxctrl);
-+	}
++	SXEVF_REG_WRITE(hw, SXEVF_TDBAL(reg_idx), (desc_dma_addr &
++						DMA_BIT_MASK(32)));
++	SXEVF_REG_WRITE(hw, SXEVF_TDBAH(reg_idx), (desc_dma_addr >> 32));
++	SXEVF_REG_WRITE(hw, SXEVF_TDLEN(reg_idx), desc_mem_len);
++	SXEVF_REG_WRITE(hw, SXEVF_TDH(reg_idx), 0);
++	SXEVF_REG_WRITE(hw, SXEVF_TDT(reg_idx), 0);
 +}
 +
-+void sxe_hw_tx_pkt_buf_switch(struct sxe_hw *hw, bool is_on)
++static void sxevf_tx_writeback_off(struct sxevf_hw *hw, u8 reg_idx)
 +{
-+	u32 dbucfg;
-+
-+	dbucfg = SXE_REG_READ(hw, SXE_DTXCFG);
-+
-+	if (is_on) {
-+		dbucfg |= SXE_DTXCFG_DBUTX_START;
-+		dbucfg |= SXE_DTXCFG_DBUTX_BUF_ALFUL_CFG;
-+		SXE_REG_WRITE(hw, SXE_DTXCFG, dbucfg);
-+	} else {
-+		dbucfg &= ~SXE_DTXCFG_DBUTX_START;
-+		SXE_REG_WRITE(hw, SXE_DTXCFG, dbucfg);
-+	}
++	SXEVF_REG_WRITE(hw, SXEVF_TDWBAH(reg_idx), 0);
++	SXEVF_REG_WRITE(hw, SXEVF_TDWBAL(reg_idx), 0);
 +}
 +
-+void sxe_hw_tx_pkt_buf_size_configure(struct sxe_hw *hw, u8 num_pb)
-+{
-+	u32 i, tx_pkt_size;
-+
-+	if (!num_pb)
-+		num_pb = 1;
-+
-+	tx_pkt_size = SXE_TX_PBSIZE_MAX / num_pb;
-+	for (i = 0; i < num_pb; i++)
-+		SXE_REG_WRITE(hw, SXE_TXPBSIZE(i), tx_pkt_size);
-+
-+	for (; i < SXE_PKG_BUF_NUM_MAX; i++)
-+		SXE_REG_WRITE(hw, SXE_TXPBSIZE(i), 0);
-+}
-+
-+void sxe_hw_rx_lro_ack_switch(struct sxe_hw *hw, bool is_on)
-+{
-+	u32 lro_dbu = SXE_REG_READ(hw, SXE_LRODBU);
-+
-+	if (is_on)
-+		lro_dbu &= ~SXE_LRODBU_LROACKDIS;
-+	else
-+		lro_dbu |= SXE_LRODBU_LROACKDIS;
-+
-+	SXE_REG_WRITE(hw, SXE_LRODBU, lro_dbu);
-+}
-+
-+u64 sxe_hw_ptp_systime_get(struct sxe_hw *hw)
-+{
-+	struct sxe_adapter *adapter = hw->adapter;
-+	u32 systiml;
-+	u32 systimm;
-+	u64 ns;
-+
-+	systiml = SXE_REG_READ(hw, SXE_SYSTIML);
-+	systimm = SXE_REG_READ(hw, SXE_SYSTIMM);
-+	ns = SXE_TIME_TO_NS(systiml, systimm);
-+
-+	LOG_DEBUG_BDF("get ptp hw systime systiml=%u, systimm=%u, ns=%" SXE_PRIU64,
-+			systiml, systimm, ns);
-+	return ns;
-+}
-+
-+void sxe_hw_ptp_systime_init(struct sxe_hw *hw)
-+{
-+	SXE_REG_WRITE(hw, SXE_SYSTIML, 0);
-+	SXE_REG_WRITE(hw, SXE_SYSTIMM, 0);
-+	SXE_REG_WRITE(hw, SXE_SYSTIMH, 0);
-+
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+void sxe_hw_ptp_init(struct sxe_hw *hw)
-+{
-+	u32 regval;
-+	u32 tsctl = SXE_TSCTRL_TSEN |
-+	SXE_TSCTRL_VER_2 |
-+	SXE_TSCTRL_PTYP_ALL |
-+	SXE_TSCTRL_L4_UNICAST;
-+
-+	regval = SXE_REG_READ(hw, SXE_TSCTRL);
-+	regval &= ~SXE_TSCTRL_ONESTEP;
-+	regval &= ~SXE_TSCTRL_CSEN;
-+	regval |= tsctl;
-+	SXE_REG_WRITE(hw, SXE_TSCTRL, regval);
-+
-+	SXE_REG_WRITE(hw, SXE_TIMINC,
-+			SXE_TIMINC_SET(SXE_INCPD, SXE_IV_NS, SXE_IV_SNS));
-+}
-+
-+void sxe_hw_ptp_rx_timestamp_clear(struct sxe_hw *hw)
-+{
-+	SXE_REG_READ(hw, SXE_RXSTMPH);
-+}
-+
-+void sxe_hw_ptp_tx_timestamp_get(struct sxe_hw *hw, u32 *ts_sec, u32 *ts_ns)
-+{
-+	u32 reg_sec;
-+	u32 reg_ns;
-+	u32 sec_8bit;
-+	u32 sec_24bit;
-+	u32 systimm;
-+	u32 systimm_8bit;
-+	u32 systimm_24bit;
-+
-+	SXE_REG64_WRITE(hw, SXE_TXSTMP_SEL, SXE_TXTS_MAGIC0);
-+	reg_ns = SXE_REG_READ(hw, SXE_TXSTMP_VAL);
-+	SXE_REG64_WRITE(hw, SXE_TXSTMP_SEL, SXE_TXTS_MAGIC1);
-+	reg_sec = SXE_REG_READ(hw, SXE_TXSTMP_VAL);
-+	systimm = SXE_REG_READ(hw, SXE_SYSTIMM);
-+
-+
-+	sec_8bit  = reg_sec & 0x000000FF;
-+	sec_24bit = (reg_sec >> 8) & 0x00FFFFFF;
-+
-+	systimm_24bit = systimm & 0x00FFFFFF;
-+	systimm_8bit  = systimm & 0xFF000000;
-+
-+	*ts_ns  = (sec_8bit << 24) | ((reg_ns & 0xFFFFFF00) >> 8);
-+
-+	if (unlikely((sec_24bit - systimm_24bit) >= 0x00FFFFF0)) {
-+		if (systimm_8bit >= 1)
-+			systimm_8bit -= 1;
-+	}
-+
-+	*ts_sec = systimm_8bit | sec_24bit;
-+}
-+
-+u64 sxe_hw_ptp_rx_timestamp_get(struct sxe_hw *hw)
-+{
-+	struct sxe_adapter *adapter = hw->adapter;
-+	u32 rxtsl;
-+	u32 rxtsh;
-+	u64 ns;
-+
-+	rxtsl = SXE_REG_READ(hw, SXE_RXSTMPL);
-+	rxtsh = SXE_REG_READ(hw, SXE_RXSTMPH);
-+	ns = SXE_TIME_TO_NS(rxtsl, rxtsh);
-+
-+	LOG_DEBUG_BDF("ptp get rx ptp timestamp low=%u, high=%u, ns=%" SXE_PRIU64,
-+			rxtsl, rxtsh, ns);
-+	return ns;
-+}
-+
-+bool sxe_hw_ptp_is_rx_timestamp_valid(struct sxe_hw *hw)
-+{
-+	bool rx_tmstamp_valid = false;
-+	u32 tsyncrxctl;
-+
-+	tsyncrxctl = SXE_REG_READ(hw, SXE_TSYNCRXCTL);
-+	if (tsyncrxctl & SXE_TSYNCRXCTL_RXTT)
-+		rx_tmstamp_valid = true;
-+
-+	return rx_tmstamp_valid;
-+}
-+
-+void sxe_hw_ptp_timestamp_mode_set(struct sxe_hw *hw,
-+					bool is_l2, u32 tsctl, u32 tses)
-+{
-+	u32 regval;
-+
-+	if (is_l2) {
-+		SXE_REG_WRITE(hw, SXE_ETQF(SXE_ETQF_FILTER_1588),
-+			(SXE_ETQF_FILTER_EN |
-+			 SXE_ETQF_1588 |
-+			 ETH_P_1588));
-+	} else {
-+		SXE_REG_WRITE(hw, SXE_ETQF(SXE_ETQF_FILTER_1588), 0);
-+	}
-+
-+	if (tsctl) {
-+		regval = SXE_REG_READ(hw, SXE_TSCTRL);
-+		regval |= tsctl;
-+		SXE_REG_WRITE(hw, SXE_TSCTRL, regval);
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_TSES, tses);
-+
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+void sxe_hw_ptp_timestamp_enable(struct sxe_hw *hw)
-+{
-+	SXE_REG_WRITE(hw, SXE_TSYNCTXCTL,
-+			(SXE_REG_READ(hw, SXE_TSYNCTXCTL) |
-+			SXE_TSYNCTXCTL_TEN));
-+
-+	SXE_REG_WRITE(hw, SXE_TSYNCRXCTL,
-+			(SXE_REG_READ(hw, SXE_TSYNCRXCTL) |
-+			SXE_TSYNCRXCTL_REN));
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+void sxe_hw_rx_dma_ctrl_init(struct sxe_hw *hw)
-+{
-+	u32 rx_dma_ctrl = SXE_REG_READ(hw, SXE_RDRXCTL);
-+
-+	rx_dma_ctrl &= ~SXE_RDRXCTL_LROFRSTSIZE;
-+	SXE_REG_WRITE(hw, SXE_RDRXCTL, rx_dma_ctrl);
-+}
-+
-+void sxe_hw_rx_dma_lro_ctrl_set(struct sxe_hw *hw)
-+{
-+	u32 rx_dma_ctrl = SXE_REG_READ(hw, SXE_RDRXCTL);
-+
-+	rx_dma_ctrl |= SXE_RDRXCTL_LROACKC;
-+	SXE_REG_WRITE(hw, SXE_RDRXCTL, rx_dma_ctrl);
-+}
-+
-+void sxe_hw_rx_desc_thresh_set(struct sxe_hw *hw, u8 reg_idx)
-+{
-+	u32 rxdctl;
-+	rxdctl = SXE_REG_READ(hw, SXE_RXDCTL(reg_idx));
-+	rxdctl |= 0x40 << SXE_RXDCTL_PREFETCH_NUM_CFG_SHIFT;
-+	rxdctl |= 0x2 << SXE_RXDCTL_DESC_FIFO_AE_TH_SHIFT;
-+	rxdctl |= 0x10;
-+	SXE_REG_WRITE(hw, SXE_RXDCTL(reg_idx), rxdctl);
-+}
-+
-+void sxe_hw_rx_ring_switch(struct sxe_hw *hw, u8 reg_idx, bool is_on)
-+{
-+	u32 rxdctl;
-+	u32 wait_loop = SXE_RING_WAIT_LOOP;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	rxdctl = SXE_REG_READ(hw, SXE_RXDCTL(reg_idx));
-+	if (is_on) {
-+		rxdctl |= SXE_RXDCTL_ENABLE;
-+		SXE_REG_WRITE(hw, SXE_RXDCTL(reg_idx), rxdctl);
-+
-+		do {
-+			usleep_range(1000, 2000);
-+			rxdctl = SXE_REG_READ(hw, SXE_RXDCTL(reg_idx));
-+		} while (--wait_loop && !(rxdctl & SXE_RXDCTL_ENABLE));
-+	} else {
-+		rxdctl &= ~SXE_RXDCTL_ENABLE;
-+		SXE_REG_WRITE(hw, SXE_RXDCTL(reg_idx), rxdctl);
-+
-+		do {
-+			usleep_range(1000, 2000);
-+			rxdctl = SXE_REG_READ(hw, SXE_RXDCTL(reg_idx));
-+		} while (--wait_loop && (rxdctl & SXE_RXDCTL_ENABLE));
-+	}
-+
-+	SXE_WRITE_FLUSH(hw);
-+
-+	if (!wait_loop) {
-+		LOG_MSG_ERR(drv, "rx ring %u switch %u failed within "
-+			  "the polling period", reg_idx, is_on);
-+	}
-+}
-+
-+void sxe_hw_rx_queue_desc_reg_configure(struct sxe_hw *hw, u8 reg_idx,
-+					u32 rdh_value, u32 rdt_value)
-+{
-+	SXE_REG_WRITE(hw, SXE_RDH(reg_idx), rdh_value);
-+	SXE_REG_WRITE(hw, SXE_RDT(reg_idx), rdt_value);
-+}
-+
-+static void sxe_hw_rx_ring_head_init(struct sxe_hw *hw, u8 reg_idx)
-+{
-+	SXE_REG_WRITE(hw, SXE_RDH(reg_idx), 0);
-+}
-+
-+static void sxe_hw_rx_ring_tail_init(struct sxe_hw *hw, u8 reg_idx)
-+{
-+	SXE_REG_WRITE(hw, SXE_RDT(reg_idx), 0);
-+}
-+
-+void sxe_hw_rx_ring_desc_configure(struct sxe_hw *hw, u32 desc_mem_len,
-+				   u64 desc_dma_addr, u8 reg_idx)
-+{
-+	SXE_REG_WRITE(hw, SXE_RDBAL(reg_idx),
-+			(desc_dma_addr & DMA_BIT_MASK(32)));
-+	SXE_REG_WRITE(hw, SXE_RDBAH(reg_idx), (desc_dma_addr >> 32));
-+	SXE_REG_WRITE(hw, SXE_RDLEN(reg_idx), desc_mem_len);
-+
-+	SXE_WRITE_FLUSH(hw);
-+
-+	sxe_hw_rx_ring_head_init(hw, reg_idx);
-+	sxe_hw_rx_ring_tail_init(hw, reg_idx);
-+}
-+
-+void sxe_hw_rx_rcv_ctl_configure(struct sxe_hw *hw, u8 reg_idx,
-+				   u32 header_buf_len, u32 pkg_buf_len)
-+{
-+	u32 srrctl;
-+
-+	srrctl = ((header_buf_len << SXE_SRRCTL_BSIZEHDRSIZE_SHIFT) &
-+			SXE_SRRCTL_BSIZEHDR_MASK);
-+	srrctl |= ((pkg_buf_len >> SXE_SRRCTL_BSIZEPKT_SHIFT) &
-+			SXE_SRRCTL_BSIZEPKT_MASK);
-+
-+	SXE_REG_WRITE(hw, SXE_SRRCTL(reg_idx), srrctl);
-+}
-+
-+void sxe_hw_rx_lro_ctl_configure(struct sxe_hw *hw, u8 reg_idx, u32 max_desc)
-+{
-+	u32 lroctrl;
-+	lroctrl = SXE_REG_READ(hw, SXE_LROCTL(reg_idx));
-+	lroctrl |= SXE_LROCTL_LROEN;
-+	lroctrl |= max_desc;
-+	SXE_REG_WRITE(hw, SXE_LROCTL(reg_idx), lroctrl);
-+}
-+
-+static void sxe_hw_dcb_arbiter_set(struct sxe_hw *hw, bool is_enable)
-+{
-+	u32 rttdcs;
-+
-+	rttdcs = SXE_REG_READ(hw, SXE_RTTDCS);
-+
-+	if (is_enable) {
-+		rttdcs &= ~SXE_RTTDCS_ARBDIS;
-+		rttdcs &= ~SXE_RTTDCS_BPBFSM;
-+
-+		SXE_REG_WRITE(hw, SXE_RTTDCS, rttdcs);
-+	} else {
-+		rttdcs |= SXE_RTTDCS_ARBDIS;
-+		SXE_REG_WRITE(hw, SXE_RTTDCS, rttdcs);
-+	}
-+}
-+
-+void sxe_hw_tx_ring_head_init(struct sxe_hw *hw, u8 reg_idx)
-+{
-+	SXE_REG_WRITE(hw, SXE_TDH(reg_idx), 0);
-+}
-+
-+void sxe_hw_tx_ring_tail_init(struct sxe_hw *hw, u8 reg_idx)
-+{
-+	SXE_REG_WRITE(hw, SXE_TDT(reg_idx), 0);
-+}
-+
-+void sxe_hw_tx_ring_desc_configure(struct sxe_hw *hw, u32 desc_mem_len,
-+				   u64 desc_dma_addr, u8 reg_idx)
-+{
-+	SXE_REG_WRITE(hw, SXE_TXDCTL(reg_idx), 0);
-+
-+	SXE_WRITE_FLUSH(hw);
-+
-+	SXE_REG_WRITE(hw, SXE_TDBAL(reg_idx), (desc_dma_addr & DMA_BIT_MASK(32)));
-+	SXE_REG_WRITE(hw, SXE_TDBAH(reg_idx), (desc_dma_addr >> 32));
-+	SXE_REG_WRITE(hw, SXE_TDLEN(reg_idx), desc_mem_len);
-+	sxe_hw_tx_ring_head_init(hw, reg_idx);
-+	sxe_hw_tx_ring_tail_init(hw, reg_idx);
-+}
-+
-+void sxe_hw_tx_desc_thresh_set(struct sxe_hw *hw, u8 reg_idx, u32 wb_thresh,
-+				u32 host_thresh, u32 prefech_thresh)
++static void sxevf_tx_desc_thresh_set(struct sxevf_hw *hw,
++				u8 reg_idx,
++				u32 wb_thresh,
++				u32 host_thresh,
++				u32 prefech_thresh)
 +{
 +	u32 txdctl = 0;
 +
-+	txdctl |= (wb_thresh << SXE_TXDCTL_WTHRESH_SHIFT);
-+	txdctl |= (host_thresh << SXE_TXDCTL_HTHRESH_SHIFT) | prefech_thresh;
++	txdctl |= (wb_thresh << SXEVF_TXDCTL_WTHRESH_SHIFT);
++	txdctl |= (host_thresh << SXEVF_TXDCTL_HTHRESH_SHIFT) |
++			prefech_thresh;
 +
-+	SXE_REG_WRITE(hw, SXE_TXDCTL(reg_idx), txdctl);
++	SXEVF_REG_WRITE(hw, SXEVF_TXDCTL(reg_idx), txdctl);
 +}
 +
-+void sxe_hw_all_ring_disable(struct sxe_hw *hw, u32 ring_max)
++void sxevf_tx_ring_switch(struct sxevf_hw *hw, u8 reg_idx, bool is_on)
 +{
-+	u32 i, value;
++	u32 wait_loop = SXEVF_MAX_TXRX_DESC_POLL;
++	struct sxevf_adapter *adapter = hw->adapter;
 +
-+	for (i = 0; i < ring_max; i++) {
-+		value = SXE_REG_READ(hw, SXE_TXDCTL(i));
-+		value &= ~SXE_TXDCTL_ENABLE;
-+		SXE_REG_WRITE(hw, SXE_TXDCTL(i), value);
-+
-+		value = SXE_REG_READ(hw, SXE_RXDCTL(i));
-+		value &= ~SXE_RXDCTL_ENABLE;
-+		SXE_REG_WRITE(hw, SXE_RXDCTL(i), value);
-+	}
-+
-+	SXE_WRITE_FLUSH(hw);
-+	usleep_range(1000, 2000);
-+}
-+
-+void sxe_hw_tx_ring_switch(struct sxe_hw *hw, u8 reg_idx, bool is_on)
-+{
-+	u32 wait_loop = SXE_RING_WAIT_LOOP;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	u32 txdctl = SXE_REG_READ(hw, SXE_TXDCTL(reg_idx));
++	u32 txdctl = SXEVF_REG_READ(hw, SXEVF_TXDCTL(reg_idx));
 +	if (is_on) {
-+		txdctl |= SXE_TXDCTL_ENABLE;
-+		SXE_REG_WRITE(hw, SXE_TXDCTL(reg_idx), txdctl);
++		txdctl |= SXEVF_TXDCTL_ENABLE;
++		SXEVF_REG_WRITE(hw, SXEVF_TXDCTL(reg_idx), txdctl);
 +
 +		do {
 +			usleep_range(1000, 2000);
-+			txdctl = SXE_REG_READ(hw, SXE_TXDCTL(reg_idx));
-+		} while (--wait_loop && !(txdctl & SXE_TXDCTL_ENABLE));
++			txdctl = SXEVF_REG_READ(hw, SXEVF_TXDCTL(reg_idx));
++		} while (--wait_loop && !(txdctl & SXEVF_TXDCTL_ENABLE));
 +	} else {
-+		txdctl &= ~SXE_TXDCTL_ENABLE;
-+		SXE_REG_WRITE(hw, SXE_TXDCTL(reg_idx), txdctl);
++		txdctl &= ~SXEVF_TXDCTL_ENABLE;
++		SXEVF_REG_WRITE(hw, SXEVF_TXDCTL(reg_idx), txdctl);
 +
 +		do {
 +			usleep_range(1000, 2000);
-+			txdctl = SXE_REG_READ(hw, SXE_TXDCTL(reg_idx));
-+		} while (--wait_loop && (txdctl & SXE_TXDCTL_ENABLE));
++			txdctl = SXEVF_REG_READ(hw, SXEVF_TXDCTL(reg_idx));
++		} while (--wait_loop && (txdctl & SXEVF_TXDCTL_ENABLE));
 +	}
 +
 +	if (!wait_loop) {
@@ -1815,1100 +617,351 @@ index 0000000000..6e04a1b7ce
 +	}
 +}
 +
-+void sxe_hw_tx_pkt_buf_thresh_configure(struct sxe_hw *hw,
-+					u8 num_pb, bool dcb_enable)
-+{
-+	u32 i, tx_pkt_size, tx_pb_thresh;
-+
-+	if (!num_pb)
-+		num_pb = 1;
-+
-+	tx_pkt_size = SXE_TX_PBSIZE_MAX / num_pb;
-+	if (dcb_enable)
-+		tx_pb_thresh = (tx_pkt_size / 1024) - SXE_TX_PKT_SIZE_MAX;
-+	else
-+		tx_pb_thresh = (tx_pkt_size / 1024) - SXE_NODCB_TX_PKT_SIZE_MAX;
-+
-+	for (i = 0; i < num_pb; i++)
-+		SXE_REG_WRITE(hw, SXE_TXPBTHRESH(i), tx_pb_thresh);
-+
-+	for (; i < SXE_PKG_BUF_NUM_MAX; i++)
-+		SXE_REG_WRITE(hw, SXE_TXPBTHRESH(i), 0);
-+}
-+
-+void sxe_hw_tx_enable(struct sxe_hw *hw)
-+{
-+	u32 ctl;
-+
-+	ctl = SXE_REG_READ(hw, SXE_DMATXCTL);
-+	ctl |= SXE_DMATXCTL_TE;
-+	SXE_REG_WRITE(hw, SXE_DMATXCTL, ctl);
-+}
-+
-+void sxe_hw_vlan_tag_strip_switch(struct sxe_hw *hw,
-+					u16 reg_index, bool is_enable)
++static void sxevf_rx_disable(struct sxevf_hw *hw, u8 reg_idx)
 +{
 +	u32 rxdctl;
++	u32 wait_loop = SXEVF_RX_RING_POLL_MAX;
++	struct sxevf_adapter *adapter = hw->adapter;
 +
-+	rxdctl = SXE_REG_READ(hw, SXE_RXDCTL(reg_index));
++	if (!hw->reg_base_addr)
++		return;
 +
-+	if (is_enable)
-+		rxdctl |= SXE_RXDCTL_VME;
-+	else
-+		rxdctl &= ~SXE_RXDCTL_VME;
++	rxdctl = SXEVF_REG_READ(hw, SXE_VFRXDCTL(reg_idx));
++	rxdctl &= ~SXE_VFRXDCTL_ENABLE;
++	SXEVF_REG_WRITE(hw, SXE_VFRXDCTL(reg_idx), rxdctl);
 +
-+	SXE_REG_WRITE(hw, SXE_RXDCTL(reg_index), rxdctl);
++	do {
++		sxe_udelay(10);
++		rxdctl = SXEVF_REG_READ(hw, SXE_VFRXDCTL(reg_idx));
++	} while (--wait_loop && (rxdctl & SXE_VFRXDCTL_ENABLE));
++
++	if (!wait_loop) {
++		LOG_ERROR_BDF("RXDCTL.ENABLE queue %d not cleared while polling",
++				reg_idx);
++	}
 +}
 +
-+void sxe_hw_tx_vlan_tag_clear(struct sxe_hw *hw, u32 vf)
++void sxevf_rx_ring_switch(struct sxevf_hw *hw, u8 reg_idx, bool is_on)
 +{
-+	SXE_REG_WRITE(hw, SXE_VMVIR(vf), 0);
++	u32 rxdctl;
++	u32 wait_loop = SXEVF_RING_WAIT_LOOP;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	rxdctl = SXEVF_REG_READ(hw, SXE_VFRXDCTL(reg_idx));
++	if (is_on) {
++		rxdctl |= SXEVF_RXDCTL_ENABLE | SXEVF_RXDCTL_VME;
++		SXEVF_REG_WRITE(hw, SXE_VFRXDCTL(reg_idx), rxdctl);
++
++		do {
++			usleep_range(1000, 2000);
++			rxdctl = SXEVF_REG_READ(hw, SXE_VFRXDCTL(reg_idx));
++		} while (--wait_loop && !(rxdctl & SXEVF_RXDCTL_ENABLE));
++	} else {
++		rxdctl &= ~SXEVF_RXDCTL_ENABLE;
++		SXEVF_REG_WRITE(hw, SXE_VFRXDCTL(reg_idx), rxdctl);
++
++		do {
++			usleep_range(1000, 2000);
++			rxdctl = SXEVF_REG_READ(hw, SXE_VFRXDCTL(reg_idx));
++		} while (--wait_loop && (rxdctl & SXEVF_RXDCTL_ENABLE));
++	}
++
++	SXEVF_WRITE_FLUSH(hw);
++
++	if (!wait_loop) {
++		LOG_DEV_ERR("rx ring %u switch %u failed within "
++			  "the polling period", reg_idx, is_on);
++	}
 +}
 +
-+u32 sxe_hw_tx_vlan_insert_get(struct sxe_hw *hw, u32 vf)
++void sxevf_rx_ring_desc_configure(struct sxevf_hw *hw, u32 desc_mem_len,
++					u64 desc_dma_addr, u8 reg_idx)
 +{
-+	return SXE_REG_READ(hw, SXE_VMVIR(vf));
++	SXEVF_REG_WRITE(hw, SXE_VFRDBAL(reg_idx),
++			(desc_dma_addr & DMA_BIT_MASK(32)));
++	SXEVF_REG_WRITE(hw, SXE_VFRDBAH(reg_idx), (desc_dma_addr >> 32));
++	SXEVF_REG_WRITE(hw, SXE_VFRDLEN(reg_idx), desc_mem_len);
++
++	SXEVF_WRITE_FLUSH(hw);
++
++	SXEVF_REG_WRITE(hw, SXE_VFRDH(reg_idx), 0);
++	SXEVF_REG_WRITE(hw, SXE_VFRDT(reg_idx), 0);
 +}
 +
-+void sxe_hw_tx_ring_info_get(struct sxe_hw *hw,
++void sxevf_rx_rcv_ctl_configure(struct sxevf_hw *hw, u8 reg_idx,
++				   u32 header_buf_len, u32 pkg_buf_len, bool drop_en)
++{
++	u32 srrctl = 0;
++
++	if (drop_en)
++		srrctl = SXEVF_SRRCTL_DROP_EN;
++
++	srrctl |= ((header_buf_len << SXEVF_SRRCTL_BSIZEHDRSIZE_SHIFT) &
++			SXEVF_SRRCTL_BSIZEHDR_MASK);
++	srrctl |= ((pkg_buf_len >> SXEVF_SRRCTL_BSIZEPKT_SHIFT) &
++			SXEVF_SRRCTL_BSIZEPKT_MASK);
++
++	SXEVF_REG_WRITE(hw, SXE_VFSRRCTL(reg_idx), srrctl);
++}
++
++static void sxevf_tx_ring_info_get(struct sxevf_hw *hw,
 +				u8 idx, u32 *head, u32 *tail)
 +{
-+	*head = SXE_REG_READ(hw, SXE_TDH(idx));
-+	*tail = SXE_REG_READ(hw, SXE_TDT(idx));
++	*head = SXEVF_REG_READ(hw, SXE_VFTDH(idx));
++	*tail = SXEVF_REG_READ(hw, SXE_VFTDT(idx));
 +}
 +
-+void sxe_hw_dcb_rx_bw_alloc_configure(struct sxe_hw *hw, u16 *refill,
-+				      u16 *max, u8 *bwg_id, u8 *prio_type,
-+				      u8 *prio_tc, u8 max_priority)
-+{
-+	u32	reg;
-+	u32	credit_refill;
-+	u32	credit_max;
-+	u8	 i;
++static const struct sxevf_dma_operations sxevf_dma_ops = {
++	.tx_ring_desc_configure	= sxevf_tx_ring_desc_configure,
++	.tx_writeback_off	= sxevf_tx_writeback_off,
++	.tx_desc_thresh_set	= sxevf_tx_desc_thresh_set,
++	.tx_ring_switch		= sxevf_tx_ring_switch,
++	.tx_ring_info_get	= sxevf_tx_ring_info_get,
 +
-+	reg = SXE_RTRPCS_RRM | SXE_RTRPCS_RAC | SXE_RTRPCS_ARBDIS;
-+	SXE_REG_WRITE(hw, SXE_RTRPCS, reg);
++	.rx_disable		= sxevf_rx_disable,
++	.rx_ring_switch		= sxevf_rx_ring_switch,
++	.rx_ring_desc_configure	= sxevf_rx_ring_desc_configure,
++	.rx_rcv_ctl_configure	= sxevf_rx_rcv_ctl_configure,
++};
 +
-+	reg = 0;
-+	for (i = 0; i < max_priority; i++)
-+		reg |= (prio_tc[i] << (i * SXE_RTRUP2TC_UP_SHIFT));
-+
-+	SXE_REG_WRITE(hw, SXE_RTRUP2TC, reg);
-+
-+	for (i = 0; i < MAX_TRAFFIC_CLASS; i++) {
-+		credit_refill = refill[i];
-+		credit_max	= max[i];
-+		reg = credit_refill | (credit_max << SXE_RTRPT4C_MCL_SHIFT);
-+
-+		reg |= (u32)(bwg_id[i]) << SXE_RTRPT4C_BWG_SHIFT;
-+
-+		if (prio_type[i] == PRIO_LINK)
-+			reg |= SXE_RTRPT4C_LSP;
-+
-+		SXE_REG_WRITE(hw, SXE_RTRPT4C(i), reg);
++#define SXEVF_32BIT_COUNTER_UPDATE(reg, last, cur) \
++	{ \
++		u32 latest = SXEVF_REG_READ(hw, reg); \
++		(cur) += (latest - (last)) & UINT_MAX; \
++		last = latest; \
 +	}
 +
-+	reg = SXE_RTRPCS_RRM | SXE_RTRPCS_RAC;
-+	SXE_REG_WRITE(hw, SXE_RTRPCS, reg);
-+}
-+
-+void sxe_hw_dcb_tx_desc_bw_alloc_configure(struct sxe_hw *hw, u16 *refill,
-+					   u16 *max, u8 *bwg_id, u8 *prio_type)
-+{
-+	u32	reg, max_credits;
-+	u8	 i;
-+
-+	for (i = 0; i < 128; i++) {
-+		SXE_REG_WRITE(hw, SXE_RTTDQSEL, i);
-+		SXE_REG_WRITE(hw, SXE_RTTDT1C, 0);
++#define SXEVF_36BIT_COUNTER_UPDATE(lsb, msb, last, cur) \
++	{ \
++		u64 new_lsb = SXEVF_REG_READ(hw, lsb); \
++		u64 new_msb = SXEVF_REG_READ(hw, msb); \
++		u64 latest = ((new_msb << 32) | new_lsb); \
++		(cur) += (0x1000000000LL + latest - (last)) & 0xFFFFFFFFFLL; \
++		last = latest; \
 +	}
 +
-+	for (i = 0; i < MAX_TRAFFIC_CLASS; i++) {
-+		max_credits = max[i];
-+		reg = max_credits << SXE_RTTDT2C_MCL_SHIFT;
-+		reg |= refill[i];
-+		reg |= (u32)(bwg_id[i]) << SXE_RTTDT2C_BWG_SHIFT;
++void sxevf_packet_stats_get(struct sxevf_hw *hw,
++				struct sxevf_hw_stats *stats)
++{
++	SXEVF_32BIT_COUNTER_UPDATE(SXEVF_VFGPRC, stats->last_vfgprc,
++				stats->vfgprc);
++	SXEVF_32BIT_COUNTER_UPDATE(SXEVF_VFGPTC, stats->last_vfgptc,
++				stats->vfgptc);
++	SXEVF_36BIT_COUNTER_UPDATE(SXEVF_VFGORC_LSB, SXEVF_VFGORC_MSB,
++				stats->last_vfgorc,
++				stats->vfgorc);
++	SXEVF_36BIT_COUNTER_UPDATE(SXEVF_VFGOTC_LSB, SXEVF_VFGOTC_MSB,
++				stats->last_vfgotc,
++				stats->vfgotc);
++	SXEVF_32BIT_COUNTER_UPDATE(SXEVF_VFMPRC, stats->last_vfmprc,
++				stats->vfmprc);
++}
 +
-+		if (prio_type[i] == PRIO_GROUP)
-+			reg |= SXE_RTTDT2C_GSP;
++void sxevf_stats_init_value_get(struct sxevf_hw *hw,
++				struct sxevf_hw_stats *stats)
++{
++	stats->last_vfgprc = SXEVF_REG_READ(hw, SXE_VFGPRC);
++	stats->last_vfgorc = SXEVF_REG_READ(hw, SXE_VFGORC_LSB);
++	stats->last_vfgorc |= (((u64)(SXEVF_REG_READ(hw, SXE_VFGORC_MSB))) << 32);
++	stats->last_vfgptc = SXEVF_REG_READ(hw, SXE_VFGPTC);
++	stats->last_vfgotc = SXEVF_REG_READ(hw, SXE_VFGOTC_LSB);
++	stats->last_vfgotc |= (((u64)(SXEVF_REG_READ(hw, SXE_VFGOTC_MSB))) << 32);
++	stats->last_vfmprc = SXEVF_REG_READ(hw, SXE_VFMPRC);
++}
++static const struct sxevf_stat_operations sxevf_stat_ops = {
++	.packet_stats_get	= sxevf_packet_stats_get,
++	.stats_init_value_get	= sxevf_stats_init_value_get,
++};
 +
-+		if (prio_type[i] == PRIO_LINK)
-+			reg |= SXE_RTTDT2C_LSP;
++static void sxevf_rx_max_used_ring_set(struct sxevf_hw *hw, u16 max_rx_ring)
++{
++	u32 rqpl = 0;
 +
-+		SXE_REG_WRITE(hw, SXE_RTTDT2C(i), reg);
++	if (max_rx_ring > 1)
++		rqpl |= BIT(29);
++
++	SXEVF_REG_WRITE(hw, SXE_VFPSRTYPE, rqpl);
++}
++
++static const struct sxevf_dbu_operations sxevf_dbu_ops = {
++	.rx_max_used_ring_set = sxevf_rx_max_used_ring_set,
++};
++
++static const struct sxevf_mbx_operations sxevf_mbx_ops = {
++	.mailbox_read		= sxevf_mailbox_read,
++	.mailbox_write		= sxevf_mailbox_write,
++
++	.msg_write		= sxevf_msg_write,
++	.msg_read		= sxevf_msg_read,
++
++	.pf_req_irq_trigger	= sxevf_pf_req_irq_trigger,
++	.pf_ack_irq_trigger	= sxevf_pf_ack_irq_trigger,
++};
++
++void sxevf_hw_ops_init(struct sxevf_hw *hw)
++{
++	hw->setup.ops	= &sxevf_setup_ops;
++	hw->irq.ops	= &sxevf_irq_ops;
++	hw->mbx.ops	= &sxevf_mbx_ops;
++	hw->dma.ops	= &sxevf_dma_ops;
++	hw->stat.ops	= &sxevf_stat_ops;
++	hw->dbu.ops	= &sxevf_dbu_ops;
++}
++
++#define SXEVF_RSS_FIELD_MASK		0xffff0000
++#define SXEVF_MRQC_RSSEN			0x00000001
++
++#define SXEVF_RSS_KEY_SIZE				(40)
++#define SXEVF_MAX_RSS_KEY_ENTRIES	  (10)
++#define SXEVF_MAX_RETA_ENTRIES			(128)
++
++void sxevf_rxtx_reg_init(struct sxevf_hw *hw)
++{
++	int i;
++	u32 vfsrrctl;
++
++	vfsrrctl = 0x100 << SXEVF_SRRCTL_BSIZEHDRSIZE_SHIFT;
++	vfsrrctl |= 0x800 >> SXEVF_SRRCTL_BSIZEPKT_SHIFT;
++
++	SXEVF_REG_WRITE(hw, SXE_VFPSRTYPE, 0);
++
++	for (i = 0; i < 7; i++) {
++		SXEVF_REG_WRITE(hw, SXE_VFRDH(i), 0);
++		SXEVF_REG_WRITE(hw, SXE_VFRDT(i), 0);
++		SXEVF_REG_WRITE(hw, SXE_VFRXDCTL(i), 0);
++		SXEVF_REG_WRITE(hw, SXE_VFSRRCTL(i), vfsrrctl);
++		SXEVF_REG_WRITE(hw, SXE_VFTDH(i), 0);
++		SXEVF_REG_WRITE(hw, SXE_VFTDT(i), 0);
++		SXEVF_REG_WRITE(hw, SXE_VFTXDCTL(i), 0);
++		SXEVF_REG_WRITE(hw, SXE_VFTDWBAH(i), 0);
++		SXEVF_REG_WRITE(hw, SXE_VFTDWBAL(i), 0);
 +	}
 +
-+	reg = SXE_RTTDCS_TDPAC | SXE_RTTDCS_TDRM;
-+	SXE_REG_WRITE(hw, SXE_RTTDCS, reg);
++	SXEVF_WRITE_FLUSH(hw);
 +}
 +
-+void sxe_hw_dcb_tx_data_bw_alloc_configure(struct sxe_hw *hw, u16 *refill,
-+					   u16 *max, u8 *bwg_id, u8 *prio_type,
-+					   u8 *prio_tc, u8 max_priority)
++u32 sxevf_irq_cause_get(struct sxevf_hw *hw)
 +{
-+	u32 reg;
-+	u8 i;
-+
-+	reg = SXE_RTTPCS_TPPAC | SXE_RTTPCS_TPRM |
-+		  (SXE_RTTPCS_ARBD_DCB << SXE_RTTPCS_ARBD_SHIFT) |
-+		  SXE_RTTPCS_ARBDIS;
-+	SXE_REG_WRITE(hw, SXE_RTTPCS, reg);
-+
-+	reg = 0;
-+	for (i = 0; i < max_priority; i++)
-+		reg |= (prio_tc[i] << (i * SXE_RTTUP2TC_UP_SHIFT));
-+
-+	SXE_REG_WRITE(hw, SXE_RTTUP2TC, reg);
-+
-+	for (i = 0; i < MAX_TRAFFIC_CLASS; i++) {
-+		reg = refill[i];
-+		reg |= (u32)(max[i]) << SXE_RTTPT2C_MCL_SHIFT;
-+		reg |= (u32)(bwg_id[i]) << SXE_RTTPT2C_BWG_SHIFT;
-+
-+		if (prio_type[i] == PRIO_GROUP)
-+			reg |= SXE_RTTPT2C_GSP;
-+
-+		if (prio_type[i] == PRIO_LINK)
-+			reg |= SXE_RTTPT2C_LSP;
-+
-+		SXE_REG_WRITE(hw, SXE_RTTPT2C(i), reg);
-+	}
-+
-+	reg = SXE_RTTPCS_TPPAC | SXE_RTTPCS_TPRM |
-+		  (SXE_RTTPCS_ARBD_DCB << SXE_RTTPCS_ARBD_SHIFT);
-+	SXE_REG_WRITE(hw, SXE_RTTPCS, reg);
++	return SXEVF_REG_READ(hw, SXE_VFEICR);
 +}
 +
-+void sxe_hw_dcb_pfc_configure(struct sxe_hw *hw, u8 pfc_en,
-+			      u8 *prio_tc, u8 max_priority)
++void sxevf_tx_desc_configure(struct sxevf_hw *hw, u32 desc_mem_len,
++				u64 desc_dma_addr, u8 reg_idx)
 +{
-+	u32 i, j, fcrtl, reg;
-+	u8 max_tc = 0;
-+	u32 reg_val;
-+
-+	reg_val = SXE_REG_READ(hw, SXE_FLCTRL);
-+
-+	reg_val &= ~SXE_FCTRL_TFCE_MASK;
-+	reg_val |= SXE_FCTRL_TFCE_PFC_EN;
-+	reg_val |= SXE_FCTRL_TFCE_DPF_EN;
-+
-+	reg_val &= ~(SXE_FCTRL_TFCE_FCEN_MASK | SXE_FCTRL_TFCE_XONE_MASK);
-+	reg_val |= (pfc_en << 16) & SXE_FCTRL_TFCE_FCEN_MASK;
-+	reg_val |= (pfc_en << 24) & SXE_FCTRL_TFCE_XONE_MASK;
-+
-+	reg_val &= ~SXE_FCTRL_RFCE_MASK;
-+	reg_val |= SXE_FCTRL_RFCE_PFC_EN;
-+	SXE_REG_WRITE(hw, SXE_FLCTRL, reg_val);
-+
-+	reg_val = SXE_REG_READ(hw, SXE_PFCTOP);
-+	reg_val &= ~SXE_PFCTOP_FCOP_MASK;
-+	reg_val |= SXE_PFCTOP_FCT;
-+	reg_val |= SXE_PFCTOP_FCOP_PFC;
-+	SXE_REG_WRITE(hw, SXE_PFCTOP, reg_val);
-+
-+	for (i = 0; i < max_priority; i++) {
-+		if (prio_tc[i] > max_tc)
-+			max_tc = prio_tc[i];
-+	}
-+
-+	for (i = 0; i <= max_tc; i++) {
-+		int enabled = 0;
-+
-+		for (j = 0; j < max_priority; j++) {
-+			if (prio_tc[j] == i && (pfc_en & BIT(j))) {
-+				enabled = 1;
-+				break;
-+			}
-+		}
-+
-+		if (enabled) {
-+			reg = (hw->fc.high_water[i] << 9) | SXE_FCRTH_FCEN;
-+			fcrtl = (hw->fc.low_water[i] << 9) | SXE_FCRTL_XONE;
-+			SXE_REG_WRITE(hw, SXE_FCRTL(i), fcrtl);
-+		} else {
-+			reg = (SXE_REG_READ(hw, SXE_RXPBSIZE(i)) - 24576) >> 1;
-+			SXE_REG_WRITE(hw, SXE_FCRTL(i), 0);
-+		}
-+
-+		SXE_REG_WRITE(hw, SXE_FCRTH(i), reg);
-+	}
-+
-+	for (; i < MAX_TRAFFIC_CLASS; i++) {
-+		SXE_REG_WRITE(hw, SXE_FCRTL(i), 0);
-+		SXE_REG_WRITE(hw, SXE_FCRTH(i), 0);
-+	}
-+
-+	reg = hw->fc.pause_time * 0x00010001;
-+	for (i = 0; i < (MAX_TRAFFIC_CLASS / 2); i++)
-+		SXE_REG_WRITE(hw, SXE_FCTTV(i), reg);
-+
-+	SXE_REG_WRITE(hw, SXE_FCRTV, hw->fc.pause_time / 2);
++	SXEVF_REG_WRITE(hw, SXEVF_TDBAL(reg_idx), (desc_dma_addr &
++						DMA_BIT_MASK(32)));
++	SXEVF_REG_WRITE(hw, SXEVF_TDBAH(reg_idx), (desc_dma_addr >> 32));
++	SXEVF_REG_WRITE(hw, SXEVF_TDLEN(reg_idx), desc_mem_len);
++	SXEVF_REG_WRITE(hw, SXEVF_TDH(reg_idx), 0);
++	SXEVF_REG_WRITE(hw, SXEVF_TDT(reg_idx), 0);
 +}
 +
-+static void sxe_hw_dcb_8tc_vmdq_off_stats_configure(struct sxe_hw *hw)
++void sxevf_rss_bit_num_set(struct sxevf_hw *hw, u32 value)
 +{
-+	u32 reg;
-+	u8  i;
-+
-+	for (i = 0; i < 32; i++) {
-+		reg = 0x01010101 * (i / 4);
-+		SXE_REG_WRITE(hw, SXE_RQSMR(i), reg);
-+	}
-+
-+	for (i = 0; i < 32; i++) {
-+		if (i < 8)
-+			reg = 0x00000000;
-+		else if (i < 16)
-+			reg = 0x01010101;
-+		else if (i < 20)
-+			reg = 0x02020202;
-+		else if (i < 24)
-+			reg = 0x03030303;
-+		else if (i < 26)
-+			reg = 0x04040404;
-+		else if (i < 28)
-+			reg = 0x05050505;
-+		else if (i < 30)
-+			reg = 0x06060606;
-+		else
-+			reg = 0x07070707;
-+
-+		SXE_REG_WRITE(hw, SXE_TQSM(i), reg);
-+	}
++	SXEVF_REG_WRITE(hw, SXE_VFPSRTYPE, value);
 +}
 +
-+void sxe_hw_vt_pool_loopback_switch(struct sxe_hw *hw, bool is_enable)
++void sxevf_hw_vlan_tag_strip_switch(struct sxevf_hw *hw,
++					u16 reg_index, bool is_enable)
 +{
-+	if (is_enable)
-+		SXE_REG_WRITE(hw, SXE_PFDTXGSWC, SXE_PFDTXGSWC_VT_LBEN);
-+	else
-+		SXE_REG_WRITE(hw, SXE_PFDTXGSWC, 0);
-+}
++	u32 vlnctrl;
 +
-+u32 sxe_hw_rx_pool_bitmap_get(struct sxe_hw *hw, u8 reg_idx)
-+{
-+	return SXE_REG_READ(hw, SXE_VFRE(reg_idx));
-+}
-+
-+void sxe_hw_rx_pool_bitmap_set(struct sxe_hw *hw, u8 reg_idx, u32 bitmap)
-+{
-+	SXE_REG_WRITE(hw, SXE_VFRE(reg_idx), bitmap);
-+}
-+
-+u32 sxe_hw_tx_pool_bitmap_get(struct sxe_hw *hw, u8 reg_idx)
-+{
-+	return SXE_REG_READ(hw, SXE_VFTE(reg_idx));
-+}
-+
-+void sxe_hw_tx_pool_bitmap_set(struct sxe_hw *hw, u8 reg_idx, u32 bitmap)
-+{
-+	SXE_REG_WRITE(hw, SXE_VFTE(reg_idx), bitmap);
-+}
-+
-+void sxe_hw_dcb_max_mem_window_set(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_RTTBCNRM, value);
-+}
-+
-+void sxe_hw_dcb_tx_ring_rate_factor_set(struct sxe_hw *hw,
-+							u32 ring_idx, u32 rate)
-+{
-+	SXE_REG_WRITE(hw, SXE_RTTDQSEL, ring_idx);
-+	SXE_REG_WRITE(hw, SXE_RTTBCNRC, rate);
-+}
-+
-+void sxe_hw_spoof_count_enable(struct sxe_hw *hw, u8 reg_idx, u8 bit_index)
-+{
-+	u32 value = SXE_REG_READ(hw, SXE_VMECM(reg_idx));
-+
-+	value |= BIT(bit_index);
-+
-+	SXE_REG_WRITE(hw, SXE_VMECM(reg_idx), value);
-+}
-+
-+void sxe_hw_pool_mac_anti_spoof_set(struct sxe_hw *hw, u8 vf_idx, bool status)
-+{
-+	u8 reg_index = vf_idx >> 3;
-+	u8 bit_index = vf_idx % 8;
-+	u32 value;
-+
-+	value = SXE_REG_READ(hw, SXE_SPOOF(reg_index));
-+
-+	if (status)
-+		value |= BIT(bit_index);
-+	else
-+		value &= ~BIT(bit_index);
-+
-+	SXE_REG_WRITE(hw, SXE_SPOOF(reg_index), value);
-+}
-+
-+void sxe_hw_rx_drop_switch(struct sxe_hw *hw, u8 idx, bool is_enable)
-+{
-+	u32 srrctl = SXE_REG_READ(hw, SXE_SRRCTL(idx));
++	vlnctrl = SXEVF_REG_READ(hw, SXE_VFRXDCTL(reg_index));
 +
 +	if (is_enable)
-+		srrctl |= SXE_SRRCTL_DROP_EN;
++		vlnctrl |= SXEVF_RXDCTL_VME;
 +	else
-+		srrctl &= ~SXE_SRRCTL_DROP_EN;
++		vlnctrl &= ~SXEVF_RXDCTL_VME;
 +
-+	SXE_REG_WRITE(hw, SXE_SRRCTL(idx), srrctl);
++	SXEVF_REG_WRITE(hw, SXE_VFRXDCTL(reg_index), vlnctrl);
 +}
 +
-+void sxe_hw_dcb_rate_limiter_clear(struct sxe_hw *hw, u8 ring_max)
++void sxevf_tx_queue_thresh_set(struct sxevf_hw *hw, u8 reg_idx,
++				u32 prefech_thresh, u32 host_thresh, u32 wb_thresh)
 +{
-+	u32 i;
++	u32 txdctl = SXEVF_REG_READ(hw, SXEVF_TXDCTL(reg_idx));
 +
-+	for (i = 0; i < ring_max; i++) {
-+		SXE_REG_WRITE(hw, SXE_RTTDQSEL, i);
-+		SXE_REG_WRITE(hw, SXE_RTTBCNRC, 0);
-+	}
-+	SXE_WRITE_FLUSH(hw);
++	txdctl |= (prefech_thresh & SXEVF_TXDCTL_THRESH_MASK);
++	txdctl |= ((host_thresh & SXEVF_TXDCTL_THRESH_MASK) << SXEVF_TXDCTL_HTHRESH_SHIFT);
++	txdctl |= ((wb_thresh & SXEVF_TXDCTL_THRESH_MASK) << SXEVF_TXDCTL_WTHRESH_SHIFT);
++
++	SXEVF_REG_WRITE(hw, SXEVF_TXDCTL(reg_idx), txdctl);
 +}
 +
-+void sxe_hw_stats_regs_clean(struct sxe_hw *hw)
++void sxevf_rx_desc_tail_set(struct sxevf_hw *hw, u8 reg_idx, u32 value)
 +{
-+	u16 i;
-+	for (i = 0; i < 16; i++) {
-+		SXE_REG_READ(hw, SXE_QPTC(i));
-+		SXE_REG_READ(hw, SXE_QPRC(i));
-+		SXE_REG_READ(hw, SXE_QBTC_H(i));
-+		SXE_REG_READ(hw, SXE_QBTC_L(i));
-+		SXE_REG_READ(hw, SXE_QBRC_H(i));
-+		SXE_REG_READ(hw, SXE_QBRC_L(i));
-+		SXE_REG_READ(hw, SXE_QPRDC(i));
-+	}
-+
-+	SXE_REG_READ(hw, SXE_RXDGBCH);
-+	SXE_REG_READ(hw, SXE_RXDGBCL);
-+	SXE_REG_READ(hw, SXE_RXDGPC);
-+	SXE_REG_READ(hw, SXE_TXDGPC);
-+	SXE_REG_READ(hw, SXE_TXDGBCH);
-+	SXE_REG_READ(hw, SXE_TXDGBCL);
-+	SXE_REG_READ(hw, SXE_RXDDGPC);
-+	SXE_REG_READ(hw, SXE_RXDDGBCH);
-+	SXE_REG_READ(hw, SXE_RXDDGBCL);
-+	SXE_REG_READ(hw, SXE_RXLPBKGPC);
-+	SXE_REG_READ(hw, SXE_RXLPBKGBCH);
-+	SXE_REG_READ(hw, SXE_RXLPBKGBCL);
-+	SXE_REG_READ(hw, SXE_RXDLPBKGPC);
-+	SXE_REG_READ(hw, SXE_RXDLPBKGBCH);
-+	SXE_REG_READ(hw, SXE_RXDLPBKGBCL);
-+	SXE_REG_READ(hw, SXE_RXTPCIN);
-+	SXE_REG_READ(hw, SXE_RXTPCOUT);
-+	SXE_REG_READ(hw, SXE_RXPRDDC);
-+	SXE_REG_READ(hw, SXE_TXSWERR);
-+	SXE_REG_READ(hw, SXE_TXSWITCH);
-+	SXE_REG_READ(hw, SXE_TXREPEAT);
-+	SXE_REG_READ(hw, SXE_TXDESCERR);
-+
-+	SXE_REG_READ(hw, SXE_CRCERRS);
-+	SXE_REG_READ(hw, SXE_ERRBC);
-+	SXE_REG_READ(hw, SXE_RLEC);
-+	SXE_REG_READ(hw, SXE_PRC64);
-+	SXE_REG_READ(hw, SXE_PRC127);
-+	SXE_REG_READ(hw, SXE_PRC255);
-+	SXE_REG_READ(hw, SXE_PRC511);
-+	SXE_REG_READ(hw, SXE_PRC1023);
-+	SXE_REG_READ(hw, SXE_PRC1522);
-+	SXE_REG_READ(hw, SXE_GPRC);
-+	SXE_REG_READ(hw, SXE_BPRC);
-+	SXE_REG_READ(hw, SXE_MPRC);
-+	SXE_REG_READ(hw, SXE_GPTC);
-+	SXE_REG_READ(hw, SXE_GORCL);
-+	SXE_REG_READ(hw, SXE_GORCH);
-+	SXE_REG_READ(hw, SXE_GOTCL);
-+	SXE_REG_READ(hw, SXE_GOTCH);
-+	SXE_REG_READ(hw, SXE_RUC);
-+	SXE_REG_READ(hw, SXE_RFC);
-+	SXE_REG_READ(hw, SXE_ROC);
-+	SXE_REG_READ(hw, SXE_RJC);
-+	for (i = 0; i < 8; i++)
-+		SXE_REG_READ(hw, SXE_PRCPF(i));
-+
-+	SXE_REG_READ(hw, SXE_TORL);
-+	SXE_REG_READ(hw, SXE_TORH);
-+	SXE_REG_READ(hw, SXE_TPR);
-+	SXE_REG_READ(hw, SXE_TPT);
-+	SXE_REG_READ(hw, SXE_PTC64);
-+	SXE_REG_READ(hw, SXE_PTC127);
-+	SXE_REG_READ(hw, SXE_PTC255);
-+	SXE_REG_READ(hw, SXE_PTC511);
-+	SXE_REG_READ(hw, SXE_PTC1023);
-+	SXE_REG_READ(hw, SXE_PTC1522);
-+	SXE_REG_READ(hw, SXE_MPTC);
-+	SXE_REG_READ(hw, SXE_BPTC);
-+	for (i = 0; i < 8; i++)
-+		SXE_REG_READ(hw, SXE_PFCT(i));
++	SXEVF_REG_WRITE(hw, SXE_VFRDT(reg_idx), value);
 +}
 +
-+static void sxe_hw_stats_seq_get(struct sxe_hw *hw, struct sxe_mac_stats *stats)
++u32 sxevf_hw_rss_redir_tbl_get(struct sxevf_hw *hw, u16 reg_idx)
 +{
-+	u8 i;
-+	u64 tx_pfc_num = 0;
-+	u64 gotch = 0;
-+	u32 rycle_cnt = 10;
-+
-+	for (i = 0; i < 8; i++) {
-+		stats->prcpf[i] += SXE_REG_READ(hw, SXE_PRCPF(i));
-+		tx_pfc_num = SXE_REG_READ(hw, SXE_PFCT(i));
-+		stats->pfct[i] += tx_pfc_num;
-+		stats->total_tx_pause += tx_pfc_num;
-+	}
-+
-+	stats->total_gptc += SXE_REG_READ(hw, SXE_GPTC);
-+	stats->total_gotc += (SXE_REG_READ(hw, SXE_GOTCL) |
-+			((u64)SXE_REG_READ(hw, SXE_GOTCH) << 32));
-+
-+	do {
-+		gotch = SXE_REG_READ(hw, SXE_GOTCH);
-+		rycle_cnt--;
-+	} while (gotch != 0 && rycle_cnt != 0);
-+	if (gotch != 0)
-+		LOG_INFO("GOTCH is not clear!");
++	return SXEVF_REG_READ(hw, SXE_VFRETA(reg_idx >> 2));
 +}
 +
-+void sxe_hw_stats_seq_clean(struct sxe_hw *hw, struct sxe_mac_stats *stats)
++void sxevf_hw_rss_redir_tbl_set(struct sxevf_hw *hw,
++						u16 reg_idx, u32 value)
 +{
-+	u8 i;
-+	u64 tx_pfc_num = 0;
-+	u64 gotch = 0;
-+	u32 rycle_cnt = 10;
-+
-+	stats->total_gotc += (SXE_REG_READ(hw, SXE_GOTCL) |
-+			((u64)SXE_REG_READ(hw, SXE_GOTCH) << 32));
-+	stats->total_gptc += SXE_REG_READ(hw, SXE_GPTC);
-+	do {
-+		gotch = SXE_REG_READ(hw, SXE_GOTCH);
-+		rycle_cnt--;
-+	} while (gotch != 0 && rycle_cnt != 0);
-+	if (gotch != 0)
-+		LOG_INFO("GOTCH is not clear!");
-+
-+	for (i = 0; i < 8; i++) {
-+		stats->prcpf[i] += SXE_REG_READ(hw, SXE_PRCPF(i));
-+		tx_pfc_num = SXE_REG_READ(hw, SXE_PFCT(i));
-+		stats->pfct[i] += tx_pfc_num;
-+		stats->total_tx_pause += tx_pfc_num;
-+	}
++	SXEVF_REG_WRITE(hw, SXE_VFRETA(reg_idx >> 2), value);
 +}
 +
-+void sxe_hw_stats_get(struct sxe_hw *hw, struct sxe_mac_stats *stats)
-+{
-+	u64 rjc;
-+	u32 i, rx_dbu_drop, ring_drop = 0;
-+	u64 tpr = 0;
-+	u32 rycle_cnt = 10;
-+	u64 gorch, torh = 0;
-+
-+	for (i = 0; i < 16; i++) {
-+		stats->qptc[i] += SXE_REG_READ(hw, SXE_QPTC(i));
-+		stats->qprc[i] += SXE_REG_READ(hw, SXE_QPRC(i));
-+		ring_drop = SXE_REG_READ(hw, SXE_QPRDC(i));
-+		stats->qprdc[i] += ring_drop;
-+		stats->hw_rx_no_dma_resources += ring_drop;
-+
-+		stats->qbtc[i] += ((u64)SXE_REG_READ(hw, SXE_QBTC_H(i)) << 32);
-+		SXE_RMB();
-+		stats->qbtc[i] += SXE_REG_READ(hw, SXE_QBTC_L(i));
-+
-+		stats->qbrc[i] += ((u64)SXE_REG_READ(hw, SXE_QBRC_H(i)) << 32);
-+		SXE_RMB();
-+		stats->qbrc[i] += SXE_REG_READ(hw, SXE_QBRC_L(i));
-+	}
-+	stats->rxdgbc += ((u64)SXE_REG_READ(hw, SXE_RXDGBCH) << 32) +
-+				(SXE_REG_READ(hw, SXE_RXDGBCL));
-+
-+	stats->rxdgpc += SXE_REG_READ(hw, SXE_RXDGPC);
-+	stats->txdgpc += SXE_REG_READ(hw, SXE_TXDGPC);
-+	stats->txdgbc += (((u64)SXE_REG_READ(hw, SXE_TXDGBCH) << 32) +
-+				SXE_REG_READ(hw, SXE_TXDGBCL));
-+
-+	stats->rxddpc += SXE_REG_READ(hw, SXE_RXDDGPC);
-+	stats->rxddbc += ((u64)SXE_REG_READ(hw, SXE_RXDDGBCH) << 32) +
-+				(SXE_REG_READ(hw, SXE_RXDDGBCL));
-+
-+	stats->rxlpbkpc += SXE_REG_READ(hw, SXE_RXLPBKGPC);
-+	stats->rxlpbkbc += ((u64)SXE_REG_READ(hw, SXE_RXLPBKGBCH) << 32) +
-+			(SXE_REG_READ(hw, SXE_RXLPBKGBCL));
-+
-+	stats->rxdlpbkpc += SXE_REG_READ(hw, SXE_RXDLPBKGPC);
-+	stats->rxdlpbkbc += ((u64)SXE_REG_READ(hw, SXE_RXDLPBKGBCH) << 32) +
-+				(SXE_REG_READ(hw, SXE_RXDLPBKGBCL));
-+	stats->rxtpcing += SXE_REG_READ(hw, SXE_RXTPCIN);
-+	stats->rxtpceng += SXE_REG_READ(hw, SXE_RXTPCOUT);
-+	stats->prddc += SXE_REG_READ(hw, SXE_RXPRDDC);
-+	stats->txswerr += SXE_REG_READ(hw, SXE_TXSWERR);
-+	stats->txswitch += SXE_REG_READ(hw, SXE_TXSWITCH);
-+	stats->txrepeat += SXE_REG_READ(hw, SXE_TXREPEAT);
-+	stats->txdescerr += SXE_REG_READ(hw, SXE_TXDESCERR);
-+
-+	for (i = 0; i < 8; i++) {
-+		stats->dburxtcin[i] += SXE_REG_READ(hw, SXE_DBUDRTCICNT(i));
-+		stats->dburxtcout[i] += SXE_REG_READ(hw, SXE_DBUDRTCOCNT(i));
-+		stats->dburxgdreecnt[i] += SXE_REG_READ(hw, SXE_DBUDREECNT(i));
-+		rx_dbu_drop = SXE_REG_READ(hw, SXE_DBUDROFPCNT(i));
-+		stats->dburxdrofpcnt[i] += rx_dbu_drop;
-+		stats->dbutxtcin[i] += SXE_REG_READ(hw, SXE_DBUDTTCICNT(i));
-+		stats->dbutxtcout[i] += SXE_REG_READ(hw, SXE_DBUDTTCOCNT(i));
-+	}
-+
-+	stats->fnavadd += (SXE_REG_READ(hw, SXE_FNAVUSTAT) & 0xFFFF);
-+	stats->fnavrmv += ((SXE_REG_READ(hw, SXE_FNAVUSTAT) >> 16) & 0xFFFF);
-+	stats->fnavadderr += (SXE_REG_READ(hw, SXE_FNAVFSTAT) & 0xFFFF);
-+	stats->fnavrmverr += ((SXE_REG_READ(hw, SXE_FNAVFSTAT) >> 16) & 0xFFFF);
-+	stats->fnavmatch += SXE_REG_READ(hw, SXE_FNAVMATCH);
-+	stats->fnavmiss += SXE_REG_READ(hw, SXE_FNAVMISS);
-+
-+	sxe_hw_stats_seq_get(hw, stats);
-+
-+	stats->crcerrs += SXE_REG_READ(hw, SXE_CRCERRS);
-+	stats->errbc   += SXE_REG_READ(hw, SXE_ERRBC);
-+	stats->bprc += SXE_REG_READ(hw, SXE_BPRC);
-+	stats->mprc += SXE_REG_READ(hw, SXE_MPRC);
-+	stats->roc += SXE_REG_READ(hw, SXE_ROC);
-+	stats->prc64 += SXE_REG_READ(hw, SXE_PRC64);
-+	stats->prc127 += SXE_REG_READ(hw, SXE_PRC127);
-+	stats->prc255 += SXE_REG_READ(hw, SXE_PRC255);
-+	stats->prc511 += SXE_REG_READ(hw, SXE_PRC511);
-+	stats->prc1023 += SXE_REG_READ(hw, SXE_PRC1023);
-+	stats->prc1522 += SXE_REG_READ(hw, SXE_PRC1522);
-+	stats->rlec += SXE_REG_READ(hw, SXE_RLEC);
-+	stats->mptc += SXE_REG_READ(hw, SXE_MPTC);
-+	stats->ruc += SXE_REG_READ(hw, SXE_RUC);
-+	stats->rfc += SXE_REG_READ(hw, SXE_RFC);
-+
-+	rjc = SXE_REG_READ(hw, SXE_RJC);
-+	stats->rjc += rjc;
-+	stats->roc += rjc;
-+
-+	tpr = SXE_REG_READ(hw, SXE_TPR);
-+	stats->tpr += tpr;
-+	stats->tpt += SXE_REG_READ(hw, SXE_TPT);
-+	stats->ptc64 += SXE_REG_READ(hw, SXE_PTC64);
-+	stats->ptc127 += SXE_REG_READ(hw, SXE_PTC127);
-+	stats->ptc255 += SXE_REG_READ(hw, SXE_PTC255);
-+	stats->ptc511 += SXE_REG_READ(hw, SXE_PTC511);
-+	stats->ptc1023 += SXE_REG_READ(hw, SXE_PTC1023);
-+	stats->ptc1522 += SXE_REG_READ(hw, SXE_PTC1522);
-+	stats->bptc += SXE_REG_READ(hw, SXE_BPTC);
-+
-+	stats->gprc += SXE_REG_READ(hw, SXE_GPRC);
-+	stats->gorc += (SXE_REG_READ(hw, SXE_GORCL) |
-+			((u64)SXE_REG_READ(hw, SXE_GORCH) << 32));
-+
-+	do {
-+		gorch = SXE_REG_READ(hw, SXE_GORCH);
-+		rycle_cnt--;
-+	} while (gorch != 0 && rycle_cnt != 0);
-+	if (gorch != 0)
-+		LOG_INFO("GORCH is not clear!");
-+
-+	stats->tor += (SXE_REG_READ(hw, SXE_TORL) |
-+			((u64)SXE_REG_READ(hw, SXE_TORH) << 32));
-+
-+			rycle_cnt = 10;
-+	do {
-+		torh = SXE_REG_READ(hw, SXE_TORH);
-+		rycle_cnt--;
-+	} while (torh != 0 && rycle_cnt != 0);
-+	if (torh != 0)
-+		LOG_INFO("TORH is not clear!");
-+
-+	stats->tor -= tpr * RTE_ETHER_CRC_LEN;
-+	stats->gptc = stats->total_gptc - stats->total_tx_pause;
-+	stats->gotc = stats->total_gotc - stats->total_tx_pause * RTE_ETHER_MIN_LEN
-+			- stats->gptc * RTE_ETHER_CRC_LEN;
-+}
-+
-+void sxe_hw_mbx_init(struct sxe_hw *hw)
-+{
-+	hw->mbx.msg_len = SXE_MBX_MSG_NUM;
-+	hw->mbx.interval = SXE_MBX_RETRY_INTERVAL;
-+	hw->mbx.retry = SXE_MBX_RETRY_COUNT;
-+
-+	hw->mbx.stats.rcv_msgs   = 0;
-+	hw->mbx.stats.send_msgs  = 0;
-+	hw->mbx.stats.acks	 = 0;
-+	hw->mbx.stats.reqs	 = 0;
-+	hw->mbx.stats.rsts	 = 0;
-+}
-+
-+static bool sxe_hw_vf_irq_check(struct sxe_hw *hw, u32 mask, u32 index)
-+{
-+	u32 value = SXE_REG_READ(hw, SXE_PFMBICR(index));
-+
-+	if (value & mask) {
-+		SXE_REG_WRITE(hw, SXE_PFMBICR(index), mask);
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+bool sxe_hw_vf_rst_check(struct sxe_hw *hw, u8 vf_idx)
-+{
-+	u32 index = vf_idx >> 5;
-+	u32 bit = vf_idx % 32;
-+	u32 value;
-+
-+	value = SXE_REG_READ(hw, SXE_VFLRE(index));
-+	if (value & BIT(bit)) {
-+		SXE_REG_WRITE(hw, SXE_VFLREC(index), BIT(bit));
-+		hw->mbx.stats.rsts++;
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+bool sxe_hw_vf_req_check(struct sxe_hw *hw, u8 vf_idx)
-+{
-+	u8 index = vf_idx >> 4;
-+	u8 bit = vf_idx % 16;
-+
-+	if (sxe_hw_vf_irq_check(hw, SXE_PFMBICR_VFREQ << bit, index)) {
-+		hw->mbx.stats.reqs++;
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+bool sxe_hw_vf_ack_check(struct sxe_hw *hw, u8 vf_idx)
-+{
-+	u8 index = vf_idx >> 4;
-+	u8 bit = vf_idx % 16;
-+
-+	if (sxe_hw_vf_irq_check(hw, SXE_PFMBICR_VFACK << bit, index)) {
-+		hw->mbx.stats.acks++;
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+static bool sxe_hw_mbx_lock(struct sxe_hw *hw, u8 vf_idx)
-+{
-+	u32 value;
-+	bool ret = false;
-+	u32 retry = hw->mbx.retry;
-+
-+	while (retry--) {
-+		SXE_REG_WRITE(hw, SXE_PFMAILBOX(vf_idx), SXE_PFMAILBOX_PFU);
-+
-+		value = SXE_REG_READ(hw, SXE_PFMAILBOX(vf_idx));
-+		if (value & SXE_PFMAILBOX_PFU) {
-+			ret = true;
-+			break;
-+		}
-+
-+		sxe_udelay(hw->mbx.interval);
-+	}
-+
-+	return ret;
-+}
-+
-+s32 sxe_hw_rcv_msg_from_vf(struct sxe_hw *hw, u32 *msg,
-+				u16 msg_len, u16 index)
-+{
-+	struct sxe_mbx_info *mbx = &hw->mbx;
-+	u8 i;
-+	s32 ret = 0;
-+	u16 msg_entry;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	msg_entry = (msg_len > mbx->msg_len) ? mbx->msg_len : msg_len;
-+
-+	if (!sxe_hw_mbx_lock(hw, index)) {
-+		ret = -SXE_ERR_MBX_LOCK_FAIL;
-+		LOG_ERROR_BDF("vf idx:%d msg_len:%d rcv lock mailbox fail.(err:%d)",
-+			   index, msg_len, ret);
-+		goto l_out;
-+	}
-+
-+	for (i = 0; i < msg_entry; i++) {
-+		msg[i] = SXE_REG_READ(hw, (SXE_PFMBMEM(index) + (i << 2)));
-+		LOG_DEBUG_BDF("vf_idx:%u read mbx mem[%u]:0x%x.",
-+				  index, i, msg[i]);
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_PFMAILBOX(index), SXE_PFMAILBOX_ACK);
-+	mbx->stats.rcv_msgs++;
-+
-+l_out:
-+	return ret;
-+}
-+
-+s32 sxe_hw_send_msg_to_vf(struct sxe_hw *hw, u32 *msg,
-+				u16 msg_len, u16 index)
-+{
-+	struct sxe_mbx_info *mbx = &hw->mbx;
-+	u8 i;
-+	s32 ret = 0;
-+	u32 old;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	if (msg_len > mbx->msg_len) {
-+		ret = -EINVAL;
-+		LOG_ERROR_BDF("pf reply msg num:%d exceed limit:%d reply fail.(err:%d)",
-+			  msg_len, mbx->msg_len, ret);
-+		goto l_out;
-+	}
-+
-+	if (!sxe_hw_mbx_lock(hw, index)) {
-+		ret = -SXE_ERR_MBX_LOCK_FAIL;
-+		LOG_ERROR_BDF("send msg len:%u to vf idx:%u msg[0]:0x%x "
-+			   "lock mailbox fail.(err:%d)",
-+			   msg_len, index, msg[0], ret);
-+		goto l_out;
-+	}
-+
-+	old = SXE_REG_READ(hw, (SXE_PFMBMEM(index)));
-+	LOG_DEBUG_BDF("original send msg:0x%x. mbx mem[0]:0x%x", *msg, old);
-+	if (msg[0] & SXE_CTRL_MSG_MASK)
-+		msg[0] |= (old & SXE_MSGID_MASK);
-+	else
-+		msg[0] |= (old & SXE_PFMSG_MASK);
-+
-+	for (i = 0; i < msg_len; i++) {
-+		SXE_REG_WRITE(hw, (SXE_PFMBMEM(index) + (i << 2)), msg[i]);
-+		LOG_DEBUG_BDF("vf_idx:%u write mbx mem[%u]:0x%x.",
-+				  index, i, msg[i]);
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_PFMAILBOX(index), SXE_PFMAILBOX_STS);
-+	mbx->stats.send_msgs++;
-+
-+l_out:
-+	return ret;
-+}
-+
-+void sxe_hw_pcie_vt_mode_set(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_GCR_EXT, value);
-+}
-+
-+s32 sxe_hw_hdc_lock_get(struct sxe_hw *hw, u32 trylock)
-+{
-+	u32 val;
-+	u16 i;
-+	s32 ret = 0;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	SXE_REG_WRITE(hw, SXE_HDC_SW_LK, SXE_HDC_RELEASE_SW_LK);
-+	SXE_WRITE_FLUSH(hw);
-+
-+	for (i = 0; i < trylock; i++) {
-+		val = SXE_REG_READ(hw, SXE_HDC_SW_LK) & SXE_HDC_SW_LK_BIT;
-+		if (!val)
-+			break;
-+
-+		sxe_udelay(10);
-+	}
-+
-+	if (i >= trylock) {
-+		LOG_ERROR_BDF("hdc is busy, reg: 0x%x", val);
-+		ret = -SXE_ERR_HDC_LOCK_BUSY;
-+		goto l_out;
-+	}
-+
-+	val = SXE_REG_READ(hw, SXE_HDC_PF_LK) & SXE_HDC_PF_LK_BIT;
-+	if (!val) {
-+		SXE_REG_WRITE(hw, SXE_HDC_SW_LK, SXE_HDC_RELEASE_SW_LK);
-+		LOG_ERROR_BDF("get hdc lock fail, reg: 0x%x", val);
-+		ret = -SXE_ERR_HDC_LOCK_BUSY;
-+		goto l_out;
-+	}
-+
-+	hw->hdc.pf_lock_val = val;
-+	LOG_DEBUG_BDF("hw[%p]'s port[%u] got pf lock", hw, val);
-+
-+l_out:
-+	return ret;
-+}
-+
-+void sxe_hw_hdc_lock_release(struct sxe_hw *hw, u32 retry_cnt)
-+{
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	do {
-+		SXE_REG_WRITE(hw, SXE_HDC_SW_LK, SXE_HDC_RELEASE_SW_LK);
-+		sxe_udelay(1);
-+		if (!(SXE_REG_READ(hw, SXE_HDC_PF_LK) & hw->hdc.pf_lock_val)) {
-+			LOG_DEBUG_BDF("hw[%p]'s port[%u] release pf lock", hw,
-+				hw->hdc.pf_lock_val);
-+			hw->hdc.pf_lock_val = 0;
-+			break;
-+		}
-+	} while ((retry_cnt--) > 0);
-+}
-+
-+void sxe_hw_hdc_fw_ov_clear(struct sxe_hw *hw)
-+{
-+	SXE_REG_WRITE(hw, SXE_HDC_FW_OV, 0);
-+}
-+
-+bool sxe_hw_hdc_is_fw_over_set(struct sxe_hw *hw)
-+{
-+	bool fw_ov = false;
-+
-+	if (SXE_REG_READ(hw, SXE_HDC_FW_OV) & SXE_HDC_FW_OV_BIT)
-+		fw_ov = true;
-+
-+	return fw_ov;
-+}
-+
-+void sxe_hw_hdc_packet_send_done(struct sxe_hw *hw)
-+{
-+	SXE_REG_WRITE(hw, SXE_HDC_SW_OV, SXE_HDC_SW_OV_BIT);
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+void sxe_hw_hdc_packet_header_send(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_HDC_PACKET_HEAD0, value);
-+}
-+
-+void sxe_hw_hdc_packet_data_dword_send(struct sxe_hw *hw,
-+						u16 dword_index, u32 value)
-+{
-+	SXE_WRITE_REG_ARRAY_32(hw, SXE_HDC_PACKET_DATA0, dword_index, value);
-+}
-+
-+u32 sxe_hw_hdc_fw_ack_header_get(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_HDC_PACKET_HEAD0);
-+}
-+
-+u32 sxe_hw_hdc_packet_data_dword_rcv(struct sxe_hw *hw, u16 dword_index)
-+{
-+	return SXE_READ_REG_ARRAY_32(hw, SXE_HDC_PACKET_DATA0, dword_index);
-+}
-+
-+u32 sxe_hw_hdc_fw_status_get(struct sxe_hw *hw)
-+{
-+	struct sxe_adapter *adapter = hw->adapter;
-+	u32 status = SXE_REG_READ(hw, SXE_FW_STATUS_REG);
-+
-+	LOG_DEBUG_BDF("fw status[0x%x]", status);
-+
-+	return status;
-+}
-+
-+void sxe_hw_hdc_drv_status_set(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_DRV_STATUS_REG, value);
-+}
-+
-+u32 sxe_hw_hdc_channel_state_get(struct sxe_hw *hw)
-+{
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	u32 state = SXE_REG_READ(hw, SXE_FW_HDC_STATE_REG);
-+
-+	LOG_DEBUG_BDF("hdc channel state[0x%x]", state);
-+
-+	return state;
-+}
-+
-+u32 sxe_hw_rss_key_get_by_idx(struct sxe_hw *hw, u8 reg_idx)
++u32 sxevf_hw_rss_key_get(struct sxevf_hw *hw, u8 reg_idx)
 +{
 +	u32 rss_key;
 +
-+	if (reg_idx >= SXE_MAX_RSS_KEY_ENTRIES)
++	if (reg_idx >= SXEVF_MAX_RSS_KEY_ENTRIES)
 +		rss_key = 0;
 +	else
-+		rss_key = SXE_REG_READ(hw, SXE_RSSRK(reg_idx));
++		rss_key = SXEVF_REG_READ(hw, SXE_VFRSSRK(reg_idx));
 +
 +	return rss_key;
 +}
 +
-+bool sxe_hw_is_rss_enabled(struct sxe_hw *hw)
++u32 sxevf_hw_rss_field_get(struct sxevf_hw *hw)
++{
++	u32 mrqc = SXEVF_REG_READ(hw, SXE_VFMRQC);
++	return (mrqc & SXEVF_RSS_FIELD_MASK);
++}
++
++bool sxevf_hw_is_rss_enabled(struct sxevf_hw *hw)
 +{
 +	bool rss_enable = false;
-+	u32 mrqc = SXE_REG_READ(hw, SXE_MRQC);
-+	u32 mrqe_val = mrqc & SXE_MRQC_MRQE_MASK;
-+
-+	if (mrqe_val == SXE_MRQC_RSSEN ||
-+		mrqe_val == SXE_MRQC_RTRSS8TCEN ||
-+		mrqe_val == SXE_MRQC_RTRSS4TCEN ||
-+		mrqe_val == SXE_MRQC_VMDQRSS32EN ||
-+		mrqe_val == SXE_MRQC_VMDQRSS64EN)
++	u32 mrqc = SXEVF_REG_READ(hw, SXE_VFMRQC);
++	if (mrqc & SXEVF_MRQC_RSSEN)
 +		rss_enable = true;
 +
 +	return rss_enable;
 +}
 +
-+static u32 sxe_hw_mrqc_reg_get(struct sxe_hw *hw)
++void sxevf_hw_rss_key_set_all(struct sxevf_hw *hw, u32 *rss_key)
 +{
-+	return SXE_REG_READ(hw, SXE_MRQC);
++	u32 i;
++
++	for (i = 0; i < SXEVF_MAX_RSS_KEY_ENTRIES; i++)
++		SXEVF_REG_WRITE(hw, SXE_VFRSSRK(i), rss_key[i]);
 +}
 +
-+u32 sxe_hw_rss_field_get(struct sxe_hw *hw)
++void sxevf_hw_rss_cap_switch(struct sxevf_hw *hw, bool is_on)
 +{
-+	u32 mrqc = sxe_hw_mrqc_reg_get(hw);
-+	return (mrqc & SXE_RSS_FIELD_MASK);
-+}
-+
-+#define SXE_TRAFFIC_CLASS_MAX			8
-+#define SXE_MR_VLAN_MSB_REG_OFFSET		4
-+#define SXE_MR_VIRTUAL_POOL_MSB_REG_OFFSET	4
-+#define SXE_MR_TYPE_MASK			0x0F
-+#define SXE_MR_DST_POOL_OFFSET			8
-+
-+void sxe_hw_crc_strip_config(struct sxe_hw *hw, bool keep_crc)
-+{
-+	u32 crcflag = SXE_REG_READ(hw, SXE_CRC_STRIP_REG);
-+
-+	if (keep_crc)
-+		crcflag |= SXE_KEEP_CRC_EN;
++	u32 mrqc = SXEVF_REG_READ(hw, SXE_VFMRQC);
++	if (is_on)
++		mrqc |= SXEVF_MRQC_RSSEN;
 +	else
-+		crcflag &= ~SXE_KEEP_CRC_EN;
++		mrqc &= ~SXEVF_MRQC_RSSEN;
 +
-+	SXE_REG_WRITE(hw, SXE_CRC_STRIP_REG, crcflag);
++	SXEVF_REG_WRITE(hw, SXE_VFMRQC, mrqc);
 +}
 +
-+void sxe_hw_rx_pkt_buf_size_set(struct sxe_hw *hw, u8 tc_idx, u16 pbsize)
++void sxevf_hw_rss_field_set(struct sxevf_hw *hw, u32 rss_field)
 +{
-+	u32 rxpbsize = pbsize << SXE_RX_PKT_BUF_SIZE_SHIFT;
++	u32 mrqc = SXEVF_REG_READ(hw, SXE_VFMRQC);
 +
-+	sxe_hw_rx_pkt_buf_switch(hw, false);
-+	SXE_REG_WRITE(hw, SXE_RXPBSIZE(tc_idx), rxpbsize);
-+	sxe_hw_rx_pkt_buf_switch(hw, true);
++	mrqc &= ~SXEVF_RSS_FIELD_MASK;
++	mrqc |= rss_field;
++	SXEVF_REG_WRITE(hw, SXE_VFMRQC, mrqc);
 +}
 +
-+void sxe_hw_dcb_vmdq_mq_configure(struct sxe_hw *hw, u8 num_pools)
-+{
-+	u16 pbsize;
-+	u8 i, nb_tcs;
-+	u32 mrqc;
-+
-+	nb_tcs = SXE_VMDQ_DCB_NUM_QUEUES / num_pools;
-+
-+	pbsize = (u8)(SXE_RX_PKT_BUF_SIZE / nb_tcs);
-+
-+	for (i = 0; i < nb_tcs; i++)
-+		sxe_hw_rx_pkt_buf_size_set(hw, i, pbsize);
-+
-+	for (i = nb_tcs; i < ETH_DCB_NUM_USER_PRIORITIES; i++)
-+		sxe_hw_rx_pkt_buf_size_set(hw, i, 0);
-+
-+	mrqc = (num_pools == RTE_ETH_16_POOLS) ?
-+		SXE_MRQC_VMDQRT8TCEN : SXE_MRQC_VMDQRT4TCEN;
-+	SXE_REG_WRITE(hw, SXE_MRQC, mrqc);
-+
-+	SXE_REG_WRITE(hw, SXE_RTRPCS, SXE_RTRPCS_RRM);
-+}
-+
-+static const struct sxe_reg_info sxe_regs_general_group[] = {
-+	{SXE_CTRL, 1, 1, "SXE_CTRL"},
-+	{SXE_STATUS, 1, 1, "SXE_STATUS"},
-+	{SXE_CTRL_EXT, 1, 1, "SXE_CTRL_EXT"},
-+	{0, 0, 0, ""}
-+};
-+
-+static const struct sxe_reg_info sxe_regs_interrupt_group[] = {
-+	{SXE_EICS, 1, 1, "SXE_EICS"},
-+	{SXE_EIMS, 1, 1, "SXE_EIMS"},
-+	{SXE_EIMC, 1, 1, "SXE_EIMC"},
-+	{SXE_EIAC, 1, 1, "SXE_EIAC"},
-+	{SXE_EIAM, 1, 1, "SXE_EIAM"},
-+	{SXE_EITR(0), 24, 4, "SXE_EITR"},
-+	{SXE_IVAR(0), 24, 4, "SXE_IVAR"},
-+	{SXE_GPIE, 1, 1, "SXE_GPIE"},
-+	{0, 0, 0, ""}
-+};
-+
-+static const struct sxe_reg_info sxe_regs_fctl_group[] = {
-+	{SXE_PFCTOP, 1, 1, "SXE_PFCTOP"},
-+	{SXE_FCRTV, 1, 1, "SXE_FCRTV"},
-+	{SXE_TFCS, 1, 1, "SXE_TFCS"},
-+	{0, 0, 0, ""}
-+};
-+
-+static const struct sxe_reg_info sxe_regs_rxdma_group[] = {
-+	{SXE_RDBAL(0), 64, 0x40, "SXE_RDBAL"},
-+	{SXE_RDBAH(0), 64, 0x40, "SXE_RDBAH"},
-+	{SXE_RDLEN(0), 64, 0x40, "SXE_RDLEN"},
-+	{SXE_RDH(0), 64, 0x40, "SXE_RDH"},
-+	{SXE_RDT(0), 64, 0x40, "SXE_RDT"},
-+	{SXE_RXDCTL(0), 64, 0x40, "SXE_RXDCTL"},
-+	{SXE_SRRCTL(0), 16, 0x4, "SXE_SRRCTL"},
-+	{SXE_TPH_RXCTRL(0), 16, 4, "SXE_TPH_RXCTRL"},
-+	{SXE_RDRXCTL, 1, 1, "SXE_RDRXCTL"},
-+	{SXE_RXPBSIZE(0), 8, 4, "SXE_RXPBSIZE"},
-+	{SXE_RXCTRL, 1, 1, "SXE_RXCTRL"},
-+	{0, 0, 0, ""}
-+};
-+
-+static const struct sxe_reg_info sxe_regs_rx_group[] = {
-+	{SXE_RXCSUM, 1, 1, "SXE_RXCSUM"},
-+	{SXE_RFCTL, 1, 1, "SXE_RFCTL"},
-+	{SXE_RAL(0), 16, 8, "SXE_RAL"},
-+	{SXE_RAH(0), 16, 8, "SXE_RAH"},
-+	{SXE_PSRTYPE(0), 1, 4, "SXE_PSRTYPE"},
-+	{SXE_FCTRL, 1, 1, "SXE_FCTRL"},
-+	{SXE_VLNCTRL, 1, 1, "SXE_VLNCTRL"},
-+	{SXE_MCSTCTRL, 1, 1, "SXE_MCSTCTRL"},
-+	{SXE_MRQC, 1, 1, "SXE_MRQC"},
-+	{SXE_VMD_CTL, 1, 1, "SXE_VMD_CTL"},
-+
-+	{0, 0, 0, ""}
-+};
-+
-+static struct sxe_reg_info sxe_regs_tx_group[] = {
-+	{SXE_TDBAL(0), 32, 0x40, "SXE_TDBAL"},
-+	{SXE_TDBAH(0), 32, 0x40, "SXE_TDBAH"},
-+	{SXE_TDLEN(0), 32, 0x40, "SXE_TDLEN"},
-+	{SXE_TDH(0), 32, 0x40, "SXE_TDH"},
-+	{SXE_TDT(0), 32, 0x40, "SXE_TDT"},
-+	{SXE_TXDCTL(0), 32, 0x40, "SXE_TXDCTL"},
-+	{SXE_TPH_TXCTRL(0), 16, 4, "SXE_TPH_TXCTRL"},
-+	{SXE_TXPBSIZE(0), 8, 4, "SXE_TXPBSIZE"},
-+	{0, 0, 0, ""}
-+};
-+
-+static const struct sxe_reg_info sxe_regs_wakeup_group[] = {
-+	{SXE_WUC, 1, 1, "SXE_WUC"},
-+	{SXE_WUFC, 1, 1, "SXE_WUFC"},
-+	{SXE_WUS, 1, 1, "SXE_WUS"},
-+	{0, 0, 0, ""}
-+};
-+
-+static const struct sxe_reg_info sxe_regs_dcb_group[] = {
-+	{0, 0, 0, ""}
-+};
-+
-+static const struct sxe_reg_info sxe_regs_diagnostic_group[] = {
-+	{SXE_MFLCN, 1, 1, "SXE_MFLCN"},
-+	{0, 0, 0, ""},
-+};
-+
-+static const struct sxe_reg_info *sxe_regs_group[] = {
-+				sxe_regs_general_group,
-+				sxe_regs_interrupt_group,
-+				sxe_regs_fctl_group,
-+				sxe_regs_rxdma_group,
-+				sxe_regs_rx_group,
-+				sxe_regs_tx_group,
-+				sxe_regs_wakeup_group,
-+				sxe_regs_dcb_group,
-+				sxe_regs_diagnostic_group,
-+				NULL};
-+
-+static u32 sxe_regs_group_count(const struct sxe_reg_info *regs)
-+{
-+	int i = 0;
-+	int count = 0;
-+
-+	while (regs[i].count)
-+		count += regs[i++].count;
-+
-+	return count;
-+};
-+
-+static u32 sxe_hw_regs_group_read(struct sxe_hw *hw,
-+				const struct sxe_reg_info *regs,
++u32 sxevf_hw_regs_group_read(struct sxevf_hw *hw,
++				const struct sxevf_reg_info *regs,
 +				u32 *reg_buf)
 +{
 +	u32 j, i = 0;
@@ -2916,7 +969,7 @@ index 0000000000..6e04a1b7ce
 +
 +	while (regs[i].count) {
 +		for (j = 0; j < regs[i].count; j++) {
-+			reg_buf[count + j] = SXE_REG_READ(hw,
++			reg_buf[count + j] = SXEVF_REG_READ(hw,
 +					regs[i].addr + j * regs[i].stride);
 +			LOG_INFO("regs= %s, regs_addr=%x, regs_value=%04x",
 +				regs[i].name, regs[i].addr, reg_buf[count + j]);
@@ -2928,1177 +981,143 @@ index 0000000000..6e04a1b7ce
 +
 +	return count;
 +};
-+
-+u32 sxe_hw_all_regs_group_num_get(void)
-+{
-+	u32 i = 0;
-+	u32 count = 0;
-+	const struct sxe_reg_info *reg_group;
-+	const struct sxe_reg_info **reg_set = sxe_regs_group;
-+
-+	while ((reg_group = reg_set[i++]))
-+		count += sxe_regs_group_count(reg_group);
-+
-+	return count;
-+}
-+
-+void sxe_hw_all_regs_group_read(struct sxe_hw *hw, u32 *data)
-+{
-+	u32 count = 0, i = 0;
-+	const struct sxe_reg_info *reg_group;
-+	const struct sxe_reg_info **reg_set = sxe_regs_group;
-+
-+	while ((reg_group = reg_set[i++]))
-+		count += sxe_hw_regs_group_read(hw, reg_group, &data[count]);
-+
-+	LOG_INFO("read regs cnt=%u, regs num=%u",
-+				count, sxe_hw_all_regs_group_num_get());
-+}
-+
-+static void sxe_hw_default_pool_configure(struct sxe_hw *hw,
-+						u8 default_pool_enabled,
-+						u8 default_pool_idx)
-+{
-+	u32 vt_ctl;
-+
-+	vt_ctl = SXE_VT_CTL_VT_ENABLE | SXE_VT_CTL_REPLEN;
-+	if (default_pool_enabled)
-+		vt_ctl |= (default_pool_idx << SXE_VT_CTL_POOL_SHIFT);
-+	else
-+		vt_ctl |= SXE_VT_CTL_DIS_DEFPL;
-+
-+	SXE_REG_WRITE(hw, SXE_VT_CTL, vt_ctl);
-+}
-+
-+void sxe_hw_dcb_vmdq_default_pool_configure(struct sxe_hw *hw,
-+						u8 default_pool_enabled,
-+						u8 default_pool_idx)
-+{
-+	sxe_hw_default_pool_configure(hw, default_pool_enabled, default_pool_idx);
-+}
-+
-+u32 sxe_hw_ring_irq_switch_get(struct sxe_hw *hw, u8 idx)
-+{
-+	u32 mask;
-+
-+	if (idx == 0)
-+		mask = SXE_REG_READ(hw, SXE_EIMS_EX(0));
-+	else
-+		mask = SXE_REG_READ(hw, SXE_EIMS_EX(1));
-+
-+	return mask;
-+}
-+
-+void sxe_hw_ring_irq_switch_set(struct sxe_hw *hw, u8 idx, u32 value)
-+{
-+	if (idx == 0)
-+		SXE_REG_WRITE(hw, SXE_EIMS_EX(0), value);
-+	else
-+		SXE_REG_WRITE(hw, SXE_EIMS_EX(1), value);
-+}
-+
-+void sxe_hw_dcb_vmdq_up_2_tc_configure(struct sxe_hw *hw, u8 *tc_arr)
-+{
-+	u32 up2tc;
-+	u8 i;
-+
-+	up2tc = 0;
-+	for (i = 0; i < 8; i++)
-+		up2tc |= ((tc_arr[i] & 0x07) << (i * 3));
-+
-+	SXE_REG_WRITE(hw, SXE_RTRUP2TC, up2tc);
-+}
-+
-+u32 sxe_hw_uta_hash_table_get(struct sxe_hw *hw, u8 reg_idx)
-+{
-+	return SXE_REG_READ(hw, SXE_UTA(reg_idx));
-+}
-+
-+void sxe_hw_uta_hash_table_set(struct sxe_hw *hw, u8 reg_idx, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_UTA(reg_idx), value);
-+}
-+
-+u32 sxe_hw_vlan_type_get(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_VLNCTRL);
-+}
-+
-+void sxe_hw_vlan_type_set(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_VLNCTRL, value);
-+}
-+
-+void sxe_hw_dcb_vmdq_vlan_configure(struct sxe_hw *hw, u8 num_pools)
-+{
-+	u32 vlanctrl;
-+	u8 i;
-+
-+	vlanctrl = SXE_REG_READ(hw, SXE_VLNCTRL);
-+	vlanctrl |= SXE_VLNCTRL_VFE;
-+	SXE_REG_WRITE(hw, SXE_VLNCTRL, vlanctrl);
-+
-+	for (i = 0; i < SXE_VFT_TBL_SIZE; i++)
-+		SXE_REG_WRITE(hw, SXE_VFTA(i), 0xFFFFFFFF);
-+
-+	SXE_REG_WRITE(hw, SXE_VFRE(0),
-+			num_pools == RTE_ETH_16_POOLS ? 0xFFFF : 0xFFFFFFFF);
-+
-+	SXE_REG_WRITE(hw, SXE_MPSAR_LOW(0), 0xFFFFFFFF);
-+	SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(0), 0xFFFFFFFF);
-+}
-+
-+void sxe_hw_vlan_ext_type_set(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_EXVET, value);
-+}
-+
-+u32 sxe_hw_txctl_vlan_type_get(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_DMATXCTL);
-+}
-+
-+void sxe_hw_txctl_vlan_type_set(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_DMATXCTL, value);
-+}
-+
-+u32 sxe_hw_ext_vlan_get(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_CTRL_EXT);
-+}
-+
-+void sxe_hw_ext_vlan_set(struct sxe_hw *hw, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_CTRL_EXT, value);
-+}
-+
-+void sxe_hw_rxq_stat_map_set(struct sxe_hw *hw, u8 idx, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_RQSMR(idx), value);
-+}
-+
-+void sxe_hw_dcb_vmdq_pool_configure(struct sxe_hw *hw,
-+						u8 pool_idx, u16 vlan_id,
-+						u64 pools_map)
-+{
-+	SXE_REG_WRITE(hw, SXE_VLVF(pool_idx), (SXE_VLVF_VIEN |
-+			(vlan_id & 0xFFF)));
-+
-+	SXE_REG_WRITE(hw, SXE_VLVFB(pool_idx * 2), pools_map);
-+}
-+
-+void sxe_hw_txq_stat_map_set(struct sxe_hw *hw, u8 idx, u32 value)
-+{
-+	SXE_REG_WRITE(hw, SXE_TQSM(idx), value);
-+}
-+
-+void sxe_hw_dcb_rx_configure(struct sxe_hw *hw, bool is_vt_on,
-+					u8 sriov_active, u8 tc_num)
-+{
-+	u32 reg;
-+	u32 vlanctrl;
-+	u8 i;
-+	u32 q;
-+
-+	reg = SXE_RTRPCS_RRM | SXE_RTRPCS_RAC | SXE_RTRPCS_ARBDIS;
-+	SXE_REG_WRITE(hw, SXE_RTRPCS, reg);
-+
-+	reg = SXE_REG_READ(hw, SXE_MRQC);
-+	if (tc_num == 4) {
-+		if (is_vt_on) {
-+			reg = (reg & ~SXE_MRQC_MRQE_MASK) |
-+				SXE_MRQC_VMDQRT4TCEN;
-+		} else {
-+			SXE_REG_WRITE(hw, SXE_VT_CTL, 0);
-+			reg = (reg & ~SXE_MRQC_MRQE_MASK) |
-+				SXE_MRQC_RTRSS4TCEN;
-+		}
-+	}
-+
-+	if (tc_num == 8) {
-+		if (is_vt_on) {
-+			reg = (reg & ~SXE_MRQC_MRQE_MASK) |
-+				SXE_MRQC_VMDQRT8TCEN;
-+		} else {
-+			SXE_REG_WRITE(hw, SXE_VT_CTL, 0);
-+			reg = (reg & ~SXE_MRQC_MRQE_MASK) |
-+				SXE_MRQC_RTRSS8TCEN;
-+		}
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_MRQC, reg);
-+
-+	if (sriov_active == 0) {
-+		for (q = 0; q < SXE_HW_TXRX_RING_NUM_MAX; q++) {
-+			SXE_REG_WRITE(hw, SXE_QDE,
-+				(SXE_QDE_WRITE |
-+				 (q << SXE_QDE_IDX_SHIFT)));
-+		}
-+	} else {
-+		for (q = 0; q < SXE_HW_TXRX_RING_NUM_MAX; q++) {
-+			SXE_REG_WRITE(hw, SXE_QDE,
-+				(SXE_QDE_WRITE |
-+				 (q << SXE_QDE_IDX_SHIFT) |
-+				 SXE_QDE_ENABLE));
-+		}
-+	}
-+
-+	vlanctrl = SXE_REG_READ(hw, SXE_VLNCTRL);
-+	vlanctrl |= SXE_VLNCTRL_VFE;
-+	SXE_REG_WRITE(hw, SXE_VLNCTRL, vlanctrl);
-+
-+	for (i = 0; i < SXE_VFT_TBL_SIZE; i++)
-+		SXE_REG_WRITE(hw, SXE_VFTA(i), 0xFFFFFFFF);
-+
-+	reg = SXE_RTRPCS_RRM | SXE_RTRPCS_RAC;
-+	SXE_REG_WRITE(hw, SXE_RTRPCS, reg);
-+}
-+
-+void sxe_hw_fc_status_get(struct sxe_hw *hw,
-+					bool *rx_pause_on, bool *tx_pause_on)
-+{
-+	u32 flctrl;
-+
-+	flctrl = SXE_REG_READ(hw, SXE_FLCTRL);
-+	if (flctrl & (SXE_FCTRL_RFCE_PFC_EN | SXE_FCTRL_RFCE_LFC_EN))
-+		*rx_pause_on = true;
-+	else
-+		*rx_pause_on = false;
-+
-+	if (flctrl & (SXE_FCTRL_TFCE_PFC_EN | SXE_FCTRL_TFCE_LFC_EN))
-+		*tx_pause_on = true;
-+	else
-+		*tx_pause_on = false;
-+}
-+
-+void sxe_hw_fc_base_init(struct sxe_hw *hw)
-+{
-+	u8 i;
-+
-+	hw->fc.requested_mode = SXE_FC_NONE;
-+	hw->fc.current_mode = SXE_FC_NONE;
-+	hw->fc.pause_time = SXE_DEFAULT_FCPAUSE;
-+	hw->fc.disable_fc_autoneg = false;
-+
-+	for (i = 0; i < MAX_TRAFFIC_CLASS; i++) {
-+		hw->fc.low_water[i]  = SXE_FC_DEFAULT_LOW_WATER_MARK;
-+		hw->fc.high_water[i] = SXE_FC_DEFAULT_HIGH_WATER_MARK;
-+	}
-+
-+	hw->fc.send_xon = 1;
-+}
-+
-+u32 sxe_hw_fc_tc_high_water_mark_get(struct sxe_hw *hw, u8 tc_idx)
-+{
-+	return hw->fc.high_water[tc_idx];
-+}
-+
-+u32 sxe_hw_fc_tc_low_water_mark_get(struct sxe_hw *hw, u8 tc_idx)
-+{
-+	return hw->fc.low_water[tc_idx];
-+}
-+
-+u16 sxe_hw_fc_send_xon_get(struct sxe_hw *hw)
-+{
-+	return hw->fc.send_xon;
-+}
-+
-+void sxe_hw_fc_send_xon_set(struct sxe_hw *hw, u16 send_xon)
-+{
-+	hw->fc.send_xon = send_xon;
-+}
-+
-+u16 sxe_hw_fc_pause_time_get(struct sxe_hw *hw)
-+{
-+	return hw->fc.pause_time;
-+}
-+
-+void sxe_hw_fc_pause_time_set(struct sxe_hw *hw, u16 pause_time)
-+{
-+	hw->fc.pause_time = pause_time;
-+}
-+
-+void sxe_hw_dcb_tx_configure(struct sxe_hw *hw, bool is_vt_on, u8 tc_num)
-+{
-+	u32 reg;
-+
-+	reg = SXE_REG_READ(hw, SXE_RTTDCS);
-+	reg |= SXE_RTTDCS_ARBDIS;
-+	SXE_REG_WRITE(hw, SXE_RTTDCS, reg);
-+
-+	if (tc_num == 8)
-+		reg = SXE_MTQC_RT_ENA | SXE_MTQC_8TC_8TQ;
-+	else
-+		reg = SXE_MTQC_RT_ENA | SXE_MTQC_4TC_4TQ;
-+
-+	if (is_vt_on)
-+		reg |= SXE_MTQC_VT_ENA;
-+
-+	SXE_REG_WRITE(hw, SXE_MTQC, reg);
-+
-+	reg = SXE_REG_READ(hw, SXE_RTTDCS);
-+	reg &= ~SXE_RTTDCS_ARBDIS;
-+	SXE_REG_WRITE(hw, SXE_RTTDCS, reg);
-+}
-+
-+void sxe_hw_rx_ip_checksum_offload_switch(struct sxe_hw *hw, bool is_on)
-+{
-+	u32 rxcsum;
-+
-+	rxcsum = SXE_REG_READ(hw, SXE_RXCSUM);
-+	if (is_on)
-+		rxcsum |= SXE_RXCSUM_IPPCSE;
-+	else
-+		rxcsum &= ~SXE_RXCSUM_IPPCSE;
-+
-+	SXE_REG_WRITE(hw, SXE_RXCSUM, rxcsum);
-+}
-+
-+void sxe_hw_rss_cap_switch(struct sxe_hw *hw, bool is_on)
-+{
-+	u32 mrqc = SXE_REG_READ(hw, SXE_MRQC);
-+	u32 mrqe_val;
-+	mrqe_val = mrqc & SXE_MRQC_MRQE_MASK;
-+	if (is_on) {
-+		mrqe_val = SXE_MRQC_RSSEN;
-+	} else {
-+		switch (mrqe_val) {
-+		case SXE_MRQC_RSSEN:
-+			mrqe_val = 0;
-+			break;
-+		case SXE_MRQC_RTRSS8TCEN:
-+			mrqe_val = SXE_MRQC_RT8TCEN;
-+			break;
-+		case SXE_MRQC_RTRSS4TCEN:
-+			mrqe_val = SXE_MRQC_RT4TCEN;
-+			break;
-+		case SXE_MRQC_VMDQRSS64EN:
-+			mrqe_val = SXE_MRQC_VMDQEN;
-+			break;
-+		case SXE_MRQC_VMDQRSS32EN:
-+			PMD_LOG_WARN(DRV, "Three is no regression for virtualizatic"
-+				" and RSS with 32 polls among the MRQE configuration"
-+				" after disable RSS and left it unchanged.");
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+	mrqc = (mrqc & ~SXE_MRQC_MRQE_MASK) | mrqe_val;
-+
-+	SXE_REG_WRITE(hw, SXE_MRQC, mrqc);
-+}
-+
-+void sxe_hw_pool_xmit_enable(struct sxe_hw *hw, u16 reg_idx, u8 pool_num)
-+{
-+	SXE_REG_WRITE(hw, SXE_VFTE(reg_idx),
-+		pool_num == RTE_ETH_16_POOLS ? 0xFFFF : 0xFFFFFFFF);
-+}
-+
-+void sxe_hw_rss_field_set(struct sxe_hw *hw, u32 rss_field)
-+{
-+	u32 mrqc = SXE_REG_READ(hw, SXE_MRQC);
-+
-+	mrqc &= ~SXE_RSS_FIELD_MASK;
-+	mrqc |= rss_field;
-+	SXE_REG_WRITE(hw, SXE_MRQC, mrqc);
-+}
-+
-+static void sxe_hw_dcb_4tc_vmdq_off_stats_configure(struct sxe_hw *hw)
-+{
-+	u32 reg;
-+	u8  i;
-+
-+	for (i = 0; i < 32; i++) {
-+		if (i % 8 > 3)
-+			continue;
-+
-+		reg = 0x01010101 * (i / 8);
-+		SXE_REG_WRITE(hw, SXE_RQSMR(i), reg);
-+	}
-+	for (i = 0; i < 32; i++) {
-+		if (i < 16)
-+			reg = 0x00000000;
-+		else if (i < 24)
-+			reg = 0x01010101;
-+		else if (i < 28)
-+			reg = 0x02020202;
-+		else
-+			reg = 0x03030303;
-+
-+		SXE_REG_WRITE(hw, SXE_TQSM(i), reg);
-+	}
-+}
-+
-+static void sxe_hw_dcb_4tc_vmdq_on_stats_configure(struct sxe_hw *hw)
-+{
-+	u8  i;
-+
-+	for (i = 0; i < 32; i++)
-+		SXE_REG_WRITE(hw, SXE_RQSMR(i), 0x03020100);
-+
-+
-+	for (i = 0; i < 32; i++)
-+		SXE_REG_WRITE(hw, SXE_TQSM(i), 0x03020100);
-+}
-+
-+void sxe_hw_rss_redir_tbl_set_by_idx(struct sxe_hw *hw, u16 reg_idx, u32 value)
-+{
-+	return sxe_hw_rss_redir_tbl_reg_write(hw, reg_idx, value);
-+}
-+
-+static u32 sxe_hw_rss_redir_tbl_reg_read(struct sxe_hw *hw, u16 reg_idx)
-+{
-+	return SXE_REG_READ(hw, SXE_RETA(reg_idx >> 2));
-+}
-+
-+u32 sxe_hw_rss_redir_tbl_get_by_idx(struct sxe_hw *hw, u16 reg_idx)
-+{
-+	return sxe_hw_rss_redir_tbl_reg_read(hw, reg_idx);
-+}
-+
-+void sxe_hw_ptp_time_inc_stop(struct sxe_hw *hw)
-+{
-+	SXE_REG_WRITE(hw, SXE_TIMINC, 0);
-+}
-+
-+void sxe_hw_dcb_tc_stats_configure(struct sxe_hw *hw,
-+					u8 tc_num, bool vmdq_active)
-+{
-+	if (tc_num == 8 && !vmdq_active)
-+		sxe_hw_dcb_8tc_vmdq_off_stats_configure(hw);
-+	else if (tc_num == 4 && !vmdq_active)
-+		sxe_hw_dcb_4tc_vmdq_off_stats_configure(hw);
-+	else if (tc_num == 4 && vmdq_active)
-+		sxe_hw_dcb_4tc_vmdq_on_stats_configure(hw);
-+}
-+
-+void sxe_hw_ptp_timestamp_disable(struct sxe_hw *hw)
-+{
-+	SXE_REG_WRITE(hw, SXE_TSYNCTXCTL,
-+			(SXE_REG_READ(hw, SXE_TSYNCTXCTL) &
-+			~SXE_TSYNCTXCTL_TEN));
-+
-+	SXE_REG_WRITE(hw, SXE_TSYNCRXCTL,
-+			(SXE_REG_READ(hw, SXE_TSYNCRXCTL) &
-+			~SXE_TSYNCRXCTL_REN));
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+void sxe_hw_mac_pool_clear(struct sxe_hw *hw, u8 rar_idx)
-+{
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	if (rar_idx >= SXE_UC_ENTRY_NUM_MAX) {
-+		LOG_ERROR_BDF("rar_idx:%d invalid.(err:%d)",
-+			  rar_idx, SXE_ERR_PARAM);
-+		return;
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_MPSAR_LOW(rar_idx), 0);
-+	SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(rar_idx), 0);
-+}
-+
-+void sxe_hw_vmdq_mq_configure(struct sxe_hw *hw)
-+{
-+	u32 mrqc;
-+
-+	mrqc = SXE_MRQC_VMDQEN;
-+	SXE_REG_WRITE(hw, SXE_MRQC, mrqc);
-+}
-+
-+void sxe_hw_vmdq_default_pool_configure(struct sxe_hw *hw,
-+						u8 default_pool_enabled,
-+						u8 default_pool_idx)
-+{
-+	sxe_hw_default_pool_configure(hw, default_pool_enabled, default_pool_idx);
-+}
-+
-+void sxe_hw_vmdq_vlan_configure(struct sxe_hw *hw, u8 num_pools, u32 rx_mode)
-+{
-+	u32 vlanctrl;
-+	u8 i;
-+
-+	vlanctrl = SXE_REG_READ(hw, SXE_VLNCTRL);
-+	vlanctrl |= SXE_VLNCTRL_VFE;
-+	SXE_REG_WRITE(hw, SXE_VLNCTRL, vlanctrl);
-+
-+	for (i = 0; i < SXE_VFT_TBL_SIZE; i++)
-+		SXE_REG_WRITE(hw, SXE_VFTA(i), 0xFFFFFFFF);
-+
-+	SXE_REG_WRITE(hw, SXE_VFRE(0), 0xFFFFFFFF);
-+	if (num_pools == RTE_ETH_64_POOLS)
-+		SXE_REG_WRITE(hw, SXE_VFRE(1), 0xFFFFFFFF);
-+
-+	for (i = 0; i < num_pools; i++)
-+		SXE_REG_WRITE(hw, SXE_VMOLR(i), rx_mode);
-+
-+	SXE_REG_WRITE(hw, SXE_MPSAR_LOW(0), 0xFFFFFFFF);
-+	SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(0), 0xFFFFFFFF);
-+
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+u32 sxe_hw_pcie_vt_mode_get(struct sxe_hw *hw)
-+{
-+	return SXE_REG_READ(hw, SXE_GCR_EXT);
-+}
-+
-+void sxe_rx_fc_threshold_set(struct sxe_hw *hw)
-+{
-+	u8 i;
-+	u32 high;
-+
-+	for (i = 0; i < SXE_TRAFFIC_CLASS_MAX; i++) {
-+		SXE_REG_WRITE(hw, SXE_FCRTL(i), 0);
-+		high = SXE_REG_READ(hw, SXE_RXPBSIZE(i)) - 32;
-+		SXE_REG_WRITE(hw, SXE_FCRTH(i), high);
-+	}
-+}
-+
-+void sxe_hw_vmdq_pool_configure(struct sxe_hw *hw, u8 pool_idx, u16 vlan_id,
-+				u64 pools_map)
-+{
-+	SXE_REG_WRITE(hw, SXE_VLVF(pool_idx), (SXE_VLVF_VIEN |
-+			(vlan_id & SXE_RXD_VLAN_ID_MASK)));
-+
-+	if (((pools_map >> 32) & 0xFFFFFFFF) == 0) {
-+		SXE_REG_WRITE(hw, SXE_VLVFB(pool_idx * 2),
-+			(pools_map & 0xFFFFFFFF));
-+	} else {
-+		SXE_REG_WRITE(hw, SXE_VLVFB((pool_idx * 2 + 1)),
-+			((pools_map >> 32) & 0xFFFFFFFF));
-+	}
-+
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+void sxe_hw_vmdq_loopback_configure(struct sxe_hw *hw)
-+{
-+	u8 i;
-+	SXE_REG_WRITE(hw, SXE_PFDTXGSWC, SXE_PFDTXGSWC_VT_LBEN);
-+	for (i = 0; i < SXE_VMTXSW_REGISTER_COUNT; i++)
-+		SXE_REG_WRITE(hw, SXE_VMTXSW(i), 0xFFFFFFFF);
-+
-+	SXE_WRITE_FLUSH(hw);
-+}
-+
-+void sxe_hw_tx_multi_queue_configure(struct sxe_hw *hw, bool vmdq_enable,
-+				     bool sriov_enable, u16 pools_num)
-+{
-+	u32 mtqc;
-+
-+	sxe_hw_dcb_arbiter_set(hw, false);
-+
-+	if (sriov_enable) {
-+		switch (pools_num) {
-+		case RTE_ETH_64_POOLS:
-+			mtqc = SXE_MTQC_VT_ENA | SXE_MTQC_64VF;
-+			break;
-+		case RTE_ETH_32_POOLS:
-+			mtqc = SXE_MTQC_VT_ENA | SXE_MTQC_32VF;
-+			break;
-+		case RTE_ETH_16_POOLS:
-+			mtqc = SXE_MTQC_VT_ENA | SXE_MTQC_RT_ENA |
-+				SXE_MTQC_8TC_8TQ;
-+			break;
-+		default:
-+			mtqc = SXE_MTQC_64Q_1PB;
-+		}
-+	} else {
-+		if (vmdq_enable) {
-+			u8 queue_idx;
-+			SXE_REG_WRITE(hw, SXE_VFTE(0), UINT32_MAX);
-+			SXE_REG_WRITE(hw, SXE_VFTE(1), UINT32_MAX);
-+
-+			for (queue_idx = 0; queue_idx < SXE_HW_TXRX_RING_NUM_MAX;
-+				queue_idx++) {
-+				SXE_REG_WRITE(hw, SXE_QDE,
-+					(SXE_QDE_WRITE |
-+					(queue_idx << SXE_QDE_IDX_SHIFT)));
-+			}
-+
-+			mtqc = SXE_MTQC_VT_ENA | SXE_MTQC_64VF;
-+		} else {
-+			mtqc = SXE_MTQC_64Q_1PB;
-+		}
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_MTQC, mtqc);
-+
-+	sxe_hw_dcb_arbiter_set(hw, true);
-+}
-+
-+void sxe_hw_vf_queue_drop_enable(struct sxe_hw *hw, u8 vf_idx, u8 ring_per_pool)
-+{
-+	u32 value;
-+	u8 i;
-+
-+	for (i = (vf_idx * ring_per_pool); i < ((vf_idx + 1) * ring_per_pool); i++) {
-+		value = SXE_QDE_ENABLE | SXE_QDE_WRITE;
-+		SXE_WRITE_FLUSH(hw);
-+
-+		value |= i << SXE_QDE_IDX_SHIFT;
-+
-+		SXE_REG_WRITE(hw, SXE_QDE, value);
-+	}
-+}
-+
-+bool sxe_hw_vt_status(struct sxe_hw *hw)
-+{
-+	bool ret;
-+	u32 vt_ctl = SXE_REG_READ(hw, SXE_VT_CTL);
-+
-+	if (vt_ctl & SXE_VMD_CTL_POOL_EN)
-+		ret = true;
-+	else
-+		ret = false;
-+
-+	return ret;
-+}
-+
-+void sxe_hw_mirror_ctl_set(struct sxe_hw *hw, u8 rule_id,
-+					u8 mirror_type, u8 dst_pool, bool on)
-+{
-+	u32 mr_ctl;
-+
-+	mr_ctl = SXE_REG_READ(hw, SXE_MRCTL(rule_id));
-+
-+	if (on) {
-+		mr_ctl |= mirror_type;
-+		mr_ctl &= SXE_MR_TYPE_MASK;
-+		mr_ctl |= dst_pool << SXE_MR_DST_POOL_OFFSET;
-+	} else {
-+		mr_ctl &= ~(mirror_type & SXE_MR_TYPE_MASK);
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_MRCTL(rule_id), mr_ctl);
-+}
-+
-+void sxe_hw_mirror_virtual_pool_set(struct sxe_hw *hw, u8 rule_id, u32 lsb, u32 msb)
-+{
-+	SXE_REG_WRITE(hw, SXE_VMRVM(rule_id), lsb);
-+	SXE_REG_WRITE(hw, SXE_VMRVM(rule_id  + SXE_MR_VIRTUAL_POOL_MSB_REG_OFFSET), msb);
-+}
-+
-+void sxe_hw_mirror_vlan_set(struct sxe_hw *hw, u8 rule_id, u32 lsb, u32 msb)
-+{
-+	SXE_REG_WRITE(hw, SXE_VMRVLAN(rule_id), lsb);
-+	SXE_REG_WRITE(hw, SXE_VMRVLAN(rule_id  + SXE_MR_VLAN_MSB_REG_OFFSET), msb);
-+}
-+
-+void sxe_hw_mirror_rule_clear(struct sxe_hw *hw, u8 rule_id)
-+{
-+	SXE_REG_WRITE(hw, SXE_MRCTL(rule_id), 0);
-+
-+	SXE_REG_WRITE(hw, SXE_VMRVLAN(rule_id), 0);
-+	SXE_REG_WRITE(hw, SXE_VMRVLAN(rule_id  + SXE_MR_VLAN_MSB_REG_OFFSET), 0);
-+
-+	SXE_REG_WRITE(hw, SXE_VMRVM(rule_id), 0);
-+	SXE_REG_WRITE(hw, SXE_VMRVM(rule_id  + SXE_MR_VIRTUAL_POOL_MSB_REG_OFFSET), 0);
-+}
-+
-+void sxe_hw_mac_reuse_add(struct rte_eth_dev *dev, u8 *mac_addr, u8 rar_idx)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
-+	struct sxe_hw *hw = &adapter->hw;
-+	s32 i;
-+	u32 value_low = SXE_REG_READ(hw, SXE_MPSAR_LOW(rar_idx));
-+	u32 value_high = SXE_REG_READ(hw, SXE_MPSAR_HIGH(rar_idx));
-+
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		if (memcmp(uc_table[i].addr, mac_addr, SXE_MAC_ADDR_LEN) == 0 &&
-+				uc_table[i].used && i != rar_idx) {
-+			value_low |= SXE_REG_READ(hw, SXE_MPSAR_LOW(i));
-+			value_high |= SXE_REG_READ(hw, SXE_MPSAR_HIGH(i));
-+
-+			SXE_REG_WRITE(hw, SXE_MPSAR_LOW(i), value_low);
-+			SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(i), value_high);
-+		}
-+	}
-+
-+	SXE_REG_WRITE(hw, SXE_MPSAR_LOW(rar_idx), value_low);
-+	SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(rar_idx), value_high);
-+}
-+
-+void sxe_hw_mac_reuse_del(struct rte_eth_dev *dev,
-+				u8 *mac_addr, u8 pool_idx, u8 rar_idx)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 value;
-+	s32 i;
-+
-+	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
-+		if (memcmp(uc_table[i].addr, mac_addr, SXE_MAC_ADDR_LEN) == 0 &&
-+				uc_table[i].used && i != rar_idx) {
-+			if (pool_idx < 32) {
-+				value = SXE_REG_READ(hw, SXE_MPSAR_LOW(i));
-+				value &= ~(BIT(pool_idx));
-+				SXE_REG_WRITE(hw, SXE_MPSAR_LOW(i), value);
-+			} else {
-+				value = SXE_REG_READ(hw, SXE_MPSAR_HIGH(i));
-+				value &= ~(BIT(pool_idx - 32));
-+				SXE_REG_WRITE(hw, SXE_MPSAR_HIGH(i), value);
-+			}
-+		}
-+	}
-+}
-diff --git a/drivers/net/sxe/base/sxe_hw.h b/drivers/net/sxe/base/sxe_hw.h
+diff --git a/drivers/net/sxe/base/sxevf_hw.h b/drivers/net/sxe/base/sxevf_hw.h
 new file mode 100644
-index 0000000000..4519568736
+index 0000000000..c0c1bf5e3b
 --- /dev/null
-+++ b/drivers/net/sxe/base/sxe_hw.h
-@@ -0,0 +1,1010 @@
++++ b/drivers/net/sxe/base/sxevf_hw.h
+@@ -0,0 +1,318 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
 +
-+#ifndef __SXE_HW_H__
-+#define __SXE_HW_H__
++#ifndef __SXEVF_HW_H__
++#define __SXEVF_HW_H__
 +
-+#include "sxe_types.h"
 +#include "sxe_compat_platform.h"
-+#include "sxe_compat_version.h"
 +#ifdef SXE_HOST_DRIVER
 +#include "sxe_drv_type.h"
 +#endif
-+#include <inttypes.h>
 +
-+#include "sxe_regs.h"
++#include "sxevf_regs.h"
 +
 +#define SXE_PRIU64  PRIu64
 +#define SXE_PRIX64  PRIx64
 +#define SXE_PRID64  PRId64
-+#define SXE_RMB()   rte_rmb()
 +
-+struct sxe_hw;
-+struct sxe_fc_info;
++#define SXEVF_TXRX_RING_NUM_MAX		   8
++#define SXEVF_MAX_TXRX_DESC_POLL		  (10)
++#define SXEVF_TX_DESC_PREFETCH_THRESH_32  (32)
++#define SXEVF_TX_DESC_HOST_THRESH_1	   (1)
++#define SXEVF_TX_DESC_WRITEBACK_THRESH_8  (8)
++#define SXEVF_TXDCTL_HTHRESH_SHIFT		(8)
++#define SXEVF_TXDCTL_WTHRESH_SHIFT		(16)
 +
-+#define SXE_MAC_ADDR_LEN 6
-+#define SXE_QUEUE_STATS_MAP_REG_NUM 32
++#define SXEVF_TXDCTL_THRESH_MASK		  (0x7F)
 +
-+#define SXE_FC_DEFAULT_HIGH_WATER_MARK	0x80
-+#define SXE_FC_DEFAULT_LOW_WATER_MARK	0x40
++#define SXEVF_RX_RING_POLL_MAX		   (10)
 +
-+#define  SXE_MC_ADDR_EXTRACT_MASK  (0xFFF)
-+#define  SXE_MC_ADDR_SHIFT	   (5)
-+#define  SXE_MC_ADDR_REG_MASK	   (0x7F)
-+#define  SXE_MC_ADDR_BIT_MASK	   (0x1F)
++#define SXEVF_MAC_HDR_LEN_MAX		   (127)
++#define SXEVF_NETWORK_HDR_LEN_MAX	   (511)
 +
-+#define SXE_TXTS_POLL_CHECK		3
-+#define SXE_TXTS_POLL			5
-+#define SXE_TIME_TO_NS(ns, sec)	(((u64)(ns)) + (u64)(((u64)(sec)) * NSEC_PER_SEC))
++#define SXEVF_LINK_SPEED_UNKNOWN		0
++#define SXEVF_LINK_SPEED_1GB_FULL	0x0020
++#define SXEVF_LINK_SPEED_10GB_FULL	0x0080
++#define SXEVF_LINK_SPEED_100_FULL	0x0008
 +
-+enum sxe_strict_prio_type {
-+	PRIO_NONE = 0,
-+	PRIO_GROUP,
-+	PRIO_LINK
-+};
++#define SXEVF_VFT_TBL_SIZE		   (128)
++#define SXEVF_HW_TXRX_RING_NUM_MAX   (128)
 +
-+enum sxe_mc_filter_type {
-+	SXE_MC_FILTER_TYPE0 = 0,
-+	SXE_MC_FILTER_TYPE1,
-+	SXE_MC_FILTER_TYPE2,
-+	SXE_MC_FILTER_TYPE3
-+};
++#define SXEVF_VLAN_TAG_SIZE		  (4)
 +
-+#define SXE_POOLS_NUM_MAX 64
-+#define SXE_16_POOL 16
-+#define SXE_32_POOL 32
-+#define SXE_1_RING_PER_POOL 1
-+#define SXE_2_RING_PER_POOL 2
-+#define SXE_3_RING_PER_POOL 3
-+#define SXE_4_RING_PER_POOL 4
++#define SXEVF_HW_UC_ENTRY_NUM_MAX   128
 +
-+#define SXE_DCB_1_TC 1
-+#define SXE_DCB_4_TC 4
-+#define SXE_DCB_8_TC 8
-+
-+#define SXE_8Q_PER_POOL_MASK   0x78
-+#define SXE_4Q_PER_POOL_MASK   0x7C
-+#define SXE_2Q_PER_POOL_MASK   0x7E
-+
-+#define SXE_VF_NUM_16		16
-+#define SXE_VF_NUM_32		32
-+
-+#define SXE_TX_DESC_EOP_MASK  0x01000000
-+#define SXE_TX_DESC_RS_MASK   0x08000000
-+#define SXE_TX_DESC_STAT_DD   0x00000001
-+#define SXE_TX_DESC_CMD	   (SXE_TX_DESC_EOP_MASK | SXE_TX_DESC_RS_MASK)
-+#define SXE_TX_DESC_TYPE_DATA 0x00300000
-+#define SXE_TX_DESC_DEXT	0x20000000
-+#define SXE_TX_DESC_IFCS	0x02000000
-+#define SXE_TX_DESC_VLE		0x40000000
-+#define SXE_TX_DESC_TSTAMP	0x00080000
-+#define SXE_TX_DESC_FLAGS	(SXE_TX_DESC_TYPE_DATA | \
-+				SXE_TX_DESC_IFCS | \
-+				SXE_TX_DESC_DEXT | \
-+				SXE_TX_DESC_EOP_MASK)
-+#define SXE_TXD_DTYP_CTXT	0x00200000
-+#define SXE_TXD_DCMD_TSE	0x80000000
-+#define SXE_TXD_MAC_LINKSEC	0x00040000
-+#define SXE_TXD_MAC_1588	0x00080000
-+#define SXE_TX_DESC_PAYLEN_SHIFT	14
-+#define SXE_TX_OUTERIPCS_SHIFT		17
-+
-+#define SXE_TX_POPTS_IXSM   0x01
-+#define SXE_TX_POPTS_TXSM   0x02
-+#define SXE_TXD_POPTS_SHIFT 8
-+#define SXE_TXD_POPTS_IXSM  (SXE_TX_POPTS_IXSM << SXE_TXD_POPTS_SHIFT)
-+#define SXE_TXD_POPTS_TXSM  (SXE_TX_POPTS_TXSM << SXE_TXD_POPTS_SHIFT)
-+#define SXE_TXD_POPTS_IPSEC (0x00000400)
-+
-+#define SXE_TX_CTXTD_DTYP_CTXT	    0x00200000
-+#define SXE_TX_CTXTD_TUCMD_IPV6	    0x00000000
-+#define SXE_TX_CTXTD_TUCMD_IPV4	    0x00000400
-+#define SXE_TX_CTXTD_TUCMD_L4T_UDP  0x00000000
-+#define SXE_TX_CTXTD_TUCMD_L4T_TCP  0x00000800
-+#define SXE_TX_CTXTD_TUCMD_L4T_SCTP 0x00001000
-+#define SXE_TX_CTXTD_TUCMD_L4T_RSV  0x00001800
-+#define SXE_TX_CTXTD_TUCMD_IPSEC_TYPE_ESP   0x00002000
-+#define SXE_TX_CTXTD_TUCMD_IPSEC_ENCRYPT_EN 0x00004000
-+
-+#define SXE_TX_CTXTD_L4LEN_SHIFT	8
-+#define SXE_TX_CTXTD_MSS_SHIFT		16
-+#define SXE_TX_CTXTD_MACLEN_SHIFT	9
-+#define SXE_TX_CTXTD_VLAN_SHIFT		16
-+#define SXE_TX_CTXTD_VLAN_MASK		0xffff0000
-+#define SXE_TX_CTXTD_MACLEN_MASK	0x0000fE00
-+#define SXE_TX_CTXTD_OUTER_IPLEN_SHIFT	16
-+#define SXE_TX_CTXTD_TUNNEL_LEN_SHIFT	24
-+
-+#define SXE_VLAN_TAG_SIZE	4
-+
-+#define SXE_RSS_KEY_SIZE	(40)
-+#define SXE_MAX_RSS_KEY_ENTRIES	(10)
-+#define SXE_MAX_RETA_ENTRIES	(128)
-+
-+#define SXE_TIMINC_IV_NS_SHIFT  8
-+#define SXE_TIMINC_INCPD_SHIFT  24
-+#define SXE_TIMINC_SET(incpd, iv_ns, iv_sns)   \
-+	(((incpd) << SXE_TIMINC_INCPD_SHIFT) | \
-+	((iv_ns) << SXE_TIMINC_IV_NS_SHIFT) | (iv_sns))
-+
-+#define PBA_STRATEGY_EQUAL		(0)
-+#define PBA_STRATEGY_WEIGHTED		(1)
-+#define SXE_PKG_BUF_NUM_MAX		(8)
-+#define SXE_HW_TXRX_RING_NUM_MAX	128
-+#define SXE_VMDQ_DCB_NUM_QUEUES		SXE_HW_TXRX_RING_NUM_MAX
-+#define SXE_RX_PKT_BUF_SIZE		(512)
-+
-+#define SXE_UC_ENTRY_NUM_MAX		128
-+#define SXE_HW_TX_NONE_MODE_Q_NUM	64
-+
-+#define SXE_MBX_MSG_NUM			16
-+#define SXE_MBX_RETRY_INTERVAL		500
-+#define SXE_MBX_RETRY_COUNT		2000
-+
-+#define SXE_VF_UC_ENTRY_NUM_MAX 10
-+#define SXE_VF_MC_ENTRY_NUM_MAX 30
-+
-+#define SXE_UTA_ENTRY_NUM_MAX   128
-+#define SXE_MTA_ENTRY_NUM_MAX   128
-+#define SXE_HASH_UC_NUM_MAX     4096
-+
-+#define  SXE_MAC_ADDR_EXTRACT_MASK	(0xFFF)
-+#define  SXE_MAC_ADDR_SHIFT		(5)
-+#define  SXE_MAC_ADDR_REG_MASK		(0x7F)
-+#define  SXE_MAC_ADDR_BIT_MASK		(0x1F)
-+
-+#define  SXE_VFT_TBL_SIZE		(128)
-+#define  SXE_VLAN_ID_SHIFT		(5)
-+#define  SXE_VLAN_ID_REG_MASK		(0x7F)
-+#define  SXE_VLAN_ID_BIT_MASK		(0x1F)
-+
-+#define SXE_TX_PBSIZE_MAX		0x00028000
-+#define SXE_TX_PKT_SIZE_MAX		0xA
-+#define SXE_NODCB_TX_PKT_SIZE_MAX	0x14
-+#define SXE_RING_ENABLE_WAIT_LOOP	10
-+
-+#define VFTA_BLOCK_SIZE			8
-+#define VF_BLOCK_BITS			(32)
-+#define SXE_MAX_MAC_HDR_LEN		127
-+#define SXE_MAX_NETWORK_HDR_LEN		511
-+#define SXE_MAC_ADDR_LEN		6
-+
-+#define SXE_FNAV_BUCKET_HASH_KEY	0x3DAD14E2
-+#define SXE_FNAV_SAMPLE_HASH_KEY	0x174D3614
-+#define SXE_SAMPLE_COMMON_HASH_KEY \
-+		(SXE_FNAV_BUCKET_HASH_KEY & SXE_FNAV_SAMPLE_HASH_KEY)
-+
-+#define SXE_SAMPLE_HASH_MASK		0x7fff
-+#define SXE_SAMPLE_L4TYPE_MASK		0x3
-+#define SXE_SAMPLE_L4TYPE_UDP		0x1
-+#define SXE_SAMPLE_L4TYPE_TCP		0x2
-+#define SXE_SAMPLE_L4TYPE_SCTP		0x3
-+#define SXE_SAMPLE_L4TYPE_IPV6_MASK	0x4
-+#define SXE_SAMPLE_L4TYPE_TUNNEL_MASK	0x10
-+#define SXE_SAMPLE_FLOW_TYPE_MASK	0xF
-+
-+#define SXE_SAMPLE_VM_POOL_MASK		0x7F
-+#define SXE_SAMPLE_VLAN_MASK		0xEFFF
-+#define SXE_SAMPLE_FLEX_BYTES_MASK	0xFFFF
-+
-+#define SXE_FNAV_INIT_DONE_POLL		10
-+#define SXE_FNAV_DROP_QUEUE		127
-+
-+#define MAX_TRAFFIC_CLASS		8
-+#define DEF_TRAFFIC_CLASS		1
-+
-+#define SXE_LINK_SPEED_UNKNOWN   0
-+#define SXE_LINK_SPEED_10_FULL   0x0002
-+#define SXE_LINK_SPEED_100_FULL  0x0008
-+#define SXE_LINK_SPEED_1GB_FULL  0x0020
-+#define SXE_LINK_SPEED_10GB_FULL 0x0080
-+
-+typedef u32 sxe_link_speed;
-+#define SXE_LINK_MBPS_SPEED_DEFAULT 10000
-+
-+#define SXE_LINK_MBPS_SPEED_MIN   (10)
-+
-+enum sxe_rss_ip_version {
-+	SXE_RSS_IP_VER_4 = 4,
-+	SXE_RSS_IP_VER_6 = 6,
-+};
-+
-+enum sxe_fnav_mode {
-+	SXE_FNAV_SAMPLE_MODE = 1,
-+	SXE_FNAV_SPECIFIC_MODE	= 2,
-+};
-+
-+enum sxe_sample_type {
-+	SXE_SAMPLE_FLOW_TYPE_IPV4   = 0x0,
-+	SXE_SAMPLE_FLOW_TYPE_UDPV4  = 0x1,
-+	SXE_SAMPLE_FLOW_TYPE_TCPV4  = 0x2,
-+	SXE_SAMPLE_FLOW_TYPE_SCTPV4 = 0x3,
-+	SXE_SAMPLE_FLOW_TYPE_IPV6   = 0x4,
-+	SXE_SAMPLE_FLOW_TYPE_UDPV6  = 0x5,
-+	SXE_SAMPLE_FLOW_TYPE_TCPV6  = 0x6,
-+	SXE_SAMPLE_FLOW_TYPE_SCTPV6 = 0x7,
++enum {
++	SXEVF_LINK_TO_PHY   = 0,
++	SXEVF_LINK_TO_DOWN,
++	SXEVF_LINK_TO_REINIT,
 +};
 +
 +enum {
-+	SXE_DIAG_TEST_PASSED			= 0,
-+	SXE_DIAG_TEST_BLOCKED			= 1,
-+	SXE_DIAG_STATS_REG_TEST_ERR		= 2,
-+	SXE_DIAG_REG_PATTERN_TEST_ERR		= 3,
-+	SXE_DIAG_CHECK_REG_TEST_ERR		= 4,
-+	SXE_DIAG_DISABLE_IRQ_TEST_ERR		= 5,
-+	SXE_DIAG_ENABLE_IRQ_TEST_ERR		= 6,
-+	SXE_DIAG_DISABLE_OTHER_IRQ_TEST_ERR	= 7,
-+	SXE_DIAG_TX_RING_CONFIGURE_ERR		= 8,
-+	SXE_DIAG_RX_RING_CONFIGURE_ERR		= 9,
-+	SXE_DIAG_ALLOC_SKB_ERR			= 10,
-+	SXE_DIAG_LOOPBACK_SEND_TEST_ERR		= 11,
-+	SXE_DIAG_LOOPBACK_RECV_TEST_ERR		= 12,
++	SXEVF_DIAG_TEST_PASSED			= 0,
++	SXEVF_DIAG_TEST_BLOCKED			= 1,
++	SXEVF_DIAG_REG_PATTERN_TEST_ERR		= 2,
++	SXEVF_DIAG_CHECK_REG_TEST_ERR		   = 3,
 +};
 +
-+#define SXE_RXD_STAT_DD		0x01
-+#define SXE_RXD_STAT_EOP	0x02
-+#define SXE_RXD_STAT_FLM	0x04
-+#define SXE_RXD_STAT_VP		0x08
-+#define SXE_RXDADV_NEXTP_MASK	0x000FFFF0
-+#define SXE_RXDADV_NEXTP_SHIFT	0x00000004
-+#define SXE_RXD_STAT_UDPCS	0x10
-+#define SXE_RXD_STAT_L4CS	0x20
-+#define SXE_RXD_STAT_IPCS	0x40
-+#define SXE_RXD_STAT_PIF	0x80
-+#define SXE_RXD_STAT_CRCV	0x100
-+#define SXE_RXD_STAT_OUTERIPCS	0x100
-+#define SXE_RXD_STAT_VEXT	0x200
-+#define SXE_RXD_STAT_UDPV	0x400
-+#define SXE_RXD_STAT_DYNINT	0x800
-+#define SXE_RXD_STAT_LLINT	0x800
-+#define SXE_RXD_STAT_TSIP	0x08000
-+#define SXE_RXD_STAT_TS		0x10000
-+#define SXE_RXD_STAT_SECP	0x20000
-+#define SXE_RXD_STAT_LB		0x40000
-+#define SXE_RXD_STAT_ACK	0x8000
-+#define SXE_RXD_ERR_CE		0x01
-+#define SXE_RXD_ERR_LE		0x02
-+#define SXE_RXD_ERR_PE		0x08
-+#define SXE_RXD_ERR_OSE		0x10
-+#define SXE_RXD_ERR_USE		0x20
-+#define SXE_RXD_ERR_TCPE	0x40
-+#define SXE_RXD_ERR_IPE		0x80
-+#define SXE_RXDADV_ERR_MASK	0xfff00000
-+#define SXE_RXDADV_ERR_SHIFT	20
-+#define SXE_RXDADV_ERR_OUTERIPER 0x04000000
-+#define SXE_RXDADV_ERR_FCEOFE	 0x80000000
-+#define SXE_RXDADV_ERR_FCERR	 0x00700000
-+#define SXE_RXDADV_ERR_FNAV_LEN	 0x00100000
-+#define SXE_RXDADV_ERR_FNAV_DROP 0x00200000
-+#define SXE_RXDADV_ERR_FNAV_COLL 0x00400000
-+#define SXE_RXDADV_ERR_HBO	 0x00800000
-+#define SXE_RXDADV_ERR_CE	 0x01000000
-+#define SXE_RXDADV_ERR_LE	 0x02000000
-+#define SXE_RXDADV_ERR_PE	 0x08000000
-+#define SXE_RXDADV_ERR_OSE	 0x10000000
-+#define SXE_RXDADV_ERR_IPSEC_INV_PROTOCOL  0x08000000
-+#define SXE_RXDADV_ERR_IPSEC_INV_LENGTH    0x10000000
-+#define SXE_RXDADV_ERR_IPSEC_AUTH_FAILED   0x18000000
-+#define SXE_RXDADV_ERR_USE	0x20000000
-+#define SXE_RXDADV_ERR_L4E	0x40000000
-+#define SXE_RXDADV_ERR_IPE	0x80000000
-+#define SXE_RXD_VLAN_ID_MASK	0x0FFF
-+#define SXE_RXD_PRI_MASK	0xE000
-+#define SXE_RXD_PRI_SHIFT	13
-+#define SXE_RXD_CFI_MASK	0x1000
-+#define SXE_RXD_CFI_SHIFT	12
-+#define SXE_RXDADV_LROCNT_MASK	0x001E0000
-+#define SXE_RXDADV_LROCNT_SHIFT	17
++struct sxevf_hw;
 +
-+#define SXE_RXDADV_STAT_DD	SXE_RXD_STAT_DD
-+#define SXE_RXDADV_STAT_EOP	SXE_RXD_STAT_EOP
-+#define SXE_RXDADV_STAT_FLM	SXE_RXD_STAT_FLM
-+#define SXE_RXDADV_STAT_VP	SXE_RXD_STAT_VP
-+#define SXE_RXDADV_STAT_MASK	0x000fffff
-+#define SXE_RXDADV_STAT_TS	0x00010000
-+#define SXE_RXDADV_STAT_SECP	0x00020000
++struct sxevf_hw_stats {
++	u64 base_vfgprc;
++	u64 base_vfgptc;
++	u64 base_vfgorc;
++	u64 base_vfgotc;
++	u64 base_vfmprc;
 +
-+#define SXE_RXDADV_PKTTYPE_NONE		0x00000000
-+#define SXE_RXDADV_PKTTYPE_IPV4		0x00000010
-+#define SXE_RXDADV_PKTTYPE_IPV4_EX	0x00000020
-+#define SXE_RXDADV_PKTTYPE_IPV6		0x00000040
-+#define SXE_RXDADV_PKTTYPE_IPV6_EX	0x00000080
-+#define SXE_RXDADV_PKTTYPE_TCP		0x00000100
-+#define SXE_RXDADV_PKTTYPE_UDP		0x00000200
-+#define SXE_RXDADV_PKTTYPE_SCTP		0x00000400
-+#define SXE_RXDADV_PKTTYPE_NFS		0x00000800
-+#define SXE_RXDADV_PKTTYPE_VXLAN	0x00000800
-+#define SXE_RXDADV_PKTTYPE_TUNNEL	0x00010000
-+#define SXE_RXDADV_PKTTYPE_IPSEC_ESP	0x00001000
-+#define SXE_RXDADV_PKTTYPE_IPSEC_AH	0x00002000
-+#define SXE_RXDADV_PKTTYPE_LINKSEC	0x00004000
-+#define SXE_RXDADV_PKTTYPE_ETQF		0x00008000
-+#define SXE_RXDADV_PKTTYPE_ETQF_MASK	0x00000070
-+#define SXE_RXDADV_PKTTYPE_ETQF_SHIFT	4
++	u64 last_vfgprc;
++	u64 last_vfgptc;
++	u64 last_vfgorc;
++	u64 last_vfgotc;
++	u64 last_vfmprc;
 +
-+struct sxe_mac_stats {
-+	u64 crcerrs;
-+	u64 errbc;
-+	u64 rlec;
-+	u64 prc64;
-+	u64 prc127;
-+	u64 prc255;
-+	u64 prc511;
-+	u64 prc1023;
-+	u64 prc1522;
-+	u64 gprc;
-+	u64 bprc;
-+	u64 mprc;
-+	u64 gptc;
-+	u64 gorc;
-+	u64 gotc;
-+	u64 ruc;
-+	u64 rfc;
-+	u64 roc;
-+	u64 rjc;
-+	u64 tor;
-+	u64 tpr;
-+	u64 tpt;
-+	u64 ptc64;
-+	u64 ptc127;
-+	u64 ptc255;
-+	u64 ptc511;
-+	u64 ptc1023;
-+	u64 ptc1522;
-+	u64 mptc;
-+	u64 bptc;
-+	u64 qprc[16];
-+	u64 qptc[16];
-+	u64 qbrc[16];
-+	u64 qbtc[16];
-+	u64 qprdc[16];
-+	u64 dburxtcin[8];
-+	u64 dburxtcout[8];
-+	u64 dburxgdreecnt[8];
-+	u64 dburxdrofpcnt[8];
-+	u64 dbutxtcin[8];
-+	u64 dbutxtcout[8];
-+	u64 rxdgpc;
-+	u64 rxdgbc;
-+	u64 rxddpc;
-+	u64 rxddbc;
-+	u64 rxtpcing;
-+	u64 rxtpceng;
-+	u64 rxlpbkpc;
-+	u64 rxlpbkbc;
-+	u64 rxdlpbkpc;
-+	u64 rxdlpbkbc;
-+	u64 prddc;
-+	u64 txdgpc;
-+	u64 txdgbc;
-+	u64 txswerr;
-+	u64 txswitch;
-+	u64 txrepeat;
-+	u64 txdescerr;
++	u64 vfgprc;
++	u64 vfgptc;
++	u64 vfgorc;
++	u64 vfgotc;
++	u64 vfmprc;
 +
-+	u64 fnavadd;
-+	u64 fnavrmv;
-+	u64 fnavadderr;
-+	u64 fnavrmverr;
-+	u64 fnavmatch;
-+	u64 fnavmiss;
-+	u64 hw_rx_no_dma_resources;
-+	u64 prcpf[8];
-+	u64 pfct[8];
-+	u64 mpc[8];
-+
-+	u64 total_tx_pause;
-+	u64 total_gptc;
-+	u64 total_gotc;
++	u64 saved_reset_vfgprc;
++	u64 saved_reset_vfgptc;
++	u64 saved_reset_vfgorc;
++	u64 saved_reset_vfgotc;
++	u64 saved_reset_vfmprc;
 +};
 +
-+union sxe_fnav_rule_info {
-+	struct {
-+		u8	 vm_pool;
-+		u8	 flow_type;
-+		__be16 vlan_id;
-+		__be32 dst_ip[4];
-+		__be32 src_ip[4];
-+		__be16 src_port;
-+		__be16 dst_port;
-+		__be16 flex_bytes;
-+		__be16 bkt_hash;
-+	} ntuple;
-+	__be32 fast_access[11];
++void sxevf_hw_ops_init(struct sxevf_hw *hw);
++
++
++struct sxevf_setup_operations {
++	void (*reset)(struct sxevf_hw *hw);
++	void (*hw_stop)(struct sxevf_hw *hw);
++	s32  (*regs_test)(struct sxevf_hw *hw);
++	u32  (*link_state_get)(struct sxevf_hw *hw);
++	u32  (*regs_dump)(struct sxevf_hw *hw, u32 *regs_buff, u32 buf_size);
++	bool (*reset_done)(struct sxevf_hw *hw);
 +};
 +
-+union sxe_sample_hash_dword {
-+	struct {
-+		u8 vm_pool;
-+		u8 flow_type;
-+		__be16 vlan_id;
-+	} formatted;
-+	__be32 ip;
-+	struct {
-+		__be16 src;
-+		__be16 dst;
-+	} port;
-+	__be16 flex_bytes;
-+	__be32 dword;
++struct sxevf_hw_setup {
++	const struct sxevf_setup_operations *ops;
 +};
 +
-+struct sxe_reg_info {
-+	u32 addr;
-+	u32 count;
-+	u32 stride;
-+	const s8 *name;
++struct sxevf_irq_operations {
++	void (*pending_irq_clear)(struct sxevf_hw *hw);
++	void (*ring_irq_interval_set)(struct sxevf_hw *hw, u16 irq_idx, u32 interval);
++	void (*event_irq_interval_set)(struct sxevf_hw *hw, u16 irq_idx, u32 value);
++	void (*ring_irq_map)(struct sxevf_hw *hw, bool is_tx, u16 hw_ring_idx, u16 irq_idx);
++	void (*event_irq_map)(struct sxevf_hw *hw, u16 irq_idx);
++	void (*ring_irq_trigger)(struct sxevf_hw *hw, u64 eics);
++	void (*irq_enable)(struct sxevf_hw *hw, u32 mask);
++	void (*specific_irq_enable)(struct sxevf_hw *hw, u32 value);
++	void (*irq_disable)(struct sxevf_hw *hw);
++	void (*irq_off)(struct sxevf_hw *hw);
 +};
 +
-+#define SXE_FLAGS_DOUBLE_RESET_REQUIRED	0x01
-+
-+struct sxe_mac_info {
-+	u8   flags;
-+	bool set_lben;
++struct sxevf_irq_info {
++	const struct sxevf_irq_operations *ops;
 +};
 +
-+struct sxe_mbx_stats {
++struct sxevf_mbx_operations {
++	u32 (*mailbox_read)(struct sxevf_hw *hw);
++	void (*mailbox_write)(struct sxevf_hw *hw, u32 value);
++
++	void (*msg_write)(struct sxevf_hw *hw, u8 index, u32 msg);
++	u32 (*msg_read)(struct sxevf_hw *hw, u8 index);
++
++	void (*pf_req_irq_trigger)(struct sxevf_hw *hw);
++	void (*pf_ack_irq_trigger)(struct sxevf_hw *hw);
++};
++
++struct sxevf_mbx_stats {
 +	u32 send_msgs;
 +	u32 rcv_msgs;
 +
@@ -4107,70 +1126,92 @@ index 0000000000..4519568736
 +	u32 rsts;
 +};
 +
-+struct sxe_mbx_info {
-+	struct sxe_mbx_stats stats;
++struct sxevf_mbx_info {
++	const struct sxevf_mbx_operations *ops;
++
++	struct sxevf_mbx_stats stats;
++	u32 msg_len;
 +	u32 retry;
 +	u32 interval;
-+	u32 msg_len;
++	u32 reg_value;
++	u32 api_version;
 +};
 +
-+enum sxe_hw_state {
-+	SXE_HW_STOP,
-+	SXE_HW_FAULT,
++struct sxevf_dma_operations {
++	void (*tx_ring_desc_configure)(struct sxevf_hw *hw, u32 desc_mem_len,
++				u64 desc_dma_addr, u8 reg_idx);
++	void (*tx_writeback_off)(struct sxevf_hw *hw, u8 reg_idx);
++	void (*tx_desc_thresh_set)(struct sxevf_hw *hw, u8 reg_idx,
++				u32 wb_thresh, u32 host_thresh, u32 prefech_thresh);
++	void (*tx_ring_switch)(struct sxevf_hw *hw, u8 reg_idx, bool is_on);
++	void (*tx_desc_wb_flush)(struct sxevf_hw *hw, u8 val);
++	void (*tx_ring_info_get)(struct sxevf_hw *hw, u8 reg_idx,
++					u32 *head, u32 *tail);
++	void (*rx_disable)(struct sxevf_hw *hw, u8 reg_idx);
++	void (*rx_ring_switch)(struct sxevf_hw *hw, u8 reg_idx, bool is_on);
++	void (*rx_ring_desc_configure)(struct sxevf_hw *hw, u32 desc_mem_len,
++				u64 desc_dma_addr, u8 reg_idx);
++	void (*rx_rcv_ctl_configure)(struct sxevf_hw *hw, u8 reg_idx,
++				   u32 header_buf_len, u32 pkg_buf_len, bool drop_en);
 +};
 +
-+enum sxe_fc_mode {
-+	SXE_FC_NONE = 0,
-+	SXE_FC_RX_PAUSE,
-+	SXE_FC_TX_PAUSE,
-+	SXE_FC_FULL,
-+	SXE_FC_DEFAULT,
++struct sxevf_dma_info {
++	const struct sxevf_dma_operations *ops;
 +};
 +
-+struct sxe_fc_info {
-+	u32 high_water[MAX_TRAFFIC_CLASS];
-+	u32 low_water[MAX_TRAFFIC_CLASS];
-+	u16 pause_time;
-+	bool strict_ieee;
-+	bool disable_fc_autoneg;
-+	u16 send_xon;
-+	enum sxe_fc_mode current_mode;
-+	enum sxe_fc_mode requested_mode;
++struct sxevf_stat_operations {
++	void (*packet_stats_get)(struct sxevf_hw *hw,
++			struct sxevf_hw_stats *stats);
++	void (*stats_init_value_get)(struct sxevf_hw *hw,
++				struct sxevf_hw_stats *stats);
 +};
 +
-+struct sxe_fc_nego_mode {
-+	u32 adv_sym;
-+	u32 adv_asm;
-+	u32 lp_sym;
-+	u32 lp_asm;
++struct sxevf_stat_info {
++	const struct sxevf_stat_operations *ops;
++};
++
++struct sxevf_dbu_operations {
++	void (*rx_max_used_ring_set)(struct sxevf_hw *hw, u16 max_rx_ring);
 +
 +};
 +
-+struct sxe_hdc_info {
-+	u32 pf_lock_val;
++struct sxevf_dbu_info {
++	const struct sxevf_dbu_operations	*ops;
 +};
 +
-+struct sxe_hw {
++enum sxevf_hw_state {
++	SXEVF_HW_STOP,
++	SXEVF_HW_FAULT,
++};
++
++struct sxevf_hw {
 +	u8 __iomem *reg_base_addr;
-+
 +	void *adapter;
++
 +	unsigned long state;
 +	u32 (*reg_read)(const volatile void *reg);
 +	void (*reg_write)(u32 value, volatile void *reg);
++	s32	board_type;
 +
-+	struct sxe_mac_info  mac;
-+	struct sxe_fc_info   fc;
-+	struct sxe_mbx_info mbx;
-+	struct sxe_hdc_info  hdc;
++	struct sxevf_hw_setup   setup;
++	struct sxevf_irq_info   irq;
++	struct sxevf_mbx_info   mbx;
++
++	struct sxevf_dma_info	dma;
++	struct sxevf_stat_info   stat;
++	struct sxevf_dbu_info	dbu;
 +};
 +
-+u32 sxe_hw_rss_key_get_by_idx(struct sxe_hw *hw, u8 reg_idx);
++struct sxevf_reg_info {
++	u32 addr;
++	u32 count;
++	u32 stride;
++	const s8 *name;
++};
 +
-+bool sxe_hw_is_rss_enabled(struct sxe_hw *hw);
++u16 sxevf_reg_dump_num_get(void);
 +
-+u32 sxe_hw_rss_field_get(struct sxe_hw *hw);
-+
-+static inline void sxe_hw_reg_handle_init(struct sxe_hw *hw,
++static inline void sxevf_hw_reg_handle_init(struct sxevf_hw *hw,
 +		u32 (*read)(const volatile void *),
 +		void (*write)(u32, volatile void *))
 +{
@@ -4178,2477 +1219,2339 @@ index 0000000000..4519568736
 +	hw->reg_write = write;
 +}
 +
-+void sxe_hw_crc_strip_config(struct sxe_hw *hw, bool keep_crc);
++void sxevf_irq_disable(struct sxevf_hw *hw);
 +
-+void sxe_hw_stats_seq_clean(struct sxe_hw *hw, struct sxe_mac_stats *stats);
++void sxevf_hw_stop(struct sxevf_hw *hw);
 +
-+void sxe_hw_hdc_drv_status_set(struct sxe_hw *hw, u32 value);
++void sxevf_hw_reset(struct sxevf_hw *hw);
 +
-+s32 sxe_hw_nic_reset(struct sxe_hw *hw);
++void sxevf_msg_write(struct sxevf_hw *hw, u8 index, u32 msg);
 +
-+u16 sxe_hw_fc_pause_time_get(struct sxe_hw *hw);
++u32 sxevf_msg_read(struct sxevf_hw *hw, u8 index);
 +
-+void sxe_hw_fc_pause_time_set(struct sxe_hw *hw, u16 pause_time);
++u32 sxevf_mailbox_read(struct sxevf_hw *hw);
 +
-+void sxe_fc_autoneg_localcap_set(struct sxe_hw *hw);
++void sxevf_mailbox_write(struct sxevf_hw *hw, u32 value);
 +
-+u32 sxe_hw_fc_tc_high_water_mark_get(struct sxe_hw *hw, u8 tc_idx);
++void sxevf_pf_req_irq_trigger(struct sxevf_hw *hw);
 +
-+u32 sxe_hw_fc_tc_low_water_mark_get(struct sxe_hw *hw, u8 tc_idx);
++void sxevf_pf_ack_irq_trigger(struct sxevf_hw *hw);
 +
-+u16 sxe_hw_fc_send_xon_get(struct sxe_hw *hw);
++void sxevf_rxtx_reg_init(struct sxevf_hw *hw);
 +
-+void sxe_hw_fc_send_xon_set(struct sxe_hw *hw, u16 send_xon);
++void sxevf_irq_enable(struct sxevf_hw *hw, u32 mask);
 +
-+u32 sxe_hw_rx_mode_get(struct sxe_hw *hw);
++u32 sxevf_irq_cause_get(struct sxevf_hw *hw);
 +
-+void sxe_hw_rx_mode_set(struct sxe_hw *hw, u32 filter_ctrl);
++void sxevf_event_irq_map(struct sxevf_hw *hw, u16 vector);
 +
-+void sxe_hw_specific_irq_enable(struct sxe_hw *hw, u32 value);
++void sxevf_hw_ring_irq_map(struct sxevf_hw *hw, bool is_tx, u16 hw_ring_idx, u16 vector);
 +
-+void sxe_hw_specific_irq_disable(struct sxe_hw *hw, u32 value);
++void sxevf_ring_irq_interval_set(struct sxevf_hw *hw, u16 irq_idx, u32 interval);
 +
-+void sxe_hw_irq_general_reg_set(struct sxe_hw *hw, u32 value);
++void sxevf_tx_desc_configure(struct sxevf_hw *hw, u32 desc_mem_len,
++				u64 desc_dma_addr, u8 reg_idx);
 +
-+u32 sxe_hw_irq_general_reg_get(struct sxe_hw *hw);
-+
-+void sxe_hw_event_irq_map(struct sxe_hw *hw, u8 offset, u16 irq_idx);
-+
-+void sxe_hw_ring_irq_map(struct sxe_hw *hw, bool is_tx,
-+						u16 reg_idx, u16 irq_idx);
-+
-+void sxe_hw_ring_irq_interval_set(struct sxe_hw *hw,
-+						u16 irq_idx, u32 interval);
-+
-+void sxe_hw_event_irq_auto_clear_set(struct sxe_hw *hw, u32 value);
-+
-+void sxe_hw_all_irq_disable(struct sxe_hw *hw);
-+
-+void sxe_hw_ring_irq_auto_disable(struct sxe_hw *hw,
-+					bool is_msix);
-+
-+u32 sxe_hw_irq_cause_get(struct sxe_hw *hw);
-+
-+void sxe_hw_pending_irq_write_clear(struct sxe_hw *hw, u32 value);
-+
-+u32 sxe_hw_ring_irq_switch_get(struct sxe_hw *hw, u8 idx);
-+
-+void sxe_hw_ring_irq_switch_set(struct sxe_hw *hw, u8 idx, u32 value);
-+
-+s32 sxe_hw_uc_addr_add(struct sxe_hw *hw, u32 rar_idx,
-+					u8 *addr, u32 pool_idx);
-+
-+s32 sxe_hw_uc_addr_del(struct sxe_hw *hw, u32 index);
-+
-+void sxe_hw_uc_addr_pool_del(struct sxe_hw *hw, u32 rar_idx, u32 pool_idx);
-+
-+u32 sxe_hw_uta_hash_table_get(struct sxe_hw *hw, u8 reg_idx);
-+
-+void sxe_hw_uta_hash_table_set(struct sxe_hw *hw,
-+				u8 reg_idx, u32 value);
-+
-+u32 sxe_hw_mc_filter_get(struct sxe_hw *hw);
-+
-+void sxe_hw_mta_hash_table_set(struct sxe_hw *hw,
-+						u8 index, u32 value);
-+
-+void sxe_hw_mc_filter_enable(struct sxe_hw *hw);
-+
-+void sxe_hw_vlan_filter_array_write(struct sxe_hw *hw,
-+					u16 reg_index, u32 value);
-+
-+u32 sxe_hw_vlan_filter_array_read(struct sxe_hw *hw, u16 reg_index);
-+
-+void sxe_hw_vlan_filter_switch(struct sxe_hw *hw, bool is_enable);
-+
-+u32 sxe_hw_vlan_type_get(struct sxe_hw *hw);
-+
-+void sxe_hw_vlan_type_set(struct sxe_hw *hw, u32 value);
-+
-+void sxe_hw_vlan_ext_vet_write(struct sxe_hw *hw, u32 value);
-+
-+void sxe_hw_vlan_tag_strip_switch(struct sxe_hw *hw,
-+					u16 reg_index, bool is_enable);
-+
-+void sxe_hw_txctl_vlan_type_set(struct sxe_hw *hw, u32 value);
-+
-+u32 sxe_hw_txctl_vlan_type_get(struct sxe_hw *hw);
-+
-+u32 sxe_hw_ext_vlan_get(struct sxe_hw *hw);
-+
-+void sxe_hw_ext_vlan_set(struct sxe_hw *hw, u32 value);
-+
-+void sxe_hw_pf_rst_done_set(struct sxe_hw *hw);
-+
-+u32 sxe_hw_all_regs_group_num_get(void);
-+
-+void sxe_hw_all_regs_group_read(struct sxe_hw *hw, u32 *data);
-+
-+s32 sxe_hw_fc_enable(struct sxe_hw *hw);
-+
-+bool sxe_hw_is_fc_autoneg_disabled(struct sxe_hw *hw);
-+
-+void sxe_hw_fc_status_get(struct sxe_hw *hw,
-+					bool *rx_pause_on, bool *tx_pause_on);
-+
-+void sxe_hw_fc_requested_mode_set(struct sxe_hw *hw,
-+						enum sxe_fc_mode mode);
-+
-+void sxe_hw_fc_tc_high_water_mark_set(struct sxe_hw *hw,
-+							u8 tc_idx, u32 mark);
-+
-+void sxe_hw_fc_tc_low_water_mark_set(struct sxe_hw *hw,
-+							u8 tc_idx, u32 mark);
-+
-+void sxe_hw_fc_autoneg_disable_set(struct sxe_hw *hw,
-+							bool is_disabled);
-+
-+u32 sxe_hw_rx_pkt_buf_size_get(struct sxe_hw *hw, u8 pb);
-+
-+void sxe_hw_ptp_init(struct sxe_hw *hw);
-+
-+void sxe_hw_ptp_timestamp_mode_set(struct sxe_hw *hw,
-+					bool is_l2, u32 tsctl, u32 tses);
-+
-+void sxe_hw_ptp_timestamp_enable(struct sxe_hw *hw);
-+
-+void sxe_hw_ptp_time_inc_stop(struct sxe_hw *hw);
-+
-+void sxe_hw_ptp_rx_timestamp_clear(struct sxe_hw *hw);
-+
-+void sxe_hw_ptp_timestamp_disable(struct sxe_hw *hw);
-+
-+bool sxe_hw_ptp_is_rx_timestamp_valid(struct sxe_hw *hw);
-+
-+u64 sxe_hw_ptp_rx_timestamp_get(struct sxe_hw *hw);
-+
-+void sxe_hw_ptp_tx_timestamp_get(struct sxe_hw *hw,
-+						u32 *ts_sec, u32 *ts_ns);
-+
-+u64 sxe_hw_ptp_systime_get(struct sxe_hw *hw);
-+
-+void sxe_hw_rss_cap_switch(struct sxe_hw *hw, bool is_on);
-+
-+void sxe_hw_rss_key_set_all(struct sxe_hw *hw, u32 *rss_key);
-+
-+void sxe_hw_rss_field_set(struct sxe_hw *hw, u32 rss_field);
-+
-+void sxe_hw_rss_redir_tbl_set_all(struct sxe_hw *hw, u8 *redir_tbl);
-+
-+u32 sxe_hw_rss_redir_tbl_get_by_idx(struct sxe_hw *hw, u16 reg_idx);
-+
-+void sxe_hw_rss_redir_tbl_set_by_idx(struct sxe_hw *hw,
-+						u16 reg_idx, u32 value);
-+
-+void sxe_hw_rx_dma_ctrl_init(struct sxe_hw *hw);
-+
-+void sxe_hw_rx_udp_frag_checksum_disable(struct sxe_hw *hw);
-+
-+void sxe_hw_rx_ip_checksum_offload_switch(struct sxe_hw *hw,
-+							bool is_on);
-+
-+void sxe_hw_rx_ring_switch(struct sxe_hw *hw, u8 reg_idx, bool is_on);
-+
-+void sxe_hw_rx_ring_desc_configure(struct sxe_hw *hw,
-+					u32 desc_mem_len, u64 desc_dma_addr,
-+					u8 reg_idx);
-+
-+void sxe_hw_rx_rcv_ctl_configure(struct sxe_hw *hw, u8 reg_idx,
-+				   u32 header_buf_len, u32 pkg_buf_len
-+				   );
-+
-+void sxe_hw_rx_drop_switch(struct sxe_hw *hw, u8 idx, bool is_enable);
-+
-+void sxe_hw_rx_desc_thresh_set(struct sxe_hw *hw, u8 reg_idx);
-+
-+void sxe_hw_rx_lro_ack_switch(struct sxe_hw *hw, bool is_on);
-+
-+void sxe_hw_rx_dma_lro_ctrl_set(struct sxe_hw *hw);
-+
-+void sxe_hw_rx_nfs_filter_disable(struct sxe_hw *hw);
-+
-+void sxe_hw_rx_lro_enable(struct sxe_hw *hw, bool is_enable);
-+
-+void sxe_hw_rx_lro_ctl_configure(struct sxe_hw *hw,
-+						u8 reg_idx, u32 max_desc);
-+void sxe_hw_loopback_switch(struct sxe_hw *hw, bool is_enable);
-+
-+void sxe_hw_rx_cap_switch_off(struct sxe_hw *hw);
-+
-+void sxe_hw_tx_ring_info_get(struct sxe_hw *hw,
-+				u8 idx, u32 *head, u32 *tail);
-+
-+void sxe_hw_tx_ring_switch(struct sxe_hw *hw, u8 reg_idx, bool is_on);
-+
-+void sxe_hw_rx_queue_desc_reg_configure(struct sxe_hw *hw,
-+					u8 reg_idx, u32 rdh_value,
-+					u32 rdt_value);
-+
-+u32 sxe_hw_hdc_fw_status_get(struct sxe_hw *hw);
-+
-+s32 sxe_hw_hdc_lock_get(struct sxe_hw *hw, u32 trylock);
-+
-+void sxe_hw_hdc_lock_release(struct sxe_hw *hw, u32 retry_cnt);
-+
-+bool sxe_hw_hdc_is_fw_over_set(struct sxe_hw *hw);
-+
-+void sxe_hw_hdc_fw_ov_clear(struct sxe_hw *hw);
-+
-+u32 sxe_hw_hdc_fw_ack_header_get(struct sxe_hw *hw);
-+
-+void sxe_hw_hdc_packet_send_done(struct sxe_hw *hw);
-+
-+void sxe_hw_hdc_packet_header_send(struct sxe_hw *hw, u32 value);
-+
-+void sxe_hw_hdc_packet_data_dword_send(struct sxe_hw *hw,
-+						u16 dword_index, u32 value);
-+
-+u32 sxe_hw_hdc_packet_data_dword_rcv(struct sxe_hw *hw,
-+						u16 dword_index);
-+
-+u32 sxe_hw_hdc_channel_state_get(struct sxe_hw *hw);
-+
-+u32 sxe_hw_pending_irq_read_clear(struct sxe_hw *hw);
-+
-+void sxe_hw_all_ring_disable(struct sxe_hw *hw, u32 ring_max);
-+
-+void sxe_hw_tx_ring_head_init(struct sxe_hw *hw, u8 reg_idx);
-+
-+void sxe_hw_tx_ring_tail_init(struct sxe_hw *hw, u8 reg_idx);
-+
-+void sxe_hw_tx_enable(struct sxe_hw *hw);
-+
-+void sxe_hw_tx_desc_thresh_set(struct sxe_hw *hw,
-+				u8 reg_idx,
-+				u32 wb_thresh,
-+				u32 host_thresh,
-+				u32 prefech_thresh);
-+
-+void sxe_hw_tx_pkt_buf_switch(struct sxe_hw *hw, bool is_on);
-+
-+void sxe_hw_tx_pkt_buf_size_configure(struct sxe_hw *hw, u8 num_pb);
-+
-+void sxe_hw_tx_pkt_buf_thresh_configure(struct sxe_hw *hw,
-+					u8 num_pb, bool dcb_enable);
-+
-+void sxe_hw_tx_ring_desc_configure(struct sxe_hw *hw,
-+					u32 desc_mem_len,
++void sxevf_rx_ring_desc_configure(struct sxevf_hw *hw, u32 desc_mem_len,
 +					u64 desc_dma_addr, u8 reg_idx);
 +
-+void sxe_hw_mac_txrx_enable(struct sxe_hw *hw);
++void sxevf_rx_rcv_ctl_configure(struct sxevf_hw *hw, u8 reg_idx,
++				   u32 header_buf_len, u32 pkg_buf_len,
++				   bool drop_en);
 +
-+void sxe_hw_rx_cap_switch_on(struct sxe_hw *hw);
++void sxevf_rss_bit_num_set(struct sxevf_hw *hw, u32 value);
 +
-+void sxe_hw_mac_pad_enable(struct sxe_hw *hw);
++void sxevf_hw_vlan_tag_strip_switch(struct sxevf_hw *hw,
++					u16 reg_index, bool is_enable);
 +
-+bool sxe_hw_is_link_state_up(struct sxe_hw *hw);
++void sxevf_tx_queue_thresh_set(struct sxevf_hw *hw, u8 reg_idx,
++				u32 prefech_thresh, u32 host_thresh, u32 wb_thresh);
 +
-+u32 sxe_hw_link_speed_get(struct sxe_hw *hw);
++void sxevf_tx_ring_switch(struct sxevf_hw *hw, u8 reg_idx, bool is_on);
 +
-+void sxe_hw_fc_base_init(struct sxe_hw *hw);
++void sxevf_rx_ring_switch(struct sxevf_hw *hw, u8 reg_idx, bool is_on);
 +
-+void sxe_hw_stats_get(struct sxe_hw *hw, struct sxe_mac_stats *stats);
++void sxevf_rx_desc_tail_set(struct sxevf_hw *hw, u8 reg_idx, u32 value);
 +
-+void sxe_hw_rxq_stat_map_set(struct sxe_hw *hw, u8 idx, u32 value);
++void sxevf_specific_irq_enable(struct sxevf_hw *hw, u32 value);
 +
-+void sxe_hw_txq_stat_map_set(struct sxe_hw *hw, u8 idx, u32 value);
++void sxevf_packet_stats_get(struct sxevf_hw *hw,
++				struct sxevf_hw_stats *stats);
 +
-+void sxe_hw_uc_addr_clear(struct sxe_hw *hw);
++void sxevf_stats_init_value_get(struct sxevf_hw *hw,
++				struct sxevf_hw_stats *stats);
 +
-+void sxe_hw_stats_regs_clean(struct sxe_hw *hw);
++u32 sxevf_hw_rss_redir_tbl_get(struct sxevf_hw *hw, u16 reg_idx);
 +
-+void sxe_hw_vlan_ext_type_set(struct sxe_hw *hw, u32 value);
-+
-+void sxe_hw_vlan_filter_array_clear(struct sxe_hw *hw);
-+
-+void sxe_hw_no_snoop_disable(struct sxe_hw *hw);
-+
-+void sxe_hw_dcb_rate_limiter_clear(struct sxe_hw *hw, u8 ring_max);
-+
-+s32 sxe_hw_pfc_enable(struct sxe_hw *hw, u8 tc_idx);
-+
-+void sxe_hw_dcb_vmdq_mq_configure(struct sxe_hw *hw, u8 num_pools);
-+
-+void sxe_hw_dcb_vmdq_default_pool_configure(struct sxe_hw *hw,
-+						u8 default_pool_enabled,
-+						u8 default_pool_idx);
-+
-+void sxe_hw_dcb_vmdq_up_2_tc_configure(struct sxe_hw *hw,
-+						u8 *tc_arr);
-+
-+void sxe_hw_dcb_vmdq_vlan_configure(struct sxe_hw *hw,
-+						u8 num_pools);
-+
-+void sxe_hw_dcb_vmdq_pool_configure(struct sxe_hw *hw,
-+						u8 pool_idx, u16 vlan_id,
-+						u64 pools_map);
-+
-+void sxe_hw_dcb_rx_configure(struct sxe_hw *hw, bool is_vt_on,
-+					u8 sriov_active, u8 pg_tcs);
-+
-+void sxe_hw_dcb_tx_configure(struct sxe_hw *hw, bool is_vt_on, u8 pg_tcs);
-+
-+void sxe_hw_pool_xmit_enable(struct sxe_hw *hw, u16 reg_idx, u8 pool_num);
-+
-+void sxe_hw_rx_pkt_buf_size_set(struct sxe_hw *hw, u8 tc_idx, u16 pbsize);
-+
-+void sxe_hw_dcb_tc_stats_configure(struct sxe_hw *hw,
-+					u8 tc_count, bool vmdq_active);
-+
-+void sxe_hw_dcb_rx_bw_alloc_configure(struct sxe_hw *hw,
-+					  u16 *refill,
-+					  u16 *max,
-+					  u8 *bwg_id,
-+					  u8 *prio_type,
-+					  u8 *prio_tc,
-+					  u8 max_priority);
-+
-+void sxe_hw_dcb_tx_desc_bw_alloc_configure(struct sxe_hw *hw,
-+					   u16 *refill,
-+					   u16 *max,
-+					   u8 *bwg_id,
-+					   u8 *prio_type);
-+
-+void sxe_hw_dcb_tx_data_bw_alloc_configure(struct sxe_hw *hw,
-+					   u16 *refill,
-+					   u16 *max,
-+					   u8 *bwg_id,
-+					   u8 *prio_type,
-+					   u8 *prio_tc,
-+					   u8 max_priority);
-+
-+void sxe_hw_dcb_pfc_configure(struct sxe_hw *hw,
-+						u8 pfc_en, u8 *prio_tc,
-+						u8 max_priority);
-+
-+void sxe_hw_vmdq_mq_configure(struct sxe_hw *hw);
-+
-+void sxe_hw_vmdq_default_pool_configure(struct sxe_hw *hw,
-+						u8 default_pool_enabled,
-+						u8 default_pool_idx);
-+
-+void sxe_hw_vmdq_vlan_configure(struct sxe_hw *hw,
-+						u8 num_pools, u32 rx_mode);
-+
-+void sxe_hw_vmdq_pool_configure(struct sxe_hw *hw,
-+						u8 pool_idx, u16 vlan_id,
-+						u64 pools_map);
-+
-+void sxe_hw_vmdq_loopback_configure(struct sxe_hw *hw);
-+
-+void sxe_hw_tx_multi_queue_configure(struct sxe_hw *hw,
-+				bool vmdq_enable, bool sriov_enable, u16 pools_num);
-+
-+void sxe_hw_dcb_max_mem_window_set(struct sxe_hw *hw, u32 value);
-+
-+void sxe_hw_dcb_tx_ring_rate_factor_set(struct sxe_hw *hw,
-+							u32 ring_idx, u32 rate);
-+
-+void sxe_hw_mbx_init(struct sxe_hw *hw);
-+
-+void sxe_hw_vt_ctrl_cfg(struct sxe_hw *hw, u8 num_vfs);
-+
-+void sxe_hw_tx_pool_bitmap_set(struct sxe_hw *hw,
-+						u8 reg_idx, u32 bitmap);
-+
-+void sxe_hw_rx_pool_bitmap_set(struct sxe_hw *hw,
-+						u8 reg_idx, u32 bitmap);
-+
-+void sxe_hw_vt_pool_loopback_switch(struct sxe_hw *hw,
-+						bool is_enable);
-+
-+void sxe_hw_mac_pool_clear(struct sxe_hw *hw, u8 rar_idx);
-+
-+s32 sxe_hw_uc_addr_pool_enable(struct sxe_hw *hw,
-+						u8 rar_idx, u8 pool_idx);
-+
-+s32 sxe_hw_uc_addr_single_pool_disable(struct sxe_hw *hw,
-+				u8 rar_idx, u8 pool_idx);
-+
-+void sxe_hw_pcie_vt_mode_set(struct sxe_hw *hw, u32 value);
-+
-+u32 sxe_hw_pcie_vt_mode_get(struct sxe_hw *hw);
-+
-+void sxe_hw_pool_mac_anti_spoof_set(struct sxe_hw *hw,
-+							u8 vf_idx, bool status);
-+
-+void sxe_rx_fc_threshold_set(struct sxe_hw *hw);
-+
-+void sxe_hw_rx_multi_ring_configure(struct sxe_hw *hw,
-+						u8 tcs, bool is_4Q,
-+						bool sriov_enable);
-+
-+void sxe_hw_rx_queue_mode_set(struct sxe_hw *hw, u32 mrqc);
-+
-+bool sxe_hw_vf_rst_check(struct sxe_hw *hw, u8 vf_idx);
-+
-+bool sxe_hw_vf_req_check(struct sxe_hw *hw, u8 vf_idx);
-+
-+bool sxe_hw_vf_ack_check(struct sxe_hw *hw, u8 vf_idx);
-+
-+s32 sxe_hw_rcv_msg_from_vf(struct sxe_hw *hw, u32 *msg,
-+				u16 msg_len, u16 index);
-+
-+s32 sxe_hw_send_msg_to_vf(struct sxe_hw *hw, u32 *msg,
-+				u16 msg_len, u16 index);
-+
-+u32 sxe_hw_pool_rx_mode_get(struct sxe_hw *hw, u16 pool_idx);
-+
-+void sxe_hw_pool_rx_mode_set(struct sxe_hw *hw,
-+						u32 vmolr, u16 pool_idx);
-+
-+void sxe_hw_tx_vlan_tag_clear(struct sxe_hw *hw, u32 vf);
-+
-+u32 sxe_hw_rx_pool_bitmap_get(struct sxe_hw *hw, u8 reg_idx);
-+
-+u32 sxe_hw_tx_pool_bitmap_get(struct sxe_hw *hw, u8 reg_idx);
-+
-+void sxe_hw_spoof_count_enable(struct sxe_hw *hw,
-+						u8 reg_idx, u8 bit_index);
-+
-+u32 sxe_hw_tx_vlan_insert_get(struct sxe_hw *hw, u32 vf);
-+
-+bool sxe_hw_vt_status(struct sxe_hw *hw);
-+
-+s32 sxe_hw_vlvf_slot_find(struct sxe_hw *hw, u32 vlan, bool vlvf_bypass);
-+
-+void sxe_hw_mirror_vlan_set(struct sxe_hw *hw, u8 idx, u32 lsb, u32 msb);
-+
-+void sxe_hw_mirror_virtual_pool_set(struct sxe_hw *hw, u8 idx, u32 lsb, u32 msb);
-+
-+void sxe_hw_mirror_ctl_set(struct sxe_hw *hw, u8 rule_id,
-+					u8 mirror_type, u8 dst_pool, bool on);
-+
-+void sxe_hw_mirror_rule_clear(struct sxe_hw *hw, u8 rule_id);
-+
-+void sxe_hw_mac_reuse_add(struct rte_eth_dev *dev,
-+				 u8 *mac_addr, u8 rar_idx);
-+
-+void sxe_hw_mac_reuse_del(struct rte_eth_dev *dev,
-+				 u8 *mac_addr, u8 pool_idx, u8 rar_idx);
-+
-+u32 sxe_hw_mac_max_frame_get(struct sxe_hw *hw);
-+
-+void sxe_hw_mta_hash_table_update(struct sxe_hw *hw,
-+						u8 reg_idx, u8 bit_idx);
-+
-+void sxe_hw_vf_queue_drop_enable(struct sxe_hw *hw, u8 vf_idx,
-+					u8 ring_per_pool);
-+void sxe_hw_fc_mac_addr_set(struct sxe_hw *hw, u8 *mac_addr);
-+
-+void sxe_hw_macsec_enable(struct sxe_hw *hw, bool is_up, u32 tx_mode,
-+				u32 rx_mode, u32 pn_trh);
-+
-+void sxe_hw_macsec_disable(struct sxe_hw *hw, bool is_up);
-+
-+void sxe_hw_macsec_txsc_set(struct sxe_hw *hw, u32 scl, u32 sch);
-+
-+void sxe_hw_macsec_rxsc_set(struct sxe_hw *hw, u32 scl, u32 sch, u16 pi);
-+
-+void sxe_hw_macsec_tx_sa_configure(struct sxe_hw *hw, u8 sa_idx,
-+				u8 an, u32 pn, u32 *keys);
-+
-+void sxe_hw_macsec_rx_sa_configure(struct sxe_hw *hw, u8 sa_idx,
-+				u8 an, u32 pn, u32 *keys);
-+void sxe_hw_vt_pool_loopback_switch(struct sxe_hw *hw,
-+							bool is_enable);
-+
-+void sxe_hw_rss_redir_tbl_reg_write(struct sxe_hw *hw,
++void sxevf_hw_rss_redir_tbl_set(struct sxevf_hw *hw,
 +						u16 reg_idx, u32 value);
 +
-+s32 sxe_hw_vlan_filter_configure(struct sxe_hw *hw,
-+					u32 vid, u32 pool,
-+					bool vlan_on, bool vlvf_bypass);
++u32 sxevf_hw_rss_key_get(struct sxevf_hw *hw, u8 reg_idx);
 +
-+void sxe_hw_ptp_systime_init(struct sxe_hw *hw);
++u32 sxevf_hw_rss_field_get(struct sxevf_hw *hw);
++
++void sxevf_hw_rss_field_set(struct sxevf_hw *hw, u32 rss_field);
++
++void sxevf_hw_rss_cap_switch(struct sxevf_hw *hw, bool is_on);
++
++void sxevf_hw_rss_key_set_all(struct sxevf_hw *hw, u32 *rss_key);
++
++bool sxevf_hw_is_rss_enabled(struct sxevf_hw *hw);
++
++u32 sxevf_link_state_get(struct sxevf_hw *hw);
++
++u32 sxevf_hw_regs_group_read(struct sxevf_hw *hw,
++				const struct sxevf_reg_info *regs,
++				u32 *reg_buf);
 +
 +#endif
-diff --git a/drivers/net/sxe/base/sxe_logs.h b/drivers/net/sxe/base/sxe_logs.h
+diff --git a/drivers/net/sxe/base/sxevf_regs.h b/drivers/net/sxe/base/sxevf_regs.h
 new file mode 100644
-index 0000000000..2776b8f6a6
+index 0000000000..50a22f559c
 --- /dev/null
-+++ b/drivers/net/sxe/base/sxe_logs.h
-@@ -0,0 +1,105 @@
++++ b/drivers/net/sxe/base/sxevf_regs.h
+@@ -0,0 +1,119 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
 +
-+#ifndef _SXE_LOGS_H_
-+#define _SXE_LOGS_H_
++#ifndef __SXEVF_REGS_H__
++#define __SXEVF_REGS_H__
 +
-+#include <stdio.h>
-+#include <sys/time.h>
-+#include <pthread.h>
++#define SXEVF_REG_READ_FAIL  0xffffffffU
++#define SXEVF_REG_READ_RETRY 5
 +
-+#include "sxe_types.h"
++#define SXE_VFLINKS_UP		0x00000008
++#define SXE_VFLINKS_SPEED	0x00000006
++#define SXE_VFLINKS_SPEED_10G	0x00000006
++#define SXE_VFLINKS_SPEED_1G	0x00000004
++#define SXE_VFLINKS_SPEED_100	0x00000002
 +
-+#define LOG_FILE_NAME_LEN	 256
-+#define LOG_FILE_PATH		 "/var/log/"
-+#define LOG_FILE_PREFIX	   "sxepmd.log"
++#define SXE_VFCTRL		0x00000
++#define SXE_VFSTATUS	  0x00008
++#define SXE_VFLINKS	   0x00018
++#define SXE_VFFRTIMER	 0x00048
++#define SXE_VFRXMEMWRAP   0x03190
++#define SXE_VFEICR		0x00100
++#define SXE_VFEICS		0x00104
++#define SXE_VFEIMS		0x00108
++#define SXE_VFEIMC		0x0010C
++#define SXE_VFEIAM		0x00114
++#define SXE_VFEITR(x)	 (0x00820 + (4 * (x)))
++#define SXE_VFIVAR(x)	 (0x00120 + (4 * (x)))
++#define SXE_VFIVAR_MISC	0x00140
++#define SXE_VFRDBAL(x)	(0x01000 + (0x40 * (x)))
++#define SXE_VFRDBAH(x)	(0x01004 + (0x40 * (x)))
++#define SXE_VFRDLEN(x)	(0x01008 + (0x40 * (x)))
++#define SXE_VFRDH(x)	  (0x01010 + (0x40 * (x)))
++#define SXE_VFRDT(x)	  (0x01018 + (0x40 * (x)))
++#define SXE_VFRXDCTL(x)   (0x01028 + (0x40 * (x)))
++#define SXE_VFSRRCTL(x)   (0x01014 + (0x40 * (x)))
++#define SXE_VFLROCTL(x)   (0x0102C + (0x40 * (x)))
++#define SXE_VFPSRTYPE	 0x00300
++#define SXE_VFTDBAL(x)	(0x02000 + (0x40 * (x)))
++#define SXE_VFTDBAH(x)	(0x02004 + (0x40 * (x)))
++#define SXE_VFTDLEN(x)	(0x02008 + (0x40 * (x)))
++#define SXE_VFTDH(x)	  (0x02010 + (0x40 * (x)))
++#define SXE_VFTDT(x)	  (0x02018 + (0x40 * (x)))
++#define SXE_VFTXDCTL(x)   (0x02028 + (0x40 * (x)))
++#define SXE_VFTDWBAL(x)   (0x02038 + (0x40 * (x)))
++#define SXE_VFTDWBAH(x)   (0x0203C + (0x40 * (x)))
++#define SXE_VFDCA_RXCTRL(x)	(0x0100C + (0x40 * (x)))
++#define SXE_VFDCA_TXCTRL(x)	(0x0200c + (0x40 * (x)))
++#define SXE_VFGPRC		0x0101C
++#define SXE_VFGPTC		0x0201C
++#define SXE_VFGORC_LSB	0x01020
++#define SXE_VFGORC_MSB	0x01024
++#define SXE_VFGOTC_LSB	0x02020
++#define SXE_VFGOTC_MSB	0x02024
++#define SXE_VFMPRC		0x01034
++#define SXE_VFMRQC		0x3000
++#define SXE_VFRSSRK(x)	(0x3100 + ((x) * 4))
++#define SXE_VFRETA(x)	 (0x3200 + ((x) * 4))
 +
-+extern s32 sxe_log_init;
-+extern s32 sxe_log_rx;
-+extern s32 sxe_log_tx;
-+extern s32 sxe_log_drv;
-+extern s32 sxe_log_hw;
++#define SXEVF_VFEIMC_IRQ_MASK			(7)
++#define SXEVF_IVAR_ALLOC_VALID	(0x80)
 +
-+#define RTE_LOGTYPE_sxe_log_init sxe_log_init
-+#define RTE_LOGTYPE_sxe_log_rx sxe_log_rx
-+#define RTE_LOGTYPE_sxe_log_tx sxe_log_tx
-+#define RTE_LOGTYPE_sxe_log_drv sxe_log_drv
-+#define RTE_LOGTYPE_sxe_log_hw sxe_log_hw
++#define SXEVF_EITR_CNT_WDIS	   (0x80000000)
++#define SXEVF_EITR_ITR_MASK	   (0x00000FF8)
++#define SXEVF_EITR_ITR_SHIFT	  (2)
++#define SXEVF_EITR_ITR_MAX		(SXEVF_EITR_ITR_MASK >> SXEVF_EITR_ITR_SHIFT)
 +
-+#define INIT sxe_log_init
-+#define RX   sxe_log_rx
-+#define TX   sxe_log_tx
-+#define HW   sxe_log_hw
-+#define DRV  sxe_log_drv
++#define SXE_VFRXDCTL_ENABLE  0x02000000
++#define SXE_VFTXDCTL_ENABLE  0x02000000
++#define SXE_VFCTRL_RST	   0x04000000
 +
-+#define UNUSED(x)	((void)(x))
++#define SXEVF_RXDCTL_ENABLE	 0x02000000
++#define SXEVF_RXDCTL_VME	0x40000000
 +
-+#define  TIME(log_time) \
-+	do { \
-+		struct timeval	tv; \
-+		struct tm *td; \
-+		gettimeofday(&tv, NULL); \
-+		td = localtime(&tv.tv_sec); \
-+		strftime(log_time, sizeof(log_time), "%Y-%m-%d-%H:%M:%S", td); \
-+	} while (0)
++#define SXEVF_PSRTYPE_RQPL_SHIFT			   29
 +
-+#define filename_printf(x) (strrchr((x), '/') ? strrchr((x), '/') + 1 : (x))
++#define SXEVF_SRRCTL_DROP_EN				   0x10000000
++#define SXEVF_SRRCTL_DESCTYPE_DATA_ONEBUF	  0x02000000
++#define SXEVF_SRRCTL_BSIZEPKT_SHIFT			(10)
++#define SXEVF_SRRCTL_BSIZEHDRSIZE_SHIFT		(2)
++#define SXEVF_SRRCTL_BSIZEPKT_MASK		   0x0000007F
++#define SXEVF_SRRCTL_BSIZEHDR_MASK		   0x00003F00
 +
-+#define PMD_LOG_DEBUG(logtype, ...) \
-+		RTE_LOG_LINE_PREFIX(DEBUG, logtype, "%s(): ",\
-+			__func__, __VA_ARGS__)
++#define SXE_VFMAILBOX	   0x002FC
++#define SXE_VFMBMEM		 0x00200
 +
-+#define PMD_LOG_INFO(logtype, ...) \
-+		RTE_LOG_LINE_PREFIX(INFO, logtype, "%s(): ",\
-+			__func__, __VA_ARGS__)
++#define SXE_VFMAILBOX_REQ	 0x00000001
++#define SXE_VFMAILBOX_ACK	 0x00000002
++#define SXE_VFMAILBOX_VFU	 0x00000004
++#define SXE_VFMAILBOX_PFU	 0x00000008
++#define SXE_VFMAILBOX_PFSTS   0x00000010
++#define SXE_VFMAILBOX_PFACK   0x00000020
++#define SXE_VFMAILBOX_RSTI	0x00000040
++#define SXE_VFMAILBOX_RSTD	0x00000080
++#define SXE_VFMAILBOX_RC_BIT  0x000000B0
 +
-+#define PMD_LOG_NOTICE(logtype, ...) \
-+		RTE_LOG_LINE_PREFIX(NOTICE, logtype, "%s(): ",\
-+			__func__, __VA_ARGS__)
++#define SXEVF_TDBAL(_i)	  (0x02000 + ((_i) * 0x40))
++#define SXEVF_TDBAH(_i)	  (0x02004 + ((_i) * 0x40))
++#define SXEVF_TDLEN(_i)	  (0x02008 + ((_i) * 0x40))
++#define SXEVF_TDH(_i)		(0x02010 + ((_i) * 0x40))
++#define SXEVF_TDT(_i)		(0x02018 + ((_i) * 0x40))
++#define SXEVF_TXDCTL(_i)	 (0x02028 + ((_i) * 0x40))
++#define SXEVF_TDWBAL(_i)	 (0x02038 + ((_i) * 0x40))
++#define SXEVF_TDWBAH(_i)	 (0x0203C + ((_i) * 0x40))
 +
-+#define PMD_LOG_WARN(logtype, ...) \
-+		RTE_LOG_LINE_PREFIX(WARNING, logtype, "%s(): ",\
-+			__func__, __VA_ARGS__)
++#define SXEVF_TXDCTL_SWFLSH  (0x02000000)
++#define SXEVF_TXDCTL_ENABLE  (0x02000000)
 +
-+#define PMD_LOG_ERR(logtype, ...) \
-+		RTE_LOG_LINE_PREFIX(ERR, logtype, "%s(): ",\
-+			__func__, __VA_ARGS__)
++#define SXEVF_VFGPRC		  0x0101C
++#define SXEVF_VFGPTC		  0x0201C
++#define SXEVF_VFGORC_LSB	  0x01020
++#define SXEVF_VFGORC_MSB	  0x01024
++#define SXEVF_VFGOTC_LSB	  0x02020
++#define SXEVF_VFGOTC_MSB	  0x02024
++#define SXEVF_VFMPRC		  0x01034
 +
-+#define PMD_LOG_CRIT(logtype, ...) \
-+		RTE_LOG_LINE_PREFIX(CRIT, logtype, "%s(): ",\
-+			__func__, __VA_ARGS__)
-+
-+#define PMD_LOG_ALERT(logtype, ...) \
-+		RTE_LOG_LINE_PREFIX(ALERT, logtype, "%s(): ",\
-+			__func__, __VA_ARGS__)
-+
-+#define PMD_LOG_EMERG(logtype, ...) \
-+		RTE_LOG_LINE_PREFIX(EMERG, logtype, "%s(): ",\
-+			__func__, __VA_ARGS__)
-+
-+
-+#define PMD_INIT_FUNC_TRACE() PMD_LOG_DEBUG(INIT, " >>")
-+
-+#define LOG_DEBUG(fmt, ...) UNUSED(fmt)
-+#define LOG_INFO(fmt, ...) UNUSED(fmt)
-+#define LOG_WARN(fmt, ...) UNUSED(fmt)
-+#define LOG_ERROR(fmt, ...) UNUSED(fmt)
-+#define LOG_DEBUG_BDF(fmt, ...) UNUSED(adapter)
-+#define LOG_INFO_BDF(fmt, ...) UNUSED(adapter)
-+#define LOG_WARN_BDF(fmt, ...) UNUSED(adapter)
-+#define LOG_ERROR_BDF(fmt, ...) UNUSED(adapter)
-+
-+#define LOG_DEV_DEBUG(fmt, ...) UNUSED(adapter)
-+#define LOG_DEV_INFO(fmt, ...) UNUSED(adapter)
-+#define LOG_DEV_WARN(fmt, ...) UNUSED(adapter)
-+#define LOG_DEV_ERR(fmt, ...) UNUSED(adapter)
-+#define LOG_MSG_DEBUG(msglvl, fmt, ...) UNUSED(adapter)
-+#define LOG_MSG_INFO(msglvl, fmt, ...) UNUSED(adapter)
-+#define LOG_MSG_WARN(msglvl, fmt, ...) UNUSED(adapter)
-+#define LOG_MSG_ERR(msglvl, fmt, ...) UNUSED(adapter)
-+
-+
-+void sxe_log_stream_init(void);
-+
-+#endif
-diff --git a/drivers/net/sxe/base/sxe_types.h b/drivers/net/sxe/base/sxe_types.h
-new file mode 100644
-index 0000000000..a36a3cfbf6
---- /dev/null
-+++ b/drivers/net/sxe/base/sxe_types.h
-@@ -0,0 +1,40 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#ifndef __SXE_DPDK_TYPES_H__
-+#define __SXE_DPDK_TYPES_H__
-+
-+#include <sys/time.h>
-+
-+#include <stdlib.h>
-+#include <stdio.h>
-+#include <errno.h>
-+#include <stdarg.h>
-+#include <unistd.h>
-+#include <string.h>
-+
-+#include <rte_common.h>
-+
-+typedef uint8_t		u8;
-+typedef uint16_t	u16;
-+typedef uint32_t	u32;
-+typedef uint64_t	u64;
-+
-+typedef char		s8;
-+typedef int16_t		s16;
-+typedef int32_t		s32;
-+typedef int64_t		s64;
-+
-+typedef s8		S8;
-+typedef s16		S16;
-+typedef s32		S32;
-+
-+#define __le16  u16
-+#define __le32  u32
-+#define __le64  u64
-+
-+#define __be16  u16
-+#define __be32  u32
-+#define __be64  u64
-+
-+#endif
-diff --git a/drivers/net/sxe/include/drv_msg.h b/drivers/net/sxe/include/drv_msg.h
-new file mode 100644
-index 0000000000..87c505569d
---- /dev/null
-+++ b/drivers/net/sxe/include/drv_msg.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#ifndef __DRV_MSG_H__
-+#define __DRV_MSG_H__
-+
-+#ifdef SXE_HOST_DRIVER
-+#include "sxe_drv_type.h"
-+#endif
-+
-+#define SXE_VERSION_LEN 32
-+
-+typedef struct sxe_version_resp {
-+	u8 fw_version[SXE_VERSION_LEN];
-+} sxe_version_resp_s;
-+
-+#endif
-diff --git a/drivers/net/sxe/include/sxe/sxe_hdc.h b/drivers/net/sxe/include/sxe/sxe_hdc.h
-new file mode 100644
-index 0000000000..bfc6dbb82d
---- /dev/null
-+++ b/drivers/net/sxe/include/sxe/sxe_hdc.h
-@@ -0,0 +1,43 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#ifndef __SXE_HDC_H__
-+#define __SXE_HDC_H__
-+
-+#ifdef SXE_HOST_DRIVER
-+#include "sxe_drv_type.h"
-+#endif
-+
-+#define HDC_CACHE_TOTAL_LEN	(16 * 1024)
-+#define ONE_PACKET_LEN_MAX	(1024)
-+#define DWORD_NUM		(256)
-+#define ONE_DWORD_LEN		(4)
-+#define HDC_TRANS_RETRY_COUNT	(3)
-+
-+
-+typedef enum sxe_hdc_errno_code {
-+	PKG_OK			= 0,
-+	PKG_ERR_REQ_LEN,
-+	PKG_ERR_RESP_LEN,
-+	PKG_ERR_PKG_SKIP,
-+	PKG_ERR_NODATA,
-+	PKG_ERR_PF_LK,
-+	PKG_ERR_OTHER,
-+} sxe_hdc_errno_code_e;
-+
-+typedef union hdc_header {
-+	struct {
-+		u8 pid:4;
-+		u8 err_code:4;
-+		u8 len;
-+		u16 start_pkg:1;
-+		u16 end_pkg:1;
-+		u16 is_rd:1;
-+		u16 msi:1;
-+		u16 total_len:12;
-+	} head;
-+	u32 dw0;
-+} hdc_header_u;
++#define SXEVF_EICR_MASK	   0x07
 +
 +#endif
 diff --git a/drivers/net/sxe/include/sxe/sxe_msg.h b/drivers/net/sxe/include/sxe/sxe_msg.h
-new file mode 100644
-index 0000000000..460258c907
---- /dev/null
+index 460258c907..19d03d25b2 100644
+--- a/drivers/net/sxe/include/sxe/sxe_msg.h
 +++ b/drivers/net/sxe/include/sxe/sxe_msg.h
-@@ -0,0 +1,135 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#ifndef __SXE_MSG_H__
-+#define __SXE_MSG_H__
-+
-+#ifdef SXE_HOST_DRIVER
-+#include "sxe_drv_type.h"
-+#endif
-+
-+#define SXE_MAC_ADDR_LEN 6
-+
-+#define SXE_HDC_CMD_HDR_SIZE  sizeof(struct sxe_hdc_cmd_hdr)
-+#define SXE_HDC_MSG_HDR_SIZE  sizeof(struct sxe_hdc_drv_cmd_msg)
-+
-+enum sxe_cmd_type {
-+	SXE_CMD_TYPE_CLI,
-+	SXE_CMD_TYPE_DRV,
-+	SXE_CMD_TYPE_UNKNOWN,
-+};
-+
-+typedef struct sxe_hdc_cmd_hdr {
-+	U8 cmd_type;
-+	U8 cmd_sub_type;
-+	U8 reserve[6];
-+} sxe_hdc_cmd_hdr_s;
-+
-+typedef enum sxe_fw_state {
-+	SXE_FW_START_STATE_UNDEFINED	= 0x00,
-+	SXE_FW_START_STATE_INIT_BASE	= 0x10,
-+	SXE_FW_START_STATE_SCAN_DEVICE  = 0x20,
-+	SXE_FW_START_STATE_FINISHED	 = 0x30,
-+	SXE_FW_START_STATE_UPGRADE	  = 0x31,
-+	SXE_FW_RUNNING_STATE_ABNOMAL	= 0x40,
-+	SXE_FW_START_STATE_MASK		 = 0xF0,
-+} sxe_fw_state_e;
-+
-+typedef struct sxe_fw_state_info {
-+	U8 soc_status;
-+	char stat_buff[32];
-+} sxe_fw_state_info_s;
-+
-+
-+typedef enum msi_evt {
-+	MSI_EVT_SOC_STATUS		  = 0x1,
-+	MSI_EVT_HDC_FWOV			= 0x2,
-+	MSI_EVT_HDC_TIME_SYNC	   = 0x4,
-+
-+	MSI_EVT_MAX				 = 0x80000000,
-+} msi_evt_u;
-+
-+
-+typedef enum sxe_fw_hd_state {
-+	SXE_FW_HDC_TRANSACTION_IDLE = 0x01,
-+	SXE_FW_HDC_TRANSACTION_BUSY,
-+
-+	SXE_FW_HDC_TRANSACTION_ERR,
-+} sxe_fw_hd_state_e;
-+
-+enum sxe_hdc_cmd_opcode {
-+	SXE_CMD_SET_WOL		 = 1,
-+	SXE_CMD_LED_CTRL,
-+	SXE_CMD_SFP_READ,
-+	SXE_CMD_SFP_WRITE,
-+	SXE_CMD_TX_DIS_CTRL	 = 5,
-+	SXE_CMD_TINE_SYNC,
-+	SXE_CMD_RATE_SELECT,
-+	SXE_CMD_R0_MAC_GET,
-+	SXE_CMD_LOG_EXPORT,
-+	SXE_CMD_FW_VER_GET  = 10,
-+	SXE_CMD_PCS_SDS_INIT,
-+	SXE_CMD_AN_SPEED_GET,
-+	SXE_CMD_AN_CAP_GET,
-+	SXE_CMD_GET_SOC_INFO,
-+	SXE_CMD_MNG_RST = 15,
-+
-+	SXE_CMD_MAX,
-+};
-+
-+enum sxe_hdc_cmd_errcode {
-+	SXE_ERR_INVALID_PARAM = 1,
-+};
-+
-+typedef struct sxe_hdc_drv_cmd_msg {
-+	U16 opcode;
-+	U16 errcode;
-+	union data_length {
-+		U16 req_len;
-+		U16 ack_len;
-+	} length;
-+	U8 reserve[8];
-+	U64 traceid;
-+	U8 body[0];
-+} sxe_hdc_drv_cmd_msg_s;
-+
-+
-+typedef struct sxe_sfp_rw_req {
-+	U16 offset;
-+	U16 len;
-+	U8  write_data[0];
-+} sxe_sfp_rw_req_s;
-+
-+
-+typedef struct sxe_sfp_read_resp {
-+	U16 len;
-+	U8  resp[0];
-+} sxe_sfp_read_resp_s;
-+
-+typedef enum sxe_sfp_rate {
-+	SXE_SFP_RATE_1G	 = 0,
-+	SXE_SFP_RATE_10G	= 1,
-+} sxe_sfp_rate_e;
-+
-+
-+typedef struct sxe_sfp_rate_able {
-+	sxe_sfp_rate_e rate;
-+} sxe_sfp_rate_able_s;
-+
-+
-+typedef struct sxe_spp_tx_able {
-+	BOOL is_disable;
-+} sxe_spp_tx_able_s;
-+
-+
-+typedef struct sxe_default_mac_addr_resp {
-+	U8  addr[SXE_MAC_ADDR_LEN];
-+} sxe_default_mac_addr_resp_s;
-+
-+
-+typedef struct sxe_mng_rst {
-+	BOOL enable;
-+} sxe_mng_rst_s;
-+
-+#endif
-diff --git a/drivers/net/sxe/include/sxe/sxe_regs.h b/drivers/net/sxe/include/sxe/sxe_regs.h
-new file mode 100644
-index 0000000000..4fa1198d76
---- /dev/null
-+++ b/drivers/net/sxe/include/sxe/sxe_regs.h
-@@ -0,0 +1,1270 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#ifndef __SXE_REGS_H__
-+#define __SXE_REGS_H__
-+
-+#define SXE_LINKSEC_MAX_SC_COUNT 1
-+#define SXE_LINKSEC_MAX_SA_COUNT 2
-+
-+#define SXE_FLAGS_DOUBLE_RESET_REQUIRED	0x01
-+
-+
-+#define SXE_REG_READ_FAIL	0xffffffffU
-+#define SXE_REG_READ_RETRY	5
-+#define SXE_PCI_MASTER_DISABLE_TIMEOUT	(800)
-+
-+#define SXE_CTRL	0x00000
-+#define SXE_STATUS	0x00008
-+#define SXE_CTRL_EXT	0x00018
-+
-+
-+#define SXE_CTRL_LNK_RST	0x00000008
-+#define SXE_CTRL_RST		0x04000000
-+
-+#define SXE_CTRL_RST_MASK	(SXE_CTRL_LNK_RST | SXE_CTRL_RST)
-+#define SXE_CTRL_GIO_DIS	0x00000004
-+
-+
-+#define SXE_STATUS_GIO		0x00080000
-+
-+
-+#define SXE_CTRL_EXT_PFRSTD	0x00004000
-+#define SXE_CTRL_EXT_NS_DIS	0x00010000
-+#define SXE_CTRL_EXT_DRV_LOAD	0x10000000
-+
-+
-+#define SXE_FCRTL(_i)	(0x03220 + ((_i) * 4))
-+#define SXE_FCRTH(_i)	(0x03260 + ((_i) * 4))
-+#define SXE_FCCFG	0x03D00
-+
-+
-+#define SXE_FCRTL_XONE		0x80000000
-+#define SXE_FCRTH_FCEN		0x80000000
-+
-+#define SXE_FCCFG_TFCE_802_3X	0x00000008
-+#define SXE_FCCFG_TFCE_PRIORITY	0x00000010
-+
-+
-+#define SXE_GCR_EXT		   0x11050
-+
-+
-+#define SXE_GCR_CMPL_TMOUT_MASK		0x0000F000
-+#define SXE_GCR_CMPL_TMOUT_10ms		0x00001000
-+#define SXE_GCR_CMPL_TMOUT_RESEND	0x00010000
-+#define SXE_GCR_CAP_VER2		0x00040000
-+#define SXE_GCR_EXT_MSIX_EN		0x80000000
-+#define SXE_GCR_EXT_BUFFERS_CLEAR	0x40000000
-+#define SXE_GCR_EXT_VT_MODE_16		0x00000001
-+#define SXE_GCR_EXT_VT_MODE_32		0x00000002
-+#define SXE_GCR_EXT_VT_MODE_64		0x00000003
-+#define SXE_GCR_EXT_VT_MODE_MASK	0x00000003
-+#define SXE_GCR_EXT_SRIOV		(SXE_GCR_EXT_MSIX_EN | \
-+					SXE_GCR_EXT_VT_MODE_64)
-+
-+#define SXE_PCI_DEVICE_STATUS		0x7A
-+#define SXE_PCI_DEVICE_STATUS_TRANSACTION_PENDING   0x0020
-+#define SXE_PCI_LINK_STATUS		0x82
-+#define SXE_PCI_DEVICE_CONTROL2		0x98
-+#define SXE_PCI_LINK_WIDTH		0x3F0
-+#define SXE_PCI_LINK_WIDTH_1		0x10
-+#define SXE_PCI_LINK_WIDTH_2		0x20
-+#define SXE_PCI_LINK_WIDTH_4		0x40
-+#define SXE_PCI_LINK_WIDTH_8		0x80
-+#define SXE_PCI_LINK_SPEED		0xF
-+#define SXE_PCI_LINK_SPEED_2500		0x1
-+#define SXE_PCI_LINK_SPEED_5000		0x2
-+#define SXE_PCI_LINK_SPEED_8000		0x3
-+#define SXE_PCI_HEADER_TYPE_REGISTER	0x0E
-+#define SXE_PCI_HEADER_TYPE_MULTIFUNC	0x80
-+#define SXE_PCI_DEVICE_CONTROL2_16ms	0x0005
-+
-+#define SXE_PCIDEVCTRL2_TIMEO_MASK	0xf
-+#define SXE_PCIDEVCTRL2_16_32ms_def	0x0
-+#define SXE_PCIDEVCTRL2_50_100us	0x1
-+#define SXE_PCIDEVCTRL2_1_2ms		0x2
-+#define SXE_PCIDEVCTRL2_16_32ms		0x5
-+#define SXE_PCIDEVCTRL2_65_130ms	0x6
-+#define SXE_PCIDEVCTRL2_260_520ms	0x9
-+#define SXE_PCIDEVCTRL2_1_2s		0xa
-+#define SXE_PCIDEVCTRL2_4_8s		0xd
-+#define SXE_PCIDEVCTRL2_17_34s		0xe
-+
-+
-+#define SXE_EICR	0x00800
-+#define SXE_EICS	0x00808
-+#define SXE_EIMS	0x00880
-+#define SXE_EIMC	0x00888
-+#define SXE_EIAC	0x00810
-+#define SXE_EIAM	0x00890
-+#define SXE_EITRSEL	0x00894
-+#define SXE_GPIE	0x00898
-+#define SXE_IVAR(i)	(0x00900 + (i) * 4)
-+#define SXE_IVAR_MISC	0x00A00
-+#define SXE_EICS_EX(i)	(0x00A90 + (i) * 4)
-+#define SXE_EIMS_EX(i)	(0x00AA0 + (i) * 4)
-+#define SXE_EIMC_EX(i)	(0x00AB0 + (i) * 4)
-+#define SXE_EIAM_EX(i)	(0x00AD0 + (i) * 4)
-+#define SXE_EITR(i)	(((i) <= 23) ? (0x00820 + ((i) * 4)) : \
-+							(0x012300 + (((i) - 24) * 4)))
-+
-+#define SXE_SPP_PROC	0x00AD8
-+#define SXE_SPP_STATE	0x00AF4
-+
-+
-+
-+#define SXE_EICR_RTX_QUEUE	0x0000FFFF
-+#define SXE_EICR_FLOW_NAV	0x00010000
-+#define SXE_EICR_MAILBOX	0x00080000
-+#define SXE_EICR_LSC		0x00100000
-+#define SXE_EICR_LINKSEC	0x00200000
-+#define SXE_EICR_ECC		0x10000000
-+#define SXE_EICR_HDC		0x20000000
-+#define SXE_EICR_TCP_TIMER	0x40000000
-+#define SXE_EICR_OTHER		0x80000000
-+
-+
-+#define SXE_EICS_RTX_QUEUE	SXE_EICR_RTX_QUEUE
-+#define SXE_EICS_FLOW_NAV	SXE_EICR_FLOW_NAV
-+#define SXE_EICS_MAILBOX	SXE_EICR_MAILBOX
-+#define SXE_EICS_LSC		SXE_EICR_LSC
-+#define SXE_EICS_ECC		SXE_EICR_ECC
-+#define SXE_EICS_HDC		SXE_EICR_HDC
-+#define SXE_EICS_TCP_TIMER	SXE_EICR_TCP_TIMER
-+#define SXE_EICS_OTHER		SXE_EICR_OTHER
-+
-+
-+#define SXE_EIMS_RTX_QUEUE	SXE_EICR_RTX_QUEUE
-+#define SXE_EIMS_FLOW_NAV	SXE_EICR_FLOW_NAV
-+#define SXE_EIMS_MAILBOX	SXE_EICR_MAILBOX
-+#define SXE_EIMS_LSC		SXE_EICR_LSC
-+#define SXE_EIMS_ECC		SXE_EICR_ECC
-+#define SXE_EIMS_HDC		SXE_EICR_HDC
-+#define SXE_EIMS_TCP_TIMER	SXE_EICR_TCP_TIMER
-+#define SXE_EIMS_OTHER		SXE_EICR_OTHER
-+#define SXE_EIMS_ENABLE_MASK	(SXE_EIMS_RTX_QUEUE | SXE_EIMS_LSC | \
-+					SXE_EIMS_TCP_TIMER | SXE_EIMS_OTHER)
-+
-+#define SXE_EIMC_FLOW_NAV	SXE_EICR_FLOW_NAV
-+#define SXE_EIMC_LSC		SXE_EICR_LSC
-+#define SXE_EIMC_HDC		SXE_EICR_HDC
-+
-+
-+#define SXE_GPIE_SPP0_EN	0x00000001
-+#define SXE_GPIE_SPP1_EN	0x00000002
-+#define SXE_GPIE_SPP2_EN	0x00000004
-+#define SXE_GPIE_MSIX_MODE	0x00000010
-+#define SXE_GPIE_OCD		0x00000020
-+#define SXE_GPIE_EIMEN		0x00000040
-+#define SXE_GPIE_EIAME		0x40000000
-+#define SXE_GPIE_PBA_SUPPORT	0x80000000
-+#define SXE_GPIE_VTMODE_MASK	0x0000C000
-+#define SXE_GPIE_VTMODE_16	0x00004000
-+#define SXE_GPIE_VTMODE_32	0x00008000
-+#define SXE_GPIE_VTMODE_64	0x0000C000
-+
-+
-+#define SXE_IVAR_ALLOC_VALID	0x80
-+
-+
-+#define SXE_EITR_CNT_WDIS	0x80000000
-+#define SXE_EITR_ITR_MASK	0x00000FF8
-+#define SXE_EITR_ITR_SHIFT	2
-+#define SXE_EITR_ITR_MAX	(SXE_EITR_ITR_MASK >> SXE_EITR_ITR_SHIFT)
-+
-+
-+#define SXE_EICR_GPI_SPP0	0x01000000
-+#define SXE_EICR_GPI_SPP1	0x02000000
-+#define SXE_EICR_GPI_SPP2	0x04000000
-+#define SXE_EIMS_GPI_SPP0	SXE_EICR_GPI_SPP0
-+#define SXE_EIMS_GPI_SPP1	SXE_EICR_GPI_SPP1
-+#define SXE_EIMS_GPI_SPP2	SXE_EICR_GPI_SPP2
-+
-+
-+#define SXE_SPP_PROC_SPP2_TRIGGER	0x00300000
-+#define SXE_SPP_PROC_SPP2_TRIGGER_MASK	0xFFCFFFFF
-+#define SXE_SPP_PROC_DELAY_US_MASK	0x0000FFFF
-+#define SXE_SPP_PROC_DELAY_US		0x00000007
-+#define SXE_SPP_PROC_DELAY_MS		0x00003A98
-+
-+
-+#define SXE_SPP2_STATE		0x00000004
-+
-+
-+#define SXE_IRQ_CLEAR_MASK	0xFFFFFFFF
-+
-+
-+#define SXE_RXCSUM		0x05000
-+#define SXE_RFCTL		0x05008
-+#define SXE_FCTRL		0x05080
-+#define SXE_EXVET			   0x05078
-+#define SXE_VLNCTRL		0x05088
-+#define SXE_MCSTCTRL		0x05090
-+#define SXE_ETQF(_i)		(0x05128 + ((_i) * 4))
-+#define SXE_ETQS(_i)		(0x0EC00 + ((_i) * 4))
-+#define SXE_SYNQF		0x0EC30
-+#define SXE_MTA(_i)		(0x05200 + ((_i) * 4))
-+#define SXE_UTA(_i)		(0x0F400 + ((_i) * 4))
-+#define SXE_VFTA(_i)		(0x0A000 + ((_i) * 4))
-+#define SXE_RAL(_i)		(0x0A200 + ((_i) * 8))
-+#define SXE_RAH(_i)		(0x0A204 + ((_i) * 8))
-+#define SXE_MPSAR_LOW(_i)	(0x0A600 + ((_i) * 8))
-+#define SXE_MPSAR_HIGH(_i)	(0x0A604 + ((_i) * 8))
-+#define SXE_PSRTYPE(_i)		(0x0EA00 + ((_i) * 4))
-+#define SXE_RETA(_i)		(0x0EB00 + ((_i) * 4))
-+#define SXE_RSSRK(_i)		(0x0EB80 + ((_i) * 4))
-+#define SXE_RQTC		0x0EC70
-+#define SXE_MRQC		0x0EC80
-+#define SXE_IEOI		0x0F654
-+#define SXE_PL			0x0F658
-+#define SXE_LPL			0x0F65C
-+
-+
-+#define SXE_ETQF_CNT			8
-+#define SXE_MTA_CNT				128
-+#define SXE_UTA_CNT				128
-+#define SXE_VFTA_CNT			128
-+#define SXE_RAR_CNT				128
-+#define SXE_MPSAR_CNT			128
-+
-+
-+#define SXE_EXVET_DEFAULT		0x81000000
-+#define SXE_VLNCTRL_DEFAULT		0x8100
-+#define SXE_IEOI_DEFAULT		0x060005DC
-+#define SXE_PL_DEFAULT			0x3e000016
-+#define SXE_LPL_DEFAULT			0x26000000
-+
-+
-+#define SXE_RXCSUM_IPPCSE	0x00001000
-+#define SXE_RXCSUM_PCSD		0x00002000
-+
-+
-+#define SXE_RFCTL_LRO_DIS	0x00000020
-+#define SXE_RFCTL_NFSW_DIS	0x00000040
-+#define SXE_RFCTL_NFSR_DIS	0x00000080
-+
-+
-+#define SXE_FCTRL_SBP		0x00000002
-+#define SXE_FCTRL_MPE		0x00000100
-+#define SXE_FCTRL_UPE		0x00000200
-+#define SXE_FCTRL_BAM		0x00000400
-+#define SXE_FCTRL_PMCF		0x00001000
-+#define SXE_FCTRL_DPF		0x00002000
-+
-+
-+#define SXE_VLNCTRL_VET		0x0000FFFF
-+#define SXE_VLNCTRL_CFI		0x10000000
-+#define SXE_VLNCTRL_CFIEN	0x20000000
-+#define SXE_VLNCTRL_VFE		0x40000000
-+#define SXE_VLNCTRL_VME		0x80000000
-+
-+#define SXE_EXVET_VET_EXT_SHIFT			  16
-+#define SXE_EXTENDED_VLAN				 (1 << 26)
-+
-+
-+#define SXE_MCSTCTRL_MFE	4
-+
-+#define SXE_ETQF_FILTER_EAPOL	0
-+#define SXE_ETQF_FILTER_1588	3
-+#define SXE_ETQF_FILTER_FIP	4
-+#define SXE_ETQF_FILTER_LLDP	5
-+#define SXE_ETQF_FILTER_LACP	6
-+#define SXE_ETQF_FILTER_FC	7
-+#define SXE_MAX_ETQF_FILTERS	8
-+#define SXE_ETQF_1588		0x40000000
-+#define SXE_ETQF_FILTER_EN	0x80000000
-+#define SXE_ETQF_POOL_ENABLE	BIT(26)
-+#define SXE_ETQF_POOL_SHIFT	20
-+
-+
-+#define SXE_ETQS_RX_QUEUE	0x007F0000
-+#define SXE_ETQS_RX_QUEUE_SHIFT	16
-+#define SXE_ETQS_LLI		0x20000000
-+#define SXE_ETQS_QUEUE_EN	0x80000000
-+
-+
-+#define SXE_SYN_FILTER_ENABLE		 0x00000001
-+#define SXE_SYN_FILTER_QUEUE		  0x000000FE
-+#define SXE_SYN_FILTER_QUEUE_SHIFT	1
-+#define SXE_SYN_FILTER_SYNQFP		 0x80000000
-+
-+
-+#define SXE_RAH_VIND_MASK	0x003C0000
-+#define SXE_RAH_VIND_SHIFT	18
-+#define SXE_RAH_AV		0x80000000
-+#define SXE_CLEAR_VMDQ_ALL	0xFFFFFFFF
-+
-+
-+#define SXE_PSRTYPE_TCPHDR	0x00000010
-+#define SXE_PSRTYPE_UDPHDR	0x00000020
-+#define SXE_PSRTYPE_IPV4HDR	0x00000100
-+#define SXE_PSRTYPE_IPV6HDR	0x00000200
-+#define SXE_PSRTYPE_L2HDR	0x00001000
-+
-+
-+#define SXE_MRQC_RSSEN				 0x00000001
-+#define SXE_MRQC_MRQE_MASK					0xF
-+#define SXE_MRQC_RT8TCEN			   0x00000002
-+#define SXE_MRQC_RT4TCEN			   0x00000003
-+#define SXE_MRQC_RTRSS8TCEN			0x00000004
-+#define SXE_MRQC_RTRSS4TCEN			0x00000005
-+#define SXE_MRQC_VMDQEN				0x00000008
-+#define SXE_MRQC_VMDQRSS32EN		   0x0000000A
-+#define SXE_MRQC_VMDQRSS64EN		   0x0000000B
-+#define SXE_MRQC_VMDQRT8TCEN		   0x0000000C
-+#define SXE_MRQC_VMDQRT4TCEN		   0x0000000D
-+#define SXE_MRQC_RSS_FIELD_MASK		0xFFFF0000
-+#define SXE_MRQC_RSS_FIELD_IPV4_TCP	0x00010000
-+#define SXE_MRQC_RSS_FIELD_IPV4		0x00020000
-+#define SXE_MRQC_RSS_FIELD_IPV6_EX_TCP 0x00040000
-+#define SXE_MRQC_RSS_FIELD_IPV6_EX	 0x00080000
-+#define SXE_MRQC_RSS_FIELD_IPV6		0x00100000
-+#define SXE_MRQC_RSS_FIELD_IPV6_TCP	0x00200000
-+#define SXE_MRQC_RSS_FIELD_IPV4_UDP	0x00400000
-+#define SXE_MRQC_RSS_FIELD_IPV6_UDP	0x00800000
-+#define SXE_MRQC_RSS_FIELD_IPV6_EX_UDP 0x01000000
-+
-+
-+#define SXE_RDBAL(_i)		(((_i) < 64) ? (0x01000 + ((_i) * 0x40)) : \
-+					(0x0D000 + (((_i) - 64) * 0x40)))
-+#define SXE_RDBAH(_i)		(((_i) < 64) ? (0x01004 + ((_i) * 0x40)) : \
-+					(0x0D004 + (((_i) - 64) * 0x40)))
-+#define SXE_RDLEN(_i)		(((_i) < 64) ? (0x01008 + ((_i) * 0x40)) : \
-+					(0x0D008 + (((_i) - 64) * 0x40)))
-+#define SXE_RDH(_i)		(((_i) < 64) ? (0x01010 + ((_i) * 0x40)) : \
-+					(0x0D010 + (((_i) - 64) * 0x40)))
-+#define SXE_SRRCTL(_i)		(((_i) < 64) ? (0x01014 + ((_i) * 0x40)) : \
-+					(0x0D014 + (((_i) - 64) * 0x40)))
-+#define SXE_RDT(_i)		(((_i) < 64) ? (0x01018 + ((_i) * 0x40)) : \
-+					(0x0D018 + (((_i) - 64) * 0x40)))
-+#define SXE_RXDCTL(_i)		(((_i) < 64) ? (0x01028 + ((_i) * 0x40)) : \
-+					(0x0D028 + (((_i) - 64) * 0x40)))
-+#define SXE_LROCTL(_i)		(((_i) < 64) ? (0x0102C + ((_i) * 0x40)) : \
-+					(0x0D02C + (((_i) - 64) * 0x40)))
-+#define SXE_RDRXCTL		0x02F00
-+#define SXE_RXCTRL		0x03000
-+#define SXE_LRODBU		0x03028
-+#define SXE_RXPBSIZE(_i)	(0x03C00 + ((_i) * 4))
-+
-+#define SXE_DRXCFG		(0x03C20)
-+
-+
-+#define SXE_RXDCTL_CNT			128
-+
-+
-+#define SXE_RXDCTL_DEFAULT		0x40210
-+
-+
-+#define SXE_SRRCTL_DROP_EN		0x10000000
-+#define SXE_SRRCTL_BSIZEPKT_SHIFT	(10)
-+#define SXE_SRRCTL_BSIZEHDRSIZE_SHIFT	(2)
-+#define SXE_SRRCTL_DESCTYPE_DATA_ONEBUF	0x02000000
-+#define SXE_SRRCTL_BSIZEPKT_MASK	0x0000007F
-+#define SXE_SRRCTL_BSIZEHDR_MASK	0x00003F00
-+
-+
-+#define SXE_RXDCTL_ENABLE	0x02000000
-+#define SXE_RXDCTL_SWFLSH	0x04000000
-+#define SXE_RXDCTL_VME		0x40000000
-+#define SXE_RXDCTL_DESC_FIFO_AE_TH_SHIFT	8
-+#define SXE_RXDCTL_PREFETCH_NUM_CFG_SHIFT	16
-+
-+
-+#define SXE_LROCTL_LROEN	0x01
-+#define SXE_LROCTL_MAXDESC_1	0x00
-+#define SXE_LROCTL_MAXDESC_4	0x04
-+#define SXE_LROCTL_MAXDESC_8	0x08
-+#define SXE_LROCTL_MAXDESC_16	0x0C
-+
-+
-+#define SXE_RDRXCTL_RDMTS_1_2	0x00000000
-+#define SXE_RDRXCTL_RDMTS_EN	0x00200000
-+#define SXE_RDRXCTL_CRCSTRIP	0x00000002
-+#define SXE_RDRXCTL_PSP		0x00000004
-+#define SXE_RDRXCTL_MVMEN	0x00000020
-+#define SXE_RDRXCTL_DMAIDONE	0x00000008
-+#define SXE_RDRXCTL_AGGDIS	0x00010000
-+#define SXE_RDRXCTL_LROFRSTSIZE	0x003E0000
-+#define SXE_RDRXCTL_LROLLIDIS	0x00800000
-+#define SXE_RDRXCTL_LROACKC	0x02000000
-+#define SXE_RDRXCTL_FCOE_WRFIX	0x04000000
-+#define SXE_RDRXCTL_MBINTEN	0x10000000
-+#define SXE_RDRXCTL_MDP_EN	0x20000000
-+#define SXE_RDRXCTL_MPBEN	0x00000010
-+
-+#define SXE_RDRXCTL_MCEN	0x00000040
-+
-+
-+
-+#define SXE_RXCTRL_RXEN		0x00000001
-+
-+
-+#define SXE_LRODBU_LROACKDIS	0x00000080
-+
-+
-+#define SXE_DRXCFG_GSP_ZERO	0x00000002
-+#define SXE_DRXCFG_DBURX_START 0x00000001
-+
-+
-+#define SXE_DMATXCTL		0x04A80
-+#define SXE_TDBAL(_i)		(0x06000 + ((_i) * 0x40))
-+#define SXE_TDBAH(_i)		(0x06004 + ((_i) * 0x40))
-+#define SXE_TDLEN(_i)		(0x06008 + ((_i) * 0x40))
-+#define SXE_TDH(_i)		(0x06010 + ((_i) * 0x40))
-+#define SXE_TDT(_i)		(0x06018 + ((_i) * 0x40))
-+#define SXE_TXDCTL(_i)		(0x06028 + ((_i) * 0x40))
-+#define SXE_PVFTDWBAL(p)	(0x06038 + (0x40 * (p)))
-+#define SXE_PVFTDWBAH(p)	(0x0603C + (0x40 * (p)))
-+#define SXE_TXPBSIZE(_i)	(0x0CC00 + ((_i) * 4))
-+#define SXE_TXPBTHRESH(_i)	(0x04950 + ((_i) * 4))
-+#define SXE_MTQC		0x08120
-+#define SXE_TXPBFCS		0x0CE00
-+#define SXE_DTXCFG		0x0CE08
-+#define SXE_DTMPCNT		0x0CE98
-+
-+
-+#define SXE_DMATXCTL_DEFAULT		0x81000000
-+
-+
-+#define SXE_DMATXCTL_TE		0x1
-+#define SXE_DMATXCTL_GDV	0x8
-+#define SXE_DMATXCTL_VT_SHIFT	16
-+#define SXE_DMATXCTL_VT_MASK	0xFFFF0000
-+
-+
-+#define SXE_TXDCTL_HTHRESH_SHIFT 8
-+#define SXE_TXDCTL_WTHRESH_SHIFT 16
-+#define SXE_TXDCTL_ENABLE	 0x02000000
-+#define SXE_TXDCTL_SWFLSH	 0x04000000
-+
-+#define SXE_PVFTDWBAL_N(ring_per_pool, vf_idx, vf_ring_idx) \
-+		SXE_PVFTDWBAL((ring_per_pool) * (vf_idx) + (vf_ring_idx))
-+#define SXE_PVFTDWBAH_N(ring_per_pool, vf_idx, vf_ring_idx) \
-+		SXE_PVFTDWBAH((ring_per_pool) * (vf_idx) + (vf_ring_idx))
-+
-+
-+#define SXE_MTQC_RT_ENA		0x1
-+#define SXE_MTQC_VT_ENA		0x2
-+#define SXE_MTQC_64Q_1PB	0x0
-+#define SXE_MTQC_32VF		0x8
-+#define SXE_MTQC_64VF		0x4
-+#define SXE_MTQC_8TC_8TQ	0xC
-+#define SXE_MTQC_4TC_4TQ	0x8
-+
-+
-+#define SXE_TFCS_PB0_MASK	0x1
-+#define SXE_TFCS_PB1_MASK	0x2
-+#define SXE_TFCS_PB2_MASK	0x4
-+#define SXE_TFCS_PB3_MASK	0x8
-+#define SXE_TFCS_PB4_MASK	0x10
-+#define SXE_TFCS_PB5_MASK	0x20
-+#define SXE_TFCS_PB6_MASK	0x40
-+#define SXE_TFCS_PB7_MASK	0x80
-+#define SXE_TFCS_PB_MASK	0xff
-+
-+
-+#define SXE_DTXCFG_DBUTX_START	0x00000001
-+#define SXE_DTXCFG_DBUTX_BUF_ALFUL_CFG	0x20
-+
-+
-+#define SXE_RTRPCS		0x02430
-+#define SXE_RTRPT4C(_i)		(0x02140 + ((_i) * 4))
-+#define SXE_RTRUP2TC		0x03020
-+#define SXE_RTTDCS		0x04900
-+#define SXE_RTTDQSEL		0x04904
-+#define SXE_RTTDT1C		0x04908
-+#define SXE_RTTDT2C(_i)		(0x04910 + ((_i) * 4))
-+#define SXE_RTTBCNRM		0x04980
-+#define SXE_RTTBCNRC		0x04984
-+#define SXE_RTTUP2TC		0x0C800
-+#define SXE_RTTPCS		0x0CD00
-+#define SXE_RTTPT2C(_i)		(0x0CD20 + ((_i) * 4))
-+
-+
-+#define SXE_RTRPCS_RRM		0x00000002
-+#define SXE_RTRPCS_RAC		0x00000004
-+#define SXE_RTRPCS_ARBDIS	0x00000040
-+
-+
-+#define SXE_RTRPT4C_MCL_SHIFT	12
-+#define SXE_RTRPT4C_BWG_SHIFT	9
-+#define SXE_RTRPT4C_GSP		0x40000000
-+#define SXE_RTRPT4C_LSP		0x80000000
-+
-+
-+#define SXE_RTRUP2TC_UP_SHIFT 3
-+#define SXE_RTRUP2TC_UP_MASK	7
-+
-+
-+#define SXE_RTTDCS_ARBDIS	0x00000040
-+#define SXE_RTTDCS_TDPAC	0x00000001
-+
-+#define SXE_RTTDCS_VMPAC	0x00000002
-+
-+#define SXE_RTTDCS_TDRM		0x00000010
-+#define SXE_RTTDCS_ARBDIS	0x00000040
-+#define SXE_RTTDCS_BDPM		0x00400000
-+#define SXE_RTTDCS_BPBFSM	0x00800000
-+
-+#define SXE_RTTDCS_SPEED_CHG	0x80000000
-+
-+
-+#define SXE_RTTDT2C_MCL_SHIFT	12
-+#define SXE_RTTDT2C_BWG_SHIFT	9
-+#define SXE_RTTDT2C_GSP		0x40000000
-+#define SXE_RTTDT2C_LSP		0x80000000
-+
-+
-+#define SXE_RTTBCNRC_RS_ENA		0x80000000
-+#define SXE_RTTBCNRC_RF_DEC_MASK	0x00003FFF
-+#define SXE_RTTBCNRC_RF_INT_SHIFT	14
-+#define SXE_RTTBCNRC_RF_INT_MASK	\
-+			(SXE_RTTBCNRC_RF_DEC_MASK << SXE_RTTBCNRC_RF_INT_SHIFT)
-+
-+
-+#define SXE_RTTUP2TC_UP_SHIFT	3
-+
-+
-+#define SXE_RTTPCS_TPPAC	0x00000020
-+
-+#define SXE_RTTPCS_ARBDIS	0x00000040
-+#define SXE_RTTPCS_TPRM		0x00000100
-+#define SXE_RTTPCS_ARBD_SHIFT	22
-+#define SXE_RTTPCS_ARBD_DCB	0x4
-+
-+
-+#define SXE_RTTPT2C_MCL_SHIFT 12
-+#define SXE_RTTPT2C_BWG_SHIFT 9
-+#define SXE_RTTPT2C_GSP	   0x40000000
-+#define SXE_RTTPT2C_LSP	   0x80000000
-+
-+
-+#define SXE_TPH_CTRL		0x11074
-+#define SXE_TPH_TXCTRL(_i)	  (0x0600C + ((_i) * 0x40))
-+#define SXE_TPH_RXCTRL(_i)	(((_i) < 64) ? (0x0100C + ((_i) * 0x40)) : \
-+				 (0x0D00C + (((_i) - 64) * 0x40)))
-+
-+
-+#define SXE_TPH_CTRL_ENABLE		0x00000000
-+#define SXE_TPH_CTRL_DISABLE		0x00000001
-+#define SXE_TPH_CTRL_MODE_CB1		0x00
-+#define SXE_TPH_CTRL_MODE_CB2		0x02
-+
-+
-+#define SXE_TPH_RXCTRL_DESC_TPH_EN	BIT(5)
-+#define SXE_TPH_RXCTRL_HEAD_TPH_EN	BIT(6)
-+#define SXE_TPH_RXCTRL_DATA_TPH_EN	BIT(7)
-+#define SXE_TPH_RXCTRL_DESC_RRO_EN	BIT(9)
-+#define SXE_TPH_RXCTRL_DATA_WRO_EN	BIT(13)
-+#define SXE_TPH_RXCTRL_HEAD_WRO_EN	BIT(15)
-+#define SXE_TPH_RXCTRL_CPUID_SHIFT	24
-+
-+#define SXE_TPH_TXCTRL_DESC_TPH_EN	BIT(5)
-+#define SXE_TPH_TXCTRL_DESC_RRO_EN	BIT(9)
-+#define SXE_TPH_TXCTRL_DESC_WRO_EN	BIT(11)
-+#define SXE_TPH_TXCTRL_DATA_RRO_EN	BIT(13)
-+#define SXE_TPH_TXCTRL_CPUID_SHIFT	24
-+
-+
-+#define SXE_SECTXCTRL		0x08800
-+#define SXE_SECTXSTAT		0x08804
-+#define SXE_SECTXBUFFAF		0x08808
-+#define SXE_SECTXMINIFG		0x08810
-+#define SXE_SECRXCTRL		0x08D00
-+#define SXE_SECRXSTAT		0x08D04
-+#define SXE_LSECTXCTRL			0x08A04
-+#define SXE_LSECTXSCL			 0x08A08
-+#define SXE_LSECTXSCH			 0x08A0C
-+#define SXE_LSECTXSA			  0x08A10
-+#define SXE_LSECTXPN(_n)		  (0x08A14 + (4 * (_n)))
-+#define SXE_LSECTXKEY(_n, _m)	 (0x08A1C + ((0x10 * (_n)) + (4 * (_m))))
-+#define SXE_LSECRXCTRL			0x08B04
-+#define SXE_LSECRXSCL			 0x08B08
-+#define SXE_LSECRXSCH			 0x08B0C
-+#define SXE_LSECRXSA(_i)		  (0x08B10 + (4 * (_i)))
-+#define SXE_LSECRXPN(_i)		  (0x08B18 + (4 * (_i)))
-+#define SXE_LSECRXKEY(_n, _m)	 (0x08B20 + ((0x10 * (_n)) + (4 * (_m))))
-+
-+
-+#define SXE_SECTXCTRL_SECTX_DIS		0x00000001
-+#define SXE_SECTXCTRL_TX_DIS		0x00000002
-+#define SXE_SECTXCTRL_STORE_FORWARD	0x00000004
-+
-+
-+#define SXE_SECTXSTAT_SECTX_RDY		0x00000001
-+#define SXE_SECTXSTAT_SECTX_OFF_DIS	0x00000002
-+#define SXE_SECTXSTAT_ECC_TXERR		0x00000004
-+
-+
-+#define SXE_SECRXCTRL_SECRX_DIS		0x00000001
-+#define SXE_SECRXCTRL_RX_DIS		0x00000002
-+#define SXE_SECRXCTRL_RP			  0x00000080
-+
-+
-+#define SXE_SECRXSTAT_SECRX_RDY		0x00000001
-+#define SXE_SECRXSTAT_SECRX_OFF_DIS	0x00000002
-+#define SXE_SECRXSTAT_ECC_RXERR		0x00000004
-+
-+#define SXE_SECTX_DCB_ENABLE_MASK	0x00001F00
-+
-+#define SXE_LSECTXCTRL_EN_MASK		0x00000003
-+#define SXE_LSECTXCTRL_EN_SHIFT	   0
-+#define SXE_LSECTXCTRL_ES			 0x00000010
-+#define SXE_LSECTXCTRL_AISCI		  0x00000020
-+#define SXE_LSECTXCTRL_PNTHRSH_MASK   0xFFFFFF00
-+#define SXE_LSECTXCTRL_PNTHRSH_SHIFT  8
-+#define SXE_LSECTXCTRL_RSV_MASK	   0x000000D8
-+
-+#define SXE_LSECRXCTRL_EN_MASK		0x0000000C
-+#define SXE_LSECRXCTRL_EN_SHIFT	   2
-+#define SXE_LSECRXCTRL_DROP_EN		0x00000010
-+#define SXE_LSECRXCTRL_DROP_EN_SHIFT  4
-+#define SXE_LSECRXCTRL_PLSH		   0x00000040
-+#define SXE_LSECRXCTRL_PLSH_SHIFT	 6
-+#define SXE_LSECRXCTRL_RP			 0x00000080
-+#define SXE_LSECRXCTRL_RP_SHIFT	   7
-+#define SXE_LSECRXCTRL_RSV_MASK	   0xFFFFFF33
-+
-+#define SXE_LSECTXSA_AN0_MASK		 0x00000003
-+#define SXE_LSECTXSA_AN0_SHIFT		0
-+#define SXE_LSECTXSA_AN1_MASK		 0x0000000C
-+#define SXE_LSECTXSA_AN1_SHIFT		2
-+#define SXE_LSECTXSA_SELSA			0x00000010
-+#define SXE_LSECTXSA_SELSA_SHIFT	  4
-+#define SXE_LSECTXSA_ACTSA			0x00000020
-+
-+#define SXE_LSECRXSA_AN_MASK		  0x00000003
-+#define SXE_LSECRXSA_AN_SHIFT		 0
-+#define SXE_LSECRXSA_SAV			  0x00000004
-+#define SXE_LSECRXSA_SAV_SHIFT		2
-+#define SXE_LSECRXSA_RETIRED		  0x00000010
-+#define SXE_LSECRXSA_RETIRED_SHIFT	4
-+
-+#define SXE_LSECRXSCH_PI_MASK		 0xFFFF0000
-+#define SXE_LSECRXSCH_PI_SHIFT		16
-+
-+#define SXE_LSECTXCTRL_DISABLE	0x0
-+#define SXE_LSECTXCTRL_AUTH		0x1
-+#define SXE_LSECTXCTRL_AUTH_ENCRYPT	0x2
-+
-+#define SXE_LSECRXCTRL_DISABLE	0x0
-+#define SXE_LSECRXCTRL_CHECK		0x1
-+#define SXE_LSECRXCTRL_STRICT		0x2
-+#define SXE_LSECRXCTRL_DROP		0x3
-+#define SXE_SECTXCTRL_STORE_FORWARD_ENABLE	0x4
-+
-+
-+
-+#define SXE_IPSTXIDX		0x08900
-+#define SXE_IPSTXSALT		0x08904
-+#define SXE_IPSTXKEY(_i)	(0x08908 + (4 * (_i)))
-+#define SXE_IPSRXIDX		0x08E00
-+#define SXE_IPSRXIPADDR(_i)	(0x08E04 + (4 * (_i)))
-+#define SXE_IPSRXSPI		0x08E14
-+#define SXE_IPSRXIPIDX		0x08E18
-+#define SXE_IPSRXKEY(_i)	(0x08E1C + (4 * (_i)))
-+#define SXE_IPSRXSALT		0x08E2C
-+#define SXE_IPSRXMOD		0x08E30
-+
-+
-+
-+#define SXE_FNAVCTRL		0x0EE00
-+#define SXE_FNAVHKEY		0x0EE68
-+#define SXE_FNAVSKEY		0x0EE6C
-+#define SXE_FNAVDIP4M		0x0EE3C
-+#define SXE_FNAVSIP4M		0x0EE40
-+#define SXE_FNAVTCPM		0x0EE44
-+#define SXE_FNAVUDPM		0x0EE48
-+#define SXE_FNAVIP6M		0x0EE74
-+#define SXE_FNAVM		0x0EE70
-+
-+#define SXE_FNAVFREE		0x0EE38
-+#define SXE_FNAVLEN		0x0EE4C
-+#define SXE_FNAVUSTAT		0x0EE50
-+#define SXE_FNAVFSTAT		0x0EE54
-+#define SXE_FNAVMATCH		0x0EE58
-+#define SXE_FNAVMISS		0x0EE5C
-+
-+#define SXE_FNAVSIPV6(_i)	(0x0EE0C + ((_i) * 4))
-+#define SXE_FNAVIPSA		0x0EE18
-+#define SXE_FNAVIPDA		0x0EE1C
-+#define SXE_FNAVPORT		0x0EE20
-+#define SXE_FNAVVLAN		0x0EE24
-+#define SXE_FNAVHASH		0x0EE28
-+#define SXE_FNAVCMD		0x0EE2C
-+
-+
-+#define SXE_FNAVCTRL_FLEX_SHIFT			16
-+#define SXE_FNAVCTRL_MAX_LENGTH_SHIFT		24
-+#define SXE_FNAVCTRL_FULL_THRESH_SHIFT		28
-+#define SXE_FNAVCTRL_DROP_Q_SHIFT		8
-+#define SXE_FNAVCTRL_PBALLOC_64K		0x00000001
-+#define SXE_FNAVCTRL_PBALLOC_128K		0x00000002
-+#define SXE_FNAVCTRL_PBALLOC_256K		0x00000003
-+#define SXE_FNAVCTRL_INIT_DONE			0x00000008
-+#define SXE_FNAVCTRL_SPECIFIC_MATCH		0x00000010
-+#define SXE_FNAVCTRL_REPORT_STATUS		0x00000020
-+#define SXE_FNAVCTRL_REPORT_STATUS_ALWAYS	0x00000080
-+
-+#define SXE_FNAVCTRL_FLEX_MASK			(0x1F << SXE_FNAVCTRL_FLEX_SHIFT)
-+
-+#define SXE_FNAVTCPM_DPORTM_SHIFT		16
-+
-+#define SXE_FNAVM_VLANID			0x00000001
-+#define SXE_FNAVM_VLANP				0x00000002
-+#define SXE_FNAVM_POOL				0x00000004
-+#define SXE_FNAVM_L4P				0x00000008
-+#define SXE_FNAVM_FLEX				0x00000010
-+#define SXE_FNAVM_DIPV6				0x00000020
-+
-+#define SXE_FNAVPORT_DESTINATION_SHIFT		16
-+#define SXE_FNAVVLAN_FLEX_SHIFT			16
-+#define SXE_FNAVHASH_SIG_SW_INDEX_SHIFT		16
-+
-+#define SXE_FNAVCMD_CMD_MASK			0x00000003
-+#define SXE_FNAVCMD_CMD_ADD_FLOW		0x00000001
-+#define SXE_FNAVCMD_CMD_REMOVE_FLOW		0x00000002
-+#define SXE_FNAVCMD_CMD_QUERY_REM_FILT		0x00000003
-+#define SXE_FNAVCMD_FILTER_VALID		0x00000004
-+#define SXE_FNAVCMD_FILTER_UPDATE		0x00000008
-+#define SXE_FNAVCMD_IPV6DMATCH			0x00000010
-+#define SXE_FNAVCMD_L4TYPE_UDP			0x00000020
-+#define SXE_FNAVCMD_L4TYPE_TCP			0x00000040
-+#define SXE_FNAVCMD_L4TYPE_SCTP			0x00000060
-+#define SXE_FNAVCMD_IPV6			0x00000080
-+#define SXE_FNAVCMD_CLEARHT			0x00000100
-+#define SXE_FNAVCMD_DROP			0x00000200
-+#define SXE_FNAVCMD_INT				0x00000400
-+#define SXE_FNAVCMD_LAST			0x00000800
-+#define SXE_FNAVCMD_COLLISION			0x00001000
-+#define SXE_FNAVCMD_QUEUE_EN			0x00008000
-+#define SXE_FNAVCMD_FLOW_TYPE_SHIFT		5
-+#define SXE_FNAVCMD_RX_QUEUE_SHIFT		16
-+#define SXE_FNAVCMD_RX_TUNNEL_FILTER_SHIFT	23
-+#define SXE_FNAVCMD_VT_POOL_SHIFT		24
-+#define SXE_FNAVCMD_CMD_POLL			10
-+#define SXE_FNAVCMD_TUNNEL_FILTER		0x00800000
-+
-+
-+#define SXE_LXOFFRXCNT		0x041A8
-+#define SXE_PXOFFRXCNT(_i)	(0x04160 + ((_i) * 4))
-+
-+#define SXE_EPC_GPRC		0x050E0
-+#define SXE_RXDGPC			  0x02F50
-+#define SXE_RXDGBCL			 0x02F54
-+#define SXE_RXDGBCH			 0x02F58
-+#define SXE_RXDDGPC			 0x02F5C
-+#define SXE_RXDDGBCL			0x02F60
-+#define SXE_RXDDGBCH			0x02F64
-+#define SXE_RXLPBKGPC		   0x02F68
-+#define SXE_RXLPBKGBCL		  0x02F6C
-+#define SXE_RXLPBKGBCH		  0x02F70
-+#define SXE_RXDLPBKGPC		  0x02F74
-+#define SXE_RXDLPBKGBCL		 0x02F78
-+#define SXE_RXDLPBKGBCH		 0x02F7C
-+
-+#define SXE_RXTPCIN			 0x02F88
-+#define SXE_RXTPCOUT			0x02F8C
-+#define SXE_RXPRDDC			 0x02F9C
-+
-+#define SXE_TXDGPC		0x087A0
-+#define SXE_TXDGBCL			 0x087A4
-+#define SXE_TXDGBCH			 0x087A8
-+#define SXE_TXSWERR			 0x087B0
-+#define SXE_TXSWITCH			0x087B4
-+#define SXE_TXREPEAT			0x087B8
-+#define SXE_TXDESCERR		   0x087BC
-+#define SXE_MNGPRC		0x040B4
-+#define SXE_MNGPDC		0x040B8
-+#define SXE_RQSMR(_i)		(0x02300 + ((_i) * 4))
-+#define SXE_TQSM(_i)		(0x08600 + ((_i) * 4))
-+#define SXE_QPRC(_i)		(0x01030 + ((_i) * 0x40))
-+#define SXE_QBRC_L(_i)		(0x01034 + ((_i) * 0x40))
-+#define SXE_QBRC_H(_i)		(0x01038 + ((_i) * 0x40))
-+
-+
-+#define SXE_QPRDC(_i)		(0x01430 + ((_i) * 0x40))
-+#define SXE_QPTC(_i)		(0x08680 + ((_i) * 0x4))
-+#define SXE_QBTC_L(_i)		(0x08700 + ((_i) * 0x8))
-+#define SXE_QBTC_H(_i)		(0x08704 + ((_i) * 0x8))
-+#define SXE_SSVPC		0x08780
-+#define SXE_MNGPTC		0x0CF90
-+#define SXE_MPC(_i)		(0x03FA0 + ((_i) * 4))
-+
-+#define SXE_DBUDRTCICNT(_i)	(0x03C6C + ((_i) * 4))
-+#define SXE_DBUDRTCOCNT(_i)	(0x03C8C + ((_i) * 4))
-+#define SXE_DBUDRBDPCNT(_i)	(0x03D20 + ((_i) * 4))
-+#define SXE_DBUDREECNT(_i)	(0x03D40 + ((_i) * 4))
-+#define SXE_DBUDROFPCNT(_i)	(0x03D60 + ((_i) * 4))
-+#define SXE_DBUDTTCICNT(_i)	(0x0CE54 + ((_i) * 4))
-+#define SXE_DBUDTTCOCNT(_i)	(0x0CE74 + ((_i) * 4))
-+
-+
-+
-+#define SXE_WUC					   0x05800
-+#define SXE_WUFC					  0x05808
-+#define SXE_WUS					   0x05810
-+#define SXE_IP6AT(_i)				 (0x05880 + ((_i) * 4))
-+
-+
-+#define SXE_IP6AT_CNT				 4
-+
-+
-+#define SXE_WUC_PME_EN				0x00000002
-+#define SXE_WUC_PME_STATUS			0x00000004
-+#define SXE_WUC_WKEN				  0x00000010
-+#define SXE_WUC_APME				  0x00000020
-+
-+
-+#define SXE_WUFC_LNKC				 0x00000001
-+#define SXE_WUFC_MAG				  0x00000002
-+#define SXE_WUFC_EX				   0x00000004
-+#define SXE_WUFC_MC				   0x00000008
-+#define SXE_WUFC_BC				   0x00000010
-+#define SXE_WUFC_ARP				  0x00000020
-+#define SXE_WUFC_IPV4				 0x00000040
-+#define SXE_WUFC_IPV6				 0x00000080
-+#define SXE_WUFC_MNG				  0x00000100
-+
-+
-+
-+
-+#define SXE_TSCTRL			  0x14800
-+#define SXE_TSES				0x14804
-+#define SXE_TSYNCTXCTL		  0x14810
-+#define SXE_TSYNCRXCTL		  0x14820
-+#define SXE_RXSTMPL			 0x14824
-+#define SXE_RXSTMPH			 0x14828
-+#define SXE_SYSTIML			 0x14840
-+#define SXE_SYSTIMM			 0x14844
-+#define SXE_SYSTIMH			 0x14848
-+#define SXE_TIMADJL			 0x14850
-+#define SXE_TIMADJH			 0x14854
-+#define SXE_TIMINC			  0x14860
-+
-+
-+#define SXE_TSYNCTXCTL_TXTT	 0x0001
-+#define SXE_TSYNCTXCTL_TEN	  0x0010
-+
-+
-+#define SXE_TSYNCRXCTL_RXTT	 0x0001
-+#define SXE_TSYNCRXCTL_REN	  0x0010
-+
-+
-+#define SXE_TSCTRL_TSSEL		0x00001
-+#define SXE_TSCTRL_TSEN		 0x00002
-+#define SXE_TSCTRL_VER_2		0x00010
-+#define SXE_TSCTRL_ONESTEP	  0x00100
-+#define SXE_TSCTRL_CSEN		 0x01000
-+#define SXE_TSCTRL_PTYP_ALL	 0x00C00
-+#define SXE_TSCTRL_L4_UNICAST   0x08000
-+
-+
-+#define SXE_TSES_TXES				   0x00200
-+#define SXE_TSES_RXES				   0x00800
-+#define SXE_TSES_TXES_V1_SYNC		   0x00000
-+#define SXE_TSES_TXES_V1_DELAY_REQ	  0x00100
-+#define SXE_TSES_TXES_V1_ALL			0x00200
-+#define SXE_TSES_RXES_V1_SYNC		   0x00000
-+#define SXE_TSES_RXES_V1_DELAY_REQ	  0x00400
-+#define SXE_TSES_RXES_V1_ALL			0x00800
-+#define SXE_TSES_TXES_V2_ALL			0x00200
-+#define SXE_TSES_RXES_V2_ALL			0x00800
-+
-+#define SXE_IV_SNS			  0
-+#define SXE_IV_NS			   8
-+#define SXE_INCPD			   0
-+#define SXE_BASE_INCVAL		 8
-+
-+
-+#define SXE_VT_CTL		0x051B0
-+#define SXE_PFMAILBOX(_i)	(0x04B00 + (4 * (_i)))
-+
-+#define SXE_PFMBICR(_i)		(0x00710 + (4 * (_i)))
-+#define SXE_VFLRE(i)		(((i) & 1) ? 0x001C0 : 0x00600)
-+#define SXE_VFLREC(i)		(0x00700 + ((i) * 4))
-+#define SXE_VFRE(_i)		(0x051E0 + ((_i) * 4))
-+#define SXE_VFTE(_i)		(0x08110 + ((_i) * 4))
-+#define SXE_QDE			(0x02F04)
-+#define SXE_SPOOF(_i)		(0x08200 + (_i) * 4)
-+#define SXE_PFDTXGSWC		0x08220
-+#define SXE_VMVIR(_i)		(0x08000 + ((_i) * 4))
-+#define SXE_VMOLR(_i)		(0x0F000 + ((_i) * 4))
-+#define SXE_VLVF(_i)		(0x0F100 + ((_i) * 4))
-+#define SXE_VLVFB(_i)		(0x0F200 + ((_i) * 4))
-+#define SXE_MRCTL(_i)		(0x0F600 + ((_i) * 4))
-+#define SXE_VMRVLAN(_i)			(0x0F610 + ((_i) * 4))
-+#define SXE_VMRVM(_i)		(0x0F630 + ((_i) * 4))
-+#define SXE_VMECM(_i)		(0x08790 + ((_i) * 4))
-+#define SXE_PFMBMEM(_i)		(0x13000 + (64 * (_i)))
-+
-+
-+#define SXE_VMOLR_CNT			64
-+#define SXE_VLVF_CNT			64
-+#define SXE_VLVFB_CNT			128
-+#define SXE_MRCTL_CNT			4
-+#define SXE_VMRVLAN_CNT			8
-+#define SXE_VMRVM_CNT			8
-+#define SXE_SPOOF_CNT			8
-+#define SXE_VMVIR_CNT			64
-+#define SXE_VFRE_CNT			2
-+
-+
-+#define SXE_VMVIR_VLANA_MASK	0xC0000000
-+#define SXE_VMVIR_VLAN_VID_MASK	0x00000FFF
-+#define SXE_VMVIR_VLAN_UP_MASK	0x0000E000
-+
-+
-+#define SXE_MRCTL_VPME  0x01
-+
-+#define SXE_MRCTL_UPME  0x02
-+
-+#define SXE_MRCTL_DPME  0x04
-+
-+#define SXE_MRCTL_VLME  0x08
-+
-+
-+#define SXE_VT_CTL_DIS_DEFPL  0x20000000
-+#define SXE_VT_CTL_REPLEN	 0x40000000
-+#define SXE_VT_CTL_VT_ENABLE  0x00000001
-+#define SXE_VT_CTL_POOL_SHIFT 7
-+#define SXE_VT_CTL_POOL_MASK  (0x3F << SXE_VT_CTL_POOL_SHIFT)
-+
-+
-+#define SXE_PFMAILBOX_STS		 0x00000001
-+#define SXE_PFMAILBOX_ACK		 0x00000002
-+#define SXE_PFMAILBOX_VFU		 0x00000004
-+#define SXE_PFMAILBOX_PFU		 0x00000008
-+#define SXE_PFMAILBOX_RVFU		0x00000010
-+
-+
-+#define SXE_PFMBICR_VFREQ		 0x00000001
-+#define SXE_PFMBICR_VFACK		 0x00010000
-+#define SXE_PFMBICR_VFREQ_MASK	0x0000FFFF
-+#define SXE_PFMBICR_VFACK_MASK	0xFFFF0000
-+
-+
-+#define SXE_QDE_ENABLE		(0x00000001)
-+#define SXE_QDE_HIDE_VLAN	(0x00000002)
-+#define SXE_QDE_IDX_MASK	(0x00007F00)
-+#define SXE_QDE_IDX_SHIFT	(8)
-+#define SXE_QDE_WRITE		(0x00010000)
-+
-+
-+
-+#define SXE_SPOOF_VLAN_SHIFT  (8)
-+
-+
-+#define SXE_PFDTXGSWC_VT_LBEN	0x1
-+
-+
-+#define SXE_VMVIR_VLANA_DEFAULT 0x40000000
-+#define SXE_VMVIR_VLANA_NEVER   0x80000000
-+
-+
-+#define SXE_VMOLR_UPE		0x00400000
-+#define SXE_VMOLR_VPE		0x00800000
-+#define SXE_VMOLR_AUPE		0x01000000
-+#define SXE_VMOLR_ROMPE		0x02000000
-+#define SXE_VMOLR_ROPE		0x04000000
-+#define SXE_VMOLR_BAM		0x08000000
-+#define SXE_VMOLR_MPE		0x10000000
-+
-+
-+#define SXE_VLVF_VIEN		 0x80000000
-+#define SXE_VLVF_ENTRIES	  64
-+#define SXE_VLVF_VLANID_MASK  0x00000FFF
-+
-+
-+#define SXE_HDC_HOST_BASE	   0x16000
-+#define SXE_HDC_SW_LK		   (SXE_HDC_HOST_BASE + 0x00)
-+#define SXE_HDC_PF_LK		   (SXE_HDC_HOST_BASE + 0x04)
-+#define SXE_HDC_SW_OV		   (SXE_HDC_HOST_BASE + 0x08)
-+#define SXE_HDC_FW_OV		   (SXE_HDC_HOST_BASE + 0x0C)
-+#define SXE_HDC_PACKET_HEAD0	(SXE_HDC_HOST_BASE + 0x10)
-+
-+#define SXE_HDC_PACKET_DATA0	(SXE_HDC_HOST_BASE + 0x20)
-+
-+
-+#define SXE_HDC_MSI_STATUS_REG  0x17000
-+#define SXE_FW_STATUS_REG	   0x17004
-+#define SXE_DRV_STATUS_REG	  0x17008
-+#define SXE_FW_HDC_STATE_REG	0x1700C
-+#define SXE_R0_MAC_ADDR_RAL	 0x17010
-+#define SXE_R0_MAC_ADDR_RAH	 0x17014
-+#define SXE_CRC_STRIP_REG		0x17018
-+
-+
-+#define SXE_HDC_SW_LK_BIT	   0x0001
-+#define SXE_HDC_PF_LK_BIT	   0x0003
-+#define SXE_HDC_SW_OV_BIT	   0x0001
-+#define SXE_HDC_FW_OV_BIT	   0x0001
-+#define SXE_HDC_RELEASE_SW_LK   0x0000
-+
-+#define SXE_HDC_LEN_TO_REG(n)		((n) - 1)
-+#define SXE_HDC_LEN_FROM_REG(n)	  ((n) + 1)
-+
-+
-+#define SXE_RX_PKT_BUF_SIZE_SHIFT	10
-+#define SXE_TX_PKT_BUF_SIZE_SHIFT	10
-+
-+#define SXE_RXIDX_TBL_SHIFT		   1
-+#define SXE_RXTXIDX_IPS_EN			0x00000001
-+#define SXE_RXTXIDX_IDX_SHIFT		 3
-+#define SXE_RXTXIDX_READ			  0x40000000
-+#define SXE_RXTXIDX_WRITE			 0x80000000
-+
-+
-+#define SXE_KEEP_CRC_EN			  0x00000001
-+
-+
-+#define SXE_VMD_CTL			0x0581C
-+
-+
-+#define SXE_VMD_CTL_POOL_EN		0x00000001
-+#define SXE_VMD_CTL_POOL_FILTER		0x00000002
-+
-+
-+#define SXE_FLCTRL					0x14300
-+#define SXE_PFCTOP					0x14304
-+#define SXE_FCTTV0					0x14310
-+#define SXE_FCTTV(_i)				(SXE_FCTTV0 + ((_i) * 4))
-+#define SXE_FCRTV					 0x14320
-+#define SXE_TFCS					  0x14324
-+
-+
-+#define SXE_FCTRL_TFCE_MASK		   0x0018
-+#define SXE_FCTRL_TFCE_LFC_EN		 0x0008
-+#define SXE_FCTRL_TFCE_PFC_EN		 0x0010
-+#define SXE_FCTRL_TFCE_DPF_EN		 0x0020
-+#define SXE_FCTRL_RFCE_MASK		   0x0300
-+#define SXE_FCTRL_RFCE_LFC_EN		 0x0100
-+#define SXE_FCTRL_RFCE_PFC_EN		 0x0200
-+
-+#define SXE_FCTRL_TFCE_FCEN_MASK	  0x00FF0000
-+#define SXE_FCTRL_TFCE_XONE_MASK	  0xFF000000
-+
-+
-+#define SXE_PFCTOP_FCT			   0x8808
-+#define SXE_PFCTOP_FCOP_MASK		 0xFFFF0000
-+#define SXE_PFCTOP_FCOP_PFC		  0x01010000
-+#define SXE_PFCTOP_FCOP_LFC		  0x00010000
-+
-+
-+#define SXE_COMCTRL				   0x14400
-+#define SXE_PCCTRL					0x14404
-+#define SXE_LPBKCTRL				  0x1440C
-+#define SXE_MAXFS					 0x14410
-+#define SXE_SACONH					0x14420
-+#define SXE_SACONL					0x14424
-+#define SXE_VLANCTRL				  0x14430
-+#define SXE_VLANID					0x14434
-+#define SXE_LINKS					 0x14454
-+#define SXE_FPGA_SDS_STS		  0x14704
-+#define SXE_MSCA					  0x14500
-+#define SXE_MSCD					  0x14504
-+
-+#define SXE_HLREG0					0x04240
-+#define SXE_MFLCN					 0x04294
-+#define SXE_MACC					  0x04330
-+
-+#define SXE_PCS1GLSTA				 0x0420C
-+#define SXE_MFLCN					 0x04294
-+#define SXE_PCS1GANA				  0x04850
-+#define SXE_PCS1GANLP				 0x04854
-+
-+
-+#define SXE_LPBKCTRL_EN			   0x00000001
-+
-+
-+#define SXE_MAC_ADDR_SACONH_SHIFT	 32
-+#define SXE_MAC_ADDR_SACONL_MASK	  0xFFFFFFFF
-+
-+
-+#define SXE_PCS1GLSTA_AN_COMPLETE	 0x10000
-+#define SXE_PCS1GLSTA_AN_PAGE_RX	  0x20000
-+#define SXE_PCS1GLSTA_AN_TIMED_OUT	0x40000
-+#define SXE_PCS1GLSTA_AN_REMOTE_FAULT 0x80000
-+#define SXE_PCS1GLSTA_AN_ERROR_RWS	0x100000
-+
-+#define SXE_PCS1GANA_SYM_PAUSE		0x100
-+#define SXE_PCS1GANA_ASM_PAUSE		0x80
-+
-+
-+#define SXE_LKSTS_PCS_LKSTS_UP		0x00000001
-+#define SXE_LINK_UP_TIME			  90
-+#define SXE_AUTO_NEG_TIME			 45
-+
-+
-+#define SXE_MSCA_NP_ADDR_MASK	  0x0000FFFF
-+#define SXE_MSCA_NP_ADDR_SHIFT	 0
-+#define SXE_MSCA_DEV_TYPE_MASK	 0x001F0000
-+#define SXE_MSCA_DEV_TYPE_SHIFT	16
-+#define SXE_MSCA_PHY_ADDR_MASK	 0x03E00000
-+#define SXE_MSCA_PHY_ADDR_SHIFT	21
-+#define SXE_MSCA_OP_CODE_MASK	  0x0C000000
-+#define SXE_MSCA_OP_CODE_SHIFT	 26
-+#define SXE_MSCA_ADDR_CYCLE		0x00000000
-+#define SXE_MSCA_WRITE			 0x04000000
-+#define SXE_MSCA_READ			  0x0C000000
-+#define SXE_MSCA_READ_AUTOINC	  0x08000000
-+#define SXE_MSCA_ST_CODE_MASK	  0x30000000
-+#define SXE_MSCA_ST_CODE_SHIFT	 28
-+#define SXE_MSCA_NEW_PROTOCOL	  0x00000000
-+#define SXE_MSCA_OLD_PROTOCOL	  0x10000000
-+#define SXE_MSCA_BYPASSRA_C45	  0x40000000
-+#define SXE_MSCA_MDI_CMD_ON_PROG   0x80000000
-+
-+
-+#define MDIO_MSCD_RDATA_LEN		16
-+#define MDIO_MSCD_RDATA_SHIFT	  16
-+
-+
-+#define SXE_CRCERRS				   0x14A04
-+#define SXE_ERRBC					 0x14A10
-+#define SXE_RLEC					  0x14A14
-+#define SXE_PRC64					 0x14A18
-+#define SXE_PRC127					0x14A1C
-+#define SXE_PRC255					0x14A20
-+#define SXE_PRC511					0x14A24
-+#define SXE_PRC1023				   0x14A28
-+#define SXE_PRC1522				   0x14A2C
-+#define SXE_BPRC					  0x14A30
-+#define SXE_MPRC					  0x14A34
-+#define SXE_GPRC					  0x14A38
-+#define SXE_GORCL					 0x14A3C
-+#define SXE_GORCH					 0x14A40
-+#define SXE_RUC					   0x14A44
-+#define SXE_RFC					   0x14A48
-+#define SXE_ROC					   0x14A4C
-+#define SXE_RJC					   0x14A50
-+#define SXE_TORL					  0x14A54
-+#define SXE_TORH					  0x14A58
-+#define SXE_TPR					   0x14A5C
-+#define SXE_PRCPF(_i)				 (0x14A60 + ((_i) * 4))
-+#define SXE_GPTC					  0x14B00
-+#define SXE_GOTCL					 0x14B04
-+#define SXE_GOTCH					 0x14B08
-+#define SXE_TPT					   0x14B0C
-+#define SXE_PTC64					 0x14B10
-+#define SXE_PTC127					0x14B14
-+#define SXE_PTC255					0x14B18
-+#define SXE_PTC511					0x14B1C
-+#define SXE_PTC1023				   0x14B20
-+#define SXE_PTC1522				   0x14B24
-+#define SXE_MPTC					  0x14B28
-+#define SXE_BPTC					  0x14B2C
-+#define SXE_PFCT(_i)				  (0x14B30 + ((_i) * 4))
-+
-+#define SXE_MACCFG					0x0CE04
-+#define SXE_MACCFG_PAD_EN			 0x00000001
-+
-+
-+#define SXE_COMCTRL_TXEN		  0x0001
-+#define SXE_COMCTRL_RXEN		  0x0002
-+#define SXE_COMCTRL_EDSEL		  0x0004
-+#define SXE_COMCTRL_SPEED_1G		  0x0200
-+#define SXE_COMCTRL_SPEED_10G		  0x0300
-+
-+
-+#define SXE_PCCTRL_TXCE			  0x0001
-+#define SXE_PCCTRL_RXCE			  0x0002
-+#define SXE_PCCTRL_PEN			  0x0100
-+#define SXE_PCCTRL_PCSC_ALL		  0x30000
-+
-+
-+#define SXE_MAXFS_TFSEL			  0x0001
-+#define SXE_MAXFS_RFSEL			  0x0002
-+#define SXE_MAXFS_MFS_MASK		  0xFFFF0000
-+#define SXE_MAXFS_MFS			  0x40000000
-+#define SXE_MAXFS_MFS_SHIFT		  16
-+
-+
-+#define SXE_LINKS_UP			0x00000001
-+
-+#define SXE_10G_LINKS_DOWN		0x00000006
-+
-+
-+#define SXE_LINK_SPEED_UNKNOWN		0
-+#define SXE_LINK_SPEED_10_FULL		0x0002
-+#define SXE_LINK_SPEED_100_FULL	   0x0008
-+#define SXE_LINK_SPEED_1GB_FULL	   0x0020
-+#define SXE_LINK_SPEED_10GB_FULL	  0x0080
-+
-+
-+#define SXE_HLREG0_TXCRCEN			0x00000001
-+#define SXE_HLREG0_RXCRCSTRP		  0x00000002
-+#define SXE_HLREG0_JUMBOEN			0x00000004
-+#define SXE_HLREG0_TXPADEN			0x00000400
-+#define SXE_HLREG0_TXPAUSEEN		  0x00001000
-+#define SXE_HLREG0_RXPAUSEEN		  0x00004000
-+#define SXE_HLREG0_LPBK			   0x00008000
-+#define SXE_HLREG0_MDCSPD			 0x00010000
-+#define SXE_HLREG0_CONTMDC			0x00020000
-+#define SXE_HLREG0_CTRLFLTR		   0x00040000
-+#define SXE_HLREG0_PREPEND			0x00F00000
-+#define SXE_HLREG0_PRIPAUSEEN		 0x01000000
-+#define SXE_HLREG0_RXPAUSERECDA	   0x06000000
-+#define SXE_HLREG0_RXLNGTHERREN	   0x08000000
-+#define SXE_HLREG0_RXPADSTRIPEN	   0x10000000
-+
-+#define SXE_MFLCN_PMCF				0x00000001
-+#define SXE_MFLCN_DPF				 0x00000002
-+#define SXE_MFLCN_RPFCE			   0x00000004
-+#define SXE_MFLCN_RFCE				0x00000008
-+#define SXE_MFLCN_RPFCE_MASK		  0x00000FF4
-+#define SXE_MFLCN_RPFCE_SHIFT		 4
-+
-+#define SXE_MACC_FLU				  0x00000001
-+#define SXE_MACC_FSV_10G			  0x00030000
-+#define SXE_MACC_FS				   0x00040000
-+
-+#define SXE_DEFAULT_FCPAUSE		   0xFFFF
-+
-+
-+#define SXE_SAQF(_i)		(0x0E000 + ((_i) * 4))
-+#define SXE_DAQF(_i)		(0x0E200 + ((_i) * 4))
-+#define SXE_SDPQF(_i)		(0x0E400 + ((_i) * 4))
-+#define SXE_FTQF(_i)		(0x0E600 + ((_i) * 4))
-+#define SXE_L34T_IMIR(_i)	(0x0E800 + ((_i) * 4))
-+
-+#define SXE_MAX_FTQF_FILTERS		128
-+#define SXE_FTQF_PROTOCOL_MASK		0x00000003
-+#define SXE_FTQF_PROTOCOL_TCP		0x00000000
-+#define SXE_FTQF_PROTOCOL_UDP		0x00000001
-+#define SXE_FTQF_PROTOCOL_SCTP		2
-+#define SXE_FTQF_PRIORITY_MASK		0x00000007
-+#define SXE_FTQF_PRIORITY_SHIFT		2
-+#define SXE_FTQF_POOL_MASK		0x0000003F
-+#define SXE_FTQF_POOL_SHIFT		8
-+#define SXE_FTQF_5TUPLE_MASK_MASK	0x0000001F
-+#define SXE_FTQF_5TUPLE_MASK_SHIFT	25
-+#define SXE_FTQF_SOURCE_ADDR_MASK	0x1E
-+#define SXE_FTQF_DEST_ADDR_MASK		0x1D
-+#define SXE_FTQF_SOURCE_PORT_MASK	0x1B
-+#define SXE_FTQF_DEST_PORT_MASK		0x17
-+#define SXE_FTQF_PROTOCOL_COMP_MASK	0x0F
-+#define SXE_FTQF_POOL_MASK_EN		0x40000000
-+#define SXE_FTQF_QUEUE_ENABLE		0x80000000
-+
-+#define SXE_SDPQF_DSTPORT		0xFFFF0000
-+#define SXE_SDPQF_DSTPORT_SHIFT		16
-+#define SXE_SDPQF_SRCPORT		0x0000FFFF
-+
-+#define SXE_L34T_IMIR_SIZE_BP		0x00001000
-+#define SXE_L34T_IMIR_RESERVE		0x00080000
-+#define SXE_L34T_IMIR_LLI			0x00100000
-+#define SXE_L34T_IMIR_QUEUE			0x0FE00000
-+#define SXE_L34T_IMIR_QUEUE_SHIFT	21
-+
-+#define SXE_VMTXSW(_i)				(0x05180 + ((_i) * 4))
-+#define SXE_VMTXSW_REGISTER_COUNT	 2
-+
-+#define SXE_TXSTMP_SEL		0x14510
-+#define SXE_TXSTMP_VAL		0x1451c
-+
-+#define SXE_TXTS_MAGIC0		0x005a005900580057
-+#define SXE_TXTS_MAGIC1		0x005e005d005c005b
-+
-+#endif
-diff --git a/drivers/net/sxe/include/sxe_version.h b/drivers/net/sxe/include/sxe_version.h
-new file mode 100644
-index 0000000000..fb58e73399
---- /dev/null
-+++ b/drivers/net/sxe/include/sxe_version.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#ifndef __SXE_VER_H__
-+#define __SXE_VER_H__
-+
-+#define SXE_VERSION				"0.0.0.0"
-+#define SXE_COMMIT_ID			  "852946d"
-+#define SXE_BRANCH				 "feature/sagitta-1.3.0-P3-dpdk_patch"
-+#define SXE_BUILD_TIME			 "2025-04-03 17:15:31"
-+
-+#define SXE_DRV_NAME				   "sxe"
-+#define SXEVF_DRV_NAME				 "sxevf"
-+#define SXE_DRV_LICENSE				"GPL v2"
-+#define SXE_DRV_AUTHOR				 "sxe"
-+#define SXEVF_DRV_AUTHOR			   "sxevf"
-+#define SXE_DRV_DESCRIPTION			"sxe driver"
-+#define SXEVF_DRV_DESCRIPTION		  "sxevf driver"
-+
-+#define SXE_FW_NAME					 "soc"
-+#define SXE_FW_ARCH					 "arm32"
-+
-+#ifndef PS3_CFG_RELEASE
-+#define PS3_SXE_FW_BUILD_MODE			 "debug"
-+#else
-+#define PS3_SXE_FW_BUILD_MODE			 "release"
-+#endif
-+
-+#endif
-diff --git a/drivers/net/sxe/meson.build b/drivers/net/sxe/meson.build
-index c2460c7229..0afd54e071 100644
---- a/drivers/net/sxe/meson.build
-+++ b/drivers/net/sxe/meson.build
-@@ -1,9 +1,26 @@
- # SPDX-License-Identifier: BSD-3-Clause
- # Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+if not is_linux or not (dpdk_conf.has('RTE_ARCH_X86_64') or dpdk_conf.has('RTE_ARCH_ARM64'))
-+    build = false
-+    reason = 'only supported on x86_64 or arm64 Linux'
-+    subdir_done()
-+endif
-+cflags += ['-DSXE_DPDK']
-+cflags += ['-DSXE_HOST_DRIVER']
+@@ -119,7 +119,7 @@ typedef struct sxe_sfp_rate_able {
  
-+#subdir('base')
-+#objs = [base_objs]
- deps += ['hash']
- sources = files(
-+        'pf/sxe_main.c',
-+        'pf/sxe_irq.c',
-         'pf/sxe_ethdev.c',
-+        'pf/sxe_pmd_hdc.c',
-+        'base/sxe_common.c',
-+        'base/sxe_hw.c',
- )
  
-+includes += include_directories('base')
- includes += include_directories('pf')
-+includes += include_directories('include/sxe/')
-+includes += include_directories('include/')
-diff --git a/drivers/net/sxe/pf/sxe.h b/drivers/net/sxe/pf/sxe.h
+ typedef struct sxe_spp_tx_able {
+-	BOOL is_disable;
++	bool is_disable;
+ } sxe_spp_tx_able_s;
+ 
+ 
+@@ -129,7 +129,7 @@ typedef struct sxe_default_mac_addr_resp {
+ 
+ 
+ typedef struct sxe_mng_rst {
+-	BOOL enable;
++	bool enable;
+ } sxe_mng_rst_s;
+ 
+ #endif
+diff --git a/drivers/net/sxe/pf/rte_pmd_sxe.h b/drivers/net/sxe/pf/rte_pmd_sxe.h
+index 25e768624f..2369f03214 100644
+--- a/drivers/net/sxe/pf/rte_pmd_sxe.h
++++ b/drivers/net/sxe/pf/rte_pmd_sxe.h
+@@ -15,4 +15,5 @@ typedef int32_t		s32;
+ s32 rte_pmd_sxe_tx_loopback_set(u16 port, u8 on);
+ __rte_experimental
+ s32 rte_pmd_sxe_tc_bw_set(u8 port, u8 tc_num, u8 *bw_weight);
++int rte_pmd_sxe_set_vf_rxmode(u16 port, u16 vf, u16 rx_mask, u8 on);
+ #endif
+diff --git a/drivers/net/sxe/pf/sxe_filter.c b/drivers/net/sxe/pf/sxe_filter.c
+index df583c960a..8d09d8596f 100644
+--- a/drivers/net/sxe/pf/sxe_filter.c
++++ b/drivers/net/sxe/pf/sxe_filter.c
+@@ -9,7 +9,9 @@
+ #include "sxe_logs.h"
+ #include "sxe.h"
+ #include "sxe_queue.h"
++#include "drv_msg.h"
+ #include "sxe_pmd_hdc.h"
++#include "sxe_cli.h"
+ #include "sxe_compat_version.h"
+ 
+ #define PF_POOL_INDEX(p)		(p)
+@@ -123,6 +125,45 @@ static u8 sxe_sw_uc_entry_del(struct sxe_adapter *adapter, u8 index)
+ 	return i;
+ }
+ 
++u8 sxe_sw_uc_entry_vf_add(struct sxe_adapter *adapter,
++				u8 vf_idx, u8 *mac_addr, bool macvlan)
++{
++	u8 i;
++	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++
++	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
++		if (!uc_table[i].used) {
++			uc_table[i].used = true;
++			uc_table[i].rar_idx = i;
++			uc_table[i].pool_idx = vf_idx;
++			uc_table[i].type = macvlan ? SXE_VF_MACVLAN : SXE_VF;
++			rte_memcpy(uc_table[i].addr, mac_addr, SXE_MAC_ADDR_LEN);
++			break;
++		}
++	}
++
++	return i;
++}
++
++void sxe_sw_uc_entry_vf_del(struct sxe_adapter *adapter, u8 vf_idx,
++					bool macvlan)
++{
++	u8 i;
++	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++
++	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
++		if (!uc_table[i].used || uc_table[i].type == SXE_PF)
++			continue;
++
++		if (uc_table[i].pool_idx == vf_idx) {
++			uc_table[i].used = false;
++			sxe_hw_uc_addr_del(&adapter->hw, i);
++			if (!macvlan)
++				break;
++		}
++	}
++}
++
+ s32 sxe_mac_addr_init(struct rte_eth_dev *eth_dev)
+ {
+ 	struct sxe_adapter *adapter = eth_dev->data->dev_private;
+@@ -340,6 +381,40 @@ s32 sxe_allmulticast_disable(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
++static void sxe_vf_promisc_mac_update_all(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++	u16 vf_num = sxe_vf_num_get(dev);
++	u8 vf_idx = 0;
++	s32 i;
++
++	for (vf_idx = 0; vf_idx < vf_num; vf_idx++) {
++		if (vf_info[vf_idx].cast_mode == SXE_CAST_MODE_PROMISC) {
++			for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
++				if (uc_table[i].used) {
++					sxe_hw_uc_addr_pool_enable(&adapter->hw,
++						uc_table[i].rar_idx, vf_idx);
++				}
++			}
++		}
++	}
++}
++
++static void sxe_vf_promisc_mac_update(struct rte_eth_dev *dev, u32 rar_idx)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	u16 vf_num = sxe_vf_num_get(dev);
++	u8 vf_idx;
++
++	for (vf_idx = 0; vf_idx < vf_num; vf_idx++) {
++		if (vf_info[vf_idx].cast_mode == SXE_CAST_MODE_PROMISC)
++			sxe_hw_uc_addr_pool_enable(&adapter->hw, rar_idx, vf_idx);
++	}
++}
++
+ s32 sxe_mac_addr_add(struct rte_eth_dev *dev,
+ 				 struct rte_ether_addr *mac_addr,
+ 				 u32 index, u32 pool)
+@@ -468,6 +543,108 @@ static void sxe_hash_mac_addr_parse(u8 *mac_addr, u16 *reg_idx,
+ 			 mac_addr[4], mac_addr[5], *reg_idx, *bit_idx);
+ }
+ 
++s32 sxe_uc_hash_table_set(struct rte_eth_dev *dev,
++			struct rte_ether_addr *mac_addr, u8 on)
++{
++	u16 bit_idx;
++	u16 reg_idx;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_mac_filter_context *mac_filter = &adapter->mac_filter_ctxt;
++	u32 value;
++	s32 ret = 0;
++	u8 *addr;
++
++	sxe_hash_mac_addr_parse(mac_addr->addr_bytes, &reg_idx, &bit_idx);
++
++	value = (mac_filter->uta_hash_table[reg_idx] >> bit_idx) & 0x1;
++	if (value == on)
++		goto l_out;
++
++	value = sxe_hw_uta_hash_table_get(hw, reg_idx);
++	if (on) {
++		mac_filter->uta_used_count++;
++		value |= (0x1 << bit_idx);
++		mac_filter->uta_hash_table[reg_idx] |= (0x1 << bit_idx);
++	} else {
++		mac_filter->uta_used_count--;
++		value &= ~(0x1 << bit_idx);
++		mac_filter->uta_hash_table[reg_idx] &= ~(0x1 << bit_idx);
++	}
++
++	sxe_hw_uta_hash_table_set(hw, reg_idx, value);
++
++	addr = mac_addr->addr_bytes;
++	PMD_LOG_INFO(DRV, "mac_addr:" RTE_ETHER_ADDR_PRT_FMT " uta reg_idx:%u bit_idx:%u"
++			  " %s done, uta_used_count:%u",
++			 addr[0], addr[1], addr[2],
++			 addr[3], addr[4], addr[5],
++			 reg_idx, bit_idx,
++			 on ? "set" : "clear",
++			 mac_filter->uta_used_count);
++
++l_out:
++	return ret;
++}
++
++s32 sxe_uc_all_hash_table_set(struct rte_eth_dev *dev, u8 on)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_mac_filter_context *mac_filter = &adapter->mac_filter_ctxt;
++	u32 value;
++	u8 i;
++
++	value = on ? (~0) : 0;
++
++	for (i = 0; i < SXE_UTA_ENTRY_NUM_MAX; i++) {
++		mac_filter->uta_hash_table[i] = value;
++		sxe_hw_uta_hash_table_set(hw, i, value);
++	}
++
++	PMD_LOG_INFO(DRV, "uta table all entry %s done.",
++			  on ? "set" : "clear");
++
++	return 0;
++}
++
++s32 sxe_set_mc_addr_list(struct rte_eth_dev *dev,
++			  struct rte_ether_addr *mc_addr_list,
++			  u32 nb_mc_addr)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_mac_filter_context *mac_filter = &adapter->mac_filter_ctxt;
++	u16 vf_num = sxe_vf_num_get(dev);
++	u32 vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf_num);
++	u32 i;
++	u16 bit_idx;
++	u16 reg_idx;
++
++	memset(&mac_filter->mta_hash_table, 0, sizeof(mac_filter->mta_hash_table));
++	for (i = 0; i < nb_mc_addr; i++) {
++		sxe_hash_mac_addr_parse(mc_addr_list->addr_bytes, &reg_idx, &bit_idx);
++		mc_addr_list++;
++		mac_filter->mta_hash_table[reg_idx] |= (0x1 << bit_idx);
++	}
++
++	for (i = 0; i < SXE_MTA_ENTRY_NUM_MAX; i++)
++		sxe_hw_mta_hash_table_set(hw, i, mac_filter->mta_hash_table[i]);
++
++	if (nb_mc_addr) {
++		sxe_hw_mc_filter_enable(hw);
++
++		if (vf_num > 0) {
++			vm_l2_ctrl |= SXE_VMOLR_ROMPE;
++			sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
++		}
++	}
++
++	PMD_LOG_INFO(DRV, "mc addr list cnt:%u set to mta done.", nb_mc_addr);
++
++	return 0;
++}
++
+ s32 sxe_vlan_filter_set(struct rte_eth_dev *eth_dev, u16 vlan_id, s32 on)
+ {
+ 	struct sxe_adapter *adapter = eth_dev->data->dev_private;
+diff --git a/drivers/net/sxe/pf/sxe_filter.h b/drivers/net/sxe/pf/sxe_filter.h
+index 2b7c91a9bd..7b9026fcfb 100644
+--- a/drivers/net/sxe/pf/sxe_filter.h
++++ b/drivers/net/sxe/pf/sxe_filter.h
+@@ -72,6 +72,15 @@ void sxe_mac_addr_remove(struct rte_eth_dev *dev, u32 rar_idx);
+ s32 sxe_mac_addr_set(struct rte_eth_dev *dev,
+ 				 struct rte_ether_addr *mac_addr);
+ 
++s32 sxe_uc_hash_table_set(struct rte_eth_dev *dev,
++			struct rte_ether_addr *mac_addr, u8 on);
++
++s32 sxe_uc_all_hash_table_set(struct rte_eth_dev *dev, u8 on);
++
++s32 sxe_set_mc_addr_list(struct rte_eth_dev *dev,
++			  struct rte_ether_addr *mc_addr_list,
++			  u32 nb_mc_addr);
++
+ s32 sxe_vlan_filter_set(struct rte_eth_dev *eth_dev, u16 vlan_id, s32 on);
+ 
+ s32 sxe_vlan_tpid_set(struct rte_eth_dev *eth_dev,
+@@ -91,4 +100,10 @@ void sxe_vlan_strip_switch_set(struct rte_eth_dev *dev);
+ 
+ void sxe_fc_mac_addr_set(struct sxe_adapter *adapter);
+ 
++u8 sxe_sw_uc_entry_vf_add(struct sxe_adapter *adapter,
++				u8 vf_idx, u8 *mac_addr, bool macvlan);
++
++void sxe_sw_uc_entry_vf_del(struct sxe_adapter *adapter, u8 vf_idx,
++					bool macvlan);
++
+ #endif
+diff --git a/drivers/net/sxe/pf/sxe_phy.h b/drivers/net/sxe/pf/sxe_phy.h
+index 0dd2ad2d95..65a530ba2b 100644
+--- a/drivers/net/sxe/pf/sxe_phy.h
++++ b/drivers/net/sxe/pf/sxe_phy.h
+@@ -6,6 +6,7 @@
+ 
+ #include <rte_ethdev.h>
+ #include "drv_msg.h"
++#include "sxe_cli.h"
+ #include "sxe_msg.h"
+ 
+ #define SXE_SFF_BASE_ADDR			0x0
+diff --git a/drivers/net/sxe/pf/sxe_tx.c b/drivers/net/sxe/pf/sxe_tx.c
+index 33d4468ebc..bbf802cd2f 100644
+--- a/drivers/net/sxe/pf/sxe_tx.c
++++ b/drivers/net/sxe/pf/sxe_tx.c
+@@ -55,7 +55,7 @@ void __rte_cold sxe_tx_function_set(struct rte_eth_dev *dev,
+ 
+ 		PMD_LOG_INFO(INIT, "using full-featured tx code path");
+ 		PMD_LOG_INFO(INIT, " - offloads = 0x%" SXE_PRIX64,
+-					(unsigned long)txq->offloads);
++							txq->offloads);
+ 		PMD_LOG_INFO(INIT, " - tx_rs_thresh = %d "
+ 				   "[RTE_PMD_SXE_MAX_TX_BURST=%d]",
+ 				txq->rs_thresh,
+diff --git a/drivers/net/sxe/pf/sxe_vf.c b/drivers/net/sxe/pf/sxe_vf.c
 new file mode 100644
-index 0000000000..009d2db173
+index 0000000000..a13c70e946
 --- /dev/null
-+++ b/drivers/net/sxe/pf/sxe.h
-@@ -0,0 +1,56 @@
++++ b/drivers/net/sxe/pf/sxe_vf.c
+@@ -0,0 +1,1199 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
-+#ifndef __SXE_H__
-+#define __SXE_H__
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include <rte_ethdev.h>
++#include <rte_ether.h>
++#include <rte_memcpy.h>
++#include <ethdev_driver.h>
++#include <ethdev_pci.h>
++#include <bus_pci_driver.h>
++#include "sxe_logs.h"
++#include "sxe_vf.h"
++#include "sxe_hw.h"
++#include "sxe.h"
++#include "sxe_errno.h"
++#include "sxe_filter.h"
++#include "sxe_offload.h"
++#include "sxe_ethdev.h"
++#include "sxe_rx.h"
++#include "rte_pmd_sxe.h"
++
++#define SXE_MR_VLAN_MASK  0xFFFFFFFF
++#define SXE_MR_VLAN_MSB_BIT_OFFSET 32
++
++#define SXE_MR_VIRTUAL_POOL_MASK		 0xFFFFFFFF
++#define SXE_MR_VIRTUAL_POOL_MSB_BIT_MASK 32
++
++#define SXE_UC_MAC_UNSET 0
++#define SXE_UC_MAC_SET 1
++
++static inline s32 sxe_vf_mac_addr_generate(struct rte_eth_dev *eth_dev, u16 vf_num)
++{
++	u8 vf_mac_addr[RTE_ETHER_ADDR_LEN];
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	u16 idx;
++
++	for (idx = 0; idx < vf_num; idx++) {
++		rte_eth_random_addr(vf_mac_addr);
++		memcpy(vf_info[idx].mac_addr, vf_mac_addr, RTE_ETHER_ADDR_LEN);
++	}
++
++	return 0;
++}
++
++static void sxe_vt_mode_configure(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 gpie;
++	u32 pcie_ext;
++
++	pcie_ext = sxe_hw_pcie_vt_mode_get(hw);
++	pcie_ext &= ~SXE_GCR_EXT_VT_MODE_MASK;
++
++	gpie = sxe_hw_irq_general_reg_get(hw);
++	gpie &= ~SXE_GPIE_VTMODE_MASK;
++	gpie |= SXE_GPIE_MSIX_MODE;
++
++	switch (RTE_ETH_DEV_SRIOV(eth_dev).active) {
++	case RTE_ETH_64_POOLS:
++		pcie_ext |= SXE_GCR_EXT_VT_MODE_64;
++		gpie |= SXE_GPIE_VTMODE_64;
++		break;
++	case RTE_ETH_32_POOLS:
++		pcie_ext |= SXE_GCR_EXT_VT_MODE_32;
++		gpie |= SXE_GPIE_VTMODE_32;
++		break;
++	case RTE_ETH_16_POOLS:
++		pcie_ext |= SXE_GCR_EXT_VT_MODE_16;
++		gpie |= SXE_GPIE_VTMODE_16;
++		break;
++	}
++
++	sxe_hw_pcie_vt_mode_set(hw, pcie_ext);
++	sxe_hw_irq_general_reg_set(hw, gpie);
++}
++
++s32 sxe_vt_init(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_vf_info **vf_info = &adapter->vt_ctxt.vf_info;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_irq_context *irq = &adapter->irq_ctxt;
++	u16 vf_num;
++	s32 ret = 0;
++	u8 nb_queue;
++
++	PMD_INIT_FUNC_TRACE();
++
++	RTE_ETH_DEV_SRIOV(eth_dev).active = 0;
++	/* get vf num from max_vfs or sriov_numvfs */
++	vf_num = sxe_vf_num_get(eth_dev);
++	if (vf_num == 0) {
++		LOG_WARN_BDF("no vf, no need init vt");
++		goto l_out;
++	}
++
++	*vf_info = rte_zmalloc("vf_info", sizeof(struct sxe_vf_info) * vf_num, 0);
++	if (*vf_info == NULL) {
++		LOG_WARN_BDF("vf_info allocate memory fail.");
++		ret = -ENOMEM;
++		goto l_out;
++	}
++
++	ret = rte_eth_switch_domain_alloc(&(*vf_info)->domain_id);
++	if (ret) {
++		LOG_ERROR_BDF("failed to allocate switch domain for device %d", ret);
++		goto l_free_vf_info;
++	}
++
++	if (vf_num >= RTE_ETH_32_POOLS) {
++		nb_queue = 2;
++		RTE_ETH_DEV_SRIOV(eth_dev).active = RTE_ETH_64_POOLS;
++	} else if (vf_num >= RTE_ETH_16_POOLS) {
++		nb_queue = 4;
++		RTE_ETH_DEV_SRIOV(eth_dev).active = RTE_ETH_32_POOLS;
++	} else {
++		nb_queue = 8;
++		RTE_ETH_DEV_SRIOV(eth_dev).active = RTE_ETH_16_POOLS;
++	}
++
++	RTE_ETH_DEV_SRIOV(eth_dev).nb_q_per_pool = nb_queue;
++	RTE_ETH_DEV_SRIOV(eth_dev).def_vmdq_idx = vf_num;
++	RTE_ETH_DEV_SRIOV(eth_dev).def_pool_q_idx = (u16)(vf_num * nb_queue);
++
++	sxe_vf_mac_addr_generate(eth_dev, vf_num);
++
++	sxe_hw_mbx_init(hw);
++
++	irq->enable_mask |= SXE_EIMS_MAILBOX;
++
++	adapter->vt_ctxt.promisc_cnt = 0;
++
++	sxe_vt_mode_configure(eth_dev);
++
++	LOG_INFO_BDF("vf_num:%d domain id:%u init done.",
++			  vf_num, (*vf_info)->domain_id);
++
++l_out:
++	return ret;
++
++l_free_vf_info:
++	rte_free(*vf_info);
++	*vf_info = NULL;
++	return ret;
++}
++
++static void sxe_pf_pool_enable(struct rte_eth_dev *eth_dev, u16 vf_num)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 enable_mask = ~0;
++	u8 vf_reg_idx = ((vf_num >> 5) > 0) ? 1 : 0;
++	u8 vf_bit_index = vf_num & ((1 << 5) - 1);
++
++	sxe_hw_rx_pool_bitmap_set(hw, vf_reg_idx, enable_mask << vf_bit_index);
++	sxe_hw_rx_pool_bitmap_set(hw, (vf_reg_idx ^ 1), (vf_reg_idx - 1));
++
++	sxe_hw_tx_pool_bitmap_set(hw, vf_reg_idx, enable_mask << vf_bit_index);
++	sxe_hw_tx_pool_bitmap_set(hw, (vf_reg_idx ^ 1), (vf_reg_idx - 1));
++}
++
++static void sxe_vf_vlan_filter_enable(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 enable_mask = ~0;
++	u32 vlan_ctl;
++	u8 i;
++
++	vlan_ctl = sxe_hw_vlan_type_get(hw);
++	vlan_ctl |= SXE_VLNCTRL_VFE;
++	sxe_hw_vlan_type_set(hw, vlan_ctl);
++
++	for (i = 0; i < SXE_VFT_TBL_SIZE; i++)
++		sxe_hw_vlan_filter_array_write(hw, i, enable_mask);
++}
++
++static void sxe_uc_mac_table_init(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	u8 vf_num = sxe_vf_num_get(eth_dev);
++	u8 i;
++
++	for (i = 0; i < vf_num; i++)
++		memset(vf_info[i].uc_mac_table, SXE_UC_MAC_UNSET, SXE_UC_ENTRY_NUM_MAX);
++}
++
++void sxe_vt_configure(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u16 vf_num;
++	u16 pf_pool_idx = RTE_ETH_DEV_SRIOV(eth_dev).def_vmdq_idx;
++
++	vf_num = sxe_vf_num_get(eth_dev);
++	if (vf_num == 0) {
++		LOG_WARN_BDF("no vf, no need configure vt");
++		return;
++	}
++
++	sxe_hw_vt_ctrl_cfg(hw, pf_pool_idx);
++
++	sxe_pf_pool_enable(eth_dev, vf_num);
++
++	sxe_hw_vt_pool_loopback_switch(hw, true);
++
++	sxe_hw_mac_pool_clear(hw, 0);
++	sxe_hw_mac_pool_clear(hw, SXE_UC_ENTRY_NUM_MAX - 1);
++
++	sxe_hw_uc_addr_pool_enable(hw, 0, pf_pool_idx);
++
++	sxe_vt_mode_configure(eth_dev);
++
++	sxe_vf_vlan_filter_enable(eth_dev);
++
++	sxe_hw_pool_mac_anti_spoof_set(hw, vf_num, 0);
++
++	sxe_uc_mac_table_init(eth_dev);
++
++	sxe_rx_fc_threshold_set(hw);
++}
++
++void sxe_vt_uninit(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_vf_info **vf_info = &adapter->vt_ctxt.vf_info;
++	u16 vf_num;
++	int ret;
++
++	PMD_INIT_FUNC_TRACE();
++
++	RTE_ETH_DEV_SRIOV(eth_dev).active = 0;
++	RTE_ETH_DEV_SRIOV(eth_dev).nb_q_per_pool = 0;
++	RTE_ETH_DEV_SRIOV(eth_dev).def_vmdq_idx = 0;
++	RTE_ETH_DEV_SRIOV(eth_dev).def_pool_q_idx = 0;
++
++	vf_num = sxe_vf_num_get(eth_dev);
++	if (vf_num == 0 || (*vf_info) == NULL) {
++		LOG_INFO_BDF("vf_num:%u vf_info:%p, no need free vf_info.",
++				 vf_num, *vf_info);
++		return;
++	}
++
++	ret = rte_eth_switch_domain_free((*vf_info)->domain_id);
++	if (ret)
++		LOG_ERROR_BDF("failed to free switch domain: %d", ret);
++
++	rte_free(*vf_info);
++	*vf_info = NULL;
++}
++
++s32 sxe_vf_rss_configure(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	bool is_4q_per_pool;
++	s32 ret = 0;
++
++	sxe_rss_configure(dev);
++
++	switch (RTE_ETH_DEV_SRIOV(dev).active) {
++	case RTE_ETH_64_POOLS:
++		is_4q_per_pool = false;
++		break;
++
++	case RTE_ETH_32_POOLS:
++		is_4q_per_pool = true;
++		break;
++
++	default:
++		ret = -EINVAL;
++		LOG_ERROR_BDF("invalid pool number:%u in iov mode with rss.(err:%d)",
++				  RTE_ETH_DEV_SRIOV(dev).active, ret);
++		goto l_out;
++	}
++
++	sxe_hw_rx_multi_ring_configure(hw, 0, is_4q_per_pool, true);
++
++	LOG_INFO_BDF("pool num:%u is_4q_per_pool:%u configure done.",
++			RTE_ETH_DEV_SRIOV(dev).active, is_4q_per_pool);
++
++l_out:
++	return ret;
++}
++
++s32 sxe_vf_default_mode_configure(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	s32 ret = 0;
++	u8 tcs = 0;
++	bool is_4q_per_pool = false;
++
++	switch (RTE_ETH_DEV_SRIOV(dev).active) {
++	case RTE_ETH_64_POOLS:
++		is_4q_per_pool = false;
++		break;
++
++	case RTE_ETH_32_POOLS:
++		is_4q_per_pool = true;
++		break;
++
++	case RTE_ETH_16_POOLS:
++		tcs = 8;
++		break;
++	default:
++		ret = -SXE_ERR_CONFIG;
++		LOG_ERROR_BDF("invalid pool number:%u (err:%d)",
++				  RTE_ETH_DEV_SRIOV(dev).active, ret);
++		goto l_out;
++	}
++
++	sxe_hw_rx_multi_ring_configure(hw, tcs, is_4q_per_pool, true);
++
++l_out:
++	return ret;
++}
++
++static void sxe_filter_mode_configure(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u16 vf_num = sxe_vf_num_get(dev);
++	u32 filter_ctrl = sxe_hw_rx_mode_get(hw);
++	u32 vm_l2_ctrl = SXE_VMOLR_AUPE | SXE_VMOLR_BAM;
++
++	filter_ctrl &= ~(SXE_FCTRL_SBP | SXE_FCTRL_UPE | SXE_FCTRL_MPE);
++
++	filter_ctrl |= SXE_FCTRL_BAM;
++
++	if (dev->data->promiscuous) {
++		filter_ctrl |= (SXE_FCTRL_UPE | SXE_FCTRL_MPE);
++		vm_l2_ctrl |= (SXE_VMOLR_ROPE | SXE_VMOLR_MPE);
++	} else {
++		if (dev->data->all_multicast) {
++			filter_ctrl |= SXE_FCTRL_MPE;
++			vm_l2_ctrl |= SXE_VMOLR_MPE;
++		} else {
++			vm_l2_ctrl |= SXE_VMOLR_ROMPE;
++		}
++	}
++
++	vm_l2_ctrl |= sxe_hw_pool_rx_mode_get(hw, vf_num) &
++			~(SXE_VMOLR_MPE | SXE_VMOLR_ROMPE | SXE_VMOLR_ROPE);
++
++	sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf_num);
++
++	sxe_hw_rx_mode_set(hw, filter_ctrl);
++
++	sxe_vlan_strip_switch_set(dev);
++}
++
++static inline void sxe_vf_flr_handle(struct rte_eth_dev *dev, u16 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	u32 vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf);
++
++	sxe_sw_uc_entry_vf_del(adapter, vf, false);
++
++	vm_l2_ctrl |= (SXE_VMOLR_AUPE | SXE_VMOLR_ROPE | SXE_VMOLR_BAM);
++
++	sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf);
++
++	sxe_hw_tx_vlan_tag_clear(hw, vf);
++
++	vf_info[vf].mc_hash_used = 0;
++
++	sxe_filter_mode_configure(dev);
++}
++
++static void sxe_vf_promisc_mac_update(struct rte_eth_dev *dev, u32 vf,
++		u32 rar_idx)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	u16 vf_num = sxe_vf_num_get(dev);
++	u8 vf_idx;
++
++	for (vf_idx = 0; vf_idx < vf_num; vf_idx++) {
++		if (vf_info[vf_idx].cast_mode == SXE_CAST_MODE_PROMISC &&
++				vf_idx != vf)
++			sxe_hw_uc_addr_pool_enable(&adapter->hw, rar_idx, vf_idx);
++	}
++}
++
++static void sxe_vf_promisc_mac_update_all(struct rte_eth_dev *dev)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++	s32 i;
++	u16 vf_num = sxe_vf_num_get(dev);
++	u8 vf_idx;
++
++	for (vf_idx = 0; vf_idx < vf_num; vf_idx++) {
++		if (vf_info[vf_idx].cast_mode == SXE_CAST_MODE_PROMISC) {
++			for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
++				if (uc_table[i].used) {
++					sxe_hw_uc_addr_pool_enable(&adapter->hw,
++						uc_table[i].rar_idx, vf_idx);
++				}
++			}
++		}
++	}
++}
++
++static void sxe_vf_uc_clean(struct rte_eth_dev *dev, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
++	u8 i;
++
++	sxe_sw_uc_entry_vf_del(adapter, vf, true);
++	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
++		if (vf_info->uc_mac_table[i] == SXE_UC_MAC_SET)
++			sxe_hw_mac_reuse_del(dev, uc_table[i].addr, vf,
++					uc_table[i].rar_idx);
++	}
++	vf_info->uc_mac_cnt = 0;
++	memset(vf_info->uc_mac_table, SXE_UC_MAC_UNSET, SXE_UC_ENTRY_NUM_MAX);
++	sxe_vf_promisc_mac_update_all(dev);
++}
++
++static s32 sxe_vf_dev_mac_addr_set_handler(struct rte_eth_dev *dev, u32 *msgbuf, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_uc_addr_msg mac_msg = *(struct sxe_uc_addr_msg *)msgbuf;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	u32 rar_idx = sxe_sw_uc_entry_vf_add(adapter, vf, mac_msg.uc_addr, false);
++	s32 ret = -SXE_ERR_PARAM;
++	u8 *mac_addr = mac_msg.uc_addr;
++
++	UNUSED(mac_addr);
++	if (rte_is_valid_assigned_ether_addr((struct rte_ether_addr *)mac_msg.uc_addr)) {
++		rte_memcpy(vf_info[vf].mac_addr, mac_msg.uc_addr, RTE_ETHER_ADDR_LEN);
++		ret = sxe_hw_uc_addr_add(&adapter->hw, rar_idx, mac_msg.uc_addr, vf);
++		if (ret) {
++			LOG_ERROR_BDF("vf:%u mac addr:" RTE_ETHER_ADDR_PRT_FMT " set fail.(err:%d)",
++					  vf, mac_addr[0], mac_addr[1], mac_addr[2],
++					  mac_addr[3], mac_addr[4], mac_addr[5], ret);
++		}
++		sxe_vf_promisc_mac_update(dev, vf, rar_idx);
++	}
++
++	return ret;
++}
++
++static s32 sxe_mbx_api_set_handler(struct rte_eth_dev *dev,
++							u32 *msg, u32 vf_idx)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_mbx_api_msg *api_msg = (struct sxe_mbx_api_msg *)msg;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf_idx];
++	s32 ret = 0;
++
++	switch (api_msg->api_version) {
++	case SXE_MBX_API_10:
++	case SXE_MBX_API_11:
++	case SXE_MBX_API_12:
++	case SXE_MBX_API_13:
++		vf_info->mbx_version = api_msg->api_version;
++		break;
++	default:
++		ret = -SXE_ERR_PARAM;
++		LOG_ERROR_BDF("invalid mailbox api version:%u.",
++			  api_msg->api_version);
++		break;
++	}
++
++	LOG_INFO_BDF("mailbox api version:0x%x.(err:%d)",
++					vf_info->mbx_version, ret);
++
++	return ret;
++}
++
++static s32 sxe_pf_ring_info_get(struct rte_eth_dev *dev, u32 *msgbuf, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
++	struct sxe_ring_info_msg *ring_msg = (struct sxe_ring_info_msg *)msgbuf;
++	u32 default_q = vf * RTE_ETH_DEV_SRIOV(dev).nb_q_per_pool;
++	struct rte_eth_vmdq_dcb_tx_conf *vmdq_dcb_tx_conf;
++	u8 num_tcs;
++	u32 vmvir;
++	u32 vlan_action;
++	u32 vlan_id;
++	u32 user_priority;
++	s32 ret = 0;
++
++	switch (vf_info->mbx_version) {
++	case SXE_MBX_API_11:
++	case SXE_MBX_API_12:
++	case SXE_MBX_API_13:
++		break;
++	default:
++		ret = -SXE_ERR_CONFIG;
++		LOG_ERROR_BDF("mailbod version:0x%x not support get ring"
++				  " info.(err:%d)",
++				  vf_info->mbx_version, ret);
++		goto l_out;
++	}
++
++	ring_msg->max_rx_num = RTE_ETH_DEV_SRIOV(dev).nb_q_per_pool;
++	ring_msg->max_tx_num  = RTE_ETH_DEV_SRIOV(dev).nb_q_per_pool;
++
++	ring_msg->default_tc = default_q;
++
++	switch (dev->data->dev_conf.txmode.mq_mode) {
++	case RTE_ETH_MQ_TX_NONE:
++	case RTE_ETH_MQ_TX_DCB:
++		ret = -SXE_ERR_CONFIG;
++		LOG_ERROR_BDF("vf_idx:%u sriov eanble, not support tx queue mode:0x%x.",
++			vf,
++			dev->data->dev_conf.txmode.mq_mode);
++		goto l_out;
++
++	case RTE_ETH_MQ_TX_VMDQ_DCB:
++		vmdq_dcb_tx_conf = &dev->data->dev_conf.tx_adv_conf.vmdq_dcb_tx_conf;
++		switch (vmdq_dcb_tx_conf->nb_queue_pools) {
++		case RTE_ETH_16_POOLS:
++			num_tcs = RTE_ETH_8_TCS;
++			break;
++		case RTE_ETH_32_POOLS:
++			num_tcs = RTE_ETH_4_TCS;
++			break;
++		default:
++			ret = -SXE_ERR_CONFIG;
++			LOG_ERROR_BDF("vf:%u sriov enable, tx queue mode:0x%x "
++					  "invalid pool num:%u.(err:%d)",
++					vf,
++					dev->data->dev_conf.txmode.mq_mode,
++					vmdq_dcb_tx_conf->nb_queue_pools,
++					ret);
++			goto l_out;
++		}
++		break;
++
++	case RTE_ETH_MQ_TX_VMDQ_ONLY:
++		vmvir = sxe_hw_tx_vlan_insert_get(hw, vf);
++		vlan_action = vmvir & SXE_VMVIR_VLANA_MASK;
++		vlan_id = vmvir & SXE_VMVIR_VLAN_VID_MASK;
++		user_priority = (vmvir & SXE_VMVIR_VLAN_UP_MASK) >> VLAN_PRIO_SHIFT;
++		if (vlan_action == SXE_VMVIR_VLANA_DEFAULT &&
++			(vlan_id !=  0 || user_priority != 0)) {
++			num_tcs = 1;
++		} else {
++			num_tcs = 0;
++		}
++		break;
++
++	default:
++		ret = -SXE_ERR_CONFIG;
++		LOG_ERROR_BDF("vf_idx:%u sriov eanble, invalid tx queue mode:0x%x.",
++			vf,
++			dev->data->dev_conf.txmode.mq_mode);
++		goto l_out;
++	}
++
++	ring_msg->tc_num = num_tcs;
++
++	LOG_INFO_BDF("max_rx_num:%u max_tx_num:%u default queue:%u tc_num:%u.",
++			ring_msg->max_rx_num, ring_msg->max_tx_num,
++			ring_msg->default_tc, ring_msg->tc_num);
++
++l_out:
++	return ret;
++}
++
++static s32 sxe_vf_rss_hash_conf_get(struct rte_eth_dev *dev, u32 *msgbuf, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct rte_eth_rss_conf rss_conf;
++	struct sxe_rss_hash_msg *rss_msg = (struct sxe_rss_hash_msg *)msgbuf;
++
++	UNUSED(vf);
++	rss_conf.rss_key = malloc(SXE_RSS_KEY_SIZE);
++	sxe_rss_hash_conf_get(dev, &rss_conf);
++
++	memcpy(rss_msg->hash_key, rss_conf.rss_key, SXE_RSS_KEY_SIZE);
++	rss_msg->rss_hf = rss_conf.rss_hf;
++
++	free(rss_conf.rss_key);
++
++	LOG_INFO_BDF("vf[%u] rss hash conf get, rss_key:%s, rss_hf:%" SXE_PRID64 "",
++			vf, rss_msg->hash_key, rss_msg->rss_hf);
++
++	return 0;
++}
++
++static s32 sxe_vf_vlan_id_set_handler(struct rte_eth_dev *dev,
++						u32 *msgbuf, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = adapter->vt_ctxt.vf_info;
++	struct sxe_vlan_msg *vlan_msg = (struct sxe_vlan_msg *)msgbuf;
++	u32 vlan_id = (vlan_msg->vlan_id & SXE_VLVF_VLANID_MASK);
++	s32 ret;
++
++	ret = sxe_hw_vlan_filter_configure(hw, vlan_id, vf, vlan_msg->add, false);
++	if (ret == 0) {
++		if (vlan_msg->add)
++			vf_info[vf].vlan_cnt++;
++		else if (vf_info[vf].vlan_cnt)
++			vf_info[vf].vlan_cnt--;
++	}
++
++	LOG_INFO_BDF("vf[%u] %s vid[%u] done vlan_cnt:%u ret = %d",
++			vf, vlan_msg->add ? "add" : "delete",
++			vlan_id,
++			vf_info[vf].vlan_cnt, ret);
++
++	return ret;
++}
++
++static s32 sxe_vf_max_frame_set_handler(struct rte_eth_dev *dev,
++						u32 *msgbuf, u32 vf)
++
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
++	struct sxe_max_frame_msg *msg = (struct sxe_max_frame_msg *)msgbuf;
++	u32 vf_max_frame = msg->max_frame + SXE_ETH_OVERHEAD;
++	s32 ret = 0;
++	u32 cur_max_frs;
++	u32 frame_size = SXE_GET_FRAME_SIZE(dev);
++
++	switch (vf_info->mbx_version) {
++	case SXE_MBX_API_11:
++	case SXE_MBX_API_12:
++	case SXE_MBX_API_13:
++		if (frame_size > SXE_ETH_MAX_LEN) {
++			LOG_WARN_BDF("pf jumbo frame enabled.");
++			break;
++		}
++		// fall through
++	default:
++		if (vf_max_frame > SXE_ETH_MAX_LEN ||
++			frame_size > SXE_ETH_MAX_LEN) {
++			ret = -SXE_ERR_PARAM;
++			LOG_ERROR_BDF("mbx version:0x%x pf max pkt len:0x%x vf:%u"
++					  " max_frames:0x%x max_len:0x%x.(err:%d)",
++					  vf_info->mbx_version,
++					  frame_size,
++					  vf, vf_max_frame,
++					  SXE_ETH_MAX_LEN, ret);
++			goto l_out;
++		}
++		break;
++	}
++
++	if (vf_max_frame < RTE_ETHER_MIN_LEN ||
++		vf_max_frame > RTE_ETHER_MAX_JUMBO_FRAME_LEN) {
++		ret = -SXE_ERR_PARAM;
++		LOG_ERROR_BDF("mbx version:0x%x vf:%u invalid max_frame:%u (err:%d)",
++				  vf_info->mbx_version,
++				  vf,
++				  vf_max_frame,
++				  ret);
++		goto l_out;
++	}
++
++	cur_max_frs = sxe_hw_mac_max_frame_get(hw);
++	if (vf_max_frame > cur_max_frs) {
++		ret = -SXE_ERR_PARAM;
++		LOG_ERROR_BDF("mbx version:0x%x vf:%u invalid max_frame:%u >= cur_max_frs:%u",
++				  vf_info->mbx_version,
++				  vf,
++				  vf_max_frame,
++				  cur_max_frs);
++		goto l_out;
++	}
++
++l_out:
++	return ret;
++}
++
++static void sxe_vf_mc_promisc_disable(struct rte_eth_dev *dev, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 vm_l2_ctrl = sxe_hw_pool_rx_mode_get(hw, vf);
++
++	vm_l2_ctrl &= ~SXE_VMOLR_MPE;
++
++	sxe_hw_pool_rx_mode_set(hw, vm_l2_ctrl, vf);
++}
++
++static void sxe_vf_promisc_disable(struct rte_eth_dev *dev, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
++	u32 disable;
++	u32 vm_l2_filter;
++
++	if (vf_info->cast_mode != SXE_CAST_MODE_PROMISC)
++		goto out;
++
++	disable = SXE_VMOLR_BAM | SXE_VMOLR_ROMPE |
++				SXE_VMOLR_MPE | SXE_VMOLR_ROPE;
++
++	vf_info->cast_mode = SXE_CAST_MODE_NONE;
++
++	vm_l2_filter = sxe_hw_pool_rx_mode_get(hw, vf);
++	vm_l2_filter &= ~disable;
++	sxe_hw_pool_rx_mode_set(hw, vm_l2_filter, vf);
++
++	adapter->vt_ctxt.promisc_cnt--;
++	if (adapter->vt_ctxt.promisc_cnt == 0)
++		sxe_uc_all_hash_table_set(dev, false);
++
++out:
++	return;
++}
++
++static s32 sxe_vf_mc_addr_sync(struct rte_eth_dev *dev,
++					u32 *msgbuf, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
++	struct sxe_mc_sync_msg *mc_msg = (struct sxe_mc_sync_msg *)msgbuf;
++	u8 mc_cnt = RTE_MIN(mc_msg->mc_cnt, SXE_VF_MC_ENTRY_NUM_MAX);
++	u32 mta_idx;
++	u32 mta_shift;
++	u32 vm_l2_filter = sxe_hw_pool_rx_mode_get(hw, vf);
++	int i;
++
++	sxe_vf_mc_promisc_disable(dev, vf);
++
++	vf_info->mc_hash_used = mc_cnt;
++	for (i = 0; i < mc_cnt; i++) {
++		vf_info->mc_hash[i] = mc_msg->mc_addr_extract[i];
++		LOG_INFO_BDF("vf_idx:%u mc_cnt:%u mc_hash[%d]:0x%x",
++				 vf, mc_cnt, i, vf_info->mc_hash[i]);
++	}
++
++	if (mc_cnt == 0) {
++		vm_l2_filter &= ~SXE_VMOLR_ROMPE;
++		sxe_hw_pool_rx_mode_set(hw, vm_l2_filter, vf);
++		LOG_WARN_BDF("vf:%u request disable mta filter.", vf);
++	} else {
++		for (i = 0; i < mc_cnt; i++) {
++			mta_idx = (vf_info->mc_hash[i] >> SXE_MC_ADDR_SHIFT) &
++				  SXE_MC_ADDR_REG_MASK;
++			mta_shift = vf_info->mc_hash[i] & SXE_MC_ADDR_BIT_MASK;
++			sxe_hw_mta_hash_table_update(hw, mta_idx, mta_shift);
++
++			LOG_INFO_BDF("vf_idx:%u mc_cnt:%u mc_hash[%d]:0x%x "
++				"reg_idx=%u, bit_idx=%u.",
++				vf, mc_cnt, i, vf_info->mc_hash[i],
++				mta_idx, mta_shift);
++		}
++
++		vm_l2_filter |= SXE_VMOLR_ROMPE;
++		sxe_hw_pool_rx_mode_set(hw, vm_l2_filter, vf);
++		sxe_hw_mc_filter_enable(hw);
++	}
++
++	return 0;
++}
++
++static void sxe_vf_mac_reuse_rebuild(struct sxe_adapter *adapter,
++					u8 rar_idx, u32 vf)
++{
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
++	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++	u8 i;
++
++	for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
++		if (vf_info->uc_mac_table[i] == SXE_UC_MAC_SET &&
++				memcmp(uc_table[rar_idx].addr, uc_table[rar_idx].addr,
++					SXE_MAC_ADDR_LEN) == 0) {
++			sxe_hw_uc_addr_pool_enable(hw, rar_idx, vf);
++			break;
++		}
++	}
++}
++
++static s32 sxe_vf_cast_mode_handler(struct rte_eth_dev *dev,
++					u32 *msgbuf, u32 vf)
++
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
++	struct sxe_cast_mode_msg *cast_msg = (struct sxe_cast_mode_msg *)msgbuf;
++	struct sxe_uc_addr_table *uc_table = adapter->mac_filter_ctxt.uc_addr_table;
++	u32 enable;
++	u32 disable;
++	u32 flt_ctrl = 0;
++	u32 vm_l2_filter;
++	s32 ret = 0;
++	u8 i;
++	bool allmulti = false;
++
++	switch (vf_info->mbx_version) {
++	case SXE_MBX_API_12:
++	case SXE_MBX_API_13:
++		break;
++	default:
++		ret = -SXE_ERR_PARAM;
++		LOG_ERROR_BDF("vf:%u invalid mbx api version:0x%x.",
++				 vf, vf_info->mbx_version);
++		goto l_out;
++	}
++
++	if (vf_info->cast_mode == cast_msg->cast_mode) {
++		LOG_INFO_BDF("vf:%d currut mode equal set mode:0x%x, skip set.",
++				 vf, cast_msg->cast_mode);
++		goto l_out;
++	}
++
++	switch (cast_msg->cast_mode) {
++	case SXE_CAST_MODE_NONE:
++		disable = SXE_VMOLR_BAM | SXE_VMOLR_ROMPE |
++				SXE_VMOLR_MPE | SXE_VMOLR_ROPE;
++		enable = 0;
++		break;
++
++	case SXE_CAST_MODE_MULTI:
++		disable = SXE_VMOLR_MPE | SXE_VMOLR_ROPE;
++		enable = SXE_VMOLR_BAM | SXE_VMOLR_ROMPE;
++		break;
++
++	case SXE_CAST_MODE_ALLMULTI:
++		disable = SXE_VMOLR_ROPE;
++		enable = SXE_VMOLR_BAM | SXE_VMOLR_ROMPE |
++					SXE_VMOLR_MPE;
++		allmulti = true;
++		break;
++
++	case SXE_CAST_MODE_PROMISC:
++		disable = 0;
++		enable = SXE_VMOLR_MPE | SXE_VMOLR_ROPE |
++					SXE_VMOLR_BAM | SXE_VMOLR_ROMPE;
++		allmulti = true;
++		break;
++
++	default:
++		ret = -SXE_ERR_PARAM;
++		LOG_ERROR_BDF("vf:%u invalid cast mode:0x%x.",
++				vf, cast_msg->cast_mode);
++		goto l_out;
++	}
++
++	vm_l2_filter = sxe_hw_pool_rx_mode_get(hw, vf);
++	vm_l2_filter &= ~disable;
++	vm_l2_filter |= enable;
++	sxe_hw_pool_rx_mode_set(hw, vm_l2_filter, vf);
++
++	if (allmulti) {
++		flt_ctrl = sxe_hw_rx_mode_get(hw) | SXE_FCTRL_MPE;
++		sxe_hw_rx_mode_set(hw, flt_ctrl);
++	}
++
++	if (cast_msg->cast_mode == SXE_CAST_MODE_PROMISC) {
++		sxe_uc_all_hash_table_set(dev, true);
++		adapter->vt_ctxt.promisc_cnt++;
++		for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
++			if (uc_table[i].used)
++				sxe_hw_uc_addr_pool_enable(hw, i, vf);
++		}
++	} else if (vf_info->cast_mode == SXE_CAST_MODE_PROMISC) {
++		adapter->vt_ctxt.promisc_cnt--;
++		if (adapter->vt_ctxt.promisc_cnt == 0)
++			sxe_uc_all_hash_table_set(dev, false);
++
++		for (i = 0; i < SXE_UC_ENTRY_NUM_MAX; i++) {
++			if (uc_table[i].used && uc_table[i].pool_idx != vf) {
++				sxe_hw_uc_addr_pool_del(hw, i, vf);
++				sxe_vf_mac_reuse_rebuild(adapter, i, vf);
++			}
++		}
++	}
++
++	vf_info->cast_mode = cast_msg->cast_mode;
++	LOG_INFO_BDF("vf:%d filter reg:0x%x mode:%d promisc vfs:%d.",
++			 vf, vm_l2_filter, cast_msg->cast_mode, adapter->vt_ctxt.promisc_cnt);
++
++l_out:
++	return ret;
++}
++
++static s32 sxe_vf_uc_addr_sync_handler(struct rte_eth_dev *dev,
++					u32 *msgbuf, u32 vf)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf];
++	struct sxe_uc_sync_msg *uc_msg = (struct sxe_uc_sync_msg *)msgbuf;
++	s32 ret = 0;
++	u8 rar_idx;
++	u8 *mac_addr = (u8 *)uc_msg->addr;
++
++	UNUSED(mac_addr);
++	if (uc_msg->index) {
++		if (!rte_is_valid_assigned_ether_addr((struct rte_ether_addr *)uc_msg->addr)) {
++			ret = -SXE_ERR_PARAM;
++			LOG_ERROR_BDF("vf:%u mac addr:" RTE_ETHER_ADDR_PRT_FMT " invalid.(err:%d).",
++					  vf, mac_addr[0], mac_addr[1], mac_addr[2],
++					  mac_addr[3], mac_addr[4], mac_addr[5], ret);
++			goto l_out;
++		}
++
++		vf_info->uc_mac_cnt++;
++		rar_idx = sxe_sw_uc_entry_vf_add(adapter, vf, (u8 *)uc_msg->addr, true);
++		if (rar_idx < SXE_UC_ENTRY_NUM_MAX) {
++			vf_info->uc_mac_table[rar_idx] = SXE_UC_MAC_SET;
++			sxe_hw_uc_addr_add(hw, rar_idx, (u8 *)uc_msg->addr, vf);
++			sxe_hw_mac_reuse_add(dev, (u8 *)uc_msg->addr, rar_idx);
++			sxe_vf_promisc_mac_update(dev, vf, rar_idx);
++		}
++	} else {
++		if (vf_info->uc_mac_cnt)
++			sxe_vf_uc_clean(dev, vf);
++	}
++
++	LOG_INFO_BDF("vf:%u mac addr:" RTE_ETHER_ADDR_PRT_FMT " opt:%d.",
++					vf, mac_addr[0], mac_addr[1], mac_addr[2],
++					mac_addr[3], mac_addr[4], mac_addr[5], uc_msg->index);
++
++l_out:
++	return ret;
++}
++
++static struct sxe_msg_table msg_table[] = {
++	[SXE_VFREQ_MAC_ADDR_SET] = {SXE_VFREQ_MAC_ADDR_SET, sxe_vf_dev_mac_addr_set_handler},
++	[SXE_VFREQ_MC_ADDR_SYNC] = {SXE_VFREQ_MC_ADDR_SYNC, sxe_vf_mc_addr_sync},
++	[SXE_VFREQ_VLAN_SET] = {SXE_VFREQ_VLAN_SET, sxe_vf_vlan_id_set_handler},
++	[SXE_VFREQ_LPE_SET] = {SXE_VFREQ_LPE_SET, sxe_vf_max_frame_set_handler},
++	[SXE_VFREQ_UC_ADDR_SYNC] = {SXE_VFREQ_UC_ADDR_SYNC, sxe_vf_uc_addr_sync_handler},
++	[SXE_VFREQ_API_NEGOTIATE] = {SXE_VFREQ_API_NEGOTIATE, sxe_mbx_api_set_handler},
++	[SXE_VFREQ_RING_INFO_GET] = {SXE_VFREQ_RING_INFO_GET, sxe_pf_ring_info_get},
++	[SXE_VFREQ_CAST_MODE_SET] = {SXE_VFREQ_CAST_MODE_SET, sxe_vf_cast_mode_handler},
++	[SXE_VFREQ_RSS_CONF_GET] = {SXE_VFREQ_RSS_CONF_GET, sxe_vf_rss_hash_conf_get},
++};
++
++static void sxe_vf_pool_enable(struct rte_eth_dev *dev, u8 vf_idx)
++{
++	u32 enable_pool;
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	u8 reg_idx = vf_idx / 32;
++	u8 bit_idx = vf_idx % 32;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_vf_info *vf_info = &adapter->vt_ctxt.vf_info[vf_idx];
++
++	enable_pool = sxe_hw_tx_pool_bitmap_get(hw, reg_idx);
++	enable_pool |= BIT(bit_idx);
++	sxe_hw_tx_pool_bitmap_set(hw, reg_idx, enable_pool);
++
++	sxe_hw_vf_queue_drop_enable(hw, vf_idx,
++				RTE_ETH_DEV_SRIOV(dev).nb_q_per_pool);
++
++	enable_pool = sxe_hw_rx_pool_bitmap_get(hw, reg_idx);
++	enable_pool |= BIT(bit_idx);
++	sxe_hw_rx_pool_bitmap_set(hw, reg_idx, enable_pool);
++
++	vf_info->is_ready = true;
++
++	sxe_hw_spoof_count_enable(hw, reg_idx, bit_idx);
++}
++
++static void sxe_vf_reset_msg_handle(struct rte_eth_dev *dev, u8 vf_idx)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	struct sxe_rst_reply reply = {};
++	u8 *mac_addr = adapter->vt_ctxt.vf_info[vf_idx].mac_addr;
++	u8 *addr_bytes = (u8 *)(((struct rte_ether_addr *)mac_addr)->addr_bytes);
++	u32 rar_idx = sxe_sw_uc_entry_vf_add(adapter, vf_idx, addr_bytes, false);
++
++	LOG_INFO_BDF("receive vf_idx:%d reset msg.", vf_idx);
++
++	sxe_vf_pool_enable(dev, vf_idx);
++
++	sxe_vf_flr_handle(dev, vf_idx);
++
++	sxe_hw_uc_addr_add(&adapter->hw, rar_idx, addr_bytes, vf_idx);
++
++	sxe_vf_mc_promisc_disable(dev, vf_idx);
++
++	sxe_vf_promisc_disable(dev, vf_idx);
++
++	reply.msg_type = SXE_VFREQ_RESET | SXE_MSGTYPE_ACK;
++	reply.mc_filter_type = SXE_MC_FILTER_TYPE0;
++	rte_memcpy(reply.mac_addr, mac_addr, RTE_ETHER_ADDR_LEN);
++
++	sxe_hw_send_msg_to_vf(hw, (u32 *)&reply,
++				SXE_MSG_NUM(sizeof(reply)), vf_idx);
++
++	adapter->vt_ctxt.vf_info->is_ready = true;
++
++	LOG_INFO_BDF("vf_idx:%d reset msg:0x%x handle done.send mac addr:" RTE_ETHER_ADDR_PRT_FMT
++			" mc type:%d to vf.",
++			vf_idx, reply.msg_type,
++			mac_addr[0], mac_addr[1], mac_addr[2],
++			mac_addr[3], mac_addr[4], mac_addr[5],
++			SXE_MC_FILTER_TYPE0);
++}
++
++static s32 sxe_req_msg_handle(struct rte_eth_dev *dev, u32 *msg,
++					u8 vf_idx)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	s32 ret = 0;
++	u16 cmd_id = msg[0] & SXE_VFREQ_MASK;
++	struct rte_pmd_sxe_mb_event_param user_param;
++
++	if (cmd_id > SXE_VFREQ_CAST_MODE_SET &&
++		cmd_id <= SXE_VFREQ_IPSEC_DEL) {
++		ret = -SXE_ERR_PARAM;
++		LOG_ERROR_BDF("vf_idx:%u msg:0x%x invalid cmd_id:0x%x.",
++			   vf_idx, msg[0], cmd_id);
++		goto l_out;
++	}
++
++	user_param.ret = RTE_PMD_SXE_MB_EVENT_PROCEED;
++	user_param.vf_idx = vf_idx;
++	user_param.msg_type = msg[0] & 0xFFFF;
++	user_param.msg = (void *)msg;
++
++	if (cmd_id == SXE_VFREQ_RESET) {
++		ret = 0;
++		sxe_vf_reset_msg_handle(dev, vf_idx);
++
++		sxe_eth_dev_callback_process(dev, RTE_ETH_EVENT_VF_MBOX,
++						  &user_param);
++		goto l_out;
++	}
++
++	sxe_eth_dev_callback_process(dev, RTE_ETH_EVENT_VF_MBOX,
++						  &user_param);
++
++	LOG_INFO_BDF("vf_idx:%u cmd_id:0x%x user configure:0x%x.",
++			vf_idx, cmd_id, user_param.ret);
++
++	if (!adapter->vt_ctxt.vf_info[vf_idx].is_ready) {
++		msg[0] |= SXE_MSGTYPE_NACK;
++		ret = sxe_hw_send_msg_to_vf(hw, msg,
++					SXE_MSG_NUM(sizeof(msg[0])), vf_idx);
++		LOG_WARN_BDF("vf_idx:%d not ready now, send nack to vf.ret:%d.",
++			  vf_idx, ret);
++		goto l_out;
++	}
++
++	if (msg_table[cmd_id].msg_func) {
++		if (user_param.ret == RTE_PMD_SXE_MB_EVENT_PROCEED ||
++			cmd_id == SXE_VFREQ_API_NEGOTIATE ||
++			cmd_id == SXE_VFREQ_RING_INFO_GET) {
++			ret = msg_table[cmd_id].msg_func(dev, msg, vf_idx);
++		}
++		LOG_INFO_BDF("msg:0x%x cmd_id:0x%x handle done.ret:%d",
++			 msg[0], cmd_id, ret);
++	} else {
++		ret = -SXE_ERR_PARAM;
++	}
++
++	if (!ret) {
++		msg[0] |= SXE_MSGTYPE_ACK;
++	} else {
++		msg[0] |= SXE_MSGTYPE_NACK;
++		LOG_ERROR_BDF("vf_idx:%u msg_type:0x%x cmdId:0x%x invalid.(err:%d)",
++				  vf_idx, msg[0], cmd_id, ret);
++	}
++
++	ret = sxe_hw_send_msg_to_vf(hw, msg, SXE_MBX_MSG_NUM, vf_idx);
++	if (ret) {
++		LOG_ERROR_BDF("vf:%d msg:0x%x reply fail.(err:%d).",
++			   vf_idx, msg[0], ret);
++	}
++
++	LOG_INFO_BDF("pf reply vf:%d msg:0x%x done.ret:%d", vf_idx, msg[0], ret);
++
++l_out:
++	return ret;
++}
++
++static s32 sxe_vf_req_msg_handle(struct rte_eth_dev *dev, u8 vf_idx)
++{
++	struct sxe_adapter *adapter = dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u32 msg[SXE_MBX_MSG_NUM] = {0};
++	s32 ret;
++
++	ret = sxe_hw_rcv_msg_from_vf(hw, msg, SXE_MBX_MSG_NUM, vf_idx);
++	if (ret) {
++		LOG_ERROR_BDF("rcv vf:0x%x req msg:0x%x fail.(err:%d)",
++			   vf_idx, msg[0], ret);
++		goto l_out;
++	}
++
++	LOG_INFO_BDF("rcv vf_idx:%d req msg:0x%x.", vf_idx, msg[0]);
++
++	if (msg[0] & (SXE_MSGTYPE_ACK | SXE_MSGTYPE_NACK)) {
++		LOG_WARN_BDF("msg:0x%x has handled, no need dup handle.",
++			  msg[0]);
++		goto l_out;
++	}
++
++	ret = sxe_req_msg_handle(dev, msg, vf_idx);
++	if (ret) {
++		LOG_ERROR_BDF("vf:%d request msg handle fail.(err:%d)",
++			  vf_idx, ret);
++	}
++
++l_out:
++	return ret;
++}
++
++static void sxe_vf_ack_msg_handle(struct rte_eth_dev *eth_dev, u8 vf_idx)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	u32 msg = SXE_MSGTYPE_NACK;
++
++	if (!adapter->vt_ctxt.vf_info[vf_idx].is_ready) {
++		sxe_hw_send_msg_to_vf(&adapter->hw, &msg,
++					SXE_MSG_NUM(sizeof(msg)), vf_idx);
++	}
++}
++
++void sxe_mbx_irq_handler(struct rte_eth_dev *eth_dev)
++{
++	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	struct sxe_hw *hw = &adapter->hw;
++	u16 vf_num = sxe_vf_num_get(eth_dev);
++	u8 vf_idx;
++
++	LOG_DEBUG_BDF("mailbox irq triggered vf_num:%u.", vf_num);
++
++	for (vf_idx = 0; vf_idx < vf_num; vf_idx++) {
++		if (sxe_hw_vf_rst_check(hw, vf_idx)) {
++			LOG_WARN_BDF("vf_idx:%d flr triggered.", vf_idx);
++			sxe_vf_flr_handle(eth_dev, vf_idx);
++		}
++
++		if (sxe_hw_vf_req_check(hw, vf_idx))
++			sxe_vf_req_msg_handle(eth_dev, vf_idx);
++
++		if (sxe_hw_vf_ack_check(hw, vf_idx))
++			sxe_vf_ack_msg_handle(eth_dev, vf_idx);
++	}
++}
++
++int rte_pmd_sxe_set_vf_rxmode(u16 port, u16 vf,
++				u16 rx_mask, u8 on)
++{
++	u32 val = 0;
++	struct rte_eth_dev *dev;
++	struct rte_pci_device *pci_dev;
++	struct sxe_adapter *adapter;
++	struct sxe_hw *hw;
++	u32 vmolr;
++
++	RTE_ETH_VALID_PORTID_OR_ERR_RET(port, -ENODEV);
++
++	dev = &rte_eth_devices[port];
++	pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++
++	if (!sxe_is_supported(dev))
++		return -ENOTSUP;
++
++	if (vf >= pci_dev->max_vfs)
++		return -EINVAL;
++
++	if (on > 1)
++		return -EINVAL;
++
++	adapter = dev->data->dev_private;
++	hw = &adapter->hw;
++	vmolr = sxe_hw_pool_rx_mode_get(hw, vf);
++
++	if (sxe_hw_vt_status(hw) == false)
++		return -ENOTSUP;
++
++	sxe_vmdq_rx_mode_get((u32)rx_mask, &val);
++
++	if (on)
++		vmolr |= val;
++	else
++		vmolr &= ~val;
++
++	sxe_hw_pool_rx_mode_set(hw, vmolr, vf);
++
++	return 0;
++}
++#endif
+diff --git a/drivers/net/sxe/pf/sxe_vf.h b/drivers/net/sxe/pf/sxe_vf.h
+new file mode 100644
+index 0000000000..6f07c20751
+--- /dev/null
++++ b/drivers/net/sxe/pf/sxe_vf.h
+@@ -0,0 +1,200 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXE_VF_H__
++#define __SXE_VF_H__
++
++#include <rte_ethdev.h>
++#include <bus_pci_driver.h>
++
++#include "sxe_hw.h"
++
++#define SXE_MIRROR_RULES_MAX   4
++
++#define SXE_MSG_NUM(size)		 DIV_ROUND_UP(size, 4)
++
++#define SXE_MSGTYPE_ACK	0x80000000
++#define SXE_MSGTYPE_NACK   0x40000000
++
++#define SXE_VFREQ_RESET			   0x01
++#define SXE_VFREQ_MAC_ADDR_SET		0x02
++#define SXE_VFREQ_MC_ADDR_SYNC		0x03
++#define SXE_VFREQ_VLAN_SET			0x04
++#define SXE_VFREQ_LPE_SET			 0x05
++
++#define SXE_VFREQ_UC_ADDR_SYNC		0x06
++
++#define SXE_VFREQ_API_NEGOTIATE	   0x08
++
++#define SXE_VFREQ_RING_INFO_GET	   0x09
++#define SXE_VFREQ_REDIR_TBL_GET	   0x0a
++#define SXE_VFREQ_RSS_KEY_GET		 0x0b
++#define SXE_VFREQ_CAST_MODE_SET	   0x0c
++#define SXE_VFREQ_LINK_ENABLE_GET	 0X0d
++#define SXE_VFREQ_IPSEC_ADD		   0x0e
++#define SXE_VFREQ_IPSEC_DEL		   0x0f
++#define SXE_VFREQ_RSS_CONF_GET		0x10
++
++#define SXE_VFREQ_MASK				0xFF
++
++#define SXE_MIRROR_TYPE_INVALID(mirror_type) \
++	((mirror_type) & ~(u8)(ETH_MIRROR_VIRTUAL_POOL_UP | \
++	ETH_MIRROR_UPLINK_PORT | ETH_MIRROR_DOWNLINK_PORT | ETH_MIRROR_VLAN))
++
++#define SXE_ETH_MIRROR_TYPE_MASK \
++			(ETH_MIRROR_VIRTUAL_POOL_UP | ETH_MIRROR_UPLINK_PORT \
++			| ETH_MIRROR_DOWNLINK_PORT | ETH_MIRROR_VLAN)
++
++static inline u16 sxe_vf_num_get(struct rte_eth_dev *eth_dev)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++
++	return pci_dev->max_vfs;
++}
++
++enum sxe_mbx_api_version {
++	SXE_MBX_API_10 = 0,
++	SXE_MBX_API_11,
++	SXE_MBX_API_12,
++	SXE_MBX_API_13,
++	SXE_MBX_API_14,
++
++	SXE_MBX_API_NR,
++};
++
++enum sxe_cast_mode {
++	SXE_CAST_MODE_NONE = 0,
++	SXE_CAST_MODE_MULTI,
++	SXE_CAST_MODE_ALLMULTI,
++	SXE_CAST_MODE_PROMISC,
++};
++
++struct sxe_vf_info {
++	u8 mac_addr[RTE_ETHER_ADDR_LEN];
++	u16 mc_hash[SXE_VF_MC_ENTRY_NUM_MAX];
++	u8  mc_hash_used;
++	u8 cast_mode;
++	u8  trusted :1;
++	u8  is_ready :1;
++	u8  spoof_chk_enabled :1;
++	u8  rss_query_enabled :1;
++	u8  mac_from_pf :1;
++	u8  reserved :3;
++	u16 domain_id;
++	u16 tx_rate;
++	u32 mbx_version;
++	u32 vlan_cnt;
++	u32 uc_mac_cnt;
++	u8 uc_mac_table[SXE_UC_ENTRY_NUM_MAX];
++};
++
++struct sxe_virtual_context {
++	u8  pflink_fullchk;
++	u8  promisc_cnt;
++	u32 mbx_version;
++	struct sxe_vf_info *vf_info;
++};
++
++struct sxe_msg_table {
++	u32 msg_type;
++	s32 (*msg_func)(struct rte_eth_dev *dev, u32 *msg, u32 vf_idx);
++};
++
++enum RTE_PMD_SXE_MB_event_rsp {
++	RTE_PMD_SXE_MB_EVENT_NOOP_ACK,
++	RTE_PMD_SXE_MB_EVENT_NOOP_NACK,
++	RTE_PMD_SXE_MB_EVENT_PROCEED,
++	RTE_PMD_SXE_MB_EVENT_MAX
++};
++
++struct rte_pmd_sxe_mb_event_param {
++	u16 vf_idx;
++	u16 msg_type;
++	u16 ret;
++	void *msg;
++};
++
++struct sxe_mbx_api_msg {
++	u32 msg_type;
++	u32 api_version;
++};
++
++struct sxe_uc_addr_msg {
++	u32 msg_type;
++	u8 uc_addr[RTE_ETHER_ADDR_LEN];
++	u16 pad;
++};
++
++struct sxe_rst_rcv {
++	u32 msg_type;
++};
++
++struct sxe_rst_reply {
++	u32 msg_type;
++	u32 mac_addr[2];
++	u32 mc_filter_type;
++};
++
++struct sxe_rst_msg {
++	union {
++		struct sxe_rst_rcv rcv;
++		struct sxe_rst_reply reply;
++	};
++};
++
++struct sxe_ring_info_msg {
++	u32 msg_type;
++	u8  max_rx_num;
++	u8  max_tx_num;
++	u8  tc_num;
++	u8  default_tc;
++};
++
++struct sxe_rss_hash_msg {
++	u32 msg_type;
++	u8  hash_key[SXE_RSS_KEY_SIZE];
++	u64 rss_hf;
++};
++
++struct sxe_vlan_msg {
++	u16 msg_type;
++	u16 add;
++	u32 vlan_id;
++};
++
++struct sxe_mc_sync_msg {
++	u16 msg_type;
++	u16 mc_cnt;
++	u16 mc_addr_extract[SXE_VF_MC_ENTRY_NUM_MAX];
++};
++
++struct sxe_cast_mode_msg {
++	u32 msg_type;
++	u32 cast_mode;
++};
++
++struct sxe_uc_sync_msg {
++	u16 msg_type;
++	u16 index;
++	u32 addr[2];
++};
++
++struct sxe_max_frame_msg {
++	u32 msg_type;
++	u32 max_frame;
++};
++
++s32 sxe_vt_init(struct rte_eth_dev *eth_dev);
++
++void sxe_vt_configure(struct rte_eth_dev *eth_dev);
++
++void sxe_vt_uninit(struct rte_eth_dev *eth_dev);
++
++s32 sxe_vf_rss_configure(struct rte_eth_dev *dev);
++
++s32 sxe_vf_default_mode_configure(struct rte_eth_dev *dev);
++
++void sxe_mbx_irq_handler(struct rte_eth_dev *eth_dev);
++
++#endif
+diff --git a/drivers/net/sxe/sxe_testpmd.c b/drivers/net/sxe/sxe_testpmd.c
+index 6974bfe002..a0205e593e 100644
+--- a/drivers/net/sxe/sxe_testpmd.c
++++ b/drivers/net/sxe/sxe_testpmd.c
+@@ -12,6 +12,131 @@
+ 
+ #include "testpmd.h"
+ 
++static int
++vf_tc_min_bw_parse_bw_list(uint8_t *bw_list, uint8_t *tc_num, char *str)
++{
++	uint32_t size;
++	const char *p, *p0 = str;
++	char s[256];
++	char *end;
++	char *str_fld[16];
++	uint16_t i;
++	int ret;
++
++	p = strchr(p0, '(');
++	if (p == NULL) {
++		RTE_LOG_LINE(ERR, EAL, "The bandwidth-list should be '(bw1, bw2, ...)'");
++		return -1;
++	}
++	p++;
++	p0 = strchr(p, ')');
++	if (p0 == NULL) {
++		RTE_LOG_LINE(ERR, EAL, "The bandwidth-list should be '(bw1, bw2, ...)'");
++		return -1;
++	}
++	size = p0 - p;
++	if (size >= sizeof(s)) {
++		RTE_LOG_LINE(ERR, EAL, "The string size exceeds the internal buffer size");
++		return -1;
++	}
++	snprintf(s, sizeof(s), "%.*s", size, p);
++	ret = rte_strsplit(s, sizeof(s), str_fld, 16, ',');
++	if (ret <= 0) {
++		RTE_LOG_LINE(ERR, EAL, "Failed to get the bandwidth list.");
++		return -1;
++	}
++	*tc_num = ret;
++	for (i = 0; i < ret; i++)
++		bw_list[i] = (uint8_t)strtoul(str_fld[i], &end, 0);
++
++	return 0;
++}
++
++struct cmd_vf_tc_bw_result {
++	cmdline_fixed_string_t set;
++	cmdline_fixed_string_t tc;
++	cmdline_fixed_string_t tx;
++	cmdline_fixed_string_t min_bw;
++	portid_t port_id;
++	cmdline_fixed_string_t bw_list;
++};
++
++static cmdline_parse_token_string_t cmd_vf_tc_bw_set =
++	TOKEN_STRING_INITIALIZER(struct cmd_vf_tc_bw_result,
++		set, "set");
++static cmdline_parse_token_string_t cmd_vf_tc_bw_tc =
++	TOKEN_STRING_INITIALIZER(struct cmd_vf_tc_bw_result,
++		tc, "tc");
++static cmdline_parse_token_string_t cmd_vf_tc_bw_tx =
++	TOKEN_STRING_INITIALIZER(struct cmd_vf_tc_bw_result,
++		tx, "tx");
++static cmdline_parse_token_string_t cmd_vf_tc_bw_min_bw =
++	TOKEN_STRING_INITIALIZER(struct cmd_vf_tc_bw_result,
++		min_bw, "min-bandwidth");
++static cmdline_parse_token_num_t cmd_vf_tc_bw_port_id =
++	TOKEN_NUM_INITIALIZER(struct cmd_vf_tc_bw_result,
++		port_id, RTE_UINT16);
++static cmdline_parse_token_string_t cmd_vf_tc_bw_bw_list =
++	TOKEN_STRING_INITIALIZER(struct cmd_vf_tc_bw_result,
++		bw_list, NULL);
++
++static void
++cmd_tc_min_bw_parsed(void *parsed_result,
++	__rte_unused struct cmdline *cl, __rte_unused void *data)
++{
++	struct cmd_vf_tc_bw_result *res = parsed_result;
++	struct rte_port *port;
++	uint8_t tc_num;
++	uint8_t bw[16];
++	int ret = -ENOTSUP;
++
++	if (port_id_is_invalid(res->port_id, ENABLED_WARN))
++		return;
++
++	port = &ports[res->port_id];
++	if (port->port_status != RTE_PORT_STOPPED) {
++		RTE_LOG_LINE(ERR, EAL, "Please stop port %d first", res->port_id);
++		return;
++	}
++
++	ret = vf_tc_min_bw_parse_bw_list(bw, &tc_num, res->bw_list);
++	if (ret)
++		return;
++
++	ret = rte_pmd_sxe_tc_bw_set(res->port_id, tc_num, bw);
++
++	switch (ret) {
++	case 0:
++		break;
++	case -EINVAL:
++		RTE_LOG_LINE(ERR, EAL, "invalid bandwidth");
++		break;
++	case -ENODEV:
++		RTE_LOG_LINE(ERR, EAL, "invalid port_id %d", res->port_id);
++		break;
++	case -ENOTSUP:
++		RTE_LOG_LINE(ERR, EAL, "function not implemented");
++		break;
++	default:
++		RTE_LOG_LINE(ERR, EAL, "programming error: (%s)", strerror(-ret));
++	}
++}
++
++static cmdline_parse_inst_t cmd_tc_min_bw = {
++	.f = cmd_tc_min_bw_parsed,
++	.data = NULL,
++	.help_str = "set tc tx min-bandwidth <port_id> <bw1, bw2, ...>",
++	.tokens = {
++		(void *)&cmd_vf_tc_bw_set,
++		(void *)&cmd_vf_tc_bw_tc,
++		(void *)&cmd_vf_tc_bw_tx,
++		(void *)&cmd_vf_tc_bw_min_bw,
++		(void *)&cmd_vf_tc_bw_port_id,
++		(void *)&cmd_vf_tc_bw_bw_list,
++		NULL,
++	},
++};
++
+ struct led_ctrl_result {
+ 	cmdline_fixed_string_t port;
+ 	uint16_t port_id;
+@@ -55,6 +180,11 @@ cmdline_parse_inst_t  cmd_led_ctrl = {
+ 
+ static struct testpmd_driver_commands sxe_cmds = {
+ 	.commands = {
++		{
++			&cmd_tc_min_bw,
++			"set tc tx min-bandwidth (port_id) (bw1, bw2, ...)\n"
++			"	Set all TCs' min bandwidth(%%) for all PF and VFs.\n",
++		},
+ 		{
+ 			&cmd_led_ctrl,
+ 			"port <port_id> led on|off\n"
+diff --git a/drivers/net/sxe/vf/sxevf.h b/drivers/net/sxe/vf/sxevf.h
+new file mode 100644
+index 0000000000..60c4a6342f
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf.h
+@@ -0,0 +1,42 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++#ifndef __SXEVF_H__
++#define __SXEVF_H__
 +
 +#include <rte_pci.h>
-+#include <rte_time.h>
 +
-+#include <stdbool.h>
-+#include "sxe_types.h"
-+#include "sxe_irq.h"
-+#include "sxe_phy.h"
-+#include "sxe_hw.h"
++#include "sxevf_irq.h"
++#include "sxevf_hw.h"
++#include "sxevf_filter.h"
++#include "sxevf_stats.h"
 +
-+struct sxe_hw;
++#define SXEVF_DEVARG_LINK_CHECK		   "link_check"
 +
-+#define SXE_LPBK_DISABLED   0x0
-+#define SXE_LPBK_ENABLED	0x1
-+
-+#define PCI_VENDOR_ID_STARS	  0x1FF2
-+#define SXE_DEV_ID_ASIC		  0x10a1
-+
-+#define MAC_FMT "%02x:%02x:%02x:%02x:%02x:%02x"
-+
-+#ifdef RTE_PMD_PACKET_PREFETCH
-+#define rte_packet_prefetch(p)  rte_prefetch1(p)
-+#else
-+#define rte_packet_prefetch(p) \
-+	do { \
-+	} while (0)
-+#endif
-+
-+#define RTE_PMD_USE_PREFETCH
-+
-+#ifdef RTE_PMD_USE_PREFETCH
-+#define rte_sxe_prefetch(p)   rte_prefetch0(p)
-+#else
-+#define rte_sxe_prefetch(p)   do {} while (0)
-+#endif
-+
-+struct sxe_adapter {
-+	struct sxe_hw hw;
-+
-+	struct sxe_irq_context irq_ctxt;
-+
++struct sxevf_adapter {
 +	s8 name[PCI_PRI_STR_SIZE + 1];
++	u8 max_rx_queue;
++	u8 max_tx_queue;
++
++	struct sxevf_hw hw;
++	struct sxevf_irq_context irq_ctxt;
++	struct sxevf_vlan_context vlan_ctxt;
++	struct sxevf_mac_filter_context mac_filter_ctxt;
++	struct sxevf_stats_info stats_info;
++
++	pthread_t link_thread_tid;
++	u8 link_check;
++	bool stop;
++	bool rx_batch_alloc_allowed;
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	bool rx_vec_allowed;
++#endif
++	u8 rss_reta_updated;
 +};
 +
-+s32 sxe_hw_reset(struct sxe_hw *hw);
-+
-+void sxe_hw_start(struct sxe_hw *hw);
-+
-+bool sxe_is_supported(struct rte_eth_dev *dev);
++struct sxevf_thread_param {
++	struct rte_eth_dev *dev;
++	pthread_barrier_t barrier;
++};
 +
 +#endif
-diff --git a/drivers/net/sxe/pf/sxe_ethdev.c b/drivers/net/sxe/pf/sxe_ethdev.c
-index bcd91b6a8c..41bf47cf7d 100644
---- a/drivers/net/sxe/pf/sxe_ethdev.c
-+++ b/drivers/net/sxe/pf/sxe_ethdev.c
-@@ -1,3 +1,305 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
+diff --git a/drivers/net/sxe/vf/sxevf_ethdev.c b/drivers/net/sxe/vf/sxevf_ethdev.c
+new file mode 100644
+index 0000000000..a746820f0a
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_ethdev.c
+@@ -0,0 +1,752 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
 +
-+#include <bus_pci_driver.h>
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include <stdio.h>
++#include <errno.h>
++#include <stdint.h>
++#include <string.h>
++#include <unistd.h>
++#include <stdarg.h>
++#include <inttypes.h>
++
 +#include <ethdev_driver.h>
-+#include <dev_driver.h>
 +#include <ethdev_pci.h>
++#include <bus_pci_driver.h>
++
 +#include <rte_ethdev.h>
-+#include <rte_alarm.h>
-+#include "sxe_types.h"
-+#include "sxe_logs.h"
-+#include "sxe_compat_platform.h"
-+#include "sxe_errno.h"
-+#include "sxe.h"
-+#include "sxe_hw.h"
-+#include "sxe_ethdev.h"
-+#include "sxe_irq.h"
-+#include "sxe_pmd_hdc.h"
-+#include "drv_msg.h"
-+#include "sxe_version.h"
-+#include "sxe_compat_version.h"
++#include <rte_kvargs.h>
++#include <rte_common.h>
 +#include <rte_string_fns.h>
 +
-+#define SXE_DEFAULT_MTU			 1500
-+#define SXE_ETH_HLEN				14
-+#define SXE_ETH_FRAME_LEN		   1514
-+#define SXE_ETH_FCS_LEN			 4
++#include "sxevf.h"
++#include "sxe_rx.h"
++#include "sxe_logs.h"
++#include "sxevf_msg.h"
++#include "sxe_errno.h"
++#include "sxevf_tx.h"
++#include "sxevf_rx.h"
++#include "sxevf_ethdev.h"
++#include "sxevf_queue.h"
++#include "sxevf_offload.h"
++#include "sxe_compat_version.h"
 +
-+#define SXE_ETH_MAX_LEN  (RTE_ETHER_MTU + SXE_ETH_OVERHEAD)
++#define SXEVF_ETH_OVERHEAD	 (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN)
++#define SXEVF_HKEY_MAX_INDEX   (10)
++#define SXEVF_RSS_OFFLOAD_ALL ( \
++	RTE_ETH_RSS_IPV4 | \
++	RTE_ETH_RSS_NONFRAG_IPV4_TCP | \
++	RTE_ETH_RSS_NONFRAG_IPV4_UDP | \
++	RTE_ETH_RSS_IPV6 | \
++	RTE_ETH_RSS_NONFRAG_IPV6_TCP | \
++	RTE_ETH_RSS_NONFRAG_IPV6_UDP | \
++	RTE_ETH_RSS_IPV6_EX | \
++	RTE_ETH_RSS_IPV6_TCP_EX | \
++	RTE_ETH_RSS_IPV6_UDP_EX)
 +
-+static s32 sxe_dev_reset(struct rte_eth_dev *eth_dev);
++#define SXEVF_DEFAULT_RX_FREE_THRESH  32
++#define SXEVF_DEFAULT_RX_PTHRESH	  8
++#define SXEVF_DEFAULT_RX_HTHRESH	  8
++#define SXEVF_DEFAULT_RX_WTHRESH	  0
 +
-+static s32 sxe_dev_configure(struct rte_eth_dev *dev)
++#define SXEVF_DEFAULT_TX_FREE_THRESH  32
++#define SXEVF_DEFAULT_TX_PTHRESH	  32
++#define SXEVF_DEFAULT_TX_HTHRESH	  0
++#define SXEVF_DEFAULT_TX_WTHRESH	  0
++#define SXEVF_DEFAULT_TX_RSBIT_THRESH 32
++
++#define	SXEVF_MIN_RING_DESC	 32
++#define	SXEVF_MAX_RING_DESC	 4096
++
++#define	SXEVF_ALIGN			 128
++#define SXEVF_RXD_ALIGN		(SXEVF_ALIGN / sizeof(sxevf_rx_data_desc_u))
++#define SXEVF_TXD_ALIGN		(SXEVF_ALIGN / sizeof(sxevf_tx_data_desc_u))
++
++#define SXEVF_TX_MAX_SEG			40
++#define SXEVF_DEFAULT_TX_QUEUE_NUM  1
++#define SXEVF_DEFAULT_RX_QUEUE_NUM  1
++#define SXEVF_RX_BUF_MIN	  1024
++#define SXEVF_RX_BUF_LEN_MAX  9728
++
++static const struct rte_eth_desc_lim rx_desc_lim = {
++	.nb_max = SXEVF_MAX_RING_DESC,
++	.nb_min = SXEVF_MIN_RING_DESC,
++	.nb_align = SXEVF_RXD_ALIGN,
++};
++
++static const struct rte_eth_desc_lim tx_desc_lim = {
++	.nb_max = SXEVF_MAX_RING_DESC,
++	.nb_min = SXEVF_MIN_RING_DESC,
++	.nb_align = SXEVF_TXD_ALIGN,
++	.nb_seg_max = SXEVF_TX_MAX_SEG,
++	.nb_mtu_seg_max = SXEVF_TX_MAX_SEG,
++};
++
++static const char * const sxevf_valid_arguments[] = {
++	SXEVF_DEVARG_LINK_CHECK,
++	NULL
++};
++
++static s32 sxevf_devargs_handle(__rte_unused const char *key, const char *value,
++		  void *extra_args)
 +{
-+	s32 ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	return ret;
-+}
-+
-+static s32 sxe_dev_start(struct rte_eth_dev *dev)
-+{
++	u16 *n = extra_args;
 +	s32 ret;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
-+	struct rte_intr_handle *handle = SXE_PCI_INTR_HANDLE(pci_dev);
-+	struct sxe_irq_context *irq = &adapter->irq_ctxt;
 +
-+	sxe_fw_time_sync(hw);
-+
-+	rte_intr_disable(handle);
-+
-+	ret = sxe_hw_reset(hw);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(INIT, "hw init failed, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	sxe_hw_start(hw);
-+
-+	ret = sxe_irq_configure(dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "irq config fail.");
-+		goto l_error;
-+	}
-+
-+_end:
-+	return ret;
-+
-+l_error:
-+	PMD_LOG_ERR(INIT, "dev start err, ret=%d", ret);
-+	rte_intr_vec_list_free(handle);
-+	ret = -EIO;
-+	goto l_end;
-+}
-+
-+static s32 sxe_dev_stop(struct rte_eth_dev *dev)
-+{
-+	s32 ret = 0;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	sxe_hw_all_irq_disable(hw);
-+
-+	ret = sxe_hw_reset(hw);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(INIT, "hw init failed, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static s32 sxe_dev_close(struct rte_eth_dev *dev)
-+{
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	s32 ret = 0;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
-+		PMD_LOG_INFO(INIT, "not primary, do nothing");
-+		goto l_end;
-+	}
-+
-+	sxe_hw_hdc_drv_status_set(hw, (u32)false);
-+
-+	ret = sxe_dev_stop(dev);
-+	if (ret)
-+		PMD_LOG_ERR(INIT, "dev stop fail.(err:%d)", ret);
-+
-+	sxe_irq_uninit(dev);
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int sxe_get_regs(struct rte_eth_dev *dev,
-+		  struct rte_dev_reg_info *regs)
-+{
-+	s32 ret = 0;
-+	u32 *data = regs->data;
-+	struct sxe_adapter *adapter = dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	u32 length = sxe_hw_all_regs_group_num_get();
-+
-+	if (data == NULL) {
-+		regs->length = length;
-+		regs->width = sizeof(uint32_t);
-+		goto l_end;
-+	}
-+
-+	if (regs->length == 0 || regs->length == length) {
-+		sxe_hw_all_regs_group_read(hw, data);
-+
-+		goto l_end;
-+	}
-+
-+	ret = -ENOTSUP;
-+	LOG_ERROR("get regs: inval param: regs_len=%u, regs->data=%p, "
-+			"regs_offset=%u,  regs_width=%u, regs_version=%u",
-+			regs->length, regs->data,
-+			regs->offset, regs->width,
-+			regs->version);
-+
-+l_end:
-+	return ret;
-+}
-+
-+static int sxe_fw_version_get(struct rte_eth_dev *dev, char *fw_version,
-+						size_t fw_size)
-+{
-+	int ret;
-+	int len;
-+	size_t end;
-+	sxe_version_resp_s resp;
-+	struct sxe_adapter *adapter = (struct sxe_adapter *)(dev->data->dev_private);
-+	struct sxe_hw *hw = &adapter->hw;
-+
-+	RTE_ASSERT(fw_size > 0);
-+	ret = sxe_driver_cmd_trans(hw, SXE_CMD_FW_VER_GET,
-+				NULL, 0,
-+				(void *)&resp, sizeof(resp));
-+	if (ret) {
-+		LOG_ERROR_BDF("get version failed, ret=%d", ret);
-+		ret = -EIO;
-+		goto l_end;
-+	}
-+
-+	len = snprintf(fw_version, fw_size, "%.*s", (int)SXE_VERSION_LEN, resp.fw_version);
-+	if (len < 0) {
++	if (value == NULL || extra_args == NULL) {
 +		ret = -EINVAL;
-+		goto l_end;
++		LOG_ERROR("invalid args.(err:%d)", ret);
++		goto l_out;
 +	}
 +
-+	end = (len < (int)(fw_size - 1)) ? (size_t)len : (fw_size - 1);
-+	fw_version[end] = '\0';
++	*n = (u16)strtoul(value, NULL, 0);
++	if (*n == USHRT_MAX && errno == ERANGE) {
++		ret = -ERANGE;
++		LOG_ERROR("invalid args.(err:%d)", ret);
++		goto l_out;
++	}
 +
 +	ret = 0;
 +
-+l_end:
++l_out:
 +	return ret;
 +}
 +
-+static const struct eth_dev_ops sxe_eth_dev_ops = {
-+	.dev_configure		= sxe_dev_configure,
-+	.dev_start		= sxe_dev_start,
-+	.dev_stop		= sxe_dev_stop,
-+	.dev_close		= sxe_dev_close,
-+	.dev_reset		= sxe_dev_reset,
++static void sxevf_devargs_parse(struct sxevf_adapter *adapter,
++			  struct rte_devargs *devargs)
++{
++	struct rte_kvargs *kvlist;
++	u16 check;
 +
-+	.get_reg		= sxe_get_regs,
-+};
++	if (devargs == NULL) {
++		LOG_INFO_BDF("no dev args.");
++		return;
++	}
 +
-+static s32 sxe_hw_base_init(struct rte_eth_dev *eth_dev)
++	kvlist = rte_kvargs_parse(devargs->args, sxevf_valid_arguments);
++	if (kvlist == NULL)
++		return;
++
++	if (rte_kvargs_count(kvlist, SXEVF_DEVARG_LINK_CHECK) == 1 &&
++		rte_kvargs_process(kvlist, SXEVF_DEVARG_LINK_CHECK,
++				   sxevf_devargs_handle, &check) == 0 &&
++		check == 1) {
++		adapter->link_check = 1;
++	}
++
++	LOG_INFO_BDF("dev args link_check:%u", adapter->link_check);
++
++	rte_kvargs_free(kvlist);
++}
++
++static s32 sxevf_hw_dev_reset(struct sxevf_hw *hw)
++{
++	u32 retry = SXEVF_RST_CHECK_NUM;
++	s32 ret;
++	struct sxevf_rst_msg msg = {};
++	struct sxevf_adapter *adapter = hw->adapter;
++	u8 *mac_addr = adapter->mac_filter_ctxt.def_mac_addr.addr_bytes;
++
++	UNUSED(mac_addr);
++	adapter->stop = true;
++
++	sxevf_hw_stop(hw);
++
++	/* Mail box init */
++	sxevf_mbx_init(hw);
++
++
++	sxevf_hw_reset(hw);
++
++	while (!sxevf_pf_rst_check(hw) && retry) {
++		retry--;
++		sxe_udelay(5);
++	}
++
++	if (!retry) {
++		ret = -SXEVF_ERR_RESET_FAILED;
++		LOG_ERROR_BDF("retry: %u use up, pf has not reset done.(err:%d)",
++						SXEVF_RST_CHECK_NUM, ret);
++		goto l_out;
++	}
++
++	LOG_INFO_BDF("pf reset done.");
++
++	hw->mbx.retry = SXEVF_MBX_RETRY_COUNT;
++
++	sxevf_rxtx_reg_init(hw);
++
++	/* Send reset message to pf */
++	msg.msg_type = SXEVF_RESET;
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg,
++					SXEVF_MSG_NUM(sizeof(msg)));
++	if (ret) {
++		LOG_ERROR_BDF("vf reset msg:%d len:%zu mailbox fail.(err:%d)",
++			  msg.msg_type, SXEVF_MSG_NUM(sizeof(msg)), ret);
++		goto l_out;
++	}
++
++	if (msg.msg_type == (SXEVF_RESET | SXEVF_MSGTYPE_ACK)) {
++		memcpy(&adapter->mac_filter_ctxt.def_mac_addr,
++			(u8 *)(msg.mac_addr), SXEVF_MAC_ADDR_LEN);
++	}
++
++	adapter->mac_filter_ctxt.mc_filter_type = msg.mc_fiter_type;
++
++	LOG_INFO_BDF("vf get mc filter type:%d default mac addr:" RTE_ETHER_ADDR_PRT_FMT " from pf.",
++		  adapter->mac_filter_ctxt.mc_filter_type,
++		  mac_addr[0], mac_addr[1], mac_addr[2],
++		  mac_addr[3], mac_addr[4], mac_addr[5]);
++
++l_out:
++	return ret;
++}
++
++static s32 sxevf_hw_base_init(struct rte_eth_dev *eth_dev)
 +{
 +	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
 +	s32 ret;
 +
 +	hw->reg_base_addr = (void *)pci_dev->mem_resource[0].addr;
@@ -6657,336 +3560,1647 @@ index bcd91b6a8c..41bf47cf7d 100644
 +	hw->adapter = adapter;
 +
 +	strlcpy(adapter->name, pci_dev->device.name, sizeof(adapter->name));
++	adapter->stop = true;
 +
-+	sxe_hw_hdc_drv_status_set(hw, (u32)true);
++	adapter->max_rx_queue = SXEVF_DEFAULT_RX_QUEUE_NUM;
++	adapter->max_tx_queue = SXEVF_DEFAULT_TX_QUEUE_NUM;
 +
-+	ret = sxe_hw_reset(hw);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "hw init failed, ret=%d", ret);
++	ret = sxevf_hw_dev_reset(hw);
++	if (ret < 0) {
++		PMD_LOG_ERR(INIT, "hw dev reset failed, ret=%d", ret);
 +		goto l_out;
 +	} else {
-+		sxe_hw_start(hw);
++		adapter->stop = false;
++	}
++
++	ret = sxevf_mac_addr_init(eth_dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "mac addr init fail, ret=%d", ret);
++		goto l_out;
 +	}
 +
 +l_out:
-+	if (ret)
-+		sxe_hw_hdc_drv_status_set(hw, (u32)false);
-+
 +	return ret;
 +}
 +
-+void sxe_secondary_proc_init(struct rte_eth_dev *eth_dev,
-+	bool rx_batch_alloc_allowed, bool *rx_vec_allowed)
++static void sxevf_txrx_start(struct rte_eth_dev *eth_dev)
 +{
-+	__sxe_secondary_proc_init(eth_dev, rx_batch_alloc_allowed, rx_vec_allowed);
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	sxevf_tx_queue_s *txq;
++	sxevf_rx_queue_s *rxq;
++	u16 i;
++
++	for (i = 0; i < eth_dev->data->nb_tx_queues; i++) {
++		txq = eth_dev->data->tx_queues[i];
++		sxevf_tx_ring_switch(hw, txq->reg_idx, true);
++		eth_dev->data->tx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
++
++	}
++
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
++		rxq = eth_dev->data->rx_queues[i];
++		sxevf_rx_ring_switch(hw, rxq->reg_idx, true);
++		eth_dev->data->rx_queue_state[i] = RTE_ETH_QUEUE_STATE_STARTED;
++		rte_wmb();
++
++		sxevf_rx_desc_tail_set(hw, rxq->reg_idx, rxq->ring_depth - 1);
++	}
 +}
 +
-+s32 sxe_ethdev_init(struct rte_eth_dev *eth_dev, void *param __rte_unused)
++static s32 sxevf_dev_start(struct rte_eth_dev *dev)
++{
++	s32 ret;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_stats_info *stats_info = &adapter->stats_info;
++	struct sxevf_hw *hw = &adapter->hw;
++
++	PMD_INIT_FUNC_TRACE();
++
++	ret = sxevf_hw_dev_reset(hw);
++	if (ret) {
++		LOG_ERROR_BDF("dev reset fail.");
++		goto l_out;
++	}
++
++	sxevf_mbx_api_version_init(adapter);
++
++	sxevf_tx_configure(dev);
++
++	ret = sxevf_rx_configure(dev);
++	if (ret) {
++		LOG_ERROR_BDF("rx configure fail.(err:%d)", ret);
++		goto l_clear_queue;
++	}
++
++	sxevf_vlan_filter_configure(dev);
++
++	sxevf_txrx_start(dev);
++
++	sxevf_irq_configure(dev);
++
++	sxevf_stats_init_value_get(hw, &stats_info->hw_stats);
++
++	adapter->stop = false;
++
++l_out:
++	return ret;
++
++l_clear_queue:
++	sxevf_txrx_queues_clear(dev, adapter->rx_batch_alloc_allowed);
++	return ret;
++}
++
++static s32 sxevf_dev_stop(struct rte_eth_dev *dev)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++
++	PMD_INIT_FUNC_TRACE();
++
++	if (adapter->stop) {
++		LOG_INFO_BDF("eth dev has been stopped.");
++		goto l_out;
++	}
++
++	adapter->stop = true;
++	dev->data->dev_started = false;
++	dev->data->scattered_rx = false;
++
++	sxevf_hw_stop(hw);
++
++	sxevf_vfta_sync(dev, false);
++
++	sxevf_txrx_queues_clear(dev, adapter->rx_batch_alloc_allowed);
++
++	sxevf_irq_free(dev);
++
++l_out:
++	return 0;
++}
++
++static s32 sxevf_dev_close(struct rte_eth_dev *dev)
++{
++	s32 ret = 0;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_stats_info *stats_info = &adapter->stats_info;
++	struct sxevf_hw *hw = &adapter->hw;
++
++	PMD_INIT_FUNC_TRACE();
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
++		LOG_INFO_BDF("secondery procee can't close dev.");
++		goto l_out;
++	}
++
++	ret = sxevf_hw_dev_reset(hw);
++	if (ret)
++		LOG_ERROR_BDF("dev reset fail.");
++
++	sxevf_dev_stop(dev);
++
++	sxevf_stats_init_value_get(hw, &stats_info->hw_stats);
++
++	sxevf_queues_free(dev);
++
++	sxevf_irq_unregister(dev);
++
++l_out:
++	return ret;
++}
++
++static s32 sxevf_dev_reset(struct rte_eth_dev *dev)
++{
++	s32 ret;
++
++	ret = sxevf_ethdev_uninit(dev);
++	if (ret) {
++		PMD_LOG_ERR(INIT, "dev uninit fail.");
++		goto l_out;
++	}
++
++	ret = sxevf_ethdev_init(dev);
++	if (ret)
++		PMD_LOG_ERR(INIT, "dev init fail.");
++
++l_out:
++	return ret;
++}
++
++static s32 sxevf_dev_info_get(struct rte_eth_dev *dev,
++			 struct rte_eth_dev_info *dev_info)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++
++	dev_info->max_rx_queues = adapter->max_rx_queue;
++	dev_info->max_tx_queues = adapter->max_tx_queue;
++	dev_info->min_rx_bufsize = SXEVF_RX_BUF_MIN;
++	dev_info->max_rx_pktlen = SXEVF_RX_BUF_LEN_MAX;
++	dev_info->max_mtu = dev_info->max_rx_pktlen - SXEVF_ETH_OVERHEAD;
++	dev_info->max_mac_addrs = adapter->mac_filter_ctxt.uc_table_size;
++	dev_info->max_hash_mac_addrs = SXEVF_UTA_HASH_BIT_MAX;
++	dev_info->max_vfs = pci_dev->max_vfs;
++	dev_info->max_vmdq_pools = RTE_ETH_64_POOLS;
++
++	dev_info->rx_queue_offload_capa = sxevf_rx_queue_offloads_get(dev);
++	dev_info->rx_offload_capa = (sxevf_rx_port_offloads_get(dev) |
++					 dev_info->rx_queue_offload_capa);
++	dev_info->tx_queue_offload_capa = sxevf_tx_queue_offloads_get(dev);
++	dev_info->tx_offload_capa = sxevf_tx_port_offloads_get(dev);
++
++	dev_info->hash_key_size = SXEVF_HKEY_MAX_INDEX * sizeof(u32);
++	dev_info->reta_size = 0;
++	dev_info->flow_type_rss_offloads = SXEVF_RSS_OFFLOAD_ALL;
++
++	dev_info->default_rxconf = (struct rte_eth_rxconf) {
++		.rx_thresh = {
++			.pthresh = SXEVF_DEFAULT_RX_PTHRESH,
++			.hthresh = SXEVF_DEFAULT_RX_HTHRESH,
++			.wthresh = SXEVF_DEFAULT_RX_WTHRESH,
++		},
++		.rx_free_thresh = SXEVF_DEFAULT_RX_FREE_THRESH,
++		.rx_drop_en = 0,
++		.offloads = 0,
++	};
++
++	dev_info->default_txconf = (struct rte_eth_txconf) {
++		.tx_thresh = {
++			.pthresh = SXEVF_DEFAULT_TX_PTHRESH,
++			.hthresh = SXEVF_DEFAULT_TX_HTHRESH,
++			.wthresh = SXEVF_DEFAULT_TX_WTHRESH,
++		},
++		.tx_free_thresh = SXEVF_DEFAULT_TX_FREE_THRESH,
++		.tx_rs_thresh = SXEVF_DEFAULT_TX_RSBIT_THRESH,
++		.offloads = 0,
++	};
++
++	dev_info->rx_desc_lim = rx_desc_lim;
++	dev_info->tx_desc_lim = tx_desc_lim;
++
++	dev_info->err_handle_mode = RTE_ETH_ERROR_HANDLE_MODE_PASSIVE;
++
++	return 0;
++}
++
++static s32 sxevf_mtu_set(struct rte_eth_dev *dev, u16 mtu)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	u32 max_frame = mtu + SXEVF_ETH_OVERHEAD;
++	s32 ret;
++
++	if (mtu < RTE_ETHER_MIN_MTU ||
++			max_frame > RTE_ETHER_MAX_JUMBO_FRAME_LEN) {
++		ret = -EINVAL;
++		LOG_ERROR_BDF("invalid mtu:%u.", mtu);
++		goto l_out;
++	}
++
++	if (dev->data->dev_started && !dev->data->scattered_rx &&
++		((max_frame + 2 * SXEVF_VLAN_TAG_SIZE) >
++		 (dev->data->min_rx_buf_size - RTE_PKTMBUF_HEADROOM))) {
++		ret = -EINVAL;
++		LOG_ERROR_BDF("max_frame:%u stop port first.(err:%d)",
++				  max_frame, ret);
++		goto l_out;
++	}
++
++	ret = sxevf_rx_max_frame_set(hw, mtu);
++	if (ret) {
++		LOG_ERROR_BDF("max_frame:%u set fail.(err:%d)", max_frame, ret);
++		ret = -EINVAL;
++		goto l_out;
++	}
++
++	LOG_INFO_BDF("change max frame size to %u success.", max_frame);
++
++l_out:
++	return ret;
++}
++
++static s32 sxevf_dev_configure(struct rte_eth_dev *dev)
++{
++	struct rte_eth_conf *conf = &dev->data->dev_conf;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++
++	LOG_INFO_BDF("Configured Virtual Function port id: %d",
++			 dev->data->port_id);
++
++	if (dev->data->dev_conf.rxmode.mq_mode & RTE_ETH_MQ_RX_RSS_FLAG)
++		dev->data->dev_conf.rxmode.offloads |= RTE_ETH_RX_OFFLOAD_RSS_HASH;
++
++#ifndef RTE_LIBRTE_SXEVF_PF_DISABLE_STRIP_CRC
++	if (conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC) {
++		LOG_INFO_BDF("VF can't disable HW CRC Strip");
++		conf->rxmode.offloads &= ~RTE_ETH_RX_OFFLOAD_KEEP_CRC;
++	}
++#else
++	if (!(conf->rxmode.offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)) {
++		LOG_INFO_BDF("VF can't enable HW CRC Strip");
++		conf->rxmode.offloads |= RTE_ETH_RX_OFFLOAD_KEEP_CRC;
++	}
++#endif
++
++	adapter->rx_batch_alloc_allowed = true;
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	adapter->rx_vec_allowed = true;
++#endif
++
++	return 0;
++}
++
++static const struct sxevf_reg_info sxevf_regs_general[] = {
++	{SXE_VFCTRL, 1, 1, "SXE_VFCTRL"},
++	{SXE_VFSTATUS, 1, 1, "SXE_VFSTATUS"},
++	{SXE_VFLINKS, 1, 1, "SXE_VFLINKS"},
++	{SXE_VFFRTIMER, 1, 1, "SXE_VFFRTIMER"},
++	{SXE_VFMAILBOX, 1, 1, "SXE_VFMAILBOX"},
++	{SXE_VFMBMEM, 16, 4, "SXE_VFMBMEM"},
++	{SXE_VFRXMEMWRAP, 1, 1, "SXE_VFRXMEMWRAP"},
++	{0, 0, 0, ""}
++};
++
++static const struct sxevf_reg_info sxevf_regs_interrupt[] = {
++	{SXE_VFEICR, 1, 1, "SXE_VFEICR"},
++	{SXE_VFEICS, 1, 1, "SXE_VFEICS"},
++	{SXE_VFEIMS, 1, 1, "SXE_VFEIMS"},
++	{SXE_VFEIMC, 1, 1, "SXE_VFEIMC"},
++	{SXE_VFEIAM, 1, 1, "SXE_VFEIAM"},
++	{SXE_VFEITR(0), 2, 4, "SXE_VFEITR"},
++	{SXE_VFIVAR(0), 4, 4, "SXE_VFIVAR"},
++	{SXE_VFIVAR_MISC, 1, 1, "SXE_VFIVAR_MISC"},
++	{0, 0, 0, ""}
++};
++
++static const struct sxevf_reg_info sxevf_regs_rxdma[] = {
++	{SXE_VFRDBAL(0), 8, 0x40, "SXE_VFRDBAL"},
++	{SXE_VFRDBAH(0), 8, 0x40, "SXE_VFRDBAH"},
++	{SXE_VFRDLEN(0), 8, 0x40, "SXE_VFRDLEN"},
++	{SXE_VFRDH(0), 8, 0x40, "SXE_VFRDH"},
++	{SXE_VFRDT(0), 8, 0x40, "SXE_VFRDT"},
++	{SXE_VFRXDCTL(0), 8, 0x40, "SXE_VFRXDCTL"},
++	{SXE_VFSRRCTL(0), 8, 0x40, "SXE_VFSRRCTL"},
++	{SXE_VFPSRTYPE, 1, 1,	"SXE_VFPSRTYPE"},
++	{SXE_VFLROCTL(0), 8, 0x40, "SXE_VFRSCCTL"},
++	{SXE_VFDCA_RXCTRL(0), 8, 0x40, "SXE_VFDCA_RXCTRL"},
++	{SXE_VFDCA_TXCTRL(0), 8, 0x40, "SXE_VFDCA_TXCTRL"},
++	{0, 0, 0, ""}
++};
++
++static const struct sxevf_reg_info sxevf_regs_tx[] = {
++	{SXE_VFTDBAL(0), 4, 0x40, "SXE_VFTDBAL"},
++	{SXE_VFTDBAH(0), 4, 0x40, "SXE_VFTDBAH"},
++	{SXE_VFTDLEN(0), 4, 0x40, "SXE_VFTDLEN"},
++	{SXE_VFTDH(0), 4, 0x40, "SXE_VFTDH"},
++	{SXE_VFTDT(0), 4, 0x40, "SXE_VFTDT"},
++	{SXE_VFTXDCTL(0), 4, 0x40, "SXE_VFTXDCTL"},
++	{SXE_VFTDWBAL(0), 4, 0x40, "SXE_VFTDWBAL"},
++	{SXE_VFTDWBAH(0), 4, 0x40, "SXE_VFTDWBAH"},
++	{0, 0, 0, ""}
++};
++
++static const struct sxevf_reg_info *sxevf_regs_group[] = {
++				sxevf_regs_general,
++				sxevf_regs_interrupt,
++				sxevf_regs_rxdma,
++				sxevf_regs_tx,
++				NULL};
++
++static u32 sxevf_regs_group_count(const struct sxevf_reg_info *regs)
++{
++	int i = 0;
++	int count = 0;
++
++	while (regs[i].count)
++		count += regs[i++].count;
++
++	return count;
++};
++
++u32 sxevf_regs_group_num_get(void)
++{
++	u32 i = 0;
++	u32 count = 0;
++	const struct sxevf_reg_info *reg_group;
++	const struct sxevf_reg_info **reg_set = sxevf_regs_group;
++
++	while ((reg_group = reg_set[i++]))
++		count += sxevf_regs_group_count(reg_group);
++
++	PMD_LOG_INFO(INIT, "read regs cnt=%u", count);
++
++	return count;
++}
++
++void sxevf_regs_group_read(struct sxevf_hw *hw, u32 *data)
++{
++	u32 cnt = 0, i = 0;
++	const struct sxevf_reg_info *reg_group;
++	const struct sxevf_reg_info **reg_set = sxevf_regs_group;
++
++	while ((reg_group = reg_set[i++]))
++		cnt += sxevf_hw_regs_group_read(hw, reg_group, &data[cnt]);
++
++	PMD_LOG_INFO(INIT, "read regs cnt=%u, regs num=%u",
++				 cnt, sxevf_regs_group_num_get());
++}
++
++static int sxevf_get_regs(struct rte_eth_dev *dev,
++		  struct rte_dev_reg_info *regs)
++{
++	s32 ret = 0;
++	u32 *data = regs->data;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	u32 length = sxevf_regs_group_num_get();
++
++	if (data == NULL) {
++		regs->length = length;
++		regs->width = sizeof(u32);
++		goto l_end;
++	}
++
++	if (regs->length == 0 || regs->length == length) {
++		sxevf_regs_group_read(hw, data);
++
++		goto l_end;
++	}
++
++	ret = -ENOTSUP;
++	PMD_LOG_ERR(INIT, "get regs: inval param: regs_len=%u, regs->data=%p, "
++			  "regs_offset=%u,  regs_width=%u, regs_version=%u",
++			  regs->length, regs->data,
++			  regs->offset, regs->width,
++			  regs->version);
++
++l_end:
++	return ret;
++}
++
++static const struct eth_dev_ops sxevf_eth_dev_ops = {
++	.dev_configure		= sxevf_dev_configure,
++	.dev_start		= sxevf_dev_start,
++	.dev_stop		= sxevf_dev_stop,
++	.link_update		= sxevf_link_update,
++	.stats_get		= sxevf_eth_stats_get,
++	.xstats_get		= sxevf_xstats_get,
++	.stats_reset		= sxevf_dev_stats_reset,
++	.xstats_reset		= sxevf_dev_stats_reset,
++	.xstats_get_names	= sxevf_xstats_names_get,
++	.dev_close		= sxevf_dev_close,
++	.dev_reset		= sxevf_dev_reset,
++	.promiscuous_enable	= sxevf_promiscuous_enable,
++	.promiscuous_disable	= sxevf_promiscuous_disable,
++	.allmulticast_enable	= sxevf_allmulticast_enable,
++	.allmulticast_disable	= sxevf_allmulticast_disable,
++	.dev_infos_get		= sxevf_dev_info_get,
++	.dev_supported_ptypes_get = sxevf_dev_supported_ptypes_get,
++	.mtu_set		= sxevf_mtu_set,
++	.vlan_filter_set	= sxevf_vlan_filter_set,
++	.vlan_strip_queue_set	= sxevf_vlan_strip_queue_set,
++	.vlan_offload_set	= sxevf_vlan_offload_set,
++	.rx_queue_setup		= sxevf_rx_queue_setup,
++	.rx_queue_release	= sxevf_rx_queue_release,
++	.tx_queue_setup		= sxevf_tx_queue_setup,
++	.tx_queue_release	= sxevf_tx_queue_release,
++	.rx_queue_intr_enable	= sxevf_rx_queue_intr_enable,
++	.rx_queue_intr_disable	= sxevf_rx_queue_intr_disable,
++	.mac_addr_add		= sxevf_mac_addr_add,
++	.mac_addr_remove	= sxevf_mac_addr_remove,
++	.set_mc_addr_list	= sxevf_set_mc_addr_list,
++	.rxq_info_get		= sxevf_rx_queue_info_get,
++	.txq_info_get		= sxevf_tx_queue_info_get,
++	.mac_addr_set		= sxevf_default_mac_addr_set,
++	.get_reg		= sxevf_get_regs,
++	.reta_update		= sxevf_rss_reta_update,
++	.reta_query		= sxevf_rss_reta_query,
++	.rss_hash_update	= sxevf_rss_hash_update,
++	.rss_hash_conf_get	= sxevf_rss_hash_conf_get,
++	.tx_done_cleanup	= sxevf_tx_done_cleanup,
++	.get_monitor_addr	= sxe_monitor_addr_get,
++};
++
++s32 sxevf_ethdev_init(struct rte_eth_dev *eth_dev)
 +{
 +	s32 ret = 0;
 +	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-+#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_FILTER_CTRL
-+	struct sxe_filter_context *filter_info = &adapter->filter_ctxt;
-+#endif
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_stats_info *stats_info = &adapter->stats_info;
++	struct sxevf_hw *hw = &adapter->hw;
++	u8 default_tc;
++	u8 tc_num;
 +
-+	eth_dev->dev_ops = &sxe_eth_dev_ops;
++	PMD_INIT_FUNC_TRACE();
 +
-+	rte_eth_copy_pci_info(eth_dev, pci_dev);
++	eth_dev->dev_ops = &sxevf_eth_dev_ops;
 +
-+	ret = sxe_hw_base_init(eth_dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "hw base init fail.(err:%d)", ret);
++	eth_dev->rx_descriptor_status = sxevf_rx_descriptor_status;
++	eth_dev->tx_descriptor_status = sxevf_tx_descriptor_status;
++
++	eth_dev->rx_pkt_burst = &sxevf_pkts_recv;
++	eth_dev->tx_pkt_burst = &sxevf_pkts_xmit_with_offload;
++
++	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
++		sxevf_secondary_proc_init(eth_dev);
 +		goto l_out;
 +	}
 +
-+	sxe_irq_init(eth_dev);
++	sxevf_devargs_parse(eth_dev->data->dev_private,
++				  pci_dev->device.devargs);
 +
-+	PMD_LOG_INFO(INIT, "sxe eth dev init done.");
++	rte_eth_copy_pci_info(eth_dev, pci_dev);
++
++	eth_dev->data->dev_flags |= RTE_ETH_DEV_AUTOFILL_QUEUE_XSTATS;
++
++	ret = sxevf_hw_base_init(eth_dev);
++	if (ret) {
++		ret = -EIO;
++		LOG_ERROR_BDF("hw base init fail.(err:%d)", ret);
++		goto l_out;
++	}
++
++	sxevf_dev_stats_reset(eth_dev);
++
++	sxevf_stats_init_value_get(hw, &stats_info->hw_stats);
++
++	sxevf_mbx_api_version_init(adapter);
++
++	sxevf_ring_info_get(adapter, &default_tc, &tc_num);
++
++	sxevf_irq_init(eth_dev);
++
++	LOG_INFO_BDF("sxevf eth dev init done.");
 +
 +l_out:
 +	return ret;
 +}
 +
-+s32 sxe_ethdev_uninit(struct rte_eth_dev *eth_dev)
++s32 sxevf_ethdev_uninit(struct rte_eth_dev *eth_dev)
 +{
++	s32 ret = 0;
++
++	PMD_INIT_FUNC_TRACE();
 +	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
-+		PMD_LOG_INFO(INIT, "not primary process ,do nothing");
-+		goto l_end;
++		PMD_LOG_WARN(INIT, "secondery procee can't unint.");
++		goto l_out;
 +	}
 +
-+	sxe_dev_close(eth_dev);
++	sxevf_dev_close(eth_dev);
 +
-+l_end:
++l_out:
++	return ret;
++}
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_ethdev.h b/drivers/net/sxe/vf/sxevf_ethdev.h
+new file mode 100644
+index 0000000000..57dfeea2e6
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_ethdev.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXEVF_ETHDEV_H__
++#define __SXEVF_ETHDEV_H__
++
++s32 sxevf_ethdev_init(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_ethdev_uninit(struct rte_eth_dev *eth_dev);
++
++u32 sxevf_regs_group_num_get(void);
++
++void sxevf_regs_group_read(struct sxevf_hw *hw, u32 *data);
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_filter.c b/drivers/net/sxe/vf/sxevf_filter.c
+new file mode 100644
+index 0000000000..c4875f82bc
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_filter.c
+@@ -0,0 +1,493 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include <string.h>
++#include <rte_ether.h>
++#include <rte_ethdev.h>
++#include <rte_malloc.h>
++
++#include "sxevf.h"
++#include "sxe_logs.h"
++#include "sxevf_msg.h"
++#include "sxe_errno.h"
++#include "sxevf_filter.h"
++#include "sxevf_rx.h"
++#include "sxevf_queue.h"
++#include "sxe_compat_version.h"
++
++#define  SXEVF_MAC_ADDR_EXTRACT_MASK  (0xFFF)
++#define  SXEVF_MAC_ADDR_SHIFT		 (5)
++#define  SXEVF_MAC_ADDR_REG_MASK	  (0x7F)
++#define  SXEVF_MAC_ADDR_BIT_MASK	  (0x1F)
++
++#define SXEVF_STRIP_BITMAP_SET(h, q) \
++	do { \
++		u32 idx = (q) / (sizeof((h)->strip_bitmap[0]) * BYTE_BIT_NUM); \
++		u32 bit = (q) % (sizeof((h)->strip_bitmap[0]) * BYTE_BIT_NUM); \
++		(h)->strip_bitmap[idx] |= 1 << bit;\
++	} while (0)
++
++#define SXEVF_STRIP_BITMAP_CLEAR(h, q) \
++	do {\
++		u32 idx = (q) / (sizeof((h)->strip_bitmap[0]) * BYTE_BIT_NUM); \
++		u32 bit = (q) % (sizeof((h)->strip_bitmap[0]) * BYTE_BIT_NUM); \
++		(h)->strip_bitmap[idx] &= ~(1 << bit);\
++	} while (0)
++
++#define SXEVF_STRIP_BITMAP_GET(h, q, r) \
++	do {\
++		u32 idx = (q) / (sizeof((h)->strip_bitmap[0]) * BYTE_BIT_NUM); \
++		u32 bit = (q) % (sizeof((h)->strip_bitmap[0]) * BYTE_BIT_NUM); \
++		(r) = (h)->strip_bitmap[idx] >> bit & 1;\
++	} while (0)
++
++static void sxevf_random_mac_addr_generate(struct rte_ether_addr *mac_addr)
++{
++	u64 random;
++
++	mac_addr->addr_bytes[0] = 0xe4;
++	mac_addr->addr_bytes[1] = 0xb6;
++	mac_addr->addr_bytes[2] = 0x33;
++
++	mac_addr->addr_bytes[0] |= RTE_ETHER_LOCAL_ADMIN_ADDR;
++
++	random = rte_rand();
++	memcpy(&mac_addr->addr_bytes[3], &random, 3);
++}
++
++s32 sxevf_mac_addr_init(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_mac_filter_context *mac_filter = &adapter->mac_filter_ctxt;
++	s32 ret = 0;
++	u8 *mac_addr;
++
++	UNUSED(mac_addr);
++	eth_dev->data->mac_addrs = rte_zmalloc("sxe",
++				RTE_ETHER_ADDR_LEN * SXEVF_HW_UC_ENTRY_NUM_MAX, 0);
++	if (eth_dev->data->mac_addrs == NULL) {
++		LOG_ERROR_BDF("mac addr allocate %u B fail.",
++				 RTE_ETHER_ADDR_LEN * SXEVF_HW_UC_ENTRY_NUM_MAX);
++		ret = -ENOMEM;
++		goto l_out;
++	}
++
++	if (rte_is_zero_ether_addr(&mac_filter->def_mac_addr)) {
++		sxevf_random_mac_addr_generate(&mac_filter->def_mac_addr);
++		ret = sxevf_mac_addr_set(hw, mac_filter->def_mac_addr.addr_bytes);
++		if (ret) {
++			LOG_ERROR_BDF("vf uc mac addr set fail.(err:%d)", ret);
++			goto l_free;
++		}
++		mac_addr = mac_filter->def_mac_addr.addr_bytes;
++		LOG_INFO_BDF("generate random mac_addr:" RTE_ETHER_ADDR_PRT_FMT,
++			mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3],
++			mac_addr[4], mac_addr[5]);
++	}
++
++	rte_ether_addr_copy(&mac_filter->def_mac_addr, &eth_dev->data->mac_addrs[0]);
++
++	mac_filter->uc_table_size = SXEVF_HW_UC_ENTRY_NUM_MAX;
++
++l_out:
++	return ret;
++
++l_free:
++	rte_free(eth_dev->data->mac_addrs);
++	eth_dev->data->mac_addrs = NULL;
++	return ret;
++}
++
++void sxevf_vfta_sync(struct rte_eth_dev *eth_dev, bool on)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_vlan_context *vlan_ctxt = &adapter->vlan_ctxt;
++	u32 reg_idx;
++	u32 bit_idx;
++	u32 vfta;
++	u32 mask;
++	u32 vlan_id;
++
++	for (reg_idx = 0; reg_idx < SXEVF_VFT_TBL_SIZE; reg_idx++) {
++		vfta = vlan_ctxt->vlan_table[reg_idx];
++		if (vfta) {
++			mask = 1;
++			for (bit_idx = 0; bit_idx < 32; bit_idx++) {
++				vlan_id = (reg_idx << 5) + bit_idx;
++				if (vfta & mask)
++					sxevf_vlan_id_set(hw, vlan_id, on);
++				mask <<= 1;
++			}
++		}
++	}
++}
++
++static void sxevf_vlan_strip_bitmap_set(struct rte_eth_dev *dev, u16 queue_idx, bool on)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_vlan_context *vlan_ctxt = &adapter->vlan_ctxt;
++	sxevf_rx_queue_s *rxq;
++
++	if (queue_idx >= adapter->max_rx_queue) {
++		LOG_ERROR_BDF("invalid queue idx:%u exceed max"
++			   " queue  number:%u.",
++			   queue_idx, adapter->max_rx_queue);
++		return;
++	}
++
++	if (on)
++		SXEVF_STRIP_BITMAP_SET(vlan_ctxt, queue_idx);
++	else
++		SXEVF_STRIP_BITMAP_CLEAR(vlan_ctxt, queue_idx);
++
++	if (queue_idx >= dev->data->nb_rx_queues) {
++		LOG_ERROR_BDF("invalid queue_idx id:%u exceed rx "
++			   " queue number:%u.",
++			   queue_idx, dev->data->nb_rx_queues);
++		return;
++	}
++
++	rxq = dev->data->rx_queues[queue_idx];
++
++	if (on) {
++		rxq->vlan_flags = RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED;
++		rxq->offloads |= RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++	} else {
++		rxq->vlan_flags = RTE_MBUF_F_RX_VLAN;
++		rxq->offloads &= ~RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++	}
++
++	LOG_INFO_BDF("queue idx:%u vlan strip on:%d set bitmap and offload done.",
++			 queue_idx, on);
++}
++
++static void sxevf_vlan_strip_switch_set(struct rte_eth_dev *dev)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	u16 i;
++	sxevf_rx_queue_s *rxq;
++	bool on;
++
++	PMD_INIT_FUNC_TRACE();
++
++	for (i = 0; i < dev->data->nb_rx_queues; i++) {
++		rxq = dev->data->rx_queues[i];
++
++		if (rxq->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
++			on = true;
++		else
++			on = false;
++
++		sxevf_hw_vlan_tag_strip_switch(hw, i, on);
++
++		sxevf_vlan_strip_bitmap_set(dev, i, on);
++	}
++}
++
++static void sxevf_vlan_offload_configure(struct rte_eth_dev *dev, s32 mask)
++{
++	if (mask & RTE_ETH_VLAN_STRIP_MASK)
++		sxevf_vlan_strip_switch_set(dev);
++}
++
++void sxevf_vlan_filter_configure(struct rte_eth_dev *eth_dev)
++{
++	u32 vlan_mask;
++
++	sxevf_vfta_sync(eth_dev, true);
++
++	vlan_mask = RTE_ETH_VLAN_STRIP_MASK | RTE_ETH_VLAN_FILTER_MASK |
++			RTE_ETH_VLAN_EXTEND_MASK;
++
++	sxevf_vlan_offload_configure(eth_dev, vlan_mask);
++}
++
++s32 sxevf_promiscuous_enable(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	s32 ret;
++
++	ret = sxevf_cast_mode_set(hw, SXEVF_CAST_MODE_PROMISC);
++	if (ret) {
++		LOG_ERROR_BDF("cast mode:0x%x set fail.(err:%d)",
++				  SXEVF_CAST_MODE_PROMISC, ret);
++	}
++
++	return ret;
++}
++
++s32 sxevf_promiscuous_disable(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	s32 mode = SXEVF_CAST_MODE_NONE;
++	s32 ret;
++
++	if (eth_dev->data->all_multicast)
++		mode = SXEVF_CAST_MODE_ALLMULTI;
++	ret = sxevf_cast_mode_set(hw, mode);
++	if (ret)
++		LOG_ERROR_BDF("disable mc promiscuous fail.(err:%d)", ret);
++
++	return ret;
++}
++
++s32 sxevf_allmulticast_enable(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	s32 ret = 0;
++
++	if (eth_dev->data->promiscuous)
++		goto l_out;
++
++	ret = sxevf_cast_mode_set(hw, SXEVF_CAST_MODE_ALLMULTI);
++	if (ret)
++		LOG_ERROR_BDF("cast mode:0x%x set fail.(err:%d)",
++				  SXEVF_CAST_MODE_ALLMULTI, ret);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_allmulticast_disable(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	s32 ret = 0;
++
++	if (eth_dev->data->promiscuous)
++		goto l_out;
++
++	ret = sxevf_cast_mode_set(hw, SXEVF_CAST_MODE_MULTI);
++	if (ret)
++		LOG_ERROR_BDF("disable mc promiscuous fail.(err:%d)", ret);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_vlan_filter_set(struct rte_eth_dev *eth_dev,  u16 vlan_id, s32 on)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_vlan_context *vlan_ctxt = &adapter->vlan_ctxt;
++	s32 ret;
++	u8 reg_idx;
++	u8 bit_idx;
++
++	ret = sxevf_vlan_id_set(hw, vlan_id, on);
++	if (ret) {
++		LOG_ERROR_BDF("vlan_id:0x%x status:%u set fail.(err:%d)",
++				  vlan_id, on, ret);
++		goto l_out;
++	}
++
++	reg_idx = (vlan_id >> SXEVF_VLAN_ID_SHIFT) & SXEVF_VLAN_ID_REG_MASK;
++	bit_idx = (vlan_id & SXEVF_VLAN_ID_BIT_MASK);
++
++	if (on)
++		vlan_ctxt->vlan_table[reg_idx] |= (1 << bit_idx);
++	else
++		vlan_ctxt->vlan_table[reg_idx] &= ~(1 << bit_idx);
++
++	LOG_INFO_BDF("vlan_id:0x%x status:%u set success.", vlan_id, on);
++
++l_out:
++	return ret;
++}
++
++void sxevf_vlan_strip_queue_set(struct rte_eth_dev *dev, u16 queue, s32 on)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++
++	if (queue > adapter->max_rx_queue) {
++		LOG_ERROR_BDF("queue id:%u invalid exceed max rx queue num:%u",
++				  queue, adapter->max_rx_queue);
++		return;
++	}
++
++	sxevf_hw_vlan_tag_strip_switch(hw, queue, on);
++
++	sxevf_vlan_strip_bitmap_set(dev, queue, on);
++
++	LOG_INFO_BDF("queue:%u vlan tag strip on:%u done", queue, on);
++}
++
++static void sxevf_vlan_strip_offload_configure(struct rte_eth_dev *dev, s32 mask)
++{
++	u16 i;
++	struct rte_eth_rxmode *rxmode = &dev->data->dev_conf.rxmode;
++	sxevf_rx_queue_s *rxq;
++
++	if (mask & RTE_ETH_VLAN_STRIP_MASK) {
++		if (rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP) {
++			for (i = 0; i < dev->data->nb_rx_queues; i++) {
++				rxq = dev->data->rx_queues[i];
++				rxq->offloads |= RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++			}
++		} else {
++			for (i = 0; i < dev->data->nb_rx_queues; i++) {
++				rxq = dev->data->rx_queues[i];
++				rxq->offloads &= ~RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++			}
++		}
++	}
++
++	PMD_LOG_INFO(DRV, "mask:0x%x rx mode offload:0x%" SXE_PRIX64
++			 " all queue vlan strip offload flag configure done",
++			 mask, rxmode->offloads);
++}
++
++s32 sxevf_vlan_offload_set(struct rte_eth_dev *dev, s32 mask)
++{
++	sxevf_vlan_strip_offload_configure(dev, mask);
++
++	sxevf_vlan_offload_configure(dev, mask);
++
++	PMD_LOG_INFO(DRV, "vlan offload mask:0x%x set done.", mask);
++
 +	return 0;
 +}
 +
-+static s32 sxe_dev_reset(struct rte_eth_dev *eth_dev)
++s32 sxevf_default_mac_addr_set(struct rte_eth_dev *dev,
++				 struct rte_ether_addr *mac_addr)
 +{
 +	s32 ret;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	u8 *addr = mac_addr->addr_bytes;
 +
-+	if (eth_dev->data->sriov.active) {
-+		ret = -ENOTSUP;
-+		PMD_LOG_ERR(INIT, "sriov activated, not support reset pf port[%u]",
-+			eth_dev->data->port_id);
++	UNUSED(addr);
++	ret = sxevf_mac_addr_set(hw, mac_addr->addr_bytes);
++	if (ret) {
++		LOG_ERROR_BDF("modify default mac addr to " RTE_ETHER_ADDR_PRT_FMT " fail.(err:%d)",
++				  addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], ret);
++	}
++
++	LOG_INFO_BDF("modify default mac addr to " RTE_ETHER_ADDR_PRT_FMT " success.",
++			  addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
++
++	return ret;
++}
++
++s32 sxevf_mac_addr_add(struct rte_eth_dev *dev,
++				 struct rte_ether_addr *mac_addr,
++				 __rte_unused u32 rar_idx, __rte_unused u32 pool)
++{
++	s32 ret;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_mac_filter_context *mac_ctxt = &adapter->mac_filter_ctxt;
++	u8 *addr = mac_addr->addr_bytes;
++
++	UNUSED(addr);
++	if (memcmp(mac_ctxt->def_mac_addr.addr_bytes, mac_addr->addr_bytes,
++			sizeof(*mac_addr)) == 0) {
++		ret = -EINVAL;
++		LOG_ERROR_BDF("mac_addr:" RTE_ETHER_ADDR_PRT_FMT " eaqual to defalut mac addr"
++				 " skip mac addr add.(err:%d)",
++				 addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], ret);
++		goto l_out;
++	}
++
++	ret = sxevf_uc_addr_add(hw, 2, mac_addr->addr_bytes);
++	if (ret) {
++		LOG_ERROR_BDF("mac_addr:" RTE_ETHER_ADDR_PRT_FMT " add fail.(err:%d)",
++				  addr[0], addr[1], addr[2], addr[3], addr[4], addr[5], ret);
++		goto l_out;
++	}
++
++	LOG_INFO_BDF("mac_addr:" RTE_ETHER_ADDR_PRT_FMT " add success.",
++				addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
++
++l_out:
++	return ret;
++}
++
++void sxevf_mac_addr_remove(struct rte_eth_dev *dev, u32 index)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_mac_filter_context *mac_ctxt = &adapter->mac_filter_ctxt;
++	struct rte_ether_addr *mac_addr;
++	u8 *addr;
++	u8 i;
++
++	sxevf_uc_addr_add(hw, 0, NULL);
++
++	for (i = 0, mac_addr = dev->data->mac_addrs; i < mac_ctxt->uc_table_size;
++		 i++, mac_addr++) {
++		if (i == index || rte_is_zero_ether_addr(mac_addr) ||
++		(memcmp(mac_ctxt->def_mac_addr.addr_bytes, mac_addr->addr_bytes,
++				sizeof(*mac_addr)) == 0)) {
++			continue;
++		}
++		sxevf_uc_addr_add(hw, 2, mac_addr->addr_bytes);
++	}
++	addr = dev->data->mac_addrs[index].addr_bytes;
++	UNUSED(addr);
++	LOG_INFO_BDF("index:%u mac addr" RTE_ETHER_ADDR_PRT_FMT " remove success.",
++			  index, addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
++}
++
++static u16 sxevf_hash_mac_addr_parse(u8 *mac_addr)
++{
++	u16 extracted = ((mac_addr[4] >> 4) |
++			(((u16)mac_addr[5]) << 4));
++
++	extracted &= SXEVF_MAC_ADDR_EXTRACT_MASK;
++
++	PMD_LOG_DEBUG(DRV, "mac_addr:" RTE_ETHER_ADDR_PRT_FMT " parse result:0x%x",
++			 mac_addr[0], mac_addr[1], mac_addr[2], mac_addr[3],
++			 mac_addr[4], mac_addr[5], extracted);
++
++	return extracted;
++}
++
++s32 sxevf_set_mc_addr_list(struct rte_eth_dev *dev,
++			  struct rte_ether_addr *mc_addr_list,
++			  u32 nb_mc_addr)
++{
++	s32 ret;
++	u32 result;
++	struct sxevf_mc_sync_msg msg;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	u32 i;
++
++	msg.msg_type = SXEVF_MC_ADDR_SYNC;
++	msg.mc_cnt = RTE_MIN(nb_mc_addr, (u32)SXEVF_MC_ENTRY_NUM_MAX);
++
++	for (i = 0; i < msg.mc_cnt; i++) {
++		msg.mc_addr_extract[i] = sxevf_hash_mac_addr_parse(mc_addr_list->addr_bytes);
++		mc_addr_list++;
++	}
++
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg, SXEVF_MSG_NUM(sizeof(msg)));
++	result = (msg.mc_cnt << 16) | msg.msg_type;
++
++	if (ret || ((result & SXEVF_MC_ADDR_SYNC) &&
++			(result & SXEVF_MSGTYPE_NACK))) {
++		ret = ret ? ret : -SXEVF_ERR_MSG_HANDLE_ERR;
++		goto l_out;
++	}
++
++	PMD_LOG_DEBUG(DRV, "msg_type:0x%x len:%zu mc_cnt:%d msg "
++		  "result:0x%x.(ret:%d)",
++		  msg.msg_type, SXEVF_MSG_NUM(sizeof(msg)),
++		  msg.mc_cnt, result, ret);
++
++l_out:
++	return ret;
++}
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_filter.h b/drivers/net/sxe/vf/sxevf_filter.h
+new file mode 100644
+index 0000000000..6fa51e3af1
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_filter.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXEVF_FILTER_H__
++#define __SXEVF_FILTER_H__
++
++#include <rte_ether.h>
++#include <ethdev_driver.h>
++
++#define SXEVF_MTA_ENTRY_NUM_MAX		128
++#define SXEVF_UTA_HASH_BIT_MAX		 4096
++#define VLAN_N_VID	 4096
++#define BYTE_BIT_NUM   8
++
++#define  SXEVF_VLAN_ID_SHIFT		 (5)
++#define  SXEVF_VLAN_ID_REG_MASK	  (0x7F)
++#define  SXEVF_VLAN_ID_BIT_MASK	  (0x1F)
++
++#define SXEVF_VLAN_STRIP_BITMAP_SIZE \
++		(SXEVF_HW_TXRX_RING_NUM_MAX / (sizeof(u32) * BYTE_BIT_NUM))
++
++struct sxevf_vlan_context {
++	u32 vlan_table[SXEVF_VFT_TBL_SIZE];
++	u32 strip_bitmap[SXEVF_VLAN_STRIP_BITMAP_SIZE];
++	u32 vlan_table_size;
++};
++
++struct sxevf_mac_filter_context {
++	struct rte_ether_addr def_mac_addr;
++	u8  mc_filter_type;
++	u32 uc_table_size;
++};
++
++void sxevf_vlan_filter_init(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_mac_addr_init(struct rte_eth_dev *eth_dev);
++
++void sxevf_vlan_filter_configure(struct rte_eth_dev *eth_dev);
++
++void sxevf_vfta_sync(struct rte_eth_dev *eth_dev, bool on);
++
++s32 sxevf_promiscuous_disable(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_promiscuous_enable(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_allmulticast_disable(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_allmulticast_enable(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_vlan_filter_set(struct rte_eth_dev *eth_dev,  u16 vlan_id, s32 on);
++
++void sxevf_vlan_strip_queue_set(struct rte_eth_dev *dev, u16 queue, s32 on);
++
++s32 sxevf_vlan_offload_set(struct rte_eth_dev *dev, s32 mask);
++
++s32 sxevf_default_mac_addr_set(struct rte_eth_dev *dev,
++				 struct rte_ether_addr *mac_addr);
++
++void sxevf_mac_addr_remove(struct rte_eth_dev *dev, u32 index);
++
++s32 sxevf_mac_addr_add(struct rte_eth_dev *dev,
++				 struct rte_ether_addr *mac_addr,
++				 __rte_unused u32 rar_idx, __rte_unused u32 pool);
++
++s32 sxevf_set_mc_addr_list(struct rte_eth_dev *dev,
++			  struct rte_ether_addr *mc_addr_list,
++			  u32 nb_mc_addr);
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_irq.c b/drivers/net/sxe/vf/sxevf_irq.c
+new file mode 100644
+index 0000000000..3263f56313
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_irq.c
+@@ -0,0 +1,432 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include <rte_ethdev.h>
++#include <rte_pci.h>
++#include <rte_alarm.h>
++#include <rte_interrupts.h>
++#include <rte_malloc.h>
++#include <bus_pci_driver.h>
++#include <eal_interrupts.h>
++#include "sxevf.h"
++#include "sxe_logs.h"
++#include "sxe_errno.h"
++#include "sxevf_rx.h"
++#include "sxevf_irq.h"
++#include "sxevf_msg.h"
++#include "sxevf_queue.h"
++#include "sxe_compat_version.h"
++
++#define SXEVF_IRQ_LINK_CONFIG	  (u32)(1 << 3)
++
++#define SXEVF_RX_OTHER_IRQ_MASK	 (3)
++
++#define SXEVF_MISC_VEC_ID		RTE_INTR_VEC_ZERO_OFFSET
++
++#define SXEVF_RX_VEC_BASE		  RTE_INTR_VEC_RXTX_OFFSET
++
++#define SXEVF_EITR_INTERVAL_UNIT_NS	2048
++#define SXEVF_EITR_ITR_INT_SHIFT		3
++#define SXEVF_IRQ_ITR_MASK			  (0x00000FF8)
++#define SXEVF_EITR_INTERVAL_US(us) \
++	(((us) * 1000 / SXEVF_EITR_INTERVAL_UNIT_NS << SXEVF_EITR_ITR_INT_SHIFT) & \
++		SXEVF_IRQ_ITR_MASK)
++
++#define SXEVF_QUEUE_ITR_INTERVAL_DEFAULT   500
++#define SXEVF_QUEUE_ITR_INTERVAL   3
++
++void sxevf_intr_disable(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_irq_context *irq_ctxt = &adapter->irq_ctxt;
++
++	PMD_INIT_FUNC_TRACE();
++
++	sxevf_irq_disable(hw);
++
++	irq_ctxt->enable_mask = 0;
++}
++
++void sxevf_intr_enable(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_irq_context *irq_ctxt = &adapter->irq_ctxt;
++
++	PMD_INIT_FUNC_TRACE();
++
++	sxevf_irq_enable(hw, SXEVF_RX_OTHER_IRQ_MASK);
++
++	irq_ctxt->enable_mask = SXEVF_RX_OTHER_IRQ_MASK;
++}
++
++static s32 sxevf_ctrl_msg_check(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	u32 ctrl_msg;
++	s32 ret;
++
++	ret = sxevf_ctrl_msg_rcv_and_clear(hw, (u32 *)&ctrl_msg,
++				SXEVF_MSG_NUM(sizeof(ctrl_msg)));
++	if (ret) {
++		PMD_LOG_INFO(DRV, "ctrl msg rcv fail due to lock fail.(err:%d)", ret);
 +		goto l_end;
 +	}
 +
-+	ret = sxe_ethdev_uninit(eth_dev);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "port[%u] dev uninit failed",
-+			eth_dev->data->port_id);
-+		goto l_end;
-+	}
-+
-+	ret = sxe_ethdev_init(eth_dev, NULL);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "port[%u] dev init failed",
-+			eth_dev->data->port_id);
++	if (ctrl_msg & SXEVF_PF_CTRL_MSG_REINIT) {
++		sxe_eth_dev_callback_process(eth_dev, RTE_ETH_EVENT_INTR_RESET,
++						 NULL);
++		PMD_LOG_INFO(DRV, "rcv reinit msg.");
 +	}
 +
 +l_end:
 +	return ret;
 +}
-diff --git a/drivers/net/sxe/pf/sxe_ethdev.h b/drivers/net/sxe/pf/sxe_ethdev.h
-index bcd91b6a8c..66034343ea 100644
---- a/drivers/net/sxe/pf/sxe_ethdev.h
-+++ b/drivers/net/sxe/pf/sxe_ethdev.h
-@@ -1,3 +1,28 @@
- /* SPDX-License-Identifier: BSD-3-Clause
-  * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-  */
 +
-+#ifndef __SXE_ETHDEV_H__
-+#define __SXE_ETHDEV_H__
-+
-+#include "sxe.h"
-+
-+#define SXE_MMW_SIZE_DEFAULT		0x4
-+#define SXE_MMW_SIZE_JUMBO_FRAME	0x14
-+#define SXE_MAX_JUMBO_FRAME_SIZE	0x2600
-+
-+#define SXE_ETH_MAX_LEN  (RTE_ETHER_MTU + SXE_ETH_OVERHEAD)
-+
-+#define SXE_HKEY_MAX_INDEX 10
-+#define SXE_ETH_OVERHEAD (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN)
-+#define SXE_ETH_DEAD_LOAD (SXE_ETH_OVERHEAD + 2 * SXE_VLAN_TAG_SIZE)
-+
-+struct sxe_adapter;
-+s32 sxe_ethdev_init(struct rte_eth_dev *eth_dev, void *param __rte_unused);
-+
-+s32 sxe_ethdev_uninit(struct rte_eth_dev *eth_dev);
-+
-+void sxe_secondary_proc_init(struct rte_eth_dev *eth_dev,
-+	bool rx_batch_alloc_allowed, bool *rx_vec_allowed);
-+
-+#endif
-diff --git a/drivers/net/sxe/pf/sxe_irq.c b/drivers/net/sxe/pf/sxe_irq.c
-new file mode 100644
-index 0000000000..81855fbead
---- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_irq.c
-@@ -0,0 +1,118 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#include <rte_ethdev.h>
-+#include <rte_pci.h>
-+#include <rte_alarm.h>
-+
-+#include <rte_pci.h>
-+#include <bus_pci_driver.h>
-+#include <eal_interrupts.h>
-+
-+#include <rte_malloc.h>
-+
-+#include "sxe_irq.h"
-+#include "sxe_logs.h"
-+#include "sxe_regs.h"
-+#include "sxe_hw.h"
-+#include "sxe.h"
-+#include "sxe_phy.h"
-+#include "sxe_errno.h"
-+#include "sxe_compat_version.h"
-+
-+#define SXE_LINK_DOWN_TIMEOUT 4000
-+#define SXE_LINK_UP_TIMEOUT   1000
-+
-+#define SXE_IRQ_MAILBOX		  ((u32)(1 << 1))
-+#define SXE_IRQ_MACSEC		   ((u32)(1 << 2))
-+
-+#define SXE_LINK_UP_TIME		 90
-+
-+#define SXE_MISC_VEC_ID		  RTE_INTR_VEC_ZERO_OFFSET
-+
-+#define SXE_RX_VEC_BASE		  RTE_INTR_VEC_RXTX_OFFSET
-+
-+static s32 sxe_event_irq_action(struct rte_eth_dev *eth_dev)
++static s32 sxevf_link_msg_check(struct rte_eth_dev *eth_dev, bool *link_up)
 +{
-+	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-+	struct sxe_irq_context *irq = &adapter->irq_ctxt;
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	u32 ctrl_msg;
++	s32 ret;
 +
-+	PMD_LOG_DEBUG(DRV, "event irq action type %d", irq->action);
++	ret = sxevf_ctrl_msg_rcv_and_clear(hw, (u32 *)&ctrl_msg,
++				SXEVF_MSG_NUM(sizeof(ctrl_msg)));
++	if (ret) {
++		PMD_LOG_INFO(DRV, "ctrl msg rcv fail due to lock fail.(err:%d)", ret);
++		goto l_end;
++	}
 +
-+	/* lsc irq handler */
-+	if (irq->action & SXE_IRQ_LINK_UPDATE)
-+		PMD_LOG_INFO(DRV, "link change irq");
++	if (ctrl_msg & SXEVF_PF_CTRL_MSG_NETDEV_DOWN) {
++		*link_up = false;
++		PMD_LOG_INFO(DRV, "rcv ctrl msg:0x%x need link down.", ctrl_msg);
++	} else if (ctrl_msg & SXEVF_PF_CTRL_MSG_LINK_UPDATE) {
++		*link_up = true;
++		PMD_LOG_INFO(DRV, "rcv ctrl msg:0x%x physical link up.", ctrl_msg);
++	}
++
++l_end:
++	return ret;
++}
++
++static void sxevf_mbx_irq_handler(void *data)
++{
++	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)data;
++
++	sxevf_intr_disable(eth_dev);
++
++	sxevf_ctrl_msg_check(eth_dev);
++
++	sxevf_intr_enable(eth_dev);
++}
++
++void sxevf_irq_init(struct rte_eth_dev *eth_dev)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++	struct rte_intr_handle *irq_handle = SXE_PCI_INTR_HANDLE(pci_dev);
++
++	sxevf_intr_disable(eth_dev);
++
++	rte_intr_callback_register(irq_handle,
++				   sxevf_mbx_irq_handler, eth_dev);
++
++	rte_intr_enable(irq_handle);
++	sxevf_intr_enable(eth_dev);
++}
++
++static s32 sxevf_msix_configure(struct rte_eth_dev *dev)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	struct rte_intr_handle *handle = SXE_PCI_INTR_HANDLE(pci_dev);
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	sxevf_rx_queue_s *rx_queue;
++	u16 queue_id;
++	u16 vector = SXEVF_MISC_VEC_ID;
++	u16 base = SXEVF_MISC_VEC_ID;
++	u32 irq_interval;
++	s32 ret = 0;
++
++	sxevf_event_irq_map(hw, vector);
++
++	if (!rte_intr_dp_is_en(handle)) {
++		ret = -SXE_ERR_PARAM;
++		PMD_LOG_ERR(DRV, "intr type:%u nb_efd:%u irq unsupported.(err:%d)",
++				  handle->type, handle->nb_efd, ret);
++		goto l_out;
++	}
++
++	if (rte_intr_allow_others(handle)) {
++		vector = SXEVF_RX_VEC_BASE;
++		base = SXEVF_RX_VEC_BASE;
++	}
++
++	irq_interval = SXEVF_EITR_INTERVAL_US(SXEVF_QUEUE_ITR_INTERVAL_DEFAULT);
++	if (rte_intr_dp_is_en(handle))
++		irq_interval = SXEVF_EITR_INTERVAL_US(SXEVF_QUEUE_ITR_INTERVAL);
++
++	for (queue_id = 0; queue_id < dev->data->nb_rx_queues;
++		queue_id++) {
++		rx_queue = dev->data->rx_queues[queue_id];
++		if (rte_intr_dp_is_en(handle))
++			sxevf_ring_irq_interval_set(hw, vector, irq_interval);
++
++		sxevf_hw_ring_irq_map(hw, false,
++					rx_queue->reg_idx,
++					vector);
++		handle->intr_vec[queue_id] = vector;
++		PMD_LOG_INFO(DRV,
++				"queue id:%u reg_idx:%u vector:%u ",
++				queue_id,
++				rx_queue->reg_idx,
++				vector);
++		if (vector < base + handle->nb_efd - 1)
++			vector++;
++	}
++
++	sxevf_ring_irq_interval_set(hw, 0, irq_interval);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_irq_configure(struct rte_eth_dev *eth_dev)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++	struct rte_intr_handle *handle = SXE_PCI_INTR_HANDLE(pci_dev);
++	u16 irq_num;
++	s32 ret = 0;
++
++	if (rte_intr_cap_multiple(handle) &&
++		 eth_dev->data->dev_conf.intr_conf.rxq != 0) {
++		irq_num = 1;
++		if (rte_intr_efd_enable(handle, irq_num)) {
++			ret = -SXE_ERR_CONFIG;
++			PMD_LOG_ERR(DRV,
++					  "intr_handle type:%d irq num:%d invalid",
++					  handle->type, irq_num);
++			goto l_out;
++		}
++	}
++
++	if (rte_intr_dp_is_en(handle) && !handle->intr_vec) {
++		handle->intr_vec = rte_zmalloc("intr_vec",
++					eth_dev->data->nb_rx_queues * sizeof(u32), 0);
++		if (handle->intr_vec == NULL) {
++			PMD_LOG_ERR(DRV, "rx queue irq vector "
++					 "allocate %zuB memory fail.",
++					 eth_dev->data->nb_rx_queues * sizeof(u32));
++			ret = -ENOMEM;
++			goto l_out;
++		}
++	}
++
++	ret = sxevf_msix_configure(eth_dev);
++	if (ret) {
++		PMD_LOG_ERR(DRV, "intr type:%u nb_efd:%u irq unsupported.(err:%d)",
++				  handle->type, handle->nb_efd, ret);
++		goto l_out;
++	}
++
++	rte_intr_disable(handle);
++
++	rte_intr_enable(handle);
++
++	sxevf_intr_enable(eth_dev);
++
++	PMD_LOG_INFO(DRV,
++			  "intr_handle type:%d rx queue num:%d "
++			  "queue irq num:%u total irq num:%u "
++			  "config done",
++			  handle->type,
++			  eth_dev->data->nb_rx_queues,
++			  handle->nb_efd,
++			  handle->max_intr);
++
++l_out:
++	return ret;
++}
++
++void sxevf_irq_free(struct rte_eth_dev *eth_dev)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++	struct rte_intr_handle *handle = SXE_PCI_INTR_HANDLE(pci_dev);
++
++	rte_intr_disable(handle);
++
++	if (handle->intr_vec) {
++		rte_free(handle->intr_vec);
++		handle->intr_vec = NULL;
++	}
++}
++
++void sxevf_irq_unregister(struct rte_eth_dev *eth_dev)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
++	struct rte_intr_handle *handle = SXE_PCI_INTR_HANDLE(pci_dev);
++
++	rte_intr_callback_unregister(handle, sxevf_mbx_irq_handler, eth_dev);
++}
++
++s32 sxevf_rx_queue_intr_enable(struct rte_eth_dev *dev, u16 queue_id)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	struct rte_intr_handle *intr_handle = SXE_PCI_INTR_HANDLE(pci_dev);
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	u32 vector = SXEVF_MISC_VEC_ID;
++
++	RTE_SET_USED(queue_id);
++
++	if (rte_intr_allow_others(intr_handle))
++		vector = SXEVF_RX_VEC_BASE;
++
++	irq_ctxt->enable_mask |= (1 << vector);
++
++	sxevf_specific_irq_enable(hw, irq_ctxt->enable_mask);
++
++	rte_intr_ack(intr_handle);
 +
 +	return 0;
 +}
 +
-+static void sxe_event_irq_handler(void *data)
++s32 sxevf_rx_queue_intr_disable(struct rte_eth_dev *dev, u16 queue_id)
 +{
-+	struct rte_eth_dev *eth_dev = (struct rte_eth_dev *)data;
-+	struct sxe_adapter *adapter = eth_dev->data->dev_private;
-+	struct sxe_hw *hw = &adapter->hw;
-+	struct sxe_irq_context *irq = &adapter->irq_ctxt;
-+	u32 eicr;
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	struct rte_intr_handle *intr_handle = SXE_PCI_INTR_HANDLE(pci_dev);
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_irq_context *irq_ctxt = &adapter->irq_ctxt;
++	u32 vector = SXEVF_MISC_VEC_ID;
 +
-+	rte_spinlock_lock(&adapter->irq_ctxt.event_irq_lock);
++	RTE_SET_USED(queue_id);
 +
-+	sxe_hw_all_irq_disable(hw);
++	if (rte_intr_allow_others(intr_handle))
++		vector = SXEVF_RX_VEC_BASE;
 +
-+	eicr = sxe_hw_irq_cause_get(hw);
-+	PMD_LOG_DEBUG(DRV, "event irq triggered eicr:0x%x", eicr);
++	irq_ctxt->enable_mask &= ~(1 << vector);
 +
-+	eicr &= 0xFFFF0000;
++	sxevf_specific_irq_enable(hw, irq_ctxt->enable_mask);
 +
-+	sxe_hw_pending_irq_write_clear(hw, eicr);
-+
-+	rte_spinlock_unlock(&adapter->irq_ctxt.event_irq_lock);
-+
-+	if (eicr & SXE_EICR_LSC)
-+		irq->action |= SXE_IRQ_LINK_UPDATE;
-+
-+	if (eicr & SXE_EICR_MAILBOX)
-+		irq->action |= SXE_IRQ_MAILBOX;
-+
-+	if (eicr & SXE_EICR_LINKSEC)
-+		irq->action |= SXE_IRQ_MACSEC;
-+
-+	sxe_event_irq_action(eth_dev);
-+
-+	rte_spinlock_lock(&adapter->irq_ctxt.event_irq_lock);
-+	sxe_hw_specific_irq_enable(hw, irq->enable_mask);
-+	rte_spinlock_unlock(&adapter->irq_ctxt.event_irq_lock);
++	return 0;
 +}
 +
-+void sxe_irq_init(struct rte_eth_dev *eth_dev)
++static void sxevf_physical_link_check(struct rte_eth_dev *dev,  u32 *link_speed, bool *link_up)
 +{
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	struct rte_intr_handle *irq_handle = SXE_PCI_INTR_HANDLE(pci_dev);
-+	struct sxe_adapter *adapter = eth_dev->data->dev_private;
++	u32 link_reg, i;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
 +
-+	rte_intr_callback_register(irq_handle,
-+				   sxe_event_irq_handler, eth_dev);
++	link_reg = sxevf_link_state_get(hw);
++	if (!(link_reg & SXE_VFLINKS_UP)) {
++		*link_up = false;
++		goto l_end;
++	}
 +
-+	rte_spinlock_init(&adapter->irq_ctxt.event_irq_lock);
-+}
-+
-+void sxe_irq_uninit(struct rte_eth_dev *eth_dev)
-+{
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
-+	struct rte_intr_handle *handle = SXE_PCI_INTR_HANDLE(pci_dev);
-+	u8 retry = 0;
-+	s32 ret;
-+
-+	rte_intr_disable(handle);
-+
-+	do {
-+		ret = rte_intr_callback_unregister(handle,
-+				sxe_event_irq_handler, eth_dev);
-+		if (ret >= 0 || ret == -ENOENT) {
-+			break;
-+		} else if (ret != -EAGAIN) {
-+			PMD_LOG_ERR(DRV,
-+					"irq handler unregister fail, next to retry");
++	for (i = 0; i < 5; i++) {
++		sxe_udelay(100);
++		link_reg = sxevf_link_state_get(hw);
++		if (!(link_reg & SXE_VFLINKS_UP)) {
++			*link_up = false;
++			goto l_end;
 +		}
-+		rte_delay_ms(100);
-+	} while (retry++ < (10 + SXE_LINK_UP_TIME));
++	}
++
++	switch (link_reg & SXE_VFLINKS_SPEED) {
++	case SXE_VFLINKS_SPEED_10G:
++		*link_speed = SXEVF_LINK_SPEED_10GB_FULL;
++		break;
++	case SXE_VFLINKS_SPEED_1G:
++		*link_speed = SXEVF_LINK_SPEED_1GB_FULL;
++		break;
++	case SXE_VFLINKS_SPEED_100:
++		*link_speed = SXEVF_LINK_SPEED_100_FULL;
++		break;
++	default:
++		*link_speed = SXEVF_LINK_SPEED_UNKNOWN;
++	}
++
++	*link_up = true;
++
++l_end:
++	PMD_LOG_INFO(DRV, "link up status:%d.", *link_up);
 +}
-diff --git a/drivers/net/sxe/pf/sxe_irq.h b/drivers/net/sxe/pf/sxe_irq.h
++
++static void sxevf_link_info_get(struct rte_eth_dev *dev, int wait_to_complete,
++				   u32 *link_speed, bool *link_up)
++{
++	s32 ret;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++
++	sxevf_physical_link_check(dev, link_speed, link_up);
++
++	if (wait_to_complete == 0 && adapter->link_check == 0) {
++		if (*link_speed == SXEVF_LINK_SPEED_UNKNOWN)
++			*link_up = false;
++		else
++			*link_up = true;
++		return;
++	}
++
++	if (*link_up) {
++		ret = sxevf_link_msg_check(dev, link_up);
++		if (ret) {
++			PMD_LOG_ERR(DRV, "ctrl msg rcv fail, try to next workqueue.");
++			return;
++		}
++	}
++}
++
++s32 sxevf_link_update(struct rte_eth_dev *dev, int wait_to_complete)
++{
++	bool link_up;
++	struct rte_eth_link link;
++	u32 link_speed = SXEVF_LINK_SPEED_UNKNOWN;
++
++	PMD_LOG_INFO(INIT, "link update start...");
++
++	memset(&link, 0, sizeof(link));
++	link.link_status = RTE_ETH_LINK_DOWN;
++	link.link_speed  = RTE_ETH_SPEED_NUM_NONE;
++	link.link_duplex = RTE_ETH_LINK_HALF_DUPLEX;
++	link.link_autoneg = !(dev->data->dev_conf.link_speeds &
++						RTE_ETH_LINK_SPEED_FIXED);
++
++	if (wait_to_complete == 0 || dev->data->dev_conf.intr_conf.lsc)
++		wait_to_complete = 0;
++
++	sxevf_link_info_get(dev, wait_to_complete, &link_speed, &link_up);
++
++	if (!link_up) {
++		PMD_LOG_ERR(DRV, "other link thread is running now!");
++
++		goto l_end;
++	}
++
++	link.link_status = RTE_ETH_LINK_UP;
++	link.link_duplex = RTE_ETH_LINK_FULL_DUPLEX;
++	switch (link_speed) {
++	case SXEVF_LINK_SPEED_1GB_FULL:
++		link.link_speed = RTE_ETH_SPEED_NUM_1G;
++		break;
++
++	case SXEVF_LINK_SPEED_10GB_FULL:
++		link.link_speed = RTE_ETH_SPEED_NUM_10G;
++		break;
++	default:
++		link.link_speed = RTE_ETH_SPEED_NUM_UNKNOWN;
++	}
++
++l_end:
++	PMD_LOG_INFO(DRV, "link update end, up=%x, speed=%x",
++			  link_up, link_speed);
++	return rte_eth_linkstatus_set(dev, &link);
++}
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_irq.h b/drivers/net/sxe/vf/sxevf_irq.h
 new file mode 100644
-index 0000000000..e3a7da6ae8
+index 0000000000..2f9860ba15
 --- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_irq.h
-@@ -0,0 +1,39 @@
++++ b/drivers/net/sxe/vf/sxevf_irq.h
+@@ -0,0 +1,34 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
 +
-+#ifndef __SXE_IRQ_H__
-+#define __SXE_IRQ_H__
++#ifndef __SXEVF_IRQ_H__
++#define __SXEVF_IRQ_H__
 +
 +#include <ethdev_driver.h>
 +#include "sxe_compat_platform.h"
-+#include "sxe_compat_version.h"
 +
-+#define SXE_QUEUE_IRQ_NUM_MAX	15
-+
-+#define SXE_QUEUE_ITR_INTERVAL_DEFAULT   500
-+#define SXE_QUEUE_ITR_INTERVAL   3
-+
-+#define SXE_EITR_INTERVAL_UNIT_NS	2048
-+#define SXE_EITR_ITR_INT_SHIFT		  3
-+#define SXE_IRQ_ITR_MASK				(0x00000FF8)
-+#define SXE_EITR_INTERVAL_US(us) \
-+	(((us) * 1000 / SXE_EITR_INTERVAL_UNIT_NS << SXE_EITR_ITR_INT_SHIFT) & \
-+		SXE_IRQ_ITR_MASK)
-+
-+struct sxe_irq_context {
-+	u32 action;
++struct sxevf_irq_context {
 +	u32 enable_mask;
 +	u32 enable_mask_original;
-+	rte_spinlock_t event_irq_lock;
-+	bool to_pcs_init;
 +};
 +
-+void sxe_event_irq_delayed_handler(void *param);
++void sxevf_intr_disable(struct rte_eth_dev *eth_dev);
 +
-+void sxe_irq_init(struct rte_eth_dev *eth_dev);
++void sxevf_intr_enable(struct rte_eth_dev *eth_dev);
 +
-+void sxe_irq_uninit(struct rte_eth_dev *eth_dev);
++void sxevf_irq_init(struct rte_eth_dev *eth_dev);
 +
++s32 sxevf_irq_configure(struct rte_eth_dev *eth_dev);
++
++void sxevf_irq_free(struct rte_eth_dev *eth_dev);
++
++void sxevf_irq_unregister(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_rx_queue_intr_disable(struct rte_eth_dev *dev, u16 queue_id);
++
++s32 sxevf_rx_queue_intr_enable(struct rte_eth_dev *dev, u16 queue_id);
++
++s32 sxevf_link_update(struct rte_eth_dev *dev, int wait_to_complete);
 +
 +#endif
-diff --git a/drivers/net/sxe/pf/sxe_main.c b/drivers/net/sxe/pf/sxe_main.c
+diff --git a/drivers/net/sxe/vf/sxevf_main.c b/drivers/net/sxe/vf/sxevf_main.c
 new file mode 100644
-index 0000000000..19ec5e93ac
+index 0000000000..b1924c1475
 --- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_main.c
-@@ -0,0 +1,178 @@
++++ b/drivers/net/sxe/vf/sxevf_main.c
+@@ -0,0 +1,82 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
 +#include <string.h>
 +#include <sys/time.h>
 +
 +#include <rte_log.h>
 +#include <rte_pci.h>
++#include <rte_dev.h>
 +
 +#include "sxe_version.h"
-+#include <bus_pci_driver.h>
 +#include <ethdev_driver.h>
 +#include <ethdev_pci.h>
-+#include <dev_driver.h>
++#include <bus_pci_driver.h>
 +
++#include "sxevf.h"
 +#include "sxe_logs.h"
-+#include "sxe_types.h"
-+#include "sxe_hw.h"
-+#include "sxe_ethdev.h"
-+#include "sxe.h"
-+#include "drv_msg.h"
-+#include "sxe_errno.h"
-+#include "sxe_compat_platform.h"
-+#include "sxe_pmd_hdc.h"
++#include "sxevf_ethdev.h"
++#include "sxe_queue_common.h"
 +
-+static const struct rte_pci_id sxe_pci_tbl[] = {
-+	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_STARS, SXE_DEV_ID_ASIC) },
-+	{.vendor_id = 0,}
-+};
++#define PCI_VENDOR_ID_STARS	  0x1FF2
++#define SXEVF_DEV_ID_ASIC		0x10A2
 +
-+static s32 sxe_probe(struct rte_pci_driver *pci_drv __rte_unused,
++static s32 sxevf_probe(struct rte_pci_driver *pci_drv __rte_unused,
 +					struct rte_pci_device *pci_dev)
 +{
 +	s32 ret;
@@ -6994,924 +5208,1705 @@ index 0000000000..19ec5e93ac
 +	PMD_LOG_INFO(INIT, "sxe_version[%s], sxe_commit_id[%s], sxe_branch[%s], sxe_build_time[%s]",
 +		SXE_VERSION, SXE_COMMIT_ID, SXE_BRANCH, SXE_BUILD_TIME);
 +
++#ifdef SXE_DPDK_DEBUG
++	sxe_log_stream_init();
++#endif
 +
-+	/* HDC */
-+	sxe_hdc_channel_init();
-+
-+	ret = rte_eth_dev_create(&pci_dev->device, pci_dev->device.name,
-+				sizeof(struct sxe_adapter),
-+				eth_dev_pci_specific_init,
-+				pci_dev,
-+				sxe_ethdev_init, NULL);
++	ret = rte_eth_dev_pci_generic_probe(pci_dev,
++		sizeof(struct sxevf_adapter), sxevf_ethdev_init);
 +	if (ret) {
 +		PMD_LOG_ERR(INIT, "sxe pmd eth dev create fail.(err:%d)", ret);
 +		goto l_out;
 +	}
 +
-+	PMD_LOG_DEBUG(INIT, "%s sxe pmd probe done.", pci_dev->device.name);
++	PMD_LOG_DEBUG(INIT, "%s sxevf pmd probe done.", pci_dev->device.name);
 +
 +l_out:
 +	return ret;
 +}
 +
-+static s32 sxe_remove(struct rte_pci_device *pci_dev)
++static s32 sxevf_remove(struct rte_pci_device *pci_dev)
 +{
-+	struct rte_eth_dev *eth_dev;
 +	s32 ret;
-+
-+	eth_dev = rte_eth_dev_allocated(pci_dev->device.name);
-+	if (!eth_dev) {
-+		ret = 0;
-+		PMD_LOG_ERR(INIT, "sxe pmd dev has removed.");
-+		goto l_out;
-+	}
 +
 +	ret = rte_eth_dev_pci_generic_remove(pci_dev,
-+					sxe_ethdev_uninit);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "sxe eth dev remove fail.(err:%d)", ret);
-+		goto l_out;
-+	}
-+
-+	PMD_LOG_DEBUG(INIT, "sxe pmd remove done.");
-+
-+l_out:
-+	return ret;
-+}
-+
-+static struct rte_pci_driver rte_sxe_pmd = {
-+	.id_table  = sxe_pci_tbl,
-+	.drv_flags = RTE_PCI_DRV_NEED_MAPPING | RTE_PCI_DRV_INTR_LSC,
-+	.probe	 = sxe_probe,
-+	.remove	= sxe_remove,
-+};
-+
-+static s32 sxe_mng_reset(struct sxe_hw *hw, bool enable)
-+{
-+	s32 ret;
-+	sxe_mng_rst_s mng_rst;
-+
-+	mng_rst.enable = enable;
-+	PMD_LOG_INFO(INIT, "mng reset, enable=%x", enable);
-+
-+	/* Send reset command */
-+	ret = sxe_driver_cmd_trans(hw, SXE_CMD_MNG_RST,
-+				(void *)&mng_rst, sizeof(mng_rst),
-+				NULL, 0);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "mng reset failed, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_INFO(INIT, "mng reset success, enable=%x", enable);
-+
-+l_end:
-+	return ret;
-+}
-+
-+s32 sxe_hw_reset(struct sxe_hw *hw)
-+{
-+	s32 ret;
-+
-+	sxe_hw_all_irq_disable(hw);
-+
-+	sxe_hw_pending_irq_read_clear(hw);
-+
-+	ret = sxe_mng_reset(hw, false);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "mng reset disable failed, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	ret = sxe_hw_nic_reset(hw);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "nic reset failed, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	msleep(50);
-+
-+	ret = sxe_mng_reset(hw, true);
-+	if (ret) {
-+		PMD_LOG_ERR(INIT, "mng reset enable failed, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+void sxe_hw_start(struct sxe_hw *hw)
-+{
-+	;
-+}
-+
-+static bool is_device_supported(struct rte_eth_dev *dev,
-+					struct rte_pci_driver *drv)
-+{
-+	bool ret = true;
-+
-+	if (strcmp(dev->device->driver->name, drv->driver.name))
-+		ret = false;
-+
-+	return ret;
-+}
-+
-+bool sxe_is_supported(struct rte_eth_dev *dev)
-+{
-+	return is_device_supported(dev, &rte_sxe_pmd);
-+}
-+
-+RTE_PMD_REGISTER_PCI(net_sxe, rte_sxe_pmd);
-+RTE_PMD_REGISTER_PCI_TABLE(net_sxe, sxe_pci_tbl);
-+RTE_PMD_REGISTER_KMOD_DEP(net_sxe, "* igb_uio | uio_pci_generic | vfio-pci");
-+
-+RTE_LOG_REGISTER_SUFFIX(sxe_log_init, pmd.net.sxe.init, NOTICE);
-+RTE_LOG_REGISTER_SUFFIX(sxe_log_drv, pmd.net.sxe.drv, NOTICE);
-+
-+int sxe_eth_dev_callback_process(struct rte_eth_dev *dev,
-+	enum rte_eth_event_type event, void *ret_param)
-+{
-+	return rte_eth_dev_callback_process(dev, event, ret_param);
-+}
-diff --git a/drivers/net/sxe/pf/sxe_phy.h b/drivers/net/sxe/pf/sxe_phy.h
-new file mode 100644
-index 0000000000..2947d88812
---- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_phy.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#ifndef __SXE_PHY_H__
-+#define __SXE_PHY_H__
-+
-+#include <rte_ethdev.h>
-+#include "drv_msg.h"
-+#include "sxe_msg.h"
-+
-+#define SXE_SFF_BASE_ADDR			0x0
-+#define SXE_SFF_IDENTIFIER			0x0
-+#define SXE_SFF_10GBE_COMP_CODES		0x3
-+#define SXE_SFF_1GBE_COMP_CODES			0x6
-+#define SXE_SFF_CABLE_TECHNOLOGY		0x8
-+#define SXE_SFF_8472_DIAG_MONITOR_TYPE		0x5C
-+#define SXE_SFF_8472_COMPLIANCE			0x5E
-+
-+#define SXE_SFF_IDENTIFIER_SFP			0x3
-+#define SXE_SFF_ADDRESSING_MODE			0x4
-+#define SXE_SFF_8472_UNSUP			0x0
-+#define SXE_SFF_DDM_IMPLEMENTED			0x40
-+#define SXE_SFF_DA_PASSIVE_CABLE		0x4
-+#define SXE_SFF_DA_ACTIVE_CABLE			0x8
-+#define SXE_SFF_DA_SPEC_ACTIVE_LIMITING		0x4
-+#define SXE_SFF_1GBASESX_CAPABLE		0x1
-+#define SXE_SFF_1GBASELX_CAPABLE		0x2
-+#define SXE_SFF_1GBASET_CAPABLE			0x8
-+#define SXE_SFF_10GBASESR_CAPABLE		0x10
-+#define SXE_SFF_10GBASELR_CAPABLE		0x20
-+
-+#define SXE_SFP_COMP_CODE_SIZE			10
-+#define SXE_SFP_EEPROM_SIZE_MAX			512
-+
-+#define SXE_IRQ_LINK_UPDATE	  ((u32)(1 << 0))
-+#define SXE_IRQ_LINK_CONFIG	  ((u32)(1 << 3))
-+
-+#endif
-diff --git a/drivers/net/sxe/pf/sxe_pmd_hdc.c b/drivers/net/sxe/pf/sxe_pmd_hdc.c
-new file mode 100644
-index 0000000000..b64367beb2
---- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_pmd_hdc.c
-@@ -0,0 +1,661 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+
-+#include <rte_malloc.h>
-+#include <ethdev_driver.h>
-+#include "sxe_compat_version.h"
-+#include <semaphore.h>
-+#include <pthread.h>
-+#include <signal.h>
-+#include "sxe_pmd_hdc.h"
-+#include "sxe_logs.h"
-+#include "sxe_hw.h"
-+#include "sxe.h"
-+#include "sxe_msg.h"
-+#include "drv_msg.h"
-+#include "sxe_errno.h"
-+#include "sxe_common.h"
-+
-+static rte_spinlock_t g_hdc_lock;
-+
-+#define SXE_SUCCESS			(0)
-+
-+#define SXE_HDC_TRYLOCK_MAX		200
-+
-+#define SXE_HDC_RELEASELOCK_MAX		20
-+#define SXE_HDC_WAIT_TIME		1000
-+#define SXE_HDC_BIT_1			0x1
-+
-+void sxe_hdc_channel_init(void)
-+{
-+	rte_spinlock_init(&g_hdc_lock);
-+	sxe_trace_id_gen();
-+}
-+
-+static s32 sxe_fw_time_sync_process(struct sxe_hw *hw)
-+{
-+	s32 ret;
-+	u64 timestamp = sxe_time_get_real_ms();
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	LOG_DEBUG_BDF("sync time= %" SXE_PRIU64 "ms", timestamp);
-+	ret = sxe_driver_cmd_trans(hw, SXE_CMD_TINE_SYNC,
-+				(void *)&timestamp, sizeof(timestamp),
-+				NULL, 0);
++			sxevf_ethdev_uninit);
 +	if (ret)
-+		LOG_ERROR_BDF("hdc trans failed ret=%d, cmd:time sync", ret);
++		LOG_ERROR("vf remove fail.(err:%d)", ret);
 +
 +	return ret;
 +}
 +
-+void sxe_fw_time_sync(struct sxe_hw *hw)
-+{
-+	s32 ret = 0;
-+	u32 status;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	status = sxe_hw_hdc_fw_status_get(hw);
-+	if (status != SXE_FW_START_STATE_FINISHED) {
-+		LOG_ERROR_BDF("fw[%p] status[0x%x] is not good", hw, status);
-+		goto l_ret;
-+	}
-+
-+	ret = sxe_fw_time_sync_process(hw);
-+	if (ret) {
-+		LOG_WARN_BDF("fw time sync failed, ret=%d", ret);
-+		goto l_ret;
-+	}
-+
-+l_ret:
-+	return;
-+}
-+
-+static inline s32 sxe_hdc_lock_get(struct sxe_hw *hw)
-+{
-+	return sxe_hw_hdc_lock_get(hw, SXE_HDC_TRYLOCK_MAX);
-+}
-+
-+static inline void sxe_hdc_lock_release(struct sxe_hw *hw)
-+{
-+	sxe_hw_hdc_lock_release(hw, SXE_HDC_RELEASELOCK_MAX);
-+}
-+
-+static inline s32 sxe_poll_fw_ack(struct sxe_hw *hw, u32 timeout)
-+{
-+	s32 ret = 0;
-+	u32 i;
-+	bool fw_ov = false;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	for (i = 0; i < timeout; i++) {
-+		fw_ov = sxe_hw_hdc_is_fw_over_set(hw);
-+		if (fw_ov)
-+			break;
-+
-+		mdelay(10);
-+	}
-+
-+	if (i >= timeout) {
-+		LOG_ERROR_BDF("poll fw_ov timeout...");
-+		ret = -SXE_ERR_HDC_FW_OV_TIMEOUT;
-+		goto l_ret;
-+	}
-+
-+	sxe_hw_hdc_fw_ov_clear(hw);
-+l_ret:
-+	return ret;
-+}
-+
-+static inline void hdc_channel_clear(struct sxe_hw *hw)
-+{
-+	sxe_hw_hdc_fw_ov_clear(hw);
-+}
-+
-+static s32 hdc_packet_ack_get(struct sxe_hw *hw, u64 trace_id,
-+				hdc_header_u *pkt_header)
-+{
-+	s32 ret	 = 0;
-+	u32 timeout = SXE_HDC_WAIT_TIME;
-+	struct sxe_adapter *adapter = hw->adapter;
-+	UNUSED(trace_id);
-+
-+	pkt_header->dw0 = 0;
-+	pkt_header->head.err_code = PKG_ERR_OTHER;
-+
-+	LOG_DEBUG_BDF("trace_id=0x%" SXE_PRIX64 " hdc cmd ack get start", trace_id);
-+	ret = sxe_poll_fw_ack(hw, timeout);
-+	if (ret) {
-+		LOG_ERROR_BDF("get fw ack failed, ret=%d", ret);
-+		goto l_out;
-+	}
-+
-+	pkt_header->dw0 = sxe_hw_hdc_fw_ack_header_get(hw);
-+	if (pkt_header->head.err_code == PKG_ERR_PKG_SKIP) {
-+		ret = -SXE_HDC_PKG_SKIP_ERR;
-+		goto l_out;
-+	} else if (pkt_header->head.err_code != PKG_OK) {
-+		ret = -SXE_HDC_PKG_OTHER_ERR;
-+		goto l_out;
-+	}
-+
-+l_out:
-+	LOG_DEBUG_BDF("trace_id=0x%" SXE_PRIX64 " hdc cmd ack get end ret=%d", trace_id, ret);
-+	return ret;
-+}
-+
-+static void hdc_packet_header_fill(hdc_header_u *pkt_header,
-+			u8 pkt_index, u16 total_len,
-+			u16 pkt_num, u8 is_read)
-+{
-+	u16 pkt_len = 0;
-+
-+	pkt_header->dw0 = 0;
-+
-+	pkt_header->head.pid = (is_read == 0) ? pkt_index : (pkt_index - 1);
-+
-+	pkt_header->head.total_len = SXE_HDC_LEN_TO_REG(total_len);
-+
-+	if (pkt_index == 0 && is_read == 0)
-+		pkt_header->head.start_pkg = SXE_HDC_BIT_1;
-+
-+	if (pkt_index == (pkt_num - 1)) {
-+		pkt_header->head.end_pkg = SXE_HDC_BIT_1;
-+		pkt_len = total_len - (DWORD_NUM * (pkt_num - 1));
-+	} else {
-+		pkt_len = DWORD_NUM;
-+	}
-+
-+	pkt_header->head.len  = SXE_HDC_LEN_TO_REG(pkt_len);
-+	pkt_header->head.is_rd = is_read;
-+	pkt_header->head.msi = 0;
-+}
-+
-+static inline void hdc_packet_send_done(struct sxe_hw *hw)
-+{
-+	sxe_hw_hdc_packet_send_done(hw);
-+}
-+
-+static inline void hdc_packet_header_send(struct sxe_hw *hw,
-+							u32 header)
-+{
-+	sxe_hw_hdc_packet_header_send(hw, header);
-+}
-+
-+static inline void hdc_packet_data_dword_send(struct sxe_hw *hw,
-+						u16 dword_index, u32 value)
-+{
-+	sxe_hw_hdc_packet_data_dword_send(hw, dword_index, value);
-+}
-+
-+static void hdc_packet_send(struct sxe_hw *hw, u64 trace_id,
-+			hdc_header_u *pkt_header, u8 *data,
-+			u16 data_len)
-+{
-+	u16	dw_idx   = 0;
-+	u16	pkt_len	 = 0;
-+	u16	offset	 = 0;
-+	u32	pkg_data = 0;
-+	struct sxe_adapter *adapter = hw->adapter;
-+	UNUSED(trace_id);
-+
-+	LOG_DEBUG_BDF("hw_addr[%p] trace_id=0x%" SXE_PRIX64 " send pkt pkg_header[0x%x], "
-+		"data_addr[%p], data_len[%u]",
-+		hw, trace_id, pkt_header->dw0, data, data_len);
-+
-+	hdc_packet_header_send(hw, pkt_header->dw0);
-+
-+	if (data == NULL || data_len == 0)
-+		goto l_send_done;
-+
-+	pkt_len = SXE_HDC_LEN_FROM_REG(pkt_header->head.len);
-+	for (dw_idx = 0; dw_idx < pkt_len; dw_idx++) {
-+		pkg_data = 0;
-+
-+		offset = dw_idx * 4;
-+
-+		if (pkt_header->head.end_pkg == SXE_HDC_BIT_1 &&
-+			(dw_idx == (pkt_len - 1)) &&
-+			(data_len % 4 != 0)) {
-+			memcpy((u8 *)&pkg_data, data + offset,
-+					data_len % ONE_DWORD_LEN);
-+		} else {
-+			memcpy(&pkg_data, data + offset, sizeof(u32));
-+		}
-+
-+		LOG_DEBUG_BDF("trace_id=0x%" SXE_PRIX64 " send data to reg[%u] dword[0x%x]",
-+				trace_id, dw_idx, pkg_data);
-+		hdc_packet_data_dword_send(hw, dw_idx, pkg_data);
-+	}
-+
-+l_send_done:
-+	hdc_channel_clear(hw);
-+
-+	hdc_packet_send_done(hw);
-+}
-+
-+static inline u32 hdc_packet_data_dword_rcv(struct sxe_hw *hw,
-+						u16 dword_index)
-+{
-+	return sxe_hw_hdc_packet_data_dword_rcv(hw, dword_index);
-+}
-+
-+static void hdc_resp_data_rcv(struct sxe_hw *hw, u64 trace_id,
-+				hdc_header_u *pkt_header, u8 *out_data,
-+				u16 out_len)
-+{
-+	u16	dw_idx = 0;
-+	u16	dw_num = 0;
-+	u16	offset = 0;
-+	u32	pkt_data;
-+	struct sxe_adapter *adapter = hw->adapter;
-+	UNUSED(trace_id);
-+
-+	dw_num = SXE_HDC_LEN_FROM_REG(pkt_header->head.len);
-+	for (dw_idx = 0; dw_idx < dw_num; dw_idx++) {
-+		pkt_data = hdc_packet_data_dword_rcv(hw, dw_idx);
-+		offset = dw_idx * ONE_DWORD_LEN;
-+		LOG_DEBUG_BDF("trace_id=0x%" SXE_PRIX64 " get data from reg[%u] dword=0x%x",
-+				trace_id, dw_idx, pkt_data);
-+
-+		if (pkt_header->head.end_pkg == SXE_HDC_BIT_1 &&
-+			(dw_idx == (dw_num - 1)) && (out_len % ONE_DWORD_LEN != 0)) {
-+			memcpy(out_data + offset, (u8 *)&pkt_data,
-+					out_len % ONE_DWORD_LEN);
-+		} else {
-+			memcpy(out_data + offset, &pkt_data, sizeof(u32));
-+		}
-+	}
-+}
-+
-+static s32 hdc_req_process(struct sxe_hw *hw, u64 trace_id,
-+			u8 *in_data, u16 in_len)
-+{
-+	s32 ret = 0;
-+	u32 total_len	= 0;
-+	u16 pkt_num	 = 0;
-+	u16 index	   = 0;
-+	u16 offset	  = 0;
-+	hdc_header_u	 pkt_header;
-+	bool is_retry   = false;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	total_len  = (in_len + ONE_DWORD_LEN - 1) / ONE_DWORD_LEN;
-+
-+	pkt_num = (in_len + ONE_PACKET_LEN_MAX - 1) / ONE_PACKET_LEN_MAX;
-+	LOG_DEBUG_BDF("hw[%p] trace_id=0x%" SXE_PRIX64 " req in_data[%p] in_len=%u, "
-+			"total_len=%uDWORD, pkt_num = %u",
-+			hw, trace_id, in_data, in_len, total_len,
-+			pkt_num);
-+
-+	for (index = 0; index < pkt_num; index++) {
-+		LOG_DEBUG_BDF("trace_id=0x%" SXE_PRIX64 " fill pkg header[%p], pkg_index[%u], "
-+			"total_Len[%u], pkg_num[%u], is_read[no]",
-+			trace_id, &pkt_header, index, total_len, pkt_num);
-+		hdc_packet_header_fill(&pkt_header, index, total_len,
-+						pkt_num, 0);
-+
-+		offset = index * DWORD_NUM * ONE_DWORD_LEN;
-+		hdc_packet_send(hw, trace_id, &pkt_header,
-+				in_data + offset, in_len);
-+
-+		if (index == pkt_num - 1)
-+			break;
-+
-+		ret = hdc_packet_ack_get(hw, trace_id, &pkt_header);
-+		if (ret == -EINTR) {
-+			LOG_ERROR_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " interrupted", trace_id);
-+			goto l_out;
-+		} else if (ret == -SXE_HDC_PKG_SKIP_ERR) {
-+			LOG_ERROR_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " req ack "
-+					"failed, retry", trace_id);
-+			if (is_retry) {
-+				ret = -SXE_HDC_RETRY_ERR;
-+				goto l_out;
-+			}
-+
-+			index--;
-+			is_retry = true;
-+			continue;
-+		} else if (ret != SXE_HDC_SUCCESS) {
-+			LOG_ERROR_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " req ack "
-+					"failed, ret=%d", trace_id, ret);
-+			ret = -SXE_HDC_RETRY_ERR;
-+			goto l_out;
-+		}
-+
-+		LOG_DEBUG_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " get req packet_index[%u]"
-+			" ack succeed header[0x%x]",
-+			trace_id, index, pkt_header.dw0);
-+		is_retry = false;
-+	}
-+
-+l_out:
-+	return ret;
-+}
-+
-+static s32 hdc_resp_process(struct sxe_hw *hw, u64 trace_id,
-+			u8 *out_data, u16 out_len)
-+{
-+	s32		  ret;
-+	u32		  req_dwords;
-+	u32		  resp_len;
-+	u32		  resp_dwords;
-+	u16		  pkt_num;
-+	u16		  index;
-+	u16		  offset;
-+	hdc_header_u  pkt_header;
-+	bool	 retry		  = false;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	LOG_DEBUG_BDF("hdc trace_id=0x%" SXE_PRIX64 " req's last cmd ack get", trace_id);
-+	ret = hdc_packet_ack_get(hw, trace_id, &pkt_header);
-+	if (ret == -EINTR) {
-+		LOG_ERROR_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " interrupted", trace_id);
-+		goto l_out;
-+	} else if (ret) {
-+		LOG_ERROR_BDF("hdc trace_id=0x%" SXE_PRIX64 " ack get failed, ret=%d",
-+				trace_id, ret);
-+		ret = -SXE_HDC_RETRY_ERR;
-+		goto l_out;
-+	}
-+
-+	LOG_DEBUG_BDF("hdc trace_id=0x%" SXE_PRIX64 " req's last cmd ack get "
-+		"succeed header[0x%x]", trace_id, pkt_header.dw0);
-+
-+	if (!pkt_header.head.start_pkg) {
-+		ret = -SXE_HDC_RETRY_ERR;
-+		LOG_ERROR_BDF("trace_id=0x%" SXE_PRIX64 " ack header has error: "
-+				"not set start bit", trace_id);
-+		goto l_out;
-+	}
-+
-+	req_dwords = (out_len + ONE_DWORD_LEN - 1) / ONE_DWORD_LEN;
-+	resp_dwords  = SXE_HDC_LEN_FROM_REG(pkt_header.head.total_len);
-+	if (resp_dwords > req_dwords) {
-+		ret = -SXE_HDC_RETRY_ERR;
-+		LOG_ERROR_BDF("trace_id=0x%" SXE_PRIX64 " rsv len check failed:"
-+				"resp_dwords=%u, req_dwords=%u", trace_id,
-+				resp_dwords, req_dwords);
-+		goto l_out;
-+	}
-+
-+	resp_len = resp_dwords << 2;
-+	LOG_DEBUG_BDF("outlen = %u bytes, resp_len = %u bytes", out_len, resp_len);
-+	if (resp_len > out_len)
-+		resp_len = out_len;
-+
-+	hdc_resp_data_rcv(hw, trace_id, &pkt_header, out_data, resp_len);
-+
-+	pkt_num = (resp_len + ONE_PACKET_LEN_MAX - 1) / ONE_PACKET_LEN_MAX;
-+	for (index = 1; index < pkt_num; index++) {
-+		LOG_DEBUG_BDF("trace_id=0x%" SXE_PRIX64 " fill pkg header[%p], pkg_index[%u], "
-+			"total_Len[%u], pkg_num[%u], is_read[yes]",
-+			trace_id, &pkt_header, index, resp_dwords,
-+			pkt_num);
-+		hdc_packet_header_fill(&pkt_header, index, resp_dwords,
-+					pkt_num, 1);
-+
-+		hdc_packet_send(hw, trace_id, &pkt_header, NULL, 0);
-+
-+		ret = hdc_packet_ack_get(hw, trace_id, &pkt_header);
-+		if (ret == -EINTR) {
-+			LOG_ERROR_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " interrupted", trace_id);
-+			goto l_out;
-+		} else if (ret == -SXE_HDC_PKG_SKIP_ERR) {
-+			LOG_ERROR_BDF("trace_id=0x%" SXE_PRIX64 " hdc resp ack polling "
-+					"failed, ret=%d", trace_id, ret);
-+			if (retry) {
-+				ret = -SXE_HDC_RETRY_ERR;
-+				goto l_out;
-+			}
-+
-+			index--;
-+			retry = true;
-+			continue;
-+		} else if (ret != SXE_HDC_SUCCESS) {
-+			LOG_ERROR_BDF("trace_id=0x%" SXE_PRIX64 " hdc resp ack polling "
-+					"failed, ret=%d", trace_id, ret);
-+			ret = -SXE_HDC_RETRY_ERR;
-+			goto l_out;
-+		}
-+
-+		LOG_DEBUG_BDF("hdc trace_id=0x%" SXE_PRIX64 " resp pkt[%u] get "
-+			"succeed header[0x%x]",
-+			trace_id, index, pkt_header.dw0);
-+
-+		retry = false;
-+
-+		offset = index * DWORD_NUM * ONE_DWORD_LEN;
-+		hdc_resp_data_rcv(hw, trace_id, &pkt_header,
-+					out_data + offset, resp_len - offset);
-+	}
-+
-+l_out:
-+	return ret;
-+}
-+
-+static s32 sxe_hdc_packet_trans(struct sxe_hw *hw, u64 trace_id,
-+					struct sxe_hdc_trans_info *trans_info)
-+{
-+	s32 ret = SXE_SUCCESS;
-+	u32 status;
-+	struct sxe_adapter *adapter = hw->adapter;
-+	u32 channel_state;
-+
-+	status = sxe_hw_hdc_fw_status_get(hw);
-+	if (status != SXE_FW_START_STATE_FINISHED) {
-+		LOG_ERROR_BDF("fw[%p] status[0x%x] is not good", hw, status);
-+		ret = -SXE_FW_STATUS_ERR;
-+		goto l_ret;
-+	}
-+
-+	channel_state = sxe_hw_hdc_channel_state_get(hw);
-+	if (channel_state != SXE_FW_HDC_TRANSACTION_IDLE) {
-+		LOG_ERROR_BDF("hdc channel state is busy");
-+		ret = -SXE_HDC_RETRY_ERR;
-+		goto l_ret;
-+	}
-+
-+	ret = sxe_hdc_lock_get(hw);
-+	if (ret) {
-+		LOG_ERROR_BDF("hw[%p] cmd trace_id=0x%" SXE_PRIX64 " get hdc lock fail, ret=%d",
-+				hw, trace_id, ret);
-+		ret = -SXE_HDC_RETRY_ERR;
-+		goto l_ret;
-+	}
-+
-+	ret = hdc_req_process(hw, trace_id, trans_info->in.data,
-+				trans_info->in.len);
-+	if (ret) {
-+		LOG_ERROR_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " req process "
-+				"failed, ret=%d", trace_id, ret);
-+		goto l_hdc_lock_release;
-+	}
-+
-+	ret = hdc_resp_process(hw, trace_id, trans_info->out.data,
-+				trans_info->out.len);
-+	if (ret) {
-+		LOG_ERROR_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " resp process "
-+				"failed, ret=%d", trace_id, ret);
-+	}
-+
-+l_hdc_lock_release:
-+	sxe_hdc_lock_release(hw);
-+l_ret:
-+	return ret;
-+}
-+
-+static s32 sxe_hdc_cmd_process(struct sxe_hw *hw, u64 trace_id,
-+				struct sxe_hdc_trans_info *trans_info)
-+{
-+	s32 ret;
-+	s32 ret_v;
-+	u8 retry_idx;
-+	struct sxe_adapter *adapter = hw->adapter;
-+	sigset_t old_mask, new_mask;
-+	sigemptyset(&new_mask);
-+	sigaddset(&new_mask, SIGINT);
-+	sigaddset(&new_mask, SIGTERM);
-+	ret = pthread_sigmask(SIG_BLOCK, &new_mask, &old_mask);
-+	if (ret) {
-+		LOG_ERROR_BDF("hdc set signal mask failed, ret=%d", ret);
-+		goto l_ret;
-+	}
-+
-+	LOG_DEBUG_BDF("hw[%p] cmd trace=0x%" SXE_PRIX64 "", hw, trace_id);
-+
-+
-+	for (retry_idx = 0; retry_idx < 250; retry_idx++) {
-+		rte_spinlock_lock(&g_hdc_lock);
-+		ret = sxe_hdc_packet_trans(hw, trace_id, trans_info);
-+		rte_spinlock_unlock(&g_hdc_lock);
-+		if (ret == SXE_SUCCESS) {
-+			goto l_up;
-+		} else if (ret == -SXE_HDC_RETRY_ERR) {
-+			rte_delay_ms(10);
-+			continue;
-+		} else {
-+			LOG_ERROR_BDF("sxe hdc packet trace_id=0x%" SXE_PRIX64
-+					" trans error, ret=%d", trace_id, ret);
-+			ret = -EFAULT;
-+			goto l_up;
-+		}
-+	}
-+
-+l_up:
-+	LOG_DEBUG_BDF("hw[%p] cmd trace=0x%" SXE_PRIX64 "", hw, trace_id);
-+l_ret:
-+	ret_v = pthread_sigmask(SIG_SETMASK, &old_mask, NULL);
-+	if (ret_v)
-+		LOG_ERROR_BDF("hdc restore old signal mask failed, ret_v=%d", ret_v);
-+
-+	if (ret == -SXE_HDC_RETRY_ERR)
-+		ret = -EFAULT;
-+
-+	return ret;
-+}
-+
-+static void sxe_cmd_hdr_init(struct sxe_hdc_cmd_hdr *cmd_hdr,
-+					u8 cmd_type)
-+{
-+	cmd_hdr->cmd_type = cmd_type;
-+	cmd_hdr->cmd_sub_type = 0;
-+}
-+
-+static void sxe_driver_cmd_msg_init(struct sxe_hdc_drv_cmd_msg *msg,
-+						u16 opcode, u64 trace_id,
-+						void *req_data, u16 req_len)
-+{
-+	LOG_DEBUG("cmd[opcode=0x%x], trace=0x%" SXE_PRIX64 ", req_data_len=%u start init",
-+			opcode, trace_id, req_len);
-+	msg->opcode = opcode;
-+	msg->length.req_len = SXE_HDC_MSG_HDR_SIZE + req_len;
-+	msg->traceid = trace_id;
-+
-+	if (req_data && req_len != 0)
-+		memcpy(msg->body, (u8 *)req_data, req_len);
-+}
-+
-+static void sxe_hdc_trans_info_init(struct sxe_hdc_trans_info *trans_info,
-+					u8 *in_data_buf, u16 in_len,
-+					u8 *out_data_buf, u16 out_len)
-+{
-+	trans_info->in.data  = in_data_buf;
-+	trans_info->in.len   = in_len;
-+	trans_info->out.data = out_data_buf;
-+	trans_info->out.len  = out_len;
-+}
-+
-+s32 sxe_driver_cmd_trans(struct sxe_hw *hw, u16 opcode,
-+					void *req_data, u16 req_len,
-+					void *resp_data, u16 resp_len)
-+{
-+	s32 ret = SXE_SUCCESS;
-+	struct sxe_hdc_cmd_hdr *cmd_hdr;
-+	struct sxe_hdc_drv_cmd_msg *msg;
-+	struct sxe_hdc_drv_cmd_msg *ack;
-+	struct sxe_hdc_trans_info trans_info;
-+	struct sxe_adapter *adapter = hw->adapter;
-+
-+	u8 *in_data_buf;
-+	u8 *out_data_buf;
-+	u16 in_len;
-+	u16 out_len;
-+	u64 trace_id = 0;
-+	u16 ack_data_len;
-+
-+	in_len = SXE_HDC_CMD_HDR_SIZE + SXE_HDC_MSG_HDR_SIZE + req_len;
-+	out_len = SXE_HDC_CMD_HDR_SIZE + SXE_HDC_MSG_HDR_SIZE + resp_len;
-+
-+	trace_id = sxe_trace_id_get();
-+
-+	in_data_buf = calloc(1, RTE_ALIGN(in_len, RTE_CACHE_LINE_SIZE));
-+	if (in_data_buf == NULL) {
-+		LOG_ERROR_BDF("cmd trace_id=0x%" SXE_PRIX64 " kzalloc indata "
-+				"mem len[%u] failed", trace_id, in_len);
-+		ret = -ENOMEM;
-+		goto l_ret;
-+	}
-+
-+	out_data_buf = calloc(1, RTE_ALIGN(out_len, RTE_CACHE_LINE_SIZE));
-+	if (out_data_buf == NULL) {
-+		LOG_ERROR_BDF("cmd trace_id=0x%" SXE_PRIX64 " kzalloc out_data "
-+				"mem len[%u] failed", trace_id, out_len);
-+		ret = -ENOMEM;
-+		goto l_in_buf_free;
-+	}
-+
-+	cmd_hdr = (struct sxe_hdc_cmd_hdr *)in_data_buf;
-+	sxe_cmd_hdr_init(cmd_hdr, SXE_CMD_TYPE_DRV);
-+
-+	msg = (struct sxe_hdc_drv_cmd_msg *)((u8 *)in_data_buf + SXE_HDC_CMD_HDR_SIZE);
-+	sxe_driver_cmd_msg_init(msg, opcode, trace_id, req_data, req_len);
-+
-+	LOG_DEBUG_BDF("trans drv cmd:trace_id=0x%" SXE_PRIX64 ", opcode[0x%x], "
-+			"inlen=%u, out_len=%u",
-+			trace_id, opcode, in_len, out_len);
-+
-+	sxe_hdc_trans_info_init(&trans_info,
-+				in_data_buf, in_len,
-+				out_data_buf, out_len);
-+
-+	ret = sxe_hdc_cmd_process(hw, trace_id, &trans_info);
-+	if (ret) {
-+		LOG_ERROR_BDF("hdc cmd trace_id=0x%" SXE_PRIX64 " hdc cmd process"
-+				" failed, ret=%d", trace_id, ret);
-+		goto l_out_buf_free;
-+	}
-+
-+	ack = (struct sxe_hdc_drv_cmd_msg *)((u8 *)out_data_buf + SXE_HDC_CMD_HDR_SIZE);
-+
-+	if (ack->errcode) {
-+		LOG_ERROR_BDF("driver get hdc ack failed trace_id=0x%" SXE_PRIX64 ", err=%d",
-+				trace_id, ack->errcode);
-+		ret = -EFAULT;
-+		goto l_out_buf_free;
-+	}
-+
-+	ack_data_len = ack->length.ack_len - SXE_HDC_MSG_HDR_SIZE;
-+	if (resp_len != ack_data_len) {
-+		LOG_ERROR("ack trace_id=0x%" SXE_PRIX64 " data len[%u]"
-+			" and resp_len[%u] dont match",
-+			trace_id, ack_data_len, resp_len);
-+		ret = -EFAULT;
-+		goto l_out_buf_free;
-+	}
-+
-+	if (resp_len != 0)
-+		memcpy(resp_data, ack->body, resp_len);
-+
-+	LOG_DEBUG_BDF("driver get hdc ack trace_id=0x%" SXE_PRIX64 ","
-+			" ack_len=%u, ack_data_len=%u",
-+			trace_id, ack->length.ack_len, ack_data_len);
-+
-+l_out_buf_free:
-+	free(out_data_buf);
-+l_in_buf_free:
-+	free(in_data_buf);
-+l_ret:
-+	return ret;
-+}
-diff --git a/drivers/net/sxe/pf/sxe_pmd_hdc.h b/drivers/net/sxe/pf/sxe_pmd_hdc.h
-new file mode 100644
-index 0000000000..9198ee8cc1
---- /dev/null
-+++ b/drivers/net/sxe/pf/sxe_pmd_hdc.h
-@@ -0,0 +1,42 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
-+ */
-+#ifndef __SXE_HOST_HDC_H__
-+#define __SXE_HOST_HDC_H__
-+
-+#include "sxe_hdc.h"
-+#include "sxe_hw.h"
-+#include "sxe_errno.h"
-+
-+#define SXE_HDC_SUCCESS			  0
-+#define SXE_HDC_FALSE				SXE_ERR_HDC(1)
-+#define SXE_HDC_INVAL_PARAM		  SXE_ERR_HDC(2)
-+#define SXE_HDC_BUSY				 SXE_ERR_HDC(3)
-+#define SXE_HDC_FW_OPS_FAILED		SXE_ERR_HDC(4)
-+#define SXE_HDC_FW_OV_TIMEOUT		SXE_ERR_HDC(5)
-+#define SXE_HDC_REQ_ACK_HEAD_ERR	 SXE_ERR_HDC(6)
-+#define SXE_HDC_REQ_ACK_TLEN_ERR	 SXE_ERR_HDC(7)
-+#define SXE_HDC_PKG_SKIP_ERR		 SXE_ERR_HDC(8)
-+#define SXE_HDC_PKG_OTHER_ERR		SXE_ERR_HDC(9)
-+#define SXE_HDC_RETRY_ERR			SXE_ERR_HDC(10)
-+#define SXE_FW_STATUS_ERR			SXE_ERR_HDC(11)
-+
-+struct sxe_hdc_data_info {
-+	u8 *data;
-+	u16 len;
++static const struct rte_pci_id sxevf_pci_tbl[] = {
++	{ RTE_PCI_DEVICE(PCI_VENDOR_ID_STARS, SXEVF_DEV_ID_ASIC) },
++	{.vendor_id = 0,}
 +};
 +
-+struct sxe_hdc_trans_info {
-+	struct sxe_hdc_data_info in;
-+	struct sxe_hdc_data_info out;
++static struct rte_pci_driver rte_sxevf_pmd = {
++	.id_table  = sxevf_pci_tbl,
++	.drv_flags = RTE_PCI_DRV_NEED_MAPPING,
++	.probe	 = sxevf_probe,
++	.remove	= sxevf_remove,
 +};
 +
-+s32 sxe_driver_cmd_trans(struct sxe_hw *hw, u16 opcode,
-+					void *req_data, u16 req_len,
-+					void *resp_data, u16 resp_len);
-+
-+void sxe_hdc_channel_init(void);
-+
-+void sxe_fw_time_sync(struct sxe_hw *hw);
++RTE_PMD_REGISTER_PCI(net_sxevf, rte_sxevf_pmd);
++RTE_PMD_REGISTER_PCI_TABLE(net_sxevf, sxevf_pci_tbl);
++RTE_PMD_REGISTER_KMOD_DEP(net_sxevf, "* igb_uio | vfio-pci");
++RTE_PMD_REGISTER_PARAM_STRING(net_sxevf,
++				  SXEVF_DEVARG_LINK_CHECK "=<0|1>");
 +
 +#endif
-diff --git a/drivers/net/sxe/sxe_drv_type.h b/drivers/net/sxe/sxe_drv_type.h
+diff --git a/drivers/net/sxe/vf/sxevf_msg.c b/drivers/net/sxe/vf/sxevf_msg.c
 new file mode 100644
-index 0000000000..027c0571a4
+index 0000000000..37d3f2c5dc
 --- /dev/null
-+++ b/drivers/net/sxe/sxe_drv_type.h
-@@ -0,0 +1,15 @@
++++ b/drivers/net/sxe/vf/sxevf_msg.c
+@@ -0,0 +1,624 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2022, Linkdata Technology Co., Ltd.
 + */
 +
-+#ifndef __SXE_DRV_TYPEDEF_H__
-+#define __SXE_DRV_TYPEDEF_H__
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include "sxevf.h"
++#include "sxevf_msg.h"
++#include "sxevf_hw.h"
++#include "sxe_errno.h"
++#include "sxe_logs.h"
++
++#define SXEVF_PFMSG_MASK	0xFF00
++#define SXEVF_DEFAULT_TC_NUM		1
++
++void sxevf_mbx_init(struct sxevf_hw *hw)
++{
++	hw->mbx.msg_len = SXEVF_MBX_MSG_NUM;
++
++	hw->mbx.stats.rcv_msgs = 0;
++	hw->mbx.stats.send_msgs = 0;
++	hw->mbx.stats.acks = 0;
++	hw->mbx.stats.reqs = 0;
++	hw->mbx.stats.rsts = 0;
++
++	hw->mbx.retry = 0;
++	hw->mbx.interval = SXEVF_MBX_RETRY_INTERVAL;
++
++	hw->mbx.api_version = SXEVF_MBX_API_10;
++}
++
++static u32 sxevf_mbx_reg_read(struct sxevf_hw *hw)
++{
++	u32 value = sxevf_mailbox_read(hw);
++
++	value |= hw->mbx.reg_value;
++
++	hw->mbx.reg_value |= value & SXE_VFMAILBOX_RC_BIT;
++
++	return value;
++}
++
++static bool sxevf_mbx_bit_check(struct sxevf_hw *hw, u32 mask)
++{
++	bool ret = false;
++	u32 value = sxevf_mbx_reg_read(hw);
++
++	if (value & mask)
++		ret = true;
++
++	hw->mbx.reg_value &= ~mask;
++
++	return ret;
++}
++
++static bool sxevf_pf_msg_check(struct sxevf_hw *hw)
++{
++	bool ret = false;
++
++	if (sxevf_mbx_bit_check(hw, SXE_VFMAILBOX_PFSTS)) {
++		hw->mbx.stats.reqs++;
++		ret = true;
++	}
++
++	return ret;
++}
++
++static bool sxevf_pf_ack_check(struct sxevf_hw *hw)
++{
++	bool ret = false;
++
++	if (sxevf_mbx_bit_check(hw, SXE_VFMAILBOX_PFACK)) {
++		hw->mbx.stats.acks++;
++		ret = true;
++	}
++
++	return ret;
++}
++
++bool sxevf_pf_rst_check(struct sxevf_hw *hw)
++{
++	bool ret = false;
++
++	if (!sxevf_mbx_bit_check(hw, (SXE_VFMAILBOX_RSTI |
++					  SXE_VFMAILBOX_RSTD))) {
++		hw->mbx.stats.rsts++;
++		ret = true;
++	}
++
++	return ret;
++}
++
++static s32 sxevf_mailbox_lock(struct sxevf_hw *hw)
++{
++	u32 mailbox;
++	u32 retry = SXEVF_MBX_RETRY_COUNT;
++	s32 ret = -SXEVF_ERR_MBX_LOCK_FAIL;
++
++	while (retry--) {
++		mailbox = sxevf_mbx_reg_read(hw);
++		mailbox |= SXE_VFMAILBOX_VFU;
++		sxevf_mailbox_write(hw, mailbox);
++
++		if (sxevf_mbx_reg_read(hw) & SXE_VFMAILBOX_VFU) {
++			ret = 0;
++			break;
++		}
++
++		sxe_udelay(hw->mbx.interval);
++	}
++
++	return ret;
++}
++
++static void sxevf_mailbox_unlock(struct sxevf_hw *hw)
++{
++	u32 mailbox;
++
++	mailbox = sxevf_mbx_reg_read(hw);
++	mailbox &= ~SXE_VFMAILBOX_VFU;
++	sxevf_mailbox_write(hw, mailbox);
++}
++
++static bool sxevf_msg_poll(struct sxevf_hw *hw)
++{
++	struct sxevf_mbx_info *mbx = &hw->mbx;
++	u32 retry = mbx->retry;
++	bool ret = true;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	while (!sxevf_pf_msg_check(hw) && retry) {
++		retry--;
++		sxe_udelay(mbx->interval);
++	}
++
++	if (!retry) {
++		LOG_ERROR_BDF("retry:%d send msg to pf done, but don't check pf reply.",
++			  mbx->retry);
++		mbx->retry = 0;
++		ret = false;
++	}
++
++	return ret;
++}
++
++static bool sxevf_ack_poll(struct sxevf_hw *hw)
++{
++	struct sxevf_mbx_info *mbx = &hw->mbx;
++	u32 retry = mbx->retry;
++	bool ret = true;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	while (!sxevf_pf_ack_check(hw) && retry) {
++		retry--;
++		sxe_udelay(mbx->interval);
++	}
++
++	if (!retry) {
++		LOG_ERROR_BDF("send msg to pf, retry:%d but don't check pf ack, "
++			  "init mbx retry to 0.",
++			  mbx->retry);
++		mbx->retry = 0;
++		ret = false;
++	}
++
++	return ret;
++}
++
++static void sxevf_pf_msg_and_ack_clear(struct sxevf_hw *hw)
++{
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	LOG_INFO_BDF("clear pending pf msg and ack.");
++
++	sxevf_pf_msg_check(hw);
++	sxevf_pf_ack_check(hw);
++}
++
++static s32 sxevf_send_msg_to_pf(struct sxevf_hw *hw, u32 *msg, u16 msg_len)
++{
++	struct sxevf_mbx_info *mbx = &hw->mbx;
++	s32 ret = 0;
++	u16 i;
++	u32 old;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	if (!mbx->retry) {
++		ret = -SXEVF_ERR_NOT_READY;
++		LOG_ERROR_BDF("msg:0x%x len:%d send fail due to timeout.(err:%d)",
++			  msg[0], msg_len, ret);
++		goto l_out;
++	}
++
++	if (msg_len > mbx->msg_len) {
++		ret = -EINVAL;
++		LOG_ERROR_BDF("vf msg:0x%x len:%d exceed limit:%d "
++			  "send fail.(err:%d)",
++			  msg[0], msg_len, mbx->msg_len, ret);
++		goto l_out;
++	}
++
++	ret = sxevf_mailbox_lock(hw);
++	if (ret) {
++		LOG_ERROR_BDF("msg:0x%x len:%d send lock mailbox fail.(err:%d)",
++			   msg[0], msg_len, ret);
++		goto l_out;
++	}
++
++	sxevf_pf_msg_and_ack_clear(hw);
++
++	old = sxevf_msg_read(hw, 0);
++	msg[0] |= (old & SXEVF_PFMSG_MASK);
++
++	for (i = 0; i < msg_len; i++)
++		sxevf_msg_write(hw, i, msg[i]);
++
++	sxevf_pf_req_irq_trigger(hw);
++
++	hw->mbx.stats.send_msgs++;
++
++	if (!sxevf_ack_poll(hw)) {
++		ret = -SXEVF_ERR_POLL_ACK_FAIL;
++		LOG_ERROR_BDF("msg:0x%x len:%d send done, but don't poll ack.",
++			   msg[0], msg_len);
++		goto l_out;
++	}
++
++	LOG_INFO_BDF("vf send msg:0x%x len:%d to pf and polled pf ack done."
++		 "stats send_msg:%d ack:%d.",
++		 msg[0], msg_len,
++		 mbx->stats.send_msgs, mbx->stats.acks);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_mbx_msg_rcv(struct sxevf_hw *hw, u32 *msg, u16 msg_len)
++{
++	u32 i;
++	u16 msg_entry;
++	s32 ret = 0;
++	struct sxevf_mbx_info *mbx = &hw->mbx;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	msg_entry = (msg_len > mbx->msg_len) ? mbx->msg_len : msg_len;
++
++	ret = sxevf_mailbox_lock(hw);
++	if (ret) {
++		LOG_ERROR_BDF("size:%d rcv lock mailbox fail.(err:%d)",
++			   msg_entry, ret);
++		goto l_end;
++	}
++
++	for (i = 0; i < msg_entry; i++)
++		msg[i] = sxevf_msg_read(hw, i);
++
++	msg[0] &= ~SXEVF_PFMSG_MASK;
++
++	sxevf_pf_ack_irq_trigger(hw);
++
++	mbx->stats.rcv_msgs++;
++l_end:
++	return ret;
++}
++
++s32 sxevf_ctrl_msg_rcv(struct sxevf_hw *hw, u32 *msg, u16 msg_len)
++{
++	u16 i;
++	u16 msg_entry;
++	s32 ret = 0;
++	struct sxevf_mbx_info *mbx = &hw->mbx;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	msg_entry = (msg_len > mbx->msg_len) ? mbx->msg_len : msg_len;
++
++	ret = sxevf_mailbox_lock(hw);
++	if (ret) {
++		LOG_ERROR_BDF("size:%d rcv lock mailbox fail.(err:%d)",
++			   msg_entry, ret);
++		goto l_end;
++	}
++
++	for (i = 0; i < msg_entry; i++)
++		msg[i] = sxevf_msg_read(hw, i);
++
++	sxevf_mailbox_unlock(hw);
++
++	LOG_INFO_BDF("rcv pf mailbox msg:0x%x.", *msg);
++
++	mbx->stats.rcv_msgs++;
++l_end:
++	return ret;
++}
++
++s32 sxevf_ctrl_msg_rcv_and_clear(struct sxevf_hw *hw, u32 *msg, u16 msg_len)
++{
++	u16 i;
++	u16 msg_entry;
++	s32 ret = 0;
++	u32 clear;
++	struct sxevf_mbx_info *mbx = &hw->mbx;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	msg_entry = (msg_len > mbx->msg_len) ? mbx->msg_len : msg_len;
++
++	ret = sxevf_mailbox_lock(hw);
++	if (ret) {
++		LOG_ERROR_BDF("size:%d rcv lock mailbox fail.(err:%d)",
++			   msg_entry, ret);
++		goto l_end;
++	}
++
++	for (i = 0; i < msg_entry; i++)
++		msg[i] = sxevf_msg_read(hw, i);
++
++	clear = msg[0] & (~SXEVF_PFMSG_MASK);
++	sxevf_msg_write(hw, 0, clear);
++
++	sxevf_mailbox_unlock(hw);
++
++	LOG_INFO_BDF("rcv pf mailbox msg:0x%x.", *msg);
++
++	mbx->stats.rcv_msgs++;
++l_end:
++	return ret;
++}
++
++static s32 sxevf_rcv_msg_from_pf(struct sxevf_hw *hw, u32 *msg, u16 msg_len)
++{
++	s32 ret;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	if (!sxevf_msg_poll(hw)) {
++		ret = -SXEVF_ERR_POLL_MSG_FAIL;
++		LOG_ERROR_BDF("retry:%d don't poll pf msg.", hw->mbx.retry);
++		goto l_out;
++	}
++
++	ret = sxevf_mbx_msg_rcv(hw, msg, msg_len);
++	if (ret < 0) {
++		LOG_ERROR_BDF("retry:%d read msg fail.", hw->mbx.retry);
++		goto l_out;
++	}
++
++	LOG_INFO_BDF("vf polled pf msg:0x%x and rcv pf msg done. "
++		"stats req:%d rcv_msg:%d",
++		 msg[0], hw->mbx.stats.reqs, hw->mbx.stats.rcv_msgs);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_send_and_rcv_msg(struct sxevf_hw *hw, u32 *msg, u8 msg_len)
++{
++	s32 ret;
++	u16 msg_type = msg[0] & 0xFF;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	ret = sxevf_send_msg_to_pf(hw, msg, msg_len);
++	if (ret) {
++		LOG_ERROR_BDF("msg:0x%x len:%u msg send fail.(err:%d).",
++			   msg[0], msg_len, ret);
++		goto l_out;
++	}
++
++	if (msg_type == SXEVF_RESET)
++		mdelay(10);
++
++	ret = sxevf_rcv_msg_from_pf(hw, msg, msg_len);
++	if (ret) {
++		LOG_ERROR_BDF("msg:0x%x len:%u rcv fail.(err:%d).",
++			   msg[0], msg_len, ret);
++		goto l_out;
++	}
++
++	LOG_INFO_BDF("send and rcv msg:0x%x len:%u success.", msg[0], msg_len);
++
++l_out:
++	return ret;
++}
++
++void sxevf_mbx_api_version_init(struct sxevf_adapter *adapter)
++{
++	s32 ret;
++	struct sxevf_hw *hw = &adapter->hw;
++	static const int api[] = {
++		SXEVF_MBX_API_13,
++		SXEVF_MBX_API_12,
++		SXEVF_MBX_API_11,
++		SXEVF_MBX_API_10,
++		SXEVF_MBX_API_NR
++	};
++	u32 idx = 0;
++	struct sxevf_mbx_api_msg msg;
++
++	while (api[idx] != SXEVF_MBX_API_NR) {
++		msg.msg_type = SXEVF_API_NEGOTIATE;
++		msg.api_version = api[idx];
++
++		ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg, SXEVF_MSG_NUM(sizeof(msg)));
++		if (!ret && (msg.msg_type == (SXEVF_API_NEGOTIATE | SXEVF_MSGTYPE_ACK))) {
++			hw->mbx.api_version = api[idx];
++			break;
++		}
++		idx++;
++	}
++
++	LOG_INFO_BDF("mailbox api version:%u", hw->mbx.api_version);
++}
++
++s32 sxevf_ring_info_get(struct sxevf_adapter *adapter,
++			u8 *tc_num, u8 *default_tc)
++{
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_ring_info_msg req = {};
++	s32 ret;
++
++	req.msg_type = SXEVF_RING_INFO_GET;
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&req,
++					 SXEVF_MSG_NUM(sizeof(req)));
++	if (ret) {
++		LOG_ERROR_BDF("msg:0x%x send or rcv reply failed.(err:%d)",
++			   req.msg_type, ret);
++		goto l_out;
++	}
++
++	if (req.msg_type != (SXEVF_MSGTYPE_ACK | SXEVF_RING_INFO_GET)) {
++		ret = -SXEVF_ERR_REPLY_INVALID;
++		LOG_WARN_BDF("msg:0x%x not expected.(err:%d)", req.msg_type, ret);
++		goto l_out;
++	}
++
++	LOG_DEBUG_BDF("original ring info from pf, max_tx_num:%u max_rx_num:%u "
++		 "tc_num:%u default_tc:%u.",
++		 req.max_tx_num, req.max_rx_num, req.tc_num, req.default_tc);
++
++	if (req.max_tx_num == 0 ||
++		req.max_tx_num > SXEVF_TXRX_RING_NUM_MAX) {
++		req.max_tx_num = SXEVF_TXRX_RING_NUM_MAX;
++	}
++
++	if (req.max_rx_num == 0 ||
++		req.max_rx_num > SXEVF_TXRX_RING_NUM_MAX) {
++		req.max_rx_num = SXEVF_TXRX_RING_NUM_MAX;
++	}
++
++	if (req.tc_num > req.max_rx_num)
++		req.tc_num = SXEVF_DEFAULT_TC_NUM;
++
++	*tc_num = req.tc_num;
++
++	if (req.default_tc > req.max_tx_num)
++		req.default_tc = 0;
++
++	*default_tc = req.default_tc;
++
++	adapter->max_rx_queue = req.max_rx_num;
++	adapter->max_tx_queue = req.max_tx_num;
++
++	LOG_INFO_BDF("ring info max_tx_num:%u max_rx_num:%u "
++		 "tc_num:%u default_tc:%u.",
++		 req.max_tx_num, req.max_rx_num, req.tc_num, req.default_tc);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_rss_hash_config_get(struct sxevf_adapter *adapter,
++			struct rte_eth_rss_conf *rss_conf)
++{
++	struct sxevf_hw *hw = &adapter->hw;
++	struct sxevf_rss_hash_msg msg = {};
++	s32 ret;
++
++	msg.msg_type = SXEVF_RSS_CONF_GET;
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg,
++					 SXEVF_MSG_NUM(sizeof(msg)));
++	if (ret) {
++		LOG_ERROR_BDF("msg:0x%x send or rcv reply failed.(err:%d)",
++			   msg.msg_type, ret);
++		goto l_out;
++	}
++
++	if (msg.msg_type != (SXEVF_MSGTYPE_ACK | SXEVF_RSS_CONF_GET)) {
++		ret = -SXEVF_ERR_REPLY_INVALID;
++		LOG_WARN_BDF("msg:0x%x not expected.(err:%d)", msg.msg_type, ret);
++		goto l_out;
++	}
++
++	rss_conf->rss_key = msg.hash_key;
++	rss_conf->rss_hf = msg.rss_hf;
++
++	LOG_INFO_BDF("rss hash conf get success, msg:0x%x rss_key:%s rss_func:%" SXE_PRID64 ". ",
++		 msg.msg_type, msg.hash_key, msg.rss_hf);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_mac_addr_set(struct sxevf_hw *hw, u8 *uc_addr)
++{
++	s32 ret;
++	struct sxevf_uc_addr_msg msg = {};
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	msg.msg_type = SXEVF_DEV_MAC_ADDR_SET;
++	memcpy(msg.uc_addr, uc_addr, SXEVF_MAC_ADDR_LEN);
++
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg, SXEVF_MSG_NUM(sizeof(msg)));
++	if (!ret && (msg.msg_type ==
++		   (SXEVF_DEV_MAC_ADDR_SET | SXEVF_MSGTYPE_NACK))) {
++		ret = -EPERM;
++		LOG_ERROR_BDF("msg:0x%x uc addr:%pM replyed nack.",
++			   msg.msg_type, uc_addr);
++		goto l_out;
++	}
++
++	if (ret) {
++		LOG_ERROR_BDF("msg:0x%x uc addr:%pM set fail.(err:%d)",
++			   msg.msg_type, uc_addr, ret);
++		ret = -EPERM;
++		goto l_out;
++	}
++
++	LOG_INFO_BDF("msg:0x%x uc addr:%pM set success.", msg.msg_type, uc_addr);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_rx_max_frame_set(struct sxevf_hw *hw, u32 mtu)
++{
++	struct sxevf_max_frame_msg msg = {};
++	s32 ret;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	msg.msg_type = SXEVF_LPE_SET;
++	msg.max_frame = mtu;
++
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg,
++						 SXEVF_MSG_NUM(sizeof(msg)));
++	if (ret || ((msg.msg_type & SXEVF_LPE_SET) &&
++			(msg.msg_type & SXEVF_MSGTYPE_NACK))) {
++		ret = ret ? ret : -SXEVF_ERR_MSG_HANDLE_ERR;
++	}
++
++	LOG_INFO_BDF("msg_type:0x%x max_frame:0x%x (ret:%d)",
++		   msg.msg_type, msg.max_frame, ret);
++
++	return ret;
++}
++
++s32 sxevf_vlan_id_set(struct sxevf_hw *hw, u32 vlan_id,
++						 bool vlan_on)
++{
++	struct sxevf_vlan_filter_msg msg = {};
++	s32 ret;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	msg.msg_type = SXEVF_VLAN_SET;
++	msg.vlan_id = vlan_id;
++	msg.msg_type |= vlan_on << SXEVF_MSGINFO_SHIFT;
++
++	LOG_INFO_BDF("update vlan[%u], vlan on = %s", vlan_id, vlan_on ? "yes" : "no");
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg,
++						 SXEVF_MSG_NUM(sizeof(msg)));
++	LOG_INFO_BDF("update vlan[%u] ret = %d", vlan_id, ret);
++
++	msg.msg_type &= ~(0xFF << SXEVF_MSGINFO_SHIFT);
++
++	if (ret || (msg.msg_type != (SXEVF_VLAN_SET | SXEVF_MSGTYPE_ACK)))
++		ret = ret ? ret : -SXEVF_ERR_MSG_HANDLE_ERR;
++
++	return ret;
++}
++
++s32 sxevf_cast_mode_set(struct sxevf_hw *hw, enum sxevf_cast_mode mode)
++{
++	struct sxevf_cast_mode_msg msg = {};
++	s32 ret;
++	struct sxevf_adapter *adapter = hw->adapter;
++
++	msg.msg_type = SXEVF_CAST_MODE_SET;
++	msg.cast_mode = mode;
++
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg, SXEVF_MSG_NUM(sizeof(msg)));
++	if (ret || (msg.msg_type != (SXEVF_CAST_MODE_SET | SXEVF_MSGTYPE_ACK)))
++		ret = ret ? ret : -SXEVF_ERR_MSG_HANDLE_ERR;
++
++	LOG_INFO_BDF("msg_type:0x%x mode:0x%x msg result:0x%x.(ret:%d)",
++		   msg.msg_type, mode, msg.msg_type, ret);
++
++	return ret;
++}
++
++s32 sxevf_uc_addr_add(struct sxevf_hw *hw, u32 index, u8 *mac_addr)
++{
++	s32 ret = 0;
++	struct sxevf_adapter *adapter = hw->adapter;
++	struct sxevf_uc_sync_msg msg = {};
++	u32 check;
++	u32 result;
++
++	msg.msg_type = SXEVF_UC_ADDR_SYNC;
++	msg.index = index;
++	check = *(u32 *)&msg;
++
++	if (mac_addr)
++		memcpy((u8 *)&msg.addr, mac_addr, SXEVF_MAC_ADDR_LEN);
++
++	ret = sxevf_send_and_rcv_msg(hw, (u32 *)&msg, SXEVF_MSG_NUM(sizeof(msg)));
++	result = *(u32 *)&msg;
++
++	if (ret || (result != (check | SXEVF_MSGTYPE_ACK)))
++		ret = ret ? ret : -SXEVF_ERR_MSG_HANDLE_ERR;
++
++	LOG_INFO_BDF("msg_type:0x%x index:%d addr:%pM sync done "
++		 " result:0x%x msg.(ret:%d)",
++		 msg.msg_type, index, mac_addr, result, ret);
++
++	return ret;
++}
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_msg.h b/drivers/net/sxe/vf/sxevf_msg.h
+new file mode 100644
+index 0000000000..f017117dff
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_msg.h
+@@ -0,0 +1,201 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++#ifndef __SXEVF_MSG_H__
++#define __SXEVF_MSG_H__
++
++struct sxevf_adapter;
++
++#define SXEVF_MAC_ADDR_LEN 6
++
++#define SXEVF_UC_ENTRY_NUM_MAX 10
++#define SXEVF_MC_ENTRY_NUM_MAX 30
++
++#define SXEVF_MBX_MSG_NUM		16
++#define SXEVF_MBX_RETRY_INTERVAL 500
++#define SXEVF_MBX_RETRY_COUNT	2000
++
++#define SXEVF_RST_CHECK_NUM		  10000
++
++#define SXEVF_DEFAULT_ADDR_LEN	   4
++#define SXEVF_MC_FILTER_TYPE_WORD	3
++
++#define SXEVF_RESET			   0x01
++#define SXEVF_DEV_MAC_ADDR_SET	0x02
++#define SXEVF_MC_ADDR_SYNC		0x03
++#define SXEVF_VLAN_SET			0x04
++#define SXEVF_LPE_SET			 0x05
++
++#define SXEVF_UC_ADDR_SYNC		0x06
++
++#define SXEVF_API_NEGOTIATE	   0x08
++
++#define SXEVF_RING_INFO_GET	   0x09
++
++#define SXEVF_REDIR_TBL_GET		 0x0a
++#define SXEVF_RSS_KEY_GET		   0x0b
++#define SXEVF_CAST_MODE_SET		 0x0c
++#define SXEVF_LINK_ENABLE_GET	   0X0d
++#define SXEVF_IPSEC_ADD			 0x0e
++#define SXEVF_IPSEC_DEL			 0x0f
++#define SXEVF_RSS_CONF_GET		  0x10
++
++#define SXEVF_PF_CTRL_MSG_LINK_UPDATE  0x100
++#define SXEVF_PF_CTRL_MSG_NETDEV_DOWN   0x200
++
++#define SXEVF_PF_CTRL_MSG_REINIT		0x400
++
++#define SXEVF_PF_CTRL_MSG_MASK		  0x700
++#define SXEVF_PFREQ_MASK				0xFF00
++
++#define SXEVF_RSS_HASH_KEY_SIZE   (40)
++#define SXEVF_MAX_RETA_ENTRIES	(128)
++#define SXEVF_RETA_ENTRIES_DWORDS (SXEVF_MAX_RETA_ENTRIES / 16)
++
++#define SXEVF_TX_QUEUES	  1
++#define SXEVF_RX_QUEUES	  2
++#define SXEVF_TRANS_VLAN	 3
++#define SXEVF_DEF_QUEUE	  4
++
++#define SXEVF_MSGTYPE_ACK	0x80000000
++#define SXEVF_MSGTYPE_NACK   0x40000000
++
++#define SXEVF_MSGINFO_SHIFT  16
++#define SXEVF_MSGINFO_MASK   (0xFF << SXEVF_MSGINFO_SHIFT)
++
++#define SXEVF_MSG_NUM(size)   DIV_ROUND_UP(size, 4)
++
++enum sxevf_mbx_api_version {
++	SXEVF_MBX_API_10 = 0,
++	SXEVF_MBX_API_11,
++	SXEVF_MBX_API_12,
++	SXEVF_MBX_API_13,
++	SXEVF_MBX_API_14,
++
++	SXEVF_MBX_API_NR,
++};
++
++enum sxevf_cast_mode {
++	SXEVF_CAST_MODE_NONE = 0,
++	SXEVF_CAST_MODE_MULTI,
++	SXEVF_CAST_MODE_ALLMULTI,
++	SXEVF_CAST_MODE_PROMISC,
++};
++
++struct sxevf_rst_msg {
++	u32 msg_type;
++	u32 mac_addr[2];
++	u32 mc_fiter_type;
++};
++
++struct sxevf_mbx_api_msg {
++	u32 msg_type;
++	u32 api_version;
++};
++
++struct sxevf_ring_info_msg {
++	u32 msg_type;
++	u8  max_rx_num;
++	u8  max_tx_num;
++	u8  tc_num;
++	u8  default_tc;
++};
++
++struct sxevf_uc_addr_msg {
++	u32 msg_type;
++	u8 uc_addr[SXEVF_MAC_ADDR_LEN];
++	u16 pad;
++};
++
++struct sxevf_cast_mode_msg {
++	u32 msg_type;
++	u32 cast_mode;
++};
++
++struct sxevf_mc_sync_msg {
++	u16 msg_type;
++	u16 mc_cnt;
++	u16 mc_addr_extract[SXEVF_MC_ENTRY_NUM_MAX];
++};
++
++struct sxevf_uc_sync_msg {
++	u16 msg_type;
++	u16 index;
++	u32 addr[2];
++};
++
++struct sxevf_max_frame_msg {
++	u32 msg_type;
++	u32 max_frame;
++};
++
++struct sxevf_vlan_filter_msg {
++	u32 msg_type;
++	u32 vlan_id;
++};
++
++struct sxevf_redir_tbl_msg {
++	u32 type;
++	u32 entries[SXEVF_RETA_ENTRIES_DWORDS];
++};
++
++struct sxevf_rss_hsah_key_msg {
++	u32 type;
++	u8  hash_key[SXEVF_RSS_HASH_KEY_SIZE];
++};
++
++struct sxevf_rss_hash_msg {
++	u32 msg_type;
++	u8  hash_key[SXEVF_RSS_HASH_KEY_SIZE];
++	u64 rss_hf;
++};
++
++struct sxevf_ipsec_add_msg {
++	u32 msg_type;
++	u32 pf_sa_idx;
++	__be32 spi;
++	u8 flags;
++	u8 proto;
++	u16 family;
++	__be32 addr[4];
++	u32 key[5];
++};
++
++struct sxevf_ipsec_del_msg {
++	u32 msg_type;
++	u32 sa_idx;
++};
++
++void sxevf_mbx_init(struct sxevf_hw *hw);
++
++void sxevf_mbx_api_version_init(struct sxevf_adapter *adapter);
++
++bool sxevf_pf_rst_check(struct sxevf_hw *hw);
++
++s32 sxevf_mbx_msg_rcv(struct sxevf_hw *hw, u32 *msg, u16 msg_len);
++
++s32 sxevf_send_and_rcv_msg(struct sxevf_hw *hw, u32 *msg, u8 msg_len);
++
++s32 sxevf_mac_addr_set(struct sxevf_hw *hw, u8 *uc_addr);
++
++s32 sxevf_ring_info_get(struct sxevf_adapter *adapter,
++			u8 *tc_num, u8 *default_tc);
++
++s32 sxevf_rss_hash_config_get(struct sxevf_adapter *adapter,
++			struct rte_eth_rss_conf *rss_conf);
++
++void sxevf_mbx_api_version_init(struct sxevf_adapter *adapter);
++
++s32 sxevf_ctrl_msg_rcv(struct sxevf_hw *hw, u32 *msg, u16 msg_len);
++
++s32 sxevf_rx_max_frame_set(struct sxevf_hw *hw, u32 mtu);
++
++s32 sxevf_vlan_id_set(struct sxevf_hw *hw, u32 vlan,
++						 bool vlan_on);
++s32 sxevf_cast_mode_set(struct sxevf_hw *hw, enum sxevf_cast_mode mode);
++
++s32 sxevf_uc_addr_add(struct sxevf_hw *hw, u32 index, u8 *mac_addr);
++
++s32 sxevf_ctrl_msg_rcv_and_clear(struct sxevf_hw *hw, u32 *msg, u16 msg_len);
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_offload.c b/drivers/net/sxe/vf/sxevf_offload.c
+new file mode 100644
+index 0000000000..b39245aa11
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_offload.c
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++#include <ethdev_driver.h>
 +
 +#include "sxe_types.h"
++#include "sxe_offload_common.h"
++#include "sxevf_offload.h"
 +
-+typedef u8 U8;
-+typedef u16 U16;
-+typedef u32 U32;
-+typedef u64 U64;
++u64 sxevf_rx_queue_offloads_get(struct rte_eth_dev *dev)
++{
++	return __sxe_rx_queue_offload_capa_get(dev);
++}
++
++u64 sxevf_rx_port_offloads_get(struct rte_eth_dev *dev)
++{
++	return __sxe_rx_port_offload_capa_get(dev);
++}
++
++u64 sxevf_tx_queue_offloads_get(struct rte_eth_dev *dev)
++{
++	RTE_SET_USED(dev);
++
++	return 0;
++}
++
++u64 sxevf_tx_port_offloads_get(struct rte_eth_dev *dev)
++{
++	return __sxe_tx_port_offload_capa_get(dev);
++}
+diff --git a/drivers/net/sxe/vf/sxevf_offload.h b/drivers/net/sxe/vf/sxevf_offload.h
+new file mode 100644
+index 0000000000..ae4bf87f30
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_offload.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXEVF_OFFLOAD_H__
++#define __SXEVF_OFFLOAD_H__
++
++u64 sxevf_rx_queue_offloads_get(struct rte_eth_dev *dev);
++
++u64 sxevf_rx_port_offloads_get(struct rte_eth_dev *dev);
++
++u64 sxevf_tx_queue_offloads_get(struct rte_eth_dev *dev);
++
++u64 sxevf_tx_port_offloads_get(struct rte_eth_dev *dev);
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_queue.c b/drivers/net/sxe/vf/sxevf_queue.c
+new file mode 100644
+index 0000000000..69ef1f6676
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_queue.c
+@@ -0,0 +1,208 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include <rte_byteorder.h>
++#include <rte_mbuf_core.h>
++#include <rte_ethdev.h>
++#include "sxevf_rx.h"
++#include "sxevf_tx.h"
++#include "sxe_logs.h"
++#include "sxevf.h"
++#include "sxe_queue_common.h"
++#include "sxevf_hw.h"
++#include "sxe_offload.h"
++#include "sxe_ethdev.h"
++#include "sxevf_queue.h"
++#include "sxevf_msg.h"
++
++s32 __rte_cold sxevf_rx_queue_mbufs_alloc(sxevf_rx_queue_s *rxq)
++{
++	s32 ret;
++
++	ret = __sxe_rx_queue_mbufs_alloc((sxevf_rx_queue_s *)rxq);
++
++	return ret;
++}
++
++s32 __rte_cold sxevf_rx_queue_setup(struct rte_eth_dev *dev,
++			 u16 queue_idx, u16 desc_num,
++			 unsigned int socket_id,
++			 const struct rte_eth_rxconf *rx_conf,
++			 struct rte_mempool *mp)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++	struct sxevf_hw	 *hw = &adapter->hw;
++	struct rx_setup rx_setup = {};
++	s32 ret;
++
++	PMD_INIT_FUNC_TRACE();
++
++	rx_setup.desc_num = desc_num;
++	rx_setup.queue_idx = queue_idx;
++	rx_setup.socket_id = socket_id;
++	rx_setup.mp = mp;
++	rx_setup.dev = dev;
++	rx_setup.reg_base_addr = hw->reg_base_addr;
++	rx_setup.rx_conf = rx_conf;
++	rx_setup.rx_batch_alloc_allowed = &adapter->rx_batch_alloc_allowed;
++
++	ret = __sxe_rx_queue_setup(&rx_setup, true);
++	if (ret)
++		LOG_ERROR_BDF("rx queue setup fail.(err:%d)", ret);
++
++	return ret;
++}
++
++s32 __rte_cold sxevf_tx_queue_setup(struct rte_eth_dev *dev,
++				u16 tx_queue_id,
++				u16 ring_depth,
++				u32 socket_id,
++				const struct rte_eth_txconf *tx_conf)
++{
++	s32 ret;
++	struct sxevf_hw *hw = (&((struct sxevf_adapter *)(dev->data->dev_private))->hw);
++	struct tx_setup tx_setup;
++
++	tx_setup.dev = dev;
++	tx_setup.desc_num = ring_depth;
++	tx_setup.queue_idx = tx_queue_id;
++	tx_setup.socket_id = socket_id;
++	tx_setup.reg_base_addr = hw->reg_base_addr;
++	tx_setup.tx_conf = tx_conf;
++
++	ret = __sxe_tx_queue_setup(&tx_setup, true);
++	if (ret)
++		PMD_LOG_ERR(DRV, "rx queue setup fail.(err:%d)", ret);
++
++	return ret;
++}
++
++void __rte_cold
++sxevf_rx_queue_release(struct rte_eth_dev *dev, u16 queue_id)
++{
++	__sxe_rx_queue_free(dev->data->rx_queues[queue_id]);
++}
++
++void __rte_cold
++sxevf_tx_queue_release(struct rte_eth_dev *dev, u16 queue_id)
++{
++	__sxe_tx_queue_free(dev->data->tx_queues[queue_id]);
++}
++
++void sxevf_rx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
++	struct rte_eth_rxq_info *qinfo)
++{
++	__sxe_rx_queue_info_get(dev, queue_id, qinfo);
++}
++
++void sxevf_tx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
++		struct rte_eth_txq_info *q_info)
++{
++	__sxe_tx_queue_info_get(dev, queue_id, q_info);
++}
++
++s32 sxevf_tx_done_cleanup(void *tx_queue, u32 free_cnt)
++{
++	s32 ret;
++
++	/* Tx queue cleanup */
++	ret = __sxe_tx_done_cleanup(tx_queue, free_cnt);
++	if (ret)
++		PMD_LOG_ERR(DRV, "tx cleanup fail.(err:%d)", ret);
++
++	return ret;
++}
++
++s32 sxevf_rss_reta_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_reta_entry64 *reta_conf,
++			u16 reta_size)
++{
++	s32 ret = -ENOTSUP;
++
++	PMD_INIT_FUNC_TRACE();
++
++	RTE_SET_USED(reta_conf);
++	RTE_SET_USED(reta_size);
++
++	if (!dev->data->dev_started) {
++		PMD_LOG_ERR(DRV,
++			"port %d must be started before rss reta update",
++			 dev->data->port_id);
++		ret = -EIO;
++		goto l_out;
++	}
++
++	PMD_LOG_ERR(DRV, "rss reta update is not supported on vf.(err:%d)", ret);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_rss_reta_query(struct rte_eth_dev *dev,
++			 struct rte_eth_rss_reta_entry64 *reta_conf,
++			 u16 reta_size)
++{
++	s32 ret = 0;
++
++	RTE_SET_USED(dev);
++	RTE_SET_USED(reta_conf);
++
++	if (reta_size != 0) {
++		ret = -EINVAL;
++		PMD_LOG_ERR(DRV, "vf rss reta size:0, not support query.(err:%d)", ret);
++	}
++
++	return ret;
++}
++
++s32 sxevf_rss_hash_conf_get(struct rte_eth_dev *dev,
++				struct rte_eth_rss_conf *rss_conf)
++{
++	s32 ret = 0;
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++
++	ret = sxevf_rss_hash_config_get(adapter, rss_conf);
++	if (ret) {
++		LOG_ERROR_BDF("rss hash config get failed.(err:%d)", ret);
++		goto l_out;
++	}
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf)
++{
++	s32 ret = -ENOTSUP;
++
++	RTE_SET_USED(dev);
++	RTE_SET_USED(rss_conf);
++
++	PMD_LOG_ERR(DRV, "rss hash update is not supported on vf.(err:%d)", ret);
++
++	return ret;
++}
++
++void sxevf_secondary_proc_init(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	bool rx_vec_allowed = 0;
++
++	__sxe_secondary_proc_init(eth_dev, adapter->rx_batch_alloc_allowed, &rx_vec_allowed);
++}
++
++void __rte_cold sxevf_txrx_queues_clear(struct rte_eth_dev *dev, bool rx_batch_alloc_allowed)
++{
++	__sxe_txrx_queues_clear(dev, rx_batch_alloc_allowed);
++}
++
++void sxevf_queues_free(struct rte_eth_dev *dev)
++{
++	__sxe_queues_free(dev);
++}
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_queue.h b/drivers/net/sxe/vf/sxevf_queue.h
+new file mode 100644
+index 0000000000..01e2ec216c
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_queue.h
+@@ -0,0 +1,69 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXEVF_QUEUEU_H__
++#define __SXEVF_QUEUEU_H__
++
++#include "sxe_types.h"
++#include "sxe_queue_common.h"
++
++typedef union sxe_tx_data_desc sxevf_tx_data_desc_u;
++typedef struct sxe_rx_buffer   sxevf_rx_buffer_s;
++typedef union sxe_rx_data_desc sxevf_rx_data_desc_u;
++typedef struct sxe_tx_queue	sxevf_tx_queue_s;
++typedef struct sxe_rx_queue	sxevf_rx_queue_s;
++
++s32 __rte_cold sxevf_rx_queue_mbufs_alloc(sxevf_rx_queue_s *rxq);
++
++s32 __rte_cold sxevf_rx_queue_setup(struct rte_eth_dev *dev,
++			 u16 queue_idx, u16 desc_num,
++			 unsigned int socket_id,
++			 const struct rte_eth_rxconf *rx_conf,
++			 struct rte_mempool *mp);
++
++s32 __rte_cold sxevf_tx_queue_setup(struct rte_eth_dev *dev,
++				u16 tx_queue_id,
++				u16 ring_depth,
++				u32 socket_id,
++				const struct rte_eth_txconf *tx_conf);
++void __rte_cold sxevf_tx_queue_release(struct rte_eth_dev *dev, u16 queue_id);
++
++void __rte_cold sxevf_rx_queue_release(struct rte_eth_dev *dev, u16 queue_id);
++
++void sxevf_rx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
++	struct rte_eth_rxq_info *qinfo);
++
++void sxevf_tx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
++		struct rte_eth_txq_info *q_info);
++
++s32 sxevf_tx_done_cleanup(void *tx_queue, u32 free_cnt);
++
++s32 sxevf_rss_reta_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_reta_entry64 *reta_conf,
++			u16 reta_size);
++
++s32 sxevf_rss_reta_query(struct rte_eth_dev *dev,
++			 struct rte_eth_rss_reta_entry64 *reta_conf,
++			 u16 reta_size);
++
++s32 sxevf_rss_hash_conf_get(struct rte_eth_dev *dev,
++				struct rte_eth_rss_conf *rss_conf);
++
++s32 sxevf_rss_hash_update(struct rte_eth_dev *dev,
++			struct rte_eth_rss_conf *rss_conf);
++
++void sxevf_secondary_proc_init(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_rx_descriptor_status(void *rx_queue, u16 offset);
++
++u16 sxevf_pkts_recv(void *rx_queue, struct rte_mbuf **rx_pkts, u16 num_pkts);
++
++u16 sxevf_pkts_xmit_with_offload(void *tx_queue, struct rte_mbuf **tx_pkts, u16 pkts_num);
++s32 sxevf_tx_descriptor_status(void *tx_queue, u16 offset);
++
++void __rte_cold sxevf_txrx_queues_clear(struct rte_eth_dev *dev, bool rx_batch_alloc_allowed);
++
++void sxevf_queues_free(struct rte_eth_dev *dev);
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_rx.c b/drivers/net/sxe/vf/sxevf_rx.c
+new file mode 100644
+index 0000000000..81aab3f315
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_rx.c
+@@ -0,0 +1,162 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include <rte_common.h>
++#include <ethdev_driver.h>
++
++#include "sxe_logs.h"
++#include "sxe_errno.h"
++#include "sxevf.h"
++#include "sxevf_msg.h"
++#include "sxevf_rx.h"
++#include "sxe_rx_common.h"
++#include "sxevf_queue.h"
++#include "sxevf_rx.h"
++#include "sxe_ethdev.h"
++
++#define SXEVF_RX_HDR_SIZE  256
++
++static void sxevf_rss_bit_num_configure(struct sxevf_hw *hw, u16 rx_queues_num)
++{
++	u32 psrtype;
++
++	psrtype = (rx_queues_num >> 1) << SXEVF_PSRTYPE_RQPL_SHIFT;
++
++	sxevf_rss_bit_num_set(hw, psrtype);
++}
++
++static void sxevf_rxmode_offload_configure(struct rte_eth_dev *eth_dev,
++						u64 queue_offload, u32 buf_size)
++{
++	struct rte_eth_rxmode *rxmode = &eth_dev->data->dev_conf.rxmode;
++	u32 frame_size = SXE_GET_FRAME_SIZE(eth_dev);
++
++	if (rxmode->offloads & RTE_ETH_RX_OFFLOAD_SCATTER ||
++		((frame_size + 2 * SXEVF_VLAN_TAG_SIZE) > buf_size)) {
++		if (!eth_dev->data->scattered_rx) {
++			PMD_LOG_WARN(DRV, "rxmode offload:0x%" SXE_PRIX64 " max_rx_pkt_len:%u "
++					"buf_size:%u enable rx scatter",
++					rxmode->offloads,
++					frame_size,
++					buf_size);
++		}
++		eth_dev->data->scattered_rx = 1;
++	}
++
++	if (queue_offload & RTE_ETH_RX_OFFLOAD_VLAN_STRIP)
++		rxmode->offloads |= RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++}
++
++static s32 sxevf_rx_queue_configure(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	sxevf_rx_queue_s *rxq;
++	struct rte_eth_rxmode *rxmode = &eth_dev->data->dev_conf.rxmode;
++	s32 ret;
++	u16 i;
++	u32 len;
++	u32 buf_size;
++
++	rxmode->offloads &= ~RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
++	for (i = 0; i < eth_dev->data->nb_rx_queues; i++) {
++		rxq = eth_dev->data->rx_queues[i];
++		len = rxq->ring_depth * sizeof(sxevf_rx_data_desc_u);
++
++		ret = sxevf_rx_queue_mbufs_alloc(rxq);
++		if (ret) {
++			LOG_ERROR_BDF("rx queue num:%u queue id:%u alloc "
++					  "rx buffer fail.(err:%d)",
++					  eth_dev->data->nb_rx_queues, i, ret);
++			goto l_out;
++		}
++
++		buf_size = (u16)(rte_pktmbuf_data_room_size(rxq->mb_pool) -
++			RTE_PKTMBUF_HEADROOM);
++
++		sxevf_rx_ring_desc_configure(hw, len, rxq->base_addr, rxq->reg_idx);
++
++		sxevf_rx_rcv_ctl_configure(hw, rxq->reg_idx, SXEVF_RX_HDR_SIZE,
++					   buf_size, rxq->drop_en);
++
++		sxevf_rxmode_offload_configure(eth_dev, rxq->offloads, buf_size);
++	}
++
++	sxevf_rss_bit_num_configure(hw, eth_dev->data->nb_rx_queues);
++
++	sxevf_rx_function_set(eth_dev);
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_rx_configure(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	u32 frame_size = SXE_GET_FRAME_SIZE(eth_dev);
++	u32 mtu = frame_size - SXE_ETH_OVERHEAD;
++	s32 ret;
++
++	if (rte_is_power_of_2(eth_dev->data->nb_rx_queues) == 0) {
++		ret = -SXEVF_ERR_PARAM;
++		LOG_ERROR_BDF("invalid rx queue num:%u.",
++			 eth_dev->data->nb_rx_queues);
++		goto l_out;
++	}
++
++	if (eth_dev->data->nb_rx_queues > adapter->max_rx_queue) {
++		ret = -SXEVF_ERR_PARAM;
++		LOG_ERROR_BDF("invalid rx queue num:%u exceed max rx queue:%u ",
++			eth_dev->data->nb_rx_queues,
++			adapter->max_rx_queue);
++		goto l_out;
++	}
++
++	ret = sxevf_rx_max_frame_set(hw, mtu);
++	if (ret) {
++		LOG_ERROR_BDF("max frame size:%u set fail.(err:%d)",
++				  frame_size, ret);
++		goto l_out;
++	}
++
++	ret = sxevf_rx_queue_configure(eth_dev);
++	if (ret) {
++		LOG_ERROR_BDF("rx queue num:%u configure fail.(err:%u)",
++				  eth_dev->data->nb_rx_queues, ret);
++	}
++
++l_out:
++	return ret;
++}
++
++void __rte_cold sxevf_rx_function_set(struct rte_eth_dev *dev)
++{
++	struct sxevf_adapter *adapter = dev->data->dev_private;
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SIMD
++	__sxe_rx_function_set(dev, adapter->rx_batch_alloc_allowed, &adapter->rx_vec_allowed);
++#else
++	__sxe_rx_function_set(dev, adapter->rx_batch_alloc_allowed, NULL);
++#endif
++}
++
++s32 sxevf_rx_descriptor_status(void *rx_queue, u16 offset)
++{
++	return __sxe_rx_descriptor_status(rx_queue, offset);
++}
++
++u16 sxevf_pkts_recv(void *rx_queue, struct rte_mbuf **rx_pkts, u16 num_pkts)
++{
++	return __sxe_pkts_recv(rx_queue, rx_pkts, num_pkts);
++}
++
++const u32 *sxevf_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
++{
++	return __sxe_dev_supported_ptypes_get(dev, no_of_elements);
++}
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_rx.h b/drivers/net/sxe/vf/sxevf_rx.h
+new file mode 100644
+index 0000000000..55ca2705c1
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_rx.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXEVF_RX_H__
++#define __SXEVF_RX_H__
++
++#include "sxe_queue_common.h"
++
++#define SXEVF_RX_DESC_RING_ALIGN	(SXE_ALIGN / sizeof(sxevf_rx_data_desc_t))
++
++s32 sxevf_rx_configure(struct rte_eth_dev *eth_dev);
++
++const u32 *sxevf_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements);
++
++void __rte_cold sxevf_rx_function_set(struct rte_eth_dev *dev);
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_stats.c b/drivers/net/sxe/vf/sxevf_stats.c
+new file mode 100644
+index 0000000000..5cf8603807
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_stats.c
+@@ -0,0 +1,162 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include <rte_ethdev.h>
++#include <ethdev_driver.h>
++#include "sxevf_stats.h"
++#include "sxe_logs.h"
++#include "sxe_errno.h"
++#include "sxevf.h"
++
++#define SXE_HW_XSTATS_CNT (sizeof(sxevf_xstats_field) / \
++			  sizeof(sxevf_xstats_field[0]))
++
++static const struct sxevf_stats_field sxevf_xstats_field[] = {
++	{"rx_multicast_packets", offsetof(struct sxevf_hw_stats, vfmprc)},
++};
++
++#ifdef SXE_TEST
++static u32 sxevf_xstats_cnt_get(void)
++{
++	return SXE_HW_XSTATS_CNT;
++}
++#endif
++
++int sxevf_eth_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
++			struct eth_queue_stats *qstats __rte_unused)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_stats_info *stats_info = &adapter->stats_info;
++	struct sxevf_hw *hw = &adapter->hw;
++	s32 ret = 0;
++
++	sxevf_packet_stats_get(hw, &stats_info->hw_stats);
++
++	if (stats == NULL) {
++		ret = -EINVAL;
++		PMD_LOG_ERR(DRV, "input param stats is null.");
++		goto l_out;
++	}
++
++	stats->ipackets = stats_info->hw_stats.vfgprc;
++	stats->ibytes   = stats_info->hw_stats.vfgorc;
++	stats->opackets = stats_info->hw_stats.vfgptc;
++	stats->obytes   = stats_info->hw_stats.vfgotc - stats->opackets * RTE_ETHER_CRC_LEN;
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_dev_stats_reset(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_stats_info *stats_info = &adapter->stats_info;
++
++	sxevf_eth_stats_get(eth_dev, NULL, NULL);
++
++	stats_info->hw_stats.vfgprc = 0;
++	stats_info->hw_stats.vfgorc = 0;
++	stats_info->hw_stats.vfgptc = 0;
++	stats_info->hw_stats.vfgotc = 0;
++	stats_info->hw_stats.vfmprc = 0;
++
++	return 0;
++}
++
++static s32 sxevf_hw_xstat_offset_get(u32 id, u32 *offset)
++{
++	s32 ret = 0;
++	u32 size = SXE_HW_XSTATS_CNT;
++
++	if (id < size) {
++		*offset = sxevf_xstats_field[id].offset;
++	} else {
++		ret = -SXE_ERR_PARAM;
++		PMD_LOG_ERR(DRV, "invalid id:%u exceed stats size cnt:%u.",
++				id, size);
++	}
++
++	return ret;
++}
++
++s32 sxevf_xstats_get(struct rte_eth_dev *eth_dev,
++				struct rte_eth_xstat *xstats,
++				u32 usr_cnt)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_stats_info *stats_info = &adapter->stats_info;
++	struct sxevf_hw *hw = &adapter->hw;
++	u32 i;
++	u32 cnt;
++	s32 ret;
++	u32 offset;
++
++	cnt = SXE_HW_XSTATS_CNT;
++	PMD_LOG_INFO(DRV, "xstat size:%u. hw xstat field cnt:%" SXE_PRIU64,
++			cnt,
++			(u64)SXE_HW_XSTATS_CNT);
++
++	if (usr_cnt < cnt) {
++		ret = cnt;
++		PMD_LOG_ERR(DRV, "user usr_cnt:%u less than stats cnt:%u.",
++				usr_cnt, cnt);
++		goto l_out;
++	}
++
++	sxevf_packet_stats_get(hw, &stats_info->hw_stats);
++
++	if (xstats == NULL) {
++		ret = 0;
++		PMD_LOG_ERR(DRV, "usr_cnt:%u, input param xstats is null.",
++					usr_cnt);
++		goto l_out;
++	}
++
++	cnt = 0;
++	for (i = 0; i < SXE_HW_XSTATS_CNT; i++) {
++		sxevf_hw_xstat_offset_get(i, &offset);
++		xstats[cnt].value = *(u_long *)(((s8 *)(&stats_info->hw_stats)) + offset);
++		xstats[cnt].id = cnt;
++		cnt++;
++	}
++
++	ret = SXE_HW_XSTATS_CNT;
++
++l_out:
++	return ret;
++}
++
++s32 sxevf_xstats_names_get(__rte_unused struct rte_eth_dev *dev,
++	struct rte_eth_xstat_name *xstats_names, __rte_unused unsigned int usr_cnt)
++{
++	u32 i = 0;
++	u32 cnt = 0;
++	s32 ret;
++
++	if (xstats_names == NULL) {
++		ret = SXE_HW_XSTATS_CNT;
++		PMD_LOG_INFO(DRV, "xstats field size:%u.", ret);
++		goto l_out;
++	} else if (usr_cnt < SXE_HW_XSTATS_CNT) {
++		ret = -ENOMEM;
++		PMD_LOG_ERR(DRV, "usr_cnt:%u invalid.(err:%d).", usr_cnt, ret);
++		goto l_out;
++	}
++
++	for (i = 0; i < SXE_HW_XSTATS_CNT; i++) {
++		strlcpy(xstats_names[cnt].name,
++			sxevf_xstats_field[i].name,
++			sizeof(xstats_names[cnt].name));
++		cnt++;
++	}
++
++	ret = cnt;
++
++l_out:
++	return ret;
++}
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_stats.h b/drivers/net/sxe/vf/sxevf_stats.h
+new file mode 100644
+index 0000000000..cba450953f
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_stats.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXEVF_STATS_H__
++#define __SXEVF_STATS_H__
++
++#include "sxevf_hw.h"
++
++struct sxevf_stats_field {
++	s8  name[RTE_ETH_XSTATS_NAME_SIZE];
++	u32 offset;
++};
++
++struct sxevf_stats_info {
++	struct sxevf_hw_stats hw_stats;
++};
++
++int sxevf_eth_stats_get(struct rte_eth_dev *eth_dev, struct rte_eth_stats *stats,
++			struct eth_queue_stats *qstats __rte_unused);
++
++s32 sxevf_dev_stats_reset(struct rte_eth_dev *eth_dev);
++
++s32 sxevf_xstats_get(struct rte_eth_dev *eth_dev,
++				struct rte_eth_xstat *xstats,
++				u32 usr_cnt);
++
++s32 sxevf_xstats_names_get(__rte_unused struct rte_eth_dev *dev,
++	struct rte_eth_xstat_name *xstats_names, __rte_unused unsigned int usr_cnt);
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_tx.c b/drivers/net/sxe/vf/sxevf_tx.c
+new file mode 100644
+index 0000000000..099f737e9a
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_tx.c
+@@ -0,0 +1,46 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#if defined SXE_DPDK_L4_FEATURES && defined SXE_DPDK_SRIOV
++
++#include <rte_ethdev.h>
++
++#include "sxe_logs.h"
++#include "sxevf.h"
++#include "sxevf_tx.h"
++#include "sxevf_queue.h"
++#include "sxe_tx_common.h"
++
++void sxevf_tx_configure(struct rte_eth_dev *eth_dev)
++{
++	struct sxevf_adapter *adapter = eth_dev->data->dev_private;
++	struct sxevf_hw *hw = &adapter->hw;
++	sxevf_tx_queue_s *txq;
++	u16 i;
++	u32 len;
++
++	for (i = 0; i < eth_dev->data->nb_tx_queues; i++) {
++		txq = eth_dev->data->tx_queues[i];
++		len = txq->ring_depth * sizeof(sxevf_tx_data_desc_u);
++		sxevf_tx_desc_configure(hw, len, txq->base_addr, txq->reg_idx);
++
++		sxevf_tx_queue_thresh_set(hw, txq->reg_idx,
++			txq->pthresh, txq->hthresh, txq->wthresh);
++	}
++
++	LOG_DEBUG_BDF("tx queue num:%u tx configure done.",
++			eth_dev->data->nb_tx_queues);
++}
++
++s32 sxevf_tx_descriptor_status(void *tx_queue, u16 offset)
++{
++	return __sxe_tx_descriptor_status(tx_queue, offset);
++}
++
++u16 sxevf_pkts_xmit_with_offload(void *tx_queue, struct rte_mbuf **tx_pkts, u16 pkts_num)
++{
++	return __sxe_pkts_xmit_with_offload(tx_queue, tx_pkts, pkts_num);
++}
++
++#endif
+diff --git a/drivers/net/sxe/vf/sxevf_tx.h b/drivers/net/sxe/vf/sxevf_tx.h
+new file mode 100644
+index 0000000000..c8ad400bca
+--- /dev/null
++++ b/drivers/net/sxe/vf/sxevf_tx.h
+@@ -0,0 +1,14 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2022, Linkdata Technology Co., Ltd.
++ */
++
++#ifndef __SXEVF_TX_H__
++#define __SXEVF_TX_H__
++
++#include "sxe_queue_common.h"
++
++#define SXEVF_TX_DESC_RING_ALIGN	(SXE_ALIGN / sizeof(sxevf_tx_data_desc_u))
++
++void sxevf_tx_configure(struct rte_eth_dev *eth_dev);
 +
 +#endif
 -- 
