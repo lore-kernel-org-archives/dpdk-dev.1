@@ -2,79 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B927F33810
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 08:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE988F33815
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 08:40:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A8C3402D1;
-	Tue, 17 Mar 2026 09:24:32 +0100 (CET)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id 9D4D740270
- for <dev@dpdk.org>; Tue, 17 Mar 2026 09:24:31 +0100 (CET)
-Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 28883140001A;
- Tue, 17 Mar 2026 04:24:31 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-10.internal (MEProxy); Tue, 17 Mar 2026 04:24:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773735871;
- x=1773822271; bh=N2ML/sjIiRQrwb8PyYJ+07FeI9Y5qf9W7XPy/9juTZ4=; b=
- lQWcqYd8UJ4HxtFq4qHXHeYH9ImPI+aZDn/h89goctyz907kc3JD3MYymCv03BQf
- g0ip44vLNKEuF3cypH3PCBTnTU8f4uHNotGn1vT2hVV3bVX5jM9Y48MC0z3wT2KF
- baz5UDx2HaYRYQDJC7dtlL26GNhTG+fakqMi2eujOq4tl7+2r6KVNC6nE3Bc7FSN
- zvJ7/1+oJ2D6CeN6CH1AZ8Mq8jgs2IVV1ymWbJWtcbFX0778KG0O0KPusmddPhW4
- t/xCbdqAIgbC1+wDqkMNJDRmj+tlFnm79dzuMTCIB0CaHuMofDkY9ngkYzwGULX5
- vlh5YicU5HZpjOxLM3N8Ow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773735871; x=
- 1773822271; bh=N2ML/sjIiRQrwb8PyYJ+07FeI9Y5qf9W7XPy/9juTZ4=; b=Y
- kjXuifmpB5PVpnPdE1LVhbBPvjua/QUlnO9hJKg1J9MBTfhgOX3XDfJDU+nNmyTx
- UC5QBqMj757ITfs6pBUZqCRvNsjyIuuCBwelS2k1S0mOOWBnOHit2JOdqml+t0cw
- 9IeooAc6lpLkb92+mpKccxn9reeeKHXfmFCGCzEOpmbBnJQx9n+u05hkopMjDemP
- aVp3QxlRSwuqL7DJCA8QhH+R7hgBfkEuWDJSgdWxF2yga+Nx4igVQFh+jmrqDjKC
- PzqNzPtXjGfUNvkz9HEHsNCIu6NHByGiziNT3Sl4mmUJGhiiIjPudh6IvtC4bCrm
- j1n6MjbyC3nVRaKGrevaQ==
-X-ME-Sender: <xms:vg-5aUhsTH4ZHdQAcB69tILSApWEegEmzWrylozTKkXn6h5VLKi8GA>
- <xme:vg-5adJLxLzNRsUWhd81THoX9r1OXGmaxErstkOJBZDydq0zAgRlgGsCrBH-1TZHS
- 0xB6WU2Yo4-IxZhM4sq50aKPxKra4rYpGROm_TpjuW59fpCGNDfOQ>
-X-ME-Received: <xmr:vg-5aUD-HSvSIxmTOEj0PQoQJFW3lmJND9vGlPD3nnHA8G6DPgvzbPN9sLY57p580iHm0UTBaJzVz1bFw-hJYuKD5Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftddtjeeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnheshhhurg
- ifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
- qhhirghnfigvihhliheshhhurgifvghirdgtohhmpdhrtghpthhtoheplhhiuhihohhngh
- hlohhngheshhhurgifvghirdgtohhm
-X-ME-Proxy: <xmx:vg-5adiBYZTj9Hp4daPjVt91PEj_BGTgJSEzth4Ww2sC6tJuLK4OIg>
- <xmx:vg-5aclmNjlSSObMMtyIEwYa_-7WZO9zpBpzKUA2_sVpLmc3we1xmQ>
- <xmx:vg-5aZpn7iQdPho0QBhCv7wKVibIf8h1S-0kuRyiNiv4fluZ3RHxVQ>
- <xmx:vg-5aVGuz6VSlm5UaK57t_Fy5rq27sr7klMak49fuRr8hxgPbI9sPA>
- <xmx:vw-5aUjXfbP-ocWuxgDIDXftNouMrUnkvNq-9xvYRirPwDpLIZtb9-Tt>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Mar 2026 04:24:29 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: dev@dpdk.org, qianweili@huawei.com, liuyonglong@huawei.com
-Subject: Re: [PATCH 0/2] support driver forward compatibility
-Date: Tue, 17 Mar 2026 09:24:28 +0100
-Message-ID: <2768879.BddDVKsqQX@thomas>
-In-Reply-To: <20260302110206.49670-1-fengchengwen@huawei.com>
-References: <20260302110206.49670-1-fengchengwen@huawei.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+	by mails.dpdk.org (Postfix) with ESMTP id A9FD3402D1;
+	Tue, 17 Mar 2026 09:40:12 +0100 (CET)
+Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com
+ [203.205.221.221])
+ by mails.dpdk.org (Postfix) with UTF8SMTP id 997C8402D3
+ for <dev@dpdk.org>; Sun, 15 Mar 2026 13:47:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+ t=1773578826; bh=n+Vr55ZUHAoAq8Nk2ZBPlh4C7tkzl1l+AbFGVK+BbTY=;
+ h=From:To:Subject:Date;
+ b=FAddstOhE4vF0QP6p/RXttDkD+Xb/s6FPrrWtCvPzWCkRZ/Zo46J12XWKw1TyzsNA
+ D4LM8a0b0wKh0/GeFNAjguXtTJvPoBUy58VeXn/gYaevk/OX8WmsaAa0nc66vfvokM
+ 8fEYxiHSduc+nDgcKmUlLPnm8xecXwY+iZSG2Ua0=
+X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+X-QQ-XMAILINFO: M/goIcLrx9/lpi+tALLtzDrtr25L8EU0CStXtjgeajaX7KVnHOK98lVEPWdOmG
+ xig3gfNUk9U6h2PqArQmNIBy593Sr1uS6Zc30nSUnm5O+5VxbIbubl9AaAgKSeXolD1Gm93V/s2/g
+ rqWLVKk8fphwEjWR8D8kV/kg77+YRXwvnrs5tcYjyb9pCoi986E8s1tyuuFIUQ2eXCM1qLiCheD3F
+ o0JuAWBbjBqG2+GTuwpIWwSxsd6GGGBj5XNshuDbrhb/cP2ZmUekrbaIJHkRNYgamwJ1VEPCM7Rbt
+ gSi0BiYMxu3+w/b++eghDHgRbTFN1q/wpI/5rvJYl9PfJptz6O7GiFLw60QyduoI8h/Cd7AMvTjnr
+ kBwihsoXtW9ys7DlbmxrdZdDmLl5d3DJ3FTB3jUg/HcwbBnXYwLS5KTs1fZHvZGi1FWwA8or7YeSc
+ evGyWgy83KxgD3bB2ZeDFNZGkq3GxT/0Ys0x4wQ4k1Zct1LUpL4DJjDPKlGRiwce4iKOP3Ap0ihEM
+ L0zLyRcfGcfS73e146H/S8iJR+b1cVymkugNIHRtCODZYSXNHDajL8JKfIogUVhx8mueI7I98mtnO
+ G5aQVOWoQNTtZfL27biZk5IyBcN/ICULNd1maDyCyd7X4n4hjVJ5LYVYQdCBNZbdTkJkXqR8PZPL5
+ x+2GXPoCLM87sHiXmLkwn00gIz5cBvKaf4nskZcs6WWDKtYxkZbEzkEy2qab9mOaNrBbcfZXevbo6
+ YS3CMgYHoemS5AAVbao98GkmmlMYXvCG2l6bvox9e+378Rsl9A/bFzqC0ulFPsSNwrc04E+DEron0
+ Q1ty/i8scv+yx4AnELTpetPmLY6HswDk7gamwLScdhJVyer0Y6QvPKfOOtIPiqc0UMbriqJReJGuM
+ QEJDdxubbDkJEhAIojHyB89f0hi7NrwhnMC9A/63WFn3/+r3t5UZL4LPTieH9fgxQBHwNfAmAlyZ3
+ rmIz3NohIYRrQ5Yc3FpG8d5stpB7Hpsn9zMw4rge3d5ts2ae+tbUVVG2oRy3YQgRiMlX01p9jxm+Q
+ xeivs+HRUQm/O+OybraeLc0G+zHZ4JpJVIEP6yK7InNg29UmgIZB3w+Qz0uiOdemqNjUDk8FZ7+VP
+ TIuYxy2o1s6Y76fO2gYg+Pj9C8UhPc5Lo4BUYhb/cvSroDAs4kqS/+nGuTn1jTKH/20=
+From: "=?utf-8?B?6b6Z54yr?=" <1302496776@qq.com>
+To: "=?utf-8?B?ZGV2?=" <dev@dpdk.org>
+Subject: [QUESTION] EAL init failed: Cannot create epoll instance on Ubuntu
+ 16.04
+Mime-Version: 1.0
+Content-Type: multipart/alternative;
+ boundary="----=_NextPart_69B6AA49_132AB5A0_25085DEC"
+Content-Transfer-Encoding: 8Bit
+Date: Sun, 15 Mar 2026 20:47:05 +0800
+X-Priority: 3
+Message-ID: <tencent_6DC5E4B7255A41255D0D46DAB0B3DACACF05@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+X-QQ-mid: xmsezb52-0t1773578825tgvg15y4c
+X-Mailman-Approved-At: Tue, 17 Mar 2026 09:40:11 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,14 +63,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-02/03/2026 12:02, Chengwen Feng:
-> This patchset supports driver forward compatibility.
-> 
-> Chengwen Feng (2):
->   bus/uacce: support driver forward compatibility
->   dma/hisi_acc: support driver forward compatibility
+This is a multi-part message in MIME format.
 
-Applied, thanks.
+------=_NextPart_69B6AA49_132AB5A0_25085DEC
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 
+6b6Z54yrDQoxMzAyNDk2Nzc2QHFxLmNvbQ0KDQoNCg0KSGVsbG8gRFBESyBkZXZzLCBJJ20g
+cnVubmluZyBhIERQREstYmFzZWQgYXBwbGljYXRpb24gKE50eVRjcC1EUERLKSBvbiBVYnVu
+dHUgMTYuMDQuIFRoZSBwcm9qZWN0IGNvZGUgaXMgZnJvbSBteSBHaXRIdWIgcmVwb3NpdG9y
+eTogaHR0cHM6Ly9naXRodWIuY29tL2plcnJ5MTIzNDU2MTIzNDU2L050eXRjcF9kcGRrLmdp
+dCBXaGVuIEkgc3RhcnQgaXQgd2l0aCBzdWRvLCBJIGdldCB0aGUgZm9sbG93aW5nIGVycm9y
+OiBQQU5JQyBpbiBlYWxfaW50cl90aHJlYWRfbWFpbigpOiBDYW5ub3QgY3JlYXRlIGVwb2xs
+IGluc3RhbmNlIEVBTDogZmFpbGVkIHRvIGNyZWF0ZSB1bml4IHNvY2tldCBFQUw6IEZBVEFM
+OiBmYWlsZWQgdG8gaW5pdCBtcCBjaGFubmVsIEVBTCBpbml0IGZhaWxlZDogQmFkIGFkZHJl
+c3MgSSBoYXZlIGFscmVhZHkgdHJpZWQ6IC0gUnVubmluZyB3aXRoIHN1ZG8gLSBDb25maWd1
+cmluZyBodWdlcGFnZXMgLSBSZW1vdmluZyAvdmFyL3J1bi9kcGRrLyAtIEFkZGluZyBFQUwg
+cGFyYW1ldGVyczogLWMgMSAtLW5vLXBjaSBDb3VsZCBhbnlvbmUgaGVscCBtZSBmaWd1cmUg
+b3V0IHdoYXQncyB3cm9uZz8gVGhhbmtzIGEgbG90IQ==
 
+------=_NextPart_69B6AA49_132AB5A0_25085DEC
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+
+PGRpdiBzdHlsZT0ibGluZS1oZWlnaHQ6IDEuNDM7Ij48YnIgIC8+PC9kaXY+PGRpdiBjb250
+ZW50ZWRpdGFibGU9ImZhbHNlIj48ZGl2IHN0eWxlPSJkaXNwbGF5OmJsb2NrO3dpZHRoOjE1
+MHB4O2hlaWdodDoxcHg7Ym9yZGVyOm5vbmU7bWFyZ2luOjMycHggMHB4IDEwcHg7YmFja2dy
+b3VuZDpyZ2IoMjMwLCAyMzIsIDIzNSkiPjwvZGl2PjxkaXY+PGEgY2xhc3M9InhtX3dyaXRl
+X2NhcmQiIHN0eWxlPSJ0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTt0ZXh0LWRlY29yYXRp
+b246dW5kZXJsaW5lO2Rpc3BsYXk6aW5saW5lLWJsb2NrO3RleHQtZGVjb3JhdGlvbjpub25l
+ICFpbXBvcnRhbnQ7Zm9udC1mYW1pbHk6LWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZv
+bnQsUGluZ0ZhbmcgU0MsTWljcm9zb2Z0IFlhSGVpIiBocmVmPSJodHRwczovL3d4Lm1haWwu
+cXEuY29tL2hvbWUvaW5kZXg/dD1yZWFkbWFpbF9idXNpbmVzc2NhcmRfbWlkcGFnZSZhbXA7
+bm9jaGVjaz10cnVlJmFtcDtuYW1lPSVFOSVCRSU5OSVFNyU4QyVBQiZhbXA7aWNvbj1odHRw
+JTNBJTJGJTJGdGhpcmRxcS5xbG9nby5jbiUyRmVrX3FxYXBwJTJGQVFUOEdmYTYxYUh1c2Z4
+SnJrY3BOMjNpYU1mUmF2cEwyWHM1R2liWEYwWjllUTByMU9xOGJxUHdiS3dpYjZoaWJPMlRa
+TUhWQmliSmlhbUNRU1gzbFNFelBsUEFhaWJ0TjNkVmlhRnVPUWY1M2pWRUJYYkR6S3FSNmlh
+ZyUyRjAmYW1wO21haWw9MTMwMjQ5Njc3NiU0MHFxLmNvbSZhbXA7Y29kZT1LNHBXclFpR1k3
+ODg1Y29FR3VldFRGSi1tb2VjWnF6cU9HNVdWR3NLc0tLSkpQZXJxVTNXdzR3bkp1ZGVOSXdE
+STRsQnR4N2o0Rk9TSVFqSEM1dmFtZyIgdGFyZ2V0PSJfYmxhbmsiPjx0YWJsZSBzdHlsZT0i
+dGFibGUtbGF5b3V0OmZpeGVkO3BhZGRpbmctcmlnaHQ6MjBweCIgY2VsbHBhZGRpbmc9IjAi
+IGNlbGxzcGFjaW5nPSIwIj48dGJvZHk+PHRyIHZhbGlnbj0idG9wIj48dGQgc3R5bGU9Indp
+ZHRoOjQwcHg7bWluLXdpZHRoOjQwcHg7cGFkZGluZy10b3A6MTBweCI+PGRpdiBzdHlsZT0i
+d2lkdGg6MzhweDtoZWlnaHQ6MzhweDtib3JkZXI6MXB4ICNGRkYgc29saWQ7Ym9yZGVyLXJh
+ZGl1czo1MCU7bWFyZ2luOjA7dmVydGljYWwtYWxpZ246dG9wO2JveC1zaGFkb3c6MCAwIDEw
+cHggMCByZ2JhKDEyNywxNTIsMTc4LDAuMTQpIj48aW1nIHNyYz0iaHR0cDovL3RoaXJkcXEu
+cWxvZ28uY24vZWtfcXFhcHAvQVFUOEdmYTYxYUh1c2Z4SnJrY3BOMjNpYU1mUmF2cEwyWHM1
+R2liWEYwWjllUTByMU9xOGJxUHdiS3dpYjZoaWJPMlRaTUhWQmliSmlhbUNRU1gzbFNFelBs
+UEFhaWJ0TjNkVmlhRnVPUWY1M2pWRUJYYkR6S3FSNmlhZy8wIiBzdHlsZT0idmVydGljYWwt
+YWxpZ246IGJvdHRvbTt2ZXJ0aWNhbC1hbGlnbjpib3R0b207d2lkdGg6MTAwJTtoZWlnaHQ6
+MTAwJTtib3JkZXItcmFkaXVzOjUwJTtwb2ludGVyLWV2ZW50czpub25lIiAgLz48L2Rpdj48
+L3RkPjx0ZCBzdHlsZT0icGFkZGluZzoxMHB4IDAgOHB4IDEwcHgiPjxkaXYgY2xhc3M9ImJ1
+c2luZXNzQ2FyZF9uYW1lIiBzdHlsZT0iZm9udC1zaXplOjE0cHg7Y29sb3I6IzMzMzEyRTts
+aW5lLWhlaWdodDoyMHB4O3BhZGRpbmctYm90dG9tOjJweDttYXJnaW46MDtmb250LXdlaWdo
+dDo1MDAiPum+meeMqzwvZGl2PjxkaXYgY2xhc3M9ImJ1c2luZXNzQ2FyZF9tYWlsIiBzdHls
+ZT0iZm9udC1zaXplOjEycHg7Y29sb3I6Izk5OTg5NjtsaW5lLWhlaWdodDoxOHB4O21hcmdp
+bjowIj4xMzAyNDk2Nzc2QHFxLmNvbTwvZGl2PjwvdGQ+PC90cj48L3Rib2R5PjwvdGFibGU+
+PC9hPjwvZGl2PjwvZGl2PjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTogdWktc2Fucy1zZXJp
+Ziwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmLCAmcXVvdDtBcHBsZSBDb2xvciBFbW9qaSZxdW90
+OywgJnF1b3Q7U2Vnb2UgVUkgRW1vamkmcXVvdDssICZxdW90O1NlZ29lIFVJIFN5bWJvbCZx
+dW90OywgJnF1b3Q7Tm90byBDb2xvciBFbW9qaSZxdW90OzsgZm9udC1zaXplOiAxNnB4OyBj
+b2xvcjogcmdiKDAsIDAsIDApOyBsaW5lLWhlaWdodDogMS40MzsiPkhlbGxvIERQREsgZGV2
+cywKCkknbSBydW5uaW5nIGEgRFBESy1iYXNlZCBhcHBsaWNhdGlvbiAoTnR5VGNwLURQREsp
+IG9uIFVidW50dSAxNi4wNC4KVGhlIHByb2plY3QgY29kZSBpcyBmcm9tIG15IEdpdEh1YiBy
+ZXBvc2l0b3J5OgpodHRwczovL2dpdGh1Yi5jb20vamVycnkxMjM0NTYxMjM0NTYvTnR5dGNw
+X2RwZGsuZ2l0CgpXaGVuIEkgc3RhcnQgaXQgd2l0aCBzdWRvLCBJIGdldCB0aGUgZm9sbG93
+aW5nIGVycm9yOgoKUEFOSUMgaW4gZWFsX2ludHJfdGhyZWFkX21haW4oKToKQ2Fubm90IGNy
+ZWF0ZSBlcG9sbCBpbnN0YW5jZQpFQUw6IGZhaWxlZCB0byBjcmVhdGUgdW5peCBzb2NrZXQK
+RUFMOiBGQVRBTDogZmFpbGVkIHRvIGluaXQgbXAgY2hhbm5lbApFQUwgaW5pdCBmYWlsZWQ6
+IEJhZCBhZGRyZXNzCgpJIGhhdmUgYWxyZWFkeSB0cmllZDoKLSBSdW5uaW5nIHdpdGggc3Vk
+bwotIENvbmZpZ3VyaW5nIGh1Z2VwYWdlcwotIFJlbW92aW5nIC92YXIvcnVuL2RwZGsvCi0g
+QWRkaW5nIEVBTCBwYXJhbWV0ZXJzOiAtYyAxIC0tbm8tcGNpCgpDb3VsZCBhbnlvbmUgaGVs
+cCBtZSBmaWd1cmUgb3V0IHdoYXQncyB3cm9uZz8KVGhhbmtzIGEgbG90ITwvc3Bhbj4=
+
+------=_NextPart_69B6AA49_132AB5A0_25085DEC--
 
