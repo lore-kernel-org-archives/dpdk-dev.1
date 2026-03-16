@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0CFF4644A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 10:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ADBF4644B
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 10:53:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5780E40664;
-	Mon, 16 Mar 2026 11:53:06 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 2B79F40668;
+	Mon, 16 Mar 2026 11:53:07 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 86F2440651
+ by mails.dpdk.org (Postfix) with ESMTP id 12325400D5
  for <dev@dpdk.org>; Mon, 16 Mar 2026 11:53:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1773658384; x=1805194384;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=yW25Flp16yXSsiFnKcnNUikJXXc2lPuJP0gSKWshcVY=;
- b=Cp9m7xZz7rJpS2uQuiuUzOrhMJoItO0t0ZtucxY4h1wBizMifJRpkdoM
- VS9IFoxQwbyoSHSzLqPIc5YdF4DyjeLJIgCAwLhha/PIdh70qZ4of/tII
- X97rABew6Y4WYJgTLhBviZiJSi4//NxNOU2FL24zG6qfr+IFGK10BI1hk
- rqS6mIFa5hYn/evEROTB2/GKiNzUpaRTE5b1Cxe09it9Ij60Dqrm43V4Y
- OBSMDtr3mM2MNMKLhDiZXJgrWalv8qTRG/C8ENzCKWtmAGIhO1j3wjTQw
- Ou2xvtzGh5UBty27tHeqGUcOI2ynBNmeZ+Crb34ZEfDZN/YeSQB2VY5Bn Q==;
-X-CSE-ConnectionGUID: 9oPkA2sdReCnadQf58dOVg==
-X-CSE-MsgGUID: BivyNJ+WQ1ihT0tTFWlYhw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11730"; a="62237414"
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="62237414"
+ bh=RTFlywsoq1olOUYPbVDwWm/BQZlIWaJXjomBXPDXpDY=;
+ b=De/nP0uE1uM9TA4hRqpTkVXIMRQJr6+YW9vrvqv0wDUuQd+QfaZ4RdCw
+ wfVX3Nq83JkktshqwBaGN1Di8nTEwazT0mJ5bIf6lMgDdm3LZUifCfWJr
+ bMpFUPoL9bi6bNj59un1yC7wNa0yv/Yld6K9NVQkg5yIULqT6jaLOmbQK
+ GyLt5TgcV350bfsAWGmQpl4ZOA6itO00DEudGjP57INiHQx3Qde4Qfut9
+ /qAKfM4bOHyvHYveEbPm6dV/1UKQHWjFl4zNnlPOvvMqAYPKAsJ3NmeSl
+ TlwgF2rzQJzUF8UbkKN4vPcfd06lVpA+ZUlRDTrn/e8a95E8wYXx1q1Pr w==;
+X-CSE-ConnectionGUID: 7A0phykwTkCBNo7jwz1p/A==
+X-CSE-MsgGUID: BLx3htv9SF+tYTcz7Xqapw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11730"; a="62237415"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="62237415"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 03:53:03 -0700
-X-CSE-ConnectionGUID: n7Pkiyc2SMWT/L0Pd2qLIA==
-X-CSE-MsgGUID: /c/U80w0Tnqj6dgUjOa4+g==
+ 16 Mar 2026 03:53:04 -0700
+X-CSE-ConnectionGUID: z8a+7JgMReWONpOdMt42cw==
+X-CSE-MsgGUID: BEfY4iNbRmiPHTLICfYpSA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221826720"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221826724"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa009.jf.intel.com with ESMTP; 16 Mar 2026 03:53:02 -0700
+ by orviesa009.jf.intel.com with ESMTP; 16 Mar 2026 03:53:03 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
 	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 05/25] net/ixgbe: use common checks in L2 tunnel filter
-Date: Mon, 16 Mar 2026 10:52:30 +0000
-Message-ID: <1a76e3b544382f8efe5aa25ad700cce1bbd05463.1773658289.git.anatoly.burakov@intel.com>
+Subject: [PATCH v2 06/25] net/ixgbe: use common checks in ntuple filter
+Date: Mon, 16 Mar 2026 10:52:31 +0000
+Message-ID: <c0de7e41c03ff363ca6012cb7266d4d7ee9ec60b.1773658289.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1773658289.git.anatoly.burakov@intel.com>
  <cover.1773658289.git.anatoly.burakov@intel.com>
@@ -60,79 +60,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use the common attr and action parsing infrastructure in L2 tunnel filter.
-Some checks have become more stringent as a result, in particular, group
-attribute is now explicitly rejected instead of being ignored.
+Use the common attr and action parsing infrastructure in ntuple filter.
+As a result, some checks have become more stringent, in particular the
+group attribute is now explicitly rejected instead of being ignored.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_flow.c | 148 +++++++++------------------
- 1 file changed, 47 insertions(+), 101 deletions(-)
+ drivers/net/intel/ixgbe/ixgbe_flow.c | 133 ++++++++-------------------
+ 1 file changed, 36 insertions(+), 97 deletions(-)
 
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 220b89f8fc..383d84fb92 100644
+index 383d84fb92..20d163bce0 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -145,6 +145,7 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
- {
- 	const struct rte_flow_action *action;
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param->driver_ctx;
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
- 	size_t idx;
- 
- 	for (idx = 0; idx < actions->count; idx++) {
-@@ -162,6 +163,17 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
- 			}
- 			break;
- 		}
-+		case RTE_FLOW_ACTION_TYPE_VF:
-+		{
-+			const struct rte_flow_action_vf *vf = action->conf;
-+			if (vf->id >= pci_dev->max_vfs) {
-+				return rte_flow_error_set(error, EINVAL,
-+						RTE_FLOW_ERROR_TYPE_ACTION,
-+						action,
-+						"VF id out of range");
-+			}
-+			break;
-+		}
- 		default:
- 			/* no specific validation */
- 			break;
-@@ -900,12 +912,6 @@ ixgbe_parse_ethertype_filter(struct rte_eth_dev *dev, const struct rte_flow_attr
- 	if (ret)
- 		return ret;
- 
--	/* only one action is supported */
--	if (parsed_actions.count > 1) {
--		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
--					  parsed_actions.actions[1],
--					  "Only one action can be specified at a time");
--	}
- 	action = parsed_actions.actions[0];
- 
- 	ret = cons_parse_ethertype_filter(pattern, action, filter, error);
-@@ -1151,40 +1157,16 @@ ixgbe_parse_syn_filter(struct rte_eth_dev *dev, const struct rte_flow_attr *attr
-  */
+@@ -219,12 +219,11 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
  static int
- cons_parse_l2_tn_filter(struct rte_eth_dev *dev,
--			const struct rte_flow_attr *attr,
- 			const struct rte_flow_item pattern[],
--			const struct rte_flow_action actions[],
-+			const struct rte_flow_action *action,
- 			struct ixgbe_l2_tunnel_conf *filter,
- 			struct rte_flow_error *error)
+ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+ 			 const struct rte_flow_item pattern[],
+-			 const struct rte_flow_action actions[],
++			 const struct rte_flow_action_queue *q_act,
+ 			 struct rte_eth_ntuple_filter *filter,
+ 			 struct rte_flow_error *error)
  {
  	const struct rte_flow_item *item;
- 	const struct rte_flow_item_e_tag *e_tag_spec;
- 	const struct rte_flow_item_e_tag *e_tag_mask;
 -	const struct rte_flow_action *act;
--	const struct rte_flow_action_vf *act_vf;
- 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
+ 	const struct rte_flow_item_ipv4 *ipv4_spec;
+ 	const struct rte_flow_item_ipv4 *ipv4_mask;
+ 	const struct rte_flow_item_tcp *tcp_spec;
+@@ -240,24 +239,11 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+ 	struct rte_flow_item_eth eth_null;
+ 	struct rte_flow_item_vlan vlan_null;
  
 -	if (!pattern) {
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ITEM_NUM,
+-		rte_flow_error_set(error,
+-			EINVAL, RTE_FLOW_ERROR_TYPE_ITEM_NUM,
 -			NULL, "NULL pattern.");
 -		return -rte_errno;
 -	}
@@ -143,153 +104,156 @@ index 220b89f8fc..383d84fb92 100644
 -				   NULL, "NULL action.");
 -		return -rte_errno;
 -	}
--
 -	if (!attr) {
 -		rte_flow_error_set(error, EINVAL,
 -				   RTE_FLOW_ERROR_TYPE_ATTR,
 -				   NULL, "NULL attribute.");
 -		return -rte_errno;
--	}
--
- 	/* The first not void item should be e-tag. */
- 	item = next_no_void_pattern(pattern, NULL);
- 	if (item->type != RTE_FLOW_ITEM_TYPE_E_TAG) {
-@@ -1242,71 +1224,13 @@ cons_parse_l2_tn_filter(struct rte_eth_dev *dev,
- 		return -rte_errno;
++	/* Priority must be 16-bit */
++	if (attr->priority > UINT16_MAX) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY, attr,
++				"Priority must be 16-bit");
  	}
  
+ 	memset(&eth_null, 0, sizeof(struct rte_flow_item_eth));
+@@ -553,70 +539,11 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
+ 
+ action:
+ 
+-	/**
+-	 * n-tuple only supports forwarding,
+-	 * check if the first not void action is QUEUE.
+-	 */
+-	act = next_no_void_action(actions, NULL);
+-	if (act->type != RTE_FLOW_ACTION_TYPE_QUEUE) {
+-		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_ACTION,
+-			item, "Not supported action.");
+-		return -rte_errno;
+-	}
+-	filter->queue =
+-		((const struct rte_flow_action_queue *)act->conf)->index;
++	filter->queue = q_act->index;
+ 
+-	/* check if the next not void item is END */
+-	act = next_no_void_action(actions, act);
+-	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
+-		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_ACTION,
+-			act, "Not supported action.");
+-		return -rte_errno;
+-	}
+-
 -	/* parse attr */
 -	/* must be input direction */
 -	if (!attr->ingress) {
--		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+-		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
 -		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ATTR_INGRESS,
--			attr, "Only support ingress.");
+-				   RTE_FLOW_ERROR_TYPE_ATTR_INGRESS,
+-				   attr, "Only support ingress.");
 -		return -rte_errno;
 -	}
 -
 -	/* not supported */
 -	if (attr->egress) {
--		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+-		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
 -		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ATTR_EGRESS,
--			attr, "Not support egress.");
+-				   RTE_FLOW_ERROR_TYPE_ATTR_EGRESS,
+-				   attr, "Not support egress.");
 -		return -rte_errno;
 -	}
 -
 -	/* not supported */
 -	if (attr->transfer) {
--		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+-		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
 -		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ATTR_TRANSFER,
--			attr, "No support for transfer.");
+-				   RTE_FLOW_ERROR_TYPE_ATTR_TRANSFER,
+-				   attr, "No support for transfer.");
 -		return -rte_errno;
 -	}
 -
--	/* not supported */
--	if (attr->priority) {
--		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
+-	if (attr->priority > 0xFFFF) {
+-		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
 -		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
--			attr, "Not support priority.");
+-				   RTE_FLOW_ERROR_TYPE_ATTR_PRIORITY,
+-				   attr, "Error priority.");
 -		return -rte_errno;
 -	}
--
--	/* check if the first not void action is VF or PF. */
--	act = next_no_void_action(actions, NULL);
--	if (act->type != RTE_FLOW_ACTION_TYPE_VF &&
--			act->type != RTE_FLOW_ACTION_TYPE_PF) {
--		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ACTION,
--			act, "Not supported action.");
--		return -rte_errno;
--	}
--
--	if (act->type == RTE_FLOW_ACTION_TYPE_VF) {
--		act_vf = (const struct rte_flow_action_vf *)act->conf;
-+	if (action->type == RTE_FLOW_ACTION_TYPE_VF) {
-+		const struct rte_flow_action_vf *act_vf = action->conf;
- 		filter->pool = act_vf->id;
- 	} else {
- 		filter->pool = pci_dev->max_vfs;
- 	}
+ 	filter->priority = (uint16_t)attr->priority;
+-	if (attr->priority < IXGBE_MIN_N_TUPLE_PRIO ||
+-	    attr->priority > IXGBE_MAX_N_TUPLE_PRIO)
+-	    filter->priority = 1;
++	if (attr->priority < IXGBE_MIN_N_TUPLE_PRIO || attr->priority > IXGBE_MAX_N_TUPLE_PRIO)
++		filter->priority = 1;
  
--	/* check if the next not void item is END */
--	act = next_no_void_action(actions, act);
--	if (act->type != RTE_FLOW_ACTION_TYPE_END) {
--		memset(filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
--		rte_flow_error_set(error, EINVAL,
--			RTE_FLOW_ERROR_TYPE_ACTION,
--			act, "Not supported action.");
--		return -rte_errno;
--	}
--
  	return 0;
  }
- 
-@@ -1318,29 +1242,51 @@ ixgbe_parse_l2_tn_filter(struct rte_eth_dev *dev,
- 			struct ixgbe_l2_tunnel_conf *l2_tn_filter,
- 			struct rte_flow_error *error)
+@@ -736,15 +663,40 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+ 			  struct rte_eth_ntuple_filter *filter,
+ 			  struct rte_flow_error *error)
  {
--	int ret = 0;
+-	int ret;
  	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
--	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
--	uint16_t vf_num;
--
--	ret = cons_parse_l2_tn_filter(dev, attr, pattern,
--				actions, l2_tn_filter, error);
++	struct ci_flow_attr_check_param attr_param = {
++		.allow_priority = true,
++	};
 +	struct ci_flow_actions parsed_actions;
 +	struct ci_flow_actions_check_param ap_param = {
 +		.allowed_types = (const enum rte_flow_action_type[]){
-+			/* only vf/pf is allowed here */
-+			RTE_FLOW_ACTION_TYPE_VF,
-+			RTE_FLOW_ACTION_TYPE_PF,
++			/* only queue is allowed here */
++			RTE_FLOW_ACTION_TYPE_QUEUE,
 +			RTE_FLOW_ACTION_TYPE_END
 +		},
 +		.driver_ctx = dev,
 +		.check = ixgbe_flow_actions_check,
 +		.max_actions = 1,
 +	};
-+	int ret = 0;
 +	const struct rte_flow_action *action;
++	int ret;
  
- 	if (hw->mac.type != ixgbe_mac_X550 &&
- 		hw->mac.type != ixgbe_mac_X550EM_x &&
- 		hw->mac.type != ixgbe_mac_X550EM_a &&
- 		hw->mac.type != ixgbe_mac_E610) {
--		memset(l2_tn_filter, 0, sizeof(struct ixgbe_l2_tunnel_conf));
- 		rte_flow_error_set(error, EINVAL,
- 			RTE_FLOW_ERROR_TYPE_ITEM,
- 			NULL, "Not supported by L2 tunnel filter");
- 		return -rte_errno;
- 	}
+ 	if (hw->mac.type != ixgbe_mac_82599EB &&
+ 			hw->mac.type != ixgbe_mac_X540)
+ 		return -ENOTSUP;
  
--	vf_num = pci_dev->max_vfs;
+-	ret = cons_parse_ntuple_filter(attr, pattern, actions, filter, error);
 +	/* validate attributes */
-+	ret = ci_flow_check_attr(attr, NULL, error);
++	ret = ci_flow_check_attr(attr, &attr_param, error);
 +	if (ret)
 +		return ret;
  
--	if (l2_tn_filter->pool > vf_num)
--		return -rte_errno;
 +	/* parse requested actions */
 +	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
 +	if (ret)
 +		return ret;
-+
-+	/* only one action is supported */
-+	if (parsed_actions.count > 1) {
-+		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
-+					  parsed_actions.actions[1],
-+					  "Only one action can be specified at a time");
-+	}
 +	action = parsed_actions.actions[0];
 +
-+	ret = cons_parse_l2_tn_filter(dev, pattern, action, l2_tn_filter, error);
++	ret = cons_parse_ntuple_filter(attr, pattern, action->conf, filter, error);
+ 	if (ret)
+ 		return ret;
  
- 	return ret;
- }
+@@ -757,19 +709,6 @@ ixgbe_parse_ntuple_filter(struct rte_eth_dev *dev,
+ 		return -rte_errno;
+ 	}
+ 
+-	/* Ixgbe doesn't support many priorities. */
+-	if (filter->priority < IXGBE_MIN_N_TUPLE_PRIO ||
+-	    filter->priority > IXGBE_MAX_N_TUPLE_PRIO) {
+-		memset(filter, 0, sizeof(struct rte_eth_ntuple_filter));
+-		rte_flow_error_set(error, EINVAL,
+-			RTE_FLOW_ERROR_TYPE_ITEM,
+-			NULL, "Priority not supported by ntuple filter");
+-		return -rte_errno;
+-	}
+-
+-	if (filter->queue >= dev->data->nb_rx_queues)
+-		return -rte_errno;
+-
+ 	/* fixed value for ixgbe */
+ 	filter->flags = RTE_5TUPLE_FLAGS;
+ 	return 0;
 -- 
 2.47.3
 
