@@ -2,53 +2,84 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE988F33815
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 08:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35764F33819
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 08:40:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A9FD3402D1;
-	Tue, 17 Mar 2026 09:40:12 +0100 (CET)
-Received: from out203-205-221-221.mail.qq.com (out203-205-221-221.mail.qq.com
- [203.205.221.221])
- by mails.dpdk.org (Postfix) with UTF8SMTP id 997C8402D3
- for <dev@dpdk.org>; Sun, 15 Mar 2026 13:47:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
- t=1773578826; bh=n+Vr55ZUHAoAq8Nk2ZBPlh4C7tkzl1l+AbFGVK+BbTY=;
- h=From:To:Subject:Date;
- b=FAddstOhE4vF0QP6p/RXttDkD+Xb/s6FPrrWtCvPzWCkRZ/Zo46J12XWKw1TyzsNA
- D4LM8a0b0wKh0/GeFNAjguXtTJvPoBUy58VeXn/gYaevk/OX8WmsaAa0nc66vfvokM
- 8fEYxiHSduc+nDgcKmUlLPnm8xecXwY+iZSG2Ua0=
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
-X-QQ-XMAILINFO: M/goIcLrx9/lpi+tALLtzDrtr25L8EU0CStXtjgeajaX7KVnHOK98lVEPWdOmG
- xig3gfNUk9U6h2PqArQmNIBy593Sr1uS6Zc30nSUnm5O+5VxbIbubl9AaAgKSeXolD1Gm93V/s2/g
- rqWLVKk8fphwEjWR8D8kV/kg77+YRXwvnrs5tcYjyb9pCoi986E8s1tyuuFIUQ2eXCM1qLiCheD3F
- o0JuAWBbjBqG2+GTuwpIWwSxsd6GGGBj5XNshuDbrhb/cP2ZmUekrbaIJHkRNYgamwJ1VEPCM7Rbt
- gSi0BiYMxu3+w/b++eghDHgRbTFN1q/wpI/5rvJYl9PfJptz6O7GiFLw60QyduoI8h/Cd7AMvTjnr
- kBwihsoXtW9ys7DlbmxrdZdDmLl5d3DJ3FTB3jUg/HcwbBnXYwLS5KTs1fZHvZGi1FWwA8or7YeSc
- evGyWgy83KxgD3bB2ZeDFNZGkq3GxT/0Ys0x4wQ4k1Zct1LUpL4DJjDPKlGRiwce4iKOP3Ap0ihEM
- L0zLyRcfGcfS73e146H/S8iJR+b1cVymkugNIHRtCODZYSXNHDajL8JKfIogUVhx8mueI7I98mtnO
- G5aQVOWoQNTtZfL27biZk5IyBcN/ICULNd1maDyCyd7X4n4hjVJ5LYVYQdCBNZbdTkJkXqR8PZPL5
- x+2GXPoCLM87sHiXmLkwn00gIz5cBvKaf4nskZcs6WWDKtYxkZbEzkEy2qab9mOaNrBbcfZXevbo6
- YS3CMgYHoemS5AAVbao98GkmmlMYXvCG2l6bvox9e+378Rsl9A/bFzqC0ulFPsSNwrc04E+DEron0
- Q1ty/i8scv+yx4AnELTpetPmLY6HswDk7gamwLScdhJVyer0Y6QvPKfOOtIPiqc0UMbriqJReJGuM
- QEJDdxubbDkJEhAIojHyB89f0hi7NrwhnMC9A/63WFn3/+r3t5UZL4LPTieH9fgxQBHwNfAmAlyZ3
- rmIz3NohIYRrQ5Yc3FpG8d5stpB7Hpsn9zMw4rge3d5ts2ae+tbUVVG2oRy3YQgRiMlX01p9jxm+Q
- xeivs+HRUQm/O+OybraeLc0G+zHZ4JpJVIEP6yK7InNg29UmgIZB3w+Qz0uiOdemqNjUDk8FZ7+VP
- TIuYxy2o1s6Y76fO2gYg+Pj9C8UhPc5Lo4BUYhb/cvSroDAs4kqS/+nGuTn1jTKH/20=
-From: "=?utf-8?B?6b6Z54yr?=" <1302496776@qq.com>
-To: "=?utf-8?B?ZGV2?=" <dev@dpdk.org>
-Subject: [QUESTION] EAL init failed: Cannot create epoll instance on Ubuntu
- 16.04
-Mime-Version: 1.0
-Content-Type: multipart/alternative;
- boundary="----=_NextPart_69B6AA49_132AB5A0_25085DEC"
-Content-Transfer-Encoding: 8Bit
-Date: Sun, 15 Mar 2026 20:47:05 +0800
-X-Priority: 3
-Message-ID: <tencent_6DC5E4B7255A41255D0D46DAB0B3DACACF05@qq.com>
-X-QQ-MIME: TCMime 1.0 by Tencent
-X-Mailer: QQMail 2.x
-X-QQ-Mailer: QQMail 2.x
-X-QQ-mid: xmsezb52-0t1773578825tgvg15y4c
+	by mails.dpdk.org (Postfix) with ESMTP id 9AA1440611;
+	Tue, 17 Mar 2026 09:40:13 +0100 (CET)
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com
+ [74.125.82.173]) by mails.dpdk.org (Postfix) with ESMTP id A7C47400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 16:14:14 +0100 (CET)
+Received: by mail-dy1-f173.google.com with SMTP id
+ 5a478bee46e88-2c0c955a481so887160eec.1
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 08:14:14 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773674054; cv=none;
+ d=google.com; s=arc-20240605;
+ b=Z85NmNX3ubWjyG0bVX0V/y+Kru3I/cKevznHvgLGeqpm2LeZ1fLM8anUng2QV6HmDD
+ zkpURGZsHh99zQiJLoIzGu2//rlr2Qk8C5mDuPFsqsnMkP/YryvVUkVfSbVoXh3APndt
+ LdZ0TDHwSFcrAUCusNzpgBCdKC9tnwA0RxBCnQvQDQTkn/+CdpQsqIiuPoKPiQfWavGE
+ 6lVo7OJqCaqIxW3F1aAGpXKFEtK/J1ATdtoWz0yfR2wLGq5ORsSc51Ab8y5nEDMxNFFV
+ 1QOLhzcYVbdxWVOyQ/AZ0+kt3anaMoSXLFET2R/76jtttlDDi1PFMzi6MsX0ELQ7RC8a
+ VzBg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=PcacPKnYx6gJaYQD4gi8aPgUXA4eQvzSQcK7L8DdAkA=;
+ fh=z6huqySSiisbIHTThxC2czaTq6fo3+gRzXgEv8VYTCs=;
+ b=BqNy/vsTuNjShFdPCuf/TWGN+l21hEA6/QevSWs5km1DuZULBI3tF6MN6t3IjSY5yW
+ SjRCP8XwyhAz4V/GN+gP2jhNWzjA4cnNUjI7I99EmTyNWgiVTyzERZ8IxATH+ywnD40q
+ aYGa3sVnjW5WBbE9DdIVSfkD5DjwrE6wctAAUKucQbkOBuCipZftxzN4R0b551Bbhk/w
+ Co5Ck6bbgN2Au82K3OejYJ9bpEOu9L+nkW8q5KunBY/C7uJz8diPge565cEr7re3F6bZ
+ m+gMedq1gtXD9WAG95n3Hrzq34z8g+0g+dh4Acb0vmageylJtZJcN0M25pnGTZBGeFKk
+ FEFw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1773674054; x=1774278854; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=PcacPKnYx6gJaYQD4gi8aPgUXA4eQvzSQcK7L8DdAkA=;
+ b=M7gf5eXf52QYrYTBlHmGZ4IyZo+7apiiaYv9+pZQvNs8g6r+otynLqlm7s46QGDce2
+ wPT1SXGHyU/S0jHWvAmd3EzP8Te+gfEdmWl+KqSshHujc+R1tL9xe/F36wzMHZvU7QCe
+ 5hkJe4yeSr8I8fTsOZaCKAMImqwOLs+OsJTusdGldygSYZZgKOsZBnPNfomr/+7CWQ9Y
+ uQcSKFefCYHMAxel8HBjyuOoPkG8a+S1wI9pptpezoKa26DdMyzQUP27/n9JD7velMUY
+ n9ntmnupX8hqyE1PI0YmBumisa19ZUC49B5xpwSISbiwGucWhtCv2/Hlud4fGSgsZkcn
+ nstg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1773674054; x=1774278854;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=PcacPKnYx6gJaYQD4gi8aPgUXA4eQvzSQcK7L8DdAkA=;
+ b=tI+Kd8B+RY8X/RC1Hwj2HuMB4VWmKUGSAfuhzBQDfa/M1gEeTRV19Yjh1OvfFER+TD
+ 1NP6ts7p5dXiYyKjUk5UMiTOdV73veKNJytSN++B87h5lyJ4Eo5tpfTm0o8sXDdKHRMv
+ 1FNGO5w2EP7Y3j5QAsi3Cjc6Oz7O6q1vTsdw+bbvNA3x9d/DPfs0nxp2/uHgki4UYquY
+ 8ZE1dnIg8JsF4P3ebDU17Kwieuv5q+8YKrRbbXPtraK+05ZEl59bZvO+Ejvpg4LvvNyb
+ uzCxaSydycc7VW6iOyOq+Qy08SNvFyuoHDqali2i7rCt4Ly2Ov7waEGsMCk38DzfcYLH
+ Tjvw==
+X-Gm-Message-State: AOJu0YxiCZO/M/Axs3kHFvP2ifpf2E9fewAZyvr41GUguKnB0cEFeRXa
+ gtg8h57CrL52WPTqf2vwrPaZamNKeFhtwYJma/0LPO/kGksGbPBYENTT9Ds0ntvFJAr1Ye3w1zo
+ w6En47hRvt1ZzzR27JZfy04EOuKv5RBU=
+X-Gm-Gg: ATEYQzy592SCbM3A/NeksdVnYh3VB+4yGE6iRwGKnztxwwKc98/z9EbY01+yV3xusiX
+ Uu/R381qtqJqH5ozRUs/R/pAdy0ZPx174pjJuPW0Id0A0q65T+OpmINX7HTAH+9IOvf1NUkQIfR
+ aD2ri3RGIgYvXTJ/tq0VGUKvnRZowzt/r+WmZap8IFlZ8lKA0VXGbzte5jhdd99PbNbgU4wZDc0
+ faHRc1a62SZx7G0iJ2Xmk2EvrCvFZ5sZyQ7vPQiUisUJ3rKb3sWyKCxSNI/EmeeZRNmajBd/Mpo
+ /rvzpHY=
+X-Received: by 2002:a05:7300:cd91:b0:2be:833c:14a6 with SMTP id
+ 5a478bee46e88-2bea547bc42mr6953339eec.15.1773674053341; Mon, 16 Mar 2026
+ 08:14:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAB3eHOwcEg_7A1rsDFm7QuGQXd72XscEkxg0PcgkUqe8-ZVP-A@mail.gmail.com>
+ <20260316085000.3492548-1-sriram.yagnaraman@ericsson.com>
+In-Reply-To: <20260316085000.3492548-1-sriram.yagnaraman@ericsson.com>
+From: Mike Bly <bly454@gmail.com>
+Date: Mon, 16 Mar 2026 08:13:59 -0700
+X-Gm-Features: AaiRm52XbY4nV8dRaAbwpaH-84Kqvbi4lwBNRYiWERr2uwwm4Yxzz6K-jNXo830
+Message-ID: <CAB3eHOz3G9LvpSpcBfGmW7+9iS1T8xv_jauupoOiPW=qUS8hjA@mail.gmail.com>
+Subject: Re: [PATCH v2] net/memif: Fix memif-rx buffer linking
+To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+Cc: dev@dpdk.org, stable@dpdk.org, jgrajcia@cisco.com
+Content-Type: multipart/alternative; boundary="000000000000e59560064d25ab13"
 X-Mailman-Approved-At: Tue, 17 Mar 2026 09:40:11 +0100
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -63,80 +94,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a multi-part message in MIME format.
+--000000000000e59560064d25ab13
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-------=_NextPart_69B6AA49_132AB5A0_25085DEC
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+Sriram,
 
-6b6Z54yrDQoxMzAyNDk2Nzc2QHFxLmNvbQ0KDQoNCg0KSGVsbG8gRFBESyBkZXZzLCBJJ20g
-cnVubmluZyBhIERQREstYmFzZWQgYXBwbGljYXRpb24gKE50eVRjcC1EUERLKSBvbiBVYnVu
-dHUgMTYuMDQuIFRoZSBwcm9qZWN0IGNvZGUgaXMgZnJvbSBteSBHaXRIdWIgcmVwb3NpdG9y
-eTogaHR0cHM6Ly9naXRodWIuY29tL2plcnJ5MTIzNDU2MTIzNDU2L050eXRjcF9kcGRrLmdp
-dCBXaGVuIEkgc3RhcnQgaXQgd2l0aCBzdWRvLCBJIGdldCB0aGUgZm9sbG93aW5nIGVycm9y
-OiBQQU5JQyBpbiBlYWxfaW50cl90aHJlYWRfbWFpbigpOiBDYW5ub3QgY3JlYXRlIGVwb2xs
-IGluc3RhbmNlIEVBTDogZmFpbGVkIHRvIGNyZWF0ZSB1bml4IHNvY2tldCBFQUw6IEZBVEFM
-OiBmYWlsZWQgdG8gaW5pdCBtcCBjaGFubmVsIEVBTCBpbml0IGZhaWxlZDogQmFkIGFkZHJl
-c3MgSSBoYXZlIGFscmVhZHkgdHJpZWQ6IC0gUnVubmluZyB3aXRoIHN1ZG8gLSBDb25maWd1
-cmluZyBodWdlcGFnZXMgLSBSZW1vdmluZyAvdmFyL3J1bi9kcGRrLyAtIEFkZGluZyBFQUwg
-cGFyYW1ldGVyczogLWMgMSAtLW5vLXBjaSBDb3VsZCBhbnlvbmUgaGVscCBtZSBmaWd1cmUg
-b3V0IHdoYXQncyB3cm9uZz8gVGhhbmtzIGEgbG90IQ==
+I am glad the patch worked for you. Unfortunately, I am no longer working
+in this space so you will need to take the lead on getting this pulled in.
 
-------=_NextPart_69B6AA49_132AB5A0_25085DEC
-Content-Type: text/html;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+-MikeB
 
-PGRpdiBzdHlsZT0ibGluZS1oZWlnaHQ6IDEuNDM7Ij48YnIgIC8+PC9kaXY+PGRpdiBjb250
-ZW50ZWRpdGFibGU9ImZhbHNlIj48ZGl2IHN0eWxlPSJkaXNwbGF5OmJsb2NrO3dpZHRoOjE1
-MHB4O2hlaWdodDoxcHg7Ym9yZGVyOm5vbmU7bWFyZ2luOjMycHggMHB4IDEwcHg7YmFja2dy
-b3VuZDpyZ2IoMjMwLCAyMzIsIDIzNSkiPjwvZGl2PjxkaXY+PGEgY2xhc3M9InhtX3dyaXRl
-X2NhcmQiIHN0eWxlPSJ0ZXh0LWRlY29yYXRpb246IHVuZGVybGluZTt0ZXh0LWRlY29yYXRp
-b246dW5kZXJsaW5lO2Rpc3BsYXk6aW5saW5lLWJsb2NrO3RleHQtZGVjb3JhdGlvbjpub25l
-ICFpbXBvcnRhbnQ7Zm9udC1mYW1pbHk6LWFwcGxlLXN5c3RlbSxCbGlua01hY1N5c3RlbUZv
-bnQsUGluZ0ZhbmcgU0MsTWljcm9zb2Z0IFlhSGVpIiBocmVmPSJodHRwczovL3d4Lm1haWwu
-cXEuY29tL2hvbWUvaW5kZXg/dD1yZWFkbWFpbF9idXNpbmVzc2NhcmRfbWlkcGFnZSZhbXA7
-bm9jaGVjaz10cnVlJmFtcDtuYW1lPSVFOSVCRSU5OSVFNyU4QyVBQiZhbXA7aWNvbj1odHRw
-JTNBJTJGJTJGdGhpcmRxcS5xbG9nby5jbiUyRmVrX3FxYXBwJTJGQVFUOEdmYTYxYUh1c2Z4
-SnJrY3BOMjNpYU1mUmF2cEwyWHM1R2liWEYwWjllUTByMU9xOGJxUHdiS3dpYjZoaWJPMlRa
-TUhWQmliSmlhbUNRU1gzbFNFelBsUEFhaWJ0TjNkVmlhRnVPUWY1M2pWRUJYYkR6S3FSNmlh
-ZyUyRjAmYW1wO21haWw9MTMwMjQ5Njc3NiU0MHFxLmNvbSZhbXA7Y29kZT1LNHBXclFpR1k3
-ODg1Y29FR3VldFRGSi1tb2VjWnF6cU9HNVdWR3NLc0tLSkpQZXJxVTNXdzR3bkp1ZGVOSXdE
-STRsQnR4N2o0Rk9TSVFqSEM1dmFtZyIgdGFyZ2V0PSJfYmxhbmsiPjx0YWJsZSBzdHlsZT0i
-dGFibGUtbGF5b3V0OmZpeGVkO3BhZGRpbmctcmlnaHQ6MjBweCIgY2VsbHBhZGRpbmc9IjAi
-IGNlbGxzcGFjaW5nPSIwIj48dGJvZHk+PHRyIHZhbGlnbj0idG9wIj48dGQgc3R5bGU9Indp
-ZHRoOjQwcHg7bWluLXdpZHRoOjQwcHg7cGFkZGluZy10b3A6MTBweCI+PGRpdiBzdHlsZT0i
-d2lkdGg6MzhweDtoZWlnaHQ6MzhweDtib3JkZXI6MXB4ICNGRkYgc29saWQ7Ym9yZGVyLXJh
-ZGl1czo1MCU7bWFyZ2luOjA7dmVydGljYWwtYWxpZ246dG9wO2JveC1zaGFkb3c6MCAwIDEw
-cHggMCByZ2JhKDEyNywxNTIsMTc4LDAuMTQpIj48aW1nIHNyYz0iaHR0cDovL3RoaXJkcXEu
-cWxvZ28uY24vZWtfcXFhcHAvQVFUOEdmYTYxYUh1c2Z4SnJrY3BOMjNpYU1mUmF2cEwyWHM1
-R2liWEYwWjllUTByMU9xOGJxUHdiS3dpYjZoaWJPMlRaTUhWQmliSmlhbUNRU1gzbFNFelBs
-UEFhaWJ0TjNkVmlhRnVPUWY1M2pWRUJYYkR6S3FSNmlhZy8wIiBzdHlsZT0idmVydGljYWwt
-YWxpZ246IGJvdHRvbTt2ZXJ0aWNhbC1hbGlnbjpib3R0b207d2lkdGg6MTAwJTtoZWlnaHQ6
-MTAwJTtib3JkZXItcmFkaXVzOjUwJTtwb2ludGVyLWV2ZW50czpub25lIiAgLz48L2Rpdj48
-L3RkPjx0ZCBzdHlsZT0icGFkZGluZzoxMHB4IDAgOHB4IDEwcHgiPjxkaXYgY2xhc3M9ImJ1
-c2luZXNzQ2FyZF9uYW1lIiBzdHlsZT0iZm9udC1zaXplOjE0cHg7Y29sb3I6IzMzMzEyRTts
-aW5lLWhlaWdodDoyMHB4O3BhZGRpbmctYm90dG9tOjJweDttYXJnaW46MDtmb250LXdlaWdo
-dDo1MDAiPum+meeMqzwvZGl2PjxkaXYgY2xhc3M9ImJ1c2luZXNzQ2FyZF9tYWlsIiBzdHls
-ZT0iZm9udC1zaXplOjEycHg7Y29sb3I6Izk5OTg5NjtsaW5lLWhlaWdodDoxOHB4O21hcmdp
-bjowIj4xMzAyNDk2Nzc2QHFxLmNvbTwvZGl2PjwvdGQ+PC90cj48L3Rib2R5PjwvdGFibGU+
-PC9hPjwvZGl2PjwvZGl2PjxzcGFuIHN0eWxlPSJmb250LWZhbWlseTogdWktc2Fucy1zZXJp
-Ziwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmLCAmcXVvdDtBcHBsZSBDb2xvciBFbW9qaSZxdW90
-OywgJnF1b3Q7U2Vnb2UgVUkgRW1vamkmcXVvdDssICZxdW90O1NlZ29lIFVJIFN5bWJvbCZx
-dW90OywgJnF1b3Q7Tm90byBDb2xvciBFbW9qaSZxdW90OzsgZm9udC1zaXplOiAxNnB4OyBj
-b2xvcjogcmdiKDAsIDAsIDApOyBsaW5lLWhlaWdodDogMS40MzsiPkhlbGxvIERQREsgZGV2
-cywKCkknbSBydW5uaW5nIGEgRFBESy1iYXNlZCBhcHBsaWNhdGlvbiAoTnR5VGNwLURQREsp
-IG9uIFVidW50dSAxNi4wNC4KVGhlIHByb2plY3QgY29kZSBpcyBmcm9tIG15IEdpdEh1YiBy
-ZXBvc2l0b3J5OgpodHRwczovL2dpdGh1Yi5jb20vamVycnkxMjM0NTYxMjM0NTYvTnR5dGNw
-X2RwZGsuZ2l0CgpXaGVuIEkgc3RhcnQgaXQgd2l0aCBzdWRvLCBJIGdldCB0aGUgZm9sbG93
-aW5nIGVycm9yOgoKUEFOSUMgaW4gZWFsX2ludHJfdGhyZWFkX21haW4oKToKQ2Fubm90IGNy
-ZWF0ZSBlcG9sbCBpbnN0YW5jZQpFQUw6IGZhaWxlZCB0byBjcmVhdGUgdW5peCBzb2NrZXQK
-RUFMOiBGQVRBTDogZmFpbGVkIHRvIGluaXQgbXAgY2hhbm5lbApFQUwgaW5pdCBmYWlsZWQ6
-IEJhZCBhZGRyZXNzCgpJIGhhdmUgYWxyZWFkeSB0cmllZDoKLSBSdW5uaW5nIHdpdGggc3Vk
-bwotIENvbmZpZ3VyaW5nIGh1Z2VwYWdlcwotIFJlbW92aW5nIC92YXIvcnVuL2RwZGsvCi0g
-QWRkaW5nIEVBTCBwYXJhbWV0ZXJzOiAtYyAxIC0tbm8tcGNpCgpDb3VsZCBhbnlvbmUgaGVs
-cCBtZSBmaWd1cmUgb3V0IHdoYXQncyB3cm9uZz8KVGhhbmtzIGEgbG90ITwvc3Bhbj4=
+On Mon, Mar 16, 2026, 1:50=E2=80=AFAM Sriram Yagnaraman <
+sriram.yagnaraman@ericsson.com> wrote:
 
-------=_NextPart_69B6AA49_132AB5A0_25085DEC--
+> Hi Mike,
+>
+> Do you know the status of this patch? It looks like it hasn't received an=
+y
+> review since it was posted in January 2025.
+>
+> We've independently hit the same bug (dst_off reset per-descriptor
+> instead of per-packet in the RX slow path) and your fix solves our
+> issue.
+>
+> If this patch is stale and unlikely to be picked up, I can send a
+> new patchset against the latest tree that also includes a
+> boundary check for MEMIF_DESC_FLAG_NEXT when n_slots is
+> exhausted.
+>
+> Let me know if you'd prefer to respin your series or if I should send
+> a new one.
+>
+> Thanks,
+> Sriram
+>
 
+--000000000000e59560064d25ab13
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto"><div>Sriram,<div dir=3D"auto"><br></div><div dir=3D"auto"=
+>I am glad the patch worked for you. Unfortunately, I am no longer working =
+in this space so you will need to take the lead on getting this pulled in.<=
+/div><div dir=3D"auto"><br></div>-MikeB=C2=A0<br><br><div class=3D"gmail_qu=
+ote gmail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Mon, Ma=
+r 16, 2026, 1:50=E2=80=AFAM Sriram Yagnaraman &lt;<a href=3D"mailto:sriram.=
+yagnaraman@ericsson.com">sriram.yagnaraman@ericsson.com</a>&gt; wrote:<br><=
+/div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-le=
+ft:1px #ccc solid;padding-left:1ex">Hi Mike,<br>
+<br>
+Do you know the status of this patch? It looks like it hasn&#39;t received =
+any<br>
+review since it was posted in January 2025.<br>
+<br>
+We&#39;ve independently hit the same bug (dst_off reset per-descriptor<br>
+instead of per-packet in the RX slow path) and your fix solves our<br>
+issue.<br>
+<br>
+If this patch is stale and unlikely to be picked up, I can send a<br>
+new patchset against the latest tree that also includes a <br>
+boundary check for MEMIF_DESC_FLAG_NEXT when n_slots is<br>
+exhausted.<br>
+<br>
+Let me know if you&#39;d prefer to respin your series or if I should send<b=
+r>
+a new one.<br>
+<br>
+Thanks,<br>
+Sriram<br>
+</blockquote></div></div></div>
+
+--000000000000e59560064d25ab13--
