@@ -2,142 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9D2F506D6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 14:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3696EF506D2
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 14:05:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 097D04025E;
-	Mon, 16 Mar 2026 15:01:16 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id A5778400D5
- for <dev@dpdk.org>; Mon, 16 Mar 2026 15:01:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6B5984025E;
+	Mon, 16 Mar 2026 15:05:17 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 3A843400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 15:05:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773669675; x=1805205675;
+ t=1773669917; x=1805205917;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=IYmqM1eMsK8Y7HA3Z+MU9IH9D/TYolwypFROGIyP1BI=;
- b=mH8nudFSZDbnKsrQMi31roofYb0ekbmoGMtP7ai+fy/zuZweTipeuyHh
- yAUMbEqQKmHHc4nQnHtX6MQXNRkdxdSfJeKfjVLsCAERgEIb2+YNY5eTt
- Wx6GOwUgURttl0VwqJ2dgiI6DKQIH9tJOByBtPU3jpIzv2Ukue3DdssnQ
- o5abBPfcQcAMP3gXS3sZrfj43HDEa32gGWta8sah504e42Bp0ljtvMTuS
- 7IiO81BdpdF29IH4hQ+RoK9Hj6dYXtjhZFybTLwJg23FQx/jEXPPOYKyO
- b8lgzK0jXier7Bwc5bVNBeZiDAyfWtr26a/0M+MsESxPFyb7cJTdVRKNA w==;
-X-CSE-ConnectionGUID: 7SdgtrDgSsunPhCI+pCozw==
-X-CSE-MsgGUID: 4QW2MuPbSvmgdtmKScovrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="62252405"
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="62252405"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 07:01:14 -0700
-X-CSE-ConnectionGUID: O2lcCovOT4WKa99/yOo52A==
-X-CSE-MsgGUID: guYTUgxuQ7irSzqrNZJVtA==
+ bh=lp43ILbOOCNanh0B1n5w38kLJ9AGpYYOuoNUGHm81y8=;
+ b=PNDWBt+YlGjftIBpJwcnbmJj8Onmkzl6dHCNJsiIlt381DIlz9ziQfHg
+ XZAKRlx9S5pkJfujRFCEYvtC9rbfJyEVEG/iSiMZpGJtc8NjIcPe3tyL8
+ Xg+0CxLLi16ED/9R7ClxTk6i5hyehW6lVp/P31u3S86vlx+WdG5e76J59
+ w2V9RV/xbpLVWmM1NVd9RUwoRRukqKD6yG/Up++V5mvtRu0PX1hU201QR
+ 6UFIGWFRl0CeJ3zH2BtwjHMUDLAEF86r/yuVbu6gYxp7wFcUCtYU/mgZD
+ u/+2+RpgyMSxsjsroL1XjtyW+Iz50ygQ/k2Q2MWXdI0gZy9bB86t8EQu7 A==;
+X-CSE-ConnectionGUID: H52U6QHkTI+zDRuuqxiCmw==
+X-CSE-MsgGUID: 9OUCEA8/SZCvrEYWhQbBlQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="74763358"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="74763358"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+ by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Mar 2026 07:05:15 -0700
+X-CSE-ConnectionGUID: CmRjwLHyRtmGx7lckCbWhw==
+X-CSE-MsgGUID: kIS+orCgSFOuQP+AuARXYQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="219499647"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="222139830"
 Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 07:01:13 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Mar 2026 07:05:15 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Mon, 16 Mar 2026 07:01:12 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.2562.37; Mon, 16 Mar 2026 07:05:14 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Mon, 16 Mar 2026 07:01:12 -0700
-Received: from MW6PR02CU001.outbound.protection.outlook.com (52.101.48.51) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.37 via Frontend Transport; Mon, 16 Mar 2026 07:05:14 -0700
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.68) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Mon, 16 Mar 2026 07:01:09 -0700
+ 15.2.2562.37; Mon, 16 Mar 2026 07:05:14 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oG4Za7pe7ybc6Nd9gY3y5JD9qu25lMYgFxFNiVW0QqaUFmQFsJniWrsvCbhGZ354J3Gh1+NlhVBf+xR7kFzOaE1PiiwrD/6WR5q3XNYvmDaybyAJra9VDZaufWVGhSTn52gd2KxirXv/30PXw4kTMnOnUEb01+oo+4txLRLC4YYVusRpnvERNbZE+Gi3o7Rr0VM4dqaZjcipCddOuMkR6c598SqfecDJNZNo9uapWrHc2Doe/ocz4Sb5MadYW+OPEzAJ7ef5gL22Jwys8CjWdO8uEBRbTbQzMWH/1X9t+pZx1LVw50ks7+c1e+6F2CJgxaIr6Pzg2B8OSvyblSA/Cw==
+ b=i9QVMK6BpEvAy/2MX0+0nrhoFnHQeeNLnf72zTMxtpewpiWda7q2bPK7a35wX7OSf+cCnMcWqdqF8uPyf7bRkb2g05poW43N9osu0BkJ7n3ahM8z9BZjl7lpFu+z2LQbJJctwvf87G2DcZ9GlBv/FStcjKeAxCv9sUp9/1HaaGvvR6xS/ASZRBSvzQzwc8nntVPB4kxlbblNqVTQ3uR/3nEJQFuOWB7bDJFsotMVyK4gmT2350E8r4XkOXc4Ne+FmaL9MMc3rgWXaJ0CBT4QpSQD0ZFeWp9+uXM0yDQiz+vvfAzE1WGzDlxx1ZczyHg+2EJ3O13CkYFDRiH7nU+S+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PpxX7Pl5rwtXW2Kba4Hrow8YzAdrZzap5+ggqG8cPVw=;
- b=KQI75qrfiLu+KyLO6hZf3oRccMQa6ToAfl33l5J0fDSJwYw+rqp3D79+dilEFLf3Db3W9sInjv1H1k9llQNqQQhUVirbpYBgaZksvxbGVrkyqdUlLNEXnGNLyP8g4jwjmqp/jm81826+G4XGqJZqT/J2VZ7rl3IDIW2/6s3RAG9DmhO3j8yzj94bw/KK7EE2VhqdTBA7mpbxDL5VTddEMI/S0d0vAvR3Tl6reGvn0tnIgEsBcnph1SdK7JuSL5nJrc+iDB/sPU7kQIMIXth1bhMxEjQQoYcT7MTISXXePfRBUkQ+sPjFP516nF4ymquffiftzuV5ot1B6ZN83R9HJw==
+ bh=zP+40tRGwKmnRDRhbxejYv83AGgHEORrXawQL12rLFY=;
+ b=oTjdQqYfwjdY6IWx8myKpppk1b65RABuRNG+AEPN3wFV5fwfquYSNexA33B7oP0m6xTpae1zDpjBLArXnmApNTodgAtkNGSlZBwppk5Tuut7kHreVv7SXTY+DKL4A7TfYKOEUumUtpFEvPbb3jOL4J83CnMs1tis4MFsY6MyWonPbPBMta9W9MgG/ax9BX/CSHpRw5SZSJ9PvLzYqGCwkAJQP8sbaV7IxsgJgvrSi5+ntcpMM8GkA2rk2m2RxTTh5RVKsRREoEqq21aa2SEGKK83VNF7LrO68y02o0wyYIi/l3PT6UzWi/1pDtkGiQzxVBB/g79afVWcQsYX/v05CQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from CY8PR11MB7290.namprd11.prod.outlook.com (2603:10b6:930:9a::6)
- by IA1PR11MB9495.namprd11.prod.outlook.com (2603:10b6:208:59f::17) with
+ by SJ0PR11MB5215.namprd11.prod.outlook.com (2603:10b6:a03:2d9::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.16; Mon, 16 Mar
- 2026 14:01:02 +0000
+ 2026 14:05:05 +0000
 Received: from CY8PR11MB7290.namprd11.prod.outlook.com
  ([fe80::97aa:4b89:4558:19e1]) by CY8PR11MB7290.namprd11.prod.outlook.com
  ([fe80::97aa:4b89:4558:19e1%5]) with mapi id 15.20.9723.016; Mon, 16 Mar 2026
- 14:01:02 +0000
-Date: Mon, 16 Mar 2026 14:00:40 +0000
+ 14:05:05 +0000
+Date: Mon, 16 Mar 2026 14:04:59 +0000
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Stephen Hemminger <stephen@networkplumber.org>
 CC: <dev@dpdk.org>
-Subject: Re: [PATCH v20 11/25] net/pcap: consolidate boolean flag handling
-Message-ID: <abgNCJkwM6lRvbYS@bricha3-mobl1.ger.corp.intel.com>
+Subject: Re: [PATCH v20 12/25] net/pcap: support VLAN strip and insert offloads
+Message-ID: <abgOCyUiSMKZ9njL@bricha3-mobl1.ger.corp.intel.com>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
  <20260310161356.194553-1-stephen@networkplumber.org>
- <20260310161356.194553-12-stephen@networkplumber.org>
+ <20260310161356.194553-13-stephen@networkplumber.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20260310161356.194553-12-stephen@networkplumber.org>
-X-ClientProxiedBy: DUZPR01CA0290.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4b7::28) To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <20260310161356.194553-13-stephen@networkplumber.org>
+X-ClientProxiedBy: DB9PR05CA0001.eurprd05.prod.outlook.com
+ (2603:10a6:10:1da::6) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|IA1PR11MB9495:EE_
-X-MS-Office365-Filtering-Correlation-Id: 428fc83a-120f-4673-74a9-08de83646d06
+X-MS-TrafficTypeDiagnostic: CY8PR11MB7290:EE_|SJ0PR11MB5215:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a0519fc-1d07-4a84-cae8-08de836505b0
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|56012099003|22082099003|18002099003|7053199007;
-X-Microsoft-Antispam-Message-Info: z8zqlq6a1ViqGyLHD7jeENi0+qzRB4t6lK24WOjiYe/YdByOnCnVR5Db6MCdA6cLQX6oRWPokp/2remBvFOZ6/GgxecIKgBkh1CT8xeV1OeQOokhAgPSi5cWwdzBC4gIB2runLyBWnAukmGECOMRJOnhsEf4HotIkSVJjH1DdODoQ2LQSnbyDs96/zE13D2c+uhcX/St/ctanKmUJMpkgU2WB5DkTeLyvW5jBFb+V91IIFE/slt53kNx56bPTWoQEFHEd8mbaSCS4Y5nAKHlCnZ7Zy7HRocwN0ZXmXvLjmQGO+SF9qGD8HNknhmCj2k+GTps/z0Z2Hb6wc/ooWh52Sf5lJYk0jeebtc97UdfwApPt2Gl75KFa0kGCEbt7VaLkjVpUDDsu0zz7i9P68axQMkl0gX+ZKUmc09RWIfR52OcNU3+cjL0VOD//ExwCd+OUkab/ESts6rTUFe2j9c34VSDt7oc2oWty2TFKzGH3+4aC6zryVPdMaKMosnD/xQOKrFJp/TTF2pn4oQWfgTq3rlOZmwwvVWrWAHL7qmUrPVPiIDYQNb5NGfkL96CsBorq+gJuJPdWRsKCtPk9jb3JouoRpNjfZM2pei3eQdjc9dgrCM4Q4PC08LDoYzmlPOtc/mb28yBCgnvh0fKZDjZY7nYF70RO5Yd2D22aKHtMfrHTGPmTD9b9JxufkhuoP8/lKwMCMbJMqOnVowi3emeRF5q9eagoDgeJD2Z9OuzhQ0=
+ ARA:13230040|366016|1800799024|376014|18002099003|56012099003|22082099003|7053199007;
+X-Microsoft-Antispam-Message-Info: 3ECkrx/aXf6NhMuu0o9uB8vpAlTP5LPRF9waMm1FEuaLYdSUQrGU/nGEtJCnK6DBy43CzngR32db0BXQdjhVsoG8mrmO3t0nUNzRC6dZdeyAaMfwKcXnPUzlZOkWoZWuQomStGoMc1uVrx3uv78n7AjahRPX4cwVFbQWQkgwhOIjO7Zc1ZKEYm8P3FYc42clFkz1HBdtwJK7OEkeJiXyD7hvzb7OvoCzRibzQ5/xU9AdR0zaOQB1zNv6Vc7W13AQ8HqyOT/xQOpRfahsgpSI7mXft9YUguRpvg6kO4IrwCvGsEQg4b1QnJ9oCkMjl1hlWLal2WGlCYKNiXsREsMyESbEurU1b3UpwIP1BGWi+RnSHlFjzJESgk18JJ2nneFV8VLPU60xXXTV49+YN0WGnJ7cNospDQB/JSeXTTyTq6FzUHFXwhkuSnaN8wDXEQZhIsT5reWlRkhBAUqiXYIa9WEtTY/aQPqxEdY8ESkwrf4fnxyr3heNupjWeESBtsedtdyVXnxFC5f17UdfvKGWL9LHQstelYhmHj4vhFdAU+spoMRiWYFI5D1lbLcIsBWKbLyIy0MLlnC6r4ZiKbXq2Dk55ldhfAJV/kweGu2HOc0r78wtIcsIsko4mPxUCpQvJuFBIpOmhvS9194WprFftNqcGA+RkFhKbyiI5O6ovp2UWi43HPtLYanGLdXIrkcIen7Z1ClMdMfLh6NNtjB82kjaGPNcHg0Y+gjUwLcOFa8=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:CY8PR11MB7290.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(56012099003)(22082099003)(18002099003)(7053199007);
+ SFS:(13230040)(366016)(1800799024)(376014)(18002099003)(56012099003)(22082099003)(7053199007);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NjrhCElpj3yVEyKCDlGyEKkvbpTiipTb02wPV1/EbvfBrEjK+cyF8nT3p+V5?=
- =?us-ascii?Q?tfKibnG8d4f1oOPNoDCapVXvo3PxY+CW2rQYIyOClYKUEArueTHHzsNqBuRd?=
- =?us-ascii?Q?jYS5RhjQVBbzHoePbWP2R4q6sNapzGfQMETLt91S2u6ERv7Mhf/zgyFl/9VW?=
- =?us-ascii?Q?8HUvD5+EHB3nl6eMvwBbHadGkD1yBmXtHbGdWpEhlC+iyGMi+NxrRDEXogcg?=
- =?us-ascii?Q?3ibl7ju51+bAGmEbSBkSzIp3vr/F0+G0ViFFiako4Z13anF8QhoKWMoQRo+h?=
- =?us-ascii?Q?OlJt9QkWNSAi2tsz26vpqfdCih0r13EB8pBKdQcT10H8UUE1/g1w1P/dt81p?=
- =?us-ascii?Q?3Dw9KHOgbeVdlW76Rl2MxrRb1rnmgudoGwoaDSkB2EVPpW4HLbLtoSN+wEzz?=
- =?us-ascii?Q?CFfxZSlh8fFCyG8wYwzNkwpnN9Np6Ot+8tvRp+p5sI5bGpA8UAURtV22P5Ul?=
- =?us-ascii?Q?9dihBd8FNwFZ2+WW9d7nb3t1P9vaEMUMlAyFaiuxQWLfxzxvSxN0MrgcAskx?=
- =?us-ascii?Q?zKXQAFmP3pDNgGCTBDaJ5+No3O8tSJbg1CltUmp/B/IGdNz/6Ux3WCQ4yKR/?=
- =?us-ascii?Q?QItCDDPTKBOumXNknDKPkJbZR+HXWnACcVvgHKVART4F418PuuA/Oqd80NWk?=
- =?us-ascii?Q?eN2wksfruuI8kySJNQTaGUx5tUQusmvWEGIKDn2cEDQ9oOZJw+TOTxkWWzgq?=
- =?us-ascii?Q?xvaZfO3MFi/vYLeKRU7ak7pNK70t2Rz8CqmjP/IqpMDgBHfMcCfpZN5f1Tzq?=
- =?us-ascii?Q?jrqjNhc75INRa2VVI9n4BdBaJzrD8UvvV2WRO453Xv3Fni1KunIDk6f1aRy2?=
- =?us-ascii?Q?YfCab4P2yA1VqPVZh5oEA4WFnuTbJlLNovO2tusNXCHnJsJnDjsL700M/tSF?=
- =?us-ascii?Q?gi22tUhJRmfVKIl72g/H0sE20CznvWf1GAUV92iVII8ikzyligsdlFu5vrCn?=
- =?us-ascii?Q?xSdVAJAzi/VT81oh8Sb4svPcuN1//3zJBs8MtIYKuuyOuV6yURUpiJyLRM/2?=
- =?us-ascii?Q?63RBjbAv64ym3oN/vFQ36AERQUCCeiWIIRIELLEBdo16KAm7dfMvDE60h8Iw?=
- =?us-ascii?Q?aFH1GbE+VZMqPRDwgaDxoUrxCrkX4fJ+p7F27mOWtIREiy+iSjza7WrVDXxl?=
- =?us-ascii?Q?5n+rCNfhX+cvgw3m5/qLzpsrC691g451sChfZEyMv9h5VhjWJtbwtU9LE5nf?=
- =?us-ascii?Q?htS+AGhBJiPjrwaP8gRDwnpKdtgn8/YHfIEkX0rcegqHucDqcqLcZoZXGeZY?=
- =?us-ascii?Q?c9o4/Yuwyk2Y1U3xsamZB8SwaaL/JV6LXga+wy6gJwaA/PlvxhSI6llpOpIu?=
- =?us-ascii?Q?9gnoLG0BFoBqh7tVGCDW51zIN21UMY23xvsV/gORnwQlsVe1l0EWmhnDxY6K?=
- =?us-ascii?Q?hvzZcIb8yReReoTHD/WBH2W5q6jhN/hTwSA3ZEeD+7TvnuYRaL+RqCWMYprI?=
- =?us-ascii?Q?5pScHUtSZm1FdX0mIeu2wacDEzeP9acXNc5goSR9bRYMaabW1vWuW+fq1HAG?=
- =?us-ascii?Q?eFRjwtiGGcm6ROK4FNIKyu2JwUP78xb4NG8MVKu9mmiGllQ6P5D5LuETQmdO?=
- =?us-ascii?Q?HSPqS3bb54rYLWplm0LCl5nyhltGQE1MP3aYl3t3UvteWZRrom86MyQtwkeb?=
- =?us-ascii?Q?dyzlUIJt76enHRVlDWR8EKo2qXP5N8u0IYd1Lnqokn08LdIlPslOSL1izoXe?=
- =?us-ascii?Q?0bb+eRPPljg3C+JGxIqHjiYnwhXOUKeQBFsqEhBy5gJX56TImTKfC90HaN9O?=
- =?us-ascii?Q?2MNVaU2me2JqBEDCYdOvSGW8nGxbCVo=3D?=
-X-Exchange-RoutingPolicyChecked: oANZ8WbL3M5om2p6TSsSOResgpc/FJiS/9wO4w9desM4M9l12Ppp4wOoEGzDqXVg5b3tx43M4o+IHYqdY6DVlV9k9NAs2GjUV4dlHZG6FtNdiQCKkiBvqfRI728ojnuENWqAwZIG/FlhjsjxnL8oMp5IM1go2aFCSL5WPFuXkBl4j1GE1vdz0MgRl2n4jV+rQUClUnttENE7Mm1zcL68fhsmFIKq7Smr9ZbPwdLv5cqdaIC5M/Ay4TBMaZrZ46GEOf7u+FNj5eEAkjoy6A891sFLXaKWfTxDDonCLAQ4TOv/B3OD/8e5Q7DBzQHtWFLldUciZYHHGrjT3VAUh7I5zA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 428fc83a-120f-4673-74a9-08de83646d06
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?mqK1SD4cYbmgYycMIBMqGv+aPGz8EyCN3/91kM+Ky0h9675GkMnLZ7jspxBj?=
+ =?us-ascii?Q?jnxEK/3NFmNm4Vl+VGHkFGvhbwlRTp9lgGI6yX3AK/ul8HJTA/9QzRVSev32?=
+ =?us-ascii?Q?NzLbab9TDysb+I3msNrUzmt8JGVtY0bBvEVbS0ku3eR0Kk99IENmHnwWonMS?=
+ =?us-ascii?Q?qg0uCta1i7KMprqMU0dixmlZa8aMkdkaxd3twHXsZWpNoka5ND6sDKlkFx4k?=
+ =?us-ascii?Q?f1FOAFjZ6t2+0eLCwcCOcvRWXEqhO54n8MoCzIpzaHs2zETjKIYRBAI967Fi?=
+ =?us-ascii?Q?AQVukm4jRSpaUx2uMK/1eAzlxREvQX9oO1OOK7Dm220jT1fbeY8A17g12N+t?=
+ =?us-ascii?Q?AVX7sWKMYUqultLCKOGmrlouFlUe/Eut1pOzleEcu74Pp6ddZljdqy4ZYwZt?=
+ =?us-ascii?Q?/2z/jfr35S9o+ElADDhFKgIotIpzcOyfSQ52fSee+M1auH0IFabmV+ebMtVi?=
+ =?us-ascii?Q?RI0Y2ijoYvbx/pr10amrZZwDa1Iq6ytUhRLZviufDiG4Qj5CCdA7aLLxJOlQ?=
+ =?us-ascii?Q?QOsTeodk7HhSf47puX1CMrU9eCdjCjlfhUwAJz7OM0/vUDksTL23Tx5HAsw2?=
+ =?us-ascii?Q?VfFW7LWV9DtyzBpbUl+mNcGI91K0CfHetpeVZ9ZVodeWee8WdW4LzjIdY+51?=
+ =?us-ascii?Q?NSOtnBMtuIMztFJDdXlJ/nH7FGDJaXq85wvg6BVjt+enzHD6W9zW0CJF376P?=
+ =?us-ascii?Q?w4w946KSTMms0Yv5bGNz2Srz9SZ9RPv2+s4v3P92eH7abPu7wkytWjS/QUjW?=
+ =?us-ascii?Q?alR4VKPpvSye+uC3qD7oLkKjlFbLOGZenE9Xu6P7X76IYqdnjewIn2OQlJyk?=
+ =?us-ascii?Q?U4B0+C5ruMQBAgbxN/FFoCk86eLodxSh4SYQG53gNZOCnAuDVbRf0GLexZb1?=
+ =?us-ascii?Q?TUtNX7OUWG80cHD25IhDIOjx04s8RdAgHu5EfM/ZOaq9lL1cKpGEsASFQm1l?=
+ =?us-ascii?Q?Pi6RToZyFsWPRQjaLWpkk5LlX+tptp6X1BldltQGLCTQSCl/hk0+oxkYwcFr?=
+ =?us-ascii?Q?wexwuQvBOPe2mA0u+mA27Fsld4MoRtUM7EK3wHccrg5tfCELz6Yr/29Bttei?=
+ =?us-ascii?Q?COLwn0zXuL+ZTGsdTbs4u5gqTy7Toy7pGV7NKlmmr7Kx7P3V9Lxq+a6MFkmK?=
+ =?us-ascii?Q?FDSzk3eEyMZRBQ3QqXFI+XzLdxEx3V1yMbz19aFOlnakmYqDas4IR76MWKIM?=
+ =?us-ascii?Q?SVXx7uhGQTCpf49ebTCPIMHC7Nzv/Xv71xopP81UGup/iRnL9mDA9k0Xcks/?=
+ =?us-ascii?Q?oPlFY2F6JnZrtRhhdClnX1A+RRC09Wzissv1N5cbwuRawP19LWAuSoWcI+5p?=
+ =?us-ascii?Q?+QclG7KFBjlWkMvSwv80ZVCJpmdTDyMIb5/UnTfzj0HSYEkvbh84hWiexWYa?=
+ =?us-ascii?Q?dIz1scMu+65NFqSYxNe3KjhXnXXx4d8zYmQgFkRg5FL84/FVmllHqRZplun+?=
+ =?us-ascii?Q?TdRBWpS3IJ9WMqYqGZHu3e+h+1DuQkFsfBC0i+rZ5debrQ9ua9eS4Ds/ko1E?=
+ =?us-ascii?Q?eCCOyQKT0PJFV2W8frLRG6szT3z+VmyCsaxUfM2MhhkweTdxKyq4a7+E4tF8?=
+ =?us-ascii?Q?3SvoErz4/ij+5yh90+sNMCEEmw5qD8gqPXT7O5BiLFOekiKeGS5nDnqqU7Jw?=
+ =?us-ascii?Q?GUBnp4XYqEFthDp8dri+Pz1YeDdkutZ8Ef2d20biR94ciwtbd8XCIqtNrSmK?=
+ =?us-ascii?Q?hREmMm458QA/s1dmV/dB1VUgYbX0dmeWWjhhQJrViByU5lzvfbNx7r408NXx?=
+ =?us-ascii?Q?WebnGYlKFvmdmGLDg+XP8sj5dbPL52g=3D?=
+X-Exchange-RoutingPolicyChecked: PG8Fjvw6cuRyXU5GHBtVMDflPZSRhqbUoju59To4LpimL2e8d/+/wns1OlNXTN3Sg/TM+To3S3pwUtihM9oovC8OyM9YRZAOZ/dWZGowJaW1pB4p4tDcIFA5amWgCJFVjETdMgTgihY0QQkkh2Gun4/GN4vQ7MWnEU+7qMAP2jEpuHUpy/KGE3EVQ9fIG3EC1eJvWFBr2tHtoYfDvG/TESSOXsV74/JIVrIqT1f/62/vDksAJnph3Ch1d8IxMITqK1cVITmlFJ2pqx7duyTsRHAUBltg5pldHgtvAE2KZXUVlsiTNmXRWzJLAC7iJx5Ei08NMbnO60Ykv++R7wAeRA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a0519fc-1d07-4a84-cae8-08de836505b0
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 14:01:02.4817 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 14:05:04.8506 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EEJRwDGVdZnJGUrhlmGydlCGfyufAmKta3/MqTnvkPWEAilbw6BywqLx7gqzltIUIIZr9nUntNBdKUjcZ/RE4m0P2Ws/rhl1QWE3XcWi7nk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB9495
+X-MS-Exchange-CrossTenant-UserPrincipalName: IqlWpZCbhA1TKDJZ25BBHY4QOqKMXEYKp7u1ot2NuiF8JD8CwGyK5XdTa/x609d7a8q/jHvnYn6WXXjDA4aVGKW8MFXnXJ5SSVypi1ehHhI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5215
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -152,171 +152,165 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Mar 10, 2026 at 09:09:49AM -0700, Stephen Hemminger wrote:
-> Convert internal flag fields from int/unsigned int to bool for clarity
-> and reduced structure size.
+On Tue, Mar 10, 2026 at 09:09:50AM -0700, Stephen Hemminger wrote:
+> Add VLAN tag handling to the pcap PMD, consistent with how virtio
+> and af_packet drivers implement it. This also gets used for
+> capture of VLAN tagged packets when legacy pdump is used.
 > 
-> Merge the separate select_phy_mac() and get_infinite_rx_arg() functions
-> into a single process_bool_flag() handler. The new function also adds
-> proper validation, rejecting values other than "0", "1", or empty (which
-> defaults to true).
+> RX strip: when RTE_ETH_RX_OFFLOAD_VLAN_STRIP is enabled, the driver
+> calls rte_vlan_strip() on received packets in both normal and
+> infinite_rx modes. For infinite_rx, offloads are deferred to
+> packet delivery rather than applied during ring fill, so the
+> stored template packets remain unmodified.
 > 
-> Also change num_of_queue from unsigned int to uint16_t since it cannot
-> exceed RTE_PMD_PCAP_MAX_QUEUES.
+> TX insert: when RTE_MBUF_F_TX_VLAN is set on an mbuf, the driver
+> inserts the VLAN tag via rte_vlan_insert() before writing to pcap
+> or sending to the interface. Indirect or shared mbufs get a new
+> header mbuf to avoid modifying the original.
+> 
+> Runtime reconfiguration is supported through vlan_offload_set,
+> which propagates the strip setting to all active RX queues.
 > 
 > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-
-One minor comment inline below.
-
 > ---
->  drivers/net/pcap/pcap_ethdev.c | 69 +++++++++++++++-------------------
->  1 file changed, 30 insertions(+), 39 deletions(-)
+>  doc/guides/nics/features/pcap.ini      |  1 +
+>  doc/guides/nics/pcap.rst               | 11 +++
+>  doc/guides/rel_notes/release_26_03.rst |  5 ++
+>  drivers/net/pcap/pcap_ethdev.c         | 96 ++++++++++++++++++++++++--
+>  4 files changed, 109 insertions(+), 4 deletions(-)
 > 
+> diff --git a/doc/guides/nics/features/pcap.ini b/doc/guides/nics/features/pcap.ini
+> index c4f0360a06..ec7c91c650 100644
+> --- a/doc/guides/nics/features/pcap.ini
+> +++ b/doc/guides/nics/features/pcap.ini
+> @@ -9,6 +9,7 @@ Queue start/stop     = Y
+>  Timestamp offload    = Y
+>  Basic stats          = Y
+>  Stats per queue      = Y
+> +VLAN offload         = Y
+>  Multiprocess aware   = Y
+>  FreeBSD              = Y
+>  Linux                = Y
+> diff --git a/doc/guides/nics/pcap.rst b/doc/guides/nics/pcap.rst
+> index fbfe854bb1..bed5006a42 100644
+> --- a/doc/guides/nics/pcap.rst
+> +++ b/doc/guides/nics/pcap.rst
+> @@ -247,3 +247,14 @@ will be discarded by the Rx flushing operation.
+>     The network interface provided to the PMD should be up.
+>     The PMD will return an error if the interface is down,
+>     and the PMD itself won't change the status of the external network interface.
+> +
+> +Features and Limitations
+> +~~~~~~~~~~~~~~~~~~~~~~~~
+> +
+> +*  The PMD will re-insert the VLAN tag transparently to the packet if the kernel
+> +   strips it, as long as the ``RTE_ETH_RX_OFFLOAD_VLAN_STRIP`` is not enabled by the
+> +   application.
+> +
+> +*  The PMD will transparently insert a VLAN tag to transmitted packets if
+> +   ``RTE_ETH_TX_OFFLOAD_VLAN_INSERT`` is enabled and the mbuf has ``RTE_MBUF_F_TX_VLAN``
+> +   set.
+> diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+> index d121951f5c..6aef623bf8 100644
+> --- a/doc/guides/rel_notes/release_26_03.rst
+> +++ b/doc/guides/rel_notes/release_26_03.rst
+> @@ -118,6 +118,11 @@ New Features
+>    Added handling of the key combination Control+L
+>    to clear the screen before redisplaying the prompt.
+>  
+> +* **Updated PCAP ethernet driver.**
+> +
+> +  * Added support for VLAN insertion and stripping.
+> +
+> +
+>  Removed Items
+>  -------------
+>  
 > diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-> index 258cffb813..c3270a676c 100644
+> index c3270a676c..c49ca7fa2b 100644
 > --- a/drivers/net/pcap/pcap_ethdev.c
 > +++ b/drivers/net/pcap/pcap_ethdev.c
-> @@ -7,6 +7,7 @@
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <string.h>
-> +#include <stdbool.h>
->  #include <time.h>
->  #include <inttypes.h>
->  #include <errno.h>
-> @@ -102,9 +103,9 @@ struct pmd_internals {
->  	char devargs[ETH_PCAP_ARG_MAXLEN];
->  	struct rte_ether_addr eth_addr;
->  	int if_index;
-> -	int single_iface;
-> -	int phy_mac;
-> -	unsigned int infinite_rx;
-> +	bool single_iface;
-> +	bool phy_mac;
-> +	bool infinite_rx;
+> @@ -76,6 +76,7 @@ struct queue_missed_stat {
+>  struct pcap_rx_queue {
+>  	uint16_t port_id;
+>  	uint16_t queue_id;
+> +	bool vlan_strip;
+>  	struct rte_mempool *mb_pool;
+>  	struct queue_stat rx_stat;
+>  	struct queue_missed_stat missed_stat;
+> @@ -106,6 +107,7 @@ struct pmd_internals {
+>  	bool single_iface;
+>  	bool phy_mac;
+>  	bool infinite_rx;
+> +	bool vlan_strip;
 >  };
 >  
 >  struct pmd_process_private {
-> @@ -114,25 +115,25 @@ struct pmd_process_private {
->  };
->  
->  struct pmd_devargs {
-> -	unsigned int num_of_queue;
-> +	uint16_t num_of_queue;
-> +	bool phy_mac;
->  	struct devargs_queue {
->  		pcap_dumper_t *dumper;
->  		pcap_t *pcap;
->  		const char *name;
->  		const char *type;
->  	} queue[RTE_PMD_PCAP_MAX_QUEUES];
-> -	int phy_mac;
->  };
->  
->  struct pmd_devargs_all {
->  	struct pmd_devargs rx_queues;
->  	struct pmd_devargs tx_queues;
-> -	int single_iface;
-> -	unsigned int is_tx_pcap;
-> -	unsigned int is_tx_iface;
-> -	unsigned int is_rx_pcap;
-> -	unsigned int is_rx_iface;
-> -	unsigned int infinite_rx;
-> +	bool single_iface;
-> +	bool is_tx_pcap;
-> +	bool is_tx_iface;
-> +	bool is_rx_pcap;
-> +	bool is_rx_iface;
-> +	bool infinite_rx;
->  };
->  
->  static const char *valid_arguments[] = {
-> @@ -884,7 +885,7 @@ eth_dev_close(struct rte_eth_dev *dev)
->  		}
->  	}
->  
-> -	if (internals->phy_mac == 0)
-> +	if (!internals->phy_mac)
->  		/* not dynamically allocated, must not be freed */
->  		dev->data->mac_addrs = NULL;
->  
-> @@ -1209,29 +1210,19 @@ open_tx_iface(const char *key, const char *value, void *extra_args)
->  }
->  
->  static int
-> -select_phy_mac(const char *key __rte_unused, const char *value,
-> -		void *extra_args)
-> +process_bool_flag(const char *key, const char *value, void *extra_args)
->  {
-> -	if (extra_args) {
-> -		const int phy_mac = atoi(value);
-> -		int *enable_phy_mac = extra_args;
-> -
-> -		if (phy_mac)
-> -			*enable_phy_mac = 1;
-> -	}
-> -	return 0;
-> -}
-> -
-> -static int
-> -get_infinite_rx_arg(const char *key __rte_unused,
-> -		const char *value, void *extra_args)
-> -{
-> -	if (extra_args) {
-> -		const int infinite_rx = atoi(value);
-> -		int *enable_infinite_rx = extra_args;
-> -
-> -		if (infinite_rx > 0)
-> -			*enable_infinite_rx = 1;
-> +	bool *flag = extra_args;
+> @@ -270,7 +272,11 @@ eth_pcap_rx_infinite(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+>  		bufs[i]->data_len = pcap_buf->data_len;
+>  		bufs[i]->pkt_len = pcap_buf->pkt_len;
+>  		bufs[i]->port = pcap_q->port_id;
+> -		rx_bytes += pcap_buf->data_len;
 > +
-> +	if (value == NULL || *value == '\0') {
-> +		*flag = true; /* default with no additional argument */
-> +	} else if (strcmp(value, "0") == 0) {
-> +		*flag = false;
-> +	} else if (strcmp(value, "1") == 0) {
-> +		*flag = true;
-> +	} else {
-> +		PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
-> +		return -1;
+> +		if (pcap_q->vlan_strip)
+> +			rte_vlan_strip(bufs[i]);
+> +
+> +		rx_bytes += bufs[i]->data_len;
+>  
+>  		/* Enqueue packet back on ring to allow infinite rx. */
+>  		rte_ring_enqueue(pcap_q->pkts, pcap_buf);
+> @@ -336,6 +342,10 @@ eth_pcap_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+>  		}
+>  
+>  		mbuf->pkt_len = len;
+> +
+> +		if (pcap_q->vlan_strip)
+> +			rte_vlan_strip(mbuf);
+> +
+>  		uint64_t us = (uint64_t)header->ts.tv_sec * US_PER_S + header->ts.tv_usec;
+>  
+>  		*RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset, rte_mbuf_timestamp_t *) = us;
+> @@ -382,6 +392,39 @@ calculate_timestamp(struct timeval *ts) {
 >  	}
->  	return 0;
 >  }
-> @@ -1507,7 +1498,7 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
->  		dumpers.queue[0] = pcaps.queue[0];
 >  
->  		ret = rte_kvargs_process(kvlist, ETH_PCAP_PHY_MAC_ARG,
-> -				&select_phy_mac, &pcaps.phy_mac);
-> +					 &process_bool_flag, &pcaps.phy_mac);
->  		if (ret < 0)
->  			goto free_kvlist;
->  
-> @@ -1546,9 +1537,9 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
->  
->  		if (infinite_rx_arg_cnt == 1) {
->  			ret = rte_kvargs_process(kvlist,
-> -					ETH_PCAP_INFINITE_RX_ARG,
-> -					&get_infinite_rx_arg,
-> -					&devargs_all.infinite_rx);
-> +						 ETH_PCAP_INFINITE_RX_ARG,
-> +						 &process_bool_flag,
-> +						 &devargs_all.infinite_rx);
+> +static uint16_t
+> +eth_pcap_tx_prepare(void *queue __rte_unused, struct rte_mbuf **tx_pkts, uint16_t nb_pkts)
+> +{
+> +	uint16_t nb_tx;
+> +	int error;
+> +
+> +	for (nb_tx = 0; nb_tx < nb_pkts; nb_tx++) {
+> +		struct rte_mbuf *m = tx_pkts[nb_tx];
+> +
+> +#ifdef RTE_LIBRTE_ETHDEV_DEBUG
+> +		error = rte_validate_tx_offload(m);
+> +		if (unlikely(error)) {
+> +			rte_errno = -error;
+> +			break;
+> +		}
+> +#endif
+> +		/* Do VLAN tag insertion */
+> +		if (unlikely(m->ol_flags & RTE_MBUF_F_TX_VLAN)) {
+> +			error = rte_vlan_insert(&m);
+> +
+> +			/* rte_vlan_insert() could change pointer (currently does not) */
+> +			tx_pkts[nb_tx] = m;
+> +
+> +			if (unlikely(error != 0)) {
+> +				PMD_TX_LOG(ERR, "rte_vlan_insert failed: %s", strerror(-error));
+> +				rte_errno = -error;
+> +				break;
+> +			}
+> +		}
+> +	}
+> +	return nb_tx;
+> +}
+> +
 
-You can shrink the diff by leaving the indentation alone, there is nothing
-wrong with it! :-)
+Are we sure this is the correct way to do this? To behave like a normal NIC
+the Tx VLAN tag should be inserted in the Tx function, rather than tx
+prepare should it not? There is no guarantee apps will call tx_prepare
+before Tx.
 
->  			if (ret < 0)
->  				goto free_kvlist;
->  			PMD_LOG(INFO, "infinite_rx has been %s for %s",
-> @@ -1698,5 +1689,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_pcap,
->  	ETH_PCAP_RX_IFACE_IN_ARG "=<ifc> "
->  	ETH_PCAP_TX_IFACE_ARG "=<ifc> "
->  	ETH_PCAP_IFACE_ARG "=<ifc> "
-> -	ETH_PCAP_PHY_MAC_ARG "=<int>"
-> +	ETH_PCAP_PHY_MAC_ARG "=<0|1> "
->  	ETH_PCAP_INFINITE_RX_ARG "=<0|1>");
-> -- 
-> 2.51.0
-> 
+/Bruce
