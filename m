@@ -2,85 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B04A6F53D6D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 16:21:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA3DF53D80
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 17:28:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B63F84025E;
-	Mon, 16 Mar 2026 17:21:03 +0100 (CET)
-Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
- by mails.dpdk.org (Postfix) with ESMTP id 67EAE400D5
- for <dev@dpdk.org>; Mon, 16 Mar 2026 17:21:02 +0100 (CET)
-Received: by mail-dl1-f49.google.com with SMTP id
- a92af1059eb24-12732e6a123so1667921c88.1
- for <dev@dpdk.org>; Mon, 16 Mar 2026 09:21:02 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1773678061; cv=none;
- d=google.com; s=arc-20240605;
- b=cVZvjiBhqmCnV190QXWONWDf39xBWGgQEeR/xziXe2hICXTikcNrS1sr+ouNOKembM
- d1qtqGynx8ANKl9nBSWYeN19XtlqO2GJlH+GvOulsXGnivbbAidntVCyv3s0+sfCfrFc
- RkpSx4DbE10OTTJbyli7afoLB/C2zqCl9mhcNUQNNTV4Lmop1JtOujJ96Lc4qP4qD7i/
- iFFrEvOnXMm0NL4qvrjQcSI6Z/LfE1BpmtS8nzYPeDCWHBs1xlBcODnOPrunU2XDG7bK
- JZDSsoUoxXGRStSkcYdojxyQjTx+EmNRxYOG7wD+UCYcp1UFk6OdPArkoa5UnYNOgg5X
- wTHg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=FhbhsIRQfDXQmDNmTAJwErGMefn4gA/aDV/UfXOmlwI=;
- fh=TnaQSLo3e16j7m5WUfLe3mP+auRMup1cMc92tEgLqeA=;
- b=f8SOG4wpXuSk4RPTSjNpFjSYQ22JMSaS76w5jEs/p2WmqM0tm0FXr3HODP7PC3kHBk
- WoMprV+yEp8QIK5PwlIWBmkOueLdAHLBEI2m2Q1qDE7bM6pJAsBygTi7NhSl7OJOEI0c
- jE1iv0ihRIKeu11BGxP3WSVWWnQyCYmXjbdzycF+eZHOs16+OTYMJisgdU8XSfI65Enw
- tW6cedThmZDXIG5rSafJLVD5Ho3IIQrHiRRD/Id6XlrecREynbm3E6A/MYnhSYw4TzQ5
- MFGq8Zr4n1NUUxBPhZ6x71rhtjvHGX1TuiM76ntHq4euA8805/aYwvmv43vu6SNIa2vD
- 9Llg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1773678061; x=1774282861; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=FhbhsIRQfDXQmDNmTAJwErGMefn4gA/aDV/UfXOmlwI=;
- b=St3Y5uQfs94SJUCXRfkevQ2yUvU8iWx4m2v62reg1MZBHUE//pH7oSY/vXzQCsOQFH
- DrkfFtnolqKaOaMEDVT6m8Iiq69UtF12CZ8a7Gfzqfnh9xp1fzXvjGxM7EbHp1v7AC0u
- eIa81eJPyxN83HuKoEwv6o0jvZ0uTJh/awkUg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773678061; x=1774282861;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=FhbhsIRQfDXQmDNmTAJwErGMefn4gA/aDV/UfXOmlwI=;
- b=dHU3GaZ5Xn/VXuqUaJEncrMTfAg20U04eTxY/HWhOaljpTC5Y4yqiiMgZ98POlIbpe
- GAtabVu3Q6sLJ3n0KW6W25EfSIM5C4kOfwRL77o/N3vaSXIsFzwkQoeDMgmGTPJsr/VG
- Pf3UKgYb/F9ntWxxp60rf5fIVJBWhWEy54pdfmpKDzZDQTzE2Tl+GhgVwtJSSUlK83lz
- wKr1/QYTN8lIEd04uNrOcLFajQ+GzumnHo0cP1W1qbubzKSHfBz3f9xs+fLvE0d+rA0f
- 7EdhYdQ61zhgzuTtZci9amo8alYn/0ppRXdXXWecpez2Lgue5np92Fq8eHcpG/HljFLN
- nSww==
-X-Forwarded-Encrypted: i=1;
- AJvYcCVTNuYqYzDIB483ZhXeSE7+EUF1S6hV1NOq46zkbuy9JJoA2jNTmV1J9nZTd42mZL2ihTU=@dpdk.org
-X-Gm-Message-State: AOJu0YwO6c1fOWxyXcmzPU4t52K+MgE1fgvt/nn8xoEQbq5BYWdHKMJu
- cXG3TdFA5Cx32Piv3KpRHUcCPErtki2WTc89yxm11/AYMlz2u8mzrLW1G2rsVpuMVnhSrlB81gW
- Kg+oQs19dHERZ4i6441fvD3Ls7OEAIu3dyaFOVWsYfQ==
-X-Gm-Gg: ATEYQzwErIy7rp4cqUPOc+q6CqaPU+UonPcBYetzuE8b+uN76g9AEBECuFypAAja6zi
- kTE+FZsYqVr2M/ucNio6auVptgA8ZSVck0kndlQHMX+pt9kzcKbNBY/bfHQXiaeqB+foKDL9v8m
- /DPuLoyXOYUfO1FNZuziUPiaZX04D2CmOy31j9Vr4w97NSXGvu4fnwgTZdZxgGYewMOyHqNspEf
- 4x8Lnvk/Y0i1A88YbtzDYY0tefCrOWMNyYdZ2VptE+HczV6A7R4r/UoCQmkTESeOFYKmroeHKIp
- Y/RlibOZe/pqB/wBTgTRE8nKr6G0v6MNLj7lO0E5MPSAEbuMrAXbuQ==
-X-Received: by 2002:a05:7022:309:b0:11b:ec5f:1c37 with SMTP id
- a92af1059eb24-128f3d5d20cmr6934462c88.18.1773678061279; Mon, 16 Mar 2026
- 09:21:01 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 19EDE4025E;
+	Mon, 16 Mar 2026 18:28:01 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+ by mails.dpdk.org (Postfix) with ESMTP id BC3B5400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 18:27:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1773682080; x=1805218080;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=EoKhPTnbGupaA47bIMv45wj6Eox3phdixjo5mc+GHgY=;
+ b=ZKBoW9Eyp4C4Xo/6x2bMr0MaTFlU0GYSIEefSLlEhz+fBa29YW2nRs51
+ Uz9w55pKCSpvZjyUmv7Ek6kq5kQMB9xyvwZcxNCMtUvkA9UHhu3WFH34W
+ P5iSHmRKtZUh0x4ribpdlWcQLwd7Zn3yY2Iz8rXka5NBwmxy6rkA0ukqa
+ NbeyLRR7UGenp2IRK+6Om6/ywmVG1rRTwIQM/8LgiatObYnmw2KqloKWv
+ sF6j0CZzC+5F6vcTtlJ9XUInB+htzeDxXggd1D16phbGzfAE4zV5YXtu3
+ Zf1X52hHG3D0qtoZd6UXCPYVsASiLN8uYOwavmrGDDEFXxPQf6jJNcZdg w==;
+X-CSE-ConnectionGUID: //HCTioRRDqFp/BMQWEH4g==
+X-CSE-MsgGUID: yaMVucPESU2x8A2ov/ZXoA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="86059604"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="86059604"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Mar 2026 10:27:58 -0700
+X-CSE-ConnectionGUID: RFpbAwFDQbO7z6ztkX1s+A==
+X-CSE-MsgGUID: FirheUtHT6ObGCvUKCgz4Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221228126"
+Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
+ by orviesa010.jf.intel.com with ESMTP; 16 Mar 2026 10:27:57 -0700
+From: Anatoly Burakov <anatoly.burakov@intel.com>
+To: dev@dpdk.org
+Subject: [RFC PATCH v1 00/21] Building a better rte_flow parser
+Date: Mon, 16 Mar 2026 17:27:28 +0000
+Message-ID: <cover.1773681363.git.anatoly.burakov@intel.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-References: <20260313155601.112819-1-dmarx@iol.unh.edu>
- <20260313182240.130379-1-dmarx@iol.unh.edu>
-In-Reply-To: <20260313182240.130379-1-dmarx@iol.unh.edu>
-From: Patrick Robb <probb@iol.unh.edu>
-Date: Mon, 16 Mar 2026 12:17:53 -0400
-X-Gm-Features: AaiRm523AZBSj6SWBd8QALl7cV6_ko2f5ZPhQfJsO_MPrZyRNzseSFpL4rKO6Go
-Message-ID: <CAJvnSUAL3o4wGexM10Ymp0WvhSjmzR8vgBbQefxemiO1UFrmkw@mail.gmail.com>
-Subject: Re: [PATCH v2] dts: update overall result pass/skip logic
-To: Dean Marx <dmarx@iol.unh.edu>
-Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org, 
- Andrew Bailey <abailey@iol.unh.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -94,4 +56,127 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Recheck-request: github-robot
+Most rte_flow parsers in DPDK suffer from huge implementation complexity because
+even though 99% of what people use rte_flow parsers for is parsing protocol
+graphs, no parser is written explicitly as a graph. This patchset attempts to
+suggest a viable model to build rte_flow parsers as graphs, by offering a
+lightweight header only library to build rte_flow parsering graphs without too
+much boilerplate and complexity.
+
+Most of the patchset is about Intel drivers, but they are meant as
+reimplementations as well as examples for the rest of the community to assess
+how to build parsers using this new infrastructure. I expect the first two
+patches will be of most interest to non-Intel reviewers, as they deal with
+building two reusable parser architecture pieces.
+
+The first piece is a new flow graph helper in ethdev. Its purpose is
+deliberately narrow: it targets the protocol-graph part of rte_flow pattern
+parsing, where drivers walk packet headers and validate legal item sequences and
+parameters. That does not cover all possible rte_flow features, especially more
+exotic flow items, but it does cover a large and widely shared part of what
+existing drivers need to do. Or, to put it in other words, the only flow items
+this infrastructure *doesn't* cover is things that do not lend themselves well
+to be parsed as a graph of protocol headers (e.g. conntrack items). Everything
+else should be covered or cover-able.
+
+The second piece is a reusable flow engine framework for Intel Ethernet drivers.
+This is kept Intel-local for now because I do not feel it is generic enough to
+be presented as an ethdev-wide engine model. Even so, the intent is to establish
+a cleaner parser architecture with a defined interaction model, explicit memory
+ownership rules, and engine definitions that do not block secondary-process-safe
+usage. It is my hope that we could also promote something like this into ethdev
+proper and remove the necessity for drivers to build so much boilerplate around
+rte_flow parsing (and more often than not doing it in a way that is more complex
+than it needs to be).
+
+Most of the rest of the series is parser reimplementation, but that is mainly
+the vehicle for demonstrating and validating those two pieces. ixgbe and i40e
+are wired into the new common parsing path, and their existing parsers are
+migrated incrementally to the graph-based model. Besides reducing ad hoc parser
+code, this also makes validation more explicit and more consistent with the
+actual install path. In a few places that means invalid inputs that were
+previously ignored, deferred, or interpreted loosely are now rejected earlier
+and more strictly, without any increase in code complexity (in fact, with marked
+*decrease* of it!).
+
+Series depends on previously submitted patchsets:
+
+- IAVF global buffer fix [1]
+- Common attr parsing stuff [2]
+
+[1] https://patches.dpdk.org/project/dpdk/list/?series=37585&state=*
+[2] https://patches.dpdk.org/project/dpdk/list/?series=37663&state=*
+
+Anatoly Burakov (21):
+  ethdev: add flow graph API
+  net/intel/common: add flow engines infrastructure
+  net/intel/common: add utility functions
+  net/ixgbe: add support for common flow parsing
+  net/ixgbe: reimplement ethertype parser
+  net/ixgbe: reimplement syn parser
+  net/ixgbe: reimplement L2 tunnel parser
+  net/ixgbe: reimplement ntuple parser
+  net/ixgbe: reimplement security parser
+  net/ixgbe: reimplement FDIR parser
+  net/ixgbe: reimplement hash parser
+  net/i40e: add support for common flow parsing
+  net/i40e: reimplement ethertype parser
+  net/i40e: reimplement FDIR parser
+  net/i40e: reimplement tunnel QinQ parser
+  net/i40e: reimplement VXLAN parser
+  net/i40e: reimplement NVGRE parser
+  net/i40e: reimplement MPLS parser
+  net/i40e: reimplement gtp parser
+  net/i40e: reimplement L4 cloud parser
+  net/i40e: reimplement hash parser
+
+ drivers/net/intel/common/flow_engine.h        | 1003 ++++
+ drivers/net/intel/common/flow_util.h          |  165 +
+ drivers/net/intel/i40e/i40e_ethdev.c          |   56 +-
+ drivers/net/intel/i40e/i40e_ethdev.h          |   49 +-
+ drivers/net/intel/i40e/i40e_fdir.c            |   47 -
+ drivers/net/intel/i40e/i40e_flow.c            | 4092 +----------------
+ drivers/net/intel/i40e/i40e_flow.h            |   44 +
+ drivers/net/intel/i40e/i40e_flow_ethertype.c  |  258 ++
+ drivers/net/intel/i40e/i40e_flow_fdir.c       | 1806 ++++++++
+ drivers/net/intel/i40e/i40e_flow_hash.c       | 1289 ++++++
+ drivers/net/intel/i40e/i40e_flow_tunnel.c     | 1510 ++++++
+ drivers/net/intel/i40e/i40e_hash.c            |  980 +---
+ drivers/net/intel/i40e/i40e_hash.h            |    8 +-
+ drivers/net/intel/i40e/meson.build            |    4 +
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   40 +-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   13 +-
+ drivers/net/intel/ixgbe/ixgbe_fdir.c          |   13 +-
+ drivers/net/intel/ixgbe/ixgbe_flow.c          | 3130 +------------
+ drivers/net/intel/ixgbe/ixgbe_flow.h          |   38 +
+ .../net/intel/ixgbe/ixgbe_flow_ethertype.c    |  240 +
+ drivers/net/intel/ixgbe/ixgbe_flow_fdir.c     | 1510 ++++++
+ drivers/net/intel/ixgbe/ixgbe_flow_hash.c     |  182 +
+ drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c    |  228 +
+ drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c   |  483 ++
+ drivers/net/intel/ixgbe/ixgbe_flow_security.c |  297 ++
+ drivers/net/intel/ixgbe/ixgbe_flow_syn.c      |  280 ++
+ drivers/net/intel/ixgbe/meson.build           |    7 +
+ lib/ethdev/meson.build                        |    1 +
+ lib/ethdev/rte_flow_graph.h                   |  414 ++
+ 29 files changed, 9867 insertions(+), 8320 deletions(-)
+ create mode 100644 drivers/net/intel/common/flow_engine.h
+ create mode 100644 drivers/net/intel/common/flow_util.h
+ create mode 100644 drivers/net/intel/i40e/i40e_flow.h
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_ethertype.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_fdir.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_hash.c
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_tunnel.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow.h
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_fdir.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_hash.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_security.c
+ create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_syn.c
+ create mode 100644 lib/ethdev/rte_flow_graph.h
+
+-- 
+2.47.3
+
