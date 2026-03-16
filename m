@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F54F53D80
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 17:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF73AF53D80
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 17:28:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A95940647;
-	Mon, 16 Mar 2026 18:28:02 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 4CECE40662;
+	Mon, 16 Mar 2026 18:28:04 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 3D3264025E
- for <dev@dpdk.org>; Mon, 16 Mar 2026 18:28:00 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A48F740609
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 18:28:01 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773682080; x=1805218080;
+ t=1773682082; x=1805218082;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=jwvYuuvoZOb/8M+YOO9jCjQ5ReuA5wFsXoUI8N5w3t0=;
- b=PZwwTuh/zHOZUFM4DTwsvc8VNrcYG6xubLpnXPjQT2SMpgAP1m4Gh8ZG
- FwI64b4Ccl7/AUypKZ8edcJMeXTH5mA1tQG83Lsl7WyGKN91be073gwCv
- mKfW/b6vDOwy1H1ZzANSroy0qDygcsiPSYzQ0pSVwAc887t5cPDkniXN2
- OT3viBjdD8NQmPMmJqCqel7DRkkNyDDqgwfnx3I2jIU+nPZWCCqiYd1nB
- YuqDOJCr22vSwKSTyUZl3y8sKCZvRKaLVG7Jf1haBx0xubvuRETuJ9MaQ
- HWJ/uwDs3143bTJCJCzZW1Z0MuoEkX/UaLn2dOmzqEymgRNP5PQEuwazp w==;
-X-CSE-ConnectionGUID: 6m7P5haYROK3YjrSt0fmpg==
-X-CSE-MsgGUID: mIs7e92sTyKxXYQvBjEXaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="86059605"
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="86059605"
+ bh=ML2/3r56xzJiwSVAJ/de4YpyKM/ptx5M6d2tIR8Lvjo=;
+ b=d30qCu5CgjsaWl3QGV72oO3oBkG+Qkfz0ekhR8tc3QsKobfdfYitWI5E
+ OTyM1TAmRlDtN/z/axpoiTcFzHpPLAqLnC6SPwyhmVgB9Zu26vyKfWIWZ
+ 1fAHuFntIa5CUeofM1qGeFxDqrtQ4/CCJI7gem6EJg0D/RDn1a8A0S8at
+ 7VsD9v7vmDS3m5bhJK+yh8DkCgwpjFwpDA4DCLE1psSqPjRqwm8fenh0n
+ tEV2MnD1K+EUFdy95jBNa6bRVRbU2KdZcPoiaHkQqCinozyCKFMXzQ/Cb
+ gfNPDv29AXwZ5B7aSjskbuMvG1YQ7jw7mFG+RN4CY3kPfAcklLbOpZwmX w==;
+X-CSE-ConnectionGUID: IdGDQ9phSNqKIfMEze0CHg==
+X-CSE-MsgGUID: u6AL+DC1ReKDCqvXOCCCsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="86059612"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="86059612"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 10:27:59 -0700
-X-CSE-ConnectionGUID: c5DYvBgRSq+tPx9Q7yiUNQ==
-X-CSE-MsgGUID: tX8v8Z4VTP2VjoC0KfONfQ==
+ 16 Mar 2026 10:28:01 -0700
+X-CSE-ConnectionGUID: KbiL05qSR3mYZUAUmTodCg==
+X-CSE-MsgGUID: MD5CGQBlSzyDnhyGlaYOsA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221228133"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221228162"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa010.jf.intel.com with ESMTP; 16 Mar 2026 10:27:58 -0700
+ by orviesa010.jf.intel.com with ESMTP; 16 Mar 2026 10:28:00 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Ori Kam <orika@nvidia.com>
-Subject: [RFC PATCH v1 01/21] ethdev: add flow graph API
-Date: Mon, 16 Mar 2026 17:27:29 +0000
-Message-ID: <07d2b375e71e883bed0ac7e2f167a8e01c3a00fc.1773681364.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC PATCH v1 02/21] net/intel/common: add flow engines infrastructure
+Date: Mon, 16 Mar 2026 17:27:30 +0000
+Message-ID: <55b46a45aefd7aaccb6ac837fd9ba76dcf49c1fa.1773681364.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1773681363.git.anatoly.burakov@intel.com>
 References: 
@@ -60,458 +59,1058 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This commit adds a flow graph parsing API. This is a helper API intended to
-help ethdev drivers implement rte_flow parsers, as common usages map to
-graph traversal problem very well.
+Current implementation of flow engines in various drivers have a few issues
+that need to be corrected.
 
-Features provided by the API:
-- Flow graph, edge, and node definitions
-- Graph traversal logic
-- Declarative validation against common flow item types
-- Per-node validation and state processing callbacks
+For one, some of the are fundamentally incompatible with secondary
+processes, because the flow engine registration and creation will
+allocate structures in shared memory but use process-local pointers to
+point to flow engines and pattern tables.
+
+For another, a lot of them are needlessly complicated and rely on a
+separation between patterns and parsing that is hard to reason about and
+maintain: they do not define memory ownership model, they do not define the
+way in which we approach parameter and pattern parsing, and they
+occasionally do weird things like passing around pointers-to-void-pointers
+or even using pointers as integer values.
+
+These issues can be corrected, but because of how much code there is to the
+current infrastructure and how tightly coupled it is, it would be easier to
+just build new one from scratch, and gradually migrate all engines to use
+it. This patch is intended as a first step towards that goal, and defines
+both common data types to be used by all rte_flow parsers, as well as the
+interaction model that is to be followed by all drivers.
+
+We define a set of structures that will represent:
+
+- Defined rte_flow parsing interaction model and code flow (ops struct)
+- Defined memory allocation and ownership model for all engines
+- Scratch space format for all engines (variably allocated typed struct)
+- Flow rule format for all engines (variably allocated typed struct)
+- Engine definitions that are compatible with secondary process model
+- Reference implementations of common rte_flow operations
+- Various supporting infrastructure for parser customization, e.g. hooks
+- Support for using custom allocation (e.g. for mempool-based alloc)
+
+The design intent is heavily documented right inside the header and is to
+be considered authoritative design document for how to build rte_flow
+parsers for Intel Ethernet drivers going forward.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
-Depends-on: series-37663 ("Add common flow attr/action parsing infrastructure to Intel PMD's")
-Depends-on: series-37585 ("Reduce reliance on global response buffer in IAVF")
+ drivers/net/intel/common/flow_engine.h | 1003 ++++++++++++++++++++++++
+ 1 file changed, 1003 insertions(+)
+ create mode 100644 drivers/net/intel/common/flow_engine.h
 
- lib/ethdev/meson.build      |   1 +
- lib/ethdev/rte_flow_graph.h | 414 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 415 insertions(+)
- create mode 100644 lib/ethdev/rte_flow_graph.h
-
-diff --git a/lib/ethdev/meson.build b/lib/ethdev/meson.build
-index 8ba6c708a2..686b64e3c2 100644
---- a/lib/ethdev/meson.build
-+++ b/lib/ethdev/meson.build
-@@ -40,6 +40,7 @@ driver_sdk_headers += files(
-         'ethdev_pci.h',
-         'ethdev_vdev.h',
-         'rte_flow_driver.h',
-+        'rte_flow_graph.h',
-         'rte_mtr_driver.h',
-         'rte_tm_driver.h',
- )
-diff --git a/lib/ethdev/rte_flow_graph.h b/lib/ethdev/rte_flow_graph.h
+diff --git a/drivers/net/intel/common/flow_engine.h b/drivers/net/intel/common/flow_engine.h
 new file mode 100644
-index 0000000000..07c370b45a
+index 0000000000..14feabb3ce
 --- /dev/null
-+++ b/lib/ethdev/rte_flow_graph.h
-@@ -0,0 +1,414 @@
++++ b/drivers/net/intel/common/flow_engine.h
+@@ -0,0 +1,1003 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2025 Intel Corporation
++ * Copyright(c) 2026 Intel Corporation
 + */
 +
-+#ifndef _RTE_FLOW_GRAPH_H_
-+#define _RTE_FLOW_GRAPH_H_
++#ifndef _COMMON_INTEL_FLOW_ENGINE_H_
++#define _COMMON_INTEL_FLOW_ENGINE_H_
 +
-+/**
-+ * @file
-+ * RTE Flow Graph Parser (Internal Driver API)
-+ *
-+ * This file provides a graph-based flow pattern parser for PMD drivers.
-+ * It defines structures and functions to validate and process rte_flow
-+ * patterns using a directed graph representation.
-+ *
-+ * @warning
-+ * This is an internal API for PMD drivers only. Applications must not use it.
-+ */
++#include <stddef.h>
++#include <sys/queue.h>
++
++#include <rte_malloc.h>
 +
 +#include <rte_flow.h>
++#include <rte_flow_graph.h>
++#include <rte_tailq.h>
++#include <rte_rwlock.h>
 +
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+#define RTE_FLOW_NODE_FIRST (0)
-+/* Edge array termination sentinel (not a valid node index). */
-+#define RTE_FLOW_NODE_EDGE_END ((size_t)~0U)
-+
-+/**
-+ * For a lot of nodes, there are multiple common patterns of validation behavior. This enum allows
-+ * marking nodes as implementing one of these common behaviors without need for expressing that in
-+ * validation code. Can be ORed together to express support for multiple node types. These checks
-+ * are not combined (any one of them being satisfied is sufficient).
++/*
++ * This is a common header for Intel Ethernet drivers' flow engine
++ * implementations. It defines the interfaces and data structures required to
++ * implement flow rule engines that can be plugged into the drivers' flow
++ * handling logic.
++ *
++ * Design considerations:
++ *
++ * 1. Ease of implementation
++ *
++ * The flow engine interface is designed to be as simple as possible with
++ * obvious defaults (i.e. not specifying something leads to behavior that
++ * would've been the most obvious in context). The point is not to produce a
++ * monstrous driver-within-a-driver framework, but rather to make engine
++ * definitions follow semantic expectations of what the engine actually does.
++ *
++ * All the boilerplate (flow management, engine enablement tracking, etc.) is
++ * handled by the common flow infrastructure, so the engine implementation only
++ * needs to focus on the actual logic of parsing and installing/uninstalling
++ * flow rules, and defining each step of the process as it pertains to each flow
++ * engine.
++ *
++ * It is expected that drivers will use other utility functions from the common
++ * flow-related code where applicable (e.g. flow_util.h, flow_check.h, etc.),
++ * however this is obviously up to each individual driver to handle.
++ *
++ * Default implementations for rte_flow API functions are also provided, but
++ * they are not mandatory to use - drivers may implement their own versions if
++ * they so choose, this is just a reference implementation.
++ *
++ * 2. Full secondary process compatibility
++ *
++ * In order to support rte_flow operations in secondary processes, we need to
++ * store which engines are enabled for particular driver instance, and resolve
++ * them at runtime. Therefore, instead of relying on function pointers, each
++ * engine is expected to define an enum of engine type, which is then used as a
++ * bitshift-mask into a driver-specific 64-bit field of enabled engines. This
++ * way, the engine definitions can be stored in read-only memory, and referenced
++ * by both primary and secondary processes without issues.
++ *
++ * Note that this does not imply that all drivers are therefore able to support
++ * rte_flow-related operations in secondary processes - that is still up to each
++ * driver to implement. This just ensures that the flow engine framework does
++ * not prevent it.
++ *
++ * 3. No memory management by engines
++ *
++ * Engines are expected to only fill in the provided memory areas, and not
++ * allocate or free any memory on their own. The only exception is per-engine
++ * internal data where the engine is free to alloc/free any additional resources
++ * on init/uninit, as this cannot be reasonably generalized by the framework.
++ *
++ * 4. All rte_flow pattern parsing is implemented using rte_flow_graph
++ *
++ * The flow engine framework is designed to work hand-in-hand with the
++ * rte_flow_graph parsing infrastructure. Each engine may provide a pattern
++ * graph that is used to match the flow pattern, and extract relevant data
++ * into the engine context. This allows for cleaner separation of concerns,
++ * where the engine focuses on handling actions and attributes, while the
++ * graph parser deals with the pattern matching.
++ *
++ * If the graph is not provided, a default empty pattern graph is used that
++ * matches either empty patterns or patterns consisting solely of "any" items.
 + */
-+enum rte_flow_graph_node_expect
-+{
-+	RTE_FLOW_NODE_EXPECT_NONE = 0,             /**< No special constraints. */
-+	RTE_FLOW_NODE_EXPECT_EMPTY = (1 << 0),     /**< spec, mask, last must be NULL. */
-+	RTE_FLOW_NODE_EXPECT_SPEC = (1 << 1),      /**< spec is required, mask and last must be NULL. */
-+	RTE_FLOW_NODE_EXPECT_MASK = (1 << 2),      /**< mask is required, spec and last must be NULL. */
-+	RTE_FLOW_NODE_EXPECT_SPEC_MASK = (1 << 3), /**< spec and mask required, last must be NULL. */
-+	RTE_FLOW_NODE_EXPECT_RANGE = (1 << 4),     /**< spec, mask, and last are required. */
-+	RTE_FLOW_NODE_EXPECT_NOT_RANGE = (1 << 5), /**< last must be NULL. */
++
++/* forward declarations for flow engine data types */
++struct ci_flow_engine_ops;
++struct ci_flow_engine_ctx;
++struct ci_flow_engine;
++struct ci_flow_engine_list;
++struct ci_flow_engine_conf;
++struct ci_flow;
++
++/*
++ * Flow engine ops.
++ *
++ * Each flow engine must provide a set of operations to handle common operations,
++ * such as:
++ *
++ * - Check whether the engine is available for use (is_available)
++ * - Initialize and clean up engine resources (init/uninit)
++ * - Allocate memory for flow rules (flow_alloc)
++ * - Parse flow attributes and actions into engine-specific context (ctx_parse)
++ * - Pattern graph to use when parsing flow patterns (graph)
++ * - Validate the parsed attributes and actions against the data parsed from pattern (ctx_validate)
++ * - Build the actual flow rule structure from the parsed context (ctx_to_flow)
++ * - Add/remove the flow rule to/from hardware or driver's internal state (flow_install/flow_uninstall)
++ * - Query data for the flow rule (flow_query)
++ *
++ * The intended flow and semantics is as follows:
++ *
++ * - at init time:
++ *   [is_available] -> [init]
++ *
++ * - at rte_flow_validate time:
++ *   ctx_parse -> graph parser -> [ctx_validate] -> [ctx_to_flow]
++ *
++ * - at rte_flow_create time:
++ *   [flow_alloc] -> ctx_parse -> graph parser -> [ctx_validate] -> [ctx_to_flow -> [flow_install]]
++ *
++ * - at rte_flow_destroy/rte_flow_flush time:
++ *   [flow_uninstall] -> [flow_free]
++ *
++ * - at rte_flow_query time:
++ *   [flow_query]
++ *
++ * The engine availability must be checked by the driver at init time. The exact
++ * mechanics of this is left up to each individual driver - it may be hardware
++ * capability bits, PHY type check, devargs, or any other criteria that makes
++ * sense in the context of driver/adapter. If the availability callback is not
++ * implemented, the engine is assumed to be always available.
++ *
++ * The ctx_parse acts as the main gateway to parse flow actions and attributes,
++ * and so is mandatory. It is expected to fill the context structure.
++
++ * The init/uninit are optional resource lifecycle callbacks. If `priv_size` is
++ * non-zero, the framework allocates a zeroed private memory block and passes
++ * it to init/uninit.
++ *
++ * The flow_alloc is an optional allocator callback - if it is not defined, the
++ * engine will use rte_zmalloc with the provided flow_size to allocate memory
++ * for a flow rule. This callback will be useful for drivers who wish to e.g.
++ * allocate flow rules from a mempool, static memory, or any other custom memory
++ * management scheme. If allocation fails, fallback to default allocator will be
++ * used.
++ *
++ * Custom allocators only own their own engine-specific fields.
++ * The ci_flow common fields (engine_type, fallback_alloc, dev, node) are
++ * owned by the framework and will be initialised after the callback returns.
++ *
++ * The graph parser will take in the actual flow pattern, match it against the
++ * pattern graph, and put more data into the context structure. The engine may
++ * not provide a graph, in which case a default pattern graph is provided that
++ * will match the following:
++ *
++ * - empty patterns (start -> end)
++ * - "any" patterns (start -> any -> end)
++ *
++ * The ctx_validate is meant to perform any final checks on incongruity between
++ * the context data parsed from actions/attributes and the pattern graph. The
++ * engine may not provide this function, it is there purely to provide an avenue
++ * for cleaner logic separation where it makes sense.
++ *
++ * The ctx_to_flow uses the context data to fill in the actual flow structure.
++ *
++ * Finally, flow_install/flow_uninstall are meant to install/uninstall the flow
++ * and modify driver's internal structures and/or hardware state. The engine
++ * may not provide these functions if no internal state modification beyond
++ * storing the rule is required.
++ *
++ * The flow_free is an optional deallocator callback - if it is not defined,
++ * the engine will use rte_free to free memory for a flow rule. This callback
++ * must be present if flow_alloc is present.
++ *
++ * For querying data, the flow_query function is provided to query data for the
++ * flow rule. The engine may not provide this function, in which case
++ * any attempt to query the rule will result in failure when using reference
++ * implementation.
++ *
++ * If custom implementation for parts of the engine is used, take care to lock
++ * the config at appropriate times.
++ */
++struct ci_flow_engine_ops {
++	/* check whether engine is available - can be NULL */
++	bool (*is_available)(const struct ci_flow_engine *engine, const struct rte_eth_dev *dev);
++	/* init callback for engine-scoped resources - can be NULL */
++	int (*init)(const struct ci_flow_engine *engine,
++			struct rte_eth_dev *dev,
++			void *priv);
++	/* uninit callback for engine-scoped resources - can be NULL */
++	void (*uninit)(const struct ci_flow_engine *engine, void *priv);
++	/* allocation callback for flow rules - can be NULL */
++	struct ci_flow *(*flow_alloc)(const struct ci_flow_engine *engine, struct rte_eth_dev *dev);
++	/* deallocation callback for flow rules - can be NULL */
++	void (*flow_free)(struct ci_flow *flow);
++	/* initialize engine context from flow attr/actions - mandatory */
++	int (*ctx_parse)(const struct rte_flow_action actions[],
++			const struct rte_flow_attr *attr,
++			struct ci_flow_engine_ctx *ctx,
++			struct rte_flow_error *error);
++	/* final pass before converting context to flow - can be NULL */
++	int (*ctx_validate)(struct ci_flow_engine_ctx *ctx,
++			struct rte_flow_error *error);
++	/* initialize flow rule from parsed context - can be NULL */
++	int (*ctx_to_flow)(const struct ci_flow_engine_ctx *ctx,
++			struct ci_flow *flow,
++			struct rte_flow_error *error);
++	/* install a flow rule - can be NULL */
++	int (*flow_install)(struct ci_flow *flow,
++			struct rte_flow_error *error);
++	/* uninstall a flow rule - can be NULL */
++	int (*flow_uninstall)(struct ci_flow *flow,
++			struct rte_flow_error *error);
++	/* query flow - can be NULL */
++	int (*flow_query)(struct ci_flow *flow,
++			const struct rte_flow_action *action,
++			void *data,
++			struct rte_flow_error *error);
 +};
 +
-+/**
-+ * Node validation callback.
-+ *
-+ * Called when the graph traversal reaches this node. Validates the
-+ * rte_flow_item (spec, mask, last) against driver-specific constraints.
-+ *
-+ * Drivers are suggested to perform all checks in this callback.
-+ *
-+ * @param ctx
-+ *   Opaque driver context for accumulating parsed state.
-+ * @param item
-+ *   Pointer to the rte_flow_item being validated.
-+ * @param error
-+ *   Pointer to rte_flow_error structure for reporting failures.
-+ * @return
-+ *   0 on success, negative errno on failure.
++/*
++ * common definition for flow engine context.
++ * each engine will define its own context structure that
++ * *must* start with this base structure.
 + */
-+typedef int (*rte_flow_node_validate_fn)(
-+	const void *ctx,
-+	const struct rte_flow_item *item,
-+	struct rte_flow_error *error);
-+
-+/**
-+ * Node processing callback.
-+ *
-+ * Called after validation succeeds. Extracts fields from the rte_flow_item
-+ * and stores them in driver-specific state for later hardware programming.
-+ *
-+ * Drivers are suggested to implement "happy path" in this callback.
-+ *
-+ * @param ctx
-+ *   Opaque driver context for accumulating parsed state.
-+ * @param item
-+ *   Pointer to the rte_flow_item to process.
-+ * @param error
-+ *   Pointer to rte_flow_error structure for reporting failures.
-+ * @return
-+ *   0 on success, negative errno on failure.
-+ */
-+typedef int (*rte_flow_node_process_fn)(
-+	void *ctx,
-+	const struct rte_flow_item *item,
-+	struct rte_flow_error *error);
-+
-+/**
-+ * Graph node definition.
-+ *
-+ * When all members are NULL, it is assumed that the node is not used.
-+ */
-+struct rte_flow_graph_node {
-+	const char *name;                    /**< Node name. */
-+	const enum rte_flow_item_type type;  /**< Corresponding rte_flow_item_type. */
-+	const enum rte_flow_graph_node_expect constraints; /**< Common validation constraints (ORed). */
-+	rte_flow_node_validate_fn validate;  /**< Validation callback (NULL if unsupported). */
-+	rte_flow_node_process_fn process;    /**< Processing callback (NULL if no extraction needed). */
++struct ci_flow_engine_ctx {
++	/* ethernet device this context belongs to */
++	struct rte_eth_dev *dev;
 +};
 +
-+/**
-+ * Graph edge definition.
++/*
++ * Common definition for flow rule.
 + *
-+ * Describes allowed transitions from one node to others. The 'next' array
-+ * lists all valid successor node types and is terminated by RTE_FLOW_EDGE_END.
-+ * Drivers define edges to express their supported protocol sequences.
++ * For flow rules, there are three parts to consider:
++ *
++ * 1) Common data
++ * 2) Driver-specific data
++ * 3) Engine-specific data
++ *
++ * The common data is defined here as the `ci_flow` structure. It contains
++ * fields that are common to all flow rules, regardless of driver or engine.
++ * This includes a linked list node for managing flow rules in a list, a pointer
++ * to the device (driver instance) the flow belongs to, and the engine type
++ * that created the flow.
++ *
++ * With rte_flow API, each driver is meant to define its own rte_flow structure
++ * that contains driver-specific data. This structure must start with the
++ * `ci_flow` structure defined here, followed by driver-specific fields.
++ *
++ * Additionally, each *engine* may want to define its own flow rule structure
++ * that contains actual engine-specific data. This structure must start with the
++ * driver-wide `rte_flow` structure such that it contains everything before it,
++ * followed by engine-specific fields.
++ *
++ * IMPORTANT:
++ *
++ * All of these structures will be referred to by the same pointer and can be
++ * freely (and safely) cast between each other *as long as* each structure
++ * definition has the parent structure as its first member. E.g. the common flow
++ * struct is `ci_flow`, and the driver-specific `rte_flow` must be defined as
++ * follows:
++ *
++ * struct rte_flow {
++ *     struct ci_flow base;
++ *     ...any driver-specific fields...
++ * }
++ *
++ * If the engine needs to define its own flow structure, in turn it should be
++ * defined as follows:
++ *
++ * struct ixgbe_fdir_flow {
++ *     struct rte_flow base;
++ *     ...any engine-specific fields...
++ * }
++ *
++ * This ensures pointer conversion safety between all three types:
++ *
++ *     struct ci_flow *flow = ...;
++ *     struct rte_flow *rte_flow = (struct rte_flow *)flow;
++ *     struct ixgbe_fdir_flow *fdir_flow = (struct ixgbe_fdir_flow *)flow;
++ *
++ * The engine structure provides a `flow_size` field that indicates how much
++ * memory is required for a particular engine's flow structure. The driver must
++ * provide that value for each engine, as it will be used to size flow structure
++ * allocations. If the engine does not require any memory beyond the `rte_flow`
++ * structure, this value should be set to `sizeof(rte_flow)` for those engines.
 + */
-+struct rte_flow_graph_edge {
-+	const size_t *next;  /**< Array of valid successor nodes, terminated by RTE_FLOW_EDGE_END. */
++struct ci_flow {
++	TAILQ_ENTRY(ci_flow) node;
++	/* device this flow belongs to */
++	struct rte_eth_dev *dev;
++	/* engine this flow was created by */
++	size_t engine_type;
++	/* if the engine has custom allocator but fallback was used to allocate */
++	bool fallback_alloc;
 +};
 +
-+/**
-+ * Flow graph to be implemented by drivers.
-+ */
-+struct rte_flow_graph {
-+	struct rte_flow_graph_node *nodes;
-+	struct rte_flow_graph_edge *edges;
-+	const enum rte_flow_item_type *ignore_nodes; /**< Additional node types to ignore, terminated by RTE_FLOW_ITEM_TYPE_END. */
++/* flow engine definition */
++struct ci_flow_engine {
++	/* engine name */
++	const char *name;
++	/* engine type */
++	size_t type;
++	/* size of scratch space structure, can be 0 */
++	size_t ctx_size;
++	/* size of flow rule structure, must not be 0 */
++	size_t flow_size;
++	/* size of per-device engine private data, can be 0 */
++	size_t priv_size;
++	/* ops for this flow engine */
++	const struct ci_flow_engine_ops *ops;
++	/* pattern graph this engine supports - can be NULL to match empty patterns */
++	const struct rte_flow_graph *graph;
 +};
 +
++/* maximum number of engines is 63 + sentinel (NULL pointer) */
++#define CI_FLOW_ENGINE_MAX	62
++#define CI_FLOW_ENGINE_LIST_SIZE	64
++
++/* flow engine list definition */
++struct ci_flow_engine_list {
++	/* NULL-terminated array of flow engine pointers */
++	const struct ci_flow_engine *engines[CI_FLOW_ENGINE_LIST_SIZE];
++};
++
++/* flow engine configuration - each device must have its own instance */
++struct ci_flow_engine_conf {
++	/* lock to protect config */
++	rte_rwlock_t config_lock;
++	/* list of flows created on this device */
++	TAILQ_HEAD(ci_flow_list, ci_flow) flows;
++	/* bitmask of enabled engines */
++	uint64_t enabled_engines;
++	/* back-reference to device structure */
++	struct rte_eth_dev *dev;
++	/* per-engine private data pointers, indexed by engine type */
++	void *engine_priv[CI_FLOW_ENGINE_LIST_SIZE];
++};
++
++/* helper macro to iterate over list of engines */
++#define CI_FLOW_ENGINE_LIST_FOREACH(engine_ptr, engine_list)    \
++	for (size_t __i = 0;                                        \
++	     __i < CI_FLOW_ENGINE_MAX &&                            \
++	     ((engine_ptr) = (engine_list)->engines[__i]) != NULL;  \
++	     __i++)
++
++/* basic checks for flow engine validity */
 +static inline bool
-+__flow_graph_node_check_constraint(enum rte_flow_graph_node_expect c,
-+		bool has_spec, bool has_mask, bool has_last)
++ci_flow_engine_is_valid(const struct ci_flow_engine *engine)
 +{
-+	bool empty = !has_spec && !has_mask && !has_last;
-+
-+	if ((c & RTE_FLOW_NODE_EXPECT_EMPTY) && empty)
-+		return true;
-+	if ((c & RTE_FLOW_NODE_EXPECT_NOT_RANGE) && !has_last)
-+		return true;
-+	if ((c & RTE_FLOW_NODE_EXPECT_SPEC) && has_spec && !has_mask && !has_last)
-+		return true;
-+	if ((c & RTE_FLOW_NODE_EXPECT_MASK) && has_mask && !has_spec && !has_last)
-+		return true;
-+	if ((c & RTE_FLOW_NODE_EXPECT_SPEC_MASK) && has_spec && has_mask && !has_last)
-+		return true;
-+	if ((c & RTE_FLOW_NODE_EXPECT_RANGE) && has_mask && has_spec && has_last)
-+		return true;
-+
-+	return false;
++	/* is the pointer valid? */
++	if (engine == NULL)
++		return false;
++	/* does the engine have a name? */
++	if (engine->name == NULL)
++		return false;
++	/* is the engine type within bounds? */
++	if (engine->type >= CI_FLOW_ENGINE_MAX)
++		return false;
++	/* does the engine have ops? */
++	if (engine->ops == NULL)
++		return false;
++	/* does the engine have mandatory ctx_parse op? */
++	if (engine->ops->ctx_parse == NULL)
++		return false;
++	/* flow size cannot be less than ci_flow */
++	if (engine->flow_size < sizeof(struct ci_flow))
++		return false;
++	/* alloc and free must both be defined or NULL */
++	if ((engine->ops->flow_alloc == NULL) != (engine->ops->flow_free == NULL))
++		return false;
++	/* engine looks valid */
++	return true;
 +}
 +
++/* helper to validate whether an engine can be enabled - thread-unsafe */
 +static inline bool
-+__flow_graph_node_is_expected(const struct rte_flow_graph_node *node,
-+		const struct rte_flow_item *item, struct rte_flow_error *error)
++ci_flow_engine_is_supported(const struct ci_flow_engine *engine, const struct rte_eth_dev *dev)
 +{
-+	enum rte_flow_graph_node_expect c = node->constraints;
-+
-+	if (c == RTE_FLOW_NODE_EXPECT_NONE)
-+		return true;
-+
-+	bool has_spec = (item->spec != NULL);
-+	bool has_mask = (item->mask != NULL);
-+	bool has_last = (item->last != NULL);
-+
-+	if (__flow_graph_node_check_constraint(c, has_spec, has_mask, has_last))
-+		return true;
-+
-+	/*
-+	 * In the interest of everyone debugging flow parsing code, we should provide the user with
-+	 * meaningful messages about exactly what failed, as no one likes non-descript "node
-+	 * constraints not met" errors with no clear indication of where this is even coming from.
-+	 * What follows is us building said meaningful error messages. It's a bit ugly, but it is
-+	 * for the greater good.
-+	 */
-+	const char *msg;
-+
-+	/* for empty items, we know exactly what went wrong */
-+	if (c == RTE_FLOW_NODE_EXPECT_EMPTY) {
-+		if (has_spec)
-+			msg = "Unexpected spec in flow item";
-+		else if (has_mask)
-+			msg = "Unexpected mask in flow item";
-+		else /* has_last */
-+			msg = "Unexpected last in flow item";
-+	} else {
-+		/*
-+		 * for non-empty constraints, we need to figure out the one thing user is missing
-+		 * (or has extra) that would've satisfied the constraints.
-+		 * We do that by flipping each presence bit in turn and seeing whether that single
-+		 * change would have satisfied the node constraints.
-+		 */
-+
-+		/* check spec first */
-+		if (!has_spec && __flow_graph_node_check_constraint(c, true, has_mask, has_last)) {
-+			msg = "Missing spec in flow item";
-+		} else if (has_spec && __flow_graph_node_check_constraint(c, false, has_mask, has_last)) {
-+			msg = "Unexpected spec in flow item";
-+		}
-+		/* check mask next */
-+		else if (!has_mask && __flow_graph_node_check_constraint(c, has_spec, true, has_last)) {
-+			msg = "Missing mask in flow item";
-+		} else if (has_mask && __flow_graph_node_check_constraint(c, has_spec, false, has_last)) {
-+			msg = "Unexpected mask in flow item";
-+		}
-+		/* finally, check range */
-+		else if (!has_last && __flow_graph_node_check_constraint(c, has_spec, has_mask, true)) {
-+			msg = "Missing last in flow item";
-+		} else if (has_last && __flow_graph_node_check_constraint(c, has_spec, has_mask, false)) {
-+			msg = "Unexpected last in flow item";
-+		/* multiple things are wrong with the constraint, so just output a generic error */
-+		} else {
-+			msg = "Flow item does not meet node constraints";
-+		}
-+	}
-+
-+	rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ITEM, item, msg);
-+
-+	return false;
-+}
-+
-+/**
-+ * @internal
-+ * Check if a graph node is null/unused.
-+ *
-+ * Valid graph nodes must at least define a name.
-+ */
-+__rte_internal
-+static inline bool
-+__flow_graph_node_is_null(const struct rte_flow_graph_node *node)
-+{
-+	return node->name == NULL && node->type == RTE_FLOW_ITEM_TYPE_END &&
-+			node->process == NULL && node->validate == NULL;
-+}
-+
-+/**
-+ * @internal
-+ * Check if a flow item type should be ignored by the graph.
-+ *
-+ * Checks if the item type is in the graph's ignore list.
-+ */
-+__rte_internal
-+static inline bool
-+__flow_graph_node_is_ignored(const struct rte_flow_graph *graph,
-+			  enum rte_flow_item_type fi_type)
-+{
-+	const enum rte_flow_item_type *ignored;
-+
-+	/* Always skip VOID items */
-+	if (fi_type == RTE_FLOW_ITEM_TYPE_VOID)
-+		return true;
-+
-+	if (graph->ignore_nodes == NULL)
++	/* basic checks */
++	if (!ci_flow_engine_is_valid(engine))
 +		return false;
 +
-+	for (ignored = graph->ignore_nodes; *ignored != RTE_FLOW_ITEM_TYPE_END; ignored++) {
-+		if (*ignored == fi_type)
-+			return true;
++	/* does it have engine-specific validation? */
++	if (engine->ops->is_available != NULL) {
++		return engine->ops->is_available(engine, dev);
 +	}
-+
-+	return false;
++	/* no specific validation required, allow by default */
++	return true;
 +}
 +
-+/**
-+ * @internal
-+ * Get the index of a node within a graph.
-+ */
-+__rte_internal
-+static inline size_t
-+__flow_graph_get_node_index(const struct rte_flow_graph *graph, const struct rte_flow_graph_node *node)
++/* helper to check whether an engine is enabled in the bitmask - thread-unsafe */
++static inline bool
++ci_flow_engine_enabled(const struct ci_flow_engine_conf *conf, const struct ci_flow_engine *engine)
 +{
-+	return (size_t)(node - graph->nodes);
++	return (conf->enabled_engines & (1ULL << engine->type)) != 0;
 +}
 +
-+/**
-+ * @internal
-+ * Find the next node in the graph matching the given item type.
-+ */
-+__rte_internal
-+static inline const struct rte_flow_graph_node *
-+__flow_graph_find_next_node(const struct rte_flow_graph *graph,
-+		      const struct rte_flow_graph_node *cur_node,
-+		      enum rte_flow_item_type next_type)
++/* helper to enable an engine in the bitmask - thread-unsafe */
++static inline void
++ci_flow_engine_enable(struct ci_flow_engine_conf *conf, const struct ci_flow_engine *engine)
 +{
-+	const size_t *next_nodes;
-+	size_t cur_idx, edge_idx;
++	conf->enabled_engines |= (1ULL << engine->type);
++}
 +
-+	cur_idx = __flow_graph_get_node_index(graph, cur_node);
-+	next_nodes = graph->edges[cur_idx].next;
-+	if (next_nodes == NULL)
-+		return NULL;
++/* find engine by flow type in the engine list - thread-unsafe */
++static inline const struct ci_flow_engine *
++ci_flow_engine_find(const struct ci_flow_engine_list *engine_list, const size_t type)
++{
++	const struct ci_flow_engine *engine;
 +
-+	for (edge_idx = 0; next_nodes[edge_idx] != RTE_FLOW_NODE_EDGE_END; edge_idx++) {
-+		const struct rte_flow_graph_node *tmp =
-+				&graph->nodes[next_nodes[edge_idx]];
-+		if (__flow_graph_node_is_null(tmp))
-+			continue;
-+		if (tmp->type == next_type)
-+			return tmp;
++	CI_FLOW_ENGINE_LIST_FOREACH(engine, engine_list) {
++		if (engine->type == type)
++			return engine;
 +	}
-+
 +	return NULL;
 +}
 +
-+/**
-+ * @internal
-+ * Visit (validate and extract) a node's item.
-+ */
-+__rte_internal
-+static inline int
-+__flow_graph_visit_node(const struct rte_flow_graph_node *node, void *ctx,
-+		const struct rte_flow_item *item, struct rte_flow_error *error)
++/* get per-device engine private data by engine type - thread-unsafe */
++static inline void *
++ci_flow_engine_priv(const struct ci_flow_engine_conf *engine_conf, const size_t type)
 +{
-+	int ret;
-+
-+	/* if we expect a certain type of node, check for it */
-+	if (!__flow_graph_node_is_expected(node, item, error))
-+		/* error already set */
-+		return -1;
-+
-+	/* Does this node fit driver's criteria? */
-+	if (node->validate != NULL) {
-+		ret = node->validate(ctx, item, error);
-+		if (ret != 0)
-+			return ret;
-+	}
-+
-+	/* Extract data from this item */
-+	if (node->process != NULL) {
-+		ret = node->process(ctx, item, error);
-+		if (ret != 0)
-+			return ret;
-+	}
-+
-+	return 0;
++	return engine_conf->engine_priv[type];
 +}
 +
-+/**
-+ * @internal
-+ * Parse and validate a flow pattern using the flow graph.
-+ *
-+ * Traverses the pattern items and validates them against the driver's graph
-+ * structure. For each item, checks that the transition from the current node
-+ * is allowed, then invokes validation and processing callbacks.
-+ *
-+ * @param graph
-+ *   Pointer to the driver's flow graph definition with nodes and edges.
-+ * @param pattern
-+ *   Array of rte_flow_item structures to parse, terminated by RTE_FLOW_ITEM_TYPE_END.
-+ * @param error
-+ *   Pointer to rte_flow_error structure for reporting failures.
-+ * @param ctx
-+ *   Opaque driver context for accumulating parsed state.
-+ * @return
-+ *   0 on success, negative errno on failure (error is set).
-+ */
-+__rte_internal
-+static inline int
-+rte_flow_graph_parse(const struct rte_flow_graph *graph, const struct rte_flow_item *pattern,
-+		struct rte_flow_error *error, void *ctx)
++static inline struct ci_flow *
++ci_flow_alloc(const struct ci_flow_engine *engine, struct rte_eth_dev *dev)
 +{
-+	const struct rte_flow_graph_node *cur_node;
-+	const struct rte_flow_item *item;
++	struct ci_flow *flow = NULL;
++	bool fallback = false;
++
++	/* if engine has custom allocator, try it first */
++	if (engine->ops->flow_alloc != NULL) {
++		flow = engine->ops->flow_alloc(engine, dev);
++		/* erase the common parts */
++		if (flow != NULL)
++			*flow = (struct ci_flow){0};
++	}
++	/* if custom allocator is not defined or failed, fallback to default allocator */
++	if (flow == NULL) {
++		flow = rte_zmalloc(NULL, engine->flow_size, 0);
++
++		/* if we are here and we have a custom allocator, that means we fell back */
++		if (flow != NULL && engine->ops->flow_alloc != NULL)
++			fallback = true;
++	}
++	/* set the engine type to enable correct deallocation in case of failure */
++	if (flow != NULL) {
++		flow->fallback_alloc = fallback;
++		flow->engine_type = engine->type;
++	}
++	return flow;
++}
++
++static inline void
++ci_flow_free(const struct ci_flow_engine *engine, struct ci_flow *flow)
++{
++	if (engine->ops->flow_free != NULL && !flow->fallback_alloc)
++		engine->ops->flow_free(flow);
++	else
++		rte_free(flow);
++}
++
++/* allocate per-device engine private data and call init - thread-unsafe */
++static inline int
++ci_flow_engine_init(const struct ci_flow_engine *engine,
++		struct ci_flow_engine_conf *engine_conf)
++{
++	void *priv = NULL;
 +	int ret;
 +
-+	if (graph == NULL || graph->nodes == NULL || graph->edges == NULL) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
-+				"Flow graph is not defined");
-+	}
-+	if (pattern == NULL) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ITEM, NULL,
-+				"Flow pattern is NULL");
++	if (engine->priv_size > 0) {
++		priv = rte_zmalloc(engine->name, engine->priv_size, 0);
++		if (priv == NULL) {
++			ret = -ENOMEM;
++			goto err;
++		}
++		engine_conf->engine_priv[engine->type] = priv;
 +	}
 +
-+	/* process start node */
-+	cur_node = &graph->nodes[RTE_FLOW_NODE_FIRST];
-+	ret = __flow_graph_visit_node(cur_node, ctx, NULL, error);
-+	if (ret != 0)
-+		return ret;
++	if (engine->ops->init != NULL) {
++		ret = engine->ops->init(engine, engine_conf->dev,
++				engine_conf->engine_priv[engine->type]);
++		if (ret != 0)
++			goto err;
++	}
++	return 0;
++err:
++	if (priv != NULL) {
++		rte_free(priv);
++		engine_conf->engine_priv[engine->type] = NULL;
++	}
++	return ret;
++}
 +
-+	/* Traverse pattern items */
-+	for (item = pattern; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
++/* call uninit and free per-device engine private data - thread-unsafe */
++static inline void
++ci_flow_engine_uninit(const struct ci_flow_engine *engine,
++		struct ci_flow_engine_conf *engine_conf)
++{
++	void *priv = engine_conf->engine_priv[engine->type];
 +
-+		/* Skip items in the graph's ignore list */
-+		if (__flow_graph_node_is_ignored(graph, item->type))
++	/* ignore uninit errors */
++	if (engine->ops->uninit != NULL)
++		engine->ops->uninit(engine, priv);
++
++	if (priv != NULL) {
++		rte_free(priv);
++		engine_conf->engine_priv[engine->type] = NULL;
++	}
++}
++
++/* disable all engines for a specific driver instance - thread-safe */
++static inline void
++ci_flow_engine_conf_reset(struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine_list *engine_list)
++{
++	const struct ci_flow_engine *engine;
++	struct ci_flow *flow, *tmp;
++
++	/* lock the config */
++	rte_rwlock_write_lock(&engine_conf->config_lock);
++
++	/* free all flows - shouldn't have any at this point */
++	RTE_TAILQ_FOREACH_SAFE(flow, &engine_conf->flows, node, tmp) {
++		engine = ci_flow_engine_find(engine_list, flow->engine_type);
++		ci_flow_free(engine, flow);
++		TAILQ_REMOVE(&engine_conf->flows, flow, node);
++	}
++
++	CI_FLOW_ENGINE_LIST_FOREACH(engine, engine_list) {
++		if (!ci_flow_engine_enabled(engine_conf, engine))
++			continue;
++		ci_flow_engine_uninit(engine, engine_conf);
++	}
++
++	/* disable all engines */
++	engine_conf->enabled_engines = 0;
++
++	/* erase device pointer */
++	engine_conf->dev = NULL;
++
++	/* unlock the config */
++	rte_rwlock_write_unlock(&engine_conf->config_lock);
++}
++
++/* enable all engines for a specific driver instance - thread-unsafe */
++static inline void
++ci_flow_engine_conf_init(struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine_list *engine_list,
++		struct rte_eth_dev *dev)
++{
++	const struct ci_flow_engine *engine;
++
++	/* init the lock */
++	rte_rwlock_init(&engine_conf->config_lock);
++
++	/* store device pointer */
++	engine_conf->dev = dev;
++
++	/* init the flow list */
++	TAILQ_INIT(&engine_conf->flows);
++
++	/* enable all engines */
++	CI_FLOW_ENGINE_LIST_FOREACH(engine, engine_list) {
++		if (!ci_flow_engine_is_supported(engine, dev))
 +			continue;
 +
-+		/* Find the next graph node for this item type */
-+		cur_node = __flow_graph_find_next_node(graph, cur_node, item->type);
-+		if (cur_node == NULL) {
-+			return rte_flow_error_set(error, ENOTSUP,
-+					RTE_FLOW_ERROR_TYPE_ITEM,
-+					item, "Pattern item not supported");
-+		}
-+		/* Validate and process the current item at this node */
-+		ret = __flow_graph_visit_node(cur_node, ctx, item, error);
-+		if (ret != 0)
-+			return ret;
++		if (ci_flow_engine_init(engine, engine_conf) != 0)
++			continue;
++
++		ci_flow_engine_enable(engine_conf, engine);
++	}
++}
++
++/* validate whether a flow is valid for a specific engine configuration - thread-unsafe */
++static inline bool
++ci_flow_is_valid(const struct ci_flow *flow,
++		const struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine_list *engine_list)
++{
++	const struct ci_flow_engine *engine;
++
++	/* is the pointer valid? */
++	if (flow == NULL)
++		return false;
++	/* does the flow belong to this device? */
++	if (flow->dev != engine_conf->dev)
++		return false;
++	/* can we find the engine that created this flow? */
++	engine = ci_flow_engine_find(engine_list, flow->engine_type);
++	if (engine == NULL)
++		return false;
++	/* engine must be valid */
++	if (!ci_flow_engine_is_valid(engine))
++		return false;
++	/* engine must be enabled */
++	if (!ci_flow_engine_enabled(engine_conf, engine))
++		return false;
++	/* flow looks valid */
++	return true;
++}
++
++/* default empty pattern graph definitions */
++enum ci_flow_empty_graph_node_id {
++	CI_FLOW_EMPTY_GRAPH_NODE_START = RTE_FLOW_NODE_FIRST,
++	CI_FLOW_EMPTY_GRAPH_NODE_ANY,
++	CI_FLOW_EMPTY_GRAPH_NODE_END,
++};
++
++static const struct rte_flow_graph ci_flow_empty_graph = {
++	.nodes = (struct rte_flow_graph_node []) {
++		[CI_FLOW_EMPTY_GRAPH_NODE_START] = {
++			.name = "START",
++		},
++		[CI_FLOW_EMPTY_GRAPH_NODE_ANY] = {
++			.name = "ANY",
++			.type = RTE_FLOW_ITEM_TYPE_ANY,
++			.constraints = RTE_FLOW_NODE_EXPECT_EMPTY,
++		},
++		[CI_FLOW_EMPTY_GRAPH_NODE_END] = {
++			.name = "END",
++			.type = RTE_FLOW_ITEM_TYPE_END,
++		},
++	},
++	.edges = (struct rte_flow_graph_edge []) {
++		[CI_FLOW_EMPTY_GRAPH_NODE_START] = {
++			.next = (const size_t []) {
++				CI_FLOW_EMPTY_GRAPH_NODE_ANY,
++				CI_FLOW_EMPTY_GRAPH_NODE_END,
++				RTE_FLOW_NODE_EDGE_END,
++			},
++		},
++		[CI_FLOW_EMPTY_GRAPH_NODE_ANY] = {
++			.next = (const size_t []) {
++				CI_FLOW_EMPTY_GRAPH_NODE_END,
++				RTE_FLOW_NODE_EDGE_END,
++			},
++		},
++	}
++};
++
++/* parse a flow using a specific engine - thread-unsafe */
++static inline int
++ci_flow_parse(const struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine *engine,
++		const struct rte_flow_attr *attr,
++		const struct rte_flow_item pattern[],
++		const struct rte_flow_action actions[],
++		struct ci_flow *flow,
++		struct rte_flow_error *error)
++{
++	struct ci_flow_engine_ctx *ctx;
++	int ret = 0;
++
++	/* engines that aren't enabled cannot be used for validation */
++	if (!ci_flow_engine_enabled(engine_conf, engine)) {
++		return rte_flow_error_set(error, ENOTSUP,
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++				"Flow engine is not enabled");
 +	}
 +
-+	/* Pattern items have ended but we still need to process the end */
-+	cur_node = __flow_graph_find_next_node(graph, cur_node, RTE_FLOW_ITEM_TYPE_END);
-+	if (cur_node == NULL) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+				RTE_FLOW_ERROR_TYPE_ITEM,
-+				item, "Pattern item not supported");
++	/* allocate context */
++	ctx = calloc(1, RTE_MAX(engine->ctx_size, sizeof(struct ci_flow_engine_ctx)));
++	if (ctx == NULL) {
++		return rte_flow_error_set(error, ENOMEM,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Failed to allocate memory for rule engine context");
 +	}
-+	ret = __flow_graph_visit_node(cur_node, ctx, item, error);
++	ctx->dev = engine_conf->dev;
++	flow->dev = engine_conf->dev;
++
++	/* parse flow parameters */
++	ret = engine->ops->ctx_parse(actions, attr, ctx, error);
++
++	/* context init failed - that means engine can't be used for this flow */
 +	if (ret != 0)
-+		return ret;
++		goto free_ctx;
++
++	/* NULL pattern is allowed for engines that don't match any patterns */
++	if (pattern == NULL && engine->graph != NULL) {
++		ret = rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ITEM, NULL,
++				"Pattern cannot be NULL");
++		goto free_ctx;
++	} else if (pattern != NULL) {
++		const struct rte_flow_graph *graph = engine->graph;
++
++		/* if graph isn't provided, use empty graph */
++		if (graph == NULL)
++			graph = &ci_flow_empty_graph;
++
++		ret = rte_flow_graph_parse(graph, pattern, error, ctx);
++	}
++
++	/* if graph parsing failed, pattern didn't match */
++	if (ret != 0)
++		goto free_ctx;
++
++	/* final verification, if the operation is defined */
++	if (engine->ops->ctx_validate != NULL)
++		ret = engine->ops->ctx_validate(ctx, error);
++
++	/* finalization failed - mismatch between parsed data and context data */
++	if (ret != 0)
++		goto free_ctx;
++
++	/* if we need to build rules from context, do it */
++	if (engine->ops->ctx_to_flow != NULL) {
++		ret = engine->ops->ctx_to_flow(ctx, flow, error);
++
++		/* flow building failed - something wrong with context data */
++		if (ret != 0)
++			goto free_ctx;
++	}
++	/* success */
++	ret = 0;
++
++free_ctx:
++	free(ctx);
++	return ret;
++}
++
++/* uninstall a flow using its appropriate engine - thread-unsafe */
++static inline int
++ci_flow_uninstall(const struct ci_flow_engine_list *engine_list,
++		struct ci_flow *flow,
++		struct rte_flow_error *error)
++{
++	const struct ci_flow_engine *engine;
++
++	/* find the engine that created this flow */
++	engine = ci_flow_engine_find(engine_list, flow->engine_type);
++	if (engine == NULL) {
++		return rte_flow_error_set(error, ENOTSUP,
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++				"Flow engine that created this flow is not available");
++	}
++
++	/* uninstall the flow if required */
++	if (engine->ops->flow_uninstall != NULL) {
++		return engine->ops->flow_uninstall(flow, error);
++	}
 +
 +	return 0;
 +}
 +
-+#ifdef __cplusplus
-+}
-+#endif
++/*
++ * The following functions are designed to be called from the context of
++ * rte_flow API implementations and are meant to be used as reference/default
++ * implementations.
++ *
++ * Thread-safe.
++ */
 +
-+#endif /* _RTE_FLOW_GRAPH_H_ */
++/* default implementation of rte_flow_create using flow engines */
++static inline struct rte_flow *
++ci_flow_create(struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine_list *engine_list,
++		const struct rte_flow_attr *attr,
++		const struct rte_flow_item pattern[],
++		const struct rte_flow_action actions[],
++		struct rte_flow_error *error)
++{
++	const struct ci_flow_engine *engine;
++	struct ci_flow *flow = NULL;
++	int ret;
++
++	if (attr == NULL || actions == NULL) {
++		rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ATTR, NULL,
++				"Attributes and actions cannot be NULL");
++		return NULL;
++	}
++
++	/* lock the config for writing */
++	rte_rwlock_write_lock(&engine_conf->config_lock);
++
++	/* find an engine that can handle this flow */
++	CI_FLOW_ENGINE_LIST_FOREACH(engine, engine_list) {
++		if (!ci_flow_engine_enabled(engine_conf, engine))
++			continue;
++
++		flow = ci_flow_alloc(engine, engine_conf->dev);
++		if (flow == NULL) {
++			rte_flow_error_set(error, ENOMEM,
++					RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++					"Failed to allocate memory for flow rule");
++			/* this is a serious error so don't continue */
++			goto unlock;
++		}
++
++		ret = ci_flow_parse(engine_conf, engine, attr, pattern,
++				actions, flow, error);
++
++		/* if successfully parsed, install */
++		if (ret == 0 && engine->ops->flow_install != NULL) {
++			ret = engine->ops->flow_install(flow, error);
++		}
++
++		if (ret == 0) {
++			/* success */
++			goto unlock;
++		}
++
++		/* parsing failed - free the flow and try next engine */
++		ci_flow_free(engine, flow);
++	}
++
++	/* no engine could handle this flow */
++	flow = NULL;
++	rte_flow_error_set(error, ENOTSUP,
++			RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++			"No flow engine could handle the requested flow");
++unlock:
++	rte_rwlock_write_unlock(&engine_conf->config_lock);
++
++	return (struct rte_flow *)flow;
++}
++
++/* default implementation of rte_flow_validate using flow engines */
++static inline int
++ci_flow_validate(struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine_list *engine_list,
++		const struct rte_flow_attr *attr,
++		const struct rte_flow_item pattern[],
++		const struct rte_flow_action actions[],
++		struct rte_flow_error *error)
++{
++	const struct ci_flow_engine *engine;
++	int ret;
++
++	if (attr == NULL || actions == NULL) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ATTR, NULL,
++				"Attributes and actions cannot be NULL");
++	}
++
++	/* lock the config for reading */
++	rte_rwlock_read_lock(&engine_conf->config_lock);
++
++	/* find an engine that can handle this flow */
++	CI_FLOW_ENGINE_LIST_FOREACH(engine, engine_list) {
++		struct ci_flow *flow;
++
++		if (!ci_flow_engine_enabled(engine_conf, engine))
++			continue;
++
++		/* use OS allocator as we're not keeping the flow */
++		flow = calloc(1, engine->flow_size);
++		if (flow == NULL) {
++			/* this is a serious error so don't continue */
++			ret = rte_flow_error_set(error, ENOMEM,
++					RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++					"Failed to allocate memory for flow rule");
++			goto unlock;
++		}
++		/* try to parse the flow with this engine */
++		ret = ci_flow_parse(engine_conf, engine, attr, pattern,
++				actions, flow, error);
++		free(flow);
++
++		if (ret == 0) {
++			/* success */
++			goto unlock;
++		}
++	}
++	/* no engine could handle this flow */
++	ret = rte_flow_error_set(error, ENOTSUP,
++			RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++			"No flow engine could handle the requested flow");
++unlock:
++	rte_rwlock_read_unlock(&engine_conf->config_lock);
++	return ret;
++}
++
++/* default implementation of rte_flow_destroy using flow engines. */
++static inline int
++ci_flow_destroy(struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine_list *engine_list,
++		struct rte_flow *rte_flow,
++		struct rte_flow_error *error)
++{
++	struct ci_flow *flow = (struct ci_flow *)rte_flow;
++	const struct ci_flow_engine *engine;
++	int ret = 0;
++
++	if (rte_flow == NULL) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Flow handle cannot be NULL");
++	}
++
++	/* lock the config for writing */
++	rte_rwlock_write_lock(&engine_conf->config_lock);
++
++	/* find the engine that created this flow */
++	engine = ci_flow_engine_find(engine_list, flow->engine_type);
++
++	/* validate the flow */
++	if (!ci_flow_is_valid(flow, engine_conf, engine_list) || engine == NULL) {
++		ret = rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Invalid flow handle");
++		goto unlock;
++	}
++
++	ret = ci_flow_uninstall(engine_list, flow, error);
++
++	if (ret != 0)
++		goto unlock;
++
++	/* remove the flow from the list and free it */
++	TAILQ_REMOVE(&engine_conf->flows, flow, node);
++	ci_flow_free(engine, flow);
++unlock:
++	rte_rwlock_write_unlock(&engine_conf->config_lock);
++
++	return ret;
++}
++
++/* default implementation of rte_flow_flush using flow engines */
++static inline int
++ci_flow_flush(struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine_list *engine_list,
++		struct rte_flow_error *error)
++{
++	struct ci_flow *flow, *tmp;
++
++	/* lock the config for writing */
++	rte_rwlock_write_lock(&engine_conf->config_lock);
++
++	/* iterate over all flows and uninstall them */
++	RTE_TAILQ_FOREACH_SAFE(flow, &engine_conf->flows, node, tmp) {
++		const struct ci_flow_engine *engine;
++
++		/* find the engine that created this flow */
++		engine = ci_flow_engine_find(engine_list, flow->engine_type);
++		/* shouldn't happen */
++		if (engine == NULL)
++			continue;
++
++		/* ignore failures */
++		ci_flow_uninstall(engine_list, flow, error);
++
++		TAILQ_REMOVE(&engine_conf->flows, flow, node);
++		ci_flow_free(engine, flow);
++	}
++
++	rte_rwlock_write_unlock(&engine_conf->config_lock);
++
++	return 0;
++}
++
++/* default implementation of rte_flow_query using flow engines */
++static inline int
++ci_flow_query(struct ci_flow_engine_conf *engine_conf,
++		const struct ci_flow_engine_list *engine_list,
++		struct rte_flow *rte_flow,
++		const struct rte_flow_action *action,
++		void *data,
++		struct rte_flow_error *error)
++{
++	struct ci_flow *flow = (struct ci_flow *)rte_flow;
++	const struct ci_flow_engine *engine;
++	int ret;
++
++	if (action == NULL || data == NULL) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, NULL,
++				"Action or data cannot be NULL");
++	}
++
++	/* lock the config for reading */
++	rte_rwlock_read_lock(&engine_conf->config_lock);
++
++	/* validate the flow first */
++	if (!ci_flow_is_valid(flow, engine_conf, engine_list)) {
++		ret = rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
++				"Invalid flow handle");
++		goto unlock;
++	}
++	/* find the engine that created this flow */
++	engine = ci_flow_engine_find(engine_list, flow->engine_type);
++	if (engine == NULL) {
++		ret = rte_flow_error_set(error, ENOTSUP,
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++				"Flow engine that created this flow is not available");
++		goto unlock;
++	}
++	/* query the flow if supported */
++	if (engine->ops->flow_query != NULL) {
++		ret = engine->ops->flow_query(flow, action, data, error);
++	} else {
++		ret = rte_flow_error_set(error, ENOTSUP,
++			RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++			"Flow engine does not support querying");
++	}
++unlock:
++	rte_rwlock_read_unlock(&engine_conf->config_lock);
++
++	return ret;
++}
++
++#endif /* _COMMON_INTEL_FLOW_ENGINE_H_ */
 -- 
 2.47.3
 
