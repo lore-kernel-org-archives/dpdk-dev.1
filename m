@@ -2,73 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A548F53D6F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 16:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C00F53D6F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 16:15:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 891514025E;
-	Mon, 16 Mar 2026 17:08:50 +0100 (CET)
-Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
- by mails.dpdk.org (Postfix) with ESMTP id A1BF0400D5
- for <dev@dpdk.org>; Mon, 16 Mar 2026 17:08:49 +0100 (CET)
-Received: by mail-dl1-f51.google.com with SMTP id
- a92af1059eb24-128e4d0cc48so5342056c88.1
- for <dev@dpdk.org>; Mon, 16 Mar 2026 09:08:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773677329;
- x=1774282129; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ehoekHqeFdtgJ4FZzmwxOHCgaXH2PSZB1/DWxIR8+PQ=;
- b=YTgjLxgItmOvb1HQcIbfr3Pp/0y52hhd4iXqGYi2CJ5Ja98nYk07K2hHOz1PziSAVR
- BTpzkX8U9qH2Sk/Ai8cPUpNfNriLgtKgerxbBTDY19Ov58bh7rdKqyVnfw/pQSroXUZf
- uWC47gXs9K9/YToCWMsCswQBBCANY5KXMo2QwtMldlWUqUQ+4wSCybD9S6CA4e8z4dcR
- xF7V+9yYqO+E7u6rCRFdwJbrBI3OyH02TzRaOuBnmfNq52TcomrdsHu9Pmloo4FI5pxw
- TLHDFGcKpdEkG6zDKIVeMhGEFXlqCIArWV8ZM95i4BJtWUpiB7u0GEZRXLZQIPhYXPBj
- Z0Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773677329; x=1774282129;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=ehoekHqeFdtgJ4FZzmwxOHCgaXH2PSZB1/DWxIR8+PQ=;
- b=iPswcJoKmt3XxF5s+Mg1UOcgjwLtCHXsIwzss1aKtu8gZCq68/b3/MSlYwMt1K5GlF
- KhdY0QxrIQ+C9JZkV20cJT5g4w2aTV8v1wEWrgPVPkWxz53QYDyD0ezeUFMbuCeM/f7K
- 2QsvF/INBBNvPL49TP7LKFEDBes/jUr0+gzZ7tJBaCG6w0pXIK1VCwUlvie2ypA3rWNS
- zO85SK4H/zLmlfagK8ozRlhTZPyeT5b++kZHqsUUznhkaAp1bC2P7e8j9KfIIfOejtr2
- BalaWdlebXObiYWQ9H+LFe96/30nBeJaCXVGu/IQBuUQfXgp8qW5DUMR++yzkG2QzA1K
- p/5g==
-X-Gm-Message-State: AOJu0Ywn/lO8k7WPIhQvRABeAjzFDNWnjR+0MoFZffyAYLiGlkt9OsXs
- YyqT7eK1qCfCx98XjDJWzaDxMiJGLZKJgSPV6/QG5pezMvOozP4PTBsNrxaeFQAkXZE=
-X-Gm-Gg: ATEYQzzvyCzPgO8NwUISFQLZD7i632glTo0TruprLBS3v87Lb0T7ET633mn+mkBWlzB
- GdoUte+sCD54RJgk1CqJpcCoDUM7xKufcPPGpWIYdtY//cGC/U3I2RwaSly6+gWEirVRbeJx1rc
- gpD1Ugr1Q+jB5ZqWcuBjtglMx5a6BFuU0LuW1YkKsCTHQQyskBCefltWWvPPmTDEt5WOuRYKhhr
- kLLTVYPZ+ZX+RevrXO7UBrY23UWU0GyyDZe6Nu9x8yaK931mUJ7mEpdV7wfQ1qJpNDxifrI1G2M
- TezVJa/N2fK7+YSw8Lc7ObnEkybTikdyxwtAy9iZEDgG30p7dPo9jUmdO5dqaN7cCCKJkTJqkb4
- d00k56wG9jxVMTRad74yZVlGVGqjUMRTsTSvGFusKLlajNlPqc7B82OrrRHlXPNS5GRiWvaNO2M
- EO+wjUa6JfirYJVspJY8eWaWKDHxRaKIhxqoM=
-X-Received: by 2002:a05:7022:1a84:b0:127:3214:c862 with SMTP id
- a92af1059eb24-128f3e5662amr6154641c88.40.1773677328452; 
- Mon, 16 Mar 2026 09:08:48 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-128f639d1e4sm12065300c88.13.2026.03.16.09.08.47
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Mar 2026 09:08:48 -0700 (PDT)
-Date: Mon, 16 Mar 2026 09:08:45 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-Cc: <dev@dpdk.org>, <jgrajcia@cisco.com>, <ferruh.yigit@amd.com>,
- <stable@dpdk.org>, <mattias.ronnblom@ericsson.com>,
- <heng.wang@ericsson.com>, <ravi.kumar.chennaparapu@ericsson.com>
-Subject: Re: [PATCH] net/memif: fix descriptor flags corruption in
- multi-segment TX
-Message-ID: <20260316090845.158843db@phoenix.local>
-In-Reply-To: <20260303110152.276344-1-sriram.yagnaraman@ericsson.com>
-References: <20260303110152.276344-1-sriram.yagnaraman@ericsson.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 773A74025E;
+	Mon, 16 Mar 2026 17:15:14 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id CC4A7400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 17:15:12 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A4013208E0;
+ Mon, 16 Mar 2026 17:15:12 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Subject: RE: [PATCH v20 25/25] app/pdump: preserve VLAN tags in captured
+ packets
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 16 Mar 2026 17:15:11 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6579B@smartserver.smartshare.dk>
+In-Reply-To: <abgqTqbrJp-jdL5U@bricha3-mobl1.ger.corp.intel.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Thread-Topic: [PATCH v20 25/25] app/pdump: preserve VLAN tags in captured
+ packets
+Thread-Index: Ady1XsGo+5grT+hASum79MJ8mGlNmgAAD8LQ
+References: <20260106182823.192350-1-stephen@networkplumber.org>
+ <20260310161356.194553-1-stephen@networkplumber.org>
+ <20260310161356.194553-26-stephen@networkplumber.org>
+ <abgi0O1fWFqYIDP5@bricha3-mobl1.ger.corp.intel.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F6579A@smartserver.smartshare.dk>
+ <abgqTqbrJp-jdL5U@bricha3-mobl1.ger.corp.intel.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Bruce Richardson" <bruce.richardson@intel.com>
+Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>,
+ "Reshma Pattan" <reshma.pattan@intel.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,40 +54,89 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 3 Mar 2026 12:01:52 +0100
-Sriram Yagnaraman <sriram.yagnaraman@ericsson.com> wrote:
+> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> Sent: Monday, 16 March 2026 17.06
+>=20
+> On Mon, Mar 16, 2026 at 04:55:29PM +0100, Morten Br=F8rup wrote:
+> > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
+> > > Sent: Monday, 16 March 2026 16.34
+> > >
+> > > On Tue, Mar 10, 2026 at 09:10:03AM -0700, Stephen Hemminger wrote:
+> > > > When the source port has VLAN strip enabled, captured packets
+> have
+> > > > the VLAN tag in mbuf metadata (vlan_tci) but not in the packet
+> data.
+> > > > Similarly, TX captures with pending VLAN insert have the tag =
+only
+> > > > in metadata. The resulting pcap files contain untagged packets.
+> > > >
+> > > > Convert RX_VLAN_STRIPPED metadata to TX_VLAN offload requests on
+> > > > dequeued mbufs and call rte_eth_tx_prepare() before
+> > > rte_eth_tx_burst()
+> > > > so the pcap vdev inserts the tag into the packet data.
+> > > >
+> > >
+> > > This is an example of something I previously flagged. Like with
+> real
+> > > hardware, I think the PMD should be inserting the VLAN tag into =
+the
+> > > packet
+> > > as part of the Tx function, not the prepare function.
+> >
+> > Agree with Bruce on this.
+> > For simple stuff like VLAN offload, applications should not be
+> required to call tx_prep first.
+> >
+> > However, the Tx function is supposed to not modify the packets;
+> relevant when refcnt > 1.
+> >
+>=20
+> Reading the doc on tx_burst it can modify the packets (obviously
+> enough) if
+> refcnt is one, so only the edge case of refcnt > 1 needs to be worried
+> about. The other thing worth noting is that there is already an
+> exception
+> for bonding driver - if we need to, I suppose we can look to make a
+> more
+> general exception for a set of virtual drivers under specific
+> circumstances. I'd be ok with documenting that "the following drivers
+> modify
+> packets for VLAN insertion..." or something like that.
 
-> The memif TX path was using |= to set descriptor flags, which could
-> leave stale flag bits from previous ring iterations. This caused
-> descriptor corruption when the ring wrapped around, leading to
-> malformed packet chains and RX failures.
-> 
-> Initialize d0->flags to 0 before setting MEMIF_DESC_FLAG_NEXT to
-> ensure clean descriptor state on each transmission.
-> 
-> Fixes: 43b815d88188 ("net/memif: support zero-copy slave")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+I'm opposed to API contract exceptions for virtual drivers.
+They should be just as well behaved as physical device drivers.
+Otherwise, applications need to behave differently, depending on which =
+driver they are using.
 
-Looks good, the AI review spotted one thing.
+I cannot remember the reason for the exception in the bonding driver, =
+but optimally it should be treated as a bug and fixed.
 
-Error: Asymmetric mbuf cleanup between the two Rx paths on truncation
+>=20
+> > Instead of modifying the packet data to insert/strip the VLAN tag,
+> > perhaps the driver can split the write/read operation into multiple
+> write/read operations:
+> > 1. the Ethernet header
+> > 2. the VLAN tag
+> > 3. the remaining packet data
+> >
+> > I haven't really followed the pcap driver, so maybe my suggestion
+> doesn't make sense.
+> >
+> >
+> > Let's say an application adds 1 to the mbufs' refcnt before each Tx,
+> so the mbufs still exist after Tx.
+> > Then, the application captures/mirrors the packets consumed by the
+> driver, and logs/drops the packets the driver was unable to consume.
+> > If the capture/mirror is filtering by VLAN ID, modifying the packets
+> in the driver's Tx function is bad.
+> >
+> Worth investigating. We already have copies for scattered packets, I
+> think,
+> so doing some copying for VLAN insertion if refcnt > 1 wouldn't be the
+> end
+> of the world.
 
-In the first Rx path (fast path, around line 376), the truncation
-handler frees mbuf_head and also frees the remaining pre-allocated
-mbufs with rte_pktmbuf_free_bulk(mbufs + rx_pkts, MAX_PKT_BURST -
-rx_pkts). 
++1
 
-In the second Rx path (slow path, around line 469), the
-truncation handler frees mbuf_head but does NOT free the remaining
-pre-allocated mbufs. If the slow path also pre-allocates mbufs into the
-mbufs[] array, this is a resource leak. If the slow path does not
-pre-allocate (i.e., allocates one mbuf at a time), then the asymmetry
-is correct but should be verified against the full source. Without
-seeing the full function, I cannot be 100% certain which case applies.
-The existing mbuf == NULL failure path in the fast path (visible in the
-context at line 163) also does the rte_pktmbuf_free_bulk cleanup, which
-suggests the slow path may handle mbufs differently. Worth confirming
-that the slow path does not leak pre-allocated mbufs on this new error
-path.
+>=20
+> /Bruce
