@@ -2,77 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2195AF53D65
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 15:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 841D9F53D65
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 15:24:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 637474025E;
-	Mon, 16 Mar 2026 16:20:59 +0100 (CET)
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com
- [209.85.210.177])
- by mails.dpdk.org (Postfix) with ESMTP id B3F3A400D5
- for <dev@dpdk.org>; Mon, 16 Mar 2026 16:20:58 +0100 (CET)
-Received: by mail-pf1-f177.google.com with SMTP id
- d2e1a72fcca58-829759ca646so2867519b3a.2
- for <dev@dpdk.org>; Mon, 16 Mar 2026 08:20:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9B1684025E;
+	Mon, 16 Mar 2026 16:24:04 +0100 (CET)
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com
+ [209.85.214.170])
+ by mails.dpdk.org (Postfix) with ESMTP id A9869400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 16:24:03 +0100 (CET)
+Received: by mail-pl1-f170.google.com with SMTP id
+ d9443c01a7336-2b0603ee486so4024075ad.0
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 08:24:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773674458;
- x=1774279258; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773674643;
+ x=1774279443; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=C+s8uhpBExT8r8+d2XwEwuO6Yd4vAPQJvUiOTahWbys=;
- b=HpZ+3fPELttTIiK0d8tL1uG7NCkUQbd7KCF8/Ns8nq+eZLCWDZGXozTYKCwMHCaOUo
- wVagZcZI+uthTumOTzbM/dSoTufNBlcGmzUX8A8V5bqxO5WVrKbvjtA+g/Eh1iwbbg3f
- nf4xl+jdylIOgv0AGtwhMbTD/K4uvtyyp1dJPAy8/sZ5JgFoMgsgcNQjfEsIqxlQm/tp
- JgterL783ygrggk44R/BkJu7UlfOpXw8S8NmxxrTjHLnmMLHHz+4sCUKD1OtdEaABq0Z
- 837ggvv8nlKPgv8WvJahkhFEJriSGhCLahqmYEtYmMxFjAEJMew/TuvmyaqGjON9uj7f
- F1NA==
+ bh=MdEUZz5g5z6dhD406Jh43NV4AeUIuvYYZKfO7F07zYQ=;
+ b=HCa71Tdm6N8+f6s3J4aUjPLsMOC7lzt7FdUNEYr5YyIYuNvo3QX9kHj9WdXvTLPcxW
+ hByPyxFF6yrKvJtCsv69nu+Ziix5NBg5K+7rEeBlFxPNabfd1HR7hav5bvjqQtrMhZCM
+ +zXmiWMQw2Mr0qIjCQWBTJ4/HAwmmMblBaIIkvEXbfFetDHzDQX5WitxotwXsTydVcT1
+ 6h9mx+iRfD5UlSdNAX5kY+AG4AIuGYutr5BjNvQ+Ld1vdVouRagVMfi1prqml81F32zZ
+ FAajokOA+yQkW7JdEjtTBd7r4cyCxg4t4otlalSS/BY9TYaq4TLp3ri0V2AY7Y2mrkR/
+ 4RTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773674458; x=1774279258;
+ d=1e100.net; s=20251104; t=1773674643; x=1774279443;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=C+s8uhpBExT8r8+d2XwEwuO6Yd4vAPQJvUiOTahWbys=;
- b=K+afW5nD0NOsUkYfQhhlsiJkCw1hf5monGByoFgzlvkPpGNf5zgc/LAlCIZreq/02b
- X9N1bDl+CsLlUA5KePJ1jtDsferz6LQJH8Cc101KnF+fTrANZ64f1KKONweuA9eJk1Ls
- mMXKrkWsep97A2I99zyHsvj6WPWIrey4kVEsufOcG9Rkg70FTFpJ7acl51IUrNEdDGXD
- wOoibVATDdCgVWjw4nrsVYbEGaiXtM9MSTb47gkesLgo7OKQqFROjqbXdpSXprT15AeG
- 9lfkY/e0clZu2Nw8c5zSfJAqF0pF0hFNoWbKquzEgkDCGJwERz1oPBQOpyQrjCAEvsBm
- GuSw==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXb3mDIZ8h22ND01ps6Q+kybKC5QyQlEKABQBbDzwTUWa2FEqKK9mDcjNLvuQHtjWhkUkM=@dpdk.org
-X-Gm-Message-State: AOJu0Yw+6MyKcz9wBwwe/R/PKcxag0at2wV6kuglet7e4lqpT5xn8DYM
- nsHrcHKFLYtjEcBMKbYYYq3cEQIomxfLW1SYdjE2IDxguH/Cxnihzd+5KxSLW1zKkpE=
-X-Gm-Gg: ATEYQzz7TViWqAu2lgA03B2xbLaVRdnoe9SO3WgjdGp1lmb1SsQ4hFn8kM29kwp1CuF
- xU65jqmUnHtNZs/TdxQghNL3Hqjp8HFwk1TX3+Y+HROVDI7RE+WFusUTw9FWvUArhZtqpivGhYu
- tljQgU0zj/sLDSNnl5a0t6HqI3ZvpIom+dXhn/Y8fdHkywLZzr0IGQESI4CpVkrDSTXkezzAcgD
- FzU4G1tsa9sCVs4N0DVuLJsyMX6PNAQHbI2KNkLB5ve52jEHVGehFgQBydVKdjnQpyQ8G6SJjKP
- LhTJgLFj1JtsnjLv4tRhJCAWsNQ3z6ZTgG4kwOZa5Y6kDtNbd3tHonCy9Gr9SUANHO4tbv0RfIH
- LWFs9o9Pbn4cWUYkOKTpMcn9fCSLaLkhItc58+j3Axnjwt0CvBj2yAWRRsDEpyAbS8skg62dhIQ
- BAlIvR12G14nUS8natc75CyPlZQeKX2Yf5cun6hWiG/BO2mA==
-X-Received: by 2002:aa7:9062:0:b0:827:26e7:5c34 with SMTP id
- d2e1a72fcca58-82a1991fa7bmr12049838b3a.61.1773674457792; 
- Mon, 16 Mar 2026 08:20:57 -0700 (PDT)
+ bh=MdEUZz5g5z6dhD406Jh43NV4AeUIuvYYZKfO7F07zYQ=;
+ b=hW0DY5QsPfZAFOU3+51vUpDfVvEVWyt4PXG63kE0OB3yek/5Q0pioRD0xM814aNFO/
+ h6VZ7b4DI7YuzE3MOdC90ZZjy1IfjwoPWuCvUUaHTaMs72Xv8PAYO0Awtg8EEDlaAmKL
+ cLcvJyNb+ckHKgt2m1YsRWB4IdsvMcsLDwOix+rm1P/AYt1oLuINtNKXUNcwU9J8mbgv
+ wfN0GqYwq2kBfE09mDxfqA0x+4XxWKDEYcM0ocHb0NXwIcJtag6szlOtDoKsQ2SG7tZK
+ LEV7BoFTLVcsqsUbj9a3SKJW2iLsqQ6bIa0vqMxcMyt6+5/LFfs3ErhPytyPf8sMBmMu
+ QEyg==
+X-Gm-Message-State: AOJu0YyO3ywu49fPuoSw5gp6N7UoDwjj6G50rCuyf3CctLgsLEEs3Ate
+ 6r09ro+aYt8zhGXwIfET/ZU5fXVF+bL6bbh7zOBTEBBhytX7g41UirN6aCIZmwi4la30WjdtSf/
+ RpO9V
+X-Gm-Gg: ATEYQzysffdaN1kPSpGbX42bVNmcKDhcYlIAe3jh0S+YsqAOnBzlkfL3DcszZviqdfv
+ X8CHwNmATj1G3sQUpl0JV6VrZAuTAXuVoRFakhUU/n+kqewKBgdRRBM8+FsysqTO6Mbr1AnET1c
+ LEXt94vOCkH/Hpub2+HSGfgLaSmESCBpiNHsyR5BUzH018LURCCNhPMSaCxDYCJUbPnkG8s7Z7Q
+ Q3+9vaor8lLMc3+BmhnQYvF9UIE6xG4nnhl0xHaW9SA7w1ZBMPMYVLiSBI4iNKocz0AQJFyckaN
+ yAibthHicTjn0uOsRPyx2uEq0y32HOJzGoaEx9Z5rouWiJi/3CYYSig13Ijds2M5aPN6J2ogj/D
+ 92SyVgWtlLv2/A5yD8Zgeic+9ajhY/a+jXg7heDdpvVdzX9RsAWPV056cKOAAS32bNSmoK2Nkfy
+ LMWKfCJWox28/RTiq5eMy+ZYCHESOL8p1a8HM=
+X-Received: by 2002:a17:903:2412:b0:2ae:5848:bada with SMTP id
+ d9443c01a7336-2aeca967d8emr134956995ad.10.1773674642579; 
+ Mon, 16 Mar 2026 08:24:02 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-82a07370353sm17008518b3a.51.2026.03.16.08.20.53
+ d9443c01a7336-2aece809586sm104720145ad.63.2026.03.16.08.24.00
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 16 Mar 2026 08:20:57 -0700 (PDT)
-Date: Mon, 16 Mar 2026 08:20:47 -0700
+ Mon, 16 Mar 2026 08:24:02 -0700 (PDT)
+Date: Mon, 16 Mar 2026 08:23:55 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Rakesh Kudurumalla <rkudurumalla@marvell.com>
-Cc: Pawel Wodkowski <pawelwod@gmail.com>, Pablo de Lara
- <pablo.de.lara.guarch@intel.com>, "dev@dpdk.org" <dev@dpdk.org>, Jerin
- Jacob <jerinj@marvell.com>, Nithin Kumar Dabilpuram
- <ndabilpuram@marvell.com>, "stable@dpdk.org" <stable@dpdk.org>
-Subject: Re: [EXTERNAL] Re: [PATCH v6 1/1] examples/l2fwd-jobstats: fix
- timer stats display with lock contention
-Message-ID: <20260316082047.3ac04bc0@phoenix.local>
-In-Reply-To: <DM4PR18MB425513DE057FB7D2B68969F1CF40A@DM4PR18MB4255.namprd18.prod.outlook.com>
-References: <20240811155957.576645-1-rkudurumalla@marvell.com>
- <20260302061805.1666176-1-rkudurumalla@marvell.com>
- <20260302074804.40042d55@phoenix.local>
- <DM4PR18MB425513DE057FB7D2B68969F1CF40A@DM4PR18MB4255.namprd18.prod.outlook.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH v20 17/25] net/pcap: avoid use of volatile
+Message-ID: <20260316082355.7fd41066@phoenix.local>
+In-Reply-To: <abgUT5fN_mWeW6mZ@bricha3-mobl1.ger.corp.intel.com>
+References: <20260106182823.192350-1-stephen@networkplumber.org>
+ <20260310161356.194553-1-stephen@networkplumber.org>
+ <20260310161356.194553-18-stephen@networkplumber.org>
+ <abgUT5fN_mWeW6mZ@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -89,15 +84,29 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 16 Mar 2026 13:36:30 +0000
-Rakesh Kudurumalla <rkudurumalla@marvell.com> wrote:
+On Mon, 16 Mar 2026 14:31:43 +0000
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
-> Hi @Stephen Hemminger,
+> On Tue, Mar 10, 2026 at 09:09:55AM -0700, Stephen Hemminger wrote:
+> > Using volatile for statistics is not necessary since only one
+> > thread is allowed to operate on a queue at a time.
+> > 
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > ---  
 > 
-> Yes, you're correct that the architecture looks unusual. But since the primary goal here is to stress-test the stats/timer subsystem under contention rather than packet forwarding, I believe the current structure serves its purpose well.
+> Well only one queue is allowed to change them, but other threads could read
+> them, so using volatile is correct in that it tells the compiler not to
+> cache the values in registers or on the stack. Technically the compiler
+> could have the stats stored locally somewhere between updates, but in
+> practice I don't think that situation could ever arise for stats. Therefore
+> I'm ok with stats being either volatile or not, I doubt the resulting code
+> will be any different.
+> 
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
 
-But it also exposes lots of issues. I would argue that if it is a stress test it should be in tests/
-not examples. Examples are intended as guidance for how users should use the API.
+I went back and forth on this. The compiler unless statically linked
+with LTO has no chance or seeing across calls.
 
-This is not the example that we should guide users towards.
+The other option would be relaxed atomics would also solve
+the torn 32 bit counter roll over problem on 32 bit CPU's.
