@@ -2,48 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B279AF4644B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 10:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C934F46449
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 10:53:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 77C944025E;
-	Mon, 16 Mar 2026 11:53:00 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6634D40612;
+	Mon, 16 Mar 2026 11:53:01 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id CE22C400D5
- for <dev@dpdk.org>; Mon, 16 Mar 2026 11:52:58 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 92B1D400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 11:52:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773658379; x=1805194379;
+ t=1773658380; x=1805194380;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=Bsi0+jCFLIfqGKuxajjiZEzzZiMOAD21H+jDbEOQOMQ=;
- b=cgV0+005q3zyjt2LcYF4EyiLExjCfoluXxM5MTM+Ke0n8al2EBDMEhg3
- Z6VtW0+q7KbMPmHNy9ubuAQpU12qhcusCFfT6ULG/stGBgVhS6MqmwONp
- zFy88pLey+hUWxwrxNTsQp+F8PJLgp0VelMwxWozCRVYPxKMh65jMIM24
- 5+8JFzIvVArKKngxNEOq6Hhlgyx+OcfIkupRO2jkQtXptI6ZqUQhJiZ4n
- uD/nSB5NMmdXADh67WrGxa/QoAn9GeoRUcN2LaAV+yFgWoa55ebAOWz75
- 1qL2ayTopbjqVhVMKUzcb3TLvodNz5ezBrNmOkStRUpUjcl2sZdyLbumF w==;
-X-CSE-ConnectionGUID: r2ewf1EaQ8GNmqWFjH1cwA==
-X-CSE-MsgGUID: jIZjujpqSvSZSdBnGIiwqQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11730"; a="62237407"
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="62237407"
+ bh=4hvcYe5nso/c3VzEs77SB+jSl3hQeYao/HBLAMmRsv0=;
+ b=VZGJ354r6/labwlG0w6bKHWvU91kZFqD1JBqexUFUI0r/Ee7wFb7q0Un
+ MmTmcInqmoeFdB+rB3lOCovULWHpqCLNrJNVwBih6j4DVs8+wmUqZ8mue
+ o4Q/yCqjGCTiW/gWnSjzcwW9Lm9/BkR6X80FJWyqHMK79YeydJd7jDGD/
+ /ZGCwiMdXE3y6bbocbZlsMd8qrzM21O23EN1Zzdp0A8MWo4j3U7iBumsM
+ VdKOpm+R8o6wPBjqQM7aM2HspSAqCzVBa4gAGs5VhUD6Wn+0PV9enn/DY
+ hXGLBbND+tMvewzOM4WImH9tbJbzLdf+yF+bPJhFZSMRueAT7e1hyAMmL A==;
+X-CSE-ConnectionGUID: IYtnKm90Tomc7hx4ouOlnA==
+X-CSE-MsgGUID: OIPm0SBxRrWI1xzqeyD4BQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11730"; a="62237409"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="62237409"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 03:52:58 -0700
-X-CSE-ConnectionGUID: X+SjFjFGRui7qz0KLJSqTg==
-X-CSE-MsgGUID: Ax1zrIeoSwajKI8fB0IsCQ==
+ 16 Mar 2026 03:52:59 -0700
+X-CSE-ConnectionGUID: xfRrp2fjSeSHUvvx3xbzFA==
+X-CSE-MsgGUID: 2a1I6RjoQGaLA2m7M/qtDg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221826531"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221826540"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa009.jf.intel.com with ESMTP; 16 Mar 2026 03:52:57 -0700
+ by orviesa009.jf.intel.com with ESMTP; 16 Mar 2026 03:52:58 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org
-Subject: [PATCH v2 00/25] Add common flow attr/action parsing infrastructure
- to Intel PMD's
-Date: Mon, 16 Mar 2026 10:52:25 +0000
-Message-ID: <cover.1773658289.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 01/25] net/intel/common: add common flow action parsing
+Date: Mon, 16 Mar 2026 10:52:26 +0000
+Message-ID: <81c2c80740331d6d8fb6a3f4831f6a28afe05bf2.1773658289.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1770819433.git.anatoly.burakov@intel.com>
-References: <cover.1770819433.git.anatoly.burakov@intel.com>
+In-Reply-To: <cover.1773658289.git.anatoly.burakov@intel.com>
+ <cover.1773658289.git.anatoly.burakov@intel.com>
+References: 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,67 +60,271 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset introduces common flow attr/action checking infrastructure to
-some Intel PMD's (IXGBE, I40E, IAVF, and ICE). The aim is to reduce code
-duplication, simplify implementation of new parsers/verification of existing
-ones, and make action/attr handling more consistent across drivers.
+Currently, each driver has their own code for action parsing, which results
+in a lot of duplication and subtle mismatches in behavior between drivers.
 
-v2:
-- Rebase on latest main
-- Now depends on series 37585 [1]
+Add common infrastructure, based on the following assumptions:
 
-[1] https://patches.dpdk.org/project/dpdk/list/?series=37585
+- All drivers support at most 4 actions at once, but usually less
+- Not every action is supported by all drivers
+- We can check a few common things to filter out obviously wrong actions
+- Driver performs semantic checks on all valid actions
 
-Anatoly Burakov (20):
-  net/intel/common: add common flow action parsing
-  net/intel/common: add common flow attr validation
-  net/ixgbe: use common checks in ethertype filter
-  net/ixgbe: use common checks in syn filter
-  net/ixgbe: use common checks in L2 tunnel filter
-  net/ixgbe: use common checks in ntuple filter
-  net/ixgbe: use common checks in security filter
-  net/ixgbe: use common checks in FDIR filters
-  net/ixgbe: use common checks in RSS filter
-  net/i40e: use common flow attribute checks
-  net/i40e: refactor RSS flow parameter checks
-  net/i40e: use common action checks for ethertype
-  net/i40e: use common action checks for FDIR
-  net/i40e: use common action checks for tunnel
-  net/iavf: use common flow attribute checks
-  net/iavf: use common action checks for IPsec
-  net/iavf: use common action checks for hash
-  net/iavf: use common action checks for FDIR
-  net/iavf: use common action checks for fsub
-  net/iavf: use common action checks for flow query
+So, the intention is to reject everything we can reasonably reject at the
+outset without knowing anything about the drivers, parametrize what is
+trivial to parametrize, and leave the rest for the driver to implement.
 
-Vladimir Medvedkin (5):
-  net/ice: use common flow attribute checks
-  net/ice: use common action checks for hash
-  net/ice: use common action checks for FDIR
-  net/ice: use common action checks for switch
-  net/ice: use common action checks for ACL
+Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+---
+Depends-on: series-37585 ("Reduce reliance on global response buffer in IAVF")
 
- drivers/net/intel/common/flow_check.h      |  307 ++++++
- drivers/net/intel/i40e/i40e_ethdev.h       |    1 -
- drivers/net/intel/i40e/i40e_flow.c         |  434 +++-----
- drivers/net/intel/i40e/i40e_hash.c         |  425 +++++---
- drivers/net/intel/i40e/i40e_hash.h         |    2 +-
- drivers/net/intel/iavf/iavf_fdir.c         |  367 +++----
- drivers/net/intel/iavf/iavf_fsub.c         |  266 +++--
- drivers/net/intel/iavf/iavf_generic_flow.c |  103 +-
- drivers/net/intel/iavf/iavf_generic_flow.h |    2 +-
- drivers/net/intel/iavf/iavf_hash.c         |  153 +--
- drivers/net/intel/iavf/iavf_ipsec_crypto.c |   42 +-
- drivers/net/intel/ice/ice_acl_filter.c     |  146 ++-
- drivers/net/intel/ice/ice_fdir_filter.c    |  383 ++++---
- drivers/net/intel/ice/ice_generic_flow.c   |   59 +-
- drivers/net/intel/ice/ice_generic_flow.h   |    2 +-
- drivers/net/intel/ice/ice_hash.c           |  189 ++--
- drivers/net/intel/ice/ice_switch_filter.c  |  388 +++----
- drivers/net/intel/ixgbe/ixgbe_flow.c       | 1135 +++++++-------------
- 18 files changed, 2151 insertions(+), 2253 deletions(-)
+ drivers/net/intel/common/flow_check.h | 237 ++++++++++++++++++++++++++
+ 1 file changed, 237 insertions(+)
  create mode 100644 drivers/net/intel/common/flow_check.h
 
+diff --git a/drivers/net/intel/common/flow_check.h b/drivers/net/intel/common/flow_check.h
+new file mode 100644
+index 0000000000..69b1b60ffc
+--- /dev/null
++++ b/drivers/net/intel/common/flow_check.h
+@@ -0,0 +1,237 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Intel Corporation
++ */
++
++#ifndef _COMMON_INTEL_FLOW_CHECK_H_
++#define _COMMON_INTEL_FLOW_CHECK_H_
++
++#include <bus_pci_driver.h>
++#include <ethdev_driver.h>
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++/*
++ * Common attr and action validation code for Intel drivers.
++ */
++
++/**
++ * Maximum number of actions that can be stored in a parsed action list.
++ */
++#define CI_FLOW_PARSED_ACTIONS_MAX 4
++
++/* Actions that are reasonably expected to have a conf structure */
++static const enum rte_flow_action_type need_conf[] = {
++	RTE_FLOW_ACTION_TYPE_QUEUE,
++	RTE_FLOW_ACTION_TYPE_RSS,
++	RTE_FLOW_ACTION_TYPE_VF,
++	RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR,
++	RTE_FLOW_ACTION_TYPE_COUNT,
++	RTE_FLOW_ACTION_TYPE_MARK,
++	RTE_FLOW_ACTION_TYPE_SECURITY,
++	RTE_FLOW_ACTION_TYPE_END
++};
++
++/**
++ * Is action type in this list of action types?
++ */
++__rte_internal
++static inline bool
++ci_flow_action_type_in_list(const enum rte_flow_action_type type,
++		const enum rte_flow_action_type list[])
++{
++	size_t i = 0;
++	while (list[i] != RTE_FLOW_ACTION_TYPE_END) {
++		if (type == list[i])
++			return true;
++		i++;
++	}
++	return false;
++}
++
++/* Forward declarations */
++struct ci_flow_actions;
++struct ci_flow_actions_check_param;
++
++/**
++ * Driver-specific action list validation callback.
++ *
++ * Performs driver-specific validation of action parameter list.
++ * Called after all actions have been parsed and added to the list,
++ * allowing validation based on the complete action set.
++ *
++ * @param actions
++ *   The complete list of parsed actions (for context-dependent validation).
++ * @param driver_ctx
++ *   Opaque driver context (e.g., adapter/queue configuration).
++ * @param error
++ *   Pointer to rte_flow_error for reporting failures.
++ * @return
++ *   0 on success, negative errno on failure.
++ */
++typedef int (*ci_flow_actions_check_fn)(const struct ci_flow_actions *actions,
++		const struct ci_flow_actions_check_param *param,
++		struct rte_flow_error *error);
++
++/**
++ * List of actions that we know we've validated.
++ */
++struct ci_flow_actions {
++	/* Number of actions in the list. */
++	uint8_t count;
++	/* Parsed actions array. */
++	struct rte_flow_action const *actions[CI_FLOW_PARSED_ACTIONS_MAX];
++};
++
++/**
++ * Parameters for action list validation.Any element can be NULL/0 as checks are only performed
++ * against constraints specified.
++ */
++struct ci_flow_actions_check_param {
++	/**
++	 * Driver-specific context pointer (e.g., adapter/queue configuration). Can be NULL.
++	 */
++	void *driver_ctx;
++	/**
++	 * Driver-specific action list validation callback. Can be NULL.
++	 */
++	ci_flow_actions_check_fn check;
++	/**
++	 * Allowed action types for this parse parameter. Must be terminated with
++	 * RTE_FLOW_ACTION_TYPE_END. Can be NULL.
++	 */
++	const enum rte_flow_action_type *allowed_types;
++	size_t max_actions;                 /**< Maximum number of actions allowed. */
++};
++
++static inline int
++__flow_action_check_rss(const struct rte_flow_action_rss *rss, struct rte_flow_error *error)
++{
++	size_t q, q_num = rss->queue_num;
++	if ((q_num == 0) == (rss->queue == NULL)) {
++		return rte_flow_error_set(error, EINVAL,
++			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
++			"If queue number is specified, queue array must also be specified");
++	}
++	for (q = 1; q < q_num; q++) {
++		uint16_t qi = rss->queue[q];
++		if (rss->queue[q - 1] + 1 != qi) {
++			return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
++				"RSS queues must be contiguous");
++		}
++	}
++	/* either we have both key and key length, or we have neither */
++	if ((rss->key_len == 0) != (rss->key == NULL)) {
++		return rte_flow_error_set(error, EINVAL,
++			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss,
++			"If RSS key is specified, key length must also be specified");
++	}
++	return 0;
++}
++
++static inline int
++__flow_action_check_generic(const struct rte_flow_action *action,
++		const struct ci_flow_actions_check_param *param,
++		struct rte_flow_error *error)
++{
++	/* is this action in our allowed list? */
++	if (param != NULL && param->allowed_types != NULL &&
++			!ci_flow_action_type_in_list(action->type, param->allowed_types)) {
++		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
++				action, "Unsupported action");
++	}
++	/* do we need to validate presence of conf? */
++	if (ci_flow_action_type_in_list(action->type, need_conf)) {
++		if (action->conf == NULL) {
++			return rte_flow_error_set(error, EINVAL,
++						  RTE_FLOW_ERROR_TYPE_ACTION_CONF, action,
++						  "Action requires configuration");
++		}
++	}
++
++	/* type-specific validation */
++	switch (action->type) {
++	case RTE_FLOW_ACTION_TYPE_RSS:
++	{
++		const struct rte_flow_action_rss *rss =
++				(const struct rte_flow_action_rss *)action->conf;
++		if (__flow_action_check_rss(rss, error) < 0)
++			return -rte_errno;
++		break;
++	}
++	default:
++		/* no specific validation */
++		break;
++	}
++
++	return 0;
++}
++
++/**
++ * Validate and parse a list of rte_flow_action into a parsed action list.
++ *
++ * @param actions pointer to array of rte_flow_action, terminated by RTE_FLOW_ACTION_TYPE_END
++ * @param param pointer to ci_flow_actions_check_param structure (can be NULL)
++ * @param parsed_actions pointer to ci_flow_actions structure to store parsed actions
++ * @param error pointer to rte_flow_error structure for error reporting
++ *
++ * @return 0 on success, negative errno on failure.
++ */
++__rte_internal
++static inline int
++ci_flow_check_actions(const struct rte_flow_action *actions,
++	const struct ci_flow_actions_check_param *param,
++	struct ci_flow_actions *parsed_actions,
++	struct rte_flow_error *error)
++{
++	size_t i = 0;
++
++	if (actions == NULL) {
++		return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
++				NULL, "Missing actions");
++	}
++
++	/* reset the list */
++	*parsed_actions = (struct ci_flow_actions){0};
++
++	while (actions[i].type != RTE_FLOW_ACTION_TYPE_END) {
++		const struct rte_flow_action *action = &actions[i++];
++
++		/* skip VOID actions */
++		if (action->type == RTE_FLOW_ACTION_TYPE_VOID)
++			continue;
++
++		/* generic validation for actions - this will check against param as well */
++		if (__flow_action_check_generic(action, param, error) < 0)
++			return -rte_errno;
++
++		/* add action to the list */
++		if (parsed_actions->count >= RTE_DIM(parsed_actions->actions)) {
++			return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
++							action, "Too many actions");
++		}
++		/* user may have specified a maximum number of actions */
++		if (param != NULL && param->max_actions != 0 &&
++		    parsed_actions->count >= param->max_actions) {
++			return rte_flow_error_set(error, EINVAL, RTE_FLOW_ERROR_TYPE_ACTION,
++							action, "Too many actions");
++		}
++		parsed_actions->actions[parsed_actions->count++] = action;
++	}
++
++	/* now, call into user validation if specified */
++	if (param != NULL && param->check != NULL) {
++		if (param->check(parsed_actions, param, error) < 0)
++			return -rte_errno;
++	}
++	/* if we didn't parse anything, valid action list is empty */
++	return parsed_actions->count == 0 ? -EINVAL : 0;
++}
++
++#ifdef __cplusplus
++}
++#endif
++
++#endif /* _COMMON_INTEL_FLOW_CHECK_H_ */
 -- 
 2.47.3
 
