@@ -2,51 +2,143 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04032F4644B
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 10:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F90F4644A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 10:59:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7ADAF40E09;
-	Mon, 16 Mar 2026 11:53:29 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
- by mails.dpdk.org (Postfix) with ESMTP id 7BB1740B98
- for <dev@dpdk.org>; Mon, 16 Mar 2026 11:53:24 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id F188C4025E;
+	Mon, 16 Mar 2026 11:59:27 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 4727C400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 11:59:26 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773658405; x=1805194405;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=C9hBoG7lK7MFOs4ctKz04zWrALHr11FKS/pzXzCqTpQ=;
- b=mZYJiipUZN229Tpy3bkfx5zvPvVDGYS8fJx7DYintDDw8t1iGgqyV8lR
- xF6dtJisL0ciidjBOVLyD6aInSL+j80jTpD3Y0p3BTILZywMKxXZi4fNh
- oxE2rz+Dt2QNvRoYZv1kdNX61Ocfcdew5pbOP1W8rM9H3Mgk7VyHAmFDI
- RU5LC8pBZ2cwgDrVehkKZZ4bgEgOy92pILCt1RSnGe2nsjnLg72N2bO+s
- 6WaVd69R8s2bCRAzkCQkerqNOYt3HEsd7AwBUZyL+3Y2kd/4WiSU0pMn4
- Sf8ojVUFNOANMi9ynTBtk8MYFbs7ECF0DneQNOpsZL/hBXL5HuYcVynOX w==;
-X-CSE-ConnectionGUID: qCZBOuDlTg6a0nP6ZZ4JiA==
-X-CSE-MsgGUID: ex87U+ZBTqi42rfB61bysA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11730"; a="62237450"
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="62237450"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 03:53:24 -0700
-X-CSE-ConnectionGUID: QRG0vQnjQE66CeskV2ceJw==
-X-CSE-MsgGUID: dMHoEUMERIOpvETjAX+P/Q==
+ t=1773658766; x=1805194766;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=sHh3fJEeusJwH5UA4/xU9fbpNA9iREwocZ9knAkt1sU=;
+ b=IaizspSxITWsplSDhLj3LFrYmilTEHE42vu5+ckoJlb9dUYwhbbHOCC8
+ 7lyfOdGNRcV7EYvUw0cirBDOk7rbKVyjsem7ipStbEZzd/bCdqUkUqAzO
+ l8Nv6N+pyej0cNYqvXJ1fg4jGxHa7yFLWgCnvFT+/KamzufpdYk8PNhY+
+ ht0SClFBf8+Icr1CXC8sRycC+NCfL46moqdG43lCqgb7VsYKD3UywUHti
+ tqJnGkzZR0KEcAuTCmxHafy1o/NvHnxGSrCYcqVYNVfRi09OuF8i3Jnmk
+ S/SCCbiNBomXBSExDw+4XqWzShMrOnfg1m/X9OGifo06LH8mOiXiEVvRk w==;
+X-CSE-ConnectionGUID: LDp17SvtQqWb5E50TEr7vA==
+X-CSE-MsgGUID: B9OTehjMTgq4Na3GeM2OBQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11730"; a="73686356"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="73686356"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Mar 2026 03:59:25 -0700
+X-CSE-ConnectionGUID: jGHnV8iDQkya6Cj87vYpig==
+X-CSE-MsgGUID: yRjrj+mzSqeSgXUvDz/9ew==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221826824"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa009.jf.intel.com with ESMTP; 16 Mar 2026 03:53:23 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 25/25] net/ice: use common action checks for ACL
-Date: Mon, 16 Mar 2026 10:52:50 +0000
-Message-ID: <566e92a2bc16d589faf9abee5ff5831c0ace08c4.1773658290.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1773658289.git.anatoly.burakov@intel.com>
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="226340065"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Mar 2026 03:59:25 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Mon, 16 Mar 2026 03:59:24 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Mon, 16 Mar 2026 03:59:24 -0700
+Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.57) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Mon, 16 Mar 2026 03:59:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IMKXgFF4t902TK9K62CTqY2qGfbITBu/Q8udC0zzDayqKJHYwdC3W7jdvgv9VwvWH1ejWrLB54OibI23EDyPXL7GVDUPWimQj/WhC4DAygCKCZdLIBiI37Hex9gfjVI2jFmd2Di99fQym8Gw/79Q6NYUjA4qwHaZob+8vOI6YFX6qwjiEZuiCAbbsPeY4yHWW3/J9Jtcwi51Pt1XYiBF9heHrmXlSHB3OIjK199KMEry801NzeU2gOqCtS9ZytNbmwjk6BCx1NShbl7+NeYdNJ+lrVPv+Slz6NK2aiSV9EPSb3e7DIezQOrnmO9HeqsCzBDHI0we9LzCWShZ3fqlLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YSY4xNTWEJvN8sQXymNtHbT+ROLSbYY0dXWaM0SNXgs=;
+ b=VDIBA1Qf815FM28q25vOo5IQifwKV8q9I3yFDJ2W2ssUqUpGKJ6ZZUzhjxrOq2CIJseOmXXXmtX+9qqXjp+TqSdA8OOMpzyuW6JoHEZYnLp1me3zThiRQDK6cwJOO3gGaj3jFLkbzN0ZAooFhc3JaNhIdUBKF3KObDm4MlxV0FccTW5CnpQJDKcfaq1N9FMfOY+XOTa5Hr1cMg04Q1SWGDwwlOJCBv2kYLfjzjPFDUjcEp3UJsTKcT1bIJC2hnpXdFe9u4gNbkHLUhPSozPYetCZDOWWyfCxQmekYEILOum2OxsG9C6ih8Q5uVpJJfdPNLh/6AagTXPsZtL3VPJtlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SA1PR11MB8375.namprd11.prod.outlook.com (2603:10b6:806:38b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.14; Mon, 16 Mar
+ 2026 10:59:21 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9723.013; Mon, 16 Mar 2026
+ 10:59:21 +0000
+Date: Mon, 16 Mar 2026 10:59:14 +0000
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v2 00/25] Add common flow attr/action parsing
+ infrastructure to Intel PMD's
+Message-ID: <abfiggyU6lvhekgX@bricha3-mobl1.ger.corp.intel.com>
+References: <cover.1770819433.git.anatoly.burakov@intel.com>
  <cover.1773658289.git.anatoly.burakov@intel.com>
-References: 
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cover.1773658289.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DU2PR04CA0327.eurprd04.prod.outlook.com
+ (2603:10a6:10:2b5::32) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA1PR11MB8375:EE_
+X-MS-Office365-Filtering-Correlation-Id: 49449af3-ad92-4b3d-fa49-08de834b13b3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|366016|22082099003|56012099003|18002099003; 
+X-Microsoft-Antispam-Message-Info: yjYld2SwOfeB8JPuGbs+dCSlFhjwcz1IXMWrQYVnfXmnZBbmblOnzDL3zkOgWUfCGqcXagoPYXHdpiBeRpUWNywP+s/Pa9hrlqMowNymFZSTCu1lBQXf5ZAwMffEWyVvbpzHcg2RJ0c70JlsP4FzPD2ggECmAbX35S7lQdOHvmi7QdRTRb4hRXzD6K+Xu+nCWfzVdmHGQPIpgELKVUFOeyBTpAr9bh4s/yqJ0zLBUsjDBvFD2TrsXKjfnj3G+XOGJBxrUpEaBRqozI4YSNnPtTn1vXOWT+1fjYv03YcwecsTvtdByOgma/Go+DYjXNzlRfPTyQB8oHUnlov02eFOXtbvrcoY8ITYIptLbYCrWLOrnS1MKzLA+Y5brQezuwd67YH/mgE3k57PkzWnLWJOSFedoivROF563ho/EPFovXqCySHoB4Pd/LYntFHVYg9BOfLoSuwPB/GN4Dhs1EgiMVecadmRdGuBwPHnxXgcV2CschRBSmWeodKeH99EXWUb4PzBkt2AKg8vWPuZiPq5w29SeAFE32CbmWt0bcRpeTdaRgbKlidzDnNmqYFGGROwHjxn9jJYlAMW+OKTgOJGiCJVhvQ+zGIL34/jobFOnKMnVYbtZUUP5zJkSaK8/wsHOuBV5fcRev2yX/xudmaRwCvOLYky2nWpjOKFHJmLtPfUtmMueLkyqCqqMpxQQBuhKZX/LQPs61lUnGlGW0STXC7iKiwLO6ufCOH6lTILTtox7fc8yaqXjf0jfOrtfX9f
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(22082099003)(56012099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?lDOUD8oUdJ9dVnoRHdQgrvfTHA4WG4PkMmft9YwBiNyPeQKIowv9+5rN/C8Y?=
+ =?us-ascii?Q?p6Ucjjq4M+KfNPoLQ0kxpg/RTxheKJEVJ7yNDOvYBmMwxQjiBFz1II/Koi3N?=
+ =?us-ascii?Q?jzBXecgdM42Wm1FIBTycCzVrA7DdoCDNX+HeLvS09QacC3A/6+Yh1QZmJY0S?=
+ =?us-ascii?Q?bIcBsIIc07xZLXGNh+N/duesJkDn+7C1s/LUNhrlDZMXaseJHr+Rl3q1e2qk?=
+ =?us-ascii?Q?pugjOuNMd5RbvzxPOH7zk7ykz48o1jqI1KoxbTS9kRe9urZRQytFKUO4UBeT?=
+ =?us-ascii?Q?nDBoPqc/6+LismGKtvCgF4ALaPWnZ3AUWzGvqilmYxxWmZ1jrEIhUusHCCt2?=
+ =?us-ascii?Q?a4qhHpn3HsJhHoAEttBzAsNmawfEVexNSYvzIOKdck1sLFRmBHUB4b2Fs3eW?=
+ =?us-ascii?Q?QVYoINnfxmiaLTCG8/c3VD6dRu/37ge+dhkO1W9kOh2xBYLOfHAg8SQDvOZ7?=
+ =?us-ascii?Q?1JAdiW06cgSJzsfeSneaOpQiBd/RGAWOoL70VJTWDDS7sOWjlQL+LpTzBBfV?=
+ =?us-ascii?Q?YfUIoGIfT1ZA6FWoiKRCMIcz29wPbXvBo1eLuK2FDqIBIublgnRYjGVyUTzr?=
+ =?us-ascii?Q?tAiben++gsihAq3oBpoN15F/RnkSpcdqykcKwKcK6SOH1sDIk8Gal4NCnM5+?=
+ =?us-ascii?Q?KOStQc7EUV8EcnCg+rHOges2T4R+JgfTvq3dpufCN0rJVizkZR8Yw2MrZUoU?=
+ =?us-ascii?Q?uWu8A7BL8ssSJsoOxRJ7EAWctgoWPquxTMiadEyJt1ZXdsRU2t5gvucg1Mbj?=
+ =?us-ascii?Q?gI88XjcAx2MTVTUHtXeTG/qZLEEVJ/Leg5TYvhX6cougID9aCDe7jTEaZBMl?=
+ =?us-ascii?Q?zr3htFkd5JjXwP9ydegX0oN68QF4idIc3pQDqPg8FWDTk8n4JMPpYFMMV6Sv?=
+ =?us-ascii?Q?Urlyn12/Hv6okqUqDTXOKA6IShRh4SYNaJ6ojdNZlJSz9xCESFV2LuIyQ96O?=
+ =?us-ascii?Q?mnGVW/flxSdutgHYrFLxy2XeMp/0+q4w4N41iHfa+QN1VlrqhVxAYmuLN29A?=
+ =?us-ascii?Q?iAQGmCG80F7LvFWY7At4Gt0eaVLyF4ZOI1P1ZMz5+LlzfCpPWJFgiBeAIBSM?=
+ =?us-ascii?Q?GYpJNCG2rcXoupzM1enKBRHmi0eu1tiVH1NiOIG8/dg01D8NLq/N0SM/w7IQ?=
+ =?us-ascii?Q?BpoNRPqRwXrJRj1Becm/MFmMjaYQ1ddx6AGm1IYidlOz+B0+u6BvtSiXIgb7?=
+ =?us-ascii?Q?XkTPM7XP1a6AoE3SqEkfmqU3BLvxSwT+K20y4RBVv1vQx9i/zoFAFHZ0DRTG?=
+ =?us-ascii?Q?meSmQqPuQhOeGd7gEVxE/hEBVWojORNOvmwYE/5VmUaK9zhPK4lhMGMzL+Dx?=
+ =?us-ascii?Q?kRCPdch1v7IyBl50rjMogO6uq7SwoUpHxmvo2E4oY1qOxxiND2q5ivA+30Xp?=
+ =?us-ascii?Q?Q8ZYrGQ1hm/HoJRKrvsZzf1vHlzYlS/9s4CtzOuZEVKoey4m8dh01v58ipyK?=
+ =?us-ascii?Q?Hlow8up/DliHTYlzAyYQtc884Jb5ge8jv9Uaja568m//uAZ0fGDKsKrvP2HZ?=
+ =?us-ascii?Q?a/VwYGXHeDEJ0pLSw12TEkrfOvOSliV1NNhBWw7Hh/+onodEKU101buZCVbt?=
+ =?us-ascii?Q?Exxh13Ai94OIfGv+7dmj7mb4/E5vR09CskX8LAQgUYH9TzekJVmU44V78f7x?=
+ =?us-ascii?Q?av/pARwZOJJW0zk+aLdiXVK+LneTitYztynBRhqm+/ExmHGlFcqqER2XhdMY?=
+ =?us-ascii?Q?SWJ4waEHL/Jw76usf2StKkjH2eQXmU1t70+e0njJAT3HRUVf+JeMGQRl+FUA?=
+ =?us-ascii?Q?KfJrDhEBJUQ3UCpew6X3MFWoUv6Ni18=3D?=
+X-Exchange-RoutingPolicyChecked: O62IP83A99LUyTu4v6gN+PY2BF7qJI51OsBdsSIVf0okv75PPScUnjwAaXXpleg+nxyQZJPiptnXuxdwxKEj3zI2UU487wWk9AFSa/BmPRGa7/PMQ0ArZHvUoYDdhwPT72efHfJtelryE3C7f+FkV+mdSmZW4IdpqxJ9rM3ZATs30OqgnV1xF85jcmKhwu90dQ0NTlasXFO5iYMgF1Pk2WbjqWgDVSf1Y6JnvYBlmZ6lqTlazIajG4bzArSly8NgUp1fHyICZKxk3mcjl3wMMRVND44xTHxqECja2eufP5RNiafnxWShc0DgT5L8Cx+enIZ19jwSEpqtb/5TNF1vdw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 49449af3-ad92-4b3d-fa49-08de834b13b3
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 10:59:21.1029 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EH/SiuTLcaxItczu0uSrv2ksuKWaeJQ66VHHiI+rhV54kIEKD/2TSBxkOzWO9WFDY0z2KuNl83NlajK2xFL3r2XJtZ9k/hYxIE84MGl2jMA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8375
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,198 +152,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+On Mon, Mar 16, 2026 at 10:52:25AM +0000, Anatoly Burakov wrote:
+> This patchset introduces common flow attr/action checking infrastructure to
+> some Intel PMD's (IXGBE, I40E, IAVF, and ICE). The aim is to reduce code
+> duplication, simplify implementation of new parsers/verification of existing
+> ones, and make action/attr handling more consistent across drivers.
+> 
+> v2:
+> - Rebase on latest main
+> - Now depends on series 37585 [1]
+> 
+> [1] https://patches.dpdk.org/project/dpdk/list/?series=37585
+> 
+Since patchset is deferred, the link shows nothing unless we override
+the state value. This link below should work better:
 
-Use the common flow action checking parsing infrastructure for checking
-flow actions for ACL filter.
-
-Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
----
- drivers/net/intel/ice/ice_acl_filter.c | 143 +++++++++++++++----------
- 1 file changed, 84 insertions(+), 59 deletions(-)
-
-diff --git a/drivers/net/intel/ice/ice_acl_filter.c b/drivers/net/intel/ice/ice_acl_filter.c
-index 0421578b32..90fd3c2c05 100644
---- a/drivers/net/intel/ice/ice_acl_filter.c
-+++ b/drivers/net/intel/ice/ice_acl_filter.c
-@@ -645,60 +645,6 @@ ice_acl_filter_free(struct rte_flow *flow)
- 	flow->rule = NULL;
- }
- 
--static int
--ice_acl_parse_action(__rte_unused struct ice_adapter *ad,
--		     const struct rte_flow_action actions[],
--		     struct rte_flow_error *error,
--		     struct ice_acl_conf *filter)
--{
--	struct ice_pf *pf = &ad->pf;
--	const struct rte_flow_action_queue *act_q;
--	uint32_t dest_num = 0;
--
--	for (; actions->type != RTE_FLOW_ACTION_TYPE_END; actions++) {
--		switch (actions->type) {
--		case RTE_FLOW_ACTION_TYPE_VOID:
--			break;
--		case RTE_FLOW_ACTION_TYPE_DROP:
--			dest_num++;
--
--			filter->input.dest_ctl =
--				ICE_FLTR_PRGM_DESC_DEST_DROP_PKT;
--			break;
--		case RTE_FLOW_ACTION_TYPE_QUEUE:
--			dest_num++;
--
--			act_q = actions->conf;
--			filter->input.q_index = act_q->index;
--			if (filter->input.q_index >=
--					pf->dev_data->nb_rx_queues) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ACTION,
--						   actions,
--						   "Invalid queue for FDIR.");
--				return -rte_errno;
--			}
--			filter->input.dest_ctl =
--				ICE_FLTR_PRGM_DESC_DEST_DIRECT_PKT_QINDEX;
--			break;
--		default:
--			rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ACTION, actions,
--				   "Invalid action.");
--			return -rte_errno;
--		}
--	}
--
--	if (dest_num == 0 || dest_num >= 2) {
--		rte_flow_error_set(error, EINVAL,
--			   RTE_FLOW_ERROR_TYPE_ACTION, actions,
--			   "Unsupported action combination");
--		return -rte_errno;
--	}
--
--	return 0;
--}
--
- static int
- ice_acl_parse_pattern(__rte_unused struct ice_adapter *ad,
- 		       const struct rte_flow_item pattern[],
-@@ -966,6 +912,69 @@ ice_acl_parse_pattern(__rte_unused struct ice_adapter *ad,
- 	return 0;
- }
- 
-+static int
-+ice_acl_parse_action(const struct ci_flow_actions *actions,
-+		struct ice_acl_conf *filter,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_action *act = actions->actions[0];
-+
-+	switch (act->type) {
-+	case RTE_FLOW_ACTION_TYPE_DROP:
-+		filter->input.dest_ctl =
-+			ICE_FLTR_PRGM_DESC_DEST_DROP_PKT;
-+		break;
-+	case RTE_FLOW_ACTION_TYPE_QUEUE:
-+	{
-+		const struct rte_flow_action_queue *act_q = act->conf;
-+
-+		filter->input.q_index = act_q->index;
-+		filter->input.dest_ctl =
-+			ICE_FLTR_PRGM_DESC_DEST_DIRECT_PKT_QINDEX;
-+		break;
-+	}
-+	default:
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, act,
-+				"Invalid action.");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+ice_acl_parse_action_check(const struct ci_flow_actions *actions,
-+		const struct ci_flow_actions_check_param *param,
-+		struct rte_flow_error *error)
-+{
-+	struct ice_adapter *ad = param->driver_ctx;
-+	struct ice_pf *pf = &ad->pf;
-+	const struct rte_flow_action *act = actions->actions[0];
-+
-+	switch (act->type) {
-+	case RTE_FLOW_ACTION_TYPE_DROP:
-+		break;
-+	case RTE_FLOW_ACTION_TYPE_QUEUE:
-+	{
-+		const struct rte_flow_action_queue *act_q = act->conf;
-+
-+		if (act_q->index >= pf->dev_data->nb_rx_queues) {
-+			return rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ACTION, act,
-+					"Invalid queue for ACL.");
-+		}
-+		break;
-+	}
-+	default:
-+		/* shouldn't happen */
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, act,
-+				"Invalid action.");
-+	}
-+
-+	return 0;
-+}
-+
- static int
- ice_acl_parse(struct ice_adapter *ad,
- 	       struct ice_pattern_match_item *array,
-@@ -976,17 +985,33 @@ ice_acl_parse(struct ice_adapter *ad,
- 	       void **meta,
- 	       struct rte_flow_error *error)
- {
-+	struct ci_flow_actions parsed_actions = {0};
-+	struct ci_flow_actions_check_param param = {
-+		.allowed_types = (enum rte_flow_action_type[]){
-+			RTE_FLOW_ACTION_TYPE_DROP,
-+			RTE_FLOW_ACTION_TYPE_QUEUE,
-+			RTE_FLOW_ACTION_TYPE_END
-+		},
-+		.max_actions = 1,
-+		.check = ice_acl_parse_action_check,
-+		.driver_ctx = ad,
-+	};
- 	struct ice_pf *pf = &ad->pf;
- 	struct ice_acl_conf *filter = &pf->acl.conf;
- 	struct ice_pattern_match_item *item = NULL;
- 	uint64_t input_set;
- 	int ret;
- 
--	ret = ci_flow_check_attr(attr, NULL, error);
--	if (ret)
--		return ret;
--
- 	memset(filter, 0, sizeof(*filter));
-+
-+	ret = ci_flow_check_attr(attr, NULL, error);
-+	if (ret)
-+		return ret;
-+
-+	ret = ci_flow_check_actions(actions, &param, &parsed_actions, error);
-+	if (ret)
-+		return ret;
-+
- 	item = ice_search_pattern_match_item(ad, pattern, array, array_len,
- 					     error);
- 	if (!item)
-@@ -1005,7 +1030,7 @@ ice_acl_parse(struct ice_adapter *ad,
- 		goto error;
- 	}
- 
--	ret = ice_acl_parse_action(ad, actions, error, filter);
-+	ret = ice_acl_parse_action(&parsed_actions, filter, error);
- 	if (ret)
- 		goto error;
- 
--- 
-2.47.3
-
+https://patches.dpdk.org/project/dpdk/list/?series=37585&state=*
