@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 159CDF53D81
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 17:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E7C0F53D7E
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 17:30:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 37D0E40A73;
-	Mon, 16 Mar 2026 18:28:18 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id A3C5040B94;
+	Mon, 16 Mar 2026 18:28:19 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 7A02840661
- for <dev@dpdk.org>; Mon, 16 Mar 2026 18:28:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id DFCB040A73
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 18:28:16 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773682096; x=1805218096;
+ t=1773682097; x=1805218097;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=Mhf7QkdAqq6HOfSsF67mperuNmnyOZXDurlQyDsMjKU=;
- b=aUHuwaTQioW0WkHWHOwua2cCk3I8JE0Z75gqdtxtTDxBXspx/LH3KLI8
- DOKKoQ2PNSLMhi3MrCF1OIIHNwbIJqNDYNrLbufgVRAvAhQ7EVWi23mUJ
- M7FwjOk4FgbpAyd0CZBLjTsvwisUylGrNZw8uKJJyVwsqnUzVjGaPbEHy
- vzIOiKBXb367lFQZ2xJkjKdwgpnHQGPYFkE9YJJdGqG+JRdjgmaAMudgH
- 8wEppxH12t/4TGLZex6Z+Lr7A2L3visYNwBtdJJiCd+FVjb3KDxbd1tCX
- ilEkDN0TQxCdczb8AsXZxcyK+IU2uEh2pYKiNPU0ilwgojcXqsky8vdSv Q==;
-X-CSE-ConnectionGUID: j16c4lzOQIqAMvGfZYJtuw==
-X-CSE-MsgGUID: h446QsnlSEaLd3uTFSnqsA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="86059647"
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="86059647"
+ bh=BydQEhpYYAkQlPVHiR4zFPL9XkFyyZNYklc2Hd7VHOU=;
+ b=WKU//WjhORxJV3xozprmaYCurcfi3DruEc9vvgZt//BKdkVgppZQnrE6
+ K1/zkkQ1EJ5UA3KB3fIYbEuu+xY8L+BHhNxtvoWjJ9hMsQMwcQnslHhTM
+ bMNXqKIWeUVWN4Jdqfqg5lwQ327sccIEXMTCKgzbkcI1HnSOERg/h6UgR
+ Cg1h1qLflcoHerT25fi4rqXzNn2vflvUoPMlgMbqRv3svmFGVQl1kqpjR
+ +ROT6wK98nDQTCsQkKCR5wS12DTCulZozGPcuwi1qU+5v4d+meUUJruG7
+ YTo/GBHgCHiTu7FFKWrwkfe1Q1M3XRiAK4uEumbhfqLNARTYBMr7BP1DJ g==;
+X-CSE-ConnectionGUID: wwbY7G2qTkm2YV1yRaAyig==
+X-CSE-MsgGUID: gb2cISoYRIKtUtuMIM7iIA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11731"; a="86059653"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="86059653"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 10:28:14 -0700
-X-CSE-ConnectionGUID: Kl3uPGvzR02Sp3+gLSDA2w==
-X-CSE-MsgGUID: nYhxycrJSPiFEtNN9Yr7Bg==
+ 16 Mar 2026 10:28:16 -0700
+X-CSE-ConnectionGUID: 1QQzBUfURk+bGvFZkpWdEg==
+X-CSE-MsgGUID: qLeoYYt3S7iescLaqffVMQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221228246"
+X-IronPort-AV: E=Sophos;i="6.23,124,1770624000"; d="scan'208";a="221228268"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa010.jf.intel.com with ESMTP; 16 Mar 2026 10:28:11 -0700
+ by orviesa010.jf.intel.com with ESMTP; 16 Mar 2026 10:28:16 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [RFC PATCH v1 11/21] net/ixgbe: reimplement hash parser
-Date: Mon, 16 Mar 2026 17:27:39 +0000
-Message-ID: <44ca3311460e354ca45cb2e94efc015517c71cee.1773681365.git.anatoly.burakov@intel.com>
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [RFC PATCH v1 15/21] net/i40e: reimplement tunnel QinQ parser
+Date: Mon, 16 Mar 2026 17:27:43 +0000
+Message-ID: <2fb9f69c4f44e6af1bdad2ecf09fbc4c45f69e01.1773681365.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1773681363.git.anatoly.burakov@intel.com>
 References: 
@@ -60,649 +60,569 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 Use the new flow graph API and the common parsing framework to implement
-flow parser for RSS configuration.
+flow parser for tunnel QinQ filters.
 
-RSS flow parser doesn't really parse any "flows", it was completely
-ignoring the flow patterns and was only looking at actions. It will
-therefore not specify a pattern graph and will thus match NULL pattern,
-empty patterns (START -> END), and ANY patterns (START -> ANY -> END).
+As a result of transitioning to more formalized VLAN validation, some
+checks have become more stringent:
 
-RSS was the last engine using "filter list", so that is now removed.
+- VLAN TCI mask is now required to be fully masked (all-ones); previously
+  the mask was only checked for eth_proto and any non-zero vlan_tci mask
+  value was silently accepted
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_ethdev.c    |   6 -
- drivers/net/intel/ixgbe/ixgbe_ethdev.h    |   5 +-
- drivers/net/intel/ixgbe/ixgbe_flow.c      | 277 +---------------------
- drivers/net/intel/ixgbe/ixgbe_flow.h      |   2 +
- drivers/net/intel/ixgbe/ixgbe_flow_hash.c | 182 ++++++++++++++
- drivers/net/intel/ixgbe/meson.build       |   1 +
- 6 files changed, 193 insertions(+), 280 deletions(-)
- create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_hash.c
+ drivers/net/intel/i40e/i40e_flow.c        | 132 +--------
+ drivers/net/intel/i40e/i40e_flow.h        |   2 +
+ drivers/net/intel/i40e/i40e_flow_tunnel.c | 338 ++++++++++++++++++++++
+ drivers/net/intel/i40e/meson.build        |   1 +
+ 4 files changed, 342 insertions(+), 131 deletions(-)
+ create mode 100644 drivers/net/intel/i40e/i40e_flow_tunnel.c
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 442e4d96c6..7ecfebdb25 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -1334,9 +1334,6 @@ eth_ixgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
- 	if (ret)
- 		goto err_l2_tn_filter_init;
- 
--	/* initialize flow filter lists */
--	ixgbe_filterlist_init();
--
- 	/* initialize bandwidth configuration info */
- 	memset(bw_conf, 0, sizeof(struct ixgbe_bw_conf));
- 
-@@ -3141,9 +3138,6 @@ ixgbe_dev_close(struct rte_eth_dev *dev)
- 	/* Remove all ntuple filters of the device */
- 	ixgbe_ntuple_filter_uninit(dev);
- 
--	/* clear all the filters list */
--	ixgbe_filterlist_flush();
--
- 	/* Remove all Traffic Manager configuration */
- 	ixgbe_tm_conf_uninit(dev);
- 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-index 17b9fa918f..182b013dc4 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
-@@ -346,10 +346,9 @@ struct ixgbe_l2_tn_info {
- 	uint16_t e_tag_ether_type; /* ether type for e-tag */
- };
- 
-+/* no driver-specific data needed */
- struct rte_flow {
- 	struct ci_flow flow;
--	enum rte_filter_type filter_type;
--	void *rule;
- };
- 
- struct ixgbe_macsec_setting {
-@@ -691,8 +690,6 @@ ixgbe_dev_l2_tunnel_filter_add(struct rte_eth_dev *dev,
- int
- ixgbe_dev_l2_tunnel_filter_del(struct rte_eth_dev *dev,
- 			       struct ixgbe_l2_tunnel_conf *l2_tunnel);
--void ixgbe_filterlist_init(void);
--void ixgbe_filterlist_flush(void);
- /*
-  * Flow director function prototypes
-  */
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index ea32025079..9efad51177 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -48,23 +48,6 @@
- #include "../common/flow_engine.h"
- #include "ixgbe_flow.h"
- 
--/* rss filter list structure */
--struct ixgbe_rss_conf_ele {
--	TAILQ_ENTRY(ixgbe_rss_conf_ele) entries;
--	struct ixgbe_rte_flow_rss_conf filter_info;
--};
--/* ixgbe_flow memory list structure */
--struct ixgbe_flow_mem {
--	TAILQ_ENTRY(ixgbe_flow_mem) entries;
--	struct rte_flow *flow;
--};
--
--TAILQ_HEAD(ixgbe_rss_filter_list, ixgbe_rss_conf_ele);
--TAILQ_HEAD(ixgbe_flow_mem_list, ixgbe_flow_mem);
--
--static struct ixgbe_rss_filter_list filter_rss_list;
--static struct ixgbe_flow_mem_list ixgbe_flow_list;
--
- const struct ci_flow_engine_list ixgbe_flow_engine_list = {
+diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
+index 44dcb4f5b2..3ca528a1f3 100644
+--- a/drivers/net/intel/i40e/i40e_flow.c
++++ b/drivers/net/intel/i40e/i40e_flow.c
+@@ -33,6 +33,7 @@ const struct ci_flow_engine_list i40e_flow_engine_list = {
  	{
- 		&ixgbe_ethertype_flow_engine,
-@@ -74,6 +57,7 @@ const struct ci_flow_engine_list ixgbe_flow_engine_list = {
- 		&ixgbe_security_flow_engine,
- 		&ixgbe_fdir_flow_engine,
- 		&ixgbe_fdir_tunnel_flow_engine,
-+		&ixgbe_hash_flow_engine,
- 	},
+ 		&i40e_flow_engine_ethertype,
+ 		&i40e_flow_engine_fdir,
++		&i40e_flow_engine_tunnel_qinq,
+ 	}
  };
- /*
-@@ -131,102 +115,6 @@ ixgbe_flow_actions_check(const struct ci_flow_actions *actions,
-  * normally the packets should use network order.
-  */
  
--/* Flow actions check specific to RSS filter */
+@@ -87,17 +88,6 @@ static int i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
+ static int i40e_flow_destroy_tunnel_filter(struct i40e_pf *pf,
+ 					   struct i40e_tunnel_filter *filter);
+ static int i40e_flow_flush_tunnel_filter(struct i40e_pf *pf);
 -static int
--ixgbe_flow_actions_check_rss(const struct ci_flow_actions *parsed_actions,
--		const struct ci_flow_actions_check_param *param,
--		struct rte_flow_error *error)
--{
--	const struct rte_flow_action *action = parsed_actions->actions[0];
--	const struct rte_flow_action_rss *rss_act = action->conf;
--	struct rte_eth_dev *dev = param->driver_ctx;
--	const size_t rss_key_len = sizeof(((struct ixgbe_rte_flow_rss_conf *)0)->key);
--	size_t q_idx, q;
--
--	/* check if queue list is not empty */
--	if (rss_act->queue_num == 0) {
--		return rte_flow_error_set(error, ENOTSUP,
--			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
--			"RSS queue list is empty");
--	}
--
--	/* check if each RSS queue is valid */
--	for (q_idx = 0; q_idx < rss_act->queue_num; q_idx++) {
--		q = rss_act->queue[q_idx];
--		if (q >= dev->data->nb_rx_queues) {
--			return rte_flow_error_set(error, ENOTSUP,
--				RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
--				"Invalid RSS queue specified");
--		}
--	}
--
--	/* only support default hash function */
--	if (rss_act->func != RTE_ETH_HASH_FUNCTION_DEFAULT) {
--		return rte_flow_error_set(error, ENOTSUP,
--			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
--			"Non-default RSS hash functions are not supported");
--	}
--	/* levels aren't supported */
--	if (rss_act->level) {
--		return rte_flow_error_set(error, ENOTSUP,
--			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
--			"A nonzero RSS encapsulation level is not supported");
--	}
--	/* check key length */
--	if (rss_act->key_len != 0 && rss_act->key_len != rss_key_len) {
--		return rte_flow_error_set(error, ENOTSUP,
--			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
--			"RSS key must be exactly 40 bytes long");
--	}
--	/* filter out unsupported RSS types */
--	if ((rss_act->types & ~IXGBE_RSS_OFFLOAD_ALL) != 0) {
--		return rte_flow_error_set(error, ENOTSUP,
--			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
--			"Invalid RSS type specified");
--	}
--	return 0;
--}
--
+-i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
+-			      const struct rte_flow_item pattern[],
+-			      const struct rte_flow_action actions[],
+-			      struct rte_flow_error *error,
+-			      struct i40e_filter_ctx *filter);
 -static int
--ixgbe_parse_rss_filter(struct rte_eth_dev *dev,
--			const struct rte_flow_attr *attr,
--			const struct rte_flow_action actions[],
--			struct ixgbe_rte_flow_rss_conf *rss_conf,
--			struct rte_flow_error *error)
--{
--	struct ci_flow_actions parsed_actions;
--	struct ci_flow_actions_check_param ap_param = {
--		.allowed_types = (const enum rte_flow_action_type[]){
--			/* only rss allowed here */
--			RTE_FLOW_ACTION_TYPE_RSS,
--			RTE_FLOW_ACTION_TYPE_END
--		},
--		.driver_ctx = dev,
--		.check = ixgbe_flow_actions_check_rss,
--		.max_actions = 1,
--	};
--	int ret;
--	const struct rte_flow_action *action;
+-i40e_flow_parse_qinq_pattern(struct rte_eth_dev *dev,
+-			      const struct rte_flow_item *pattern,
+-			      struct rte_flow_error *error,
+-			      struct i40e_tunnel_filter_conf *filter);
+ 
+ static int i40e_flow_parse_l4_cloud_filter(struct rte_eth_dev *dev,
+ 					   const struct rte_flow_item pattern[],
+@@ -291,13 +281,6 @@ static enum rte_flow_item_type pattern_mpls_4[] = {
+ 	RTE_FLOW_ITEM_TYPE_END,
+ };
+ 
+-static enum rte_flow_item_type pattern_qinq_1[] = {
+-	RTE_FLOW_ITEM_TYPE_ETH,
+-	RTE_FLOW_ITEM_TYPE_VLAN,
+-	RTE_FLOW_ITEM_TYPE_VLAN,
+-	RTE_FLOW_ITEM_TYPE_END,
+-};
 -
--	/* validate attributes */
--	ret = ci_flow_check_attr(attr, NULL, error);
--	if (ret)
--		return ret;
--
--	/* parse requested actions */
--	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
--	if (ret)
--		return ret;
--	action = parsed_actions.actions[0];
--
--	if (ixgbe_rss_conf_init(rss_conf, action->conf))
--		return rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ACTION, NULL,
--				"RSS context initialization failure");
--
--	return 0;
--}
--
- /* remove the rss filter */
- static void
- ixgbe_clear_rss_filter(struct rte_eth_dev *dev)
-@@ -238,35 +126,6 @@ ixgbe_clear_rss_filter(struct rte_eth_dev *dev)
- 		ixgbe_config_rss_filter(dev, &filter_info->rss_info, FALSE);
+ static struct i40e_valid_pattern i40e_supported_patterns[] = {
+ 	/* VXLAN */
+ 	{ pattern_vxlan_1, i40e_flow_parse_vxlan_filter },
+@@ -319,8 +302,6 @@ static struct i40e_valid_pattern i40e_supported_patterns[] = {
+ 	{ pattern_fdir_ipv4_gtpu, i40e_flow_parse_gtp_filter },
+ 	{ pattern_fdir_ipv6_gtpc, i40e_flow_parse_gtp_filter },
+ 	{ pattern_fdir_ipv6_gtpu, i40e_flow_parse_gtp_filter },
+-	/* QINQ */
+-	{ pattern_qinq_1, i40e_flow_parse_qinq_filter },
+ 	/* L4 over port */
+ 	{ pattern_fdir_ipv4_udp, i40e_flow_parse_l4_cloud_filter },
+ 	{ pattern_fdir_ipv4_tcp, i40e_flow_parse_l4_cloud_filter },
+@@ -1586,117 +1567,6 @@ i40e_flow_parse_gtp_filter(struct rte_eth_dev *dev,
+ 	return ret;
  }
  
--void
--ixgbe_filterlist_init(void)
+-/* 1. Last in item should be NULL as range is not supported.
+- * 2. Supported filter types: QINQ.
+- * 3. Mask of fields which need to be matched should be
+- *    filled with 1.
+- * 4. Mask of fields which needn't to be matched should be
+- *    filled with 0.
+- */
+-static int
+-i40e_flow_parse_qinq_pattern(__rte_unused struct rte_eth_dev *dev,
+-			      const struct rte_flow_item *pattern,
+-			      struct rte_flow_error *error,
+-			      struct i40e_tunnel_filter_conf *filter)
 -{
--	TAILQ_INIT(&filter_rss_list);
--	TAILQ_INIT(&ixgbe_flow_list);
--}
+-	const struct rte_flow_item *item = pattern;
+-	const struct rte_flow_item_vlan *vlan_spec = NULL;
+-	const struct rte_flow_item_vlan *vlan_mask = NULL;
+-	const struct rte_flow_item_vlan *i_vlan_spec = NULL;
+-	const struct rte_flow_item_vlan *i_vlan_mask = NULL;
+-	const struct rte_flow_item_vlan *o_vlan_spec = NULL;
+-	const struct rte_flow_item_vlan *o_vlan_mask = NULL;
 -
--void
--ixgbe_filterlist_flush(void)
--{
--	struct ixgbe_flow_mem *ixgbe_flow_mem_ptr;
--	struct ixgbe_rss_conf_ele *rss_filter_ptr;
+-	enum rte_flow_item_type item_type;
+-	bool vlan_flag = 0;
 -
--	while ((rss_filter_ptr = TAILQ_FIRST(&filter_rss_list))) {
--		TAILQ_REMOVE(&filter_rss_list,
--				 rss_filter_ptr,
--				 entries);
--		rte_free(rss_filter_ptr);
--	}
--
--	while ((ixgbe_flow_mem_ptr = TAILQ_FIRST(&ixgbe_flow_list))) {
--		TAILQ_REMOVE(&ixgbe_flow_list,
--				 ixgbe_flow_mem_ptr,
--				 entries);
--		rte_free(ixgbe_flow_mem_ptr->flow);
--		rte_free(ixgbe_flow_mem_ptr);
--	}
--}
--
- /**
-  * Create or destroy a flow rule.
-  * Theorically one rule can match more than one filters.
-@@ -281,68 +140,9 @@ ixgbe_flow_create(struct rte_eth_dev *dev,
- 		  struct rte_flow_error *error)
- {
- 	struct ixgbe_adapter *ad = dev->data->dev_private;
--	int ret;
--	struct ixgbe_rte_flow_rss_conf rss_conf;
--	struct rte_flow *flow = NULL;
--	struct ixgbe_rss_conf_ele *rss_filter_ptr;
--	struct ixgbe_flow_mem *ixgbe_flow_mem_ptr;
- 
--	/* try the new flow engine first */
--	flow = ci_flow_create(&ad->flow_engine_conf, &ixgbe_flow_engine_list,
-+	return ci_flow_create(&ad->flow_engine_conf, &ixgbe_flow_engine_list,
- 		attr, pattern, actions, error);
--	if (flow != NULL) {
--		return flow;
--	}
--
--	/* fall back to legacy flow engines */
--
--	flow = rte_zmalloc("ixgbe_rte_flow", sizeof(struct rte_flow), 0);
--	if (!flow) {
--		PMD_DRV_LOG(ERR, "failed to allocate memory");
--		return (struct rte_flow *)flow;
--	}
--	ixgbe_flow_mem_ptr = rte_zmalloc("ixgbe_flow_mem",
--			sizeof(struct ixgbe_flow_mem), 0);
--	if (!ixgbe_flow_mem_ptr) {
--		PMD_DRV_LOG(ERR, "failed to allocate memory");
--		rte_free(flow);
--		return NULL;
--	}
--	ixgbe_flow_mem_ptr->flow = flow;
--	TAILQ_INSERT_TAIL(&ixgbe_flow_list,
--				ixgbe_flow_mem_ptr, entries);
--
--	memset(&rss_conf, 0, sizeof(struct ixgbe_rte_flow_rss_conf));
--	ret = ixgbe_parse_rss_filter(dev, attr,
--					actions, &rss_conf, error);
--	if (!ret) {
--		ret = ixgbe_config_rss_filter(dev, &rss_conf, TRUE);
--		if (!ret) {
--			rss_filter_ptr = rte_zmalloc("ixgbe_rss_filter",
--				sizeof(struct ixgbe_rss_conf_ele), 0);
--			if (!rss_filter_ptr) {
--				PMD_DRV_LOG(ERR, "failed to allocate memory");
--				goto out;
+-	for (; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
+-		if (item->last) {
+-			rte_flow_error_set(error, EINVAL,
+-					   RTE_FLOW_ERROR_TYPE_ITEM,
+-					   item,
+-					   "Not support range");
+-			return -rte_errno;
+-		}
+-		item_type = item->type;
+-		switch (item_type) {
+-		case RTE_FLOW_ITEM_TYPE_ETH:
+-			if (item->spec || item->mask) {
+-				rte_flow_error_set(error, EINVAL,
+-						   RTE_FLOW_ERROR_TYPE_ITEM,
+-						   item,
+-						   "Invalid ETH item");
+-				return -rte_errno;
 -			}
--			ixgbe_rss_conf_init(&rss_filter_ptr->filter_info,
--					    &rss_conf.conf);
--			TAILQ_INSERT_TAIL(&filter_rss_list,
--				rss_filter_ptr, entries);
--			flow->rule = rss_filter_ptr;
--			flow->filter_type = RTE_ETH_FILTER_HASH;
--			return flow;
--		}
--	}
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_VLAN:
+-			vlan_spec = item->spec;
+-			vlan_mask = item->mask;
 -
--out:
--	TAILQ_REMOVE(&ixgbe_flow_list,
--		ixgbe_flow_mem_ptr, entries);
--	rte_flow_error_set(error, -ret,
--			   RTE_FLOW_ERROR_TYPE_HANDLE, NULL,
--			   "Failed to create flow.");
--	rte_free(ixgbe_flow_mem_ptr);
--	rte_free(flow);
--	return NULL;
- }
- 
- /**
-@@ -358,22 +158,9 @@ ixgbe_flow_validate(struct rte_eth_dev *dev,
- 		struct rte_flow_error *error)
- {
- 	struct ixgbe_adapter *ad = dev->data->dev_private;
--	struct ixgbe_rte_flow_rss_conf rss_conf;
--	int ret;
- 
--	/* try the new flow engine first */
--	ret = ci_flow_validate(&ad->flow_engine_conf, &ixgbe_flow_engine_list,
-+	return ci_flow_validate(&ad->flow_engine_conf, &ixgbe_flow_engine_list,
- 		attr, pattern, actions, error);
--	if (ret == 0)
--		return ret;
+-			if (!(vlan_spec && vlan_mask) ||
+-			    vlan_mask->hdr.eth_proto) {
+-				rte_flow_error_set(error, EINVAL,
+-					   RTE_FLOW_ERROR_TYPE_ITEM,
+-					   item,
+-					   "Invalid vlan item");
+-				return -rte_errno;
+-			}
 -
--	/* fall back to legacy engines */
+-			if (!vlan_flag) {
+-				o_vlan_spec = vlan_spec;
+-				o_vlan_mask = vlan_mask;
+-				vlan_flag = 1;
+-			} else {
+-				i_vlan_spec = vlan_spec;
+-				i_vlan_mask = vlan_mask;
+-				vlan_flag = 0;
+-			}
+-			break;
 -
--	memset(&rss_conf, 0, sizeof(struct ixgbe_rte_flow_rss_conf));
--	ret = ixgbe_parse_rss_filter(dev, attr,
--					actions, &rss_conf, error);
--
--	return ret;
- }
- 
- /* Destroy a flow rule on ixgbe. */
-@@ -383,58 +170,8 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
- 		struct rte_flow_error *error)
- {
- 	struct ixgbe_adapter *ad = dev->data->dev_private;
--	int ret;
--	struct rte_flow *pmd_flow = flow;
--	enum rte_filter_type filter_type = pmd_flow->filter_type;
--	struct ixgbe_flow_mem *ixgbe_flow_mem_ptr;
--	struct ixgbe_rss_conf_ele *rss_filter_ptr;
- 
--	/* try the new flow engine first */
--	ret = ci_flow_destroy(&ad->flow_engine_conf,
--			&ixgbe_flow_engine_list, flow, error);
--	if (ret == 0) {
--		return 0;
--	}
--
--	/* fall back to legacy engines */
--
--	switch (filter_type) {
--	case RTE_ETH_FILTER_HASH:
--		rss_filter_ptr = (struct ixgbe_rss_conf_ele *)
--				pmd_flow->rule;
--		ret = ixgbe_config_rss_filter(dev,
--					&rss_filter_ptr->filter_info, FALSE);
--		if (!ret) {
--			TAILQ_REMOVE(&filter_rss_list,
--				rss_filter_ptr, entries);
--			rte_free(rss_filter_ptr);
--		}
--		break;
--	default:
--		PMD_DRV_LOG(WARNING, "Filter type (%d) not supported",
--			    filter_type);
--		ret = -EINVAL;
--		break;
--	}
--
--	if (ret) {
--		rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_HANDLE,
--				NULL, "Failed to destroy flow");
--		return ret;
--	}
--
--	TAILQ_FOREACH(ixgbe_flow_mem_ptr, &ixgbe_flow_list, entries) {
--		if (ixgbe_flow_mem_ptr->flow == pmd_flow) {
--			TAILQ_REMOVE(&ixgbe_flow_list,
--				ixgbe_flow_mem_ptr, entries);
--			rte_free(ixgbe_flow_mem_ptr);
+-		default:
 -			break;
 -		}
 -	}
--	rte_free(flow);
+-
+-	/* Get filter specification */
+-	if (o_vlan_mask != NULL &&  i_vlan_mask != NULL) {
+-		filter->outer_vlan = rte_be_to_cpu_16(o_vlan_spec->hdr.vlan_tci);
+-		filter->inner_vlan = rte_be_to_cpu_16(i_vlan_spec->hdr.vlan_tci);
+-	} else {
+-			rte_flow_error_set(error, EINVAL,
+-					   RTE_FLOW_ERROR_TYPE_ITEM,
+-					   NULL,
+-					   "Invalid filter type");
+-			return -rte_errno;
+-	}
+-
+-	filter->tunnel_type = I40E_TUNNEL_TYPE_QINQ;
+-	return 0;
+-}
+-
+-static int
+-i40e_flow_parse_qinq_filter(struct rte_eth_dev *dev,
+-			      const struct rte_flow_item pattern[],
+-			      const struct rte_flow_action actions[],
+-			      struct rte_flow_error *error,
+-			      struct i40e_filter_ctx *filter)
+-{
+-	struct i40e_tunnel_filter_conf *tunnel_filter = &filter->consistent_tunnel_filter;
+-	int ret;
+-
+-	ret = i40e_flow_parse_qinq_pattern(dev, pattern,
+-					     error, tunnel_filter);
+-	if (ret)
+-		return ret;
+-
+-	ret = i40e_flow_parse_tunnel_action(dev, actions, error, tunnel_filter);
+-	if (ret)
+-		return ret;
+-
+-	filter->type = RTE_ETH_FILTER_TUNNEL;
 -
 -	return ret;
-+	return ci_flow_destroy(&ad->flow_engine_conf, &ixgbe_flow_engine_list, flow, error);
- }
+-}
  
- /*  Destroy all flow rules associated with a port on ixgbe. */
-@@ -445,13 +182,15 @@ ixgbe_flow_flush(struct rte_eth_dev *dev,
- 	struct ixgbe_adapter *ad = dev->data->dev_private;
- 	int ret = 0;
- 
--	/* flush all flows from the new flow engine */
-+	/* flush the flow engine */
- 	ret = ci_flow_flush(&ad->flow_engine_conf, &ixgbe_flow_engine_list, error);
- 	if (ret) {
- 		PMD_DRV_LOG(ERR, "Failed to flush flow");
- 		return ret;
- 	}
- 
-+	/* normally this shouldn't be necessary */
-+
- 	ixgbe_clear_all_ntuple_filter(dev);
- 	ixgbe_clear_all_ethertype_filter(dev);
- 	ixgbe_clear_syn_filter(dev);
-@@ -472,8 +211,6 @@ ixgbe_flow_flush(struct rte_eth_dev *dev,
- 
- 	ixgbe_clear_rss_filter(dev);
- 
--	ixgbe_filterlist_flush();
--
- 	return 0;
- }
- 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.h b/drivers/net/intel/ixgbe/ixgbe_flow.h
-index 91ee5106e3..7a5dd09551 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.h
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.h
-@@ -16,6 +16,7 @@ enum ixgbe_flow_engine_type {
- 	IXGBE_FLOW_ENGINE_TYPE_SECURITY,
- 	IXGBE_FLOW_ENGINE_TYPE_FDIR,
- 	IXGBE_FLOW_ENGINE_TYPE_FDIR_TUNNEL,
-+	IXGBE_FLOW_ENGINE_TYPE_HASH,
+ static int
+ i40e_flow_check(struct rte_eth_dev *dev,
+diff --git a/drivers/net/intel/i40e/i40e_flow.h b/drivers/net/intel/i40e/i40e_flow.h
+index e6ad1afdba..c578351eb4 100644
+--- a/drivers/net/intel/i40e/i40e_flow.h
++++ b/drivers/net/intel/i40e/i40e_flow.h
+@@ -16,11 +16,13 @@ i40e_flow_fdir_get_pctype_value(struct i40e_pf *pf,
+ enum i40e_flow_engine_type {
+ 	I40E_FLOW_ENGINE_TYPE_ETHERTYPE = 0,
+ 	I40E_FLOW_ENGINE_TYPE_FDIR,
++	I40E_FLOW_ENGINE_TYPE_TUNNEL_QINQ,
  };
  
- int
-@@ -32,5 +33,6 @@ extern const struct ci_flow_engine ixgbe_ntuple_flow_engine;
- extern const struct ci_flow_engine ixgbe_security_flow_engine;
- extern const struct ci_flow_engine ixgbe_fdir_flow_engine;
- extern const struct ci_flow_engine ixgbe_fdir_tunnel_flow_engine;
-+extern const struct ci_flow_engine ixgbe_hash_flow_engine;
+ extern const struct ci_flow_engine_list i40e_flow_engine_list;
  
- #endif /*  _IXGBE_FLOW_H_ */
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow_hash.c b/drivers/net/intel/ixgbe/ixgbe_flow_hash.c
+ extern const struct ci_flow_engine i40e_flow_engine_ethertype;
+ extern const struct ci_flow_engine i40e_flow_engine_fdir;
++extern const struct ci_flow_engine i40e_flow_engine_tunnel_qinq;
+ 
+ #endif /* _I40E_FLOW_H_ */
+diff --git a/drivers/net/intel/i40e/i40e_flow_tunnel.c b/drivers/net/intel/i40e/i40e_flow_tunnel.c
 new file mode 100644
-index 0000000000..db9678b914
+index 0000000000..621354d6ea
 --- /dev/null
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow_hash.c
-@@ -0,0 +1,182 @@
++++ b/drivers/net/intel/i40e/i40e_flow_tunnel.c
+@@ -0,0 +1,338 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2026 Intel Corporation
 + */
 +
-+#include <rte_common.h>
-+#include <rte_flow.h>
-+#include <rte_flow_graph.h>
-+#include <rte_ether.h>
++#include "i40e_ethdev.h"
++#include "i40e_flow.h"
 +
-+#include "ixgbe_ethdev.h"
-+#include "ixgbe_flow.h"
++#include "../common/flow_engine.h"
 +#include "../common/flow_check.h"
 +#include "../common/flow_util.h"
-+#include "../common/flow_engine.h"
 +
-+struct ixgbe_hash_flow {
-+	struct rte_flow flow;
-+	struct ixgbe_rte_flow_rss_conf rss_conf;
-+};
-+
-+struct ixgbe_hash_ctx {
++struct i40e_tunnel_ctx {
 +	struct ci_flow_engine_ctx base;
-+	struct ixgbe_rte_flow_rss_conf rss_conf;
++	struct i40e_tunnel_filter_conf filter;
 +};
 +
-+/* Flow actions check specific to RSS filter */
++struct i40e_tunnel_flow {
++	struct rte_flow base;
++	struct i40e_tunnel_filter_conf filter;
++};
++
++/**
++ * QinQ tunnel filter graph implementation
++ * Pattern: START -> ETH -> OUTER_VLAN -> INNER_VLAN -> END
++ */
++enum i40e_tunnel_qinq_node_id {
++	I40E_TUNNEL_QINQ_NODE_START = RTE_FLOW_NODE_FIRST,
++	I40E_TUNNEL_QINQ_NODE_ETH,
++	I40E_TUNNEL_QINQ_NODE_OUTER_VLAN,
++	I40E_TUNNEL_QINQ_NODE_INNER_VLAN,
++	I40E_TUNNEL_QINQ_NODE_END,
++	I40E_TUNNEL_QINQ_NODE_MAX,
++};
++
 +static int
-+ixgbe_flow_actions_check_rss(const struct ci_flow_actions *parsed_actions,
-+		const struct ci_flow_actions_check_param *param,
++i40e_tunnel_node_vlan_validate(const void *ctx __rte_unused, const struct rte_flow_item *item,
 +		struct rte_flow_error *error)
 +{
-+	const struct rte_flow_action *action = parsed_actions->actions[0];
-+	const struct rte_flow_action_rss *rss_act = action->conf;
-+	const struct rte_eth_dev *dev = param->driver_ctx;
-+	const size_t rss_key_len = sizeof(((struct ixgbe_rte_flow_rss_conf *)0)->key);
++	const struct rte_flow_item_vlan *vlan_mask = item->mask;
 +
-+	/* check if queue list is not empty */
-+	if (rss_act->queue_num == 0) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
-+			"RSS queue list is empty");
++	/* matching eth proto not supported */
++	if (vlan_mask->hdr.eth_proto) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ITEM, item,
++				"Invalid VLAN mask");
 +	}
 +
-+	if (rss_act->queue[rss_act->queue_num - 1] >= dev->data->nb_rx_queues) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
-+			"Invalid RSS queue specified");
++	/* VLAN TCI must be fully masked */
++	if (!CI_FIELD_IS_MASKED(&vlan_mask->hdr.vlan_tci)) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ITEM, item,
++				"Invalid VLAN mask");
 +	}
 +
-+	/* only support default hash function */
-+	if (rss_act->func != RTE_ETH_HASH_FUNCTION_DEFAULT) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
-+			"Non-default RSS hash functions are not supported");
++	return 0;
++}
++
++/* common VLAN processing for both outer and inner VLAN nodes */
++static int
++i40e_tunnel_node_vlan_process(struct i40e_tunnel_ctx *tunnel_ctx,
++		const struct rte_flow_item *item, bool is_inner)
++{
++	const struct rte_flow_item_vlan *vlan_spec = item->spec;
++	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
++
++	/* Store the VLAN ID and set filter flag */
++	if (is_inner) {
++		tunnel_filter->inner_vlan = rte_be_to_cpu_16(vlan_spec->hdr.vlan_tci);
++		tunnel_filter->filter_type |= RTE_ETH_TUNNEL_FILTER_IVLAN;
++	} else {
++		tunnel_filter->outer_vlan = rte_be_to_cpu_16(vlan_spec->hdr.vlan_tci);
++		/* no special flag for outer VLAN matching */
 +	}
-+	/* levels aren't supported */
-+	if (rss_act->level) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
-+			"A nonzero RSS encapsulation level is not supported");
-+	}
-+	/* check key length */
-+	if (rss_act->key_len != 0 && rss_act->key_len != rss_key_len) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
-+			"RSS key must be exactly 40 bytes long");
-+	}
-+	/* filter out unsupported RSS types */
-+	if ((rss_act->types & ~IXGBE_RSS_OFFLOAD_ALL) != 0) {
-+		return rte_flow_error_set(error, ENOTSUP,
-+			RTE_FLOW_ERROR_TYPE_ACTION_CONF, rss_act,
-+			"Invalid RSS type specified");
-+	}
++
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_hash_ctx_parse(const struct rte_flow_action *actions,
++i40e_tunnel_node_outer_vlan_process(void *ctx, const struct rte_flow_item *item,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
++
++	return i40e_tunnel_node_vlan_process(tunnel_ctx, item, false);
++}
++
++static int
++i40e_tunnel_node_inner_vlan_process(void *ctx, const struct rte_flow_item *item,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
++
++	return i40e_tunnel_node_vlan_process(tunnel_ctx, item, true);
++}
++
++static int
++i40e_tunnel_qinq_node_end_process(void *ctx, const struct rte_flow_item *item __rte_unused,
++		struct rte_flow_error *error __rte_unused)
++{
++	struct i40e_tunnel_ctx *tunnel_ctx = ctx;
++	struct i40e_tunnel_filter_conf *tunnel_filter = &tunnel_ctx->filter;
++
++	tunnel_filter->tunnel_type = I40E_TUNNEL_TYPE_QINQ;
++
++	/* QinQ filter is not meant to set this flag */
++	tunnel_filter->filter_type &= ~RTE_ETH_TUNNEL_FILTER_IVLAN;
++
++	return 0;
++}
++
++const struct rte_flow_graph i40e_tunnel_qinq_graph = {
++	.nodes = (struct rte_flow_graph_node[]) {
++		[I40E_TUNNEL_QINQ_NODE_START] = {
++			.name = "START",
++		},
++		[I40E_TUNNEL_QINQ_NODE_ETH] = {
++			.name = "ETH",
++			.type = RTE_FLOW_ITEM_TYPE_ETH,
++			.constraints = RTE_FLOW_NODE_EXPECT_EMPTY,
++		},
++		[I40E_TUNNEL_QINQ_NODE_OUTER_VLAN] = {
++			.name = "OUTER_VLAN",
++			.type = RTE_FLOW_ITEM_TYPE_VLAN,
++			.constraints = RTE_FLOW_NODE_EXPECT_SPEC_MASK,
++			.validate = i40e_tunnel_node_vlan_validate,
++			.process = i40e_tunnel_node_outer_vlan_process,
++		},
++		[I40E_TUNNEL_QINQ_NODE_INNER_VLAN] = {
++			.name = "INNER_VLAN",
++			.type = RTE_FLOW_ITEM_TYPE_VLAN,
++			.constraints = RTE_FLOW_NODE_EXPECT_SPEC_MASK,
++			.validate = i40e_tunnel_node_vlan_validate,
++			.process = i40e_tunnel_node_inner_vlan_process,
++		},
++		[I40E_TUNNEL_QINQ_NODE_END] = {
++			.name = "END",
++			.type = RTE_FLOW_ITEM_TYPE_END,
++			.process = i40e_tunnel_qinq_node_end_process,
++		},
++	},
++	.edges = (struct rte_flow_graph_edge[]) {
++		[I40E_TUNNEL_QINQ_NODE_START] = {
++			.next = (const size_t[]) {
++				I40E_TUNNEL_QINQ_NODE_ETH,
++				RTE_FLOW_NODE_EDGE_END
++			}
++		},
++		[I40E_TUNNEL_QINQ_NODE_ETH] = {
++			.next = (const size_t[]) {
++				I40E_TUNNEL_QINQ_NODE_OUTER_VLAN,
++				RTE_FLOW_NODE_EDGE_END
++			}
++		},
++		[I40E_TUNNEL_QINQ_NODE_OUTER_VLAN] = {
++			.next = (const size_t[]) {
++				I40E_TUNNEL_QINQ_NODE_INNER_VLAN,
++				RTE_FLOW_NODE_EDGE_END
++			}
++		},
++		[I40E_TUNNEL_QINQ_NODE_INNER_VLAN] = {
++			.next = (const size_t[]) {
++				I40E_TUNNEL_QINQ_NODE_END,
++				RTE_FLOW_NODE_EDGE_END
++			}
++		},
++	},
++};
++
++static int
++i40e_tunnel_action_check(const struct ci_flow_actions *actions,
++		const struct ci_flow_actions_check_param *param,
++		struct rte_flow_error *error)
++{
++	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(param->driver_ctx);
++	const struct rte_flow_action *first, *second;
++	const struct rte_flow_action_queue *act_q;
++	bool is_to_vf;
++
++	first = actions->actions[0];
++	/* can be NULL */
++	second = actions->actions[1];
++
++	/* first action must be PF or VF */
++	if (first->type == RTE_FLOW_ACTION_TYPE_VF) {
++		const struct rte_flow_action_vf *vf = first->conf;
++		if (vf->id >= pf->vf_num) {
++			return rte_flow_error_set(error, EINVAL,
++					RTE_FLOW_ERROR_TYPE_ACTION, first,
++					"Invalid VF ID for tunnel filter");
++		}
++		is_to_vf = true;
++	} else if (first->type != RTE_FLOW_ACTION_TYPE_PF) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION, first,
++				"Unsupported action");
++	}
++
++	/* check if second action is QUEUE */
++	if (second == NULL)
++		return 0;
++
++	if (second->type != RTE_FLOW_ACTION_TYPE_QUEUE) {
++		return rte_flow_error_set(error, EINVAL,
++					  RTE_FLOW_ERROR_TYPE_ACTION, second,
++					  "Unsupported action");
++	}
++
++	act_q = second->conf;
++	/* check queue ID for PF flow */
++	if (!is_to_vf && act_q->index >= pf->dev_data->nb_rx_queues) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, act_q,
++				"Invalid queue ID for tunnel filter");
++	}
++	/* check queue ID for VF flow */
++	if (is_to_vf && act_q->index >= pf->vf_nb_qps) {
++		return rte_flow_error_set(error, EINVAL,
++				RTE_FLOW_ERROR_TYPE_ACTION_CONF, act_q,
++				"Invalid queue ID for tunnel filter");
++	}
++
++	return 0;
++}
++
++static int
++i40e_tunnel_ctx_parse(const struct rte_flow_action actions[],
 +		const struct rte_flow_attr *attr,
 +		struct ci_flow_engine_ctx *ctx,
 +		struct rte_flow_error *error)
 +{
-+	struct ci_flow_actions parsed_actions;
-+	struct ci_flow_actions_check_param ap_param = {
-+		.allowed_types = (const enum rte_flow_action_type[]){
-+			/* only rss allowed here */
-+			RTE_FLOW_ACTION_TYPE_RSS,
++	struct i40e_tunnel_ctx *tunnel_ctx = (struct i40e_tunnel_ctx *)ctx;
++	struct ci_flow_actions parsed_actions = {0};
++	struct ci_flow_actions_check_param ac_param = {
++		.allowed_types = (enum rte_flow_action_type[]) {
++			RTE_FLOW_ACTION_TYPE_QUEUE,
++			RTE_FLOW_ACTION_TYPE_PF,
++			RTE_FLOW_ACTION_TYPE_VF,
 +			RTE_FLOW_ACTION_TYPE_END
 +		},
-+		.driver_ctx = ctx->dev,
-+		.check = ixgbe_flow_actions_check_rss,
-+		.max_actions = 1,
++		.max_actions = 2,
++		.check = i40e_tunnel_action_check,
++		.driver_ctx = ctx->dev->data->dev_private,
 +	};
-+	struct ixgbe_hash_ctx *hash_ctx = (struct ixgbe_hash_ctx *)ctx;
-+	const struct rte_flow_action_rss *rss_conf;
++	const struct rte_flow_action *first, *second;
++	const struct rte_flow_action_queue *act_q;
 +	int ret;
 +
-+	/* validate attributes */
 +	ret = ci_flow_check_attr(attr, NULL, error);
 +	if (ret)
 +		return ret;
 +
-+	/* parse requested actions */
-+	ret = ci_flow_check_actions(actions, &ap_param, &parsed_actions, error);
++	ret = ci_flow_check_actions(actions, &ac_param, &parsed_actions, error);
 +	if (ret)
 +		return ret;
 +
-+	rss_conf = parsed_actions.actions[0]->conf;
++	first = parsed_actions.actions[0];
++	/* can be NULL */
++	second = parsed_actions.actions[1];
 +
-+	ret = ixgbe_rss_conf_init(&hash_ctx->rss_conf, rss_conf);
-+	if (ret) {
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, rss_conf,
-+				"RSS context initialization failure");
++	if (first->type == RTE_FLOW_ACTION_TYPE_VF) {
++		const struct rte_flow_action_vf *vf = first->conf;
++		tunnel_ctx->filter.vf_id = vf->id;
++		tunnel_ctx->filter.is_to_vf = 1;
++	} else if (first->type == RTE_FLOW_ACTION_TYPE_PF) {
++		tunnel_ctx->filter.is_to_vf = 0;
 +	}
++
++	/* check if second action is QUEUE */
++	if (second == NULL)
++		return 0;
++
++	act_q = second->conf;
++	tunnel_ctx->filter.queue_id = act_q->index;
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_hash_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
++i40e_tunnel_ctx_to_flow(const struct ci_flow_engine_ctx *ctx,
 +		struct ci_flow *flow,
 +		struct rte_flow_error *error __rte_unused)
 +{
-+	const struct ixgbe_hash_ctx *hash_ctx = (const struct ixgbe_hash_ctx *)ctx;
-+	struct ixgbe_hash_flow *hash_flow = (struct ixgbe_hash_flow *)flow;
++	const struct i40e_tunnel_ctx *tunnel_ctx = (const struct i40e_tunnel_ctx *)ctx;
++	struct i40e_tunnel_flow *tunnel_flow = (struct i40e_tunnel_flow *)flow;
 +
-+	hash_flow->rss_conf = hash_ctx->rss_conf;
++	/* copy filter configuration from context to flow */
++	tunnel_flow->filter = tunnel_ctx->filter;
 +
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_hash_flow_install(struct ci_flow *flow, struct rte_flow_error *error)
++i40e_tunnel_flow_install(struct ci_flow *flow, struct rte_flow_error *error)
 +{
-+	struct ixgbe_hash_flow *hash_flow = (struct ixgbe_hash_flow *)flow;
-+	struct rte_eth_dev *dev = flow->dev;
++	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(flow->dev->data->dev_private);
++	struct i40e_tunnel_flow *tunnel_flow = (struct i40e_tunnel_flow *)flow;
 +	int ret;
 +
-+	ret = ixgbe_config_rss_filter(dev, &hash_flow->rss_conf, TRUE);
-+	if (ret != 0) {
++	ret = i40e_dev_consistent_tunnel_filter_set(pf, &tunnel_flow->filter, 1);
++	if (ret) {
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, flow,
-+				"Failed to install RSS filter");
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++				"Failed to install tunnel filter");
 +	}
 +	return 0;
 +}
 +
 +static int
-+ixgbe_flow_hash_flow_uninstall(struct ci_flow *flow,
-+		struct rte_flow_error *error)
++i40e_tunnel_flow_uninstall(struct ci_flow *flow, struct rte_flow_error *error)
 +{
-+	struct rte_eth_dev *dev = flow->dev;
-+	struct ixgbe_adapter *adapter = dev->data->dev_private;
-+	struct ixgbe_filter_info *filter_info = IXGBE_DEV_PRIVATE_TO_FILTER_INFO(adapter);
++	struct i40e_pf *pf = I40E_DEV_PRIVATE_TO_PF(flow->dev->data->dev_private);
++	struct i40e_tunnel_flow *tunnel_flow = (struct i40e_tunnel_flow *)flow;
 +	int ret;
 +
-+	ret = ixgbe_config_rss_filter(dev, &filter_info->rss_info, FALSE);
-+	if (ret != 0) {
++	ret = i40e_dev_consistent_tunnel_filter_set(pf, &tunnel_flow->filter, 0);
++	if (ret) {
 +		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, flow,
-+				"Failed to uninstall RSS filter");
++				RTE_FLOW_ERROR_TYPE_UNSPECIFIED, NULL,
++				"Failed to uninstall tunnel filter");
 +	}
 +	return 0;
 +}
 +
-+const struct ci_flow_engine_ops ixgbe_hash_ops = {
-+	/* RSS engine always available */
-+	.ctx_parse = ixgbe_flow_hash_ctx_parse,
-+	.ctx_to_flow = ixgbe_flow_hash_ctx_to_flow,
-+	.flow_install = ixgbe_flow_hash_flow_install,
-+	.flow_uninstall = ixgbe_flow_hash_flow_uninstall,
++const struct ci_flow_engine_ops i40e_flow_engine_tunnel_ops = {
++	.ctx_parse = i40e_tunnel_ctx_parse,
++	.ctx_to_flow = i40e_tunnel_ctx_to_flow,
++	.flow_install = i40e_tunnel_flow_install,
++	.flow_uninstall = i40e_tunnel_flow_uninstall,
 +};
 +
-+const struct ci_flow_engine ixgbe_hash_flow_engine = {
-+	.name = "ixgbe_hash",
-+	.ctx_size = sizeof(struct ixgbe_hash_ctx),
-+	.flow_size = sizeof(struct ixgbe_hash_flow),
-+	.type = IXGBE_FLOW_ENGINE_TYPE_HASH,
-+	.ops = &ixgbe_hash_ops,
-+	/* RSS does not accept patterns */
++const struct ci_flow_engine i40e_flow_engine_tunnel_qinq = {
++	.name = "i40e_tunnel_qinq",
++	.type = I40E_FLOW_ENGINE_TYPE_TUNNEL_QINQ,
++	.ops = &i40e_flow_engine_tunnel_ops,
++	.ctx_size = sizeof(struct i40e_tunnel_ctx),
++	.flow_size = sizeof(struct i40e_tunnel_flow),
++	.graph = &i40e_tunnel_qinq_graph,
 +};
-diff --git a/drivers/net/intel/ixgbe/meson.build b/drivers/net/intel/ixgbe/meson.build
-index 770125350e..de35833e48 100644
---- a/drivers/net/intel/ixgbe/meson.build
-+++ b/drivers/net/intel/ixgbe/meson.build
-@@ -17,6 +17,7 @@ sources += files(
-         'ixgbe_flow_ntuple.c',
-         'ixgbe_flow_security.c',
-         'ixgbe_flow_fdir.c',
-+        'ixgbe_flow_hash.c',
-         'ixgbe_ipsec.c',
-         'ixgbe_pf.c',
-         'ixgbe_rxtx.c',
+diff --git a/drivers/net/intel/i40e/meson.build b/drivers/net/intel/i40e/meson.build
+index 0638f873dd..9cff46b5e6 100644
+--- a/drivers/net/intel/i40e/meson.build
++++ b/drivers/net/intel/i40e/meson.build
+@@ -27,6 +27,7 @@ sources += files(
+         'i40e_flow.c',
+         'i40e_flow_ethertype.c',
+         'i40e_flow_fdir.c',
++        'i40e_flow_tunnel.c',
+         'i40e_tm.c',
+         'i40e_hash.c',
+         'i40e_vf_representor.c',
 -- 
 2.47.3
 
