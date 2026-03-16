@@ -2,45 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C00F53D6F
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 16:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04A6F53D6D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 16:21:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 773A74025E;
-	Mon, 16 Mar 2026 17:15:14 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id CC4A7400D5
- for <dev@dpdk.org>; Mon, 16 Mar 2026 17:15:12 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A4013208E0;
- Mon, 16 Mar 2026 17:15:12 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id B63F84025E;
+	Mon, 16 Mar 2026 17:21:03 +0100 (CET)
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+ by mails.dpdk.org (Postfix) with ESMTP id 67EAE400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 17:21:02 +0100 (CET)
+Received: by mail-dl1-f49.google.com with SMTP id
+ a92af1059eb24-12732e6a123so1667921c88.1
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 09:21:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773678061; cv=none;
+ d=google.com; s=arc-20240605;
+ b=cVZvjiBhqmCnV190QXWONWDf39xBWGgQEeR/xziXe2hICXTikcNrS1sr+ouNOKembM
+ d1qtqGynx8ANKl9nBSWYeN19XtlqO2GJlH+GvOulsXGnivbbAidntVCyv3s0+sfCfrFc
+ RkpSx4DbE10OTTJbyli7afoLB/C2zqCl9mhcNUQNNTV4Lmop1JtOujJ96Lc4qP4qD7i/
+ iFFrEvOnXMm0NL4qvrjQcSI6Z/LfE1BpmtS8nzYPeDCWHBs1xlBcODnOPrunU2XDG7bK
+ JZDSsoUoxXGRStSkcYdojxyQjTx+EmNRxYOG7wD+UCYcp1UFk6OdPArkoa5UnYNOgg5X
+ wTHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=FhbhsIRQfDXQmDNmTAJwErGMefn4gA/aDV/UfXOmlwI=;
+ fh=TnaQSLo3e16j7m5WUfLe3mP+auRMup1cMc92tEgLqeA=;
+ b=f8SOG4wpXuSk4RPTSjNpFjSYQ22JMSaS76w5jEs/p2WmqM0tm0FXr3HODP7PC3kHBk
+ WoMprV+yEp8QIK5PwlIWBmkOueLdAHLBEI2m2Q1qDE7bM6pJAsBygTi7NhSl7OJOEI0c
+ jE1iv0ihRIKeu11BGxP3WSVWWnQyCYmXjbdzycF+eZHOs16+OTYMJisgdU8XSfI65Enw
+ tW6cedThmZDXIG5rSafJLVD5Ho3IIQrHiRRD/Id6XlrecREynbm3E6A/MYnhSYw4TzQ5
+ MFGq8Zr4n1NUUxBPhZ6x71rhtjvHGX1TuiM76ntHq4euA8805/aYwvmv43vu6SNIa2vD
+ 9Llg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1773678061; x=1774282861; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=FhbhsIRQfDXQmDNmTAJwErGMefn4gA/aDV/UfXOmlwI=;
+ b=St3Y5uQfs94SJUCXRfkevQ2yUvU8iWx4m2v62reg1MZBHUE//pH7oSY/vXzQCsOQFH
+ DrkfFtnolqKaOaMEDVT6m8Iiq69UtF12CZ8a7Gfzqfnh9xp1fzXvjGxM7EbHp1v7AC0u
+ eIa81eJPyxN83HuKoEwv6o0jvZ0uTJh/awkUg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1773678061; x=1774282861;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=FhbhsIRQfDXQmDNmTAJwErGMefn4gA/aDV/UfXOmlwI=;
+ b=dHU3GaZ5Xn/VXuqUaJEncrMTfAg20U04eTxY/HWhOaljpTC5Y4yqiiMgZ98POlIbpe
+ GAtabVu3Q6sLJ3n0KW6W25EfSIM5C4kOfwRL77o/N3vaSXIsFzwkQoeDMgmGTPJsr/VG
+ Pf3UKgYb/F9ntWxxp60rf5fIVJBWhWEy54pdfmpKDzZDQTzE2Tl+GhgVwtJSSUlK83lz
+ wKr1/QYTN8lIEd04uNrOcLFajQ+GzumnHo0cP1W1qbubzKSHfBz3f9xs+fLvE0d+rA0f
+ 7EdhYdQ61zhgzuTtZci9amo8alYn/0ppRXdXXWecpez2Lgue5np92Fq8eHcpG/HljFLN
+ nSww==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVTNuYqYzDIB483ZhXeSE7+EUF1S6hV1NOq46zkbuy9JJoA2jNTmV1J9nZTd42mZL2ihTU=@dpdk.org
+X-Gm-Message-State: AOJu0YwO6c1fOWxyXcmzPU4t52K+MgE1fgvt/nn8xoEQbq5BYWdHKMJu
+ cXG3TdFA5Cx32Piv3KpRHUcCPErtki2WTc89yxm11/AYMlz2u8mzrLW1G2rsVpuMVnhSrlB81gW
+ Kg+oQs19dHERZ4i6441fvD3Ls7OEAIu3dyaFOVWsYfQ==
+X-Gm-Gg: ATEYQzwErIy7rp4cqUPOc+q6CqaPU+UonPcBYetzuE8b+uN76g9AEBECuFypAAja6zi
+ kTE+FZsYqVr2M/ucNio6auVptgA8ZSVck0kndlQHMX+pt9kzcKbNBY/bfHQXiaeqB+foKDL9v8m
+ /DPuLoyXOYUfO1FNZuziUPiaZX04D2CmOy31j9Vr4w97NSXGvu4fnwgTZdZxgGYewMOyHqNspEf
+ 4x8Lnvk/Y0i1A88YbtzDYY0tefCrOWMNyYdZ2VptE+HczV6A7R4r/UoCQmkTESeOFYKmroeHKIp
+ Y/RlibOZe/pqB/wBTgTRE8nKr6G0v6MNLj7lO0E5MPSAEbuMrAXbuQ==
+X-Received: by 2002:a05:7022:309:b0:11b:ec5f:1c37 with SMTP id
+ a92af1059eb24-128f3d5d20cmr6934462c88.18.1773678061279; Mon, 16 Mar 2026
+ 09:21:01 -0700 (PDT)
 MIME-Version: 1.0
-Subject: RE: [PATCH v20 25/25] app/pdump: preserve VLAN tags in captured
- packets
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 16 Mar 2026 17:15:11 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6579B@smartserver.smartshare.dk>
-In-Reply-To: <abgqTqbrJp-jdL5U@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Thread-Topic: [PATCH v20 25/25] app/pdump: preserve VLAN tags in captured
- packets
-Thread-Index: Ady1XsGo+5grT+hASum79MJ8mGlNmgAAD8LQ
-References: <20260106182823.192350-1-stephen@networkplumber.org>
- <20260310161356.194553-1-stephen@networkplumber.org>
- <20260310161356.194553-26-stephen@networkplumber.org>
- <abgi0O1fWFqYIDP5@bricha3-mobl1.ger.corp.intel.com>
- <98CBD80474FA8B44BF855DF32C47DC35F6579A@smartserver.smartshare.dk>
- <abgqTqbrJp-jdL5U@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: "Stephen Hemminger" <stephen@networkplumber.org>, <dev@dpdk.org>,
- "Reshma Pattan" <reshma.pattan@intel.com>
+References: <20260313155601.112819-1-dmarx@iol.unh.edu>
+ <20260313182240.130379-1-dmarx@iol.unh.edu>
+In-Reply-To: <20260313182240.130379-1-dmarx@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Mon, 16 Mar 2026 12:17:53 -0400
+X-Gm-Features: AaiRm523AZBSj6SWBd8QALl7cV6_ko2f5ZPhQfJsO_MPrZyRNzseSFpL4rKO6Go
+Message-ID: <CAJvnSUAL3o4wGexM10Ymp0WvhSjmzR8vgBbQefxemiO1UFrmkw@mail.gmail.com>
+Subject: Re: [PATCH v2] dts: update overall result pass/skip logic
+To: Dean Marx <dmarx@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org, 
+ Andrew Bailey <abailey@iol.unh.edu>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,89 +94,4 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Monday, 16 March 2026 17.06
->=20
-> On Mon, Mar 16, 2026 at 04:55:29PM +0100, Morten Br=F8rup wrote:
-> > > From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> > > Sent: Monday, 16 March 2026 16.34
-> > >
-> > > On Tue, Mar 10, 2026 at 09:10:03AM -0700, Stephen Hemminger wrote:
-> > > > When the source port has VLAN strip enabled, captured packets
-> have
-> > > > the VLAN tag in mbuf metadata (vlan_tci) but not in the packet
-> data.
-> > > > Similarly, TX captures with pending VLAN insert have the tag =
-only
-> > > > in metadata. The resulting pcap files contain untagged packets.
-> > > >
-> > > > Convert RX_VLAN_STRIPPED metadata to TX_VLAN offload requests on
-> > > > dequeued mbufs and call rte_eth_tx_prepare() before
-> > > rte_eth_tx_burst()
-> > > > so the pcap vdev inserts the tag into the packet data.
-> > > >
-> > >
-> > > This is an example of something I previously flagged. Like with
-> real
-> > > hardware, I think the PMD should be inserting the VLAN tag into =
-the
-> > > packet
-> > > as part of the Tx function, not the prepare function.
-> >
-> > Agree with Bruce on this.
-> > For simple stuff like VLAN offload, applications should not be
-> required to call tx_prep first.
-> >
-> > However, the Tx function is supposed to not modify the packets;
-> relevant when refcnt > 1.
-> >
->=20
-> Reading the doc on tx_burst it can modify the packets (obviously
-> enough) if
-> refcnt is one, so only the edge case of refcnt > 1 needs to be worried
-> about. The other thing worth noting is that there is already an
-> exception
-> for bonding driver - if we need to, I suppose we can look to make a
-> more
-> general exception for a set of virtual drivers under specific
-> circumstances. I'd be ok with documenting that "the following drivers
-> modify
-> packets for VLAN insertion..." or something like that.
-
-I'm opposed to API contract exceptions for virtual drivers.
-They should be just as well behaved as physical device drivers.
-Otherwise, applications need to behave differently, depending on which =
-driver they are using.
-
-I cannot remember the reason for the exception in the bonding driver, =
-but optimally it should be treated as a bug and fixed.
-
->=20
-> > Instead of modifying the packet data to insert/strip the VLAN tag,
-> > perhaps the driver can split the write/read operation into multiple
-> write/read operations:
-> > 1. the Ethernet header
-> > 2. the VLAN tag
-> > 3. the remaining packet data
-> >
-> > I haven't really followed the pcap driver, so maybe my suggestion
-> doesn't make sense.
-> >
-> >
-> > Let's say an application adds 1 to the mbufs' refcnt before each Tx,
-> so the mbufs still exist after Tx.
-> > Then, the application captures/mirrors the packets consumed by the
-> driver, and logs/drops the packets the driver was unable to consume.
-> > If the capture/mirror is filtering by VLAN ID, modifying the packets
-> in the driver's Tx function is bad.
-> >
-> Worth investigating. We already have copies for scattered packets, I
-> think,
-> so doing some copying for VLAN insertion if refcnt > 1 wouldn't be the
-> end
-> of the world.
-
-+1
-
->=20
-> /Bruce
+Recheck-request: github-robot
