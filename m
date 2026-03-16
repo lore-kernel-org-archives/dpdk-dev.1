@@ -2,143 +2,102 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AEBF013D5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 08:44:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFDEF013E0
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 08:50:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6A48C4025E;
-	Mon, 16 Mar 2026 09:44:46 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id D07104025E
- for <dev@dpdk.org>; Mon, 16 Mar 2026 09:44:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773650685; x=1805186685;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=OnKJLuoD3cgZD/rNl2GmdYSy1Du5Wd1ZM+oGiQ3Z9wE=;
- b=De1O2RMsqM0HGhv3gXTJXTiVA7/YYkhn0cpfxMgMgTG6c7dN/DkW7GXa
- H0jOlakWBE/hTJwG4U9V+w+3oH6vb18dANomhjdYa/htfBArCGarqGya6
- Y2Ho8v7XTEsyvJI/O3TW1TjQh2hhhw0kBwpdYs36o4hY0j7UvCsnvUXfd
- 5XZe3QpyihFeh5jRD9sSJs56LT9iYPR8PLfYlpaujwLd0kh+WvjyFHY1H
- 9BMY8OhsFcEBrKyZOdrfUKCKW2VPlbkaH8Lp0zYYkJUoKTXgalVMq/GYG
- mbP6F3fwOHsX5t7vLrQvElL7krv7TbNYxA6R02GGl/uq7Y56oJE+FBh97 A==;
-X-CSE-ConnectionGUID: rvS5b3RbR4WWaIL56j3plg==
-X-CSE-MsgGUID: WX0Yi98/T9uJU8xTxgo1mA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11730"; a="97270409"
-X-IronPort-AV: E=Sophos;i="6.23,123,1770624000"; d="scan'208";a="97270409"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 01:44:44 -0700
-X-CSE-ConnectionGUID: j7QbohwMSLiXLzzPw3QcSw==
-X-CSE-MsgGUID: VgekYWRoR6ikmx1QWPUVWg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,123,1770624000"; d="scan'208";a="221077074"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Mar 2026 01:44:44 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Mon, 16 Mar 2026 01:44:43 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Mon, 16 Mar 2026 01:44:43 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.52) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Mon, 16 Mar 2026 01:44:42 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id BEAEB4025E;
+	Mon, 16 Mar 2026 09:50:11 +0100 (CET)
+Received: from PA4PR04CU001.outbound.protection.outlook.com
+ (mail-francecentralazon11013010.outbound.protection.outlook.com
+ [40.107.162.10])
+ by mails.dpdk.org (Postfix) with ESMTP id E401A400D5;
+ Mon, 16 Mar 2026 09:50:09 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FMFRRJz8CcX+1LmtBxSnrKS9qHPnuHzBRb5VkSxg8oNdTMwAmwZG4yLk9ylfW8GtGjNEKxS7m16x96nzwpzrBLOiaOQiou5BBQy4gBhuKvtEsGZY/DF3vdVFIbxpF94YiJjIcxNS00srr2BomQRS2ZGFDdma8ZwhPxezYxSyeY+qx0s46yTVH538J50CmXsh8+dgRzbVHGbRUMqTH+I3KpIUME5ANkJ/TnrFOZ22l587kadqZK0fr6fpzNvUG2dI2KaJurRzPPISm1FqKqrrskHaFAZzzR7gsXeatzKj+RGl6Mr1t/lIpKxdQpWCDHs3Xkn34+6Utok0hc2nSrVnnA==
+ b=rbHw3QvFmSmMuupH0tudu25Yis/i4l4CdpnkryIS//1Glp+q9uVMlHEZIMO2YhoqqCpIVoXvWqzlJq/zu8QGRn/8RdiBZZfJ+u9NpHxf2AEKPKyn1ZlgYL1G7Ieq9e8fhJIRzcJZULTnD2anjn1bVktD3CHGJkb9ggcebLuMvk5YgOHtYapsUUdg6YYI+JuLM6Q9aMR6KFmKFUhbySBQ6VszZObdx3INiWQnTcwR+T84MuSnV/VXiWNgONiXiI2dADvUUziVgm7anKl1gSS8yfA41wBFr+kv/yxy5kifGiIRQxMmJJIbcb7zvj1429hGWWtHpeXOnDOWV5j+bYrjCQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZQx9rYhmObZMnw6bliaHSb6F76m23NB3nUTbG2zYiJg=;
- b=h+GfHAI694Z62XWQxEEREPl+Xz6bcHcwVEUY3ZXtP6G7G9PF7+mHAIOJPs8iVm16HTtCDA9qG+EwW1p6mfRvHL5r2qgJLpreydB15HliMC6LQZDS0PlplbkhgD4BTM+9499PQVshIYHHoyFR1lAdNkMt7plB8R61xCYLCWFSbz0Oc6iPVFQF5yKP9Xc5puLwweCl14zE+TSJM1I3mzlJ6JnukwjmZYXrt+qGz1cB+3JeIqpUsZMUXON7S8Ssw8Q6TD3iGeQvXpYOBoyHjJb6AIJHVY4sWn/uKTEvNH/qmci0ktFmBnIBLEy/qs5L/Bvg6V3CWZ2ikW/AePaYQVK8UQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS0PR11MB6496.namprd11.prod.outlook.com (2603:10b6:8:c0::20) with
+ bh=HZhpK+zvaS+8r4CKDsNr8uVn77kJlQV90yJ7J1tEnRU=;
+ b=vASwhlByC26AJfankhNGFwSOZ2b8jpusQ0cu0FMir/LL7XSxvIQ279UhjfuPiLXldOUqJb+ZcyyEYk5DWYOmGpq05ONTIyj9rogZNYePrpml6fj20szQmsi8gz/bEZP6yOrgviGd2QRuZ6FvKg5j/B+GvXd8pg1X4ge/Uk+ZxAYCI57Em+A0NHEBxIqqVs/8NSqynlPIgG2psxY2lsk0IlPv+0tMjDlNPOU53e9UPPMa/EhWF53lB9p+gvNmo9QxGKGBuraZqGb6jta6Mh2vyGclC8xWVHevJ4bakg0EeSJ1vcngRBVuT+VvgSgwLPWezBhPIJravNG0NwSJZAvb+A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 192.176.1.74) smtp.rcpttodomain=cisco.com smtp.mailfrom=ericsson.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HZhpK+zvaS+8r4CKDsNr8uVn77kJlQV90yJ7J1tEnRU=;
+ b=w0hr3BLrBddJimO3mXqMUu0SfZTYyi0fZeEpDhlCu2R7csh6SrpVtk/0992BeyBCKqH23A3ACGD5fTa1+d3UZFoNfU59d1XyEgvwCnu4GpMIRZakI6bBgi5v8YJm7BvG+pBDRI8NkF+4s5eyA3j1NpRMFex127nE9kwPsR87POAfy9J0gBTiHDsF68OWP9DnkQRkc7JpGA5w/zj+IiX+VglbivSbwiqNd+Ioup3prn9+dsFF86OU9KnfK5LFcA+gIWF70jfInZLntBBHePx9ko1hqgJ9DlkFXKmwEoz8C7imP/yftbdvzF3FXRK64rasVXInNRDRmva3ZLPJtoXGGg==
+Received: from DU7P191CA0014.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::27)
+ by AMBPR07MB11462.eurprd07.prod.outlook.com (2603:10a6:20b:734::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9723.16; Mon, 16 Mar
- 2026 08:44:40 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9723.013; Mon, 16 Mar 2026
- 08:44:40 +0000
-Date: Mon, 16 Mar 2026 08:44:33 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: <dev@dpdk.org>
-Subject: Re: Intel PMD fast free layer violation
-Message-ID: <abfC8e0FOlkuJAjz@bricha3-mobl1.ger.corp.intel.com>
-References: <98CBD80474FA8B44BF855DF32C47DC35F65793@smartserver.smartshare.dk>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65793@smartserver.smartshare.dk>
-X-ClientProxiedBy: DU6P191CA0022.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:540::13) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.24; Mon, 16 Mar
+ 2026 08:50:06 +0000
+Received: from DB5PEPF00014B9F.eurprd02.prod.outlook.com
+ (2603:10a6:10:54e:cafe::8d) by DU7P191CA0014.outlook.office365.com
+ (2603:10a6:10:54e::27) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.25 via Frontend Transport; Mon,
+ 16 Mar 2026 08:50:06 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
+ smtp.mailfrom=ericsson.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=ericsson.com;
+Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
+ 192.176.1.74 as permitted sender)
+ receiver=protection.outlook.com; 
+ client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
+Received: from oa.msg.ericsson.com (192.176.1.74) by
+ DB5PEPF00014B9F.mail.protection.outlook.com (10.167.8.169) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9700.17 via Frontend Transport; Mon, 16 Mar 2026 08:50:06 +0000
+Received: from seliius19819.seli.gic.ericsson.se (153.88.142.248) by
+ smtp-central.internal.ericsson.com (100.87.178.64) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.29; Mon, 16 Mar 2026 09:50:06 +0100
+Received: from seliiuvd10563.seli.gic.ericsson.se
+ (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
+ by seliius19819.seli.gic.ericsson.se (Postfix) with ESMTP id B47024020AB9;
+ Mon, 16 Mar 2026 09:50:05 +0100 (CET)
+Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
+ id 9CDEC60B11E5; Mon, 16 Mar 2026 09:50:05 +0100 (CET)
+From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
+To: Mike Bly <bly454@gmail.com>, <dev@dpdk.org>
+CC: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>, <stable@dpdk.org>,
+ <jgrajcia@cisco.com>
+Subject: Re: [PATCH v2] net/memif: Fix memif-rx buffer linking
+Date: Mon, 16 Mar 2026 09:49:06 +0100
+Message-ID: <20260316085000.3492548-1-sriram.yagnaraman@ericsson.com>
+X-Mailer: git-send-email 2.43.7
+In-Reply-To: <CAB3eHOwcEg_7A1rsDFm7QuGQXd72XscEkxg0PcgkUqe8-ZVP-A@mail.gmail.com>
+References: <CAB3eHOwcEg_7A1rsDFm7QuGQXd72XscEkxg0PcgkUqe8-ZVP-A@mail.gmail.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS0PR11MB6496:EE_
-X-MS-Office365-Filtering-Correlation-Id: b6efd0db-4722-4e4e-36c9-08de83384330
+X-MS-TrafficTypeDiagnostic: DB5PEPF00014B9F:EE_|AMBPR07MB11462:EE_
+X-MS-Office365-Filtering-Correlation-Id: 75cff128-970d-452d-4120-08de833905b6
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|56012099003|18002099003|22082099003; 
-X-Microsoft-Antispam-Message-Info: uL1cY5zMfAwonHjr9coKZ10vLECmJkK++XTwNF/FHJZRWRMUw1ByDK9R6Z2/9A2NEnnOhQqY1xKSFy4VDTLdChyIVLk0PhQmMmqDGCLM+ewN+9/3YQw/ah/0if1NbWyjZ4qNxfFjoCQP0SgEc0pxgm8vOyuISD5gPO6xUsb1wjLbUZHiz/Z9a/7zJ+hUFraYGMQksU+UYoCLAYbc7VWROpeE07BpuRg4RaQ1Eux3rQo69TE2fm7K5Us+/wsnI+28ArncgI+KlFm7nfwZHM/+4El5iW62C0t9jEewBY/rAOO16F5U919zDwIH14W4jR3KVkEj5sRNJrqggSeYEC5jp9LSZBnCKqh/7vXUHG6Gkn6yqhMUAcXVP5Ku2Hn076HudToTO+rj976DTK864nG68MNhGKawieDCEo4zofZQtneYU2ZfLwLsBAeUL1YBqGYCG9BsH7bTX9d/0TpsE6aIxk/PbsW4+m1VD9l01qX8pcdIAVJA3IpTT0TI6E254xgE2DO41TGGYj9NulgSVt1KYVtLl3M9bYUdcw/7kPXM84q2yXkfbzIKTDwWK4XrF6nxEG0CUqEciOkEqlFGIi6J+I0iJS7uKPQyMG5ymtRaRdEOU09mW3zx+SoMDrZ6KguX08PLsWF8/q6tUoV3F9eAQ0VtzVybcpwqFBbacSo0fY8v+9xXXgtzqow382wKiYgrx7Zqwz4lbkhDiBIhcvhlPVJmvEqhDLUSoaslbBDRQ8U=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(56012099003)(18002099003)(22082099003);
+ ARA:13230040|1800799024|82310400026|376014|36860700016|22082099003|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info: DL32F6P5S/iF8RhOWryMh0uiAMzb4O9EG4ud3Aqtg+639XIKh+p+cNJTMb7xK7uhRHJagTmXQAD8VHtPrfPzbrokznWaCeQz0deBlbyNBnH+qEy6LYG+qLUSZa8puUcndWiwKTrvxyuurfLN6vztjmzs0NCC5Tr57rVQhJ5A6WN8Tw1uVpy9MPkXe23AcbJhe+qczy3vfkQpKe/5YIQns2Xaxt52iWNLMEFXlQtfVQIPc787y3Tsh0e3VCRwzzS4ZSNWdTEMyMGDG2DOKlvf1Y2QMQiGsWe/Uk8mitQhX1hLxJIl5VidJV2P6GvzLacUjwRHS36mjFSbfhD3RMJMdN8kTEqECNI7O3z4tnZbQUyBzBXy4RgVA0F63qQmQyMrodx/227P4Xp48w8/3LK9fpyDM9jJuwQdmf1J1edTOPXoU3gu7NsN7SyhquLcTxQyz7wNtBoTBfB4qO1/msBusZwPY6sFyT0rNV++zhFt2vXw3Tw7t5TGHjr+OKtxMk9soZNpTeEdpqceMxZWwfXj8/b5skLXLCl460to15QHVmmfMLORVHHecDlhqUAMuMtSb5wHQ8P3Hhulo5h9d3uTUp1WSp5ob1IdBwz3ZQdAM0JJAxlWCoqzTde5mnmJx4FPKW32utney4MfAC6/+pOayu5R7ufPoIUSCo9cIdNyiz+KeKBZUHL+o5mDKQTR+d0kc4IKa/sFcXkktmwDLJWNFWHPqOiCvwBsVaBUgcxQdkvVdvB9wYM3dPIlFnCN3eyeJ8IbfiwY+1KXXxPKxV0wHA==
+X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
+ CAT:NONE;
+ SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(22082099003)(18002099003)(56012099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?8z1XwJRDuMry6th0DFGEAkXph6yv3JKfSijrYDbZSVQKJDwunqCway02tD?=
- =?iso-8859-1?Q?MPrVpEjUnhoJr02dhNnzwQgdW2uha84deZbvV/PlzbWeSt8eSmRz6sCfHd?=
- =?iso-8859-1?Q?kEKruPF/tgl7qrrqSvIQz15oWCd+csh9mbOTIFPnc2hZX9OJ32evyDVP/Y?=
- =?iso-8859-1?Q?lKbPUH24WmSR9lQwcfR3BtEqJNF3jFT8Wzz9SdrP1UkUYw9vSTNoJ1w7oh?=
- =?iso-8859-1?Q?6UcmHmsA1C+5OxJTb9EEOjA/MapnL6qnpq/DmrrYvLMNlvae3Jna+J9MQF?=
- =?iso-8859-1?Q?Az18ZNc1Om4bJyR06DJzDxxacuZXMm4RR/3CWmg2oiUN1mw4dTFwSzyrHz?=
- =?iso-8859-1?Q?+vahbhqNn2EQFvbiB+xDJsAsn1AWOUTGCry/WQBl9rK2n4iBsIOsIrIhDa?=
- =?iso-8859-1?Q?UH+xIjQ/I0QqqOcEGb1xC8TLhr5gWzLL5PUom2lJeFRsXEr5riEWOmnVy2?=
- =?iso-8859-1?Q?Upo/9Lh+0C7YOkhnPCSdLM+nJQmawD/L1ZzbGONzXSYhIpgSDL/bZKptE0?=
- =?iso-8859-1?Q?N4SMJMwPljs43G+fnBRDfDSr9BoZskigmUGK+OR2lDgGj645w1G6WuIao8?=
- =?iso-8859-1?Q?WiX4NiUGSlgyIZJ0aPnOC8hmICIWsV8AeAXdS+0SZysRJqN4VqEhHVcGnG?=
- =?iso-8859-1?Q?YwRHOOWPYb2O2XQwMfF8laPSyvLzuPx1nZGb5QHZwOegXXtod5OQiU6rsf?=
- =?iso-8859-1?Q?oj4F89g5LgYeE5RaUsXgsBQFuj+Q1ApiZ4PJLGg+uVeVixUh8yBa1JG78R?=
- =?iso-8859-1?Q?9vRTv+2pdugTmoh8YfvXC7/YaKdj6ic5cn5kkf15IH4BlEXruYN2iH1TrD?=
- =?iso-8859-1?Q?bz4tAD/Cu1ZvU8CcJYPo7YOzvjWVNXqJtfSTk3aEvtVICfMyn00NCh2Ymq?=
- =?iso-8859-1?Q?YrOKs5rESiT87r7olePNF+f0VSFNX7cxe7i07E4hpXwew3zq+XHei1P0l4?=
- =?iso-8859-1?Q?oH9foteGiTvzQy3eFYkazceReiuHMXtApzxtIVuN4BstVSaF7MrZiMkRD9?=
- =?iso-8859-1?Q?lEILxFuux80u1IB1SZci8D/dFyvEBo9qSnSWzY52PXQr81OZlW2tTz4DQ5?=
- =?iso-8859-1?Q?XyP0BGWiTCOZla77y+Nvafih53gQWGfYsO1PgDMOn2HKSly8L04kdXyU+P?=
- =?iso-8859-1?Q?8Az+9UvVqu0bw5nGZKds/QaNQoODCdBwdyHwJE5H0VX98Py0jYD0zFcqHW?=
- =?iso-8859-1?Q?1V8SA/LGV0IcWe3T6xZJfAWtQXZWrJMyQ4FnvzSGRwrcbnXchLWBv5plUE?=
- =?iso-8859-1?Q?mPcH5+H6CCUrBTGZnycBm81gsruAm+9sYYurDE0AP3q9Ia/2J9cQ+Yiagi?=
- =?iso-8859-1?Q?4ZUGDDS2wTJaM+2S4bkHrNd6uyigngyf0qzOF1NwXAFfNuknIXeaq0jKvZ?=
- =?iso-8859-1?Q?or3booDgqs66vSB3fUDtxj25qy1PjlADg96CP4+hgV6m1qFXwCSS3l8MoW?=
- =?iso-8859-1?Q?lzqtE9lfr+QuGWK5orhgi5NAyCwNceW+cjEXafz8Arnv/xsfo27hI6ySVi?=
- =?iso-8859-1?Q?ACBKRpqJwgBKaoVhZR7R7IdB8vRGes70JAnkALdoF/6rxWMvS+k8jjG/o0?=
- =?iso-8859-1?Q?S3se5Rj/MiuZ2Uf/VfLll+eg6JkgeqocFpEpVQa3VlZAXgEIfCuQcl2gj3?=
- =?iso-8859-1?Q?fdEYxw4pQNYhw/IO92L4sz0z8RkOTw3Q9xb020rnkjgiCiF6nC+nmCOrwy?=
- =?iso-8859-1?Q?WH/aRKcdMAFIz88IrbGIOK3kLRKvqQBEd3ixRVLJ3Pw+usdBSnFZ/9Nlna?=
- =?iso-8859-1?Q?KfbGmTnSxFtyip4h59ZSoNs8ePJbUoF9eTwqzmqWM9TPA3SOThSE74yTT+?=
- =?iso-8859-1?Q?011mWVp/1KB5czlVKXESue9WYhWhtV8=3D?=
-X-Exchange-RoutingPolicyChecked: na+maHpthYJqWg84cX4iEWf/UzeA/K689Sf0C6lotRJr71twVKBV0Z3YXnW1NPY1lTvoU1ovyTcjKK70JN7+7QMkavqG7DoGx7Vt41IAFxKj3qbqksc5HVj6c2OlnyVYUqYCGH3/936lT2nOIZcIvYuqc4NLdfZGW9V3AXh0V7wWOCfcyCABl/k11gil0AoS62add19bLql9Z1x4WfpQW5yFhh6pa0w0bCqAgmMMqOb4q5lHUFwEVRQRvqhDkhQH95bDn+2MJ+WFXSXBI+0aWtseCUCYXs9Z5Mnhv7MrDW8025F0XA1UD4WV2V2p+lrhNpgnnnAVmohRIppnf/+6rQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6efd0db-4722-4e4e-36c9-08de83384330
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 08:44:40.5703 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qx8Dah3FUFCPGWYGszUNV8ANS+8YgPKoZsAT9Qanm3czRULdSS6ZshsBP/6TFpVVJSjG4mXeEtaQz30TpSL9qomCalJaAgMEBSC1s0U/nsk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6496
-X-OriginatorOrg: intel.com
+X-MS-Exchange-AntiSpam-MessageData-0: 63Pjw+0HtjSl16LhWeo2rDDqJuiir7gacUFKjhXFgMhHSr6d3XmNdrqVFX1n8kMTVeO0mCNtlDRLazE0YVyGb/0vH8tz4Xxkmurnim6UbuO3WAQ/EmrdPowE5fl0CLu8txZnQ30jnmmsETevVxKMrbpKPH9oWW6Zow9g/4zC8oveevwb7iFraduL49vPsj3agpExUGGHYgp0QoVR8l/dm3Pn2GZE/0qdqGOnIP+vfCzqlAGlXf5mOUay24cHol5ku51kbXB94HffwONyIICvvKHgDqiDVBj0SPCDe6f1Y/4OjHjpXTDpnVnvDVO6n19lQVBRXIRSXmWDi2Lsv60eGtPBYLCkbbCVCbT8Rf0PWe45Co9aUttqstEmknz5IkTeYaWLFCG+TgYc+yXmjnRqUdFLlfN2F1KdATTnZLS+8piVL3dTqKF/8+LqfypAcX4l
+X-OriginatorOrg: ericsson.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 08:50:06.4592 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 75cff128-970d-452d-4120-08de833905b6
+X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
+ Helo=[oa.msg.ericsson.com]
+X-MS-Exchange-CrossTenant-AuthSource: DB5PEPF00014B9F.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMBPR07MB11462
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,74 +111,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, Mar 14, 2026 at 08:41:27AM +0100, Morten Brørup wrote:
-> Bruce,
-> 
-> I haven't looked at the Next-net-intel tree, so it might already have been fixed...
-> 
-> ci_tx_free_bufs_vec() in drivers/net/intel/common/tx.h has:
-> 
-> 	/* is fast-free enabled? */
-> 	struct rte_mempool *mp =
-> 			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
-> 			txq->fast_free_mp :
-> 			(txq->fast_free_mp = txep[0].mbuf->pool);
-> 
-> 	if (mp != NULL && (n & 31) == 0) {
-> 		void **cache_objs;
-> 		struct rte_mempool_cache *cache = rte_mempool_default_cache(mp, rte_lcore_id());
-> 
-> 		if (cache == NULL)
-> 			goto normal;
-> 
-> 		cache_objs = &cache->objs[cache->len];
-> 
-> 		if (n > RTE_MEMPOOL_CACHE_MAX_SIZE) {
-> 			rte_mempool_ops_enqueue_bulk(mp, (void *)txep, n);
-> 			goto done;
-> 		}
-> 
-> 		/* The cache follows the following algorithm
-> 		 *   1. Add the objects to the cache
-> 		 *   2. Anything greater than the cache min value (if it
-> 		 *   crosses the cache flush threshold) is flushed to the ring.
-> 		 */
-> 		/* Add elements back into the cache */
-> 		uint32_t copied = 0;
-> 		/* n is multiple of 32 */
-> 		while (copied < n) {
-> 			memcpy(&cache_objs[copied], &txep[copied], 32 * sizeof(void *));
-> 			copied += 32;
-> 		}
-> 		cache->len += n;
-> 
-> 		if (cache->len >= cache->flushthresh) {
-> 			rte_mempool_ops_enqueue_bulk(mp, &cache->objs[cache->size],
-> 					cache->len - cache->size);
-> 			cache->len = cache->size;
-> 		}
-> 		goto done;
-> 	}
-> 
-> It should be replaced by:
-> 
-> 	/* is fast-free enabled? */
-> 	struct rte_mempool *mp =
-> 			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
-> 			txq->fast_free_mp :
-> 			(txq->fast_free_mp = txep[0].mbuf->pool);
-> 
-> 	if (mp != NULL) {
-> 		rte_mbuf_raw_free_bulk(mp, txep, n);
-> 		goto done;
-> 	}
-> 
-> This removes a layer violation and adds the missing mbuf sanity checks and mbuf history marks due to that layer violation.
-> And it implements fast-free for bulks not a multiple of 32.
-> 
-Right, agreed that this would be better. Apart from the missing checks and
-history, the current code is functionally correct right now, though? Unless
-it's likely to break, I'd rather take this patch in 26.07 rather than risk
-changing this code post-rc2 of this release. Any issue with that?
+Hi Mike,
 
-/Bruce
+Do you know the status of this patch? It looks like it hasn't received any
+review since it was posted in January 2025.
+
+We've independently hit the same bug (dst_off reset per-descriptor
+instead of per-packet in the RX slow path) and your fix solves our
+issue.
+
+If this patch is stale and unlikely to be picked up, I can send a
+new patchset against the latest tree that also includes a 
+boundary check for MEMIF_DESC_FLAG_NEXT when n_slots is
+exhausted.
+
+Let me know if you'd prefer to respin your series or if I should send
+a new one.
+
+Thanks,
+Sriram
