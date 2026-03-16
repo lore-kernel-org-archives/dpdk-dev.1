@@ -2,52 +2,78 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EA4EFCBB6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 06:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A94EFCBD4
+	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 08:03:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B45984025E;
-	Mon, 16 Mar 2026 07:45:44 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
- by mails.dpdk.org (Postfix) with ESMTP id CBF2C400D5;
- Mon, 16 Mar 2026 07:45:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773643543; x=1805179543;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=vawRe/bJq05iqmW0dphDh7G7DCQbi0/UTRBEIa5/C7o=;
- b=l6m9oD8b+oXmFllb0T/KEX88gvlkB4FTDsYLEiqzrRKmfMcyeCcc07at
- /Y0LiOZTVSMhgfh0PjBHHz9Eyt/bgnHr6mXCCdS05rjU8oDkQTgbx74t1
- dkCDVFonegjsaJ+eOBvHY7AWk8LV1vH0rYCJ0ivNRKsUZLhfJtZapl8fe
- B4xXst8DSWJq59PvzfBVI2as0rOq3SUowVBVUd0FgeAF9iNl0OWTj2ZaR
- VnLy4zrvh8SznJYkdFrD81lpTO/4BkKiIh5zQCl5KeDKFKm2ENG7DnOmc
- cpzc5oHW7j57ZsK9ISayJBG3RZ+DTEYzYXEi7cTBP/JMlYe5cT/ecpH7d g==;
-X-CSE-ConnectionGUID: ZcBRMOp0Q0SrHUg4tgnnMQ==
-X-CSE-MsgGUID: K/c1lcekQVSrAL2ACnC4yQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11730"; a="100111659"
-X-IronPort-AV: E=Sophos;i="6.23,123,1770624000"; d="scan'208";a="100111659"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
- by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 15 Mar 2026 23:45:37 -0700
-X-CSE-ConnectionGUID: pf5eEHgNRp+6G8hJINwPgg==
-X-CSE-MsgGUID: sr7FPUEoTMaeAnka8Qg0fA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,123,1770624000"; d="scan'208";a="225930088"
-Received: from unknown (HELO srv13..) ([10.190.213.143])
- by orviesa003.jf.intel.com with ESMTP; 15 Mar 2026 23:45:32 -0700
-From: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-To: dev@dpdk.org, bruce.richardson@intel.com, stephen@networkplumber.org,
- aman.deep.singh@intel.com
-Cc: shaiq.wani@intel.com,
- Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>, stable@dpdk.org
-Subject: [PATCH v3] app/testpmd: fix DCB forwarding TC mask and queue guard
-Date: Mon, 16 Mar 2026 06:21:18 +0000
-Message-ID: <20260316062118.1508009-1-chaitanyababux.talluri@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260311083751.1107404-1-chaitanyababux.talluri@intel.com>
-References: <20260311083751.1107404-1-chaitanyababux.talluri@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9089D4025E;
+	Mon, 16 Mar 2026 09:03:32 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 83C81400D5
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 09:03:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773648209;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=2u6+DkD7PeZtVAJvF5Q6n9XV3srCIIQlaz091TdsaHw=;
+ b=bBiNCLb/RCAvmqCfW54soI3z64nVtEXtOAUpy7Ko8QanvtmKz+yieFQirKSP84J10r+zn/
+ WK90fY78kb4XpCszvGMDY/MfmRzEvcMSQrtKVzg917IHEUI4Zl5lXqUd0lSk3c17fPQoiT
+ 44lBz/f+chQXHSdSHm+lDxihg0b5igw=
+Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
+ [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-619-fVelPY4QNJ6UCIE5LMVyDA-1; Mon, 16 Mar 2026 04:03:26 -0400
+X-MC-Unique: fVelPY4QNJ6UCIE5LMVyDA-1
+X-Mimecast-MFC-AGG-ID: fVelPY4QNJ6UCIE5LMVyDA_1773648205
+Received: by mail-lj1-f198.google.com with SMTP id
+ 38308e7fff4ca-38a39047762so20550521fa.3
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 01:03:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1773648205; x=1774253005;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=2u6+DkD7PeZtVAJvF5Q6n9XV3srCIIQlaz091TdsaHw=;
+ b=BFF9NWsZ8C4YNbr8IyDe6P0SNUbuFhEPfvbQ28uqoj1WPnfiRJrCY+MLFVipbOuuB/
+ PpF6cSSSEXhS1RmnrcdXD+PNOSQQyKHMEftGVGfkcjwOUt4v4/yRiSfNlpyPKEF6f1Os
+ ASU1oBSbRTmqFCYTs8yihKoxt/X+KTbk9NRzFpCU5DMKjzjW6F8xwrqh/tsbsxkPNRl6
+ 7neI/aibXht1AOyE4sPaT/0IQnEvwahPdiWJmiUYpOTBrSmw9Jg/eFgr2CezjxKRkfcO
+ H6K7zgZtD2fUZ08gB/Evo4h/4jMsDe1Wy3nKEXtiTz41Y9ZmwD1TJW/gfsk0d/hyRfsw
+ wQZA==
+X-Gm-Message-State: AOJu0YzPmh2jOFYAxtrg4fwFRY2pZykKKv2Nex9/M9DpstEiWzLnMuNZ
+ zI3KPGQxlPfc/g/3LR4+1N1WPvV8FZKyxaF4zFGAxVVXy1oS5eswPLAsyGQfohM+o0qqAL3bPJf
+ rFRbgb0eABgESG5o/7bgJYdYfWHsyELiivpd5ZIU075UklCa4d73oRUkElu0oorhZTtj5x6xHtZ
+ 7trLLPeilafq19b1ZtIHM=
+X-Gm-Gg: ATEYQzzBBDDoX0wJs/QT6J+r1HmRaa2g0K28kjm5OtnvZ//CA9zLHdV1q7pgvP6fGzw
+ 90Z2ESeRUbmndXgdGMjqNEfUIpa3TyfzpJD8XVSE0fmVz2apHhldtluK1s09et2E4PC/y8/Tkfv
+ dbElIm84QSagsvXO5UvV0Gaa+xXIv7ePiw5vknMnJ/yJFuKjihAALR50goI8itbs1arLnMcvLQl
+ nxwzTpWxlKBDueOGWSZe+R+dBJ6tdm0J6WjYL5TLe4MEa+d4Ua/Q0VcsVXUafyM13eSIw==
+X-Received: by 2002:a2e:86d9:0:b0:38a:45e7:17df with SMTP id
+ 38308e7fff4ca-38a8966bf9cmr33908831fa.1.1773648204736; 
+ Mon, 16 Mar 2026 01:03:24 -0700 (PDT)
+X-Received: by 2002:a2e:86d9:0:b0:38a:45e7:17df with SMTP id
+ 38308e7fff4ca-38a8966bf9cmr33908731fa.1.1773648204237; Mon, 16 Mar 2026
+ 01:03:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260215195348.557945-1-stephen@networkplumber.org>
+ <20260222173225.522754-1-stephen@networkplumber.org>
+ <20260222173225.522754-20-stephen@networkplumber.org>
+In-Reply-To: <20260222173225.522754-20-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Mon, 16 Mar 2026 09:03:11 +0100
+X-Gm-Features: AaiRm52n1xrUvnbamlmDfLcpKRwWb7YVnfZK4BLO726xDnEGEn8jvf02FJCSBto
+Message-ID: <CAJFAV8ybKr-am3MONkg78SsE9vzk6+tiT0=i-kK2=x=FfLmoKA@mail.gmail.com>
+Subject: Re: [PATCH v5 19/19] test: add unit tests for TAP PMD
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>, 
+ Luca Boccassi <luca.boccassi@gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: kJ790c56y_Dp9aB9_GX3VYgxAsL06icG8gpuG5whH00_1773648205
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,88 +87,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update forwarding TC mask based on configured traffic classes to properly
-handle both 4 TC and 8 TC modes. The bitmask calculation (1u << nb_tcs) - 1
-correctly creates masks for all available traffic classes (0xF for 4 TCs,
-0xFF for 8 TCs).
-
-When the mask is not updated after a TC configuration change, it stays at
-the default 0xFF, which causes dcb_fwd_tc_update_dcb_info() to skip the
-compress logic entirely (early return when mask ==
-DEFAULT_DCB_FWD_TC_MASK).
-This can lead to inconsistent queue allocations.
-
-Additionally, the existing VMDQ pool guard in dcb_fwd_config_setup() only
-checks RX queue counts, missing the case where the TX port has zero queues
-for a given pool/TC combination. When nb_tx_queue is 0, the expression
-"j % nb_tx_queue" triggers a SIGFPE (integer division by zero).
-
-Fix this by:
-1. Updating dcb_fwd_tc_mask after port DCB reconfiguration using the
-   user requested num_tcs value, so fwd_config_setup() sees the correct
-   mask.
-2. Extending the existing pool guard to also check TX queue counts.
-3. Adding a defensive break after the division by dcb_fwd_tc_cores to
-   catch integer truncation to zero.
-
-Fixes: 0ecbf93f5001 ("app/testpmd: add command to disable DCB")
-Cc: stable@dpdk.org
-
-Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
-
-v3: Removed old email address.
-
-v2:
-* Used res->num_tcs to derive dcb_fwd_tc_mask.
-* Removed redundant rte_eth_dev_get_dcb_info().
----
- app/test-pmd/cmdline.c | 3 +++
- app/test-pmd/config.c  | 9 ++++++++-
- 2 files changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
-index e9a1331071..a53af7e72b 100644
---- a/app/test-pmd/cmdline.c
-+++ b/app/test-pmd/cmdline.c
-@@ -3682,6 +3682,9 @@ cmd_config_dcb_parsed(void *parsed_result,
- 		return;
- 	}
- 
-+	/* Update forwarding TC mask to match the configured number of TCs. */
-+	dcb_fwd_tc_mask = (1u << res->num_tcs) - 1;
-+
- 	fwd_config_setup();
- 
- 	cmd_reconfig_device_queue(port_id, 1, 1);
-diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-index f9f3c542a6..9b201ac241 100644
---- a/app/test-pmd/config.c
-+++ b/app/test-pmd/config.c
-@@ -5450,7 +5450,8 @@ dcb_fwd_config_setup(void)
- 			/* if the nb_queue is zero, means this tc is
- 			 * not enabled on the POOL
- 			 */
--			if (rxp_dcb_info.tc_queue.tc_rxq[i][tc].nb_queue == 0)
-+			if (rxp_dcb_info.tc_queue.tc_rxq[i][tc].nb_queue == 0 ||
-+			    txp_dcb_info.tc_queue.tc_txq[i][tc].nb_queue == 0)
- 				break;
- 			k = fwd_lcores[lc_id]->stream_nb +
- 				fwd_lcores[lc_id]->stream_idx;
-@@ -5458,6 +5459,12 @@ dcb_fwd_config_setup(void)
- 						dcb_fwd_tc_cores;
- 			nb_tx_queue = txp_dcb_info.tc_queue.tc_txq[i][tc].nb_queue /
- 						dcb_fwd_tc_cores;
-+			/* guard against integer truncation to zero (e.g.
-+			 * nb_queue=1, dcb_fwd_tc_cores=2) to prevent SIGFPE
-+			 * from "j % nb_tx_queue" below.
-+			 */
-+			if (nb_rx_queue == 0 || nb_tx_queue == 0)
-+				break;
- 			rxq = rxp_dcb_info.tc_queue.tc_rxq[i][tc].base + nb_rx_queue * sub_core_idx;
- 			txq = txp_dcb_info.tc_queue.tc_txq[i][tc].base + nb_tx_queue * sub_core_idx;
- 			for (j = 0; j < nb_rx_queue; j++) {
--- 
-2.43.0
+SGVsbG8gU3RlcGhlbiwNCg0KT24gU3VuLCAyMiBGZWIgMjAyNiBhdCAxODozNCwgU3RlcGhlbiBI
+ZW1taW5nZXINCjxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4gd3JvdGU6DQo+DQo+IEFkZCBh
+IHN0YW5kYWxvbmUgdGVzdCBzdWl0ZSBmb3IgdGhlIFRBUCBQTUQsIG1vZGVsZWQgb24gdGhlIGV4
+aXN0aW5nDQo+IHRlc3RfcG1kX3JpbmcgdGVzdHMuIEV4ZXJjaXNlcyBkZXZpY2UgY29uZmlndXJh
+dGlvbiwgbGluayBzdGF0dXMsDQo+IHN0YXRzLCBNVFUsIE1BQyBhZGRyZXNzLCBwcm9taXNjdW91
+cy9hbGxtdWx0aWNhc3QgbW9kZXMsIHF1ZXVlDQo+IHN0YXJ0L3N0b3AsIGxpbmsgdXAvZG93biwg
+ZGV2aWNlIHN0b3Avc3RhcnQsIGFuZCBtdWx0aS1xdWV1ZSBzZXR1cC4NCj4NCj4gU2lnbmVkLW9m
+Zi1ieTogU3RlcGhlbiBIZW1taW5nZXIgPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KDQpU
+aGlzIG5ldyB0ZXN0IHRyaWdnZXJzIGZhaWx1cmVzIGluIE9CUzoNCg0KWyAgMzczc10gIDc0LzEw
+NyBEUERLOmZhc3QtdGVzdHMgLyB0YXBfcG1kX2F1dG90ZXN0DQogICAgIFJVTk5JTkcNClsgIDM3
+M3NdID4+PiBMRF9MSUJSQVJZX1BBVEg9L3Vzci9zcmMvcGFja2FnZXMvQlVJTEQvb2JqLXg4Nl82
+NC1saW51eC1nbnUvbGliOi91c3Ivc3JjL3BhY2thZ2VzL0JVSUxEL29iai14ODZfNjQtbGludXgt
+Z251L2RyaXZlcnMNCk1BTExPQ19QRVJUVVJCXz01MiBEUERLX1RFU1Q9dGFwX3BtZF9hdXRvdGVz
+dA0KL3Vzci9zcmMvcGFja2FnZXMvQlVJTEQvb2JqLXg4Nl82NC1saW51eC1nbnUvYXBwL2RwZGst
+dGVzdCAtLW5vLWh1Z2UNCi1tIDIwNDggLWQgL3Vzci9zcmMvcGFja2FnZXMvQlVJTEQvb2JqLXg4
+Nl82NC1saW51eC1nbnUvZHJpdmVycw0KWyAgMzczc10gw6LigqzigKLDouKCrOKAosOi4oKs4oCi
+w6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLD
+ouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi
+4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6Li
+gqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKC
+rOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKINCsOixZPigqwgIMOi
+4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6Li
+gqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKC
+rOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs
+4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6Ligqzi
+gKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKA
+osOi4oKs4oCiDQpbICAzNzNzXSBFQUw6IERldGVjdGVkIENQVSBsY29yZXM6IDEyDQpbICAzNzNz
+XSBFQUw6IERldGVjdGVkIE5VTUEgbm9kZXM6IDENClsgIDM3M3NdIEVBTDogRGV0ZWN0ZWQgc2hh
+cmVkIGxpbmthZ2Ugb2YgRFBESw0KWyAgMzczc10gRUFMOiBNdWx0aS1wcm9jZXNzIHNvY2tldCAv
+dG1wL2RwZGsvcnRlL21wX3NvY2tldA0KWyAgMzczc10gRUFMOiBTZWxlY3RlZCBJT1ZBIG1vZGUg
+J1ZBJw0KWyAgMzczc10gQVBQOiBIUEVUIGlzIG5vdCBlbmFibGVkLCB1c2luZyBUU0MgYXMgZGVm
+YXVsdCB0aW1lcg0KWyAgMzczc10gUlRFPj50YXBfcG1kX2F1dG90ZXN0DQpbICAzNzNzXSBUQVA6
+IHR1bl9hbGxvYygpOiBVbmFibGUgdG8gb3BlbiAvZGV2L25ldC90dW4gaW50ZXJmYWNlDQpbICAz
+NzNzXSBUQVA6IGV0aF9kZXZfdGFwX2NyZWF0ZSgpOiBVbmFibGUgdG8gY3JlYXRlIFRBUCBpbnRl
+cmZhY2UNClsgIDM3M3NdIFRBUDogZXRoX2Rldl90YXBfY3JlYXRlKCk6IFRBUCBVbmFibGUgdG8g
+aW5pdGlhbGl6ZSBuZXRfdGFwMA0KWyAgMzczc10gICsgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLSArDQpbICAzNzNzXSAgKyBUZXN0IFN1aXRl
+IDogVEFQIFBNRCBVbml0IFRlc3QgU3VpdGUNClsgIDM3M3NdIFNldHRpbmcgdXAgVEFQIFBNRCB0
+ZXN0DQpbICAzNzNzXSBFcnJvcjogZmFpbGVkIHRvIGNyZWF0ZSBUQVAgZGV2aWNlIG5ldF90YXAw
+OiBJbnZhbGlkIGFyZ3VtZW50DQpbICAzNzNzXSAgKyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tICsNClsgIDM3M3NdICArIFRlc3QgU3VpdGUg
+U3VtbWFyeSA6IFRBUCBQTUQgVW5pdCBUZXN0IFN1aXRlDQpbICAzNzNzXSAgKyAtLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tICsNClsgIDM3M3Nd
+ICArIFRlc3RzIFRvdGFsIDogICAgICAgMTcNClsgIDM3M3NdICArIFRlc3RzIFNraXBwZWQgOiAg
+ICAgIDANClsgIDM3M3NdICArIFRlc3RzIEV4ZWN1dGVkIDogICAgIDANClsgIDM3M3NdICArIFRl
+c3RzIFVuc3VwcG9ydGVkOiAgIDANClsgIDM3M3NdICArIFRlc3RzIFBhc3NlZCA6ICAgICAgIDAN
+ClsgIDM3M3NdICArIFRlc3RzIEZhaWxlZCA6ICAgICAgMTcNClsgIDM3M3NdICArIC0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0gKw0KWyAgMzcz
+c10gVGVzdCBGYWlsZWQNClsgIDM3M3NdIFJURT4+w6LigqzigKLDouKCrOKAosOi4oKs4oCiw6Li
+gqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKC
+rOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs
+4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6Ligqzi
+gKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKA
+osOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCi
+w6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLD
+ouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi
+4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6Li
+gqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKC
+rOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiw6LigqzigKLDouKCrOKAosOi4oKs
+4oCiw6LigqzigKLDouKCrOKAosOi4oKs4oCiDQpbICAzNzNzXSAgNzQvMTA3IERQREs6ZmFzdC10
+ZXN0cyAvIHRhcF9wbWRfYXV0b3Rlc3QNCiAgICAgRkFJTCAgICAgICAgICAgIDAuMjNzICAgKGV4
+aXQgc3RhdHVzIDI1NSBvciBzaWduYWwgMTI3DQpTSUdpbnZhbGlkKQ0KDQoNCi0tIA0KRGF2aWQg
+TWFyY2hhbmQNCg==
 
