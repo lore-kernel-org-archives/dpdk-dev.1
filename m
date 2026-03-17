@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA6BFED9E8
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 15:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A026FED9E4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 15:55:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47E6A402B0;
-	Tue, 17 Mar 2026 16:52:46 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7C097402B0;
+	Tue, 17 Mar 2026 16:55:57 +0100 (CET)
 Received: from fhigh-b3-smtp.messagingengine.com
  (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
- by mails.dpdk.org (Postfix) with ESMTP id 445F040270;
- Tue, 17 Mar 2026 16:52:44 +0100 (CET)
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 1EF1D7A01C2;
- Tue, 17 Mar 2026 11:52:43 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-11.internal (MEProxy); Tue, 17 Mar 2026 11:52:43 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 2D1EF40270
+ for <dev@dpdk.org>; Tue, 17 Mar 2026 16:55:56 +0100 (CET)
+Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id A70377A0181;
+ Tue, 17 Mar 2026 11:55:55 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-06.internal (MEProxy); Tue, 17 Mar 2026 11:55:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773762762;
- x=1773849162; bh=frih9N7+az9lIcEnTSKTlWJCigJumH4wb/uN9cXm5Yg=; b=
- AstAOVgTDJ6mo6wGuXLdMg2MDTQ1kMoCmuh5EsrjFba4y+P4HW6a0hAxW+yLvnRY
- crG2FGz1/FxvV6bkk0xvrOtx7kgml3+SEHhjGt9HhxgYNxsOxkdT52kfJvBYV7tQ
- adi2raaKfZBicaYBAWuzrZ/f6iV+zs0JFpQQOzhEq62DYC57sz20APJxE5zROs+9
- CdtgZ0MXFJbVeCNBNN5MmjSBSt1zFXzz94jRHk3gQYZasjFDwuiH2EaDc6/FZHg8
- WRTBqbAGr4PJf8gDQp/9edMnL8FlJBvXz77+GAe4yhHGRbJ078SfZBZzOymwzBqJ
- aMEWnjEnioajn8ijlBlUzw==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1773762955;
+ x=1773849355; bh=2lK0EOVzbaYJzD3Vdc82GyeikFlI2IqbEJ/SJbp3Ju4=; b=
+ YP7PSRM37FaFBfyhIJB2l/MuXnovvf2/ss/6zSUQmkmB9bQZIQ+AjHZNrGgGAl+b
+ zQ714U1UTpm4QJD9C9Y/VIWIIQaOP3UF7Wi6Fg7gxKOSnfFd33MjRb6jR1FseEt4
+ VzHAGEd5DgdRQiN2bayq7I21O2G45MLNcLNzuKYpwjzhTB/+RI5i7nokj1DMdACl
+ JIcmPhDFhSuuqbR1am51VbQ9jPrne0JJBMpoX92RE+6ud2ZT2eMZ433HO3BAoFtF
+ xNmkN2SMdTOH6lAtAyNyrvwhDdZBIuJ5iRgki87U54g+oWHseaXEb0aR16c7PyHb
+ gmxs7nIHaA6n+su5ukj6Tg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773762762; x=
- 1773849162; bh=frih9N7+az9lIcEnTSKTlWJCigJumH4wb/uN9cXm5Yg=; b=p
- pFEO4kHKAxrtXkWXky4pw97xnjzONHkrZb3EoJn+FUKBwngk9bV4Dn8KIH1lfC64
- S00k4RhuhEt/vBQAdHV+kV6un15AiKEJMEk0C5ZvtjPjnoYi5YJvBg2bFH91dX7t
- XXCmLbR2oVrHSrHbWxT3uJECE+aNYMK55rAr1NDrS7ficxpbQ0+Il5NwclJuVvZk
- vDD68EkT3F04kq5pH03UHi3pGfnyyY0UDRbYEgL9K6SGzsQAEttHdU5DZaXrNucG
- 0/QtiKf1bmUkDe/ayVeBG/xAXx3kNwUj8iigTex/97qsOm1TfA1ajZrEdbHnw9J+
- CBJGnCSr3snjMROK/J6JQ==
-X-ME-Sender: <xms:yni5aXuO2mVmyU67K3KTAhk7ZgCriQD987bmqIXb4O0hWfpPzl9nVQ>
- <xme:yni5aRaGccHNdF1fwy8h-_ir-Q6hjZsSmCG7ebICBcm_yXK5R42wdrAlYYSMQz9vs
- EX8Z918ozgfqlFo3DSmgPm3fei9dtFoJ-fXCtr5VLKLUzQh_7FqHw>
-X-ME-Received: <xmr:yni5aWUjT2KgH1d9m4NkvcZYmQKGot1N_PbUwNQsBAQ9oam6GfGtswBiSP_9y-bn_yz0JaqlrIx4J6g2tmoeXfPVbw>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773762955; x=
+ 1773849355; bh=2lK0EOVzbaYJzD3Vdc82GyeikFlI2IqbEJ/SJbp3Ju4=; b=a
+ Zhd3hjDfzXq76XfkqSDunn36yyIdcVO446VMKsRp6hdHl+jVOnNiMNjnR137hvNC
+ DVHQCDoGUziNNoPM/vjCZCUfFoLMdBZBv/t13rIsE/q1ic5f20V/R9vHDovxaUjW
+ 2CKbKhb2/5lNRLrMvXPUmX7fjaAFOAZpvba4zCWrTxOa0ePfe3P1rFiPg6Un6rc1
+ YqHCeoErBUevHLgI/J2KPN9WefEzU0DEfhcnzzuo7PGVYOlZ8oS6urvWEV2B4Yh8
+ dXXs4NfoHbgsx3tqqQUTOMQMGpM760w5k57AZYvaM4H4Bcp0ie17qgr6nqxOIUgh
+ xMIiMXtXFsZf5lFYZ/aLg==
+X-ME-Sender: <xms:i3m5abPdkOjqL_ixKHpMK2IV1duhH-2f9cLguOCzG7xmj7VQ40z5Xw>
+ <xme:i3m5aSQkjIkwpRbq3SyOziIp2E_pz27J0CKaZ5UCdx3V7AluJ0sk4gG87U3iLpJL8
+ UospUW7dgAIz8uNq7BwgKjzthe8CfAGSJyRVsiX66ELrX1T7iZzJw>
+X-ME-Received: <xmr:i3m5adDEUhFEYSK9m3BfSpttYIw36X89x5qHkDpBD9Xsu1L3A1dB__gqS60s8A_FVn3hYpnAu9R6W4FZLj3tefdF5Q>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdduieeiucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -51,31 +51,25 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdduieeiucetufdote
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopehkthhrrgihnhhorhesrhgvughhrghtrd
- gtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepshhtrggs
- lhgvseguphgukhdrohhrghdprhgtphhtthhopegrmhgrnhdruggvvghprdhsihhnghhhse
- hinhhtvghlrdgtohhmpdhrtghpthhtohepmhgssehsmhgrrhhtshhhrghrvghshihsthgv
- mhhsrdgtohhmpdhrtghpthhtohepshhhphgvrhgvthiisehnvhhiughirgdrtghomh
-X-ME-Proxy: <xmx:yni5aWQRDCQ6WHqmNi_BW2rjp5o3SGiqheA8izDcGVJ5Rq0rOHLtZQ>
- <xmx:yni5aUOatjkx_ha-_IXZUBgTsPMfh-Mt1o36TlfcvgswLCz-Ze2Mvw>
- <xmx:yni5aURQCdWrAlgLKSTYU8fGG69SVhbZ7hvy-B5V4ApThaNjF1pjWA>
- <xmx:yni5aSgUOnA1EmEMfYd3GBoHoAQA0wgkGmWv4IXRNxquRhOcq3CU8Q>
- <xmx:yni5acxUTAuQGHI5v5DD5QMeXabeNv8H_NktmQrIsDQElBShyvCwKJVf>
+ gtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:i3m5aRhMZGXg0CObhyGatzCgmfV8vtbchsTtM2MZkPvqJeRLrcx_LQ>
+ <xmx:i3m5aWPsenL3anPYWc0IGYcpqDDiP9joNFaw1YYN8NForckrCH3RdA>
+ <xmx:i3m5aS7h1Rs60WBpCU0jj2FBcMdJGSQvDTaCeAcnBHIcnP2RoX_O3g>
+ <xmx:i3m5aU2yjmbr0FH5NRDW2Qy470NvcHIZRARBpZ0nI_liFp_LkLSPFA>
+ <xmx:i3m5aVgYNTKbe0GmHgVMipyaSNDX5E1V69-o_6toT0Nn_z2Xtsvu81rQ>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Mar 2026 11:52:41 -0400 (EDT)
+ 17 Mar 2026 11:55:54 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Kevin Traynor <ktraynor@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Aman Singh <aman.deep.singh@intel.com>,
- Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>,
- Shani Peretz <shperetz@nvidia.com>
-Subject: Re: [PATCH 4/4] app/testpmd: fix fd leak
-Date: Tue, 17 Mar 2026 16:52:39 +0100
-Message-ID: <2768921.Isy0gbHreE@thomas>
-In-Reply-To: <20260312103606.702617-5-ktraynor@redhat.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/4] Static analysis fixes
+Date: Tue, 17 Mar 2026 16:55:53 +0100
+Message-ID: <6225470.alqRGMn8q6@thomas>
+In-Reply-To: <20260312103606.702617-1-ktraynor@redhat.com>
 References: <20260312103606.702617-1-ktraynor@redhat.com>
- <20260312103606.702617-5-ktraynor@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -93,18 +87,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 12/03/2026 11:36, Kevin Traynor:
-> In error cases, the fd was not being closed.
+> Fix some leaks and uninitialized variables.
 > 
-> Add label for error case that will close the fd.
-> 
-> Fixes: 1303b50a9c21 ("app/testpmd: add commands to dump mbuf history")
+> Kevin Traynor (4):
+>   vhost: fix resource leak
+>   net/bnxt: fix uninitialized read
+>   app/testpmd: check for no arguments
+>   app/testpmd: fix fd leak
 
-My bad
-
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
-
-Reviewed-by: Thomas Monjalon <thomas@monjalon.net>
+Looks like the patch 3 is rejected.
+Patches 1, 2 and 4 applied, thanks.
 
 
