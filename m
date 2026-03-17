@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80054FD877F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 14:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3906F3383D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 14:52:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB8DA402B0;
-	Tue, 17 Mar 2026 15:48:11 +0100 (CET)
-Received: from fout-b3-smtp.messagingengine.com
- (fout-b3-smtp.messagingengine.com [202.12.124.146])
- by mails.dpdk.org (Postfix) with ESMTP id DFD6640270;
- Tue, 17 Mar 2026 15:48:09 +0100 (CET)
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
- by mailfout.stl.internal (Postfix) with ESMTP id E6B7F1D000BF;
- Tue, 17 Mar 2026 10:48:08 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-11.internal (MEProxy); Tue, 17 Mar 2026 10:48:09 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 459C64060C;
+	Tue, 17 Mar 2026 15:52:16 +0100 (CET)
+Received: from fhigh-b3-smtp.messagingengine.com
+ (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+ by mails.dpdk.org (Postfix) with ESMTP id B4E2240270;
+ Tue, 17 Mar 2026 15:52:14 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 7485C7A0105;
+ Tue, 17 Mar 2026 10:52:13 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-02.internal (MEProxy); Tue, 17 Mar 2026 10:52:13 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773758888;
- x=1773845288; bh=XWzpE0dJtG8wThMB01qppbefVfVGlTtY/pWCDf/gsao=; b=
- ko8b6vSkenSziSK/LGAwlBFfylTMGxffsmxEOJeP/dMSUXJgIJN94bJ2gJLndKI0
- 61LydeiF7QGAQSl9rg9xA7I8DlAEYo7UaalszRIswuy4gS62dmgG784N/3cVZ00Q
- uKlT32QBCjPo4UjwVtT20JyBdmUvgiYLydqVKqqOCio9Vx60RlCy/hEXyAzqNxd5
- 0/btFM+h1efoPfGS4QOBA9CV/D5dbO4FzObswyXhNQP7AfZnoXM0dawCrQlrMLLX
- 9snHJeqQ6cknZaQCG05vngXuXtaK9XjrCwOdG8WPFEXgIuo+XL+IufY4gGlfHltM
- Hy/ulLTkpcBej+R2zrokdA==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1773759133;
+ x=1773845533; bh=160MzndHnW90gsAwcBX4rIkHaH/p+qg9o01A/V5/e7E=; b=
+ TrMa8LUQzOJy1VXxsqxJ5kvyMcC9OAv8lju1ywjlB1mPf5WdjqIcRUkO8V6UsEdj
+ eQXcTDZMIR/iQKIVJNkIdXJ6ZQmtf0UlGKgyDySeWlulFfVMap0f6UOJPSNUsiyC
+ +fzvfrXdo8c69uzYoiLnA3t9P1Mzy5zcn6UD3o6rZt8O9aVmjf2ygrqz1FA28FtV
+ 1Tiq7Azj2OqqugEI/T1Z+WBYzTETTPkHbNxUzOPJwwmU+ciHVtpxGCeJYqGwK8Qv
+ l1L/7U3/7wIZFWqWMj7EpPWdUE0COmupMTafYjMrjBfuwsVhjIo1NporQ2KTFsqq
+ 5joVo278lVvCTXvDIfmwIA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773758888; x=
- 1773845288; bh=XWzpE0dJtG8wThMB01qppbefVfVGlTtY/pWCDf/gsao=; b=a
- oCnR4Cq0V0J6Xt8RCFhv6PFLRXzYyWfJ2YWHrVYlDwJN0l6xnXgRO/jOOTIhP9zQ
- 4vnYx2tdbTcjmkVbkQgOJg7lCAjZxk2Sd/KuMcxes0zczs6JUSBaC7fFuH+7j0b5
- fyu6jaVy1mU+LOlptN+Ewfw7XxRVHUv/R/Ol8Ntf9lTXlFjPyl8zercd9Tr1zIy9
- c+eECouQhASM44iBCSs1BH6wTe0r/eOCNQ2PJHkI3uPLpa6fysixwdX0sziwCMTL
- 4gaHA1LMCEBEQFOq/LNTTxVN0W3z4bWK/BZJuttE2IWwMPrEmAwGLWFWC4BCSYTb
- c7PSPVT0ngH4ivey4dK6w==
-X-ME-Sender: <xms:p2m5ae2Ux08FU_DUbdon3XWRMX1LVrfW7RmNXNZ7AG8ahiERCynOmA>
- <xme:p2m5aaCwPxyAmhv53x0tfKIHnGL37qhcDoHENCRTSoQgC1tSQS90q0TCjQ5uUmaS1
- btOd22IbfBiBU11meHz6hTsgsy6T-g-SSQSjHOVUpJoXKjgi2XxdA>
-X-ME-Received: <xmr:p2m5aSc8hylx8Xso6dUkDNin9qQGGUPU4SOl3Zs9rAd4UOyajBdnC2l4mE1MtYpTS4FCCYVtPdrp-R9dQVx1CD0aPw>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773759133; x=
+ 1773845533; bh=160MzndHnW90gsAwcBX4rIkHaH/p+qg9o01A/V5/e7E=; b=T
+ eyIhxrhQZbiApGVSyLmScfU0wDzVtbF6tSoXrGv8L0F2wid2cTD6JAfkBEWtg8jU
+ CkZHo3hATATsMc2NQQZV4TgaAWfYhxqb8gv4XW4tP3she0wWTmNTC68VevIi70Jm
+ cCQwGq11ez0i7IKDaP/4qVNN13H1/kRr+lEqzjvpGQhojLGcVn9p4zgeTK0y6eRX
+ WTVpdqWCZWUaC5j4Nf03Laki4QIuK5DUDbH38al8TJduIORHOWUMqyFJyFdr/tv1
+ PDNd6ut14RVdBzr/5xA5sCH3CuVnwpVFYG4trNfD/wgBSjXZhPhf3JkI4WZ4z2Ew
+ J9j8ir0USOiRPAN2Bhb8w==
+X-ME-Sender: <xms:nGq5adc5aTI4RvR_bT6mZnh7NC-HShq0OON_PK2Y0h4wcgKOoPbZaA>
+ <xme:nGq5aUIk9ciT-UQQPUH4JX48UqZwk_Q8YT_sSDWpBH8c2BGIzTidKaxWugu54lBFS
+ iSPPTTo5z7ujOEiA8CdIU5uFq886EbByeAbMszq_QgQq12SX0Ix_w>
+X-ME-Received: <xmr:nGq5aSEEBc7pFQARM_JlU34gWXacqC-8w0uLg0MVmTytdNRYDUUCvAyIpbpLA9PKVD3KEiveakcRB2VyKthl211Z7Q>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdduheefucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -52,30 +52,30 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdduheefucetufdote
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
  hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopeifrghnghhlihgrnhhggihinhhgsehhhi
- hgohhnrdgtnhdprhgtphhtthhopehhohhnvghsthdrjhhirghnghesfhhogihmrghilhdr
- tghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehvihhpih
- hnrdhvrghrghhhvghsvgesrghmugdrtghomhdprhgtphhtthhopehsthgrsghlvgesughp
- ughkrdhorhhgpdhrtghpthhtohepfhgvnhhgtghhvghnghifvghnsehhuhgrfigvihdrtg
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehvihhpihhnrdhvrghrghhhvghsvgesrg
+ hmugdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehh
+ ohhnvghsthdrjhhirghnghesfhhogihmrghilhdrtghomhdprhgtphhtthhopehsthgrsg
+ hlvgesughpughkrdhorhhgpdhrtghpthhtoheptghhvghnghdurdhjihgrnhhgsehinhht
+ vghlrdgtohhmpdhrtghpthhtohepfhgvnhhgtghhvghnghifvghnsehhuhgrfigvihdrtg
  homh
-X-ME-Proxy: <xmx:p2m5af7nBGycdcf9p0f-8bUX6ZT5Nj85jFgdCM6mmDQk6oMOubJljw>
- <xmx:p2m5adVVcNHKn-YsLdq6nu8U7MiRxBJY0IgZk1v9qPVGwEjrqvIUBg>
- <xmx:p2m5aW5ZO9T6DcTUceMiNws2MiwVJsnKCSUPkDdAm8fmpgBKrVj5LA>
- <xmx:p2m5aQq3e-uKF4Lo6dft-XGVXeVJi8j333oHUn6jGZyY7Zyo7fng5g>
- <xmx:qGm5abDQob8wwEmMPlM3HsEPHB1ifxOe-MImAYRsmkPvKXZfdUhT3D-K>
+X-ME-Proxy: <xmx:nGq5aXCptZ2uFcKfULlTZh_rLl7dioslT_H7f92d183Wuz3eNfejzw>
+ <xmx:nWq5aV8fl_j44kk9JL5sIEn3x1Bu74YaJIupfhdHAHCqwnfaDTGoPg>
+ <xmx:nWq5aTAlCdCgZNYgJtZbBGZxBGr6ozpzY5TW1PkNHRE3VPpQ7SHKvQ>
+ <xmx:nWq5aaTEAxpfAjZiBJlwHMUzOpDsPcs9xYE-fiDnObhntoZz1ZoYTw>
+ <xmx:nWq5acodUJxvzZ4ipO4VeevurdcZ5ptFajUxIBA6Tqq10g8fm8_t9WEA>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Mar 2026 10:48:06 -0400 (EDT)
+ 17 Mar 2026 10:52:11 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Liangxing Wang <wangliangxing@hygon.cn>
-Cc: honest.jiang@foxmail.com, dev@dpdk.org, vipin.varghese@amd.com,
- stable@dpdk.org, fengchengwen <fengchengwen@huawei.com>
-Subject: Re: [PATCH] app/test-dma-perf: fix reversed src and dst for memcpy
-Date: Tue, 17 Mar 2026 15:48:04 +0100
-Message-ID: <2293419.1BCLMh4Saa@thomas>
-In-Reply-To: <544edfc3-0e6f-4c57-8b6b-8d937dd0be4c@huawei.com>
-References: <20260303091804.41761-1-wangliangxing@hygon.cn>
- <544edfc3-0e6f-4c57-8b6b-8d937dd0be4c@huawei.com>
+To: Vipin Varghese <vipin.varghese@amd.com>
+Cc: dev@dpdk.org, honest.jiang@foxmail.com, stable@dpdk.org,
+ cheng1.jiang@intel.com, fengchengwen <fengchengwen@huawei.com>
+Subject: Re: [PATCH] app/dma-perf: fixes buffer overflow error
+Date: Tue, 17 Mar 2026 15:52:10 +0100
+Message-ID: <4447252.mogB4TqSGs@thomas>
+In-Reply-To: <f8149a16-f017-4d01-87d3-6e38b945877d@huawei.com>
+References: <20260225114120.2036-1-vipin.varghese@amd.com>
+ <f8149a16-f017-4d01-87d3-6e38b945877d@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -92,14 +92,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-05/03/2026 01:41, fengchengwen:
+26/02/2026 03:08, fengchengwen:
 > Acked-by: Chengwen Feng <fengchengwen@huawei.com>
 > 
-> On 3/3/2026 5:18 PM, Liangxing Wang wrote:
-> > Fixes: 2f2f7af66791 ("app/dma-perf: fix crash with IOVA as physical address")
-> > Cc: stable@dpdk.org
+> On 2/25/2026 7:41 PM, Vipin Varghese wrote:
+> > test-dma-perf limits the number of worker thread to 128.
+> > The current change accomadates to RTE_MAX_LCORES. This allows
+> > high core density platforms to run the test on `(RTE_MAX_LCORE - 1)`
 > > 
-> > Signed-off-by: Liangxing Wang <wangliangxing@hygon.cn>
+> > Without the change we encounter `buffer overflow detected, terminated`.
+> > 
+> > Fixes: 623dc9364dc6 ("app/dma-perf: introduce DMA performance test")
+> > Cc: cheng1.jiang@intel.com
+> > Cc: stable@dpdk.org
+> > Signed-off-by: Vipin Varghese <vipin.varghese@amd.com>
 
 Applied, thanks.
 
