@@ -2,105 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25643F53D92
-	for <dpdk-dev@archiver.kernel.org>; Mon, 16 Mar 2026 20:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A58EFB5E97
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 00:42:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 357C44025E;
-	Mon, 16 Mar 2026 21:08:41 +0100 (CET)
-Received: from DUZPR83CU001.outbound.protection.outlook.com
- (mail-northeuropeazon11012068.outbound.protection.outlook.com [52.101.66.68])
- by mails.dpdk.org (Postfix) with ESMTP id C6BF0400D5;
- Mon, 16 Mar 2026 21:08:39 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S64UfVsRJzSxNhjL9hcYHkZDvBJ+EyOv/LORDC7DWzwiO4hBqrnVCZCzlkTQnUJAL2rSgyNN99JLgw6QB/0AtM/bfg1zgTXCldH/xE7ZLIcIwlBxr3KSjzO18fQxtOL0kHXAEycxpd2WNro1EiHwWxOVmpPg7PN4935aT173UKAP7Gr5I/CTVg2IWFt/IFZZNaC+V0L5qtAabVVj4zxBVQWGT+Vx1kQe3ATJTxConxg2u+/kDesZmuY2yTuRgxKeLN9PKICRCdaE7bKieiBBxqHBcSfVJBflIFv1/Yg7Rv6mGlVRJ+qEstmlQaqtPSoU3HVMO2ccJ+FsdpvJWXqMNw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9mMak2f0EM+EfBnU8xmFEVDjzqcr8wUqGEdqaC0lOOM=;
- b=ey5e+icYR9JnIslPJOpxg6G3BlMZyU2UQ2NWc9MckJ6E+VYpdeP1orL9RIGZXF9oPg6waZjoUCwxzIA17A/UpYSbawgIBoxdAK2mAg6Ool0VIVipU9b0Io9NnBZBwYC5p4dVV6+hr3U2GO1Ij3qs5nuLyDlDSOt/tIfss/0iG2zEQXFYLOjmrSXHBbbcoJxNM5Q8LXKEekcOngASBnK160OmYCPuQGaxLdlUBpIOkeahPBhYRKXvfGPG62uYdeLmFw4pQnIoQHN8xhNYM+Atduc6qzVgYEKWpgNGDtppTa+6J6hLN23W1jEsEc2CyjprLURj5kzvErjPl7VtZdv58w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 192.176.1.74) smtp.rcpttodomain=amd.com smtp.mailfrom=ericsson.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=ericsson.com; 
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ericsson.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9mMak2f0EM+EfBnU8xmFEVDjzqcr8wUqGEdqaC0lOOM=;
- b=GoI0t9KqQvzJzZMTUNH1vOR+tk6TmOavIiyOkmqvMnmBSJ2x8vJw9m6nKTopk6hkOqypzeAKbObbmDtbKjHqTGD+HAgIOwOU+OFlM2s6lGxxHhYac+0JcW62QmYpE22cpiLG8pL9Pyc/juar83QGqYv7FJATBkBV287disBPehGnn0EE0jPEnbwEWTuzrEe6+dypiM1Zict55PRLdAKG0VxJwSDmxNCpad6d0h7I9wBt5/l1Yvhu/z6+cUp++O5k92yHLRI7NlFUoVs78dpiRwdokfk/aKnzB/KRFmBH+3y99wY4WAS8WkaQ2LuCUc/xpA9/6sAgcnnCwS0Prfw4FA==
-Received: from AM6PR02CA0028.eurprd02.prod.outlook.com (2603:10a6:20b:6e::41)
- by DBBPR07MB7609.eurprd07.prod.outlook.com (2603:10a6:10:1e1::12)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9700.22; Mon, 16 Mar
- 2026 20:08:36 +0000
-Received: from AM2PEPF0001C715.eurprd05.prod.outlook.com
- (2603:10a6:20b:6e:cafe::cc) by AM6PR02CA0028.outlook.office365.com
- (2603:10a6:20b:6e::41) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9700.22 via Frontend Transport; Mon,
- 16 Mar 2026 20:08:35 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 192.176.1.74)
- smtp.mailfrom=ericsson.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=ericsson.com;
-Received-SPF: Pass (protection.outlook.com: domain of ericsson.com designates
- 192.176.1.74 as permitted sender)
- receiver=protection.outlook.com; 
- client-ip=192.176.1.74; helo=oa.msg.ericsson.com; pr=C
-Received: from oa.msg.ericsson.com (192.176.1.74) by
- AM2PEPF0001C715.mail.protection.outlook.com (10.167.16.185) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9700.17 via Frontend Transport; Mon, 16 Mar 2026 20:08:36 +0000
-Received: from seliius19819.seli.gic.ericsson.se (153.88.142.248) by
- smtp-central.internal.ericsson.com (100.87.178.62) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.29; Mon, 16 Mar 2026 21:08:32 +0100
-Received: from seliiuvd10563.seli.gic.ericsson.se
- (seliiuvd10563.seli.gic.ericsson.se [10.120.141.220])
- by seliius19819.seli.gic.ericsson.se (Postfix) with ESMTP id C5E904020AB9;
- Mon, 16 Mar 2026 21:08:31 +0100 (CET)
-Received: by seliiuvd10563.seli.gic.ericsson.se (Postfix, from userid 93258)
- id AFD16604B603; Mon, 16 Mar 2026 21:08:31 +0100 (CET)
-From: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>, <dev@dpdk.org>,
- <jgrajcia@cisco.com>, <ferruh.yigit@amd.com>, <stable@dpdk.org>,
- <mattias.ronnblom@ericsson.com>, <heng.wang@ericsson.com>,
- <ravi.kumar.chennaparapu@ericsson.com>
-Subject: Re: [PATCH] net/memif: fix descriptor flags corruption in
- multi-segment TX
-Date: Mon, 16 Mar 2026 21:08:13 +0100
-Message-ID: <20260316200819.3879365-1-sriram.yagnaraman@ericsson.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20260316090845.158843db@phoenix.local>
-References: <20260303110152.276344-1-sriram.yagnaraman@ericsson.com>
- <20260316090845.158843db@phoenix.local>
+	by mails.dpdk.org (Postfix) with ESMTP id 588CE402D6;
+	Tue, 17 Mar 2026 01:42:19 +0100 (CET)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com
+ [209.85.214.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 9D1B440270
+ for <dev@dpdk.org>; Tue, 17 Mar 2026 01:42:18 +0100 (CET)
+Received: by mail-pl1-f181.google.com with SMTP id
+ d9443c01a7336-2b0484a6de4so10349185ad.3
+ for <dev@dpdk.org>; Mon, 16 Mar 2026 17:42:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773708137;
+ x=1774312937; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=yXEnpgFnvJvrdHFM9VkdJvHe7BEj/kxiGdjSYcigpbU=;
+ b=1f71fUgkHYtLeo/Fk99EOnUsMmZxzvSkIUOt6HVn8H00aSsTAhaCGx01zDsWeFj0bQ
+ zI6RwJeGX530LWJuRAWdeb7f2kGZnIiBZ0csTM2XW1XWrdHcMs5HHLcy7XNiO/etkA8P
+ FT9XaZqyryVGnGe1UDDBOrWmNE7IlHAqHkK6EIEFMQ0fKWOIAPkAgpJ2QCLb6hcOehFQ
+ YmkEhystyMxQQniqwpfNzLTzT8f8DA1W3Uoku5m1KK5OzjJbfdoTvVXkUK3hYE+q2C9Q
+ u9ciPWmST3WDW+Sz3F3oMuZ1RvyR8BHcFy5ebif5caONoaAHfWDPI4zTHWSYJ4KnIyFk
+ ZtQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1773708137; x=1774312937;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=yXEnpgFnvJvrdHFM9VkdJvHe7BEj/kxiGdjSYcigpbU=;
+ b=DEpoOK2v7lwSHBPun8ctMLsGM37MGj2xwlEuQZlKZNFfMnz3VBehHtXxHFd09Fk5fI
+ /NSI1SObAJgdNYCeycWjW/fjF+8yhzXu7qP7xXuatsQ0hSumYsmePVT/GVY9UTD4w4t3
+ XL+2Nw94icBpi7fYdDnMqTHKLHAXq2v9bdCZfoZvxcHbThly2xtu13rMrwEHcIjeZn+d
+ xjELVidgFpgcOw02lGcj/Bm8E/75QMP9TVkn2Nne2vXitVJgPwmgHvFd1Lnuftfxa+6x
+ xPrnsS3DtQUqMcr6UUuaLGMe5w6XiVDG/IkPS5v4nCFlNd4vmbTVids5MkCrLr9hiUDa
+ v1+g==
+X-Gm-Message-State: AOJu0Yyt+ixWiaZd4opcCx27h/I/xWsY+pszaYKH7gvDXZpP5w9P0JKr
+ aKVjZkmsCawcBS0DTPDsOtjBCM+cEnwTDZ2b//y7LBQIpl52zGnseWuc9vtandy93RQ=
+X-Gm-Gg: ATEYQzxHSJ6MEXH6RRKZOL+L36j6C3AOnEdvUIws3KIJzCWdR4w6w47ikwVmuCZ3FCo
+ Cy+RKtRLeXsZO3UXrumy2XtStjea3EjvNuKIcVPz/pr5MH5mLau/bJVk4fhe+emWIerHn8n7BZ7
+ ecPKBOxWjMf5MHlVQYFGhwLaRmYzg3b4qMmpFb5vOeAEZfF03a4GEqzxewJOGiZQ1zj6wxbmSgP
+ KNKxZBpGUNzC7m8qGyqQ+mokcrr4TxHbzGTNRLizgezb8NvfqYlrq5TvpZ6MSLk9SL9+F7RjtZU
+ eWz/UntlqY9fDr8SW7m/1Jl/Uwlob5cmuS6MhF3NSbqx8Et5qxnmp2UCO7Lm4heDHxqgeiIR72S
+ fxI1VN9ZBUuCD96o5d3U3TmzoDXw6OCa44+thz6WYsJ8EjlJv2B2oNYpAVb/VVyW8M/FYi2q3Md
+ 0hyS9fetPGPjxJV93tznQfvnpEt/KIbBzj5d9y/TLtyW9A0/RxA8PyO9cVqcj66JYR3I5e6YBUs
+ XVwdfSeLw2xpmAnMPoG/FzOAiKB+3DZ
+X-Received: by 2002:a17:903:2b0b:b0:2b0:64c4:34a0 with SMTP id
+ d9443c01a7336-2b064c43b45mr9238095ad.10.1773708137318; 
+ Mon, 16 Mar 2026 17:42:17 -0700 (PDT)
+Received: from stephen-xps.local
+ (h216-87-238-89.thvror.broadband.dynamic.tds.net. [216.87.238.89])
+ by smtp.gmail.com with ESMTPSA id
+ d9443c01a7336-2b04ccf9bf1sm70216385ad.24.2026.03.16.17.42.16
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 16 Mar 2026 17:42:17 -0700 (PDT)
+Date: Mon, 16 Mar 2026 17:42:14 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [RFC PATCH v1 00/21] Building a better rte_flow parser
+Message-ID: <20260316174214.5681e7d0@stephen-xps.local>
+In-Reply-To: <cover.1773681363.git.anatoly.burakov@intel.com>
+References: <cover.1773681363.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM2PEPF0001C715:EE_|DBBPR07MB7609:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9e4609b2-226d-4894-79c2-08de8397cef5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700016|376014|1800799024|22082099003|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info: 8nT0n2qfKkLacKYqJHWnN7GvERRZnHsWFXTL100avPJsxBide7vVoC8ljR/S+UAfg4acPSvBSKEyfe4dzK/rnidzQj52qL7LrSvaZNUrWYYyFbeLHfwUjq39/LW4wCiTyrfUKFrsAHUxqcwdK4ZI7EfthBP7cp8kOY7irUtYdwfFmAMS1mFAq/vVREQd1+r9YrvVx0gXs/TWDbJSihygcu9ujbH7BH9xfazMVkFOzwrm5k+oLlxtLTllyXNAypJEk0jcI6gv9+eK5bDmBgyo8FEkp+Ct6ymTFwrRyS3zYNiPusPh8jk00R4BdFjpw5SqfBPiZMPe1/jVypJbG6Fp3+evJaJ/3uBulMa4m83hRJEFaYhniZRO5dKrJ7yDaTqr7WeCs6W+2aBGxupfPbXIHc17DgNQPf1a9Z/OE0JZs61BwFjGa4p/li8xNMTfngc3z6aLnY5Hq1M4+HSAHltK01VnHoeMb2AtNSFLaify4VqbGtHFBxpp58OqyarOvX7fVydoACnGvkZ0lxNWxkmT13DbWKBzSCYMrupwboEl1AmZx9QZskdf63xJGC1Hz/Z1Fc0xQQoDx7QDYlJcmxd1eur9b06LdTs3tVx0nfpBnns7UsqyXztvsDGeykSmxQmpsc/Q10NJcjm9pm53TyDh8WDCLLT2EeKKLc1aCFpg3HRKnlgFVIIT2i5VDKrsQv/QXNAJIQJlVCNfUh12w72D20PGaFNd68RDjM/MwGvlZDG/auD6vnddxgkFh64F3uIpqLKZnmuYmIVHVXO/Uil7yA==
-X-Forefront-Antispam-Report: CIP:192.176.1.74; CTRY:SE; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:oa.msg.ericsson.com; PTR:office365.se.ericsson.net;
- CAT:NONE;
- SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(22082099003)(56012099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: QJnNvMvbPh3o0r1uhXDJBNL06d5ehfJOyLIfl7PGWuSQsF8ry2+D6hzIudCdDUtz/Lx9LzZNhmteHmvfuXwpINpy3thesMg2Vz7dfFfa4vrsqbgvF6ePaQKe+/W8/oQ8vQYTr1GyjPTwLNHK2tURPUM8Fv+kJDF0EXAyJ3V/c0qLBFNNx9xuQ5C8AHhqclqdd+PYIHl5CBBExJ+utgcRcvtHaTz3wu2SHsIpC5WldeFmjNHWgAIOoQH2+Wq2od8VysGWqwOR/UQT93gLx300u6Vvj7t/2Jy8/lmGtQFKgepePqgJunn3pYKIBvAJcuHTG/GhoFPrqEtZsCsDIcNqGo5QBfELy/Q6DSv7OpDBa+qXMu2RUrENYyDfFR2R99NM+6dlan7aAmeXYq+ZBjbjqkqvbXs4gTczIZfQUenrWu8HqT0yjf5GYBvyr8KTGP/Z
-X-OriginatorOrg: ericsson.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2026 20:08:36.8082 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e4609b2-226d-4894-79c2-08de8397cef5
-X-MS-Exchange-CrossTenant-Id: 92e84ceb-fbfd-47ab-be52-080c6b87953f
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=92e84ceb-fbfd-47ab-be52-080c6b87953f; Ip=[192.176.1.74];
- Helo=[oa.msg.ericsson.com]
-X-MS-Exchange-CrossTenant-AuthSource: AM2PEPF0001C715.eurprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR07MB7609
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -114,22 +82,299 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 16 Mar 2026 09:08:45 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Mon, 16 Mar 2026 17:27:28 +0000
+Anatoly Burakov <anatoly.burakov@intel.com> wrote:
 
-> Looks good, the AI review spotted one thing.
-> 
-> Error: Asymmetric mbuf cleanup between the two Rx paths on truncation
+> Most rte_flow parsers in DPDK suffer from huge implementation complexity =
+because
+> even though 99% of what people use rte_flow parsers for is parsing protoc=
+ol
+> graphs, no parser is written explicitly as a graph. This patchset attempt=
+s to
+> suggest a viable model to build rte_flow parsers as graphs, by offering a
+> lightweight header only library to build rte_flow parsering graphs withou=
+t too
+> much boilerplate and complexity.
+>=20
+> Most of the patchset is about Intel drivers, but they are meant as
+> reimplementations as well as examples for the rest of the community to as=
+sess
+> how to build parsers using this new infrastructure. I expect the first two
+> patches will be of most interest to non-Intel reviewers, as they deal with
+> building two reusable parser architecture pieces.
+>=20
+> The first piece is a new flow graph helper in ethdev. Its purpose is
+> deliberately narrow: it targets the protocol-graph part of rte_flow patte=
+rn
+> parsing, where drivers walk packet headers and validate legal item sequen=
+ces and
+> parameters. That does not cover all possible rte_flow features, especiall=
+y more
+> exotic flow items, but it does cover a large and widely shared part of wh=
+at
+> existing drivers need to do. Or, to put it in other words, the only flow =
+items
+> this infrastructure *doesn't* cover is things that do not lend themselves=
+ well
+> to be parsed as a graph of protocol headers (e.g. conntrack items). Every=
+thing
+> else should be covered or cover-able.
+>=20
+> The second piece is a reusable flow engine framework for Intel Ethernet d=
+rivers.
+> This is kept Intel-local for now because I do not feel it is generic enou=
+gh to
+> be presented as an ethdev-wide engine model. Even so, the intent is to es=
+tablish
+> a cleaner parser architecture with a defined interaction model, explicit =
+memory
+> ownership rules, and engine definitions that do not block secondary-proce=
+ss-safe
+> usage. It is my hope that we could also promote something like this into =
+ethdev
+> proper and remove the necessity for drivers to build so much boilerplate =
+around
+> rte_flow parsing (and more often than not doing it in a way that is more =
+complex
+> than it needs to be).
+>=20
+> Most of the rest of the series is parser reimplementation, but that is ma=
+inly
+> the vehicle for demonstrating and validating those two pieces. ixgbe and =
+i40e
+> are wired into the new common parsing path, and their existing parsers are
+> migrated incrementally to the graph-based model. Besides reducing ad hoc =
+parser
+> code, this also makes validation more explicit and more consistent with t=
+he
+> actual install path. In a few places that means invalid inputs that were
+> previously ignored, deferred, or interpreted loosely are now rejected ear=
+lier
+> and more strictly, without any increase in code complexity (in fact, with=
+ marked
+> *decrease* of it!).
+>=20
+> Series depends on previously submitted patchsets:
+>=20
+> - IAVF global buffer fix [1]
+> - Common attr parsing stuff [2]
+>=20
+> [1] https://patches.dpdk.org/project/dpdk/list/?series=3D37585&state=3D*
+> [2] https://patches.dpdk.org/project/dpdk/list/?series=3D37663&state=3D*
+>=20
+> Anatoly Burakov (21):
+>   ethdev: add flow graph API
+>   net/intel/common: add flow engines infrastructure
+>   net/intel/common: add utility functions
+>   net/ixgbe: add support for common flow parsing
+>   net/ixgbe: reimplement ethertype parser
+>   net/ixgbe: reimplement syn parser
+>   net/ixgbe: reimplement L2 tunnel parser
+>   net/ixgbe: reimplement ntuple parser
+>   net/ixgbe: reimplement security parser
+>   net/ixgbe: reimplement FDIR parser
+>   net/ixgbe: reimplement hash parser
+>   net/i40e: add support for common flow parsing
+>   net/i40e: reimplement ethertype parser
+>   net/i40e: reimplement FDIR parser
+>   net/i40e: reimplement tunnel QinQ parser
+>   net/i40e: reimplement VXLAN parser
+>   net/i40e: reimplement NVGRE parser
+>   net/i40e: reimplement MPLS parser
+>   net/i40e: reimplement gtp parser
+>   net/i40e: reimplement L4 cloud parser
+>   net/i40e: reimplement hash parser
+>=20
+>  drivers/net/intel/common/flow_engine.h        | 1003 ++++
+>  drivers/net/intel/common/flow_util.h          |  165 +
+>  drivers/net/intel/i40e/i40e_ethdev.c          |   56 +-
+>  drivers/net/intel/i40e/i40e_ethdev.h          |   49 +-
+>  drivers/net/intel/i40e/i40e_fdir.c            |   47 -
+>  drivers/net/intel/i40e/i40e_flow.c            | 4092 +----------------
+>  drivers/net/intel/i40e/i40e_flow.h            |   44 +
+>  drivers/net/intel/i40e/i40e_flow_ethertype.c  |  258 ++
+>  drivers/net/intel/i40e/i40e_flow_fdir.c       | 1806 ++++++++
+>  drivers/net/intel/i40e/i40e_flow_hash.c       | 1289 ++++++
+>  drivers/net/intel/i40e/i40e_flow_tunnel.c     | 1510 ++++++
+>  drivers/net/intel/i40e/i40e_hash.c            |  980 +---
+>  drivers/net/intel/i40e/i40e_hash.h            |    8 +-
+>  drivers/net/intel/i40e/meson.build            |    4 +
+>  drivers/net/intel/ixgbe/ixgbe_ethdev.c        |   40 +-
+>  drivers/net/intel/ixgbe/ixgbe_ethdev.h        |   13 +-
+>  drivers/net/intel/ixgbe/ixgbe_fdir.c          |   13 +-
+>  drivers/net/intel/ixgbe/ixgbe_flow.c          | 3130 +------------
+>  drivers/net/intel/ixgbe/ixgbe_flow.h          |   38 +
+>  .../net/intel/ixgbe/ixgbe_flow_ethertype.c    |  240 +
+>  drivers/net/intel/ixgbe/ixgbe_flow_fdir.c     | 1510 ++++++
+>  drivers/net/intel/ixgbe/ixgbe_flow_hash.c     |  182 +
+>  drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c    |  228 +
+>  drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c   |  483 ++
+>  drivers/net/intel/ixgbe/ixgbe_flow_security.c |  297 ++
+>  drivers/net/intel/ixgbe/ixgbe_flow_syn.c      |  280 ++
+>  drivers/net/intel/ixgbe/meson.build           |    7 +
+>  lib/ethdev/meson.build                        |    1 +
+>  lib/ethdev/rte_flow_graph.h                   |  414 ++
+>  29 files changed, 9867 insertions(+), 8320 deletions(-)
+>  create mode 100644 drivers/net/intel/common/flow_engine.h
+>  create mode 100644 drivers/net/intel/common/flow_util.h
+>  create mode 100644 drivers/net/intel/i40e/i40e_flow.h
+>  create mode 100644 drivers/net/intel/i40e/i40e_flow_ethertype.c
+>  create mode 100644 drivers/net/intel/i40e/i40e_flow_fdir.c
+>  create mode 100644 drivers/net/intel/i40e/i40e_flow_hash.c
+>  create mode 100644 drivers/net/intel/i40e/i40e_flow_tunnel.c
+>  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow.h
+>  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ethertype.c
+>  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_fdir.c
+>  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_hash.c
+>  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_l2tun.c
+>  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_ntuple.c
+>  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_security.c
+>  create mode 100644 drivers/net/intel/ixgbe/ixgbe_flow_syn.c
+>  create mode 100644 lib/ethdev/rte_flow_graph.h
+>=20
 
-Was this meant for the RX patch [1], not this TX patch?
+I ran patch review with Claude and current AGENTS.md file. Found some bugs =
+right away.
 
-The asymmetry is intentional. The fast path (mbuf_size >= bsize)
-pre-allocates MAX_PKT_BURST mbufs via rte_pktmbuf_alloc_bulk() into a
-local mbufs[] array, so on truncation we must free the unused portion
-with rte_pktmbuf_free_bulk(mbufs + rx_pkts, MAX_PKT_BURST - rx_pkts).
+---
+I'll start by reading the AGENTS.md from the project and then examine the u=
+ploaded patch.This is a 21-patch series. Let me split it and read through e=
+ach patch systematically.Let me start with the core API patch (01/21) which=
+ is the most important one to review carefully.Now let me read patches 02 a=
+nd 03 (infrastructure):Now let me quickly scan the driver implementation pa=
+tches for correctness issues:This is a massive series. Let me focus on the =
+key correctness issues rather than reading every line of every patch. Let m=
+e check the most critical areas - the core API and the flow engine infrastr=
+ucture for bugs.I found a key issue. Let me verify it:Good, I see the issue=
+ I suspected. Now let me check the `__flow_graph_visit_node` call with `NUL=
+L` item for the start node:Now let me check the `__flow_graph_visit_node` t=
+o see what happens when `item` is NULL (called for START node):Now let me a=
+lso look at the `ci_flow_engine_conf_reset` for the use-after-free I notice=
+d:I see the use-after-free: `ci_flow_free(engine, flow)` then `TAILQ_REMOVE=
+(&engine_conf->flows, flow, node)` - the flow is freed before being removed=
+ from the list. Now let me check `ci_flow_create` for the same:I see anothe=
+r issue: `ci_flow_create` never inserts the flow into `engine_conf->flows` =
+TAILQ on success. The flow is allocated, parsed, installed, but never added=
+ to the flow list. This means `ci_flow_destroy` and `ci_flow_flush` will ne=
+ver find it.
 
-The slow path (mbuf_size < bsize) allocates one mbuf at a time via
-rte_pktmbuf_alloc() -- there is no batch array to clean up. Freeing
-mbuf_head is sufficient.
+Let me also check i40e patches quickly for any additional issues:Now let me=
+ check the `__rte_internal` on `static inline` functions - that's unusual:N=
+ow let me write up the review. I've identified several significant issues a=
+cross this 21-patch series.
 
-[1] https://lore.kernel.org/dpdk-dev/20260316155918.3756017-1-sriram.yagnaraman@ericsson.com/
+---
+
+**Review of [RFC PATCH v1 00/21] Building a better rte_flow parser**
+
+**Patch 01/21: ethdev: add flow graph API**
+
+**Error: NULL pointer dereference in `__flow_graph_node_is_expected` when c=
+alled from start node**
+
+`rte_flow_graph_parse()` calls `__flow_graph_visit_node(cur_node, ctx, NULL=
+, error)` for the START node. `__flow_graph_visit_node` passes this NULL `i=
+tem` to `__flow_graph_node_is_expected()`, which unconditionally dereferenc=
+es it (`item->spec`, `item->mask`, `item->last`) when `constraints !=3D RTE=
+_FLOW_NODE_EXPECT_NONE`. If any start node has non-NONE constraints, this i=
+s a NULL dereference. In practice the existing start nodes all use `EXPECT_=
+NONE` so the early return saves it, but the API is fragile =E2=80=94 a sing=
+le misconfigured graph will crash. Either guard with `if (item =3D=3D NULL)=
+ return true;` before the dereferences, or document the contract that start=
+ nodes must always be `EXPECT_NONE`.
+
+**Error: Use-after-free in `ci_flow_engine_conf_reset` (patch 02/21)**
+
+In the flow cleanup loop:
+```c
+RTE_TAILQ_FOREACH_SAFE(flow, &engine_conf->flows, node, tmp) {
+    engine =3D ci_flow_engine_find(engine_list, flow->engine_type);
+    ci_flow_free(engine, flow);       /* frees flow */
+    TAILQ_REMOVE(&engine_conf->flows, flow, node);  /* accesses freed flow =
+*/
+}
+```
+`ci_flow_free()` frees `flow`, then `TAILQ_REMOVE` dereferences `flow->node=
+`. The remove must come before the free.
+
+**Error: Flow never added to TAILQ in `ci_flow_create` (patch 02/21)**
+
+`ci_flow_create()` allocates, parses, and installs a flow, but never calls =
+`TAILQ_INSERT_TAIL(&engine_conf->flows, flow, node)`. This means `ci_flow_d=
+estroy` and `ci_flow_flush` will never find the flow (the `ci_flow_is_valid=
+` TAILQ walk won't match), so flows are leaked on destroy/flush. The succes=
+s path needs:
+```c
+if (ret =3D=3D 0) {
+    flow->dev =3D engine_conf->dev;
+    flow->engine_type =3D engine->type;
+    TAILQ_INSERT_TAIL(&engine_conf->flows, flow, node);
+    goto unlock;
+}
+```
+
+**Warning: `__rte_internal` on `static inline` functions is a no-op (patch =
+01/21)**
+
+`__rte_internal` is a visibility/symbol-export annotation meaningful only f=
+or non-static functions that appear in linker symbol maps. On `static inlin=
+e` functions in a header, it does nothing. Either drop the annotation (sinc=
+e these are header-only and already `static inline`), or if the intent is t=
+o mark them as internal API, use a comment instead.
+
+**Warning: `enum rte_flow_graph_node_expect` brace on wrong line (patch 01/=
+21)**
+
+The opening brace is on its own line (`enum ... \n{`). DPDK style places it=
+ on the same line as `enum`.
+
+**Patch 02/21: net/intel/common: add flow engines infrastructure**
+
+**Warning: `ci_flow_alloc` erases only `struct ci_flow` base, not full allo=
+cation**
+
+When the custom allocator succeeds, the code does `*flow =3D (struct ci_flo=
+w){0}` which only zeroes the base struct. The engine-specific fields beyond=
+ `ci_flow` in the allocation are left with whatever the custom allocator re=
+turned. If the custom allocator returns uninitialized memory (not zeroed), =
+those engine-specific fields are garbage. The framework comment says "Custo=
+m allocators only own their own engine-specific fields" but the intent seem=
+s to be that the framework zeroes its own fields =E2=80=94 documenting this=
+ more clearly or using `memset(flow, 0, sizeof(struct ci_flow))` explicitly=
+ would be safer.
+
+**Patch 03/21: net/intel/common: add utility functions**
+
+**Warning: `ci_be24_to_cpu` uses `int` arithmetic on `uint8_t` shift**
+
+`val[0] << 16` promotes `val[0]` to `int` (signed). If the compiler's `int`=
+ is 16 bits (hypothetically), this would be undefined. In practice on all D=
+PDK targets `int` is 32 bits so it's fine, but `(uint32_t)val[0] << 16` wou=
+ld be more precise.
+
+**Patch 12/21: net/i40e: add support for common flow parsing**
+
+**Warning: i40e's `struct rte_flow` has both `struct ci_flow base` and `TAI=
+LQ_ENTRY(rte_flow) node`**
+
+The `ci_flow` base already contains a `TAILQ_ENTRY(ci_flow) node`. Having a=
+ second TAILQ_ENTRY in the i40e `rte_flow` struct means there are two indep=
+endent list linkages. The old code uses `flow->node` via the legacy path; t=
+he new engine uses `flow->base.node` via `ci_flow`. This works during the t=
+ransition but is confusing and wastes space. The legacy TAILQ_ENTRY should =
+be removed once migration is complete.
+
+**General observation across patches 04-21:**
+
+The series progressively migrates each legacy flow parser to the new graph-=
+based engine, which is a good incremental approach. The individual engine i=
+mplementations (ethertype, syn, L2 tunnel, ntuple, security, FDIR, hash) ap=
+pear to correctly translate the old hand-rolled parsing into graph nodes wi=
+th validate/process callbacks. The graph definitions look structurally corr=
+ect with proper edge termination sentinels.
+
+The two critical bugs (use-after-free in reset, missing TAILQ insert in cre=
+ate) and the NULL dereference risk in the graph parser should be fixed befo=
+re this moves beyond RFC.
+
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
