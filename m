@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76778F3380D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 08:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B927F33810
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 08:24:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70B60402D1;
-	Tue, 17 Mar 2026 09:02:52 +0100 (CET)
-Received: from fout-a6-smtp.messagingengine.com
- (fout-a6-smtp.messagingengine.com [103.168.172.149])
- by mails.dpdk.org (Postfix) with ESMTP id C211E40270
- for <dev@dpdk.org>; Tue, 17 Mar 2026 09:02:50 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 830C0EC0086;
- Tue, 17 Mar 2026 04:02:49 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Tue, 17 Mar 2026 04:02:50 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 7A8C3402D1;
+	Tue, 17 Mar 2026 09:24:32 +0100 (CET)
+Received: from fhigh-a2-smtp.messagingengine.com
+ (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+ by mails.dpdk.org (Postfix) with ESMTP id 9D4D740270
+ for <dev@dpdk.org>; Tue, 17 Mar 2026 09:24:31 +0100 (CET)
+Received: from phl-compute-10.internal (phl-compute-10.internal [10.202.2.50])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 28883140001A;
+ Tue, 17 Mar 2026 04:24:31 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-10.internal (MEProxy); Tue, 17 Mar 2026 04:24:31 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773734569;
- x=1773820969; bh=fX+r0ozzmaqC2r4+qmKEJNRORjYPhedC+tkAhmldNdo=; b=
- H0cjhhlt4cRlv2kKLyj3w/c8PpDpjnTRc3KDlpmAbUJxJarC1fo0gHonoQWl5hTe
- /0KcLA1VLGgulSDeL1lNajj4sx5VvbsWH/ut4W61rejhTuJwIWT1wZXKehmZQnZN
- IGHU4dTLAaf0kUmSJGQ5pDp1Su0NU1/5vHj0FhW7uKjnu47HnZ9FpRrdd1e96oCb
- df2x3aQkmNhHNXdjVOONPAs17csbVZlnmlOEsIW9cy2I4ytqQ45VnrBnh0LMoVJe
- G8m5Hae29Z3rW61T8PKXRpEIBLp7lsWKINnnA5iHczci6X1N0V53GYV2l9cL3241
- enMNpgXhvyz7rczPQlLGow==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1773735871;
+ x=1773822271; bh=N2ML/sjIiRQrwb8PyYJ+07FeI9Y5qf9W7XPy/9juTZ4=; b=
+ lQWcqYd8UJ4HxtFq4qHXHeYH9ImPI+aZDn/h89goctyz907kc3JD3MYymCv03BQf
+ g0ip44vLNKEuF3cypH3PCBTnTU8f4uHNotGn1vT2hVV3bVX5jM9Y48MC0z3wT2KF
+ baz5UDx2HaYRYQDJC7dtlL26GNhTG+fakqMi2eujOq4tl7+2r6KVNC6nE3Bc7FSN
+ zvJ7/1+oJ2D6CeN6CH1AZ8Mq8jgs2IVV1ymWbJWtcbFX0778KG0O0KPusmddPhW4
+ t/xCbdqAIgbC1+wDqkMNJDRmj+tlFnm79dzuMTCIB0CaHuMofDkY9ngkYzwGULX5
+ vlh5YicU5HZpjOxLM3N8Ow==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773734569; x=
- 1773820969; bh=fX+r0ozzmaqC2r4+qmKEJNRORjYPhedC+tkAhmldNdo=; b=G
- g1B7/x4tkcePJ47hcbUPT4QIwLnRJSgg4pN27OCS8blFnZKch0L0zZbPfGJap08i
- I+jg9Mva7J/7I69GG6yEk/diR4t82ejsxbTLTVJiTF9X6TN/dxHgyysqo/yXZiDU
- uHjuO0DFNnXlSffxySNcGXIknHa9eR+KmMSoDguwfdEU9OYm3P8SKAdx8+uU8uca
- EVRQk7bnEl2w4J0dyr8PcNpHzMMoVyBL3OYzyGb82HSoWLhaaWiHtyl3g63k3nGB
- 4af840JcPk9OOgxIhqv9YtvhOCJQ5OAbqCRhjo7vhbR+LQ6c8dDWqO30iGmbSW75
- sQq1/Qu3KCNA/QUniRwNg==
-X-ME-Sender: <xms:qQq5aZwIFSKnD1dUsfWdZzZiqBDBKHSp7PYniOSXahbsuJ_zdXOeqA>
- <xme:qQq5aZZTEqv6YRVIYqA-x6OPZLBog7aretSWOsttqUG1BVtQUkuOHGFnGjYj9pDSb
- 2qXdsPDSzWW08JNSG4xgccCqDZSUpeoMe8m2NcvbGO7HUKIHTF1qA>
-X-ME-Received: <xmr:qQq5abRkAd5K-DIdEDvq1_pwmuK3DqHy9Jg8g9CIFfScdNx4DZPo9RI0ir04c5FCjMF3mbpzGhrjP2o8xZRq9gzWfw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftddtjedvucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773735871; x=
+ 1773822271; bh=N2ML/sjIiRQrwb8PyYJ+07FeI9Y5qf9W7XPy/9juTZ4=; b=Y
+ kjXuifmpB5PVpnPdE1LVhbBPvjua/QUlnO9hJKg1J9MBTfhgOX3XDfJDU+nNmyTx
+ UC5QBqMj757ITfs6pBUZqCRvNsjyIuuCBwelS2k1S0mOOWBnOHit2JOdqml+t0cw
+ 9IeooAc6lpLkb92+mpKccxn9reeeKHXfmFCGCzEOpmbBnJQx9n+u05hkopMjDemP
+ aVp3QxlRSwuqL7DJCA8QhH+R7hgBfkEuWDJSgdWxF2yga+Nx4igVQFh+jmrqDjKC
+ PzqNzPtXjGfUNvkz9HEHsNCIu6NHByGiziNT3Sl4mmUJGhiiIjPudh6IvtC4bCrm
+ j1n6MjbyC3nVRaKGrevaQ==
+X-ME-Sender: <xms:vg-5aUhsTH4ZHdQAcB69tILSApWEegEmzWrylozTKkXn6h5VLKi8GA>
+ <xme:vg-5adJLxLzNRsUWhd81THoX9r1OXGmaxErstkOJBZDydq0zAgRlgGsCrBH-1TZHS
+ 0xB6WU2Yo4-IxZhM4sq50aKPxKra4rYpGROm_TpjuW59fpCGNDfOQ>
+X-ME-Received: <xmr:vg-5aUD-HSvSIxmTOEj0PQoQJFW3lmJND9vGlPD3nnHA8G6DPgvzbPN9sLY57p580iHm0UTBaJzVz1bFw-hJYuKD5Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftddtjeeiucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
@@ -52,28 +52,26 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftddtjedvucetufdote
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
  hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopehkihhshhhorhgvrdhprggumhgrnhgrsghhrgessghrohgruggtohhmrdgtohhmpd
- hrtghpthhtoheprghjihhtrdhkhhgrphgrrhguvgessghrohgruggtohhmrdgtohhm
-X-ME-Proxy: <xmx:qQq5aTxZMBiKQW-u2MEBuWgD0o_LRmxbNts0MFc79zYL-X5N_Gus0A>
- <xmx:qQq5aV30-3Xv3s7PqkuhQDLNgcfcIDd80kOnCBgdp7D1BU5qBKKT5A>
- <xmx:qQq5aZ6nrl6W7wR1Ly5NJo7pVUiBYJ-W9-Ic2ru8wghd4agIRjHV-g>
- <xmx:qQq5aQWI3nGVxkYBDaPx0RmPhVxwdvfRPHThhCJy95_PyEo3dRGzuA>
- <xmx:qQq5adVQ_F7kSfyqvAYhEhq0-obJ_34LaFxQSFVFk0stgoCU2WsXYUCs>
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnheshhhurg
+ ifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
+ qhhirghnfigvihhliheshhhurgifvghirdgtohhmpdhrtghpthhtoheplhhiuhihohhngh
+ hlohhngheshhhurgifvghirdgtohhm
+X-ME-Proxy: <xmx:vg-5adiBYZTj9Hp4daPjVt91PEj_BGTgJSEzth4Ww2sC6tJuLK4OIg>
+ <xmx:vg-5aclmNjlSSObMMtyIEwYa_-7WZO9zpBpzKUA2_sVpLmc3we1xmQ>
+ <xmx:vg-5aZpn7iQdPho0QBhCv7wKVibIf8h1S-0kuRyiNiv4fluZ3RHxVQ>
+ <xmx:vg-5aVGuz6VSlm5UaK57t_Fy5rq27sr7klMak49fuRr8hxgPbI9sPA>
+ <xmx:vw-5aUjXfbP-ocWuxgDIDXftNouMrUnkvNq-9xvYRirPwDpLIZtb9-Tt>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Mar 2026 04:02:46 -0400 (EDT)
+ 17 Mar 2026 04:24:29 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>
-Subject: Re: [PATCH 2/2] net/bnxt: fix shadow variable warnings
-Date: Tue, 17 Mar 2026 09:02:45 +0100
-Message-ID: <15698507.tv2OnDr8pf@thomas>
-In-Reply-To: <20260312002123.867357-3-stephen@networkplumber.org>
-References: <20260312002123.867357-1-stephen@networkplumber.org>
- <20260312002123.867357-3-stephen@networkplumber.org>
+To: Chengwen Feng <fengchengwen@huawei.com>
+Cc: dev@dpdk.org, qianweili@huawei.com, liuyonglong@huawei.com
+Subject: Re: [PATCH 0/2] support driver forward compatibility
+Date: Tue, 17 Mar 2026 09:24:28 +0100
+Message-ID: <2768879.BddDVKsqQX@thomas>
+In-Reply-To: <20260302110206.49670-1-fengchengwen@huawei.com>
+References: <20260302110206.49670-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,19 +88,14 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-12/03/2026 01:20, Stephen Hemminger:
-> Fix things flagged as warnings about shadowed variables.
-> If the variable was harmless overlap then just drop the shadowed
-> version. For min values case use RTE_MIN3() and RTE_MIN4().
+02/03/2026 12:02, Chengwen Feng:
+> This patchset supports driver forward compatibility.
 > 
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  drivers/net/bnxt/bnxt.h        | 6 +++---
->  drivers/net/bnxt/bnxt_ethdev.c | 3 +--
->  drivers/net/bnxt/bnxt_rxq.c    | 6 ++----
->  drivers/net/bnxt/bnxt_txr.c    | 3 ---
->  4 files changed, 6 insertions(+), 12 deletions(-)
+> Chengwen Feng (2):
+>   bus/uacce: support driver forward compatibility
+>   dma/hisi_acc: support driver forward compatibility
 
-Why not removing cflags += no_shadow_cflag ?
+Applied, thanks.
+
 
 
