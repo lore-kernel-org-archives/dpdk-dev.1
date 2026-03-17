@@ -2,88 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE2BEF3381E
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 09:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A41CFF3381D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 09:07:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 144FA402D1;
-	Tue, 17 Mar 2026 10:02:41 +0100 (CET)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id 6A1BA40270;
- Tue, 17 Mar 2026 10:02:39 +0100 (CET)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfhigh.phl.internal (Postfix) with ESMTP id E87D814001E9;
- Tue, 17 Mar 2026 05:02:38 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-09.internal (MEProxy); Tue, 17 Mar 2026 05:02:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773738158;
- x=1773824558; bh=/djoA221ZkIiMl2bZOSXUAnfwDEAGBDeTEC9ACUDscY=; b=
- Dp2UPdAyxmXAw4J6efyhYMupLD2MzDkrb5mwQuDJ2LmgrXYdpGwkHaXJvN6Gnvnt
- gkKHuRJuySUAe6vaAWi8e3UMg+JiHF5NTUgqKEPc3edHtqtkumBiyWhOBXkCbHaG
- TL1ea8WO5EkDi67Mn/+twSUkRRZt7giccKUQ/Y597VXH8LT2CWELXpoQUetIGBqI
- ERnYYOR7ELzmHkDEEO6xC6LoM9Vd1qWz3/92v8mfaeHnDlgp0J576963XBYi31Sf
- fpp5LUE6YPeq3nPxvOoZZTBlWIMCHEIAUsepGevTz4YdA0824xeqiPfP9lT1QLRo
- 9V9RJ64ZAXXPeMyvWpb1/w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773738158; x=
- 1773824558; bh=/djoA221ZkIiMl2bZOSXUAnfwDEAGBDeTEC9ACUDscY=; b=y
- 27DkxZbGfVsSQfME/gVfI9ycN+eeqbZxGDqHdonMPuoKgjhqslBiV+nuSnE9gwE+
- ycwA9YmPk7WOxesOsQza5hqC5tQsoV8VVvlgHpp+VvDzg7uTh88MclRUOrvTvVoo
- 2ADV/1Duta2Yoe0mSaZAMR03K1lGnseqAjVzTUgJw0g1DrUtpZS1qoaiaUtPIcmX
- KDWZ1ESt3bSLJQKZfS1wzNP7+0vqlHGo0alK2Auv4LWWpYNn6fiG0LQSNvzmpeCP
- PbAcononjqa/MaLfjCcYY3HVcUAMj+okKhh9vLODqET59nxOf4HdFcHLm5d77JJL
- /LrZ7/0O9i7H9rA37HpXg==
-X-ME-Sender: <xms:rhi5aepSFBjAS4rzgo4bCzfmeeS45hOPT4kWg-6_GBe8tvPGXajfIQ>
- <xme:rhi5aUTlt1Jr5Jc15rY5eWqH2jGfpEQ7d7Jn6WqI7t82VRm2OMx_tNz38iGyjLawZ
- LGticvCRpUr-CGVhu3c8ABLc6L7eTCn6MfRR-6HI8KVFY3w6HHm3Ow>
-X-ME-Received: <xmr:rhi5aQ2xYFF9OjCLO7USgDEbIq5AasBGRTEhM8Skvp-PRqafI0jOwGl0vYUZd0nSbpF165mwTqLVhKNjBT-gGftvlw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftddtkeegucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopegthhgrihhtrghnhigrsggrsghugidrthgr
- lhhluhhrihesihhnthgvlhdrtghomhdprhgtphhtthhopehfvghnghgthhgvnhhgfigvnh
- eshhhurgifvghirdgtohhmpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdp
- rhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopegsrhhutggvrdhrih
- gthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopegrmhgrnhdruggvvghp
- rdhsihhnghhhsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhhrghiqhdrfigrnhhise
- hinhhtvghlrdgtohhm
-X-ME-Proxy: <xmx:rhi5aYDOxZZYymbvPz9sA7nHEcyhvQO-yDHvxpeAKSUYi6yA2llN7w>
- <xmx:rhi5aUgKqbyky4qdrEJ4WHg4fA-yWE9JGzr5Lr9GS4-du2MJS4SV6Q>
- <xmx:rhi5aSOf1EVYNyaywmvXdqKW4JNzhg5GVYqcmsv5GkosvnUuqIeG-A>
- <xmx:rhi5ac8xfbG9aGZCKY_3HIMpssYvu-CME5_ZuMN0SXGy9pF9JBV-bw>
- <xmx:rhi5acXCAKE2P6_DyBFOkRK1t25l3Y_l5AznZgRl2qm6xIw-6mLnU2Mr>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 17 Mar 2026 05:02:37 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: stephen@networkplumber.org,
- Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>,
- Chengwen Feng <fengchengwen@huawei.com>
-Cc: stable@dpdk.org, dev@dpdk.org, bruce.richardson@intel.com,
- aman.deep.singh@intel.com, shaiq.wani@intel.com
-Subject: Re: [PATCH v3] app/testpmd: fix DCB forwarding TC mask and queue guard
-Date: Tue, 17 Mar 2026 10:02:36 +0100
-Message-ID: <14422376.RDIVbhacDa@thomas>
-In-Reply-To: <5157955.0VBMTVartN@thomas>
-References: <20260311083751.1107404-1-chaitanyababux.talluri@intel.com>
- <20260316062118.1508009-1-chaitanyababux.talluri@intel.com>
- <5157955.0VBMTVartN@thomas>
+	by mails.dpdk.org (Postfix) with ESMTP id AA1C5402D1;
+	Tue, 17 Mar 2026 10:07:29 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E6DE440270
+ for <dev@dpdk.org>; Tue, 17 Mar 2026 10:07:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773738447;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=Fe0o/Qj+Ri/GT5M1HZo8zeFHXDx2Xv/qpPKXZ0rZ5CA=;
+ b=I2WAbHqMMNcG0xJkQFbUBm1GqK9DE+klUdvUQW/lnaFFyvQNdEtufXOmikttJDk1RQm3RQ
+ OsLiMj3Lemo8zA9KWJvCRkmqYc2X4rD9Bf8Uxy37K2YP0pyixJ+jLl33KoUBxNzTY46dtd
+ F44dN+aDQt5ny3A77GWZjIkrqCXPqB8=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-232-KTpy-GSeNfeo6v-auFOq2A-1; Tue, 17 Mar 2026 05:07:25 -0400
+X-MC-Unique: KTpy-GSeNfeo6v-auFOq2A-1
+X-Mimecast-MFC-AGG-ID: KTpy-GSeNfeo6v-auFOq2A_1773738444
+Received: by mail-lf1-f69.google.com with SMTP id
+ 2adb3069b0e04-5a13072689fso3593803e87.0
+ for <dev@dpdk.org>; Tue, 17 Mar 2026 02:07:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1773738444; x=1774343244;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Fe0o/Qj+Ri/GT5M1HZo8zeFHXDx2Xv/qpPKXZ0rZ5CA=;
+ b=JDiX6vAHdr/xsSIkYaDzjtxduNwjdBMBfq6Rc4cqWeCuJ/hFov5rwmaWi6d8qWo5y4
+ KgKKivNLaBgQdP5h0BidhFTJTLbNW89uxElfvvWyTMiXqVH4bdnYtcIxE1isDVMrY0He
+ k6qUYVGch61IOt5C/O75NU5CwcNeot+TYa0/zExTm9afvUycALbwmDEcDxH+87t3wcSr
+ UzppCGOWDtFIKRbTcnEMOAV9csZisfwAQCvaiRxKNVHDxKGDiBkiu8k6qWrMFuYm1+3V
+ vaV052s7s9LfI/RJtgmkOuHPWMNe8mU4EeNbRS2HiQJGMRG/QPJzpA6XoyKxkMqgQyDA
+ rhhg==
+X-Gm-Message-State: AOJu0Yx9tCi84B/fvvZ5vze5JlwVW6scbTLL/a3ZhdOuC9oDwsRDw30M
+ 3FOq9k8KiRb86aQMBD/OkjAQt9vI81OBkfTN6i5KPZNXrEOFj8GUzk6mjFxEVMiiGga0aQHQV41
+ 1IYQAgnJ7M+Tkk3IZPNwn7CMImMI+jAk93oZ1VezNQS4cgy3Q1vMmXYDjvR6Xic3hd4iGQRlYLl
+ B42DXobPyG8+UXWXUTFzc=
+X-Gm-Gg: ATEYQzxGNEnnfw9ovtY571+KYvosIpKtTAJe7Q40s89vLGqZuvD2G93gRs9VhxyYXBf
+ JyyNW3qMPZ6lGHW0TWRq77KPRMfeF+C9tzREv2GPuizR3BPBI2sHhmdxHapxmwnDWAAtIm6b77W
+ JY9QWGMUM0HmM/KuOev5dm/wHi9u9uzQn2XRpB4RjySe8lUZY/jnYLNvoNux5gr4gDkD7Ch9ruY
+ NzcRMquJUMouCDJvRIQZdqTawagCroFIwxfTOGIYrOi9S4e+lNu8MzLhOFSVMO0jb9/hQ==
+X-Received: by 2002:a05:6512:3b28:b0:5a1:4835:306f with SMTP id
+ 2adb3069b0e04-5a16280b4eamr5734844e87.19.1773738444005; 
+ Tue, 17 Mar 2026 02:07:24 -0700 (PDT)
+X-Received: by 2002:a05:6512:3b28:b0:5a1:4835:306f with SMTP id
+ 2adb3069b0e04-5a16280b4eamr5734824e87.19.1773738443538; Tue, 17 Mar 2026
+ 02:07:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+References: <20260310122045.4057836-1-cfontain@redhat.com>
+In-Reply-To: <20260310122045.4057836-1-cfontain@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Tue, 17 Mar 2026 10:07:10 +0100
+X-Gm-Features: AaiRm537CqIqhnuuwR26i8_P3Ibsga53WjQHeQNLA27Nc-q5uRP7h-RRf22KHTM
+Message-ID: <CAJFAV8z0+hKxOxg+ChDQvP1huhkYoJ8+Z90M-8_Mwxkwnj2WLw@mail.gmail.com>
+Subject: Re: [PATCH] bpf/arm64: support packet data load instructions
+To: Christophe Fontaine <cfontain@redhat.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>, 
+ Marat Khalili <marat.khalili@huawei.com>,
+ Wathsala Vithanage <wathsala.vithanage@arm.com>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Oani6bukBfDU4OP_wXDF6C2DjqryMtcvl_ENv4Dwgfo_1773738444
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -97,20 +85,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-17/03/2026 09:57, Thomas Monjalon:
-> 16/03/2026 07:21, Talluri Chaitanyababu:
-> > Update forwarding TC mask based on configured traffic classes to properly
-> > handle both 4 TC and 8 TC modes. The bitmask calculation (1u << nb_tcs) - 1
-> > correctly creates masks for all available traffic classes (0xF for 4 TCs,
-> > 0xFF for 8 TCs).
-> 
-> I don't know why this patch was merged in next-net without any review.
-> It has been pulled in main yesterday, sorry for that.
-> You'll need to make another patch to fix after the complete review.
-> 
-> Stephen, please don't merge too fast if no review.
+On Mon, 16 Mar 2026 at 20:13, Christophe Fontaine <cfontain@redhat.com> wrote:
+>
+> arm64 jit compiler didn't support reading from a packet.
+> Enable arm64 JIT to generate native code for
+> (BPF_ABS | <size> | BPF_LD) and (BPF_IND | <size> | BPF_LD)
+> instructions.
+>
+> Compared to the x86_64 HIT, only a "slow path" is implemented,
+> '__rte_pktmbuf_read' is systematically called.
 
-After another thought, I've dropped it from main,
-so you can continue with a v4 as usual.
+Worth mentioning in the commitlog that the unit test was a yes box
+(failures to load mbuf data on arm were silently ignored iiuc).
 
+On the code itself, a review from BPF (and ARM?) maintainers is needed.
+
+
+-- 
+David Marchand
 
