@@ -2,78 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA50F3383D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 14:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80054FD877F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 17 Mar 2026 14:48:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9CDAE4042C;
-	Tue, 17 Mar 2026 15:47:16 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id D048A40270
- for <dev@dpdk.org>; Tue, 17 Mar 2026 15:47:14 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1773758834;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=q3JRmT3c5VCEHCaBoC3hCqgdM+eF9KzXQXBe5gSB2C4=;
- b=L4loDkE9oZ/cyeTtAjKJcCqRz8E7btu/LcqogAG1GPWwxWuq4h8hFCCYXwmTSrwkwQZCHB
- 1vdaPbUuJHkdOa5vyFFjb4iM5q05rc9xMXDWldZrkXBTYnwzVnHP8cXGslrDv1dfk7qAR7
- Jlrw034cBF/gaPa8hr0gT5+y1SWvy/I=
-Received: from mail-dl1-f71.google.com (mail-dl1-f71.google.com
- [74.125.82.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-616-hY8LCLsENdayHWMsC_3_Yw-1; Tue, 17 Mar 2026 10:47:12 -0400
-X-MC-Unique: hY8LCLsENdayHWMsC_3_Yw-1
-X-Mimecast-MFC-AGG-ID: hY8LCLsENdayHWMsC_3_Yw_1773758830
-Received: by mail-dl1-f71.google.com with SMTP id
- a92af1059eb24-128e8ac314eso1320810c88.1
- for <dev@dpdk.org>; Tue, 17 Mar 2026 07:47:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773758830; x=1774363630;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=q3JRmT3c5VCEHCaBoC3hCqgdM+eF9KzXQXBe5gSB2C4=;
- b=XBhsye7DgQAW4QmR7BLZNnd85kPNv9dS+Xwsc5uLySCS92G6VmTGGgez92DS7oM9hq
- 8j5MfFxLaVFqHfyhYy5+YJ0WT8hQ4XfotRPk2c4KOmevsbrfHTnMgvIe8odzy/gKxYpg
- gxUDSxtdB1rRAwNo83zsOPlFKtV4IaCOrOMndKi+a8rO0jbZr2XFRyHvW28LhtCpOglw
- gMBnV9EOmAyg8IrNgB6MaTLEDbrKfliLWY5WpdtLQKmsXTD5j2RD+ro8DHfEInkp4vff
- wJqQ9kCvpyMaF+F0j9NLjXU2Dc5LBTccu1hwS4Az/+eazLaZNsr6KoFV+jI/ecB1soNG
- jKfg==
-X-Gm-Message-State: AOJu0YwGLtSZbpVfRaT0zv/1orpfdovewnbupJl7xEK6sH0v2tvcPLZJ
- p8jyOgOQ4q/tUfQaaL1FIdgSkV1/JpsZpkXAUv4KoJCtqHlVpln2hTpgRYwCG61k8kIdieRJXKU
- oZ6imkaxRseTAPexZv8Mpdr6b8LRE+DH+7kw+mYB7YLFwBgc1IUcrUJyRAhiPIS5dA4krIJKQeg
- QtHk7bknXodmyV5I53AKo=
-X-Gm-Gg: ATEYQzysVe0JBmWAWAPFocEe+946JLKngeXWMNJgydeffjyqHoLKLhTRLyH/VCJymon
- ECJOFc6b1YrnuLiHZFMv5Ocrk3aW2FvHKEMf9QM0u7ky3xEOwluIc01vGrl0kNQ1jxrgr9D216s
- YCu7lepmstxI2l1Zum1mqmwfdGBl1ytjPSLFIw4BeVgX2N5dIefAL8UtTtokH+huKsuqwOYiWeY
- JPLY9XDq6YL2mWRBZHbJEZKIvaU3HAd4Z0DACj/qkINZ+o2PGQoSO0lvnHUslgGYQ==
-X-Received: by 2002:a05:7022:4186:b0:128:d4db:4478 with SMTP id
- a92af1059eb24-128f3dcdb90mr6698612c88.24.1773758830128; 
- Tue, 17 Mar 2026 07:47:10 -0700 (PDT)
-X-Received: by 2002:a05:7022:4186:b0:128:d4db:4478 with SMTP id
- a92af1059eb24-128f3dcdb90mr6698590c88.24.1773758829512; Tue, 17 Mar 2026
- 07:47:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AB8DA402B0;
+	Tue, 17 Mar 2026 15:48:11 +0100 (CET)
+Received: from fout-b3-smtp.messagingengine.com
+ (fout-b3-smtp.messagingengine.com [202.12.124.146])
+ by mails.dpdk.org (Postfix) with ESMTP id DFD6640270;
+ Tue, 17 Mar 2026 15:48:09 +0100 (CET)
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+ by mailfout.stl.internal (Postfix) with ESMTP id E6B7F1D000BF;
+ Tue, 17 Mar 2026 10:48:08 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-11.internal (MEProxy); Tue, 17 Mar 2026 10:48:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1773758888;
+ x=1773845288; bh=XWzpE0dJtG8wThMB01qppbefVfVGlTtY/pWCDf/gsao=; b=
+ ko8b6vSkenSziSK/LGAwlBFfylTMGxffsmxEOJeP/dMSUXJgIJN94bJ2gJLndKI0
+ 61LydeiF7QGAQSl9rg9xA7I8DlAEYo7UaalszRIswuy4gS62dmgG784N/3cVZ00Q
+ uKlT32QBCjPo4UjwVtT20JyBdmUvgiYLydqVKqqOCio9Vx60RlCy/hEXyAzqNxd5
+ 0/btFM+h1efoPfGS4QOBA9CV/D5dbO4FzObswyXhNQP7AfZnoXM0dawCrQlrMLLX
+ 9snHJeqQ6cknZaQCG05vngXuXtaK9XjrCwOdG8WPFEXgIuo+XL+IufY4gGlfHltM
+ Hy/ulLTkpcBej+R2zrokdA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773758888; x=
+ 1773845288; bh=XWzpE0dJtG8wThMB01qppbefVfVGlTtY/pWCDf/gsao=; b=a
+ oCnR4Cq0V0J6Xt8RCFhv6PFLRXzYyWfJ2YWHrVYlDwJN0l6xnXgRO/jOOTIhP9zQ
+ 4vnYx2tdbTcjmkVbkQgOJg7lCAjZxk2Sd/KuMcxes0zczs6JUSBaC7fFuH+7j0b5
+ fyu6jaVy1mU+LOlptN+Ewfw7XxRVHUv/R/Ol8Ntf9lTXlFjPyl8zercd9Tr1zIy9
+ c+eECouQhASM44iBCSs1BH6wTe0r/eOCNQ2PJHkI3uPLpa6fysixwdX0sziwCMTL
+ 4gaHA1LMCEBEQFOq/LNTTxVN0W3z4bWK/BZJuttE2IWwMPrEmAwGLWFWC4BCSYTb
+ c7PSPVT0ngH4ivey4dK6w==
+X-ME-Sender: <xms:p2m5ae2Ux08FU_DUbdon3XWRMX1LVrfW7RmNXNZ7AG8ahiERCynOmA>
+ <xme:p2m5aaCwPxyAmhv53x0tfKIHnGL37qhcDoHENCRTSoQgC1tSQS90q0TCjQ5uUmaS1
+ btOd22IbfBiBU11meHz6hTsgsy6T-g-SSQSjHOVUpJoXKjgi2XxdA>
+X-ME-Received: <xmr:p2m5aSc8hylx8Xso6dUkDNin9qQGGUPU4SOl3Zs9rAd4UOyajBdnC2l4mE1MtYpTS4FCCYVtPdrp-R9dQVx1CD0aPw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdduheefucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopeifrghnghhlihgrnhhggihinhhgsehhhi
+ hgohhnrdgtnhdprhgtphhtthhopehhohhnvghsthdrjhhirghnghesfhhogihmrghilhdr
+ tghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhopehvihhpih
+ hnrdhvrghrghhhvghsvgesrghmugdrtghomhdprhgtphhtthhopehsthgrsghlvgesughp
+ ughkrdhorhhgpdhrtghpthhtohepfhgvnhhgtghhvghnghifvghnsehhuhgrfigvihdrtg
+ homh
+X-ME-Proxy: <xmx:p2m5af7nBGycdcf9p0f-8bUX6ZT5Nj85jFgdCM6mmDQk6oMOubJljw>
+ <xmx:p2m5adVVcNHKn-YsLdq6nu8U7MiRxBJY0IgZk1v9qPVGwEjrqvIUBg>
+ <xmx:p2m5aW5ZO9T6DcTUceMiNws2MiwVJsnKCSUPkDdAm8fmpgBKrVj5LA>
+ <xmx:p2m5aQq3e-uKF4Lo6dft-XGVXeVJi8j333oHUn6jGZyY7Zyo7fng5g>
+ <xmx:qGm5abDQob8wwEmMPlM3HsEPHB1ifxOe-MImAYRsmkPvKXZfdUhT3D-K>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 17 Mar 2026 10:48:06 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Liangxing Wang <wangliangxing@hygon.cn>
+Cc: honest.jiang@foxmail.com, dev@dpdk.org, vipin.varghese@amd.com,
+ stable@dpdk.org, fengchengwen <fengchengwen@huawei.com>
+Subject: Re: [PATCH] app/test-dma-perf: fix reversed src and dst for memcpy
+Date: Tue, 17 Mar 2026 15:48:04 +0100
+Message-ID: <2293419.1BCLMh4Saa@thomas>
+In-Reply-To: <544edfc3-0e6f-4c57-8b6b-8d937dd0be4c@huawei.com>
+References: <20260303091804.41761-1-wangliangxing@hygon.cn>
+ <544edfc3-0e6f-4c57-8b6b-8d937dd0be4c@huawei.com>
 MIME-Version: 1.0
-References: <20260312103606.702617-1-ktraynor@redhat.com>
- <20260312103606.702617-2-ktraynor@redhat.com>
-In-Reply-To: <20260312103606.702617-2-ktraynor@redhat.com>
-From: Maxime Coquelin <maxime.coquelin@redhat.com>
-Date: Tue, 17 Mar 2026 15:46:58 +0100
-X-Gm-Features: AaiRm52Ar4eTSELY32cRhWk6fVzR9fVByAqJmkkGMSWQObdD0qoZjzh1EPm12Ng
-Message-ID: <CAO55cswNtnV4O7CH88WwGWu0+qoaXQyG+iUnY3UE1w8OvsmDuA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] vhost: fix resource leak
-To: Kevin Traynor <ktraynor@redhat.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Chenbo Xia <chenbox@nvidia.com>, 
- Ariel Otilibili <ariel.otilibili@6wind.com>,
- Stephen Hemminger <stephen@networkplumber.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: CdhyxS8vmIngacgEnzUUL7skEXptFdCEiKHWHzLVWXg_1773758830
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,45 +92,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Kevin,
+05/03/2026 01:41, fengchengwen:
+> Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+> 
+> On 3/3/2026 5:18 PM, Liangxing Wang wrote:
+> > Fixes: 2f2f7af66791 ("app/dma-perf: fix crash with IOVA as physical address")
+> > Cc: stable@dpdk.org
+> > 
+> > Signed-off-by: Liangxing Wang <wangliangxing@hygon.cn>
 
-On Thu, Mar 12, 2026 at 11:36=E2=80=AFAM Kevin Traynor <ktraynor@redhat.com=
-> wrote:
->
-> When the return value check for pthread_mutex_init() was removed the
-> out_free label and vhost_user_socket_mem_free() were removed.
->
-> The free is still needed as vsocket was not being freed on out_mutex
-> error path.
->
-> Restore vhost_user_socket_mem_free() on error path.
->
-> Fixes: 4d2aa150769b ("vhost: remove check around mutex init")
-> Cc: stable@dpdk.org
->
-> Signed-off-by: Kevin Traynor <ktraynor@redhat.com>
-> ---
->  lib/vhost/socket.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/lib/vhost/socket.c b/lib/vhost/socket.c
-> index ae95e7e6b0..278a2c01d8 100644
-> --- a/lib/vhost/socket.c
-> +++ b/lib/vhost/socket.c
-> @@ -1037,4 +1037,5 @@ rte_vhost_driver_register(const char *path, uint64_=
-t flags)
->                 VHOST_CONFIG_LOG(path, ERR, "failed to destroy connection=
- mutex");
->         }
-> +       vhost_user_socket_mem_free(vsocket);
->  out:
->         pthread_mutex_unlock(&vhost_user.mutex);
-> --
-> 2.53.0
->
+Applied, thanks.
 
-Reviewed-by: Maxime Coquelin <maxime.coquelin@redhat.com>
 
-Thanks,
-Maxime
 
