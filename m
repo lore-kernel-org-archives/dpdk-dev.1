@@ -2,49 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D65BC10706D6
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Mar 2026 10:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DBB103E160
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Mar 2026 10:54:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF29A402A0;
-	Wed, 18 Mar 2026 11:16:42 +0100 (CET)
-Received: from fhigh-a2-smtp.messagingengine.com
- (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
- by mails.dpdk.org (Postfix) with ESMTP id EB09F4026F
- for <dev@dpdk.org>; Wed, 18 Mar 2026 11:16:40 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 5FAB5140016A;
- Wed, 18 Mar 2026 06:16:40 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B467B4060C;
+	Wed, 18 Mar 2026 11:54:42 +0100 (CET)
+Received: from fout-a6-smtp.messagingengine.com
+ (fout-a6-smtp.messagingengine.com [103.168.172.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 7DBF84060C
+ for <dev@dpdk.org>; Wed, 18 Mar 2026 11:54:41 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.phl.internal (Postfix) with ESMTP id E5F9AEC00C6;
+ Wed, 18 Mar 2026 06:54:40 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Wed, 18 Mar 2026 06:16:40 -0400
+ by phl-compute-03.internal (MEProxy); Wed, 18 Mar 2026 06:54:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773829000;
- x=1773915400; bh=7MV+jHjq+stwVlTt1lUWtbUewFZR43nzY4nShlRI2bs=; b=
- I+D/B8BE2e/pNqbT+SJPHqMfRroQUariyZ6iCMjXBqCU2xxL8EmlpsHSuMXOuuJZ
- VlgrWsx3AJotnCU1rla6mvsKBlOmml8HGORSw+AsUODIhAjpknO/PyYgojUoSYDU
- 52tl6o+etDdjDLyAG3zGft702nmzVkLjMynL9KIBFhJg87w+73po8iyQC56+H1qW
- 5D6syVa2M4bQDAlL/AG5EbTcb4FXQtq1+BYJlSv3O868cZ2+TMtaSQEb/KgFylii
- LFFBgH2fHBsGMB9KUcT9mkyYyw913Wk3BXyW0zloxQqGt5W5T6/p0zERqnmkXaga
- UnrGrWHfhKJt1mR8trsayg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1773831280;
+ x=1773917680; bh=dTJP7YQZpAeX0PxsvRp3cKV/i/YMzMRk8TLcunBCaU4=; b=
+ FYqmwd8wV0wX4byosrWGD3e6NbXaM3IEPmvSsKpwxA9X+8rnTnAM6IzRFnUEuv3P
+ S5528jskLyNWG3AnZLQn7t/oYGXVeiOE/DrIuHx6ewFywttA0N3x5+81FNDDKLq1
+ SlyrQfv6OOSu4TPqFthMJc7mwbJq/M70eFnB0IATv+Ov7mRiLFgrWOTP3q9hYW7v
+ TDyfhRiGR3z87Rwx4thP6F/utgtFeZyCrhSeff3Eedl/ejhsglUvk3QzBEqmiDLZ
+ MLhOnWuE++6w5ro2IxQ4pqolgPDkZu3zVO5qaNZlr1lqzY9diIzo1kb7WfsGbBNo
+ KfzlAYA2RnFsphipshnOTQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773829000; x=
- 1773915400; bh=7MV+jHjq+stwVlTt1lUWtbUewFZR43nzY4nShlRI2bs=; b=N
- g6Z+3l92wXTqUEe/C65aL/O7lAly8sfrhtc9Tla7JzpzQcJqSiJlHxgjfIQlXTiR
- OjdgQQvKEnhCfZfYpY4Hhf5V4F5SZ2BasPRK9uPdj71R1qLMohnkN7MsSXFred0B
- ZAgkcDEzc8hAdm/aCXJORMfmxCT0+3mN+1AOV5xFK3HDqZZZa9djf5zisT8DgzQq
- lXeW1WP7o0oXFhlS39qwJ/yC/X/i504dF34kF1jkU3ciKOf2Dzhzftu3TURWRVMR
- UVs1uvnElMN3Qw7vJH+3QUCvme4xkVvhjbZH13Y/JEFeLU+3DgGd6B3frNCeAPtP
- mmdnJiioGPFgRQAo2hVYA==
-X-ME-Sender: <xms:h3u6aaugWr6Hur5snWB1xKp051trcQo-M9rZYHXGfzvks-20U9XfeA>
- <xme:h3u6aW4CZpLJUp3ihD6F1QSyhUb4EJAKZ4ZAD3GnvUiifMXMrcYxAn3EEczqVSIsU
- smkngKWD1sJO3mKIxuWLTux2n8YVQvRc6BxAiOQlxFZ85CprynVgA>
-X-ME-Received: <xmr:h3u6aTLlg9Ef0VLohMPU-YASJarmce3A7jgxCJ--5IaWhYSlcCB8lTAacJ8oXjT7cSaHbpV3isSx5D2vBEH_nD_n4A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdefkeeiucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773831280; x=
+ 1773917680; bh=dTJP7YQZpAeX0PxsvRp3cKV/i/YMzMRk8TLcunBCaU4=; b=0
+ kVjE+myGkuPae469lD9wguFudMypQtxIUI6AVXk9eE0KW5r+V00CNaE76W9H/cci
+ CavhXK2CX5wjjBfRu+aiPImTWLB56K1DKvUVRYMGZlmEA2VThE+tSAPGrXu5JO7O
+ +wQQa/8hkpphDOvA7kdqPsBWMSxJ0rNFWtqE+nhcHfrpr1zvza+5aFVa4U5tUZnB
+ oz6Bjsuek4qr6OadtMu+QvLb/xEMRIMVaqC8oUUoC7eAETQ4+UKUD3pguVZjLGj3
+ K06X92U5RnevhPp59JsDiKCuyhtGvGmU+2OelptY9BDhS4kvHn1YDp0Sq4ROgwgD
+ NNFscRDFqjvPgH41ZkNfw==
+X-ME-Sender: <xms:cIS6aU3PguLEQcokOQGB8NSYQHbJ8uZ4dpFsyND7IpuaxwBb1sVmhg>
+ <xme:cIS6aWhpv4pdtrj_ostmAgVGsW_BWQAB5UqVHvO2vVTBKJWu-9kfYlfJ4KaEV6i2L
+ u5UQXVvpDfaomNJh_z0_g_O6H2jRAqCXOKlEvJwgONGjDq7_DIPEJo>
+X-ME-Received: <xmr:cIS6aaRZkZwmHWMz2VRitHZS07aJFDOI9YeFoTUcYFLZOMkrrtIvrkzVR1hBLgIwI85yBSe0E7qE1qWMH4c2FYryDQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdefleegucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
@@ -56,24 +56,25 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdefkeeiucetufdote
  epshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohep
  figrnhhgrdhjuhhnlhhonhhgudesiihtvgdrtghomhdrtghnpdhrtghpthhtohepuggvvh
  esughpughkrdhorhhg
-X-ME-Proxy: <xmx:h3u6ae4F9kNuY1zqTgoqoc8jVlfNcQ58dyGY4kUAtLKN1TnUMgJ-Ig>
- <xmx:h3u6aezV3T5dJ6rHhL90d3OQWxeSLEIJe2Zrgl--lA1rOOjQz0BByQ>
- <xmx:h3u6aaaex_pLBkINiuQc19qByxGoiF-cjjXyPtZW0D7dRd1mH-j91A>
- <xmx:h3u6aYS6YsIdwR8XyoFON8fVBs0kLscSMB1YKEcsz2Bu7GdRa39Mhg>
- <xmx:iHu6aSEQk-L_Ue47MtBVd232w_b-vdpAbL-Mga1RKsh8RMr2f1ML-iPh>
+X-ME-Proxy: <xmx:cIS6aXgGZwRTKdB8gczCy1_yb55FY1CU6GVY7Pem2JdAoVMkGpy6Lw>
+ <xmx:cIS6aa4Mr-Ddm9dFoitIZ3KA6iFncV0MRjva2LiVBPKlzWqS1cVIWg>
+ <xmx:cIS6aUA75o5UBAHx1y-PISeJrR7_S1ZymqycVG4fwyJ0eK0XySkoNw>
+ <xmx:cIS6aRbEFT6qQPM4wX63GqapiXPbhXp8kP-7DQ72pt-hjntk8bw9zQ>
+ <xmx:cIS6aeuxyWHMYQ73TtjryfCSshtcqJcW0T0pe9Ss7WtqVDdZ6Zbavn-H>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 18 Mar 2026 06:16:39 -0400 (EDT)
+ 18 Mar 2026 06:54:39 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: stephen@networkplumber.org, Junlong Wang <wang.junlong1@zte.com.cn>
 Cc: dev@dpdk.org
 Subject: Re: [v3,
  5/5] net/zxdh: add support for GENEVE TSO and Rx outer checksum
-Date: Wed, 18 Mar 2026 11:16:37 +0100
-Message-ID: <5668926.29KlJPOoH8@thomas>
-In-Reply-To: <20260318022159.589957-1-wang.junlong1@zte.com.cn>
+Date: Wed, 18 Mar 2026 11:54:38 +0100
+Message-ID: <3292708.fEcJ0Lxnt5@thomas>
+In-Reply-To: <5668926.29KlJPOoH8@thomas>
 References: <20260131062208.2445121-6-wang.junlong1@zte.com.cn>
  <20260318022159.589957-1-wang.junlong1@zte.com.cn>
+ <5668926.29KlJPOoH8@thomas>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,19 +91,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-18/03/2026 03:21, Junlong Wang:
-> Sorry, I have a question.
-> Some time ago, I submitted this patch ([v3,5/5] net/zxdh: add support for GENEVE TSO and Rx outer checksum),
-> which was marked as accepted. However, when I fetched the latest dpd-next-net code, the for-main branch did not contain it.
+18/03/2026 11:16, Thomas Monjalon:
+> 18/03/2026 03:21, Junlong Wang:
+> > Sorry, I have a question.
+> > Some time ago, I submitted this patch ([v3,5/5] net/zxdh: add support for GENEVE TSO and Rx outer checksum),
+> > which was marked as accepted. However, when I fetched the latest dpd-next-net code, the for-main branch did not contain it.
+> > 
+> > Could you please let me know if I need to resubmit this patch?
 > 
-> Could you please let me know if I need to resubmit this patch?
+> It seems that the commit is merged but without its content:
+> 	https://git.dpdk.org/dpdk/commit/?id=2aa7e28b41
+> 
+> It looks like a mistake during a next-net rebase.
+> Stephen, please would you be able to find the original commit
+> that you modified in your reflog?
+> Or I could get it from the mailing list if you didn't change it too much.
 
-It seems that the commit is merged but without its content:
-	https://git.dpdk.org/dpdk/commit/?id=2aa7e28b41
+I've pushed a new commit with the content of the patch:
+	https://git.dpdk.org/dpdk/commit/?id=af40a93fa21
 
-It looks like a mistake during a next-net rebase.
-Stephen, please would you be able to find the original commit
-that you modified in your reflog?
-Or I could get it from the mailing list if you didn't change it too much.
 
 
