@@ -2,46 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3059B103E160
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Mar 2026 11:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2859D103E170
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Mar 2026 12:32:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1209A402A0;
-	Wed, 18 Mar 2026 12:59:25 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 301804026F
- for <dev@dpdk.org>; Wed, 18 Mar 2026 12:59:23 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fbS5X5qZ4zJ46dZ;
- Wed, 18 Mar 2026 19:58:24 +0800 (CST)
-Received: from frapema500001.china.huawei.com (unknown [7.182.19.243])
- by mail.maildlp.com (Postfix) with ESMTPS id 815DD40572;
- Wed, 18 Mar 2026 19:59:22 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500001.china.huawei.com (7.182.19.243) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 18 Mar 2026 12:59:22 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 18 Mar 2026 12:59:22 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Christophe Fontaine <cfontain@redhat.com>, "dev@dpdk.org" <dev@dpdk.org>
-CC: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>
-Subject: RE: [PATCH] bpf/arm64: support packet data load instructions
-Thread-Topic: [PATCH] bpf/arm64: support packet data load instructions
-Thread-Index: AQHctXjoFxWXyTh3g0OC9SlGIQcTMrW0I+zw
-Date: Wed, 18 Mar 2026 11:59:22 +0000
-Message-ID: <b10d0edcdaac4fd9a4f5a0261205670c@huawei.com>
-References: <20260310122045.4057836-1-cfontain@redhat.com>
-In-Reply-To: <20260310122045.4057836-1-cfontain@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.74]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 08BFB4060C;
+	Wed, 18 Mar 2026 13:32:37 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.3])
+ by mails.dpdk.org (Postfix) with ESMTP id 06801402D3
+ for <dev@dpdk.org>; Wed, 18 Mar 2026 13:32:34 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
+ MIME-Version; bh=z8iGcp45B4ahasf4d4xS1GVbPzr3yZ7yzh14phTaA1c=;
+ b=osga6oSUI0s7dIVyby3STO1/x+KG/HswnNBvV3msMRroXWnwlWOFdgh4ASguZ3
+ WPN5cNYgx4s8E2cySqBXicR1ImHAn0e7J2QIM7v26PlINBYP5qRL01JlS9pRyQKw
+ TMEeW3OxhQqPJgLYlN7H0tDpcsp0c5xFw6vixYd8W4+a8=
+Received: from localhost.localdomain (unknown [114.116.198.59])
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgDXr95am7pplRv4Ag--.47359S5;
+ Wed, 18 Mar 2026 20:32:31 +0800 (CST)
+From: Feifei Wang <wff_light@vip.163.com>
+To: dev@dpdk.org
+Cc: Feifei Wang <wangfeifei40@huawei.com>
+Subject: [V5 1/7] net/hinic3: add support for new SPx series NIC
+Date: Wed, 18 Mar 2026 20:31:56 +0800
+Message-ID: <20260318123208.2199-2-wff_light@vip.163.com>
+X-Mailer: git-send-email 2.47.0.windows.2
+In-Reply-To: <20260318123208.2199-1-wff_light@vip.163.com>
+References: <20260131100608.12429-2-wff_light@vip.163.com>
+ <20260318123208.2199-1-wff_light@vip.163.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID: Ac8vCgDXr95am7pplRv4Ag--.47359S5
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJw1kXFyDGFWfKF1DJF15XFb_yoWrGF17pF
+ 1aka9rZr4UKr4jyw1kuw1DAF98J3WfG34jg34SvanY9F4UZF1Yv347GFW8ZrW5t397XFW2
+ 9r47Cws7Ww1jgwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UA8nOUUUUU=
+X-Originating-IP: [114.116.198.59]
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMx8HEWm6m19hIQAA3t
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,101 +51,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi! Thank you for doing this, please see some comments inline.
+From: Feifei Wang <wangfeifei40@huawei.com>=0D
 
-> @@ -3491,6 +3531,7 @@ run_test(const struct bpf_test *tst)
->  	if (ret !=3D 0) {
->  		printf("%s@%d: check_result(%s) failed, error: %d(%s);\n",
->  			__func__, __LINE__, tst->name, ret, strerror(ret));
-> +		return -1;
->  	}
->=20
->  	/* repeat the same test with jit, when possible */
-> @@ -3506,6 +3547,7 @@ run_test(const struct bpf_test *tst)
->  				"error: %d(%s);\n",
->  				__func__, __LINE__, tst->name,
->  				rv, strerror(rv));
-> +			return -1;
->  		}
->  	}
->=20
+Add new device id to suuport Huawei new SPx series Network Adapters.=0D
+=0D
+Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>=0D
+---=0D
+ drivers/net/hinic3/base/hinic3_csr.h  | 18 +++++++++---------=0D
+ drivers/net/hinic3/base/hinic3_hwif.c | 10 +++++++---=0D
+ drivers/net/hinic3/hinic3_ethdev.c    | 14 +++++++-------=0D
+ 3 files changed, 23 insertions(+), 19 deletions(-)=0D
+=0D
+diff --git a/drivers/net/hinic3/base/hinic3_csr.h b/drivers/net/hinic3/base=
+/hinic3_csr.h=0D
+index 94b10601c4..eceb34e9fd 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_csr.h=0D
++++ b/drivers/net/hinic3/base/hinic3_csr.h=0D
+@@ -5,15 +5,15 @@=0D
+ #ifndef _HINIC3_CSR_H_=0D
+ #define _HINIC3_CSR_H_=0D
+ =0D
+-#ifdef CONFIG_SP_VID_DID=0D
+-#define PCI_VENDOR_ID_SPNIC    0x1F3F=0D
+-#define HINIC3_DEV_ID_STANDARD 0x9020=0D
+-#define HINIC3_DEV_ID_VF       0x9001=0D
+-#else=0D
+-#define PCI_VENDOR_ID_HUAWEI   0x19e5=0D
+-#define HINIC3_DEV_ID_STANDARD 0x0222=0D
+-#define HINIC3_DEV_ID_VF       0x375F=0D
+-#endif=0D
++#define PCI_VENDOR_ID_HUAWEI	0x19e5=0D
++=0D
++#define HINIC3_DEV_ID_SP620	0x0222=0D
++#define HINIC3_DEV_ID_VF_SP620	0x375F=0D
++=0D
++#define HINIC3_DEV_ID_SP230	0x0229=0D
++#define HINIC3_DEV_ID_VF_SP230	0x3750=0D
++=0D
++#define HINIC3_DEV_ID_SP920	0x0224=0D
+ =0D
+ /*=0D
+  * Bit30/bit31 for bar index flag.=0D
+diff --git a/drivers/net/hinic3/base/hinic3_hwif.c b/drivers/net/hinic3/bas=
+e/hinic3_hwif.c=0D
+index 080254bf44..c82b223fa0 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_hwif.c=0D
++++ b/drivers/net/hinic3/base/hinic3_hwif.c=0D
+@@ -138,7 +138,11 @@=0D
+ =0D
+ #define HINIC3_GET_REG_ADDR(reg) ((reg) & (HINIC3_REGS_FLAG_MASK))=0D
+ =0D
+-#define HINIC3_IS_VF_DEV(pdev) ((pdev)->id.device_id =3D=3D HINIC3_DEV_ID_=
+VF)=0D
++static inline bool hinic3_is_vf_dev(const struct rte_pci_device *pdev)=0D
++{=0D
++	return pdev->id.device_id =3D=3D HINIC3_DEV_ID_VF_SP620 ||=0D
++	       pdev->id.device_id =3D=3D HINIC3_DEV_ID_VF_SP230;=0D
++}=0D
+ =0D
+ uint32_t=0D
+ hinic3_hwif_read_reg(struct hinic3_hwif *hwif, uint32_t reg)=0D
+@@ -552,7 +556,7 @@ hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)=0D
+ 	void *db_base =3D NULL;=0D
+ 	int cfg_bar;=0D
+ =0D
+-	cfg_bar =3D HINIC3_IS_VF_DEV(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR=0D
++	cfg_bar =3D hinic3_is_vf_dev(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR=0D
+ 					    : HINIC3_PF_PCI_CFG_REG_BAR;=0D
+ 	cfg_regs_base =3D pci_dev->mem_resource[cfg_bar].addr;=0D
+ =0D
+@@ -561,7 +565,7 @@ hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)=0D
+ 			    "mem_resource addr is null, cfg_regs_base is NULL");=0D
+ 		return -EFAULT;=0D
+ 	}=0D
+-	if (!HINIC3_IS_VF_DEV(pci_dev)) {=0D
++	if (!hinic3_is_vf_dev(pci_dev)) {=0D
+ 		mgmt_reg_base =3D=0D
+ 			pci_dev->mem_resource[HINIC3_PCI_MGMT_REG_BAR].addr;=0D
+ 		if (mgmt_reg_base =3D=3D NULL) {=0D
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3=
+_ethdev.c=0D
+index 0f72728a95..da2d6722d2 100644=0D
+--- a/drivers/net/hinic3/hinic3_ethdev.c=0D
++++ b/drivers/net/hinic3/hinic3_ethdev.c=0D
+@@ -3521,13 +3521,13 @@ hinic3_dev_uninit(struct rte_eth_dev *dev)=0D
+ }=0D
+ =0D
+ static const struct rte_pci_id pci_id_hinic3_map[] =3D {=0D
+-#ifdef CONFIG_SP_VID_DID=0D
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_STANDARD)},=0D
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_VF)},=0D
+-#else=0D
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_STANDARD)},=0D
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF)},=0D
+-#endif=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP620)},=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF_SP620)},=0D
++=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP230)},=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF_SP230)},=0D
++=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP920)},=0D
+ =0D
+ 	{.vendor_id =3D 0},=0D
+ };=0D
+-- =0D
+2.45.1.windows.1=0D
+=0D
 
-All return values were OR-ed, so adding early return is not strictly necess=
-ary.
-
-The real problem is JIT tests being skipped altogether if jit.func =3D=3D N=
-ULL, and
-it still remains. We need to disallow empty jit.func on platforms with know=
-n
-working JIT.
-
-(I'd ask for many more tests, but not sure it's fair since they aren't real=
-ly
-platform-dependent.)
-
-// snip to implementation
-
-> +static void
-> +emit_ld_mbuf(struct a64_jit_ctx *ctx, uint32_t op, uint8_t tmp1, uint8_t=
- tmp2,
-> +	uint8_t src, uint32_t imm)
-
-Handling immediate as unsigned is questionable, especially in the BPF_IND c=
-ase
-it may produce incorrect results.
-
-To make things worse, `__rte_pktmbuf_read` is also buggy when passed very l=
-arge
-lengths (again, technically not ARM eBPF fault).
-
-> +{
-> +	uint8_t r0 =3D ebpf_to_a64_reg(ctx, EBPF_REG_0);
-> +	uint8_t r6 =3D ebpf_to_a64_reg(ctx, EBPF_REG_6);
-> +	uint32_t mode =3D BPF_MODE(op);
-> +	uint32_t opsz =3D BPF_SIZE(op);
-> +	uint32_t sz =3D bpf_size(opsz);
-> +	int16_t jump_to_epilogue;
-> +
-> +	/* r0 =3D mbuf (R6) */
-> +	emit_mov_64(ctx, A64_R(0), r6);
-> +
-> +	/* r1 =3D off: for ABS use imm, for IND use src + imm */
-> +	if (mode =3D=3D BPF_ABS) {
-> +		emit_mov_imm(ctx, 1, A64_R(1), imm);
-> +	} else {
-> +		emit_mov_imm(ctx, 1, tmp2, imm);
-> +		emit_add(ctx, 1, tmp2, src);
-> +		emit_mov_64(ctx, A64_R(1), tmp2);
-> +	}
-> +
-> +	/* r2 =3D len */
-> +	emit_mov_imm(ctx, 1, A64_R(2), sz);
-> +
-> +	/* r3 =3D buf (SP) */
-> +	emit_mov_64(ctx, A64_R(3), A64_SP);
-> +
-> +	/* call __rte_pktmbuf_read */
-> +	emit_call(ctx, tmp1, __rte_pktmbuf_read);
-> +	/* check return value of __rte_pktmbuf_read */
-> +	emit_cbnz(ctx, 1, A64_R(0), 3);
-> +	emit_mov_imm(ctx, 1, r0, 0);
-> +	jump_to_epilogue =3D (ctx->program_start + ctx->program_sz) - ctx->idx;
-> +	emit_b(ctx, jump_to_epilogue);
-
-Could we call emit_return_zero_if_src_zero here instead?
-
-> +
-> +	/* r0 points to the data, load 1/2/4 bytes */
-> +	emit_ldr(ctx, opsz, A64_R(0), A64_R(0), A64_ZR);
-> +	if (sz !=3D sizeof(uint8_t))
-> +		emit_be(ctx, A64_R(0), sz * CHAR_BIT);
-> +	emit_mov_64(ctx, r0, A64_R(0));
-> +}
-> +
-
-I would also pass final verdict on ARM code to ARM folks. To my untrained e=
-ye
-it looks correct apart from the signed immediate issue. Optimizations are
-possible, but since we're only implementing slow path for now maybe not wor=
-th
-the effort.
