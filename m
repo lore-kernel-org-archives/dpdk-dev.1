@@ -2,59 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5ED10775E7
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Mar 2026 16:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F96110775E7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Mar 2026 16:37:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 762914026F;
-	Wed, 18 Mar 2026 17:36:44 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id B901B40150
- for <dev@dpdk.org>; Wed, 18 Mar 2026 17:36:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1773851802;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=fHORCoI/2cU1iS9AH4drLeK8BDfXr8yP910ymzeVt0M=;
- b=es6S+6PGPvqVh/N2tp2L/7RsOtHwqD4YkhvQ1sv1DdysfeRm3pyvJv4LxQtE7MQ0dM4EhY
- Rd/AHbZQXGA2Dnr8JZE/3gDExDBgaLSOPxuebELMZk77WDMH1OKkNXAgf9Z10timZFhlhU
- Zq5K3nW2lao8YvNAx+sWO4qDeXr6zL0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-451-s8mw--6yPZyZEToeUJpuKQ-1; Wed,
- 18 Mar 2026 12:36:41 -0400
-X-MC-Unique: s8mw--6yPZyZEToeUJpuKQ-1
-X-Mimecast-MFC-AGG-ID: s8mw--6yPZyZEToeUJpuKQ_1773851799
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1FAAE195608D; Wed, 18 Mar 2026 16:36:39 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.33.173])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 38E451955F19; Wed, 18 Mar 2026 16:36:34 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: stable@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
- Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
- Adrien Mazarguil <adrien.mazarguil@6wind.com>,
- Nelio Laranjeiro <nelio.laranjeiro@6wind.com>
-Subject: [PATCH] common/mlx5: fix mac deletion on Linux
-Date: Wed, 18 Mar 2026 17:36:28 +0100
-Message-ID: <20260318163628.609968-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 7D1434026F;
+	Wed, 18 Mar 2026 17:37:29 +0100 (CET)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 32DFC40150
+ for <dev@dpdk.org>; Wed, 18 Mar 2026 17:37:28 +0100 (CET)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 140B320849;
+ Wed, 18 Mar 2026 17:37:28 +0100 (CET)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: UlN86Pcnb7ODNrplq90HE5uKp-3BjM07brqx_NHjDF0_1773851799
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH] bpf/arm64: support packet data load instructions
+Date: Wed, 18 Mar 2026 17:37:26 +0100
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F657A1@smartserver.smartshare.dk>
+In-Reply-To: <ea715be437174fa782f3ceb031debe0d@huawei.com>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+Thread-Topic: [PATCH] bpf/arm64: support packet data load instructions
+Thread-Index: AQHctXjoFxWXyTh3g0OC9SlGIQcTMrW0I+zwgAAX+/CAAAZ24IAABL0ggAAWnQCAABUq0IAACOLg
+References: <20260310122045.4057836-1-cfontain@redhat.com><b10d0edcdaac4fd9a4f5a0261205670c@huawei.com><98CBD80474FA8B44BF855DF32C47DC35F6579F@smartserver.smartshare.dk><4942136acefe4fc3b5157191749fe3d5@huawei.com><98CBD80474FA8B44BF855DF32C47DC35F657A0@smartserver.smartshare.dk>
+ <CAHVr2NmXSAhKO6EGjh_DDvdaUShPTWH-Eb1y1VrriQBAVnay4w@mail.gmail.com>
+ <ea715be437174fa782f3ceb031debe0d@huawei.com>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Marat Khalili" <marat.khalili@huawei.com>,
+ "Christophe Fontaine" <cfontain@redhat.com>
+Cc: <dev@dpdk.org>, "Konstantin Ananyev" <konstantin.ananyev@huawei.com>,
+ "Wathsala Vithanage" <wathsala.vithanage@arm.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,59 +50,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Re-enable debug logs unconditionally, this helps understanding why mac
-deletions were silently failing (while a bridge fdb del command was
-working fine).
-
-testpmd> mac_addr add 0 FA:35:44:3F:58:31
-testpmd> mac_addr remove 0 FA:35:44:3F:58:31
-mlx5_common: Interface 35 cannot remove MAC address FA:35:44:3F:58:31
-	Operation not supported
-
-Then, fix mac deletion as the NLM_F_CREATE == 0x200 flag is relevant
-with a RTM_NEWNEIGH op.
-For a RTM_DELNEIGH op, 0x200 == NLM_F_BULK and passing this flag
-makes the deletion fail miserably for a single mac.
-
-Fixes: ccdcba53a3f4 ("net/mlx5: use Netlink to add/remove MAC addresses")
-Cc: stable@dpdk.org
-
-Signed-off-by: David Marchand <david.marchand@redhat.com>
----
- drivers/common/mlx5/linux/mlx5_nl.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/common/mlx5/linux/mlx5_nl.c b/drivers/common/mlx5/linux/mlx5_nl.c
-index eceb3d796f..b50431fb61 100644
---- a/drivers/common/mlx5/linux/mlx5_nl.c
-+++ b/drivers/common/mlx5/linux/mlx5_nl.c
-@@ -581,8 +581,8 @@ mlx5_nl_mac_addr_modify(int nlsk_fd, unsigned int iface_idx,
- 	} req = {
- 		.hdr = {
- 			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ndmsg)),
--			.nlmsg_flags = NLM_F_REQUEST | NLM_F_CREATE |
--				NLM_F_EXCL | NLM_F_ACK,
-+			.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK |
-+				add ? NLM_F_CREATE | NLM_F_EXCL : 0,
- 			.nlmsg_type = add ? RTM_NEWNEIGH : RTM_DELNEIGH,
- 		},
- 		.ndm = {
-@@ -612,7 +612,6 @@ mlx5_nl_mac_addr_modify(int nlsk_fd, unsigned int iface_idx,
- 		goto error;
- 	return 0;
- error:
--#ifdef RTE_PMD_MLX5_DEBUG
- 	{
- 		char m[RTE_ETHER_ADDR_FMT_SIZE];
- 
-@@ -622,7 +621,6 @@ mlx5_nl_mac_addr_modify(int nlsk_fd, unsigned int iface_idx,
- 			iface_idx,
- 			add ? "add" : "remove", m, strerror(rte_errno));
- 	}
--#endif
- 	return -rte_errno;
- }
- 
--- 
-2.53.0
-
+PiA+ID4gSW4gQ2xhc3NpYyBCUEYsIG5lZ2F0aXZlICJrIiBoYXMgc3BlY2lhbCBtZWFuaW5nIGZv
+ciBib3RoIEJQRl9BQlMNCj4gYW5kIEJQRl9JTkQuDQo+ID4gPiBTbyB3ZSBzaG91bGQgY29uc2lk
+ZXIgaXQgaW52YWxpZCBmb3IgYm90aCBjYXNlcy4NCj4gPiA+DQo+ID4gPiBUaGF0IHByZXZlbnRz
+IGFwcGxpY2F0aW9ucyBmcm9tIHVzaW5nIGl0IHRoZSB3YXkgeW91IGRlc2NyaWJlLg0KPiA+ID4g
+QW5kIGl0IHdpbGwgYWxsb3cgdXMgdG8gYWRkIEJQRiBsaWJyYXJ5IHN1cHBvcnQgZm9yIExpbnV4
+LQ0KPiBjb21wYXRpYmxlIHNwZWNpYWwgbWVhbmluZ3MgbGF0ZXIsIHdpdGhvdXQNCj4gPiBicmVh
+a2luZyB0aGUgQUJJLg0KPiA+ID4NCj4gPg0KPiA+IEFyZW4ndCB0aGVzZSBpbnZhbGlkIG9mZnNl
+dHMgYWxyZWFkeSB0YWtlbiBjYXJlIGR1cmluZyB0aGUgc3ludGF4DQo+ID4gY2hlY2sgd2hlbiB3
+ZSB2YWxpZGF0ZSB0aGUgQlBGIHByb2dyYW0gPw0KPiA+IGluIGJwZl92YWxpZGF0ZS5jICsxNDk5
+Og0KPiA+ICAgICAgICAgLyogbG9hZCBhYnNvbHV0ZSBpbnN0cnVjdGlvbnMgKi8NCj4gPiAgICAg
+ICAgIFsoQlBGX0xEIHwgQlBGX0FCUyB8IEJQRl9CKV0gPSB7DQo+ID4gICAgICAgICAgICAgICAg
+IC5tYXNrID0gey4gZHJlZyA9IFpFUk9fUkVHLCAuc3JlZyA9IFpFUk9fUkVHfSwNCj4gPiAgICAg
+ICAgICAgICAgICAgLm9mZiA9IHsgLm1pbiA9IDAsIC5tYXggPSAwfSwNCj4gPiAgICAgICAgICAg
+ICAgICAgLmltbSA9IHsgLm1pbiA9IDAsIC5tYXggPSBJTlQzMl9NQVh9LA0KPiA+ICAgICAgICAg
+ICAgICAgICAuZXZhbCA9IGV2YWxfbGRfbWJ1ZiwNCj4gPiAgICAgICAgIH0sDQo+ID4NCj4gPiBJ
+SVVDLCBhcyBfX3J0ZV9icGZfdmFsaWRhdGUgZmFpbHMgd2hlbiB3ZSBjYWwgcnRlX2JwZl9sb2Fk
+ICggaW4NCj4gPiBicGZfbG9hZC5jICsxMTMpLCB3ZSBjYW4ndCBldmVuIGludGVycHJldCB0aGUg
+Y0JQRiBwcm9ncmFtLg0KPiANCj4gR29vZCBwb2ludCwgd2UgY2FuIHByb2JhYmx5IGNvbnNpZGVy
+IEJQRl9BQlMgY2FzZSBjb3ZlcmVkIGJ5IHRoaXMuDQoNCkFncmVlLg0KDQo+IA0KPiBGb3IgQlBG
+X0lORCBob3dldmVyIGl0IGRvZXMgbm90IHNlZW0gdG8gZXhjbHVkZSBhbnkgdmFsdWVzLCBhbmQg
+ZXZlbiBpZg0KPiBpdCBkaWQNCj4gd2UgZG9uJ3Qga25vdyB3aGF0J3MgaW4gdGhlIHJlZ2lzdGVy
+LiBTcGVha2luZyBvZiB3aGljaCwgSSBqdXN0IG5vdGljZWQNCj4gdGhhdA0KPiB3ZSdyZSB0cnVu
+Y2F0aW5nIGl0Lg0KPiANCj4gSSBzdWdnZXN0IHRoZSBmb2xsb3dpbmcgbG9naWMgaW4gcHNldWRv
+LWNvZGU6DQo+IA0KPiBzdGF0aWMgdm9pZA0KPiBlbWl0X2xkX21idWYoc3RydWN0IGE2NF9qaXRf
+Y3R4ICpjdHgsIHVpbnQzMl90IG9wLCB1aW50OF90IHRtcDEsDQo+IHVpbnQ4X3QgdG1wMiwNCj4g
+CXVpbnQ4X3Qgc3JjLCBpbnQzMl90IGltbSkNCj4gew0KPiAJLy8gLi4uDQo+IA0KPiAJLyogcjEg
+PSBvZmY6IGZvciBBQlMgdXNlIGltbSwgZm9yIElORCB1c2Ugc3JjICsgaW1tICovDQo+IAlpZiAo
+bW9kZSA9PSBCUEZfQUJTKSB7DQo+IAkJYXNzZXJ0IGltbSA+PSAwLCAidmVyaWZpZWQgYnkgdmVy
+aWZpZXIiDQo+IAkJZW1pdCBNT1YgVzEsICM8aW1tPg0KPiAJfSBlbHNlIHsNCj4gCQkvKiBhZGQg
+c2lnbmVkIGltbSB0byB0aGUgc291cmNlIHJlZ2lzdGVyICovDQo+IAkJZW1pdChzKSBYMSA9IHNy
+YyArICM8aW1tPg0KPiAJCS8qIHZlcmlmeSBkeW5hbWljYWxseSB0aGF0IG9mZnNldCBpcyB3aXRo
+aW4gdGhlIGRvbWFpbiBvZg0KPiBfX3J0ZV9wa3RtYnVmX3JlYWQgKi8NCj4gCQllbWl0KHMpIGp1
+bXBfdG9fZXBpbG9ndWUgaWYgWDEgPHMgMCB8fCBYMSA+IElOVDMyX01BWA0KPiAJfQ0KPiANCj4g
+CS8vIC4uLg0KPiB9DQoNCkkgZG9uJ3Qga25vdyBpZiBpdCdzIHRoZSBzdW0gb2Ygc3JjK2ltbSB0
+aGF0IGRldGVybWluZXMgc3BlY2lhbCBtZWFuaW5nLCBvciBpdCdzIHRoZSBpbW0gaXRzZWxmLg0K
+SWYgaXQncyB0aGUgaW1tIGl0c2VsZiwgYSBzaW1wbGUgZml4IHdvdWxkIGJlIHRvIHVwZGF0ZSB0
+aGUgdmFsaWRhdG9yJ3MgLmltbS5tYXggdmFsdWVzIGZvciBCUEZfSU5EIGZyb20gVUlOVDMyX01B
+WCB0byBJTlQzMl9NQVguDQoNCg0K
