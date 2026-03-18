@@ -2,53 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BAB10775E6
-	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Mar 2026 16:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA5ED10775E7
+	for <dpdk-dev@archiver.kernel.org>; Wed, 18 Mar 2026 16:36:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D69864026F;
-	Wed, 18 Mar 2026 17:16:58 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 0436440150
- for <dev@dpdk.org>; Wed, 18 Mar 2026 17:16:55 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.150])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fbYpg1YhmzJ46bM;
- Thu, 19 Mar 2026 00:15:55 +0800 (CST)
-Received: from frapema500002.china.huawei.com (unknown [7.182.19.148])
- by mail.maildlp.com (Postfix) with ESMTPS id 380DD4056B;
- Thu, 19 Mar 2026 00:16:53 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500002.china.huawei.com (7.182.19.148) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 18 Mar 2026 17:16:53 +0100
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 18 Mar 2026 17:16:52 +0100
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Christophe Fontaine <cfontain@redhat.com>,
- =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>
-Subject: RE: [PATCH] bpf/arm64: support packet data load instructions
-Thread-Topic: [PATCH] bpf/arm64: support packet data load instructions
-Thread-Index: AQHctXjoFxWXyTh3g0OC9SlGIQcTMrW0I+zwgAAX+/CAAAZ24IAABL0ggAAWnQCAABUq0A==
-Date: Wed, 18 Mar 2026 16:16:52 +0000
-Message-ID: <ea715be437174fa782f3ceb031debe0d@huawei.com>
-References: <20260310122045.4057836-1-cfontain@redhat.com>
- <b10d0edcdaac4fd9a4f5a0261205670c@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F6579F@smartserver.smartshare.dk>
- <4942136acefe4fc3b5157191749fe3d5@huawei.com>
- <98CBD80474FA8B44BF855DF32C47DC35F657A0@smartserver.smartshare.dk>
- <CAHVr2NmXSAhKO6EGjh_DDvdaUShPTWH-Eb1y1VrriQBAVnay4w@mail.gmail.com>
-In-Reply-To: <CAHVr2NmXSAhKO6EGjh_DDvdaUShPTWH-Eb1y1VrriQBAVnay4w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.74]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 762914026F;
+	Wed, 18 Mar 2026 17:36:44 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id B901B40150
+ for <dev@dpdk.org>; Wed, 18 Mar 2026 17:36:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773851802;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=fHORCoI/2cU1iS9AH4drLeK8BDfXr8yP910ymzeVt0M=;
+ b=es6S+6PGPvqVh/N2tp2L/7RsOtHwqD4YkhvQ1sv1DdysfeRm3pyvJv4LxQtE7MQ0dM4EhY
+ Rd/AHbZQXGA2Dnr8JZE/3gDExDBgaLSOPxuebELMZk77WDMH1OKkNXAgf9Z10timZFhlhU
+ Zq5K3nW2lao8YvNAx+sWO4qDeXr6zL0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-451-s8mw--6yPZyZEToeUJpuKQ-1; Wed,
+ 18 Mar 2026 12:36:41 -0400
+X-MC-Unique: s8mw--6yPZyZEToeUJpuKQ-1
+X-Mimecast-MFC-AGG-ID: s8mw--6yPZyZEToeUJpuKQ_1773851799
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 1FAAE195608D; Wed, 18 Mar 2026 16:36:39 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.33.173])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 38E451955F19; Wed, 18 Mar 2026 16:36:34 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>,
+ Bing Zhao <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
+ Adrien Mazarguil <adrien.mazarguil@6wind.com>,
+ Nelio Laranjeiro <nelio.laranjeiro@6wind.com>
+Subject: [PATCH] common/mlx5: fix mac deletion on Linux
+Date: Wed, 18 Mar 2026 17:36:28 +0100
+Message-ID: <20260318163628.609968-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: UlN86Pcnb7ODNrplq90HE5uKp-3BjM07brqx_NHjDF0_1773851799
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,35 +68,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiA+IEluIENsYXNzaWMgQlBGLCBuZWdhdGl2ZSAiayIgaGFzIHNwZWNpYWwgbWVhbmluZyBmb3Ig
-Ym90aCBCUEZfQUJTIGFuZCBCUEZfSU5ELg0KPiA+IFNvIHdlIHNob3VsZCBjb25zaWRlciBpdCBp
-bnZhbGlkIGZvciBib3RoIGNhc2VzLg0KPiA+DQo+ID4gVGhhdCBwcmV2ZW50cyBhcHBsaWNhdGlv
-bnMgZnJvbSB1c2luZyBpdCB0aGUgd2F5IHlvdSBkZXNjcmliZS4NCj4gPiBBbmQgaXQgd2lsbCBh
-bGxvdyB1cyB0byBhZGQgQlBGIGxpYnJhcnkgc3VwcG9ydCBmb3IgTGludXgtY29tcGF0aWJsZSBz
-cGVjaWFsIG1lYW5pbmdzIGxhdGVyLCB3aXRob3V0DQo+IGJyZWFraW5nIHRoZSBBQkkuDQo+ID4N
-Cj4gDQo+IEFyZW4ndCB0aGVzZSBpbnZhbGlkIG9mZnNldHMgYWxyZWFkeSB0YWtlbiBjYXJlIGR1
-cmluZyB0aGUgc3ludGF4DQo+IGNoZWNrIHdoZW4gd2UgdmFsaWRhdGUgdGhlIEJQRiBwcm9ncmFt
-ID8NCj4gaW4gYnBmX3ZhbGlkYXRlLmMgKzE0OTk6DQo+ICAgICAgICAgLyogbG9hZCBhYnNvbHV0
-ZSBpbnN0cnVjdGlvbnMgKi8NCj4gICAgICAgICBbKEJQRl9MRCB8IEJQRl9BQlMgfCBCUEZfQild
-ID0gew0KPiAgICAgICAgICAgICAgICAgLm1hc2sgPSB7LiBkcmVnID0gWkVST19SRUcsIC5zcmVn
-ID0gWkVST19SRUd9LA0KPiAgICAgICAgICAgICAgICAgLm9mZiA9IHsgLm1pbiA9IDAsIC5tYXgg
-PSAwfSwNCj4gICAgICAgICAgICAgICAgIC5pbW0gPSB7IC5taW4gPSAwLCAubWF4ID0gSU5UMzJf
-TUFYfSwNCj4gICAgICAgICAgICAgICAgIC5ldmFsID0gZXZhbF9sZF9tYnVmLA0KPiAgICAgICAg
-IH0sDQo+IA0KPiBJSVVDLCBhcyBfX3J0ZV9icGZfdmFsaWRhdGUgZmFpbHMgd2hlbiB3ZSBjYWwg
-cnRlX2JwZl9sb2FkICggaW4NCj4gYnBmX2xvYWQuYyArMTEzKSwgd2UgY2FuJ3QgZXZlbiBpbnRl
-cnByZXQgdGhlIGNCUEYgcHJvZ3JhbS4NCg0KR29vZCBwb2ludCwgd2UgY2FuIHByb2JhYmx5IGNv
-bnNpZGVyIEJQRl9BQlMgY2FzZSBjb3ZlcmVkIGJ5IHRoaXMuDQoNCkZvciBCUEZfSU5EIGhvd2V2
-ZXIgaXQgZG9lcyBub3Qgc2VlbSB0byBleGNsdWRlIGFueSB2YWx1ZXMsIGFuZCBldmVuIGlmIGl0
-IGRpZA0Kd2UgZG9uJ3Qga25vdyB3aGF0J3MgaW4gdGhlIHJlZ2lzdGVyLiBTcGVha2luZyBvZiB3
-aGljaCwgSSBqdXN0IG5vdGljZWQgdGhhdA0Kd2UncmUgdHJ1bmNhdGluZyBpdC4NCg0KSSBzdWdn
-ZXN0IHRoZSBmb2xsb3dpbmcgbG9naWMgaW4gcHNldWRvLWNvZGU6DQoNCnN0YXRpYyB2b2lkIA0K
-ZW1pdF9sZF9tYnVmKHN0cnVjdCBhNjRfaml0X2N0eCAqY3R4LCB1aW50MzJfdCBvcCwgdWludDhf
-dCB0bXAxLCB1aW50OF90IHRtcDIsIA0KCXVpbnQ4X3Qgc3JjLCBpbnQzMl90IGltbSkNCnsNCgkv
-LyAuLi4NCg0KCS8qIHIxID0gb2ZmOiBmb3IgQUJTIHVzZSBpbW0sIGZvciBJTkQgdXNlIHNyYyAr
-IGltbSAqLw0KCWlmIChtb2RlID09IEJQRl9BQlMpIHsNCgkJYXNzZXJ0IGltbSA+PSAwLCAidmVy
-aWZpZWQgYnkgdmVyaWZpZXIiDQoJCWVtaXQgTU9WIFcxLCAjPGltbT4NCgl9IGVsc2Ugew0KCQkv
-KiBhZGQgc2lnbmVkIGltbSB0byB0aGUgc291cmNlIHJlZ2lzdGVyICovDQoJCWVtaXQocykgWDEg
-PSBzcmMgKyAjPGltbT4NCgkJLyogdmVyaWZ5IGR5bmFtaWNhbGx5IHRoYXQgb2Zmc2V0IGlzIHdp
-dGhpbiB0aGUgZG9tYWluIG9mIF9fcnRlX3BrdG1idWZfcmVhZCAqLw0KCQllbWl0KHMpIGp1bXBf
-dG9fZXBpbG9ndWUgaWYgWDEgPHMgMCB8fCBYMSA+IElOVDMyX01BWA0KCX0NCg0KCS8vIC4uLg0K
-fQ0K
+Re-enable debug logs unconditionally, this helps understanding why mac
+deletions were silently failing (while a bridge fdb del command was
+working fine).
+
+testpmd> mac_addr add 0 FA:35:44:3F:58:31
+testpmd> mac_addr remove 0 FA:35:44:3F:58:31
+mlx5_common: Interface 35 cannot remove MAC address FA:35:44:3F:58:31
+	Operation not supported
+
+Then, fix mac deletion as the NLM_F_CREATE == 0x200 flag is relevant
+with a RTM_NEWNEIGH op.
+For a RTM_DELNEIGH op, 0x200 == NLM_F_BULK and passing this flag
+makes the deletion fail miserably for a single mac.
+
+Fixes: ccdcba53a3f4 ("net/mlx5: use Netlink to add/remove MAC addresses")
+Cc: stable@dpdk.org
+
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+ drivers/common/mlx5/linux/mlx5_nl.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/common/mlx5/linux/mlx5_nl.c b/drivers/common/mlx5/linux/mlx5_nl.c
+index eceb3d796f..b50431fb61 100644
+--- a/drivers/common/mlx5/linux/mlx5_nl.c
++++ b/drivers/common/mlx5/linux/mlx5_nl.c
+@@ -581,8 +581,8 @@ mlx5_nl_mac_addr_modify(int nlsk_fd, unsigned int iface_idx,
+ 	} req = {
+ 		.hdr = {
+ 			.nlmsg_len = NLMSG_LENGTH(sizeof(struct ndmsg)),
+-			.nlmsg_flags = NLM_F_REQUEST | NLM_F_CREATE |
+-				NLM_F_EXCL | NLM_F_ACK,
++			.nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK |
++				add ? NLM_F_CREATE | NLM_F_EXCL : 0,
+ 			.nlmsg_type = add ? RTM_NEWNEIGH : RTM_DELNEIGH,
+ 		},
+ 		.ndm = {
+@@ -612,7 +612,6 @@ mlx5_nl_mac_addr_modify(int nlsk_fd, unsigned int iface_idx,
+ 		goto error;
+ 	return 0;
+ error:
+-#ifdef RTE_PMD_MLX5_DEBUG
+ 	{
+ 		char m[RTE_ETHER_ADDR_FMT_SIZE];
+ 
+@@ -622,7 +621,6 @@ mlx5_nl_mac_addr_modify(int nlsk_fd, unsigned int iface_idx,
+ 			iface_idx,
+ 			add ? "add" : "remove", m, strerror(rte_errno));
+ 	}
+-#endif
+ 	return -rte_errno;
+ }
+ 
+-- 
+2.53.0
+
