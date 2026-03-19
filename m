@@ -2,49 +2,61 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 032BE1088E58
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 01:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 247561088E65
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 02:50:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E8F2E402AC;
-	Thu, 19 Mar 2026 02:36:00 +0100 (CET)
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
- [113.46.200.223])
- by mails.dpdk.org (Postfix) with ESMTP id 8F776402A7;
- Thu, 19 Mar 2026 02:35:59 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id EC687402A7;
+	Thu, 19 Mar 2026 03:50:31 +0100 (CET)
+Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
+ [113.46.200.219])
+ by mails.dpdk.org (Postfix) with ESMTP id DB3474013F
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 03:50:29 +0100 (CET)
 dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=PFPvTFwcWyYnno0GsJwKpMcdpmwEYTwBOl35FES/RHU=;
- b=GIC+wIxFPXDhh1eGh7E3/Vyn/K+4xR5IQk3RmViHwOIdH0U7cDaAw49XqvBmywg8eV+4VlO5q
- lQ12fJbIhisFZ8i07VHSfdpnnRmA2vygYtFL5Pq27G3BD7XzJSnQfzgZlNox4C7jfA0ZK9cUNJN
- KZ7eRXQgsvLiKSYhwmOiUtw=
-Received: from mail.maildlp.com (unknown [172.19.163.127])
- by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4fbp744JdtzmV65;
- Thu, 19 Mar 2026 09:30:56 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 8514F402AB;
- Thu, 19 Mar 2026 09:35:57 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ bh=bqeG1YbENFa5Kn1YnUiQhcig00c34+ts8oyZQfLxBEY=;
+ b=TPa5C0i4mEey40v/JWaVdi699dtUeHwXMeH+vrne/exhG0uMZhHRLFJEUaSKJTZhbOBYQk/zm
+ 8b1tauhrxgeEPkCpVGwMK9KcXVjbvcRfxnSqbIJVOK7lkFX+xWz4W2RfA3Bo6kQF18AuwcM4akm
+ +t/ddkjBU0UKCyyujbLhgAI=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+ by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4fbqn10lHYz1prMV;
+ Thu, 19 Mar 2026 10:45:25 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id 55E024056B;
+ Thu, 19 Mar 2026 10:50:27 +0800 (CST)
+Received: from kwepemn200018.china.huawei.com (7.202.194.141) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 19 Mar 2026 09:35:57 +0800
-Message-ID: <93153650-162e-40ca-ab72-82c0faf4a3a1@huawei.com>
-Date: Thu, 19 Mar 2026 09:35:56 +0800
+ 15.2.1544.11; Thu, 19 Mar 2026 10:50:27 +0800
+Received: from kwepemn500008.china.huawei.com (7.202.194.149) by
+ kwepemn200018.china.huawei.com (7.202.194.141) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 19 Mar 2026 10:50:26 +0800
+Received: from kwepemn500008.china.huawei.com ([7.202.194.149]) by
+ kwepemn500008.china.huawei.com ([7.202.194.149]) with mapi id 15.02.1544.011; 
+ Thu, 19 Mar 2026 10:50:26 +0800
+From: "wangfeifei (J)" <wangfeifei40@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, Feifei Wang
+ <wff_light@vip.163.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, "chenyi (CY)" <chenyi221@huawei.com>,
+ zengweiliang zengweiliang <zengweiliang.zengweiliang@huawei.com>
+Subject: =?gb2312?B?u9i4tDogW1YyIDAvN10gaGluaWMzIGNoYW5nZSBmb3Igc3VwcG9ydCBuZXcg?=
+ =?gb2312?Q?SPx_NIC?=
+Thread-Topic: [V2 0/7] hinic3 change for support new SPx NIC
+Thread-Index: AQHctUsBK2CyKUlmY0iIVP3yFO/P/LWwxz6AgARP3GA=
+Date: Thu, 19 Mar 2026 02:50:26 +0000
+Message-ID: <2f53819ae73642a2b4837cef530c15e9@huawei.com>
+References: <20260131100608.12429-2-wff_light@vip.163.com>
+ <20260316134335.1640-1-wff_light@vip.163.com>
+ <20260316084553.0b732977@phoenix.local>
+In-Reply-To: <20260316084553.0b732977@phoenix.local>
+Accept-Language: en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [100.105.34.252]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] app/testpmd: fix DCB forwarding TC mismatch handling
-To: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>, <dev@dpdk.org>, 
- <bruce.richardson@intel.com>, <aman.deep.singh@intel.com>
-CC: <shaiq.wani@intel.com>, <stable@dpdk.org>
-References: <20260311083751.1107404-1-chaitanyababux.talluri@intel.com>
- <20260318061720.1885589-1-chaitanyababux.talluri@intel.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260318061720.1885589-1-chaitanyababux.talluri@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,70 +70,130 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
-
-On 3/18/2026 2:17 PM, Talluri Chaitanyababu wrote:
-> Fix DCB forwarding issues when RX and TX ports are configured with
-> different numbers of traffic classes (TCs).
-
-Suggest: Fix DCB forwarding failed when the number of TCs on ports is inconsistent.
-
-And RX/TX -> Rx/Tx
-
-> 
-> When ports have asymmetric TC configurations (e.g. 4 TCs on RX and 8 TCs
-> on TX), the forwarding logic iterates based only on the RX port TC count.
-
-e.g. 4 TCs on RX and 8 TCs on TX
-suggest replaced with: e.g. 2 ports, port0 has 4 TCs and port1 has 8 TCs
-
-And suggest add the testpmd command in commit-log like below so that others could reproduce:
-x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-20 -n 4 -a 0000:31:00.0 -a 0000:4b:00.0 --file-prefix=testpmd1 -- -i --rxq=256 --txq=256 --nb-cores=16 --total-num-mbufs=600000
-port stop all
-port config 0 dcb vt off 8 pfc on
-port config 1 dcb vt off 8 pfc on
-port start all
-port stop all
-port config 0 dcb vt off 4 pfc on
-
-> This can lead to accessing invalid TX TC entries and incorrect queue
-> mapping, potentially causing multiple threads to operate on the same
-> queues.
-
-Suggest: This can lead to accessing invalid TX TC entries and incorrect queue
- mapping and which will result SIGFPE exception.
-
-> 
-> Additionally, the existing VMDq pool guard in dcb_fwd_config_setup()
-> only checks RX queue counts and does not consider the case where the TX
-> port has no queues for a given pool/TC combination.
-> 
-> Fix this by:
-> 1. Introducing an effective TC count using RTE_MIN() of RX and TX TC
->    values, ensuring forwarding only operates on valid TCs supported by
->    both ports.
-> 2. Updating the loop condition to use the effective TC count instead of
->    only the RX TC count.
-> 3. Extending validation in dcb_fwd_check_cores_per_tc() to ensure both RX
->    and TX queue counts are divisible by dcb_fwd_tc_cores, preventing
->    invalid configurations.
-
-Suggest 1&2 as one commit, and 3 as another commit.
-
-> 
-> This ensures correct queue mapping and avoids issues when switching
-> between different DCB configurations across ports.
-> 
-> Fixes: 945e9be0a803 ("app/testpmd: support multi-cores process one TC")
-
-The SIGFPE error was not introduced by this commit as I pointed out in early reply to v2.
-I just suggest you split two commit, the second commit could adds this fix tag, but as the
-first commit please find the real commit which introduce the bug.
-
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-> Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
-> ---
-
-...
+DQoNCj4gLS0tLS3Tyrz+1K28/i0tLS0tDQo+ILeivP7IyzogU3RlcGhlbiBIZW1taW5nZXIgPHN0
+ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KPiC3osvNyrG85DogMjAyNsTqM9TCMTbI1SAyMzo0
+Ng0KPiDK1bz+yMs6IEZlaWZlaSBXYW5nIDx3ZmZfbGlnaHRAdmlwLjE2My5jb20+DQo+ILOty806
+IGRldkBkcGRrLm9yZzsgY2hlbnlpIChDWSkgPGNoZW55aTIyMUBodWF3ZWkuY29tPg0KPiDW98zi
+OiBSZTogW1YyIDAvN10gaGluaWMzIGNoYW5nZSBmb3Igc3VwcG9ydCBuZXcgU1B4IE5JQw0KPiAN
+Cj4gT24gTW9uLCAxNiBNYXIgMjAyNiAyMTo0MzoyMiArMDgwMA0KPiBGZWlmZWkgV2FuZyA8d2Zm
+X2xpZ2h0QHZpcC4xNjMuY29tPiB3cm90ZToNCj4gDQo+ID4gRnJvbTogY2hlbnlpMjIxIDxjaGVu
+eWkyMjFAaHVhd2VpLmNvbT4NCj4gPg0KPiA+IENoYW5nZSBoaW5pYzMgZHJpdmVyIHRvIHN1cHBv
+cnQgSHVhd2VpIG5ldyBTUHggc2VyaWVzIE5JQy4NCj4gPg0KPiA+IHYyOg0KPiA+IC0tZml4IGJ1
+aWxkIGlzc3Vlcw0KPiA+DQo+ID4gRmVpZmVpIFdhbmcgKDcpOg0KPiA+ICAgbmV0L2hpbmljMzog
+YWRkIHN1cHBvcnQgZm9yIG5ldyBTUHggc2VyaWVzIE5JQw0KPiA+ICAgbmV0L2hpbmljMzogYWRk
+IGVuaGFuY2UgY21kcSBzdXBwb3J0IGZvciBuZXcgU1B4IHNlcmllcyBOSUMNCj4gPiAgIG5ldC9o
+aW5pYzM6IHVzZSBkaWZmZXJlbnQgY2FsbGJhY2sgZnVuYyB0byBzcGxpdCBuZXcvb2xkIGNtZHEN
+Cj4gPiAgICAgb3BlcmF0aW9ucw0KPiA+ICAgbmV0L2hpbmljMzogYWRkIGZ1biBpbml0IG9wcyB0
+byBzdXBwb3J0IENvbXBhY3QgQ1FFDQo+ID4gICBuZXQvaGluaWMzOiBhZGQgcnggb3BzIHRvIHN1
+cHBvcnQgQ29tcGFjdCBDUUUNCj4gPiAgIG5ldC9oaW5pYzM6IGFkZCB0eCBvcHMgdG8gc3VwcG9y
+dCBDb21wYWN0IENRRQ0KPiA+ICAgbmV0L2hpbmljMzogdXNlIGRpZmZlcmVudCBjYWxsYmFjayBm
+dW5jIHRvIHN1cHBvcnQgaHRuIGZkaXINCj4gPg0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFz
+ZS9oaW5pYzNfY21kLmggICAgICAgICAgfCAgODAgKystDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmlj
+My9iYXNlL2hpbmljM19jbWRxLmMgICAgICAgICB8IDM3MCArKysrLS0tLS0tDQo+ID4gIGRyaXZl
+cnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19jbWRxLmggICAgICAgICB8IDExMiArKy0NCj4gPiAg
+ZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2NtZHFfZW5oYW5jZS5jIHwgMTExICsrKw0K
+PiA+IGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19jbWRxX2VuaGFuY2UuaCB8IDEyNSAr
+KysrDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19jc3IuaCAgICAgICAgICB8
+ICAxOCArLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdfY29tbS5jICAg
+ICAgfCAgMTUgKy0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3X2NvbW0u
+aCAgICAgIHwgIDMxICstDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19od2Rl
+di5jICAgICAgICB8ICAxMyArLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNf
+aHdkZXYuaCAgICAgICAgfCAgMTggKw0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5p
+YzNfaHdpZi5jICAgICAgICAgfCAgMTAgKy0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2Uv
+aGluaWMzX21nbXQuYyAgICAgICAgIHwgICA1ICstDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9i
+YXNlL2hpbmljM19tZ210LmggICAgICAgICB8ICAgMiArDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmlj
+My9iYXNlL2hpbmljM19uaWNfY2ZnLmMgICAgICB8IDE4MiArKy0tLQ0KPiA+ICBkcml2ZXJzL25l
+dC9oaW5pYzMvYmFzZS9oaW5pYzNfbmljX2NmZy5oICAgICAgfCAgOTggKystDQo+ID4gIGRyaXZl
+cnMvbmV0L2hpbmljMy9iYXNlL21lc29uLmJ1aWxkICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRy
+aXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfZXRoZGV2LmMgICAgICAgICAgICB8IDI4MCArKysrKyst
+LQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX2V0aGRldi5oICAgICAgICAgICAgfCAx
+MjAgKystLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX2ZkaXIuYyAgICAgICAgICAg
+ICAgfCA2NTcgKysrKysrKysrKysrKy0tLS0tDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9oaW5p
+YzNfZmRpci5oICAgICAgICAgICAgICB8IDM2MSArKysrKysrKy0tDQo+ID4gIGRyaXZlcnMvbmV0
+L2hpbmljMy9oaW5pYzNfbmljX2lvLmMgICAgICAgICAgICB8IDUyNSArKysrKystLS0tLS0tLQ0K
+PiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX25pY19pby5oICAgICAgICAgICAgfCAxNjMg
+KysrKy0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2hpbmljM19yeC5jICAgICAgICAgICAgICAg
+IHwgMjY1ICsrKysrLS0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2hpbmljM19yeC5oICAgICAg
+ICAgICAgICAgIHwgMTgyICsrKystDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfdHgu
+YyAgICAgICAgICAgICAgICB8IDQ1OCArKysrKystLS0tLS0NCj4gPiAgZHJpdmVycy9uZXQvaGlu
+aWMzL2hpbmljM190eC5oICAgICAgICAgICAgICAgIHwgMTU0ICsrKy0NCj4gPiAgLi4uL25ldC9o
+aW5pYzMvaHRuX2FkYXB0L2hpbmljM19odG5fY21kcS5jICAgIHwgMTY3ICsrKysrDQo+ID4gIC4u
+Li9uZXQvaGluaWMzL2h0bl9hZGFwdC9oaW5pYzNfaHRuX2NtZHEuaCAgICB8ICA2MyArKw0KPiA+
+ICBkcml2ZXJzL25ldC9oaW5pYzMvaHRuX2FkYXB0L21lc29uLmJ1aWxkICAgICAgfCAgIDcgKw0K
+PiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvbWVzb24uYnVpbGQgICAgICAgICAgICAgICAgfCAgIDgg
+Ky0NCj4gPiAgLi4uL25ldC9oaW5pYzMvc3RuX2FkYXB0L2hpbmljM19zdG5fY21kcS5jICAgIHwg
+MTUxICsrKysNCj4gPiAgLi4uL25ldC9oaW5pYzMvc3RuX2FkYXB0L2hpbmljM19zdG5fY21kcS5o
+ICAgIHwgIDQ2ICsrDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9zdG5fYWRhcHQvbWVzb24uYnVp
+bGQgICAgICB8ICAgNyArDQo+ID4gIDMzIGZpbGVzIGNoYW5nZWQsIDMzNjIgaW5zZXJ0aW9ucygr
+KSwgMTQ0MyBkZWxldGlvbnMoLSkgIGNyZWF0ZSBtb2RlDQo+ID4gMTAwNjQ0IGRyaXZlcnMvbmV0
+L2hpbmljMy9iYXNlL2hpbmljM19jbWRxX2VuaGFuY2UuYw0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2
+NDQgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2NtZHFfZW5oYW5jZS5oDQo+ID4gIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvaHRuX2FkYXB0L2hpbmljM19odG5f
+Y21kcS5jDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvaHRuX2Fk
+YXB0L2hpbmljM19odG5fY21kcS5oDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25l
+dC9oaW5pYzMvaHRuX2FkYXB0L21lc29uLmJ1aWxkDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
+cml2ZXJzL25ldC9oaW5pYzMvc3RuX2FkYXB0L2hpbmljM19zdG5fY21kcS5jDQo+ID4gIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvc3RuX2FkYXB0L2hpbmljM19zdG5fY21k
+cS5oDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvc3RuX2FkYXB0
+L21lc29uLmJ1aWxkDQo+ID4NCj4gPiAtLQ0KPiA+IDIuNDUuMS53aW5kb3dzLjENCj4gPg0KPiAN
+Cj4gU3RpbGwgbG90cyBvZiB0aGluZ3MgdGhhdCBuZWVkIHRvIGJlIGFkZHJlc3NlZCBoZXJlLg0K
+PiBTZWUgdGhlIGZvbGxvd2luZyBBSSBwYXRjaCByZXZpZXcuDQo+IA0KPiANCj4gUGF0Y2ggMS83
+OiBuZXQvaGluaWMzOiBhZGQgc3VwcG9ydCBmb3IgbmV3IFNQeCBzZXJpZXMgTklDDQo+IA0KPiBI
+SU5JQzNfREVWX0lEX1NQMjMwIGlzIGRlZmluZWQgYXMgMFgwMjI5IHdpdGggYW4gdXBwZXJjYXNl
+IFguDQo+IEV2ZXJ5IG90aGVyIGhleCBjb25zdGFudCBpbiB0aGUgZmlsZSB1c2VzIGxvd2VyY2Fz
+ZSAweC4gU2hvdWxkIGJlIDB4MDIyOS4NCltGZWlmZWldIERvbmUNCj4gDQo+IEhJTklDM19ERVZf
+SURfU1A5MjAgaGFzIG5vIFZGIGNvdW50ZXJwYXJ0IGFuZCBubyBlbnRyeSBpbiBoaW5pYzNfaXNf
+dmZfZGV2KCkuDQo+IElzIHRoYXQgaW50ZW50aW9uYWw/DQpbRmVpZmVpXSBZZXMsIFNQOTIwIG5v
+dyBkb2Vzbid0IHN1cHBvcnQgVkYgZnVuY3Rpb24uDQo+IA0KPiBQYXRjaCAyLzc6IG5ldC9oaW5p
+YzM6IGFkZCBlbmhhbmNlIGNtZHEgc3VwcG9ydA0KPiANCj4gVGhlIHVuaWZpZWQgY21kcV9zeW5j
+X2NtZCgpIHJldGFpbnMgcnRlX3NtcF9ybWIoKSB3aGljaCBpcyBhIGRlcHJlY2F0ZWQgYmFycmll
+ci4NCj4gU2luY2UgdGhpcyBmdW5jdGlvbiBpcyBiZWluZyByZXdyaXR0ZW4sIHBsZWFzZSBjb252
+ZXJ0IHRvDQo+IHJ0ZV9hdG9taWNfdGhyZWFkX2ZlbmNlKHJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWly
+ZSkuDQpbRmVpZmVpXSBEb25lDQo+IA0KPiBISU5JQzNfQ01EUV9CVUZfU0laRSBjaGFuZ2VkIGZy
+b20gMjA0OCB0byAxMDI0IHdpdGhvdXQgYW55IGV4cGxhbmF0aW9uIGluDQo+IHRoZSBjb21taXQg
+bWVzc2FnZS4gSWYgZXhpc3Rpbmcgbm9ybWFsLWNtZHEgY29tbWFuZHMgcmVsaWVkIG9uIHRoZSBs
+YXJnZXINCj4gYnVmZmVyIHRoaXMgY291bGQgc2lsZW50bHkgdHJ1bmNhdGUgdGhlbS4NCltGZWlm
+ZWldIERvbmUsIGV4cGxhbmF0aW9uIGlzIHdyaXR0ZW4gaW4gcGF0Y2ggMiBjb21taXQgbWVzc2Fn
+ZToNCiJISU5JQzNfQ01EUV9CVUZfU0laRSBjaGFuZ2VkIGZyb20gMjA0OCB0byAxMDI0IHRvIGFk
+YXB0IHRvDQp0aGUgdHdvIHR5cGVzIG9mIE5JQ3MiDQo+IA0KPiBQYXRjaCAzLzc6IG5ldC9oaW5p
+YzM6IHVzZSBkaWZmZXJlbnQgY2FsbGJhY2sgZnVuYyB0byBzcGxpdCBuZXcvb2xkIGNtZHEgb3Bl
+cmF0aW9ucw0KPiANCj4gVGhlIGNhbGwgc2l0ZXMgaW4gaGluaWMzX2V0aGRldi5jIHVzZSBoaW5p
+YzNfY21kcV9nZXRfc3RuX29wcygpIGFuZA0KPiBoaW5pYzNfY21kcV9nZXRfaHRuX29wcygpIGJ1
+dCB0aGUgYWN0dWFsIGRlZmluaXRpb25zIGFyZQ0KPiBoaW5pYzNfbmljX2NtZHFfZ2V0X3N0bl9v
+cHMoKSBhbmQgaGluaWMzX25pY19jbWRxX2dldF9odG5fb3BzKCkuDQo+IFRoaXMgd2lsbCBub3Qg
+bGluay4gUGF0Y2ggNCBmaXhlcyB0aGUgY2FsbCBzaXRlIGJ1dCBlYWNoIGNvbW1pdCBtdXN0IGNv
+bXBpbGUNCj4gaW5kZXBlbmRlbnRseS4NCltGZWlmZWldIERvbmUuDQo+IA0KPiBJbiBodG5fYWRh
+cHQvaGluaWMzX2h0bl9jbWRxLmMgdGhlIHN0YXRpYyBmdW5jdGlvbg0KPiBwcmVwYXJlX3Jzc19p
+bmRpcl90YWJsZV9jbWRfaGVhZGVyKCkgaXMgY2FsbGVkIGJlZm9yZSBpdCBpcyBkZWZpbmVkLCB3
+aXRoIG5vDQo+IGZvcndhcmQgZGVjbGFyYXRpb24uIFRoaXMgd2lsbCBmYWlsIHdpdGggLVdlcnJv
+cj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbi4NCltGZWlmZWldRG9uZS4NCj4gDQo+IFBh
+dGNoIDQvNzogbmV0L2hpbmljMzogYWRkIGZ1biBpbml0IG9wcyB0byBzdXBwb3J0IENvbXBhY3Qg
+Q1FFDQo+IA0KPiBJbiBoaW5pYzNfcnhfcXVldWVfc2V0dXAoKSwgd2hlbiBjaV9teiBhbGxvY2F0
+aW9uIGZhaWxzIHRoZSBjb2RlIGNhbGxzDQo+IGhpbmljM19tZW16b25lX2ZyZWUoY2lfbXopIG9u
+IGEgTlVMTCBwb2ludGVyIGJlZm9yZSBqdW1waW5nIHRvIHRoZSBlcnJvciBsYWJlbC4NCj4gVGhp
+cyBjYWxsIGlzIGVpdGhlciBhIE5VTEwgZGVyZWZlcmVuY2Ugb3IgZGVhZCBjb2RlIGFuZCBzaG91
+bGQgYmUgcmVtb3ZlZC4NCltGZWlmZWldRG9uZS4NCj4gDQo+IFRoZSBlcnJvci1wYXRoIGdvdG8g
+bGFiZWxzIGluIGhpbmljM19mdW5jX2luaXQoKSBhcmUgbWlzb3JkZXJlZC4NCj4gVGhlIGFsbG9j
+YXRpb24gb3JkZXIgaXMgbWFjX2FkZHJzLCBjbWRxX29wcywgcnhfb3BzLCB0eF9vcHMsIG1jX2xp
+c3QgYnV0IHRoZQ0KPiBjbGVhbnVwIGxhYmVscyBkbyBub3QgcmV2ZXJzZSB0aGlzIHByb3Blcmx5
+LiBGb3IgZXhhbXBsZSBpZiBjbWRxX29wcyBhbGxvY2F0aW9uDQo+IGZhaWxzLCBtYWNfYWRkcnMg
+aXMgbmV2ZXIgZnJlZWQuDQo+IElmIHR4X29wcyBmYWlscywgbmVpdGhlciBjbWRxX29wcyBub3Ig
+bWFjX2FkZHJzIGFyZSBmcmVlZC4gVGhpcyBsZWFrcyBtZW1vcnkgb24NCj4gZXZlcnkgaW5pdCBm
+YWlsdXJlIHBhdGguDQpbRmVpZmVpXURvbmUuDQo+IA0KPiBUaGUgdGVybmFyeSBpbiBoaW5pYzNf
+cGZfZ2V0X2RlZmF1bHRfY29zKCkgYXNzaWducyBISU5JQzNfQ09TX05VTV9NQVggKDgpDQo+IHdo
+ZW4gTklDX0ZfSFROX0NNRFEgaXMgc2V0IGFuZCBISU5JQzNfQ09TX05VTV9NQVhfSFROICg0KSB3
+aGVuIGl0IGlzDQo+IG5vdC4gVGhlIG5hbWluZyBzdWdnZXN0cyB0aGlzIGlzIGJhY2t3YXJkcy4g
+UGxlYXNlIHZlcmlmeS4NCltGZWlmZWldRG9uZQ0KPiANCj4gUGF0Y2ggNS83OiBuZXQvaGluaWMz
+OiBhZGQgcnggb3BzIHRvIHN1cHBvcnQgQ29tcGFjdCBDUUUNCj4gDQo+IGhpbmljM19wb2xsX2lu
+dGVncmF0ZWRfY3FlX3JxX2VtcHR5KCkgdXNlcyBfX2F0b21pY19sb2FkX24oKSB3aXRoDQo+IF9f
+QVRPTUlDX0FDUVVJUkUuIE5ldyBjb2RlIG11c3QgdXNlIHJ0ZV9hdG9taWNfbG9hZF9leHBsaWNp
+dCgpIHdpdGgNCj4gcnRlX21lbW9yeV9vcmRlcl9hY3F1aXJlIGluc3RlYWQgb2YgdGhlIEdDQyBi
+dWlsdC1pbi4NCltGZWlmZWldIERvbmUuDQo+IA0KPiBQYXRjaCA3Lzc6IG5ldC9oaW5pYzM6IHVz
+ZSBkaWZmZXJlbnQgY2FsbGJhY2sgZnVuYyB0byBzdXBwb3J0IGh0biBmZGlyDQo+IA0KPiBDb3B5
+LXBhc3RlIGJ1ZyBpbiBoaW5pYzNfcnNzX2hhc2hfdXBkYXRlKCkgYW5kIGhpbmljM19yc3NfY29u
+Zl9nZXQoKS4NCj4gSW4gYm90aCBmdW5jdGlvbnMgdGhlIGVsc2UgYnJhbmNoIGhhczoNCj4gDQo+
+ICAgICByc3NfdHlwZS5pcHY2X2V4dCA9IDA7DQo+ICAgICByc3NfdHlwZS5pcHY2X2V4dCA9IDA7
+DQo+IA0KPiBUaGUgc2Vjb25kIGxpbmUgc2hvdWxkIGJlIHJzc190eXBlLnRjcF9pcHY2X2V4dCA9
+IDAuIEFzIHdyaXR0ZW4gdGNwX2lwdjZfZXh0IGlzDQo+IG5ldmVyIGNsZWFyZWQgb24gbm9uLUhU
+TiBoYXJkd2FyZSB3aGljaCB3aWxsIHByb2R1Y2UgaW5jb3JyZWN0IFJTUw0KPiBjb25maWd1cmF0
+aW9uLg0KW0ZlaWZlaV0gRG9uZQ0K
