@@ -2,41 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2434109022B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 13:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45977109022B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 13:53:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92A0E402D1;
-	Thu, 19 Mar 2026 14:53:05 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
- by mails.dpdk.org (Postfix) with ESMTP id 31D83402C4
- for <dev@dpdk.org>; Thu, 19 Mar 2026 14:53:02 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8D7BE402ED;
+	Thu, 19 Mar 2026 14:53:06 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 8974F402D4
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 14:53:03 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=ab5aQJi4zydWgSe+fAAYeyvOxndFo9IQp8wdF3hhfnI=;
- b=C5P+x4rhan4zHcp2dPOlCq/gdT+bF+gDTEB93F85pXDaSJ/oNtpwIysmErhz/0
- mAse05CGuCR44odUQTZM10E6kkS9UEnFDUSPaNApShC4igL0NfxYTgwskZyTtvg+
- QEObJ9HLQu5hsg77TSxDk3+I24XGvvs0RLFFyhlZLPs5I=
+ MIME-Version; bh=Nb7V90aUAH0uywJ1Wg6qD6UyLv6GCMkopNpemZ7vsPg=;
+ b=RNZihcLuUcQPhWqaPZp/fW3EhKoOYBZSFNCVp/Jm8gkXM7oWB2sc/B8MorJrCo
+ t91FmE/f8P7Mf0ZPfGzRgH03dBwLF00SUqQ+w5k9GYWjIcHqtpYrBhL3eEJ+p/6/
+ gEmR2/vrhO41Ny9YA13vptD5XtwkFmwJIkR+KHChr5c6o=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp1 (Coremail) with SMTP id Ac8vCgAX3Gek_7tpacAQAw--.19162S4;
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgAX3Gek_7tpacAQAw--.19162S5;
  Thu, 19 Mar 2026 21:52:58 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
-Cc: chenyi221 <chenyi221@huawei.com>
-Subject: [v6 0/7] hinic3 change for support new SPx NIC
-Date: Thu, 19 Mar 2026 21:52:06 +0800
-Message-ID: <20260319135220.2390-1-wff_light@vip.163.com>
+Cc: Feifei Wang <wangfeifei40@huawei.com>
+Subject: [V6 1/7] net/hinic3: add support for new SPx series NIC
+Date: Thu, 19 Mar 2026 21:52:07 +0800
+Message-ID: <20260319135220.2390-2-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
-In-Reply-To: <20260316134335.1640-1-wff_light@vip.163.com>
+In-Reply-To: <20260319135220.2390-1-wff_light@vip.163.com>
 References: <20260316134335.1640-1-wff_light@vip.163.com>
+ <20260319135220.2390-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID: Ac8vCgAX3Gek_7tpacAQAw--.19162S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZryrury3Jw18CF1DuryxuFg_yoW5Zr1fpF
- WUG3y3Zr1qgrW7Jwn7Gw4xAa45X3WxG34UKas8XasYvFykAFy5A34UGFW0yrW3tr4xJF12
- vF45Cryvg3W5tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U_wIDUUUUU=
+X-CM-TRANSID: Ac8vCgAX3Gek_7tpacAQAw--.19162S5
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJw1kXFyDGFWfKF1DJF15XFb_yoWrGF17pF
+ 1aka9rZr4UKr4jyw1kuw1DAF98J3WfG34jg34SvanY9F4UZF1Yv347GFW8ZrW5t397XFW2
+ 9r47Cws7Ww1jgwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URlksUUUUU=
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNhp3gWm7-7qV2QAA3B
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNxt3gWm7-7uXlwAA3M
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,79 +51,111 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: chenyi221 <chenyi221@huawei.com>=0D
+From: Feifei Wang <wangfeifei40@huawei.com>=0D
 
-Change hinic3 driver to support Huawei new SPx series NIC.=0D
+Add new device id to support Huawei new SPx series Network Adapters.=0D
 =0D
-v2:=0D
---fix build issues=0D
+Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>=0D
+---=0D
+ drivers/net/hinic3/base/hinic3_csr.h  | 18 +++++++++---------=0D
+ drivers/net/hinic3/base/hinic3_hwif.c | 10 +++++++---=0D
+ drivers/net/hinic3/hinic3_ethdev.c    | 14 +++++++-------=0D
+ 3 files changed, 23 insertions(+), 19 deletions(-)=0D
 =0D
-v3:=0D
---fix community review comments and err reports=0D
-=0D
-v4:=0D
---fix rss type assignment error=0D
-=0D
-v5:=0D
---fix community ubuntu-22.04-clang err=0D
-=0D
-v6:=0D
---fix atomic compilation error=0D
-=0D
-Feifei Wang (7):=0D
-  net/hinic3: add support for new SPx series NIC=0D
-  net/hinic3: add enhance cmdq support for new SPx series NIC=0D
-  net/hinic3: use different callback func to split new/old cmdq=0D
-    operations=0D
-  net/hinic3: add fun init ops to support Compact CQE=0D
-  net/hinic3: add rx ops to support Compact CQE=0D
-  net/hinic3: add tx ops to support Compact CQE=0D
-  net/hinic3: use different callback func to support htn fdir=0D
-=0D
- drivers/net/hinic3/base/hinic3_cmd.h          |  80 ++-=0D
- drivers/net/hinic3/base/hinic3_cmdq.c         | 370 ++++------=0D
- drivers/net/hinic3/base/hinic3_cmdq.h         | 112 ++-=0D
- drivers/net/hinic3/base/hinic3_cmdq_enhance.c | 111 +++=0D
- drivers/net/hinic3/base/hinic3_cmdq_enhance.h | 125 ++++=0D
- drivers/net/hinic3/base/hinic3_csr.h          |  18 +-=0D
- drivers/net/hinic3/base/hinic3_hw_comm.c      |  15 +-=0D
- drivers/net/hinic3/base/hinic3_hw_comm.h      |  31 +-=0D
- drivers/net/hinic3/base/hinic3_hwdev.c        |  13 +-=0D
- drivers/net/hinic3/base/hinic3_hwdev.h        |  18 +=0D
- drivers/net/hinic3/base/hinic3_hwif.c         |  10 +-=0D
- drivers/net/hinic3/base/hinic3_mgmt.c         |   5 +-=0D
- drivers/net/hinic3/base/hinic3_mgmt.h         |   2 +=0D
- drivers/net/hinic3/base/hinic3_nic_cfg.c      | 182 ++---=0D
- drivers/net/hinic3/base/hinic3_nic_cfg.h      |  98 ++-=0D
- drivers/net/hinic3/base/meson.build           |   1 +=0D
- drivers/net/hinic3/hinic3_ethdev.c            | 279 ++++++--=0D
- drivers/net/hinic3/hinic3_ethdev.h            | 120 ++--=0D
- drivers/net/hinic3/hinic3_fdir.c              | 657 +++++++++++++-----=0D
- drivers/net/hinic3/hinic3_fdir.h              | 361 ++++++++--=0D
- drivers/net/hinic3/hinic3_nic_io.c            | 525 ++++++--------=0D
- drivers/net/hinic3/hinic3_nic_io.h            | 163 ++++-=0D
- drivers/net/hinic3/hinic3_rx.c                | 267 +++++--=0D
- drivers/net/hinic3/hinic3_rx.h                | 182 ++++-=0D
- drivers/net/hinic3/hinic3_tx.c                | 456 ++++++------=0D
- drivers/net/hinic3/hinic3_tx.h                | 154 +++-=0D
- .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    | 167 +++++=0D
- .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |  63 ++=0D
- drivers/net/hinic3/htn_adapt/meson.build      |   7 +=0D
- drivers/net/hinic3/meson.build                |   8 +-=0D
- .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    | 151 ++++=0D
- .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |  46 ++=0D
- drivers/net/hinic3/stn_adapt/meson.build      |   7 +=0D
- 33 files changed, 3362 insertions(+), 1442 deletions(-)=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.h=0D
- create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c=0D
- create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h=0D
- create mode 100644 drivers/net/hinic3/htn_adapt/meson.build=0D
- create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c=0D
- create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h=0D
- create mode 100644 drivers/net/hinic3/stn_adapt/meson.build=0D
-=0D
---=0D
+diff --git a/drivers/net/hinic3/base/hinic3_csr.h b/drivers/net/hinic3/base=
+/hinic3_csr.h=0D
+index 94b10601c4..eceb34e9fd 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_csr.h=0D
++++ b/drivers/net/hinic3/base/hinic3_csr.h=0D
+@@ -5,15 +5,15 @@=0D
+ #ifndef _HINIC3_CSR_H_=0D
+ #define _HINIC3_CSR_H_=0D
+ =0D
+-#ifdef CONFIG_SP_VID_DID=0D
+-#define PCI_VENDOR_ID_SPNIC    0x1F3F=0D
+-#define HINIC3_DEV_ID_STANDARD 0x9020=0D
+-#define HINIC3_DEV_ID_VF       0x9001=0D
+-#else=0D
+-#define PCI_VENDOR_ID_HUAWEI   0x19e5=0D
+-#define HINIC3_DEV_ID_STANDARD 0x0222=0D
+-#define HINIC3_DEV_ID_VF       0x375F=0D
+-#endif=0D
++#define PCI_VENDOR_ID_HUAWEI	0x19e5=0D
++=0D
++#define HINIC3_DEV_ID_SP620	0x0222=0D
++#define HINIC3_DEV_ID_VF_SP620	0x375F=0D
++=0D
++#define HINIC3_DEV_ID_SP230	0x0229=0D
++#define HINIC3_DEV_ID_VF_SP230	0x3750=0D
++=0D
++#define HINIC3_DEV_ID_SP920	0x0224=0D
+ =0D
+ /*=0D
+  * Bit30/bit31 for bar index flag.=0D
+diff --git a/drivers/net/hinic3/base/hinic3_hwif.c b/drivers/net/hinic3/bas=
+e/hinic3_hwif.c=0D
+index 080254bf44..c82b223fa0 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_hwif.c=0D
++++ b/drivers/net/hinic3/base/hinic3_hwif.c=0D
+@@ -138,7 +138,11 @@=0D
+ =0D
+ #define HINIC3_GET_REG_ADDR(reg) ((reg) & (HINIC3_REGS_FLAG_MASK))=0D
+ =0D
+-#define HINIC3_IS_VF_DEV(pdev) ((pdev)->id.device_id =3D=3D HINIC3_DEV_ID_=
+VF)=0D
++static inline bool hinic3_is_vf_dev(const struct rte_pci_device *pdev)=0D
++{=0D
++	return pdev->id.device_id =3D=3D HINIC3_DEV_ID_VF_SP620 ||=0D
++	       pdev->id.device_id =3D=3D HINIC3_DEV_ID_VF_SP230;=0D
++}=0D
+ =0D
+ uint32_t=0D
+ hinic3_hwif_read_reg(struct hinic3_hwif *hwif, uint32_t reg)=0D
+@@ -552,7 +556,7 @@ hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)=0D
+ 	void *db_base =3D NULL;=0D
+ 	int cfg_bar;=0D
+ =0D
+-	cfg_bar =3D HINIC3_IS_VF_DEV(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR=0D
++	cfg_bar =3D hinic3_is_vf_dev(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR=0D
+ 					    : HINIC3_PF_PCI_CFG_REG_BAR;=0D
+ 	cfg_regs_base =3D pci_dev->mem_resource[cfg_bar].addr;=0D
+ =0D
+@@ -561,7 +565,7 @@ hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)=0D
+ 			    "mem_resource addr is null, cfg_regs_base is NULL");=0D
+ 		return -EFAULT;=0D
+ 	}=0D
+-	if (!HINIC3_IS_VF_DEV(pci_dev)) {=0D
++	if (!hinic3_is_vf_dev(pci_dev)) {=0D
+ 		mgmt_reg_base =3D=0D
+ 			pci_dev->mem_resource[HINIC3_PCI_MGMT_REG_BAR].addr;=0D
+ 		if (mgmt_reg_base =3D=3D NULL) {=0D
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3=
+_ethdev.c=0D
+index 0f72728a95..da2d6722d2 100644=0D
+--- a/drivers/net/hinic3/hinic3_ethdev.c=0D
++++ b/drivers/net/hinic3/hinic3_ethdev.c=0D
+@@ -3521,13 +3521,13 @@ hinic3_dev_uninit(struct rte_eth_dev *dev)=0D
+ }=0D
+ =0D
+ static const struct rte_pci_id pci_id_hinic3_map[] =3D {=0D
+-#ifdef CONFIG_SP_VID_DID=0D
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_STANDARD)},=0D
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_VF)},=0D
+-#else=0D
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_STANDARD)},=0D
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF)},=0D
+-#endif=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP620)},=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF_SP620)},=0D
++=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP230)},=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF_SP230)},=0D
++=0D
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP920)},=0D
+ =0D
+ 	{.vendor_id =3D 0},=0D
+ };=0D
+-- =0D
 2.45.1.windows.1=0D
 =0D
 
