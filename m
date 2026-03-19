@@ -2,54 +2,82 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A651091916
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 22:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16320109192A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 22:11:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0B39A402AC;
-	Thu, 19 Mar 2026 23:10:50 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 6A45E4013F
- for <dev@dpdk.org>; Thu, 19 Mar 2026 23:10:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1773958247;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=PGIV1Dte6wC2eqpBVY98RShxjaLezn9zyvjKjL7u1lw=;
- b=evVPDmG8nRyuVxK4VHR+4nowg3/luAcFQidJUsxXvHFqrx+Q8G7Vp+Iyv7atEnp0WJ52SN
- LyNa6Rp+59myMVlhlIvuu1TjOgJ6NLBSZ48ynWiTKzcIpCGhl1UuGueZSP6HZTCxci573y
- x1ra9kqtevXdMhsyiPT2nPf0zCTU8tA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-74-X4dSEg4SNFyNj4kAdO-i_Q-1; Thu,
- 19 Mar 2026 18:10:46 -0400
-X-MC-Unique: X4dSEg4SNFyNj4kAdO-i_Q-1
-X-Mimecast-MFC-AGG-ID: X4dSEg4SNFyNj4kAdO-i_Q_1773958245
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 96B0B195608D; Thu, 19 Mar 2026 22:10:45 +0000 (UTC)
-Received: from ringo (unknown [10.44.32.39])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 1F7F1180035F; Thu, 19 Mar 2026 22:10:43 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org,
-	Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH dpdk] net/tap: add software MAC address filtering
-Date: Thu, 19 Mar 2026 23:10:35 +0100
-Message-ID: <20260319221034.703656-2-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0D5AA402AC;
+	Thu, 19 Mar 2026 23:11:28 +0100 (CET)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id F205B4013F
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 23:11:25 +0100 (CET)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-48541edecf9so15329095e9.1
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 15:11:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20230601; t=1773958285; x=1774563085; darn=dpdk.org;
+ h=content-transfer-encoding:reply-to:mime-version:message-id:date
+ :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=bQIzybsiYul/Hm9qdOP7mat4fvRZM0S6XRKU3JrPcVs=;
+ b=lnGJhzMgqtbJvVjskby10jgX1MAYiaTkSAPrvqtPf26IkqwQKLqHdC5n7qpUHqVYpt
+ DYpxxxS8nTs9m1v9tgi5jMyZGigEAWOmW3EoIOoSSYcHkOR9/WKXuOy1bWuDac0+swci
+ D4x1vwlk3jFMQQIzSl0Z2vtGmEa1sgk8MwjxCsIvCGJxmS/mrUvS6hEvxJcTfJCeaFzH
+ 7iWhyRyWCic2SpDJN0wIMOlfIWi0dw55QNVHepviYGLXkRkw22uU+/R2hDgbqEtLAlYb
+ yeSiUMd1DbZjh+d7R0xUaZOyzvDvdwl8b1TCE9uKN7LLfhvQMRTsNUBClUXbxSHW4Gle
+ nwug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1773958285; x=1774563085;
+ h=content-transfer-encoding:reply-to:mime-version:message-id:date
+ :subject:cc:to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject
+ :date:message-id:reply-to;
+ bh=bQIzybsiYul/Hm9qdOP7mat4fvRZM0S6XRKU3JrPcVs=;
+ b=D1bGNf6Z+Nrmd5g4dsJV7zgX5bEz54l9ibyaE9ecoYEjY1s0mAEERtWxPylBro5ER+
+ C7+P6zk978LKQgKSlstH90X9V29cb9zJqCHM6HFNaTdbxrof2LDmA8A6zfbkMCFzVKCY
+ i/6+75lyPlW3h4dnY+moQzUVxBO1KzDPNbCUntzs1zzwK8rInMlClSfrGv/Q0YtADqBF
+ XDpUnA7YRX7fluPuZHqi/J6OnFOui7HSXZXxQmoaO3pIuWHRy4rUjJ4t6qIlcZnplSUi
+ 4MslzYyiCyQPmrZMV1cs8IjnbxVBU8enE5+Wwomn6r3ZPuuOFuVi8sbrL7EIPurzh2GR
+ 4JlQ==
+X-Gm-Message-State: AOJu0Yz2tyMqqo8VNX7oohaCZJAWMvKJhK7IYnM3NVO69OH+DSOr4Szy
+ xNmU4De5io8p32jdpxNot8o831adCYYdzRBC8paSqFzzxdi6YluXaYq4
+X-Gm-Gg: ATEYQzwAeuE6xfpcoBPK3xz8hZh0qx8fl0vugPMuCThBzqyNdyinqsp6LNYSJ18txpX
+ R8HRIZ7wX6fFt2G9bP/2Zn1D6aA5ilJ+EdRwOi9inZH8trILXiQQib0GJGVFB5/jhUY3zp9GQtJ
+ 7U2nh4lVYaJHZKbXTKt6Fl5DdNg9HarsjQcqL1snnkhuY/LMi21o6YRYa+TBKkKBWgZOupPhRo6
+ N8TERKnUtMOMRowu+86DWPj7Au4Yc6PPb2ROllS5cHsWgfXzbYklJGdr89hzrvqukdPM1obdlXM
+ HghnHBUCm0QrKi3WvAxQXu8m560bN8svjXIECaU2mO5NlcdX3bBDl6DZ/UMApbcOwWfP0miiaNR
+ aT3bXDRaH+587HkVlXV9tBOXTf2IOeUhpcftsVP/5ySHVwITSggzvwBLEH5BMlxUDPE1uxA3gEq
+ 4l2qoZcz6NG3Z/5C8nlesiC43a1mrc
+X-Received: by 2002:a05:600c:5250:b0:485:304a:58cd with SMTP id
+ 5b1f17b1804b1-486fedab733mr11736165e9.4.1773958285443; 
+ Thu, 19 Mar 2026 15:11:25 -0700 (PDT)
+Received: from localhost ([2a01:4b00:d036:ae00:d0e2:31a1:5c2c:69ec])
+ by smtp.gmail.com with UTF8SMTPSA id
+ 5b1f17b1804b1-486f8b949a5sm85524055e9.11.2026.03.19.15.11.24
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 19 Mar 2026 15:11:25 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: dpdk stable <stable@dpdk.org>
+Cc: dpdk <dev@dpdk.org>, Anatoly Burakov <anatoly.burakov@intel.com>,
+ Bing Zhao <bingz@nvidia.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Dariusz Sosnowski <dsosnowski@nvidia.com>,
+ Helin Zhang <helin.zhang@intel.com>, Jingjing Wu <jingjing.wu@intel.com>,
+ "John W. Linville" <linville@tuxdriver.com>,
+ Keith Wiles <keith.wiles@intel.com>, Long Li <longli@microsoft.com>,
+ Matan Azrad <matan@nvidia.com>,
+ =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ Ophir Munk <ophirmu@nvidia.com>, Ori Kam <orika@nvidia.com>,
+ Pascal Mazon <pascal.mazon@6wind.com>,
+ Reshma Pattan <reshma.pattan@intel.com>, Shaiq Wani <shaiq.wani@intel.com>,
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Suanming Mou <suanmingm@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>,
+ Venkatesh Vemula <venkatesh.vemula@intel.com>,
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Wei Hu <weh@microsoft.com>,
+ Xavier Guillaume <xavier.guillaume@ovhcloud.com>
+Subject: please help backporting some patches to stable release 24.11.5
+Date: Thu, 19 Mar 2026 22:11:13 +0000
+Message-ID: <20260319221114.1071955-1-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 9rwQasgI8FRcvXReW4BEsBXzBARTcp-W7nFSiJmeIEI_1773958245
-X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,400 +89,58 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: dpdk stable <stable@dpdk.org>
 Errors-To: dev-bounces@dpdk.org
 
-Linux TAP devices deliver all packets to userspace regardless of the
-PROMISC/ALLMULTI flags on the interface. Add an opt-in "macfilter"
-devarg that, when enabled, drops received packets whose destination MAC
-does not match any configured unicast or multicast address.
+Hi commit authors (and maintainers),
 
-When macfilter is active the receive path checks the destination MAC
-against the device's unicast address table (managed by the ethdev
-layer), the multicast address list (stored by the driver since the
-ethdev layer does not keep a copy), and accepts broadcast
-unconditionally. Promiscuous and all-multicast modes bypass the
-respective checks.
+Despite being selected by the DPDK maintenance tool ./devtools/git-log-fixes.sh
+I didn't apply following commits from DPDK main to 24.11
+stable branch, as conflicts or build errors occur.
 
-To support multiple unicast addresses via rte_eth_dev_mac_addr_add(),
-allocate mac_addrs with rte_zmalloc (TAP_MAX_MAC_ADDRS=16) instead of
-pointing into dev_private, and advertise the new limit in dev_infos_get.
+Can authors check your patches in the following list and either:
+    - Backport your patches to the 24.11 branch, or
+    - Indicate that the patch should not be backported
 
-Dropped packets are reported via per-queue xstats
-(rx_q<N>_mac_filter_drops).
+Please do either of the above by 03/26/26.
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
+You can find the a temporary work-in-progress branch of the coming 24.11.5
+release at:
+    https://github.com/bluca/dpdk-stable
+It is recommended to backport on top of that to minimize further conflicts or
+misunderstandings.
+
+Some notes on stable backports:
+
+A backport should contain a reference to the DPDK main branch commit
+in it's commit message in the following fashion:
+    [ upstream commit <commit's dpdk main branch SHA-1 checksum> ]
+
+For example:
+    https://git.dpdk.org/dpdk-stable/commit/?h=18.11&id=d90e6ae6f936ecdc2fd3811ff9f26aec7f3c06eb
+
+When sending the backported patch, please indicate the target branch in the
+subject line, as we have multiple branches, for example:
+    [PATCH 24.11] foo/bar: fix baz
+
+With git format-patch, this can be achieved by appending the parameter:
+    --subject-prefix='PATCH 24.11'
+
+Send the backported patch to "stable@dpdk.org" but not "dev@dpdk.org".
+
+FYI, branch 24.11 is located at tree:
+   https://git.dpdk.org/dpdk-stable
+
+Thanks.
+
+Luca Boccassi
+
 ---
- drivers/net/tap/rte_eth_tap.c | 178 ++++++++++++++++++++++++++++++----
- drivers/net/tap/rte_eth_tap.h |   7 ++
- 2 files changed, 167 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index 13e0a23c34a1..f4ea3bc5d160 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -53,11 +53,14 @@
- #define ETH_TAP_MAC_ARG         "mac"
- #define ETH_TAP_MAC_FIXED       "fixed"
- #define ETH_TAP_PERSIST_ARG     "persist"
-+#define ETH_TAP_MAC_FILTER_ARG  "macfilter"
- 
- #define ETH_TAP_USR_MAC_FMT     "xx:xx:xx:xx:xx:xx"
- #define ETH_TAP_CMP_MAC_FMT     "0123456789ABCDEFabcdef"
- #define ETH_TAP_MAC_ARG_FMT     ETH_TAP_MAC_FIXED "|" ETH_TAP_USR_MAC_FMT
- 
-+#define TAP_MAX_MAC_ADDRS	16
-+
- #define TAP_GSO_MBUFS_PER_CORE	128
- #define TAP_GSO_MBUF_SEG_SIZE	128
- #define TAP_GSO_MBUF_CACHE_SIZE	4
-@@ -110,6 +113,7 @@ static const char *valid_arguments[] = {
- 	ETH_TAP_REMOTE_ARG,
- 	ETH_TAP_MAC_ARG,
- 	ETH_TAP_PERSIST_ARG,
-+	ETH_TAP_MAC_FILTER_ARG,
- 	NULL
- };
- 
-@@ -437,6 +441,45 @@ tap_rxq_pool_free(struct rte_mbuf *pool)
- 	rte_pktmbuf_free(pool);
- }
- 
-+static inline bool
-+tap_mac_filter_match(struct rx_queue *rxq, struct rte_mbuf *mbuf)
-+{
-+	struct pmd_internals *pmd = rxq->pmd;
-+	struct rte_eth_dev_data *data;
-+	struct rte_ether_addr *dst;
-+	uint32_t i;
-+
-+	if (!pmd->macfilter)
-+		return true;
-+
-+	data = pmd->dev->data;
-+	if (data->promiscuous)
-+		return true;
-+
-+	dst = rte_pktmbuf_mtod(mbuf, struct rte_ether_addr *);
-+
-+	if (rte_is_broadcast_ether_addr(dst))
-+		return true;
-+
-+	if (rte_is_multicast_ether_addr(dst)) {
-+		if (data->all_multicast)
-+			return true;
-+		for (i = 0; i < pmd->nb_mc_addrs; i++) {
-+			if (rte_is_same_ether_addr(dst, &pmd->mc_addrs[i]))
-+				return true;
-+		}
-+		return false;
-+	}
-+
-+	for (i = 0; i < TAP_MAX_MAC_ADDRS; i++) {
-+		if (rte_is_zero_ether_addr(&data->mac_addrs[i]))
-+			continue;
-+		if (rte_is_same_ether_addr(dst, &data->mac_addrs[i]))
-+			return true;
-+	}
-+	return false;
-+}
-+
- /* Callback to handle the rx burst of packets to the correct interface and
-  * file descriptor(s) in a multi-queue setup.
-  */
-@@ -515,6 +558,13 @@ pmd_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			data_off = 0;
- 		}
- 		seg->next = NULL;
-+
-+		if (!tap_mac_filter_match(rxq, mbuf)) {
-+			rxq->stats.mac_drops++;
-+			rte_pktmbuf_free(mbuf);
-+			continue;
-+		}
-+
- 		mbuf->packet_type = rte_net_get_ptype(mbuf, NULL,
- 						      RTE_PTYPE_ALL_MASK);
- 		if (rxq->rxmode->offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM)
-@@ -933,7 +983,7 @@ tap_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	struct pmd_internals *internals = dev->data->dev_private;
- 
- 	dev_info->if_index = internals->if_index;
--	dev_info->max_mac_addrs = 1;
-+	dev_info->max_mac_addrs = TAP_MAX_MAC_ADDRS;
- 	dev_info->max_rx_pktlen = RTE_ETHER_MAX_JUMBO_FRAME_LEN;
- 	dev_info->max_rx_queues = RTE_PMD_TAP_MAX_QUEUES;
- 	dev_info->max_tx_queues = RTE_PMD_TAP_MAX_QUEUES;
-@@ -1025,6 +1075,43 @@ tap_stats_reset(struct rte_eth_dev *dev)
- 	return 0;
- }
- 
-+static int
-+tap_xstats_get_names(struct rte_eth_dev *dev,
-+		     struct rte_eth_xstat_name *names,
-+		     unsigned int limit __rte_unused)
-+{
-+	unsigned int i;
-+
-+	if (names == NULL)
-+		return dev->data->nb_rx_queues;
-+
-+	for (i = 0; i < dev->data->nb_rx_queues; i++)
-+		snprintf(names[i].name, sizeof(names[i].name),
-+			 "rx_q%u_mac_filter_drops", i);
-+
-+	return dev->data->nb_rx_queues;
-+}
-+
-+static int
-+tap_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
-+	       unsigned int n)
-+{
-+	struct rte_eth_dev_data *data = dev->data;
-+	struct rx_queue *rxq;
-+	unsigned int i;
-+
-+	if (n < dev->data->nb_rx_queues)
-+		return dev->data->nb_rx_queues;
-+
-+	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-+		rxq = data->rx_queues[i];
-+		xstats[i].id = i;
-+		xstats[i].value = rxq->stats.mac_drops;
-+	}
-+
-+	return dev->data->nb_rx_queues;
-+}
-+
- static void
- tap_queue_close(struct pmd_process_private *process_private, uint16_t qid)
- {
-@@ -1089,14 +1176,15 @@ tap_dev_close(struct rte_eth_dev *dev)
- 	rte_mempool_free(internals->gso_ctx_mp);
- 	internals->gso_ctx_mp = NULL;
- 
-+	rte_free(internals->mc_addrs);
-+	internals->mc_addrs = NULL;
-+	internals->nb_mc_addrs = 0;
-+
- 	if (internals->ka_fd != -1) {
- 		close(internals->ka_fd);
- 		internals->ka_fd = -1;
- 	}
- 
--	/* mac_addrs must not be freed alone because part of dev_private */
--	dev->data->mac_addrs = NULL;
--
- 	internals = dev->data->dev_private;
- 	TAP_LOG(DEBUG, "Closing %s Ethernet device on numa %u",
- 		tuntap_types[internals->type], rte_socket_id());
-@@ -1574,6 +1662,7 @@ tap_rx_queue_setup(struct rte_eth_dev *dev,
- 	}
- 	tmp = &rxq->pool;
- 
-+	rxq->pmd = internals;
- 	rxq->mp = mp;
- 	rxq->trigger_seen = 1; /* force initial burst */
- 	rxq->in_port = dev->data->port_id;
-@@ -1692,17 +1781,50 @@ tap_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
- }
- 
- static int
--tap_set_mc_addr_list(struct rte_eth_dev *dev __rte_unused,
--		     struct rte_ether_addr *mc_addr_set __rte_unused,
--		     uint32_t nb_mc_addr __rte_unused)
-+tap_set_mc_addr_list(struct rte_eth_dev *dev,
-+		     struct rte_ether_addr *mc_addr_set,
-+		     uint32_t nb_mc_addr)
- {
--	/*
--	 * Nothing to do actually: the tap has no filtering whatsoever, every
--	 * packet is received.
--	 */
-+	struct pmd_internals *pmd = dev->data->dev_private;
-+
-+	if (nb_mc_addr == 0) {
-+		rte_free(pmd->mc_addrs);
-+		pmd->mc_addrs = NULL;
-+		pmd->nb_mc_addrs = 0;
-+		return 0;
-+	}
-+
-+	pmd->mc_addrs = rte_realloc(pmd->mc_addrs,
-+				    nb_mc_addr * sizeof(*pmd->mc_addrs), 0);
-+	if (pmd->mc_addrs == NULL) {
-+		pmd->nb_mc_addrs = 0;
-+		return -ENOMEM;
-+	}
-+
-+	memcpy(pmd->mc_addrs, mc_addr_set,
-+	       nb_mc_addr * sizeof(*pmd->mc_addrs));
-+	pmd->nb_mc_addrs = nb_mc_addr;
-+
- 	return 0;
- }
- 
-+static int
-+tap_mac_addr_add(struct rte_eth_dev *dev __rte_unused,
-+		 struct rte_ether_addr *mac_addr __rte_unused,
-+		 uint32_t index __rte_unused,
-+		 uint32_t vmdq __rte_unused)
-+{
-+	/* ethdev layer already stores the address in mac_addrs[] */
-+	return 0;
-+}
-+
-+static void
-+tap_mac_addr_remove(struct rte_eth_dev *dev __rte_unused,
-+		    uint32_t index __rte_unused)
-+{
-+	/* ethdev layer already zeroes the slot in mac_addrs[] */
-+}
-+
- static void tap_dev_intr_handler(void *cb_arg);
- static int tap_lsc_intr_handle_set(struct rte_eth_dev *dev, int set);
- 
-@@ -2038,10 +2160,15 @@ static const struct eth_dev_ops ops = {
- 	.allmulticast_enable    = tap_allmulti_enable,
- 	.allmulticast_disable   = tap_allmulti_disable,
- 	.mac_addr_set           = tap_mac_set,
-+	.mac_addr_add           = tap_mac_addr_add,
-+	.mac_addr_remove        = tap_mac_addr_remove,
- 	.mtu_set                = tap_mtu_set,
- 	.set_mc_addr_list       = tap_set_mc_addr_list,
- 	.stats_get              = tap_stats_get,
- 	.stats_reset            = tap_stats_reset,
-+	.xstats_get             = tap_xstats_get,
-+	.xstats_get_names       = tap_xstats_get_names,
-+	.xstats_reset           = tap_stats_reset,
- 	.dev_supported_ptypes_get = tap_dev_supported_ptypes_get,
- 	.rss_hash_update        = tap_rss_hash_update,
- #ifdef HAVE_TCA_FLOWER
-@@ -2052,7 +2179,7 @@ static const struct eth_dev_ops ops = {
- static int
- eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
- 		   const char *remote_iface, struct rte_ether_addr *mac_addr,
--		   enum rte_tuntap_type type, int persist)
-+		   enum rte_tuntap_type type, int persist, int macfilter)
- {
- 	int numa_node = rte_socket_id();
- 	struct rte_eth_dev *dev;
-@@ -2102,7 +2229,14 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
- 	data->numa_node = numa_node;
- 
- 	data->dev_link = pmd_link;
--	data->mac_addrs = &pmd->eth_addr;
-+	data->mac_addrs = rte_zmalloc_socket(rte_vdev_device_name(vdev),
-+					     TAP_MAX_MAC_ADDRS *
-+					     sizeof(struct rte_ether_addr),
-+					     0, numa_node);
-+	if (data->mac_addrs == NULL) {
-+		TAP_LOG(ERR, "Failed to allocate mac_addrs");
-+		goto error_exit;
-+	}
- 	/* Set the number of RX and TX queues */
- 	data->nb_rx_queues = 0;
- 	data->nb_tx_queues = 0;
-@@ -2120,6 +2254,8 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
- 		process_private->fds[i] = -1;
- 
- 
-+	pmd->macfilter = macfilter;
-+
- 	if (pmd->type == ETH_TUNTAP_TYPE_TAP) {
- 		if (rte_is_zero_ether_addr(mac_addr))
- 			rte_eth_random_addr((uint8_t *)&pmd->eth_addr);
-@@ -2227,6 +2363,9 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
- 	}
- #endif
- 
-+	/* Copy final MAC to slot 0 (remote path may have overwritten it) */
-+	data->mac_addrs[0] = pmd->eth_addr;
-+
- 	rte_eth_dev_probing_finish(dev);
- 	return 0;
- 
-@@ -2246,8 +2385,6 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
- 	free(dev->process_private);
- 
- error_exit_nodev_release:
--	/* mac_addrs must not be freed alone because part of dev_private */
--	dev->data->mac_addrs = NULL;
- 	rte_eth_dev_release_port(dev);
- 
- error_exit_nodev:
-@@ -2405,7 +2542,7 @@ rte_pmd_tun_probe(struct rte_vdev_device *dev)
- 	TAP_LOG(DEBUG, "Initializing pmd_tun for %s", name);
- 
- 	ret = eth_dev_tap_create(dev, tun_name, remote_iface, 0,
--				 ETH_TUNTAP_TYPE_TUN, 0);
-+				 ETH_TUNTAP_TYPE_TUN, 0, 0);
- 
- leave:
- 	if (ret == -1) {
-@@ -2529,6 +2666,7 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
- 	struct rte_eth_dev *eth_dev;
- 	int tap_devices_count_increased = 0;
- 	int persist = 0;
-+	int macfilter = 0;
- 
- 	name = rte_vdev_device_name(dev);
- 	params = rte_vdev_device_args(dev);
-@@ -2617,6 +2755,9 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
- 
- 			if (rte_kvargs_count(kvlist, ETH_TAP_PERSIST_ARG) == 1)
- 				persist = 1;
-+
-+			if (rte_kvargs_count(kvlist, ETH_TAP_MAC_FILTER_ARG) == 1)
-+				macfilter = 1;
- 		}
- 	}
- 
-@@ -2634,7 +2775,7 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
- 	tap_devices_count++;
- 	tap_devices_count_increased = 1;
- 	ret = eth_dev_tap_create(dev, tap_name, remote_iface, &user_mac,
--				 ETH_TUNTAP_TYPE_TAP, persist);
-+				 ETH_TUNTAP_TYPE_TAP, persist, macfilter);
- 
- leave:
- 	if (ret == -1) {
-@@ -2687,5 +2828,6 @@ RTE_PMD_REGISTER_PARAM_STRING(net_tun,
- RTE_PMD_REGISTER_PARAM_STRING(net_tap,
- 			      ETH_TAP_IFACE_ARG "=<string> "
- 			      ETH_TAP_MAC_ARG "=" ETH_TAP_MAC_ARG_FMT " "
--			      ETH_TAP_REMOTE_ARG "=<string>");
-+			      ETH_TAP_REMOTE_ARG "=<string> "
-+			      ETH_TAP_MAC_FILTER_ARG "=<int>");
- RTE_LOG_REGISTER_DEFAULT(tap_logtype, NOTICE);
-diff --git a/drivers/net/tap/rte_eth_tap.h b/drivers/net/tap/rte_eth_tap.h
-index b44eaf9a1bdb..dd65b33bf351 100644
---- a/drivers/net/tap/rte_eth_tap.h
-+++ b/drivers/net/tap/rte_eth_tap.h
-@@ -38,9 +38,13 @@ struct queue_stats {
- 	uint64_t packets;
- 	uint64_t bytes;
- 	uint64_t errors;
-+	uint64_t mac_drops;             /* Packets dropped by MAC filter */
- };
- 
-+struct pmd_internals;
-+
- struct rx_queue {
-+	struct pmd_internals *pmd;      /* back-pointer to driver state */
- 	struct rte_mempool *mp;         /* Mempool for RX packets */
- 	uint32_t trigger_seen;          /* Last seen Rx trigger value */
- 	uint16_t in_port;               /* Port ID */
-@@ -69,7 +73,10 @@ struct pmd_internals {
- 	char name[IFNAMSIZ];		  /* Internal Tap device name */
- 	int type;                         /* Type field - TUN|TAP */
- 	int persist;			  /* 1 if keep link up, else 0 */
-+	int macfilter;                    /* SW MAC filtering enabled */
- 	struct rte_ether_addr eth_addr;   /* Mac address of the device port */
-+	struct rte_ether_addr *mc_addrs;  /* multicast address list */
-+	uint32_t nb_mc_addrs;             /* multicast address count */
- 	unsigned int remote_initial_flags;/* Remote netdevice flags on init */
- 	int remote_if_index;              /* remote netdevice IF_INDEX */
- 	int if_index;                     /* IF_INDEX for the port */
--- 
-2.53.0
-
+2f7cdd821b  Dariusz Sosnowski net/mlx5: fix probing to allow BlueField Socket Direct
+f741298f70  Long Li          net/netvsc: support multi-process VF device removal
+5a9362386e  Stephen Hemminger examples/vmdq_dcb: initialize all configuration structures
+abacc3b2da  Stephen Hemminger net/tap: fix handling of queue stats
+c67f59508d  Stephen Hemminger net/tap: fix Rx descriptor vs scatter segment confusion
+77f831b6f1  Stephen Hemminger pcapng: handle packets copied before file open
+b3b8301dee  Thomas Monjalon  net/idpf: fix commas instead of semicolons
+3ed9a05bff  Xavier Guillaume net/af_packet: fix receive buffer overflow
