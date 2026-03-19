@@ -2,39 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BA0108E1E6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 10:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDC9108E1F2
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 11:45:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 40A8F402D1;
-	Thu, 19 Mar 2026 11:55:14 +0100 (CET)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 456A34013F
- for <dev@dpdk.org>; Thu, 19 Mar 2026 11:55:13 +0100 (CET)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 14BD8205CA;
- Thu, 19 Mar 2026 11:55:13 +0100 (CET)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id E13444025D;
+	Thu, 19 Mar 2026 12:45:31 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BEDF44013F
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 12:45:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773920730;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=qUCueZuOlEgHc2zcUseTNa0djn3KKNz9tEtkZQqv+Zg=;
+ b=In0fIX9e7mqGxwGyxjkPmRwVuR2x4hCLD3f/RY9HoSHMbCReOOQl1NqLNZeT5LupQJLTnm
+ t7SpRtVP8hQGxkZHaX7mATQSqOQJ8s8l+fpIALOGKNZ95/hgfV+8zJbuDEhTn9DJYiLs3y
+ SGk7zRA+n/7Zp9OKvRx6Gn6HFlbqhv4=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-687-hpF2HFj1MDu66VNIJwd-Sg-1; Thu,
+ 19 Mar 2026 07:45:28 -0400
+X-MC-Unique: hpF2HFj1MDu66VNIJwd-Sg-1
+X-Mimecast-MFC-AGG-ID: hpF2HFj1MDu66VNIJwd-Sg_1773920728
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 17A231944F01
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 11:45:28 +0000 (UTC)
+Received: from fedora-linux-42 (unknown [10.44.32.235])
+ by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 53D4A1800576; Thu, 19 Mar 2026 11:45:27 +0000 (UTC)
+From: Christophe Fontaine <cfontain@redhat.com>
+To: dev@dpdk.org
+Cc: Christophe Fontaine <cfontain@redhat.com>
+Subject: [PATCH v2 0/2] bpf/arm64: support packet data load instructions
+Date: Thu, 19 Mar 2026 12:44:07 +0100
+Message-ID: <20260319114500.9757-1-cfontain@redhat.com>
+In-Reply-To: <20260310122045.4057836-1-cfontain@redhat.com>
+References: <20260310122045.4057836-1-cfontain@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Subject: RE: [PATCH] doc: remove obsolete mempool creation advice
-Date: Thu, 19 Mar 2026 11:55:11 +0100
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F657A4@smartserver.smartshare.dk>
-In-Reply-To: <abvEoELb6QIAHBnW@bricha3-mobl1.ger.corp.intel.com>
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-Thread-Topic: [PATCH] doc: remove obsolete mempool creation advice
-Thread-Index: Ady3hICDkVm203z9QUyg89TD98sObAAAYo8g
-References: <20260319091300.652853-1-mb@smartsharesystems.com>
- <abvEoELb6QIAHBnW@bricha3-mobl1.ger.corp.intel.com>
-From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
-To: "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>,
-	"Andrew Rybchenko" <andrew.rybchenko@oktetlabs.ru>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: gU68bSiJ0nCrc27w7A0gY4DBLxOajGOQrV4pR4f-FHk_1773920728
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,102 +67,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> From: Bruce Richardson [mailto:bruce.richardson@intel.com]
-> Sent: Thursday, 19 March 2026 10.41
->=20
-> On Thu, Mar 19, 2026 at 09:13:00AM +0000, Morten Br=F8rup wrote:
-> > The descriptions for the mempool creation functions contained advice
-> for
-> > choosing the optimum (in terms of memory usage) number of elements
-> and
-> > cache size.
-> > The advice was based on implementation details, which was changed
-> long
-> > ago, making the advice completely irrelevant.
-> >
->=20
-> The comment is still correct in most cases, since the default backing
-> storage remains an rte_ring. If passing a power-of-2 size to mempool
-> create
-> one will get a backing rte_ring store which is twice as large as
-> requested,
-> leading to lots of ring slots being wasted. For example, for a pool
-> with
-> 16k elements, the actual ring size allocated will be 32k, leading to
-> wasting 128k of RAM, and also potentially cache too. The latter will
-> occur
-> because of the nature of the ring to iterate through all mempool/ring
-> entries, meaning that even if only 16k of the 32k slots will ever be
-> used,
-> all 32k slots will be passed through the cpu cache if it works on the
-> mempool directly and not just from the per-core cache.
+v2:
+- use emit_return_zero_if_src_zero instead of manual call
+- add fast path (direct read from mbuf->buf_addr) if the
+  requested data is present in the first mbuf and fallback to
+  'slow path' (call to __rte_pktmbuf_read) otherwise.
+- add tests for BPF_LD ABS/IND amd slow path.
 
-You are right about the waste of memory in the ring driver. And good =
-point about the CPU cache!
+Christophe Fontaine (2):
+  bpf/arm64: fix offset type to allow a negative jump
+  bpf/arm64: support packet data load instructions
 
-However, only pointer entries (8 byte each) are being wasted, not object =
-entries (which are much larger). This is not 100 % clear from the =
-advice.
+ app/test/test_bpf.c     | 121 ++++++++++++++++++++++++++++++++++++++++
+ lib/bpf/bpf_jit_arm64.c |  88 ++++++++++++++++++++++++++++-
+ 2 files changed, 208 insertions(+), 1 deletion(-)
 
-Furthermore, with 16k mbufs of 2368 byte each, the mempool itself =
-consumes 37 MB worth of memory, so do we really care about wasting 128 =
-KB?
-
-IMHO, removing the advice improves the quality of the documentation.
-I don't think a detail about saving 0.3 % of the memory used by the =
-mempool should be presented so prominently in the documentation.
-
-Obviously, the memory waste percentage for a mempool holding smaller =
-objects will be larger.
-With 64 byte objects (+64 byte object header), the waste is 8 bytes in =
-the ring driver per 128 bytes in the mempool itself, ca. 6 %.
-Still relatively small.
-
-Alternatively, we could keep the advice and change the wording. =
-Something like:
-
-If the mempool uses a ring driver, the optimum size (in terms of memory) =
-is when n is a power of two minus one, n =3D (2^q - 1); otherwise the =
-ring's array of pointers to the objects will be larger, as it's size is =
-aligned to the next power of 2.
-
-It's difficult to keep the advice short, if we add the fine print to it.
-
-But then the advice is still missing for all the other mempool drivers =
-using nonlinear memory allocation.
-I'm not sure, but I think the "bucket" driver also uses nonlinear memory =
-allocation.
-
-Another alternative:
-The mempool drivers or underlying libraries could log a debug message =
-when allocating an oversize array for alignment reasons.
-
->=20
-> On the other hand, I'd be in favour of removing this text if we
-> switched
-> the default mempool in DPDK to being stack-based. While the stack may
-> not
-> be lock-free like the ring, with per-lcore caches the number of
-> accesses to
-> the stack should be small, and it gives much better cache utilization
-> overall - especially in cases where buffers are allocated on one core
-> and
-> freed on a different one! Even in cases where we are not transferring
-> between cores, in a single-core case we still will get better reuse of
-> "hot" buffers than in an rte_ring-backed case.
-
-<jokingly>
-The lock free stack driver's reference to each object uses 2 pointers, =
-so guaranteed waste of memory here.
-</jokingly>
-
-Let's discuss changing the default mempool driver some other day, and =
-focus on the documentation for now.
-
-I get your point, though.
-It makes sense that the documentation for a library considers the =
-underlying default implementation.
-
-But if it does, the advice should come with a disclaimer mentioning when =
-it applies.
+-- 
+2.53.0
 
