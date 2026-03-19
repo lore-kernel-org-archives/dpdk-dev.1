@@ -2,51 +2,41 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B55C51090222
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 13:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2434109022B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 13:53:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 90A87402BD;
-	Thu, 19 Mar 2026 14:15:44 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id EC42C4025D;
- Thu, 19 Mar 2026 14:15:42 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fc5ln5wgbzHnGd7;
- Thu, 19 Mar 2026 21:15:17 +0800 (CST)
-Received: from dubpeml500004.china.huawei.com (unknown [7.214.147.1])
- by mail.maildlp.com (Postfix) with ESMTPS id 5DB2440086;
- Thu, 19 Mar 2026 21:15:41 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml500004.china.huawei.com (7.214.147.1) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 19 Mar 2026 13:15:40 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Thu, 19 Mar 2026 13:15:40 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
- "dev@dpdk.org" <dev@dpdk.org>, Marat Khalili <marat.khalili@huawei.com>
-CC: Stephen Hemminger <stephen@networkplumber.org>, Christophe Fontaine
- <cfontain@redhat.com>, Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>, "stable@dpdk.org"
- <stable@dpdk.org>
-Subject: RE: [PATCH v2] mbuf: fix read packet data
-Thread-Topic: [PATCH v2] mbuf: fix read packet data
-Thread-Index: AQHct54NPTc54bXoC0m5ZJ+QMc+jJLW11CBg
-Date: Thu, 19 Mar 2026 13:15:40 +0000
-Message-ID: <71be4d5ba80847d3994012a082fc42d6@huawei.com>
-References: <20260319084048.652493-1-mb@smartsharesystems.com>
- <20260319124329.729034-1-mb@smartsharesystems.com>
-In-Reply-To: <20260319124329.729034-1-mb@smartsharesystems.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.149.3]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 92A0E402D1;
+	Thu, 19 Mar 2026 14:53:05 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.221])
+ by mails.dpdk.org (Postfix) with ESMTP id 31D83402C4
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 14:53:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
+ MIME-Version; bh=ab5aQJi4zydWgSe+fAAYeyvOxndFo9IQp8wdF3hhfnI=;
+ b=C5P+x4rhan4zHcp2dPOlCq/gdT+bF+gDTEB93F85pXDaSJ/oNtpwIysmErhz/0
+ mAse05CGuCR44odUQTZM10E6kkS9UEnFDUSPaNApShC4igL0NfxYTgwskZyTtvg+
+ QEObJ9HLQu5hsg77TSxDk3+I24XGvvs0RLFFyhlZLPs5I=
+Received: from localhost.localdomain (unknown [114.116.198.59])
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgAX3Gek_7tpacAQAw--.19162S4;
+ Thu, 19 Mar 2026 21:52:58 +0800 (CST)
+From: Feifei Wang <wff_light@vip.163.com>
+To: dev@dpdk.org
+Cc: chenyi221 <chenyi221@huawei.com>
+Subject: [v6 0/7] hinic3 change for support new SPx NIC
+Date: Thu, 19 Mar 2026 21:52:06 +0800
+Message-ID: <20260319135220.2390-1-wff_light@vip.163.com>
+X-Mailer: git-send-email 2.47.0.windows.2
+In-Reply-To: <20260316134335.1640-1-wff_light@vip.163.com>
+References: <20260316134335.1640-1-wff_light@vip.163.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID: Ac8vCgAX3Gek_7tpacAQAw--.19162S4
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZryrury3Jw18CF1DuryxuFg_yoW5Zr1fpF
+ WUG3y3Zr1qgrW7Jwn7Gw4xAa45X3WxG34UKas8XasYvFykAFy5A34UGFW0yrW3tr4xJF12
+ vF45Cryvg3W5tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U_wIDUUUUU=
+X-Originating-IP: [114.116.198.59]
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNhp3gWm7-7qV2QAA3B
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,90 +50,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gVGhlIHN1bSBvZiBvZmZzZXQgKyBsZW5ndGgsIGJvdGggMzIgYml0IHVuc2lnbmVkIGlu
-dGVnZXJzLCBjb3VsZCB3cmFwDQo+IGFyb3VuZCwgY2F1c2luZyBjb21wYXJpc29ucyB0byBnaXZl
-IHRoZSB3cm9uZyByZXN1bHQuDQo+IFRoaXMgd2FzIGZpeGVkIGJ5IHVzaW5nIDY0IGJpdCBpbnN0
-ZWFkIG9mIDMyIGJpdCBmb3IgY2FsY3VsYXRpbmcgdGhlIHN1bS4NCj4gDQo+IE5vdGU6DQo+IFdo
-ZW4gdGhlIGJyYW5jaCBpcyBub3QgdGFrZW4gZm9yIHRoZSBpbml0aWFsICJpZiAoKHVpbnQ2NF90
-KW9mZiArIGxlbiA+DQo+IHJ0ZV9wa3RtYnVmX3BrdF9sZW4obSkpIiBjb21wYXJpc29uLCB0aGUg
-c3VtIGlzIGtub3duIHRvIG5vdCBleGNlZWQgdGhlDQo+IG1heGltdW0gcG9zc2libGUgdmFsdWUg
-b2YgcnRlX3BrdG1idWZfcGt0X2xlbihtKSwgVUlOVDMyX01BWCwgYW5kDQo+IGZvbGxvd2luZyBz
-dW0gY2FsY3VsYXRpb25zIGNhbiBwcm9jZWVkIHVzaW5nIDMyIGJpdC4NCj4gDQo+IEFsc28sIGZp
-eGVkIGEgcmVsYXRlZCBidWcgaW4gYW4gbWJ1ZiB0ZXN0IGNhc2U6DQo+IEl0IGV4cGVjdGVkIHJl
-YWRpbmcgYSBsZW5ndGggb2YgVUlOVF9NQVggZnJvbSBhIG5vbi16ZXJvIG9mZnNldCB0byBub3QN
-Cj4gZmFpbC4NCj4gQW5kIGR1ZSB0byB0aGUgb2Zmc2V0K2xlbmd0aCB3cmFwYXJvdW5kIGJ1Zywg
-dGhlIHJlYWQgb3BlcmF0aW9uIGRpZCBub3QNCj4gZmFpbC4NCj4gVGhpcyB0ZXN0IGNhc2Ugd2Fz
-IHVwZGF0ZWQgdG8gZXhwZWN0IHRoZSByZWFkIG9wZXJhdGlvbiB0byBmYWlsLg0KPiANCj4gRml4
-ZXM6IGI4NDExMGU3YmFhMiAoIm1idWY6IGFkZCBmdW5jdGlvbiB0byByZWFkIHBhY2tldCBkYXRh
-IikNCj4gRml4ZXM6IDdiMjk1ZGNlZWEwNyAoInRlc3QvbWJ1ZjogYWRkIHVuaXQgdGVzdCBjYXNl
-cyIpDQo+IENjOiBzdGFibGVAZHBkay5vcmcNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1vcnRlbiBC
-csO4cnVwIDxtYkBzbWFydHNoYXJlc3lzdGVtcy5jb20+DQo+IC0tLQ0KPiB2MjoNCj4gKiBGaXhl
-ZCBtYnVmIHRlc3QgY2FzZS4gKE1hcmF0IEtoYWxpbGkpDQo+IC0tLQ0KPiAgYXBwL3Rlc3QvdGVz
-dF9tYnVmLmMgfCAxOCArKysrKysrKystLS0tLS0tLS0NCj4gIGxpYi9tYnVmL3J0ZV9tYnVmLmMg
-IHwgIDIgKy0NCj4gIGxpYi9tYnVmL3J0ZV9tYnVmLmggIHwgIDIgKy0NCj4gIDMgZmlsZXMgY2hh
-bmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0
-IGEvYXBwL3Rlc3QvdGVzdF9tYnVmLmMgYi9hcHAvdGVzdC90ZXN0X21idWYuYw0KPiBpbmRleCBh
-NDFkMmQwZjk3Li5kYjIzMjU5NzQ1IDEwMDY0NA0KPiAtLS0gYS9hcHAvdGVzdC90ZXN0X21idWYu
-Yw0KPiArKysgYi9hcHAvdGVzdC90ZXN0X21idWYuYw0KPiBAQCAtMjAzNywxMyArMjAzNywxMyBA
-QCB0ZXN0X3BrdG1idWZfcmVhZF9mcm9tX29mZnNldChzdHJ1Y3QNCj4gcnRlX21lbXBvb2wgKnBr
-dG1idWZfcG9vbCkNCj4gIAkvKiByZWFkIGxlbmd0aCBncmVhdGVyIHRoYW4gbWJ1ZiBkYXRhX2xl
-biAqLw0KPiAgCWlmIChydGVfcGt0bWJ1Zl9yZWFkKG0sIGhkcl9sZW4sIHJ0ZV9wa3RtYnVmX2Rh
-dGFfbGVuKG0pICsgMSwNCj4gIAkJCQlOVUxMKSAhPSBOVUxMKQ0KPiAtCQlHT1RPX0ZBSUwoIiVz
-OiBSZXF1ZXN0ZWQgbGVuIGlzIGxhcmdlciB0aGFuIG1idWYgZGF0YSBsZW4hXG4iLA0KPiArCQlH
-T1RPX0ZBSUwoIiVzOiBSZXF1ZXN0ZWQgb2Zmc2V0ICsgbGVuIGlzIGxhcmdlciB0aGFuIG1idWYg
-ZGF0YQ0KPiBsZW4hXG4iLA0KPiAgCQkJCV9fZnVuY19fKTsNCj4gDQo+ICAJLyogcmVhZCBsZW5n
-dGggZ3JlYXRlciB0aGFuIG1idWYgcGt0X2xlbiAqLw0KPiAgCWlmIChydGVfcGt0bWJ1Zl9yZWFk
-KG0sIGhkcl9sZW4sIHJ0ZV9wa3RtYnVmX3BrdF9sZW4obSkgKyAxLA0KPiAgCQkJCU5VTEwpICE9
-IE5VTEwpDQo+IC0JCUdPVE9fRkFJTCgiJXM6IFJlcXVlc3RlZCBsZW4gaXMgbGFyZ2VyIHRoYW4g
-bWJ1ZiBwa3QgbGVuIVxuIiwNCj4gKwkJR09UT19GQUlMKCIlczogUmVxdWVzdGVkIG9mZnNldCAr
-IGxlbiBpcyBsYXJnZXIgdGhhbiBtYnVmIHBrdA0KPiBsZW4hXG4iLA0KPiAgCQkJCV9fZnVuY19f
-KTsNCj4gDQo+ICAJLyogcmVhZCBkYXRhIG9mIHplcm8gbGVuIGZyb20gdmFsaWQgb2Zmc2V0ICov
-DQo+IEBAIC0yMDY1LDIxICsyMDY1LDIxIEBAIHRlc3RfcGt0bWJ1Zl9yZWFkX2Zyb21fb2Zmc2V0
-KHN0cnVjdA0KPiBydGVfbWVtcG9vbCAqcGt0bWJ1Zl9wb29sKQ0KPiANCj4gIAkvKiByZWFkIGRh
-dGEgb2YgbWF4IGxlbmd0aCBmcm9tIHZhbGlkIG9mZnNldCAqLw0KPiAgCWRhdGFfY29weSA9IHJ0
-ZV9wa3RtYnVmX3JlYWQobSwgaGRyX2xlbiwgVUlOVF9NQVgsIE5VTEwpOw0KPiAtCWlmIChkYXRh
-X2NvcHkgPT0gTlVMTCkNCj4gLQkJR09UT19GQUlMKCIlczogRXJyb3IgaW4gcmVhZGluZyBwYWNr
-ZXQgZGF0YSFcbiIsIF9fZnVuY19fKTsNCj4gLQkvKiBjaGVjayBpZiB0aGUgcmVjZWl2ZWQgYWRk
-cmVzcyBpcyB0aGUgYmVnaW5uaW5nIG9mIGRhdGEgc2VnbWVudCAqLw0KPiAtCWlmIChkYXRhX2Nv
-cHkgIT0gZGF0YSkNCj4gLQkJR09UT19GQUlMKCIlczogQ29ycnVwdGVkIGRhdGEgYWRkcmVzcyFc
-biIsIF9fZnVuY19fKTsNCj4gKwlpZiAoZGF0YV9jb3B5ICE9IE5VTEwpDQo+ICsJCUdPVE9fRkFJ
-TCgiJXM6IFJlcXVlc3RlZCBvZmZzZXQgKyBtYXggbGVuIGlzIGxhcmdlciB0aGFuIG1idWYNCj4g
-cGt0IGxlbiFcbiIsDQo+ICsJCQkJX19mdW5jX18pOw0KPiANCj4gIAkvKiB0cnkgdG8gcmVhZCBm
-cm9tIG1idWYgd2l0aCBtYXggc2l6ZSBvZmZzZXQgKi8NCj4gIAlkYXRhX2NvcHkgPSBydGVfcGt0
-bWJ1Zl9yZWFkKG0sIFVJTlRfTUFYLCAwLCBOVUxMKTsNCj4gIAlpZiAoZGF0YV9jb3B5ICE9IE5V
-TEwpDQo+IC0JCUdPVE9fRkFJTCgiJXM6IEVycm9yIGluIHJlYWRpbmcgcGFja2V0IGRhdGEhXG4i
-LCBfX2Z1bmNfXyk7DQo+ICsJCUdPVE9fRkFJTCgiJXM6IFJlcXVlc3RlZCBtYXggb2Zmc2V0IGlz
-IGxhcmdlciB0aGFuIG1idWYgcGt0DQo+IGxlbiFcbiIsDQo+ICsJCQkJX19mdW5jX18pOw0KPiAN
-Cj4gIAkvKiB0cnkgdG8gcmVhZCBmcm9tIG1idWYgd2l0aCBtYXggc2l6ZSBvZmZzZXQgYW5kIGxl
-biAqLw0KPiAgCWRhdGFfY29weSA9IHJ0ZV9wa3RtYnVmX3JlYWQobSwgVUlOVF9NQVgsIFVJTlRf
-TUFYLCBOVUxMKTsNCj4gIAlpZiAoZGF0YV9jb3B5ICE9IE5VTEwpDQo+IC0JCUdPVE9fRkFJTCgi
-JXM6IEVycm9yIGluIHJlYWRpbmcgcGFja2V0IGRhdGEhXG4iLCBfX2Z1bmNfXyk7DQo+ICsJCUdP
-VE9fRkFJTCgiJXM6IFJlcXVlc3RlZCBtYXggb2Zmc2V0ICsgbWF4IGxlbiBpcyBsYXJnZXIgdGhh
-bg0KPiBtYnVmIHBrdCBsZW4hXG4iLA0KPiArCQkJCV9fZnVuY19fKTsNCj4gDQo+ICAJcnRlX3Br
-dG1idWZfZHVtcChzdGRvdXQsIG0sIHJ0ZV9wa3RtYnVmX3BrdF9sZW4obSkpOw0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2xpYi9tYnVmL3J0ZV9tYnVmLmMgYi9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+IGlu
-ZGV4IGE1ZDE2ZTRjOTcuLmMyNDc2ZTc3MDQgMTAwNjQ0DQo+IC0tLSBhL2xpYi9tYnVmL3J0ZV9t
-YnVmLmMNCj4gKysrIGIvbGliL21idWYvcnRlX21idWYuYw0KPiBAQCAtNzk1LDcgKzc5NSw3IEBA
-IGNvbnN0IHZvaWQgKl9fcnRlX3BrdG1idWZfcmVhZChjb25zdCBzdHJ1Y3QgcnRlX21idWYNCj4g
-Km0sIHVpbnQzMl90IG9mZiwNCj4gIAljb25zdCBzdHJ1Y3QgcnRlX21idWYgKnNlZyA9IG07DQo+
-ICAJdWludDMyX3QgYnVmX29mZiA9IDAsIGNvcHlfbGVuOw0KPiANCj4gLQlpZiAob2ZmICsgbGVu
-ID4gcnRlX3BrdG1idWZfcGt0X2xlbihtKSkNCj4gKwlpZiAoKHVpbnQ2NF90KW9mZiArIGxlbiA+
-IHJ0ZV9wa3RtYnVmX3BrdF9sZW4obSkpDQoNClRoYW5rcyBNb3J0ZW4gZm9yIGFkZHJlc3Npbmcg
-aXQuDQpKdXN0IGFzIGEgbml0LCBmb3IgMzItYml0IHN5c3RlbXMsIHdvdWxkbid0IGl0IGJlIG1v
-cmUgZnJpZW5kbHk6DQpJZiAob2ZmICsgbGVuIDwgb2ZmIHx8IG9mZiArIGxlbiA+IHJ0ZV9wa3Rt
-YnVmX3BrdF9sZW4obSkpDQo/DQpTYW1lIGZvciBjb21wYXJpc29uIGluIHJ0ZV9wa3RtYnVmX3Jl
-YWQoKS4gDQpXaXRoIG9yIHdpdGhvdXQgc3VnZ2VzdGVkIGNoYW5nZToNCkFja2VkLWJ5OiBLb25z
-dGFudGluIEFuYW55ZXYgPGtvbnN0YW50aW4uYW5hbnlldkBodWF3ZWkuY29tPg0KDQo+ICAJCXJl
-dHVybiBOVUxMOw0KPiANCj4gIAl3aGlsZSAob2ZmID49IHJ0ZV9wa3RtYnVmX2RhdGFfbGVuKHNl
-ZykpIHsNCj4gZGlmZiAtLWdpdCBhL2xpYi9tYnVmL3J0ZV9tYnVmLmggYi9saWIvbWJ1Zi9ydGVf
-bWJ1Zi5oDQo+IGluZGV4IDU5MmFmMjM4OGMuLmQ2NjAyZjc0YmMgMTAwNjQ0DQo+IC0tLSBhL2xp
-Yi9tYnVmL3J0ZV9tYnVmLmgNCj4gKysrIGIvbGliL21idWYvcnRlX21idWYuaA0KPiBAQCAtMTg0
-Myw3ICsxODQzLDcgQEAgY29uc3Qgdm9pZCAqX19ydGVfcGt0bWJ1Zl9yZWFkKGNvbnN0IHN0cnVj
-dCBydGVfbWJ1Zg0KPiAqbSwgdWludDMyX3Qgb2ZmLA0KPiAgc3RhdGljIGlubGluZSBjb25zdCB2
-b2lkICpydGVfcGt0bWJ1Zl9yZWFkKGNvbnN0IHN0cnVjdCBydGVfbWJ1ZiAqbSwNCj4gIAl1aW50
-MzJfdCBvZmYsIHVpbnQzMl90IGxlbiwgdm9pZCAqYnVmKQ0KPiAgew0KPiAtCWlmIChsaWtlbHko
-b2ZmICsgbGVuIDw9IHJ0ZV9wa3RtYnVmX2RhdGFfbGVuKG0pKSkNCj4gKwlpZiAobGlrZWx5KCh1
-aW50NjRfdClvZmYgKyBsZW4gPD0gcnRlX3BrdG1idWZfZGF0YV9sZW4obSkpKQ0KPiAgCQlyZXR1
-cm4gcnRlX3BrdG1idWZfbXRvZF9vZmZzZXQobSwgY2hhciAqLCBvZmYpOw0KPiAgCWVsc2UNCj4g
-IAkJcmV0dXJuIF9fcnRlX3BrdG1idWZfcmVhZChtLCBvZmYsIGxlbiwgYnVmKTsNCj4gLS0NCj4g
-Mi40My4wDQoNCg==
+From: chenyi221 <chenyi221@huawei.com>=0D
+
+Change hinic3 driver to support Huawei new SPx series NIC.=0D
+=0D
+v2:=0D
+--fix build issues=0D
+=0D
+v3:=0D
+--fix community review comments and err reports=0D
+=0D
+v4:=0D
+--fix rss type assignment error=0D
+=0D
+v5:=0D
+--fix community ubuntu-22.04-clang err=0D
+=0D
+v6:=0D
+--fix atomic compilation error=0D
+=0D
+Feifei Wang (7):=0D
+  net/hinic3: add support for new SPx series NIC=0D
+  net/hinic3: add enhance cmdq support for new SPx series NIC=0D
+  net/hinic3: use different callback func to split new/old cmdq=0D
+    operations=0D
+  net/hinic3: add fun init ops to support Compact CQE=0D
+  net/hinic3: add rx ops to support Compact CQE=0D
+  net/hinic3: add tx ops to support Compact CQE=0D
+  net/hinic3: use different callback func to support htn fdir=0D
+=0D
+ drivers/net/hinic3/base/hinic3_cmd.h          |  80 ++-=0D
+ drivers/net/hinic3/base/hinic3_cmdq.c         | 370 ++++------=0D
+ drivers/net/hinic3/base/hinic3_cmdq.h         | 112 ++-=0D
+ drivers/net/hinic3/base/hinic3_cmdq_enhance.c | 111 +++=0D
+ drivers/net/hinic3/base/hinic3_cmdq_enhance.h | 125 ++++=0D
+ drivers/net/hinic3/base/hinic3_csr.h          |  18 +-=0D
+ drivers/net/hinic3/base/hinic3_hw_comm.c      |  15 +-=0D
+ drivers/net/hinic3/base/hinic3_hw_comm.h      |  31 +-=0D
+ drivers/net/hinic3/base/hinic3_hwdev.c        |  13 +-=0D
+ drivers/net/hinic3/base/hinic3_hwdev.h        |  18 +=0D
+ drivers/net/hinic3/base/hinic3_hwif.c         |  10 +-=0D
+ drivers/net/hinic3/base/hinic3_mgmt.c         |   5 +-=0D
+ drivers/net/hinic3/base/hinic3_mgmt.h         |   2 +=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.c      | 182 ++---=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.h      |  98 ++-=0D
+ drivers/net/hinic3/base/meson.build           |   1 +=0D
+ drivers/net/hinic3/hinic3_ethdev.c            | 279 ++++++--=0D
+ drivers/net/hinic3/hinic3_ethdev.h            | 120 ++--=0D
+ drivers/net/hinic3/hinic3_fdir.c              | 657 +++++++++++++-----=0D
+ drivers/net/hinic3/hinic3_fdir.h              | 361 ++++++++--=0D
+ drivers/net/hinic3/hinic3_nic_io.c            | 525 ++++++--------=0D
+ drivers/net/hinic3/hinic3_nic_io.h            | 163 ++++-=0D
+ drivers/net/hinic3/hinic3_rx.c                | 267 +++++--=0D
+ drivers/net/hinic3/hinic3_rx.h                | 182 ++++-=0D
+ drivers/net/hinic3/hinic3_tx.c                | 456 ++++++------=0D
+ drivers/net/hinic3/hinic3_tx.h                | 154 +++-=0D
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    | 167 +++++=0D
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |  63 ++=0D
+ drivers/net/hinic3/htn_adapt/meson.build      |   7 +=0D
+ drivers/net/hinic3/meson.build                |   8 +-=0D
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    | 151 ++++=0D
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |  46 ++=0D
+ drivers/net/hinic3/stn_adapt/meson.build      |   7 +=0D
+ 33 files changed, 3362 insertions(+), 1442 deletions(-)=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.c=0D
+ create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.h=0D
+ create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c=0D
+ create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h=0D
+ create mode 100644 drivers/net/hinic3/htn_adapt/meson.build=0D
+ create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c=0D
+ create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h=0D
+ create mode 100644 drivers/net/hinic3/stn_adapt/meson.build=0D
+=0D
+--=0D
+2.45.1.windows.1=0D
+=0D
+
