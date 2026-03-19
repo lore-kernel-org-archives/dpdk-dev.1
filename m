@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1452109024D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 16:07:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA84E109025C
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 17:13:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BBF0340650;
-	Thu, 19 Mar 2026 17:07:28 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 6620E40430
- for <dev@dpdk.org>; Thu, 19 Mar 2026 17:07:26 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 8EFF0402BD;
+	Thu, 19 Mar 2026 18:13:41 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 896124013F
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 18:13:40 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773936447; x=1805472447;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=Wrf0m7RTwdUhj+jSoc+V3VYZ8ya6A/nIXZPPjl9ujbQ=;
- b=ahKDHXpWxUbAtBkZbEk3mkBi8J2IkU4NClujT5L3ox4oHt33el4SfwOa
- OZ2mOw9N3d33eRXHWZOU3lYPTI38kkC1jZLYDYD4QNaZFBdmhkOj6Ua76
- xl+Jf5tCAST6w9eokE/+UppVfUDNikdo2aa0CyJm6AtL00wtCEbg6UfOn
- 8Y661ln8ApWHokk0I92wIDyOeUKVjj8wcqe/epSfbcBa7NEv8kDGHaxGb
- Dl8z6unh7g5RM2zV6AueXR+AMvjljXSIpoFqv1Yd0HBdhL6KLuROXogKc
- VRpOmhaNANXzWueo5FeQJxkZZuM0uRB2Gi4idQF4aIpkVuGO1SXMsWQm0 A==;
-X-CSE-ConnectionGUID: 4rx0SHeMQm6cNsKG5+WxJA==
-X-CSE-MsgGUID: H9qprwHzRGaGUEW18tCDoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11734"; a="74900641"
-X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; d="scan'208";a="74900641"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2026 09:07:26 -0700
-X-CSE-ConnectionGUID: R0fr3/C6T7CyJ4inYrrqGw==
-X-CSE-MsgGUID: m684K5FfTESScxmtwuQZlg==
+ t=1773940421; x=1805476421;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=JgoPelVDRsB76TycRVxmlBx2CXzpOgt34/dUOWEO/YM=;
+ b=IzBBG4SAW61IwZNyPDvp2a4j2FSk6n7I4tD5EFmoCBQ95GwPLn24iVjf
+ GfbhV0PeZ0qgXg1zZBgxKibCztyquyBuI/Ot7ATVWP/CUTKnHh7mG0d39
+ 8MryxPGXBn+LxmM8IURBMA+4ICmxar8iQ/cX0ubZGxESTryVArpzzXk3Q
+ fOnHDgF1/yf+KGKjFBFpy7s7JyMmIpWeagy6SZ08qF20XHuQHlZlgG7rW
+ vym8c2ajTv+2Bgsbbqq74dAonY5ZLnI5/5vZUbovx1TQ/bViSvWf7aGUL
+ vCq/KSGhxHWsoHkJDgRFa8laCZCSrWcZ2EwlHO8mmW+sL+EvIcVU97qEy g==;
+X-CSE-ConnectionGUID: qEi0t1VGRQm2mjE+emirVw==
+X-CSE-MsgGUID: y1nn9ysJSEOAlBSmzJXyqw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11734"; a="85648022"
+X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; d="scan'208";a="85648022"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 19 Mar 2026 10:13:39 -0700
+X-CSE-ConnectionGUID: flmYI0dySDeU0de2U2H4dw==
+X-CSE-MsgGUID: KMPYCtr+QCGe+PgOjoz+Ew==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; d="scan'208";a="222987066"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa009.jf.intel.com with ESMTP; 19 Mar 2026 09:07:25 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Jianfeng Tan <jianfeng.tan@intel.com>
-Subject: [PATCH v1 5/5] eal: avoid deadlock in async IPC alarm callback
-Date: Thu, 19 Mar 2026 16:07:17 +0000
-Message-ID: <398239c507619ce17786c94e0613a07819f2b7e9.1773936429.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <740b39c5098b4d40cafb9881ad70865a3c889012.1773936429.git.anatoly.burakov@intel.com>
-References: 
+X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; d="scan'208";a="227979614"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa005.jf.intel.com with ESMTP; 19 Mar 2026 10:13:38 -0700
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: lylavoie@iol.unh.edu, probb@iol.unh.edu, david.marchand@redhat.com,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 0/7] Get fast-test suite to run on FreeBSD
+Date: Thu, 19 Mar 2026 17:11:34 +0000
+Message-ID: <20260319171334.1151425-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.51.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -59,62 +58,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-async_reply_handle_thread_unsafe() can run while holding
-pending_requests.lock and currently calls rte_eal_alarm_cancel().
+Bugzilla ID: 761
 
-rte_eal_alarm_cancel() may spin-wait for an executing callback, which can
-deadlock if that callback is blocked on the same lock.
+The standard "fast-tests" suite is used to sanity-check large parts
+of the DPDK codebase, but it failed to run successfully on FreeBSD,
+with large numbers of failures. This is a long-standing issue reported
+in Bugzilla back in 2021 (hence the 3-digit BZ ID)
 
-Remove callback-side alarm cancellation. It is safe to do so, because any
-callback triggered without a pending request becomes a noop.
+This set attempts to rectify this situation by allowing the suite
+to run without errors. Mostly it does this by disabling test suites
+that rely on features like multi-process which are unsupported on
+FreeBSD. It also fixes the test_debug suite which should run on
+BSD but was failing.
 
-Fixes: daf9bfca717e ("ipc: remove thread for async requests")
-Cc: stable@dpdk.org
+After this set, a run on my FreeBSD system passes with zero failures
+and 22 tests reported as skipped.
 
-Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
----
- lib/eal/common/eal_common_proc.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
+Bruce Richardson (7):
+  test/timer_secondary: skip test on FreeBSD
+  test/eal_flags: skip test on FreeBSD
+  test/pdump: skip test on FreeBSD
+  test/secondary_process: skip test on FreeBSD
+  test/external_memory: skip test on FreeBSD
+  test/interrupts: skip test on FreeBSD
+  test/debug: fix unit test on FreeBSD
 
-diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
-index d1a041b707..830c11f4ac 100644
---- a/lib/eal/common/eal_common_proc.c
-+++ b/lib/eal/common/eal_common_proc.c
-@@ -549,19 +549,6 @@ async_reply_handle_thread_unsafe(struct pending_request *req)
- 
- 	TAILQ_REMOVE(&pending_requests.requests, req, next);
- 
--	if (rte_eal_alarm_cancel(async_reply_handle,
--			(void *)(uintptr_t)req->id) < 0) {
--		/* if we failed to cancel the alarm because it's already in
--		 * progress, don't proceed because otherwise we will end up
--		 * handling the same message twice.
--		 */
--		if (rte_errno == EINPROGRESS) {
--			EAL_LOG(DEBUG, "Request handling is already in progress");
--			goto no_trigger;
--		}
--		EAL_LOG(ERR, "Failed to cancel alarm");
--	}
--
- 	if (action == ACTION_TRIGGER)
- 		return req;
- no_trigger:
-@@ -910,8 +897,12 @@ mp_request_async(const char *dst, struct rte_mp_msg *req,
- 		return -1;
- 	}
- 
--	/* Set alarm before allocating or sending so request timeout tracking
--	 * is active as soon as this request ID is reserved.
-+	/* Set alarm before allocating or sending. The alarm is never cancelled:
-+	 * rte_eal_alarm_cancel spin-waits for an executing callback to finish,
-+	 * which deadlocks if we hold pending_requests.lock while the callback
-+	 * is blocked on it. Instead, let stale alarms fire; with ID-based
-+	 * lookup the callback will simply not find the request and return
-+	 * harmlessly.
- 	 */
- 	id = ++next_request_id;
- 	if (rte_eal_alarm_set(ts->tv_sec * 1000000 + ts->tv_nsec / 1000,
--- 
-2.47.3
+ app/test/process.h              | 11 ++++++++---
+ app/test/test_debug.c           |  6 +++---
+ app/test/test_eal_flags.c       | 26 +++++++++++++-------------
+ app/test/test_external_mem.c    |  4 ++--
+ app/test/test_interrupts.c      |  2 +-
+ app/test/test_mp_secondary.c    |  4 ++--
+ app/test/test_pdump.c           |  6 ++++++
+ app/test/test_timer_secondary.c |  4 ++--
+ 8 files changed, 37 insertions(+), 26 deletions(-)
+
+--
+2.51.0
 
