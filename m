@@ -2,61 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 247561088E65
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 02:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D57611088E70
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 04:06:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EC687402A7;
-	Thu, 19 Mar 2026 03:50:31 +0100 (CET)
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
- [113.46.200.219])
- by mails.dpdk.org (Postfix) with ESMTP id DB3474013F
- for <dev@dpdk.org>; Thu, 19 Mar 2026 03:50:29 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=bqeG1YbENFa5Kn1YnUiQhcig00c34+ts8oyZQfLxBEY=;
- b=TPa5C0i4mEey40v/JWaVdi699dtUeHwXMeH+vrne/exhG0uMZhHRLFJEUaSKJTZhbOBYQk/zm
- 8b1tauhrxgeEPkCpVGwMK9KcXVjbvcRfxnSqbIJVOK7lkFX+xWz4W2RfA3Bo6kQF18AuwcM4akm
- +t/ddkjBU0UKCyyujbLhgAI=
-Received: from mail.maildlp.com (unknown [172.19.163.0])
- by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4fbqn10lHYz1prMV;
- Thu, 19 Mar 2026 10:45:25 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
- by mail.maildlp.com (Postfix) with ESMTPS id 55E024056B;
- Thu, 19 Mar 2026 10:50:27 +0800 (CST)
-Received: from kwepemn200018.china.huawei.com (7.202.194.141) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id A7D9A402A7;
+	Thu, 19 Mar 2026 05:05:59 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id B9C9F4013F;
+ Thu, 19 Mar 2026 05:05:57 +0100 (CET)
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 62J3QAaV1405169; Wed, 18 Mar 2026 21:05:56 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=LfOR5Wn07uPZQZX8OuNTNHU
+ zF8ZAfpuZk0XlfT9yBhc=; b=ilzZp+s5B2oRqy+QK7/AkitDXOxCtm3UMCGgDL/
+ PTfT59Q3w5534vn+KTzwfPIUekZ7OmJY+VTRyBcYKFQjDjVjB5BizM1B+4GqKTjd
+ 5vsFVThnVPp919g6BiSTGRa2tphaYg2fgASN/b60M/Ydod3/ldoZOfV3tT3l3IiY
+ k/p6ZBHdLfyuXboviwzzMRJTc9lnpTIQ2ns1e2uX9cH+g6wUjI1UtYGa7P/7ibeW
+ FJQsj39VkcnEF35dOxCe41p4x4ArlT2dQp2KOafToxIBC+UDbcdOA0CFDY6XYPXu
+ 1GhvDr93cqBh7+QB7c6XrjSOGKVNwxcpSgALhm8a3x5nNxA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4cytccjbdm-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 18 Mar 2026 21:05:56 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 19 Mar 2026 10:50:27 +0800
-Received: from kwepemn500008.china.huawei.com (7.202.194.149) by
- kwepemn200018.china.huawei.com (7.202.194.141) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 19 Mar 2026 10:50:26 +0800
-Received: from kwepemn500008.china.huawei.com ([7.202.194.149]) by
- kwepemn500008.china.huawei.com ([7.202.194.149]) with mapi id 15.02.1544.011; 
- Thu, 19 Mar 2026 10:50:26 +0800
-From: "wangfeifei (J)" <wangfeifei40@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, Feifei Wang
- <wff_light@vip.163.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, "chenyi (CY)" <chenyi221@huawei.com>,
- zengweiliang zengweiliang <zengweiliang.zengweiliang@huawei.com>
-Subject: =?gb2312?B?u9i4tDogW1YyIDAvN10gaGluaWMzIGNoYW5nZSBmb3Igc3VwcG9ydCBuZXcg?=
- =?gb2312?Q?SPx_NIC?=
-Thread-Topic: [V2 0/7] hinic3 change for support new SPx NIC
-Thread-Index: AQHctUsBK2CyKUlmY0iIVP3yFO/P/LWwxz6AgARP3GA=
-Date: Thu, 19 Mar 2026 02:50:26 +0000
-Message-ID: <2f53819ae73642a2b4837cef530c15e9@huawei.com>
-References: <20260131100608.12429-2-wff_light@vip.163.com>
- <20260316134335.1640-1-wff_light@vip.163.com>
- <20260316084553.0b732977@phoenix.local>
-In-Reply-To: <20260316084553.0b732977@phoenix.local>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [100.105.34.252]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+ 15.2.1544.25; Wed, 18 Mar 2026 21:05:55 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Wed, 18 Mar 2026 21:05:55 -0700
+Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
+ by maili.marvell.com (Postfix) with ESMTP id 5D0763F7058;
+ Wed, 18 Mar 2026 21:05:53 -0700 (PDT)
+From: Tejasree Kondoj <ktejasree@marvell.com>
+To: Jerin Jacob <jerinj@marvell.com>, Akhil Goyal <gakhil@marvell.com>
+CC: Anoob Joseph <anoobj@marvell.com>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>, <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH] common/cnxk: validate cipher key length
+Date: Thu, 19 Mar 2026 09:35:52 +0530
+Message-ID: <20260319040552.4151899-1-ktejasree@marvell.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=H6zWAuYi c=1 sm=1 tr=0 ts=69bb7624 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=EAYMVhzMl8SCOHhVQcBL:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
+ a=UzQi_V4CL4N8gIqO2eoA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE5MDAyOCBTYWx0ZWRfX3/Ch+55NsUs+
+ nZbzsBcgFRy1HKqTWJrfMBoT9IO5uNGUEmTdBRptz4Q7144OsYjW3GWfCr8AugAPo/w0ExVHn2w
+ 1R0GQRqE06CfT3iRZ5tHvO9IphewTWKXRqxT0NK4+N/YNOWOsml3xCmMNUC+7ZitTDnnNIVY2ZC
+ Ho2xU6yu6yYsW8t8GxkDYj6vhJiOeAcDEpdPK+DtMW9ZYEsa2eF4PKiYmfYo4plpw6m0qTmiJH/
+ r59Ub6WgcDpVSEt1KM/Am5/XsFaS50qe0CzN2itoabDqPNIM+SJEyEZz7waoSQhxAOhqdXIFHNS
+ M33inYdv+VOaH4wtfHaha7XViF+zJ8L5kwBSX3uyw1Yj8mC0J7M0M3koF53AySas50GGYQVlkkN
+ IJZ7Y1Hui9bKuRLstEH7/1ePhfjVmaLetGIZ0VYbg0MrKCVRjo/SXHpdYkIDZpCNKwC0gPx+qEs
+ yEaPKVipNdVxgE48RQQ==
+X-Proofpoint-ORIG-GUID: 8_8l3y70eqdd_NagBCi6LLXrPnShiH-Q
+X-Proofpoint-GUID: 8_8l3y70eqdd_NagBCi6LLXrPnShiH-Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-18_02,2026-03-17_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,130 +79,219 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gLS0tLS3Tyrz+1K28/i0tLS0tDQo+ILeivP7IyzogU3RlcGhlbiBIZW1taW5nZXIgPHN0
-ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KPiC3osvNyrG85DogMjAyNsTqM9TCMTbI1SAyMzo0
-Ng0KPiDK1bz+yMs6IEZlaWZlaSBXYW5nIDx3ZmZfbGlnaHRAdmlwLjE2My5jb20+DQo+ILOty806
-IGRldkBkcGRrLm9yZzsgY2hlbnlpIChDWSkgPGNoZW55aTIyMUBodWF3ZWkuY29tPg0KPiDW98zi
-OiBSZTogW1YyIDAvN10gaGluaWMzIGNoYW5nZSBmb3Igc3VwcG9ydCBuZXcgU1B4IE5JQw0KPiAN
-Cj4gT24gTW9uLCAxNiBNYXIgMjAyNiAyMTo0MzoyMiArMDgwMA0KPiBGZWlmZWkgV2FuZyA8d2Zm
-X2xpZ2h0QHZpcC4xNjMuY29tPiB3cm90ZToNCj4gDQo+ID4gRnJvbTogY2hlbnlpMjIxIDxjaGVu
-eWkyMjFAaHVhd2VpLmNvbT4NCj4gPg0KPiA+IENoYW5nZSBoaW5pYzMgZHJpdmVyIHRvIHN1cHBv
-cnQgSHVhd2VpIG5ldyBTUHggc2VyaWVzIE5JQy4NCj4gPg0KPiA+IHYyOg0KPiA+IC0tZml4IGJ1
-aWxkIGlzc3Vlcw0KPiA+DQo+ID4gRmVpZmVpIFdhbmcgKDcpOg0KPiA+ICAgbmV0L2hpbmljMzog
-YWRkIHN1cHBvcnQgZm9yIG5ldyBTUHggc2VyaWVzIE5JQw0KPiA+ICAgbmV0L2hpbmljMzogYWRk
-IGVuaGFuY2UgY21kcSBzdXBwb3J0IGZvciBuZXcgU1B4IHNlcmllcyBOSUMNCj4gPiAgIG5ldC9o
-aW5pYzM6IHVzZSBkaWZmZXJlbnQgY2FsbGJhY2sgZnVuYyB0byBzcGxpdCBuZXcvb2xkIGNtZHEN
-Cj4gPiAgICAgb3BlcmF0aW9ucw0KPiA+ICAgbmV0L2hpbmljMzogYWRkIGZ1biBpbml0IG9wcyB0
-byBzdXBwb3J0IENvbXBhY3QgQ1FFDQo+ID4gICBuZXQvaGluaWMzOiBhZGQgcnggb3BzIHRvIHN1
-cHBvcnQgQ29tcGFjdCBDUUUNCj4gPiAgIG5ldC9oaW5pYzM6IGFkZCB0eCBvcHMgdG8gc3VwcG9y
-dCBDb21wYWN0IENRRQ0KPiA+ICAgbmV0L2hpbmljMzogdXNlIGRpZmZlcmVudCBjYWxsYmFjayBm
-dW5jIHRvIHN1cHBvcnQgaHRuIGZkaXINCj4gPg0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFz
-ZS9oaW5pYzNfY21kLmggICAgICAgICAgfCAgODAgKystDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmlj
-My9iYXNlL2hpbmljM19jbWRxLmMgICAgICAgICB8IDM3MCArKysrLS0tLS0tDQo+ID4gIGRyaXZl
-cnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19jbWRxLmggICAgICAgICB8IDExMiArKy0NCj4gPiAg
-ZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2NtZHFfZW5oYW5jZS5jIHwgMTExICsrKw0K
-PiA+IGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19jbWRxX2VuaGFuY2UuaCB8IDEyNSAr
-KysrDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19jc3IuaCAgICAgICAgICB8
-ICAxOCArLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdfY29tbS5jICAg
-ICAgfCAgMTUgKy0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3X2NvbW0u
-aCAgICAgIHwgIDMxICstDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19od2Rl
-di5jICAgICAgICB8ICAxMyArLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNf
-aHdkZXYuaCAgICAgICAgfCAgMTggKw0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5p
-YzNfaHdpZi5jICAgICAgICAgfCAgMTAgKy0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2Uv
-aGluaWMzX21nbXQuYyAgICAgICAgIHwgICA1ICstDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9i
-YXNlL2hpbmljM19tZ210LmggICAgICAgICB8ICAgMiArDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmlj
-My9iYXNlL2hpbmljM19uaWNfY2ZnLmMgICAgICB8IDE4MiArKy0tLQ0KPiA+ICBkcml2ZXJzL25l
-dC9oaW5pYzMvYmFzZS9oaW5pYzNfbmljX2NmZy5oICAgICAgfCAgOTggKystDQo+ID4gIGRyaXZl
-cnMvbmV0L2hpbmljMy9iYXNlL21lc29uLmJ1aWxkICAgICAgICAgICB8ICAgMSArDQo+ID4gIGRy
-aXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfZXRoZGV2LmMgICAgICAgICAgICB8IDI4MCArKysrKyst
-LQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX2V0aGRldi5oICAgICAgICAgICAgfCAx
-MjAgKystLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX2ZkaXIuYyAgICAgICAgICAg
-ICAgfCA2NTcgKysrKysrKysrKysrKy0tLS0tDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9oaW5p
-YzNfZmRpci5oICAgICAgICAgICAgICB8IDM2MSArKysrKysrKy0tDQo+ID4gIGRyaXZlcnMvbmV0
-L2hpbmljMy9oaW5pYzNfbmljX2lvLmMgICAgICAgICAgICB8IDUyNSArKysrKystLS0tLS0tLQ0K
-PiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX25pY19pby5oICAgICAgICAgICAgfCAxNjMg
-KysrKy0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2hpbmljM19yeC5jICAgICAgICAgICAgICAg
-IHwgMjY1ICsrKysrLS0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2hpbmljM19yeC5oICAgICAg
-ICAgICAgICAgIHwgMTgyICsrKystDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfdHgu
-YyAgICAgICAgICAgICAgICB8IDQ1OCArKysrKystLS0tLS0NCj4gPiAgZHJpdmVycy9uZXQvaGlu
-aWMzL2hpbmljM190eC5oICAgICAgICAgICAgICAgIHwgMTU0ICsrKy0NCj4gPiAgLi4uL25ldC9o
-aW5pYzMvaHRuX2FkYXB0L2hpbmljM19odG5fY21kcS5jICAgIHwgMTY3ICsrKysrDQo+ID4gIC4u
-Li9uZXQvaGluaWMzL2h0bl9hZGFwdC9oaW5pYzNfaHRuX2NtZHEuaCAgICB8ICA2MyArKw0KPiA+
-ICBkcml2ZXJzL25ldC9oaW5pYzMvaHRuX2FkYXB0L21lc29uLmJ1aWxkICAgICAgfCAgIDcgKw0K
-PiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvbWVzb24uYnVpbGQgICAgICAgICAgICAgICAgfCAgIDgg
-Ky0NCj4gPiAgLi4uL25ldC9oaW5pYzMvc3RuX2FkYXB0L2hpbmljM19zdG5fY21kcS5jICAgIHwg
-MTUxICsrKysNCj4gPiAgLi4uL25ldC9oaW5pYzMvc3RuX2FkYXB0L2hpbmljM19zdG5fY21kcS5o
-ICAgIHwgIDQ2ICsrDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9zdG5fYWRhcHQvbWVzb24uYnVp
-bGQgICAgICB8ICAgNyArDQo+ID4gIDMzIGZpbGVzIGNoYW5nZWQsIDMzNjIgaW5zZXJ0aW9ucygr
-KSwgMTQ0MyBkZWxldGlvbnMoLSkgIGNyZWF0ZSBtb2RlDQo+ID4gMTAwNjQ0IGRyaXZlcnMvbmV0
-L2hpbmljMy9iYXNlL2hpbmljM19jbWRxX2VuaGFuY2UuYw0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2
-NDQgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2NtZHFfZW5oYW5jZS5oDQo+ID4gIGNy
-ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvaHRuX2FkYXB0L2hpbmljM19odG5f
-Y21kcS5jDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvaHRuX2Fk
-YXB0L2hpbmljM19odG5fY21kcS5oDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25l
-dC9oaW5pYzMvaHRuX2FkYXB0L21lc29uLmJ1aWxkDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBk
-cml2ZXJzL25ldC9oaW5pYzMvc3RuX2FkYXB0L2hpbmljM19zdG5fY21kcS5jDQo+ID4gIGNyZWF0
-ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvc3RuX2FkYXB0L2hpbmljM19zdG5fY21k
-cS5oDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvc3RuX2FkYXB0
-L21lc29uLmJ1aWxkDQo+ID4NCj4gPiAtLQ0KPiA+IDIuNDUuMS53aW5kb3dzLjENCj4gPg0KPiAN
-Cj4gU3RpbGwgbG90cyBvZiB0aGluZ3MgdGhhdCBuZWVkIHRvIGJlIGFkZHJlc3NlZCBoZXJlLg0K
-PiBTZWUgdGhlIGZvbGxvd2luZyBBSSBwYXRjaCByZXZpZXcuDQo+IA0KPiANCj4gUGF0Y2ggMS83
-OiBuZXQvaGluaWMzOiBhZGQgc3VwcG9ydCBmb3IgbmV3IFNQeCBzZXJpZXMgTklDDQo+IA0KPiBI
-SU5JQzNfREVWX0lEX1NQMjMwIGlzIGRlZmluZWQgYXMgMFgwMjI5IHdpdGggYW4gdXBwZXJjYXNl
-IFguDQo+IEV2ZXJ5IG90aGVyIGhleCBjb25zdGFudCBpbiB0aGUgZmlsZSB1c2VzIGxvd2VyY2Fz
-ZSAweC4gU2hvdWxkIGJlIDB4MDIyOS4NCltGZWlmZWldIERvbmUNCj4gDQo+IEhJTklDM19ERVZf
-SURfU1A5MjAgaGFzIG5vIFZGIGNvdW50ZXJwYXJ0IGFuZCBubyBlbnRyeSBpbiBoaW5pYzNfaXNf
-dmZfZGV2KCkuDQo+IElzIHRoYXQgaW50ZW50aW9uYWw/DQpbRmVpZmVpXSBZZXMsIFNQOTIwIG5v
-dyBkb2Vzbid0IHN1cHBvcnQgVkYgZnVuY3Rpb24uDQo+IA0KPiBQYXRjaCAyLzc6IG5ldC9oaW5p
-YzM6IGFkZCBlbmhhbmNlIGNtZHEgc3VwcG9ydA0KPiANCj4gVGhlIHVuaWZpZWQgY21kcV9zeW5j
-X2NtZCgpIHJldGFpbnMgcnRlX3NtcF9ybWIoKSB3aGljaCBpcyBhIGRlcHJlY2F0ZWQgYmFycmll
-ci4NCj4gU2luY2UgdGhpcyBmdW5jdGlvbiBpcyBiZWluZyByZXdyaXR0ZW4sIHBsZWFzZSBjb252
-ZXJ0IHRvDQo+IHJ0ZV9hdG9taWNfdGhyZWFkX2ZlbmNlKHJ0ZV9tZW1vcnlfb3JkZXJfYWNxdWly
-ZSkuDQpbRmVpZmVpXSBEb25lDQo+IA0KPiBISU5JQzNfQ01EUV9CVUZfU0laRSBjaGFuZ2VkIGZy
-b20gMjA0OCB0byAxMDI0IHdpdGhvdXQgYW55IGV4cGxhbmF0aW9uIGluDQo+IHRoZSBjb21taXQg
-bWVzc2FnZS4gSWYgZXhpc3Rpbmcgbm9ybWFsLWNtZHEgY29tbWFuZHMgcmVsaWVkIG9uIHRoZSBs
-YXJnZXINCj4gYnVmZmVyIHRoaXMgY291bGQgc2lsZW50bHkgdHJ1bmNhdGUgdGhlbS4NCltGZWlm
-ZWldIERvbmUsIGV4cGxhbmF0aW9uIGlzIHdyaXR0ZW4gaW4gcGF0Y2ggMiBjb21taXQgbWVzc2Fn
-ZToNCiJISU5JQzNfQ01EUV9CVUZfU0laRSBjaGFuZ2VkIGZyb20gMjA0OCB0byAxMDI0IHRvIGFk
-YXB0IHRvDQp0aGUgdHdvIHR5cGVzIG9mIE5JQ3MiDQo+IA0KPiBQYXRjaCAzLzc6IG5ldC9oaW5p
-YzM6IHVzZSBkaWZmZXJlbnQgY2FsbGJhY2sgZnVuYyB0byBzcGxpdCBuZXcvb2xkIGNtZHEgb3Bl
-cmF0aW9ucw0KPiANCj4gVGhlIGNhbGwgc2l0ZXMgaW4gaGluaWMzX2V0aGRldi5jIHVzZSBoaW5p
-YzNfY21kcV9nZXRfc3RuX29wcygpIGFuZA0KPiBoaW5pYzNfY21kcV9nZXRfaHRuX29wcygpIGJ1
-dCB0aGUgYWN0dWFsIGRlZmluaXRpb25zIGFyZQ0KPiBoaW5pYzNfbmljX2NtZHFfZ2V0X3N0bl9v
-cHMoKSBhbmQgaGluaWMzX25pY19jbWRxX2dldF9odG5fb3BzKCkuDQo+IFRoaXMgd2lsbCBub3Qg
-bGluay4gUGF0Y2ggNCBmaXhlcyB0aGUgY2FsbCBzaXRlIGJ1dCBlYWNoIGNvbW1pdCBtdXN0IGNv
-bXBpbGUNCj4gaW5kZXBlbmRlbnRseS4NCltGZWlmZWldIERvbmUuDQo+IA0KPiBJbiBodG5fYWRh
-cHQvaGluaWMzX2h0bl9jbWRxLmMgdGhlIHN0YXRpYyBmdW5jdGlvbg0KPiBwcmVwYXJlX3Jzc19p
-bmRpcl90YWJsZV9jbWRfaGVhZGVyKCkgaXMgY2FsbGVkIGJlZm9yZSBpdCBpcyBkZWZpbmVkLCB3
-aXRoIG5vDQo+IGZvcndhcmQgZGVjbGFyYXRpb24uIFRoaXMgd2lsbCBmYWlsIHdpdGggLVdlcnJv
-cj1pbXBsaWNpdC1mdW5jdGlvbi1kZWNsYXJhdGlvbi4NCltGZWlmZWldRG9uZS4NCj4gDQo+IFBh
-dGNoIDQvNzogbmV0L2hpbmljMzogYWRkIGZ1biBpbml0IG9wcyB0byBzdXBwb3J0IENvbXBhY3Qg
-Q1FFDQo+IA0KPiBJbiBoaW5pYzNfcnhfcXVldWVfc2V0dXAoKSwgd2hlbiBjaV9teiBhbGxvY2F0
-aW9uIGZhaWxzIHRoZSBjb2RlIGNhbGxzDQo+IGhpbmljM19tZW16b25lX2ZyZWUoY2lfbXopIG9u
-IGEgTlVMTCBwb2ludGVyIGJlZm9yZSBqdW1waW5nIHRvIHRoZSBlcnJvciBsYWJlbC4NCj4gVGhp
-cyBjYWxsIGlzIGVpdGhlciBhIE5VTEwgZGVyZWZlcmVuY2Ugb3IgZGVhZCBjb2RlIGFuZCBzaG91
-bGQgYmUgcmVtb3ZlZC4NCltGZWlmZWldRG9uZS4NCj4gDQo+IFRoZSBlcnJvci1wYXRoIGdvdG8g
-bGFiZWxzIGluIGhpbmljM19mdW5jX2luaXQoKSBhcmUgbWlzb3JkZXJlZC4NCj4gVGhlIGFsbG9j
-YXRpb24gb3JkZXIgaXMgbWFjX2FkZHJzLCBjbWRxX29wcywgcnhfb3BzLCB0eF9vcHMsIG1jX2xp
-c3QgYnV0IHRoZQ0KPiBjbGVhbnVwIGxhYmVscyBkbyBub3QgcmV2ZXJzZSB0aGlzIHByb3Blcmx5
-LiBGb3IgZXhhbXBsZSBpZiBjbWRxX29wcyBhbGxvY2F0aW9uDQo+IGZhaWxzLCBtYWNfYWRkcnMg
-aXMgbmV2ZXIgZnJlZWQuDQo+IElmIHR4X29wcyBmYWlscywgbmVpdGhlciBjbWRxX29wcyBub3Ig
-bWFjX2FkZHJzIGFyZSBmcmVlZC4gVGhpcyBsZWFrcyBtZW1vcnkgb24NCj4gZXZlcnkgaW5pdCBm
-YWlsdXJlIHBhdGguDQpbRmVpZmVpXURvbmUuDQo+IA0KPiBUaGUgdGVybmFyeSBpbiBoaW5pYzNf
-cGZfZ2V0X2RlZmF1bHRfY29zKCkgYXNzaWducyBISU5JQzNfQ09TX05VTV9NQVggKDgpDQo+IHdo
-ZW4gTklDX0ZfSFROX0NNRFEgaXMgc2V0IGFuZCBISU5JQzNfQ09TX05VTV9NQVhfSFROICg0KSB3
-aGVuIGl0IGlzDQo+IG5vdC4gVGhlIG5hbWluZyBzdWdnZXN0cyB0aGlzIGlzIGJhY2t3YXJkcy4g
-UGxlYXNlIHZlcmlmeS4NCltGZWlmZWldRG9uZQ0KPiANCj4gUGF0Y2ggNS83OiBuZXQvaGluaWMz
-OiBhZGQgcnggb3BzIHRvIHN1cHBvcnQgQ29tcGFjdCBDUUUNCj4gDQo+IGhpbmljM19wb2xsX2lu
-dGVncmF0ZWRfY3FlX3JxX2VtcHR5KCkgdXNlcyBfX2F0b21pY19sb2FkX24oKSB3aXRoDQo+IF9f
-QVRPTUlDX0FDUVVJUkUuIE5ldyBjb2RlIG11c3QgdXNlIHJ0ZV9hdG9taWNfbG9hZF9leHBsaWNp
-dCgpIHdpdGgNCj4gcnRlX21lbW9yeV9vcmRlcl9hY3F1aXJlIGluc3RlYWQgb2YgdGhlIEdDQyBi
-dWlsdC1pbi4NCltGZWlmZWldIERvbmUuDQo+IA0KPiBQYXRjaCA3Lzc6IG5ldC9oaW5pYzM6IHVz
-ZSBkaWZmZXJlbnQgY2FsbGJhY2sgZnVuYyB0byBzdXBwb3J0IGh0biBmZGlyDQo+IA0KPiBDb3B5
-LXBhc3RlIGJ1ZyBpbiBoaW5pYzNfcnNzX2hhc2hfdXBkYXRlKCkgYW5kIGhpbmljM19yc3NfY29u
-Zl9nZXQoKS4NCj4gSW4gYm90aCBmdW5jdGlvbnMgdGhlIGVsc2UgYnJhbmNoIGhhczoNCj4gDQo+
-ICAgICByc3NfdHlwZS5pcHY2X2V4dCA9IDA7DQo+ICAgICByc3NfdHlwZS5pcHY2X2V4dCA9IDA7
-DQo+IA0KPiBUaGUgc2Vjb25kIGxpbmUgc2hvdWxkIGJlIHJzc190eXBlLnRjcF9pcHY2X2V4dCA9
-IDAuIEFzIHdyaXR0ZW4gdGNwX2lwdjZfZXh0IGlzDQo+IG5ldmVyIGNsZWFyZWQgb24gbm9uLUhU
-TiBoYXJkd2FyZSB3aGljaCB3aWxsIHByb2R1Y2UgaW5jb3JyZWN0IFJTUw0KPiBjb25maWd1cmF0
-aW9uLg0KW0ZlaWZlaV0gRG9uZQ0K
+Validate DES/3DES and AES key lengths before copying
+into SA cipher_key[] to avoid out-of-bounds write
+into adjacent IV/salt fields.
+
+Cc: stable@dpdk.org
+
+Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
+---
+ drivers/common/cnxk/cnxk_security.c | 127 ++++++++++++++++------------
+ drivers/common/cnxk/roc_cpt.h       |   1 +
+ 2 files changed, 76 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
+index 14d29e605a..04aca12131 100644
+--- a/drivers/common/cnxk/cnxk_security.c
++++ b/drivers/common/cnxk/cnxk_security.c
+@@ -170,6 +170,35 @@ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 	w2->s.spi = ipsec_xfrm->spi;
+ 
+ 	if (key != NULL && length != 0) {
++		/* Validate key length and set AES key len before copy to avoid overflow */
++		if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
++		    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
++			switch (length) {
++			case ROC_CPT_AES128_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
++				break;
++			case ROC_CPT_AES192_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
++				break;
++			case ROC_CPT_AES256_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
++				break;
++			default:
++				plt_err("Invalid AES key length");
++				return -EINVAL;
++			}
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_DES_CBC && length != ROC_CPT_DES_KEY_LEN) {
++			plt_err("Invalid DES key length");
++			return -EINVAL;
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_3DES_CBC && length != ROC_CPT_DES3_KEY_LEN) {
++			plt_err("Invalid 3DES key length");
++			return -EINVAL;
++		}
+ 		/* Copy encryption key */
+ 		memcpy(cipher_key, key, length);
+ 		tmp_key = (uint64_t *)cipher_key;
+@@ -177,30 +206,7 @@ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 			tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
+ 	}
+ 
+-	/* Set AES key length */
+-	if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
+-	    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+-		switch (length) {
+-		case ROC_CPT_AES128_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+-			break;
+-		case ROC_CPT_AES192_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+-			break;
+-		case ROC_CPT_AES256_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+-			break;
+-		default:
+-			plt_err("Invalid AES key length");
+-			return -EINVAL;
+-		}
+-	}
+-
+-	if (ipsec_xfrm->life.packets_soft_limit != 0 ||
+-	    ipsec_xfrm->life.packets_hard_limit != 0) {
++	if (ipsec_xfrm->life.packets_soft_limit != 0 || ipsec_xfrm->life.packets_hard_limit != 0) {
+ 		if (ipsec_xfrm->life.bytes_soft_limit != 0 ||
+ 		    ipsec_xfrm->life.bytes_hard_limit != 0) {
+ 			plt_err("Expiry tracking with both packets & bytes is not supported");
+@@ -844,9 +850,11 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_DES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_DES_CBC;
++				aes_key_len = cipher_xform->cipher.key.length;
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_3DES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_3DES_CBC;
++				aes_key_len = cipher_xform->cipher.key.length;
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_AES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_AES_CBC;
+@@ -897,20 +905,18 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 		}
+ 	}
+ 
+-	/* Set AES key length */
+-	if (ctl->enc_type == ROC_IE_SA_ENC_AES_CBC ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_CTR ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_CCM ||
++	/* Validate and set AES key length before copy */
++	if (ctl->enc_type == ROC_IE_SA_ENC_AES_CBC || ctl->enc_type == ROC_IE_SA_ENC_AES_CTR ||
++	    ctl->enc_type == ROC_IE_SA_ENC_AES_GCM || ctl->enc_type == ROC_IE_SA_ENC_AES_CCM ||
+ 	    ctl->auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+ 		switch (aes_key_len) {
+-		case 16:
++		case ROC_CPT_AES128_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+ 			break;
+-		case 24:
++		case ROC_CPT_AES192_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+ 			break;
+-		case 32:
++		case ROC_CPT_AES256_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+ 			break;
+ 		default:
+@@ -918,6 +924,14 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 			return -EINVAL;
+ 		}
+ 	}
++	if (ctl->enc_type == ROC_IE_SA_ENC_DES_CBC && aes_key_len != ROC_CPT_DES_KEY_LEN) {
++		plt_err("Invalid DES key length");
++		return -EINVAL;
++	}
++	if (ctl->enc_type == ROC_IE_SA_ENC_3DES_CBC && aes_key_len != ROC_CPT_DES3_KEY_LEN) {
++		plt_err("Invalid 3DES key length");
++		return -EINVAL;
++	}
+ 
+ 	if (ipsec->options.esn)
+ 		ctl->esn_en = 1;
+@@ -1364,6 +1378,35 @@ ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 	w2->s.spi = ipsec_xfrm->spi;
+ 
+ 	if (key != NULL && length != 0) {
++		/* Validate key length and set AES key len before copy to avoid overflow */
++		if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
++		    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
++			switch (length) {
++			case ROC_CPT_AES128_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
++				break;
++			case ROC_CPT_AES192_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
++				break;
++			case ROC_CPT_AES256_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
++				break;
++			default:
++				plt_err("Invalid AES key length");
++				return -EINVAL;
++			}
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_DES_CBC && length != ROC_CPT_DES_KEY_LEN) {
++			plt_err("Invalid DES key length");
++			return -EINVAL;
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_3DES_CBC && length != ROC_CPT_DES3_KEY_LEN) {
++			plt_err("Invalid 3DES key length");
++			return -EINVAL;
++		}
+ 		/* Copy encryption key */
+ 		memcpy(cipher_key, key, length);
+ 		tmp_key = (uint64_t *)cipher_key;
+@@ -1371,26 +1414,6 @@ ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 			tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
+ 	}
+ 
+-	/* Set AES key length */
+-	if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC || w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR || w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM || w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+-		switch (length) {
+-		case ROC_CPT_AES128_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+-			break;
+-		case ROC_CPT_AES192_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+-			break;
+-		case ROC_CPT_AES256_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+-			break;
+-		default:
+-			plt_err("Invalid AES key length");
+-			return -EINVAL;
+-		}
+-	}
+-
+ 	if (ipsec_xfrm->life.packets_soft_limit != 0 || ipsec_xfrm->life.packets_hard_limit != 0) {
+ 		if (ipsec_xfrm->life.bytes_soft_limit != 0 ||
+ 		    ipsec_xfrm->life.bytes_hard_limit != 0) {
+diff --git a/drivers/common/cnxk/roc_cpt.h b/drivers/common/cnxk/roc_cpt.h
+index 4715359f49..533d194bd4 100644
+--- a/drivers/common/cnxk/roc_cpt.h
++++ b/drivers/common/cnxk/roc_cpt.h
+@@ -79,6 +79,7 @@
+ #define ROC_CPT_SHA2_HMAC_LEN	16
+ #define ROC_CPT_DES_IV_LEN	8
+ 
++#define ROC_CPT_DES_KEY_LEN	    8
+ #define ROC_CPT_DES3_KEY_LEN	    24
+ #define ROC_CPT_AES128_KEY_LEN	    16
+ #define ROC_CPT_AES192_KEY_LEN	    24
+-- 
+2.34.1
+
