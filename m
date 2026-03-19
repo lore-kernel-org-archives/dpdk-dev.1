@@ -2,79 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B4E109190B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 18:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECF31091912
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 20:18:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75E77402C6;
-	Thu, 19 Mar 2026 19:28:48 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 55A4C402B9
- for <dev@dpdk.org>; Thu, 19 Mar 2026 19:28:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1773944926;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=y8BUHzvMzUzjo0Q53sJVYrBjrs+waX1bXEa7r49dpAA=;
- b=jHXVj7jkxKXTimINR/Za6t1I3cKVgDlRBEuIVkZfX0OLmTG1UKLSz8EZIZum14GlLZFIs8
- OC1kfYXFYSb1nfX0eiSvaJ08yQsE3GDIsuUjJn/i6yq1EbH5yzaS5utrddaTm5e1IMIgyY
- okqO18MM5y1SPTJj4tkIh1UFeWTbRMQ=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-152-cAxry57zOGKedwnVJ9KIfA-1; Thu, 19 Mar 2026 14:28:43 -0400
-X-MC-Unique: cAxry57zOGKedwnVJ9KIfA-1
-X-Mimecast-MFC-AGG-ID: cAxry57zOGKedwnVJ9KIfA_1773944922
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5a2778d515aso1550089e87.1
- for <dev@dpdk.org>; Thu, 19 Mar 2026 11:28:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BE508402B9;
+	Thu, 19 Mar 2026 21:18:17 +0100 (CET)
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
+ by mails.dpdk.org (Postfix) with ESMTP id 714F24013F
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 21:18:15 +0100 (CET)
+Received: by mail-dl1-f43.google.com with SMTP id
+ a92af1059eb24-127380532eeso3586170c88.1
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 13:18:15 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773951494; cv=none;
+ d=google.com; s=arc-20240605;
+ b=Ac32LtpITm1taIYzsNovVUm0ltV24NniaFsm0b7sXInDXsa4cZtjGgAmw52QMcowZO
+ QAxK0+qcpkxQ+qgQqWj4Ke+ccwTZosfqc9LURoCzcIKLXX/N2pokKMF/2rR//5BvRhVl
+ 1qStXVihnUQFTbTB0ah50RUN6cSxKfhTdEDtpBMGYfFmowXS3Ip6cd74nf5Yg9I4D191
+ ghvPRW3/uESZl96AcdhxjtJ6bHC1JL2xKF4TJ/t+U1UGRbN3MUK8gBPCZBv8sStV/ppI
+ gFR8MbyK/34sxwb3brfmTX4BIL26DymIzg7aA1/kw2s1hT05O4Z6Ujf1rm3mSObFyKR5
+ 72gQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=Afx2R1i7iP8MH4b50smeliumL1Gut3KrWKoxecX4bDw=;
+ fh=FrOm8Zxjtk8Vz9XPnZuRIL9rXk+dlmFQdkgQwGfBT9E=;
+ b=ULwE8cFKYxnm0o0Wh5yacfqfuaWRpRgzsIS6wiqy4Qlk/2BsCC216vLP1dwPN9QHB/
+ iOllUiFMNg5s1ObJ4qKM79/W4ySWm3Ypj71+dWh/SvxELWgnSqO6u4EZvgtGDjPpKNa7
+ W1w2mEwZ5SS+mZjn/KNxSQ17Cx3bC7hZTc0N79NvcY/Ff4iuNYB9nmBYkIEZAsc26qm1
+ v+N3Rq0nxtmksphQy+S0DuOeug/q1U0XLcU8PJOc35UPDN1+zXspwQpY+GcGxhAfhCPQ
+ ZFqUxU8PiT8yg7Pg2U76gbSsU3haq41iRFPI3WQp/xbXaIelK8A2dHsUCAOad396QKtH
+ Dl2Q==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1773951494; x=1774556294; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=Afx2R1i7iP8MH4b50smeliumL1Gut3KrWKoxecX4bDw=;
+ b=jZiVc7ZkuFGXLgkHMMIdOHMF8ETUkrubRH+tDfu6DqnTD7xDHak6rOYxl2L4Hf0PRE
+ y5F3rvUrIsIPHoY1OBedbFbUCygHF9YM01aUZjigIRtc/HkqyD0qLnfNBPAE8mze21E1
+ PwlUTxGcdOOpNIV4uRyCEqXmoneKvGyd+FPe8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773944922; x=1774549722;
+ d=1e100.net; s=20251104; t=1773951494; x=1774556294;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=y8BUHzvMzUzjo0Q53sJVYrBjrs+waX1bXEa7r49dpAA=;
- b=PVyNSWYJNXseydkTnM5+9NRtFQk4wiRQ/0NZE+GcFlOe3B2QNyzMsrrR4YCpJ7P7DZ
- dRGco79M6DHDX0EIWVyIYFtdR1CwvLmvS+bQ7FyniIBArytcYH7AGOsJEvejOSnSgw7K
- Ehtwsa5oMJ5le55EYw+Y/8sV3V/zLfJU9JZOs8N796V+jTyr955FOZsCKpoHqMtDO7bi
- 3PC07y87IqspRElx8FeghulFdSqjKN16oY1gqpsemydpiCm+x9z+IQAoTCE//6S82JFL
- xXz+gnlGZGn4107ClKo1BD/dltwmNkOnruzW9FpjHSo132Mc2X4ZhFRfOI1JSMoHBhCa
- E10Q==
-X-Gm-Message-State: AOJu0YzxMl4xvnfY011NQwn1oQw4HnKg+a5G4mNUnZWXA93Bh4bnmksU
- VB8tiLjypxVxKeMssh0rfBn/Ei+8Ao5cCOcqUj7vsorPESFK91s0pCeumH8QOsnLsQXiQbRTONy
- 9S8/DvhNLlwa/LKSIi4+XkQVx9NOh/uf7GUzt33q85RGCy79HRCYNBmhsA+53+qp3ebftsph+mY
- X6YtwN9kYvSnkMWYKqaJ4=
-X-Gm-Gg: ATEYQzyZ6t1+qXTopZ29lXXtzMqOgKipzCfM7frPZMtlgyaaQXGhrUlo3RXHxie/Cb/
- Hlf8Gq4niNJrbpZMwPPkDjmqvs/KuR3q/JCTjao3ya6oDw+ddgQ2L1WoNMdaJ5YquvObCCymW//
- 1iSCHM6NfDsez3X2JgSv7+RjpXr9IN6r7m4xBz15t+Xoo2hC+KKtpTkLNZvzLOWQ7/K6+YnfPWM
- p0DWzd13iXN7IKWrpZCt+yn0K5gmZK8oGdexpESmuy/bGsjQgRMMN12iHNSob/SqsHS2A==
-X-Received: by 2002:a05:6512:3b08:b0:5a2:7b19:71ac with SMTP id
- 2adb3069b0e04-5a2856011b5mr122208e87.21.1773944921850; 
- Thu, 19 Mar 2026 11:28:41 -0700 (PDT)
-X-Received: by 2002:a05:6512:3b08:b0:5a2:7b19:71ac with SMTP id
- 2adb3069b0e04-5a2856011b5mr122186e87.21.1773944921334; Thu, 19 Mar 2026
- 11:28:41 -0700 (PDT)
+ bh=Afx2R1i7iP8MH4b50smeliumL1Gut3KrWKoxecX4bDw=;
+ b=iAC70odFi/lO6t5OUP4Re1ZOb2Lzl96MRzRDetPpET86bnNy/qMI/yvFY92Y6O5vwv
+ yfNut2WAcBUaAcRxsEs05/xbyXfDoYHYPwg00cPU6sRBcsJEUWyYEoWXOJ4t/fRYj0fp
+ pKrluMzM0C2PYyIdMtgHDcD5m3YneHnG68MHMwk4YOxiU/CI7tXW24RuD5IJCol33Drs
+ E2F74alqgNwhmnJ1MMWeGC0nKBPhbjdZcQzuDSJhNW9khFv6VJdZxVuMWMA95ROFanpI
+ MU6Fp4iRsV5WPxw/nTlt9vNt9JPu4f1wsKwLxqu/tI7UQE4cWv3ahMVNpyhw0JjYfpZ1
+ 1cUg==
+X-Gm-Message-State: AOJu0YwFe6fUrRlPzpw39/HhYXgX2+LgIeD9nu1knGD8UC+YknYFAWPj
+ pjWtv6xdSca1P50uuZwAUnBLwkVVNY5uF72OmgVekxIiB+5meUBeVOoArPNeva2bU+xftgM58+Y
+ XcxyGB2bhtJ1mnNOkhNCyYV2nD+708JVY599lvAOmuQ==
+X-Gm-Gg: ATEYQzx2HJe4YgZ4GAew68NfdBQMs8N3nGOYzlqrKETqFi4a76DhDtDIH201r7QMf8F
+ zSddYVy2SfXcDpMxvk/oLFZ5x041rbsa+kfSu9JnEexw1/HQyVU06DmMOhALkr5PKwDY3lFpYUG
+ l48BpYirjISFvNYLIKuJnV1gNPsWmLMyUkVkvCc5T2FjUTBc5kPYBiQBXoDK5QhAPPEVDvs8nZ9
+ y5rRJlTh86w3mkHG2XZViCj3PWpe+e3g64uOGvJf+NLu+fPdJXf7TfY7Vz50N/nJIqmCu3Uv/k7
+ R8k9fIAZ0Ut7BtNCKtz3kQu2kKOJOvj6R749oOCURdeI0fdbdgf4OA==
+X-Received: by 2002:a05:7022:61a7:b0:128:bc19:813d with SMTP id
+ a92af1059eb24-12a726c14bamr236456c88.27.1773951494230; Thu, 19 Mar 2026
+ 13:18:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20260318163628.609968-1-david.marchand@redhat.com>
- <jnenabfqrgsmz4erfktd7osqcjw3vewajffyjwmuxhf6s4r4yw@zmlfmipdrpnr>
-In-Reply-To: <jnenabfqrgsmz4erfktd7osqcjw3vewajffyjwmuxhf6s4r4yw@zmlfmipdrpnr>
-From: David Marchand <david.marchand@redhat.com>
-Date: Thu, 19 Mar 2026 19:28:29 +0100
-X-Gm-Features: AaiRm50YeaFIixE6gWLLb5uzqrliKBXzPqhHg-a7CeJaRMBfLqhCrfi4cpLGHeI
-Message-ID: <CAJFAV8w2ET9GKA6ifcg90kn+_J=VG1eOqL0yr0=g7xsCpZgsVA@mail.gmail.com>
-Subject: Re: [PATCH] common/mlx5: fix mac deletion on Linux
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org, 
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
- Ori Kam <orika@nvidia.com>, 
- Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, 
- Adrien Mazarguil <adrien.mazarguil@6wind.com>,
- Nelio Laranjeiro <nelio.laranjeiro@6wind.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Uju8oP-rksEWSsIGNnaC784ngtNdEEUIZgdg0hgcQ1I_1773944922
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+References: <20260319171334.1151425-1-bruce.richardson@intel.com>
+In-Reply-To: <20260319171334.1151425-1-bruce.richardson@intel.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Thu, 19 Mar 2026 16:15:03 -0400
+X-Gm-Features: AaiRm53EZupKgZKiP5jA1oivXvdOhVSuLKq6J9sG1T-6G9v5baa_CjMiPFQCkWc
+Message-ID: <CAJvnSUCez8aFrFRaSuDxw20HaBB7+83zk6Uh+j7cU7AdpGn6GA@mail.gmail.com>
+Subject: Re: [PATCH 0/7] Get fast-test suite to run on FreeBSD
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, lylavoie@iol.unh.edu, david.marchand@redhat.com, 
+ Matthew Labrecque <mlabrecque@iol.unh.edu>
+Content-Type: multipart/alternative; boundary="000000000000a9add3064d664498"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,61 +90,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 19 Mar 2026 at 17:06, Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
->
-> On Wed, Mar 18, 2026 at 05:36:28PM +0100, David Marchand wrote:
-> > Re-enable debug logs unconditionally, this helps understanding why mac
-> > deletions were silently failing (while a bridge fdb del command was
-> > working fine).
-> >
-> > testpmd> mac_addr add 0 FA:35:44:3F:58:31
-> > testpmd> mac_addr remove 0 FA:35:44:3F:58:31
-> > mlx5_common: Interface 35 cannot remove MAC address FA:35:44:3F:58:31
-> >       Operation not supported
-> >
-> > Then, fix mac deletion as the NLM_F_CREATE == 0x200 flag is relevant
-> > with a RTM_NEWNEIGH op.
-> > For a RTM_DELNEIGH op, 0x200 == NLM_F_BULK and passing this flag
-> > makes the deletion fail miserably for a single mac.
-> >
-> > Fixes: ccdcba53a3f4 ("net/mlx5: use Netlink to add/remove MAC addresses")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > ---
-> >  drivers/common/mlx5/linux/mlx5_nl.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/common/mlx5/linux/mlx5_nl.c b/drivers/common/mlx5/linux/mlx5_nl.c
-> > index eceb3d796f..b50431fb61 100644
-> > --- a/drivers/common/mlx5/linux/mlx5_nl.c
-> > +++ b/drivers/common/mlx5/linux/mlx5_nl.c
-> > @@ -581,8 +581,8 @@ mlx5_nl_mac_addr_modify(int nlsk_fd, unsigned int iface_idx,
-> >       } req = {
-> >               .hdr = {
-> >                       .nlmsg_len = NLMSG_LENGTH(sizeof(struct ndmsg)),
-> > -                     .nlmsg_flags = NLM_F_REQUEST | NLM_F_CREATE |
-> > -                             NLM_F_EXCL | NLM_F_ACK,
-> > +                     .nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK |
-> > +                             add ? NLM_F_CREATE | NLM_F_EXCL : 0,
->
-> It seems that this expression is constructed incorrectly.
-> IIUC this will be "parenthesised" as follows:
->
->         ((NLM_F_REQUEST | NLM_F_ACK) | add) ? (NLM_F_CREATE | NLM_F_EXCL) : 0
->
-> Since bitwise OR has higher precendence.
-> So "add" value will be ignored and only "NLM_F_CREATE | NLM_F_EXCL"
-> will be returned.
->
-> Could you please add parenthesis around the ternary?
+--000000000000a9add3064d664498
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ugh.
-That's what happens when doing a last minute change with a ternary and
-not testing the new patch...
-I will send the right fix.
+Thanks Bruce. We will apply the series and try a fast tests run on our
+freebsd14 VM. And if all goes well provide a tested by tag and wait for
+this to hit mainline so unit tests in CI can turn back on. :)
 
+On Thu, Mar 19, 2026 at 1:13=E2=80=AFPM Bruce Richardson <bruce.richardson@=
+intel.com>
+wrote:
 
--- 
-David Marchand
+> Bugzilla ID: 761
+>
+> The standard "fast-tests" suite is used to sanity-check large parts
+> of the DPDK codebase, but it failed to run successfully on FreeBSD,
+> with large numbers of failures. This is a long-standing issue reported
+> in Bugzilla back in 2021 (hence the 3-digit BZ ID)
+>
+> This set attempts to rectify this situation by allowing the suite
+> to run without errors. Mostly it does this by disabling test suites
+> that rely on features like multi-process which are unsupported on
+> FreeBSD. It also fixes the test_debug suite which should run on
+> BSD but was failing.
+>
+> After this set, a run on my FreeBSD system passes with zero failures
+> and 22 tests reported as skipped.
+>
+> Bruce Richardson (7):
+>   test/timer_secondary: skip test on FreeBSD
+>   test/eal_flags: skip test on FreeBSD
+>   test/pdump: skip test on FreeBSD
+>   test/secondary_process: skip test on FreeBSD
+>   test/external_memory: skip test on FreeBSD
+>   test/interrupts: skip test on FreeBSD
+>   test/debug: fix unit test on FreeBSD
+>
+>  app/test/process.h              | 11 ++++++++---
+>  app/test/test_debug.c           |  6 +++---
+>  app/test/test_eal_flags.c       | 26 +++++++++++++-------------
+>  app/test/test_external_mem.c    |  4 ++--
+>  app/test/test_interrupts.c      |  2 +-
+>  app/test/test_mp_secondary.c    |  4 ++--
+>  app/test/test_pdump.c           |  6 ++++++
+>  app/test/test_timer_secondary.c |  4 ++--
+>  8 files changed, 37 insertions(+), 26 deletions(-)
+>
+> --
+> 2.51.0
+>
+>
 
+--000000000000a9add3064d664498
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Thanks Bruce. We will apply the series=C2=A0and try a fast=
+ tests run on our freebsd14 VM. And if all goes well provide a tested by ta=
+g and wait for this to hit mainline so unit tests in CI can turn back on. :=
+)</div><br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr=
+" class=3D"gmail_attr">On Thu, Mar 19, 2026 at 1:13=E2=80=AFPM Bruce Richar=
+dson &lt;<a href=3D"mailto:bruce.richardson@intel.com">bruce.richardson@int=
+el.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"m=
+argin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left=
+:1ex">Bugzilla ID: 761<br>
+<br>
+The standard &quot;fast-tests&quot; suite is used to sanity-check large par=
+ts<br>
+of the DPDK codebase, but it failed to run successfully on FreeBSD,<br>
+with large numbers of failures. This is a long-standing issue reported<br>
+in Bugzilla back in 2021 (hence the 3-digit BZ ID)<br>
+<br>
+This set attempts to rectify this situation by allowing the suite<br>
+to run without errors. Mostly it does this by disabling test suites<br>
+that rely on features like multi-process which are unsupported on<br>
+FreeBSD. It also fixes the test_debug suite which should run on<br>
+BSD but was failing.<br>
+<br>
+After this set, a run on my FreeBSD system passes with zero failures<br>
+and 22 tests reported as skipped.<br>
+<br>
+Bruce Richardson (7):<br>
+=C2=A0 test/timer_secondary: skip test on FreeBSD<br>
+=C2=A0 test/eal_flags: skip test on FreeBSD<br>
+=C2=A0 test/pdump: skip test on FreeBSD<br>
+=C2=A0 test/secondary_process: skip test on FreeBSD<br>
+=C2=A0 test/external_memory: skip test on FreeBSD<br>
+=C2=A0 test/interrupts: skip test on FreeBSD<br>
+=C2=A0 test/debug: fix unit test on FreeBSD<br>
+<br>
+=C2=A0app/test/process.h=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 | =
+11 ++++++++---<br>
+=C2=A0app/test/test_debug.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0=
+ 6 +++---<br>
+=C2=A0app/test/test_eal_flags.c=C2=A0 =C2=A0 =C2=A0 =C2=A0| 26 ++++++++++++=
++-------------<br>
+=C2=A0app/test/test_external_mem.c=C2=A0 =C2=A0 |=C2=A0 4 ++--<br>
+=C2=A0app/test/test_interrupts.c=C2=A0 =C2=A0 =C2=A0 |=C2=A0 2 +-<br>
+=C2=A0app/test/test_mp_secondary.c=C2=A0 =C2=A0 |=C2=A0 4 ++--<br>
+=C2=A0app/test/test_pdump.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0|=C2=A0=
+ 6 ++++++<br>
+=C2=A0app/test/test_timer_secondary.c |=C2=A0 4 ++--<br>
+=C2=A08 files changed, 37 insertions(+), 26 deletions(-)<br>
+<br>
+--<br>
+2.51.0<br>
+<br>
+</blockquote></div>
+
+--000000000000a9add3064d664498--
