@@ -2,42 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A26109022B
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 13:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B43F109022A
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 13:53:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C71540613;
-	Thu, 19 Mar 2026 14:53:08 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.222])
- by mails.dpdk.org (Postfix) with ESMTP id 8D27B402E7
- for <dev@dpdk.org>; Thu, 19 Mar 2026 14:53:03 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6C2F540430;
+	Thu, 19 Mar 2026 14:53:09 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.5])
+ by mails.dpdk.org (Postfix) with ESMTP id 1EBF44025D
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 14:53:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=R8RpNQKqvxk4jiqwqOr3aoQKWJPQJhjZXRK+St3nrts=;
- b=J+rPHOpHD3+/vQ8qhjCtgTX4ejpX31a9tXjbpopomgCtqDIfrKevX/j1HscUyC
- 89lbWy+M+2FATx7fKOlSER6A0tUVaPRKsWLorlGrPxFfHffYkwgCnb3MOp8c+F7M
- IyyJEX0+xaeMoMAKDBeZwRHfQnRJZxR24HmpTa2GSRzoU=
+ MIME-Version; bh=9zdDS7+kUrqpHQeVdHi0HkA5P3dToLPx3ypYSQwFLbo=;
+ b=SWuxS8ib8o1TsygoZsYLZP2nIQslHibESLrCPjcazGo5rFkmaORE+PVD65j+Xl
+ RsO5JFBvUFT6Xg5Xt6Rp5yTPTncC8Pgoir4h+DZVR70mxJBrHuovkJPbNbwDNX4T
+ GBtM4jbZBD9YfkvzKn3US2FopWoBGbw/DjVvblHHKoFRE=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp1 (Coremail) with SMTP id Ac8vCgAX3Gek_7tpacAQAw--.19162S6;
- Thu, 19 Mar 2026 21:52:59 +0800 (CST)
+ by gzsmtp1 (Coremail) with SMTP id Ac8vCgAX3Gek_7tpacAQAw--.19162S7;
+ Thu, 19 Mar 2026 21:53:01 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>
-Subject: [V6 2/7] net/hinic3: add enhance cmdq support for new SPx series NIC
-Date: Thu, 19 Mar 2026 21:52:08 +0800
-Message-ID: <20260319135220.2390-3-wff_light@vip.163.com>
+Subject: [V6 3/7] net/hinic3: use different callback func to split new/old
+ cmdq operations
+Date: Thu, 19 Mar 2026 21:52:09 +0800
+Message-ID: <20260319135220.2390-4-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
 In-Reply-To: <20260319135220.2390-1-wff_light@vip.163.com>
 References: <20260316134335.1640-1-wff_light@vip.163.com>
  <20260319135220.2390-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-CM-TRANSID: Ac8vCgAX3Gek_7tpacAQAw--.19162S6
-X-Coremail-Antispam: 1Uf129KBjvAXoWDZr1UKry8Gw4rXFy7Cr47CFg_yoW7Gw43uo
- WfJr4fKr1Fq340kw1DK3yIkFZxJwn8Z3Z8Jana9FZFq3ZrJF97tay3Jw4rW3W8ZrW5AF17
- CFW3JwsYq3ykuw1Dn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUz8nYUUUUU
+X-CM-TRANSID: Ac8vCgAX3Gek_7tpacAQAw--.19162S7
+X-Coremail-Antispam: 1Uf129KBjvAXoWfCw13Aw45tF4fWFWftF43Jrb_yoW5uryxKo
+ WfJr4Syw18trWIk39Igr4ktF4DZ34DXFn8Jws5Kr9rXas7Ja47WFnxJw4Fva43XayrA3Zr
+ ZFW7J3ZFq39xGw1kn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUz0PfDUUUU
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMhx4gmm7-7zEWwAA3a
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiNh14gmm7-72V5gAA3y
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,1608 +54,1066 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Feifei Wang <wangfeifei40@huawei.com>=0D
 
-Add enhance command queue for new SPx series NIC=0D
-=0D
-New SPx series NIC uses enhance command queue to send messages to=0D
-hardware NIC, which is different from previous SPx NIC's common=0D
-command queue.HINIC3_CMDQ_BUF_SIZE changed from 2048 to 1024 to adapt to=0D
-the two types of NICs.=0D
+For new SPx series NIC with enhance cmdq, it send control message to=0D
+hardware tile in NIC(htn), this is different from previous SPx NIC, which=0D
+send control message to software tile in NIC(stn).=0D
 =0D
 Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>=0D
 ---=0D
- drivers/net/hinic3/base/hinic3_cmd.h          |  80 ++--=0D
- drivers/net/hinic3/base/hinic3_cmdq.c         | 370 +++++++-----------=0D
- drivers/net/hinic3/base/hinic3_cmdq.h         | 112 +++++-=0D
- drivers/net/hinic3/base/hinic3_cmdq_enhance.c | 111 ++++++=0D
- drivers/net/hinic3/base/hinic3_cmdq_enhance.h | 125 ++++++=0D
- drivers/net/hinic3/base/hinic3_hw_comm.c      |  15 +-=0D
- drivers/net/hinic3/base/hinic3_hw_comm.h      |  31 +-=0D
- drivers/net/hinic3/base/hinic3_hwdev.c        |  13 +-=0D
- drivers/net/hinic3/base/hinic3_hwdev.h        |  18 +=0D
- drivers/net/hinic3/base/hinic3_mgmt.c         |   5 +-=0D
- drivers/net/hinic3/base/hinic3_mgmt.h         |   2 +=0D
- drivers/net/hinic3/base/hinic3_nic_cfg.c      |  77 ++--=0D
- drivers/net/hinic3/base/meson.build           |   1 +=0D
- 13 files changed, 627 insertions(+), 333 deletions(-)=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.c=0D
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.h=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.c      |  50 ++----=0D
+ drivers/net/hinic3/base/hinic3_nic_cfg.h      |  79 +++++----=0D
+ drivers/net/hinic3/hinic3_ethdev.c            |  16 +-=0D
+ drivers/net/hinic3/hinic3_nic_io.h            | 130 ++++++++++++++=0D
+ drivers/net/hinic3/hinic3_rx.c                |   3 +-=0D
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    | 161 ++++++++++++++++++=0D
+ .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |  55 ++++++=0D
+ drivers/net/hinic3/htn_adapt/meson.build      |   7 +=0D
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    | 145 ++++++++++++++++=0D
+ .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |  38 +++++=0D
+ drivers/net/hinic3/stn_adapt/meson.build      |   7 +=0D
+ 11 files changed, 618 insertions(+), 73 deletions(-)=0D
+ create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c=0D
+ create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h=0D
+ create mode 100644 drivers/net/hinic3/htn_adapt/meson.build=0D
+ create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c=0D
+ create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h=0D
+ create mode 100644 drivers/net/hinic3/stn_adapt/meson.build=0D
 =0D
-diff --git a/drivers/net/hinic3/base/hinic3_cmd.h b/drivers/net/hinic3/base=
-/hinic3_cmd.h=0D
-index 6042ca51bd..f2d5d47522 100644=0D
---- a/drivers/net/hinic3/base/hinic3_cmd.h=0D
-+++ b/drivers/net/hinic3/base/hinic3_cmd.h=0D
-@@ -23,14 +23,21 @@=0D
- #define HINIC3_RSS_TYPE_GET(val, member)	\=0D
- 	(((uint32_t)(val) >> HINIC3_RSS_TYPE_##member##_SHIFT) & 0x1)=0D
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/=
+base/hinic3_nic_cfg.c=0D
+index ac44da46c2..22caac0457 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.c=0D
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c=0D
+@@ -11,6 +11,7 @@=0D
+ #include "hinic3_mbox.h"=0D
+ #include "hinic3_nic_cfg.h"=0D
+ #include "hinic3_wq.h"=0D
++#include "hinic3_nic_io.h"=0D
  =0D
-+#define CMDQ_PFN(addr, page_size) ((addr) >> (rte_log2_u32(page_size)))=0D
-+=0D
- /* NIC CMDQ MODE. */=0D
- enum hinic3_ucode_cmd {=0D
--	HINIC3_UCODE_CMD_MODIFY_QUEUE_CTX	=3D 0,=0D
--	HINIC3_UCODE_CMD_CLEAN_QUEUE_CONTEXT	=3D 1,=0D
--	HINIC3_UCODE_CMD_SET_RSS_INDIR_TABLE	=3D 4,=0D
--	HINIC3_UCODE_CMD_SET_RSS_CONTEXT_TABLE	=3D 5,=0D
--	HINIC3_UCODE_CMD_GET_RSS_INDIR_TABLE	=3D 6,=0D
--	HINIC3_UCODE_CMD_SET_RQ_FLUSH		=3D 10,=0D
-+	HINIC3_UCODE_CMD_MODIFY_QUEUE_CTX =3D 0,=0D
-+	HINIC3_UCODE_CMD_CLEAN_QUEUE_CONTEXT,=0D
-+	HINIC3_UCODE_CMD_ARM_SQ,=0D
-+	HINIC3_UCODE_CMD_ARM_RQ,=0D
-+	HINIC3_UCODE_CMD_SET_RSS_INDIR_TABLE,=0D
-+	HINIC3_UCODE_CMD_SET_RSS_CONTEXT_TABLE,=0D
-+	HINIC3_UCODE_CMD_GET_RSS_INDIR_TABLE,=0D
-+	HINIC3_UCODE_CMD_GET_RSS_CONTEXT_TABLE,=0D
-+	HINIC3_UCODE_CMD_SET_IQ_ENABLE,=0D
-+	HINIC3_UCODE_CMD_SET_RQ_FLUSH =3D 10,=0D
-+	HINIC3_UCODE_CMD_MODIFY_VLAN_CTX,=0D
- };=0D
- =0D
- /* Commands between NIC to MPU. */=0D
-@@ -51,6 +58,12 @@ enum hinic3_nic_cmd {=0D
- 	HINIC3_NIC_CMD_CFG_RX_LRO			=3D 13,=0D
- 	HINIC3_NIC_CMD_CFG_LRO_TIMER			=3D 14,=0D
- 	HINIC3_NIC_CMD_FEATURE_NEGO			=3D 15,=0D
-+	HINIC3_NIC_CMD_CFG_LOCAL_LRO_STATE		=3D 16,=0D
-+=0D
-+	HINIC3_NIC_CMD_CACHE_OUT_QP_RES			=3D 17,=0D
-+	HINIC3_NIC_CMD_SET_RQ_CI_CTX			=3D 18,=0D
-+	HINIC3_NIC_CMD_SET_RQ_ENABLE			=3D 19,=0D
-+=0D
- 	/* MAC & VLAN CFG */=0D
- 	HINIC3_NIC_CMD_GET_MAC				=3D 20,=0D
- 	HINIC3_NIC_CMD_SET_MAC				=3D 21,=0D
-@@ -59,6 +72,10 @@ enum hinic3_nic_cmd {=0D
- 	HINIC3_NIC_CMD_CFG_FUNC_VLAN			=3D 25,=0D
- 	HINIC3_NIC_CMD_SET_VLAN_FILTER_EN		=3D 26,=0D
- 	HINIC3_NIC_CMD_SET_RX_VLAN_OFFLOAD		=3D 27,=0D
-+=0D
-+	HINIC3_NIC_CMD_SET_RQ_CI_CTX_HTN		=3D 34,=0D
-+	HINIC3_NIC_CMD_SET_RQ_ENABLE_HTN		=3D 35,=0D
-+=0D
- 	/* RSS CFG */=0D
- 	HINIC3_NIC_CMD_RSS_CFG				=3D 60,=0D
- 	HINIC3_NIC_CMD_RSS_TEMP_MGR			=3D 61,=0D
-@@ -89,6 +106,7 @@ enum hinic3_mgmt_cmd {=0D
- 	HINIC3_MGMT_CMD_CFG_PAGESIZE			=3D 22,=0D
- 	HINIC3_MGMT_CMD_CFG_MSIX_CTRL_REG		=3D 23,=0D
- 	HINIC3_MGMT_CMD_SET_DMA_ATTR			=3D 25,=0D
-+	HINIC3_MGMT_CMD_SET_ENHANCE_CMDQ_CTXT		=3D 26,=0D
- 	HINIC3_MGMT_CMD_GET_MQM_FIX_INFO		=3D 40,=0D
- 	HINIC3_MGMT_CMD_GET_FW_VERSION			=3D 60,=0D
- 	HINIC3_MGMT_CMD_GET_BOARD_INFO			=3D 61,=0D
-@@ -97,39 +115,39 @@ enum hinic3_mgmt_cmd {=0D
- };=0D
- =0D
- enum mag_cmd {=0D
--	SERDES_CMD_PROCESS	  =3D 0,=0D
-+	SERDES_CMD_PROCESS		=3D 0,=0D
- =0D
--	MAG_CMD_SET_PORT_CFG      =3D 1,=0D
--	MAG_CMD_SET_PORT_ADAPT    =3D 2,=0D
--	MAG_CMD_CFG_LOOPBACK_MODE =3D 3,=0D
-+	MAG_CMD_SET_PORT_CFG		=3D 1,=0D
-+	MAG_CMD_SET_PORT_ADAPT		=3D 2,=0D
-+	MAG_CMD_CFG_LOOPBACK_MODE	=3D 3,=0D
- =0D
--	MAG_CMD_GET_PORT_ENABLE   =3D 5,=0D
--	MAG_CMD_SET_PORT_ENABLE   =3D 6,=0D
--	MAG_CMD_GET_LINK_STATUS   =3D 7,=0D
--	MAG_CMD_SET_LINK_FOLLOW   =3D 8,=0D
--	MAG_CMD_SET_PMA_ENABLE    =3D 9,=0D
--	MAG_CMD_CFG_FEC_MODE      =3D 10,=0D
-+	MAG_CMD_GET_PORT_ENABLE		=3D 5,=0D
-+	MAG_CMD_SET_PORT_ENABLE		=3D 6,=0D
-+	MAG_CMD_GET_LINK_STATUS		=3D 7,=0D
-+	MAG_CMD_SET_LINK_FOLLOW		=3D 8,=0D
-+	MAG_CMD_SET_PMA_ENABLE		=3D 9,=0D
-+	MAG_CMD_CFG_FEC_MODE		=3D 10,=0D
- =0D
- 	/* PHY */=0D
--	MAG_CMD_GET_XSFP_INFO     =3D 60,=0D
--	MAG_CMD_SET_XSFP_ENABLE   =3D 61,=0D
--	MAG_CMD_GET_XSFP_PRESENT  =3D 62,=0D
-+	MAG_CMD_GET_XSFP_INFO		=3D 60,=0D
-+	MAG_CMD_SET_XSFP_ENABLE		=3D 61,=0D
-+	MAG_CMD_GET_XSFP_PRESENT	=3D 62,=0D
- 	/* sfp/qsfp single byte read/write, for equipment test. */=0D
--	MAG_CMD_SET_XSFP_RW       =3D 63,=0D
--	MAG_CMD_CFG_XSFP_TEMPERATURE =3D 64,=0D
-+	MAG_CMD_SET_XSFP_RW		=3D 63,=0D
-+	MAG_CMD_CFG_XSFP_TEMPERATURE	=3D 64,=0D
- =0D
--	MAG_CMD_WIRE_EVENT        =3D 100,=0D
--	MAG_CMD_LINK_ERR_EVENT    =3D 101,=0D
-+	MAG_CMD_WIRE_EVENT		=3D 100,=0D
-+	MAG_CMD_LINK_ERR_EVENT		=3D 101,=0D
- =0D
--	MAG_CMD_EVENT_PORT_INFO   =3D 150,=0D
--	MAG_CMD_GET_PORT_STAT     =3D 151,=0D
--	MAG_CMD_CLR_PORT_STAT     =3D 152,=0D
--	MAG_CMD_GET_PORT_INFO     =3D 153,=0D
--	MAG_CMD_GET_PCS_ERR_CNT   =3D 154,=0D
--	MAG_CMD_GET_MAG_CNT       =3D 155,=0D
--	MAG_CMD_DUMP_ANTRAIN_INFO =3D 156,=0D
-+	MAG_CMD_EVENT_PORT_INFO		=3D 150,=0D
-+	MAG_CMD_GET_PORT_STAT		=3D 151,=0D
-+	MAG_CMD_CLR_PORT_STAT		=3D 152,=0D
-+	MAG_CMD_GET_PORT_INFO		=3D 153,=0D
-+	MAG_CMD_GET_PCS_ERR_CNT		=3D 154,=0D
-+	MAG_CMD_GET_MAG_CNT		=3D 155,=0D
-+	MAG_CMD_DUMP_ANTRAIN_INFO	=3D 156,=0D
- =0D
--	MAG_CMD_MAX =3D 0xFF=0D
-+	MAG_CMD_MAX			=3D 0xFF=0D
- };=0D
- =0D
- #endif /* _HINIC3_CMD_H_ */=0D
-diff --git a/drivers/net/hinic3/base/hinic3_cmdq.c b/drivers/net/hinic3/bas=
-e/hinic3_cmdq.c=0D
-index e2b30ff94e..9c27c6f54c 100644=0D
---- a/drivers/net/hinic3/base/hinic3_cmdq.c=0D
-+++ b/drivers/net/hinic3/base/hinic3_cmdq.c=0D
-@@ -5,6 +5,7 @@=0D
- #include "hinic3_compat.h"=0D
- #include "hinic3_cmd.h"=0D
- #include "hinic3_cmdq.h"=0D
-+#include "hinic3_cmdq_enhance.h"=0D
- #include "hinic3_hwdev.h"=0D
- #include "hinic3_hwif.h"=0D
- #include "hinic3_mgmt.h"=0D
-@@ -125,17 +126,17 @@=0D
- =0D
- #define CMDQ_DB_ADDR(db_base, pi) ((db_base) + CMDQ_DB_PI_OFF(pi))=0D
- =0D
--#define CMDQ_PFN(addr, page_size) ((addr) >> (rte_log2_u32(page_size)))=0D
--=0D
- #define FIRST_DATA_TO_WRITE_LAST sizeof(uint64_t)=0D
- =0D
--#define WQE_LCMD_SIZE 64=0D
--#define WQE_SCMD_SIZE 64=0D
-+#define WQE_LCMDQ_SIZE 64=0D
-+#define WQE_SCMDQ_SIZE 64=0D
-+#define WQE_ENHANCE_CMDQ_SIZE 32=0D
- =0D
- #define COMPLETE_LEN 3=0D
- =0D
- #define CMDQ_WQEBB_SIZE	 64=0D
- #define CMDQ_WQEBB_SHIFT 6=0D
-+#define CMDQ_ENHANCE_WQEBB_SHIFT 4=0D
- =0D
- #define CMDQ_WQE_SIZE 64=0D
- =0D
-@@ -203,43 +204,6 @@ hinic3_free_cmd_buf(struct hinic3_cmd_buf *cmd_buf)=0D
- 	rte_free(cmd_buf);=0D
- }=0D
- =0D
--static uint32_t=0D
--cmdq_wqe_size(enum cmdq_wqe_type wqe_type)=0D
--{=0D
--	uint32_t wqe_size =3D 0;=0D
--=0D
--	switch (wqe_type) {=0D
--	case WQE_LCMD_TYPE:=0D
--		wqe_size =3D WQE_LCMD_SIZE;=0D
--		break;=0D
--	case WQE_SCMD_TYPE:=0D
--		wqe_size =3D WQE_SCMD_SIZE;=0D
--		break;=0D
--	}=0D
--=0D
--	return wqe_size;=0D
--}=0D
--=0D
--static uint32_t=0D
--cmdq_get_wqe_size(enum bufdesc_len len)=0D
--{=0D
--	uint32_t wqe_size =3D 0;=0D
--=0D
--	switch (len) {=0D
--	case BUFDESC_LCMD_LEN:=0D
--		wqe_size =3D WQE_LCMD_SIZE;=0D
--		break;=0D
--	case BUFDESC_SCMD_LEN:=0D
--		wqe_size =3D WQE_SCMD_SIZE;=0D
--		break;=0D
--	default:=0D
--		PMD_DRV_LOG(ERR, "Invalid bufdesc_len");=0D
--		break;=0D
--	}=0D
--=0D
--	return wqe_size;=0D
--}=0D
--=0D
- static void=0D
- cmdq_set_completion(struct hinic3_cmdq_completion *complete,=0D
- 		    struct hinic3_cmd_buf *buf_out)=0D
-@@ -274,11 +238,11 @@ cmdq_set_db(struct hinic3_cmdq *cmdq, enum hinic3_cmd=
-q_type cmdq_type,=0D
- }=0D
- =0D
- static void=0D
--cmdq_wqe_fill(void *dst, void *src)=0D
-+cmdq_wqe_fill(void *dst, void *src, int wqe_size)=0D
+ struct vf_msg_handler {=0D
+ 	uint16_t cmd;=0D
+@@ -442,6 +443,7 @@ int=0D
+ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, bool enable)=0D
  {=0D
- 	memcpy((void *)((uint8_t *)dst + FIRST_DATA_TO_WRITE_LAST),=0D
- 	       (void *)((uint8_t *)src + FIRST_DATA_TO_WRITE_LAST),=0D
--	       CMDQ_WQE_SIZE - FIRST_DATA_TO_WRITE_LAST);=0D
-+	       wqe_size - FIRST_DATA_TO_WRITE_LAST);=0D
+ 	struct hinic3_vport_state en_state;=0D
++	struct hinic3_nic_dev *nic_dev =3D hwdev->dev_handle;=0D
+ 	uint16_t out_size =3D sizeof(en_state);=0D
+ 	int err;=0D
  =0D
- 	/* The first 8 bytes should be written last. */=0D
- 	rte_atomic_thread_fence(rte_memory_order_release);=0D
-@@ -369,182 +333,94 @@ cmdq_set_lcmd_wqe(struct hinic3_cmdq_wqe *wqe, enum =
-cmdq_cmd_type cmd_type,=0D
- 	cmdq_set_lcmd_bufdesc(wqe_lcmd, buf_in);=0D
+@@ -451,6 +453,7 @@ hinic3_set_vport_enable(struct hinic3_hwdev *hwdev, boo=
+l enable)=0D
+ 	memset(&en_state, 0, sizeof(en_state));=0D
+ 	en_state.func_id =3D hinic3_global_func_id(hwdev);=0D
+ 	en_state.state =3D enable ? 1 : 0;=0D
++	en_state.num_qps =3D nic_dev->num_rqs;=0D
+ =0D
+ 	err =3D hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_L2NIC,=0D
+ 				      HINIC3_NIC_CMD_SET_VPORT_ENABLE,=0D
+@@ -1159,13 +1162,12 @@ hinic3_rss_set_hash_key(struct hinic3_hwdev *hwdev,=
+ uint8_t *key, uint16_t key_s=0D
  }=0D
- =0D
--/**=0D
-- * Prepare necessary context for command queue, send a synchronous command=
- with=0D
-- * a direct response to hardware. It waits for completion of command by po=
-lling=0D
-- * command queue for a response.=0D
-- *=0D
-- * @param[in] cmdq=0D
-- * The command queue object that represents the queue to send the command =
-to.=0D
-- * @param[in] mod=0D
-- * The module type that the command belongs to.=0D
-- * @param[in] cmd=0D
-- * The command to be executed.=0D
-- * @param[in] buf_in=0D
-- * The input buffer containing the command parameters.=0D
-- * @param[out] out_param=0D
-- * A pointer to the location where the response data will be stored, if=0D
-- * available.=0D
-- * @param[in] timeout=0D
-- * The timeout value (ms) to wait for the command completion. If zero, a d=
-efault=0D
-- * timeout will be used.=0D
-- *=0D
-- * @return=0D
-- * 0 on success, non-zero on failure.=0D
-- * - -EBUSY: The command queue is busy.=0D
-- * - -ETIMEDOUT: The command did not complete within the specified timeout=
-.=0D
-- */=0D
--static int=0D
--cmdq_sync_cmd_direct_resp(struct hinic3_cmdq *cmdq, enum hinic3_mod_type m=
-od,=0D
--			  uint8_t cmd, struct hinic3_cmd_buf *buf_in,=0D
--			  uint64_t *out_param, uint32_t timeout)=0D
-+static void=0D
-+cmdq_sync_wqe_prepare(struct hinic3_cmdq *cmdq, uint8_t mod, uint8_t cmd,=
-=0D
-+		      struct hinic3_cmd_buf *buf_in, struct hinic3_cmd_buf *buf_out,=0D
-+		      struct hinic3_cmdq_wqe *curr_wqe, uint16_t curr_pi,=0D
-+		      enum hinic3_cmdq_cmd_type nic_cmd_type)=0D
- {=0D
- 	struct hinic3_cmdq_wqe wqe;=0D
--	struct hinic3_wq *wq =3D cmdq->wq;=0D
--	struct hinic3_cmdq_wqe *curr_wqe =3D NULL;=0D
--	struct hinic3_cmdq_wqe_lcmd *wqe_lcmd =3D NULL;=0D
--	uint16_t curr_prod_idx, next_prod_idx, num_wqebbs;=0D
--	uint32_t timeo, wqe_size;=0D
--	int wrapped, err;=0D
-+	int wrapped, wqe_size;=0D
-+	enum cmdq_cmd_type cmd_type;=0D
- =0D
--	wqe_size =3D cmdq_wqe_size(WQE_LCMD_TYPE);=0D
--	num_wqebbs =3D WQE_NUM_WQEBBS(wqe_size, wq);=0D
-+	wqe_size =3D cmdq->cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ ?=0D
-+					     WQE_LCMDQ_SIZE : WQE_ENHANCE_CMDQ_SIZE;=0D
- =0D
--	/* ensure thread safety and maintain wrapped and doorbell index correct. =
-*/=0D
--	rte_spinlock_lock(&cmdq->cmdq_lock);=0D
-+	memset(&wqe, 0, (uint32_t)wqe_size);=0D
- =0D
--	curr_wqe =3D hinic3_get_wqe(cmdq->wq, num_wqebbs, &curr_prod_idx);=0D
--	if (curr_wqe =3D=3D NULL) {=0D
--		err =3D -EBUSY;=0D
--		goto cmdq_unlock;=0D
--	}=0D
--=0D
--	memset(&wqe, 0, sizeof(wqe));=0D
- 	wrapped =3D cmdq->wrapped;=0D
- =0D
--	next_prod_idx =3D curr_prod_idx + num_wqebbs;=0D
--	if (next_prod_idx >=3D wq->q_depth) {=0D
--		cmdq->wrapped =3D !cmdq->wrapped;=0D
--		next_prod_idx -=3D wq->q_depth;=0D
--	}=0D
--=0D
--	cmdq_set_lcmd_wqe(&wqe, SYNC_CMD_DIRECT_RESP, buf_in, NULL, wrapped,=0D
--			  mod, cmd, curr_prod_idx);=0D
--=0D
-+	cmd_type =3D (nic_cmd_type =3D=3D HINIC3_CMD_TYPE_DIRECT_RESP) ?=0D
-+				SYNC_CMD_DIRECT_RESP : SYNC_CMD_SGE_RESP;=0D
-+	if (cmdq->cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ)=0D
-+		cmdq_set_lcmd_wqe(&wqe, cmd_type, buf_in, buf_out, wrapped, mod, cmd, cu=
-rr_pi);=0D
-+	else=0D
-+		hinic3_enhance_cmdq_set_wqe(&wqe, cmd_type, buf_in, buf_out, wrapped, mo=
-d, cmd);=0D
- =0D
-+	/* The data written to HW should be in Big Endian Format */=0D
- 	hinic3_cpu_to_hw(&wqe, wqe_size);=0D
- =0D
--	/* Cmdq wqe is not shadow, therefore wqe will be written to wq. */=0D
--	cmdq_wqe_fill(curr_wqe, &wqe);=0D
--=0D
--	cmdq->cmd_infos[curr_prod_idx].cmd_type =3D HINIC3_CMD_TYPE_DIRECT_RESP;=
-=0D
--=0D
--	cmdq_set_db(cmdq, HINIC3_CMDQ_SYNC, next_prod_idx);=0D
--=0D
--	timeo =3D timeout ? timeout : CMDQ_CMD_TIMEOUT;=0D
--	err =3D hinic3_cmdq_poll_msg(cmdq, timeo);=0D
--	if (err) {=0D
--		PMD_DRV_LOG(ERR, "Cmdq poll msg ack failed, prod idx: 0x%x",=0D
--			    curr_prod_idx);=0D
--		err =3D -ETIMEDOUT;=0D
--		goto cmdq_unlock;=0D
--	}=0D
--=0D
--	rte_smp_rmb(); /*Ensure all cmdq return messages are completed*/=0D
--=0D
--	if (out_param) {=0D
--		wqe_lcmd =3D &curr_wqe->wqe_lcmd;=0D
--		*out_param =3D rte_cpu_to_be_64(wqe_lcmd->completion.direct_resp);=0D
--	}=0D
--=0D
--	if (cmdq->errcode[curr_prod_idx])=0D
--		err =3D cmdq->errcode[curr_prod_idx];=0D
--=0D
--cmdq_unlock:=0D
--	rte_spinlock_unlock(&cmdq->cmdq_lock);=0D
--=0D
--	return err;=0D
-+	cmdq_wqe_fill(curr_wqe, &wqe, wqe_size);=0D
- }=0D
- =0D
--/**=0D
-- * Send a synchronous command with detailed response and wait for the=0D
-- * completion.=0D
-- *=0D
-- * @param[in] cmdq=0D
-- * The command queue object representing the queue to send the command to.=
-=0D
-- * @param[in] mod=0D
-- * The module type that the command belongs to.=0D
-- * @param[in] cmd=0D
-- * The command to be executed.=0D
-- * @param[in] buf_in=0D
-- * The input buffer containing the parameters for the command.=0D
-- * @param[out] buf_out=0D
-- * The output buffer where the detailed response from the hardware will be=
-=0D
-- * stored.=0D
-- * @param[in] timeout=0D
-- * The timeout value (ms) to wait for the command completion. If zero, a d=
-efault=0D
-- * timeout will be used.=0D
-- *=0D
-- * @return=0D
-- * 0 on success, non-zero on failure.=0D
-- * - -EBUSY: The command queue is busy.=0D
-- * - -ETIMEDOUT: The command did not complete within the specified timeout=
-.=0D
-- */=0D
--static int=0D
--cmdq_sync_cmd_detail_resp(struct hinic3_cmdq *cmdq, enum hinic3_mod_type m=
-od,=0D
--			  uint8_t cmd, struct hinic3_cmd_buf *buf_in,=0D
--			  struct hinic3_cmd_buf *buf_out, uint32_t timeout)=0D
-+#define NUM_WQEBBS_FOR_CMDQ_WQE		1=0D
-+#define NUM_WQEBBS_FOR_ENHANCE_CMDQ_WQE	2=0D
-+=0D
-+static int cmdq_sync_cmd(struct hinic3_cmdq *cmdq, enum hinic3_mod_type mo=
-d, uint8_t cmd,=0D
-+			 struct hinic3_cmd_buf *buf_in, struct hinic3_cmd_buf *buf_out,=0D
-+			 uint64_t *out_param, uint32_t timeout,=0D
-+			 enum hinic3_cmdq_cmd_type nic_cmd_type)=0D
- {=0D
--	struct hinic3_cmdq_wqe wqe;=0D
- 	struct hinic3_wq *wq =3D cmdq->wq;=0D
- 	struct hinic3_cmdq_wqe *curr_wqe =3D NULL;=0D
- 	uint16_t curr_prod_idx, next_prod_idx, num_wqebbs;=0D
--	uint32_t timeo, wqe_size;=0D
--	int wrapped, err;=0D
-+	uint32_t time;=0D
-+	uint64_t *direct_resp =3D NULL;=0D
-+	int err;=0D
- =0D
--	wqe_size =3D cmdq_wqe_size(WQE_LCMD_TYPE);=0D
--	num_wqebbs =3D WQE_NUM_WQEBBS(wqe_size, wq);=0D
-+	num_wqebbs =3D (cmdq->cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ) ?=0D
-+				NUM_WQEBBS_FOR_CMDQ_WQE : NUM_WQEBBS_FOR_ENHANCE_CMDQ_WQE;=0D
- =0D
--	/* ensure thread safety and maintain wrapped and doorbell index correct. =
-*/=0D
-+	/* Keep wrapped and doorbell index correct */=0D
- 	rte_spinlock_lock(&cmdq->cmdq_lock);=0D
- =0D
- 	curr_wqe =3D hinic3_get_wqe(cmdq->wq, num_wqebbs, &curr_prod_idx);=0D
--	if (curr_wqe =3D=3D NULL) {=0D
-+	if (!curr_wqe) {=0D
- 		err =3D -EBUSY;=0D
- 		goto cmdq_unlock;=0D
- 	}=0D
- =0D
--	memset(&wqe, 0, sizeof(wqe));=0D
--	wrapped =3D cmdq->wrapped;=0D
-+	cmdq_sync_wqe_prepare(cmdq, mod, cmd, buf_in, buf_out,=0D
-+			      curr_wqe, curr_prod_idx, nic_cmd_type);=0D
-+=0D
-+	cmdq->cmd_infos[curr_prod_idx].cmd_type =3D nic_cmd_type;=0D
- =0D
- 	next_prod_idx =3D curr_prod_idx + num_wqebbs;=0D
- 	if (next_prod_idx >=3D wq->q_depth) {=0D
- 		cmdq->wrapped =3D !cmdq->wrapped;=0D
- 		next_prod_idx -=3D wq->q_depth;=0D
- 	}=0D
--=0D
--	cmdq_set_lcmd_wqe(&wqe, SYNC_CMD_SGE_RESP, buf_in, buf_out, wrapped,=0D
--			  mod, cmd, curr_prod_idx);=0D
--=0D
--	hinic3_cpu_to_hw(&wqe, wqe_size);=0D
--=0D
--	/* Cmdq wqe is not shadow, therefore wqe will be written to wq. */=0D
--	cmdq_wqe_fill(curr_wqe, &wqe);=0D
--=0D
--	cmdq->cmd_infos[curr_prod_idx].cmd_type =3D HINIC3_CMD_TYPE_SGE_RESP;=0D
--=0D
--	cmdq_set_db(cmdq, cmdq->cmdq_type, next_prod_idx);=0D
--=0D
--	timeo =3D timeout ? timeout : CMDQ_CMD_TIMEOUT;=0D
--	err =3D hinic3_cmdq_poll_msg(cmdq, timeo);=0D
-+	cmdq_set_db(cmdq, HINIC3_CMDQ_SYNC, next_prod_idx);=0D
-+	time =3D msecs_to_cycles(timeout ? timeout : CMDQ_CMD_TIMEOUT);=0D
-+	err =3D hinic3_cmdq_poll_msg(cmdq, time);=0D
- 	if (err) {=0D
--		PMD_DRV_LOG(ERR, "Cmdq poll msg ack failed, prod idx: 0x%x",=0D
--			    curr_prod_idx);=0D
-+		PMD_DRV_LOG(ERR, "Cmdq poll msg ack failed, prod idx: 0x%x", curr_prod_i=
-dx);=0D
- 		err =3D -ETIMEDOUT;=0D
- 		goto cmdq_unlock;=0D
- 	}=0D
- =0D
--	rte_smp_rmb(); /*Ensure all cmdq return messages are completed*/=0D
-+	rte_atomic_thread_fence(rte_memory_order_acquire); /* Read error code aft=
-er completion */=0D
-+=0D
-+	if (out_param) {=0D
-+		if (cmdq->cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ)=0D
-+			direct_resp =3D=0D
-+				(uint64_t *)(&curr_wqe->wqe_lcmd.completion.direct_resp);=0D
-+		else=0D
-+			direct_resp =3D (uint64_t *)=0D
-+				(&curr_wqe->enhanced_cmdq_wqe.completion.sge_resp_lo_addr);=0D
-+=0D
-+		*out_param =3D rte_cpu_to_be_64(*direct_resp);=0D
-+	}=0D
- =0D
- 	if (cmdq->errcode[curr_prod_idx])=0D
- 		err =3D cmdq->errcode[curr_prod_idx];=0D
-@@ -588,7 +464,8 @@ wait_cmdqs_enable(struct hinic3_cmdqs *cmdqs)=0D
  =0D
  int=0D
- hinic3_cmdq_direct_resp(struct hinic3_hwdev *hwdev, enum hinic3_mod_type m=
-od, uint8_t cmd,=0D
--			struct hinic3_cmd_buf *buf_in, uint64_t *out_param, uint32_t timeout)=0D
-+			struct hinic3_cmd_buf *buf_in,=0D
-+			uint64_t *out_param, uint32_t timeout)=0D
+-hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev,=0D
+-			 uint32_t *indir_table, uint32_t indir_table_size)=0D
++hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_table=
+)=0D
  {=0D
- 	struct hinic3_cmdqs *cmdqs =3D hwdev->cmdqs;=0D
+ 	struct hinic3_cmd_buf *cmd_buf =3D NULL;=0D
+-	uint16_t *indir_tbl =3D NULL;=0D
++	struct hinic3_nic_dev *nic_dev =3D NULL;=0D
++	uint8_t cmd;=0D
  	int err;=0D
-@@ -605,8 +482,8 @@ hinic3_cmdq_direct_resp(struct hinic3_hwdev *hwdev, enu=
-m hinic3_mod_type mod, ui=0D
+-	uint32_t i;=0D
+ =0D
+ 	if (!hwdev || !indir_table)=0D
+ 		return -EINVAL;=0D
+@@ -1177,31 +1179,28 @@ hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev=
+,=0D
+ 	}=0D
+ =0D
+ 	cmd_buf->size =3D sizeof(struct nic_rss_indirect_tbl);=0D
+-	err =3D hinic3_cmdq_detail_resp(hwdev, HINIC3_MOD_L2NIC,=0D
+-				      HINIC3_UCODE_CMD_GET_RSS_INDIR_TABLE,=0D
+-				      cmd_buf, cmd_buf, 0);=0D
++	nic_dev =3D (struct hinic3_nic_dev *)hwdev->dev_handle;=0D
++=0D
++	cmd =3D nic_dev->cmdq_ops->prepare_cmd_buf_get_rss_indir_table(nic_dev, c=
+md_buf);=0D
++	err =3D hinic3_cmdq_detail_resp(hwdev, HINIC3_MOD_L2NIC, cmd, cmd_buf, cm=
+d_buf, 0);=0D
+ 	if (err) {=0D
+ 		PMD_DRV_LOG(ERR, "Get rss indir table failed");=0D
+ 		hinic3_free_cmd_buf(cmd_buf);=0D
  		return err;=0D
  	}=0D
  =0D
--	return cmdq_sync_cmd_direct_resp(&cmdqs->cmdq[HINIC3_CMDQ_SYNC], mod,=0D
--					 cmd, buf_in, out_param, timeout);=0D
-+	return cmdq_sync_cmd(&cmdqs->cmdq[HINIC3_CMDQ_SYNC], mod, cmd, buf_in,=0D
-+			     NULL, out_param, timeout, HINIC3_CMD_TYPE_DIRECT_RESP);=0D
+-	indir_tbl =3D (uint16_t *)cmd_buf->buf;=0D
+-	for (i =3D 0; i < indir_table_size; i++)=0D
+-		indir_table[i] =3D *(indir_tbl + i);=0D
++	nic_dev->cmdq_ops->cmd_buf_to_rss_indir_table(cmd_buf, indir_table);=0D
+ =0D
+ 	hinic3_free_cmd_buf(cmd_buf);=0D
+ 	return 0;=0D
  }=0D
  =0D
  int=0D
-@@ -628,8 +505,8 @@ hinic3_cmdq_detail_resp(struct hinic3_hwdev *hwdev, enu=
-m hinic3_mod_type mod, ui=0D
- 		return err;=0D
- 	}=0D
- =0D
--	return cmdq_sync_cmd_detail_resp(&cmdqs->cmdq[HINIC3_CMDQ_SYNC], mod,=0D
--					 cmd, buf_in, buf_out, timeout);=0D
-+	return cmdq_sync_cmd(&cmdqs->cmdq[HINIC3_CMDQ_SYNC], mod, cmd, buf_in, bu=
-f_out,=0D
-+			     NULL, timeout, HINIC3_CMD_TYPE_SGE_RESP);=0D
- }=0D
- =0D
- static void=0D
-@@ -643,21 +520,23 @@ clear_wqe_complete_bit(struct hinic3_cmdq *cmdq, stru=
-ct hinic3_cmdq_wqe *wqe)=0D
+-hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev, const uint32_t *indir=
+_table,=0D
+-			 uint32_t indir_table_size)=0D
++hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev, const uint32_t *indir=
+_table)=0D
  {=0D
- 	struct hinic3_ctrl *ctrl =3D NULL;=0D
- 	uint32_t header_info =3D hinic3_hw_cpu32(WQE_HEADER(wqe)->header_info);=0D
--	int buf_len =3D CMDQ_WQE_HEADER_GET(header_info, BUFDESC_LEN);=0D
--	uint32_t wqe_size =3D cmdq_get_wqe_size(buf_len);=0D
- 	uint16_t num_wqebbs;=0D
--=0D
--	if (wqe_size =3D=3D WQE_LCMD_SIZE)=0D
--		ctrl =3D &wqe->wqe_lcmd.ctrl;=0D
--	else=0D
--		ctrl =3D &wqe->inline_wqe.wqe_scmd.ctrl;=0D
--=0D
--	/* Clear HW busy bit. */=0D
--	ctrl->ctrl_info =3D 0;=0D
-+	enum data_format df;=0D
-+	if (cmdq->cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ) {=0D
-+		df =3D CMDQ_WQE_HEADER_GET(header_info, DATA_FMT);=0D
-+		if (df =3D=3D DATA_SGE)=0D
-+			ctrl =3D &wqe->wqe_lcmd.ctrl;=0D
-+		else=0D
-+			ctrl =3D &wqe->inline_wqe.wqe_scmd.ctrl;=0D
-+		ctrl->ctrl_info =3D 0; /* clear HW busy bit */=0D
-+		num_wqebbs =3D NUM_WQEBBS_FOR_CMDQ_WQE;=0D
-+	} else {=0D
-+		wqe->enhanced_cmdq_wqe.completion.cs_format =3D 0; /* clear HW busy bit =
-*/=0D
-+		num_wqebbs =3D NUM_WQEBBS_FOR_ENHANCE_CMDQ_WQE;=0D
-+	}=0D
- =0D
- 	rte_atomic_thread_fence(rte_memory_order_release); /**< Verify wqe is cle=
-ared. */=0D
- =0D
--	num_wqebbs =3D WQE_NUM_WQEBBS(wqe_size, cmdq->wq);=0D
- 	hinic3_put_wqe(cmdq->wq, num_wqebbs);=0D
- }=0D
- =0D
-@@ -735,25 +614,28 @@ static int=0D
- hinic3_set_cmdq_ctxts(struct hinic3_hwdev *hwdev)=0D
- {=0D
- 	struct hinic3_cmdqs *cmdqs =3D hwdev->cmdqs;=0D
--	struct hinic3_cmd_cmdq_ctxt cmdq_ctxt;=0D
--	enum hinic3_cmdq_type cmdq_type;=0D
-+	struct hinic3_cmd_cmdq_ctxt cmdq_ctxt =3D {0};=0D
-+	enum hinic3_cmdq_type cmdq_type =3D HINIC3_CMDQ_SYNC;=0D
- 	uint16_t out_size =3D sizeof(cmdq_ctxt);=0D
-+	uint16_t cmd;=0D
+-	struct nic_rss_indirect_tbl *indir_tbl =3D NULL;=0D
+ 	struct hinic3_cmd_buf *cmd_buf =3D NULL;=0D
+-	uint32_t i, size;=0D
+-	uint32_t *temp =3D NULL;=0D
++	struct hinic3_nic_dev *nic_dev =3D NULL;=0D
++	uint8_t cmd;=0D
+ 	uint64_t out_param =3D 0;=0D
  	int err;=0D
  =0D
--	for (cmdq_type =3D HINIC3_CMDQ_SYNC; cmdq_type < HINIC3_MAX_CMDQ_TYPES; c=
-mdq_type++) {=0D
--		memset(&cmdq_ctxt, 0, sizeof(cmdq_ctxt));=0D
--		cmdq_ctxt.ctxt_info =3D cmdqs->cmdq[cmdq_type].cmdq_ctxt;=0D
-+	for (; cmdq_type < HINIC3_MAX_CMDQ_TYPES; cmdq_type++) {=0D
-+		if (hwdev->cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ) {=0D
-+			cmdq_ctxt.ctxt_info =3D cmdqs->cmdq[cmdq_type].cmdq_ctxt;=0D
-+			cmd =3D HINIC3_MGMT_CMD_SET_CMDQ_CTXT;=0D
-+		} else {=0D
-+			cmdq_ctxt.enhance_ctxt_info =3D cmdqs->cmdq[cmdq_type].cmdq_enhance_ctx=
-t;=0D
-+			cmd =3D HINIC3_MGMT_CMD_SET_ENHANCE_CMDQ_CTXT;=0D
-+		}=0D
- 		cmdq_ctxt.func_idx =3D hinic3_global_func_id(hwdev);=0D
- 		cmdq_ctxt.cmdq_id =3D cmdq_type;=0D
+@@ -1214,22 +1213,9 @@ hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev,=
+ const uint32_t *indir_table=0D
+ 		return -ENOMEM;=0D
+ 	}=0D
  =0D
--		err =3D hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_COMM,=0D
--					      HINIC3_MGMT_CMD_SET_CMDQ_CTXT,=0D
-+		err =3D hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_COMM, cmd,=0D
- 					      &cmdq_ctxt, sizeof(cmdq_ctxt),=0D
- 					      &cmdq_ctxt, &out_size);=0D
+-	cmd_buf->size =3D sizeof(struct nic_rss_indirect_tbl);=0D
+-	indir_tbl =3D (struct nic_rss_indirect_tbl *)cmd_buf->buf;=0D
+-	memset(indir_tbl, 0, sizeof(*indir_tbl));=0D
 -=0D
- 		if (err || !out_size || cmdq_ctxt.status) {=0D
--			PMD_DRV_LOG(ERR,=0D
--				    "Set cmdq ctxt failed, err: %d, status: 0x%x, out_size: 0x%x",=0D
-+			PMD_DRV_LOG(ERR, "Set cmdq ctxt failed, err: %d, status: 0x%x, out_size=
-: 0x%x",=0D
- 				    err, cmdq_ctxt.status, out_size);=0D
- 			return -EFAULT;=0D
- 		}=0D
-@@ -794,6 +676,7 @@ hinic3_set_cmdqs(struct hinic3_hwdev *hwdev, struct hin=
-ic3_cmdqs *cmdqs)=0D
- 	cmdqs->cmdqs_db_base =3D (uint8_t *)db_base;=0D
- =0D
- 	for (cmdq_type =3D HINIC3_CMDQ_SYNC; cmdq_type < HINIC3_MAX_CMDQ_TYPES; c=
-mdq_type++) {=0D
-+		cmdqs->cmdq[cmdq_type].cmdqs =3D cmdqs;=0D
- 		err =3D init_cmdq(&cmdqs->cmdq[cmdq_type], hwdev,=0D
- 				&cmdqs->saved_wqs[cmdq_type], cmdq_type);=0D
- 		if (err) {=0D
-@@ -801,8 +684,11 @@ hinic3_set_cmdqs(struct hinic3_hwdev *hwdev, struct hi=
-nic3_cmdqs *cmdqs)=0D
- 			goto init_cmdq_err;=0D
- 		}=0D
- =0D
--		cmdq_init_queue_ctxt(&cmdqs->cmdq[cmdq_type],=0D
--				     &cmdqs->cmdq[cmdq_type].cmdq_ctxt);=0D
-+		if (cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ)=0D
-+			cmdq_init_queue_ctxt(&cmdqs->cmdq[cmdq_type],=0D
-+					     &cmdqs->cmdq[cmdq_type].cmdq_ctxt);=0D
-+		else=0D
-+			hinic3_enhance_cmdq_init_queue_ctxt(&cmdqs->cmdq[cmdq_type]);=0D
+-	for (i =3D 0; i < indir_table_size; i++)=0D
+-		indir_tbl->entry[i] =3D (uint16_t)(*(indir_table + i));=0D
+-=0D
+-	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
+-	size =3D sizeof(indir_tbl->entry) / sizeof(uint16_t);=0D
+-	temp =3D (uint32_t *)indir_tbl->entry;=0D
+-	for (i =3D 0; i < size; i++)=0D
+-		temp[i] =3D rte_cpu_to_be_32(temp[i]);=0D
+-=0D
+-	err =3D hinic3_cmdq_direct_resp(hwdev, HINIC3_MOD_L2NIC,=0D
+-				      HINIC3_UCODE_CMD_SET_RSS_INDIR_TABLE,=0D
+-				      cmd_buf, &out_param, 0);=0D
++	nic_dev =3D (struct hinic3_nic_dev *)hwdev->dev_handle;=0D
++	cmd =3D nic_dev->cmdq_ops->prepare_cmd_buf_set_rss_indir_table(nic_dev, i=
+ndir_table, cmd_buf);=0D
++	err =3D hinic3_cmdq_direct_resp(hwdev, HINIC3_MOD_L2NIC, cmd, cmd_buf, &o=
+ut_param, 0);=0D
+ 	if (err || out_param !=3D 0) {=0D
+ 		PMD_DRV_LOG(ERR, "Set rss indir table failed");=0D
+ 		err =3D -EFAULT;=0D
+@@ -1477,7 +1463,7 @@ hinic3_vf_get_default_cos(struct hinic3_hwdev *hwdev,=
+ uint8_t *cos_id)=0D
+ 		return -EIO;=0D
  	}=0D
  =0D
- 	err =3D hinic3_set_cmdq_ctxts(hwdev);=0D
-@@ -821,11 +707,12 @@ hinic3_set_cmdqs(struct hinic3_hwdev *hwdev, struct h=
-inic3_cmdqs *cmdqs)=0D
+-	*cos_id =3D vf_dcb.state.default_cos;=0D
++	*cos_id =3D vf_dcb.state.default_cos % HINIC3_COS_NUM_MAX_HTN;=0D
+ =0D
+ 	return 0;=0D
  }=0D
+diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.h b/drivers/net/hinic3/=
+base/hinic3_nic_cfg.h=0D
+index a88d62333d..06d5bc7d1b 100644=0D
+--- a/drivers/net/hinic3/base/hinic3_nic_cfg.h=0D
++++ b/drivers/net/hinic3/base/hinic3_nic_cfg.h=0D
+@@ -14,16 +14,17 @@=0D
+ #define OS_VF_ID_TO_HW(os_vf_id) ((os_vf_id) + 1)=0D
+ #define HW_VF_ID_TO_OS(hw_vf_id) ((hw_vf_id) - 1)=0D
  =0D
- int=0D
--hinic3_init_cmdqs(struct hinic3_hwdev *hwdev)=0D
-+hinic3_cmdq_init(struct hinic3_hwdev *hwdev)=0D
- {=0D
- 	struct hinic3_cmdqs *cmdqs =3D NULL;=0D
- 	size_t saved_wqs_size;=0D
- 	char cmdq_pool_name[RTE_MEMPOOL_NAMESIZE];=0D
-+	uint32_t wqebb_shift;=0D
- 	int err;=0D
+-#define HINIC3_DCB_UP_MAX 0x8=0D
++#define HINIC3_DCB_UP_MAX		0x8=0D
  =0D
- 	cmdqs =3D rte_zmalloc(NULL, sizeof(*cmdqs), 0);=0D
-@@ -835,6 +722,14 @@ hinic3_init_cmdqs(struct hinic3_hwdev *hwdev)=0D
- 	hwdev->cmdqs =3D cmdqs;=0D
- 	cmdqs->hwdev =3D hwdev;=0D
+-#define HINIC3_MAX_NUM_RQ 256=0D
++#define HINIC3_MAX_NUM_RQ		256=0D
  =0D
-+	if (HINIC3_SUPPORT_ONLY_ENHANCE_CMDQ(hwdev))=0D
-+		cmdqs->cmdq_mode =3D HINIC3_ENHANCE_CMDQ;=0D
-+	else=0D
-+		cmdqs->cmdq_mode =3D HINIC3_NORMAL_CMDQ;=0D
+-#define HINIC3_MAX_MTU_SIZE 9600=0D
+-#define HINIC3_MIN_MTU_SIZE 256=0D
++#define HINIC3_MAX_MTU_SIZE		9600=0D
++#define HINIC3_MIN_MTU_SIZE		256=0D
+ =0D
+-#define HINIC3_COS_NUM_MAX 8=0D
++#define HINIC3_COS_NUM_MAX		8=0D
++#define HINIC3_COS_NUM_MAX_HTN		4=0D
+ =0D
+-#define HINIC3_VLAN_TAG_SIZE 4=0D
++#define HINIC3_VLAN_TAG_SIZE	4=0D
+ #define HINIC3_ETH_OVERHEAD \=0D
+ 	(RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN + HINIC3_VLAN_TAG_SIZE * 2)=0D
+ =0D
+@@ -34,28 +35,41 @@=0D
+ =0D
+ #define HINIC3_PKTLEN_TO_MTU(pktlen) (pktlen)=0D
+ =0D
+-#define HINIC3_PF_SET_VF_ALREADY 0x4=0D
+-#define HINIC3_MGMT_STATUS_EXIST 0x6=0D
+-#define CHECK_IPSU_15BIT	 0x8000=0D
++#define HINIC3_PF_SET_VF_ALREADY		0x4=0D
++#define HINIC3_MGMT_STATUS_EXIST		0x6=0D
++#define CHECK_IPSU_15BIT				0x8000=0D
+ =0D
+-#define HINIC3_MGMT_STATUS_TABLE_EMPTY 0xB=0D
+-#define HINIC3_MGMT_STATUS_TABLE_FULL  0xC=0D
++#define HINIC3_MGMT_STATUS_TABLE_EMPTY	0xB=0D
++#define HINIC3_MGMT_STATUS_TABLE_FULL	0xC=0D
+ =0D
+-#define HINIC3_MGMT_CMD_UNSUPPORTED 0xFF=0D
++#define HINIC3_MGMT_CMD_UNSUPPORTED		0xFF=0D
+ =0D
+-#define HINIC3_MAX_UC_MAC_ADDRS 128=0D
+-#define HINIC3_MAX_MC_MAC_ADDRS 2048=0D
++#define HINIC3_MAX_UC_MAC_ADDRS			128=0D
++#define HINIC3_MAX_MC_MAC_ADDRS			2048=0D
+ =0D
+-#define CAP_INFO_MAX_LEN 512=0D
+-#define VENDOR_MAX_LEN	 17=0D
++#define CAP_INFO_MAX_LEN		512=0D
++#define VENDOR_MAX_LEN			17=0D
+ =0D
+ /* Structures for RSS config. */=0D
+-#define HINIC3_RSS_INDIR_SIZE	   256=0D
+-#define HINIC3_RSS_INDIR_CMDQ_SIZE 128=0D
+-#define HINIC3_RSS_KEY_SIZE	   40=0D
+-#define HINIC3_RSS_ENABLE	   0x01=0D
+-#define HINIC3_RSS_DISABLE	   0x00=0D
+-#define HINIC3_INVALID_QID_BASE	   0xffff=0D
++#define HINIC3_RSS_INDIR_SIZE			256=0D
++#define HINIC3_RSS_INDIR_CMDQ_SIZE		128=0D
++#define HINIC3_RSS_KEY_SIZE			40=0D
++#define HINIC3_RSS_ENABLE			0x01=0D
++#define HINIC3_RSS_DISABLE			0x00=0D
++#define HINIC3_INVALID_QID_BASE			0xffff=0D
 +=0D
-+	wqebb_shift =3D (cmdqs->cmdq_mode =3D=3D HINIC3_ENHANCE_CMDQ) ?=0D
-+			CMDQ_ENHANCE_WQEBB_SHIFT : CMDQ_WQEBB_SHIFT;=0D
-+=0D
- 	saved_wqs_size =3D HINIC3_MAX_CMDQ_TYPES * sizeof(struct hinic3_wq);=0D
- 	cmdqs->saved_wqs =3D rte_zmalloc(NULL, saved_wqs_size, 0);=0D
- 	if (!cmdqs->saved_wqs) {=0D
-@@ -844,8 +739,7 @@ hinic3_init_cmdqs(struct hinic3_hwdev *hwdev)=0D
- 	}=0D
++#define HINIC3_SUPPORT_FEATURE(dev, feature) \=0D
++	((hinic3_get_driver_feature(dev) & NIC_F_##feature) !=3D 0)=0D
++#define HINIC3_SUPPORT_RX_HW_COMPACT_CQE(dev) \=0D
++	HINIC3_SUPPORT_FEATURE(dev, RX_HW_COMPACT_CQE)=0D
++#define HINIC3_SUPPORT_TX_WQE_COMPACT_TASK(dev) \=0D
++	HINIC3_SUPPORT_FEATURE(dev, TX_WQE_COMPACT_TASK)=0D
++#define HINIC3_SUPPORT_VXLAN_OFFLOAD(dev) \=0D
++	HINIC3_SUPPORT_FEATURE(dev, VXLAN_OFFLOAD)=0D
++#define HINIC3_SUPPORT_GENEVE_OFFLOAD(dev) \=0D
++	HINIC3_SUPPORT_FEATURE(dev, GENEVE_OFFLOAD)=0D
++#define HINIC3_SUPPORT_IPXIP_OFFLOAD(dev) \=0D
++	HINIC3_SUPPORT_FEATURE(dev, IPXIP_OFFLOAD)=0D
  =0D
- 	memset(cmdq_pool_name, 0, RTE_MEMPOOL_NAMESIZE);=0D
--	snprintf(cmdq_pool_name, sizeof(cmdq_pool_name), "hinic3_cmdq_%u",=0D
--		       hwdev->port_id);=0D
-+	snprintf(cmdq_pool_name, sizeof(cmdq_pool_name), "hinic3_cmdq_%u", hwdev-=
->port_id);=0D
+ struct hinic3_rss_type {=0D
+ 	uint8_t tcp_ipv6_ext;=0D
+@@ -312,7 +326,9 @@ struct hinic3_vport_state {=0D
+ 	uint16_t func_id;=0D
+ 	uint16_t rsvd1;=0D
+ 	uint8_t state; /**< 0:disable, 1:enable. */=0D
+-	uint8_t rsvd2[3];=0D
++	uint8_t num_qps;=0D
++	uint8_t rx_compact_wqe_en;=0D
++	uint8_t rsvd2;=0D
+ };=0D
  =0D
- 	cmdqs->cmd_buf_pool =3D rte_pktmbuf_pool_create(cmdq_pool_name,=0D
- 		HINIC3_CMDQ_DEPTH * HINIC3_MAX_CMDQ_TYPES, 0, 0,=0D
-@@ -857,8 +751,7 @@ hinic3_init_cmdqs(struct hinic3_hwdev *hwdev)=0D
- 	}=0D
+ #define MAG_CMD_PORT_DISABLE 0x0=0D
+@@ -670,12 +686,15 @@ enum hinic3_func_tbl_cfg_bitmap {=0D
+ 	FUNC_CFG_INIT,=0D
+ 	FUNC_CFG_RX_BUF_SIZE,=0D
+ 	FUNC_CFG_MTU,=0D
++	FUNC_CFG_RX_COMPACT_WQE_EN, /**< Enable 8Byte WQE. */=0D
+ };=0D
  =0D
- 	err =3D hinic3_cmdq_alloc(cmdqs->saved_wqs, hwdev, HINIC3_MAX_CMDQ_TYPES,=
-=0D
--				HINIC3_CMDQ_WQ_BUF_SIZE, CMDQ_WQEBB_SHIFT,=0D
--				HINIC3_CMDQ_DEPTH);=0D
-+				HINIC3_CMDQ_WQ_BUF_SIZE, wqebb_shift, HINIC3_CMDQ_DEPTH);=0D
- 	if (err) {=0D
- 		PMD_DRV_LOG(ERR, "Allocate cmdq failed");=0D
- 		goto cmdq_alloc_err;=0D
-@@ -884,7 +777,7 @@ hinic3_init_cmdqs(struct hinic3_hwdev *hwdev)=0D
- }=0D
+ struct hinic3_func_tbl_cfg {=0D
+ 	uint16_t rx_wqe_buf_size;=0D
+ 	uint16_t mtu;=0D
+-	uint32_t rsvd[9];=0D
++	uint8_t rx_compact_wqe_en; /**< Enable Rx 8Byte compact WQE. */=0D
++	uint8_t rsvd0[3];=0D
++	uint32_t rsvd1[8];=0D
+ };=0D
  =0D
- void=0D
--hinic3_free_cmdqs(struct hinic3_hwdev *hwdev)=0D
-+hinic3_cmdqs_free(struct hinic3_hwdev *hwdev)=0D
- {=0D
- 	struct hinic3_cmdqs *cmdqs =3D hwdev->cmdqs;=0D
- 	enum hinic3_cmdq_type cmdq_type =3D HINIC3_CMDQ_SYNC;=0D
-@@ -900,14 +793,36 @@ hinic3_free_cmdqs(struct hinic3_hwdev *hwdev)=0D
- 	rte_free(cmdqs);=0D
- }=0D
+ struct hinic3_cmd_set_func_tbl {=0D
+@@ -895,7 +914,7 @@ struct hinic3_set_fdir_ethertype_rule {=0D
+ 	struct mgmt_msg_head head;=0D
  =0D
-+static int=0D
-+hinic3_check_cmdq_done(struct hinic3_cmdq *cmdq, struct hinic3_cmdq_wqe *w=
-qe)=0D
-+{=0D
-+	struct hinic3_ctrl *ctrl =3D NULL;=0D
-+	uint32_t ctrl_info;=0D
-+=0D
-+	if (cmdq->cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ) {=0D
-+		/* Only arm bit using scmd wqe, the wqe is lcmd. */=0D
-+		ctrl =3D &wqe->wqe_lcmd.ctrl;=0D
-+		ctrl_info =3D hinic3_hw_cpu32((ctrl)->ctrl_info);=0D
-+=0D
-+		if (!WQE_COMPLETED(ctrl_info))=0D
-+			return -EBUSY;=0D
-+	} else {=0D
-+		ctrl_info =3D wqe->enhanced_cmdq_wqe.completion.cs_format;=0D
-+		ctrl_info =3D hinic3_hw_cpu32(ctrl_info);=0D
-+=0D
-+		if (!ENHANCE_CMDQ_WQE_CS_GET(ctrl_info, HW_BUSY))=0D
-+			return -EBUSY;=0D
-+	}=0D
-+	return 0;=0D
-+}=0D
-+=0D
- static int=0D
- hinic3_cmdq_poll_msg(struct hinic3_cmdq *cmdq, uint32_t timeout)=0D
- {=0D
- 	struct hinic3_cmdq_wqe *wqe =3D NULL;=0D
- 	struct hinic3_cmdq_wqe_lcmd *wqe_lcmd =3D NULL;=0D
--	struct hinic3_ctrl *ctrl =3D NULL;=0D
- 	struct hinic3_cmdq_cmd_info *cmd_info =3D NULL;=0D
--	uint32_t status_info, ctrl_info;=0D
-+	uint32_t status_info;=0D
- 	uint16_t ci;=0D
- 	int errcode;=0D
- 	uint64_t end;=0D
-@@ -928,13 +843,10 @@ hinic3_cmdq_poll_msg(struct hinic3_cmdq *cmdq, uint32=
-_t timeout)=0D
+ 	uint16_t func_id;=0D
+-	uint16_t rsvd1;=0D
++	uint16_t index;=0D
+ 	uint8_t pkt_type_en;=0D
+ 	uint8_t pkt_type;=0D
+ 	uint8_t qid;=0D
+@@ -1231,14 +1250,11 @@ int hinic3_rss_template_free(struct hinic3_hwdev *h=
+wdev);=0D
+  * Device pointer to hwdev.=0D
+  * @param[in] indir_table=0D
+  * RSS indirect table.=0D
+- * @param[in] indir_table_size=0D
+- * RSS indirect table size.=0D
+  *=0D
+  * @return=0D
+  * 0 on success, non-zero on failure.=0D
+  */=0D
+-int hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev, const uint32_t *i=
+ndir_table,=0D
+-			     uint32_t indir_table_size);=0D
++int hinic3_rss_set_indir_tbl(struct hinic3_hwdev *hwdev, const uint32_t *i=
+ndir_table);=0D
+ =0D
+ /**=0D
+  * Get RSS indirect table.=0D
+@@ -1247,14 +1263,11 @@ int hinic3_rss_set_indir_tbl(struct hinic3_hwdev *h=
+wdev, const uint32_t *indir_t=0D
+  * Device pointer to hwdev.=0D
+  * @param[out] indir_table=0D
+  * RSS indirect table.=0D
+- * @param[in] indir_table_size=0D
+- * RSS indirect table size.=0D
+  *=0D
+  * @return=0D
+  * 0 on success, non-zero on failure.=0D
+  */=0D
+-int hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_t=
+able,=0D
+-			     uint32_t indir_table_size);=0D
++int hinic3_rss_get_indir_tbl(struct hinic3_hwdev *hwdev, uint32_t *indir_t=
+able);=0D
+ =0D
+ /**=0D
+  * Set RSS type.=0D
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3=
+_ethdev.c=0D
+index da2d6722d2..780b17414a 100644=0D
+--- a/drivers/net/hinic3/hinic3_ethdev.c=0D
++++ b/drivers/net/hinic3/hinic3_ethdev.c=0D
+@@ -15,6 +15,8 @@=0D
+ #include "base/hinic3_hw_comm.h"=0D
+ #include "base/hinic3_nic_cfg.h"=0D
+ #include "base/hinic3_nic_event.h"=0D
++#include "htn_adapt/hinic3_htn_cmdq.h"=0D
++#include "stn_adapt/hinic3_stn_cmdq.h"=0D
+ #include "hinic3_nic_io.h"=0D
+ #include "hinic3_tx.h"=0D
+ #include "hinic3_rx.h"=0D
+@@ -2577,8 +2579,7 @@ hinic3_rss_reta_query(struct rte_eth_dev *dev,=0D
  		return -EINVAL;=0D
  	}=0D
  =0D
--	/* Only arm bit is using scmd wqe, the wqe is lcmd. */=0D
--	wqe_lcmd =3D &wqe->wqe_lcmd;=0D
--	ctrl =3D &wqe_lcmd->ctrl;=0D
-+	/* Only arm bit using scmd wqe, the wqe is lcmd. */=0D
- 	end =3D cycles + msecs_to_cycles(timeout);=0D
- 	do {=0D
--		ctrl_info =3D hinic3_hw_cpu32((ctrl)->ctrl_info);=0D
--		if (WQE_COMPLETED(ctrl_info)) {=0D
-+		if (hinic3_check_cmdq_done(cmdq, wqe) =3D=3D 0) {=0D
- 			done =3D 1;=0D
- 			break;=0D
+-	err =3D hinic3_rss_get_indir_tbl(nic_dev->hwdev, indirtbl,=0D
+-				       HINIC3_RSS_INDIR_SIZE);=0D
++	err =3D hinic3_rss_get_indir_tbl(nic_dev->hwdev, indirtbl);=0D
+ 	if (err) {=0D
+ 		PMD_DRV_LOG(ERR, "Get RSS retas table failed, error: %d", err);=0D
+ 		return err;=0D
+@@ -2626,8 +2627,7 @@ hinic3_rss_reta_update(struct rte_eth_dev *dev,=0D
+ 		return -EINVAL;=0D
+ 	}=0D
+ =0D
+-	err =3D hinic3_rss_get_indir_tbl(nic_dev->hwdev, indirtbl,=0D
+-				       HINIC3_RSS_INDIR_SIZE);=0D
++	err =3D hinic3_rss_get_indir_tbl(nic_dev->hwdev, indirtbl);=0D
+ 	if (err)=0D
+ 		return err;=0D
+ =0D
+@@ -2648,8 +2648,7 @@ hinic3_rss_reta_update(struct rte_eth_dev *dev,=0D
  		}=0D
-@@ -943,8 +855,14 @@ hinic3_cmdq_poll_msg(struct hinic3_cmdq *cmdq, uint32_=
-t timeout)=0D
- 	} while (time_before(cycles, end));=0D
+ 	}=0D
  =0D
- 	if (done) {=0D
--		status_info =3D hinic3_hw_cpu32(wqe_lcmd->status.status_info);=0D
--		errcode =3D WQE_ERRCODE_GET(status_info, VAL);=0D
-+		if (cmdq->cmdqs->cmdq_mode =3D=3D HINIC3_NORMAL_CMDQ) {=0D
-+			wqe_lcmd =3D &wqe->wqe_lcmd;=0D
-+			status_info =3D hinic3_hw_cpu32(wqe_lcmd->status.status_info);=0D
-+			errcode =3D WQE_ERRCODE_GET(status_info, VAL);=0D
-+		} else {=0D
-+			status_info =3D hinic3_hw_cpu32(wqe->enhanced_cmdq_wqe.completion.cs_fo=
-rmat);=0D
-+			errcode =3D ENHANCE_CMDQ_WQE_CS_GET(status_info, ERR_CODE);=0D
-+		}=0D
- 		cmdq_update_errcode(cmdq, ci, errcode);=0D
- 		clear_wqe_complete_bit(cmdq, wqe);=0D
- 		err =3D 0;=0D
-diff --git a/drivers/net/hinic3/base/hinic3_cmdq.h b/drivers/net/hinic3/bas=
-e/hinic3_cmdq.h=0D
-index deac909488..b31b61029e 100644=0D
---- a/drivers/net/hinic3/base/hinic3_cmdq.h=0D
-+++ b/drivers/net/hinic3/base/hinic3_cmdq.h=0D
-@@ -13,25 +13,55 @@=0D
- /* Pmd driver uses 64, kernel l2nic uses 4096. */=0D
- #define HINIC3_CMDQ_DEPTH 64=0D
+-	err =3D hinic3_rss_set_indir_tbl(nic_dev->hwdev, indirtbl,=0D
+-				       HINIC3_RSS_INDIR_SIZE);=0D
++	err =3D hinic3_rss_set_indir_tbl(nic_dev->hwdev, indirtbl);=0D
+ 	if (err)=0D
+ 		PMD_DRV_LOG(ERR, "Set RSS reta table failed");=0D
  =0D
--#define HINIC3_CMDQ_BUF_SIZE 2048U=0D
-+#define HINIC3_CMDQ_BUF_SIZE 1024U=0D
+@@ -3387,6 +3386,11 @@ hinic3_func_init(struct rte_eth_dev *eth_dev)=0D
+ 		goto get_cap_fail;=0D
+ 	}=0D
  =0D
- #define HINIC3_CEQ_ID_CMDQ 0=0D
- =0D
--enum cmdq_scmd_type { CMDQ_SET_ARM_CMD =3D 2 };=0D
-+#define WQ_BLOCK_PFN_SHIFT		9=0D
-+#define WQ_BLOCK_PFN(page_addr)		((page_addr) >> WQ_BLOCK_PFN_SHIFT)=0D
- =0D
--enum cmdq_wqe_type { WQE_LCMD_TYPE =3D 0, WQE_SCMD_TYPE =3D 1 };=0D
-+enum hinic3_cmdq_mode {=0D
-+	HINIC3_NORMAL_CMDQ,=0D
-+	HINIC3_ENHANCE_CMDQ=0D
-+};=0D
++	if (!(nic_dev->feature_cap & NIC_F_HTN_CMDQ))=0D
++		nic_dev->cmdq_ops =3D hinic3_cmdq_get_stn_ops();=0D
++	else=0D
++		nic_dev->cmdq_ops =3D hinic3_cmdq_get_htn_ops();=0D
 +=0D
-+enum cmdq_scmd_type {=0D
-+	CMDQ_SET_ARM_CMD =3D 2=0D
-+};=0D
+ 	err =3D hinic3_init_sw_rxtxqs(nic_dev);=0D
+ 	if (err) {=0D
+ 		PMD_DRV_LOG(ERR, "Init sw rxqs or txqs failed, dev_name: %s",=0D
+diff --git a/drivers/net/hinic3/hinic3_nic_io.h b/drivers/net/hinic3/hinic3=
+_nic_io.h=0D
+index db5802e4b7..c8e690981b 100644=0D
+--- a/drivers/net/hinic3/hinic3_nic_io.h=0D
++++ b/drivers/net/hinic3/hinic3_nic_io.h=0D
+@@ -6,6 +6,7 @@=0D
+ #define _HINIC3_NIC_IO_H_=0D
+ =0D
+ #include "hinic3_ethdev.h"=0D
++#include "base/hinic3_cmdq.h"=0D
+ =0D
+ #define HINIC3_SQ_WQEBB_SHIFT 4=0D
+ #define HINIC3_RQ_WQEBB_SHIFT 3=0D
+@@ -25,6 +26,13 @@=0D
+ #define HINIC3_CI_PADDR(base_paddr, q_id) \=0D
+ 	((base_paddr) + (q_id) * HINIC3_CI_Q_ADDR_SIZE)=0D
+ =0D
++#define HINIC3_Q_CTXT_MAX ((uint16_t)(((HINIC3_CMDQ_BUF_SIZE - 8) - RTE_PK=
+TMBUF_HEADROOM) / 64))=0D
 +=0D
-+enum cmdq_wqe_type {=0D
-+	WQE_LCMD_TYPE,=0D
-+	WQE_SCMD_TYPE=0D
-+};=0D
- =0D
--enum ctrl_sect_len { CTRL_SECT_LEN =3D 1, CTRL_DIRECT_SECT_LEN =3D 2 };=0D
-+enum ctrl_sect_len {=0D
-+	CTRL_SECT_LEN =3D 1,=0D
-+	CTRL_DIRECT_SECT_LEN =3D 2=0D
-+};=0D
- =0D
--enum bufdesc_len { BUFDESC_LCMD_LEN =3D 2, BUFDESC_SCMD_LEN =3D 3 };=0D
-+enum bufdesc_len {=0D
-+	BUFDESC_LCMD_LEN =3D 2,=0D
-+	BUFDESC_SCMD_LEN =3D 3=0D
-+};=0D
- =0D
--enum data_format { DATA_SGE =3D 0};=0D
-+enum data_format {=0D
-+	DATA_SGE=0D
-+};=0D
- =0D
--enum completion_format { COMPLETE_DIRECT =3D 0, COMPLETE_SGE =3D 1 };=0D
-+enum completion_format {=0D
-+	COMPLETE_DIRECT,=0D
-+	COMPLETE_SGE=0D
-+};=0D
- =0D
--enum completion_request { CEQ_SET =3D 1 };=0D
-+enum completion_request {=0D
-+	CEQ_SET =3D 1=0D
-+};=0D
- =0D
--enum cmdq_cmd_type { SYNC_CMD_DIRECT_RESP, SYNC_CMD_SGE_RESP, ASYNC_CMD };=
-=0D
-+enum cmdq_cmd_type {=0D
-+	SYNC_CMD_DIRECT_RESP,=0D
-+	SYNC_CMD_SGE_RESP,=0D
-+	ASYNC_CMD=0D
-+};=0D
- =0D
- enum hinic3_cmdq_type {=0D
- 	HINIC3_CMDQ_SYNC,=0D
-@@ -44,17 +74,63 @@ enum hinic3_db_src_type {=0D
- 	HINIC3_DB_SRC_L2NIC_SQ_TYPE=0D
++#define SQ_CTXT_SIZE(num_sqs) ((uint16_t)(sizeof(struct hinic3_qp_ctxt_hea=
+der) \=0D
++					  + (num_sqs) * sizeof(struct hinic3_sq_ctxt)))=0D
++#define RQ_CTXT_SIZE(num_rqs) ((uint16_t)(sizeof(struct hinic3_qp_ctxt_hea=
+der) \=0D
++					  + (num_rqs) * sizeof(struct hinic3_rq_ctxt)))=0D
++=0D
+ enum hinic3_rq_wqe_type {=0D
+ 	HINIC3_COMPACT_RQ_WQE,=0D
+ 	HINIC3_NORMAL_RQ_WQE,=0D
+@@ -37,12 +45,119 @@ enum hinic3_queue_type {=0D
+ 	HINIC3_MAX_QUEUE_TYPE,=0D
  };=0D
  =0D
--enum hinic3_cmdq_db_type { HINIC3_DB_SQ_RQ_TYPE, HINIC3_DB_CMDQ_TYPE };=0D
-+enum hinic3_cmdq_db_type {=0D
-+	HINIC3_DB_SQ_RQ_TYPE,=0D
-+	HINIC3_DB_CMDQ_TYPE=0D
++enum hinic3_qp_ctxt_type {=0D
++	HINIC3_QP_CTXT_TYPE_SQ,=0D
++	HINIC3_QP_CTXT_TYPE_RQ,=0D
 +};=0D
- =0D
- /* Cmdq ack type. */=0D
- enum hinic3_ack_type {=0D
- 	HINIC3_ACK_TYPE_CMDQ		=3D 0,=0D
- 	HINIC3_ACK_TYPE_SHARE_CQN	=3D 1,=0D
- 	HINIC3_ACK_TYPE_APP_CQN		=3D 2,=0D
--=0D
- 	HINIC3_MOD_ACK_MAX		=3D 15=0D
++=0D
++/* Prepare cmd to clean tso/lro space */=0D
++typedef uint8_t  (*prepare_cmd_buf_clean_tso_lro_space_t)(struct hinic3_ni=
+c_dev *nic_dev,=0D
++							  struct hinic3_cmd_buf *cmd_buf,=0D
++							  enum hinic3_qp_ctxt_type ctxt_type);=0D
++/* Prepare cmd to store RQ and TQ ctxt */=0D
++typedef uint8_t  (*prepare_cmd_buf_qp_context_multi_store_t)(struct hinic3=
+_nic_dev *nic_dev,=0D
++							     struct hinic3_cmd_buf *cmd_buf,=0D
++							     enum hinic3_qp_ctxt_type ctxt_type,=0D
++							     uint16_t start_qid,=0D
++							     uint16_t max_ctxts);=0D
++/* Prepare cmd to modify vlan tag */=0D
++typedef uint8_t  (*prepare_cmd_buf_modify_svlan_t)(struct hinic3_cmd_buf *=
+cmd_buf, uint16_t func_id,=0D
++						   uint16_t vlan_tag, uint16_t q_id,=0D
++						   uint8_t vlan_mode);=0D
++/* Prepare cmd to set RSS indir table */=0D
++typedef uint8_t  (*prepare_cmd_buf_set_rss_indir_table_t)(struct hinic3_ni=
+c_dev *nic_dev,=0D
++							  const uint32_t *indir_table,=0D
++							  struct hinic3_cmd_buf *cmd_buf);=0D
++/* Prepare cmd to get RSS indir table */=0D
++typedef uint8_t  (*prepare_cmd_buf_get_rss_indir_table_t)(struct hinic3_ni=
+c_dev *nic_dev,=0D
++							  struct hinic3_cmd_buf *cmd_buf);=0D
++/* Configure RSS indir table */=0D
++typedef void     (*cmd_buf_to_rss_indir_table_t)(const struct hinic3_cmd_b=
+uf *cmd_buf,=0D
++						 uint32_t *indir_table);=0D
++=0D
++struct hinic3_nic_cmdq_ops {=0D
++	prepare_cmd_buf_clean_tso_lro_space_t		prepare_cmd_buf_clean_tso_lro_spac=
+e;=0D
++	prepare_cmd_buf_qp_context_multi_store_t	prepare_cmd_buf_qp_context_multi=
+_store;=0D
++	prepare_cmd_buf_modify_svlan_t			prepare_cmd_buf_modify_svlan;=0D
++	prepare_cmd_buf_set_rss_indir_table_t		prepare_cmd_buf_set_rss_indir_tabl=
+e;=0D
++	prepare_cmd_buf_get_rss_indir_table_t		prepare_cmd_buf_get_rss_indir_tabl=
+e;=0D
++	cmd_buf_to_rss_indir_table_t			cmd_buf_to_rss_indir_table;=0D
++};=0D
++=0D
+ /* Doorbell info. */=0D
+ struct hinic3_db {=0D
+ 	uint32_t db_info;=0D
+ 	uint32_t pi_hi;=0D
  };=0D
  =0D
-+struct cmdq_enhance_completion {=0D
-+	uint32_t cs_format;=0D
-+	uint32_t sge_resp_hi_addr;=0D
-+	uint32_t sge_resp_lo_addr;=0D
-+	uint32_t sge_resp_len; /* bit 14~31 rsvd, soft can't use. */=0D
++struct hinic3_sq_ctxt {=0D
++	uint32_t ci_pi;=0D
++	uint32_t drop_mode_sp;=0D
++	uint32_t wq_pfn_hi_owner;=0D
++	uint32_t wq_pfn_lo;=0D
++=0D
++	uint32_t rsvd0;=0D
++	uint32_t pkt_drop_thd;=0D
++	uint32_t global_sq_id;=0D
++	uint32_t vlan_ceq_attr;=0D
++=0D
++	uint32_t pref_cache;=0D
++	uint32_t pref_ci_owner;=0D
++	uint32_t pref_wq_pfn_hi_ci;=0D
++	uint32_t pref_wq_pfn_lo;=0D
++=0D
++	uint32_t rsvd8;=0D
++	uint32_t rsvd9;=0D
++	uint32_t wq_block_pfn_hi;=0D
++	uint32_t wq_block_pfn_lo;=0D
 +};=0D
 +=0D
-+struct cmdq_enhance_response {=0D
-+	uint32_t cs_format;=0D
-+	uint32_t resvd;=0D
-+	uint64_t direct_data;=0D
++struct hinic3_rq_ctxt {=0D
++	uint32_t ci_pi;=0D
++	uint32_t ceq_attr;=0D
++	uint32_t wq_pfn_hi_type_owner;=0D
++	uint32_t wq_pfn_lo;=0D
++=0D
++	uint32_t rsvd[3];=0D
++	uint32_t cqe_sge_len;=0D
++=0D
++	uint32_t pref_cache;=0D
++	uint32_t pref_ci_owner;=0D
++	uint32_t pref_wq_pfn_hi_ci;=0D
++	uint32_t pref_wq_pfn_lo;=0D
++=0D
++	uint32_t pi_paddr_hi;=0D
++	uint32_t pi_paddr_lo;=0D
++	uint32_t wq_block_pfn_hi;=0D
++	uint32_t wq_block_pfn_lo;=0D
 +};=0D
 +=0D
-+struct sge_send_info {=0D
-+	uint32_t sge_hi_addr;=0D
-+	uint32_t sge_li_addr;=0D
-+	uint32_t seg_len;=0D
-+	uint32_t rsvd;=0D
++struct hinic3_rq_cqe_ctx {=0D
++	struct mgmt_msg_head msg_head;=0D
++=0D
++	uint8_t cqe_type;=0D
++	uint8_t rq_id;=0D
++	uint8_t threshold_cqe_num;=0D
++	uint8_t rsvd1;=0D
++=0D
++	uint16_t msix_entry_idx;=0D
++	uint16_t rsvd2;=0D
++=0D
++	uint32_t ci_addr_hi;=0D
++	uint32_t ci_addr_lo;=0D
++=0D
++	uint16_t timer_loop;=0D
++	uint16_t rsvd3;=0D
 +};=0D
 +=0D
-+struct ctrl_section {=0D
-+	uint32_t header;=0D
-+	uint32_t rsv;=0D
-+	uint32_t sge_send_hi_addr;=0D
-+	uint32_t sge_send_lo_addr;=0D
++struct hinic3_rq_enable {=0D
++	struct mgmt_msg_head msg_head;=0D
++=0D
++	uint32_t rq_id;=0D
++	uint8_t rq_enable;=0D
++	uint8_t rsvd[3];=0D
 +};=0D
 +=0D
-+struct enhanced_cmdq_wqe {=0D
-+	struct ctrl_section     ctrl_sec; /* 16B */=0D
-+	struct cmdq_enhance_completion  completion; /* 16B */=0D
-+};=0D
-+=0D
-+/* Enhance cmdq context of hardware */=0D
-+struct enhance_cmdq_ctxt_info {=0D
-+	uint64_t eq_cfg;=0D
-+	uint64_t dfx_pi_ci;=0D
-+=0D
-+	uint64_t pft_thd;=0D
-+	uint64_t pft_ci;=0D
-+=0D
-+	uint64_t rsv;=0D
-+	uint64_t ci_cla_addr;=0D
-+};=0D
-+=0D
- /* Cmdq wqe ctrls. */=0D
- struct hinic3_cmdq_header {=0D
- 	uint32_t header_info;=0D
-@@ -126,6 +202,7 @@ struct hinic3_cmdq_wqe {=0D
- 	union {=0D
- 		struct hinic3_cmdq_inline_wqe inline_wqe;=0D
- 		struct hinic3_cmdq_wqe_lcmd wqe_lcmd;=0D
-+		struct enhanced_cmdq_wqe enhanced_cmdq_wqe;=0D
- 	};=0D
- };=0D
+ #define DB_INFO_QID_SHIFT	 0=0D
+ #define DB_INFO_NON_FILTER_SHIFT 22=0D
+ #define DB_INFO_CFLAG_SHIFT	 23=0D
+@@ -142,6 +257,21 @@ int hinic3_init_qp_ctxts(struct hinic3_nic_dev *nic_de=
+v);=0D
+  */=0D
+ void hinic3_free_qp_ctxts(struct hinic3_hwdev *hwdev);=0D
  =0D
-@@ -142,8 +219,10 @@ struct hinic3_cmd_cmdq_ctxt {=0D
- 	uint16_t func_idx;=0D
- 	uint8_t cmdq_id;=0D
- 	uint8_t rsvd1[5];=0D
--=0D
--	struct hinic3_cmdq_ctxt_info ctxt_info;=0D
-+	union {=0D
-+		struct hinic3_cmdq_ctxt_info ctxt_info;=0D
-+		struct enhance_cmdq_ctxt_info enhance_ctxt_info;=0D
-+	};=0D
- };=0D
- =0D
- enum hinic3_cmdq_status {=0D
-@@ -173,8 +252,10 @@ struct hinic3_cmdq {=0D
- 	rte_spinlock_t cmdq_lock;=0D
- =0D
- 	struct hinic3_cmdq_ctxt_info cmdq_ctxt;=0D
-+	struct enhance_cmdq_ctxt_info cmdq_enhance_ctxt;=0D
- =0D
- 	struct hinic3_cmdq_cmd_info *cmd_infos;=0D
-+	struct hinic3_cmdqs *cmdqs;=0D
- };=0D
- =0D
- struct hinic3_cmdqs {=0D
-@@ -188,6 +269,7 @@ struct hinic3_cmdqs {=0D
- 	struct hinic3_cmdq cmdq[HINIC3_MAX_CMDQ_TYPES];=0D
- =0D
- 	uint32_t status;=0D
-+	uint8_t cmdq_mode;=0D
- };=0D
- =0D
- struct hinic3_cmd_buf {=0D
-@@ -215,8 +297,8 @@ int hinic3_cmdq_direct_resp(struct hinic3_hwdev *hwdev,=
- enum hinic3_mod_type mod=0D
- int hinic3_cmdq_detail_resp(struct hinic3_hwdev *hwdev, enum hinic3_mod_ty=
-pe mod, uint8_t cmd,=0D
- 		 struct hinic3_cmd_buf *buf_in, struct hinic3_cmd_buf *buf_out, uint32_t=
- timeout);=0D
- =0D
--int hinic3_init_cmdqs(struct hinic3_hwdev *hwdev);=0D
-+int hinic3_cmdq_init(struct hinic3_hwdev *hwdev);=0D
- =0D
--void hinic3_free_cmdqs(struct hinic3_hwdev *hwdev);=0D
-+void hinic3_cmdqs_free(struct hinic3_hwdev *hwdev);=0D
- =0D
- #endif /* _HINIC3_CMDQ_H_ */=0D
-diff --git a/drivers/net/hinic3/base/hinic3_cmdq_enhance.c b/drivers/net/hi=
-nic3/base/hinic3_cmdq_enhance.c=0D
-new file mode 100644=0D
-index 0000000000..e09597c9f3=0D
---- /dev/null=0D
-+++ b/drivers/net/hinic3/base/hinic3_cmdq_enhance.c=0D
-@@ -0,0 +1,111 @@=0D
-+/* SPDX-License-Identifier: BSD-3-Clause=0D
-+ * Copyright(c) 2019 Huawei Technologies Co., Ltd=0D
++/**=0D
++ * Get cmdq ops software tile NIC(stn) supported.=0D
++ *=0D
++ * @return=0D
++ * Pointer to ops.=0D
 + */=0D
++struct hinic3_nic_cmdq_ops *hinic3_cmdq_get_stn_ops(void);=0D
 +=0D
-+#include <rte_mbuf.h>=0D
++/**=0D
++ * Get cmdq ops hardware tile NIC(htn) supported.=0D
++ *=0D
++ * @retval Pointer to ops.=0D
++ */=0D
++struct hinic3_nic_cmdq_ops *hinic3_cmdq_get_htn_ops(void);=0D
 +=0D
-+#include "hinic3_compat.h"=0D
-+#include "hinic3_hwdev.h"=0D
-+#include "hinic3_hwif.h"=0D
-+#include "hinic3_wq.h"=0D
-+#include "hinic3_cmd.h"=0D
-+#include "hinic3_mgmt.h"=0D
-+#include "hinic3_cmdq.h"=0D
-+#include "hinic3_cmdq_enhance.h"=0D
-+=0D
-+#define WQ_PREFETCH_MAX			4=0D
-+#define WQ_PREFETCH_MIN			1=0D
-+#define WQ_PREFETCH_THRESHOLD	256=0D
-+=0D
-+void=0D
-+hinic3_enhance_cmdq_init_queue_ctxt(struct hinic3_cmdq *cmdq)=0D
-+{=0D
-+	struct enhance_cmdq_ctxt_info *ctxt_info =3D &cmdq->cmdq_enhance_ctxt;=0D
-+	struct hinic3_wq *wq =3D cmdq->wq;=0D
-+	uint64_t cmdq_first_block_paddr, pfn;=0D
-+	uint16_t start_ci =3D (uint16_t)wq->cons_idx;=0D
-+	uint32_t start_pi =3D (uint16_t)wq->prod_idx;=0D
-+=0D
-+	/* The data in HW is Big Endian Format */=0D
-+	cmdq_first_block_paddr =3D wq->queue_buf_paddr;=0D
-+	pfn =3D CMDQ_PFN(cmdq_first_block_paddr, RTE_PGSIZE_4K);=0D
-+=0D
-+	/* First part 16B */=0D
-+	ctxt_info->eq_cfg =3D=0D
-+		ENHANCED_CMDQ_SET(pfn, CTXT0_CI_WQE_ADDR) |=0D
-+		ENHANCED_CMDQ_SET(0, CTXT0_EQ) |=0D
-+		ENHANCED_CMDQ_SET(0, CTXT0_CEQ_ARM) |=0D
-+		ENHANCED_CMDQ_SET(0, CTXT0_CEQ_EN) |=0D
-+		ENHANCED_CMDQ_SET(1, CTXT0_HW_BUSY_BIT);=0D
-+=0D
-+	ctxt_info->dfx_pi_ci =3D=0D
-+		ENHANCED_CMDQ_SET(0, CTXT1_Q_DIS) |=0D
-+		ENHANCED_CMDQ_SET(0, CTXT1_ERR_CODE) |=0D
-+		ENHANCED_CMDQ_SET(start_pi, CTXT1_PI) |=0D
-+		ENHANCED_CMDQ_SET(start_ci, CTXT1_CI);=0D
-+=0D
-+	/* Second part 16B */=0D
-+	ctxt_info->pft_thd =3D=0D
-+		ENHANCED_CMDQ_SET(CI_HIGN_IDX(start_ci), CTXT2_PFT_CI) |=0D
-+		ENHANCED_CMDQ_SET(1, CTXT2_O_BIT) |=0D
-+		ENHANCED_CMDQ_SET(WQ_PREFETCH_MIN, CTXT2_PFT_MIN) |=0D
-+		ENHANCED_CMDQ_SET(WQ_PREFETCH_MAX, CTXT2_PFT_MAX) |=0D
-+		ENHANCED_CMDQ_SET(WQ_PREFETCH_THRESHOLD, CTXT2_PFT_THD);=0D
-+	ctxt_info->pft_ci =3D=0D
-+		ENHANCED_CMDQ_SET(pfn, CTXT3_PFT_CI_ADDR) |=0D
-+		ENHANCED_CMDQ_SET(start_ci, CTXT3_PFT_CI);=0D
-+=0D
-+	/* Third part 16B */=0D
-+	pfn =3D WQ_BLOCK_PFN(cmdq_first_block_paddr);=0D
-+=0D
-+	ctxt_info->ci_cla_addr =3D ENHANCED_CMDQ_SET(pfn, CTXT4_CI_CLA_ADDR);=0D
-+}=0D
-+=0D
-+static void=0D
-+enhance_cmdq_set_completion(struct cmdq_enhance_completion *completion,=0D
-+			    const struct hinic3_cmd_buf *buf_out)=0D
-+{=0D
-+	completion->sge_resp_hi_addr =3D upper_32_bits(buf_out->dma_addr);=0D
-+	completion->sge_resp_lo_addr =3D lower_32_bits(buf_out->dma_addr);=0D
-+	completion->sge_resp_len =3D HINIC3_CMDQ_BUF_SIZE;=0D
-+}=0D
-+=0D
-+void hinic3_enhance_cmdq_set_wqe(struct hinic3_cmdq_wqe *wqe,=0D
-+				 enum cmdq_cmd_type cmd_type,=0D
-+				 struct hinic3_cmd_buf *buf_in,=0D
-+				 struct hinic3_cmd_buf *buf_out,=0D
-+				 int wrapped, uint8_t mod, uint8_t cmd)=0D
-+{=0D
-+	struct enhanced_cmdq_wqe *enhanced_wqe =3D &wqe->enhanced_cmdq_wqe;=0D
-+=0D
-+	enhanced_wqe->ctrl_sec.header =3D=0D
-+		ENHANCE_CMDQ_WQE_HEADER_SET(buf_in->size, SEND_SGE_LEN) |=0D
-+		ENHANCE_CMDQ_WQE_HEADER_SET(1, BDSL) |=0D
-+		ENHANCE_CMDQ_WQE_HEADER_SET(DATA_SGE, DF) |=0D
-+		ENHANCE_CMDQ_WQE_HEADER_SET(NORMAL_WQE_TYPE, DN) |=0D
-+		ENHANCE_CMDQ_WQE_HEADER_SET(COMPACT_WQE_TYPE, EC) |=0D
-+		ENHANCE_CMDQ_WQE_HEADER_SET((uint32_t)wrapped, HW_BUSY_BIT);=0D
-+=0D
-+	enhanced_wqe->ctrl_sec.sge_send_hi_addr =3D upper_32_bits(buf_in->dma_add=
-r);=0D
-+	enhanced_wqe->ctrl_sec.sge_send_lo_addr =3D lower_32_bits(buf_in->dma_add=
-r);=0D
-+=0D
-+	enhanced_wqe->completion.cs_format =3D=0D
-+		ENHANCE_CMDQ_WQE_CS_SET(cmd, CMD) |=0D
-+		ENHANCE_CMDQ_WQE_CS_SET(HINIC3_ACK_TYPE_CMDQ, ACK_TYPE) |=0D
-+		ENHANCE_CMDQ_WQE_CS_SET(mod, MOD);=0D
-+=0D
-+	switch (cmd_type) {=0D
-+	case SYNC_CMD_DIRECT_RESP:=0D
-+		enhanced_wqe->completion.cs_format |=3D ENHANCE_CMDQ_WQE_CS_SET(INLINE_D=
-ATA, CF);=0D
-+		break;=0D
-+	case SYNC_CMD_SGE_RESP:=0D
-+		if (buf_out) {=0D
-+			enhanced_wqe->completion.cs_format |=3D=0D
-+				ENHANCE_CMDQ_WQE_CS_SET(SGE_RESPONSE, CF);=0D
-+			enhance_cmdq_set_completion(&enhanced_wqe->completion, buf_out);=0D
-+		}=0D
-+		break;=0D
-+	case ASYNC_CMD:=0D
-+		break;=0D
-+	}=0D
-+}=0D
-diff --git a/drivers/net/hinic3/base/hinic3_cmdq_enhance.h b/drivers/net/hi=
-nic3/base/hinic3_cmdq_enhance.h=0D
+ /**=0D
+  * Update driver feature capabilities.=0D
+  *=0D
+diff --git a/drivers/net/hinic3/hinic3_rx.c b/drivers/net/hinic3/hinic3_rx.=
+c=0D
+index e8e417b474..3d5f4e4524 100644=0D
+--- a/drivers/net/hinic3/hinic3_rx.c=0D
++++ b/drivers/net/hinic3/hinic3_rx.c=0D
+@@ -407,8 +407,7 @@ hinic3_refill_indir_rqid(struct hinic3_rxq *rxq)=0D
+ 	/* Build indir tbl according to the number of rss queue. */=0D
+ 	hinic3_fill_indir_tbl(nic_dev, indir_tbl);=0D
+ =0D
+-	err =3D hinic3_rss_set_indir_tbl(nic_dev->hwdev, indir_tbl,=0D
+-				       HINIC3_RSS_INDIR_SIZE);=0D
++	err =3D hinic3_rss_set_indir_tbl(nic_dev->hwdev, indir_tbl);=0D
+ 	if (err) {=0D
+ 		PMD_DRV_LOG(ERR,=0D
+ 			"Set indirect table failed, eth_dev:%s, queue_idx:%d",=0D
+diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c b/drivers/net/h=
+inic3/htn_adapt/hinic3_htn_cmdq.c=0D
 new file mode 100644=0D
-index 0000000000..8de0ae4d71=0D
+index 0000000000..d997647f48=0D
 --- /dev/null=0D
-+++ b/drivers/net/hinic3/base/hinic3_cmdq_enhance.h=0D
-@@ -0,0 +1,125 @@=0D
++++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c=0D
+@@ -0,0 +1,161 @@=0D
 +/* SPDX-License-Identifier: BSD-3-Clause=0D
 + * Copyright(c) 2026 Huawei Technologies Co., Ltd=0D
 + */=0D
 +=0D
-+#ifndef _HINIC3_CMDQ_ENHANCE_H_=0D
-+#define _HINIC3_CMDQ_ENHANCE_H_=0D
++#include "hinic3_compat.h"=0D
++#include "hinic3_nic_cfg.h"=0D
++#include "hinic3_cmd.h"=0D
++#include "hinic3_hwif.h"=0D
++#include "hinic3_htn_cmdq.h"=0D
 +=0D
-+#include "hinic3_mgmt.h"=0D
-+=0D
-+#define NORMAL_WQE_TYPE  0=0D
-+#define COMPACT_WQE_TYPE 1=0D
-+=0D
-+/* First part 16B */=0D
-+#define ENHANCED_CMDQ_CTXT0_CI_WQE_ADDR_SHIFT   0=0D
-+#define ENHANCED_CMDQ_CTXT0_RSV1_SHIFT          52=0D
-+#define ENHANCED_CMDQ_CTXT0_EQ_SHIFT            53=0D
-+#define ENHANCED_CMDQ_CTXT0_CEQ_ARM_SHIFT       61=0D
-+#define ENHANCED_CMDQ_CTXT0_CEQ_EN_SHIFT        62=0D
-+#define ENHANCED_CMDQ_CTXT0_HW_BUSY_BIT_SHIFT   63=0D
-+=0D
-+#define ENHANCED_CMDQ_CTXT0_CI_WQE_ADDR_MASK    0xFFFFFFFFFFFFFU=0D
-+#define ENHANCED_CMDQ_CTXT0_RSV1_MASK           0x1U=0D
-+#define ENHANCED_CMDQ_CTXT0_EQ_MASK             0xFFU=0D
-+#define ENHANCED_CMDQ_CTXT0_CEQ_ARM_MASK        0x1U=0D
-+#define ENHANCED_CMDQ_CTXT0_CEQ_EN_MASK         0x1U=0D
-+#define ENHANCED_CMDQ_CTXT0_HW_BUSY_BIT_MASK    0x1U=0D
-+=0D
-+#define ENHANCED_CMDQ_CTXT1_Q_DIS_SHIFT         0=0D
-+#define ENHANCED_CMDQ_CTXT1_ERR_CODE_SHIFT      1=0D
-+#define ENHANCED_CMDQ_CTXT1_RSV1_SHIFT          3=0D
-+#define ENHANCED_CMDQ_CTXT1_PI_SHIFT            32=0D
-+#define ENHANCED_CMDQ_CTXT1_CI_SHIFT            48=0D
-+=0D
-+#define ENHANCED_CMDQ_CTXT1_Q_DIS_MASK          0x1U=0D
-+#define ENHANCED_CMDQ_CTXT1_ERR_CODE_MASK       0x3U=0D
-+#define ENHANCED_CMDQ_CTXT1_RSV1_MASK           0x1FFFFFFFU=0D
-+#define ENHANCED_CMDQ_CTXT1_PI_MASK             0xFFFFU=0D
-+#define ENHANCED_CMDQ_CTXT1_CI_MASK             0xFFFFU=0D
-+=0D
-+/* Second part 16B */=0D
-+#define ENHANCED_CMDQ_CTXT2_PFT_CI_SHIFT        0=0D
-+#define ENHANCED_CMDQ_CTXT2_O_BIT_SHIFT         4=0D
-+#define ENHANCED_CMDQ_CTXT2_PFT_THD_SHIFT       32=0D
-+#define ENHANCED_CMDQ_CTXT2_PFT_MAX_SHIFT       46=0D
-+#define ENHANCED_CMDQ_CTXT2_PFT_MIN_SHIFT       57=0D
-+=0D
-+#define ENHANCED_CMDQ_CTXT2_PFT_CI_MASK         0xFU=0D
-+#define ENHANCED_CMDQ_CTXT2_O_BIT_MASK          0x1U=0D
-+#define ENHANCED_CMDQ_CTXT2_PFT_THD_MASK        0x3FFFFU=0D
-+#define ENHANCED_CMDQ_CTXT2_PFT_MAX_MASK        0x7FFFU=0D
-+#define ENHANCED_CMDQ_CTXT2_PFT_MIN_MASK        0x7FU=0D
-+=0D
-+#define ENHANCED_CMDQ_CTXT3_PFT_CI_ADDR_SHIFT	0=0D
-+#define ENHANCED_CMDQ_CTXT3_PFT_CI_SHIFT	52=0D
-+=0D
-+#define ENHANCED_CMDQ_CTXT3_PFT_CI_ADDR_MASK	0xFFFFFFFFFFFFFU=0D
-+#define ENHANCED_CMDQ_CTXT3_PFT_CI_MASK		0xFFFFU=0D
-+=0D
-+/* Third part 16B */=0D
-+#define ENHANCED_CMDQ_CTXT4_CI_CLA_ADDR_SHIFT	0=0D
-+#define ENHANCED_CMDQ_CTXT4_CI_CLA_ADDR_MASK	0x7FFFFFFFFFFFFFU=0D
-+=0D
-+#define ENHANCED_CMDQ_SET(val, member)      \=0D
-+			(((uint64_t)(val) & ENHANCED_CMDQ_##member##_MASK) << \=0D
-+			 ENHANCED_CMDQ_##member##_SHIFT)=0D
-+=0D
-+#define CI_IDX_HIGH_SHIFH       12=0D
-+#define CI_HIGN_IDX(val)        ((val) >> CI_IDX_HIGH_SHIFH)=0D
-+=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_SEND_SGE_LEN_SHIFT  0=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_BDSL_SHIFT          19=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_DF_SHIFT            28=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_DN_SHIFT            29=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_EC_SHIFT            30=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_HW_BUSY_BIT_SHIFT   31=0D
-+=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_SEND_SGE_LEN_MASK   0x3FFFFU=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_BDSL_MASK           0xFFU=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_DF_MASK             0x1U=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_DN_MASK             0x1U=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_EC_MASK             0x1U=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_HW_BUSY_BIT_MASK    0x1U=0D
-+=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_SET(val, member)        \=0D
-+			((((uint32_t)(val)) & ENHANCE_CMDQ_WQE_HEADER_##member##_MASK) << \=0D
-+			 ENHANCE_CMDQ_WQE_HEADER_##member##_SHIFT)=0D
-+=0D
-+#define ENHANCE_CMDQ_WQE_HEADER_GET(val, member)        \=0D
-+			(((val) >> ENHANCE_CMDQ_WQE_HEADER_##member##_SHIFT) & \=0D
-+			 ENHANCE_CMDQ_WQE_HEADER_##member##_MASK)=0D
-+=0D
-+#define ENHANCE_CMDQ_WQE_CS_ERR_CODE_SHIFT          0=0D
-+#define ENHANCE_CMDQ_WQE_CS_CMD_SHIFT               4=0D
-+#define ENHANCE_CMDQ_WQE_CS_ACK_TYPE_SHIFT          12=0D
-+#define ENHANCE_CMDQ_WQE_CS_HW_BUSY_SHIFT           14=0D
-+#define ENHANCE_CMDQ_WQE_CS_MOD_SHIFT               16=0D
-+#define ENHANCE_CMDQ_WQE_CS_CF_SHIFT                31=0D
-+=0D
-+#define ENHANCE_CMDQ_WQE_CS_ERR_CODE_MASK           0xFU=0D
-+#define ENHANCE_CMDQ_WQE_CS_CMD_MASK                0xFFU=0D
-+#define ENHANCE_CMDQ_WQE_CS_ACK_TYPE_MASK           0x3U=0D
-+#define ENHANCE_CMDQ_WQE_CS_HW_BUSY_MASK            0x1U=0D
-+#define ENHANCE_CMDQ_WQE_CS_MOD_MASK                0x1FU=0D
-+#define ENHANCE_CMDQ_WQE_CS_CF_MASK                 0x1U=0D
-+=0D
-+#define ENHANCE_CMDQ_WQE_CS_SET(val, member)        \=0D
-+			((((uint32_t)(val)) & ENHANCE_CMDQ_WQE_CS_##member##_MASK) << \=0D
-+			 ENHANCE_CMDQ_WQE_CS_##member##_SHIFT)=0D
-+=0D
-+#define ENHANCE_CMDQ_WQE_CS_GET(val, member)        \=0D
-+			(((val) >> ENHANCE_CMDQ_WQE_CS_##member##_SHIFT) & \=0D
-+			 ENHANCE_CMDQ_WQE_CS_##member##_MASK)=0D
-+=0D
-+enum complete_format {=0D
-+	INLINE_DATA,=0D
-+	SGE_RESPONSE=0D
-+};=0D
-+=0D
-+void hinic3_enhance_cmdq_set_wqe(struct hinic3_cmdq_wqe *wqe, enum cmdq_cm=
-d_type cmd_type,=0D
-+			  struct hinic3_cmd_buf *buf_in, struct hinic3_cmd_buf *buf_out,=0D
-+			  int wrapped, uint8_t mod, uint8_t cmd);=0D
-+=0D
-+void hinic3_enhance_cmdq_init_queue_ctxt(struct hinic3_cmdq *cmdq);=0D
-+=0D
-+#endif /*_HINIC3_CMDQ_ENHANCE_H_ */=0D
-diff --git a/drivers/net/hinic3/base/hinic3_hw_comm.c b/drivers/net/hinic3/=
-base/hinic3_hw_comm.c=0D
-index d259b88a2d..6541bc0428 100644=0D
---- a/drivers/net/hinic3/base/hinic3_hw_comm.c=0D
-+++ b/drivers/net/hinic3/base/hinic3_hw_comm.c=0D
-@@ -12,7 +12,7 @@=0D
- #include "hinic3_wq.h"=0D
- #include "hinic3_nic_cfg.h"=0D
- =0D
--/* Buffer sizes in hinic3_convert_rx_buf_size must be in ascending order. =
-*/=0D
-+/* Buffer sizes must be in ascending order. */=0D
- const uint32_t hinic3_hw_rx_buf_size[] =3D {=0D
- 	HINIC3_RX_BUF_SIZE_32B,=0D
- 	HINIC3_RX_BUF_SIZE_64B,=0D
-@@ -239,11 +239,14 @@ hinic3_convert_rx_buf_size(uint32_t rx_buf_sz, uint32=
-_t *match_sz)=0D
- }=0D
- =0D
- static uint16_t=0D
--get_hw_rx_buf_size(uint32_t rx_buf_sz)=0D
-+get_hw_rx_buf_size(struct hinic3_hwdev *hwdev, uint32_t rx_buf_sz)=0D
- {=0D
- 	uint16_t num_hw_types =3D RTE_DIM(hinic3_hw_rx_buf_size);=0D
- 	uint16_t i;=0D
- =0D
-+	if (HINIC3_IS_USE_REAL_RX_BUF_SIZE(hwdev))=0D
-+		return rx_buf_sz;=0D
-+=0D
- 	for (i =3D 0; i < num_hw_types; i++) {=0D
- 		if (hinic3_hw_rx_buf_size[i] =3D=3D rx_buf_sz)=0D
- 			return i;=0D
-@@ -271,8 +274,12 @@ hinic3_set_root_ctxt(struct hinic3_hwdev *hwdev, uint3=
-2_t rq_depth,=0D
- 	root_ctxt.cmdq_depth =3D 0;=0D
- 	root_ctxt.lro_en =3D 1;=0D
- 	root_ctxt.rq_depth =3D (uint16_t)rte_log2_u32(rq_depth);=0D
--	root_ctxt.rx_buf_sz =3D get_hw_rx_buf_size(rx_buf_sz);=0D
-+	root_ctxt.rx_buf_sz =3D get_hw_rx_buf_size(hwdev, rx_buf_sz);=0D
- 	root_ctxt.sq_depth =3D (uint16_t)rte_log2_u32(sq_depth);=0D
-+	root_ctxt.cmdq_mode =3D hwdev->cmdqs->cmdq_mode;=0D
-+=0D
-+	if (hwdev->cmdqs->cmdq_mode =3D=3D HINIC3_ENHANCE_CMDQ)=0D
-+		root_ctxt.cmdq_depth--;=0D
- =0D
- 	err =3D hinic3_msg_to_mgmt_sync(hwdev, HINIC3_MOD_COMM,=0D
- 				      HINIC3_MGMT_CMD_SET_VAT,=0D
-@@ -403,7 +410,7 @@ hinic3_comm_features_nego(struct hinic3_hwdev *hwdev,=0D
- 	uint16_t out_size =3D sizeof(feature_nego);=0D
- 	int err;=0D
- =0D
--	if (!hwdev || !s_feature || size > COMM_MAX_FEATURE_QWORD)=0D
-+	if (!hwdev || !s_feature || size > HINIC3_MAX_FEATURE_QWORD)=0D
- 		return -EINVAL;=0D
- =0D
- 	memset(&feature_nego, 0, sizeof(feature_nego));=0D
-diff --git a/drivers/net/hinic3/base/hinic3_hw_comm.h b/drivers/net/hinic3/=
-base/hinic3_hw_comm.h=0D
-index b86f5aad8f..42ff04ee9d 100644=0D
---- a/drivers/net/hinic3/base/hinic3_hw_comm.h=0D
-+++ b/drivers/net/hinic3/base/hinic3_hw_comm.h=0D
-@@ -9,17 +9,17 @@=0D
- #define HINIC3_MGMT_CMD_OP_GET 0=0D
- #define HINIC3_MGMT_CMD_OP_SET 1=0D
- =0D
--#define HINIC3_MSIX_CNT_LLI_TIMER_SHIFT	    0=0D
--#define HINIC3_MSIX_CNT_LLI_CREDIT_SHIFT    8=0D
--#define HINIC3_MSIX_CNT_COALESCE_TIMER_SHIFT 8=0D
--#define HINIC3_MSIX_CNT_PENDING_SHIFT	    8=0D
--#define HINIC3_MSIX_CNT_RESEND_TIMER_SHIFT  29=0D
--=0D
--#define HINIC3_MSIX_CNT_LLI_TIMER_MASK	   0xFFU=0D
--#define HINIC3_MSIX_CNT_LLI_CREDIT_MASK	   0xFFU=0D
--#define HINIC3_MSIX_CNT_COALESCE_TIMER_MASK 0xFFU=0D
--#define HINIC3_MSIX_CNT_PENDING_MASK	   0x1FU=0D
--#define HINIC3_MSIX_CNT_RESEND_TIMER_MASK  0x7U=0D
-+#define HINIC3_MSIX_CNT_LLI_TIMER_SHIFT			0=0D
-+#define HINIC3_MSIX_CNT_LLI_CREDIT_SHIFT		8=0D
-+#define HINIC3_MSIX_CNT_COALESCE_TIMER_SHIFT		8=0D
-+#define HINIC3_MSIX_CNT_PENDING_SHIFT			8=0D
-+#define HINIC3_MSIX_CNT_RESEND_TIMER_SHIFT		29=0D
-+=0D
-+#define HINIC3_MSIX_CNT_LLI_TIMER_MASK			0xFFU=0D
-+#define HINIC3_MSIX_CNT_LLI_CREDIT_MASK			0xFFU=0D
-+#define HINIC3_MSIX_CNT_COALESCE_TIMER_MASK		0xFFU=0D
-+#define HINIC3_MSIX_CNT_PENDING_MASK			0x1FU=0D
-+#define HINIC3_MSIX_CNT_RESEND_TIMER_MASK		0x7U=0D
- =0D
- #define HINIC3_MSIX_CNT_SET(val, member)           \=0D
- 	(((val) & HINIC3_MSIX_CNT_##member##_MASK) \=0D
-@@ -129,7 +129,7 @@ struct hinic3_cmd_root_ctxt {=0D
- 	uint8_t cmdq_depth;=0D
- 	uint16_t rx_buf_sz;=0D
- 	uint8_t lro_en;=0D
--	uint8_t rsvd1;=0D
-+	uint8_t cmdq_mode;=0D
- 	uint16_t sq_depth;=0D
- 	uint16_t rq_depth;=0D
- 	uint64_t rsvd2;=0D
-@@ -143,17 +143,16 @@ enum hinic3_fw_ver_type {=0D
- 	HINIC3_FW_VER_TYPE_CFG,=0D
- };=0D
- =0D
--#define MGMT_MSG_CMD_OP_SET 1=0D
--#define MGMT_MSG_CMD_OP_GET 0=0D
-+#define MGMT_MSG_CMD_OP_SET	1=0D
-+#define MGMT_MSG_CMD_OP_GET	0=0D
- =0D
--#define COMM_MAX_FEATURE_QWORD 4=0D
- struct comm_cmd_feature_nego {=0D
- 	struct mgmt_msg_head head;=0D
- =0D
- 	uint16_t func_id;=0D
- 	uint8_t opcode; /**< 1: set, 0: get. */=0D
- 	uint8_t rsvd;=0D
--	uint64_t s_feature[COMM_MAX_FEATURE_QWORD];=0D
-+	uint64_t s_feature[HINIC3_MAX_FEATURE_QWORD];=0D
- };=0D
- =0D
- #define HINIC3_FW_VERSION_LEN	    16=0D
-diff --git a/drivers/net/hinic3/base/hinic3_hwdev.c b/drivers/net/hinic3/ba=
-se/hinic3_hwdev.c=0D
-index 668bbf4a0e..5d12cf7b5f 100644=0D
---- a/drivers/net/hinic3/base/hinic3_hwdev.c=0D
-+++ b/drivers/net/hinic3/base/hinic3_hwdev.c=0D
-@@ -261,7 +261,7 @@ hinic3_comm_cmdqs_init(struct hinic3_hwdev *hwdev)=0D
- {=0D
- 	int err;=0D
- =0D
--	err =3D hinic3_init_cmdqs(hwdev);=0D
-+	err =3D hinic3_cmdq_init(hwdev);=0D
- 	if (err) {=0D
- 		PMD_DRV_LOG(ERR, "Init cmd queues failed");=0D
- 		return err;=0D
-@@ -276,7 +276,7 @@ hinic3_comm_cmdqs_init(struct hinic3_hwdev *hwdev)=0D
- 	return 0;=0D
- =0D
- set_cmdq_depth_err:=0D
--	hinic3_free_cmdqs(hwdev);=0D
-+	hinic3_cmdqs_free(hwdev);=0D
- =0D
- 	return err;=0D
- }=0D
-@@ -284,7 +284,7 @@ hinic3_comm_cmdqs_init(struct hinic3_hwdev *hwdev)=0D
- static void=0D
- hinic3_comm_cmdqs_free(struct hinic3_hwdev *hwdev)=0D
- {=0D
--	hinic3_free_cmdqs(hwdev);=0D
-+	hinic3_cmdqs_free(hwdev);=0D
- }=0D
- =0D
- static void=0D
-@@ -426,6 +426,12 @@ hinic3_init_comm_ch(struct hinic3_hwdev *hwdev)=0D
- 		goto func_reset_err;=0D
- 	}=0D
- =0D
-+	err =3D hinic3_get_comm_features(hwdev, hwdev->features, HINIC3_MAX_FEATU=
-RE_QWORD);=0D
-+	if (err) {=0D
-+		PMD_DRV_LOG(ERR, "Get comm features failed");=0D
-+		goto get_common_features_err;=0D
-+	}=0D
-+=0D
- 	err =3D hinic3_set_func_svc_used_state(hwdev, HINIC3_MOD_COMM, 1);=0D
- 	if (err)=0D
- 		goto set_used_state_err;=0D
-@@ -444,6 +450,7 @@ hinic3_init_comm_ch(struct hinic3_hwdev *hwdev)=0D
- 	hinic3_set_func_svc_used_state(hwdev, HINIC3_MOD_COMM, 0);=0D
- set_used_state_err:=0D
- func_reset_err:=0D
-+get_common_features_err:=0D
- get_func_info_err:=0D
- 	free_mgmt_channel(hwdev);=0D
- =0D
-diff --git a/drivers/net/hinic3/base/hinic3_hwdev.h b/drivers/net/hinic3/ba=
-se/hinic3_hwdev.h=0D
-index 161f1e2de5..c6661aa1a6 100644=0D
---- a/drivers/net/hinic3/base/hinic3_hwdev.h=0D
-+++ b/drivers/net/hinic3/base/hinic3_hwdev.h=0D
-@@ -23,6 +23,18 @@ enum hinic3_set_arm_type {=0D
- 	HINIC3_SET_ARM_TYPE_NUM=0D
- };=0D
- =0D
-+enum {=0D
-+	HINIC3_F_API_CHAIN =3D 1U << 0,=0D
-+	HINIC3_F_CLP =3D 1U << 1,=0D
-+	HINIC3_F_CHANNEL_DETECT =3D 1U << 2,=0D
-+	HINIC3_F_MBOX_SEGMENT =3D 1U << 3,=0D
-+	HINIC3_F_CMDQ_NUM =3D 1U << 4,=0D
-+	HINIC3_F_VIRTIO_VQ_SIZE =3D 1U << 5,=0D
-+	HINIC3_F_EXTEND_CAP =3D 1U << 6,=0D
-+	HINIC3_F_SMF_CACHE_INVALID =3D 1U << 7,=0D
-+	HINIC3_F_ONLY_ENHANCE_CMDQ =3D 1U << 8,=0D
-+	HINIC3_F_USE_REAL_RX_BUF_SIZE =3D 1U << 9,=0D
-+};=0D
- struct hinic3_page_addr {=0D
- 	void *virt_addr;=0D
- 	uint64_t phys_addr;=0D
-@@ -78,6 +90,11 @@ struct hinic3_hw_stats {=0D
- #define HINIC3_CHIP_FAULT_SIZE (110 * 1024)=0D
- #define MAX_DRV_BUF_SIZE       4096=0D
- =0D
-+#define HINIC3_SUPPORT_ONLY_ENHANCE_CMDQ(hwdev) \=0D
-+	(((struct hinic3_hwdev *)hwdev)->features[0] & HINIC3_F_ONLY_ENHANCE_CMDQ=
-)=0D
-+#define HINIC3_IS_USE_REAL_RX_BUF_SIZE(hwdev) \=0D
-+	(((struct hinic3_hwdev *)hwdev)->features[0] & HINIC3_F_USE_REAL_RX_BUF_S=
-IZE)=0D
-+=0D
- struct nic_cmd_chip_fault_stats {=0D
- 	uint32_t offset;=0D
- 	uint8_t chip_fault_stats[MAX_DRV_BUF_SIZE];=0D
-@@ -141,6 +158,7 @@ struct hinic3_hwdev {=0D
- =0D
- 	uint16_t max_vfs;=0D
- 	uint16_t link_status;=0D
-+	uint64_t features[HINIC3_MAX_FEATURE_QWORD];=0D
- };=0D
- =0D
- bool hinic3_is_vfio_iommu_enable(const struct rte_eth_dev *rte_dev);=0D
-diff --git a/drivers/net/hinic3/base/hinic3_mgmt.c b/drivers/net/hinic3/bas=
-e/hinic3_mgmt.c=0D
-index 5db6d49922..b1f850dfff 100644=0D
---- a/drivers/net/hinic3/base/hinic3_mgmt.c=0D
-+++ b/drivers/net/hinic3/base/hinic3_mgmt.c=0D
-@@ -13,6 +13,8 @@=0D
- #define SEGMENT_LEN	     48=0D
- #define MGMT_MSG_MAX_SEQ_ID \=0D
- 	(RTE_ALIGN(HINIC3_MSG_TO_MGMT_MAX_LEN, SEGMENT_LEN) / SEGMENT_LEN)=0D
-+#define MGMT_MSG_LAST_SEG_MAX_LEN \=0D
-+	(MAX_PF_MGMT_BUF_SIZE - SEGMENT_LEN * MGMT_MSG_MAX_SEQ_ID)=0D
- =0D
- #define BUF_OUT_DEFAULT_SIZE 1=0D
- =0D
-@@ -34,7 +36,8 @@ static bool=0D
- check_mgmt_seq_id_and_seg_len(struct hinic3_recv_msg *recv_msg, uint8_t se=
-q_id,=0D
- 			      uint8_t seg_len, uint16_t msg_id)=0D
- {=0D
--	if (seq_id > MGMT_MSG_MAX_SEQ_ID || seg_len > SEGMENT_LEN)=0D
-+	if (seq_id > MGMT_MSG_MAX_SEQ_ID || seg_len > SEGMENT_LEN ||=0D
-+		(seq_id =3D=3D MGMT_MSG_MAX_SEQ_ID && seg_len > MGMT_MSG_LAST_SEG_MAX_LE=
-N))=0D
- 		return false;=0D
- =0D
- 	if (seq_id =3D=3D 0) {=0D
-diff --git a/drivers/net/hinic3/base/hinic3_mgmt.h b/drivers/net/hinic3/bas=
-e/hinic3_mgmt.h=0D
-index f8148406d3..4e77b9bec4 100644=0D
---- a/drivers/net/hinic3/base/hinic3_mgmt.h=0D
-+++ b/drivers/net/hinic3/base/hinic3_mgmt.h=0D
-@@ -70,6 +70,8 @@ typedef enum {=0D
- #define HINIC3_TOE_RES	 (1 << RES_TYPE_TOE)=0D
- #define HINIC3_IPSEC_RES (1 << RES_TYPE_IPSEC)=0D
- =0D
-+#define HINIC3_MAX_FEATURE_QWORD 4=0D
-+=0D
- struct hinic3_recv_msg {=0D
- 	void *msg;=0D
- =0D
-diff --git a/drivers/net/hinic3/base/hinic3_nic_cfg.c b/drivers/net/hinic3/=
-base/hinic3_nic_cfg.c=0D
-index c35fefdeac..ac44da46c2 100644=0D
---- a/drivers/net/hinic3/base/hinic3_nic_cfg.c=0D
-+++ b/drivers/net/hinic3/base/hinic3_nic_cfg.c=0D
-@@ -48,6 +48,46 @@ static const struct vf_msg_handler vf_mag_cmd_handler[] =
-=3D {=0D
- 	},=0D
- };=0D
- =0D
-+int=0D
-+hinic3_msg_to_mgmt_sync(struct hinic3_hwdev *hwdev, enum hinic3_mod_type m=
-od,=0D
-+			uint16_t cmd, void *buf_in, uint16_t in_size,=0D
-+			void *buf_out, uint16_t *out_size)=0D
++static uint8_t prepare_cmd_buf_clean_tso_lro_space(struct hinic3_nic_dev *=
+nic_dev,=0D
++						   struct hinic3_cmd_buf *cmd_buf,=0D
++						   enum hinic3_qp_ctxt_type ctxt_type)=0D
 +{=0D
-+	uint32_t i;=0D
-+	bool cmd_to_pf =3D false;=0D
-+	struct hinic3_handler_info handler_info =3D {=0D
-+		.cmd =3D cmd,=0D
-+		.buf_in =3D buf_in,=0D
-+		.in_size =3D in_size,=0D
-+		.buf_out =3D buf_out,=0D
-+		.out_size =3D out_size,=0D
-+		.dst_func =3D HINIC3_MGMT_SRC_ID,=0D
-+		.direction =3D HINIC3_MSG_DIRECT_SEND,=0D
-+		.ack_type =3D HINIC3_MSG_ACK,=0D
-+	};=0D
++	struct hinic3_clean_queue_ctxt *ctxt_block =3D NULL;=0D
 +=0D
-+	if (hwdev =3D=3D NULL)=0D
-+		return -EINVAL;=0D
++	ctxt_block =3D cmd_buf->buf;=0D
++	ctxt_block->cmdq_hdr.num_queues =3D nic_dev->max_sqs;=0D
++	ctxt_block->cmdq_hdr.queue_type =3D ctxt_type;=0D
++	ctxt_block->cmdq_hdr.start_qid =3D 0;=0D
++	ctxt_block->cmdq_hdr.dest_func_id =3D hinic3_global_func_id(nic_dev->hwde=
+v);=0D
 +=0D
-+	if (hinic3_func_type(hwdev) =3D=3D TYPE_VF) {=0D
-+		if (mod =3D=3D HINIC3_MOD_HILINK) {=0D
-+			for (i =3D 0; i < RTE_DIM(vf_mag_cmd_handler); i++) {=0D
-+				if (cmd =3D=3D vf_mag_cmd_handler[i].cmd)=0D
-+					cmd_to_pf =3D true;=0D
-+			}=0D
-+		} else if (mod =3D=3D HINIC3_MOD_L2NIC) {=0D
-+			for (i =3D 0; i < RTE_DIM(vf_cmd_handler); i++) {=0D
-+				if (cmd =3D=3D vf_cmd_handler[i].cmd)=0D
-+					cmd_to_pf =3D true;=0D
-+			}=0D
-+		}=0D
-+	}=0D
-+	if (cmd_to_pf)=0D
-+		handler_info.dst_func =3D hinic3_pf_id_of_vf(hwdev);=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_cpu_to_be32(ctxt_block, sizeof(*ctxt_block));=0D
 +=0D
-+	return hinic3_send_mbox_to_mgmt(hwdev, mod, &handler_info, 0);=0D
++	cmd_buf->size =3D sizeof(*ctxt_block);=0D
++	return HINIC3_HTN_CMD_TSO_LRO_SPACE_CLEAN;=0D
 +}=0D
 +=0D
- /**=0D
-  * Set CI table for a SQ.=0D
-  *=0D
-@@ -1712,43 +1752,6 @@ hinic3_set_rq_flush(struct hinic3_hwdev *hwdev, uint=
-16_t q_id)=0D
- 	return err;=0D
- }=0D
- =0D
--int=0D
--hinic3_msg_to_mgmt_sync(struct hinic3_hwdev *hwdev, enum hinic3_mod_type m=
-od,=0D
--			uint16_t cmd, void *buf_in, uint16_t in_size,=0D
--			void *buf_out, uint16_t *out_size)=0D
--{=0D
--	uint32_t i;=0D
--	bool cmd_to_pf =3D false;=0D
--	struct hinic3_handler_info handler_info =3D {=0D
--		.cmd =3D cmd,=0D
--		.buf_in =3D buf_in,=0D
--		.in_size =3D in_size,=0D
--		.buf_out =3D buf_out,=0D
--		.out_size =3D out_size,=0D
--		.dst_func =3D HINIC3_MGMT_SRC_ID,=0D
--		.direction =3D HINIC3_MSG_DIRECT_SEND,=0D
--		.ack_type =3D HINIC3_MSG_ACK,=0D
--	};=0D
--=0D
--	if (hinic3_func_type(hwdev) =3D=3D TYPE_VF) {=0D
--		if (mod =3D=3D HINIC3_MOD_HILINK) {=0D
--			for (i =3D 0; i < RTE_DIM(vf_mag_cmd_handler); i++) {=0D
--				if (cmd =3D=3D vf_mag_cmd_handler[i].cmd)=0D
--					cmd_to_pf =3D true;=0D
--			}=0D
--		} else if (mod =3D=3D HINIC3_MOD_L2NIC) {=0D
--			for (i =3D 0; i < RTE_DIM(vf_cmd_handler); i++) {=0D
--				if (cmd =3D=3D vf_cmd_handler[i].cmd)=0D
--					cmd_to_pf =3D true;=0D
--			}=0D
--		}=0D
--	}=0D
--	if (cmd_to_pf)=0D
--		handler_info.dst_func =3D hinic3_pf_id_of_vf(hwdev);=0D
--=0D
--	return hinic3_send_mbox_to_mgmt(hwdev, mod, &handler_info, 0);=0D
--}=0D
--=0D
- int=0D
- hinic3_set_link_status_follow(struct hinic3_hwdev *hwdev,=0D
- 			      enum hinic3_link_follow_status status)=0D
-diff --git a/drivers/net/hinic3/base/meson.build b/drivers/net/hinic3/base/=
-meson.build=0D
-index 48ac7a47f5..729980d087 100644=0D
---- a/drivers/net/hinic3/base/meson.build=0D
-+++ b/drivers/net/hinic3/base/meson.build=0D
-@@ -2,6 +2,7 @@=0D
- # Copyright(c) 2025 Huawei Technologies Co., Ltd=0D
- =0D
- base_sources =3D files(=0D
-+        'hinic3_cmdq_enhance.c',=0D
-         'hinic3_cmdq.c',=0D
-         'hinic3_eqs.c',=0D
-         'hinic3_hw_cfg.c',=0D
++static void qp_prepare_cmdq_header(struct hinic3_qp_ctxt_header *qp_ctxt_h=
+dr,=0D
++				   enum hinic3_qp_ctxt_type ctxt_type, uint16_t num_queues,=0D
++				   uint16_t q_id, uint16_t func_id)=0D
++{=0D
++	qp_ctxt_hdr->queue_type =3D ctxt_type;=0D
++	qp_ctxt_hdr->num_queues =3D num_queues;=0D
++	qp_ctxt_hdr->start_qid =3D q_id;=0D
++	qp_ctxt_hdr->dest_func_id =3D func_id;=0D
++=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_cpu_to_be32(qp_ctxt_hdr, sizeof(*qp_ctxt_hdr));=0D
++}=0D
++=0D
++static uint8_t prepare_cmd_buf_qp_context_multi_store(struct hinic3_nic_de=
+v *nic_dev,=0D
++						      struct hinic3_cmd_buf *cmd_buf,=0D
++						      enum hinic3_qp_ctxt_type ctxt_type,=0D
++						      uint16_t start_qid, uint16_t max_ctxts)=0D
++{=0D
++	struct hinic3_qp_ctxt_block *qp_ctxt_block =3D NULL;=0D
++	uint16_t func_id;=0D
++	uint16_t i;=0D
++=0D
++	qp_ctxt_block =3D cmd_buf->buf;=0D
++	func_id =3D hinic3_global_func_id(nic_dev->hwdev);=0D
++	qp_prepare_cmdq_header(&qp_ctxt_block->cmdq_hdr, ctxt_type,=0D
++			       max_ctxts, start_qid, func_id);=0D
++=0D
++	for (i =3D 0; i < max_ctxts; i++) {=0D
++		if (ctxt_type =3D=3D HINIC3_QP_CTXT_TYPE_RQ)=0D
++			hinic3_rq_prepare_ctxt(nic_dev->rxqs[start_qid + i],=0D
++					       &qp_ctxt_block->rq_ctxt[i]);=0D
++		else=0D
++			hinic3_sq_prepare_ctxt(nic_dev->txqs[start_qid + i],=0D
++					       start_qid + i,=0D
++					       &qp_ctxt_block->sq_ctxt[i]);=0D
++	}=0D
++=0D
++	if (ctxt_type =3D=3D HINIC3_QP_CTXT_TYPE_RQ)=0D
++		cmd_buf->size =3D RQ_CTXT_SIZE(max_ctxts);=0D
++	else=0D
++		cmd_buf->size =3D SQ_CTXT_SIZE(max_ctxts);=0D
++=0D
++	return HINIC3_HTN_CMD_SQ_RQ_CONTEXT_MULTI_ST;=0D
++}=0D
++=0D
++static uint8_t prepare_cmd_buf_modify_svlan(struct hinic3_cmd_buf *cmd_buf=
+,=0D
++			uint16_t func_id, uint16_t vlan_tag, uint16_t q_id, uint8_t vlan_mode)=
+=0D
++{=0D
++	struct hinic3_vlan_ctx *vlan_ctx =3D NULL;=0D
++=0D
++	cmd_buf->size =3D sizeof(struct hinic3_vlan_ctx);=0D
++	vlan_ctx =3D (struct hinic3_vlan_ctx *)cmd_buf->buf;=0D
++=0D
++	vlan_ctx->dest_func_id =3D func_id;=0D
++	vlan_ctx->start_qid =3D q_id;=0D
++	vlan_ctx->vlan_tag =3D vlan_tag;=0D
++	vlan_ctx->vlan_sel =3D 0; /* TPID0 in IPSU */=0D
++	vlan_ctx->vlan_mode =3D vlan_mode;=0D
++=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_cpu_to_be32(vlan_ctx, sizeof(struct hinic3_vlan_ctx));=0D
++	return HINIC3_HTN_CMD_SVLAN_MODIFY;=0D
++}=0D
++=0D
++static void prepare_rss_indir_table_cmd_header(struct hinic3_nic_dev *nic_=
+dev,=0D
++					       struct hinic3_cmd_buf *cmd_buf)=0D
++{=0D
++	struct hinic3_rss_cmd_header *header =3D cmd_buf->buf;=0D
++=0D
++	header->dest_func_id =3D hinic3_global_func_id(nic_dev->hwdev);=0D
++=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_cpu_to_be32(header, sizeof(*header));=0D
++}=0D
++=0D
++static uint8_t prepare_cmd_buf_set_rss_indir_table(struct hinic3_nic_dev *=
+nic_dev,=0D
++						   const uint32_t *indir_table,=0D
++						   struct hinic3_cmd_buf *cmd_buf)=0D
++{=0D
++	uint32_t i;=0D
++	uint8_t *indir_tbl =3D NULL;=0D
++=0D
++	indir_tbl =3D (uint8_t *)cmd_buf->buf + sizeof(struct hinic3_rss_cmd_head=
+er);=0D
++	cmd_buf->size =3D sizeof(struct hinic3_rss_cmd_header) + HINIC3_RSS_INDIR=
+_SIZE;=0D
++	memset(indir_tbl, 0, HINIC3_RSS_INDIR_SIZE);=0D
++=0D
++	prepare_rss_indir_table_cmd_header(nic_dev, cmd_buf);=0D
++=0D
++	for (i =3D 0; i < HINIC3_RSS_INDIR_SIZE; i++)=0D
++		indir_tbl[i] =3D (uint8_t)(*(indir_table + i));=0D
++=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_cpu_to_be32(indir_tbl, HINIC3_RSS_INDIR_SIZE);=0D
++=0D
++	return HINIC3_HTN_CMD_SET_RSS_INDIR_TABLE;=0D
++}=0D
++=0D
++static uint8_t prepare_cmd_buf_get_rss_indir_table(struct hinic3_nic_dev *=
+nic_dev,=0D
++						   struct hinic3_cmd_buf *cmd_buf)=0D
++{=0D
++	memset(cmd_buf->buf, 0, cmd_buf->size);=0D
++	prepare_rss_indir_table_cmd_header(nic_dev, cmd_buf);=0D
++=0D
++	return HINIC3_HTN_CMD_GET_RSS_INDIR_TABLE;=0D
++}=0D
++=0D
++static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_bu=
+f, uint32_t *indir_table)=0D
++{=0D
++	uint32_t i;=0D
++	uint8_t *indir_tbl =3D NULL;=0D
++=0D
++	indir_tbl =3D (uint8_t *)cmd_buf->buf;=0D
++=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_be32_to_cpu(cmd_buf->buf, HINIC3_RSS_INDIR_SIZE);=0D
++	for (i =3D 0; i < HINIC3_RSS_INDIR_SIZE; i++)=0D
++		indir_table[i] =3D *(indir_tbl + i);=0D
++}=0D
++=0D
++struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_htn_ops(void)=0D
++{=0D
++	static struct hinic3_nic_cmdq_ops cmdq_ops =3D {=0D
++		.prepare_cmd_buf_clean_tso_lro_space =3D    prepare_cmd_buf_clean_tso_lr=
+o_space,=0D
++		.prepare_cmd_buf_qp_context_multi_store =3D prepare_cmd_buf_qp_context_m=
+ulti_store,=0D
++		.prepare_cmd_buf_modify_svlan =3D           prepare_cmd_buf_modify_svlan=
+,=0D
++		.prepare_cmd_buf_set_rss_indir_table =3D    prepare_cmd_buf_set_rss_indi=
+r_table,=0D
++		.prepare_cmd_buf_get_rss_indir_table =3D    prepare_cmd_buf_get_rss_indi=
+r_table,=0D
++		.cmd_buf_to_rss_indir_table =3D             cmd_buf_to_rss_indir_table,=
+=0D
++	};=0D
++=0D
++	return &cmdq_ops;=0D
++}=0D
+diff --git a/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h b/drivers/net/h=
+inic3/htn_adapt/hinic3_htn_cmdq.h=0D
+new file mode 100644=0D
+index 0000000000..1245b9c8d8=0D
+--- /dev/null=0D
++++ b/drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h=0D
+@@ -0,0 +1,55 @@=0D
++/* SPDX-License-Identifier: BSD-3-Clause=0D
++ * Copyright(c) 2026 Huawei Technologies Co., Ltd=0D
++ */=0D
++=0D
++#ifndef _HINIC3_HTN_CMDQ_H_=0D
++#define _HINIC3_HTN_CMDQ_H_=0D
++=0D
++#include "hinic3_nic_io.h"=0D
++=0D
++struct hinic3_qp_ctxt_header {=0D
++	uint32_t rsvd[2];=0D
++	uint16_t num_queues;=0D
++	uint16_t queue_type;=0D
++	uint16_t start_qid;=0D
++	uint16_t dest_func_id;=0D
++};=0D
++=0D
++struct hinic3_clean_queue_ctxt {=0D
++	struct hinic3_qp_ctxt_header cmdq_hdr;=0D
++};=0D
++=0D
++struct hinic3_qp_ctxt_block {=0D
++	struct hinic3_qp_ctxt_header   cmdq_hdr;=0D
++	union {=0D
++		struct hinic3_sq_ctxt  sq_ctxt[HINIC3_Q_CTXT_MAX];=0D
++		struct hinic3_rq_ctxt  rq_ctxt[HINIC3_Q_CTXT_MAX];=0D
++	};=0D
++};=0D
++=0D
++struct hinic3_rss_cmd_header {=0D
++	uint32_t rsv[3];=0D
++	uint16_t rsv1;=0D
++	uint16_t dest_func_id;=0D
++};=0D
++=0D
++/* NIC HTN CMD */=0D
++enum hinic3_htn_cmd {=0D
++	HINIC3_HTN_CMD_SQ_RQ_CONTEXT_MULTI_ST =3D 0x20,=0D
++	HINIC3_HTN_CMD_SQ_RQ_CONTEXT_MULTI_LD,=0D
++	HINIC3_HTN_CMD_TSO_LRO_SPACE_CLEAN,=0D
++	HINIC3_HTN_CMD_SVLAN_MODIFY,=0D
++	HINIC3_HTN_CMD_SET_RSS_INDIR_TABLE,=0D
++	HINIC3_HTN_CMD_GET_RSS_INDIR_TABLE=0D
++};=0D
++=0D
++struct hinic3_vlan_ctx {=0D
++	uint32_t rsv[2];=0D
++	uint16_t vlan_tag;=0D
++	uint8_t vlan_sel;=0D
++	uint8_t vlan_mode;=0D
++	uint16_t start_qid;=0D
++	uint16_t dest_func_id;=0D
++};=0D
++=0D
++#endif /* _HINIC3_HTN_CMDQ_H_ */=0D
+diff --git a/drivers/net/hinic3/htn_adapt/meson.build b/drivers/net/hinic3/=
+htn_adapt/meson.build=0D
+new file mode 100644=0D
+index 0000000000..17f7ad09e3=0D
+--- /dev/null=0D
++++ b/drivers/net/hinic3/htn_adapt/meson.build=0D
+@@ -0,0 +1,7 @@=0D
++# SPDX-License-Identifier: BSD-3-Clause=0D
++# Copyright(c) 2026 Huawei Technologies Co., Ltd=0D
++=0D
++includes +=3D include_directories('.')=0D
++sources +=3D files(=0D
++        'hinic3_htn_cmdq.c',=0D
++)=0D
+diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c b/drivers/net/h=
+inic3/stn_adapt/hinic3_stn_cmdq.c=0D
+new file mode 100644=0D
+index 0000000000..3d4becf07c=0D
+--- /dev/null=0D
++++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c=0D
+@@ -0,0 +1,145 @@=0D
++/* SPDX-License-Identifier: BSD-3-Clause=0D
++ * Copyright(c) 2026 Huawei Technologies Co., Ltd=0D
++ */=0D
++=0D
++#include "hinic3_compat.h"=0D
++#include "hinic3_nic_cfg.h"=0D
++#include "hinic3_cmd.h"=0D
++#include "hinic3_hwif.h"=0D
++#include "hinic3_stn_cmdq.h"=0D
++=0D
++static uint8_t prepare_cmd_buf_clean_tso_lro_space(struct hinic3_nic_dev *=
+nic_dev,=0D
++						   struct hinic3_cmd_buf *cmd_buf,=0D
++						   enum hinic3_qp_ctxt_type ctxt_type)=0D
++{=0D
++	struct hinic3_clean_queue_ctxt *ctxt_block =3D NULL;=0D
++=0D
++	ctxt_block =3D cmd_buf->buf;=0D
++	ctxt_block->cmdq_hdr.num_queues =3D nic_dev->max_sqs;=0D
++	ctxt_block->cmdq_hdr.queue_type =3D ctxt_type;=0D
++	ctxt_block->cmdq_hdr.start_qid =3D 0;=0D
++=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_cpu_to_be32(ctxt_block, sizeof(*ctxt_block));=0D
++=0D
++	cmd_buf->size =3D sizeof(*ctxt_block);=0D
++	return HINIC3_UCODE_CMD_CLEAN_QUEUE_CONTEXT;=0D
++}=0D
++=0D
++static void qp_prepare_cmdq_header(struct hinic3_qp_ctxt_header *qp_ctxt_h=
+dr,=0D
++				   enum hinic3_qp_ctxt_type ctxt_type, uint16_t num_queues,=0D
++				   uint16_t q_id)=0D
++{=0D
++	qp_ctxt_hdr->queue_type =3D ctxt_type;=0D
++	qp_ctxt_hdr->num_queues =3D num_queues;=0D
++	qp_ctxt_hdr->start_qid =3D q_id;=0D
++	qp_ctxt_hdr->rsvd =3D 0;=0D
++=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_cpu_to_be32(qp_ctxt_hdr, sizeof(*qp_ctxt_hdr));=0D
++}=0D
++=0D
++static uint8_t prepare_cmd_buf_qp_context_multi_store(struct hinic3_nic_de=
+v *nic_dev,=0D
++						 struct hinic3_cmd_buf *cmd_buf,=0D
++						 enum hinic3_qp_ctxt_type ctxt_type,=0D
++						 uint16_t start_qid, uint16_t max_ctxts)=0D
++{=0D
++	struct hinic3_qp_ctxt_block *qp_ctxt_block =3D NULL;=0D
++	uint16_t i;=0D
++=0D
++	qp_ctxt_block =3D cmd_buf->buf;=0D
++=0D
++	qp_prepare_cmdq_header(&qp_ctxt_block->cmdq_hdr, ctxt_type,=0D
++				   max_ctxts, start_qid);=0D
++=0D
++	for (i =3D 0; i < max_ctxts; i++) {=0D
++		if (ctxt_type =3D=3D HINIC3_QP_CTXT_TYPE_RQ)=0D
++			hinic3_rq_prepare_ctxt(nic_dev->rxqs[start_qid + i],=0D
++					       &qp_ctxt_block->rq_ctxt[i]);=0D
++		else=0D
++			hinic3_sq_prepare_ctxt(nic_dev->txqs[start_qid + i], start_qid + i,=0D
++					       &qp_ctxt_block->sq_ctxt[i]);=0D
++	}=0D
++=0D
++	if (ctxt_type =3D=3D HINIC3_QP_CTXT_TYPE_RQ)=0D
++		cmd_buf->size =3D RQ_CTXT_SIZE(max_ctxts);=0D
++	else=0D
++		cmd_buf->size =3D SQ_CTXT_SIZE(max_ctxts);=0D
++=0D
++	return HINIC3_UCODE_CMD_MODIFY_QUEUE_CTX;=0D
++}=0D
++=0D
++static uint8_t prepare_cmd_buf_modify_svlan(struct hinic3_cmd_buf *cmd_buf=
+, uint16_t func_id,=0D
++					    uint16_t vlan_tag, uint16_t q_id, uint8_t vlan_mode)=0D
++{=0D
++	struct hinic3_vlan_ctx *vlan_ctx =3D NULL;=0D
++=0D
++	cmd_buf->size =3D sizeof(struct hinic3_vlan_ctx);=0D
++	vlan_ctx =3D (struct hinic3_vlan_ctx *)cmd_buf->buf;=0D
++=0D
++	vlan_ctx->func_id =3D func_id;=0D
++	vlan_ctx->qid =3D q_id;=0D
++	vlan_ctx->vlan_id =3D vlan_tag;=0D
++	vlan_ctx->vlan_sel =3D 0; /* TPID0 in IPSU */=0D
++	vlan_ctx->vlan_mode =3D vlan_mode;=0D
++=0D
++	rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++	hinic3_cpu_to_be32(vlan_ctx, sizeof(struct hinic3_vlan_ctx));=0D
++	return HINIC3_UCODE_CMD_MODIFY_VLAN_CTX;=0D
++}=0D
++=0D
++static uint8_t prepare_cmd_buf_set_rss_indir_table(struct hinic3_nic_dev *=
+nic_dev,=0D
++						   const uint32_t *indir_table,=0D
++						   struct hinic3_cmd_buf *cmd_buf)=0D
++{=0D
++	uint32_t i, size;=0D
++	uint32_t *temp =3D NULL;=0D
++	struct nic_rss_indirect_tbl *indir_tbl =3D NULL;=0D
++=0D
++	indir_tbl =3D (struct nic_rss_indirect_tbl *)cmd_buf->buf;=0D
++	cmd_buf->size =3D sizeof(struct nic_rss_indirect_tbl);=0D
++	memset(indir_tbl, 0, sizeof(*indir_tbl));=0D
++=0D
++	for (i =3D 0; i < HINIC3_RSS_INDIR_SIZE; i++)=0D
++		indir_tbl->entry[i] =3D (uint16_t)(*(indir_table + i));=0D
++	size =3D sizeof(indir_tbl->entry) / 4;=0D
++	temp =3D (uint32_t *)indir_tbl->entry;=0D
++	for (i =3D 0; i < size; i++) {=0D
++		rte_atomic_thread_fence(rte_memory_order_seq_cst);=0D
++		temp[i] =3D rte_cpu_to_be_32(temp[i]);=0D
++	}=0D
++	return HINIC3_UCODE_CMD_SET_RSS_INDIR_TABLE;=0D
++}=0D
++=0D
++static uint8_t prepare_cmd_buf_get_rss_indir_table(struct hinic3_nic_dev *=
+nic_dev,=0D
++						   struct hinic3_cmd_buf *cmd_buf)=0D
++{=0D
++	(void)nic_dev;=0D
++	memset(cmd_buf->buf, 0, cmd_buf->size);=0D
++=0D
++	return HINIC3_UCODE_CMD_GET_RSS_INDIR_TABLE;=0D
++}=0D
++=0D
++static void cmd_buf_to_rss_indir_table(const struct hinic3_cmd_buf *cmd_bu=
+f, uint32_t *indir_table)=0D
++{=0D
++	uint32_t i;=0D
++	uint16_t *indir_tbl =3D NULL;=0D
++=0D
++	indir_tbl =3D (uint16_t *)cmd_buf->buf;=0D
++	for (i =3D 0; i < HINIC3_RSS_INDIR_SIZE; i++)=0D
++		indir_table[i] =3D *(indir_tbl + i);=0D
++}=0D
++=0D
++struct hinic3_nic_cmdq_ops *hinic3_nic_cmdq_get_stn_ops(void)=0D
++{=0D
++	static struct hinic3_nic_cmdq_ops cmdq_ops =3D {=0D
++		.prepare_cmd_buf_clean_tso_lro_space =3D    prepare_cmd_buf_clean_tso_lr=
+o_space,=0D
++		.prepare_cmd_buf_qp_context_multi_store =3D prepare_cmd_buf_qp_context_m=
+ulti_store,=0D
++		.prepare_cmd_buf_modify_svlan =3D           prepare_cmd_buf_modify_svlan=
+,=0D
++		.prepare_cmd_buf_set_rss_indir_table =3D    prepare_cmd_buf_set_rss_indi=
+r_table,=0D
++		.prepare_cmd_buf_get_rss_indir_table =3D    prepare_cmd_buf_get_rss_indi=
+r_table,=0D
++		.cmd_buf_to_rss_indir_table =3D             cmd_buf_to_rss_indir_table,=
+=0D
++	};=0D
++=0D
++	return &cmdq_ops;=0D
++}=0D
+diff --git a/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h b/drivers/net/h=
+inic3/stn_adapt/hinic3_stn_cmdq.h=0D
+new file mode 100644=0D
+index 0000000000..f8d26e9397=0D
+--- /dev/null=0D
++++ b/drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h=0D
+@@ -0,0 +1,38 @@=0D
++/* SPDX-License-Identifier: BSD-3-Clause=0D
++ * Copyright(c) 2026 Huawei Technologies Co., Ltd=0D
++ */=0D
++=0D
++#ifndef _HINIC3_STN_CMDQ_H_=0D
++#define _HINIC3_STN_CMDQ_H_=0D
++=0D
++#include "hinic3_nic_io.h"=0D
++=0D
++struct hinic3_qp_ctxt_header {=0D
++	uint16_t num_queues;=0D
++	uint16_t queue_type;=0D
++	uint16_t start_qid;=0D
++	uint16_t rsvd;=0D
++};=0D
++=0D
++struct hinic3_clean_queue_ctxt {=0D
++	struct hinic3_qp_ctxt_header cmdq_hdr;=0D
++	uint32_t rsvd;=0D
++};=0D
++=0D
++struct hinic3_qp_ctxt_block {=0D
++	struct hinic3_qp_ctxt_header   cmdq_hdr;=0D
++	union {=0D
++		struct hinic3_sq_ctxt  sq_ctxt[HINIC3_Q_CTXT_MAX];=0D
++		struct hinic3_rq_ctxt  rq_ctxt[HINIC3_Q_CTXT_MAX];=0D
++	};=0D
++};=0D
++=0D
++struct hinic3_vlan_ctx {=0D
++	uint32_t func_id;=0D
++	uint32_t qid; /* if qid =3D 0xFFFF, config for all queues */=0D
++	uint32_t vlan_id;=0D
++	uint32_t vlan_mode;=0D
++	uint32_t vlan_sel;=0D
++};=0D
++=0D
++#endif /* _HINIC3_STN_CMDQ_H_ */=0D
+diff --git a/drivers/net/hinic3/stn_adapt/meson.build b/drivers/net/hinic3/=
+stn_adapt/meson.build=0D
+new file mode 100644=0D
+index 0000000000..99f7f66ab4=0D
+--- /dev/null=0D
++++ b/drivers/net/hinic3/stn_adapt/meson.build=0D
+@@ -0,0 +1,7 @@=0D
++# SPDX-License-Identifier: BSD-3-Clause=0D
++# Copyright(c) 2026 Huawei Technologies Co., Ltd=0D
++=0D
++includes +=3D include_directories('.')=0D
++sources +=3D files(=0D
++        'hinic3_stn_cmdq.c',=0D
++)=0D
 -- =0D
 2.45.1.windows.1=0D
 =0D
