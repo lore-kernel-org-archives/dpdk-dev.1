@@ -2,143 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E03D91075289
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 09:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7C31075289
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 09:44:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EDB144025D;
-	Thu, 19 Mar 2026 10:41:00 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
- by mails.dpdk.org (Postfix) with ESMTP id EAD424013F
- for <dev@dpdk.org>; Thu, 19 Mar 2026 10:40:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773913261; x=1805449261;
- h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=6cK+BiA9zpklO2mJ9LQo22ijhu62Mu62G7lcAbnCmB8=;
- b=N2qUVx81/k41HypL3hinEAYQbWdRBSRdmw08I9jll+kW3xWy5omtfGCZ
- gYg9oZ9wSMgal7Bwa4XdwN8cXqLMa+W7QJC8hUeX0QjsmgZ8BrDDq0YRb
- 5rxxXx0qgh9HRgGITATWwIzZtKp0aI0mxoeA565veHc8Rzjp5SY53wmVj
- rRejulQ0EaNyHvdKy776pw0FW5sjSkAMRnH+l96aoMlrNcHD1RefemiW0
- PvHgXd9IHbXH8kCKx0tm/IFNMaB8NCw8/1QrVPN4mh8fr8UcZLtUBgKzP
- Qe27/wzpHUCJf0vrpxkTGs3sJEgENe6HZ0J01fd+/e4h+lDT5omHxBlVI w==;
-X-CSE-ConnectionGUID: CQ2cBuiCTZ+RIoQoRqWl9w==
-X-CSE-MsgGUID: x6nEXaO0TECNXJs0nFjFTA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11733"; a="86459369"
-X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; d="scan'208";a="86459369"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2026 02:40:59 -0700
-X-CSE-ConnectionGUID: aweLGT8mSNCgmhBnK9PEwg==
-X-CSE-MsgGUID: szsIWHr/TqW0EpFlBA7jaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; d="scan'208";a="218392050"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2026 02:40:58 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 9717B402EA;
+	Thu, 19 Mar 2026 10:44:40 +0100 (CET)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 1A7DD4013F;
+ Thu, 19 Mar 2026 10:44:38 +0100 (CET)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 62J4wUvx080447; Thu, 19 Mar 2026 02:44:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=Y
+ lbDW1nGk7aPxJwfBxFykvNBmPGTSw21NpV9hylxQcI=; b=BlcgrPHhktgyuqSEz
+ 5nXtKQ8RcNCYmaqO4fb5jL9OB5e7PVcFpfZnWSAaa2HaMmL2jd2uPln/6jrKdVS+
+ /mHVAW+PCKWqUJ8kv8fGYSY9WUQ55mdyKSV90QCLqP9eDjDjiwUQs2cKc9U5p4e3
+ vncGpLTPbbpQo5lvhfKWxBU5q0H53rv9Na4MPFRUXJNIOrwIUud3YOfXRzKONpPZ
+ ajotWR1VnPhh3dobgtg1em+LaMqdkyUiNyAxBKYSrmHRseaSAkOdUgyKbM8ezA7y
+ q854FhzBWnyvzH7DbqWdMmUvlgKVdsIHs78BK2l+x2+evvGHrDqsAwswQ5c8D1GC
+ iEUwg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4cyxmh2808-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 19 Mar 2026 02:44:38 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 19 Mar 2026 02:40:57 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Thu, 19 Mar 2026 02:40:57 -0700
-Received: from PH0PR06CU001.outbound.protection.outlook.com (40.107.208.67) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 19 Mar 2026 02:40:56 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=naJANzOr3iDpISCUOlHdH2r4AHutYXCGNV8KQjEXgYQ013GFDY0Z4QvzniU2PULsiBr87qZDEDqxwPW00XhRj62bmdQrKo3LLZZeBSXeniZszG/92CiomleE28b61KQa4xI+AuVOSDMegUvmKrXksbA34WyMGh/KTv3Nu1/zQHvxP2kRaR+88Fja7AN7oDuuC/2mwT6j9/7cT1Hw78KvYTFbV5BCsxzn08CgEsNkPQM0DhezqyCu9wLfbHKP/5L9QJ0E3j+a0vfpUgv91Xj36gN1fU8AMHjaqr9xMyUltafw7qlVj+S7LFS112WFZGQbho16sEkTN34cqpbNdXIRkQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HCC38zZk7isllu+ZMr/qQdAB9QlBHv1fys+DCN9fOUA=;
- b=MDZu+zClS6tqSh4UWkPNfcPlFBeoxQXb3VLhSu7feAICBvHSsFVNWeAGr1Rhw3hE/I0OQ87vo8tyjN/jjyshFpZHea8BEo0RjUxY5vYDqYYxabs0iLQkxXpSckY1i3NO9BeSxBcrNmsyblG4gkOhvdoAY6wKzA2sg0c3Ly/REX3TKgH2U9hGFvJqNEHSD3Iai9EdygXnDaIgoG+UxdcJ9pgsp6a72QVPiszOuO1Ips0yYtPduPru8WCJahqB46lQpryK0j3yA1SOjD1vSlQdFqxXsv1RASSK0Cir9wMGUKK+DpFpJUiCV8his5LH4ZCW+0YHQAsJM78ByRrK6QL43Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by BL1PR11MB5317.namprd11.prod.outlook.com (2603:10b6:208:309::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.9; Thu, 19 Mar
- 2026 09:40:53 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9723.018; Thu, 19 Mar 2026
- 09:40:53 +0000
-Date: Thu, 19 Mar 2026 09:40:48 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Morten =?iso-8859-1?Q?Br=F8rup?= <mb@smartsharesystems.com>
-CC: <dev@dpdk.org>, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH] doc: remove obsolete mempool creation advice
-Message-ID: <abvEoELb6QIAHBnW@bricha3-mobl1.ger.corp.intel.com>
-References: <20260319091300.652853-1-mb@smartsharesystems.com>
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260319091300.652853-1-mb@smartsharesystems.com>
-X-ClientProxiedBy: DU6P191CA0039.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:10:53f::13) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ 15.2.1544.25; Thu, 19 Mar 2026 02:44:37 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 19 Mar 2026 02:44:37 -0700
+Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
+ by maili.marvell.com (Postfix) with ESMTP id 445453F7040;
+ Thu, 19 Mar 2026 02:44:35 -0700 (PDT)
+From: Tejasree Kondoj <ktejasree@marvell.com>
+To: Jerin Jacob <jerinj@marvell.com>, Akhil Goyal <gakhil@marvell.com>
+CC: Anoob Joseph <anoobj@marvell.com>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>, <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH v3] common/cnxk: validate cipher key length
+Date: Thu, 19 Mar 2026 15:14:34 +0530
+Message-ID: <20260319094434.4154156-1-ktejasree@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260319092723.4153401-1-ktejasree@marvell.com>
+References: <20260319092723.4153401-1-ktejasree@marvell.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|BL1PR11MB5317:EE_
-X-MS-Office365-Filtering-Correlation-Id: 761e1055-402d-4fb0-5a2a-08de859b9cbe
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|18002099003|22082099003|56012099003; 
-X-Microsoft-Antispam-Message-Info: bJl8d/X5CQmuZ2tBtRdSsMKBqIdldNbJXLm+fQyIT0Ij6NTlnImk8QMErYNpfvcmjlgZbDNNeMASuJP4UF770bCaARdJjRy31+DVs7Lij34WYBqta2doNT2iBj2rBld8uOwm/26HxHd2aTnqZ5QFMLKTlABLEvx5F+I5B0BNwIAd7W0TMAUh+6/jqImn/qjXGFUXrhi9zOtQMCp8RdRB7OaLasGkMCsj4DVVbsue0qm//JHE4lCjXaiSLhVBlL9JmhhnEzHlDIrA/r0XOahsbB/BFilF+cUuYzYMZbej3AI8LPHrKmuBKnl2XG6QliwGidXDVFJquDbdfWIDgDUdfEVrK0tFd7OIkDYirjj4BFvOTzxeGRlWYHifZ4U/vga4zIMwgwCV1yM4Z44Ul4GigZvEtVEN7a6wJvpV6+Rn5g5VCVfb9VLJi7werrXrHv2c4j2CNXizU3MiGeV3XOSS0+hhU6uoJLdl6sHfQESagPfGV2hvIUyWCDaIyNr6RCLm+/dnR3bTsWMiHtTD4gG6ruOU2+SwSlnuPEq2gzTf0xrDj5OK5B7WEo5BuUqvRdbfTf6CgsB/BG6HN8Cv55kCwBla7ZKTYx5BZFTB7kDQwIDXVF18M56pee8D5tssBeIdZ48E+O6nW2e5dm5tU019VtXhoAvy1N26bLL5aYQxPrqCFlJiEPTEDGg0fFDIP81snhRhLObizjNQivBMsMmSq3m8+lMaI8756Xz5/D/HbVk=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(18002099003)(22082099003)(56012099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?R5yxTVmV+Ve0TRPggX6OraaYYwU6SbcLnnDVOwe6NSA2cFU1rI/9b/eIJ0?=
- =?iso-8859-1?Q?PaG0XJFHLTFHr5GBE8+0UWXRR9EmSrRCMDZXxQ0SjJn0lNsv0JCKicYKM1?=
- =?iso-8859-1?Q?Jy+q+ni7o8Hy4wsXweaHOIF3/KBW0pRLr3YrIQ756u5dRFGgQkKaQFmqzO?=
- =?iso-8859-1?Q?nvNoCR22Jq+4U3FSirqX6OAlp0vYWgpCb3Qsc+4KQREnwuc3GLDfQpi8uJ?=
- =?iso-8859-1?Q?Gkn9FTav/HEvjL0XYq+6uAKa7fS9Fw/SrX2ex6ruF+zqEumVPaT6+Vxfmc?=
- =?iso-8859-1?Q?er5t6IM8Ro/5KTgbgu8ky3c0GqhchtcxP7fnGQ+QWF97A1ezWSSGyrtAHi?=
- =?iso-8859-1?Q?O4bKcp2mSC8IiXOq5VLqugdw0G3hGWQVj0cB6B0fk7L+66SphgNsjwkILy?=
- =?iso-8859-1?Q?/WfXwgdmF1Kp/6B/0XZFFhkRpFvA/BRQZyT7yVH8nTNXckqIxy4wtk1C7/?=
- =?iso-8859-1?Q?4dzcrBVwiGrDobnkH7OwAtDlD9SVP1MgaZebo127qfifux0GyuIqHafbPY?=
- =?iso-8859-1?Q?by09+zDPG/P/9g4BAf1GQlOaGdZn2jDaqiFQSnPszWf9yu4x8N901JY7WT?=
- =?iso-8859-1?Q?zrSFF20O1ARK2WEZSeW0sjUI3o2ob2i5tNkYktcWRKSQCmvEyKnPKcTQ1h?=
- =?iso-8859-1?Q?C4ycKPMmICueJ/xwRpbbRed1fdFg0uNueKTEzcaMgIeg52UpZHvcIBRfkw?=
- =?iso-8859-1?Q?5StUGruZCg8RsSrPcu4EqZPQFCLh73NXoUphckvjLAWAdB9ahuYqyGEtK/?=
- =?iso-8859-1?Q?jprJR2Q0OMlOoRIb/nUazrYjSzqBIfxbzaTuWlnSGeDWcNRsBFBZhanx3y?=
- =?iso-8859-1?Q?bOl950XUUpQzXX22Eanr9ZQUrIsmwHHxm1uv/oEvBY9pPwj87ffiHAJqHH?=
- =?iso-8859-1?Q?Hc2XMT4LLJb8K8sqR+2vc8anHF6Xqe83mXNE8ZOOeyUCBYFC4WJGlTZQ7n?=
- =?iso-8859-1?Q?rB8S4NRMadPOy69UbX/jbE3hWuYf0YlzKNWjr1M/wT5XyKAPSghOAp07EG?=
- =?iso-8859-1?Q?c11ZKiSc/mSRjBDBoxR0pB+A0tdaaeWvXlFjplWLykl7vNZbt8JBSPRHrC?=
- =?iso-8859-1?Q?yVRpwRx6qKXslzS6EZkX2eiNFnzbgtJpHfFbv97pmceBfRzsvxJczOdzqi?=
- =?iso-8859-1?Q?d+N9CLrTezYK1WvKtA7jha3WzXH7Kyh3tMuz8y0AD8RAFBu+rZ2zN3haxk?=
- =?iso-8859-1?Q?v0zvx5gXV/wxfKv1NScr0vTBn6bTGe0cmYzcXAQgA2s6c1ASfD02n38ifL?=
- =?iso-8859-1?Q?kUh/jDrKWSE9/bKlETMJd0nS925UKCkFhK3tTFXPZUSzG5mMPET5s/rD2z?=
- =?iso-8859-1?Q?jvnPgH3pxBi7lgqt836iJH32QHnwPJXJWfhX4SwvlwNqSlSiI2DOlapzLD?=
- =?iso-8859-1?Q?US6dUB2yGQuFQYrC0/iSv6iRvxzswshYFuk7ZU3YYPwom2PaaR+JOBT/pX?=
- =?iso-8859-1?Q?0DHKOVdodOA11RNOOk2w15Ak201k3gqpBplRvWK4katQ6yXiltM4u+77Vm?=
- =?iso-8859-1?Q?q/q6OVpSUINRfXdgGOhMWXBgOwB4/rGM/eDpI2u4LHnjcYm95S4OVPMgyS?=
- =?iso-8859-1?Q?Mz8BNYWkMs064iFLSQoa+YFA5Wdq6Nn3sQvPd9LdF9iA2Vy1nzIo+y90ga?=
- =?iso-8859-1?Q?FtDQBB48lSI3DVAWeykxn4UrRLh1Z6YV3+nZEyPRehCgZLZ15fLs1kjYfM?=
- =?iso-8859-1?Q?FAU8U+guxcj5UWIvDOoB6JUOV+wRDts0+8avxl1E9fu9VynlpL2gC++6S3?=
- =?iso-8859-1?Q?fqOUSGqHn5NK8E5X26OZckdfACvEjgD3A2BVK7foZyjVKJbLvY5ZYrZIAE?=
- =?iso-8859-1?Q?vokdtL24xUm93EuPfbR08P4qe1FpRGA=3D?=
-X-Exchange-RoutingPolicyChecked: oAQO+xsmFN0GUp3Ufyoc2eQGTKmdPP8Gg7ngV0ynCtgOujfttOhmt2Ksix4b72PuGwqFROY3iBzDMiWDjIikbrMutgxVW86wbTcxd3Y1rsYFExVmF1vHSSNPtt5pjce9kE8fMyful+uwYrTWkKAjc+dIx8o+Ej04mM+3OCaHnOVkMKjmS3uMNApHboz36pq9kRRZx25tl/RBUiFp0lxvoMmbNi+1cwm6/kPM3xocNwPkOpX14lH3Uca/TOyen9MH4FT+ypbRMmBmcYDd9tGiOhV9yQCeuu+dJBcJ7IC+3ltowGf0apW9c6KU87CbWiltYooN4dkLQOfC2KcU0Nr6+w==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 761e1055-402d-4fb0-5a2a-08de859b9cbe
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 09:40:53.1354 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nj9RpI1i1XKTd6Oxx4p7E9fIEa7EDCGyzwmUefXwRjAbQXm4XKnY6hlVp7MX7rkF3OdErUDnqQdiuTzGu08H65aBQOTJmh0Vn+uF/89LW3A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB5317
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: qo8R85TckM_3F4FEwE5wj4pJW_JAHQ7U
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE5MDA3NyBTYWx0ZWRfX+XXu6piHoNin
+ WJ+ndFSGVPNsHT8ab6DreYRsjBzjA0Lv3j95+4uF3kVZIYS2kthqylonh214VW6l7rZLUuLwHh7
+ dW0Gt3onTLp9Ij0pN9x2iSa+sG6qxk7J1SDp8T9L6M/Tv68Sm6JXWVs92ygXtRJySxwAwrGtsDJ
+ cNdUWb5eYx8Xid7lHlLsZoUji7Surfuubn1NSPOLplYONPiSicGePRho9URCWb/KrB7kWQ6nu49
+ HBT0MEIT/Pk35lshFW6bsfv0cCr+U0B8B4G5fI80QPvT5hVAeoubkkLplsbXrqB9y2ddWfkj9Tr
+ Ey5o2H9RkaMbr+lcmHJiK+uSkZGaAttISvrBWdhB8wwcesPoxrE7ANs8l9LXyVkeuiQkQWK+V2n
+ PG+/QHifI2SA0+u4nOVpC5xQpF++7xBQ+clAJnKRdRQv3M4AvGP45s1Q9RqYNj1OtUZdu2rzPD9
+ 5v9p/oSvT5EOfXOhtHg==
+X-Authority-Analysis: v=2.4 cv=KvNAGGWN c=1 sm=1 tr=0 ts=69bbc586 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=TtqV-g6YmW1Jfm2GSLaY:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
+ a=UzQi_V4CL4N8gIqO2eoA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: qo8R85TckM_3F4FEwE5wj4pJW_JAHQ7U
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-19_01,2026-03-17_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,33 +82,220 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 19, 2026 at 09:13:00AM +0000, Morten Brørup wrote:
-> The descriptions for the mempool creation functions contained advice for
-> choosing the optimum (in terms of memory usage) number of elements and
-> cache size.
-> The advice was based on implementation details, which was changed long
-> ago, making the advice completely irrelevant.
-> 
+Validate DES/3DES and AES key lengths before copying
+into SA cipher_key[] to avoid out-of-bounds write
+into adjacent IV/salt fields.
 
-The comment is still correct in most cases, since the default backing
-storage remains an rte_ring. If passing a power-of-2 size to mempool create
-one will get a backing rte_ring store which is twice as large as requested,
-leading to lots of ring slots being wasted. For example, for a pool with
-16k elements, the actual ring size allocated will be 32k, leading to
-wasting 128k of RAM, and also potentially cache too. The latter will occur
-because of the nature of the ring to iterate through all mempool/ring
-entries, meaning that even if only 16k of the 32k slots will ever be used,
-all 32k slots will be passed through the cpu cache if it works on the
-mempool directly and not just from the per-core cache.
+Fixes: 24d10645bdfb ("common/cnxk: support CN20K IPsec session")
+Cc: stable@dpdk.org
 
-On the other hand, I'd be in favour of removing this text if we switched
-the default mempool in DPDK to being stack-based. While the stack may not
-be lock-free like the ring, with per-lcore caches the number of accesses to
-the stack should be small, and it gives much better cache utilization
-overall - especially in cases where buffers are allocated on one core and
-freed on a different one! Even in cases where we are not transferring
-between cores, in a single-core case we still will get better reuse of
-"hot" buffers than in an rte_ring-backed case.
+Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
+---
+ drivers/common/cnxk/cnxk_security.c | 127 ++++++++++++++++------------
+ drivers/common/cnxk/roc_cpt.h       |   1 +
+ 2 files changed, 76 insertions(+), 52 deletions(-)
 
-/Bruce
+diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
+index 14d29e605a..04aca12131 100644
+--- a/drivers/common/cnxk/cnxk_security.c
++++ b/drivers/common/cnxk/cnxk_security.c
+@@ -170,6 +170,35 @@ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 	w2->s.spi = ipsec_xfrm->spi;
+ 
+ 	if (key != NULL && length != 0) {
++		/* Validate key length and set AES key len before copy to avoid overflow */
++		if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
++		    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
++			switch (length) {
++			case ROC_CPT_AES128_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
++				break;
++			case ROC_CPT_AES192_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
++				break;
++			case ROC_CPT_AES256_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
++				break;
++			default:
++				plt_err("Invalid AES key length");
++				return -EINVAL;
++			}
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_DES_CBC && length != ROC_CPT_DES_KEY_LEN) {
++			plt_err("Invalid DES key length");
++			return -EINVAL;
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_3DES_CBC && length != ROC_CPT_DES3_KEY_LEN) {
++			plt_err("Invalid 3DES key length");
++			return -EINVAL;
++		}
+ 		/* Copy encryption key */
+ 		memcpy(cipher_key, key, length);
+ 		tmp_key = (uint64_t *)cipher_key;
+@@ -177,30 +206,7 @@ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 			tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
+ 	}
+ 
+-	/* Set AES key length */
+-	if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
+-	    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+-		switch (length) {
+-		case ROC_CPT_AES128_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+-			break;
+-		case ROC_CPT_AES192_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+-			break;
+-		case ROC_CPT_AES256_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+-			break;
+-		default:
+-			plt_err("Invalid AES key length");
+-			return -EINVAL;
+-		}
+-	}
+-
+-	if (ipsec_xfrm->life.packets_soft_limit != 0 ||
+-	    ipsec_xfrm->life.packets_hard_limit != 0) {
++	if (ipsec_xfrm->life.packets_soft_limit != 0 || ipsec_xfrm->life.packets_hard_limit != 0) {
+ 		if (ipsec_xfrm->life.bytes_soft_limit != 0 ||
+ 		    ipsec_xfrm->life.bytes_hard_limit != 0) {
+ 			plt_err("Expiry tracking with both packets & bytes is not supported");
+@@ -844,9 +850,11 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_DES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_DES_CBC;
++				aes_key_len = cipher_xform->cipher.key.length;
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_3DES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_3DES_CBC;
++				aes_key_len = cipher_xform->cipher.key.length;
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_AES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_AES_CBC;
+@@ -897,20 +905,18 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 		}
+ 	}
+ 
+-	/* Set AES key length */
+-	if (ctl->enc_type == ROC_IE_SA_ENC_AES_CBC ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_CTR ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_CCM ||
++	/* Validate and set AES key length before copy */
++	if (ctl->enc_type == ROC_IE_SA_ENC_AES_CBC || ctl->enc_type == ROC_IE_SA_ENC_AES_CTR ||
++	    ctl->enc_type == ROC_IE_SA_ENC_AES_GCM || ctl->enc_type == ROC_IE_SA_ENC_AES_CCM ||
+ 	    ctl->auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+ 		switch (aes_key_len) {
+-		case 16:
++		case ROC_CPT_AES128_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+ 			break;
+-		case 24:
++		case ROC_CPT_AES192_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+ 			break;
+-		case 32:
++		case ROC_CPT_AES256_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+ 			break;
+ 		default:
+@@ -918,6 +924,14 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 			return -EINVAL;
+ 		}
+ 	}
++	if (ctl->enc_type == ROC_IE_SA_ENC_DES_CBC && aes_key_len != ROC_CPT_DES_KEY_LEN) {
++		plt_err("Invalid DES key length");
++		return -EINVAL;
++	}
++	if (ctl->enc_type == ROC_IE_SA_ENC_3DES_CBC && aes_key_len != ROC_CPT_DES3_KEY_LEN) {
++		plt_err("Invalid 3DES key length");
++		return -EINVAL;
++	}
+ 
+ 	if (ipsec->options.esn)
+ 		ctl->esn_en = 1;
+@@ -1364,6 +1378,35 @@ ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 	w2->s.spi = ipsec_xfrm->spi;
+ 
+ 	if (key != NULL && length != 0) {
++		/* Validate key length and set AES key len before copy to avoid overflow */
++		if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
++		    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
++			switch (length) {
++			case ROC_CPT_AES128_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
++				break;
++			case ROC_CPT_AES192_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
++				break;
++			case ROC_CPT_AES256_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
++				break;
++			default:
++				plt_err("Invalid AES key length");
++				return -EINVAL;
++			}
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_DES_CBC && length != ROC_CPT_DES_KEY_LEN) {
++			plt_err("Invalid DES key length");
++			return -EINVAL;
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_3DES_CBC && length != ROC_CPT_DES3_KEY_LEN) {
++			plt_err("Invalid 3DES key length");
++			return -EINVAL;
++		}
+ 		/* Copy encryption key */
+ 		memcpy(cipher_key, key, length);
+ 		tmp_key = (uint64_t *)cipher_key;
+@@ -1371,26 +1414,6 @@ ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 			tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
+ 	}
+ 
+-	/* Set AES key length */
+-	if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC || w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR || w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM || w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+-		switch (length) {
+-		case ROC_CPT_AES128_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+-			break;
+-		case ROC_CPT_AES192_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+-			break;
+-		case ROC_CPT_AES256_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+-			break;
+-		default:
+-			plt_err("Invalid AES key length");
+-			return -EINVAL;
+-		}
+-	}
+-
+ 	if (ipsec_xfrm->life.packets_soft_limit != 0 || ipsec_xfrm->life.packets_hard_limit != 0) {
+ 		if (ipsec_xfrm->life.bytes_soft_limit != 0 ||
+ 		    ipsec_xfrm->life.bytes_hard_limit != 0) {
+diff --git a/drivers/common/cnxk/roc_cpt.h b/drivers/common/cnxk/roc_cpt.h
+index 4715359f49..533d194bd4 100644
+--- a/drivers/common/cnxk/roc_cpt.h
++++ b/drivers/common/cnxk/roc_cpt.h
+@@ -79,6 +79,7 @@
+ #define ROC_CPT_SHA2_HMAC_LEN	16
+ #define ROC_CPT_DES_IV_LEN	8
+ 
++#define ROC_CPT_DES_KEY_LEN	    8
+ #define ROC_CPT_DES3_KEY_LEN	    24
+ #define ROC_CPT_AES128_KEY_LEN	    16
+ #define ROC_CPT_AES192_KEY_LEN	    24
+-- 
+2.25.1
 
