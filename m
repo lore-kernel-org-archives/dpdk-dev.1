@@ -2,81 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 181A61075286
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 09:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EAF31075286
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 09:27:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6297E4025D;
-	Thu, 19 Mar 2026 10:27:10 +0100 (CET)
-Received: from fhigh-a8-smtp.messagingengine.com
- (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
- by mails.dpdk.org (Postfix) with ESMTP id 310B74013F
- for <dev@dpdk.org>; Thu, 19 Mar 2026 10:27:08 +0100 (CET)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id AA2A81400233;
- Thu, 19 Mar 2026 05:27:07 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Thu, 19 Mar 2026 05:27:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1773912427;
- x=1773998827; bh=tN0cL+wjYUPytbjb3sEBARyd59j470PKps6OY3Z/Hok=; b=
- CauyowBGPkloiWxGp3gHTNJyp0Ya1ZC+2Auhg2swyJd3Q3hY99sR06Yono9DUJaN
- O/Hlph8XrmDIGlpszREHOiKng2pe44H4Opn66eVlWx05BFrCQTpI+VKOnSVozL/E
- 2r3goOWdEW1a520icxzUGHiVNb6X11k6mnqMDWQdeUj4gJ02MGBpyiQtA0/Y3M/O
- 30eXawvQOSvgkFaG1Mcoq36H099mV0D9Km+ihzDPhdkUcRBGKfw+xqHJ67GRluqV
- WTnnbPsSBsJxigAejukCw5d/UIG4/3TMzf+NNHskrNATqA/1sZ3epnsJMc7ZZBoc
- LJPgxySmREgFPv1X1ZsmWQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1773912427; x=
- 1773998827; bh=tN0cL+wjYUPytbjb3sEBARyd59j470PKps6OY3Z/Hok=; b=5
- 4v4dOusTAyPmU3sloD+0jW4KsOrBDbGm905S2u2ZjNfZ+pNoPODqhgzmUi6ojR1u
- Uyvy8GX4vnbAme/IxDq7TmmJR5J0jw/tP92uGtHn9YOvp/IBXFchd2N0wASOCDZu
- TiDodFaYvnM99a3XY7P5XKLS6xpH9+tDyGZDAi0cqjZMg/UGTuK3soQk0LKGDSCk
- oM4VRlKUP1a8sHJsOMjc1cxoESP52+O2ElDSC0ZW5NoUx+JNwAyFWt4RZAGFPC2Y
- jmcamCw/mT6ygcXyynzC2copQF8jZG/KLNxtnEb102PZsKGtS9KGX6FOZsineORL
- WVZTZIYiuvkht3u1oQkJQ==
-X-ME-Sender: <xms:asG7aepd3pjFoZhfuFH3Qn4BaGkkgJx6iQAUXItVFc4Bk9g3M9Y96g>
- <xme:asG7aUEwmBBOuMLaJ2ovC8tNZ0vJj7-wRn9iTsWi_h5TiwSUfipKRO6c-DfnOeLKh
- vJWV_G8Vn-bjoNYYNEuD7aEnzx_l3zY6hvPz0sXnhmBtaAGzfMaD1E>
-X-ME-Received: <xmr:asG7aQn6kNrePgIDOelRX3zs_8ZK2vXQawWCYw0rsgjcsdvf_nFZegfXB3QTXC50IoZdAWW8v-ytCUpC4Srx>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdeftdeiieehucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeekfeehfedtgedtjeehueeutdfgleefieevkeeikeelkefflefgtdev
- ieehheffudenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
- eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
- nhgvthdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
- epshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohep
- figrnhhgrdhjuhhnlhhonhhgudesiihtvgdrtghomhdrtghnpdhrtghpthhtohepuggvvh
- esughpughkrdhorhhg
-X-ME-Proxy: <xmx:asG7aXkPdYeSYB7oAghm8C8bnQIUgg1iZ-35Vly3NPpvGA21W40fhw>
- <xmx:asG7aRvIq3QGP7M_Cw0nA0BlMF0qTEmoInqivWpx65g4EtGoWX8N-g>
- <xmx:asG7aan2YfBqYuIQtMFL5AXslMuioqaO6WAcIZDjZ5_hMjJCvlYo7A>
- <xmx:asG7acvl8LwwruPUJ6Dwqj4BggUcbnjroPuKL_VP14sbFqwnAkeYeA>
- <xmx:a8G7aQwDqcvY5ir6OtPd0YKRPgfRSqVJnThzYSiyU3mhPef81QiYLv9f>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 19 Mar 2026 05:27:04 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: stephen@networkplumber.org, Junlong Wang <wang.junlong1@zte.com.cn>
-Cc: dev@dpdk.org
-Subject: Re: [v3,
- 5/5] net/zxdh: add support for GENEVE TSO and Rx outer checksum
-Date: Thu, 19 Mar 2026 10:27:00 +0100
-Message-ID: <2726644.9Mp67QZiUf@thomas>
-In-Reply-To: <20260319055356.648384-1-wang.junlong1@zte.com.cn>
-References: <20260131062208.2445121-6-wang.junlong1@zte.com.cn>
- <20260319055356.648384-1-wang.junlong1@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 6FB56402ED;
+	Thu, 19 Mar 2026 10:27:30 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 8F0ED4013F;
+ Thu, 19 Mar 2026 10:27:28 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 62J4wF1D3368361; Thu, 19 Mar 2026 02:27:28 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=H
+ bpp0GUvsqQrexvCmRYGdm7mkh1OdV7az61zNw9L5Z4=; b=NTGfGToM8K62NkHBj
+ R8cffYRPJNoRUnZ3rYlIs82Nqku9C1se54Yw1c9FPweO+MLR+nk2laFOiccuQEg7
+ Xmz2znfDo4Z3GkU09J+YvDwD+SIgwDBDo3IodmFvZfrYzXiKbgIRj6WG9wBG3Vyp
+ IBymyiGd8iADru9Cb9hK70Fh5/VyeT/24vQskfT8s0xZYIH3GUuV8LIHHJS5vjQs
+ lt9nqzU/iHCC1l5EudD9ndWTdOeRdjuwuJkbypyxxpOqZxNh5L3cVftd9J4vrxBh
+ W1fVhgqd63LKhD4AMLCZ1BFyAN5a0WNu1CPDf3LGvK/2cL/GJ/+gtqqNCI0gD625
+ 9DloA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4d05tf92f2-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Thu, 19 Mar 2026 02:27:27 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Thu, 19 Mar 2026 02:27:26 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 19 Mar 2026 02:27:26 -0700
+Received: from hyd1554.caveonetworks.com (unknown [10.29.56.32])
+ by maili.marvell.com (Postfix) with ESMTP id 3B96D5B696A;
+ Thu, 19 Mar 2026 02:27:23 -0700 (PDT)
+From: Tejasree Kondoj <ktejasree@marvell.com>
+To: Jerin Jacob <jerinj@marvell.com>, Akhil Goyal <gakhil@marvell.com>
+CC: Anoob Joseph <anoobj@marvell.com>, Nithin Dabilpuram
+ <ndabilpuram@marvell.com>, <dev@dpdk.org>, <stable@dpdk.org>
+Subject: [PATCH v2] common/cnxk: validate cipher key length
+Date: Thu, 19 Mar 2026 14:57:23 +0530
+Message-ID: <20260319092723.4153401-1-ktejasree@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260319040552.4151899-1-ktejasree@marvell.com>
+References: <20260319040552.4151899-1-ktejasree@marvell.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 2FmZOiFlHADcO9qDdZiQ7oxq8hPGNQwc
+X-Proofpoint-ORIG-GUID: 2FmZOiFlHADcO9qDdZiQ7oxq8hPGNQwc
+X-Authority-Analysis: v=2.4 cv=FJQWBuos c=1 sm=1 tr=0 ts=69bbc17f cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=qit2iCtTFQkLgVSMPQTB:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
+ a=UzQi_V4CL4N8gIqO2eoA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzE5MDA3NSBTYWx0ZWRfX4HQ0RB6Es+Ge
+ QtGx+AVdO7MtzfvYxjFJdRsvwIG9Yp88uR7NKAJoi2UPxBgq9RmJsrZ6pnOBokMpeJIPEkHXMYN
+ aZeTycSd7NwyVeFTqpTwGqkrCEGJxhaHyxEZFCB3ynwC3RzH+mbIQpfKXBJlSzYXNeLpJEYB2xW
+ ZJ1hXMjOn/QqwOhdbW2a982k+hD6kkku6mTTGTxR/MT/3WrPR1tYvoIRfo+dSLFwHuklIePocOS
+ Gixh55X909BWZED2gzQxJMhbMJos3QWUoWY1SZ8ELlWNvekLxQImkREtaUN55toUHCeTjuCu2ga
+ 6mq9TmZcCF5FUcY7i9oRugqb5+YxKJh/pnpiGwygBk4KisZI0C/kxdW+WieMO7FbGG2W2YDVjEq
+ +0FoB4Pw1BWC+dVPUgC+NDa1U5S/qWCzfYJ+nrekhgs1+ZaUFkAYiQVPDs1i1wEIRmEEdA7JJyp
+ K8J3ugt/uq2KYFHqPsg==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-19_01,2026-03-17_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,32 +82,220 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/03/2026 06:53, Junlong Wang:
-> > > 18/03/2026 03:21, Junlong Wang:
-> > > > Sorry, I have a question.
-> > > > Some time ago, I submitted this patch ([v3,5/5] net/zxdh: add support for GENEVE TSO and Rx outer checksum),
-> > > > which was marked as accepted. However, when I fetched the latest dpd-next-net code, the for-main branch did not contain it.
-> > > > 
-> > > > Could you please let me know if I need to resubmit this patch?
-> > > 
-> > > It seems that the commit is merged but without its content:
-> > >     https://git.dpdk.org/dpdk/commit/?id=2aa7e28b41
-> > > 
-> > > It looks like a mistake during a next-net rebase.
-> > > Stephen, please would you be able to find the original commit
-> > > that you modified in your reflog?
-> > >  Or I could get it from the mailing list if you didn't change it too much.
-> 
-> > I've pushed a new commit with the content of the patch:
-> >    https://git.dpdk.org/dpdk/commit/?id=af40a93fa21
-> 
-> Thank you very much for your reply and for pushing a new commit with the content of the patch.
-> 
-> I noticed that it has been merged into the dpdk repo, and i would like to know if it will also be merged into the next-net repo.
-> I have been submitting patches using this repo, and i plan to submit new patches to the next-net repo.
+Validate DES/3DES and AES key lengths before copying
+into SA cipher_key[] to avoid out-of-bounds write
+into adjacent IV/salt fields.
 
-I will be in next-net as soon as it will be rebased on main.
+Fixes: 24d10645bd ("common/cnxk: support CN20K IPsec session")
+Cc: stable@dpdk.org
 
-Stephen, please could you rebase next-net?
+Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
+---
+ drivers/common/cnxk/cnxk_security.c | 127 ++++++++++++++++------------
+ drivers/common/cnxk/roc_cpt.h       |   1 +
+ 2 files changed, 76 insertions(+), 52 deletions(-)
 
+diff --git a/drivers/common/cnxk/cnxk_security.c b/drivers/common/cnxk/cnxk_security.c
+index 14d29e605a..04aca12131 100644
+--- a/drivers/common/cnxk/cnxk_security.c
++++ b/drivers/common/cnxk/cnxk_security.c
+@@ -170,6 +170,35 @@ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 	w2->s.spi = ipsec_xfrm->spi;
+ 
+ 	if (key != NULL && length != 0) {
++		/* Validate key length and set AES key len before copy to avoid overflow */
++		if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
++		    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
++			switch (length) {
++			case ROC_CPT_AES128_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
++				break;
++			case ROC_CPT_AES192_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
++				break;
++			case ROC_CPT_AES256_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
++				break;
++			default:
++				plt_err("Invalid AES key length");
++				return -EINVAL;
++			}
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_DES_CBC && length != ROC_CPT_DES_KEY_LEN) {
++			plt_err("Invalid DES key length");
++			return -EINVAL;
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_3DES_CBC && length != ROC_CPT_DES3_KEY_LEN) {
++			plt_err("Invalid 3DES key length");
++			return -EINVAL;
++		}
+ 		/* Copy encryption key */
+ 		memcpy(cipher_key, key, length);
+ 		tmp_key = (uint64_t *)cipher_key;
+@@ -177,30 +206,7 @@ ot_ipsec_sa_common_param_fill(union roc_ot_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 			tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
+ 	}
+ 
+-	/* Set AES key length */
+-	if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
+-	    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+-		switch (length) {
+-		case ROC_CPT_AES128_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+-			break;
+-		case ROC_CPT_AES192_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+-			break;
+-		case ROC_CPT_AES256_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+-			break;
+-		default:
+-			plt_err("Invalid AES key length");
+-			return -EINVAL;
+-		}
+-	}
+-
+-	if (ipsec_xfrm->life.packets_soft_limit != 0 ||
+-	    ipsec_xfrm->life.packets_hard_limit != 0) {
++	if (ipsec_xfrm->life.packets_soft_limit != 0 || ipsec_xfrm->life.packets_hard_limit != 0) {
+ 		if (ipsec_xfrm->life.bytes_soft_limit != 0 ||
+ 		    ipsec_xfrm->life.bytes_hard_limit != 0) {
+ 			plt_err("Expiry tracking with both packets & bytes is not supported");
+@@ -844,9 +850,11 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_DES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_DES_CBC;
++				aes_key_len = cipher_xform->cipher.key.length;
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_3DES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_3DES_CBC;
++				aes_key_len = cipher_xform->cipher.key.length;
+ 				break;
+ 			case RTE_CRYPTO_CIPHER_AES_CBC:
+ 				ctl->enc_type = ROC_IE_SA_ENC_AES_CBC;
+@@ -897,20 +905,18 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 		}
+ 	}
+ 
+-	/* Set AES key length */
+-	if (ctl->enc_type == ROC_IE_SA_ENC_AES_CBC ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_CTR ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    ctl->enc_type == ROC_IE_SA_ENC_AES_CCM ||
++	/* Validate and set AES key length before copy */
++	if (ctl->enc_type == ROC_IE_SA_ENC_AES_CBC || ctl->enc_type == ROC_IE_SA_ENC_AES_CTR ||
++	    ctl->enc_type == ROC_IE_SA_ENC_AES_GCM || ctl->enc_type == ROC_IE_SA_ENC_AES_CCM ||
+ 	    ctl->auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+ 		switch (aes_key_len) {
+-		case 16:
++		case ROC_CPT_AES128_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+ 			break;
+-		case 24:
++		case ROC_CPT_AES192_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+ 			break;
+-		case 32:
++		case ROC_CPT_AES256_KEY_LEN:
+ 			ctl->aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+ 			break;
+ 		default:
+@@ -918,6 +924,14 @@ on_ipsec_sa_ctl_set(struct rte_security_ipsec_xform *ipsec,
+ 			return -EINVAL;
+ 		}
+ 	}
++	if (ctl->enc_type == ROC_IE_SA_ENC_DES_CBC && aes_key_len != ROC_CPT_DES_KEY_LEN) {
++		plt_err("Invalid DES key length");
++		return -EINVAL;
++	}
++	if (ctl->enc_type == ROC_IE_SA_ENC_3DES_CBC && aes_key_len != ROC_CPT_DES3_KEY_LEN) {
++		plt_err("Invalid 3DES key length");
++		return -EINVAL;
++	}
+ 
+ 	if (ipsec->options.esn)
+ 		ctl->esn_en = 1;
+@@ -1364,6 +1378,35 @@ ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 	w2->s.spi = ipsec_xfrm->spi;
+ 
+ 	if (key != NULL && length != 0) {
++		/* Validate key length and set AES key len before copy to avoid overflow */
++		if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
++		    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
++		    w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
++			switch (length) {
++			case ROC_CPT_AES128_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
++				break;
++			case ROC_CPT_AES192_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
++				break;
++			case ROC_CPT_AES256_KEY_LEN:
++				w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
++				break;
++			default:
++				plt_err("Invalid AES key length");
++				return -EINVAL;
++			}
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_DES_CBC && length != ROC_CPT_DES_KEY_LEN) {
++			plt_err("Invalid DES key length");
++			return -EINVAL;
++		}
++		if (w2->s.enc_type == ROC_IE_SA_ENC_3DES_CBC && length != ROC_CPT_DES3_KEY_LEN) {
++			plt_err("Invalid 3DES key length");
++			return -EINVAL;
++		}
+ 		/* Copy encryption key */
+ 		memcpy(cipher_key, key, length);
+ 		tmp_key = (uint64_t *)cipher_key;
+@@ -1371,26 +1414,6 @@ ow_ipsec_sa_common_param_fill(union roc_ow_ipsec_sa_word2 *w2, uint8_t *cipher_k
+ 			tmp_key[i] = rte_be_to_cpu_64(tmp_key[i]);
+ 	}
+ 
+-	/* Set AES key length */
+-	if (w2->s.enc_type == ROC_IE_SA_ENC_AES_CBC || w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CTR || w2->s.enc_type == ROC_IE_SA_ENC_AES_GCM ||
+-	    w2->s.enc_type == ROC_IE_SA_ENC_AES_CCM || w2->s.auth_type == ROC_IE_SA_AUTH_AES_GMAC) {
+-		switch (length) {
+-		case ROC_CPT_AES128_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_128;
+-			break;
+-		case ROC_CPT_AES192_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_192;
+-			break;
+-		case ROC_CPT_AES256_KEY_LEN:
+-			w2->s.aes_key_len = ROC_IE_SA_AES_KEY_LEN_256;
+-			break;
+-		default:
+-			plt_err("Invalid AES key length");
+-			return -EINVAL;
+-		}
+-	}
+-
+ 	if (ipsec_xfrm->life.packets_soft_limit != 0 || ipsec_xfrm->life.packets_hard_limit != 0) {
+ 		if (ipsec_xfrm->life.bytes_soft_limit != 0 ||
+ 		    ipsec_xfrm->life.bytes_hard_limit != 0) {
+diff --git a/drivers/common/cnxk/roc_cpt.h b/drivers/common/cnxk/roc_cpt.h
+index 4715359f49..533d194bd4 100644
+--- a/drivers/common/cnxk/roc_cpt.h
++++ b/drivers/common/cnxk/roc_cpt.h
+@@ -79,6 +79,7 @@
+ #define ROC_CPT_SHA2_HMAC_LEN	16
+ #define ROC_CPT_DES_IV_LEN	8
+ 
++#define ROC_CPT_DES_KEY_LEN	    8
+ #define ROC_CPT_DES3_KEY_LEN	    24
+ #define ROC_CPT_AES128_KEY_LEN	    16
+ #define ROC_CPT_AES192_KEY_LEN	    24
+-- 
+2.25.1
 
