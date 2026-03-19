@@ -2,142 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CDF1075270
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 17:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B4E109190B
+	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 18:28:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 594C340431;
-	Thu, 19 Mar 2026 18:16:45 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id F2AD24013F;
- Thu, 19 Mar 2026 18:16:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1773940604; x=1805476604;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=ZHNtN5W4n7jttrTPrgOPh3uWjhFwm5tL3WJNCDijA9E=;
- b=krmwCnpVkLW3EDL9Lypu8IQfIu4IocaYAeCfhwxi/jz88aeUm6KDduyk
- HkFilI4+20NaBx7c6DIEhPN2qcZwll7cisg6Sx+VRdzJRLa9rs8wDHX86
- T8MVdLf/UQUUknC2RvwoIIzw0dV9oq84FBvzMGddMnuh+jWVN28iIIwN1
- pbfF2wxZOfzlgM4DKxtehie+lwikw3rsCaH3bzCOgAc+YY04O12awIPg6
- 45bi+Ikv634Re2iYgAV5JoJ1K+W5dTblB2GVYGDLs14iFD6+BJyoAQ3CZ
- 9FYZrttycF2PsLMARROgsAwxKkpQb6UdCbQAR6INx27i4HbxvafxUCr/T Q==;
-X-CSE-ConnectionGUID: hAS4dz52Qbex5pXn+sWcww==
-X-CSE-MsgGUID: 8tOEcRBCRMaOolJXjkWEnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11734"; a="92403814"
-X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; d="scan'208";a="92403814"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2026 10:16:40 -0700
-X-CSE-ConnectionGUID: qntV3aWBSAyF9Tg8Y+LLaw==
-X-CSE-MsgGUID: bqgAFODRQBiCiRDpeYYbXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,129,1770624000"; d="scan'208";a="227515829"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 19 Mar 2026 10:16:40 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 19 Mar 2026 10:16:39 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Thu, 19 Mar 2026 10:16:39 -0700
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.40) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 19 Mar 2026 10:16:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j/2UlAJXjHcoZD4sCB0eHU5b9TEMdlGfltW8qcVqXeMBYhxY7VUhgz7tfKA0hJUa9TTYn+90PitVCUVZWZoAofeHDrtn2pC3QtY0lSpqu7X2tTh0f5FYmN81kYOYPBnDDrQ2H+SQCbg64VPz78B4X8ccqkmCZPs/9a+BJ2FIh6ydOvHN0fO/06jcbierEd+v1zR5FZIUm1znchrvWptfTB+K8eqNwpMer3fjDEZ+FfGMa8sDMzi7DeGMn6j6j74X5KF4cfWuQnPyob42KLw6RTfxbjmB2v07gPexXpB2m9Pj7emEKRkaAlAVZclqceO2qCH5DTUmoFbhuIzMpLVF1g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8XEk6/qFlD6o73npVKFvIbDv0ejdslB6g1mH3dENPgw=;
- b=YaakTBgaTTITOaNMn8m1ryoDNBpXQLtxiMcrP8qQAeUiwFKEOyqIz9UTVC5GpWCrORxsfyhizVJDLCWH/Lvm1JR0eFAK4ynZWZisOgBgsC7aGI/hltNIezkXBUkjoa0XzqQoIJFwoUFzDVyV1uGflQHP3PpzIJzbriZt7XrFEUR9EV78R0TCIbCpAWOjev8YS0xOj4BMXG0kW9kRCeuBMcBO/N5mpDEsj1oZFZMlfdTbuNX+zhMtherdfjA3tMgjAcKqUA8naf3h7bmqQuOT/SZlN1TBoIrCl3J9+8TWLom0JOTi7s8bOFg3g7viJdTzlVRwbrPVJS0/oIXiJ9aD9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SN7PR11MB7090.namprd11.prod.outlook.com (2603:10b6:806:299::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.9; Thu, 19 Mar
- 2026 17:16:33 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9745.007; Thu, 19 Mar 2026
- 17:16:33 +0000
-Date: Thu, 19 Mar 2026 17:16:27 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: <dev@dpdk.org>
-CC: <probb@iol.unh.edu>, <david.marchand@redhat.com>, <stable@dpdk.org>
-Subject: Re: [PATCH 3/7] test/pdump: skip test on FreeBSD
-Message-ID: <abwva7QN2pBRD4Jz@bricha3-mobl1.ger.corp.intel.com>
-References: <20260319171334.1151425-1-bruce.richardson@intel.com>
- <20260319171334.1151425-4-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260319171334.1151425-4-bruce.richardson@intel.com>
-X-ClientProxiedBy: DUZPR01CA0035.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:468::13) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 75E77402C6;
+	Thu, 19 Mar 2026 19:28:48 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 55A4C402B9
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 19:28:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1773944926;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=y8BUHzvMzUzjo0Q53sJVYrBjrs+waX1bXEa7r49dpAA=;
+ b=jHXVj7jkxKXTimINR/Za6t1I3cKVgDlRBEuIVkZfX0OLmTG1UKLSz8EZIZum14GlLZFIs8
+ OC1kfYXFYSb1nfX0eiSvaJ08yQsE3GDIsuUjJn/i6yq1EbH5yzaS5utrddaTm5e1IMIgyY
+ okqO18MM5y1SPTJj4tkIh1UFeWTbRMQ=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-152-cAxry57zOGKedwnVJ9KIfA-1; Thu, 19 Mar 2026 14:28:43 -0400
+X-MC-Unique: cAxry57zOGKedwnVJ9KIfA-1
+X-Mimecast-MFC-AGG-ID: cAxry57zOGKedwnVJ9KIfA_1773944922
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-5a2778d515aso1550089e87.1
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 11:28:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1773944922; x=1774549722;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=y8BUHzvMzUzjo0Q53sJVYrBjrs+waX1bXEa7r49dpAA=;
+ b=PVyNSWYJNXseydkTnM5+9NRtFQk4wiRQ/0NZE+GcFlOe3B2QNyzMsrrR4YCpJ7P7DZ
+ dRGco79M6DHDX0EIWVyIYFtdR1CwvLmvS+bQ7FyniIBArytcYH7AGOsJEvejOSnSgw7K
+ Ehtwsa5oMJ5le55EYw+Y/8sV3V/zLfJU9JZOs8N796V+jTyr955FOZsCKpoHqMtDO7bi
+ 3PC07y87IqspRElx8FeghulFdSqjKN16oY1gqpsemydpiCm+x9z+IQAoTCE//6S82JFL
+ xXz+gnlGZGn4107ClKo1BD/dltwmNkOnruzW9FpjHSo132Mc2X4ZhFRfOI1JSMoHBhCa
+ E10Q==
+X-Gm-Message-State: AOJu0YzxMl4xvnfY011NQwn1oQw4HnKg+a5G4mNUnZWXA93Bh4bnmksU
+ VB8tiLjypxVxKeMssh0rfBn/Ei+8Ao5cCOcqUj7vsorPESFK91s0pCeumH8QOsnLsQXiQbRTONy
+ 9S8/DvhNLlwa/LKSIi4+XkQVx9NOh/uf7GUzt33q85RGCy79HRCYNBmhsA+53+qp3ebftsph+mY
+ X6YtwN9kYvSnkMWYKqaJ4=
+X-Gm-Gg: ATEYQzyZ6t1+qXTopZ29lXXtzMqOgKipzCfM7frPZMtlgyaaQXGhrUlo3RXHxie/Cb/
+ Hlf8Gq4niNJrbpZMwPPkDjmqvs/KuR3q/JCTjao3ya6oDw+ddgQ2L1WoNMdaJ5YquvObCCymW//
+ 1iSCHM6NfDsez3X2JgSv7+RjpXr9IN6r7m4xBz15t+Xoo2hC+KKtpTkLNZvzLOWQ7/K6+YnfPWM
+ p0DWzd13iXN7IKWrpZCt+yn0K5gmZK8oGdexpESmuy/bGsjQgRMMN12iHNSob/SqsHS2A==
+X-Received: by 2002:a05:6512:3b08:b0:5a2:7b19:71ac with SMTP id
+ 2adb3069b0e04-5a2856011b5mr122208e87.21.1773944921850; 
+ Thu, 19 Mar 2026 11:28:41 -0700 (PDT)
+X-Received: by 2002:a05:6512:3b08:b0:5a2:7b19:71ac with SMTP id
+ 2adb3069b0e04-5a2856011b5mr122186e87.21.1773944921334; Thu, 19 Mar 2026
+ 11:28:41 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SN7PR11MB7090:EE_
-X-MS-Office365-Filtering-Correlation-Id: bdd02946-e674-4775-aa7d-08de85db4491
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|56012099003|18002099003|22082099003; 
-X-Microsoft-Antispam-Message-Info: Oa/Zc3dybC/7SzWp83X+5C8snJmeDqPZNJod2xMdFEWLxol+meXGe6QB73bx9IzYasgz04R+nsRMg7fGqEA2RgOfx4FmS4L0mLbQRyOU1IwUPMXRZWSz9dFOtX5+jlFNq0mEj495KG8N7MyAdTjIwyh7LKZICnARnAYV1SFko/xh7Ch9tl0RGNXLTsSIBcmbZDk5wbkHN2tGQH56tqaPqgRISTckvso5pqKqrv9RFgttHVUb0jEZlP36lc17Ve3acubhhEKLDeVKHabpKKVAKDa4tfEnh+wGMXKedKARgWj5HRl7kdQ7pD0T96/sJSVOSYY7wJkYLu/c5CyDe78zyQ3QWQdMpoMhb0LH6q3G5tWdyn45x0crrlcNIowj/DH6kQTYvrELdtOzvw2yL9s5r4jzkkctRgGPWnj4FCliqG7qESqFxCZsCPT9r1otxeEhuazV6JFKftJ6dC/9VGmC5o9l29kuuLyHct9A0ytPUcKqbDgh6o2cfeR1shJ59k0twtWCBYWGC0LKGbklc1HH+drmmdEueesd21WPNeQ2ZkljLxAFFbYiFibg7bkVIv0g9BcWso/UP7ru4gYYjj4MWf+W/fA/btDts8RinNE8wvLv6oowrGqMzR1Uq8BvDmXqbWNTHhc7IXy3CJc0hwO98d7N0NuBS28+hEzI7H+iS21aOAfxbkEnqyID3jkJvHc+J3jzNFYQPp8Zuk/pj3AsvQy7ChH6AkcgUGZ0IzLcfjs=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(56012099003)(18002099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?osG778fPfWs3v584g4ILRZlpBZkbRsRiSlCiHcfjNaaxNEqYEgnW5sIVZO7n?=
- =?us-ascii?Q?PY2Ajt03EAUKnCenUTsVDk7qYJkg5DcvRCBpkzFQxzGI2HMhnAKwUYTgg+cG?=
- =?us-ascii?Q?0tkPziR+QZOYbHWk5QFdNYsx6wtfp1Xscqtkmqlg95zA+QuW3BFDEBxfmH9t?=
- =?us-ascii?Q?ievEcUS6ScryGiEm1ujeTaKs971MLWp/GA/mxfcOTKMeKId8yeSQ1NsU1JSO?=
- =?us-ascii?Q?nW0+Tbp/i8kN6YdpUqUt83Gsmz/FxwNJ4nCzEYSW7q2b7McRuvxx8tq6t8Ma?=
- =?us-ascii?Q?YQUmmxg32F6gbs9yv1MK34WJZS6wzX/MiyyktLSZmPmj7cmHOFeA7Z3HcWkm?=
- =?us-ascii?Q?DIuuuRcFA8wsdcA5nRNQpOFAyMkBqjpINJABafjdHVfY7ejekhPSg7i9ThjE?=
- =?us-ascii?Q?qxy9sgat7RByDX1Z3u0LmNoSW57PEcodL8hiogHpEpKQwu7EMgIGARHIYHAH?=
- =?us-ascii?Q?4FJO09Oz7N1TZR2x3EXDN2f3qI7hIzHhugvsu4c5BjBv/jk05Ewf74e+2BgO?=
- =?us-ascii?Q?a0jyh01W9YaCzjETQZl/63d2QN74ouevtwwcU+hnsqjw+F8HCSrajiPqWE8n?=
- =?us-ascii?Q?3OrfLxyKiJPctlzqJ34i3n1j/b2V+drn2Chb7dxxB9RlnOrwy1TUoRcizvkV?=
- =?us-ascii?Q?kzBMvHZCaLwJoQ/ztOTP0uthWEnhVaEuFiXhCuezBCTVv1qleOY3nfALbfB0?=
- =?us-ascii?Q?wRnJeGTz1hWM5/UxDtZJwsTjwIW0UaBt8OlMnOUTcZf6SJ9cNHaarZ0AiMPY?=
- =?us-ascii?Q?5u2SVgMZ3bNv/DOyvFvuNTveTi5tBWIj19uHZXFAuMo2X8Tx7YJvPHcXNFiE?=
- =?us-ascii?Q?BCM2eNXK4zbTNCU4pO5RGeagHLWMepe+9zfrGztbLPq8dkzNNM3YWbuFZKRZ?=
- =?us-ascii?Q?Zfuxi2yWeqCwEAzXbSHkl45hoAuxWXodlXBxYDuvDSO8g+zMfs5huVCH0HNS?=
- =?us-ascii?Q?YHi+Wi5Hud0itBYHRag+XvLDAsOiGUh3C+ZLzd526J7t94/Omj7PUIpshDPZ?=
- =?us-ascii?Q?n7FaUVpSbmqESAR80kQkdEhkpkkn2RkCXisc+WdaP3GFDf/pSztmXDjxq5KX?=
- =?us-ascii?Q?pxNmBHfrKq2abcCyTYmUdGomL8mVbF+YtP0MDfa/EjM8M3MDjH0sH6iDPWWU?=
- =?us-ascii?Q?nsucbjUfZXyjROhf6C9rMbxcwpvP9moiHEyZxmYwVTw3AsYnGi1QW9uHxvBi?=
- =?us-ascii?Q?XalKhmnIAOqeuKU1NqMmk95M9C4D3pxrudGi3Fr9/EM2KcUOBLjGSWw/kg6G?=
- =?us-ascii?Q?pPuvqD5K1LNxdBy8XyLpYW+n6lRVdOEZ3FiCpJ2w3RrdUSMY+UpQeaDny30D?=
- =?us-ascii?Q?nnPp0cakZW9W1VOYNiqRfnU+z7E1mG5qVB2erPLQxC6U8KJSs11H1XVrd4DF?=
- =?us-ascii?Q?fc9N5/08lvmvQM5TXZ9Gsk/gJZZfDg+FfLnYW3mssjSnPXf5krJ2iYt7UITf?=
- =?us-ascii?Q?OFT/YZi3I9L9WFU0KMBiaQA52Um+6ay5iLPaaXavQsBcvpypdMejeIu4faJs?=
- =?us-ascii?Q?fM9qFjQHY1038s62Xn+DQIcm+wWxdpMUusGoSEMEB2J9Z701MXr/7pxkpCQO?=
- =?us-ascii?Q?h5vlUCdVnZmX5cg+Z3wFOpPS6vRRaUdhTws10HYrjqwaTXJweiXCvM3JXVqq?=
- =?us-ascii?Q?NT9ZQHItTOq7VeQ398GRdWKPWsqNzc3pfSFidKAnbg+SHoR9IV0chdifHyVW?=
- =?us-ascii?Q?oyHmMhd8lrJS2flqxWIcYZp9Q9XdM0yAaYmUI5fx4Jf3hWRIewnXDnvZpzXG?=
- =?us-ascii?Q?BcPRNa172drAcKP6BU64A9qbRMgLQeU=3D?=
-X-Exchange-RoutingPolicyChecked: YzQOuJGT2sg732geMLpnvArm8BDGqhAP6Nml+gsHZND8AgN5yxd7lrH/K8rM0lnhqoYrODLknJuBUlpMtOQnj9xGOxoT/cv7Brb8iD9BS0AbezWCZIAvasO2IVmYeUKesvRXULAp/aln2R7/IeUWzH4kqzRsSVAF09EA3bxQDYxLs1iEYmsU9fbE9CcIN/Y0wACB5F0LTpVhaFo5NUadTQA3l9YHsjvvNbjxj7+AsZURYav1Sr2uRMCgb5pTy4oIC4ign/p0b9g0Fa06cRdpCbpz9/Y70Zg6jSzbQ3wkFlep4EIJt6vfq5N1qr0vtYBbYde7IactEluVIR4FtWU0jg==
-X-MS-Exchange-CrossTenant-Network-Message-Id: bdd02946-e674-4775-aa7d-08de85db4491
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Mar 2026 17:16:33.0339 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xtg3anXRaJjMRw9rfS8+VvlBfhjMwL4HIzuk2vhKX/AZPhW5lWJAwW082dYT96TktGMvE3tjPPvK3FGcRuInCW7Ty/pGH7rLi/SA0vvtQdU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7090
-X-OriginatorOrg: intel.com
+References: <20260318163628.609968-1-david.marchand@redhat.com>
+ <jnenabfqrgsmz4erfktd7osqcjw3vewajffyjwmuxhf6s4r4yw@zmlfmipdrpnr>
+In-Reply-To: <jnenabfqrgsmz4erfktd7osqcjw3vewajffyjwmuxhf6s4r4yw@zmlfmipdrpnr>
+From: David Marchand <david.marchand@redhat.com>
+Date: Thu, 19 Mar 2026 19:28:29 +0100
+X-Gm-Features: AaiRm50YeaFIixE6gWLLb5uzqrliKBXzPqhHg-a7CeJaRMBfLqhCrfi4cpLGHeI
+Message-ID: <CAJFAV8w2ET9GKA6ifcg90kn+_J=VG1eOqL0yr0=g7xsCpZgsVA@mail.gmail.com>
+Subject: Re: [PATCH] common/mlx5: fix mac deletion on Linux
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: dev@dpdk.org, stable@dpdk.org, 
+ Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
+ Ori Kam <orika@nvidia.com>, 
+ Suanming Mou <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, 
+ Adrien Mazarguil <adrien.mazarguil@6wind.com>,
+ Nelio Laranjeiro <nelio.laranjeiro@6wind.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Uju8oP-rksEWSsIGNnaC784ngtNdEEUIZgdg0hgcQ1I_1773944922
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -151,48 +88,61 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 19, 2026 at 05:11:37PM +0000, Bruce Richardson wrote:
-> FreeBSD doesn't support multiprocess so skip the pdump unit test which
-> requires multi-process support.
-> 
-> Bugzilla ID: 761 (partial fix)
-> Fixes: 086eb64db39e ("test/pdump: add unit test for pdump library")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
->  app/test/test_pdump.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/app/test/test_pdump.c b/app/test/test_pdump.c
-> index 824caef2d4..9d1175b4b0 100644
-> --- a/app/test/test_pdump.c
-> +++ b/app/test/test_pdump.c
-> @@ -5,6 +5,7 @@
->  #include <unistd.h>
->  #include <stdint.h>
->  #include <limits.h>
-> +#include <sys/utsname.h>
->  
->  #include <ethdev_driver.h>
->  #include <rte_pdump.h>
-> @@ -197,7 +198,12 @@ run_pdump_server_tests(void)
->  int
->  test_pdump(void)
->  {
-> +	struct utsname name;
->  	int ret = 0;
-> +
-> +	if (uname(&name) < 0 || strcmp(name.sysname, "FreeBSD") == 0)
-> +		return TEST_SKIPPED;
-> +
+On Thu, 19 Mar 2026 at 17:06, Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
+>
+> On Wed, Mar 18, 2026 at 05:36:28PM +0100, David Marchand wrote:
+> > Re-enable debug logs unconditionally, this helps understanding why mac
+> > deletions were silently failing (while a bridge fdb del command was
+> > working fine).
+> >
+> > testpmd> mac_addr add 0 FA:35:44:3F:58:31
+> > testpmd> mac_addr remove 0 FA:35:44:3F:58:31
+> > mlx5_common: Interface 35 cannot remove MAC address FA:35:44:3F:58:31
+> >       Operation not supported
+> >
+> > Then, fix mac deletion as the NLM_F_CREATE == 0x200 flag is relevant
+> > with a RTM_NEWNEIGH op.
+> > For a RTM_DELNEIGH op, 0x200 == NLM_F_BULK and passing this flag
+> > makes the deletion fail miserably for a single mac.
+> >
+> > Fixes: ccdcba53a3f4 ("net/mlx5: use Netlink to add/remove MAC addresses")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> > ---
+> >  drivers/common/mlx5/linux/mlx5_nl.c | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/common/mlx5/linux/mlx5_nl.c b/drivers/common/mlx5/linux/mlx5_nl.c
+> > index eceb3d796f..b50431fb61 100644
+> > --- a/drivers/common/mlx5/linux/mlx5_nl.c
+> > +++ b/drivers/common/mlx5/linux/mlx5_nl.c
+> > @@ -581,8 +581,8 @@ mlx5_nl_mac_addr_modify(int nlsk_fd, unsigned int iface_idx,
+> >       } req = {
+> >               .hdr = {
+> >                       .nlmsg_len = NLMSG_LENGTH(sizeof(struct ndmsg)),
+> > -                     .nlmsg_flags = NLM_F_REQUEST | NLM_F_CREATE |
+> > -                             NLM_F_EXCL | NLM_F_ACK,
+> > +                     .nlmsg_flags = NLM_F_REQUEST | NLM_F_ACK |
+> > +                             add ? NLM_F_CREATE | NLM_F_EXCL : 0,
+>
+> It seems that this expression is constructed incorrectly.
+> IIUC this will be "parenthesised" as follows:
+>
+>         ((NLM_F_REQUEST | NLM_F_ACK) | add) ? (NLM_F_CREATE | NLM_F_EXCL) : 0
+>
+> Since bitwise OR has higher precendence.
+> So "add" value will be ignored and only "NLM_F_CREATE | NLM_F_EXCL"
+> will be returned.
+>
+> Could you please add parenthesis around the ternary?
 
-Self-NAK, I forgot to update this patch to just use
-"RTE_EXEC_ENV_IS_FREEBSD" instead of calling "uname". Will fix in V2.
+Ugh.
+That's what happens when doing a last minute change with a ternary and
+not testing the new patch...
+I will send the right fix.
 
->  	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
->  		printf("IN PRIMARY PROCESS\n");
->  		ret = run_pdump_server_tests();
-> -- 
-> 2.51.0
-> 
+
+-- 
+David Marchand
+
