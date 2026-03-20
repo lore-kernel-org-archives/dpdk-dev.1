@@ -2,73 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFCB1091929
-	for <dpdk-dev@archiver.kernel.org>; Thu, 19 Mar 2026 22:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC90109317A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 20 Mar 2026 04:30:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 45146402AC;
-	Thu, 19 Mar 2026 23:43:40 +0100 (CET)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
- [209.85.210.180])
- by mails.dpdk.org (Postfix) with ESMTP id 5D99C4013F
- for <dev@dpdk.org>; Thu, 19 Mar 2026 23:43:39 +0100 (CET)
-Received: by mail-pf1-f180.google.com with SMTP id
- d2e1a72fcca58-829ac4670c4so908964b3a.0
- for <dev@dpdk.org>; Thu, 19 Mar 2026 15:43:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A580E402B2;
+	Fri, 20 Mar 2026 05:30:03 +0100 (CET)
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
+ by mails.dpdk.org (Postfix) with ESMTP id 7A93540272
+ for <dev@dpdk.org>; Fri, 20 Mar 2026 05:30:02 +0100 (CET)
+Received: by mail-dl1-f44.google.com with SMTP id
+ a92af1059eb24-1271257ae53so2136398c88.1
+ for <dev@dpdk.org>; Thu, 19 Mar 2026 21:30:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1773981001; cv=none;
+ d=google.com; s=arc-20240605;
+ b=fVjeGCKTgBMvCW0ToeC4JHZa/06qjkvvR7w46wc3HbulJEYxL0FPMSw+KCaAQ2GGY8
+ mvVYRPaMP3fAb7dVG7gzluvJrZNfu4SYWmPA/gJg4FcXU1csOTRio8kgUslsZ8KWTwJc
+ NmgfWx5Oe3am5E5yPpbxsjrNbdeFdjxFAGTz+HBBJrT3Bs/PZCcnhL6nih9KClprdsbK
+ slUdOsXnhe3+yFFcCwzOJST09FW8smOQ+xtS9PlrqxiQdsKg7ndXYqYXz9svzY/BpzNJ
+ OyMNwY+gBoJgyNTCCmydC88UFtUmeNM+P2MbZZi2kw0NUT1d+LzN/K8qSXS0NnyzLkp+
+ GRbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=5T4OjWKtASMCklGncqBs0bUL84ev1E3VpC1dC51C/SE=;
+ fh=l0EZoFfzBfvU7SxV5hgyp7OqOPyTkyA+JpmpO0gwlUQ=;
+ b=V4Fq8xQp3jNqS3nXLnLtWl7WeDrEEVBI636U4gy+G5+1q4BnzTQ/mPNJCIE69utE6m
+ Awgc+DU06/RNHZXXpEgxT6vO2jdNJaC2+nfZL3R/eTGkCtkqvdWhCJj3n6GwaHGlaG4o
+ D+eV0yX/Sjq3qWMjvJnqVqYBiP18yvlbrf8BUznwxfSCrPuyc34xdBUCyj4+4sZyuFwz
+ VRq7MlBGMUNqZME71SAcrdcF1CpgjqF4R1qahqA0dtkTQUBR79Mmk61gJVcZF79hX1wu
+ A8Q62aSDiQrYl0O1c9nQKhN8nRV68C0wRnaJsdTzy8sq+LvDtGsfduAzUJd8ZXm3Jb4e
+ c6cA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1773960218;
- x=1774565018; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=WOhyvVSvqV+25/R2rsDpe52ycZd4shTJNSC8I9fuIus=;
- b=Ky1KAPiMIBymOJkxXbTtPoBOaRUMN53Dh5bktZjtboXHqUseploKdotF8HFIQ/B6QQ
- JHqwPo0c5dAWbFfKJjsxIC7rWQwHuQy5Ds3FNAGfV5J16oqC9T6i7J+ovshaJfXDMemv
- pXnY20C0Q2EZFuIz5+P2WCCsG4Xs+LkOuuKwFx+TneHpWK9XTRGm2m/iZS56W4rFRJmH
- 6CakulXnl1TCXxNc18GKSvkoJPULD9CEx6eH5POPYeiaZee40e6bA0I901kPuwYQJR+V
- O0eK05Qg50gOkRmNLxR7zne6Vt6ByIw8Jmjxx7QL3FnMMj6s+FZ/iR5rye/wC5j/HOXm
- o28w==
+ d=iol.unh.edu; s=unh-iol; t=1773981001; x=1774585801; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=5T4OjWKtASMCklGncqBs0bUL84ev1E3VpC1dC51C/SE=;
+ b=Ea/ZUEv4bSL4dRCUPI+fJV2EF9TUxdoVl57I0ZAn042X1+cSCzI07NEfhVwuqf21uB
+ 4uJQBShtiO3kf+XciWaIs6e5lApeZaLc5fCc8881x/B+awkm6O9+fKpg+mkP2GHsL/xJ
+ CqxVym0583zis4U2nbDZyTlnQWlSzznfDHWxk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1773960218; x=1774565018;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=WOhyvVSvqV+25/R2rsDpe52ycZd4shTJNSC8I9fuIus=;
- b=aQK5asCPLnCvuaDxM/gvtGVuBpGlnngnX2psntmMbNLe/pVYrQrm6X7fHP4kwQ9kwO
- owkt2+QxdudoLN+sglNlppps2HxKsCtWgwyyAMwHcBZWNL83nTgnFVC475v4FpdyjuCe
- t7OCIlBV92QncETMPnNew1EkKlevGvCAcCDZxQzAU2lOU3npexXR+aOFKpqZMXacGilO
- W+8WLgv4OobiHVJOVL+iCODCFUgj6CrN5qi1r0Q6ga9rWqu0RoBs5cwp0FvZNPCWgM6L
- g1KCm/5zUGTxLPB7LopkUUrARAceIHIpBNCTnL6YgOu/QDIpoUm2lUpKRP6K+bMM8brD
- aBrw==
-X-Gm-Message-State: AOJu0YzAhUK7lw30olcL+qE5BzXosI96M1et3Dpd4UQNJ6bYo6pC7Lvx
- H2TpUSDLQUr3aPSFsLGk8IqX4mEkHzSWWmRIItxLnHbXh68Fooedcv5/DEVc/IcjAX8=
-X-Gm-Gg: ATEYQzy6RimcW5BF5S27l3wOIV0NYynoHcVc+U6ICSk4qtHx2cfJMJ03zybaATpnjIX
- V79NkgorVj/ATiaMmibgfoGR4IA9uzbQwkpnKf/W4ENc9yAiEk2GpnAZEt0FH+4Y5hOdmuZotG5
- 74FqbjY8Ui4xedx6ZaiRAZSbbSJBITgOGPSSUcwu3fRphHCTTt4J1/XSaQ3ItfWq+/G5WWH2xxb
- SKYFRjuQusqAWuBmxy731WkPBLYUk5syuGYVC97Jh+qIL33BgIGOmlv2/wro1WymElBl46A78st
- besiT01hFwUInp9/fBbx/MgIu34vJOeJoFF9AS0kSsO1n0PYCq+oUiEhmcMfCdn4Ozkx3Iaec2g
- cCQIxgi0rsHdocgRbfXam3E1JiHR+upENmVB9Hm2FwHgauEQbEnDqSLa1gDeYMLmDTvEEdijyiQ
- Q2mQaP4ko9QYgKUocEXYwK5WSdDuMRDclhFGSoGwOUUVr3q+ARS78g77qQbTPWcP2b61Gsm2i+x
- ZlhbSCUIWLjO+eTc0oHow==
-X-Received: by 2002:a05:6a00:23c6:b0:824:374a:1407 with SMTP id
- d2e1a72fcca58-82a8c234e03mr678061b3a.16.1773960218184; 
- Thu, 19 Mar 2026 15:43:38 -0700 (PDT)
-Received: from stephen-xps.local
- (h216-87-238-89.thvror.broadband.dynamic.tds.net. [216.87.238.89])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-82b040db2a6sm236118b3a.50.2026.03.19.15.43.37
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 19 Mar 2026 15:43:37 -0700 (PDT)
-Date: Thu, 19 Mar 2026 15:43:35 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH dpdk] net/tap: add software MAC address filtering
-Message-ID: <20260319154335.60e6406a@stephen-xps.local>
-In-Reply-To: <20260319221034.703656-2-rjarry@redhat.com>
-References: <20260319221034.703656-2-rjarry@redhat.com>
+ d=1e100.net; s=20251104; t=1773981001; x=1774585801;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=5T4OjWKtASMCklGncqBs0bUL84ev1E3VpC1dC51C/SE=;
+ b=rvPuyR7SC/7X9hzXPVYEtDLIxg1PMCf1w+BZCaOQ+9K9tn6E5JBG5VViiH4h+cmqPg
+ r5s4CCkUmJE/AFU2JQ0PEio31fjmQAPnWK9Du4j6o8o7/tyGnJ9PGSRNWenaEFSs6/do
+ zUKtACY+oZwB6lTXIhPS0lU+QkMq8ZnsVXE3IBSWl5pYLVBfszDObvnxrKNRkH3riyxv
+ Em+Eq3z5KpKSTNjlWe9z+kdbDX7l4x1w3XRKaNLPZZvFfOfMv6BkA5U1DhSCvfFzaZqV
+ eiJP84i83muCHB/ZIg0yKb6IoxiiPxb63ol1ZAqZF8GKVqPEr6+y7kNVbbPX3twu0ddp
+ s4hA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUUIOZsYfQY9lNs93l1QbUx+JgIkaD859Sl2lYaocKTF62A/4K1AxY5OJX2fGzv4we9zrc=@dpdk.org
+X-Gm-Message-State: AOJu0YyOY2NWwwA+bqCyKLREwv0rqySqrlTLWhqjLEi2OP4F/1lBo9ya
+ mo3uSNJS694iCf5vPvkxy2sB0VuQLSdOjnwwW+dlYaMGkpcFhNkfMzdAn2IjONKJhIgul8y2bQ/
+ He5naJ/dxnF24lIqfPkNba+yrL616sjM+xBvsdsd01A==
+X-Gm-Gg: ATEYQzzflgLR+s2sD5xRQvaMVnZ4j39ezdO5nTMT9nhPtK+1lcjfmiL9xWd+ozBHPvA
+ eVbqCz4Qgrk3rwHyKVl8Vs/9iJd/rwcLRv/XOKB8A+qZgveetzZiGMWvUha4WQESN6nQMdTpqAW
+ VDlJsytQVigmBji0krk+Hy8N/fnaXzz2eqvHowpdx9JPnvTLapFcp4hFMbSJOucI8CnL1KqqKwi
+ Qc4HsOO1RgDBukFZiNKlq0geVPWQJcZ9l3hE2TrB0DGa1Ni+oncbYjLR8hsafW1V0ram3nEsG83
+ +LpZh9EO2XA49LCPfvWHcNuFkyrkNflSwDtENUnbBNclkd0TUYOyi8I=
+X-Received: by 2002:a05:7022:fd0c:b0:129:ea6:a3c7 with SMTP id
+ a92af1059eb24-12a725c9168mr729633c88.0.1773981001389; Thu, 19 Mar 2026
+ 21:30:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260313155601.112819-1-dmarx@iol.unh.edu>
+ <20260313182240.130379-1-dmarx@iol.unh.edu>
+In-Reply-To: <20260313182240.130379-1-dmarx@iol.unh.edu>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Fri, 20 Mar 2026 00:26:50 -0400
+X-Gm-Features: AaiRm537xn_a9_G-gdFt-fVNog_p6xqWotHnPrl5C6JtuKBfVuZFIsev0t7F1W0
+Message-ID: <CAJvnSUAnAo_Fpe9Mkb0ZYtL35oXjATt2MMJ1QzbzwFJKPNyrTg@mail.gmail.com>
+Subject: Re: [PATCH v2] dts: update overall result pass/skip logic
+To: Dean Marx <dmarx@iol.unh.edu>
+Cc: luca.vizzarro@arm.com, yoan.picchi@foss.arm.com, 
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com, dev@dpdk.org, 
+ Andrew Bailey <abailey@iol.unh.edu>
+Content-Type: multipart/alternative; boundary="0000000000006d28eb064d6d23b6"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,401 +94,203 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 19 Mar 2026 23:10:35 +0100
-Robin Jarry <rjarry@redhat.com> wrote:
+--0000000000006d28eb064d6d23b6
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Linux TAP devices deliver all packets to userspace regardless of the
-> PROMISC/ALLMULTI flags on the interface. Add an opt-in "macfilter"
-> devarg that, when enabled, drops received packets whose destination MAC
-> does not match any configured unicast or multicast address.
-> 
-> When macfilter is active the receive path checks the destination MAC
-> against the device's unicast address table (managed by the ethdev
-> layer), the multicast address list (stored by the driver since the
-> ethdev layer does not keep a copy), and accepts broadcast
-> unconditionally. Promiscuous and all-multicast modes bypass the
-> respective checks.
-> 
-> To support multiple unicast addresses via rte_eth_dev_mac_addr_add(),
-> allocate mac_addrs with rte_zmalloc (TAP_MAX_MAC_ADDRS=16) instead of
-> pointing into dev_private, and advertise the new limit in dev_infos_get.
-> 
-> Dropped packets are reported via per-queue xstats
-> (rx_q<N>_mac_filter_drops).
-> 
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+Okay, the implementation makes sense and I see that it works.
+
+However, isn't the whole issue stemming from the fact that the currently
+existing get_overall_result() function calls max() on self.children, and
+self.children (the result objects) are IntEnum enums which are ordered in
+ascending order, starting with PASS, then SKIP, then BLOCK, then FAIL, then
+ERROR? If we just swap PASS and SKIP, doesn't that make the existing logic
+(using the max() function call) work correctly?
+
+I.e. re-order this class:
+
+class Result(IntEnum):
+    """The possible states that a setup, a teardown or a test case may end
+up in."""
+
+    #:
+    PASS =3D auto()
+    #:
+    SKIP =3D auto()
+    #:
+    BLOCK =3D auto()
+    #:
+    FAIL =3D auto()
+    #:
+    ERROR =3D auto()
+
+
+
+On Fri, Mar 13, 2026 at 2:22=E2=80=AFPM Dean Marx <dmarx@iol.unh.edu> wrote=
+:
+
+> Update overall result of test suites such that
+> when some cases skip and at least one passes,
+> the result is a pass instead of a skip. Only
+> when all cases skip is the result a skip.
+>
+> Bugzilla ID: 1899
+>
+> Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+> Tested-by: Andrew Bailey <abailey@iol.unh.edu>
+> Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
 > ---
->  drivers/net/tap/rte_eth_tap.c | 178 ++++++++++++++++++++++++++++++----
->  drivers/net/tap/rte_eth_tap.h |   7 ++
->  2 files changed, 167 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-> index 13e0a23c34a1..f4ea3bc5d160 100644
-> --- a/drivers/net/tap/rte_eth_tap.c
-> +++ b/drivers/net/tap/rte_eth_tap.c
-> @@ -53,11 +53,14 @@
->  #define ETH_TAP_MAC_ARG         "mac"
->  #define ETH_TAP_MAC_FIXED       "fixed"
->  #define ETH_TAP_PERSIST_ARG     "persist"
-> +#define ETH_TAP_MAC_FILTER_ARG  "macfilter"
->  
->  #define ETH_TAP_USR_MAC_FMT     "xx:xx:xx:xx:xx:xx"
->  #define ETH_TAP_CMP_MAC_FMT     "0123456789ABCDEFabcdef"
->  #define ETH_TAP_MAC_ARG_FMT     ETH_TAP_MAC_FIXED "|" ETH_TAP_USR_MAC_FMT
->  
-> +#define TAP_MAX_MAC_ADDRS	16
-> +
->  #define TAP_GSO_MBUFS_PER_CORE	128
->  #define TAP_GSO_MBUF_SEG_SIZE	128
->  #define TAP_GSO_MBUF_CACHE_SIZE	4
-> @@ -110,6 +113,7 @@ static const char *valid_arguments[] = {
->  	ETH_TAP_REMOTE_ARG,
->  	ETH_TAP_MAC_ARG,
->  	ETH_TAP_PERSIST_ARG,
-> +	ETH_TAP_MAC_FILTER_ARG,
->  	NULL
->  };
->  
-> @@ -437,6 +441,45 @@ tap_rxq_pool_free(struct rte_mbuf *pool)
->  	rte_pktmbuf_free(pool);
->  }
->  
-> +static inline bool
-> +tap_mac_filter_match(struct rx_queue *rxq, struct rte_mbuf *mbuf)
-> +{
-> +	struct pmd_internals *pmd = rxq->pmd;
-> +	struct rte_eth_dev_data *data;
-> +	struct rte_ether_addr *dst;
-> +	uint32_t i;
-> +
-> +	if (!pmd->macfilter)
-> +		return true;
-> +
-> +	data = pmd->dev->data;
-> +	if (data->promiscuous)
-> +		return true;
-> +
-> +	dst = rte_pktmbuf_mtod(mbuf, struct rte_ether_addr *);
-> +
-> +	if (rte_is_broadcast_ether_addr(dst))
-> +		return true;
-> +
-> +	if (rte_is_multicast_ether_addr(dst)) {
-> +		if (data->all_multicast)
-> +			return true;
-> +		for (i = 0; i < pmd->nb_mc_addrs; i++) {
-> +			if (rte_is_same_ether_addr(dst, &pmd->mc_addrs[i]))
-> +				return true;
-> +		}
-> +		return false;
-> +	}
-> +
-> +	for (i = 0; i < TAP_MAX_MAC_ADDRS; i++) {
-> +		if (rte_is_zero_ether_addr(&data->mac_addrs[i]))
-> +			continue;
-> +		if (rte_is_same_ether_addr(dst, &data->mac_addrs[i]))
-> +			return true;
-> +	}
-> +	return false;
-> +}
-> +
->  /* Callback to handle the rx burst of packets to the correct interface and
->   * file descriptor(s) in a multi-queue setup.
->   */
-> @@ -515,6 +558,13 @@ pmd_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
->  			data_off = 0;
->  		}
->  		seg->next = NULL;
-> +
-> +		if (!tap_mac_filter_match(rxq, mbuf)) {
-> +			rxq->stats.mac_drops++;
-> +			rte_pktmbuf_free(mbuf);
-> +			continue;
-> +		}
-> +
->  		mbuf->packet_type = rte_net_get_ptype(mbuf, NULL,
->  						      RTE_PTYPE_ALL_MASK);
->  		if (rxq->rxmode->offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM)
-> @@ -933,7 +983,7 @@ tap_dev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
->  	struct pmd_internals *internals = dev->data->dev_private;
->  
->  	dev_info->if_index = internals->if_index;
-> -	dev_info->max_mac_addrs = 1;
-> +	dev_info->max_mac_addrs = TAP_MAX_MAC_ADDRS;
->  	dev_info->max_rx_pktlen = RTE_ETHER_MAX_JUMBO_FRAME_LEN;
->  	dev_info->max_rx_queues = RTE_PMD_TAP_MAX_QUEUES;
->  	dev_info->max_tx_queues = RTE_PMD_TAP_MAX_QUEUES;
-> @@ -1025,6 +1075,43 @@ tap_stats_reset(struct rte_eth_dev *dev)
->  	return 0;
->  }
->  
-> +static int
-> +tap_xstats_get_names(struct rte_eth_dev *dev,
-> +		     struct rte_eth_xstat_name *names,
-> +		     unsigned int limit __rte_unused)
-> +{
-> +	unsigned int i;
-> +
-> +	if (names == NULL)
-> +		return dev->data->nb_rx_queues;
-> +
-> +	for (i = 0; i < dev->data->nb_rx_queues; i++)
-> +		snprintf(names[i].name, sizeof(names[i].name),
-> +			 "rx_q%u_mac_filter_drops", i);
-> +
-> +	return dev->data->nb_rx_queues;
-> +}
-> +
-> +static int
-> +tap_xstats_get(struct rte_eth_dev *dev, struct rte_eth_xstat *xstats,
-> +	       unsigned int n)
-> +{
-> +	struct rte_eth_dev_data *data = dev->data;
-> +	struct rx_queue *rxq;
-> +	unsigned int i;
-> +
-> +	if (n < dev->data->nb_rx_queues)
-> +		return dev->data->nb_rx_queues;
-> +
-> +	for (i = 0; i < dev->data->nb_rx_queues; i++) {
-> +		rxq = data->rx_queues[i];
-> +		xstats[i].id = i;
-> +		xstats[i].value = rxq->stats.mac_drops;
-> +	}
-> +
-> +	return dev->data->nb_rx_queues;
-> +}
-> +
->  static void
->  tap_queue_close(struct pmd_process_private *process_private, uint16_t qid)
->  {
-> @@ -1089,14 +1176,15 @@ tap_dev_close(struct rte_eth_dev *dev)
->  	rte_mempool_free(internals->gso_ctx_mp);
->  	internals->gso_ctx_mp = NULL;
->  
-> +	rte_free(internals->mc_addrs);
-> +	internals->mc_addrs = NULL;
-> +	internals->nb_mc_addrs = 0;
-> +
->  	if (internals->ka_fd != -1) {
->  		close(internals->ka_fd);
->  		internals->ka_fd = -1;
->  	}
->  
-> -	/* mac_addrs must not be freed alone because part of dev_private */
-> -	dev->data->mac_addrs = NULL;
+>  dts/framework/test_result.py | 29 +++++++++++++++++------------
+>  1 file changed, 17 insertions(+), 12 deletions(-)
+>
+> diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
+> index c6bddc55a9..e05663f90e 100644
+> --- a/dts/framework/test_result.py
+> +++ b/dts/framework/test_result.py
+> @@ -187,18 +187,23 @@ def serialize_model(self) -> dict[str, Any]:
+>
+>      def get_overall_result(self) -> ResultLeaf:
+>          """The overall result of the underlying results."""
 > -
->  	internals = dev->data->dev_private;
->  	TAP_LOG(DEBUG, "Closing %s Ethernet device on numa %u",
->  		tuntap_types[internals->type], rte_socket_id());
-> @@ -1574,6 +1662,7 @@ tap_rx_queue_setup(struct rte_eth_dev *dev,
->  	}
->  	tmp = &rxq->pool;
->  
-> +	rxq->pmd = internals;
->  	rxq->mp = mp;
->  	rxq->trigger_seen = 1; /* force initial burst */
->  	rxq->in_port = dev->data->port_id;
-> @@ -1692,17 +1781,50 @@ tap_mtu_set(struct rte_eth_dev *dev, uint16_t mtu)
->  }
->  
->  static int
-> -tap_set_mc_addr_list(struct rte_eth_dev *dev __rte_unused,
-> -		     struct rte_ether_addr *mc_addr_set __rte_unused,
-> -		     uint32_t nb_mc_addr __rte_unused)
-> +tap_set_mc_addr_list(struct rte_eth_dev *dev,
-> +		     struct rte_ether_addr *mc_addr_set,
-> +		     uint32_t nb_mc_addr)
->  {
-> -	/*
-> -	 * Nothing to do actually: the tap has no filtering whatsoever, every
-> -	 * packet is received.
-> -	 */
-> +	struct pmd_internals *pmd = dev->data->dev_private;
+> -        def extract_result(value: ResultNode | ResultLeaf) -> ResultLeaf=
+:
+> -            match value:
+> -                case ResultNode():
+> -                    return value.get_overall_result()
+> -                case ResultLeaf():
+> -                    return value
+> -
+> -        return max(
+> -            (extract_result(child) for child in self.children),
+> -            default=3DResultLeaf(result=3DResult.PASS),
+> -        )
+> +        results =3D [
+> +            child.get_overall_result() if isinstance(child, ResultNode)
+> else child
+> +            for child in self.children
+> +        ]
+> +        max_result =3D max(results, default=3DResultLeaf(result=3DResult=
+.PASS))
 > +
-> +	if (nb_mc_addr == 0) {
-> +		rte_free(pmd->mc_addrs);
-> +		pmd->mc_addrs = NULL;
-> +		pmd->nb_mc_addrs = 0;
-> +		return 0;
-> +	}
+> +        if max_result.result !=3D Result.SKIP:
+> +            return max_result
 > +
-> +	pmd->mc_addrs = rte_realloc(pmd->mc_addrs,
-> +				    nb_mc_addr * sizeof(*pmd->mc_addrs), 0);
-> +	if (pmd->mc_addrs == NULL) {
-> +		pmd->nb_mc_addrs = 0;
-> +		return -ENOMEM;
-> +	}
+> +        if any(
+> +            r.result =3D=3D Result.PASS
+> +            for child, r in zip(self.children, results)
+> +            if not (isinstance(child, ResultNode) and child.label in
+> self.__ignore_steps)
+> +        ):
+> +            return ResultLeaf(result=3DResult.PASS)
 > +
-> +	memcpy(pmd->mc_addrs, mc_addr_set,
-> +	       nb_mc_addr * sizeof(*pmd->mc_addrs));
-> +	pmd->nb_mc_addrs = nb_mc_addr;
-> +
->  	return 0;
->  }
->  
-> +static int
-> +tap_mac_addr_add(struct rte_eth_dev *dev __rte_unused,
-> +		 struct rte_ether_addr *mac_addr __rte_unused,
-> +		 uint32_t index __rte_unused,
-> +		 uint32_t vmdq __rte_unused)
-> +{
-> +	/* ethdev layer already stores the address in mac_addrs[] */
-> +	return 0;
-> +}
-> +
-> +static void
-> +tap_mac_addr_remove(struct rte_eth_dev *dev __rte_unused,
-> +		    uint32_t index __rte_unused)
-> +{
-> +	/* ethdev layer already zeroes the slot in mac_addrs[] */
-> +}
-> +
->  static void tap_dev_intr_handler(void *cb_arg);
->  static int tap_lsc_intr_handle_set(struct rte_eth_dev *dev, int set);
->  
-> @@ -2038,10 +2160,15 @@ static const struct eth_dev_ops ops = {
->  	.allmulticast_enable    = tap_allmulti_enable,
->  	.allmulticast_disable   = tap_allmulti_disable,
->  	.mac_addr_set           = tap_mac_set,
-> +	.mac_addr_add           = tap_mac_addr_add,
-> +	.mac_addr_remove        = tap_mac_addr_remove,
->  	.mtu_set                = tap_mtu_set,
->  	.set_mc_addr_list       = tap_set_mc_addr_list,
->  	.stats_get              = tap_stats_get,
->  	.stats_reset            = tap_stats_reset,
-> +	.xstats_get             = tap_xstats_get,
-> +	.xstats_get_names       = tap_xstats_get_names,
-> +	.xstats_reset           = tap_stats_reset,
->  	.dev_supported_ptypes_get = tap_dev_supported_ptypes_get,
->  	.rss_hash_update        = tap_rss_hash_update,
->  #ifdef HAVE_TCA_FLOWER
-> @@ -2052,7 +2179,7 @@ static const struct eth_dev_ops ops = {
->  static int
->  eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
->  		   const char *remote_iface, struct rte_ether_addr *mac_addr,
-> -		   enum rte_tuntap_type type, int persist)
-> +		   enum rte_tuntap_type type, int persist, int macfilter)
->  {
->  	int numa_node = rte_socket_id();
->  	struct rte_eth_dev *dev;
-> @@ -2102,7 +2229,14 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
->  	data->numa_node = numa_node;
->  
->  	data->dev_link = pmd_link;
-> -	data->mac_addrs = &pmd->eth_addr;
-> +	data->mac_addrs = rte_zmalloc_socket(rte_vdev_device_name(vdev),
-> +					     TAP_MAX_MAC_ADDRS *
-> +					     sizeof(struct rte_ether_addr),
-> +					     0, numa_node);
-> +	if (data->mac_addrs == NULL) {
-> +		TAP_LOG(ERR, "Failed to allocate mac_addrs");
-> +		goto error_exit;
-> +	}
->  	/* Set the number of RX and TX queues */
->  	data->nb_rx_queues = 0;
->  	data->nb_tx_queues = 0;
-> @@ -2120,6 +2254,8 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
->  		process_private->fds[i] = -1;
->  
->  
-> +	pmd->macfilter = macfilter;
-> +
->  	if (pmd->type == ETH_TUNTAP_TYPE_TAP) {
->  		if (rte_is_zero_ether_addr(mac_addr))
->  			rte_eth_random_addr((uint8_t *)&pmd->eth_addr);
-> @@ -2227,6 +2363,9 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
->  	}
->  #endif
->  
-> +	/* Copy final MAC to slot 0 (remote path may have overwritten it) */
-> +	data->mac_addrs[0] = pmd->eth_addr;
-> +
->  	rte_eth_dev_probing_finish(dev);
->  	return 0;
->  
-> @@ -2246,8 +2385,6 @@ eth_dev_tap_create(struct rte_vdev_device *vdev, const char *tap_name,
->  	free(dev->process_private);
->  
->  error_exit_nodev_release:
-> -	/* mac_addrs must not be freed alone because part of dev_private */
-> -	dev->data->mac_addrs = NULL;
->  	rte_eth_dev_release_port(dev);
->  
->  error_exit_nodev:
-> @@ -2405,7 +2542,7 @@ rte_pmd_tun_probe(struct rte_vdev_device *dev)
->  	TAP_LOG(DEBUG, "Initializing pmd_tun for %s", name);
->  
->  	ret = eth_dev_tap_create(dev, tun_name, remote_iface, 0,
-> -				 ETH_TUNTAP_TYPE_TUN, 0);
-> +				 ETH_TUNTAP_TYPE_TUN, 0, 0);
->  
->  leave:
->  	if (ret == -1) {
-> @@ -2529,6 +2666,7 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
->  	struct rte_eth_dev *eth_dev;
->  	int tap_devices_count_increased = 0;
->  	int persist = 0;
-> +	int macfilter = 0;
->  
->  	name = rte_vdev_device_name(dev);
->  	params = rte_vdev_device_args(dev);
-> @@ -2617,6 +2755,9 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
->  
->  			if (rte_kvargs_count(kvlist, ETH_TAP_PERSIST_ARG) == 1)
->  				persist = 1;
-> +
-> +			if (rte_kvargs_count(kvlist, ETH_TAP_MAC_FILTER_ARG) == 1)
-> +				macfilter = 1;
->  		}
->  	}
->  
-> @@ -2634,7 +2775,7 @@ rte_pmd_tap_probe(struct rte_vdev_device *dev)
->  	tap_devices_count++;
->  	tap_devices_count_increased = 1;
->  	ret = eth_dev_tap_create(dev, tap_name, remote_iface, &user_mac,
-> -				 ETH_TUNTAP_TYPE_TAP, persist);
-> +				 ETH_TUNTAP_TYPE_TAP, persist, macfilter);
->  
->  leave:
->  	if (ret == -1) {
-> @@ -2687,5 +2828,6 @@ RTE_PMD_REGISTER_PARAM_STRING(net_tun,
->  RTE_PMD_REGISTER_PARAM_STRING(net_tap,
->  			      ETH_TAP_IFACE_ARG "=<string> "
->  			      ETH_TAP_MAC_ARG "=" ETH_TAP_MAC_ARG_FMT " "
-> -			      ETH_TAP_REMOTE_ARG "=<string>");
-> +			      ETH_TAP_REMOTE_ARG "=<string> "
-> +			      ETH_TAP_MAC_FILTER_ARG "=<int>");
->  RTE_LOG_REGISTER_DEFAULT(tap_logtype, NOTICE);
-> diff --git a/drivers/net/tap/rte_eth_tap.h b/drivers/net/tap/rte_eth_tap.h
-> index b44eaf9a1bdb..dd65b33bf351 100644
-> --- a/drivers/net/tap/rte_eth_tap.h
-> +++ b/drivers/net/tap/rte_eth_tap.h
-> @@ -38,9 +38,13 @@ struct queue_stats {
->  	uint64_t packets;
->  	uint64_t bytes;
->  	uint64_t errors;
-> +	uint64_t mac_drops;             /* Packets dropped by MAC filter */
->  };
->  
-> +struct pmd_internals;
-> +
->  struct rx_queue {
-> +	struct pmd_internals *pmd;      /* back-pointer to driver state */
->  	struct rte_mempool *mp;         /* Mempool for RX packets */
->  	uint32_t trigger_seen;          /* Last seen Rx trigger value */
->  	uint16_t in_port;               /* Port ID */
-> @@ -69,7 +73,10 @@ struct pmd_internals {
->  	char name[IFNAMSIZ];		  /* Internal Tap device name */
->  	int type;                         /* Type field - TUN|TAP */
->  	int persist;			  /* 1 if keep link up, else 0 */
-> +	int macfilter;                    /* SW MAC filtering enabled */
->  	struct rte_ether_addr eth_addr;   /* Mac address of the device port */
-> +	struct rte_ether_addr *mc_addrs;  /* multicast address list */
-> +	uint32_t nb_mc_addrs;             /* multicast address count */
->  	unsigned int remote_initial_flags;/* Remote netdevice flags on init */
->  	int remote_if_index;              /* remote netdevice IF_INDEX */
->  	int if_index;                     /* IF_INDEX for the port */
+> +        return max_result
+>
+>      def make_summary(self) -> Counter[Result]:
+>          """Make the summary of the underlying results while ignoring
+> special nodes."""
+> --
+> 2.52.0
+>
+>
 
-TAP should just always do it. TAP should behave like a real NIC.
-Flags should be uint8_t of bool not int.
+--0000000000006d28eb064d6d23b6
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Okay, the implementation makes sense and I see that it wor=
+ks.<div><br></div><div>However, isn&#39;t the whole issue stemming from the=
+ fact that the currently existing get_overall_result() function calls max()=
+ on self.children, and self.children (the result objects) are IntEnum enums=
+ which are ordered in ascending order, starting with PASS, then SKIP, then =
+BLOCK, then FAIL, then ERROR? If we just swap PASS and SKIP, doesn&#39;t th=
+at make the existing logic (using the max() function call) work correctly?<=
+/div><div><br></div><div>I.e. re-order this class:<br><br>class Result(IntE=
+num):<br>=C2=A0 =C2=A0 &quot;&quot;&quot;The possible states that a setup, =
+a teardown or a test case may end up in.&quot;&quot;&quot;<br><br>=C2=A0 =
+=C2=A0 #:<br>=C2=A0 =C2=A0 PASS =3D auto()<br>=C2=A0 =C2=A0 #:<br>=C2=A0 =
+=C2=A0 SKIP =3D auto()<br>=C2=A0 =C2=A0 #:<br>=C2=A0 =C2=A0 BLOCK =3D auto(=
+)<br>=C2=A0 =C2=A0 #:<br>=C2=A0 =C2=A0 FAIL =3D auto()<br>=C2=A0 =C2=A0 #:<=
+br>=C2=A0 =C2=A0 ERROR =3D auto()</div><div><br></div><div><br></div></div>=
+<br><div class=3D"gmail_quote gmail_quote_container"><div dir=3D"ltr" class=
+=3D"gmail_attr">On Fri, Mar 13, 2026 at 2:22=E2=80=AFPM Dean Marx &lt;<a hr=
+ef=3D"mailto:dmarx@iol.unh.edu">dmarx@iol.unh.edu</a>&gt; wrote:<br></div><=
+blockquote class=3D"gmail_quote" style=3D"margin:0px 0px 0px 0.8ex;border-l=
+eft:1px solid rgb(204,204,204);padding-left:1ex">Update overall result of t=
+est suites such that<br>
+when some cases skip and at least one passes,<br>
+the result is a pass instead of a skip. Only<br>
+when all cases skip is the result a skip.<br>
+<br>
+Bugzilla ID: 1899<br>
+<br>
+Signed-off-by: Dean Marx &lt;<a href=3D"mailto:dmarx@iol.unh.edu" target=3D=
+"_blank">dmarx@iol.unh.edu</a>&gt;<br>
+Tested-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu" target=
+=3D"_blank">abailey@iol.unh.edu</a>&gt;<br>
+Reviewed-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu" targe=
+t=3D"_blank">abailey@iol.unh.edu</a>&gt;<br>
+---<br>
+=C2=A0dts/framework/test_result.py | 29 +++++++++++++++++------------<br>
+=C2=A01 file changed, 17 insertions(+), 12 deletions(-)<br>
+<br>
+diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py<br=
+>
+index c6bddc55a9..e05663f90e 100644<br>
+--- a/dts/framework/test_result.py<br>
++++ b/dts/framework/test_result.py<br>
+@@ -187,18 +187,23 @@ def serialize_model(self) -&gt; dict[str, Any]:<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def get_overall_result(self) -&gt; ResultLeaf:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;The overall result of t=
+he underlying results.&quot;&quot;&quot;<br>
+-<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 def extract_result(value: ResultNode | ResultL=
+eaf) -&gt; ResultLeaf:<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 match value:<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 case ResultNode():=
+<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 retu=
+rn value.get_overall_result()<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 case ResultLeaf():=
+<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 retu=
+rn value<br>
+-<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 return max(<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (extract_result(child) for child=
+ in self.children),<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 default=3DResultLeaf(result=3DRe=
+sult.PASS),<br>
+-=C2=A0 =C2=A0 =C2=A0 =C2=A0 )<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 results =3D [<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 child.get_overall_result() if is=
+instance(child, ResultNode) else child<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for child in self.children<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 ]<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 max_result =3D max(results, default=3DResultLe=
+af(result=3DResult.PASS))<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 if max_result.result !=3D Result.SKIP:<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return max_result<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 if any(<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 r.result =3D=3D Result.PASS<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 for child, r in zip(self.childre=
+n, results)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if not (isinstance(child, Result=
+Node) and child.label in self.__ignore_steps)<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 ):<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 return ResultLeaf(result=3DResul=
+t.PASS)<br>
++<br>
++=C2=A0 =C2=A0 =C2=A0 =C2=A0 return max_result<br>
+<br>
+=C2=A0 =C2=A0 =C2=A0def make_summary(self) -&gt; Counter[Result]:<br>
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0&quot;&quot;&quot;Make the summary of the=
+ underlying results while ignoring special nodes.&quot;&quot;&quot;<br>
+-- <br>
+2.52.0<br>
+<br>
+</blockquote></div>
+
+--0000000000006d28eb064d6d23b6--
