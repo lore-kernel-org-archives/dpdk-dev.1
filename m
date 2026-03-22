@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C14FC72AD
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Mar 2026 13:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB26FC72C4
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Mar 2026 13:47:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6038D402EE;
-	Sun, 22 Mar 2026 14:46:55 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 6AFCE4042E;
+	Sun, 22 Mar 2026 14:47:11 +0100 (CET)
 Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
- by mails.dpdk.org (Postfix) with ESMTP id 4C3B5402CC
- for <dev@dpdk.org>; Sun, 22 Mar 2026 14:46:54 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id BFDD94042E
+ for <dev@dpdk.org>; Sun, 22 Mar 2026 14:47:09 +0100 (CET)
 Received: from localhost.localdomain (unknown [78.240.46.143])
  (Authenticated sender: vjardin@free.fr)
- by smtp6-g21.free.fr (Postfix) with ESMTPSA id 646E8780383;
- Sun, 22 Mar 2026 14:46:39 +0100 (CET)
+ by smtp6-g21.free.fr (Postfix) with ESMTPSA id 638E0780375;
+ Sun, 22 Mar 2026 14:46:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1774187214;
- bh=QZ28secaQYW2JpEHtnHD1IRfkZxwakJ76pByFfjGJ08=;
+ s=smtp-20201208; t=1774187229;
+ bh=uTPMJ5mrD1vqvMiVuCLeSez/zb6qSMVCyWjt+CowRK8=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=IgQsQgHGCHSY3dEKcGhure32OE0rKsvlNZMGqBI5P2FJSSb0uQaqxMpDndZO8JGR8
- 3LMcS8i516dXWaVQ9DYQ+Ds/IYO4u2X3YYzbwv8Nq8XN+iGbAWNnkDh/qgz9RusBiy
- IBAmBh4le4RNm1fgRNUzD8zok3vCJkdNfeerP+siqtivPs1vudvjTY3BCGzKrIuxS3
- MgxVExNOpGNhiPkEHoYCqqBd0MkVwtw8eE4OfMWwAfwFYFRKih53qs2KItbajrY51I
- 4f/rDBLa2ujQD9abX4BSTHWpRcwZSTh2EtbBPF6vv70cvIvTIJvoj94oXhUCys3LOG
- CdwOtRxXQGBnA==
+ b=LKyYjsQDapcjga8tlK2C2MIXvdmFFO9oeCwmA00H+8978bsYihENoLLV/kYNMqbUP
+ dB3DhziUok+DLhLFD5kRhXiNwlydgq854FZ61idx+oWP2bUvVu/YySQBt68ERMVWY1
+ TEbuTcX4jfKOPadFSkGzYTstISl3585FpLpMsP507jcZ34OkkHI+gtWQLl7U0zZTZk
+ 3t+gBeYCy3j+haVE9zUn7vwo7wZu9uMPfanVfMc4OVakX0XQdyUnWHsRq7s2z+RfLg
+ pKvo/biF4ssYwKPbQICO8ozxfvs/q0FN8TH80jo/IyVstrvhcvAER+lejjOYmyvTYr
+ 7O2pBTGsUvjRQ==
 From: Vincent Jardin <vjardin@free.fr>
 To: dev@dpdk.org
 Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
@@ -31,15 +31,14 @@ Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
  orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
  stephen@networkplumber.org, aman.deep.singh@intel.com,
  Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v4 00/10] net/mlx5: per-queue Tx rate limiting via packet
- pacing
-Date: Sun, 22 Mar 2026 14:46:19 +0100
-Message-ID: <20260322134629.94633-1-vjardin@free.fr>
+Subject: [PATCH v4 01/10] doc/nics/mlx5: fix stale packet pacing documentation
+Date: Sun, 22 Mar 2026 14:46:20 +0100
+Message-ID: <20260322134629.94633-2-vjardin@free.fr>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260312220120.3256755-1-vjardin@free.fr>
+In-Reply-To: <20260322134629.94633-1-vjardin@free.fr>
 References: <20260312220120.3256755-1-vjardin@free.fr>
+ <20260322134629.94633-1-vjardin@free.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -54,176 +53,206 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+The Tx Scheduling section incorrectly stated that timestamps can only
+be put on the first packet in a burst. The driver actually checks every
+packet's ol_flags for the timestamp dynamic flag and inserts a dedicated
+WAIT WQE per timestamped packet. The eMPW path also breaks batches when
+a timestamped packet is encountered.
 
-This series adds per-queue Tx data-rate limiting to the mlx5 PMD using
-hardware packet pacing (PP), and a symmetric rte_eth_get_queue_rate_limit()
-ethdev API to read back the configured rate.
+Additionally, the ConnectX-7+ wait-on-time capability was only briefly
+mentioned in the tx_pp parameter section with no explanation of how it
+differs from the ConnectX-6 Dx Clock Queue approach.
 
-Each Tx queue can be assigned an individual rate (in Mbps) at runtime via
-rte_eth_set_queue_rate_limit(). The mlx5 implementation allocates a PP
-context per queue from the HW rate table, programs the PP index into the
-SQ via modify_sq, and relies on the kernel to share identical rates
-across PP contexts to conserve table entries. A PMD-specific API exposes
-per-queue PP diagnostics and rate table capacity.
+This patch:
+- Removes the stale first-packet-only limitation
+- Documents both scheduling mechanisms (ConnectX-6 Dx Clock Queue and
+  ConnectX-7+ wait-on-time) with separate requirements tables
+- Clarifies that tx_pp is specific to ConnectX-6 Dx
+- Fixes tx_skew applicability to cover both hardware generations
+- Updates the Send Scheduling Counters intro to reflect that timestamp
+  validation counters also apply to ConnectX-7+ wait-on-time mode
 
-Patch breakdown:
+Fixes: 8f848f32fc24 ("net/mlx5: introduce send scheduling devargs")
 
-  01/10 doc/nics/mlx5: fix stale packet pacing documentation
-  02/10 common/mlx5: query packet pacing rate table capabilities
-  03/10 common/mlx5: extend SQ modify to support rate limit update
-  04/10 net/mlx5: add per-queue packet pacing infrastructure
-  05/10 net/mlx5: support per-queue rate limiting
-  06/10 net/mlx5: add burst pacing devargs
-  07/10 net/mlx5: add testpmd command to query per-queue rate limit
-  08/10 ethdev: add getter for per-queue Tx rate limit
-  09/10 net/mlx5: implement per-queue Tx rate limit getter
-  10/10 net/mlx5: add rate table capacity query API
+Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+Signed-off-by: Vincent Jardin <vjardin@free.fr>
+---
+ doc/guides/nics/mlx5.rst | 109 ++++++++++++++++++++++++++++-----------
+ 1 file changed, 78 insertions(+), 31 deletions(-)
 
-Release notes for the new ethdev API and mlx5 per-queue rate
-limiting can be added to a release_26_07.rst once the file is
-created at the start of the 26.07 development cycle.
-
-Changes since v3:
-
-  Addressed review feedback from Stephen and Slava (nvidia/Mellanox).
-
-  Patch 02/10 (query caps):
-  - Added Acked-by: Viacheslav Ovsiienko
-
-  Patch 03/10 (SQ modify):
-  - Define MLX5_MODIFY_SQ_IN_MODIFY_BITMASK_PACKET_PACING_RATE_LIMIT_INDEX
-    enum in mlx5_prm.h, following the MLX5_MODIFY_RQ_IN_MODIFY_xxx pattern
-  - Use read-modify-write for modify_bitmask (MLX5_GET64 | OR | MLX5_SET64)
-    instead of direct overwrite, for forward compatibility
-
-  Patch 04/10 (PP infrastructure):
-  - Rename struct member and parameters from "rl" to "rate_limit"
-    for consistency with codebase naming style
-  - Replace MLX5_ASSERT(rate_mbps > 0) with runtime check returning
-    -EINVAL in non-debug builds
-  - Move mlx5_txq_free_pp_rate_limit() to after txq_obj_release() in
-    mlx5_txq_release() — destroy the SQ before freeing the PP index
-    it references
-  - Clarify commit message: distinct PP handle per queue (for cleanup)
-    but kernel shares the same pp_id for identical rate parameters
-
-  Patch 05/10 (set rate):
-  - Fix obj->sq vs obj->sq_obj.sq: use obj->sq_obj.sq from the start
-    for non-hairpin queues (was introduced in patch 07 in v3, breaking
-    git bisect)
-  - Move all variable declarations to block top (sq_devx,
-    new_rate_limit)
-  - Add queue state check: reject set_queue_rate_limit if queue is not
-    STARTED (SQ not in RDY state)
-  - Update mlx5 feature matrix: Rate limitation = Y
-  - Add Per-Queue Tx Rate Limiting documentation section in mlx5.rst
-    covering DevX requirement, hardware support, rate table sharing,
-    and testpmd usage
-
-  Patch 06/10 (burst devargs):
-  - Remove burst_upper_bound/typical_packet_size from Clock Queue
-    path (mlx5_txpp_alloc_pp_index) — Clock Queue uses WQE rate
-    pacing and does not need these parameters
-  - Update commit message and documentation accordingly
-
-  Patch 07/10 (testpmd + PMD query):
-  - sq_obj.sq accessor change moved to patch 05 (see above)
-  - sq_devx declaration moved to block top
-
-  Patch 08/10 (ethdev getter) — split from v3 patch 08:
-  - Split into ethdev API (this patch) and mlx5 driver (patch 09)
-  - Add rte_eth_trace_get_queue_rate_limit() trace point matching
-    the existing setter pattern
-
-  Patch 09/10 — NEW (was part of v3 patch 08):
-  - mlx5 driver implementation of get_queue_rate_limit callback,
-    split out per Slava's request
-
-  Patch 10/10 (rate table query):
-  - Rename struct field "used" to "port_used" to clarify per-port
-    scope
-  - Strengthen Doxygen: rate table is a global shared HW resource
-    (firmware, kernel, other DPDK instances may consume entries);
-    port_used is a lower bound
-  - Document PP sharing behavior with flags=0
-  - Note that applications should aggregate across ports for
-    device-wide visibility
-
-Changes since v2:
-
-  Addressed review feedback from Stephen Hemminger:
-
-  Patch 04: cleaned redundant cast parentheses on (struct mlx5dv_pp *)
-  Patch 04: consolidated dv_alloc_pp call onto one line
-  Patch 05+08: removed redundant queue_idx bounds checks from driver
-    callbacks — ethdev layer is the single validation point
-  Patch 07: added generic testpmd command: show port <id> queue <id> rate
-  Patch 08+10: removed release notes from release_26_03.rst (targets 26.07)
-  Patch 10: use MLX5_MEM_SYS | MLX5_MEM_ZERO for heap allocation
-  Patch 10: consolidated packet_pacing_rate_table_size onto one line
-
-Changes since v1:
-
-  Patch 01: Acked-by Viacheslav Ovsiienko
-  Patch 04: rate bounds validation, uint64_t overflow fix, remove
-    early PP free
-  Patch 05: PP leak fix (temp struct pattern), rte_errno in error paths
-  Patch 07: inverted rte_eth_tx_queue_is_valid() check
-  Patch 10: stack array replaced with heap, per-port scope documented
-
-Testing:
-
-  - Build: GCC, no warnings
-  - Hardware: ConnectX-6 Dx
-  - DevX path (default): set/get/disable rate limiting verified
-  - Verbs path (dv_flow_en=0): returns -EINVAL cleanly (SQ DevX
-    object not available), no crash
-
-Vincent Jardin (10):
-  doc/nics/mlx5: fix stale packet pacing documentation
-  common/mlx5: query packet pacing rate table capabilities
-  common/mlx5: extend SQ modify to support rate limit update
-  net/mlx5: add per-queue packet pacing infrastructure
-  net/mlx5: support per-queue rate limiting
-  net/mlx5: add burst pacing devargs
-  net/mlx5: add testpmd command to query per-queue rate limit
-  ethdev: add getter for per-queue Tx rate limit
-  net/mlx5: implement per-queue Tx rate limit getter
-  net/mlx5: add rate table capacity query API
-
-Vincent Jardin (10):
-  doc/nics/mlx5: fix stale packet pacing documentation
-  common/mlx5: query packet pacing rate table capabilities
-  common/mlx5: extend SQ modify to support rate limit update
-  net/mlx5: add per-queue packet pacing infrastructure
-  net/mlx5: support per-queue rate limiting
-  net/mlx5: add burst pacing devargs
-  net/mlx5: add testpmd command to query per-queue rate limit
-  ethdev: add getter for per-queue Tx rate limit
-  net/mlx5: implement per-queue Tx rate limit getter
-  net/mlx5: add rate table capacity query API
-
- app/test-pmd/cmdline.c               |  69 ++++++++++
- doc/guides/nics/features/mlx5.ini    |   1 +
- doc/guides/nics/mlx5.rst             | 180 ++++++++++++++++++++++-----
- drivers/common/mlx5/mlx5_devx_cmds.c |  23 ++++
- drivers/common/mlx5/mlx5_devx_cmds.h |  14 ++-
- drivers/common/mlx5/mlx5_prm.h       |   7 ++
- drivers/net/mlx5/mlx5.c              |  46 +++++++
- drivers/net/mlx5/mlx5.h              |  13 ++
- drivers/net/mlx5/mlx5_testpmd.c      |  93 ++++++++++++++
- drivers/net/mlx5/mlx5_tx.c           | 104 +++++++++++++++-
- drivers/net/mlx5/mlx5_tx.h           |   5 +
- drivers/net/mlx5/mlx5_txpp.c         |  84 +++++++++++++
- drivers/net/mlx5/mlx5_txq.c          | 149 ++++++++++++++++++++++
- drivers/net/mlx5/rte_pmd_mlx5.h      |  74 +++++++++++
- lib/ethdev/ethdev_driver.h           |   7 ++
- lib/ethdev/ethdev_trace.h            |   9 ++
- lib/ethdev/ethdev_trace_points.c     |   3 +
- lib/ethdev/rte_ethdev.c              |  35 ++++++
- lib/ethdev/rte_ethdev.h              |  24 ++++
- 19 files changed, 906 insertions(+), 33 deletions(-)
-
+diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
+index 9dcc93cc23..6bb8c07353 100644
+--- a/doc/guides/nics/mlx5.rst
++++ b/doc/guides/nics/mlx5.rst
+@@ -553,27 +553,32 @@ for an additional list of options shared with other mlx5 drivers.
+ 
+ - ``tx_pp`` parameter [int]
+ 
++  This parameter applies to **ConnectX-6 Dx** only.
+   If a nonzero value is specified the driver creates all necessary internal
+-  objects to provide accurate packet send scheduling on mbuf timestamps.
++  objects (Clock Queue and Rearm Queue) to provide accurate packet send
++  scheduling on mbuf timestamps using a cross-channel approach.
+   The positive value specifies the scheduling granularity in nanoseconds,
+   the packet send will be accurate up to specified digits. The allowed range is
+   from 500 to 1 million of nanoseconds. The negative value specifies the module
+   of granularity and engages the special test mode the check the schedule rate.
+   By default (if the ``tx_pp`` is not specified) send scheduling on timestamps
+-  feature is disabled.
++  feature is disabled on ConnectX-6 Dx.
+ 
+-  Starting with ConnectX-7 the capability to schedule traffic directly
+-  on timestamp specified in descriptor is provided,
+-  no extra objects are needed anymore and scheduling capability
+-  is advertised and handled regardless ``tx_pp`` parameter presence.
++  Starting with **ConnectX-7** the hardware provides a native wait-on-time
++  capability that inserts the scheduling delay directly in the WQE descriptor.
++  No Clock Queue or Rearm Queue is needed and the ``tx_pp`` parameter is not
++  required. The driver automatically advertises send scheduling support when
++  the HCA wait-on-time capability is detected. The ``tx_skew`` parameter can
++  still be used on ConnectX-7 and above to compensate for wire delay.
+ 
+ - ``tx_skew`` parameter [int]
+ 
+   The parameter adjusts the send packet scheduling on timestamps and represents
+   the average delay between beginning of the transmitting descriptor processing
+   by the hardware and appearance of actual packet data on the wire. The value
+-  should be provided in nanoseconds and is valid only if ``tx_pp`` parameter is
+-  specified. The default value is zero.
++  should be provided in nanoseconds and applies to both ConnectX-6 Dx
++  (with ``tx_pp``) and ConnectX-7+ (wait-on-time) scheduling modes.
++  The default value is zero.
+ 
+ - ``tx_vec_en`` parameter [int]
+ 
+@@ -883,9 +888,13 @@ Send Scheduling Counters
+ 
+ The mlx5 PMD provides a comprehensive set of counters designed for
+ debugging and diagnostics related to packet scheduling during transmission.
+-These counters are applicable only if the port was configured with the ``tx_pp`` devarg
+-and reflect the status of the PMD scheduling infrastructure
+-based on Clock and Rearm Queues, used as a workaround on ConnectX-6 DX NICs.
++The first group of counters (prefixed ``tx_pp_``) reflects the status of the
++Clock Queue and Rearm Queue infrastructure used on ConnectX-6 Dx and is
++applicable only if the port was configured with the ``tx_pp`` devarg.
++The timestamp validation counters
++(``tx_pp_timestamp_past_errors``, ``tx_pp_timestamp_future_errors``,
++``tx_pp_timestamp_order_errors``) are also reported on ConnectX-7 and above
++in wait-on-time mode, without requiring ``tx_pp``.
+ 
+ ``tx_pp_missed_interrupt_errors``
+   Indicates that the Rearm Queue interrupt was not serviced on time.
+@@ -1969,31 +1978,54 @@ Limitations
+ Tx Scheduling
+ ~~~~~~~~~~~~~
+ 
+-When PMD sees the ``RTE_MBUF_DYNFLAG_TX_TIMESTAMP_NAME`` set on the packet
+-being sent it tries to synchronize the time of packet appearing on
+-the wire with the specified packet timestamp. If the specified one
+-is in the past it should be ignored, if one is in the distant future
+-it should be capped with some reasonable value (in range of seconds).
+-These specific cases ("too late" and "distant future") can be optionally
+-reported via device xstats to assist applications to detect the
+-time-related problems.
+-
+-The timestamp upper "too-distant-future" limit
+-at the moment of invoking the Tx burst routine
+-can be estimated as ``tx_pp`` option (in nanoseconds) multiplied by 2^23.
++When the PMD sees ``RTE_MBUF_DYNFLAG_TX_TIMESTAMP_NAME`` set on a packet
++being sent it inserts a dedicated WAIT WQE to synchronize the time of the
++packet appearing on the wire with the specified timestamp. Every packet
++in a burst that carries the timestamp dynamic flag is individually
++scheduled -- there is no restriction to the first packet only.
++
++If the specified timestamp is in the past, the packet is sent immediately.
++If it is in the distant future it should be capped with some reasonable
++value (in range of seconds). These specific cases ("too late" and
++"distant future") can be optionally reported via device xstats to assist
++applications to detect time-related problems.
++
++The eMPW (enhanced Multi-Packet Write) data path automatically breaks
++the batch when a timestamped packet is encountered, ensuring each
++scheduled packet gets its own WAIT WQE.
++
++Two hardware mechanisms are supported:
++
++**ConnectX-6 Dx -- Clock Queue (cross-channel)**
++   The driver creates a Clock Queue and a Rearm Queue that together
++   provide a time reference for scheduling. This mode requires the
++   :ref:`tx_pp <mlx5_tx_pp_param>` devarg. The timestamp upper
++   "too-distant-future" limit at the moment of invoking the Tx burst
++   routine can be estimated as ``tx_pp`` (in nanoseconds) multiplied
++   by 2^23.
++
++**ConnectX-7 and above -- wait-on-time**
++   The hardware supports placing the scheduling delay directly inside
++   the WQE descriptor. No Clock Queue or Rearm Queue is needed and the
++   ``tx_pp`` devarg is **not** required. The driver automatically
++   advertises send scheduling support when the HCA wait-on-time
++   capability is detected.
++
+ Please note, for the testpmd txonly mode,
+ the limit is deduced from the expression::
+ 
+    (n_tx_descriptors / burst_size + 1) * inter_burst_gap
+ 
+-There is no any packet reordering according timestamps is supposed,
+-neither within packet burst, nor between packets, it is an entirely
+-application responsibility to generate packets and its timestamps
+-in desired order.
++There is no packet reordering according to timestamps,
++neither within a packet burst, nor between packets. It is entirely the
++application's responsibility to generate packets and their timestamps
++in the desired order.
+ 
+ Requirements
+ ^^^^^^^^^^^^
+ 
++ConnectX-6 Dx (Clock Queue mode):
++
+ =========  =============
+ Minimum    Version
+ =========  =============
+@@ -2005,20 +2037,35 @@ rdma-core
+ DPDK       20.08
+ =========  =============
+ 
++ConnectX-7 and above (wait-on-time mode):
++
++=========  =============
++Minimum    Version
++=========  =============
++hardware   ConnectX-7
++=========  =============
++
+ Firmware configuration
+ ^^^^^^^^^^^^^^^^^^^^^^
+ 
+ Runtime configuration
+ ^^^^^^^^^^^^^^^^^^^^^
+ 
+-To provide the packet send scheduling on mbuf timestamps the ``tx_pp``
+-parameter should be specified.
++**ConnectX-6 Dx**: the :ref:`tx_pp <mlx5_tx_pp_param>` parameter must be
++specified to enable send scheduling on mbuf timestamps.
++
++**ConnectX-7+**: no devarg is required. Send scheduling is automatically
++enabled when the HCA reports the wait-on-time capability.
++
++On both hardware generations the ``tx_skew`` parameter can be used to
++compensate for the delay between descriptor processing and actual wire
++time.
+ 
+ Limitations
+ ^^^^^^^^^^^
+ 
+-#. The timestamps can be put only in the first packet
+-   in the burst providing the entire burst scheduling.
++#. On ConnectX-6 Dx (Clock Queue mode) timestamps too far in the future
++   are capped (see the ``tx_pp`` x 2^23 limit above).
+ 
+ 
+ .. _mlx5_tx_inline:
 -- 
 2.43.0
 
