@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB26FC72C4
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Mar 2026 13:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 422F1FC72AD
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Mar 2026 13:47:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6AFCE4042E;
-	Sun, 22 Mar 2026 14:47:11 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5A12D40609;
+	Sun, 22 Mar 2026 14:47:26 +0100 (CET)
 Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
- by mails.dpdk.org (Postfix) with ESMTP id BFDD94042E
- for <dev@dpdk.org>; Sun, 22 Mar 2026 14:47:09 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 36249402CC
+ for <dev@dpdk.org>; Sun, 22 Mar 2026 14:47:25 +0100 (CET)
 Received: from localhost.localdomain (unknown [78.240.46.143])
  (Authenticated sender: vjardin@free.fr)
- by smtp6-g21.free.fr (Postfix) with ESMTPSA id 638E0780375;
- Sun, 22 Mar 2026 14:46:54 +0100 (CET)
+ by smtp6-g21.free.fr (Postfix) with ESMTPSA id EDBE678034E;
+ Sun, 22 Mar 2026 14:47:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1774187229;
- bh=uTPMJ5mrD1vqvMiVuCLeSez/zb6qSMVCyWjt+CowRK8=;
+ s=smtp-20201208; t=1774187245;
+ bh=ROIZ1bmUjO1vEYjWU8tijgLg+dSMXRJ5GGDHrdUJh/0=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=LKyYjsQDapcjga8tlK2C2MIXvdmFFO9oeCwmA00H+8978bsYihENoLLV/kYNMqbUP
- dB3DhziUok+DLhLFD5kRhXiNwlydgq854FZ61idx+oWP2bUvVu/YySQBt68ERMVWY1
- TEbuTcX4jfKOPadFSkGzYTstISl3585FpLpMsP507jcZ34OkkHI+gtWQLl7U0zZTZk
- 3t+gBeYCy3j+haVE9zUn7vwo7wZu9uMPfanVfMc4OVakX0XQdyUnWHsRq7s2z+RfLg
- pKvo/biF4ssYwKPbQICO8ozxfvs/q0FN8TH80jo/IyVstrvhcvAER+lejjOYmyvTYr
- 7O2pBTGsUvjRQ==
+ b=L0z7qK+CHvUSqGS6SuWN1LXEOHJFw+9oXqc8TfgRMeBTKbse4yDxrUOBk9AWdcqqt
+ 7xS33ag/5LZh0X/4iQk4vRX/0K1ELzQf7+iB5EvlcU325CNN1dXl7Sp2WlUNw57uyl
+ IhYtPMArzQOPpqPAsGvG8I+S09cD6zrWpuqQRXhikZ5jpgTs2GSuPzi94nlORUqAIJ
+ AJLDRRqAgG2/ZCONA7ICeLULE/pvvBdi95COKYO6x7a9VRChrLCVCKyF+DEYlYWQxy
+ iJqHNo2ALLptiWo9mcDvU9zhybr51tiovxWIq3K9qGzUkWIGZPyojvt025QEEDRzwB
+ o6rpLW9YF720Q==
 From: Vincent Jardin <vjardin@free.fr>
 To: dev@dpdk.org
 Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
@@ -31,9 +31,10 @@ Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
  orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
  stephen@networkplumber.org, aman.deep.singh@intel.com,
  Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v4 01/10] doc/nics/mlx5: fix stale packet pacing documentation
-Date: Sun, 22 Mar 2026 14:46:20 +0100
-Message-ID: <20260322134629.94633-2-vjardin@free.fr>
+Subject: [PATCH v4 02/10] common/mlx5: query packet pacing rate table
+ capabilities
+Date: Sun, 22 Mar 2026 14:46:21 +0100
+Message-ID: <20260322134629.94633-3-vjardin@free.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260322134629.94633-1-vjardin@free.fr>
 References: <20260312220120.3256755-1-vjardin@free.fr>
@@ -53,206 +54,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The Tx Scheduling section incorrectly stated that timestamps can only
-be put on the first packet in a burst. The driver actually checks every
-packet's ol_flags for the timestamp dynamic flag and inserts a dedicated
-WAIT WQE per timestamped packet. The eMPW path also breaks batches when
-a timestamped packet is encountered.
+Query additional QoS packet pacing capabilities from HCA attributes:
+- packet_pacing_burst_bound: HW supports burst_upper_bound parameter
+- packet_pacing_typical_size: HW supports typical_packet_size parameter
+- packet_pacing_max_rate / packet_pacing_min_rate: rate range in kbps
+- packet_pacing_rate_table_size: number of HW rate table entries
 
-Additionally, the ConnectX-7+ wait-on-time capability was only briefly
-mentioned in the tx_pp parameter section with no explanation of how it
-differs from the ConnectX-6 Dx Clock Queue approach.
+These capabilities are needed by the upcoming per-queue rate limiting
+feature to validate devarg values and report HW limits.
 
-This patch:
-- Removes the stale first-packet-only limitation
-- Documents both scheduling mechanisms (ConnectX-6 Dx Clock Queue and
-  ConnectX-7+ wait-on-time) with separate requirements tables
-- Clarifies that tx_pp is specific to ConnectX-6 Dx
-- Fixes tx_skew applicability to cover both hardware generations
-- Updates the Send Scheduling Counters intro to reflect that timestamp
-  validation counters also apply to ConnectX-7+ wait-on-time mode
+Supported hardware:
+- ConnectX-6 Dx and later (different boards expose different subsets)
+- ConnectX-5 reports packet_pacing but not all extended fields
+- ConnectX-7/8 report the full capability set
+- BlueField-2 and later DPUs also report these capabilities
 
-Fixes: 8f848f32fc24 ("net/mlx5: introduce send scheduling devargs")
+Not supported:
+- ConnectX-4 Lx and earlier (no packet_pacing capability at all)
+- ConnectX-5 Ex may not report burst_bound or typical_size
 
-Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
 Signed-off-by: Vincent Jardin <vjardin@free.fr>
+Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
 ---
- doc/guides/nics/mlx5.rst | 109 ++++++++++++++++++++++++++++-----------
- 1 file changed, 78 insertions(+), 31 deletions(-)
+ drivers/common/mlx5/mlx5_devx_cmds.c | 15 +++++++++++++++
+ drivers/common/mlx5/mlx5_devx_cmds.h | 11 ++++++++++-
+ 2 files changed, 25 insertions(+), 1 deletion(-)
 
-diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
-index 9dcc93cc23..6bb8c07353 100644
---- a/doc/guides/nics/mlx5.rst
-+++ b/doc/guides/nics/mlx5.rst
-@@ -553,27 +553,32 @@ for an additional list of options shared with other mlx5 drivers.
- 
- - ``tx_pp`` parameter [int]
- 
-+  This parameter applies to **ConnectX-6 Dx** only.
-   If a nonzero value is specified the driver creates all necessary internal
--  objects to provide accurate packet send scheduling on mbuf timestamps.
-+  objects (Clock Queue and Rearm Queue) to provide accurate packet send
-+  scheduling on mbuf timestamps using a cross-channel approach.
-   The positive value specifies the scheduling granularity in nanoseconds,
-   the packet send will be accurate up to specified digits. The allowed range is
-   from 500 to 1 million of nanoseconds. The negative value specifies the module
-   of granularity and engages the special test mode the check the schedule rate.
-   By default (if the ``tx_pp`` is not specified) send scheduling on timestamps
--  feature is disabled.
-+  feature is disabled on ConnectX-6 Dx.
- 
--  Starting with ConnectX-7 the capability to schedule traffic directly
--  on timestamp specified in descriptor is provided,
--  no extra objects are needed anymore and scheduling capability
--  is advertised and handled regardless ``tx_pp`` parameter presence.
-+  Starting with **ConnectX-7** the hardware provides a native wait-on-time
-+  capability that inserts the scheduling delay directly in the WQE descriptor.
-+  No Clock Queue or Rearm Queue is needed and the ``tx_pp`` parameter is not
-+  required. The driver automatically advertises send scheduling support when
-+  the HCA wait-on-time capability is detected. The ``tx_skew`` parameter can
-+  still be used on ConnectX-7 and above to compensate for wire delay.
- 
- - ``tx_skew`` parameter [int]
- 
-   The parameter adjusts the send packet scheduling on timestamps and represents
-   the average delay between beginning of the transmitting descriptor processing
-   by the hardware and appearance of actual packet data on the wire. The value
--  should be provided in nanoseconds and is valid only if ``tx_pp`` parameter is
--  specified. The default value is zero.
-+  should be provided in nanoseconds and applies to both ConnectX-6 Dx
-+  (with ``tx_pp``) and ConnectX-7+ (wait-on-time) scheduling modes.
-+  The default value is zero.
- 
- - ``tx_vec_en`` parameter [int]
- 
-@@ -883,9 +888,13 @@ Send Scheduling Counters
- 
- The mlx5 PMD provides a comprehensive set of counters designed for
- debugging and diagnostics related to packet scheduling during transmission.
--These counters are applicable only if the port was configured with the ``tx_pp`` devarg
--and reflect the status of the PMD scheduling infrastructure
--based on Clock and Rearm Queues, used as a workaround on ConnectX-6 DX NICs.
-+The first group of counters (prefixed ``tx_pp_``) reflects the status of the
-+Clock Queue and Rearm Queue infrastructure used on ConnectX-6 Dx and is
-+applicable only if the port was configured with the ``tx_pp`` devarg.
-+The timestamp validation counters
-+(``tx_pp_timestamp_past_errors``, ``tx_pp_timestamp_future_errors``,
-+``tx_pp_timestamp_order_errors``) are also reported on ConnectX-7 and above
-+in wait-on-time mode, without requiring ``tx_pp``.
- 
- ``tx_pp_missed_interrupt_errors``
-   Indicates that the Rearm Queue interrupt was not serviced on time.
-@@ -1969,31 +1978,54 @@ Limitations
- Tx Scheduling
- ~~~~~~~~~~~~~
- 
--When PMD sees the ``RTE_MBUF_DYNFLAG_TX_TIMESTAMP_NAME`` set on the packet
--being sent it tries to synchronize the time of packet appearing on
--the wire with the specified packet timestamp. If the specified one
--is in the past it should be ignored, if one is in the distant future
--it should be capped with some reasonable value (in range of seconds).
--These specific cases ("too late" and "distant future") can be optionally
--reported via device xstats to assist applications to detect the
--time-related problems.
+diff --git a/drivers/common/mlx5/mlx5_devx_cmds.c b/drivers/common/mlx5/mlx5_devx_cmds.c
+index d12ebf8487..8f53303fa7 100644
+--- a/drivers/common/mlx5/mlx5_devx_cmds.c
++++ b/drivers/common/mlx5/mlx5_devx_cmds.c
+@@ -1244,6 +1244,21 @@ mlx5_devx_cmd_query_hca_attr(void *ctx,
+ 				MLX5_GET(qos_cap, hcattr, packet_pacing);
+ 		attr->qos.wqe_rate_pp =
+ 				MLX5_GET(qos_cap, hcattr, wqe_rate_pp);
++		attr->qos.packet_pacing_burst_bound =
++				MLX5_GET(qos_cap, hcattr,
++					packet_pacing_burst_bound);
++		attr->qos.packet_pacing_typical_size =
++				MLX5_GET(qos_cap, hcattr,
++					packet_pacing_typical_size);
++		attr->qos.packet_pacing_max_rate =
++				MLX5_GET(qos_cap, hcattr,
++					packet_pacing_max_rate);
++		attr->qos.packet_pacing_min_rate =
++				MLX5_GET(qos_cap, hcattr,
++					packet_pacing_min_rate);
++		attr->qos.packet_pacing_rate_table_size =
++				MLX5_GET(qos_cap, hcattr,
++					packet_pacing_rate_table_size);
+ 		if (attr->qos.flow_meter_aso_sup) {
+ 			attr->qos.log_meter_aso_granularity =
+ 				MLX5_GET(qos_cap, hcattr,
+diff --git a/drivers/common/mlx5/mlx5_devx_cmds.h b/drivers/common/mlx5/mlx5_devx_cmds.h
+index da50fc686c..930ae2c072 100644
+--- a/drivers/common/mlx5/mlx5_devx_cmds.h
++++ b/drivers/common/mlx5/mlx5_devx_cmds.h
+@@ -67,7 +67,16 @@ struct mlx5_hca_qos_attr {
+ 	/* Power of the maximum allocation granularity Object. */
+ 	uint32_t log_max_num_meter_aso:5;
+ 	/* Power of the maximum number of supported objects. */
 -
--The timestamp upper "too-distant-future" limit
--at the moment of invoking the Tx burst routine
--can be estimated as ``tx_pp`` option (in nanoseconds) multiplied by 2^23.
-+When the PMD sees ``RTE_MBUF_DYNFLAG_TX_TIMESTAMP_NAME`` set on a packet
-+being sent it inserts a dedicated WAIT WQE to synchronize the time of the
-+packet appearing on the wire with the specified timestamp. Every packet
-+in a burst that carries the timestamp dynamic flag is individually
-+scheduled -- there is no restriction to the first packet only.
-+
-+If the specified timestamp is in the past, the packet is sent immediately.
-+If it is in the distant future it should be capped with some reasonable
-+value (in range of seconds). These specific cases ("too late" and
-+"distant future") can be optionally reported via device xstats to assist
-+applications to detect time-related problems.
-+
-+The eMPW (enhanced Multi-Packet Write) data path automatically breaks
-+the batch when a timestamped packet is encountered, ensuring each
-+scheduled packet gets its own WAIT WQE.
-+
-+Two hardware mechanisms are supported:
-+
-+**ConnectX-6 Dx -- Clock Queue (cross-channel)**
-+   The driver creates a Clock Queue and a Rearm Queue that together
-+   provide a time reference for scheduling. This mode requires the
-+   :ref:`tx_pp <mlx5_tx_pp_param>` devarg. The timestamp upper
-+   "too-distant-future" limit at the moment of invoking the Tx burst
-+   routine can be estimated as ``tx_pp`` (in nanoseconds) multiplied
-+   by 2^23.
-+
-+**ConnectX-7 and above -- wait-on-time**
-+   The hardware supports placing the scheduling delay directly inside
-+   the WQE descriptor. No Clock Queue or Rearm Queue is needed and the
-+   ``tx_pp`` devarg is **not** required. The driver automatically
-+   advertises send scheduling support when the HCA wait-on-time
-+   capability is detected.
-+
- Please note, for the testpmd txonly mode,
- the limit is deduced from the expression::
++	uint32_t packet_pacing_burst_bound:1;
++	/* HW supports burst_upper_bound PP parameter. */
++	uint32_t packet_pacing_typical_size:1;
++	/* HW supports typical_packet_size PP parameter. */
++	uint32_t packet_pacing_max_rate;
++	/* Maximum supported pacing rate in kbps. */
++	uint32_t packet_pacing_min_rate;
++	/* Minimum supported pacing rate in kbps. */
++	uint16_t packet_pacing_rate_table_size;
++	/* Number of entries in the HW rate table. */
+ };
  
-    (n_tx_descriptors / burst_size + 1) * inter_burst_gap
- 
--There is no any packet reordering according timestamps is supposed,
--neither within packet burst, nor between packets, it is an entirely
--application responsibility to generate packets and its timestamps
--in desired order.
-+There is no packet reordering according to timestamps,
-+neither within a packet burst, nor between packets. It is entirely the
-+application's responsibility to generate packets and their timestamps
-+in the desired order.
- 
- Requirements
- ^^^^^^^^^^^^
- 
-+ConnectX-6 Dx (Clock Queue mode):
-+
- =========  =============
- Minimum    Version
- =========  =============
-@@ -2005,20 +2037,35 @@ rdma-core
- DPDK       20.08
- =========  =============
- 
-+ConnectX-7 and above (wait-on-time mode):
-+
-+=========  =============
-+Minimum    Version
-+=========  =============
-+hardware   ConnectX-7
-+=========  =============
-+
- Firmware configuration
- ^^^^^^^^^^^^^^^^^^^^^^
- 
- Runtime configuration
- ^^^^^^^^^^^^^^^^^^^^^
- 
--To provide the packet send scheduling on mbuf timestamps the ``tx_pp``
--parameter should be specified.
-+**ConnectX-6 Dx**: the :ref:`tx_pp <mlx5_tx_pp_param>` parameter must be
-+specified to enable send scheduling on mbuf timestamps.
-+
-+**ConnectX-7+**: no devarg is required. Send scheduling is automatically
-+enabled when the HCA reports the wait-on-time capability.
-+
-+On both hardware generations the ``tx_skew`` parameter can be used to
-+compensate for the delay between descriptor processing and actual wire
-+time.
- 
- Limitations
- ^^^^^^^^^^^
- 
--#. The timestamps can be put only in the first packet
--   in the burst providing the entire burst scheduling.
-+#. On ConnectX-6 Dx (Clock Queue mode) timestamps too far in the future
-+   are capped (see the ``tx_pp`` x 2^23 limit above).
- 
- 
- .. _mlx5_tx_inline:
+ struct mlx5_hca_vdpa_attr {
 -- 
 2.43.0
 
