@@ -2,72 +2,100 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860391094481
-	for <dpdk-dev@archiver.kernel.org>; Sat, 21 Mar 2026 23:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E40FC72B9
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Mar 2026 10:25:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 558D640280;
-	Sun, 22 Mar 2026 00:21:04 +0100 (CET)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id 5226D400D7
- for <dev@dpdk.org>; Sun, 22 Mar 2026 00:21:01 +0100 (CET)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-2b6b0500e06so3467525eec.1
- for <dev@dpdk.org>; Sat, 21 Mar 2026 16:21:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774135260;
- x=1774740060; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=TYcvxJYdUCHbONmt65reyAveAVYExJL/YzxnayiYc1g=;
- b=nHkKA/60gD4y8otH9Mz41wqR5si23SB2S36M92jRHJpFtspIaNMVn9sp/ZH8J1CfHi
- wUkxQoIYnZz34BB/Q2KW7q2m/RA/AXdU2xRR8oqMUTIVJEiQuDBlKteLe8ez7NjRGpMx
- 2SooMM/GD/TeX3swNGpAOMj10mGn1Ol4Vzh5xSaRZx25Sps/4LYEtBtx3pUgDgVTRH4J
- E6Ax8RQ3i2y91DAf1JkknsGy8szoI9uQntBymJFFHpq1hIayju9Y1Me/1WHq6E0HCHNW
- 5oKrvvFfeusaAX2L8tjoKGmlYE5MH6B+8fhCUM4tzAKYVmUr/o/D0Ep2mkv3VfJkhi3y
- DOHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774135260; x=1774740060;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=TYcvxJYdUCHbONmt65reyAveAVYExJL/YzxnayiYc1g=;
- b=S7NN2XKSxCr4vB57ZwjoaPm2aRmp2/qf5JP1FrJYQNcn/fo1cMW/gLGtpTsj+Gr2kU
- b2jb1vYMp90+B1UamwAiNndU6VVt188Ajw9/cmHcEODH3k9rVkvoOsyypwVENU48BxOD
- PwTFI/HqUh+h52A8KkGkLh9/4XHuFvKJ/c54Vo3GGsi/6IbYEumkjEn/dWQkFSbywtC/
- WnrgSmViK4LMFyBOuj0kMpciv588AOSpIadYk4uUYM0+WMKR2jt4BxelWhAFDgJSn+qm
- lC30eoQPpWTzjQDTXnmXf1f47D94CPBng0BS8hxHoIYlTV/obl561B4lqyNJUPCrzENc
- Zohw==
-X-Gm-Message-State: AOJu0YxlrR2Ou+IKJp9C/9yFxv1+pTv10Nu9/n9yM4g/U87qqaYEltIp
- SZ/2y8La2bDH3i0r0rhaV2iimE+RrhyCU9sq3dj4aucDlJYvkTIt/tvtcm17Cf3hPL8Lfk0bnKN
- TWHJI
-X-Gm-Gg: ATEYQzxv4et8Jz/I7fGcLxCiZi/bMth63CaR8ph4LsgehsrLWQiRn94HJxtfT5AZVCH
- ZcZ/gbmDCC1qZEfP8zl0cVntTXmC5tZwEWMVLkfRZSz6Uni4oM3xkCqPOIalnPTTa9iM20yOlLc
- 2rVRoObGAs9SL8Fl3vK+7xy6lAiFj5Q3imE5EV+FEYAuKbQFIgZPgGbKPzjaSj4DSwa5a7omvl1
- xbYgRr8QmDkij8bChWb4SM6GkrziKHDN97VEXAl+iKR8kQnco1RYOQqTCM7CHj7VakXcTa/+X76
- 3cvMyiEvV+WwpHalzvZWl7OS0zYeEq9mtGY16KP8NCKk1K6VkDUEUKHkD/FoTXW4SYns7DXlWRk
- nbYKJe3Up20O1m7/98bH1lupvMZuSfxc5rc7V2p8QnVDpjR268QVlc7cJVejg63vyhEU5JmZVkM
- AXZIiGae7s2HTKbj5tYSgRIretAirnRIQb0BU=
-X-Received: by 2002:a05:693c:3106:b0:2b7:b7e7:9025 with SMTP id
- 5a478bee46e88-2c10980a36dmr3417948eec.31.1774135260119; 
- Sat, 21 Mar 2026 16:21:00 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2c10b2d01f7sm8124547eec.23.2026.03.21.16.20.59
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 21 Mar 2026 16:20:59 -0700 (PDT)
-Date: Sat, 21 Mar 2026 16:20:57 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH dpdk v3] net/tap: add software MAC address filtering
-Message-ID: <20260321162057.09dbd5fc@phoenix.local>
-In-Reply-To: <20260321144840.863746-2-rjarry@redhat.com>
-References: <20260319221034.703656-2-rjarry@redhat.com>
- <20260321144840.863746-2-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DACD2402EE;
+	Sun, 22 Mar 2026 11:25:26 +0100 (CET)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11013030.outbound.protection.outlook.com
+ [40.93.196.30]) by mails.dpdk.org (Postfix) with ESMTP id BF5D5402CC
+ for <dev@dpdk.org>; Sun, 22 Mar 2026 11:25:25 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pYzKtBIdZxZ0mIcXQnsevMgP02O+/kK2fwrgZq06ZDAnmGGDJKE4uufnpTsjVdoELO81eJuywZ5FamzG2cHTdoUSfBJtQ28IbQhfDKLbO6mxEYxC2j+h3ESG7tCMulqyt2p5qsPBNZTDx97FAt97RfmWlbtX5lYgydV/mS3Vhtmh9rqd0aC1L2XfXPqWUEItyazifzpW6vIK1XhKgwUUpJSQU+RJF0dLFrnvYyZrzNNwG22GvLkSR0Ticlw8CiLm2AnVDeljALmPDj8GLQdP+QGR7UUa8NtYNZLp7u1/y+gs7xcUohk9q9jcEMpdxyGk2juFGNqOi0Q8ddx3Iz+9kw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rw3YhU+z1pCqOd9cVxyfIUztTfKRjO1Dtn/PGxdjyRQ=;
+ b=RRgZIeAS2UlCmUAQcG1vtX9GX4V1+k1k5Yk7kIbzAkB/9sCK0yG1ZtIIz22k8bPLSqVnu3BugLplBcih0qh5YDPIFMXhL4b/uEJFVZFJoWL5Ve6OCJb1gGSqbSHh2K/fCIhL7iGG9weDyXyTlg2z29ln1IPbkdwgKICUoYBwFWoLJDKqc5tGtcej8qlTm2HNpndZrZxDR6ganTJVvE2p54+BD3Bfsow9eVkrTQvuGoTUCM1njRaNmPRFlyj6/EDs/QLP2GF409xfHqbKUy+p0R8XxDARlSluNByvNay2jsEFta7Fbb/OlJe5q+sB8BBcjAayPiTsHP6P4P2QqpymKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rw3YhU+z1pCqOd9cVxyfIUztTfKRjO1Dtn/PGxdjyRQ=;
+ b=tLKU3sYLa8c/c4RuhfErlKh6F7ylNMpfZb+Q8ZR7dNLUSAEoiUZNupggqkhCAfMbtnmcSKHPoKxPCdP5WsDIJC++CxMtxH8JQFrTIEi0tPvXoV5sddiAzHT2gEWgLtAVoE8izanm1iqKJJe4fU7Te4uoJ870nXFKzoWpqgUvEzrBrdVe+mFZwax6Kybk9I7Mk+CuwQi4bwo9z1JqP5SyJVqHP5gYUyjeLSTkYS/viMIwHrIXdCs25pAWzjQigJ7UJ0XSRjqMe/15CD0yLihYGbuEyRPGJdP0XglYK3f9/LvEFTK2JbUg4R3RPUfYtrNE81yDcxmgibVcT3Nf6WcYVQ==
+Received: from PH7P220CA0136.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:327::8)
+ by DS0PR12MB7826.namprd12.prod.outlook.com (2603:10b6:8:148::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.15; Sun, 22 Mar
+ 2026 10:25:22 +0000
+Received: from MW1PEPF00016159.namprd21.prod.outlook.com
+ (2603:10b6:510:327::4) by PH7P220CA0136.outlook.office365.com
+ (2603:10b6:510:327::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.25 via Frontend Transport; Sun,
+ 22 Mar 2026 10:25:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ MW1PEPF00016159.mail.protection.outlook.com (10.167.249.84) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9769.0 via Frontend Transport; Sun, 22 Mar 2026 10:25:21 +0000
+Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 22 Mar
+ 2026 03:25:04 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail204.nvidia.com
+ (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 22 Mar
+ 2026 03:25:03 -0700
+Received: from nvidia.com (10.127.8.14) by mail.nvidia.com (10.129.68.10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Sun, 22 Mar 2026 03:25:02 -0700
+From: Shani Peretz <shperetz@nvidia.com>
+To: <dev@dpdk.org>
+CC: <rasland@nvidia.com>, Shani Peretz <shperetz@nvidia.com>
+Subject: [PATCH 0/2] Fix a doorbell race on Cortex-A78AE
+Date: Sun, 22 Mar 2026 12:24:57 +0200
+Message-ID: <20260322102459.141958-1-shperetz@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW1PEPF00016159:EE_|DS0PR12MB7826:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2de992dd-9f69-4586-1fc2-08de87fd5293
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|376014|36860700016|82310400026|1800799024|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info: BiBGoe8fzybuUxSqmmtpV56JlP+G/RxvBnuVAE1hLqzu4/CRVnRNFkY9XqbR3HJ1qK6d6ScQYCiGk5uQhuXKHTatEaLHb5aKgksKWU8pu09L1eEQX/QUnB/rWO7GOFdH8oNUyDmKf65F8xDPfqL91cEzl/0C4K3qr4vuXKbuqsKJmXrArd+LHCGU7mhdwRQoL/ZvXE6ka3WcWrbKr6wMj/wg+0zq6D1q8WQeK4pWX0upuRdvzKa30dR9gIrYeHXvaUq3Pl1uyytmHpUgE+H4qeqd1zMz7C8nXR0SQ4s+fuvPxdSTuOwxyqFW8OuXIrH75nSE72Wc5g8GbBDoPdfAZi2K2ReMOyALopxN78eHtzHJKupOS9cRc55PQyMw40oiW8xpB5fwwgO9wAj7v+lwQGTYrCtrkLzVraZtsMSnxnSqk9D6kM3jSVuAjurLD8xys6dU3I9/SAHWH0yta3IGLZRdJ76syEu7dGdejl+nShcIdvsk3bq/4HCOWB2hmez61yX/a29A4a1R38LOOTy+fRph3P8jkybKCG8538mAppYNUhrS61If7VeZ8RlJwfH0Lg4V5G2X/PZ/r4tdV4AA7gfd1OUA6/yf3vYTJvg2eWlhYwKkC9l0F5rnNPEd/P/U/45ZvCCHVPD1t+14JA8ovA9RaXCKSI9ANmO+CxYIUNGhoE13C0H9ey0c3uP273MxISuaC4WLrdY7paaXow0IMVEuGvRoWEvn9W3jQMLXS1rDfPWXA8uik7Y+Q7OOXyz09QEXnZufYiXOdnJeRjf+fQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(376014)(36860700016)(82310400026)(1800799024)(18002099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 32AJBV/j58Lm5J15Isjzw8ICh+G7l8kkzFI3lfRm2LO+ZohQKDj8Dtaj63EJm96mGencCc8Ya5SM9Px5vTxRAGk+jUZLi1QF0HQ0cpIaKMVYQRh7sAPErZd8uDFqbwMBg3UYysH3G9u7W7CDTAfoRRQisfoOsYJtZzD7qz8khBVMz2pfr5XUbEvrOb6jAQRfVQPp5x07KgR1eXRbBgtMxYuF1wu7gavbYJdc3z+RMZKek/ZiJavXq81S9Nb3I2LskPwx69DyAuJsTBOtWMiXzvHPSVvuv/qOsXJSoFAlblIVBuVKR8IhFlmmF2Hz1uR9HNeWz2/wALjTgSHT5yePAG4FsTc8GqlAt4OkjCNHDh/csyeWQqpVj/FKl5ryF/tPN7FRqAi2kBzYElgFPWySgwMQO211OYs6VwBnUwi/o3tWee58dGbuoiJRc2UkMY40
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Mar 2026 10:25:21.4656 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2de992dd-9f69-4586-1fc2-08de87fd5293
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: MW1PEPF00016159.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7826
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,199 +109,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 21 Mar 2026 15:48:40 +0100
-Robin Jarry <rjarry@redhat.com> wrote:
+Fix a doorbell race on Cortex-A78AE where the compiler reorders a
+64-bit WQE load before the 32-bit stores that construct it, causing
+stale data to reach the hardware doorbell.
+The first patch fixes the root cause by passing a pointer and adding
+a compiler barrier;
+The second patch reverts the crypto march extension workaround that is
+no longer needed and that broke builds without AES support.
 
-> Linux TAP devices deliver all packets to userspace regardless of the
-> PROMISC/ALLMULTI flags on the interface. When promiscuous mode is
-> disabled, drop received packets whose destination MAC does not match
-> any configured unicast or multicast address.
->=20
-> The receive path checks the destination MAC against the device's
-> unicast address table (managed by the ethdev layer), the multicast
-> address list (stored by the driver since the ethdev layer does not keep
-> a copy), and accepts broadcast unconditionally. Promiscuous and
-> all-multicast modes bypass the respective checks.
->=20
-> To support multiple unicast addresses via rte_eth_dev_mac_addr_add(),
-> allocate mac_addrs with rte_zmalloc (TAP_MAX_MAC_ADDRS=3D16) instead of
-> pointing into dev_private, and advertise the new limit in dev_infos_get.
->=20
-> Dropped packets are reported via per-queue xstats
-> (rx_q<N>_mac_filter_drops).
->=20
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
-> ---
+Shani Peretz (2):
+  common/mlx5: fix doorbell race from compiler reordering
+  config/arm: revert forced crypto extension for Cortex-A78AE
 
-Here is a test for this.
+ config/arm/meson.build                   |  7 ++-----
+ drivers/common/mlx5/mlx5_common.h        | 12 ++++++++----
+ drivers/compress/mlx5/mlx5_compress.c    |  2 +-
+ drivers/crypto/mlx5/mlx5_crypto_gcm.c    |  6 +++---
+ drivers/crypto/mlx5/mlx5_crypto_xts.c    |  2 +-
+ drivers/net/mlx5/mlx5_flow_aso.c         | 12 ++++++------
+ drivers/net/mlx5/mlx5_flow_quota.c       |  2 +-
+ drivers/net/mlx5/mlx5_rxq.c              |  3 ++-
+ drivers/net/mlx5/mlx5_tx.h               |  4 ++--
+ drivers/net/mlx5/mlx5_txpp.c             |  4 ++--
+ drivers/regex/mlx5/mlx5_regex_fastpath.c |  2 +-
+ drivers/vdpa/mlx5/mlx5_vdpa_event.c      |  2 +-
+ 12 files changed, 30 insertions(+), 28 deletions(-)
 
-=46rom f1f093323a713abdfeb36a486a16b4b816095953 Mon Sep 17 00:00:00 2001
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Sat, 21 Mar 2026 16:14:00 -0700
-Subject: [PATCH 2/2] net/tap: add tests for software MAC address filtering
-
-Extend the TAP PMD test suite to cover the new MAC filtering API.
-Verify that dev_info advertises multiple unicast addresses,
-mac_addr_add/remove and set_mc_addr_list work correctly,
-and mac_filter_drops xstats are present and reset properly.
-
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- app/test/test_pmd_tap.c | 133 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 133 insertions(+)
-
-diff --git a/app/test/test_pmd_tap.c b/app/test/test_pmd_tap.c
-index dabd7d3506..bd3d4a64cc 100644
---- a/app/test/test_pmd_tap.c
-+++ b/app/test/test_pmd_tap.c
-@@ -757,6 +757,135 @@ test_tap_setup(void)
- 	return 0;
- }
-=20
-+/*
-+ * MAC address filtering tests.
-+ *
-+ * These exercise the new software MAC filtering paths added to TAP:
-+ * mac_addr_add/remove, set_mc_addr_list, xstats for mac_filter_drops,
-+ * and the increased max_mac_addrs reported in dev_info.
-+ */
-+
-+static int
-+test_tap_mac_filter_info(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+
-+	TEST_ASSERT_SUCCESS(rte_eth_dev_info_get(tap_port0, &dev_info),
-+			    "failed to get dev info");
-+	TEST_ASSERT(dev_info.max_mac_addrs >=3D 16,
-+		    "max_mac_addrs=3D%u, expected >=3D 16",
-+		    dev_info.max_mac_addrs);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_mac_addr_ops(void)
-+{
-+	struct rte_ether_addr addr, addr2;
-+
-+	rte_eth_random_addr(addr.addr_bytes);
-+	rte_eth_random_addr(addr2.addr_bytes);
-+
-+	TEST_ASSERT_SUCCESS(rte_eth_dev_mac_addr_add(tap_port0, &addr, 0),
-+			    "mac_addr_add first address failed");
-+	TEST_ASSERT_SUCCESS(rte_eth_dev_mac_addr_add(tap_port0, &addr2, 0),
-+			    "mac_addr_add second address failed");
-+
-+	rte_eth_dev_mac_addr_remove(tap_port0, &addr2);
-+	rte_eth_dev_mac_addr_remove(tap_port0, &addr);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_mc_addr_list(void)
-+{
-+	struct rte_ether_addr mc_addrs[3];
-+	int i;
-+
-+	for (i =3D 0; i < 3; i++) {
-+		rte_eth_random_addr(mc_addrs[i].addr_bytes);
-+		mc_addrs[i].addr_bytes[0] |=3D RTE_ETHER_GROUP_ADDR;
-+	}
-+
-+	TEST_ASSERT_SUCCESS(rte_eth_dev_set_mc_addr_list(tap_port0, mc_addrs, 3),
-+			    "set_mc_addr_list(3) failed");
-+	TEST_ASSERT_SUCCESS(rte_eth_dev_set_mc_addr_list(tap_port0, mc_addrs, 1),
-+			    "set_mc_addr_list(1) failed");
-+	TEST_ASSERT_SUCCESS(rte_eth_dev_set_mc_addr_list(tap_port0, NULL, 0),
-+			    "set_mc_addr_list(0) failed");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_tap_xstats_mac_filter(void)
-+{
-+	struct rte_eth_xstat_name *names =3D NULL;
-+	struct rte_eth_xstat *xstats =3D NULL;
-+	int nb_xstats, ret, i;
-+	int found =3D 0;
-+	int result =3D TEST_FAILED;
-+
-+	nb_xstats =3D rte_eth_xstats_get_names(tap_port0, NULL, 0);
-+	TEST_ASSERT(nb_xstats > 0,
-+		    "expected at least 1 xstat, got %d", nb_xstats);
-+
-+	names =3D calloc(nb_xstats, sizeof(*names));
-+	xstats =3D calloc(nb_xstats, sizeof(*xstats));
-+	if (names =3D=3D NULL || xstats =3D=3D NULL) {
-+		printf("Error: failed to allocate xstats arrays\n");
-+		goto out;
-+	}
-+
-+	ret =3D rte_eth_xstats_get_names(tap_port0, names, nb_xstats);
-+	if (ret !=3D nb_xstats) {
-+		printf("Error: xstats_get_names returned %d, expected %d\n",
-+		       ret, nb_xstats);
-+		goto out;
-+	}
-+
-+	/* Verify at least one mac_filter_drops counter exists */
-+	for (i =3D 0; i < nb_xstats; i++) {
-+		if (strstr(names[i].name, "mac_filter_drops") !=3D NULL)
-+			found++;
-+	}
-+	if (found =3D=3D 0) {
-+		printf("Error: no mac_filter_drops xstat found\n");
-+		goto out;
-+	}
-+
-+	/* Reset and verify the mac_filter_drops counters are zero */
-+	if (rte_eth_xstats_reset(tap_port0) !=3D 0) {
-+		printf("Error: xstats_reset failed\n");
-+		goto out;
-+	}
-+
-+	ret =3D rte_eth_xstats_get(tap_port0, xstats, nb_xstats);
-+	if (ret !=3D nb_xstats) {
-+		printf("Error: xstats_get after reset returned %d\n", ret);
-+		goto out;
-+	}
-+
-+	for (i =3D 0; i < nb_xstats; i++) {
-+		if (strstr(names[i].name, "mac_filter_drops") =3D=3D NULL)
-+			continue;
-+		if (xstats[i].value !=3D 0) {
-+			printf("Error: %s not zero after reset\n",
-+			       names[i].name);
-+			goto out;
-+		}
-+	}
-+
-+	result =3D TEST_SUCCESS;
-+
-+out:
-+	free(names);
-+	free(xstats);
-+	return result;
-+}
-+
- /* Individual test case wrappers */
-=20
- static int
-@@ -1128,6 +1257,10 @@ static struct unit_test_suite test_pmd_tap_suite =3D=
- {
- 		TEST_CASE(test_tap_multiqueue),
- 		TEST_CASE(test_tap_rx_queue_setup),
- 		TEST_CASE(test_tap_tx_burst),
-+		TEST_CASE(test_tap_mac_filter_info),
-+		TEST_CASE(test_tap_mac_addr_ops),
-+		TEST_CASE(test_tap_mc_addr_list),
-+		TEST_CASE(test_tap_xstats_mac_filter),
- 		TEST_CASES_END()
- 	}
- };
---=20
-2.53.0
+--
+2.34.1
 
