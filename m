@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFF24FC72AD
-	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Mar 2026 13:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD198FC72AD
+	for <dpdk-dev@archiver.kernel.org>; Sun, 22 Mar 2026 13:49:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2097B40657;
-	Sun, 22 Mar 2026 14:49:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 3CAC540657;
+	Sun, 22 Mar 2026 14:49:33 +0100 (CET)
 Received: from smtp6-g21.free.fr (smtp6-g21.free.fr [212.27.42.6])
- by mails.dpdk.org (Postfix) with ESMTP id BF88F4042C
- for <dev@dpdk.org>; Sun, 22 Mar 2026 14:49:15 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id BF2724065D
+ for <dev@dpdk.org>; Sun, 22 Mar 2026 14:49:31 +0100 (CET)
 Received: from localhost.localdomain (unknown [78.240.46.143])
  (Authenticated sender: vjardin@free.fr)
- by smtp6-g21.free.fr (Postfix) with ESMTPSA id 41E3F78034E;
- Sun, 22 Mar 2026 14:49:00 +0100 (CET)
+ by smtp6-g21.free.fr (Postfix) with ESMTPSA id EEBF7780383;
+ Sun, 22 Mar 2026 14:49:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1774187355;
- bh=pcmx9PoFx/aAznv9jp4MiQOw3Hipk3TI9W5vtPzVJ+Q=;
+ s=smtp-20201208; t=1774187371;
+ bh=yCQWFAAd0GUZ0abgrIUdsWfMpEi6TdYCHEQU4sAUDPk=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=biBMWl0qC52/0U0npGe48fQ3OmGI+YCDNH8c/5LT7fNCPnqEU4SZZoB9P5lx5EuUP
- /UMIEtr++3tRquPCGUhPwiPbj0xyegitWSnYDMvjU7JT/N7C84NRZTbEZ/jjrh6gj5
- GhElAP/7kw6ny6V+qooIbpzRnD4ICYUHeSwltW0Us6HOHJGt+Jd7e1pAnouh0MbH97
- nwEFUCjpDWb3GmPZgwykwrZh9GndM7WOjXgxa/WGetAcRiGQhMbd//OzegUUB7B+3l
- +3R8FnJuQ2PZufBL1qfOlP+t9lPGiscJwQTzTnQ0/nrZ60HzUC/PGiHLtzWFIs7dfs
- TK7REZs3GIy6g==
+ b=C9YO+rqv9hUHMX2ADMUGkstsmIZrepFVu/Iah4KXWFasTdOh66NJfGWfdnYDDUBT+
+ iFQ92rvqY2OMHCKOacOHFvjuRBViV9AxTz7SNM/VKcJBXE9rjQs/PK4FbcbrLqRIPo
+ m8LfMXtTsbyYuPXO0fy1+89jZY5dhW5PCFip7lGd6ApEfD2aJ7gqVMdOBr0PVqU/HH
+ B2YFmRO22pkBcExmwnpUe+fj1QFg0SIuLBwnJ3q285keYapTGN2z1SixuWYFzGSeui
+ NsJ3sqW18AzutZRWCJo1vs6DFUx4uzhkSQgmKBnymQUmEMaJlHzwO3jyaLbhWoXhA6
+ lCKuLogpEgpsA==
 From: Vincent Jardin <vjardin@free.fr>
 To: dev@dpdk.org
 Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
@@ -31,9 +31,9 @@ Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
  orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
  stephen@networkplumber.org, aman.deep.singh@intel.com,
  Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v4 09/10] net/mlx5: implement per-queue Tx rate limit getter
-Date: Sun, 22 Mar 2026 14:46:28 +0100
-Message-ID: <20260322134629.94633-10-vjardin@free.fr>
+Subject: [PATCH v4 10/10] net/mlx5: add rate table capacity query API
+Date: Sun, 22 Mar 2026 14:46:29 +0100
+Message-ID: <20260322134629.94633-11-vjardin@free.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260322134629.94633-1-vjardin@free.fr>
 References: <20260312220120.3256755-1-vjardin@free.fr>
@@ -53,91 +53,168 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Wire the mlx5 PMD to the new rte_eth_get_queue_rate_limit()
-ethdev callback. The implementation reads the per-queue
-rate_mbps tracking field from the txq_ctrl structure.
+Add rte_pmd_mlx5_pp_rate_table_query() to report the HW packet
+pacing rate table size and how many entries are used by this port.
+
+The total comes from the HCA QoS capability
+packet_pacing_rate_table_size. The port_used count is derived by
+collecting unique non-zero PP indices across this port's TX queues.
+
+The rate table is a global shared HW resource: firmware, kernel,
+other DPDK ports on the same device, and other application
+instances may all consume entries. The port_used count is therefore
+a lower bound of actual HW usage.
+
+With shared PP allocation (flags=0), the kernel mlx5 driver reuses
+a single rate table entry for all PP contexts with identical
+parameters (rate, burst, packet size). Multiple queues configured
+with the same rate share one pp_id, so port_used counts unique
+entries, not the number of queues with rate limiting enabled.
+
+Applications that need device-wide visibility should query all
+ports on the same physical device and aggregate the results,
+similar to how the kernel mlx5 driver tracks usage internally.
 
 Signed-off-by: Vincent Jardin <vjardin@free.fr>
 ---
- drivers/net/mlx5/mlx5.c     |  2 ++
- drivers/net/mlx5/mlx5_tx.h  |  2 ++
- drivers/net/mlx5/mlx5_txq.c | 30 ++++++++++++++++++++++++++++++
- 3 files changed, 34 insertions(+)
+ drivers/net/mlx5/mlx5_tx.c      | 64 +++++++++++++++++++++++++++++++++
+ drivers/net/mlx5/rte_pmd_mlx5.h | 44 +++++++++++++++++++++++
+ 2 files changed, 108 insertions(+)
 
-diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
-index 7d08d7886b..f5784761f9 100644
---- a/drivers/net/mlx5/mlx5.c
-+++ b/drivers/net/mlx5/mlx5.c
-@@ -2652,6 +2652,7 @@ const struct eth_dev_ops mlx5_dev_ops = {
- 	.rx_metadata_negotiate = mlx5_flow_rx_metadata_negotiate,
- 	.get_restore_flags = mlx5_get_restore_flags,
- 	.set_queue_rate_limit = mlx5_set_queue_rate_limit,
-+	.get_queue_rate_limit = mlx5_get_queue_rate_limit,
- };
+diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
+index 7d71782d33..615b792836 100644
+--- a/drivers/net/mlx5/mlx5_tx.c
++++ b/drivers/net/mlx5/mlx5_tx.c
+@@ -19,6 +19,7 @@
  
- /* Available operations from secondary process. */
-@@ -2746,6 +2747,7 @@ const struct eth_dev_ops mlx5_dev_ops_isolate = {
- 	.map_aggr_tx_affinity = mlx5_map_aggr_tx_affinity,
- 	.get_restore_flags = mlx5_get_restore_flags,
- 	.set_queue_rate_limit = mlx5_set_queue_rate_limit,
-+	.get_queue_rate_limit = mlx5_get_queue_rate_limit,
- };
+ #include <mlx5_prm.h>
+ #include <mlx5_common.h>
++#include <mlx5_malloc.h>
  
- /**
-diff --git a/drivers/net/mlx5/mlx5_tx.h b/drivers/net/mlx5/mlx5_tx.h
-index 975ff57acd..02feb9e6fd 100644
---- a/drivers/net/mlx5/mlx5_tx.h
-+++ b/drivers/net/mlx5/mlx5_tx.h
-@@ -224,6 +224,8 @@ int mlx5_txq_releasable(struct rte_eth_dev *dev, uint16_t idx);
- int mlx5_txq_verify(struct rte_eth_dev *dev);
- int mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
- 			      uint32_t tx_rate);
-+int mlx5_get_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
-+			      uint32_t *tx_rate);
- int mlx5_txq_get_sqn(struct mlx5_txq_ctrl *txq);
- void mlx5_txq_alloc_elts(struct mlx5_txq_ctrl *txq_ctrl);
- void mlx5_txq_free_elts(struct mlx5_txq_ctrl *txq_ctrl);
-diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
-index ce08363ca9..867ea4b994 100644
---- a/drivers/net/mlx5/mlx5_txq.c
-+++ b/drivers/net/mlx5/mlx5_txq.c
-@@ -1481,6 +1481,36 @@ mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
+ #include "mlx5_autoconf.h"
+ #include "mlx5_defs.h"
+@@ -886,3 +887,66 @@ int rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
+ 				     packet_pacing_rate_limit_index);
  	return 0;
  }
- 
-+/**
-+ * Get per-queue packet pacing rate limit.
-+ *
-+ * @param dev
-+ *   Pointer to Ethernet device.
-+ * @param queue_idx
-+ *   TX queue index.
-+ * @param[out] tx_rate
-+ *   Pointer to store the TX rate in Mbps, 0 if rate limiting is disabled.
-+ *
-+ * @return
-+ *   0 on success, a negative errno value otherwise and rte_errno is set.
-+ */
-+int
-+mlx5_get_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
-+			  uint32_t *tx_rate)
-+{
-+	struct mlx5_priv *priv = dev->data->dev_private;
-+	struct mlx5_txq_ctrl *txq_ctrl;
 +
-+	if (priv->txqs == NULL || (*priv->txqs)[queue_idx] == NULL) {
-+		rte_errno = EINVAL;
-+		return -rte_errno;
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_pp_rate_table_query, 26.07)
++int rte_pmd_mlx5_pp_rate_table_query(uint16_t port_id,
++				     struct rte_pmd_mlx5_pp_rate_table_info *info)
++{
++	struct rte_eth_dev *dev;
++	struct mlx5_priv *priv;
++	uint16_t used = 0;
++	uint16_t *seen;
++	unsigned int i;
++
++	if (info == NULL)
++		return -EINVAL;
++	if (!rte_eth_dev_is_valid_port(port_id))
++		return -ENODEV;
++	dev = &rte_eth_devices[port_id];
++	priv = dev->data->dev_private;
++	if (!priv->sh->cdev->config.hca_attr.qos.packet_pacing) {
++		rte_errno = ENOTSUP;
++		return -ENOTSUP;
 +	}
-+	txq_ctrl = container_of((*priv->txqs)[queue_idx],
-+				struct mlx5_txq_ctrl, txq);
-+	*tx_rate = txq_ctrl->rate_limit.rate_mbps;
++	info->total = priv->sh->cdev->config.hca_attr.qos.packet_pacing_rate_table_size;
++	if (priv->txqs == NULL || priv->txqs_n == 0) {
++		info->port_used = 0;
++		return 0;
++	}
++	seen = mlx5_malloc(MLX5_MEM_SYS | MLX5_MEM_ZERO,
++			   priv->txqs_n * sizeof(*seen), 0, SOCKET_ID_ANY);
++	if (seen == NULL)
++		return -ENOMEM;
++	/*
++	 * Count unique non-zero PP indices across this port's TX queues.
++	 * Note: the count reflects only queues on this port; other ports
++	 * sharing the same device may also consume rate table entries.
++	 */
++	for (i = 0; i < priv->txqs_n; i++) {
++		struct mlx5_txq_data *txq_data;
++		struct mlx5_txq_ctrl *txq_ctrl;
++		uint16_t pp_id;
++		uint16_t j;
++		bool dup;
++
++		if ((*priv->txqs)[i] == NULL)
++			continue;
++		txq_data = (*priv->txqs)[i];
++		txq_ctrl = container_of(txq_data, struct mlx5_txq_ctrl, txq);
++		pp_id = txq_ctrl->rate_limit.pp_id;
++		if (pp_id == 0)
++			continue;
++		dup = false;
++		for (j = 0; j < used; j++) {
++			if (seen[j] == pp_id) {
++				dup = true;
++				break;
++			}
++		}
++		if (!dup)
++			seen[used++] = pp_id;
++	}
++	mlx5_free(seen);
++	info->port_used = used;
 +	return 0;
 +}
+diff --git a/drivers/net/mlx5/rte_pmd_mlx5.h b/drivers/net/mlx5/rte_pmd_mlx5.h
+index 698d7d2032..621d8c2b15 100644
+--- a/drivers/net/mlx5/rte_pmd_mlx5.h
++++ b/drivers/net/mlx5/rte_pmd_mlx5.h
+@@ -450,6 +450,50 @@ int
+ rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
+ 				  struct rte_pmd_mlx5_txq_rate_limit_info *info);
+ 
++/**
++ * Packet pacing rate table capacity information.
++ */
++struct rte_pmd_mlx5_pp_rate_table_info {
++	uint16_t total;		/**< Total HW rate table entries. */
++	uint16_t port_used;	/**< Entries used by this port's TX queues. */
++};
 +
- /**
-  * Verify if the queue can be released.
-  *
++/**
++ * Query packet pacing rate table capacity.
++ *
++ * The ``port_used`` count reflects only unique PP indices allocated
++ * by the queried port's TX queues. It is a lower bound of actual HW
++ * usage because the rate table is a global shared resource:
++ * - Other DPDK ports on the same physical device may hold entries.
++ * - The kernel mlx5 driver and firmware may also consume entries.
++ * - Multiple DPDK application instances may share the device.
++ *
++ * When multiple queues on the same port are configured with identical
++ * rate parameters, the kernel shares a single rate table entry across
++ * them (with flags=0 allocation), so ``port_used`` counts unique
++ * entries, not the number of queues with rate limiting enabled.
++ *
++ * Applications that need device-wide visibility should query all
++ * ports on the same physical device and aggregate the results,
++ * similar to how the kernel mlx5 driver tracks usage internally.
++ *
++ * @param[in] port_id
++ *   Port ID.
++ * @param[out] info
++ *   Rate table capacity information.
++ *
++ * @return
++ *   0 on success, negative errno on failure:
++ *   - -ENODEV: invalid port_id.
++ *   - -EINVAL: info is NULL.
++ *   - -ENOTSUP: packet pacing not supported.
++ *   - -ENOMEM: allocation failure.
++ */
++__rte_experimental
++int
++rte_pmd_mlx5_pp_rate_table_query(uint16_t port_id,
++				 struct rte_pmd_mlx5_pp_rate_table_info *info);
++
+ /** Type of mlx5 driver event for which custom callback is called. */
+ enum rte_pmd_mlx5_driver_event_cb_type {
+ 	/** Called after HW Rx queue is created. */
 -- 
 2.43.0
 
