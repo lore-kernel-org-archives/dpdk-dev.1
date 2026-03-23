@@ -2,75 +2,133 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942ABD58CBF
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 23:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09208F4613F
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 23:24:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C96AC402D6;
-	Tue, 24 Mar 2026 00:10:11 +0100 (CET)
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com
- [209.85.216.54]) by mails.dpdk.org (Postfix) with ESMTP id E29CE4027C
- for <dev@dpdk.org>; Tue, 24 Mar 2026 00:10:09 +0100 (CET)
-Received: by mail-pj1-f54.google.com with SMTP id
- 98e67ed59e1d1-35a094cc3e9so3222911a91.3
- for <dev@dpdk.org>; Mon, 23 Mar 2026 16:10:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774307408;
- x=1774912208; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=d/eAe//zmDTADyovXeWdjnqh+VXj/u8CdcAPi7Up7lM=;
- b=yY93qDsuVeV1gUl/wRylpnuuKm+vPPZdzvbclp492Fr1SLAo5N4jy9jEbz8mtVIzds
- M6h7BomuQbnTQB5Y5+38Vz8gDfsEFZHOIW+FpRk84QrXGBErLkLjAg4gZ2e7oKmT8hPW
- Ma/hbfs1+r2sJ0YAO9LRH4yuGiYJdG7eySn+S3Munl7gKyNmj4eaWX668dHdNh7FY0XV
- PnoJ9mxfZsJ2jBZ4IY2G9+y5lX9RIfx+gHnV03aILU0Hpb4Qn1/9zckUhN9cRHyBh+9v
- WSd/lumT2LsP8ZyEJa3WVIJLNgqO/XFWyLbVeLGe+jhb+wPbgb4yYcmmdxW8r+AstOes
- iJeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774307408; x=1774912208;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=d/eAe//zmDTADyovXeWdjnqh+VXj/u8CdcAPi7Up7lM=;
- b=JDb+n9YqrHsTT35md8ioE0OCe4Uirx5TAbagSnXkBe0ls0gB/cXidAQU3NbtkmyFVk
- Y/pDf1wmeD26hzZklVwAkhiXfIfbZ+4hN8cVmQjR8b7H377BikMUgRcQtjpA2V3xnVyj
- BUko11bcUE6Uv3UFuTteXbJWwwfvs6iaaPXW9NBwh/jlXSA/zh8wJRDLUDmHvUm9gG3D
- USSu/c88CPVv3ktneDHdwnAdelnR5c9pCwLGK3OHfB911/76veyCNPwLbAz3MJKHhlM2
- geEMuX6FdPLF4QvtJdujzmIfWu99udEg05gbTIrw4/ApYlZNJ4D3Qtl0nrmsEKWNI1yH
- mkBg==
-X-Gm-Message-State: AOJu0YzTUEFngHLK7gsJogKzMnYBk9VF/lTv8hP8hIkq29F14Fl+LYBm
- e4RxdOoP4ScclrmDPigtgoLd0fIb0cwsvUithabDqw8rK1nZQrLCo/s7M7uOB8xsyeQ=
-X-Gm-Gg: ATEYQzwZnkC/OPUN03+cZ9KshE0WC8+fh/kUt7tuC1Kn9covmzjF8YmsdhU43OEhTi9
- YoBQhP+BUGHL5jqZBN4bLBxmAyot71mraegAZQATbeVQdPwCYAozF0xVVHQsZNCn1teUgEPALRi
- +f9D/WkHDN7Abemc22aa0XRAKSn+3OANhqFVlH+bpx3GwHBcqcVDVzJX00U4PwSnzUPkgO9acGs
- Hsg2ZtCVmX0+RNVNVavYG+0Lt0PAcjK2AvkZXR1sR/O9pdJ2I6tYi853R0AJoAXC/BAU243LSE9
- +dC4CCVQNZWevOGmDmqfzI+9ir/MzXhGBGZnNRJpsFW6bcvuGQAHf2jC7ChVSwb0veoYSUHhdES
- tEaE4ju0RBCGyrVOwZtb+fZPIUx0KCzJVDjdo4zQPvCFykkBFEtNhLZx0UgIsuYEWyTRo0Lb5Pe
- mbtS790uMFFjlP8Li1FZageDV/BofqzDE1rTU=
-X-Received: by 2002:a17:90b:4e8d:b0:35b:e5cf:20fc with SMTP id
- 98e67ed59e1d1-35be5cf22b5mr6563926a91.26.1774307408032; 
- Mon, 23 Mar 2026 16:10:08 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-35c031354f3sm174262a91.6.2026.03.23.16.10.02
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Mar 2026 16:10:07 -0700 (PDT)
-Date: Mon, 23 Mar 2026 16:09:55 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Vincent Jardin <vjardin@free.fr>
-Cc: dev@dpdk.org, rasland@nvidia.com, thomas@monjalon.net,
- andrew.rybchenko@oktetlabs.ru, dsosnowski@nvidia.com,
- viacheslavo@nvidia.com, bingz@nvidia.com, orika@nvidia.com,
- suanmingm@nvidia.com, matan@nvidia.com, aman.deep.singh@intel.com
-Subject: Re: [PATCH v4 00/10] net/mlx5: per-queue Tx rate limiting via
- packet pacing
-Message-ID: <20260323160955.5379adfe@phoenix.local>
-In-Reply-To: <20260322134629.94633-1-vjardin@free.fr>
-References: <20260312220120.3256755-1-vjardin@free.fr>
- <20260322134629.94633-1-vjardin@free.fr>
+	by mails.dpdk.org (Postfix) with ESMTP id AAF11402D6;
+	Tue, 24 Mar 2026 00:24:24 +0100 (CET)
+Received: from SN4PR2101CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11022102.outbound.protection.outlook.com
+ [40.93.195.102])
+ by mails.dpdk.org (Postfix) with ESMTP id 25D854027C;
+ Tue, 24 Mar 2026 00:24:23 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PZg/5A96MWSOazjUitBi/gn2iW5xj0l6cEkeuzo/0oYS3IlmkEkhLprPw2Cf3ufEKqz8HvPZALGfK2FZV5XFxGoLTriX7/DW/vdjNId//Gavw9JuDjPtkE4QFY6hSllCFhmI2p8aucNR9VcHmqVoF6igrmtqHJJqHbAtRAs/ZAZ87iYSOpuTQm+6nZeIM+F4Npm8nYN/T9Gy+B7wpOGcpld4jKyv0k/onPzzokEtAsZd7tTh1gVibDFMglYpC2JpnuaTrRl+yHpD5dwowApqDuLil19oKjEFxfJ0VdmTy9k52s6fOO0ItzBt+WPQd8Dzoh5yHOZWtS1IX76GHmmx5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6tOkpcWooHQ/ftfRrAjxzhSTZIjqBnzI6nA+k4cm6DQ=;
+ b=iD+xULJYm57GkitHJYv2enZXRNymz+OLust4IAMHgmNz4Epa6hkih+GIMKE0ltJMY1oGocGuZgWmybTdKKvQlwLvbiMSZuEzEPmw/tIwQZ/g4yRl1UjePsZ4mCgxjDMb6dydqz7LmeBIGhxMjBdCRscOaFQ8F57/EPUMJIe/ddXaBnt8z/k9pi4qNUOeY3dmPQZdBk/6HYolKs7I49RtgD5FQ4eXcV1XtyLxAx7Y+/q/HN7WjPRy5TuV/zUYt8ky8bU5WN14FCmBPBNKYZsff5RHZCbI+mB+QmA5HUzsy0IJOZgZLyyLpsPi7BNPUI8PtI2ncKDFx6WwG/4w1DHdpQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tOkpcWooHQ/ftfRrAjxzhSTZIjqBnzI6nA+k4cm6DQ=;
+ b=OnFhKdmi4K07SHZsm/RDG5XgO/4+LsSFZYFYh/7/HbemqYHcdcgCsNZHc7oyqpLM6gwMKksOlBcRqGSvkbov52Mw7BvIbrH1z5B55Hih7CbRQfTcj9RWHPpMhFSDukc5d1sk/r57f7AdJiBgdjKfFl0ZVPyPEsUpaf+L7tBWFjo=
+Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
+ by SA1PR21MB6538.namprd21.prod.outlook.com (2603:10b6:806:4a7::5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.19; Mon, 23 Mar
+ 2026 23:24:20 +0000
+Received: from SA1PR21MB6683.namprd21.prod.outlook.com
+ ([fe80::879f:eec1:ca0e:d219]) by SA1PR21MB6683.namprd21.prod.outlook.com
+ ([fe80::879f:eec1:ca0e:d219%3]) with mapi id 15.20.9769.004; Mon, 23 Mar 2026
+ 23:24:20 +0000
+From: Long Li <longli@microsoft.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>, Wei Hu <weh@microsoft.com>,
+ "stable@dpdk.org" <stable@dpdk.org>
+Subject: RE: [EXTERNAL] Re: [PATCH] net/netvsc: switch data path to synthetic
+ on device stop
+Thread-Topic: [EXTERNAL] Re: [PATCH] net/netvsc: switch data path to synthetic
+ on device stop
+Thread-Index: AQHcuMvHx1JPkcZUikGxa5yKNke4lbW5QzEAgAOCzoA=
+Date: Mon, 23 Mar 2026 23:24:20 +0000
+Message-ID: <SA1PR21MB6683943FC6714FE7408BBA94CE4BA@SA1PR21MB6683.namprd21.prod.outlook.com>
+References: <20260321004337.1608222-1-longli@microsoft.com>
+ <20260321104440.7e853b61@phoenix.local>
+In-Reply-To: <20260321104440.7e853b61@phoenix.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=620ff64c-8020-4386-8589-bcd0269fe6d9;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-03-23T23:21:36Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|SA1PR21MB6538:EE_
+x-ms-office365-filtering-correlation-id: 80850800-62d3-40a3-3683-08de89334f97
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|1800799024|376014|38070700021|56012099003|22082099003|18002099003;
+x-microsoft-antispam-message-info: xvA7eAFGxcZC5WaumKZskTdU4XsMMDNsp1ApSaGG/J03+hcu3Y/CqPlys68ON0+9AGuovDEWoj/o1iCRVYY+j+uTep3vWn8B8vQkXEPX761aSxqHTbuOawbJG58kJSZ2Gd4a7QQn0kJB4hkRfZ6HMDM8N4Afudy5StTnHKtrb3955spAYAQVvDjgO+gi5CeDCAjFm9vFMt11xYJ08RfFUyi0/aPu3wmry0tXCwBVbInRy0WGL9TGzngaI0GCGMvaablDgYtvTO+GSX5D/qyeTq7pp3D2E40zykOgIc1WFz18oYXHekl9IupFbQEUMWo+SBMaphhD9wI8qoJYQ1e54IdCTi587FqYQM8ET6qfALs4cEg1jv9hbDFqhjID//JjLpkx86rLnKHh6bQYEvyjNh7XUYrOynPNNfFhCY4h9WtKaxcaG9Qy/vilcp+4QuEpoNtjnUw/vXwo3Lrg8ybnTSH+paEGnVi/EzfbPE03eOdEnQclX2lORBg/j997dT9MvZ56s18chKft8FeuQvJdq5sp6av/lCJ/LRu1rINvGDULW1TUVfas9uN/BMF5sbuGRVgeW/21fwvAkJoDdXDXr8dhMzZwoGamnc/WTlrfzGESidPIGaxMJUxX2u0bqApRNCmLsY9dknqAhMxI8+8PxkSqfO02InqYvxSX79kQ1dhDGoVUZOvHFY2TZQrRBe5GmYlXILdegCEpyltg0fE1XiMRuX7zVNDaVoRBHkbhuJaENQgWyLBYUNi1lxi2aDm5HoePL5Oe48Zp/UqjTCTQspE9wCx7QQGe7lL5bSw37A0=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700021)(56012099003)(22082099003)(18002099003);
+ DIR:OUT; SFP:1102; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?WWFNOUFhS1hCQW5YU1k0SzlNaXIraDd0dmNIRnNmcFQ1a2lWZUJvZXFDQWpt?=
+ =?utf-8?B?M253TnFHZzQxbEZLTnR3dDJwY1lvUFBlYXVvazFFc242Wkp4TnZLTzRMOXdI?=
+ =?utf-8?B?SjFTNjFyMGs4Ull0NU5aRHZ2Q1RZNHZtSjNza3FJeGdKTFpXU1dvUFpldlIz?=
+ =?utf-8?B?YW9zM1ovbkxRbmJoQzA0V2V6OTZFYWRMZkYxZUEvSjRTZ28xWnc4OEw5M1c3?=
+ =?utf-8?B?Q29Tc0R1d0FUWTg0UE85ZlpGa3NvaWREL0ZJRkFzcVd2c3R1b1c0UUwvK09E?=
+ =?utf-8?B?VTdRVEFIVzJCVUI5bWlTNmVJNC9NSkhoUTZhcFVtc0dOb0JHaGRicGRQRDNR?=
+ =?utf-8?B?M2RjemJJWVQrem1zdk1icmFZUlNUM3BSYXhvSTVvRzB0QW0vbllaWWdjUmtS?=
+ =?utf-8?B?UG4xVHFnR2VIajVXdVZKcWI1UUZzdUJjWFZPWXVjRkk0UDFmS2ViOVg3dzdI?=
+ =?utf-8?B?aG15S1hxbmdpUmE1cnlqZHF6QU02QzhhSnNoZDgvcXNFM29aQkNsdVg5TjNk?=
+ =?utf-8?B?OExGZUpsSE5HNUxSSmZ1UEhQN1hKUis0TUwrOWNuc0YvUnlOOGhPSzFYSFpi?=
+ =?utf-8?B?NHc5bzVlcVBwR3kvRkZBNU91clI4VTNWdFhnT1QyYzg5WUxsWHhSdzVLQ1M1?=
+ =?utf-8?B?dFlPK2lHbUpKc2hzSC9LS1ppMEQrSDF4b09RWFpPOTEvZlcvR29JY0lYdy9h?=
+ =?utf-8?B?eCtDVndSRWxJQm1ZREVqdjJPR1Z3UW4yejc4SFgwSXBZbzNGNWpFREpaeVli?=
+ =?utf-8?B?eWZZaXRwM3dLeUl3WnV4U3BJZmM3c3FDUGoyWEVQZERYSXM3a3FVQ014N3dh?=
+ =?utf-8?B?bXE1dFVQWEp5MlJwQ3BsVmlsTjlPZ2lDQjhvZXpTdXFaWmFkdXRyME1ONWZN?=
+ =?utf-8?B?SGp4WlZXcHhiMDRZR1NUTEI3akFOWktvaDU0VVMrTnF2MkJpaXJsK0RiRmZL?=
+ =?utf-8?B?UHl0bTZIYVR4QUxPMno4czQxN1kzUUd0NDdDYmxxcXUvT25jWkFlUHZlZlhS?=
+ =?utf-8?B?UXNMdWFjR0M2dHRDUTV3RnZOSGtIVHFJaG1UWHlUMS96Q1MwWkZjaHVPVGZj?=
+ =?utf-8?B?ZlBybmNDWm5ZQUFQV0Y2QitjZm5kTEtibUtMZEZpdHlwRkFWMnZWd1JEMFRC?=
+ =?utf-8?B?L1lzVkRwWXBVeHNhT2JGTmZFUmdIL3JWelBBYVJzMm5DcWVpaUVLK1NLSWFU?=
+ =?utf-8?B?RHdHUzhpV2NocDZkbWNsNm5vMDVsYldKU1hmNzNHWmZlUkplRXZEMnVsbTNM?=
+ =?utf-8?B?Q1VLeVlNd1IyZGVXTXpOYTg3U1dCT1lPQ3d1Q3lXVEVBUlBuZlQ0VzQvRVlB?=
+ =?utf-8?B?d0NjbUFmVVdrQkQ3T244anE3eDRqUWtkVTdTZDM3RmJkUnlacjZBS0pnUmNT?=
+ =?utf-8?B?OW5YSjg2Y3hJekl4NWFEZEhjVFp6Qnh1blNHbTlwZkZSTUExYU5iZUZYT0JF?=
+ =?utf-8?B?U245dUZQOWExWk5CSHlvVGN5YUZETDZuTG5XZVVQWkJjVmZJYmFicERHdDJR?=
+ =?utf-8?B?NERUeUNwOFRmV2ZJTDc4L1R5UFR6dmkwWW1HMThQUko4SEFBa3prZjdIbVlv?=
+ =?utf-8?B?ZXArL2RVZnFyU0VGK3VzcVFTM28yT0IyaEI5NVVpb1N1VGtocFJuTExCRGFQ?=
+ =?utf-8?B?eFR4ZTF2bVBBQTBNeWQyVG05bVBBb2t5NTZDR3JtMFhYTUpqcnN4QWRzc3Zh?=
+ =?utf-8?B?QnNUU094QXVYSjBDK2tuMWJoU043eU9BVXdMa3MyRzBnbWoxRTZEcHA1SEx0?=
+ =?utf-8?B?VVplRE9CMU5TNnBXd3drS2poSi8xTTBINVN4bW04NHBxbjI3NHpDWHpOYUxT?=
+ =?utf-8?B?amtUdUlDOTcxU0k5RFZuWWZSMFpubjdUZXVxRjB0eDA5cVpaUlAxMndFVS9p?=
+ =?utf-8?B?elQvaTRIYmpETUlEVms2UnNpWmc2cUFjSllmRXBFemxpNnNnNzZxTStDcHhV?=
+ =?utf-8?B?Z05KSmsvMmxoaGlLNnpJUTZHQ3F1MkxxaFBoNlNQRHNXVnlpdHFJeVlFVUw0?=
+ =?utf-8?B?YXQvMDJ3NVpObW54RGI3NDE4akJtbWU1MmZXdE16RU02NGpIYmpSSVpMSSt0?=
+ =?utf-8?B?Nk4wZDZyenRxV2hkN2hZY1JLcnBxYjU0RW1IVHFVZ2JlRGd0Q05TMEJ3KzJ6?=
+ =?utf-8?B?NGdFUDdrSnZzOWVJRldSN016QWJnLzRmb1JlYTMxa1l1SEJWVXJtMWQ4TVdU?=
+ =?utf-8?B?SnJJY1pPRlVOSGlTMldFK1BhcXNkZWVDQ21GV2xNN2E0dFhsOTlaQmM1Mmwv?=
+ =?utf-8?B?RDkyLzc2KzRqRVN6SEpIN09oOWJqWHZLS2NZdmJMWnk3THlDMHRvekZ4RmN3?=
+ =?utf-8?Q?Dlo4q/MDp05bSchlXz?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 80850800-62d3-40a3-3683-08de89334f97
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2026 23:24:20.4519 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GAXccJ7GRL/vZvVGTEnNjHa01lHj0Gw+mZTylpuH/Heyz6MFCcUBX3RQspLGL4J0IEeRZba4jEUuCwOvO647yQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB6538
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,274 +142,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 22 Mar 2026 14:46:19 +0100
-Vincent Jardin <vjardin@free.fr> wrote:
-
-> This series adds per-queue Tx data-rate limiting to the mlx5 PMD using
-> hardware packet pacing (PP), and a symmetric rte_eth_get_queue_rate_limit=
-()
-> ethdev API to read back the configured rate.
->=20
-> Each Tx queue can be assigned an individual rate (in Mbps) at runtime via
-> rte_eth_set_queue_rate_limit(). The mlx5 implementation allocates a PP
-> context per queue from the HW rate table, programs the PP index into the
-> SQ via modify_sq, and relies on the kernel to share identical rates
-> across PP contexts to conserve table entries. A PMD-specific API exposes
-> per-queue PP diagnostics and rate table capacity.
->=20
-> Patch breakdown:
->=20
->   01/10 doc/nics/mlx5: fix stale packet pacing documentation
->   02/10 common/mlx5: query packet pacing rate table capabilities
->   03/10 common/mlx5: extend SQ modify to support rate limit update
->   04/10 net/mlx5: add per-queue packet pacing infrastructure
->   05/10 net/mlx5: support per-queue rate limiting
->   06/10 net/mlx5: add burst pacing devargs
->   07/10 net/mlx5: add testpmd command to query per-queue rate limit
->   08/10 ethdev: add getter for per-queue Tx rate limit
->   09/10 net/mlx5: implement per-queue Tx rate limit getter
->   10/10 net/mlx5: add rate table capacity query API
->=20
-> Release notes for the new ethdev API and mlx5 per-queue rate
-> limiting can be added to a release_26_07.rst once the file is
-> created at the start of the 26.07 development cycle.
->=20
-> Changes since v3:
->=20
->   Addressed review feedback from Stephen and Slava (nvidia/Mellanox).
->=20
->   Patch 02/10 (query caps):
->   - Added Acked-by: Viacheslav Ovsiienko
->=20
->   Patch 03/10 (SQ modify):
->   - Define MLX5_MODIFY_SQ_IN_MODIFY_BITMASK_PACKET_PACING_RATE_LIMIT_INDEX
->     enum in mlx5_prm.h, following the MLX5_MODIFY_RQ_IN_MODIFY_xxx pattern
->   - Use read-modify-write for modify_bitmask (MLX5_GET64 | OR | MLX5_SET6=
-4)
->     instead of direct overwrite, for forward compatibility
->=20
->   Patch 04/10 (PP infrastructure):
->   - Rename struct member and parameters from "rl" to "rate_limit"
->     for consistency with codebase naming style
->   - Replace MLX5_ASSERT(rate_mbps > 0) with runtime check returning
->     -EINVAL in non-debug builds
->   - Move mlx5_txq_free_pp_rate_limit() to after txq_obj_release() in
->     mlx5_txq_release() =E2=80=94 destroy the SQ before freeing the PP ind=
-ex
->     it references
->   - Clarify commit message: distinct PP handle per queue (for cleanup)
->     but kernel shares the same pp_id for identical rate parameters
->=20
->   Patch 05/10 (set rate):
->   - Fix obj->sq vs obj->sq_obj.sq: use obj->sq_obj.sq from the start
->     for non-hairpin queues (was introduced in patch 07 in v3, breaking
->     git bisect)
->   - Move all variable declarations to block top (sq_devx,
->     new_rate_limit)
->   - Add queue state check: reject set_queue_rate_limit if queue is not
->     STARTED (SQ not in RDY state)
->   - Update mlx5 feature matrix: Rate limitation =3D Y
->   - Add Per-Queue Tx Rate Limiting documentation section in mlx5.rst
->     covering DevX requirement, hardware support, rate table sharing,
->     and testpmd usage
->=20
->   Patch 06/10 (burst devargs):
->   - Remove burst_upper_bound/typical_packet_size from Clock Queue
->     path (mlx5_txpp_alloc_pp_index) =E2=80=94 Clock Queue uses WQE rate
->     pacing and does not need these parameters
->   - Update commit message and documentation accordingly
->=20
->   Patch 07/10 (testpmd + PMD query):
->   - sq_obj.sq accessor change moved to patch 05 (see above)
->   - sq_devx declaration moved to block top
->=20
->   Patch 08/10 (ethdev getter) =E2=80=94 split from v3 patch 08:
->   - Split into ethdev API (this patch) and mlx5 driver (patch 09)
->   - Add rte_eth_trace_get_queue_rate_limit() trace point matching
->     the existing setter pattern
->=20
->   Patch 09/10 =E2=80=94 NEW (was part of v3 patch 08):
->   - mlx5 driver implementation of get_queue_rate_limit callback,
->     split out per Slava's request
->=20
->   Patch 10/10 (rate table query):
->   - Rename struct field "used" to "port_used" to clarify per-port
->     scope
->   - Strengthen Doxygen: rate table is a global shared HW resource
->     (firmware, kernel, other DPDK instances may consume entries);
->     port_used is a lower bound
->   - Document PP sharing behavior with flags=3D0
->   - Note that applications should aggregate across ports for
->     device-wide visibility
->=20
-> Changes since v2:
->=20
->   Addressed review feedback from Stephen Hemminger:
->=20
->   Patch 04: cleaned redundant cast parentheses on (struct mlx5dv_pp *)
->   Patch 04: consolidated dv_alloc_pp call onto one line
->   Patch 05+08: removed redundant queue_idx bounds checks from driver
->     callbacks =E2=80=94 ethdev layer is the single validation point
->   Patch 07: added generic testpmd command: show port <id> queue <id> rate
->   Patch 08+10: removed release notes from release_26_03.rst (targets 26.0=
-7)
->   Patch 10: use MLX5_MEM_SYS | MLX5_MEM_ZERO for heap allocation
->   Patch 10: consolidated packet_pacing_rate_table_size onto one line
->=20
-> Changes since v1:
->=20
->   Patch 01: Acked-by Viacheslav Ovsiienko
->   Patch 04: rate bounds validation, uint64_t overflow fix, remove
->     early PP free
->   Patch 05: PP leak fix (temp struct pattern), rte_errno in error paths
->   Patch 07: inverted rte_eth_tx_queue_is_valid() check
->   Patch 10: stack array replaced with heap, per-port scope documented
->=20
-> Testing:
->=20
->   - Build: GCC, no warnings
->   - Hardware: ConnectX-6 Dx
->   - DevX path (default): set/get/disable rate limiting verified
->   - Verbs path (dv_flow_en=3D0): returns -EINVAL cleanly (SQ DevX
->     object not available), no crash
->=20
-> Vincent Jardin (10):
->   doc/nics/mlx5: fix stale packet pacing documentation
->   common/mlx5: query packet pacing rate table capabilities
->   common/mlx5: extend SQ modify to support rate limit update
->   net/mlx5: add per-queue packet pacing infrastructure
->   net/mlx5: support per-queue rate limiting
->   net/mlx5: add burst pacing devargs
->   net/mlx5: add testpmd command to query per-queue rate limit
->   ethdev: add getter for per-queue Tx rate limit
->   net/mlx5: implement per-queue Tx rate limit getter
->   net/mlx5: add rate table capacity query API
->=20
-> Vincent Jardin (10):
->   doc/nics/mlx5: fix stale packet pacing documentation
->   common/mlx5: query packet pacing rate table capabilities
->   common/mlx5: extend SQ modify to support rate limit update
->   net/mlx5: add per-queue packet pacing infrastructure
->   net/mlx5: support per-queue rate limiting
->   net/mlx5: add burst pacing devargs
->   net/mlx5: add testpmd command to query per-queue rate limit
->   ethdev: add getter for per-queue Tx rate limit
->   net/mlx5: implement per-queue Tx rate limit getter
->   net/mlx5: add rate table capacity query API
->=20
->  app/test-pmd/cmdline.c               |  69 ++++++++++
->  doc/guides/nics/features/mlx5.ini    |   1 +
->  doc/guides/nics/mlx5.rst             | 180 ++++++++++++++++++++++-----
->  drivers/common/mlx5/mlx5_devx_cmds.c |  23 ++++
->  drivers/common/mlx5/mlx5_devx_cmds.h |  14 ++-
->  drivers/common/mlx5/mlx5_prm.h       |   7 ++
->  drivers/net/mlx5/mlx5.c              |  46 +++++++
->  drivers/net/mlx5/mlx5.h              |  13 ++
->  drivers/net/mlx5/mlx5_testpmd.c      |  93 ++++++++++++++
->  drivers/net/mlx5/mlx5_tx.c           | 104 +++++++++++++++-
->  drivers/net/mlx5/mlx5_tx.h           |   5 +
->  drivers/net/mlx5/mlx5_txpp.c         |  84 +++++++++++++
->  drivers/net/mlx5/mlx5_txq.c          | 149 ++++++++++++++++++++++
->  drivers/net/mlx5/rte_pmd_mlx5.h      |  74 +++++++++++
->  lib/ethdev/ethdev_driver.h           |   7 ++
->  lib/ethdev/ethdev_trace.h            |   9 ++
->  lib/ethdev/ethdev_trace_points.c     |   3 +
->  lib/ethdev/rte_ethdev.c              |  35 ++++++
->  lib/ethdev/rte_ethdev.h              |  24 ++++
->  19 files changed, 906 insertions(+), 33 deletions(-)
->=20
-
-
-I didn't see anything wrong, but AI nit picking did.
-
-
-
----
-
-## Review: [PATCH v4 01-10/10] mlx5 per-queue rate limiting
-
-### Patch 05/10 =E2=80=94 `net/mlx5: support per-queue rate limiting`
-
-**Error (Correctness): Data truncation in `rate_kbps` =E2=86=92 PRM `rate_l=
-imit` field**
-
-In `mlx5_txq_alloc_pp_rate_limit()`, `rate_kbps` is computed as `(uint64_t)=
-rate_mbps * 1000` and then stored with `MLX5_SET(..., rate_limit, (uint32_t=
-)rate_kbps)`. When `qos->packet_pacing_max_rate` is zero (HW doesn't report=
- a maximum), the range check is skipped, and any `rate_mbps` value above ~4=
-,294,967 will silently overflow the `uint32_t` cast, programming a complete=
-ly wrong rate into the hardware.
-
-For example, `rate_mbps =3D 5000000` (5 Tbps =E2=80=94 unlikely but allowed=
- by the `uint32_t` parameter type) yields `rate_kbps =3D 5,000,000,000` whi=
-ch truncates to `705,032,704` kbps.
-
-Suggested fix: add an explicit check that `rate_kbps` fits in `uint32_t` be=
-fore the cast, or cap it:
-
-```c
-if (rate_kbps > UINT32_MAX) {
-    DRV_LOG(ERR, "Rate %u Mbps overflows PRM rate_limit field.", rate_mbps);
-    rte_errno =3D ERANGE;
-    return -ERANGE;
-}
-```
-
-**Warning (Correctness): Missing NULL check on `txq_data` in `rte_pmd_mlx5_=
-txq_rate_limit_query()` (patch 07)**
-
-After `rte_eth_tx_queue_is_valid()` confirms the index is in range, the cod=
-e does:
-
-```c
-txq_data =3D (*priv->txqs)[queue_id];
-txq_ctrl =3D container_of(txq_data, struct mlx5_txq_ctrl, txq);
-```
-
-If the queue index is valid but the queue has been released (entry is NULL)=
-, `container_of` on a NULL pointer produces an invalid pointer, and subsequ=
-ent dereferences are undefined behavior. The setter in patch 05 checks `(*p=
-riv->txqs)[queue_idx] =3D=3D NULL` but the query function does not.
-
-Suggested fix: add a NULL check on `txq_data` before the `container_of`, si=
-milar to what the setter does.
-
-The same issue exists in `rte_pmd_mlx5_pp_rate_table_query()` (patch 10) bu=
-t there the loop body does check `(*priv->txqs)[i] =3D=3D NULL` and skips, =
-so that one is fine.
-
-### Patch 09/10 =E2=80=94 `net/mlx5: implement per-queue Tx rate limit gett=
-er`
-
-**Warning (Correctness): Missing NULL check on queue data in `mlx5_get_queu=
-e_rate_limit()`**
-
-The getter checks `priv->txqs =3D=3D NULL || (*priv->txqs)[queue_idx] =3D=
-=3D NULL` which is good. However, the ethdev layer (`rte_eth_get_queue_rate=
-_limit()` in patch 08) only checks `queue_idx >=3D dev->data->nb_tx_queues`=
-, not whether `priv->txqs` is allocated. The driver-side check handles this=
-, so this is actually fine =E2=80=94 noting for completeness.
-
-### Patch 01/10 =E2=80=94 `doc/nics/mlx5: fix stale packet pacing documenta=
-tion`
-
-**Warning: Missing `Cc: stable@dpdk.org`**
-
-The patch has a `Fixes:` tag referencing a previous commit but is missing `=
-Cc: stable@dpdk.org` for backport consideration, even though it's a documen=
-tation-only fix.
-
-### Patches 02, 03, 04, 06, 08, 10
-
-No correctness issues found. The code is well-structured with proper error =
-handling, resource cleanup on failure paths, and appropriate validation.
-
-### General observations
-
-The series is well organized with clean separation of concerns across patch=
-es. Error paths in `mlx5_set_queue_rate_limit()` properly clean up the temp=
-orary `new_rate_limit` PP allocation on modify-SQ failure, and `mlx5_txq_re=
-lease()` correctly frees the rate limit context on queue teardown. The `rte=
-_errno =3D -ret` pattern after `mlx5_devx_cmd_modify_sq()` is consistent wi=
-th how other mlx5 callers handle that function's negative errno return conv=
-ention.
+PiBMb25nIExpIDxsb25nbGlAbWljcm9zb2Z0LmNvbT4gd3JvdGU6DQo+IA0KPiA+IFdoZW4gRFBE
+SyBzdG9wcyBhIG5ldHZzYyBkZXZpY2UgKGUuZy4gb24gdGVzdHBtZCBxdWl0KSwgdGhlIGRhdGEg
+cGF0aA0KPiA+IHdhcyBsZWZ0IHBvaW50aW5nIHRvIHRoZSBWRi9NQU5BIGRldmljZS4gSWYgdGhl
+IGtlcm5lbCBuZXR2c2MgZHJpdmVyDQo+ID4gc3Vic2VxdWVudGx5IHJlbG9hZHMgdGhlIE1BTkEg
+ZGV2aWNlIGFuZCBvcGVucyBpdCwgaW5jb21pbmcgdHJhZmZpYw0KPiA+IGFycml2ZXMgb24gdGhl
+IE1BTkEgZGV2aWNlIGltbWVkaWF0ZWx5LCBiZWZvcmUgdGhlIHF1ZXVlcyBhcmUgZnVsbHkNCj4g
+PiBpbml0aWFsaXplZC4gVGhpcyBjYXVzZXMgYm9ndXMgUlggY29tcGxldGlvbiBldmVudHMgdG8g
+YXBwZWFyIG9uIHRoZQ0KPiA+IFRYIGNvbXBsZXRpb24gcXVldWUsIHRyaWdnZXJpbmcgYSBrZXJu
+ZWwgV0FSTklORyBpbiBtYW5hX3BvbGxfdHhfY3EoKS4NCj4gPg0KPiA+IEZpeCB0aGlzIGJ5IHN3
+aXRjaGluZyB0aGUgZGF0YSBwYXRoIGJhY2sgdG8gc3ludGhldGljICh2aWENCj4gPiBOVlNfREFU
+QVBBVEhfU1lOVEhFVElDKSBpbiBobl92Zl9zdG9wKCkgYmVmb3JlIHN0b3BwaW5nIHRoZSBWRiBk
+ZXZpY2UuDQo+ID4gVGhpcyB0ZWxscyB0aGUgaG9zdCB0byByb3V0ZSB0cmFmZmljIHRocm91Z2gg
+dGhlIHN5bnRoZXRpYyBwYXRoLCBzbw0KPiA+IHRoYXQgd2hlbiB0aGUgTUFOQSBkcml2ZXIgcmVj
+cmVhdGVzIGl0cyBxdWV1ZXMsIG5vIHVuZXhwZWN0ZWQgdHJhZmZpYw0KPiA+IGFycml2ZXMgdW50
+aWwgbmV0dnNjIGV4cGxpY2l0bHkgc3dpdGNoZXMgYmFjayB0byBWRi4NCj4gPg0KPiA+IEFsc28g
+dXBkYXRlIGhuX3ZmX3N0YXJ0KCkgdG8gc3dpdGNoIHRoZSBkYXRhIHBhdGggYmFjayB0byBWRiBh
+ZnRlciB0aGUNCj4gPiBWRiBkZXZpY2UgaXMgc3RhcnRlZCwgZW5hYmxpbmcgY29ycmVjdCBzdG9w
+L3N0YXJ0IGN5Y2xpbmcuDQo+ID4NCj4gPiBCb3RoIGZ1bmN0aW9ucyBub3cgdXNlIHdyaXRlIGxv
+Y2tzIGluc3RlYWQgb2YgcmVhZCBsb2NrcyBzaW5jZSB0aGV5DQo+ID4gbW9kaWZ5IHZmX3ZzY19z
+d2l0Y2hlZCBzdGF0ZS4NCj4gPg0KPiA+IEZpeGVzOiBkYzc2ODBlODU5N2MgKCJuZXQvbmV0dnNj
+OiBzdXBwb3J0IGludGVncmF0ZWQgVkYiKQ0KPiA+IENjOiBzdGFibGVAZHBkay5vcmcNCj4gPg0K
+PiA+IFNpZ25lZC1vZmYtYnk6IExvbmcgTGkgPGxvbmdsaUBtaWNyb3NvZnQuY29tPg0KPiANCj4g
+TG9va3MgZ29vZCB0byBtZSB5b3UgbWlnaHQgd2FudCB0byBhZGRyZXNzIHRoZSBlcnJvciBjb25k
+aXRpb24gc3BvdHRlZCBieSBBSQ0KPiByZXZpZXcuDQo+IA0KPiAtLS0NCj4gDQo+ICoqUGF0Y2g6
+IG5ldC9uZXR2c2M6IHN3aXRjaCBkYXRhIHBhdGggdG8gc3ludGhldGljIG9uIGRldmljZSBzdG9w
+KioNCj4gDQo+IFRoaXMgcGF0Y2ggYWRkcmVzc2VzIGEgcmVhbCByYWNlIGNvbmRpdGlvbiB3aGVy
+ZSBzdG9wcGluZyBhIG5ldHZzYyBkZXZpY2UgbGVhdmVzDQo+IHRoZSBkYXRhIHBhdGggcG9pbnRp
+bmcgdG8gdGhlIFZGL01BTkEgZGV2aWNlLCBjYXVzaW5nIGtlcm5lbCB3YXJuaW5ncyB3aGVuIHRo
+ZQ0KPiBNQU5BIGRyaXZlciBsYXRlciByZWluaXRpYWxpemVzLiBUaGUgZml4IGlzIGxvZ2ljYWxs
+eSBzb3VuZCDigJQgc3dpdGNoIHRvIHN5bnRoZXRpYw0KPiBiZWZvcmUgc3RvcHBpbmcgdGhlIFZG
+LCBhbmQgcmUtc3dpdGNoIHRvIFZGIG9uIHN0YXJ0Lg0KPiANCj4gKipFcnJvcjogYGhuX3ZmX3N0
+b3AoKWAg4oCUIGB2Zl92c2Nfc3dpdGNoZWRgIGNsZWFyZWQgZXZlbiB3aGVuDQo+IGBobl9udnNf
+c2V0X2RhdGFwYXRoKClgIGZhaWxzKioNCj4gDQo+IEluIGBobl92Zl9zdG9wKClgLCBpZiBgaG5f
+bnZzX3NldF9kYXRhcGF0aChodiwgTlZTX0RBVEFQQVRIX1NZTlRIRVRJQylgIGZhaWxzLA0KPiBg
+dmZfdnNjX3N3aXRjaGVkYCBpcyB1bmNvbmRpdGlvbmFsbHkgc2V0IHRvIGBmYWxzZWAuIFRoaXMg
+bWVhbnMgdGhlIGRyaXZlciBiZWxpZXZlcw0KPiBpdCBzd2l0Y2hlZCB0byBzeW50aGV0aWMgd2hl
+biB0aGUgaG9zdCBtYXkgc3RpbGwgYmUgcm91dGluZyB0cmFmZmljIHRocm91Z2ggdGhlIFZGLg0K
+PiBPbiBhIHN1YnNlcXVlbnQgYGhuX3ZmX3N0YXJ0KClgLCB0aGUgYCFodi0+dmZfY3R4LnZmX3Zz
+Y19zd2l0Y2hlZGAgY2hlY2sgd2lsbA0KPiBwYXNzIGFuZCB0aGUgZHJpdmVyIHdpbGwgdHJ5IHRv
+IHJlLXN3aXRjaCB0byBWRiDigJQgYnV0IHNpbmNlIHRoZSBob3N0IG5ldmVyIGxlZnQgVkYNCj4g
+bW9kZSwgdGhpcyBpcyBhIG5vLW9wIGF0IGJlc3Qgb3IgY29uZnVzaW5nIGF0IHdvcnN0LiBNb3Jl
+IGltcG9ydGFudGx5LCBpZiBzdG9wIGlzDQo+IGJlaW5nIGNhbGxlZCBvbiB0aGUgcGF0aCB0byB0
+ZWFyZG93biwgdGhlIGZsYWcgaXMgbm93IHdyb25nLg0KPiANCj4gSSBub3RlIHRoYXQgYGhuX3Zm
+X3JlbW92ZV91bmxvY2tlZCgpYCBoYXMgdGhlIHNhbWUgcGF0dGVybiAoY2xlYXJzIHRoZSBmbGFn
+DQo+IHJlZ2FyZGxlc3MsIHdpdGggdGhlIGNvbW1lbnQgIkNsZWFyIHN3aXRjaGVkIGZsYWcgcmVn
+YXJkbGVzcyDigJQgVkYgaXMgYmVpbmcNCj4gcmVtb3ZlZCIpLCBzbyB0aGlzIG1heSBiZSBpbnRl
+bnRpb25hbCBmb3IgbmV0dnNjIHNpbmNlIG9uIHRoZSByZW1vdmUgcGF0aCB5b3UNCj4gd2FudCB0
+byBmb3JnZXQgdGhlIHN0YXRlLiBCdXQgb24gdGhlIHN0b3AgcGF0aCB0aGUgZGV2aWNlIGlzIHN0
+aWxsIHByZXNlbnQgYW5kIHdpbGwNCj4gYmUgcmVzdGFydGVkIOKAlCBwcm9wYWdhdGluZyB0aGUg
+ZXJyb3IgYW5kIGxlYXZpbmcgYHZmX3ZzY19zd2l0Y2hlZCA9IHRydWVgIG1pZ2h0DQo+IGJlIG1v
+cmUgY29ycmVjdCBzbyB0aGF0IGBobl92Zl9zdGFydCgpYCByZXRyaWVzIHRoZSBzd2l0Y2guIFdv
+cnRoIGNvbmZpcm1pbmcgdGhpcyBpcw0KPiBpbnRlbnRpb25hbC4NCj4gDQo+ICoqV2FybmluZzog
+YGhuX3ZmX3N0YXJ0KClgIOKAlCBlcnJvciBmcm9tIGBobl9udnNfc2V0X2RhdGFwYXRoKClgIHJl
+dHVybmVkIGJ1dCBWRg0KPiBkZXZpY2UgbGVmdCBzdGFydGVkKioNCj4gDQo+IEluIGBobl92Zl9z
+dGFydCgpYCwgaWYgYHJ0ZV9ldGhfZGV2X3N0YXJ0KClgIHN1Y2NlZWRzIGJ1dCB0aGUgc3Vic2Vx
+dWVudA0KPiBgaG5fbnZzX3NldF9kYXRhcGF0aChodiwgTlZTX0RBVEFQQVRIX1ZGKWAgZmFpbHMs
+IHRoZSBmdW5jdGlvbiBsb2dzIHRoZSBlcnJvcg0KPiBhbmQgcmV0dXJucyB0aGUgZmFpbHVyZSBj
+b2RlLiBIb3dldmVyLCB0aGUgVkYgZGV2aWNlIGlzIGxlZnQgaW4gdGhlIHN0YXJ0ZWQgc3RhdGUu
+DQo+IFRoZSBjYWxsZXIgc2VlcyBhIGZhaWx1cmUgZnJvbSBgaG5fdmZfc3RhcnQoKWAsIGJ1dCB0
+aGUgVkYgaXMgcnVubmluZyB3aXRoIG5vIHRyYWZmaWMNCj4gcm91dGVkIHRvIGl0LiBUaGlzIGlz
+IGEgcmVzb3VyY2UgY29uc2lzdGVuY3kgaXNzdWUg4oCUIGlmIHRoZSBkYXRhcGF0aCBzd2l0Y2gg
+ZmFpbHMsDQo+IHNob3VsZCB0aGUgVkYgYmUgc3RvcHBlZCBhZ2FpbiB0byBtYWludGFpbiBjb25z
+aXN0ZW50IHN0YXRlPw0KDQpJJ20gc2VuZGluZyB2MiB0byBmaXggdGhpcy4NCg0KPiANCj4gKipX
+YXJuaW5nOiBgaG5fdmZfYWRkX3VubG9ja2VkKClgIOKAlCBjaGFuZ2UgZGVmZXJzIGRhdGFwYXRo
+IHN3aXRjaCBidXQgc3RpbGwNCj4gcmV0dXJucyAwIG9uIHRoZSBkZWZlcnJlZCBwYXRoKioNCj4g
+DQo+IFRoZSBwYXRjaCBtb2RpZmllcyBgaG5fdmZfYWRkX3VubG9ja2VkKClgIHRvIHNraXAgdGhl
+IGRhdGFwYXRoIHN3aXRjaCB3aGVuDQo+IGAhZGV2LT5kYXRhLT5kZXZfc3RhcnRlZGAuIFRoaXMg
+aXMgY29ycmVjdCwgYnV0IG5vdGUgdGhhdCBpbiB0aGUgb3JpZ2luYWwgY29kZSB0aGUNCj4gZnVu
+Y3Rpb24gd291bGQgcmV0dXJuIHRoZSByZXN1bHQgb2YgYGhuX252c19zZXRfZGF0YXBhdGgoKWAg
+4oCUIGlmIHRoYXQgZmFpbGVkLCBpdA0KPiByZXR1cm5lZCBhbiBlcnJvci4gTm93IG9uIHRoZSBk
+ZWZlcnJlZCBwYXRoLCBgcmV0YCByZXRhaW5zIHdoYXRldmVyIHZhbHVlIGl0IGhhZA0KPiBmcm9t
+IHRoZSBhdHRhY2gvY29uZmlndXJlIHBhdGggKGNvdWxkIGJlIDAgZnJvbSBhIHN1Y2Nlc3NmdWwg
+YXR0YWNoKSwgc28gdGhlIGNhbGxlcg0KPiBnZXRzIHN1Y2Nlc3MgZXZlbiB0aG91Z2ggdGhlIGRh
+dGFwYXRoIHN3aXRjaCB3YXMgbm90IGF0dGVtcHRlZC4gVGhpcyBpcyBmaW5lIGZvcg0KPiB0aGUg
+aG90LWFkZC1iZWZvcmUtc3RhcnQgY2FzZSwganVzdCBub3RpbmcgdGhlIGJlaGF2aW9yIGNoYW5n
+ZS4NCj4gDQoNClRoaXMgd2FybmluZyBjYW4gYmUgaWdub3JlZC4NCg0KVGhhbmtzLA0KTG9uZw0K
+DQo+ICoqSW5mbzogTG9jayB1cGdyYWRlIGZyb20gcmVhZCB0byB3cml0ZSBpcyBjb3JyZWN0KioN
+Cj4gDQo+IEJvdGggYGhuX3ZmX3N0YXJ0KClgIGFuZCBgaG5fdmZfc3RvcCgpYCBjb3JyZWN0bHkg
+c3dpdGNoIGZyb20NCj4gYHJ0ZV9yd2xvY2tfcmVhZF9sb2NrYCB0byBgcnRlX3J3bG9ja193cml0
+ZV9sb2NrYCBzaW5jZSB0aGV5IG5vdyBtb2RpZnkNCj4gYHZmX3ZzY19zd2l0Y2hlZGAuIFRoaXMg
+bWF0Y2hlcyB0aGUgbG9ja2luZyBwYXR0ZXJuIHVzZWQgYnkgYGhuX3ZmX2Nsb3NlKClgIGFuZA0K
+PiBgaG5fbnZzX2hhbmRsZV92ZmFzc29jKClgLg0K
