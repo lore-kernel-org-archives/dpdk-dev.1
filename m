@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B24F46101
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 13:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02ED4F46100
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 13:19:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2870E4064E;
-	Mon, 23 Mar 2026 14:19:03 +0100 (CET)
-Received: from MW6PR02CU001.outbound.protection.outlook.com
- (mail-westus2azon11012067.outbound.protection.outlook.com [52.101.48.67])
- by mails.dpdk.org (Postfix) with ESMTP id 7FEAB40268
- for <dev@dpdk.org>; Mon, 23 Mar 2026 14:19:01 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 50A724064E;
+	Mon, 23 Mar 2026 14:19:32 +0100 (CET)
+Received: from CO1PR03CU002.outbound.protection.outlook.com
+ (mail-westus2azon11010008.outbound.protection.outlook.com [52.101.46.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 4EC8040268
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 14:19:31 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ysHXfwyAzptb2RrBweHLpKI4XstjQBkVE7BYXNleCpE7/A4dqFTla/1oMaf0IZ1pu31Pwb7BHlDK10LC1uidw0Fo4vwO+GPqsrqeiJkwzMwwWDIMs5OVUwIh1SpsVLefrRJ9DPDmi/rkXugS9fuYocl0lLZOmbnVcwdadna3jusjDvErMjwecVd+RWC557KREKB30/agP51jCgqhWBUKSTSdcBbkBV/g1gXanwkhfb/tc+l15Tz8ZdI1CArZooatK9Trxanob3yVbJ4AyJkPR9ElrtKIfXOKfsp5enYyCY//D89NwZgsTe3B/OGos5FKXjrCkNUolnGm+8meCs+m4A==
+ b=DJ0jYCzE3DQI4DU0PUo4LV9eNHnAn/uV6y5VSX42UA+WyH34XDGrZDecfq5qEw/Wf1EtWljKHYAsyHAJRosIovC1B6Xs9DVtzcVMCRjvtCCWzmsK4urRR8gGZQZbhyv1+Rk+gxib8+leloq/wlEXr1/Wh5W2hQbdbz13xz4CSUXA4/idb1UTQrZfyLSw/FFQIGIATQL4tLTOcNOpxNl1t30TgN50hTIhxH5TUO5kzRzxXnbMK3f++weRs7TO1NzIlSE+nwsHM9aNhbgSipoGM8/NlnxpLVVx9fmqyizBVRIGTEh3MHLcPjMIfXS+BeS+xPq4fRFB1kxduToLJ2bUsQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=28m1XY49sC8zwR2/njmCaL1x+sgzY0wBUWpa6Fe06lA=;
- b=IIG20dgE6FbZrZFvD95uLPojgR9QkxJGPbbgctQxF5DlU7sYrWsPg8w3p01x2mz7qkEHJUgaoHZRFO8W8YnYeU2zWc6kb6Q/d57gCRoTym1bGUtq3ia8YTivX8Dzr+6tLl4Ij8Yyo0QxLj9UsLoBZPquwLipnoxnHz5sdDiISpfjLQwq/T8u394I0X65/qE4dlCfOYrjAFZHt1MW05cUrUGj5nDiPJccUhE5WfeEhx16H9lXomcEl3gt3n5KEksNyhW+7D0j4cUbmXHl1OGMehJgqR4kPiC90OJ9YWmVu4+/zW75g82QLA1oKmSnNB4RJD22wYIsaf8Cn6HEgV7GFQ==
+ bh=Y/X7Hxmrew8p2vI8ka+bs+bV2A+AW9UJHozF/0efBFA=;
+ b=FEKQdLELmZ/sxFwmdi+cMmOc9GmClbfHdUE3CwvhMu0w9cOXhz4f8G3raz9l8qINqjJLFBmQK0sllBqwsqyEDTNkOUNRhebOL7PlTdMbeHzZ4UF+bAP1mmsKjFiIrCiIQTyu2rnmbbpF+X8DmkCQBLdCYWTliDB+SxLOnmkTr+Kpb8JH5zqPgsZacp34OMLP5++iMmALb+9sC/CoQT+U9hhwjvEjBmOqINwnRjO8OMssIMn4Y8X9LTgrgLDfHcaFl4PRHo0/SAdvnLP+1Of8fHi4hVI8n7+s6+iW6Et4ZqeuLZibRZPLSh8XVDdJHpbQqQbfWGPu7EemVpLb2J3AAQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=28m1XY49sC8zwR2/njmCaL1x+sgzY0wBUWpa6Fe06lA=;
- b=ltQRb0dc0Fe/orzdQZzdcbKBXL9UWjpQ3bZPBLWvIzQ/qQG2g/A3miAbywXC1x0xtFyaJZmcjEcWhMHUthReTKz1YzpPoG3Nw23u8p7FPFreKZy7eNJU9AnYDwtP9pXSJFwYQ7V4h9/bxoPcyBwOvbuTIAYCa+xMsisqq4NvZ27itugwrgF+HygcCx5CPfcrzWGg9AjoY0ZededHqnT0fO6WyJsUAhrph6BSoaCYTGC25TUJbamrtGJNQ/rOHmsley+W168fJxp2m3HyoCnYr+R4o/ygzYkkYM2FXA5R1R6ZlZrN74mAXmMLN6BaeZpX6zWt4gZ34q8GB6p1laRpTw==
+ bh=Y/X7Hxmrew8p2vI8ka+bs+bV2A+AW9UJHozF/0efBFA=;
+ b=Ld+iHH7Z61jtFSoo4WocZFBiT0PIiGpFLghx6dyqk5MhUwKl93c8ls6jORclyLjtT5/8WszogBEzKJJDmIfeu6gPPoxKfYfbgT+V+khpKXiUJNJAKpYpoF88Og4iYcUnSH/XEllt/lzZGj6bE4SPjwkVq7ppNcwuqcTwPU+fZ88j7/FnyiRV7a4GO4W4/2gQKolxFqKhgxkg1UKPnkVBccrZKemrcrK7oV15OL6xNMZ6+eJu7CatRd907vfLcC1Vvxuw+knmEXF8YAJTpuzMbTrYynC7tVmER3loDv33cJIP8K1BILny9I7eGA+Xdgjrlxzq8tqEex2n9esE3LzL8A==
 Received: from DM4PR12MB6087.namprd12.prod.outlook.com (2603:10b6:8:b1::12) by
- MN0PR12MB6127.namprd12.prod.outlook.com (2603:10b6:208:3c5::11) with
+ PH7PR12MB7257.namprd12.prod.outlook.com (2603:10b6:510:205::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Mon, 23 Mar
- 2026 13:18:55 +0000
+ 2026 13:19:26 +0000
 Received: from DM4PR12MB6087.namprd12.prod.outlook.com
  ([fe80::3359:f44d:6814:3ec3]) by DM4PR12MB6087.namprd12.prod.outlook.com
  ([fe80::3359:f44d:6814:3ec3%4]) with mapi id 15.20.9745.015; Mon, 23 Mar 2026
- 13:18:54 +0000
+ 13:19:26 +0000
 From: Slava Ovsiienko <viacheslavo@nvidia.com>
 To: Vincent Jardin <vjardin@free.fr>, "dev@dpdk.org" <dev@dpdk.org>
 CC: Raslan Darawsheh <rasland@nvidia.com>, "NBU-Contact-Thomas Monjalon
@@ -44,15 +44,17 @@ CC: Raslan Darawsheh <rasland@nvidia.com>, "NBU-Contact-Thomas Monjalon
  <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>,
  "stephen@networkplumber.org" <stephen@networkplumber.org>,
  "aman.deep.singh@intel.com" <aman.deep.singh@intel.com>
-Subject: RE: [PATCH v4 06/10] net/mlx5: add burst pacing devargs
-Thread-Topic: [PATCH v4 06/10] net/mlx5: add burst pacing devargs
-Thread-Index: AQHcugKTn8Vjtp1+nUG3X24VYOQJt7W8Gyrw
-Date: Mon, 23 Mar 2026 13:18:54 +0000
-Message-ID: <DM4PR12MB60872FDC757C4FFC2656A3B6DF4BA@DM4PR12MB6087.namprd12.prod.outlook.com>
+Subject: RE: [PATCH v4 07/10] net/mlx5: add testpmd command to query per-queue
+ rate limit
+Thread-Topic: [PATCH v4 07/10] net/mlx5: add testpmd command to query
+ per-queue rate limit
+Thread-Index: AQHcugKcRS/KCS/9kkSqUl0ZgRuAy7W8G06A
+Date: Mon, 23 Mar 2026 13:19:26 +0000
+Message-ID: <DM4PR12MB608729EDFF0A2D02544A2547DF4BA@DM4PR12MB6087.namprd12.prod.outlook.com>
 References: <20260312220120.3256755-1-vjardin@free.fr>
  <20260322134629.94633-1-vjardin@free.fr>
- <20260322134629.94633-7-vjardin@free.fr>
-In-Reply-To: <20260322134629.94633-7-vjardin@free.fr>
+ <20260322134629.94633-8-vjardin@free.fr>
+In-Reply-To: <20260322134629.94633-8-vjardin@free.fr>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -60,62 +62,62 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM4PR12MB6087:EE_|MN0PR12MB6127:EE_
-x-ms-office365-filtering-correlation-id: 12c18f3c-ff0c-4f0d-ef4b-08de88debbb7
+x-ms-traffictypediagnostic: DM4PR12MB6087:EE_|PH7PR12MB7257:EE_
+x-ms-office365-filtering-correlation-id: c6b06b55-d4c8-4c4e-39ed-08de88deceaf
 x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
 x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|38070700021|56012099003|22082099003|18002099003|15866825006|41080700001;
-x-microsoft-antispam-message-info: qLjoudTcjILy/JKVM2aVzByQIYIwbk5OG9VBIJK81nRAU+lQK2WoKTcA+URRKLv/QdJUgQi0H+B6p6eK0JEocPo+OvY5rf9jUs2WUnvDxbAplH/ifgKZK7H2jBOuc7bNspvFUhJJoOAGnfinHTuv1ta3aCS6jgmq1Gh2e1gjvjf27gJzXHLkdcI2XnseEmNj8aHg6veQb2xv98KoEs1TdU296IjedTeL3Je6Aflf+CwEKo7pExkqA4RYrIdaMTPjANFhjBmqPNRjVSnG29Sijo8UMU0RoeqcfLa+chwDMB52YwOTFBeMmRzMv/ZHzXrN8enGQnLZ1aSTC9ZGuRGIId2Hh31OdIx9NMcm2YVLYsXJozp9Bjxi6mxl7bN1x8iTAFCTGekZYu7pd7rNkMnL0AHmcSGbAA0MGE0sE1wUaYzRj+wCSMc4c7vRg4hp5OVzoCTa23J8h1R5MMnUyP7t+sTavseB8nHFbZHAAIIGYXb/tjfkMS2wVOoz1T8SuYBjN3gGWm2ukDqmw2zEoH2nK2aehJYVyWJSLAcBb0b3n0HxxoHm+qGoV8XQmIS/Z66ukBklkkn5JlLBB3RSNELkzR9c0Vh3XK1mc5jH1gmHBxKIVbOlTGRQAuAGD6eMpZW70VEBL9ew44O+aoyY92W3elhXn7RidQ1CiQK/e4TYMAd+K9svSOWq5QpxitFyTV/wZXUuzfwHMcigvHARrbwNbkVvlSKsGjewW5g3sLcytuXPqp0ADztO+3W2p/0fN7FWKYYrpfoRq879lVUSK0WeKYVpVI+jfCtgzSErMTjWT9DtnicQj+/APNKujd/H/O9rKW6yGjapdquJpxEXiKbOIoXDdPH394vx3G+6duPX1yU=
+ ARA:13230040|366016|1800799024|376014|38070700021|18002099003|22082099003|56012099003|15866825006|41080700001;
+x-microsoft-antispam-message-info: 8IfjChyKqO2aocJmSyVDpnJ6dvDz9mkh7WDBKtx5RgPHzB0lfrCxmxIpdJypVSj/v5/ykQ7J5+983kI0/BGrIgj7PAQ23OOA26kfx2ES4RXE1qUI7p0+swSc7C6h+4IDqsDgi6O7VRtXz6sC7WP7yWIdbMJ+AakaL/GIKXt4e2t6cJ7O0FsujV8ZQHkGZ9DP53yTS5Ra9j5Itjn+76vPRMG+mNcHKCp9X41lXALJK8uhAUMSRn2NylMn6NwYURmfnkmSM00bFpLn7Hj54/2a5susVTcrxZAQzrkCimd8LqsuoSSCIctGiVSeNw7NpeEQAwFhMjwHqmAOgwVg7VP3gFTHXNSp5bvxstpF6SSx8wbKrYGjjaJciQi7Tko4r+qtNHhbhzA0lWlJ4mlPmIG//47ZEdoOk9VYC/UBgGncQ0pBMaCSde9t6TfcncRTvBCeVvyR0cPWiwXn9SGhUj3U3bMWAgkXa5yMsNShWwwY9SFT6eei2AxGhsE+8aDrHAzNcnYToBGe/Pp+/6MmUH3huWELgS3gpHBAw7/a2UoTYqZyqKwE4wLnmfUA9wJ/BYylscqnFFNVlQwxxPOeZbvY3/6hmdblNVIgccHqdL4yawz0FOaGPAwVERuK1J4buACckINkAqSbZaJcTnZvyMExWaHvxGEHkyoe6vQUOOgUvN4smJaRqpgUQaZYyUC8lv4ZKBkChGtEepCqZTyHru+Z5H86faKi2D+jlYmkWqVlL3drdm7Rkmx97U4duQ9iwpQ6X24pGBbBFe32T27htIzdrDZu/rlfHuPkfKP8odqho9y7mycZXCnzwX4rMjPCgaUN6rlI0Uw4BiXTc3DXA1LEbJbGcNJF/pzZofOkx6uJ40A=
 x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DM4PR12MB6087.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(38070700021)(56012099003)(22082099003)(18002099003)(15866825006)(41080700001);
+ SFS:(13230040)(366016)(1800799024)(376014)(38070700021)(18002099003)(22082099003)(56012099003)(15866825006)(41080700001);
  DIR:OUT; SFP:1101; 
 x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?R6RMG26KcjwjmFfQbfiTUw2A6YIolwTGLZ75ZImiuSU5wTYUhxve1xnD+9HY?=
- =?us-ascii?Q?yLKvcRm/2gwZCZs1ONIHrDgXeEEh1+H10mXs+BEKNFhZP73GPxDoPSMDL9Im?=
- =?us-ascii?Q?PNyYhue033qu+Gsts0bcSqcyUUv3VAPE13ZLGpSxoD/QqBa3121EW4eV82tD?=
- =?us-ascii?Q?X8mTvEUUHWc96CXvObTJpcf9AS5SYO6Fmv+FAznCt0BmkS0JMIpS65XGGGV9?=
- =?us-ascii?Q?jr0TN8lwg5RVxDC8f3XR+FdE6H39VR/7S5mubI03xpMMrzyruFOZ+TWSZYs4?=
- =?us-ascii?Q?tI1HoAsfhgzmQVTdgG2ZWpuWLrFsvs1fp/pJ/lHJm0n6PfPSt+dtr1JvF04d?=
- =?us-ascii?Q?W+dL+SZZSOeiqBQQSjdaUGwIb7n2xZ7uOIZdKwFuy36fYZWIIN8/pyID1jB6?=
- =?us-ascii?Q?27ABfMoTe21ry50Nl1je54Rr/7bEP8nQJ+bp549vwU8jtDKrH7jHSFPdGW5R?=
- =?us-ascii?Q?NIP/OXLeJ7JwA58nE7i6rW3i+UFeatnjG+uZofz2esTYow59RXJABpo/wrt5?=
- =?us-ascii?Q?WrHeaFCYxEAcnB7vEEJ8na5uqAeluUyL9Ctik1GwLhlqR23mgrNlRVGWYtI2?=
- =?us-ascii?Q?kHvxFnfbuswE62GbCf2UTAZecwns3ijnWGRe+FoHpbarJG4BogU2HpdV+kGM?=
- =?us-ascii?Q?ng3Sa5NN1wfIr+UdlbYhD7pgQVBqMOTAtpfgsSafWnK5gOm1PxS9Kzri6G+S?=
- =?us-ascii?Q?Fqru+BX8LzoTTHMuFveAO8Qx9t5I0h/R8uXRBbTjqj5bmXt+xnGWjURMmwC9?=
- =?us-ascii?Q?WIIMFXWBguNyY1mP9wvsIySbyZy8X7h5xDRCsvtygPkFTYRvcfSFFyew9a9y?=
- =?us-ascii?Q?wWU3wLQ1BOJt7SUiQTK7JtK102VoQkpPc7N90a+d47haOKGg+hzn4g9F68e1?=
- =?us-ascii?Q?72hHJDF0qSdRtWqbcwEx2BfbBCiIvvc7PvBLyXHIegRzjezWBBDoFagIofUk?=
- =?us-ascii?Q?z6htKN8jLI7qfFaxCrYIU06QGs6d4zKOzbPk7H9OnBpn3dyfIFFgUQoebEV2?=
- =?us-ascii?Q?qXH5lBQWnxtoZ20Rp9gFC675yJJrfHOPqhKmyN1Vm9nlVt6aHgpX0BS3itks?=
- =?us-ascii?Q?dXa1zVrUrMdp470q4UDj1uKhMOc1Bg+aP6pCm4J1ni4TeKZllkNmXdutwExE?=
- =?us-ascii?Q?s12J1UlxlTzHYl5r6P5iV8JohUOaPEYXBmnPNNfqqop9ywa5CD793SPW0HvC?=
- =?us-ascii?Q?u4klJvGyr6fh10ATK4lIMwSIfTWC5ZJuddQPgbuqPZQ6JadWzFqOzKdq4JwH?=
- =?us-ascii?Q?+Pv+5/ZGTs2kdnCPbunHAQ6zCDmVAX8419xInK9FAn0B2A6pY6YGTR1Nd/xF?=
- =?us-ascii?Q?+X2YbT34M3QmxQAh/N9iwCzM3LLKvUFYsWHhE+eSApGrC2mW2cxBw2h1aTsb?=
- =?us-ascii?Q?qq34I7Nr4CeGIajRO8h2Ln2jeCdozHc9wMyngZ/ayZAzG0pVF2McDE9AjVot?=
- =?us-ascii?Q?MBl0aPHpEBKCyQU1qGmAr0pEqm1M7iEYySWC3o33WVJcIA31qk3FHotUV7c2?=
- =?us-ascii?Q?mUscl00idf2rSx0xjj9zUBD5kGaYWqnqXjdzMYL7BXQxHCYX4ySaZWteq9Sb?=
- =?us-ascii?Q?5wyqUH6nwYsRM/mTr/wG8StnSM48YFXpov0yMQHjvpcpYwL5va9muoDgSMpo?=
- =?us-ascii?Q?spbJyHwxOOaSdRSFD0zzpLZiz9WOoaR6Y4DX2WHB3Da5TSGWYm8020GQn1+c?=
- =?us-ascii?Q?fUIdLHxFWFkwDVXHJ4wD5RMoJevcIDeeihAHR+UquDjTyP9K4intSju/TaoW?=
- =?us-ascii?Q?TWHtERTExw=3D=3D?=
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?Yj3q3y0JGWM3XoMMmIDqD9y5aP0A+qVnm0o6FfxkPMYRTKeVZsWGVnIFaBet?=
+ =?us-ascii?Q?IAvzCeTeuh6ZJ2eVXoWSMm5z2ke5Oj0X36hRdSHrexv+S/XNEqUP4GD2ZCLz?=
+ =?us-ascii?Q?Gfz4Y/r3+1LBAaaCWpt//jDVXaJD49l54Uq7OMwBBfrfB6wg416wfo1O2XX9?=
+ =?us-ascii?Q?tuBu12CKSMTZNLhHhexJXuytZXhy9/qYyY/eftr51CWks/t48yiaK94haLVO?=
+ =?us-ascii?Q?Gnk8oQNl4rfqMpIH76s86Q+icoH0h4xQ8+W4MnE+W/E86taIAOjWQ6YX0ijR?=
+ =?us-ascii?Q?viNRbtTAY3d0nOytABkiIafejCVF4hPlyRuUKcjXKgUNUGc7yliVTUzJvhNf?=
+ =?us-ascii?Q?74WBSbtgLHR3+X1u5b0dZqHcfHNUkjwPizM2xBaJP/46plgvN874iDY5CmbC?=
+ =?us-ascii?Q?o8yoRq003q0TaQi3+1FQF9VEiZfY2Gm23VdteUR5qTPCAYI6zljJgAjYO4K+?=
+ =?us-ascii?Q?zgYzJ7jJ1k8M8fxvWxutb78k+b/rwkjpgUJE+lCYhkWpK83WMBTEwBkV0o+L?=
+ =?us-ascii?Q?2FS11jBka3PfmhNGoa7K2YrX1sON18u8uiuDnO2QjQux6LbmhUQggUiBxJ8h?=
+ =?us-ascii?Q?C8Zqtz+bUZE6BsR1NiRJCa1tbP4ydnvtaTOds09dcUTbMYc/n/fi4YMATkjf?=
+ =?us-ascii?Q?y/Aa7yjSEniwKTyp3p4ZZQqKKijDCYCVjAQ6bF4Aw4sRfI65AykGZk9FaaI7?=
+ =?us-ascii?Q?Xo/9uXyvlMpEIipdmzEulISmRbJrSxM0AXB0fzDHj124VtcabSDtbWW9vEvz?=
+ =?us-ascii?Q?JkG1ZRinZx9sIgGkBCbDmAsjEd7DyXB8kHCX1rt4ynHW4qY8Vumb1IcVHXeQ?=
+ =?us-ascii?Q?CjB/PBWw8zr7SskAdG7rug8cFN+2kJg4KBN3VcXp4+dGLJPYCqpcwyQ6JI7z?=
+ =?us-ascii?Q?HXCTETzndL/NpAwbCdrorxidPRUYiYy+8zfypTKRhp8oQcV0kLY1gH2Tax+1?=
+ =?us-ascii?Q?tnYzrgeTBO2WUDtKUwb9dbtTaCyT7ypdXKKOUXr5dmKZKuJMO1C34AolKyCk?=
+ =?us-ascii?Q?CE0GxZKtlcd5I0Shyn+eNHcKkzF3/zpVl2pqy4Mb3XD/jvwMoSeskSWsutGk?=
+ =?us-ascii?Q?9n5w8fCRm5Q3jWN2MqsiuHExYjwvn1iSAHaQuxXHwcdYvfkKHS64SEfDsUXs?=
+ =?us-ascii?Q?QzRmqx4xUKuyeQsO/flctGsbC5ahVpOUR3CxgorgOeHeAGCXUjnX3W91oIxM?=
+ =?us-ascii?Q?zuWOYbk/bLjffUrq9DzumW6uc67M6R5l881LLZoJ92b6xcHy8xN8Kij2LPk7?=
+ =?us-ascii?Q?L0O9JH2gQ8mZWmkHA327CTvr3MuPyuRDZSXNFMxEkmhDSd8+DnxRp7fN0ZZ9?=
+ =?us-ascii?Q?6RGo7ytM9V5CvC0nDrmjcPgVAWa5UDzFLDJs7KCxnw6Syy1E7/HMASS98hdb?=
+ =?us-ascii?Q?p8JZAkbxxK58+RI52zo4qO0A7i2waqrrbK5QWiK/PRSqK3fGDGwMr7mxoKbQ?=
+ =?us-ascii?Q?rZIMKGaAA9JqijJruIubrvobpgwAe56h2KK4w0GdLvMWUuZ8WtPMW46+o241?=
+ =?us-ascii?Q?1zzOjPq24yNbASyXYopPIcq0lxqMH8FSyK4SXIJyYOP3qGnN7iaPjmwlERWc?=
+ =?us-ascii?Q?KfR+EQK5613rUmfPWk6J6P0bcAyJRHd8Bt+4o7j7t+mClxcIbIzX+9fvx3gi?=
+ =?us-ascii?Q?BCkOqzX+2dd4bIW66gXDKtMQZo8elEdaos3rT6XMNnwd6cmmXNOKC7dhHcb9?=
+ =?us-ascii?Q?rvVef7PFSqR/f/ZFrAEQH/hiH7/t7v7s/hhLMeKjCMa/fMHH1e49i6ZhAITE?=
+ =?us-ascii?Q?86THEuhn2A=3D=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: Nvidia.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6087.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12c18f3c-ff0c-4f0d-ef4b-08de88debbb7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2026 13:18:54.6398 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c6b06b55-d4c8-4c4e-39ed-08de88deceaf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2026 13:19:26.4653 (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: io3+xvpguN0o2UFIQAAZJB0nWOi+p5kRi1VJyOdbR5jXPxHE5yjLVObhNwRXnRNWz4RSkgXlkqtzynYBeYiGgA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6127
+X-MS-Exchange-CrossTenant-userprincipalname: pBhjQuJOlm7CVU6OAuOWkKhw1FidDWk6eyyXrtaxE/L6Eyt+nRSuu6PGtRpRBwDJ6YL7pzTYl6HiMmGKVTCdPA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7257
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -142,199 +144,257 @@ Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
 > <orika@nvidia.com>; Suanming Mou <suanmingm@nvidia.com>; Matan Azrad
 > <matan@nvidia.com>; stephen@networkplumber.org;
 > aman.deep.singh@intel.com; Vincent Jardin <vjardin@free.fr>
-> Subject: [PATCH v4 06/10] net/mlx5: add burst pacing devargs
+> Subject: [PATCH v4 07/10] net/mlx5: add testpmd command to query per-
+> queue rate limit
 >=20
-> Expose burst_upper_bound and typical_packet_size from the PRM
-> set_pp_rate_limit_context as devargs:
-> - tx_burst_bound=3D<bytes>: max burst before rate evaluation kicks in
-> - tx_typical_pkt_sz=3D<bytes>: typical packet size for accuracy
+> Add a new testpmd command to display the per-queue packet pacing rate lim=
+it
+> state, including the PP index from both driver state and FW SQ context
+> readback:
 >=20
-> These parameters apply to per-queue rate limiting
-> (rte_eth_set_queue_rate_limit) only. The Clock Queue path (tx_pp devarg) =
-uses
-> WQE rate pacing and does not need these parameters.
+>   testpmd> mlx5 port <port_id> txq <queue_id> rate show
 >=20
-> Values are validated against HCA capabilities (packet_pacing_burst_bound =
-and
-> packet_pacing_typical_size).
-> If the HW does not support them, a warning is logged and the value is sil=
-ently
-> zeroed. Test mode still overrides both values.
+> This helps verify that the FW actually applied the PP index to the SQ aft=
+er setting
+> a per-queue rate limit.
 >=20
-> Shared context mismatch checks ensure all ports on the same device use th=
-e
-> same burst parameters.
->=20
-> Supported hardware:
-> - ConnectX-6 Dx: burst_upper_bound and typical_packet_size
->   reported via packet_pacing_burst_bound / packet_pacing_typical_size
->   QoS capability bits
-> - ConnectX-7/8: full support for both parameters
-> - BlueField-2/3: same capabilities as host-side ConnectX
->=20
-> Not supported:
-> - ConnectX-5: may not report burst_bound or typical_size caps
-> - ConnectX-4 Lx and earlier: no packet_pacing at all
+> Expose a new PMD API rte_pmd_mlx5_txq_rate_limit_query() that queries
+> txq_ctrl->rate_limit for driver state and
+> mlx5_devx_cmd_query_sq() for the FW
+> packet_pacing_rate_limit_index field.
 >=20
 > Signed-off-by: Vincent Jardin <vjardin@free.fr>
 > ---
->  doc/guides/nics/mlx5.rst     | 17 +++++++++++++++
->  drivers/net/mlx5/mlx5.c      | 42 ++++++++++++++++++++++++++++++++++++
->  drivers/net/mlx5/mlx5.h      |  2 ++
->  drivers/net/mlx5/mlx5_txpp.c |  6 ++++++
->  4 files changed, 67 insertions(+)
+>  drivers/net/mlx5/mlx5_testpmd.c | 93
+> +++++++++++++++++++++++++++++++++
+>  drivers/net/mlx5/mlx5_tx.c      | 40 +++++++++++++-
+>  drivers/net/mlx5/rte_pmd_mlx5.h | 30 +++++++++++
+>  3 files changed, 162 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst index
-> c72a60f084..d0b403dd5c 100644
-> --- a/doc/guides/nics/mlx5.rst
-> +++ b/doc/guides/nics/mlx5.rst
-> @@ -580,6 +580,23 @@ for an additional list of options shared with other
-> mlx5 drivers.
->    (with ``tx_pp``) and ConnectX-7+ (wait-on-time) scheduling modes.
->    The default value is zero.
->=20
-> +- ``tx_burst_bound`` parameter [int]
-> +
-> +  Specifies the burst upper bound in bytes for packet pacing rate evalua=
-tion.
-> +  When set, the hardware considers this burst size when enforcing the
-> + configured  rate limit. Only effective when the HCA reports
-> + ``packet_pacing_burst_bound``  capability. Applies to per-queue rate
-> + limiting  (``rte_eth_set_queue_rate_limit()``). The Clock Queue path
-> + (``tx_pp``)  uses WQE rate pacing and does not use this parameter.
-> +  The default value is zero (hardware default).
-> +
-> +- ``tx_typical_pkt_sz`` parameter [int]
-> +
-> +  Specifies the typical packet size in bytes for packet pacing rate
-> + accuracy  improvement. Only effective when the HCA reports
-> + ``packet_pacing_typical_size`` capability. Applies to per-queue rate
-> + limiting only. The default value is zero (hardware default).
-> +
->  .. _mlx5_per_queue_rate_limit:
->=20
->  Per-Queue Tx Rate Limiting
-> diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c index
-> e718f0fa8c..7d08d7886b 100644
-> --- a/drivers/net/mlx5/mlx5.c
-> +++ b/drivers/net/mlx5/mlx5.c
-> @@ -119,6 +119,18 @@
->   */
->  #define MLX5_TX_SKEW "tx_skew"
->=20
-> +/*
-> + * Device parameter to specify burst upper bound in bytes
-> + * for packet pacing rate evaluation.
-> + */
-> +#define MLX5_TX_BURST_BOUND "tx_burst_bound"
-> +
-> +/*
-> + * Device parameter to specify typical packet size in bytes
-> + * for packet pacing rate accuracy improvement.
-> + */
-> +#define MLX5_TX_TYPICAL_PKT_SZ "tx_typical_pkt_sz"
-> +
->  /*
->   * Device parameter to enable hardware Tx vector.
->   * Deprecated, ignored (no vectorized Tx routines anymore).
-> @@ -1407,6 +1419,10 @@ mlx5_dev_args_check_handler(const char *key,
-> const char *val, void *opaque)
->  		config->tx_pp =3D tmp;
->  	} else if (strcmp(MLX5_TX_SKEW, key) =3D=3D 0) {
->  		config->tx_skew =3D tmp;
-> +	} else if (strcmp(MLX5_TX_BURST_BOUND, key) =3D=3D 0) {
-> +		config->tx_burst_bound =3D tmp;
-> +	} else if (strcmp(MLX5_TX_TYPICAL_PKT_SZ, key) =3D=3D 0) {
-> +		config->tx_typical_pkt_sz =3D tmp;
->  	} else if (strcmp(MLX5_L3_VXLAN_EN, key) =3D=3D 0) {
->  		config->l3_vxlan_en =3D !!tmp;
->  	} else if (strcmp(MLX5_VF_NL_EN, key) =3D=3D 0) { @@ -1481,8 +1497,10
-> @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
->  				struct mlx5_sh_config *config)
->  {
->  	const char **params =3D (const char *[]){
-> +		MLX5_TX_BURST_BOUND,
->  		MLX5_TX_PP,
->  		MLX5_TX_SKEW,
-> +		MLX5_TX_TYPICAL_PKT_SZ,
->  		MLX5_L3_VXLAN_EN,
->  		MLX5_VF_NL_EN,
->  		MLX5_DV_ESW_EN,
-> @@ -1557,6 +1575,18 @@ mlx5_shared_dev_ctx_args_config(struct
-> mlx5_dev_ctx_shared *sh,
->  		DRV_LOG(WARNING,
->  			"\"tx_skew\" doesn't affect without \"tx_pp\".");
+> diff --git a/drivers/net/mlx5/mlx5_testpmd.c
+> b/drivers/net/mlx5/mlx5_testpmd.c index 1bb5a89559..fd3efecc5d 100644
+> --- a/drivers/net/mlx5/mlx5_testpmd.c
+> +++ b/drivers/net/mlx5/mlx5_testpmd.c
+> @@ -1365,6 +1365,94 @@ cmdline_parse_inst_t
+> mlx5_cmd_dump_rq_context_options =3D {
 >  	}
-> +	if (config->tx_burst_bound &&
-> +	    !sh->cdev->config.hca_attr.qos.packet_pacing_burst_bound) {
-> +		DRV_LOG(WARNING,
-> +			"HW does not support burst_upper_bound,
-> ignoring.");
-> +		config->tx_burst_bound =3D 0;
+>  };
+>=20
+> +/* Show per-queue rate limit PP index for a given port/queue */ struct
+> +mlx5_cmd_show_rate_limit_options {
+> +	cmdline_fixed_string_t mlx5;
+> +	cmdline_fixed_string_t port;
+> +	portid_t port_id;
+> +	cmdline_fixed_string_t txq;
+> +	queueid_t queue_id;
+> +	cmdline_fixed_string_t rate;
+> +	cmdline_fixed_string_t show;
+> +};
+> +
+> +cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_mlx5 =3D
+> +	TOKEN_STRING_INITIALIZER(struct
+> mlx5_cmd_show_rate_limit_options,
+> +				 mlx5, "mlx5");
+> +cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_port =3D
+> +	TOKEN_STRING_INITIALIZER(struct
+> mlx5_cmd_show_rate_limit_options,
+> +				 port, "port");
+> +cmdline_parse_token_num_t mlx5_cmd_show_rate_limit_port_id =3D
+> +	TOKEN_NUM_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
+> +			      port_id, RTE_UINT16);
+> +cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_txq =3D
+> +	TOKEN_STRING_INITIALIZER(struct
+> mlx5_cmd_show_rate_limit_options,
+> +				 txq, "txq");
+> +cmdline_parse_token_num_t mlx5_cmd_show_rate_limit_queue_id =3D
+> +	TOKEN_NUM_INITIALIZER(struct mlx5_cmd_show_rate_limit_options,
+> +			      queue_id, RTE_UINT16);
+> +cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_rate =3D
+> +	TOKEN_STRING_INITIALIZER(struct
+> mlx5_cmd_show_rate_limit_options,
+> +				 rate, "rate");
+> +cmdline_parse_token_string_t mlx5_cmd_show_rate_limit_show =3D
+> +	TOKEN_STRING_INITIALIZER(struct
+> mlx5_cmd_show_rate_limit_options,
+> +				 show, "show");
+> +
+> +static void
+> +mlx5_cmd_show_rate_limit_parsed(void *parsed_result,
+> +				__rte_unused struct cmdline *cl,
+> +				__rte_unused void *data)
+> +{
+> +	struct mlx5_cmd_show_rate_limit_options *res =3D parsed_result;
+> +	struct rte_pmd_mlx5_txq_rate_limit_info info;
+> +	int ret;
+> +
+> +	ret =3D rte_pmd_mlx5_txq_rate_limit_query(res->port_id, res-
+> >queue_id,
+> +						 &info);
+> +	switch (ret) {
+> +	case 0:
+> +		break;
+> +	case -ENODEV:
+> +		fprintf(stderr, "invalid port_id %u\n", res->port_id);
+> +		return;
+> +	case -EINVAL:
+> +		fprintf(stderr, "invalid queue index (%u), out of range\n",
+> +			res->queue_id);
+> +		return;
+> +	case -EIO:
+> +		fprintf(stderr, "failed to query SQ context\n");
+> +		return;
+> +	default:
+> +		fprintf(stderr, "query failed (%d)\n", ret);
+> +		return;
 > +	}
-> +	if (config->tx_typical_pkt_sz &&
-> +	    !sh->cdev->config.hca_attr.qos.packet_pacing_typical_size) {
-> +		DRV_LOG(WARNING,
-> +			"HW does not support typical_packet_size, ignoring.");
-> +		config->tx_typical_pkt_sz =3D 0;
+> +	fprintf(stdout, "Port %u Txq %u rate limit info:\n",
+> +		res->port_id, res->queue_id);
+> +	if (info.rate_mbps > 0)
+> +		fprintf(stdout, "  Configured rate: %u Mbps\n",
+> +			info.rate_mbps);
+> +	else
+> +		fprintf(stdout, "  Configured rate: disabled\n");
+> +	fprintf(stdout, "  PP index (driver): %u\n", info.pp_index);
+> +	fprintf(stdout, "  PP index (FW readback): %u\n", info.fw_pp_index); }
+> +
+> +cmdline_parse_inst_t mlx5_cmd_show_rate_limit =3D {
+> +	.f =3D mlx5_cmd_show_rate_limit_parsed,
+> +	.data =3D NULL,
+> +	.help_str =3D "mlx5 port <port_id> txq <queue_id> rate show",
+> +	.tokens =3D {
+> +		(void *)&mlx5_cmd_show_rate_limit_mlx5,
+> +		(void *)&mlx5_cmd_show_rate_limit_port,
+> +		(void *)&mlx5_cmd_show_rate_limit_port_id,
+> +		(void *)&mlx5_cmd_show_rate_limit_txq,
+> +		(void *)&mlx5_cmd_show_rate_limit_queue_id,
+> +		(void *)&mlx5_cmd_show_rate_limit_rate,
+> +		(void *)&mlx5_cmd_show_rate_limit_show,
+> +		NULL,
 > +	}
->  	/* Check for LRO support. */
->  	if (mlx5_devx_obj_ops_en(sh) && sh->cdev->config.hca_attr.lro_cap) {
->  		/* TBD check tunnel lro caps. */
-> @@ -3191,6 +3221,18 @@ mlx5_probe_again_args_validate(struct
-> mlx5_common_device *cdev,
->  			sh->ibdev_name);
->  		goto error;
->  	}
-> +	if (sh->config.tx_burst_bound !=3D config->tx_burst_bound) {
-> +		DRV_LOG(ERR, "\"tx_burst_bound\" "
-> +			"configuration mismatch for shared %s context.",
-> +			sh->ibdev_name);
-> +		goto error;
+> +};
+> +
+>  static struct testpmd_driver_commands mlx5_driver_cmds =3D {
+>  	.commands =3D {
+>  		{
+> @@ -1440,6 +1528,11 @@ static struct testpmd_driver_commands
+> mlx5_driver_cmds =3D {
+>  			.help =3D "mlx5 port (port_id) queue (queue_id) dump
+> rq_context (file_name)\n"
+>  				"    Dump mlx5 RQ Context\n\n",
+>  		},
+> +		{
+> +			.ctx =3D &mlx5_cmd_show_rate_limit,
+> +			.help =3D "mlx5 port (port_id) txq (queue_id) rate
+> show\n"
+> +				"    Show per-queue rate limit PP index\n\n",
+> +		},
+>  		{
+>  			.ctx =3D NULL,
+>  		},
+> diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c inde=
+x
+> 8085b5c306..7d71782d33 100644
+> --- a/drivers/net/mlx5/mlx5_tx.c
+> +++ b/drivers/net/mlx5/mlx5_tx.c
+> @@ -800,7 +800,7 @@ int rte_pmd_mlx5_txq_dump_contexts(uint16_t
+> port_id, uint16_t queue_id, const ch
+>  	if (!rte_eth_dev_is_valid_port(port_id))
+>  		return -ENODEV;
+>=20
+> -	if (rte_eth_tx_queue_is_valid(port_id, queue_id))
+> +	if (rte_eth_tx_queue_is_valid(port_id, queue_id) !=3D 0)
+>  		return -EINVAL;
+>=20
+>  	fd =3D fopen(path, "w");
+> @@ -848,3 +848,41 @@ int rte_pmd_mlx5_txq_dump_contexts(uint16_t
+> port_id, uint16_t queue_id, const ch
+>  	fclose(fd);
+>  	return ret;
+>  }
+> +
+> +RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_txq_rate_limit_query,
+> +26.07) int rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t
+> queue_id,
+> +				       struct rte_pmd_mlx5_txq_rate_limit_info
+> *info) {
+> +	struct rte_eth_dev *dev;
+> +	struct mlx5_priv *priv;
+> +	struct mlx5_txq_data *txq_data;
+> +	struct mlx5_txq_ctrl *txq_ctrl;
+> +	uint32_t sq_out[MLX5_ST_SZ_DW(query_sq_out)] =3D {0};
+> +	int ret;
+> +
+> +	if (info =3D=3D NULL)
+> +		return -EINVAL;
+> +	if (!rte_eth_dev_is_valid_port(port_id))
+> +		return -ENODEV;
+> +	if (rte_eth_tx_queue_is_valid(port_id, queue_id) !=3D 0)
+> +		return -EINVAL;
+> +	dev =3D &rte_eth_devices[port_id];
+> +	priv =3D dev->data->dev_private;
+> +	txq_data =3D (*priv->txqs)[queue_id];
+> +	txq_ctrl =3D container_of(txq_data, struct mlx5_txq_ctrl, txq);
+> +	info->rate_mbps =3D txq_ctrl->rate_limit.rate_mbps;
+> +	info->pp_index =3D txq_ctrl->rate_limit.pp_id;
+> +	if (txq_ctrl->obj =3D=3D NULL) {
+> +		info->fw_pp_index =3D 0;
+> +		return 0;
 > +	}
-> +	if (sh->config.tx_typical_pkt_sz !=3D config->tx_typical_pkt_sz) {
-> +		DRV_LOG(ERR, "\"tx_typical_pkt_sz\" "
-> +			"configuration mismatch for shared %s context.",
-> +			sh->ibdev_name);
-> +		goto error;
-> +	}
->  	if (sh->config.txq_mem_algn !=3D config->txq_mem_algn) {
->  		DRV_LOG(ERR, "\"TxQ memory alignment\" "
->  			"configuration mismatch for shared %s context. %u -
-> %u", diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h index
-> 33628d7987..5ae01ec491 100644
-> --- a/drivers/net/mlx5/mlx5.h
-> +++ b/drivers/net/mlx5/mlx5.h
-> @@ -383,6 +383,8 @@ struct mlx5_port_config {  struct mlx5_sh_config {
->  	int tx_pp; /* Timestamp scheduling granularity in nanoseconds. */
->  	int tx_skew; /* Tx scheduling skew between WQE and data on wire. */
-> +	uint32_t tx_burst_bound; /* Burst upper bound in bytes, 0 =3D default. =
-*/
-> +	uint32_t tx_typical_pkt_sz; /* Typical packet size in bytes, 0 =3D
-> +default. */
->  	uint32_t reclaim_mode:2; /* Memory reclaim mode. */
->  	uint32_t dv_esw_en:1; /* Enable E-Switch DV flow. */
->  	/* Enable DV flow. 1 means SW steering, 2 means HW steering. */ diff --
-> git a/drivers/net/mlx5/mlx5_txpp.c b/drivers/net/mlx5/mlx5_txpp.c index
-> e34e996e9b..707ef9d111 100644
-> --- a/drivers/net/mlx5/mlx5_txpp.c
-> +++ b/drivers/net/mlx5/mlx5_txpp.c
-> @@ -176,6 +176,12 @@ mlx5_txq_alloc_pp_rate_limit(struct
-> mlx5_dev_ctx_shared *sh,
->  	memset(&pp, 0, sizeof(pp));
->  	MLX5_SET(set_pp_rate_limit_context, &pp, rate_limit,
-> (uint32_t)rate_kbps);
->  	MLX5_SET(set_pp_rate_limit_context, &pp, rate_mode,
-> MLX5_DATA_RATE);
-> +	if (sh->config.tx_burst_bound)
-> +		MLX5_SET(set_pp_rate_limit_context, &pp,
-> +			 burst_upper_bound, sh->config.tx_burst_bound);
-> +	if (sh->config.tx_typical_pkt_sz)
-> +		MLX5_SET(set_pp_rate_limit_context, &pp,
-> +			 typical_packet_size, sh->config.tx_typical_pkt_sz);
->  	rate_limit->pp =3D mlx5_glue->dv_alloc_pp(sh->cdev->ctx, sizeof(pp),
->  						 &pp, 0);
->  	if (rate_limit->pp =3D=3D NULL) {
+> +	ret =3D mlx5_devx_cmd_query_sq(txq_ctrl->obj->sq_obj.sq,
+> +				     sq_out, sizeof(sq_out));
+> +	if (ret)
+> +		return -EIO;
+> +	info->fw_pp_index =3D MLX5_GET(sqc,
+> +				     MLX5_ADDR_OF(query_sq_out, sq_out,
+> +						  sq_context),
+> +				     packet_pacing_rate_limit_index);
+> +	return 0;
+> +}
+> diff --git a/drivers/net/mlx5/rte_pmd_mlx5.h
+> b/drivers/net/mlx5/rte_pmd_mlx5.h index 7acfdae97d..698d7d2032 100644
+> --- a/drivers/net/mlx5/rte_pmd_mlx5.h
+> +++ b/drivers/net/mlx5/rte_pmd_mlx5.h
+> @@ -420,6 +420,36 @@ __rte_experimental
+>  int
+>  rte_pmd_mlx5_txq_dump_contexts(uint16_t port_id, uint16_t queue_id,
+> const char *filename);
+>=20
+> +/**
+> + * Per-queue rate limit information.
+> + */
+> +struct rte_pmd_mlx5_txq_rate_limit_info {
+> +	uint32_t rate_mbps;	/**< Configured rate in Mbps, 0 =3D disabled. */
+> +	uint16_t pp_index;	/**< PP index from driver state. */
+> +	uint16_t fw_pp_index;	/**< PP index read back from FW SQ context.
+> */
+> +};
+> +
+> +/**
+> + * Query per-queue rate limit state for a given Tx queue.
+> + *
+> + * @param[in] port_id
+> + *   Port ID.
+> + * @param[in] queue_id
+> + *   Tx queue ID.
+> + * @param[out] info
+> + *   Rate limit information.
+> + *
+> + * @return
+> + *   0 on success, negative errno on failure:
+> + *   - -ENODEV: invalid port_id.
+> + *   - -EINVAL: invalid queue_id.
+> + *   - -EIO: FW query failed.
+> + */
+> +__rte_experimental
+> +int
+> +rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
+> +				  struct rte_pmd_mlx5_txq_rate_limit_info
+> *info);
+> +
+>  /** Type of mlx5 driver event for which custom callback is called. */  e=
+num
+> rte_pmd_mlx5_driver_event_cb_type {
+>  	/** Called after HW Rx queue is created. */
 > --
 > 2.43.0
 
