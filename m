@@ -2,59 +2,155 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A19EC01C4
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 10:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B62EC01CB
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 11:16:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3CCED40677;
-	Mon, 23 Mar 2026 11:54:07 +0100 (CET)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2F50840676
- for <dev@dpdk.org>; Mon, 23 Mar 2026 11:54:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774263245;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=33aAEuH5jYz1k5a3tt76ysNmz6cNsrrqQoscWj/hK1g=;
- b=jWAF3kHvq4Twc/C89fVIf2j8AQ3v86DZTNIm8sbFbcVUJJZ1qtgXon5oveKqCrE8UCyKlI
- is9cfm6LUoHWjqwSvlbX5IXrcv4RBfcAttEU7ZA/ViZivZ1E2vG7ks8JQg09eRyQV/8x4+
- QXZwfR6gYh6GUuWJjP6JRQa7vYvod98=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-397-VMfEWvXHPlSu6WrM3QyK3g-1; Mon,
- 23 Mar 2026 06:54:02 -0400
-X-MC-Unique: VMfEWvXHPlSu6WrM3QyK3g-1
-X-Mimecast-MFC-AGG-ID: VMfEWvXHPlSu6WrM3QyK3g_1774263241
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 6A06A1955D8B; Mon, 23 Mar 2026 10:54:01 +0000 (UTC)
-Received: from dmarchan.lan (unknown [10.44.33.173])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 189CA19560B7; Mon, 23 Mar 2026 10:53:58 +0000 (UTC)
-From: David Marchand <david.marchand@redhat.com>
-To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Robin Jarry <rjarry@redhat.com>, Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH 8/8] eal: configure initial device probing
-Date: Mon, 23 Mar 2026 11:53:02 +0100
-Message-ID: <20260323105306.1531689-9-david.marchand@redhat.com>
-In-Reply-To: <20260323105306.1531689-1-david.marchand@redhat.com>
-References: <20260323105306.1531689-1-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4385440268;
+	Mon, 23 Mar 2026 12:16:13 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id C5F074025F
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 12:16:11 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1774264572; x=1805800572;
+ h=message-id:date:subject:to:cc:references:from:
+ in-reply-to:content-transfer-encoding:mime-version;
+ bh=c8DPVgplt9l2jH9/IBltqSBU8wkZ/cc5UM0EYaJf4jE=;
+ b=OVe9Z2sC6xl5kzBpPxZxQj3BD6rgRHWTgD4BT8rZ/NlgrcuxiJzMCwch
+ lSeomOrgBpEQ8LaxADpmQs1nZZ6P3na97McujutoCvrYj7VdSMKi7R6Ik
+ 8Gaw9Btp4J9J2roHDGbPUyz4zaiCeCYxBXtzxU3MQ9M2g5UrDShdxkOKv
+ re7aGgzlK1Qv38kw3fso4cGLZoPyYkUwzmKqnChNs/BPOipRytFw9vjuf
+ WVy5ZkqFGD3vXLoBw3NxKtKtTIJ+TgrouH564Hv3u0O3EFQIi/svA8KuS
+ tZczSGsV3PJaGO+ya7pt/4R7rfoguztlqbqqWjZPqpigU9/JEkGC2Kspp Q==;
+X-CSE-ConnectionGUID: 4ZwyymtEQ16P+OPXHhb+pg==
+X-CSE-MsgGUID: 8iKAXRmNRVSD11wPaK/hXg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11737"; a="75229167"
+X-IronPort-AV: E=Sophos;i="6.23,137,1770624000"; d="scan'208";a="75229167"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Mar 2026 04:16:11 -0700
+X-CSE-ConnectionGUID: G87J4ADkT2e0nXjA2ay4Iw==
+X-CSE-MsgGUID: zxVblhE8StOQsjrEGhXiAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,137,1770624000"; d="scan'208";a="228072078"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 23 Mar 2026 04:16:11 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Mon, 23 Mar 2026 04:16:10 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Mon, 23 Mar 2026 04:16:10 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.50) by
+ edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Mon, 23 Mar 2026 04:16:10 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YtzVulN3VVE6vBqLjKILToPXI0ZCq16/2J8ctBnMZ0EH25S5c+LDyevWCLRG7/h9HUTUq+cgDxjnXNODxxRwQfH8tl/mk2zQcHaYn/PoT4Aw7Q5hxZ5nnqH9AtzuxEOqstx3mKhUtCtZzKkjPA/QjpcCG1M0q7dZqV4woTEUXKdE7zRBTZXxsc/DmV0GGY7PGQ/KNPDSMVFQ7P4UJbKE8vi5wWp7P0cG5ZJOobVWzOr8EHA3JP32y0Wp4tDmlS+cE7OSM8SAN9Cjo4WVEW5QhgKV9OkI0q0hS8oi/sG7Q52Xgt+/Gxnes39RVz2sZ2AXvrA35dXYp+J5qwTGZqmF0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=56N0wpDwS0ARKqvTagEcJVjUffBU/DfQKr8dJJ0FcCM=;
+ b=gnhtdC13IWjvbnO8HmDllqAChgkXK3yGdY5+MwgP4kokcNOUwOeWYeCtIORkGfuTe50aTMdnrVox3JM+W+CtdbQlfmNxtTfORiLlv8bzHPbCPuKnersYe6rcFcrES3emgq+ZPh+0YXrFIF1+eiC4DJQ22k4TLh0RF2Kzhrp7tFoDJqeqO6IDU2gRAKWY2BfEjJ+NRPSOMXHfJLOOv4jyvLsyCJ1awX0yJBkmegy+mY8FlinwAOCxoKxU577ljd71Ll/F6f54TbkBUM6/ZSfmwY1LAf+AOOJOBDRxjY0TNScoQ4rNC2VcheXc/Z/E4vN/0AE6HsqaQI6HhJBXRduziw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA4PR11MB9204.namprd11.prod.outlook.com (2603:10b6:208:56d::16)
+ by CO1PR11MB4948.namprd11.prod.outlook.com (2603:10b6:303:9b::12)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Mon, 23 Mar
+ 2026 11:16:03 +0000
+Received: from IA4PR11MB9204.namprd11.prod.outlook.com
+ ([fe80::8560:b65c:231a:64a2]) by IA4PR11MB9204.namprd11.prod.outlook.com
+ ([fe80::8560:b65c:231a:64a2%5]) with mapi id 15.20.9745.007; Mon, 23 Mar 2026
+ 11:16:03 +0000
+Message-ID: <b16f1460-626c-44ba-8d26-226ac9d8f76a@intel.com>
+Date: Mon, 23 Mar 2026 11:16:00 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/4] VRF support in FIB library
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <rjarry@redhat.com>, <nsaxena16@gmail.com>,
+ <mb@smartsharesystems.com>, <adwivedi@marvell.com>, <jerinjacobk@gmail.com>
+References: <20260322154215.3686528-1-vladimir.medvedkin@intel.com>
+ <20260322094346.52a87b29@phoenix.local>
+Content-Language: en-US
+From: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+In-Reply-To: <20260322094346.52a87b29@phoenix.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DBBPR09CA0035.eurprd09.prod.outlook.com
+ (2603:10a6:10:d4::23) To IA4PR11MB9204.namprd11.prod.outlook.com
+ (2603:10b6:208:56d::16)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: aVqnVmU36qDQRipj5TXhniQk7FHKLcA5MtvbJCytJk4_1774263241
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA4PR11MB9204:EE_|CO1PR11MB4948:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6683bd41-5cef-4d34-6da0-08de88cd91dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|1800799024|376014|22082099003|18002099003|56012099003; 
+X-Microsoft-Antispam-Message-Info: ssdOD4K/QCzRe8r+0usdGsZhN/mdMFRnavSBBT2qzD8xrFzI64auGOkfW9quin+y41MeWe/6Ihdi2q0qtjhUUedpkNs7U0xR3Hoz4uBzNBfbpifUYSs1ziaxlPnRXFIzBYz2ilRFN8MLm+9Ax6bn7Y3q2thhEw+2H3xGcBq6w04uZECwHFSIHB35QYjiofolpV9+P+MbVqIUO/+QDry3RWC3T4qa1IinVTy5HLFaQw5UVgpSBob5Qp90mVrBc52KprR1DFeC1C9Pp2Qp/6v1yTWpNLRqhdEqVRi76TJIb02/CBg6HloURpiIRzpNjLFOKgGBNiCM2VNTUtQt0kh4SkKgoNeL5jaBTAvAyQPli7YJkvC0XCLcoJtZVD2jR26KHHj+TjKysgYGWuEwUzTd7qLz0GEU++UG0QcH1MRKndmqc1Jgp74QlLFrhVwuT5XB76fhBfnNenO58kn8k2jzqFBz5PL8KHgSRBt4vNBr2W55+ZhJNPfvyURvXnh2AANv+tt3U/9535cbFMvNcisqxTxivJFwoUnyxRgdAMEEV23FWyOCJIl5pvw7Ef3MksIZ+E9N3p11kOYTJqj/DhFxhptMjTJU+WNkhOIDiHYuEmy8Nz+t6fr0uJC+8SjdChsNTztIZT4rkvepVwjV1ybkSqmc4JPzwxDUC0MfgKk8Q88usF3JPA8ICt5uk6F8f7ho
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:IA4PR11MB9204.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(22082099003)(18002099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RUFNLzlCZ3VUWHlnUmFhT0lyVUZRTFJQMXFmVzAyMHdFeXRGY0hqelJxM2kz?=
+ =?utf-8?B?cVlOWmF3WUlIWmZaSE8yd3pDREpnY2Y2UDRvMzJybmVUd3dvYVltTTNBaCs1?=
+ =?utf-8?B?TWRUVmJPV09YTXhtWll3QitjcjZvUEpQL0VSVFZvc01rUVlqMnZJNjdnVXFD?=
+ =?utf-8?B?S0d5dEF2T09PL3pnWWFwME8rWVlHSG1XSUY1WGczWEVmbG1hdFo3U1FTcTBu?=
+ =?utf-8?B?dnJVcVhxNlhFZGkyZlcyMUhYc2R5elZRR2NLWXd3Mnk4aW41QVZWaGpJNkoy?=
+ =?utf-8?B?SHM4TmJ5QkNYeXdrYnVMcSsvcjlaSm5uc1RkUU0vK3I2aTFBSHRCZ05zWVBS?=
+ =?utf-8?B?VG5oZVRzaDlxVWFnWGZjaTQzY2J5Z0JGRndxOXcyN2E2WEptVnBVcTZ6K2hR?=
+ =?utf-8?B?b2JCdTZmVm1BZnprSlRxcUhqWDNIL0ZmSENyQWN5UmdZVWh0WWkvYnN5NlYz?=
+ =?utf-8?B?RVptMXBtMVpFSFNQeitva3ZKcVNOUGQ0T082anJHamhJUGpvMmtoT1VvMDhN?=
+ =?utf-8?B?UEdVcHg4RTNPMHBVaVYvNXdNdWJRWCtGM2U2bnVQTWN5ZE91YUF1WGlNYXJV?=
+ =?utf-8?B?aUtKZkozS2tPY2hNSktoR1oyZ1pSY25QcVJIajhsaHp2c2ZKU1pWWmdqUTR5?=
+ =?utf-8?B?ZFJpNzdKME5KSlRnTHE2ZXZuMlVlV3ExSTdKQ3ZrNWVIVElCS2Q1MkRUZ3dv?=
+ =?utf-8?B?MHFmZzlEbjRad01hSUphZlpUeFFSSnQ1dEdSSEJmS1pjeWM5L05kcHRJK0NN?=
+ =?utf-8?B?M1QwN3pqNm83Zm1ibndYVXFZK0RuTHFqWXNxaUNST2VsaVludDh0NUdLSkJl?=
+ =?utf-8?B?dG85dThtZnY1RUpENVZZTnhaME9GbVNsbkFZNkhDSjN0R2tIbDFhYWh4a0to?=
+ =?utf-8?B?RDluSzl1R3NIclBBeVIxa1JIVU1rdVlNcy9xcmZ4cjBCVndOdDZMNEFEVkh4?=
+ =?utf-8?B?MHFQeUFEaGdPaWxtbDA2dFdDSWdIUk9HaWttWnRIcjVBNTQ5d1NiM056dTJO?=
+ =?utf-8?B?UWpJdEpad2J3UWF4VWxEYUp2RzgvMFdzUEE0Mi9PSHpXanJVbFBPTjV1TWFT?=
+ =?utf-8?B?U0ZlUHpkY3RMbWJSV2NucVlxeUM0WVZkbkFaZzZvTmp0MW9wUStqWXlGck1i?=
+ =?utf-8?B?NGhBSGhhdU1LR3hSUnNYTG1uZHRNbFpqSjIzSWovUW5Zd09oaDNYWFNUaGUw?=
+ =?utf-8?B?ZFoxeW54cVBwbGJZL0NNWjExS29DZjdFRlR6dWNuR3dNcFlBUncyQlBqMm0w?=
+ =?utf-8?B?VExmdkJieFpKWXhHblIzcU1nR3g1UElBVWpPZGUvKzQ5cG1pSlhieDJKSWVE?=
+ =?utf-8?B?MVkvNENEMnhueVp2SkpPY0tnR3NOYzJKR25YU2JrQlowWExmQTE0WGljd0wr?=
+ =?utf-8?B?RVJNQWhmVnVhVDA0NEw2eXZweFZyNHBLcmlnTkJEZTVLR0MvaE9tY2tqZFdY?=
+ =?utf-8?B?bGRjS1ZUQXExdzNWbUxiOVRZRVUzZU0zdjB3UG5DWUZjRStUSmVQRG40L2pm?=
+ =?utf-8?B?dVA4c2puSlFSSkk5UHNHTzVWNWV4eEJCWVdxekovdCs5bGc2U0UrKzEwWURL?=
+ =?utf-8?B?bHJwdVBST1FQQ0tkd3BrTUNJZmE3MU0zRVVpbzRUdnY5YXE2VVNzb3JMYks4?=
+ =?utf-8?B?eUxBdnpUVjZva3lmRGEyaUdJU3cxWFVDVC8yWTR2YS95em50TFM3MVJ0TWh6?=
+ =?utf-8?B?ZkJOTFZVN01nbkd4YkFXWVlmQ041U21pWFlHUENsOUdlVER1VG1uSGJXa0xi?=
+ =?utf-8?B?RVd2TDI4aVBQME1MMmdCeldNSXk2Ri9zQms4TVFWcmV6NWlneVZZQTZ2Mkpm?=
+ =?utf-8?B?elJQekR6ajdaTHhOUy9KYStFTFRZNnNvRmxtZkd6cTMzalpCWXpqVUdvdXl0?=
+ =?utf-8?B?MnhtbXVYOHY4SEwrUVFoeFdpdzh1ak5neWUxNXlYQ3FSMWgrVjF0aEoyaXlu?=
+ =?utf-8?B?OU1wcUVLUUo3WTFzWVI5MnVuWWpSQytodUQ5czZyWDdTV0s3SStpcUtway9k?=
+ =?utf-8?B?dzdGN0RZTGhoMGc0cTQ1cHhkdkMzaWJLK3hJYmVuUnlvRG5ReStrY3VPeWJz?=
+ =?utf-8?B?Z0RQTFcyT0llakVyNU9rK3JLTmFOVjFNeDJQUmpjL1l2SjA2YklmVGVQMm1D?=
+ =?utf-8?B?aDErMlFHQ3FnNnFlaCtOTCtzNzJwcTEyZGxhV1pZVUF3ekRNUnVVRWxEam9l?=
+ =?utf-8?B?OVozdXlaOVhaR1NOSHp1Q3BwTmJ6TGFITFM0TjNBZ0d1Y0F3cHdqamRHUFRO?=
+ =?utf-8?B?WmhZeWVtM2prYUNWN3pxczBYK1BmTVplM3BnNHFNQ2tGbnNBQkN1Nnl5blNM?=
+ =?utf-8?B?YVNFdjFSaUl4Z3A0bFRVcm8zajE5dTNkbWNvY3pTU21yU1lkQmtLTGxXYm1W?=
+ =?utf-8?Q?cwKNx85EBPhhh1U4=3D?=
+X-Exchange-RoutingPolicyChecked: dk1L8Ep3WLj1FdZlbpnpBvOWzHf9tH+VglGHAD2HDoOfaQNjmIPr56xvorgZkFeIVnMiP4LNUB1yzCXGXOh0ezzx0gMjd+eLYKy3YnfxZm60KFygPdso86ZkP1wC8/PGutk6K6tyUAOKWCi1kZ/RmjyuTRd2OmMb/oV2BoIagts6gVcsu61ZtL/d0nxGx1L+KNXnyFiiXf749+FOfjuIxqCM0iPKqFZkDSMAqXe/Q6y+5mJ0LS/grIIzer2qJBtwR/pGhu7FBgSChbFG8NEFB8ELiWHjWdX7uQdcOaCM2Rs0o2fZyMIoTKOlpKa4EAcQs1bvBGdUJ9q+uyiObJOuQQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6683bd41-5cef-4d34-6da0-08de88cd91dc
+X-MS-Exchange-CrossTenant-AuthSource: IA4PR11MB9204.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2026 11:16:03.1669 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MWmLcuDhUDmcZfXtWTDrdkHPxCcs+PffOmBunvQMpTF+Zs8r561o3tWLklC+PRhN6m4bOHV7TUPMznWXSUGUe/6jtYRs3RV8yb4nTYGDoac=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4948
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,308 +164,81 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some applications use port hotplug as their primary way for using DPDK
-resources.
-Having a systematic device probing is a problem when not all available
-resources will be used by the application, as such applications won't set
-an explicit allow list at startup.
+Hi Stephen,
 
-This is the case for OVS on systems with multiple mlx5 devices:
-one device can be used by the kernel while the other(s) are used by DPDK.
-In such a setup, the kernel used device may get reconfigured in
-unexpected ways and trigger issues like the one described by Kevin
-not so long ago in bugzilla 1873.
+On 3/22/2026 4:43 PM, Stephen Hemminger wrote:
+> On Sun, 22 Mar 2026 15:42:11 +0000
+> Vladimir Medvedkin <vladimir.medvedkin@intel.com> wrote:
+>
+>> This series adds multi-VRF support to both IPv4 and IPv6 FIB paths by
+>> allowing a single FIB instance to host multiple isolated routing domains.
+>>
+>> Currently FIB instance represents one routing instance. For workloads that
+>> need multiple VRFs, the only option is to create multiple FIB objects. In a
+>> burst oriented datapath, packets in the same batch can belong to different VRFs, so
+>> the application either does per-packet lookup in different FIB instances or
+>> regroups packets by VRF before lookup. Both approaches are expensive.
+>>
+>> To remove that cost, this series keeps all VRFs inside one FIB instance and
+>> extends lookup input with per-packet VRF IDs.
+>>
+>> The design follows the existing fast-path structure for both families. IPv4 and
+>> IPv6 use multi-ary trees with a 2^24 associativity on a first level (tbl24). The
+>> first-level table scales per configured VRF. This increases memory usage, but
+>> keeps performance and lookup complexity on par with non-VRF implementation.
+>>
+>> Vladimir Medvedkin (4):
+>>    fib: add multi-VRF support
+>>    fib: add VRF functional and unit tests
+>>    fib6: add multi-VRF support
+>>    fib6: add VRF functional and unit tests
+>>
+>>   app/test-fib/main.c      | 257 ++++++++++++++++++++++--
+>>   app/test/test_fib.c      | 298 +++++++++++++++++++++++++++
+>>   app/test/test_fib6.c     | 319 ++++++++++++++++++++++++++++-
+>>   lib/fib/dir24_8.c        | 241 ++++++++++++++++------
+>>   lib/fib/dir24_8.h        | 255 ++++++++++++++++--------
+>>   lib/fib/dir24_8_avx512.c | 420 +++++++++++++++++++++++++++++++--------
+>>   lib/fib/dir24_8_avx512.h |  80 +++++++-
+>>   lib/fib/rte_fib.c        | 158 ++++++++++++---
+>>   lib/fib/rte_fib.h        |  94 ++++++++-
+>>   lib/fib/rte_fib6.c       | 166 +++++++++++++---
+>>   lib/fib/rte_fib6.h       |  88 +++++++-
+>>   lib/fib/trie.c           | 158 +++++++++++----
+>>   lib/fib/trie.h           |  51 +++--
+>>   lib/fib/trie_avx512.c    | 225 +++++++++++++++++++--
+>>   lib/fib/trie_avx512.h    |  39 +++-
+>>   15 files changed, 2453 insertions(+), 396 deletions(-)
+>
+> Not sure at all if this the right way to do VRF.
+I'd like to hear the reason why this is not the right way, what is the 
+right way and why
+> There are multiple ways to do VRF, the Linux way, the Cisco way, ...
 
-Add an EAL option so that we can change the default behavior from
-block-listing to allow-listing which can be summed up as disabling
-automatic probing.
-In case some applications want to require automatic probing, add the
-opposite option.
+I'm not 100% sure what defines a "way", but looking at VPP (since Cisco 
+was mentioned) their way is pretty much the same as Linux - i.e. it has 
+a separate handle per VRF(fib_index):
 
-Signed-off-by: David Marchand <david.marchand@redhat.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-Reviewed-by: Robin Jarry <rjarry@redhat.com>
----
-Changes since RFC v2:
-- added -A short option alias as it seems intuitive to use with -a,
-- renamed option to --no-auto-probing (half Robin and half Thomas
-  suggestions),
-- made -A and -b conflicting options,
-- added opposite option in case an application wants an explicit behavior,
-- updated unit tests accordingly,
-- updated documentation (namely some detail on --vdev),
+https://github.com/FDio/vpp/blob/c2f6a88b43d6175730d5d19364cb446e128065da/src/vnet/fib/ip4_fib.h#L128
 
-Changes since RFC v1:
-- changed approach following Bruce suggestion,
+In grout with the current FIB design the situation is the same - FIB 
+instance per VRF(vrf_id):
 
----
- app/test/test_eal_flags.c                 | 63 +++++++++++++++++++++++
- devtools/test-null.sh                     |  2 +-
- doc/guides/linux_gsg/eal_args.include.rst | 13 +++++
- lib/eal/common/eal_common_bus.c           | 17 +++---
- lib/eal/common/eal_common_options.c       | 10 ++++
- lib/eal/common/eal_internal_cfg.h         |  1 +
- lib/eal/common/eal_option_list.h          |  2 +
- 7 files changed, 101 insertions(+), 7 deletions(-)
+https://github.com/DPDK/grout/blob/0f7b91c287f7f54cd75a1b64da7ade505b346bf5/modules/ip/control/route.c#L147
 
-diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
-index b3a8d0ae6f..5594cc992d 100644
---- a/app/test/test_eal_flags.c
-+++ b/app/test/test_eal_flags.c
-@@ -119,6 +119,8 @@ test_misc_flags(void)
- #define no_hpet "--no-hpet"
- #define no_huge "--no-huge"
- #define no_shconf "--no-shconf"
-+#define auto_probing "--auto-probing"
-+#define no_auto_probing "--no-auto-probing"
- #define allow "--allow"
- #define vdev "--vdev"
- #define no_pci "--no-pci"
-@@ -338,6 +340,14 @@ test_allow_flag(void)
- 			allow, "09:0B.3,type=test",
- 			allow, "08:00.1,type=normal",
- 	};
-+	const char *wlval4[] = {prgname, prefix, mp_flag, eal_debug_logs,
-+			no_auto_probing };
-+	const char *wlval5[] = {prgname, prefix, mp_flag, eal_debug_logs,
-+			no_auto_probing, allow, "00FF:09:0B.3"};
-+	const char *wlval6[] = {prgname, prefix, mp_flag, eal_debug_logs,
-+			auto_probing };
-+	const char *wlval7[] = {prgname, prefix, mp_flag, eal_debug_logs,
-+			auto_probing, allow, "00FF:09:0B.3"};
- 
- 	for (i = 0; i < RTE_DIM(wlinval); i++) {
- 		if (launch_proc(wlinval[i]) == 0) {
-@@ -360,6 +370,26 @@ test_allow_flag(void)
- 			__LINE__);
- 		return -1;
- 	}
-+	if (launch_proc(wlval4) != 0) {
-+		printf("Error (line %d) - process did not run ok with no-auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
-+	if (launch_proc(wlval5) != 0) {
-+		printf("Error (line %d) - process did not run ok with no-auto-probing + allow\n",
-+			__LINE__);
-+		return -1;
-+	}
-+	if (launch_proc(wlval6) != 0) {
-+		printf("Error (line %d) - process did not run ok with auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
-+	if (launch_proc(wlval7) != 0) {
-+		printf("Error (line %d) - process did not run ok with auto-probing + allow\n",
-+			__LINE__);
-+		return -1;
-+	}
- 
- 	return 0;
- }
-@@ -383,6 +413,11 @@ test_invalid_b_flag(void)
- 		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "error0:0:0.1"},
- 		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0:0.1.2"},
- 	};
-+	const char *blinval_probing[] =
-+		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0.0", auto_probing};
-+	const char *blinval_probing_inval[] =
-+		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0.0", no_auto_probing};
-+
- 	/* Test with valid blocklist option */
- 	const char *blval[] = {prgname, prefix, mp_flag, eal_debug_logs,
- 			       "-b", "FF:09:0B.3"};
-@@ -396,6 +431,16 @@ test_invalid_b_flag(void)
- 			return -1;
- 		}
- 	}
-+	if (launch_proc(blinval_probing) != 0) {
-+		printf("Error (line %d) - process did not run ok with blocklist and auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
-+	if (launch_proc(blinval_probing_inval) == 0) {
-+		printf("Error (line %d) - process did run ok with blocklist and no-auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
- 	if (launch_proc(blval) != 0) {
- 		printf("Error (line %d) - process did not run ok with valid blocklist value\n",
- 			__LINE__);
-@@ -434,6 +479,12 @@ test_invalid_vdev_flag(void)
- 	const char *vdevval3[] = {prgname, prefix, no_huge, eal_debug_logs,
- 				bus_debug_logs, no_pci, vdev, "net_ring0,nodeaction=r1:0:CREATE"};
- 
-+	const char *vdevval4[] = {prgname, prefix, no_huge, eal_debug_logs,
-+				bus_debug_logs, no_auto_probing, vdev, "net_ring0"};
-+
-+	const char *vdevval5[] = {prgname, prefix, no_huge, eal_debug_logs,
-+				bus_debug_logs, auto_probing, vdev, "net_ring0"};
-+
- 	if (launch_proc(vdevinval) == 0) {
- 		printf("Error (line %d) - process did run ok with invalid vdev parameter\n",
- 			__LINE__);
-@@ -457,6 +508,18 @@ test_invalid_vdev_flag(void)
- 			__LINE__);
- 		return -1;
- 	}
-+
-+	if (launch_proc(vdevval4) != 0) {
-+		printf("Error (line %d) - process did not run ok with valid vdev value and no-auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
-+
-+	if (launch_proc(vdevval5) != 0) {
-+		printf("Error (line %d) - process did not run ok with valid vdev value and auto-probing\n",
-+			__LINE__);
-+		return -1;
-+	}
- 	return 0;
- #else
- 	return TEST_SKIPPED;
-diff --git a/devtools/test-null.sh b/devtools/test-null.sh
-index 8f21189262..5e8a1b20cd 100755
---- a/devtools/test-null.sh
-+++ b/devtools/test-null.sh
-@@ -30,7 +30,7 @@ logfile=$build/test-null.log
- (sleep 1 && echo stop) |
- # testpmd only needs 20M, make it x2 (default number of cores) for NUMA systems
- $testpmd -l $corelist --no-huge -m 40 \
--	$libs -a 0:0.0 --vdev net_null1 --vdev net_null2 $eal_options -- \
-+	$libs -A --vdev net_null1 --vdev net_null2 $eal_options -- \
- 	--no-mlockall --total-num-mbufs=2048 $testpmd_options -ia | tee $logfile
- 
- # we expect two ports and some traffic is received and transmitted
-diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
-index 4a3c4d9b5f..db9eff9321 100644
---- a/doc/guides/linux_gsg/eal_args.include.rst
-+++ b/doc/guides/linux_gsg/eal_args.include.rst
-@@ -101,6 +101,19 @@ Lcore-related options
- Device-related options
- ~~~~~~~~~~~~~~~~~~~~~~
- 
-+*   ``-A, --no-auto-probing``
-+
-+    By default, EAL probes all devices on every available bus, unless some ``-a``/``-b``
-+    options are passed.
-+    Disable automatic probing of non-blocked devices.
-+
-+.. Note::
-+    Block list cannot be used when auto probing is disabled.
-+
-+    On the other hand, disabling auto probing does not affect the VDEV bus.
-+    The VDEV bus is not concerned by automatic probing and requires explicit
-+    ``-a`` or ``--vdev``.
-+
- *   ``-b, --block <[domain:]bus:devid.func>``
- 
-     Skip probing a PCI device to prevent EAL from using it.
-diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_bus.c
-index 27a31bbefa..43503e6b13 100644
---- a/lib/eal/common/eal_common_bus.c
-+++ b/lib/eal/common/eal_common_bus.c
-@@ -252,18 +252,23 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_is_ignored_device)
- bool
- rte_bus_is_ignored_device(const struct rte_bus *bus, const char *dev_name)
- {
-+	const struct internal_config *internal_conf = eal_get_internal_configuration();
- 	struct rte_devargs *devargs = rte_bus_find_devargs(bus, dev_name);
-+	enum rte_bus_scan_mode scan_mode = rte_bus_scan_mode_get();
- 
--	switch (rte_bus_scan_mode_get()) {
--	case RTE_BUS_SCAN_ALLOWLIST:
-+	if (scan_mode == RTE_BUS_SCAN_UNDEFINED) {
-+		if (internal_conf->no_auto_probing != 0)
-+			scan_mode = RTE_BUS_SCAN_ALLOWLIST;
-+		else
-+			scan_mode = RTE_BUS_SCAN_BLOCKLIST;
-+	}
-+
-+	if (scan_mode == RTE_BUS_SCAN_ALLOWLIST) {
- 		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
- 			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
-+	} else {
- 		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
- 			return false;
--		break;
- 	}
- 	return true;
- }
-diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index aad676a004..290386dc63 100644
---- a/lib/eal/common/eal_common_options.c
-+++ b/lib/eal/common/eal_common_options.c
-@@ -233,10 +233,15 @@ eal_collate_args(int argc, char **argv)
- 		EAL_LOG(ERR, "Options allow (-a) and block (-b) can't be used at the same time");
- 		return -1;
- 	}
-+	if (args.no_auto_probing && !TAILQ_EMPTY(&args.block)) {
-+		EAL_LOG(ERR, "Options no-auto-probing and block (-b) can't be used at the same time");
-+		return -1;
-+	}
- 
- 	/* for non-list args, we can just check for zero/null values using macro */
- 	if (CONFLICTING_OPTIONS(args, coremask, lcores) ||
- 			CONFLICTING_OPTIONS(args, service_coremask, service_corelist) ||
-+			CONFLICTING_OPTIONS(args, no_auto_probing, auto_probing) ||
- 			CONFLICTING_OPTIONS(args, no_telemetry, telemetry) ||
- 			CONFLICTING_OPTIONS(args, memory_size, numa_mem) ||
- 			CONFLICTING_OPTIONS(args, no_huge, numa_mem) ||
-@@ -518,6 +523,8 @@ eal_reset_internal_config(struct internal_config *internal_cfg)
- 	memset(internal_cfg->vfio_vf_token, 0,
- 			sizeof(internal_cfg->vfio_vf_token));
- 
-+	internal_cfg->no_auto_probing = 0;
-+
- #ifdef RTE_LIBEAL_USE_HPET
- 	internal_cfg->no_hpet = 0;
- #else
-@@ -1972,6 +1979,9 @@ eal_parse_args(void)
- 		}
- 	}
- 
-+	if (args.no_auto_probing)
-+		int_cfg->no_auto_probing = 1;
-+
- 	/* device -a/-b/-vdev options*/
- 	TAILQ_FOREACH(arg, &args.allow, next)
- 		if (eal_option_device_add(RTE_DEVTYPE_ALLOWED, arg->arg) < 0)
-diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
-index 95d327a613..fac45cbe66 100644
---- a/lib/eal/common/eal_internal_cfg.h
-+++ b/lib/eal/common/eal_internal_cfg.h
-@@ -104,6 +104,7 @@ struct internal_config {
- 	struct simd_bitwidth max_simd_bitwidth;
- 	/**< max simd bitwidth path to use */
- 	size_t huge_worker_stack_size; /**< worker thread stack size */
-+	unsigned int no_auto_probing; /**< true to switch from block-listing to allow-listing */
- };
- 
- void eal_reset_internal_config(struct internal_config *internal_cfg);
-diff --git a/lib/eal/common/eal_option_list.h b/lib/eal/common/eal_option_list.h
-index abee16340b..6a5ddfd8d1 100644
---- a/lib/eal/common/eal_option_list.h
-+++ b/lib/eal/common/eal_option_list.h
-@@ -32,6 +32,7 @@
-  * Format of each entry: long name, short name, help string, struct member name.
-  */
- /* (Alphabetical) List of common options first */
-+BOOL_ARG("--auto-probing", NULL, "Let EAL probe all available devices unless some -a/-b option is set.", auto_probing)
- LIST_ARG("--allow", "-a", "Add device to allow-list, causing DPDK to only use specified devices", allow)
- STR_ARG("--base-virtaddr", NULL, "Base virtual address to reserve memory", base_virtaddr)
- LIST_ARG("--block", "-b", "Add device to block-list, preventing DPDK from using the device", block)
-@@ -51,6 +52,7 @@ STR_ARG("--mbuf-pool-ops-name", NULL, "User defined mbuf default pool ops name",
- STR_ARG("--memory-channels", "-n", "Number of memory channels per socket", memory_channels)
- STR_ARG("--memory-ranks", "-r", "Force number of memory ranks (don't detect)", memory_ranks)
- STR_ARG("--memory-size", "-m", "Total size of memory to allocate initially", memory_size)
-+BOOL_ARG("--no-auto-probing", "-A", "Do not probe any devices unless some -a option is set", no_auto_probing)
- BOOL_ARG("--no-hpet", NULL, "Disable HPET timer", no_hpet)
- BOOL_ARG("--no-huge", NULL, "Disable hugetlbfs support", no_huge)
- BOOL_ARG("--no-pci", NULL, "Disable all PCI devices", no_pci)
+I wrote about the problems of this approach in the cover letter, 
+different options were considered, and this is the design I have arrived at.
+
+After all, why should we have to follow someone else's way? I'm 
+proposing our own "DPDK way" :)
+
+>
+>
+>
+> This needs way more documentation and also an example.
+> Like an option to l3fwd. And also an implementation in testpmd.
+
 -- 
-2.53.0
+Regards,
+Vladimir
 
