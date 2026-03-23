@@ -2,49 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BD8EC01C8
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 10:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C11DEC01C9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 10:53:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 38E3C402DF;
-	Mon, 23 Mar 2026 11:44:08 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
- by mails.dpdk.org (Postfix) with ESMTP id 7D6854025F;
- Mon, 23 Mar 2026 11:44:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1774262646; x=1805798646;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=YG8h45mbiLklfoD5HkY6jyKvgYv2C34saetgWgxjhF4=;
- b=CR3Q5qcoDkG++RJfn+uB19xAzVb4CUAYuEatVCepl0S3bqaqL8lgNK9i
- sMrhk/YZeotIVNrl4e5q6JEFYB9OBYi9OuZnjJbdy2zwMBqAcEjAHXdqf
- wPJJap/5p5QA+iWDCxc4jhRyoMcx8UFcnkoQvEbntyikHsRaQws/MRIiE
- ffugASSqOEVHgVUvajFrqlxJ+448PWS2mw0M8PxmK/Jot4i7TPE9lIlQF
- NRKDNG/CVDApVRvr44qcnGft29iGcLkO5g6GPjmDTgWU4E5YdZbjBcDlX
- obJxnI2oSCPA0dzwjkfaoqhdj9tEg85zh+KnYaxYyom5xy/jlDy0lUFXI w==;
-X-CSE-ConnectionGUID: UJ8tKEOrTo6W0oQ+2wy/4A==
-X-CSE-MsgGUID: YYFe2fSZTg2GiuORSfXuQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11737"; a="92636543"
-X-IronPort-AV: E=Sophos;i="6.23,137,1770624000"; d="scan'208";a="92636543"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Mar 2026 03:44:05 -0700
-X-CSE-ConnectionGUID: qkUvEd4bS0yoJVWuqew3mg==
-X-CSE-MsgGUID: t8MEScW6QbC6ScQLfcmjaQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,137,1770624000"; d="scan'208";a="247016999"
-Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa002.fm.intel.com with ESMTP; 23 Mar 2026 03:44:04 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4FCB840268;
+	Mon, 23 Mar 2026 11:53:17 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 9BB384025F
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 11:53:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1774263195;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=F54B8l2Q1yrjyEKRtcpmzwg3oAXbFCl/gkIO+Sfzp58=;
+ b=F3qVSuPOjhjbcl/xF3peUrRMWjlPhLjp1qsfp9gmTiCfXOi481pbDP12e4vQq/8fYXzrYB
+ RE+58+SipKK8lpiffaXmAgYQoDjOnrmN/M8CMWFYPULA3Jg3fw/99pcjfVT4CQAWPOn665
+ 15Ttdo6ahOHknWyT08b9Por5s/NEExU=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-206-gP0MOYb5NIamlZJctNHPpg-1; Mon,
+ 23 Mar 2026 06:53:13 -0400
+X-MC-Unique: gP0MOYb5NIamlZJctNHPpg-1
+X-Mimecast-MFC-AGG-ID: gP0MOYb5NIamlZJctNHPpg_1774263193
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 0E36E195608E
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 10:53:13 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.33.173])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 48AA41955D71
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 10:53:12 +0000 (UTC)
+From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/i40e: fix FDIR VLAN TCI partial mask validation
-Date: Mon, 23 Mar 2026 10:43:45 +0000
-Message-ID: <20260323104345.1667974-1-ciara.loftus@intel.com>
-X-Mailer: git-send-email 2.43.0
+Subject: [PATCH 0/8] Rework device probing
+Date: Mon, 23 Mar 2026 11:52:54 +0100
+Message-ID: <20260323105306.1531689-1-david.marchand@redhat.com>
 MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: p7EiXZoLFNRg1wI9fLIOYsVTc7TcYPizrCkhIKGWxK4_1774263193
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,74 +64,74 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, the i40e flow validation logic accepts some partial VLAN TCI
-masks alongside the full mask, and reports an error for any other value.
-This is broken in two ways.
+Applications relying on device hotplug don't work well with the default
+probing of all available resources.
+This series proposes to change this behavior via a new EAL option.
 
-First, the error case is not handled correctly. An error is recorded
-however execution continues as normal, and a filter is programmed using
-the invalid mask, silently producing wrong matching behaviour.
 
-Second, the hardware always compares the full 16-bit TCI field with no
-per-bit masking. Partial masks are therefore not honoured and should not
-be accepted.
-
-Fix this by accepting only either a wildcard or exact match mask and
-handle the invalid mask cases appropriately.
-
-Bugzilla ID: 1340
-Fixes: 81aebb47d1 ("net/i40e: fix flow director for eth + VLAN pattern")
-Cc: stable@dpdk.org
-
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
----
- drivers/net/intel/i40e/i40e_flow.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
-index 84cfddb92d..9369256b48 100644
---- a/drivers/net/intel/i40e/i40e_flow.c
-+++ b/drivers/net/intel/i40e/i40e_flow.c
-@@ -30,9 +30,6 @@
- #define I40E_IPV6_FRAG_HEADER	44
- #define I40E_TENANT_ARRAY_NUM	3
- #define I40E_VLAN_TCI_MASK	0xFFFF
--#define I40E_VLAN_PRI_MASK	0xE000
--#define I40E_VLAN_CFI_MASK	0x1000
--#define I40E_VLAN_VID_MASK	0x0FFF
- 
- static int i40e_flow_validate(struct rte_eth_dev *dev,
- 			      const struct rte_flow_attr *attr,
-@@ -1765,22 +1762,19 @@ i40e_flow_parse_fdir_pattern(struct rte_eth_dev *dev,
- 
- 			RTE_ASSERT(!(input_set & I40E_INSET_LAST_ETHER_TYPE));
- 			if (vlan_spec && vlan_mask) {
--				if (vlan_mask->hdr.vlan_tci !=
--				    rte_cpu_to_be_16(I40E_VLAN_TCI_MASK) &&
-+				if (vlan_mask->hdr.vlan_tci != 0 &&
- 				    vlan_mask->hdr.vlan_tci !=
--				    rte_cpu_to_be_16(I40E_VLAN_PRI_MASK) &&
--				    vlan_mask->hdr.vlan_tci !=
--				    rte_cpu_to_be_16(I40E_VLAN_CFI_MASK) &&
--				    vlan_mask->hdr.vlan_tci !=
--				    rte_cpu_to_be_16(I40E_VLAN_VID_MASK)) {
-+				    rte_cpu_to_be_16(I40E_VLAN_TCI_MASK)) {
- 					rte_flow_error_set(error, EINVAL,
- 						   RTE_FLOW_ERROR_TYPE_ITEM,
- 						   item,
- 						   "Unsupported TCI mask.");
-+					return -rte_errno;
-+				}
-+				if (vlan_mask->hdr.vlan_tci != 0) {
-+					input_set |= I40E_INSET_VLAN_INNER;
-+					filter->input.flow_ext.vlan_tci = vlan_spec->hdr.vlan_tci;
- 				}
--				input_set |= I40E_INSET_VLAN_INNER;
--				filter->input.flow_ext.vlan_tci =
--					vlan_spec->hdr.vlan_tci;
- 			}
- 			if (vlan_spec && vlan_mask && vlan_mask->hdr.eth_proto) {
- 				if (vlan_mask->hdr.eth_proto != RTE_BE16(0xffff)) {
 -- 
-2.43.0
+David Marchand
+
+Changes since RFC v3:
+- removed per bus scan mode,
+
+Changes since RFC v2:
+- went one step further and reworked devargs lookup in buses following
+  Bruce comment (see patch 4 which is cosmetic, and patch 5),
+- updated device selection helper accordingly and
+  changed API to be device name based,
+- renamed option, added check on -b presence, updated doc in the last
+  patch,
+
+Changes since RFC v1:
+- reviewed bus probe() and cleaned up NXP drivers,
+- changed approach following Bruce comment,
+
+David Marchand (8):
+  devtools: check packet forwarding in null test
+  bus/fslmc: fix bus cleanup
+  drivers/bus: require probe function for NXP drivers
+  drivers: cleanup devargs lookup in bus scan
+  bus: factorize devargs lookup
+  bus: factorize device selection
+  bus: remove per bus scan mode
+  eal: configure initial device probing
+
+ app/test/test_eal_flags.c                    | 63 +++++++++++++++++
+ devtools/test-null.sh                        | 10 ++-
+ doc/guides/linux_gsg/eal_args.include.rst    | 13 ++++
+ drivers/bus/auxiliary/auxiliary_common.c     | 33 +--------
+ drivers/bus/auxiliary/bus_auxiliary_driver.h |  2 -
+ drivers/bus/auxiliary/linux/auxiliary.c      |  2 +-
+ drivers/bus/auxiliary/private.h              |  6 --
+ drivers/bus/cdx/cdx.c                        | 34 +---------
+ drivers/bus/dpaa/dpaa_bus.c                  | 71 +++++++++-----------
+ drivers/bus/fslmc/fslmc_bus.c                | 69 ++++++++-----------
+ drivers/bus/fslmc/fslmc_vfio.c               | 21 ++----
+ drivers/bus/ifpga/bus_ifpga_driver.h         |  2 -
+ drivers/bus/ifpga/ifpga_bus.c                |  4 +-
+ drivers/bus/pci/bsd/pci.c                    |  5 +-
+ drivers/bus/pci/linux/pci.c                  |  2 +-
+ drivers/bus/pci/pci_common.c                 | 51 ++++----------
+ drivers/bus/pci/private.h                    | 11 ---
+ drivers/bus/pci/windows/pci.c                |  4 +-
+ drivers/bus/platform/platform.c              | 43 +-----------
+ drivers/bus/uacce/uacce.c                    | 39 +----------
+ drivers/bus/vdev/vdev.c                      |  2 +-
+ drivers/bus/vmbus/linux/vmbus_bus.c          |  2 +-
+ drivers/bus/vmbus/private.h                  |  3 -
+ drivers/bus/vmbus/vmbus_common.c             | 45 +++----------
+ drivers/dma/idxd/idxd_bus.c                  | 18 +----
+ drivers/raw/ifpga/ifpga_rawdev.c             |  2 +-
+ lib/eal/common/eal_common_bus.c              | 62 +++++++++++++++++
+ lib/eal/common/eal_common_devargs.c          |  8 +--
+ lib/eal/common/eal_common_options.c          | 10 +++
+ lib/eal/common/eal_internal_cfg.h            |  1 +
+ lib/eal/common/eal_option_list.h             |  2 +
+ lib/eal/common/eal_private.h                 | 31 +++++++++
+ lib/eal/include/bus_driver.h                 | 55 ++++++++++-----
+ 33 files changed, 338 insertions(+), 388 deletions(-)
+
+-- 
+2.53.0
 
