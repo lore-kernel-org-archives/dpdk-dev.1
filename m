@@ -2,79 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 348D3F483CC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 16:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B7BF483CC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 16:59:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 538AC40268;
-	Mon, 23 Mar 2026 17:59:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 7961F4060C;
+	Mon, 23 Mar 2026 17:59:48 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id BC55A4025F
- for <dev@dpdk.org>; Mon, 23 Mar 2026 17:59:41 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id A148A4025F
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 17:59:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774285181;
+ s=mimecast20190719; t=1774285186;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=5OL+iIxrXM7up75ps6Z0+0seX3Oc72Jk+lAhx9oef9M=;
- b=dn5hHleNgSiEIONyBsCQVqP8zrTISF3BzS36HUFtFWkMm0dW0ev3lmTCkljmG4pCcFunw3
- K3Je228svnhtk2ChEkEEq8EZ9C0FacPTYYs8oRB2dP7rEbZadsoRLdcC2p6y0vbQXVNhs2
- 8bTP6YW/J8oW4Auz3z0i/2rjckKaiRE=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=IxUfs2j05+I3uLo7L3ycajenh0nXTUdpCec3h8hTPgM=;
+ b=SnPb779t33LW9N7nVXxU3t+T8DTb2uAWHXuxeoOfaPJktXMHViQApAG5WNXR7uCRQGy8zz
+ KI5bvi6nc74rKVmTSUdwJgGG/As2ZbMBT8vS8Bb4C83vpEse9/qn69bfqJpKRUXXiHFgjb
+ w1K+Uokd84T39L3yT3NxQmbXvOHKDfQ=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-618-D4TA4s1ROhCdb2Kx0EkEZQ-1; Mon, 23 Mar 2026 12:59:39 -0400
-X-MC-Unique: D4TA4s1ROhCdb2Kx0EkEZQ-1
-X-Mimecast-MFC-AGG-ID: D4TA4s1ROhCdb2Kx0EkEZQ_1774285179
-Received: by mail-wm1-f70.google.com with SMTP id
- 5b1f17b1804b1-4870221e1fdso21680245e9.0
- for <dev@dpdk.org>; Mon, 23 Mar 2026 09:59:39 -0700 (PDT)
+ us-mta-172-UfjZD7qANnuL5-GFaG3e8w-1; Mon, 23 Mar 2026 12:59:44 -0400
+X-MC-Unique: UfjZD7qANnuL5-GFaG3e8w-1
+X-Mimecast-MFC-AGG-ID: UfjZD7qANnuL5-GFaG3e8w_1774285183
+Received: by mail-wm1-f71.google.com with SMTP id
+ 5b1f17b1804b1-4836abfc742so20664025e9.0
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 09:59:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774285178; x=1774889978;
+ d=1e100.net; s=20251104; t=1774285183; x=1774889983;
  h=content-transfer-encoding:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5OL+iIxrXM7up75ps6Z0+0seX3Oc72Jk+lAhx9oef9M=;
- b=rk276pwfuvWa7LIWRHCtHYWSO69cEYPWQwSex0oQa9BEfvZzDYvwhZ7Hm/+prAc98L
- GIitO5M0sldYCSiq0Pgur7LyWV3HaEVswSl6O1BMFNWw2Lws2i1/FVhfKqK4fLSroArX
- nhdgVDNu9nMWNB+M/8CPAek6gN0YDnhOyZgI0dZrPHSTMFY5GAQtsWiM2StXSwvQpppo
- TCdALuTkFbemh6TAYdDrvd18xqzxUqT7EMHFUSnU6LN1zso/172hPFH+P9x7SK/Dbdnw
- WKopg8FpuGn1AmfEbEV8/0JG0Ox5/j1KuOHheOgGk9gpMrmWn9hN9/6xVrpR0/d/Ywl9
- v3rg==
+ bh=IxUfs2j05+I3uLo7L3ycajenh0nXTUdpCec3h8hTPgM=;
+ b=sfUwaMH+cAAIamnjvSxqKemmAaNWmCZkjqopZe/2T4rULU5OfTd6cpDYZwMdRq+Ckv
+ KuAkLLCwgVzWvoDXPZSZUnzMiyJjS08xXKlNY0qZ7qAM1qAc4w1gdN1bgkrU53RaUA5Q
+ pNqhmCP9Ev9NjMXTi4WVlMSVenTtE5Ie/P3gXHWAXKc/e+ORUfjR9RFaqDuxyanlzlgh
+ qCLmuuDKf38+FGp2KrVpwc82d7Re0aXM2tsIQOGewF6U7UOjPdzzBt+RKsim9vfFo4pt
+ nHmiGrtM83hZbg155Fr/4MfnCq/6pqHC9BI/hN6hN/Lai2er6l4TJtfJXoIz33Rgtq2L
+ 6fiQ==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUBlT3C77SjllbLSMmPjRG8L63iAy4zatAWTbOuBBWH1wc60pbeK1dp6N44hdpMUbTqmts=@dpdk.org
-X-Gm-Message-State: AOJu0Yx+WgSOn5xGxCGo/1YfAZcBvtzi70TpfRn7MGOPkUEMUj4x05OL
- Cq1+j+juB6RqL8gT5QdxIoUbdgk5BEx5OLd7E4cdqSmzlGWMVU58Ln1wP0B+3nfXvEVsEEuPwdW
- CmZK1r6y9oOlXjOgpo9JFkEElA5JOwCE6SyczK60M5YW8
-X-Gm-Gg: ATEYQzwvTuRnsNn3ICxUVfijG+Gh+blJbgc6a8t6yOmjp29MOy8zog8uPbejyk1gzNO
- oGbTE6ijdH75At2DpZDnPgv6qKMPAhwhFVQw9pwWqfGJx5ex+0uHTK628SrH/Yr4RyaTP3Hk3Aw
- u9cxNCFWqkK1W+rhQozwr86WFsJ4b5F1sEOqMNxRemMUod0X95mmsU7wg5wc271vjZPrE5ZFcr9
- gfpyum6Ib1b9DmvnLvZw5GVtEHQh3vldsi7JyuXCkI+ptDpS67GvfhQYLU80kE7zbYLmKfuQN/L
- f3dTxjaR0CoFrN+9zcNOinx1sbGTZTpMyKquhYpyCgBSE4TuraRexyErcnZ7JfdCRp3eFAq9t2D
- GeCmJfMbFJWi/bpYx1Hl2cbe8
-X-Received: by 2002:a05:600c:154b:b0:485:3cef:d6ea with SMTP id
- 5b1f17b1804b1-4870f212c1emr4618155e9.13.1774285178512; 
- Mon, 23 Mar 2026 09:59:38 -0700 (PDT)
-X-Received: by 2002:a05:600c:154b:b0:485:3cef:d6ea with SMTP id
- 5b1f17b1804b1-4870f212c1emr4617805e9.13.1774285178102; 
- Mon, 23 Mar 2026 09:59:38 -0700 (PDT)
+ AJvYcCWAryrMWt5viDHcb3VhlOdEGJp5Cx7GebcjkEy3bKcpK9VSdZ6keeojbbXlg5zWQImR4JU=@dpdk.org
+X-Gm-Message-State: AOJu0YwnpdSQcf8CjhQ6XYm8JyYkFIbJ1kmHcQkEZl+E6mWddD6f/UFu
+ qwNyucARBIxMmbnwrWKQUyT1UuzC0cnBwxPkk5dqQVcrNd5rI2jlz1Cefd/9uVKIVsnwF6qWYV0
+ D/wqCR8K5yBJqjbXz44/ea+PUq89f/VRbgfPoZY8lmug5
+X-Gm-Gg: ATEYQzw8+iKt3l59PXLt9HHMHwEh/H4MZ3Uz+35K3QRBmX2iYBlNrjSJt20qCXW29Tm
+ w/7RBOl8RF/2juS0oi7Zcgbua+8wodDDg16mu5foC7kBV2Uu6TOLLtaHzIC80B1ddMtkgBj8hHd
+ sr1nT7wmdKfZUq9fYxB5mNR3rBFaWWiVp9lzQvsH0MOV2fNWLew41FD6nuNSKcWAVUzzayn+1NT
+ l7jM49khJoN/KKqNEe9kGKYbjcUQR3sk34PW7OAe0ADJEczMmlxlaGsyJlMlZh5zzplXYals7D0
+ hHW4iFRmiOIZB4BJkk1w5khqreSZucLTJ0JIbXCF4oxLcF6BuLgdOS5Uy/s87q/+Xi38MJtQIWy
+ RxX0rjPZgTEac8YbL0YzC7Atp
+X-Received: by 2002:a05:600c:1f86:b0:483:1403:c47f with SMTP id
+ 5b1f17b1804b1-486febbc653mr189684895e9.6.1774285183215; 
+ Mon, 23 Mar 2026 09:59:43 -0700 (PDT)
+X-Received: by 2002:a05:600c:1f86:b0:483:1403:c47f with SMTP id
+ 5b1f17b1804b1-486febbc653mr189684405e9.6.1774285182699; 
+ Mon, 23 Mar 2026 09:59:42 -0700 (PDT)
 Received: from [192.168.0.65] ([78.16.129.161])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-486ff1c16absm83521635e9.26.2026.03.23.09.59.36
+ 5b1f17b1804b1-486ff1c16absm83521635e9.26.2026.03.23.09.59.40
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Mon, 23 Mar 2026 09:59:37 -0700 (PDT)
-Message-ID: <0b33ca24-dce4-47f2-aacd-cb0e9ecfd5d6@redhat.com>
-Date: Mon, 23 Mar 2026 16:59:35 +0000
+ Mon, 23 Mar 2026 09:59:41 -0700 (PDT)
+Message-ID: <51f2b38e-ac0a-4b5f-ad64-ecbf9bdd523d@redhat.com>
+Date: Mon, 23 Mar 2026 16:59:40 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] bus/fslmc: fix bus cleanup
+Subject: Re: [PATCH 3/8] drivers/bus: require probe function for NXP drivers
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Rohit Raj <rohit.raj@nxp.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
 References: <20260323105306.1531689-1-david.marchand@redhat.com>
- <20260323105306.1531689-3-david.marchand@redhat.com>
+ <20260323105306.1531689-4-david.marchand@redhat.com>
 From: Kevin Traynor <ktraynor@redhat.com>
 Autocrypt: addr=ktraynor@redhat.com; keydata=
  xsFNBF2J2awBEADUEPNhgNI+nJNgiTAUcw4YIgVXEoHlsNPyyzG1BEXkWXALy0Y3fNTiw6+r
@@ -119,9 +120,9 @@ Autocrypt: addr=ktraynor@redhat.com; keydata=
  yWzMcVrcGJDQLC9JLKEpoyUF6gdTKaiDL2Vao4+XRIA3Y57b6MO35a3HuzAv7+i5Z0mnDEJO
  XxXqTOmKYpMIGexzM/PtuA0712sT1abG9tAJ17ao/B7cqMW5IkKkalemFbWfI2unns4Papvo
  tk9igVqyp6EJDU98z5TJioCVojwK2laDaoIjTJk9YYv3iwCsqPd5feU=
-In-Reply-To: <20260323105306.1531689-3-david.marchand@redhat.com>
+In-Reply-To: <20260323105306.1531689-4-david.marchand@redhat.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: El1l6Ga9VeHR36qmuVnQo85EejyAzTOoa1Mu1FfGJ8s_1774285179
+X-Mimecast-MFC-PROC-ID: xeCYSz3uenKSl8Tsai_CJ1ajDa7ku0Ai01uebnUud6M_1774285183
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
@@ -140,65 +141,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 On 3/23/26 10:52 AM, David Marchand wrote:
-> The close operation was never closing probed devices.
-> 
-> Taking a step back, reevaluating the devargs makes no sense during the
-> close step, as a probed device must have passed the allow/block list
-> evaluation initially.
-> 
-> Since the device contains a reference to the driver that probed it,
-> simply call this driver remove op.
-> 
-> Fixes: 274fd921ff7f ("bus/fslmc: support close operation")
-> Cc: stable@dpdk.org
+> Rather than silently ignore an invalid driver, enforce every registered
+> driver has a probe callback.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
->  drivers/bus/fslmc/fslmc_vfio.c | 21 ++++-----------------
->  1 file changed, 4 insertions(+), 17 deletions(-)
+>  drivers/bus/dpaa/dpaa_bus.c   | 6 +++---
+>  drivers/bus/fslmc/fslmc_bus.c | 7 +------
+>  2 files changed, 4 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
-> index 550d4e0e8d..7daa18d850 100644
-> --- a/drivers/bus/fslmc/fslmc_vfio.c
-> +++ b/drivers/bus/fslmc/fslmc_vfio.c
-> @@ -1393,7 +1393,7 @@ fslmc_close_iodevices(struct rte_dpaa2_device *dev,
+> diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+> index d9830b68ca..5e0f32bfe8 100644
+> --- a/drivers/bus/dpaa/dpaa_bus.c
+> +++ b/drivers/bus/dpaa/dpaa_bus.c
+> @@ -614,6 +614,7 @@ void
+>  rte_dpaa_driver_register(struct rte_dpaa_driver *driver)
 >  {
->  	struct rte_dpaa2_object *object = NULL;
->  	struct rte_dpaa2_driver *drv;
-> -	int ret, probe_all;
-> +	int ret;
+>  	RTE_VERIFY(driver);
+> +	RTE_VERIFY(driver->probe != NULL);
 >  
->  	switch (dev->dev_type) {
->  	case DPAA2_IO:
-> @@ -1411,22 +1411,9 @@ fslmc_close_iodevices(struct rte_dpaa2_device *dev,
->  	case DPAA2_ETH:
->  	case DPAA2_CRYPTO:
->  	case DPAA2_QDMA:
-> -		probe_all = rte_fslmc_bus.bus.conf.scan_mode !=
-> -			    RTE_BUS_SCAN_ALLOWLIST;
-> -		TAILQ_FOREACH(drv, &rte_fslmc_bus.driver_list, next) {
-> -			if (drv->drv_type != dev->dev_type)
-> -				continue;
-> -			if (rte_dev_is_probed(&dev->device))
-> -				continue;
-> -			if (probe_all ||
+>  	BUS_INIT_FUNC_TRACE();
+>  
+> @@ -808,9 +809,8 @@ rte_dpaa_bus_probe(void)
+>  			if (rte_dev_is_probed(&dev->device))
+>  				continue;
+>  
+> -			if (!drv->probe ||
 > -			    (dev->device.devargs &&
-> -			     dev->device.devargs->policy ==
-> -			     RTE_DEV_ALLOWED)) {
-> -				ret = drv->remove(dev);
-> -				if (ret)
-> -					DPAA2_BUS_ERR("Unable to remove");
-> -			}
-> -		}
-> +		drv = dev->driver;
-> +		if (drv && drv->remove && drv->remove(dev))
+> -			     dev->device.devargs->policy == RTE_DEV_BLOCKED))
+> +			if (dev->device.devargs &&
+> +			    dev->device.devargs->policy == RTE_DEV_BLOCKED)
+>  				continue;
+>  
+>  			if (probe_all ||
+> diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+> index abdb0ad50d..ac9fb7a08c 100644
+> --- a/drivers/bus/fslmc/fslmc_bus.c
+> +++ b/drivers/bus/fslmc/fslmc_bus.c
+> @@ -465,9 +465,6 @@ rte_fslmc_probe(void)
+>  			if (ret)
+>  				continue;
+>  
+> -			if (!drv->probe)
+> -				continue;
+> -
+>  			if (rte_dev_is_probed(&dev->device))
+>  				continue;
+>  
+> @@ -534,6 +531,7 @@ void
+>  rte_fslmc_driver_register(struct rte_dpaa2_driver *driver)
+>  {
+>  	RTE_VERIFY(driver);
+> +	RTE_VERIFY(driver->probe != NULL);
+>  
+>  	TAILQ_INSERT_TAIL(&rte_fslmc_bus.driver_list, driver, next);
+>  }
+> @@ -601,9 +599,6 @@ fslmc_bus_plug(struct rte_device *rte_dev)
+>  		if (ret)
+>  			continue;
+>  
+> -		if (!drv->probe)
+> -			continue;
+> -
+>  		if (rte_dev_is_probed(&dev->device))
+>  			continue;
+>  
 
-Not new but dpaa2_qdma_remove doesn't return an error which seems like a
-bug, but it has it's own log and it's just a log here anyway, so not
-critical.
-
-> +			DPAA2_BUS_ERR("Unable to remove");
->  		break;
->  	default:
->  		break;
+Acked-by: Kevin Traynor <ktraynor@redhat.com>
 
