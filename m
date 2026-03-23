@@ -2,84 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7D3F483E6
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 19:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC95F483E6
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 19:24:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44C3F40654;
-	Mon, 23 Mar 2026 20:15:46 +0100 (CET)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com
- [209.85.208.51]) by mails.dpdk.org (Postfix) with ESMTP id C8EAD402D6
- for <dev@dpdk.org>; Mon, 23 Mar 2026 20:15:44 +0100 (CET)
-Received: by mail-ed1-f51.google.com with SMTP id
- 4fb4d7f45d1cf-669720ca6c3so884475a12.1
- for <dev@dpdk.org>; Mon, 23 Mar 2026 12:15:44 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774293344; cv=none;
+	by mails.dpdk.org (Postfix) with ESMTP id E4115402D6;
+	Mon, 23 Mar 2026 20:24:48 +0100 (CET)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com
+ [209.85.218.43]) by mails.dpdk.org (Postfix) with ESMTP id 9078B40268
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 20:24:47 +0100 (CET)
+Received: by mail-ej1-f43.google.com with SMTP id
+ a640c23a62f3a-b936331786dso506399266b.3
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 12:24:47 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774293887; cv=none;
  d=google.com; s=arc-20240605;
- b=FLQHGh5TgXebqPQktklO9XAH+teoTWg8K9oiARFvxkwBgHG6M49P/peUBehYhBgjTx
- ncLCebmJs3RfPDA+2VO1Yk+XvPzGTe3Jv2RZ3piIsJFr3J1FSRUKjWFiheYzev5W42+h
- 1FNgynBspeTd3UspupOX+l8+2Bk7Ekh2GnK6QYjH7HqbxEK5fl/d2BEqRHY+nk6J0/1l
- BAopxLdFiQEhXWAn8om4ATVTeH6SGSn5//Jkn3Pd/hxXRCDh3IDZMpn4I/3BIT+ywnnL
- ER0XCxXYgwc1hwK/h1aNPR3qty5wnvphxZ67J6qGhotdiJp3dnUQ6beGr+NNciB+PwKJ
- UVvg==
+ b=bwvXQoCA4lzfQ3oAa9d6gWdqv65ruPkjoir4sm/W6pe00yJXh5bb8X3OheamQFZjxR
+ hUAdUQqUP+VYeX4H23ymapdjFhp/VO2D+Oyrj7AIHlMsPZSpEhZNLgL1pMZRNwSZ78w1
+ +bijUUamCAGIGDBJuitjaNH1+tDuxxfFgu2NLl5GB2hyMVsGPzA2qM3t4sMq0B7f12X+
+ gqZVR3/K5gKMj/Id/CS0hxXqIT149gySpoT8hD69iUvPGKzJ+EpLGxwQAcgjODqIHHZY
+ SwGVp81II1SGaME8YApFo0Md9hGW+2eBDQptCeBm6Ysy+4DDgKoeODvzXGHiDhivFVZy
+ dYrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
  s=arc-20240605; 
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:dkim-signature;
- bh=a//kkJmWZ4tc55oFLf5zyd06FXl3iyjnSrBWVbwqbvc=;
- fh=BZqXEwALApxsogqGWx4lzVkI4rWpsYITFukVEGgpeuk=;
- b=e4euYezxLptKN4adODFLLnbnkOpMjNPWUJVVGEfNojfgC5rO3htV3lPUmeUdgykioa
- SyQgL8JxDxLDROJMfuAag77uz12vE6tp4YNTW3hOMGEiLxsokB5sXOxIxYcLHw67gz62
- HZcNw04+AQ+73VmCt6rd34wFrkFEMB/xRJxxEUyzsXpnXl0+ZmyMqDv1DEdVqHukkT32
- JUzzhn52SqRFQV2jAzwMN/uGrJp8Pgeb9rcDBKB9Ed6JdB61C/ZhQh6md7ecCtwYtV68
- zns8vMa/MdAhQ/rUUqAojIRhUM9g2g2O8XPLhyU+GUQMAGHtmW8ffHFi2z8rJcZxB971
- dF0Q==; darn=dpdk.org
+ bh=0lSDAtZusJg/XQ1dtGsrfw7HSnQSdm/jEMpdvktZF4M=;
+ fh=Jw/I1NQAG13oKvKcy9H7n+Q9FS5BBWV1nucWC1lvmfk=;
+ b=A2WTuOfPVFACmcPeJB6jJ6iknBMuZCTIiuqODmX91X2xRrO+lUzFPgX/sJWt3uVIl8
+ SmG2v2tuD7joDcLuAbWKIGTqeyuaeCyKSH7Gbs38B9VZ4jBYnTjw5rkGlyN8mWM15B9d
+ UZs1XFKEIl5Ut0crKN9PDmqMyjo/9jG0Kk752qJzgkf1vNaXH1VyDua69A6JxpHURAoS
+ 93S+dhB9vLt/ohrZmYQQiY3filsQQrM4wy1G/jLRFET1VtUyFBehwvN8SAo7hcFIv9vn
+ M4nxB9egOVYqHPpvnU5MNRd7thJxHeGagMaJtbytlINZamtQjZ3hG2sAHfG9lqa8rHaY
+ Ezng==; darn=dpdk.org
 ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1774293344; x=1774898144; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1774293887; x=1774898687; darn=dpdk.org;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=a//kkJmWZ4tc55oFLf5zyd06FXl3iyjnSrBWVbwqbvc=;
- b=WRnDXClBhX1T0Km3pyivP1Bj+8b0ot5UJMxcxsNeJ1v2WBtI4QjumA6QABFtayJd27
- XAOtIpoxjY/sAZhfblIqCYDXRETCfNiGxjX/l3oXcRdxnacaODQMGCW7oSaHSdy0jFCM
- mcJASdhjDGQ/LI8ZO5OFBl4n/u5NP/zrDRpqc=
+ bh=0lSDAtZusJg/XQ1dtGsrfw7HSnQSdm/jEMpdvktZF4M=;
+ b=CKsOdkf0GDKMIm3oVrQl/FiZzv8wPHDtqkAZNUjSnXu02KIxqadqJEcjm0/v4PKTr1
+ rXc4tefA3ID2EI4fyMTy7CukTZ1vYm7DNpt8MUUyZ2EMbNqFl+yMOxujXjo0Rd1HDsAt
+ cDPvJEIdnfyKwqZcOZG5ns1MKwUo6IF57vv9M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774293344; x=1774898144;
+ d=1e100.net; s=20251104; t=1774293887; x=1774898687;
  h=cc:to:subject:message-id:date:from:in-reply-to:references
  :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=a//kkJmWZ4tc55oFLf5zyd06FXl3iyjnSrBWVbwqbvc=;
- b=gmm5re0dC4Y0lQNUzyh3n351SCy2rQ0q5ad2GhF8Ufp59uDbFpwRkWSqGlCULUSeqK
- Zy49EMwNiFPH87SIMOw/XyueNFCscuB9D5pw903lo0ULvS4icaj7FJPZLn60yRuZPyz3
- 9H55UmedFy2sJUYiTRZv1yfJat5+I5v0ntVxE+z2rCrQtDUhu2bZWirlkQFS207mReci
- VPHP8S45TpfMsE1uHfxeTSRPeG+wHKJBdOrPp5nlzN0rJOF7gi2jZJ7Kf3OaJBahSggk
- YA6as+DFpc+rgDvj/26/Qyep/LDn84Qh9FuFVkaDaoTI6leFHPHf5TjqVW7HHZMQ2tuV
- LY0g==
+ bh=0lSDAtZusJg/XQ1dtGsrfw7HSnQSdm/jEMpdvktZF4M=;
+ b=n6nc00GZmZxXSUSd7kQ5BU1KwzMJ50FYGYCm3I++F4Qd9o4td2I8agi+Z5yg7l5S22
+ C2vVql5D87N7dtZFLzObvFwq39Xw2D+Zopp8Bk7UpwTlTwSXFighTbSgEjGC8C7DFamb
+ ESYxOz81hanVC5Nfl792qGJescprDpObcoKzGYolVrvudB6au3uIGwHORHb6V0phqAch
+ zWaaHrSquWWu1A+ebE51gVDbXgXNmJjKJKeTpD7IO1xUVsDpjnaGjfwTj7ootwMwDPD/
+ liGs8oGduPhK5YwrfEGWBkojJOaPzGE5M78IiJivNZZ/9k87KsaMTADb7zrHpZtqo7zu
+ Vuxg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUT4oY42PFfTGJK+NCOUwHtJYXxHiqd2HPV0aFASSTBIjXby6y9HFdHnrxFwjymoAG5raY=@dpdk.org
-X-Gm-Message-State: AOJu0YzackprD22OQEwjLrZwnnHHxxAuNeumlpoqfOQf5y9tow+Qet/7
- iv60Ce2oR463cbbcBaiPYUqoQVyF88dOXq/8NT+fEvMTnbL0qK9hrJWAGPuBh12V1HXpsENzORa
- u5MymkjrnfIo/tJ4rFzIejPYKyaG5fv7xAWbsrW8Wyw==
-X-Gm-Gg: ATEYQzyKyg8/zGvCPiZUPLVAPrIEjufkRcr/I85u2rD+RoqviBFIz8T2h2W7iHBBJp4
- LIY9ezwPLGofQuOHpZHNs3U8jUpUIS5sa90vOpsJBH+f6a6Of4nLT2zYaAlToZRlFdKw4ntHHV+
- Zk9RVhEPaF/WhfTdfcc+hSF3UxR7/zcOF4SbpsujyMI8O1LqmMXDt4CSLdaI/g/bcAGpdXBiT7O
- 8ogWOcKmlszKddpqfgIkv+9ZUI0Ax9ogTS0WffX/0gAViD7EMkEkJiAy13tofl+biWK9P6rKtuR
- n+oajSj8q3brAPfq93DMlZMjgaN6bKpYsoUb8BAL
-X-Received: by 2002:a17:906:27d7:b0:b98:2641:be5e with SMTP id
- a640c23a62f3a-b982f399b5amr745883766b.27.1774293344348; Mon, 23 Mar 2026
- 12:15:44 -0700 (PDT)
+ AJvYcCXVCzd+x32I+3lZ3tomG4w309HUOPXESfrr03EvdjNm7SZZwjBkW/MB21BdaZ5W5nrh8TY=@dpdk.org
+X-Gm-Message-State: AOJu0Yzsnk9RUzvPANoDAsLMFr2HTtEFe9iwoDFV0K+1GOaKgnMgJrDq
+ TvmCaZmdt5zfrRfy3RuHOdJ7cmRQOVqt2S5WSsCj0eJfeXdlAtA/VlcE+DwTTzijTOOUOAShXoO
+ 2fckjnJZww3RJ/bMIqkdcjI9MRHcIinlH/8K33p0b5A==
+X-Gm-Gg: ATEYQzxPPEZPDzELKD5jHtSxWIPwO7mxUlZ2mvE7uCR0Z602VGCdOtGsXfy905zYp1F
+ XWapL3uspiIAMySu1uB8L8CVKIeMRIGFu+wfKvAtAreH2plzf4otD/GbV8g7qHuIHpCwRJT4KGT
+ ElkBfkdZ5OvZelGNBEWuWXyxafnca1L6qqohpf9sekdBixL2Iddj/QKd5/YkpCy7M07fzld2M+P
+ 2lz8EZjwOe4yCNxJPnGiv1F7dzmezsIag9tbPcYMrBzlUwyKDDZS0SOMJG2dzGWoV7Oh2oxAk+a
+ GjxY1hohzpj81KzhxUfkYjplgXXzDAw2bam8bOaN
+X-Received: by 2002:a17:907:1604:b0:b97:fe6d:2e4a with SMTP id
+ a640c23a62f3a-b982f0a95fbmr1010744366b.10.1774293887123; Mon, 23 Mar 2026
+ 12:24:47 -0700 (PDT)
 MIME-Version: 1.0
 References: <20260323180818.674041-1-probb@iol.unh.edu>
  <20260323180818.674041-3-probb@iol.unh.edu>
-In-Reply-To: <20260323180818.674041-3-probb@iol.unh.edu>
+ <CABJ3N2V7=3tsbXDuBsTryjABM0E_rc8VX-MDTigA2jZqLZSWMw@mail.gmail.com>
+In-Reply-To: <CABJ3N2V7=3tsbXDuBsTryjABM0E_rc8VX-MDTigA2jZqLZSWMw@mail.gmail.com>
 From: Andrew Bailey <abailey@iol.unh.edu>
-Date: Mon, 23 Mar 2026 15:15:32 -0400
-X-Gm-Features: AQROBzA6_kBefJJpzwl-u89UsgZ8EocAlR1bN5EUsAEETe5s8FAHATBiLT_Xf08
-Message-ID: <CABJ3N2V7=3tsbXDuBsTryjABM0E_rc8VX-MDTigA2jZqLZSWMw@mail.gmail.com>
+Date: Mon, 23 Mar 2026 15:24:35 -0400
+X-Gm-Features: AQROBzD4gSyCo6BFPFabC4Jw1tDO5d8XQZt_fGdSK-NkkZ1bxG7doQc2dqKvFBQ
+Message-ID: <CABJ3N2VAd6VuyWTKgJTEJvfXfLyQakZbS7LT+1o76CfP7y512A@mail.gmail.com>
 Subject: Re: [PATCH v1 2/2] dts: avoid dpdk resources conflict
 To: Patrick Robb <probb@iol.unh.edu>
 Cc: luca.vizzarro@arm.com, dev@dpdk.org, dmarx@iol.unh.edu, 
  knimoji@iol.unh.edu, Paul.Szczepanek@arm.com
-Content-Type: multipart/alternative; boundary="000000000000847f51064db5dce9"
+Content-Type: multipart/alternative; boundary="000000000000de8dff064db5fccf"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,15 +94,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000847f51064db5dce9
+--000000000000de8dff064db5fccf
 Content-Type: text/plain; charset="UTF-8"
 
-Tested-by: Andrew Bailey <abailey@iol.unh.edu>
-Reviewed-by Andrew Bailey <abailey@iol.unh.edu>
+oops, I forgot a colon.
+Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
 
---000000000000847f51064db5dce9
+--000000000000de8dff064db5fccf
 Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-<div dir="ltr">Tested-by: Andrew Bailey &lt;<a href="mailto:abailey@iol.unh.edu">abailey@iol.unh.edu</a>&gt;<div>Reviewed-by Andrew Bailey &lt;<a href="mailto:abailey@iol.unh.edu">abailey@iol.unh.edu</a>&gt;</div></div>
+<div dir=3D"ltr"><div dir=3D"ltr">oops, I forgot a colon.=C2=A0<br>Reviewed=
+-by: Andrew Bailey &lt;<a href=3D"mailto:abailey@iol.unh.edu">abailey@iol.u=
+nh.edu</a>&gt;</div></div>
 
---000000000000847f51064db5dce9--
+--000000000000de8dff064db5fccf--
