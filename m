@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80071F483EB
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 19:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FB41F483F8
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 20:24:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E206402D6;
-	Mon, 23 Mar 2026 20:51:51 +0100 (CET)
-Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
- by mails.dpdk.org (Postfix) with ESMTP id 91F6640268
- for <dev@dpdk.org>; Mon, 23 Mar 2026 20:51:50 +0100 (CET)
-Received: by mail-dl1-f49.google.com with SMTP id
- a92af1059eb24-1271257ae53so624036c88.1
- for <dev@dpdk.org>; Mon, 23 Mar 2026 12:51:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2C93C402D6;
+	Mon, 23 Mar 2026 21:24:09 +0100 (CET)
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com
+ [209.85.160.175])
+ by mails.dpdk.org (Postfix) with ESMTP id BC77740268
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 21:24:07 +0100 (CET)
+Received: by mail-qt1-f175.google.com with SMTP id
+ d75a77b69052e-5094e1d17d3so37416081cf.3
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 13:24:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774295510;
- x=1774900310; darn=dpdk.org; 
+ d=iol.unh.edu; s=unh-iol; t=1774297447; x=1774902247; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=rTAsyxHWsyE1tET8NA2uepOvQCx9FTpl59X5oZgxyRI=;
- b=ZJhuXQtNJ+JdYeBJERQCEDDHgJKTCrpCGEMpEmBRvUCukKAr1Wb0Oy2XDpca1gKk8K
- BFX6g2ocgYxiEiQ7i/wV4yQH7vdmHbwagW8nbt5MLs2XuUdPmE3cPePmHD2zETtxMt2L
- duV5FqFHFmckZxC948yRXvN/PnZc+c28vB6cQD9A2y7YKL6Xf8fJSdjEry1ax+8GcYJZ
- McvfV/quvgA5gR3N7+7GrzjiCIkC7mWOYyUEVicIxjLIBEbE2GyfLb54tNehCKiqy3TT
- VeywjFRLXIQmfVWY7jIy2KYvyyAtBJenKmR3ClsdOvliwOImdxKWPMyLFC6m1j3Z51M2
- ur8A==
+ bh=ZLB+m/2zI2GZOb5jaY41Y7AevGHz7Ii0xegKYzx5/SM=;
+ b=KUfc3HW35U2An/wbdhnl/1MD+e45V4FxRViibdSGD9/XGiK73+j1BzN6Bz5eaaoWse
+ 3n+EvMgcwWbwMNSPInS6XclnlbJthPiOfn5/v7kFRIQiymWr52rz1ZgDnzd0mEc5O9uh
+ hKxfJL5PoNzryQC1cG9+7XoQtrwJH0oB0LL30=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774295510; x=1774900310;
+ d=1e100.net; s=20251104; t=1774297447; x=1774902247;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=rTAsyxHWsyE1tET8NA2uepOvQCx9FTpl59X5oZgxyRI=;
- b=Q6Wb1Rv6vYEHAA0zT7J6GROzEhFPQ5cDj8Rqa/3iSh6ubBMraxULgtjCcjQS8kXXKt
- TlS/UCEp+Geh7QS64NblJVnkx6+Vgu3lupC3sCGSYY6p4CCyxQy4lNMXAThXv/mab9g+
- LNUK9DPoy74hyIF2sT/d1ioKBFKrVcZoe3hoKVB/k+C+8bodf3UEX6nE3E0LN61XvPcR
- KquEYVf12MVIt76rZ4qQIw56QZPHVF68kv6Tc9mN71x3zAqq0CDGmm1/1hBiZDFolBN2
- Rt5JAnDFtJNpyXJyO/5B5HbdpS4v6pApzq1j66BnuUpnFMCJiffdQX87JqAFze0aoVGg
- gSgg==
-X-Gm-Message-State: AOJu0Ywt+mNdlqt+ITFLQb61dQ+BEvNCnoQAZ60t37NRJWf4u0OJeFwA
- 3J9Savd5WXZ1W+K6N1IXpnBrtknDr01X1IbE1ihOW5SgBWLuqwtH76azgq+nZHe/uVg=
-X-Gm-Gg: ATEYQzwoUil/RLfLBPpp4HYzFdReV4ID/+o3KRcJwK2gxJ2G+kAUYtmhprWhoXXBk+v
- ffkWqllTbj7njapbv0XpC+jvuUj2IFROFgOEnmDFQvX/Jog930qW2rmeljrTI6UauqvpFlM/77k
- MjMd1cuEX16qUkb0p8voYpu2bZKJXjw/zxk7L8rceieX0YzXFb7VhSVlyZk6UdD7uyQfbDGMtEH
- vtYxDKzr8TlFwhyMzyCLjCPOdv8dySZlrOvfh/AMxxbAk2OFuTnGF5/2N85gA3MDJc6foUgTwcg
- nacR10UWBxWPPMU7MGaRgheDEOVpPj//f7jmNaFlQ7YpvAsDWz6MXTE6qhiVRHtl+mZDAWgMcP/
- 2Rqed1Nj0BAZ44G2TGyOlcQv8mzAi1ibTMz3Gfg1hqwMIoT4IKeVY995t/I4v24E3KST13Ywbx4
- BgMjx30pWWbNBJJcfQiLlLjEK1X1Yx91Er/xA=
-X-Received: by 2002:a05:7022:612:b0:128:d4db:447b with SMTP id
- a92af1059eb24-12a726fac5fmr5855915c88.38.1774295509528; 
- Mon, 23 Mar 2026 12:51:49 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
+ bh=ZLB+m/2zI2GZOb5jaY41Y7AevGHz7Ii0xegKYzx5/SM=;
+ b=lJOe+N1Oem/IRcmi5kPkpKlxXs6H9I6AqyOEIPEkLkUf1ReEB6Ivsoq8rraVbeI/L5
+ mHsERqxfN9PC3AMiuYV+KL4PBFSyqPrP+zXZa4AcSOZgPQZMOKYMvCJOCAKvwrFHcTef
+ nh4BlBLkcB2NJpLXqDysR58S7ozCT27qB6zkVp+KGsp4rCyrFAgBOVUeOs19uFpUBmFz
+ oWK2DAbb/5UwlU9GFyHCmuRriBr9HL0Oim7YRWB/bNbFPnir/Cj/b4v1YUTar+duxSEz
+ RdlqYzoDNlr0beNDHeekXPXDNW7lGSSz40rMzg+FGPL+6xBEctfF/cyZhaqYDseQ8+le
+ OXsQ==
+X-Gm-Message-State: AOJu0Yz8d5ks+HBLxE98u58qoMC7EyOaNC8OILjuh2EFm3XnIqlKFfVs
+ GouRH60zi8rxqrCOSz6zmMEriWvwqRNAfeYVK9ky0lnvO/W8h3AIyOF6dQ5J/FZJoV8=
+X-Gm-Gg: ATEYQzw1aTxjME3pHuKCqoM6O4aGWOrpDXJKJf0qPtgpN2h5UtXh4QPg/VBYhfOD37/
+ JO1jbQ19o8vKMuC2hic3zCdHQx2LmvWY4tcINUpjHs98AgZuoH7MIicuyGkGyLNwNHOBp8VqEk1
+ httoapo2SOHPZxyys6KlWsNWXkY3YwsKSQA69T/nxaZLuiEMJBtxr3eQ9hZTqPzlcqGXseRsmhU
+ agq4ftQ36cG/ff6SbBZ96qRSQDydDtPpVfrtLMNXnamvJui4TxvNPC1WcqEJBFWRL2HORw2IQvd
+ tuw+lO4schhOWhwrtC6HfbHDLq/clNSP57cd32Cn5uIz9pdBGRwrf8c/2eMxjRQ8QZLQE7CsVI+
+ TyGjjwEYiAX2rQXQx4mRXjq8rTcApiz+/tBEwyj0cNets6RL6EQJq4DPqeTi0gSWYA+7oi1JGJe
+ 0Lr/2mDjrnn0+gByGPTwBUmwE0Y685ChvkWWL09njCHe6YZ9g9dhUHwGkfRgco1NgN07kT7UYKb
+ xgHmtU+QFik
+X-Received: by 2002:ac8:57c8:0:b0:4ff:b1eb:2d03 with SMTP id
+ d75a77b69052e-50b375f96a9mr204749401cf.72.1774297447021; 
+ Mon, 23 Mar 2026 13:24:07 -0700 (PDT)
+Received: from patrick-laptop.iol.unh.edu ([2606:4100:3880:1210::224])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12a736cf7e1sm9386958c88.15.2026.03.23.12.51.48
+ d75a77b69052e-50b702b85d2sm2966811cf.25.2026.03.23.13.24.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Mar 2026 12:51:49 -0700 (PDT)
-Date: Mon, 23 Mar 2026 12:51:47 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Feifei Wang <wff_light@vip.163.com>
-Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>
-Subject: Re: [PATCH v7 1/7] net/hinic3: add support for new SPx series NIC
-Message-ID: <20260323125147.7ff35d8f@phoenix.local>
-In-Reply-To: <20260323080455.2699-2-wff_light@vip.163.com>
-References: <20260316134335.1640-1-wff_light@vip.163.com>
- <20260323080455.2699-1-wff_light@vip.163.com>
- <20260323080455.2699-2-wff_light@vip.163.com>
+ Mon, 23 Mar 2026 13:24:06 -0700 (PDT)
+From: Patrick Robb <probb@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: dev@dpdk.org, abailey@iol.unh.edu, dmarx@iol.unh.edu,
+ Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH v2 0/2] dts: dpdk shell bug fixes
+Date: Mon, 23 Mar 2026 16:20:51 -0400
+Message-ID: <20260323202053.740203-1-probb@iol.unh.edu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20260323180818.674041-1-probb@iol.unh.edu>
+References: <20260323180818.674041-1-probb@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,19 +78,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 23 Mar 2026 16:04:44 +0800
-Feifei Wang <wff_light@vip.163.com> wrote:
+Support for the dpdk-test-crypto-perf application in DTS was added
+recently. This work introduced a new bug (incorrectly setting the EAL
+port allowlist when checking ethdev capabilities) and also exposed a
+pre-existing bug (insuffient time delay between dpdk app runs causing
+resource conflicts). Both of these bugs are resolved by the patches in
+this series. The patches are very small, but also important for the DTS
+user experience, so if there is time for these to be merged in for RC3 I
+think it would be a big benefit. Thanks.
 
-> diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-> index 3d2ed19eb8..a29c460c6a 100644
-> --- a/doc/guides/rel_notes/release_26_03.rst
-> +++ b/doc/guides/rel_notes/release_26_03.rst
-> @@ -81,6 +81,14 @@ New Features
->    * Added application-initiated device reset.
->    * Added support for receive flow steering.
->  
-> +* **Updated Huawei hinic3 ethernet driver.**
-> +
-> +  * Added support for Huawei new SPx NICs, include SP230 and SP920(DPU).
+v2:
+Adding missing only_active decorator to the DPDKShell close method,
+which resolves a doc build issue.
 
-Minor grammar note: should be "including" not "include" here.
+Patrick Robb (2):
+  dts: always use ethdev ports to check capabilities
+  dts: avoid dpdk resources conflict
+
+ dts/api/testpmd/__init__.py                |  2 +-
+ dts/framework/remote_session/dpdk_shell.py | 17 ++++++++++++-----
+ dts/framework/testbed_model/capability.py  |  2 +-
+ 3 files changed, 14 insertions(+), 7 deletions(-)
+
+-- 
+2.49.0
+
