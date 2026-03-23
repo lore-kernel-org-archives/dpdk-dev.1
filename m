@@ -2,67 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C243DD58CBE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 04:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFD0D58CC5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 04:17:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA7EB40268;
-	Mon, 23 Mar 2026 05:08:25 +0100 (CET)
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com
- [209.85.214.195])
- by mails.dpdk.org (Postfix) with ESMTP id DBA9A4025F
- for <dev@dpdk.org>; Mon, 23 Mar 2026 05:08:24 +0100 (CET)
-Received: by mail-pl1-f195.google.com with SMTP id
- d9443c01a7336-2b05761bec1so21169505ad.1
- for <dev@dpdk.org>; Sun, 22 Mar 2026 21:08:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 77E4A40268;
+	Mon, 23 Mar 2026 05:17:46 +0100 (CET)
+Received: from mail-pg1-f193.google.com (mail-pg1-f193.google.com
+ [209.85.215.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 8497C4025F
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 05:17:45 +0100 (CET)
+Received: by mail-pg1-f193.google.com with SMTP id
+ 41be03b00d2f7-c73ba417c6eso1428520a12.3
+ for <dev@dpdk.org>; Sun, 22 Mar 2026 21:17:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20230601; t=1774238904; x=1774843704; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=RrZ6B+bgmqv7UoopZy0oKgFlM5A8fvxUSq/ivnBDRUQ=;
- b=DCM+9fOtuvqXZpzkkVA87aLwLb6XCIKU7dqIDqvhzO2AjEMn00aavh3gpjFb1hEGIS
- C18+k7hjOrHurTL37OQcDdQ0GTIY0jko5GmYooTUXgvruWEsurAHHzR96nxjizGMxtOR
- F4pT9ukiGqBXGmBZLi1XHVcMliVQoFQssyYIYx0wMtikxmi8VeB5Tk+6VRBxfFzB+KxS
- jVRTx8arJkBJmsgSU/fpL2uYF9oTK9AqE7DvZkf4xjK/nz7+VjCwdi3PlaPwxvebgjgG
- y/5tZtA3S6Bn/UPSNeqr1AZxhXyOUz1qPFDs9t8wwBXgLe55MbRuD/MmzjPv0YOx2bKv
- RjKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774238904; x=1774843704;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20230601; t=1774239464; x=1774844264; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
  bh=RrZ6B+bgmqv7UoopZy0oKgFlM5A8fvxUSq/ivnBDRUQ=;
- b=h0K/3zjPXRbMpuI6gvyBNbAKmN5vqQCi5kQfYjfCoR8UJBp+wYuqIkjNBlOxoiv8nD
- UlGxgDRRLFPMw9rvUXZjIrt48qJF8rUak0H/tlATCA5Tk1oUw0A/B4KLuKPJ0ya3/jZy
- 5ggkgzjpLkX9BZdBic2DWAhKEjfQR1M0GZp/i4zR2JkQqgb9fZf/82a4UcaGW1kjgfHC
- lCVxLmL/HQMBlLsoD47exRloBpANbcEK8VHr7/22roP5Oil4geEiaiu90meP6EjrbyCg
- VOCDHL9Yon5a9fGh4frpo3YqRc3l3AkVpfgnKmvTFDbUKO5stbWSKe7jD2A5UkC7P+Kt
- Jc3g==
-X-Gm-Message-State: AOJu0YwKwcbdoJ+0T1RqS4W0dM4xFwx1T8ZUNcWTQq10XRegoyWaxx+P
- J/iI1khBqESAme350z6jxcbzpHF+MMZjadWtZrVBiMKfehQX/gOennBSODLtOsDKWCVd1w2D
-X-Gm-Gg: ATEYQzymbaVoX+R57hcEx+L0g+X/YQxj9Uj+OcTg5N53iB9fY6rQ3riJZq26jacvU5u
- XOX5NPmna8XXRoOoWartVs/sSxLKpCYlNJfWz2C5qs6oFjFK1Ae6PAi5EzRZ5ieHJ64dWxPJ3gJ
- HsBvOeAP+wWiCZc64XjhWlbSebTzUd+QAlMWcuSv4/rC3qN4XotIQCam6++iUPW17RxWNEWtSQr
- z30LUni6mtq+F4RNkR5FONjwlibxblyULoQ+YtvFqN0WiY2BCJKzT23t4Mmjs1kspn7bMhsI6G7
- PsCmU2NfCv0mOnA5BPTADTIm36WIy4OJl1H5n2PFm3j1hyet3lRxrvG6N4zm4vMHUs4OjsQ0phu
- Z1R/AG4TAjZDAQ8zh4LicH3ckgvBgqCS4zLYe0PBHEIP7yKUMe1T2N62TlE/hRJ7S0tMZHpt5Dh
- 4VyKVVV82uIuKhGplMIb2o07uaZIJ0VFv8ImRGbbdtrdjilXfG5K8kiA==
-X-Received: by 2002:a17:903:1a67:b0:2b0:427b:909d with SMTP id
- d9443c01a7336-2b0771ee090mr126849295ad.20.1774238903436; 
- Sun, 22 Mar 2026 21:08:23 -0700 (PDT)
+ b=WOHLUjI2rNHKBRLRfVPJS5vtlRT6J0vQBxElACRxebeTLdXXCHc5S6X6Va6NUmzQXb
+ PVEh5by9ylGUnu4Zy1/Dcb7WNiFhB/JB9wcLaMRF5Vv//yY/pG6syD2MQcgmWW+BErPP
+ ME23Ye1EwbZX3YCXES5ybC81SHYMbpwMjjHh0vyjEmCAHcTBLlGvU8P6i0pkST41tXB1
+ 1/GepZXU6A7sJka88RwgLURrhN07gkCiZJzxZlvTv9tCNjUAveE604MyhJhQELa3S+CS
+ PPGkFuK+SyZ0k+FxCPxhlD3AXL0ltf6pJUP8ihx+B0E/OUooKxXQBc0Ap8rqFi5TDLwN
+ 6RgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774239464; x=1774844264;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=RrZ6B+bgmqv7UoopZy0oKgFlM5A8fvxUSq/ivnBDRUQ=;
+ b=rkS/ytgGB0t8ebOc05B5m7jxRlsVX/L9+y3/w97GtXIClS35xnDU6ThyQ7eDdKoPGO
+ 1p0AiL3deeaCyvAUB721O5QrDokC4XGdApcKYHtuAz2NqlVuLOi0DKd6VY51b0+q7QFn
+ 2PVpC85rF1RJhnpTSPGZgZ5QiwmrC/pEIx5b3OoXVQGLTNsG+MJ0yJJv9NPmrIZ4/tkN
+ mlKxsa4cne00GylOjp/mskpiP5Z1Hvz34fy9+I81hVJbppdSTucQmZdE+X8JdqmQ8pDS
+ 8/m+5RjruHj3xRisqGINu5xna7mii1JKLyTADwbOWpZx+QduY/ZFrqhJiegU6owXAcg6
+ k9Ew==
+X-Gm-Message-State: AOJu0Yz06Uhy4F3b+R4bNc/OEjreDLosJDL7e3+P4/O2TZqlvRdsq0zn
+ jFEXszrnjSFVsU4n1HFl8dSfzaBRYZ5uKP03s2BWAgluieZ67WIZ4mMqD+9OZ4s01UDNVOO9
+X-Gm-Gg: ATEYQzyeGVytMbTAWDDaCKGmERj0fXyhCdmtXWD41jQj3eVryJLxD78APgma8kPPNqB
+ S8S1x9faTRAd1MymIdGPYB6Z8bY+BqdxgnrECsqgCC37Mn7vJDYFyt1kF4g9fcqHwpevib12BYQ
+ UVk5s3daR1ptysR9RPerZhDnq+lC2Zpp2fY/w+0RiVruaVKzr7QEtxupZX6wOV8eg5I98iuIjPC
+ 3k4M0QlCbAdL8Av2qOvgMFkrpPXXtUrO0IebHloKrYe8o/ncW0bUw1hUqaVYkNfePPEcT60wUXn
+ 1LpmHKveZ55ukWbnzFtS/sZAgGWJ4OI+YV/HIwMO9v6K4VG8jKW1EjlNHLyquD6WB5p2FMPjcHr
+ 8WEWLJ0f64HSSVffERrbwm3S8ha7zO0UdSK1fYrI2meKgvTF8WQqWdgOzSbyrfWOEvojx/NlHfF
+ oGONbmmPAHPUIAYjaMFHp/jV5HmLNjrCHUZNc+TATM6ztzJxx7AuTrGw==
+X-Received: by 2002:a05:6a20:748d:b0:39b:8dcb:f37d with SMTP id
+ adf61e73a8af0-39bceabe111mr9360392637.17.1774239463968; 
+ Sun, 22 Mar 2026 21:17:43 -0700 (PDT)
 Received: from localhost.localdomain ([180.101.235.28])
  by smtp.gmail.com with ESMTPSA id
- d9443c01a7336-2b083688ca4sm119344025ad.67.2026.03.22.21.08.15
+ 41be03b00d2f7-c74443ccbe4sm6297807a12.22.2026.03.22.21.17.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 22 Mar 2026 21:08:22 -0700 (PDT)
+ Sun, 22 Mar 2026 21:17:43 -0700 (PDT)
 From: dangshiwei <1138222970gg@gmail.com>
 To: dev@dpdk.org
 Cc: stanislaw.kardach@gmail.com, sunyuechi@iscas.ac.cn, thomas@monjalon.net,
  dangshiwei <1138222970gg@gmail.com>
 Subject: [PATCH v2] eal/riscv: add Z sub-extension detection via hwprobe
  syscall
-Date: Mon, 23 Mar 2026 12:07:54 +0800
-Message-ID: <20260323040754.4197-1-1138222970gg@gmail.com>
+Date: Mon, 23 Mar 2026 12:17:14 +0800
+Message-ID: <20260323041714.4386-1-1138222970gg@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260318144021.3308-1-1138222970gg@gmail.com>
+References: <20260318144021.3308-1-1138222970gg@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
