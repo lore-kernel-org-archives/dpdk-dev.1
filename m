@@ -2,149 +2,99 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A93EC01BD
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 10:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D21AEC01BD
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 10:14:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CDDDE40268;
-	Mon, 23 Mar 2026 11:13:48 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 892324025F;
- Mon, 23 Mar 2026 11:13:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1774260828; x=1805796828;
- h=from:to:cc:subject:date:message-id:references:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=iXFfxDvPiKonT6m+q1eRd3PiUXf9wCQ4Bdh+kcv2vWM=;
- b=YV8h0FpmRuXiy8zV8I5jhKV0qHCZZBflvHoH2T6Y+3aKVvDW74sC0bNS
- WSABL5ae1M4Vex24t4xAdr8E5wkVJe3xMp2Q0Zn2D8ufj1F3eSpoZHKlD
- Sh2BNadKSTm8i3nuFOgC1FjxBcN4qPKbfEMkV7IbXVhFkMiQFMQjmthSx
- w18jwBGhREMVhnxqeH3geAoGaJ3M1MY3fa405KLus3m7CDCUjyX/NYCLD
- K4t/cFTVbr3j9Lhvwpd18tVprnhr4ZypkNl2A8hveYyOmo7qMqhqNuhFm
- 06jyM0/2lmpRnKZlm9gFsKnE70mpuZIPPbt2pzH0A3lrW8OJDTAoq3T3F A==;
-X-CSE-ConnectionGUID: wd7HQOTIS7WnebWYvs0c/w==
-X-CSE-MsgGUID: z2RfIKTmT+qhpXhYB69/Sg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11737"; a="75161596"
-X-IronPort-AV: E=Sophos;i="6.23,137,1770624000"; d="scan'208";a="75161596"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Mar 2026 03:13:47 -0700
-X-CSE-ConnectionGUID: qoSmIF6aQQyX19q16JuV6A==
-X-CSE-MsgGUID: zj4J8aBTRgC4VwtnrUxtsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,137,1770624000"; d="scan'208";a="254458183"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 23 Mar 2026 03:13:46 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Mon, 23 Mar 2026 03:13:45 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Mon, 23 Mar 2026 03:13:45 -0700
-Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.51) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Mon, 23 Mar 2026 03:13:45 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 7CA8440655;
+	Mon, 23 Mar 2026 11:14:25 +0100 (CET)
+Received: from BYAPR05CU005.outbound.protection.outlook.com
+ (mail-westusazon11010012.outbound.protection.outlook.com [52.101.85.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 011DF4025F;
+ Mon, 23 Mar 2026 11:14:23 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MbX/83z9D7ICz3GX00bw/G3Esx3aiWbOzFTBEv/R1KDZy6dCqoGQgjaXSWOOtQHz1c/OOvc3/RlDoVdh2LHo9mAZ5E7iBuMbQhOhLrarTz5Y766vSjqj1y6mOyvblrf6scV/oQ9z8sh1fScEzZQ5MywbhARmVGSm16ZtRp+xulUvno2LxFdyjN0DBKJOM9HiS+ToVoRDoos8hHHkWf13s1AT3UHc/egOnzH1J7+gc4k7Rs6bu588vyHwAIi8m3AScqlIYeLn1awRg+cxecm7+oKxJlzf+CGbaU+LHJQdzbXefJm504ayJUpLJi5BXBhwWr0Q5BhLPDiTphPEF9+8RQ==
+ b=PpbbQ5mbbbKPe72NIske049gZb4BicglY01zSb+skpfgRMFFTf5j9MRjZBoN+L7wYjaC5XmIMIOG4SVuoprLcyu34SyI8qCW9SzMEtsMhD8tzk7pu6bekLGje1IJK0pv9tAnfJDk4XYY8c4gw/keCdyOwe/k6YsBsUnWbRLBCE2/2lcPk8V0JGt6JB85rMEsW0ek1dFPQxQO9zp9LmHFxX9ztmF+muzOozNQh7G12eAZhvQKBVWSmWUeCZWN2azmDup0Nv7QvO8sN993xcUqtob0AbtzqgzzVm6N2IIIfw97jfZ/YKefGOuz2b/Myt8JmWgl/89kYQ34PY8FEvrFCA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2TxcuXAqrR0Uy0xaAxOPllh3U6KZH0zAxmTA9BheomU=;
- b=hAkLUZmyyRQwxK/+X9KLscX3/1z2oxPiYFJ5P7fmkzopHdX+tXXsOQWKAEfx5v9ti5aPRpYXoAg7Qsb0ryHMazFv5y1TS3mmdcsRqfHV02lLphS2ABIKRGNTbCrcWRIqwuvYEGvvpdNiFQxfzw7BTeQpSfIJjT0flBP6YCWbrHAFJYcIrtX17Upc+5BpisoWzwpn4zLOkgM0x2grEh2SHiH7S46y0TRz1xS8eTnZCxDaKGztAcFOCSNq41RrAxarHKdmaGSOOXDCJDbxIqzwK/GYMwoZxEepegeyUGPdUTTfZH07Q+bkkzc+ZK95uQ+06O0UiFAXWd3Zjcb/abl3Uw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY5PR11MB6116.namprd11.prod.outlook.com (2603:10b6:930:2b::14)
- by MN6PR11MB8218.namprd11.prod.outlook.com (2603:10b6:208:47c::20)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Mon, 23 Mar
- 2026 10:13:43 +0000
-Received: from CY5PR11MB6116.namprd11.prod.outlook.com
- ([fe80::7243:ab06:2282:cd8b]) by CY5PR11MB6116.namprd11.prod.outlook.com
- ([fe80::7243:ab06:2282:cd8b%5]) with mapi id 15.20.9745.019; Mon, 23 Mar 2026
- 10:13:42 +0000
-From: "Mandal, Anurag" <anurag.mandal@intel.com>
-To: "dev@dpdk.org" <dev@dpdk.org>
-CC: "Richardson, Bruce" <bruce.richardson@intel.com>, "Burakov, Anatoly"
- <anatoly.burakov@intel.com>, "Medvedkin, Vladimir"
- <vladimir.medvedkin@intel.com>, "Yang, Qiming" <qiming.yang@intel.com>,
- "alex.chapman@arm.com" <alex.chapman@arm.com>, "stable@dpdk.org"
- <stable@dpdk.org>
-Subject: RE: [PATCH v2] net/ice: fix RSS hash function implementation
-Thread-Topic: [PATCH v2] net/ice: fix RSS hash function implementation
-Thread-Index: AQHctfltVqMAqHYFIkOLhhDRkrH86rW770fw
-Date: Mon, 23 Mar 2026 10:13:42 +0000
-Message-ID: <CY5PR11MB6116F7BF0702DD94ED10505BE44BA@CY5PR11MB6116.namprd11.prod.outlook.com>
-References: <20260309023255.308526-1-anurag.mandal@intel.com>
- <20260317103203.404781-1-anurag.mandal@intel.com>
-In-Reply-To: <20260317103203.404781-1-anurag.mandal@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY5PR11MB6116:EE_|MN6PR11MB8218:EE_
-x-ms-office365-filtering-correlation-id: ec903f78-36f9-4d28-ff66-08de88c4dc9c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|38070700021|18002099003|22082099003|56012099003|7053199007;
-x-microsoft-antispam-message-info: yjz1upFhgQQ+3SJcN9h/24wceqmQ1eGYsIYepfqDbQz4K1CwwaGVMDCAYpUaDfdByoZgwPy19jf4yTTV5j3uEVMAqt7X+z7W4G3NmCfHd3HW8iGQ7ZlwWl/y6W7tdzbSnaOt8qoMGzU8CF9xfP7fzDBRuPSoM/LXamqbijAoP4rqYsIIQ9FF4SBGl0FfeNCr5XnmIyCzf+YoIgy43WXOvnoNdES47NjzpJ4gKXL24z1sU8CIcLfTwjeejEpD17KzR5N1xLR5Qny/Chf1Klsh05ts1UScRKGh+XYX7Kd7Lq46UOaQ8Aq51uBOe0tKFpF3naPZV9ZIbeVeSLe9Zp7JXiyXhE7cvu2O8/bCTp/fMJBJLZIc7eFbkomXCqoQ6MElLZCqDhcxEJDJ4tWQz0A2PDUrA2K59cwCkqkXfJxXrKS34baMfd/rZS3iCZRcGkGTon9oX4vSp1WglfUnE3D9/W/qoo/YNW123LmKoVh7QoBzmDGDfxm6yKJLT/yRWk1o3VVOA5+buqoWH2c2lNoEdcEx/BzYg/gcgLYKOP2d4k1EtfMKro4osKW97wMyE10T6jZ755ghIBC9ChwvT9xzc38YD/sCFIBFbjv5NNs0oEwOnjEllNQN+SWCCX7V/JalRsxVMXBgjBT57BuGEDvBkm8fB/nJdAtxqU4p0swrQyv/1IW8TTNz4KyZRnq0gkwiKuS75jrLtAoPOqyLq3ZPZ5jRPaqF//T65KnvSI6kLJsoXkn/DExcTbBYDjQy9dF/ddwevg9EJRKEXnJum2PjfCcEerNmBO/CT30XfqSeUj8=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CY5PR11MB6116.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(38070700021)(18002099003)(22082099003)(56012099003)(7053199007);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?xVPkB8hLoeGGJOK9WEMFtOAAhs6rFapoeoaPyPsYhhvxB9g9Qx5j7J+vnZFB?=
- =?us-ascii?Q?yuDeUNPFP+rfoNgW3zME3y2YrMxhwt0L325++oH9CLzcuKUoA3Ibcx2eV5Cu?=
- =?us-ascii?Q?Jj/qacby6mAPK1Mul4FdbI8xFpKFu54RVIHlOZcs+mrkYbOyknC7mCQQ7qpq?=
- =?us-ascii?Q?+DCAeU1F0f9kLgI1KseS4t4pqZk000AkVrr17TNZuVirH3mDa2FA3DHq0C0C?=
- =?us-ascii?Q?rUYtMID3Z9RMx0zsmlx6K9Ob6cGcUbNqzGaXCgLvJI8jBse4rDLxmT4LxHDO?=
- =?us-ascii?Q?w2Axyhw7A4MkqazTX8iuJGQtO5j5y3yjMWqmIaiYUPOeFIMXFK30giZ8r66Z?=
- =?us-ascii?Q?y5ecmYmMLKi1DjI879VICJo9VZjNQYAByfznj5eRmnheCn5yD0+D9MoW5JhU?=
- =?us-ascii?Q?A/6Gnli7KG8EVK/lV4SIU7P5y4Fdo6P3YM6eji+i56U4YZJq4GvN0PqXT/9C?=
- =?us-ascii?Q?pe8UXaPP5vxNoZxn6xguML/87APFwWILUjt6YMNFM5lCjiL+Slpso6KOL5HV?=
- =?us-ascii?Q?yVcAdl9Tz49jVS68BdhQmyCQ+vddZHINcVSyOXumiYuU0x7/2o5oTXCcr+Tv?=
- =?us-ascii?Q?qrTnrrW2D/Zb79/5iAMo5Yrojp8zJqJdazxB18lkrZ5c9B/2eY5zhG/6vMyh?=
- =?us-ascii?Q?tzYlfLOwMMGA9LbuntANhpqph8PX/03vrbv6XRzb0OETwVaqBfFQPdMgvQwS?=
- =?us-ascii?Q?eFpl43uiFsU5R6BY2bjnoYz5NdFAggVq7ADbVU15nUm9UNj/CLu3Z1hQWzKD?=
- =?us-ascii?Q?3End2zzahMvIWAa7Qjr4LwsjJYEYfBtQUU/zCNszSaZcg5OpgAEaQCyh8eow?=
- =?us-ascii?Q?11J4ZWTWlof8dLsOJa27YIIOmI73VI1GM2d02lwoeTXSETPAHTXZzTbaWDGx?=
- =?us-ascii?Q?Wm/a3CbBQiYfHzsgoqgu0U1MN1DGY7chI7WkuN+tBNarNM8OFOF+QOG0zs+o?=
- =?us-ascii?Q?qJis7s+LWWlwpR7PnblTNaKiuYeqzv8nE+05yOSIYqMwyJmXiS9muTPZbCHU?=
- =?us-ascii?Q?FcfYS/6PCrYUQPwq81FW5WW83QNmbOiEZ8v79z5mDaMG7KIcLkVvX+jHhjHb?=
- =?us-ascii?Q?5gaHo7JtHtP7RkvJeN4uIzEU4DGgdXtatEUMk9s4tnBskPJVwANLGR2jy+3t?=
- =?us-ascii?Q?R2gqqAuRvVr4jYPYv++UpeUC50icn9CBULX6E1Ewq2uxKhTq+bcL1sXbj2Wc?=
- =?us-ascii?Q?CKhMCXNerOCoDKBFOPLn0s6vHt6kwNcWYWqNFLl04RYsZALjg8Px4POUTLQT?=
- =?us-ascii?Q?ba7T5SHm8b/tKOGQGHcHHmjHhF9dCTiXUrvicuHrLXYLNzf4ri6xxn+2yCcp?=
- =?us-ascii?Q?7B13OXd1IHJvmjn5ie2IrksA2L3zfOfcDMvr6FlCZfU6vC1lKuN9BKtmyPD/?=
- =?us-ascii?Q?LxTSzew41nup/PxJHwu0A/GURnpEfAJKoog0T2Cvg93BRjk/LsK4Pmc9xrhC?=
- =?us-ascii?Q?UwzJNYS9GmS1tPGmdFA/i11bCoLqLc8QHpMs1SDGzdObQ8ucWP4HKpiXj5U0?=
- =?us-ascii?Q?zNAcSqvLu1yLVZdgg9fgxg6AAYaGZCK2U7JoEHKQAyoehpQ8k3FTMQl0K2WD?=
- =?us-ascii?Q?NJ/gcurmxvFd/+7YmZFk035cMa5us29wfi4v05Zd3GpKeVjTmM9Qcpg4k3t9?=
- =?us-ascii?Q?GrXtWT+yhnbOQpL/eLyR/iO54qUy0NW2w/9J4KekcncbvYxHTCDR92aa56ME?=
- =?us-ascii?Q?eclZvx/0c3flv1JkBTpAndkTfROp1YxqubDbgmwaTN9M+QAz5ww+A6ghv702?=
- =?us-ascii?Q?BOhTuHAJRg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=fWrAZqY5T41jaegJADnDl/youFhW/fYsZhir/+WjCj0=;
+ b=iElri5dk2+bH2qT31mEROVq2HTldyT5CTAGG0NYDKx6ecSpHt8ySONrbg+Nl9S0hZ0Mki5sltXlS6cgqwKdpZnrZPZXOd7ZY4iXfb/W7Sp12131H3EAaZdA02IBq1t8gl7FrN+13KiG07nsCWXdZtLZlbmD1+dzekeqzvDL0WmbAkvuSWmVhx1PHGEr/GJDvSz9ALrmCQG0jL/RBATO3gWOQY6fRRVEMc4yksG+hvbZPcWAONrhWsdTm+u/j3NolA94/wNJleQnPtlqojWf9n268zO5+Rg6eWQYz0eQLBI3beGXnHgIrSZhXMjJS0cy6Nk9dNnEBjVE9tZ5nXPh6lQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fWrAZqY5T41jaegJADnDl/youFhW/fYsZhir/+WjCj0=;
+ b=JY1OVTMpQhjHFBqp92swXDSd3UqPPseNsqHPARg/McxPh8aAo/5crS4/LKXI/b1Mx6hCL7+7iZN9flKc/e88CVZM1+rm0D2ettS1kSOmHAPpNNqXV8fVz0GifgurTQs8KAk4+beFqzzld1+AZqwhG0O/I81wFtkQj2KYWJJ0IFcZoPaqykfqly3ferFW6K7FmNp0FL743T8t/aSUVpBHSHQLPo4OXUEw6lOerwC0zPJ8jWuMNgVcp0iILRXG9b1IDT1x1FQRkNWCLB24CuWNRZIjTFDIJuGeG4Sqk/gZnpoMOaYZ4/UjpTsMjWWz2a5NExoiCFC5GcC8hwEtOuI79g==
+Received: from DM6PR06CA0076.namprd06.prod.outlook.com (2603:10b6:5:336::9) by
+ DS0PR12MB6654.namprd12.prod.outlook.com (2603:10b6:8:d1::11) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.20; Mon, 23 Mar 2026 10:14:14 +0000
+Received: from DS1PEPF00017093.namprd03.prod.outlook.com
+ (2603:10b6:5:336:cafe::13) by DM6PR06CA0076.outlook.office365.com
+ (2603:10b6:5:336::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Mon,
+ 23 Mar 2026 10:14:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS1PEPF00017093.mail.protection.outlook.com (10.167.17.136) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.19 via Frontend Transport; Mon, 23 Mar 2026 10:14:13 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 23 Mar
+ 2026 03:14:02 -0700
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 23 Mar
+ 2026 03:14:00 -0700
+From: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+To: <dev@dpdk.org>
+CC: <rasland@nvidia.com>, <matan@nvidia.com>, <suanmingm@nvidia.com>,
+ <dsosnowski@nvidia.com>, <stable@dpdk.org>
+Subject: [PATCH] net/mlx5: cleanup unused olx parameter in Tx free routines
+Date: Mon, 23 Mar 2026 12:13:45 +0200
+Message-ID: <20260323101345.393740-1-viacheslavo@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Exchange-RoutingPolicyChecked: AxJ2K0S0hJZ4/JUw2qEHlL08A19/v4QgEYCtGcBsLgOVKLU3Lyj46jMhvEdGIDaiH452TgB/yMRsKDB7rD5gDMKtTjkbD0f27pzXaXPAwkuT6UBXxLrVSk05hjsFYG6d+eU1OcaxKjoJSIyW6j59t/Dedidxh0L3hP1NsopsX7utiPPw57+EuSIl64yRkPag9WvhVcnSqAe48yqBgyvHpk+K5+6NwS1xNLrVD6emvMlU9vzgMvYFlwsPvuo+6F0ZEQo9QMDwryTF/Grwrs00QXXGF2paNMD0C15apW7M+rS/hLWDYrnDHW2VoPj8HM39OgkqFWdwVZO8UZ3UB9VsWg==
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6116.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec903f78-36f9-4d28-ff66-08de88c4dc9c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2026 10:13:42.8906 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: GABPgCWVSx5qrejQlqDlz2EkeXI0IiDAPeA/VWN0YP9HvxqL34LVFka2m4sKy7/zz8LE8BD7BvAkXnxYIXK5jA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR11MB8218
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017093:EE_|DS0PR12MB6654:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4d0c245-f4b3-467b-2f00-08de88c4ef19
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|82310400026|36860700016|376014|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info: VGJN0gBGIy8vaqfaPpiNL/Sf6e3FEtp/+4b19ZZWS94ySrFrIcg7LMs4m4BtxaHw4Bz2x72PSiwYP8v+dGclfydC7OdpbrJHbRCUD1m4WNj1XNFsdC0jYBmNqNjnXiEQxWzrFitD7wwh99Z5udrGbahYXGrAum2zS7vQ6qFOFlM6PjDhNLMRXeuBKDHiGv/1PMMleGPBTQLwWXzzHs2vpAihBmgltUBdA8eEb2L5UCD5bImUvf1DipjCVrRCt+c/CYNBL7jAmofC/5cBVKumuLgcGa226Sv9COqp8x3VHCn1CJggcCnSSX+E6yEyqJ8f95QCAhvsqff8xPOp2OB/OznBRuR6aEBhe/U3DnDTozNTBllTBsKFn4X0dlWE0DH6jfHFuWlRYlgukcHOVDxktnAnx0/472+hkaoQXNMJ7zam5i2i/pVVD1zqKO9yorrFBRoxgjcxoef8K3T8aaX3IlQTrhVPizJhOPLvt7Fe8eIq5dEDLPo8X3osnquUy9Ew8HQo98CxrxBI1uFD1i9uH7A9kXkW08JDesfUMdHjzS2DvHpTX37V7U1bjP+v0Jz0O4D1oN6MAVxGoOjoPh/p1RP3w0isTkyDd3BvjDvQoxO3t/uQevHo1eNHqG4hF4FFCfdJ8/GbsLZDqAtocdvhaMJF5sWzPBc5obtliR718yCk4DTj1fq7aQXeAdumBh4yzmWEWb85+JPE8GnijwLibewlbSzGr0t7HG7X9/LJ6jiZcRYfY4DEGytID6JQE2ke06z4kYsjJvw2aF9H3fpSUQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(18002099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 4SDl0TvlbVRXQQ0onMRzg2AZYkeKK4ACujP5CpX/tV0bGRH8y7o2rLdSxFbPxOrWnDdjOFovm9anDEfEngB3rgxuL8ufDJ9AZf6YuvdkLMBoFZs1CiwXlfzcQ5fZNuP2XsnqomVB0eY16UYVlXKaq45Cf66RfeM/vspcQWnecLF6mMaIxaKFhCu1oI0PRX5pmeTm9pAbTZX/VsvT9nLH3MzXiYsxu3AVhcy3KMF+UWuue6jkXvWPQck59FbdN7OLxl5xbT1Ti0OwVnXoGEhlB3sx0sMO6oTR3NSysbjrzN5r1BgJ/YJlAB988e/gXnzTrXUvC9+APbf7vd/gaNKsUy8ncxx1kw5szQOJv62pEATFrvO+qwJEuJ6b/7GQvxOG3tuDxQlE4xFVGDMRw0gk4HHg8NwvJy36fH/jDvjXMKtJUnJXk5Kd8KRGn8Ess3Rz
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Mar 2026 10:14:13.8024 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4d0c245-f4b3-467b-2f00-08de88c4ef19
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DS1PEPF00017093.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6654
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -158,184 +108,187 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi Bruce/Vladimir/Anatoly,
+The olx parameter is intended to be known in compile time and
+widely used for static optimizations while generating the tx_burst
+rotuines code from the template.
 
-Friendly ping for review/upstream.
+However, in the mlx5_tx_free_mbuf routine we have the olx parameter
+provided in runtime only, for all possible execution paths. And the
+only intended optimization (that actually does not happen) is to check
+whether multi-buf packets are supported. As fast free offload is not
+supported for multi-buf packets, we can simplify the code and get rid of
+the unused olx parameter in the entire call chain.
 
-Thank you.
+Cc: stable@dpdk.org
 
-Regards,
-Anurag M
+Signed-off-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ drivers/net/mlx5/mlx5_tx.c | 18 +++++-------------
+ drivers/net/mlx5/mlx5_tx.h | 28 +++++++++-------------------
+ 2 files changed, 14 insertions(+), 32 deletions(-)
 
-> -----Original Message-----
-> From: Mandal, Anurag <anurag.mandal@intel.com>
-> Sent: 17 March 2026 16:02
-> To: dev@dpdk.org
-> Cc: Richardson, Bruce <bruce.richardson@intel.com>; Burakov, Anatoly
-> <anatoly.burakov@intel.com>; Medvedkin, Vladimir
-> <vladimir.medvedkin@intel.com>; Yang, Qiming <qiming.yang@intel.com>;
-> alex.chapman@arm.com; Mandal, Anurag <anurag.mandal@intel.com>;
-> stable@dpdk.org
-> Subject: [PATCH v2] net/ice: fix RSS hash function implementation
->=20
-> Hash function type is not meaningful for non-empty patterns as they are p=
-er
-> VSI i.e. they are set globally only &  not per pattern.
-> So, for non-empty patterns, user should not specify hash function.
-> ICE PMD does not adhere to these rules.
->=20
-> This patch fixes that by implementing the following:
-> - interpret "default" hash function as "currently set up"
-> - store the "current" hash function globally per VSI
-> - for empty patterns, overwrite the setting
-> - for non-empty patterns, disallow hash function that is not "default"
-> or does not match currently selected global hash function type
->=20
-> Tested the following:
-> 1. non-empty pattern with default hash function 2. empty pattern with
-> simple_xor/symmetric_toeplitz hash function 3. non-empty pattern with
-> simple_xor/symmetric_toeplitz hash function 4. empty pattern with
-> no/default hash function
->=20
-> Bugzilla ID: 1518
-> Fixes: 0b952714e9c1 ("net/ice: refactor PF hash flow")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Anurag Mandal <anurag.mandal@intel.com>
-> ---
-> V2: Addressed Vladimir Medvedkin's feedback
->  - interpret "default" hash function as "whatever is currently set up"
->  - store the "current" hash function globally somewhere (in VSI context)
->  - for empty patterns, overwrite the setting
->  - for non-empty patterns, disallow hash function that is not "default"
->    or does not match currently selected global hash function type
->=20
->  drivers/net/intel/ice/ice_ethdev.c |  3 +++  drivers/net/intel/ice/ice_e=
-thdev.h
-> |  1 +
->  drivers/net/intel/ice/ice_hash.c   | 20 ++++++++++++++++----
->  3 files changed, 20 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/net/intel/ice/ice_ethdev.c
-> b/drivers/net/intel/ice/ice_ethdev.c
-> index 0d6b030536..0948a8cb23 100644
-> --- a/drivers/net/intel/ice/ice_ethdev.c
-> +++ b/drivers/net/intel/ice/ice_ethdev.c
-> @@ -3741,6 +3741,7 @@ static int ice_init_rss(struct ice_pf *pf)
->  	vsi->rss_key_size =3D ICE_AQC_GET_SET_RSS_KEY_DATA_RSS_KEY_SIZE
-> +
->=20
-> ICE_AQC_GET_SET_RSS_KEY_DATA_HASH_KEY_SIZE;
->  	vsi->rss_lut_size =3D pf->hash_lut_size;
-> +	vsi->hash_function =3D rss_conf->algorithm;
->=20
->  	if (nb_q =3D=3D 0) {
->  		PMD_DRV_LOG(WARNING,
-> @@ -5700,6 +5701,8 @@ ice_rss_hash_update(struct rte_eth_dev *dev,
->  	if (rss_conf->rss_hf =3D=3D 0)
->  		pf->rss_hf =3D 0;
->=20
-> +	vsi->hash_function =3D rss_conf->algorithm;
-> +
->  	/* RSS hash configuration */
->  	ice_rss_hash_set(pf, rss_conf->rss_hf);
->=20
-> diff --git a/drivers/net/intel/ice/ice_ethdev.h
-> b/drivers/net/intel/ice/ice_ethdev.h
-> index 4b3718f715..d8a01fe7fa 100644
-> --- a/drivers/net/intel/ice/ice_ethdev.h
-> +++ b/drivers/net/intel/ice/ice_ethdev.h
-> @@ -351,6 +351,7 @@ struct ice_vsi {
->  	bool offset_loaded;
->  	/* holds previous values so limitations can be enlarged to 64 bits */
->  	struct ice_vsi_get_stats_fields old_get_stats_fields;
-> +	enum rte_eth_hash_function hash_function;
->  };
->=20
->  enum proto_xtr_type {
-> diff --git a/drivers/net/intel/ice/ice_hash.c b/drivers/net/intel/ice/ice=
-_hash.c
-> index 77829e607b..8e97a6fd42 100644
-> --- a/drivers/net/intel/ice/ice_hash.c
-> +++ b/drivers/net/intel/ice/ice_hash.c
-> @@ -1084,6 +1084,10 @@ ice_any_invalid_rss_type(enum
-> rte_eth_hash_function rss_func,
->  	/* check not allowed RSS type */
->  	rss_type &=3D ~VALID_RSS_ATTR;
->=20
-> +	/* For Empty patterns */
-> +	if (!allow_rss_type)
-> +		return false;
-> +
->  	return ((rss_type & allow_rss_type) !=3D rss_type);  }
->=20
-> @@ -1091,7 +1095,8 @@ static int
->  ice_hash_parse_action(struct ice_pattern_match_item *pattern_match_item,
->  		const struct rte_flow_action actions[],
->  		uint64_t pattern_hint, struct ice_rss_meta *rss_meta,
-> -		struct rte_flow_error *error)
-> +		struct rte_flow_error *error,
-> +		enum rte_eth_hash_function *vsi_hash_function)
->  {
->  	struct ice_rss_hash_cfg *cfg =3D pattern_match_item->meta;
->  	enum rte_flow_action_type action_type; @@ -1110,8 +1115,8 @@
-> ice_hash_parse_action(struct ice_pattern_match_item *pattern_match_item,
->=20
->  			/* Check hash function and save it to rss_meta. */
->  			if (pattern_match_item->pattern_list !=3D
-> -			    pattern_empty && rss->func =3D=3D
-> -			    RTE_ETH_HASH_FUNCTION_SIMPLE_XOR) {
-> +			    pattern_empty && rss->func &&
-> +			    rss->func !=3D *vsi_hash_function) {
->  				return rte_flow_error_set(error, ENOTSUP,
->  					RTE_FLOW_ERROR_TYPE_ACTION,
-> action,
->  					"Not supported flow");
-> @@ -1119,6 +1124,7 @@ ice_hash_parse_action(struct
-> ice_pattern_match_item *pattern_match_item,
->  				   RTE_ETH_HASH_FUNCTION_SIMPLE_XOR){
->  				rss_meta->hash_function =3D
->  				RTE_ETH_HASH_FUNCTION_SIMPLE_XOR;
-> +				*vsi_hash_function =3D rss_meta-
-> >hash_function;
->  				return 0;
->  			} else if (rss->func =3D=3D
->=20
-> RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ) { @@ -1161,7 +1167,12
-> @@ ice_hash_parse_action(struct ice_pattern_match_item
-> *pattern_match_item,
->  					RTE_FLOW_ERROR_TYPE_ACTION,
->  					action, "RSS type not supported");
->=20
-> +			/* For Empty patterns*/
-> +			if (cfg->hash_flds =3D=3D ICE_HASH_INVALID)
-> +				cfg->hash_flds =3D 1;
->  			rss_meta->cfg =3D *cfg;
-> +			if (rss->func)
-> +				*vsi_hash_function =3D rss_meta-
-> >hash_function;
->  			ice_refine_hash_cfg(&rss_meta->cfg,
->  					    rss_type, pattern_hint);
->  			break;
-> @@ -1193,6 +1204,7 @@ ice_hash_parse_pattern_action(__rte_unused
-> struct ice_adapter *ad,
->  	struct ice_pattern_match_item *pattern_match_item;
->  	struct ice_rss_meta *rss_meta_ptr;
->  	uint64_t phint =3D ICE_PHINT_NONE;
-> +	struct ice_vsi *vsi =3D ad->pf.main_vsi;
->=20
->  	if (priority >=3D 1)
->  		return -rte_errno;
-> @@ -1230,7 +1242,7 @@ ice_hash_parse_pattern_action(__rte_unused
-> struct ice_adapter *ad,
->=20
->  	/* Check rss action. */
->  	ret =3D ice_hash_parse_action(pattern_match_item, actions, phint,
-> -				    rss_meta_ptr, error);
-> +				    rss_meta_ptr, error, &vsi->hash_function);
->=20
->  error:
->  	if (!ret && meta)
-> --
-> 2.34.1
+diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
+index 8085b5c306..94644bc3b9 100644
+--- a/drivers/net/mlx5/mlx5_tx.c
++++ b/drivers/net/mlx5/mlx5_tx.c
+@@ -144,14 +144,10 @@ mlx5_tx_error_cqe_handle(struct mlx5_txq_data *__rte_restrict txq,
+  *   Pointer to TX queue structure.
+  * @param last_cqe
+  *   valid CQE pointer, if not NULL update txq->wqe_pi and flush the buffers.
+- * @param olx
+- *   Configured Tx offloads mask. It is fully defined at
+- *   compile time and may be used for optimization.
+  */
+ static __rte_always_inline void
+ mlx5_tx_comp_flush(struct mlx5_txq_data *__rte_restrict txq,
+-		   volatile struct mlx5_cqe *last_cqe,
+-		   unsigned int olx __rte_unused)
++		   volatile struct mlx5_cqe *last_cqe)
+ {
+ 	if (likely(last_cqe != NULL)) {
+ 		uint16_t tail;
+@@ -159,7 +155,7 @@ mlx5_tx_comp_flush(struct mlx5_txq_data *__rte_restrict txq,
+ 		txq->wqe_pi = rte_be_to_cpu_16(last_cqe->wqe_counter);
+ 		tail = txq->fcqs[(txq->cq_ci - 1) & txq->cqe_m];
+ 		if (likely(tail != txq->elts_tail)) {
+-			mlx5_tx_free_elts(txq, tail, olx);
++			mlx5_tx_free_elts(txq, tail);
+ 			MLX5_ASSERT(tail == txq->elts_tail);
+ 		}
+ 	}
+@@ -172,16 +168,12 @@ mlx5_tx_comp_flush(struct mlx5_txq_data *__rte_restrict txq,
+  *
+  * @param txq
+  *   Pointer to TX queue structure.
+- * @param olx
+- *   Configured Tx offloads mask. It is fully defined at
+- *   compile time and may be used for optimization.
+  *
+  * NOTE: not inlined intentionally, it makes tx_burst
+  * routine smaller, simple and faster - from experiments.
+  */
+ void
+-mlx5_tx_handle_completion(struct mlx5_txq_data *__rte_restrict txq,
+-			  unsigned int olx __rte_unused)
++mlx5_tx_handle_completion(struct mlx5_txq_data *__rte_restrict txq)
+ {
+ 	unsigned int count = MLX5_TX_COMP_MAX_CQE;
+ 	volatile struct mlx5_cqe *last_cqe = NULL;
+@@ -259,7 +251,7 @@ mlx5_tx_handle_completion(struct mlx5_txq_data *__rte_restrict txq,
+ 		/* Ring doorbell to notify hardware. */
+ 		rte_compiler_barrier();
+ 		*txq->cq_db = rte_cpu_to_be_32(txq->cq_ci);
+-		mlx5_tx_comp_flush(txq, last_cqe, olx);
++		mlx5_tx_comp_flush(txq, last_cqe);
+ 	}
+ }
+ 
+@@ -280,7 +272,7 @@ mlx5_tx_descriptor_status(void *tx_queue, uint16_t offset)
+ 	struct mlx5_txq_data *__rte_restrict txq = tx_queue;
+ 	uint16_t used;
+ 
+-	mlx5_tx_handle_completion(txq, 0);
++	mlx5_tx_handle_completion(txq);
+ 	used = txq->elts_head - txq->elts_tail;
+ 	if (offset < used)
+ 		return RTE_ETH_TX_DESC_FULL;
+diff --git a/drivers/net/mlx5/mlx5_tx.h b/drivers/net/mlx5/mlx5_tx.h
+index 0134a2e003..48dbb2d867 100644
+--- a/drivers/net/mlx5/mlx5_tx.h
++++ b/drivers/net/mlx5/mlx5_tx.h
+@@ -234,8 +234,7 @@ struct mlx5_external_q *mlx5_ext_txq_get(struct rte_eth_dev *dev, uint16_t idx);
+ 
+ /* mlx5_tx.c */
+ 
+-void mlx5_tx_handle_completion(struct mlx5_txq_data *__rte_restrict txq,
+-			       unsigned int olx __rte_unused);
++void mlx5_tx_handle_completion(struct mlx5_txq_data *__rte_restrict txq);
+ int mlx5_tx_descriptor_status(void *tx_queue, uint16_t offset);
+ void mlx5_txq_info_get(struct rte_eth_dev *dev, uint16_t queue_id,
+ 		       struct rte_eth_txq_info *qinfo);
+@@ -526,15 +525,11 @@ txq_ol_cksum_to_cs(struct rte_mbuf *buf)
+  *   Pointer to array of packets to be free.
+  * @param pkts_n
+  *   Number of packets to be freed.
+- * @param olx
+- *   Configured Tx offloads mask. It is fully defined at
+- *   compile time and may be used for optimization.
+  */
+ static __rte_always_inline void
+ mlx5_tx_free_mbuf(struct mlx5_txq_data *__rte_restrict txq,
+ 		  struct rte_mbuf **__rte_restrict pkts,
+-		  unsigned int pkts_n,
+-		  unsigned int olx __rte_unused)
++		  unsigned int pkts_n)
+ {
+ 	struct rte_mempool *pool = NULL;
+ 	struct rte_mbuf **p_free = NULL;
+@@ -552,7 +547,7 @@ mlx5_tx_free_mbuf(struct mlx5_txq_data *__rte_restrict txq,
+ 	 * Free mbufs directly to the pool in bulk
+ 	 * if fast free offload is engaged
+ 	 */
+-	if (!MLX5_TXOFF_CONFIG(MULTI) && txq->fast_free) {
++	if (txq->fast_free) {
+ 		mbuf = *pkts;
+ 		pool = mbuf->pool;
+ 		rte_mempool_put_bulk(pool, (void *)pkts, pkts_n);
+@@ -642,10 +637,9 @@ mlx5_tx_free_mbuf(struct mlx5_txq_data *__rte_restrict txq,
+ static __rte_noinline void
+ __mlx5_tx_free_mbuf(struct mlx5_txq_data *__rte_restrict txq,
+ 		    struct rte_mbuf **__rte_restrict pkts,
+-		    unsigned int pkts_n,
+-		    unsigned int olx __rte_unused)
++		    unsigned int pkts_n)
+ {
+-	mlx5_tx_free_mbuf(txq, pkts, pkts_n, olx);
++	mlx5_tx_free_mbuf(txq, pkts, pkts_n);
+ }
+ 
+ /**
+@@ -655,14 +649,10 @@ __mlx5_tx_free_mbuf(struct mlx5_txq_data *__rte_restrict txq,
+  *   Pointer to Tx queue structure.
+  * @param tail
+  *   Index in elts to free up to, becomes new elts tail.
+- * @param olx
+- *   Configured Tx offloads mask. It is fully defined at
+- *   compile time and may be used for optimization.
+  */
+ static __rte_always_inline void
+ mlx5_tx_free_elts(struct mlx5_txq_data *__rte_restrict txq,
+-		  uint16_t tail,
+-		  unsigned int olx __rte_unused)
++		  uint16_t tail)
+ {
+ 	uint16_t n_elts = tail - txq->elts_tail;
+ 
+@@ -681,7 +671,7 @@ mlx5_tx_free_elts(struct mlx5_txq_data *__rte_restrict txq,
+ 		MLX5_ASSERT(part <= txq->elts_s);
+ 		mlx5_tx_free_mbuf(txq,
+ 				  &txq->elts[txq->elts_tail & txq->elts_m],
+-				  part, olx);
++				  part);
+ 		txq->elts_tail += part;
+ 		n_elts -= part;
+ 	} while (n_elts);
+@@ -3580,7 +3570,7 @@ mlx5_tx_burst_tmpl(struct mlx5_txq_data *__rte_restrict txq,
+ 	 * - doorbell the NIC about processed CQEs
+ 	 */
+ 	rte_prefetch0(*(pkts + loc.pkts_sent));
+-	mlx5_tx_handle_completion(txq, olx);
++	mlx5_tx_handle_completion(txq);
+ 	/*
+ 	 * Calculate the number of available resources - elts and WQEs.
+ 	 * There are two possible different scenarios:
+@@ -3829,7 +3819,7 @@ mlx5_tx_burst_tmpl(struct mlx5_txq_data *__rte_restrict txq,
+ 	txq->stats.opackets += loc.pkts_sent;
+ #endif
+ 	if (MLX5_TXOFF_CONFIG(INLINE) && loc.mbuf_free)
+-		__mlx5_tx_free_mbuf(txq, pkts, loc.mbuf_free, olx);
++		__mlx5_tx_free_mbuf(txq, pkts, loc.mbuf_free);
+ 	/* Trace productive bursts only. */
+ 	if (__rte_trace_point_fp_is_enabled() && loc.pkts_sent)
+ 		rte_pmd_mlx5_trace_tx_exit(mlx5_read_pcibar_clock_from_txq(txq),
+-- 
+2.34.1
 
