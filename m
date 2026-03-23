@@ -2,71 +2,129 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA1BBF483C9
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 16:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 348D3F483CC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 16:59:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D285640268;
-	Mon, 23 Mar 2026 17:17:31 +0100 (CET)
-Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
- by mails.dpdk.org (Postfix) with ESMTP id D782C4025F
- for <dev@dpdk.org>; Mon, 23 Mar 2026 17:17:29 +0100 (CET)
-Received: by mail-dl1-f44.google.com with SMTP id
- a92af1059eb24-128b9b7e3edso6990192c88.0
- for <dev@dpdk.org>; Mon, 23 Mar 2026 09:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774282649;
- x=1774887449; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=/m4Vo2YdOdHauqtKKdQjjj2XMo2tiwp/4TsPhVCvXk0=;
- b=p65TBi8BlK/NsiUcRLu0YqmX+eSQM5zF8D1Wf+IdDxbGhkChB2NwG2oUHDhJHAf0cy
- qS4Y5qChcjspp4zyGg1In7+w4WiZeiulHYo6PguodyXAOjx23hRjfupG4sQEXvY3Jo3x
- 4JJWR/pu5rHBDAtBoJr8mToBewd8PboCL36pmY/F/ez/nBN1b1TGvOYHFm0W7+s4UP5x
- mO5ulIyfyDnLSB8MLnulzR1VNWJIOGwv2p+aPWGP0+RfzRqss6G7K2w7g3ylqudfxSkz
- apeug+t9tfDdKTJZCTHQboWKdekLBhCTz9YP7Nd4yVwC/lyusvZwM/ZHy5C1VmSXmSMk
- 1OcQ==
+	by mails.dpdk.org (Postfix) with ESMTP id 538AC40268;
+	Mon, 23 Mar 2026 17:59:43 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id BC55A4025F
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 17:59:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1774285181;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=5OL+iIxrXM7up75ps6Z0+0seX3Oc72Jk+lAhx9oef9M=;
+ b=dn5hHleNgSiEIONyBsCQVqP8zrTISF3BzS36HUFtFWkMm0dW0ev3lmTCkljmG4pCcFunw3
+ K3Je228svnhtk2ChEkEEq8EZ9C0FacPTYYs8oRB2dP7rEbZadsoRLdcC2p6y0vbQXVNhs2
+ 8bTP6YW/J8oW4Auz3z0i/2rjckKaiRE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-618-D4TA4s1ROhCdb2Kx0EkEZQ-1; Mon, 23 Mar 2026 12:59:39 -0400
+X-MC-Unique: D4TA4s1ROhCdb2Kx0EkEZQ-1
+X-Mimecast-MFC-AGG-ID: D4TA4s1ROhCdb2Kx0EkEZQ_1774285179
+Received: by mail-wm1-f70.google.com with SMTP id
+ 5b1f17b1804b1-4870221e1fdso21680245e9.0
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 09:59:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774282649; x=1774887449;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=/m4Vo2YdOdHauqtKKdQjjj2XMo2tiwp/4TsPhVCvXk0=;
- b=lzy7lgPMlrXa6lr6lO3LXc/I/A7U29C/E7lDccCFYGDtnaIxvFl1g727zt0VSPqlqG
- iT72BNbWkz/Ie6dHidm+oHTHVj5YjlK1yo5kGbpt3ixkh6nL7lMdIy60YhpKezQNSISl
- in/iGYtumGrY6Oz257TqL4FZ7aQvSflLJsaXzlH1Z/E3juoRgzCkgdZWlhD05HyYFINH
- 7T6qgO5NCmENJtpNtgI1v7rFpy8vHTXOkgU376QoC7f/wDOeUsJi4VFpEfE6OEVBjupC
- n4BLFLgTTN2jULOIutj68dDwJOo8W5uy5+bo6JIbOMVY3f7d5ABoPl/Fc21Q23gMrz/h
- VrLQ==
+ d=1e100.net; s=20251104; t=1774285178; x=1774889978;
+ h=content-transfer-encoding:in-reply-to:autocrypt:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=5OL+iIxrXM7up75ps6Z0+0seX3Oc72Jk+lAhx9oef9M=;
+ b=rk276pwfuvWa7LIWRHCtHYWSO69cEYPWQwSex0oQa9BEfvZzDYvwhZ7Hm/+prAc98L
+ GIitO5M0sldYCSiq0Pgur7LyWV3HaEVswSl6O1BMFNWw2Lws2i1/FVhfKqK4fLSroArX
+ nhdgVDNu9nMWNB+M/8CPAek6gN0YDnhOyZgI0dZrPHSTMFY5GAQtsWiM2StXSwvQpppo
+ TCdALuTkFbemh6TAYdDrvd18xqzxUqT7EMHFUSnU6LN1zso/172hPFH+P9x7SK/Dbdnw
+ WKopg8FpuGn1AmfEbEV8/0JG0Ox5/j1KuOHheOgGk9gpMrmWn9hN9/6xVrpR0/d/Ywl9
+ v3rg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCVL565/qnJDXtE83QPNu/JHuGoR0k1th1BGZAQ0ZCYKvk7t8G6pLDrUL/kFjRZqWTvmwys=@dpdk.org
-X-Gm-Message-State: AOJu0YyaAqaE5kj5mDK8+ijwepei6jm9l6IjLDkN9rgfprRCZkwYLoeX
- NJToS7agVtq4F7kE8LYoqNmjNc6sAFztyhS/nZ1F93kgj0ZuZtPjzFd9gHApBtULTBQ=
-X-Gm-Gg: ATEYQzzHPwjSn6UMC3Ravj0gLXgHpOeofVi80/5UO22C+WCYG4ewUsSvCw6P3iomelM
- FpO2LYDCYRk36jO3L51N6vb9QpkC8UYb2mmWRaazQb0xx/eOWstAvBzva3uQLq0MH21tlqxhESV
- UgBiTGI/EF5ml88LNw3QU6GD4Y1ljSADzQpdLnWkr9xFjot+gPNRmEuhzZOtZsxBrb2qXQ0X2U6
- K1PNrRUbZ3XUl7/Lge1H6hrcQ8dvjqA17WXgXXOrQrV3whH0+iLlfEk2/1Ly6OhDyKsXtAxnUbZ
- 2IaGNNcD5Q/W7mZTy+/OB4Czu0Wrcrr62YdddMGMMZroR0+fJsDk39sTQqyr45IF74yzvITZd8M
- 5Ql3YqL7F5FQwVQEfsb1BlXTtgJVTw2/2bYGclNbXWnl6BH9T3iD7GmE01wA+Gum1RusOS6Mvjk
- ct8dnB/5H+PW9h4CqkNVpYMzAU/KgjL4bcmWE=
-X-Received: by 2002:a05:7022:e1e:b0:124:9acd:3b15 with SMTP id
- a92af1059eb24-12a726f86cemr6172620c88.39.1774282648782; 
- Mon, 23 Mar 2026 09:17:28 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
+ AJvYcCUBlT3C77SjllbLSMmPjRG8L63iAy4zatAWTbOuBBWH1wc60pbeK1dp6N44hdpMUbTqmts=@dpdk.org
+X-Gm-Message-State: AOJu0Yx+WgSOn5xGxCGo/1YfAZcBvtzi70TpfRn7MGOPkUEMUj4x05OL
+ Cq1+j+juB6RqL8gT5QdxIoUbdgk5BEx5OLd7E4cdqSmzlGWMVU58Ln1wP0B+3nfXvEVsEEuPwdW
+ CmZK1r6y9oOlXjOgpo9JFkEElA5JOwCE6SyczK60M5YW8
+X-Gm-Gg: ATEYQzwvTuRnsNn3ICxUVfijG+Gh+blJbgc6a8t6yOmjp29MOy8zog8uPbejyk1gzNO
+ oGbTE6ijdH75At2DpZDnPgv6qKMPAhwhFVQw9pwWqfGJx5ex+0uHTK628SrH/Yr4RyaTP3Hk3Aw
+ u9cxNCFWqkK1W+rhQozwr86WFsJ4b5F1sEOqMNxRemMUod0X95mmsU7wg5wc271vjZPrE5ZFcr9
+ gfpyum6Ib1b9DmvnLvZw5GVtEHQh3vldsi7JyuXCkI+ptDpS67GvfhQYLU80kE7zbYLmKfuQN/L
+ f3dTxjaR0CoFrN+9zcNOinx1sbGTZTpMyKquhYpyCgBSE4TuraRexyErcnZ7JfdCRp3eFAq9t2D
+ GeCmJfMbFJWi/bpYx1Hl2cbe8
+X-Received: by 2002:a05:600c:154b:b0:485:3cef:d6ea with SMTP id
+ 5b1f17b1804b1-4870f212c1emr4618155e9.13.1774285178512; 
+ Mon, 23 Mar 2026 09:59:38 -0700 (PDT)
+X-Received: by 2002:a05:600c:154b:b0:485:3cef:d6ea with SMTP id
+ 5b1f17b1804b1-4870f212c1emr4617805e9.13.1774285178102; 
+ Mon, 23 Mar 2026 09:59:38 -0700 (PDT)
+Received: from [192.168.0.65] ([78.16.129.161])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2c10b3253d0sm12809102eec.29.2026.03.23.09.17.28
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Mar 2026 09:17:28 -0700 (PDT)
-Date: Mon, 23 Mar 2026 09:17:25 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: a.schollmeyer@syseleven.de
-Cc: Aman Singh <aman.deep.singh@intel.com>, dev@dpdk.org
-Subject: Re: [PATCH] app/testpmd: warn on shared rxq switch mismatch
-Message-ID: <20260323091725.3440ad89@phoenix.local>
-In-Reply-To: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
-References: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
+ 5b1f17b1804b1-486ff1c16absm83521635e9.26.2026.03.23.09.59.36
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Mon, 23 Mar 2026 09:59:37 -0700 (PDT)
+Message-ID: <0b33ca24-dce4-47f2-aacd-cb0e9ecfd5d6@redhat.com>
+Date: Mon, 23 Mar 2026 16:59:35 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/8] bus/fslmc: fix bus cleanup
+To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+Cc: stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Rohit Raj <rohit.raj@nxp.com>
+References: <20260323105306.1531689-1-david.marchand@redhat.com>
+ <20260323105306.1531689-3-david.marchand@redhat.com>
+From: Kevin Traynor <ktraynor@redhat.com>
+Autocrypt: addr=ktraynor@redhat.com; keydata=
+ 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
+In-Reply-To: <20260323105306.1531689-3-david.marchand@redhat.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: El1l6Ga9VeHR36qmuVnQo85EejyAzTOoa1Mu1FfGJ8s_1774285179
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -81,27 +139,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 25 Nov 2025 11:22:07 +0100
-a.schollmeyer@syseleven.de wrote:
-
-> From: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
+On 3/23/26 10:52 AM, David Marchand wrote:
+> The close operation was never closing probed devices.
 > 
-> Shared Rx queues do not work with every combination of ports. Besides
-> requiring the corresponding device capability, shared Rx queues also
-> require all ports of one share group and queue ID have the same switch
-> domain and Rx domain. When these fields do not match, shared Rx queues
-> are not properly set up and queue sharing may fail silently. This can
-> happen even in some less intuitive cases like multiple VFs of one
-> physical NIC.
+> Taking a step back, reevaluating the devargs makes no sense during the
+> close step, as a probed device must have passed the allow/block list
+> evaluation initially.
 > 
-> To make debugging issues with shared Rx queue configuration easier, this
-> commit introduces simple checks and warning messages for all members of
-> a share_group and share_qid to warn whenever there is a mismatch in the
-> switch and Rx domain.
+> Since the device contains a reference to the driver that probed it,
+> simply call this driver remove op.
 > 
-> Signed-off-by: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
+> Fixes: 274fd921ff7f ("bus/fslmc: support close operation")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
 > ---
+>  drivers/bus/fslmc/fslmc_vfio.c | 21 ++++-----------------
+>  1 file changed, 4 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/bus/fslmc/fslmc_vfio.c b/drivers/bus/fslmc/fslmc_vfio.c
+> index 550d4e0e8d..7daa18d850 100644
+> --- a/drivers/bus/fslmc/fslmc_vfio.c
+> +++ b/drivers/bus/fslmc/fslmc_vfio.c
+> @@ -1393,7 +1393,7 @@ fslmc_close_iodevices(struct rte_dpaa2_device *dev,
+>  {
+>  	struct rte_dpaa2_object *object = NULL;
+>  	struct rte_dpaa2_driver *drv;
+> -	int ret, probe_all;
+> +	int ret;
+>  
+>  	switch (dev->dev_type) {
+>  	case DPAA2_IO:
+> @@ -1411,22 +1411,9 @@ fslmc_close_iodevices(struct rte_dpaa2_device *dev,
+>  	case DPAA2_ETH:
+>  	case DPAA2_CRYPTO:
+>  	case DPAA2_QDMA:
+> -		probe_all = rte_fslmc_bus.bus.conf.scan_mode !=
+> -			    RTE_BUS_SCAN_ALLOWLIST;
+> -		TAILQ_FOREACH(drv, &rte_fslmc_bus.driver_list, next) {
+> -			if (drv->drv_type != dev->dev_type)
+> -				continue;
+> -			if (rte_dev_is_probed(&dev->device))
+> -				continue;
+> -			if (probe_all ||
+> -			    (dev->device.devargs &&
+> -			     dev->device.devargs->policy ==
+> -			     RTE_DEV_ALLOWED)) {
+> -				ret = drv->remove(dev);
+> -				if (ret)
+> -					DPAA2_BUS_ERR("Unable to remove");
+> -			}
+> -		}
+> +		drv = dev->driver;
+> +		if (drv && drv->remove && drv->remove(dev))
 
-Why is this not handled at ethdev or device level?
+Not new but dpaa2_qdma_remove doesn't return an error which seems like a
+bug, but it has it's own log and it's just a log here anyway, so not
+critical.
 
-Testpmd is just a test program. Real applications might make same mistake.
+> +			DPAA2_BUS_ERR("Unable to remove");
+>  		break;
+>  	default:
+>  		break;
+
