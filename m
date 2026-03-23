@@ -2,64 +2,64 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C68FF483DE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 18:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7909CF483DD
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 18:11:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7CCDF40648;
-	Mon, 23 Mar 2026 19:11:30 +0100 (CET)
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com
- [209.85.222.179])
- by mails.dpdk.org (Postfix) with ESMTP id 8F95940647
- for <dev@dpdk.org>; Mon, 23 Mar 2026 19:11:29 +0100 (CET)
-Received: by mail-qk1-f179.google.com with SMTP id
- af79cd13be357-8ca01dc7d40so44704985a.1
- for <dev@dpdk.org>; Mon, 23 Mar 2026 11:11:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 80E9F40654;
+	Mon, 23 Mar 2026 19:11:34 +0100 (CET)
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com
+ [209.85.222.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 8623D40647
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 19:11:33 +0100 (CET)
+Received: by mail-qk1-f171.google.com with SMTP id
+ af79cd13be357-8cd90401034so40284685a.0
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 11:11:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1774289489; x=1774894289; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1774289493; x=1774894293; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=N1z7X9fG8xhQQMkhs+fDuMVGoBZkpjIZ2mAVnvylx8c=;
- b=JomfN8WnePXSsV+zYwSnBcev2FPpSXj0c7ke3lLA+g2D0TDlmqw97jebL9RoslfNw8
- 00PcSTdrVTAlZJU9PCSwQSe9C1Wcki3FHxk3CYiTkw5T2AT20XJFYLH9DJp/oyxzwbWK
- vqhnoROJ1u+KhV0hLk6Ef45c8jlBZSXx2asrs=
+ bh=+OqPYT+bTSV8eGWJ6Xgy+NHSnnGsiX6OSsINhfUMvOg=;
+ b=iTbRl0N8+YGvvfJV2wztqW0+jC6EI16ttV5ccYI9fbpk7Z5F+7dDzrVfqJjB6SMEvw
+ 1fU4k/V4L9WpNFpfBbz6IG/Nq3jqpH6LVc+kt2/W/UsEZ0FWI8rh9qhQiNEUplU8q8yA
+ B/2HGO4DrT3gPsfeB0XTZHWsgzvTejLYaLe28=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774289489; x=1774894289;
+ d=1e100.net; s=20251104; t=1774289493; x=1774894293;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=N1z7X9fG8xhQQMkhs+fDuMVGoBZkpjIZ2mAVnvylx8c=;
- b=ejNLwT9Y5jxbgbYwaT408lDRdCQt2gtjPpmJcSWjmsuliGnyWPNfatsTAfNYNG7UMS
- o+uD5H7+/acU3Si2HmWEHBVyMvslZKSfN+NabbCijxS8goR12OjUc/bmMYPQgI6DKHRo
- 2v6GfL9tducDZ6tFv6u7rx2pgjX9T6wkfWX56Tpkx1ZRiJRM3nbtZ5DH1ShVgOTbs/2D
- gPb0ewUqvNmg+ULMGGJDuteZBDnlVlW4VYE7kXn7RD1PD6/5dFzxsiB/e9N8Q6A1Cx70
- GsiwXTHkOM24KAcNZ156gNMQL8v1+f6G4M47GxjE1RlpUHz9DveFllXuKQk4mudUSLxy
- aXfw==
-X-Gm-Message-State: AOJu0Yx/V2rRpw4/fjDj17ZHn4QIRTDe5rny8u2VT8pyM2PQv+NVVRyK
- 1+6evXDZH/dkpYLt8Tyz8Y8K3Ku74BGJytV01m/j4EpiSXpNVXdT9a5hfTjdR9hrZCA=
-X-Gm-Gg: ATEYQzzolbMaVzc5zguWOCwJKozA2vRWr9WWNdk3NKzNSr3NyI6NcRIdNv6XR2jUswe
- upu8ZZv0n+PqzgfRnka7J3zpMnbjctnNeryNeWxgWsCPlE93erp+AurpKV5Jas9Vzu34xObVX9O
- Re8Vt/dyBtxxvYbEyeRQblxf2c/rMrD+zEFJ7lkg1mn6aF4/Hn/f4zrG+z0FYOmM27OafkplseA
- j1778J544eUF2+ItPWmvSzbfGJ/JjuPPWM/0ovOCZMRjdvci4DWyh9SeYcuVnNbaYnSdr2EhDDK
- ma6lC0IIb55PKZswNcjOabqfhaGB6haM2ftwi41ekqZUb+juhCj3NICVdsVM7CfV1mK/Mtmazqf
- bh8O/NVLCDur4IP05idDZZh6EDy9DYL5hfpxyjjmQq0YP1/PjGfxsQZ0vbUgeeRH5PZqg6XmdgI
- vHU+uXzXuHmUAqv4K1XX4q2B+uwUCGU8sJTB6y1HbyeuLaC3eMMxQABFa1BbkELKPo+G14ycL4h
- K/szwT6aiY8
-X-Received: by 2002:a05:620a:4505:b0:8cf:c1c2:908 with SMTP id
- af79cd13be357-8cfc7e8c3f7mr1982714485a.23.1774289488884; 
- Mon, 23 Mar 2026 11:11:28 -0700 (PDT)
+ bh=+OqPYT+bTSV8eGWJ6Xgy+NHSnnGsiX6OSsINhfUMvOg=;
+ b=llCBE0U5Ppnay+FYN/zjIy32rY9pgl8GmLAlNbGEB8AQlOxNBBFjTX1cn2/bjYOi66
+ KtV/ap9LFftdmabvUQ730HV8x44+zdFqSN9pgYyPusx0LvYO50x/z7GPZ9NppD0IRd0c
+ SI4n2GViEk3DtjSkA5Ts6ptJ1+Scv20maAz9EgQ2KzcjErEDrvVc4pI866Ai8rjLADMm
+ sjnHJ2mFtbOAfCfHucap6ifqlCtKIK9sfkcnWO7DPOzRRJaBvsN0/7fU98xJQjrh4UuD
+ FOUs8h72cYSYLCqD+KMHoBhlHc94+7uma3vBAY/Nx6d+VwGFLxJZ+zDvyEPGtAp78VMu
+ k3aA==
+X-Gm-Message-State: AOJu0YwoOfZcBhBsjsVm4F+eDDIt7NXCgwa5OpDYl1yXdr/tGiLxipRu
+ W/iMvGnG2YJJFjie5BAxCMkF8lA2Z7eLh8vk8lY5tUbDG9S4fpKOQAoAWNpNNUyiuqA=
+X-Gm-Gg: ATEYQzz0CA+4H3ruWpLZBhTQLIppURPDHDcRdJRxvwlzmhe2wD576bfTqeGPodJ9IFJ
+ xHf3rF44qJPOokvLjul7bOmETw4/35vH6ykYHv1ZsCfMGXwe+zu+hKbIPthAJ0QHbVX3w3/+e16
+ 2RDDIeuWZuSzeUa80xca1KoU53AzcOM3oIuRVHGhntOt4sGDIszIyXAqngmpvUJugsaeP3O6mRK
+ yMQSo2z/z2AeG4qRdP1A+fJK3yzOynPldUCfjbObPQfdndoM4oMJTMTgY7a67is0EMWV3DRdo9G
+ z1tnZ385tWNEUGbVn/6h4kBbDvBBUGS9lIljX21CgWNbU+r6eY34A8K/bzrvLBXkwlygDRJV9qu
+ YpsBQqxnTIVEYCfdzwJtPHPIvdn/lZnPFNbAsmGhWKLNLt4NPgEhWh6uvwvBxfvrUJmIeigGn8O
+ cBpYxvMeHxSCLa2+3LrvE6ZcKPexI63mWMBnDuyK9mtdvdwImsjd5bE9Iwd+u9Qw5GjMB7ybOY2
+ 2vsHsBXbHfq
+X-Received: by 2002:a05:620a:2a10:b0:8cd:972d:2fc with SMTP id
+ af79cd13be357-8cfc7f7ddfemr1812364685a.63.1774289492580; 
+ Mon, 23 Mar 2026 11:11:32 -0700 (PDT)
 Received: from patrick-laptop.iol.unh.edu ([2606:4100:3880:1210::224])
  by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8cfc908d8cfsm841462885a.28.2026.03.23.11.11.28
+ af79cd13be357-8cfc908d8cfsm841462885a.28.2026.03.23.11.11.31
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Mar 2026 11:11:28 -0700 (PDT)
+ Mon, 23 Mar 2026 11:11:32 -0700 (PDT)
 From: Patrick Robb <probb@iol.unh.edu>
 To: luca.vizzarro@arm.com
 Cc: dev@dpdk.org, abailey@iol.unh.edu, dmarx@iol.unh.edu, knimoji@iol.unh.edu,
  Paul.Szczepanek@arm.com, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v1 1/2] dts: always use ethdev ports to check capabilities
-Date: Mon, 23 Mar 2026 14:08:17 -0400
-Message-ID: <20260323180818.674041-2-probb@iol.unh.edu>
+Subject: [PATCH v1 2/2] dts: avoid dpdk resources conflict
+Date: Mon, 23 Mar 2026 14:08:18 -0400
+Message-ID: <20260323180818.674041-3-probb@iol.unh.edu>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20260323180818.674041-1-probb@iol.unh.edu>
 References: <20260323180818.674041-1-probb@iol.unh.edu>
@@ -78,56 +78,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DTS uses its capability check step to query ethdev devices for
-their capabilities, and then run or skip testsuites according
-to their respective capability requirements. So, we should be
-running the capability check step with the ethernet devices
-in all cases. However, when crypto ports are specified, a
-crypto virtual function will be used in the capability check
-step in error. So, this patch changes the default behavior
-when computing EAL arguments, setting the port allow list to
-the ethernet devices by default. In addition, as a defensive
-coding measure, the capability check now specifies its usage
-of the SUT ethernet devices when acquiring capabilities.
+When starting and stopping DPDK applications in rapid succession,
+there may be a resource conflicts on ports, memory, VFIO, etc.
+Even after we send "quit" to the testpmd CLI, some resource
+cleanup will happen asynchronously in the background. To avoid a
+resource conflict upon starting a subsequent DPDK application,
+add a very brief sleep after quitting DPDK applications.
 
-Fixes: 76e3fdd7b5c6 ("dts: add cryptodev package to DTS")
+Fixes: bfad0948df75 ("dts: rework interactive shells")
 
 Signed-off-by: Patrick Robb <probb@iol.unh.edu>
 Tested-by: Patrick Robb <probb@iol.unh.edu>
 ---
- dts/framework/remote_session/dpdk_shell.py | 5 +----
- dts/framework/testbed_model/capability.py  | 2 +-
- 2 files changed, 2 insertions(+), 5 deletions(-)
+ dts/framework/remote_session/dpdk_shell.py | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
-index b94d336d4e..51b97d4ff6 100644
+index 51b97d4ff6..7c79f33908 100644
 --- a/dts/framework/remote_session/dpdk_shell.py
 +++ b/dts/framework/remote_session/dpdk_shell.py
-@@ -46,10 +46,7 @@ def compute_eal_params(
-     params.prefix = prefix
+@@ -6,6 +6,7 @@
+ Provides a base class to create interactive shells based on DPDK.
+ """
  
-     if params.allowed_ports is None:
--        if ctx.topology.crypto_vf_ports:
--            params.allowed_ports = [ctx.topology.crypto_vf_ports[0]]
--        else:
--            params.allowed_ports = ctx.topology.sut_dpdk_ports
-+        params.allowed_ports = ctx.topology.sut_dpdk_ports
++import time
+ from abc import ABC, abstractmethod
+ from pathlib import PurePath
  
-     return params
- 
-diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
-index b166014e0c..960370fc72 100644
---- a/dts/framework/testbed_model/capability.py
-+++ b/dts/framework/testbed_model/capability.py
-@@ -384,7 +384,7 @@ def get_supported_capabilities(
-         )
-         if cls.capabilities_to_check:
-             capabilities_to_check_map = cls._get_decorated_capabilities_map()
--            with TestPmd() as testpmd:
-+            with TestPmd(allowed_ports=topology.sut_dpdk_ports) as testpmd:
-                 for (
-                     conditional_capability_fn,
-                     capabilities,
+@@ -84,3 +85,11 @@ def _make_real_path(self) -> PurePath:
+         Adds the remote DPDK build directory to the path.
+         """
+         return get_ctx().dpdk_build.remote_dpdk_build_dir.joinpath(self.path)
++
++    def close(self) -> None:
++        """Overrides :meth:`~.interactive_shell.close`."""
++        # Allow time for VFIO and hardware resources to be released by the kernel after the
++        # DPDK process exits. Without this delay, sequential testpmd instances may have EAL
++        # errors when trying to acquire the same devices.
++        time.sleep(1)
++        return super().close()
 -- 
 2.49.0
 
