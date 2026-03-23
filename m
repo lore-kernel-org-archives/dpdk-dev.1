@@ -2,70 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A26FF483F8
-	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 20:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F2ED58CBF
+	for <dpdk-dev@archiver.kernel.org>; Mon, 23 Mar 2026 22:22:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 256994066F;
-	Mon, 23 Mar 2026 21:24:16 +0100 (CET)
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com
- [209.85.160.182])
- by mails.dpdk.org (Postfix) with ESMTP id EE2384066D
- for <dev@dpdk.org>; Mon, 23 Mar 2026 21:24:14 +0100 (CET)
-Received: by mail-qt1-f182.google.com with SMTP id
- d75a77b69052e-506bcb23a78so35533751cf.3
- for <dev@dpdk.org>; Mon, 23 Mar 2026 13:24:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1774297454; x=1774902254; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=JsehasbPrdgsrw9W7+uDeltSyX+3gXIbxoFdAv0pJrI=;
- b=cy0qAiiwz+b+arjS9FkcIYEo62EYWrmWP2GU+LNgVn0wTlCrwaNGAUyLelCb3IjOTr
- w8298tgnRYlVRUEotmDPHY5UAGRoXQvWgOJP2FyNQQCYyeVVR2RBGEaFUwZAGJH8f5Lg
- eXFNa2Q2nu1Oqu0GDHHJ7jpfGHTiYiLgQ7h+Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774297454; x=1774902254;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=JsehasbPrdgsrw9W7+uDeltSyX+3gXIbxoFdAv0pJrI=;
- b=dAn6u0ZPF1WB3eTiWTukoE3w0wV2wbat1rd1VrwvqPxQblParFIDuybUZPDyDT+VWn
- t9uPUizEFyYHIqWwRTaaDYI0Vg7vK/a5QaD/fH2NBDsKU1iL9N99BP5N459EhEQu5x3T
- pi9ZY4Ie9bZF61aAl9uzGq0a6T7PXlIBvvd/3dZ+fdAoHpZfAOtcJeaeYJEJa7WCFHvM
- fVw3lI3/zndLEsrp0Mc6O0Sigboz9HzkqthIW/VEIKtAk1oTW9Xzwn9yAW5bEDqwHBT4
- kPkcf0Xr3NwQUPV1DZYkuzycmhOA7vL1widbA9HOrA1iUGmRYMCcw/Zux3aFdzFVKG0B
- XFng==
-X-Gm-Message-State: AOJu0Yybf7pUPphjOcSlqic1r0f9BY+60delGVUMbiCZ7po+LzSByYp4
- xLd+nASvdHpUej1qrtZ47Y8nocbfLbRcNkwaohklwJJamPLpSDKxcPybtOxpk5psBkg=
-X-Gm-Gg: ATEYQzwGBNVlCTqgWlpPn35Juf1wD1P0RpFKIHX7z3yUbv8qGoG68zoI2wVO5esb9L+
- eMNcKmV4w6GeIPh1oG4kPV1l6jJN3WKTSvmZ7Or7RGrcfqC6d0XG+Ye37yiPgVIWFQVLgmvGMgM
- E9//FJPK9L/o4JSfl6w6wanO39ttMk37e1Nyx1GXVHhjQmn1PPPVBaKg5Z1KIncCw9kbvRskrYq
- qhCOotWkB/19/W7Expe9dEr+huboDVRkXfgFogzgL+kVIxMB0OcCfrXUZ+JUzjWUX9mbV5xAfmS
- gRsHCtZTQnYSBdN8fAUb7BuGuUqJjjmNPKAiSMimhhAJSaX41P09KqOaNxQd/UxMlIxqEuKsMsF
- 8av4CyBEMeWnSfR6Fzu7yuBKVAx5NJluyR02EO/Bs9VTAfvqJFm4PPS/JX9V8B85FkAwYyieK4y
- wURbgbiujirEpNJhgk0Pb97i5Ij26A7dMVgZnq8U6EK+ibOEtoVVEt+xjTXLRBs0694lterp9ZO
- Quj+Ltw0MFeMCfNnlgrWwQ=
-X-Received: by 2002:a05:622a:49:b0:509:e48:f8cb with SMTP id
- d75a77b69052e-50b375b714fmr216581481cf.70.1774297454251; 
- Mon, 23 Mar 2026 13:24:14 -0700 (PDT)
-Received: from patrick-laptop.iol.unh.edu ([2606:4100:3880:1210::224])
- by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-50b702b85d2sm2966811cf.25.2026.03.23.13.24.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Mar 2026 13:24:13 -0700 (PDT)
-From: Patrick Robb <probb@iol.unh.edu>
-To: luca.vizzarro@arm.com
-Cc: dev@dpdk.org, abailey@iol.unh.edu, dmarx@iol.unh.edu,
- Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v2 2/2] dts: avoid dpdk resources conflict
-Date: Mon, 23 Mar 2026 16:20:53 -0400
-Message-ID: <20260323202053.740203-3-probb@iol.unh.edu>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20260323202053.740203-1-probb@iol.unh.edu>
-References: <20260323180818.674041-1-probb@iol.unh.edu>
- <20260323202053.740203-1-probb@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id EAE70402D6;
+	Mon, 23 Mar 2026 23:22:33 +0100 (CET)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 2AE3440268
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 23:22:31 +0100 (CET)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4ffnjD4q8pzJ468N;
+ Tue, 24 Mar 2026 06:22:24 +0800 (CST)
+Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
+ by mail.maildlp.com (Postfix) with ESMTPS id 9138740086;
+ Tue, 24 Mar 2026 06:22:30 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Mon, 23 Mar 2026 22:22:30 +0000
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Mon, 23 Mar 2026 22:22:30 +0000
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "rjarry@redhat.com" <rjarry@redhat.com>, "nsaxena16@gmail.com"
+ <nsaxena16@gmail.com>, "mb@smartsharesystems.com" <mb@smartsharesystems.com>, 
+ "adwivedi@marvell.com" <adwivedi@marvell.com>, "jerinjacobk@gmail.com"
+ <jerinjacobk@gmail.com>, Maxime Leroy <maxime@leroys.fr>
+Subject: RE: [RFC PATCH 1/4] fib: add multi-VRF support
+Thread-Topic: [RFC PATCH 1/4] fib: add multi-VRF support
+Thread-Index: AQHcuhKcJJxwCE+lqEy31K72rKhCrbW8QVYQgAA62oCAADV+QA==
+Date: Mon, 23 Mar 2026 22:22:30 +0000
+Message-ID: <8127950263884375b935be30eb39da9b@huawei.com>
+References: <20260322154215.3686528-1-vladimir.medvedkin@intel.com>
+ <20260322154215.3686528-2-vladimir.medvedkin@intel.com>
+ <a97747eac5c242359b959e24f284bf5b@huawei.com>
+ <5ef5dc7b-0048-4e1e-be1c-d94b5b8f3caf@intel.com>
+In-Reply-To: <5ef5dc7b-0048-4e1e-be1c-d94b5b8f3caf@intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.81.207.232]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,68 +61,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When starting and stopping DPDK applications in rapid succession,
-there may be a resource conflicts on ports, memory, VFIO, etc.
-Even after we send "quit" to the testpmd CLI, some resource
-cleanup will happen asynchronously in the background. To avoid a
-resource conflict upon starting a subsequent DPDK application,
-add a very brief sleep after quitting DPDK applications.
-
-Fixes: bfad0948df75 ("dts: rework interactive shells")
-
-Signed-off-by: Patrick Robb <probb@iol.unh.edu>
-Tested-by: Patrick Robb <probb@iol.unh.edu>
----
- dts/api/testpmd/__init__.py                |  2 +-
- dts/framework/remote_session/dpdk_shell.py | 12 +++++++++++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-index 703cae487e..e9187440bb 100644
---- a/dts/api/testpmd/__init__.py
-+++ b/dts/api/testpmd/__init__.py
-@@ -1174,7 +1174,7 @@ def clear_port_stats_all(self, verify: bool = True) -> None:
- 
-     @only_active
-     def close(self) -> None:
--        """Overrides :meth:`~.interactive_shell.close`."""
-+        """Overrides :meth:`~.dpdk_shell.close`."""
-         self.stop()
-         self.send_command("quit", "Bye...")
-         return super().close()
-diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
-index 51b97d4ff6..f926c3fa4d 100644
---- a/dts/framework/remote_session/dpdk_shell.py
-+++ b/dts/framework/remote_session/dpdk_shell.py
-@@ -6,13 +6,14 @@
- Provides a base class to create interactive shells based on DPDK.
- """
- 
-+import time
- from abc import ABC, abstractmethod
- from pathlib import PurePath
- 
- from framework.context import get_ctx
- from framework.params.eal import EalParams
- from framework.remote_session.interactive_shell import (
--    InteractiveShell,
-+    InteractiveShell, only_active,
- )
- from framework.testbed_model.cpu import LogicalCoreList
- 
-@@ -84,3 +85,12 @@ def _make_real_path(self) -> PurePath:
-         Adds the remote DPDK build directory to the path.
-         """
-         return get_ctx().dpdk_build.remote_dpdk_build_dir.joinpath(self.path)
-+
-+    @only_active
-+    def close(self) -> None:
-+        """Overrides :meth:`~.interactive_shell.close`."""
-+        # Allow time for VFIO and hardware resources to be released by the kernel after the
-+        # DPDK process exits. Without this delay, sequential testpmd instances may have EAL
-+        # errors when trying to acquire the same devices.
-+        time.sleep(1)
-+        return super().close()
--- 
-2.49.0
-
+DQo+ID4+IEFkZCBWUkYgKFZpcnR1YWwgUm91dGluZyBhbmQgRm9yd2FyZGluZykgc3VwcG9ydCB0
+byB0aGUgSVB2NA0KPiA+PiBGSUIgbGlicmFyeSwgYWxsb3dpbmcgbXVsdGlwbGUgaW5kZXBlbmRl
+bnQgcm91dGluZyB0YWJsZXMNCj4gPj4gd2l0aGluIGEgc2luZ2xlIEZJQiBpbnN0YW5jZS4NCj4g
+Pj4NCj4gPj4gSW50cm9kdWNlIG1heF92cmZzIGFuZCB2cmZfZGVmYXVsdF9uaCBmaWVsZHMgaW4g
+cnRlX2ZpYl9jb25mDQo+ID4+IHRvIGNvbmZpZ3VyZSB0aGUgbnVtYmVyIG9mIFZSRnMgYW5kIHBl
+ci1WUkYgZGVmYXVsdCBuZXh0aG9wcy4NCj4gPiBUaGFua3MgVmxhZGltaXIsIGFsbG93aW5nIG11
+bHRpcGxlIFZSRnMgcGVyIHNhbWUgTFBNIHRhYmxlIHdpbGwNCj4gPiBkZWZpbml0ZWx5IGJlIGEg
+dXNlZnVsIHRoaW5nIHRvIGhhdmUuDQo+ID4gVGhvdWdoLCBJIGhhdmUgdGhlIHNhbWUgY29uY2Vy
+biBhcyBNYXhpbWU6DQo+ID4gbWVtb3J5IHJlcXVpcmVtZW50cyBhcmUganVzdCBvdmVyd2hlbG1p
+bmcuDQo+ID4gU3R1cGlkIHEgLSB3aHkganVzdCBub3QgdG8gc3RvcmUgYSBwb2ludGVyIHRvIGEg
+dmVjdG9yIG9mIG5leHQtaG9wcw0KPiA+IHdpdGhpbiB0aGUgdGFibGUgZW50cnk/DQo+IA0KPiBB
+bSBJIHVuZGVyc3RhbmQgY29ycmVjdGx5LCBhIHZlY3RvciB3aXRoIG1heF9udW1iZXJfb2ZfdnJm
+cyBlbnRyaWVzIGFuZA0KPiB1c2UgdnJmIGlkIHRvIGFkZHJlc3MgYSBuZXh0aG9wPw0KDQpZZXMu
+DQoNCj4gWWVzLCB0aGlzIG1heSB3b3JrLg0KPiBCdXQsIGlmIHdlIGFyZSBnb2luZyB0byBkbyBh
+biBleHRyYSBtZW1vcnkgYWNjZXNzLCBJJ2QgYmV0dGVyIHRvDQo+IG1haW50YWluIGFuIGludGVy
+bmFsIGhhc2ggdGFibGUgd2l0aCA1IGJ5dGUga2V5cyB7MjRfYml0c19mcm9tX0xQTSwNCj4gMTZf
+Yml0c192cmZfaWR9IHRvIHJldHJpZXZlIGEgbmV4dGhvcC4NCg0KSG1tLi4uIGFuZCB3aGF0IHRv
+IGRvIHdpdGggZW50cmllcyBpbiB0Ymw4LCBJIG1lYW4gd2hhdCB3aWxsIGJlIHRoZSBrZXkgZm9y
+IHRoZW0/DQpPciB5b3UgZG9uJ3QgcGxhbiB0byBwdXQgZW50cmllcyBmcm9tIHRibDggdG8gdGhh
+dCBoYXNoIHRhYmxlPw0KDQo+ID4gQW5kIHdlIGNhbiBwcm92aWRlIHRvIHRoZSB1c2VyIHdpdGgg
+YWJpbGl0eSB0byBzcGVjaWZ5IGN1c3RvbQ0KPiA+IGFsbG9jL2ZyZWUgZnVuY3Rpb24gZm9yIHRo
+ZXNlIHZlY3RvcnMuDQo+ID4gVGhhdCB3b3VsZCBoZWxwIHRvIGF2b2lkIGFsbG9jYXRpbmcgaHVn
+ZSBjaHVua3Mgb2YgbWVtb3J5IGF0IHN0YXJ0dXAuDQo+ID4gSSB1bmRlcnN0YW5kIHRoYXQgaXQg
+d2lsbCBiZSBvbmUgZXh0cmEgbWVtb3J5IGRlcmVmZXJlbmNlLA0KPiA+IGJ1dCBwcm9iYWJseSBp
+dCB3aWxsIGJlIG5vdCB0aGF0IGNyaXRpY2FsIGluIHRlcm1zIG9mIHBlcmZvcm1hbmNlIC4NCj4g
+PiBBZ2FpbiBmb3IgYnVsayBmdW5jdGlvbiAgd2UgbWlnaHQgYmUgYWJsZSB0byBwaXBlbGluZSBs
+b29rdXBzIGFuZA0KPiA+IGRlLXJlZmVyZW5jZXMgYW5kIGhpZGUgdGhhdCBleHRyYSBsb2FkIGxh
+dGVuY3kuDQo+ID4NCj4gPj4gQWRkIGZvdXIgbmV3IGV4cGVyaW1lbnRhbCBBUElzOg0KPiA+PiAt
+IHJ0ZV9maWJfdnJmX2FkZCgpIGFuZCBydGVfZmliX3ZyZl9kZWxldGUoKSB0byBtYW5hZ2Ugcm91
+dGVzDQo+ID4+ICAgIHBlciBWUkYNCj4gPj4gLSBydGVfZmliX3ZyZl9sb29rdXBfYnVsaygpIGZv
+ciBtdWx0aS1WUkYgYnVsayBsb29rdXBzDQo+ID4+IC0gcnRlX2ZpYl92cmZfZ2V0X3JpYigpIHRv
+IHJldHJpZXZlIGEgcGVyLVZSRiBSSUIgaGFuZGxlDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6
+IFZsYWRpbWlyIE1lZHZlZGtpbiA8dmxhZGltaXIubWVkdmVka2luQGludGVsLmNvbT4NCj4gPj4g
+LS0tDQo+ID4+ICAgbGliL2ZpYi9kaXIyNF84LmMgICAgICAgIHwgMjQxICsrKysrKysrKysrKysr
+KystLS0tLS0NCj4gPj4gICBsaWIvZmliL2RpcjI0XzguaCAgICAgICAgfCAyNTUgKysrKysrKysr
+KysrKysrKy0tLS0tLS0tDQo+ID4+ICAgbGliL2ZpYi9kaXIyNF84X2F2eDUxMi5jIHwgNDIwICsr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLQ0KPiA+PiAgIGxpYi9maWIvZGly
+MjRfOF9hdng1MTIuaCB8ICA4MCArKysrKysrLQ0KPiA+PiAgIGxpYi9maWIvcnRlX2ZpYi5jICAg
+ICAgICB8IDE1OCArKysrKysrKysrKystLS0NCj4gPj4gICBsaWIvZmliL3J0ZV9maWIuaCAgICAg
+ICAgfCAgOTQgKysrKysrKystDQo+ID4+ICAgNiBmaWxlcyBjaGFuZ2VkLCA5ODggaW5zZXJ0aW9u
+cygrKSwgMjYwIGRlbGV0aW9ucygtKQ0KPiA+Pg0KPiA8c25pcD4NCj4gDQo+IC0tDQo+IFJlZ2Fy
+ZHMsDQo+IFZsYWRpbWlyDQo+IA0KDQo=
