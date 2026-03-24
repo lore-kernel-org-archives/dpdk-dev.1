@@ -2,89 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95FE8FEC0EB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 17:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C08EFEC0EB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 18:01:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D3F7D4060A;
-	Tue, 24 Mar 2026 18:35:04 +0100 (CET)
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com
- [209.85.160.178])
- by mails.dpdk.org (Postfix) with ESMTP id 47C864021F
- for <dev@dpdk.org>; Tue, 24 Mar 2026 18:35:03 +0100 (CET)
-Received: by mail-qt1-f178.google.com with SMTP id
- d75a77b69052e-50b266413fbso45656061cf.1
- for <dev@dpdk.org>; Tue, 24 Mar 2026 10:35:03 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774373702; cv=none;
- d=google.com; s=arc-20240605;
- b=Gz87fgk+RD8n+v1lHz8NyZGkr9giil7qK+s36LESnszYKNi6HxVvlia1Tea5XxH9EA
- hGPcT98KlJs7Gs6r/wL6GcvgYB3VxRdB6leUI/hKVQB/p/jXZuZ/tiOffoquqfa5F7mW
- dpP3rbOWwywsolyblSy571xdoySDglf5wq4mHoNDC/6mZMkx7ZWdRwVNgEZr/1sOuBqF
- u0o9X9K55Q+hlwhPzbnO5SsVyP4z7Sd0yNBTeQI2qFpbg8xc2uhpTRqHTJUyLcL9W232
- /OEPBn9nZk0JbPlyTQtNYgypZvrgFpb5OVz1reb4+IG/ZS2iYq2zHb+z5COd0tbrXmLV
- 8k6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=QdMLQHJfueIQofYoQXrdVWpCa7Ce0D2t1GTnNXBurvg=;
- fh=T6zuNLJD9hatQXoWg3boYcDul0IcDgSsUpFtNKJ2vuw=;
- b=XZvm/HLownVAe9Qcx/TU24uKqbOb2LkIksnYEttvjgdSqqbhHCQCo+HtytzcUb+lh1
- R+7AEue+kg+EIr5mASNAUJZGcro48Owu2+BOyYXXDaT25ryzqMqOW6s1UhmWI8vAtOx1
- IUns8CNY/OAu/3BA4Bqhk8YZjKtooKVtU8EwuwF7z//VJaNvjmTj1Y/cQ6UuiEdCO0TF
- t5l9tAPXivG+RO/97Qyw4KusbOaA0FhwTyzMoJYQpy3Gl0sz2bbjHz8iLvrPjqcqsbnn
- TMtbpHAU1fv5jIY9Dpmw/BPmXiAXntS1U/jqhe/0MfTAR1CBOEp2B7TP/HUZWsACTjOH
- TElg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1774373702; x=1774978502; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=QdMLQHJfueIQofYoQXrdVWpCa7Ce0D2t1GTnNXBurvg=;
- b=pFmWPsOTdQK3ChLcfoSzd54k7xJmLtHKwifCZpMyhA9AAYVS7WVsF2QL2y1NVhS7vL
- IF2wSBjPlX5q7HjRQaraTf0WhRn7EHhokEuL9UxZuAcoEEzDkbRvc9bM+QtnkWtP/vpT
- Ll4g2BV4d+tYhDfmzEx6CzhXRp/MJl9SMkIrh1uqxNFwxuliXTkBZ8o2FjImrQ4SOIIW
- z5Ee3D6DNjPMgDE/dWk5l62oJI+Rqw0NLxS9NlMmoN3fH0ooD1un74BG39tYEYYzgEyg
- cA1yOC3XUZ5G8U8RwRPUd+YvlwaQfmim3Mu4sNSlMpKy8goJb93pNurCHf+7hP9Gho3M
- txQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774373702; x=1774978502;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=QdMLQHJfueIQofYoQXrdVWpCa7Ce0D2t1GTnNXBurvg=;
- b=SDYXX7lH9AFv6wm8+j68ykY2LZZH/Wu2Y1+43juM/8T7smhOFvxC020dw4I3LV0eSj
- eTCRgJzxFUeAjkKq5di8BNzUq9oE/DKX8hj/pxW+LoeEBxcK7v66g6AmIcorQObI3k2A
- /6AXNvM46IawD7W3Pw6znlA2v47YOPwIMRQHNWBxiXJZvwpTKJw9qg++kQhFNNWnrQ41
- VPm1Yc9c+adLQhGm/2YY+XcWnXQd8co8GwrwEgwlhD8MD0TtQGKjJDL2lI2w9+8XfOPs
- ytA/H94BFY47bOfI8ld7v3WRFi2Q28YBkiYyDulAVpEh/f7BHLDITrXY8sSMbrUskm7J
- JmLA==
-X-Forwarded-Encrypted: i=1;
- AJvYcCXAMb90DSYVLsAlgheJFLGB9KN4ZKKxJ9xsrCu5ZPal7MCA3Fh4O+sCxAGMzdfGWnRgyYM=@dpdk.org
-X-Gm-Message-State: AOJu0YxHHsnvGLvURj28TJNMSr0NYzy427e1ssPARA1HalW0Y+M7wdzE
- wICYRd69T6Eomj2Kct9i9eKOCaCKjVNFTeN0hAbbkvCuM/YeU8VyG9KnkWgS+oOuY6U3jJ/yvUD
- t5eE/ufPSTYCaL0COgB7ky8tzNam4C7CqRNuT
-X-Gm-Gg: ATEYQzyAiLUPxojNl0D7K1H9Upt40yYOYSyRyIUjQfOct/4OcQ2/0qDBDyzPZom++ir
- g8qut+pXLJyyoznyg8jX21Eo7bcGd9ziZ9aArEVAPshSAo8Vo7xnnvq/sCUuthEChVwkNIchyk2
- M6kTRldhkOyLmaCbn3v62Kx0zh1JIF4RAcrWewMQodZlknVw34CTS3i2FGvkZge8jtOvh/r2mZP
- 9ThdR3sDAP6K40vqrECEqicJ4dVA1+jELJykVbEs74v7Duk3esuPSGtdbmZvYutidK+Z5qCSZWN
- jtA=
-X-Received: by 2002:a05:622a:22a9:b0:50b:4b2f:1606 with SMTP id
- d75a77b69052e-50b80c9ad0amr7571561cf.15.1774373702216; Tue, 24 Mar 2026
- 10:35:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3119F402CC;
+	Tue, 24 Mar 2026 19:01:27 +0100 (CET)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 871604021F
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 19:01:26 +0100 (CET)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 62OGkITO731003 for <dev@dpdk.org>; Tue, 24 Mar 2026 11:01:25 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=pfpt0220; bh=mAB8ea2pKhH6mdxiLYk5piw
+ 3uktYNWkMHxPfEuX7zrA=; b=EgnZz9nf/psvsAVpJPjSo0wfbFtMcJbkFv9lC84
+ jO6QCItgqBJAfwHcyywi4eSZrVP1jBQZYCrY2w++4h23HZ1URvAXQjQVZ8Gjik4i
+ vc4WV2RBqRclHTTdSYofTUcGzbyWZgHPBxPh1bgLqScHWYY6LULmndKZnIDWykV+
+ MER3Eg0KY36fl7i/EnTs5oNUYNpGd6dlfvwmT+6wHutMuJMXpwbX30ep0Q+gyrnv
+ ESTpFUGpfVUOeX3YW+0xPETVo1OFEK/D5r6i77VDGNi3ulPAntThLdOb8a71tPsw
+ U8zGy3Bo6WtGYfyVqoyE6EcCPj8wecxOOxEpyuAjK9fKCYg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4d2c36695w-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 11:01:25 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 24 Mar 2026 11:01:24 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 24 Mar 2026 11:01:24 -0700
+Received: from cavium-System-Product-Name.. (unknown [10.28.37.42])
+ by maili.marvell.com (Postfix) with ESMTP id 869A13F705A;
+ Tue, 24 Mar 2026 11:01:22 -0700 (PDT)
+From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
+To: <dev@dpdk.org>
+CC: <adwivedi@marvell.com>, <anoobj@marvell.com>, <ktejasree@marvell.com>,
+ <gakhil@marvell.com>
+Subject: [PATCH v2 0/2] crypto/cnxk: add SNOW5G and ZUC256 support
+Date: Tue, 24 Mar 2026 23:31:19 +0530
+Message-ID: <20260324180121.1449787-1-nkaithakadan@marvell.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20260304003406.252929-1-yashin.sergey@gmail.com>
- <20260304003406.252929-3-yashin.sergey@gmail.com>
-In-Reply-To: <20260304003406.252929-3-yashin.sergey@gmail.com>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Tue, 24 Mar 2026 23:04:36 +0530
-X-Gm-Features: AaiRm53E7UycanSYiB-jtm26gVu8hHREQ2dYv5Q4dekAvcoVWn--XQTOGXALhuA
-Message-ID: <CALBAE1MYNXEZO4afP4R+hPxEYX7ExOvGiUZNxV1n7HRJ7RQurg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mailmap: add Sergei Iashin
-To: Sergei Iashin <yashin.sergey@gmail.com>
-Cc: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDEzOSBTYWx0ZWRfXxJoS6CYNe5gG
+ qbNcHUDJFVoN4je+qUMj4TFP08pLNC/NNd+4DeFpJQcAg72Vvd3SZfg32j9Gh6ucUO9Gch/QUuX
+ /pr0PJvvcKkv3mR0R4inWmDsBrcb5the/KPdBy/qLkfoQXfgxs8Sd05svjXay/0EKQrcgPY8jgh
+ oh1l3qVqJ+MSSpFqPf4tHGBsCW905VPAcRp6H6WdmDLpQxa5U1ggawmmpVtPE1ssxuTvL/sil2z
+ OGpGcEAPkEwaUKOyoDRQZz28WMNYAf/alcOSDpbDnXNU9hyIzHCPB7Gz1acjHKTaET6iuvfkhwA
+ n3ijP/NubfgitZ+25gkt4RybTMgewDBBd2wck+JNeLKqgw+mcL9Uz6ngW8HFt4GK+owdjcxI4sv
+ 2J7Shlpv3KGlUhGJqttFZ3CrSuQa31IL9alau2nMSBeCYZ0BSUZZ34EmIYOGRkkoZjA6E/pxwma
+ UrOIe8H/cCO43HXn1sg==
+X-Proofpoint-ORIG-GUID: ULEbfYTxIefD5yZqIDrm81rL3bvm8tAG
+X-Proofpoint-GUID: ULEbfYTxIefD5yZqIDrm81rL3bvm8tAG
+X-Authority-Analysis: v=2.4 cv=SItPlevH c=1 sm=1 tr=0 ts=69c2d175 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=Yq5XynenixoA:10 a=Zc_DtpmQZw8A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=l0iWHRpgs5sLHlkKQ1IR:22 a=qit2iCtTFQkLgVSMPQTB:22 a=pKJgRPgL4S9wehBeXhMA:9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-24_03,2026-03-24_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -98,32 +78,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, Mar 4, 2026 at 8:46=E2=80=AFPM Sergei Iashin <yashin.sergey@gmail.c=
-om> wrote:
->
-> Add my name and email mapping to .mailmap
->
-> Signed-off-by: Sergei Iashin <yashin.sergey@gmail.com>
-> ---
->  .mailmap | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/.mailmap b/.mailmap
-> index 6c4c977dde..85db3c11af 100644
-> --- a/.mailmap
-> +++ b/.mailmap
-> @@ -1936,3 +1936,4 @@ Zoltan Kiss <zoltan.kiss@schaman.hu> <zoltan.kiss@l=
-inaro.org>
->  Zorik Machulsky <zorik@amazon.com>
->  Zyta Szpak <zyta@marvell.com> <zr@semihalf.com>
->  Zyta Szpak <zyta@marvell.com> <zyta.szpak@semihalf.com>
-> +Sergei Iashin <yashin.sergey@gmail.com>
+This patch series extends the cnxk crypto PMD to support SNOW5G
+NEA4/NIA4 and ZUC256 NEA6/NIA6 confidentiality and integrity
+algorithms for CN20K SoC.
 
-Fixed the name order by making it as alphabetical
-Squashed with 1/2 patch
-Applied to dpdk-next-eventdev/for-main. Thanks
+v2:
+- Amended patch 2/2 to include release notes update
+- Updated cn20k.ini configuration for CN20K
 
+Nithinsen Kaithakadan (1):
+  crypto/cnxk: add SNOW5G and ZUC256 support
 
-> --
-> 2.39.5
->
+Tejasree Kondoj (1):
+  crypto/cnxk: add ZUC256 v2 support for cn20k
+
+ doc/guides/cryptodevs/features/cn20k.ini      |   4 +
+ doc/guides/rel_notes/release_26_03.rst        |   4 +
+ drivers/common/cnxk/hw/cpt.h                  |   4 +-
+ drivers/common/cnxk/roc_se.c                  |  52 +++++++-
+ drivers/common/cnxk/roc_se.h                  |  18 ++-
+ drivers/crypto/cnxk/cnxk_cryptodev.h          |   2 +-
+ .../crypto/cnxk/cnxk_cryptodev_capabilities.c | 118 ++++++++++++++++--
+ drivers/crypto/cnxk/cnxk_cryptodev_ops.c      |  13 +-
+ drivers/crypto/cnxk/cnxk_se.h                 |  32 ++++-
+ 9 files changed, 219 insertions(+), 28 deletions(-)
+
+-- 
+2.34.1
+
