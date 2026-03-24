@@ -2,28 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F2CF54ADC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 16:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6EBF54ADA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 16:52:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E1D1640BA2;
-	Tue, 24 Mar 2026 17:52:20 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id D71C840DCB;
+	Tue, 24 Mar 2026 17:52:35 +0100 (CET)
 Received: from smtp5-g21.free.fr (smtp5-g21.free.fr [212.27.42.5])
- by mails.dpdk.org (Postfix) with ESMTP id 99D6540B94
- for <dev@dpdk.org>; Tue, 24 Mar 2026 17:52:19 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id E130640B94
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 17:52:34 +0100 (CET)
 Received: from localhost.localdomain (unknown [213.36.7.12])
  (Authenticated sender: vjardin@free.fr)
- by smtp5-g21.free.fr (Postfix) with ESMTPSA id 847485FFAF;
- Tue, 24 Mar 2026 17:52:04 +0100 (CET)
+ by smtp5-g21.free.fr (Postfix) with ESMTPSA id C24625FFC0;
+ Tue, 24 Mar 2026 17:52:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1774371139;
- bh=axw9CFsxkbltR61W44ycbjTBuNhAgQITBfoVqTYal4U=;
+ s=smtp-20201208; t=1774371154;
+ bh=5IHp/DwFbXCV49Q4Fq7SsVLHD+04RPyo/9D8xs/jtBo=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=TPCcF0C+UI9lZpVpm9A2L7zAq7YlT9SqM7MSWsWVCC0lLbDHOu1MSFzRm8yMIw6l3
- fFI5mCqL4NJU1/raSQK/nYSz6EJ7K9r7NYHTpSiLnOMDuwKn6NMbYmHLoWR/LUGzTM
- 3ekAkq0Eg29/a5/EJUGckpVkdyCyd8C03c1hHp9kFFUXhBIs81Oo5m10d/R4OLEiBo
- JHebPkhA6lNzEg9fm8vsX0TPSfLzD9LdOTd9xjTXnmi+8Opr7OYOL7W1wvndn0T3Mg
- s8jwMt2I8OeZCvS4n/u2geVIaX9p0hFReYT7WgtI1vt9URJmrBH0upbS+qOYgkpLqk
- bLP5bdOvThy7A==
+ b=VhPlXAud4cZeWKi5pmrxkW+m8HVIdlk8W1I9BhAWz/xgE7e33nPDJO0xhvrrgYUi7
+ xcpy6JIBnZZ2g466IP1eHH5u1Ng//jUWLL0klL+kbs1bQ5k3LF24BGaHvM3UksmGBd
+ rxZdvqfF0pHYY3Uip6d9RwG80t1zU8Y8XrfpHPlh57LoH0blI4urRH6qqyZNdKh/LL
+ hPq7sHyps3ocFQu/LelX9C1L1LGbOft76OOdbK3OHe0cdQLF1KXZ2JWoAT5DdBCypT
+ 2Vf2mb08wywn9ycXyZ0IfZmt8TqebKsINo+zx/iH6jx+Y0WbghqnSPmzzdKzLzY7B+
+ TOO6Pqk6QUiCA==
 From: Vincent Jardin <vjardin@free.fr>
 To: dev@dpdk.org
 Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
@@ -31,15 +31,14 @@ Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
  orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
  stephen@networkplumber.org, aman.deep.singh@intel.com,
  Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v5 05/10] net/mlx5: support per-queue rate limiting
-Date: Tue, 24 Mar 2026 17:50:42 +0100
-Message-ID: <20260324165047.391137-6-vjardin@free.fr>
+Subject: [PATCH v5 06/10] net/mlx5: add burst pacing devargs
+Date: Tue, 24 Mar 2026 17:50:43 +0100
+Message-ID: <20260324165047.391137-7-vjardin@free.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260324165047.391137-1-vjardin@free.fr>
 References: <20260322134629.94633-1-vjardin@free.fr>
  <20260324165047.391137-1-vjardin@free.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -54,302 +53,185 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Wire rte_eth_set_queue_rate_limit() to the mlx5 PMD. The callback
-allocates a per-queue PP index with the requested data rate, then
-modifies the live SQ via modify_bitmask bit 0 to apply the new
-packet_pacing_rate_limit_index — no queue teardown required.
+Expose burst_upper_bound and typical_packet_size from the PRM
+set_pp_rate_limit_context as devargs:
+- tx_burst_bound=<bytes>: max burst before rate evaluation kicks in
+- tx_typical_pkt_sz=<bytes>: typical packet size for accuracy
 
-Setting tx_rate=0 clears the PP index on the SQ and frees it.
+These parameters apply to per-queue rate limiting
+(rte_eth_set_queue_rate_limit) only. The Clock Queue path
+(tx_pp devarg) uses WQE rate pacing and does not need these
+parameters.
 
-Capability check uses hca_attr.qos.packet_pacing directly (not
-dev_cap.txpp_en which requires Clock Queue prerequisites). This
-allows per-queue rate limiting without the tx_pp devarg.
+Values are validated against HCA capabilities
+(packet_pacing_burst_bound and packet_pacing_typical_size).
+If the HW does not support them, a warning is logged and the
+value is silently zeroed. Test mode still overrides both values.
 
-The callback rejects hairpin queues and queues whose SQ is not
-yet created.
-
-testpmd usage (no testpmd changes needed):
-  set port 0 queue 0 rate 1000
-  set port 0 queue 1 rate 5000
-  set port 0 queue 0 rate 0     # disable
+Shared context mismatch checks ensure all ports on the same
+device use the same burst parameters.
 
 Supported hardware:
-- ConnectX-6 Dx: full support, per-SQ rate via HW rate table
-- ConnectX-7/8: full support, coexists with wait-on-time scheduling
-- BlueField-2/3: full support as DPU rep ports
+- ConnectX-6 Dx: burst_upper_bound and typical_packet_size
+  reported via packet_pacing_burst_bound / packet_pacing_typical_size
+  QoS capability bits
+- ConnectX-7/8: full support for both parameters
+- BlueField-2/3: same capabilities as host-side ConnectX
 
 Not supported:
-- ConnectX-5: packet_pacing exists but dynamic SQ modify may not
-  work on all firmware versions
-- ConnectX-4 Lx and earlier: no packet_pacing capability
+- ConnectX-5: may not report burst_bound or typical_size caps
+- ConnectX-4 Lx and earlier: no packet_pacing at all
 
 Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
 Signed-off-by: Vincent Jardin <vjardin@free.fr>
 ---
- doc/guides/nics/features/mlx5.ini |   1 +
- doc/guides/nics/mlx5.rst          |  54 ++++++++++++++
- drivers/net/mlx5/mlx5.c           |   2 +
- drivers/net/mlx5/mlx5_tx.h        |   2 +
- drivers/net/mlx5/mlx5_txpp.c      |   6 ++
- drivers/net/mlx5/mlx5_txq.c       | 118 ++++++++++++++++++++++++++++++
- 6 files changed, 183 insertions(+)
+ doc/guides/nics/mlx5.rst     | 17 +++++++++++++++
+ drivers/net/mlx5/mlx5.c      | 42 ++++++++++++++++++++++++++++++++++++
+ drivers/net/mlx5/mlx5.h      |  2 ++
+ drivers/net/mlx5/mlx5_txpp.c |  6 ++++++
+ 4 files changed, 67 insertions(+)
 
-diff --git a/doc/guides/nics/features/mlx5.ini b/doc/guides/nics/features/mlx5.ini
-index 4f9c4c309b..3b3eda28b8 100644
---- a/doc/guides/nics/features/mlx5.ini
-+++ b/doc/guides/nics/features/mlx5.ini
-@@ -30,6 +30,7 @@ Inner RSS            = Y
- SR-IOV               = Y
- VLAN filter          = Y
- Flow control         = Y
-+Rate limitation      = Y
- CRC offload          = Y
- VLAN offload         = Y
- L3 checksum offload  = Y
 diff --git a/doc/guides/nics/mlx5.rst b/doc/guides/nics/mlx5.rst
-index 6bb8c07353..c72a60f084 100644
+index c72a60f084..d0b403dd5c 100644
 --- a/doc/guides/nics/mlx5.rst
 +++ b/doc/guides/nics/mlx5.rst
-@@ -580,6 +580,60 @@ for an additional list of options shared with other mlx5 drivers.
+@@ -580,6 +580,23 @@ for an additional list of options shared with other mlx5 drivers.
    (with ``tx_pp``) and ConnectX-7+ (wait-on-time) scheduling modes.
    The default value is zero.
  
-+.. _mlx5_per_queue_rate_limit:
++- ``tx_burst_bound`` parameter [int]
 +
-+Per-Queue Tx Rate Limiting
-+~~~~~~~~~~~~~~~~~~~~~~~~~~
++  Specifies the burst upper bound in bytes for packet pacing rate evaluation.
++  When set, the hardware considers this burst size when enforcing the configured
++  rate limit. Only effective when the HCA reports ``packet_pacing_burst_bound``
++  capability. Applies to per-queue rate limiting
++  (``rte_eth_set_queue_rate_limit()``). The Clock Queue path (``tx_pp``)
++  uses WQE rate pacing and does not use this parameter.
++  The default value is zero (hardware default).
 +
-+The mlx5 PMD supports per-queue Tx rate limiting via the standard ethdev
-+API ``rte_eth_set_queue_rate_limit()`` and ``rte_eth_get_queue_rate_limit()``.
++- ``tx_typical_pkt_sz`` parameter [int]
 +
-+This feature uses the hardware packet pacing mechanism to enforce a data
-+rate on individual TX queues without tearing down the queue. The rate is
-+specified in Mbps.
++  Specifies the typical packet size in bytes for packet pacing rate accuracy
++  improvement. Only effective when the HCA reports
++  ``packet_pacing_typical_size`` capability. Applies to per-queue rate
++  limiting only. The default value is zero (hardware default).
 +
-+**Requirements:**
-+
-+- ConnectX-6 Dx or later with ``packet_pacing`` HCA capability.
-+- The DevX path must be used (default). The legacy Verbs path
-+  (``dv_flow_en=0``) does not support dynamic SQ modification and
-+  returns ``-EINVAL``.
-+- The queue must be started (SQ in RDY state) before setting a rate.
-+
-+**Supported hardware:**
-+
-+- ConnectX-6 Dx: per-SQ rate via HW rate table.
-+- ConnectX-7/8: full support, coexists with wait-on-time scheduling.
-+- BlueField-2/3: full support as DPU rep ports.
-+
-+**Not supported:**
-+
-+- ConnectX-5: ``packet_pacing`` exists but dynamic SQ modify may not
-+  work on all firmware versions.
-+- ConnectX-4 Lx and earlier: no ``packet_pacing`` capability.
-+
-+**Rate table sharing:**
-+
-+The hardware rate table has a limited number of entries (typically 128 on
-+ConnectX-6 Dx). When multiple queues are configured with identical rate
-+parameters, the kernel mlx5 driver shares a single rate table entry across
-+them. Each queue still has its own independent SQ and enforces the rate
-+independently — queues are never merged. The rate cap applies per-queue:
-+if two queues share the same 1000 Mbps entry, each can send up to
-+1000 Mbps independently, they do not share a combined budget.
-+
-+This sharing is transparent and only affects table capacity: 128 entries
-+can serve thousands of queues as long as many use the same rate. Queues
-+with different rates consume separate entries.
-+
-+**Usage with testpmd:**
-+
-+.. code-block:: console
-+
-+   testpmd> set port 0 queue 0 rate 1000
-+   testpmd> show port 0 queue 0 rate
-+   testpmd> set port 0 queue 0 rate 0
-+
- - ``tx_vec_en`` parameter [int]
+ .. _mlx5_per_queue_rate_limit:
  
-   A nonzero value enables Tx vector with ConnectX-5 NICs and above.
+ Per-Queue Tx Rate Limiting
 diff --git a/drivers/net/mlx5/mlx5.c b/drivers/net/mlx5/mlx5.c
-index e795948187..e718f0fa8c 100644
+index e718f0fa8c..7d08d7886b 100644
 --- a/drivers/net/mlx5/mlx5.c
 +++ b/drivers/net/mlx5/mlx5.c
-@@ -2621,6 +2621,7 @@ const struct eth_dev_ops mlx5_dev_ops = {
- 	.map_aggr_tx_affinity = mlx5_map_aggr_tx_affinity,
- 	.rx_metadata_negotiate = mlx5_flow_rx_metadata_negotiate,
- 	.get_restore_flags = mlx5_get_restore_flags,
-+	.set_queue_rate_limit = mlx5_set_queue_rate_limit,
- };
+@@ -119,6 +119,18 @@
+  */
+ #define MLX5_TX_SKEW "tx_skew"
  
- /* Available operations from secondary process. */
-@@ -2714,6 +2715,7 @@ const struct eth_dev_ops mlx5_dev_ops_isolate = {
- 	.count_aggr_ports = mlx5_count_aggr_ports,
- 	.map_aggr_tx_affinity = mlx5_map_aggr_tx_affinity,
- 	.get_restore_flags = mlx5_get_restore_flags,
-+	.set_queue_rate_limit = mlx5_set_queue_rate_limit,
- };
- 
- /**
-diff --git a/drivers/net/mlx5/mlx5_tx.h b/drivers/net/mlx5/mlx5_tx.h
-index 51f330454a..975ff57acd 100644
---- a/drivers/net/mlx5/mlx5_tx.h
-+++ b/drivers/net/mlx5/mlx5_tx.h
-@@ -222,6 +222,8 @@ struct mlx5_txq_ctrl *mlx5_txq_get(struct rte_eth_dev *dev, uint16_t idx);
- int mlx5_txq_release(struct rte_eth_dev *dev, uint16_t idx);
- int mlx5_txq_releasable(struct rte_eth_dev *dev, uint16_t idx);
- int mlx5_txq_verify(struct rte_eth_dev *dev);
-+int mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
-+			      uint32_t tx_rate);
- int mlx5_txq_get_sqn(struct mlx5_txq_ctrl *txq);
- void mlx5_txq_alloc_elts(struct mlx5_txq_ctrl *txq_ctrl);
- void mlx5_txq_free_elts(struct mlx5_txq_ctrl *txq_ctrl);
++/*
++ * Device parameter to specify burst upper bound in bytes
++ * for packet pacing rate evaluation.
++ */
++#define MLX5_TX_BURST_BOUND "tx_burst_bound"
++
++/*
++ * Device parameter to specify typical packet size in bytes
++ * for packet pacing rate accuracy improvement.
++ */
++#define MLX5_TX_TYPICAL_PKT_SZ "tx_typical_pkt_sz"
++
+ /*
+  * Device parameter to enable hardware Tx vector.
+  * Deprecated, ignored (no vectorized Tx routines anymore).
+@@ -1407,6 +1419,10 @@ mlx5_dev_args_check_handler(const char *key, const char *val, void *opaque)
+ 		config->tx_pp = tmp;
+ 	} else if (strcmp(MLX5_TX_SKEW, key) == 0) {
+ 		config->tx_skew = tmp;
++	} else if (strcmp(MLX5_TX_BURST_BOUND, key) == 0) {
++		config->tx_burst_bound = tmp;
++	} else if (strcmp(MLX5_TX_TYPICAL_PKT_SZ, key) == 0) {
++		config->tx_typical_pkt_sz = tmp;
+ 	} else if (strcmp(MLX5_L3_VXLAN_EN, key) == 0) {
+ 		config->l3_vxlan_en = !!tmp;
+ 	} else if (strcmp(MLX5_VF_NL_EN, key) == 0) {
+@@ -1481,8 +1497,10 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 				struct mlx5_sh_config *config)
+ {
+ 	const char **params = (const char *[]){
++		MLX5_TX_BURST_BOUND,
+ 		MLX5_TX_PP,
+ 		MLX5_TX_SKEW,
++		MLX5_TX_TYPICAL_PKT_SZ,
+ 		MLX5_L3_VXLAN_EN,
+ 		MLX5_VF_NL_EN,
+ 		MLX5_DV_ESW_EN,
+@@ -1557,6 +1575,18 @@ mlx5_shared_dev_ctx_args_config(struct mlx5_dev_ctx_shared *sh,
+ 		DRV_LOG(WARNING,
+ 			"\"tx_skew\" doesn't affect without \"tx_pp\".");
+ 	}
++	if (config->tx_burst_bound &&
++	    !sh->cdev->config.hca_attr.qos.packet_pacing_burst_bound) {
++		DRV_LOG(WARNING,
++			"HW does not support burst_upper_bound, ignoring.");
++		config->tx_burst_bound = 0;
++	}
++	if (config->tx_typical_pkt_sz &&
++	    !sh->cdev->config.hca_attr.qos.packet_pacing_typical_size) {
++		DRV_LOG(WARNING,
++			"HW does not support typical_packet_size, ignoring.");
++		config->tx_typical_pkt_sz = 0;
++	}
+ 	/* Check for LRO support. */
+ 	if (mlx5_devx_obj_ops_en(sh) && sh->cdev->config.hca_attr.lro_cap) {
+ 		/* TBD check tunnel lro caps. */
+@@ -3191,6 +3221,18 @@ mlx5_probe_again_args_validate(struct mlx5_common_device *cdev,
+ 			sh->ibdev_name);
+ 		goto error;
+ 	}
++	if (sh->config.tx_burst_bound != config->tx_burst_bound) {
++		DRV_LOG(ERR, "\"tx_burst_bound\" "
++			"configuration mismatch for shared %s context.",
++			sh->ibdev_name);
++		goto error;
++	}
++	if (sh->config.tx_typical_pkt_sz != config->tx_typical_pkt_sz) {
++		DRV_LOG(ERR, "\"tx_typical_pkt_sz\" "
++			"configuration mismatch for shared %s context.",
++			sh->ibdev_name);
++		goto error;
++	}
+ 	if (sh->config.txq_mem_algn != config->txq_mem_algn) {
+ 		DRV_LOG(ERR, "\"TxQ memory alignment\" "
+ 			"configuration mismatch for shared %s context. %u - %u",
+diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
+index 33628d7987..5ae01ec491 100644
+--- a/drivers/net/mlx5/mlx5.h
++++ b/drivers/net/mlx5/mlx5.h
+@@ -383,6 +383,8 @@ struct mlx5_port_config {
+ struct mlx5_sh_config {
+ 	int tx_pp; /* Timestamp scheduling granularity in nanoseconds. */
+ 	int tx_skew; /* Tx scheduling skew between WQE and data on wire. */
++	uint32_t tx_burst_bound; /* Burst upper bound in bytes, 0 = default. */
++	uint32_t tx_typical_pkt_sz; /* Typical packet size in bytes, 0 = default. */
+ 	uint32_t reclaim_mode:2; /* Memory reclaim mode. */
+ 	uint32_t dv_esw_en:1; /* Enable E-Switch DV flow. */
+ 	/* Enable DV flow. 1 means SW steering, 2 means HW steering. */
 diff --git a/drivers/net/mlx5/mlx5_txpp.c b/drivers/net/mlx5/mlx5_txpp.c
-index e34e996e9b..23d18b6116 100644
+index 23d18b6116..279bd430c9 100644
 --- a/drivers/net/mlx5/mlx5_txpp.c
 +++ b/drivers/net/mlx5/mlx5_txpp.c
-@@ -173,6 +173,12 @@ mlx5_txq_alloc_pp_rate_limit(struct mlx5_dev_ctx_shared *sh,
- 		rte_errno = ERANGE;
- 		return -ERANGE;
- 	}
-+	if (rate_kbps > UINT32_MAX) {
-+		DRV_LOG(ERR, "Rate %u Mbps overflows PRM rate_limit field.",
-+			rate_mbps);
-+		rte_errno = ERANGE;
-+		return -ERANGE;
-+	}
+@@ -182,6 +182,12 @@ mlx5_txq_alloc_pp_rate_limit(struct mlx5_dev_ctx_shared *sh,
  	memset(&pp, 0, sizeof(pp));
  	MLX5_SET(set_pp_rate_limit_context, &pp, rate_limit, (uint32_t)rate_kbps);
  	MLX5_SET(set_pp_rate_limit_context, &pp, rate_mode, MLX5_DATA_RATE);
-diff --git a/drivers/net/mlx5/mlx5_txq.c b/drivers/net/mlx5/mlx5_txq.c
-index 3356c89758..ce08363ca9 100644
---- a/drivers/net/mlx5/mlx5_txq.c
-+++ b/drivers/net/mlx5/mlx5_txq.c
-@@ -1363,6 +1363,124 @@ mlx5_txq_release(struct rte_eth_dev *dev, uint16_t idx)
- 	return 0;
- }
- 
-+/**
-+ * Set per-queue packet pacing rate limit.
-+ *
-+ * @param dev
-+ *   Pointer to Ethernet device.
-+ * @param queue_idx
-+ *   TX queue index.
-+ * @param tx_rate
-+ *   TX rate in Mbps, 0 to disable rate limiting.
-+ *
-+ * @return
-+ *   0 on success, a negative errno value otherwise and rte_errno is set.
-+ */
-+int
-+mlx5_set_queue_rate_limit(struct rte_eth_dev *dev, uint16_t queue_idx,
-+			  uint32_t tx_rate)
-+{
-+	struct mlx5_priv *priv = dev->data->dev_private;
-+	struct mlx5_dev_ctx_shared *sh = priv->sh;
-+	struct mlx5_txq_ctrl *txq_ctrl;
-+	struct mlx5_devx_obj *sq_devx;
-+	struct mlx5_devx_modify_sq_attr sq_attr = { 0 };
-+	struct mlx5_txq_rate_limit new_rate_limit = { 0 };
-+	int ret;
-+
-+	if (!sh->cdev->config.hca_attr.qos.packet_pacing) {
-+		DRV_LOG(ERR, "Port %u packet pacing not supported.",
-+			dev->data->port_id);
-+		rte_errno = ENOTSUP;
-+		return -rte_errno;
-+	}
-+	if (priv->txqs == NULL || (*priv->txqs)[queue_idx] == NULL) {
-+		DRV_LOG(ERR, "Port %u Tx queue %u not configured.",
-+			dev->data->port_id, queue_idx);
-+		rte_errno = EINVAL;
-+		return -rte_errno;
-+	}
-+	txq_ctrl = container_of((*priv->txqs)[queue_idx],
-+				struct mlx5_txq_ctrl, txq);
-+	if (txq_ctrl->is_hairpin) {
-+		DRV_LOG(ERR, "Port %u Tx queue %u is hairpin.",
-+			dev->data->port_id, queue_idx);
-+		rte_errno = EINVAL;
-+		return -rte_errno;
-+	}
-+	if (txq_ctrl->obj == NULL) {
-+		DRV_LOG(ERR, "Port %u Tx queue %u not initialized.",
-+			dev->data->port_id, queue_idx);
-+		rte_errno = EINVAL;
-+		return -rte_errno;
-+	}
-+	/*
-+	 * For non-hairpin queues the SQ DevX object lives in
-+	 * obj->sq_obj.sq (used by DevX/HWS mode), while hairpin
-+	 * queues use obj->sq directly. These are different members
-+	 * of a union inside mlx5_txq_obj.
-+	 */
-+	sq_devx = txq_ctrl->obj->sq_obj.sq;
-+	if (sq_devx == NULL) {
-+		DRV_LOG(ERR, "Port %u Tx queue %u SQ not ready.",
-+			dev->data->port_id, queue_idx);
-+		rte_errno = EINVAL;
-+		return -rte_errno;
-+	}
-+	if (dev->data->tx_queue_state[queue_idx] !=
-+	    RTE_ETH_QUEUE_STATE_STARTED) {
-+		DRV_LOG(ERR,
-+			"Port %u Tx queue %u is not started, stop traffic before setting rate.",
-+			dev->data->port_id, queue_idx);
-+		rte_errno = EINVAL;
-+		return -rte_errno;
-+	}
-+	if (tx_rate == 0) {
-+		/* Disable rate limiting. */
-+		if (txq_ctrl->rate_limit.pp_id == 0)
-+			return 0; /* Already disabled. */
-+		sq_attr.sq_state = MLX5_SQC_STATE_RDY;
-+		sq_attr.state = MLX5_SQC_STATE_RDY;
-+		sq_attr.rl_update = 1;
-+		sq_attr.packet_pacing_rate_limit_index = 0;
-+		ret = mlx5_devx_cmd_modify_sq(sq_devx, &sq_attr);
-+		if (ret) {
-+			DRV_LOG(ERR,
-+				"Port %u Tx queue %u failed to clear rate.",
-+				dev->data->port_id, queue_idx);
-+			rte_errno = -ret;
-+			return ret;
-+		}
-+		mlx5_txq_free_pp_rate_limit(&txq_ctrl->rate_limit);
-+		DRV_LOG(DEBUG, "Port %u Tx queue %u rate limit disabled.",
-+			dev->data->port_id, queue_idx);
-+		return 0;
-+	}
-+	/* Allocate a new PP index for the requested rate into a temp. */
-+	ret = mlx5_txq_alloc_pp_rate_limit(sh, &new_rate_limit, tx_rate);
-+	if (ret)
-+		return ret;
-+	/* Modify live SQ to use the new PP index. */
-+	sq_attr.sq_state = MLX5_SQC_STATE_RDY;
-+	sq_attr.state = MLX5_SQC_STATE_RDY;
-+	sq_attr.rl_update = 1;
-+	sq_attr.packet_pacing_rate_limit_index = new_rate_limit.pp_id;
-+	ret = mlx5_devx_cmd_modify_sq(sq_devx, &sq_attr);
-+	if (ret) {
-+		DRV_LOG(ERR, "Port %u Tx queue %u failed to set rate %u Mbps.",
-+			dev->data->port_id, queue_idx, tx_rate);
-+		mlx5_txq_free_pp_rate_limit(&new_rate_limit);
-+		rte_errno = -ret;
-+		return ret;
-+	}
-+	/* SQ updated — release old PP context, install new one. */
-+	mlx5_txq_free_pp_rate_limit(&txq_ctrl->rate_limit);
-+	txq_ctrl->rate_limit = new_rate_limit;
-+	DRV_LOG(DEBUG, "Port %u Tx queue %u rate set to %u Mbps (PP idx %u).",
-+		dev->data->port_id, queue_idx, tx_rate, txq_ctrl->rate_limit.pp_id);
-+	return 0;
-+}
-+
- /**
-  * Verify if the queue can be released.
-  *
++	if (sh->config.tx_burst_bound)
++		MLX5_SET(set_pp_rate_limit_context, &pp,
++			 burst_upper_bound, sh->config.tx_burst_bound);
++	if (sh->config.tx_typical_pkt_sz)
++		MLX5_SET(set_pp_rate_limit_context, &pp,
++			 typical_packet_size, sh->config.tx_typical_pkt_sz);
+ 	rate_limit->pp = mlx5_glue->dv_alloc_pp(sh->cdev->ctx, sizeof(pp),
+ 						 &pp, 0);
+ 	if (rate_limit->pp == NULL) {
 -- 
 2.43.0
 
