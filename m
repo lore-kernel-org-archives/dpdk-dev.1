@@ -2,125 +2,101 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20286E9A77B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 12:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE567D58CC9
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 12:37:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2EDDC402BE;
-	Tue, 24 Mar 2026 13:30:17 +0100 (CET)
-Received: from CH1PR05CU001.outbound.protection.outlook.com
- (mail-northcentralusazon11010004.outbound.protection.outlook.com
- [52.101.193.4]) by mails.dpdk.org (Postfix) with ESMTP id 63F7D4025F;
- Tue, 24 Mar 2026 13:30:15 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id BFFD8402BE;
+	Tue, 24 Mar 2026 13:37:51 +0100 (CET)
+Received: from BL0PR03CU003.outbound.protection.outlook.com
+ (mail-eastusazon11012005.outbound.protection.outlook.com [52.101.53.5])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A98C4025F
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 13:37:50 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DV4V2QIhAqvlKyaQcgtfBd+oZUJaepNFk/M1bAlLtw/9/cnyJFxgkbMWCrER+x7JyjNTGsxbgVcCkjTivhKoxK9JiC3TndcUTwt8HFbRy5wv8nPOdWegs5qbGjCDxJEemzgSddAjKun+gZTGzWjJMun/WfLc56J8EdVbxkyMfnrqlVHBO991PsNvEQE+bTpYCJp0omkfDiUc3WyIYMMe8BtvzIMzwm2GhN4LritROgNBFTf9ievZnt8ZgUE66ZSLyU/9bZYdP4O2DZ0vfLEHjsr68D8TP3YY9qhn7byoncXFzrFDezZ2mKJt0XHNF3RBrYYUTF4hawHPF1PXXd0x+w==
+ b=ohkSCJPvSIhqEIIv2xWfq5g9zZqgHjPVwayMEZsya4HEgwfSJYlpZQYnvrEKKGNOUQfNFYZGUmlL6vGjSF2gJYcgJKzuIhCxWc1Y+rIKn5pPtvaA19pgeP5IqBnMqzK7tw0RYlRZNfCbDXuI5NTYEBhzZXQkVbk0jDWVSQ4skb/5fRKQWjMICbSg7OF2S6jpMH4Y4pgDM/XWcfYh9c93WGxifLMS9o8ARZvhC0CWfoOlGExl3lUVTyYDhLqktP5CT316NZy1sxTc98rODEcrLXMj9u7pRLhcEsF4UOJGBJx5mlEARp6wrYecezxG01GY+/Kdj7e+awOrlKUO+qECjg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Otd1dU5Lny2m+baoxk5AupkRjVNe6SAX8ToWKNZZpDU=;
- b=pl1O+QUFXnD/dwTcQcAb5mYhn2W8J0ZMk24CJmPvDpkGj0zcG7KBhbTvs2AQ4jB8SRZbUs3D5Zg1uzn97fNZI0HSvBRF+7uQf302i+++oNKSRcGu7u3SxOFtHOR8cRndLl1yS9Cdt29kML2LsJmcH5uuivLRF2x8t3PhCkVgx4ysRgjQtnvQTtkK2H8BpvOHwUz4HGA/W2H+cwHFpRvr+zDSywBRzPd9i+jlyM4woLaIoVyFPEytv8+aVmRHGfsC9+NIqlS9bkKHJ8QYOIK1zAuc2yYuygTK5t/Cl8ypb/bcWkqnY0kYy79k9JMGRVkRINVUs/BmJediiNgNvniPag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
+ bh=ofxqNSnwOuedvt7fRZlV8R2scGY/9b3D8PGU6j16wqw=;
+ b=LDJLtxjbldwYvh3GgIKkNluP5W0Vu5i9PGvxRLt1huU/Fd8Su1IYyQ6nq0QaEaNV/WFhdjvLQYHxew6+X343hcUixBLKpqAfZlbfTj+DcR4ruY+uvQr0XBiEI+2V0xXArCOQSWi/6ddI9Z0ygj/qqu9fhW5RFK252BAwL4+oqAlTsGOjIKe4v5eXlAPE/piZsg4MiIYPNG2trfO5qjwoN4D89A2dDnOOazvbPnkU7JNGrXurIX/Ltkezqp8r56WgZwlkwnAixDGTW7yENNUbFYsQ9SYjoWDbSOHGcHJMcjBzqXOuee54rdozyrb9/BwlDg91ufHLrQxuKfVzZEGOzw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Otd1dU5Lny2m+baoxk5AupkRjVNe6SAX8ToWKNZZpDU=;
- b=Fz1eemv+1qyeeFGgC8DS91lpfy74ohrDgFmlNdEAgOu0W+yFzK900AszcPbfN269z/cwLDQyUInrftukAVRzQVWStQZXHv/pwAAoQ9BA+bYsVh2WCTAnF0B9c5tIRJpw2Vtslr5qfNyFHBiFMxwBlLL6tcjU10h3JmE/OzqJV7nPDV0Ws4e/9/IalSDU6L5WvJrLj48GwLD5PsyGbrCh5w6lAvHm1dkwgOzYu6i8uB22/0no2GHj5hRSeuGOq0rSxotYRZpr+Yp6YtiScPkEtxDjr0OI8G0UUQgkC9vLiuOiMuYHhFhSYoJzZBQGp8X8Z87bt5aVFu4hYxRbMG097g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW4PR12MB6754.namprd12.prod.outlook.com (2603:10b6:303:1eb::7)
- by PH0PR12MB7981.namprd12.prod.outlook.com (2603:10b6:510:26c::13)
+ bh=ofxqNSnwOuedvt7fRZlV8R2scGY/9b3D8PGU6j16wqw=;
+ b=azWz8vlyJqExGmcZfvaefWQgzjH8ubNErxyCsRUcyjsibGQcU9MqZkgIcnjbAzuNoUIyJq7m5D/BTf+UkVlqCtcCQM1T79xpD/RFIq0tcix/5gQP7TxULHTycrg0U1z3ICDKfNeml8QKHf6b9yD4gvVBkejiSCaQvdPgDr6xKIoRHG2dkb8AiTK1fBwg39W7zBMQAnKsr9BjWsJplYOwO5JTjL9sopL8Phwh0f85JDHvJcqOy9mGQkvqm4+qnrV1cYtUlhNQ+8QuXWUDw+2TQg7+iPeUpuK/B2Qkv/awPHMCY7G3rvD1Ks41WnJBSr6fdRpRCBAO5cvMe3N5oMBoBQ==
+Received: from BN9PR03CA0041.namprd03.prod.outlook.com (2603:10b6:408:fb::16)
+ by BL3PR12MB6522.namprd12.prod.outlook.com (2603:10b6:208:3be::21)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Tue, 24 Mar
- 2026 12:30:08 +0000
-Received: from MW4PR12MB6754.namprd12.prod.outlook.com
- ([fe80::baee:e8cc:6cbf:3d84]) by MW4PR12MB6754.namprd12.prod.outlook.com
- ([fe80::baee:e8cc:6cbf:3d84%6]) with mapi id 15.20.9745.019; Tue, 24 Mar 2026
- 12:30:08 +0000
-Message-ID: <225397e4-eaed-4d03-b1a8-50ff4e22c347@nvidia.com>
-Date: Tue, 24 Mar 2026 14:30:02 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] common/mlx5: fix mac deletion on Linux
-To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: stable@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
- Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
- Matan Azrad <matan@nvidia.com>, Nelio Laranjeiro
- <nelio.laranjeiro@6wind.com>, Adrien Mazarguil <adrien.mazarguil@6wind.com>
-References: <20260318163628.609968-1-david.marchand@redhat.com>
- <20260320141417.1024543-1-david.marchand@redhat.com>
-Content-Language: en-US
-From: Raslan Darawsheh <rasland@nvidia.com>
-In-Reply-To: <20260320141417.1024543-1-david.marchand@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0408.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d0::6) To MW4PR12MB6754.namprd12.prod.outlook.com
- (2603:10b6:303:1eb::7)
+ 2026 12:37:46 +0000
+Received: from BN1PEPF00004680.namprd03.prod.outlook.com
+ (2603:10b6:408:fb:cafe::76) by BN9PR03CA0041.outlook.office365.com
+ (2603:10b6:408:fb::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Tue,
+ 24 Mar 2026 12:37:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN1PEPF00004680.mail.protection.outlook.com (10.167.243.85) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.19 via Frontend Transport; Tue, 24 Mar 2026 12:37:45 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Mar
+ 2026 05:37:30 -0700
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Mar
+ 2026 05:37:28 -0700
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Aman Singh <aman.deep.singh@intel.com>
+CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Raslan Darawsheh
+ <rasland@nvidia.com>, Stephen Hemminger <stephen@networkplumber.org>, "Adrian
+ Schollmeyer" <a.schollmeyer@syseleven.de>
+Subject: [PATCH 0/2] app/testpmd: assign share group dynamically
+Date: Tue, 24 Mar 2026 13:37:07 +0100
+Message-ID: <20260324123709.3471-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB6754:EE_|PH0PR12MB7981:EE_
-X-MS-Office365-Filtering-Correlation-Id: 01669a39-7c12-4ccc-63eb-08de89a115b2
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004680:EE_|BL3PR12MB6522:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1625f03f-cd28-48af-d17b-08de89a226aa
 X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|7053199007|22082099003|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info: IcXR2UjUG1tzIlBVmlMvA+F0mNXUUrGoLywhaWMBspx1r1ZKjUdIMP/WiGPRxYEKUANms6RfGYxQJtGzJKnkkklaywJISQTUN81AijxMtgVZ8gdkiOUNeyJe9+GvcJco2GLcthPkm7iGrvlMbyeSh8NpN9e0YYui3NrefMiyYm79Ic4RtNHHiuNmgzDUak/WC6KA9nxppg9DbT2kx+FGyRWNIHH62rQdYZoWypyciAubQ/MRTFHZZYxY9j1Ke7zoTLNNAQHlMeJHXBVHLXAju1ILNYHe/PtilZhHOZIPS00jKm1dGONxrVbAYA0gV+I5y0Z5OhgjShU3KgVqk6M1u2DK3giC1egTQyflkXjpBJSb+AOMoz19AFBQ3Oq8kPdusbZoXNjMrKgWt1p6BEbppXvytny8a6PngC6q+LYAQE5yZlkYr4t0Kn1D4lfjDsbsxUj+PwesIxfOXXFKnrUDPZwLxzDPAU0fFKAMfeXBxBnt33KsaUZMgstrzUhB5yZs2hG2ixnqY72aMoJ7yqNB3VMj4iwyg8Jw2pwB8WvAQxA+slLs/3nZSp08MYzUScxmsrKVT03zjp+NLefuUi8Ril/Gm7r6OXVD2gv2ybbbYJmKBtZa9S+hhm5yvEfesjdYlnQIdwL4iWgDwhaNDntoIi8ky+mv0l0TT2ZB3rytz2RDnTqLQS1Qp81zVRJh+IdINnwfueMqHoftmEWXrgyql4lqZqokwT04y4xDFhvbQYQ=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MW4PR12MB6754.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(7053199007)(22082099003)(56012099003)(18002099003);
+ ARA:13230040|82310400026|1800799024|36860700016|376014|13003099007|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info: aPOeeTRwN2l8RKhrfe8Gm3GOVxdLLljbWXE8LV+qQvajuvDkFBiLiFxPe1HSqLgRvEKfXQu3YBbhl9CsiBwPE4wUaAuWN6j83BAJCBLKlxVPY6uYEyyeDVCF/it0n77waDGKtkUWjxzHJ2ac+ASe9LkBB901y4z/vPQhcLARlPAT+UH6VCpvTJJnnIrafNOq6cnYc9XubqA+UXl3qyrqZ2BpiQyHvik3CGdNkY7H18+RmYHvptNXjCAV0YLuIseMaWQF6XnJZ8YixyHew9Dwnq31lRCOKESYyJMeell4U+/L8q7PnCey+Vk+uWkrcH222UpIy7CCuYzY0cA0oI6HV3BkG1OI2LiopVRihw56/U/tysVJZ9Tm/ao2QqkAjzRcYH/sPdEzEgV4QpzSTtJEFTdxd9SvMUdH8kejbDFzD80wr/KPkSqU6WI3C5jKP5jBTD66b3JL8R0lzBDeoccNFW7efr1EuDaE6i4JfqzytxQn95L5IhjngzLgY2aCyyCZdgOWStET+PvKT7ttx43d65/fFt75e4nM+zY72vWhIHfaFW3ESfZlS6Y/N0LDPJUJFhTbG7RYNMlCb13DgiVhvWcHDCzcnZIAuYhQzDR34QhwxZVDbHL3nRpwMr7Qo6MUvNn+/gZNbOHhodPURK/EF/9/aXoO8yJrEQyerZ5jHumsHSXE2vwT8/v9KqoFTmMarRgU5DLvIQeuIuTbpfSzF3bxgSEEihYDikIHijkmvy1S9uVffJ96KsC02IDMvEWATH+otfsVJ535Pc6BM3ryjw==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(1800799024)(36860700016)(376014)(13003099007)(18002099003)(56012099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?bmMwTFBiSG5GTG85eVRxRUo5c1NVWThibkFTNnVlNmZRL1poWGZwOU13alRz?=
- =?utf-8?B?UExyR0FpNDBPaXB5ZTZnRHRCYWFiVGJEbTFtUjBRa0pnYkFxY0psdlRhcjQ5?=
- =?utf-8?B?eXJtU21yQ0tvdktPWVl4bWVnQ2Zhc28wZ0Vuc2pWV2R6V3lieGVoNnRKVXBS?=
- =?utf-8?B?czJ6endaVldrd1BRVXlIQzYxT3dDV1QrYWJxR1kyV1U3OWZnanZjeHUwdXIx?=
- =?utf-8?B?WHozK2VjVUtsY3VidFZpU3VNYVZLOUpoWGVKQk5jOGF5UUlpTkw0bk9GYkdT?=
- =?utf-8?B?NFE4ZDRiODkyZ09VZFczWXdMU1RLelcxSk9waW02QWpRU3BQRVRPczV0aktQ?=
- =?utf-8?B?WXZRRzh2T3RFMTd5cjg4SzFTYkdBaEpDdnRnYUI5SW9TajNYNEl1V0JtVHJH?=
- =?utf-8?B?Y0tiTFFqVm1tWVlrckZKRHhRMk12UmhHVE54c3BpZVp1c2ptd1g2amZpb0FI?=
- =?utf-8?B?RmMzRnlPMm4vR0VKN2dwSStVWXExYUQyQXdmVW4vOXk4eU1STVdaUWdKUDVO?=
- =?utf-8?B?NVp2ZHhRaklHOHVBYVFRZUN3MUthVGQrY0RMNU9KbWp6ZmlSeTc3RGk3WWVV?=
- =?utf-8?B?cHEzRm9vdDcwbndhWnBpbGxzL1ZLRVhjdFdaV04yTjJpSmlvRWdiY1RtMmRr?=
- =?utf-8?B?aEd4N21ZcEdiYno0aGFIcm0xMU1VdUw5d0NRUjNxVUd0N2N2d1RPTUFlanor?=
- =?utf-8?B?dUdMRDZZQUl5cElvS0p1eTdTMTJ3Q2V2TStGdVJGZ25tUUZJUkJGK1FrQnFC?=
- =?utf-8?B?a093eG1vUVJtbFg4bnVJN0l1blB6VnVZQ2R0MGhOa1JQaVMwckwwbVRTTEcr?=
- =?utf-8?B?WkdBeFV1WTRYUU1GejZlYks3SDNocDIrZHlEbmRsYnNnelpSdEp1aE9ZNVNF?=
- =?utf-8?B?UXV3SktPcjhtd1lHZ2laZ2JCeFRsa2pNaEJOaUMrbXVHUmtmZkJvc1NyRzRi?=
- =?utf-8?B?UlJuWXhRNUtENEozT3ZCRnBYeTNuR2xGZ3I0cDV0YW5BSEF2ZmZXOElsU3Nu?=
- =?utf-8?B?NWQvOXBBNU55b0pMSnl3Ykk1dU1XanBuWmY0SGdBa2lreC9sU3p0V2VUcWlL?=
- =?utf-8?B?QTlvK1RrQlk1V20vTG9Lcm12THh0VmNGM2RpYjlFbDRORjZ5WVhHbHI3Ty9B?=
- =?utf-8?B?Y2lOTS9FWVBxZkFiRlQrdTliQ0o4c1FhUVZRV2lrVVJuOE5JUHd4c1hrR1Rh?=
- =?utf-8?B?dmNaZnJZVzhiZktldWliOEZjSWdKdUh1a2FwQWlxcWJ6UEwyVjh2K3RLeWJ2?=
- =?utf-8?B?ei9ZMngyM1k5VGNpK0FrNHZjVGhKVkxsSEl6emVRQVcrc1NHemJkWFAxcy90?=
- =?utf-8?B?MWtJL3p4OUQwOWduMW9ZckgycmVKd2Y2akFJVEtBb0x0Vm56TmN3L3JwelEy?=
- =?utf-8?B?Y0FCeGlTWW5QYkZXZHJtTWxDM1Y3Ni9TcEx3WHZaSGMya2RqRXJua0I1czh3?=
- =?utf-8?B?UWNvazBZSnU5cExvWEprSFVXUDlHUXFnbFRnbkNjdWpvZjBkdXJJOHV2d3d5?=
- =?utf-8?B?ajh6eU4yWDhVcXVPUHpFMjlKVkkyN2FPQXBVeXNlM29TTkdrdGlJaWZsMXoy?=
- =?utf-8?B?K2tDcFpFNHNSdjhUVkdIZVREdzBITyt4dW52UEZjTG1GUkJ0MDAzck56Zm5I?=
- =?utf-8?B?azFXeDFCaXJncS90andqWHVncEJqdVVFQW91dHdaQkIxaEI3T2M2K2prUS9a?=
- =?utf-8?B?S2RJa0xuQzJLMzEzWEVnOHh6bk1hdmQwNDVzQjNlamZMZzlwdkhLZkVjMXYr?=
- =?utf-8?B?dEYvQ3ExUU1TblVYWllnNUdqbGc3MHJnQU54RE5XM3VkZkFHWitDYk1kNmQ2?=
- =?utf-8?B?NlZmWGNmOEFJdkZkOXlGUU9Ba0h6ZjdWUzIvYm1naFpRWHk0blBHeVZJVDNQ?=
- =?utf-8?B?aUZYSnpYUXY0SGUwSVNBNTB4VG1Gdnp0NzR0SlBFTWsxVWhvOGhWb2xuR1ZQ?=
- =?utf-8?B?R1k5MWl0MHZlWkhmVlVDZ1Mrb3NrVExxL1ZOZlpwTnRNOFNINVVreHJibHdI?=
- =?utf-8?B?d3Q5eCs5K1dhS3llaUlVeERaTkl1QlhDcHBOa2dycmNJZ2o2QTk1TDFPRlZu?=
- =?utf-8?B?MndKZDlYdzdjQUs4NlZuMy8yUE4zK3d3aE5LSHI1VElsem5zOENhNUl6MU80?=
- =?utf-8?B?TjV4b1pEc0o1VHVwL3FBR3g2MHJvR1huNVBPOXU0SURuaysrYWJPM1ZBY1I5?=
- =?utf-8?B?U1pKMndGOXZJSWN0RVJ3YjI0MFpxbHFlZk04ekc5dTJ1djkwZmNBR1kyWFdl?=
- =?utf-8?B?WDJBUzY5aGdLbURoSUhEQnFXbjgxRkxyYmx4eS9PVkQ4WVZxZURDQWlROVBy?=
- =?utf-8?B?VTNCOC9LdDhPT1p1azQ2dXFNYkh1QXY3OXdFQjkzNTFhQ3d1R3ZxZz09?=
+X-MS-Exchange-AntiSpam-MessageData-0: pK7ZXxPbstxoQOirpdslYVa3yDoh6flYjFPYSSLaXTderO1lqW75IBjeSrNJTREGYgiS/SU7Q+Yuw9voo+CvFMrZfhw5FWENnXlLUlHAL7Dmh45Fp9KY4CqOAq6b3Mi560ApQtcY5+W3kULb3mzhiDFEhqGNcEPkZUtggtbZWaJQiqaJcOgRNT+YKXu/wAg3SsnbCTGrMNd1JtJg9KsJqnP8NJwsWDBl1Yo7DtMEIuKXtw2UqBMJtAln17wa8enw46FOBoa+bGdRRTKM7HLUB8G43Yj7LX9msJggZf/CBRAS2DqraRRC6JKHlZezbAhBnpsbXxRZnMSJX44Mk+R6tMvVKBttbGJGrNy1sXLVOVm110UFKcFrVLtNpOCzXtG1t8DOAgf6Sj29rl8vrt22Dj4eMmyu1pOWysbvdFYFOdkK1e77N4WqZbHeZHqwidOY
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01669a39-7c12-4ccc-63eb-08de89a115b2
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB6754.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 12:30:08.3680 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 12:37:45.7780 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1625f03f-cd28-48af-d17b-08de89a226aa
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Qd8Vm5X1Efd0bfRDEC8LmNzzBXENjDjx6DNA4KupBHZStDVvLMZGbJv1pPoJWPG4eeE/2QYB0dEDqi0Y15v9Xg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7981
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BN1PEPF00004680.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6522
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -134,32 +110,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+Our internal regression tests have flagged issues with shared Rx queues.
+Specifically, issues with domain mismatches:
 
+	Invalid shared rxq config: switch domain mismatch ports 0 and 3
 
-On 20/03/2026 4:14 PM, David Marchand wrote:
-> Re-enable debug logs unconditionally, this helps understanding why mac
-> deletions were silently failing (while a bridge fdb del command was
-> working fine).
-> 
-> testpmd> mac_addr add 0 FA:35:44:3F:58:31
-> testpmd> mac_addr remove 0 FA:35:44:3F:58:31
-> mlx5_common: Interface 35 cannot remove MAC address FA:35:44:3F:58:31
-> 	Operation not supported
-> 
-> Then, fix mac deletion as the NLM_F_CREATE == 0x200 flag is relevant
-> with a RTM_NEWNEIGH op.
-> 
-> Since kernel v5.19 though, for a RTM_DELNEIGH op, 0x200 == NLM_F_BULK
-> and passing this flag makes the deletion fail miserably for a single mac.
-> 
-> Fixes: ccdcba53a3f4 ("net/mlx5: use Netlink to add/remove MAC addresses")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: David Marchand <david.marchand@redhat.com>
+These started appearing after commit [1] which added checks
+for globally unique share group indexes.
+This could be worked around with --rxq-share=N option,
+but it does not allow proper testing of all use cases [2].
 
-Patch applied to next-net-mlx,
+This patchset addresses that by changing behavior of --rxq-share parameter.
+Instead of relying on user to select proper parameter value,
+testpmd will dynamically assign globally unique share group index
+to each unique switch and Rx domain.
 
-Kindest regards
-Raslan Darawsheh
+[1]: 8ebba91086f4 ("app/testpmd: fail on shared Rx queue switch mismatch")
+[2]: https://inbox.dpdk.org/dev/yotjxacqrodttraqrr3r6ftut4cty66g6cjnr5ughswtatapgh@gqqkftskp3qq/
+
+Dariusz Sosnowski (2):
+  app/testpmd: assign share group dynamically
+  app/testpmd: revert switch domain mismatch check
+
+ app/test-pmd/parameters.c             | 12 +---
+ app/test-pmd/testpmd.c                | 88 ++++++++++++++-------------
+ app/test-pmd/testpmd.h                |  2 +-
+ doc/guides/testpmd_app_ug/run_app.rst | 10 +--
+ 4 files changed, 54 insertions(+), 58 deletions(-)
+
+--
+2.47.3
 
