@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8CCF54AC5
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 15:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9264BF54ACE
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 15:17:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5E3F8402BE;
-	Tue, 24 Mar 2026 16:16:04 +0100 (CET)
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com
- [209.85.216.49]) by mails.dpdk.org (Postfix) with ESMTP id 0D8984025F
- for <dev@dpdk.org>; Tue, 24 Mar 2026 16:16:02 +0100 (CET)
-Received: by mail-pj1-f49.google.com with SMTP id
- 98e67ed59e1d1-3567e2b4159so1054158a91.0
- for <dev@dpdk.org>; Tue, 24 Mar 2026 08:16:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7CB47402BE;
+	Tue, 24 Mar 2026 16:17:12 +0100 (CET)
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
+ [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 92F664025F
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 16:17:10 +0100 (CET)
+Received: by mail-dy1-f182.google.com with SMTP id
+ 5a478bee46e88-2b4520f6b32so1639810eec.0
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 08:17:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774365362;
- x=1774970162; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774365429;
+ x=1774970229; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qjqJxNMnvYa7OABy1cHJTN3Gfs5S/Qdg7Biy0vVgP/s=;
- b=gSIYRitfz34Xp6Lg6KlE1Do8+R/xWFMqbhpQPI1cvvQIhHzBtk1wTzDNkk7bBbCJ8A
- ASewoqo4zsAuzTK2dN7c+ugbQ2+rkg/4x7YduoVaai5IHEZQKYDK8XmrYRHrxlEV2UjK
- f4WXRYRBAQSc38OxhKluXyHjcWBYcCRX4xwv0gNlItlheGEC3RJ3NFnbgM5dX2Wl3QX+
- SKUlYsYCRYQQKtraX5VUT+wcXk7BsJf7govydg2HBO/kBatpHgFySIxafz/nW3g9/e2Y
- vafTrmbIvUuYfNyHz1BW+9A/55q2sKCByS/LP9IbtRAGdqrJrYVg8tHMHXtqvgbNNDlK
- wIqg==
+ bh=h8tt0xepNgyEfRqRshKAkdKvubVdz9mEcq3K1aE1v58=;
+ b=kX4V7BmRgf4FYYmYQAzVHvfTvvL+PUReCoDLxUL+QbY+Ee/RD3qeqGAdMs6dGztPA1
+ YIdSuEpVksB4JyiAaWdIUApDwgzk6bS5bwtZhGd5XwCL1pqiGvMhHWXnGGjtt95PXqnF
+ z07WM3e4BBW4cnJGOgc+QGb7iFK/CEdmqXQ398X3aFj23ZwfG3kA9WkcX1BXHgMi6kG0
+ HzsuhsC3c9e2iTsyLQuLbLyp0/uMlBAKTMhrh1Yg3ydWE1CEHfJkcqfnQwec4hj9WllM
+ u+SlTj955Q+NQkiM9pd9dTR3oF//39jxB+VhZ0N1mgUmSmfv5Ah4B5Uo3h67aGHSdV7C
+ jx8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774365362; x=1774970162;
+ d=1e100.net; s=20251104; t=1774365429; x=1774970229;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=qjqJxNMnvYa7OABy1cHJTN3Gfs5S/Qdg7Biy0vVgP/s=;
- b=sM4SFFDNJ7oaLE/XmDIW4m0xuP4/8dUpAD4MuOo78g6zjXwxU+f+xE3dgttO0mSA7w
- hXOn3nLavuVtUrgO85tK0q1s8w4vZ7RyCLGpxBh5F5DsLNWyG8soR6lOws7TGJaQlTnE
- 85T5UJXQq0KZKuEIiuCCrXu/ndL1WbL9dgHdM4ZSoZrXuFdVEutbo/67OI6NRvQelNE8
- QEAaeJE13U1aTqF24jcFdIn36ERzGJQS+95s6XqdyKyUYAKjvtHBiKYIC3OG07FLo8ii
- 3hcTIPikvl/cdc3HESjppmFvreytxyr0XX0CpWqQnCUOe47GbAObhfdkaAblGtaP6haJ
- A2AQ==
+ bh=h8tt0xepNgyEfRqRshKAkdKvubVdz9mEcq3K1aE1v58=;
+ b=Lx/qR8A8PZy/VvzfXx87GMZHdtpkHd0srtww3menqwcAeCBvP3wuMb37b4gIe5XlyS
+ eD8GbzPOFA985lapKw49qQKehqJ3vvsmGZUJlEVaHAhHwCPeTUn8HcV1D3+V3cw9YWKU
+ 0RYgfKw02uYYKT/++j5K++QSGRvizMUECpg9aFeTvojV6+9B1TVGZWprxMhGYbtpBj99
+ T65+032CHp6C9Cm9IbS0cKMyuGIaKWxniLvPmIPXBRIxc49rFH/xJXLXDCaFCpYUr6K1
+ VnmGx3he0FFc0fl5WigyYhbtqrhzAAPeDBkK6bKz7PykkUBs9dEq22yldmKb8Kks9L31
+ Ue8w==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUdTb3FRo1uWsm0Vjh0T0SRsbxhmjmcurHXu5Tto833FDmH8pVUsk4bgH6lhzNffImw8O4=@dpdk.org
-X-Gm-Message-State: AOJu0YzDine9rKyztgmCSSQFTF2ErukILApJngUX7D0H1WQf4HOsKxxO
- WeN2nHYBxkn4iQL9yW9jKZGOXDhejMoADcbdoe5OOEno0/BBq32E9HtwnBlCoWlSl+Q=
-X-Gm-Gg: ATEYQzxbXa47ZWXCGAzytj3rKNAxQDZiJkf56uA1MNiVQgmp+fg0QJ0ckF6ao+Yk4M3
- PlTKGGQt1vKgWfXxn1yW4PiZ3VzqPts385vTIdO/nABwphqWNsPnQlT7otD8l82kt4OA5ng/Rg6
- 36D5D/GzSPFQ6GjbSa92gZUMb2iVvZvU1bqX9s/sronPPf//TPtnaZHvtEVHARp4PStQqc4JtQi
- s2RqWUuO79S2/PKw7zSWItsm/ECjakykAOj4oHLFDxyXl5DjbFd5xQI4YpqrfVzLrE3R//UVeyi
- TDPcRfRMzsTrM1hW8cU+PpcTqspq/PUHOnuAQMJUc0u1H8tUB+9NtGGEu9JLMfQxRC7a+ZQA0dT
- zYYDULwkPN6kZwgSPyX0UYKMU5k943SaCPdsYMLx6t10KYAPIobXYlRVHST99SiQHUDR/x6Any8
- B2stQqvv+csC7UsADzyhscAOynb/p+1H0BROI=
-X-Received: by 2002:a17:90b:35d0:b0:34c:fe7e:84fe with SMTP id
- 98e67ed59e1d1-35bd2d0dabcmr16102108a91.28.1774365361933; 
- Tue, 24 Mar 2026 08:16:01 -0700 (PDT)
+ AJvYcCULkPy9LTCpyr0vUy0JJ0G9HXvKs4HXaP9LXKNgRzGrNe2e6fW0YHDYiNGSaJjvS53gg+U=@dpdk.org
+X-Gm-Message-State: AOJu0YxI5iLaZzn9qycAL020lVtXWLRY2BXBsEGlMOykknB6/KyrvKF5
+ ZK481jZDuC2302t8ZAV+4K6UGScy2C0+ffGY6vUacQEcba3MlsWy3mC84JdObKQn3uA=
+X-Gm-Gg: ATEYQzwpynfonAAqAZ8RKzZVnzeYiQKVhry5fAh6wrJVmD0bDUEHJ1wqCUx5wDcYyUe
+ Iyfx53Vu13hsuvU0uKuX6U215sa698FiWhQOGfFEGOY8OVhScfuP8Bh9HXrLY4TM7sClKpoXCqR
+ DVa0/Sq41woL2tdxUUu1dVZAHoSzIVf7NCULdv3gM0Phr0lVeMLIeWKxlB9FDF4tE+hrfbE6x2W
+ DgZff6boso3oTcDRwWGERppcJOR00lA1WEQmNTBm3k9ZUeCdTQc5PcCE+9U41joNPS7L1OLemJN
+ aOJk187tUtieQ5YGIwPEfm1QclsC/OA7f8aKo4mF9RkpCiibuIt1ByfXAskRDoSTr+SIv+GWOgp
+ Mo+5XzrKmT8K+o5gHfO1MKtkROUXjhXOYxqv21AecqZOwv/NXgjcbjwDFkjDoMRoyJa44fneW4V
+ Jkl0rOMNtrjvltjkUXNTpUS9TvmmTIvZpmCUg=
+X-Received: by 2002:a05:7301:e24:b0:2c0:c7cd:1288 with SMTP id
+ 5a478bee46e88-2c1097602b4mr6825021eec.27.1774365429409; 
+ Tue, 24 Mar 2026 08:17:09 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-35c087cd95bsm1556117a91.13.2026.03.24.08.15.58
+ 5a478bee46e88-2c10b1961a2sm15834856eec.12.2026.03.24.08.17.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 24 Mar 2026 08:16:01 -0700 (PDT)
-Date: Tue, 24 Mar 2026 08:15:53 -0700
+ Tue, 24 Mar 2026 08:17:09 -0700 (PDT)
+Date: Tue, 24 Mar 2026 08:17:05 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Dariusz Sosnowski <dsosnowski@nvidia.com>
 Cc: Aman Singh <aman.deep.singh@intel.com>, <dev@dpdk.org>, Thomas Monjalon
  <thomas@monjalon.net>, Raslan Darawsheh <rasland@nvidia.com>, "Adrian
  Schollmeyer" <a.schollmeyer@syseleven.de>
-Subject: Re: [PATCH 1/2] app/testpmd: assign share group dynamically
-Message-ID: <20260324081553.1e38e474@phoenix.local>
-In-Reply-To: <20260324123709.3471-2-dsosnowski@nvidia.com>
+Subject: Re: [PATCH 2/2] app/testpmd: revert switch domain mismatch check
+Message-ID: <20260324081705.085e4a9f@phoenix.local>
+In-Reply-To: <20260324123709.3471-3-dsosnowski@nvidia.com>
 References: <20260324123709.3471-1-dsosnowski@nvidia.com>
- <20260324123709.3471-2-dsosnowski@nvidia.com>
+ <20260324123709.3471-3-dsosnowski@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -84,41 +84,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 24 Mar 2026 13:37:08 +0100
+On Tue, 24 Mar 2026 13:37:09 +0100
 Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
 
-> Testpmd exposes "--rxq-share=3D[N]" parameter which controls
-> sharing Rx queues. Before this patch logic was that either:
+> This reverts commit 8ebba91086f47c90e398d7775921e05659c0d62f.
 >=20
-> - all queues were assigned to the same share group
->   (when N was not passed),
-> - or ports were grouped in subsets of N ports,
->   each subset got different share group index.
->=20
-> 2nd option did not work well with dynamic representor probing,
-> where new representors would be assigned to new share group.
->=20
-> This patch changes the logic in testpmd to dynamically
-> assign share group index. Each unique switch and Rx domain
-> will get different share group.
+> Previous patch changed --rxq-share parameter logic.
+> If this parameter is passed, then unique share group index
+> per switch and Rx domain will be assigned to each shared Rx queue.
+> As a result the check for domain mismatch is not needed.
 >=20
 > Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 > ---
 
-AI review feedback:
+One nit from AI review
 
-The logic is sound =E2=80=94 assign_share_group() maps each unique (domain_=
-id,
-rx_domain) pair to a share group index via a simple linear scan of a
-fixed-size slot table. No correctness bugs found. Two warnings:
+Clean revert, correctness is fine =E2=80=94 the mismatch check is now redun=
+dant
+since patch 1 guarantees ports in the same share group have matching
+domain/rx_domain by construction.
 
-Warning: share_group_slots[] entries are never freed on port removal.
-With dynamic representor probing and hot-unplug cycles, the slot array
-(sized RTE_MAX_ETHPORTS, default 32) could fill up. The RTE_ASSERT will
-fire in debug builds, but in release builds the behavior would be
-reading an uninitialized slot. Consider adding cleanup when a port is
-removed, or document the limitation.
-
-Warning: share_group_slots[] should be declared static. It's a
-file-scope global without the rte_ prefix and only accessed within
-testpmd.c. Making it static gives it proper scoping.
+Warning: Double blank line after deletion. The removal leaves two
+consecutive blank lines between the variable declarations (int ret;)
+and the if ((rx_pkt_nb_segs > 1) block. One should be removed.
