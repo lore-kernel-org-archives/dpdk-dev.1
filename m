@@ -2,122 +2,136 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C70F54AAC
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 13:04:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8C0F54ABA
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 14:13:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E9DB74067E;
-	Tue, 24 Mar 2026 14:04:02 +0100 (CET)
-Received: from MW6PR02CU001.outbound.protection.outlook.com
- (mail-westus2azon11012033.outbound.protection.outlook.com [52.101.48.33])
- by mails.dpdk.org (Postfix) with ESMTP id D65F34025F;
- Tue, 24 Mar 2026 14:04:01 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WVK+TFR+Vqi7P+DcV1pI0NJ49D+ZPah71IzmGJXLLv1j55OajKpnUm0DRkK5q8SktHwGTyy1Xpgr3yHF3Ecks33zfTgooFVI0sHRQedKk4kEOknLJRtAv5881oFnnvwJItggfu3edCpj5OipkqeKwaGWI/4hXpoGu/UQmvYUxMnVf0NEnFHldmc006otbXzT0KAV4Bxr6+7WHB0t0m29t9IQiqS9nWjNXj7H6Y7e3rVB1rJub3Ia4hnaIbbMXPwkocesEmmFWYyNoXoQ1+oxkT32N8pWHfkS9TXNmy8N9PV+54vaWVJyX+Q08zZV8f9IUQ+SBqN5VYvlEMT2jgDSIQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zN6dqUojFiSzgElkWAHHN/YEnbwN/puYDEQvnbmvvnc=;
- b=Cz/sKX826BY6UG1u1xtbhPIR8KTTMmqNjuvK+nUNaaEhiU5Dfl6caFvXhz0J0XhBOo2Bsrjhc/qc6C2vLKpph7YimvSDDXIp+6aeVm0IWBmE5cgUY45bBmYe1Nk9svYYUavaWo232gMa8creV0tFh4L/khLUHwQdlG7NWjThlujWM7RtLyFzClaXaPlBpfMYdBXybEt57Q55nkcp0iYpTGclkbgi3aTN6ucRiKWVH/gXQeCVyzatDPjQV5ARN9kVbULw+WaNYayC3SXSCdHR812EzeO0kMeujUediFKB9RZoihaKVjEif2PmkVS+fTFigBp1fs6w33JgF2TCo9jnQQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zN6dqUojFiSzgElkWAHHN/YEnbwN/puYDEQvnbmvvnc=;
- b=JPHJkNe3upo3v37de4gFg3/6u+hEkrQ4ERtfMUc+GMN5E/0HBn8+z0YyURQGe+WdslRt+tHvV9rjPKs7c2UXTZdcU+mzaUJnwysWf+fRQ6EnDBEb//Ii5lsIUoS7JKXZ2ILAbCzkpMUxl6FAqJUP3h6yr6P9EvPmRVtytm0k71HEIwaBqinlXNzglMiPhkyVAx3h8mjvvf8ktV6sToXFwb4/1tAEAPTRMby/eyrbq0u62gGM4abNgRQRSWvcS8xqQPygOJJc0idy3ObR4Y1frvnpxEIiXhXc/WJCLAJDFAwQNfWWsN0I/JKb1/mIGnMcUAmyZVFIBpdQwaLreuDXJg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW4PR12MB6754.namprd12.prod.outlook.com (2603:10b6:303:1eb::7)
- by CY8PR12MB7516.namprd12.prod.outlook.com (2603:10b6:930:94::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Tue, 24 Mar
- 2026 13:03:58 +0000
-Received: from MW4PR12MB6754.namprd12.prod.outlook.com
- ([fe80::baee:e8cc:6cbf:3d84]) by MW4PR12MB6754.namprd12.prod.outlook.com
- ([fe80::baee:e8cc:6cbf:3d84%6]) with mapi id 15.20.9745.019; Tue, 24 Mar 2026
- 13:03:57 +0000
-Message-ID: <fcb9d7d4-44a3-47d3-b8c9-2ff7d3d97a25@nvidia.com>
-Date: Tue, 24 Mar 2026 15:03:47 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/mlx5: fix VLAN strip info for CQE compression
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
- Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
- Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
- Matan Azrad <matan@nvidia.com>, Alexander Kozyrev <akozyrev@nvidia.com>
-Cc: dev@dpdk.org, stable@dpdk.org
-References: <20260320160001.787223-1-dsosnowski@nvidia.com>
-Content-Language: en-US
-From: Raslan Darawsheh <rasland@nvidia.com>
-In-Reply-To: <20260320160001.787223-1-dsosnowski@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL2P290CA0020.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:3::9)
- To MW4PR12MB6754.namprd12.prod.outlook.com
- (2603:10b6:303:1eb::7)
+	by mails.dpdk.org (Postfix) with ESMTP id C79BD402BE;
+	Tue, 24 Mar 2026 15:13:11 +0100 (CET)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id D26FC4025F
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 15:13:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1774361590;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+ bh=Zaf534HuRf7s6ehM0qdcBi00HETFFDOcHTwtU8Gl3l4=;
+ b=C/3kCrAQTHgTLtenK9npmIHv4995vhAYiwo00m5JtpvfCccSTgjzS2Kp9lDi5IAKs1Yh9M
+ 0msMyultJulvRHUGEbkrSOqHPGv1k+moeZX4vjKEZxD5JQ8fY7ExyFo3jZBY1P7dJ8i+RJ
+ fXUXR+S2L6X9GtrslUvrKD7ylC1mBK0=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-140-0mONBAIdPZ-Vu4edMJuJvw-1; Tue, 24 Mar 2026 10:13:09 -0400
+X-MC-Unique: 0mONBAIdPZ-Vu4edMJuJvw-1
+X-Mimecast-MFC-AGG-ID: 0mONBAIdPZ-Vu4edMJuJvw_1774361588
+Received: by mail-qk1-f200.google.com with SMTP id
+ af79cd13be357-8cfda078676so1988879885a.2
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 07:13:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774361588; x=1774966388;
+ h=content-transfer-encoding:in-reply-to:autocrypt:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=Zaf534HuRf7s6ehM0qdcBi00HETFFDOcHTwtU8Gl3l4=;
+ b=liEQSDQ9BOyy36L44k2SBsX7YRJgG4X/UeJXyg5MXCgvmkxsPldhhFG1DJYpJZ/QBs
+ EG700JAw7HHPPjLUL0YhBSSuNWGnC33ppN8usJkFrgLhS6PorXJTsOAAj2E0NLTHG0NJ
+ so1tq2VdTYDhQxjiZXCG/Pqd+wRKEVlPqjAw8E9+JJdZzKKNs/XXrKByzRmmXpv1b57M
+ hxi0Q1SJOrHPOvF27ZmBAO+nqy0qVIqcRnJTDlV0AetipEM1P7m7E2PUpC9qtbdkuCw4
+ YaTeep7gV+jD0zjyo1mVT7Qwwh9c1ESKslplo57y58z+11aVWRvTCN6Um1rAjKXzrviO
+ 6BNA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCWwQCKRiod76IQIxHd+JR0R76RsYm2Nl2V2hZ1wnei7IWKU4Jet7pwAYiUSanTNnXDvJZI=@dpdk.org
+X-Gm-Message-State: AOJu0YwZVWc4dW7OC4G9wBxLizWXd98OahayJqzqgTHEbHF/oAQdPff2
+ lotSYlK9e0suvGEp7CupjxxUB9wxMr6/HWL937ByrEjECjYczclluIctzXL3w3ytNNeV7EXPYKk
+ NIuVgsMHtaRNP0iRX9YbS+9LoT265W7Bwm7XI5BC6dNcq
+X-Gm-Gg: ATEYQzxhJsJ1dt0GWZwNzt8GlWzxv2UxuoMrzo7a/Vt7xRIhvMrfgc6tNIvkStOpNhv
+ s7An97z/IWcL+a5wnc1GXr65BMYUKZWpxEcN+5wWVjLb6aYWtbCJUhK5J/sdEvyzTDRZq0zA4CX
+ CsCvDesDTvxuBp6lvN6oDMFP/Do6gF8zZy/Mej6udO3ejdl9RQZG68E7COiKG+8TYq9rgdmB2XQ
+ BxPHUl4oHfNyqsBE2cHSrJaSh+jIX3w+rH/0cP1SZfzvuBDxWitNH9Zst1utkdbrqrU8I48JZcc
+ vMQmAHTjoZ0IbGIT3Os50iX+/jnt3B2IgrIiqdGgWqcX6byWniXdbpbpwkwH/nfpBOxichwFIwu
+ F6R5g0ViGYuBzmQ+aPS0Nc2RO
+X-Received: by 2002:a05:620a:4892:b0:8cf:d62a:c81d with SMTP id
+ af79cd13be357-8cfd62acc82mr1794648685a.29.1774361588332; 
+ Tue, 24 Mar 2026 07:13:08 -0700 (PDT)
+X-Received: by 2002:a05:620a:4892:b0:8cf:d62a:c81d with SMTP id
+ af79cd13be357-8cfd62acc82mr1794636685a.29.1774361587344; 
+ Tue, 24 Mar 2026 07:13:07 -0700 (PDT)
+Received: from [192.168.0.65] ([78.16.129.161])
+ by smtp.gmail.com with ESMTPSA id
+ af79cd13be357-8cfc8f926e0sm1152200785a.12.2026.03.24.07.13.02
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Tue, 24 Mar 2026 07:13:05 -0700 (PDT)
+Message-ID: <f5d3c1f8-f3f1-49a3-b075-f0684ce21023@redhat.com>
+Date: Tue, 24 Mar 2026 14:13:00 +0000
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB6754:EE_|CY8PR12MB7516:EE_
-X-MS-Office365-Filtering-Correlation-Id: c0e2d521-ae45-4fb0-14c2-08de89a5ceb8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|18002099003|22082099003|56012099003; 
-X-Microsoft-Antispam-Message-Info: VRg+QIJdgJmCedAbGanQPAExxwG1SQ/FxPo56j9jDzwtU8HIwWx57z80YAI0PB8d+uLI2Reuuj16mV23VdHVkGNXufTN58W5eQRp9cZ8f2Z4JxTQcJh2/FSaV9Ks6tfqwtl4E2gLkP1/lke0MvUz5FoUccxqPVFFdZ0Zh7F051Wd/tmzYEwmuXCkzVkdgtnqVvZd3vn7ONjyykj1NYHcu55mTaH17IS+R6kP3Cupt5TTmje/be9hB0m5XxP91ETwrOijmcb639u69bKbefLI8XXEiGtTyQAg0I0uznqZgvOh24gh9LrAJ3VD04Txj2q/y7yoTFApdEtAVoilM8CJTiLu6bOWENFzONyaWExTdDsCxT8K6QurK7KC/zcsB/Br1pFoCF187KjlYSf6NGB1C1dzBz+NBAunoRqwZM/tzDlhBDGzQO7iL4OJ2DvTlhzsl058ScWftY2EWtaPpXMO+PRloV+p1mVztNIQ2nFhlhCZXu1FAxIHzlNQQ/VLlMbkUTlFt74fC3J2nEZz6CzhFOLe7bSDPsNWaPtfFsuAmmdblvKrlSf1FiNaEbyLQojfK2YcrJJ6K0Or1VH4vuguR79upsdAkdU1+F4l0TDY61sE9wpr38WGWUBpjL9ku8QkIjDBB46TraZOknLUXdpNJJAfiazKKW6eZ48vxQtDAIzmncBCWNtt03S/mU7EjduOHU4yWymcHS5ZEiRf4MLAqLFTWRZqQoQTIY16lbQWcQ4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:MW4PR12MB6754.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VHZzV29XNHZ5Y09rRi9mY3ZGNURqYjZRNHNRenpKWnRmV1lOL1Y4S21zOHNv?=
- =?utf-8?B?RS9mZk95TWs5K1RCQ21jeGtSWmx3S052UVlXeUorazRqRFpzSmtsYm9EOUpm?=
- =?utf-8?B?WWRBeXN1WGtvbkRMZFd4R3c2akUvcGR4emFHZGtUVE1QRW5JU0QvZFV4OUxE?=
- =?utf-8?B?clJhTVJuSytvSGZyZFZQYm81TjBleXNINkZXVFl4S2VERUYzbTdxVUtINm9E?=
- =?utf-8?B?UjJGak9QSjVHQVpsSU1NVzVmaWE3eG43d1VaT2FNQ3pSZHkrbysyYzlucVlH?=
- =?utf-8?B?YnBhWkZiK09STG9hSzhpQnd2SkUySnJ1NVY0Z2JxdGtnOWNGaDQ0em4rcU0r?=
- =?utf-8?B?YVZ0TFJsN3FsZzZvWkVnMXBwSjdOWTM1YzV5UGRoVDZ4ZllqVFNJM0YzR2Z1?=
- =?utf-8?B?UnR4QzdmaXhYSlYwS3J2MTV2ZHc1czZJZGZ2d1hXSE1LRmxGaWdoMGtieXZa?=
- =?utf-8?B?aWxSeUdlanh4RGVTZ29qWHFNSEgwWTBuUXJuRi8xcHcvMTIwQXV5Z0dkOUNE?=
- =?utf-8?B?TzdMcWNwWjBaUVZKUm5qYmREazFhUHlGejdxU2hrZGpBa1hObXBmK2diQWgy?=
- =?utf-8?B?NUtkUzJuZGs4bFMzVGxWVWE1RittWE9FTHpMYXVrUTI0QmF6NVMzdHo2S2F2?=
- =?utf-8?B?KzJlRGZIVWVvY2xaMys0WUlPTU1oM1o0U21YNlQwRDVHczlZOGE4YStWck0x?=
- =?utf-8?B?R1ZUeFl4aE1zR1VrUnlhM04yQzdRZUNkbTNyVUVOajVoR0RGVVJZMXNEbHBZ?=
- =?utf-8?B?OTZWOE41eHpwWWJ5anBkVUgxZDlFREVQL0dEeWJId21QdlVnQ1dIMm9CMS9s?=
- =?utf-8?B?RmV5YWhCMS9BV2lqTy9rS3RBUEp2WkNEUEs0TU9GUk9BVHE5UGkwOCtqQzZG?=
- =?utf-8?B?cXpIVEVaV0pnK0FYbkJRR2ViZnVrNk1EZGYzK3FGQmgvZU14YWtxVlU1dWp3?=
- =?utf-8?B?bkJpMVZaeFpSK0hoUzl1Q01kVWNicktPaExBUm1HT2p1RGRPTTdMbDREK1lP?=
- =?utf-8?B?M0t0VDdsOHBhOEdrYWtncytxbVNTOXJySy8xVG43YTZPalBVcXhrdWJTQXcv?=
- =?utf-8?B?N3RCMGdXeVN5SDFvQ3hwOTQ4VExYcGNsbTc2R1Y1SWszZTRCcS9sOTN2Ym54?=
- =?utf-8?B?eEJkZGNxTlQ5TmtNajl0Ti91L1VYMUNIWll1aUlNZTA0RDlYRlBsdUtrRTlK?=
- =?utf-8?B?ZGtjSjRoQVlsM3AxNzFRUTZ4OWpHRW4zUTNBN1loY2dEZkdjKzZaU3JDSlZ2?=
- =?utf-8?B?a29LVmZkcGpoV2g1NGVmMFE5Vi9HdlMzd25ucjdmZmlaWDJ6R3BvR0hjbmZh?=
- =?utf-8?B?RkV5cE00SGxzeE41UHpBSkozUWo4OHViYm9CMUNHWHJQTnJJdGhlNVpPVU5Z?=
- =?utf-8?B?TlZwRVJBcDdsZi9YbEhVeGRjdmNJZlpvZVRHTUhiemFkR3ZDT2M5Y25lZmNa?=
- =?utf-8?B?UE95NkFoZXVKNzl0ZE4zN1cxM0JsWjV4UzRQYWl4T0xMNi9jbnhCOU9tcncr?=
- =?utf-8?B?UG9VSU8wdFRSYU5KNDlzZDVuV0VvZmhubjQyRU04eWxHaWxIZUJBZUlIa2Nk?=
- =?utf-8?B?UjZjb2ZuTmlLYmlsZ2wvaDdrVTY2L3Ruc1o2ZzQ3RzhBdjRIWDZqTTJJYmZ2?=
- =?utf-8?B?c0NHQmZmdVU1M0ZsZnRXVVNsRTJnanYvQnArMVZkMWkyS21yYXV1Q2pWd1Vu?=
- =?utf-8?B?Smd5b2JNQkNsdi9telh2ZTJFSTE1T2c2R2lHUW1PbUg1dUJ5VnI3OTI1Z1Yz?=
- =?utf-8?B?N1Z4OEVFckxranVPbGVXTjA4QTkwMFVYejh6THhMM0ltcUlXNmRwMStHaGdW?=
- =?utf-8?B?T0hnTFdLZGpoSkdrQ2ZWREVTdGF0aktYYk85ZTJtUFB1Nk5velUrNGtTcUtM?=
- =?utf-8?B?NmR0VWNHT2pqaFQydTBsTW4rTkUwM2RNY09KWHk5MlZGZUtJaWEzY3dZSDhW?=
- =?utf-8?B?aDlUZDNlN1hPalJDaVEwaHg1eFNoNkl2TGdPdi85R0U4cDVPWGVjS2sxVE9F?=
- =?utf-8?B?cEUzUG81L2lYRytZVEpsLzMvV2ovSFE0NnloNDdlOXB5d1ZMY1JFNWZWYm9h?=
- =?utf-8?B?bXR2U3lXT2hPT2lEN21lUFJqUlZ4NzdWQmRnUEZ5L29nUmpCL3VNMHA3STFZ?=
- =?utf-8?B?eTh0QUpHa3JhZDZGNWJOUnFqQXY1OWRHOVJDSmlxVTdzbUh3R2RvVXAwNllw?=
- =?utf-8?B?SWxqdXQ1SnZJaGlFYU44SUhONUlOc3lrU1ZGZXNDUWdlQXVqa25hczRJUHJl?=
- =?utf-8?B?QlR5NzVrM3A1bTNZYUM5c3p0ZzR0c29peUJPa1BRV05STjE5ZUt6Y0grYWZ0?=
- =?utf-8?B?Z2MzWUF0ZXk5U0didVRSOEhIWFhBNGVhdDBQeWdaTkxlSzZxcHVRUT09?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0e2d521-ae45-4fb0-14c2-08de89a5ceb8
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB6754.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 13:03:57.0788 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: u5ChvXG8uDiej1ao/CUlu3DN/qxysqRsw9JDq+kl6hpzUScGZEx7of2W6KZK85O0vzCOul2N9iGD57dzURvk4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7516
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/8] drivers: cleanup devargs lookup in bus scan
+To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
+ Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Rosen Xu <rosen.xu@altera.com>,
+ Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>,
+ Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
+ Wei Hu <weh@microsoft.com>
+References: <20260323105306.1531689-1-david.marchand@redhat.com>
+ <20260323105306.1531689-5-david.marchand@redhat.com>
+From: Kevin Traynor <ktraynor@redhat.com>
+Autocrypt: addr=ktraynor@redhat.com; keydata=
+ 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
+In-Reply-To: <20260323105306.1531689-5-david.marchand@redhat.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: e2PXJnJElOLeYmGJj5elMZeaW-p6bq4BJSpn_H8OS7E_1774361588
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -131,39 +145,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
-
-
-On 20/03/2026 6:00 PM, Dariusz Sosnowski wrote:
-> When L3/L4 mini CQE format is used with CQE compression
-> (rxq_cqe_comp_en set to 4 in lower 3 bits),
-> each mini CQE reports packet header info for relevant packet.
-> One bit in that header info is dedicated to CVLAN info,
-> used to determine whether CVLAN is present in the received packet.
-> This info is used to determine VLAN stripping info
-> when relevant offload is enabled.
+On 3/23/26 10:52 AM, David Marchand wrote:
+> Don't hardcode the bus names in the RTE_EAL_DEVARGS_FOREACH() calls.
+> The bus name is set by code in EAL.
+> Even if there is nothing broken, let's reuse the name from the bus object.
 > 
-> Before this patch, users might have seen incorrectly set/unset
-> RTE_MBUF_F_RX_VLAN and RTE_MBUF_F_RX_VLAN_STRIPPED flags because:
+> And remove the now useless macros.
 > 
-> - Struct for mlx5 mini CQE incorrectly defined the location
->    of packet header info byte - it was swapped with neighboring
->    reserved byte.
-> - CVLAN bit was checked incorrectly because of cast to uint16_t
->    and big endian change. It should be checked as uint8_t.
+> Note: in the ifpga bus case, the call was using an incorrect macro
+> (IFPGA_ARG_NAME instead of IFPGA_BUS_NAME), yet it was working fine
+> as this macro is aligned with the ifpga bus name.
 > 
-> This patch addresses the above.
-> 
-> Fixes: 54c2d46b160f ("net/mlx5: support flow tag and packet header miniCQEs")
-> Cc: akozyrev@nvidia.com
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
-> Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+> Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 > ---
+>  drivers/bus/auxiliary/auxiliary_common.c     | 2 +-
+>  drivers/bus/auxiliary/bus_auxiliary_driver.h | 2 --
+>  drivers/bus/cdx/cdx.c                        | 3 +--
+>  drivers/bus/dpaa/dpaa_bus.c                  | 6 ++----
+>  drivers/bus/fslmc/fslmc_bus.c                | 8 +++-----
+>  drivers/bus/ifpga/bus_ifpga_driver.h         | 2 --
+>  drivers/bus/ifpga/ifpga_bus.c                | 4 ++--
+>  drivers/bus/pci/pci_common.c                 | 2 +-
+>  drivers/bus/platform/platform.c              | 2 +-
+>  drivers/bus/uacce/uacce.c                    | 2 +-
+>  drivers/bus/vdev/vdev.c                      | 2 +-
+>  drivers/bus/vmbus/vmbus_common.c             | 2 +-
+>  drivers/raw/ifpga/ifpga_rawdev.c             | 2 +-
+>  13 files changed, 15 insertions(+), 24 deletions(-)
+> 
 
-Patch applied to next-net-mlx,
-
-Kindest regards
-Raslan Darawsheh
+Acked-by: Kevin Traynor <ktraynor@redhat.com>
 
