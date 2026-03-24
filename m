@@ -2,44 +2,103 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26351F54ADA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 16:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA0BF54ADC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 16:57:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 66C914025F;
-	Tue, 24 Mar 2026 17:53:37 +0100 (CET)
-Received: from smtp5-g21.free.fr (smtp5-g21.free.fr [212.27.42.5])
- by mails.dpdk.org (Postfix) with ESMTP id 095984021F
- for <dev@dpdk.org>; Tue, 24 Mar 2026 17:53:36 +0100 (CET)
-Received: from localhost.localdomain (unknown [213.36.7.12])
- (Authenticated sender: vjardin@free.fr)
- by smtp5-g21.free.fr (Postfix) with ESMTPSA id E0F2F6013F;
- Tue, 24 Mar 2026 17:53:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=free.fr;
- s=smtp-20201208; t=1774371216;
- bh=kUVprpAYfce0jdNI1RVGHBmViJEwRoJUQ/K7Q5rg/Wo=;
- h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=CiFPwzxmZVGqGYXkFFWNpbHhNLppbgkxCZ34M9pRll/BBQmI9jTmiKj3UUH8esE5X
- K8w8cPN4onyjUFdaCVLV8mPfza9FLcSbDyXZekHtPBBLLXRphKLdwqKrQA39zBv7td
- RxtOjUaGlApWqKYdC5VUXoi3xC+FDo1+tU4J57E6RYxsLkCVGugybA9DqKCb6JpytC
- O5PQA4MxKJWulAOm/f2SiPpYqH+PHdUscmHTQb180TTkJEWMXYoMlWYbBrvKVbDUw+
- hK6XOE+7LQyrVPFcEIdZYTRluc5yPQFeOgAOF2p7bSyrvd4U73IF4UI2HTGF5//qvj
- cQjN5My+mT1rA==
-From: Vincent Jardin <vjardin@free.fr>
-To: dev@dpdk.org
-Cc: rasland@nvidia.com, thomas@monjalon.net, andrew.rybchenko@oktetlabs.ru,
- dsosnowski@nvidia.com, viacheslavo@nvidia.com, bingz@nvidia.com,
- orika@nvidia.com, suanmingm@nvidia.com, matan@nvidia.com,
- stephen@networkplumber.org, aman.deep.singh@intel.com,
- Vincent Jardin <vjardin@free.fr>
-Subject: [PATCH v5 10/10] net/mlx5: add rate table capacity query API
-Date: Tue, 24 Mar 2026 17:50:47 +0100
-Message-ID: <20260324165047.391137-11-vjardin@free.fr>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260324165047.391137-1-vjardin@free.fr>
-References: <20260322134629.94633-1-vjardin@free.fr>
- <20260324165047.391137-1-vjardin@free.fr>
+	by mails.dpdk.org (Postfix) with ESMTP id AE7F9406BA;
+	Tue, 24 Mar 2026 17:57:35 +0100 (CET)
+Received: from CH1PR05CU001.outbound.protection.outlook.com
+ (mail-northcentralusazon11010040.outbound.protection.outlook.com
+ [52.101.193.40]) by mails.dpdk.org (Postfix) with ESMTP id 137A64021F
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 17:57:34 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uEUkkQx3N8idHWpsGnWYM1GVH1Q0hFl8NbpaRG9X+Fpv7Sh921TSSrLFSRYql/SwSyU5t7JkLz4RDQVGvRdMpWXBqTd7WjpuyyM9a2kXpj0FGtwud+HfPsexH3sZkWtF0uviVVUUMdZaAmMAQgX/03zjbJnq9OrB/m8xUDeFtv2RpkD3nndWJx8KbIzlug8ligXhkqRwKVzYm9DBh0R2txDnxboFNsHwzbqo3VLB6rPp6G9jNTiG382rQdrrLP1AxOPwsGDaFmymAZ7SPxBRckCMpgxYKCdSxs4fWT5Ao8Q5g2y1pdJiPVvsnxbFW2IcTra9sIeJJjGcWP+T3TJeoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wm/iVszHKx8p63V1Sj5ZUoSIHhIB0cXd/1Gf1kvPYCw=;
+ b=Q2SpT3qBULlVOyBYWz54affcvi2TEUwCYYsRN2Fz5faOByPyh/qsEay5biI/DjGr6ThqxKToCHFRXaDt4/6gsMMSUdvRH3EoACE3KsmJ7kt50HEsFyvyFXgP3R+rAAeKN7VvYIF221OvMUazIuWS8g60Vidk+M0I/WhzsdNy7+TJIcJ70FyvvxkMdGbh3S83wV1ZHhfEZAobUlLH6YDKqMQZGz1qgBHpy4HL+O9ukmwyyK2f3HNS8ocnZHyf9FELqY2X5PX563Y0pOwo0NhZr+DQAJZmnE9gYigmhwJcDZyYvDkvakiCPg58TdBrtGjYkdZwjd+C6p92Mg3UtYhXbQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wm/iVszHKx8p63V1Sj5ZUoSIHhIB0cXd/1Gf1kvPYCw=;
+ b=RpvBrSG3cgqJlngd7ARrhs7UxBiJ81xAMHe0mJh8nwMV4je0RCY17Fo+1i4mv9+fl5uFg7tPe8iY3+qU+C4iHcqjBj/HOs7dmtRyDP3mlMVKCwwX22LzGs5YMaPQtJsOHItY/OD09M7nt13w5gXI+GWK/Ip6YoRBxExVZE/x0rOsqoEb/BCty32nMiAldRB72IbxOvlw844jb9PDHcr/YWy32paJPoKPrYibraGtvtiT0OpDhl8+rCQWCfIWB8eS4BStCnbl/GNqZoRkOp7VX2qIyuNjBqAFeFzOVwUhr9sDsWkE93LHGH6NYHpXgbFAneLg+1eS64Ku7D4LqVLDQA==
+Received: from DM6PR10CA0019.namprd10.prod.outlook.com (2603:10b6:5:60::32) by
+ IA0PR12MB9011.namprd12.prod.outlook.com (2603:10b6:208:488::8) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.20; Tue, 24 Mar 2026 16:57:29 +0000
+Received: from DS3PEPF0000C37B.namprd04.prod.outlook.com
+ (2603:10b6:5:60:cafe::96) by DM6PR10CA0019.outlook.office365.com
+ (2603:10b6:5:60::32) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Tue,
+ 24 Mar 2026 16:57:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS3PEPF0000C37B.mail.protection.outlook.com (10.167.23.5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.19 via Frontend Transport; Tue, 24 Mar 2026 16:57:29 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Mar
+ 2026 09:57:10 -0700
+Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Mar
+ 2026 09:57:08 -0700
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Aman Singh <aman.deep.singh@intel.com>
+CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Raslan Darawsheh
+ <rasland@nvidia.com>, Stephen Hemminger <stephen@networkplumber.org>, "Adrian
+ Schollmeyer" <a.schollmeyer@syseleven.de>
+Subject: [PATCH v2 0/2] app/testpmd: assign share group dynamically
+Date: Tue, 24 Mar 2026 17:56:55 +0100
+Message-ID: <20260324165657.23945-1-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260324123709.3471-1-dsosnowski@nvidia.com>
+References: <20260324123709.3471-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.230.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37B:EE_|IA0PR12MB9011:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2480f7ee-d67f-4a75-678d-08de89c66f07
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|36860700016|1800799024|376014|82310400026|18002099003|22082099003|56012099003|13003099007;
+X-Microsoft-Antispam-Message-Info: gElFPP8Jr/9q3Fzc2XmqfA5Fkfxoe+Op76d1TSRQVr0mU+0+2ihU4CPfb5bF76/iKgCalA6ICZeKFBtN5H48ejEDTI6Zc2GN/cId7Il9Yq0BGbTJzlQUFCWJoOnb8jWcP7PdIDbVNjzVpg/XI4vvlqALG8CscurJFRY/h/XOEVYCytH12HdzbEtnix7CMmb8/JcqnJSiX8MPT3JsX9+bACd8I1GSvkWw8c8C5bCky37iSQBxxbuvbp3pJEQb9rtjLI+RIRf6+IlSqa4UUfpV+F2j0eqklG2AB/YXpCvupwvwYL+faURGkbTCG+wHCS/hc4PUsdmOZYlShrpccnHt1NSJOQ+T+EenUtB+279yJxV/VYUk3jj5uLm1KdhJGFqhn2KS95m6moGUEudog/FtspJ5rggZvrCFbgLp1zt0ftTMr5zMxb8datxMxEgE0ijlyq0trFvehXxe1X2ZOWzMNsQ77ylO/sSlh4hE9iyw5O2Oc+K7MhIFJu8QF4SSMtt3nRFokvne7Y8SAQx0JoZzMFNFtZtehdhrprK9nYfcsbkZbrtVYe69OuQtgGDYoHnVYfmoBP/WYEl7rnmNP2ZXYixWwVr1o6wr38MB2lj6Gv0xUoar1/asJUtVcgLFR8mxQANwSdI2Xo1djzxYnCV5uRQr1WEQzzkxzn2IPxa7yLFWtyGiz90IB+dCgStsOkyJpLr6ftWDeiUyZRE35xLfzWllwzn+DpHOJei1k37DohNdXn20njnZIwm+E7wNiuculutnCDN9AzGlBRoG4L57og==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(36860700016)(1800799024)(376014)(82310400026)(18002099003)(22082099003)(56012099003)(13003099007);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: dD2YpCZbzWcDv+a2iZPm97F56LwixZdrJCsvIk3naF+3H9Um+X0NAB5w5QNbGbjwFiGXf0UkCsVg0+hoD2UsLndqENkZbSnmA1Ek6b/6O/rpbYzbs6ecMS5rA2U4NRnGuVzSTEP32xJ2dWxs5ojSPdSmW0vsY6//24ADqECaCm82Nba/XTXEz7WXtgKyQpTu4CzNEuq2Anu3RyoPL5luGitQZ5LFcxw0hIeu2MLPXUsyXWKjUQQ/Hd+p0OZo19ZnuMArFHSgQ+1dg/5sNvLws2DY1mG9w4OIETUz3fIQVFjy2JkkoXVvlyq7uCBSdkgEjGRUqDsWWdx2/BBfrgmZ6POR3NrTyBZyubxGBCJ3ms8jt8Y8pVpapybHKWljt3OugJAMPAhCV4xx9pmtLbrmCCbdXqZhC69U4NV52U5mdLaBkjoJ+LYygF7vJnk7zCNS
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 16:57:29.1101 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2480f7ee-d67f-4a75-678d-08de89c66f07
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF0000C37B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB9011
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -53,169 +112,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add rte_pmd_mlx5_pp_rate_table_query() to report the HW packet
-pacing rate table size and how many entries are used by this port.
+Our internal regression tests have flagged issues with shared Rx queues.
+Specifically, issues with domain mismatches:
 
-The total comes from the HCA QoS capability
-packet_pacing_rate_table_size. The port_used count is derived by
-collecting unique non-zero PP indices across this port's TX queues.
+	Invalid shared rxq config: switch domain mismatch ports 0 and 3
 
-The rate table is a global shared HW resource: firmware, kernel,
-other DPDK ports on the same device, and other application
-instances may all consume entries. The port_used count is therefore
-a lower bound of actual HW usage.
+These started appearing after commit [1] which added checks
+for globally unique share group indexes.
+This could be worked around with --rxq-share=N option,
+but it does not allow proper testing of all use cases [2].
 
-With shared PP allocation (flags=0), the kernel mlx5 driver reuses
-a single rate table entry for all PP contexts with identical
-parameters (rate, burst, packet size). Multiple queues configured
-with the same rate share one pp_id, so port_used counts unique
-entries, not the number of queues with rate limiting enabled.
+This patchset addresses that by changing behavior of --rxq-share parameter.
+Instead of relying on user to select proper parameter value,
+testpmd will dynamically assign globally unique share group index
+to each unique switch and Rx domain.
 
-Applications that need device-wide visibility should query all
-ports on the same physical device and aggregate the results,
-similar to how the kernel mlx5 driver tracks usage internally.
+[1]: 8ebba91086f4 ("app/testpmd: fail on shared Rx queue switch mismatch")
+[2]: https://inbox.dpdk.org/dev/yotjxacqrodttraqrr3r6ftut4cty66g6cjnr5ughswtatapgh@gqqkftskp3qq/
 
-Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
-Signed-off-by: Vincent Jardin <vjardin@free.fr>
----
- drivers/net/mlx5/mlx5_tx.c      | 64 +++++++++++++++++++++++++++++++++
- drivers/net/mlx5/rte_pmd_mlx5.h | 44 +++++++++++++++++++++++
- 2 files changed, 108 insertions(+)
+v2:
+- Add releasing share groups when ports are closed.
+- Add static to share_group_slots array definition.
+- Remove double empty line in revert commit.
 
-diff --git a/drivers/net/mlx5/mlx5_tx.c b/drivers/net/mlx5/mlx5_tx.c
-index fe8c363490..654323852f 100644
---- a/drivers/net/mlx5/mlx5_tx.c
-+++ b/drivers/net/mlx5/mlx5_tx.c
-@@ -19,6 +19,7 @@
- 
- #include <mlx5_prm.h>
- #include <mlx5_common.h>
-+#include <mlx5_malloc.h>
- 
- #include "mlx5_autoconf.h"
- #include "mlx5_defs.h"
-@@ -888,3 +889,66 @@ int rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
- 				     packet_pacing_rate_limit_index);
- 	return 0;
- }
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_mlx5_pp_rate_table_query, 26.07)
-+int rte_pmd_mlx5_pp_rate_table_query(uint16_t port_id,
-+				     struct rte_pmd_mlx5_pp_rate_table_info *info)
-+{
-+	struct rte_eth_dev *dev;
-+	struct mlx5_priv *priv;
-+	uint16_t used = 0;
-+	uint16_t *seen;
-+	unsigned int i;
-+
-+	if (info == NULL)
-+		return -EINVAL;
-+	if (!rte_eth_dev_is_valid_port(port_id))
-+		return -ENODEV;
-+	dev = &rte_eth_devices[port_id];
-+	priv = dev->data->dev_private;
-+	if (!priv->sh->cdev->config.hca_attr.qos.packet_pacing) {
-+		rte_errno = ENOTSUP;
-+		return -ENOTSUP;
-+	}
-+	info->total = priv->sh->cdev->config.hca_attr.qos.packet_pacing_rate_table_size;
-+	if (priv->txqs == NULL || priv->txqs_n == 0) {
-+		info->port_used = 0;
-+		return 0;
-+	}
-+	seen = mlx5_malloc(MLX5_MEM_SYS | MLX5_MEM_ZERO,
-+			   priv->txqs_n * sizeof(*seen), 0, SOCKET_ID_ANY);
-+	if (seen == NULL)
-+		return -ENOMEM;
-+	/*
-+	 * Count unique non-zero PP indices across this port's TX queues.
-+	 * Note: the count reflects only queues on this port; other ports
-+	 * sharing the same device may also consume rate table entries.
-+	 */
-+	for (i = 0; i < priv->txqs_n; i++) {
-+		struct mlx5_txq_data *txq_data;
-+		struct mlx5_txq_ctrl *txq_ctrl;
-+		uint16_t pp_id;
-+		uint16_t j;
-+		bool dup;
-+
-+		if ((*priv->txqs)[i] == NULL)
-+			continue;
-+		txq_data = (*priv->txqs)[i];
-+		txq_ctrl = container_of(txq_data, struct mlx5_txq_ctrl, txq);
-+		pp_id = txq_ctrl->rate_limit.pp_id;
-+		if (pp_id == 0)
-+			continue;
-+		dup = false;
-+		for (j = 0; j < used; j++) {
-+			if (seen[j] == pp_id) {
-+				dup = true;
-+				break;
-+			}
-+		}
-+		if (!dup)
-+			seen[used++] = pp_id;
-+	}
-+	mlx5_free(seen);
-+	info->port_used = used;
-+	return 0;
-+}
-diff --git a/drivers/net/mlx5/rte_pmd_mlx5.h b/drivers/net/mlx5/rte_pmd_mlx5.h
-index 698d7d2032..621d8c2b15 100644
---- a/drivers/net/mlx5/rte_pmd_mlx5.h
-+++ b/drivers/net/mlx5/rte_pmd_mlx5.h
-@@ -450,6 +450,50 @@ int
- rte_pmd_mlx5_txq_rate_limit_query(uint16_t port_id, uint16_t queue_id,
- 				  struct rte_pmd_mlx5_txq_rate_limit_info *info);
- 
-+/**
-+ * Packet pacing rate table capacity information.
-+ */
-+struct rte_pmd_mlx5_pp_rate_table_info {
-+	uint16_t total;		/**< Total HW rate table entries. */
-+	uint16_t port_used;	/**< Entries used by this port's TX queues. */
-+};
-+
-+/**
-+ * Query packet pacing rate table capacity.
-+ *
-+ * The ``port_used`` count reflects only unique PP indices allocated
-+ * by the queried port's TX queues. It is a lower bound of actual HW
-+ * usage because the rate table is a global shared resource:
-+ * - Other DPDK ports on the same physical device may hold entries.
-+ * - The kernel mlx5 driver and firmware may also consume entries.
-+ * - Multiple DPDK application instances may share the device.
-+ *
-+ * When multiple queues on the same port are configured with identical
-+ * rate parameters, the kernel shares a single rate table entry across
-+ * them (with flags=0 allocation), so ``port_used`` counts unique
-+ * entries, not the number of queues with rate limiting enabled.
-+ *
-+ * Applications that need device-wide visibility should query all
-+ * ports on the same physical device and aggregate the results,
-+ * similar to how the kernel mlx5 driver tracks usage internally.
-+ *
-+ * @param[in] port_id
-+ *   Port ID.
-+ * @param[out] info
-+ *   Rate table capacity information.
-+ *
-+ * @return
-+ *   0 on success, negative errno on failure:
-+ *   - -ENODEV: invalid port_id.
-+ *   - -EINVAL: info is NULL.
-+ *   - -ENOTSUP: packet pacing not supported.
-+ *   - -ENOMEM: allocation failure.
-+ */
-+__rte_experimental
-+int
-+rte_pmd_mlx5_pp_rate_table_query(uint16_t port_id,
-+				 struct rte_pmd_mlx5_pp_rate_table_info *info);
-+
- /** Type of mlx5 driver event for which custom callback is called. */
- enum rte_pmd_mlx5_driver_event_cb_type {
- 	/** Called after HW Rx queue is created. */
--- 
-2.43.0
+Dariusz Sosnowski (2):
+  app/testpmd: assign share group dynamically
+  app/testpmd: revert switch domain mismatch check
+
+ app/test-pmd/parameters.c             |  12 +--
+ app/test-pmd/testpmd.c                | 122 +++++++++++++++++---------
+ app/test-pmd/testpmd.h                |   2 +-
+ doc/guides/testpmd_app_ug/run_app.rst |  10 +--
+ 4 files changed, 87 insertions(+), 59 deletions(-)
+
+--
+2.47.3
 
