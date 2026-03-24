@@ -2,121 +2,121 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4385F54AAA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 13:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C70F54AAC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 13:04:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7EEF14066C;
-	Tue, 24 Mar 2026 14:03:25 +0100 (CET)
-Received: from BN1PR04CU002.outbound.protection.outlook.com
- (mail-eastus2azon11010037.outbound.protection.outlook.com [52.101.56.37])
- by mails.dpdk.org (Postfix) with ESMTP id 8C5984025F;
- Tue, 24 Mar 2026 14:03:23 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E9DB74067E;
+	Tue, 24 Mar 2026 14:04:02 +0100 (CET)
+Received: from MW6PR02CU001.outbound.protection.outlook.com
+ (mail-westus2azon11012033.outbound.protection.outlook.com [52.101.48.33])
+ by mails.dpdk.org (Postfix) with ESMTP id D65F34025F;
+ Tue, 24 Mar 2026 14:04:01 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Xb1/932csgtPeYVB0V77Nio1SyNkXPeUDvLN4JvgAJYfTt45CHoPOKhcbcGC6YVWTDtc7xP7mf+me/xXm5cecV9gBFsPM6u//Ibxp78wn6GUM/fgr6hcnxQyzxBLg8QEhZfUItKkuPI3XZixG/n+RfWPgwK+cyLLfdzLgkXKhSiAYzY21iZLsM//1d0QkLEpUTLPprFQBhh/RmsBF4IlJNgLcp/Bd0OcewBAop/h7YivIFpEf9NiD0c7yzayH5W2qxhNSrU4GjONTzTfgCCIXaTMmEldelfx4d9+cs3uOiGeNM9hZXrZPwOdd4gmgv0OO1UtAt2Ya9UpdfY5qTFpxg==
+ b=WVK+TFR+Vqi7P+DcV1pI0NJ49D+ZPah71IzmGJXLLv1j55OajKpnUm0DRkK5q8SktHwGTyy1Xpgr3yHF3Ecks33zfTgooFVI0sHRQedKk4kEOknLJRtAv5881oFnnvwJItggfu3edCpj5OipkqeKwaGWI/4hXpoGu/UQmvYUxMnVf0NEnFHldmc006otbXzT0KAV4Bxr6+7WHB0t0m29t9IQiqS9nWjNXj7H6Y7e3rVB1rJub3Ia4hnaIbbMXPwkocesEmmFWYyNoXoQ1+oxkT32N8pWHfkS9TXNmy8N9PV+54vaWVJyX+Q08zZV8f9IUQ+SBqN5VYvlEMT2jgDSIQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zfzC8rUvKvxnu08iOCM8FEsh2J3Pfbd9Eo9LEjY7IQk=;
- b=rUUQto3TyE1RQwYdUiHzRBsgVXJ4MsZMTXvIyzqxwMJ+VoS3d8aSWv4XV3uE1CzpaDLywhUr77SRcYXejzVpH3bb92C74yKDU/AWHj3oJoEk74op/uJgFbS4+m0pugjsIM6hgsgM1Rg7RIJHIlzHtBN/aOe/kugqNTntPz/zLolaNVlQUGoP/dTzNtxd9lXu/WbeSgAkEcGtvB+iYVSLVuJSqHQK+dH+M1ZL7MEqeGw8ouSxm3vTFIzWGegqWDnHu9VhYZV7HVMnda8tp0sYIJVinsgeV7X6i9z1owbBuYWnjO0H8LTaUsjtY522+EvUS8/BzCjA2kN88FfYVRGoCg==
+ bh=zN6dqUojFiSzgElkWAHHN/YEnbwN/puYDEQvnbmvvnc=;
+ b=Cz/sKX826BY6UG1u1xtbhPIR8KTTMmqNjuvK+nUNaaEhiU5Dfl6caFvXhz0J0XhBOo2Bsrjhc/qc6C2vLKpph7YimvSDDXIp+6aeVm0IWBmE5cgUY45bBmYe1Nk9svYYUavaWo232gMa8creV0tFh4L/khLUHwQdlG7NWjThlujWM7RtLyFzClaXaPlBpfMYdBXybEt57Q55nkcp0iYpTGclkbgi3aTN6ucRiKWVH/gXQeCVyzatDPjQV5ARN9kVbULw+WaNYayC3SXSCdHR812EzeO0kMeujUediFKB9RZoihaKVjEif2PmkVS+fTFigBp1fs6w33JgF2TCo9jnQQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zfzC8rUvKvxnu08iOCM8FEsh2J3Pfbd9Eo9LEjY7IQk=;
- b=YK/WZnSnH4k57mYCmjUvboxAGlARDHWYV/fJa8lE5rJqI+LUW8gM1fnwk0DsMvbJq9R5XPJRt2gQUe21qy4ruYufeQgWLe1MnT4GwEhTTXqKUyVkiYpwheA9cwphnIVcHopmGGKwjQRa5OVKQTWvn+6DbKP9ws/wWjcLXPbsDJsDRX65CtD3XQd/ShKKyMhdmYl7KGdpPw74AA8T7wvcH8TerFyrsrSOomBhQfLTJwvPHRGOtGHdabdVyhoL3m0ycAlZM04kR5hHz5rz8aTKZ523ya/Pk4FxxQ1HEFKo8lBFkSInkkkxhp7VdJIpqY4WcJ6CydTiKb4sl28xhMuHBg==
+ bh=zN6dqUojFiSzgElkWAHHN/YEnbwN/puYDEQvnbmvvnc=;
+ b=JPHJkNe3upo3v37de4gFg3/6u+hEkrQ4ERtfMUc+GMN5E/0HBn8+z0YyURQGe+WdslRt+tHvV9rjPKs7c2UXTZdcU+mzaUJnwysWf+fRQ6EnDBEb//Ii5lsIUoS7JKXZ2ILAbCzkpMUxl6FAqJUP3h6yr6P9EvPmRVtytm0k71HEIwaBqinlXNzglMiPhkyVAx3h8mjvvf8ktV6sToXFwb4/1tAEAPTRMby/eyrbq0u62gGM4abNgRQRSWvcS8xqQPygOJJc0idy3ObR4Y1frvnpxEIiXhXc/WJCLAJDFAwQNfWWsN0I/JKb1/mIGnMcUAmyZVFIBpdQwaLreuDXJg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from MW4PR12MB6754.namprd12.prod.outlook.com (2603:10b6:303:1eb::7)
  by CY8PR12MB7516.namprd12.prod.outlook.com (2603:10b6:930:94::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Tue, 24 Mar
- 2026 13:03:20 +0000
+ 2026 13:03:58 +0000
 Received: from MW4PR12MB6754.namprd12.prod.outlook.com
  ([fe80::baee:e8cc:6cbf:3d84]) by MW4PR12MB6754.namprd12.prod.outlook.com
  ([fe80::baee:e8cc:6cbf:3d84%6]) with mapi id 15.20.9745.019; Tue, 24 Mar 2026
- 13:03:20 +0000
-Message-ID: <a0aed7a7-a6de-4ea2-a44c-e5e1c71841e6@nvidia.com>
-Date: Tue, 24 Mar 2026 15:03:11 +0200
+ 13:03:57 +0000
+Message-ID: <fcb9d7d4-44a3-47d3-b8c9-2ff7d3d97a25@nvidia.com>
+Date: Tue, 24 Mar 2026 15:03:47 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/mlx5: fix flex item capability check
+Subject: Re: [PATCH] net/mlx5: fix VLAN strip info for CQE compression
 To: Dariusz Sosnowski <dsosnowski@nvidia.com>,
  Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>,
  Ori Kam <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>,
- Matan Azrad <matan@nvidia.com>, Gregory Etelson <getelson@nvidia.com>
+ Matan Azrad <matan@nvidia.com>, Alexander Kozyrev <akozyrev@nvidia.com>
 Cc: dev@dpdk.org, stable@dpdk.org
-References: <20260323102059.791194-1-dsosnowski@nvidia.com>
+References: <20260320160001.787223-1-dsosnowski@nvidia.com>
 Content-Language: en-US
 From: Raslan Darawsheh <rasland@nvidia.com>
-In-Reply-To: <20260323102059.791194-1-dsosnowski@nvidia.com>
+In-Reply-To: <20260320160001.787223-1-dsosnowski@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL2P290CA0016.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:3::18) To MW4PR12MB6754.namprd12.prod.outlook.com
+X-ClientProxiedBy: TL2P290CA0020.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:3::9)
+ To MW4PR12MB6754.namprd12.prod.outlook.com
  (2603:10b6:303:1eb::7)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: MW4PR12MB6754:EE_|CY8PR12MB7516:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba76e9ef-1a66-47fa-b799-08de89a5b8c2
+X-MS-Office365-Filtering-Correlation-Id: c0e2d521-ae45-4fb0-14c2-08de89a5ceb8
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
  ARA:13230040|1800799024|366016|376014|18002099003|22082099003|56012099003; 
-X-Microsoft-Antispam-Message-Info: iuGXTzy0VyUFQDKMy4OFr/wvfULfLIFsoaD4R+IP+bfoZ9IytquwygrGbiOd3NefSutBUv2V7ToXNbN2w0AKV4K3dW0CagLYPR5AhK728LIP4eETg0hWLh25rPDr0xIkva+4RtZlSpEvNZFWORstuch0yIw9427ZNdruHBTjgrGZmOvo/5zJlH14QdtlC7/ebG1PKWUYj6RlNBc44cP3tod6Thj9ztaKAjTQt2EdjECgsZLq+qFIu/Lm5m7a/ZCwSXJ8LUVIWmiAxMx6hNS4rCLc+8NF2Hn+EFMZoW2R1/6tQpxaXIcqE3vS5hEKHzZBkfb97CjCTdBFL/bVN43mlwMmGnDruUQQbmAGK45C0g4XlQaNw4kjw0Q/Vld92A2GqoAgp5cVIiNQgb/80YD7HS0ESoDBn8tiY7m5VJMU31tEQ6tx13tPkA43ACneBhmosKGg10uoGto0e/3b10Q8GHth19hePtHhcsvnHdLG4kKHFvTGatNf0pWfuL8YnkxplV7ZPx8bAAAx9drgruWlpLmjbRG5e3JZvDpiHNaMwLEbjJdROvMGUxUHWBtZmDL0FWFDslT+PMWcQdrh8VpK+aW/HYsBCzOFP4d6HTA5B9zsTBe6D0YRUViZ2m6vN9TfPSabzvfrxOO9rkO5mlje7mzBlMHxrapu2zB9m82hSRHPXYLF5PWOGqiuidHZD5wfbVSzKWdxThjTW2K3eYa/HdpXGVUZW08q/9RMNZ9f310=
+X-Microsoft-Antispam-Message-Info: VRg+QIJdgJmCedAbGanQPAExxwG1SQ/FxPo56j9jDzwtU8HIwWx57z80YAI0PB8d+uLI2Reuuj16mV23VdHVkGNXufTN58W5eQRp9cZ8f2Z4JxTQcJh2/FSaV9Ks6tfqwtl4E2gLkP1/lke0MvUz5FoUccxqPVFFdZ0Zh7F051Wd/tmzYEwmuXCkzVkdgtnqVvZd3vn7ONjyykj1NYHcu55mTaH17IS+R6kP3Cupt5TTmje/be9hB0m5XxP91ETwrOijmcb639u69bKbefLI8XXEiGtTyQAg0I0uznqZgvOh24gh9LrAJ3VD04Txj2q/y7yoTFApdEtAVoilM8CJTiLu6bOWENFzONyaWExTdDsCxT8K6QurK7KC/zcsB/Br1pFoCF187KjlYSf6NGB1C1dzBz+NBAunoRqwZM/tzDlhBDGzQO7iL4OJ2DvTlhzsl058ScWftY2EWtaPpXMO+PRloV+p1mVztNIQ2nFhlhCZXu1FAxIHzlNQQ/VLlMbkUTlFt74fC3J2nEZz6CzhFOLe7bSDPsNWaPtfFsuAmmdblvKrlSf1FiNaEbyLQojfK2YcrJJ6K0Or1VH4vuguR79upsdAkdU1+F4l0TDY61sE9wpr38WGWUBpjL9ku8QkIjDBB46TraZOknLUXdpNJJAfiazKKW6eZ48vxQtDAIzmncBCWNtt03S/mU7EjduOHU4yWymcHS5ZEiRf4MLAqLFTWRZqQoQTIY16lbQWcQ4=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:MW4PR12MB6754.namprd12.prod.outlook.com; PTR:; CAT:NONE;
  SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OHNUQnlQNDgreW0yWVY2WWVBTFN6SnpTTSs0eUx1amRlUEhrR0toK3hTR2x0?=
- =?utf-8?B?aGpjSVB2Qy8zNXY1cmtSQlZRdCtHQmFmZlRVL3p4cmZ0OXJmaWhiYkpNbkox?=
- =?utf-8?B?RlRKS3Z4MHdZYktHN2trNnhqUWVrTHFVR3ZmM0N2RktVWExJRkJIU25MS3Mz?=
- =?utf-8?B?RktwZWQ4OE5KbnUwOFdTWDJJaEFDVVZHakNHaFMwL1h5Tyt1VVVlZUg4a1Nm?=
- =?utf-8?B?Zy96a0lNanBqMGkvTng0Szd5dk1tdmY5alZtZlc5aVlibUxBVDYzYWdVWEVs?=
- =?utf-8?B?OEJ1SldDY2RGeDhTZGpFS2k1VVRJZmRTNDJWVG5kc0dxU0NVNmkyV0tUZVBl?=
- =?utf-8?B?U05KbEh6OE00V2VFMVgxYzFMVXgxSzJJRTIxTFRsNVF4Y1RFbEw3Nk1SQ0dH?=
- =?utf-8?B?VVllSUwyVFlUUEZVVWJsVEFGQ25LN254K1J0Q1Zqc0M5Q0srYW50WU41NWtX?=
- =?utf-8?B?T2pHSS9tTXd4QkQrd1U4Q1hFOVFPTjhvdmlnYjdySGszS0JTclZrMlNhcHQy?=
- =?utf-8?B?eUtLZENDWGRaTFh3K2MvQ2lCdHN3MUpoTTFoMFVDbi9ycG90cHF3bUd3NkpX?=
- =?utf-8?B?UFdzRHpydG5BSWRoYm5BNDFUZW5XVzZMSHRHc2xLb0RweVhwdlRqSFJUSUhZ?=
- =?utf-8?B?bEpuTnhBOFI1WjhxbmZsOGZFYm9Ham5jdFhoZlFlWUJEdmpRRUY0S1pUdVps?=
- =?utf-8?B?RUpUbDNEZlZmT3YraGtiVVpDRFk2emNLbDhZQ3doSnVVTDNSUmhJRGx6NjZj?=
- =?utf-8?B?dHpKM24rMU5ka0NmUCtvRU9WczFNZkhLZUdUcmpPdG55eDVJaUR3RmdQUHFo?=
- =?utf-8?B?QURERUUxRXAvNEdFeW14OUNXZU5xNjVzR3Y5M0NyTWFQMm85MnB5VU4yNzB2?=
- =?utf-8?B?SDBEVWJJanNFN3ByQ3VxYncxbmNCZFIxYlpzQkJFaE9wb0V4M1E5Y21kTVJP?=
- =?utf-8?B?N0VFUlpuaE1qZUlTQ1R5b2xWalNmSEY5S0c5VGRuSGI1a1hVSEEzYXAzS21X?=
- =?utf-8?B?UFNhUFc1c0hZNjlsUjZ1VzhtRVYyc0hJS0l2bEUwZUhFYU1MR3VzVU5PNUFt?=
- =?utf-8?B?eFB4UGwzTnRtRnYwcnUzcGJHNE5XL0o4b0VwM0YwZkpKWUNNdjFhQ3M2QmZP?=
- =?utf-8?B?cGU4OEFVMFp2eWdsdlhzVVBIZzk4M2dHRUdlaklQY1JsUUt2QXJmQXhSU0ZW?=
- =?utf-8?B?MEJVYmxtN2I5aXFranNSYU9tN3Y4S3NDQkMwbSs1Z2owdzJVQ215bUk2RERv?=
- =?utf-8?B?c0c4NnFqaXFZZHJJT21PN2hlMW1XV2RiVFVFNng1aWRGUHR0MlcxRnpPZHdm?=
- =?utf-8?B?a3ZxSVFMN21laVpQODRvVHRJdnFJaDlRYldMejFoQk9JdWJLUlgrN2R1ckZO?=
- =?utf-8?B?SWhWTm5CZWhrb3NpRE9NUkZqSUVaZGFCZ2Q0REg4MFRzdHpIMDRmOHJHM3N2?=
- =?utf-8?B?b3NUTTZMVkdSQVE1QU42QjRia2VtLzVsMElSaXY2UHU5MSs2dWJhbjNFRXVN?=
- =?utf-8?B?TjhSZkg4cnVlQm1qeUZoN3oveWdYNnFLSUZFZ2k5MzY5Szdwb2FGanVxeC9P?=
- =?utf-8?B?YzFYYW9kRG9vbTlrNWdsY1ZuZXFPdVJkSmxQUEFFMzU2dEY3YllFNWFoK3pI?=
- =?utf-8?B?TVhxSDJocEtjZGNjbHhiSlFQV0lkWjNOQVJVQVVibnMzakczekxCS3oxY3ND?=
- =?utf-8?B?TnRnRVNraTA1c2tQSWpscjRKTWRJc3pUVzVwUHltTUxDVVFvd0dOS0dsVmNv?=
- =?utf-8?B?RW9aZWJnQU1ENEhickczZjdESHFGUHRVQkdoeWJ0akp5OHg1SWxYZEVZTkoy?=
- =?utf-8?B?RVNlWmxoQUJmak1wbE1EQmhNbGgrL0tRdXZqcnI2RXVSWnpTeTZtbFJrSEdL?=
- =?utf-8?B?eVFjUlB1eVcxVEJwVUxMU3p0TFdEWEVFM3MxT1ZoTENGRUtPWVdVSlZnL3BD?=
- =?utf-8?B?UkpERkY4QUhHK0xaWTQxZFJwL21ZdVJqRlpWQ0xIYXBRa3k0aFkraFZrZGEv?=
- =?utf-8?B?aTFndytnTVJhb1hJRTYwODdHalhsU2RveGxqR2p2WDRkOU5yZVc4MGpqa3RB?=
- =?utf-8?B?TmJGOTlJOHNubk5udWluazl1SC9XdWo1QTlybjd1WmsyWHZCV2M2R2p1aUF6?=
- =?utf-8?B?eEgzMnd0L0UvRWpDTE1yQVdVdU5LL3RYQzVjUW5VMHB2bmtNaTVtUC9vb2Jn?=
- =?utf-8?B?L1NkL0lCVHlzTVpjNG9vSTB6eGl3QmgveWU2S3dHMEFqQk9WU0Q4aXNXR1p0?=
- =?utf-8?B?YkhFMnVxVHU5V0NXNG1YemFWUnUzdGI4M0ZhK3VrNldqRlZLUndKM0FYcisv?=
- =?utf-8?B?L1JoWTlxRVUyQ3k4Uk85N1JNU0F5Qko4NTc2TGxOMy9ybVRZRWtCUT09?=
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VHZzV29XNHZ5Y09rRi9mY3ZGNURqYjZRNHNRenpKWnRmV1lOL1Y4S21zOHNv?=
+ =?utf-8?B?RS9mZk95TWs5K1RCQ21jeGtSWmx3S052UVlXeUorazRqRFpzSmtsYm9EOUpm?=
+ =?utf-8?B?WWRBeXN1WGtvbkRMZFd4R3c2akUvcGR4emFHZGtUVE1QRW5JU0QvZFV4OUxE?=
+ =?utf-8?B?clJhTVJuSytvSGZyZFZQYm81TjBleXNINkZXVFl4S2VERUYzbTdxVUtINm9E?=
+ =?utf-8?B?UjJGak9QSjVHQVpsSU1NVzVmaWE3eG43d1VaT2FNQ3pSZHkrbysyYzlucVlH?=
+ =?utf-8?B?YnBhWkZiK09STG9hSzhpQnd2SkUySnJ1NVY0Z2JxdGtnOWNGaDQ0em4rcU0r?=
+ =?utf-8?B?YVZ0TFJsN3FsZzZvWkVnMXBwSjdOWTM1YzV5UGRoVDZ4ZllqVFNJM0YzR2Z1?=
+ =?utf-8?B?UnR4QzdmaXhYSlYwS3J2MTV2ZHc1czZJZGZ2d1hXSE1LRmxGaWdoMGtieXZa?=
+ =?utf-8?B?aWxSeUdlanh4RGVTZ29qWHFNSEgwWTBuUXJuRi8xcHcvMTIwQXV5Z0dkOUNE?=
+ =?utf-8?B?TzdMcWNwWjBaUVZKUm5qYmREazFhUHlGejdxU2hrZGpBa1hObXBmK2diQWgy?=
+ =?utf-8?B?NUtkUzJuZGs4bFMzVGxWVWE1RittWE9FTHpMYXVrUTI0QmF6NVMzdHo2S2F2?=
+ =?utf-8?B?KzJlRGZIVWVvY2xaMys0WUlPTU1oM1o0U21YNlQwRDVHczlZOGE4YStWck0x?=
+ =?utf-8?B?R1ZUeFl4aE1zR1VrUnlhM04yQzdRZUNkbTNyVUVOajVoR0RGVVJZMXNEbHBZ?=
+ =?utf-8?B?OTZWOE41eHpwWWJ5anBkVUgxZDlFREVQL0dEeWJId21QdlVnQ1dIMm9CMS9s?=
+ =?utf-8?B?RmV5YWhCMS9BV2lqTy9rS3RBUEp2WkNEUEs0TU9GUk9BVHE5UGkwOCtqQzZG?=
+ =?utf-8?B?cXpIVEVaV0pnK0FYbkJRR2ViZnVrNk1EZGYzK3FGQmgvZU14YWtxVlU1dWp3?=
+ =?utf-8?B?bkJpMVZaeFpSK0hoUzl1Q01kVWNicktPaExBUm1HT2p1RGRPTTdMbDREK1lP?=
+ =?utf-8?B?M0t0VDdsOHBhOEdrYWtncytxbVNTOXJySy8xVG43YTZPalBVcXhrdWJTQXcv?=
+ =?utf-8?B?N3RCMGdXeVN5SDFvQ3hwOTQ4VExYcGNsbTc2R1Y1SWszZTRCcS9sOTN2Ym54?=
+ =?utf-8?B?eEJkZGNxTlQ5TmtNajl0Ti91L1VYMUNIWll1aUlNZTA0RDlYRlBsdUtrRTlK?=
+ =?utf-8?B?ZGtjSjRoQVlsM3AxNzFRUTZ4OWpHRW4zUTNBN1loY2dEZkdjKzZaU3JDSlZ2?=
+ =?utf-8?B?a29LVmZkcGpoV2g1NGVmMFE5Vi9HdlMzd25ucjdmZmlaWDJ6R3BvR0hjbmZh?=
+ =?utf-8?B?RkV5cE00SGxzeE41UHpBSkozUWo4OHViYm9CMUNHWHJQTnJJdGhlNVpPVU5Z?=
+ =?utf-8?B?TlZwRVJBcDdsZi9YbEhVeGRjdmNJZlpvZVRHTUhiemFkR3ZDT2M5Y25lZmNa?=
+ =?utf-8?B?UE95NkFoZXVKNzl0ZE4zN1cxM0JsWjV4UzRQYWl4T0xMNi9jbnhCOU9tcncr?=
+ =?utf-8?B?UG9VSU8wdFRSYU5KNDlzZDVuV0VvZmhubjQyRU04eWxHaWxIZUJBZUlIa2Nk?=
+ =?utf-8?B?UjZjb2ZuTmlLYmlsZ2wvaDdrVTY2L3Ruc1o2ZzQ3RzhBdjRIWDZqTTJJYmZ2?=
+ =?utf-8?B?c0NHQmZmdVU1M0ZsZnRXVVNsRTJnanYvQnArMVZkMWkyS21yYXV1Q2pWd1Vu?=
+ =?utf-8?B?Smd5b2JNQkNsdi9telh2ZTJFSTE1T2c2R2lHUW1PbUg1dUJ5VnI3OTI1Z1Yz?=
+ =?utf-8?B?N1Z4OEVFckxranVPbGVXTjA4QTkwMFVYejh6THhMM0ltcUlXNmRwMStHaGdW?=
+ =?utf-8?B?T0hnTFdLZGpoSkdrQ2ZWREVTdGF0aktYYk85ZTJtUFB1Nk5velUrNGtTcUtM?=
+ =?utf-8?B?NmR0VWNHT2pqaFQydTBsTW4rTkUwM2RNY09KWHk5MlZGZUtJaWEzY3dZSDhW?=
+ =?utf-8?B?aDlUZDNlN1hPalJDaVEwaHg1eFNoNkl2TGdPdi85R0U4cDVPWGVjS2sxVE9F?=
+ =?utf-8?B?cEUzUG81L2lYRytZVEpsLzMvV2ovSFE0NnloNDdlOXB5d1ZMY1JFNWZWYm9h?=
+ =?utf-8?B?bXR2U3lXT2hPT2lEN21lUFJqUlZ4NzdWQmRnUEZ5L29nUmpCL3VNMHA3STFZ?=
+ =?utf-8?B?eTh0QUpHa3JhZDZGNWJOUnFqQXY1OWRHOVJDSmlxVTdzbUh3R2RvVXAwNllw?=
+ =?utf-8?B?SWxqdXQ1SnZJaGlFYU44SUhONUlOc3lrU1ZGZXNDUWdlQXVqa25hczRJUHJl?=
+ =?utf-8?B?QlR5NzVrM3A1bTNZYUM5c3p0ZzR0c29peUJPa1BRV05STjE5ZUt6Y0grYWZ0?=
+ =?utf-8?B?Z2MzWUF0ZXk5U0didVRSOEhIWFhBNGVhdDBQeWdaTkxlSzZxcHVRUT09?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba76e9ef-1a66-47fa-b799-08de89a5b8c2
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0e2d521-ae45-4fb0-14c2-08de89a5ceb8
 X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB6754.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 13:03:20.3215 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 13:03:57.0788 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bWJ6NTLBnipQwGbvJpR52MPC4lt9mGaWH8BelvNKWI8Qs0zDC+X6LXIeKYW/FP6M2Uy98ZsENyMEwVEXAwWlZA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: u5ChvXG8uDiej1ao/CUlu3DN/qxysqRsw9JDq+kl6hpzUScGZEx7of2W6KZK85O0vzCOul2N9iGD57dzURvk4w==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7516
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -134,26 +134,33 @@ Errors-To: dev-bounces@dpdk.org
 Hi,
 
 
-On 23/03/2026 12:20 PM, Dariusz Sosnowski wrote:
-> Whenever installed BlueField FW was too old and it did not support
-> flex parser, mlx5 PMD reported an unrelated error
-> on flex item creation.
-> For example it reported that:
+On 20/03/2026 6:00 PM, Dariusz Sosnowski wrote:
+> When L3/L4 mini CQE format is used with CQE compression
+> (rxq_cqe_comp_en set to 4 in lower 3 bits),
+> each mini CQE reports packet header info for relevant packet.
+> One bit in that header info is dedicated to CVLAN info,
+> used to determine whether CVLAN is present in the received packet.
+> This info is used to determine VLAN stripping info
+> when relevant offload is enabled.
 > 
->      unsupported header length field mode (FIXED)
+> Before this patch, users might have seen incorrectly set/unset
+> RTE_MBUF_F_RX_VLAN and RTE_MBUF_F_RX_VLAN_STRIPPED flags because:
 > 
-> This was caused by lack of check for flex parser support.
+> - Struct for mlx5 mini CQE incorrectly defined the location
+>    of packet header info byte - it was swapped with neighboring
+>    reserved byte.
+> - CVLAN bit was checked incorrectly because of cast to uint16_t
+>    and big endian change. It should be checked as uint8_t.
 > 
-> This patch adds missing capability check and
-> adds proper error reporting.
-> Limitations of flex item described in PMD docs are also adjusted.
+> This patch addresses the above.
 > 
-> Fixes: 71adf25dbfb3 ("net/mlx5: fix flex item availability")
-> Cc: getelson@nvidia.com
+> Fixes: 54c2d46b160f ("net/mlx5: support flow tag and packet header miniCQEs")
+> Cc: akozyrev@nvidia.com
 > Cc: stable@dpdk.org
 > 
 > Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 > Acked-by: Viacheslav Ovsiienko <viacheslavo@nvidia.com>
+> ---
 
 Patch applied to next-net-mlx,
 
