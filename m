@@ -2,41 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE73F532C3
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 01:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 678C6F532C3
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 01:55:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6F0F340431;
-	Tue, 24 Mar 2026 02:55:45 +0100 (CET)
-Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [1.95.21.2])
- by mails.dpdk.org (Postfix) with ESMTP id E69A54027C
- for <dev@dpdk.org>; Tue, 24 Mar 2026 02:55:43 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 029CA40655;
+	Tue, 24 Mar 2026 02:55:48 +0100 (CET)
+Received: from mail-m16.vip.163.com (mail-m16.vip.163.com [220.197.30.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 6A15B402D6
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 02:55:44 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=vip.163.com; s=s110527; h=From:To:Subject:Date:Message-ID:
- MIME-Version; bh=oeop//HmkMT5sbfzqJromW6taSmymPpSCBNb9OUuLQ8=;
- b=ApE5GuaYTDgeGGbVkmBevhxKQA3kNcGbsqe2YVZyNb8Hvlx+biTeg95g4OlTAo
- MiYQZZwQzKUJbdwLJQTB9z3VRRyXVobhyY5GkMTU+k0tluLN/Ewnm0mj+HuxePVJ
- 5q9DIXBWYj7l9FsNzahBWeOHJ1jH1Ra6zyin50bSwjdG4=
+ MIME-Version; bh=ViOfv7dXUhBldZq8mDYa/M3e6O4UIPuSxnKHwfuvovY=;
+ b=Z0y9WQAgLLQ2NOG+lkUdNBArHAP1tm0WFu+dNt4AoDdJJW4vXtXUS64wJSP1NW
+ s6tWhKm6+WX2Uplt3odvFlzNWGVdD+ETPyJ8IjDRyLe0XMgrOthuwL+7f3h/q+q8
+ swWZRX9JhwBirFUCu5RTiUrJ89sw99fnih4f4dJVdt17I=
 Received: from localhost.localdomain (unknown [114.116.198.59])
- by gzsmtp2 (Coremail) with SMTP id As8vCgAnW20U78FpSlhiAw--.50021S4;
- Tue, 24 Mar 2026 09:55:40 +0800 (CST)
+ by gzsmtp2 (Coremail) with SMTP id As8vCgAnW20U78FpSlhiAw--.50021S5;
+ Tue, 24 Mar 2026 09:55:41 +0800 (CST)
 From: Feifei Wang <wff_light@vip.163.com>
 To: dev@dpdk.org
 Cc: Feifei Wang <wangfeifei40@huawei.com>
-Subject: [PATCH v8 0/7] hinic3 change for support new SPx NIC
-Date: Tue, 24 Mar 2026 09:55:03 +0800
-Message-ID: <20260324015516.201-1-wff_light@vip.163.com>
+Subject: [PATCH v8 1/7] net/hinic3: add support for new SPx series NIC
+Date: Tue, 24 Mar 2026 09:55:04 +0800
+Message-ID: <20260324015516.201-2-wff_light@vip.163.com>
 X-Mailer: git-send-email 2.47.0.windows.2
-In-Reply-To: <20260316134335.1640-1-wff_light@vip.163.com>
+In-Reply-To: <20260324015516.201-1-wff_light@vip.163.com>
 References: <20260316134335.1640-1-wff_light@vip.163.com>
+ <20260324015516.201-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: As8vCgAnW20U78FpSlhiAw--.50021S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGrWkGw15uF43ZrW8GrykZrb_yoW5tFW3pF
- WUJ3y3ZF1qgrW7Jwn7Gw4xAa45J3W8G34UK34YqasYvFWkAFyUA34UGFW0yrZxtr4xJ3W2
- vF45uryvg3W5tw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U_wIDUUUUU=
+X-CM-TRANSID: As8vCgAnW20U78FpSlhiAw--.50021S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW3GF1fCr4kXw4fWFW7uF4DArb_yoWxGF48pF
+ 45Ca98urWDKr4UAw1v9w1DCFn5Ja18K34j934IyayF9Fn8Xr1jv3yUGFW8ZrW5t34kZa47
+ ur12k397Cw1jgwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07URlksUUUUU=
 X-Originating-IP: [114.116.198.59]
-X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMh3N12nB7x01OQAA3j
+X-CM-SenderInfo: pziiszhljk3qxylshiywtou0bp/1tbiMx3N12nB7x07rQAA34
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,90 +53,191 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Feifei Wang <wangfeifei40@huawei.com>
 
-Change hinic3 driver to support Huawei new SPx series NIC.
+Add new device id to support Huawei new SPx series Network Adapters.
 
-v2:
---fix build issues
+Signed-off-by: Feifei Wang <wangfeifei40@huawei.com>
+---
+ doc/guides/nics/features/hinic3.ini    | 11 ++++++++---
+ doc/guides/nics/hinic3.rst             |  5 ++++-
+ doc/guides/rel_notes/release_26_03.rst |  8 ++++++++
+ drivers/net/hinic3/base/hinic3_csr.h   | 18 +++++++++---------
+ drivers/net/hinic3/base/hinic3_hwif.c  | 10 +++++++---
+ drivers/net/hinic3/hinic3_ethdev.c     | 14 +++++++-------
+ 6 files changed, 43 insertions(+), 23 deletions(-)
 
-v3:
---fix community review comments and err reports
-
-v4:
---fix rss type assignment error
-
-v5:
---fix community ubuntu-22.04-clang err
-
-v6:
---fix atomic compilation error
-
-v6:
---fix community review comments
-
-v7:
---fix htn/stn ops function name error
---update doc/guides for hinic3 driver
-
-v8:
---fix guides grammar issue
---fix rss_type.ipv6_ext = 0 error
-
-Feifei Wang (7):
-  net/hinic3: add support for new SPx series NIC
-  net/hinic3: add enhance cmdq support for new SPx series NIC
-  net/hinic3: use different callback func to split new/old cmdq
-    operations
-  net/hinic3: add fun init ops to support Compact CQE
-  net/hinic3: add rx ops to support Compact CQE
-  net/hinic3: add tx ops to support Compact CQE
-  net/hinic3: use different callback func to support htn fdir
-
- doc/guides/nics/features/hinic3.ini           |  11 +-
- doc/guides/nics/hinic3.rst                    |   5 +-
- doc/guides/rel_notes/release_26_03.rst        |   8 +
- drivers/net/hinic3/base/hinic3_cmd.h          |  80 ++-
- drivers/net/hinic3/base/hinic3_cmdq.c         | 370 ++++------
- drivers/net/hinic3/base/hinic3_cmdq.h         | 112 ++-
- drivers/net/hinic3/base/hinic3_cmdq_enhance.c | 111 +++
- drivers/net/hinic3/base/hinic3_cmdq_enhance.h | 125 ++++
- drivers/net/hinic3/base/hinic3_csr.h          |  18 +-
- drivers/net/hinic3/base/hinic3_hw_comm.c      |  15 +-
- drivers/net/hinic3/base/hinic3_hw_comm.h      |  31 +-
- drivers/net/hinic3/base/hinic3_hwdev.c        |  13 +-
- drivers/net/hinic3/base/hinic3_hwdev.h        |  18 +
- drivers/net/hinic3/base/hinic3_hwif.c         |  10 +-
- drivers/net/hinic3/base/hinic3_mgmt.c         |   5 +-
- drivers/net/hinic3/base/hinic3_mgmt.h         |   2 +
- drivers/net/hinic3/base/hinic3_nic_cfg.c      | 182 ++---
- drivers/net/hinic3/base/hinic3_nic_cfg.h      |  98 ++-
- drivers/net/hinic3/base/meson.build           |   1 +
- drivers/net/hinic3/hinic3_ethdev.c            | 275 ++++++--
- drivers/net/hinic3/hinic3_ethdev.h            | 120 ++--
- drivers/net/hinic3/hinic3_fdir.c              | 657 +++++++++++++-----
- drivers/net/hinic3/hinic3_fdir.h              | 361 ++++++++--
- drivers/net/hinic3/hinic3_nic_io.c            | 525 ++++++--------
- drivers/net/hinic3/hinic3_nic_io.h            | 163 ++++-
- drivers/net/hinic3/hinic3_rx.c                | 267 +++++--
- drivers/net/hinic3/hinic3_rx.h                | 182 ++++-
- drivers/net/hinic3/hinic3_tx.c                | 456 ++++++------
- drivers/net/hinic3/hinic3_tx.h                | 154 +++-
- .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    | 167 +++++
- .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |  63 ++
- drivers/net/hinic3/htn_adapt/meson.build      |   7 +
- drivers/net/hinic3/meson.build                |   8 +-
- .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    | 151 ++++
- .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |  46 ++
- drivers/net/hinic3/stn_adapt/meson.build      |   7 +
- 36 files changed, 3379 insertions(+), 1445 deletions(-)
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.c
- create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.h
- create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
- create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
- create mode 100644 drivers/net/hinic3/htn_adapt/meson.build
- create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
- create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
- create mode 100644 drivers/net/hinic3/stn_adapt/meson.build
-
+diff --git a/doc/guides/nics/features/hinic3.ini b/doc/guides/nics/features/hinic3.ini
+index bc70c887cb..74fea318ee 100644
+--- a/doc/guides/nics/features/hinic3.ini
++++ b/doc/guides/nics/features/hinic3.ini
+@@ -20,14 +20,18 @@ Allmulticast mode    = Y
+ Unicast MAC filter   = Y
+ Multicast MAC filter = Y
+ RSS hash             = Y
++RSS key update       = Y
+ RSS reta update      = Y
++SR-IOV               = Y
+ VLAN filter          = Y
+ Flow control         = Y
+ CRC offload          = Y
++VLAN offload         = Y
++QinQ offload         = P
+ L3 checksum offload  = Y
+ L4 checksum offload  = Y
+-Inner L3 checksum    = Y
+-Inner L4 checksum    = Y
++Inner L3 checksum    = P
++Inner L4 checksum    = P
+ Packet type parsing  = Y
+ Basic stats          = Y
+ Extended stats       = Y
+@@ -40,12 +44,13 @@ ARMv8                = Y
+ 
+ [rte_flow items]
+ any                  = Y
+-eth                  = Y
++eth                  = P
+ icmp                 = Y
+ ipv4                 = Y
+ ipv6                 = Y
+ tcp                  = Y
+ udp                  = Y
+ vxlan                = Y
++
+ [rte_flow actions]
+ queue                = Y
+diff --git a/doc/guides/nics/hinic3.rst b/doc/guides/nics/hinic3.rst
+index e10f6bb450..a6117c713f 100644
+--- a/doc/guides/nics/hinic3.rst
++++ b/doc/guides/nics/hinic3.rst
+@@ -16,16 +16,19 @@ Features
+ - Receiver Side Scaling (RSS)
+ - Flow filtering
+ - Checksum offload
++- VLAN/QinQ stripping and inserting
+ - TSO offload
+ - Promiscuous mode
+ - Port hardware statistics
++- Jumbo frames
+ - Link state information
+ - Link flow control
+ - Scattered and gather for TX and RX
+ - Allmulticast mode
+ - MTU update
+ - Multicast MAC filter
+-- Flow API
++- NUMA support
++- Generic Flow API
+ - Set Link down or up
+ - VLAN filter and VLAN offload
+ - SR-IOV - Partially supported at this point, VFIO only
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 3d2ed19eb8..cbc71af8f0 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -81,6 +81,14 @@ New Features
+   * Added application-initiated device reset.
+   * Added support for receive flow steering.
+ 
++* **Updated Huawei hinic3 ethernet driver.**
++
++  * Added support for Huawei new SPx NICs, including SP230 and SP920(DPU).
++  * Added support for GENEVE tunnel TSO, IP-in-IP tunnel TSO of SP230.
++  * Added support for VXLAN-GPE CKSUM of SP620.
++  * Added support for tunnel packet outer UDP checksum.
++  * Added support for QinQ of SP620.
++
+ * **Updated Intel idpf ethernet driver.**
+ 
+   * Added support for time sync features.
+diff --git a/drivers/net/hinic3/base/hinic3_csr.h b/drivers/net/hinic3/base/hinic3_csr.h
+index 94b10601c4..eceb34e9fd 100644
+--- a/drivers/net/hinic3/base/hinic3_csr.h
++++ b/drivers/net/hinic3/base/hinic3_csr.h
+@@ -5,15 +5,15 @@
+ #ifndef _HINIC3_CSR_H_
+ #define _HINIC3_CSR_H_
+ 
+-#ifdef CONFIG_SP_VID_DID
+-#define PCI_VENDOR_ID_SPNIC    0x1F3F
+-#define HINIC3_DEV_ID_STANDARD 0x9020
+-#define HINIC3_DEV_ID_VF       0x9001
+-#else
+-#define PCI_VENDOR_ID_HUAWEI   0x19e5
+-#define HINIC3_DEV_ID_STANDARD 0x0222
+-#define HINIC3_DEV_ID_VF       0x375F
+-#endif
++#define PCI_VENDOR_ID_HUAWEI	0x19e5
++
++#define HINIC3_DEV_ID_SP620	0x0222
++#define HINIC3_DEV_ID_VF_SP620	0x375F
++
++#define HINIC3_DEV_ID_SP230	0x0229
++#define HINIC3_DEV_ID_VF_SP230	0x3750
++
++#define HINIC3_DEV_ID_SP920	0x0224
+ 
+ /*
+  * Bit30/bit31 for bar index flag.
+diff --git a/drivers/net/hinic3/base/hinic3_hwif.c b/drivers/net/hinic3/base/hinic3_hwif.c
+index 080254bf44..c82b223fa0 100644
+--- a/drivers/net/hinic3/base/hinic3_hwif.c
++++ b/drivers/net/hinic3/base/hinic3_hwif.c
+@@ -138,7 +138,11 @@
+ 
+ #define HINIC3_GET_REG_ADDR(reg) ((reg) & (HINIC3_REGS_FLAG_MASK))
+ 
+-#define HINIC3_IS_VF_DEV(pdev) ((pdev)->id.device_id == HINIC3_DEV_ID_VF)
++static inline bool hinic3_is_vf_dev(const struct rte_pci_device *pdev)
++{
++	return pdev->id.device_id == HINIC3_DEV_ID_VF_SP620 ||
++	       pdev->id.device_id == HINIC3_DEV_ID_VF_SP230;
++}
+ 
+ uint32_t
+ hinic3_hwif_read_reg(struct hinic3_hwif *hwif, uint32_t reg)
+@@ -552,7 +556,7 @@ hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)
+ 	void *db_base = NULL;
+ 	int cfg_bar;
+ 
+-	cfg_bar = HINIC3_IS_VF_DEV(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR
++	cfg_bar = hinic3_is_vf_dev(pci_dev) ? HINIC3_VF_PCI_CFG_REG_BAR
+ 					    : HINIC3_PF_PCI_CFG_REG_BAR;
+ 	cfg_regs_base = pci_dev->mem_resource[cfg_bar].addr;
+ 
+@@ -561,7 +565,7 @@ hinic3_get_bar_addr(struct hinic3_hwdev *hwdev)
+ 			    "mem_resource addr is null, cfg_regs_base is NULL");
+ 		return -EFAULT;
+ 	}
+-	if (!HINIC3_IS_VF_DEV(pci_dev)) {
++	if (!hinic3_is_vf_dev(pci_dev)) {
+ 		mgmt_reg_base =
+ 			pci_dev->mem_resource[HINIC3_PCI_MGMT_REG_BAR].addr;
+ 		if (mgmt_reg_base == NULL) {
+diff --git a/drivers/net/hinic3/hinic3_ethdev.c b/drivers/net/hinic3/hinic3_ethdev.c
+index 0f72728a95..da2d6722d2 100644
+--- a/drivers/net/hinic3/hinic3_ethdev.c
++++ b/drivers/net/hinic3/hinic3_ethdev.c
+@@ -3521,13 +3521,13 @@ hinic3_dev_uninit(struct rte_eth_dev *dev)
+ }
+ 
+ static const struct rte_pci_id pci_id_hinic3_map[] = {
+-#ifdef CONFIG_SP_VID_DID
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_STANDARD)},
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_SPNIC, HINIC3_DEV_ID_VF)},
+-#else
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_STANDARD)},
+-	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF)},
+-#endif
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP620)},
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF_SP620)},
++
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP230)},
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_VF_SP230)},
++
++	{RTE_PCI_DEVICE(PCI_VENDOR_ID_HUAWEI, HINIC3_DEV_ID_SP920)},
+ 
+ 	{.vendor_id = 0},
+ };
 -- 
 2.45.1.windows.1
 
