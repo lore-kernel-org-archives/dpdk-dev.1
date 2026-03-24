@@ -2,66 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35672F54AD2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 15:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BD3F54ACF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 15:56:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 60983402BE;
-	Tue, 24 Mar 2026 16:55:00 +0100 (CET)
-Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
- by mails.dpdk.org (Postfix) with ESMTP id F29414025F
- for <dev@dpdk.org>; Tue, 24 Mar 2026 16:54:58 +0100 (CET)
-Received: by mail-dl1-f49.google.com with SMTP id
- a92af1059eb24-1273349c56bso5468425c88.0
- for <dev@dpdk.org>; Tue, 24 Mar 2026 08:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774367698;
- x=1774972498; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=ojNM0ze0GTAirrZ5S3TbPiZQzmyV/4HovCQv1SxnK1g=;
- b=l/9SBeioT16jKjMXGWufqHSpkbOErsxGP7l7vExx59vnpTkhJoo+iLahqQ354WhQg+
- RtxZ+lrJ0CRVKBTumY6R93v0Td2oquASraFbgiWAO0/20PJyM+0WuZtx11nNl+HsZhMZ
- C/z6w8VGwcS47jx48K5Tqm/Ho18FGDlvu/2KTIcmBSv4iDsMmYOEE6mG0uCkRh++25Kp
- ZqIfoB2Aq/+/QEIL6FpdaexECiktsqWKhN3m9xiqJmyqVBxAw9JRHjE1ev9SWb6B6nWC
- g8A63LbiFhmsY8R0Wz6l3P8oKGU+1BD6p0VUVxlQNwCSYH7Q0ugOAAbeYZ05Ce9AOm4z
- 0U3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774367698; x=1774972498;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ojNM0ze0GTAirrZ5S3TbPiZQzmyV/4HovCQv1SxnK1g=;
- b=CBWmvKylgyGJit9lIwDrknTcbTKhet+IMpJ2w4kt+ZuHCy+H9OhXQjv35mPLaHtdrr
- K3J0rQVPoSIBwu9IYuLmu5gk4kun5UXtL5yDInzKD1XkoVs/630i8+Tu+zERmiFRBDnQ
- KnNX6RgfjkNC8xTzDFunKWqmimGX9cp3jX0FSkvbdQkJJSeVzjI0WaAlRtdQrpCe+yHY
- YnMcprNulrE5wNkbX9H9NHbg4Qj/iQomX5E09dHq3YCGxH8khlsThFu/FVpRqKyWJu1/
- OUOxr52h9EQXsdn+JtPEKLyKCp6cYypPFlmq+kugZ0U2Qcg26EbBWzuGY4gNx7sD8koM
- bn/g==
-X-Gm-Message-State: AOJu0YwzxT0Y/sgRE28MKG7KaAzDkGjr/awxvbIWlw9/x2py98k1f6hU
- 1///lYATvfnqPwl+ssJ/dRvj0S0KTkz46KDA7hwOOoymLBLzPZlrz6BMDWLzKqg4FsiYmcbT85y
- POpp5
-X-Gm-Gg: ATEYQzwGEccA/sXiPL/Ekd/eeQ9eKbcwxBlTBfvoA8Qn5dmAFJMPzTX8bex4faThUP6
- RzMXs2jXGk39pYdImZtb67bvDJhmuqfIop4W58S+4CRpYCEPhp+CmJYX3N72K9mzEdlLUeohuHQ
- Bzoq35abB2QXmanhJmghIfZhFQLKmcBPFq4B33n0iV7mYDJw8i0lUK5LcGUhHnuI0ija49msE/C
- h5IhQQWfmwEmPwAot8Uzrf0HQlCJZGdi6zKG+PJs7X+hCO6YdCPq4oRh/Oblp5eFnFYUiOl5FzW
- VJFMlH48iCZN0wz3T6AvL66kKGDpu9DMxT6NX/8dJQRPF2fn3gSFbioG5PERidLSIsFZkwAeJne
- a4rgVV654jklddcyGaV+QAdeYc/Ygbvr1MG6hedj1mt73feDrILcgy8NZH7hR7FraPGVi+dYPbv
- eQIdfKt3V0EhfhEhTkI/kap70sCYxHpguD
-X-Received: by 2002:a05:7022:239c:b0:12a:949b:c46 with SMTP id
- a92af1059eb24-12a96eef455mr15143c88.21.1774367697904; 
- Tue, 24 Mar 2026 08:54:57 -0700 (PDT)
-Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12a733e794esm11583977c88.6.2026.03.24.08.54.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 24 Mar 2026 08:54:57 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id A383E40666;
+	Tue, 24 Mar 2026 16:56:36 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 9AD634025F;
+ Tue, 24 Mar 2026 16:56:35 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1774367796; x=1805903796;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=7OAiGr+NgFVXPPu9lFHLOe2a41sxXZvODkAlsPrRed0=;
+ b=VFALx+Qo2EM1IQNtGgLMi//5/csY4bWCYmADprLKph4e6RFiApkuVFnT
+ B2ZYNGHuI/VPAuVy28dMp8/dR5cuBLQ89B1jS3flCOyJdtUU7GocYSNI5
+ NmgKqD0bgm32p/bsq1udn+m/8xWXUtrjIkUzuY/PAvL56Ol8kmAXVItc4
+ l2PwIcnM4OeAlxqvvL2ppA1rpqbumedmw1ohhhURQnKKQHa0WWAumDDV4
+ gQJJgwbtC+l+0osx+qESumwoN5ZiWGF0S2RLgkIZ97X1m4j4tVElIsa9S
+ HQYc+LNV+rcHumoLn1Dok5lXvC0IbR5SM6kvx5u21vBlczSutHrct1hEG A==;
+X-CSE-ConnectionGUID: fqil1CSOQAiRB4aEcSdi/w==
+X-CSE-MsgGUID: sZyEt2eJTrGTJg8IwpBkTA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11739"; a="79298204"
+X-IronPort-AV: E=Sophos;i="6.23,138,1770624000"; d="scan'208";a="79298204"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+ by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 24 Mar 2026 08:56:34 -0700
+X-CSE-ConnectionGUID: 1e/OvHzSTdmkRLeEZas7pA==
+X-CSE-MsgGUID: DMNKn7xISvWKrSUzBSphmw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,138,1770624000"; d="scan'208";a="229311680"
+Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
+ by orviesa005.jf.intel.com with ESMTP; 24 Mar 2026 08:56:34 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: [PATCH] net/zxdh: replace rte_memcpy with structure assignment
-Date: Tue, 24 Mar 2026 08:54:54 -0700
-Message-ID: <20260324155455.661996-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+Cc: Ciara Loftus <ciara.loftus@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH] net/i40e: fix raw flow item validation
+Date: Tue, 24 Mar 2026 15:56:27 +0000
+Message-ID: <20260324155627.1849904-1-ciara.loftus@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,27 +58,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The cocci/struct_assign script found where simple assignment
-could be used instead.
+Commit c138a6c3bd0a ("net/i40e: validate raw flow items before
+dereferencing") rejected raw flow items when spec and mask length
+fields differ, intending to prevent out-of-bounds pattern access.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+This breaks flows using the default rte_flow_item_raw_mask, which
+sets mask.length to 0xffff regardless of the spec pattern size. Remove
+the erroneous check.
+
+Fixes: c138a6c3bd0a ("net/i40e: validate raw flow items before dereferencing")
+Cc: stable@dpdk.org
+
+Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
 ---
- drivers/net/zxdh/zxdh_flow.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/intel/i40e/i40e_flow.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/net/zxdh/zxdh_flow.c b/drivers/net/zxdh/zxdh_flow.c
-index 7a2e20ac39..56ac34c6e3 100644
---- a/drivers/net/zxdh/zxdh_flow.c
-+++ b/drivers/net/zxdh/zxdh_flow.c
-@@ -1884,7 +1884,7 @@ vf_flow_msg_process(enum zxdh_msg_type msg_type, struct rte_eth_dev *dev,
- 	struct zxdh_flow_op_rsp *flow_rsp = (struct zxdh_flow_op_rsp *)flow_op_rsp;
+diff --git a/drivers/net/intel/i40e/i40e_flow.c b/drivers/net/intel/i40e/i40e_flow.c
+index 84cfddb92d..78191a2d22 100644
+--- a/drivers/net/intel/i40e/i40e_flow.c
++++ b/drivers/net/intel/i40e/i40e_flow.c
+@@ -2360,13 +2360,6 @@ i40e_flow_parse_fdir_pattern(struct rte_eth_dev *dev,
+ 							   "NULL RAW mask pattern");
+ 					return -rte_errno;
+ 				}
+-				if (raw_spec->length != raw_mask->length) {
+-					rte_flow_error_set(error, EINVAL,
+-							   RTE_FLOW_ERROR_TYPE_ITEM,
+-							   item,
+-							   "RAW spec and mask length mismatch");
+-					return -rte_errno;
+-				}
+ 			}
  
- 	dh_flow->hash_search_index = hw->hash_search_index;
--	rte_memcpy(&flow_msg->dh_flow, dh_flow, sizeof(struct zxdh_flow));
-+	flow_msg->dh_flow = *dh_flow;
- 
- 	zxdh_msg_head_build(hw, msg_type, &msg_info);
- 	ret = zxdh_vf_send_msg_to_pf(dev, &msg_info, sizeof(struct zxdh_msg_info),
+ 			for (i = 0; i < raw_spec->length; i++) {
 -- 
-2.53.0
+2.43.0
 
