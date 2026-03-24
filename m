@@ -2,72 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF69F54ACF
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 15:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3460AF54ACF
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 15:48:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70BCD402BE;
-	Tue, 24 Mar 2026 16:47:04 +0100 (CET)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id 5BDA6402BE
- for <dev@dpdk.org>; Tue, 24 Mar 2026 16:47:02 +0100 (CET)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-128ebee22caso4449366c88.0
- for <dev@dpdk.org>; Tue, 24 Mar 2026 08:47:02 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 81123402BE;
+	Tue, 24 Mar 2026 16:48:06 +0100 (CET)
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com
+ [209.85.160.180])
+ by mails.dpdk.org (Postfix) with ESMTP id D4E4D4025F
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 16:48:04 +0100 (CET)
+Received: by mail-qt1-f180.google.com with SMTP id
+ d75a77b69052e-50b351eaf81so36821651cf.3
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 08:48:04 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774367284; cv=none;
+ d=google.com; s=arc-20240605;
+ b=jD0MRQySd7IuKmzuT8ez+gHA9UhaYvTOqUsjowhYubcnp8L+Ewn+v+3HafeAwJntsd
+ ATIhGS1yikU2GBvfbhvA34x268ch5Au6DC3rWctF4beB0GzPTfUEHWemw/enuk3eHPJJ
+ vJw32ctzQJgV8J3F/Btc25CEB+PT/+wUKZwEtJZ+w7B7PZsN/tUYg1hT+x7Z9M/UdjnT
+ uv6Mm7xBtbE+KlFVFfYOJTzIUB5v6puhVoi/wvGjh963wJ7QnNeInHAeiS6HmphW8Zy4
+ 4p0SfhS558d1j0jhfKVA+/Cp614T84+Z0HQh6gQGMGqZNE7jD8MCA+HME2ArS9yaZSoI
+ 38iA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=p5nicaFfg9BSg2j3YVXYP7tQVFFyUMl4TB+pDh8OYB4=;
+ fh=9hopF22WS6rcyiGIQiCZEh1VGxIFjqDMk/SKNceIjQ8=;
+ b=kOefDI2J7rCpgnH0WiFJ0ChzIA10AqlZiJjB3TFpFaZLhZy0RVre8JLvb0qJI7BwUU
+ jon45/wSzIFs9jfK4CsKa44pUYISC+jEktJHk8h1pJznokaQHUGqlIUWQzGnuFbPJOXY
+ yCvf+m9SR2hwj1196TNyEvcDp1d6XhCu4dVNzgSn+/atyjgiC57ghyDmqBUDKs/gXOZB
+ JwO4GHVzSbo1uEjoRPuDek/67JIh/MCdqRj7+lmmDSy2pvb+BvDt79ywLPWeeOGsooj5
+ jKiQ9HGRxeOFx/GRcrtbpd58KEa3lBuEY5omd1bsCbqHnc9DkL5GwMtYQI2AN6mZ6/S8
+ f8/A==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774367221;
- x=1774972021; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1774367284; x=1774972084; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tDLDaigtF+sSJ7aak+XNsuGHjQ5IdnE/OSO5qPKMHuI=;
- b=BT2pEdL7HGIxVk5VlKMUmiq2G3linwIhTgI7K77mBK9M2NssyrrvE/CC3RMV9FDA8q
- cuF1OrJjhc9nczDLf+E0OoPIpxrIFLtx8VfycjVvB3h3r+tcFi/UGoosYBRyalUubdtD
- pbFjBsYdwI9KLSx8yF3x0/cLdAFzd+kSQRGW9FuDi3fybJJG+OgMjKk5F8+Ycw7I1Dca
- Q81UPnY6qoRG10JJE/WwfwBl2BFI04yp1pJ6830JtA6q5R7gW4bhKWV/quW6xfbiFn3w
- Edw+x9KK35N83N7jzAeRF+8xtNFe4GB++JZMlhj/R6qMdUcyO+jQDFYVUf3JMLp/HZ3J
- nAzw==
+ bh=p5nicaFfg9BSg2j3YVXYP7tQVFFyUMl4TB+pDh8OYB4=;
+ b=L8+XvpG8shOa1SZGNwOyTe+s530LntlB57pbEhmkQp9Mm6fEGRNxwgniMYzvFZD7eE
+ Lw8bFGdZTYtp8OQmUuSxI4MI7L9ss5bLKROnUxjLP/ZrBWKU1k7BK1jy8Yb0pTMEIzmG
+ CYuemuzUo9NBZBSvaJR6XBSk1/unwo3ZmhHnRqoc/mhn8+rHxybqTn2rZWwfxjnL30nH
+ O7cbSKSce6vMYu1Z5VlYiBQwk0OpG+fG3RvDw+omDchZIuqm8jEfPwgUp5acmZF6g96j
+ TtB57BIhQS81Nj5yLTmwQ7tBGKa6sMh5hVlF2rweGre6KdNl1Kby5gVBD+qnZ9nQy2tX
+ TQ0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774367221; x=1774972021;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ d=1e100.net; s=20251104; t=1774367284; x=1774972084;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=tDLDaigtF+sSJ7aak+XNsuGHjQ5IdnE/OSO5qPKMHuI=;
- b=OrUym8mVEmAPO/OnEuctrU8XkhtQZrGeK5RHTg/LPKsLCDF0LAUjoaki2662gGxTRR
- GoiDvYsdVkebwjjQxFWsBoC3Ox9mrgajlu9Dh9wb9Cx4yeccZfLSn+20yOcNwYsOkApI
- KoU4xiOc3VXxkmbb2nXwOJb643svnEzNDojQcvuVl2kmq7TKOyLgcqahMFRJpHVPKLBA
- 4jNcGXprgumIfjq+8QXJvSMwOeYYplyFp/Brw4m0ixbAQkq+vHuxg5AgvdDLN5dMWBAV
- LxZXm0BDvCUUyfvWidxpUmb6HrPO5puxU+7yWtwfESSFvlLIw873/fNpCdbOuNU/+dtF
- KioA==
-X-Gm-Message-State: AOJu0YxDVd7EhelX/NUZcA4TKC1VP5ydcy7dq3lOlOO0k4/0K+iC5Sd8
- nUn1j/ZdN2sOa5/wOYXK4BRtwTnVLwDtjGrwROLS0FEmL6N4OAq+A8vRCw8/UaWXsek=
-X-Gm-Gg: ATEYQzwMEIj1b5YMT1weSVWBKXxJjRyeA88zDD6QgzgeplVv2euDfg5GXdepaU0j0Rf
- 2mwKWBDptmr8yxlU5P2RDNxtn1QvtFabcMbsTweq+hZTCrM6QDkjfflQddAr/IS0BAq030Lfmnk
- rBseixFFI5JAClaks9cBO36Ylpqvmkz3ASc1HUifz37xBiAkRzufAGUwirtedSPBK+HHANgA21S
- paWt03jns8qYWax2vSAw5Bfflg+TXraAng0bMKwWyInp2VFsGwxL/r7ObGNrvTtygEVlVjEA83W
- EemRdjdpfgL6y32ZO63xKDoRAWNasQ7iilaUl/Wdk1uLCTGgADjKF8zteFHnYYjpI/2n7/y1iXQ
- 8+VshdKjm8Wld+gB2Zch8oAhybmrrh5bl1oZeKTbzsOO5CZi/nEUCGes/IkqMOE4DjKa+G0lPTU
- cJR7CeC08uxkz22gdC6XgA5wOzM01rhNql+y8=
-X-Received: by 2002:a05:7022:78e:b0:11b:9b9f:426b with SMTP id
- a92af1059eb24-12a96ed357fmr7747c88.20.1774367221199; 
- Tue, 24 Mar 2026 08:47:01 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2c10b17b8f2sm21161888eec.9.2026.03.24.08.47.00
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 24 Mar 2026 08:47:01 -0700 (PDT)
-Date: Tue, 24 Mar 2026 08:46:55 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: KAVYA AV <kavyax.a.v@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com,
- vladimir.medvedkin@intel.com, shaiq.wani@intel.com, stable@dpdk.org
-Subject: Re: [PATCH v3] app/testpmd: fix DCB queue allocation for VMDq devices
-Message-ID: <20260324084655.6d22c7fc@phoenix.local>
-In-Reply-To: <20260324100500.2516672-1-kavyax.a.v@intel.com>
-References: <20260313101553.1827216-1-kavyax.a.v@intel.com>
- <20260324100500.2516672-1-kavyax.a.v@intel.com>
+ bh=p5nicaFfg9BSg2j3YVXYP7tQVFFyUMl4TB+pDh8OYB4=;
+ b=qay7nCjOTVQZcU5Vb+KY8jqs4ddPMmxXpStgUZISGq0Aqh1CtkLihkkjXBBQsYpPK9
+ iEcYZvHdOTjlwkzSXQ6TrxC+06UogiC0fm2pOWx1a8/Sqii8cOVTpP3w5jaTt4TC0m9X
+ Z0iHKgHvgSwjaEzbIGKiOsFaOLtdD/eimUx6PTT/2ow/aBJOxp7Vz8PDI6qWwkHo7dYj
+ rz5av18dM0IYyVuWhbRNu9rNf3FJWDFzSivwIepp+zkvKjioVQpfPs0AHVuhe9GpOsKw
+ GQxNd4FaKfifNQqMtaO4ngrsLLLliLDg+fyznHY2zlBI5K+61cxNR62O7VHd84qFJ7Ex
+ 6GIQ==
+X-Gm-Message-State: AOJu0YxZ/06Dq1EY3GKEnxEOXadfLZZYJHFoWcRYX2/mfyYa5dOqgf1A
+ gIFNkcndyFypLt9wp/Fj5jjZ5ib15ILNFo4amicgNkBKu5AWDpHx7YkQtxA11RhSORIOP1xMCxI
+ syGVbcU1SPtVYZER7Kn2OPjGemA2sYRM=
+X-Gm-Gg: ATEYQzyYmS8HL1svkIMQSYZk2fbzfBXRQ3ZC+4BqbA/CwyQM7jICtxMyf2g/xEePS9n
+ b/Au4TGIDLGrVOYk6wmU0cax42gOGnlKT7b9m6qlpOUiDQJL0b3N2leh+RucyUGyNTA6OGESFBG
+ Yr5gPhu08f8gYfQZ3Qh/iwcnhTp4GUoRshXCS9F1fNxCiKcwe6MHBXjQaNFJiKtKM5qatNIBPv2
+ zVpxCLTFlegbO5xWcGr/2TVVwtq8W1iYXNou/qCz6qomeJPXzTpAj/Oya/O2s+ZrBD1U9tH9VcM
+ NdI=
+X-Received: by 2002:a05:622a:1488:b0:50b:3014:22a1 with SMTP id
+ d75a77b69052e-50b80f367c7mr1242981cf.67.1774367284071; Tue, 24 Mar 2026
+ 08:48:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260302135319.1971488-1-rbhansali@marvell.com>
+ <20260302135319.1971488-2-rbhansali@marvell.com>
+In-Reply-To: <20260302135319.1971488-2-rbhansali@marvell.com>
+From: Jerin Jacob <jerinjacobk@gmail.com>
+Date: Tue, 24 Mar 2026 21:17:37 +0530
+X-Gm-Features: AaiRm52eggYC8cERkIRVwwjAHkzNlGNeBJA3a3cIR40SXdDulInwSx82LYujDGY
+Message-ID: <CALBAE1PC1dRRxsqoQgwVughjtr8Mx2CqMc+YLN_qWf=xaPitPA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] net/cnxk: config option for RXC time step
+To: Rahul Bhansali <rbhansali@marvell.com>
+Cc: dev@dpdk.org, Nithin Dabilpuram <ndabilpuram@marvell.com>, 
+ Kiran Kumar K <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, 
+ Satha Rao <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>,
+ jerinj@marvell.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,52 +99,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 24 Mar 2026 10:05:00 +0000
-KAVYA AV <kavyax.a.v@intel.com> wrote:
+On Mon, Mar 2, 2026 at 7:40=E2=80=AFPM Rahul Bhansali <rbhansali@marvell.co=
+m> wrote:
+>
+> Provide devarg option to configure RXC time granularity
+> for reassembly handling.
+>
+> It will be set as rxc_step=3D<val> for nix device.
+> e.g.: 0002:02:00.0,rxc_step=3D10000
+>
+> Signed-off-by: Rahul Bhansali <rbhansali@marvell.com>
 
-> When using DCB mode with VT disabled and requesting more queues than
-> traffic classes (e.g., rxq=64 with 8 TCs), testpmd crashes with null
-> pointer errors because it artificially limits queue allocation to
-> num_tcs.
-> 
-> For VMDq devices, use actual VMDq queue layout (vmdq_queue_num) instead
-> of limiting to num_tcs. This allows VMDq devices to utilize their full
-> queue capacity while maintaining compatibility with non-VMDq devices.
-> 
-> Fixes null pointer dereference when queue structures are accessed
-> beyond the allocated range.
-> 
-> Fixes: 2169699b15fc ("app/testpmd: add queue restriction in DCB command")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: KAVYA AV <kavyax.a.v@intel.com>
-> ---
-
-I can't follow all the stuff here, is rather complex and esoteric case.
-So did AI review.
-
-The feedback from AI raised some questions (the I here is AI not me):
-
-
-The basic idea of using dynamic VMDq queue info instead of limiting
-to num_tcs is right -- the current code clearly crashes when more
-queues are requested than traffic classes.
-
-However, I'm not convinced vmdq_queue_num is the correct value here.
-This code path is DCB-only (VT disabled) on a device with
-vmdq_pool_base > 0, which in practice means i40e. In that case
-vmdq_queue_num is the total VMDq pool queue count
-(vmdq_nb_qps * max_nb_vmdq_vsi), but with VT disabled the PF queues
-are what's used for DCB, not the VMDq pool queues. The PF queue count
-would be max_rx_queues - vmdq_queue_num. Using the VMDq count here
-could over-allocate or misconfigure queues in DCB-only mode.
-
-Can you explain why vmdq_queue_num is the right value rather than
-the PF queue count? Or test what happens when this value exceeds
-what the hardware supports in DCB-only mode?
-
-Minor: the prose line "Fixes null pointer dereference when queue
-structures are accessed beyond the allocated range." reads as a
-sentence fragment. Fold it into the preceding paragraph or drop it
-since the Fixes tag already identifies what's being fixed.
-
+Series applied to dpdk-next-net-mrvl/for-main. Thanks
