@@ -2,70 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43BB1FEC0EB
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 18:01:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2BCFEC0EB
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 18:01:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 27A6940650;
-	Tue, 24 Mar 2026 19:01:30 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 671E140A4B;
+	Tue, 24 Mar 2026 19:01:35 +0100 (CET)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id 2EA8540647
- for <dev@dpdk.org>; Tue, 24 Mar 2026 19:01:29 +0100 (CET)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id 24BA140693
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 19:01:34 +0100 (CET)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
  by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 62OGkKua731082 for <dev@dpdk.org>; Tue, 24 Mar 2026 11:01:28 -0700
+ 62OGl45M1712915 for <dev@dpdk.org>; Tue, 24 Mar 2026 11:01:33 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=X
- lP6LNR3k8YQdk/0q6cgsZrOAdQ3Q1kCV7Hhy68cmJw=; b=HjvrZULSiNt+OwWLy
- /zTc6YgIldqONJEixB6v974Yu8YoKOF1mH8sO6Mx5+G3ZAFRliLtRdL+whJX6vKe
- QbSZMYJc58nfQaUXM5YuXcOIxc4xHN0wwVP8djU++CV8flAivFV1uIsmkV305Okv
- PJ1tTPHc/w3w8E6Xt6BTm6tJmNA3M/sJfzknjOnCg5ZBbeHgzJz0+DoTjdybqTwl
- UDszoTxRDOu5Ng0ODLcYZE2Q96/G3j0vrLs2EypMPSx4YIJC/ORgz4dAe6U6BqF4
- tAup3JNdP0K3b1fTQI/e7aDyQzkrW1nLg2v4xybOInrIUDSqdiErXWg4rL3frHJM
- VGWZQ==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=K
+ SVfqjJ1AwEjLR7aMDK/EacVKB9tI+INnttlI+Fn2ec=; b=XLBUmfvZ97cgBU20y
+ ied5W7n53aL1A5t3MH07GpqZolfFq/NfV9SOvIIsQEKFo9ESTi6DcmyYdUZo/JWK
+ QrqbqJrzZnOLU6awpmzEtK/ezujDtfjRAcOB5QAODxYGrs3h5fUzMIOa8Dh6TIdF
+ oWBCLL6Keseyao8mEyrrYoH/c7YLAS0cnbEVdaKucz2mQdkBjRn40N60KUsM7Bxt
+ F8AKG50zBv4ndGczaqs3m7KqMvb7NVjaGJmYDhF5l3Pg1y0WUVc91VjpalRQ5cnu
+ 7n9mTdpzg8DkRrh18U/LSc3xS17Rn00yZwo3nWehuJkXB3U7n76aL3V4ecEYDBUn
+ NrBNA==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4d2c366964-1
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4d1tugqec5-3
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 24 Mar 2026 11:01:28 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 11:01:33 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 24 Mar 2026 11:01:26 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 24 Mar 2026 11:01:26 -0700
+ 15.2.1544.25; Tue, 24 Mar 2026 11:01:31 -0700
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Tue, 24 Mar 2026 11:01:31 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 24 Mar 2026 11:01:31 -0700
 Received: from cavium-System-Product-Name.. (unknown [10.28.37.42])
- by maili.marvell.com (Postfix) with ESMTP id 06ABF3F705A;
- Tue, 24 Mar 2026 11:01:24 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 6F5C73F705A;
+ Tue, 24 Mar 2026 11:01:27 -0700 (PDT)
 From: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
 To: <dev@dpdk.org>
 CC: <adwivedi@marvell.com>, <anoobj@marvell.com>, <ktejasree@marvell.com>,
  <gakhil@marvell.com>
-Subject: [PATCH v2 1/2] crypto/cnxk: add ZUC256 v2 support for cn20k
-Date: Tue, 24 Mar 2026 23:31:20 +0530
-Message-ID: <20260324180121.1449787-2-nkaithakadan@marvell.com>
+Subject: [PATCH v2 2/2] crypto/cnxk: add SNOW5G and ZUC256 support
+Date: Tue, 24 Mar 2026 23:31:21 +0530
+Message-ID: <20260324180121.1449787-3-nkaithakadan@marvell.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20260324180121.1449787-1-nkaithakadan@marvell.com>
 References: <20260324180121.1449787-1-nkaithakadan@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE0MCBTYWx0ZWRfX8MzffCblR4ta
- ho2WJptRrkavStM4G4fyzfNAxXl3cqfLkSHhMpQqUpGquW7eRSxy3NmPRqKxqXC/Fvy3apkuW1u
- wwJ6Jj4npFtPbDdyNPDVkAddQ3Syb3gHtAoa7bOcWMiPxduo4JqGMJejP7Q7BChVuRdrFIpOgjZ
- jrchpe9XsDYO/+JyYubzXHV9uLFpimP0GKYBHSI3XBLLpkBUpaL6kFqKtyg0IWKgp8CEBOS5aby
- 98Ok9bIS5vK2Q1JFhOnWxbFWi7Ucdjjg2DUxPaWpjxT8az565bwnixm+PGkskG9uePvMg2SldKS
- avYsZSftWACR9/wUVho7ZbkwbcjGFnKVlWwb0zbYt7yff/S8B5omE5xsZzh9JCSvaqikXYrKXlC
- aX5i/WZOn6R7MFuILMucvkLS3myVfgjDEZn6niH5yuu9OQaVC7ZJxfTxihZCZdug/aWahtpSWhH
- aIx4VffsWFurjTqYF6Q==
-X-Proofpoint-ORIG-GUID: L4OeC5zCLma1QUkipcCUe1AqUou16uVF
-X-Proofpoint-GUID: L4OeC5zCLma1QUkipcCUe1AqUou16uVF
-X-Authority-Analysis: v=2.4 cv=SItPlevH c=1 sm=1 tr=0 ts=69c2d178 cx=c_pps
+X-Proofpoint-ORIG-GUID: naJ22gAy2khstMfCJ1Qp1exIC9FhPgLZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzI0MDE0MCBTYWx0ZWRfX5+GwBMx/t5eS
+ CMCS9lYNBMvLTYb/7+DKfj1TN5ZcugB47aJ0VblFnDP51QjM5DTra7Qp1xjhHhJkNz4J3L74l6w
+ DXJe3nmTNntS9snzuOabWyoiQxqmtzTZuQ/G9cRoplkIIXbhjbC9CmZ897cyR2Hyb748nz5k5Lp
+ EBB/TigSsu1FH7w+qBDX63EELgFlW2UxLzyXg99h8fP/HDHzy+H9wsoCOqNoijZ7A3QOse4V5hQ
+ JSAH647UQBGhTyBX04OG86p/jmkCVygYAb7wedoOJb5axItceG4WyhZOM++kZrrHx2ETl1R80AS
+ /GqOCLaNBumb9epi1++7mIDt6rYFxwomxM9vr6an34PbmdwxETwQwP2A/4SJN3C+V8dLLnhyPp2
+ 8HMq3E3cFdc34qGY/bu6RwZexOGgbElcjATP6ajyYmKZAPmRm9iwYC+5evsxugACDF54vB4vV66
+ tzZS4sPopLGH6u8ZrTg==
+X-Proofpoint-GUID: naJ22gAy2khstMfCJ1Qp1exIC9FhPgLZ
+X-Authority-Analysis: v=2.4 cv=Pu6ergM3 c=1 sm=1 tr=0 ts=69c2d17d cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=XHYWXplByCRcvef3p8IA:9
- a=OBjm3rFKGHvpk9ecZwUJ:22
+ a=Yq5XynenixoA:10 a=Zc_DtpmQZw8A:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=l0iWHRpgs5sLHlkKQ1IR:22 a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8
+ a=Iyoc_MBfkVmoib6s2FkA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-03-24_03,2026-03-24_01,2025-10-01_01
@@ -82,209 +86,476 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Tejasree Kondoj <ktejasree@marvell.com>
+As part of this patch:
+- Implemented driver support in cnxk for SNOW5G NEA4/NIA4
+  and ZUC NEA6/NIA6 algorithms.
+- Added capability structures for ZUC256/SNOW5G algorithms.
+- Update cn20k.ini with new algorithm settings.
+- Document changes in release notes.
 
-Adding ZUC256 v2 cipher only support in
-CN20K PMD.
-
-Signed-off-by: Tejasree Kondoj <ktejasree@marvell.com>
+Signed-off-by: Nithinsen Kaithakadan <nkaithakadan@marvell.com>
 ---
- drivers/common/cnxk/roc_se.c                      | 14 +++++++++++---
- drivers/common/cnxk/roc_se.h                      |  2 ++
- drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c | 15 +++++++++------
- drivers/crypto/cnxk/cnxk_cryptodev_ops.c          | 10 ++++++++--
- drivers/crypto/cnxk/cnxk_se.h                     |  7 +++++--
- 5 files changed, 35 insertions(+), 13 deletions(-)
+ doc/guides/cryptodevs/features/cn20k.ini      |   4 +
+ doc/guides/rel_notes/release_26_03.rst        |   4 +
+ drivers/common/cnxk/hw/cpt.h                  |   4 +-
+ drivers/common/cnxk/roc_se.c                  |  40 ++++++-
+ drivers/common/cnxk/roc_se.h                  |  16 ++-
+ drivers/crypto/cnxk/cnxk_cryptodev.h          |   2 +-
+ .../crypto/cnxk/cnxk_cryptodev_capabilities.c | 103 +++++++++++++++++-
+ drivers/crypto/cnxk/cnxk_cryptodev_ops.c      |   3 +
+ drivers/crypto/cnxk/cnxk_se.h                 |  25 ++++-
+ 9 files changed, 185 insertions(+), 16 deletions(-)
 
+diff --git a/doc/guides/cryptodevs/features/cn20k.ini b/doc/guides/cryptodevs/features/cn20k.ini
+index ff00a8a107..d4c52082c6 100644
+--- a/doc/guides/cryptodevs/features/cn20k.ini
++++ b/doc/guides/cryptodevs/features/cn20k.ini
+@@ -46,6 +46,8 @@ SM4 CBC        = Y
+ SM4 CTR        = Y
+ SM4 CFB        = Y
+ SM4 OFB        = Y
++SNOW5G NEA4    = Y
++ZUC-256 NEA6   = Y
+ 
+ ;
+ ; Supported authentication algorithms of 'cn20k' crypto driver.
+@@ -82,6 +84,8 @@ SHA3_512 HMAC   = Y
+ SHAKE_128       = Y
+ SHAKE_256       = Y
+ SM3             = Y
++SNOW5G NIA4     = Y
++ZUC-256 NIA6    = Y
+ 
+ ;
+ ; Supported AEAD algorithms of 'cn20k' crypto driver.
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 2c3a318dba..fa53f0c8f3 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -108,6 +108,10 @@ New Features
+   Added handling of the key combination Control+L
+   to clear the screen before redisplaying the prompt.
+ 
++* **Updated Marvell cnxk crypto driver.**
++
++  * Added SNOW5G and ZUC256 v2 support for CN20K SoC.
++
+ Removed Items
+ -------------
+ 
+diff --git a/drivers/common/cnxk/hw/cpt.h b/drivers/common/cnxk/hw/cpt.h
+index 6e577b6277..eb795f61ac 100644
+--- a/drivers/common/cnxk/hw/cpt.h
++++ b/drivers/common/cnxk/hw/cpt.h
+@@ -81,7 +81,9 @@ union cpt_eng_caps {
+ 		uint64_t __io reserved_15_20 : 6;
+ 		uint64_t __io sm3 : 1;
+ 		uint64_t __io sm4 : 1;
+-		uint64_t __io reserved_23_34 : 12;
++		uint64_t __io reserved_23_24 : 2;
++		uint64_t __io zuc256_snow5g : 1;
++		uint64_t __io reserved_26_34 : 9;
+ 		uint64_t __io sg_ver2 : 1;
+ 		uint64_t __io sm2 : 1;
+ 		uint64_t __io pdcp_chain_zuc256 : 1;
 diff --git a/drivers/common/cnxk/roc_se.c b/drivers/common/cnxk/roc_se.c
-index f71832ff3a..bdb42567c7 100644
+index bdb42567c7..d841a926a4 100644
 --- a/drivers/common/cnxk/roc_se.c
 +++ b/drivers/common/cnxk/roc_se.c
-@@ -25,6 +25,9 @@ static uint8_t zuc_key256_mac16[16] = {0x23, 0x2f, 0x25, 0x2a, 0x6d, 0x40,
- 				       0x40, 0x40, 0x40, 0x40, 0x40, 0x40,
- 				       0x40, 0x52, 0x10, 0x30};
- 
-+static uint8_t zuc_key256_v2[16] = {0x64, 0x43, 0x7b, 0x2a, 0x11, 0x05, 0x51, 0x42,
-+				    0x1a, 0x31, 0x18, 0x66, 0x14, 0x2e, 0x01, 0x5c};
-+
- static inline void
- cpt_snow3g_key_gen(const uint8_t *ck, uint32_t *keyx)
- {
-@@ -93,7 +96,8 @@ cpt_ciph_type_set(roc_se_cipher_type type, struct roc_se_ctx *ctx, uint16_t key_
+@@ -91,6 +91,7 @@ cpt_ciph_type_set(roc_se_cipher_type type, struct roc_se_ctx *ctx, uint16_t key_
+ 		fc_type = ROC_SE_FC_GEN;
+ 		break;
+ 	case ROC_SE_ZUC_EEA3:
++	case ROC_SE_ZUC_NEA6:
+ 		if (unlikely(key_len != 16)) {
+ 			/*
  			 * ZUC 256 is not supported with older microcode
- 			 * where pdcp_iv_offset is 16
- 			 */
--			if (chained_op || (ctx->pdcp_iv_offset == 16)) {
-+			if ((chained_op ||
-+			     (!roc_model_is_cn20k() && (ctx->pdcp_iv_offset == 16)))) {
- 				plt_err("ZUC 256 is not supported with chained operations");
- 				return -1;
- 			}
-@@ -318,7 +322,8 @@ roc_se_auth_key_set(struct roc_se_ctx *se_ctx, roc_se_auth_type type, const uint
+@@ -115,6 +116,11 @@ cpt_ciph_type_set(roc_se_cipher_type type, struct roc_se_ctx *ctx, uint16_t key_
+ 		else
+ 			fc_type = ROC_SE_PDCP;
+ 		break;
++	case ROC_SE_SNOW5G_NEA4:
++		if (unlikely(key_len != 32))
++			return -1;
++		fc_type = ROC_SE_PDCP;
++		break;
+ 	case ROC_SE_AES_CTR_EEA2:
+ 		if (chained_op)
+ 			fc_type = ROC_SE_PDCP_CHAIN;
+@@ -287,7 +293,7 @@ roc_se_auth_key_set(struct roc_se_ctx *se_ctx, roc_se_auth_type type, const uint
+ 
+ 	chained_op = se_ctx->ciph_then_auth || se_ctx->auth_then_ciph;
+ 
+-	if ((type >= ROC_SE_ZUC_EIA3) && (type <= ROC_SE_KASUMI_F9_ECB)) {
++	if ((type >= ROC_SE_ZUC_EIA3) && (type <= ROC_SE_ZUC_NIA6)) {
+ 		uint32_t keyx[4];
+ 		int key_type;
+ 
+@@ -316,7 +322,20 @@ roc_se_auth_key_set(struct roc_se_ctx *se_ctx, roc_se_auth_type type, const uint
+ 			se_ctx->zsk_flags = 0x1;
+ 			opcode_major = ROC_SE_MAJOR_OP_PDCP_CHAIN;
+ 			break;
++		case ROC_SE_SNOW5G_NIA4:
++			pctx->w0.s.state_conf = ROC_SE_PDCP_CHAIN_CTX_KEY_IV;
++			pctx->w0.s.auth_type = ROC_SE_PDCP_CHAIN_ALG_TYPE_SNOW5G;
++			pctx->w0.s.mac_len = mac_len;
++			pctx->w0.s.auth_key_len = 3;
++			memcpy(pctx->st.auth_key, key, key_len);
++
++			se_ctx->fc_type = ROC_SE_PDCP;
++			se_ctx->pdcp_auth_alg = ROC_SE_PDCP_ALG_TYPE_SNOW5G;
++			se_ctx->zsk_flags = 0x1;
++			opcode_major = ROC_SE_MAJOR_OP_PDCP_CHAIN;
++			break;
+ 		case ROC_SE_ZUC_EIA3:
++		case ROC_SE_ZUC_NIA6:
+ 			if (unlikely(key_len != 16)) {
+ 				/*
  				 * ZUC 256 is not supported with older microcode
- 				 * where pdcp_iv_offset is 16
- 				 */
--				if (chained_op || (se_ctx->pdcp_iv_offset == 16)) {
-+				if ((chained_op ||
-+				     (!roc_model_is_cn20k() && (se_ctx->pdcp_iv_offset == 16)))) {
- 					plt_err("ZUC 256 is not supported with chained operations");
- 					return -1;
- 				}
-@@ -552,7 +557,10 @@ roc_se_ciph_key_set(struct roc_se_ctx *se_ctx, roc_se_cipher_type type, const ui
+@@ -336,13 +355,16 @@ roc_se_auth_key_set(struct roc_se_ctx *se_ctx, roc_se_auth_type type, const uint
+ 			pctx->w0.s.auth_type = ROC_SE_PDCP_CHAIN_ALG_TYPE_ZUC;
+ 			pctx->w0.s.mac_len = mac_len;
+ 			memcpy(pctx->st.auth_key, key, key_len);
+-			if (key_len == 32)
++
++			if (!roc_model_is_cn20k() && key_len == 32)
+ 				roc_se_zuc_bytes_swap(pctx->st.auth_key, key_len);
++
+ 			cpt_zuc_const_update(pctx->st.auth_zuc_const, key_len, mac_len);
+ 			se_ctx->fc_type = ROC_SE_PDCP_CHAIN;
+ 
+ 			if (!chained_op)
+ 				se_ctx->fc_type = ROC_SE_PDCP;
++
+ 			se_ctx->pdcp_auth_alg = ROC_SE_PDCP_ALG_TYPE_ZUC;
+ 			se_ctx->zsk_flags = 0x1;
+ 			opcode_major = ROC_SE_MAJOR_OP_PDCP_CHAIN;
+@@ -547,7 +569,16 @@ roc_se_ciph_key_set(struct roc_se_ctx *se_ctx, roc_se_cipher_type type, const ui
+ 		se_ctx->pdcp_ci_alg = ROC_SE_PDCP_ALG_TYPE_SNOW3G;
+ 		se_ctx->zsk_flags = 0;
+ 		goto success;
++	case ROC_SE_SNOW5G_NEA4:
++		pctx->w0.s.state_conf = ROC_SE_PDCP_CHAIN_CTX_KEY_IV;
++		pctx->w0.s.cipher_type = ROC_SE_PDCP_CHAIN_ALG_TYPE_SNOW5G;
++		pctx->w0.s.ci_key_len = 3;
++		memcpy(pctx->st.ci_key, key, key_len);
++		se_ctx->pdcp_ci_alg = ROC_SE_PDCP_ALG_TYPE_SNOW5G;
++		se_ctx->zsk_flags = 0;
++		goto success;
+ 	case ROC_SE_ZUC_EEA3:
++	case ROC_SE_ZUC_NEA6:
+ 		key_type = cpt_pdcp_chain_key_type_get(key_len);
+ 		if (key_type < 0)
+ 			return key_type;
+@@ -556,11 +587,12 @@ roc_se_ciph_key_set(struct roc_se_ctx *se_ctx, roc_se_cipher_type type, const ui
+ 		pctx->w0.s.cipher_type = ROC_SE_PDCP_CHAIN_ALG_TYPE_ZUC;
  		memcpy(pctx->st.ci_key, key, key_len);
  		if (key_len == 32) {
- 			roc_se_zuc_bytes_swap(pctx->st.ci_key, key_len);
--			memcpy(pctx->st.ci_zuc_const, zuc_key256, 16);
-+			if (roc_model_is_cn20k())
-+				memcpy(pctx->st.ci_zuc_const, zuc_key256_v2, 16);
-+			else
-+				memcpy(pctx->st.ci_zuc_const, zuc_key256, 16);
+-			roc_se_zuc_bytes_swap(pctx->st.ci_key, key_len);
+ 			if (roc_model_is_cn20k())
+ 				memcpy(pctx->st.ci_zuc_const, zuc_key256_v2, 16);
+-			else
++			else {
+ 				memcpy(pctx->st.ci_zuc_const, zuc_key256, 16);
++				roc_se_zuc_bytes_swap(pctx->st.ci_key, key_len);
++			}
  		} else
  			memcpy(pctx->st.ci_zuc_const, zuc_key128, 32);
  		se_ctx->pdcp_ci_alg = ROC_SE_PDCP_ALG_TYPE_ZUC;
 diff --git a/drivers/common/cnxk/roc_se.h b/drivers/common/cnxk/roc_se.h
-index 9afcda8ba4..03a6eabfd3 100644
+index 03a6eabfd3..499e71ce85 100644
 --- a/drivers/common/cnxk/roc_se.h
 +++ b/drivers/common/cnxk/roc_se.h
-@@ -355,6 +355,7 @@ struct roc_se_ctx {
- 	uint64_t eia2 : 1;
- 	/* auth_iv_offset passed to PDCP_CHAIN opcode based on FVC bit */
- 	uint8_t pdcp_iv_offset;
-+	uint8_t pdcp_iv_len;
- 	union cpt_inst_w4 template_w4;
- 	uint8_t *auth_key;
- } __plt_aligned(ROC_ALIGN);
-@@ -374,6 +375,7 @@ struct roc_se_fc_params {
- 	uint8_t cipher_iv_len;
- 	uint8_t auth_iv_len;
- 	uint8_t pdcp_iv_offset;
-+	uint8_t pdcp_iv_len;
+@@ -101,6 +101,8 @@ typedef enum {
+ 	ROC_SE_AES_CMAC_EIA2 = 0x92,
+ 	ROC_SE_KASUMI_F9_CBC = 0x93,
+ 	ROC_SE_KASUMI_F9_ECB = 0x94,
++	ROC_SE_SNOW5G_NIA4 = 0x95,
++	ROC_SE_ZUC_NIA6 = 0x96,
+ } roc_se_auth_type;
  
- 	struct roc_se_buf_ptr aad_buf;
- 	struct roc_se_buf_ptr mac_buf;
+ typedef enum {
+@@ -129,6 +131,8 @@ typedef enum {
+ 	ROC_SE_KASUMI_F8_ECB = 0x94,
+ 	ROC_SE_AES_DOCSISBPI = 0x95,
+ 	ROC_SE_DES_DOCSISBPI = 0x96,
++	ROC_SE_SNOW5G_NEA4 = 0x97,
++	ROC_SE_ZUC_NEA6 = 0x98,
+ } roc_se_cipher_type;
+ 
+ typedef enum {
+@@ -257,10 +261,8 @@ struct roc_se_pdcp_ctx {
+ 	union {
+ 		uint64_t u64;
+ 		struct {
+-			uint64_t cipher_type : 2;
+-			uint64_t rsvd58_59 : 2;
+-			uint64_t auth_type : 2;
+-			uint64_t rsvd62_63 : 2;
++			uint64_t cipher_type : 4;
++			uint64_t auth_type : 4;
+ 			uint64_t mac_len : 4;
+ 			uint64_t ci_key_len : 2;
+ 			uint64_t auth_key_len : 2;
+@@ -307,8 +309,10 @@ struct roc_se_iov_ptr {
+ #define ROC_SE_PDCP_ALG_TYPE_SNOW3G	  1
+ #define ROC_SE_PDCP_ALG_TYPE_AES_CTR	  2
+ #define ROC_SE_PDCP_ALG_TYPE_AES_CMAC	  3
++#define ROC_SE_PDCP_ALG_TYPE_SNOW5G	  4
+ #define ROC_SE_PDCP_CHAIN_ALG_TYPE_SNOW3G 1
+ #define ROC_SE_PDCP_CHAIN_ALG_TYPE_ZUC	  3
++#define ROC_SE_PDCP_CHAIN_ALG_TYPE_SNOW5G 5
+ 
+ #define ROC_SE_PDCP_CHAIN_CTX_LFSR   0
+ #define ROC_SE_PDCP_CHAIN_CTX_KEY_IV 1
+@@ -348,8 +352,8 @@ struct roc_se_ctx {
+ 	uint64_t hmac : 1;
+ 	uint64_t zsk_flags : 3;
+ 	uint64_t k_ecb : 1;
+-	uint64_t pdcp_ci_alg : 2;
+-	uint64_t pdcp_auth_alg : 2;
++	uint64_t pdcp_ci_alg : 3;
++	uint64_t pdcp_auth_alg : 3;
+ 	uint64_t ciph_then_auth : 1;
+ 	uint64_t auth_then_ciph : 1;
+ 	uint64_t eia2 : 1;
+diff --git a/drivers/crypto/cnxk/cnxk_cryptodev.h b/drivers/crypto/cnxk/cnxk_cryptodev.h
+index 088149badb..f88162ad3c 100644
+--- a/drivers/crypto/cnxk/cnxk_cryptodev.h
++++ b/drivers/crypto/cnxk/cnxk_cryptodev.h
+@@ -11,7 +11,7 @@
+ #include "roc_ae.h"
+ #include "roc_cpt.h"
+ 
+-#define CNXK_CPT_MAX_CAPS		 56
++#define CNXK_CPT_MAX_CAPS		 60
+ #define CNXK_SEC_IPSEC_CRYPTO_MAX_CAPS	 16
+ #define CNXK_SEC_TLS_1_3_CRYPTO_MAX_CAPS 3
+ #define CNXK_SEC_TLS_1_2_CRYPTO_MAX_CAPS 7
 diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c b/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-index d2747878d3..5c1542909e 100644
+index 5c1542909e..be6d383717 100644
 --- a/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
 +++ b/drivers/crypto/cnxk/cnxk_cryptodev_capabilities.c
-@@ -1908,7 +1908,7 @@ cpt_caps_add(struct rte_cryptodev_capabilities cnxk_caps[], int *cur_pos,
- }
+@@ -724,6 +724,99 @@ static const struct rte_cryptodev_capabilities caps_zuc_snow3g[] = {
+ 	},
+ };
  
- static void
--cn10k_crypto_caps_update(struct rte_cryptodev_capabilities cnxk_caps[])
-+cn10k_20k_crypto_caps_update(struct rte_cryptodev_capabilities cnxk_caps[])
- {
- 
- 	struct rte_cryptodev_capabilities *caps;
-@@ -1921,7 +1921,10 @@ cn10k_crypto_caps_update(struct rte_cryptodev_capabilities cnxk_caps[])
++static const struct rte_cryptodev_capabilities caps_zuc256_snow5g[] = {
++	{	/* SNOW 5G (NEA4) */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
++			{.cipher = {
++				.algo = RTE_CRYPTO_CIPHER_SNOW5G_NEA4,
++				.block_size = 16,
++				.key_size = {
++					.min = 32,
++					.max = 32,
++					.increment = 0
++				},
++				.iv_size = {
++					.min = 16,
++					.max = 16,
++					.increment = 0
++				}
++			}, }
++		}, }
++	},
++	{	/* SNOW 5G (NIA4) */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_SNOW5G_NIA4,
++				.block_size = 16,
++				.key_size = {
++					.min = 32,
++					.max = 32,
++					.increment = 0
++				},
++				.digest_size = {
++					.min = 4,
++					.max = 16,
++					.increment = 0
++				},
++				.iv_size = {
++					.min = 16,
++					.max = 16,
++					.increment = 0
++				}
++			}, }
++		}, }
++	},
++	{	/* ZUC 256 (NEA6) */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_CIPHER,
++			{.cipher = {
++				.algo = RTE_CRYPTO_CIPHER_ZUC_NEA6,
++				.block_size = 16,
++				.key_size = {
++					.min = 32,
++					.max = 32,
++					.increment = 0
++				},
++				.iv_size = {
++					.min = 16,
++					.max = 16,
++					.increment = 0
++				}
++			}, }
++		}, }
++	},
++	{	/* ZUC 256 (NIA6) */
++		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
++		{.sym = {
++			.xform_type = RTE_CRYPTO_SYM_XFORM_AUTH,
++			{.auth = {
++				.algo = RTE_CRYPTO_AUTH_ZUC_NIA6,
++				.block_size = 16,
++				.key_size = {
++					.min = 32,
++					.max = 32,
++					.increment = 0
++				},
++				.digest_size = {
++					.min = 4,
++					.max = 16,
++					.increment = 0
++				},
++				.iv_size = {
++					.min = 16,
++					.max = 16,
++					.increment = 0
++				}
++			}, }
++		}, }
++	},
++};
++
+ static const struct rte_cryptodev_capabilities caps_aes[] = {
+ 	{	/* AES GMAC (AUTH) */
+ 		.op = RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+@@ -1917,7 +2010,8 @@ cn10k_20k_crypto_caps_update(struct rte_cryptodev_capabilities cnxk_caps[])
+ 	while ((caps = &cnxk_caps[i++])->op != RTE_CRYPTO_OP_TYPE_UNDEFINED) {
+ 		if ((caps->op == RTE_CRYPTO_OP_TYPE_SYMMETRIC) &&
+ 		    (caps->sym.xform_type == RTE_CRYPTO_SYM_XFORM_CIPHER) &&
+-		    (caps->sym.cipher.algo == RTE_CRYPTO_CIPHER_ZUC_EEA3)) {
++		    ((caps->sym.cipher.algo == RTE_CRYPTO_CIPHER_ZUC_EEA3) ||
++		     (caps->sym.cipher.algo == RTE_CRYPTO_CIPHER_ZUC_NEA6))) {
  
  			caps->sym.cipher.key_size.max = 32;
  			caps->sym.cipher.key_size.increment = 16;
--			caps->sym.cipher.iv_size.max = 25;
-+			if (roc_model_is_cn20k())
-+				caps->sym.cipher.iv_size.max = 16;
-+			else
-+				caps->sym.cipher.iv_size.max = 25;
- 			caps->sym.cipher.iv_size.increment = 1;
- 		}
+@@ -1930,8 +2024,8 @@ cn10k_20k_crypto_caps_update(struct rte_cryptodev_capabilities cnxk_caps[])
  
-@@ -1946,8 +1949,8 @@ cn9k_crypto_caps_add(struct rte_cryptodev_capabilities cnxk_caps[], int *cur_pos
- }
- 
- static void
--cn10k_crypto_caps_add(struct rte_cryptodev_capabilities cnxk_caps[],
--		     union cpt_eng_caps *hw_caps, int *cur_pos)
-+cn10k_20k_crypto_caps_add(struct rte_cryptodev_capabilities cnxk_caps[],
-+			  union cpt_eng_caps *hw_caps, int *cur_pos)
- {
- 	if (hw_caps[CPT_ENG_TYPE_SE].sg_ver2) {
- 		CPT_CAPS_ADD(cnxk_caps, cur_pos, hw_caps, sm3);
-@@ -1980,13 +1983,13 @@ crypto_caps_populate(struct rte_cryptodev_capabilities cnxk_caps[],
- 		cn9k_crypto_caps_add(cnxk_caps, &cur_pos);
- 
+ 		if ((caps->op == RTE_CRYPTO_OP_TYPE_SYMMETRIC) &&
+ 		    (caps->sym.xform_type == RTE_CRYPTO_SYM_XFORM_AUTH) &&
+-		    (caps->sym.auth.algo == RTE_CRYPTO_AUTH_ZUC_EIA3)) {
+-
++		    ((caps->sym.auth.algo == RTE_CRYPTO_AUTH_ZUC_EIA3) ||
++		     (caps->sym.auth.algo == RTE_CRYPTO_AUTH_ZUC_NIA6))) {
+ 			caps->sym.auth.key_size.max = 32;
+ 			caps->sym.auth.key_size.increment = 16;
+ 			caps->sym.auth.digest_size.max = 16;
+@@ -1985,6 +2079,9 @@ crypto_caps_populate(struct rte_cryptodev_capabilities cnxk_caps[],
  	if (roc_model_is_cn10k() || roc_model_is_cn20k())
--		cn10k_crypto_caps_add(cnxk_caps, hw_caps, &cur_pos);
-+		cn10k_20k_crypto_caps_add(cnxk_caps, hw_caps, &cur_pos);
+ 		cn10k_20k_crypto_caps_add(cnxk_caps, hw_caps, &cur_pos);
  
++	if (roc_model_is_cn20k())
++		CPT_CAPS_ADD(cnxk_caps, &cur_pos, hw_caps, zuc256_snow5g);
++
  	cpt_caps_add(cnxk_caps, &cur_pos, caps_null, RTE_DIM(caps_null));
  	cpt_caps_add(cnxk_caps, &cur_pos, caps_end, RTE_DIM(caps_end));
  
- 	if (roc_model_is_cn10k() || roc_model_is_cn20k())
--		cn10k_crypto_caps_update(cnxk_caps);
-+		cn10k_20k_crypto_caps_update(cnxk_caps);
- }
- 
- const struct rte_cryptodev_capabilities *
 diff --git a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-index 370f311dd3..b431b78005 100644
+index b431b78005..2f9eb322dc 100644
 --- a/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
 +++ b/drivers/crypto/cnxk/cnxk_cryptodev_ops.c
-@@ -632,10 +632,16 @@ cnxk_sess_fill(struct roc_cpt *roc_cpt, struct rte_crypto_sym_xform *xform,
- 	struct rte_crypto_sym_xform *a_xfrm = NULL;
- 	bool ciph_then_auth = false;
- 
--	if (roc_cpt->hw_caps[CPT_ENG_TYPE_SE].pdcp_chain_zuc256)
-+	if (roc_model_is_cn20k()) {
-+		sess->roc_se_ctx->pdcp_iv_len = 40;
-+		sess->roc_se_ctx->pdcp_iv_offset = 16;
-+	} else if (roc_cpt->hw_caps[CPT_ENG_TYPE_SE].pdcp_chain_zuc256) {
- 		sess->roc_se_ctx->pdcp_iv_offset = 24;
--	else
-+		sess->roc_se_ctx->pdcp_iv_len = 48;
-+	} else {
- 		sess->roc_se_ctx->pdcp_iv_offset = 16;
-+		sess->roc_se_ctx->pdcp_iv_len = 32;
-+	}
- 
- 	if (xform == NULL)
- 		return -EINVAL;
+@@ -611,6 +611,7 @@ is_valid_pdcp_cipher_alg(struct rte_crypto_sym_xform *c_xfrm,
+ {
+ 	switch (c_xfrm->cipher.algo) {
+ 	case RTE_CRYPTO_CIPHER_SNOW3G_UEA2:
++	case RTE_CRYPTO_CIPHER_SNOW5G_NEA4:
+ 	case RTE_CRYPTO_CIPHER_ZUC_EEA3:
+ 		break;
+ 	case RTE_CRYPTO_CIPHER_AES_CTR:
+@@ -736,6 +737,7 @@ cnxk_sess_fill(struct roc_cpt *roc_cpt, struct rte_crypto_sym_xform *xform,
+ 				}
+ 				break;
+ 			case RTE_CRYPTO_AUTH_SNOW3G_UIA2:
++			case RTE_CRYPTO_AUTH_SNOW5G_NIA4:
+ 			case RTE_CRYPTO_AUTH_ZUC_EIA3:
+ 			case RTE_CRYPTO_AUTH_AES_CMAC:
+ 				if (!is_valid_pdcp_cipher_alg(c_xfrm, sess))
+@@ -771,6 +773,7 @@ cnxk_sess_fill(struct roc_cpt *roc_cpt, struct rte_crypto_sym_xform *xform,
+ 			}
+ 			break;
+ 		case RTE_CRYPTO_AUTH_SNOW3G_UIA2:
++		case RTE_CRYPTO_AUTH_SNOW5G_NIA4:
+ 		case RTE_CRYPTO_AUTH_ZUC_EIA3:
+ 		case RTE_CRYPTO_AUTH_AES_CMAC:
+ 			if (!is_valid_pdcp_cipher_alg(c_xfrm, sess))
 diff --git a/drivers/crypto/cnxk/cnxk_se.h b/drivers/crypto/cnxk/cnxk_se.h
-index 7a0624ca28..db25fd90d8 100644
+index db25fd90d8..8dbf3e73c7 100644
 --- a/drivers/crypto/cnxk/cnxk_se.h
 +++ b/drivers/crypto/cnxk/cnxk_se.h
-@@ -1537,7 +1537,7 @@ cpt_pdcp_chain_alg_prep(uint32_t req_flags, uint64_t d_offs, uint64_t d_lens,
- 	const uint8_t *auth_iv = NULL, *cipher_iv = NULL;
- 	uint8_t pdcp_iv_off = params->pdcp_iv_offset;
- 	uint32_t off_ctrl_len = ROC_SE_OFF_CTRL_LEN;
--	const int iv_len = pdcp_iv_off * 2;
-+	const int iv_len = params->pdcp_iv_len;
- 	uint8_t pdcp_ci_alg, pdcp_auth_alg;
- 	union cpt_inst_w4 cpt_inst_w4;
- 	struct roc_se_ctx *se_ctx;
-@@ -1667,9 +1667,9 @@ cpt_pdcp_alg_prep(uint32_t req_flags, uint64_t d_offs, uint64_t d_lens,
- 	 * So iv_len reserved is 32B for cipher and auth IVs with old microcode
- 	 * and 48B with new microcode.
- 	 */
--	const int iv_len = params->pdcp_iv_offset * 2;
- 	uint32_t off_ctrl_len = ROC_SE_OFF_CTRL_LEN;
- 	struct roc_se_ctx *se_ctx = params->ctx;
-+	const int iv_len = params->pdcp_iv_len;
- 	uint32_t encr_data_len, auth_data_len;
- 	const int flags = se_ctx->zsk_flags;
- 	uint32_t encr_offset, auth_offset;
-@@ -3039,6 +3039,7 @@ fill_pdcp_params(struct rte_crypto_op *cop, struct cnxk_se_sess *sess,
- 	fc_params.iv_buf = NULL;
- 	fc_params.auth_iv_buf = NULL;
- 	fc_params.pdcp_iv_offset = sess->roc_se_ctx->pdcp_iv_offset;
-+	fc_params.pdcp_iv_len = sess->roc_se_ctx->pdcp_iv_len;
- 
- 	if (likely(sess->iv_length))
- 		fc_params.iv_buf = rte_crypto_op_ctod_offset(cop, uint8_t *, sess->iv_offset);
-@@ -3134,6 +3135,7 @@ fill_pdcp_chain_params(struct rte_crypto_op *cop, struct cnxk_se_sess *sess,
- 	fc_params.iv_buf = NULL;
- 	fc_params.auth_iv_buf = NULL;
- 	fc_params.pdcp_iv_offset = sess->roc_se_ctx->pdcp_iv_offset;
-+	fc_params.pdcp_iv_len = sess->roc_se_ctx->pdcp_iv_len;
- 
- 	m_src = sym_op->m_src;
- 	m_dst = sym_op->m_dst;
-@@ -3347,6 +3349,7 @@ fill_digest_params(struct rte_crypto_op *cop, struct cnxk_se_sess *sess,
- 		params.auth_iv_buf =
- 			rte_crypto_op_ctod_offset(cop, uint8_t *, sess->auth_iv_offset);
- 		params.pdcp_iv_offset = sess->roc_se_ctx->pdcp_iv_offset;
-+		params.pdcp_iv_len = sess->roc_se_ctx->pdcp_iv_len;
- 		if (sess->zsk_flag == ROC_SE_K_F9) {
- 			uint32_t length_in_bits, num_bytes;
- 			uint8_t *src, direction = 0;
+@@ -131,7 +131,8 @@ pdcp_iv_copy(uint8_t *iv_d, const uint8_t *iv_s, const uint8_t pdcp_alg_type, co
+ 			iv_temp[j] = iv_s_temp[3 - j];
+ 		memcpy(iv_d, iv_temp, 16);
+ 	} else if ((pdcp_alg_type == ROC_SE_PDCP_ALG_TYPE_ZUC) ||
+-		   pdcp_alg_type == ROC_SE_PDCP_ALG_TYPE_AES_CTR) {
++		   (pdcp_alg_type == ROC_SE_PDCP_ALG_TYPE_AES_CTR) ||
++		   (pdcp_alg_type == ROC_SE_PDCP_ALG_TYPE_SNOW5G)) {
+ 		memcpy(iv_d, iv_s, 16);
+ 		if (pack_iv) {
+ 			uint8_t iv_d23, iv_d24;
+@@ -2243,12 +2244,24 @@ fill_sess_cipher(struct rte_crypto_sym_xform *xform, struct cnxk_se_sess *sess)
+ 		zsk_flag = ROC_SE_ZS_EA;
+ 		zs_cipher = ROC_SE_ZS_EA;
+ 		break;
++	case RTE_CRYPTO_CIPHER_SNOW5G_NEA4:
++		enc_type = ROC_SE_SNOW5G_NEA4;
++		cipher_key_len = 32;
++		zsk_flag = ROC_SE_ZS_EA;
++		zs_cipher = ROC_SE_ZS_EA;
++		break;
+ 	case RTE_CRYPTO_CIPHER_ZUC_EEA3:
+ 		enc_type = ROC_SE_ZUC_EEA3;
+ 		cipher_key_len = c_form->key.length;
+ 		zsk_flag = ROC_SE_ZS_EA;
+ 		zs_cipher = ROC_SE_ZS_EA;
+ 		break;
++	case RTE_CRYPTO_CIPHER_ZUC_NEA6:
++		enc_type = ROC_SE_ZUC_NEA6;
++		cipher_key_len = 32;
++		zsk_flag = ROC_SE_ZS_EA;
++		zs_cipher = ROC_SE_ZS_EA;
++		break;
+ 	case RTE_CRYPTO_CIPHER_AES_XTS:
+ 		enc_type = ROC_SE_AES_XTS;
+ 		cipher_key_len = 16;
+@@ -2437,11 +2450,21 @@ fill_sess_auth(struct rte_crypto_sym_xform *xform, struct cnxk_se_sess *sess)
+ 		zsk_flag = ROC_SE_ZS_IA;
+ 		zs_auth = ROC_SE_ZS_IA;
+ 		break;
++	case RTE_CRYPTO_AUTH_SNOW5G_NIA4:
++		auth_type = ROC_SE_SNOW5G_NIA4;
++		zsk_flag = ROC_SE_ZS_IA;
++		zs_auth = ROC_SE_ZS_IA;
++		break;
+ 	case RTE_CRYPTO_AUTH_ZUC_EIA3:
+ 		auth_type = ROC_SE_ZUC_EIA3;
+ 		zsk_flag = ROC_SE_ZS_IA;
+ 		zs_auth = ROC_SE_ZS_IA;
+ 		break;
++	case RTE_CRYPTO_AUTH_ZUC_NIA6:
++		auth_type = ROC_SE_ZUC_NIA6;
++		zsk_flag = ROC_SE_ZS_IA;
++		zs_auth = ROC_SE_ZS_IA;
++		break;
+ 	case RTE_CRYPTO_AUTH_NULL:
+ 		auth_type = 0;
+ 		is_null = 1;
 -- 
 2.34.1
 
