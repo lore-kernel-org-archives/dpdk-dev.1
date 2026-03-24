@@ -2,74 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92199F54AD2
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 16:12:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C60EF54AD7
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 16:12:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 84504406B8;
-	Tue, 24 Mar 2026 17:12:47 +0100 (CET)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id 5E52F406B6
- for <dev@dpdk.org>; Tue, 24 Mar 2026 17:12:46 +0100 (CET)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-12a80c36350so2938357c88.1
- for <dev@dpdk.org>; Tue, 24 Mar 2026 09:12:46 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6560C40A67;
+	Tue, 24 Mar 2026 17:12:50 +0100 (CET)
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+ by mails.dpdk.org (Postfix) with ESMTP id B949040A4B
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 17:12:49 +0100 (CET)
+Received: by mail-dl1-f52.google.com with SMTP id
+ a92af1059eb24-1274204434bso13400c88.1
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 09:12:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774368765;
- x=1774973565; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774368769;
+ x=1774973569; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=KuKf3bpq1fZ+ETXT6NedDY4Wsv5aHy+RItiPiIV78MQ=;
- b=O1EqoMetXJ5CxcCu/lUhLRjUxew4for2f1P/w1Zj78RFA9JtdsxtikWCJl+8KnhhGk
- ZqTday8RPA2Tqo7OZFTD1eHcl+8Uzr0tHfLO7rxkm23WcO/CTR2FCzWDOna67r7VKT8S
- Kr727bftgKGVlaD3hCwGnDMOZ6HBnz5OnoYXNZUFiYpDvGILd9Txk0tlEHxnRdx/zXJT
- 33/0bPM3ZrfPdSJIkHLA6lkpH6DqH/u9ejlYXJnS8VH6DxrFggGPaNMIjUP1FWo93LY/
- +SRreB4K1WEVHdb4XYIvQAvSRsmVt4oCd5k8Do1mvY2i/D590gGmSuuk/e9Bv2oKD9A8
- LD7w==
+ bh=hfzs4M3Th+oSM8X3/9YyaAFXilkTJRDi1PJtrWrJqPY=;
+ b=ycGJDV6gT2KNdOCobtlcW5KxXkziu2wzLixMprxXnqKrf34Lhk0qPI8teldF5ZPwxo
+ uSRTV5Sii3IGbwFPj0VoaiGoGiCoJZY5etUF5He+IgAmkOi3zDcd3kbK/qA1kI7Xv38L
+ ZjwXuCw+y33DcNvxaKrXdxCBEf/G+a3G6yB20epBh77+arvITlkOSygrxNPULR25NQH3
+ dKN2G8P9/UphjypeDWLptoEqABJtO8WphID694zkh3N+NHNBfn15kTp3Mu0PBArZjaYM
+ i5sZbAH0TBLKtp5X3mo6evFoxlSbU+ZRXs9oxP9JJly1LhSyRJC+qEqAWz91Ord9aep2
+ HLog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774368765; x=1774973565;
+ d=1e100.net; s=20251104; t=1774368769; x=1774973569;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=KuKf3bpq1fZ+ETXT6NedDY4Wsv5aHy+RItiPiIV78MQ=;
- b=a5jmNNVVWrgD5GvwTS/Z0AxAl/7sV/DQ8FN6HcHbLJz3nNqgy3iPDcp4slhjsMy1BS
- uIO8Lz/IltR72USXeOSGINiNsbC5DDEIZFnWHTjgy45va2MWziQrLhyQXI55ImjUcyFp
- 3VcucIu7vPI/VLx2/2VXWyjprJt2TP4RcAeJCcNXmgVznc13CaCzv/W/4ruLw18qmV0M
- K39hI1KJ/xXZRgngFYdnOs+ufNkoZxjXib0GQRMmk2MYH4okAQbYQSPfPuLV8k+Ccx0X
- OdBP+CfxrX6vPOwnaueJ4Z7kfedll4ZDFRA23QyxZoPhC2PgVd+Y05RvPSrdO+Rmln54
- TY7w==
-X-Gm-Message-State: AOJu0Yxi0+swviUcN8AkU+1S/ggBlMTNBPnaxG+Iw/dQyppXNPnWP8Va
- 16eTv1PbrNoDq0nkX/WItbdymZYh+3NsDvu7e9nI23ZGBv5vHoU7OdG75J2fQrc6b1A=
-X-Gm-Gg: ATEYQzzGpU2/wusGeQfTugjxRArSDE31lGGvmW1Hw0jAhAsJGkhs6M8+S82qHXa6Jan
- kFPQnqvc+AkoIeNVGedZS6rUxvpLRQKkqSiDAQvITpd+nPNVTLgoG0nOHlCbo7yuktzV4IusfAM
- hjtaFqemJuRcriYaD2yAIkLhFGE4uRkItpxUD91d9gnHQvlPXTDgZJIUdYvZYxG7A43N6LKlLeO
- o/+ALP7vS2rkhvhnxcXTB5O+xtJeU4K/6F32KCN4zcuVU6WxdCqwFje2x1W+4EYzfj2uFsag9/l
- PFngDdpDns4DeB0rftaESTYsTLw4ur7agYpTVdfTiSRxbrmTqlWAwkJS6Fw3HSL++CZscOBF6cn
- eQrMfi4PyG4VG6jaAFJdhHloPKBSB/A3hfChVRsFWwC/utWN/Xxmlddz5UMatfcoDSXq8s2Qcot
- oWcW3TAbb2M4+GufC83iSIgJKhIKSAujma2Ts=
-X-Received: by 2002:a05:7022:69a5:b0:123:330b:398 with SMTP id
- a92af1059eb24-12a96eef4c0mr51796c88.19.1774368765325; 
- Tue, 24 Mar 2026 09:12:45 -0700 (PDT)
+ bh=hfzs4M3Th+oSM8X3/9YyaAFXilkTJRDi1PJtrWrJqPY=;
+ b=ExprGl88wxqQnKNphTSV9E0tdffAnPNX5ysOuynb+PesHm5B6gRcWBohcHYQtKvTng
+ khW5CCuVtkBqcQL4NZhF2NQMb73R9gDqWj8W61Q0WFBQnTlMTIAsvLe1hOUKoI+XTHLi
+ HXQvzRwv0assh6dAIzTH7cncI3dBboSdsp2td2wFNziG7HVHRT4ypzxrBkYz9WxekG++
+ q4y7Bdz+yQzlHuSoZlgvexvTDcwp0Y8g12SSQiq9f60Y3c+LQ/YyYyHFdp3+8I66cc0f
+ v7dQRhfknj1hfBjLwcoiz1OHt70FixHA6RyKknSfI15WKtVhP+emL6rzke2MOKqpgmIg
+ zCeQ==
+X-Gm-Message-State: AOJu0YwPq3NhChfDjWrb6TP317hjsvATGrksErHAg5HZX+2i8EfOmnfK
+ G/DuPpKLC/FqKoB6u908S/7SaScfKZGnD8/7DrncoBnR4JNI6C4VJAaC/Odbb8l0iZs=
+X-Gm-Gg: ATEYQzyf56aMaelbrLQGhpFWb1FLMinEEaNZlO3TPQd7TdZT+pxLqYk+g/RETOhWfDl
+ A9N5Y6QbB/qalOyb+KAk2RSmflPpCLGQKnOlUd6y+6qiEJiMP0Bf+WCP0r/0e0jlR72rOsDG3tN
+ oTmZ2w/ie43/qeC/h1ufaIPNyZUZtIlbnpx8QBW4yv13rDPdklAFsAyZsTICkJNpiKZQgc42s/f
+ SgqEsKnUC6S7UBD7Ytr7guC+6GCqhDbR2cf7MspK+XljKNddXGwiLQdEV/aTQxWzdkOUtoM1BAa
+ U+D964FjwcVZB4VfQi4Rw4TbAILVcYK0RxIc/n7Kwti70sCb3SdIgGOQCQmbKP5e84nbHmwaoCN
+ ph+n3g/RpOM7wQHzxl7Jn/zZtK5fstarrq0HdRo/l+qtpKP42g4vNw4WRYL+oVwlQOh80kKlAGR
+ 2/fMaJojQuzy1L8DMjaGhBMKs5iPes9oTofjY=
+X-Received: by 2002:a05:7022:b91:b0:128:d396:f2ea with SMTP id
+ a92af1059eb24-12a8e0e764cmr1700741c88.11.1774368768741; 
+ Tue, 24 Mar 2026 09:12:48 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12a736bb1ccsm15239101c88.14.2026.03.24.09.12.44
+ a92af1059eb24-12a736bb1ccsm15239101c88.14.2026.03.24.09.12.47
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 24 Mar 2026 09:12:45 -0700 (PDT)
-Date: Tue, 24 Mar 2026 09:11:21 -0700
+ Tue, 24 Mar 2026 09:12:48 -0700 (PDT)
+Date: Tue, 24 Mar 2026 09:10:45 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: David Marchand <david.marchand@redhat.com>
 Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, Parav
  Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>, Nipun Gupta
  <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>, Hemant
  Agrawal <hemant.agrawal@nxp.com>, Sachin Saxena <sachin.saxena@nxp.com>,
- Chenbo Xia <chenbox@nvidia.com>, Tomasz Duszynski <tduszynski@marvell.com>,
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
- Wei Hu <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>
-Subject: Re: [PATCH 5/8] bus: factorize devargs lookup
-Message-ID: <20260324091121.684bf6c3@phoenix.local>
-In-Reply-To: <20260323105306.1531689-6-david.marchand@redhat.com>
+ Rosen Xu <rosen.xu@altera.com>, Chenbo Xia <chenbox@nvidia.com>, Tomasz
+ Duszynski <tduszynski@marvell.com>, Chengwen Feng
+ <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>, Wei Hu
+ <weh@microsoft.com>
+Subject: Re: [PATCH 4/8] drivers: cleanup devargs lookup in bus scan
+Message-ID: <20260324091045.2baca39e@phoenix.local>
+In-Reply-To: <20260323105306.1531689-5-david.marchand@redhat.com>
 References: <20260323105306.1531689-1-david.marchand@redhat.com>
- <20260323105306.1531689-6-david.marchand@redhat.com>
+ <20260323105306.1531689-5-david.marchand@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -86,37 +87,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 23 Mar 2026 11:52:59 +0100
+On Mon, 23 Mar 2026 11:52:58 +0100
 David Marchand <david.marchand@redhat.com> wrote:
 
-> Each bus reimplements some similar devargs lookup code.
+> Don't hardcode the bus names in the RTE_EAL_DEVARGS_FOREACH() calls.
+> The bus name is set by code in EAL.
+> Even if there is nothing broken, let's reuse the name from the bus object.
 > 
-> The differences are in how some bus (PCI, VMBUS etc...) normalizes the
-> device names. We can't use the .parse existing handler from outside the
-> bus code itself, as the size of the bus specific device location address
-> is unknown.
-> Introduce a bus specific helper to compare two device names and
-> hide this ugly detail.
+> And remove the now useless macros.
+> 
+> Note: in the ifpga bus case, the call was using an incorrect macro
+> (IFPGA_ARG_NAME instead of IFPGA_BUS_NAME), yet it was working fine
+> as this macro is aligned with the ifpga bus name.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
-> Changes since RFC v3:
-> - fixed doxygen,
-> 
-> ---
 
-More AI review:
-Patch 5/8: bus: factorize devargs lookup
+AI review feedback:
 
-Warning: The Doxygen for rte_bus_find_devargs() in bus_driver.h
-describes the bus parameter as "A pointer to a rte_bus structure
-describing the bus to be unregistered" -- this is copy-pasted from
-rte_bus_unregister. Should say something like "the bus to search for
-devargs on."
+Patch 4/8: drivers: cleanup devargs lookup in bus scan
 
-Warning: The Doxygen for rte_bus_devname_compare_t has two issues: the
-@return says "true or false" but the function follows strcmp semantics
-(0 for match, non-zero for no match), and the @param descriptions both
-say "device information location address" when they should say "device
-name string."
+Error: In drivers/raw/ifpga/ifpga_rawdev.c, the change from
+RTE_STR(IFPGA_BUS_NAME) to vdev->device.devargs->bus->name passes the
+wrong bus name to rte_eal_hotplug_add(). The vdev is a vdev device
+(registered via --vdev ifpga_rawdev_cfg,...), so
+vdev->device.devargs->bus is the vdev bus, and its name is "vdev". The
+old code correctly passed "ifpga" to hotplug the device onto the ifpga
+bus. The new code would attempt to add the device to the vdev bus
+instead.
+
+Suggested fix: use rte_ifpga_bus.name (the ifpga bus object) or a local
+string "ifpga" rather than deriving it from the vdev's devargs.
