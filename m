@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E75E4F54AC4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 14:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C01C4F54AC6
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 14:41:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 353FD402BE;
-	Tue, 24 Mar 2026 15:37:01 +0100 (CET)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id A02AF4025F
- for <dev@dpdk.org>; Tue, 24 Mar 2026 15:36:59 +0100 (CET)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-12a695044a4so2453359c88.0
- for <dev@dpdk.org>; Tue, 24 Mar 2026 07:36:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0885D402BE;
+	Tue, 24 Mar 2026 15:41:53 +0100 (CET)
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com
+ [74.125.82.175]) by mails.dpdk.org (Postfix) with ESMTP id BB22A4025F
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 15:41:51 +0100 (CET)
+Received: by mail-dy1-f175.google.com with SMTP id
+ 5a478bee46e88-2c0c955a481so5631663eec.1
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 07:41:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774363019;
- x=1774967819; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774363311;
+ x=1774968111; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=EMobfBaUSq6XzjSOKBzoXSSzfl6wFcC8H5eiaRD6370=;
- b=dFPYbaYhQ+7vsq+PpNksOWGnNn6414RWr8Ti+EizQrVb8nx69Q0BeiISHCOjJEJcnn
- M/b3f0tx0h2L7POLjRFOkI46PZ4BLgUu76QPAhfZns4F+Yr8IU64wYLBK1MuKNHXFWXz
- HEmNpwUGS82DRnqa/lycRkagZmCUqPJvhAeVeVNY4rZbyuqa10GicUkinhWLk9+80Rkt
- KhY8qCJ2uyyIrOYUOTF0BbbVb8Io8oFPy8JJTTDHd4NBeQN2pC2wIfpKejoydtrnzoxA
- cRIIvCwVd97EuT0C4o7t09Q61wurtI+feVJFVQxFv0Xng/WP5mTd45ZwqZyD89/7XvQt
- IEZg==
+ bh=0yvTnkaPkbVQaRONqQmzWq9e1H/vhlyGG8PnsEu8wgQ=;
+ b=L8ks/huBrwp4z/cVDTgW2lpUHEMBwKkltiCifxtN07uX1mUQfWvV1VYJjhVrfDclds
+ wEScRM76uPmDDOcff7nRenrGDhT9BMC+UjlbBTg/Ndm2k89hK6pjQZx4NPaOA640hn/x
+ XnwBAhsTHyf/Yk8GRDyRfh80Epb06I7lOD1pmFku8F3+Q94Vo5vydsL/eVpwpSM/FqH/
+ GY0ZUpggXwCKx74P6i0YoOaZw/3lLbOxo3yTHT7KKUzyee7ijRsi2ej7Tbm92XJcKZSk
+ mfgbNSCsTW4wq3ogJCNcBZIvXdu0jZF+x3dKc1KLsZfzAxe2HRfvl4+Zbmta8dHv/YBN
+ HeRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774363019; x=1774967819;
+ d=1e100.net; s=20251104; t=1774363311; x=1774968111;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=EMobfBaUSq6XzjSOKBzoXSSzfl6wFcC8H5eiaRD6370=;
- b=px1bCd7dkW5Cu/mUAw8eo2+4i6AqpRrbFmRMiPN6noSxzbJvj2plFqW6OzfPbcJpKT
- YWOXCqN4wjOAYh75BCHaaVkOPL8aX3ILvkAeRvdy20OiW38L9SjthVV5ijRZHbfax9dh
- gS7ek9Lv/veopKoAIxkBfiomzxVn/zCa+UxTtSj1xzWv99DCb+ccFqz+KS81MPR+TeKW
- RW1g9SflxDQY0RARsa1EedlcZqEreA/emx0nX6XYHhztRmlpnexc+5hOSvlTP7pUjI6H
- Y4Sq7Ronb1b5/CqlQaVq3EydREHO49Vkq+LOzhONNYhy9X8Mju0Xn4aVrvIX2b7TuiX+
- OKtA==
-X-Gm-Message-State: AOJu0Yx9QTR2H4AoNTeVmI6CpYp88IwofUUpWyeEQQ6SK83byoeuUmD0
- Bu76PIIP7wADhGP6EN2Drb45zgMYA7O3nYWIpaqcmC3lxRCOdCCFLAnd7J/WNpFYSHE=
-X-Gm-Gg: ATEYQzxr79NqHeIGf+EkLuFORLI7ckqCyQPxJdmfQf8p/o/MaQyANZoDhCdXxkwXQFk
- yA17hpYEP/0SY6NhDVXbMPCRhSmBEmgm+Uc9r5A3ez3XPTU0s7SWIDzAuoE7LmRIyB7bEQbkVTt
- 66uBa8srY76IJ5nvvhHaqFR6pnj5lWRht5qU/avKWxPAJj+7NlH+ncJwuTls4WeUuQUkWbUGe5K
- 7p7suJ2RjARr6S3/06jkOG2C5WWTjjnArwTwaga5jV7IVCc40qJwVbZLtEiGYk/+2bV1cHnrO2Z
- F4DNjazFz1mUqtfGM2jHEFqVNZU78ecne58sEXgO7tEfhUQr6gcqK8Q0OB3oTpmq5mrcCxFcXi1
- EkilJJLP9QsjwO29C8Wk7rUSRy00VbvUDwT9TwNUPevwF0l1DOmNk8CPw4LqbGBgeodnVJM2cqt
- vI2nPZH54hykt8mqz3Qq0F2tqPnyVm3pccqGaaXe2iBNa93g==
-X-Received: by 2002:a05:7022:985:b0:11d:f440:b743 with SMTP id
- a92af1059eb24-12a7265643emr8462606c88.7.1774363018485; 
- Tue, 24 Mar 2026 07:36:58 -0700 (PDT)
+ bh=0yvTnkaPkbVQaRONqQmzWq9e1H/vhlyGG8PnsEu8wgQ=;
+ b=aD4RjArcnUOm4q8CxHaUeQg0xbt6lIYr/RbvkN7phsMP5qHSonkNnvI9n4l6suAeyM
+ i07fvPXFHBawlqYejWZWDmcf1Z0aLhKhAJkdkCZYbWYMyJ3XdXNA1pEBo+HSGZKjYRxQ
+ pT167LwnpA2dnwPNlGobObD9DB7b/BvWAI8X0Yz+ePwm1iN4+34RlFo3kxcbATo/g5dt
+ vmIubJjwpmIZQl1YcdVnpToUmozOwuTfb4EVaY9EBkQd2+s9i1UZsTKuTBmh3ar2fNeV
+ rx9FuFi5XZDgw9a92a4qJQ2RpjNJz7riRqpRUf9LnAYT7jxBbZsSMBi2lCtFEJ6Wtn49
+ qCiA==
+X-Gm-Message-State: AOJu0Yx9q4slnfl3q45pOKbUM1Kbp2+AqoisflKkf1NpX9wZk9O4n0ky
+ KDP2xtJnJokiO6y8LlqiM52HLFn0gbCTWNfSOyxkL5m5RegdWK/w+L21ACbSWGziyGS24GsA7uO
+ xAbT+
+X-Gm-Gg: ATEYQzyKP6RpdpFt46cFUK01Y1xh4GCQHK9A+qYaksyWEHIs7i4/OFIzP8QGP6Nyn36
+ 6s3kL3YW2lViaXWRhVLHa5LXtVpKHvxHex9DkAIS7iWVog5mqWMT5VK8EXxCAG1t8qZj+Cro0bw
+ Q0ociXG5NuKBV6WyGfi9TA7WH7DL89HOveT+j+GPpgj76TzF6nHad3aOEyq+ud9LH0lEMUx1Rxi
+ s2wAO2iZn/mbU4pjEspm6mI7MD8Fdy2DakSWuONcFdwf9tOwPFJh5K6ZymH4BFwRgjxCbj+bzJC
+ qstghmRga90CFcTgA8fxEHPaFsL3DC9pFM8x63lDyzm2m75G31q132cs3KqXUyw9iioFijbXzVg
+ aax2aRhSAXOCp5E+e8ttLB70CjjpsldjdCkd2u+qD2+M09HZqR1yrQOJqkCbLDVL05HBfsUVJI6
+ SeRKQYkZylKsDoMGLi5sxMe3wzKqaxG3W3yiE=
+X-Received: by 2002:a05:7300:d705:b0:2be:142f:d48a with SMTP id
+ 5a478bee46e88-2c109784293mr8669601eec.27.1774363310459; 
+ Tue, 24 Mar 2026 07:41:50 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12a733b49afsm12010315c88.2.2026.03.24.07.36.57
+ 5a478bee46e88-2c10b35116bsm18419377eec.30.2026.03.24.07.41.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 24 Mar 2026 07:36:58 -0700 (PDT)
-Date: Tue, 24 Mar 2026 07:36:53 -0700
+ Tue, 24 Mar 2026 07:41:50 -0700 (PDT)
+Date: Tue, 24 Mar 2026 07:41:45 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Shani Peretz <shperetz@nvidia.com>
-Cc: <dev@dpdk.org>, <stable@dpdk.org>, Aman Singh
- <aman.deep.singh@intel.com>, Dariusz Sosnowski <dsosnowski@nvidia.com>
-Subject: Re: [PATCH] app/testpmd: fix memory leak in port flow configure
-Message-ID: <20260324073653.07fe3625@phoenix.local>
-In-Reply-To: <20260324081045.6022-1-shperetz@nvidia.com>
-References: <20260324081045.6022-1-shperetz@nvidia.com>
+To: Feifei Wang <wff_light@vip.163.com>
+Cc: dev@dpdk.org, Feifei Wang <wangfeifei40@huawei.com>
+Subject: Re: [PATCH v8 0/7] hinic3 change for support new SPx NIC
+Message-ID: <20260324074145.437604c0@phoenix.local>
+In-Reply-To: <20260324015516.201-1-wff_light@vip.163.com>
+References: <20260316134335.1640-1-wff_light@vip.163.com>
+ <20260324015516.201-1-wff_light@vip.163.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,37 +81,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 24 Mar 2026 10:10:44 +0200
-Shani Peretz <shperetz@nvidia.com> wrote:
+On Tue, 24 Mar 2026 09:55:03 +0800
+Feifei Wang <wff_light@vip.163.com> wrote:
 
-> When "flow configure" is issued multiple times on the same port,
-> port_flow_configure() allocates a new job_list via calloc() without
-> freeing the previous allocation, leaking it. The old pointer is
-> simply overwritten.
+> From: Feifei Wang <wangfeifei40@huawei.com>
 > 
->   testpmd> flow configure 0 queues_number 10 queues_size 256 ...
->   testpmd> flow configure 0 queues_number 10 queues_size 256 ...  
+> Change hinic3 driver to support Huawei new SPx series NIC.
 > 
-> The patch fixes this by freeing the existing job_list before allocating
-> the replacement.
+> v2:
+> --fix build issues
 > 
-> Fixes: df503d757b36 ("app/testpmd: fix flow queue job leaks")
-> Cc: stable@dpdk.org
+> v3:
+> --fix community review comments and err reports
 > 
-> Signed-off-by: Shani Peretz <shperetz@nvidia.com>
-> ---
->  app/test-pmd/config.c | 1 +
->  1 file changed, 1 insertion(+)
+> v4:
+> --fix rss type assignment error
 > 
-> diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
-> index f9f3c542a6..f0a784bf2f 100644
-> --- a/app/test-pmd/config.c
-> +++ b/app/test-pmd/config.c
-> @@ -1836,6 +1836,7 @@ port_flow_configure(portid_t port_id,
->  	port->queue_sz = queue_attr->size;
->  	for (std_queue = 0; std_queue < nb_queue; std_queue++)
->  		attr_list[std_queue] = queue_attr;
-> +	free(port->job_list);
->  	port->job_list = calloc(nb_queue, sizeof(*port->job_list));
+> v5:
+> --fix community ubuntu-22.04-clang err
+> 
+> v6:
+> --fix atomic compilation error
+> 
+> v6:
+> --fix community review comments
+> 
+> v7:
+> --fix htn/stn ops function name error
+> --update doc/guides for hinic3 driver
+> 
+> v8:
+> --fix guides grammar issue
+> --fix rss_type.ipv6_ext = 0 error
+> 
+> Feifei Wang (7):
+>   net/hinic3: add support for new SPx series NIC
+>   net/hinic3: add enhance cmdq support for new SPx series NIC
+>   net/hinic3: use different callback func to split new/old cmdq
+>     operations
+>   net/hinic3: add fun init ops to support Compact CQE
+>   net/hinic3: add rx ops to support Compact CQE
+>   net/hinic3: add tx ops to support Compact CQE
+>   net/hinic3: use different callback func to support htn fdir
+> 
+>  doc/guides/nics/features/hinic3.ini           |  11 +-
+>  doc/guides/nics/hinic3.rst                    |   5 +-
+>  doc/guides/rel_notes/release_26_03.rst        |   8 +
+>  drivers/net/hinic3/base/hinic3_cmd.h          |  80 ++-
+>  drivers/net/hinic3/base/hinic3_cmdq.c         | 370 ++++------
+>  drivers/net/hinic3/base/hinic3_cmdq.h         | 112 ++-
+>  drivers/net/hinic3/base/hinic3_cmdq_enhance.c | 111 +++
+>  drivers/net/hinic3/base/hinic3_cmdq_enhance.h | 125 ++++
+>  drivers/net/hinic3/base/hinic3_csr.h          |  18 +-
+>  drivers/net/hinic3/base/hinic3_hw_comm.c      |  15 +-
+>  drivers/net/hinic3/base/hinic3_hw_comm.h      |  31 +-
+>  drivers/net/hinic3/base/hinic3_hwdev.c        |  13 +-
+>  drivers/net/hinic3/base/hinic3_hwdev.h        |  18 +
+>  drivers/net/hinic3/base/hinic3_hwif.c         |  10 +-
+>  drivers/net/hinic3/base/hinic3_mgmt.c         |   5 +-
+>  drivers/net/hinic3/base/hinic3_mgmt.h         |   2 +
+>  drivers/net/hinic3/base/hinic3_nic_cfg.c      | 182 ++---
+>  drivers/net/hinic3/base/hinic3_nic_cfg.h      |  98 ++-
+>  drivers/net/hinic3/base/meson.build           |   1 +
+>  drivers/net/hinic3/hinic3_ethdev.c            | 275 ++++++--
+>  drivers/net/hinic3/hinic3_ethdev.h            | 120 ++--
+>  drivers/net/hinic3/hinic3_fdir.c              | 657 +++++++++++++-----
+>  drivers/net/hinic3/hinic3_fdir.h              | 361 ++++++++--
+>  drivers/net/hinic3/hinic3_nic_io.c            | 525 ++++++--------
+>  drivers/net/hinic3/hinic3_nic_io.h            | 163 ++++-
+>  drivers/net/hinic3/hinic3_rx.c                | 267 +++++--
+>  drivers/net/hinic3/hinic3_rx.h                | 182 ++++-
+>  drivers/net/hinic3/hinic3_tx.c                | 456 ++++++------
+>  drivers/net/hinic3/hinic3_tx.h                | 154 +++-
+>  .../net/hinic3/htn_adapt/hinic3_htn_cmdq.c    | 167 +++++
+>  .../net/hinic3/htn_adapt/hinic3_htn_cmdq.h    |  63 ++
+>  drivers/net/hinic3/htn_adapt/meson.build      |   7 +
+>  drivers/net/hinic3/meson.build                |   8 +-
+>  .../net/hinic3/stn_adapt/hinic3_stn_cmdq.c    | 151 ++++
+>  .../net/hinic3/stn_adapt/hinic3_stn_cmdq.h    |  46 ++
+>  drivers/net/hinic3/stn_adapt/meson.build      |   7 +
+>  36 files changed, 3379 insertions(+), 1445 deletions(-)
+>  create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.c
+>  create mode 100644 drivers/net/hinic3/base/hinic3_cmdq_enhance.h
+>  create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.c
+>  create mode 100644 drivers/net/hinic3/htn_adapt/hinic3_htn_cmdq.h
+>  create mode 100644 drivers/net/hinic3/htn_adapt/meson.build
+>  create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.c
+>  create mode 100644 drivers/net/hinic3/stn_adapt/hinic3_stn_cmdq.h
+>  create mode 100644 drivers/net/hinic3/stn_adapt/meson.build
+> 
 
-You could use realloc here, but it doesn't matter much
+Applied to next-net
