@@ -2,115 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EE2F532FA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 09:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEEDE9A745
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 09:19:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E6DC2402BE;
-	Tue, 24 Mar 2026 10:04:53 +0100 (CET)
-Received: from BL2PR02CU003.outbound.protection.outlook.com
- (mail-eastusazon11011060.outbound.protection.outlook.com [52.101.52.60])
- by mails.dpdk.org (Postfix) with ESMTP id C824F4025F
- for <dev@dpdk.org>; Tue, 24 Mar 2026 10:04:52 +0100 (CET)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OlVCitmpal3OkYBbFJ+O0cWUnJoJWq/Ec0wZ+cXa2Btlq6Uzr3PjIkNWuNvZZ7pkXVVsbX07G83M8t0/JEpc1/2Dk+Hq9dCFRqNZReQCGxqYCABi6pxSpzHr0i5+hv5f2gs2TqB0z1RNOdzsXRYpRVwECHed7oEMugpUaxgkC8HjTFnqW1BeW/2K01a+9DPvejrvr+6CdIxVqrW+gNDVAvj6v404M+k986gOZMFCuxosqVZ1VBAJMX5bDO0l6BlaEFfxV+6TDEbaLg/e2dk3V+pqVd4izOSoysxxrSfPH+ZFj2O8nN/HLr8te5lMW0et+qX7Vi7EpHLmL07tKdWwGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=312niJD8CGlUCRhnfohYNZhjPlh2aYDwVwK6yudBLXQ=;
- b=uQ+NSt17pBFmbsI3pmrZKMMvbuX2U7RbfqsGtTs6rrOX3/NS+GCbNyIT4zIZ+V8PyO6YAPFDn5YVgTNv/EBVaeE2Jycj1Dp6PlykmhSdwFgHyRzNRS60THC/lUjXvIowdPekqBz6m3qmDzFVBLYxmI2AdQLQsArizh4zsq3ZaJJ0WzWq7oypwQAzXmsxciTnjWEq7e+xDurQQ2VCV4PulG6AhMZWAQO0h5RUu0mZZetUMjeshUnpwxw1iyEAOLgk+M2SSiypdA8egXkRskcRMVB7oc07LKbLYXCl7DZXQd2b5El8Zq7Hc9kg7Aqu9a1W94I8laCNTMjDnA52ZKHhAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=312niJD8CGlUCRhnfohYNZhjPlh2aYDwVwK6yudBLXQ=;
- b=CLasDsjT53L9j8v19DT6rHxk+vNZZuafEbVZVzrIRqj+LqOPjibCiR/LP/izJRCmsBuQaA/y+jl4ZWROnIF1x2dQoGyvJ+X6ggWAvWiSTNJulFUP+imxbI2rwsJTLLnHxibhyBfPPMVulE189jtQnqZhftXFGQGl7B4r4vMGa1GlUTxf0c95VNw9uEgzCiIljV/5D03jjIxNZLHMoE00rmxpbuntEqqd28FQyXDvCbZnCLdFZ64UDSrTPFxW1lw0xkFR0i5F5ol+MNCE8D2QisEYJOdnEbod0xGYc3Iaml2dyYtzTtaCGWZQImYgqCgBMUUeGIPCKm3MtgEIfVifhw==
-Received: from CH2PR12MB9541.namprd12.prod.outlook.com (2603:10b6:610:27e::21)
- by IA0PR12MB8648.namprd12.prod.outlook.com (2603:10b6:208:486::19)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.15; Tue, 24 Mar
- 2026 09:04:50 +0000
-Received: from CH2PR12MB9541.namprd12.prod.outlook.com
- ([fe80::1085:eeb0:9e9d:837]) by CH2PR12MB9541.namprd12.prod.outlook.com
- ([fe80::1085:eeb0:9e9d:837%5]) with mapi id 15.20.9745.007; Tue, 24 Mar 2026
- 09:04:50 +0000
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Stephen Hemminger <stephen@networkplumber.org>,
- "a.schollmeyer@syseleven.de" <a.schollmeyer@syseleven.de>
-CC: Aman Singh <aman.deep.singh@intel.com>, "dev@dpdk.org" <dev@dpdk.org>,
- Thomas Monjalon <tmonjalon@nvidia.com>, Slava Ovsiienko
- <viacheslavo@nvidia.com>, Raslan Darawsheh <rasland@nvidia.com>
-Subject: RE: [PATCH] app/testpmd: warn on shared rxq switch mismatch
-Thread-Topic: [PATCH] app/testpmd: warn on shared rxq switch mismatch
-Thread-Index: AQHcXfWYKbIVKjLhH0u4CkmIiSEsE7W9BSeAgAEXE6A=
-Date: Tue, 24 Mar 2026 09:04:50 +0000
-Message-ID: <CH2PR12MB9541F8CC6EBE612A415B8B59A448A@CH2PR12MB9541.namprd12.prod.outlook.com>
-References: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
- <20260323091725.3440ad89@phoenix.local>
-In-Reply-To: <20260323091725.3440ad89@phoenix.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR12MB9541:EE_|IA0PR12MB8648:EE_
-x-ms-office365-filtering-correlation-id: 659023af-b619-4a9a-3cc9-08de898467d4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|38070700021|22082099003|18002099003|56012099003;
-x-microsoft-antispam-message-info: mGZH0VjMD7NKXU9WuA1dX3KkyUw7XeZt0Z9Yvj3bJ0w26rVotBIcSpn+Vj02TX0SHNqU2NhC7+YSF3XKZi0n6I+4vGxXQDG12W1QksEmGEMQEtUBrLHaxiq0oWwuovngJEaho9qLNallh2UKxSXIGqKk6+bNiLwNqzdJKJ1eJxWNGdBjLvHWXQ4uSl2MJb5mWabWfktwST7aEzyp7pK7XrUo+q0tVOVacWXOXEuj6sLpbKGl9Yart01ALKDXtGUwSCqcftp3jLqi7VG+SWSDaUdpGyYLTZ4q/CZrF25pVyiMAl5UjdTsLOiWBO9qMDzAk+0DaHfJodNnbUgAAuOxQYRHPPHCecS/K8yP1sTpQeeeeU+tL7nwM/vPAMZvnN3amYAXDCquJ4bX7TXpQo1Jc3vObGkJvU5pz7kH7EsMAsqkc8afLt+YjBGtP9Vbl2FS4jR8J85g3I0IILhY/sl5P3K+RMCuMNgCiW4mv+Nlld0TTyaeoi3Sog/rEAr6zA1R/95TC57qaPndyiRNTWYshRwYSclRofBaR7rFCY1R9OiS99teeD3YL/SQIPM0pHxInMVTbpihlw/q0Bs5xyS7C7DKYTnRsqDBt7rPspRektIeQPq1m1u9yxjypVLUzeyftAwFuz5nIpjJUwu5AkgRZUSu9mMgaN0QzjkvTnkqymQhS4iBAKmxP12Mmig7F/qIO0fKvnxaEZ42HTNycpdAalwkOIy4zIJo764Ih1QasjZK+VjiVMt38NunoAruLWZR81OcMmDuKkMWZDYp+rAoSEWJedwRS7K475Z4e7DN2GY=
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:CH2PR12MB9541.namprd12.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(38070700021)(22082099003)(18002099003)(56012099003);
- DIR:OUT; SFP:1101; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?WnPS630uKv35fGkTAZ9xBl5Ai1w51fqmPq4hrScnpg/NpgxxjydJMog1mU8B?=
- =?us-ascii?Q?9LfuCTuLu7zlKYqSV9CX+tXxL9vglS3okoHeCp7XOYM4VzbfDi1zfuUO3cQA?=
- =?us-ascii?Q?425i/G/k9JEj3nac5eL5IZMqWrEYHvfY6AjaoaZJ7lAwWxYjjvNUuRefiHtr?=
- =?us-ascii?Q?oZnWc6mL1DvMoXN7y7MJGP0316KLWnmc/c+EGukLWgx1DDHeVzNjTeg62KIT?=
- =?us-ascii?Q?2laLvQMLDDdNphyqDXRL25w6nh/xDRPjuUcG2DbmdXp0YI1nwifCPP5BVUli?=
- =?us-ascii?Q?1RJ3zIwfK0SC9EIEaWG6aRrFjU7HjDJu1+qTuBrFx/TkTRt9Hozu5v0D5j87?=
- =?us-ascii?Q?U18qHMR0G1TFf0fz9hDhF0Vr1RAyhCL4Y6CI4ywrDX8rAIDG90bI5s9xLXzB?=
- =?us-ascii?Q?lgFAvR0aHfovEe7ZQlM+lblz/0R5j72dyyD88OigU1T1qEAoAvG2oxmJY7+O?=
- =?us-ascii?Q?+kDd8dJWCdgBAvfdogl0vV+gdAuPbm2LoNoYkiIravaGS9cE4YmPG8x5ODmh?=
- =?us-ascii?Q?6MCjIybbKu5ZDsZ/fgns4eC6R+YQhdyDrdPLC/kyTkLxIgKrOKJk0vUtUou8?=
- =?us-ascii?Q?8Fevc9PwLh5ZOFNF1NgTIBLOhVUMExkhzLjEO7zEGN4x4DxhNXMxwTTdcVST?=
- =?us-ascii?Q?W1EHyzl9KIEXG0UoIPlsF5qgRA22QPxxyMc7gAUWLDUTTOKmBCaBNHFrcu3m?=
- =?us-ascii?Q?sqCA6dsY3QYQr0dOEYnQZDm1xcY2vz/Y8tar8IZfbk+DOLBvCK3GCdZAVjhI?=
- =?us-ascii?Q?xf0s6LlmLot94R2Jn0IH43OrfOTjWy1zQ1cS7cAb0p+BoidKIGDoRUdP8CEc?=
- =?us-ascii?Q?iT72NaS0RY7Boz4g/giLHoaFpjijQrx+jr40skTxi2fCsnG+3omQvun5G/jo?=
- =?us-ascii?Q?PkRysliCRLB/NmZqdgo5TONwgjR3bM4fZ7tdyMLt6bnebP3btcCNaZL6ELG/?=
- =?us-ascii?Q?HmWjI4V4xXKLVsXctrvyYXqgizCW3Y42/xTCH+Ad/JNOoEBkQPCl2bUx12Ks?=
- =?us-ascii?Q?iOecdxtsPRpIL/bEv/C8MfSLySu7naBkF7pISlIqwirrWNZTtd99rxcxbblk?=
- =?us-ascii?Q?UrZemdTYlYum3HKwNLfHA/rynqW/q4jmwJGL6102trhb6ollqjeZLHf7edTo?=
- =?us-ascii?Q?f0DC2MnVaRPuRSVs1ipR0mUnUkhAUe97+LluBFGUvLney1QXePSlJYlviMXN?=
- =?us-ascii?Q?uD6PcfNIAaLU4ri/15KeYSTBUMyuALb6wB84TdyhgVj2ghc7gfJVVHN/ZB0D?=
- =?us-ascii?Q?PCDgQXyqmS+yCEcLUvb/a5W35Dtws7gMCVst6+2+V5b1xJXd8el2dnG1LE3O?=
- =?us-ascii?Q?e911ORIIabKqPsVd/RIuyn1p3EZPRbj//wy1S2iaoCYHfon02WMycET2f9m8?=
- =?us-ascii?Q?B+GgiJSZvt/gpw7yURAH6Dwz/rhqEo/C6X9KgpI9ZHIYcrgCAntkEXqEbVW7?=
- =?us-ascii?Q?icTNujvtzUCmOLhjhl9aUH1vTqzI9c/yJ5K9Iu76qjF1fpKriAfnEjuMPFzd?=
- =?us-ascii?Q?WZm6bScK9FOmNLMzAqc2hgxN2c0cNIwjwtFVv7RedBoGNsubcAKZDQh/HKas?=
- =?us-ascii?Q?iHRvfF1vHx+gLxowMdse9LAzRF3wRH2ZDG3qZ6Ze/3wMKGj1U6OZ68WxjUo2?=
- =?us-ascii?Q?FC0ePJ8rvPmsLBKHJfzpwid/biXyQB2M02N43SEV5iL195QuIalQAJAgTDzr?=
- =?us-ascii?Q?Rdtkb9XY77nbLm3NcI9L/s8th7257wmvJJtq14w/EtauZh4UDGe3TPyMYxQ6?=
- =?us-ascii?Q?421PnFrXhA=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 85B54402BE;
+	Tue, 24 Mar 2026 10:19:30 +0100 (CET)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com
+ [209.85.222.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 0EDBC4025F
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 10:19:29 +0100 (CET)
+Received: by mail-qk1-f180.google.com with SMTP id
+ af79cd13be357-8cfc137464dso545934485a.2
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 02:19:29 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774343968; cv=none;
+ d=google.com; s=arc-20240605;
+ b=f1VCKxDFwaVvXpTF99hPbrId7hN1MHyx5iA+Tu1sctc0kGcJjzDeVHoe9ffN1BLLDS
+ bvjqZe4kcwqMu3smY9nMdzWoDLTHTO6ULg0HW//1TPhW/F1pAXTqOk5xQLjGBIS3W4Wg
+ g2iOJAYIM9beqUsD+YFprIlgf0cXieDN+G25APseRyitWaxXUMmA9S7t17EoWv5lTAhv
+ c/5TJVWPsomvvCUrroomisnAYnFe69l+o03IMXcMjbboydi6T2Mds3MyCQV0CueklBxG
+ 9957AsMvIVNnMVQcXgELP5hXRbQNkXSXYiFcPbkvje21CTa8+b/VHfC+vRnArG3NTl3L
+ 8PAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version;
+ bh=mwa2XgUppmz1CE2e/noWDQLQrSy/4iNACxXaFwW9V1A=;
+ fh=8pT7u9hk2WTvbcf39wd7+qskt9leLQ+Z/kZWEYezVaw=;
+ b=EyDSJe49EiHB1X66x04z3c36NkvCQNTTnutdSbyLQK8nMFELxzP/67IMJgfP/MO5V9
+ ly9LdYvSBTg/kzjBEFwef8vRgqU5ytfsu27OCwJyQuApAPIv3AxN8Gjgn8+2fMP/S2et
+ RFIxWtghKji/NIvvsFIg95QPNCQXuQo2npy/efFwgDs9lOtVoYQ1L8IESH3pYYCuZ9Rw
+ pmO7E4A3N+7UFqyBh8tZzDgUGVJTTAEj/tdmMdI4ph7F9UZ5igZYJ8mNVl2lhHrz9li6
+ GnViUw6COK0fkjqo1XjsA7OgOtG2efB1C9XtJC330Nr1LEM7ptesY1g3klfz41C8Z8Vl
+ scYw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774343968; x=1774948768;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=mwa2XgUppmz1CE2e/noWDQLQrSy/4iNACxXaFwW9V1A=;
+ b=eBNtpOVamtGj5OEy3/+FAxRFNmn+TiFm5KxpHv2JCFT2zS8fEdRXh2enTXhoEWgi4m
+ cDk2fv6xaUHoC31FF5Wze4NJsWIE+jIVvwKXcXwV4Te+AznM69XglGY1oR3kS92KHanz
+ By4Tuc7ih0Uc4uKdn8P/hwtt5YlkcDt+9fI5OXVoU3zQFmxjq4XjZsWCpkcdCyj9CHuN
+ N6RMHKVrOGDbIR/6OZwTewF6a+aeUZnBylN3q5ExCj7e11g8tZTq2r8+JaVt0oCQnkdJ
+ R9ig7kYwqMU2dXQyBtdAmW69rBoYxZpyhyEtMOUq8oRFrddIQbVSsG+SxZLEI+DyST0/
+ bW/g==
+X-Gm-Message-State: AOJu0YyP+U6n3uXX3YqReX4malFSKEznEWA+jtjGJjFV1Wxg9H00ct9W
+ apZro+aW0yAD8ECBTWRdemZOM3s0CyERkB40ThHE1U96euaSkbefmLTlHL3NaaK19Zd138RPYQ4
+ AOXsocjsZctaLBtzisQH/rqPXsi+uBVs=
+X-Gm-Gg: ATEYQzwwBtwMXAsrlFBGRV30n+Bcz4X2hXnKmeFMXkHS/rvtpg9NJmLLndsjDsYrjrv
+ AseYi2eYF1o2sepHp70MKaGHXDDljqk2U7+N3/Cp7A3M5vWQ0QYUyRup0xA31lgiUc81s6IIV+g
+ BHX2Oj9ifzVSSLarwWXHNMzSi3RbCL06wUZKMwsMMKo74B8xsh/L1E1eTkfkW+gO+qv4Se40Ote
+ dYjxJ4zpe81UnpsqIKyajdSYErwhGZI62EwqEgZmuPikwDh8nOuVtjpLPUZkofS+hAr/WHPN7Y7
+ QoBj
+X-Received: by 2002:a05:620a:45a9:b0:8cf:c218:739b with SMTP id
+ af79cd13be357-8cfc7e7312dmr2178403585a.18.1774343968159; Tue, 24 Mar 2026
+ 02:19:28 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB9541.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 659023af-b619-4a9a-3cc9-08de898467d4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Mar 2026 09:04:50.3361 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 91jJ4p+gFORY+fyDF9SB73QPfONsU1wLMx+8A0TBcHKKmqlP9UO575KeKWeep0g/ACugbshF/ABn0fhHJZRDvg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8648
+References: <20260322154215.3686528-1-vladimir.medvedkin@intel.com>
+ <CAHHRULVmnHih3BqoCnMv-FEj=aC3LehgCFaVhh=0eQ-SLsovXg@mail.gmail.com>
+ <22bebf4a-3801-45e9-8ac5-726cb6c89721@intel.com>
+ <CAHHRULVvLpFpwA-Z8KMuCKmdM24OCeZDrzEMEMs88h2-iqapXw@mail.gmail.com>
+ <d944f17d-35a7-42d3-9011-2d368f530474@intel.com>
+In-Reply-To: <d944f17d-35a7-42d3-9011-2d368f530474@intel.com>
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Tue, 24 Mar 2026 10:19:17 +0100
+X-Gm-Features: AQROBzA4jxlCJZXtLlPi-CWKDgvog0pm_l0ox-GmzW3Y5nf2KAdqfwi6pE_uy18
+Message-ID: <CAHHRULXCfeFrgTosCJCvMK0+Qe-eBy2bJs43KDvEwYC6A6GRCg@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] VRF support in FIB library
+To: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+Cc: dev@dpdk.org, rjarry@redhat.com, nsaxena16@gmail.com, 
+ mb@smartsharesystems.com, adwivedi@marvell.com, jerinjacobk@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -124,55 +88,275 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Monday, March 23, 2026 5:17 PM
-> To: a.schollmeyer@syseleven.de
-> Cc: Aman Singh <aman.deep.singh@intel.com>; dev@dpdk.org
-> Subject: Re: [PATCH] app/testpmd: warn on shared rxq switch mismatch
->=20
-> On Tue, 25 Nov 2025 11:22:07 +0100
-> a.schollmeyer@syseleven.de wrote:
->=20
-> > From: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
-> >
-> > Shared Rx queues do not work with every combination of ports. Besides
-> > requiring the corresponding device capability, shared Rx queues also
-> > require all ports of one share group and queue ID have the same switch
-> > domain and Rx domain. When these fields do not match, shared Rx queues
-> > are not properly set up and queue sharing may fail silently. This can
-> > happen even in some less intuitive cases like multiple VFs of one
-> > physical NIC.
+Hi Vladimir,
 
-Adrian: Could you please elaborate what kind of issues have you faced with =
-shared queue configuration?
-
-> >
-> > To make debugging issues with shared Rx queue configuration easier,
-> > this commit introduces simple checks and warning messages for all
-> > members of a share_group and share_qid to warn whenever there is a
-> > mismatch in the switch and Rx domain.
-> >
-> > Signed-off-by: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
-> > ---
->=20
-> Why is this not handled at ethdev or device level?
-
-Are you referring to share group index logic?
-
-Based on current implementation in ethdev and mlx5 PMD,
-assuring that share group indexes are unique is not needed.
-Share group index is not required to be globally unique since
-sharing works only within the same switch and Rx domain [1].
-
->=20
-> Testpmd is just a test program. Real applications might make same mistake=
+On Mon, Mar 23, 2026 at 7:46=E2=80=AFPM Medvedkin, Vladimir
+<vladimir.medvedkin@intel.com> wrote:
+>
+>
+> On 3/23/2026 2:53 PM, Maxime Leroy wrote:
+> > On Mon, Mar 23, 2026 at 1:49=E2=80=AFPM Medvedkin, Vladimir
+> > <vladimir.medvedkin@intel.com> wrote:
+> >> Hi Maxime,
+> >>
+> >> On 3/23/2026 11:27 AM, Maxime Leroy wrote:
+> >>>    Hi Vladimir,
+> >>>
+> >>>
+> >>> On Sun, Mar 22, 2026 at 4:42=E2=80=AFPM Vladimir Medvedkin
+> >>> <vladimir.medvedkin@intel.com> wrote:
+> >>>> This series adds multi-VRF support to both IPv4 and IPv6 FIB paths b=
+y
+> >>>> allowing a single FIB instance to host multiple isolated routing dom=
+ains.
+> >>>>
+> >>>> Currently FIB instance represents one routing instance. For workload=
+s that
+> >>>> need multiple VRFs, the only option is to create multiple FIB object=
+s. In a
+> >>>> burst oriented datapath, packets in the same batch can belong to dif=
+ferent VRFs, so
+> >>>> the application either does per-packet lookup in different FIB insta=
+nces or
+> >>>> regroups packets by VRF before lookup. Both approaches are expensive=
 .
+> >>>>
+> >>>> To remove that cost, this series keeps all VRFs inside one FIB insta=
+nce and
+> >>>> extends lookup input with per-packet VRF IDs.
+> >>>>
+> >>>> The design follows the existing fast-path structure for both familie=
+s. IPv4 and
+> >>>> IPv6 use multi-ary trees with a 2^24 associativity on a first level =
+(tbl24). The
+> >>>> first-level table scales per configured VRF. This increases memory u=
+sage, but
+> >>>> keeps performance and lookup complexity on par with non-VRF implemen=
+tation.
+> >>>>
+> >>> Thanks for the RFC. Some thoughts below.
+> >>>
+> >>> Memory cost: the flat TBL24 replicates the entire table for every VRF
+> >>> (num_vrfs * 2^24 * nh_size). With 256 VRFs and 8B nexthops that is
+> >>> 32 GB for TBL24 alone. In grout we support up to 256 VRFs allocated
+> >>> on demand -- this approach forces the full cost upfront even if most
+> >>> VRFs are empty.
+> >> Yes, increased memory consumption is the
+> >> trade-off.WemakethischoiceinDPDKquite often,such as pre-allocatedmbufs=
+,
+> >> mempoolsand many other stuff allocated in advance to gain performance.
+> >> For FIB, I chose to replicate TBL24 per VRF for this same reason.
+> >>
+> >> And, as Morten mentioned earlier, if memory is the priority, a table
+> >> instance per VRF allocated on-demand is still supported.
+> >>
+> >> The high memory cost stems from TBL24's design: for IPv4, it was
+> >> justified by the BGP filtering convention (no prefixes more specific
+> >> than /24 in BGPv4 full view), ensuring most lookups hit with just one
+> >> random memory access. For IPv6, we should likely switch to a 16-bit TR=
+IE
+> >> scheme on all layers. For IPv4, alternative algorithms with smaller
+> >> footprints (like DXR or DIR16-8-8, as used in VPP) may be worth
+> >> exploring if BGP full view is not required for those VRFs.
+> >>
+> >>> Per-packet VRF lookup: Rx bursts come from one port, thus one VRF.
+> >>> Mixed-VRF bulk lookups do not occur in practice. The three AVX512
+> >>> code paths add complexity for a scenario that does not exist, at
+> >>> least for a classic router. Am I missing a use-case?
+> >> That's not true, you're missing out on a lot of established core use
+> >> cases that are at least 2 decades old:
+> >>
+> >> - VLAN subinterface abstraction. Each subinterface may belong to a
+> >> separate VRF
+> >>
+> >> - MPLS VPN
+> >>
+> >> - Policy based routing
+> >>
+> > Fair point on VLAN subinterfaces and MPLS VPN. SRv6 L3VPN (End.DT4/
+> > End.DT6) also fits that pattern after decap.
+> >
+> > I agree DPDK often pre-allocates for performance, but I wonder if the
+> > flat TBL24 actually helps here. Each VRF's working set is spread
+> > 128 MB apart in the flat table. Would regrouping packets by VRF and
+> > doing one bulk lookup per VRF with separate contiguous TBL24s be
+> > more cache-friendly than a single mixed-VRF gather? Do you have
+> > benchmarks comparing the two approaches?
+>
+> It depends. Generally, if we assume that we are working with wide
+> internet traffic, then even for a single VRF we most likely will miss
+> the cache for TLB24, thus, regardless of the size of the tbl24, each
+> memory access will be performed directly to DRAM.
 
-Best regards,
-Dariusz Sosnowski
+If the lookup is DRAM-bound anyway, then the 10 cycles/addr cost
+is dominated by memory latency, not CPU. The CPU cost of a bucket
+sort on 32-64 packets is negligible next to a DRAM access (~80-100
+ns per cache miss). That actually makes the case for regroup +
+per-VRF lookup: the regrouping is pure CPU work hidden behind
+memory stalls, and each per-VRF bulk lookup hits a contiguous
+TBL24 instead of scattering across 128 MB-apart VRF regions.
 
----
+> And if the addresses are localized (i.e. most traffic is internal), then
+> having multiple TBL24 won'tmake the situationmuchworse.
+>
 
-[1]: https://inbox.dpdk.org/dev/yotjxacqrodttraqrr3r6ftut4cty66g6cjnr5ughsw=
-tatapgh@gqqkftskp3qq/
+With localized traffic, regrouping by VRF + per-VRF lookup on
+contiguous TBL24s would benefit from cache locality, while the
+flat multi-VRF table spreads hot entries 128 MB apart. The flat
+approach may actually be worse in that scenario
+
+> I don't have any benchmarks for regrouping, however I have 2 things to
+> consider:
+>
+> 1. lookup is relatively fast (for IPv4 it is about 10 cycles per
+> address, and I don't really want to slow it down)
+>
+> 2. incoming addresses and their corresponding VRFs are not controlled by
+> "us", so this is a random set. Regrouping effectively is sorting. I'm
+> not really happy to have nlogn complexity on a fast path :)
+
+Without benchmarks, we do not know whether the flat approach is
+actually faster than regroup + per-VRF lookup.
+
+>
+> >
+> > On the memory trade-off and VRF ID mapping: the API uses vrf_id as
+> > a direct index (0 to max_vrfs-1). With 256 VRFs and 8B nexthops,
+> > TBL24 alone costs 32 GB for IPv4 and 32 GB for IPv6 -- 64 GB total
+> > at startup. In grout, VRF IDs are interface IDs that can be any
+> > uint16_t, so we would also need to maintain a mapping between our
+> > VRF IDs and FIB slot indices.
+> of course, this is an application responsibility. In FIB VRFs are in
+> continuous range.
+> >   We would need to introduce a max_vrfs
+> > limit, which forces a bad trade-off: either set it low (e.g. 16)
+> > and limit deployments, or set it high (e.g. 256) and pay 64 GB at
+> > startup even with a single VRF. With separate FIB instances per VRF,
+> > we only allocate what we use.
+> Yes, I understand this. In the end, if the user wants to use 256 VRFs,
+> the amount of memory footprint will be at least 64Gb anyway.
+
+The difference is when the memory is committed. With separate FIB
+instances per VRF, you allocate 128 MB only when a VRF is actually
+created at runtime. With the flat multi-VRF approach, you pay
+max_vrfs * 128 MB at startup, even if only one VRF is active.
+
+On top of that, the API uses vrf_id as a direct index (0 to
+max_vrfs-1). As Stephen noted, there are multiple ways to model
+VRFs. Depending on the networking stack, VRFs are identified by
+ifindex (Linux l3mdev), by name (Cisco, Juniper), or by some
+other scheme. This means the application must maintain a mapping
+between its own VRF representation and the FIB slot indices, and
+choose max_vrfs upfront. What is the benefit of this flat
+multi-VRF FIB if the application still needs to manage a
+translation layer and pre-commit memory for VRFs that may never
+exist?
+
+> As a trade-off for a bad trade-off ;) I can suggest to allocate it in
+> chunks. Let's say you are starting with 16 VRFs, and during runtime, if
+> the user wants to increase the number of VRFs above this limit, you can
+> allocate another 16xVRF FIB. Then, of course, you need to split
+> addresses into 2 bursts each for each FIB handle.
+
+But then we are back to regrouping packets -- just by chunk of
+VRFs instead of by individual VRF. If we have to sort the burst
+anyway, what does the flat multi-VRF table buy us?
+
+> >
+> >>> I am not too familiar with DPDK FIB internals, but would it be
+> >>> possible to keep a separate TBL24 per VRF and only share the TBL8
+> >>> pool?
+> >> it is how it is implemented right now with one note - TBL24 are pre
+> >> allocated.
+> >>> Something like pre-allocating an array of max_vrfs TBL24
+> >>> pointers, allocating each TBL24 on demand at VRF add time,
+> >> and you suggesting to allocate TBL24 on demand by adding an extra
+> >> indirection layer. Thiswill leadtolowerperformance,whichIwouldliketo a=
+void.
+> >>>    and
+> >>> having them all point into a shared TBL8 pool. The TBL8 index in
+> >>> TBL24 entries seems to already be global, so would that work without
+> >>> encoding changes?
+> >>>
+> >>> Going further: could the same idea extend to IPv6? The dir24_8 and
+> >>> trie seem to use the same TBL8 block format (256 entries, same
+> >>> (nh << 1) | ext_bit encoding, same size). Would unifying the TBL8
+> >>> allocator allow a single pool shared across IPv4, IPv6, and all
+> >>> VRFs? That could be a bigger win for /32-heavy and /128-heavy tables
+> >>> and maybe a good first step before multi-VRF.
+> >> So, you are suggesting merging IPv4 and IPv6 into a single unified FIB=
+?
+> >> I'm not sure how this can be a bigger win, could you please elaborate
+> >> more on this?
+> > On the IPv4/IPv6 TBL8 pool: I was not suggesting merging FIBs, just
+> > sharing the TBL8 block allocator between separate FIB instances.
+> > This is possible since dir24_8 and trie use the same TBL8 block
+> > format (256 entries, same encoding, same size).
+> >
+> > Would it be possible to pass a shared TBL8 pool at rte_fib_create()
+> > time? Each FIB keeps its own TBL24 and RIB, but TBL8 is shared
+> > across all FIBs and potentially across IPv4/IPv6. Users would no
+> > longer have to guess num_tbl8 per FIB.
+> Yes, this is possible. However, this will significantly complicate the
+> work with the library, solving a not so big problem.
+
+Your series already shares TBL8 across all VRFs within a single
+FIB -- that part is useful, and it does not require the flat
+multi-VRF TBL24.
+
+In grout, routes arrive from FRR (BGP, OSPF, etc.) at runtime.
+We cannot predict TBL8 usage per VRF in advance -- it depends on
+prefix length distribution which varies per VRF and changes over
+time. No production LPM (Linux kernel, JunOS, IOS) asks the
+operator to size these structures per routing table upfront.
+Today we do not even have TBL8 usage stats (Robin's series
+addresses that), and there is no way to resize a FIB without
+destroying and recreating it.
+
+Could you share performance numbers comparing the flat multi-VRF
+lookup against regroup + per-VRF lookup?
+
+> >>> Regards,
+> >>>
+> >>> Maxime Leroy
+> >>>
+> >>>> Vladimir Medvedkin (4):
+> >>>>     fib: add multi-VRF support
+> >>>>     fib: add VRF functional and unit tests
+> >>>>     fib6: add multi-VRF support
+> >>>>     fib6: add VRF functional and unit tests
+> >>>>
+> >>>>    app/test-fib/main.c      | 257 ++++++++++++++++++++++--
+> >>>>    app/test/test_fib.c      | 298 +++++++++++++++++++++++++++
+> >>>>    app/test/test_fib6.c     | 319 ++++++++++++++++++++++++++++-
+> >>>>    lib/fib/dir24_8.c        | 241 ++++++++++++++++------
+> >>>>    lib/fib/dir24_8.h        | 255 ++++++++++++++++--------
+> >>>>    lib/fib/dir24_8_avx512.c | 420 +++++++++++++++++++++++++++++++---=
+-----
+> >>>>    lib/fib/dir24_8_avx512.h |  80 +++++++-
+> >>>>    lib/fib/rte_fib.c        | 158 ++++++++++++---
+> >>>>    lib/fib/rte_fib.h        |  94 ++++++++-
+> >>>>    lib/fib/rte_fib6.c       | 166 +++++++++++++---
+> >>>>    lib/fib/rte_fib6.h       |  88 +++++++-
+> >>>>    lib/fib/trie.c           | 158 +++++++++++----
+> >>>>    lib/fib/trie.h           |  51 +++--
+> >>>>    lib/fib/trie_avx512.c    | 225 +++++++++++++++++++--
+> >>>>    lib/fib/trie_avx512.h    |  39 +++-
+> >>>>    15 files changed, 2453 insertions(+), 396 deletions(-)
+> >>>>
+> >>>> --
+> >>>> 2.43.0
+> >>>>
+> >> --
+> >> Regards,
+> >> Vladimir
+> >>
+> >
+> --
+> Regards,
+> Vladimir
+>
+
+Regards,
+
+Maxime
