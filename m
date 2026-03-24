@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3376F54ADA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 16:57:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC4EF54ADC
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 16:57:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E85040DD3;
-	Tue, 24 Mar 2026 17:57:36 +0100 (CET)
-Received: from CY7PR03CU001.outbound.protection.outlook.com
- (mail-westcentralusazon11010071.outbound.protection.outlook.com
- [40.93.198.71]) by mails.dpdk.org (Postfix) with ESMTP id 680F14021F
- for <dev@dpdk.org>; Tue, 24 Mar 2026 17:57:35 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 0D29F40DDD;
+	Tue, 24 Mar 2026 17:57:44 +0100 (CET)
+Received: from BN1PR04CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11010055.outbound.protection.outlook.com [52.101.56.55])
+ by mails.dpdk.org (Postfix) with ESMTP id EB38240DF5
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 17:57:41 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BEmLrBzfvrt4u73G9iNUfwkQZeDeD8+SurraQcbnRZ0jScUrWVmDui8SqGQ1FwKUr8f9OBKoYwUByoAkjlwTk6fHlCQ6tZG/dKj+J3GO/sbARczu8elrdIY0sS6u7E7Qu1LFdWcTcZIslxfGe2H+ZdY8RahWfIgLoHG0w1FTLv2mU5MUFphrTeNepiXYkoWDdZm7CH1w8bJ3eYojYXk7tKK98v07Ir+h0MpuxXrcffkC6Se/o+y8CsHUBlqRCwzAIvfRm4XtCmiDzZ3zHZCxPjKoYqV8M4BeJXX1TB8tOCt/gou2LjwtWesMwmG01mvo11JNlzayzcOBj9nlFCVpzw==
+ b=XsOJ0BMjKlS3VSJGQk3va4iE5A6AIijpjwhoEDMao18rT1voLQVTqKVXEuvXRg0foh4JbjbXKpL6sa22T0jKKecwXuJrBhAb4uMtivDPtvg129y2hLXdw3rQqt6HlQELaUrRzpEph4c18ZbDhltRy/3YyTxgoeMqbyR7ZztmXfYv2ryBKXJzhcWIRvy3o+bAoX8g/NVJfhPQd8L6oZokHG/DRKiOjPh6M3tlVA7YZ3PwaRos68Q/3eGakckHLwOlyaVaRjeJQyn5hANCjnNTkgaVGCtCM61wWu/3hwMh9JTs2fppSyKErHB7BEKBU5fHT1FycRYJzQhG0Iw1L1Oumg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wBJ7QDoH64GBjFQLxu7No/SqLaZhhWyhVZNinS7MW9E=;
- b=c4QY4HY12eVYLyMbRGtEl0YZB5c6DLWtliwD+mUJFp0bSDDHFH4Qu5BLiD4b3C5uUQAvVjv8OV91u1PSmeecmB43KIPCpG8kGRPVfcG+Hr8dHeTVfnimtDGxsbMsGPkQNoyb4gZBj4JuFj64ltM8L7aczjowHAqWzeJg85TTnGEETx65QyOs9i1PBbA53RnFB64p3WHsf1szs6qqSZ9Dj+MXm4ttvb4wZpuoZSH+liz6ubq0tC4gzK02n/sF9cm0lxVuoOfIqz0yHUYug9f/ZXcMPUOvSWoj/kgLqmeUfCWRaZSUN1PmmWbwiRFgufdxgu7rywgBsqqh4hR/52gYWQ==
+ bh=Nk+L2LCeWWPrej8KDhRMH+5C7u+G+vBBhoBeBrnaEkA=;
+ b=YUnppt4L/m2bpAYSCrON14RShpQOYRUyV1Fskt3mhtphCzJo4uaV9xxOdmz8mz1VWUDGM7Q054uptRQuIEFFWPPnI7L8GbbYsOOwlv8BSNSKuPA0NZxS6lvuFNQpQhlijUrhsP1Fd8SJYiuHiUIIY9o5DIFMFOfPcKBqGZwvcD3ZmeQP3G6UYfk1pV6JalFBmhh3G0zwdRzXC6767Xbjx4asinDJDV6QW7Akr8vjgdtPV4wgoc3h7wo6czzdnkC5+vTy8S/EpY1ZA2kQCxLi0Pc4SElWw45wQgVFLFJ2ncN6DFnbZS4b1n44kH2WC7BWxj5qpZiytLOZLqFLYWWmng==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wBJ7QDoH64GBjFQLxu7No/SqLaZhhWyhVZNinS7MW9E=;
- b=VC6c6A4PcLqSPLMZjnEDSYs6u0RP8V7fAjTiJaCHVjTcYsVPYQ2tiCCatFlSLLAxjHQJrjANajN0XramiwINwYaqgNz3G3FLmz/gm31UCbtGuNiZELgqgi0NcYDoLcOo55cNDhRcy5BkkpjE1R7Tg+Ui9HBtHel8PWhuRBQrAQfVBFYCkLiwVtZBRF/sB3AQDmrrceYvJ1QaquK7S9G1qW1ghTeLzketZD6s2S8ec1gVG+xbqfLeMgo5lFxVqouWK8GlrgKwHr7eFaLwUofWKTTys81qhVDpoEqJ4X8dbCvCczcCih7e+OHd5qdDHruZ3tiACWjODopGME4OGcN/uQ==
-Received: from DM6PR18CA0009.namprd18.prod.outlook.com (2603:10b6:5:15b::22)
- by BY5PR12MB4292.namprd12.prod.outlook.com (2603:10b6:a03:212::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Tue, 24 Mar
- 2026 16:57:31 +0000
-Received: from DS3PEPF0000C37F.namprd04.prod.outlook.com
- (2603:10b6:5:15b:cafe::35) by DM6PR18CA0009.outlook.office365.com
- (2603:10b6:5:15b::22) with Microsoft SMTP Server (version=TLS1_3,
+ bh=Nk+L2LCeWWPrej8KDhRMH+5C7u+G+vBBhoBeBrnaEkA=;
+ b=HcDY5NzVBM+N8s1Cy+q61rP+gJH6tqiJzMPGqtkxoIcdSGB7tWyHRToIKs7KXJPilBGzUUHOrsO/84WBOtnksd82kGJ144oouuCawgxUt0p29BPR0LlyrITINwXvSnXOT3Kx9ncPl3lV/79IEO3ZS37eMcDeM9vMfMt60ebY1Nt3KRfpMFl5UifiMbIvTgOd41O22w8jKpUD1a4+kAbMwEgfSuL2x3AwNE7cWNG9MO7eObm/ASHKl1TpPrmEDHIApVzsNaQoK8KkUwiFA1RTfH2AI1Jlf/mDGDeb/4ZXlOMxH2UQhG59BD77me+MzVkAjlYrgbxpwAgqi6kBv6Im5A==
+Received: from DM6PR10CA0012.namprd10.prod.outlook.com (2603:10b6:5:60::25) by
+ DS0PR12MB8528.namprd12.prod.outlook.com (2603:10b6:8:160::6) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.20; Tue, 24 Mar 2026 16:57:32 +0000
+Received: from DS3PEPF0000C37B.namprd04.prod.outlook.com
+ (2603:10b6:5:60:cafe::1a) by DM6PR10CA0012.outlook.office365.com
+ (2603:10b6:5:60::25) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Tue,
- 24 Mar 2026 16:57:28 +0000
+ 24 Mar 2026 16:57:33 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,25 +45,25 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- DS3PEPF0000C37F.mail.protection.outlook.com (10.167.23.9) with Microsoft SMTP
+ DS3PEPF0000C37B.mail.protection.outlook.com (10.167.23.5) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9723.19 via Frontend Transport; Tue, 24 Mar 2026 16:57:30 +0000
+ 15.20.9723.19 via Frontend Transport; Tue, 24 Mar 2026 16:57:32 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Mar
- 2026 09:57:12 -0700
+ 2026 09:57:14 -0700
 Received: from nvidia.com (10.126.230.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Tue, 24 Mar
- 2026 09:57:10 -0700
+ 2026 09:57:12 -0700
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 To: Aman Singh <aman.deep.singh@intel.com>
 CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Raslan Darawsheh
  <rasland@nvidia.com>, Stephen Hemminger <stephen@networkplumber.org>, "Adrian
  Schollmeyer" <a.schollmeyer@syseleven.de>
-Subject: [PATCH v2 1/2] app/testpmd: assign share group dynamically
-Date: Tue, 24 Mar 2026 17:56:56 +0100
-Message-ID: <20260324165657.23945-2-dsosnowski@nvidia.com>
+Subject: [PATCH v2 2/2] app/testpmd: revert switch domain mismatch check
+Date: Tue, 24 Mar 2026 17:56:57 +0100
+Message-ID: <20260324165657.23945-3-dsosnowski@nvidia.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260324165657.23945-1-dsosnowski@nvidia.com>
 References: <20260324123709.3471-1-dsosnowski@nvidia.com>
@@ -76,30 +76,30 @@ X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37F:EE_|BY5PR12MB4292:EE_
-X-MS-Office365-Filtering-Correlation-Id: a596d447-bd8b-4c6f-135d-08de89c67005
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37B:EE_|DS0PR12MB8528:EE_
+X-MS-Office365-Filtering-Correlation-Id: e78e4c25-ef66-4a6d-2278-08de89c67124
 X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|376014|36860700016|1800799024|56012099003|18002099003|22082099003;
-X-Microsoft-Antispam-Message-Info: wVx1erxeMmJbky3Mlb1SUgC8nq2GQqR716cQxl/s3Jm0Lk329ZMNFyi3MGhIeraRs40ywdvYo0v/eJkbfyUMLg6qb5tYTD+v92FLiduaMXd+9pjfe2ZSSmnYJZNthpm7rXDbCPPTD/lC9hHnS4WQiHTUxRjw7LHgvS+GImI/IF3fIpzSnvaUAf2pPplKtaGQSP0TjbX8ozeHzPIhmyTA73w87sLi+N77b5as1NJqBXJIykA+P+XnTxkIE5ieTTFhJ911nHYI0NuNBVJnKov3xPSOnVbmDqa2YaexhKDWvtXW/dFaSxXI48pJ7wHi/gfETIqh3Unv+HqsVRQZbq8IiqPmQWk89Im2lYzo6zsMcVW/vsFTpuKql9AcrKjwqexR89zCEdeOEvI+3ByuZUbESIH+GxvjEQ+KO6ruyPUlalfocDATL1ifVTm6xtgT7HlZd1+1l1oHBI+ULpTAY0crFMKRl856WO93145gE3eMXsEK7gdVgtsYdH7QF83FuptiDiynJcMwXUL+xt6qlA4pc+0V2eG7fh4Rb3FRF6/VTILk5bkyP2FbpIoVI70JUUUPmaYRTrMG8bfyTa5CZEL9ewg878bb9x+lJEf4VxP2YlXLV2e62VFsRAQn0g/mZcwVzSDgVh038oBPgcjIv6QFLNkJrp0jjhe5nnY5a2ZIKyu2BS5/XVKNA9C32yW4rfiYKOWRg3VVqk8SaGhA4XFMFSFIopLTHTNIVD9Fs9d8XJppLVO0KJu7M9G/7EDZINMIQJrQwNbFvc7/CvI3Pkbeeg==
+ ARA:13230040|1800799024|82310400026|376014|36860700016|56012099003|18002099003|22082099003;
+X-Microsoft-Antispam-Message-Info: q62s5TJ48QYHHocA/K+nrFubk99EI2nXmaLueoB+wO/bmuo+ulRxmg72fiaUU4XMiPQoxLCoGjRtsPjRsQd66rAcVpYEqv9XwzzxfVON7ElJD+PJbx2wcAWwmCjiW6bXFguwkHNtE1F23/LcYNJ27a5ts5i6wIOj3L82+QpR/BP0atizoICT0IaoeYvdJNe+RzeyTgOpUNeoCpvWQ6jc5y1wgGv+1xJ9Kxi1GMFhtXv9W9ReRL9YUvc5reHVxxVPGYkjMaOVWLHhDB2S3TXDHgKjTQcKqaOjBbSeu6vjLcKgvN1OnzmsgSqnySP5feOuNnXVQ6EN13ORGNIOgrEAHrgiUdxrl2C1PNb+0kYgAB16mY7g0PZT1izCDuNq7K2NhyD4Un5Ctwgakm91tO5cTGZDR8PA4+h/qM3Rs1Xe/ZWGxzo42C+Tn0j33LcYLMBZB0Jb4/OUQCSpHx41riMcBqhwJddsDQTtmdnDPVEVjvqqcon4JqtsfojvEOV1hhGy1f2kf5hI8m+g/egKgMo7oXqyfLBKyDX+Ael7IUdnDXxcvnc8LwUlhXTB7yAUGqvUIq5PherKb25cZWtdABSsg0jTP6ckalpmMPzkjFT6sn5Z7zcw2iiBve+OfgWP6Wfbxj/XoKu9o4ug2s/YNcTVxYgJA6E4ls363xQDMvSKOf6fyMX+ms6b9C6sQyO7KYgrsAyoQnNELAOdTh6Z6dssIaxqVn3ttpLzFdK8LiXRWuFHxmal+xU0bSR8PI1d5z7ThrOZtERHi+5suRfzHVNLuw==
 X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(82310400026)(376014)(36860700016)(1800799024)(56012099003)(18002099003)(22082099003);
+ SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(56012099003)(18002099003)(22082099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 10ZUUst9XE6v2heMEt9EE9UJsun24otaXfTOO/gdNNJf1HZtrD6yyz2JaFPJ7RrZxxORpb3C/NW+alHx3EAKTdEzsXsvJEQIrqnORDQ0Cq4LXOmH7pg4utFP6eM8Ndryq5zpTsReILsI6NYwXealMZ/gohQspuoaFHGNlIPsy14SXYOzi7TGUr1MgknpJaT3uVaQ/J3DLxKR7e7OXw7IqPnGaxurXJ0DbQsvwJNG/uitHxMbJi/+LBO0hAh+yYaZzJmCTiueurggXUxCPEaXWNe67n/uv0sXfUAi7s5JTaKh7UDs946fq6HKSvNT6mILKPs7CRhpp0lxDVw+OEZKoCUOjUyE9+uWk8c8WXp4/Bj3BiA635yL/x7ixVyNB7F9SNH7U6wryMmJw4XJ4d5JqBEvwTnd9kHp50FGm7pE0yU86B9Z2QuDGp9fIpDpeGE7
+X-MS-Exchange-AntiSpam-MessageData-0: F0q4LFvWVaeNx/mNW8Sd+qoacJ65p9gjOTjh8Da7j+TlPkPdBZijBnXnCLd+y74gtAtdpPypRijb1eTQjUuQv3XQEKBTdRx/Oa4jf/+V6CAriR/DTNJ0c3fhKfzifpOFOPhHMHHuVjNEBlOSIlukD8WNcr2Z9iEbKmaRQ661G5cqNCQPiQwiMSc8fNuFqLp++7Td/y5pyWjQJnHVYrvpogkN/EWI6qKfIJ6ylnxpbb4jiPHbsN3Il4Po6KrqwZ0Qu0IEgJKhPGW4NO1Ewyfg4fJnaTKAfsmczCQoyeln2eIzuHJJWOx1TnbpYXwd84lt2tb2/hmZ44RpUGy0VaYlMPgiRtTBftRVZ8WTl7bwmZQtDKYH4hIt8E3//4lq/5LNBOnQydM8bSgIGPqnMM3owaWaO2Gzf9lhuAQJ2aSFflBGcqlZrJ3NMZl54zOTm9dx
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 16:57:30.7737 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a596d447-bd8b-4c6f-135d-08de89c67005
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Mar 2026 16:57:32.6376 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e78e4c25-ef66-4a6d-2278-08de89c67124
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF0000C37F.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF0000C37B.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4292
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8528
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -113,210 +113,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Testpmd exposes "--rxq-share=[N]" parameter which controls
-sharing Rx queues. Before this patch logic was that either:
+This reverts commit 8ebba91086f47c90e398d7775921e05659c0d62f.
 
-- all queues were assigned to the same share group
-  (when N was not passed),
-- or ports were grouped in subsets of N ports,
-  each subset got different share group index.
-
-2nd option did not work well with dynamic representor probing,
-where new representors would be assigned to new share group.
-
-This patch changes the logic in testpmd to dynamically
-assign share group index. Each unique switch and Rx domain
-will get different share group.
+Previous patch changed --rxq-share parameter logic.
+If this parameter is passed, then unique share group index
+per switch and Rx domain will be assigned to each shared Rx queue.
+As a result the check for domain mismatch is not needed.
 
 Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 ---
- app/test-pmd/parameters.c             | 12 +---
- app/test-pmd/testpmd.c                | 82 ++++++++++++++++++++++++++-
- app/test-pmd/testpmd.h                |  2 +-
- doc/guides/testpmd_app_ug/run_app.rst | 10 ++--
- 4 files changed, 87 insertions(+), 19 deletions(-)
+ app/test-pmd/testpmd.c | 40 ----------------------------------------
+ 1 file changed, 40 deletions(-)
 
-diff --git a/app/test-pmd/parameters.c b/app/test-pmd/parameters.c
-index 3617860830..5d9a5f2501 100644
---- a/app/test-pmd/parameters.c
-+++ b/app/test-pmd/parameters.c
-@@ -507,7 +507,7 @@ usage(char* progname)
- 	printf("  --tx-ip=src,dst: IP addresses in Tx-only mode\n");
- 	printf("  --tx-udp=src[,dst]: UDP ports in Tx-only mode\n");
- 	printf("  --eth-link-speed: force link speed.\n");
--	printf("  --rxq-share=X: number of ports per shared Rx queue groups, defaults to UINT32_MAX (1 group)\n");
-+	printf("  --rxq-share: enable Rx queue sharing per switch and Rx domain\n");
- 	printf("  --disable-link-check: disable check on link status when "
- 	       "starting/stopping ports.\n");
- 	printf("  --disable-device-start: do not automatically start port\n");
-@@ -1579,15 +1579,7 @@ launch_args_parse(int argc, char** argv)
- 				rte_exit(EXIT_FAILURE, "txonly-flows must be >= 1 and <= 64\n");
- 			break;
- 		case TESTPMD_OPT_RXQ_SHARE_NUM:
--			if (optarg == NULL) {
--				rxq_share = UINT32_MAX;
--			} else {
--				n = atoi(optarg);
--				if (n >= 0)
--					rxq_share = (uint32_t)n;
--				else
--					rte_exit(EXIT_FAILURE, "rxq-share must be >= 0\n");
--			}
-+			rxq_share = 1;
- 			break;
- 		case TESTPMD_OPT_NO_FLUSH_RX_NUM:
- 			no_flush_rx = 1;
 diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index aad880aa34..81b220466f 100644
+index 81b220466f..980f41d25c 100644
 --- a/app/test-pmd/testpmd.c
 +++ b/app/test-pmd/testpmd.c
-@@ -545,9 +545,17 @@ uint8_t record_core_cycles;
- uint8_t record_burst_stats;
+@@ -2753,46 +2753,6 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+ 	uint32_t prev_hdrs = 0;
+ 	int ret;
  
- /*
-- * Number of ports per shared Rx queue group, 0 disable.
-+ * Enable Rx queue sharing between ports in the same switch and Rx domain.
-  */
--uint32_t rxq_share;
-+uint8_t rxq_share;
-+
-+struct share_group_slot {
-+	uint16_t domain_id;
-+	uint16_t rx_domain;
-+	uint16_t share_group;
-+};
-+
-+static struct share_group_slot share_group_slots[RTE_MAX_ETHPORTS];
- 
- unsigned int num_sockets = 0;
- unsigned int socket_ids[RTE_MAX_NUMA_NODES];
-@@ -586,6 +594,73 @@ int proc_id;
-  */
- unsigned int num_procs = 1;
- 
-+static uint16_t
-+assign_share_group(struct rte_eth_dev_info *dev_info)
-+{
-+	unsigned int first_free = RTE_DIM(share_group_slots);
-+	bool found = false;
-+	unsigned int i;
-+
-+	for (i = 0; i < RTE_DIM(share_group_slots); i++) {
-+		if (share_group_slots[i].share_group > 0) {
-+			if (dev_info->switch_info.domain_id == share_group_slots[i].domain_id &&
-+			    dev_info->switch_info.rx_domain == share_group_slots[i].rx_domain) {
-+				found = true;
-+				break;
-+			}
-+		} else if (first_free == RTE_DIM(share_group_slots)) {
-+			first_free = i;
-+		}
-+	}
-+
-+	if (found)
-+		return share_group_slots[i].share_group;
-+
-+	/*
-+	 * testpmd assigns all queues on a given port to single share group.
-+	 * There are RTE_MAX_ETHPORTS share group slots,
-+	 * so at least one should always be available.
-+	 */
-+	RTE_ASSERT(first_free < RTE_DIM(share_group_slots));
-+
-+	share_group_slots[first_free].domain_id = dev_info->switch_info.domain_id;
-+	share_group_slots[first_free].rx_domain = dev_info->switch_info.rx_domain;
-+	share_group_slots[first_free].share_group = first_free + 1;
-+	return share_group_slots[first_free].share_group;
-+}
-+
-+static void
-+try_release_share_group(struct share_group_slot *slot)
-+{
-+	uint16_t pi;
-+	bool group_not_used = true;
-+
-+	/* Check if any port still uses this share group. */
-+	RTE_ETH_FOREACH_DEV(pi) {
-+		if (ports[pi].dev_info.switch_info.domain_id == slot->domain_id &&
-+		    ports[pi].dev_info.switch_info.rx_domain == slot->rx_domain) {
-+			group_not_used = false;
-+			break;
-+		}
-+	}
-+	if (group_not_used) {
-+		slot->share_group = 0;
-+		slot->domain_id = 0;
-+		slot->rx_domain = 0;
-+	}
-+}
-+
-+static void
-+try_release_share_groups(void)
-+{
-+	unsigned int i;
-+
-+	/* Try release each used share group. */
-+	for (i = 0; i < RTE_DIM(share_group_slots); i++)
-+		if (share_group_slots[i].share_group > 0)
-+			try_release_share_group(&share_group_slots[i]);
-+}
-+
- static void
- eth_rx_metadata_negotiate_mp(uint16_t port_id)
- {
-@@ -3315,6 +3390,7 @@ remove_invalid_ports(void)
- 	remove_invalid_ports_in(ports_ids, &nb_ports);
- 	remove_invalid_ports_in(fwd_ports_ids, &nb_fwd_ports);
- 	nb_cfg_ports = nb_fwd_ports;
-+	try_release_share_groups();
- }
- 
- static void
-@@ -4097,7 +4173,7 @@ rxtx_port_config(portid_t pid)
- 		if (rxq_share > 0 &&
- 		    (port->dev_info.dev_capa & RTE_ETH_DEV_CAPA_RXQ_SHARE)) {
- 			/* Non-zero share group to enable RxQ share. */
--			port->rxq[qid].conf.share_group = pid / rxq_share + 1;
-+			port->rxq[qid].conf.share_group = assign_share_group(&port->dev_info);
- 			port->rxq[qid].conf.share_qid = qid; /* Equal mapping. */
- 		}
- 
-diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
-index af185540c3..9b60ebd7fc 100644
---- a/app/test-pmd/testpmd.h
-+++ b/app/test-pmd/testpmd.h
-@@ -675,7 +675,7 @@ extern enum tx_pkt_split tx_pkt_split;
- extern uint8_t txonly_multi_flow;
- extern uint16_t txonly_flows;
- 
--extern uint32_t rxq_share;
-+extern uint8_t rxq_share;
- 
- extern uint16_t nb_pkt_per_burst;
- extern uint16_t nb_pkt_flowgen_clones;
-diff --git a/doc/guides/testpmd_app_ug/run_app.rst b/doc/guides/testpmd_app_ug/run_app.rst
-index ae3ef8cdf8..f4a30e5da9 100644
---- a/doc/guides/testpmd_app_ug/run_app.rst
-+++ b/doc/guides/testpmd_app_ug/run_app.rst
-@@ -393,13 +393,13 @@ The command line options are:
-     Valid range is 1 to 64. Default is 64.
-     Reducing this value limits the number of unique UDP source ports generated.
- 
--*   ``--rxq-share=[X]``
-+*   ``--rxq-share``
- 
-     Create queues in shared Rx queue mode if device supports.
--    Shared Rx queues are grouped per X ports. X defaults to UINT32_MAX,
--    implies all ports join share group 1. Forwarding engine "shared-rxq"
--    should be used for shared Rx queues. This engine does Rx only and
--    update stream statistics accordingly.
-+    Testpmd will assign unique share group index per each
-+    unique switch and Rx domain.
-+    Forwarding engine "shared-rxq" should be used for shared Rx queues.
-+    This engine does Rx only and update stream statistics accordingly.
- 
- *   ``--eth-link-speed``
- 
+-	if (rx_conf->share_group > 0) {
+-		/* Check required switch info for Rx queue sharing */
+-		const uint16_t dom_id = ports[port_id].dev_info.switch_info.domain_id;
+-		const uint16_t rx_dom = ports[port_id].dev_info.switch_info.rx_domain;
+-
+-		uint16_t pid;
+-		const char *mismatch = NULL;
+-		uint16_t mismatch_pid = (uint16_t)RTE_PORT_ALL;
+-
+-		RTE_ETH_FOREACH_DEV(pid) {
+-			struct rte_port *o_port = &ports[pid];
+-			const uint16_t o_dom_id = o_port->dev_info.switch_info.domain_id;
+-			const uint16_t o_rx_dom = o_port->dev_info.switch_info.rx_domain;
+-
+-			for (uint16_t q = 0; q < nb_rxq; ++q) {
+-				struct port_rxqueue *rxq = &o_port->rxq[q];
+-				if (rxq->conf.share_group != rx_conf->share_group ||
+-						rxq->conf.share_qid != rx_conf->share_qid)
+-					continue;
+-				if (o_dom_id == dom_id && o_rx_dom == rx_dom)
+-					continue;
+-
+-				if (o_dom_id != dom_id)
+-					mismatch = "switch domain";
+-				else if (o_rx_dom != rx_dom)
+-					mismatch = "rx domain";
+-
+-				mismatch_pid = pid;
+-				break;
+-			}
+-		}
+-
+-		if (mismatch) {
+-			fprintf(stderr,
+-				"Invalid shared rxq config: %s mismatch between ports %u and %u\n",
+-				mismatch, port_id, mismatch_pid);
+-			return -EINVAL;
+-		}
+-	}
+-
+ 	if ((rx_pkt_nb_segs > 1) &&
+ 	    (rx_conf->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
+ 		/* multi-segment configuration */
 -- 
 2.47.3
 
