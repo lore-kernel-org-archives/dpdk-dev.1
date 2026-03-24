@@ -2,73 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E02AF532C1
-	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 00:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 300E7F532C6
+	for <dpdk-dev@archiver.kernel.org>; Tue, 24 Mar 2026 00:55:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C419340609;
-	Tue, 24 Mar 2026 01:07:01 +0100 (CET)
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com
- [209.85.210.182])
- by mails.dpdk.org (Postfix) with ESMTP id 0E30B402D6
- for <dev@dpdk.org>; Tue, 24 Mar 2026 01:06:59 +0100 (CET)
-Received: by mail-pf1-f182.google.com with SMTP id
- d2e1a72fcca58-82c4b5dfe6cso710638b3a.2
- for <dev@dpdk.org>; Mon, 23 Mar 2026 17:06:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0F82B402D6;
+	Tue, 24 Mar 2026 01:55:53 +0100 (CET)
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com
+ [209.85.160.169])
+ by mails.dpdk.org (Postfix) with ESMTP id 4A41D4027C
+ for <dev@dpdk.org>; Tue, 24 Mar 2026 01:55:51 +0100 (CET)
+Received: by mail-qt1-f169.google.com with SMTP id
+ d75a77b69052e-509217e84a3so5918921cf.3
+ for <dev@dpdk.org>; Mon, 23 Mar 2026 17:55:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774310819;
- x=1774915619; darn=dpdk.org; 
+ d=iol.unh.edu; s=unh-iol; t=1774313750; x=1774918550; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=TkMXaLvBV3KobpYgWiZ0ekrFEZjDUUJvuCYGZK2B9YU=;
- b=jBu1mKpRQSEDQw2c2sDP/8QmVo6uWpGW5BLSAYoPA6QoGRlN7RQWhPZBpXlimvi19f
- QX2v890GTsoRN6S5rQz2aKUsseO9Y1ctPi3UGFHHjdwmiG4gLCJoEUxrAVcEJhnl0yR6
- wxMNC+jAWxuhCfhMUPt2e55sFW9hZLq5Z9UEKJqStUd3hpPJkqT8lDRum3WnLbexkOtd
- NNveegu3vtwqy0vh3OKd/B9VltLD21P2YI0V7z+w+eB/J689vnz1zH91CXfBhEmRaqxS
- Kki19wD8EirZYx5DDgIoQ/oz/sLPpHVD+KmBurx6zLZo84p6DI1jhEYz+PQ88B/oGjio
- 0gmQ==
+ bh=Y6+5J4Dq+cNubLbjCJbI4RMNjbuE0sOAoclsMKF90qM=;
+ b=X+5lZZuWh51O6JpfrBAkZV1AcFW6mja5EEuw7Fha5Ep7NcReIWFaXrAaFDkZHv2m6c
+ DMtNnAPCrUhj8HZNQdsOGWtUZmwH9nNDkqB53CPRAPyvnAdKigOmrpcVjVD7IxF7R5+7
+ AfFkS90n78l9Kj7wMB+CMJmbkaq+dk/g8zkQo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774310819; x=1774915619;
+ d=1e100.net; s=20251104; t=1774313750; x=1774918550;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=TkMXaLvBV3KobpYgWiZ0ekrFEZjDUUJvuCYGZK2B9YU=;
- b=lyhMrc9sWJo77XqbpUFXueqv8VwfOrU1HygLXFDdLJIwMwPreqpqFQhUj0vWOgWXKA
- xXFZff3/ENDpFnQUHqX8eIA1NCIM+9onNBsZpgEIjk3ulTz/1ZlSVh+dVyYvKPnmnwOx
- GU3OJioXNdbDamDIJKxKWiMhkJGrSCj4Qp5xknfIcElBT29iEb0NCLq8HMQeLfCX2def
- CV99Tdunpa9Utq8NLcO1KZCYbGT+nQMZycIoZsduiR58RsHTX3zppnk9WfDpuyXEjB/u
- wGOENZ6oprGoxyKFME2CsOCZOXe/fu8/t2LrMycQN2z/7375Od2r24BgDINic+l93scK
- SXXQ==
-X-Gm-Message-State: AOJu0Yw3HLLQuNKDqe3gI8TpVAoSlbkkkrKdckX+j97qbm8cv2qn538j
- Jreb2GZhWMqYb5N0Bz/tS6eKiGFmvlshzcsJAiwytXXpJrFal4Vpa9X/qrM3k0c6cdo=
-X-Gm-Gg: ATEYQzyvJs4TydZZ4xnk4BQcOhyj3wVFQkiDry4JPzAotXLBC3nL6582LUQnlpRtpXM
- ghIOwN0Iq82gYK1f3okYx92LHlfYmI//iWjy+icwEiYZ7C8ubBc6X9SpbnEcStAR6pCO0DTT3lO
- 8doxFPsH7L8w0pQrnJvFJ2g395cAiY5AZwAmioOrE7KmV0EnVa6qFcL4dC+aIiItRpY7dvtXgr6
- /XxccitsUprof6FOsspvBqLiIg5GKIhNwJyEgqgvDdMm7gN+jNmDOmV58XeyvGeSG/ITAXY54NS
- hF6dZeWNQ/uWhnjXuMJO3H0HWfptGljcyakFS8xvgwLn3jbxMGZ+9dXbL55vHRS4ZlA84O8namH
- 5EwWXf6+ujIKThb+EG0wiy8Nk2lMwiA66O8dTyaV01dGKyjB/CLVUDFw+VnXu52/XUWH9q63/IM
- 992cMs9FOPDsiKidwmjhIxxsMNH+EGaNGTVTk=
-X-Received: by 2002:a05:6a00:9510:b0:82a:609f:d49c with SMTP id
- d2e1a72fcca58-82a8c35de95mr11074476b3a.47.1774310818841; 
- Mon, 23 Mar 2026 17:06:58 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
+ bh=Y6+5J4Dq+cNubLbjCJbI4RMNjbuE0sOAoclsMKF90qM=;
+ b=pRbk0WdXeuLJV7zFbzjSeQmXOJWxrY98w2+qtYYQNV+fCJYMhOtyjOE38fEOuSQ8ic
+ 71eEKE5nmwqCSqg8tdvsmze7NdM7H+m+eSumzElNefnJhfblntpBnIUIvkWOZFBrf/HF
+ USujYS0d64OjeH2CQqG6KO6O77xCisD/zCuS51bzcFdto1xx/06tUEeH9PYDHb5oiJu5
+ ngml5gSyq3TQVduXS9p5cRgHFPXxdpK06rFugH/4FpGPZGxKP6N3je8YFoazu9aidpHH
+ qo82mrEm3vOaxFVznjEuHnsAuxdm/koT/aoow1CYZGIGj3oF79r8CbLkvM2yDiyBkt7u
+ +1lA==
+X-Gm-Message-State: AOJu0YxI6Wq7Z1h5mQwEUgnucnkrsnWMTAvCs859rgdhO015qdtVWyKX
+ sP7t/fsFLR5vx/a7BGX/JnJM2feRpKDJLC5UmbkS/2lF51zHbK88pDOMqhzTR3cW5LRbCOfOLSH
+ B8QrInyE=
+X-Gm-Gg: ATEYQzx3P8cAezi4Rb1D/dSUQrv+icoFNbIgrwOZUeO/4zj22FwGRnbREF5AC3LiK3f
+ vOOhdvuoqMGGr/AJtB21i37cg4X/B/cXb7rofLuspt+LYpol0dGOSbyoM0Wsa7TBHserdhAlgmb
+ OlbBWibdMAv8G46YYS4L9TS4ChRJHagZJHKz6Y6RoK6csfU2UNP1rJfLJpYuOuGMayCTJn2XvIh
+ B6+k42J6hehPC+yCzIjuaEyjsR3RjlDe/36/nfRc4Cukp7c87D6Gyns1YzvwOokrl3sOEOWOq5q
+ SIfsCCKLX5nAWLKyS4ddr41ekrSQiqG+iIg0KqSW+qS45D8An+xfj72qKZA6zPX5hQk+/jfGgnO
+ Rt52eS85y+X9nZfRn8huMQdokHx2LbSMVvcS9HkZjaZ4H/XPcqEzeDDcLTKg2A1UNB3QtCS0ChZ
+ oSrhf9ZtBm/3mrgUMue7w7G/G6Kj0hUViD66x+eKnBa1acb/TPnAeC2o8O81rwbxd1VP7Ol4ON+
+ 4r5Ly+XDBvcIbuqQH1tiQ==
+X-Received: by 2002:a05:622a:4e93:b0:509:2822:670d with SMTP id
+ d75a77b69052e-50b373eaec2mr207124261cf.27.1774313750533; 
+ Mon, 23 Mar 2026 17:55:50 -0700 (PDT)
+Received: from patrick-laptop.hsd1.nh.comcast.net
+ ([2601:188:c083:cd0:e674:3b6b:125b:ed1e])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-82b03aa9fc6sm10939363b3a.7.2026.03.23.17.06.55
+ d75a77b69052e-50b36e3d85bsm91913721cf.17.2026.03.23.17.55.49
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 23 Mar 2026 17:06:58 -0700 (PDT)
-Date: Mon, 23 Mar 2026 17:06:50 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, fengchengwen@huawei.com,
- aman.deep.singh@intel.com, shaiq.wani@intel.com, stable@dpdk.org
-Subject: Re: [PATCH v5] app/testpmd: fix DCB forwarding TC mismatch handling
-Message-ID: <20260323170650.1a6f24f3@phoenix.local>
-In-Reply-To: <20260320062954.2042887-1-chaitanyababux.talluri@intel.com>
-References: <20260311083751.1107404-1-chaitanyababux.talluri@intel.com>
- <20260320062954.2042887-1-chaitanyababux.talluri@intel.com>
+ Mon, 23 Mar 2026 17:55:49 -0700 (PDT)
+From: Patrick Robb <probb@iol.unh.edu>
+To: luca.vizzarro@arm.com
+Cc: dev@dpdk.org, abailey@iol.unh.edu, dmarx@iol.unh.edu,
+ Patrick Robb <probb@iol.unh.edu>
+Subject: [PATCH v3 1/2] dts: always use ethdev ports to check capabilities
+Date: Mon, 23 Mar 2026 20:52:40 -0400
+Message-ID: <20260324005241.761124-1-probb@iol.unh.edu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20260323180818.674041-1-probb@iol.unh.edu>
+References: <20260323180818.674041-1-probb@iol.unh.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,52 +80,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 20 Mar 2026 06:29:54 +0000
-Talluri Chaitanyababu <chaitanyababux.talluri@intel.com> wrote:
+DTS uses its capability check step to query ethdev devices for
+their capabilities, and then run or skip testsuites according
+to their respective capability requirements. So, we should be
+running the capability check step with the ethernet devices
+in all cases. However, when crypto ports are specified, a
+crypto virtual function will be used in the capability check
+step in error. So, this patch changes the default behavior
+when computing EAL arguments, setting the port allow list to
+the ethernet devices by default. In addition, as a defensive
+coding measure, the capability check now specifies its usage
+of the SUT ethernet devices when acquiring capabilities.
 
-> Fix DCB forwarding failed when the number of TCs on ports is inconsistent.
-> 
-> When ports have asymmetric TC configurations (e.g. 2 ports, port0 has
-> 4 TCs and port1 has 8 TCs), the forwarding logic iterates based only
-> on the Rx port TC count.
-> This can lead to accessing invalid Tx TC entries and incorrect queue
-> mapping, which will result in a SIGFPE exception.
-> 
-> Additionally, the existing VMDq pool guard in dcb_fwd_config_setup()
-> only checks RX queue counts and does not consider the case where the TX
-> port has no queues for a given pool/TC combination.
-> 
-> Fix this by:
-> 1. Introducing an effective TC count using RTE_MIN() of Rx and Tx TC
->    values, ensuring forwarding only operates on valid TCs supported by
->    both ports.
-> 2. Updating the loop condition to use the effective TC count instead of
->    only the Rx TC count.
-> 3. Extending the queue validation in dcb_fwd_config_setup() to ensure
->    both Rx and Tx queues are valid for a given TC.
-> 
-> Testpmd command to reproduce:
-> 
-> x86_64-native-linuxapp-gcc/app/dpdk-testpmd -l 1-20 -n 4 \
-> -a 0000:31:00.0 -a 0000:4b:00.0 \
-> --file-prefix=testpmd1 -- -i --rxq=256 --txq=256 \
-> --nb-cores=16 --total-num-mbufs=600000
-> 
-> port stop all
-> port config 0 dcb vt off 8 pfc on
-> port config 1 dcb vt off 8 pfc on
-> port start all
-> port stop all
-> port config 0 dcb vt off 4 pfc on
-> 
-> This ensures correct queue mapping and avoids issues when switching
-> between different DCB configurations across ports.
-> 
-> Fixes: 1a572499beb6 ("app/testpmd: setup DCB forwarding based on traffic class")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Talluri Chaitanyababu <chaitanyababux.talluri@intel.com>
-> Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
-> ---
+Fixes: 76e3fdd7b5c6 ("dts: add cryptodev package to DTS")
 
-Applied to next-net
+Signed-off-by: Patrick Robb <probb@iol.unh.edu>
+Reviewed-by: Andrew Bailey <abailey@iol.unh.edu>
+Tested-by: Andrew Bailey <abailey@iol.unh.edu>
+---
+ dts/framework/remote_session/dpdk_shell.py | 5 +----
+ dts/framework/testbed_model/capability.py  | 2 +-
+ 2 files changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
+index b94d336d4e..51b97d4ff6 100644
+--- a/dts/framework/remote_session/dpdk_shell.py
++++ b/dts/framework/remote_session/dpdk_shell.py
+@@ -46,10 +46,7 @@ def compute_eal_params(
+     params.prefix = prefix
+ 
+     if params.allowed_ports is None:
+-        if ctx.topology.crypto_vf_ports:
+-            params.allowed_ports = [ctx.topology.crypto_vf_ports[0]]
+-        else:
+-            params.allowed_ports = ctx.topology.sut_dpdk_ports
++        params.allowed_ports = ctx.topology.sut_dpdk_ports
+ 
+     return params
+ 
+diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
+index b166014e0c..960370fc72 100644
+--- a/dts/framework/testbed_model/capability.py
++++ b/dts/framework/testbed_model/capability.py
+@@ -384,7 +384,7 @@ def get_supported_capabilities(
+         )
+         if cls.capabilities_to_check:
+             capabilities_to_check_map = cls._get_decorated_capabilities_map()
+-            with TestPmd() as testpmd:
++            with TestPmd(allowed_ports=topology.sut_dpdk_ports) as testpmd:
+                 for (
+                     conditional_capability_fn,
+                     capabilities,
+-- 
+2.49.0
+
