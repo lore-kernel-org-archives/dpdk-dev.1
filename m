@@ -2,141 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A88109C02F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 15:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0BE109C028
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 15:22:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A50F9402CE;
-	Wed, 25 Mar 2026 16:12:35 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
- by mails.dpdk.org (Postfix) with ESMTP id EEB5C4028E
- for <dev@dpdk.org>; Wed, 25 Mar 2026 16:12:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1774451554; x=1805987554;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=okqkv597HFIZ4+1Oyeht6naml4I9c+vcCzrbcXrcoo0=;
- b=iipLkQpm+ijX0OHW7u6ISkFwuk3gxGnM1kFIalpQ+FIWA9QQk1MoA/58
- 74oAEQh5gdLaNtEFRCAqr/luuixTnnAieWWeh+4DqaqQ9yGitCKRDFlpV
- ZfJZVLCOVJ4XEvvjckVk6xx/mxAoDpfdbur7ouFsukiRy78r1+/gsUvQ6
- 7qOX09bMX8HWWjOGbRjBTFrXj+gkW1/tyDDDYCw821g5v6sROZkcXEnqT
- B1wNhUEVZ6uu6yOKccFWy0QgNe4DzKBctJRlNy5th9vmiMaf4CDgSBHEg
- xIepTy7P/tJcQNGsdWt9RIGnLer8+bcARZZCUYfbNi8slwmBiuVOzlqcI w==;
-X-CSE-ConnectionGUID: 4NnsQIelS8C8PslA3rKEVg==
-X-CSE-MsgGUID: i1BmzRmIRb6nxdrcpFGEnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11740"; a="86186106"
-X-IronPort-AV: E=Sophos;i="6.23,140,1770624000"; d="scan'208";a="86186106"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Mar 2026 08:12:33 -0700
-X-CSE-ConnectionGUID: rqu84wgLQcCFpNH7ckNGNA==
-X-CSE-MsgGUID: w6rX3+nEScu4R4i1EakmiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,140,1770624000"; d="scan'208";a="247741767"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Mar 2026 08:12:33 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 25 Mar 2026 08:12:32 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 25 Mar 2026 08:12:32 -0700
-Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.44) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 25 Mar 2026 08:12:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NusayTkF63hEq+D7JUcSeQnYU/TcTfkhNdo7TnCPs4chu0luVAI4QkgDR0NXpmb10wp9DjjP9WxLZPh4vkZj+8CCfx4vYjeBYm8LLBxbuZSZyFM/D/BL1DBf3fAYEeqScZa7enIE5E3pNJBhDTkPRsAH8OLswa1SysfFWnWIbOX3J2qkBN6X5OiMxxXQXSmvgTRqmoyDreUTkNRHTKVONNP/2ronlIev1cz6zfufupoNxpw9BwKclxXh5VR7xItmN1uYKTqoQmGbtQaW+6Fzcvc/C/2HzPVQUShzhQWHrmoB7AWn6VaL51qE6olyJCKzGzjSfz/WS5bKneboLyVorQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aIipVHAxB+85E+6DXJugyUZ55/ucDK7fU+TfwCAQ6FY=;
- b=BrJH9Oc7u5DP1x7VB2/BNNPrOn+VpxBVW0uQixFdrx8mUmKR2jIpc5QMzegYjCSlpp9yhQoKE97jUw60jBKHSBfcRto0+zedykzKmVCucF1tjgxkylbkwys4Okmps2S3562oGEba3l7QlzUq4ntVVmXQwkRu/fBb4P79imt71RYl0R2DJM5zRN450DQzvc+qwWOrHWjUXsKq2dIt1+0+ZzOtqyxG49NByKQ07b/9lBUPcLJb4Ye8Ku1DlYgIYCxpK1cR6mKGC+gwE324gM9AHq77eBTlIC6hnEqCVE+/B9Ju/CmONsE6PNVBfp2SEnsjNvIGDS+zUGQbrkAWhBv3LQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by CH3PR11MB7177.namprd11.prod.outlook.com (2603:10b6:610:153::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
- 2026 15:12:29 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9745.019; Wed, 25 Mar 2026
- 15:12:29 +0000
-Date: Wed, 25 Mar 2026 15:12:24 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Shaiq Wani <shaiq.wani@intel.com>
-CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>
-Subject: Re: [PATCH v1] net/ice: fix FDIR flow type for tunnel inner items
-Message-ID: <acP7WEglEU_AMLX3@bricha3-mobl1.ger.corp.intel.com>
-References: <20260323025418.651923-1-shaiq.wani@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260323025418.651923-1-shaiq.wani@intel.com>
-X-ClientProxiedBy: DUZPR01CA0090.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:46a::8) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 72BFC402CE;
+	Wed, 25 Mar 2026 16:22:43 +0100 (CET)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com
+ [209.85.219.54]) by mails.dpdk.org (Postfix) with ESMTP id 3B67F4028E
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 16:22:42 +0100 (CET)
+Received: by mail-qv1-f54.google.com with SMTP id
+ 6a1803df08f44-89a0d53f3d1so80532206d6.3
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 08:22:42 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774452161; cv=none;
+ d=google.com; s=arc-20240605;
+ b=HgBpqbW18P2w9Md+bbMZ7pvlHsBcotsekWvjjhD5c2FGXWueb2t7DzqB7npCTiGCj2
+ YONeKQ0NP8TP+HOpYSZusO6d24lXU+wKB2W6Rsx7X+ZXOn709cHHCGvk1AUxvWLZvd4w
+ nlSSCb58BzWBSxMU37UaKzJBqzdLuzCUh34iijn7NXj6OwdbihZdHXta+gCXW+Z4OArA
+ /wYx4NjEdpssQ4NtIAUkDH3tMXI0yC7f3byAYCUFIxPLqtL1/BEtCNGzX6mrL6GtQjF8
+ jwmwHg6ZJ45iLXobDJjh8Zl2pOwzC3Ln0qV09ldZ5iputNaNPqUQHf2szphUIL/cwSZD
+ tm7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version;
+ bh=wamZAhEIYY5IsyFhpMSgmmuPgImUWn7h0S2M0PxKJc8=;
+ fh=qtx+rTXMu0jT4NwnisPY8YqyFA3IRvAKA50FaVvbcNg=;
+ b=U6mFuclzKTJX4RVJnt+n5YX8fwbjRV7VSIfvEjeEfbaScxc0FrnvOqLGotEJcdmPAI
+ NuoEMAESZIEldldQvAREinqeSkD34+h06P0XNjS1h0DQ2QMAoJHdIaSYN2s1iu8Bsv5L
+ W6kJ/k0UT462nxPUCAPeqqzaBtVwR9+NIWv1wYEPNye61HFgZqJSobgA00awS5TBHVqg
+ BQ7R7ZzNfC4mBKx4soI9Uy3Z9AWSid1fzBKwKslGwkvcDspSRUrb+DDhAGl++6MwMVx7
+ wx8nc65oPS8tQTkajjjQsA3z4XEqO7/AnnawYPG/QLeeUfHnclwbiw2FkpzOPY0EC0U3
+ /ICw==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774452161; x=1775056961;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=wamZAhEIYY5IsyFhpMSgmmuPgImUWn7h0S2M0PxKJc8=;
+ b=pWaWze2iJ6/z8cEfOeQdnz2GdUCY3Oth1ngdD80u6Vvz78+DaMYxVASPKHTbVfcWI9
+ HJ6PnJghimFfkpZyT4etq/ybC9b30BlhOmK1MZPBfhU0paH2RIri99vcwNliQMyBxLsV
+ KDwiJoryI6kFlqXTw1EvfXz7UlsIP3CEzVXeuQEw+i+Y7s5puHnjk7g8ui1UrY8/PI+b
+ LCrhCAw3dD6P0xl3RYGA9jbBcvTjVrGMBDBuKbjFoUz9AKiEvBrpAuI9town48evRZ/b
+ 3sMruu+lyi6N5aGaVoLnbfxbhIaGuORUzGzmBGIwHvPbR468R4b5pML0mpBHVKv77kmL
+ H0yw==
+X-Gm-Message-State: AOJu0YxDEk0URjNtlpP9NmduGLO5Vt3uGfdez+9SaeO3d3M7BZOWrh91
+ 7UMuQZC0dcA4a2JjKpfR+PSwI/FDKaBXtGNxholfDFcPfILVBJpG8H2qrmsXSZHMhrB9Ne7eNWi
+ pxj4EEwdDTf2mLOEzonOXvNgkb9Sml9k=
+X-Gm-Gg: ATEYQzzvrpVXhBa04wU0/Tz1e05HF/0yb/6jcfccO3YR7x6utQVi7ed1bz9NHUEKIyQ
+ pC41jSnyL+w6DObnuexJQ/nhMmSxZhxMeiLXzCAMquzQd+ENHR+sRze6biJuWJumVNwdoUPo6IR
+ QV4ma8QHtxZn1TJkn6LTd34iiszHI9v1cdmWE7Z1xDBuRrtuJRf85Kx52Th04dm/MFWpgANpKvr
+ iMU7OY/4cdu2sIGqGOBfhMtdfC2O9lG+LSVwSrPRP/WYzMXB+PYwN5LIScZBbjE16rDpQHCO8Qn
+ 9sqs
+X-Received: by 2002:a05:6214:23cf:b0:89c:ac72:2f6e with SMTP id
+ 6a1803df08f44-89cc4aa6a4emr62245506d6.43.1774452161350; Wed, 25 Mar 2026
+ 08:22:41 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|CH3PR11MB7177:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9378bfe7-b45c-4d33-d8d8-08de8a80ee10
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|366016|1800799024|22082099003|56012099003|18002099003; 
-X-Microsoft-Antispam-Message-Info: Vhiv3eZKAMQMSdwm8v+IdvEBCeYPU7Niq5WGqo1YINNyzjkP32OW6LZ9NYw3kwyS6p72kIvtYT7qyGfpM6rXDsCRBleqo8fEbzlsIY1HbEMKYqzbnHZcrwIrM4mcUb+rv16jzKaVzmRXvLPPuuxOybdYG01HEsipvm9q/nSARmwea/8DI4mMLPJKIHT9Kml19RcWyUurWFZRx92nqKYYFN8nAPtYoQk+YaA5+7Bb3gUOXkULy8MRcgigSmQ5OorvANdAQGAoZ2YdCeDksXuZvuAhv174Qhasl8DCavxR0iVvxnVWrGlmJyyG2rvw79wm6vUQaa4x9Fe3XU2kpTihJcLC667Rm6qWNgVzZBuhL5JaCuzAkPlVLJi9y6zrY1fOEmsa2unjIoPufcronjtetN697T7Z0ZtX3SzExmlzFcJre1CqqB+qxN+6rcPqFGH6e3DVHtmytoEmma0s/Ayeud/nZpj0QD1uvEsTG7kfOuxWPPuDQiZULNYykH+Bf2h+v0wGImrIsaL9XNG1zGx5sHNlMuJUij4jPk+P7/l/Plpb55BB/crMKzUjJXBpTFD16BY1i0gQDG2g/EjKxKnEwqV0KU0BD1bmmTCyknS7nN7O1uVUP4byoRDivYJui+XVwKdSe+MFiNjoSzqyLkqA0Wd1MkXfoQXJzm0FL2KHtXORMYZSRp8p+ud1f3t2foBaGZb17ynaef6xnLMOefVGf0FWGsNvlExkro5I5nc/oa4=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(366016)(1800799024)(22082099003)(56012099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?lOvjchsXiuTydPDa0QbuuYjA7W9y/5tNIOxips5GPZeC+ybsZTjsSCVt/iYb?=
- =?us-ascii?Q?xJN6lp1noNv/rQygpI63Z3V/B7MUDGTJuWD/bSurPvEMQa2pfHL/eHJzAe0c?=
- =?us-ascii?Q?BNUooW7sc/Cy/hnTvkj5qyxf+rtdJFg31nrkSW9cvJY+KL34YpdZn55f18xg?=
- =?us-ascii?Q?iR5mtDDkfmNOi21XQgtUbBy2jI+NMmrUjkakLqPjECLYrhIuh9ruPUOQqB2j?=
- =?us-ascii?Q?YzQcm3HZai4U08qw9kx8bit5ozStWf8M4tA9ufLsdkKXXtguxfmeLwlWoHn9?=
- =?us-ascii?Q?V8fI0tZO5hVREYyNNjM91uS9EEpZrMdqkicriRbC/ueZ5th3KMPKlGrdhITK?=
- =?us-ascii?Q?fZL/uKr9HFsMxNoU9j/5SaxMnUPdNVY+PFd+gtpIPfUmNPRekoJ+d+YLbQRR?=
- =?us-ascii?Q?Sjkk3P6IUSkc81Vm1+GFraJwW8zbKhfDSs8i0ZTtiLqK+Jf4vInERXpMcCzB?=
- =?us-ascii?Q?/3Mlfib8qf7Yek69arcyF6hwALQ0Y/0ge+rW3eiIRVCvDagdS879vbfn0kq6?=
- =?us-ascii?Q?nt1ExvHGkJGtNakkgCdk15CqWUXCmcHSWGTaQElDKTYswV2EH7Sv5U2W0yzk?=
- =?us-ascii?Q?72J47s/SJ8jbVsWhClUpOscWynw6c1hUzHJsS9XMBZSfQkmUUvQlmvQBBbCB?=
- =?us-ascii?Q?QZHukvG2UQG1XOABUBbgVYs/902U10mSPIIAdUhowSk5h0KsUAaryu6DF51y?=
- =?us-ascii?Q?K7MYV0W2h1Bk+c5o9gQWaeIiG6UKgaX8LDUN9sZ8BDy5qBcYi1rOEMTO/xJm?=
- =?us-ascii?Q?L69lLdbs6muskdOXyWE5GNUHq6ZBHz+qGuzAGqr0Dhmp2TPIR6nRM89eNZZr?=
- =?us-ascii?Q?uo//DXL3cGs/6CIHDQVE1vHOF37oRJTqf63nHifi1FLP/wuNn1Szx/DeVZvb?=
- =?us-ascii?Q?UYXfJg79iApuOsHDXxXVCZgfc7wfg2EAOnzVKDXPBVMnk3aTLy9wI1QNF/qm?=
- =?us-ascii?Q?AzRKGe2zAp8YLZRe/6OYrlMDB3KxEt69OlIAlzxstilm5YtuPLFFe+HWiTew?=
- =?us-ascii?Q?tZcW4LvEFArbFlyRGbq5dYuc/A2vRy8o5txkKgLixf55tABkyZ+h+5QX62pA?=
- =?us-ascii?Q?v5BkfuqMiOPo4/KN7LuYJCLv9kTH7tQYU4441XZT20IHHxwYDgkh2HrbSzEy?=
- =?us-ascii?Q?PPsUQ+YMkRdg98rJ/mXorqxbOAiDiluy+eAmveYLSD+T5dEs8Yj3gBNyDSS4?=
- =?us-ascii?Q?3Un/LXu7HULGzFelBdO076cly0z3Elpv4rWmPZBcjki3beNITx2SwfsihX0Q?=
- =?us-ascii?Q?NfHg280pKQH1a8rz6js70FD9XMrKb41Qe/PSPuVbDtm1n/OzpjOFnJzieoUL?=
- =?us-ascii?Q?ot01G6lH/dzhJnc4DqvgwQMASXDqEMryUmQRB5GbA4EBVrwvppqCKRI+zpbu?=
- =?us-ascii?Q?F6fKC9AxnVsSeybckHSt6LqWC2BW/9uWsCFi3oM7HJY+evIi6uLlI2kDF/X3?=
- =?us-ascii?Q?jIs+YD7ixOdesEYe4/aCvHBDKsRPtKzBM+I+m1JqFFFq9Bg/Crpu9JR8kSAb?=
- =?us-ascii?Q?wG19j5tsgzaBYE1dUUGKX7Y3sfrC9aUerblqVNqTxHqeHsre4ruyusrOjDuF?=
- =?us-ascii?Q?lYI6C8sBmLy1epaMwY7EWQNCEeHo+LCmXEzTwFIiDWa2KV5SrBxkseooBsKQ?=
- =?us-ascii?Q?41fHxdtcUtu6VANgzFWBl8BQCJGelFP2gBMFxYvfFZhqfJJcYXj8vDTQN17H?=
- =?us-ascii?Q?7QOwOZKZ5M28jTfn7LqUn1ewdfjbAhqhpioSauBrOjD+S16ktTXKNLt0Shw6?=
- =?us-ascii?Q?F24aZDeblxd3zcOqqZgbdQuG0hb6yt4=3D?=
-X-Exchange-RoutingPolicyChecked: mcAxCbSpf702WA8IwwlMysfdCNeh8zFS1ShJg4KzZTztbAzEFv8ZCXPs9E44tt3nAU3VpRTUXvksn1FfJS1g77xEMA+iR343y1aN4jtujAlf4r7qImDiJL35aQKSKVnCUrPp6GoBACVq0YsSyDWGBA0VjeczAlMUGgA077cRAeUFFGRZ92eC4SBHSXvr+a+Hy5WQDdXQJ+hMsQ90QlzcInDIQBQnCg6nzo7A/Sqxj3SuF3d0LyvX0dX1JP0j7kyN/Y6egdfpI+P4XDqhni8A0VE1jYBgm5YqNGIca1Nq4co9r6u5jGCr3KFtYXASI1DX/nsOO8+F5yAOMYvx5m0nYw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9378bfe7-b45c-4d33-d8d8-08de8a80ee10
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 15:12:29.0750 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cBYpanihBG3RB7Esou/9D4K2bctTyOVS4WjBfaJIdtmuRT5h+vXxrj7uqRIFwgpWDVHdPnHtKlO/eooRQ0geH2RFFig0bOGbvevjEciYCY4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7177
-X-OriginatorOrg: intel.com
+References: <20260323105306.1531689-1-david.marchand@redhat.com>
+In-Reply-To: <20260323105306.1531689-1-david.marchand@redhat.com>
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Wed, 25 Mar 2026 16:22:29 +0100
+X-Gm-Features: AQROBzCPlq7SziDpci60trvbya-6fySQYfQte7R1YkW1homlIUIS2vaRdU5ytQc
+Message-ID: <CAHHRULUfdPm33sE7MDSpwLGCzHGJySp9=u+DBwTg3YXhioSNkA@mail.gmail.com>
+Subject: Re: [PATCH 0/8] Rework device probing
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,28 +82,88 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Mar 23, 2026 at 08:24:18AM +0530, Shaiq Wani wrote:
-> The inner_l3/inner_l4 tracking was introduced  to handle L2TPv2 tunnel
-> inner protocols separately from outer ones. However, the conditions used
-> to branch into the inner tracking than specifically L2TPv2 tunnels.
-> 
-> This caused VXLAN and GTPU FDIR rules with inner L3/L4 items to fail
-> because the inner IPv4/IPv6/TCP/UDP/SCTP items no longer updated
-> flow_type and l3, resulting in stale flow_type values.
-> 
-> Fix by narrowing the inner protocol tracking conditions to only apply
-> when tunnel_type is ICE_FDIR_TUNNEL_TYPE_L2TPV2.
-> 
-> Fixes: 733640dae75e ("net/ice: support L2TPv2 flow pattern matching")
-> 
-> Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
-> ---
->  drivers/net/intel/ice/ice_fdir_filter.c | 34 ++++++++++++-------------
->  1 file changed, 16 insertions(+), 18 deletions(-)
-> 
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Hi David,
 
-Applied to dpdk-next-net-intel.
-Thanks,
-/Bruce
+On Mon, Mar 23, 2026 at 11:53=E2=80=AFAM David Marchand
+<david.marchand@redhat.com> wrote:
+>
+> Applications relying on device hotplug don't work well with the default
+> probing of all available resources.
+> This series proposes to change this behavior via a new EAL option.
 
+On my side, the whole series works fine with Grout on NXP CPUs.
+I can add DPDK ports, send/receive traffic, delete ports, recreate them, et=
+c.
+
+>
+>
+> --
+> David Marchand
+>
+> Changes since RFC v3:
+> - removed per bus scan mode,
+>
+> Changes since RFC v2:
+> - went one step further and reworked devargs lookup in buses following
+>   Bruce comment (see patch 4 which is cosmetic, and patch 5),
+> - updated device selection helper accordingly and
+>   changed API to be device name based,
+> - renamed option, added check on -b presence, updated doc in the last
+>   patch,
+>
+> Changes since RFC v1:
+> - reviewed bus probe() and cleaned up NXP drivers,
+> - changed approach following Bruce comment,
+>
+> David Marchand (8):
+>   devtools: check packet forwarding in null test
+>   bus/fslmc: fix bus cleanup
+>   drivers/bus: require probe function for NXP drivers
+>   drivers: cleanup devargs lookup in bus scan
+>   bus: factorize devargs lookup
+>   bus: factorize device selection
+>   bus: remove per bus scan mode
+>   eal: configure initial device probing
+>
+>  app/test/test_eal_flags.c                    | 63 +++++++++++++++++
+>  devtools/test-null.sh                        | 10 ++-
+>  doc/guides/linux_gsg/eal_args.include.rst    | 13 ++++
+>  drivers/bus/auxiliary/auxiliary_common.c     | 33 +--------
+>  drivers/bus/auxiliary/bus_auxiliary_driver.h |  2 -
+>  drivers/bus/auxiliary/linux/auxiliary.c      |  2 +-
+>  drivers/bus/auxiliary/private.h              |  6 --
+>  drivers/bus/cdx/cdx.c                        | 34 +---------
+>  drivers/bus/dpaa/dpaa_bus.c                  | 71 +++++++++-----------
+>  drivers/bus/fslmc/fslmc_bus.c                | 69 ++++++++-----------
+>  drivers/bus/fslmc/fslmc_vfio.c               | 21 ++----
+>  drivers/bus/ifpga/bus_ifpga_driver.h         |  2 -
+>  drivers/bus/ifpga/ifpga_bus.c                |  4 +-
+>  drivers/bus/pci/bsd/pci.c                    |  5 +-
+>  drivers/bus/pci/linux/pci.c                  |  2 +-
+>  drivers/bus/pci/pci_common.c                 | 51 ++++----------
+>  drivers/bus/pci/private.h                    | 11 ---
+>  drivers/bus/pci/windows/pci.c                |  4 +-
+>  drivers/bus/platform/platform.c              | 43 +-----------
+>  drivers/bus/uacce/uacce.c                    | 39 +----------
+>  drivers/bus/vdev/vdev.c                      |  2 +-
+>  drivers/bus/vmbus/linux/vmbus_bus.c          |  2 +-
+>  drivers/bus/vmbus/private.h                  |  3 -
+>  drivers/bus/vmbus/vmbus_common.c             | 45 +++----------
+>  drivers/dma/idxd/idxd_bus.c                  | 18 +----
+>  drivers/raw/ifpga/ifpga_rawdev.c             |  2 +-
+>  lib/eal/common/eal_common_bus.c              | 62 +++++++++++++++++
+>  lib/eal/common/eal_common_devargs.c          |  8 +--
+>  lib/eal/common/eal_common_options.c          | 10 +++
+>  lib/eal/common/eal_internal_cfg.h            |  1 +
+>  lib/eal/common/eal_option_list.h             |  2 +
+>  lib/eal/common/eal_private.h                 | 31 +++++++++
+>  lib/eal/include/bus_driver.h                 | 55 ++++++++++-----
+>  33 files changed, 338 insertions(+), 388 deletions(-)
+>
+> --
+> 2.53.0
+>
+
+Best regards,
+
+Maxime Leroy
