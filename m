@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85394109C05D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 20:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4574F106B504
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 20:45:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D6DEE4270A;
-	Wed, 25 Mar 2026 21:19:59 +0100 (CET)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
- [209.85.215.181])
- by mails.dpdk.org (Postfix) with ESMTP id 1FF57406BC
- for <dev@dpdk.org>; Wed, 25 Mar 2026 21:19:58 +0100 (CET)
-Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-c763c294cccso208329a12.1
- for <dev@dpdk.org>; Wed, 25 Mar 2026 13:19:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7514340669;
+	Wed, 25 Mar 2026 21:45:53 +0100 (CET)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com
+ [209.85.221.49]) by mails.dpdk.org (Postfix) with ESMTP id 73463402F2
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 21:45:52 +0100 (CET)
+Received: by mail-wr1-f49.google.com with SMTP id
+ ffacd0b85a97d-43b949bf4easo13164f8f.0
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 13:45:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774469997;
- x=1775074797; darn=dpdk.org; 
+ d=gmail.com; s=20251104; t=1774471552; x=1775076352; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DHkPtjXCZkQ+KDwt29z3kL/D6AZpv84Cl7VcDa1c3Rs=;
- b=zKWnCYUDWxw6gJPbhDRU8Q65AQocZz53/SyOioVx+Y/ASzqYhqOZNOMftAsMPTvnl5
- lbqh3NjnAsdgDHHU1O6EQtDPeIYJvh7o2zh3xem/heZM8c/4JLwVq8pHhVvhKFxu8OJT
- GVzIKNCpMBoYrNymnGuZUVjlWW5tHfxJstsyyiUvbuIjbDv/1bEXCVKQ//AjrJCZ+Yv6
- F8EU3ZJnWDvGyl6E9ULJSG2qjFtsq35/U313NBcr/u2Tpr7P7515K3x801bn8J0iAAPU
- mVvK+OXNWXHrFvdartj6936+w0aDrdv+7cVoVG0nhlCkpNjfRaes95tAYSLmZEIk3P0B
- deng==
+ bh=xg66GSL466atRQp7gWMk9zQUTcXHETdPHslsRg+NJ+8=;
+ b=hr9rICexX5xs0eRtzSdMLZ6/8X4qvQeQ+Hg48epsE9vYixrAnyk+E1RiVwFvhCfkXo
+ CvVhu6DJ/8zi885fAelxTLDwftYtjdfgdjXfhva9Ql1tCCyC+3Yfdv+5IAxPsYC8vCjB
+ dhR2vGtde2ziSzduCAmLCfIbnsUDBTqTSmJzMxiAdyoMIo6VnMLpiR7WxO8kha1i8dGw
+ lME0y3twx1H6rbsVsXGO2uv4O4cFw2LvQCzGsvQMdB9+UlPquEubYTezHfTdwLj47HpK
+ u32ayfpdQ5mPUZuyLTPb+2hQsT1GaAWA6n0Wd2rtZom8htKVN8VkXA7Ni73eO47iwPOk
+ NSEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774469997; x=1775074797;
+ d=1e100.net; s=20251104; t=1774471552; x=1775076352;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=DHkPtjXCZkQ+KDwt29z3kL/D6AZpv84Cl7VcDa1c3Rs=;
- b=H5zPimSiWIEjCMVzZh8VXyaaAqaJ4pKqBhQoiHj8cF6MSMPMmtn9R7uoX213TPRnHM
- cJRb2s3yoH7EOYSp/PsA/VK6zZh9NpslhxuaQAgo3DrXUzpDqJKrUL06+U939A9dmKkL
- wNHciJUopewDfOUsuJXexUPAPEkioxfSnQXugGK0vtOspFf3IMFphLVU5J3I/CP0hepQ
- /fY28HNn2VM3Fqv1W0986bTrbWMPQL5JMJwBIVr2IzLa2IBLFUCoPMu5D6Ro7phjG4kk
- KwX5sCMBICz3WI0KE529hBVLHOcJFzHXEWpR0QW0vsldAMMg8EP1aXb0hhjOC4KdEm9S
- cdEw==
-X-Gm-Message-State: AOJu0Yxqfr3ONQn5YknOwAJOUUPMQecNWDeymBe9WJopYC7P4VRZvbWT
- ipH6wybxWkwKjvWc7IN9TUlBxcLNEoAGlORJNLGVL6c5BbIWM4ocq3aMkURHa9IHN3o=
-X-Gm-Gg: ATEYQzzpx7d4p2vxbq0Xe9FJw9ZWfxbTkgHfIVpAliSfmOgvJiBxHWv7NEZbb5De7s+
- MUbOl6X5yBrHS5llw7gRkLvCerdYWiJt5uod9/jb/B9Wh0/L0OVfDxIrB56nss1q7RNEzDlOGYG
- egRbQsUVICGt7fH18HgtbtGvQ4bR6Oba7YuEQbkfQRClq0A5yM1Mvu8fB6NnBVgpBSKjHxrHyue
- a1PstOcL8VE7fdJ90Rp9i5sXVDPZgB3Db6imGwBVwOcKZCggi7n+6xhqBvN7ZIerRHgDMJeneHI
- rTKesmc1jzutrv60uJjH+pQsNDn4ij8SJlmm1PFV0ptDvoADnlIiuZhCKfK2AeUMXh9PBsDY3sk
- 9bxUTPKM/445kzIpt7o9WOEF9ySvEml7RGySKVT5pRPJPCAvoWGAxxe4q0mgTf89ozodhYBfm3C
- QpLF632ZAU6o2Vs8SEhTubFFflvrzYbPZk108=
-X-Received: by 2002:a05:6a00:1408:b0:824:9f22:1e95 with SMTP id
- d2e1a72fcca58-82c6e106ce1mr4643865b3a.55.1774469997082; 
- Wed, 25 Mar 2026 13:19:57 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
+ :message-id:date:subject:cc:to:from:sender:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=xg66GSL466atRQp7gWMk9zQUTcXHETdPHslsRg+NJ+8=;
+ b=Cif+LwhYqDmZ0XKtgVajKe9VEWHFw87hGd6YUXtVj7wioAHliM2dHszQUhVs0Z82iT
+ 3KbJ0L6LyX60TtMvTNEnTcQZa2YoJmVWR3vPoGHA8wMzEOr/2crQAcBw7epBuT073417
+ bkwGBxjZZa9t+zmEeKBjcChxD1Amyp3RDx7pMNQX/ipH5/yqJ+4hwnY15M1JERU+4fqr
+ fmy/jiufm1JfDmdJ0eq+We3/9luFzWPY215/6p1mAR5TenG56zU1O997aIOp3Dx3kcfH
+ fizZKeOr8S4wFGnju/4SOtD3WaqaQToM9p/+VqHAcBHcXf54JhpAvkdHb+9M/AURG0oK
+ VrZQ==
+X-Gm-Message-State: AOJu0YxtJJaSygbiPz0EsHY4pPBXZw3dDhDJPOcIiwABM0Mc3owI3+/2
+ llFbim0RCxEA5BxVZFbSiidJB2N8oEYqWURpuAzkvMKBRoOIGbQLwfLB72Bfjw==
+X-Gm-Gg: ATEYQzxXym31A990nz1CdbVJ21cenHxaCUHgD+UiFYVa3CzXCezoYPLFd1GOaeHR9B1
+ 0ZQ2FB/BX5TC7emtPecxAAxLwWEWsagesUAWQz0cqgc6CLx+0Luzd+eboCaRUCz0FhrzCL0iAyJ
+ vlbCkhhnK41F5OaG88I1uxBsP9MnKJu3nqh78i+XzOHfgh0mlfLsG9jpALAcG13m5ite2NXFfvA
+ bUbl08mKesiKzk/ReiZ60kopMQfPVBZ6TcDhhtRZ+yBVUcIegUoIXBvvbylmZhTptbxTBw7TKUd
+ mBU8Hq6JoOjdNQ9gWzYkxFcf27xO9pWwSuz0AoGacHdR9UzeTvvjwq61wJRKz7XmOz5dwD560ae
+ WgkBINGOmQOYi8Pi+2R5oTf6wZR1gejIflh49sgrrVlMEcnjiol1xtiZfeKUujhHBIugMrMgKi9
+ AdnbV4f46P1PGlmh8zkUm5PlaKSkI=
+X-Received: by 2002:a05:6000:1acd:b0:43b:85d1:c45e with SMTP id
+ ffacd0b85a97d-43b883d7f45mr8187812f8f.27.1774471551866; 
+ Wed, 25 Mar 2026 13:45:51 -0700 (PDT)
+Received: from freepad.. ([2a01:e0a:6f:bdf0:224a:2b64:3d43:500c])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-82c7d1e1960sm530627b3a.3.2026.03.25.13.19.54
+ ffacd0b85a97d-43b919cf1c4sm2410175f8f.23.2026.03.25.13.45.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 13:19:56 -0700 (PDT)
-Date: Wed, 25 Mar 2026 13:19:47 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Long Li <longli@microsoft.com>
-Cc: dev@dpdk.org, weh@microsoft.com, stable@dpdk.org
-Subject: Re: [PATCH v3] net/netvsc: switch data path to synthetic on device
- stop
-Message-ID: <20260325131947.6d20a792@phoenix.local>
-In-Reply-To: <20260325185750.1926356-1-longli@microsoft.com>
-References: <20260325185750.1926356-1-longli@microsoft.com>
+ Wed, 25 Mar 2026 13:45:51 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: dev@dpdk.org
+Cc: hemant.agrawal@nxp.com, stephen@networkplumber.org,
+ Maxime Leroy <maxime@leroys.fr>
+Subject: [PATCH v4 00/17] net/dpaa2: fixes and improvements
+Date: Wed, 25 Mar 2026 21:45:27 +0100
+Message-ID: <20260325204544.101444-1-maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260306133035.179709-1-maxime@leroys.fr>
+References: <20260306133035.179709-1-maxime@leroys.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,32 +81,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 25 Mar 2026 11:57:50 -0700
-Long Li <longli@microsoft.com> wrote:
+Various fixes and improvements for the dpaa2 net driver and fslmc bus.
 
-> When DPDK stops a netvsc device (e.g. on testpmd quit), the data path
-> was left pointing to the VF/MANA device. If the kernel netvsc driver
-> subsequently reloads the MANA device and opens it, incoming traffic
-> arrives on the MANA device immediately, before the queues are fully
-> initialized. This causes bogus RX completion events to appear on the
-> TX completion queue, triggering a kernel WARNING in mana_poll_tx_cq().
-> 
-> Fix this by switching the data path back to synthetic (via
-> NVS_DATAPATH_SYNTHETIC) in hn_vf_stop() before stopping the VF device.
-> This tells the host to route traffic through the synthetic path, so
-> that when the MANA driver recreates its queues, no unexpected traffic
-> arrives until netvsc explicitly switches back to VF.
-> 
-> Also update hn_vf_start() to switch the data path back to VF after the
-> VF device is started, enabling correct stop/start cycling.
-> 
-> Both functions now use write locks instead of read locks since they
-> modify vf_vsc_switched state.
-> 
-> Fixes: dc7680e8597c ("net/netvsc: support integrated VF")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
-> ---
+Patches 1-6 fix resource leaks on port close, error paths, link status
+and devargs propagation on hotplug.
 
-Looks good applied to next-net
+Patches 7-14 fix additional bugs: spurious VLAN insertion, error packet
+dump crash, packet type classification, checksum offload flags, software
+taildrop buffer access, burst mode info reporting, SG table walk bounds,
+and MAC stats DMA allocation.
+
+Patch 15 is a minor cleanup in the link status area.
+
+Patches 16-17 add devargs alternatives for getenv-based configuration
+of taildrop and data stashing options.
+
+Changes since v3:
+- Patch 3: rename DPNI_OPT_HIGH_PERF_BUFFER to DPNI_OPT_V1_PFDR_IN_PEB,
+  rename MAX_NB_RX_DESC to MAX_NB_RX_DESC_IN_PEB, keep total_nb_rx_desc
+  calculation unconditional and only guard the warning, update warning
+  messages to suggest removing the option or reducing descriptors (Hemant)
+
+Changes since v2:
+- Fix checkpatch warnings: short SHA in Fixes tag (patch 14),
+  long line in commit message (patch 10)
+- Fix check-git-log warnings: shorten headlines (patches 3, 9, 12, 14),
+  fix tag order Fixes/Cc (patches 10, 11), fix wrong Fixes reference
+  (patch 8), remove colon after function name in commit body (patch 8),
+  lowercase macro name in headline (patch 15)
+
+Changes since v1:
+- Add Cc: stable@dpdk.org on patches with Fixes: tags (Stephen)
+- Reorder series: fixes first, then improvements (Stephen)
+- Patch 2: squash with former patch 4 (Hemant)
+- Patch 6: move devargs refresh from plug to scan rescan path (David)
+- Patch 17: keep getenv for backward compatibility, add devargs as
+  alternative instead of replacement
+- Drop former patch 11 (bus/fslmc: remove dead blocklist check) to
+  avoid disaligning with other buses (David)
+- New patches 8, 11-14 fixing issues reported by Stephen
+- New patches 7, 9-10 fixing VLAN insertion and packet classification
+  issues
+
+Maxime Leroy (17):
+  net/dpaa2: fix queue block memory leak on port close
+  net/dpaa2: fix Rx error queue memory leaks
+  net/dpaa2: warn on Rx descriptor limit in high perf mode
+  net/dpaa2: fix resource leak on softparser failure
+  net/dpaa2: fix link not up after port stop/start
+  bus/fslmc: fix devargs not propagated on hotplug
+  net/dpaa2: fix spurious VLAN insertion on non-VLAN packets
+  net/dpaa2: fix error packet dump crash and memory leak
+  net/dpaa2: fix L4 packet type in slow parse path
+  net/dpaa2: fix L3/L4 checksum offload flags
+  net/dpaa2: fix software taildrop buffer access
+  net/dpaa2: fix burst mode info report
+  net/dpaa2: add SG table walk upper bound in Rx path
+  net/dpaa2: fix MAC stats DMA alloc per xstats call
+  net/dpaa2: use check interval macro in link down path
+  net/dpaa2: add devargs to disable Rx taildrop
+  net/dpaa2: add devargs alternative for data stashing getenv
+
+ drivers/bus/fslmc/fslmc_bus.c           |   4 +
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h |  16 +-
+ drivers/net/dpaa2/dpaa2_ethdev.c        | 210 ++++++++++++------------
+ drivers/net/dpaa2/dpaa2_ethdev.h        |   3 +
+ drivers/net/dpaa2/dpaa2_rxtx.c          |  85 +++++-----
+ drivers/net/dpaa2/mc/fsl_dpni.h         |   6 +
+ 6 files changed, 164 insertions(+), 160 deletions(-)
+
+-- 
+2.43.0
+
