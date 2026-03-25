@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC86106B504
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 20:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 459C2106B504
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 20:46:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B00F0427A0;
-	Wed, 25 Mar 2026 21:46:08 +0100 (CET)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
- [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id B2347427AF
- for <dev@dpdk.org>; Wed, 25 Mar 2026 21:46:05 +0100 (CET)
-Received: by mail-wm1-f50.google.com with SMTP id
- 5b1f17b1804b1-486fba7ce4cso2978125e9.3
- for <dev@dpdk.org>; Wed, 25 Mar 2026 13:46:05 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id AE18F427B3;
+	Wed, 25 Mar 2026 21:46:09 +0100 (CET)
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com
+ [209.85.221.52]) by mails.dpdk.org (Postfix) with ESMTP id DB3B44270A
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 21:46:07 +0100 (CET)
+Received: by mail-wr1-f52.google.com with SMTP id
+ ffacd0b85a97d-43b4f48c47cso186430f8f.0
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 13:46:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1774471565; x=1775076365; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1774471567; x=1775076367; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=c85ZKSJRZIlOYEyxggjXhtmcvA6ik31Gcxf3K4XoefE=;
- b=sAWKSUjhMuiZ65F+rgpWuu6MNxEXCqCuNbLevSdguT7TT7rw4uRwX/u7lxqiRtWQkn
- Cip6Zilggvskw5t+X7xnE5fbxf0HJAEOxLQBqa+8XL05GG9NJegibirLIrFlauaIMQFB
- yIwtSKWLeCSichXuNbxoDqzWojgpRXk1RyVMJrGE4qObxjX034ODLk34vDZ33ZFNDCB+
- lLbWe+KS31a7S9ZgbaHA7XHp2dDTWoUM/8VxTmkWoU+xE3fcjNQx6sPzMt3I3OABxz50
- D5wenvyAcbNvoXgnZ2lq9/l4g6LY2o7JxLqe6SPUGWwRLyKup7av2AQnVXfa3BUMz7FB
- 0G0g==
+ bh=YmS+fKWJt0UVzRfmVMd53fnno/4FHOQJsA/ZMlRkdIM=;
+ b=T2+tr7Z5uvtfgpkS0PHEJLxMgSbmTi7f5ArzgYqp0yajqhVkKAvlwVKDxmBpmDjq/v
+ 56i94cL9ar2TBR/vXwFqwf4qtAHoUQtP+sQWmepgmpfZ18jK/VexSkt1SC8z2blCW2Qg
+ CEpFL578OsvYKB4PEcABY0q1f0aqFbGdDja5tySKPEqmTAsQbZjvfGZi3V5z95B69WzA
+ SLfh1EGkuod2prAN3V71KT91BGqBsOT0nGf1CPIUjyKGZCivhi/rSdrcb4gigM+ADBnu
+ tM2yEBzBQUMon3ciUxorGt4gLZ3wZB3fwGS3D3UlzxrZcKZqQHKDR7krPH5K+I3ecA4D
+ vu2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774471565; x=1775076365;
+ d=1e100.net; s=20251104; t=1774471567; x=1775076367;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=c85ZKSJRZIlOYEyxggjXhtmcvA6ik31Gcxf3K4XoefE=;
- b=Srdz8sXe7oUbkMWXDIgb3+E/ikMV7jRCPb0tUKiov7XP+6QRjNSCqiANReww/sz56w
- 9yTCuFO7qePNupX2H3E0xIsDypFTwqZiP/6Ln59548syebivMCmozAeqNVom4t+tpqX4
- f0El60px/wVNkFhcBdoLDPmjD/0kp/jliRqRdXi+1Msq/pBr10Sdds2iCt3ySPyWb3ni
- 1eelLFKBVyn1OOozCWVl8PJJDBQCd/hnePlPSSMj/rnSf0hrHS033VPU5Z1g8OQZE8/X
- q3jVmEdLKtKTL3nKoxWHIGyjZlaSVFAyU6MGDAlClw98N+F2A17876MekpV4Xpg6eIxe
- PU/g==
-X-Gm-Message-State: AOJu0YzPVTYS4o+moJG8X1OwjutkmjTDXrKXKFhxCDydibdMpC0kqpvb
- fuEJXrDzvgAFVfWwrr1uUlE3+u9XgfGCHYYLTyonxEMyNdKUj1WDv7tes/selKyF
-X-Gm-Gg: ATEYQzxlp5bJKOgIAUWc4GWjCix2hibw7v03ln7R36zkMy08GJP/LLca0WFkZh/Bz0Z
- 3zNOBmWZfTkoPH3pN69oGGrAINjO11p0sdmFZ6T1aePErcLPCoNlh4AasVNLSCtE3Hr91ELq5Bo
- 0HVqd6O+9hgaN94ZmKrSRIiF8flJNUkMvcTAKsOQsQ/OZCNRZ373NNLioz/rwtQgyKwxvA/v24j
- txm7wkY2LoufeBkgW290h4qjYFKBBeTj2Al8vMAax3ptFylNRp54u4/n6GZDEva7ZFKO/mA51zG
- Ia0amXwoFg/TH3woofbPuosN4Qr6cVEuGMHM+CUYxh4mnLZ800tCtFUdOUFusf9bidge9WM9UNU
- UCdF8VG0daq3n3lS0G7UGgGz9OLSXrG6z4+uKsMZj5Eo17/qA9Xxw0/4oKlAlH0p6Gzu6zUwnui
- 4J6q0xmsN0HsGnLfMwPQ6OiW9yJyc=
-X-Received: by 2002:a05:600c:4ed4:b0:46e:4e6d:79f4 with SMTP id
- 5b1f17b1804b1-487160083f4mr80482705e9.15.1774471565205; 
- Wed, 25 Mar 2026 13:46:05 -0700 (PDT)
+ bh=YmS+fKWJt0UVzRfmVMd53fnno/4FHOQJsA/ZMlRkdIM=;
+ b=bDWIvtojBRwfC75nG11lxGHRM3LSCoNHIfjs87bvqptrJ3CyOb7LSbLXoCyARSPIVc
+ 2YVTyYnA7gnf+/d30QOR+19MkhkutTvlm9JqUgnmYlWYG6jOKecELoJbTaEk2HSKHhQN
+ W59+4+1Ei8W3vTxlr/jhCygGn6F4MY4I++BXj2EdzxOSQ6Io8aGF5lAefGmW8XNavkog
+ nX9XZEUPK4z06IsaesYSBZmKjmknuY2Mq69ukS/fEGw9L9vktXMdb6h3sDYKELuv8lBE
+ o1gqNINEnRaV1WQ3fd+i+m8223FWJK/bOYdhRE3jlVt59c4OG6Ityq0dG9uIenR/7IoU
+ QR5w==
+X-Gm-Message-State: AOJu0YzbhkazcpewO+O2sGpPYh0K9jL5zlPnkvyqAsXoNeDByL/Etpd7
+ QyqjMdMM3V1PoGylvAa4IYRbY9OEhkxKYVRl6sd2O4qpEX1GAA/NRDe6qajEksqj
+X-Gm-Gg: ATEYQzx48z37sejh802uBRQyoZO8Z0BEUGAQJzOWybHe1XkLV02w7joCTIHvMdVpvU6
+ lBEK2+4r+RXsoGO39334OR1qZOjPnFBAu9+KdkHkyPOZvGE4zzJHO6PcLttntyYnJbMighSdW+4
+ GsrnrmO4OF0wBi8YXhb2lD7y2Bw4YwtKmSCbWdyKkOEpl9Jtnk9YisqDTFXf9aPa2n7nyKwPVgQ
+ pHBENluvXDBGqgwYOyRwzCPgMEup5DyvYl8XxEYdB/eYEMv3IE6Rp62LVlmeoztaPbhokBKwigu
+ rfJVJtXn/UeqQin5YFnibcALNCin15z8BHexrOZy2KHC/aR9Ehe2IuDRYEXgQlNYgCJs0fc7YAz
+ Ud+tdKhQYXmcJxhKQm28K4UtxZQcd0ElqiNVPP5pZ1xSyjOiqNq2fu6bW/e+a/a5J9xlqLyfjFL
+ daJCCFYIt2KbzxTdxp
+X-Received: by 2002:a5d:44c3:0:b0:43b:8fa4:194d with SMTP id
+ ffacd0b85a97d-43b8fa41b04mr3032671f8f.6.1774471567332; 
+ Wed, 25 Mar 2026 13:46:07 -0700 (PDT)
 Received: from freepad.. ([2a01:e0a:6f:bdf0:224a:2b64:3d43:500c])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4871fbb5a57sm1659785e9.9.2026.03.25.13.46.03
+ ffacd0b85a97d-43b919df7dcsm2785431f8f.27.2026.03.25.13.46.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 13:46:04 -0700 (PDT)
+ Wed, 25 Mar 2026 13:46:07 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com, stephen@networkplumber.org,
  Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org
-Subject: [PATCH v4 05/17] net/dpaa2: fix link not up after port stop/start
-Date: Wed, 25 Mar 2026 21:45:32 +0100
-Message-ID: <20260325204544.101444-6-maxime@leroys.fr>
+Subject: [PATCH v4 06/17] bus/fslmc: fix devargs not propagated on hotplug
+Date: Wed, 25 Mar 2026 21:45:33 +0100
+Message-ID: <20260325204544.101444-7-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260325204544.101444-1-maxime@leroys.fr>
 References: <20260306133035.179709-1-maxime@leroys.fr>
@@ -81,68 +81,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When LSC (Link State Change) interrupts are enabled, the link status
-is only updated by interrupt events -- rte_eth_link_get_nowait() reads
-the cached value without querying the hardware.
+When a device is hotplugged via rte_dev_probe(), the EAL adds the
+devargs to its global list before calling the bus scan and then probe.
+However, when the fslmc bus is rescanned, it returns early without
+refreshing devargs on existing devices.
 
-During dev_start(), dpaa2_dev_set_link_up() was called immediately
-after dpni_enable(), before LSC interrupts were registered. The MAC
-needs ~30ms to renegotiate after being re-enabled, so the initial
-link query returned link down. By the time the link came up, the LSC
-interrupt handler was not yet installed, so the link-up event was
-missed and the cached link status remained down permanently.
+As a result, PMD-specific devargs (e.g. drv_no_taildrop) passed
+through rte_dev_probe() are silently ignored by the driver.
 
-The issue does not occur on the first dev_start() after probe because
-dpni_reset() during probe does not bring the MAC down -- the kernel
-dpmac driver keeps the physical link up. Only dpni_disable() during
-dev_stop() causes the MAC to go down, requiring a full renegotiation
-on the next dpni_enable().
+Refresh devargs from the EAL list on all existing devices when rescan
+is triggered, before returning early.
 
-The problem is more likely to occur with many queues: the queue setup
-loop (dpni_get_queue for each RX queue) between dpni_enable() and the
-LSC interrupt registration adds MC portal round-trips, giving the MAC
-more time to complete negotiation before interrupts are armed. This
-makes the link-up event more likely to be missed.
-
-Move dpaa2_dev_set_link_up() after the LSC interrupt setup so that
-any link-up event occurring during MAC negotiation is properly caught.
-
-Fixes: c5acbb5ea20e ("net/dpaa2: support link status event")
+Fixes: b5721f271cbf ("bus/fslmc: support DPNI hotplug")
 Cc: stable@dpdk.org
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/bus/fslmc/fslmc_bus.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index 5e0a897ed3..cae81d3a20 100644
---- a/drivers/net/dpaa2/dpaa2_ethdev.c
-+++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -1392,9 +1392,6 @@ dpaa2_dev_start(struct rte_eth_dev *dev)
- 		return ret;
- 	}
+diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+index abdb0ad50d..d058441a3f 100644
+--- a/drivers/bus/fslmc/fslmc_bus.c
++++ b/drivers/bus/fslmc/fslmc_bus.c
+@@ -322,7 +322,11 @@ rte_fslmc_scan(void)
+ 	char *group_name;
  
--	/* Power up the phy. Needed to make the link go UP */
--	dpaa2_dev_set_link_up(dev);
--
- 	for (i = 0; i < data->nb_rx_queues; i++) {
- 		dpaa2_q = data->rx_queues[i];
- 		ret = dpni_get_queue(dpni, CMD_PRI_LOW, priv->token,
-@@ -1462,6 +1459,12 @@ dpaa2_dev_start(struct rte_eth_dev *dev)
- 		dpaa2_eth_setup_irqs(dev, 1);
- 	}
- 
-+	/* Power up the phy. Needed to make the link go UP.
-+	 * Called after LSC interrupt setup so that the link-up
-+	 * event is not missed if the MAC negotiates quickly.
-+	 */
-+	dpaa2_dev_set_link_up(dev);
+ 	if (process_once) {
++		struct rte_dpaa2_device *dev;
 +
- 	/* Change the tx burst function if ordered queues are used */
- 	if (priv->en_ordered)
- 		dev->tx_pkt_burst = dpaa2_dev_tx_ordered;
+ 		DPAA2_BUS_DEBUG("Fslmc bus already scanned. Not rescanning");
++		TAILQ_FOREACH(dev, &rte_fslmc_bus.device_list, next)
++			dev->device.devargs = fslmc_devargs_lookup(dev);
+ 		return 0;
+ 	}
+ 	process_once = 1;
 -- 
 2.43.0
 
