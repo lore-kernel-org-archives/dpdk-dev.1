@@ -2,61 +2,28 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC511093163
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 01:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0B9108B91E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 01:45:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75809402AA;
-	Wed, 25 Mar 2026 02:30:39 +0100 (CET)
-Received: from canpmsgout04.his.huawei.com (canpmsgout04.his.huawei.com
- [113.46.200.219])
- by mails.dpdk.org (Postfix) with ESMTP id C86ED4027A
- for <dev@dpdk.org>; Wed, 25 Mar 2026 02:30:36 +0100 (CET)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=AddKAIrWvLjnFedQOi8Z90l+MZJ8t9tESScE/JqNL9w=;
- b=izpX6d6jfigN9MzOtaIwz5YsrG3D25IlQTWIu6asfRgrLg9AHzun2ugP6gxA3g7Gqnr2lvAyg
- KRyXAKwc7RVPvozm8agZlyd8fT2zMwVWevudvKzfEQUAUHODEHfzt7fCjRI4aVJ8e4DYi+kRLXF
- pJHMMwIin83lqQSJ8R0a/OU=
-Received: from mail.maildlp.com (unknown [172.19.162.140])
- by canpmsgout04.his.huawei.com (SkyGuard) with ESMTPS id 4fgThp1KrLz1prKD;
- Wed, 25 Mar 2026 09:24:26 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
- by mail.maildlp.com (Postfix) with ESMTPS id 60B802012A;
- Wed, 25 Mar 2026 09:30:34 +0800 (CST)
-Received: from kwepemn200016.china.huawei.com (7.202.194.139) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 25 Mar 2026 09:30:34 +0800
-Received: from kwepemn500008.china.huawei.com (7.202.194.149) by
- kwepemn200016.china.huawei.com (7.202.194.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 25 Mar 2026 09:30:33 +0800
-Received: from kwepemn500008.china.huawei.com ([7.202.194.149]) by
- kwepemn500008.china.huawei.com ([7.202.194.149]) with mapi id 15.02.1544.011; 
- Wed, 25 Mar 2026 09:30:33 +0800
-From: "wangfeifei (J)" <wangfeifei40@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, Feifei Wang
- <wff_light@vip.163.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>, zengweiliang zengweiliang
- <zengweiliang.zengweiliang@huawei.com>, "chenyi (CY)" <chenyi221@huawei.com>
-Subject: =?gb2312?B?u9i4tDogW1BBVENIIHY4IDAvN10gaGluaWMzIGNoYW5nZSBmb3Igc3VwcG9y?=
- =?gb2312?Q?t_new_SPx_NIC?=
-Thread-Topic: [PATCH v8 0/7] hinic3 change for support new SPx NIC
-Thread-Index: AQHcuzFVkRxSfWSbBEeVkOkWpjAvNbW9PGoAgAE4RSA=
-Date: Wed, 25 Mar 2026 01:30:33 +0000
-Message-ID: <b99e4f7d066849468adf99088447056e@huawei.com>
-References: <20260316134335.1640-1-wff_light@vip.163.com>
- <20260324015516.201-1-wff_light@vip.163.com>
- <20260324074236.613d2f1a@phoenix.local>
-In-Reply-To: <20260324074236.613d2f1a@phoenix.local>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [100.105.34.252]
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 202584027A;
+	Wed, 25 Mar 2026 02:45:12 +0100 (CET)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 78E95400D6
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 02:45:10 +0100 (CET)
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+ id 08E7C20B6F01; Tue, 24 Mar 2026 18:45:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 08E7C20B6F01
+From: Long Li <longli@microsoft.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, stephen@networkplumber.org,
+ Long Li <longli@microsoft.com>
+Subject: [PATCH 1/2] eal: return error on devargs truncation in hotplug MP
+ messages
+Date: Tue, 24 Mar 2026 18:45:05 -0700
+Message-ID: <20260325014506.1866374-1-longli@microsoft.com>
+X-Mailer: git-send-email 2.43.7
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -70,84 +37,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gLS0tLS3Tyrz+1K28/i0tLS0tDQo+ILeivP7IyzogU3RlcGhlbiBIZW1taW5nZXIgPHN0
-ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KPiC3osvNyrG85DogMjAyNsTqM9TCMjTI1SAyMjo0
-Mw0KPiDK1bz+yMs6IEZlaWZlaSBXYW5nIDx3ZmZfbGlnaHRAdmlwLjE2My5jb20+DQo+ILOty806
-IGRldkBkcGRrLm9yZzsgd2FuZ2ZlaWZlaSAoSikgPHdhbmdmZWlmZWk0MEBodWF3ZWkuY29tPg0K
-PiDW98ziOiBSZTogW1BBVENIIHY4IDAvN10gaGluaWMzIGNoYW5nZSBmb3Igc3VwcG9ydCBuZXcg
-U1B4IE5JQw0KPiANCj4gT24gVHVlLCAyNCBNYXIgMjAyNiAwOTo1NTowMyArMDgwMA0KPiBGZWlm
-ZWkgV2FuZyA8d2ZmX2xpZ2h0QHZpcC4xNjMuY29tPiB3cm90ZToNCj4gDQo+ID4gRnJvbTogRmVp
-ZmVpIFdhbmcgPHdhbmdmZWlmZWk0MEBodWF3ZWkuY29tPg0KPiA+DQo+ID4gQ2hhbmdlIGhpbmlj
-MyBkcml2ZXIgdG8gc3VwcG9ydCBIdWF3ZWkgbmV3IFNQeCBzZXJpZXMgTklDLg0KPiA+DQo+ID4g
-djI6DQo+ID4gLS1maXggYnVpbGQgaXNzdWVzDQo+ID4NCj4gPiB2MzoNCj4gPiAtLWZpeCBjb21t
-dW5pdHkgcmV2aWV3IGNvbW1lbnRzIGFuZCBlcnIgcmVwb3J0cw0KPiA+DQo+ID4gdjQ6DQo+ID4g
-LS1maXggcnNzIHR5cGUgYXNzaWdubWVudCBlcnJvcg0KPiA+DQo+ID4gdjU6DQo+ID4gLS1maXgg
-Y29tbXVuaXR5IHVidW50dS0yMi4wNC1jbGFuZyBlcnINCj4gPg0KPiA+IHY2Og0KPiA+IC0tZml4
-IGF0b21pYyBjb21waWxhdGlvbiBlcnJvcg0KPiA+DQo+ID4gdjY6DQo+ID4gLS1maXggY29tbXVu
-aXR5IHJldmlldyBjb21tZW50cw0KPiA+DQo+ID4gdjc6DQo+ID4gLS1maXggaHRuL3N0biBvcHMg
-ZnVuY3Rpb24gbmFtZSBlcnJvcg0KPiA+IC0tdXBkYXRlIGRvYy9ndWlkZXMgZm9yIGhpbmljMyBk
-cml2ZXINCj4gPg0KPiA+IHY4Og0KPiA+IC0tZml4IGd1aWRlcyBncmFtbWFyIGlzc3VlDQo+ID4g
-LS1maXggcnNzX3R5cGUuaXB2Nl9leHQgPSAwIGVycm9yDQo+ID4NCj4gPiBGZWlmZWkgV2FuZyAo
-Nyk6DQo+ID4gICBuZXQvaGluaWMzOiBhZGQgc3VwcG9ydCBmb3IgbmV3IFNQeCBzZXJpZXMgTklD
-DQo+ID4gICBuZXQvaGluaWMzOiBhZGQgZW5oYW5jZSBjbWRxIHN1cHBvcnQgZm9yIG5ldyBTUHgg
-c2VyaWVzIE5JQw0KPiA+ICAgbmV0L2hpbmljMzogdXNlIGRpZmZlcmVudCBjYWxsYmFjayBmdW5j
-IHRvIHNwbGl0IG5ldy9vbGQgY21kcQ0KPiA+ICAgICBvcGVyYXRpb25zDQo+ID4gICBuZXQvaGlu
-aWMzOiBhZGQgZnVuIGluaXQgb3BzIHRvIHN1cHBvcnQgQ29tcGFjdCBDUUUNCj4gPiAgIG5ldC9o
-aW5pYzM6IGFkZCByeCBvcHMgdG8gc3VwcG9ydCBDb21wYWN0IENRRQ0KPiA+ICAgbmV0L2hpbmlj
-MzogYWRkIHR4IG9wcyB0byBzdXBwb3J0IENvbXBhY3QgQ1FFDQo+ID4gICBuZXQvaGluaWMzOiB1
-c2UgZGlmZmVyZW50IGNhbGxiYWNrIGZ1bmMgdG8gc3VwcG9ydCBodG4gZmRpcg0KPiA+DQo+ID4g
-IGRvYy9ndWlkZXMvbmljcy9mZWF0dXJlcy9oaW5pYzMuaW5pICAgICAgICAgICB8ICAxMSArLQ0K
-PiA+ICBkb2MvZ3VpZGVzL25pY3MvaGluaWMzLnJzdCAgICAgICAgICAgICAgICAgICAgfCAgIDUg
-Ky0NCj4gPiAgZG9jL2d1aWRlcy9yZWxfbm90ZXMvcmVsZWFzZV8yNl8wMy5yc3QgICAgICAgIHwg
-ICA4ICsNCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2NtZC5oICAgICAgICAg
-IHwgIDgwICsrLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfY21kcS5jICAg
-ICAgICAgfCAzNzAgKysrKy0tLS0tLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5p
-YzNfY21kcS5oICAgICAgICAgfCAxMTIgKystDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNl
-L2hpbmljM19jbWRxX2VuaGFuY2UuYyB8IDExMSArKysNCj4gPiBkcml2ZXJzL25ldC9oaW5pYzMv
-YmFzZS9oaW5pYzNfY21kcV9lbmhhbmNlLmggfCAxMjUgKysrKw0KPiA+ICBkcml2ZXJzL25ldC9o
-aW5pYzMvYmFzZS9oaW5pYzNfY3NyLmggICAgICAgICAgfCAgMTggKy0NCj4gPiAgZHJpdmVycy9u
-ZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3X2NvbW0uYyAgICAgIHwgIDE1ICstDQo+ID4gIGRyaXZl
-cnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19od19jb21tLmggICAgICB8ICAzMSArLQ0KPiA+ICBk
-cml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfaHdkZXYuYyAgICAgICAgfCAgMTMgKy0NCj4g
-PiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3ZGV2LmggICAgICAgIHwgIDE4ICsN
-Cj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX2h3aWYuYyAgICAgICAgIHwgIDEw
-ICstDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9iYXNlL2hpbmljM19tZ210LmMgICAgICAgICB8
-ICAgNSArLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfbWdtdC5oICAgICAg
-ICAgfCAgIDIgKw0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfbmljX2NmZy5j
-ICAgICAgfCAxODIgKystLS0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2Jhc2UvaGluaWMzX25p
-Y19jZmcuaCAgICAgIHwgIDk4ICsrLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9tZXNv
-bi5idWlsZCAgICAgICAgICAgfCAgIDEgKw0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMz
-X2V0aGRldi5jICAgICAgICAgICAgfCAyNzUgKysrKysrLS0NCj4gPiAgZHJpdmVycy9uZXQvaGlu
-aWMzL2hpbmljM19ldGhkZXYuaCAgICAgICAgICAgIHwgMTIwICsrLS0NCj4gPiAgZHJpdmVycy9u
-ZXQvaGluaWMzL2hpbmljM19mZGlyLmMgICAgICAgICAgICAgIHwgNjU3ICsrKysrKysrKysrKyst
-LS0tLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX2ZkaXIuaCAgICAgICAgICAgICAg
-fCAzNjEgKysrKysrKystLQ0KPiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX25pY19pby5j
-ICAgICAgICAgICAgfCA1MjUgKysrKysrLS0tLS0tLS0NCj4gPiAgZHJpdmVycy9uZXQvaGluaWMz
-L2hpbmljM19uaWNfaW8uaCAgICAgICAgICAgIHwgMTYzICsrKystDQo+ID4gIGRyaXZlcnMvbmV0
-L2hpbmljMy9oaW5pYzNfcnguYyAgICAgICAgICAgICAgICB8IDI2NyArKysrKy0tDQo+ID4gIGRy
-aXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfcnguaCAgICAgICAgICAgICAgICB8IDE4MiArKysrLQ0K
-PiA+ICBkcml2ZXJzL25ldC9oaW5pYzMvaGluaWMzX3R4LmMgICAgICAgICAgICAgICAgfCA0NTYg
-KysrKysrLS0tLS0tDQo+ID4gIGRyaXZlcnMvbmV0L2hpbmljMy9oaW5pYzNfdHguaCAgICAgICAg
-ICAgICAgICB8IDE1NCArKystDQo+ID4gIC4uLi9uZXQvaGluaWMzL2h0bl9hZGFwdC9oaW5pYzNf
-aHRuX2NtZHEuYyAgICB8IDE2NyArKysrKw0KPiA+ICAuLi4vbmV0L2hpbmljMy9odG5fYWRhcHQv
-aGluaWMzX2h0bl9jbWRxLmggICAgfCAgNjMgKysNCj4gPiAgZHJpdmVycy9uZXQvaGluaWMzL2h0
-bl9hZGFwdC9tZXNvbi5idWlsZCAgICAgIHwgICA3ICsNCj4gPiAgZHJpdmVycy9uZXQvaGluaWMz
-L21lc29uLmJ1aWxkICAgICAgICAgICAgICAgIHwgICA4ICstDQo+ID4gIC4uLi9uZXQvaGluaWMz
-L3N0bl9hZGFwdC9oaW5pYzNfc3RuX2NtZHEuYyAgICB8IDE1MSArKysrDQo+ID4gIC4uLi9uZXQv
-aGluaWMzL3N0bl9hZGFwdC9oaW5pYzNfc3RuX2NtZHEuaCAgICB8ICA0NiArKw0KPiA+ICBkcml2
-ZXJzL25ldC9oaW5pYzMvc3RuX2FkYXB0L21lc29uLmJ1aWxkICAgICAgfCAgIDcgKw0KPiA+ICAz
-NiBmaWxlcyBjaGFuZ2VkLCAzMzc5IGluc2VydGlvbnMoKyksIDE0NDUgZGVsZXRpb25zKC0pICBj
-cmVhdGUgbW9kZQ0KPiA+IDEwMDY0NCBkcml2ZXJzL25ldC9oaW5pYzMvYmFzZS9oaW5pYzNfY21k
-cV9lbmhhbmNlLmMNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvbmV0L2hpbmljMy9i
-YXNlL2hpbmljM19jbWRxX2VuaGFuY2UuaA0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
-cy9uZXQvaGluaWMzL2h0bl9hZGFwdC9oaW5pYzNfaHRuX2NtZHEuYw0KPiA+ICBjcmVhdGUgbW9k
-ZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2h0bl9hZGFwdC9oaW5pYzNfaHRuX2NtZHEuaA0K
-PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL2h0bl9hZGFwdC9tZXNv
-bi5idWlsZA0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL3N0bl9h
-ZGFwdC9oaW5pYzNfc3RuX2NtZHEuYw0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9u
-ZXQvaGluaWMzL3N0bl9hZGFwdC9oaW5pYzNfc3RuX2NtZHEuaA0KPiA+ICBjcmVhdGUgbW9kZSAx
-MDA2NDQgZHJpdmVycy9uZXQvaGluaWMzL3N0bl9hZGFwdC9tZXNvbi5idWlsZA0KPiA+DQo+IA0K
-PiBXaGVuIG1lcmdlZCBkaWQgc21hbGwgY2hhbmdlcyB0byBTdWJqZWN0IHRvIHJlc29sdmUgY2hl
-Y2stZ2l0LWxvZyB3YXJuaW5ncy4NCltGZWlmZWldIFRoYW5rcyBmb3IgeW91ciByZXZpZXdpbmcu
-DQpydGVfem1hbGxvYyBjbGVhbiB3ZSBhcmUgZG9pbmcsIGFmdGVyIHRoaXMgcGF0Y2ggYXBwbGll
-ZCwgd2Ugd2lsbCB1cGxvYWQgcnRlX3ptYWxsb2MgY2xlYW4gcGF0Y2guDQo=
+The EAL hotplug multi-process messaging uses a fixed-size buffer
+(EAL_DEV_MP_DEV_ARGS_MAX_LEN, 128 bytes) for device arguments.
+When devargs exceeds this limit, strlcpy silently truncates the
+string. This causes secondary processes to receive incomplete
+devargs during hotplug re-add, leading to failed port
+re-initialization.
+
+For example, a MANA PCI device with 6 mac= arguments:
+
+  mac=AA:BB:CC:DD:EE:01,mac=AA:BB:CC:DD:EE:02,
+  mac=AA:BB:CC:DD:EE:03,mac=AA:BB:CC:DD:EE:04,
+  mac=AA:BB:CC:DD:EE:05,mac=AA:BB:CC:DD:EE:06
+
+produces a 131-byte devargs string that gets silently truncated
+to 127 bytes, losing the last MAC address.
+
+Return -E2BIG from rte_dev_probe() and rte_dev_remove() when
+devargs would be truncated, instead of silently corrupting data.
+
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ lib/eal/common/eal_common_dev.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/lib/eal/common/eal_common_dev.c b/lib/eal/common/eal_common_dev.c
+index 7185de0cb9..de24d14d28 100644
+--- a/lib/eal/common/eal_common_dev.c
++++ b/lib/eal/common/eal_common_dev.c
+@@ -250,6 +250,11 @@ rte_dev_probe(const char *devargs)
+ 
+ 	memset(&req, 0, sizeof(req));
+ 	req.t = EAL_DEV_REQ_TYPE_ATTACH;
++	if (strlen(devargs) >= EAL_DEV_MP_DEV_ARGS_MAX_LEN) {
++		EAL_LOG(ERR, "devargs truncated (len %zu, max %d)",
++			strlen(devargs), EAL_DEV_MP_DEV_ARGS_MAX_LEN);
++		return -E2BIG;
++	}
+ 	strlcpy(req.devargs, devargs, EAL_DEV_MP_DEV_ARGS_MAX_LEN);
+ 
+ 	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
+@@ -397,6 +402,12 @@ rte_dev_remove(struct rte_device *dev)
+ 
+ 	memset(&req, 0, sizeof(req));
+ 	req.t = EAL_DEV_REQ_TYPE_DETACH;
++	if (strlen(devargs) >= EAL_DEV_MP_DEV_ARGS_MAX_LEN) {
++		EAL_LOG(ERR, "devargs truncated (len %zu, max %d)",
++			strlen(devargs), EAL_DEV_MP_DEV_ARGS_MAX_LEN);
++		free(devargs);
++		return -E2BIG;
++	}
+ 	strlcpy(req.devargs, devargs, EAL_DEV_MP_DEV_ARGS_MAX_LEN);
+ 	free(devargs);
+ 
+-- 
+2.43.0
+
