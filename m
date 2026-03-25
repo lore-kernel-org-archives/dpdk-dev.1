@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CD4109E528
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 22:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1620F109E527
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 22:50:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2D9A4279B;
-	Wed, 25 Mar 2026 23:48:53 +0100 (CET)
-Received: from fout-a5-smtp.messagingengine.com
- (fout-a5-smtp.messagingengine.com [103.168.172.148])
- by mails.dpdk.org (Postfix) with ESMTP id 5ABA64067B;
- Wed, 25 Mar 2026 23:48:52 +0100 (CET)
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
- by mailfout.phl.internal (Postfix) with ESMTP id CB4D1EC0009;
- Wed, 25 Mar 2026 18:48:51 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-02.internal (MEProxy); Wed, 25 Mar 2026 18:48:51 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id 0D6C140FB5;
+	Wed, 25 Mar 2026 23:50:14 +0100 (CET)
+Received: from fhigh-a1-smtp.messagingengine.com
+ (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
+ by mails.dpdk.org (Postfix) with ESMTP id CFF8A4067B
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 23:50:11 +0100 (CET)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 7C324140025A;
+ Wed, 25 Mar 2026 18:50:11 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Wed, 25 Mar 2026 18:50:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1774478931;
- x=1774565331; bh=J4aYS0aHVCnBC5L+MImsikpk08tN7IGO0AEkS89YdwM=; b=
- DVvwkN54bYA2wPdCNnMNfG7Rt7ykgV0yD/BFCPDAwRkSQ4vzJPWMyKNd5G2TcfKD
- pQWWXoojpOpbOjrXKzTHJBtE3pff6xNN19NHDrzpDmgnRyi365KCcR3W9EtIxVEP
- EOypYCJRvrTc5MbyGw5901aPgoPSK2Ond52f3KEDraTLHDIRnYe5gfhYDrXRBd2h
- sjljFMoD56nGf5vkMKmGID9xiHIgbqA8IzAENqYn/f6+UZ9IN+4MAhnBKJo7X0+l
- b49L+kejiHmynXf2RbOhuBYpAohhGky6NMe+SOT1wB2YUFjsOQShmF9a2yWlotMA
- ftKXYfz//tBb1tipzREjSg==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1774479011;
+ x=1774565411; bh=lu5UrjtpPrIC6VAUoe1Ucjpped/h7ILXM3HKoPaffxs=; b=
+ dLKPggooAoweTEStu0ITAE5kLZhrVcAMKyXAsdhe0aEQVc46EwC0MMBS9nhxbiWG
+ jEQE8Zdn2xANoQVERIjWE17aBQy3/Uup1nYHkFuJugaUSALqHvKkfFmQfHg2UeW2
+ CMudUorI3ZemYljUQ0DJHwZHe6QbZEsMw3broJvVDVNH6328me42obfD22FjkXY/
+ 0TLpaU4VoZTNQR0sF/+cC7+RCGSf3gyeK4zfvPtxFIZg586Ivm81VbfVm+YpIpoJ
+ qF5bZ4aR4VSJ/wCgfJGFLUaT4Tf2EV4RYWle0ry09bX4WijOwJEnO81SYn1zuHTj
+ +GOQaorEUlI6+8z3cKYWVQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774478931; x=
- 1774565331; bh=J4aYS0aHVCnBC5L+MImsikpk08tN7IGO0AEkS89YdwM=; b=E
- xhjgZ/6G5NcLgAf1j/k/469bsErlITBW8jAKmkTPS58iOFIonH2qn7PL0lr2lMC1
- aIXgWR7n4nIUj0VZFCEL6OPQi8QApTnrIjhiWRpwdyl/SCSPqmYL8HW+5tPDeR/M
- FlqG9GzJOlW+AeBmG/tzdBjeBRAoW9LsYayBJWslU0jsCFdsRetO1H3L4DLNZyLU
- ylnuIzmoQAw0GQ4rtyQGAaswUNiUEz+Q1BIbtIJepClCBGkV5tLAtXB42B/rCcvC
- MLZt1RLR4j6zpxuLzM+Nm/Hx2wshvGV37Qu5HfYKcwgdRny455jISjD3Ro+lS4EV
- /tr4/eJxG81Kh5egPtyzg==
-X-ME-Sender: <xms:U2bEaSi2RM891EgoyXDlGY_iNgFc1jfnxqySXW3cvUf20zsrsBq4RA>
- <xme:U2bEaWvAOpCUG9Voy5n5sG3iT4eSonwfJMb8OaUOv_Ru-wmX1ZGUkTIeAW-Y-tRKQ
- r8cdWX3B0mygVTBVHvWz29KNik8LGdlRV8KKrN8HuImk5HaKAjZ>
-X-ME-Received: <xmr:U2bEaT5qS6d6qPBL-0NOOwfghzrwXhQsgQbU9HeZwXHSaPwGfekF1A26rePyKQIbG53K9nF00b5urCUOE1X69G1EpA>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774479011; x=
+ 1774565411; bh=lu5UrjtpPrIC6VAUoe1Ucjpped/h7ILXM3HKoPaffxs=; b=O
+ tyzkmmv/fy9cnZKyrOvWVD5Zc2a0LMOioLNCjhMPiU4zGRdhI8EW0AirecQDiavv
+ B0AOQuAByCHZcDf6A5YTgCVtVFqFbihKWm1w+4qKgjPDMmOn1Q4PwKU7qXDcdjX4
+ 2gMTVifJ8XA3FPDL0GRLyYACJrg68gQJs/lhMnVZEQ+qo+svN4XMM8mb4Gm7l3UY
+ dTRZX6HAlaxgP/Kj3sWoX+BfKbjJFDhBVVdSlp9/UiNKO1Xgs2cvFJb4yIlpypkA
+ x70wri0GRal2t+HJc6QpyNfXT3chTzIFQVcuW2ZwUg02C+cDzRoFQOOx0wbEhIHU
+ A/RaMjlYSpffTh16aOp+w==
+X-ME-Sender: <xms:o2bEaZw4zMGUPZEwivGiNZYiLRe5A1frBQLDIcF8XTTzIZVCyNk6Vg>
+ <xme:o2bEaQQDz9k_TpyKdgzX9QweRt2JJiY4LK5ngX5gn7to7WMpSiql7iRsPX_gXtlRF
+ 8LIIdokwBruFkhWS8Vj05ILadF7S_MvUAukemduEhQsW_euC7KgZKU>
+X-ME-Received: <xmr:o2bEaYXuc2djwXz-K-S6432xm_ik7Au9kM6gsTeoyfY6q1VAo0OcJghBKpUaNjkbPz-InllkJKTtJXFqvK5YuPvvGw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehjeduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -51,32 +51,29 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehjeduucetufdote
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
  uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
  esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepuggrvhhiugdrmhgrrh
- gthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehprhhosggssehiohhlrdhu
- nhhhrdgvughupdhrtghpthhtoheprghnrghtohhlhidrsghurhgrkhhovhesihhnthgvlh
- drtghomh
-X-ME-Proxy: <xmx:U2bEaSNgpZVIsGVIOlmyz-2lFVnFiQ26KSSablyvyqJvPlttOaM8xg>
- <xmx:U2bEaRswg6y_Tawc0TdXnfJJjxIwSLyWf3Q2PBZjAY2LSIvWZTV8HA>
- <xmx:U2bEaVbcJ6Nde0fjFTPKCFcxs6JqnvGDqLX3gqzG6ZjMDQ9tPVJiYQ>
- <xmx:U2bEaTyLPglSxJLFFvhKkgdm5RaUH98rM6etUyt2StzmpOf5XRDyPA>
- <xmx:U2bEabv_hUpdED4_VpMCorruBsoxtejGSjD3vGXpyXbD39WDgYjseFtH>
+ thhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
+ epphhrohgssgesihholhdruhhnhhdrvgguuh
+X-ME-Proxy: <xmx:o2bEaaYaZEYMvvCI86bHZvYoUMWLz3FgUO_xkMuPDB4bAYZ4rRUAvg>
+ <xmx:o2bEaW2y2RrVI_V_oZ3YbmbirsjhhtCJJo56WI8wzJOurWNUNRlvrw>
+ <xmx:o2bEaUg0EVZfoRUT2ljsCLUz4GTlgcN6s9R7sI7y8yUMni8iJTeOkQ>
+ <xmx:o2bEaSYGl0TQJUBeLmayMDBqzvkzHmIU3CL4k_Ml1NWwXjAaTL5EmA>
+ <xmx:o2bEadmYqB_iVldW4dHFC2g3k1Om6KA5vBUY2kYLI0jf5FAviC5auuV_>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Mar 2026 18:48:50 -0400 (EDT)
+ 25 Mar 2026 18:50:10 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, stable@dpdk.org, david.marchand@redhat.com,
- probb@iol.unh.edu, Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v2 1/2] test: fix failing tests on FreeBSD
-Date: Wed, 25 Mar 2026 23:48:49 +0100
-Message-ID: <6520037.1IzOArtZ34@thomas>
-In-Reply-To: <20260320161108.331745-2-bruce.richardson@intel.com>
+Cc: dev@dpdk.org, david.marchand@redhat.com, probb@iol.unh.edu
+Subject: Re: [PATCH v2 2/2] test: simplify spawning extra test processes
+Date: Wed, 25 Mar 2026 23:50:09 +0100
+Message-ID: <4029978.TLkxdtWsSY@thomas>
+In-Reply-To: <20260320161108.331745-3-bruce.richardson@intel.com>
 References: <20260319171334.1151425-1-bruce.richardson@intel.com>
  <20260320161108.331745-1-bruce.richardson@intel.com>
- <20260320161108.331745-2-bruce.richardson@intel.com>
+ <20260320161108.331745-3-bruce.richardson@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -94,11 +91,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 20/03/2026 17:11, Bruce Richardson:
->  test_mp_secondary(void)
->  {
-> -	printf("mp_secondary not supported on Windows, skipping test\n");
-> +	printf("Multiprocess support on present on Linux, skipping test\n");
+> A number of tests require secondary processes or additional primary
+> process instances, so we have common code for managing that in the test
+> binary. Simplify that code a little, in the process removing dependency
+> on procfs on FreeBSD
 
-There is a typo here.
+This commit deserves a bit more explanations I think,
+saying the obvious about lacking MP support on FreeBSD and resulting dead code.
+
 
 
