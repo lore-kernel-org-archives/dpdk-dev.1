@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB43FEA838
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 09:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09E9FEA838
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 09:08:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D408B40B98;
-	Wed, 25 Mar 2026 10:08:38 +0100 (CET)
-Received: from SN4PR0501CU005.outbound.protection.outlook.com
- (mail-southcentralusazon11011017.outbound.protection.outlook.com
- [40.93.194.17]) by mails.dpdk.org (Postfix) with ESMTP id 3D75640B98
- for <dev@dpdk.org>; Wed, 25 Mar 2026 10:08:37 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 5351A40E0B;
+	Wed, 25 Mar 2026 10:08:42 +0100 (CET)
+Received: from SA9PR02CU001.outbound.protection.outlook.com
+ (mail-southcentralusazon11013033.outbound.protection.outlook.com
+ [40.93.196.33]) by mails.dpdk.org (Postfix) with ESMTP id 8463C40E17
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 10:08:40 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hBQUw1yWD9fFatwVbrf4OhkCkPOs2JTjCRfVjtysaLdnek5sc5b6oTkPdoSRRqK+K94tdliwJmJzo5e//RjiR2jG+jqoQfw2zdTjhLCun5mW4g/DFh9/BTWGP7+LMaWahVx6rhMk9Hv4Eqd237eu5CYEqTlpA1alx7egqVUSJHvQSeeNKZunuuhV7b6uv6PrdS07olmd9W+GwRic0xWbPb3QTb7j7Fo6QpCxrzuCkZ1fstNlQ3yn2xswhhb6lkl5U31Yb3F93awadIMnzEnIa+CrdyA7i2TgPpR52dtmDzoyA8EZQD581Yd5T2AOBBF/59M0QJGkslny/rc5gQbDdw==
+ b=w+s8RYVFJNdNphtzHqawfthaPueCouw0jaGDKV1Ejix4zs3rRULrqbLt5KXSwR87YobJwsjuMc4KNAJx7NCAfSBmPVgq/quqWTj+8xj0NJrnLH2vK6Aq57/H2oDR6CjwrT6NbOP6wPHSZnVhPvHNIgcmx9LovSlL+1NzpLvVi8tX4XP3LOdA9ygrZx/wtb90iFtoEx5obMVQza/GMiOQJKbsUr23VQvNevaldGJ2x/Av/pqsg7Rubk0l9PcKHWYKDjoTxeTtvdK9LDY7Y4tuqroGevCScZ2o/9nMPCAW7xa1SXOY6YaRuoRRr+aGtMO8KYtZtpHzPkcJwV0cP366PA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=frMkrURASr6CZeGIzlM/+E9nU/Cp3AmEj5oI4WpZ+Ek=;
- b=yfo+PkvACQVWfEqgQt9z7FgBnhpzGukk4VsxzmeFj56Obf/nwRB/d33kVysg1WC+9zYA91hxNz8ugeFgNMKVaVw7buO0eonTlAfH4o9e+AxmoRKf7G/dIK2H79UX4ZWFoL00fVKpFQDDRwghd/D5zXtMdGAYIGSos3svDBfxvZvOR5Tr+AhqOkpOrYpRfAx6kRGMAq5WDEPX6ppUM7nQtTTDd+u0Ss2BDv8brLrKPYBt+3PWyoFXBAcNW0of2o0CbxZ99dfyj7NQAZL+mQPiqx54DeKpQMfdRjjKXfhmb8+3rpRXSpaWnFFPooUkifzpjjJawsq2bRK109ZsZ4BOOA==
+ bh=TJJykKkv+Kt+G1lvkfVoHIIZp2f13edPgDUX9+E1eik=;
+ b=TIi/Nrqw4jvLPptSq4hRXlFaN6VJuDB3xsS+0fm+86uWNz97HEjwzNLHFTJkxShOzgdQRbHZSZaRkaXfCgImEbyCJ+Fq+PAHWK7S6zLyQMOtvWYsBB5dtQaeBuiJTPqjPWzd0WS6ujv7uY9P/GHDr81BLtrhP9IUv0HKKFDea0MGm/jgEvxngRYCgHYo7qEeEaBlh4CYCbnPyc8mKBxyJ53ReT+gqji2aP7Xy3ujNdJ7j1544S9RtR644C67vbEE47xQFQHUdupl3pecr3XlbNZ0zFY46bPjPPXV4usR0bthfgZ/S1XUi0brykDSpsBlb4DH18WighXbA0s4seQccA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.161) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=frMkrURASr6CZeGIzlM/+E9nU/Cp3AmEj5oI4WpZ+Ek=;
- b=GTGrdD7fT4xL7zifVzN8NAUeaAuRGMKpR8dMzu5mTfYyA5lThgb6AxdBLiFZ5Vzf7K3MvAdxvp8h8Z+3w1APj4aKVOd5zSbdftrpz3xcRPAJSk8KiPy6PFaSI1EJzatx1ZkEZ8+xEkV0/6JxyZ9piou7pgMkJ8bZpUokCoZyLYjpE7w4S2tNgA7UyL5ROP9LBS2rdlGXaaPhFd/Ejl0RaFPwhjrCAL5FeSi3S3lcX+91imZ4X+X36QqVlV92xRv3P+8N0EXg91RvKcILYIYY2MhNRLpKGJRNvz9+BBnzumEC0A4iKPdxzLmGb0imLIT2683y5g32vnQPPS9ABHV4ZA==
-Received: from CH2PR10CA0029.namprd10.prod.outlook.com (2603:10b6:610:4c::39)
- by MN6PR12MB8516.namprd12.prod.outlook.com (2603:10b6:208:46f::13)
+ bh=TJJykKkv+Kt+G1lvkfVoHIIZp2f13edPgDUX9+E1eik=;
+ b=Iz9E7d0JvmJrxs8T1efMLakNOyd+1rid9safKoPwDLcR1XpbMXD+p19G4Q/j+BgD5CujDQTwTyoWaxt2l8/gWLlay3axzRnlR59qBD9Q9OcKytJzHBtiDX5civOEzjHF0Rf1QoZOtscMCtIhstD+lw+Z5sFkYs4vSlUGD6pwe/FaBSH5eo+S7JY0UIMpogeaAcYafgjeAtTB4OqYtf9+yXbsyPj0XLIBXNCg/JMr6RiUsdvc3yKx5V9Qjev2RJ5I64TZ52stULj3OcslDkeDr6SDPFORisAb8dja70VxPvr3ZscAKbS+fISHIOmeYChbL7Xw0bxcySlwnQQD4Z6CXg==
+Received: from CH2PR08CA0004.namprd08.prod.outlook.com (2603:10b6:610:5a::14)
+ by LV8PR12MB9182.namprd12.prod.outlook.com (2603:10b6:408:192::11)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
- 2026 09:08:33 +0000
-Received: from CH2PEPF00000146.namprd02.prod.outlook.com
- (2603:10b6:610:4c:cafe::dc) by CH2PR10CA0029.outlook.office365.com
- (2603:10b6:610:4c::39) with Microsoft SMTP Server (version=TLS1_3,
+ 2026 09:08:36 +0000
+Received: from CH2PEPF00000144.namprd02.prod.outlook.com
+ (2603:10b6:610:5a:cafe::29) by CH2PR08CA0004.outlook.office365.com
+ (2603:10b6:610:5a::14) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.25 via Frontend Transport; Wed,
- 25 Mar 2026 09:08:26 +0000
+ 25 Mar 2026 09:08:27 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,25 +45,26 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.161 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.161) by
- CH2PEPF00000146.mail.protection.outlook.com (10.167.244.103) with Microsoft
+ CH2PEPF00000144.mail.protection.outlook.com (10.167.244.101) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9723.19 via Frontend Transport; Wed, 25 Mar 2026 09:08:32 +0000
+ 15.20.9723.19 via Frontend Transport; Wed, 25 Mar 2026 09:08:35 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
- 2026 02:08:19 -0700
+ 2026 02:08:23 -0700
 Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
- 2026 02:08:16 -0700
+ 2026 02:08:19 -0700
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
  <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
  <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH 26.07 2/5] net/mlx5: store port VHCA ID
-Date: Wed, 25 Mar 2026 10:07:54 +0100
-Message-ID: <20260325090758.42403-3-dsosnowski@nvidia.com>
+Subject: [PATCH 26.07 3/5] net/mlx5: return port info regardless of register
+ mask
+Date: Wed, 25 Mar 2026 10:07:55 +0100
+Message-ID: <20260325090758.42403-4-dsosnowski@nvidia.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260325090758.42403-1-dsosnowski@nvidia.com>
 References: <20260325090758.42403-1-dsosnowski@nvidia.com>
@@ -75,29 +76,29 @@ X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000146:EE_|MN6PR12MB8516:EE_
-X-MS-Office365-Filtering-Correlation-Id: a262c706-f7e2-4a8e-1b54-08de8a4e16ed
+X-MS-TrafficTypeDiagnostic: CH2PEPF00000144:EE_|LV8PR12MB9182:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5045e992-e08e-404c-3a9d-08de8a4e1855
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|376014|36860700016|18002099003|22082099003|56012099003;
-X-Microsoft-Antispam-Message-Info: O+4V7Li6lli9vX8ndF9K+Kmww7F3hIYJWRzuiN3thjjzk9CaoklJib8KVtuJBweE5KJrpJ36ld8bkPZ6O1/MS94jxjVbFYxUWC8H+tGhIYHpcjQvtZNFqjbpFyUKUGcpRhvXmKXkmtJX/Veh/yG4OJz3RnJDhqROf82AXwjmBuWLu+TpazRv8NlbOSHZ2CUNiCnPdpo9RT47mXhpMe/7hJ2XdLlIx1i1wAoQY3ikekytVK4MNs7OmVPi+VV1YhmVxxKx8+kMjf55B6YLpHCTpAJQO6z6+8eIlv+kQ62IOKQAetaaaGQY6AJZVcqBQWZYCxZmHR2VquEbXz0iiM9/KBo1p+v6luiO7hqmdsN+lgxgKH/75SgRrFFTrz4L1eGrXINbxF7TDUaLbQcIX3WPAuqLmJQ74gIhVo2PLyKvRZjEEyonPcvGUmTvmSpnt7u/lLcPn3dkiZLMFiNWiT8S153Ag5mlxucWlqrt8UVxaCDr4iqwMzmyaxF9PDToP6DgbIO2ZGZaHUC3lFFiBWtaF0/ifrrplRKAYMykbb1xlKufJgOQE8QGZwHvPdZlpUhX2NZGBRILWxzJJhX6hmZdpvOgCvWvJ0pY8pwbMiZTkq0pEuh0yuxk5DLBU2aYRJWwm57cjATSLmBArYZkXCNUtQLaZHRzsBjXwZOATNlLQo4EjiXrgiJdVhsxllmCjg7PKrDjr+TiLejGS+qj0NcY/YUxf84KqTlulAl/2eAFt8w6e1G5+ue6Hy9QblMaZY8nkKVq5TrBG7GkxUeAcdRfsw==
+ ARA:13230040|82310400026|1800799024|376014|36860700016|22082099003|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info: J1Q0cwOi7jsVwyiBWy3iwkHtr2JQ97xz7FL3xaC9SeC6MUvlK5KJaGiF61nKAIiEdnEhW+0Wn8paVjYckkVAClxa8xiM2o+8VHzeS7rkMJzCYylT4mcLmKjqKWQ3Up0faitJdeJoggzXWuXTPQ2UecKn8viACTv8SH2gYSoZWJc0gbQT6ikG8JCk+anMXAfLv4zon+pHBOVZrrARzvEAQgV0CljwsBu32dfQ/I4JGnIQs52yRoUaYXR+Ynyq44wZpbqKWkirOXAZUS8+v3+gg/3kN/OkJct3jxJZo2v0ig301HiFR2Rqjdq3IuRf+6yKN76uj4Jxy4oxH6iTZAB58j3PRM0j2wM6Rrq49eWHd8HuWPGHRX0kbaSUhk9d7usPHzYelADkuPJ65P405iHK3lzbksCrMa5PvnWrMRkTtJGvIxb13KIegoFebOXTZWJexKDkHenp0SAPSr1qPNTA8eB2urlBsrkSEXDvTXhm3uJcVxfYUfVhweTp/JCiid7B9Ko/Bl9o0lJ5qrg7d3p3SUGhoUeUuwzzZI9KpRdDxQ7bivb/g8tHBIf4yIc2HkpzgsRTEX0m4fXhEtcRvnlkaLf5tx+Ct6S62wjAwtDJoAAx713xzlJaSz6F2LrIoZMIzh0jvzayssUqK7d/3kfhrrgh38/UCrOFz58XO+XML6laaYs+SxX3PRSvoaafXBevZgA8kEWeVW38p4oGJ7FvNrNThpq5o8Bfe+iySOkBFjJTr++hzm6tcYGrZhmpgHTnSx97VUI1w8e3LrqAJBnkkQ==
 X-Forefront-Antispam-Report: CIP:216.228.117.161; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge2.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(18002099003)(22082099003)(56012099003);
+ SFS:(13230040)(82310400026)(1800799024)(376014)(36860700016)(22082099003)(56012099003)(18002099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 6Qe5yLP0HBJhpVPxQKT9NDK7jvsPr6OhtOKzMEDQLGCZVVtgQtu+/bobLWkDqSAFIKtNLrVFy+bn5wOFado4bno6tkLIkcIUsT1+W9OYSTAp1HeemdJ68phxGjkaQ13BLkt9cZdUqDjYLDzxYA9hyap/tt1pNRWRrSaowk9YVOBIZ0tpuE8zhkd0XyOsYJUWCETNUHfsdZq+xc7DHSVpcPjMAJyQqGt7jf0Br++b8Ok5612zA5W5EWu59AQ79VaCcsNuCU+3InBrt28n9A0BjtrzD2tdBqDbFWq6pieSPzmDDT9LXZDihNYKjFraRQwX+Eb8akRkVKhstolm/V4U7KYPj+YzJ4G01vn/SvrJhesXpslot1atCW9THwCCalNQW3ohdS0NHrBPxTKFgeWt000THu94OI0Or21olbSrjHRssiyZq7hGI+tJ5x+PaGug
+X-MS-Exchange-AntiSpam-MessageData-0: PVjB+4DvSzMe5CbKzERs0dRr9RZBaIm/Bmc67RC8RkxDpBjusNVbaD83h+wDwFic5hUuFbl/gwuYddGtuZ0YHBU2y3geNgRr4AW6xRdZG2VmIqfUbTIR5s95PoR/rFB3tTY3w/MIq1dK8zG9mmdWQhBWzVGyOUN4ie1O+ucI2OKbbLndU6XN5NVV6G4vCaMEIjt8M2v3IBRgkzXQiM3Lcn28moX48UkWIO6CdvjuXYbFKNCo9g73n2rXLu4GgRh75oWQbqkRSCFsGfTHW1GzdP0YHUqgnu/fbjzQNIYpO8Db8kKA09QMxP0UD2uMBhl9AfZuHt8S9G7VbwZTPp0trT7ATB7DLChqS97e4UQ8Xmm+v1UTW4mvw8htIYVsQvn6eTfH9nP7KX8w6FsJr7Wcc9RolNsffsZ0MTGCL0abqhBRi/+rkYg8kyrlSD2c7lLJ
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 09:08:32.8310 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a262c706-f7e2-4a8e-1b54-08de8a4e16ed
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 09:08:35.2119 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5045e992-e08e-404c-3a9d-08de8a4e1855
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.161];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: CH2PEPF00000146.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CH2PEPF00000144.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN6PR12MB8516
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9182
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,86 +112,183 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Save VHCA ID (if available) of each mlx5 port and
-of E-Switch Manager, and update port info cache
-(mlx5_flow_hw_port_infos array) used for translating
-DPDK port ID into HW matching value and mask,
-when matching on source vport.
+Previously if the port info did not have REG_C mask set,
+flow_hw_conv_port_id() returned NULL.
+In order to allow for support of legacy source vport match,
+this patch changes that logic.
 
-This data will be later used to implement source vport matching
-without E-Switch vport metadata enabled.
+Now flow port info will be returned for all ports,
+regardless of REG_C mask value.
+
+HWS layer, depending on REG_C mask value (zero or non-zero)
+will decide which matching mode should be used for
+REPRESENTED_PORT items.
+If REG_C mask is available, metadata matching will be used.
+Otherwise, legacy source vport match will be used.
+Definer handling for legacy source vport match
+will be added in the follow up commit.
 
 Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
 ---
- drivers/net/mlx5/linux/mlx5_os.c | 3 +++
- drivers/net/mlx5/mlx5.h          | 2 ++
- drivers/net/mlx5/mlx5_flow_hw.c  | 5 ++---
- 3 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/mlx5/hws/mlx5dr_cmd.c     | 13 +++++++--
+ drivers/net/mlx5/hws/mlx5dr_cmd.h     |  1 +
+ drivers/net/mlx5/hws/mlx5dr_definer.c | 38 ++++++++++++++++-----------
+ drivers/net/mlx5/linux/mlx5_os.c      |  1 +
+ drivers/net/mlx5/mlx5.h               |  1 +
+ drivers/net/mlx5/mlx5_flow.h          |  3 ++-
+ drivers/net/mlx5/mlx5_flow_hw.c       |  1 +
+ 7 files changed, 40 insertions(+), 18 deletions(-)
 
+diff --git a/drivers/net/mlx5/hws/mlx5dr_cmd.c b/drivers/net/mlx5/hws/mlx5dr_cmd.c
+index 47e6a1fd49..668e409988 100644
+--- a/drivers/net/mlx5/hws/mlx5dr_cmd.c
++++ b/drivers/net/mlx5/hws/mlx5dr_cmd.c
+@@ -1363,10 +1363,19 @@ int mlx5dr_cmd_query_caps(struct ibv_context *ctx,
+ 	strlcpy(caps->fw_ver, attr_ex.orig_attr.fw_ver, sizeof(caps->fw_ver));
+ 
+ 	port_info = flow_hw_get_wire_port(ctx);
+-	if (port_info)
++	if (port_info) {
+ 		caps->wire_regc_mask = port_info->regc_mask;
+-	else
++		/*
++		 * If REG_C_0 vport mask is available, then we can assume that vport metadata is
++		 * enabled on the switchdev.
++		 */
++		caps->vport_metadata_match = !!port_info->regc_mask;
++		DR_LOG(DEBUG, "ibdev %s vport metadata match is %sabled",
++		       ctx->device->name,
++		       caps->vport_metadata_match ? "en" : "dis");
++	} else {
+ 		DR_LOG(INFO, "Failed to query wire port regc value");
++	}
+ 
+ 	return ret;
+ }
+diff --git a/drivers/net/mlx5/hws/mlx5dr_cmd.h b/drivers/net/mlx5/hws/mlx5dr_cmd.h
+index eb9643c555..3ed7c6ecb7 100644
+--- a/drivers/net/mlx5/hws/mlx5dr_cmd.h
++++ b/drivers/net/mlx5/hws/mlx5dr_cmd.h
+@@ -207,6 +207,7 @@ struct mlx5dr_cmd_generate_wqe_attr {
+ 
+ struct mlx5dr_cmd_query_caps {
+ 	uint32_t wire_regc_mask;
++	bool vport_metadata_match;
+ 	uint32_t flex_protocols;
+ 	uint8_t wqe_based_update;
+ 	uint8_t rtc_reparse_mode;
+diff --git a/drivers/net/mlx5/hws/mlx5dr_definer.c b/drivers/net/mlx5/hws/mlx5dr_definer.c
+index 6a016de78e..3ba69c1001 100644
+--- a/drivers/net/mlx5/hws/mlx5dr_definer.c
++++ b/drivers/net/mlx5/hws/mlx5dr_definer.c
+@@ -777,12 +777,13 @@ mlx5dr_definer_vport_set(struct mlx5dr_definer_fc *fc,
+ 	const struct flow_hw_port_info *port_info = NULL;
+ 	uint32_t regc_value;
+ 
+-	if (v)
++	if (v) {
+ 		port_info = flow_hw_conv_port_id(fc->dr_ctx, v->port_id);
+-	if (unlikely(!port_info))
+-		regc_value = BAD_PORT;
+-	else
++		assert(port_info != NULL);
+ 		regc_value = port_info->regc_value >> fc->bit_off;
++	} else {
++		regc_value = BAD_PORT;
++	}
+ 
+ 	/* Bit offset is set to 0 to since regc value is 32bit */
+ 	DR_SET(tag, regc_value, fc->byte_off, fc->bit_off, fc->bit_mask);
+@@ -1593,20 +1594,27 @@ mlx5dr_definer_conv_item_port(struct mlx5dr_definer_conv_data *cd,
+ 	struct mlx5dr_definer_fc *fc;
+ 
+ 	if (port_id) {
+-		if (!caps->wire_regc_mask) {
+-			DR_LOG(ERR, "Port ID item not supported, missing wire REGC mask");
++		if (caps->vport_metadata_match) {
++			if (!caps->wire_regc_mask) {
++				DR_LOG(ERR, "Port ID item not supported, missing wire REGC mask");
++				rte_errno = ENOTSUP;
++				return rte_errno;
++			}
++
++			fc = &cd->fc[MLX5DR_DEFINER_FNAME_VPORT_REG_C_0];
++			fc->item_idx = item_idx;
++			fc->tag_set = &mlx5dr_definer_vport_set;
++			fc->tag_mask_set = &mlx5dr_definer_ones_set;
++			DR_CALC_SET_HDR(fc, registers, register_c_0);
++			fc->bit_off = rte_ctz32(caps->wire_regc_mask);
++			fc->bit_mask = caps->wire_regc_mask >> fc->bit_off;
++			fc->dr_ctx = cd->ctx;
++		} else {
++			/* TODO */
++			DR_LOG(ERR, "Port ID item with legacy vport match is not implemented");
+ 			rte_errno = ENOTSUP;
+ 			return rte_errno;
+ 		}
+-
+-		fc = &cd->fc[MLX5DR_DEFINER_FNAME_VPORT_REG_C_0];
+-		fc->item_idx = item_idx;
+-		fc->tag_set = &mlx5dr_definer_vport_set;
+-		fc->tag_mask_set = &mlx5dr_definer_ones_set;
+-		DR_CALC_SET_HDR(fc, registers, register_c_0);
+-		fc->bit_off = rte_ctz32(caps->wire_regc_mask);
+-		fc->bit_mask = caps->wire_regc_mask >> fc->bit_off;
+-		fc->dr_ctx = cd->ctx;
+ 	}
+ 
+ 	return 0;
 diff --git a/drivers/net/mlx5/linux/mlx5_os.c b/drivers/net/mlx5/linux/mlx5_os.c
-index a717191002..3a9b019601 100644
+index 3a9b019601..75a2936023 100644
 --- a/drivers/net/mlx5/linux/mlx5_os.c
 +++ b/drivers/net/mlx5/linux/mlx5_os.c
-@@ -377,6 +377,7 @@ mlx5_os_capabilities_prepare(struct mlx5_dev_ctx_shared *sh)
- 					hca_attr->scatter_fcs_w_decap_disable;
- 	sh->dev_cap.rq_delay_drop_en = hca_attr->rq_delay_drop;
- 	mlx5_rt_timestamp_config(sh, hca_attr);
-+	sh->dev_cap.esw_info.vhca_id = hca_attr->vhca_id;
- #ifdef HAVE_IBV_DEVICE_ATTR_ESW_MGR_REG_C0
- 	if (dv_attr.comp_mask & MLX5DV_CONTEXT_MASK_REG_C0) {
- 		sh->dev_cap.esw_info.regc_value = dv_attr.reg_c0.value;
-@@ -1524,6 +1525,8 @@ mlx5_dev_spawn(struct rte_device *dpdk_dev,
- 			goto error;
- 		}
- 	}
-+	if (vport_info.query_flags & MLX5_PORT_QUERY_VPORT_VHCA_ID)
-+		priv->vport_vhca_id = vport_info.vport_vhca_id;
- 	if (vport_info.query_flags & MLX5_PORT_QUERY_VPORT) {
- 		priv->vport_id = vport_info.vport_id;
- 	} else if (spawn->pf_bond >= 0 && sh->esw_mode) {
+@@ -387,6 +387,7 @@ mlx5_os_capabilities_prepare(struct mlx5_dev_ctx_shared *sh)
+ 	sh->dev_cap.esw_info.regc_value = 0;
+ 	sh->dev_cap.esw_info.regc_mask = 0;
+ #endif
++	sh->dev_cap.esw_info.is_set = 1;
+ 	return 0;
+ }
+ 
 diff --git a/drivers/net/mlx5/mlx5.h b/drivers/net/mlx5/mlx5.h
-index 4da184eb47..7ae9129e46 100644
+index 7ae9129e46..8cd6562633 100644
 --- a/drivers/net/mlx5/mlx5.h
 +++ b/drivers/net/mlx5/mlx5.h
-@@ -152,6 +152,7 @@ struct mlx5_flow_cb_ctx {
- struct flow_hw_port_info {
+@@ -153,6 +153,7 @@ struct flow_hw_port_info {
  	uint32_t regc_mask;
  	uint32_t regc_value;
-+	uint32_t vhca_id;
+ 	uint32_t vhca_id;
++	uint32_t is_set:1;
  	uint32_t is_wire:1;
  	uint32_t direction:2;
  };
-@@ -2003,6 +2004,7 @@ struct mlx5_priv {
- 	uint32_t jump_fdb_rx_en:1; /* Jump from FDB Tx to FDB Rx flag per port. */
- 	uint16_t domain_id; /* Switch domain identifier. */
- 	uint16_t vport_id; /* Associated VF vport index (if any). */
-+	uint16_t vport_vhca_id; /* VHCA ID of the associated vport (if any). */
- 	uint32_t vport_meta_tag; /* Used for vport index match ove VF LAG. */
- 	uint32_t vport_meta_mask; /* Used for vport index field match mask. */
- 	uint16_t representor_id; /* UINT16_MAX if not a representor. */
+diff --git a/drivers/net/mlx5/mlx5_flow.h b/drivers/net/mlx5/mlx5_flow.h
+index 4c56e638ab..c9e72a33d6 100644
+--- a/drivers/net/mlx5/mlx5_flow.h
++++ b/drivers/net/mlx5/mlx5_flow.h
+@@ -2156,8 +2156,9 @@ flow_hw_conv_port_id(void *ctx, const uint16_t port_id)
+ 
+ 	if (port_id >= RTE_MAX_ETHPORTS)
+ 		return NULL;
++
+ 	port_info = &mlx5_flow_hw_port_infos[port_id];
+-	return !!port_info->regc_mask ? port_info : NULL;
++	return port_info->is_set ? port_info : NULL;
+ }
+ 
+ #ifdef HAVE_IBV_FLOW_DV_SUPPORT
 diff --git a/drivers/net/mlx5/mlx5_flow_hw.c b/drivers/net/mlx5/mlx5_flow_hw.c
-index bca5b2769e..adbd4f33b0 100644
+index adbd4f33b0..4871594c35 100644
 --- a/drivers/net/mlx5/mlx5_flow_hw.c
 +++ b/drivers/net/mlx5/mlx5_flow_hw.c
-@@ -12305,6 +12305,7 @@ mlx5_flow_hw_set_port_info(struct rte_eth_dev *dev)
- 	info = &mlx5_flow_hw_port_infos[port_id];
- 	info->regc_mask = priv->vport_meta_mask;
+@@ -12307,6 +12307,7 @@ mlx5_flow_hw_set_port_info(struct rte_eth_dev *dev)
  	info->regc_value = priv->vport_meta_tag;
-+	info->vhca_id = priv->vport_vhca_id;
+ 	info->vhca_id = priv->vport_vhca_id;
  	info->is_wire = mlx5_is_port_on_mpesw_device(priv) ? priv->mpesw_uplink : priv->master;
++	info->is_set = 1;
  }
  
-@@ -12317,9 +12318,7 @@ mlx5_flow_hw_clear_port_info(struct rte_eth_dev *dev)
- 
- 	MLX5_ASSERT(port_id < RTE_MAX_ETHPORTS);
- 	info = &mlx5_flow_hw_port_infos[port_id];
--	info->regc_mask = 0;
--	info->regc_value = 0;
--	info->is_wire = 0;
-+	memset(info, 0, sizeof(*info));
- }
- 
- static int
+ /* Clears vport tag and mask used for HWS rules. */
 -- 
 2.47.3
 
