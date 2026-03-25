@@ -2,22 +2,22 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C22109C059
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 19:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F303109C058
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 19:10:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 505CD406BC;
-	Wed, 25 Mar 2026 20:09:59 +0100 (CET)
-Received: from PH0PR06CU001.outbound.protection.outlook.com
- (mail-westus3azon11011051.outbound.protection.outlook.com [40.107.208.51])
- by mails.dpdk.org (Postfix) with ESMTP id A20EE402CE
- for <dev@dpdk.org>; Wed, 25 Mar 2026 20:09:57 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 46FC04278B;
+	Wed, 25 Mar 2026 20:10:01 +0100 (CET)
+Received: from BN8PR05CU002.outbound.protection.outlook.com
+ (mail-eastus2azon11011056.outbound.protection.outlook.com [52.101.57.56])
+ by mails.dpdk.org (Postfix) with ESMTP id DE276406BC
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 20:09:58 +0100 (CET)
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d/5mf6hslWY66divL0NKbMGYjTgfsX3onG6TWR0c6v6TIvOdrbdPe/ilB0mLqyseSyOLPWKL6DIXnxea9M6gt5GoxqLWmpEL0ljRzIneoNAh+Nku+pzkQ56ugI+jRfmE8GciPecafShZ2MEJMwshqchS636/nAKiYqZFw+WGdWuLDzWr2kESPCa9pPFxqOh7QwRqipM4HtpieDTxolYKcEQ5vy20GcGm8c9VvhWzLPSiqbuaVqGuky9W3VrcsGFGAYKP/TspIpA+8vgUTle5xPQaZ1/KoW79zliwIxvZJd+SQ2zvwmVyy1BNzOAmfpfzsZFmv6dPKyX3berpm5vuEw==
+ b=AUgzTE7isBFHpxKqgK5DEkTh9vefQeC6cnM4XrC837UU3hnmYOBQAgs7MTkb3Q6RIhFgQDQYiTUm3VoZ1GTHTv36F476q8/vIRZdzhH5A/yywiqKdvQulZO3WjfkIpnSyomKcwuYDNPjOOpbua8RpAEjYimudfJozUakJjy70Dn4tIZ0smPukH5N1QMrENxSsoyiqc6k3r7tdWOUop74Z0axwF5dlNuqkw7gD/hjq3/rCgy7AndrL6BdnlUaVj7GkORqHenxhAHMMK6RqwY9vC7NAuHv42/CRe0+WdFZ/1USi6FEAIVsDxfbsw0su/Y6XKLu9IAvMaHaPaa/y7DQqA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E4j36bpOURAehH8U1j34Dl0YpKaFV4JGzvHTvZlT58g=;
- b=qNR3LQ0L53Zbnu3WV3MZpFS0DW5s8J9SsjCExnayKL6QNDUDjJjpQbeq6HHW8rcf1V6lTcwjsATKLGJ0ORushjTTSY7u4JA5DiBP6jQEeKDCE1DiUJdydAas2sMoRG2YKrEDqjZrsI8pIxJKE/bSAzLvChpqUYmA1YI5/hfMG9v4b+7hJqloI4FYcO+r9yIcWg69y0mUeuXV3ZLcKPQVk2tAlE+odOrrDN1siHuehDLfozOPHQVfnL8Gkg8+sWX+7RuaNUVRNyP8BBPrXIprPeTmrBp6o0t0eQmq+5pEe/DmFFQdngCZjLJ56JwyIgWrwC6cjT6bbNqwp+Bi7gXZ7Q==
+ bh=mzFmbpJLu8xmkSO9AqDmozTUAv10aL7RTO8YOktqMKo=;
+ b=cYJ32a4r0KFfo0K1RmQoXs+6fgpP5hFDrXgXUc6NhPL0bVTPE2xttRt4iJPI6tmbFzzD4BWt7LO1WnInWNANudMKK7BF+kW/1vJUssxUu4dFU/Gq4YN8iq57/L+zB7CiSubXtxbkoe/XDY2d3UcdDKe6WvhL+JbAubOXwbnhSaQub86hA7eLu0KZiZxifwApx1kVnNsM8FaYC0ToSO9qcbhxELcElmE8Tw+Lk904iyymPnD0hHj3mHeBWHSRUgBgzVgljfopvZcUhE7ufe2yXgYXmhaTIAUuBkXz4+tAgOxJU4Z9QsDSjfnxxcu5wtFkdKL/d4USU7iv9dr4yN08jQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
  dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
@@ -25,18 +25,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E4j36bpOURAehH8U1j34Dl0YpKaFV4JGzvHTvZlT58g=;
- b=C/yRDK+vnPfyM/QDF/mM4IbrQyGc9/76YsOQxTxMwhnpZKbkhEi+l53MwBSVnK8EfZLOYDoKEcItce9K8brcdvyqK5TVXFbRoRPQP4ABiEYwu6c72Gf4G8kJAq/yWd7G5iwlogwZU+K119FvhMBM/FxTgsH/SlNCitIXYr0DqcdwiuBhb3uYG/CcLrqb502PGrZ38PJ9CPwkv78oATGol0sp0VIigdeGaJVwXW21cM+y4utsP2ysLL2DG4sSuOjYVV+zrEmcnIunvoZTAcxW2H02PuXWK6tx9Cs9EZfgpgxNwOxVAnp1ZvXQhHdghAcxPF4bMcrJwPxlMl5U210+sg==
-Received: from DS7PR03CA0166.namprd03.prod.outlook.com (2603:10b6:5:3b2::21)
- by IA1PR12MB7496.namprd12.prod.outlook.com (2603:10b6:208:418::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
- 2026 19:09:51 +0000
-Received: from DS3PEPF000099DF.namprd04.prod.outlook.com
- (2603:10b6:5:3b2:cafe::40) by DS7PR03CA0166.outlook.office365.com
- (2603:10b6:5:3b2::21) with Microsoft SMTP Server (version=TLS1_3,
+ bh=mzFmbpJLu8xmkSO9AqDmozTUAv10aL7RTO8YOktqMKo=;
+ b=IWiTOFjxDAfEovbdCmfYGrJFxQtGIVx6adxMpM+EsIiwB9lSMzc2/6+DTHsbySpcI3gNiOFFRlMG7g6ku9+hK6aHS+9m70Fdt6ziSdq2jYpiT/zKMuODxgTVLaKS2FH3zHKBJ2I4ucqanmCWTEFy6IRQP++serNKx2vlsDdS1oa/UnkLB7wluuO41mm/zmSYm+UYExjbaNbjly+H/ilaU28N7utm1QHs0deP82XxwXmYRD8LHGHOHSDuTBmtCzEESz8LaikimP9sSMitO4YHCN+K3ndKmD+mOhn/nAvdNjKOMGBaoTDCDIG2RbNSYfmzu29VZ7H7iNzj1qxJuz0mCQ==
+Received: from DM5PR07CA0076.namprd07.prod.outlook.com (2603:10b6:4:ad::41) by
+ CH2PR12MB4184.namprd12.prod.outlook.com (2603:10b6:610:a7::9) with
+ Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9769.7; Wed, 25 Mar 2026 19:09:54 +0000
+Received: from DS3PEPF000099E0.namprd04.prod.outlook.com
+ (2603:10b6:4:ad:cafe::17) by DM5PR07CA0076.outlook.office365.com
+ (2603:10b6:4:ad::41) with Microsoft SMTP Server (version=TLS1_3,
  cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.32 via Frontend Transport; Wed,
- 25 Mar 2026 19:09:31 +0000
+ 25 Mar 2026 19:09:54 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
  smtp.mailfrom=nvidia.com;
  dkim=none (message not signed)
@@ -45,28 +45,29 @@ Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
  216.228.117.160 as permitted sender) receiver=protection.outlook.com;
  client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
 Received: from mail.nvidia.com (216.228.117.160) by
- DS3PEPF000099DF.mail.protection.outlook.com (10.167.17.202) with Microsoft
+ DS3PEPF000099E0.mail.protection.outlook.com (10.167.17.203) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9745.21 via Frontend Transport; Wed, 25 Mar 2026 19:09:51 +0000
+ 15.20.9745.21 via Frontend Transport; Wed, 25 Mar 2026 19:09:54 +0000
 Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
  (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
- 2026 12:09:35 -0700
+ 2026 12:09:39 -0700
 Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
  (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
- 2026 12:09:33 -0700
+ 2026 12:09:37 -0700
 From: Dariusz Sosnowski <dsosnowski@nvidia.com>
 To: Aman Singh <aman.deep.singh@intel.com>
 CC: <dev@dpdk.org>, Thomas Monjalon <thomas@monjalon.net>, Raslan Darawsheh
  <rasland@nvidia.com>, Stephen Hemminger <stephen@networkplumber.org>, "Adrian
  Schollmeyer" <a.schollmeyer@syseleven.de>
-Subject: [PATCH v4 0/2] app/testpmd: assign share group dynamically
-Date: Wed, 25 Mar 2026 20:09:04 +0100
-Message-ID: <20260325190906.68531-1-dsosnowski@nvidia.com>
+Subject: [PATCH v4 2/2] app/testpmd: revert switch domain mismatch check
+Date: Wed, 25 Mar 2026 20:09:06 +0100
+Message-ID: <20260325190906.68531-3-dsosnowski@nvidia.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260325180255.57489-1-dsosnowski@nvidia.com>
+In-Reply-To: <20260325190906.68531-1-dsosnowski@nvidia.com>
 References: <20260325180255.57489-1-dsosnowski@nvidia.com>
+ <20260325190906.68531-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
@@ -75,30 +76,30 @@ X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
  rnnvmail201.nvidia.com (10.129.68.8)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099DF:EE_|IA1PR12MB7496:EE_
-X-MS-Office365-Filtering-Correlation-Id: 43293c68-a090-4ae5-6f97-08de8aa2174e
+X-MS-TrafficTypeDiagnostic: DS3PEPF000099E0:EE_|CH2PR12MB4184:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96409e63-ea51-4142-7373-08de8aa21934
 X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|36860700016|376014|13003099007|18002099003|22082099003|56012099003;
-X-Microsoft-Antispam-Message-Info: 2ikv/7alQBJr2x8NG20iQJOaVeoMGm+o4bAwCHV460mNVqR1hhyb0XknzUrQwiePbHdjd614ZZ/1pvsTeKkma+i/M/bDRIVeSAC8gjpcyLYqFcAgTHYCLQL4AYLFzM7dtFmFN2ZpEI6omrwSysNXWp3edpbBJchXEaMWDsDY8cTToEb6FfRBMPDKVBHsNGBY1Ja9RsTM0k8CSGTz+nfn3iaKlIEaAyzAA63QeJCbdRDIg/yfyaV/J+QSiMKQ68IBCvXJEGmtzhKogPPv4iSBMrM50vd68eElAsh0G7GR2QTyoWE4mPEyUIG72boGYEL2ep/ChMuNM2Qc/hnumjdLTTlPoL/l9p2k32fKU1HcYVRpvI6x9bZDIqZi6jcPh0eJUmyCgGWgEcZETFgEZHTLquo4zYo31GyIp2xfJLRgXBaS1UGf6gA60sbBFC7HmB3sA+cPuEFaUyR727ZCjWtLWzYV77qa832yIqAvZ0rmSuze+XqkDCe5LvVGrGUVt2F5PQhAeaFnmzLHL7jcVwvIks78MZb0jcaMg7SS6j2uxu6eapLhgiffTSdKItMHEVYO9AvY9b+i59J31TDn7SlF8NyegKe02AfinMqJZuuojxikqShS8gHv6it7QV01aXnDfze4BImaJiFAouvBldyzN9eBgo/I1YUEH50OWECCnJuFlZ7zvjrqDsjLggMMlbpGyPxC+9/YEKbtj8mT1nm5l3cOkrROrjQtKu8a4zC4iaYTN5v1V+/zNqrrGqIavGIvwcsUNSacirePMxEhJsWhMQ==
+ ARA:13230040|82310400026|1800799024|376014|36860700016|18002099003|56012099003|22082099003;
+X-Microsoft-Antispam-Message-Info: Y9imZxltKzAggfHA+5cRcKYn80ulBwD+q6IWz8qNMO/mhQ4vCGgVErQgNhfOorVtWNHglr8mQ81jIwML2jkMnQhfjAF7kiI7KffvK0Sb+rmZRWR5Le+ER/OLOGQALcWuXwrYFP0bZWjb0645JGU5fYAuzRycbwSlBwj7zL/vNXXq6e42nCpQRMcKzFtl/lCIUvVau0p6Yscc8ww2tspCGB6KXxtjHB07s0xYp2JoSUf+PhFbDGpkieeDl+PGQlWT6vXSchTk4dPSTBgdjG69oFsk7LgoFlmkPU9hKqt9b/F7gEmpJdjJA5kKVTt5JUYc4KEbkkcmG/oRLhIO9ohxAFNVhiexB1724n08GsjzfvqHHD7lcbtpfemL0/EMZ+Bqm5IjwTSzUtL0g0b4Ra4LKGZiNDQDSOyjO/yeBzCNO4YZIzsAU2x6lhiystWaKvYDir5IgZJ9litEfdBnOAqxKP6oodRa/74JdvgXuktbEboc/5UUV+19k1Xnwmy8WX9moTdUnj8ZThluSLIPeoi5UpXQ2wHwj5JYRo5iYZ9f5HWyOjiN4vg478n8L0wviUyjW2H/XgnDaUdaLEfoxyZPgqDVhu2frFN4XZtXPHT7VwM1XOIi6MNd7rpmbSjWKuwq2Kj/8c6PN5/y0gZHgvaEK3SwAUXC4BK4BRKE3OTN/K4LMjNb46PFZJR+E5c5MPtIyNeYZTAk4D2XWjJ8cvAggWeug4mz21TOSq4PEwXJSQ/AmfMwYNVqeKStYqjuPN/3gs9GDuc7amQK53zR0unJUA==
 X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(82310400026)(36860700016)(376014)(13003099007)(18002099003)(22082099003)(56012099003);
+ SFS:(13230040)(82310400026)(1800799024)(376014)(36860700016)(18002099003)(56012099003)(22082099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 4wF9DfhnQFhRewge9M+eBVT7SZHNMYRxXImfRJkU651CmuIAmixtv2rjh+QiTivpCThe/3EYYVgt1T3lwvwMlCgZYbEyAQOZbeRefN3jvYJy/sMLSeI+U+X1YvjYxZi7SYgMpMMJfCIJpIK88hzbAyArNuCaCs1imTaepi8cKI9psmlagHIn3ZxFLzcrFLzVm78Dz1YQR57Sg+9tm5+61fi52mtXEZu5TnO3rArh86ZQwNxTqixA/40Ef8pVBQPlWQUyVoX6N7bvxdYaVfULXvNzb6O3ZBKcjapxiEJl7CB179imeCxi0BETtzyzfXyIKa6lFXUR2OwnQGZcSuYC5HFYIcYukqPs/nxkWha+AhUXy5M91emeWqpMPr8L6cOMUod3YtmFMgbhsh0COZAL2NjiSAAVNaMvZTwCHSSkVnFA7b5YEy4gQ2x6wb4HNgdt
+X-MS-Exchange-AntiSpam-MessageData-0: iD8etI4DFz2pwL66t9u5Xu0dePQOPGS3EceCHmbC0npGAPgjYR8LLkBREzt6pH40Gbw0bSeKv98SLajZSnKFaZ3OOXa+g/qC8VY/QWG8SyXhIvUE/9+tXqfbYfU+PxgJe2n/StJvkXSjMLAkvZmULMbuHlCxj34ucYf2+KGupPeEf0yaLkKhUeAFwVXHfiU5lGnN5M09n8k/QrMFj9sAB6NyfcK+6EfCzKvqN2v38cfbN0i4mtXVeBAf04Sfq75mSvKrJUsI2W4M3ShjigFDgyQHwEnq2XPD/KK+mGqgEE+ip6QRPqZ0ZyExpnxiVpVFlkKHmrk0hmDqP6uLy5+3RLSdwzfYya7cTs/BCd73Iteov/rxYFewf+GmCkz/Z9zQeFYuKs4YCmCq3jrkZfn/WzbgZb47/VhHFnvg1vnfpIPCMc5TF6zU1PsXij9ZVvym
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 19:09:51.2051 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 43293c68-a090-4ae5-6f97-08de8aa2174e
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 19:09:54.4275 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96409e63-ea51-4142-7373-08de8aa21934
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
  Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF000099DF.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF000099E0.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7496
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4184
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -112,48 +113,69 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Our internal regression tests have flagged issues with shared Rx queues.
-Specifically, issues with domain mismatches:
+This reverts commit 8ebba91086f47c90e398d7775921e05659c0d62f.
 
-	Invalid shared rxq config: switch domain mismatch ports 0 and 3
+Previous patch changed --rxq-share parameter logic.
+If this parameter is passed, then unique share group index
+per switch and Rx domain will be assigned to each shared Rx queue.
+As a result the check for domain mismatch is not needed.
 
-These started appearing after commit [1] which added checks
-for globally unique share group indexes.
-This could be worked around with --rxq-share=N option,
-but it does not allow proper testing of all use cases [2].
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ app/test-pmd/testpmd.c | 40 ----------------------------------------
+ 1 file changed, 40 deletions(-)
 
-This patchset addresses that by changing behavior of --rxq-share parameter.
-Instead of relying on user to select proper parameter value,
-testpmd will dynamically assign globally unique share group index
-to each unique switch and Rx domain.
-
-[1]: 8ebba91086f4 ("app/testpmd: fail on shared Rx queue switch mismatch")
-[2]: https://inbox.dpdk.org/dev/yotjxacqrodttraqrr3r6ftut4cty66g6cjnr5ughswtatapgh@gqqkftskp3qq/
-
-v4:
-- Use short circuit return try_release_share_group().
-
-v3:
-- Use short circuit return in assign_share_group().
-- Replace assert in assign_share_group() with error checking.
-- Do not require optional argument with --rxq-share option.
-- Fix typo in docs: update -> updates
-
-v2:
-- Add releasing share groups when ports are closed.
-- Add static to share_group_slots array definition.
-- Remove double empty line in revert commit.
-
-Dariusz Sosnowski (2):
-  app/testpmd: assign share group dynamically
-  app/testpmd: revert switch domain mismatch check
-
- app/test-pmd/parameters.c             |  14 +--
- app/test-pmd/testpmd.c                | 121 ++++++++++++++++----------
- app/test-pmd/testpmd.h                |   2 +-
- doc/guides/testpmd_app_ug/run_app.rst |  10 +--
- 4 files changed, 86 insertions(+), 61 deletions(-)
-
---
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index e655ddd247..e2569d9e30 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -2744,46 +2744,6 @@ rx_queue_setup(uint16_t port_id, uint16_t rx_queue_id,
+ 	uint32_t prev_hdrs = 0;
+ 	int ret;
+ 
+-	if (rx_conf->share_group > 0) {
+-		/* Check required switch info for Rx queue sharing */
+-		const uint16_t dom_id = ports[port_id].dev_info.switch_info.domain_id;
+-		const uint16_t rx_dom = ports[port_id].dev_info.switch_info.rx_domain;
+-
+-		uint16_t pid;
+-		const char *mismatch = NULL;
+-		uint16_t mismatch_pid = (uint16_t)RTE_PORT_ALL;
+-
+-		RTE_ETH_FOREACH_DEV(pid) {
+-			struct rte_port *o_port = &ports[pid];
+-			const uint16_t o_dom_id = o_port->dev_info.switch_info.domain_id;
+-			const uint16_t o_rx_dom = o_port->dev_info.switch_info.rx_domain;
+-
+-			for (uint16_t q = 0; q < nb_rxq; ++q) {
+-				struct port_rxqueue *rxq = &o_port->rxq[q];
+-				if (rxq->conf.share_group != rx_conf->share_group ||
+-						rxq->conf.share_qid != rx_conf->share_qid)
+-					continue;
+-				if (o_dom_id == dom_id && o_rx_dom == rx_dom)
+-					continue;
+-
+-				if (o_dom_id != dom_id)
+-					mismatch = "switch domain";
+-				else if (o_rx_dom != rx_dom)
+-					mismatch = "rx domain";
+-
+-				mismatch_pid = pid;
+-				break;
+-			}
+-		}
+-
+-		if (mismatch) {
+-			fprintf(stderr,
+-				"Invalid shared rxq config: %s mismatch between ports %u and %u\n",
+-				mismatch, port_id, mismatch_pid);
+-			return -EINVAL;
+-		}
+-	}
+-
+ 	if ((rx_pkt_nb_segs > 1) &&
+ 	    (rx_conf->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
+ 		/* multi-segment configuration */
+-- 
 2.47.3
 
