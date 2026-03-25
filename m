@@ -2,141 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF16106B522
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 12:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2829F106B530
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 13:04:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 24327402CE;
-	Wed, 25 Mar 2026 13:42:09 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 089944028E;
- Wed, 25 Mar 2026 13:42:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1774442527; x=1805978527;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=BvPXJnOPrSwub3eI8Md2XumShOHriVvP/6V/dvhWopA=;
- b=bDkVqGznxB8aP6LqT8BEp29rYiE956RR3NyaRTMjOTs0C6VVful4W37T
- eGrjR8YIM50CDdItvt7wSfnOopxETNWYBmNwSUqmUFOdhM7i2XADlVN4P
- abxOFjumTxrwFYZaxxrqt1tN1BK2ptoTxscwK6KK/QoE3FR8SEQQsvxqm
- txIf4wiwSWJClnMvaiwQ2zZnSYZRw3AtwsmXxbTyT78jUd77rwcYqPTiB
- j0iuR6ff169BP6Nm+79PQG18sK6is90Vdc8aFtzwfrBK1pqpdyyzUAUqT
- 93VeKIgtmakqkrWLLiS9Cp/QffKeRJdymHPEO7kaxpJ7vCrKE8CDx8k64 g==;
-X-CSE-ConnectionGUID: 9b+nABkvSbyF8+lFLbR5vw==
-X-CSE-MsgGUID: pBVnVvBqRDqjh31QGxfBMA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11739"; a="79070896"
-X-IronPort-AV: E=Sophos;i="6.23,140,1770624000"; d="scan'208";a="79070896"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Mar 2026 05:42:06 -0700
-X-CSE-ConnectionGUID: 28CeXislQ0aMLMmRK7qobg==
-X-CSE-MsgGUID: nHfydCQcSjSCwOXEpPhtkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,140,1770624000"; d="scan'208";a="219814744"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 25 Mar 2026 05:42:05 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 25 Mar 2026 05:42:05 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 25 Mar 2026 05:42:05 -0700
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.21) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 25 Mar 2026 05:42:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A0A237iLFNh1jCDCIVvKfGHSQy4pB2YN+3cW8BofCFQpSMljBNBcWuO8RgikOTd3UPq22E14b/UNiVH8jZNojs2WEv1mGdWq/2Fuv8k43S14ENa6QKUB5TefV302OlnAy1BTIJVhcGm4S5bDnjbT0zn6+6DuxTaJKTWShKpnRhYaO9kOIyKbjQzjQx+sqx3qqB6XdIE1CA6BOOwaMqF6ULoXCeGxy1ltzWh8omUDx4QajbVAyX2fGloeSg5L6dSxIt9wgycBUoHPIJs1RPn64J/J9Sqztr+JIVlCBCw+6hIlPHBS1vOtrgkYMSZcYx0YJA8qNilKaGOiVM4R/ucz9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZlzB3mTcj2WvlP46JtXpVs5aII8X3Fr2pqtBLgedUqw=;
- b=VO8VzQPgHjik7Ga8+btXBBJcBmgot0BJCtX/F6mRhREa4BmdaScTyMLCxaik9eILqceT22OhjlA1WutU0falm3YWA5yt38W7IdgKYRI0eR0MSDGDvFsVyvUZkn8faBa1uSIJFAjYhijHLhytgf60/Vw1wJnwxeELjxK+RUd8ZLISbyf7eJ8WCJoOzRHbiND+06ish6/nE7ZgXjYsyZAfTKxmr00qgHydk8eVwZyOvjx5lkh0cZSgorG14zfIvIXE5j/uoW4MQZk6/PRr/lD1zfG7N7ijaECIS8e+0iD4ilhJp3hC3cPusovsUEUCVAks4PRX995UGcb/82xRwKdy9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SJ5PPF183C9380E.namprd11.prod.outlook.com (2603:10b6:a0f:fc02::815) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9745.20; Wed, 25 Mar
- 2026 12:42:00 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9745.019; Wed, 25 Mar 2026
- 12:42:00 +0000
-Date: Wed, 25 Mar 2026 12:41:55 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Ciara Loftus <ciara.loftus@intel.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: Re: [PATCH] net/i40e: fix raw flow item validation
-Message-ID: <acPYE0qdxKTw8p-F@bricha3-mobl1.ger.corp.intel.com>
-References: <20260324155627.1849904-1-ciara.loftus@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260324155627.1849904-1-ciara.loftus@intel.com>
-X-ClientProxiedBy: DU7P195CA0018.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:10:54d::18) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id 3E8A2402CE;
+	Wed, 25 Mar 2026 14:04:36 +0100 (CET)
+Received: from out-cbk.mail.syseleven.net (out-cbk.mail.syseleven.net
+ [195.192.142.27])
+ by mails.dpdk.org (Postfix) with ESMTP id 5A42B4028E
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 14:04:35 +0100 (CET)
+Received: from 127.0.0.1 (localhost [127.0.0.1])
+ by out-cbk.mail.syseleven.net (Postfix) with ESMTPSA id 7B2783F108;
+ Wed, 25 Mar 2026 13:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=syseleven.de;
+ s=2022n001; t=1774443873;
+ bh=O15hQBv1U5G4IdaYTGVUiB8sAfpbOA8/JpVV8de5v2w=; h=From:From;
+ b=Aw8mmOePy3INiVD7YrsLW1N9xN4IYZQESK42/O1m9+ARrMxMfNfXNjIUreGCZ4N7z
+ LwHZbIBuUE37ey4FFUoLbij2E2Zac9X45Ln6OiFXFlWOqBqOHapbRjid5GGw/UkSUI
+ Qi6LX3vUCWSxGOflXmmhqxzt4DlSwUAB8Yz5+7Jdj/JL9HI64AqJs4lYrqw4k+vZe3
+ IHQVycaskuAyzufQF5OOlPTaBDy8a29PCP7zU0DoPA/l4A46D/0xaa0niEPkt/t/cm
+ HwqqD2IuOE+Htil/+khwbCcRKcw4HZisKZmS2VMzP1al4fS7askLDBPwfssd5acH4h
+ 0/JPeWt1Q6ltg==
+Message-ID: <feb6b06ea37a91fb798831696d4c7e234ebbb246.camel@syseleven.de>
+Subject: Re: [PATCH] app/testpmd: warn on shared rxq switch mismatch
+From: Adrian Schollmeyer <a.schollmeyer@syseleven.de>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>, Stephen Hemminger
+ <stephen@networkplumber.org>
+Cc: Aman Singh <aman.deep.singh@intel.com>, "dev@dpdk.org" <dev@dpdk.org>, 
+ Thomas Monjalon <tmonjalon@nvidia.com>, Slava Ovsiienko
+ <viacheslavo@nvidia.com>, Raslan Darawsheh <rasland@nvidia.com>
+Date: Wed, 25 Mar 2026 14:04:32 +0100
+In-Reply-To: <CH2PR12MB9541F8CC6EBE612A415B8B59A448A@CH2PR12MB9541.namprd12.prod.outlook.com>
+References: <20251125102207.428661-1-a.schollmeyer@syseleven.de>
+ <20260323091725.3440ad89@phoenix.local>
+ <CH2PR12MB9541F8CC6EBE612A415B8B59A448A@CH2PR12MB9541.namprd12.prod.outlook.com>
+Organization: SysEleven GmbH
+Content-Type: multipart/signed; micalg="pgp-sha512";
+ protocol="application/pgp-signature"; boundary="=-rJcsL4IGd4byLFfQz6rR"
+User-Agent: Evolution 3.44.4-0ubuntu2.1 
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ5PPF183C9380E:EE_
-X-MS-Office365-Filtering-Correlation-Id: 890c264a-c61b-4211-da2f-08de8a6be896
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|18002099003|56012099003|22082099003; 
-X-Microsoft-Antispam-Message-Info: oy8p7Hv6u08V3jK5JtoOKMlx69mIkvAjARV2Lq5ViVUpgopCL3GKkQw1YDO2LsDnCL1I9dxwwDpKHdsM83OdbFw/Wx6nT8eXBzsArbjtS7T2Igh7P3Mz3kuDIWduHW2li3qF31YoEGHiO+Za3+hEZa+D5ugNtgeqWZmpSNj4T2hepfLyIRvkzedBHeGePDn8aWwcePXS0nSlSYWd2WWTTpORXj6DvqOKzcmlKGfZMiq+22k8M8ALdTB2Doa7KyMGfc03G8WxuVNH7TbGat7I34f0K8Glfh+vBX6P9Z8LzlTaxUvY2w/V4/n5Eev/bQUGm066Fm9+D7CnQfgUdN0cqUJR/qCxYYCk+2ZahWpJ+Zj5p7DDvT92dgGjF09NznJvoT+DO36/ogS5FnVzElc0WLlurvSG3xkuMPwTCkukhoQDtufHDsSK+vQ+JkBXHEjgIMBdC96OR0vDXAIN7o+uzHkyJmIq1wSHEtEnraHDGIufgVw6i9ttQO87iQaRK8RsMgePojks6Aa1m/6Zng8FLZrUYCLBsg+7U3Z2smU86hmrB3pdWP2SQqZq+ZkMM/GYlvIJtIQ6BKEUUfVwJCrIK3CcsvqEZc6NI+/NZYqZU6wrhYC9oWq1vkxpLJVeUx7tEzBA/hevKuThc+jUeot4v87ABDOzCpCVGw1uccBJWpnm3VvtTphB2r1ymtBy0z19aiHqm5+Kd9boRyXeELhvodBrVSL2Dkr+1b654pXJkZE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(56012099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?ErpmlvM1T6wcVLfUi0+BmQiUkmQ55YRfHKOhmy5wpE5sMk6SMcw9cHFdTx+z?=
- =?us-ascii?Q?dWwe0tcAm6keSrwp3xytlks+o0TyHoiwpobOHYaYD3Ga4LP56/ZmQ7sr7MyR?=
- =?us-ascii?Q?8budbbqQjMnQfMYTKolUFpEUFHZ8UbBpUkvt5OdqlgHWhUfgrvj25ZEaZlZN?=
- =?us-ascii?Q?v/WqDFc9u1eLDEBiv7I2T8A7G14V+qhXQmOx0KodkWVdwQFIJqhcAB+1G+Z8?=
- =?us-ascii?Q?CyghtPWzKikWgdunicGAEI/vAD7rX35sO617+hwGsdFn5SLpkRLuZ2VHVlza?=
- =?us-ascii?Q?2w/6aY2MycnyLHxt6bMbQvEljX02tM2cD4I1nCfXi4e/qUhFnFAxaqHDdjIm?=
- =?us-ascii?Q?TLonBRd/+iJ5sOydqONuQcAoQQXbcgc7LgRdEw8WXVTjJ80WNGPUpuigQE+w?=
- =?us-ascii?Q?Vig+IREFhXjvr3UUHhI7ob/ua8ThV/d5VgoaMJP4P6bNnZgn1rt5Gg2MAxU1?=
- =?us-ascii?Q?G6FhlC7flsroJzuuvLGT9Xoko5+uhRvoYZ9NKQDW0oz8hhTOcVXbC1/jUlt4?=
- =?us-ascii?Q?GVk74W+grQKCEn4dTUOGA2+4WZccqSl1ACj96wPvpJw3BGtn/lzvjmYB3ChC?=
- =?us-ascii?Q?7xJ4Cv6wlc4qDEFdTi9qbU3dtcKiIDm66S/lERDh2WG4zXuBnBYVzccEnPTU?=
- =?us-ascii?Q?obTRYzE6q9dor7k60MmjgiImGbLAkmIKXzcjhHz2NydNZdRM2N96KL1SgPNh?=
- =?us-ascii?Q?Ln+I8Zw8Dy7ow3UePJwm08VpbypJr94L/v3aD4XOUPBOsND9zF2xe3/mBVfn?=
- =?us-ascii?Q?XSHijEUl7KxxqubHWbigJqeUgDFwiHs25Q964LI1tCZGAt5U+uAd5b6vJgap?=
- =?us-ascii?Q?nN3XQ0vcslCdoPlYcNqiQndkEUJZsDW7BHIMKGNV4/QA48fbtwnJfEBYDiS3?=
- =?us-ascii?Q?x5/4nSLZ1Ofd1pDz5A4RJe7qfCKwuAQl1sTbFX2ukDm6RNcO9D8dPjl5WHO3?=
- =?us-ascii?Q?aVTpOlnM+sz9fkgBU07DBTSIkmVhiRfiKtYWxJGYon0Xma2fHTKJpqOCKl7X?=
- =?us-ascii?Q?rcxWdd04TRZ9vZqRYh99422TjKF9ILD62+VlokmufgHeBIgEaGcl8/ksfVcO?=
- =?us-ascii?Q?QWGxv9jTJmEmuIhl4hRxL0Bk1fCOhX3J/StnfaiIIWXq+eNIQAnrk40S44n0?=
- =?us-ascii?Q?3HDRGWW4Sh75JpSZRTqH+wL112eO6dq017IjycyT4Zq/9cKzV0DQamGPnna9?=
- =?us-ascii?Q?UsS5r2ukYrV4YpKGPmZwgeVc51DDp8KgxVIFfp+yx/B+VUOWr3GK8CzZlKQ3?=
- =?us-ascii?Q?VX273r6PU1UOpsovaW8uMcFnyKZnLpDXbJgK4Oi/Aq1EkuVRw3kjRa2wDVj3?=
- =?us-ascii?Q?5bECgRuf+0yMbVIa+apVwaEAR8Mgn4XtvgbPT5t5u7X1trtufc+dbNHWctj8?=
- =?us-ascii?Q?+zqw9bNr1iU/QA17mK6pAhF3dOXdB/x00sysQueDiQ/HtcPlTA1BqOib9OhJ?=
- =?us-ascii?Q?H71U89d/UzrfRpTUZ/9O2MXjoN2bXoiriIi9i2oDDDp/QiR0iFIxx4G1HUtU?=
- =?us-ascii?Q?KbJdQ2OTS5pEHDObCgiJIbYmco84vSCLzk2Nm8xt6ZGErUh9cNIBHRs0Brcn?=
- =?us-ascii?Q?p1fg7bbI8pZWAK59jvHgGpvPmcs7xD5XZpu81Yj4uLApRH3J9rF35UZqOQpA?=
- =?us-ascii?Q?JTmSP8VkszF0umMk5myfgNvKWuQXWEqRxP95y9v5TP9BPuh2tqwHHTodv/YL?=
- =?us-ascii?Q?bHRMyO/MjmTLTWNSwoS7HVQMd1qCoLlvArFEPoAYMhv8Gph1gBN5JA/499ze?=
- =?us-ascii?Q?V8dTGDu9V6t+5FlDNUdMhdMOAqFuqvI=3D?=
-X-Exchange-RoutingPolicyChecked: SU/mjpLJFzSz5eCOT9CKwELhZ8q4mw/Et9Jc0XF+zF8DIWy7HXsBdCEYYyNjdbXHmSFZoP1nKfLyTODaJ9usbUpjnXRuYq2QfliOAUALnQmC+JZJlYUYRNU6WDzZHIo6OjZ/bBXWbs9W6s1DlD9IDz/sOs7AkldQGcYE0WQqlkBWSRywk0iqmOhcgO6QE53K6n2IRznPbE1ugVYfEN7v19dBGPj3NCcFqb5RHEEDqTo2e63OMceZX2l6pmwXLjydEcnRmS7zGQ6IgD8azzMxnEcp6k4NiyxyhVjf/6ugoLTWIW9YEbUa6+2GQOqzMpj/8kz0l+PQQJzq5WHOVfyXsw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 890c264a-c61b-4211-da2f-08de8a6be896
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 12:42:00.2634 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lB3+SbZD7flnf7n4EUaYVviA3nJ/UkmhsyfQ2AlRltPR+i3hoF8m3dLBvVHzHKngL0b7/TGRHaNQpqt9tUr4pdco7MKoLxcB2ECVgxSHpn8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF183C9380E
-X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,23 +54,113 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Mar 24, 2026 at 03:56:27PM +0000, Ciara Loftus wrote:
-> Commit c138a6c3bd0a ("net/i40e: validate raw flow items before
-> dereferencing") rejected raw flow items when spec and mask length
-> fields differ, intending to prevent out-of-bounds pattern access.
-> 
-> This breaks flows using the default rte_flow_item_raw_mask, which
-> sets mask.length to 0xffff regardless of the spec pattern size. Remove
-> the erroneous check.
-> 
-> Fixes: c138a6c3bd0a ("net/i40e: validate raw flow items before dereferencing")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> ---
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-Applied to dpdk-next-net-intel,
-Thanks,
-/Bruce
+--=-rJcsL4IGd4byLFfQz6rR
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
+
+Am Dienstag, dem 24.03.2026 um 09:04 +0000 schrieb Dariusz Sosnowski:
+>=20
+> Adrian: Could you please elaborate what kind of issues have you faced
+> with shared queue configuration?
+
+For one, I find the documentation around shared Rx queues quite poor to
+begin with. Back then, I tried to make it work on a regular ConnectX-6
+NIC with multiple VFs. For lack of better understanding, I just tried
+to run testpmd to check whether shared Rx queues works with this kind
+of setup. Unfortunately, testpmd neither emitted a warning/error
+message nor was able to set up the queues properly. Instead, everything
+failed silently. It may very well have been me just using the feature
+wrong, but testpmd did nothing to help me debug the issue.
+
+Unfortunately, I am not working on this topic anymore, so I have no
+recent experience with similar issues which I could provide. Also, as I
+did this quite some time ago, I cannot remember all the details.
+
+> >=20
+> >=20
+> Based on current implementation in ethdev and mlx5 PMD,
+> assuring that share group indexes are unique is not needed.
+> Share group index is not required to be globally unique since
+> sharing works only within the same switch and Rx domain [1].
+
+So if I understand this correctly, it is correct behavior for DPDK to
+silently accept the same share_group and qid for ports on different
+domains?
+
+=46rom a user perspective, I see two issues here:
+
+* The rx_domain and domain_id values are obscure magic values, whose
+  meaning is neither obvious nor very well documented. Therefore, in my
+  opinion, users cannot be expected to "just know" what they imply and
+  and where they might be different.
+
+  My personal assumption was that they probably differ from NIC to
+  NIC or possibly from PF to PF, but from what I learned while
+  experimenting with that ConnectX-6 NIC, this doesn't necessarily
+  seem=C2=A0to be the case.
+
+* Using the same share_group for two Rx queues intuitively means that
+  they are shared. Since this feature is used to combine Rx paths
+  across ports, I would expect that the identifiers are valid across
+  ports, not switch domains or Rx domains. In my opinion, this is
+  highly unintuitive from a user's perspective and I would expect DPDK=C2=
+=A0
+  to assume that the same share group ID actually means trying to use
+  the same share group, no matter which ports are combined.
+
+Therefore, I would prefer requiring uniqueness of share group IDs
+across all ports. In any case, the shared Rx queue feature could
+probably benefit from improved documentation.
+
+Best regards
+Adrian
+
+
+--=20
+Adrian Schollmeyer
+
+SysEleven GmbH=20
+Boxhagener Stra=C3=9Fe 80=20
+10245 Berlin=20
+
+T +49 30 / 23 32 012-0
+F +49 30 / 61 67 55 5-0=20
+
+https://www.syseleven.de=20
+https://www.linkedin.com/company/syseleven-gmbh
+
+Current system status always at:=20
+https://www.syseleven-status.net/=20
+
+Company headquarters: Berlin=20
+Registered court: AG Berlin Charlottenburg, HRB 108571 Berlin=20
+Managing directors: Andreas Hermann, Jens Ihlenfeld, Jens Plogsties,
+Andreas R=C3=BCckriegel
+
+
+
+--=-rJcsL4IGd4byLFfQz6rR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEErl0Mi1pV5uGCoyMrfIq1KN9YvTsFAmnD3WAACgkQfIq1KN9Y
+vTto+w/7BE5IcqZHuz3suurN5iouQRBBO2hAvshguFh8iBfl+Qd0T8gZ1WO1qcPC
+xPPBqru9UCXwJFfAjAwplxAOm4Du1+uFeANxnlGvE4QgtuG6sqqvbRgaoSSXe+uD
+PRFNoyo8keNoqGlzG5bPxu2QiwpRMuwq5s5acNL5lMT7qZTZpyzsGl22g3LGPxAs
+FXRhdV2RwwO8jlDfgQk5QXUIWlJ+6h/ffylNi+NJD4W8kNKO0Nrx8jVHA+CVRaJL
+XpVm4WvnqC7Ys+fTuX++C4gWQFB1MJj4EeL3fa71Zo/zLuhZqm4/xKuqIFbfuNqN
+orGQNEex8sZfXj5radmuZi5PR+3bsU3DrUyu3aDhBMJJV8vnt6shG2ndGRvkzuQe
+gwa9kCA+JdLvKvPBAw/QHmgGILu+C1yhkTzsdEtuTqtR97cQGyaDlBcWXBQJ5Utd
+Ig04VMnlzZgZKVPT5TiSYbqWAPVtI//fNP9TCHq/0cmsid0Pt/DB6Phr6PFO7Bqs
+0FA8KYiniYVgaOQb+CQtcjLsQ1+9RGAudVDBqh/ICzWkJCVCXDlWGH2CBTxg2Q6a
+I1CUrfPheB1vWRJmfw70CaNeto4ZIoT0Hg6I559jRATr5eE3PawxVcf4gamMuS/M
+E/lPH7U3oBRS+1Yu6og+xJpeqqEBf+k43QwjVCxF8wXTESX/XWc=
+=uGmT
+-----END PGP SIGNATURE-----
+
+--=-rJcsL4IGd4byLFfQz6rR--
