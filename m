@@ -2,69 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9F9109C03E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 16:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E697E109C046
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 16:50:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C22A4402CE;
-	Wed, 25 Mar 2026 17:40:24 +0100 (CET)
-Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
- by mails.dpdk.org (Postfix) with ESMTP id A30A64028E
- for <dev@dpdk.org>; Wed, 25 Mar 2026 17:40:23 +0100 (CET)
-Received: by mail-dl1-f51.google.com with SMTP id
- a92af1059eb24-127380532eeso31960c88.1
- for <dev@dpdk.org>; Wed, 25 Mar 2026 09:40:23 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 24A95402CE;
+	Wed, 25 Mar 2026 17:50:57 +0100 (CET)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com
+ [209.85.215.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 411DC4028E
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 17:50:56 +0100 (CET)
+Received: by mail-pg1-f178.google.com with SMTP id
+ 41be03b00d2f7-c76682712b5so49550a12.3
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 09:50:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774456823;
- x=1775061623; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774457455;
+ x=1775062255; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=u3PAYNVo+CWOPSV9is3puov9bJtq01epWROnaHTAbBU=;
- b=xKEJhzupg4KTKQiAES9Qvus9XNsexnTc/uOljo+rmNJmW3bSj8/25I1yqNFsPEQMVO
- y6r/GVHEZGjM99TblTzOObv1BqEEUoFa0VgN9EqnS50T8d6aiFEi/hGwTConeDmmKX7y
- fDBzXCXRgJGrQM035QBzwH9DAwGAusG2Xhl2VtU5vRswsZpSKyV0pMvk0z04esSO4hHV
- cj9K1CrYJOfLUM4kgisK4EHqRcxmmzYJ656XO3OPDRaYJXFaaGAAOp2mZJuzMfkyuoMF
- m1Q1udEiPPfn87vLmUfBmpOnG2q+uD+LW1mF8aUSDXc5GtFyTIbPhY/Eg46gI4c6/U6A
- QrPw==
+ bh=biS2k1l/MZTPjVnQoczV1xJiAF1pi14G5VZM7G1g5kM=;
+ b=DY/aOZgso9uevQmkUyaOYCXOqSu1vBPcMNlbg467F61SVFnG0uCaATeHuR8nVC6LxH
+ ZK6jRn6FFCQT0Q93bSTNXgU+z8lJ4QKrBtoBM3YZas0ZD6/PcD4xolinLETdJ6h/WgPr
+ HSPIgtPWN33PyiJL9t8HkQ+Q6LW/N5dnpkl5v2AQo7Gg6SVb5X/9u6uNyBpGEA+9lUry
+ coXFMC2Lwt+QQdJ4iwYAirnPv0V0HCmrSluHre3IIAbOncyfwrZbaBXtkpZiKOW5f3ik
+ z37ekbNOH/tJfBcMxAfi2Yg6kOIWo6Zd35387DELtVMljUIrOc2LaQPZYCE4SOGXSnsn
+ kDPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774456823; x=1775061623;
+ d=1e100.net; s=20251104; t=1774457455; x=1775062255;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=u3PAYNVo+CWOPSV9is3puov9bJtq01epWROnaHTAbBU=;
- b=Xw/H9kGsyt+XHMpRfemY21r7X/PR1U3Y5IRSMgIlnucSId9fRuPTS7NPHlufZQ7T2H
- 7FX7WW1PW1o/aXVevztoB7dB5enWOp0K8Ig3LxoGY13ztpN9mjh93qYaOWPmMz/k006w
- EpXsI+1DdVcdt3KSAsAb95iOtacHadzKIn+XGnbhZS3asyXJE+aLIqGSsYn8V8lOnDVy
- jEZ3nGWewbMB/NIzVAU9xnqrWuR239y62FzLnpIExznPpYr6H+GRn6pJnacUZkQzdanT
- zidQNE+1W5UtLmqot8bk67jQu1X09OcJfL9iZ7NG4h1f7Pj31QSh2OAA1SSGSxzqAK59
- wiaQ==
-X-Gm-Message-State: AOJu0YwIJ62aHsAU1DURABZpKYInGHc3Qk06CmsewgTt/1A0X8crErnX
- PeohsHa/WIYhdBNwlv3gXepzm3r6fKEnwld3/AeQcx6gRnKCTqnE+yo0dW7G19LnRlzSSaTpeUu
- Zi/8B
-X-Gm-Gg: ATEYQzxTA8UaY3DhR09JrcRV8XxJY3W/SbJZwflrWFeGLKn+U3SJTOHKNPzFxCeV4FW
- H9gmE23R8H2f66tAP9MaJeKRKgEvXi3WfDiM7K8O3IYF+tbyRkSlbhpPW58v+rMCYXn0RoA01c5
- 7i0gFHbzmGwuiip4AUyKJ+QDPGm4OpObmBfCfyivPOiF9upVCtuTll49hjA0fwxJaWAQXt5ug86
- 1ci2l5Up2ItPcwIPim2dAAGxNpqd5nuDyZMWQsuSACIMl8On+2AkpXuTgryC3BQjEobBVyZRwKr
- m8KitxcMsM64hIQ/WcBpG+AxWIaaNwdnPxjSTFsf9Pu6VFyPEUuq8fzhqrvtNm/6jWV0MtJKz+S
- oGNhIaLxoTEep2I2+bnw8lXN2ltlbaB+wfna6iyT3TmDMBYgcJH2Tiw2StyQV6vAJ8BSoiy6Vlb
- zq7d3ak803ICtF2UAjCARsgg6SVCNLaE4zZn02/MA3lGLsbg==
-X-Received: by 2002:a05:7022:62a7:b0:122:2f4:b24b with SMTP id
- a92af1059eb24-12a96ed716fmr2116591c88.25.1774456822535; 
- Wed, 25 Mar 2026 09:40:22 -0700 (PDT)
+ bh=biS2k1l/MZTPjVnQoczV1xJiAF1pi14G5VZM7G1g5kM=;
+ b=BOeJds30/EMNgGyVRmwrMoEsdO4TJHfRewwRRyDUi9yAjvZdUkPxRadWxsjk5WGiqS
+ 0dw2HSUb6ckWA/AwsPHhpTLJ4hKwQrdOiCX3tvrMWe2Z8HkPZzMbuac1r49egcSlt5iO
+ 87RjxWcNdJ6NiwdaQAi6J29WcDgKE6S0gKEKDkDWUFffTn9o+RaYtVrRem/zeCErPFtW
+ HIqG6PxQB3q+u0TGtlbUl5ENo5F4Cre1tgL4thyaypI5C2cwHOiJtoGZTfVfR7aLIvCy
+ rADuVH+KJBWrb+hxlRsBvmifT5bZ0qP0DhF7CS7ja5ckul6JLewwb4l81tYsMIY+xi74
+ qyjg==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCX+yXy7gF6ePCI2pqGbwgILCxZR/8dl/WsTpolajXA8GTFNlTT15GJiSLA4LvIL65qSgkA=@dpdk.org
+X-Gm-Message-State: AOJu0Yws8E4EOPbKOVWUw8jky9vxISqhI0FzXMiHzJHfsQsQQ4DCl3a2
+ C3D69QHN/2ErvNMsyI/r5knu1M31+WuT6jhEGG1B632XUKtPNI+s+i08qFDBMdvV0NE=
+X-Gm-Gg: ATEYQzw6G+RkKr1AFuwgoPgfaw9db1uPKpbVKOF2tjSjj0qDoQgIZmBKeFE5oypVWvG
+ KCLQ3uEXNKLPKpOaq8Ebq17HXEo+w5a3o+bYsbSWtQhSGb9AtdJNw7H5tdLtj6AYpCvq+2RmBcm
+ s6H/YIo6xKrntuokAL/2HMSUB3qaQ3mVWyw+MuJffC7zgz0zSb3JNUaP21w/1XXFTqvw+jTljKv
+ iDRb4Nc1+5gD8renqQ1H1b2AnvrcDiTLI/MqlwoBEdbE3xtRSXLJ91uzEeh1IILIJhoSqFNS9gc
+ BaVsUSvkWmm7DF009OFiFR+V7IiJMg3es8W5BEDvWAEkdFEsV6we883eIDSE1Nl8GlvRyIHS9G1
+ DuVEAXwwzeoUmRrWtwLGROV2cDUJOomigIfuLQWM5nRUe6XCF8I6v1OBAnju26t4ZSJwRai3BGk
+ IhIFJVFrD0Euz7jiuJqUVCsszoOK6HnribRdM=
+X-Received: by 2002:a17:903:2391:b0:2ae:4800:141a with SMTP id
+ d9443c01a7336-2b0b0a87423mr49775085ad.32.1774457455270; 
+ Wed, 25 Mar 2026 09:50:55 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12aa6e5b38csm362119c88.2.2026.03.25.09.40.22
+ d9443c01a7336-2b0bc87ebf1sm3493955ad.44.2026.03.25.09.50.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 09:40:22 -0700 (PDT)
-Date: Wed, 25 Mar 2026 09:40:19 -0700
+ Wed, 25 Mar 2026 09:50:55 -0700 (PDT)
+Date: Wed, 25 Mar 2026 09:45:20 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH dpdk v5] net/tap: add software MAC address filtering
-Message-ID: <20260325094019.3f4b8b81@phoenix.local>
-In-Reply-To: <20260324190916.422283-2-rjarry@redhat.com>
-References: <20260319221034.703656-2-rjarry@redhat.com>
- <20260324190916.422283-2-rjarry@redhat.com>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Aman Singh <aman.deep.singh@intel.com>, <dev@dpdk.org>, Thomas Monjalon
+ <thomas@monjalon.net>, Raslan Darawsheh <rasland@nvidia.com>, "Adrian
+ Schollmeyer" <a.schollmeyer@syseleven.de>
+Subject: Re: [PATCH 1/2] app/testpmd: assign share group dynamically
+Message-ID: <20260325094520.2298139e@phoenix.local>
+In-Reply-To: <20260324123709.3471-2-dsosnowski@nvidia.com>
+References: <20260324123709.3471-1-dsosnowski@nvidia.com>
+ <20260324123709.3471-2-dsosnowski@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,81 +85,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 24 Mar 2026 20:09:16 +0100
-Robin Jarry <rjarry@redhat.com> wrote:
+On Tue, 24 Mar 2026 13:37:08 +0100
+Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
 
-> Linux TAP devices deliver all packets to userspace regardless of the
-> PROMISC/ALLMULTI flags on the interface. When promiscuous mode is
-> disabled, drop received packets whose destination MAC does not match
-> any configured unicast or multicast address.
-> 
-> The receive path checks the destination MAC against the device's
-> unicast address table (managed by the ethdev layer), the multicast
-> address list (stored by the driver since the ethdev layer does not keep
-> a copy), and accepts broadcast unconditionally. Promiscuous and
-> all-multicast modes bypass the respective checks.
-> 
-> To support multiple unicast addresses via rte_eth_dev_mac_addr_add(),
-> allocate mac_addrs with rte_zmalloc (TAP_MAX_MAC_ADDRS=16) instead of
-> pointing into dev_private, and advertise the new limit in dev_infos_get.
-> 
-> Add a test to ensure it works as expected.
-> 
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
-> ---
+> +static uint16_t
+> +assign_share_group(struct rte_eth_dev_info *dev_info)
+> +{
+> +	unsigned int first_free = RTE_DIM(share_group_slots);
+> +	bool found = false;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < RTE_DIM(share_group_slots); i++) {
+> +		if (share_group_slots[i].share_group > 0) {
+> +			if (dev_info->switch_info.domain_id == share_group_slots[i].domain_id &&
+> +			    dev_info->switch_info.rx_domain == share_group_slots[i].rx_domain) {
+> +				found = true;
+> +				break;
+> +			}
+> +		} else if (first_free == RTE_DIM(share_group_slots)) {
+> +			first_free = i;
+> +		}
+> +	}
+> +
+> +	if (found)
+> +		return share_group_slots[i].share_group;
 
-Looks good, willing to merge this version.
+Please use a short circuit return, that would be simpler and code would be shorter.
+Same thing below, avoid unnecessary bools.
 
-AI review found some other small things; but these could be addressed later.
-Warnings 2 and 3 look like just nuisance stuff.
+	
+	for (i = 0; i < RTE_DIM(share_group_slots); i++) {
+		if (share_group_slots[i].share_group > 0) {
+			if (dev_info->switch_info.domain_id == share_group_slots[i].domain_id &&
+			    dev_info->switch_info.rx_domain == share_group_slots[i].rx_domain)
+			    		return share_group_slots[i].share_group;
+		} else  if (first_free == RTE_DIM(share_group_slots)) {
+			first_free = i;
+		}
+	}
 
-
----
-
-**net/tap: add software MAC address filtering**
-
-**Errors:**
-
-1. **Resource leak in `tap_set_mc_addr_list()` on `rte_realloc()` failure.**
-   `rte_realloc()` returns NULL on failure but does NOT free the original allocation. The code assigns the result directly back to `pmd->mc_addrs`, so when it returns NULL the pointer to the old allocation is lost and leaked.
-
-   ```c
-   /* Current - leaks old mc_addrs on failure */
-   pmd->mc_addrs = rte_realloc(pmd->mc_addrs,
-                       nb_mc_addr * sizeof(*pmd->mc_addrs), 0);
-   if (pmd->mc_addrs == NULL) {
-       pmd->nb_mc_addrs = 0;
-       return -ENOMEM;
-   }
-
-   /* Fix - save old pointer */
-   struct rte_ether_addr *new_addrs;
-   new_addrs = rte_realloc(pmd->mc_addrs,
-                       nb_mc_addr * sizeof(*pmd->mc_addrs), 0);
-   if (new_addrs == NULL)
-       return -ENOMEM;
-   pmd->mc_addrs = new_addrs;
-   ```
-
-   Note the fix also avoids zeroing `nb_mc_addrs` on failure, which preserves the old list as a reasonable fallback.
-
-2. **fd leak in `tap_inject_packet()` on error after `socket()`.**
-   If `bind()` or `send()` fails, `TEST_ASSERT` causes an immediate return without closing `fd`. This is test code so the impact is minor, but the fd leaks on every failed assertion after the socket is opened.
-
-   Suggest using a local `goto cleanup` pattern or closing `fd` before each `TEST_ASSERT`.
-
-**Warnings:**
-
-1. **Inconsistent error handling in test 7.** All other tests in `test_tap_mac_filter` use `TEST_ASSERT(ret == 0, ...)` for the inject call, but test 7 uses a manual `if (ret < 0) return TEST_FAILED;` check. This also skips `rte_eth_allmulticast_disable()` cleanup on failure. Should use `TEST_ASSERT` for consistency.
-
-2. **`rte_malloc` used for `mc_addrs` in `tap_set_mc_addr_list()`.** The multicast address list is a control-path data structure not accessed by DMA and not shared between processes (it's in `pmd_internals`, which is `dev_private`). Standard `malloc`/`realloc`/`free` would be more appropriate per DPDK guidelines, and would avoid consuming hugepage memory. If `rte_malloc` is kept, the leak fix above needs to use `rte_free` for cleanup, which it already would since the old pointer came from `rte_realloc`.
-
-3. **Broadcast check could be moved before the `mc_addrs` loop.** In `tap_mac_filter_match()`, broadcast frames (which are a subset of multicast) traverse the entire `mc_addrs` loop before hitting the `rte_is_broadcast_ether_addr()` check at the end. Moving the broadcast check before the loop would avoid unnecessary iterations for a common packet type:
-
-   ```c
-   if (rte_is_broadcast_ether_addr(dst))
-       return true;
-   if (data->all_multicast)
-       return true;
-   for (i = 0; i < pmd->nb_mc_addrs; i++) { ... }
-   ```
