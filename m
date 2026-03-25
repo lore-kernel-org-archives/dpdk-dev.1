@@ -2,101 +2,102 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B202FEA830
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 08:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2130FEA838
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 09:08:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 663924028F;
-	Wed, 25 Mar 2026 09:17:43 +0100 (CET)
-Received: from fout-a5-smtp.messagingengine.com
- (fout-a5-smtp.messagingengine.com [103.168.172.148])
- by mails.dpdk.org (Postfix) with ESMTP id 0336C4028E
- for <dev@dpdk.org>; Wed, 25 Mar 2026 09:17:41 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfout.phl.internal (Postfix) with ESMTP id 70A1CEC024A;
- Wed, 25 Mar 2026 04:17:41 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 25 Mar 2026 04:17:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1774426661;
- x=1774513061; bh=GmMMKNbAmMhaS6G+zw9JwUH39M5ELsMItzOAroxmwIY=; b=
- h1p1ayeJyZIDM5W5ocum0ERgNRtzvlYTdWQkrzvllOk8ChxYtkSUsfkQn9U/g61F
- 96QDQUwBSz29negV2UIkqqsv2apKYIvpq16Son0Q9eXYwURWVg7QKm/ox9t6F46D
- bD/5PIx1pzn4utpwQXHsOEg4mrL3jOBoeeM5SAfcnrg6taiLbzH18MSwHZP/EjRc
- zV4EvuuvYttkJ3+/BYllbZuijNqdfOOl0/UqU6DRpAAHA9bFfQjbRY79SiVI/+fu
- CmDCzIkUYo7ddnb3bWJDq3CDEu/HXXjBK3WXazhzJdvH7vB5S+CNDxCBmWUeJ9ud
- ylmC9KeYQ8cV8YB9mQkRHQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774426661; x=
- 1774513061; bh=GmMMKNbAmMhaS6G+zw9JwUH39M5ELsMItzOAroxmwIY=; b=I
- JGemlAL46ZMM2S8A9kY+JWzle4yZgwRdoy0ZR3WWd36VF4jcwqVqTD0QGBDyGrTO
- ir8IzNpuRtpwuHsQCebh+SaXuOdQ9O2njUAlmVT07eVPYVjLBxnqqyB8muu9fy4v
- pQ59kuNSQtZBggWxbcr/D39LRD9CaFLrMPiNbxGaHZOFk1Yl+zTDbV2slhfMVgqE
- Ncky38eh46I76kLLbUEsy92znNZWddMO1ij0+76JLVcwPU9y3km1xVbgkB2VV04E
- Xo1MT8UQFjuqlOzEjdUvhufma/QPZnOKAbodFzudpsDb1VPzn3stA4SUaboTRJTp
- HjKn2O5x+l+WqrXYJ50DQ==
-X-ME-Sender: <xms:JJrDafnvwioF8QOTNEN8y4ocnIkVjSmgEB0dpSX9Ww36dJv2-_5KjA>
- <xme:JJrDafKspy3FGTyBy4QAMSI4qFuiPSWBj__jrppe52MSXmL4N_n8G_X2Qo68VzGhf
- EoK63FhqRNF5sO_Wo3M8yySetYGZdAEZefddkO7Za0Wj0M9qL3W>
-X-ME-Received: <xmr:JJrDaXSx0xrj-ugCaQKRjI9BTnWOD4c7iZXsALS21Z9WzwPtEIcbmetaVnZca3JerBcECeKqTxvxIiVM7Ol0YV5RoQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdefleeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
- leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedukedp
- mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhgvvghmrgdrshhhrghrmhgrsehrrg
- guihhshihsrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
- ohepghgrkhhhihhlsehmrghrvhgvlhhlrdgtohhmpdhrtghpthhtohepuggrvhhiugdrmh
- grrhgthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehsthgvphhhvghnsehn
- vghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopegrnhgrthholhihrdgsuh
- hrrghkohhvsehinhhtvghlrdgtohhmpdhrtghpthhtohepjhgrtghkrdgsohhnugdqphhr
- vghsthhonhesfhhoshhsrdgrrhhmrdgtohhmpdhrtghpthhtohepfhgrnhiihhgrnhhgrd
- hoshhssehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhgrihdrjhhisehinhhtvghlrdgt
- ohhm
-X-ME-Proxy: <xmx:JJrDaUuFxRWixSm0FH7vPFt-8SPdGKHzlC0ythQtmG2z2axzHlp_pA>
- <xmx:JJrDaS-_4GhAgE5eUZR-W8abNR0OF2R-G8zi9K6nzmLcijZbIejsSQ>
- <xmx:JJrDadZ5b7f3yDq2lzgaD9HvI071IPQpRz73_CY3mGJ4N4siW_Tk5A>
- <xmx:JJrDaerW9DOTkA2e9BF-CqewkCgMDMZum6iIbKVMInCXNU6O_6yWKA>
- <xmx:JZrDaZBtaeLTT7euC3cPfzemP6pw-QfCGqGLfxsreJ9azlJ9NV2ng1gW>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Mar 2026 04:17:38 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Reema Sharma <Reema.Sharma@radisys.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "gakhil@marvell.com" <gakhil@marvell.com>, 
- "david.marchand@redhat.com" <david.marchand@redhat.com>,
- "stephen@networkplumber.org" <stephen@networkplumber.org>,
- "anatoly.burakov@intel.com" <anatoly.burakov@intel.com>,
- "jack.bond-preston@foss.arm.com" <jack.bond-preston@foss.arm.com>,
- "gakhil@marvell.com" <gakhil@marvell.com>,
- "fanzhang.oss@gmail.com" <fanzhang.oss@gmail.com>,
- "kai.ji@intel.com" <kai.ji@intel.com>,
- Prakash Durgapal <Prakash.Durgapal@radisys.com>,
- Pratap Rana <Pratap.Rana@radisys.com>,
- Vijay Kumar Mahto <Vijay.Mahto@radisys.com>,
- Jaydipkumar Dhameliya <Jaydipkumar.Dhameliya@radisys.com>,
- "Liu1, Kai" <kai.liu1@intel.com>, "Zhang, Liheng" <liheng.zhang@intel.com>,
- "Xiong, Tanghong" <tanghong.xiong@intel.com>,
- Mattias =?UTF-8?B?UsO2bm5ibG9t?= <mattias.ronnblom@ericsson.com>
-Subject: Re: Request for Review of Fixes Applied for DPDK 24.11 and 25.11
- Compilation Errors
-Date: Wed, 25 Mar 2026 09:17:36 +0100
-Message-ID: <5559422.aeNJFYEL58@thomas>
-In-Reply-To: <DS0PR08MB9465E1596F77A744A34FECD68649A@DS0PR08MB9465.namprd08.prod.outlook.com>
-References: <DS0PR08MB946583905393503122A46A898663A@DS0PR08MB9465.namprd08.prod.outlook.com>
- <SA2PR11MB5051B9440668583D5524F40E847AA@SA2PR11MB5051.namprd11.prod.outlook.com>
- <DS0PR08MB9465E1596F77A744A34FECD68649A@DS0PR08MB9465.namprd08.prod.outlook.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C881F4028F;
+	Wed, 25 Mar 2026 10:08:35 +0100 (CET)
+Received: from DM5PR21CU001.outbound.protection.outlook.com
+ (mail-centralusazon11011063.outbound.protection.outlook.com [52.101.62.63])
+ by mails.dpdk.org (Postfix) with ESMTP id A4A694028E
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 10:08:34 +0100 (CET)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=LqtMYUFOb6LffgoUV+ZNnEvwNp6dkbGBwvwATHXLrj74tQ0UJre1bKNwkuekjSCbejIvUV0NEWgDpqIs8ZBjszkoxe6FDfUNu9LibSBWr1AU9Ly5eNWoZ/AXCL5UHKA5M3uvTx9WcJ1iBBnzPgnE0Lt71QcS3sTw1TG9PqJHMKRxYk/ZDojWihfmsanK5pEfvUsDX7MAbnFdsONpaQ65PtVMGHA8wH1gK3jcw6r52NxhBNLCFgPnRjN6xH+H+EY7Ybm8p2hYyME3ky/wejdjLBtHOViVO+tLQiEAb93YxIQs1NCHsHxJBLiIJC2uaKc4qLlZmQLpDjcXeulc2V4GtQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hMfU3OpQgOsoWmiYkSuBC19mVzlNztvTN1J9kPGwq14=;
+ b=keR4KIGoFA55W9CQrtegM2gFticELwNM8v7T/ScA0KX4P3x8mtAhnI03c6nL6/tyjXYu9lcqZx4dLkaZqWykDmWwUrz+ES6UTi8XH8UsTof2HMq2ug4ihDvFmChwHQ/jYh03p0CPTn0e0+Nl/CyCjLyC0Q1uUbNkvkmtH08zj+iuQJl8HdiSznIGv6wC2z1wXgfq9sOlXe9KV8ThDD/mr8FUR/BFooPzGuX3Aeu72PAdOlk3i/0x0RyDvV6Uv7s2NkxOoEN9R6Ux0lk5oX7X9dFp3OYuoeD83dbA9m+ERHYc2HAe9HJEfDkVj/1HpgJKHqVVVddYZtC+4dQIiUSCCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hMfU3OpQgOsoWmiYkSuBC19mVzlNztvTN1J9kPGwq14=;
+ b=Tvc3ctYMsIfsoqcHtvXHve0WmH0ckJJ1hd+oUJVwEkW6fVaMUODPWtGCuE3qMdiGcETjQHMrae4lhfvRR5GMBOs+3G5jnDmShdaqTUTfalaaGwO/Tb0+2i+HHxLhamT9+9HSexjoruFcQUxXemKqSo9X5AtgawdBTJqePdbkhg4uxqJ8O5yDf/H5/SJkcg80LwkkMzKh/yQLvXTZeC8qY6NmPsy69XSgMoSJUWfKdPXg9asyLLAH0V2Iixb2p1kI6DllLrpSpGpwjXOG9s7SQ2MJdOjCNAH4QkfsVIxZdthzeMjR7nTpvrBKIuLdq7c/XGpHtoVoPIcFSXcjZTSB9g==
+Received: from MN2PR14CA0008.namprd14.prod.outlook.com (2603:10b6:208:23e::13)
+ by DS7PR12MB6166.namprd12.prod.outlook.com (2603:10b6:8:99::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.7; Wed, 25 Mar
+ 2026 09:08:31 +0000
+Received: from BL6PEPF0001AB4A.namprd04.prod.outlook.com
+ (2603:10b6:208:23e:cafe::69) by MN2PR14CA0008.outlook.office365.com
+ (2603:10b6:208:23e::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9723.31 via Frontend Transport; Wed,
+ 25 Mar 2026 09:08:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BL6PEPF0001AB4A.mail.protection.outlook.com (10.167.242.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9723.19 via Frontend Transport; Wed, 25 Mar 2026 09:08:31 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
+ 2026 02:08:15 -0700
+Received: from nvidia.com (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Wed, 25 Mar
+ 2026 02:08:13 -0700
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
+ <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
+ <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>
+CC: <dev@dpdk.org>
+Subject: [PATCH 26.07 1/5] common/mlx5: query vport VHCA ID
+Date: Wed, 25 Mar 2026 10:07:53 +0100
+Message-ID: <20260325090758.42403-2-dsosnowski@nvidia.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260325090758.42403-1-dsosnowski@nvidia.com>
+References: <20260325090758.42403-1-dsosnowski@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.126.231.35]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4A:EE_|DS7PR12MB6166:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4fcfcff8-5504-4bf9-8d28-08de8a4e15dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|1800799024|376014|36860700016|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info: fBkwZv7w4PcVsnfH2avBBLrA7MffI22xIxwX5PI66m8k3YxDREQyh6kACC4OldzQAe+v7QZkBHd/lT3ew9G2A9USW7RR/MMgR7WXKLchDefEPUqmPN7/wObSsT/117lLr7nmsnXhqJa2eVReC8ct9HEjPIBieRKgFXzDu/DVkPnQMwqhnzSh+QZ17DZysKOfQ0lGdeag/jm0sD90R/fshmcc2nOOFJModvf399HlDGECMl0pINblrXMhaNB01jSFJbFRplxr1NU3GM1i2M/7onEq5p06vtlS76dw6EOiWemAT2q1b1zpiyzQPS+FGpIf9Qw4KaHNrpq8Eu+LLCSVHTsFI7Tp/vzeiV15bb6F3TXc7k6QuxTD/I/o+UkGvx5s+MUIhbGmSlRlMjHR9fR47BmG5E5JsWTl3yEAQIKH1KfAi3gwrtY0udm3ppLuF9HUYXErfSC6wkGP1PHvLOcDOOHlHdG9qjRm2jEAQt6tDDY3+4mb+bKk3/aWtgbzOJGFVAeJ0ek4ucRmG8QRryltZYa+wjYXEOLfaLvU64uj8MEl/ZWHo4dplKSFq4d265syv149Xw0ijEyhkWUhZJK0eGQAqUYDnw2aYg2CQEWJwdA8v2HhaADQxR4mEDtmDuXrd1LmdzbLeTom7QZOPeVClblFeq/P9a8ZXNWCdetDbiM6eEZEjEM7LYv/aFkPtYPz0Q/2fIehuAIzHH2ZqF1FL26Lqu987LB18eFiZ88aiijHjIAX7qPuToHWnHej3nzqHieI7z3J+oTLTny7mZmzLg==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(82310400026)(1800799024)(376014)(36860700016)(18002099003)(22082099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: KvCGOjRpHmZeTMEaWZTzNbM6DAC0s5MiI3e6SEwXW5BiJkED3gqfgrY3p66jv/AaYjz2joSBxLpt31GQYL/EuRaNNhBWt4HRUT79Al8RDdqT66wbZftQefEo0xMzW3oFGqv6Fmb0ChZxDcfOgK5EbCpZhNRG2/nQjHl409KkmF5zP+r0ts8fdmKaPoNUjv3xpAmFYx0cmUDkmeMYPx6MZvOISV50N+dEr6AkIfcv4XR1fQYdPSOVg1MvDYU5kuO/yf94jdny+xVIK5RCIwFVt+FMkl586JbGDIBBYwFpvebOMnkxo580WxMtbqxc7Mk3yEYHgt5x/ost7nL8yoIt+l+Wp6JCEyM5EDgvldS+VBAhEL/EYWc+tK4fx9d51S4cYAVd6ZEUEjzTzYpgnVYj77TKcdgSyjRSLozaMKGHO09Vxrek/OcU7ShRJqrzxuI9
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Mar 2026 09:08:31.0104 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4fcfcff8-5504-4bf9-8d28-08de8a4e15dc
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB4A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6166
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -110,250 +111,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello,
+Extend port info returned by mlx5_glue_devx_port_query()
+with VHCA ID of the device related to the IB port.
+This ID will be later used to implement source vport matching
+without E-Switch vport metadata enabled.
 
-If I understand well, you hit 2 issues while compiling a C++ app linked wit=
-h DPDK?
-Could you share the exact version of your compiler?
+Signed-off-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
+---
+ drivers/common/mlx5/linux/mlx5_glue.c | 4 ++++
+ drivers/common/mlx5/linux/mlx5_glue.h | 2 ++
+ 2 files changed, 6 insertions(+)
 
-=46or rte_bitops.h, if disabling these macros is OK for you, go with it for=
- now.
-We will need to understand what happens exactly with __RTE_BIT_OVERLOAD mac=
-ros.
-
-=46or rte_cryptodev.h, it may be hiding an issue somewhere else.
-Please could you share the exact error message?
-
-
-
-25/03/2026 07:55, Reema Sharma:
-> Hi Team,
->=20
-> Could you please review the attached DPDK patch (dpdk-24.11_patch_for_cry=
-pto.patch) and confirm whether the applied fixes are acceptable from the DP=
-DK perspective?
-> Your guidance on the correct fix, if any changes are needed, would help u=
-s proceed with CU compilation.
-> Kindly share an update at your earliest convenience.
-> Thanks & Regards,
-> Reema Sharma
-> ________________________________
-> From: Xiong, Tanghong <tanghong.xiong@intel.com>
-> Sent: Friday, March 6, 2026 3:26 PM
-> To: Zhang, Liheng <liheng.zhang@intel.com>; Reema Sharma <Reema.Sharma@ra=
-disys.com>; Liu1, Kai <kai.liu1@intel.com>
-> Cc: Prakash Durgapal <Prakash.Durgapal@radisys.com>; Pratap Rana <Pratap.=
-Rana@radisys.com>; Vijay Kumar Mahto <Vijay.Mahto@radisys.com>; Jaydipkumar=
- Dhameliya <Jaydipkumar.Dhameliya@radisys.com>
-> Subject: RE: Request for Review of Fixes Applied for DPDK 24.11 and 25.11=
- Compilation Errors
->=20
->=20
-> Thanks Liheng,
->=20
-> Just got other info that, you can contact  DPDK directly through this mai=
-l: dev@dpdk.org<mailto:dev@dpdk.org>, but the response may be slow.
->=20
->=20
->=20
-> BRs,
->=20
-> Tanghong
->=20
->=20
->=20
-> From: Zhang, Liheng <liheng.zhang@intel.com>
-> Sent: Friday, March 6, 2026 5:51 PM
-> To: Reema Sharma <Reema.Sharma@radisys.com>; Xiong, Tanghong <tanghong.xi=
-ong@intel.com>; Liu1, Kai <kai.liu1@intel.com>
-> Cc: Durgapal, Prakash <prakash.durgapal@radisys.com>; Pratap Rana <Pratap=
-=2ERana@radisys.com>; Vijay Kumar Mahto <Vijay.Mahto@radisys.com>; Jaydipku=
-mar Dhameliya <Jaydipkumar.Dhameliya@radisys.com>
-> Subject: RE: Request for Review of Fixes Applied for DPDK 24.11 and 25.11=
- Compilation Errors
->=20
->=20
->=20
-> Yes, there is a file =E2=80=9CMAINTAINERS=E2=80=9D in the DPDK root path.
->=20
-> The file list all the contactor for all dpdk libraries.
->=20
-> You can search and contact the person for crypto issue.
->=20
-> If you can=E2=80=99t find it, please let me know, I can forward to you.
->=20
->=20
->=20
-> From: Reema Sharma <Reema.Sharma@radisys.com<mailto:Reema.Sharma@radisys.=
-com>>
-> Sent: Friday, March 6, 2026 5:45 PM
-> To: Zhang, Liheng <liheng.zhang@intel.com<mailto:liheng.zhang@intel.com>>=
-; Xiong, Tanghong <tanghong.xiong@intel.com<mailto:tanghong.xiong@intel.com=
->>; Liu1, Kai <kai.liu1@intel.com<mailto:kai.liu1@intel.com>>
-> Cc: Durgapal, Prakash <prakash.durgapal@radisys.com<mailto:prakash.durgap=
-al@radisys.com>>; Pratap Rana <Pratap.Rana@radisys.com<mailto:Pratap.Rana@r=
-adisys.com>>; Vijay Kumar Mahto <Vijay.Mahto@radisys.com<mailto:Vijay.Mahto=
-@radisys.com>>; Jaydipkumar Dhameliya <Jaydipkumar.Dhameliya@radisys.com<ma=
-ilto:Jaydipkumar.Dhameliya@radisys.com>>
-> Subject: Re: Request for Review of Fixes Applied for DPDK 24.11 and 25.11=
- Compilation Errors
->=20
->=20
->=20
-> Hi Zhang, Liheng<mailto:liheng.zhang@intel.com>,
->=20
-> We have verified the behaviour on CU side and confirmed that this is not =
-caused by our code. The issue appears to be related to a DPDK bug.
->=20
-> At the moment, we do not have any contact information for the DPDK mainta=
-iners.
-> Could you please check internally and share the relevant maintainer detai=
-ls or forward this issue on behalf of Radisys?
->=20
-> Thanks & Regards,
->=20
-> Reema Sharma
->=20
-> ________________________________
->=20
-> From: Zhang, Liheng <liheng.zhang@intel.com<mailto:liheng.zhang@intel.com=
->>
-> Sent: Friday, March 6, 2026 2:49 PM
-> To: Xiong, Tanghong <tanghong.xiong@intel.com<mailto:tanghong.xiong@intel=
-=2Ecom>>; Reema Sharma <Reema.Sharma@radisys.com<mailto:Reema.Sharma@radisy=
-s.com>>; Liu1, Kai <kai.liu1@intel.com<mailto:kai.liu1@intel.com>>
-> Cc: Prakash Durgapal <Prakash.Durgapal@radisys.com<mailto:Prakash.Durgapa=
-l@radisys.com>>; Pratap Rana <Pratap.Rana@radisys.com<mailto:Pratap.Rana@ra=
-disys.com>>; Vijay Kumar Mahto <Vijay.Mahto@radisys.com<mailto:Vijay.Mahto@=
-radisys.com>>; Jaydipkumar Dhameliya <Jaydipkumar.Dhameliya@radisys.com<mai=
-lto:Jaydipkumar.Dhameliya@radisys.com>>
-> Subject: RE: Request for Review of Fixes Applied for DPDK 24.11 and 25.11=
- Compilation Errors
->=20
->=20
->=20
-> The e-mail below is from an external source. Please do not open attachmen=
-ts or click links from an unknown or suspicious origin.
->=20
-> Hi Reema
->=20
-> Looks the changes are ok, but you need verify them by compiling your code.
->=20
-> As I know, the following are the better procedures for DPDK bug fix:
->=20
->   1.  Please first confirm the error are not related to your own code bef=
-ore changing DPDK code;
->   2.  If it is real DPDK bug, you need contact the according DPDK maintai=
-ner to fix it;
->   3.  Finally DPDK maintainer will provide an official patch;
->=20
->=20
->=20
-> From: Xiong, Tanghong <tanghong.xiong@intel.com<mailto:tanghong.xiong@int=
-el.com>>
-> Sent: Friday, March 6, 2026 3:52 PM
-> To: Reema Sharma <Reema.Sharma@radisys.com<mailto:Reema.Sharma@radisys.co=
-m>>; Liu1, Kai <kai.liu1@intel.com<mailto:kai.liu1@intel.com>>; Zhang, Lihe=
-ng <liheng.zhang@intel.com<mailto:liheng.zhang@intel.com>>
-> Cc: Durgapal, Prakash <prakash.durgapal@radisys.com<mailto:prakash.durgap=
-al@radisys.com>>; Pratap Rana <Pratap.Rana@radisys.com<mailto:Pratap.Rana@r=
-adisys.com>>; Vijay Kumar Mahto <Vijay.Mahto@radisys.com<mailto:Vijay.Mahto=
-@radisys.com>>; Jaydipkumar Dhameliya <Jaydipkumar.Dhameliya@radisys.com<ma=
-ilto:Jaydipkumar.Dhameliya@radisys.com>>
-> Subject: RE: Request for Review of Fixes Applied for DPDK 24.11 and 25.11=
- Compilation Errors
->=20
->=20
->=20
-> Hello Reema,
->=20
->=20
->=20
-> Sorry for late reply, copy @Zhang, Liheng<mailto:liheng.zhang@intel.com> =
-here for comment, thanks Liheng in advance.
->=20
->=20
->=20
-> BRs,
->=20
-> Tanghong
->=20
->=20
->=20
-> From: Reema Sharma <Reema.Sharma@radisys.com<mailto:Reema.Sharma@radisys.=
-com>>
-> Sent: Friday, March 6, 2026 1:41 PM
-> To: Xiong, Tanghong <tanghong.xiong@intel.com<mailto:tanghong.xiong@intel=
-=2Ecom>>; Liu1, Kai <kai.liu1@intel.com<mailto:kai.liu1@intel.com>>
-> Cc: Durgapal, Prakash <prakash.durgapal@radisys.com<mailto:prakash.durgap=
-al@radisys.com>>; Pratap Rana <Pratap.Rana@radisys.com<mailto:Pratap.Rana@r=
-adisys.com>>; Vijay Kumar Mahto <Vijay.Mahto@radisys.com<mailto:Vijay.Mahto=
-@radisys.com>>; Jaydipkumar Dhameliya <Jaydipkumar.Dhameliya@radisys.com<ma=
-ilto:Jaydipkumar.Dhameliya@radisys.com>>
-> Subject: Re: Request for Review of Fixes Applied for DPDK 24.11 and 25.11=
- Compilation Errors
->=20
->=20
->=20
-> Hi Xiong, Tanghong<mailto:tanghong.xiong@intel.com>/ Liu1, Kai<mailto:kai=
-=2Eliu1@intel.com>,
->=20
-> Hope you are doing well.
->=20
-> I am writing to check if there is any update on the pending DPDK issue ra=
-ised in this mail.
-> Could you please share the latest status, or let me know if any additiona=
-l inputs are required from my side to help move this forward?
->=20
-> Looking forward to your response.
->=20
-> Thanks & Regards,
->=20
-> Reema Sharma
->=20
-> ________________________________
->=20
-> From: Reema Sharma
-> Sent: Wednesday, February 11, 2026 11:27 AM
-> To: Xiong, Tanghong <tanghong.xiong@intel.com<mailto:tanghong.xiong@intel=
-=2Ecom>>; Liu1, Kai <kai.liu1@intel.com<mailto:kai.liu1@intel.com>>
-> Cc: Prakash Durgapal <Prakash.Durgapal@radisys.com<mailto:Prakash.Durgapa=
-l@radisys.com>>; Pratap Rana <Pratap.Rana@radisys.com<mailto:Pratap.Rana@ra=
-disys.com>>; Vijay Kumar Mahto <Vijay.Mahto@radisys.com<mailto:Vijay.Mahto@=
-radisys.com>>; Jaydipkumar Dhameliya <Jaydipkumar.Dhameliya@radisys.com<mai=
-lto:Jaydipkumar.Dhameliya@radisys.com>>
-> Subject: Request for Review of Fixes Applied for DPDK 24.11 and 25.11 Com=
-pilation Errors
->=20
->=20
->=20
-> Hi Xiong, Tanghong<mailto:tanghong.xiong@intel.com>/ Liu1, Kai<mailto:kai=
-=2Eliu1@intel.com>,
->=20
-> While compiling the CU with DPDK 24.11 and DPDK 25.11, we encountered the=
- following two errors:
->=20
->   1.  Conflicting type definitions in the DPDK header file rte_bitops.h
->=20
-> [cid:image001.png@01DCAD92.9C6111F0]
->=20
->   1.  =E2=80=9Ctemplate with C linkage=E2=80=9D error in the DPDK header =
-file rte_cryptodev.h
->=20
-> To proceed with our CU compilation, we applied the required fixes in the =
-respective DPDK include files and generated a patch named dpdk-24.11_patch_=
-for_crypto.patch. The updated changes are included in the attached patch fi=
-le for your review.
->=20
-> Could you please review these changes from the DPDK side and confirm whet=
-her they are acceptable, or advise on the correct fix if modifications are =
-required?
->=20
-> Thanks & Regards,
-> Reema Sharma
->=20
-
-
-
-
+diff --git a/drivers/common/mlx5/linux/mlx5_glue.c b/drivers/common/mlx5/linux/mlx5_glue.c
+index a91eaa429d..56eaedf0a2 100644
+--- a/drivers/common/mlx5/linux/mlx5_glue.c
++++ b/drivers/common/mlx5/linux/mlx5_glue.c
+@@ -1263,6 +1263,10 @@ mlx5_glue_devx_port_query(struct ibv_context *ctx,
+ 		info->vport_id = devx_port.vport;
+ 		info->query_flags |= MLX5_PORT_QUERY_VPORT;
+ 	}
++	if (devx_port.flags & MLX5DV_QUERY_PORT_VPORT_VHCA_ID) {
++		info->vport_vhca_id = devx_port.vport_vhca_id;
++		info->query_flags |= MLX5_PORT_QUERY_VPORT_VHCA_ID;
++	}
+ 	if (devx_port.flags & MLX5DV_QUERY_PORT_ESW_OWNER_VHCA_ID) {
+ 		info->esw_owner_vhca_id = devx_port.esw_owner_vhca_id;
+ 		info->query_flags |= MLX5_PORT_QUERY_ESW_OWNER_VHCA_ID;
+diff --git a/drivers/common/mlx5/linux/mlx5_glue.h b/drivers/common/mlx5/linux/mlx5_glue.h
+index 81d6b0aaf9..0610e7778e 100644
+--- a/drivers/common/mlx5/linux/mlx5_glue.h
++++ b/drivers/common/mlx5/linux/mlx5_glue.h
+@@ -92,11 +92,13 @@ struct mlx5dv_port;
+ #define MLX5_PORT_QUERY_VPORT (1u << 0)
+ #define MLX5_PORT_QUERY_REG_C0 (1u << 1)
+ #define MLX5_PORT_QUERY_ESW_OWNER_VHCA_ID (1u << 2)
++#define MLX5_PORT_QUERY_VPORT_VHCA_ID (1u << 3)
+ 
+ struct mlx5_port_info {
+ 	uint16_t query_flags;
+ 	uint16_t vport_id; /* Associated VF vport index (if any). */
+ 	uint16_t esw_owner_vhca_id; /* Associated the esw_owner that this VF belongs to. */
++	uint16_t vport_vhca_id; /* VHCA ID of the function associated with the vport. */
+ 	uint32_t vport_meta_tag; /* Used for vport index match ove VF LAG. */
+ 	uint32_t vport_meta_mask; /* Used for vport index field match mask. */
+ };
+-- 
+2.47.3
 
