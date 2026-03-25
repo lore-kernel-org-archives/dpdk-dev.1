@@ -2,72 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D790109C05D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 20:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85394109C05D
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 20:20:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2DFD4406BC;
-	Wed, 25 Mar 2026 21:16:51 +0100 (CET)
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com
- [209.85.216.50]) by mails.dpdk.org (Postfix) with ESMTP id 5742A40669
- for <dev@dpdk.org>; Wed, 25 Mar 2026 21:16:48 +0100 (CET)
-Received: by mail-pj1-f50.google.com with SMTP id
- 98e67ed59e1d1-35b88a4f123so87436a91.1
- for <dev@dpdk.org>; Wed, 25 Mar 2026 13:16:48 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D6DEE4270A;
+	Wed, 25 Mar 2026 21:19:59 +0100 (CET)
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
+ [209.85.215.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 1FF57406BC
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 21:19:58 +0100 (CET)
+Received: by mail-pg1-f181.google.com with SMTP id
+ 41be03b00d2f7-c763c294cccso208329a12.1
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 13:19:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774469807;
- x=1775074607; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774469997;
+ x=1775074797; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=8KBFEqUQ8ld5oKz9eOlg/RRXRus1TZKTSLKXl0au+I8=;
- b=XDCaGeKjZOjYkWSijntv0CTlqNZW3F1KG1JRbn52fUQ+Z9r1ogZ4YBqgNlSZYfJsT1
- 7sULo6GLmSCXaXTwuRhtWKlnDQD2PHuORgWiXyFbzdIsk6QsX7pqLEgKiipJXySwtqz+
- joqAYkqudeX4T8+OT+uNjpaehF8Uvf9iFP3NuZ1rtqaWPdtSHdeauujQPEqlKpp+WhUd
- zKrK08x2lbDF2mevFNkH1z3s9luf3TAuigLmuyZQW/ugZ3aA+6Oh3/+dgHONGufB2H5S
- zqmp2EU5pK0yi5mG4JM30TOuQf3r8WO4hmzHBp9tcDaauWKQQmwykSLpSt8JkjBx33VN
- TsoQ==
+ bh=DHkPtjXCZkQ+KDwt29z3kL/D6AZpv84Cl7VcDa1c3Rs=;
+ b=zKWnCYUDWxw6gJPbhDRU8Q65AQocZz53/SyOioVx+Y/ASzqYhqOZNOMftAsMPTvnl5
+ lbqh3NjnAsdgDHHU1O6EQtDPeIYJvh7o2zh3xem/heZM8c/4JLwVq8pHhVvhKFxu8OJT
+ GVzIKNCpMBoYrNymnGuZUVjlWW5tHfxJstsyyiUvbuIjbDv/1bEXCVKQ//AjrJCZ+Yv6
+ F8EU3ZJnWDvGyl6E9ULJSG2qjFtsq35/U313NBcr/u2Tpr7P7515K3x801bn8J0iAAPU
+ mVvK+OXNWXHrFvdartj6936+w0aDrdv+7cVoVG0nhlCkpNjfRaes95tAYSLmZEIk3P0B
+ deng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774469807; x=1775074607;
+ d=1e100.net; s=20251104; t=1774469997; x=1775074797;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=8KBFEqUQ8ld5oKz9eOlg/RRXRus1TZKTSLKXl0au+I8=;
- b=GHEZtoj4z5KPUCDSZBb9EXxypTdPZZQpwmg+kVZpBSy9oAq9DYIRP+uJuFUXunf7tP
- 5ZfTMTkoQQYuY4ybIlHa5FOpJkHkiYLpO0+0f7giWbUzG3IKThf8VKxXQRs+J5oGjxYj
- i6bQrLXYBVv2YPoEh338C3qpKc/F/WdMzedd8AzLHLvUDd2c3U5QhOdNk4zSDsPVRU8J
- PGyimAT+dL4B5n+u0V027z+GTvuXndsrgf2xzNWo3Uu83BS1FotB41lfiTYszFFmOn2U
- +I/Ob0fNJFzqz41tJuOVUMHy3fYrUrYyZXhpaBzOKIjuQ2SM3j2WDzRVsuZcNPQKBoXC
- boMg==
-X-Forwarded-Encrypted: i=1;
- AJvYcCW7EP3oOeV1aQWMK1NjhLRSyfevAK6cSFR7WhDgzyFny+wfkAz5Wei1KoH7I1b0lLdIIxQ=@dpdk.org
-X-Gm-Message-State: AOJu0YwnxNrVYWLMOuJZTtpEOOP71rUCd+Hj/aBR2roN8RQUe6T9yfjE
- Ro+W6x8P6SyM9UwCH4NwQS/PE4rUy0SrANCwJ+wOQPY1/z8LUX0c19jPi/hF6VHH/Uo=
-X-Gm-Gg: ATEYQzw4GNBqQM7U6HSQctYx1uOICb+bxwbR29UqlQftAhxhOKayImfAUFCYbK80WoW
- qdMUG/Iw2+b+N1Cr+gM3cIXIPzv+8ODCVFWsORr5TrG6aTB5yWAaIDtzbojtTFGP2OwkDTpz3xy
- MHx66JjVAMz4cFk7PRygcohn7lOfWIQPat8eF/zSEij/0qz6hOC/8k1tEqSi6tsWVCoWQ9z4b+V
- 9L50nP8IZTARek2Pkh5sTcyMygft57ql5mXH15xAbmusnqEZa3PuQVVewE3Uc03hlOx6ddngeP8
- 103p1RV7h0NHPVUzSw9iHgDez70otZja0Jox7/fkcqH6SNH9Y1bnV2SdBhJxrZYHZXzs5HGjYv9
- 5aNBGnu7CWaal9HRHlbEv6/cuYoCgzvDH6EYGiLd5O3bHbp7jTAs2b6ZyD7yP0+CCbC+tH5HomY
- YjXT3kUFw0oy53hhW12WuwF7hBSxNNGdsUQws=
-X-Received: by 2002:a17:90b:1dcd:b0:35c:69c:2a12 with SMTP id
- 98e67ed59e1d1-35c0cffc5eemr4292678a91.0.1774469807428; 
- Wed, 25 Mar 2026 13:16:47 -0700 (PDT)
+ bh=DHkPtjXCZkQ+KDwt29z3kL/D6AZpv84Cl7VcDa1c3Rs=;
+ b=H5zPimSiWIEjCMVzZh8VXyaaAqaJ4pKqBhQoiHj8cF6MSMPMmtn9R7uoX213TPRnHM
+ cJRb2s3yoH7EOYSp/PsA/VK6zZh9NpslhxuaQAgo3DrXUzpDqJKrUL06+U939A9dmKkL
+ wNHciJUopewDfOUsuJXexUPAPEkioxfSnQXugGK0vtOspFf3IMFphLVU5J3I/CP0hepQ
+ /fY28HNn2VM3Fqv1W0986bTrbWMPQL5JMJwBIVr2IzLa2IBLFUCoPMu5D6Ro7phjG4kk
+ KwX5sCMBICz3WI0KE529hBVLHOcJFzHXEWpR0QW0vsldAMMg8EP1aXb0hhjOC4KdEm9S
+ cdEw==
+X-Gm-Message-State: AOJu0Yxqfr3ONQn5YknOwAJOUUPMQecNWDeymBe9WJopYC7P4VRZvbWT
+ ipH6wybxWkwKjvWc7IN9TUlBxcLNEoAGlORJNLGVL6c5BbIWM4ocq3aMkURHa9IHN3o=
+X-Gm-Gg: ATEYQzzpx7d4p2vxbq0Xe9FJw9ZWfxbTkgHfIVpAliSfmOgvJiBxHWv7NEZbb5De7s+
+ MUbOl6X5yBrHS5llw7gRkLvCerdYWiJt5uod9/jb/B9Wh0/L0OVfDxIrB56nss1q7RNEzDlOGYG
+ egRbQsUVICGt7fH18HgtbtGvQ4bR6Oba7YuEQbkfQRClq0A5yM1Mvu8fB6NnBVgpBSKjHxrHyue
+ a1PstOcL8VE7fdJ90Rp9i5sXVDPZgB3Db6imGwBVwOcKZCggi7n+6xhqBvN7ZIerRHgDMJeneHI
+ rTKesmc1jzutrv60uJjH+pQsNDn4ij8SJlmm1PFV0ptDvoADnlIiuZhCKfK2AeUMXh9PBsDY3sk
+ 9bxUTPKM/445kzIpt7o9WOEF9ySvEml7RGySKVT5pRPJPCAvoWGAxxe4q0mgTf89ozodhYBfm3C
+ QpLF632ZAU6o2Vs8SEhTubFFflvrzYbPZk108=
+X-Received: by 2002:a05:6a00:1408:b0:824:9f22:1e95 with SMTP id
+ d2e1a72fcca58-82c6e106ce1mr4643865b3a.55.1774469997082; 
+ Wed, 25 Mar 2026 13:19:57 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-35c1dd3800bsm151986a91.1.2026.03.25.13.16.44
+ d2e1a72fcca58-82c7d1e1960sm530627b3a.3.2026.03.25.13.19.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 13:16:47 -0700 (PDT)
-Date: Wed, 25 Mar 2026 13:16:37 -0700
+ Wed, 25 Mar 2026 13:19:56 -0700 (PDT)
+Date: Wed, 25 Mar 2026 13:19:47 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Dariusz Sosnowski <dsosnowski@nvidia.com>
-Cc: Aman Singh <aman.deep.singh@intel.com>, <dev@dpdk.org>, Thomas Monjalon
- <thomas@monjalon.net>, Raslan Darawsheh <rasland@nvidia.com>, "Adrian
- Schollmeyer" <a.schollmeyer@syseleven.de>
-Subject: Re: [PATCH v4 0/2] app/testpmd: assign share group dynamically
-Message-ID: <20260325131637.74f01067@phoenix.local>
-In-Reply-To: <20260325190906.68531-1-dsosnowski@nvidia.com>
-References: <20260325180255.57489-1-dsosnowski@nvidia.com>
- <20260325190906.68531-1-dsosnowski@nvidia.com>
+To: Long Li <longli@microsoft.com>
+Cc: dev@dpdk.org, weh@microsoft.com, stable@dpdk.org
+Subject: Re: [PATCH v3] net/netvsc: switch data path to synthetic on device
+ stop
+Message-ID: <20260325131947.6d20a792@phoenix.local>
+In-Reply-To: <20260325185750.1926356-1-longli@microsoft.com>
+References: <20260325185750.1926356-1-longli@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -84,53 +81,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 25 Mar 2026 20:09:04 +0100
-Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
+On Wed, 25 Mar 2026 11:57:50 -0700
+Long Li <longli@microsoft.com> wrote:
 
-> Our internal regression tests have flagged issues with shared Rx queues.
-> Specifically, issues with domain mismatches:
+> When DPDK stops a netvsc device (e.g. on testpmd quit), the data path
+> was left pointing to the VF/MANA device. If the kernel netvsc driver
+> subsequently reloads the MANA device and opens it, incoming traffic
+> arrives on the MANA device immediately, before the queues are fully
+> initialized. This causes bogus RX completion events to appear on the
+> TX completion queue, triggering a kernel WARNING in mana_poll_tx_cq().
 > 
-> 	Invalid shared rxq config: switch domain mismatch ports 0 and 3
+> Fix this by switching the data path back to synthetic (via
+> NVS_DATAPATH_SYNTHETIC) in hn_vf_stop() before stopping the VF device.
+> This tells the host to route traffic through the synthetic path, so
+> that when the MANA driver recreates its queues, no unexpected traffic
+> arrives until netvsc explicitly switches back to VF.
 > 
-> These started appearing after commit [1] which added checks
-> for globally unique share group indexes.
-> This could be worked around with --rxq-share=N option,
-> but it does not allow proper testing of all use cases [2].
+> Also update hn_vf_start() to switch the data path back to VF after the
+> VF device is started, enabling correct stop/start cycling.
 > 
-> This patchset addresses that by changing behavior of --rxq-share parameter.
-> Instead of relying on user to select proper parameter value,
-> testpmd will dynamically assign globally unique share group index
-> to each unique switch and Rx domain.
+> Both functions now use write locks instead of read locks since they
+> modify vf_vsc_switched state.
 > 
-> [1]: 8ebba91086f4 ("app/testpmd: fail on shared Rx queue switch mismatch")
-> [2]: https://inbox.dpdk.org/dev/yotjxacqrodttraqrr3r6ftut4cty66g6cjnr5ughswtatapgh@gqqkftskp3qq/
+> Fixes: dc7680e8597c ("net/netvsc: support integrated VF")
+> Cc: stable@dpdk.org
 > 
-> v4:
-> - Use short circuit return try_release_share_group().
-> 
-> v3:
-> - Use short circuit return in assign_share_group().
-> - Replace assert in assign_share_group() with error checking.
-> - Do not require optional argument with --rxq-share option.
-> - Fix typo in docs: update -> updates
-> 
-> v2:
-> - Add releasing share groups when ports are closed.
-> - Add static to share_group_slots array definition.
-> - Remove double empty line in revert commit.
-> 
-> Dariusz Sosnowski (2):
->   app/testpmd: assign share group dynamically
->   app/testpmd: revert switch domain mismatch check
-> 
->  app/test-pmd/parameters.c             |  14 +--
->  app/test-pmd/testpmd.c                | 121 ++++++++++++++++----------
->  app/test-pmd/testpmd.h                |   2 +-
->  doc/guides/testpmd_app_ug/run_app.rst |  10 +--
->  4 files changed, 86 insertions(+), 61 deletions(-)
-> 
-> --
-> 2.47.3
-> 
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
 
-Applied to next-net thanks
+Looks good applied to next-net
