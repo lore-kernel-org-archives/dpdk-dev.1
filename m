@@ -2,69 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374BA109C058
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 18:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A779109C059
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 18:51:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 81CFD41148;
-	Wed, 25 Mar 2026 19:42:45 +0100 (CET)
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
- [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id 56C004114B
- for <dev@dpdk.org>; Wed, 25 Mar 2026 19:42:44 +0100 (CET)
-Received: by mail-dy1-f172.google.com with SMTP id
- 5a478bee46e88-2c160cb021cso208517eec.1
- for <dev@dpdk.org>; Wed, 25 Mar 2026 11:42:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A7512406BC;
+	Wed, 25 Mar 2026 19:51:33 +0100 (CET)
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
+ [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id 8CF1D402CE
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 19:51:31 +0100 (CET)
+Received: by mail-dy1-f176.google.com with SMTP id
+ 5a478bee46e88-2ba9c484e5eso186646eec.1
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 11:51:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774464163;
- x=1775068963; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774464690;
+ x=1775069490; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=guZ7TYFLh/ACrDF4OnVaQZgzT8HaM7z0DhFaUJgXRv8=;
- b=yqCECNI3O4upR8xj2LlZe8lHOfPJkhr6xahLb2a93VrXpugKt7GSO0t6kGxAxFdqHE
- 5tmpOj2S77udB/3KrUHpcujxoFhQX7fUWa5F5IpoXiFR2Razd87NGTT718aBJImC+GPF
- KaxjrqDdRoLGfqduez0vfGamX2nxh0Dr4/6zraZVLPKyz1ARd3wJrIV0NyUOAApod4cD
- Zs5AxHRE1bZTgnaL3HJk7LA1kMJ4q5UdpcDKcG+KN8yP1z0Pcdrazh3uPj7aE1ecF0G1
- YTEVUHyaIJmTr+Y0CvRmojfCKcRrkfmYilm5ERsM3w5TeLjom/pmi4dKewEc1GPII49R
- uEHA==
+ bh=oBpqFts94aWLONQe2aaMD5ylbUFRPUoYYoJ4tsaIhDg=;
+ b=yFGCABOQtWhezzkQWsvwXUERWDWI+ZE6vf4THvNWpBqyz4VNBURwfCDqqMJpkPLfjZ
+ c68NLFortIDrwR87g3EswIMLjPQo6JJg6pjW36ds3Rpi3AqzWkjZw5qdM9T1G4eLL4/d
+ KOYCCm4NbjIDdmdJOm50Y818mOWf3Qrdx5rLp724XWFRKsHErJ7YwRBMdiFSINgkZjFs
+ h6QmAdjzI+IDlj3FPXbMnB2DNWo/Eyx5GlKuNExu57xi4RIRL6awaOeb75zFuWjQwbKj
+ 1+/JeBCmScRhclsfDIQa2rDpE6/IhU9uAI+YEfFZjelWD9u3oHkKkCeQtuWwhO2lHvRj
+ 68ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774464163; x=1775068963;
+ d=1e100.net; s=20251104; t=1774464690; x=1775069490;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=guZ7TYFLh/ACrDF4OnVaQZgzT8HaM7z0DhFaUJgXRv8=;
- b=RdB06PBAEl9hfhpIlEU1OqxqbK8AAVG+cxIVrh2Xco0ZVH4p7MDRIpoC6VUEQnBrzB
- o0EuXWV+DZkqoFnaeJrGHFWST/xyJXiq56DnRWfRQT4yK0G2j4lmMSIu7S+WpR4xJUpY
- TCOTE8h6trmbibVi01/kq7MRxWtmFJ74FiXXZE0ydM1wa36m6A/fhAcxXC961MNPRL87
- Mn5dWQLu0JxHgi3ewA4lFGzQPZv5KOKe5gDpZieM3yXIhmNHJ+oCUpbHZySGaLE2hzo4
- mdkXYmd972jVsEdeFP71ODJwheo3C9ldRwveDsHSEb4kT9Gb3Nc+z3JP1PKKgaNTE31C
- 6lPQ==
-X-Gm-Message-State: AOJu0Ywr/Hsnwf7LutVx/gvK1o6X4/RjO8wGDlvfETKxH4cwxOsnkDEI
- 3HOkpaf3wlBcW172xqQJnwPsbRcY5iCrlz8DLJ1hU9tVwVa0z8y8ETKnLgyq69mcauqnI+weiLQ
- dp6as
-X-Gm-Gg: ATEYQzzYV2nOEtx7JsdbB8ci/0jGTmHo/savEfh8tiVspxs0qil4aCkg6BE//8XhObo
- a7nPSIe8NkLnek3VWMyy5uR+VMo9C//0K0gYws0a9bLsRkU70+hsiBW7lycgqkUClz4s6xuIjDv
- lLAgaXhbUuddtSL8gWm9DNr1ko+XS7JmX7d1HGCMHaBk45P6HNbsbyVp7bdA0ajW5Fm9icMQJgV
- aUaC2grWQBIhAawVxR2WDS6Em9dmU93GBoMKaRjtPFkATmnR1kmtmbcish8iqFjKH/HORMGZhsV
- vWjAd5GRPBPim/D/SDcLfstzYy7JycESqChO5xMFporUKRZricaT3OfiZIystCrkIwJi4sDKkRl
- 8J5GLbeMKloS7RVLBAh2d5A3FlX9ZH3mL7qZj8hIOAZnxur69awdtxNQEJxRsa2JfAGOzuTcD31
- ZIFP3/kpLuTP6/yeOb7uhK2oF8buwHYtipO2I=
-X-Received: by 2002:a05:7301:d8a:b0:2c0:ae1b:4573 with SMTP id
- 5a478bee46e88-2c15d32bc87mr2368221eec.7.1774464163138; 
- Wed, 25 Mar 2026 11:42:43 -0700 (PDT)
+ bh=oBpqFts94aWLONQe2aaMD5ylbUFRPUoYYoJ4tsaIhDg=;
+ b=D0QSjGNtI8KO2fKbeNKvt0QnFwW4TSrgmSAsqrjkZew2jNV2hgqL77Rf7OctI0qxQj
+ NyGINWvWuZSl3UzeU65K+KjqWAWaqtyP7GJMg2VFP3oyI/VwsUw3X0i5YBl9OOaibLUl
+ IrVcNK6qNe2LmmvCubFCpoDdkGklqcORY2GnSM5g8HcOcsalH+2tT5LWMcl5RTg+wwFB
+ bHkFLrCX73wyWPuZmtEUPFuQGGQ31eF55uotrubpEoep6K3eHajaqSiijIacH4MMlARL
+ E3pL4xYZrVMXvowN0DlObN6A3QO8G0bMYVdRktyt9/siFPTU6i8sZw5AxsSPRDOTNhN5
+ txDw==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUcvsKRBRH7tqm7LAXKti8x7Oy/sMCm4O/sJmoKyrVBI3mBNFKR07L188ni6IxDrn5l4qc=@dpdk.org
+X-Gm-Message-State: AOJu0YzD27xP7z/DC0bmr4m5bHdY/6x0IVb75JA6fbP1ChqXDcKibQXK
+ yI3XXp9KoD0WBoQZZsY/ytfUKqozCqaiUHlN9uwFcRbFmm1aPrCzyzqjSy2NWk1dl+g=
+X-Gm-Gg: ATEYQzwVR9ahJw7CgAIQQb47sE5its/0QJ0WJ0RVQrV0S5NYX2ByOuwfVdV4ENM2/HT
+ cH0ul8/YIIQSJD/33lcLxDaXGo4FewhFVHeGAlE8iq4iYZ9a81r4uLJ990AvGm3bDVO42a/q20w
+ Z+z5Omv6qvQag6dX6qFpe7CKY+FhJeS5tanWOycEkowj6b3cqAwhUjombLw+f9YlxfRL0Z8Jh4F
+ RQ8h7n9mxbV30MhiG9LnMr2gQL647uQbWgZ6OcTFGVSvdk55xPKJtkatlsTPguLkMrt6jBERzX5
+ t3pyxjRrlAXU3h3vT1cM+5g19aWxTZz89j0TULw/QtR2hrHOVbO1Z8X0bvCZGliiYg94BM3ghQZ
+ EyZkxYSDU8a1F4BlQlc14UQnS59yTCu52bzwBQJlZh5QYBNPdh4a8arDW0C0xeE1zzaRYJ91r7C
+ 5uuPQMhlaG2ymQIfzpSHquzjxSo0HxZB+WdG0=
+X-Received: by 2002:a05:7300:e208:b0:2c1:16da:47e1 with SMTP id
+ 5a478bee46e88-2c15d385d01mr2341489eec.14.1774464690523; 
+ Wed, 25 Mar 2026 11:51:30 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2c16ec257b4sm386958eec.6.2026.03.25.11.42.42
+ 5a478bee46e88-2c16ee01373sm378309eec.26.2026.03.25.11.51.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 11:42:42 -0700 (PDT)
-Date: Wed, 25 Mar 2026 10:31:56 -0700
+ Wed, 25 Mar 2026 11:51:30 -0700 (PDT)
+Date: Wed, 25 Mar 2026 11:51:27 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Sriram Yagnaraman <sriram.yagnaraman@ericsson.com>
-Cc: <dev@dpdk.org>, <xavier.guillaume@ovhcloud.com>, <robin.l.lin@ericsson.com>
-Subject: Re: [PATCH v6] net/af_packet: add Rx scatter for jumbo frames
-Message-ID: <20260325103156.1742d922@phoenix.local>
-In-Reply-To: <20260324162952.2827453-1-sriram.yagnaraman@ericsson.com>
-References: <20260318094726.1284454-1-sriram.yagnaraman@ericsson.com>
- <20260324162952.2827453-1-sriram.yagnaraman@ericsson.com>
+To: Dariusz Sosnowski <dsosnowski@nvidia.com>
+Cc: Aman Singh <aman.deep.singh@intel.com>, <dev@dpdk.org>, Thomas Monjalon
+ <thomas@monjalon.net>, Raslan Darawsheh <rasland@nvidia.com>, "Adrian
+ Schollmeyer" <a.schollmeyer@syseleven.de>
+Subject: Re: [PATCH v3 1/2] app/testpmd: assign share group dynamically
+Message-ID: <20260325115127.0326795f@phoenix.local>
+In-Reply-To: <20260325180255.57489-2-dsosnowski@nvidia.com>
+References: <20260324165657.23945-1-dsosnowski@nvidia.com>
+ <20260325180255.57489-1-dsosnowski@nvidia.com>
+ <20260325180255.57489-2-dsosnowski@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -81,26 +85,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 24 Mar 2026 17:29:52 +0100
-Sriram Yagnaraman <sriram.yagnaraman@ericsson.com> wrote:
+On Wed, 25 Mar 2026 19:02:53 +0100
+Dariusz Sosnowski <dsosnowski@nvidia.com> wrote:
 
-> +/*
-> + * Copy packet data into chained mbufs when it exceeds single mbuf tailroom.
-> + * Returns 0 on success, -1 on mbuf allocation failure.
-> + */
-> +static int
-> +eth_af_packet_rx_scatter(struct rte_mempool *mb_pool, struct rte_mbuf *mbuf,
-> +		const uint8_t *data, uint32_t data_len)
+> +static void
+> +try_release_share_group(struct share_group_slot *slot)
 > +{
-> +	uint16_t len = rte_pktmbuf_tailroom(mbuf);
-> +	struct rte_mbuf *m = mbuf;
+> +	uint16_t pi;
+> +	bool group_not_used = true;
 > +
-> +	memcpy(rte_pktmbuf_mtod(mbuf, void *), data, len);
-> +	rte_pktmbuf_data_len(mbuf) = len;
+> +	/* Check if any port still uses this share group. */
+> +	RTE_ETH_FOREACH_DEV(pi) {
+> +		if (ports[pi].dev_info.switch_info.domain_id == slot->domain_id &&
+> +		    ports[pi].dev_info.switch_info.rx_domain == slot->rx_domain) {
+> +			group_not_used = false;
+> +			break;
+> +		}
+> +	}
+> +	if (group_not_used) {
+> +		slot->share_group = 0;
+> +		slot->domain_id = 0;
+> +		slot->rx_domain = 0;
+> +	}
+> +}
 
-Very minor personal preference here. I prefer avoiding using
-rte_pktmbuf_data_len() and rte_pktmbuf_pkt_len() since they are
-really macros and the use of data_len and pkt_len directly is clearer
-in code that is manipulating other mbuf fields.
-
-Applied to next-net
+Just add a return and skip the group_not_used boolean.
