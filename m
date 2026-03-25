@@ -2,78 +2,81 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1620F109E527
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 22:50:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861B0109E52C
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 22:53:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D6C140FB5;
-	Wed, 25 Mar 2026 23:50:14 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id C605340FB5;
+	Wed, 25 Mar 2026 23:53:14 +0100 (CET)
 Received: from fhigh-a1-smtp.messagingengine.com
  (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
- by mails.dpdk.org (Postfix) with ESMTP id CFF8A4067B
- for <dev@dpdk.org>; Wed, 25 Mar 2026 23:50:11 +0100 (CET)
-Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 7C324140025A;
- Wed, 25 Mar 2026 18:50:11 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-01.internal (MEProxy); Wed, 25 Mar 2026 18:50:11 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 09E0F4067B
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 23:53:13 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 8EC681400223;
+ Wed, 25 Mar 2026 18:53:12 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Wed, 25 Mar 2026 18:53:12 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1774479011;
- x=1774565411; bh=lu5UrjtpPrIC6VAUoe1Ucjpped/h7ILXM3HKoPaffxs=; b=
- dLKPggooAoweTEStu0ITAE5kLZhrVcAMKyXAsdhe0aEQVc46EwC0MMBS9nhxbiWG
- jEQE8Zdn2xANoQVERIjWE17aBQy3/Uup1nYHkFuJugaUSALqHvKkfFmQfHg2UeW2
- CMudUorI3ZemYljUQ0DJHwZHe6QbZEsMw3broJvVDVNH6328me42obfD22FjkXY/
- 0TLpaU4VoZTNQR0sF/+cC7+RCGSf3gyeK4zfvPtxFIZg586Ivm81VbfVm+YpIpoJ
- qF5bZ4aR4VSJ/wCgfJGFLUaT4Tf2EV4RYWle0ry09bX4WijOwJEnO81SYn1zuHTj
- +GOQaorEUlI6+8z3cKYWVQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1774479192;
+ x=1774565592; bh=N2QJgVou3sdF+FVQvMPeQp3LXiS5/nAAZGRjNLRzXvA=; b=
+ LxpgBm9/KVMqaJTjy36jhN2biHjOo1IaodsrSvuCFL+L8kz1GcP49ZY26fojbgen
+ QFR6xvq5Qtg3Y2F8YuOlpSFGN6Ar6PQeLAGzi4xbqyVVFIiCvt8pcM6Z/BXVryJ7
+ OI7gBikc4pqt1GStI1NPyqESnHANB12mF7O+BGUDULYN9SCQeuD/x4NIucH6Un9b
+ jfXGb0u2opUGh85n7oSebDI1iepWg55qR7n18VC9YjCLKZ9KZ1YtW5x3tf0xFbN6
+ VozwMO3XvUFxZGnF+F9cL8yNLmkWifU6DGMY4uY15JPpJmV5UkYTOwDuwDdsRzbZ
+ HVb5TPyq3RquQgxk+6XvAQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774479011; x=
- 1774565411; bh=lu5UrjtpPrIC6VAUoe1Ucjpped/h7ILXM3HKoPaffxs=; b=O
- tyzkmmv/fy9cnZKyrOvWVD5Zc2a0LMOioLNCjhMPiU4zGRdhI8EW0AirecQDiavv
- B0AOQuAByCHZcDf6A5YTgCVtVFqFbihKWm1w+4qKgjPDMmOn1Q4PwKU7qXDcdjX4
- 2gMTVifJ8XA3FPDL0GRLyYACJrg68gQJs/lhMnVZEQ+qo+svN4XMM8mb4Gm7l3UY
- dTRZX6HAlaxgP/Kj3sWoX+BfKbjJFDhBVVdSlp9/UiNKO1Xgs2cvFJb4yIlpypkA
- x70wri0GRal2t+HJc6QpyNfXT3chTzIFQVcuW2ZwUg02C+cDzRoFQOOx0wbEhIHU
- A/RaMjlYSpffTh16aOp+w==
-X-ME-Sender: <xms:o2bEaZw4zMGUPZEwivGiNZYiLRe5A1frBQLDIcF8XTTzIZVCyNk6Vg>
- <xme:o2bEaQQDz9k_TpyKdgzX9QweRt2JJiY4LK5ngX5gn7to7WMpSiql7iRsPX_gXtlRF
- 8LIIdokwBruFkhWS8Vj05ILadF7S_MvUAukemduEhQsW_euC7KgZKU>
-X-ME-Received: <xmr:o2bEaYXuc2djwXz-K-S6432xm_ik7Au9kM6gsTeoyfY6q1VAo0OcJghBKpUaNjkbPz-InllkJKTtJXFqvK5YuPvvGw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehjeduucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774479192; x=
+ 1774565592; bh=N2QJgVou3sdF+FVQvMPeQp3LXiS5/nAAZGRjNLRzXvA=; b=S
+ bif9E5qYXQG9vqtOQUXtihNu0RI4fksqhiJFSCvXLWV2aVkTVXKx+M+/e2Ak9Rg5
+ +IEY4b189CV4Ewyi7ZxO1S8blCCjpLfNbIwHRgNWhYjy4EUvxtBkL1pveOEU4mrF
+ 5bDQXuxnLDzTnnmC2SD3p8CIYTfrX9Bpc2xlGr7gyigpyseO8emXjIv3mIe1uhdJ
+ k3t3DZbKqDBwac5Y+HhiQhZmSskgAGrmdm7cqQNR3nl6NbiKLpuALzLm7YTj7INY
+ YJBM7l4XfnOHWMkC2SNhzDQvHEvhRMEwFXLuY5fzpWqmW7jkn+TokRBDbMStPBVz
+ qv9F+dOyOxc8J6UtAwFdQ==
+X-ME-Sender: <xms:WGfEabmzeRGy8B4OC3Ow9Zh04hjzxkmcKaVd4i2nhbpj2bl02afgvA>
+ <xme:WGfEaaQJbDMeLmcHtEIG9vJxWCR0uDp2oLc8uij2hupq2TgViiGskIvKdoEgnpsJI
+ NbQjpVifSE2zS2qtO2iF4euN9TUAt-8-FKYMZp3gqO3ZkK_JFw>
+X-ME-Received: <xmr:WGfEaVKGxJjpIj4ZFzXS3bd_wXFKHNpEpxeguLvbq9gVJRQDzkPjotkA3FP5LtSeaCfjNiVHan7qGOS4ERBP97p5hQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehjedvucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
- esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopegurghvihgurdhmrghrtghhrghnugesrhgvughhrghtrdgtohhmpdhrtghpthhtoh
- epphhrohgssgesihholhdruhhnhhdrvgguuh
-X-ME-Proxy: <xmx:o2bEaaYaZEYMvvCI86bHZvYoUMWLz3FgUO_xkMuPDB4bAYZ4rRUAvg>
- <xmx:o2bEaW2y2RrVI_V_oZ3YbmbirsjhhtCJJo56WI8wzJOurWNUNRlvrw>
- <xmx:o2bEaUg0EVZfoRUT2ljsCLUz4GTlgcN6s9R7sI7y8yUMni8iJTeOkQ>
- <xmx:o2bEaSYGl0TQJUBeLmayMDBqzvkzHmIU3CL4k_Ml1NWwXjAaTL5EmA>
- <xmx:o2bEadmYqB_iVldW4dHFC2g3k1Om6KA5vBUY2kYLI0jf5FAviC5auuV_>
+ frrghtthgvrhhnpeekfeehfedtgedtjeehueeutdfgleefieevkeeikeelkefflefgtdev
+ ieehheffudenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
+ eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
+ nhgvthdpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+ epshhtvghphhgvnhesnhgvthifohhrkhhplhhumhgsvghrrdhorhhgpdhrtghpthhtohep
+ sghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohepug
+ gvvhesughpughkrdhorhhgpdhrtghpthhtohepphhrrghvvggvnhdrshhhvghtthihsehi
+ nhhtvghlrdgtohhmpdhrtghpthhtohepshhhrghiqhdrfigrnhhisehinhhtvghlrdgtoh
+ hm
+X-ME-Proxy: <xmx:WGfEaYDDH6d2kEmpDAloauJ4nR9eAWx1S5Cejl6mxd92cbH_XdcQ_g>
+ <xmx:WGfEaWDQPY8glwlVMmRaKpAHEIf7y9oysxntWMDOHtaG6cC5YyOSJA>
+ <xmx:WGfEaSAjqWTliajLzwLwAOsWS8qN5TnK_WOZzc5T76-ie7NarXbsUg>
+ <xmx:WGfEaZpxKChdrTAxfL4g-3AfvgTp-4UczhR78fSl2EF2UvY1gzeuIQ>
+ <xmx:WGfEaR_TNrJKZ5Wc9ILmxMdG2Iyd1KdPuGHM12Hfd7N_sJSjgRMr64wA>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Mar 2026 18:50:10 -0400 (EDT)
+ 25 Mar 2026 18:53:11 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org, david.marchand@redhat.com, probb@iol.unh.edu
-Subject: Re: [PATCH v2 2/2] test: simplify spawning extra test processes
-Date: Wed, 25 Mar 2026 23:50:09 +0100
-Message-ID: <4029978.TLkxdtWsSY@thomas>
-In-Reply-To: <20260320161108.331745-3-bruce.richardson@intel.com>
-References: <20260319171334.1151425-1-bruce.richardson@intel.com>
- <20260320161108.331745-1-bruce.richardson@intel.com>
- <20260320161108.331745-3-bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, Praveen Shetty <praveen.shetty@intel.com>,
+ Shaiq Wani <shaiq.wani@intel.com>
+Subject: Re: [PATCH] net/idpf: fix comma operator warning
+Date: Wed, 25 Mar 2026 23:53:10 +0100
+Message-ID: <5357397.CbtlEUcBR6@thomas>
+In-Reply-To: <abLwiikMS-apNzCP@bricha3-mobl1.ger.corp.intel.com>
+References: <20260312164344.957967-1-stephen@networkplumber.org>
+ <abLwiikMS-apNzCP@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -90,14 +93,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-20/03/2026 17:11, Bruce Richardson:
-> A number of tests require secondary processes or additional primary
-> process instances, so we have common code for managing that in the test
-> binary. Simplify that code a little, in the process removing dependency
-> on procfs on FreeBSD
+12/03/2026 17:57, Bruce Richardson:
+> On Thu, Mar 12, 2026 at 09:43:44AM -0700, Stephen Hemminger wrote:
+> > Fix comma operator misuse warnings with clang compiler in idpf that
+> > was missed in previous change. Shows up  when -Wcomma enabled.
+> > 
+> > Fixes: 57560a92167a ("net/idpf: add AVX2 Tx path for split queue config")
+> > 
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> > ---
+> 
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> 
+> Yep, this was missed because the previous commit [1] was on your tree but
+> not applied to main, so missing in mine. :-(
 
-This commit deserves a bit more explanations I think,
-saying the obvious about lacking MP support on FreeBSD and resulting dead code.
+Sorry I missed this patch and did a similar one:
+https://git.dpdk.org/dpdk/commit/?id=b3b8301dee7f1fd3e6bc8c2d79fd6f6cc04a7d58
+
 
 
 
