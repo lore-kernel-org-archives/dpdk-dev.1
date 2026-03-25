@@ -2,85 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2E8109E527
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 22:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D47109E527
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 22:39:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA44A406BC;
-	Wed, 25 Mar 2026 23:33:38 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 995EA406BC;
+	Wed, 25 Mar 2026 23:39:51 +0100 (CET)
 Received: from fhigh-a1-smtp.messagingengine.com
  (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
- by mails.dpdk.org (Postfix) with ESMTP id 133B24067B;
- Wed, 25 Mar 2026 23:33:37 +0100 (CET)
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 7D67B1400233;
- Wed, 25 Mar 2026 18:33:36 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-04.internal (MEProxy); Wed, 25 Mar 2026 18:33:36 -0400
+ by mails.dpdk.org (Postfix) with ESMTP id 31C104067B
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 23:39:50 +0100 (CET)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id B31DF140024D;
+ Wed, 25 Mar 2026 18:39:49 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Wed, 25 Mar 2026 18:39:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1774478016;
- x=1774564416; bh=VUdZIINMG9md9QHMdx/BlgiMAi7LncTn7xBMDGtdnGQ=; b=
- dt/EION/Y/1EtB/62hhn7wR2iZJqUhcpVBg3FbJz4zU24IhvyAB3rz3Arzw+DySB
- HSyvdWg7oIQRHrdSVcQRV0aJPVG10rB2E6IUz+/oc/2FQksa1vRACt9NJcZKh9ce
- e4FgAdbrLYA7gaxco7jhkf6wOgatIfyWzNIGfKF0zkBNStzV8SVGFf2zd0M96Dgq
- PnNy4Tl1bx7h3M8A5bTO3Ywn1GNBzKihXVJ12frZIt+Yz444Umd/QQAjNJZoiLfs
- izSZmTfKNJMPDzGIxNyeomgn6SxgNcqmNY0952zWvbx+cXV9Z5zSKvkc0wyDZ5UB
- drkT4W5gI7s/mJrh52cGNQ==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1774478389;
+ x=1774564789; bh=ozy6U21cLezaw+z1hWeQ2/61kAOkr5dWJ50UjVVLY/w=; b=
+ X6WrVDIUmYZbQzmH+en9ar1O09ZI3zQn4f6RmLQx0te6mLcCigY9lMv2APUXfGTJ
+ JGsN6mUL9oIFQUovE4m+IYpKxwWE0G1ojNniFO3wGPsBJDEVGuSAGxW7QR4w7CNG
+ urf9d1eEr2M1U54tGkMkCul7r68vtI5YCyJoV41n519wXf46soCm61q9UHpU1yhg
+ osb8sp/mcsm+5zqX3ab95wow+aBqZeDTarNSR/Df1yTastwRhfHtcVL8PuhKmBE3
+ Q0PuwwKGMbYH7/svax6PwdrGKsTbyCNHdUpO+dqh9lDYFfTUS9FPkKhlX4rd78IB
+ LdSWLFwaUz+uuWUC5ozeZA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774478016; x=
- 1774564416; bh=VUdZIINMG9md9QHMdx/BlgiMAi7LncTn7xBMDGtdnGQ=; b=A
- rSp0dS7ubnleHtMwtEOb73w/a4kk2M6btz2pmKK2D7hX68+gSVbpWMhoRxm1cEE2
- Rig8mDmAhSj4BZSafIY2xt3XP+wGxsTYdC0/Tnb/m3TkOpInyvM7J5HoMENeqZHa
- rYdY25srhsz14ZWd7L37uwAefWvEvw85HnGsdR5bAgS4LwQqTQB8mrPYrBXLo/S7
- HWINgCdyvVxunXECS0eSfMLJ52hPjgFY7BroIS2pmQKKYmGUoJZS21JxTdvJufBG
- TbfSh3saDhSx9OrBRtui8JV4NbNrs7CYg3WdaHAXJMPj26KS01T17gSRigmQiBdn
- uYeFJdRyfJ7YYDxXe1U+A==
-X-ME-Sender: <xms:v2LEaX0AFJZqQ2F5U_ZJB9oZsjKVfLFwcN1szaxoWIsDsW7NKEbhwg>
- <xme:v2LEaQLjfQqTPjNV11COypuF6ShFXGKrc5-EZuj_Osmo0EVjpMm_rMWzd19MRO03l
- m4wVajYVjHHBBloDR_tkuohbC_b-BbZAI8aGNCA9UGCD9827sTrGQ>
-X-ME-Received: <xmr:v2LEaXzPPwdi4AdkwsAQFvTdChBS6Lz1mDXrw4WB7zcoO-X-6xQderEbXnDFCD_-z_XQSDu-DPdRAyXPnAn6ArGaMw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehieekucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774478389; x=
+ 1774564789; bh=ozy6U21cLezaw+z1hWeQ2/61kAOkr5dWJ50UjVVLY/w=; b=U
+ +wqRrV+ov9Pyw0l6wTq3z01IHNo5LlfcUk7l+QmLqGdcp9Ju2SmHkhzmgul81qLI
+ WVnmwyQUlYPozoEnXmZ7QwAorPmlUMcBPXsOJkGknyNHxK5DZI8ql2U+AHELHwuE
+ ctvDG8S2XKvgLUAoEoE9LN2UV94/aENTdXM6PwO8L6bz/LRlZbwHPZmKAnHuLkZ7
+ IsvaAvYxJtiwnX7vVr64MSMV+MhMezIqmhkrAQtGvOEH/v0P8AwSnoUGJ+W6GLzM
+ rLSAqTdtA1aBtL70zsaOKC4dPNhwTtw4pc/MW0KuFaT33Nl68IzDkDCpqv3WREyr
+ FrnqLc+rctv5IZ6BcOcvg==
+X-ME-Sender: <xms:NGTEaeUlm23SrtPQo0eyCxca-qj-rjcrZnyy9ThuOlb6h_3X3SCshQ>
+ <xme:NGTEaathyJ7m4wpIPtQM5Jyz1cqI03hqxvEmpzXcnfIHsUiXeD6Lwmh8gxAROTEnU
+ woIkAPdERK7TM6qijA3kA_luu6Rc75-8RIOc7hO-D6BT6ZUkMZ4RVM>
+X-ME-Received: <xmr:NGTEaaVBiGRNeCFaZqZwEvhfO3-452zSjkiA3E0VfeqDs4KW_DJP9gHK69bDdfyp5D-7OAslw1p3u0PT8A9Nyl1w8Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehieelucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
  leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeekpdhm
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
- htvghmshdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
- pehmrghrrghtrdhkhhgrlhhilhhisehhuhgrfigvihdrtghomhdprhgtphhtthhopehsth
- gvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphhtthhopegtfhho
- nhhtrghinhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepkhhonhhsthgrnhhtihhnrd
- hvrdgrnhgrnhihvghvseihrghnuggvgidrrhhupdhrtghpthhtohepfigrthhhshgrlhgr
- rdhvihhthhgrnhgrghgvsegrrhhmrdgtohhmpdhrtghpthhtohepshhtrggslhgvseguph
- gukhdrohhrgh
-X-ME-Proxy: <xmx:v2LEaeW6TceGjXAOwQpy5ozU6W77GGYOn7tBJduUeuVSOgR2469uZQ>
- <xmx:v2LEaXgPqyaoOjUC9o0TG6PjG3AY5WRJ3uI14OScoVWyliQUrNyKAQ>
- <xmx:v2LEaeCDRO7NiBEKJM_Auisq279qjtjZZKKGwO33Vt7CcKVlT-HDEg>
- <xmx:v2LEadv0ZfwaT5ksMMUe4Oul0aq9cDX44AZjO1cfL2J1nMiFxkvL0Q>
- <xmx:wGLEaaTqoGWNr9YvwXlLXKg1BKYq5e267h35BpSoDjW-S7pMxaQqBAiK>
+ htvghmshdrtghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhn
+ thgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhope
+ grnhgurhgvfidrrhihsggthhgvnhhkohesohhkthgvthhlrggsshdrrhhu
+X-ME-Proxy: <xmx:NGTEadnxSDYkUvck_phP7me6qVTO9VlLyAaukEBGW0N6lnzS55vsZg>
+ <xmx:NGTEaTb9TTbSBeX6hDZ2uvLuG2QCau7b0BK1CjxGSzL2LaFi5Pl0eQ>
+ <xmx:NGTEaQNim0uHxN3H-Xm6M25_tVRvaw9MLcceNSO9SN3EU_MO5z4WeQ>
+ <xmx:NGTEaQajPG0l3oErC9vntACTRx3F4AwofxPamxNzpHHVeZ7kltvm6Q>
+ <xmx:NWTEaZVFgbx_YsUmncjAPEBvHgLpzrBcERtL9ptdjOmW6rzQ5fuoIEUe>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Mar 2026 18:33:33 -0400 (EDT)
+ 25 Mar 2026 18:39:48 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org, Marat Khalili <marat.khalili@huawei.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Christophe Fontaine <cfontain@redhat.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Wathsala Vithanage <wathsala.vithanage@arm.com>, stable@dpdk.org
-Subject: Re: [PATCH v2] mbuf: fix read packet data
-Date: Wed, 25 Mar 2026 23:33:32 +0100
-Message-ID: <4378235.OBFZWjSADL@thomas>
-In-Reply-To: <20260319124329.729034-1-mb@smartsharesystems.com>
-References: <20260319084048.652493-1-mb@smartsharesystems.com>
- <20260319124329.729034-1-mb@smartsharesystems.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: Re: [PATCH] doc: remove obsolete mempool creation advice
+Date: Wed, 25 Mar 2026 23:39:46 +0100
+Message-ID: <5059612.BEx9A2HvPv@thomas>
+In-Reply-To: <8f5e4d96-2e8b-43f9-bfe8-c79095813352@oktetlabs.ru>
+References: <20260319091300.652853-1-mb@smartsharesystems.com>
+ <abvmHkNQ8s_i38pB@bricha3-mobl1.ger.corp.intel.com>
+ <8f5e4d96-2e8b-43f9-bfe8-c79095813352@oktetlabs.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
@@ -97,33 +91,26 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-19/03/2026 13:43, Morten Br=C3=B8rup:
-> The sum of offset + length, both 32 bit unsigned integers, could wrap
-> around, causing comparisons to give the wrong result.
-> This was fixed by using 64 bit instead of 32 bit for calculating the sum.
+20/03/2026 06:44, Andrew Rybchenko:
+> On 3/19/26 3:03 PM, Bruce Richardson wrote:
+> > On Thu, Mar 19, 2026 at 09:13:00AM +0000, Morten Br=C3=B8rup wrote:
+> >> The descriptions for the mempool creation functions contained advice f=
+or
+> >> choosing the optimum (in terms of memory usage) number of elements and
+> >> cache size.
+> >> The advice was based on implementation details, which was changed long
+> >> ago, making the advice completely irrelevant.
+> >>
+> >> This obsolete advice was removed.
+> >>
+> >> Also fixed a copy-paste bug in the rte_mempool_calc_obj_size() function
+> >> description.
+> >>
+> >> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+> >> ---
+> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 >=20
-> Note:
-> When the branch is not taken for the initial "if ((uint64_t)off + len >
-> rte_pktmbuf_pkt_len(m))" comparison, the sum is known to not exceed the
-> maximum possible value of rte_pktmbuf_pkt_len(m), UINT32_MAX, and
-> following sum calculations can proceed using 32 bit.
->=20
-> Also, fixed a related bug in an mbuf test case:
-> It expected reading a length of UINT_MAX from a non-zero offset to not
-> fail.
-> And due to the offset+length wraparound bug, the read operation did not
-> fail.
-> This test case was updated to expect the read operation to fail.
->=20
-> Fixes: b84110e7baa2 ("mbuf: add function to read packet data")
-> Fixes: 7b295dceea07 ("test/mbuf: add unit test cases")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
-Tested-by: Marat Khalili <marat.khalili@huawei.com>
+> Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
 
 Applied, thanks.
 
