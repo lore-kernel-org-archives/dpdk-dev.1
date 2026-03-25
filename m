@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1B6106B504
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 20:45:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2DC6106B504
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 20:46:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8772B42794;
-	Wed, 25 Mar 2026 21:45:57 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9498C42793;
+	Wed, 25 Mar 2026 21:46:00 +0100 (CET)
 Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com
- [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id F2D5B42790
- for <dev@dpdk.org>; Wed, 25 Mar 2026 21:45:54 +0100 (CET)
+ [209.85.221.45]) by mails.dpdk.org (Postfix) with ESMTP id 1CCA842793
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 21:45:57 +0100 (CET)
 Received: by mail-wr1-f45.google.com with SMTP id
- ffacd0b85a97d-439fe4985efso153710f8f.3
- for <dev@dpdk.org>; Wed, 25 Mar 2026 13:45:54 -0700 (PDT)
+ ffacd0b85a97d-439c6fc2910so154482f8f.0
+ for <dev@dpdk.org>; Wed, 25 Mar 2026 13:45:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1774471554; x=1775076354; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1774471557; x=1775076357; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=I6WKXZA4MPJgBwk+2Nivgk+zA3/11IWj2s+KQ25fULw=;
- b=XdS6Bu5bcRwDexYY0Gn4jOB6E36x2P38xRL9DF7pX9U8hLmdcKG3kW/f4HTBqXUiph
- ADlZ2Za5BgaQgA6bu+Yzn/L2PUQzkgTTHDJVGjnKL/K06tEtrQrCIzJ+Ea3uDszw7439
- fu2N79TL+E1FSMIhi1OwyJICzN9vjWMgrnBB8ZH9EOCCPOh734BoxFVv6dF/M1l8L+K4
- aUiYbzbGAo7I8oDn88IDYvogWvmTPMddrPEZ9Q7OC0plNRBvY3QmPxcqMlv+kiCIZykB
- 4zYzDNkRtLmHWqmdfzzHh5cTHbyFxyassblPfogV7+Shsoy9M8+kfyKysP+ZXmd/um8V
- ooxg==
+ bh=ZqZ2pdiMt3RFZD96jxZAp9eTIZgtkiXnR3hP/erw2I4=;
+ b=PE7mbmEkc4qkF1NYfXP88k5V34PDlnCu4Rr+Wz9ZIpu5alKIoukdzZcxOl2iSV0bN9
+ ZgKuiyoIFC9EKOyosHBU5B29waRdBpJWt5xByrjU1MVyjFGm0Dli4BXFjesucX6xIxOb
+ iiL9vlQBJV1GKztyUBTCeEMFVMiWyItj3HuEgmRTHVymrtDhaV2W6lcXcOLRqXbYzier
+ ivw+/PrhQgnyz8370A1xVt+lthnkbIyJioOSJDhcl0OCwC4nCvhDRA3BUWe+7f+hXvAD
+ y/6xc6TNxLEZsLGMBg04azzKV6uh+ZIvI5ghLbISmAu1AgAdQhdzx9qVwNHmn/47KAn6
+ Jolw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774471554; x=1775076354;
+ d=1e100.net; s=20251104; t=1774471557; x=1775076357;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=I6WKXZA4MPJgBwk+2Nivgk+zA3/11IWj2s+KQ25fULw=;
- b=jkryJmV3+AU407ixZJfat8GSah+1Df0kPfY2RLMb7aeDbhmJoTgscIUKG/o/8x2UZq
- CMR3OxGLsf6US5F7X2rsc3HBbko9WS2D8jl+etxMbeCyo1BV+xrjumP5hRdPuBGt8KAS
- HF4BG+hpx1Sx0WODbjC6jhzpss+7MYyjyh7VFkelsIMSEaOx46j7b8s/Wz3+MZspYNDd
- mzYJ6jITf+uKl70JiKr+AA+1RthaFqBCVP644KsgBI3h1xPGXUdWhfChZhhV4T39Tw9V
- 3HKYz9uhY9ugrAJPpfKsSLN44Zi38cCZL+qpleQNj2S31O5jxUQUE2U30j6L2hlLYI4m
- 32cw==
-X-Gm-Message-State: AOJu0YyImpvkJvOgTAW0m0CMAoZRwprt0jsS38AoKNCG1jDDHvRZqTe/
- MdXQLdyiU9GgEkYc/zvMyGXB9W4VZ1CH3Zqm7pHzvDKn0kG9V3Cb8iR1gjU2ZevC
-X-Gm-Gg: ATEYQzzkc7gU2IDHIZPML4ddycn2h6Ofyb6ubYbdXxhokzUDldZZrwr45n8ekE6ZFLd
- l49DV+agLwJhAhCm7zWep8NQAqve5lNvZi0l7GybvS6olsk/gsatIGGDjmeoh9+XDHHDaoNM96M
- 7brd+xV2YTwE9/KtCAzaMS8uhdLXxPCcpU4nHVmLpOJ8hUkX2OhfXUlh2kbgdiXH7MDkEJuuDiL
- LwKUJBXdAVb7vwcA+kezTMdpB2YtI5MfsBzUMS2yI1Vg9HSOYxA+eXFPaExRYigcbSpGqeZ0tUF
- E1vyBcUuvWEW7xlQnb789Qx08mlfsPmBGWA+9+hc1pPp/3EPyegSfIXXhCZC5muwaqdRglUW0+H
- xxaLXZgttAW6gM12wXqxSLI24J9zV7VqwW07rOQfQwAEOPU4KRFHCYG3sa94orGnw/sSz2TxOLX
- sMPApIBeel9lmqga9OykzyNlwhY0E=
-X-Received: by 2002:a05:6000:2287:b0:439:cb5f:8395 with SMTP id
- ffacd0b85a97d-43b889a8773mr6962358f8f.16.1774471554376; 
- Wed, 25 Mar 2026 13:45:54 -0700 (PDT)
+ bh=ZqZ2pdiMt3RFZD96jxZAp9eTIZgtkiXnR3hP/erw2I4=;
+ b=c6MQzxiqehwhukooGqbQJb2I3HGFCdwg7l+xyLS4JouofbqXrw3MNOtVs7V24Lrl3D
+ nxR6OQK2WPUWEaukpQaN6E3MF8sTbyfkNWT1MU8Co4doXBBEQl7oXFPTPSYZ+ldm0ke1
+ gBcxgpecf7Pq+DmreBxw5WsL/oYUyEO1iuxzhNPgYPwozcSskgNegkfeUxcjV3SF1BM7
+ gr/yfX0jW/jfR6JgUgT6J8d41BVbdZ9ApDIrBOsrXrchfisWMJbgDAi8rrhJsb75bAo1
+ +Weg5b3p20/Pcs9u3hEF3GnxyM/f3KJesi0uCzFZyxTejNmsXvAcupnz4uk3zkbDtcgx
+ GsMw==
+X-Gm-Message-State: AOJu0YxoPk8MxP/R/b6s2fv8FZwTLy/uwiLkwZbE8Chp/9Lu5dRONSQy
+ JnyXtctbxnoms/gB5Fmt2o3UKjqjsmGMDKfDEDDUBDIVZvPtTCcbBqhLRvzs4zKz
+X-Gm-Gg: ATEYQzyVa+/CQ4T+9M9frDiREzswp3Ms5eFH/iEBWfkBgN611iiretwrus5M6MR4/Lt
+ teME74yzXJQUx8Do8n7C93ZQmNmo77xz5Ogtuv5txaihj2ltjZMkmAGy5ytAmo0eEp0w7Rxe9B8
+ VWuvi4g54XwXiBzu0RYMITMnpGm2c3emgYKQn5uHLyfLr9uizYrzWeP6JFX6YBcHbYqO98Fxggw
+ QA4e6dkmRyJG1eaWDbS344aKurmK+Iil4OkVbZIh35aw6i2w0P8S6zJ5dUaAGoEG5geyj/Ke7xs
+ tOvk9TO+sx7a8nfyNRM1VXM94KcL8zsZUt/HVMpZR5I4BGVHVNWfBn8DdZSp6KXlKDB5eaUQwdh
+ 4ySfjk0FSQHbVSocjR+9kzokbc1RuSiY/cRrrjbM2n77Z6LvUfmENNZeM2+NtmW2H/hPIB9++C5
+ mI+iydBIvMB9cHxvdB
+X-Received: by 2002:a5d:6449:0:b0:43b:8fa4:1953 with SMTP id
+ ffacd0b85a97d-43b8fa41ab0mr3604498f8f.11.1774471556616; 
+ Wed, 25 Mar 2026 13:45:56 -0700 (PDT)
 Received: from freepad.. ([2a01:e0a:6f:bdf0:224a:2b64:3d43:500c])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43b919df903sm2357006f8f.30.2026.03.25.13.45.53
+ ffacd0b85a97d-43b91942f24sm2558404f8f.11.2026.03.25.13.45.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 25 Mar 2026 13:45:53 -0700 (PDT)
+ Wed, 25 Mar 2026 13:45:56 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: hemant.agrawal@nxp.com, stephen@networkplumber.org,
  Maxime Leroy <maxime@leroys.fr>, stable@dpdk.org
-Subject: [PATCH v4 01/17] net/dpaa2: fix queue block memory leak on port close
-Date: Wed, 25 Mar 2026 21:45:28 +0100
-Message-ID: <20260325204544.101444-2-maxime@leroys.fr>
+Subject: [PATCH v4 02/17] net/dpaa2: fix Rx error queue memory leaks
+Date: Wed, 25 Mar 2026 21:45:29 +0100
+Message-ID: <20260325204544.101444-3-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260325204544.101444-1-maxime@leroys.fr>
 References: <20260306133035.179709-1-maxime@leroys.fr>
@@ -82,47 +82,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Commit ae2661c3ea2d ("net/dpaa2: fix queue free cleanup") added
-priv->rx_vq[i] = NULL inside the cleanup loop. This NULLs rx_vq[0]
-on the first iteration, so the subsequent rte_free(priv->rx_vq[0])
-becomes rte_free(NULL) — a no-op — leaking the entire mc_q block
-(all RX + TX + TX conf queue structs) on every port close.
+The rx_err_vq is allocated separately with rte_zmalloc() in
+dpaa2_alloc_rx_tx_queues(), but is never properly freed in two paths:
 
-Save the base pointer before the loop and free that instead.
+1. On port close: dpaa2_free_rx_tx_queues() only frees the q_storage
+contents via dpaa2_queue_storage_free() — the dpaa2_queue struct itself
+is never freed, leaking memory on every port close.
+
+2. On allocation error: the fail: path frees the error queue's
+   q_storage but never frees the rx_err_vq struct itself, which was
+   separately allocated with rte_zmalloc(). This has been missing
+   since the error queue was first introduced.
+
+Add the missing rte_free() calls and NULL assignments in both paths.
+
+Also replace the DPAAX_RX_ERROR_QUEUE_FLAG check with a direct
+priv->rx_err_vq NULL check, which is safe because rx_err_vq is
+zero-initialized and only set when the flag is active. This avoids a
+NULL dereference if rx_err_vq allocation itself fails and also
+simplifies the cleanup in dpaa2_free_rx_tx_queues() for consistency.
+
+As a defensive measure, also add a NULL guard to the
+dpaa2_queue_storage_free() macro to prevent NULL pointer dereference
+from callers in error paths.
 
 Fixes: 46d02eeaaeb8 ("net/dpaa2: fix queue freeing")
+Fixes: 4690a6114ff6 ("net/dpaa2: enable error queues optionally")
 Cc: stable@dpdk.org
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 ---
- drivers/net/dpaa2/dpaa2_ethdev.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h | 16 +++++++++-------
+ drivers/net/dpaa2/dpaa2_ethdev.c        |  8 ++++++--
+ 2 files changed, 15 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+index 10bc191645..e625a5c035 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+@@ -223,13 +223,15 @@ struct swp_active_dqs {
+ 
+ #define dpaa2_queue_storage_free(q, num) \
+ ({ \
+-	int i; \
+-	\
+-	for (i = 0; i < (num); i++) { \
+-		if ((q)->q_storage[i]) { \
+-			dpaa2_free_dq_storage((q)->q_storage[i]); \
+-			rte_free((q)->q_storage[i]); \
+-			(q)->q_storage[i] = NULL; \
++	if (q) { \
++		int i; \
++		\
++		for (i = 0; i < (num); i++) { \
++			if ((q)->q_storage[i]) { \
++				dpaa2_free_dq_storage((q)->q_storage[i]); \
++				rte_free((q)->q_storage[i]); \
++				(q)->q_storage[i] = NULL; \
++			} \
+ 		} \
+ 	} \
+ })
 diff --git a/drivers/net/dpaa2/dpaa2_ethdev.c b/drivers/net/dpaa2/dpaa2_ethdev.c
-index b3a79f18d3..cef819650b 100644
+index cef819650b..eb8333458e 100644
 --- a/drivers/net/dpaa2/dpaa2_ethdev.c
 +++ b/drivers/net/dpaa2/dpaa2_ethdev.c
-@@ -661,6 +661,9 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
+@@ -620,9 +620,11 @@ dpaa2_alloc_rx_tx_queues(struct rte_eth_dev *dev)
+ 		priv->rx_vq[i--] = NULL;
+ 	}
  
- 	/* Queue allocation base */
- 	if (priv->rx_vq[0]) {
-+		/* Save base pointer before the loop NULLs rx_vq[] entries */
-+		void *mc_q = priv->rx_vq[0];
-+
- 		/* cleaning up queue storage */
- 		for (i = 0; i < priv->nb_rx_queues; i++) {
- 			dpaa2_q = priv->rx_vq[i];
-@@ -691,8 +694,7 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
+-	if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
++	if (priv->rx_err_vq) {
+ 		dpaa2_q = priv->rx_err_vq;
+ 		dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
++		rte_free(dpaa2_q);
++		priv->rx_err_vq = NULL;
+ 	}
+ 
+ 	rte_free(mc_q);
+@@ -688,9 +690,11 @@ dpaa2_free_rx_tx_queues(struct rte_eth_dev *dev)
+ 				priv->tx_conf_vq[i] = NULL;
+ 			}
+ 		}
+-		if (priv->flags & DPAAX_RX_ERROR_QUEUE_FLAG) {
++		if (priv->rx_err_vq) {
+ 			dpaa2_q = priv->rx_err_vq;
+ 			dpaa2_queue_storage_free(dpaa2_q, RTE_MAX_LCORE);
++			rte_free(dpaa2_q);
++			priv->rx_err_vq = NULL;
  		}
  
  		/*free memory for all queues (RX+TX) */
--		rte_free(priv->rx_vq[0]);
--		priv->rx_vq[0] = NULL;
-+		rte_free(mc_q);
- 	}
- }
- 
 -- 
 2.43.0
 
