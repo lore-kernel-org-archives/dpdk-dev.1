@@ -2,81 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59D47109E527
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 22:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CD4109E528
+	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 22:48:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 995EA406BC;
-	Wed, 25 Mar 2026 23:39:51 +0100 (CET)
-Received: from fhigh-a1-smtp.messagingengine.com
- (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
- by mails.dpdk.org (Postfix) with ESMTP id 31C104067B
- for <dev@dpdk.org>; Wed, 25 Mar 2026 23:39:50 +0100 (CET)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.phl.internal (Postfix) with ESMTP id B31DF140024D;
- Wed, 25 Mar 2026 18:39:49 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Wed, 25 Mar 2026 18:39:49 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id E2D9A4279B;
+	Wed, 25 Mar 2026 23:48:53 +0100 (CET)
+Received: from fout-a5-smtp.messagingengine.com
+ (fout-a5-smtp.messagingengine.com [103.168.172.148])
+ by mails.dpdk.org (Postfix) with ESMTP id 5ABA64067B;
+ Wed, 25 Mar 2026 23:48:52 +0100 (CET)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.phl.internal (Postfix) with ESMTP id CB4D1EC0009;
+ Wed, 25 Mar 2026 18:48:51 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Wed, 25 Mar 2026 18:48:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1774478389;
- x=1774564789; bh=ozy6U21cLezaw+z1hWeQ2/61kAOkr5dWJ50UjVVLY/w=; b=
- X6WrVDIUmYZbQzmH+en9ar1O09ZI3zQn4f6RmLQx0te6mLcCigY9lMv2APUXfGTJ
- JGsN6mUL9oIFQUovE4m+IYpKxwWE0G1ojNniFO3wGPsBJDEVGuSAGxW7QR4w7CNG
- urf9d1eEr2M1U54tGkMkCul7r68vtI5YCyJoV41n519wXf46soCm61q9UHpU1yhg
- osb8sp/mcsm+5zqX3ab95wow+aBqZeDTarNSR/Df1yTastwRhfHtcVL8PuhKmBE3
- Q0PuwwKGMbYH7/svax6PwdrGKsTbyCNHdUpO+dqh9lDYFfTUS9FPkKhlX4rd78IB
- LdSWLFwaUz+uuWUC5ozeZA==
+ :references:reply-to:subject:subject:to:to; s=fm1; t=1774478931;
+ x=1774565331; bh=J4aYS0aHVCnBC5L+MImsikpk08tN7IGO0AEkS89YdwM=; b=
+ DVvwkN54bYA2wPdCNnMNfG7Rt7ykgV0yD/BFCPDAwRkSQ4vzJPWMyKNd5G2TcfKD
+ pQWWXoojpOpbOjrXKzTHJBtE3pff6xNN19NHDrzpDmgnRyi365KCcR3W9EtIxVEP
+ EOypYCJRvrTc5MbyGw5901aPgoPSK2Ond52f3KEDraTLHDIRnYe5gfhYDrXRBd2h
+ sjljFMoD56nGf5vkMKmGID9xiHIgbqA8IzAENqYn/f6+UZ9IN+4MAhnBKJo7X0+l
+ b49L+kejiHmynXf2RbOhuBYpAohhGky6NMe+SOT1wB2YUFjsOQShmF9a2yWlotMA
+ ftKXYfz//tBb1tipzREjSg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774478389; x=
- 1774564789; bh=ozy6U21cLezaw+z1hWeQ2/61kAOkr5dWJ50UjVVLY/w=; b=U
- +wqRrV+ov9Pyw0l6wTq3z01IHNo5LlfcUk7l+QmLqGdcp9Ju2SmHkhzmgul81qLI
- WVnmwyQUlYPozoEnXmZ7QwAorPmlUMcBPXsOJkGknyNHxK5DZI8ql2U+AHELHwuE
- ctvDG8S2XKvgLUAoEoE9LN2UV94/aENTdXM6PwO8L6bz/LRlZbwHPZmKAnHuLkZ7
- IsvaAvYxJtiwnX7vVr64MSMV+MhMezIqmhkrAQtGvOEH/v0P8AwSnoUGJ+W6GLzM
- rLSAqTdtA1aBtL70zsaOKC4dPNhwTtw4pc/MW0KuFaT33Nl68IzDkDCpqv3WREyr
- FrnqLc+rctv5IZ6BcOcvg==
-X-ME-Sender: <xms:NGTEaeUlm23SrtPQo0eyCxca-qj-rjcrZnyy9ThuOlb6h_3X3SCshQ>
- <xme:NGTEaathyJ7m4wpIPtQM5Jyz1cqI03hqxvEmpzXcnfIHsUiXeD6Lwmh8gxAROTEnU
- woIkAPdERK7TM6qijA3kA_luu6Rc75-8RIOc7hO-D6BT6ZUkMZ4RVM>
-X-ME-Received: <xmr:NGTEaaVBiGRNeCFaZqZwEvhfO3-452zSjkiA3E0VfeqDs4KW_DJP9gHK69bDdfyp5D-7OAslw1p3u0PT8A9Nyl1w8Q>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehieelucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774478931; x=
+ 1774565331; bh=J4aYS0aHVCnBC5L+MImsikpk08tN7IGO0AEkS89YdwM=; b=E
+ xhjgZ/6G5NcLgAf1j/k/469bsErlITBW8jAKmkTPS58iOFIonH2qn7PL0lr2lMC1
+ aIXgWR7n4nIUj0VZFCEL6OPQi8QApTnrIjhiWRpwdyl/SCSPqmYL8HW+5tPDeR/M
+ FlqG9GzJOlW+AeBmG/tzdBjeBRAoW9LsYayBJWslU0jsCFdsRetO1H3L4DLNZyLU
+ ylnuIzmoQAw0GQ4rtyQGAaswUNiUEz+Q1BIbtIJepClCBGkV5tLAtXB42B/rCcvC
+ MLZt1RLR4j6zpxuLzM+Nm/Hx2wshvGV37Qu5HfYKcwgdRny455jISjD3Ro+lS4EV
+ /tr4/eJxG81Kh5egPtyzg==
+X-ME-Sender: <xms:U2bEaSi2RM891EgoyXDlGY_iNgFc1jfnxqySXW3cvUf20zsrsBq4RA>
+ <xme:U2bEaWvAOpCUG9Voy5n5sG3iT4eSonwfJMb8OaUOv_Ru-wmX1ZGUkTIeAW-Y-tRKQ
+ r8cdWX3B0mygVTBVHvWz29KNik8LGdlRV8KKrN8HuImk5HaKAjZ>
+X-ME-Received: <xmr:U2bEaT5qS6d6qPBL-0NOOwfghzrwXhQsgQbU9HeZwXHSaPwGfekF1A26rePyKQIbG53K9nF00b5urCUOE1X69G1EpA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehjeduucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeegtddtleejjeegffekkeektdejvedtheevtdekiedvueeuvdeiuddv
- leevjeeujeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmsgesshhmrghrthhshhgrrhgvshihsh
- htvghmshdrtghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonhesihhn
- thgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhope
- grnhgurhgvfidrrhihsggthhgvnhhkohesohhkthgvthhlrggsshdrrhhu
-X-ME-Proxy: <xmx:NGTEadnxSDYkUvck_phP7me6qVTO9VlLyAaukEBGW0N6lnzS55vsZg>
- <xmx:NGTEaTb9TTbSBeX6hDZ2uvLuG2QCau7b0BK1CjxGSzL2LaFi5Pl0eQ>
- <xmx:NGTEaQNim0uHxN3H-Xm6M25_tVRvaw9MLcceNSO9SN3EU_MO5z4WeQ>
- <xmx:NGTEaQajPG0l3oErC9vntACTRx3F4AwofxPamxNzpHHVeZ7kltvm6Q>
- <xmx:NWTEaZVFgbx_YsUmncjAPEBvHgLpzrBcERtL9ptdjOmW6rzQ5fuoIEUe>
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
+ esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
+ thhopehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepuggrvhhiugdrmhgrrh
+ gthhgrnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehprhhosggssehiohhlrdhu
+ nhhhrdgvughupdhrtghpthhtoheprghnrghtohhlhidrsghurhgrkhhovhesihhnthgvlh
+ drtghomh
+X-ME-Proxy: <xmx:U2bEaSNgpZVIsGVIOlmyz-2lFVnFiQ26KSSablyvyqJvPlttOaM8xg>
+ <xmx:U2bEaRswg6y_Tawc0TdXnfJJjxIwSLyWf3Q2PBZjAY2LSIvWZTV8HA>
+ <xmx:U2bEaVbcJ6Nde0fjFTPKCFcxs6JqnvGDqLX3gqzG6ZjMDQ9tPVJiYQ>
+ <xmx:U2bEaTyLPglSxJLFFvhKkgdm5RaUH98rM6etUyt2StzmpOf5XRDyPA>
+ <xmx:U2bEabv_hUpdED4_VpMCorruBsoxtejGSjD3vGXpyXbD39WDgYjseFtH>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Mar 2026 18:39:48 -0400 (EDT)
+ 25 Mar 2026 18:48:50 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: Bruce Richardson <bruce.richardson@intel.com>, dev@dpdk.org,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: Re: [PATCH] doc: remove obsolete mempool creation advice
-Date: Wed, 25 Mar 2026 23:39:46 +0100
-Message-ID: <5059612.BEx9A2HvPv@thomas>
-In-Reply-To: <8f5e4d96-2e8b-43f9-bfe8-c79095813352@oktetlabs.ru>
-References: <20260319091300.652853-1-mb@smartsharesystems.com>
- <abvmHkNQ8s_i38pB@bricha3-mobl1.ger.corp.intel.com>
- <8f5e4d96-2e8b-43f9-bfe8-c79095813352@oktetlabs.ru>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org, stable@dpdk.org, david.marchand@redhat.com,
+ probb@iol.unh.edu, Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v2 1/2] test: fix failing tests on FreeBSD
+Date: Wed, 25 Mar 2026 23:48:49 +0100
+Message-ID: <6520037.1IzOArtZ34@thomas>
+In-Reply-To: <20260320161108.331745-2-bruce.richardson@intel.com>
+References: <20260319171334.1151425-1-bruce.richardson@intel.com>
+ <20260320161108.331745-1-bruce.richardson@intel.com>
+ <20260320161108.331745-2-bruce.richardson@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -91,28 +93,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-20/03/2026 06:44, Andrew Rybchenko:
-> On 3/19/26 3:03 PM, Bruce Richardson wrote:
-> > On Thu, Mar 19, 2026 at 09:13:00AM +0000, Morten Br=C3=B8rup wrote:
-> >> The descriptions for the mempool creation functions contained advice f=
-or
-> >> choosing the optimum (in terms of memory usage) number of elements and
-> >> cache size.
-> >> The advice was based on implementation details, which was changed long
-> >> ago, making the advice completely irrelevant.
-> >>
-> >> This obsolete advice was removed.
-> >>
-> >> Also fixed a copy-paste bug in the rte_mempool_calc_obj_size() function
-> >> description.
-> >>
-> >> Signed-off-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
-> >> ---
-> > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
->=20
-> Acked-by: Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+20/03/2026 17:11, Bruce Richardson:
+>  test_mp_secondary(void)
+>  {
+> -	printf("mp_secondary not supported on Windows, skipping test\n");
+> +	printf("Multiprocess support on present on Linux, skipping test\n");
 
-Applied, thanks.
-
+There is a typo here.
 
 
