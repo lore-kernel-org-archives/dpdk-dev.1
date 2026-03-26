@@ -2,63 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE30106F31D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 10:25:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 854BB106F31D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 10:25:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4C80C42D76;
-	Thu, 26 Mar 2026 11:25:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 1522E42D87;
+	Thu, 26 Mar 2026 11:25:43 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4507242D78
- for <dev@dpdk.org>; Thu, 26 Mar 2026 11:25:38 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 6DA48402B5
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 11:25:41 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774520737;
+ s=mimecast20190719; t=1774520741;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=V6u3n+leO+Ibr1KvyyZ+EQlp7ZD6Xh9UW75lunVAngM=;
- b=ZJjTNu0hXdvCJFudLFvtcpx3tGgWZyID0wi+kCQw3QneQJ8+8ZvKcQzoQOx6a4A3CrgA+E
- lhQbf6LmrutJUBD8mlGUUF1CSvJE5AAbkyiGaH4QxcMOAhjg0cROkB73k4jDe4UabMQD0J
- n1F4AhfXvR8qkAG3mmZ9qlXGki2+270=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=xFOlTml8zKflMPrKNwgmENRA6vasT/wsbyRe4tnQlxY=;
+ b=JYtXix+cBn4LDB/663uFeF5kkqJf47xYYGaJS/VofmzW6xLV0dtWGDOlB5dnRI+nsS/Z8v
+ 4Id2eh7s9v8pGw9RTzNlNChzyi0kNijizLAs64GVVK/CFP3lyuazhtjM4yAKPZCiJ5kT1e
+ OUKhtzp1/LK7nNbfKHTUo6dp51wX3Wg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-413-CbN3WJvuPbOyy578o6sklA-1; Thu,
- 26 Mar 2026 06:25:32 -0400
-X-MC-Unique: CbN3WJvuPbOyy578o6sklA-1
-X-Mimecast-MFC-AGG-ID: CbN3WJvuPbOyy578o6sklA_1774520730
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-160-lXi1RHJyMSGaNUDy4AW7Lw-1; Thu,
+ 26 Mar 2026 06:25:37 -0400
+X-MC-Unique: lXi1RHJyMSGaNUDy4AW7Lw-1
+X-Mimecast-MFC-AGG-ID: lXi1RHJyMSGaNUDy4AW7Lw_1774520736
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 1878618002E9; Thu, 26 Mar 2026 10:25:30 +0000 (UTC)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 8AF6D1944DD9; Thu, 26 Mar 2026 10:25:35 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.33.173])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 7184B3000223; Thu, 26 Mar 2026 10:25:25 +0000 (UTC)
+ by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id D56241800671; Thu, 26 Mar 2026 10:25:32 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
  Robin Jarry <rjarry@redhat.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Maxime Leroy <maxime@leroys.fr>, Parav Pandit <parav@nvidia.com>,
- Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
- Nikhil Agarwal <nikhil.agarwal@amd.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>,
- Tomasz Duszynski <tduszynski@marvell.com>,
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
- Wei Hu <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>
-Subject: [PATCH v2 6/7] bus: factorize device selection
-Date: Thu, 26 Mar 2026 11:24:22 +0100
-Message-ID: <20260326102424.2361945-7-david.marchand@redhat.com>
+ Maxime Leroy <maxime@leroys.fr>, Kevin Traynor <ktraynor@redhat.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v2 7/7] eal: configure initial device probing
+Date: Thu, 26 Mar 2026 11:24:23 +0100
+Message-ID: <20260326102424.2361945-8-david.marchand@redhat.com>
 In-Reply-To: <20260326102424.2361945-1-david.marchand@redhat.com>
 References: <20260323105306.1531689-1-david.marchand@redhat.com>
  <20260326102424.2361945-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: vJJC5pkkBNwAW7TOZM-KXOcU-h4wG-zKO6udfajOIwM_1774520730
+X-Mimecast-MFC-PROC-ID: EADXKywhBNkafEWXUhFZjRvWJ94e6cfYXikm-10vEwQ_1774520736
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -75,560 +71,311 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-All buses (thankfully) implement the same logic when it comes to
-selecting the devices to probe based on -a/-b options.
-As we want to adjust how devices are selected, provide a common helper
-in EAL and use it in the buses.
+Some applications use port hotplug as their primary way for using DPDK
+resources.
+Having a systematic device probing is a problem when not all available
+resources will be used by the application, as such applications won't set
+an explicit allow list at startup.
+
+This is the case for OVS on systems with multiple mlx5 devices:
+one device can be used by the kernel while the other(s) are used by DPDK.
+In such a setup, the kernel used device may get reconfigured in
+unexpected ways and trigger issues like the one described by Kevin
+not so long ago in bugzilla 1873.
+
+Add an EAL option so that we can change the default behavior from
+block-listing to allow-listing which can be summed up as disabling
+automatic probing.
+In case some applications want to require automatic probing, add the
+opposite option.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 Reviewed-by: Robin Jarry <rjarry@redhat.com>
 Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 Tested-by: Maxime Leroy <maxime@leroys.fr>
+Acked-by: Kevin Traynor <ktraynor@redhat.com>
 ---
-Changes since v1:
-- fixed device selection in dma/idxd,
-
 Changes since RFC v2:
-- changed API to query about a device name and hide the devargs meaning
-  in the common code,
+- added -A short option alias as it seems intuitive to use with -a,
+- renamed option to --no-auto-probing (half Robin and half Thomas
+  suggestions),
+- made -A and -b conflicting options,
+- added opposite option in case an application wants an explicit behavior,
+- updated unit tests accordingly,
+- updated documentation (namely some detail on --vdev),
+
+Changes since RFC v1:
+- changed approach following Bruce suggestion,
 
 ---
- drivers/bus/auxiliary/auxiliary_common.c | 19 ----------------
- drivers/bus/auxiliary/linux/auxiliary.c  |  2 +-
- drivers/bus/auxiliary/private.h          |  6 -----
- drivers/bus/cdx/cdx.c                    | 21 +-----------------
- drivers/bus/dpaa/dpaa_bus.c              | 24 ++++++--------------
- drivers/bus/fslmc/fslmc_bus.c            | 22 ++++++-------------
- drivers/bus/pci/bsd/pci.c                |  5 ++++-
- drivers/bus/pci/linux/pci.c              |  2 +-
- drivers/bus/pci/pci_common.c             | 23 -------------------
- drivers/bus/pci/private.h                | 11 ----------
- drivers/bus/pci/windows/pci.c            |  4 +++-
- drivers/bus/platform/platform.c          | 28 ++----------------------
- drivers/bus/uacce/uacce.c                | 22 +------------------
- drivers/bus/vmbus/vmbus_common.c         | 25 +--------------------
- drivers/dma/idxd/idxd_bus.c              |  8 ++-----
- lib/eal/common/eal_common_bus.c          | 19 ++++++++++++++++
- lib/eal/include/bus_driver.h             |  6 +++++
- 17 files changed, 55 insertions(+), 192 deletions(-)
+ app/test/test_eal_flags.c                 | 63 +++++++++++++++++++++++
+ devtools/test-null.sh                     |  2 +-
+ doc/guides/linux_gsg/eal_args.include.rst | 13 +++++
+ lib/eal/common/eal_common_bus.c           | 17 +++---
+ lib/eal/common/eal_common_options.c       | 10 ++++
+ lib/eal/common/eal_internal_cfg.h         |  1 +
+ lib/eal/common/eal_option_list.h          |  2 +
+ 7 files changed, 101 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/bus/auxiliary/auxiliary_common.c b/drivers/bus/auxiliary/auxiliary_common.c
-index e5b4f4460d..8f3e90eaf0 100644
---- a/drivers/bus/auxiliary/auxiliary_common.c
-+++ b/drivers/bus/auxiliary/auxiliary_common.c
-@@ -384,25 +384,6 @@ auxiliary_dma_unmap(struct rte_device *dev, void *addr, uint64_t iova,
- 	return aux_dev->driver->dma_unmap(aux_dev, addr, iova, len);
- }
+diff --git a/app/test/test_eal_flags.c b/app/test/test_eal_flags.c
+index b3a8d0ae6f..5594cc992d 100644
+--- a/app/test/test_eal_flags.c
++++ b/app/test/test_eal_flags.c
+@@ -119,6 +119,8 @@ test_misc_flags(void)
+ #define no_hpet "--no-hpet"
+ #define no_huge "--no-huge"
+ #define no_shconf "--no-shconf"
++#define auto_probing "--auto-probing"
++#define no_auto_probing "--no-auto-probing"
+ #define allow "--allow"
+ #define vdev "--vdev"
+ #define no_pci "--no-pci"
+@@ -338,6 +340,14 @@ test_allow_flag(void)
+ 			allow, "09:0B.3,type=test",
+ 			allow, "08:00.1,type=normal",
+ 	};
++	const char *wlval4[] = {prgname, prefix, mp_flag, eal_debug_logs,
++			no_auto_probing };
++	const char *wlval5[] = {prgname, prefix, mp_flag, eal_debug_logs,
++			no_auto_probing, allow, "00FF:09:0B.3"};
++	const char *wlval6[] = {prgname, prefix, mp_flag, eal_debug_logs,
++			auto_probing };
++	const char *wlval7[] = {prgname, prefix, mp_flag, eal_debug_logs,
++			auto_probing, allow, "00FF:09:0B.3"};
  
--bool
--auxiliary_is_ignored_device(const char *name)
--{
--	struct rte_devargs *devargs = rte_bus_find_devargs(&auxiliary_bus.bus, name);
--
--	switch (auxiliary_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--	return true;
--}
--
- static enum rte_iova_mode
- auxiliary_get_iommu_class(void)
- {
-diff --git a/drivers/bus/auxiliary/linux/auxiliary.c b/drivers/bus/auxiliary/linux/auxiliary.c
-index 02fc9285dc..ac9bf55efa 100644
---- a/drivers/bus/auxiliary/linux/auxiliary.c
-+++ b/drivers/bus/auxiliary/linux/auxiliary.c
-@@ -110,7 +110,7 @@ auxiliary_scan(void)
- 		if (e->d_name[0] == '.')
- 			continue;
- 
--		if (auxiliary_is_ignored_device(e->d_name))
-+		if (rte_bus_is_ignored_device(&auxiliary_bus.bus, e->d_name))
- 			continue;
- 
- 		snprintf(dirname, sizeof(dirname), "%s/%s",
-diff --git a/drivers/bus/auxiliary/private.h b/drivers/bus/auxiliary/private.h
-index 4604f6f4a7..6e61a5f494 100644
---- a/drivers/bus/auxiliary/private.h
-+++ b/drivers/bus/auxiliary/private.h
-@@ -53,12 +53,6 @@ int auxiliary_scan(void);
-  */
- void auxiliary_on_scan(struct rte_auxiliary_device *aux_dev);
- 
--/*
-- * Validate whether a device with given auxiliary device should be ignored
-- * or not.
-- */
--bool auxiliary_is_ignored_device(const char *name);
--
- /*
-  * Add an auxiliary device to the auxiliary bus (append to auxiliary device
-  * list). This function also updates the bus references of the auxiliary
-diff --git a/drivers/bus/cdx/cdx.c b/drivers/bus/cdx/cdx.c
-index 0801825ef5..58d8c8b4da 100644
---- a/drivers/bus/cdx/cdx.c
-+++ b/drivers/bus/cdx/cdx.c
-@@ -151,25 +151,6 @@ void rte_cdx_unmap_device(struct rte_cdx_device *dev)
- 	cdx_vfio_unmap_resource(dev);
- }
- 
--static bool
--cdx_ignore_device(const char *dev_name)
--{
--	struct rte_devargs *devargs = rte_bus_find_devargs(&rte_cdx_bus.bus, dev_name);
--
--	switch (rte_cdx_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--	return true;
--}
--
- /*
-  * Scan one cdx sysfs entry, and fill the devices list from it.
-  * It checks if the CDX device is bound to vfio-cdx driver. In case
-@@ -269,7 +250,7 @@ cdx_scan(void)
- 		if (e->d_name[0] == '.')
- 			continue;
- 
--		if (cdx_ignore_device(e->d_name))
-+		if (rte_bus_is_ignored_device(&rte_cdx_bus.bus, e->d_name))
- 			continue;
- 
- 		snprintf(dirname, sizeof(dirname), "%s/%s",
-diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
-index 356c56d989..9ff58af0c4 100644
---- a/drivers/bus/dpaa/dpaa_bus.c
-+++ b/drivers/bus/dpaa/dpaa_bus.c
-@@ -717,7 +717,6 @@ rte_dpaa_bus_probe(void)
- 	struct rte_dpaa_driver *drv;
- 	FILE *svr_file = NULL;
- 	uint32_t svr_ver;
--	int probe_all = rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
- 	static int process_once;
- 	char *penv;
- 
-@@ -725,9 +724,6 @@ rte_dpaa_bus_probe(void)
- 	if (!rte_dpaa_bus.detected)
- 		return 0;
- 
--	if (rte_dpaa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST)
--		probe_all = true;
--
- 	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
- 	if (svr_file) {
- 		if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
-@@ -809,21 +805,15 @@ rte_dpaa_bus_probe(void)
- 			if (rte_dev_is_probed(&dev->device))
- 				continue;
- 
--			if (dev->device.devargs &&
--			    dev->device.devargs->policy == RTE_DEV_BLOCKED)
-+			if (rte_bus_is_ignored_device(&rte_dpaa_bus.bus, dev->name))
- 				continue;
- 
--			if (probe_all ||
--			    (dev->device.devargs &&
--			     dev->device.devargs->policy == RTE_DEV_ALLOWED)) {
--				ret = drv->probe(drv, dev);
--				if (ret) {
--					DPAA_BUS_ERR("unable to probe:%s",
--						     dev->name);
--				} else {
--					dev->driver = drv;
--					dev->device.driver = &drv->driver;
--				}
-+			ret = drv->probe(drv, dev);
-+			if (ret) {
-+				DPAA_BUS_ERR("unable to probe: %s", dev->name);
-+			} else {
-+				dev->driver = drv;
-+				dev->device.driver = &drv->driver;
- 			}
- 			break;
- 		}
-diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
-index f72b512b1a..b5d839b6b0 100644
---- a/drivers/bus/fslmc/fslmc_bus.c
-+++ b/drivers/bus/fslmc/fslmc_bus.c
-@@ -407,7 +407,6 @@ static int
- rte_fslmc_probe(void)
- {
- 	int ret = 0;
--	int probe_all;
- 
- 	struct rte_dpaa2_device *dev;
- 	struct rte_dpaa2_driver *drv;
-@@ -454,8 +453,6 @@ rte_fslmc_probe(void)
- 		return 0;
+ 	for (i = 0; i < RTE_DIM(wlinval); i++) {
+ 		if (launch_proc(wlinval[i]) == 0) {
+@@ -360,6 +370,26 @@ test_allow_flag(void)
+ 			__LINE__);
+ 		return -1;
  	}
++	if (launch_proc(wlval4) != 0) {
++		printf("Error (line %d) - process did not run ok with no-auto-probing\n",
++			__LINE__);
++		return -1;
++	}
++	if (launch_proc(wlval5) != 0) {
++		printf("Error (line %d) - process did not run ok with no-auto-probing + allow\n",
++			__LINE__);
++		return -1;
++	}
++	if (launch_proc(wlval6) != 0) {
++		printf("Error (line %d) - process did not run ok with auto-probing\n",
++			__LINE__);
++		return -1;
++	}
++	if (launch_proc(wlval7) != 0) {
++		printf("Error (line %d) - process did not run ok with auto-probing + allow\n",
++			__LINE__);
++		return -1;
++	}
  
--	probe_all = rte_fslmc_bus.bus.conf.scan_mode != RTE_BUS_SCAN_ALLOWLIST;
--
- 	TAILQ_FOREACH(dev, &rte_fslmc_bus.device_list, next) {
- 		TAILQ_FOREACH(drv, &rte_fslmc_bus.driver_list, next) {
- 			ret = rte_fslmc_match(drv, dev);
-@@ -465,23 +462,18 @@ rte_fslmc_probe(void)
- 			if (rte_dev_is_probed(&dev->device))
- 				continue;
- 
--			if (dev->device.devargs &&
--			    dev->device.devargs->policy == RTE_DEV_BLOCKED) {
-+			if (rte_bus_is_ignored_device(&rte_fslmc_bus.bus, dev->device.name)) {
- 				DPAA2_BUS_LOG(DEBUG, "%s Blocked, skipping",
- 					      dev->device.name);
- 				continue;
- 			}
- 
--			if (probe_all ||
--			   (dev->device.devargs &&
--			    dev->device.devargs->policy == RTE_DEV_ALLOWED)) {
--				ret = drv->probe(drv, dev);
--				if (ret) {
--					DPAA2_BUS_ERR("Unable to probe");
--				} else {
--					dev->driver = drv;
--					dev->device.driver = &drv->driver;
--				}
-+			ret = drv->probe(drv, dev);
-+			if (ret) {
-+				DPAA2_BUS_ERR("Unable to probe");
-+			} else {
-+				dev->driver = drv;
-+				dev->device.driver = &drv->driver;
- 			}
- 			break;
- 		}
-diff --git a/drivers/bus/pci/bsd/pci.c b/drivers/bus/pci/bsd/pci.c
-index 3f13e1d6ac..ffd84ee5f0 100644
---- a/drivers/bus/pci/bsd/pci.c
-+++ b/drivers/bus/pci/bsd/pci.c
-@@ -370,12 +370,15 @@ rte_pci_scan(void)
- 		}
- 
- 		for (i = 0; i < conf_io.num_matches; i++) {
-+			char name[RTE_DEV_NAME_MAX_LEN];
+ 	return 0;
+ }
+@@ -383,6 +413,11 @@ test_invalid_b_flag(void)
+ 		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "error0:0:0.1"},
+ 		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0:0.1.2"},
+ 	};
++	const char *blinval_probing[] =
++		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0.0", auto_probing};
++	const char *blinval_probing_inval[] =
++		{prgname, prefix, mp_flag, eal_debug_logs, "-b", "0:0.0", no_auto_probing};
 +
- 			pci_addr.domain = matches[i].pc_sel.pc_domain;
- 			pci_addr.bus = matches[i].pc_sel.pc_bus;
- 			pci_addr.devid = matches[i].pc_sel.pc_dev;
- 			pci_addr.function = matches[i].pc_sel.pc_func;
-+			rte_pci_device_name(&pci_addr, name, sizeof(name));
- 
--			if (rte_pci_ignore_device(&pci_addr))
-+			if (rte_bus_is_ignored_device(&rte_pci_bus.bus, name))
- 				continue;
- 
- 			if (pci_scan_one(fd, &matches[i]) < 0)
-diff --git a/drivers/bus/pci/linux/pci.c b/drivers/bus/pci/linux/pci.c
-index 2ffac82e94..03a3c37dea 100644
---- a/drivers/bus/pci/linux/pci.c
-+++ b/drivers/bus/pci/linux/pci.c
-@@ -458,7 +458,7 @@ rte_pci_scan(void)
- 		if (parse_pci_addr_format(e->d_name, sizeof(e->d_name), &addr) != 0)
- 			continue;
- 
--		if (rte_pci_ignore_device(&addr))
-+		if (rte_bus_is_ignored_device(&rte_pci_bus.bus, e->d_name))
- 			continue;
- 
- 		snprintf(dirname, sizeof(dirname), "%s/%s",
-diff --git a/drivers/bus/pci/pci_common.c b/drivers/bus/pci/pci_common.c
-index 8782dc342a..5ef9e80e3e 100644
---- a/drivers/bus/pci/pci_common.c
-+++ b/drivers/bus/pci/pci_common.c
-@@ -713,29 +713,6 @@ pci_dma_unmap(struct rte_device *dev, void *addr, uint64_t iova, size_t len)
- 	return -1;
- }
- 
--bool
--rte_pci_ignore_device(const struct rte_pci_addr *pci_addr)
--{
--	char name[RTE_DEV_NAME_MAX_LEN];
--	struct rte_devargs *devargs;
--
--	rte_pci_device_name(pci_addr, name, sizeof(name));
--	devargs = rte_bus_find_devargs(&rte_pci_bus.bus, name);
--
--	switch (rte_pci_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--	return true;
--}
--
- enum rte_iova_mode
- rte_pci_get_iommu_class(void)
- {
-diff --git a/drivers/bus/pci/private.h b/drivers/bus/pci/private.h
-index 38109844b9..8591c4a0a7 100644
---- a/drivers/bus/pci/private.h
-+++ b/drivers/bus/pci/private.h
-@@ -82,17 +82,6 @@ pci_common_set(struct rte_pci_device *dev);
- void
- pci_free(struct rte_pci_device_internal *pdev);
- 
--/**
-- * Validate whether a device with given PCI address should be ignored or not.
-- *
-- * @param pci_addr
-- *	PCI address of device to be validated
-- * @return
-- *	true: if device is to be ignored,
-- *	false: if device is to be scanned,
-- */
--bool rte_pci_ignore_device(const struct rte_pci_addr *pci_addr);
--
- /**
-  * Add a PCI device to the PCI Bus (append to PCI Device list). This function
-  * also updates the bus references of the PCI Device (and the generic device
-diff --git a/drivers/bus/pci/windows/pci.c b/drivers/bus/pci/windows/pci.c
-index a5ce3b51f7..91c8e567d1 100644
---- a/drivers/bus/pci/windows/pci.c
-+++ b/drivers/bus/pci/windows/pci.c
-@@ -373,6 +373,7 @@ pci_scan_one(HDEVINFO dev_info, PSP_DEVINFO_DATA device_info_data)
- 	struct rte_pci_device *dev = NULL;
- 	int ret = -1;
- 	char  pci_device_info[REGSTR_VAL_MAX_HCID_LEN];
-+	char name[RTE_DEV_NAME_MAX_LEN];
- 	struct rte_pci_addr addr;
- 	struct rte_pci_id pci_id;
- 
-@@ -380,7 +381,8 @@ pci_scan_one(HDEVINFO dev_info, PSP_DEVINFO_DATA device_info_data)
- 	if (ret != 0)
- 		goto end;
- 
--	if (rte_pci_ignore_device(&addr)) {
-+	rte_pci_device_name(&addr, name, sizeof(name));
-+	if (rte_bus_is_ignored_device(&rte_pci_bus.bus, name)) {
- 		/*
- 		 * We won't add this device, but we want to continue
- 		 * looking for supported devices
-diff --git a/drivers/bus/platform/platform.c b/drivers/bus/platform/platform.c
-index 23c39aada6..ad7898f011 100644
---- a/drivers/bus/platform/platform.c
-+++ b/drivers/bus/platform/platform.c
-@@ -43,30 +43,6 @@ rte_platform_unregister(struct rte_platform_driver *pdrv)
- 	TAILQ_REMOVE(&platform_bus.driver_list, pdrv, next);
- }
- 
--static bool
--dev_allowed(const char *dev_name)
--{
--	struct rte_devargs *devargs;
--
--	devargs = rte_bus_find_devargs(&platform_bus.bus, dev_name);
--	if (devargs == NULL)
--		return true;
--
--	switch (platform_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs->policy == RTE_DEV_ALLOWED)
--			return true;
--		break;
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs->policy == RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--
--	return true;
--}
--
- static int
- dev_add(const char *dev_name)
- {
-@@ -160,7 +136,7 @@ platform_bus_scan(void)
- 		if (dev_name[0] == '.')
- 			continue;
- 
--		if (!dev_allowed(dev_name))
-+		if (rte_bus_is_ignored_device(&platform_bus.bus, dev_name))
- 			continue;
- 
- 		if (!dev_is_bound_vfio_platform(dev_name))
-@@ -484,7 +460,7 @@ platform_bus_plug(struct rte_device *dev)
- {
- 	struct rte_platform_device *pdev;
- 
--	if (!dev_allowed(dev->name))
-+	if (rte_bus_is_ignored_device(&platform_bus.bus, dev->name))
- 		return -EPERM;
- 
- 	if (!dev_is_bound_vfio_platform(dev->name))
-diff --git a/drivers/bus/uacce/uacce.c b/drivers/bus/uacce/uacce.c
-index e6963dc18a..ee02ecd1ce 100644
---- a/drivers/bus/uacce/uacce.c
-+++ b/drivers/bus/uacce/uacce.c
-@@ -70,26 +70,6 @@ extern int uacce_bus_logtype;
- #define UACCE_BUS_DEBUG(fmt, ...) UACCE_BUS_LOG(DEBUG, fmt, ##__VA_ARGS__)
- 
- 
--static bool
--uacce_ignore_device(const char *dev_name)
--{
--	struct rte_devargs *devargs = rte_bus_find_devargs(&uacce_bus.bus, dev_name);
--
--	switch (uacce_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--
--	return true;
--}
--
- /*
-  * Returns the number of bytes read (removed last newline) on success.
-  * Otherwise negative value is returned.
-@@ -296,7 +276,7 @@ uacce_scan(void)
- 			continue;
+ 	/* Test with valid blocklist option */
+ 	const char *blval[] = {prgname, prefix, mp_flag, eal_debug_logs,
+ 			       "-b", "FF:09:0B.3"};
+@@ -396,6 +431,16 @@ test_invalid_b_flag(void)
+ 			return -1;
  		}
+ 	}
++	if (launch_proc(blinval_probing) != 0) {
++		printf("Error (line %d) - process did not run ok with blocklist and auto-probing\n",
++			__LINE__);
++		return -1;
++	}
++	if (launch_proc(blinval_probing_inval) == 0) {
++		printf("Error (line %d) - process did run ok with blocklist and no-auto-probing\n",
++			__LINE__);
++		return -1;
++	}
+ 	if (launch_proc(blval) != 0) {
+ 		printf("Error (line %d) - process did not run ok with valid blocklist value\n",
+ 			__LINE__);
+@@ -434,6 +479,12 @@ test_invalid_vdev_flag(void)
+ 	const char *vdevval3[] = {prgname, prefix, no_huge, eal_debug_logs,
+ 				bus_debug_logs, no_pci, vdev, "net_ring0,nodeaction=r1:0:CREATE"};
  
--		if (uacce_ignore_device(e->d_name))
-+		if (rte_bus_is_ignored_device(&uacce_bus.bus, e->d_name))
- 			continue;
++	const char *vdevval4[] = {prgname, prefix, no_huge, eal_debug_logs,
++				bus_debug_logs, no_auto_probing, vdev, "net_ring0"};
++
++	const char *vdevval5[] = {prgname, prefix, no_huge, eal_debug_logs,
++				bus_debug_logs, auto_probing, vdev, "net_ring0"};
++
+ 	if (launch_proc(vdevinval) == 0) {
+ 		printf("Error (line %d) - process did run ok with invalid vdev parameter\n",
+ 			__LINE__);
+@@ -457,6 +508,18 @@ test_invalid_vdev_flag(void)
+ 			__LINE__);
+ 		return -1;
+ 	}
++
++	if (launch_proc(vdevval4) != 0) {
++		printf("Error (line %d) - process did not run ok with valid vdev value and no-auto-probing\n",
++			__LINE__);
++		return -1;
++	}
++
++	if (launch_proc(vdevval5) != 0) {
++		printf("Error (line %d) - process did not run ok with valid vdev value and auto-probing\n",
++			__LINE__);
++		return -1;
++	}
+ 	return 0;
+ #else
+ 	return TEST_SKIPPED;
+diff --git a/devtools/test-null.sh b/devtools/test-null.sh
+index 8f21189262..5e8a1b20cd 100755
+--- a/devtools/test-null.sh
++++ b/devtools/test-null.sh
+@@ -30,7 +30,7 @@ logfile=$build/test-null.log
+ (sleep 1 && echo stop) |
+ # testpmd only needs 20M, make it x2 (default number of cores) for NUMA systems
+ $testpmd -l $corelist --no-huge -m 40 \
+-	$libs -a 0:0.0 --vdev net_null1 --vdev net_null2 $eal_options -- \
++	$libs -A --vdev net_null1 --vdev net_null2 $eal_options -- \
+ 	--no-mlockall --total-num-mbufs=2048 $testpmd_options -ia | tee $logfile
  
- 		if (uacce_scan_one(e->d_name) < 0)
-diff --git a/drivers/bus/vmbus/vmbus_common.c b/drivers/bus/vmbus/vmbus_common.c
-index 96d16ff545..a9eb7cf933 100644
---- a/drivers/bus/vmbus/vmbus_common.c
-+++ b/drivers/bus/vmbus/vmbus_common.c
-@@ -168,29 +168,6 @@ vmbus_probe_all_drivers(struct rte_vmbus_device *dev)
- 	return 1;
- }
+ # we expect two ports and some traffic is received and transmitted
+diff --git a/doc/guides/linux_gsg/eal_args.include.rst b/doc/guides/linux_gsg/eal_args.include.rst
+index 4a3c4d9b5f..db9eff9321 100644
+--- a/doc/guides/linux_gsg/eal_args.include.rst
++++ b/doc/guides/linux_gsg/eal_args.include.rst
+@@ -101,6 +101,19 @@ Lcore-related options
+ Device-related options
+ ~~~~~~~~~~~~~~~~~~~~~~
  
--static bool
--vmbus_ignore_device(struct rte_vmbus_device *dev)
--{
--	char name[RTE_DEV_NAME_MAX_LEN];
--	struct rte_devargs *devargs;
--
--	rte_uuid_unparse(dev->device_id, name, sizeof(name));
--	devargs = rte_bus_find_devargs(&rte_vmbus_bus.bus, name);
--
--	switch (rte_vmbus_bus.bus.conf.scan_mode) {
--	case RTE_BUS_SCAN_ALLOWLIST:
--		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
--			return false;
--		break;
--	case RTE_BUS_SCAN_UNDEFINED:
--	case RTE_BUS_SCAN_BLOCKLIST:
--		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
--			return false;
--		break;
--	}
--	return true;
--}
--
- /*
-  * Scan the vmbus, and call the devinit() function for
-  * all registered drivers that have a matching entry in its id_table
-@@ -209,7 +186,7 @@ rte_vmbus_probe(void)
++*   ``-A, --no-auto-probing``
++
++    By default, EAL probes all devices on every available bus, unless some ``-a``/``-b``
++    options are passed.
++    Disable automatic probing of non-blocked devices.
++
++.. Note::
++    Block list cannot be used when auto probing is disabled.
++
++    On the other hand, disabling auto probing does not affect the VDEV bus.
++    The VDEV bus is not concerned by automatic probing and requires explicit
++    ``-a`` or ``--vdev``.
++
+ *   ``-b, --block <[domain:]bus:devid.func>``
  
- 		rte_uuid_unparse(dev->device_id, ubuf, sizeof(ubuf));
- 
--		if (vmbus_ignore_device(dev))
-+		if (rte_bus_is_ignored_device(&rte_vmbus_bus.bus, ubuf))
- 			continue;
- 
- 		if (vmbus_probe_all_drivers(dev) < 0) {
-diff --git a/drivers/dma/idxd/idxd_bus.c b/drivers/dma/idxd/idxd_bus.c
-index 136ac511ef..f46719f4d7 100644
---- a/drivers/dma/idxd/idxd_bus.c
-+++ b/drivers/dma/idxd/idxd_bus.c
-@@ -263,12 +263,8 @@ is_for_this_process_use(struct rte_dsa_device *dev, const char *name)
- 	if (strncmp(name, prefix, prefixlen) == 0 && name[prefixlen] == '_')
- 		retval = 1;
- 
--	if (retval && dsa_bus.bus.conf.scan_mode != RTE_BUS_SCAN_UNDEFINED) {
--		if (dsa_bus.bus.conf.scan_mode == RTE_BUS_SCAN_ALLOWLIST)
--			retval = rte_bus_find_devargs(&dsa_bus.bus, dev->device.name) != NULL;
--		else
--			retval = rte_bus_find_devargs(&dsa_bus.bus, dev->device.name) == NULL;
--	}
-+	if (retval)
-+		retval = !rte_bus_is_ignored_device(&dsa_bus.bus, dev->device.name);
- 
- 	return retval;
- }
+     Skip probing a PCI device to prevent EAL from using it.
 diff --git a/lib/eal/common/eal_common_bus.c b/lib/eal/common/eal_common_bus.c
-index 863c7418bb..2ca0af7914 100644
+index 2ca0af7914..47ba303468 100644
 --- a/lib/eal/common/eal_common_bus.c
 +++ b/lib/eal/common/eal_common_bus.c
-@@ -246,6 +246,25 @@ rte_bus_find_by_device_name(const char *str)
- 	return rte_bus_find(NULL, bus_can_parse, name);
- }
+@@ -250,18 +250,23 @@ RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_is_ignored_device)
+ bool
+ rte_bus_is_ignored_device(const struct rte_bus *bus, const char *dev_name)
+ {
++	const struct internal_config *internal_conf = eal_get_internal_configuration();
+ 	struct rte_devargs *devargs = rte_bus_find_devargs(bus, dev_name);
++	enum rte_bus_scan_mode scan_mode = bus->conf.scan_mode;
  
-+RTE_EXPORT_INTERNAL_SYMBOL(rte_bus_is_ignored_device)
-+bool
-+rte_bus_is_ignored_device(const struct rte_bus *bus, const char *dev_name)
-+{
-+	struct rte_devargs *devargs = rte_bus_find_devargs(bus, dev_name);
-+
-+	switch (bus->conf.scan_mode) {
-+	case RTE_BUS_SCAN_ALLOWLIST:
-+		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
-+			return false;
-+		break;
-+	case RTE_BUS_SCAN_UNDEFINED:
-+	case RTE_BUS_SCAN_BLOCKLIST:
-+		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
-+			return false;
-+		break;
+-	switch (bus->conf.scan_mode) {
+-	case RTE_BUS_SCAN_ALLOWLIST:
++	if (scan_mode == RTE_BUS_SCAN_UNDEFINED) {
++		if (internal_conf->no_auto_probing != 0)
++			scan_mode = RTE_BUS_SCAN_ALLOWLIST;
++		else
++			scan_mode = RTE_BUS_SCAN_BLOCKLIST;
 +	}
-+	return true;
-+}
- 
- /*
-  * Get iommu class of devices on the bus.
-diff --git a/lib/eal/include/bus_driver.h b/lib/eal/include/bus_driver.h
-index 0760b09b8f..d9f59a54a1 100644
---- a/lib/eal/include/bus_driver.h
-+++ b/lib/eal/include/bus_driver.h
-@@ -313,6 +313,12 @@ void rte_bus_register(struct rte_bus *bus);
- __rte_internal
- struct rte_devargs *rte_bus_find_devargs(const struct rte_bus *bus, const char *dev_name);
- 
-+/**
-+ * Indicate if a device should be skipped during probing of a bus.
-+ */
-+__rte_internal
-+bool rte_bus_is_ignored_device(const struct rte_bus *bus, const char *dev_name);
 +
- /**
-  * Helper for Bus registration.
-  * The constructor has higher priority than PMD constructors.
++	if (scan_mode == RTE_BUS_SCAN_ALLOWLIST) {
+ 		if (devargs && devargs->policy == RTE_DEV_ALLOWED)
+ 			return false;
+-		break;
+-	case RTE_BUS_SCAN_UNDEFINED:
+-	case RTE_BUS_SCAN_BLOCKLIST:
++	} else {
+ 		if (devargs == NULL || devargs->policy != RTE_DEV_BLOCKED)
+ 			return false;
+-		break;
+ 	}
+ 	return true;
+ }
+diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
+index aad676a004..290386dc63 100644
+--- a/lib/eal/common/eal_common_options.c
++++ b/lib/eal/common/eal_common_options.c
+@@ -233,10 +233,15 @@ eal_collate_args(int argc, char **argv)
+ 		EAL_LOG(ERR, "Options allow (-a) and block (-b) can't be used at the same time");
+ 		return -1;
+ 	}
++	if (args.no_auto_probing && !TAILQ_EMPTY(&args.block)) {
++		EAL_LOG(ERR, "Options no-auto-probing and block (-b) can't be used at the same time");
++		return -1;
++	}
+ 
+ 	/* for non-list args, we can just check for zero/null values using macro */
+ 	if (CONFLICTING_OPTIONS(args, coremask, lcores) ||
+ 			CONFLICTING_OPTIONS(args, service_coremask, service_corelist) ||
++			CONFLICTING_OPTIONS(args, no_auto_probing, auto_probing) ||
+ 			CONFLICTING_OPTIONS(args, no_telemetry, telemetry) ||
+ 			CONFLICTING_OPTIONS(args, memory_size, numa_mem) ||
+ 			CONFLICTING_OPTIONS(args, no_huge, numa_mem) ||
+@@ -518,6 +523,8 @@ eal_reset_internal_config(struct internal_config *internal_cfg)
+ 	memset(internal_cfg->vfio_vf_token, 0,
+ 			sizeof(internal_cfg->vfio_vf_token));
+ 
++	internal_cfg->no_auto_probing = 0;
++
+ #ifdef RTE_LIBEAL_USE_HPET
+ 	internal_cfg->no_hpet = 0;
+ #else
+@@ -1972,6 +1979,9 @@ eal_parse_args(void)
+ 		}
+ 	}
+ 
++	if (args.no_auto_probing)
++		int_cfg->no_auto_probing = 1;
++
+ 	/* device -a/-b/-vdev options*/
+ 	TAILQ_FOREACH(arg, &args.allow, next)
+ 		if (eal_option_device_add(RTE_DEVTYPE_ALLOWED, arg->arg) < 0)
+diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
+index 95d327a613..fac45cbe66 100644
+--- a/lib/eal/common/eal_internal_cfg.h
++++ b/lib/eal/common/eal_internal_cfg.h
+@@ -104,6 +104,7 @@ struct internal_config {
+ 	struct simd_bitwidth max_simd_bitwidth;
+ 	/**< max simd bitwidth path to use */
+ 	size_t huge_worker_stack_size; /**< worker thread stack size */
++	unsigned int no_auto_probing; /**< true to switch from block-listing to allow-listing */
+ };
+ 
+ void eal_reset_internal_config(struct internal_config *internal_cfg);
+diff --git a/lib/eal/common/eal_option_list.h b/lib/eal/common/eal_option_list.h
+index abee16340b..6a5ddfd8d1 100644
+--- a/lib/eal/common/eal_option_list.h
++++ b/lib/eal/common/eal_option_list.h
+@@ -32,6 +32,7 @@
+  * Format of each entry: long name, short name, help string, struct member name.
+  */
+ /* (Alphabetical) List of common options first */
++BOOL_ARG("--auto-probing", NULL, "Let EAL probe all available devices unless some -a/-b option is set.", auto_probing)
+ LIST_ARG("--allow", "-a", "Add device to allow-list, causing DPDK to only use specified devices", allow)
+ STR_ARG("--base-virtaddr", NULL, "Base virtual address to reserve memory", base_virtaddr)
+ LIST_ARG("--block", "-b", "Add device to block-list, preventing DPDK from using the device", block)
+@@ -51,6 +52,7 @@ STR_ARG("--mbuf-pool-ops-name", NULL, "User defined mbuf default pool ops name",
+ STR_ARG("--memory-channels", "-n", "Number of memory channels per socket", memory_channels)
+ STR_ARG("--memory-ranks", "-r", "Force number of memory ranks (don't detect)", memory_ranks)
+ STR_ARG("--memory-size", "-m", "Total size of memory to allocate initially", memory_size)
++BOOL_ARG("--no-auto-probing", "-A", "Do not probe any devices unless some -a option is set", no_auto_probing)
+ BOOL_ARG("--no-hpet", NULL, "Disable HPET timer", no_hpet)
+ BOOL_ARG("--no-huge", NULL, "Disable hugetlbfs support", no_huge)
+ BOOL_ARG("--no-pci", NULL, "Disable all PCI devices", no_pci)
 -- 
 2.53.0
 
