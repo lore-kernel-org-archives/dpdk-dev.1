@@ -2,42 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DD3106F315
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 10:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57894106F315
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 10:18:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A5817402F1;
-	Thu, 26 Mar 2026 11:18:18 +0100 (CET)
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
- by mails.dpdk.org (Postfix) with ESMTP id 3AFBA402B5
- for <dev@dpdk.org>; Thu, 26 Mar 2026 11:18:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 94A27427D9;
+	Thu, 26 Mar 2026 11:18:22 +0100 (CET)
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 090F0427D9
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 11:18:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
  s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=sr
- DeqqmahcGKRrAjqUgHZ4+4/BrErSnPweBFBKuSF3U=; b=ZtQWd/Hr6DuWwgofuF
- L/mLR8fHjKTsO1wIQ/cI6ab7pYFbuEZaYhm2njITZTrGz+xHNlEtJQGKMWXpy1xa
- qfLDOWJxqGrmS3fdFc965DghsQnbR4RVOR8PPNOH0ZyrGuLoOE4DXs4ALs93HMmg
- FPG6CDkasRjvZa+yej6F68xV8=
+ DeqqmahcGKRrAjqUgHZ4+4/BrErSnPweBFBKuSF3U=; b=Gur3dcbq66DpfIJQr/
+ S5dnWt2U91dPIgbLIaY9Qe6NVaXsLd5QC6LJulhzCZithayRjOsR4Gdxez8KZHzd
+ j324E0rm59c/0q1VOY78ukiE7mI4w0FuiimIMkmjsoit209S+Lhp6gglI3X73bZy
+ bIeeugbUHXjjH9LzT1cXXInlw=
 Received: from test-spdk.. (unknown [])
  by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id
- _____wD3lwXmB8VpIRWFAg--.64267S2; 
- Thu, 26 Mar 2026 18:18:15 +0800 (CST)
+ _____wD3lwXmB8VpIRWFAg--.64267S3; 
+ Thu, 26 Mar 2026 18:18:18 +0800 (CST)
 From: YuanXin <yuanxin123456@126.com>
 To: dev@dpdk.org
 Cc: yuanxin36 <yuanxin36@jd.com>, Maxime Coquelin <maxime.coquelin@redhat.com>,
  Chenbo Xia <chenbox@nvidia.com>
 Subject: [PATCH] vhost: fix rte_vhost_vring_call coredump caused by
  numa_realloc free virtio_net
-Date: Thu, 26 Mar 2026 18:18:11 +0800
-Message-ID: <20260326101813.23049-1-yuanxin123456@126.com>
+Date: Thu, 26 Mar 2026 18:18:12 +0800
+Message-ID: <20260326101813.23049-2-yuanxin123456@126.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260326101813.23049-1-yuanxin123456@126.com>
+References: <20260326101813.23049-1-yuanxin123456@126.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wD3lwXmB8VpIRWFAg--.64267S2
+X-CM-TRANSID: _____wD3lwXmB8VpIRWFAg--.64267S3
 X-Coremail-Antispam: 1Uf129KBjvJXoWrtr1kZr18WF4ftrWxCw17Jrb_yoW8JrWrpa
  ySyry7XFWSkry2k348Jr18J34rA3WvkrnrWr9Igr1FvrW5GwnxCFZrKa4FvF1UArW5AF1U
  tF1IqrWruw4Du37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6q2_UUUUU=
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UXmiiUUUUU=
 X-Originating-IP: [116.196.86.234]
-X-CM-SenderInfo: h1xd05tlqrjjquvwqiyswou0bp/xtbBswfGT2nFB+fIqgAA3T
+X-CM-SenderInfo: h1xd05tlqrjjquvwqiyswou0bp/xtbBsgrHUGnFB+rJKgAA3N
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
