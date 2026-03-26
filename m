@@ -2,81 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE9810A1E82
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 11:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D05C10A1E81
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 11:51:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8837B42B71;
-	Thu, 26 Mar 2026 12:50:39 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9AA4F40E1E;
+	Thu, 26 Mar 2026 12:51:12 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 015D040E1E
- for <dev@dpdk.org>; Thu, 26 Mar 2026 12:50:37 +0100 (CET)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 7848B4069F
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 12:51:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774525837;
+ s=mimecast20190719; t=1774525870;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=DE/Fv3IGLoTPOA2db34VKoZu1XGRdlYIkhHQzkcFDS0=;
- b=M7j8dK5VRCguErFwjeEE1jt3TIuk+7PpOmp+/TyvSwTMH7qXlOWbEw24HABCBDenNS9bGx
- N383Vw/kcF/xt4ce4cZhBaoGR1yu5Dehy36+nN5O3Vki1y2szNkE2KtnKeeVOdeh/okKOD
- tAgllVGm/WoOO05smu+uXkN03GPDxyE=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=3TLQ0KaY93xdNnv+GN3UfgqRAvn3R6VK3i5/6zH3T8o=;
+ b=LyuQh7ls7rIGn3XR70zV/PHF2KnlsTJDGPz2kE60FwckXnsMKKz9g1COfGGXp7xZROmH4j
+ E1c4wx1V95NUIgNNdoBix9Pkk/mSfQauj6Uh8x09WoB37r/wbcNsxjt07cj6YG73OAfcL/
+ bMKwjeatMzRwGlWhNwsCVUBdbIwICDs=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-106-z25ivVQPNXaICo5RevO3Sg-1; Thu, 26 Mar 2026 07:50:36 -0400
-X-MC-Unique: z25ivVQPNXaICo5RevO3Sg-1
-X-Mimecast-MFC-AGG-ID: z25ivVQPNXaICo5RevO3Sg_1774525835
-Received: by mail-wm1-f70.google.com with SMTP id
- 5b1f17b1804b1-48544725bdeso16892035e9.2
- for <dev@dpdk.org>; Thu, 26 Mar 2026 04:50:35 -0700 (PDT)
+ us-mta-221-fRVMBe9pOF-uZ_UyWVwxkw-1; Thu, 26 Mar 2026 07:51:09 -0400
+X-MC-Unique: fRVMBe9pOF-uZ_UyWVwxkw-1
+X-Mimecast-MFC-AGG-ID: fRVMBe9pOF-uZ_UyWVwxkw_1774525868
+Received: by mail-wr1-f69.google.com with SMTP id
+ ffacd0b85a97d-43b8f23bdc7so761584f8f.3
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 04:51:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774525835; x=1775130635;
+ d=1e100.net; s=20251104; t=1774525868; x=1775130668;
  h=content-transfer-encoding:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DE/Fv3IGLoTPOA2db34VKoZu1XGRdlYIkhHQzkcFDS0=;
- b=me83S8ntQ8IX85TlpDof/+HrluH2BRle0Vn4A0jz4ByaSxUgiuQ0AVJl7MERcsacVY
- z+Cld53QsAnKSVx2tZMyPfX/ngkEbI/fElZlpy8zuRovFhLEKMWzgzH2kO8OQmrylDn1
- 5LkIiF1LhAGrL+XOGJ2FJMA2vDR4NiFyD+S1Fv1V+21xJIaqHiahu8A3uP4l1bGYosW+
- WLx3lmYhAKkdH6WvJiEq/DlnuEVWfvEBV1aA0S/T45OHd5Ig9vL0DiA4OWf6x1ZstG+9
- bvk2Z1uqCBlKwgouZtSHKXax3IlEdxRsA7htFGd9iA0uO2ImYje0OOo3bOWJ+yxTnIgG
- SbsQ==
+ bh=3TLQ0KaY93xdNnv+GN3UfgqRAvn3R6VK3i5/6zH3T8o=;
+ b=X8kZcLM+akGTE/wFIgCV8AhD8tRz+CyhV/hG+oXZiJ8OE9FK7VnRs31bhhiq9yFeZY
+ x3MRqUMhV5gIvjndou9rkPBuugbhhOvPAV1sdOsL2joJJAK+8pmBZ/znwBDgt9mu8bxL
+ ux1DPc0CvfkOj9Yf2nC4tAvwIHURgz44fSui04an0ZqYeD1BJOraFKkQj5nvZYoX+ED5
+ 5rMV/pSnPHekj6w1wTjZuJNBL1fmMCfaxE+UDGkIm5OnBlOj1y6PTd7BoxoPx20N2vcY
+ iy4KkjUT8C8Kd+fdDbnVJjXLFLby8m3l1XPA8JwD6q0YBAEHFSsdbsRvfF0E49o93B2/
+ kZKg==
 X-Forwarded-Encrypted: i=1;
- AJvYcCUI3bWRcfP3AFksN7XVj5BKfB7dGGy5VaA2pWNAOx/fj19E1vZ0Cm8swQuv4M7W0ZADrEk=@dpdk.org
-X-Gm-Message-State: AOJu0YzNkq9Xhzsbl5qjFOChxwfvY98vrDwRqfX17Gh4sXgVulwn5QX7
- ghLnhZQ8XdXtqNbSaLll9LIHrNkbtCaW653SM2jxmtbKv1qOIHRcibxiO/J1g15TKrKH/NpaVvT
- yQkX7v/I4Sii+dzsZlGCZ1/+7dsRQxq0+TVQmI4N3AmIt
-X-Gm-Gg: ATEYQzxsNPkJZKw+n4F4ULQssbxgmcQMPngiHPwYREKzkQf0SgaFEO/d6gbNepJdTbg
- zzZvEriu412r2Ujh55UMjTIpwRwFs8Quig2wVal6OyH6HNAdwJcY0j6OLqkTBVBkEhkS67zyYDt
- SbO6pDP13QsEsC2pvi9rhJ+QM/s/Rmb4shSK4NtZfxldMzd3k5ifRckWNeWiQC41Ud+pFKPH/6W
- tScXgN5+r/YtHw2GYcemaCny2dU5xJ1gz6E1h8CsPASUYtKHERj5igszXcEa/zlYswM0/Or1Oa7
- lR9f3V3ITfyD51vckU64lvupqFk49SUc134EZrNEirXuhaYiN9Hzp2wLGF6/Gve3eGIRnSPgRPl
- HAw1Jfskeae+TlF+CmHgqDp+D
-X-Received: by 2002:a05:600c:4447:b0:485:3f1c:d8a4 with SMTP id
- 5b1f17b1804b1-48715fd50c2mr105470375e9.9.1774525834734; 
- Thu, 26 Mar 2026 04:50:34 -0700 (PDT)
-X-Received: by 2002:a05:600c:4447:b0:485:3f1c:d8a4 with SMTP id
- 5b1f17b1804b1-48715fd50c2mr105469995e9.9.1774525834245; 
- Thu, 26 Mar 2026 04:50:34 -0700 (PDT)
+ AJvYcCXDhCgDzbMj3dWBAebLH+Lez5W3/JxOt+GXb+dPH4rnJJlU9Fm6l/IlagJ5yd/moVUUQHQ=@dpdk.org
+X-Gm-Message-State: AOJu0YwsrIgcLDRo7fj0N+5Xh0qWaf5wHmr/9yZuR1KUsH7h/3uFACHU
+ OSzjnl+Xnk3aAH1mmsO62J7aYlu5uq8h9IRd39Ko9aL+A058Fxng5UQuWQwrq5yXwJeVmT3vpDS
+ qvi5T98Zc8QH7UGwjXykC5nl4qRacKrHTBaT3fJ6bJl/S
+X-Gm-Gg: ATEYQzzLvReWI+0N/B4FmeEU2UaOKXoNEeySU6sjCkqqsn+tbnpfb8+mhVi20f0Oj/q
+ pzYQzJXewVRM5KMYpJRYv9olVbV/R5Hhflp0StP6LZyqWLrNlEErizUhN1RmnTnmv7z943micrf
+ 1FAyKTWCadLFcZIx11a85CfiRzISpGVrwbwHQze+lyB40iuuI2M57B6qj0cD/6xMF4717dTV0hP
+ b3KAwX2EpvGIF/eRR3Ku+jMAlpmKr3CIfaN7zNsjTIqjt4OoB4riFR32Fu4g5Ef3VmBoU/lkIj7
+ 0sJ2dilIYKReBU62DtTNL+OhXW1ceyYg/w2psIqAvzEkq10p8U4D6V2PBzPaLcvkev/Vg2Ku2Pl
+ sFwlMBZ8wKImGIZES8T/i8CWm
+X-Received: by 2002:a5d:5d85:0:b0:43b:4989:86a5 with SMTP id
+ ffacd0b85a97d-43b88a29124mr11005245f8f.43.1774525868169; 
+ Thu, 26 Mar 2026 04:51:08 -0700 (PDT)
+X-Received: by 2002:a5d:5d85:0:b0:43b:4989:86a5 with SMTP id
+ ffacd0b85a97d-43b88a29124mr11005190f8f.43.1774525867644; 
+ Thu, 26 Mar 2026 04:51:07 -0700 (PDT)
 Received: from [192.168.0.65] ([78.16.129.161])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48722c789ecsm25032195e9.4.2026.03.26.04.50.32
+ ffacd0b85a97d-43b9192e3e8sm8205929f8f.5.2026.03.26.04.51.05
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 26 Mar 2026 04:50:33 -0700 (PDT)
-Message-ID: <b760bb9a-1c4f-4ab6-ac63-9111683761ae@redhat.com>
-Date: Thu, 26 Mar 2026 11:50:31 +0000
+ Thu, 26 Mar 2026 04:51:06 -0700 (PDT)
+Message-ID: <f280674f-31d5-4f85-a6fc-2ab4f9db4dcc@redhat.com>
+Date: Thu, 26 Mar 2026 11:51:05 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/7] bus/fslmc: fix bus cleanup
+Subject: Re: [PATCH v2 5/7] bus: factorize devargs lookup
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
-Cc: stable@dpdk.org, Hemant Agrawal <hemant.agrawal@nxp.com>,
- Maxime Leroy <maxime@leroys.fr>, Sachin Saxena <sachin.saxena@nxp.com>,
- Rohit Raj <rohit.raj@nxp.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Maxime Leroy <maxime@leroys.fr>,
+ Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
+ Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>,
+ Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
+ Wei Hu <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>
 References: <20260323105306.1531689-1-david.marchand@redhat.com>
  <20260326102424.2361945-1-david.marchand@redhat.com>
- <20260326102424.2361945-3-david.marchand@redhat.com>
+ <20260326102424.2361945-6-david.marchand@redhat.com>
 From: Kevin Traynor <ktraynor@redhat.com>
 Autocrypt: addr=ktraynor@redhat.com; keydata=
  xsFNBF2J2awBEADUEPNhgNI+nJNgiTAUcw4YIgVXEoHlsNPyyzG1BEXkWXALy0Y3fNTiw6+r
@@ -121,9 +126,9 @@ Autocrypt: addr=ktraynor@redhat.com; keydata=
  yWzMcVrcGJDQLC9JLKEpoyUF6gdTKaiDL2Vao4+XRIA3Y57b6MO35a3HuzAv7+i5Z0mnDEJO
  XxXqTOmKYpMIGexzM/PtuA0712sT1abG9tAJ17ao/B7cqMW5IkKkalemFbWfI2unns4Papvo
  tk9igVqyp6EJDU98z5TJioCVojwK2laDaoIjTJk9YYv3iwCsqPd5feU=
-In-Reply-To: <20260326102424.2361945-3-david.marchand@redhat.com>
+In-Reply-To: <20260326102424.2361945-6-david.marchand@redhat.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ipl98hnphu1Ik4ahDrwV9Q5KD3xHVEL3VgLjYhI2ukk_1774525835
+X-Mimecast-MFC-PROC-ID: uSgaMZvUIksRzadKHvSQgaLzS0NTbJNR0965WoZKVQg_1774525868
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
@@ -142,24 +147,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 On 3/26/26 10:24 AM, David Marchand wrote:
-> The close operation was never closing probed devices.
+> Each bus reimplements some similar devargs lookup code.
 > 
-> Taking a step back, reevaluating the devargs makes no sense during the
-> close step, as a probed device must have passed the allow/block list
-> evaluation initially.
-> 
-> Since the device contains a reference to the driver that probed it,
-> simply call this driver remove op.
-> 
-> Fixes: 274fd921ff7f ("bus/fslmc: support close operation")
-> Cc: stable@dpdk.org
+> The differences are in how some bus (PCI, VMBUS etc...) normalizes the
+> device names. We can't use the .parse existing handler from outside the
+> bus code itself, as the size of the bus specific device location address
+> is unknown.
+> Introduce a bus specific helper to compare two device names and
+> hide this ugly detail.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
+> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 > Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 > Tested-by: Maxime Leroy <maxime@leroys.fr>
 > ---
->  drivers/bus/fslmc/fslmc_vfio.c | 21 ++++-----------------
->  1 file changed, 4 insertions(+), 17 deletions(-)
+> Changes since v1:
+> - fixed copy/paste descriptions in doxygen,
+> 
+> Changes since RFC v3:
+> - fixed doxygen,
+> 
+> ---
+>  drivers/bus/auxiliary/auxiliary_common.c | 16 ++-------
+>  drivers/bus/cdx/cdx.c                    | 14 +-------
+>  drivers/bus/dpaa/dpaa_bus.c              | 41 +++++++++++++-----------
+>  drivers/bus/fslmc/fslmc_bus.c            | 34 ++++++++++----------
+>  drivers/bus/pci/pci_common.c             | 38 +++++++++++-----------
+>  drivers/bus/platform/platform.c          | 17 ++--------
+>  drivers/bus/uacce/uacce.c                | 19 ++---------
+>  drivers/bus/vmbus/linux/vmbus_bus.c      |  2 +-
+>  drivers/bus/vmbus/private.h              |  3 --
+>  drivers/bus/vmbus/vmbus_common.c         | 30 ++++++++---------
+>  drivers/dma/idxd/idxd_bus.c              | 14 ++------
+>  lib/eal/common/eal_common_bus.c          | 20 ++++++++++++
+>  lib/eal/include/bus_driver.h             | 32 ++++++++++++++++++
+>  13 files changed, 133 insertions(+), 147 deletions(-)
 
 Acked-by: Kevin Traynor <ktraynor@redhat.com>
 
