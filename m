@@ -2,86 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D05C10A1E81
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 11:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE79710A1E81
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 11:52:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9AA4F40E1E;
-	Thu, 26 Mar 2026 12:51:12 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id E4B9E40E1E;
+	Thu, 26 Mar 2026 12:52:39 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 7848B4069F
- for <dev@dpdk.org>; Thu, 26 Mar 2026 12:51:11 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id D31B94069F
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 12:52:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774525870;
+ s=mimecast20190719; t=1774525957;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=3TLQ0KaY93xdNnv+GN3UfgqRAvn3R6VK3i5/6zH3T8o=;
- b=LyuQh7ls7rIGn3XR70zV/PHF2KnlsTJDGPz2kE60FwckXnsMKKz9g1COfGGXp7xZROmH4j
- E1c4wx1V95NUIgNNdoBix9Pkk/mSfQauj6Uh8x09WoB37r/wbcNsxjt07cj6YG73OAfcL/
- bMKwjeatMzRwGlWhNwsCVUBdbIwICDs=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=pvHsz4f0/dxto2S1aFwlPsaJ5cq92z9wq4TAgP9JUYk=;
+ b=LIETJ5x0KaEhvrJHF1ogKsGm+zBZGZK4vvS0aGFMgZcmVwn9arIVYaX9HPoDHvD/lCcth7
+ q00AiNU8splgNXl1pwQljBK4TT60Kg7MJJqjFwFowaTqWUCBltxUknfLKncUpc/8i5C1LT
+ 0IorAbfSXim5BvzLaicUHN5LgJOQYbo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-221-fRVMBe9pOF-uZ_UyWVwxkw-1; Thu, 26 Mar 2026 07:51:09 -0400
-X-MC-Unique: fRVMBe9pOF-uZ_UyWVwxkw-1
-X-Mimecast-MFC-AGG-ID: fRVMBe9pOF-uZ_UyWVwxkw_1774525868
-Received: by mail-wr1-f69.google.com with SMTP id
- ffacd0b85a97d-43b8f23bdc7so761584f8f.3
- for <dev@dpdk.org>; Thu, 26 Mar 2026 04:51:09 -0700 (PDT)
+ us-mta-605-pqfgp2zwMgOw2KSQaUfh7g-1; Thu, 26 Mar 2026 07:52:36 -0400
+X-MC-Unique: pqfgp2zwMgOw2KSQaUfh7g-1
+X-Mimecast-MFC-AGG-ID: pqfgp2zwMgOw2KSQaUfh7g_1774525955
+Received: by mail-wm1-f71.google.com with SMTP id
+ 5b1f17b1804b1-486fe36cf73so9937685e9.1
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 04:52:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774525868; x=1775130668;
+ d=1e100.net; s=20251104; t=1774525955; x=1775130755;
  h=content-transfer-encoding:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=3TLQ0KaY93xdNnv+GN3UfgqRAvn3R6VK3i5/6zH3T8o=;
- b=X8kZcLM+akGTE/wFIgCV8AhD8tRz+CyhV/hG+oXZiJ8OE9FK7VnRs31bhhiq9yFeZY
- x3MRqUMhV5gIvjndou9rkPBuugbhhOvPAV1sdOsL2joJJAK+8pmBZ/znwBDgt9mu8bxL
- ux1DPc0CvfkOj9Yf2nC4tAvwIHURgz44fSui04an0ZqYeD1BJOraFKkQj5nvZYoX+ED5
- 5rMV/pSnPHekj6w1wTjZuJNBL1fmMCfaxE+UDGkIm5OnBlOj1y6PTd7BoxoPx20N2vcY
- iy4KkjUT8C8Kd+fdDbnVJjXLFLby8m3l1XPA8JwD6q0YBAEHFSsdbsRvfF0E49o93B2/
- kZKg==
+ bh=pvHsz4f0/dxto2S1aFwlPsaJ5cq92z9wq4TAgP9JUYk=;
+ b=IUrWQTjnaDEoNAjvsR8bm9oHm4CzDXhLyHPObgiYpJcx57DGMzXGTRQJLMPQFCkoNw
+ IHcj1MlBUV7KF4XYEdiDnp7YWFeoJFNtbGIIwgdCgWiyQJLa+GBzsKKE5eH9wOdurC6n
+ eMrW4wTPVI/HcobfYB+VdQtD5LPCAq7i/nubqJkHxCILkZt01dYlXKoDC3Bwtx+eZTQb
+ PMS60r2locs/3lmIGzMf21RYTfi/Xp3n9rln9XIAUMyM0KDQI9Ukt8LDAKwXpAChiuLI
+ iPBs6OnlSGNW7XyParpluu+Ta+TgavdCfRYg1iGRQtrvJ8xpUWhV00opz2imCs88tIgD
+ M/9g==
 X-Forwarded-Encrypted: i=1;
- AJvYcCXDhCgDzbMj3dWBAebLH+Lez5W3/JxOt+GXb+dPH4rnJJlU9Fm6l/IlagJ5yd/moVUUQHQ=@dpdk.org
-X-Gm-Message-State: AOJu0YwsrIgcLDRo7fj0N+5Xh0qWaf5wHmr/9yZuR1KUsH7h/3uFACHU
- OSzjnl+Xnk3aAH1mmsO62J7aYlu5uq8h9IRd39Ko9aL+A058Fxng5UQuWQwrq5yXwJeVmT3vpDS
- qvi5T98Zc8QH7UGwjXykC5nl4qRacKrHTBaT3fJ6bJl/S
-X-Gm-Gg: ATEYQzzLvReWI+0N/B4FmeEU2UaOKXoNEeySU6sjCkqqsn+tbnpfb8+mhVi20f0Oj/q
- pzYQzJXewVRM5KMYpJRYv9olVbV/R5Hhflp0StP6LZyqWLrNlEErizUhN1RmnTnmv7z943micrf
- 1FAyKTWCadLFcZIx11a85CfiRzISpGVrwbwHQze+lyB40iuuI2M57B6qj0cD/6xMF4717dTV0hP
- b3KAwX2EpvGIF/eRR3Ku+jMAlpmKr3CIfaN7zNsjTIqjt4OoB4riFR32Fu4g5Ef3VmBoU/lkIj7
- 0sJ2dilIYKReBU62DtTNL+OhXW1ceyYg/w2psIqAvzEkq10p8U4D6V2PBzPaLcvkev/Vg2Ku2Pl
- sFwlMBZ8wKImGIZES8T/i8CWm
-X-Received: by 2002:a5d:5d85:0:b0:43b:4989:86a5 with SMTP id
- ffacd0b85a97d-43b88a29124mr11005245f8f.43.1774525868169; 
- Thu, 26 Mar 2026 04:51:08 -0700 (PDT)
-X-Received: by 2002:a5d:5d85:0:b0:43b:4989:86a5 with SMTP id
- ffacd0b85a97d-43b88a29124mr11005190f8f.43.1774525867644; 
- Thu, 26 Mar 2026 04:51:07 -0700 (PDT)
+ AJvYcCUmyDCxY1Ron0ZPDdy6dtU/12u969pRVtQjKm/ta8oZO90k7CWjbxt+HTnbtWS/Y9AP4yE=@dpdk.org
+X-Gm-Message-State: AOJu0Ywv3CGmVxdZ3aH4opZ7BiADlr5kKfHTvTep4WYIeHg4lX47/Fa1
+ A7E2dwb9DoGemK1/Lk89rRn1vFjmZN7+iwwlZp1LL76ppjaTqrfyHCV9kc8UpGW3rIqaI7jEqlE
+ qg7c4zBVbUfSF+rXZPbU9q8QN0Ozz7Db2UEbQ6t7cyB5g
+X-Gm-Gg: ATEYQzwjJLfwBTXgiZOtVkrO/1N8GR5bOql+01RmSwVZOC/tjxDduxIAnNl7ejCEGT7
+ NR5n9QqEk4FnLC2Al1G0Ffub3NdvcYLOp0hcxDyRZyGo3Pkifyqm547YMI1VOQOLnw32NofDfmM
+ ozszAjUDQkRY0NqFSBGkk2WuS1w9pf56FGlqNWkbSvifHEqVxHQ04NOJEoenlnpxDmPvwhPygNs
+ s4SzDqethUZ5/XCFVrOyKaLckbt66XOTdwBKgpFOvKur91k1b8c8CRnIyLb8fj+wkhtFTDpPhOY
+ BIWgGENRjss5hwxffjU19qsLd0y8Q+0ntdZ3YzHbvNrmFcgYfJZjHKoF+8qW4jxWnkXMCeElbVK
+ EkJX/jagPLXh79PDKNlRW7iRW
+X-Received: by 2002:a05:600c:6287:b0:479:1b0f:dfff with SMTP id
+ 5b1f17b1804b1-48715fd545bmr109754815e9.10.1774525954751; 
+ Thu, 26 Mar 2026 04:52:34 -0700 (PDT)
+X-Received: by 2002:a05:600c:6287:b0:479:1b0f:dfff with SMTP id
+ 5b1f17b1804b1-48715fd545bmr109754255e9.10.1774525954271; 
+ Thu, 26 Mar 2026 04:52:34 -0700 (PDT)
 Received: from [192.168.0.65] ([78.16.129.161])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-43b9192e3e8sm8205929f8f.5.2026.03.26.04.51.05
+ 5b1f17b1804b1-487208ca5b0sm47823485e9.2.2026.03.26.04.52.32
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 26 Mar 2026 04:51:06 -0700 (PDT)
-Message-ID: <f280674f-31d5-4f85-a6fc-2ab4f9db4dcc@redhat.com>
-Date: Thu, 26 Mar 2026 11:51:05 +0000
+ Thu, 26 Mar 2026 04:52:33 -0700 (PDT)
+Message-ID: <d0bd0f6e-0cd9-4c77-b9a2-d814f9db4a8a@redhat.com>
+Date: Thu, 26 Mar 2026 11:52:31 +0000
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] bus: factorize devargs lookup
+Subject: Re: [PATCH v2 6/7] bus: factorize device selection
 To: David Marchand <david.marchand@redhat.com>, dev@dpdk.org
 Cc: Bruce Richardson <bruce.richardson@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, Maxime Leroy <maxime@leroys.fr>,
- Parav Pandit <parav@nvidia.com>, Xueming Li <xuemingl@nvidia.com>,
- Nipun Gupta <nipun.gupta@amd.com>, Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Robin Jarry <rjarry@redhat.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Maxime Leroy <maxime@leroys.fr>, Parav Pandit <parav@nvidia.com>,
+ Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
+ Nikhil Agarwal <nikhil.agarwal@amd.com>,
  Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>,
  Tomasz Duszynski <tduszynski@marvell.com>,
  Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
  Wei Hu <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>
 References: <20260323105306.1531689-1-david.marchand@redhat.com>
  <20260326102424.2361945-1-david.marchand@redhat.com>
- <20260326102424.2361945-6-david.marchand@redhat.com>
+ <20260326102424.2361945-7-david.marchand@redhat.com>
 From: Kevin Traynor <ktraynor@redhat.com>
 Autocrypt: addr=ktraynor@redhat.com; keydata=
  xsFNBF2J2awBEADUEPNhgNI+nJNgiTAUcw4YIgVXEoHlsNPyyzG1BEXkWXALy0Y3fNTiw6+r
@@ -126,9 +127,9 @@ Autocrypt: addr=ktraynor@redhat.com; keydata=
  yWzMcVrcGJDQLC9JLKEpoyUF6gdTKaiDL2Vao4+XRIA3Y57b6MO35a3HuzAv7+i5Z0mnDEJO
  XxXqTOmKYpMIGexzM/PtuA0712sT1abG9tAJ17ao/B7cqMW5IkKkalemFbWfI2unns4Papvo
  tk9igVqyp6EJDU98z5TJioCVojwK2laDaoIjTJk9YYv3iwCsqPd5feU=
-In-Reply-To: <20260326102424.2361945-6-david.marchand@redhat.com>
+In-Reply-To: <20260326102424.2361945-7-david.marchand@redhat.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: uSgaMZvUIksRzadKHvSQgaLzS0NTbJNR0965WoZKVQg_1774525868
+X-Mimecast-MFC-PROC-ID: srJGvZqhycDcp7bbHUEsYUKPOroSCD_T_HJQlW4ntIM_1774525955
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
@@ -147,41 +148,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 On 3/26/26 10:24 AM, David Marchand wrote:
-> Each bus reimplements some similar devargs lookup code.
-> 
-> The differences are in how some bus (PCI, VMBUS etc...) normalizes the
-> device names. We can't use the .parse existing handler from outside the
-> bus code itself, as the size of the bus specific device location address
-> is unknown.
-> Introduce a bus specific helper to compare two device names and
-> hide this ugly detail.
+> All buses (thankfully) implement the same logic when it comes to
+> selecting the devices to probe based on -a/-b options.
+> As we want to adjust how devices are selected, provide a common helper
+> in EAL and use it in the buses.
 > 
 > Signed-off-by: David Marchand <david.marchand@redhat.com>
 > Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+> Reviewed-by: Robin Jarry <rjarry@redhat.com>
 > Acked-by: Hemant Agrawal <hemant.agrawal@nxp.com>
 > Tested-by: Maxime Leroy <maxime@leroys.fr>
 > ---
 > Changes since v1:
-> - fixed copy/paste descriptions in doxygen,
+> - fixed device selection in dma/idxd,
 > 
-> Changes since RFC v3:
-> - fixed doxygen,
+> Changes since RFC v2:
+> - changed API to query about a device name and hide the devargs meaning
+>   in the common code,
 > 
 > ---
->  drivers/bus/auxiliary/auxiliary_common.c | 16 ++-------
->  drivers/bus/cdx/cdx.c                    | 14 +-------
->  drivers/bus/dpaa/dpaa_bus.c              | 41 +++++++++++++-----------
->  drivers/bus/fslmc/fslmc_bus.c            | 34 ++++++++++----------
->  drivers/bus/pci/pci_common.c             | 38 +++++++++++-----------
->  drivers/bus/platform/platform.c          | 17 ++--------
->  drivers/bus/uacce/uacce.c                | 19 ++---------
->  drivers/bus/vmbus/linux/vmbus_bus.c      |  2 +-
->  drivers/bus/vmbus/private.h              |  3 --
->  drivers/bus/vmbus/vmbus_common.c         | 30 ++++++++---------
->  drivers/dma/idxd/idxd_bus.c              | 14 ++------
->  lib/eal/common/eal_common_bus.c          | 20 ++++++++++++
->  lib/eal/include/bus_driver.h             | 32 ++++++++++++++++++
->  13 files changed, 133 insertions(+), 147 deletions(-)
+>  drivers/bus/auxiliary/auxiliary_common.c | 19 ----------------
+>  drivers/bus/auxiliary/linux/auxiliary.c  |  2 +-
+>  drivers/bus/auxiliary/private.h          |  6 -----
+>  drivers/bus/cdx/cdx.c                    | 21 +-----------------
+>  drivers/bus/dpaa/dpaa_bus.c              | 24 ++++++--------------
+>  drivers/bus/fslmc/fslmc_bus.c            | 22 ++++++-------------
+>  drivers/bus/pci/bsd/pci.c                |  5 ++++-
+>  drivers/bus/pci/linux/pci.c              |  2 +-
+>  drivers/bus/pci/pci_common.c             | 23 -------------------
+>  drivers/bus/pci/private.h                | 11 ----------
+>  drivers/bus/pci/windows/pci.c            |  4 +++-
+>  drivers/bus/platform/platform.c          | 28 ++----------------------
+>  drivers/bus/uacce/uacce.c                | 22 +------------------
+>  drivers/bus/vmbus/vmbus_common.c         | 25 +--------------------
+>  drivers/dma/idxd/idxd_bus.c              |  8 ++-----
+>  lib/eal/common/eal_common_bus.c          | 19 ++++++++++++++++
+>  lib/eal/include/bus_driver.h             |  6 +++++
+>  17 files changed, 55 insertions(+), 192 deletions(-)
 
 Acked-by: Kevin Traynor <ktraynor@redhat.com>
 
