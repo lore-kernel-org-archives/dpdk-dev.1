@@ -2,77 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9B2109E52F
-	for <dpdk-dev@archiver.kernel.org>; Wed, 25 Mar 2026 23:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506C6109E530
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 01:37:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA73A402C4;
-	Thu, 26 Mar 2026 00:53:21 +0100 (CET)
-Received: from fout-a7-smtp.messagingengine.com
- (fout-a7-smtp.messagingengine.com [103.168.172.150])
- by mails.dpdk.org (Postfix) with ESMTP id 8F56F40285;
- Thu, 26 Mar 2026 00:53:20 +0100 (CET)
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
- by mailfout.phl.internal (Postfix) with ESMTP id F1F4EEC0192;
- Wed, 25 Mar 2026 19:53:19 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-11.internal (MEProxy); Wed, 25 Mar 2026 19:53:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm1; t=1774482799;
- x=1774569199; bh=6bhvgfRp4C3oJYSKhMVl6xGdWRWxpNimqKuaUNE9PPI=; b=
- IIpVJrJWt7dulPgy/J1niax6UfY0u7+lWBd34uQ9N5qQAkvFyyEaYwAwg6MPBWtq
- /DEMlom69ubPCIewPMBN5A08mYNpnU18oaoaXiSFlTHossvDjK2cyfpN6o255V6e
- cLAS5wEAmyeT1i4JG8adu0PJhQfEbnHihPQFRYAi2GJAUpVUMn75mT/dWgwvyM5j
- /KyG8Vosq2XV5955A1uY5Q/17ikJcltE1AfZkxD1Q7a1TXyETpX47fT7oRyA/d96
- ndcxA7sTmogHYYGn4m0mhkMz0Zq/T3XLY4kYPdFafjGIU+SQWdA98CwDuO2at44s
- Ykah+FPeUqejwRn2Px5nAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1774482799; x=
- 1774569199; bh=6bhvgfRp4C3oJYSKhMVl6xGdWRWxpNimqKuaUNE9PPI=; b=R
- +YqqmnCjXgjTc+mi6nAvrpFIKFLNcvUSQSvVeaRfFeHv+4I0DM2L8BxlFCukJwyG
- 0uLx4YE3wgcJF1u81cMKObf/2GWhGP5FG1N4xfKY1xPPGdW1U64cc4GoP9OeCAds
- 8AdSr8fX1OQqUHZJ+fojOr1BDROPEKoGuXa1wHyrb27uWC51KATwHTKDHW5cYspq
- NIACm8LJinghjBUm0AqfZXyiB5JvmwDUrjstQUwDfbtW9KbML5vWsd6m215ZDkoI
- KNRuhDZxMpisDYQytihGiTJGeE3bdcP7oHWPJpFMlJfhUJzW96zFO9BvN7RqrEDu
- mxsofSwdSacbiJBll2ncA==
-X-ME-Sender: <xms:b3XEaTV8FVgZK19dzHJ3wl5G4kKlHihJwXpEIpT_Ztwzderey8KXXA>
- <xme:b3XEaf5rMeOayGXMRQtgM-b9pR2a4m9dimNzZ-ubAJwnSQ1J-EzTvXbGAG2P7sqjG
- _EeKoteszSvTPCtAo2srKAZCfzm7v4feklZ2haLvwHXcOUaJpO1Dg>
-X-ME-Received: <xmr:b3XEaejhzdB-Oa6SWd2R6xTfgY8Ff6fl6GTa5aB7uVItXMXzV8lUTgq6b_Qf8nI0OqHn1Awq7XI81pRpXgCrgK7Ezw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefgedrtddtgdefvdehkeegucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertd
- dttdejnecuhfhrohhmpefvhhhomhgrshcuofhonhhjrghlohhnuceothhhohhmrghssehm
- ohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrthhtvghrnhepjeduveehieevuddutdevff
- fgtdegkeeuveejffejgedtgeegkefgvdeugfefkeejnecuvehluhhsthgvrhfuihiivgep
- tdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnh
- gvthdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
- vhhiphhinhdrvhgrrhhghhgvshgvsegrmhgurdgtohhmpdhrtghpthhtohepuggvvhesug
- hpughkrdhorhhgpdhrtghpthhtohepshhtrggslhgvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:b3XEaWeXUQSHv4s1DwI246nFr6EQ5hBOxvXgLm5YlRAvh3-ZZwEyvw>
- <xmx:b3XEaTcJNj5H9XQbRRIyIta_U9ncObKeLTH0OuXIqdtPySSRGawM8g>
- <xmx:b3XEaQ_axyLwWpjyZSuQHmKc-MHdS8inE4Nq3qVzVml6qAMwXrEBUQ>
- <xmx:b3XEafnNNs-NOGC4GoTi5XffAzbyuyuOnVQhlimGg0f6gYqcwXxspw>
- <xmx:b3XEaQlzh-ha3gdl5Ms8jTZrV76x-6OBBo7Ukrge4MyvWljpTgmDUWXT>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 25 Mar 2026 19:53:19 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: vipin.varghese@amd.com
-Cc: dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH] doc: update AMD EPYC guide
-Date: Thu, 26 Mar 2026 00:53:17 +0100
-Message-ID: <16586827.RDIVbhacDa@thomas>
-In-Reply-To: <20260227143133.510-1-vipin.varghese@amd.com>
-References: <20260227143133.510-1-vipin.varghese@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 43F6B40E1E;
+	Thu, 26 Mar 2026 02:37:38 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+ by mails.dpdk.org (Postfix) with ESMTP id B1E09402C4
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 02:37:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1774489057; x=1806025057;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=s4cKv8V9lxpMNlVYta8UBOdfLQRCgr7PXnlMgs/RcBU=;
+ b=G4J+DriTa53hjhfsZTZ4/82hLWxJZ+/b1hrjpKrNKTtdl+2J8XEnyQfj
+ xeY+Sn2mHpIovNxJRqeR6UXHJayMpwak8vnlTVOSGG0VmwTeLnUybO+Ti
+ vurIfIfar5KGi597X+3B1QMY8rYXtBk1AV0kUZciM4Y1SCddARUmQKZ4g
+ NGYKEYD4z/2gtBJLHodlI4LqzCL4tQdUBFYoaLoGX3ncoPBeqKXlxsy+7
+ bj+Zk5Ian3uwpVb4JZVX+NDgSHKFpMRA/bDpeoJPsG85RxiC5FlXJ+8S/
+ 8JCjRsIxGWvfev1I6oDBslr0mL6/0/PVGe8hWzABPNFqB3cprG9w3h6Sd g==;
+X-CSE-ConnectionGUID: f9YmdMsTQYiWZJ19nAcgnw==
+X-CSE-MsgGUID: IzERcuGuT7+hkJJt7SfJXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11740"; a="75442390"
+X-IronPort-AV: E=Sophos;i="6.23,141,1770624000"; d="scan'208";a="75442390"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+ by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Mar 2026 18:37:35 -0700
+X-CSE-ConnectionGUID: WKpz2+M4RbCfR7wpAGpRpw==
+X-CSE-MsgGUID: s8IAvt5DQ9mroEwOllingQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,141,1770624000"; d="scan'208";a="255347294"
+Received: from unknown (HELO tester12..) ([10.239.252.12])
+ by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 25 Mar 2026 18:37:33 -0700
+From: hailinxx <hailinx.xu@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, john.mcnamara@intel.com,
+ hailinxx <hailinx.xu@intel.com>
+Subject: [PATCH v1 0/3] nics: update intel nic latest recommended matching
+ list 
+Date: Thu, 26 Mar 2026 00:54:04 +0000
+Message-Id: <20260326005407.623302-1-hailinx.xu@intel.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -86,17 +60,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/02/2026 15:31, Vipin Varghese:
-> 1. updated URL for AMD SoC tuning guide.
-> 2. add `ASPM` disable for latency.
-> 
-> Fixes: de1f01a8eabd ("doc: add AMD configuration in Linux guide")
-> Cc: vipin.varghese@amd.com
-> Cc: stable@dpdk.org
-> Signed-off-by: Vipin Varghese <vipin.varghese@amd.com>
-> Tested-by: Vipin Varghese <vipin.varghese@amd.com>
+1. Updated ice latest recommended matching list
+2. Updated i40e latest recommended matching list
+3. Add ixgbe(E610,X550) latest recommended matching list
 
-Applied, thanks.
+*** SUBJECT HERE ***
 
+Hailin Xu (3):
+  net/ice: updated ice latest recommended matching list
+  net/i40e: updated i40e latest recommended matching list
+  net/ixgbe: updated ixgbe latest recommended matching list
 
+ doc/guides/nics/i40e.rst  | 52 +++++++++++++++++++++------------------
+ doc/guides/nics/ice.rst   |  4 +++
+ doc/guides/nics/ixgbe.rst | 28 +++++++++++++++++++++
+ 3 files changed, 60 insertions(+), 24 deletions(-)
+
+-- 
+2.34.1
 
