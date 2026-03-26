@@ -2,54 +2,42 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A5D106F318
-	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 10:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DD3106F315
+	for <dpdk-dev@archiver.kernel.org>; Thu, 26 Mar 2026 10:18:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6DCDC402F1;
-	Thu, 26 Mar 2026 11:13:35 +0100 (CET)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 40062402B5
- for <dev@dpdk.org>; Thu, 26 Mar 2026 11:13:33 +0100 (CET)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fhKNd4P3BzJ46hM;
- Thu, 26 Mar 2026 18:13:21 +0800 (CST)
-Received: from dubpeml100002.china.huawei.com (unknown [7.214.144.156])
- by mail.maildlp.com (Postfix) with ESMTPS id 9E82F40587;
- Thu, 26 Mar 2026 18:13:31 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100002.china.huawei.com (7.214.144.156) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 26 Mar 2026 10:13:31 +0000
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Thu, 26 Mar 2026 10:13:31 +0000
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: "rjarry@redhat.com" <rjarry@redhat.com>, "nsaxena16@gmail.com"
- <nsaxena16@gmail.com>, "mb@smartsharesystems.com" <mb@smartsharesystems.com>, 
- "adwivedi@marvell.com" <adwivedi@marvell.com>, "jerinjacobk@gmail.com"
- <jerinjacobk@gmail.com>, Maxime Leroy <maxime@leroys.fr>
-Subject: RE: [RFC PATCH 1/4] fib: add multi-VRF support
-Thread-Topic: [RFC PATCH 1/4] fib: add multi-VRF support
-Thread-Index: AQHcuhKcJJxwCE+lqEy31K72rKhCrbW8QVYQgAA62oCAADV+QIACnDwAgAFIKpA=
-Date: Thu, 26 Mar 2026 10:13:31 +0000
-Message-ID: <11250ee33c514310aa034c0f7ae0d8e5@huawei.com>
-References: <20260322154215.3686528-1-vladimir.medvedkin@intel.com>
- <20260322154215.3686528-2-vladimir.medvedkin@intel.com>
- <a97747eac5c242359b959e24f284bf5b@huawei.com>
- <5ef5dc7b-0048-4e1e-be1c-d94b5b8f3caf@intel.com>
- <8127950263884375b935be30eb39da9b@huawei.com>
- <688998df-fdeb-4748-8821-6cc0ed49ffd0@intel.com>
-In-Reply-To: <688998df-fdeb-4748-8821-6cc0ed49ffd0@intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.154.171]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id A5817402F1;
+	Thu, 26 Mar 2026 11:18:18 +0100 (CET)
+Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.8])
+ by mails.dpdk.org (Postfix) with ESMTP id 3AFBA402B5
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 11:18:17 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+ s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=sr
+ DeqqmahcGKRrAjqUgHZ4+4/BrErSnPweBFBKuSF3U=; b=ZtQWd/Hr6DuWwgofuF
+ L/mLR8fHjKTsO1wIQ/cI6ab7pYFbuEZaYhm2njITZTrGz+xHNlEtJQGKMWXpy1xa
+ qfLDOWJxqGrmS3fdFc965DghsQnbR4RVOR8PPNOH0ZyrGuLoOE4DXs4ALs93HMmg
+ FPG6CDkasRjvZa+yej6F68xV8=
+Received: from test-spdk.. (unknown [])
+ by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id
+ _____wD3lwXmB8VpIRWFAg--.64267S2; 
+ Thu, 26 Mar 2026 18:18:15 +0800 (CST)
+From: YuanXin <yuanxin123456@126.com>
+To: dev@dpdk.org
+Cc: yuanxin36 <yuanxin36@jd.com>, Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH] vhost: fix rte_vhost_vring_call coredump caused by
+ numa_realloc free virtio_net
+Date: Thu, 26 Mar 2026 18:18:11 +0800
+Message-ID: <20260326101813.23049-1-yuanxin123456@126.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: _____wD3lwXmB8VpIRWFAg--.64267S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWrtr1kZr18WF4ftrWxCw17Jrb_yoW8JrWrpa
+ ySyry7XFWSkry2k348Jr18J34rA3WvkrnrWr9Igr1FvrW5GwnxCFZrKa4FvF1UArW5AF1U
+ tF1IqrWruw4Du37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U6q2_UUUUU=
+X-Originating-IP: [116.196.86.234]
+X-CM-SenderInfo: h1xd05tlqrjjquvwqiyswou0bp/xtbBswfGT2nFB+fIqgAA3T
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -63,89 +51,38 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gPj4+PiBBZGQgVlJGIChWaXJ0dWFsIFJvdXRpbmcgYW5kIEZvcndhcmRpbmcpIHN1cHBv
-cnQgdG8gdGhlIElQdjQNCj4gPj4+PiBGSUIgbGlicmFyeSwgYWxsb3dpbmcgbXVsdGlwbGUgaW5k
-ZXBlbmRlbnQgcm91dGluZyB0YWJsZXMNCj4gPj4+PiB3aXRoaW4gYSBzaW5nbGUgRklCIGluc3Rh
-bmNlLg0KPiA+Pj4+DQo+ID4+Pj4gSW50cm9kdWNlIG1heF92cmZzIGFuZCB2cmZfZGVmYXVsdF9u
-aCBmaWVsZHMgaW4gcnRlX2ZpYl9jb25mDQo+ID4+Pj4gdG8gY29uZmlndXJlIHRoZSBudW1iZXIg
-b2YgVlJGcyBhbmQgcGVyLVZSRiBkZWZhdWx0IG5leHRob3BzLg0KPiA+Pj4gVGhhbmtzIFZsYWRp
-bWlyLCBhbGxvd2luZyBtdWx0aXBsZSBWUkZzIHBlciBzYW1lIExQTSB0YWJsZSB3aWxsDQo+ID4+
-PiBkZWZpbml0ZWx5IGJlIGEgdXNlZnVsIHRoaW5nIHRvIGhhdmUuDQo+ID4+PiBUaG91Z2gsIEkg
-aGF2ZSB0aGUgc2FtZSBjb25jZXJuIGFzIE1heGltZToNCj4gPj4+IG1lbW9yeSByZXF1aXJlbWVu
-dHMgYXJlIGp1c3Qgb3ZlcndoZWxtaW5nLg0KPiA+Pj4gU3R1cGlkIHEgLSB3aHkganVzdCBub3Qg
-dG8gc3RvcmUgYSBwb2ludGVyIHRvIGEgdmVjdG9yIG9mIG5leHQtaG9wcw0KPiA+Pj4gd2l0aGlu
-IHRoZSB0YWJsZSBlbnRyeT8NCj4gPj4gQW0gSSB1bmRlcnN0YW5kIGNvcnJlY3RseSwgYSB2ZWN0
-b3Igd2l0aCBtYXhfbnVtYmVyX29mX3ZyZnMgZW50cmllcyBhbmQNCj4gPj4gdXNlIHZyZiBpZCB0
-byBhZGRyZXNzIGEgbmV4dGhvcD8NCj4gPiBZZXMuDQo+IA0KPiBIZXJlIEkgY2FuIHNlZSAyIHBy
-b2JsZW1zOg0KPiANCj4gMS4gdGJsIGVudHJpZXMgbXVzdCBiZSB0aGUgc2l6ZSBvZiBhIHBvaW50
-ZXIsIHNvIG5vIHdheSB0byB1c2Ugc21hbGxlciBzaXplcw0KDQpZZXMsIGJ1dCBhcyB3ZSBhcmUg
-dGFsa2luZyBhYm91dCBzdG9yaW5nIG5leHRob3BzIGZvciBtdWx0aXBsZSBWUkZzIGFueXdheSwN
-CkkgZG9uJ3QgdGhpbmsgaXQgaXMgYSBiaWcgZGVhbC4NCg0KPiAyLiB0aG9zZSB2ZWN0b3JzIHdp
-bGwgYmUgc3BhcnNlbHkgcG9wdWxhdGVkIGFuZCwgZGVwZW5kaW5nIG9uIHRoZQ0KPiBydW50aW1l
-IGNvbmZpZ3VyYXRpb24sIG1heSBjb25zdW1lIGEgbG90IG9mIG1lbW9yeSB0b28gKGFzIFJvYmlu
-DQo+IG1lbnRpb25lZCB0aGV5IG1heSBoYXZlIDEwMjQgVlJGcykNCg0KWWVhcywgZWFjaCBWUkYg
-dmVjdG9yIGNhbiBiZWNvbWUgcmVhbGx5IHNwYXJzZSBhbmQgd2Ugd2FzdGUgYSBsb3Qgb2YgbWVt
-b3J5Lg0KSWYgdGhhdCdzIGFuIGlzc3VlLCB3ZSBwcm9iYWJseSBjYW4gdGhpbmsgYWJvdXQgc29t
-ZXRoaW5nIHNtYXJ0ZXINCnRoZW4gc2ltcGxlIGZsYXQgYXJyYXkgaW5kZXhlZCBieSB2cmYtaWQ6
-IHNvbWV0aGluZyBsaWtlIDItbGV2ZWwgQi10cmVlIG9yIHNvLg0KVGhlIG1haW4gcG9zaXRpdmVz
-IHRoYXQgSSBzZWUgaW4gdGhhdCBhcHByb2FjaDogDQotIGxvdyBleHRyYSBvdmVyaGVhZCBhdCBs
-b29rdXAgIC0gb25lL3R3byBleHRyYSBwb2ludGVyIGRlLXJlZmVybmNlcy4NCi0gaXQgYWxsb3dz
-IENQIHRvIGFsbG9jYXRlL2ZyZWUgc3BhY2UgZm9yIGVhY2ggc3VjaCB2ZWN0byBzZXBhcmF0ZWx5
-LA0KICBzbyB3ZSBkb24ndCBuZWVkIHRvIHByZS1hbGxvY2F0ZSBtZW1vcnkgZm9yIG1heCBwb3Nz
-aWJsZSBlbnRyaWVzIGF0IHN0YXJ0dXAuICAgICANCg0KPiA+DQo+ID4+IFllcywgdGhpcyBtYXkg
-d29yay4NCj4gPj4gQnV0LCBpZiB3ZSBhcmUgZ29pbmcgdG8gZG8gYW4gZXh0cmEgbWVtb3J5IGFj
-Y2VzcywgSSdkIGJldHRlciB0bw0KPiA+PiBtYWludGFpbiBhbiBpbnRlcm5hbCBoYXNoIHRhYmxl
-IHdpdGggNSBieXRlIGtleXMgezI0X2JpdHNfZnJvbV9MUE0sDQo+ID4+IDE2X2JpdHNfdnJmX2lk
-fSB0byByZXRyaWV2ZSBhIG5leHRob3AuDQo+ID4gSG1tLi4uIGFuZCB3aGF0IHRvIGRvIHdpdGgg
-ZW50cmllcyBpbiB0Ymw4LCBJIG1lYW4gd2hhdCB3aWxsIGJlIHRoZSBrZXkgZm9yDQo+IHRoZW0/
-DQo+ID4gT3IgeW91IGRvbid0IHBsYW4gdG8gcHV0IGVudHJpZXMgZnJvbSB0Ymw4IHRvIHRoYXQg
-aGFzaCB0YWJsZT8NCj4gDQo+IFRoZSBpZGVhIGlzIHRvIGhhdmUgYSBzaW5nbGUgTFBNIHN0cnVj
-dCB3aXRoIGEgam9pbiBzdXBlcnNldCBvZiBhbGwNCj4gcHJlZml4ZXMgZXhpc3RpbmcgaW4gYWxs
-IFZSRnMuIEVhY2ggcHJlZml4IGluIHRoaXMgTFBNIHN0cnVjdCBoYXMgaXRzDQo+IG93biB1bmlx
-dWUgIm5leHRob3AiLCB3aGljaCBpcyBub3QgdGhlIGZpbmFsIG5leHQgaG9wLCBidXQgYW4NCj4g
-aW50ZXJtZWRpYXRlIG1ldGFkYXRhIGRlZmluaW5nIHRoaXMgdW5pcXVlIHByZWZpeC4gVGhlbiwg
-dGhlIGZvbGxvd2luZw0KPiBzZWFyY2ggaXMgcGVyZm9ybWVkIHdpdGggdGhlIGtleSBjb250YWlu
-aW5nIHRoaXMgaW50ZXJtZWRpYXRlIG1ldGFkYXRhICsNCj4gdnJmX2lkIGluIHNvbWUgZXhhY3Qg
-bWF0Y2ggZGF0YWJhc2UgbGlrZSBoYXNoIHRhYmxlLsKgVGhpcyBhcHByb2FjaCBpcw0KPiB0aGUg
-bW9zdCBtZW1vcnkgZnJpZW5kbHksIHNpbmNlIHRoZXJlIGlzIG9ubHkgb25lIExQTSBkYXRhIHN0
-cnVjdCAod2hpY2gNCj4gc2NhbGVzIHdlbGwgd2l0aCBudW1iZXIgb2YgcHJlZml4ZXMgaXQgaGFz
-KSB3aXRoIGludGVybWVkaWF0ZSBlbnRyaWVzDQo+IG9ubHkgNGIgbG9uZy4NCj4gT24gdGhlIG90
-aGVyIGhhbmQgaXQgcmVxdWlyZXMgYW4gZXh0cmEgc2VhcmNoLCBzbyBsb29rdXAgd2lsbCBiZSBz
-bG93ZXIuDQo+IEFsc28sIHNvbWUgY3VycmVudCBMUE0gb3B0aW1pemF0aW9ucywgbGlrZSB0Ymw4
-IGNvbGxhcHNpbmcgaWYgYWxsIHRibDgNCj4gZW50cmllcyBoYXZlIGEgc2ltaWxhciB2YWx1ZSwg
-d2lsbCBiZSBnb25lLg0KDQpZZXMsIGFuZCB5ZXMgOikNClllcyBpdCB3b3VsZCBoZWxwIHRvIHNh
-dmUgbWVtb3J5LCBhbmQgeWVzIGxvb2t1cCB3aWxsIG1vc3QgbGlrZWx5IGJlIHNsb3dlci4gDQpU
-aGUgb3RoZXIgdGhpbmcgdGhhdCBJIGNvbnNpZGVyIGFzIGEgcG9zc2libGUgZHJhd2JhY2sgaGVy
-ZSAtIHdpdGggY3VycmVudCBydGVfaGFzaA0KaW1wbGVtZW50YXRpb24gd2Ugc3RpbGwgbmVlZCB0
-byBhbGxvY2F0ZSBzcGFjZSBmb3IgYWxsIHBvc3NpYmxlIG1heCBlbnRyaWVzIGF0IHN0YXJ0dXAu
-DQpCdXQgdGhhdCdzIG5vdCBuZXcgaW4gRFBESywgYW5kIGZvciBtb3N0IGNhc2VzIGl0IGlzIGNv
-bnNpZGVyZWQgYXMgYWNjZXB0YWJsZSB0cmFkZS1vZmYuDQpPdmVyYWxsLCBpdCBzZWVtcyBsaWtl
-IGEgcG9zc2libGUgYXBwcm9hY2ggdG8gbWUsIEkgc3VwcG9zZSB0aGUgbWFpbiBxdWVzdGlvbiBp
-czoNCndoYXQgd2lsbCBiZSB0aGUgcHJpY2Ugb2YgdGhhdCBleHRyYSBoYXNoLWxvb2t1cCBoZXJl
-LiANCkFnYWluIHRoZXJlIGlzIGEgYnVsayB2ZXJzaW9uIG9mIGhhc2ggbG9va3VwIGFuZCBpbiB0
-aGVvcnkgaXQgbWlnaHQgYmUgaXQgY2FuIGJlDQppbXByb3ZlZCBmdXJ0aGVyIChhdng1MTIgdmVy
-c2lvbiBvbiB4ODY/KS4gICANCg0KPiANCj4gPg0KPiA+Pj4gQW5kIHdlIGNhbiBwcm92aWRlIHRv
-IHRoZSB1c2VyIHdpdGggYWJpbGl0eSB0byBzcGVjaWZ5IGN1c3RvbQ0KPiA+Pj4gYWxsb2MvZnJl
-ZSBmdW5jdGlvbiBmb3IgdGhlc2UgdmVjdG9ycy4NCj4gPj4+IFRoYXQgd291bGQgaGVscCB0byBh
-dm9pZCBhbGxvY2F0aW5nIGh1Z2UgY2h1bmtzIG9mIG1lbW9yeSBhdCBzdGFydHVwLg0KPiA+Pj4g
-SSB1bmRlcnN0YW5kIHRoYXQgaXQgd2lsbCBiZSBvbmUgZXh0cmEgbWVtb3J5IGRlcmVmZXJlbmNl
-LA0KPiA+Pj4gYnV0IHByb2JhYmx5IGl0IHdpbGwgYmUgbm90IHRoYXQgY3JpdGljYWwgaW4gdGVy
-bXMgb2YgcGVyZm9ybWFuY2UgLg0KPiA+Pj4gQWdhaW4gZm9yIGJ1bGsgZnVuY3Rpb24gIHdlIG1p
-Z2h0IGJlIGFibGUgdG8gcGlwZWxpbmUgbG9va3VwcyBhbmQNCj4gPj4+IGRlLXJlZmVyZW5jZXMg
-YW5kIGhpZGUgdGhhdCBleHRyYSBsb2FkIGxhdGVuY3kuDQo+ID4+Pg0KPiA+Pj4+IEFkZCBmb3Vy
-IG5ldyBleHBlcmltZW50YWwgQVBJczoNCj4gPj4+PiAtIHJ0ZV9maWJfdnJmX2FkZCgpIGFuZCBy
-dGVfZmliX3ZyZl9kZWxldGUoKSB0byBtYW5hZ2Ugcm91dGVzDQo+ID4+Pj4gICAgIHBlciBWUkYN
-Cj4gPj4+PiAtIHJ0ZV9maWJfdnJmX2xvb2t1cF9idWxrKCkgZm9yIG11bHRpLVZSRiBidWxrIGxv
-b2t1cHMNCj4gPj4+PiAtIHJ0ZV9maWJfdnJmX2dldF9yaWIoKSB0byByZXRyaWV2ZSBhIHBlci1W
-UkYgUklCIGhhbmRsZQ0KPiA+Pj4+DQo+ID4+Pj4gU2lnbmVkLW9mZi1ieTogVmxhZGltaXIgTWVk
-dmVka2luIDx2bGFkaW1pci5tZWR2ZWRraW5AaW50ZWwuY29tPg0KPiA+Pj4+IC0tLQ0KPiA+Pj4+
-ICAgIGxpYi9maWIvZGlyMjRfOC5jICAgICAgICB8IDI0MSArKysrKysrKysrKysrKysrLS0tLS0t
-DQo+ID4+Pj4gICAgbGliL2ZpYi9kaXIyNF84LmggICAgICAgIHwgMjU1ICsrKysrKysrKysrKysr
-KystLS0tLS0tLQ0KPiA+Pj4+ICAgIGxpYi9maWIvZGlyMjRfOF9hdng1MTIuYyB8IDQyMCArKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0NCj4gPj4+PiAgICBsaWIvZmliL2Rp
-cjI0XzhfYXZ4NTEyLmggfCAgODAgKysrKysrKy0NCj4gPj4+PiAgICBsaWIvZmliL3J0ZV9maWIu
-YyAgICAgICAgfCAxNTggKysrKysrKysrKysrLS0tDQo+ID4+Pj4gICAgbGliL2ZpYi9ydGVfZmli
-LmggICAgICAgIHwgIDk0ICsrKysrKysrLQ0KPiA+Pj4+ICAgIDYgZmlsZXMgY2hhbmdlZCwgOTg4
-IGluc2VydGlvbnMoKyksIDI2MCBkZWxldGlvbnMoLSkNCj4gPj4+Pg0KPiA+PiA8c25pcD4NCj4g
-Pj4NCj4gPj4gLS0NCj4gPj4gUmVnYXJkcywNCj4gPj4gVmxhZGltaXINCj4gPj4NCj4gLS0NCj4g
-UmVnYXJkcywNCj4gVmxhZGltaXINCj4gDQoNCg==
+backend may start poller when the first vq kick(like spdk), and access virtio_net
+in poller pthread(reactor thread). At the same time, another vq kick
+coming, then call numa_realloc to realloc virtio_net in numa node of
+this vq, although virtio_net is already consistent with the first vq.
+numa_realloc will free old virtio_net and set its member to 0, this
+causes the previous poller pthread to access NULL ptr(latest code is
+vhost_vring_inject_irq).
+Why dev->flags & VIRTIO_DEV_RUNNING doesn't prevent that happening?
+Because there is no lock protecting dev(virtio_net), only vq is protected
+by lock.
+So, it's no necessary to do dev_realloc for each vq kick when call numa_realloc.
+
+Signed-off-by: YuanXin <yuanxin123456@126.com>
+Signed-off-by: yuanxin36 <yuanxin36@jd.com>
+---
+ lib/vhost/vhost_user.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
+index 4bfb13fb98..1312f95cbc 100644
+--- a/lib/vhost/vhost_user.c
++++ b/lib/vhost/vhost_user.c
+@@ -681,6 +681,9 @@ numa_realloc(struct virtio_net **pdev, struct vhost_virtqueue **pvq)
+ 
+ out_dev_realloc:
+ 
++	if (vq->index > 0)
++		return;
++
+ 	if (dev->flags & VIRTIO_DEV_RUNNING)
+ 		return;
+ 
+-- 
+2.43.0
+
