@@ -2,141 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B05E10ED676
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 13:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A9C10AB830
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 14:53:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 61B5F42E1D;
-	Fri, 27 Mar 2026 14:07:53 +0100 (CET)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 8BBB642D8C
- for <dev@dpdk.org>; Fri, 27 Mar 2026 14:07:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1774616872; x=1806152872;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=52FtbalX5XdIA4NozWQPIasRyaAOkoT2XJRPWraCGW4=;
- b=Thlm87CkpOobZiSRBfgoXHoHZr55NzERmGXuSk6g3Kws5xHGO8LzW3ii
- 8WY26lOHJ2q9b7LxufwPRhjM3lR1v+8k0YT9un7/uf8yILXOM8rLGSAll
- hym7xZRAqO5dVtpcL6OdJDTWbuetm5vsluhREGVFFYxbA2R4VRZU15mOC
- mrg54jOW2kbOTXwCv2Wkfq+45sE6vf7/nkEa6qrL3GMHbBATurceD2Rus
- 6Mg5c5enf62Chjy2lIZE6MEaB+xDs5ag1o3G5+rf2uauEbAYQ36xo8pu/
- 3/m/lK6F9dMxlbbazIKJtDzDlPMPIuk35MAq3BtR6HrwXL/xrhbGkdvA+ w==;
-X-CSE-ConnectionGUID: g/vjQTQwTqG24IUdF/f1Hg==
-X-CSE-MsgGUID: Er6CF/SKTnKOED0FVWpBFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11741"; a="75654790"
-X-IronPort-AV: E=Sophos;i="6.23,144,1770624000"; d="scan'208";a="75654790"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Mar 2026 06:07:51 -0700
-X-CSE-ConnectionGUID: TlkJB1IlQl2i17jZ+d+FJA==
-X-CSE-MsgGUID: jH5GeUGNTl+PN8FwAE9upQ==
-X-ExtLoop1: 1
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Mar 2026 06:07:50 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 27 Mar 2026 06:07:49 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Fri, 27 Mar 2026 06:07:49 -0700
-Received: from SA9PR02CU001.outbound.protection.outlook.com (40.93.196.28) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 27 Mar 2026 06:07:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U7a1kvJ288PxwgYg8CxvQk20V87WyWYnClfMBOHJr5QgPX01K2AyihDn5y62vq5XVFDT2ues98jEqSk69pPMYf+b9DIgqwnuH2j3IOUyya96C6nY4VLhA+yIUGk0KVHbnhJujE2kkL9WRUghBqJbzi/97O9HKLfTt+42rV/Vg5gnxhZ32gYpOgquIXj2b473s1jnC5p2MTBFvGv/vNphZ0lzcy3z0LOgm9olYFShuj3d1e0/AIXyELBQxnoqqKjVlXo/kORsYNcXM37ofSS15VFoRDTA3K4yC6KpKYBtmsYqQV2n4hWA3We4qbII9VoNin9a9WSSUz01nUD0pkvMtQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uaRltgi3iszPJGsTDIxH/BK+c2yYffdFzkpz3owIfhw=;
- b=jIpDGqG2Ct3eBij8JFWb8W63HSv1FIpqXlZnK4CMCzY3M1meNJkqFvNYola7lfogih3AJT3DC69K7orJD5L8f4a3bljKMjdXXenFB800YPi5X2piZyg8EEjs5hqhSHG1b80uHs7Mp14z8Gvw1cIEVNIX1mLp3C5d3M6aAR1vmjwD0ewotTmqui2qFvCibClroHRdgqaPg4fgF6UldkH8EffJ5JNK0S+ScdfblP3tgTJ3Oc+KJrm0bqTfnnkPMUeUYo5A4of5ZRDpYUX4Fooz5IDw2JggILWd1jmhjVpmU7zhVTWZOHNEbNWzs3Z9TXaXaY+q2k53k7uJ2opLR+HL3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by BY1PR11MB8005.namprd11.prod.outlook.com (2603:10b6:a03:523::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.8; Fri, 27 Mar
- 2026 13:07:47 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9769.006; Fri, 27 Mar 2026
- 13:07:47 +0000
-Date: Fri, 27 Mar 2026 13:07:42 +0000
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: hailinxx <hailinx.xu@intel.com>
-CC: <dev@dpdk.org>, <john.mcnamara@intel.com>
-Subject: Re: [PATCH v1 0/3] nics: update intel nic latest recommended
- matching list
-Message-ID: <acaBHl8ozKryn7zE@bricha3-mobl1.ger.corp.intel.com>
-References: <20260326005407.623302-1-hailinx.xu@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260326005407.623302-1-hailinx.xu@intel.com>
-X-ClientProxiedBy: DU2P250CA0010.EURP250.PROD.OUTLOOK.COM
- (2603:10a6:10:231::15) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+	by mails.dpdk.org (Postfix) with ESMTP id A7A9742DD6;
+	Fri, 27 Mar 2026 15:53:51 +0100 (CET)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id 3DB5D427C5
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 15:53:50 +0100 (CET)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-12a747e7b2fso1275418c88.0
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 07:53:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774623229; cv=none;
+ d=google.com; s=arc-20240605;
+ b=bE2GgGpzK+haswAI+McqHMy09Df2iRtLKjdPeirtf+Ji0uL25gHB8aaSu/FCaVREJE
+ HN0Qpt7NG4/L8bOSYU3ShDi8uWfp+hxAiNke9OvIPITk/HWvWYJzOS8WOLDsa00AFT+s
+ FrxFqeArV+YZQ6OK4cf/e59HY6Us7/Rg0LVsDO49morPjAoy6tgtQ0yeUtO8clrthufs
+ u9Q+m8XAbGhGbzm4CbtCkz7J4eXS4MDqzdaAHLrZqazRp94f4DPtJ0cvvT2wZ3wilaRJ
+ 4FyyUd462h+ymLs38GoqkxZdpASUCedpFcm32UHDEGIbb3uh4nIAzJA3XmBtkSkGsKJs
+ IOGw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=9Hdk3+cWcqjpSdRazVGrHZMX9MJJ6veo4zcGaKQyd4U=;
+ fh=b/pxWTS8i8er6hBw6Cgk0aNHPfPDunRtIuBYWHOcBzM=;
+ b=LPEkQzA5yLCj+iaict5/wQhXYyplIrRuDl0lKg3jJwFngYO7n3riUNCnGVmE9v4jIv
+ FEoWNpRtHsPJ8ZL+06SnyAow9wBnKLFK/NJpdG7QBfZsCg1Cp8FPTzDdPHmYy7ug8C6h
+ CEmB0UKm6PurvYs2jDcoGCmJvgZ3sVnk3yJvCOU+WBRN4ceVKUoqI9sQUEbut7w1NTOx
+ GNu6wsiGtkdRfVY6Bhd7pNqfQ+6jZPWH29SFDC0qtwWFylaghUT9l99/vDwjbkjA4TmT
+ 0m2Soq8nqz4koFrId2vAZb7/GoM1A/ooCGTbMZTUEJH96ZrdkHPr7ESKRuLG8DcUUrgW
+ CFBg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1774623229; x=1775228029; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=9Hdk3+cWcqjpSdRazVGrHZMX9MJJ6veo4zcGaKQyd4U=;
+ b=OBhMdgq++ZYT1pIeklMpD+RVtjofglbx2u3oIDHoq72/CKUmoA8AxeijyqvzBMiNEq
+ JwYTzqmx3XhGhwde3SqsbqvDPR4JXFtPDEe8uJ2/V8kK2GCwRBQ9MnvQl0c74ZQcdzmj
+ AHNxN9RGT+y73qqq0jIySXqraOmCAKjrIf9oE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774623229; x=1775228029;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=9Hdk3+cWcqjpSdRazVGrHZMX9MJJ6veo4zcGaKQyd4U=;
+ b=JKIyzs74hskSSai3aOzXKddXXHklZgxuY0bpgoNBYY35JKfrIg8OZuAO1uGQbP8CTs
+ Gq+H3kuLNT4aDpx/HrrK9FqpZACUdMH4HUg3OH3wuqwraeqDEPYfyQ6/qYKIrVd7BJG+
+ a34mOesum8R+eiPTBo2ORqFLtuV2c/j4P38GFVeKA8dtGlw3szcXEPljJ1ehcDfR15Ox
+ WVkqGuAG7wDcv2KuCYS6G4Ns0O6eIgjQ4+Ny2Y0ieV7iroVPfmmQ+wXcPAPIs0LaEK8+
+ qajJBeglS4vCgMk5jINV1KKaaxbJvKwqiwSburOFx0vN4hVXe/VRSWDZ1JSDRRSEOJhg
+ cjsg==
+X-Gm-Message-State: AOJu0YxQJEIB4g/jsfdX7l1fkp02wxbAOInXdr7+MeRKHJhz4m6UnqC3
+ HPEew9McILxw7el70dV0ZY9e6yHoJwCO0Tudu1WNQ2e147meO6XGmtWxX1zxRSSz8vt2SVCHe/R
+ Ou/gN8cQRU5aaZotkeFBuOsWrhLjn+0q2vhIZAV87tw==
+X-Gm-Gg: ATEYQzxqor6IUAJzuAUPPLXiI+D30pLtM7+ZXBU5d4yXDnGqKnsLyIedNYaBYwd1IFy
+ KxxQPPSw3KXjdp8yQmYx6RzSI4EU3L9lW6ovQbfmA/Ft38vbYwQjdS1up1h5GfUkOyJ44HMKDmW
+ WdX7khKShw7YH6hhxplOEHPq4VMGG4SZY3kIWlAfYKvv7PC5N8i+kGU21W9jskg0+UMfWqdCQvd
+ KROfaClnPd5u3yhHM2qztndcdDK/f7As14uqpxCt9eNiKFwiWbnNGpwIvF832roOPnXlKTFY2z5
+ ymHBMSrrKMm8My+9MZy9gp9kV7LPC9xYhVPNTtWjD22V+KmywM6C7gIBpJuDCySa
+X-Received: by 2002:a05:7022:e12:b0:128:d24a:a5ba with SMTP id
+ a92af1059eb24-12ab28de7cbmr1478546c88.20.1774623229110; Fri, 27 Mar 2026
+ 07:53:49 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|BY1PR11MB8005:EE_
-X-MS-Office365-Filtering-Correlation-Id: a826c57d-65e4-4a36-518e-08de8c01d799
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|18002099003|56012099003|22082099003; 
-X-Microsoft-Antispam-Message-Info: 2OMuYL8p0/bHFwj+WbDUvqQtgjzj+NiCcfyBP8Zf3Exrg2z3QUO03mEGlZgm1Q5YAP93PE1qa5ppC3dpWFF8s8/yH0BOTswiizXIOKF6rbVfKS8nh9Kq/nSEqthCjfSYhXOJ3DzviYMNVcNzMkJ6d6RtMGSXcs5upm1BmTD+Q3FGiSEv5xRzRkndouS1ZEJxCGOTnImU/0NGbMAyFmTiIR/eBA6YQ/O9zt/exOJrO9z4AC/ScpcvhelONGCbR8OXsdI7LOW0plq4XGnMX1FtH4WtfLfaUuS9rBCf0MjUmX7oGXgCy9xFyu5p7TA+yKfJEgljUJc8uFg19jciQNl/phDrz96VabsTFzxOTkNGXLXK3zuFmEhkGTlKrER5K3t27zJ9aoeN1+JWr8LPtGYtjp73FRD39ZXJ0R4DbA8jcwOke3d7nvs/KAD9gGH6YKQpBB49s5v2HVAdNac+Lqa2Bk23qPLKlK62CI+ZC808hpWX5UIl6lxYRViPTc3FIPCAEW12bF8ifSWGijcD/KTcPHJfT4s+SfakdMnzmY9x6Zdxz7Ch+kqJYsWF40fNwoLP5yd5EpTaJQQOf2lxOuenQTblgFOlP4FATEiVrEklwYb2PSUaoa3tycCHU2Q/BdhJ3cYSC+9jd+aNoqWjXPqbyue1lI+TmoaYxbGowRlhu5bcPl7iz31rLMmdwmNI56+fZzPen8NPOF9JeruAxZOalmMa8kksw8XQPn4T2AySYKg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(18002099003)(56012099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?F9W6B5PS6oH2/9DbgbUA4FuxipslW+3DXNncfK4vweX7WKk+/zd4/rlGJXdN?=
- =?us-ascii?Q?j1IgF7QwZwaMNDC0I9wQqJIyacB3elyrS5PHuGJxVOXG+RI+U+epQrNAqKJK?=
- =?us-ascii?Q?MydNLZLy/8vc1hNkkeXMrc1D/0iV4ZptJDF6jpnWfKNeI4H6yBYeyCg0HV7+?=
- =?us-ascii?Q?6IjxEYK77RGOmgMVPblfk01SCxH2huC2DIh31V/Gp4C5RBclMEU399THnajb?=
- =?us-ascii?Q?9JElNwfTyqdjmenrG198vNfrLy3tZZvzTktSNn5aiD7J0oWox6m2tVG3sRIC?=
- =?us-ascii?Q?5KRnSSmOt/yrk+d07lr9BRa4NA+koeG2DD9BK8m90N5jXKdvL047fL7R9rh6?=
- =?us-ascii?Q?XCnMwe/iFL/95kQJU5OPH2+ZkR8qlSXBHQ+kFaINZew/UEEqvS1rmusVADuR?=
- =?us-ascii?Q?XvK+6RP9HkQViwYwbXp/TV+ka3joEypwkzt7ALWDPZDoXBhZLfivOOyjAN2K?=
- =?us-ascii?Q?nlswoatrmtcdnVv6o19yBz4D2Wcgq3wPOOBdYkcur9tca45lkJYtnYD4EJTS?=
- =?us-ascii?Q?8iBo6quuW97dmNVkHsD+L3yz/f9T0PgPCdSF9Y/cQVzL9yBnyeBSI7NFqltz?=
- =?us-ascii?Q?UHt17Otv2w8p+Mzh8jCiaReVpkVaixQFtZ/oevmvZLaXSqT91jPCYXSabNug?=
- =?us-ascii?Q?Liy/R/8C1vIpTQIpvwrME4fFqraSjd/fpblY42k4/zW9SBWrvdYP5PUFj9V7?=
- =?us-ascii?Q?l5x8ZXoyj8dEXGB2zP9TrM8O0YH1Srf21h5mpC9BLz6K9cVYF+4zBVnWzgQl?=
- =?us-ascii?Q?F4UP1pUsbT9+7dMfbyIDJ5Q8wk12O89YVEjLoGp/PSQFUIwrUxgmDCmDrIIb?=
- =?us-ascii?Q?C7SGSzhWrVXWnI/ldRXFjK3GNVb7LqnY4ObidaWxHHbsqC7VjzgBQy49eYE2?=
- =?us-ascii?Q?eVH41q83jfFrGwiUqjYzbToJJBrkZT8e3a74Ev055bfXXpueeV5LDcw8cZJS?=
- =?us-ascii?Q?PVxn1+QctNhadwTqo09bRzVsXQtTjQdKIVOeSnMQnVFUoS93hLn5/Cgb2KrW?=
- =?us-ascii?Q?2ERCs0CwK3jjxdQ5//dZ8DbURVZ4hSSYSx8OoN1QCoLPezhQZRMT/fAyBT7D?=
- =?us-ascii?Q?wauZYob6VkRsVC4aMrCTb9IekYKD/FfbVRki0jaf5NT/yXVlaAWLRxBOdYcb?=
- =?us-ascii?Q?eUqTB5Fp21Osub8gsp2N7D5A/RddvnfAf1ZiFaktI0eJTYVezNyQrLhYFF2s?=
- =?us-ascii?Q?TPDqTszStcrv+TIQKeepjTXPqVolZhGQX7JoBpFashGT8wGJLqjGfNtioJHB?=
- =?us-ascii?Q?24tT/DaHdXCL2UCeZBlNFSB2r9IbBpVpC9HKtpcrbz3fYGe8WwI6zb0Czg6Z?=
- =?us-ascii?Q?aMmMi7kdeAEQWK3bxUDeN1dpc+BfRFm05T9LtwPgbXXPmRNdzjfl4saGrBXb?=
- =?us-ascii?Q?8cCUO9Kc49p5UVeIMwwYBucLaA3MkyJTc+Od9V0OyrGfQ1ArS9RHosNaQIJF?=
- =?us-ascii?Q?9uhqOyPRdi+WdHq+B49GSQVyd8oJMlPM4UiUklJrI19RQOAfZ2xgb0+dsR2g?=
- =?us-ascii?Q?zd7N4xsF0x8AaVr5B358yga5tDCvM5+2dkZCIvXQCn3Z4gklydPSXUJPpnOh?=
- =?us-ascii?Q?fgunN7WTD2Qn4Muqw1m15ogVKYN2KAXHRWQ9nhuZ7Y2rAumMsUEsVJv19BsD?=
- =?us-ascii?Q?eTOKD7hEacj6TBwClOLE0m2kR8vTf1sSqraNmn63wcg9RDNofKHWT6aqP8KU?=
- =?us-ascii?Q?lwaVFYYZ6X3IkmeQaT/k3CaFJ+/6tAGSwYmDWLaA28eGqKQPmP2D8ErWHUFD?=
- =?us-ascii?Q?1iHyY6OiLxZ4jUBgojVFdRkB4IiGM+Q=3D?=
-X-Exchange-RoutingPolicyChecked: csqHGYsLaYjCe6DsLB9mAcKwcDaNEmO9Cnh2jchA2vZgZchxvA7H7SsRL5+VoSfaJhX3ZY2Di3nx4jEg9oM8fIhqxmbxb2BZxgO1SXwkuxhZ68/ZUswM9wYnfeGKeIgxDvbAguI+SCLY7v5Jyp8X8TCMrzQt2Bdf7cXlltpXofqeK5VSKOtWyVIxvFimalaryKxChp3yD3A16CVGt0siKZLJ2oIoUfKh5/fq1b61JjZmpEg2Mbwgtg/ahiAEErvNx1bzhERsMWKDAibIOccLsqxSvXSjNqGtJza1cjiZQW50ss79xjZWaUWnUdj7DqiggE+sJx2Yy91RrR1xf/VyRw==
-X-MS-Exchange-CrossTenant-Network-Message-Id: a826c57d-65e4-4a36-518e-08de8c01d799
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Mar 2026 13:07:47.4682 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XTck6shncLQH7gxqtv3Ocw4q2/Z7xl8KuJX+FTSeIL6TroSkXgqN0BzZDVQbZMjD6rwMdiQQ1VItV37qKCUTZfH6EvLzrzTmOWxX4eIEIzI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR11MB8005
-X-OriginatorOrg: intel.com
+References: <20260326130000.2254853-1-luca.boccassi@gmail.com>
+In-Reply-To: <20260326130000.2254853-1-luca.boccassi@gmail.com>
+From: Patrick Robb <probb@iol.unh.edu>
+Date: Fri, 27 Mar 2026 10:50:29 -0400
+X-Gm-Features: AQROBzAS7dTMo_V85q4a5pn4NTQXfQNpAjTT67amqwYiv1kzSLLZN_j9__czRG0
+Message-ID: <CAJvnSUA-hZHELRRFep7X85k21J4DsTzrMnFvt4YSBwDd+FT=7w@mail.gmail.com>
+Subject: Re: please help backporting some patches to stable release 24.11.5
+To: luca.boccassi@gmail.com
+Cc: dpdk <dev@dpdk.org>, dpdk stable <stable@dpdk.org>,
+ Andrew Bailey <abailey@iol.unh.edu>, 
+ =?UTF-8?Q?Juraj_Linke=C5=A1?= <juraj.linkes@pantheon.tech>, 
+ Luca Vizzarro <luca.vizzarro@arm.com>,
+ Paul Szczepanek <paul.szczepanek@arm.com>, 
+ Vipin Varghese <vipin.varghese@amd.com>
+Content-Type: multipart/alternative; boundary="0000000000002e7ca0064e02ab00"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -150,26 +94,141 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Mar 26, 2026 at 12:54:04AM +0000, hailinxx wrote:
-> 1. Updated ice latest recommended matching list
-> 2. Updated i40e latest recommended matching list
-> 3. Add ixgbe(E610,X550) latest recommended matching list
-> 
-> *** SUBJECT HERE ***
-> 
-> Hailin Xu (3):
->   net/ice: updated ice latest recommended matching list
->   net/i40e: updated i40e latest recommended matching list
->   net/ixgbe: updated ixgbe latest recommended matching list
-> 
->  doc/guides/nics/i40e.rst  | 52 +++++++++++++++++++++------------------
->  doc/guides/nics/ice.rst   |  4 +++
->  doc/guides/nics/ixgbe.rst | 28 +++++++++++++++++++++
->  3 files changed, 60 insertions(+), 24 deletions(-)
-> 
-Please review patchset [1] and see if you think it's worth taking and then
-rebasing this set on top of that?
+--0000000000002e7ca0064e02ab00
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-/Bruce
+Hi Luca,
 
-[1] https://patches.dpdk.org/project/dpdk/list/?series=37782
+Will backport it to 24.11 and share back to you thanks.
+
+On Thu, Mar 26, 2026 at 9:00=E2=80=AFAM <luca.boccassi@gmail.com> wrote:
+
+> Hi commit authors (and maintainers),
+>
+> Despite being selected by the DPDK maintenance tool
+> ./devtools/git-log-fixes.sh
+> I didn't apply following commits from DPDK main to 24.11
+> stable branch, as conflicts or build errors occur.
+>
+> Can authors check your patches in the following list and either:
+>     - Backport your patches to the 24.11 branch, or
+>     - Indicate that the patch should not be backported
+>
+> Please do either of the above by 2026/04/01.
+>
+> You can find the a temporary work-in-progress branch of the coming 24.11.=
+5
+> release at:
+>     https://github.com/bluca/dpdk-stable
+> It is recommended to backport on top of that to minimize further conflict=
+s
+> or
+> misunderstandings.
+>
+> Some notes on stable backports:
+>
+> A backport should contain a reference to the DPDK main branch commit
+> in it's commit message in the following fashion:
+>     [ upstream commit <commit's dpdk main branch SHA-1 checksum> ]
+>
+> For example:
+>
+> https://git.dpdk.org/dpdk-stable/commit/?h=3D18.11&id=3Dd90e6ae6f936ecdc2=
+fd3811ff9f26aec7f3c06eb
+>
+> When sending the backported patch, please indicate the target branch in t=
+he
+> subject line, as we have multiple branches, for example:
+>     [PATCH 24.11] foo/bar: fix baz
+>
+> With git format-patch, this can be achieved by appending the parameter:
+>     --subject-prefix=3D'PATCH 24.11'
+>
+> Send the backported patch to "stable@dpdk.org" but not "dev@dpdk.org".
+>
+> FYI, branch 24.11 is located at tree:
+>    https://git.dpdk.org/dpdk-stable
+>
+> Thanks.
+>
+> Luca Boccassi
+>
+> ---
+> 874312e261  Patrick Robb     dts: avoid resources conflict on quick
+> stop/start
+> bc15a33eee  Vipin Varghese   doc: update AMD EPYC guide
+>
+
+--0000000000002e7ca0064e02ab00
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Luca,=C2=A0<div><br></div><div>Will backport it to 24.1=
+1 and share back to you thanks.</div></div><br><div class=3D"gmail_quote gm=
+ail_quote_container"><div dir=3D"ltr" class=3D"gmail_attr">On Thu, Mar 26, =
+2026 at 9:00=E2=80=AFAM &lt;<a href=3D"mailto:luca.boccassi@gmail.com">luca=
+.boccassi@gmail.com</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quot=
+e" style=3D"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204)=
+;padding-left:1ex">Hi commit authors (and maintainers),<br>
+<br>
+Despite being selected by the DPDK maintenance tool ./devtools/git-log-fixe=
+s.sh<br>
+I didn&#39;t apply following commits from DPDK main to 24.11<br>
+stable branch, as conflicts or build errors occur.<br>
+<br>
+Can authors check your patches in the following list and either:<br>
+=C2=A0 =C2=A0 - Backport your patches to the 24.11 branch, or<br>
+=C2=A0 =C2=A0 - Indicate that the patch should not be backported<br>
+<br>
+Please do either of the above by 2026/04/01.<br>
+<br>
+You can find the a temporary work-in-progress branch of the coming 24.11.5<=
+br>
+release at:<br>
+=C2=A0 =C2=A0 <a href=3D"https://github.com/bluca/dpdk-stable" rel=3D"noref=
+errer" target=3D"_blank">https://github.com/bluca/dpdk-stable</a><br>
+It is recommended to backport on top of that to minimize further conflicts =
+or<br>
+misunderstandings.<br>
+<br>
+Some notes on stable backports:<br>
+<br>
+A backport should contain a reference to the DPDK main branch commit<br>
+in it&#39;s commit message in the following fashion:<br>
+=C2=A0 =C2=A0 [ upstream commit &lt;commit&#39;s dpdk main branch SHA-1 che=
+cksum&gt; ]<br>
+<br>
+For example:<br>
+=C2=A0 =C2=A0 <a href=3D"https://git.dpdk.org/dpdk-stable/commit/?h=3D18.11=
+&amp;id=3Dd90e6ae6f936ecdc2fd3811ff9f26aec7f3c06eb" rel=3D"noreferrer" targ=
+et=3D"_blank">https://git.dpdk.org/dpdk-stable/commit/?h=3D18.11&amp;id=3Dd=
+90e6ae6f936ecdc2fd3811ff9f26aec7f3c06eb</a><br>
+<br>
+When sending the backported patch, please indicate the target branch in the=
+<br>
+subject line, as we have multiple branches, for example:<br>
+=C2=A0 =C2=A0 [PATCH 24.11] foo/bar: fix baz<br>
+<br>
+With git format-patch, this can be achieved by appending the parameter:<br>
+=C2=A0 =C2=A0 --subject-prefix=3D&#39;PATCH 24.11&#39;<br>
+<br>
+Send the backported patch to &quot;<a href=3D"mailto:stable@dpdk.org" targe=
+t=3D"_blank">stable@dpdk.org</a>&quot; but not &quot;<a href=3D"mailto:dev@=
+dpdk.org" target=3D"_blank">dev@dpdk.org</a>&quot;.<br>
+<br>
+FYI, branch 24.11 is located at tree:<br>
+=C2=A0 =C2=A0<a href=3D"https://git.dpdk.org/dpdk-stable" rel=3D"noreferrer=
+" target=3D"_blank">https://git.dpdk.org/dpdk-stable</a><br>
+<br>
+Thanks.<br>
+<br>
+Luca Boccassi<br>
+<br>
+---<br>
+874312e261=C2=A0 Patrick Robb=C2=A0 =C2=A0 =C2=A0dts: avoid resources confl=
+ict on quick stop/start<br>
+bc15a33eee=C2=A0 Vipin Varghese=C2=A0 =C2=A0doc: update AMD EPYC guide<br>
+</blockquote></div>
+
+--0000000000002e7ca0064e02ab00--
