@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40A2210F2846
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 15:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B2010F2846
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 15:44:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 802C842E5A;
-	Fri, 27 Mar 2026 16:43:40 +0100 (CET)
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
- [209.85.210.175])
- by mails.dpdk.org (Postfix) with ESMTP id 0992B42E5F
- for <dev@dpdk.org>; Fri, 27 Mar 2026 16:43:38 +0100 (CET)
-Received: by mail-pf1-f175.google.com with SMTP id
- d2e1a72fcca58-829ac4670c4so1718419b3a.0
- for <dev@dpdk.org>; Fri, 27 Mar 2026 08:43:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 66DD742E67;
+	Fri, 27 Mar 2026 16:43:42 +0100 (CET)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com
+ [209.85.210.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F0D942E6B
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 16:43:41 +0100 (CET)
+Received: by mail-pf1-f180.google.com with SMTP id
+ d2e1a72fcca58-829ac4670c4so1718452b3a.0
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 08:43:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774626217;
- x=1775231017; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774626220;
+ x=1775231020; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=zkur96phBkhacDSBqbI8pwPlDVmFcvSsayyvHWpXhxo=;
- b=EDFN6e4+Z2srwI3ALw8a4UvZcyZ0rql8cNO7F9sWWjHel35TVzWDWfTQ3/YhA0q3qI
- X7SCYdD+35IVC5iaZ5XcRGvYDS/hDXQ1rxMqrDUH+cbGayjTItsHTUHG+XlB3o7noWKb
- tRhN60c84Ej0qdQUuJuJcuTwg6t8lUFM29ZgP4aACpy0HOi+vSmNwoFcREnGFutXiiUe
- HTjgpC3a0A0yVZVLaRMw89mVAJxOIHP7Cy813Ply35zEY7fczsxKFnCrKBQNMQ/AHocj
- 9Jl2XRjVoelfv4Qt/K26izYfBPFSI6wkObGLB+2osa0NXolVmUY5oKIsulP6/fWuiPvk
- aIPg==
+ bh=6tcuI98N4xnR7iPU6By/ERLOVzYT0RbPdUM1fnht4FE=;
+ b=bjgXV4jwxogaWz6jaR47+GR9irK4muagqhO0ZZbCj/1UC7ShxueVmkncI+cOcqQydI
+ Z5Em00X2fIRna1qAFLAEUoiiOS2Mf+Qn+w5MnJ4rfzAKD78OgUCsZ42y/zlZm+tQXegn
+ rTevSkxIoL33vkpr/bBxW2F8gq7FYnBbOcxm7ppNgCX3TsIu6ObwwUNX+qOjBQdZDso8
+ G//+vrlzSkWpHRKKcs1O9ANZSYB7XG+hiZ/iWc4yUNTC2D0AAsuFza9oRnEORXPFNSBY
+ aLV9Vv7xDDL4wlOst6tAvX1UbttmH3HAXEwcg2HD3vzTSpkpTTfVHDoMoI/FezAp1Npz
+ DqfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774626217; x=1775231017;
+ d=1e100.net; s=20251104; t=1774626220; x=1775231020;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=zkur96phBkhacDSBqbI8pwPlDVmFcvSsayyvHWpXhxo=;
- b=Iyq+bi6SoJGaEW23ZhPvAN9FGD9dhvI0+Z06h2U9VNJ+vzOWJR38RBqdtMWpsBT6cZ
- osT6CDisPfpAcf75NYIYWhq8akIdJJ+qy94eTYaS/oHHBoQ3jg+rCt1KoLm7gf2iO3hI
- lh8HVCk1WFCoIDcChb0YOk7CT98L39jTDU+3/npavPy7opylaVckywSC7RnSvUtEmP+h
- Jn/MqCbXllyn626bkGmltqmJnQnDSVN3Piw1L3BfrTujdoMyfZbdueeaJtXemiWnHuz3
- mp3l4zd5WP2H5+L2PcCFk0V47D3slf7fIFsWT78ZYI9hiN/PTsjcSwIGBTMpAY4+2v17
- slKg==
-X-Gm-Message-State: AOJu0YziFZEyOji5AXHnNg7EKS504PtqFhtV7U7miUTZCtMXZwoWeIXT
- yCyG/qcbtDq9/ad56z7oOgHU4yieKV5sLhQSGgcorZl0lKVdxnCdclmanZdPZfnS7+QQNZC8pXB
- pAJsM
-X-Gm-Gg: ATEYQzyFwcfUo7AtowYZd2QTDSOK6Xu0qQMkBr+Pn/fTKVvhI35S2tKzVd53YzQ9b9c
- qETU47J72mgMfqlR80vWl8LJO5m+SM7YhjU6Jg3z1zoldeLyLFg0Ae/vsJVZAIIq/iA/lzCFzij
- VlxEFaxz9MM5jwDDRu4Ay3AgKmq0dSaA8Sm1YHGzisUMxdgJHsRPwDLeCVl+uoqs6H+ZZkoCmgQ
- Ql04hfvS71ZIYIUodLUplLxzegAcF3n/IZhggVpAoD4Yrj702mdKfQSvmRH7zJeokVzBDirLF6U
- vPdMm3uvgXCZMuJyxVIrtEk5g96ACU9dlLAoYZSvkJVvs2m4qFW4ZhIStWJpnIpdeOF1+ameN/s
- k7hL8ri+FluGI3e10M6KjfY/7IBIvilTBndHHQ79mCEHtuh29GeriW6tP88rnQs/wpiM1Mmk2qP
- GEBUaXA0tS5XzCFg4x325cXGyJGHmaDofl
-X-Received: by 2002:a05:6a00:4291:b0:82a:1044:356a with SMTP id
- d2e1a72fcca58-82c95d4905cmr3246611b3a.26.1774626217063; 
- Fri, 27 Mar 2026 08:43:37 -0700 (PDT)
+ bh=6tcuI98N4xnR7iPU6By/ERLOVzYT0RbPdUM1fnht4FE=;
+ b=p8L+4YlEQDrL+kUVBCRmD5O8A9f8XBq7XE7tUlUsOOAXCdcyVOS6mHPmX7LAGttERC
+ Wd6+npMKy2Cc0WgUmgVFpDZ9cfVSc42oUIx0ZxOawQ68G/Fioo4XZdBvVK/RiPVIv0hd
+ LME+74E0kToLqTIbgh4hpQ9pjRZW5O7ZkBIMQ72mrSeELS1Xv+KFFk//npDjnlxtjsk2
+ hsA/eSjdjMhW8hH/W92uKAcMbqGgT4zJWJbGhoy6JMkghRv/6v0zM/jFTS6YH465zNQf
+ GMVKNvMLo9SlH1WN7m715OskD1seRm2pEPVaseR2KeMLwjIpVVRIE26ok/eDRtb+1F4H
+ lrGg==
+X-Gm-Message-State: AOJu0Yx5iSyBrLFPp6VcjX8wBbR8CjaUBTWP8KqrzkNzsGnXdEXeCKLq
+ jBTxTNc26Va+28NGCAoshDSAUHUYOZikR88vNyMkLIYcv8cGTBZuJEtKzn+7hR3kLeJAHQ8K+pC
+ JLtP6
+X-Gm-Gg: ATEYQzx7IxThvM3b+YLrqF09jX8I18gVillJHNb+BLrYAAPM1aEE3EC+Mxy8n5T5tgB
+ mmKgs2q7jGkKLYpLtwa6bb7P81fpOxlMmQlHEL5oqnwFfPKCQcox/IADQuuDvVytXQIsTf8v2Qu
+ R1jiFlpygNdfBo2+cBkZAl+29k61ErMOztkjZl+295+fueq1pF1ZlZPc0SDhkT2Tm7Yg+1AFvCl
+ B17Gvynhx0X976kKpbtltd4tIxHLUsVF+lzlXfiRum5Mo5oltR48g2j/Iw4D0P/KvGpb7miSpT1
+ tbJ6W8xHlWV6Gm0XxGDiRSod6qvyrVcmnpOsPGXlnyyIvG8cbAGMSos2XG5BVNtsKT/2BRF7jfQ
+ V9mx0shYQ2FM9kzs6TUjbExRoZXcARYkevzcUb1daopvMbnisGIUhoPnehlWEOULiI5DQdB9JFS
+ VXYZqk96OYTW9hqicOoVrcWyJsYo8mJh/h
+X-Received: by 2002:a05:6a00:815:b0:828:f1d9:22cc with SMTP id
+ d2e1a72fcca58-82c95c23894mr3114359b3a.20.1774626220057; 
+ Fri, 27 Mar 2026 08:43:40 -0700 (PDT)
 Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-82c7d390a4csm7508304b3a.31.2026.03.27.08.43.34
+ d2e1a72fcca58-82c7d390a4csm7508304b3a.31.2026.03.27.08.43.37
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 27 Mar 2026 08:43:36 -0700 (PDT)
+ Fri, 27 Mar 2026 08:43:39 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v11 3/6] devtools: add compare-reviews.sh for multi-provider
- analysis
-Date: Fri, 27 Mar 2026 08:41:54 -0700
-Message-ID: <20260327154321.25800-4-stephen@networkplumber.org>
+Subject: [PATCH v11 4/6] devtools: add multi-provider AI documentation review
+ script
+Date: Fri, 27 Mar 2026 08:41:55 -0700
+Message-ID: <20260327154321.25800-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260327154321.25800-1-stephen@networkplumber.org>
 References: <20260126184205.104629-1-stephen@networkplumber.org>
  <20260327154321.25800-1-stephen@networkplumber.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -82,232 +83,1163 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add script to run patch reviews across multiple AI providers for
-comparison purposes.
+Add review-doc.py script that reviews DPDK documentation files for
+spelling, grammar, technical correctness, and clarity using AI
+language models. Supports batch processing of multiple files.
 
-The script automatically detects which providers have API keys
-configured and runs analyze-patch.py for each one. This allows
-users to compare review quality and feedback across different
-AI models.
+Supported AI providers:
+  - Anthropic Claude (default)
+  - OpenAI ChatGPT
+  - xAI Grok
+  - Google Gemini
+
+Output formats (-f/--format):
+  - text: plain text with extractable diff/msg markers (default)
+  - markdown: formatted review document
+  - html: complete HTML document with styling
+  - json: structured data with metadata
+
+For each input file, the script produces:
+  - <basename>.{txt,md,html,json}: review in selected format
+  - <basename>.diff: unified diff (text/json, or with -d flag)
+  - <basename>.msg: commit message (text/json, or with -d flag)
+
+The commit message prefix is automatically determined from the
+file path (e.g., doc/guides/prog_guide: for programmer's guide).
 
 Features:
-  - Auto-detects available providers based on environment variables
-  - Optional provider selection via -p/--providers option
-  - Saves individual reviews to separate files with -o/--output
-  - Verbose mode passes through to underlying analyze-patch.py
+  - Multiple file processing with glob support
+  - Provider selection via -p/--provider option
+  - Custom model selection via -m/--model option
+  - Configurable output directory via -o/--output-dir option
+  - Output format selection via -f/--format option
+  - Force diff/msg generation via -d/--diff option
+  - Quiet mode (-q) suppresses stdout output
+  - Verbose mode (-v) shows token usage and API details
+  - Email integration using git sendemail configuration
+  - Prompt caching support for Anthropic to reduce costs
 
 Usage:
-  ./devtools/compare-reviews.sh my-patch.patch
-  ./devtools/compare-reviews.sh -p anthropic,xai my-patch.patch
-  ./devtools/compare-reviews.sh -o ./reviews my-patch.patch
+  ./devtools/review-doc.py doc/guides/prog_guide/mempool_lib.rst
+  ./devtools/review-doc.py doc/guides/nics/*.rst
+  ./devtools/review-doc.py -f html -d -o /tmp doc/guides/nics/*.rst
+  ./devtools/review-doc.py --send-email --to dev@dpdk.org file.rst
 
-Output files are named <patch>-<provider>.txt when using the
-output directory option.
+Requires the appropriate API key environment variable to be set
+for the chosen provider (ANTHROPIC_API_KEY, OPENAI_API_KEY,
+XAI_API_KEY, or GOOGLE_API_KEY).
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- devtools/compare-reviews.sh | 192 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 192 insertions(+)
- create mode 100755 devtools/compare-reviews.sh
+ devtools/review-doc.py | 1099 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 1099 insertions(+)
+ create mode 100755 devtools/review-doc.py
 
-diff --git a/devtools/compare-reviews.sh b/devtools/compare-reviews.sh
+diff --git a/devtools/review-doc.py b/devtools/review-doc.py
 new file mode 100755
-index 0000000000..a63eeffb71
+index 0000000000..c8a1988a10
 --- /dev/null
-+++ b/devtools/compare-reviews.sh
-@@ -0,0 +1,192 @@
-+#!/bin/bash
++++ b/devtools/review-doc.py
+@@ -0,0 +1,1099 @@
++#!/usr/bin/env python3
 +# SPDX-License-Identifier: BSD-3-Clause
 +# Copyright(c) 2026 Stephen Hemminger
 +
-+# Compare DPDK patch reviews across multiple AI providers
-+# Runs analyze-patch.py with each available provider
++"""
++Review DPDK documentation files using AI providers.
 +
-+set -e
++Produces a diff file and commit message compliant with DPDK standards.
++Accepts multiple documentation files and generates output for each.
++Supported providers: Anthropic Claude, OpenAI ChatGPT, xAI Grok, Google Gemini
++"""
 +
-+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-+ANALYZE_SCRIPT="${SCRIPT_DIR}/analyze-patch.py"
-+AGENTS_FILE="AGENTS.md"
-+OUTPUT_DIR=""
-+PROVIDERS=""
-+FORMAT="text"
++import argparse
++import getpass
++import json
++import os
++import re
++import smtplib
++import ssl
++import subprocess
++import sys
++from email.message import EmailMessage
++from pathlib import Path
++from typing import Any
++from urllib.request import Request, urlopen
++from urllib.error import URLError, HTTPError
 +
-+usage() {
-+    cat <<EOF
-+Usage: $(basename "$0") [OPTIONS] <patch-file>
++# Output formats
++OUTPUT_FORMATS = ["text", "markdown", "html", "json"]
 +
-+Compare DPDK patch reviews across multiple AI providers.
++# Map output format to file extension
++FORMAT_EXTENSIONS = {
++    "text": ".txt",
++    "markdown": ".md",
++    "html": ".html",
++    "json": ".json",
++}
 +
-+Options:
-+    -a, --agents FILE      Path to AGENTS.md file (default: AGENTS.md)
-+    -o, --output DIR       Save individual reviews to directory
-+    -p, --providers LIST   Comma-separated list of providers to use
-+                           (default: all providers with API keys set)
-+    -f, --format FORMAT    Output format: text, markdown, html, json
-+                           (default: text)
-+    -v, --verbose          Show verbose output from each provider
-+    -h, --help             Show this help message
++# Additional markers for extracting diff/msg (used with --diff flag)
++DIFF_MARKERS_INSTRUCTION = """
 +
-+Environment Variables:
-+    Set API keys for providers you want to use:
-+    ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY, GOOGLE_API_KEY
++ADDITIONALLY, at the end of your response, include these exact markers for automated extraction:
++---COMMIT_MESSAGE_START---
++(same commit message as above)
++---COMMIT_MESSAGE_END---
 +
++---UNIFIED_DIFF_START---
++(same unified diff as above)
++---UNIFIED_DIFF_END---
++"""
++
++# Provider configurations
++PROVIDERS = {
++    "anthropic": {
++        "name": "Claude",
++        "endpoint": "https://api.anthropic.com/v1/messages",
++        "default_model": "claude-sonnet-4-5-20250929",
++        "env_var": "ANTHROPIC_API_KEY",
++    },
++    "openai": {
++        "name": "ChatGPT",
++        "endpoint": "https://api.openai.com/v1/chat/completions",
++        "default_model": "gpt-4.1",
++        "env_var": "OPENAI_API_KEY",
++    },
++    "xai": {
++        "name": "Grok",
++        "endpoint": "https://api.x.ai/v1/chat/completions",
++        "default_model": "grok-4-1-fast-non-reasoning",
++        "env_var": "XAI_API_KEY",
++    },
++    "google": {
++        "name": "Gemini",
++        "endpoint": "https://generativelanguage.googleapis.com/v1beta/models",
++        "default_model": "gemini-3-flash-preview",
++        "env_var": "GOOGLE_API_KEY",
++    },
++}
++
++# Commit prefix mappings based on file path
++COMMIT_PREFIX_MAP = [
++    ("doc/guides/prog_guide/", "doc/guides/prog_guide:"),
++    ("doc/guides/sample_app_ug/", "doc/guides/sample_app:"),
++    ("doc/guides/nics/", "doc/guides/nics:"),
++    ("doc/guides/cryptodevs/", "doc/guides/cryptodevs:"),
++    ("doc/guides/compressdevs/", "doc/guides/compressdevs:"),
++    ("doc/guides/eventdevs/", "doc/guides/eventdevs:"),
++    ("doc/guides/rawdevs/", "doc/guides/rawdevs:"),
++    ("doc/guides/bbdevs/", "doc/guides/bbdevs:"),
++    ("doc/guides/gpus/", "doc/guides/gpus:"),
++    ("doc/guides/dmadevs/", "doc/guides/dmadevs:"),
++    ("doc/guides/regexdevs/", "doc/guides/regexdevs:"),
++    ("doc/guides/mldevs/", "doc/guides/mldevs:"),
++    ("doc/guides/rel_notes/", "doc/guides/rel_notes:"),
++    ("doc/guides/linux_gsg/", "doc/guides/linux_gsg:"),
++    ("doc/guides/freebsd_gsg/", "doc/guides/freebsd_gsg:"),
++    ("doc/guides/windows_gsg/", "doc/guides/windows_gsg:"),
++    ("doc/guides/tools/", "doc/guides/tools:"),
++    ("doc/guides/testpmd_app_ug/", "doc/guides/testpmd:"),
++    ("doc/guides/howto/", "doc/guides/howto:"),
++    ("doc/guides/contributing/", "doc/guides/contributing:"),
++    ("doc/guides/platform/", "doc/guides/platform:"),
++    ("doc/guides/", "doc:"),
++    ("doc/api/", "doc/api:"),
++    ("doc/", "doc:"),
++]
++
++SYSTEM_PROMPT = """\
++You are an expert technical documentation reviewer for DPDK.
++Your task is to review documentation files and suggest improvements for:
++- Spelling errors
++- Grammar issues
++- Technical correctness
++- Clarity and readability
++- Consistency with DPDK terminology
++
++IMPORTANT COMMIT MESSAGE RULES (from check-git-log.sh):
++- Subject line MUST be â‰¤60 characters
++- Format: "prefix: lowercase description"
++- First word after colon must be lowercase (except acronyms like Rx, Tx, VF, MAC, API)
++- Use imperative mood (e.g., "fix typo" not "fixed typo" or "fixes typo")
++- NO trailing period on subject line
++- NO punctuation marks: , ; ! ? & |
++- NO underscores in subject after colon
++- Body lines wrapped at 75 characters
++- Body must NOT start with "It"
++- Do NOT include Signed-off-by (user adds via git commit --sign)
++- Only use "Fixes:" tag for actual errors in documentation, not style improvements
++
++Case-sensitive terms (must use exact case):
++- Rx, Tx (not RX, TX, rx, tx)
++- VF, PF (not vf, pf)
++- MAC, VLAN, RSS, API
++- Linux, Windows, FreeBSD
++
++For style/clarity improvements, do NOT use Fixes tag.
++For actual errors (wrong information, broken examples), include Fixes tag \
++if you can identify the commit."""
++
++FORMAT_INSTRUCTIONS = {
++    "text": """
++OUTPUT FORMAT:
++You must output exactly two sections:
++
++1. COMMIT_MESSAGE section containing the complete commit message
++2. UNIFIED_DIFF section containing the unified diff
++
++Use these exact markers:
++---COMMIT_MESSAGE_START---
++(commit message here)
++---COMMIT_MESSAGE_END---
++
++---UNIFIED_DIFF_START---
++(unified diff here)
++---UNIFIED_DIFF_END---
++
++The diff should be in unified format that can be applied with "git apply".
++If no changes are needed, output empty sections with a note.""",
++    "markdown": """
++OUTPUT FORMAT:
++Provide your review in Markdown format with:
++
++## Summary
++Brief description of changes
++
++## Commit Message
++```
++(complete commit message here, ready to use)
++```
++
++## Changes
++For each change:
++### Issue N: Brief title
++- **Location**: file path and line
++- **Problem**: description
++- **Fix**: suggested correction
++
++## Unified Diff
++```diff
++(unified diff here)
++```""",
++    "html": """
++OUTPUT FORMAT:
++Provide your review in HTML format with:
++- <h2> for sections (Summary, Commit Message, Changes, Diff)
++- <pre><code> for commit message and diff
++- <ul>/<li> for individual issues
++- Do NOT include <html>, <head>, or <body> tags - just the content
++
++Include sections for: Summary, Commit Message, Changes, Unified Diff""",
++    "json": """
++OUTPUT FORMAT:
++Provide your review as JSON with this structure:
++{
++  "summary": "Brief description of changes",
++  "commit_message": "Complete commit message ready to use",
++  "changes": [
++    {
++      "type": "spelling|grammar|technical|clarity|style",
++      "location": "line number or section",
++      "original": "original text",
++      "suggested": "corrected text",
++      "reason": "why this change"
++    }
++  ],
++  "diff": "unified diff as a string",
++  "stats": {
++    "total_issues": 0,
++    "spelling": 0,
++    "grammar": 0,
++    "technical": 0,
++    "clarity": 0
++  }
++}
++Output ONLY valid JSON, no markdown code fences or other text.""",
++}
++
++USER_PROMPT = """\
++Review the following DPDK documentation file and provide improvements.
++
++File path: {doc_file}
++Commit message prefix to use: {commit_prefix}
++
++{format_instruction}
++
++---DOCUMENT CONTENT---
++"""
++
++
++def error(msg: str) -> None:
++    """Print error message and exit."""
++    print(f"Error: {msg}", file=sys.stderr)
++    sys.exit(1)
++
++
++def get_git_config(key: str) -> str | None:
++    """Get a value from git config."""
++    try:
++        result = subprocess.run(
++            ["git", "config", "--get", key],
++            capture_output=True,
++            text=True,
++            check=True,
++        )
++        return result.stdout.strip()
++    except (subprocess.CalledProcessError, FileNotFoundError):
++        return None
++
++
++def get_smtp_config() -> dict[str, Any]:
++    """Get SMTP configuration from git config sendemail settings."""
++    config = {
++        "server": get_git_config("sendemail.smtpserver"),
++        "port": get_git_config("sendemail.smtpserverport"),
++        "user": get_git_config("sendemail.smtpuser"),
++        "encryption": get_git_config("sendemail.smtpencryption"),
++        "password": get_git_config("sendemail.smtppass"),
++    }
++
++    # Set defaults
++    if not config["port"]:
++        if config["encryption"] == "ssl":
++            config["port"] = "465"
++        else:
++            config["port"] = "587"
++
++    # Convert port to int
++    if config["port"]:
++        config["port"] = int(config["port"])
++
++    return config
++
++
++def get_commit_prefix(filepath: str) -> str:
++    """Determine commit message prefix from file path."""
++    for prefix_path, prefix in COMMIT_PREFIX_MAP:
++        if filepath.startswith(prefix_path):
++            return prefix
++    return "doc:"
++
++
++def build_anthropic_request(
++    model: str,
++    max_tokens: int,
++    agents_content: str,
++    doc_content: str,
++    doc_file: str,
++    commit_prefix: str,
++    output_format: str = "text",
++    include_diff_markers: bool = False,
++) -> dict[str, Any]:
++    """Build request payload for Anthropic API."""
++    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
++    if include_diff_markers and output_format not in ("text", "json"):
++        format_instruction += DIFF_MARKERS_INSTRUCTION
++    user_prompt = USER_PROMPT.format(
++        doc_file=doc_file,
++        commit_prefix=commit_prefix,
++        format_instruction=format_instruction,
++    )
++    return {
++        "model": model,
++        "max_tokens": max_tokens,
++        "system": [
++            {"type": "text", "text": SYSTEM_PROMPT},
++            {
++                "type": "text",
++                "text": agents_content,
++                "cache_control": {"type": "ephemeral"},
++            },
++        ],
++        "messages": [
++            {
++                "role": "user",
++                "content": user_prompt + doc_content,
++            }
++        ],
++    }
++
++
++def build_openai_request(
++    model: str,
++    max_tokens: int,
++    agents_content: str,
++    doc_content: str,
++    doc_file: str,
++    commit_prefix: str,
++    output_format: str = "text",
++    include_diff_markers: bool = False,
++) -> dict[str, Any]:
++    """Build request payload for OpenAI-compatible APIs."""
++    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
++    if include_diff_markers and output_format not in ("text", "json"):
++        format_instruction += DIFF_MARKERS_INSTRUCTION
++    user_prompt = USER_PROMPT.format(
++        doc_file=doc_file,
++        commit_prefix=commit_prefix,
++        format_instruction=format_instruction,
++    )
++    return {
++        "model": model,
++        "max_tokens": max_tokens,
++        "messages": [
++            {"role": "system", "content": SYSTEM_PROMPT},
++            {"role": "system", "content": agents_content},
++            {
++                "role": "user",
++                "content": user_prompt + doc_content,
++            },
++        ],
++    }
++
++
++def build_google_request(
++    max_tokens: int,
++    agents_content: str,
++    doc_content: str,
++    doc_file: str,
++    commit_prefix: str,
++    output_format: str = "text",
++    include_diff_markers: bool = False,
++) -> dict[str, Any]:
++    """Build request payload for Google Gemini API."""
++    format_instruction = FORMAT_INSTRUCTIONS.get(output_format, "")
++    if include_diff_markers and output_format not in ("text", "json"):
++        format_instruction += DIFF_MARKERS_INSTRUCTION
++    user_prompt = USER_PROMPT.format(
++        doc_file=doc_file,
++        commit_prefix=commit_prefix,
++        format_instruction=format_instruction,
++    )
++    return {
++        "contents": [
++            {"role": "user", "parts": [{"text": SYSTEM_PROMPT}]},
++            {"role": "user", "parts": [{"text": agents_content}]},
++            {
++                "role": "user",
++                "parts": [{"text": user_prompt + doc_content}],
++            },
++        ],
++        "generationConfig": {"maxOutputTokens": max_tokens},
++    }
++
++
++def call_api(
++    provider: str,
++    api_key: str,
++    model: str,
++    max_tokens: int,
++    agents_content: str,
++    doc_content: str,
++    doc_file: str,
++    commit_prefix: str,
++    output_format: str = "text",
++    include_diff_markers: bool = False,
++    verbose: bool = False,
++) -> str:
++    """Make API request to the specified provider."""
++    config = PROVIDERS[provider]
++
++    # Build request based on provider
++    if provider == "anthropic":
++        request_data = build_anthropic_request(
++            model,
++            max_tokens,
++            agents_content,
++            doc_content,
++            doc_file,
++            commit_prefix,
++            output_format,
++            include_diff_markers,
++        )
++        headers = {
++            "Content-Type": "application/json",
++            "x-api-key": api_key,
++            "anthropic-version": "2023-06-01",
++        }
++        url = config["endpoint"]
++    elif provider == "google":
++        request_data = build_google_request(
++            max_tokens,
++            agents_content,
++            doc_content,
++            doc_file,
++            commit_prefix,
++            output_format,
++            include_diff_markers,
++        )
++        headers = {"Content-Type": "application/json"}
++        url = f"{config['endpoint']}/{model}:generateContent?key={api_key}"
++    else:  # openai, xai
++        request_data = build_openai_request(
++            model,
++            max_tokens,
++            agents_content,
++            doc_content,
++            doc_file,
++            commit_prefix,
++            output_format,
++            include_diff_markers,
++        )
++        headers = {
++            "Content-Type": "application/json",
++            "Authorization": f"Bearer {api_key}",
++        }
++        url = config["endpoint"]
++
++    # Make request
++    request_body = json.dumps(request_data).encode("utf-8")
++    req = Request(url, data=request_body, headers=headers, method="POST")
++
++    try:
++        with urlopen(req) as response:
++            result = json.loads(response.read().decode("utf-8"))
++    except HTTPError as e:
++        error_body = e.read().decode("utf-8")
++        try:
++            error_data = json.loads(error_body)
++            error(f"API error: {error_data.get('error', error_body)}")
++        except json.JSONDecodeError:
++            error(f"API error ({e.code}): {error_body}")
++    except URLError as e:
++        error(f"Connection error: {e.reason}")
++
++    # Show verbose info
++    if verbose:
++        print("=== Token Usage ===", file=sys.stderr)
++        if provider == "anthropic":
++            usage = result.get("usage", {})
++            print(f"Input tokens: {usage.get('input_tokens', 'N/A')}", file=sys.stderr)
++            print(
++                f"Cache creation: " f"{usage.get('cache_creation_input_tokens', 0)}",
++                file=sys.stderr,
++            )
++            print(
++                f"Cache read: {usage.get('cache_read_input_tokens', 0)}",
++                file=sys.stderr,
++            )
++            print(
++                f"Output tokens: {usage.get('output_tokens', 'N/A')}", file=sys.stderr
++            )
++        elif provider == "google":
++            usage = result.get("usageMetadata", {})
++            print(
++                f"Prompt tokens: {usage.get('promptTokenCount', 'N/A')}",
++                file=sys.stderr,
++            )
++            print(
++                f"Output tokens: {usage.get('candidatesTokenCount', 'N/A')}",
++                file=sys.stderr,
++            )
++        else:  # openai, xai
++            usage = result.get("usage", {})
++            print(
++                f"Prompt tokens: {usage.get('prompt_tokens', 'N/A')}", file=sys.stderr
++            )
++            print(
++                f"Completion tokens: " f"{usage.get('completion_tokens', 'N/A')}",
++                file=sys.stderr,
++            )
++        print("===================", file=sys.stderr)
++
++    # Extract response text
++    if provider == "anthropic":
++        if "error" in result:
++            error(f"API error: {result['error'].get('message', result)}")
++        content = result.get("content", [])
++        return "".join(
++            block.get("text", "") for block in content if block.get("type") == "text"
++        )
++    elif provider == "google":
++        if "error" in result:
++            error(f"API error: {result['error'].get('message', result)}")
++        candidates = result.get("candidates", [])
++        if not candidates:
++            error("No response from Gemini")
++        parts = candidates[0].get("content", {}).get("parts", [])
++        return "".join(part.get("text", "") for part in parts)
++    else:  # openai, xai
++        if "error" in result:
++            error(f"API error: {result['error'].get('message', result)}")
++        choices = result.get("choices", [])
++        if not choices:
++            error("No response from API")
++        return choices[0].get("message", {}).get("content", "")
++
++
++def parse_review_text(review_text: str) -> tuple[str, str]:
++    """Extract commit message and diff from text format response."""
++    commit_msg = ""
++    diff = ""
++
++    # Extract commit message
++    msg_match = re.search(
++        r"---COMMIT_MESSAGE_START---\s*\n(.*?)\n---COMMIT_MESSAGE_END---",
++        review_text,
++        re.DOTALL,
++    )
++    if msg_match:
++        commit_msg = msg_match.group(1).strip()
++
++    # Extract unified diff
++    diff_match = re.search(
++        r"---UNIFIED_DIFF_START---\s*\n(.*?)\n---UNIFIED_DIFF_END---",
++        review_text,
++        re.DOTALL,
++    )
++    if diff_match:
++        diff = diff_match.group(1).strip()
++        # Clean up any markdown code fence if present
++        diff = re.sub(r"^```diff\s*\n?", "", diff)
++        diff = re.sub(r"\n?```\s*$", "", diff)
++
++    return commit_msg, diff
++
++
++def strip_diff_markers(text: str) -> str:
++    """Remove the diff/msg extraction markers from text."""
++    # Remove commit message markers and content
++    text = re.sub(
++        r"\n*---COMMIT_MESSAGE_START---\s*\n.*?\n---COMMIT_MESSAGE_END---\s*",
++        "",
++        text,
++        flags=re.DOTALL,
++    )
++    # Remove unified diff markers and content
++    text = re.sub(
++        r"\n*---UNIFIED_DIFF_START---\s*\n.*?\n---UNIFIED_DIFF_END---\s*",
++        "",
++        text,
++        flags=re.DOTALL,
++    )
++    return text.strip()
++
++
++def send_email(
++    to_addrs: list[str],
++    cc_addrs: list[str],
++    from_addr: str,
++    subject: str,
++    in_reply_to: str | None,
++    body: str,
++    dry_run: bool = False,
++    verbose: bool = False,
++) -> bool:
++    """Send review email via SMTP using git sendemail config."""
++    # Build email message
++    msg = EmailMessage()
++    msg["From"] = from_addr
++    msg["To"] = ", ".join(to_addrs)
++    if cc_addrs:
++        msg["Cc"] = ", ".join(cc_addrs)
++    msg["Subject"] = subject
++    if in_reply_to:
++        msg["In-Reply-To"] = in_reply_to
++        msg["References"] = in_reply_to
++    msg.set_content(body)
++
++    if dry_run:
++        print("=== Email Preview (dry-run) ===", file=sys.stderr)
++        print(msg.as_string(), file=sys.stderr)
++        print("=== End Preview ===", file=sys.stderr)
++        return True
++
++    # Get SMTP configuration from git config
++    smtp_config = get_smtp_config()
++
++    if not smtp_config["server"]:
++        error("No SMTP server configured. Set git config sendemail.smtpserver")
++
++    server = smtp_config["server"]
++    port = smtp_config["port"]
++    user = smtp_config["user"]
++    encryption = smtp_config["encryption"]
++
++    # Get password from environment or git config, or prompt
++    password = os.environ.get("SMTP_PASSWORD") or smtp_config["password"]
++    if user and not password:
++        password = getpass.getpass(f"SMTP password for {user}@{server}: ")
++
++    if verbose:
++        print(f"SMTP server: {server}:{port}", file=sys.stderr)
++        print(f"SMTP user: {user or '(none)'}", file=sys.stderr)
++        print(f"Encryption: {encryption or 'starttls'}", file=sys.stderr)
++
++    # Collect all recipients
++    all_recipients = list(to_addrs)
++    if cc_addrs:
++        all_recipients.extend(cc_addrs)
++
++    try:
++        if encryption == "ssl":
++            # SSL/TLS connection from the start (port 465)
++            context = ssl.create_default_context()
++            with smtplib.SMTP_SSL(server, port, context=context) as smtp:
++                if user and password:
++                    smtp.login(user, password)
++                smtp.send_message(msg, from_addr, all_recipients)
++        else:
++            # STARTTLS (port 587) or plain (port 25)
++            with smtplib.SMTP(server, port) as smtp:
++                smtp.ehlo()
++                if encryption == "tls" or port == 587:
++                    context = ssl.create_default_context()
++                    smtp.starttls(context=context)
++                    smtp.ehlo()
++                if user and password:
++                    smtp.login(user, password)
++                smtp.send_message(msg, from_addr, all_recipients)
++
++        print(f"Email sent via SMTP ({server}:{port})", file=sys.stderr)
++        return True
++
++    except smtplib.SMTPAuthenticationError as e:
++        error(f"SMTP authentication failed: {e}")
++    except smtplib.SMTPException as e:
++        error(f"SMTP error: {e}")
++    except OSError as e:
++        error(f"Connection error to {server}:{port}: {e}")
++
++
++def list_providers() -> None:
++    """Print available providers and exit."""
++    print("Available AI Providers:\n")
++    print(f"{'Provider':<12} {'Default Model':<30} {'API Key Variable'}")
++    print(f"{'--------':<12} {'-------------':<30} {'----------------'}")
++    for name, config in PROVIDERS.items():
++        print(f"{name:<12} {config['default_model']:<30} {config['env_var']}")
++    sys.exit(0)
++
++
++def main() -> None:
++    parser = argparse.ArgumentParser(
++        description="Review DPDK documentation files using AI providers. "
++        "Accepts multiple files and generates output for each.",
++        formatter_class=argparse.RawDescriptionHelpFormatter,
++        epilog="""
 +Examples:
-+    $(basename "$0") my-patch.patch
-+    $(basename "$0") -p anthropic,openai my-patch.patch
-+    $(basename "$0") -o ./reviews -f markdown my-patch.patch
-+EOF
-+    exit "${1:-0}"
-+}
++    %(prog)s doc/guides/prog_guide/mempool_lib.rst
++    %(prog)s doc/guides/nics/*.rst              # Review all NIC docs
++    %(prog)s -p openai -o /tmp doc/guides/nics/ixgbe.rst doc/guides/nics/i40e.rst
++    %(prog)s -f html -d -o /tmp/reviews doc/guides/nics/*.rst  # HTML + diff files
++    %(prog)s -f json -o /tmp doc/guides/howto/flow_bifurcation.rst
++    %(prog)s --send-email --to dev@dpdk.org doc/guides/nics/ixgbe.rst
 +
-+error() {
-+    echo "Error: $1" >&2
-+    exit 1
-+}
++Output files (in output-dir):
++    <basename>.txt|.md|.html|.json  Review in selected format
++    <basename>.diff                  Unified diff (text/json, or with --diff)
++    <basename>.msg                   Commit message (text/json, or with --diff)
 +
-+# Check which providers have API keys configured
-+get_available_providers() {
-+    local available=""
++After review:
++    git apply <basename>.diff
++    git commit -sF <basename>.msg
 +
-+    [[ -n "$ANTHROPIC_API_KEY" ]] && available="${available}anthropic,"
-+    [[ -n "$OPENAI_API_KEY" ]] && available="${available}openai,"
-+    [[ -n "$XAI_API_KEY" ]] && available="${available}xai,"
-+    [[ -n "$GOOGLE_API_KEY" ]] && available="${available}google,"
++SMTP Configuration (from git config):
++    sendemail.smtpserver      SMTP server hostname
++    sendemail.smtpserverport  SMTP port (default: 587 for TLS, 465 for SSL)
++    sendemail.smtpuser        SMTP username
++    sendemail.smtpencryption  'tls' for STARTTLS, 'ssl' for SSL/TLS
++    sendemail.smtppass        SMTP password (or set SMTP_PASSWORD env var)
 +
-+    # Remove trailing comma
-+    echo "${available%,}"
-+}
++Example git config:
++    git config --global sendemail.smtpserver smtp.gmail.com
++    git config --global sendemail.smtpserverport 587
++    git config --global sendemail.smtpuser yourname@gmail.com
++    git config --global sendemail.smtpencryption tls
++        """,
++    )
 +
-+# Get file extension for format
-+get_extension() {
-+    case "$1" in
-+        text)     echo "txt" ;;
-+        markdown) echo "md" ;;
-+        html)     echo "html" ;;
-+        json)     echo "json" ;;
-+        *)        echo "txt" ;;
-+    esac
-+}
++    parser.add_argument(
++        "doc_files",
++        nargs="+",
++        metavar="doc_file",
++        help="Documentation file(s) to review",
++    )
++    parser.add_argument(
++        "-p",
++        "--provider",
++        choices=PROVIDERS.keys(),
++        default="anthropic",
++        help="AI provider (default: anthropic)",
++    )
++    parser.add_argument(
++        "-a",
++        "--agents",
++        default="AGENTS.md",
++        help="Path to AGENTS.md file (default: AGENTS.md)",
++    )
++    parser.add_argument(
++        "-m",
++        "--model",
++        help="Model to use (default: provider-specific)",
++    )
++    parser.add_argument(
++        "-t",
++        "--tokens",
++        type=int,
++        default=8192,
++        help="Max tokens for response (default: 8192)",
++    )
++    parser.add_argument(
++        "-o",
++        "--output-dir",
++        default=".",
++        help="Output directory for all output files (default: .)",
++    )
++    parser.add_argument(
++        "-v",
++        "--verbose",
++        action="store_true",
++        help="Show API request details",
++    )
++    parser.add_argument(
++        "-q",
++        "--quiet",
++        action="store_true",
++        help="Suppress review output to stdout (only write files)",
++    )
++    parser.add_argument(
++        "-f",
++        "--format",
++        choices=OUTPUT_FORMATS,
++        default="text",
++        dest="output_format",
++        help="Output format: text, markdown, html, json (default: text)",
++    )
++    parser.add_argument(
++        "-d",
++        "--diff",
++        action="store_true",
++        help="Always produce .diff and .msg files (automatic for text/json)",
++    )
++    parser.add_argument(
++        "-l",
++        "--list-providers",
++        action="store_true",
++        help="List available providers and exit",
++    )
 +
-+# Parse command line options
-+VERBOSE=""
++    # Email options
++    email_group = parser.add_argument_group("Email Options")
++    email_group.add_argument(
++        "--send-email",
++        action="store_true",
++        help="Send review via email",
++    )
++    email_group.add_argument(
++        "--to",
++        action="append",
++        dest="to_addrs",
++        default=[],
++        metavar="ADDRESS",
++        help="Email recipient (can be specified multiple times)",
++    )
++    email_group.add_argument(
++        "--cc",
++        action="append",
++        dest="cc_addrs",
++        default=[],
++        metavar="ADDRESS",
++        help="CC recipient (can be specified multiple times)",
++    )
++    email_group.add_argument(
++        "--from",
++        dest="from_addr",
++        metavar="ADDRESS",
++        help="From address (default: from git config)",
++    )
++    email_group.add_argument(
++        "--dry-run",
++        action="store_true",
++        help="Show email without sending",
++    )
 +
-+while [[ $# -gt 0 ]]; do
-+    case "$1" in
-+        -a|--agents)
-+            AGENTS_FILE="$2"
-+            shift 2
-+            ;;
-+        -o|--output)
-+            OUTPUT_DIR="$2"
-+            shift 2
-+            ;;
-+        -p|--providers)
-+            PROVIDERS="$2"
-+            shift 2
-+            ;;
-+        -f|--format)
-+            FORMAT="$2"
-+            shift 2
-+            ;;
-+        -v|--verbose)
-+            VERBOSE="-v"
-+            shift
-+            ;;
-+        -h|--help)
-+            usage 0
-+            ;;
-+        -*)
-+            error "Unknown option: $1"
-+            ;;
-+        *)
-+            break
-+            ;;
-+    esac
-+done
++    args = parser.parse_args()
 +
-+# Check for required arguments
-+if [[ $# -lt 1 ]]; then
-+    echo "Error: No patch file specified" >&2
-+    usage 1
-+fi
++    if args.list_providers:
++        list_providers()
 +
-+PATCH_FILE="$1"
++    # Get provider config
++    config = PROVIDERS[args.provider]
++    model = args.model or config["default_model"]
 +
-+if [[ ! -f "$PATCH_FILE" ]]; then
-+    error "Patch file not found: $PATCH_FILE"
-+fi
++    # Get API key
++    api_key = os.environ.get(config["env_var"])
++    if not api_key:
++        error(f"{config['env_var']} environment variable not set")
 +
-+if [[ ! -f "$ANALYZE_SCRIPT" ]]; then
-+    error "analyze-patch.py not found: $ANALYZE_SCRIPT"
-+fi
++    # Validate files
++    agents_path = Path(args.agents)
++    if not agents_path.exists():
++        error(f"AGENTS.md not found: {args.agents}")
 +
-+# Validate format
-+case "$FORMAT" in
-+    text|markdown|html|json) ;;
-+    *) error "Invalid format: $FORMAT (must be text, markdown, html, or json)" ;;
-+esac
++    # Validate all doc files exist before processing
++    doc_paths = []
++    for doc_file in args.doc_files:
++        doc_path = Path(doc_file)
++        if not doc_path.exists():
++            error(f"Documentation file not found: {doc_file}")
++        doc_paths.append((doc_file, doc_path))
 +
-+# Get providers to use
-+if [[ -z "$PROVIDERS" ]]; then
-+    PROVIDERS=$(get_available_providers)
-+fi
++    # Validate email options
++    if args.send_email and not args.to_addrs:
++        error("--send-email requires at least one --to address")
 +
-+if [[ -z "$PROVIDERS" ]]; then
-+    error "No API keys configured. Set at least one of: "\
-+"ANTHROPIC_API_KEY, OPENAI_API_KEY, XAI_API_KEY, GOOGLE_API_KEY"
-+fi
++    # Get from address for email
++    from_addr = args.from_addr
++    if args.send_email and not from_addr:
++        git_name = get_git_config("user.name")
++        git_email = get_git_config("user.email")
++        if git_email:
++            from_addr = f"{git_name} <{git_email}>" if git_name else git_email
++        else:
++            error("No --from specified and git user.email not configured")
 +
-+# Create output directory if specified
-+if [[ -n "$OUTPUT_DIR" ]]; then
-+    mkdir -p "$OUTPUT_DIR"
-+fi
++    # Read AGENTS.md once
++    agents_content = agents_path.read_text()
++    output_dir = Path(args.output_dir)
++    output_dir.mkdir(parents=True, exist_ok=True)
++    provider_name = config["name"]
 +
-+PATCH_BASENAME=$(basename "$PATCH_FILE")
-+PATCH_STEM="${PATCH_BASENAME%.*}"
-+EXT=$(get_extension "$FORMAT")
++    # Process each file
++    num_files = len(doc_paths)
++    for file_idx, (doc_file, doc_path) in enumerate(doc_paths, 1):
++        if num_files > 1:
++            print(
++                f"\n{'=' * 60}",
++                file=sys.stderr,
++            )
++            print(
++                f"Processing file {file_idx}/{num_files}: {doc_file}",
++                file=sys.stderr,
++            )
++            print(
++                f"{'=' * 60}",
++                file=sys.stderr,
++            )
 +
-+echo "Reviewing patch: $PATCH_BASENAME"
-+echo "Providers: $PROVIDERS"
-+echo "Format: $FORMAT"
-+echo "========================================"
-+echo ""
++        # Determine output filenames
++        doc_basename = doc_path.stem
++        diff_file = output_dir / f"{doc_basename}.diff"
++        msg_file = output_dir / f"{doc_basename}.msg"
 +
-+# Run review for each provider
-+IFS=',' read -ra PROVIDER_LIST <<< "$PROVIDERS"
-+for provider in "${PROVIDER_LIST[@]}"; do
-+    echo ">>> Running review with: $provider"
-+    echo ""
++        # Get commit prefix
++        commit_prefix = get_commit_prefix(doc_file)
 +
-+    if [[ -n "$OUTPUT_DIR" ]]; then
-+        OUTPUT_FILE="${OUTPUT_DIR}/${PATCH_STEM}-${provider}.${EXT}"
-+        python3 "$ANALYZE_SCRIPT" \
-+            -p "$provider" \
-+            -a "$AGENTS_FILE" \
-+            -f "$FORMAT" \
-+            $VERBOSE \
-+            "$PATCH_FILE" | tee "$OUTPUT_FILE"
-+        echo ""
-+        echo "Saved to: $OUTPUT_FILE"
-+    else
-+        python3 "$ANALYZE_SCRIPT" \
-+            -p "$provider" \
-+            -a "$AGENTS_FILE" \
-+            -f "$FORMAT" \
-+            $VERBOSE \
-+            "$PATCH_FILE"
-+    fi
++        # Read doc content
++        doc_content = doc_path.read_text()
 +
-+    echo ""
-+    echo "========================================"
-+    echo ""
-+done
++        if args.verbose:
++            print("=== Request ===", file=sys.stderr)
++            print(f"Provider: {args.provider}", file=sys.stderr)
++            print(f"Model: {model}", file=sys.stderr)
++            print(f"Output format: {args.output_format}", file=sys.stderr)
++            print(f"AGENTS file: {args.agents}", file=sys.stderr)
++            print(f"Doc file: {doc_file}", file=sys.stderr)
++            print(f"Commit prefix: {commit_prefix}", file=sys.stderr)
++            print(f"Output dir: {args.output_dir}", file=sys.stderr)
++            if args.send_email:
++                print("Send email: yes", file=sys.stderr)
++                print(f"To: {', '.join(args.to_addrs)}", file=sys.stderr)
++                if args.cc_addrs:
++                    print(f"Cc: {', '.join(args.cc_addrs)}", file=sys.stderr)
++                print(f"From: {from_addr}", file=sys.stderr)
++            print("===============", file=sys.stderr)
 +
-+echo "Review comparison complete."
++        # Call API
++        review_text = call_api(
++            args.provider,
++            api_key,
++            model,
++            args.tokens,
++            agents_content,
++            doc_content,
++            doc_file,
++            commit_prefix,
++            args.output_format,
++            args.diff,
++            args.verbose,
++        )
 +
-+if [[ -n "$OUTPUT_DIR" ]]; then
-+    echo "All reviews saved to: $OUTPUT_DIR"
-+fi
++        if not review_text:
++            print(
++                f"Warning: No response received for {doc_file}",
++                file=sys.stderr,
++            )
++            continue
++
++        # Determine review output file
++        format_ext = FORMAT_EXTENSIONS[args.output_format]
++        review_file = output_dir / f"{doc_basename}{format_ext}"
++
++        # Determine if we should write diff/msg files
++        write_diff_msg = args.diff or args.output_format in ("text", "json")
++
++        # Extract commit message and diff first (before stripping markers)
++        commit_msg, diff = "", ""
++        if write_diff_msg:
++            if args.output_format == "json":
++                # Will extract from JSON below
++                pass
++            else:
++                # Parse from text format markers
++                commit_msg, diff = parse_review_text(review_text)
++
++        # For non-text formats with --diff, strip the markers from display output
++        display_text = review_text
++        if args.diff and args.output_format in ("markdown", "html"):
++            display_text = strip_diff_markers(review_text)
++
++        # Build formatted output text
++        if args.output_format == "text":
++            output_text = review_text
++        elif args.output_format == "json":
++            # Try to parse JSON response
++            try:
++                review_data = json.loads(review_text)
++            except json.JSONDecodeError:
++                print("Warning: Response is not valid JSON", file=sys.stderr)
++                review_data = {"raw_response": review_text}
++
++            # Extract diff/msg from JSON if present
++            if write_diff_msg:
++                if isinstance(review_data, dict) and "raw_response" not in review_data:
++                    commit_msg = review_data.get("commit_message", "")
++                    diff = review_data.get("diff", "")
++
++            # Add metadata
++            output_data = {
++                "metadata": {
++                    "doc_file": doc_file,
++                    "provider": args.provider,
++                    "provider_name": provider_name,
++                    "model": model,
++                    "commit_prefix": commit_prefix,
++                },
++                "review": review_data,
++            }
++            output_text = json.dumps(output_data, indent=2)
++        elif args.output_format == "markdown":
++            output_text = f"""# Documentation Review: {doc_path.name}
++
++*Reviewed by {provider_name} ({model})*
++
++{display_text}
++"""
++        elif args.output_format == "html":
++            output_text = f"""<!DOCTYPE html>
++<html>
++<head>
++<meta charset="utf-8">
++<title>Review: {doc_path.name}</title>
++<style>
++body {{ font-family: system-ui, sans-serif; max-width: 900px; margin: 2em auto; padding: 0 1em; }}
++h1 {{ color: #333; }}
++.review-meta {{ color: #666; font-style: italic; }}
++pre {{ background: #f5f5f5; padding: 1em; overflow-x: auto; }}
++</style>
++</head>
++<body>
++<h1>Documentation Review: {doc_path.name}</h1>
++<p class="review-meta">Reviewed by {provider_name} ({model})</p>
++<div class="review-content">
++{display_text}
++</div>
++</body>
++</html>
++"""
++
++        # Write formatted review to file
++        review_file.write_text(output_text)
++        print(f"Review written to: {review_file}", file=sys.stderr)
++
++        # Write diff/msg files
++        if write_diff_msg:
++            if commit_msg:
++                msg_file.write_text(commit_msg + "\n")
++                print(f"Commit message written to: {msg_file}", file=sys.stderr)
++            else:
++                msg_file.write_text("# No commit message generated\n")
++                print("Warning: Could not extract commit message", file=sys.stderr)
++
++            if diff:
++                diff_file.write_text(diff + "\n")
++                print(f"Diff written to: {diff_file}", file=sys.stderr)
++            else:
++                diff_file.write_text("# No changes suggested\n")
++                print("Warning: Could not extract diff", file=sys.stderr)
++
++        # Print to stdout unless quiet (or multiple files without verbose)
++        show_stdout = not args.quiet and (num_files == 1 or args.verbose)
++        if show_stdout:
++            print(
++                f"\n=== Documentation Review: {doc_path.name} "
++                f"(via {provider_name}) ==="
++            )
++            print(output_text)
++
++            # Print usage instructions for text format
++            if args.output_format == "text":
++                print("\n=== Output Files ===")
++                print(f"Commit message: {msg_file}")
++                print(f"Diff file:      {diff_file}")
++                print("\nTo apply changes:")
++                print(f"  git apply {diff_file}")
++                print(f"  git commit -sF {msg_file}")
++
++        # Send email if requested
++        if args.send_email:
++            if args.output_format != "text":
++                print(
++                    f"Note: Email will be sent as plain text regardless of "
++                    f"--format={args.output_format}",
++                    file=sys.stderr,
++                )
++
++            review_subject = f"[REVIEW] {commit_prefix} {doc_path.name}"
++
++            # Build email body
++            email_body = f"""AI-generated documentation review of {doc_file}
++Reviewed using {provider_name} ({model})
++
++This is an automated review. Please verify all suggestions.
++
++---
++
++{review_text}
++"""
++
++            if args.verbose:
++                print("", file=sys.stderr)
++                print("=== Email Details ===", file=sys.stderr)
++                print(f"Subject: {review_subject}", file=sys.stderr)
++                print("=====================", file=sys.stderr)
++
++            send_email(
++                args.to_addrs,
++                args.cc_addrs,
++                from_addr,
++                review_subject,
++                None,
++                email_body,
++                args.dry_run,
++                args.verbose,
++            )
++
++            if not args.dry_run:
++                print("", file=sys.stderr)
++                print(f"Review sent to: {', '.join(args.to_addrs)}", file=sys.stderr)
++
++    # Print summary for multiple files
++    if num_files > 1:
++        print(f"\n{'=' * 60}", file=sys.stderr)
++        print(f"Processed {num_files} files", file=sys.stderr)
++        print(f"Output directory: {output_dir}", file=sys.stderr)
++
++
++if __name__ == "__main__":
++    main()
 -- 
 2.53.0
 
