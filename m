@@ -2,55 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5387910AB82F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 00:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAFF10AB82F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 00:19:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ACC0342DA6;
-	Fri, 27 Mar 2026 01:19:41 +0100 (CET)
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com
- [209.85.214.202])
- by mails.dpdk.org (Postfix) with ESMTP id 49E0E42D99
- for <dev@dpdk.org>; Fri, 27 Mar 2026 01:19:40 +0100 (CET)
-Received: by mail-pl1-f202.google.com with SMTP id
- d9443c01a7336-2adef9d486bso29254975ad.2
- for <dev@dpdk.org>; Thu, 26 Mar 2026 17:19:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1A62342DA1;
+	Fri, 27 Mar 2026 01:19:48 +0100 (CET)
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com
+ [209.85.215.201])
+ by mails.dpdk.org (Postfix) with ESMTP id CD6EB42D55
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 01:19:46 +0100 (CET)
+Received: by mail-pg1-f201.google.com with SMTP id
+ 41be03b00d2f7-c6e24ee93a6so1785679a12.0
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 17:19:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1774570779; x=1775175579; darn=dpdk.org;
+ d=google.com; s=20251104; t=1774570786; x=1775175586; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=RDzJfqQ+E3zMfftv+s9GtKdAsZQj38jM96xJ1ryeZt0=;
- b=Bdj8nHkb7CndwCg04glmmL1LTPMJOGqdRnlQsSsUKwdNGjZ2p0D1OpWoOzzNhoz/uU
- QtqrqdqYpgjYcrlKkfJtVtKCsESZzAuNGMiu/mJKAUIhLJSRXm2dkfBLi62RV3C7FxKJ
- 6drXH872i57hdfA9pYBWPLvNtLbdfwMliiaQFsMrpJPagz53H4kn8+xOGdQfN5dPrlKY
- h7OCFh6uzpvh5HM6pM4WERTw25STy+80/hxyrgj2rf7Q39KwJBuVRDvfM/xWQTvXNRra
- tiveRElHWCy/r3qkPCrvht9n0XsXptlI1mGGF3mjfYDy+uDOzp/n3sroOxYB6Kk15kdS
- Midw==
+ bh=YU0qYyZxP+A1Rl6n4x1skuvc0xccx1iNnuj9m3uJYMc=;
+ b=Vm7wIKQdpVmwxVDSyqE0pnyCcXVOBrBzke9SU4J5w4I3HpzBCH9W5PLhTkcyy4Hh82
+ tGJJLFuaF/9hWzAwmDHqg+dSH0GR4C2LIkkm97wnl1jVYrPUqLITkEjeQqz7x0SmOA+Q
+ PvL2i/u+jwh3YmR/On5rb04uxi/fM2JKZYzFy9DkNW8wTSnzQIpco+SY/UcT5jkW33AC
+ 4dOVyWyH6Og2CL97frFlVv8TpZdKBviQxTUWxcfSHSjlyrXmj/DnLIbz6+L+vGya/J8S
+ vvhmq/uehTEII2ReQoUEp2T4YkeTz+hw+xtX8CH6PpM6r4MuwCNl14KRPobVI0ESFAJT
+ C22g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774570779; x=1775175579;
+ d=1e100.net; s=20251104; t=1774570786; x=1775175586;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=RDzJfqQ+E3zMfftv+s9GtKdAsZQj38jM96xJ1ryeZt0=;
- b=bKPiWNVzOh+vQOL/v/kyHnbsJO/whUIlKkXgFepKXvcIeyfqAVEHDPRT4F0N2/6asL
- E2ORNUxJxbklpNA05RwbyD2UoGLd4+V189MOe2gPjAxtli/73t55+XuxMAHyD+r9KQgA
- RQ2T24ptguvfY0wKpo56Ti3CMB9BNY6+Mru+Y2a+o+lfxUpTOvwTNKRirBnI0wqdsdcz
- cwSABmlTnxrGi6yqI1IUTazXa9gth6gMc/8NgLamLh2Ev3HNMGlZKOFBlp1NPFvjKMJr
- viwVVNtkiAdKCXuuC+Ey/W1iEqSSUZowsxB88xwOEJh0j3Vf8cufhflBz99S9+Qp7dMx
- zk1w==
-X-Gm-Message-State: AOJu0Yz6BqdtRqxO1/vib7rlxbxAhYeijG5iIKaroAPerOrmaCVfyKtL
- nrNQl9lWiEYmL4glXQpgi9bkyRNNajUfDbf5tZUOmuCgwzujqVfdSIYke3QnPonsPW3Vkwmhhn6
- EieYc6Z7g+I+fWIQ6lIW58kw+ww==
-X-Received: from plad20.prod.google.com ([2002:a17:902:e154:b0:2b0:5bea:23ae])
+ bh=YU0qYyZxP+A1Rl6n4x1skuvc0xccx1iNnuj9m3uJYMc=;
+ b=kh1Nxk67i4uk/vBr/7mrOBfgyWAKzE0pJoiPQbwG9F2ep5jyjRxPKsaxEdq5t9CRk0
+ j1yqTKGsuRg3TGTR7QTbxcotvwynFYSnZBNplxQ5+z3gCy1+1/An8ekaPKOlSpcxI2Cy
+ Ckf0V6+6J8imYLwzd0KCb+P+sgMhaZ0b0ksKLtnsLAJ7txLip+6SecOo9e8OiIS01CMr
+ z5mV8mhJ2ShwAhWEokLUjwSjlVGBEz4csCjtIszz5yxmHZ372JH65vRxmV+BJ/tRSX+x
+ CD1dy2bB9ZOHaCcf8pplUgHNyrbgQ+OVVliPuk2t6hNZv9mVxeJwoxfLdAnNxQhDoX9p
+ pWvg==
+X-Gm-Message-State: AOJu0Yzebe00MY9T6u+Pgmkgt7HGx/fBYwyc9PEgivIqvfh844lLCjM0
+ BBRG5QkJRbbdsdgQZqthjsId8QwKKF/HrfVFzFoQp5MEbBfvfSJ24X3/xYhVzV/ErmcrIZ1KhEx
+ xwIU/bBwXL+bklU2uGI7kpzZSLQ==
+X-Received: from pgbem14.prod.google.com
+ ([2002:a05:6a02:468e:b0:c73:9a1a:387d])
  (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:cf0b:b0:2b0:5e63:fc45 with SMTP id
- d9443c01a7336-2b0cda03c19mr5705475ad.0.1774570779219; 
- Thu, 26 Mar 2026 17:19:39 -0700 (PDT)
-Date: Fri, 27 Mar 2026 00:18:26 +0000
+ 2002:a05:6a20:9389:b0:394:4d99:ff56 with SMTP id
+ adf61e73a8af0-39c8a70a62amr288739637.11.1774570785722; 
+ Thu, 26 Mar 2026 17:19:45 -0700 (PDT)
+Date: Fri, 27 Mar 2026 00:18:27 +0000
 In-Reply-To: <20260327001827.3385001-1-jtranoleary@google.com>
 Mime-Version: 1.0
 References: <20260327001827.3385001-1-jtranoleary@google.com>
 X-Mailer: git-send-email 2.53.0.1118.gaef5881109-goog
-Message-ID: <20260327001827.3385001-4-jtranoleary@google.com>
-Subject: [PATCH 3/4] net/gve: add checks for flow rule struct padding
+Message-ID: <20260327001827.3385001-5-jtranoleary@google.com>
+Subject: [PATCH 4/4] net/gve: add minor fixes to flow rule code
 From: "Jasper Tran O'Leary" <jtranoleary@google.com>
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>, 
@@ -69,36 +70,41 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Enforce struct size matches at compile time to ensure we do not have
-unexpected padding added. Other admin queue structs already have this
-check, so add it to flow rule structs as well.
+Replace an unneeded goto statement with an early return. Add a comment
+about the lifetime of the flow rule lock.
 
 Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
 Reviewed-by: Joshua Washington <joshwash@google.com>
 ---
- drivers/net/gve/gve_flow_rule.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/gve/gve_ethdev.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/gve/gve_flow_rule.h b/drivers/net/gve/gve_flow_rule.h
-index d597a6c..bdf2955 100644
---- a/drivers/net/gve/gve_flow_rule.h
-+++ b/drivers/net/gve/gve_flow_rule.h
-@@ -41,6 +41,7 @@ struct gve_flow_spec {
- 		u8 tclass;
- 	};
- };
-+GVE_CHECK_STRUCT_LEN(40, gve_flow_spec);
+diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
+index 6ce3ef3..fce90ad 100644
+--- a/drivers/net/gve/gve_ethdev.c
++++ b/drivers/net/gve/gve_ethdev.c
+@@ -521,8 +521,7 @@ gve_setup_flow_subsystem(struct gve_priv *priv)
+ 			priv->flow_rule_bmp_size, 0);
+ 	if (!priv->avail_flow_rule_bmp_mem) {
+ 		PMD_DRV_LOG(ERR, "Failed to alloc bitmap for flow rules.");
+-		err = -ENOMEM;
+-		goto free_flow_rule_bmp;
++		return -ENOMEM;
+ 	}
  
- /* Flow rule parameters using mixed endianness.
-  * - flow_type and action are guest endian.
-@@ -55,6 +56,7 @@ struct gve_flow_rule_params {
- 	struct gve_flow_spec key;
- 	struct gve_flow_spec mask;
- };
-+GVE_CHECK_STRUCT_LEN(84, gve_flow_rule_params);
+ 	err = gve_flow_init_bmp(priv);
+@@ -619,6 +618,11 @@ gve_dev_reset(struct rte_eth_dev *dev)
+ 	if (gve_get_flow_subsystem_ok(priv))
+ 		gve_teardown_flow_subsystem(priv);
  
- struct gve_priv;
- 
++	/*
++	 * Note that gve_teardown_flow_subsystem does not destroy the
++	 * flow_rule_lock. The lock is preserved across device resets and only
++	 * destroyed on dev_close.
++	 */
+ 	gve_free_queues(dev);
+ 	gve_teardown_device_resources(priv);
+ 	gve_adminq_free(priv);
 -- 
 2.53.0.1118.gaef5881109-goog
 
