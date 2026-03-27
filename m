@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B1A710ED674
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 13:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E4810ED676
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 13:05:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4A03042E3A;
-	Fri, 27 Mar 2026 14:05:16 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 107BF42E52;
+	Fri, 27 Mar 2026 14:05:17 +0100 (CET)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 91CE542E1D
- for <dev@dpdk.org>; Fri, 27 Mar 2026 14:05:12 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 94FD542E1D
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 14:05:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1774616713; x=1806152713;
+ t=1774616714; x=1806152714;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=A34T6dyzSvZ8Hvs8mxGJq1FFpu3LLTXInzSquaXVVwA=;
- b=O3+PzuIXEQ1IBhmi2tlNUpDZ6TnYBWzf38fE6pyI2EhTDEWtLXXLFuvv
- CzuNHCbcVEBShnfeBBjz+8N9hYpPrsWx9b4TxUaxPIZnNr4f0ww8bVDOF
- HR90rov0khaSIfnnhrsY/3vbAh+siKyAL0qmteyCyDNqOr9GRKWmY4oQt
- EQMxraf0zTqaFEKUZIxI/JCFhDvabr/X55Q8/phe+Oj8Blfwhctbhw1FC
- uQMpGafSaSXdH6M9rHJHd1/HLC0B38zH2gzww0TvWmMHLeOitrR391PJy
- kRv5C1b0vTF5sdEWOGzcX4+2RQFW9jG3UM6s5X7Dm+hsWI9E7s6NmfbNH w==;
-X-CSE-ConnectionGUID: pC6vJRRWS8ypx3w5jTaaEQ==
-X-CSE-MsgGUID: t7OpJLVZQPW7mL2Av20a8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11741"; a="75654591"
-X-IronPort-AV: E=Sophos;i="6.23,144,1770624000"; d="scan'208";a="75654591"
+ bh=rhutQYQ+p6Z1tiGsoRi6vpPgmCeGhYFTVHUxuxqcR80=;
+ b=dBCJyusN69mnYCD5uIISMHXIxtGXOCnM31lmKHkpP30M2t+AUWeJ3D7D
+ KQs5uuBqJkxH+uOM+DJvrcXgcvwAbS+I9G7I2L6SlA6sVkpHQLnAKEqtE
+ gsBZAPzGZtUnJbU/+cdrzOyNVRWDraFIXHAcYXUykY7hH9HBK0XeN6Oz5
+ SavQEoLdhg3S4tXfjCxovc/trqY1EiVfmRBtMN0qTTUxeZiB5wQFnfzUq
+ ZV+GkjaQyl0yThc9OO+IKTzXLi2LBz728ds8O6/ok6AHU+QTx5IsfdigM
+ MEaDNWBqUThtLStGhmJX3y+Xu1q6GkFKdGbfSRztLDQORMYbqpk1AC0tP w==;
+X-CSE-ConnectionGUID: RzKHcUbET82shDqs6Rk6yw==
+X-CSE-MsgGUID: KXmW8MXCR52RNwyZnF3kpg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11741"; a="75654592"
+X-IronPort-AV: E=Sophos;i="6.23,144,1770624000"; d="scan'208";a="75654592"
 Received: from fmviesa003.fm.intel.com ([10.60.135.143])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Mar 2026 06:05:12 -0700
-X-CSE-ConnectionGUID: zOoowyKvQtqg1mi+iwALgw==
-X-CSE-MsgGUID: JmxXImKcRpK/G//2QVuzjg==
+ 27 Mar 2026 06:05:13 -0700
+X-CSE-ConnectionGUID: hCOESgd1Qj2+21fF8kGQlg==
+X-CSE-MsgGUID: 5rC4a6BfTMemzraxNkhwgQ==
 X-ExtLoop1: 1
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa003.fm.intel.com with ESMTP; 27 Mar 2026 06:05:11 -0700
+ by fmviesa003.fm.intel.com with ESMTP; 27 Mar 2026 06:05:12 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: john.mcnamara@intel.com,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH 3/4] net/i40e: drop unsupported releases from version table
-Date: Fri, 27 Mar 2026 13:04:46 +0000
-Message-ID: <20260327130448.1033651-4-bruce.richardson@intel.com>
+Subject: [PATCH 4/4] net/i40e: merge version tables
+Date: Fri, 27 Mar 2026 13:04:47 +0000
+Message-ID: <20260327130448.1033651-5-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260327130448.1033651-1-bruce.richardson@intel.com>
 References: <20260327130448.1033651-1-bruce.richardson@intel.com>
@@ -59,77 +59,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove the 21.11 and any non-LTS releases from the version tables for
-X710 and X722 NICs.
+The only differences between the X722 and the X710 version tables is the
+final column, so merge the tables with one column for X710 FW versions
+and another for X722 FW versions.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- doc/guides/nics/i40e.rst | 36 ------------------------------------
- 1 file changed, 36 deletions(-)
+ doc/guides/nics/i40e.rst | 41 +++++++++++++---------------------------
+ 1 file changed, 13 insertions(+), 28 deletions(-)
 
 diff --git a/doc/guides/nics/i40e.rst b/doc/guides/nics/i40e.rst
-index 0c52807f26..f4c8d39e54 100644
+index f4c8d39e54..2613ca46f6 100644
 --- a/doc/guides/nics/i40e.rst
 +++ b/doc/guides/nics/i40e.rst
-@@ -106,30 +106,12 @@ For X710/XL710/XXV710,
-    +==============+=======================+==================+
-    |    25.11     |         2.28.13       |       9.55       |
-    +--------------+-----------------------+------------------+
--   |    25.07     |         2.28.7        |       9.54       |
--   +--------------+-----------------------+------------------+
--   |    25.03     |         2.27.8        |       9.53       |
--   +--------------+-----------------------+------------------+
-    |    24.11     |         2.26.8        |       9.52       |
-    +--------------+-----------------------+------------------+
--   |    24.07     |         2.25.9        |       9.50       |
--   +--------------+-----------------------+------------------+
--   |    24.03     |         2.24.6        |       9.40       |
--   +--------------+-----------------------+------------------+
-    |    23.11     |         2.23.17       |       9.30       |
-    +--------------+-----------------------+------------------+
--   |    23.07     |         2.22.20       |       9.20       |
--   +--------------+-----------------------+------------------+
--   |    23.03     |         2.22.18       |       9.20       |
--   +--------------+-----------------------+------------------+
-    |    22.11     |         2.20.12       |       9.01       |
-    +--------------+-----------------------+------------------+
--   |    22.07     |         2.19.3        |       8.70       |
--   +--------------+-----------------------+------------------+
--   |    22.03     |         2.17.15       |       8.30       |
--   +--------------+-----------------------+------------------+
--   |    21.11     |         2.17.4        |       8.30       |
--   +--------------+-----------------------+------------------+
+@@ -99,34 +99,19 @@ The full list of in-tree and out-of-tree Linux kernel drivers from kernel.org
+ and Linux distributions that were tested and verified
+ are listed in the Tested Platforms section of the Release Notes for each release.
  
- 
- For X722,
-@@ -139,30 +121,12 @@ For X722,
-    +==============+=======================+==================+
-    |    25.11     |         2.28.13       |       6.51       |
-    +--------------+-----------------------+------------------+
--   |    25.07     |         2.28.7        |       6.50       |
+-For X710/XL710/XXV710,
+-
 -   +--------------+-----------------------+------------------+
--   |    25.03     |         2.27.8        |       6.50       |
+-   | DPDK version | Kernel driver version | Firmware version |
+-   +==============+=======================+==================+
+-   |    25.11     |         2.28.13       |       9.55       |
 -   +--------------+-----------------------+------------------+
-    |    24.11     |         2.26.8        |       6.50       |
-    +--------------+-----------------------+------------------+
--   |    24.07     |         2.25.9        |       6.50       |
+-   |    24.11     |         2.26.8        |       9.52       |
 -   +--------------+-----------------------+------------------+
--   |    24.03     |         2.24.6        |       6.20       |
+-   |    23.11     |         2.23.17       |       9.30       |
 -   +--------------+-----------------------+------------------+
-    |    23.11     |         2.23.17       |       6.20       |
-    +--------------+-----------------------+------------------+
--   |    23.07     |         2.22.20       |       6.20       |
+-   |    22.11     |         2.20.12       |       9.01       |
 -   +--------------+-----------------------+------------------+
--   |    23.03     |         2.22.18       |       6.20       |
+-
+-
+-For X722,
+-
 -   +--------------+-----------------------+------------------+
-    |    22.11     |         2.20.12       |       6.00       |
-    +--------------+-----------------------+------------------+
--   |    22.07     |         2.19.3        |       5.60       |
+-   | DPDK version | Kernel driver version | Firmware version |
+-   +==============+=======================+==================+
+-   |    25.11     |         2.28.13       |       6.51       |
 -   +--------------+-----------------------+------------------+
--   |    22.03     |         2.17.15       |       5.50       |
+-   |    24.11     |         2.26.8        |       6.50       |
 -   +--------------+-----------------------+------------------+
--   |    21.11     |         2.17.4        |       5.30       |
+-   |    23.11     |         2.23.17       |       6.20       |
 -   +--------------+-----------------------+------------------+
+-   |    22.11     |         2.20.12       |       6.00       |
+-   +--------------+-----------------------+------------------+
++   +--------------+-----------------------+------------------+------------------+
++   | DPDK version | Kernel driver version | X710* FW version |  X722 FW version |
++   +==============+=======================+==================+==================+
++   |    25.11     |         2.28.13       |       9.55       |       6.51       |
++   +--------------+-----------------------+------------------+------------------+
++   |    24.11     |         2.26.8        |       9.52       |       6.50       |
++   +--------------+-----------------------+------------------+------------------+
++   |    23.11     |         2.23.17       |       9.30       |       6.20       |
++   +--------------+-----------------------+------------------+------------------+
++   |    22.11     |         2.20.12       |       9.01       |       6.00       |
++   +--------------+-----------------------+------------------+------------------+
++
++   * The X710 FW version is also applicable for XL710 and XXV710.
  
  
  Configuration
