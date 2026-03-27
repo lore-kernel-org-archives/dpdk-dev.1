@@ -2,58 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047AD10AB82F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 00:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD0D10A62E8
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 02:33:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CD7442D55;
-	Fri, 27 Mar 2026 01:20:44 +0100 (CET)
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com
- [209.85.215.202])
- by mails.dpdk.org (Postfix) with ESMTP id 010A040151
- for <dev@dpdk.org>; Fri, 27 Mar 2026 01:20:42 +0100 (CET)
-Received: by mail-pg1-f202.google.com with SMTP id
- 41be03b00d2f7-c7651644975so1020381a12.1
- for <dev@dpdk.org>; Thu, 26 Mar 2026 17:20:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1774570842; x=1775175642; darn=dpdk.org;
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=y6hZMJd5DCDUVdHFcOJt4SPi/2SWxvX0ueEAEgAAXus=;
- b=UnbUSaWgoxoBT6gOx18+osvDqXl14FHCI6D8oNH8iPeu3NHidue7y74JwT5+AA3W6o
- E0CvA3Os7xHrI4O6YDknfzmrFvhFWvbCTZR7Ax6+1e7Gf0XtmrnNs9QREolhldjDQxPt
- 3HPsscWrABCthp+rcu1MUPs9BlnaVfvckYa07U+7TyFlqMuLungfS2Da5r0g9njrAqKk
- QVyfqxksRf46NpM0Ddx3lYNO+6wUagy7vVqQjuEg0EaiHVKQlEfRWgOH684HV3KT0gU1
- ha3zergEaLpv2UJoxvvEj1iWVCh1C3WUk9ci8UmP+hZe1JPXVmqcwTMjRShsRPUkjwuY
- l3Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774570842; x=1775175642;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=y6hZMJd5DCDUVdHFcOJt4SPi/2SWxvX0ueEAEgAAXus=;
- b=CmsaM2sMJsfjxTecA55dmkgkTKlFa+PfSyrLNbeElJMFtGL+9NC9v4LQ7No4LYpv2h
- l2Y2GHxO/UIOo6wZ70ZDmSTGKZHsRpmwKt4+KDIYImHb0V0A0eJ/BgVmZF7XLO5vtR8/
- OM4v44Ej5W1BrmiqHvPqRQ1C8Ml6B129X3PabbhbKznjxxO7KZRxipK22SPFZYaD93aM
- uGUrSR0K3/gFiWtnMjTFNbLsugdyREG26791Yx9HnFxVwm8vBGrNP9v02pa2u3JouoLi
- mHR/xcU/TQmuLLYuyrc/WYnAaUmvxTslLxOHW2eEUx4Nlmj4F16trgmVIqFZVnv8LgEW
- 3nBg==
-X-Gm-Message-State: AOJu0YywBsMa/+89E/VVY3DWOHoFo4WmY/BA1/HH39UcUS7NRFjdk6fz
- MUfuvhyF6OJSshYX1w39QCBWHti4GXUDbZDKhWRpj9brlBLYhKpdnmownV9Op5NKsm+8uXOQsFh
- +El6ZDkcPIHjoVNSBdDOVzrX+iQ==
-X-Received: from pgbeq24.prod.google.com ([2002:a05:6a02:2698:b0:c76:5ef4:ec3])
- (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:3ca3:b0:39c:3de:efec with SMTP id
- adf61e73a8af0-39c878022f2mr599438637.14.1774570841863; 
- Thu, 26 Mar 2026 17:20:41 -0700 (PDT)
-Date: Fri, 27 Mar 2026 00:20:38 +0000
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.53.0.1118.gaef5881109-goog
-Message-ID: <20260327002038.3386577-1-jtranoleary@google.com>
-Subject: [PATCH] net/gve: add passive device-requested reset
-From: "Jasper Tran O'Leary" <jtranoleary@google.com>
-To: stephen@networkplumber.org
-Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>, 
- Joshua Washington <joshwash@google.com>
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 0A79042D55;
+	Fri, 27 Mar 2026 03:33:55 +0100 (CET)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 8561B427C5
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 03:33:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1774578834; x=1806114834;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=SWm9udUGbtCT7h0ZY6v4CsdL4t6WJqbSsbJGRUl38Tg=;
+ b=BJ08WB0ZKp0jpTG0AJBUwtZudD6CnbWGRyRB8VWEo5HKN1ale5i43tmJ
+ 8I9g7x/0lyixQ985ReNSLT5icbo8kadFwLQ1UihXSTxW5AHd101/V6B2H
+ 3aVC9Ie79YvmLuptkEArd31CGvSjRWpiou+yLwZWkx0E6mDRvWTnXE5Zj
+ Z2Eyo26KzVJ3axeK7epavxg8IAophn7ay7AelxYBpz6q9Qtfm+O66Hugd
+ kJRWi1yT1Kqs7pLBgwx+VoTqqNOEzNY3cJwHcB/XxosOxLHR5MqXI4fsF
+ HOhqhzp1YXJu9BVxzuU1Yp3eefPSRmN7jen+JLjpZqNEwINkNevGlUL8j A==;
+X-CSE-ConnectionGUID: p5Lc4ULDRw6LKsD/zrwKXw==
+X-CSE-MsgGUID: YrnCag4CRbCHWT1LTddhTQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11741"; a="75532513"
+X-IronPort-AV: E=Sophos;i="6.23,143,1770624000"; d="scan'208";a="75532513"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Mar 2026 19:33:53 -0700
+X-CSE-ConnectionGUID: dYh2sPZxRyCFQLYI2ap8fQ==
+X-CSE-MsgGUID: setZRXJtThK8+nMsgU66yg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,143,1770624000"; d="scan'208";a="224232693"
+Received: from unknown (HELO icx-jy-abi-d81..) ([10.239.252.81])
+ by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 26 Mar 2026 19:33:51 -0700
+From: Yu Jiang <yux.jiang@intel.com>
+To: bruce.richardson@intel.com,
+	john.mcnamara@intel.com,
+	dev@dpdk.org
+Cc: Yu Jiang <yux.jiang@intel.com>
+Subject: [PATCH V1] doc: add tested Intel platforms with Intel NICs
+Date: Fri, 27 Mar 2026 10:51:50 +0000
+Message-ID: <20260327105150.607424-1-yux.jiang@intel.com>
+X-Mailer: git-send-email 2.43.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -67,208 +60,144 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In addition to application-initiated resets, during normal operation,
-the device can indicate the need to reset by writing a value to a device
-status register. This patch introduces an alarm that polls the
-status of that register and informs the application of the need to
-reset. The application is responsible for registering a callback that
-will execute in the event that the alarm discovers that the device
-requests a reset.
+Add tested Intel platforms with Intel NICs to v26.03 release note.
 
-Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
-Reviewed-by: Joshua Washington <joshwash@google.com>
+Signed-off-by: Yu Jiang <yux.jiang@intel.com>
 ---
-Depends-on: patch-1bf64edce3 ("net/gve: add reset path")
+ doc/guides/rel_notes/release_26_03.rst | 123 +++++++++++++++++++++++++
+ 1 file changed, 123 insertions(+)
 
- doc/guides/nics/gve.rst      | 32 ++++++++++++++-
- drivers/net/gve/gve_ethdev.c | 77 ++++++++++++++++++++++++++++++++++++
- drivers/net/gve/gve_ethdev.h |  3 ++
- 3 files changed, 110 insertions(+), 2 deletions(-)
-
-diff --git a/doc/guides/nics/gve.rst b/doc/guides/nics/gve.rst
-index d94e4cb..f564607 100644
---- a/doc/guides/nics/gve.rst
-+++ b/doc/guides/nics/gve.rst
-@@ -130,8 +130,8 @@ Security Protocols
- - Flow priorities are not supported (must be 0).
- - Masking is limited to full matches i.e. ``0x00...0`` or ``0xFF...F``.
- 
--Application-Initiated Reset
--^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+Device Reset
-+^^^^^^^^^^^^
- 
- The driver allows an application to reset the gVNIC device.
- This function will tear down and reinitialize the device's resources,
-@@ -139,3 +139,31 @@ including queues and administrative queues.
- 
- It is the application's responsibility to reinitialize
- and restart the device after resetting it.
+diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
+index 6bb18433f5..9f80d627a8 100644
+--- a/doc/guides/rel_notes/release_26_03.rst
++++ b/doc/guides/rel_notes/release_26_03.rst
+@@ -263,3 +263,126 @@ Tested Platforms
+    This section is a comment. Do not overwrite or remove it.
+    Also, make sure to start the actual text at the margin.
+    =======================================================
 +
-+In addition, the driver supports device-requested resets, which are triggered
-+when the device encounters an unrecoverable error. The driver detects this via
-+a device status register and raises an ``RTE_ETH_EVENT_INTR_RESET`` event.
++* Intel\ |reg| platforms with Intel\ |reg| NICs combinations
 +
-+The application must register a callback to handle this event. The callback
-+should handle the reset process (reset, reconfigure, restart).
++  * CPU
 +
-+.. code-block:: c
++    * Intel\ |reg| Xeon\ |reg| 6740E  CPU @ 2.4GHz
++    * Intel\ |reg| Xeon\ |reg| 6756P-B  CPU @ 2.2GHz
++    * Intel\ |reg| Xeon\ |reg| 6760P  CPU @ 2.2GHz
++    * Intel\ |reg| Xeon\ |reg| 6767P
++    * Intel\ |reg| Xeon\ |reg| 6767P  CPU @ 2.4GHz
++    * Intel\ |reg| Xeon\ |reg| CPU Max 9480
++    * Intel\ |reg| Xeon\ |reg| CPU Max 9480  CPU @ 1.9GHz
++    * Intel\ |reg| Xeon\ |reg| D-2796NT CPU @ 2.00GHz  CPU @ 2.0GHz
++    * Intel\ |reg| Xeon\ |reg| Gold 6348 CPU @ 2.60GHz  CPU @ 2.0GHz
++    * Intel\ |reg| Xeon\ |reg| Gold 6430L
++    * Intel\ |reg| Xeon\ |reg| Gold 6430L  CPU @ 1.9GHz
++    * Intel\ |reg| Xeon\ |reg| Platinum 8380 CPU @ 2.30GHz  CPU @ 2.3GHz
++    * Intel\ |reg| Xeon\ |reg| Platinum 8468H  CPU @ 2.1GHz
++    * Intel\ |reg| Xeon\ |reg| Platinum 8490H
++    * Intel\ |reg| Xeon\ |reg| Platinum 8490H  CPU @ 1.9GHz
 +
-+   static int
-+   dev_rst_req_callback(uint16_t port_id, enum rte_eth_event_type type,
-+                        void *param, void *ret_param)
-+   {
-+       RTE_SET_USED(param);
-+       RTE_SET_USED(ret_param);
++  * OS:
 +
-+       if (type == RTE_ETH_EVENT_INTR_RESET) {
-+           printf("Device requested reset on port %u\n", port_id);
-+           rte_eth_dev_reset(port_id);
-+           /* Reconfigure and restart port ... */
-+       }
-+       return 0;
-+   }
++    * Fedora 43
++    * FreeBSD 15.0
++    * Microsoft Azure Linux 3.0
++    * OpenAnolis OS 8.10
++    * openEuler 24.03 (LTS-SP2)
++    * Red Hat Enterprise Linux Server release 10
++    * Red Hat Enterprise Linux Server release 9.6
++    * Ubuntu 24.04.3 LTS
++    * Ubuntu 24.04.4 LTS
++    * Vmware Exsi 9.0
 +
-+   /* Register this callback in the main execution flow */
-+   rte_eth_dev_callback_register(port_id, RTE_ETH_EVENT_INTR_RESET,
-+                     dev_rst_req_callback, NULL);
-diff --git a/drivers/net/gve/gve_ethdev.c b/drivers/net/gve/gve_ethdev.c
-index fce90ad..7970f46 100644
---- a/drivers/net/gve/gve_ethdev.c
-+++ b/drivers/net/gve/gve_ethdev.c
-@@ -13,6 +13,8 @@
- #include <ethdev_driver.h>
- 
- static int gve_init_priv(struct gve_priv *priv, bool skip_describe_device);
-+static void gve_start_dev_status_polling(struct rte_eth_dev *dev);
-+static void gve_stop_dev_status_polling(struct rte_eth_dev *dev);
- 
- static void
- gve_write_version(uint8_t *driver_version_register)
-@@ -411,6 +413,11 @@ gve_dev_start(struct rte_eth_dev *dev)
- 	struct gve_priv *priv;
- 	int ret;
- 
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
-+		PMD_DRV_LOG(WARNING, "Cannot start device in secondary.");
-+		return -EPERM;
-+	}
++  * NICs:
 +
- 	ret = gve_start_queues(dev);
- 	if (ret != 0) {
- 		PMD_DRV_LOG(ERR, "Failed to start queues");
-@@ -440,6 +447,8 @@ gve_dev_start(struct rte_eth_dev *dev)
- 		}
- 	}
- 
-+	gve_start_dev_status_polling(dev);
++    * Intel\ |reg| Ethernet Controller E810-C for SFP (4x25G)
 +
- 	return 0;
- }
- 
-@@ -448,6 +457,17 @@ gve_dev_stop(struct rte_eth_dev *dev)
- {
- 	struct gve_priv *priv = dev->data->dev_private;
- 
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY) {
-+		PMD_DRV_LOG(WARNING, "Cannot stop device in secondary.");
-+		return -EPERM;
-+	}
++      * Firmware version: 4.91 0x8002147b 1.3909.0
++      * Device id (pf/vf): 8086:1593 / 8086:1889
++      * Driver version(out-of-tree): 2.4.5 (ice)
++      * Driver version(in-tree): 6.8.0-87-generic (Ubuntu24.04.3 LTS) (ice)
++      * OS Default DDP: 1.3.53.0
++      * COMMS DDP: 1.3.61.0
++      * Wireless Edge DDP: 1.3.25.0
 +
-+	/*
-+	 * Block until all polling callbacks have concluded before tearing down
-+	 * any device resources.
-+	 */
-+	gve_stop_dev_status_polling(dev);
++    * Intel\ |reg| Ethernet Controller E810-C for QSFP (2x100G)
 +
- 	dev->data->dev_started = 0;
- 	dev->data->dev_link.link_status = RTE_ETH_LINK_DOWN;
- 
-@@ -1311,6 +1331,63 @@ gve_set_default_ring_size_bounds(struct gve_priv *priv)
- 	priv->min_rx_desc_cnt = GVE_DEFAULT_MIN_RX_RING_SIZE;
- }
- 
-+static void
-+gve_check_device_status(void *arg)
-+{
-+	struct rte_eth_dev *dev = arg;
-+	struct gve_priv *priv = dev->data->dev_private;
-+	uint32_t dev_status;
-+	int ret;
++      * Firmware version: 4.91 0x800214ae 1.3909.0
++      * Device id (pf/vf): 8086:1592 / 8086:1889
++      * Driver version(out-of-tree): 2.4.5 (ice)
++      * Driver version(in-tree): 6.6.119.3-1.azl3 (Microsoft Azure Linux 3.0) /
++        6.12.0-55.9.1.el10_0.x86_64+rt (RHEL10) (ice)
++      * OS Default DDP: 1.3.53.0
++      * COMMS DDP: 1.3.61.0
++      * Wireless Edge DDP: 1.3.25.0
 +
-+	dev_status = ioread32be(&priv->reg_bar0->device_status);
++    * Intel\ |reg| Ethernet Controller E830-CC for QSFP
 +
-+	if (dev_status & GVE_DEVICE_STATUS_RESET_MASK) {
-+		PMD_DRV_LOG(INFO,
-+			"Device on port %u requests a reset. Stopping device status polling.",
-+			dev->data->port_id);
-+		rte_eth_dev_callback_process(dev, RTE_ETH_EVENT_INTR_RESET,
-+			NULL);
-+	} else {
-+		ret = rte_eal_alarm_set(GVE_DEV_POLL_INTERVAL_US,
-+					gve_check_device_status, dev);
-+		if (ret != 0) {
-+			PMD_DRV_LOG(ERR,
-+				"Port %u: Failed to re-arm alarm poller!",
-+				dev->data->port_id);
-+		}
-+	}
-+}
++      * Firmware version: 1.20 0x80017ef4 1.3909.0
++      * Device id (pf/vf): 8086:12d2 / 8086:1889
++      * Driver version: 2.4.5 (ice)
++      * OS Default DDP: 1.3.53.0
++      * COMMS DDP: 1.3.61.0
++      * Wireless Edge DDP: 1.3.25.0
 +
-+static void
-+gve_start_dev_status_polling(struct rte_eth_dev *dev)
-+{
-+	int ret;
++    * Intel\ |reg| Ethernet Connection E825-C for QSFP
 +
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return;
++      * Firmware version: 4.04 0x80007e5c 1.3885.0
++      * Device id (pf/vf): 8086:579d / 8086:1889
++      * Driver version: 2.4.5 (ice)
++      * OS Default DDP: 1.3.53.0
++      * COMMS DDP: 1.3.61.0
++      * Wireless Edge DDP: 1.3.25.0
 +
-+	ret = rte_eal_alarm_set(GVE_DEV_POLL_INTERVAL_US,
-+				gve_check_device_status,
-+				dev);
++    * Intel\ |reg| Ethernet Network Adapter E610-XT2
 +
-+	if (ret != 0) {
-+		PMD_DRV_LOG(ERR,
-+			"Port %u: Failed to arm device reset polling alarm! Err=%d",
-+			dev->data->port_id, ret);
-+	} else {
-+		PMD_DRV_LOG(INFO,
-+			"Port %u: Armed device reset polling alarm.",
-+			dev->data->port_id);
-+	}
-+}
++      * Firmware version: 1.41 0x8000eda0 1.3909.0
++      * Device id (pf/vf): 8086:57b0 / 8086:57ad
++      * Driver version(out-of-tree): 6.3.4 (ixgbe)
 +
-+static void
-+gve_stop_dev_status_polling(struct rte_eth_dev *dev)
-+{
-+	/* Blocks until all in-progress callbacks have completed. */
-+	rte_eal_alarm_cancel(gve_check_device_status, dev);
-+}
++    * Intel\ |reg| Corporation Ethernet Controller X550
 +
- static int
- gve_init_priv(struct gve_priv *priv, bool skip_describe_device)
- {
-diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 8fd098c..0577f03 100644
---- a/drivers/net/gve/gve_ethdev.h
-+++ b/drivers/net/gve/gve_ethdev.h
-@@ -7,6 +7,7 @@
- 
- #include <ethdev_driver.h>
- #include <ethdev_pci.h>
-+#include <rte_alarm.h>
- #include <rte_ether.h>
- #include <rte_pci.h>
- #include <pthread.h>
-@@ -57,6 +58,8 @@
- 	RTE_ETH_RSS_NONFRAG_IPV6_UDP |	\
- 	RTE_ETH_RSS_IPV6_UDP_EX)
- 
-+#define GVE_DEV_POLL_INTERVAL_US (1 * 1000 * 1000) /* 1 second in microseconds */
++      * Firmware version: 0x80001860, 1.3105.0
++      * Device id (pf/vf): 8086:1563 / 8086:1565
++      * Driver version(out-of-tree): 6.3.4 (ixgbe)
 +
- /* A list of pages registered with the device during setup and used by a queue
-  * as buffers
-  */
++    * Intel\ |reg| Ethernet Converged Network Adapter X710-DA4 (4x10G)
++
++      * Firmware version: 9.56 0x800100c4 1.3909.0
++      * Device id (pf/vf): 8086:1572 / 8086:154c
++      * Driver version(in-tree): 6.12.0-55.9.1.el10_0.x86_64 (RHEL10) (i40e)
++
++    * Intel\ |reg| Ethernet Converged Network Adapter XXV710-DA2 (2x25G)
++
++      * Firmware version:  9.56 0x80010121 1.3909.0
++      * Device id (pf/vf): 8086:158b / 8086:154c
++      * Driver version(out-of-tree): 2.28.16 (i40e)
++
++    * Intel\ |reg| Ethernet Converged Network Adapter XL710-QDA2 (2X40G)
++
++      * Firmware version(PF): 9.56 0x80010101 1.3909.0
++      * Device id (pf/vf): 8086:1583 / 8086:154c
++      * Driver version(out-of-tree): 2.28.16 (i40e)
++      * Driver version(in-tree): 6.8.0-101-generic (Ubuntu24.04.3 LTS) (i40e)
++
++    * Intel\ |reg| Corporation Ethernet Connection X722 for 10GbE SFP (2x10G)
++
++      * Firmware version: 6.51 0x80004430 1.3909.0
++      * Device id (pf/vf): 8086:37d0 / 8086:37cd
++      * Driver version(out-of-tree): 2.28.16 (i40e)
++
++    * Intel\ |reg| Ethernet Controller I226-LM
++
++      * Firmware version: 2.14, 0x8000028c
++      * Device id (pf): 8086:125b
++      * Driver version(in-tree): 6.8.0-88-generic (Ubuntu24.04.3 LTS) (igc)
++
++    * Intel\ |reg| Infrastructure Processing Unit (Intel\ |reg| IPU) E2100
++
++      * Firmware version: ci-ts.release.2.0.0.11126
++      * Device id (idpf/cpfl): 8086:1452/8086:1453
++      * Driver version: 0.0.772 (idpf)
 -- 
-2.53.0.1118.gaef5881109-goog
+2.17.1
 
