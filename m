@@ -2,74 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C6C10BA43D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 08:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 214E510BA445
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 08:39:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 65351402C5;
-	Fri, 27 Mar 2026 09:29:54 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 12F05402C5;
+	Fri, 27 Mar 2026 09:39:15 +0100 (CET)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id AD8C740280
- for <dev@dpdk.org>; Fri, 27 Mar 2026 09:29:52 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 4468A40280
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 09:39:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1774600192;
+ s=mimecast20190719; t=1774600752;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=9/TcoavSL3SZs83kIryBG9vmh6tYbL0yhkB5rMea6xo=;
- b=BdYf7bueBSegX9wbH+qilSSJMvuz/2mN7MOroRp6oXWJ4OUsQ6aJ6tI17ME9JwtUVZeyos
- xEGZRiNh1eNs3Zu8wYPU7+kjWRjHt9bnzNHU2FsHPITZQ2HkTasPpG6/5b1QCHSFZXaJns
- TLjsB2Lej3DTLG7NM1wYed1k1ClJM3c=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-505-ruyxaQyRNPKrQhn78lVBPg-1; Fri, 27 Mar 2026 04:29:50 -0400
-X-MC-Unique: ruyxaQyRNPKrQhn78lVBPg-1
-X-Mimecast-MFC-AGG-ID: ruyxaQyRNPKrQhn78lVBPg_1774600189
-Received: by mail-lj1-f197.google.com with SMTP id
- 38308e7fff4ca-38abf1618easo9244321fa.0
- for <dev@dpdk.org>; Fri, 27 Mar 2026 01:29:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774600189; x=1775204989;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=9/TcoavSL3SZs83kIryBG9vmh6tYbL0yhkB5rMea6xo=;
- b=ox9SlKlmvRgLKCuOCpuDSHM3FlxqbleGIwNpX+RfuWDFNmeGIIEBZOXPYe4EUOs8z3
- DpDz5SnpvfMSsYwNZnLOcZi68Oqt9h5UpzX5P3pM4u5PPMzK9D3EL4kxqZ9W6BWBBqdN
- hdqG3RR1f1/mtXZjmFi2t/tYb6Rbb0LFQdFV1epuYqu1lF3SssPXkyywBxnk6cgrgRwQ
- UqIU1cp9/tAFdtRrVDq/dIMaNogAqhZ1DZikMcieVtM9nhj//4YCJacAWf+W8SCY0LVD
- gIgYQZmVyXP1JmvIjbB9Xa1sQGiAxcgbQOGqx9oM3+/fjhSMbAzEZLgieQV7i1lu9mxT
- iazg==
-X-Gm-Message-State: AOJu0YwGvChdzGs3hT6ZsROI+zvjQe32xkOgWz9hNezLD0mAgiNdcZXw
- gknMopu01lfzzh0vGs3aQMo3lZzlgx4tOHXzupRk5ypJvVyy0lIma5/9geJMFKqwzdM8kad05od
- JojGD4iw9Eklk8bm2ESNPw3FKkJw9E8b6Bhac/zbWoLjpwsu/Bw1BoiYC8GyKpUyS37VFDypPzI
- PPQunBfOGHoFrHDCn3spk=
-X-Gm-Gg: ATEYQzw40PQy+6P3HkhtHiPnfXkePgBo8CnuSYbRXUp9v42HH2H6wqLcWDtDkdle+84
- e+5iUEZrCrh2OGaiyoBY1WUb8UdR3KXU0zJzexCvQNWheiH+BjQhvON4pS3v61WobFgBqeVtldN
- a0H/UePkajMm50aaWxu5ccYH+NslFSYyELb51S1Rq8riSPv2Fq8BMByvHfjfwVRuyhbV24HxLrL
- ZtshhJe4IrSnfF/7FFeWnBExM9myCQkwfoTQ6Ncy7yQaercYTwrJT31L+7Y7mq9tYq1Uw==
-X-Received: by 2002:a05:6512:3a8e:b0:5a2:a0b0:43 with SMTP id
- 2adb3069b0e04-5a2ab803c42mr580094e87.14.1774600189026; 
- Fri, 27 Mar 2026 01:29:49 -0700 (PDT)
-X-Received: by 2002:a05:6512:3a8e:b0:5a2:a0b0:43 with SMTP id
- 2adb3069b0e04-5a2ab803c42mr580072e87.14.1774600188488; Fri, 27 Mar 2026
- 01:29:48 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260326124612.2580985-1-david.marchand@redhat.com>
- <20260326113153.2bb2ef02@phoenix.local>
-In-Reply-To: <20260326113153.2bb2ef02@phoenix.local>
+ bh=XDXCys+Z18GfAhmUdflAZpOGs+oF5oy0pyJ3nvL/nRA=;
+ b=NVRWx38OgbLE8yocdHiuIrI+I2Yw9ikTAJa1DYds3ZVETAjNuCLzXuHedaViHXbzSXEbYK
+ OfRwG1p7yf3krStNWyTtR8u6NBgen5hSRU0JyYSkvldz/Wj3/IKNBSjzFL5kJwpgsH/So6
+ pCCZh7CHDmywQz0HtY4m/7EVcR5xALU=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-691-swqS3dOtOGeNx-sBliSZsg-1; Fri,
+ 27 Mar 2026 04:39:07 -0400
+X-MC-Unique: swqS3dOtOGeNx-sBliSZsg-1
+X-Mimecast-MFC-AGG-ID: swqS3dOtOGeNx-sBliSZsg_1774600747
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id CB93E1955D50; Fri, 27 Mar 2026 08:39:06 +0000 (UTC)
+Received: from dmarchan.lan (unknown [10.44.33.173])
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id C08D819560B1; Fri, 27 Mar 2026 08:39:05 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
-Date: Fri, 27 Mar 2026 09:29:36 +0100
-X-Gm-Features: AQROBzAna_B-gOrV9Fq6_3JiVySG4i4LLXKC8uLs7Yi9XNIVMW6I4WDYChVeu1s
-Message-ID: <CAJFAV8wAgFa-7voKtqwEARCo5tVxurWuoJd7J2zLi9P-ienujQ@mail.gmail.com>
-Subject: Re: [PATCH] net/tap: fix close for partially configured port
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2] net/tap: fix close for partially configured port
+Date: Fri, 27 Mar 2026 09:39:02 +0100
+Message-ID: <20260327083903.3394778-1-david.marchand@redhat.com>
+In-Reply-To: <20260326124612.2580985-1-david.marchand@redhat.com>
+References: <20260326124612.2580985-1-david.marchand@redhat.com>
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: iJKR1gxQn-Wg9f7EKMc_PNMHbADhHm6oGCsbpDIH7ww_1774600189
+X-Mimecast-MFC-PROC-ID: g5gz7EZi3GR8X0ZkfvViA3jxHiwwd3s2ooXb4Er5inc_1774600747
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,59 +66,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 26 Mar 2026 at 19:32, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Thu, 26 Mar 2026 13:46:11 +0100
-> David Marchand <david.marchand@redhat.com> wrote:
->
-> > In case no rxq has been set up (like when starting testpmd with no mempool
-> > drivers), a crash happens in tap_dev_close:
-> >
-> > Thread 1 "dpdk-testpmd" received signal SIGSEGV, Segmentation fault.
-> > 0x00007ffff7fad68b in tap_dev_close (dev=dev@entry=0x4c4a80
-> >       <rte_eth_devices@INTERNAL>) at ../drivers/net/tap/rte_eth_tap.c:1111
-> > 1111                  struct rx_queue *rxq = dev->data->rx_queues[i];
-> >
-> > (gdb) p dev->data->rx_queues
-> > $4 = (void **) 0x0
-> >
-> > Fixes: 23e2387b49a1 ("net/tap: allocate queue structures dynamically")
-> >
-> > Signed-off-by: David Marchand <david.marchand@redhat.com>
-> > ---
->
-> It looked ok, but then the AI review spotted some stuff...
->
->
-> Two issues:
->
-> The txq variable is declared as struct rx_queue * but should be
-> struct tx_queue *. Works by accident since it comes from a void *
-> array and is only NULL-tested and passed to rte_free(), but the
-> type is wrong.
+In case no rxq has been set up (like when starting testpmd with no mempool
+drivers), a crash happens in tap_dev_close:
 
-Ah yes, will send a v2 quickly.
+Thread 1 "dpdk-testpmd" received signal SIGSEGV, Segmentation fault.
+0x00007ffff7fad68b in tap_dev_close (dev=dev@entry=0x4c4a80
+	<rte_eth_devices@INTERNAL>) at ../drivers/net/tap/rte_eth_tap.c:1111
+1111			struct rx_queue *rxq = dev->data->rx_queues[i];
 
->
-> Pre-existing: the loop runs to RTE_PMD_TAP_MAX_QUEUES but the
-> rx_queues/tx_queues arrays are allocated with nb_rx_queues /
-> nb_tx_queues entries by ethdev. If dev_configure() was called
-> with fewer queues, the arrays are non-NULL but the access is
-> out-of-bounds. Since these lines are being reworked anyway, worth
-> adding a bounds check against nb_rx_queues/nb_tx_queues. The
-> tap_queue_close() call is fine -- process_private fds are sized
-> to RTE_PMD_TAP_MAX_QUEUES.
+(gdb) p dev->data->rx_queues
+$4 = (void **) 0x0
 
-Indeed, and that makes the fix even simpler.
+Fixes: 23e2387b49a1 ("net/tap: allocate queue structures dynamically")
 
+Signed-off-by: David Marchand <david.marchand@redhat.com>
+---
+Changes since v1:
+- as Stephen AI reported, [rt]x_queues array are sized against
+  dev->data->nb_[rt]x_queues, so the loop after the 23e2387b49a1 rework
+  can go out of bound. Since nb_rx_queues == nb_tx_queues with this
+  driver, simply check the number of configured rxq,
 
->
-> Also missing Cc: stable@dpdk.org for a crash fix.
+---
+ drivers/net/tap/rte_eth_tap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No, this is a fix for a 26.03 regression.
-
-
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index 64b359914b..a5d460a0b3 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -1107,7 +1107,7 @@ tap_dev_close(struct rte_eth_dev *dev)
+ 	}
+ #endif
+ 
+-	for (i = 0; i < RTE_PMD_TAP_MAX_QUEUES; i++) {
++	for (i = 0; i < dev->data->nb_rx_queues; i++) {
+ 		struct rx_queue *rxq = dev->data->rx_queues[i];
+ 
+ 		tap_queue_close(process_private, i);
 -- 
-David Marchand
+2.53.0
 
