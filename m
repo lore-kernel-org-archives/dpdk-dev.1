@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5469D10F284D
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 16:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8949510F284A
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 16:21:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 886B540E49;
-	Fri, 27 Mar 2026 17:15:10 +0100 (CET)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id 544B2402C5
- for <dev@dpdk.org>; Fri, 27 Mar 2026 17:15:09 +0100 (CET)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-2c18af885c0so877673eec.0
- for <dev@dpdk.org>; Fri, 27 Mar 2026 09:15:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2031642E5C;
+	Fri, 27 Mar 2026 17:21:14 +0100 (CET)
+Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
+ by mails.dpdk.org (Postfix) with ESMTP id E52B840E49
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 17:21:12 +0100 (CET)
+Received: by mail-dl1-f45.google.com with SMTP id
+ a92af1059eb24-1274204434bso2527888c88.1
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 09:21:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774628108;
- x=1775232908; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774628472;
+ x=1775233272; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HwvRoBH2SifNfiN4eg4JJbsuScAFhXP3a0fQzcH9KK0=;
- b=1EWUUc3EELII/B9ANSh9XuUibW0xGtjOTwkfBhJFCVRc4pmOa/dqQCEvNVcW2OF/Dl
- 9Lew0N7MVjgr/JUEeDzO4TXBVzukNIFzjewhiphX6ADF6i6MSE8gBr4U5OlfKQsuS9BP
- QKyxwSIhDgR/WqVpVVE/Zcb7m8aT4ELREr2rdGFQrqphkBBzoCPUwKJH3euCeAuThaQ8
- Ljj6UDRGQtP/vIB+MrYKCKStchhQx3Ik3JUpidlasEBipmwzstLsL8oaCTECo0/Kchvf
- oV2/Clbykk8jkLyZPWRE3VrGsIeRST0FtbMZo+j1tGfWQD0s1d1SS9QHpGwhziBVmThr
- qIVw==
+ bh=sdc+d5VLo4ADmBcgAv97ktg3DjbYkrGdmkuQD/hL4y4=;
+ b=PlpNgU+8G3zTxhG40Y5TKhj+QaIIDKPuvyZVIcerVOgOfFZsYb+Ng6uq4ZzcMg3/8C
+ Llp7UfkaCT9yDfd5a77ee+eQ4rMCIrmt5mEvrrNaUrVidP2pW2PFX8aIt6emQdnwjT7p
+ cbx2O6q1eQBOpW+pJSlQvEuBqCf8cvSNg6gPwYsyIxHVWdIrIur5QLxzOdcC8o4V7cQi
+ KZ3Y20+VDvkzESTiksbqwoaryTD5Y/GBcGVJEFj7w6fg3A637iIOQ473qPb+IBtTV11l
+ 33SodXKrgRNoip+4kmOvXbR4WNvFtvH8m08WD5gO1rFwmoPSPFkbuO07kkhmkd7kwFun
+ aKmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774628108; x=1775232908;
+ d=1e100.net; s=20251104; t=1774628472; x=1775233272;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=HwvRoBH2SifNfiN4eg4JJbsuScAFhXP3a0fQzcH9KK0=;
- b=GvjlMxU3TJkh1TxWHKnSPXaT30lQJdSA2beXAsC6YEzxwO7GF6m9PWCKRCA6sIyX2p
- 5dAxjyb6Wo5S8zk88j4B9D1kiJ9XuHPR1ox77E9KBRSPqDS0lLjioXYu+NKkzwO0ygGt
- BvlAEA4KxfQrCqe1zZZYRONSH+eEdxFsLc8ZKJblftj3mLpfn2ZLm2EBrFWFltWNUzYE
- VGtKfmBL/5fJ1Pyt4REE8uyu5j4nwggfMfXtuQ4ay2DWfhl0d/QRag3GOyXsrfldl8ia
- jrB4/Fl9snQ63DYXcFf1Q/VAF9K0ONV+zIJR0w7pEoWos1p7kx6TIKB8RrXYV0wvxn6a
- BRYg==
-X-Gm-Message-State: AOJu0YzpcgK3QZ9JPGdqozcrXyKo4tK0N3/LSIJUy5Oj77fGt8m1wawF
- H/ljq5wPxPSg7W5u8XEZTDaIl92M6ulDHxRkmwT1eGzpdaQMCENXS02IBQ8V4rT9k8s=
-X-Gm-Gg: ATEYQzzLrNgUZlmpp9g/3rayQ0km7qPLzi6ijxuksvmXIeMQoxufkPT6/AFvrHmH179
- zXD/swDxfT+Sa0aRjnbXVntlO/4Mz5WsxeKwIcE5nET/a+sYX9fhfegF90rkvoOMfm+WMO7tSzq
- PHhaIj/3NHohNgaYbt0/MxqbtzFHRaDREpbWVvBs4BJ6G4ZTx2fXuGLEqFq9FF72pIJqCAx7aqv
- r3Hcuj+t906zdgd8oIQ9SGX1u/Dq1z336LutOfXJskv8Mg2UTRm00wiC2pXqanyhENGWUoEqYWK
- NhADSDfOO8KYb2MYFPdKzp7V7QOGMClLDefsOeP/RqlUz4L0JwRgcmbZw1l2ZN3E5mheDsK1vQm
- ySiNqNEo00QUMr7L8Ezjx6LP6rvhIdMKpzy3ZdAo9wMVj/dz5sokdS28WEK5o8AB9ewk0MZ/665
- gcS9TNUmA2kx8AYR8uVG0kjVGpE5P1wa01/7Y=
-X-Received: by 2002:a05:7301:1e86:b0:2ae:5ffa:8da4 with SMTP id
- 5a478bee46e88-2c185ce844bmr1917189eec.1.1774628108073; 
- Fri, 27 Mar 2026 09:15:08 -0700 (PDT)
+ bh=sdc+d5VLo4ADmBcgAv97ktg3DjbYkrGdmkuQD/hL4y4=;
+ b=rkJE+lASQdd1uaybQsT1WHRGiWRsrN5h7dl46ndi84bl2dYMWSMx0AuAUzRNOBWlx6
+ sgH5eXnuEgm4M5sWsXUjfcrgk/nU/U0r+Ci1+GmAgsBcZvf/qWWo+haLZEQXJkPq6FOK
+ 1mIhA2ILC+1oXAikdIszi9O+U9dlh9qL2irml/fatTlNlTbD6waxU2jquuvUy/K8hKsc
+ IP/No1INdfdbcIy/RFw6lmio0nh3CQ3GQ3Gaq7NYPxRdEOQVaDjRTwyPcTA7O7ZU9VT1
+ 8PVlY0mQDsDqg4vn3OZmZ381KyUR0hsKQd/dDw+eN7DW+E/4BkMvREtFCg37mNLxxoMy
+ un6w==
+X-Gm-Message-State: AOJu0YxTir6FITvlqj4vqLWep2EZM3t6MaEvkQo30FTM6qpIKOX1hlz5
+ Q3kU5KJFvQb4k8nL+JKrb+K7WnWSEoL0ydCSx/iPeMvAw0RGVQk2qp8cDTlboRFNcJA=
+X-Gm-Gg: ATEYQzzCdLQr5Eyg//MdivKjWcYlz8Q9437+buDWMLNw7o4M4ni7rv6F4lNHdmWy2hX
+ g3zAF2W8kZ5qSPQsSXgvhgQuOjtMF4KBZgO1DUBovOXCmxbz4wKgt1EvmlzAZS8tb1w2e0Dc3Ph
+ kmz4g6J+wvcHkE9HkcvFr1Z4a/nTbA/WoWQgVPsCtuF7hP47bWnG4FrJgPzqp/EAQczYejqLfTh
+ W3gbHcJwf2RoYwusqJJwdXxPP8X3dji/vtOx98HPVYXeIslQzt9O/8+pKr2Fy+KS3R/Ih+mWmQR
+ b2RrzYWYSoqpVtkyLtQsUbC48fHCTwW8tf5ueWuVZzbV85wLdOcf2fYZRSctgsBrSHNYmNRDNyg
+ n7v0NalKASV2ZwQK/FMwwB9mtsq07HZjXueCPPCzfLQp8+99u4LFGxFyDiabVGPGYFLbRUY/eMN
+ Fr01V85YDR/snQbheCXmq0fhQVJ0snuKZh8UA=
+X-Received: by 2002:a05:7022:4586:b0:12a:6d05:3941 with SMTP id
+ a92af1059eb24-12aabb0b171mr2740105c88.2.1774628471788; 
+ Fri, 27 Mar 2026 09:21:11 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2c16ec2690bsm6608453eec.5.2026.03.27.09.15.07
+ a92af1059eb24-12aa6e5b38csm8933502c88.2.2026.03.27.09.21.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 27 Mar 2026 09:15:07 -0700 (PDT)
-Date: Fri, 27 Mar 2026 09:15:03 -0700
+ Fri, 27 Mar 2026 09:21:11 -0700 (PDT)
+Date: Fri, 27 Mar 2026 09:21:08 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: "Jasper Tran O'Leary" <jtranoleary@google.com>
-Cc: dev@dpdk.org, Joshua Washington <joshwash@google.com>
-Subject: Re: [PATCH] net/gve: add passive device-requested reset
-Message-ID: <20260327091503.3a056c68@phoenix.local>
-In-Reply-To: <20260327002038.3386577-1-jtranoleary@google.com>
-References: <20260327002038.3386577-1-jtranoleary@google.com>
+To: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
+Cc: <dev@dpdk.org>, <Selwin.Sebastian@amd.com>, <stable@dpdk.org>
+Subject: Re: [PATCH v1 1/4] net/axgbe: fix MAC TCR speed select field width
+Message-ID: <20260327092108.6117948f@phoenix.local>
+In-Reply-To: <20260327122011.1534-1-ashokkumar.natarajan@amd.com>
+References: <20260327122011.1534-1-ashokkumar.natarajan@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -79,19 +79,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 27 Mar 2026 00:20:38 +0000
-"Jasper Tran O'Leary" <jtranoleary@google.com> wrote:
+On Fri, 27 Mar 2026 17:50:03 +0530
+Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com> wrote:
 
-> In addition to application-initiated resets, during normal operation,
-> the device can indicate the need to reset by writing a value to a device
-> status register. This patch introduces an alarm that polls the
-> status of that register and informs the application of the need to
-> reset. The application is responsible for registering a callback that
-> will execute in the event that the alarm discovers that the device
-> requests a reset.
+> The MAC Transmit Configuration Register (TCR) speed select (SS)
+> field is defined as 2 bits wide, while the hardware specification
+> defines this field as 3 bits to encode all supported MAC speeds.
 > 
-> Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
-> Reviewed-by: Joshua Washington <joshwash@google.com>
+> Update the SS field width to 3 bits to match the hardware
+> specification and avoid truncation of speed select values.
+> 
+> Fixes: 69e209be5464 ("net/axgbe: add register map and related macros")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
 > ---
 
-Since not a bug fix, holding this off until 26.07 release
+Applied to next-net
