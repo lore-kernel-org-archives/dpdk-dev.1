@@ -2,53 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E908710AB82F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 00:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9863910AB82D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 27 Mar 2026 00:19:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB1A44027F;
-	Fri, 27 Mar 2026 01:19:17 +0100 (CET)
+	by mails.dpdk.org (Postfix) with ESMTP id 9EFF742D55;
+	Fri, 27 Mar 2026 01:19:30 +0100 (CET)
 Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com
  [209.85.214.202])
- by mails.dpdk.org (Postfix) with ESMTP id 1D43940151
- for <dev@dpdk.org>; Fri, 27 Mar 2026 01:19:16 +0100 (CET)
+ by mails.dpdk.org (Postfix) with ESMTP id 62EF840151
+ for <dev@dpdk.org>; Fri, 27 Mar 2026 01:19:29 +0100 (CET)
 Received: by mail-pl1-f202.google.com with SMTP id
- d9443c01a7336-2b0c96f5d9aso6944915ad.3
- for <dev@dpdk.org>; Thu, 26 Mar 2026 17:19:16 -0700 (PDT)
+ d9443c01a7336-2b07bd30b5eso35468845ad.1
+ for <dev@dpdk.org>; Thu, 26 Mar 2026 17:19:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1774570755; x=1775175555; darn=dpdk.org;
- h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
- :date:message-id:reply-to;
- bh=ITYLtC/U+B2JMK1n1BozNjc+rxdO9sJ/mamZOkmdP4U=;
- b=hdBZbbFWPT+ZC+R5aqiRFTzsnzJHiz0azDia33pduz34ZLijDiWO8GhwQh/xCP7JYD
- 3ZvVtEzJD1LvzvmP6yPBSV0tDCRKm1NS+L/S3bcdN0jONDzz4BxxCj0DE+Hfh8aSep9P
- MkgUwd0il4wO27NPPQCa352gcYwoHEg0tlbloYyi9SKT7QZWhWZC+0DPiI8FM/uu3g9A
- R5Qn5RFpCZHQ5VxtSaYeAlsvR1l+QIxj+C6cap2PbRBWO8yJlPt9zwfCZqogo8jFUSyA
- 6uvO333yrJ9X8YT6Dt6+92GdueM7uVgI8Vrx0HBKvzAzBsQ7MvQJfFW3Q432wdIpQkdc
- GPUg==
+ d=google.com; s=20251104; t=1774570768; x=1775175568; darn=dpdk.org;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=GMyeBVJLOZwscFDPqpOeUoRdhwe6GGBroSD0llqNt94=;
+ b=sJp2ZpKgN0Jd2tGJhQS4WoL8kbCT1CCv7z/Y1Bu4qG1iy2XJMuF87Ivm6eF2wLoGqI
+ XItN/NLc1nihrvOFeSgw82BjY0condaL55RPW8ZqOKjnzhTeVTfZmv6y5SSXDaM4+sXo
+ HkQ9Z/zvZkDevBAK5EmDnDhV6/jYrjNpQN4b8peSfliFaRC2mWDkKF2MDoV3fcCrPswE
+ 4F5zdgSYzV+3ajxkHzpVkpgmRV4GtolDLVAsDl07ixLW4E8EHl5VUF5dG8qfivgANQ6M
+ F6azKMe5LinVHkns52QvvMjnuCmKkM/6IDpaigouqCSnOEci7ispi7GpVTdeWTikoS/b
+ ZV8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774570755; x=1775175555;
- h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=ITYLtC/U+B2JMK1n1BozNjc+rxdO9sJ/mamZOkmdP4U=;
- b=gc9FaAmBiw/Os3Yq1lNVt9T3J2tdwvF+qI4ep5gLShFmNFj6g4WFrLsZtRljepKriq
- ZbH1IRRVa8Olcsi+zeUsvg71lCFomSnS0vYAqgTWX5DC777VgYfs00fUhWbIH4xsbU2G
- CQatqrOffcRQkY2yGPMm04+KJV0yJRm1Y1sc81nV/naJiRvnuDBeU4wwem5sASOAWnHA
- zIGpwcJvfgMnIXUMvAp5B/ZHb8q2PNqIsS0QF1RuX3+hmD0vwatyqR6PqFhQs9WYAUQG
- uAb0CM4LbBQzHK3FK9X1ZtNivEjjQnFsqCo4zqNrDWeTVQtcmG3JIL1SsJLkXA8H+W7S
- f2MA==
-X-Gm-Message-State: AOJu0Yx2Ounf8jxCqdeBSk11gRs6YlrFDTatWMZ5k51yRv1VjTN3m6I6
- cz9aM5/IBp7BtZKy61njY4ev9siQSCY9B6lF3D4ZdzUgesj7G6+vqbc7X+PEagncDP8zCldGFU9
- HGVQ4K9n2Y8TbvefHt7iRy80Npg==
-X-Received: from plyv11.prod.google.com ([2002:a17:902:d68b:b0:2b0:c971:cfd4])
+ d=1e100.net; s=20251104; t=1774570768; x=1775175568;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=GMyeBVJLOZwscFDPqpOeUoRdhwe6GGBroSD0llqNt94=;
+ b=NE+G1jMZWm4KOkHY7DN10NaZVpUeh7kYi0j62kZrglrzUS2SVOE1k1vso+ODfTR6Ti
+ uL+a1j7/TTEPlL/5gjcOfZh7NYoaXj8G7pMgkzmoyd7ts38YflNU7jYZWZroUgv2Ql2a
+ KC1YAtao5e6Y3i8wHBfQfDJuyaDjYsCT9f30vP50IVLTBpmjrjasopKN/A0IH0VOU+05
+ n7QicB1shBKltdvFvcJVl09DRhknNi7+2eosCOYGyVuOPTA6jLJ+mzn+BFxKiZk2h873
+ 7X49BxqGmYqkSCuURyYYDCQtvEmIECoBE11j4bDXFjai5tuXgu0DGIO4t44YhZe+r1in
+ bnnA==
+X-Gm-Message-State: AOJu0YxzE5ENSvSdhbF71vXw8+DzPevDI/fTsDIaW49gdWm1iIhvaLrF
+ RyRHt38mdUwlUj68U3H3oMCfWYbm9b7qXaJkSd971TENP3/BrYoCgeBGn0JppqPKRQuCYQqDW3X
+ vzDPg5iFsoTp6/BgADcgqwwsbvA==
+X-Received: from plbkc15.prod.google.com ([2002:a17:903:33cf:b0:2b0:5538:b55b])
  (user=jtranoleary job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:902:f54f:b0:2ae:5797:e082 with SMTP id
- d9443c01a7336-2b0cdcdcb63mr5657695ad.24.1774570754844; 
- Thu, 26 Mar 2026 17:19:14 -0700 (PDT)
-Date: Fri, 27 Mar 2026 00:18:23 +0000
+ 2002:a17:902:f64e:b0:2b0:c2d9:2714 with SMTP id
+ d9443c01a7336-2b0c481429emr34710345ad.4.1774570767901; 
+ Thu, 26 Mar 2026 17:19:27 -0700 (PDT)
+Date: Fri, 27 Mar 2026 00:18:24 +0000
+In-Reply-To: <20260327001827.3385001-1-jtranoleary@google.com>
 Mime-Version: 1.0
+References: <20260327001827.3385001-1-jtranoleary@google.com>
 X-Mailer: git-send-email 2.53.0.1118.gaef5881109-goog
-Message-ID: <20260327001827.3385001-1-jtranoleary@google.com>
-Subject: [PATCH 0/4] net/gve: clean up minor issues
+Message-ID: <20260327001827.3385001-2-jtranoleary@google.com>
+Subject: [PATCH 1/4] net/gve: fix comma operator compiler warning
 From: "Jasper Tran O'Leary" <jtranoleary@google.com>
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org, "Jasper Tran O'Leary" <jtranoleary@google.com>, 
@@ -67,22 +69,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patchset addresses minor issues in the gve driver stemming from both
-compiler warnings and feedback on previous patchsets.
+The gve_adminq_create_rx_queue function initialized the admin queue
+command using commas rather than semicolons after two fields'
+initializations in the GQI queue format branch. Change these commas
+to semicolons to remove the warning.
 
-Jasper Tran O'Leary (4):
-  net/gve: fix comma operator compiler warning
-  net/gve: remove variable length array in rx refill
-  net/gve: add checks for flow rule struct padding
-  net/gve: add minor fixes to flow rule code
+Signed-off-by: Jasper Tran O'Leary <jtranoleary@google.com>
+Reviewed-by: Joshua Washington <joshwash@google.com>
+---
+ drivers/net/gve/base/gve_adminq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- drivers/net/gve/base/gve_adminq.c |  4 ++--
- drivers/net/gve/gve_ethdev.c      |  8 ++++++--
- drivers/net/gve/gve_ethdev.h      |  1 +
- drivers/net/gve/gve_flow_rule.h   |  2 ++
- drivers/net/gve/gve_rx_dqo.c      | 27 +++++++++++++++++++++------
- 5 files changed, 32 insertions(+), 10 deletions(-)
-
+diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
+index 9a94591..bcfc789 100644
+--- a/drivers/net/gve/base/gve_adminq.c
++++ b/drivers/net/gve/base/gve_adminq.c
+@@ -721,9 +721,9 @@ static int gve_adminq_create_rx_queue(struct gve_priv *priv, u32 queue_index)
+ 			GVE_RAW_ADDRESSING_QPL_ID : rxq->qpl->id;
+ 
+ 		cmd.create_rx_queue.rx_desc_ring_addr =
+-			cpu_to_be64(rxq->mz->iova),
++			cpu_to_be64(rxq->mz->iova);
+ 		cmd.create_rx_queue.rx_data_ring_addr =
+-			cpu_to_be64(rxq->data_mz->iova),
++			cpu_to_be64(rxq->data_mz->iova);
+ 		cmd.create_rx_queue.index = cpu_to_be32(queue_index);
+ 		cmd.create_rx_queue.queue_page_list_id = cpu_to_be32(qpl_id);
+ 		cmd.create_rx_queue.packet_buffer_size = cpu_to_be16(rxq->rx_buf_len);
 -- 
 2.53.0.1118.gaef5881109-goog
 
