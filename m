@@ -2,72 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2D910F3DEA
-	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Mar 2026 15:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 512E410F3DEC
+	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Mar 2026 16:38:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7C0BC4021F;
-	Sat, 28 Mar 2026 16:58:55 +0100 (CET)
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com
- [209.85.215.169])
- by mails.dpdk.org (Postfix) with ESMTP id A0998400D6
- for <dev@dpdk.org>; Sat, 28 Mar 2026 16:58:54 +0100 (CET)
-Received: by mail-pg1-f169.google.com with SMTP id
- 41be03b00d2f7-c74f0c3fc16so1124941a12.2
- for <dev@dpdk.org>; Sat, 28 Mar 2026 08:58:54 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0925E4021F;
+	Sat, 28 Mar 2026 17:38:21 +0100 (CET)
+Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com
+ [209.85.222.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 87340400D6
+ for <dev@dpdk.org>; Sat, 28 Mar 2026 17:38:19 +0100 (CET)
+Received: by mail-qk1-f193.google.com with SMTP id
+ af79cd13be357-8cd7c372929so341408285a.0
+ for <dev@dpdk.org>; Sat, 28 Mar 2026 09:38:19 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1774715899; cv=none;
+ d=google.com; s=arc-20240605;
+ b=b8Ysy5xfgesiJy1jihFqHnzLnRR632hK6XQ5rcHhi57wudZqW3iDveJ4r6ZWHofACR
+ 85JsQ4BVoFncr7NGGjZuCJYJCLR3W0pf+Ne5lD+TVzO/wCUA0wu+jl5kD0Uj0lj95AfH
+ qRvYp+cXDfGHQ2EkSzmTgUnZsMOM5yzuzw5aoBY8cej2z//d4RtWZtg2d6O9lRo4y9c4
+ gUETHBT2aQSqq1bp2lpkXoia5gLRpRwIdkJeAsFjyJJrClqSCIJ9+uc96ywecNCTZ1P1
+ 2PYrNkvyVMidEFi5eOl+fvczSvJZH06xFYzek4zsMrFujp96o5ob/VWLWYB6gSZhBWV1
+ c7CA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=wHwlyRiCuIbXNlB9ZRJopO689bHK34hYYcsE3E9ksc8=;
+ fh=/BOW+Lj+scqN4W3Pg1KaSCffYNfKCmyRG4LswMt9xm4=;
+ b=RS0TrQUurXY3b4sK5N1ScpHN8a6qv+lO3k3Mxw0MmUJZz2b4kQhTJyP8M0boO4rLTK
+ k+/3Jhms5ez6UB3UuEnrvnWMh3ytQ+uoR1kS128klUojvglvOvEhYXTyT/jazNVncUxZ
+ yMqtEk0by9Jez64cyMXuQZN7lhfnTLnTBDTQMyeROsukFmvx6HKo4KEM8YqzhB0thwlY
+ zjR7VYxHM1G7v7MRPTAJfB3ljF24mujVDdOc4Nsqt8R+12kwQ0d1Y5YFEbeKbgNnUBT0
+ fFuetM6VpSeDuSh3NlU5h9L7u4iMeSggCl9eANijxBEhOUIZy1Xj58VnGbqZgWd/3Gy2
+ jyMg==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774713533;
- x=1775318333; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=QqXtsCloCFv5uWtxRe6RB4vQDp8V2w/XR7X/4wLth/o=;
- b=r3E6cCP0z3iOqryrha3CmZLnx6iUvHPDSFB/87WjB5Bcv8r8KSo45DJ75JgANJZm4p
- qFX+CFPwxZzJ9tF9+4VENCiycJPtYtKNlqt+6ywp+EbIplSALxXoLb5qFS3nhmszxCE+
- nQ5GHpC6u9ukPz2RkA4C4l4VOM2f1ucg+9kbGZAKPnSd483FZ6JF/b+vAPq0rerYOIoS
- nNEdhfSqDEXtl4LeVqIWoaB2aKDapefd3Y0krT0AVG2Lg6ZETUppgF81G89ARtDcfd73
- aFZSAFW0d3iLYC/Qei4jM+Q83gPmFQu9Unqhh3BUoSvCZ+b2Jv933xtGhpkX/flEZ0Av
- fqHg==
+ d=gmail.com; s=20251104; t=1774715899; x=1775320699; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=wHwlyRiCuIbXNlB9ZRJopO689bHK34hYYcsE3E9ksc8=;
+ b=lPKNEcSa58mhoqnUs8zZmyz+vTj6KXlrWPI1Nl1b5bkNjO/JLeLhYIT4aJ3QB6MSeC
+ xy7DhZ797XjNi6Nb80RnfMcLDnwhO6thyoeI1KNYrx2k3Y1+RVTr69cvSt36nkFOWwQt
+ VpNQEKe3/+Spit8cnth40VVohHLt6INyFbz3a7zFZcZyzz0pq5OdqNDcXPN5U0v1aEcw
+ akSPD8H/fZBUKNII+wi+rFFa9ccn0PO77KO7wKfjMYMMAr8Ksc+o1/0sFmch7YYzTBFu
+ JffIrVAmhPR6uqhE/DR77zAVHWP1kgT2ACc/lpd5QZNqCx5wc1X8LeqWUez+ziMX+SLe
+ tn4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774713533; x=1775318333;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=QqXtsCloCFv5uWtxRe6RB4vQDp8V2w/XR7X/4wLth/o=;
- b=JUmrqkTyPrx80IRU887RrE08bXjapWCLugGMp6t6veHuOq+dxxh/X4K6N7IqRzIv6L
- J0xdZlnfeWK1tHCGFuoxWhP/eue/OT7u3l1SYNfhDMQnn+BTqQCU7XxPBO/FTqjFvFJ5
- kO1z8ih+fSoE8azU75G6M7nzG2BSSplKf6aP7AFvspU9702cfVp6PT0E13WZMN4gqzU6
- 7GGR8a/wm1Etaw+hcJhWd1csr3da5X+JrofD4yFA+uIv4bFWhbSJbEc/irNhCC8+kXCY
- NFO+J0034I0N02uDg5IJOLma5rmMKnUE+cgw0qt7/3WCsdOpmocwUrARLN7UK18MaOI2
- rSNA==
-X-Gm-Message-State: AOJu0Yzm9j/NjkFENzZvUnsFzD/QWu/rwFYvD98oHboJSd7kVzEPGJea
- 26lpGCMFO4626ZRzRE/ZNe2uyNHy4QG3tJ321/okgMfFOTr30W0Mv95ufOZL1Gs9kFg=
-X-Gm-Gg: ATEYQzynYGDmJSatNZ8tL5luBSgwBTwEUah9yuFc7Bkcf3nnrdH/rSbYeaZp5IcirWd
- aViFt767HuCa43pNv2M3ieBJVK486YXxcPOJQcVGG+0qZ4Fsb7GLMSkyGAPqwWlF9pDXpNIqJt+
- ueind9AOzK+Zu4cehOTVdenFcRo1ZqeYkRSyZW+gl9DzUIv0adWw85AEuX/dzdIEpsz+uz3OfzX
- 8Q6zakXeGNGUlsxdRdgL3mtMH1c8BaKCBpsslfKKRd7LSaq/U+seeIY6lF0TWPL7auOswDnjkLI
- 7VsEpNQmaknRcl+Xa6oyrZdByRD7p9R1JlYhjyMYjcIzj2/UkVFHed4LGkxxhvp7VKoVE5G2A7f
- qnI8h7dtUXA3BevnLR08f0Ux6OeU2VCEzS9IvlsjlGydLKiuHJvkL6uQVTHzzIhciUjCwgmhatD
- MmFQlU6jYDmjnmPnlQZ3e8mBNQ379CL5hupX8=
-X-Received: by 2002:a05:6a20:72aa:b0:39b:b35f:2eb5 with SMTP id
- adf61e73a8af0-39c87af31b9mr6993109637.41.1774713533581; 
- Sat, 28 Mar 2026 08:58:53 -0700 (PDT)
-Received: from phoenix.local ([104.202.29.139])
- by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c769160b165sm1991894a12.0.2026.03.28.08.58.50
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 28 Mar 2026 08:58:53 -0700 (PDT)
-Date: Sat, 28 Mar 2026 08:58:45 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Yunjian Wang <wangyunjian@huawei.com>
-Cc: <dev@dpdk.org>, <chas3@att.com>, <humin29@huawei.com>,
- <jerry.lilijun@huawei.com>
-Subject: Re: [PATCH 1/1] net/bonding: support UDPLITE protocol in l34 hashing
-Message-ID: <20260328085845.383bdc57@phoenix.local>
-In-Reply-To: <1774683142-27684-1-git-send-email-wangyunjian@huawei.com>
-References: <1774683142-27684-1-git-send-email-wangyunjian@huawei.com>
+ d=1e100.net; s=20251104; t=1774715899; x=1775320699;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=wHwlyRiCuIbXNlB9ZRJopO689bHK34hYYcsE3E9ksc8=;
+ b=hkxnJTOH6mclhkNvRIQQ9e+UNhbAA57Q52AgSi83PIlT7OSaJZf8pzhHgVAaS3ezrs
+ MIqe7nJ85scSzjpprAo3O513iBagNLsNLMMHpMM+JV8ReqRmfoIvs4Bo+KeQkTe4Pc7l
+ IJjr7qlI9e6qGm4KQEPZmEERCN5dtyIsq/eHV+rTOKEkxTO9Ya/7j6wxxHOnELvKd/y4
+ rF2QyCBBJBUOlD9dyFBvDvHZXfaqLsuRfIJmyAR5m6aN0XEQQI9Hwvr3DtBasaVnmApp
+ mU7i0QgGnj7mEjU4VlRyMyuVpYzL5Et7li5uvllsDLQgWy41gc9lxQqPC5kXi9Rk5aHx
+ NqGQ==
+X-Gm-Message-State: AOJu0Yy6iyl2vmxzjmSMp8FYv64C5+JZgXQXkdMOsCsqtowy6sVTjKJD
+ B1S0PqzdB9XJm3e/RhuSpxzu4CtfOdVi66n67NbQCe8oZx4O2p/GnmYitxPxFP4qd29IgWvFrR7
+ 2t5q6FixhhgBCwtJaXZSSDXBVEtXGeAI=
+X-Gm-Gg: ATEYQzxDenVId/2Ts9g0E5cS6BzgnCKOH7sUo0w/A6Z0zHzzqL851IyvGZjbS3PDdlX
+ wrjfFJbkVbqkDwe2ir4zbv2wnV7FfssCfCS6jO2pd2+v22GypZexR0ZOqQgqmz3fFCfjISvrmwm
+ Qiwdf1jgWY2OmmLrWXpenlu8YBBLpJEs8c4XlZlXz1UWWJUag7fSR/Q7S+5taMsxj1an2fTCiPq
+ PPK57P/9CWkS79YEtLd3vrDBZGrfbjSfm3K5JaGhbRNCN+CRt3OnzCubkBDg9VYI3RBDK4wBm6M
+ izwOxg==
+X-Received: by 2002:a05:6214:5092:b0:89a:125f:37d9 with SMTP id
+ 6a1803df08f44-89ce8ed70a8mr89474506d6.50.1774715898480; Sat, 28 Mar 2026
+ 09:38:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260310133524.28087-1-1138222970gg@gmail.com>
+ <cac6e40a-6efd-4097-9b7a-90c559279879@iscas.ac.cn>
+In-Reply-To: <cac6e40a-6efd-4097-9b7a-90c559279879@iscas.ac.cn>
+From: shiwei dang <1138222970gg@gmail.com>
+Date: Sun, 29 Mar 2026 00:38:10 +0800
+X-Gm-Features: AQROBzCy0IFqKrhXO4rZU8tWRgaXG4D8JTvlsDkGvoXuka6NuixlXX3U1ptw85g
+Message-ID: <CAF-WEyHKBEwYW_E6UvjKwEL7LQO4pfFS7qtv-3gjz1B7c5cNYQ@mail.gmail.com>
+Subject: Re: [PATCH] eal/riscv: implement prefetch using __builtin_prefetch
+To: sunyuechi <sunyuechi@iscas.ac.cn>
+Cc: dev@dpdk.org, stanislaw.kardach@gmail.com, stephen@networkplumber.org, 
+ david.marchand@redhat.com
+Content-Type: multipart/alternative; boundary="000000000000b4cac0064e183e37"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,15 +95,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat, 28 Mar 2026 15:32:22 +0800
-Yunjian Wang <wangyunjian@huawei.com> wrote:
+--000000000000b4cac0064e183e37
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Add support for the UDPLITE protocol in l34 hashing.
-> 
-> Signed-off-by: Yunjian Wang <wangyunjian@huawei.com>
-> ---
+Hi ,
 
-Why bother UDPLITE protocol is deprecated and being removed
-from the Linux kernel which is the only place it ever got implemented
+Thanks for the review. I'll address both points (real name in Signed-off-by
+and test results) together in v2 once I have access to physical RISC-V
+hardware.
 
-https://www.phoronix.com/news/Linux-7.1-Retiring-UDP-Lite
+Best regards, Dang Shiwei
+
+On Sat, Mar 28, 2026 at 7:48=E2=80=AFPM sunyuechi <sunyuechi@iscas.ac.cn> w=
+rote:
+
+> Hi,
+>
+> In the previous prefetch discussion:
+>
+> "Let's hope you get such hardware by the next release. We will need
+> reviews too."
+>
+>
+> https://inbox.dpdk.org/dev/CAJFAV8zatWiYQoe4kETcM61=3DOS1k=3DQaPRsNjYSYDs=
+pKC+voiQw@mail.gmail.com/
+>
+> Could you share your test environment and results?
+>
+> And DPDK requires a real name in the Signed-off-by line.
+>
+>
+
+--000000000000b4cac0064e183e37
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><p class=3D"gmail-font-claude-response-body gmail-break-wo=
+rds gmail-whitespace-normal gmail-leading-[1.7]">Hi ,</p>
+<p class=3D"gmail-font-claude-response-body gmail-break-words gmail-whitesp=
+ace-normal gmail-leading-[1.7]">Thanks for the review. I&#39;ll address bot=
+h points (real name in Signed-off-by and test results) together in v2 once =
+I have access to physical RISC-V hardware.</p>
+<p class=3D"gmail-font-claude-response-body gmail-break-words gmail-whitesp=
+ace-pre-wrap gmail-leading-[1.7]">Best regards,
+Dang Shiwei</p></div><br><div class=3D"gmail_quote gmail_quote_container"><=
+div dir=3D"ltr" class=3D"gmail_attr">On Sat, Mar 28, 2026 at 7:48=E2=80=AFP=
+M sunyuechi &lt;<a href=3D"mailto:sunyuechi@iscas.ac.cn">sunyuechi@iscas.ac=
+.cn</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"marg=
+in:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1e=
+x">Hi,<br>
+<br>
+In the previous prefetch discussion:<br>
+<br>
+&quot;Let&#39;s hope you get such hardware by the next release. We will nee=
+d <br>
+reviews too.&quot;<br>
+<br>
+<a href=3D"https://inbox.dpdk.org/dev/CAJFAV8zatWiYQoe4kETcM61=3DOS1k=3DQaP=
+RsNjYSYDspKC+voiQw@mail.gmail.com/" rel=3D"noreferrer" target=3D"_blank">ht=
+tps://inbox.dpdk.org/dev/CAJFAV8zatWiYQoe4kETcM61=3DOS1k=3DQaPRsNjYSYDspKC+=
+voiQw@mail.gmail.com/</a><br>
+<br>
+Could you share your test environment and results?<br>
+<br>
+And DPDK requires a real name in the Signed-off-by line.<br>
+<br>
+</blockquote></div>
+
+--000000000000b4cac0064e183e37--
