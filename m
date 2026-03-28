@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B57110BA423
-	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Mar 2026 18:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA7F10F3DF2
+	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Mar 2026 19:34:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7B6A54021F;
-	Sat, 28 Mar 2026 19:55:05 +0100 (CET)
-Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com
- [209.85.216.67]) by mails.dpdk.org (Postfix) with ESMTP id F36E1400D6
- for <dev@dpdk.org>; Sat, 28 Mar 2026 19:55:04 +0100 (CET)
-Received: by mail-pj1-f67.google.com with SMTP id
- 98e67ed59e1d1-35c124d2613so2147341a91.2
- for <dev@dpdk.org>; Sat, 28 Mar 2026 11:55:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D7357402E7;
+	Sat, 28 Mar 2026 20:34:34 +0100 (CET)
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com
+ [209.85.210.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 1B308400D6
+ for <dev@dpdk.org>; Sat, 28 Mar 2026 20:34:31 +0100 (CET)
+Received: by mail-pf1-f175.google.com with SMTP id
+ d2e1a72fcca58-829a9d08644so1694448b3a.1
+ for <dev@dpdk.org>; Sat, 28 Mar 2026 12:34:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1774724104; x=1775328904; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=l8G2faP2Ugaom2hQ4wf3XOV/FhdyFdn5yfyzCXyG3K4=;
- b=HkRZr+7xjJOnB3rQSUaIDn6+f88mI3MlF0b0heRGtXRpjQ5+cOQKpu2kGn1oW1fWLx
- Ttty7OQCi8L2FNK/Ae1vQIIsGzNnySMhpyhj6/YT9I91M2tv1R6O2+aD/I4qutZDG6Ci
- C71PF7th40alroM7AWgWecWFeJoyYJJIS9jn7VjjneywFM9v2PcGJs2qojdcQJhy51A5
- 3hQtp4pZMF0DXQYf9V42a1toDqf5S/aDijX2kfX3fYEDtyHvWpel1VhA7i/Ra40YvRQq
- tSkQ/CfghaAczdvOIWSlA1hyxgsnsEIr3+3OCWOgLN9C8UxU9iN6ebOBCNELBdZubdWH
- xqXg==
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774726470;
+ x=1775331270; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=uz/gw2m+C9lJoozT/l0grK8hnlFBhnAjKY9Ng8BBPhA=;
+ b=sTnzwIlzjpJWRfnfxzlakefn/SjZeS7ReGm94+DagPEmZHK8bMdxBh5Wk2CP4V+Axg
+ WJGS07NufGOyyq8mREc6YfRLK8yExw5Fy0axQD5CX5bZWj9wKctxZsJF9nlwPC74+7WX
+ VBeNwHkJ9VzWxhnUzbuZQ0gz2FmKN/5aGeAnI7rHtpZ8kfrpe+LHAGLHUAv0UFymwR5M
+ +lJRIkZUpmHMzljXOmb7b1M66gb7dgInfkb4l9n6VYWqoBhSMOcGMPfH8fxVaxBeQcL/
+ Kuh5zx6N+8QRruJv4hfuNz8Nx4zD0FCS7tIRHq1VIVo4pdDZcqhqp7ApV0TrFz91tixE
+ /v2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774724104; x=1775328904;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=l8G2faP2Ugaom2hQ4wf3XOV/FhdyFdn5yfyzCXyG3K4=;
- b=jMdehUHBRr63+kU+/5bPkLG9VaQpd8QvuVxPR7XC6nHJsDVOPSn+d4MPz2Wm8/VUoP
- 07/PXCYK6hS4FJAfF3YlZUMVUfQjPrhjUYPu9It1VV+cX1NVclT2sQezjz0ijogLuwsm
- waFlashIirLFOCPrDwnPjbs1UJkjJkUegc5VdrXxWlGGguDZibKK1eNGMoDohEuix874
- cfLJ+hlD3siJEXKpAh+ChZFQWrKhHNqt67OEcbWlPpBCh4gt4UELlNVj7fLz2P7xvemD
- J02T3xLlMcZfzFcAJ4snM+k4zNmmrsCVFAPHDWZvYnSUXndyAM4q9BJyMXzUbeUL5Fi+
- C9IQ==
-X-Gm-Message-State: AOJu0YxVPRoQHliNLwPLnc0wjNMszWRmJg5uICY5z+caoxDw5jhlF+dO
- LEZWJ7oUZbi2k8WELEtsq3Jvx0YNeRqtOI2fjuJyixlsoTah+mBpk13HNTOfBA+C4xeSug==
-X-Gm-Gg: ATEYQzwoOxXsNVs0nu2uQmT4RuCnSVod5RWaixSNFRVCzBNNMrpUBEnkyDn3GUPt4C9
- LN+jtE3fCT5OjFwoR8kQu8lHaT6cvyDV7y8gheyjRNod01uv9T0RETHoKzY/868bITcoisJb+a3
- ItvW5+2abE+XqhDDx+oJeI4SxVnIXoTNHZHW+xfRKhPf5h3oxxZncfMJwe6qnu9WTIetcMu3Nbs
- mTC56hJbXTvvJpMzJJSHiqarAewXIxItJUIJWiRtwI0pIO+AEPn4EZKrqTQUqsgnohVthCsAZIA
- N0jMBMFdheTtngRUEL09WUplu2U7Qe5Mt91puuNPSsEynmJlGqB8JsdMwR14vdTT1e0w2eJ9vO+
- HS2pzHPzTkVlvVJZBn1JbIpI99JyCHwYiUUMtiaSUWxBmUA0igAptvMHJpijoOcROHLiDYJihVU
- m408J8rz7zOTfHjbvtyp6wOBCnfoMvoZteuW/0vg==
-X-Received: by 2002:a17:90b:4cc6:b0:34c:fe7e:84fe with SMTP id
- 98e67ed59e1d1-35c3011512cmr6460001a91.28.1774724103711; 
- Sat, 28 Mar 2026 11:55:03 -0700 (PDT)
-Received: from LAPTOP-GPQVQV7E ([2409:8a20:f61:a30:b9db:8230:1cc:4f69])
- by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-35c22db12f7sm8138126a91.13.2026.03.28.11.55.01
+ d=1e100.net; s=20251104; t=1774726470; x=1775331270;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=uz/gw2m+C9lJoozT/l0grK8hnlFBhnAjKY9Ng8BBPhA=;
+ b=OKVmOGPAMX5P0SMBXLnph3jGNugc9ZMujduQ75Qv+CXR4/Vx4vrV1owop1mnGl/U+2
+ uTg1s6xvpsGi1kINPhpCq2ZORli1mnnwCkToAeuosxF+rlfb+/1apUBgEwmnWC0jdINF
+ uXOPHL17Bx0os8mHwhxamZSSxnI2uQddhv9XFInvB0l4b88t5YPoErhzUZe9R1Kgci+B
+ 4zji7/eFgXOoMWW1Ct7Sm/4sCZn57LmFCIqu0soUqU7KWZUzMxkONZx/zkXHbhIR0oKD
+ +76Y97he/cysHDrc06bdHhdlMgP3/OTiTXmbqtLcijwRkBdMeUwmUnoGgS3SNCpKRTld
+ MkuA==
+X-Gm-Message-State: AOJu0Yxt1wf5/4ZgC/TfZ+HPuP3uqVYABdB55ID5JchhoeELmp86Lq/E
+ x8e8UMwDO20tV6MaJGBkC5Ld8mMUtLa1vpO5aDMDeNHvhzT3uIQf5o18Zmbp9LpmA2tlaaN+KIe
+ iTDXP
+X-Gm-Gg: ATEYQzyEBgyYnlbfSGcz6bYGItLS0l0daqob4DlopCMHGm4za2gofrS1azPZoFHBRnS
+ 3cXYXdKiYjz0ETr9kEbdhzj/y+ycVDC4L9fh818waNvIB9Q2vPyzk1+bjvC6o5NXYQ3WY7go++x
+ WVRigGPIIYtDmuw2DyGyonD3T65j6EijsZ8HHkWOG/QJxMlYTmt6syzouQOcTgXP6anHrXkB3wt
+ 4uG3QmWorXX7Ge0aVVMPz2S4tZ9veJva0yefh/uqDdKpKR2uUelg4GvMpJBIVghc62m5S4/kMyU
+ jT0/BrAWEdm4YjBfXgsQQG1UG0ejvFXD2mbvFF2YRMoifpg5QJM0a06hfowsFDa0VZxgUQIgl5d
+ ghWjKZU7ijLxVKRZm+vgwOnjgf8IgGpBMUhGOSxbZBlfdaKbc+6k6cDkFqOYDUgkVD2UeYPOCb5
+ fuV7pqlMbTkrCR6y0xILqa5HuBQHlkJ+dp
+X-Received: by 2002:a05:6a20:938c:b0:389:8f3f:50ce with SMTP id
+ adf61e73a8af0-39c87b5fb6fmr7577870637.56.1774726470109; 
+ Sat, 28 Mar 2026 12:34:30 -0700 (PDT)
+Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
+ d2e1a72fcca58-82ca85fc756sm2465761b3a.47.2026.03.28.12.34.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 28 Mar 2026 11:55:03 -0700 (PDT)
-From: dangshiwei <1138222970gg@gmail.com>
+ Sat, 28 Mar 2026 12:34:29 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: stanislaw.kardach@gmail.com, sunyuechi@iscas.ac.cn, thomas@monjalon.net,
- dangshiwei <1138222970gg@gmail.com>
-Subject: [PATCH v2 2/3] eal/riscv: add RISC-V specific I/O device memory
- operations
-Date: Sun, 29 Mar 2026 02:54:57 +0800
-Message-ID: <20260328185457.960-1-1138222970gg@gmail.com>
-X-Mailer: git-send-email 2.53.0.windows.2
-In-Reply-To: <20260313140836.3847-1-1138222970gg@gmail.com>
-References: <20260313140836.3847-1-1138222970gg@gmail.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Subject: [PATCH] power/amd_pstate: fix frequency matching for continuous
+ scaling
+Date: Sat, 28 Mar 2026 12:34:19 -0700
+Message-ID: <20260328193419.106100-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,184 +80,138 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The current rte_io.h for RISC-V only includes generic/rte_io.h,
-which uses volatile pointer casts for MMIO read/write. While this
-prevents compiler optimizations, it does not prevent CPU-level
-reordering on RISC-V, which is a weak-ordered architecture.
+The power_init_for_setting_freq() function fails on systems using the
+amd-pstate-epp driver because the current CPU frequency read from
+scaling_setspeed does not exactly match any of the synthesized
+frequency buckets. Unlike acpi_cpufreq which provides a discrete list
+of frequencies, amd-pstate operates with continuously variable
+frequencies, so an exact match will rarely succeed.
 
-This patch adds a RISC-V specific implementation using explicit
-load/store instructions:
-- lbu/lhu/lwu/ld for reads (zero-extending to avoid sign-bit pollution)
-- sb/sh/sw/sd for writes
+For example, on a Ryzen 9 7945HX the sysfs file reports 2797172
+which rounds to 2797000, but this value does not appear in the
+generated frequency table.
 
-Signed-off-by: Dang Shiwei <1138222970gg@gmail.com>
+Replace the exact match lookup with a nearest-frequency search.
+
+Also fix several issues in the same function:
+ - strtoul() was called with NULL endptr, making parse failures
+   undetectable
+ - errno was not checked, so stale errors could cause false positives
+ - freq was declared as uint32_t, truncating the unsigned long
+   return value of strtoul() on LP64 platforms
+ - no error was logged when frequency matching failed
+
+Bugzilla ID: 1915
+Fixes: 1ed04d33cf19 ("power: support amd-pstate cpufreq driver")
+Cc: stable@dpdk.org
+
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eal/riscv/include/rte_io.h | 152 ++++++++++++++++++++++++++++++++-
- 1 file changed, 149 insertions(+), 3 deletions(-)
+ drivers/power/amd_pstate/amd_pstate_cpufreq.c | 56 ++++++++++++++-----
+ 1 file changed, 41 insertions(+), 15 deletions(-)
 
-diff --git a/lib/eal/riscv/include/rte_io.h b/lib/eal/riscv/include/rte_io.h
-index 4ae1f087ba..e67b5c1c9c 100644
---- a/lib/eal/riscv/include/rte_io.h
-+++ b/lib/eal/riscv/include/rte_io.h
-@@ -5,9 +5,155 @@
-  * Copyright(c) 2022 Semihalf
+diff --git a/drivers/power/amd_pstate/amd_pstate_cpufreq.c b/drivers/power/amd_pstate/amd_pstate_cpufreq.c
+index 95495bff7d..14625ffd73 100644
+--- a/drivers/power/amd_pstate/amd_pstate_cpufreq.c
++++ b/drivers/power/amd_pstate/amd_pstate_cpufreq.c
+@@ -5,6 +5,7 @@
   */
  
--#ifndef RTE_IO_RISCV_H
--#define RTE_IO_RISCV_H
-+#ifndef _RTE_IO_RISCV_H_
-+#define _RTE_IO_RISCV_H_
-+
-+#include <stdint.h>
-+
-+#define RTE_OVERRIDE_IO_H
+ #include <stdlib.h>
++#include <errno.h>
  
- #include "generic/rte_io.h"
-+#include <rte_compat.h>
-+#include "rte_atomic.h"
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+static __rte_always_inline uint8_t
-+rte_read8_relaxed(const volatile void *addr)
-+{
-+	uint8_t val;
-+	asm volatile("lbu %0, 0(%1)" : "=r"(val) : "r"(addr));
-+	return val;
-+}
-+
-+static __rte_always_inline uint16_t
-+rte_read16_relaxed(const volatile void *addr)
-+{
-+	uint16_t val;
-+	asm volatile("lhu %0, 0(%1)" : "=r"(val) : "r"(addr));
-+	return val;
-+}
-+
-+static __rte_always_inline uint32_t
-+rte_read32_relaxed(const volatile void *addr)
-+{
-+	uint32_t val;
-+	asm volatile("lwu %0, 0(%1)" : "=r"(val) : "r"(addr));
-+	return val;
-+}
-+
-+static __rte_always_inline uint64_t
-+rte_read64_relaxed(const volatile void *addr)
-+{
-+	uint64_t val;
-+	asm volatile("ld %0, 0(%1)" : "=r"(val) : "r"(addr));
-+	return val;
-+}
-+
-+static __rte_always_inline void
-+rte_write8_relaxed(uint8_t val, volatile void *addr)
-+{
-+	asm volatile("sb %1, 0(%0)" : : "r"(addr), "r"(val));
-+}
-+
-+static __rte_always_inline void
-+rte_write16_relaxed(uint16_t val, volatile void *addr)
-+{
-+	asm volatile("sh %1, 0(%0)" : : "r"(addr), "r"(val));
-+}
-+
-+static __rte_always_inline void
-+rte_write32_relaxed(uint32_t val, volatile void *addr)
-+{
-+	asm volatile("sw %1, 0(%0)" : : "r"(addr), "r"(val));
-+}
-+
-+static __rte_always_inline void
-+rte_write64_relaxed(uint64_t val, volatile void *addr)
-+{
-+	asm volatile("sd %1, 0(%0)" : : "r"(addr), "r"(val));
-+}
-+
-+
-+static __rte_always_inline uint8_t
-+rte_read8(const volatile void *addr)
-+{
-+	uint8_t val = rte_read8_relaxed(addr);
-+	rte_io_rmb();
-+	return val;
-+}
-+
-+static __rte_always_inline uint16_t
-+rte_read16(const volatile void *addr)
-+{
-+	uint16_t val = rte_read16_relaxed(addr);
-+	rte_io_rmb();
-+	return val;
-+}
-+
-+static __rte_always_inline uint32_t
-+rte_read32(const volatile void *addr)
-+{
-+	uint32_t val = rte_read32_relaxed(addr);
-+	rte_io_rmb();
-+	return val;
-+}
-+
-+static __rte_always_inline uint64_t
-+rte_read64(const volatile void *addr)
-+{
-+	uint64_t val = rte_read64_relaxed(addr);
-+	rte_io_rmb();
-+	return val;
-+}
-+
-+
-+static __rte_always_inline void
-+rte_write8(uint8_t val, volatile void *addr)
-+{
-+	rte_io_wmb();
-+	rte_write8_relaxed(val, addr);
-+}
-+
-+static __rte_always_inline void
-+rte_write16(uint16_t val, volatile void *addr)
-+{
-+	rte_io_wmb();
-+	rte_write16_relaxed(val, addr);
-+}
-+
-+static __rte_always_inline void
-+rte_write32(uint32_t val, volatile void *addr)
-+{
-+	rte_io_wmb();
-+	rte_write32_relaxed(val, addr);
-+}
-+
-+static __rte_always_inline void
-+rte_write64(uint64_t val, volatile void *addr)
-+{
-+	rte_io_wmb();
-+	rte_write64_relaxed(val, addr);
-+}
-+
-+__rte_experimental
-+static __rte_always_inline void
-+rte_write32_wc(uint32_t val, volatile void *addr)
-+{
-+	rte_write32(val, addr);
-+}
-+
-+__rte_experimental
-+static __rte_always_inline void
-+rte_write32_wc_relaxed(uint32_t val, volatile void *addr)
-+{
-+	rte_write32_relaxed(val, addr);
-+}
-+
-+#ifdef __cplusplus
-+}
-+#endif
+ #include <rte_memcpy.h>
+ #include <rte_stdatomic.h>
+@@ -291,15 +292,21 @@ power_get_available_freqs(struct amd_pstate_power_info *pi)
+ 	return ret;
+ }
  
--#endif /* RTE_IO_RISCV_H */
-+#endif /* _RTE_IO_RISCV_H_ */
+-/**
+- * It is to fopen the sys file for the future setting the lcore frequency.
+- */
++static inline unsigned long
++abs_diff(unsigned long a, unsigned long b)
++{
++	return (a > b) ? a - b : b - a;
++}
++
+ static int
+ power_init_for_setting_freq(struct amd_pstate_power_info *pi)
+ {
+-	FILE *f = NULL;
++	FILE *f;
+ 	char buf[BUFSIZ];
+-	uint32_t i, freq;
++	char *endptr;
++	unsigned long freq, freq_conv;
++	unsigned long best_diff, diff;
++	uint32_t i, best_idx;
+ 	int ret;
+ 
+ 	open_core_sysfs_file(&f, "rw+", POWER_SYSFILE_SETSPEED, pi->lcore_id);
+@@ -308,7 +315,6 @@ power_init_for_setting_freq(struct amd_pstate_power_info *pi)
+ 				POWER_SYSFILE_SETSPEED);
+ 		goto err;
+ 	}
+-
+ 	ret = read_core_sysfs_s(f, buf, sizeof(buf));
+ 	if (ret < 0) {
+ 		POWER_LOG(ERR, "Failed to read %s",
+@@ -316,25 +322,45 @@ power_init_for_setting_freq(struct amd_pstate_power_info *pi)
+ 		goto err;
+ 	}
+ 
+-	freq = strtoul(buf, NULL, POWER_CONVERT_TO_DECIMAL);
++	errno = 0;
++	freq = strtoul(buf, &endptr, POWER_CONVERT_TO_DECIMAL);
++	if (errno != 0 || endptr == buf || freq == 0) {
++		POWER_LOG(ERR, "Failed to parse frequency '%s' for lcore %u",
++				buf, pi->lcore_id);
++		goto err;
++	}
+ 
+ 	/* convert the frequency to nearest 1000 value
+ 	 * Ex: if freq=1396789 then freq_conv=1397000
+ 	 * Ex: if freq=800030 then freq_conv=800000
+ 	 */
+-	unsigned int freq_conv = 0;
+-	freq_conv = (freq + FREQ_ROUNDING_DELTA)
+-				/ ROUND_FREQ_TO_N_1000;
++	freq_conv = (freq + FREQ_ROUNDING_DELTA) / ROUND_FREQ_TO_N_1000;
+ 	freq_conv = freq_conv * ROUND_FREQ_TO_N_1000;
+ 
+-	for (i = 0; i < pi->nb_freqs; i++) {
+-		if (freq_conv == pi->freqs[i]) {
+-			pi->curr_idx = i;
+-			pi->f = f;
+-			return 0;
++	/* Find the nearest frequency in the table.
++	 * With amd-pstate the CPU runs at continuously variable
++	 * frequencies so the current frequency will not exactly
++	 * match one of the synthesized frequency buckets.
++	 */
++	best_idx = 0;
++	best_diff = abs_diff(freq_conv, pi->freqs[0]);
++
++	for (i = 1; i < pi->nb_freqs; i++) {
++		diff = abs_diff(freq_conv, pi->freqs[i]);
++		if (diff < best_diff) {
++			best_diff = diff;
++			best_idx = i;
+ 		}
+ 	}
+ 
++	POWER_DEBUG_LOG("Freq %lu rounded to %lu matched bucket [%u] = %u "
++			"for lcore %u", freq, freq_conv, best_idx,
++			pi->freqs[best_idx], pi->lcore_id);
++
++	pi->curr_idx = best_idx;
++	pi->f = f;
++	return 0;
++
+ err:
+ 	if (f != NULL)
+ 		fclose(f);
 -- 
-2.43.0
+2.53.0
 
