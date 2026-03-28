@@ -2,86 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 512E410F3DEC
-	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Mar 2026 16:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B57110BA423
+	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Mar 2026 18:55:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0925E4021F;
-	Sat, 28 Mar 2026 17:38:21 +0100 (CET)
-Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com
- [209.85.222.193])
- by mails.dpdk.org (Postfix) with ESMTP id 87340400D6
- for <dev@dpdk.org>; Sat, 28 Mar 2026 17:38:19 +0100 (CET)
-Received: by mail-qk1-f193.google.com with SMTP id
- af79cd13be357-8cd7c372929so341408285a.0
- for <dev@dpdk.org>; Sat, 28 Mar 2026 09:38:19 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1774715899; cv=none;
- d=google.com; s=arc-20240605;
- b=b8Ysy5xfgesiJy1jihFqHnzLnRR632hK6XQ5rcHhi57wudZqW3iDveJ4r6ZWHofACR
- 85JsQ4BVoFncr7NGGjZuCJYJCLR3W0pf+Ne5lD+TVzO/wCUA0wu+jl5kD0Uj0lj95AfH
- qRvYp+cXDfGHQ2EkSzmTgUnZsMOM5yzuzw5aoBY8cej2z//d4RtWZtg2d6O9lRo4y9c4
- gUETHBT2aQSqq1bp2lpkXoia5gLRpRwIdkJeAsFjyJJrClqSCIJ9+uc96ywecNCTZ1P1
- 2PYrNkvyVMidEFi5eOl+fvczSvJZH06xFYzek4zsMrFujp96o5ob/VWLWYB6gSZhBWV1
- c7CA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=wHwlyRiCuIbXNlB9ZRJopO689bHK34hYYcsE3E9ksc8=;
- fh=/BOW+Lj+scqN4W3Pg1KaSCffYNfKCmyRG4LswMt9xm4=;
- b=RS0TrQUurXY3b4sK5N1ScpHN8a6qv+lO3k3Mxw0MmUJZz2b4kQhTJyP8M0boO4rLTK
- k+/3Jhms5ez6UB3UuEnrvnWMh3ytQ+uoR1kS128klUojvglvOvEhYXTyT/jazNVncUxZ
- yMqtEk0by9Jez64cyMXuQZN7lhfnTLnTBDTQMyeROsukFmvx6HKo4KEM8YqzhB0thwlY
- zjR7VYxHM1G7v7MRPTAJfB3ljF24mujVDdOc4Nsqt8R+12kwQ0d1Y5YFEbeKbgNnUBT0
- fFuetM6VpSeDuSh3NlU5h9L7u4iMeSggCl9eANijxBEhOUIZy1Xj58VnGbqZgWd/3Gy2
- jyMg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 7B6A54021F;
+	Sat, 28 Mar 2026 19:55:05 +0100 (CET)
+Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com
+ [209.85.216.67]) by mails.dpdk.org (Postfix) with ESMTP id F36E1400D6
+ for <dev@dpdk.org>; Sat, 28 Mar 2026 19:55:04 +0100 (CET)
+Received: by mail-pj1-f67.google.com with SMTP id
+ 98e67ed59e1d1-35c124d2613so2147341a91.2
+ for <dev@dpdk.org>; Sat, 28 Mar 2026 11:55:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1774715899; x=1775320699; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=wHwlyRiCuIbXNlB9ZRJopO689bHK34hYYcsE3E9ksc8=;
- b=lPKNEcSa58mhoqnUs8zZmyz+vTj6KXlrWPI1Nl1b5bkNjO/JLeLhYIT4aJ3QB6MSeC
- xy7DhZ797XjNi6Nb80RnfMcLDnwhO6thyoeI1KNYrx2k3Y1+RVTr69cvSt36nkFOWwQt
- VpNQEKe3/+Spit8cnth40VVohHLt6INyFbz3a7zFZcZyzz0pq5OdqNDcXPN5U0v1aEcw
- akSPD8H/fZBUKNII+wi+rFFa9ccn0PO77KO7wKfjMYMMAr8Ksc+o1/0sFmch7YYzTBFu
- JffIrVAmhPR6uqhE/DR77zAVHWP1kgT2ACc/lpd5QZNqCx5wc1X8LeqWUez+ziMX+SLe
- tn4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774715899; x=1775320699;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1774724104; x=1775328904; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wHwlyRiCuIbXNlB9ZRJopO689bHK34hYYcsE3E9ksc8=;
- b=hkxnJTOH6mclhkNvRIQQ9e+UNhbAA57Q52AgSi83PIlT7OSaJZf8pzhHgVAaS3ezrs
- MIqe7nJ85scSzjpprAo3O513iBagNLsNLMMHpMM+JV8ReqRmfoIvs4Bo+KeQkTe4Pc7l
- IJjr7qlI9e6qGm4KQEPZmEERCN5dtyIsq/eHV+rTOKEkxTO9Ya/7j6wxxHOnELvKd/y4
- rF2QyCBBJBUOlD9dyFBvDvHZXfaqLsuRfIJmyAR5m6aN0XEQQI9Hwvr3DtBasaVnmApp
- mU7i0QgGnj7mEjU4VlRyMyuVpYzL5Et7li5uvllsDLQgWy41gc9lxQqPC5kXi9Rk5aHx
- NqGQ==
-X-Gm-Message-State: AOJu0Yy6iyl2vmxzjmSMp8FYv64C5+JZgXQXkdMOsCsqtowy6sVTjKJD
- B1S0PqzdB9XJm3e/RhuSpxzu4CtfOdVi66n67NbQCe8oZx4O2p/GnmYitxPxFP4qd29IgWvFrR7
- 2t5q6FixhhgBCwtJaXZSSDXBVEtXGeAI=
-X-Gm-Gg: ATEYQzxDenVId/2Ts9g0E5cS6BzgnCKOH7sUo0w/A6Z0zHzzqL851IyvGZjbS3PDdlX
- wrjfFJbkVbqkDwe2ir4zbv2wnV7FfssCfCS6jO2pd2+v22GypZexR0ZOqQgqmz3fFCfjISvrmwm
- Qiwdf1jgWY2OmmLrWXpenlu8YBBLpJEs8c4XlZlXz1UWWJUag7fSR/Q7S+5taMsxj1an2fTCiPq
- PPK57P/9CWkS79YEtLd3vrDBZGrfbjSfm3K5JaGhbRNCN+CRt3OnzCubkBDg9VYI3RBDK4wBm6M
- izwOxg==
-X-Received: by 2002:a05:6214:5092:b0:89a:125f:37d9 with SMTP id
- 6a1803df08f44-89ce8ed70a8mr89474506d6.50.1774715898480; Sat, 28 Mar 2026
- 09:38:18 -0700 (PDT)
+ bh=l8G2faP2Ugaom2hQ4wf3XOV/FhdyFdn5yfyzCXyG3K4=;
+ b=HkRZr+7xjJOnB3rQSUaIDn6+f88mI3MlF0b0heRGtXRpjQ5+cOQKpu2kGn1oW1fWLx
+ Ttty7OQCi8L2FNK/Ae1vQIIsGzNnySMhpyhj6/YT9I91M2tv1R6O2+aD/I4qutZDG6Ci
+ C71PF7th40alroM7AWgWecWFeJoyYJJIS9jn7VjjneywFM9v2PcGJs2qojdcQJhy51A5
+ 3hQtp4pZMF0DXQYf9V42a1toDqf5S/aDijX2kfX3fYEDtyHvWpel1VhA7i/Ra40YvRQq
+ tSkQ/CfghaAczdvOIWSlA1hyxgsnsEIr3+3OCWOgLN9C8UxU9iN6ebOBCNELBdZubdWH
+ xqXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774724104; x=1775328904;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=l8G2faP2Ugaom2hQ4wf3XOV/FhdyFdn5yfyzCXyG3K4=;
+ b=jMdehUHBRr63+kU+/5bPkLG9VaQpd8QvuVxPR7XC6nHJsDVOPSn+d4MPz2Wm8/VUoP
+ 07/PXCYK6hS4FJAfF3YlZUMVUfQjPrhjUYPu9It1VV+cX1NVclT2sQezjz0ijogLuwsm
+ waFlashIirLFOCPrDwnPjbs1UJkjJkUegc5VdrXxWlGGguDZibKK1eNGMoDohEuix874
+ cfLJ+hlD3siJEXKpAh+ChZFQWrKhHNqt67OEcbWlPpBCh4gt4UELlNVj7fLz2P7xvemD
+ J02T3xLlMcZfzFcAJ4snM+k4zNmmrsCVFAPHDWZvYnSUXndyAM4q9BJyMXzUbeUL5Fi+
+ C9IQ==
+X-Gm-Message-State: AOJu0YxVPRoQHliNLwPLnc0wjNMszWRmJg5uICY5z+caoxDw5jhlF+dO
+ LEZWJ7oUZbi2k8WELEtsq3Jvx0YNeRqtOI2fjuJyixlsoTah+mBpk13HNTOfBA+C4xeSug==
+X-Gm-Gg: ATEYQzwoOxXsNVs0nu2uQmT4RuCnSVod5RWaixSNFRVCzBNNMrpUBEnkyDn3GUPt4C9
+ LN+jtE3fCT5OjFwoR8kQu8lHaT6cvyDV7y8gheyjRNod01uv9T0RETHoKzY/868bITcoisJb+a3
+ ItvW5+2abE+XqhDDx+oJeI4SxVnIXoTNHZHW+xfRKhPf5h3oxxZncfMJwe6qnu9WTIetcMu3Nbs
+ mTC56hJbXTvvJpMzJJSHiqarAewXIxItJUIJWiRtwI0pIO+AEPn4EZKrqTQUqsgnohVthCsAZIA
+ N0jMBMFdheTtngRUEL09WUplu2U7Qe5Mt91puuNPSsEynmJlGqB8JsdMwR14vdTT1e0w2eJ9vO+
+ HS2pzHPzTkVlvVJZBn1JbIpI99JyCHwYiUUMtiaSUWxBmUA0igAptvMHJpijoOcROHLiDYJihVU
+ m408J8rz7zOTfHjbvtyp6wOBCnfoMvoZteuW/0vg==
+X-Received: by 2002:a17:90b:4cc6:b0:34c:fe7e:84fe with SMTP id
+ 98e67ed59e1d1-35c3011512cmr6460001a91.28.1774724103711; 
+ Sat, 28 Mar 2026 11:55:03 -0700 (PDT)
+Received: from LAPTOP-GPQVQV7E ([2409:8a20:f61:a30:b9db:8230:1cc:4f69])
+ by smtp.gmail.com with ESMTPSA id
+ 98e67ed59e1d1-35c22db12f7sm8138126a91.13.2026.03.28.11.55.01
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 28 Mar 2026 11:55:03 -0700 (PDT)
+From: dangshiwei <1138222970gg@gmail.com>
+To: dev@dpdk.org
+Cc: stanislaw.kardach@gmail.com, sunyuechi@iscas.ac.cn, thomas@monjalon.net,
+ dangshiwei <1138222970gg@gmail.com>
+Subject: [PATCH v2 2/3] eal/riscv: add RISC-V specific I/O device memory
+ operations
+Date: Sun, 29 Mar 2026 02:54:57 +0800
+Message-ID: <20260328185457.960-1-1138222970gg@gmail.com>
+X-Mailer: git-send-email 2.53.0.windows.2
+In-Reply-To: <20260313140836.3847-1-1138222970gg@gmail.com>
+References: <20260313140836.3847-1-1138222970gg@gmail.com>
 MIME-Version: 1.0
-References: <20260310133524.28087-1-1138222970gg@gmail.com>
- <cac6e40a-6efd-4097-9b7a-90c559279879@iscas.ac.cn>
-In-Reply-To: <cac6e40a-6efd-4097-9b7a-90c559279879@iscas.ac.cn>
-From: shiwei dang <1138222970gg@gmail.com>
-Date: Sun, 29 Mar 2026 00:38:10 +0800
-X-Gm-Features: AQROBzCy0IFqKrhXO4rZU8tWRgaXG4D8JTvlsDkGvoXuka6NuixlXX3U1ptw85g
-Message-ID: <CAF-WEyHKBEwYW_E6UvjKwEL7LQO4pfFS7qtv-3gjz1B7c5cNYQ@mail.gmail.com>
-Subject: Re: [PATCH] eal/riscv: implement prefetch using __builtin_prefetch
-To: sunyuechi <sunyuechi@iscas.ac.cn>
-Cc: dev@dpdk.org, stanislaw.kardach@gmail.com, stephen@networkplumber.org, 
- david.marchand@redhat.com
-Content-Type: multipart/alternative; boundary="000000000000b4cac0064e183e37"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,72 +80,184 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---000000000000b4cac0064e183e37
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The current rte_io.h for RISC-V only includes generic/rte_io.h,
+which uses volatile pointer casts for MMIO read/write. While this
+prevents compiler optimizations, it does not prevent CPU-level
+reordering on RISC-V, which is a weak-ordered architecture.
 
-Hi ,
+This patch adds a RISC-V specific implementation using explicit
+load/store instructions:
+- lbu/lhu/lwu/ld for reads (zero-extending to avoid sign-bit pollution)
+- sb/sh/sw/sd for writes
 
-Thanks for the review. I'll address both points (real name in Signed-off-by
-and test results) together in v2 once I have access to physical RISC-V
-hardware.
+Signed-off-by: Dang Shiwei <1138222970gg@gmail.com>
+---
+ lib/eal/riscv/include/rte_io.h | 152 ++++++++++++++++++++++++++++++++-
+ 1 file changed, 149 insertions(+), 3 deletions(-)
 
-Best regards, Dang Shiwei
+diff --git a/lib/eal/riscv/include/rte_io.h b/lib/eal/riscv/include/rte_io.h
+index 4ae1f087ba..e67b5c1c9c 100644
+--- a/lib/eal/riscv/include/rte_io.h
++++ b/lib/eal/riscv/include/rte_io.h
+@@ -5,9 +5,155 @@
+  * Copyright(c) 2022 Semihalf
+  */
+ 
+-#ifndef RTE_IO_RISCV_H
+-#define RTE_IO_RISCV_H
++#ifndef _RTE_IO_RISCV_H_
++#define _RTE_IO_RISCV_H_
++
++#include <stdint.h>
++
++#define RTE_OVERRIDE_IO_H
+ 
+ #include "generic/rte_io.h"
++#include <rte_compat.h>
++#include "rte_atomic.h"
++
++#ifdef __cplusplus
++extern "C" {
++#endif
++
++static __rte_always_inline uint8_t
++rte_read8_relaxed(const volatile void *addr)
++{
++	uint8_t val;
++	asm volatile("lbu %0, 0(%1)" : "=r"(val) : "r"(addr));
++	return val;
++}
++
++static __rte_always_inline uint16_t
++rte_read16_relaxed(const volatile void *addr)
++{
++	uint16_t val;
++	asm volatile("lhu %0, 0(%1)" : "=r"(val) : "r"(addr));
++	return val;
++}
++
++static __rte_always_inline uint32_t
++rte_read32_relaxed(const volatile void *addr)
++{
++	uint32_t val;
++	asm volatile("lwu %0, 0(%1)" : "=r"(val) : "r"(addr));
++	return val;
++}
++
++static __rte_always_inline uint64_t
++rte_read64_relaxed(const volatile void *addr)
++{
++	uint64_t val;
++	asm volatile("ld %0, 0(%1)" : "=r"(val) : "r"(addr));
++	return val;
++}
++
++static __rte_always_inline void
++rte_write8_relaxed(uint8_t val, volatile void *addr)
++{
++	asm volatile("sb %1, 0(%0)" : : "r"(addr), "r"(val));
++}
++
++static __rte_always_inline void
++rte_write16_relaxed(uint16_t val, volatile void *addr)
++{
++	asm volatile("sh %1, 0(%0)" : : "r"(addr), "r"(val));
++}
++
++static __rte_always_inline void
++rte_write32_relaxed(uint32_t val, volatile void *addr)
++{
++	asm volatile("sw %1, 0(%0)" : : "r"(addr), "r"(val));
++}
++
++static __rte_always_inline void
++rte_write64_relaxed(uint64_t val, volatile void *addr)
++{
++	asm volatile("sd %1, 0(%0)" : : "r"(addr), "r"(val));
++}
++
++
++static __rte_always_inline uint8_t
++rte_read8(const volatile void *addr)
++{
++	uint8_t val = rte_read8_relaxed(addr);
++	rte_io_rmb();
++	return val;
++}
++
++static __rte_always_inline uint16_t
++rte_read16(const volatile void *addr)
++{
++	uint16_t val = rte_read16_relaxed(addr);
++	rte_io_rmb();
++	return val;
++}
++
++static __rte_always_inline uint32_t
++rte_read32(const volatile void *addr)
++{
++	uint32_t val = rte_read32_relaxed(addr);
++	rte_io_rmb();
++	return val;
++}
++
++static __rte_always_inline uint64_t
++rte_read64(const volatile void *addr)
++{
++	uint64_t val = rte_read64_relaxed(addr);
++	rte_io_rmb();
++	return val;
++}
++
++
++static __rte_always_inline void
++rte_write8(uint8_t val, volatile void *addr)
++{
++	rte_io_wmb();
++	rte_write8_relaxed(val, addr);
++}
++
++static __rte_always_inline void
++rte_write16(uint16_t val, volatile void *addr)
++{
++	rte_io_wmb();
++	rte_write16_relaxed(val, addr);
++}
++
++static __rte_always_inline void
++rte_write32(uint32_t val, volatile void *addr)
++{
++	rte_io_wmb();
++	rte_write32_relaxed(val, addr);
++}
++
++static __rte_always_inline void
++rte_write64(uint64_t val, volatile void *addr)
++{
++	rte_io_wmb();
++	rte_write64_relaxed(val, addr);
++}
++
++__rte_experimental
++static __rte_always_inline void
++rte_write32_wc(uint32_t val, volatile void *addr)
++{
++	rte_write32(val, addr);
++}
++
++__rte_experimental
++static __rte_always_inline void
++rte_write32_wc_relaxed(uint32_t val, volatile void *addr)
++{
++	rte_write32_relaxed(val, addr);
++}
++
++#ifdef __cplusplus
++}
++#endif
+ 
+-#endif /* RTE_IO_RISCV_H */
++#endif /* _RTE_IO_RISCV_H_ */
+-- 
+2.43.0
 
-On Sat, Mar 28, 2026 at 7:48=E2=80=AFPM sunyuechi <sunyuechi@iscas.ac.cn> w=
-rote:
-
-> Hi,
->
-> In the previous prefetch discussion:
->
-> "Let's hope you get such hardware by the next release. We will need
-> reviews too."
->
->
-> https://inbox.dpdk.org/dev/CAJFAV8zatWiYQoe4kETcM61=3DOS1k=3DQaPRsNjYSYDs=
-pKC+voiQw@mail.gmail.com/
->
-> Could you share your test environment and results?
->
-> And DPDK requires a real name in the Signed-off-by line.
->
->
-
---000000000000b4cac0064e183e37
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-<div dir=3D"ltr"><p class=3D"gmail-font-claude-response-body gmail-break-wo=
-rds gmail-whitespace-normal gmail-leading-[1.7]">Hi ,</p>
-<p class=3D"gmail-font-claude-response-body gmail-break-words gmail-whitesp=
-ace-normal gmail-leading-[1.7]">Thanks for the review. I&#39;ll address bot=
-h points (real name in Signed-off-by and test results) together in v2 once =
-I have access to physical RISC-V hardware.</p>
-<p class=3D"gmail-font-claude-response-body gmail-break-words gmail-whitesp=
-ace-pre-wrap gmail-leading-[1.7]">Best regards,
-Dang Shiwei</p></div><br><div class=3D"gmail_quote gmail_quote_container"><=
-div dir=3D"ltr" class=3D"gmail_attr">On Sat, Mar 28, 2026 at 7:48=E2=80=AFP=
-M sunyuechi &lt;<a href=3D"mailto:sunyuechi@iscas.ac.cn">sunyuechi@iscas.ac=
-.cn</a>&gt; wrote:<br></div><blockquote class=3D"gmail_quote" style=3D"marg=
-in:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1e=
-x">Hi,<br>
-<br>
-In the previous prefetch discussion:<br>
-<br>
-&quot;Let&#39;s hope you get such hardware by the next release. We will nee=
-d <br>
-reviews too.&quot;<br>
-<br>
-<a href=3D"https://inbox.dpdk.org/dev/CAJFAV8zatWiYQoe4kETcM61=3DOS1k=3DQaP=
-RsNjYSYDspKC+voiQw@mail.gmail.com/" rel=3D"noreferrer" target=3D"_blank">ht=
-tps://inbox.dpdk.org/dev/CAJFAV8zatWiYQoe4kETcM61=3DOS1k=3DQaPRsNjYSYDspKC+=
-voiQw@mail.gmail.com/</a><br>
-<br>
-Could you share your test environment and results?<br>
-<br>
-And DPDK requires a real name in the Signed-off-by line.<br>
-<br>
-</blockquote></div>
-
---000000000000b4cac0064e183e37--
