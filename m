@@ -2,67 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F2910D1485
-	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Mar 2026 21:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FE610D1489
+	for <dpdk-dev@archiver.kernel.org>; Sat, 28 Mar 2026 23:53:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E29F74021F;
-	Sat, 28 Mar 2026 22:51:54 +0100 (CET)
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
- by mails.dpdk.org (Postfix) with ESMTP id 4F8C9400D6
- for <dev@dpdk.org>; Sat, 28 Mar 2026 22:51:53 +0100 (CET)
-Received: by mail-dl1-f42.google.com with SMTP id
- a92af1059eb24-12732165d1eso4785060c88.1
- for <dev@dpdk.org>; Sat, 28 Mar 2026 14:51:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D8642402DB;
+	Sun, 29 Mar 2026 00:53:41 +0100 (CET)
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com
+ [209.85.210.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 51C2E4021F
+ for <dev@dpdk.org>; Sun, 29 Mar 2026 00:53:40 +0100 (CET)
+Received: by mail-pf1-f176.google.com with SMTP id
+ d2e1a72fcca58-829a9d08644so1736139b3a.1
+ for <dev@dpdk.org>; Sat, 28 Mar 2026 16:53:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774734712;
- x=1775339512; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774742019;
+ x=1775346819; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=b9eZLTq6gfCHD3O92i4MRe79tOuH89N5JtrVTRdY2eI=;
- b=tzigZKMB6vKv44lLXgjtDS8nylWJBJoxoosbfxQtRPZSNlMYcZtVYBmApF4yy+pHt9
- 8AUBdoE+YHK1TXUCsZTsC+sxCkgmSA3wCcr9GqgIWsnGtiEljQljrl3RsHicQwUOO7eN
- VWTkEJ3jvu/q+6yv7WN9cIbpZ6s+UWUKijUBZWSE1nhEqg8c7M1FmzG84uYIZ6N2XEbB
- wJ00WSfesRZnW1NLF62Ta+j25NXBQL4m4/9NrBpZekrqN6WBXjpYosr4N0C6X/REAcqq
- fFWGii680uODzG+570HCjSwlToORaMWKnM0fY0Z8yjHsfePAi1oy+3TwtGKluEzrK5c+
- 3l4w==
+ bh=0NF9fdYeyKglANgNU6cRO5TKr75T8m0T09evP9w54MM=;
+ b=zn8X/bVWL9vuYij97/bLelvwIz0qFlVbYUQm7n8WhjuydiVfVxxlcrYCIo19kK0tc/
+ awbBvSzVUgHXfxYG3pCX2CgbZSVABFfRUlGBZFo6booqxOV6YGC+/JXIdOmuRV1znVaS
+ VkE1nqIFyTUu47sgqbqnREwk7L0jCLBiGlKEdLe1h7SMBcN8s9jADxenK3GHQouytGBu
+ KgYU8B3KbDq7oNtUTAMaTZgSCYzYBXFS1c/sBLM6Q95x6bKSksJjbiai86FXx0wGNUhm
+ 8IVJjxMsBgenI6LxX0tVi5wnmPQjvMS6aSI1kmDs4s7IqJdThA2KQtOg7q7IGtLvWnQz
+ XUOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774734712; x=1775339512;
+ d=1e100.net; s=20251104; t=1774742019; x=1775346819;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=b9eZLTq6gfCHD3O92i4MRe79tOuH89N5JtrVTRdY2eI=;
- b=EHKiwmx2EahzHfKe3xKZSvgtI8SLHyFkQ2amdaZrQBhXQ1YdDI34lKuf0MVtcG/7h2
- UYtzGvGthgdYtJ1djBpWENRn0KdziblZ/TZJ1mY0tOYbDPAxaulyLKdSCVgTI7xH9blx
- H1YwQp/J5ne/2qolXGGqbtK7xGEJVn57Wz96FdBgERWMJCELXDie/JyN+C7qh5qndtNv
- xypkHnAVHOFsjYwmxK2uPnKCQ85KxTChN75zs4LrD9sGGBYhsaUqgd4VLJdoLKaKSQDW
- R7vXwpzg5NCXoZpGzD3jtFLpMGZoaixDrZktfo1ZnEz/RrQ5qggHS+KxcVGlyqUM4s3o
- arTg==
-X-Gm-Message-State: AOJu0Yw3DSBSm6Nv+w1K0AmK2LW2UDEH3OsET4jIP4b+o0Pz+f/pWTqn
- UCMRrXCvL/2JF5iyCfSnbibRMNV/ewEAaYV4nvOZiTjWpLTHWh7Wo+LE9lwmmGOD6ZA=
-X-Gm-Gg: ATEYQzwsSX9tNxYmqdgNFzH6ICmjqXZ9Jn5hPqJUIiX69CcEKDVp1aGSEFuAAQLAm2i
- ORsWbhiOTXvujEdivWr/5/p6GKc5r3PGJXT9KtXi0vWQY6ti47llT1GzMktk8VvgE7HKvjJv+pn
- c7ZM0R+TkAlraHesbZgAl1T0ExWyp4Usz0tPUjgaRQlRL3T4x14kDvNZ6k3CjnVR4TH7Z5tl+x2
- J0rvjLeIqdj40Zd+9l6pDohTxR/pNLq7Jlu47+4b9MWiXQSlkOipIeWorl7hEKEOaWNj9DvSCjU
- QX97OP+I8W67B4RBkCatkCWkwOR+Xuvjy9bj2zbVZ7Dwp0JkSWlSNr9MbXjNwdZJBbUNRWQCELJ
- oxSaAGkIMKw5luC8/ZASKfboj9njdkkwuNQey7WEV27IQOviaPxRN7N6QMtW/pY9NIEtF5hEeV+
- 8fgSkyJiYP/Miu0cMo28+PeZ5GsBfsdFguWpQ=
-X-Received: by 2002:a05:7022:4582:b0:128:df80:1852 with SMTP id
- a92af1059eb24-12ab283c2e2mr4361987c88.9.1774734712009; 
- Sat, 28 Mar 2026 14:51:52 -0700 (PDT)
+ bh=0NF9fdYeyKglANgNU6cRO5TKr75T8m0T09evP9w54MM=;
+ b=dQ3mxeeWXsKkBlG6PaxHGLWOowAN69SNSydL8dYlixASX4y7PkUnveSIpbTgePUQO7
+ zS+G2uwMtSNKPNDBfZao23nf2TAHPGXTj8YECFsHoOoW4cQKxZq8KOMwbU21bdGCyQQg
+ WVV5lYHetUsjCYX9tbgk9nnb3vNdYzAT9Z0TOBqHUe0/lWeEZE2W5as2gp2n9do80jHG
+ SFwhkQXaXikOiys2lXSf/Sd/1zUVaovsOnJ4gMcXRXjFN4AS6IQcwxB9Xq/yGas8zMB/
+ o09DUYKfv0BCEtC5WNCHQBT7KZtQJovg/y64eOyHtGlPHFswB21+9epPXFvWx1jQmhVe
+ f8MA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUHqCQAr7kQoeUcNOKNfrb11ye3s5kw4OgN7qQUZ2pq3UubBOK1kINCD4v7jz7qh44uClU=@dpdk.org
+X-Gm-Message-State: AOJu0Yw9eo3c26+Vaoang3/DXdQbTqG2zOeEqPSImg0AR9c2CThT7j72
+ kR9uQ8zPFO5tyWpbY4oOaOSQlorpWs2CbPCD6IZbm+jfgGorN7gAVONNmdqhAZhWZIw=
+X-Gm-Gg: ATEYQzxSo6r5ADDgs6xT0wut9TGrOfM52BmmcNbNpg4sM4cUtNiwedfG8Ug3U6igq/M
+ 7B/Ude2Ao0KyaNe8hniNNO532MoKywvflMwEsntiQwQqqrfG8h2yxNiWMwqBdLxxnh6ezAfBjRC
+ LF1qlYvduVNaafMHJYLqvepDIdUv1/w99OPKnPehqKSOd1o/JzKLyL8CKqmvMfgQXnlw+Bz1XmS
+ XlDdlYYxBqtzawmoBRBdWjS+wsEXXxgvuwh1iRv9stWs3Ynd/JnUC1546EKWInWPdA8GOKRlDWY
+ y/RmdIDgWmsgkEhWDIQPABivtkujFOxKBIWdoZ4yh2vA9QKVXw/KzDZuQNm+DfN/WNvTJQSNkrE
+ XcmOJdnJIZNpZz+1Zlo083ua3+1vdGN8Ti51ePRIdhxGNPnxXTRkiFVwCFCINKFXolC11SwuXmJ
+ Ai8CtCP3ZsRz00lzcg0zZLSViPQtXDNb9/Z+U=
+X-Received: by 2002:a05:6a20:6a23:b0:398:7853:70ea with SMTP id
+ adf61e73a8af0-39c878393edmr8007394637.15.1774742019169; 
+ Sat, 28 Mar 2026 16:53:39 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12ab97efb42sm4353693c88.7.2026.03.28.14.51.51
+ 41be03b00d2f7-c769179e31asm2538072a12.17.2026.03.28.16.53.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 28 Mar 2026 14:51:51 -0700 (PDT)
-Date: Sat, 28 Mar 2026 14:51:49 -0700
+ Sat, 28 Mar 2026 16:53:38 -0700 (PDT)
+Date: Sat, 28 Mar 2026 16:53:31 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: <dev@dpdk.org>
-Subject: Re: [PATCH] test: parenthesize common macro arguments
-Message-ID: <20260328145149.6e2c303e@phoenix.local>
-In-Reply-To: <20260326174749.40972-1-marat.khalili@huawei.com>
-References: <20260326174749.40972-1-marat.khalili@huawei.com>
+To: madhukar.mythri@gmail.com
+Cc: longli@microsoft.com, dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH v2] net/netvsc: fix race condition in RNDIS command
+ execution
+Message-ID: <20260328165331.571e1d85@phoenix.local>
+In-Reply-To: <20260113101820.60611-1-madhukar.mythri@gmail.com>
+References: <20260113101820.60611-1-madhukar.mythri@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -79,20 +83,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 26 Mar 2026 17:47:49 +0000
-Marat Khalili <marat.khalili@huawei.com> wrote:
+On Tue, 13 Jan 2026 15:48:20 +0530
+madhukar.mythri@gmail.com wrote:
 
-> Parenthesize argument substitutions in macros commonly used by tests.
+> From: Madhuker Mythri <madhukar.mythri@gmail.com>
 > 
-> Without parentheses around arguments macros like TEST_ASSERT_SUCCESS
-> could produce incorrect results if passed e.g. a ternary expression.
+> When multiple threads issue RNDIS command requests (such as device
+> info queries and link status checks) simultaneously, command failures
+> can occur due to concurrent access to shared resources in the RNDIS
+> execution path.
 > 
-> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> Add a spinlock to serialize RNDIS command execution and prevent
+> data corruption.
+> 
+> Fixes: 4e9c73e96e83 ("net/netvsc: add Hyper-V network device")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Madhuker Mythri <madhukar.mythri@gmail.com>
 > ---
-> Very curious how none of the code-checking tools we have like Coverity
-> flagged this trivial issue.
-> 
-> To highlight non-whitespace changes: git show --word-diff --anchored='/*'
 
-The bigger parts should be converted to functions.
-This is test infrastructure no need for multi-line macros.
+As Long (and AI review) observed this patch needs more work.
+There are two issues:
+
+1. The introduced spin lock only protects query, it does not protect
+around cases where a query races with some thing else calling rndis_set.
+Lock should go inside hn_rndis_execute().
+
+2. The lock is held while spinning, and it could take several
+seconds to complete, holding spinlock that long burns CPU and any
+other thread trying to do operation would queue up and block.
+
+Maybe a pthread_mutex (which sleeps) or use trylock in the
+query path and return EBUSY?
