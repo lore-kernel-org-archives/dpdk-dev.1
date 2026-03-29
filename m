@@ -2,76 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC95CFF4923
-	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Mar 2026 23:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1700CFF4923
+	for <dpdk-dev@archiver.kernel.org>; Sun, 29 Mar 2026 23:24:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8FAFF4065C;
-	Mon, 30 Mar 2026 01:24:29 +0200 (CEST)
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com
- [209.85.216.51]) by mails.dpdk.org (Postfix) with ESMTP id 85A0A4042C
- for <dev@dpdk.org>; Mon, 30 Mar 2026 01:24:28 +0200 (CEST)
-Received: by mail-pj1-f51.google.com with SMTP id
- 98e67ed59e1d1-35d971fbcddso587193a91.1
- for <dev@dpdk.org>; Sun, 29 Mar 2026 16:24:28 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BC8AC40663;
+	Mon, 30 Mar 2026 01:24:34 +0200 (CEST)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
+ [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id ADFF940664
+ for <dev@dpdk.org>; Mon, 30 Mar 2026 01:24:32 +0200 (CEST)
+Received: by mail-pj1-f48.google.com with SMTP id
+ 98e67ed59e1d1-3567e2b4159so2562007a91.0
+ for <dev@dpdk.org>; Sun, 29 Mar 2026 16:24:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774826667;
- x=1775431467; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774826672;
+ x=1775431472; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=YuQiCPdvIJpNJBYlAdYT1BxoIUPPfPGg/RZKZM1QymU=;
- b=T8VPVM9u1Hc4UyOK/alr+PJAn493wJfjNyTPdS8BlU02AVpxOj2/ILOUKRRHMDanLB
- Mu6KL7vyuf/3mmsdVON3t+08nqy2ku/h1FNvR9RjFPSBkAfoop+L+wioINGk1SqP1XH4
- h/FCf5mBJzIjVjWjPWBv86aKDnYJwkewcji5wcIYqNa3koKf0TuZzRMA1ft9JSwarI1R
- sIvGtlPuEY9K4dkh59AXNRY6K7BzpyXCTuV+i3ERWpHe35UE8uEQGa8Dp55ljNGcmIzw
- ZDuD0jrsKHmHCbufk/4024OXcDb1wqSqRC/HkBVoiiBbNybCc7jiYi9YdxUfyJgrxRbB
- bR6w==
+ bh=OBrVX4V9Yngp+5zU0yFG84WdIaAcVAthcGk9e4y/GX8=;
+ b=xTnB2Dpo3Na6RKPnCUjEAo3gq7pvaa/QkKGt2WYnh+QXHIIUSbEL/JfS7CfhrXXcul
+ tuiS8KpHv95N+x/FTF7PTMsbfln7seP0U/IsW9LrcVde8bwOH0xjvoS3rV5ynF6cVc/u
+ rVv57Nqb5WgDAQgLq3EttPSTJNXoI6ZQ21RZW7nC1avMCS4XW23vnYP8I+s7ryUU2f8M
+ Lo8zJY8KZaIS3GhBTFCu7b92815wmDngBlgKRbKNfh9+fYaOd9wZpdI1fItrBg8a6ES8
+ 1i6zIOYG2cGCbCH8un4Mq2OyQ7ELz+krV5BhJJkIuLFdygXeGdwDsbZVyTXRj2ZgMhJ/
+ VbkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774826667; x=1775431467;
+ d=1e100.net; s=20251104; t=1774826672; x=1775431472;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=YuQiCPdvIJpNJBYlAdYT1BxoIUPPfPGg/RZKZM1QymU=;
- b=JHqAwx1NAVWbFYSyOckuZsdlbx69k/dehDOP2vGNWtJ7COPBNL7mPLD214Zv9cOqyT
- BdHmeNaxoJphFlBMq8GWaFi86zu+DH0MKlWMGFiNkqLS0qcuOlfq/XZzEF/19lSK1Z4L
- Cn8JnJ/noPYoo7iXsrF5Uzg78kt0F34cqHdrUbd6Ry0gJTwen47JaGhjoSPiFRkihdME
- 1AmcctVrgZmtG7i4CwkWdTwVfsy8mI6Dmu093oHGj2e6W9osaTjuJ82p+26YrWzAhKd6
- 1c6DSqRs2Rk+YkyCHbmD+jlsdgrfXpTczUUq80a/udhsoSfvkXCzqku2JFkhOLyq7XRh
- 28MQ==
-X-Gm-Message-State: AOJu0Yxbiz/en/Z1G9452dfGvP5t1u09pQOqSOcrXyTFevQrGd/x1xxM
- V0kCLVumTqhf56iinBEE1MN9Az8kN3DiV1uMqwsHjA+NydXMDDK1tzpr1392upTdCVQlG754zzZ
- Y/JlO
-X-Gm-Gg: ATEYQzwOLWEnzVNMTJW1bzjm4FOlH3ksTeaWN0YzMMbig+FC3/dQJqq43lMDO81zzYO
- 2aDf5pHUylR2swh4OYz64Erop+ylf/gHL2sAgdfYgUx1cLNI7LGhuxp/yiloAH/lbvBdazEB09F
- M1iszv7CcvxMDUdJ9bssXZWIKUoD/FiwmH2wEWsnOQqF6EUU0UsTROwNqMwjiDRWzBLPJdESZBA
- 5oZxpWs/rWEPs8sKacUIIZtwByfsKM96mrL3WriIKIyJ7QoTOLFoeyTwQNa3sBXPzmDAt5W+nUN
- ajjnp9rtKKGUXhGWGT2f37Y1IbSqHgQoqWHDhcC58j4Fx6B25qsj/Dp1W09GvBUDqQD27u+hv+4
- aQd/h23C0QkjPcTzPl4GJGkWpWMu0Ib4WIwVORUpZnkO9gQ7pgUfG/b7V2wF/Ln83SK4KYMbAb5
- 4Ej4n4Ty3aMKDYtC1tkUR7FiiykH/6rANv
-X-Received: by 2002:a17:90b:4b07:b0:359:8957:7285 with SMTP id
- 98e67ed59e1d1-35c30b82d50mr7749291a91.3.1774826667507; 
- Sun, 29 Mar 2026 16:24:27 -0700 (PDT)
+ bh=OBrVX4V9Yngp+5zU0yFG84WdIaAcVAthcGk9e4y/GX8=;
+ b=sXdXdx6RhbNSih2HJRMz/r60pZ6vwbLrt4WQWHAEksATucEoDKG07Mg32mHiEJDNCU
+ tCZS2SpzG0M1Es+gbHpGaU3h3StP5nIZk/sePgAiKZaEL2NqZMu/7jh0Xu+BmAXLwahl
+ cUQ+4OU27PiACQfaSJeUzC2QTn+1xZP2b8aIO9V8UJYR1F8aEd+WDtcaC6CNATTa/iIB
+ svuayiWk+ylzhS/ts5d0RfjrRxkEibJeUsqfriAI0elsiE53nDFnxSQXVEJmtZLxArxJ
+ Rz02dLzEA4ANbAa910pWSQiMktw9AynKN05dpSIH7eQSh84XNJRUCpY/2Ohsx2O4EUJd
+ CDew==
+X-Gm-Message-State: AOJu0YywhCFW1107sYP8SJMcovdAYBm+YWkYpLOQT1k6BJnyjBpwOhRS
+ aG68r15EQ+SjYPpzp0M7dwEf/lS/Rudd06wxWk39xoJJyPaVdG9jhOoSY0G4yolVnz5zlRr6Kkm
+ Ubq8c
+X-Gm-Gg: ATEYQzycuhORv/R9uqZHy+8OzKn69YBLDQ8nm9hLulIlWWSnr2PHKDhrBYkL9DFT0LM
+ /r2Xun+GWs90lcDtZUMLydUEISGRTCjss8kqw/2O43Wo78m/GRUF2vovROv0yV9ohEQXSlzskqL
+ detB5b5XaHZlyTE2tDK1RvoxjC4ZRRodvDIffrhqhHypS6KtSbDp4/4lqhza7z1Qrr7gcG65UEw
+ 8J1PxPSyO9WvYMwBcOBaVYNyMSjIJ+nOrB9ddpi9+Y4cvpoLwox1X6TR0Fr2tYNkKZdRFb/74Am
+ c7FbYBtgUAKqhLfVchxZjNrjBl96MWtJk4Gto4ielMdS6vyxUoQ/PsK2rHU/v7dKib2xM/8rdp/
+ ZMbHiG8anUCMjRm7J8pTDVWS42ogmasK+ArmRjfwDNyaq1QpHqiJrbefWNnSX1D9s2g3Fm2PdTo
+ JvyjfDExUZDHf3J6wNnt4KiEM02pUx5LtW
+X-Received: by 2002:a17:90b:2c88:b0:35b:9777:8bb1 with SMTP id
+ 98e67ed59e1d1-35c300ba6cfmr9525072a91.19.1774826671789; 
+ Sun, 29 Mar 2026 16:24:31 -0700 (PDT)
 Received: from phoenix.lan ([104.202.29.139]) by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-35c22b9fc96sm10295401a91.7.2026.03.29.16.24.23
+ 98e67ed59e1d1-35c22b9fc96sm10295401a91.7.2026.03.29.16.24.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 29 Mar 2026 16:24:27 -0700 (PDT)
+ Sun, 29 Mar 2026 16:24:31 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
  Yipeng Wang <yipeng1.wang@intel.com>,
  Sameh Gobriel <sameh.gobriel@intel.com>,
  Bruce Richardson <bruce.richardson@intel.com>,
  Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v6 2/7] hash: use static_assert
-Date: Sun, 29 Mar 2026 16:22:36 -0700
-Message-ID: <20260329232409.205940-3-stephen@networkplumber.org>
+Subject: [PATCH v6 3/7] hash: remove spurious warnings in CRC32 init
+Date: Sun, 29 Mar 2026 16:22:37 -0700
+Message-ID: <20260329232409.205940-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260329232409.205940-1-stephen@networkplumber.org>
 References: <20250818233102.180207-1-stephen@networkplumber.org>
  <20260329232409.205940-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -86,31 +84,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now that static_assert is available, better than pre-processor
-use of #if condition.
+The warnings in rte_hash_crc_set_alg() were misleading - they fired
+when requesting a valid algorithm that would actually be used.
+For example, requesting CRC32_SSE42 would trigger a warning even
+though SSE4.2 instructions would be used successfully.
+
+Remove the spurious warnings and only warn when the requested
+algorithm is truly unavailable and falling back to software CRC.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Morten Brørup <mb@smartsharesystems.com>
 ---
- lib/hash/rte_cuckoo_hash.h | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ lib/hash/rte_hash_crc.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/lib/hash/rte_cuckoo_hash.h b/lib/hash/rte_cuckoo_hash.h
-index 5b3c51348e..919140ac1c 100644
---- a/lib/hash/rte_cuckoo_hash.h
-+++ b/lib/hash/rte_cuckoo_hash.h
-@@ -24,9 +24,8 @@
-  */
- #define RTE_HASH_BUCKET_ENTRIES		8
+diff --git a/lib/hash/rte_hash_crc.c b/lib/hash/rte_hash_crc.c
+index 523be0bf92..8b70982c4b 100644
+--- a/lib/hash/rte_hash_crc.c
++++ b/lib/hash/rte_hash_crc.c
+@@ -37,9 +37,6 @@ rte_hash_crc_set_alg(uint8_t alg)
+ 		return;
  
--#if !RTE_IS_POWER_OF_2(RTE_HASH_BUCKET_ENTRIES)
--#error RTE_HASH_BUCKET_ENTRIES must be a power of 2
--#endif
-+static_assert(RTE_IS_POWER_OF_2(RTE_HASH_BUCKET_ENTRIES),
-+	      "RTE_HASH_BUCKET_ENTRIES must be a power of 2");
+ #if defined RTE_ARCH_X86
+-	if (!(alg & CRC32_SSE42_x64))
+-		HASH_CRC_LOG(WARNING,
+-			"Unsupported CRC32 algorithm requested using CRC32_x64/CRC32_SSE42");
+ 	if (!rte_cpu_get_flag_enabled(RTE_CPUFLAG_EM64T) || alg == CRC32_SSE42)
+ 		rte_hash_crc32_alg = CRC32_SSE42;
+ 	else
+@@ -47,16 +44,13 @@ rte_hash_crc_set_alg(uint8_t alg)
+ #endif
  
- #define NULL_SIGNATURE			0
+ #if defined RTE_ARCH_ARM64
+-	if (!(alg & CRC32_ARM64))
+-		HASH_CRC_LOG(WARNING,
+-			"Unsupported CRC32 algorithm requested using CRC32_ARM64");
+ 	if (rte_cpu_get_flag_enabled(RTE_CPUFLAG_CRC32))
+ 		rte_hash_crc32_alg = CRC32_ARM64;
+ #endif
  
+ 	if (rte_hash_crc32_alg == CRC32_SW)
+ 		HASH_CRC_LOG(WARNING,
+-			"Unsupported CRC32 algorithm requested using CRC32_SW");
++			"Unsupported CRC32 algorithm requested, using CRC32_SW");
+ }
+ 
+ /* Setting the best available algorithm */
 -- 
 2.53.0
 
