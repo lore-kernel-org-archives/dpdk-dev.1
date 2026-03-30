@@ -2,71 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804231061B1E
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Mar 2026 20:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 081811061B22
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Mar 2026 20:55:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 93101402D8;
-	Mon, 30 Mar 2026 22:39:43 +0200 (CEST)
-Received: from mail-dy1-f178.google.com (mail-dy1-f178.google.com
- [74.125.82.178]) by mails.dpdk.org (Postfix) with ESMTP id D32C9402CE
- for <dev@dpdk.org>; Mon, 30 Mar 2026 22:39:41 +0200 (CEST)
-Received: by mail-dy1-f178.google.com with SMTP id
- 5a478bee46e88-2c17d152c01so3752597eec.0
- for <dev@dpdk.org>; Mon, 30 Mar 2026 13:39:41 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E44F9402D8;
+	Mon, 30 Mar 2026 22:55:01 +0200 (CEST)
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+ by mails.dpdk.org (Postfix) with ESMTP id 0FFA2402CE
+ for <dev@dpdk.org>; Mon, 30 Mar 2026 22:55:00 +0200 (CEST)
+Received: by mail-dl1-f52.google.com with SMTP id
+ a92af1059eb24-128b9b7e3edso617773c88.0
+ for <dev@dpdk.org>; Mon, 30 Mar 2026 13:54:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774903181;
- x=1775507981; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774904099;
+ x=1775508899; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=S11oDMZzIKXP+0mWwP4PlwX0XK3OEPZqoNY/NZvZTjU=;
- b=qGuoIpGUsXGa0P8lbRiJjsF+esjxaqMCNWwOQsnHda2Z9skPdD2eYGVOj9PEvh3B7x
- qOBny4H2bxLKLcvNrRWpdd+hXYKaBZzv31XmRd/UmjSxvHs+aPGJ7h27SWN4l/LSz+lB
- n0oiU47nxBP9KvOxKJo1yEfPpp8ygxCgUxN4pFjDJjY4erIIBLT24OLTixHNHiP6QPoZ
- yNmJni/n5v8IRr0WfEHFYZ64SKHnJlL/JRZgSzYprpVBaNIyyc7A4QHR/Ys2ILeIDX76
- Tz7wxCX9LuEgF3XFNhekdD9EOniWd1TaMBu/yf+7x8QzXfAE2515RiplE1VJKKi7uV4p
- /KxQ==
+ bh=wp6FH1Q9bM1GhDk4pxiScUTHfCMjmjBLdPJRbpMRgUM=;
+ b=bA7cJNkcmdFDe52aHuFVxfXylf8uKVIKEBMdrj34PuIjmGsH93pO+PW/bF0zNyBChu
+ +BHLPUCFlPhNlqjwb5QziHwcyL+WXYj8KLEScMhXiOJDYSn0Gl5T0zHbyNv8dttNxd9D
+ cL+sWJuNT9OkxV5jtqxK6MiEXSc/HYn5Kz+k1NJ7kYkQ/Ntf90HiIrrdGqdCtGjbwcih
+ rG8NP2b4pvS49AjbffDsLulZx7vU45+SwINzz3YviBE/8ZUcCde7Oaf/Pb2iMLR6KDGo
+ 74X7FpkFmh6QS05yw/7Qy7xNM3D6oO86keTL7vkMG8NF+xkQtjPlxeQ0KxVtru80SLDe
+ ytXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774903181; x=1775507981;
+ d=1e100.net; s=20251104; t=1774904099; x=1775508899;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=S11oDMZzIKXP+0mWwP4PlwX0XK3OEPZqoNY/NZvZTjU=;
- b=Ewgy9xsYETlDQHRFh6ItmlLeqYN2ueJdcwjXWeS1XgmzxCM4nuD6/Jy8/W+5LRxwrj
- NI6C3G2av15x6+r6gmk/1VegFkE+yL7/hK1gCnRC9FOHUwD/FlNio+HE0EqzhdG4bwhI
- L2VOuFZMaSQ/2bPrUsxeawd6QLJc4+EQSilIWmOzR2Fc69kB+A1wKNwD9t7Wx+1BU5PX
- mzaOCuvvG/g3XcVug+cqC9LIS2PJksLX5TTCPRVm7Lu1yPCMea5Q0ZtqN24lee/4zLK0
- F28PKJWkyufe9eXA6zWgtBUAk6XNRfiYwkR1MHBRh1iNJ3KYm+OwSmlTrQI+fFKgvaiN
- l1jA==
-X-Gm-Message-State: AOJu0Yy5nTA22SrdUB6GzN9ndgYkWgG8nq4ygKcc6WEn6Sq9tgau3pMy
- vf9b17oNolq5Kf21GQcA8RDaiEQQe6p5nGE3YTLvCt0w5b7vQpBNqfdnqqCgQ6Vla25t1SatymG
- mcxy3
-X-Gm-Gg: ATEYQzzGTz7KEJHi8T0a5YpA/QHdE8TyDflahTOZrSNO9SYnU3kk5ie3/kKozNr1XNe
- uYjBbZAgY6kdHwPgwKg5H+o/AFefPL4OCC/eHML9lyYtna/WQvSsYvfoP66768NHtR3Pz/O0z1R
- vh78KzGEJLKDgPjg5xXhT+sDqoLSgu5ElGIY2bzFgRNkuOXLvamHaY4WPrz1sQ6FLfdMVEao24U
- 2F0AujI6RgMEiaE+voI5qRUis5hg6ew6SqCUaF2u7ee+h0ocYvdSGvwwAIdG/B05aKD3aNubY67
- rgI7YQHUfHisNrBe5P1+RvnfaMWb9bIvlXodxq6qESo7B1oI+eFISOHT0HAziyuL8Wblz+44naT
- HgRULduljTgJ9eWP/38TEaZh/cQ6SXbVxyTjpbOVoT0Smwq4LqGeNe7X/yh1UecNKNN4JEikxOT
- H5BRyx9QXvwGQXlsNg3WKRunMPAi3fd19B1b0=
-X-Received: by 2002:a05:7301:6782:b0:2c6:7f49:a86d with SMTP id
- 5a478bee46e88-2c67f49bf39mr2806712eec.15.1774903180781; 
- Mon, 30 Mar 2026 13:39:40 -0700 (PDT)
+ bh=wp6FH1Q9bM1GhDk4pxiScUTHfCMjmjBLdPJRbpMRgUM=;
+ b=eVlu1sXwgSNWBrgoADl5MvN7VRC7RjDoEoKJNELrVaSgjrab4/oA3LMffvLyhsYT9r
+ 4JRwMj3OMVlOIbAvUSgFReJeXRxeF6zOawynyBn5+zlKeHR/mnDFozKa1QMVshFHSLdL
+ C2l2x/us2v7ktq15MaFpOjhN8NdJrtKDgzf4GxeITk0atqGShNGthfnwnbdE4fovES9V
+ cJ4sZQPRH+6etoOZvR57oAS2d6iOGuEZJoXIi13Nv+QcblK9NpTVC6mrLR3m9ia+xq8M
+ r4+X6VfvBiAeqENUOuoumqUJ3eAuRpoY8ogpaFbgki/6ThVhT6EM50dhCKAVW7wQJa17
+ 4i5w==
+X-Gm-Message-State: AOJu0Yy75zvcU8q5THg77oNS55fFWZsnAq+r6af4/EbhmcUExh5RHYTq
+ gi4MSPntZaXyx3xfp7Hfct6HDmljtWrEoBfyIT0mn/O+uZHmiswSz0trobcnVC++uzgqs6xdWzt
+ Q3E/3
+X-Gm-Gg: ATEYQzzexBMKxtODaMduFA27AaNa4aotPRoxU4w7lEa+YSAJzY3Gnqk8hcds0vvIF0E
+ IzYHJuQFH8DnigB9CEN5M9F6kzJivHfcheNWN4E2ER9NF+8Ba+qw7W+Lrwfw7eNw1kZlWvUpcyw
+ HsxvF81DfaDDjhrJXj+Rc9HZHH2cRdDGmhFVs9lCMVax6lMuZXNtC7tHRA/86gFbeFt4ibzU0pq
+ TWv2NPWgEpwKQR0ktzMg6L3SkxI/qzmUBfp+R5R/ceQApnWKU+tsr7xFyteGt5sKtUJIu5NapUK
+ 05tx1+1YP5TaKZ38uAORTcCT6VhBPOTvQS3fjdhupW8OgVJArCY1N4OzE3UhTXQ1n5b3EbPFEy9
+ nE3AVdEd5Q02nIrQHhDX7gqmpAc64oEIipZCF6MQL9PlEc9giYQow9Gr+Hb9Fh3wiy/ExqWPNYP
+ s07HkYC8Gp+MoMlCwyKSEw10RjENJnz11AZ6Q=
+X-Received: by 2002:a05:7022:125:b0:128:ca6f:adf2 with SMTP id
+ a92af1059eb24-12ab292f131mr8641405c88.32.1774904098844; 
+ Mon, 30 Mar 2026 13:54:58 -0700 (PDT)
 Received: from phoenix.local ([104.202.29.139])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2c3c68b249fsm7983273eec.19.2026.03.30.13.39.40
+ a92af1059eb24-12ac09e3872sm9617510c88.13.2026.03.30.13.54.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 30 Mar 2026 13:39:40 -0700 (PDT)
-Date: Mon, 30 Mar 2026 13:39:38 -0700
+ Mon, 30 Mar 2026 13:54:58 -0700 (PDT)
+Date: Mon, 30 Mar 2026 13:54:56 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Gagandeep Singh <g.singh@nxp.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] eal: add worker threads cleanup in rte_eal_cleanup()
-Message-ID: <20260330133938.2c0b6b8f@phoenix.local>
-In-Reply-To: <20250110064717.1372216-1-g.singh@nxp.com>
-References: <20250110064717.1372216-1-g.singh@nxp.com>
+To: Sun Yuechi <sunyuechi@iscas.ac.cn>
+Cc: dev@dpdk.org, Zijian <zijian.oerv@isrc.iscas.ac.cn>, =?UTF-8?B?U3Rh?=
+ =?UTF-8?B?bmlzxYJhdw==?= Kardach <stanislaw.kardach@gmail.com>, Nithin
+ Dabilpuram <ndabilpuram@marvell.com>, Pavan Nikhilesh
+ <pbhagavatula@marvell.com>
+Subject: Re: [PATCH v3] node: lookup with RISC-V vector extension
+Message-ID: <20260330135456.3064ee41@phoenix.local>
+In-Reply-To: <20260206081635.1409106-1-sunyuechi@iscas.ac.cn>
+References: <20260206081635.1409106-1-sunyuechi@iscas.ac.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,83 +83,103 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 10 Jan 2025 12:17:17 +0530
-Gagandeep Singh <g.singh@nxp.com> wrote:
+On Fri,  6 Feb 2026 16:16:35 +0800
+Sun Yuechi <sunyuechi@iscas.ac.cn> wrote:
 
-> This patch introduces a worker thread cleanup function in the EAL library,
-> ensuring proper termination of created pthreads and invocation of
-> registered pthread destructors.
-> This guarantees the correct cleanup of thread-specific resources,
-> used by drivers or applications.
-> 
-> Signed-off-by: Gagandeep Singh <g.singh@nxp.com>
+> Implement ip4_lookup_node_process_vec function for RISC-V architecture
+> using RISC-V Vector Extension instruction set
+>=20
+> Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+> Signed-off-by: Zijian <zijian.oerv@isrc.iscas.ac.cn>
 > ---
 
-This seems to have not gotten review it needs. The AI review process found several issues.
+Since RISC-V changes do not seem to get looked at, did AI review and it
+found several things that need addressing.
 
-Review: [PATCH] eal: add worker threads cleanup in rte_eal_cleanup()
+Review: [PATCH v3] node: lookup with RISC-V vector extension
 
-Patch 1/1 - eal: add worker threads cleanup in rte_eal_cleanup()
+Errors
+------
 
-Error: pthread_join called unconditionally after pthread_cancel failure.
-If pthread_cancel() fails (returns non-zero), the thread was not
-cancelled. Calling pthread_join() on a still-running worker thread
-that is blocked in read() on its pipe will block the cleanup
-indefinitely -- the worker is waiting for a command that will never
-come, and join will wait for the worker that will never exit.
-The join should be skipped when cancel fails, or the cancel failure
-should be treated as fatal for that lcore.
+1. Macro redefinition of RTE_LPM_LOOKUP_SUCCESS and
+   RTE_LPM_VALID_EXT_ENTRY_BITMASK (ip4_lookup_rvv.h lines 8-9).
 
-  Suggested fix:
-    ret = pthread_cancel((pthread_t)lcore_config[lcore_id].thread_id.opaque_id);
-    if (ret != 0) {
-        EAL_LOG(WARNING, "Pthread cancel fails for lcore %d",
-                lcore_id);
-        continue;   /* skip join -- thread is still running */
-    }
-    ret = pthread_join(...);
+   ip4_lookup.c already includes <rte_lpm.h> (line 14) before
+   including ip4_lookup_rvv.h. Both rte_lpm.h and this header
+   #define RTE_LPM_LOOKUP_SUCCESS and RTE_LPM_VALID_EXT_ENTRY_BITMASK,
+   which will produce compiler warnings for macro redefinition.
 
-Error: Cleanup ordering -- worker threads cancelled after eal_bus_cleanup().
-The patch inserts eal_worker_thread_cleanup() after eal_bus_cleanup().
-Bus cleanup may trigger device close/release callbacks. If a worker
-lcore is currently executing a function dispatched via
-rte_eal_remote_launch() that touches bus/device resources, cancelling
-the thread after those resources are torn down risks use-after-free.
-Worker threads should be terminated first, before any subsystem
-teardown, to ensure no worker is mid-execution when resources are
-freed. Move eal_worker_thread_cleanup() to the beginning of
-rte_eal_cleanup(), after the run_once guard but before
-rte_service_finalize() / eal_bus_cleanup().
+   Remove both #defines from ip4_lookup_rvv.h =E2=80=94 the values are
+   already available from rte_lpm.h.
 
-Warning: Uses raw pthread_cancel()/pthread_join() instead of DPDK thread API.
-AGENTS.md forbidden tokens list requires rte_thread_join() instead
-of pthread_join(). The existing mp_channel_cleanup code uses the
-same pattern (pthread_cancel + rte_thread_join), so at minimum
-the join should use rte_thread_join() for consistency:
+   (The upstream rte_lpm_rvv.h has the same issue, but that file is
+   included from rte_lpm.h itself, so the include ordering is
+   different. In the node header the double-define is unavoidable
+   without removing them.)
 
-    rte_thread_join(lcore_config[lcore_id].thread_id, NULL);
+2. RTE_VECT_DEFAULT_SIMD_BITWIDTH change is too broad
+   (rte_vect.h: SIMD_DISABLED -> SIMD_128).
 
-There is no rte_thread_cancel() wrapper, so pthread_cancel() is
-acceptable here (same as rte_mp_channel_cleanup does).
+   This change affects every DPDK subsystem that calls
+   rte_vect_get_max_simd_bitwidth() on RISC-V, not just the node
+   library. It globally enables SIMD code paths across all libraries
+   and drivers that gate on this value. This should be a separate
+   patch with its own justification and testing, not bundled with a
+   node-library feature patch. If a RISC-V platform cannot actually
+   execute 128-bit vector operations at runtime, this default would
+   cause failures.
 
-Warning: No pipe fd cleanup after thread cancellation.
-Each worker has pipe_main2worker and pipe_worker2main fds created
-during rte_eal_init(). After cancelling and joining the worker
-threads, these pipe fds are never closed. This leaks 2 pipe fds
-(4 file descriptors) per worker lcore. The cleanup function should
-close these fds after the join succeeds.
+Warnings
+--------
 
-Warning: Comparing opaque_id against zero to detect uninitialized threads.
-The check `if (!lcore_config[lcore_id].thread_id.opaque_id)` assumes
-that zero means "no thread was created." On Linux, pthread_t is an
-unsigned long and a valid thread ID could theoretically be 0 (though
-glibc never produces this). A more robust approach is to track which
-lcores had threads successfully created, or check the lcore state.
-The existing mp_channel code uses a similar opaque_id != 0 guard,
-so this is minor -- mentioning for completeness.
+3. Duplicated LPM lookup logic instead of using rte_lpm_lookupx4().
 
-Info: The commit message says "pthreads" and "pthread destructors" but
-does not explain *which* thread-specific resources motivate this
-change. A concrete example (e.g., a specific driver TLS destructor
-that leaks without this) would strengthen the justification.
+   The NEON and SSE implementations call rte_lpm_lookupx4() which is
+   already vectorized for RISC-V via rte_lpm_rvv.h upstream. The
+   new rte_lpm_lookup_vec() in ip4_lookup_rvv.h reimplements the
+   same tbl24/tbl8 lookup logic. While the wider LMUL (m8 vs m1)
+   enables larger batch sizes, duplicating LPM internals means any
+   future LPM bug fix or optimization must be applied in two places.
+
+   Consider either:
+   (a) Using rte_lpm_lookupx4() in a loop (as NEON/SSE do) with a
+       scalar tail, or
+   (b) Adding a variable-length bulk lookup to the LPM library
+       itself (e.g., extending rte_lpm_lookup_bulk to use RVV
+       internally) so the node code can call it without duplicating
+       table access logic.
+
+4. No prefetching of packet data.
+
+   The NEON and SSE implementations prefetch both mbuf object lines
+   and packet data (Ethernet + IP headers) for upcoming batches.
+   This implementation has no prefetch calls at all. For large
+   bursts the L1 miss penalty on the rte_pktmbuf_mtod_offset access
+   in the IP extraction loop could be significant. Consider adding
+   rte_prefetch0 for the next batch's packet headers.
+
+5. Stack arrays sized for VLEN > 256 may be excessive.
+
+   RVV_MAX_BURST is 64, giving 3 * 64 * 4 =3D 768 bytes of stack
+   arrays (ips, res, next_hops). The comment says "can be increased
+   further for VLEN > 256" but the current value already exceeds
+   what any in-tree RISC-V platform uses today. 32 would be more
+   conservative and still handle VLEN=3D256 (m8 gives 64 elements at
+   e32 with VLEN=3D256, so 64 is correct for that). This is minor but
+   worth noting for stack-constrained lcore contexts.
+
+Info
+----
+
+6. The patch is a nice addition bringing RISC-V vector support to
+   the node library. The use of vsetvl for natural tail handling
+   (no scalar remainder loop needed) is a good RVV idiom.
+
+7. The fix_spec logic uses bitwise OR accumulation across the batch
+   rather than the all-equal AND chain used by NEON. Both are
+   correct =E2=80=94 the OR detects any mismatch. The NEON approach detects
+   exact same next-hop for all four, while the RVV approach detects
+   any difference from next_index. The RVV approach is actually
+   slightly more precise since it checks against the speculated
+   index rather than checking all-same.
 
