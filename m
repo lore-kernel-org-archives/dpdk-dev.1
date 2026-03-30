@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC23EFF4934
-	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Mar 2026 03:41:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABA1FF493A
+	for <dpdk-dev@archiver.kernel.org>; Mon, 30 Mar 2026 03:58:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CB3D140269;
-	Mon, 30 Mar 2026 05:41:26 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id CEE3D400D6
- for <dev@dpdk.org>; Mon, 30 Mar 2026 05:41:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 76BD040269;
+	Mon, 30 Mar 2026 05:58:31 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 3EA77400D6
+ for <dev@dpdk.org>; Mon, 30 Mar 2026 05:58:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1774842085; x=1806378085;
+ t=1774843109; x=1806379109;
  h=from:to:subject:date:message-id:mime-version:
  content-transfer-encoding;
- bh=V7AAzOpQ0/WeXn6fm3C1rAciZ/B6lDNuBfLq/NGMdnM=;
- b=X16AHCzGxq3y2owOSMy2EDxsQeVUb/Gbc9KZAPWxHuNa+YxU6cNrP08r
- C9iHWMRjoM3wNyJmI6vY3GOctsm9T5yVAZjrUEX+qIU3pqCoA0gjd7PuL
- 5p4E8G/dnSODe9B9Gq5sEbVAsNIXuLY/I3XzFej4Naqam1Idu871/OomG
- 4qQByTdvZUr+Bl3uU4l/RdL3K30hi25lrhfowa/7lSWAD0V55DX8JYYAT
- C4ePrWquQHc8A4Y4QSF1hwtLCclZTnkQeHRcu4/Ri4ctUpLsSInvwjnoB
- dVHIl2plRjPEqjeyt244GOZTp4tcof6D+hYZJXnC06G3f1tO/aSs+pTnY A==;
-X-CSE-ConnectionGUID: mi4JIwU2TJ+O8zZz4ZTtEg==
-X-CSE-MsgGUID: pCoEjs+IQeeUk7vBlKQjtA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11743"; a="75940966"
-X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; d="scan'208";a="75940966"
+ bh=QnLdSLVXJug+oiYxJslg3omBJZDU7c0/kBC9aiGU4n4=;
+ b=XyiJfnurbntEZ5IRNAbvkHl/ElGopttLFH17Psn/kzQr8v3L+VYaWz8q
+ klk6glK8g3SoIydVOq3ZbRsrBf0uCaz8jVazCtTQJlpFIjd09uQNx6oPU
+ +3yBIt+z2tbvyWZbdkJhYJRBP5X/mnkpALWubzHLAxPyZmsb2I9MDRpke
+ eYTq2BxePtZgXUey62pqUqJg7g+AsHnonDfUxBc+eGi/XUNYDbBH95Q7Y
+ eKW46v1aO9cBXW3/MvWv37hyAikHvpw20T6c6Ets7lVKWByMPLiXxHTia
+ Fg0Cbt9C6+Gy7g9CZOn9wCx7IUp0JqA9JHwklrrwmWnusqJijXS7AjpJs Q==;
+X-CSE-ConnectionGUID: S4UNlOP8Qk+8mLb0CMP5iA==
+X-CSE-MsgGUID: WaqEWYmPQKe0oHMvWyowpQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11743"; a="86520312"
+X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; d="scan'208";a="86520312"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Mar 2026 20:41:24 -0700
-X-CSE-ConnectionGUID: MsgCQY6JTLGpZ+JHsIDXUw==
-X-CSE-MsgGUID: aaru10kcT+uavoaJH2oCSQ==
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 29 Mar 2026 20:58:28 -0700
+X-CSE-ConnectionGUID: cEN1QQxNST+0XV9/bDoodw==
+X-CSE-MsgGUID: 3gpwMSmKQdGCGZwN1CD9gg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; d="scan'208";a="230398207"
+X-IronPort-AV: E=Sophos;i="6.23,149,1770624000"; d="scan'208";a="230400688"
 Received: from unknown (HELO sprmax15..) ([10.138.182.128])
- by orviesa004.jf.intel.com with ESMTP; 29 Mar 2026 20:41:22 -0700
+ by orviesa004.jf.intel.com with ESMTP; 29 Mar 2026 20:58:27 -0700
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH 1/6] net/ice: fix FDIR session_id offset for L-bit L2TPv2 types
-Date: Mon, 30 Mar 2026 09:06:15 +0530
-Message-ID: <20260330033615.2565620-1-shaiq.wani@intel.com>
+Subject: [PATCH] net/ice: fix FDIR session ID offset for L-bit L2TPv2 types
+Date: Mon, 30 Mar 2026 09:23:19 +0530
+Message-ID: <20260330035319.2569981-1-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -66,6 +66,7 @@ Wire up ICE_FLOW_FIELD_IDX_L2TPV2_LEN_SESS_ID which was defined but
 never used, and select it based on the L-bit in flags_version.
 
 Fixes: 733640dae75e ("net/ice: support L2TPv2 flow pattern matching")
+
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
  drivers/net/intel/ice/ice_fdir_filter.c  | 13 +++++++++++--
@@ -73,7 +74,7 @@ Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
  2 files changed, 14 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index 5b27f5a077..afa7a7d1dd 100644
+index 3522d77123..bb41f91168 100644
 --- a/drivers/net/intel/ice/ice_fdir_filter.c
 +++ b/drivers/net/intel/ice/ice_fdir_filter.c
 @@ -110,7 +110,8 @@
@@ -94,7 +95,7 @@ index 5b27f5a077..afa7a7d1dd 100644
  	};
  
  	for (i = 0, j = 0; i < RTE_DIM(ice_inset_map); i++) {
-@@ -2600,7 +2602,14 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+@@ -2598,7 +2600,14 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
  			     l2tpv2_mask->hdr.type1.session_id == UINT16_MAX) ||
  			    (flags_version == RTE_L2TPV2_MSG_TYPE_DATA_L_S_O &&
  			     l2tpv2_mask->hdr.type0.session_id == UINT16_MAX)) {
