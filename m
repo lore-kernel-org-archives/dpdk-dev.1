@@ -2,71 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E019AFF60F4
-	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 18:10:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFFD210F9304
+	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 21:30:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0C8B440613;
-	Tue, 31 Mar 2026 20:10:32 +0200 (CEST)
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
- by mails.dpdk.org (Postfix) with ESMTP id 7244E402B6
- for <dev@dpdk.org>; Tue, 31 Mar 2026 20:10:30 +0200 (CEST)
-Received: by mail-dl1-f45.google.com with SMTP id
- a92af1059eb24-1273349c56bso7544187c88.0
- for <dev@dpdk.org>; Tue, 31 Mar 2026 11:10:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id EDB8540BA0;
+	Tue, 31 Mar 2026 23:30:17 +0200 (CEST)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com
+ [209.85.128.41]) by mails.dpdk.org (Postfix) with ESMTP id 4C5FD40B95
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 23:30:16 +0200 (CEST)
+Received: by mail-wm1-f41.google.com with SMTP id
+ 5b1f17b1804b1-4852b81c73aso52831535e9.3
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 14:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774980629;
- x=1775585429; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=nuGaRRqE3IhCrdSevUSPHZZORpS+0Jzln1FQjFqedqk=;
- b=o79Ul66OLp0qpRBOpy0Xla78Rk95TUlliJSLKubUtYkcq1Tnn7nIAkAtR/FppqRgQN
- TCwiSgmF9zAZFAWZ0k0RvIQOuQYgiB0eZaSUjyrv0w0Pm0TuX1zlMEQMP3zbHEXmNLxc
- K4D2xwJ0DSm423lg9IlXZFV5mr3pFtFUCC2T/ei31REW8tJcJ/UzbJ3a3/6EVuo46sYd
- iKNfj1Dhf5wAjfFmeKha+mXhsfqu8npOZF0rgy9cH/G/5EiQDfKhZsYsE63nxOe45M3A
- E9T5XIsUiYUiMLd1fGXyjvNh8kjh0VCSVXfPUShxkI7Po1pz1TcQO9xl33WQrwjohEiX
- vxfQ==
+ d=gmail.com; s=20251104; t=1774992616; x=1775597416; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=G3rAt2zLloeC4ST/y05GuXLfVY3p2aSt4sQY4a2XmDg=;
+ b=gQtYdVEYrjPlFA1Ov+DT7Ku1qNzAx5wRXdE83LQs2agENXiiRpyaMIwYsrM2B2p/lT
+ bvCWRLmK6WGxnG3TxyplsjBQew4GvMGjwqV8d1nt+6rcCn/TDbXXo4c3NOizwfzW54/U
+ hlJS3enFFhi4JO9uZedSuGNE8bI5brLbzErJ63r2ne674tZzBjfvWETdoTVmnrtrCw0E
+ sK86pO2P/QTD27e7fmEqHzL8sf9x6hxwU2Qf3X1urxq5xiZ61xDKs6JdRU08G3875aT4
+ r/7BrH0bvU6XJDGrTQJPOj1PCo7VrJWQtgyCsKoekH+VP6n2tT63bAQREfAvId9J1iAP
+ r7EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774980629; x=1775585429;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=nuGaRRqE3IhCrdSevUSPHZZORpS+0Jzln1FQjFqedqk=;
- b=YRNjx6fFRKJKyEJ/575bRg0xFuzCA1o6Efg17vDbpOTPfRy1A4M5vIj5SL80IhtzqW
- p3c8IG4jcLoYfpQnj7GSdkqbPLB0m7RoqiTTuWIovXPfv+D2fE2Qszu0O1d0OR7rDDEc
- GrDvxSjkO553D4WYC40D8jLh807AA0HJ28+j3MqPy3e7uW+KvK+vU0J/uYE9u0xomju2
- A1BIa514ab4Ij9nSn3+xYSjT+EXYNODO/wfsZtlSptX8WHlVGWVTVxi0gr0xlsvsrErc
- VeNr1CS2mUnu/wO7IEfmnjArCHomYUVYb5GP4Z6uIikJNqif9z70gdbkkMTe4roRUllX
- S19w==
-X-Gm-Message-State: AOJu0Ywe+CbSXyTfMcrC39wUTb/1FtbOwZU3TIooK84pDXxW5YIfI+e7
- uwoZGoAd41qXB68OdNvtjS9FSwEBSXvvX5PZEcOKa5Hxlfq4MQECE7F+3PbwELzYxME=
-X-Gm-Gg: ATEYQzxjjTABpeoXrlq+CgyHo+S7RCItMr0B6YY0IRkjE5QylInevtmWpl3TM1dS7p8
- BpFc42zU1zAtDmiRt/dm30t7LodpkEwk9M+VeDRwNlBlqfplh+z7UA1Oi0X4b9oupSc5nCJIE7o
- xdgSAKNWqNX5UCBR3dmwbfkTZbGY5bXoLwK7TS2l4BD1369nKr8ksz9aW4PEKMVo2CToczl/ofV
- J5ZstNB0CqV9evYcmNsJG2zKZUPwklsq3IGAxHghPMO11cjlihdjdx5yekrvzGgQk8WkYaSe77I
- mSC1DIJOdcuVEVnS5FzM375sC9KoJdk7KCWVY/gD/cIEvbU7BpFGjlMpXaysvvanRXpRJOXzW5s
- AD+ID5OAaKBlOeiYkQS2KH8EdyOOuX5/V8GXYScf/JvBoVx/1g+h8G0zUpvmHvtf2/A+8Uwtcis
- vH8DXM7v/a5LB+Y7+1mleQv796PUPTT3vAa/w=
-X-Received: by 2002:a05:7022:e01:b0:12a:949b:c46 with SMTP id
- a92af1059eb24-12be64cd277mr258193c88.21.1774980629211; 
- Tue, 31 Mar 2026 11:10:29 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12abde65313sm10223632c88.14.2026.03.31.11.10.28
+ d=1e100.net; s=20251104; t=1774992616; x=1775597416;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=G3rAt2zLloeC4ST/y05GuXLfVY3p2aSt4sQY4a2XmDg=;
+ b=esvUgeFD1J4wxEJ5Y/HKS17yz3pT2n4lpWMSP0KmYEoq/I39rEn9ln3lquCVPjm6GJ
+ gEk17hzWGG42L+iZ0bOntdHLRqjhx3ZPAWQphD7EtWW5RwV4operh2NdiQUB28/LeLA7
+ lHm76hdO5je6b0I1NitQZlDDNuLgihaSJ0DKRT1CTUXOFEGVfyTjPUGJWBiaYzzB0UK4
+ SFpGxJFVl5DZmEADcOSagaAuOUtuBf+13lpm1Mw/xuBtcEtLbktvsLryEbWKlv7gdEKX
+ sQepI4OEsFBLun5Bqtd9CspAeYzND6CmgQU/2oaegs/yaY+HUZxOBqPxFJKxHimXLa8M
+ hE1w==
+X-Gm-Message-State: AOJu0YznrqmlmPRTIAnhmAkgTlGg6IsdkB0HomJURLUJgMiF1jvnIVp0
+ eTmCy2NRhbW9TyVx1cHBYrw0Ku1vKfvMLc+Yl80GFMczBijSLgPFsbNiNRbUdw==
+X-Gm-Gg: ATEYQzxzhpQ5PSP2uW6aeoGhl3o7Kq4Xh2XPap8VX8mH0QCHlIrA8WHQ3x8arJHPf9B
+ U2mhMGPl0PVTIHvo9Ejk3vgZUbA3c+muVuJ5KbqRtTwkwozfZbAC5KWrB9RQRzea6h14xGjIHCX
+ TTrJmFHhf0NTRwdweCpccvE1pdYg7IBD9+bqxO4bRYOSQ9uY34LsEyXMB7SczqsNPwxLvq4V5it
+ U2WVfRjXC4TNbfU4m+0Yjgn0ARTGoQQ8toTmc8D7OAXmoRuc4PmAYtx/PKtuLLA4HB4vQnFoO/D
+ ULAcCr6jWS16MOP/pXxMieY3F7K4ciNgP2Hj0QqE4h3NAW7aXAdBtEpJXBUliN4aSVNFdU8m/jR
+ MK1OR6ixLr+KMAXH0o9Ga4sSUWsV/mm69P4Gg/f9bcVwfX+vgQH8O9++FBkJcHR15PEvaFp3Hm8
+ zcNW3nH6nD1mjucQSvOa2AI8d7Od2WZc2leNs+GX8=
+X-Received: by 2002:a05:600c:34d5:b0:487:20ee:bef6 with SMTP id
+ 5b1f17b1804b1-48883566134mr18758085e9.11.1774992615468; 
+ Tue, 31 Mar 2026 14:30:15 -0700 (PDT)
+Received: from localhost ([2a01:4b00:d036:ae00:d751:7f28:43f1:6bdc])
+ by smtp.gmail.com with UTF8SMTPSA id
+ 5b1f17b1804b1-4887e9630ddsm59318375e9.13.2026.03.31.14.30.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 31 Mar 2026 11:10:28 -0700 (PDT)
-Date: Tue, 31 Mar 2026 11:10:25 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Bruce Richardson <bruce.richardson@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 0/7] Add script for real-time telemetry monitoring
-Message-ID: <20260331111025.2e0b46ce@phoenix.local>
-In-Reply-To: <20260205150230.123076-1-bruce.richardson@intel.com>
-References: <20251210165532.103450-1-bruce.richardson@intel.com>
- <20260205150230.123076-1-bruce.richardson@intel.com>
+ Tue, 31 Mar 2026 14:30:14 -0700 (PDT)
+From: luca.boccassi@gmail.com
+To: dev <dev@dpdk.org>
+Cc: dpdk stable <stable@dpdk.org>, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Maxime Leroy <maxime@leroys.fr>, Nipun Gupta <nipun.gupta@amd.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: please help backporting some patches to stable release 24.11.5
+Date: Tue, 31 Mar 2026 22:30:06 +0100
+Message-ID: <20260331213008.4179620-1-luca.boccassi@gmail.com>
+X-Mailer: git-send-email 2.47.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,195 +77,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu,  5 Feb 2026 15:02:23 +0000
-Bruce Richardson <bruce.richardson@intel.com> wrote:
+Hi commit authors (and maintainers),
 
-> TL;DR
-> ------
->=20
-> For a  quick demo, apply patches, run e.g. testpmd and then in a separate
-> terminal run:
->=20
->   ./usertools/dpdk-telemetry-watcher.py -d1T eth.tx
->=20
-> Output, updated once per second, will be traffic rate per port e.g.:
->=20
-> Connected to application: "dpdk-testpmd"
-> Time       /ethdev/stats,0.opackets /ethdev/stats,1.opackets        Total
-> 16:29:12                  5,213,119                5,214,304   10,427,423
->=20
->=20
-> Fuller details
-> --------------
->=20
-> While we have the dpdk-telemetry.py CLI app for interactive querying of
-> telemetry on the commandline, and a telemetry exporter script for
-> sending telemetry to external tools for real-time monitoring, we don't
-> have an app that can print real-time stats for DPDK apps on the
-> terminal. This patchset adds such a script, developed with the help of
-> Github copilot to fill a need that I found in my testing. Submitting it
-> here in the hopes that others find it of use.
->=20
-> The script acts as a wrapper around the existing dpdk-telemetry.py
-> script, and pipes the commands to that script and reads the responses,
-> querying it once per second. It takes a number of flag parameters, such
-> as the ones above:
->  - "-d" for delta values, i.e. PPS rather than total packets
->  - "-1" for single-line output, i.e. no scrolling up the screen
->  - "-T" to display a total column
->=20
-> Other flag parameters can be seen by looking at the help output.
->=20
-> Beyond the flags, the script also takes a number of positional
-> parameters, which refer to specific stats to display. These stats must
-> be numeric values, and should take the form of the telemetry command to
-> send, followed by a "." and the stat within the result which is to be
-> tracked. As above, a stat would be e.g. "/ethdev/stats,0.opackets",
-> where we send "/ethdev/stats,0" to telemetry and extract the "opackets"
-> part of the result.
->=20
-> However, specifying individual stats can be awkward, so some shortcuts
-> are provided too for the common case of monitoring ethernet ports. Any
-> positional arg starting with "eth" will be replaced by the set of
-> equivalent values for each port, e.g. "eth.imissed" will track the
-> imissed value on all ports in use in the app. The ipackets and opackets
-> values, as common metrics, are also available as shortened values as
-> just "rx" and "tx", so in the example above, "eth.tx" means to track the
-> opackets stat for every ethdev port.
->=20
-> Finally, the script also has reconnection support so you can leave it
-> running while you start and stop your application in another terminal.
-> The watcher will try and reconnect to a running instance every second.
->=20
-> v4:
-> - Updated docs following AI review
-> - Converted one missed f-string to regular string
->=20
-> v3:
-> Updated following AI review
-> - removed unnecessary f-string
-> - added documnentation in guides/tools
-> - added release note entry
->=20
-> v2:
-> - improve reconnection handling, eliminating some crashes seen in testing.
->=20
-> Bruce Richardson (7):
->   usertools: add new script to monitor telemetry on terminal
->   usertools/telemetry-watcher: add displaying stats
->   usertools/telemetry-watcher: add delta and timeout opts
->   usertools/telemetry-watcher: add total and one-line opts
->   usertools/telemetry-watcher: add thousands separator
->   usertools/telemetry-watcher: add eth name shortcuts
->   usertools/telemetry-watcher: support reconnection
->=20
->  doc/guides/rel_notes/release_26_03.rst |   7 +
->  doc/guides/tools/index.rst             |   1 +
->  doc/guides/tools/telemetrywatcher.rst  | 184 +++++++++++
->  usertools/dpdk-telemetry-watcher.py    | 435 +++++++++++++++++++++++++
->  usertools/meson.build                  |   1 +
->  5 files changed, 628 insertions(+)
->  create mode 100644 doc/guides/tools/telemetrywatcher.rst
->  create mode 100755 usertools/dpdk-telemetry-watcher.py
->=20
-> --
-> 2.51.0
->=20
+Despite being selected by the DPDK maintenance tool ./devtools/git-log-fixes.sh
+I didn't apply following commits from DPDK main to 24.11
+stable branch, as conflicts or build errors occur.
 
-This didn't get merged so will need to be rebased.
-You may want to address these AI review comments.
+Can authors check your patches in the following list and either:
+    - Backport your patches to the 24.11 branch, or
+    - Indicate that the patch should not be backported
 
-Review of [PATCH v4 1-7/7] usertools: dpdk-telemetry-watcher
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Please do either of the above by 2026/04/03.
 
-Nice tool =E2=80=94 having a continuous monitoring wrapper around
-dpdk-telemetry.py is a practical addition. Patches 1-6 are
-clean and well-structured. Patch 7 (reconnection support)
-has several correctness issues described below.
+You can find the a temporary work-in-progress branch of the coming 24.11.5
+release at:
+    https://github.com/bluca/dpdk-stable
+It is recommended to backport on top of that to minimize further conflicts or
+misunderstandings.
 
+Some notes on stable backports:
 
-Patch 7/7: usertools/telemetry-watcher: support reconnection
-------------------------------------------------------------
+A backport should contain a reference to the DPDK main branch commit
+in it's commit message in the following fashion:
+    [ upstream commit <commit's dpdk main branch SHA-1 checksum> ]
 
-Error: monitor_stats `continue` on failed query causes
-  IndexError on next delta iteration.
+For example:
+    https://git.dpdk.org/dpdk-stable/commit/?h=18.11&id=d90e6ae6f936ecdc2fd3811ff9f26aec7f3c06eb
 
-  When `query_telemetry` returns (process, None), the code
-  does `continue`, skipping `current_values.append(...)`.
-  At the end of the loop body, `prev_values =3D current_values`
-  stores a shorter list. On the next iteration,
-  `prev_values[i]` raises IndexError for the missing indices.
+When sending the backported patch, please indicate the target branch in the
+subject line, as we have multiple branches, for example:
+    [PATCH 24.11] foo/bar: fix baz
 
-  Suggested fix: when data is None, append prev_values[i]
-  (or 0) as the current_value so the list length is preserved:
+With git format-patch, this can be achieved by appending the parameter:
+    --subject-prefix='PATCH 24.11'
 
-    process, data =3D query_telemetry(process, command)
-    if not data:
-        current_values.append(prev_values[i] if i < len(prev_values) else 0)
-        row +=3D "N/A".rjust(25)
-        continue
+Send the backported patch to "stable@dpdk.org" but not "dev@dpdk.org".
 
+FYI, branch 24.11 is located at tree:
+   https://git.dpdk.org/dpdk-stable
 
-Error: BrokenPipeError not handled in query_telemetry.
+Thanks.
 
-  When the DPDK application dies, the subprocess's stdin pipe
-  breaks. The initial `process.stdin.write()` / `.flush()`
-  before the reconnection loop will raise BrokenPipeError
-  instead of returning an empty readline(). The reconnection
-  logic never triggers.
+Luca Boccassi
 
-  Suggested fix: wrap the write+flush+readline in a
-  try/except (BrokenPipeError, OSError) and treat it the
-  same as an empty response =E2=80=94 fall into the reconnection
-  loop.
-
-
-Warning: old subprocess not cleaned up on reconnection.
-
-  In query_telemetry, when readline() returns empty and
-  reconnection begins, the old process object is replaced
-  without calling process.terminate() or process.wait().
-  The dead subprocess accumulates as a zombie. Similarly,
-  create_telemetry_process now calls print_connected_app
-  which can fail and return None, leaking the just-created
-  Popen object.
-
-  Suggested fix: add a small helper to clean up a process
-  (terminate, close pipes, wait), and call it before setting
-  process =3D None in the reconnection path. In
-  create_telemetry_process, if print_connected_app fails,
-  terminate the process before returning None.
-
-
-Warning: expand_shortcuts and validate_stats lose the
-  reconnected process handle.
-
-  Both functions update their local `process` variable via
-  query_telemetry's return value, but neither returns the
-  (possibly new) process to the caller. If a reconnection
-  happens during shortcut expansion or validation, the
-  caller in monitor_stats still holds the old dead process
-  object.
-
-  Suggested fix: have expand_shortcuts and validate_stats
-  return the process alongside their current return values,
-  or restructure so monitor_stats passes process by
-  reference (e.g., as a mutable container).
-
-
-Info: recursive call between create_telemetry_process and
-  print_connected_app.
-
-  create_telemetry_process calls print_connected_app, which
-  calls query_telemetry, which on disconnect calls
-  create_telemetry_process again. This indirect recursion
-  works in practice (Python has a high default recursion
-  limit and the retry loop in query_telemetry breaks the
-  chain), but it is fragile and hard to follow. Consider
-  separating the "connect" step from the "verify connection"
-  step to avoid the recursive dependency.
-
-
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+f9b31cf4a6  Maxime Leroy     net/dpaa2: fix Rx error queue memory leaks
