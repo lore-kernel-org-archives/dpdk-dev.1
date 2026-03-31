@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 926A11061B21
-	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 03:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B1E51061B2F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 03:26:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DB39402E9;
-	Tue, 31 Mar 2026 05:16:00 +0200 (CEST)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 8F0124025E
- for <dev@dpdk.org>; Tue, 31 Mar 2026 05:15:59 +0200 (CEST)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-2c7e5f38b37so510870eec.0
- for <dev@dpdk.org>; Mon, 30 Mar 2026 20:15:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 688A340285;
+	Tue, 31 Mar 2026 05:26:19 +0200 (CEST)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com
+ [209.85.214.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 63CA54025E
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 05:26:18 +0200 (CEST)
+Received: by mail-pl1-f177.google.com with SMTP id
+ d9443c01a7336-2ad4d639db3so23523985ad.0
+ for <dev@dpdk.org>; Mon, 30 Mar 2026 20:26:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774926958;
- x=1775531758; darn=dpdk.org; 
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774927577;
+ x=1775532377; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nfsLZAc7Yz8D5Q7XAnhDH2QOzrRT8uNTxas2JFUlw0E=;
- b=NdmL5odXv1jYlAa13fjHW1nf2E6mGdTb2N/ksiht1llIcqi0AfalY6nEhSCFDULL3d
- 069CuphzYkmjg2wC7yi0oqjoCeYX8Xq3VzKEfxuN6IEXy8/dXfZwAjbn60N0hOp88SCI
- gp8O+32v5YnqXb56MZIJVsCdWQ2puCULWQtTVe1hvdUQDts1fEMcMcyZT/NRGcNqFLGd
- tY0rK5jYfrbYyBblSCH2EI7kIg5XfRf6gzGaJlXJjGnKPP7ppo0jzFXCSuF8HWdEA77Q
- 1AKWnVG6lbMp9QVlQhLgYCK7kDYk5kGlD21kiAGXgjJcxrtNJvXNJEYuUPouSrbpIrep
- k5eQ==
+ bh=HmLe1Yqzb5jduUUMZRkB+G0gHoU+lyLtWA2IY2Jo+pA=;
+ b=dCyJE7F2KWPKAeNw8whH5raB5BpfXh8S8PQqF8P9Ws//MRfnfbT/TgpbkTx05xMVmd
+ 8VThrdRSvt7I7/RoVLH5z3e05+rM1Zi+UhOo5z1+Dyegx7xDz4RcVar/Ruli7V12pKRh
+ rN1iofU7vbQJHGvJLpmFHkVoYaYY753N4q2AMnqsYwqIEUYUwCxnCTy3RdNM3pA70K26
+ M/eQQTtPoY91uR8fENN93XjctZ4x6Rvs1r35bx90teaolt3sfIjM93nr2PDHelVOhzGM
+ zpee9Df4jhD3lFhGC+43t8Hv+3IZwgZiBWE88l3xuXLCGV9P8hWSlIM/p967ieqWRqDw
+ v+tA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774926958; x=1775531758;
+ d=1e100.net; s=20251104; t=1774927577; x=1775532377;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=nfsLZAc7Yz8D5Q7XAnhDH2QOzrRT8uNTxas2JFUlw0E=;
- b=Ytum5AOAx04ag1WI65hmB40l66xQJr6bKPX3c5TtFcG+T4LW6ahL9NdZCRzgTHBf5l
- e9L2QuvD0kYuWHjxTnuROGkP9KIrDhIk7MKruDcr7DzaMjDLCSy8lVz9lG9gjgCR8bhv
- I7PoyMEbKMu3xqKMXfu+TVXmIx0CsFfIBzeQvoaJo5O24ubr+NsYqDzmIKkHOMpbSEj2
- UC9sgHF2lOW/D84mCccfB0heqcw2K+bRrPKDl1faijFC0DwpDtVjPJiPK6/5qQXbcbpn
- y3Ll6XCENwF0eBu3PVKuv/Kh1lSEHje0ARXfC05RSNIoNvMtzMC8A58w3EarwwLY6NHA
- WY2g==
-X-Gm-Message-State: AOJu0Yx0I6M9+dna6yAlA5akzofGLr0nLncLO/7RIVPu0RfmfNl96I0h
- p+5MjT1ppMpGaU36K1av9ESuo3A05TzX05CItx2aKmOokuE/aLQ/Wjv9SVXM4MXVSL8=
-X-Gm-Gg: ATEYQzwYtMUV03etTV4c+ySzJcu/TI0IJymvwzXqQWxqHmbVSZdPtp0Hdu9tnZ1nHZf
- Enc0V7uo1SOV9DENnxBzLAVfa6TUdtOJRbeZDpB72yQQ/8WUrBBg/r0HrW3YOlk01YlTEjdUBkc
- hsFZd8sj5pXFoTUI7dMrnIhGE8pAAWe5nXRAZdH2fvoiCn4Voe+i0ClIbFLLraWpN3WCWCC0TLj
- 7bZMhXunvCVMdvP94stGY/9PTJMpntuLc2gAZbtDUgJNditr8wo24uBsZKenQ5PWfGFpRY4dcLO
- tkAFKE1oxbjYEzUacn/fFmZOYahmvZgO4FjOFg435aIRJVeFKz2yJK7zL3AMjOVYRy2hD49d/+M
- tLxWhI0TgHFi3pQmnULU1QDB63Fjcc2/jbSF5VWKojIIUkZNRQuHMWCotGC2mNIpdnz6V7eLUqD
- exuTuwRlekMJxZN8aBw3jr8aeo02UIC3/2I+0=
-X-Received: by 2002:a05:7301:1692:b0:2c8:1d56:3410 with SMTP id
- 5a478bee46e88-2c81d5642e8mr394160eec.18.1774926958253; 
- Mon, 30 Mar 2026 20:15:58 -0700 (PDT)
+ bh=HmLe1Yqzb5jduUUMZRkB+G0gHoU+lyLtWA2IY2Jo+pA=;
+ b=CNn8cAEd7/Qt4mpfTi2tOM15BzPKKezr2Yoi8jdJuPXP05ZBlkcAyx6Wgd+kJuoMPW
+ SpmcrHs/Iybov+4W37SS1IPjviJZluvwq9Y4b5lH3EfP/Nrr6sFDU/+zl917qPFsP4Np
+ N6snzufjE3XbJ/W8iAHuzpT6bZ3UM5pE8p3ioXL1osRpwQvVuMHL4aO7TDupVaoTmS+q
+ JWNw8rjZbx9TsY7QnWyfQhZv/3Iex6nAnwEMpp/+RZWTmhCzeV95UAtWoI/l6VedqomE
+ a8kjJtCYCMN7AnZnGkFt54vide2q8hNVraYLzjq6DnTFiP+LqHjDRwMk6YAIiO5wjgL5
+ BGng==
+X-Gm-Message-State: AOJu0Yz9qiveWsXoRSbOVAH32TdtlJgRpqwO46s/sBBYRIbncwU/yqWO
+ vPXIwg8lHAvAkpDU06AOxHlPoFtAwIYZ1K4e4T/JG2RfkJ/l/5OMKXBaapmADjQRRH4=
+X-Gm-Gg: ATEYQzwSf5QTy5ZbNHfpDZl2I/vJRBeJazA99U3lq7KctVr1gEYbCWhXURfsp/asLnX
+ O3eJGIAKW3klHtCSpD8331wtPBH/dsxpwDeuKb95pddfPm9+rVad5m0QoA7q1iGhJ3cA7KbIXfF
+ mkk6nNhfKdBZtRGRYpYe1grSGYqi3Jrr2tGKRUrCoe8+hvCtt9XNR7kDlnx8AOOu6Ko1KUy0h2S
+ vOx3W4OoQm6+14B+LrHiY59WoyHti4VjaIgJ1qQSW7U/SZd5scpPfjrNsIghMO89MVa2v3X+zgG
+ veCT2GZWugGHqEN+RaGV6jXwqtR1uNXAkW5jkCOGalwtYNvlVGsXdmfo5qL3sEVoQO5k6A1lyy7
+ Xd0RIog5eWgdVfQ2Ldbo3XQkHsb124YOGK7zTv40Fnbs2nGiKN8ut2rgSNf0svnr5v7AlS5Bewb
+ Me2OWjSOjARJC6uJWIr/6nLagHKZrFj60E424=
+X-Received: by 2002:a17:902:e5cc:b0:2ae:a928:f544 with SMTP id
+ d9443c01a7336-2b0cdd2f564mr160323975ad.45.1774927577219; 
+ Mon, 30 Mar 2026 20:26:17 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2c3c6e9c088sm8744106eec.21.2026.03.30.20.15.57
+ d9443c01a7336-2b24265a954sm98404625ad.18.2026.03.30.20.26.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 30 Mar 2026 20:15:58 -0700 (PDT)
-Date: Mon, 30 Mar 2026 20:15:54 -0700
+ Mon, 30 Mar 2026 20:26:17 -0700 (PDT)
+Date: Mon, 30 Mar 2026 20:26:09 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Cliff Burdick <cburdick@nvidia.com>
-Cc: <dev@dpdk.org>, <anatoly.burakov@intel.com>
-Subject: Re: [PATCH v4 0/2] support dmabuf
-Message-ID: <20260330201554.5c1ad08e@phoenix.local>
-In-Reply-To: <20260204155206.2345189-1-cburdick@nvidia.com>
-References: <20260203230338.1066297-1-cburdick@nvidia.com>
- <20260204155206.2345189-1-cburdick@nvidia.com>
+To: <pravin.bathija@dell.com>
+Cc: <dev@dpdk.org>, <maxime.coquelin@redhat.com>, <fengchengwen@huawei.com>
+Subject: Re: [PATCH v7 0/5] Support add/remove memory region & get-max-slots
+Message-ID: <20260330202609.2e34cd13@phoenix.local>
+In-Reply-To: <20260211102433.694516-1-pravin.bathija@dell.com>
+References: <20260211102433.694516-1-pravin.bathija@dell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,199 +80,249 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 4 Feb 2026 15:50:07 +0000
-Cliff Burdick <cburdick@nvidia.com> wrote:
+On Wed, 11 Feb 2026 10:24:28 +0000
+<pravin.bathija@dell.com> wrote:
 
-> Fixes since v3:
-> * Fixed version in RTE_EXPORT_EXPERIMENTAL_SYMBOL
+> From: Pravin M Bathija <pravin.bathija@dell.com>
 > 
-> Add support for kernel dmabuf feature and integrate it in the mlx5 driver.
-> This feature is needed to support GPUDirect on newer kernels.
+> This is version v7 of the patchset and it incorporates the
+> recommendations made by Maxime Coquelin and Feng Cheng Wen.
+> The patchset includes support for adding and removal of memory
+> regions, getting max memory slots and other changes to vhost-user
+> messages.  These messages are sent from vhost-user front-end (qemu
+> or libblkio) to a vhost-user back-end (dpdk, spdk). Support functions
+> for these message functions have been implemented in the interest of
+> writing optimized code. Older functions, part of vhost-user back-end
+> have also been optimized using these newly defined support functions.
+> This implementation has been extensively tested by doing Read/Write
+> I/O from multiple instances of fio + libblkio (front-end) talking to
+> spdk/dpdk (back-end) based drives. Tested with qemu front-end
+> talking to dpdk + testpmd (back-end) performing add/removal of memory
+> regions. Also tested post-copy live migration after doing
+> add_memory_region.
 > 
-> I apologize for all the patches. Still trying to learn how to submit these.
+> Version Log:
+> Version v7 (Current version): Incorporate code review suggestions
+> from Maxime Coquelin. Add debug messages to vhost_postcopy_register
+> function.
+> Version v6: Added the enablement of this feature
+> as a final patch in this patch-set and other code optimizations as
+> suggested by Maxime Coquelin.
+> Version v5: removed the patch that increased the
+> number of memory regions from 8 to 128. This will be submitted as a
+> separate feature at a later point after incorporating additional
+> optimizations. Also includes code optimizations as suggested by Feng
+> Cheng Wen.
+> Version v4: code optimizations as suggested by Feng Cheng Wen.
+> Version v3: code optimizations as suggested by Maxime Coquelin
+> and Thomas Monjalon.
+> Version v2: code optimizations as suggested by Maxime Coquelin.
+> Version v1: Initial patch set.
 > 
-> Cliff Burdick (2):
->   eal: support dmabuf
->   common/mlx5: support dmabuf
+> Pravin M Bathija (5):
+>   vhost: add user to mailmap and define to vhost hdr
+>   vhost_user: header defines for add/rem mem region
+>   vhost_user: support function defines for back-end
+>   vhost_user: Function defs for add/rem mem regions
+>   vhost_user: enable configure memory slots
 > 
->  .mailmap                                      |   1 +
->  doc/guides/rel_notes/release_26_03.rst        |   6 +
->  drivers/common/mlx5/linux/meson.build         |   2 +
->  drivers/common/mlx5/linux/mlx5_common_verbs.c |  48 ++++-
->  drivers/common/mlx5/linux/mlx5_glue.c         |  19 ++
->  drivers/common/mlx5/linux/mlx5_glue.h         |   3 +
->  drivers/common/mlx5/mlx5_common.c             |  42 ++++-
->  drivers/common/mlx5/mlx5_common_mr.c          | 113 +++++++++++-
->  drivers/common/mlx5/mlx5_common_mr.h          |  17 +-
->  drivers/common/mlx5/windows/mlx5_common_os.c  |   8 +-
->  drivers/crypto/mlx5/mlx5_crypto.h             |   1 +
->  drivers/crypto/mlx5/mlx5_crypto_gcm.c         |   3 +-
->  lib/eal/common/eal_common_memory.c            | 165 +++++++++++++++++-
->  lib/eal/common/eal_memalloc.h                 |  21 +++
->  lib/eal/common/malloc_heap.c                  |  27 +++
->  lib/eal/common/malloc_heap.h                  |   5 +
->  lib/eal/include/rte_memory.h                  | 145 +++++++++++++++
->  17 files changed, 612 insertions(+), 14 deletions(-)
+>  .mailmap               |   1 +
+>  lib/vhost/rte_vhost.h  |   4 +
+>  lib/vhost/vhost_user.c | 392 ++++++++++++++++++++++++++++++++++++-----
+>  lib/vhost/vhost_user.h |  10 ++
+>  4 files changed, 365 insertions(+), 42 deletions(-)
 > 
 
-I don't think anyone look at the details here.
-If they did they would see the same thing as what AI did.
+Lots more stuff found by AI code review, this is not ready.
+
+Review of [PATCH v7 1-5/5] vhost: configure memory slots support
+Author: Pravin M Bathija <pravin.bathija@dell.com>
+
+This patch series adds support for the VHOST_USER_F_CONFIGURE_MEM_SLOTS
+protocol feature, enabling add/remove individual memory regions instead
+of requiring a full SET_MEM_TABLE each time.  The approach is sound and
+the feature is needed, but several correctness bugs need to be addressed.
+
+Patch 3/5 -- vhost_user: support function defines for back-end
+--------------------------------------------------------------------
+
+Error: dev_invalidate_vrings loses *pdev update after numa_realloc
+
+  translate_ring_addresses() calls numa_realloc(), which can reallocate
+  the dev struct and update *pdev.  In the original set_mem_table the
+  caller writes "*pdev = dev;" after the call to observe this.
+
+  dev_invalidate_vrings() takes a plain "struct virtio_net *dev" and
+  passes "&dev, &vq" to translate_ring_addresses -- but dev is a local
+  copy.  If numa_realloc reallocates, the caller's *pdev (in
+  vhost_user_add_mem_reg) is never updated, and all subsequent accesses
+  use a stale/freed pointer -- a use-after-free.
+
+  The function should take struct virtio_net **pdev (matching the
+  pattern used in set_mem_table) and propagate updates back.
+
+Error: async_dma_map_region can underflow reg_size
+
+  The loop "reg_size -= page->size" uses unsigned subtraction. If
+  page->size does not evenly divide reg->size (which can happen with
+  misaligned guest pages), reg_size wraps to a huge value and the loop
+  runs out of bounds.  The original async_dma_map avoids this by
+  iterating over nr_guest_pages directly.
+
+  Suggest checking "reg_size >= page->size" before subtracting, or
+  better yet iterating like the original does.
+
+Warning: free_all_mem_regions iterates all VHOST_MEMORY_MAX_NREGIONS
+  but the original free_mem_region iterated only dev->mem->nregions
+
+  This is intentional for the sparse-slot design, but free_mem_region()
+  checks "reg->host_user_addr" while free_all_mem_regions checks
+  "reg->mmap_addr" as the sentinel.  These should be consistent.
+  A region that was partially initialized (mmap_addr set but
+  host_user_addr not yet set, or vice versa) would behave
+  differently depending on which sentinel is checked.
+
+Warning: vhost_user_initialize_memory unconditionally allocates
+  dev->mem without freeing any prior allocation
+
+  If dev->mem is non-NULL when vhost_user_initialize_memory is called,
+  the old allocation is leaked.  set_mem_table frees dev->mem before
+  calling it, but add_mem_reg only checks "dev->mem == NULL" and skips
+  the call otherwise.  This is safe as coded, but the function itself
+  is fragile -- consider adding an assertion or early return if
+  dev->mem is already set.
+
+Info: vhost_user_postcopy_register changes use reg_msg_index but the
+  second loop (postcopy_region_register) still iterates dev->mem->regions
+  with nregions as the bound and just skips zeros.  This is correct
+  but the two loops use different iteration strategies which is
+  confusing.  Consider making both iterate VHOST_MEMORY_MAX_NREGIONS
+  with a skip-zero check for consistency.
 
 
-Review: [PATCH v4 1/2] eal: support dmabuf
-        [PATCH v4 2/2] common/mlx5: support dmabuf
+Patch 4/5 -- vhost_user: Function defs for add/rem mem regions
+--------------------------------------------------------------------
 
-Good approach using a side-table to avoid ABI changes to
-rte_memseg_list. The dmabuf support for mlx5 is well-structured
-with proper compile-time gating via HAVE_IBV_REG_DMABUF_MR.
+Error: vhost_user_add_mem_reg does not set ctx->fds[0] = -1 after
+  assigning reg->fd = ctx->fds[0]
 
-Patch 1/2 - eal: support dmabuf
+  In the original set_mem_table, after "reg->fd = ctx->fds[i]" the
+  code sets "ctx->fds[i] = -1" to prevent the fd from being double-
+  closed if the error path calls close_msg_fds().  The new add_mem_reg
+  omits this.  If vhost_user_mmap_region or vhost_user_postcopy_register
+  fails, the error path calls close_msg_fds(ctx) which closes
+  ctx->fds[0] -- but reg->fd still holds the same value.  Later,
+  free_all_mem_regions will close(reg->fd) again -- double close.
 
-Error: rte_extmem_register is broken by rte_extmem_register_dmabuf.
+  Fix: add "ctx->fds[0] = -1;" after "reg->fd = ctx->fds[0];".
 
-rte_extmem_register now calls rte_extmem_register_dmabuf with
-fd=-1. But rte_extmem_register_dmabuf rejects dmabuf_fd < 0:
+Error: vhost_user_add_mem_reg error path frees all memory on
+  single-region failure
 
-  int
-  rte_extmem_register_dmabuf(void *va_addr, size_t len,
-      int dmabuf_fd, uint64_t dmabuf_offset,
-      rte_iova_t iova_addrs[], unsigned int n_pages, size_t page_sz)
-  {
-      if (dmabuf_fd < 0) {
-          rte_errno = EINVAL;
-          return -1;
-      }
-      ...
+  If postcopy_register fails after successfully mmap'ing one region
+  (when other regions already exist), the "free_mem_table" label
+  calls free_all_mem_regions + rte_free(dev->mem) + rte_free
+  (dev->guest_pages), destroying ALL previously registered regions.
+  This is disproportionate -- the error should only unmap the single
+  region that was just added and decrement nregions.
 
-So every call to rte_extmem_register will now fail with EINVAL.
-rte_extmem_register should call extmem_register directly (with
-fd=-1), not rte_extmem_register_dmabuf:
+Error: overlap check uses mmap_size for existing region but
+  memory_size for proposed region
 
-  int
-  rte_extmem_register(void *va_addr, size_t len, rte_iova_t iova_addrs[],
-      unsigned int n_pages, size_t page_sz)
-  {
-      return extmem_register(va_addr, len, -1, 0, iova_addrs,
-          n_pages, page_sz);
-  }
+  The overlap check compares:
+    current_region_guest_end = guest_user_addr + mmap_size - 1
+    proposed_region_guest_end = userspace_addr + memory_size - 1
 
-Error: Input validation from rte_extmem_register is lost.
+  mmap_size = memory_size + mmap_offset (set by vhost_user_mmap_region).
+  So the existing region's range is inflated by the mmap_offset,
+  potentially producing false overlaps.  Use current_region->size
+  (which corresponds to memory_size) instead of mmap_size for a
+  correct comparison.
 
-The original rte_extmem_register validated va_addr, page_sz, len,
-alignment, and n_pages before doing anything. The new
-extmem_register function has no input validation -- it only has
-the locking and memseg creation logic. The parameter checks that
-were in the original function (va_addr == NULL, page_sz == 0,
-len == 0, power-of-2, alignment) need to be in extmem_register
-or duplicated in both rte_extmem_register and
-rte_extmem_register_dmabuf.
+Error: vhost_user_add_mem_reg uses guest_user_addr == 0 as "slot
+  is empty" but guest_user_addr 0 is a valid guest virtual address
 
-Error: eal_memseg_list_init uses type_msl_idx to index dmabuf_info
-but this is not the same as the memseg list index in mcfg->memsegs.
+  The free-slot search does:
+    if (dev->mem->regions[i].guest_user_addr == 0)
+  
+  Guest address 0 is valid (common in some VM configurations).
+  If a region is mapped at guest VA 0, it would appear as a free
+  slot.  The original code uses compact packing (nregions as the
+  count), avoiding this problem.  Consider using a dedicated
+  "in_use" flag or checking mmap_addr == NULL instead (mmap
+  never returns NULL on success, it returns MAP_FAILED).
 
-eal_memseg_list_init initializes dmabuf_info[type_msl_idx], but
-type_msl_idx is a per-type index used for naming, not the global
-memseg list position. When malloc_heap_create_external_seg_dmabuf
-later sets dmabuf_info[msl_idx] where msl_idx = msl - mcfg->memsegs,
-these are different index spaces. The init in eal_memseg_list_init
-may write to wrong slots, and external segments may use indices
-that were never initialized by eal_memseg_list_init. The static
-dmabuf_info array is zero-initialized at program start (fd=0,
-offset=0), but fd=0 is a valid file descriptor (stdin), so fd
-should be initialized to -1 for all entries, or the
-eal_memseg_list_init initialization should be removed and
-initialization done only in malloc_heap_create_external_seg and
-malloc_heap_create_external_seg_dmabuf.
+Warning: vhost_user_rem_mem_reg matches on guest_phys_addr but the
+  spec says "identified by guest address, user address and size"
 
-Warning: malloc_heap_create_external_seg now redundantly
-initializes dmabuf_info.
+  The comment in the code says "identified by its guest address,
+  user address and size. The mmap offset is ignored." but the
+  comparison also checks guest_phys_addr (which is the GPA, not
+  the guest user address).  The spec says matching is by
+  userspace_addr (GVA), guest_phys_addr (GPA), and memory_size.
+  So the match is actually correct in practice, but the comment
+  is misleading -- it should mention GPA too, or remove the
+  comment about what the spec says.
 
-malloc_heap_create_external_seg calls
-eal_memseg_list_set_dmabuf_info(i, -1, 0) at the end, but
-malloc_heap_create_external_seg_dmabuf also calls
-malloc_heap_create_external_seg (which sets fd=-1) and then
-immediately overwrites with the actual fd. This works but is
-confusing -- the redundant initialization in the base function
-was added for non-dmabuf paths but makes the dmabuf path do a
-useless set-then-overwrite.
+Warning: nregions becomes inconsistent with actual slot usage
 
-Warning: dmabuf_info is process-local static storage.
+  After add_mem_reg, nregions is incremented.  After rem_mem_reg,
+  nregions is decremented.  But regions are not packed -- removing
+  a region from the middle leaves a hole.  Functions like
+  qva_to_vva, hva_to_gpa, and rte_vhost_va_from_guest_pa all
+  iterate "i < mem->nregions" and index "mem->regions[i]"
+  sequentially.  With sparse slots these functions will miss
+  regions that are stored at indices >= nregions.
 
-The side-table approach means dmabuf metadata is not shared with
-secondary processes via shared memory. The commit message mentions
-rte_extmem_attach for cross-process use, but secondary processes
-will not have the dmabuf_info populated. If a secondary process
-calls rte_memseg_list_get_dmabuf_fd, it will always get -1. This
-limitation should be documented in the Doxygen for
-rte_extmem_register_dmabuf.
+  Example: 3 regions at slots 0,1,2 (nregions=3).  Remove slot 1
+  (memset to 0, nregions=2).  Now qva_to_vva iterates slots 0,1
+  only -- slot 2 (still valid) is never checked.  Address
+  translations for memory in the third region will fail.
 
-Warning: dmabuf fd lifetime / ownership is not documented.
+  This is a correctness bug that will cause packet processing
+  failures.  Either pack the array on removal (shift later entries
+  down) or change all iteration to use VHOST_MEMORY_MAX_NREGIONS
+  with skip-zero checks.
 
-The API does not specify whether DPDK takes ownership of the
-dmabuf_fd (will it close it?) or whether the caller must keep it
-open. Since ibv_reg_dmabuf_mr likely holds a reference through
-the kernel, the fd can probably be closed after registration,
-but this should be explicitly documented in the Doxygen. Also,
-rte_extmem_unregister does not clean up the dmabuf_info entry
-(reset fd to -1), so stale metadata remains after unregistration.
+Warning: dev_invalidate_vrings does not update *pdev in add_mem_reg
 
-Warning: the public API functions in eal_memalloc.h have the same
-names as the public API functions in rte_memory.h but different
-signatures.
+  Related to the Error in patch 3 -- even if dev_invalidate_vrings
+  is fixed to take **pdev, the caller vhost_user_add_mem_reg must
+  also write "*pdev = dev;" to propagate the possibly-reallocated
+  pointer back through the message handler framework.
 
-eal_memalloc.h declares:
-  int eal_memseg_list_get_dmabuf_fd(int list_idx);
-  int eal_memseg_list_get_dmabuf_offset(int list_idx, uint64_t *offset);
 
-rte_memory.h declares:
-  int rte_memseg_list_get_dmabuf_fd(const struct rte_memseg_list *msl);
-  int rte_memseg_list_get_dmabuf_offset(const struct rte_memseg_list *msl, ...);
+Patch 5/5 -- vhost_user: enable configure memory slots
+--------------------------------------------------------------------
 
-These are distinct functions, but the eal_memalloc.h header claims
-to declare:
-  "Get dma-buf fd for a memseg list."
-  "Get dma-buf offset for a memseg list."
-...with names prefixed eal_ vs rte_. This is fine functionally but
-the internal and public function signatures should use the same
-error convention. The internal eal_memseg_list_get_dmabuf_fd
-returns -EINVAL on error, while the public
-rte_memseg_list_get_dmabuf_fd_unsafe returns -1 with rte_errno.
-The public function does not call the internal function at all --
-it accesses dmabuf_info directly. The internal functions in
-eal_memalloc.h appear unused.
+Warning: the feature is enabled unconditionally but several
+  address translation functions (qva_to_vva, hva_to_gpa,
+  rte_vhost_va_from_guest_pa) have not been updated to handle
+  sparse region arrays.  Enabling the feature flag before fixing
+  the nregions iteration issue means any front-end that uses
+  ADD_MEM_REG/REM_MEM_REG will hit broken address translations.
 
-Patch 2/2 - common/mlx5: support dmabuf
 
-Warning: mlx5_os_set_reg_mr_cb signature change is an internal
-ABI break.
+Summary
+--------------------------------------------------------------------
 
-The function signature changes from 2 to 3 parameters. This is
-an internal symbol so it's not a public ABI break, but all
-callers must be updated atomically. The Windows and Linux
-implementations are both updated, and the crypto caller is
-updated, so this appears complete. Verify no other callers exist
-outside this patch.
+The most critical issues to fix before this can be merged:
 
-Warning: duplicate dmabuf detection logic in mlx5_common.c and
-mlx5_common_mr.c.
+1. nregions vs sparse-slot iteration mismatch -- this will cause
+   address translation failures at runtime after any REM_MEM_REG.
+   All loops that iterate mem->regions must either use compact
+   packing or be updated to scan all VHOST_MEMORY_MAX_NREGIONS
+   slots with skip-zero checks.
 
-The pattern of checking msl->external, getting dmabuf_fd, getting
-dmabuf_offset, and calculating the adjusted offset is repeated
-nearly identically in mlx5_common_dev_dma_map and
-mlx5_mr_mempool_register_primary. This should be factored into a
-helper function to avoid the code duplication and ensure consistent
-behavior.
+2. dev_invalidate_vrings / translate_ring_addresses *pdev propagation
+   -- use-after-free if numa_realloc fires.
 
-Info: mlx5_common_verbs_reg_dmabuf_mr passes addr as iova.
+3. Missing ctx->fds[0] = -1 in add_mem_reg -- double-close on
+   error paths.
 
-The call is:
-  reg_dmabuf_mr_cb(pd, dmabuf_offset, len, addr, dmabuf_fd, ...)
+4. Overlap check using mmap_size instead of size -- false positive
+   overlaps.
 
-where addr is the user-space virtual address. For ibv_reg_dmabuf_mr,
-the iova parameter is the "IO virtual address the device will use
-to access the region." Using the user-space VA as iova means the
-MR maps virtual addresses 1:1. This is the common pattern for
-DPDK but worth noting that it won't work if the device expects
-different IO addresses.
+5. Error path in add_mem_reg destroys all regions instead of just
+   the failed one.
 
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
