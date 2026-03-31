@@ -2,26 +2,26 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7178D109B493
-	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 15:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0561D109B489
+	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 15:49:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5429B409FA;
-	Tue, 31 Mar 2026 17:41:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id DF0FC409FA;
+	Tue, 31 Mar 2026 17:49:48 +0200 (CEST)
 Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 1C8EF40615
- for <dev@dpdk.org>; Tue, 31 Mar 2026 17:41:50 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 6386C40615
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 17:49:47 +0200 (CEST)
 Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 02F9C4ADEF; Tue, 31 Mar 2026 17:41:49 +0200 (CEST)
+ id 3647B4ADEF; Tue, 31 Mar 2026 17:49:47 +0200 (CEST)
 From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Subject: [DPDK/DTS Bug 1917] l2fwd testsuite must be decorated with two link
- requirement
-Date: Tue, 31 Mar 2026 15:41:50 +0000
+Subject: [DPDK/testpmd Bug 1918] Stopping all ports does not update link
+ status for CX6 NIC
+Date: Tue, 31 Mar 2026 15:49:47 +0000
 X-Bugzilla-Reason: AssignedTo
 X-Bugzilla-Type: new
 X-Bugzilla-Watch-Reason: None
 X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: DTS
+X-Bugzilla-Component: testpmd
 X-Bugzilla-Version: unspecified
 X-Bugzilla-Keywords: 
 X-Bugzilla-Severity: normal
@@ -33,9 +33,9 @@ X-Bugzilla-Assigned-To: dev@dpdk.org
 X-Bugzilla-Target-Milestone: ---
 X-Bugzilla-Flags: 
 X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter cc
+ op_sys bug_status bug_severity priority component assigned_to reporter
  target_milestone
-Message-ID: <bug-1917-3@http.bugs.dpdk.org/>
+Message-ID: <bug-1918-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 X-Bugzilla-URL: http://bugs.dpdk.org/
@@ -55,11 +55,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1917
+http://bugs.dpdk.org/show_bug.cgi?id=3D1918
 
-            Bug ID: 1917
-           Summary: l2fwd testsuite must be decorated with two link
-                    requirement
+            Bug ID: 1918
+           Summary: Stopping all ports does not update link status for CX6
+                    NIC
            Product: DPDK
            Version: unspecified
           Hardware: All
@@ -67,23 +67,47 @@ http://bugs.dpdk.org/show_bug.cgi?id=3D1917
             Status: UNCONFIRMED
           Severity: normal
           Priority: Normal
-         Component: DTS
+         Component: testpmd
           Assignee: dev@dpdk.org
           Reporter: dmarx@iol.unh.edu
-                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
   Target Milestone: ---
 
-The l2fwd testsuite currently explicitly modifies port 1, which causes all
-single link test runs to error out:
+Stopping all ports does not update link status in testpmd:
 
-with TestPmd(
-    forward_mode=3DSimpleForwardingModes.mac,
-    eth_peer=3D[EthPeer(1, self.topology.tg_port_ingress.mac_address)],
-    disable_device_start=3DTrue,
-) as shell:
+testpmd> port stop all
+Stopping ports...
+Checking link statuses...
+Done
+testpmd> show port info all
 
-The two link requirement decorator needs to be added at the suite level to
-resolve this
+********************* Infos for port 0  *********************
+MAC address: B8:3F:D2:52:B7:24
+Device name: 0000:81:00.0
+Driver name: mlx5_pci
+Firmware-version: 26.42.1000
+Devargs:=20
+Connect to socket: 1
+memory allocation on the socket: 1
+Link status: up
+
+Link status should be =E2=80=9Cdown=E2=80=9D
+
+sudo ethtool -i enp129s0f0np0
+driver: mlx5_core
+version: 24.07-0.6.1
+firmware-version: 26.42.1000 (MT_0000000531)
+expansion-rom-version:=20
+bus-info: 0000:81:00.0
+supports-statistics: yes
+supports-test: yes
+supports-eeprom-access: no
+supports-register-dump: no
+supports-priv-flags: yes
+
+uname -m
+x86_64
+
+DPDK version: 26.03 rc2
 
 --=20
 You are receiving this mail because:
