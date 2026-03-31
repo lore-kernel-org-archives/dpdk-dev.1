@@ -2,66 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1032E10F9303
-	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 21:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C646710F9304
+	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 21:41:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EB2FA40697;
-	Tue, 31 Mar 2026 23:41:34 +0200 (CEST)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
- [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 73CC140613
- for <dev@dpdk.org>; Tue, 31 Mar 2026 23:41:33 +0200 (CEST)
-Received: by mail-wm1-f48.google.com with SMTP id
- 5b1f17b1804b1-4887ca8e529so2364225e9.0
- for <dev@dpdk.org>; Tue, 31 Mar 2026 14:41:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 57C2440B9A;
+	Tue, 31 Mar 2026 23:41:37 +0200 (CEST)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com
+ [209.85.128.45]) by mails.dpdk.org (Postfix) with ESMTP id D904740B94
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 23:41:35 +0200 (CEST)
+Received: by mail-wm1-f45.google.com with SMTP id
+ 5b1f17b1804b1-4887ca8e529so2364385e9.0
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 14:41:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1774993293; x=1775598093; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
- bh=cYFpWxNG2K88zHGPVDgMI2nDzBT4pagidE+NmbRjvCQ=;
- b=E3PwXg+idJuDf+aLNlNui5WJMFYdUb+iDu95PgtQPWU4P+HbMYb2C6+RLPcfPuRQVI
- 6NgJEMJwhRQ125F8h5d740qGgYw50iZ1M7+ocrGSGXHGS8glKuTCtAdyvRF2lR5WCM7o
- j+gqDLomz2/H5xNbS+sPLA7GnTeJJeVac8228XjOAQNjfk/sT1NNmD26H2HM6gyPnj9O
- G2dqSXq+7ZqhQ2jNR/gLktRs10f9YmvPGatowrQ06fHMmQQ9/TBqfQivT5nLwNdwmV/j
- jBKRfWDZ81XwtO26aSeidArsvWmIThSOmKMWPKrT4wRbKqcl6tetu1yUP3B1y82ya3ov
- 1k4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774993293; x=1775598093;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1774993295; x=1775598095; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=cYFpWxNG2K88zHGPVDgMI2nDzBT4pagidE+NmbRjvCQ=;
- b=quuNOyUZdR1d0NLqDk6hfccMLUwMcoCn39epnaU7cOPYl6i17FwU/qpbZF+WUyboAr
- jlBLt0ivNHVG/Sw6VFfv4/B+FrmCgHZ56QKbBE2RGzhWdTVBa5lRXJb3dveoPMD6TwrO
- w3gaOhfvSQIwx4LBeFS4cxW3tzQl1T/LafG71FR/O43fIkt4MT8L1pgzESoWpHTgojLk
- SHgQXaxe1f+2k+RyV4M4HHWOvRiLq1QuDlbp5Zx28qkkIMEwItsniV2IVZ22YIOcPi6r
- YHH2cI7H9utk6mWlitXFCAQh0f4hwfzzEt/e6nh+scYs19LdSz5E8jiDDlcR+7mzpOXC
- W9+g==
-X-Gm-Message-State: AOJu0Yy6800syopuBiTJyJBiTmK+BsGbMMKNr8wNom6s2qsc9+eEoiMr
- tR2+c8kJrujtoQwjh/aZ6EmTZn9oKgyDeeg+CyqKoPZN3Xbv5ddwC6mL0reS2g==
-X-Gm-Gg: ATEYQzy3T+ikpMnUOSXxms5GrCrK7gNoIGHa1h6TshsoomZc0TWjykGutbdvDNDxYy9
- 5zu6zBKBfoB+hwvpS292QRwEQ1Dv5ge1fufvW/E8G7YS09eBOsPSnvBBa3uxXfowwjXCpUKTC6c
- fJYu6ETpNVQCaPeGfjxXGiU9JH5OH0H2oSWYAHf+MVfftlf8jEsyhWEQyx3wbR5+EPis8slNDMG
- lPwoyC/j9puyGZoLt/2Yaqjocfze/SO0alXjx+YZp5rkOdJv3oN/zIF5MK9VgJ/WwqF5TgkHCL6
- rQj4uHSReA2pCvp1pGGJQMDJeU+akDpyX9SF/D23gO2hPwJWUvL62CtM3y0ekYksYZGOr8Nsa1A
- WOoxZJn8GPVjzNshRINigxprMZ++386xijBySFsEWQsTBya29zFe6Ncd6EuSLo4S/8U5pQbJ5Ol
- 09Io5G3Glk9PgQD5Oa
-X-Received: by 2002:a05:600c:450e:b0:487:22ad:403e with SMTP id
- 5b1f17b1804b1-488835d17edmr15474505e9.14.1774993292869; 
- Tue, 31 Mar 2026 14:41:32 -0700 (PDT)
+ bh=nG028KKSKiuOLhbhfug3cMGWKDLf70FDEee1wvHKtg8=;
+ b=c29gjd9b1KMndEK0+CDvRmRaAYLc96subj3Yxf3sysBY/v8qYpJrMBE5l5O4BGqiyr
+ sBRxH8w0PX05YKRc1WmsTnXf+gluA0mER4D0xgz0GGj5hBZT9ySxl0QYDkp+0Z4Y7cpZ
+ YRYdQsubt7g9uIy8v788k/idlAkDacHtS4vXw2RGBQS9HzrQujIYv+DXxv21fe6dnkZP
+ a4LnoEEHy/DcC+lzzmQ5E8ZMqAcWt6WVmj5JboY4q3bhy/BR3HRRITfCCDCoTUm+Lclj
+ 420PiXLIq2kMM5ay+CYpS2zxFIgZMA0/2VUnEhmF6CJeyyYJu+MNd/C0p/4zuCH+fX5j
+ vlQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774993295; x=1775598095;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:sender:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=nG028KKSKiuOLhbhfug3cMGWKDLf70FDEee1wvHKtg8=;
+ b=SVv5pKxdw4aTpIUS5KZDzJHLp99BcuBqha5DH3Az9DF1PIYTD6v9NMt+lLkZqurnCT
+ rJa5AvlkEJuW/5Oh6KS2nKhb6gVBc/eRVFlZxfSwo7lYiEjEDzvp5r2zUjV5npOiu7v9
+ Vonbew0rs5inIhAiUr1CZovewcQw8FxyJRR7uQLPuFSsSa7P+zmqqFOOTZwtFe1Q1aoC
+ 7L8fWh6+gQOkx+j7lKxHp7M69+UusKbpzy7TNO2aXH4jcGAAy5DTEpbDH5Pc5QV8U76/
+ Vgt9bniO4rn8BfFS75c/2qcF4i7grUcwOm6ty5DV20Ooua1hJqtd1uc8v5ocThXWw8GD
+ qTeQ==
+X-Gm-Message-State: AOJu0YxMh1S0sjh4+mpN31cDFjF9EdDrPNpCTPpLnx/wJ1vsDSAZHLTz
+ DJPbLLZQGXf9D12FQ/yF18BrYa9o1pzGzyDckwecNBdGkX/i1j8LHhw4yfARDw==
+X-Gm-Gg: ATEYQzz+plU/17ax2mSiXuAt60C7RO0ZpG9FyjfzNt39IHmiWwmoGhs0NFH7ZSr3g0R
+ QjXLjp7iFJIZ4+bJcip6rzTIKvSsf3sxVldETzht+BevO4xTiMjlN2n45IR3MQYf/gDbQT0qKk9
+ vT3eMYlqy+GHPySFVL74dg5mwlNXit/YBJ565rr6xCg5Wa3cf1Ks3ZLXclMDfe3qMpopXuF/XkC
+ /omocCGFaJNPadW+SToSZ4ULhNRqh8nvHQEMFISQ8M4VS58AosbcTv4hw7fU45GnruMR1JjTJST
+ lU85x8a86V9pZ+F8B4bNNdk/yRBC0A2vNPwalwwyOL71VwBCJbrngYThysbqSjKU1Uncek1O3WK
+ h+IjBFAquG1PGkkpuSdJ76FufaNkPVnvsoMXJ6eX6XMYeq4A9tje1zJO7u8JPlp+GCeO2IbyDB9
+ JZ2lQ4S+nGesRgePr3
+X-Received: by 2002:a05:600c:47cf:b0:487:1ed:6bf4 with SMTP id
+ 5b1f17b1804b1-488781840f3mr65346315e9.3.1774993295232; 
+ Tue, 31 Mar 2026 14:41:35 -0700 (PDT)
 Received: from freepad.. ([2a01:e0a:6f:bdf0:5eee:7f89:5053:515f])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4887e81a2cesm67187285e9.8.2026.03.31.14.41.32
+ ffacd0b85a97d-43cf21e2a7asm32981336f8f.7.2026.03.31.14.41.34
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 31 Mar 2026 14:41:32 -0700 (PDT)
+ Tue, 31 Mar 2026 14:41:34 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: vladimir.medvedkin@intel.com, rjarry@redhat.com,
  Maxime Leroy <maxime@leroys.fr>
-Subject: [RFC 0/5] fib: shared and resizable tbl8 pool
-Date: Tue, 31 Mar 2026 23:41:12 +0200
-Message-ID: <20260331214117.142495-1-maxime@leroys.fr>
+Subject: [RFC 1/5] test/fib6: zero-initialize config struct
+Date: Tue, 31 Mar 2026 23:41:13 +0200
+Message-ID: <20260331214117.142495-2-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260331214117.142495-1-maxime@leroys.fr>
+References: <20260331214117.142495-1-maxime@leroys.fr>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -77,76 +80,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This RFC proposes an optional shared tbl8 pool for FIB/FIB6,
-to address the difficulty of sizing num_tbl8 upfront.
+Initialize rte_fib6_conf with { 0 } to avoid using uninitialized
+fields, aligned with how it is already done in test_fib.c.
 
-In practice, tbl8 usage depends on prefix distribution and
-evolves over time. In multi-VRF environments, some VRFs are
-elephants (full table, thousands of tbl8 groups) while others
-consume very little (mostly /24 or shorter). Per-FIB sizing
-forces each instance to provision for its worst case, leading
-to significant memory waste.
+This is needed because the struct will gain new optional fields
+(tbl8_pool) that must default to NULL.
 
-A shared pool solves this: all FIBs draw from the same tbl8
-memory, so elephant VRFs use what they need while light VRFs
-cost almost nothing. The sharing granularity is flexible: one pool per
-VRF, per address family, a global pool, or no sharing at all.
+Signed-off-by: Maxime Leroy <maxime@leroys.fr>
+---
+ app/test/test_fib6.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-This series adds:
-
-  - A shared tbl8 pool, replacing per-backend allocation
-    (bitmap in dir24_8, stack in trie) with a common
-    refcounted O(1) stack allocator.
-  - An optional resizable mode (grow via alloc + copy + QSBR
-    synchronize), removing the need to guess peak usage at
-    creation time.
-  - A stats API (rte_fib_tbl8_pool_get_stats()) exposing
-    used/total/max counters.
-
-All features are opt-in:
-
-  - Existing per-FIB allocation remains the default.
-  - Shared pool is enabled via the tbl8_pool config field.
-  - Resize is enabled by setting max_tbl8 > 0 with QSBR.
-
-Shrinking (reducing pool capacity after usage drops) is not
-part of this series. It would always be best-effort since
-there is no compaction: if any tbl8 group near the end of the
-pool is still in use, the pool cannot shrink. The current LIFO
-free-list makes this less likely by immediately reusing freed
-high indices, which prevents a contiguous free tail from
-forming. A different allocation strategy (e.g. a min-heap
-favoring low indices) could improve shrink opportunities, but
-is better addressed separately.
-
-A working integration in Grout is available:
-https://github.com/DPDK/grout/pull/581 (still a draft)
-
-Maxime Leroy (5):
-  test/fib6: zero-initialize config struct
-  fib: share tbl8 definitions between fib and fib6
-  fib: add shared tbl8 pool
-  fib: add resizable tbl8 pool
-  fib: add tbl8 pool stats API
-
- app/test/test_fib6.c        |  10 +-
- lib/fib/dir24_8.c           | 234 ++++++++++---------------
- lib/fib/dir24_8.h           |  17 +-
- lib/fib/fib_tbl8.h          |  50 ++++++
- lib/fib/fib_tbl8_pool.c     | 337 ++++++++++++++++++++++++++++++++++++
- lib/fib/fib_tbl8_pool.h     | 113 ++++++++++++
- lib/fib/meson.build         |   5 +-
- lib/fib/rte_fib.h           |   3 +
- lib/fib/rte_fib6.h          |   3 +
- lib/fib/rte_fib_tbl8_pool.h | 149 ++++++++++++++++
- lib/fib/trie.c              | 230 +++++++++---------------
- lib/fib/trie.h              |  15 +-
- 12 files changed, 844 insertions(+), 322 deletions(-)
- create mode 100644 lib/fib/fib_tbl8.h
- create mode 100644 lib/fib/fib_tbl8_pool.c
- create mode 100644 lib/fib/fib_tbl8_pool.h
- create mode 100644 lib/fib/rte_fib_tbl8_pool.h
-
+diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
+index fffb590dbf..9fbdde6b05 100644
+--- a/app/test/test_fib6.c
++++ b/app/test/test_fib6.c
+@@ -38,7 +38,7 @@ int32_t
+ test_create_invalid(void)
+ {
+ 	struct rte_fib6 *fib = NULL;
+-	struct rte_fib6_conf config;
++	struct rte_fib6_conf config = { 0 };
+ 
+ 	config.max_routes = MAX_ROUTES;
+ 	config.rib_ext_sz = 0;
+@@ -97,7 +97,7 @@ int32_t
+ test_multiple_create(void)
+ {
+ 	struct rte_fib6 *fib = NULL;
+-	struct rte_fib6_conf config;
++	struct rte_fib6_conf config = { 0 };
+ 	int32_t i;
+ 
+ 	config.rib_ext_sz = 0;
+@@ -124,7 +124,7 @@ int32_t
+ test_free_null(void)
+ {
+ 	struct rte_fib6 *fib = NULL;
+-	struct rte_fib6_conf config;
++	struct rte_fib6_conf config = { 0 };
+ 
+ 	config.max_routes = MAX_ROUTES;
+ 	config.rib_ext_sz = 0;
+@@ -148,7 +148,7 @@ int32_t
+ test_add_del_invalid(void)
+ {
+ 	struct rte_fib6 *fib = NULL;
+-	struct rte_fib6_conf config;
++	struct rte_fib6_conf config = { 0 };
+ 	uint64_t nh = 100;
+ 	struct rte_ipv6_addr ip = RTE_IPV6_ADDR_UNSPEC;
+ 	int ret;
+@@ -342,7 +342,7 @@ int32_t
+ test_lookup(void)
+ {
+ 	struct rte_fib6 *fib = NULL;
+-	struct rte_fib6_conf config;
++	struct rte_fib6_conf config = { 0 };
+ 	uint64_t def_nh = 100;
+ 	int ret;
+ 
 -- 
 2.43.0
 
