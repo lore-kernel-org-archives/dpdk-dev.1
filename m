@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B758F10F9304
-	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 21:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1666C10F9304
+	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 21:41:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 684D940B95;
-	Tue, 31 Mar 2026 23:41:40 +0200 (CEST)
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com
- [209.85.128.48]) by mails.dpdk.org (Postfix) with ESMTP id 0EB4E40B8D
- for <dev@dpdk.org>; Tue, 31 Mar 2026 23:41:39 +0200 (CEST)
-Received: by mail-wm1-f48.google.com with SMTP id
- 5b1f17b1804b1-48700b1ba53so56595455e9.1
- for <dev@dpdk.org>; Tue, 31 Mar 2026 14:41:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E033240DD3;
+	Tue, 31 Mar 2026 23:41:42 +0200 (CEST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id A04D940DCE
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 23:41:41 +0200 (CEST)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-486fe655187so80378415e9.2
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 14:41:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1774993298; x=1775598098; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1774993301; x=1775598101; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fnmKQmxMyQIf7Ob2mcMwDK4kFOqR2Eo/On37mRhnoeI=;
- b=A38NJJZ5Jko+s4qk15utYaSTJ+k7d6LT3ZT2j4Pouw40bvwEyI21i+YjIWGAsLd/A0
- xsPTP8kRqmpTugXSKGAyHbcnB++fJ1HycwByGyCJBf4iDcuEPhpEjEkzyXrRLTCSYF/5
- 2i08ms3pweAJSY4Dw286w14YnNySlwAZdzLgvzD30cUXRNVODwPF6aPArkk68SA2cIr/
- TwlhiwOB88Ja0J89xwqglhGBlh4YH/RB/b7ls53nYjbwyJ4V31nyIqTgLuCGZ2zKFLIE
- as8xP2JL3uF5z+uMyZLd9uZbrNmqqWxfPf1EYZLilfd67LByjwIr+M+1wX5qLEbTKTh8
- hgJA==
+ bh=lBZkYI/R5YmP3k7y+iSM05F3PtjUtx1n3/YvrHR468w=;
+ b=QntAccmFPIHyrt+H1AomSs9n7Y3H7x2PYuuiIPBOfuKxZwH+3Rleg2ihITufN2ZwF5
+ gLg3fkTkyM2Sg+ov5CCT2w/0nCY2Dp29zzYKoezN5SOf6kjIjWTRFaMiOAQp/tWZMohI
+ 3crlvZ8cypUxkgKxjmCe4m9DYIk6bxySiDZha4KLj0YSG4E9bKz01sOguDQtxvNM326r
+ qnDuj47wgngruxXhsbejakN4szgmE1xRD8zho4OsuRYi/6RvGK/wOYom6K8AjcBxMVXc
+ TvYyKvUIdFzL3h1bK9VGAiJx6xgx8VIq4wriTMc2bF4DB4kdOK1n9yVkbXa9GX96rWm6
+ jA4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774993298; x=1775598098;
+ d=1e100.net; s=20251104; t=1774993301; x=1775598101;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=fnmKQmxMyQIf7Ob2mcMwDK4kFOqR2Eo/On37mRhnoeI=;
- b=beHPuTG7sWAi8781bKiS/iZjJP2cHriopP6H4JpqLGQ2+ThKZ49dbtluAMI89ftUcI
- 6eisqWEKptRB/wM5xuM2OpZ8kFbRyUrmPZG01DSpQk2ss5J+mZlEJeaaoUVcQOUYDj1S
- 25s2O0N9bS54jLrwK4h8FvxotD8MdGJRKbzwZlOW81hL8aLfpLJI/QcwpVBHdNu3XtPD
- 8/YsYGLh8Sbljf3KGUQcMn8JApu9R71a+8yDUH1VG9lPbsA03bYCVvC9hTPMkyQPRiQ+
- LhnQfUt/1SWcAQAxTXbsXI5LHTbdSv9X1gAn6ms6pcjI1NEHiNLngN0LF0UGG48wV6CV
- NqQQ==
-X-Gm-Message-State: AOJu0YznJGBHm+4z8bzd/Vo8uEBkJ8Igv5+Isfv0nMHYCFMqvVTGjVGm
- Xy3E0lrFtLYAzOCEyrEvNtDng3CK09HDE5FUEt+aYELfdQizY8jQQwglHhJEzA==
-X-Gm-Gg: ATEYQzxE6/xFVYCm4HlrpwsU+iYWEDHA9HXhBPJwF6GJw/lGG0AC35waThyBnHoEGVH
- 0daFG0UDPE+kBjEbs5kLMHuJ+3HgHhaVz9wld4VRNB6aoU7KL/v6dJVFsK0VT0uClRB2ordxfmW
- WT/v0g5ieV1ebqXo4PhWMjiWf2gMXC+Mobj7IDy9mlbwXwNETvNWAlKA554kjFGaAW9xIvhNZbu
- Gg58jHD5w9QHgKA9DBhnkUiiJ00Y7auDVXisMgxjP+eTYUAUgNMVja4C3GAzJ0uPdv9zcPVWpV9
- izlmFCXGvg/EqwbNF8M6/eiBUDyuxyY1iPgIhAhKxC21gFsePFtX68oh3asaO7p2R5ZMdW0l5dT
- AgzbR37wTL3chqhwGlr5jB2P0U2uF3DgHrWqnyeaYOlBiOhRzHHakjfDv++mZwD4QKEw24xXsvL
- orF7gZEB3z7HCtPvoV
-X-Received: by 2002:a05:600c:450f:b0:47e:e2eb:bc22 with SMTP id
- 5b1f17b1804b1-48883568af7mr16404815e9.5.1774993298421; 
- Tue, 31 Mar 2026 14:41:38 -0700 (PDT)
+ bh=lBZkYI/R5YmP3k7y+iSM05F3PtjUtx1n3/YvrHR468w=;
+ b=ZRwk6la4kfqDmzqQDtACDgkh4E8cR546DCXDBKB3hzhWsZexeB35LfpMqVxbbjHitc
+ PmaqI49qaHUBSEnN4hf8mOP5aPV7BJSg/lN80LG3G14EgvFDLnEfZjsbrda+0TaoAgv+
+ lw4oYkS/tMEhirpaUjeB3ryCiBmHfNhSF5hV/ZxW2BOeL1ce3dXJyH3668hq9pHrsKlE
+ 59Wv9cCxG9kLpaa9XNBE39LTBG6a2WAp9SdiZN20CotBYIs+5XYZm7X0XFBMdMUTx9Sg
+ fducmLPXXtNpT//VxsQNdX1MOIjmsjeMWXSeY7XHIfQSmXfazAfJLTBd18KWsATqIrGR
+ P5Ew==
+X-Gm-Message-State: AOJu0YzH/bqVZgKOzRtOvXq9Rg/nqqVdOIvOwhrYfuxFlKo7bzxr3hf7
+ FG27CrxX1crNWkN7xH1AFsHH9UMaPtsP8HTVBQQhc84+dIwM1lo7jTrmCxVVNA==
+X-Gm-Gg: ATEYQzzHmr0tzrrztbhP9Pk82+q5JvpXYsbcfGAL9agfNnSrAbJklgmIHtpJkV8L1A3
+ KCnDBlE3GPzbhChv8pSfLES7JmPbb4b8/8LdfsCT5OxOrphF/oqmGtiJM7yDg6OYF6Z762TsVA9
+ leAr46R4FjFES+oBQUIQddNZLwpV3h8yMsj+M4wVfNTGJwUBACZknrgxs5+YqDPXg80cPGTRQ8g
+ 7duSPC21ChkFZ+NLsspYbd6GUo9zpnZJsx8fEUGICMHk45sXAp8RrSzz+2lR8Ie7q67McFtV53c
+ QIPdUuRGy7+dl3Yxma+oOguHjYWQaZS/uUWhofpQ48pbhpT8+lGdsSGB027yct2VX0RK3gCzkjq
+ ad3VTTHTpS7lidybwkDFA08SgP7VDL8u/71PNpwUEgh1o5k+O/xlGZ4ml8d+uJnPUBSoUv0OCUh
+ Md/CVUtAetU9UkBk1fmdpuJr1G3x8=
+X-Received: by 2002:a05:600c:3e1b:b0:485:ae14:8173 with SMTP id
+ 5b1f17b1804b1-4888355e47fmr16948125e9.1.1774993300959; 
+ Tue, 31 Mar 2026 14:41:40 -0700 (PDT)
 Received: from freepad.. ([2a01:e0a:6f:bdf0:5eee:7f89:5053:515f])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-4887e884dacsm93524725e9.15.2026.03.31.14.41.36
+ 5b1f17b1804b1-4887c561750sm89755295e9.2.2026.03.31.14.41.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 31 Mar 2026 14:41:37 -0700 (PDT)
+ Tue, 31 Mar 2026 14:41:40 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: dev@dpdk.org
 Cc: vladimir.medvedkin@intel.com, rjarry@redhat.com,
  Maxime Leroy <maxime@leroys.fr>
-Subject: [RFC 2/5] fib: share tbl8 definitions between fib and fib6
-Date: Tue, 31 Mar 2026 23:41:14 +0200
-Message-ID: <20260331214117.142495-3-maxime@leroys.fr>
+Subject: [RFC 3/5] fib: add shared tbl8 pool
+Date: Tue, 31 Mar 2026 23:41:15 +0200
+Message-ID: <20260331214117.142495-4-maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260331214117.142495-1-maxime@leroys.fr>
 References: <20260331214117.142495-1-maxime@leroys.fr>
@@ -80,732 +80,933 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Extract common tbl8 definitions shared by dir24_8 and trie backends
-into a new fib_tbl8.h header:
-  - FIB_TBL8_GRP_NUM_ENT constant (was DIR24_8_TBL8_GRP_NUM_ENT
-    and TRIE_TBL8_GRP_NUM_ENT)
-  - enum fib_nh_sz with static_asserts against public enums
-  - fib_tbl8_write() inline (was write_to_fib and write_to_dp)
+Replace the per-FIB tbl8 allocation with a common refcounted tbl8
+pool (fib_tbl8_pool).
 
-Convert dir24_8 tbl8 index allocator from bitmap to stack, aligned
-with the trie backend which already uses a stack-based allocator.
+A FIB can either use an internal pool (created transparently from the
+existing num_tbl8 config parameter) or attach to an external shared
+pool via the new tbl8_pool config field. The shared pool allows
+multiple FIB instances (e.g. one per VRF) to draw tbl8 groups from
+the same memory, reducing overall allocation.
+
+The pool is refcounted: internal pools start at refcount 1 and are
+freed when the owning FIB is destroyed. External pools are
+incremented on FIB attach and decremented on FIB detach; the creator
+releases its reference via rte_fib_tbl8_pool_free().
+
+The per-FIB RCU defer queue callback is shared across both backends
+(fib_tbl8_pool_rcu_free_cb).
+
+New public API:
+  - rte_fib_tbl8_pool_create()
+  - rte_fib_tbl8_pool_free()
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- lib/fib/dir24_8.c  | 151 +++++++++++++++++++--------------------------
- lib/fib/dir24_8.h  |  17 +++--
- lib/fib/fib_tbl8.h |  50 +++++++++++++++
- lib/fib/trie.c     |  80 +++++++++---------------
- lib/fib/trie.h     |  11 +---
- 5 files changed, 155 insertions(+), 154 deletions(-)
- create mode 100644 lib/fib/fib_tbl8.h
+ lib/fib/dir24_8.c           | 128 ++++++++++---------------------
+ lib/fib/dir24_8.h           |   6 +-
+ lib/fib/fib_tbl8_pool.c     | 148 ++++++++++++++++++++++++++++++++++++
+ lib/fib/fib_tbl8_pool.h     |  74 ++++++++++++++++++
+ lib/fib/meson.build         |   5 +-
+ lib/fib/rte_fib.h           |   3 +
+ lib/fib/rte_fib6.h          |   3 +
+ lib/fib/rte_fib_tbl8_pool.h |  76 ++++++++++++++++++
+ lib/fib/trie.c              | 134 ++++++++++----------------------
+ lib/fib/trie.h              |   6 +-
+ 10 files changed, 394 insertions(+), 189 deletions(-)
+ create mode 100644 lib/fib/fib_tbl8_pool.c
+ create mode 100644 lib/fib/fib_tbl8_pool.h
+ create mode 100644 lib/fib/rte_fib_tbl8_pool.h
 
 diff --git a/lib/fib/dir24_8.c b/lib/fib/dir24_8.c
-index 489d2ef427..935eca12c3 100644
+index 935eca12c3..b8e588a56a 100644
 --- a/lib/fib/dir24_8.c
 +++ b/lib/fib/dir24_8.c
-@@ -17,6 +17,11 @@
- #include "dir24_8.h"
- #include "fib_log.h"
- 
-+static_assert((int)FIB_NH_SZ_1B == (int)RTE_FIB_DIR24_8_1B, "nh_sz 1B mismatch");
-+static_assert((int)FIB_NH_SZ_2B == (int)RTE_FIB_DIR24_8_2B, "nh_sz 2B mismatch");
-+static_assert((int)FIB_NH_SZ_4B == (int)RTE_FIB_DIR24_8_4B, "nh_sz 4B mismatch");
-+static_assert((int)FIB_NH_SZ_8B == (int)RTE_FIB_DIR24_8_8B, "nh_sz 8B mismatch");
-+
- #ifdef CC_AVX512_SUPPORT
- 
- #include "dir24_8_avx512.h"
-@@ -147,57 +152,27 @@ dir24_8_get_lookup_fn(void *p, enum rte_fib_lookup_type type, bool be_addr)
+@@ -152,41 +152,18 @@ dir24_8_get_lookup_fn(void *p, enum rte_fib_lookup_type type, bool be_addr)
  	return NULL;
  }
  
--static void
--write_to_fib(void *ptr, uint64_t val, enum rte_fib_dir24_8_nh_sz size, int n)
-+/*
-+ * Get an index of a free tbl8 from the pool
-+ */
-+static inline int32_t
-+tbl8_get(struct dir24_8_tbl *dp)
- {
--	int i;
--	uint8_t *ptr8 = (uint8_t *)ptr;
--	uint16_t *ptr16 = (uint16_t *)ptr;
--	uint32_t *ptr32 = (uint32_t *)ptr;
--	uint64_t *ptr64 = (uint64_t *)ptr;
--
--	switch (size) {
--	case RTE_FIB_DIR24_8_1B:
--		for (i = 0; i < n; i++)
--			ptr8[i] = (uint8_t)val;
--		break;
--	case RTE_FIB_DIR24_8_2B:
--		for (i = 0; i < n; i++)
--			ptr16[i] = (uint16_t)val;
--		break;
--	case RTE_FIB_DIR24_8_4B:
--		for (i = 0; i < n; i++)
--			ptr32[i] = (uint32_t)val;
--		break;
--	case RTE_FIB_DIR24_8_8B:
--		for (i = 0; i < n; i++)
--			ptr64[i] = (uint64_t)val;
--		break;
--	}
--}
-+	if (dp->tbl8_pool_pos == dp->number_tbl8s)
-+		/* no more free tbl8 */
-+		return -ENOSPC;
- 
--static int
--tbl8_get_idx(struct dir24_8_tbl *dp)
+-/*
+- * Get an index of a free tbl8 from the pool
+- */
+-static inline int32_t
+-tbl8_get(struct dir24_8_tbl *dp)
 -{
--	uint32_t i;
--	int bit_idx;
+-	if (dp->tbl8_pool_pos == dp->number_tbl8s)
+-		/* no more free tbl8 */
+-		return -ENOSPC;
 -
--	for (i = 0; (i < (dp->number_tbl8s >> BITMAP_SLAB_BIT_SIZE_LOG2)) &&
--			(dp->tbl8_idxes[i] == UINT64_MAX); i++)
--		;
--	if (i < (dp->number_tbl8s >> BITMAP_SLAB_BIT_SIZE_LOG2)) {
--		bit_idx = rte_ctz64(~dp->tbl8_idxes[i]);
--		dp->tbl8_idxes[i] |= (1ULL << bit_idx);
--		return (i << BITMAP_SLAB_BIT_SIZE_LOG2) + bit_idx;
--	}
--	return -ENOSPC;
-+	/* next index */
-+	return dp->tbl8_pool[dp->tbl8_pool_pos++];
- }
- 
-+/*
-+ * Put an index of a free tbl8 back to the pool
-+ */
- static inline void
--tbl8_free_idx(struct dir24_8_tbl *dp, int idx)
-+tbl8_put(struct dir24_8_tbl *dp, uint32_t tbl8_ind)
- {
--	dp->tbl8_idxes[idx >> BITMAP_SLAB_BIT_SIZE_LOG2] &=
--		~(1ULL << (idx & BITMAP_SLAB_BITMASK));
-+	dp->tbl8_pool[--dp->tbl8_pool_pos] = tbl8_ind;
- }
- 
+-	/* next index */
+-	return dp->tbl8_pool[dp->tbl8_pool_pos++];
+-}
+-
+-/*
+- * Put an index of a free tbl8 back to the pool
+- */
+-static inline void
+-tbl8_put(struct dir24_8_tbl *dp, uint32_t tbl8_ind)
+-{
+-	dp->tbl8_pool[--dp->tbl8_pool_pos] = tbl8_ind;
+-}
+-
  static int
-@@ -206,34 +181,32 @@ tbl8_alloc(struct dir24_8_tbl *dp, uint64_t nh)
+ tbl8_alloc(struct dir24_8_tbl *dp, uint64_t nh)
+ {
  	int64_t	tbl8_idx;
  	uint8_t	*tbl8_ptr;
  
--	tbl8_idx = tbl8_get_idx(dp);
-+	tbl8_idx = tbl8_get(dp);
+-	tbl8_idx = tbl8_get(dp);
++	tbl8_idx = fib_tbl8_pool_get(dp->pool);
  
  	/* If there are no tbl8 groups try to reclaim one. */
  	if (unlikely(tbl8_idx == -ENOSPC && dp->dq &&
  			!rte_rcu_qsbr_dq_reclaim(dp->dq, 1, NULL, NULL, NULL)))
--		tbl8_idx = tbl8_get_idx(dp);
-+		tbl8_idx = tbl8_get(dp);
+-		tbl8_idx = tbl8_get(dp);
++		tbl8_idx = fib_tbl8_pool_get(dp->pool);
  
  	if (tbl8_idx < 0)
  		return tbl8_idx;
- 	tbl8_ptr = (uint8_t *)dp->tbl8 +
--		((tbl8_idx * DIR24_8_TBL8_GRP_NUM_ENT) <<
-+		((tbl8_idx * FIB_TBL8_GRP_NUM_ENT) <<
- 		dp->nh_sz);
- 	/*Init tbl8 entries with nexthop from tbl24*/
--	write_to_fib((void *)tbl8_ptr, nh|
-+	fib_tbl8_write((void *)tbl8_ptr, nh|
- 		DIR24_8_EXT_ENT, dp->nh_sz,
--		DIR24_8_TBL8_GRP_NUM_ENT);
--	dp->cur_tbl8s++;
-+		FIB_TBL8_GRP_NUM_ENT);
+@@ -200,24 +177,6 @@ tbl8_alloc(struct dir24_8_tbl *dp, uint64_t nh)
  	return tbl8_idx;
  }
  
+-static void
+-tbl8_cleanup_and_free(struct dir24_8_tbl *dp, uint64_t tbl8_idx)
+-{
+-	uint8_t *ptr = (uint8_t *)dp->tbl8 + (tbl8_idx * FIB_TBL8_GRP_NUM_ENT << dp->nh_sz);
+-
+-	memset(ptr, 0, FIB_TBL8_GRP_NUM_ENT << dp->nh_sz);
+-	tbl8_put(dp, tbl8_idx);
+-}
+-
+-static void
+-__rcu_qsbr_free_resource(void *p, void *data, unsigned int n __rte_unused)
+-{
+-	struct dir24_8_tbl *dp = p;
+-	uint64_t tbl8_idx = *(uint64_t *)data;
+-
+-	tbl8_cleanup_and_free(dp, tbl8_idx);
+-}
+-
  static void
- tbl8_cleanup_and_free(struct dir24_8_tbl *dp, uint64_t tbl8_idx)
+ tbl8_recycle(struct dir24_8_tbl *dp, uint32_t ip, uint64_t tbl8_idx)
  {
--	uint8_t *ptr = (uint8_t *)dp->tbl8 + (tbl8_idx * DIR24_8_TBL8_GRP_NUM_ENT << dp->nh_sz);
-+	uint8_t *ptr = (uint8_t *)dp->tbl8 + (tbl8_idx * FIB_TBL8_GRP_NUM_ENT << dp->nh_sz);
+@@ -276,10 +235,10 @@ tbl8_recycle(struct dir24_8_tbl *dp, uint32_t ip, uint64_t tbl8_idx)
+ 	}
  
--	memset(ptr, 0, DIR24_8_TBL8_GRP_NUM_ENT << dp->nh_sz);
--	tbl8_free_idx(dp, tbl8_idx);
--	dp->cur_tbl8s--;
-+	memset(ptr, 0, FIB_TBL8_GRP_NUM_ENT << dp->nh_sz);
-+	tbl8_put(dp, tbl8_idx);
- }
- 
- static void
-@@ -258,9 +231,9 @@ tbl8_recycle(struct dir24_8_tbl *dp, uint32_t ip, uint64_t tbl8_idx)
- 	switch (dp->nh_sz) {
- 	case RTE_FIB_DIR24_8_1B:
- 		ptr8 = &((uint8_t *)dp->tbl8)[tbl8_idx *
--				DIR24_8_TBL8_GRP_NUM_ENT];
-+				FIB_TBL8_GRP_NUM_ENT];
- 		nh = *ptr8;
--		for (i = 1; i < DIR24_8_TBL8_GRP_NUM_ENT; i++) {
-+		for (i = 1; i < FIB_TBL8_GRP_NUM_ENT; i++) {
- 			if (nh != ptr8[i])
- 				return;
- 		}
-@@ -269,9 +242,9 @@ tbl8_recycle(struct dir24_8_tbl *dp, uint32_t ip, uint64_t tbl8_idx)
- 		break;
- 	case RTE_FIB_DIR24_8_2B:
- 		ptr16 = &((uint16_t *)dp->tbl8)[tbl8_idx *
--				DIR24_8_TBL8_GRP_NUM_ENT];
-+				FIB_TBL8_GRP_NUM_ENT];
- 		nh = *ptr16;
--		for (i = 1; i < DIR24_8_TBL8_GRP_NUM_ENT; i++) {
-+		for (i = 1; i < FIB_TBL8_GRP_NUM_ENT; i++) {
- 			if (nh != ptr16[i])
- 				return;
- 		}
-@@ -280,9 +253,9 @@ tbl8_recycle(struct dir24_8_tbl *dp, uint32_t ip, uint64_t tbl8_idx)
- 		break;
- 	case RTE_FIB_DIR24_8_4B:
- 		ptr32 = &((uint32_t *)dp->tbl8)[tbl8_idx *
--				DIR24_8_TBL8_GRP_NUM_ENT];
-+				FIB_TBL8_GRP_NUM_ENT];
- 		nh = *ptr32;
--		for (i = 1; i < DIR24_8_TBL8_GRP_NUM_ENT; i++) {
-+		for (i = 1; i < FIB_TBL8_GRP_NUM_ENT; i++) {
- 			if (nh != ptr32[i])
- 				return;
- 		}
-@@ -291,9 +264,9 @@ tbl8_recycle(struct dir24_8_tbl *dp, uint32_t ip, uint64_t tbl8_idx)
- 		break;
- 	case RTE_FIB_DIR24_8_8B:
- 		ptr64 = &((uint64_t *)dp->tbl8)[tbl8_idx *
--				DIR24_8_TBL8_GRP_NUM_ENT];
-+				FIB_TBL8_GRP_NUM_ENT];
- 		nh = *ptr64;
--		for (i = 1; i < DIR24_8_TBL8_GRP_NUM_ENT; i++) {
-+		for (i = 1; i < FIB_TBL8_GRP_NUM_ENT; i++) {
- 			if (nh != ptr64[i])
- 				return;
- 		}
-@@ -337,32 +310,32 @@ install_to_fib(struct dir24_8_tbl *dp, uint32_t ledge, uint32_t redge,
+ 	if (dp->v == NULL) {
+-		tbl8_cleanup_and_free(dp, tbl8_idx);
++		fib_tbl8_pool_cleanup_and_free(dp->pool, tbl8_idx);
+ 	} else if (dp->rcu_mode == RTE_FIB_QSBR_MODE_SYNC) {
+ 		rte_rcu_qsbr_synchronize(dp->v, RTE_QSBR_THRID_INVALID);
+-		tbl8_cleanup_and_free(dp, tbl8_idx);
++		fib_tbl8_pool_cleanup_and_free(dp->pool, tbl8_idx);
+ 	} else { /* RTE_FIB_QSBR_MODE_DQ */
+ 		if (rte_rcu_qsbr_dq_enqueue(dp->dq, &tbl8_idx))
+ 			FIB_LOG(ERR, "Failed to push QSBR FIFO");
+@@ -310,14 +269,14 @@ install_to_fib(struct dir24_8_tbl *dp, uint32_t ledge, uint32_t redge,
  				 * needs tbl8 for ledge and redge.
  				 */
  				tbl8_idx = tbl8_alloc(dp, tbl24_tmp);
--				tmp_tbl8_idx = tbl8_get_idx(dp);
-+				tmp_tbl8_idx = tbl8_get(dp);
+-				tmp_tbl8_idx = tbl8_get(dp);
++				tmp_tbl8_idx = fib_tbl8_pool_get(dp->pool);
  				if (tbl8_idx < 0)
  					return -ENOSPC;
  				else if (tmp_tbl8_idx < 0) {
--					tbl8_free_idx(dp, tbl8_idx);
-+					tbl8_put(dp, tbl8_idx);
+-					tbl8_put(dp, tbl8_idx);
++					fib_tbl8_pool_cleanup_and_free(dp->pool, tbl8_idx);
  					return -ENOSPC;
  				}
--				tbl8_free_idx(dp, tmp_tbl8_idx);
-+				tbl8_put(dp, tmp_tbl8_idx);
+-				tbl8_put(dp, tmp_tbl8_idx);
++				fib_tbl8_pool_put(dp->pool, tmp_tbl8_idx);
  				/*update dir24 entry with tbl8 index*/
--				write_to_fib(get_tbl24_p(dp, ledge,
-+				fib_tbl8_write(get_tbl24_p(dp, ledge,
+ 				fib_tbl8_write(get_tbl24_p(dp, ledge,
  					dp->nh_sz), (tbl8_idx << 1)|
- 					DIR24_8_EXT_ENT,
- 					dp->nh_sz, 1);
- 			} else
- 				tbl8_idx = tbl24_tmp >> 1;
- 			tbl8_ptr = (uint8_t *)dp->tbl8 +
--				(((tbl8_idx * DIR24_8_TBL8_GRP_NUM_ENT) +
-+				(((tbl8_idx * FIB_TBL8_GRP_NUM_ENT) +
- 				(ledge & ~DIR24_8_TBL24_MASK)) <<
- 				dp->nh_sz);
- 			/*update tbl8 with new next hop*/
--			write_to_fib((void *)tbl8_ptr, (next_hop << 1)|
-+			fib_tbl8_write((void *)tbl8_ptr, (next_hop << 1)|
- 				DIR24_8_EXT_ENT,
- 				dp->nh_sz, ROUNDUP(ledge, 24) - ledge);
- 			tbl8_recycle(dp, ledge, tbl8_idx);
- 		}
--		write_to_fib(get_tbl24_p(dp, ROUNDUP(ledge, 24), dp->nh_sz),
-+		fib_tbl8_write(get_tbl24_p(dp, ROUNDUP(ledge, 24), dp->nh_sz),
- 			next_hop << 1, dp->nh_sz, len);
- 		if (redge & ~DIR24_8_TBL24_MASK) {
- 			tbl24_tmp = get_tbl24(dp, redge, dp->nh_sz);
-@@ -372,17 +345,17 @@ install_to_fib(struct dir24_8_tbl *dp, uint32_t ledge, uint32_t redge,
- 				if (tbl8_idx < 0)
- 					return -ENOSPC;
- 				/*update dir24 entry with tbl8 index*/
--				write_to_fib(get_tbl24_p(dp, redge,
-+				fib_tbl8_write(get_tbl24_p(dp, redge,
- 					dp->nh_sz), (tbl8_idx << 1)|
- 					DIR24_8_EXT_ENT,
- 					dp->nh_sz, 1);
- 			} else
- 				tbl8_idx = tbl24_tmp >> 1;
- 			tbl8_ptr = (uint8_t *)dp->tbl8 +
--				((tbl8_idx * DIR24_8_TBL8_GRP_NUM_ENT) <<
-+				((tbl8_idx * FIB_TBL8_GRP_NUM_ENT) <<
- 				dp->nh_sz);
- 			/*update tbl8 with new next hop*/
--			write_to_fib((void *)tbl8_ptr, (next_hop << 1)|
-+			fib_tbl8_write((void *)tbl8_ptr, (next_hop << 1)|
- 				DIR24_8_EXT_ENT,
- 				dp->nh_sz, redge & ~DIR24_8_TBL24_MASK);
- 			tbl8_recycle(dp, redge, tbl8_idx);
-@@ -395,18 +368,18 @@ install_to_fib(struct dir24_8_tbl *dp, uint32_t ledge, uint32_t redge,
- 			if (tbl8_idx < 0)
+@@ -477,7 +436,7 @@ dir24_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
+ 			tmp = rte_rib_get_nxt(rib, ip, 24, NULL,
+ 				RTE_RIB_GET_NXT_COVER);
+ 			if ((tmp == NULL) &&
+-				(dp->rsvd_tbl8s >= dp->number_tbl8s))
++				(dp->rsvd_tbl8s >= dp->pool->num_tbl8s))
  				return -ENOSPC;
- 			/*update dir24 entry with tbl8 index*/
--			write_to_fib(get_tbl24_p(dp, ledge, dp->nh_sz),
-+			fib_tbl8_write(get_tbl24_p(dp, ledge, dp->nh_sz),
- 				(tbl8_idx << 1)|
- 				DIR24_8_EXT_ENT,
- 				dp->nh_sz, 1);
- 		} else
- 			tbl8_idx = tbl24_tmp >> 1;
- 		tbl8_ptr = (uint8_t *)dp->tbl8 +
--			(((tbl8_idx * DIR24_8_TBL8_GRP_NUM_ENT) +
-+			(((tbl8_idx * FIB_TBL8_GRP_NUM_ENT) +
- 			(ledge & ~DIR24_8_TBL24_MASK)) <<
- 			dp->nh_sz);
- 		/*update tbl8 with new next hop*/
--		write_to_fib((void *)tbl8_ptr, (next_hop << 1)|
-+		fib_tbl8_write((void *)tbl8_ptr, (next_hop << 1)|
- 			DIR24_8_EXT_ENT,
- 			dp->nh_sz, redge - ledge);
- 		tbl8_recycle(dp, ledge, tbl8_idx);
-@@ -561,7 +534,9 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
+ 
+ 		}
+@@ -533,18 +492,13 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
+ {
  	char mem_name[DIR24_8_NAMESIZE];
  	struct dir24_8_tbl *dp;
++	struct rte_fib_tbl8_pool *pool;
  	uint64_t	def_nh;
-+	uint64_t	tbl8_sz;
- 	uint32_t	num_tbl8;
-+	uint32_t	i;
+-	uint64_t	tbl8_sz;
+-	uint32_t	num_tbl8;
+-	uint32_t	i;
  	enum rte_fib_dir24_8_nh_sz	nh_sz;
  
  	if ((name == NULL) || (fib_conf == NULL) ||
-@@ -578,8 +553,7 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
+ 			(fib_conf->dir24_8.nh_sz < RTE_FIB_DIR24_8_1B) ||
+ 			(fib_conf->dir24_8.nh_sz > RTE_FIB_DIR24_8_8B) ||
+-			(fib_conf->dir24_8.num_tbl8 >
+-			get_max_nh(fib_conf->dir24_8.nh_sz)) ||
+-			(fib_conf->dir24_8.num_tbl8 == 0) ||
+ 			(fib_conf->default_nh >
+ 			get_max_nh(fib_conf->dir24_8.nh_sz))) {
+ 		rte_errno = EINVAL;
+@@ -553,46 +507,47 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
  
  	def_nh = fib_conf->default_nh;
  	nh_sz = fib_conf->dir24_8.nh_sz;
--	num_tbl8 = RTE_ALIGN_CEIL(fib_conf->dir24_8.num_tbl8,
--			BITMAP_SLAB_BIT_SIZE);
-+	num_tbl8 = fib_conf->dir24_8.num_tbl8;
+-	num_tbl8 = fib_conf->dir24_8.num_tbl8;
++
++	if (fib_conf->dir24_8.tbl8_pool != NULL) {
++		/* External shared pool */
++		pool = fib_conf->dir24_8.tbl8_pool;
++		if (pool->nh_sz != nh_sz) {
++			rte_errno = EINVAL;
++			return NULL;
++		}
++		fib_tbl8_pool_ref(pool);
++	} else {
++		/* Internal pool */
++		if ((fib_conf->dir24_8.num_tbl8 >
++		     get_max_nh(fib_conf->dir24_8.nh_sz)) ||
++		    (fib_conf->dir24_8.num_tbl8 == 0)) {
++			rte_errno = EINVAL;
++			return NULL;
++		}
++		struct rte_fib_tbl8_pool_conf pool_conf = {
++			.num_tbl8 = fib_conf->dir24_8.num_tbl8,
++			.nh_sz = nh_sz,
++			.socket_id = socket_id,
++		};
++		pool = rte_fib_tbl8_pool_create(name, &pool_conf);
++		if (pool == NULL)
++			return NULL;
++	}
  
  	snprintf(mem_name, sizeof(mem_name), "DP_%s", name);
  	dp = rte_zmalloc_socket(name, sizeof(struct dir24_8_tbl) +
-@@ -590,11 +564,8 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
- 		return NULL;
- 	}
- 
--	/* Init table with default value */
--	write_to_fib(dp->tbl24, (def_nh << 1), nh_sz, 1 << 24);
--
- 	snprintf(mem_name, sizeof(mem_name), "TBL8_%p", dp);
--	uint64_t tbl8_sz = DIR24_8_TBL8_GRP_NUM_ENT * (1ULL << nh_sz) *
-+	tbl8_sz = FIB_TBL8_GRP_NUM_ENT * (1ULL << nh_sz) *
- 			(num_tbl8 + 1);
- 	dp->tbl8 = rte_zmalloc_socket(mem_name, tbl8_sz,
- 			RTE_CACHE_LINE_SIZE, socket_id);
-@@ -608,16 +579,24 @@ dir24_8_create(const char *name, int socket_id, struct rte_fib_conf *fib_conf)
- 	dp->number_tbl8s = num_tbl8;
- 
- 	snprintf(mem_name, sizeof(mem_name), "TBL8_idxes_%p", dp);
--	dp->tbl8_idxes = rte_zmalloc_socket(mem_name,
--			RTE_ALIGN_CEIL(dp->number_tbl8s, 64) >> 3,
-+	dp->tbl8_pool = rte_zmalloc_socket(mem_name,
-+			sizeof(uint32_t) * dp->number_tbl8s,
- 			RTE_CACHE_LINE_SIZE, socket_id);
--	if (dp->tbl8_idxes == NULL) {
-+	if (dp->tbl8_pool == NULL) {
+ 		DIR24_8_TBL24_NUM_ENT * (1 << nh_sz) + sizeof(uint32_t),
+ 		RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (dp == NULL) {
++		fib_tbl8_pool_unref(pool);
  		rte_errno = ENOMEM;
- 		rte_free(dp->tbl8);
- 		rte_free(dp);
  		return NULL;
  	}
  
-+	/* Init pool with all tbl8 indices free */
-+	for (i = 0; i < dp->number_tbl8s; i++)
-+		dp->tbl8_pool[i] = i;
-+	dp->tbl8_pool_pos = 0;
-+
-+	/* Init table with default value */
-+	fib_tbl8_write(dp->tbl24, (def_nh << 1), nh_sz, 1 << 24);
-+
- 	return dp;
- }
+-	snprintf(mem_name, sizeof(mem_name), "TBL8_%p", dp);
+-	tbl8_sz = FIB_TBL8_GRP_NUM_ENT * (1ULL << nh_sz) *
+-			(num_tbl8 + 1);
+-	dp->tbl8 = rte_zmalloc_socket(mem_name, tbl8_sz,
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (dp->tbl8 == NULL) {
+-		rte_errno = ENOMEM;
+-		rte_free(dp);
+-		return NULL;
+-	}
++	dp->pool = pool;
++	dp->tbl8 = pool->tbl8;
+ 	dp->def_nh = def_nh;
+ 	dp->nh_sz = nh_sz;
+-	dp->number_tbl8s = num_tbl8;
+-
+-	snprintf(mem_name, sizeof(mem_name), "TBL8_idxes_%p", dp);
+-	dp->tbl8_pool = rte_zmalloc_socket(mem_name,
+-			sizeof(uint32_t) * dp->number_tbl8s,
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (dp->tbl8_pool == NULL) {
+-		rte_errno = ENOMEM;
+-		rte_free(dp->tbl8);
+-		rte_free(dp);
+-		return NULL;
+-	}
+-
+-	/* Init pool with all tbl8 indices free */
+-	for (i = 0; i < dp->number_tbl8s; i++)
+-		dp->tbl8_pool[i] = i;
+-	dp->tbl8_pool_pos = 0;
  
-@@ -627,7 +606,7 @@ dir24_8_free(void *p)
+ 	/* Init table with default value */
+ 	fib_tbl8_write(dp->tbl24, (def_nh << 1), nh_sz, 1 << 24);
+@@ -606,8 +561,7 @@ dir24_8_free(void *p)
  	struct dir24_8_tbl *dp = (struct dir24_8_tbl *)p;
  
  	rte_rcu_qsbr_dq_delete(dp->dq);
--	rte_free(dp->tbl8_idxes);
-+	rte_free(dp->tbl8_pool);
- 	rte_free(dp->tbl8);
+-	rte_free(dp->tbl8_pool);
+-	rte_free(dp->tbl8);
++	fib_tbl8_pool_unref(dp->pool);
  	rte_free(dp);
  }
+ 
+@@ -639,8 +593,8 @@ dir24_8_rcu_qsbr_add(struct dir24_8_tbl *dp, struct rte_fib_rcu_config *cfg,
+ 		if (params.max_reclaim_size == 0)
+ 			params.max_reclaim_size = RTE_FIB_RCU_DQ_RECLAIM_MAX;
+ 		params.esize = sizeof(uint64_t);
+-		params.free_fn = __rcu_qsbr_free_resource;
+-		params.p = dp;
++		params.free_fn = fib_tbl8_pool_rcu_free_cb;
++		params.p = dp->pool;
+ 		params.v = cfg->v;
+ 		dp->dq = rte_rcu_qsbr_dq_create(&params);
+ 		if (dp->dq == NULL) {
 diff --git a/lib/fib/dir24_8.h b/lib/fib/dir24_8.h
-index b343b5d686..e75bd120ad 100644
+index e75bd120ad..287b91ef4b 100644
 --- a/lib/fib/dir24_8.h
 +++ b/lib/fib/dir24_8.h
-@@ -14,24 +14,21 @@
+@@ -14,7 +14,7 @@
  #include <rte_branch_prediction.h>
  #include <rte_rcu_qsbr.h>
  
-+#include "fib_tbl8.h"
-+
+-#include "fib_tbl8.h"
++#include "fib_tbl8_pool.h"
+ 
  /**
   * @file
-  * DIR24_8 algorithm
-  */
- 
- #define DIR24_8_TBL24_NUM_ENT		(1 << 24)
--#define DIR24_8_TBL8_GRP_NUM_ENT	256U
- #define DIR24_8_EXT_ENT			1
+@@ -26,9 +26,7 @@
  #define DIR24_8_TBL24_MASK		0xffffff00
  
--#define BITMAP_SLAB_BIT_SIZE_LOG2	6
--#define BITMAP_SLAB_BIT_SIZE		(1 << BITMAP_SLAB_BIT_SIZE_LOG2)
--#define BITMAP_SLAB_BITMASK		(BITMAP_SLAB_BIT_SIZE - 1)
--
  struct dir24_8_tbl {
- 	uint32_t	number_tbl8s;	/**< Total number of tbl8s */
+-	uint32_t	number_tbl8s;	/**< Total number of tbl8s */
  	uint32_t	rsvd_tbl8s;	/**< Number of reserved tbl8s */
--	uint32_t	cur_tbl8s;	/**< Current number of tbl8s */
-+	uint32_t	tbl8_pool_pos;	/**< Next free index in pool */
+-	uint32_t	tbl8_pool_pos;	/**< Next free index in pool */
  	enum rte_fib_dir24_8_nh_sz	nh_sz;	/**< Size of nexthop entry */
  	/* RCU config. */
  	enum rte_fib_qsbr_mode rcu_mode;/* Blocking, defer queue. */
-@@ -39,7 +36,7 @@ struct dir24_8_tbl {
+@@ -36,7 +34,7 @@ struct dir24_8_tbl {
  	struct rte_rcu_qsbr_dq *dq;	/* RCU QSBR defer queue. */
  	uint64_t	def_nh;		/**< Default next hop */
  	uint64_t	*tbl8;		/**< tbl8 table. */
--	uint64_t	*tbl8_idxes;	/**< bitmap containing free tbl8 idxes*/
-+	uint32_t	*tbl8_pool;	/**< Stack of free tbl8 indices */
+-	uint32_t	*tbl8_pool;	/**< Stack of free tbl8 indices */
++	struct rte_fib_tbl8_pool *pool;	/**< tbl8 pool */
  	/* tbl24 table. */
  	alignas(RTE_CACHE_LINE_SIZE) uint64_t	tbl24[];
  };
-@@ -72,7 +69,7 @@ get_tbl24_idx(uint32_t ip)
- static  inline uint32_t
- get_tbl8_idx(uint32_t res, uint32_t ip)
- {
--	return (res >> 1) * DIR24_8_TBL8_GRP_NUM_ENT + (uint8_t)ip;
-+	return (res >> 1) * FIB_TBL8_GRP_NUM_ENT + (uint8_t)ip;
- }
- 
- static inline uint64_t
-@@ -133,14 +130,14 @@ static inline void dir24_8_lookup_bulk_##suffix(void *p, const uint32_t *ips, \
- 		tmp = ((type *)dp->tbl24)[ips[i] >> 8];			\
- 		if (unlikely(is_entry_extended(tmp)))			\
- 			tmp = ((type *)dp->tbl8)[(uint8_t)ips[i] +	\
--				((tmp >> 1) * DIR24_8_TBL8_GRP_NUM_ENT)]; \
-+				((tmp >> 1) * FIB_TBL8_GRP_NUM_ENT)]; \
- 		next_hops[i] = tmp >> 1;				\
- 	}								\
- 	for (; i < n; i++) {						\
- 		tmp = ((type *)dp->tbl24)[ips[i] >> 8];			\
- 		if (unlikely(is_entry_extended(tmp)))			\
- 			tmp = ((type *)dp->tbl8)[(uint8_t)ips[i] +	\
--				((tmp >> 1) * DIR24_8_TBL8_GRP_NUM_ENT)]; \
-+				((tmp >> 1) * FIB_TBL8_GRP_NUM_ENT)]; \
- 		next_hops[i] = tmp >> 1;				\
- 	}								\
- }									\
-diff --git a/lib/fib/fib_tbl8.h b/lib/fib/fib_tbl8.h
+diff --git a/lib/fib/fib_tbl8_pool.c b/lib/fib/fib_tbl8_pool.c
 new file mode 100644
-index 0000000000..b345c1e489
+index 0000000000..5f8ba74219
 --- /dev/null
-+++ b/lib/fib/fib_tbl8.h
-@@ -0,0 +1,50 @@
++++ b/lib/fib/fib_tbl8_pool.c
+@@ -0,0 +1,148 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2026 Maxime Leroy, Free Mobile
 + */
 +
-+#ifndef _FIB_TBL8_H_
-+#define _FIB_TBL8_H_
++#include <stdint.h>
++#include <string.h>
++
++#include <eal_export.h>
++#include <rte_debug.h>
++#include <rte_errno.h>
++#include <rte_malloc.h>
++
++#include "fib_tbl8_pool.h"
++
++static void
++pool_init_free_list(struct rte_fib_tbl8_pool *pool)
++{
++	uint32_t i;
++
++	/* put entire range of indexes to the tbl8 pool */
++	for (i = 0; i < pool->num_tbl8s; i++)
++		pool->free_list[i] = i;
++
++	pool->cur_tbl8s = 0;
++}
++
++int32_t
++fib_tbl8_pool_get(struct rte_fib_tbl8_pool *pool)
++{
++	if (pool->cur_tbl8s == pool->num_tbl8s)
++		/* no more free tbl8 */
++		return -ENOSPC;
++
++	/* next index */
++	return pool->free_list[pool->cur_tbl8s++];
++}
++
++void
++fib_tbl8_pool_put(struct rte_fib_tbl8_pool *pool, uint32_t idx)
++{
++	RTE_ASSERT(pool->cur_tbl8s > 0);
++	pool->free_list[--pool->cur_tbl8s] = idx;
++}
++
++void
++fib_tbl8_pool_cleanup_and_free(struct rte_fib_tbl8_pool *pool, uint64_t idx)
++{
++	uint8_t *ptr = (uint8_t *)pool->tbl8 +
++		((idx * FIB_TBL8_GRP_NUM_ENT) << pool->nh_sz);
++
++	memset(ptr, 0, FIB_TBL8_GRP_NUM_ENT << pool->nh_sz);
++	fib_tbl8_pool_put(pool, idx);
++}
++
++void
++fib_tbl8_pool_rcu_free_cb(void *p, void *data,
++			  unsigned int n __rte_unused)
++{
++	struct rte_fib_tbl8_pool *pool = p;
++	uint64_t tbl8_idx = *(uint64_t *)data;
++
++	fib_tbl8_pool_cleanup_and_free(pool, tbl8_idx);
++}
++
++void
++fib_tbl8_pool_ref(struct rte_fib_tbl8_pool *pool)
++{
++	pool->refcnt++;
++}
++
++static void
++pool_free(struct rte_fib_tbl8_pool *pool)
++{
++	rte_free(pool->free_list);
++	rte_free(pool->tbl8);
++	rte_free(pool);
++}
++
++void
++fib_tbl8_pool_unref(struct rte_fib_tbl8_pool *pool)
++{
++	if (--pool->refcnt == 0)
++		pool_free(pool);
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib_tbl8_pool_create, 26.07)
++struct rte_fib_tbl8_pool *
++rte_fib_tbl8_pool_create(const char *name,
++			 const struct rte_fib_tbl8_pool_conf *conf)
++{
++	struct rte_fib_tbl8_pool *pool;
++	char mem_name[64];
++
++	if (name == NULL || conf == NULL || conf->num_tbl8 == 0 ||
++	    conf->nh_sz > 3) {
++		rte_errno = EINVAL;
++		return NULL;
++	}
++
++	snprintf(mem_name, sizeof(mem_name), "TBL8_POOL_%s", name);
++	pool = rte_zmalloc_socket(mem_name, sizeof(*pool),
++		RTE_CACHE_LINE_SIZE, conf->socket_id);
++	if (pool == NULL) {
++		rte_errno = ENOMEM;
++		return NULL;
++	}
++
++	pool->nh_sz = conf->nh_sz;
++	pool->num_tbl8s = conf->num_tbl8;
++	pool->socket_id = conf->socket_id;
++	pool->refcnt = 1;
++
++	snprintf(mem_name, sizeof(mem_name), "TBL8_%s", name);
++	pool->tbl8 = rte_zmalloc_socket(mem_name,
++		FIB_TBL8_GRP_NUM_ENT * (1ULL << pool->nh_sz) *
++		(pool->num_tbl8s + 1),
++		RTE_CACHE_LINE_SIZE, conf->socket_id);
++	if (pool->tbl8 == NULL) {
++		rte_errno = ENOMEM;
++		rte_free(pool);
++		return NULL;
++	}
++
++	snprintf(mem_name, sizeof(mem_name), "TBL8_FL_%s", name);
++	pool->free_list = rte_zmalloc_socket(mem_name,
++		sizeof(uint32_t) * pool->num_tbl8s,
++		RTE_CACHE_LINE_SIZE, conf->socket_id);
++	if (pool->free_list == NULL) {
++		rte_errno = ENOMEM;
++		rte_free(pool->tbl8);
++		rte_free(pool);
++		return NULL;
++	}
++
++	pool_init_free_list(pool);
++
++	return pool;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_fib_tbl8_pool_free, 26.07)
++void
++rte_fib_tbl8_pool_free(struct rte_fib_tbl8_pool *pool)
++{
++	if (pool == NULL)
++		return;
++
++	fib_tbl8_pool_unref(pool);
++}
+diff --git a/lib/fib/fib_tbl8_pool.h b/lib/fib/fib_tbl8_pool.h
+new file mode 100644
+index 0000000000..285f06d87f
+--- /dev/null
++++ b/lib/fib/fib_tbl8_pool.h
+@@ -0,0 +1,74 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Maxime Leroy, Free Mobile
++ */
++
++#ifndef _FIB_TBL8_POOL_H_
++#define _FIB_TBL8_POOL_H_
 +
 +/**
 + * @file
-+ * Common tbl8 definitions shared by dir24_8 and trie backends.
++ * Internal tbl8 pool header.
++ *
++ * The pool is not thread-safe. When multiple FIBs share a pool,
++ * all operations (route modifications, FIB creation/destruction)
++ * must be serialized by the caller.
++ */
++
++#include <stdint.h>
++#include <string.h>
++
++#include <rte_common.h>
++
++#include "fib_tbl8.h"
++#include "rte_fib_tbl8_pool.h"
++
++struct rte_fib_tbl8_pool {
++	uint64_t	*tbl8;		/**< tbl8 group array */
++	uint32_t	*free_list;	/**< Stack of free group indices */
++	uint32_t	cur_tbl8s;	/**< Number of allocated groups */
++	uint32_t	num_tbl8s;	/**< Total number of tbl8 groups */
++	uint8_t		nh_sz;		/**< Nexthop entry size (0-3) */
++	int		socket_id;
++	uint32_t	refcnt;		/**< Reference count */
++};
++
++/**
++ * Get a free tbl8 group index from the pool.
++ * @return index on success, -ENOSPC if pool is full
++ */
++int32_t
++fib_tbl8_pool_get(struct rte_fib_tbl8_pool *pool);
++
++/**
++ * Return a tbl8 group index to the pool.
++ */
++void
++fib_tbl8_pool_put(struct rte_fib_tbl8_pool *pool, uint32_t idx);
++
++/**
++ * Clear a tbl8 group and return its index to the pool.
++ */
++void
++fib_tbl8_pool_cleanup_and_free(struct rte_fib_tbl8_pool *pool, uint64_t idx);
++
++/**
++ * RCU defer queue callback for tbl8 group reclamation.
++ * Shared by dir24_8 and trie backends.
++ * Use as params.free_fn with params.p = pool.
++ */
++void
++fib_tbl8_pool_rcu_free_cb(void *p, void *data, unsigned int n);
++
++/**
++ * Increment pool reference count.
++ */
++void
++fib_tbl8_pool_ref(struct rte_fib_tbl8_pool *pool);
++
++/**
++ * Decrement pool reference count. Free the pool if it reaches 0.
++ */
++void
++fib_tbl8_pool_unref(struct rte_fib_tbl8_pool *pool);
++
++#endif /* _FIB_TBL8_POOL_H_ */
+diff --git a/lib/fib/meson.build b/lib/fib/meson.build
+index 573fc50ff1..6ecd954b26 100644
+--- a/lib/fib/meson.build
++++ b/lib/fib/meson.build
+@@ -2,8 +2,9 @@
+ # Copyright(c) 2018 Vladimir Medvedkin <medvedkinv@gmail.com>
+ # Copyright(c) 2019 Intel Corporation
+ 
+-sources = files('rte_fib.c', 'rte_fib6.c', 'dir24_8.c', 'trie.c')
+-headers = files('rte_fib.h', 'rte_fib6.h')
++sources = files('rte_fib.c', 'rte_fib6.c', 'dir24_8.c', 'trie.c',
++	'fib_tbl8_pool.c')
++headers = files('rte_fib.h', 'rte_fib6.h', 'rte_fib_tbl8_pool.h')
+ deps += ['rib']
+ deps += ['rcu']
+ deps += ['net']
+diff --git a/lib/fib/rte_fib.h b/lib/fib/rte_fib.h
+index b16a653535..b8c86566ad 100644
+--- a/lib/fib/rte_fib.h
++++ b/lib/fib/rte_fib.h
+@@ -19,6 +19,7 @@
+ 
+ #include <rte_common.h>
+ #include <rte_rcu_qsbr.h>
++#include <rte_fib_tbl8_pool.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -107,6 +108,8 @@ struct rte_fib_conf {
+ 		struct {
+ 			enum rte_fib_dir24_8_nh_sz nh_sz;
+ 			uint32_t	num_tbl8;
++			/** Shared tbl8 pool (NULL = internal pool) */
++			struct rte_fib_tbl8_pool *tbl8_pool;
+ 		} dir24_8;
+ 	};
+ 	unsigned int flags; /**< Optional feature flags from RTE_FIB_F_* */
+diff --git a/lib/fib/rte_fib6.h b/lib/fib/rte_fib6.h
+index 4527328bf0..655a4c9501 100644
+--- a/lib/fib/rte_fib6.h
++++ b/lib/fib/rte_fib6.h
+@@ -20,6 +20,7 @@
+ #include <rte_common.h>
+ #include <rte_ip6.h>
+ #include <rte_rcu_qsbr.h>
++#include <rte_fib_tbl8_pool.h>
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -95,6 +96,8 @@ struct rte_fib6_conf {
+ 		struct {
+ 			enum rte_fib_trie_nh_sz nh_sz;
+ 			uint32_t	num_tbl8;
++			/** Shared tbl8 pool (NULL = internal pool) */
++			struct rte_fib_tbl8_pool *tbl8_pool;
+ 		} trie;
+ 	};
+ };
+diff --git a/lib/fib/rte_fib_tbl8_pool.h b/lib/fib/rte_fib_tbl8_pool.h
+new file mode 100644
+index 0000000000..e362efe74b
+--- /dev/null
++++ b/lib/fib/rte_fib_tbl8_pool.h
+@@ -0,0 +1,76 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Maxime Leroy, Free Mobile
++ */
++
++#ifndef _RTE_FIB_TBL8_POOL_H_
++#define _RTE_FIB_TBL8_POOL_H_
++
++/**
++ * @file
++ * Shared tbl8 pool for FIB backends.
++ *
++ * A tbl8 pool manages a shared array of tbl8 groups that can be used
++ * across multiple FIB instances (e.g., one per VRF).
++ *
++ * Two modes of operation:
++ *  - Internal pool: set num_tbl8 in the FIB config and leave tbl8_pool
++ *    NULL. The pool is created and destroyed with the FIB.
++ *  - External shared pool: create with rte_fib_tbl8_pool_create(), pass
++ *    the handle via the tbl8_pool config field. Each FIB holds a
++ *    reference; the creator releases its reference with
++ *    rte_fib_tbl8_pool_free(). The pool is freed when the last
++ *    reference is dropped.
++ *
++ * Thread safety: none. The pool is not thread-safe. All operations
++ * on FIBs sharing the same pool (route updates, FIB creation and
++ * destruction, pool create/free) must be serialized by the caller.
 + */
 +
 +#include <stdint.h>
 +
-+#define FIB_TBL8_GRP_NUM_ENT	256U
++#ifdef __cplusplus
++extern "C" {
++#endif
 +
-+/** Nexthop size (log2 of byte width) */
-+enum fib_nh_sz {
-+	FIB_NH_SZ_1B = 0,
-+	FIB_NH_SZ_2B = 1,
-+	FIB_NH_SZ_4B = 2,
-+	FIB_NH_SZ_8B = 3,
++struct rte_fib_tbl8_pool;
++
++/** tbl8 pool configuration */
++struct rte_fib_tbl8_pool_conf {
++	uint32_t num_tbl8;	/**< Number of tbl8 groups */
++	uint8_t  nh_sz;		/**< Nexthop size: 0=1B, 1=2B, 2=4B, 3=8B */
++	int      socket_id;	/**< NUMA socket for memory allocation */
 +};
 +
-+static inline void
-+fib_tbl8_write(void *ptr, uint64_t val, uint8_t nh_sz, int n)
-+{
-+	int i;
++/**
++ * Create a tbl8 pool.
++ *
++ * @param name
++ *   Pool name (for memory allocation tracking)
++ * @param conf
++ *   Pool configuration
++ * @return
++ *   Pool handle on success, NULL on failure with rte_errno set
++ */
++__rte_experimental
++struct rte_fib_tbl8_pool *
++rte_fib_tbl8_pool_create(const char *name,
++			 const struct rte_fib_tbl8_pool_conf *conf);
 +
-+	switch (nh_sz) {
-+	case FIB_NH_SZ_1B:
-+		for (i = 0; i < n; i++)
-+			((uint8_t *)ptr)[i] = (uint8_t)val;
-+		break;
-+	case FIB_NH_SZ_2B:
-+		for (i = 0; i < n; i++)
-+			((uint16_t *)ptr)[i] = (uint16_t)val;
-+		break;
-+	case FIB_NH_SZ_4B:
-+		for (i = 0; i < n; i++)
-+			((uint32_t *)ptr)[i] = (uint32_t)val;
-+		break;
-+	case FIB_NH_SZ_8B:
-+		for (i = 0; i < n; i++)
-+			((uint64_t *)ptr)[i] = (uint64_t)val;
-+		break;
-+	}
++/**
++ * Release the creator's reference on a tbl8 pool.
++ *
++ * The pool is freed when the last reference is dropped (i.e. after
++ * all FIBs using this pool have been destroyed).
++ *
++ * @param pool
++ *   Pool handle (NULL is allowed)
++ */
++__rte_experimental
++void
++rte_fib_tbl8_pool_free(struct rte_fib_tbl8_pool *pool);
++
++#ifdef __cplusplus
 +}
++#endif
 +
-+#endif /* _FIB_TBL8_H_ */
++#endif /* _RTE_FIB_TBL8_POOL_H_ */
 diff --git a/lib/fib/trie.c b/lib/fib/trie.c
-index fa5d9ec6b0..198fc54395 100644
+index 198fc54395..798d322b1e 100644
 --- a/lib/fib/trie.c
 +++ b/lib/fib/trie.c
-@@ -16,6 +16,10 @@
- #include "fib_log.h"
- #include "trie.h"
- 
-+static_assert((int)FIB_NH_SZ_2B == (int)RTE_FIB6_TRIE_2B, "nh_sz 2B mismatch");
-+static_assert((int)FIB_NH_SZ_4B == (int)RTE_FIB6_TRIE_4B, "nh_sz 4B mismatch");
-+static_assert((int)FIB_NH_SZ_8B == (int)RTE_FIB6_TRIE_8B, "nh_sz 8B mismatch");
-+
- #ifdef CC_AVX512_SUPPORT
- 
- #include "trie_avx512.h"
-@@ -95,30 +99,6 @@ trie_get_lookup_fn(void *p, enum rte_fib6_lookup_type type)
+@@ -99,53 +99,18 @@ trie_get_lookup_fn(void *p, enum rte_fib6_lookup_type type)
  	return NULL;
  }
  
 -static void
--write_to_dp(void *ptr, uint64_t val, enum rte_fib_trie_nh_sz size, int n)
+-tbl8_pool_init(struct rte_trie_tbl *dp)
 -{
--	int i;
--	uint16_t *ptr16 = (uint16_t *)ptr;
--	uint32_t *ptr32 = (uint32_t *)ptr;
--	uint64_t *ptr64 = (uint64_t *)ptr;
+-	uint32_t i;
 -
--	switch (size) {
--	case RTE_FIB6_TRIE_2B:
--		for (i = 0; i < n; i++)
--			ptr16[i] = (uint16_t)val;
--		break;
--	case RTE_FIB6_TRIE_4B:
--		for (i = 0; i < n; i++)
--			ptr32[i] = (uint32_t)val;
--		break;
--	case RTE_FIB6_TRIE_8B:
--		for (i = 0; i < n; i++)
--			ptr64[i] = (uint64_t)val;
--		break;
--	}
+-	/* put entire range of indexes to the tbl8 pool */
+-	for (i = 0; i < dp->number_tbl8s; i++)
+-		dp->tbl8_pool[i] = i;
+-
+-	dp->tbl8_pool_pos = 0;
 -}
 -
- static void
- tbl8_pool_init(struct rte_trie_tbl *dp)
+-/*
+- * Get an index of a free tbl8 from the pool
+- */
+-static inline int32_t
+-tbl8_get(struct rte_trie_tbl *dp)
+-{
+-	if (dp->tbl8_pool_pos == dp->number_tbl8s)
+-		/* no more free tbl8 */
+-		return -ENOSPC;
+-
+-	/* next index */
+-	return dp->tbl8_pool[dp->tbl8_pool_pos++];
+-}
+-
+-/*
+- * Put an index of a free tbl8 back to the pool
+- */
+-static inline void
+-tbl8_put(struct rte_trie_tbl *dp, uint32_t tbl8_ind)
+-{
+-	dp->tbl8_pool[--dp->tbl8_pool_pos] = tbl8_ind;
+-}
+-
+ static int
+ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
  {
-@@ -170,19 +150,19 @@ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
+ 	int64_t		tbl8_idx;
+ 	uint8_t		*tbl8_ptr;
+ 
+-	tbl8_idx = tbl8_get(dp);
++	tbl8_idx = fib_tbl8_pool_get(dp->pool);
+ 
+ 	/* If there are no tbl8 groups try to reclaim one. */
+ 	if (unlikely(tbl8_idx == -ENOSPC && dp->dq &&
+ 			!rte_rcu_qsbr_dq_reclaim(dp->dq, 1, NULL, NULL, NULL)))
+-		tbl8_idx = tbl8_get(dp);
++		tbl8_idx = fib_tbl8_pool_get(dp->pool);
+ 
  	if (tbl8_idx < 0)
  		return tbl8_idx;
- 	tbl8_ptr = get_tbl_p_by_idx(dp->tbl8,
--		tbl8_idx * TRIE_TBL8_GRP_NUM_ENT, dp->nh_sz);
-+		tbl8_idx * FIB_TBL8_GRP_NUM_ENT, dp->nh_sz);
- 	/*Init tbl8 entries with nexthop from tbl24*/
--	write_to_dp((void *)tbl8_ptr, nh, dp->nh_sz,
--		TRIE_TBL8_GRP_NUM_ENT);
-+	fib_tbl8_write((void *)tbl8_ptr, nh, dp->nh_sz,
-+		FIB_TBL8_GRP_NUM_ENT);
+@@ -157,23 +122,6 @@ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
  	return tbl8_idx;
  }
  
+-static void
+-tbl8_cleanup_and_free(struct rte_trie_tbl *dp, uint64_t tbl8_idx)
+-{
+-	uint8_t *ptr = (uint8_t *)dp->tbl8 + (tbl8_idx * FIB_TBL8_GRP_NUM_ENT << dp->nh_sz);
+-
+-	memset(ptr, 0, FIB_TBL8_GRP_NUM_ENT << dp->nh_sz);
+-	tbl8_put(dp, tbl8_idx);
+-}
+-
+-static void
+-__rcu_qsbr_free_resource(void *p, void *data, unsigned int n __rte_unused)
+-{
+-	struct rte_trie_tbl *dp = p;
+-	uint64_t tbl8_idx = *(uint64_t *)data;
+-	tbl8_cleanup_and_free(dp, tbl8_idx);
+-}
+-
  static void
- tbl8_cleanup_and_free(struct rte_trie_tbl *dp, uint64_t tbl8_idx)
+ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
  {
--	uint8_t *ptr = (uint8_t *)dp->tbl8 + (tbl8_idx * TRIE_TBL8_GRP_NUM_ENT << dp->nh_sz);
-+	uint8_t *ptr = (uint8_t *)dp->tbl8 + (tbl8_idx * FIB_TBL8_GRP_NUM_ENT << dp->nh_sz);
+@@ -223,10 +171,10 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
+ 	}
  
--	memset(ptr, 0, TRIE_TBL8_GRP_NUM_ENT << dp->nh_sz);
-+	memset(ptr, 0, FIB_TBL8_GRP_NUM_ENT << dp->nh_sz);
- 	tbl8_put(dp, tbl8_idx);
- }
- 
-@@ -206,39 +186,39 @@ tbl8_recycle(struct rte_trie_tbl *dp, void *par, uint64_t tbl8_idx)
- 	switch (dp->nh_sz) {
- 	case RTE_FIB6_TRIE_2B:
- 		ptr16 = &((uint16_t *)dp->tbl8)[tbl8_idx *
--				TRIE_TBL8_GRP_NUM_ENT];
-+				FIB_TBL8_GRP_NUM_ENT];
- 		nh = *ptr16;
- 		if (nh & TRIE_EXT_ENT)
- 			return;
--		for (i = 1; i < TRIE_TBL8_GRP_NUM_ENT; i++) {
-+		for (i = 1; i < FIB_TBL8_GRP_NUM_ENT; i++) {
- 			if (nh != ptr16[i])
- 				return;
+ 	if (dp->v == NULL) {
+-		tbl8_cleanup_and_free(dp, tbl8_idx);
++		fib_tbl8_pool_cleanup_and_free(dp->pool, tbl8_idx);
+ 	} else if (dp->rcu_mode == RTE_FIB6_QSBR_MODE_SYNC) {
+ 		rte_rcu_qsbr_synchronize(dp->v, RTE_QSBR_THRID_INVALID);
+-		tbl8_cleanup_and_free(dp, tbl8_idx);
++		fib_tbl8_pool_cleanup_and_free(dp->pool, tbl8_idx);
+ 	} else { /* RTE_FIB6_QSBR_MODE_DQ */
+ 		if (rte_rcu_qsbr_dq_enqueue(dp->dq, &tbl8_idx))
+ 			FIB_LOG(ERR, "Failed to push QSBR FIFO");
+@@ -583,7 +531,7 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
+ 			return 0;
  		}
--		write_to_dp(par, nh, dp->nh_sz, 1);
-+		fib_tbl8_write(par, nh, dp->nh_sz, 1);
- 		break;
- 	case RTE_FIB6_TRIE_4B:
- 		ptr32 = &((uint32_t *)dp->tbl8)[tbl8_idx *
--				TRIE_TBL8_GRP_NUM_ENT];
-+				FIB_TBL8_GRP_NUM_ENT];
- 		nh = *ptr32;
- 		if (nh & TRIE_EXT_ENT)
- 			return;
--		for (i = 1; i < TRIE_TBL8_GRP_NUM_ENT; i++) {
-+		for (i = 1; i < FIB_TBL8_GRP_NUM_ENT; i++) {
- 			if (nh != ptr32[i])
- 				return;
- 		}
--		write_to_dp(par, nh, dp->nh_sz, 1);
-+		fib_tbl8_write(par, nh, dp->nh_sz, 1);
- 		break;
- 	case RTE_FIB6_TRIE_8B:
- 		ptr64 = &((uint64_t *)dp->tbl8)[tbl8_idx *
--				TRIE_TBL8_GRP_NUM_ENT];
-+				FIB_TBL8_GRP_NUM_ENT];
- 		nh = *ptr64;
- 		if (nh & TRIE_EXT_ENT)
- 			return;
--		for (i = 1; i < TRIE_TBL8_GRP_NUM_ENT; i++) {
-+		for (i = 1; i < FIB_TBL8_GRP_NUM_ENT; i++) {
- 			if (nh != ptr64[i])
- 				return;
- 		}
--		write_to_dp(par, nh, dp->nh_sz, 1);
-+		fib_tbl8_write(par, nh, dp->nh_sz, 1);
- 		break;
+ 
+-		if ((depth > 24) && (dp->rsvd_tbl8s + depth_diff > dp->number_tbl8s))
++		if ((depth > 24) && (dp->rsvd_tbl8s + depth_diff > dp->pool->num_tbl8s))
+ 			return -ENOSPC;
+ 
+ 		node = rte_rib6_insert(rib, &ip_masked, depth);
+@@ -636,63 +584,66 @@ trie_create(const char *name, int socket_id,
+ {
+ 	char mem_name[TRIE_NAMESIZE];
+ 	struct rte_trie_tbl *dp = NULL;
++	struct rte_fib_tbl8_pool *pool;
+ 	uint64_t	def_nh;
+-	uint32_t	num_tbl8;
+ 	enum rte_fib_trie_nh_sz	nh_sz;
+ 
+ 	if ((name == NULL) || (conf == NULL) ||
+ 			(conf->trie.nh_sz < RTE_FIB6_TRIE_2B) ||
+ 			(conf->trie.nh_sz > RTE_FIB6_TRIE_8B) ||
+-			(conf->trie.num_tbl8 >
+-			get_max_nh(conf->trie.nh_sz)) ||
+-			(conf->trie.num_tbl8 == 0) ||
+ 			(conf->default_nh >
+ 			get_max_nh(conf->trie.nh_sz))) {
+-
+ 		rte_errno = EINVAL;
+ 		return NULL;
  	}
  
-@@ -265,7 +245,7 @@ get_idx(const struct rte_ipv6_addr *ip, uint32_t prev_idx, int bytes, int first_
- 		bitshift = (int8_t)(((first_byte + bytes - 1) - i)*BYTE_SIZE);
- 		idx |= ip->a[i] <<  bitshift;
- 	}
--	return (prev_idx * TRIE_TBL8_GRP_NUM_ENT) + idx;
-+	return (prev_idx * FIB_TBL8_GRP_NUM_ENT) + idx;
- }
+ 	def_nh = conf->default_nh;
+ 	nh_sz = conf->trie.nh_sz;
+-	num_tbl8 = conf->trie.num_tbl8;
++
++	if (conf->trie.tbl8_pool != NULL) {
++		/* External shared pool: validate nh_sz matches. */
++		pool = conf->trie.tbl8_pool;
++		if (pool->nh_sz != nh_sz) {
++			rte_errno = EINVAL;
++			return NULL;
++		}
++		fib_tbl8_pool_ref(pool);
++	} else {
++		/* Internal pool: create from config. */
++		struct rte_fib_tbl8_pool_conf pool_conf = {
++			.num_tbl8 = conf->trie.num_tbl8,
++			.nh_sz = nh_sz,
++			.socket_id = socket_id,
++		};
++
++		if (conf->trie.num_tbl8 == 0 ||
++		    conf->trie.num_tbl8 >
++		    get_max_nh(nh_sz)) {
++			rte_errno = EINVAL;
++			return NULL;
++		}
++
++		pool = rte_fib_tbl8_pool_create(name, &pool_conf);
++		if (pool == NULL)
++			return NULL;
++	}
  
- static inline uint64_t
-@@ -303,7 +283,7 @@ recycle_root_path(struct rte_trie_tbl *dp, const uint8_t *ip_part,
+ 	snprintf(mem_name, sizeof(mem_name), "DP_%s", name);
+ 	dp = rte_zmalloc_socket(name, sizeof(struct rte_trie_tbl) +
+ 		TRIE_TBL24_NUM_ENT * (1 << nh_sz) + sizeof(uint32_t),
+ 		RTE_CACHE_LINE_SIZE, socket_id);
+ 	if (dp == NULL) {
++		fib_tbl8_pool_unref(pool);
+ 		rte_errno = ENOMEM;
+-		return dp;
+-	}
+-
+-	fib_tbl8_write(&dp->tbl24, (def_nh << 1), nh_sz, 1 << 24);
+-
+-	snprintf(mem_name, sizeof(mem_name), "TBL8_%p", dp);
+-	dp->tbl8 = rte_zmalloc_socket(mem_name, FIB_TBL8_GRP_NUM_ENT *
+-			(1ll << nh_sz) * (num_tbl8 + 1),
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (dp->tbl8 == NULL) {
+-		rte_errno = ENOMEM;
+-		rte_free(dp);
+ 		return NULL;
+ 	}
++
+ 	dp->def_nh = def_nh;
+ 	dp->nh_sz = nh_sz;
+-	dp->number_tbl8s = num_tbl8;
++	dp->pool = pool;
++	dp->tbl8 = pool->tbl8;
  
- 	if (common_tbl8 != 0) {
- 		p = get_tbl_p_by_idx(dp->tbl8, (val >> 1) *
--			TRIE_TBL8_GRP_NUM_ENT + *ip_part, dp->nh_sz);
-+			FIB_TBL8_GRP_NUM_ENT + *ip_part, dp->nh_sz);
- 		recycle_root_path(dp, ip_part + 1, common_tbl8 - 1, p);
- 	}
- 	tbl8_recycle(dp, prev, val >> 1);
-@@ -327,7 +307,7 @@ build_common_root(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ip,
- 			idx = tbl8_alloc(dp, val);
- 			if (unlikely(idx < 0))
- 				return idx;
--			write_to_dp(tbl_ptr, (idx << 1) |
-+			fib_tbl8_write(tbl_ptr, (idx << 1) |
- 				TRIE_EXT_ENT, dp->nh_sz, 1);
- 			prev_idx = idx;
- 		} else
-@@ -336,7 +316,7 @@ build_common_root(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ip,
- 		j = i;
- 		cur_tbl = dp->tbl8;
- 	}
--	*tbl = get_tbl_p_by_idx(cur_tbl, prev_idx * TRIE_TBL8_GRP_NUM_ENT,
-+	*tbl = get_tbl_p_by_idx(cur_tbl, prev_idx * FIB_TBL8_GRP_NUM_ENT,
- 		dp->nh_sz);
- 	return 0;
- }
-@@ -361,22 +341,22 @@ write_edge(struct rte_trie_tbl *dp, const uint8_t *ip_part, uint64_t next_hop,
- 			val = (tbl8_idx << 1)|TRIE_EXT_ENT;
- 		}
- 		p = get_tbl_p_by_idx(dp->tbl8, (tbl8_idx *
--			TRIE_TBL8_GRP_NUM_ENT) + *ip_part, dp->nh_sz);
-+			FIB_TBL8_GRP_NUM_ENT) + *ip_part, dp->nh_sz);
- 		ret = write_edge(dp, ip_part + 1, next_hop, len - 1, edge, p);
- 		if (ret < 0)
- 			return ret;
- 		if (edge == LEDGE) {
--			write_to_dp(RTE_PTR_ADD(p, (uintptr_t)(1) << dp->nh_sz),
-+			fib_tbl8_write(RTE_PTR_ADD(p, (uintptr_t)(1) << dp->nh_sz),
- 				next_hop << 1, dp->nh_sz, UINT8_MAX - *ip_part);
- 		} else {
--			write_to_dp(get_tbl_p_by_idx(dp->tbl8, tbl8_idx *
--				TRIE_TBL8_GRP_NUM_ENT, dp->nh_sz),
-+			fib_tbl8_write(get_tbl_p_by_idx(dp->tbl8, tbl8_idx *
-+				FIB_TBL8_GRP_NUM_ENT, dp->nh_sz),
- 				next_hop << 1, dp->nh_sz, *ip_part);
- 		}
- 		tbl8_recycle(dp, &val, tbl8_idx);
- 	}
- 
--	write_to_dp(ent, val, dp->nh_sz, 1);
-+	fib_tbl8_write(ent, val, dp->nh_sz, 1);
- 	return ret;
- }
- 
-@@ -444,7 +424,7 @@ install_to_dp(struct rte_trie_tbl *dp, const struct rte_ipv6_addr *ledge,
- 	if (right_idx > left_idx + 1) {
- 		ent = get_tbl_p_by_idx(common_root_tbl, left_idx + 1,
- 			dp->nh_sz);
--		write_to_dp(ent, next_hop << 1, dp->nh_sz,
-+		fib_tbl8_write(ent, next_hop << 1, dp->nh_sz,
- 			right_idx - (left_idx + 1));
- 	}
- 	ent = get_tbl_p_by_idx(common_root_tbl, right_idx, dp->nh_sz);
-@@ -686,10 +666,10 @@ trie_create(const char *name, int socket_id,
- 		return dp;
- 	}
- 
--	write_to_dp(&dp->tbl24, (def_nh << 1), nh_sz, 1 << 24);
+-	snprintf(mem_name, sizeof(mem_name), "TBL8_idxes_%p", dp);
+-	dp->tbl8_pool = rte_zmalloc_socket(mem_name,
+-			sizeof(uint32_t) * dp->number_tbl8s,
+-			RTE_CACHE_LINE_SIZE, socket_id);
+-	if (dp->tbl8_pool == NULL) {
+-		rte_errno = ENOMEM;
+-		rte_free(dp->tbl8);
+-		rte_free(dp);
+-		return NULL;
+-	}
+-
+-	tbl8_pool_init(dp);
 +	fib_tbl8_write(&dp->tbl24, (def_nh << 1), nh_sz, 1 << 24);
  
- 	snprintf(mem_name, sizeof(mem_name), "TBL8_%p", dp);
--	dp->tbl8 = rte_zmalloc_socket(mem_name, TRIE_TBL8_GRP_NUM_ENT *
-+	dp->tbl8 = rte_zmalloc_socket(mem_name, FIB_TBL8_GRP_NUM_ENT *
- 			(1ll << nh_sz) * (num_tbl8 + 1),
- 			RTE_CACHE_LINE_SIZE, socket_id);
- 	if (dp->tbl8 == NULL) {
+ 	return dp;
+ }
+@@ -703,8 +654,7 @@ trie_free(void *p)
+ 	struct rte_trie_tbl *dp = (struct rte_trie_tbl *)p;
+ 
+ 	rte_rcu_qsbr_dq_delete(dp->dq);
+-	rte_free(dp->tbl8_pool);
+-	rte_free(dp->tbl8);
++	fib_tbl8_pool_unref(dp->pool);
+ 	rte_free(dp);
+ }
+ 
+@@ -735,8 +685,8 @@ trie_rcu_qsbr_add(struct rte_trie_tbl *dp, struct rte_fib6_rcu_config *cfg,
+ 		if (params.max_reclaim_size == 0)
+ 			params.max_reclaim_size = RTE_FIB6_RCU_DQ_RECLAIM_MAX;
+ 		params.esize = sizeof(uint64_t);
+-		params.free_fn = __rcu_qsbr_free_resource;
+-		params.p = dp;
++		params.free_fn = fib_tbl8_pool_rcu_free_cb;
++		params.p = dp->pool;
+ 		params.v = cfg->v;
+ 		dp->dq = rte_rcu_qsbr_dq_create(&params);
+ 		if (dp->dq == NULL) {
 diff --git a/lib/fib/trie.h b/lib/fib/trie.h
-index c34cc2c057..30fa886792 100644
+index 30fa886792..61df56b1bb 100644
 --- a/lib/fib/trie.h
 +++ b/lib/fib/trie.h
-@@ -11,6 +11,8 @@
+@@ -11,7 +11,7 @@
  #include <rte_common.h>
  #include <rte_fib6.h>
  
-+#include "fib_tbl8.h"
-+
+-#include "fib_tbl8.h"
++#include "fib_tbl8_pool.h"
+ 
  /**
   * @file
-  * RTE IPv6 Longest Prefix Match (LPM)
-@@ -18,21 +20,14 @@
- 
- /* @internal Total number of tbl24 entries. */
- #define TRIE_TBL24_NUM_ENT	(1 << 24)
--/* @internal Number of entries in a tbl8 group. */
--#define TRIE_TBL8_GRP_NUM_ENT	256ULL
- /* @internal Total number of tbl8 groups in the tbl8. */
- #define TRIE_TBL8_NUM_GROUPS	65536
- /* @internal bitmask with valid and valid_group fields set */
+@@ -26,13 +26,11 @@
  #define TRIE_EXT_ENT		1
  
--#define BITMAP_SLAB_BIT_SIZE_LOG2	6
--#define BITMAP_SLAB_BIT_SIZE		(1ULL << BITMAP_SLAB_BIT_SIZE_LOG2)
--#define BITMAP_SLAB_BITMASK		(BITMAP_SLAB_BIT_SIZE - 1)
--
  struct rte_trie_tbl {
- 	uint32_t	number_tbl8s;	/**< Total number of tbl8s */
+-	uint32_t	number_tbl8s;	/**< Total number of tbl8s */
  	uint32_t	rsvd_tbl8s;	/**< Number of reserved tbl8s */
--	uint32_t	cur_tbl8s;	/**< Current cumber of tbl8s */
  	uint64_t	def_nh;		/**< Default next hop */
  	enum rte_fib_trie_nh_sz	nh_sz;	/**< Size of nexthop entry */
  	uint64_t	*tbl8;		/**< tbl8 table. */
-@@ -124,7 +119,7 @@ static inline void rte_trie_lookup_bulk_##suffix(void *p,		\
- 		j = 3;							\
- 		while (is_entry_extended(tmp)) {			\
- 			tmp = ((type *)dp->tbl8)[ips[i].a[j++] +	\
--				((tmp >> 1) * TRIE_TBL8_GRP_NUM_ENT)];	\
-+				((tmp >> 1) * FIB_TBL8_GRP_NUM_ENT)];	\
- 		}							\
- 		next_hops[i] = tmp >> 1;				\
- 	}								\
+-	uint32_t	*tbl8_pool;	/**< bitmap containing free tbl8 idxes*/
+-	uint32_t	tbl8_pool_pos;
++	struct rte_fib_tbl8_pool *pool;	/**< tbl8 pool */
+ 	/* RCU config. */
+ 	enum rte_fib6_qsbr_mode rcu_mode; /**< Blocking, defer queue. */
+ 	struct rte_rcu_qsbr *v; /**< RCU QSBR variable. */
 -- 
 2.43.0
 
