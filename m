@@ -2,78 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E31109B472
-	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 14:05:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B466E109B47A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 14:39:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5D258402D3;
-	Tue, 31 Mar 2026 16:05:57 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id 35CC0402C3
- for <dev@dpdk.org>; Tue, 31 Mar 2026 16:05:56 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 46E8A7A0174;
- Tue, 31 Mar 2026 10:05:55 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-03.internal (MEProxy); Tue, 31 Mar 2026 10:05:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1774965955;
- x=1775052355; bh=Y//4msawCnM2rEr/Tgr8UJ2+qvat5ett7vn7NId6/TM=; b=
- tFdY1F5CitV4+8XLFn4xsjxsNf+yHOGTKJ4GeDbkznp0v73dCwK7mA/84Um2zEvm
- bB5Ua2rlx/eHLnMZ0ACTxEaChT1DDpKPwgGSK5FULh6gsEjNcBzUkm+0jTy42H0f
- AGr9XNlvfI1PbpwtiWFJ7ZzVCF+uLbwXlBU/kmHWKT6bfxgrrKvO2ohkjupaWYrx
- Q5QLV8PjbgWcS2wPa5qwNlyup0p/SQS+/EYqRTEasiPGR6RBp7ieM2LmjN6gHHYz
- AhRjxdjtsETZgCFoHRcp4VW8nJto5VgCI2XJdGNJvdYBAIR3SzDaF+p12tj86mf8
- 5Lo++paA8ClCOnjqD594zQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1774965955; x=
- 1775052355; bh=Y//4msawCnM2rEr/Tgr8UJ2+qvat5ett7vn7NId6/TM=; b=s
- zKEEuam1rqzNyzETCsWthZJm9/fw4yvbMpf9aU4iSwdfHRhJ1VnsWWfS0iie3DVb
- +4afDeEEQpt90407mULhp/4HUPZQFStXezv7aUnMmyRQPL1ngda2XC5exIIUgpji
- PP/Ii3Yy1i3GsBE8EkkvYK3JJBip40tACxgrcBjaI/d8YBNBJMe4ncCgei9yrt+k
- 6QkAilydxkZE7XMBy0ewWdVnA/UwSDE+TM8I4jlR958YWsEUKOsjzmd+oZKhL+mo
- zV2z4B1X/xFnFy7HTR84ifabvLgCDqCKsZ4Mo11gW3zV3VkU/8ealYwa4p3O6FPg
- Xr0OIUTtAg6q0Yyjuy+aw==
-X-ME-Sender: <xms:wtTLaZS0iZptHLUqhlPpRzznK_egwlsEDCnkPSJt0EK1pJWRH6JmsA>
- <xme:wtTLafHH-RajPn858eQBifuwxSgwoRpUl1IuSpjulNlwPZfHGesZJ_idVVh3vMvAj
- pE-Z4VHMAj93Hrg8Pv5X85tqAA_SM5J3x3Kec3cnreb_QTASHa5FA>
-X-ME-Received: <xmr:wtTLaRmxJ5FWkzNM1OGXq4IrJoG564qrEPKXEr_fvETs4Z6800e4l14Inr7Y8ZbENTavVQaEHs0e8O3JtBgd5siBkA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdeflecutefuodetggdotefrodftvf
- curfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegrihhl
- ohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpe
- fhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcuofho
- nhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrth
- htvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeugfef
- keejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepth
- hhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepvddpmhhouggv
- pehsmhhtphhouhhtpdhrtghpthhtoheprghnrghtohhlhidrsghurhgrkhhovhesihhnth
- gvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
-X-ME-Proxy: <xmx:wtTLaS19okDUMdbhhMJvMt0cFYgN4BQAdnO3KPGLnP9F9i72X-0RdQ>
- <xmx:wtTLaVSwaiHPp3_9Og-uXPwjb0InU7CGPgKiT0trCXrlZznanPEaSA>
- <xmx:wtTLacvUIqJpZp3CGi42eEpIlc0q0Rn_1QgYveS58FkoWM0ZEChxzA>
- <xmx:wtTLaSZ67XJkSyvZLH3bWr6renD69zYZL9HSJtyBOd2aGEY6Jvsw1A>
- <xmx:w9TLaT79V7VqrZZuIXSUN7LeMXGGSpstv_Cg6GdklAnykkkyslazJKPK>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 31 Mar 2026 10:05:54 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/2] Deprecation notices for VFIO
-Date: Tue, 31 Mar 2026 16:05:52 +0200
-Message-ID: <5118586.31r3eYUQgx@thomas>
-In-Reply-To: <cover.1772114309.git.anatoly.burakov@intel.com>
-References: <cover.1763548356.git.anatoly.burakov@intel.com>
- <cover.1772114309.git.anatoly.burakov@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C17A6402D3;
+	Tue, 31 Mar 2026 16:39:25 +0200 (CEST)
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com
+ [148.163.156.1]) by mails.dpdk.org (Postfix) with ESMTP id 46FC0402C3
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 16:39:24 +0200 (CEST)
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 62V29laO3535583; Tue, 31 Mar 2026 14:39:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+ content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pp1; bh=sOmylo
+ S/uY6VUzIldpzVjlzSSZ7fGDxZcKXnYeNpQ4U=; b=Y0hG+9Te/lKBBGBMrY4+hB
+ wTEsRSRSUy4nZB5Y52mbF1sqMJgNxC61Pl2OETJgXhkupzT1bWTcKFDHIr6E6T72
+ qeZvEb7QAlNKvO6drUPyotfdffei2QmS267a62J4KRzoHZAueMQuXc9qjFvhWxuy
+ 3hdF4GW0f32BFjwMT0cIo8GP/N5OAS3MR2Pgmz0pOa+r//iW+XSRh+Pj/CI4gKMb
+ Dco+Hz+2jknzMu63OhMcAcG+mUz/H4PnHD/de8/XRckgZxsP7G6zE+0vFxw6QP4b
+ h3iKXrMr3NPhO0oGh2kkG9mhEYmktjUN5wlEyy9eHJ2V0z/PWffAv+mgFhe8H6jQ
+ ==
+Received: from ppma23.wdc07v.mail.ibm.com
+ (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+ by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4d66nnksnm-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 31 Mar 2026 14:39:23 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+ by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 62VC744i013897;
+ Tue, 31 Mar 2026 14:39:22 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+ by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4d6ttkhdre-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Tue, 31 Mar 2026 14:39:22 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com
+ [10.39.53.229])
+ by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+ 62VEdLqM27460100
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Tue, 31 Mar 2026 14:39:21 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id 97E6D58058;
+ Tue, 31 Mar 2026 14:39:21 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id 6C1475805B;
+ Tue, 31 Mar 2026 14:39:21 +0000 (GMT)
+Received: from li-4c4c4544-0048-3510-8036-cac04f563434.ibm.com (unknown
+ [9.24.10.250]) by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+ Tue, 31 Mar 2026 14:39:21 +0000 (GMT)
+Message-ID: <6ef072f2871cb5d99e38ae635318a4924f8bb9c5.camel@linux.ibm.com>
+Subject: Re: DPDK release candidate 26.03-rc3
+From: Riley Fletcher <rileyf@linux.ibm.com>
+To: Thomas Monjalon <thomas@monjalon.net>, dev@dpdk.org
+Date: Tue, 31 Mar 2026 09:39:21 -0500
+In-Reply-To: <4340093.KlZ2vcFHjT@thomas>
+References: <4340093.KlZ2vcFHjT@thomas>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.3 (3.58.3-1.fc43) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: WUqaf-6XXGuQ1bKn2Af_bBDypWBKMcSv
+X-Authority-Analysis: v=2.4 cv=KslAGGWN c=1 sm=1 tr=0 ts=69cbdc9b cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Yq5XynenixoA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=RnoormkPH1_aCDwRdu11:22 a=uAbxVGIbfxUO_5tXvNgY:22 a=8rWy6zfcAAAA:8
+ a=o0H6PxKc5kZCS8mi02EA:9 a=QEXdDO2ut3YA:10 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwMzMxMDEzOSBTYWx0ZWRfX8f6BcQq+IKo/
+ mUUxN9C5/y0sp28uxLiHa54O53QmUHXU6pM3aU5L8MfXzcwO9ev5W7sbYzd3gpWNhYe8cHn4t1I
+ WC540TygVNb+nwUxjKc/+X8mAs6Gua31Gph/LW8rkcdh5uTUKfltq54yg00mAnc3XnqdsxiM7P5
+ 1wecXyTzWMhU4X8zRAZ0uH4LQOS5va6+gUa9z9+uEmvYB08aZ+HnjXS3hTOfu8dcrBK6QUV6Vpx
+ NGMxf9gZBPNctwHau37xyFjnsvwQILkgewBNwregK/Z9w7svQ/2ypE49E2nZH8f61IhrgZDqvVG
+ M9DRDTC9zJWhdq2kCXwUkB3LGQ26Uh8Yef9flkNpMWZxmqW94vk26GeZNtn6yqlu97rz5SVzMyt
+ NW/npLNMl8z6SoIbvDEQrXPw8koU0xUm/AP1j6ZNYpPJSFxQ4A0OiLaGy57xDV5ZYNZI53UoIU/
+ XldXSLCGpzWUmP+qSVQ==
+X-Proofpoint-ORIG-GUID: WUqaf-6XXGuQ1bKn2Af_bBDypWBKMcSv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-03-31_03,2026-03-31_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 lowpriorityscore=0 priorityscore=1501 suspectscore=0
+ phishscore=0 adultscore=0 bulkscore=0 impostorscore=0 clxscore=1015
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2603050001
+ definitions=main-2603310139
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -87,15 +99,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-26/02/2026 14:59, Anatoly Burakov:
-> There's ongoing work to rework VFIO in DPDK [1]. These deprecation
-> notices originally were part of that patchset, but were split off
-> to easy review and acceptance.
+IBM - Power Systems Testing
+DPDK v26.03-rc3
 
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: David Marchand <david.marchand@redhat.com>
-Acked-by: Thomas Monjalon <thomas@monjalon.net>
+* Build CI on Fedora 40, 41, 42 and 43 container images for ppc64le
+* Basic PF on Mellanox: No issues found
+* Performance: TestPMD throughput single core tests
+* OS:- RHEL 10.1  kernel: 6.12.0-124.39.1.el10_1.ppc64le
+         with gcc version 14.2.1 20250110 (Red Hat 14.2.1-7)
 
-Applied, thanks.
+Systems tested:
+  - LPARs on IBM Power11 CHRP IBM, 9105-22A
+     NICs:
+     - Mellanox Technologies MT2910 Family [ConnectX-7 25 GbE 4-Port]
+     - Mellanox Technologies MT4129 Family [ConnectX-7 100 GbE 2-Port]
+     - Firmware Version: 28.47.1088
+     - OFED 26.01-1.0.0
 
+Regards,
 
+Riley Fletcher
+
+On Thu, 2026-03-26 at 01:14 +0100, Thomas Monjalon wrote:
+> A new DPDK release candidate is ready for testing:
+> 	https://git.dpdk.org/dpdk/tag/?id=3Dv26.03-rc3
+>=20
+> There are 65 new patches in this snapshot.
+>=20
+> Release notes:
+> 	https://doc.dpdk.org/guides/rel_notes/release_26_03.html
+>=20
+> Please test and report issues on https://bugs.dpdk.org
+>=20
+> You may share some release validation results
+> by replying to this message at dev@dpdk.org
+> and by adding tested hardware in the release notes.
+>=20
+> More tooling and documentation could be added before closing 26.03.
+> The final release will happen in a few days, at the end of the month.
+>=20
+> Thank you everyone
+>=20
