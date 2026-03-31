@@ -2,72 +2,96 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA931061B21
-	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 03:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E861FF60C4
+	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 04:10:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0656F40285;
-	Tue, 31 Mar 2026 05:46:23 +0200 (CEST)
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com
- [209.85.210.172])
- by mails.dpdk.org (Postfix) with ESMTP id D63C74025E
- for <dev@dpdk.org>; Tue, 31 Mar 2026 05:46:21 +0200 (CEST)
-Received: by mail-pf1-f172.google.com with SMTP id
- d2e1a72fcca58-82c68339cf0so3307654b3a.0
- for <dev@dpdk.org>; Mon, 30 Mar 2026 20:46:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774928781;
- x=1775533581; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=7B9GdebMRSx3eyZle6TTSeTn2ZiuoGvnSK20q993L9w=;
- b=i+b9EAlvlT8ojfbnkV40fPNLd104l2VuzWedEw5GxxkCX4Nlr3+1qXjSPNljcJGG1w
- R+REm7oB1WOFdSc/HfMgmpqOnFJToFUfiJpOn9jodvS7JcIPWQdivSHIJGSlNuwe1bL+
- fq6NeopDjavq6RnOqO/0ONherzEFSW4GoLcPzW7V6TEyoczyxSU9Em/ssI3RhLGhuGLC
- OSYR4N207LA0nBYQv8jp45kg6k49u/ly/eNCbPGNjzs8g4zu7tXrey/tW3A80vdAGy1O
- 5zop2crUP0eygN95MuxMbeAIMIvgJUE/mAdR5VFd13iTJE0nR36SV718o23mv1iJkzgY
- Jc+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1774928781; x=1775533581;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=7B9GdebMRSx3eyZle6TTSeTn2ZiuoGvnSK20q993L9w=;
- b=dTdapfZ0vJ0u6Z2AXvO3Oi2r3/HvtCEFbVNp6jETs79RX0SqGAx8toRp6tnxiA3NxR
- hyANFj6iO3vw0VbrkvxURoigxZCWhkGK7ekpF9unT7llbg8/pXwnXqp9naLlXP8wqHrT
- drGIVSNOqOXVchYO/6LRskh96l87+duRdnGQjV1HMeOdg4t3VgklLe+5ZE5c/CGIW1BA
- 2WiQY35j/jyimZpgPgapqRoqHL6esfOICmqw6i+iCoGEi+aUHgumVx2Gqf07aOuONawP
- WfY1d9ff6kcChauLl2ug2//26RaNRXzs8ESLdxCfvWBHzy7O2WHyY0S1ffgF4REl4Tll
- 4ZTg==
-X-Gm-Message-State: AOJu0YwIrwpQt5qyznW9vAyuW7Avfq7gKuH+b/G98WbUalal7pUnkUil
- I+wy1QtQ6CbbW4aZU0hHz5rXXgL0r0H5Xk6w6PwnfrJJpcrvL8GCGqHPAAjRkjWhAIQ=
-X-Gm-Gg: ATEYQzzb2PR7KZBFayjEIr8xGLPvsgeCjCLQlrBHBy4BXsuVBbkw2FsWpPPLPZUee0W
- p+Rd3OVnjs+g+0bGEFajbbIu2Q2f1NtkMA5rXVkr+IcQCKjbG6rYrfsQBP7KrRW82F8MkL6S1DS
- mVftzPSiCKdgMQPVKTLwz5bDwSHTpY/Nd7KUhfjiOPNPqDzF7c9FNNMtUYcGUd5VehA0rYSmR+V
- BdZ40zMbmGoohndv/vzXKgSRRZJb6fC3st+X3U+tndnJ1hF4pqPjTARDS403DtPI0zg7CBI0KuU
- mnkWlhLZxm1KoFMHr1HUDXrV7KSXppAtJfcSR4BtnHo3M8Cq+FD5U7g49ymcE/FGs+X7Y63WmkL
- 2+CEQhVsAb0hT3KN0c9uf/7lVxuLxZbZP/VZQ2PeHV9yRuu2M0SC7FS+nWVPHMgrBXq217Nifvn
- DYspQTsPoamGHTmy+jThoMB1Ztc1LqTn5vp8A=
-X-Received: by 2002:a05:6a00:3906:b0:827:32dd:59c5 with SMTP id
- d2e1a72fcca58-82cd6652d45mr1775397b3a.28.1774928780705; 
- Mon, 30 Mar 2026 20:46:20 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-82ca8436f19sm8734608b3a.9.2026.03.30.20.46.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 30 Mar 2026 20:46:20 -0700 (PDT)
-Date: Mon, 30 Mar 2026 20:46:12 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ankur Dwivedi <adwivedi@marvell.com>
-Cc: <dev@dpdk.org>, <thomas@monjalon.net>, <jerinj@marvell.com>
-Subject: Re: [PATCH v6 0/2] devtools: add tracepoint check in checkpatch
-Message-ID: <20260330204612.710ff20b@phoenix.local>
-In-Reply-To: <20231215064355.1429709-1-adwivedi@marvell.com>
-References: <20230307120514.2774917-1-adwivedi@marvell.com>
- <20231215064355.1429709-1-adwivedi@marvell.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 78E5240285;
+	Tue, 31 Mar 2026 06:10:16 +0200 (CEST)
+Received: from CY7PR03CU001.outbound.protection.outlook.com
+ (mail-westcentralusazon11010007.outbound.protection.outlook.com
+ [40.93.198.7]) by mails.dpdk.org (Postfix) with ESMTP id D8CA04025E
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 06:10:14 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FX54tOSLYugwOOVPrUM33CTMhrpkTKRzGT4WTwCKtplK+WFHkT89bDYty9xnQsCQBGL0o6l3fVzZXiSdMcwBQeVg9pFM5loA1Ab/2bONCbjJX45Sh4T3cfbBcbZyneOjwf4kHfX3+FSoRvDU0VBx7xgjaQVSsrNfPSJ6V5btAJnRLcCb31G7HJGxFbx0rFubhm0A7IgKIBrqV4jG6AJTBJr7ad/4x6LCiQlF/aLPyv3+qR9hsCjOi3kbvTGH9EpngQpIB7Al2mUGYLqdiGKwXWRBERTpSS8TsCDqGWnQ6lrrB+IRFiELbXVtns9uDamE6Ld5BDO0K+zARcDGC+R/xA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cG0eNtIXDY3BN1/XGuFekNpplabwIg+hGFhY04yk3TQ=;
+ b=YevjrEj7uBkwQRWlC/ZzVx4pq9lW63MJxwejC8ptPoaVI6qo6wqw9cALD/DhKUJlgEe3yfz2+mGWFRbFbLn4a/0/EH8ybii8PtWG4GvzbbNfiEkMIv2ArFtpHoVNH8x9mJ9/RsLmu4AbAUE+jUz2CLXoNekygZOPbMa7MbqRYU0G2af+/bfM+yiw7Usuuxx6YY8A3IvpCkme7bOr4+bY4JkrtieDsl877z/eLmFFmjyQXY9BLTXa24OUwAneswjS44cfLc6xWhRBMWsZ+/tSGeRE82z3n+mxrk0DBOfSv0ljiAiyzPpEUzgK7e8Kw8nA3xo63necD7KmB1wLwtPJ4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cG0eNtIXDY3BN1/XGuFekNpplabwIg+hGFhY04yk3TQ=;
+ b=3wZGDmLN+EqB+ZWHY5dBiUqKwaP6ndE5QOJM/ZAZweyCbykNW35NqgJM0tf20HgN4PD1tgqW8MGHIIWvEJHbVbKxhopOxRiplDTRcrXJtX0QxeDf0vpSLOiNmfKIpCaj/2zS7GrpJfYdLljj0rhk18OPSzMadr2gz0G3FfOqHEk=
+Received: from SJ0PR13CA0119.namprd13.prod.outlook.com (2603:10b6:a03:2c5::34)
+ by IA1PR12MB9465.namprd12.prod.outlook.com (2603:10b6:208:593::10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.14; Tue, 31 Mar
+ 2026 04:10:12 +0000
+Received: from SJ1PEPF000026C6.namprd04.prod.outlook.com
+ (2603:10b6:a03:2c5:cafe::99) by SJ0PR13CA0119.outlook.office365.com
+ (2603:10b6:a03:2c5::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.15 via Frontend Transport; Tue,
+ 31 Mar 2026 04:10:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ SJ1PEPF000026C6.mail.protection.outlook.com (10.167.244.103) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9745.21 via Frontend Transport; Tue, 31 Mar 2026 04:10:11 +0000
+Received: from satlexmb10.amd.com (10.181.42.219) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 30 Mar
+ 2026 23:10:11 -0500
+Received: from epycpwr02.amd.com (10.180.168.240) by satlexmb10.amd.com
+ (10.181.42.219) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Mon, 30 Mar
+ 2026 23:10:10 -0500
+From: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+To: <dev@dpdk.org>
+CC: Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH] power/amd_uncore: detect esmi lib64 using pkgconfig
+Date: Tue, 31 Mar 2026 04:09:58 +0000
+Message-ID: <20260331040958.126869-1-sivaprasad.tummala@amd.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb10.amd.com
+ (10.181.42.219)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C6:EE_|IA1PR12MB9465:EE_
+X-MS-Office365-Filtering-Correlation-Id: f07d31bc-91f9-4032-c012-08de8edb675b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|1800799024|36860700016|376014|56012099003|18002099003;
+X-Microsoft-Antispam-Message-Info: Dii5NmDHq1YbYK9JczM3jiI5sX+Y1U74F+qiKbAnoaXqk63/It1YBycsMh4FlVjFnjrE2pobZOXF84lXUQIFkhoozbLM1XLH1V0mbRI1l4cYTw1YhH4XXHRuFsE+FsiB8JtUqA6/A38Fe6zBGhEmHQ24XobGaXdm3z4PYLX2nJuribb8GINwRr4Bc5ezqBngO1HWC50+LIy8rUKBoed1q3nTFQXcle/asmfCv+Ro+jW9JE2MMXZ5qAxQ+QbelmHEhO/sKtGCjKZNHRPiN9lNBOkNQbKEXenEHYFKYcH7qk6iO0EeW3M5sxDzDH0gOfo0JLPwDZkAgcstWq7UePPt8tbU+ziQxk35QcdLlaSGqwl+wB+NO8j+OyKdcls/7aTKfI8F7AGAjholJ1+O30qM/yYUGr+Bn/sWovlIouwV4uC5YUaTggWem51VMhPTFfAYjF2sqoTfEuUB/62/FDEtLrRdgA9ihiXLXQeDQeaSOC7oSPHrWVbQw4lvStFa3mitMh8D5wL3PNCke/8xQf4OkvTPIbehjRGtz6YigO6oMU7rB2SoBeXTzuERinUggxM4tPzb4kcF+E7qvZjWpRN4hM188fJwWAZ10rdKwBnXeG6UKDnc87HFBs/BA7FC40g/0AZkLPaA4mDinXvHvj+yx6fQKYq0eXi3kAnl7M9N9nWlYovzd5v/afrfhGqqxHEG7tB11iTOtUyJ501Jd6kcPXEmv4Cq/3fVU1G7fOA2odKmpgqwp8MOhCJkg67zuodOwfBAtse0I+8l5lwp3/iJkA==
+X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(82310400026)(1800799024)(36860700016)(376014)(56012099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: U0/UiaDGnK6waedxvEmK2ak0uuzfvUy/Lvolsaj90F3JOFp7Hsfzy4BK2py+0wCWAwp+YDPu4o7oFG/GpYAn1pgwdzS7+X9K+Q4egWCOzJMSBgyyqgzr/5/q5IgYdE7gf2l6mVpsXO1yO0ffXZW8CsiNIJ/Pr8hcyofJqognbm3ugpQiMknduFDbHcHFikk9qlnpNZcx9Pa65TdRNSBH6PYtzOFyOaHaB/RgMGHnLulEs7Bgi09zQqtHF8Bx49PupXXN1Ic4vB8TgIzrujEfe00KjemhEskFVGVV4YCRPtGYnFNkgIzqitaq/PP4IDesVDhZgYr32AQq1xSKTzSGVidJBAe09jq+TWboe1r0KzTvZujgZzKHNGUnE9vrcmBa2ICc93c8OlzX7SwXLDPiMiSLIDFORZ3x/Pk9WOUu4hSeGCxN4JH/FtiATQ2HbDoy
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Mar 2026 04:10:11.5394 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f07d31bc-91f9-4032-c012-08de8edb675b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
+ Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000026C6.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB9465
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,128 +105,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 15 Dec 2023 12:13:53 +0530
-Ankur Dwivedi <adwivedi@marvell.com> wrote:
+Replace manual detection of e_smi_lib64 library from find_library() with
+dependency() via pkg-config in meson.
 
-> This patch series adds a validation in checkpatch tool to check if
-> tracepoint is present in any new function added in ethdev, eventdev
-> cryptodev and mempool library.
-> 
-> v6:
->  - The build_map_changes function is moved from check-symbol-change.sh to
->    a new symbol-map-util.sh file. This function can be used in other
->    scripts by including symbol-map-util.sh file.
-> 
-> v5:
->  - Copied the build_map_changes function from check-symbol-change.sh to
->    check-tracepoint.sh.
->  - Added eventdev, cryptodev and mempool in libdir in check-tracepoint.sh.
->  
-> v4:
->  - Rebased on the recent next-net branch.
->  - Refined logic to find function definition.
->  - Updated year in the license in devtools/check-tracepoint.sh.
->  - Removed cryptodev, added ethdev in libdir in
->    devtools/check-tracepoint.sh. 
-> 
-> v3:
->  - Split the v2 patch into 2 patches.
->  - The file common-func.sh is renamed to build-symbol-map.sh.
->  - Removed check-tracepoint.py file.
->  - Code improvements in check-tracepoint.sh.
-> 
-> v2:
->  - Add check for parent directory.
-> 
-> Ankur Dwivedi (2):
->   devtools: move build map changes function
->   devtools: add tracepoint check in checkpatch
-> 
->  devtools/check-symbol-change.sh |  76 +---------------
->  devtools/check-tracepoint.sh    | 148 ++++++++++++++++++++++++++++++++
->  devtools/checkpatches.sh        |   9 ++
->  devtools/symbol-map-util.sh     |  78 +++++++++++++++++
->  devtools/trace-skiplist.txt     |   0
->  5 files changed, 237 insertions(+), 74 deletions(-)
->  create mode 100755 devtools/check-tracepoint.sh
->  create mode 100644 devtools/symbol-map-util.sh
->  create mode 100644 devtools/trace-skiplist.txt
-> 
+Meson find_library() API may select incompatible libraries,
+requiring additional checks. Using pkg-config avoids this
+by providing correct build flags via .pc files.
 
-This patch seems to have not been updated since build system changes around symbols.
-AI spotted this an other issues. If interested change and resubmit.
+Signed-off-by: Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+---
+ drivers/power/amd_uncore/meson.build | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-Review of [PATCH v6 1/2] devtools: move build map changes function
-         [PATCH v6 2/2] devtools: add tracepoint check in checkpatch
+diff --git a/drivers/power/amd_uncore/meson.build b/drivers/power/amd_uncore/meson.build
+index cab260b64e..378eb72e50 100644
+--- a/drivers/power/amd_uncore/meson.build
++++ b/drivers/power/amd_uncore/meson.build
+@@ -7,14 +7,12 @@ if not is_linux
+     subdir_done()
+ endif
+ 
+-ESMI_header = '#include<e_smi/e_smi.h>'
+-lib = cc.find_library('e_smi64', required: false)
+-if not lib.found() or not cc.links(min_c_code, dependencies: lib)
++dep = dependency('e_smi_lib64', required: false, method: 'pkg-config')
++if not dep.found()
+     build = false
+-    reason = 'missing dependency, "libe_smi"'
+-else
+-    ext_deps += lib
++    reason = 'missing dependency, "e_smi_lib64"'
++    subdir_done()
+ endif
+-
+ sources = files('amd_uncore.c')
++ext_deps += dep
+ deps += ['power']
+-- 
+2.43.0
 
-NOTE: This patch series (v6, Dec 2023) is based on the old
-version.map / check-symbol-change.sh infrastructure. Upstream has
-since replaced check-symbol-change.sh with check-symbol-change.py
-and moved to auto-generated symbol maps via RTE_EXPORT_* macros.
-The build_map_changes() shell function parses version.map diffs,
-but version.map files are no longer manually edited. This means
-the entire detection mechanism will never trigger on current DPDK
-patches. The approach needs to be redesigned around RTE_EXPORT_*
-annotations rather than version.map changes.
-
-Patch 1/2 - devtools: move build map changes function
-------------------------------------------------------
-No issues. The function is moved verbatim and the sourcing
-mechanism is correct.
-
-Patch 2/2 - devtools: add tracepoint check in checkpatch
----------------------------------------------------------
-
-Error:
-
-1. find_trace_fn silently passes when the function body is absent
-   from the patch. If a symbol is added to version.map but the
-   function definition is in a different patch or already in the
-   tree, the awk script never matches the function name, never
-   reaches "exit 1", and falls through with exit status 0. The
-   check reports "tracepoint present" when it was never examined.
-   The awk should exit with a distinct status (e.g., 2) when the
-   function body is not found, and the caller should handle that
-   case (skip or warn).
-
-Warning:
-
-2. find_trace_fn does not filter on diff line prefixes. The awk
-   matches the function name on any line in the patch -- context
-   lines (space prefix), added lines (+), and removed lines (-).
-   If a function is being deleted, its body will still match on
-   the "-" lines, and the script could incorrectly conclude that
-   the tracepoint is present (from the old removed code). The
-   match on the function name and the _trace_ search should both
-   be restricted to "+" lines to avoid false results.
-
-3. Trap is registered before the function it references is
-   defined. The line "trap clean_and_exit_on_sig EXIT" appears
-   before clean_and_exit_on_sig() is defined. While POSIX sh
-   allows this (the name is resolved when the trap fires, not
-   when registered), it is fragile and confusing. Move the trap
-   registration after the function definition.
-
-4. Double cleanup on normal exit. The normal code path does
-   "rm -f $mapfile" then "exit $exit_code". The exit triggers the
-   EXIT trap, which runs clean_and_exit_on_sig() calling rm again
-   (harmless) and exit again. This works but is unnecessarily
-   convoluted. Either remove the explicit rm/exit at the bottom
-   and let the trap handle it, or remove the trap and rely on the
-   explicit cleanup.
-
-5. Shell variables not quoted. Multiple instances of unquoted
-   variables that could break on paths with spaces:
-     selfdir=$(dirname $(readlink -f $0))
-     . $selfdir/symbol-map-util.sh
-     find_trace_fn $patch $symname
-     for sym in $(cat $skiplist); do
-   These should use double quotes:
-     selfdir=$(dirname "$(readlink -f "$0")")
-     . "$selfdir/symbol-map-util.sh"
-     find_trace_fn "$patch" "$symname"
-   The same quoting issue exists in patch 1/2 as well. Admittedly
-   the existing DPDK scripts have similar quoting habits, but new
-   code should set a better example.
-
-Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
