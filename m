@@ -2,51 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D94041061B2B
-	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 03:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 926A11061B21
+	for <dpdk-dev@archiver.kernel.org>; Tue, 31 Mar 2026 03:16:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0BE040691;
-	Tue, 31 Mar 2026 05:11:46 +0200 (CEST)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
- by mails.dpdk.org (Postfix) with ESMTP id 649C44025E
- for <dev@dpdk.org>; Tue, 31 Mar 2026 05:11:43 +0200 (CEST)
-Received: from ar (unknown [42.177.178.249])
- by APP-03 (Coremail) with SMTP id rQCowACHa+JtO8tpg6liDA--.41003S2;
- Tue, 31 Mar 2026 11:11:41 +0800 (CST)
-From: Sun Yuechi <sunyuechi@iscas.ac.cn>
-To: dev@dpdk.org
-Cc: Sun Yuechi <sunyuechi@iscas.ac.cn>, Zijian <zijian.oerv@isrc.iscas.ac.cn>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>
-Subject: [PATCH v4 2/2] node: lookup with RISC-V vector extension
-Date: Tue, 31 Mar 2026 11:10:59 +0800
-Message-ID: <20260331031059.2621971-3-sunyuechi@iscas.ac.cn>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260331031059.2621971-1-sunyuechi@iscas.ac.cn>
-References: <20260206081635.1409106-1-sunyuechi@iscas.ac.cn>
- <20260331031059.2621971-1-sunyuechi@iscas.ac.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 9DB39402E9;
+	Tue, 31 Mar 2026 05:16:00 +0200 (CEST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 8F0124025E
+ for <dev@dpdk.org>; Tue, 31 Mar 2026 05:15:59 +0200 (CEST)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-2c7e5f38b37so510870eec.0
+ for <dev@dpdk.org>; Mon, 30 Mar 2026 20:15:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1774926958;
+ x=1775531758; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=nfsLZAc7Yz8D5Q7XAnhDH2QOzrRT8uNTxas2JFUlw0E=;
+ b=NdmL5odXv1jYlAa13fjHW1nf2E6mGdTb2N/ksiht1llIcqi0AfalY6nEhSCFDULL3d
+ 069CuphzYkmjg2wC7yi0oqjoCeYX8Xq3VzKEfxuN6IEXy8/dXfZwAjbn60N0hOp88SCI
+ gp8O+32v5YnqXb56MZIJVsCdWQ2puCULWQtTVe1hvdUQDts1fEMcMcyZT/NRGcNqFLGd
+ tY0rK5jYfrbYyBblSCH2EI7kIg5XfRf6gzGaJlXJjGnKPP7ppo0jzFXCSuF8HWdEA77Q
+ 1AKWnVG6lbMp9QVlQhLgYCK7kDYk5kGlD21kiAGXgjJcxrtNJvXNJEYuUPouSrbpIrep
+ k5eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1774926958; x=1775531758;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=nfsLZAc7Yz8D5Q7XAnhDH2QOzrRT8uNTxas2JFUlw0E=;
+ b=Ytum5AOAx04ag1WI65hmB40l66xQJr6bKPX3c5TtFcG+T4LW6ahL9NdZCRzgTHBf5l
+ e9L2QuvD0kYuWHjxTnuROGkP9KIrDhIk7MKruDcr7DzaMjDLCSy8lVz9lG9gjgCR8bhv
+ I7PoyMEbKMu3xqKMXfu+TVXmIx0CsFfIBzeQvoaJo5O24ubr+NsYqDzmIKkHOMpbSEj2
+ UC9sgHF2lOW/D84mCccfB0heqcw2K+bRrPKDl1faijFC0DwpDtVjPJiPK6/5qQXbcbpn
+ y3Ll6XCENwF0eBu3PVKuv/Kh1lSEHje0ARXfC05RSNIoNvMtzMC8A58w3EarwwLY6NHA
+ WY2g==
+X-Gm-Message-State: AOJu0Yx0I6M9+dna6yAlA5akzofGLr0nLncLO/7RIVPu0RfmfNl96I0h
+ p+5MjT1ppMpGaU36K1av9ESuo3A05TzX05CItx2aKmOokuE/aLQ/Wjv9SVXM4MXVSL8=
+X-Gm-Gg: ATEYQzwYtMUV03etTV4c+ySzJcu/TI0IJymvwzXqQWxqHmbVSZdPtp0Hdu9tnZ1nHZf
+ Enc0V7uo1SOV9DENnxBzLAVfa6TUdtOJRbeZDpB72yQQ/8WUrBBg/r0HrW3YOlk01YlTEjdUBkc
+ hsFZd8sj5pXFoTUI7dMrnIhGE8pAAWe5nXRAZdH2fvoiCn4Voe+i0ClIbFLLraWpN3WCWCC0TLj
+ 7bZMhXunvCVMdvP94stGY/9PTJMpntuLc2gAZbtDUgJNditr8wo24uBsZKenQ5PWfGFpRY4dcLO
+ tkAFKE1oxbjYEzUacn/fFmZOYahmvZgO4FjOFg435aIRJVeFKz2yJK7zL3AMjOVYRy2hD49d/+M
+ tLxWhI0TgHFi3pQmnULU1QDB63Fjcc2/jbSF5VWKojIIUkZNRQuHMWCotGC2mNIpdnz6V7eLUqD
+ exuTuwRlekMJxZN8aBw3jr8aeo02UIC3/2I+0=
+X-Received: by 2002:a05:7301:1692:b0:2c8:1d56:3410 with SMTP id
+ 5a478bee46e88-2c81d5642e8mr394160eec.18.1774926958253; 
+ Mon, 30 Mar 2026 20:15:58 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2c3c6e9c088sm8744106eec.21.2026.03.30.20.15.57
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 30 Mar 2026 20:15:58 -0700 (PDT)
+Date: Mon, 30 Mar 2026 20:15:54 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Cliff Burdick <cburdick@nvidia.com>
+Cc: <dev@dpdk.org>, <anatoly.burakov@intel.com>
+Subject: Re: [PATCH v4 0/2] support dmabuf
+Message-ID: <20260330201554.5c1ad08e@phoenix.local>
+In-Reply-To: <20260204155206.2345189-1-cburdick@nvidia.com>
+References: <20260203230338.1066297-1-cburdick@nvidia.com>
+ <20260204155206.2345189-1-cburdick@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: rQCowACHa+JtO8tpg6liDA--.41003S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3WryktF1UWr1Uur4xKr1kGrg_yoW3Jw15p3
- 45GrWFkr93JF13G3ySv3W8ZFyru3W8Kr47KryDWayfCF93Cr4xCr97try2ka9xXryku3sx
- Xa1UZ34UJr17G3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
- 6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
- 1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
- 6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
- 0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
- 6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
- AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
- c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
- AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
- Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbb_-P
- UUUUU==
-X-Originating-IP: [42.177.178.249]
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAUDAmnLGIuLBAAAs2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,226 +80,199 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement ip4_lookup_node_process_vec function for RISC-V architecture
-using RISC-V Vector Extension instruction set.
+On Wed, 4 Feb 2026 15:50:07 +0000
+Cliff Burdick <cburdick@nvidia.com> wrote:
 
-Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
-Signed-off-by: Zijian <zijian.oerv@isrc.iscas.ac.cn>
----
- doc/guides/rel_notes/release_26_03.rst |   4 +
- lib/node/ip4_lookup.c                  |   5 +-
- lib/node/ip4_lookup_rvv.h              | 164 +++++++++++++++++++++++++
- 3 files changed, 172 insertions(+), 1 deletion(-)
- create mode 100644 lib/node/ip4_lookup_rvv.h
+> Fixes since v3:
+> * Fixed version in RTE_EXPORT_EXPERIMENTAL_SYMBOL
+> 
+> Add support for kernel dmabuf feature and integrate it in the mlx5 driver.
+> This feature is needed to support GPUDirect on newer kernels.
+> 
+> I apologize for all the patches. Still trying to learn how to submit these.
+> 
+> Cliff Burdick (2):
+>   eal: support dmabuf
+>   common/mlx5: support dmabuf
+> 
+>  .mailmap                                      |   1 +
+>  doc/guides/rel_notes/release_26_03.rst        |   6 +
+>  drivers/common/mlx5/linux/meson.build         |   2 +
+>  drivers/common/mlx5/linux/mlx5_common_verbs.c |  48 ++++-
+>  drivers/common/mlx5/linux/mlx5_glue.c         |  19 ++
+>  drivers/common/mlx5/linux/mlx5_glue.h         |   3 +
+>  drivers/common/mlx5/mlx5_common.c             |  42 ++++-
+>  drivers/common/mlx5/mlx5_common_mr.c          | 113 +++++++++++-
+>  drivers/common/mlx5/mlx5_common_mr.h          |  17 +-
+>  drivers/common/mlx5/windows/mlx5_common_os.c  |   8 +-
+>  drivers/crypto/mlx5/mlx5_crypto.h             |   1 +
+>  drivers/crypto/mlx5/mlx5_crypto_gcm.c         |   3 +-
+>  lib/eal/common/eal_common_memory.c            | 165 +++++++++++++++++-
+>  lib/eal/common/eal_memalloc.h                 |  21 +++
+>  lib/eal/common/malloc_heap.c                  |  27 +++
+>  lib/eal/common/malloc_heap.h                  |   5 +
+>  lib/eal/include/rte_memory.h                  | 145 +++++++++++++++
+>  17 files changed, 612 insertions(+), 14 deletions(-)
+> 
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 6bb18433f5..ea03c95477 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -153,6 +153,10 @@ New Features
-   Added handling of the key combination Control+L
-   to clear the screen before redisplaying the prompt.
- 
-+* **Added RISC-V vector extension support for node library.**
-+
-+  * Added vectorized IPv4 LPM lookup implementation for the node library
-+    using RISC-V Vector Extension instruction set.
- 
- Removed Items
- -------------
-diff --git a/lib/node/ip4_lookup.c b/lib/node/ip4_lookup.c
-index f6db3219f0..42db993142 100644
---- a/lib/node/ip4_lookup.c
-+++ b/lib/node/ip4_lookup.c
-@@ -44,6 +44,8 @@ static struct ip4_lookup_node_main ip4_lookup_nm;
- #include "ip4_lookup_neon.h"
- #elif defined(RTE_ARCH_X86)
- #include "ip4_lookup_sse.h"
-+#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
-+#include "ip4_lookup_rvv.h"
- #endif
- 
- static uint16_t
-@@ -208,7 +210,8 @@ ip4_lookup_node_init(const struct rte_graph *graph, struct rte_node *node)
- 	IP4_LOOKUP_NODE_LPM(node->ctx) = ip4_lookup_nm.lpm_tbl[graph->socket];
- 	IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx) = dyn;
- 
--#if defined(__ARM_NEON) || defined(RTE_ARCH_X86)
-+#if defined(__ARM_NEON) || defined(RTE_ARCH_X86) || \
-+	(defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V))
- 	if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
- 		node->process = ip4_lookup_node_process_vec;
- #endif
-diff --git a/lib/node/ip4_lookup_rvv.h b/lib/node/ip4_lookup_rvv.h
-new file mode 100644
-index 0000000000..0d9db2e19b
---- /dev/null
-+++ b/lib/node/ip4_lookup_rvv.h
-@@ -0,0 +1,164 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
-+ */
-+
-+#ifndef __INCLUDE_IP4_LOOKUP_RVV_H__
-+#define __INCLUDE_IP4_LOOKUP_RVV_H__
-+
-+static __rte_always_inline vuint32m8_t
-+bswap32_vec(vuint32m8_t v, size_t vl)
-+{
-+	vuint32m8_t low16 = __riscv_vor_vv_u32m8(
-+		__riscv_vsll_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF, vl), 24, vl),
-+		__riscv_vsll_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF00, vl), 8, vl),
-+		vl);
-+
-+	vuint32m8_t high16 = __riscv_vor_vv_u32m8(
-+		__riscv_vsrl_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF0000, vl), 8, vl),
-+		__riscv_vsrl_vx_u32m8(v, 24, vl),
-+		vl);
-+
-+	return __riscv_vor_vv_u32m8(low16, high16, vl);
-+}
-+
-+static __rte_always_inline void
-+rte_lpm_lookup_vec(const struct rte_lpm *lpm, const uint32_t *ips,
-+			uint32_t *hop, size_t vl, uint32_t defv)
-+{
-+	/* Load IP addresses (network byte order) */
-+	vuint32m8_t v_ip = bswap32_vec(__riscv_vle32_v_u32m8(ips, vl), vl);
-+
-+	vuint32m8_t v_tbl24_byte_offset = __riscv_vsll_vx_u32m8(
-+			__riscv_vsrl_vx_u32m8(v_ip, 8, vl), 2, vl);
-+
-+	vuint32m8_t vtbl_entry = __riscv_vluxei32_v_u32m8(
-+		(const uint32_t *)lpm->tbl24, v_tbl24_byte_offset, vl);
-+
-+	vbool4_t mask = __riscv_vmseq_vx_u32m8_b4(
-+		__riscv_vand_vx_u32m8(vtbl_entry, RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),
-+		RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl);
-+
-+	vuint32m8_t vtbl8_index = __riscv_vsll_vx_u32m8(
-+		__riscv_vadd_vv_u32m8(
-+			__riscv_vsll_vx_u32m8(
-+				__riscv_vand_vx_u32m8(vtbl_entry, 0x00FFFFFF, vl), 8, vl),
-+			__riscv_vand_vx_u32m8(v_ip, 0x000000FF, vl), vl),
-+		2, vl);
-+
-+	vtbl_entry = __riscv_vluxei32_v_u32m8_mu(
-+		mask, vtbl_entry, (const uint32_t *)(lpm->tbl8), vtbl8_index, vl);
-+
-+	vuint32m8_t vnext_hop = __riscv_vand_vx_u32m8(vtbl_entry, 0x00FFFFFF, vl);
-+	mask = __riscv_vmseq_vx_u32m8_b4(
-+		__riscv_vand_vx_u32m8(vtbl_entry, RTE_LPM_LOOKUP_SUCCESS, vl), 0, vl);
-+
-+	vnext_hop = __riscv_vmerge_vxm_u32m8(vnext_hop, defv, mask, vl);
-+
-+	__riscv_vse32_v_u32m8(hop, vnext_hop, vl);
-+}
-+
-+/* Can be increased further for VLEN > 256 */
-+#define RVV_MAX_BURST 64U
-+
-+static uint16_t
-+ip4_lookup_node_process_vec(struct rte_graph *graph, struct rte_node *node,
-+			void **objs, uint16_t nb_objs)
-+{
-+	struct rte_mbuf **pkts;
-+	struct rte_lpm *lpm = IP4_LOOKUP_NODE_LPM(node->ctx);
-+	const int dyn = IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx);
-+	rte_edge_t next_index;
-+	void **to_next, **from;
-+	uint16_t last_spec = 0;
-+	uint16_t n_left_from;
-+	uint16_t held = 0;
-+	uint32_t drop_nh;
-+
-+	/* Temporary arrays for batch processing */
-+	uint32_t ips[RVV_MAX_BURST];
-+	uint32_t res[RVV_MAX_BURST];
-+	rte_edge_t next_hops[RVV_MAX_BURST];
-+
-+	/* Speculative next */
-+	next_index = RTE_NODE_IP4_LOOKUP_NEXT_REWRITE;
-+	/* Drop node */
-+	drop_nh = ((uint32_t)RTE_NODE_IP4_LOOKUP_NEXT_PKT_DROP) << 16;
-+
-+	pkts = (struct rte_mbuf **)objs;
-+	from = objs;
-+	n_left_from = nb_objs;
-+
-+	/* Get stream for the speculated next node */
-+	to_next = rte_node_next_stream_get(graph, node, next_index, nb_objs);
-+
-+	while (n_left_from > 0) {
-+		rte_edge_t fix_spec = 0;
-+
-+		size_t vl = __riscv_vsetvl_e32m8(RTE_MIN(n_left_from, RVV_MAX_BURST));
-+
-+		/* Extract IP addresses and metadata from current batch */
-+		for (size_t i = 0; i < vl; i++) {
-+			struct rte_ipv4_hdr *ipv4_hdr =
-+				rte_pktmbuf_mtod_offset(pkts[i], struct rte_ipv4_hdr *,
-+						sizeof(struct rte_ether_hdr));
-+			ips[i] = ipv4_hdr->dst_addr;
-+			node_mbuf_priv1(pkts[i], dyn)->cksum = ipv4_hdr->hdr_checksum;
-+			node_mbuf_priv1(pkts[i], dyn)->ttl = ipv4_hdr->time_to_live;
-+		}
-+
-+		/* Perform LPM lookup */
-+		rte_lpm_lookup_vec(lpm, ips, res, vl, drop_nh);
-+
-+		for (size_t i = 0; i < vl; i++) {
-+			/* Update statistics */
-+			if ((res[i] >> 16) == (drop_nh >> 16))
-+				NODE_INCREMENT_XSTAT_ID(node, 0, 1, 1);
-+
-+			/* Extract next hop and next node */
-+			node_mbuf_priv1(pkts[i], dyn)->nh = res[i] & 0xFFFF;
-+			next_hops[i] = res[i] >> 16;
-+
-+			/* Check speculation */
-+			fix_spec |= (next_index ^ next_hops[i]);
-+		}
-+
-+		if (unlikely(fix_spec)) {
-+			/* Copy successfully speculated packets before this batch */
-+			memcpy(to_next, from, last_spec * sizeof(from[0]));
-+			from += last_spec;
-+			to_next += last_spec;
-+			held += last_spec;
-+			last_spec = 0;
-+
-+			/* Process each packet in current batch individually */
-+			for (size_t i = 0; i < vl; i++) {
-+				if (next_index == next_hops[i]) {
-+					*to_next++ = from[i];
-+					held++;
-+				} else {
-+					rte_node_enqueue_x1(graph, node, next_hops[i], from[i]);
-+				}
-+			}
-+
-+			from += vl;
-+		} else {
-+			last_spec += vl;
-+		}
-+
-+		pkts += vl;
-+		n_left_from -= vl;
-+	}
-+
-+	/* Handle successfully speculated packets */
-+	if (likely(last_spec == nb_objs)) {
-+		rte_node_next_stream_move(graph, node, next_index);
-+		return nb_objs;
-+	}
-+
-+	held += last_spec;
-+	memcpy(to_next, from, last_spec * sizeof(from[0]));
-+	rte_node_next_stream_put(graph, node, next_index, held);
-+
-+	return nb_objs;
-+}
-+#endif
--- 
-2.53.0
+I don't think anyone look at the details here.
+If they did they would see the same thing as what AI did.
 
+
+Review: [PATCH v4 1/2] eal: support dmabuf
+        [PATCH v4 2/2] common/mlx5: support dmabuf
+
+Good approach using a side-table to avoid ABI changes to
+rte_memseg_list. The dmabuf support for mlx5 is well-structured
+with proper compile-time gating via HAVE_IBV_REG_DMABUF_MR.
+
+Patch 1/2 - eal: support dmabuf
+
+Error: rte_extmem_register is broken by rte_extmem_register_dmabuf.
+
+rte_extmem_register now calls rte_extmem_register_dmabuf with
+fd=-1. But rte_extmem_register_dmabuf rejects dmabuf_fd < 0:
+
+  int
+  rte_extmem_register_dmabuf(void *va_addr, size_t len,
+      int dmabuf_fd, uint64_t dmabuf_offset,
+      rte_iova_t iova_addrs[], unsigned int n_pages, size_t page_sz)
+  {
+      if (dmabuf_fd < 0) {
+          rte_errno = EINVAL;
+          return -1;
+      }
+      ...
+
+So every call to rte_extmem_register will now fail with EINVAL.
+rte_extmem_register should call extmem_register directly (with
+fd=-1), not rte_extmem_register_dmabuf:
+
+  int
+  rte_extmem_register(void *va_addr, size_t len, rte_iova_t iova_addrs[],
+      unsigned int n_pages, size_t page_sz)
+  {
+      return extmem_register(va_addr, len, -1, 0, iova_addrs,
+          n_pages, page_sz);
+  }
+
+Error: Input validation from rte_extmem_register is lost.
+
+The original rte_extmem_register validated va_addr, page_sz, len,
+alignment, and n_pages before doing anything. The new
+extmem_register function has no input validation -- it only has
+the locking and memseg creation logic. The parameter checks that
+were in the original function (va_addr == NULL, page_sz == 0,
+len == 0, power-of-2, alignment) need to be in extmem_register
+or duplicated in both rte_extmem_register and
+rte_extmem_register_dmabuf.
+
+Error: eal_memseg_list_init uses type_msl_idx to index dmabuf_info
+but this is not the same as the memseg list index in mcfg->memsegs.
+
+eal_memseg_list_init initializes dmabuf_info[type_msl_idx], but
+type_msl_idx is a per-type index used for naming, not the global
+memseg list position. When malloc_heap_create_external_seg_dmabuf
+later sets dmabuf_info[msl_idx] where msl_idx = msl - mcfg->memsegs,
+these are different index spaces. The init in eal_memseg_list_init
+may write to wrong slots, and external segments may use indices
+that were never initialized by eal_memseg_list_init. The static
+dmabuf_info array is zero-initialized at program start (fd=0,
+offset=0), but fd=0 is a valid file descriptor (stdin), so fd
+should be initialized to -1 for all entries, or the
+eal_memseg_list_init initialization should be removed and
+initialization done only in malloc_heap_create_external_seg and
+malloc_heap_create_external_seg_dmabuf.
+
+Warning: malloc_heap_create_external_seg now redundantly
+initializes dmabuf_info.
+
+malloc_heap_create_external_seg calls
+eal_memseg_list_set_dmabuf_info(i, -1, 0) at the end, but
+malloc_heap_create_external_seg_dmabuf also calls
+malloc_heap_create_external_seg (which sets fd=-1) and then
+immediately overwrites with the actual fd. This works but is
+confusing -- the redundant initialization in the base function
+was added for non-dmabuf paths but makes the dmabuf path do a
+useless set-then-overwrite.
+
+Warning: dmabuf_info is process-local static storage.
+
+The side-table approach means dmabuf metadata is not shared with
+secondary processes via shared memory. The commit message mentions
+rte_extmem_attach for cross-process use, but secondary processes
+will not have the dmabuf_info populated. If a secondary process
+calls rte_memseg_list_get_dmabuf_fd, it will always get -1. This
+limitation should be documented in the Doxygen for
+rte_extmem_register_dmabuf.
+
+Warning: dmabuf fd lifetime / ownership is not documented.
+
+The API does not specify whether DPDK takes ownership of the
+dmabuf_fd (will it close it?) or whether the caller must keep it
+open. Since ibv_reg_dmabuf_mr likely holds a reference through
+the kernel, the fd can probably be closed after registration,
+but this should be explicitly documented in the Doxygen. Also,
+rte_extmem_unregister does not clean up the dmabuf_info entry
+(reset fd to -1), so stale metadata remains after unregistration.
+
+Warning: the public API functions in eal_memalloc.h have the same
+names as the public API functions in rte_memory.h but different
+signatures.
+
+eal_memalloc.h declares:
+  int eal_memseg_list_get_dmabuf_fd(int list_idx);
+  int eal_memseg_list_get_dmabuf_offset(int list_idx, uint64_t *offset);
+
+rte_memory.h declares:
+  int rte_memseg_list_get_dmabuf_fd(const struct rte_memseg_list *msl);
+  int rte_memseg_list_get_dmabuf_offset(const struct rte_memseg_list *msl, ...);
+
+These are distinct functions, but the eal_memalloc.h header claims
+to declare:
+  "Get dma-buf fd for a memseg list."
+  "Get dma-buf offset for a memseg list."
+...with names prefixed eal_ vs rte_. This is fine functionally but
+the internal and public function signatures should use the same
+error convention. The internal eal_memseg_list_get_dmabuf_fd
+returns -EINVAL on error, while the public
+rte_memseg_list_get_dmabuf_fd_unsafe returns -1 with rte_errno.
+The public function does not call the internal function at all --
+it accesses dmabuf_info directly. The internal functions in
+eal_memalloc.h appear unused.
+
+Patch 2/2 - common/mlx5: support dmabuf
+
+Warning: mlx5_os_set_reg_mr_cb signature change is an internal
+ABI break.
+
+The function signature changes from 2 to 3 parameters. This is
+an internal symbol so it's not a public ABI break, but all
+callers must be updated atomically. The Windows and Linux
+implementations are both updated, and the crypto caller is
+updated, so this appears complete. Verify no other callers exist
+outside this patch.
+
+Warning: duplicate dmabuf detection logic in mlx5_common.c and
+mlx5_common_mr.c.
+
+The pattern of checking msl->external, getting dmabuf_fd, getting
+dmabuf_offset, and calculating the adjusted offset is repeated
+nearly identically in mlx5_common_dev_dma_map and
+mlx5_mr_mempool_register_primary. This should be factored into a
+helper function to avoid the code duplication and ensure consistent
+behavior.
+
+Info: mlx5_common_verbs_reg_dmabuf_mr passes addr as iova.
+
+The call is:
+  reg_dmabuf_mr_cb(pd, dmabuf_offset, len, addr, dmabuf_fd, ...)
+
+where addr is the user-space virtual address. For ibv_reg_dmabuf_mr,
+the iova parameter is the "IO virtual address the device will use
+to access the region." Using the user-space VA as iova means the
+MR maps virtual addresses 1:1. This is the common pattern for
+DPDK but worth noting that it won't work if the device expects
+different IO addresses.
+
+Reviewed-by: Stephen Hemminger <stephen@networkplumber.org>
