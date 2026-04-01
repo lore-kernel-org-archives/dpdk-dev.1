@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A78351076387
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Apr 2026 17:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625A610FCAC9
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Apr 2026 19:24:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B9B1A40A7A;
-	Wed,  1 Apr 2026 19:13:17 +0200 (CEST)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 7D6DD402E2
- for <dev@dpdk.org>; Wed,  1 Apr 2026 19:13:16 +0200 (CEST)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-2c156c4a9efso29616eec.1
- for <dev@dpdk.org>; Wed, 01 Apr 2026 10:13:16 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7DDB240A7A;
+	Wed,  1 Apr 2026 21:24:13 +0200 (CEST)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
+ [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id 41877402E2
+ for <dev@dpdk.org>; Wed,  1 Apr 2026 21:24:12 +0200 (CEST)
+Received: by mail-wm1-f44.google.com with SMTP id
+ 5b1f17b1804b1-4887fd35e60so423555e9.2
+ for <dev@dpdk.org>; Wed, 01 Apr 2026 12:24:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1775063595;
- x=1775668395; darn=dpdk.org; 
+ d=gmail.com; s=20251104; t=1775071452; x=1775676252; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=U+XlLufJg1eXw42f4uTGeHpl56EtL30oFe3SJXMxttw=;
- b=Ruq8e1FSlR9tL9ACYMP61nqYs/YVU34UdscaLTo2HLuLRHwij4rXbpQ57xcK89XHZ6
- IXzKhG+WauRzKuOd87J2myR43uWKCF/JAJO+FIw8zibuIgu66tU3x5e0O/fKN1F21JAX
- zBe7aFaLHi1dMPm+CT/PVYiISnlPr/MCWKY81REPrxeBISgST7Hq31Nw63GnzMPXnlnC
- 3gM32cShaAGtxy0zZjbf/oG43l+HVTgHyEKpDf+3AjB5jOxLmew2enavUbH4X0Oqtwep
- np3IFDSY58ytzNgo2g3ltUCU5PYtKEXl01G4O9FzewN25wTcAgmM/J249LoeT9p4m1+A
- pljw==
+ :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+ bh=4hn4lTG6bIpqdBDdMaYOVvDj/xnUR2ax8tCtJd6Fm/E=;
+ b=EO34YToFUCcDca+VToSOOrhks+r7EyxxCeZxEYYy7MJGLdV/hMmIg8U3eQ47tZGr+W
+ WMMMQQfemx3Ns3crTYtOMNPB1Dnb3+7LQ1yFRhmb2/zVb8tQvaWH/oXEP9nKZIhNSt9A
+ scXG9UeQ/+lcYOUNC/n5jPwIz8dHwJQ/TS5V5LoCa00QVVO2KehDtMsbZ4vHUghlYML/
+ j5gys+SsZnbH95FahN5VmHXVp3laMKKrRVKJ/Tf1t5zeAwJiWW4N5S0LC7tjHCqLjsr/
+ GEj4sN5PX+RasIPWbh3kZV8ztv/2A6GFoVhQn/nKWXs1XGiiZQg03hI6zjWpFiZo5+uG
+ t5/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775063595; x=1775668395;
+ d=1e100.net; s=20251104; t=1775071452; x=1775676252;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=U+XlLufJg1eXw42f4uTGeHpl56EtL30oFe3SJXMxttw=;
- b=rr1+jRhu3NhvhHa5fKFdFoIryNiKGJFi9F7o8Wg2eQXJQke8wvMNiUND3fLf2o5lEd
- cEMncANh+yHOftPY4CjRvjaZsXka9SpDJmrA7qBqqva2GNTkhyL6Js7INvpPym0SP3bO
- jIizbtH5fz2uXvDh/Fz89glUVYbWwULyTDiwpV7Id4fZQ5QmQGmJmorMihnhv8RnbbvB
- Xd2IoIXvKFZM9zVYnHx6+dwVc+Ikw9kvhr9Y7ANBsWKeZvpS27UmlDTA9WPid98cohHC
- xBg6bzpisb8z94RVm16jMiP2pJHhYbr7wc05+U5lgTap3Ssl5UdoUG9RO389LC1nW/rg
- KHkw==
-X-Gm-Message-State: AOJu0YyyGal+LUhKD7gTuGk3l7s4mSW/ZQVASx4AiKOJxf5LHpcO/o+3
- 6iFcRmaDjssdcY+E8LSYgQQhC/b9kj0eD3hqoCtHVi0jrFyxhWcS1mMtxwnh9Tr0nyjAJ/OmfQI
- MLwD9
-X-Gm-Gg: ATEYQzyXzop1mryHnCSuTjGUKXf5SDtDOZgMfzX1UNCs9sb99434uVgpSVaWHqtDZSY
- efKeV3C2bIlWdhwIjEZwqiLn256kvQrQ+89Be7IY39k32iH9uJ9UlJcUWzzuDzNgPRf8unBm3iy
- eV8UhgekSG+yZ5R/lOhb3oMHpcOWFkOElGATUw4Jgm9DRGC/2N4wbp56B2CxrjME21mNJ3YSbwZ
- qXH2RE7Au8n+W4vWSSB2mTNCw4ZFrcL3CZyN/CgO7HUeMM/ODgkMaEws64MuAh3ST+bc7AJsbjr
- s7BkpUQzPSoZoQoxb1GkYoGkDN3Mji9aaJ9C3DpaReK2AQBbuoYfbpHZTuTBRPQkf6VHklQMIES
- BwZze3FJlDQAAQVSdkvW8F/6R1UaIPMDYdZ6AomjRhryIk8TkI3F8GGqnBcA1ujyIZUGF3bUdpU
- 58LW3WeHgaI3W/Bmu5S0RqV1PcXpWHim5V
-X-Received: by 2002:a05:7300:230d:b0:2c6:2bac:8b1 with SMTP id
- 5a478bee46e88-2c932ea99f0mr2310301eec.24.1775063595236; 
- Wed, 01 Apr 2026 10:13:15 -0700 (PDT)
-Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2ca7cf126c9sm247055eec.27.2026.04.01.10.13.14
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 01 Apr 2026 10:13:14 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
+ bh=4hn4lTG6bIpqdBDdMaYOVvDj/xnUR2ax8tCtJd6Fm/E=;
+ b=F5ZQbXmAtzYb3XZVtn9Ojy3ecWwFenTzOFQEDTWGfpqAoTIXSAruuIew1OmqIEpiWU
+ EoPTj1c90lsA2/Wx7mzmUYnxpTng5Ypu7nogcCGkxcLWxELbeBRKnCjiX+oIe8V1JExR
+ /ubZ7UY6O77ZzwACsXzPaNiL60nDHq0W7b76XTd6rK5n1j4zHSA8OnL0FgZxl2vwHyIZ
+ ESZLm1s+GF7unX+JgR4of7d90yzUp4v9o9iVx4cms0kB41TIzgRFT3C3A/Y35G7JdT7Y
+ 2m4X5kNxM+2/YyUTwsI4DCPEC8y+7NFqgmpWS19fMUJNloE03f9CyS2Uzz6Rlo20rrxT
+ SFlw==
+X-Gm-Message-State: AOJu0YzUcu/YcwGyTTpmpGrahUC4m23fdoVydI01CJ+6qRmobB/k9Q97
+ wQBctunUzeZbs2U8Z/PPfXsWIRQJ12+EcDJqcZKlilwsy7Rj7s2hVuSQZwLD3W3E
+X-Gm-Gg: ATEYQzz8d7ThtD4gou4QM75YX1ADCmMmTgeXF1B9MwgPIlUYAPAS/rmHNduKA1ciCUy
+ DKWe5kHVk+Btdb3ONejZ9L708CyJMEsrft9LoDW+iEMA+LpxQoWsg/xieX368RMglYpWPkxT9+/
+ x3DQvfsHx/O+sKNW20YsaFvaJPiBmpVNKLNaHBABLWjXNXfixNwM7nf8niAmBILwlcaXQngDPgp
+ /nbiBiJsjPezizitGoi5gniOghKm4JLI+aSvPQmCjrKR5lbaeV25pKHetk/xhngk9DqWfl7Vjvi
+ MPBRIUF+52mxr+LSQpvmuJoRHYjElUHiSer3bBIxFoH3fwpO0gAuwJzKqe+K1RXWYwXHwxLax9R
+ cAhzklx5gAlOOjP2PTNiH/nprVjiqrpAaLLiNXUVO/GKLsiyIcFAztl2KizGaxg9L6vREbt2JRs
+ 42xTpneaQ5tCGCQ1rm9uOpJeGjkI6DG8JjPFdjuT3Mx0E/cWrHu7NyOfMLcSvBvYeFvS9hUpucP
+ AzhDg+nnRIZscpD55LFBXbTBc0+ofI=
+X-Received: by 2002:a05:600c:a0d:b0:487:55c:e0c1 with SMTP id
+ 5b1f17b1804b1-48883591733mr88519245e9.14.1775071451425; 
+ Wed, 01 Apr 2026 12:24:11 -0700 (PDT)
+Received: from localhost.localdomain (83.22.224.212.ipv4.supernova.orange.pl.
+ [83.22.224.212]) by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-4887a630901sm79220185e9.0.2026.04.01.12.24.10
+ (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+ Wed, 01 Apr 2026 12:24:10 -0700 (PDT)
+Sender: Staszek Kardach <kardasan@gmail.com>
+From: Stanislaw Kardach <stanislaw.kardach@gmail.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: [PATCH] net/zxdh: replace memcpy with structure assignment
-Date: Wed,  1 Apr 2026 10:13:11 -0700
-Message-ID: <20260401171312.292717-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+Cc: Thomas Monjalon <thomas@monjalon.net>, Sun Yuechi <sunyuechi@iscas.ac.cn>,
+ Stanislaw Kardach <stanislaw.kardach@gmail.com>
+Subject: [PATCH] maintainers: update RISC-V maintainer
+Date: Wed,  1 Apr 2026 21:24:00 +0200
+Message-ID: <20260401192401.6243-1-stanislaw.kardach@gmail.com>
+X-Mailer: git-send-email 2.50.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -77,26 +79,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Found by cocci/struct_assign script
+Change the RISC-V maintainer to Sun Yuechi and remove myself as
+I'm unable to properly perform maintainer duties due to time
+constraints.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: Stanislaw Kardach <stanislaw.kardach@gmail.com>
 ---
- drivers/net/zxdh/zxdh_flow.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/zxdh/zxdh_flow.c b/drivers/net/zxdh/zxdh_flow.c
-index 7a2e20ac39..56ac34c6e3 100644
---- a/drivers/net/zxdh/zxdh_flow.c
-+++ b/drivers/net/zxdh/zxdh_flow.c
-@@ -1884,7 +1884,7 @@ vf_flow_msg_process(enum zxdh_msg_type msg_type, struct rte_eth_dev *dev,
- 	struct zxdh_flow_op_rsp *flow_rsp = (struct zxdh_flow_op_rsp *)flow_op_rsp;
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0f5539f851..eeb55951b4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -334,11 +334,10 @@ F: examples/*/*_altivec.*
+ F: examples/common/altivec/
  
- 	dh_flow->hash_search_index = hw->hash_search_index;
--	rte_memcpy(&flow_msg->dh_flow, dh_flow, sizeof(struct zxdh_flow));
-+	flow_msg->dh_flow = *dh_flow;
+ RISC-V
+-M: Stanisław Kardach <stanislaw.kardach@gmail.com>
++M: Sun Yuechi <sunyuechi@iscas.ac.cn>
+ F: config/riscv/
+ F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
+ F: lib/eal/riscv/
+-M: Sun Yuechi <sunyuechi@iscas.ac.cn>
+ F: lib/**/*rvv*
  
- 	zxdh_msg_head_build(hw, msg_type, &msg_info);
- 	ret = zxdh_vf_send_msg_to_pf(dev, &msg_info, sizeof(struct zxdh_msg_info),
+ Intel x86
 -- 
-2.53.0
+2.50.1 (Apple Git-155)
 
