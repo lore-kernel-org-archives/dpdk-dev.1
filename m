@@ -2,94 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED41D35157
-	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Apr 2026 07:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F11F8D35164
+	for <dpdk-dev@archiver.kernel.org>; Wed,  1 Apr 2026 09:15:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B2340406FF;
-	Wed,  1 Apr 2026 09:59:06 +0200 (CEST)
-Received: from SN4PR2101CU001.outbound.protection.outlook.com
- (mail-southcentralusazon11012061.outbound.protection.outlook.com
- [40.93.195.61]) by mails.dpdk.org (Postfix) with ESMTP id 5DE59400D7;
- Wed,  1 Apr 2026 09:59:05 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=A4OLqToLCcqtfPyvqcj0DRHpzwNTPHVAqu8iEf7lXqeqjgs4sgZFLXHJ4soO9Igrp8jn+QAWDHJC6Zf/Zmlvfs8vJM/ANOSlulGX47n0E3wXRQpPJQeAXbfGss8+PD2hy7WQd34Ri/vTz7eIkraTTWbb9eJcUdXgcyhJNr+ZnbANAdlp54mYLmK4PGmwZQETvNGQrZO3KQWW+jbN6wlPp4KEXmCZbJkbzknjb6GvYEra/YoBqgifirgw5h5H1p21bvL8SYA5JcVqYrb3eSVYe7Bp7dFXFm0mUZOV3cKniSrM6Yge1YaOFhtpf15KGUajvnKTXL4z68GQwEo9wE0SXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s58Tfg+ZQq3MgdsdClL6wSkSUrkyCIhqqWzyidxDVZg=;
- b=stJBZ3l1R1fJuUnGkJOUD/hoAtoX9VAgsCDZ55BP0vUFmR3I0zMeZ50A6Mp2K6YDBYHk7pKz+UWrwB5YatBX2iW3TEg8nWuvmB0dBVZIzfwuZhy5khVlplNecDyMpfHII+yR0vd6l+tc5xGdv39LKxK5WjsbQe92ohN0Amub8DXdXmFDASRPidbxghJTXSpDSMaIUypygukopCtqK6PYcm1cuS/VJ2XY8Ama4+200TDu7EMKzh1qDJazM//s7ODel6Y2FXx/oYdQ2Wzk81SQQFbAk8EwMPUpNr8AX6tdOT8jeq6faorus7I9mR7a8/ycxvnNCvW59pSrBGtV9al+pw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s58Tfg+ZQq3MgdsdClL6wSkSUrkyCIhqqWzyidxDVZg=;
- b=DjZhI87BzlOdNosb6rNgFv8cesw9gR3O+J2kdXovysuUkRVPerhlBX8G4V0yK4ayqMaxHRp7JgBTjDoBvp1RYNoVzqEQ/ELWNSrCBTKAmP6ZDj3ZhIw+GFoAaBGkhwzMyLQq5rLTOP5bpWajj6L6b/IaNTmzdH/jZl37CIZnQrs=
-Received: from DM6PR01CA0019.prod.exchangelabs.com (2603:10b6:5:296::24) by
- DM4PR12MB5819.namprd12.prod.outlook.com (2603:10b6:8:63::22) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.17; Wed, 1 Apr 2026 07:59:01 +0000
-Received: from DS3PEPF0000C37B.namprd04.prod.outlook.com
- (2603:10b6:5:296:cafe::40) by DM6PR01CA0019.outlook.office365.com
- (2603:10b6:5:296::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9745.30 via Frontend Transport; Wed,
- 1 Apr 2026 07:59:01 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS3PEPF0000C37B.mail.protection.outlook.com (10.167.23.5) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.17 via Frontend Transport; Wed, 1 Apr 2026 07:59:01 +0000
-Received: from BLRASNATARA.amd.com (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Wed, 1 Apr
- 2026 02:58:59 -0500
-From: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-To: <dev@dpdk.org>
-CC: <Selwin.Sebastian@amd.com>, Ashok Kumar Natarajan
- <ashokkumar.natarajan@amd.com>, <stable@dpdk.org>
-Subject: [PATCH v2] net/axgbe: fix PHY auto-negotiation advertisement
-Date: Wed, 1 Apr 2026 13:28:30 +0530
-Message-ID: <20260401075831.568-1-ashokkumar.natarajan@amd.com>
-X-Mailer: git-send-email 2.53.0.windows.1
-In-Reply-To: <20260331090427.156-1-ashokkumar.natarajan@amd.com>
-References: <20260331090427.156-1-ashokkumar.natarajan@amd.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 19DB84029D;
+	Wed,  1 Apr 2026 11:15:57 +0200 (CEST)
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com
+ [209.85.219.45]) by mails.dpdk.org (Postfix) with ESMTP id 08584400D7
+ for <dev@dpdk.org>; Wed,  1 Apr 2026 11:15:55 +0200 (CEST)
+Received: by mail-qv1-f45.google.com with SMTP id
+ 6a1803df08f44-8a154cc6a48so31916396d6.0
+ for <dev@dpdk.org>; Wed, 01 Apr 2026 02:15:54 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775034954; cv=none;
+ d=google.com; s=arc-20240605;
+ b=EbmhtZKPIzBZHV1LpPfUs+IWd+NlVZXQDxFia8/wPgSb2eVjUv8lHvbqT/3ZyT83hx
+ S/4Q5F7wbooWm/D2Q9ckVwo7KBXvQIgaB1EzciPc65qHHaqONO6HpiUyPE92ARE3Q0xa
+ cq3+5tZq3cAUR1pFG0b6A0IkxLYkm/C02To14GcSlo6tsWqgLLrzAWV2x1v5qxDUA85L
+ knGAVJ2LIy3neScfb1/0zHrQA2PIzjMgeAVmPSaO2JHubCxtLImMa8XWCY9K7079m81M
+ eGkumOvy9W+mLUq2LCKEGzQ9q8XKcHbhbe1EjPM1TbaMqLtPS6TfNfqudF0z/GVqNs7d
+ jAEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version;
+ bh=4p2bbT7B6OmgRJwqlVxHvthyl4VboXozb68KPKqwnd0=;
+ fh=GViiPYLYvQcrk50N7USltnV4Mo1T8wPOXvu3IthtR4g=;
+ b=URqQaEaKq1kXyk9sH46+XYpAeexj4WwrU1bQKdBAQLKJbacScP35rdg7klxjeVpVen
+ sMMcFtOIE/B7gC1qiBLaByr21iBEVmsTzMEddk00sFHXv7QQ0JbFVvPnuZDb/z1DQcSr
+ +xU3JfKoLFpj4dJbJjtLpPHgW0zvrioQLmUszmPeY/BPdncYTvxyyuxF0BHrq+fiTy7O
+ xmjt8bzk7jBcg6PCvDu/2f0LYil/psYmmuXfVg4SjhACvhULLgvm9t9c7NkJlmmY8X8U
+ TJzuh03b4yJxs/9bq0V/ku/H040mn2wjzdWS3oHL96nQh0GBvW7BjDbI0DH2FIwWnA2O
+ T4tA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1775034954; x=1775639754;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4p2bbT7B6OmgRJwqlVxHvthyl4VboXozb68KPKqwnd0=;
+ b=nJR3axA37JEB7egt9E+4N1NbYfyGMjRmFtoB02bQh53jRhy2pgQpjhTrjipqFCe3rW
+ UBknBN/eiO2oQmVo9xxIE2TD+IpVw+6ppLC74jLKCunHwVnly0ZUErrq2/diw34zpzLV
+ GHn8X8JlPCB6W607PMXXeV0t6JwBvAD4kQI53KivaWx+6dMffmgOGK31tkn131eScTMj
+ lx0X1rtvzgjqKBfeBnRAhH6w0+CwjvRFa2YcwuFU7Dxu8236GpmZoor4EWMSRPibkuIq
+ wn2z3fPRdGkT3lzsVCPj/5ZHkgFA9xzjEDFLzfnL5BQg8wxUIqfodquxs+W/hwHa7DNG
+ K6hw==
+X-Gm-Message-State: AOJu0YyBu4ez/6b/5W5dgONZ34e3i2i3xyBDoGw13WXL2STMRkwPMMQO
+ 2LTLbbdjSYR35KuuiI+EzjpYn/F5Ik5tJ6Z/II1i4TLqY//UWnJyfbNbSV1rv+vF19XHFrYp2md
+ kj7u7Gf1m7YKToc+NVMbU6MqPpRqpFXY=
+X-Gm-Gg: ATEYQzx4dHMEGSPRO5rCZfalgBtsTCBTHjhDixfeuaLM2LSU6Hf01+a48q0F/p/Eeiq
+ tPsUy67uCSbgwusImuS1ntNyIrxDUgmCoKxB0WDf+5z02t5QpjOfJb5qdhI9IgGATqm/fcGu/Nh
+ qkCH/EVsGOJ18qPSY5CW/Syqx8By7lTEqMxw3ndDIrJfglrpk2kPWR86MQLMhbqRlqcYMqwn1a4
+ UWDXN2+6c7UKsJ3t5rzH+q6FosLqjmJPFrelTAjtT4b7E24euPO65+ptaIpQRNuBXFNj4nvLGfk
+ yx4rox9+eGudpaCCDcZwYWQO28xcexHX56xFt9oWCg==
+X-Received: by 2002:ad4:5aa6:0:b0:89c:cfb1:b59c with SMTP id
+ 6a1803df08f44-8a4387f0d1amr38229656d6.23.1775034954209; Wed, 01 Apr 2026
+ 02:15:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37B:EE_|DM4PR12MB5819:EE_
-X-MS-Office365-Filtering-Correlation-Id: b998331a-efa0-44d8-0561-08de8fc4893e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|82310400026|36860700016|376014|1800799024|18002099003|56012099003|22082099003;
-X-Microsoft-Antispam-Message-Info: Lt5ul4sQZBBpMA/yp8hoZ9gyn0YaBof1GF5+ML1svVQHcbkiM+HLJQ86Nwf/PM8nmdfPgfcVe88TK9zIgZ95XfjnU6ePjALk6qNfQtjEWWqnIvzaEDwNjC81uNVkRNeeG5ei2u3Pm7Q1YgM6kuTbnB3lX/1kemLvIuWhT8qReTyqNswyruGd0qWT+xhzhbZD2Q5BA4gFbdbHVptP8xguCkEBzDgtK9G9AomfmbX1QBDor5q75sAWgy4lQGrV47sGmackyFAxfZpiW7aJ2fmizX10UBXZqWKYtZupT51MENHmBWAEdIWglArLhaf4E1kITpVjATlJPuL4LCQltf5w18sd0SY4ZqJISFKBetxfBf5/f4IZdNudcOP7gIGx5MRHzzzkTFLqq/LpmtOrzPmtG/wzSsQX64v4L1ppjO0g5KNb2Uu6HGFPItYMb//77b6y3B/XPOXKXnqr8G0IoNXgiwyBJPyeZDar6mdeAGkE3JXK+mVshUK03PpIwejgQi+hVZrY2mmLqNTnDR1oqVQksCageZZQXaQvMCdvYBhKr1vq+tz9Q2fQoC6UdDTNXADJBIX7GZAasYPAkO+2fJ5nQ/BDAyo5aCQM8OyJjbxI1tVFo6Qjxh2XXhuA4/A4IEUOQrPe2bYP+F+VHptAP9A5n0JLQOpA9Z05e+hDP99lHTXNDG/alBBjKGiuKNTzekWllqDFh+VAWXbVPQ7qK+s5HjHh9PmQVFqLHKV9It3zPTdogrcUR+AOmLcuAvecu3iQed62+QqdMgvsyma8bTGerQ==
-X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
- SFS:(13230040)(82310400026)(36860700016)(376014)(1800799024)(18002099003)(56012099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: IVtk4sg7k0MreZ6hvJrB77+0Zmr4FagQCnrjXx6uAdDkpoJ+FJ11mISB3e181V8Qd3Adl/Xqp8MLf8hj2ZFecHaAuXqVVPGJ3WBf00+ZYsOSKnRzOvd5SLt3O/TETxl32771v8iZdU7Q4vvuXJ5a9dolv/rq9C7CCX2DNV1oq1TqafOj4ZO4RqlvCY5bjjOS05Wa/q2W7Ye6k8/Oe6vgi5hMwLJ3pBk3OZsySkkcTCAKYY+XC9RdvPWWiI+xAaBIHAKgZ/HoMkue9l+tXrLa913lg4lZvw7kqoY8DVeFhCyPDB6x/ek4CJP2cNHu3bWFMGZSpL4EDejZ0qRzSnogoEUJe2x+qIe+A6j1uwIMHATtpmImTIflAiNYovZlx3j2zvlBMsuzLMPx20wt21qVXFLUEyLzk6WZbdvCeGAfe2fL3h0vWEN3gY7xIGJkXX6E
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Apr 2026 07:59:01.1291 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b998331a-efa0-44d8-0561-08de8fc4893e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
- Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DS3PEPF0000C37B.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB5819
+References: <20260331214117.142495-1-maxime@leroys.fr>
+ <DHHBDQLPUP7N.N5BQQQHV8Z4J@redhat.com>
+In-Reply-To: <DHHBDQLPUP7N.N5BQQQHV8Z4J@redhat.com>
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Wed, 1 Apr 2026 11:15:43 +0200
+X-Gm-Features: AQROBzAs0nx5qZkFu68_tzoW4tjkoZNGFr5erRaCN34StQrDKiNMPXq9LeKxHIo
+Message-ID: <CAHHRULWgXZHc92FR9-ZF0MONA3yiSF3t27JZ8x_d58cXHcYUjA@mail.gmail.com>
+Subject: Re: [RFC 0/5] fib: shared and resizable tbl8 pool
+To: Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Content-Type: multipart/alternative; boundary="000000000000e8dd09064e6287fa"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -103,103 +82,235 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Correct the programming of PHY auto-negotiation advertisement
-registers.
+--000000000000e8dd09064e6287fa
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-AXGBE supports 10/100/1000BASE-T operation in full-duplex mode
-only. Since half-duplex operation (CSMA/CD) is not supported by
-the MAC, half-duplex capabilities are intentionally not
-advertised. Only supported full-duplex and pause capabilities
-are programmed into MII_ADVERTISE and MII_CTRL1000.
+HI Robin,
 
-This ensures Clause 22 PHY registers are programmed according
-to IEEE 802.3 and prevents advertising unsupported or
-unintended capabilities.
+Thanks a lot for the review.
 
-Fixes: 7ba7d89890ab ("net/axgbe: support Marvell M88E1512 PHY")
-Cc: stable@dpdk.org
+Le mer. 1 avr. 2026, 00:17, Robin Jarry <rjarry@redhat.com> a =C3=A9crit :
 
-Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
----
- drivers/net/axgbe/axgbe_phy.h      |  1 +
- drivers/net/axgbe/axgbe_phy_impl.c | 43 +++++++++++++++++++++++++-----
- 2 files changed, 38 insertions(+), 6 deletions(-)
+> Hi Maxime,
+>
+> Maxime Leroy, Mar 31, 2026 at 23:41:
+> > This RFC proposes an optional shared tbl8 pool for FIB/FIB6,
+> > to address the difficulty of sizing num_tbl8 upfront.
+> >
+> > In practice, tbl8 usage depends on prefix distribution and
+> > evolves over time. In multi-VRF environments, some VRFs are
+> > elephants (full table, thousands of tbl8 groups) while others
+> > consume very little (mostly /24 or shorter). Per-FIB sizing
+> > forces each instance to provision for its worst case, leading
+> > to significant memory waste.
+> >
+> > A shared pool solves this: all FIBs draw from the same tbl8
+> > memory, so elephant VRFs use what they need while light VRFs
+> > cost almost nothing. The sharing granularity is flexible: one pool per
+> > VRF, per address family, a global pool, or no sharing at all.
+> >
+> > This series adds:
+> >
+> >   - A shared tbl8 pool, replacing per-backend allocation
+> >     (bitmap in dir24_8, stack in trie) with a common
+> >     refcounted O(1) stack allocator.
+> >   - An optional resizable mode (grow via alloc + copy + QSBR
+> >     synchronize), removing the need to guess peak usage at
+> >     creation time.
+> >   - A stats API (rte_fib_tbl8_pool_get_stats()) exposing
+> >     used/total/max counters.
+> >
+> > All features are opt-in:
+> >
+> >   - Existing per-FIB allocation remains the default.
+> >   - Shared pool is enabled via the tbl8_pool config field.
+> >   - Resize is enabled by setting max_tbl8 > 0 with QSBR.
+>
+> The shared pool is nice, but dynamic resize is awesome.
+>
+> I have gone over the implementation and it seems sane to me. The only
+> concern I might have is the change of tbl8 pool allocator for DIR24_8
+> from a O(n/64) slab to O(1) stack. I don't know if it can have
+> a performance impact on lookup or if it only affects the control plane
+> operations (add/del).
+>
 
-diff --git a/drivers/net/axgbe/axgbe_phy.h b/drivers/net/axgbe/axgbe_phy.h
-index e5568cce5f..ab9c692d47 100644
---- a/drivers/net/axgbe/axgbe_phy.h
-+++ b/drivers/net/axgbe/axgbe_phy.h
-@@ -156,6 +156,7 @@
- #define AXGBE_M88E1512_MODE_RGMII_SGMII		4
- #define AXGBE_M88E1512_MODE_SW_RESET		0x8000
- 
-+#define AXGBE_PHY_MII_CTRL1000_1000T_FULL	0x0200
- 
- /* Control register 1. */
- /* Enable extended speed selection */
-diff --git a/drivers/net/axgbe/axgbe_phy_impl.c b/drivers/net/axgbe/axgbe_phy_impl.c
-index 369d766884..aa245c1b44 100644
---- a/drivers/net/axgbe/axgbe_phy_impl.c
-+++ b/drivers/net/axgbe/axgbe_phy_impl.c
-@@ -303,21 +303,52 @@ static int axgbe_phy_write(struct axgbe_port *pdata, u16 reg, u16 value)
- 
- static int axgbe_phy_config_advert(struct axgbe_port *pdata)
- {
-+	u32 adv = pdata->phy.advertising;
- 	u16 advert;
-+	u16 ctrl1000;
- 	int ret;
- 
--	ret = pdata->phy_if.phy_impl.read(pdata, MII_ADVERTISE, &advert);
-+	/*
-+	 * AXGBE supports 10BASE-T and 100BASE-TX in full-duplex mode only.
-+	 * Half-duplex operation (CSMA/CD) is not supported by the MAC,
-+	 * so 10/100 half-duplex capabilities are intentionally not advertised.
-+	 * Any ADVERTISED_10baseT_Half or ADVERTISED_100baseT_Half bits
-+	 * present in the software advertising mask are therefore ignored.
-+	 */
-+	advert = ADVERTISE_CSMA;
-+
-+	if (adv & ADVERTISED_10baseT_Full)
-+		advert |= ADVERTISE_10FULL;
-+
-+	if (adv & ADVERTISED_100baseT_Full)
-+		advert |= ADVERTISE_100FULL;
-+
-+	if (adv & ADVERTISED_Pause)
-+		advert |= ADVERTISE_PAUSE_CAP;
-+
-+	if (adv & ADVERTISED_Asym_Pause)
-+		advert |= ADVERTISE_PAUSE_ASYM;
-+
-+	ret = pdata->phy_if.phy_impl.write(pdata, MII_ADVERTISE, advert);
- 	if (ret) {
--		PMD_DRV_LOG_LINE(ERR, "Failed to read ADVERTISE register");
-+		PMD_DRV_LOG_LINE(ERR, "Failed to write ADVERTISE register");
- 		return ret;
- 	}
- 
--	advert |= ADVERTISE_FULL;
--	advert |= ADVERTISE_PAUSE_CAP;
-+	/*
-+	 * AXGBE supports 1000BASE-T in full-duplex mode only.
-+	 * Half-duplex operation (CSMA/CD) is not supported by the MAC,
-+	 * so 1000BASE-T half-duplex is intentionally not advertised.
-+	 * Any ADVERTISED_1000baseT_Half bit present in the software
-+	 * advertising mask is therefore ignored here.
-+	 */
-+	ctrl1000 = 0;
-+	if (adv & ADVERTISED_1000baseT_Full)
-+		ctrl1000 |= AXGBE_PHY_MII_CTRL1000_1000T_FULL;
- 
--	ret = pdata->phy_if.phy_impl.write(pdata, MII_ADVERTISE, advert);
-+	ret = pdata->phy_if.phy_impl.write(pdata, MII_CTRL1000, ctrl1000);
- 	if (ret) {
--		PMD_DRV_LOG_LINE(ERR, "Failed to write ADVERTISE register");
-+		PMD_DRV_LOG_LINE(ERR, "Failed to write MII_CTRL1000 register");
- 		return ret;
- 	}
- 	return 0;
--- 
-2.43.0
+This only affects control-plane operations (tbl8 alloc/free on
+add/del).Lookup only reads the final tbl24/tbl8 arrays and does not
+interact withthe allocator itself.
 
+So the motivation for the stack allocator here is to make
+shared-poolmanagement simple and O(1) on the update path, not to change
+lookupbehavior.
+
+If shrinking ever becomes interesting later, then I agree the allocator
+choice may need to be revisited. A LIFO stack immediately reuses the most
+recently freed entries, so high indices tend to get reused first and it
+becomes difficult to form a contiguous free tail. A low-first bitmap/slab
+allocator, or a min-heap, would be better for shrinking because they prefer
+lower free indices and therefore leave high indices unused longer.The
+trade-off is that put/get become more expensive (O(n/64) for bitmap scan or
+O(log n) for a heap, instead of O(1) for the stack).
+
+
+> > Shrinking (reducing pool capacity after usage drops) is not
+> > part of this series. It would always be best-effort since
+> > there is no compaction: if any tbl8 group near the end of the
+> > pool is still in use, the pool cannot shrink. The current LIFO
+> > free-list makes this less likely by immediately reusing freed
+> > high indices, which prevents a contiguous free tail from
+> > forming. A different allocation strategy (e.g. a min-heap
+> > favoring low indices) could improve shrink opportunities, but
+> > is better addressed separately.
+>
+> Shrinking would be nice to have but not critical in my opinion. I would
+> prefer if we could add a dynamic resize feature (and possibly RIB node
+> mempool sharing) for rte_rib* as well so that FIB objects can really be
+> scaled up on demand. For now, if you run out of space in the RIB, you
+> will get an ENOSPC error even if the FIB tbl8 pool still has room.
+>
+
+Agreed. Today tbl8 is only one side of the sizing problem.
+
+For rte_rib*, I think we should probably move in a similar direction as
+well: avoid per-VRF/per-instance worst-case provisioning, while keeping
+separate global limits for IPv4 and IPv6, e.g. max_ipv4_routes and
+max_ipv6_routes.
+
+The difference with tbl8 is that the trade-off is not the same. tbl8 usage
+is both expensive (2 KB per group) and hard to predict from route count
+alone, since it depends on prefix distribution and table shape. RIB nodes
+are much smaller and their usage is more predictable, so a shared global
+node pool per AF already looks like a sensible first step.
+
+That would remove per-VRF over-provisioning while keeping global limits. If
+later true on-demand growth is needed, I think the mechanism would likely
+have to be different from tbl8 resizing anyway: tbl8 is an indexed array
+and can grow via alloc + copy + pointer swap, while RIB nodes are linked by
+pointers, so they cannot be relocated transparently. In that case, a
+chunked allocator would probably make more sense.
+
+Also, I do not think hugepage-backed allocation (i.e. rte_mempool) is
+really needed for rte_rib*.
+
+Maxime
+
+--000000000000e8dd09064e6287fa
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"auto"><div dir=3D"auto"><div><div>HI Robin,</div><div dir=3D"au=
+to"><br></div><div dir=3D"auto">Thanks a lot for the review.</div><div><br>=
+</div><div class=3D"gmail_quote"><div dir=3D"ltr" class=3D"gmail_attr">Le m=
+er. 1 avr. 2026, 00:17, Robin Jarry &lt;<a href=3D"mailto:rjarry@redhat.com=
+" target=3D"_blank" rel=3D"noreferrer">rjarry@redhat.com</a>&gt; a =C3=A9cr=
+it=C2=A0:<br></div><blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 =
+.8ex;border-left:1px #ccc solid;padding-left:1ex">Hi Maxime,<br>
+<br>
+Maxime Leroy, Mar 31, 2026 at 23:41:<br>
+&gt; This RFC proposes an optional shared tbl8 pool for FIB/FIB6,<br>
+&gt; to address the difficulty of sizing num_tbl8 upfront.<br>
+&gt;<br>
+&gt; In practice, tbl8 usage depends on prefix distribution and<br>
+&gt; evolves over time. In multi-VRF environments, some VRFs are<br>
+&gt; elephants (full table, thousands of tbl8 groups) while others<br>
+&gt; consume very little (mostly /24 or shorter). Per-FIB sizing<br>
+&gt; forces each instance to provision for its worst case, leading<br>
+&gt; to significant memory waste.<br>
+&gt;<br>
+&gt; A shared pool solves this: all FIBs draw from the same tbl8<br>
+&gt; memory, so elephant VRFs use what they need while light VRFs<br>
+&gt; cost almost nothing. The sharing granularity is flexible: one pool per=
+<br>
+&gt; VRF, per address family, a global pool, or no sharing at all.<br>
+&gt;<br>
+&gt; This series adds:<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0- A shared tbl8 pool, replacing per-backend allocation<br>
+&gt;=C2=A0 =C2=A0 =C2=A0(bitmap in dir24_8, stack in trie) with a common<br=
+>
+&gt;=C2=A0 =C2=A0 =C2=A0refcounted O(1) stack allocator.<br>
+&gt;=C2=A0 =C2=A0- An optional resizable mode (grow via alloc + copy + QSBR=
+<br>
+&gt;=C2=A0 =C2=A0 =C2=A0synchronize), removing the need to guess peak usage=
+ at<br>
+&gt;=C2=A0 =C2=A0 =C2=A0creation time.<br>
+&gt;=C2=A0 =C2=A0- A stats API (rte_fib_tbl8_pool_get_stats()) exposing<br>
+&gt;=C2=A0 =C2=A0 =C2=A0used/total/max counters.<br>
+&gt;<br>
+&gt; All features are opt-in:<br>
+&gt;<br>
+&gt;=C2=A0 =C2=A0- Existing per-FIB allocation remains the default.<br>
+&gt;=C2=A0 =C2=A0- Shared pool is enabled via the tbl8_pool config field.<b=
+r>
+&gt;=C2=A0 =C2=A0- Resize is enabled by setting max_tbl8 &gt; 0 with QSBR.<=
+br>
+<br>
+The shared pool is nice, but dynamic resize is awesome.<br>
+<br>
+I have gone over the implementation and it seems sane to me. The only<br>
+concern I might have is the change of tbl8 pool allocator for DIR24_8<br>
+from a O(n/64) slab to O(1) stack. I don&#39;t know if it can have<br>
+a performance impact on lookup or if it only affects the control plane<br>
+operations (add/del).<br></blockquote></div></div></div><div dir=3D"auto"><=
+br></div><div dir=3D"auto"><div><div class=3D"gmail_quote"><blockquote clas=
+s=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;pad=
+ding-left:1ex"></blockquote></div></div><div dir=3D"auto">This only affects=
+ control-plane operations (tbl8 alloc/free on add/del).Lookup only reads th=
+e final tbl24/tbl8 arrays and does not interact withthe allocator itself.</=
+div><div dir=3D"auto"><br></div><div dir=3D"auto">So the motivation for the=
+ stack allocator here is to make shared-poolmanagement simple and O(1) on t=
+he update path, not to change lookupbehavior.</div><div dir=3D"auto"><br></=
+div><div dir=3D"auto">If shrinking ever becomes interesting later, then I a=
+gree the allocator choice may need to be revisited. A LIFO stack immediatel=
+y reuses the most recently freed entries, so high indices tend to get reuse=
+d first and it becomes difficult to form a contiguous free tail. A low-firs=
+t bitmap/slab allocator, or a min-heap, would be better for shrinking becau=
+se they prefer lower free indices and therefore leave high indices unused l=
+onger.The trade-off is that put/get become more expensive (O(n/64) for bitm=
+ap scan or O(log n) for a heap, instead of O(1) for the stack).</div><div d=
+ir=3D"auto"><br></div><div dir=3D"auto"><div class=3D"gmail_quote"><blockqu=
+ote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc s=
+olid;padding-left:1ex">
+<br>
+&gt; Shrinking (reducing pool capacity after usage drops) is not<br>
+&gt; part of this series. It would always be best-effort since<br>
+&gt; there is no compaction: if any tbl8 group near the end of the<br>
+&gt; pool is still in use, the pool cannot shrink. The current LIFO<br>
+&gt; free-list makes this less likely by immediately reusing freed<br>
+&gt; high indices, which prevents a contiguous free tail from<br>
+&gt; forming. A different allocation strategy (e.g. a min-heap<br>
+&gt; favoring low indices) could improve shrink opportunities, but<br>
+&gt; is better addressed separately.<br>
+<br>
+Shrinking would be nice to have but not critical in my opinion. I would<br>
+prefer if we could add a dynamic resize feature (and possibly RIB node<br>
+mempool sharing) for rte_rib* as well so that FIB objects can really be<br>
+scaled up on demand. For now, if you run out of space in the RIB, you<br>
+will get an ENOSPC error even if the FIB tbl8 pool still has room.<br></blo=
+ckquote></div></div></div><div dir=3D"auto"><br></div><div dir=3D"auto"><di=
+v dir=3D"auto"><div class=3D"gmail_quote"><blockquote class=3D"gmail_quote"=
+ style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex"></=
+blockquote></div></div></div><div dir=3D"auto">Agreed. Today tbl8 is only o=
+ne side of the sizing problem.</div><div dir=3D"auto"><br></div><div dir=3D=
+"auto">For rte_rib*, I think we should probably move in a similar direction=
+ as well: avoid per-VRF/per-instance worst-case provisioning, while keeping=
+ separate global limits for IPv4 and IPv6, e.g. max_ipv4_routes and max_ipv=
+6_routes.</div><div dir=3D"auto"><br></div><div dir=3D"auto">The difference=
+ with tbl8 is that the trade-off is not the same. tbl8 usage is both expens=
+ive (2 KB per group) and hard to predict from route count alone, since it d=
+epends on prefix distribution and table shape. RIB nodes are much smaller a=
+nd their usage is more predictable, so a shared global node pool per AF alr=
+eady looks like a sensible first step.</div><div dir=3D"auto"><br></div><di=
+v dir=3D"auto">That would remove per-VRF over-provisioning while keeping gl=
+obal limits. If later true on-demand growth is needed, I think the mechanis=
+m would likely have to be different from tbl8 resizing anyway: tbl8 is an i=
+ndexed array and can grow via alloc + copy + pointer swap, while RIB nodes =
+are linked by pointers, so they cannot be relocated transparently. In that =
+case, a chunked allocator would probably make more sense.</div><div dir=3D"=
+auto"><br></div><div dir=3D"auto">Also, I do not think hugepage-backed allo=
+cation (i.e. rte_mempool) is really needed for rte_rib*.</div><div dir=3D"a=
+uto"><br></div><div dir=3D"auto">Maxime</div></div>
+
+--000000000000e8dd09064e6287fa--
