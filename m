@@ -2,51 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE6D111227B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Apr 2026 03:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C54F5CC6B01
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Apr 2026 04:00:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20F3240E12;
-	Thu,  2 Apr 2026 05:16:35 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id D2AA340E01
- for <dev@dpdk.org>; Thu,  2 Apr 2026 05:16:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775099793; x=1806635793;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=XCEnx9VG98p5s3c8PG6jeTtEJ3rwvbdBYbQca0mwiew=;
- b=K+3xR3mNy5S5FRtU6tW1cnvX3tRa3NNiZUCqMwpmP/IR9ccvXSKC5xmA
- CJzqXbltLcKaqASlDURScanK82orl07QPGwrFfe7/Ns1T63o/KtaqHTjh
- aQnUPBkTOmBRw1UvGHLOVyjtPK++/dzjhW7EWky0t1xDuRvtJHfSGb9yQ
- hxDuqMw3gI4QmkK/MOJofM36LO12u9pN2NhDiwJCyHtvzH870cGxPAY9j
- TgIGXxrjBnBEp482sKhcn9+E7jlOuVZ+hpJUsbTIkSo7WwpnACdvT+yk3
- sQG3i4TKtJw1aWvby4BH/bL1u0qhaGeluz0O5K+eAQdCIDxlavp3/v4Hr g==;
-X-CSE-ConnectionGUID: UgOqs/7fQf2MCRcMXi/X2g==
-X-CSE-MsgGUID: lzRJdpleSKWE6Z6O1yLTcQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11746"; a="75189065"
-X-IronPort-AV: E=Sophos;i="6.23,155,1770624000"; d="scan'208";a="75189065"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 01 Apr 2026 20:16:33 -0700
-X-CSE-ConnectionGUID: Ey4GsDlDTxi3LFIf+xuhHA==
-X-CSE-MsgGUID: H0skIqDpTkGeWVItGWkfIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,155,1770624000"; d="scan'208";a="220198971"
-Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
- by fmviesa009.fm.intel.com with ESMTP; 01 Apr 2026 20:16:31 -0700
-From: Soumyadeep Hore <soumyadeep.hore@intel.com>
-To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
- aman.deep.singh@intel.com, dev@dpdk.org, rajesh3.kumar@intel.com
-Subject: [PATCH v2 2/2] net/iavf: reuse device alarm for PHC sync
-Date: Thu,  2 Apr 2026 11:48:12 -0400
-Message-ID: <20260402154812.1540949-3-soumyadeep.hore@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20260402154812.1540949-1-soumyadeep.hore@intel.com>
-References: <20260402152137.1527322-2-soumyadeep.hore@intel.com>
- <20260402154812.1540949-1-soumyadeep.hore@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id C10304028B;
+	Thu,  2 Apr 2026 06:00:57 +0200 (CEST)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 1D8FB40275
+ for <dev@dpdk.org>; Thu,  2 Apr 2026 06:00:55 +0200 (CEST)
+Received: from [192.168.50.151] (unknown [42.177.178.249])
+ by APP-01 (Coremail) with SMTP id qwCowAA3o2726c1pMOTvCw--.56087S3;
+ Thu, 02 Apr 2026 12:00:54 +0800 (CST)
+Message-ID: <97f5d14c-9136-45e3-9451-bda8253c3cae@iscas.ac.cn>
+Date: Thu, 2 Apr 2026 12:00:53 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/6] devtools: add multi-provider AI patch review
+ script
+To: Stephen Hemminger <stephen@networkplumber.org>, dev@dpdk.org
+Cc: Aaron Conole <aconole@redhat.com>
+References: <20260126184205.104629-1-stephen@networkplumber.org>
+ <20260401154218.160500-1-stephen@networkplumber.org>
+ <20260401154218.160500-3-stephen@networkplumber.org>
+Content-Language: en-US
+From: sunyuechi <sunyuechi@iscas.ac.cn>
+In-Reply-To: <20260401154218.160500-3-stephen@networkplumber.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: qwCowAA3o2726c1pMOTvCw--.56087S3
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+ VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUU5X7k0a2IF6FyUM7kC6x804xWl14x267AK
+ xVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
+ A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj
+ 6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26F
+ 4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAa
+ Y2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4
+ A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY
+ 0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I
+ 0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAI
+ cVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcV
+ CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+ c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU8Tmh5UUUUU==
+X-Originating-IP: [42.177.178.249]
+X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiDAcFAmnNveOtzQABsX
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,207 +58,21 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Reuse existing iavf device alarm cadence to drive periodic PHC sync
-instead of a dedicated PHC alarm callback.
+> +        sections = []
+> +        for label, review in reviews:
+> +            sections.append(f"<h2>{label}</h2>\n{review}")
+> +        return "\n<hr>\n".join(sections)
+> +    elif output_format == "markdown":
+> +        sections = []
+> +        for label, review in reviews:
+> +            sections.append(f"## {label}\n\n{review}")
+> +        return "\n\n---\n\n".join(sections)
+> +    else:  # text
+> +        sections = []
+> +        for label, review in reviews:
+> +            sections.append(f"=== {label} ===\n\n{review}")
+> +        return "\n\n" + "=" * 60 + "\n\n".join(sections)
+> +
 
-Keep PHC start/stop hooks as pause/resume controls around queue
-reconfiguration and device lifecycle paths.
-
-Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
----
- drivers/net/intel/iavf/iavf.h        |  5 ++
- drivers/net/intel/iavf/iavf_ethdev.c | 70 ++++++++++++++++++++++++++++
- drivers/net/intel/iavf/iavf_vchnl.c  |  4 ++
- 3 files changed, 79 insertions(+)
-
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 403c61e2e8..2f1779d47b 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -76,6 +76,7 @@
- #define IAVF_QUEUE_ITR_INTERVAL_MAX     8160 /* 8160 us */
- 
- #define IAVF_ALARM_INTERVAL 50000 /* us */
-+#define IAVF_PHC_SYNC_ALARM_INTERVAL_US 200000
- 
- /* The overhead from MTU to max frame size.
-  * Considering QinQ packet, the VLAN tag needs to be counted twice.
-@@ -383,6 +384,8 @@ struct iavf_adapter {
- 	enum iavf_rx_func_type rx_func_type;
- 	enum iavf_tx_func_type tx_func_type;
- 	uint16_t fdir_ref_cnt;
-+	uint8_t phc_sync_ticks;
-+	bool phc_sync_paused;
- 	struct iavf_devargs devargs;
- 	bool mac_primary_set;
- };
-@@ -517,6 +520,8 @@ void iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add);
- int iavf_dev_link_update(struct rte_eth_dev *dev,
- 			__rte_unused int wait_to_complete);
- void iavf_dev_alarm_handler(void *param);
-+void iavf_phc_sync_alarm_start(struct rte_eth_dev *dev);
-+void iavf_phc_sync_alarm_stop(struct rte_eth_dev *dev);
- int iavf_query_stats(struct iavf_adapter *adapter,
- 		    struct virtchnl_eth_stats **pstats);
- int iavf_config_promisc(struct iavf_adapter *adapter, bool enable_unicast,
-diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 1eca20bc9a..02272d45c1 100644
---- a/drivers/net/intel/iavf/iavf_ethdev.c
-+++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -21,6 +21,7 @@
- #include <rte_pci.h>
- #include <rte_alarm.h>
- #include <rte_atomic.h>
-+#include <rte_cycles.h>
- #include <rte_eal.h>
- #include <rte_ether.h>
- #include <ethdev_driver.h>
-@@ -145,6 +146,7 @@ static int iavf_dev_rx_queue_intr_disable(struct rte_eth_dev *dev,
- 					 uint16_t queue_id);
- static void iavf_dev_interrupt_handler(void *param);
- static void iavf_disable_irq0(struct iavf_hw *hw);
-+static bool iavf_phc_sync_alarm_needed(struct rte_eth_dev *dev);
- static int iavf_dev_flow_ops_get(struct rte_eth_dev *dev,
- 				 const struct rte_flow_ops **ops);
- static int iavf_set_mc_addr_list(struct rte_eth_dev *dev,
-@@ -1056,6 +1058,8 @@ iavf_dev_start(struct rte_eth_dev *dev)
- 		goto error;
- 	}
- 
-+	iavf_phc_sync_alarm_start(dev);
-+
- 	return 0;
- 
- error:
-@@ -1082,6 +1086,8 @@ iavf_dev_stop(struct rte_eth_dev *dev)
- 	if (adapter->stopped == 1)
- 		return 0;
- 
-+	iavf_phc_sync_alarm_stop(dev);
-+
- 	/* Disable the interrupt for Rx */
- 	rte_intr_efd_disable(intr_handle);
- 	/* Rx interrupt vector mapping free */
-@@ -2705,9 +2711,11 @@ void
- iavf_dev_alarm_handler(void *param)
- {
- 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
-+	struct iavf_adapter *adapter;
- 	if (dev == NULL || dev->data == NULL || dev->data->dev_private == NULL)
- 		return;
- 
-+	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(dev->data->dev_private);
- 	uint32_t icr0;
- 
-@@ -2723,10 +2731,70 @@ iavf_dev_alarm_handler(void *param)
- 
- 	iavf_enable_irq0(hw);
- 
-+	if (iavf_phc_sync_alarm_needed(dev) && !adapter->phc_sync_paused) {
-+		adapter->phc_sync_ticks++;
-+		if (adapter->phc_sync_ticks >=
-+		    IAVF_PHC_SYNC_ALARM_INTERVAL_US / IAVF_ALARM_INTERVAL) {
-+			struct ci_rx_queue *rxq = dev->data->rx_queues[0];
-+
-+			adapter->phc_sync_ticks = 0;
-+			if (iavf_get_phc_time(rxq) == 0)
-+				rxq->hw_time_update = rte_get_timer_cycles() /
-+					(rte_get_timer_hz() / 1000);
-+		}
-+	} else {
-+		adapter->phc_sync_ticks = 0;
-+	}
-+
- 	rte_eal_alarm_set(IAVF_ALARM_INTERVAL,
- 			  iavf_dev_alarm_handler, dev);
- }
- 
-+static bool
-+iavf_phc_sync_alarm_needed(struct rte_eth_dev *dev)
-+{
-+	struct iavf_adapter *adapter;
-+
-+	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+
-+	if (adapter->closed || adapter->stopped)
-+		return false;
-+
-+	if (!(dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP))
-+		return false;
-+
-+	if (dev->data->nb_rx_queues == 0 || dev->data->rx_queues[0] == NULL)
-+		return false;
-+
-+	return true;
-+}
-+
-+void
-+iavf_phc_sync_alarm_start(struct rte_eth_dev *dev)
-+{
-+	struct iavf_adapter *adapter;
-+
-+	if (!iavf_phc_sync_alarm_needed(dev))
-+		return;
-+
-+	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	adapter->phc_sync_paused = false;
-+	adapter->phc_sync_ticks = 0;
-+}
-+
-+void
-+iavf_phc_sync_alarm_stop(struct rte_eth_dev *dev)
-+{
-+	struct iavf_adapter *adapter;
-+
-+	if (dev == NULL || dev->data == NULL || dev->data->dev_private == NULL)
-+		return;
-+
-+	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	adapter->phc_sync_paused = true;
-+	adapter->phc_sync_ticks = 0;
-+}
-+
- static int
- iavf_dev_flow_ops_get(struct rte_eth_dev *dev,
- 		      const struct rte_flow_ops **ops)
-@@ -2912,6 +2980,7 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
- 	} else {
- 		rte_eal_alarm_cancel(iavf_dev_alarm_handler, eth_dev);
- 	}
-+	iavf_phc_sync_alarm_stop(eth_dev);
- 
- 	rte_free(eth_dev->data->mac_addrs);
- 	eth_dev->data->mac_addrs = NULL;
-@@ -2986,6 +3055,7 @@ iavf_dev_close(struct rte_eth_dev *dev)
- 	} else {
- 		rte_eal_alarm_cancel(iavf_dev_alarm_handler, dev);
- 	}
-+	iavf_phc_sync_alarm_stop(dev);
- 	iavf_disable_irq0(hw);
- 
- 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_QOS)
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 08dd6f2d7f..82943472e1 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -2133,12 +2133,16 @@ iavf_request_queues(struct rte_eth_dev *dev, uint16_t num)
- 	args.out_size = IAVF_AQ_BUF_SZ;
- 
- 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) {
-+		iavf_phc_sync_alarm_stop(dev);
- 		err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
-+		iavf_phc_sync_alarm_start(dev);
- 	} else {
- 		rte_eal_alarm_cancel(iavf_dev_alarm_handler, dev);
-+		iavf_phc_sync_alarm_stop(dev);
- 		err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
- 		rte_eal_alarm_set(IAVF_ALARM_INTERVAL,
- 				  iavf_dev_alarm_handler, dev);
-+		iavf_phc_sync_alarm_start(dev);
- 	}
- 
- 	if (err) {
--- 
-2.47.1
+return ("\n\n" + "=" * 60 + "\n\n").join(sections)
 
