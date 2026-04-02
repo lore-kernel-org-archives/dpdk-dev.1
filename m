@@ -2,48 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DEDCC6B00
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Apr 2026 04:08:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E1BCC6B03
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Apr 2026 05:47:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 71D7A4028B;
-	Thu,  2 Apr 2026 06:08:20 +0200 (CEST)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 799F140275
- for <dev@dpdk.org>; Thu,  2 Apr 2026 06:08:18 +0200 (CEST)
-Received: from [192.168.50.151] (unknown [42.177.178.249])
- by APP-01 (Coremail) with SMTP id qwCowACXPGiv681pkwnwCw--.10489S3;
- Thu, 02 Apr 2026 12:08:16 +0800 (CST)
-Message-ID: <7c10b2b5-71e9-4ef7-be7e-02da5bda7aaf@iscas.ac.cn>
-Date: Thu, 2 Apr 2026 12:08:15 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 985224028B;
+	Thu,  2 Apr 2026 07:47:17 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 7450040275
+ for <dev@dpdk.org>; Thu,  2 Apr 2026 07:47:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1775108836; x=1806644836;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=dWgxh2n2ZRtrqt/BHlOKhHLNoMdYY9mOnJG8z+d9zIg=;
+ b=UyR1+p/YhjJ7+gx4I8nkRAHiaWgldS57bvTjKMK82+kchJRQw12b7ntj
+ pcx8py9IEEJRayEjLPBXDzCnILvCKkOrYIIcinT38Wyr5DupQ+jF7t+HR
+ 2iriuB7VwQEykL/eTyYphfdwr/1o7EiZoHnOfjRkjM6zyg1sdXA/womCc
+ TxxgbFVpkS8uDxB1KapHm4Wn6qKW493fe01ZSLs8n4RpBrwnz2H/4bOV+
+ oieGIhQRp/mrJLOweGitvqGb1XvkwHao97veEkZ3E9RN+VWvogrE6c1eo
+ N0aH5fOTWsIL4WoO9qOdsu7s7aeKLv+bJxecyt37OXpf0coQdXW1MlTWw Q==;
+X-CSE-ConnectionGUID: 71Us+5fPRs2g+FHFzUZ01A==
+X-CSE-MsgGUID: ulvLNEJtQcucf1Bw/sqWww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11746"; a="98773810"
+X-IronPort-AV: E=Sophos;i="6.23,155,1770624000"; d="scan'208";a="98773810"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+ by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 01 Apr 2026 22:47:15 -0700
+X-CSE-ConnectionGUID: msFtRa9eSdK6suGKvz/eKg==
+X-CSE-MsgGUID: csHXr2F+SrmoTkf5qzrkVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,155,1770624000"; d="scan'208";a="249941487"
+Received: from unknown (HELO sprmax15..) ([10.138.182.128])
+ by fmviesa002.fm.intel.com with ESMTP; 01 Apr 2026 22:47:12 -0700
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Subject: [PATCH 2/6] net/ice: fix FDIR L2TPv2 outer MAC address in training
+ packet
+Date: Thu,  2 Apr 2026 11:12:11 +0530
+Message-ID: <20260402054211.2981923-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] maintainers: update RISC-V maintainer
-To: Stanislaw Kardach <stanislaw.kardach@gmail.com>, dev@dpdk.org
-Cc: Thomas Monjalon <thomas@monjalon.net>
-References: <20260401192401.6243-1-stanislaw.kardach@gmail.com>
-Content-Language: en-US
-From: sunyuechi <sunyuechi@iscas.ac.cn>
-In-Reply-To: <20260401192401.6243-1-stanislaw.kardach@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowACXPGiv681pkwnwCw--.10489S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF45Ar4xWr15GF1fCw47XFb_yoWfWFX_Ga
- 1kWF92ga9ruFs8Jwn0qF9ayr4Yqr4fGr1ftan2qrZxAa4DGrna9r1ktw18C3W3ArZ7KF10
- yrn3uayakwnF9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
- 9fnUUIcSsGvfJTRUUUbrxYjsxI4VW3JwAYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I
- 6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM2
- 8CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0
- cI8IcVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4
- A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IE
- w4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMc
- vjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCF
- s4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r
- 1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWU
- JVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r
- 1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUv
- cSsGvfC2KfnxnUUI43ZEXa7IU8mhF7UUUUU==
-X-Originating-IP: [42.177.178.249]
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiCRAFAmnNvduy0QABs+
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -57,33 +59,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 4/2/26 3:24 AM, Stanislaw Kardach wrote:
+FDIR rules with eth + l2tpv2 patterns fail to match because outer MACs
+are written to the wrong location in the training packet.
 
-> Change the RISC-V maintainer to Sun Yuechi and remove myself as
-> I'm unable to properly perform maintainer duties due to time
-> constraints.
->
-> Signed-off-by: Stanislaw Kardach <stanislaw.kardach@gmail.com>
-> ---
->   MAINTAINERS | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0f5539f851..eeb55951b4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -334,11 +334,10 @@ F: examples/*/*_altivec.*
->   F: examples/common/altivec/
->   
->   RISC-V
-> -M: Stanisław Kardach <stanislaw.kardach@gmail.com>
-> +M: Sun Yuechi <sunyuechi@iscas.ac.cn>
->   F: config/riscv/
->   F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
->   F: lib/eal/riscv/
-> -M: Sun Yuechi <sunyuechi@iscas.ac.cn>
->   F: lib/**/*rvv*
->   
->   Intel x86
-Acked-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+The pre-scan loop does not detect L2TPV2, so tunnel_type is still 0
+when the ETH item is parsed and MACs land in ext_data (inner) instead
+of ext_data_outer. Also, ice_fdir_get_gen_prgm_pkt() uses the 'loc'
+pointer (past the L2TPv2 header) instead of 'pkt' (Ethernet offset 0).
+
+Detect L2TPV2 in pre-scan, and use 'pkt' for MAC insertion in all
+four L2TPv2 training-packet cases.
+
+Fixes: 733640dae75e ("net/ice: support L2TPv2 flow pattern matching")
+Fixes: bf662653976e ("net/ice/base: support L2TPv2 flow rule")
+Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+---
+ drivers/net/intel/ice/base/ice_fdir.c   | 16 ++++++++--------
+ drivers/net/intel/ice/ice_fdir_filter.c |  2 ++
+ 2 files changed, 10 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/net/intel/ice/base/ice_fdir.c b/drivers/net/intel/ice/base/ice_fdir.c
+index 2c0cb99854..e1d8b65972 100644
+--- a/drivers/net/intel/ice/base/ice_fdir.c
++++ b/drivers/net/intel/ice/base/ice_fdir.c
+@@ -4599,16 +4599,16 @@ ice_fdir_get_gen_prgm_pkt(struct ice_hw *hw, struct ice_fdir_fltr *input,
+ 				     input->ip.v6.tc);
+ 		break;
+ 	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_CONTROL:
+-		ice_pkt_insert_mac_addr(loc, input->ext_data_outer.dst_mac);
+-		ice_pkt_insert_mac_addr(loc + ETH_ALEN,
++		ice_pkt_insert_mac_addr(pkt, input->ext_data_outer.dst_mac);
++		ice_pkt_insert_mac_addr(pkt + ETH_ALEN,
+ 					input->ext_data_outer.src_mac);
+ 		ice_pkt_insert_u16(loc, ICE_IPV4_L2TPV2_LEN_SESS_ID_OFFSET,
+ 				   input->l2tpv2_data.session_id);
+ 		break;
+ 	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2:
+ 	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP:
+-		ice_pkt_insert_mac_addr(loc, input->ext_data_outer.dst_mac);
+-		ice_pkt_insert_mac_addr(loc + ETH_ALEN,
++		ice_pkt_insert_mac_addr(pkt, input->ext_data_outer.dst_mac);
++		ice_pkt_insert_mac_addr(pkt + ETH_ALEN,
+ 					input->ext_data_outer.src_mac);
+ 		flags_version = BE16_TO_CPU(input->l2tpv2_data.flags_version);
+ 		if (flags_version & ICE_L2TPV2_FLAGS_LEN) {
+@@ -4622,16 +4622,16 @@ ice_fdir_get_gen_prgm_pkt(struct ice_hw *hw, struct ice_fdir_fltr *input,
+ 		}
+ 		break;
+ 	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_CONTROL:
+-		ice_pkt_insert_mac_addr(loc, input->ext_data_outer.dst_mac);
+-		ice_pkt_insert_mac_addr(loc + ETH_ALEN,
++		ice_pkt_insert_mac_addr(pkt, input->ext_data_outer.dst_mac);
++		ice_pkt_insert_mac_addr(pkt + ETH_ALEN,
+ 					input->ext_data_outer.src_mac);
+ 		ice_pkt_insert_u16(loc, ICE_IPV6_L2TPV2_LEN_SESS_ID_OFFSET,
+ 				   input->l2tpv2_data.session_id);
+ 		break;
+ 	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2:
+ 	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP:
+-		ice_pkt_insert_mac_addr(loc, input->ext_data_outer.dst_mac);
+-		ice_pkt_insert_mac_addr(loc + ETH_ALEN,
++		ice_pkt_insert_mac_addr(pkt, input->ext_data_outer.dst_mac);
++		ice_pkt_insert_mac_addr(pkt + ETH_ALEN,
+ 					input->ext_data_outer.src_mac);
+ 		flags_version = BE16_TO_CPU(input->l2tpv2_data.flags_version);
+ 		if (flags_version & ICE_L2TPV2_FLAGS_LEN) {
+diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
+index afa7a7d1dd..5e0f1f954b 100644
+--- a/drivers/net/intel/ice/ice_fdir_filter.c
++++ b/drivers/net/intel/ice/ice_fdir_filter.c
+@@ -1913,6 +1913,8 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+ 	for (item = pattern; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
+ 		if (item->type == RTE_FLOW_ITEM_TYPE_VXLAN)
+ 			tunnel_type = ICE_FDIR_TUNNEL_TYPE_VXLAN;
++		if (item->type == RTE_FLOW_ITEM_TYPE_L2TPV2)
++			tunnel_type = ICE_FDIR_TUNNEL_TYPE_L2TPV2;
+ 		/* To align with shared code behavior, save gtpu outer
+ 		 * fields in inner struct.
+ 		 */
+-- 
+2.43.0
 
