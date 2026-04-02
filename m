@@ -2,64 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32ACD6AAF2
-	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Apr 2026 16:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3445D6AAEC
+	for <dpdk-dev@archiver.kernel.org>; Thu,  2 Apr 2026 16:51:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0864C4028F;
-	Thu,  2 Apr 2026 18:45:16 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 2A5E54028E
- for <dev@dpdk.org>; Thu,  2 Apr 2026 18:45:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1775148313;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding;
- bh=m8BpYKvVYhuJ0Vi2LDfFyQmjBj3hiTixz714tCwUBzA=;
- b=cWDWXRTNVTVKnSvSM85s8GAmM9OlwSCxUI0L7DzwvC6uo9pkTMBhoAFUdkJmu9swo+pT7r
- Rro8/TUiv/8HiQMeNA4Z8adl4BA9+AWRSUcw24btKqI8FuhfSxDIsnR0Pm0RWWhdkAVXW1
- XwrfLOUrL8HSi+/Q+TSoNDXhOz5+5jc=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-536-kj3Ks9bXPkKeccKCjyjGpQ-1; Thu,
- 02 Apr 2026 12:45:10 -0400
-X-MC-Unique: kj3Ks9bXPkKeccKCjyjGpQ-1
-X-Mimecast-MFC-AGG-ID: kj3Ks9bXPkKeccKCjyjGpQ_1775148308
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id E74A01800365; Thu,  2 Apr 2026 16:45:07 +0000 (UTC)
-Received: from rh.redhat.com (unknown [10.44.32.63])
- by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id DCDA530030D5; Thu,  2 Apr 2026 16:45:00 +0000 (UTC)
-From: Kevin Traynor <ktraynor@redhat.com>
-To: stable@dpdk.org
-Cc: dev@dpdk.org, Abhishek Marathe <Abhishek.Marathe@microsoft.com>,
- Ali Alnubani <alialnu@nvidia.com>, benjamin.walker@intel.com,
- David Christensen <drc@linux.vnet.ibm.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
- Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
- Ju-Hyoung Lee <juhlee@microsoft.com>, Kevin Traynor <ktraynor@redhat.com>,
- Luca Boccassi <bluca@debian.org>, Pei Zhang <pezhang@redhat.com>,
- qian.q.xu@intel.com, Raslan Darawsheh <rasland@nvidia.com>,
- Thomas Monjalon <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>,
- yuan.peng@intel.com, zhaoyan.chen@intel.com,
- Shani Peretz <shperetz@nvidia.com>
-Subject: 25.11.1 patches review and test
-Date: Thu,  2 Apr 2026 17:44:52 +0100
-Message-ID: <20260402164454.669125-1-ktraynor@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id DDF6C4028F;
+	Thu,  2 Apr 2026 18:51:34 +0200 (CEST)
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com
+ [209.85.219.51]) by mails.dpdk.org (Postfix) with ESMTP id 14A894028E
+ for <dev@dpdk.org>; Thu,  2 Apr 2026 18:51:33 +0200 (CEST)
+Received: by mail-qv1-f51.google.com with SMTP id
+ 6a1803df08f44-89cd8596724so13553876d6.0
+ for <dev@dpdk.org>; Thu, 02 Apr 2026 09:51:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775148692; cv=none;
+ d=google.com; s=arc-20240605;
+ b=Hk1CAorqIwQslQCR+NPpcwHWX2EdLnL4S5rXRH/McNIRnQqqJTw8+CJYcKAoPibGbx
+ OCklYAj+PTKHWlR9kRhx3Z/TV66ptFNK3ZO8xMlVHuxT0MEJ6MR+mhVO5P7HQ1uBN1EI
+ Pdv4LUxGrXqUrfSDa4VT0xrJ8L2MsjB1cAxKQgSr5Sl2zoBuUnfB38oey1FDJImfzlwS
+ /7mRQfmNc12orkHM49tszv0wMg7y5GrIwi4PTg96gC7cVS2CCIb+xCnvonekbNF9w8oA
+ USqKnd6SILjut3OVuGsK4ZI0ipIW/SS4kkqmcV4P1HzUCDzANiyK6Knju8/fhFyTML8f
+ g3xA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version;
+ bh=JGBc+O3DOc/ddORjLfJOSD1BR9IPzl5fPKfBkgxw2eM=;
+ fh=o2i87oYIfNDY8o29svlte/ES+qvQX1EPYhry2HrZkJA=;
+ b=BO1svvxPJrUX7P/a4rVXMOIlmeS9eB6Xp915NwjsmEAjMbKL7tyVn9cFfuN4hs/61w
+ w63qkWcuQM3xguvuFrxiS+ctv6fUbidHJfhccitkliqSv6vD7E++NPUkhX5Gnm0k/SdI
+ vpiyfch0U4qMqRtoUGuhshfPo9ZqiCK/0kB3Uw+2LyHB5PpCNcVwM1aMqs+zxzU+sGaD
+ XwPjy7KUR2gT5jpA4sPA99GG7BANef30kCxAXXY92pdLs6eq5tKRYjME2cE/e9B656A+
+ IHTlZHWoRNH1dR26BFHD7qKqWdhAg5IZfck0pi+Qi80in71mpRNXs/O5YWU/hNuybncb
+ Np5g==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1775148692; x=1775753492;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=JGBc+O3DOc/ddORjLfJOSD1BR9IPzl5fPKfBkgxw2eM=;
+ b=Qqiofav1112QN0ZwEx1d9J8+RPtr66+t5mYvhEYpYKitQFaycnCH7AxchQtIwsxbHQ
+ BkTtrYlnpJdI1qYzVWnbcuM1Ed49E0U5ws6f9pfJi+X+ifB/9YjQj7HAeCaoe/VnqXdC
+ hUidu0JS6bhaSNSOjLCKAuIKHEp86BKmbp4SjA5q2c4pKP5HJk0mP+afJVwS+fpyXW2j
+ TIFaTBHhgcDJS0bqN1WEa18gUWCOPmfAHCatlDFQompmPVUCvTzYZdwWeG6HHc7SQpOR
+ W0p7nKeIXCN1O4pbEcnTuVYw2FRiad+1Upa71R7+omQLeWBa/BisXtu48q7p6lEtHXYJ
+ aQdQ==
+X-Gm-Message-State: AOJu0YzpytVLqivc9jdSFeOhwt92dFZsokWSinEd1BtK040ec84bUNtj
+ sL+ptGbc1XChPvKxxmznFacnwN4Rj12ZbY4NPOk2oKhs5JmqoEd9sH0sSFDKxZE9ic1+leiz701
+ dtC7cLE//frqIkYMIVwvoHrRySnLDAZQ=
+X-Gm-Gg: AeBDievupMz4wYHpp25oZ1qx9y3T77rUE1xQ4nMONB9OakheU5kATGAntdywmuOLIEJ
+ GDvPwQNTu/40y98vLOSCKXgduW4QRLMR7mNhdv1icbikE8Yp8bGHh5MmJNmnIbFfisj6OrZvStk
+ MutNXhRhthnUJ8/ChQ5pWO3fE5cVr23Rtzyyyra13BkIl9Yyrvka9If9/8UIch4Uj1aa2bn57lh
+ e7oQmMBr73UmqDHxpMRvR2YiDNH9prcZZwB5eM1pewbJ0ljLe6iTYj3HQyh/Oy0gBm/lXHKBWDJ
+ ClMM19LByAvEkft8Tg==
+X-Received: by 2002:ad4:5f09:0:b0:89f:48d0:4c9 with SMTP id
+ 6a1803df08f44-8a439b91733mr121039206d6.46.1775148691971; Thu, 02 Apr 2026
+ 09:51:31 -0700 (PDT)
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: TJn9Wf1ULtmAXPJvM92cGe_OL7cntU9Etux_Mew2T3I_1775148308
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20260322154215.3686528-1-vladimir.medvedkin@intel.com>
+ <CAHHRULVmnHih3BqoCnMv-FEj=aC3LehgCFaVhh=0eQ-SLsovXg@mail.gmail.com>
+ <22bebf4a-3801-45e9-8ac5-726cb6c89721@intel.com>
+ <CAHHRULVvLpFpwA-Z8KMuCKmdM24OCeZDrzEMEMs88h2-iqapXw@mail.gmail.com>
+ <d944f17d-35a7-42d3-9011-2d368f530474@intel.com>
+ <CAHHRULXCfeFrgTosCJCvMK0+Qe-eBy2bJs43KDvEwYC6A6GRCg@mail.gmail.com>
+ <a3a95872-2cc7-4b9d-ae70-179050339bd8@intel.com>
+ <CAHHRULUHTLohJ+2=uTRwB5mq54yK=wytfC0vCf-sa2Bv-rwX8g@mail.gmail.com>
+ <9534229c-fe4c-45e8-8bb0-515f440b1a32@intel.com>
+In-Reply-To: <9534229c-fe4c-45e8-8bb0-515f440b1a32@intel.com>
+From: Maxime Leroy <maxime@leroys.fr>
+Date: Thu, 2 Apr 2026 18:51:20 +0200
+X-Gm-Features: AQROBzBeyJ75uFJ0_kyzsr8jHBGOms4QY77FVA-l_t0BQuRu3gHuXq-bxWfIyR8
+Message-ID: <CAHHRULW5CG9jF_iY6eakmW2j0t0yRanO+gbxe=MPuikM7y-TFQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] VRF support in FIB library
+To: "Medvedkin, Vladimir" <vladimir.medvedkin@intel.com>
+Cc: dev@dpdk.org, rjarry@redhat.com, nsaxena16@gmail.com, 
+ mb@smartsharesystems.com, adwivedi@marvell.com, jerinjacobk@gmail.com, 
+ Vladimir Medvedkin <medvedkinv@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,478 +92,508 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi all,
-
-Here is a list of patches targeted for stable release 25.11.1.
-
-The planned date for the final release is 21st April 2026.
-
-Please help with testing and validation of your use cases and report
-any issues/results with reply-all to this mail. For the final release
-the fixes and reported validations will be added to the release notes.
-
-A release candidate tarball can be found at:
-
-    https://dpdk.org/browse/dpdk-stable/tag/?id=v25.11.1-rc1
-
-These patches are located at branch 25.11 of dpdk-stable repo:
-    https://dpdk.org/browse/dpdk-stable/
-
-Thanks.
-
-Kevin
-
----
-Aarnav JP (2):
-      examples/packet_ordering: fix format specifier for port ID
-      examples/ptpclient: fix format specifier for port ID
-
-Ajit Khaparde (1):
-      net/bnxt: support statistics query when port is stopped
-
-Anatoly Burakov (13):
-      net/ixgbe: add missing E610 MAC type checks
-      net/ixgbe: fix memory leak in security flows
-      net/ixgbe: fix potential null dereference with IPsec config
-      net/ixgbe: fix potential null dereference in IPsec flow
-      net/ixgbe: fix pointer handling in IPsec
-      net/i40e: move filter config to flow create
-      net/i40e: fix IPv6 GTPU handling
-      net/iavf: fix memory leak on egress IPsec flows
-      net/iavf: fix memory leak on uninit
-      net/iavf: fix IPv4 flow subscription
-      net/ice: fix memory leak in DCF QoS bandwidth config
-      net/ice: fix memory leak in FDIR flow parsing
-      net/iavf: fix struct size in IPsec status get
-
-Andrew Bailey (4):
-      dts: show missing NIC capabilities in logs
-      dts: fix doc for RSS test suite
-      dts: fix doc for QinQ test suite
-      dts: reduce digit count in single core forwarding metrics
-
-Anurag Mandal (3):
-      app/testpmd: fix function names in logs
-      net/i40e: fix QinQ stripping
-      net/iavf: fix deletion of primary MAC address
-
-Ashok Kumar Natarajan (5):
-      net/axgbe: fix 100M SGMII mode
-      net/axgbe: fix MAC TCR speed select field width
-      net/axgbe: add 100 Mbps MAC speed select
-      net/axgbe: fix auto-negotiation capabilities
-      net/axgbe: fix SGMII auto-negotiation status bits
-
-Bing Zhao (2):
-      net/mlx5: fix counters resource leak
-      net/mlx5: fix NAT64 HW registers calculation
-
-Bruce Richardson (33):
-      rcu: fix build with MSVC
-      net/ice/base: disable MSVC warning
-      test/red: fix some undefined behaviour
-      test/timer: fix hang on secondary process failure
-      buildtools/test: suppress empty output
-      eal: fix variable shadowing
-      bbdev: fix variable shadowing
-      ethdev: fix variable shadowing
-      eventdev: fix variable shadowing
-      net: fix variable shadowing
-      pcapng: fix variable shadowing
-      pipeline: fix variable shadowing
-      power: fix variable shadowing
-      table: fix variable shadowing
-      bus/pci: fix variable shadowing
-      net/cpfl: fix variable shadowing
-      net/e1000: fix variable shadowing
-      net/i40e: fix variable shadowing
-      net/ice: fix variable shadowing
-      net/ixgbe: fix variable shadowing
-      app/graph: fix variable shadowing
-      app/pdump: fix variable shadowing
-      app/testpmd: fix variable shadowing
-      config/arm: fix 32-bit build
-      hash: fix maybe-uninitialized warnings on build
-      net/intel: fix memory leak on Tx queue setup failure
-      dma/idxd: mark portal pointer as volatile
-      test: fix dependencies on net null driver
-      hash: fix overflow of 32-bit offsets
-      test/security: skip inline protocol test if no HW support
-      net/bonding: clamp Rx free threshold for small rings
-      usertools/pmdinfo: fix search for PMD info string
-      net/ice/base: fix double HW reinitialization
-
-Chengwen Feng (2):
-      net/hns3: fix outer UDP checksum with simple BD
-      app/testpmd: check start for DCB forwarding TC commands
-
-Ciara Loftus (15):
-      doc: fix TSO and checksum offload feature status for ice
-      doc: fix TSO feature status for iavf
-      doc: fix inline crypto feature status for iavf
-      doc: fix TSO feature status for i40e
-      net/intel: prevent selection of a null Rx burst function
-      net/ice: check null scheduler root node
-      net/ice: fix priority mode printing in Tx scheduler dump
-      net/ice: re-enable strict priority on non-root levels
-      net/i40e: fix secondary process Rx path selection
-      net/iavf: fix secondary process Rx path selection
-      net/ice: fix secondary process Rx path selection
-      net/iavf: fix order of tags for AVX512 Tx QinQ offload
-      net/i40e: validate raw flow items before dereferencing
-      doc: remove references to obsolete testpmd flag
-      net/i40e: fix raw flow item validation
-
-Congjie Zhou (1):
-      eal/linux: fix fbarray name collision in containers
-
-Dariusz Sosnowski (13):
-      app/testpmd: fix flow queue job leaks
-      net/mlx5: fix default memzone requirements in HWS
-      net/mlx5: fix flow mark reading after reconfigure
-      net/mlx5: fix shared Rx queue limitations
-      common/mlx5: fix bonding check
-      net/mlx5: fix bonding check
-      net/mlx5: fix probing to allow BlueField Socket Direct
-      net/mlx5: fix default flow engine on Windows
-      net/mlx5: fix VXLAN and NVGRE encap in async flow API
-      net/mlx5: fix VLAN strip info for CQE compression
-      net/mlx5: fix flex item capability check
-      common/mlx5: fix error logging for queue modify
-      net/mlx5: report share group and queue ID
-
-David Marchand (5):
-      net/tap: remove log when running without multiprocess
-      net/af_xdp: fix external mbuf transmit
-      eal/linux: fix HPET symbols export
-      common/mlx5: fix MAC deletion on Linux
-      examples/vm_power_manager: fix format specifier for port ID
-
-Dean Marx (1):
-      dts: fix docstring typo in dynamic queue suite
-
-Dimon Zhao (10):
-      net/nbl: fix integer overflow
-      net/nbl: fix null pointer dereference
-      net/nbl: check ioctl returns
-      net/nbl: fix memzone leak on queue release
-      net/nbl: fix mbuf headroom usage in packet Tx
-      net/nbl: fix mbuf double-free in queue cleanup
-      net/nbl: improve mailbox exception handling
-      net/nbl: fix hardware stats interrupt nesting
-      net/nbl: checks for unsupported UIO drivers
-      net/nbl: fix queue stats on restart
-
-Emma Finn (1):
-      examples/fips_validation: fix dangling pointers
-
-Garvit Varshney (1):
-      crypto/cnxk: return decrypted data for RSA verify
-
-Gregory Etelson (6):
-      net: fix packet type for stacked VLAN
-      net/mlx5: fix MPESW PF probe for any number of ports
-      net/mlx5: fix flow metadata between E-Switch and VM
-      net/mlx5: fix flow metadata sharing with E-Switch and VM
-      net/mlx5: fix IPv6 SRH flex node header length
-      net/mlx5: fix IPv6 SRH flex parser initialization
-
-Grzegorz Nitka (1):
-      net/ice/base: fix adjust timer programming for E830
-
-Hailin Xu (1):
-      doc: fix E830 recommended firmware in ice guide
-
-Howard Wang (4):
-      net/r8169: fix crash in RTL8168FP init
-      net/r8169: fix RTL8168KB speed classification
-      net/r8169: ensure old mapping is used
-      net/r8169: fix bitmask logic for RTL8127
-
-Itai Sharoni (1):
-      net/mlx5/windows: fix MAC address ownership tracking
-
-Ivan Malov (7):
-      common/sfc_efx/base: fix flow control on legacy MCDI
-      common/sfc_efx/base: fix indication of requestable FEC flags
-      common/sfc_efx/base: define mask for pause mode capabilities
-      net/sfc: avoid speed reset when setting FEC in started state
-      net/sfc: rework capability check that is done on FEC set
-      net/sfc: drop AUTO from FEC capabilities and fix comment
-      net/sfc: fix reporting status of autonegotiation
-
-Jacob Keller (1):
-      net/iavf: negotiate PTP before reporting Rx timestamping
-
-John McNamara (1):
-      net/i40e: fix unused variable
-
-Junfeng Guo (1):
-      net/mlx5: fix IP tunnel detection with HWS
-
-Kai Ji (1):
-      crypto/openssl: fix SM2 public key buffer overflow
-
-Keegan Freyhof (2):
-      net/bnxt: fix commas instead of semicolons
-      net/bnxt: fix reported VLAN stripped flag for Thor2
-
-Kevin Traynor (8):
-      examples/vm_power: fix format-truncation warning
-      eal/linux: handle interrupt epoll events
-      interrupts: add interrupt event info
-      net/mlx5: check DevX disconnect/error interrupt events
-      vhost: fix resource leak on driver registration failure
-      net/bnxt: fix uninitialized read
-      app/testpmd: fix FD leak in mbuf history command parsing
-      examples/ipsec-secgw: fix build with glibc 2.43
-
-Kishore Padmanabha (1):
-      net/bnxt: fix statistics for high number of queues
-
-Liangxing Wang (1):
-      app/dma-perf: fix reversed CPU copy
-
-Long Li (14):
-      net/netvsc: fix race conditions on VF add/remove events
-      net/netvsc: support multi-process VF device removal
-      net/mana: fix PD resource leak on device close
-      net/netvsc: fix devargs memory leak on hotplug
-      net/mana: fix fast-path ops setup in secondary process
-      net/mlx5: fix fast-path ops setup in secondary process
-      net/mlx4: fix fast-path ops setup in secondary process
-      net/netvsc: fix subchannel leak on device removal
-      net/netvsc: fix double-free of primary Rx queue on uninit
-      net/netvsc: fix resource leak on init failure
-      net/netvsc: fix event callback leak on Rx filter failure
-      net/netvsc: fix resource leaks on MTU change
-      net/mana: fix CQE suppression handling on error completions
-      net/netvsc: switch data path to synthetic on device stop
-
-Lukas Sismis (1):
-      dts: fix doc generation for testpmd shell
-
-Maayan Kashani (3):
-      net/mlx5: fix flow devargs handling for future HW
-      net/mlx5: fix internal HWS pattern template creation
-      net/mlx5: fix redundant control rules in promiscuous mode
-
-Maciej Paczkowski (1):
-      net/ice/base: fix integer types in comparisons
-
-Manish Kurup (1):
-      net/bnxt: fix crash in HWRM capabilities query
-
-Marat Khalili (6):
-      bpf: fix x86 call stack alignment for external calls
-      bitops: allow variable as first argument of shift macros
-      bpf: fix signed shift overflows in ARM JIT
-      bpf: disallow empty program
-      bpf: fix add/subtract overflow
-      bpf: fix starting with conditional jump
-
-Martin Spinler (5):
-      net/nfb: use constant values for max Rx/Tx queues count
-      net/nfb: fix bad pointer access in queue stats
-      net/nfb: use process private variable for internal
-      net/nfb: fix resources release
-      net/nfb: stop only started queues in fail path
-
-Maxime Coquelin (3):
-      vhost: fix virtqueue array size for control queue
-      vhost: fix descriptor chain bounds check in control queue
-      vhost: fix mmap error check in VDUSE IOTLB miss handler
-
-Maxime Leroy (14):
-      net/dpaa2: fix queue block memory leak on port close
-      net/dpaa2: fix Rx error queue memory leaks
-      net/dpaa2: warn on Rx descriptor limit in high perf mode
-      net/dpaa2: fix resource leak on soft parser failure
-      net/dpaa2: fix link after port stop/start
-      bus/fslmc: fix devargs not propagated on hotplug
-      net/dpaa2: fix spurious VLAN insertion on non-VLAN packet
-      net/dpaa2: fix error packet dump
-      net/dpaa2: fix L4 packet type in slow parse path
-      net/dpaa2: fix L3/L4 checksum offload flags
-      net/dpaa2: fix software taildrop buffer access
-      net/dpaa2: fix burst mode info
-      net/dpaa2: add SG table walk upper bound in Rx
-      net/dpaa2: fix MAC stats DMA alloc per xstats call
-
-Morten Brørup (3):
-      ethdev: fix mbuf fast release requirements description
-      eal: fix cache guard for pedantic compilation
-      mbuf: fix packet data read
-
-Nawal Kishor (1):
-      common/cnxk: fix width of DPC set field
-
-Nithinsen Kaithakadan (2):
-      test/crypto: fix mbuf segment number
-      test/crypto: fix RSA sign data length
-
-Patrick Robb (3):
-      dts: sniff only inbound packets
-      dts: fix test suite filtering
-      dts: avoid resources conflict on quick stop/start
-
-Piotr Krzewinski (1):
-      cryptodev: fix memory corruption in secondary process
-
-Radu Nicolau (3):
-      pdcp: add digest physical address
-      crypto/qat: align vector address
-      hash: fix unaligned access for CRC
-
-Rahul Bhansali (4):
-      net/cnxk: fix security flag for custom inbound SA
-      common/cnxk: fix duplicated branches
-      common/cnxk: fix CPT CQ roll over handling
-      event/cnxk: fix crash on CN10K
-
-Rakesh Kudurumalla (2):
-      common/cnxk: fix engine capabilities fetch logic
-      examples/l2fwd-jobstats: fix stats availability
-
-Riley Fletcher (1):
-      doc: add IBM Power 10 testing to 25.11 release notes
-
-Robin Jarry (4):
-      net/iavf: fix reported max Tx and Rx queues
-      telemetry: fix adding dict in container array
-      hash: avoid leaking entries on RCU defer queue failure
-      hash: free replaced data on overwrite when RCU is configured
-
-Rongwei Liu (1):
-      net/mlx5: fix job leak on indirect meter creation failure
-
-Sameer Vaze (1):
-      compress/zlib: fix UDC checksum
-
-Scott Mitchell (1):
-      eal: fix annotation on lcore variable allocator
-
-Sergei Iashin (1):
-      eventdev/eth_rx: fix crash with telemetry
-
-Shaiq Wani (1):
-      net/idpf: fix typo in CQ scan threshold macro name
-
-Shani Peretz (10):
-      examples/ethtool: fix size of mempool name
-      app/testpmd: fix memory leak in port attach
-      net/mlx5/hws: fix stack alignment for ASan compatibility
-      net/mlx5/hws: fix null dereference in rule skip
-      net/mlx5: allow MTU mismatch for running shared queue
-      vhost: fix use-after-free race during cleanup
-      app/testpmd: fix memory leak in port flow configure
-      config/arm: drop crypto extension from Cortex-A78AE
-      net/mlx5: fix meter ASO action leak on release to pool
-      net/mlx5: fix heap buffer overflow in sample group match
-
-Song Yoong Siang (3):
-      net/e1000: use device timestamp for clock read in igc
-      net/e1000: fix allocation of context desc for launch time
-      net/e1000: fix igc launch time calculation
-
-Sriram Yagnaraman (2):
-      net/memif: fix descriptor Tx flags corruption
-      net/memif: fix multi-segment Rx corruption
-
-Stephen Hemminger (40):
-      common/cnxk: fix array out-of-bounds
-      examples/fips_validation: fix RSA memcpy
-      net/bnxt: fix build with GCC 16
-      test/table: avoid input line overflow
-      test/cfgfile: avoid temp filename truncation
-      test/crypto: check for vdev args overflow
-      pcapng: document return values
-      pcapng: use malloc instead of fixed buffer size
-      pcapng: chain additional mbuf when comment exceeds tailroom
-      test/pcapng: skip test if null driver missing
-      common/cnxk: remove VLA in interrupt configuration
-      common/cnxk: fix buffer overflow in SA setup
-      net/mlx5: fix build with LTO
-      net/bnxt: remove unbuilt source files
-      net/mlx5: fix null dereference in Tx queue start
-      net/mlx5: fix counter leak in hairpin queue setup
-      net/mlx5: fix use-after-free in ASO management init
-      net/mlx5: fix counter truncation in queue counter read
-      net/tap: fix handling of queue stats
-      net/tap: use correct length for interface names
-      net/tap: fix resource leaks on creation failure
-      net/tap: fix resource leaks in secondary process probe
-      net/tap: free IPC reply buffer on queue count mismatch
-      net/tap: fix use-after-free on remote flow creation failure
-      net/tap: free remote flow when implicit rule already exists
-      test/pcapng: fix for Windows
-      test: add pause to synchronization spinloops
-      test/atomic: scale test based on core count
-      test/mcslock: scale test based on core count
-      test/stack: scale test based on core count
-      test/timer: scale test based on core count
-      test/timer: replace volatile with C11 atomics
-      test: add file-prefix for all fast-tests on Linux
-      test/trace: fix parallel execution with traces enabled
-      test/bpf: fix error handling in ELF load tests
-      test/bpf: fix unsupported instructions in ELF load test
-      test/bpf: fix payload size for Rx/Tx load tests
-      examples/vmdq_dcb: initialize all configuration structures
-      test/memcpy: reduce alignment offset coverage
-      test/latency: relax check on zero latency
-
-Sunyang Wu (1):
-      doc: add --query-rate option in flow-perf guide
-
-Talluri Chaitanyababu (1):
-      app/testpmd: fix DCB forwarding TC mismatch handling
-
-Tejasree Kondoj (1):
-      common/cnxk: fix cipher key length validation
-
-Thierry Herbelot (1):
-      net/intel: update key length when getting RSS key
-
-Thomas Monjalon (7):
-      common/mlx5: fix variable shadowing
-      net/mvpp2: fix variable shadowing
-      eal/x86: fix TSC frequency query
-      net/bnxt/tf_ulp: fix minsize build
-      ci: fix debug build type
-      examples/ethtool: fix error message about ports limit
-      mem: check fbarray name truncation in secondary process
-
-Venkatesh Vemula (1):
-      net/intel: fix comma operator warnings
-
-Viacheslav Ovsiienko (2):
-      net/mlx5: fix flex parser creation length attribute
-      net/mlx5: fix send skew settings when using wait on time
-
-Vipin Varghese (2):
-      app/dma-perf: fix buffer overflow with high core count
-      doc: update AMD EPYC guide
-
-Vladimir Medvedkin (2):
-      fib: fix prefix addition handling
-      net/ice: fix RSS LUT access when using global LUT
-
-Xavier Guillaume (2):
-      net/af_packet: fix MTU set data size calculation
-      net/af_packet: fix receive buffer overflow
-
-Xiaoyu Min (1):
-      net/mlx5: fix HW flow counter query
-
-Yang Xu (1):
-      net/mlx5: fix port down in link detection failure
-
-Yehor Malikov (1):
-      vhost: fix use-after-free fdset during shutdown
-
-Yunjian Wang (1):
-      net/mlx5: fix memory leak after device spawn failure
-
-Zhanibek Bakin (1):
-      net/null: fix Tx statistics accumulation
-
+Hi Vladimir,
+
+On Fri, Mar 27, 2026 at 7:28=E2=80=AFPM Medvedkin, Vladimir
+<vladimir.medvedkin@intel.com> wrote:
+>
+> Hi Maxime,
+>
+> On 3/25/2026 9:43 PM, Maxime Leroy wrote:
+> > Hi Vladimir,
+> >
+> > On Wed, Mar 25, 2026 at 4:56=E2=80=AFPM Medvedkin, Vladimir
+> > <vladimir.medvedkin@intel.com> wrote:
+> >>
+> >> On 3/24/2026 9:19 AM, Maxime Leroy wrote:
+> >>> Hi Vladimir,
+> >>>
+> >>> On Mon, Mar 23, 2026 at 7:46=E2=80=AFPM Medvedkin, Vladimir
+> >>> <vladimir.medvedkin@intel.com> wrote:
+> >>>> On 3/23/2026 2:53 PM, Maxime Leroy wrote:
+> >>>>> On Mon, Mar 23, 2026 at 1:49=E2=80=AFPM Medvedkin, Vladimir
+> >>>>> <vladimir.medvedkin@intel.com> wrote:
+> >>>>>> Hi Maxime,
+> >>>>>>
+> >>>>>> On 3/23/2026 11:27 AM, Maxime Leroy wrote:
+> >>>>>>>      Hi Vladimir,
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> On Sun, Mar 22, 2026 at 4:42=E2=80=AFPM Vladimir Medvedkin
+> >>>>>>> <vladimir.medvedkin@intel.com> wrote:
+> >>>>>>>> This series adds multi-VRF support to both IPv4 and IPv6 FIB pat=
+hs by
+> >>>>>>>> allowing a single FIB instance to host multiple isolated routing=
+ domains.
+> >>>>>>>>
+> >>>>>>>> Currently FIB instance represents one routing instance. For work=
+loads that
+> >>>>>>>> need multiple VRFs, the only option is to create multiple FIB ob=
+jects. In a
+> >>>>>>>> burst oriented datapath, packets in the same batch can belong to=
+ different VRFs, so
+> >>>>>>>> the application either does per-packet lookup in different FIB i=
+nstances or
+> >>>>>>>> regroups packets by VRF before lookup. Both approaches are expen=
+sive.
+> >>>>>>>>
+> >>>>>>>> To remove that cost, this series keeps all VRFs inside one FIB i=
+nstance and
+> >>>>>>>> extends lookup input with per-packet VRF IDs.
+> >>>>>>>>
+> >>>>>>>> The design follows the existing fast-path structure for both fam=
+ilies. IPv4 and
+> >>>>>>>> IPv6 use multi-ary trees with a 2^24 associativity on a first le=
+vel (tbl24). The
+> >>>>>>>> first-level table scales per configured VRF. This increases memo=
+ry usage, but
+> >>>>>>>> keeps performance and lookup complexity on par with non-VRF impl=
+ementation.
+> >>>>>>>>
+> >>>>>>> Thanks for the RFC. Some thoughts below.
+> >>>>>>>
+> >>>>>>> Memory cost: the flat TBL24 replicates the entire table for every=
+ VRF
+> >>>>>>> (num_vrfs * 2^24 * nh_size). With 256 VRFs and 8B nexthops that i=
+s
+> >>>>>>> 32 GB for TBL24 alone. In grout we support up to 256 VRFs allocat=
+ed
+> >>>>>>> on demand -- this approach forces the full cost upfront even if m=
+ost
+> >>>>>>> VRFs are empty.
+> >>>>>> Yes, increased memory consumption is the
+> >>>>>> trade-off.WemakethischoiceinDPDKquite often,such as pre-allocatedm=
+bufs,
+> >>>>>> mempoolsand many other stuff allocated in advance to gain performa=
+nce.
+> >>>>>> For FIB, I chose to replicate TBL24 per VRF for this same reason.
+> >>>>>>
+> >>>>>> And, as Morten mentioned earlier, if memory is the priority, a tab=
+le
+> >>>>>> instance per VRF allocated on-demand is still supported.
+> >>>>>>
+> >>>>>> The high memory cost stems from TBL24's design: for IPv4, it was
+> >>>>>> justified by the BGP filtering convention (no prefixes more specif=
+ic
+> >>>>>> than /24 in BGPv4 full view), ensuring most lookups hit with just =
+one
+> >>>>>> random memory access. For IPv6, we should likely switch to a 16-bi=
+t TRIE
+> >>>>>> scheme on all layers. For IPv4, alternative algorithms with smalle=
+r
+> >>>>>> footprints (like DXR or DIR16-8-8, as used in VPP) may be worth
+> >>>>>> exploring if BGP full view is not required for those VRFs.
+> >>>>>>
+> >>>>>>> Per-packet VRF lookup: Rx bursts come from one port, thus one VRF=
+.
+> >>>>>>> Mixed-VRF bulk lookups do not occur in practice. The three AVX512
+> >>>>>>> code paths add complexity for a scenario that does not exist, at
+> >>>>>>> least for a classic router. Am I missing a use-case?
+> >>>>>> That's not true, you're missing out on a lot of established core u=
+se
+> >>>>>> cases that are at least 2 decades old:
+> >>>>>>
+> >>>>>> - VLAN subinterface abstraction. Each subinterface may belong to a
+> >>>>>> separate VRF
+> >>>>>>
+> >>>>>> - MPLS VPN
+> >>>>>>
+> >>>>>> - Policy based routing
+> >>>>>>
+> >>>>> Fair point on VLAN subinterfaces and MPLS VPN. SRv6 L3VPN (End.DT4/
+> >>>>> End.DT6) also fits that pattern after decap.
+> >>>>>
+> >>>>> I agree DPDK often pre-allocates for performance, but I wonder if t=
+he
+> >>>>> flat TBL24 actually helps here. Each VRF's working set is spread
+> >>>>> 128 MB apart in the flat table. Would regrouping packets by VRF and
+> >>>>> doing one bulk lookup per VRF with separate contiguous TBL24s be
+> >>>>> more cache-friendly than a single mixed-VRF gather? Do you have
+> >>>>> benchmarks comparing the two approaches?
+> >>>> It depends. Generally, if we assume that we are working with wide
+> >>>> internet traffic, then even for a single VRF we most likely will mis=
+s
+> >>>> the cache for TLB24, thus, regardless of the size of the tbl24, each
+> >>>> memory access will be performed directly to DRAM.
+> >>> If the lookup is DRAM-bound anyway, then the 10 cycles/addr cost
+> >>> is dominated by memory latency, not CPU. The CPU cost of a bucket
+> >>> sort on 32-64 packets is negligible next to a DRAM access (~80-100
+> >>> ns per cache miss).
+> >> memory accesses are independent and executed in parallel in the CPU
+> >> pipeline
+> >>>    That actually makes the case for regroup +
+> >>> per-VRF lookup: the regrouping is pure CPU work hidden behind
+> >>> memory stalls,
+> >> regrouping must be performed before memory accesses, so it cannot be
+> >> amortized in between of memory reads
+> > With internet traffic, TBL24 lookups quickly become limited by
+> > cache misses, not CPU cycles. Even if some bursts hit the same
+> > routes and benefit from cache locality, the CPU has a limited
+> > number of outstanding misses (load buffer entries, MSHRs) --
+> > out-of-order execution helps, but it is not magic.
+> Correct, but this does not contradict to what I'm saying
+> >
+> > The whole point of vector/graph processing (VPP, DPDK graph, etc.)
+> > is to amortize that memory latency: prefetch for packet N+1 while
+> > processing packet N. This works because all packets in a batch
+> > hit the same data structure in a tight loop.
+> https://github.com/DPDK/dpdk/blob/626d4e39327333cd5508885162e45ca7fb94ef7=
+f/lib/fib/dir24_8.h#L161
+>
+> >
+> > With separate per-VRF TBL24s, a bucket sort by VRF -- a few
+> > dozen cycles, all in L1 -- gives you clean batches where
+> > prefetching works as designed. This is exactly what graph nodes
+> > already do: classify, then process per-class in a tight loop.
+> How lookup is performed in this design? Am I understand it right:
+> 1. sort the batch by VRF ids, splitting IPs from the batch with IP
+> sub-batches belonging to the same VRF id
+> 2. for each subset of IPs perform lookup in tbl24[batch_common_vrf_id]
+> 3. unsort nexthops
+>
+> Correct?
+
+No sort/unsort. This is how rte_graph classification works:
+
+ ip_input (validation)
+   -> ip_lookup-v0  (bulk fib4_lookup on homogeneous VRF 0 burst)
+   -> ip_lookup-v1  (bulk fib4_lookup on homogeneous VRF 1 burst)
+   -> ip_forward / ip_input_local / ...
+
+ ip_input already iterates over packets for header validation and
+ enqueues them to different next nodes. Adding a per-VRF edge costs
+ one iface->vrf_id load (already in L1) and one rte_node_enqueue_x1()
+ (already done today). Each ip_lookup-vN clone holds its VRF's
+ rte_fib in node context and calls rte_fib_lookup_bulk() on the
+ whole burst at once.
+
+ We do not use bulk lookups yet in grout (each packet does its own
+ rte_fib_lookup_bulk(..., 1) today), but this is how we would
+ implement it.
+
+ The tradeoff is batch fragmentation: with traffic spread across K
+ active VRFs, each sub-batch is ~N/K packets. But in practice, most
+ deployments have 1-3 hot VRFs, so batches stay large. And even
+ fragmented batches benefit from the vectorized lookup -- 8 packets
+ is still one AVX512 iteration, vs. 8 scalar lookups today.
+
+> >
+> >>>    and each per-VRF bulk lookup hits a contiguous
+> >>> TBL24 instead of scattering across 128 MB-apart VRF regions.
+> >> why is a contiguous 128Mb single-VRF TBL24 OK for you, but bigger
+> >> contiguous multi-VRF TBL24 is not OK in the context of lookup (here we
+> >> are talking about lookup, omitting the problem of memory consumption o=
+n
+> >> init)?
+> > The performance difference may be small, but the flat approach
+> > is not faster either -- while costing 64 GB upfront.
+> it seems you are implicitly take an assumption of 256 VRFs. Is my
+> usecase with a few VRFs have a right to exist?
+> >
+> >> In both of these cases, memory access behaves the same way within a
+> >> single batch of packets during lookup, i.e. the first hit is likely a
+> >> cache miss, regardless of whether we are dealing with one or more VRFs=
+,
+> >> it will not maintain TBL24 in L3$ in any way in a real dataplane app.
+> >>
+> >>>> And if the addresses are localized (i.e. most traffic is internal), =
+then
+> >>>> having multiple TBL24 won'tmake the situationmuchworse.
+> >>>>
+> >>> With localized traffic, regrouping by VRF + per-VRF lookup on
+> >>> contiguous TBL24s would benefit from cache locality,
+> >> why so? There will be no differences within a single batch with a
+> >> reasonable size (for example 64), because within the lookup session, n=
+o
+> >> matter with or without regrouping, temporal cache locality will be the=
+ same.
+> >>
+> >> Let't look at it from a different angle. Is it
+> >> worthregroupingipaddressesby/8(i.e. 8 MSBs)withthe
+> >> currentimplementationof a singleVRFFIB?
+> >>
+> >>>    while the
+> >>> flat multi-VRF table spreads hot entries 128 MB apart. The flat
+> >>> approach may actually be worse in that scenario
+> >>>
+> >>>> I don't have any benchmarks for regrouping, however I have 2 things =
+to
+> >>>> consider:
+> >>>>
+> >>>> 1. lookup is relatively fast (for IPv4 it is about 10 cycles per
+> >>>> address, and I don't really want to slow it down)
+> >>>>
+> >>>> 2. incoming addresses and their corresponding VRFs are not controlle=
+d by
+> >>>> "us", so this is a random set. Regrouping effectively is sorting. I'=
+m
+> >>>> not really happy to have nlogn complexity on a fast path :)
+> >>> Without benchmarks, we do not know whether the flat approach is
+> >>> actually faster than regroup + per-VRF lookup.
+> >> feel free to share benchmark results. The only thing you need to add i=
+s
+> >> the packets regrouping logic, and then use separate single-VRF FIB
+> >> instances.
+> > Your series introduces a new API that optimizes multi-VRF lookup.
+> > The performance numbers should come with the proposal.
+> By the policy we can not share raw performance numbers, and I think this
+> is unnecessary, because performance depends on the testing environment
+> (content of the routing table, CPU model, etc).
+>
+> Tests I've done on my board with ipv4 full-view (782940 routes) with 4
+> VRFs performing random lookup in all of them was 180% in cost comparing
+> to a single VRF with the same RT content.
+>
+> You can test it in your environment with
+> dpdk-test-fib -l 1,2  --no-pci -- -f <path to your routes> -e 4 -l
+> 100000000 -V <number of VRFs>
+
+The dpdk-test-fib benchmark is useful for measuring raw lookup
+ throughput, but it does not capture the full picture. In a real
+ router stack with rte_graph, the classification by VRF happens
+ naturally as part of packet processing -- it is not an extra
+ sorting step. The only way to compare both approaches fairly is
+ to measure end-to-end forwarding performance in a real datapath.
+
+ grout is an open source DPDK-based router built on rte_graph,
+ designed to exercise and validate DPDK APIs in realistic
+ conditions. I would be happy to help benchmark both approaches
+ there.
+
+>
+> >
+> >>>>> On the memory trade-off and VRF ID mapping: the API uses vrf_id as
+> >>>>> a direct index (0 to max_vrfs-1). With 256 VRFs and 8B nexthops,
+> >>>>> TBL24 alone costs 32 GB for IPv4 and 32 GB for IPv6 -- 64 GB total
+> >>>>> at startup. In grout, VRF IDs are interface IDs that can be any
+> >>>>> uint16_t, so we would also need to maintain a mapping between our
+> >>>>> VRF IDs and FIB slot indices.
+> >>>> of course, this is an application responsibility. In FIB VRFs are in
+> >>>> continuous range.
+> >>>>>     We would need to introduce a max_vrfs
+> >>>>> limit, which forces a bad trade-off: either set it low (e.g. 16)
+> >>>>> and limit deployments, or set it high (e.g. 256) and pay 64 GB at
+> >>>>> startup even with a single VRF. With separate FIB instances per VRF=
+,
+> >>>>> we only allocate what we use.
+> >>>> Yes, I understand this. In the end, if the user wants to use 256 VRF=
+s,
+> >>>> the amount of memory footprint will be at least 64Gb anyway.
+> >>> The difference is when the memory is committed.
+> >> yes, this's the only difference. It all comes down to the static vs
+> >> dynamic memory allocation problem. And each of these approaches is goo=
+d
+> >> for solving a specific task. For the task of creating a new VRF, what =
+is
+> >> more preferable - to fail on init or runtime?
+> > The main problem is that your series imposes contiguous VRF IDs
+> > (0 to max_vrfs-1). How a VRF is represented is a network stack
+> > design decision
+> exactly - a network stack decision. FIB is not a network stack.
+> >   -- in Linux it is an ifindex,
+> so every interface lives in it's own private VRF?
+> >   in Cisco a name,
+> are you going to pass an array of strings on lookup?
+> > in grout an interface ID.
+> haven't we decided this is a problematic design(VLANs, L3VPN, etc)?
+> >   Any application using this API needs
+> > a mapping layer on top.
+> I think from my rhetoric questions this should be obvious
+> >
+> > In grout, everything is allocated dynamically: mempools, FIBs,
+> > conntrack tables. Pre-allocating everything at init forces
+> > hardcoded arbitrary limits and prevents memory reuse between
+> > subsystems -- memory reserved for FIB TBL24 cannot be used for
+> > conntrack when the VRF has no routes, and vice versa. We prefer
+> > to allocate resources only when needed. It is simpler for users
+> > and more efficient for memory.
+> >
+> >>>    With separate FIB
+> >>> instances per VRF, you allocate 128 MB only when a VRF is actually
+> >>> created at runtime. With the flat multi-VRF approach, you pay
+> >>> max_vrfs * 128 MB at startup, even if only one VRF is active.
+> >>>
+> >>> On top of that, the API uses vrf_id as a direct index (0 to
+> >>> max_vrfs-1). As Stephen noted, there are multiple ways to model
+> >>> VRFs. Depending on the networking stack, VRFs are identified by
+> >>> ifindex (Linux l3mdev), by name (Cisco, Juniper), or by some
+> >>> other scheme. This means the application must maintain a mapping
+> >>> between its own VRF representation and the FIB slot indices, and
+> >>> choose max_vrfs upfront. What is the benefit of this flat
+> >>> multi-VRF FIB if the application still needs to manage a
+> >>> translation layer and pre-commit memory for VRFs that may never
+> >>> exist?
+> >> This is the control plane task.
+> >>>> As a trade-off for a bad trade-off ;) I can suggest to allocate it i=
+n
+> >>>> chunks. Let's say you are starting with 16 VRFs, and during runtime,=
+ if
+> >>>> the user wants to increase the number of VRFs above this limit, you =
+can
+> >>>> allocate another 16xVRF FIB. Then, of course, you need to split
+> >>>> addresses into 2 bursts each for each FIB handle.
+> >>> But then we are back to regrouping packets -- just by chunk of
+> >>> VRFs instead of by individual VRF. If we have to sort the burst
+> >>> anyway, what does the flat multi-VRF table buy us?
+> >>>
+> >>>>>>> I am not too familiar with DPDK FIB internals, but would it be
+> >>>>>>> possible to keep a separate TBL24 per VRF and only share the TBL8
+> >>>>>>> pool?
+> >>>>>> it is how it is implemented right now with one note - TBL24 are pr=
+e
+> >>>>>> allocated.
+> >>>>>>> Something like pre-allocating an array of max_vrfs TBL24
+> >>>>>>> pointers, allocating each TBL24 on demand at VRF add time,
+> >>>>>> and you suggesting to allocate TBL24 on demand by adding an extra
+> >>>>>> indirection layer. Thiswill leadtolowerperformance,whichIwouldlike=
+to avoid.
+> >>>>>>>      and
+> >>>>>>> having them all point into a shared TBL8 pool. The TBL8 index in
+> >>>>>>> TBL24 entries seems to already be global, so would that work with=
+out
+> >>>>>>> encoding changes?
+> >>>>>>>
+> >>>>>>> Going further: could the same idea extend to IPv6? The dir24_8 an=
+d
+> >>>>>>> trie seem to use the same TBL8 block format (256 entries, same
+> >>>>>>> (nh << 1) | ext_bit encoding, same size). Would unifying the TBL8
+> >>>>>>> allocator allow a single pool shared across IPv4, IPv6, and all
+> >>>>>>> VRFs? That could be a bigger win for /32-heavy and /128-heavy tab=
+les
+> >>>>>>> and maybe a good first step before multi-VRF.
+> >>>>>> So, you are suggesting merging IPv4 and IPv6 into a single unified=
+ FIB?
+> >>>>>> I'm not sure how this can be a bigger win, could you please elabor=
+ate
+> >>>>>> more on this?
+> >>>>> On the IPv4/IPv6 TBL8 pool: I was not suggesting merging FIBs, just
+> >>>>> sharing the TBL8 block allocator between separate FIB instances.
+> >>>>> This is possible since dir24_8 and trie use the same TBL8 block
+> >>>>> format (256 entries, same encoding, same size).
+> >>>>>
+> >>>>> Would it be possible to pass a shared TBL8 pool at rte_fib_create()
+> >>>>> time? Each FIB keeps its own TBL24 and RIB, but TBL8 is shared
+> >>>>> across all FIBs and potentially across IPv4/IPv6. Users would no
+> >>>>> longer have to guess num_tbl8 per FIB.
+> >>>> Yes, this is possible. However, this will significantly complicate t=
+he
+> >>>> work with the library, solving a not so big problem.
+> >>> Your series already shares TBL8 across all VRFs within a single
+> >>> FIB -- that part is useful, and it does not require the flat
+> >>> multi-VRF TBL24.
+> >>>
+> >>> In grout, routes arrive from FRR (BGP, OSPF, etc.) at runtime.
+> >>> We cannot predict TBL8 usage per VRF in advance
+> >> and you don't need it (knowing per-VRF consumption) now. If I understo=
+od
+> >> your request here properly, do you want to share TBL8 between ipv4 and
+> >> ipv6 FIBs? I don't think this is a good idea at all. At least because
+> >> this is a good idea to split them in case if one AF consumes (because =
+of
+> >> attack/bogus CP) all TBL8, another AF remains intact.
+> > If TBL8 isolation per AF is meant as a protection against route
+> > floods, then the same argument applies between VRFs: your series
+> > shares TBL8 across all VRFs within a single FIB, so a bogus
+> > control plane in one VRF exhausts TBL8 for all other VRFs.
+> >
+> > But more fundamentally, this is not how route flood protection
+> > works. It is handled in the control plane: the routing daemon
+> > limits the number of prefixes accepted per BGP session
+> > (max-prefix) and selects which routes are installed via prefix
+> > filters -- before those routes ever reach the forwarding table.
+> >
+> > The Linux kernel is a good reference here. IPv6 used to enforce
+> > a max_size limit on FIB + cache entries (net.ipv6.route.max_size,
+> > defaulting to 4096). It caused real production issues and was
+> > removed in kernel 6.3. IPv4 never had a FIB route limit. There
+> > is no per-VRF route limit either. The kernel relies entirely on
+> > the control plane for route flood protection.
+>
+> FIB is not the Linux kernel, as well as not a network stack. We can not
+> rely on a control plane protection, since control plane is a 3rd party
+> software.
+>
+> Also, I think allocating a very algorithm-specific entity such as pool
+> of TBL8 prior to calling rte_fib_create and passing a pointer on it
+> could be confusing for many users and bloating API.
+>
+> FIB supports pluggable lookup algorithms, you can write your own and
+> specify a pointer to the tbl8_pool in an algorithm-specific
+> configuration defined for your algorithm, where you may also create a
+> dynamic table of TBL24 pointers per each VRF. If you need any help with
+> this task - I would be happy to help.
+I have sent this RFC:
+https://mails.dpdk.org/archives/dev/2026-March/335512.html
+
+Thanks in advance for your help.
+
+>
+> >
+> >>>    -- it depends on
+> >>> prefix length distribution which varies per VRF and changes over
+> >>> time. No production LPM (Linux kernel, JunOS, IOS) asks the
+> >>> operator to size these structures per routing table upfront.
+> >> - they are using different lpm algorithms
+> >> - you use these facilities, developers properly tuned them. FIB is a l=
+ow
+> >> level library, it cannot be used without any knowledge, it will not
+> >> solve all the problems with a single red button "make it work, don't d=
+o
+> >> any bugs"
+> >> P.S. how do you know how JunOS  /IOS implements their LPMs? ;)
+> >>
+> > I do not need to know their LPM implementation -- I only need
+> > to know how they are configured. No production router requires
+> > the operator to size internal LPM structures.
+> >
+> > We can impose a maximum number of IPv4/IPv6 routes on the user
+> > -- even though the kernel does not need this either. But TBL8
+> > is a different problem: the application cannot predict TBL8
+> > consumption because it depends on prefix length distribution,
+> > which varies per VRF and changes over time with dynamic routing.
+> > Today there is no API to query TBL8 usage, and no API to resize
+> > a FIB without destroying it.
+> >
+> > This is exactly why a shared TBL8 pool across VRFs is useful:
+> > VRFs with few long prefixes naturally leave room for VRFs that
+> > need more.
+>
+> but this is already implemented. I don't know why you repeatedly
+> concerning about this. We are aligned about this and this feature is
+> already there - in the patch
+> On the other hand what we disagreed on is the sharing not only across
+> VRFs, but also across address families. If you don't understand the
+> amount of TBL8 per AF, how would you magically understand the number of
+> TBL8s for a merged pool?
+>
+> >   This is the valuable part of your series. But it
+> > does not require a flat multi-VRF TBL24 -- separate per-VRF
+> > TBL24s sharing a common TBL8 pool would give the same benefit
+> > without the 64 GB upfront cost.
+>
+> andthat'sa completelydifferentproblem.Please,let's separatethe
+> problemsandnotmixthemup.
+>
+> I understand your concern about memory consumption. Ihavesomeideason
+> howto solvethisproblem as a parallel to proposed solution.
+>
+> >
+> >>> Today we do not even have TBL8 usage stats (Robin's series
+> >>> addresses that)
+> >> I will tryto findtimetoreviewthispatchinthe nearfuture
+> > Thanks, Robin's TBL8 stats series would help users understand
+> > their TBL8 consumption -- a more practical improvement for
+> > current users.
+> >
+> > Regards,
+> > Maxime
+>
+> --
+> Regards,
+> Vladimir
+>
+
+--
+Regards,
+
+Maxime
