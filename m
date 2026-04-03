@@ -2,141 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E32E1E7E36C
-	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Apr 2026 10:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDABE7E36E
+	for <dpdk-dev@archiver.kernel.org>; Fri,  3 Apr 2026 10:52:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4B4740296;
-	Fri,  3 Apr 2026 12:43:03 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id E00174028B
- for <dev@dpdk.org>; Fri,  3 Apr 2026 12:43:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9A02540296;
+	Fri,  3 Apr 2026 12:52:58 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 84A064028B
+ for <dev@dpdk.org>; Fri,  3 Apr 2026 12:52:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775212982; x=1806748982;
+ t=1775213576; x=1806749576;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=DNU377Ba5N+5PvaJRlPnYy65gPpt/ExQsK7k1mMAHEs=;
- b=Vgs9rW/vsUPloRejC/P79DFA3n2LZxaOkodbZ4Wx4lMUyeQatH2Y1Kp3
- WgqzF9ubQCK2hr5KuIWmL6zaRmhrvKBw/PQc5NY0ERfuMyDhxe9yOSEn6
- 9NoY2AGRBxWA1qd3y4oMTDsz34bK8A1Lc0glved0pHygt7h19ksBIqqbV
- 4isPRYnLBODYflFLEcMQsWW+bisWBTWAv5dU6Jg+KH3dlo7mBL1TysiJM
- Qm0eL+ulIB1Gl7zXpw7yT+vMou8vhsCO4g8VEM/IlRTr+vxG63JLahLbf
- u6WFH/eYmgvggAJ28sqL5qAYVRof00PNT8LFPOz6Ql4JpzUQQxSUCbtwR A==;
-X-CSE-ConnectionGUID: VeT3bBisSbGGz0eH8KTd8Q==
-X-CSE-MsgGUID: iKOgT/CzQD2M6ABLX4iTvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11747"; a="76468550"
-X-IronPort-AV: E=Sophos;i="6.23,157,1770624000"; d="scan'208";a="76468550"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Apr 2026 03:43:01 -0700
-X-CSE-ConnectionGUID: KHalaTHpTJ+fzbRLQQpY5Q==
-X-CSE-MsgGUID: eicYVaWrSMOlGMZIXl/Jtg==
+ bh=qGYTqa+ffS/K3lrIbizi1znKH8BfbbwYjOrw8dume0U=;
+ b=dazt+SbGwdM3nZWp5ytHZ5ubOi6u/0bEWPVYVwucHlmSNHtpiuNPc9gc
+ /GzQdOomcjU4ojKr5BahOKeNb78EqDfprCiYX1VwRgujB2kjzyRZeyI3a
+ pQCtKOuGlnnZkdA6Fr1yFEAMof+LU8OgkkfmAvtGNl7j/TsxaaDXBsnoV
+ VdBLS9geXa0HWGOJiQy0p4VKMehf3jI8Rro7WVBaEpK9DPivQ0N1/YzWT
+ Mq55eh/1wcrYhVP1u5SRWIRCQkDELzulVmbhZnnAnHWnfDVzUFRr6Nc/a
+ vff9Uopathmcooy5+LlyPNfhQR7HwL7SZ3/Ky9CblHFuIpiNHZj/hNKXj A==;
+X-CSE-ConnectionGUID: 9pO7pZNsS1ayJ5zTNCWTWQ==
+X-CSE-MsgGUID: Yjc+5dAQTV2Bgzj1gLmmEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11747"; a="76161035"
+X-IronPort-AV: E=Sophos;i="6.23,157,1770624000"; d="scan'208";a="76161035"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Apr 2026 03:52:55 -0700
+X-CSE-ConnectionGUID: 9D4VEouWTI2rciJ0nT0CTw==
+X-CSE-MsgGUID: 9mi3Pl6RTSK182J5e3/tfQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,157,1770624000"; d="scan'208";a="227169826"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 03 Apr 2026 03:43:01 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.23,157,1770624000"; d="scan'208";a="228855966"
+Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
+ by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 03 Apr 2026 03:52:55 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 3 Apr 2026 03:43:00 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.2562.37; Fri, 3 Apr 2026 03:52:54 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Fri, 3 Apr 2026 03:43:00 -0700
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (52.101.43.36) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.37 via Frontend Transport; Fri, 3 Apr 2026 03:52:54 -0700
+Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.2) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 3 Apr 2026 03:42:59 -0700
+ 15.2.2562.37; Fri, 3 Apr 2026 03:52:53 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QOWd3rkT0Qgp5r2LSlZihS7JcOtRQDt3m69ew+0/fZtgOupnD5tBPTLMCHBgDqSfqg5OhT0IadV3zIJl46pBSbH3C5pIuqcRA4jzf8+LE4XHWNedqp6Lx76oqdRLrAu8oM9ZetUENmh/+MzwEdHtGHWGFJLs6+SX8tPJN30HdnUbWNPO5czSb6QN6GmqebFaKP+GfP5Rz/BGMfUSEiIu74j/idbZ/OMiIs95rot+q5wXlfkAzORIhUReIpTLFg1kladk5g9MxmgpWU9mnAVmL4WCbiHl/LuKqrzLDJcx00NgH1s35lYIwCvL9UDzVIsqoL2RkYqrxJhbF07svnkQ2g==
+ b=f8TgaVHSqn4FD1siDZiGyxWAoLfZ8+3gSahbs9WL3S7iJ8olpD/PZe/RaESSrynKMWtB57JPvg1YKdOJdGyifF8boUAPpbSSayaA+O1b7j2XGd+w9xQpveThzAARf4Tm4qqx0tAG/kZ2CgxpLGRlTm2g3bpB1YiA+CLdMW8kRfEE23ia8/KxwKPARf+te3RakhUUZEjGPQbl9oXv9cTXGVcBpHSldouB/tzM9ljmuEsZx0OR0PxZhk+mwx27BFVou5udfR4yenYjGBx/+/sSeL4xZ8atM5RJKoKqId5reW+Vs3f6DaI+3zGSraESUvsVVFTE941x5CYRCz9YXM5f2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Wj7qjrjjNMZSchPZL0bSF+iyKhdR4lhQiMB18WYvJ6s=;
- b=XyLqBCj5AIS1TpNyocLVIT26tHzguTv9R5nc3aCwt/w1sUynhQqviBC6V2u00ng/P3kiMc0pMwyN2T6oKREdT/P8CkRUciW420hCd8UFvpRYvfJqU58C645nQe73dv1cJ7IvuS8R7d8zP54Vs4hLI++Z4qGznKZBwFw44lCWuOZKNhaMtfh053vv9siK3TbMeiBxmIp4McX1j17qHyb8JNEuVpPo3RzG2eJnJoTF9NyHOYLSiH/7gFtu/zP3N6R/AAdqNxVlYMsc0ZDn6mFnS3uNzT7W/nfMakKC7gzPZU+vMTu9aj5fMr1Un0qqro3gSwjePK7zelpjsw1XCQbT8g==
+ bh=vQkylVO7T/hx/6W53a7FWRJLUUbLtD8eoOniEqGycpU=;
+ b=JrdovX6jB44ZaVuBiXzRH4JEawFKceaYVkfVrTb+jZx6KzJ1FIojXMofF5riOHGHTNbaZYN6sHaO4TQDfPpDz9YaqtziJi+uHZSWkSVAChk7RPEBeE7YKGnykDOzHwEjnJSsevHIrd6SLD0EAwxUEeXMun1ZmkprElTeF0a8StxcFaluSHjaJTZnxCvSg3y5tbHC67l4IgID1iNUIx4iqPGdtkuJOW779KTOrxE83XWy+HAxr1mUg1Y0LneA0rCTMfRU/Mv+cVNt8sjqtnpcvm9HYcJ1ogaXzre7sHBr5jW9SmDcBK0FjBL3RfuUoZGhZlHhRoK7TIjSjmnUa3SV8w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS7PR11MB7932.namprd11.prod.outlook.com (2603:10b6:8:e5::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.11; Fri, 3 Apr 2026 10:42:52 +0000
+ by SA1PR11MB8254.namprd11.prod.outlook.com (2603:10b6:806:251::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Fri, 3 Apr
+ 2026 10:52:50 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9769.018; Fri, 3 Apr 2026
- 10:42:52 +0000
-Date: Fri, 3 Apr 2026 11:42:46 +0100
+ 10:52:50 +0000
+Date: Fri, 3 Apr 2026 11:52:45 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Anatoly Burakov <anatoly.burakov@intel.com>
 CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH v3 3/8] net/iavf: add virtchnl interrupt enable flag
-Message-ID: <ac-ZpozZp2fvN1tf@bricha3-mobl1.ger.corp.intel.com>
+Subject: Re: [PATCH v3 4/8] net/iavf: rework "async" virtchnl requests
+Message-ID: <ac-b_eXBoaHNMqyl@bricha3-mobl1.ger.corp.intel.com>
 References: <cover.1772794442.git.anatoly.burakov@intel.com>
  <cover.1772794442.git.anatoly.burakov@intel.com>
- <2a9e9fbceaf98b0f3224de5b5928477b87c033f9.1772794442.git.anatoly.burakov@intel.com>
+ <d5193c7e8c1cf6ba351409943a59a546f4dcaa7c.1772794442.git.anatoly.burakov@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <2a9e9fbceaf98b0f3224de5b5928477b87c033f9.1772794442.git.anatoly.burakov@intel.com>
-X-ClientProxiedBy: DU2PR04CA0080.eurprd04.prod.outlook.com
- (2603:10a6:10:232::25) To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <d5193c7e8c1cf6ba351409943a59a546f4dcaa7c.1772794442.git.anatoly.burakov@intel.com>
+X-ClientProxiedBy: DUZPR01CA0001.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:3c3::10) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS7PR11MB7932:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4066912-b241-40d9-b4dd-08de916dc179
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA1PR11MB8254:EE_
+X-MS-Office365-Filtering-Correlation-Id: fd2a9449-c1bd-43bb-8cd3-08de916f2612
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|22082099003|56012099003|18002099003; 
-X-Microsoft-Antispam-Message-Info: 5mX81yCjrxVenGs+DNrCbh9yy1PytoveTWG1zu07/a7uB4x0me4sn1GVBBfwZNHuPOW0rVL08Kx7+YHKy6ZTuuPdystTwzRhq4Ins/K2hxsoH3OARNzuwdI5e23kw3jYaPQ5R+BqoYOGD7bp5xGkSzmV77pDKC6JZhQpiel9yzGRHH4WmwPg6r325O+4dIGJbp4SfFHUBOnslrRg8exf3MJhWCVNI8yO/ohcRCP2xZN9YrKT/jvw1+ncLydha7FXNtnv9Xrg9In+SBvt3s4pCPONL9BXluMFVtdKtZafJF/3bd7ININFJLpadw2Rdbs//pcuXi/VfhRF5KE2AQBNAtGf/t6X01Q/7nPjF5zhRtKB9eFttoWCto/Y3jQ82AmPL5Yo5UDYRuhb0z8CZl9BT3DUU7iJ8OiTQIDyneNI1e7N5/Cx3uEpIdTyoyv5Wk4MLdq8laPaPs5M0dGexb0K31DWZSJl7X265urUySIK9Dj7O9EV/0zO7y7SAVYrZZMuQEMO92a5tikBfNVQq0uKGqQ07hxzV25fSjO9g6yCZsPVzWxANVBgbgmIq6U+mURssbfZuuppfsmM9eg/P4JnTb2fMeote/3NekmLlTKFrRs0nTjSHhCJYkUM8nnh2xZh4r2apoBcQKKK8sht9U0dKmMlu84QGPu61twPFhJM/31td5jz9iCA9G6lcdZic4k7Dbrhcx9lfXFsNyFsfzoAc9xi7cmxOWpd9/NP4Y1bwc4=
+ ARA:13230040|366016|376014|1800799024|18002099003|56012099003|22082099003; 
+X-Microsoft-Antispam-Message-Info: rCqalB5xnkP/medJasyaPDYi8KqTkOuCPWctt9USCcggrabGHtDLCusy6k1z9YOGVKzRAFfnvAl9Mdg8wvbirx5TSJCYvRYsT9ZnuF1pLpZwSKb387w9xqdMdslGys8KkEcinGiBgDAAMe7C84HWoqiEj75nuNG3YMNNd1gi8FdwxBchqPnX0fbN7SC35eVaV7O1TLWbxZL+XZNeYeGiRVIinDc0SRGGTTZfanJaMxU1ETJJXc/bvtfUYb0nlCmwdRqb84B0X2hbla6YAoOOaxq7/64jm3ChcrGyXtoNP2C5E0LHsgjJJ8re0Qk7Yn06osZR1crzCxToBTL/IqQD7du5PMBb7yqd4eC3GEk3FphBOYe4kucdy6+/MldlDaEAWwLUqjLyvfiIz6UdTB3GlytN0GhSmIyArb+BtsMObYuHu08eF2X6QAH23Y5VdTntopV6SpljecyQ6M/YVTPWmsHw5JTkFjq5n0ueYoosa5W6RdvU5Q1sCpevH34+kYUL2MwJ54dgr1fQXGB9rDIZP3I6C4eXUgw8CRE/zLM8WW407LoBN+rK94a0oX6PjEz9tKpdBdHfnzWGGrsXg+9E1u6eFqoTCyGkG6kjCffkeW3PukWjLoyhasjmEO/GnsjZ5njU0HLNMM0hJ5QgDckFLqxxfTTuz6g3+t35T252P0wLlrfWyjiMLVdipDXmN5nOZj+TgcyD/t/ZBjBRvyNFcHMy2E3PmcWz4Z4dwfYNcvg=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(22082099003)(56012099003)(18002099003);
+ SFS:(13230040)(366016)(376014)(1800799024)(18002099003)(56012099003)(22082099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?eKe0ZLEqG52LYreLAQ75zwn0fa2gOSD/qkhXhJslsbZ2CY6BfcZ1xOIx/8yx?=
- =?us-ascii?Q?OxnC8ioUyQDAfe7t5NRLQuZAktK7HXU8Oe8yeSgYOXIrsxgESLxfJs3CikmY?=
- =?us-ascii?Q?QrHha0gqOSKT+DOBuhU3hedbKh6ArWB2jo6eOo8Er3L4FhJgnNHU0NQmd+ii?=
- =?us-ascii?Q?DGdVExjWDW82QCUB8+rVlw3hmOYCMkD0f9yFxAifGQ9I9ZFOGHOOi/QDtHdU?=
- =?us-ascii?Q?s6Er6cWTs3A+nTmcjrlJVYL7+6BlH2L9MG3GBeJTvU8nNQedRd/pM01GC4nv?=
- =?us-ascii?Q?07FYKtDnfIfsx7nniCwDctOvHrYrLZdVxUTAo5m/+mkpyYFqRJat/S/Qb8+s?=
- =?us-ascii?Q?UMwNGZxQeROZbCwAruJN5fwMI/Cs7ZA6VIdF4+FQH/cTjhXOUZ+pnh8Bda98?=
- =?us-ascii?Q?vMKAtooddCS/NAUz45Ttc3CFUXJjmEbXfKrdImGpX/e11VD4LndxGamSBMEY?=
- =?us-ascii?Q?p++fmCOLI+7iPMCvs1Exky1Z2dSsF7QlbaPvleNmFo1QAgaNyhYW7ECdZCyr?=
- =?us-ascii?Q?YDgEFAejGsG6zBx2P7qEHWLGGieAVW9slc/izVdyFSqXpyns/j/g53mguY4q?=
- =?us-ascii?Q?Sx9GsFhAe5UeOzHFt+9G+RD3FbimRqUHDRDAfNOGvcNPal2KE18FMZWYLYif?=
- =?us-ascii?Q?CWsJUmf5IqLccG3jWyKzGUDVWYSwGBZqxmiMziPCv0QH74ls+In9p9ylDnXt?=
- =?us-ascii?Q?Ei7j+2k08EthCPRZCTt2J/Txa7mWTSEWezO/Wi9zDc3etv20NZtfbCC2u7Pv?=
- =?us-ascii?Q?M7eFvb5suHd8AwKzEH2tlakCLMu6VEwO/ZvRtW0VHPKSu+I8UsYOcZ8KyaQO?=
- =?us-ascii?Q?8lGIAW9X/r02T3FLEtJiC35mFor4i09FzXjFF53UlsOb6ChVKrzk5/jtri7l?=
- =?us-ascii?Q?CJwM5mHVYqfMLTC6AY8fyNR6N4UwQ/gvOUh2Rtf2UZ+tLZsSIT6i0dAg4/Vl?=
- =?us-ascii?Q?rL1wkvuzQUSNHfw4+fUW3ALPkafHEdkTe2epHlDFg2h24qVKDiL0qMGkj4Uc?=
- =?us-ascii?Q?/nGDZCrs05G8Ip9FAZapBRsKyrgncCvIg0Mh55i0a+yepy6Ikrujn2g09hNC?=
- =?us-ascii?Q?FM75g5aZvr+qF1OvXrS4+DNJYF30hNyPymhEDeOPc7AkCKZynph9CKYCZgWQ?=
- =?us-ascii?Q?SZMBKP1p9zlE+cVjQRRbaMwdedTRVFcScE4ujlDZgQg7Q0OwhkX0plYyIY6C?=
- =?us-ascii?Q?ztSweqQ9NoFHSFZ2AGq8GsKTjm3A1SjawT9e7fRgR9i0OnL4kXOIyrbkozAY?=
- =?us-ascii?Q?ehjswYc2zROK3I7IeAlbj2n4t7ULOBU4e4lbHdZ7wl6+Oaq9HLMWclBbEYoA?=
- =?us-ascii?Q?M1Uamk0NgZ/bcZnviDpZ4p8QGQjelBbmY5JaSvqH1WELQPsy5iQVgr893xM7?=
- =?us-ascii?Q?ki8RZifbJUHDDxWXaPbW/ihayGE87TFGr3vHMo/HK/f0yT2uwz6qswleOx8b?=
- =?us-ascii?Q?hx9UDvyd0emcxdtJt/IGXjC45PiFEITbKn5+IfUwQFMI92pvXyRkcVRgO9ff?=
- =?us-ascii?Q?nQ80YT7owQ12EbjVp495DoCf0sjoAkHHdCVmWU7AsS5ta5nqkiZNBCFyZiQX?=
- =?us-ascii?Q?aqHzjhisCupFXdCm+DBdVdW/NYFmnmTah2Tok2ZM1/dxrQyrQuDQL4RwHBj0?=
- =?us-ascii?Q?8RVPE89aGXiFzCS/WlFIwVgdKWsyZtBdVaJpo0IAoEwZXWBa1hpiSLG2XaAL?=
- =?us-ascii?Q?rjTOKDXiMcpGaQxHDgWSmUo6DJctdh/xWHj9aoEdJbN5Vmo2JyY9cqbEZKor?=
- =?us-ascii?Q?jA1CSuN+q5+f5t9WypwhjEWckdlJweg=3D?=
-X-Exchange-RoutingPolicyChecked: X3nHf15gk4FooxkNperdYLf6UpRtT8INjVY07libxpAnYrbVgEeA+JTW+CkQ5qfeGAFVsdQHL0PhavcwRs0PTL3/3ZIbWpUWNvquhewhWM7oxSbXgXriy3K4dzi1x25EPz+bwPj9dWjKctBWpQXXCOH5JtjPnrNUXEWZUOQ0gEoudsQ96vvmVYlnXLTJgYP8uM/z8pV4WrTCMae8XJ84VYMoFOtJEJzvMARgqvqD9PAC3qc472UsDnZiXGgIZ1PdbYa8VUbgnxQLcLRlRTcIGwDFJrzZin/6Jm9Gz/zWZ19smxCtZ05uP7SsYcZIyhA4iIHqw4SiRfBiktWub8XAnQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4066912-b241-40d9-b4dd-08de916dc179
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?YPjo4EE9w5sx9RnP67Mw4ehSG3SHRiIwI0B/sthdeaeFyC9ZRU7Xjz7sFjrQ?=
+ =?us-ascii?Q?J0vVZGoTpFQCmIyAd8svXw8ExcW0GX09WP0EKDQw4H3QMFuoasGL+VJ+KoeY?=
+ =?us-ascii?Q?UuJK+DnpJIOL0LbBrefmWFbuuUcpAXDfzmZwAv+cq0Mo1ZJuI//UfsAjaMPw?=
+ =?us-ascii?Q?iFCFo8mLblb0H3TlSEJeAltFAkJrQSiKMcugwv/kkVvoX8KWhJkAjwbiYMhz?=
+ =?us-ascii?Q?3auYWNiWC7Kifq1yZc5BBAoW/Ti2cvkNmNJM9s7gJvFSNjE8cbgovRCHfmtq?=
+ =?us-ascii?Q?iz3a0czwkSqIKRnjpCj+rFfFKCXHGLUksCaWCWWvwKo+3mxhAoGV2w+WPByj?=
+ =?us-ascii?Q?8fCBoNJ/joKqqTttNFC1xilSg2clTBM4zeCKMVz/bYHEkY4BjYN7Y2NnXRvr?=
+ =?us-ascii?Q?iIjG8f+X78khuNelXvoGxCzu0CzADDyQgw3mPDlb1lAOrWzCE9TGBOdo2IXk?=
+ =?us-ascii?Q?hwtAwSmD1t8znxvECeYIm+9kwU7xoXPlGOn9bqMQDc0i6/8eui6jr11+b+KI?=
+ =?us-ascii?Q?spmkI8Yd+s+OBCYDq6tUDiVYxeNqyDVoxSFWq4bTnNvGz7x3gTM3ijEl1pfo?=
+ =?us-ascii?Q?ZDQA6nMoAdc+Dgh3GsrUaX2mTQQ5avhDHFYRpSozmb/01jUMMwv6xEzgbUcJ?=
+ =?us-ascii?Q?8EmnBzUcNDGMfq5ff5NTJnAtGkSZtid0nxXVP63z0h0LnLVluQvOs0DUdkTg?=
+ =?us-ascii?Q?9J/uplCJbK/DegjX6q7NkuesgwVHededf40KqG0mq9frYrOGw4SVxOk+L0l8?=
+ =?us-ascii?Q?lMBcBcGUtiWbTQWUn/2jHpEImXxdhjudTFsAS7avydRfZWTdzrdH6tONufBr?=
+ =?us-ascii?Q?52zLf9RW0dagXsPKjeZ0MYeA/kYHqMy35AgcrBMTPkSAyPanegOxztyrcggw?=
+ =?us-ascii?Q?213MIL5oGhpHsq8AqRWsDhQINMQA/0E4b8wTJzwf+0QS7YUTxfhNZbX3H9Do?=
+ =?us-ascii?Q?M56Vw85LMcXq/I+ZNA5vO03VLcmaR03RsXv/c08964j0EIoF3iDiELW630cE?=
+ =?us-ascii?Q?flcrzXyksy6m+VYPJvbb9v+y2GhkCLUGNQYBdPd2CmD5I69W4R5Q92NZWVpk?=
+ =?us-ascii?Q?rjkMQEmzV+xtKW3EZCxbbrR+G+I3e6GwE3EvVpGwmOYu3032MZZ5SSEfnOR+?=
+ =?us-ascii?Q?/O1hUpgQeiC3b6T5b0vDYwhGRa6SYV58Bzqhp/5XC7LmSPBq4qOd5epDucFg?=
+ =?us-ascii?Q?BpoZ7AGIaYt/gB4MsA70f+Hmg8nDOjVL7yB5iDZ2UBtZbFpOsa0nmC9tGgkD?=
+ =?us-ascii?Q?Qjlp7ck2CMH0RJEVZXfJ9Idv3RWM5XoXhwlNVTZIou0HNh7Ws0whPCBYdjfU?=
+ =?us-ascii?Q?Rfaa9KPmMiwKqreBjIKNa/HYYK6HEgXi/hrymCK30cDOECKyVZugfZSPKN89?=
+ =?us-ascii?Q?w0IeC6iQuQY88PFvOaYfEtUghAj8GEh35PMMtp9s659adTTGnJlATKryqehm?=
+ =?us-ascii?Q?M1PgCHyZZ28+hDVlRdold6mmjQi503LkDaD0E3iaoB9M9sKPbsAtTbeHv2PN?=
+ =?us-ascii?Q?PKFWVkv34q2oahvhjnyG8DsATcood6s2xZ2ObtY0UBKWwNIIOhEF3dvRW0wy?=
+ =?us-ascii?Q?xQG/gq0dBAE0qPfmvmCGe2RA8V1U/4g0r0feJJKpOPdfjzgJB0HrxIUNIuIf?=
+ =?us-ascii?Q?j5hMjj7pqKcVC4GuCKn9bfjYXBsmmwQgzIkc/RjjkU4txqJydFjxGT46Ejqu?=
+ =?us-ascii?Q?EiRgbCm3EBSP4z22pJqYOxzixbBrEB+C3O5eKl7R7yFxKLhWSAt5BUHfXz12?=
+ =?us-ascii?Q?xk2mH68k12KiS76liBVCpFKcG6IVPGs=3D?=
+X-Exchange-RoutingPolicyChecked: ACU66QJ4yXuh0OR/rrZfvsN0taQ+PIefnJOpModywuQQJ6rGc+e4Sx8YfeIyiL6yPMjcfJJL4Ndadbyqkc1u/SVFcz1NsksqAY6KABhTZaQZvT8b3vF7r8+SUdInLn8+JxgKrtoxjS9OqmEEjRcInCXCRa8+t7LYbR5uRdH5XwcBt96ZYcBAYMczlhzoCZdnCMzq5pWYN8m9ABi92eOCxOs0Kr5VRbAEiLQf+hA2qwbpWlnzw2H1SPkT3El2Wxw0ZyH3Xn/NHemPc2um5R6A2DmJxHKjL8VxReeOh3kCpXdNqH60gzMvsUS7Me/OvJGVefBJgP+wHgJcExzcKnTgqQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: fd2a9449-c1bd-43bb-8cd3-08de916f2612
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2026 10:42:51.9114 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Apr 2026 10:52:50.2137 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: BOQSalwkHYNcog8Jo/z2opFmaxPqiP8t/w6Np7m/Nl2kfkSywaocFG9l/GXD4KCgw8EHtutTbeJ0o/i/5rBL9RX0B95ev9OUJZ/ma0isU2g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB7932
+X-MS-Exchange-CrossTenant-UserPrincipalName: zR8aXMZL8Ku832yzXhh/is/YY1cztfOILSSst2SoI2jR+gVYghzxabU/ynlE68PRHf3rRYPMwWwGjLZ8h+dgnWzfPxmnv1duaF6YCi0LH2U=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8254
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -151,12 +152,201 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Mar 06, 2026 at 10:58:19AM +0000, Anatoly Burakov wrote:
-> For some functionality, we will need to know if the virtchnl message queue
-> interrupts are enabled (i.e. if the new virtchnl messages will be delivered
-> into an interrupt thread as opposed to having to directly poll the queue).
-> Add such flag and track its status during init/close.
+On Fri, Mar 06, 2026 at 10:58:20AM +0000, Anatoly Burakov wrote:
+> Currently, IPsec crypto requests are called with `async` parameter set to 1
+> on account of these requests generating two virtchnl responses instead of
+> having just one, like all other requests.
+> 
+> However, this terminology is misleading, because in actuality *almost all*
+> virtchnl requests are asynchronously implemented; that is, almost all of
+> them will send a request into virtchnl command queue, and then expect to
+> receive a virtchnl response in an interrupt thread, which will update the
+> global "pending command" status and write into the global response buffer,
+> while the pending request will simply check pending command status on a
+> timer. So, for almost all requests, the command status is updated
+> asynchronously. The only times this *doesn't* happen is 1) when the
+> request is sent from an interrupt thread context, or 2) when the requests
+> are sent at init time and the interrupt thread isn't active yet. In both
+> of those cases we directly poll the virtchnl queue for responses.
+> 
+> To make things a little less confusing, remove the usage of "asynchronous"
+> terminology across all callsites, and instead make it explicit that what
+> we're actually interested in is the number of responses we are waiting for,
+> and whether the thread is meant to directly poll the message queue or wait
+> for interrupt thread to update command status, not whether the requests
+> are "asynchronous". We also make it an implementation detail, not part of
+> the API for executing VF commands.
 > 
 > Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
-> ---
+
+One minor nit inline below.
+
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+
+
+> ---
+>  drivers/net/intel/iavf/iavf.h       |  53 --------
+>  drivers/net/intel/iavf/iavf_vchnl.c | 187 ++++++++++++++++++----------
+>  2 files changed, 121 insertions(+), 119 deletions(-)
+> 
+> diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+> index cf98d12247..440376c4ca 100644
+> --- a/drivers/net/intel/iavf/iavf.h
+> +++ b/drivers/net/intel/iavf/iavf.h
+> @@ -432,59 +432,6 @@ struct iavf_cmd_info {
+>  	uint32_t out_size;      /* buffer size for response */
+>  };
+>  
+> -/* notify current command done. Only call in case execute
+> - * _atomic_set_cmd successfully.
+> - */
+> -static inline void
+> -_notify_cmd(struct iavf_info *vf, int msg_ret)
+> -{
+> -	vf->cmd_retval = msg_ret;
+> -	rte_wmb();
+> -	vf->pend_cmd = VIRTCHNL_OP_UNKNOWN;
+> -}
+> -
+> -/* clear current command. Only call in case execute
+> - * _atomic_set_cmd successfully.
+> - */
+> -static inline void
+> -_clear_cmd(struct iavf_info *vf)
+> -{
+> -	rte_wmb();
+> -	vf->pend_cmd = VIRTCHNL_OP_UNKNOWN;
+> -	vf->cmd_retval = VIRTCHNL_STATUS_SUCCESS;
+> -}
+> -
+> -/* Check there is pending cmd in execution. If none, set new command. */
+> -static inline int
+> -_atomic_set_cmd(struct iavf_info *vf, enum virtchnl_ops ops)
+> -{
+> -	enum virtchnl_ops op_unk = VIRTCHNL_OP_UNKNOWN;
+> -	int ret = rte_atomic_compare_exchange_strong_explicit(&vf->pend_cmd, &op_unk, ops,
+> -			rte_memory_order_acquire, rte_memory_order_acquire);
+> -
+> -	if (!ret)
+> -		PMD_DRV_LOG(ERR, "There is incomplete cmd %d", vf->pend_cmd);
+> -
+> -	rte_atomic_store_explicit(&vf->pend_cmd_count, 1, rte_memory_order_relaxed);
+> -
+> -	return !ret;
+> -}
+> -
+> -/* Check there is pending cmd in execution. If none, set new command. */
+> -static inline int
+> -_atomic_set_async_response_cmd(struct iavf_info *vf, enum virtchnl_ops ops)
+> -{
+> -	enum virtchnl_ops op_unk = VIRTCHNL_OP_UNKNOWN;
+> -	int ret = rte_atomic_compare_exchange_strong_explicit(&vf->pend_cmd, &op_unk, ops,
+> -			rte_memory_order_acquire, rte_memory_order_acquire);
+> -
+> -	if (!ret)
+> -		PMD_DRV_LOG(ERR, "There is incomplete cmd %d", vf->pend_cmd);
+> -
+> -	rte_atomic_store_explicit(&vf->pend_cmd_count, 2, rte_memory_order_relaxed);
+> -
+> -	return !ret;
+> -}
+>  int iavf_check_api_version(struct iavf_adapter *adapter);
+>  int iavf_get_vf_resource(struct iavf_adapter *adapter);
+>  void iavf_dev_event_post(struct rte_eth_dev *dev,
+> diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+> index d97bdf0dc1..d240745f5c 100644
+> --- a/drivers/net/intel/iavf/iavf_vchnl.c
+> +++ b/drivers/net/intel/iavf/iavf_vchnl.c
+> @@ -309,42 +309,97 @@ iavf_read_msg_from_pf(struct iavf_adapter *adapter, uint16_t buf_len,
+>  }
+>  
+>  static int
+> -iavf_execute_vf_cmd(struct iavf_adapter *adapter, struct iavf_cmd_info *args,
+> -	int async)
+> +iavf_set_pending_cmd(struct iavf_info *vf, enum virtchnl_ops ops,
+> +		    uint32_t resp_count)
+> +{
+> +	enum virtchnl_ops op_unk = VIRTCHNL_OP_UNKNOWN;
+> +	int ret = rte_atomic_compare_exchange_strong_explicit(&vf->pend_cmd,
+> +			&op_unk, ops, rte_memory_order_acquire,
+> +			rte_memory_order_acquire);
+> +
+> +	if (ret == 0) {
+> +		PMD_DRV_LOG(ERR, "There is incomplete cmd %d", vf->pend_cmd);
+> +		return -1;
+> +	}
+> +
+> +	rte_atomic_store_explicit(&vf->pend_cmd_count, resp_count,
+> +			rte_memory_order_relaxed);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void
+> +iavf_clear_pending_cmd(struct iavf_info *vf)
+> +{
+> +	rte_wmb();
+> +	vf->pend_cmd = VIRTCHNL_OP_UNKNOWN;
+> +	vf->cmd_retval = VIRTCHNL_STATUS_SUCCESS;
+> +}
+> +
+> +static inline void
+> +iavf_notify_pending_cmd(struct iavf_info *vf, int msg_ret)
+> +{
+> +	vf->cmd_retval = msg_ret;
+> +	rte_wmb();
+> +	vf->pend_cmd = VIRTCHNL_OP_UNKNOWN;
+> +}
+> +
+> +static int
+> +iavf_get_cmd_resp_count(enum virtchnl_ops op)
+> +{
+> +	switch (op) {
+> +	case VIRTCHNL_OP_RESET_VF:
+> +	case VIRTCHNL_OP_REQUEST_QUEUES:
+> +		/* These commands trigger reset and are not waited for */
+> +		return 0;
+> +	case VIRTCHNL_OP_INLINE_IPSEC_CRYPTO:
+> +		/* IPsec crypto commands generate two responses */
+> +		return 2;
+> +	default:
+> +		/* All other commands generate one response */
+> +		return 1;
+> +	}
+> +}
+> +
+> +static int
+> +iavf_execute_vf_cmd(struct iavf_adapter *adapter, struct iavf_cmd_info *args)
+>  {
+>  	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(adapter);
+>  	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
+>  	enum iavf_aq_result result;
+>  	enum iavf_status ret;
+> +	uint32_t resp_count;
+>  	int err = 0;
+>  	int i = 0;
+>  
+>  	if (vf->vf_reset)
+>  		return -EIO;
+>  
+> +	resp_count = iavf_get_cmd_resp_count(args->ops);
+>  
+> -	if (async) {
+> -		if (_atomic_set_async_response_cmd(vf, args->ops))
+> -			return -1;
+> -	} else {
+> -		if (_atomic_set_cmd(vf, args->ops))
+> -			return -1;
+> -	}
+> +	/*
+> +	 * For some commands, we are not waiting for responses because they
+> +	 * produce a reset event. However, we still need to set pending command
+> +	 * to avoid sending commands while another one is already in progress.
+> +	 */
+> +	if (iavf_set_pending_cmd(vf, args->ops, RTE_MAX(1U, resp_count)))
+
+Nit: according to coding style this should be explicitly "!= 0" 
+
+> +		return -1;
+>  
+<snip>
