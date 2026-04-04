@@ -2,60 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D54F3D5E1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 07:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74990F3D5E1
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 07:06:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6CE5E4025A;
-	Tue,  7 Apr 2026 09:06:26 +0200 (CEST)
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
- by mails.dpdk.org (Postfix) with ESMTP id B0B844028B;
- Fri,  3 Apr 2026 14:41:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
- s=s201512; t=1775220061;
- bh=jM9VFRfZduXLTAL0yxNoyDNpfnuhxgnBySi/W0bhDTs=;
- h=From:To:Subject:Date:Message-ID:MIME-Version;
- b=rXPsNMIL5aVC/CtqGGut2EN3tRqp86eXRnrV3iAwcUhZReFtTkV4o/fxiGmdkDAoJ
- wRn6i95XGOq6jrVor5IL25v74UMvNCrf9XFRrDDXrEcsNUql7GxdTe2tt730oFSRWI
- eL4s6SvryYWzDXnFIlTVdN3Aa2uwDej0wHm5UMVM=
-X-QQ-mid: esmtpsz21t1775220057t66fe1715
-X-QQ-Originating-IP: jZFFJ1lYIhxZHhocxyBsLjcPqB/gMwmEEJepRXelRho=
-Received: from spikeouyan-PC1.tencent.com ( [113.108.77.55])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Fri, 03 Apr 2026 20:40:55 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 3575969522151362747
-From: "=?gb18030?B?T3V5YW5nIEhhbw==?=" <ouyanghao@tencent.com>
-To: dev@dpdk.org
-Cc: ciara.loftus@intel.com, mtahhan@redhat.com, stable@dpdk.org,
- Ouyang Hao <ouyanghao@tencent.com>
-Subject: [PATCH] net/af_xdp: fix resource leak in eth_dev_close
-Date: Fri,  3 Apr 2026 20:40:53 +0800
-Message-ID: <F8BAB5327DFA4F53+20260403124053.1354-1-ouyanghao@tencent.com>
-X-Mailer: git-send-email 2.45.2.windows.1
+	by mails.dpdk.org (Postfix) with ESMTP id 6EDF040293;
+	Tue,  7 Apr 2026 09:06:27 +0200 (CEST)
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com
+ [209.85.210.53]) by mails.dpdk.org (Postfix) with ESMTP id DE05B40265
+ for <dev@dpdk.org>; Sat,  4 Apr 2026 19:19:40 +0200 (CEST)
+Received: by mail-ot1-f53.google.com with SMTP id
+ 46e09a7af769-7d9b1c57a4cso2388209a34.3
+ for <dev@dpdk.org>; Sat, 04 Apr 2026 10:19:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1775323180; x=1775927980; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=CkecN2gXN4vQMjbgKxh1sORindU3tyECdthnMMR+Cps=;
+ b=fDEcmAYSKxanvJDABLGSBO8mEA/nBv41DTiI49t1WfTOV+Tt9fkWBK3fBh+qstNEXQ
+ aF3Kgit609g4XG4D6warT8h868INFRilGWkqiJPGxYg1DAYmhknkJf74UyoLntEM470s
+ 2VkWUHXA77iiGkefS2kxrrfTKdqLAUcnbJqS1XOeBJPBqw2iUSl/ncl7eUlD7wp5e1X0
+ 0SfFcc7RUiFxR/eCf5Vv7ET22LlibjLpfcWYbu30kWf6n/VjyKR20KEM7yXtlZhgXWlI
+ ymU2iNEu8dHnuZY+FT3KE+Dmr6Nzy2Qxp3utAu12eXwQ7vAb1EDb28ThSb0h9bKWaRbg
+ ndGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1775323180; x=1775927980;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=CkecN2gXN4vQMjbgKxh1sORindU3tyECdthnMMR+Cps=;
+ b=UsO96VX9YhsLspnJeLLYNsMj4eFMbttKop+wWF4ZJw18UAfJ0GQotyJU/bp5RjoMWR
+ KPVywrd2w8Qwst80ftLS+Ia683jp6JqKi7onWd2cOTzqO8sZdW2auXzOeFFJR6+c1GuZ
+ FAhAJ1plsSiSM6GqNLs6CisMSdheSx15TbKAcC5IlNsirUfqKJGxHXwlXiD6m72kUAcX
+ iHFSPyoAtWL8Yxheda9saA5JSPj5WVNeTATJDeB6gBi0h7R3FTjamn8Oh22Zl52XQ1gK
+ fTPYgh4F77Unwu4I5rgGQMLd1caMbUOlhDvTk+3ujtjHmqYsCcUDViN3SgE8NJxwsV3E
+ HShA==
+X-Gm-Message-State: AOJu0YxnXpicHnLNsLjN5SRwPNo0DILKArh7aLXMc1XIeJEsm02fEyq/
+ qmKz8Xsr0ojvwQizY18Mf5/NboJmqCTiysbaOPPLX3Fp7FScM6HR6Fk0
+X-Gm-Gg: AeBDieuy2KW2K0Yr9mtdv+YAeCMrx2epme3qzAF4icYDrfjlbwPrAAx2XBa/PruNvG3
+ NLCLRjnOqtrvyN3fRDiyGDu627WcDL1L/9FRyWH/n6oTnRJYdrIyy7QkLQpuQ+o2umK9iI0pd+A
+ KlnLni/wtjWm3XVy0K/9szFcVIEAqNUuHvuipTqrosHRaQr3Redh4IPmn+I2QFO3edALG9Zwbvl
+ 770Lo+UJijaHoA/9Tu2V+SeXK2pGb2vOC1UdZBY18snRBYEG141U8EChhzK2pKs///Wkt6m0AWW
+ HhbwbOCwlkYEMl1fBzYegsBqYzUA5dCwvf37M3o7sKSUv9aOdyRHEr4dzz6SK39tI3ueRgymMPV
+ 3N61irh7pOdIAAKQduGQ05z6NzO2+7bZHjReejoua+3sISFtDRKpIYNiNloR8BJv7Rv3Ws/z2PQ
+ ==
+X-Received: by 2002:a05:6830:6ae7:b0:7da:37fe:7b34 with SMTP id
+ 46e09a7af769-7dbb7576b6bmr4176136a34.25.1775323179895; 
+ Sat, 04 Apr 2026 10:19:39 -0700 (PDT)
+Received: from gmail.com ([50.93.222.110]) by smtp.gmail.com with ESMTPSA id
+ 46e09a7af769-7dba71261dbsm6580665a34.6.2026.04.04.10.19.38
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 04 Apr 2026 10:19:39 -0700 (PDT)
+From: Weijun Pan <wpan3636@gmail.com>
+X-Google-Original-From: Weijun Pan <wpan36@wisc.edu>
+To: Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
+Cc: dev@dpdk.org,
+	Weijun Pan <wpan36@wisc.edu>,
+	stable@dpdk.org
+Subject: [PATCH] bus/fslmc: fix shadowed variables in queue storage macros
+Date: Sat,  4 Apr 2026 12:19:11 -0500
+Message-Id: <20260404171912.48947-1-wpan36@wisc.edu>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpsz:tencent.com:qybglogicsvrsz:qybglogicsvrsz4b-0
-X-QQ-XMAILINFO: NGe+v6b5AUNWRtVXK68rQQxHApjgetCSzVItQujn6XfFsF7ISgVAwM+M
- ibGnJnwsYjaTI+gBxM1ucQOHlimjBkfAM/BUjLjS+WCY636lM2tvmv7YNNseWrt3usJj4fy
- Ku8BPIS4mhulvk4XpZHDpjUBqP6/WrqyPF9rRjegCPKA/uLq1ryD1qrCWejrjmKheKuwtYB
- 0guZUzZhMFLCjBi3RgifrMX14h9mx/rMu4242ztG2NIOEdcpftw4wb6t9nKfljuIzNKcwYt
- AjyE+vaQ8FyznTTUDQc5fdPH6TNEMWjwKmOuwT5ObUr2ueyndNVoyhsFM0ViikzOmZxqkEW
- 9YcSPtdpEj6Ck4p0gARglJCgWftok+WMhBHWdvj60NZwzNSXUbfZbJ7zQ/3rxvSf0PZUs2i
- Wxa7wWO1vDagH2pPs4/vencuaUXuCb9KjjG6gpxVdlONnUrRvs7AjFbF9ukThfNpjS7XtKZ
- qkjTdWdXjaIVWo7Mqx+sapGuRqvafR/l4T3sYUHUtfc3GvHTZf0CA5f2uKUWzQahWK1kK48
- Jk0TFFb4uYgCvcuE1sVelMhSA+f2JCym58QFbYVFQHv1QeGqPwPZkwUWUXS78nDYz3msoGp
- TLrLaLxN5a3hhViKp2pWgcrvUWQDYfo9370mprOi4xLy4nnM5z8+ENk2b14D/StI91DPOaN
- T6kGveI4s+S1O2gKgfvKneRCgtVDs7j77Yj3WiHsByvwd0+rrCRgoEoSy1QYWm2rsjlu6/L
- q6NnE5/JwYHSQ0dRpoE5sKICnUtJ32hKm4UHve/6uCsXILHWWBReg5HTdzjhNmuCl1lH7Fy
- 2gGLeyCzJF5LMC8av6oSBpmCu4ro1a54C/GQ5841x+T4kM8okpgTkHFKmri72LBjdQjPxKr
- ZkzIA1mgtN45jAcl25uyf14AuOdSCYN167AMRtxqQAcC8hHcwutOMc/+5Qqok1yaU99KWnT
- CB0aETaKwxQsfzimG93jVDMqfvoUV+MERsV3qOBduqNxTlqEmx8G5c023n/V1MlQNPwPu50
- Y01lyPDmznSmwAdM4XHn3KSlfHh9mHXb/W7rzQB3AtwGpTew4KM3rQfcpFMHdy7qhRu7xKi
- spaUm/k/OjnOrss8cHeU2I=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
-X-QQ-RECHKSPAM: 0
 X-Mailman-Approved-At: Tue, 07 Apr 2026 09:06:25 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -70,54 +79,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rx_queues and tx_queues arrays are allocated as contiguous
-blocks via rte_zmalloc_socket() in init_internals(). However,
-eth_dev_close() incorrectly calls rte_free() on individual array
-elements (rxq and rxq->pair) inside the per-queue cleanup loop.
+The queue storage allocation and free macros declare local variables
+named ret and i, which shadow local variables in
+rte_dpaa2_create_dpci_device() and trigger -Wshadow warnings.
 
-Since rte_free(&rx_queues[0]) releases the entire contiguous
-block, the memory backing queues[1..N-1] becomes invalid after
-the first iteration. On subsequent iterations, accessing the
-freed memory may read NULL (or garbage), causing the loop to
-break early via the (rxq->umem == NULL) check.
+Rename the macro-local variables to avoid shadowing without changing
+behavior.
 
-This results in:
-- XSK sockets for queues 1..N-1 not being deleted
-- UMEM reference counts not being decremented, leaking memory
-- Potential use-after-free if freed memory is reallocated
-
-Fix by removing the per-element rte_free() calls from inside
-the loop and instead freeing the entire tx_queues and rx_queues
-arrays after the loop completes.
-
-Fixes: 339b88c6a91f ("net/af_xdp: support multi-queue")
+Bugzilla ID: 1744
+Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
+Cc: jun.yang@nxp.com
 Cc: stable@dpdk.org
 
-Signed-off-by: Ouyang Hao <ouyanghao@tencent.com>
+Signed-off-by: Weijun Pan <wpan36@wisc.edu>
 ---
- drivers/net/af_xdp/rte_eth_af_xdp.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h | 28 ++++++++++++-------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 10dbcf1333..2cdb533276 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -1069,12 +1069,10 @@ eth_dev_close(struct rte_eth_dev *dev)
- 		if (rte_atomic_fetch_sub_explicit(&rxq->umem->refcnt, 1,
- 				rte_memory_order_acquire) - 1 == 0)
- 			xdp_umem_destroy(rxq->umem);
--
--		/* free pkt_tx_queue */
--		rte_free(rxq->pair);
--		rte_free(rxq);
- 	}
--
-+	/* Free Tx and Rx queue arrays */
-+	rte_free(internals->tx_queues);
-+	rte_free(internals->rx_queues);
- 	/*
- 	 * MAC is not allocated dynamically, setting it to NULL would prevent
- 	 * from releasing it in rte_eth_dev_release_port.
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+index e625a5c035..bbeccd8fc3 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+@@ -204,33 +204,33 @@ struct swp_active_dqs {
+ 
+ #define dpaa2_queue_storage_alloc(q, num) \
+ ({ \
+-	int ret = 0, i; \
++	int qs_ret = 0, qs_idx; \
+ 	\
+-	for (i = 0; i < (num); i++) { \
+-		(q)->q_storage[i] = rte_zmalloc(NULL, \
++	for (qs_idx = 0; qs_idx < (num); qs_idx++) { \
++		(q)->q_storage[qs_idx] = rte_zmalloc(NULL, \
+ 			sizeof(struct queue_storage_info_t), \
+ 			RTE_CACHE_LINE_SIZE); \
+-		if (!(q)->q_storage[i]) { \
+-			ret = -ENOBUFS; \
++		if (!(q)->q_storage[qs_idx]) { \
++			qs_ret = -ENOBUFS; \
+ 			break; \
+ 		} \
+-		ret = dpaa2_alloc_dq_storage((q)->q_storage[i]); \
+-		if (ret) \
++		qs_ret = dpaa2_alloc_dq_storage((q)->q_storage[qs_idx]); \
++		if (qs_ret) \
+ 			break; \
+ 	} \
+-	ret; \
++	qs_ret; \
+ })
+ 
+ #define dpaa2_queue_storage_free(q, num) \
+ ({ \
+ 	if (q) { \
+-		int i; \
++		int qs_idx; \
+ 		\
+-		for (i = 0; i < (num); i++) { \
+-			if ((q)->q_storage[i]) { \
+-				dpaa2_free_dq_storage((q)->q_storage[i]); \
+-				rte_free((q)->q_storage[i]); \
+-				(q)->q_storage[i] = NULL; \
++		for (qs_idx = 0; qs_idx < (num); qs_idx++) { \
++			if ((q)->q_storage[qs_idx]) { \
++				dpaa2_free_dq_storage((q)->q_storage[qs_idx]); \
++				rte_free((q)->q_storage[qs_idx]); \
++				(q)->q_storage[qs_idx] = NULL; \
+ 			} \
+ 		} \
+ 	} \
 -- 
-2.37.1
+2.34.1
 
