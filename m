@@ -2,69 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B49E9D82F
-	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Apr 2026 03:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851B0E9D831
+	for <dpdk-dev@archiver.kernel.org>; Mon,  6 Apr 2026 04:26:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 98A234026D;
-	Mon,  6 Apr 2026 05:37:48 +0200 (CEST)
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com
- [209.85.210.181])
- by mails.dpdk.org (Postfix) with ESMTP id 40B4840265
- for <dev@dpdk.org>; Mon,  6 Apr 2026 05:37:47 +0200 (CEST)
-Received: by mail-pf1-f181.google.com with SMTP id
- d2e1a72fcca58-824c9da9928so2589455b3a.3
- for <dev@dpdk.org>; Sun, 05 Apr 2026 20:37:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 74D004026D;
+	Mon,  6 Apr 2026 06:26:14 +0200 (CEST)
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+ by mails.dpdk.org (Postfix) with ESMTP id D821A40265
+ for <dev@dpdk.org>; Mon,  6 Apr 2026 06:26:12 +0200 (CEST)
+Received: by mail-dl1-f48.google.com with SMTP id
+ a92af1059eb24-12a74039dc6so2515856c88.0
+ for <dev@dpdk.org>; Sun, 05 Apr 2026 21:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775446666;
- x=1776051466; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775449572;
+ x=1776054372; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nofEexM1teS6pMvy9455GfoUx7R5GFPG4+9PQLfQfWo=;
- b=tKYomAA5LB7/5Uk3xY3bJHaeFOWPJk/3TzxfDPrqRL0ZAPPKUuG3eLIe6CLNsntdoT
- xaz1jh8yIOCKpoPXWnu/1OhEqcQjdfUUtmSqin4AlhP814KiR0GEou3yn6T87hwhaItQ
- mLIg5Vn2neZHhrqi5q1Oe3ZLeX8f7pJEdWWYVVwekWCkTHcgP4TpwFhE+17BDGY1IH6W
- vd6j3arLy0yv2dhm7wDL6fAeudZyJ2DjxlOShO8lUCA7bd1bD4tPHNMjkUAHxVKHpObl
- QcPWz19dffTgHbhuLhSY+fzxvJqCJKChpjdoY3C+oiVpsHnYKPnC0L8+WmFYGIWhBJRJ
- lX2g==
+ bh=ewO7hJ0/Yf4fSTqVJfdpBewFJHa+jOWwxnLona9Fks0=;
+ b=zD7jssNhNetnBfEJZ+27Et7Iz/rFL4tk6ljJko66d6aPNYs8D/ztpP9kIA2S1+l2L8
+ FxzMTDZG7TSsHDKef1Ub79hq9R57nBkWdMwlqsFvM8ABr3xcJ2b44d6gnMTPMLmFr3n0
+ jyf9Xp+ZYdKSfsxpYl6objuYLy9wJ2EQv3XlZdu/xDtCriurLzH0tV9+4EUekovfqBUk
+ 2sPqtSpybkm0cd4S/krnOliK9VnvTvWKhkHbgiRzn/D0FRXhxPGUujjj10XzwAxEgXPi
+ eNpj6YvNEC51dncdZeIkohkkulSynoiT5BSuaooRZCyjImSAvKFw7h8NYjxJ25CIC7nv
+ 62gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775446666; x=1776051466;
+ d=1e100.net; s=20251104; t=1775449572; x=1776054372;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=nofEexM1teS6pMvy9455GfoUx7R5GFPG4+9PQLfQfWo=;
- b=tTSCaBUnSXuuHwpCqKil44d8ENpV/6yTIrnFOSZEmQPStXTp/6cN5Jt/lFtEnBHsjz
- SBzgUHsYOULJOOyanV7WDpLT/yUBI3JWqo3R6FJtW1rKkg63DM3pAex/VKqq9CrDdqVr
- uhJdb1d7X4zhZXEvMzaSaRie91xJ0zsQpLJQ4QfPVsAOb96bZxUTZ4fcms1LHA7TtB3L
- 0L/2Y6SIYFApfVLdolEc57BVUnn/AIVMBZrsBxEbcwMltC3i8FQtrBPYDxA95NzZ1sVa
- mzfIn08MrljNApxpw4zkTAiXrkO6wfME23M0In0hsvahSFKpApNeiTtoImdj8EhMw8Kf
- oG2Q==
-X-Gm-Message-State: AOJu0YzWOr9fYxUel+Iav7f1S3YArnrCyZ3lHoqX6/vlqJOtI/mEoJq/
- F3lZQrp7nZO5RMVm1Ua0Aq4gdj56UrPgRsgw4S8Zl0mRzmynHlX91I2te27JlGHsEBs=
-X-Gm-Gg: AeBDiesOM+7frzR+djFAfq1OkrqWP5isU7GQeEmfdw42o/3hOfa5F7zoEqYkQYMg5Ge
- st0Zsja01ifTprK4Jm0eO5ieMEUuBbae0PpeCrOJ8EVl8wzlDz6JPszecxQm7PhlTm10WZxwesi
- Q80WtKVRiuo6f9KwpBJQDaNinZUXrL0FEPdSIxw9jOagZDzMqrshrd7kdJPHVGPztfcH8CGZl6B
- s8uwh0KKxpo4NhtqC63cV3uIi8cWGdywmVT7BnkL5NkcAPlIwTPI1Mwon6Mc6nZR6rpsjttqVYI
- Gt2oLENCti7xbGO0NFC2/mEEuLJaCsPjCZFEniB/BpZDwWJ91qkdhVle3pVSmiWpWSXmqIghRfH
- SLxS27DUf4MHdV/Vxy4Ns6QFP40STRuEqrGI4oF+4Pj6+NcMctTy6BBJeyjxXnvYRxM3rlH5TpY
- CXtzSO6E8BsIwY/7kpUSzC0yhbQdVj8FQS5vs=
-X-Received: by 2002:a05:6a20:9192:b0:398:759d:23e with SMTP id
- adf61e73a8af0-39f2efaf81dmr10987052637.32.1775446666114; 
- Sun, 05 Apr 2026 20:37:46 -0700 (PDT)
+ bh=ewO7hJ0/Yf4fSTqVJfdpBewFJHa+jOWwxnLona9Fks0=;
+ b=EFaY/IjMscA/2EAJHFs80I4UUAcLTBE2l+Nd6FKW20+b8fCmW9NBpgwTQbUX8m5VDe
+ btm2y8i5HiwK1KGcTNXr3LXdVPZBlXLELhKI1Gy7AV7PDNACyYJ8megfYrs7BAW23Q54
+ XAjmfRTK9SBi+gUpUKASeVPo42nPVNdTeUYIeGfAViUT1B0OZjJ/uYc89hsCqpR9gb80
+ v+drnWhS8J2MoQBd5ayhUfmgZWufjlFc6VLb/ZyDlvZ/Te/IQYCDzIVvWzHLGY6pdK5R
+ iVjIpHE4JEiz++JgZ3TKsMDhT0VOf5prqXkbW9EnD6X6iQGXsho+xBcFg4yiNX91rYA8
+ rBeg==
+X-Gm-Message-State: AOJu0Yy3erKbfe59bXfdRZp18uTKWRv8J9v4dX7EyGsKp8VgMnLPD5J5
+ ka2ZhKlLw2+wUlccBeRSLF6/eQmZm7rrooY2qw8ndG1kv7heyWOcND11N5O8DPnoHm4=
+X-Gm-Gg: AeBDievQ65imJQAIgG7m5xX7BcTucLqkHTp5BDQxV8nx0tVnlQ4ouSr8IXARZhAwP0n
+ 7ZBAmbOq8wuQlm8BtCdBUM78mMIYA4fPBolrfzaQMjPQiwJx6IwNShMA0nad8JiQN+dZeEuFfsU
+ tzfs5wKBvgSrfzCMY3pravYZdIHS3tzq5Hr6U24ETLmDG95SBV4UGi9U/4tuEpugjpvmA03Yj23
+ GPCk7Kqqo//Cn/sIxQy6XrGG7Rr8dBXHoryMXptgqpfsdYljNp6xtYAQV7vngMyA9j/yyDaSWHy
+ YwBPW7QoKkwNozTifs4iVYHi8NK2a0BD6zClKqF4rJ7/LY7rkVCQtK1nMDKyg7cMUprBv1JvWqg
+ ZhYaGz7MKaTd5r0XnPSYhvL5ly9QcJvXKnA11WqwgIP2b12ouoj1o4AXJTc7HhKKI0tHzXKHhGB
+ LATl0D601y5UwSDl5GNYi0C81fsALZDZNwVuk=
+X-Received: by 2002:a05:7022:418f:b0:128:d7a7:5271 with SMTP id
+ a92af1059eb24-12bfb75ea82mr4903449c88.28.1775449571521; 
+ Sun, 05 Apr 2026 21:26:11 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- d2e1a72fcca58-82cf9b23c6asm16133035b3a.10.2026.04.05.20.37.43
+ 5a478bee46e88-2ca7c20c151sm12792235eec.19.2026.04.05.21.26.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 05 Apr 2026 20:37:45 -0700 (PDT)
-Date: Sun, 5 Apr 2026 12:57:22 -0700
+ Sun, 05 Apr 2026 21:26:11 -0700 (PDT)
+Date: Sun, 5 Apr 2026 21:26:08 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-Cc: <dev@dpdk.org>, <Selwin.Sebastian@amd.com>
-Subject: Re: [PATCH v3] net/axgbe: mask unsupported PHY half-duplex modes
-Message-ID: <20260405125722.5b936678@phoenix.local>
-In-Reply-To: <20260402065450.1074-1-ashokkumar.natarajan@amd.com>
-References: <20260401075831.568-1-ashokkumar.natarajan@amd.com>
- <20260402065450.1074-1-ashokkumar.natarajan@amd.com>
+To: Junlong Wang <wang.junlong1@zte.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v1] net/zxdh: optimize Rx/Tx path performance
+Message-ID: <20260405212608.7c9f9ca5@phoenix.local>
+In-Reply-To: <20260326022828.998541-1-wang.junlong1@zte.com.cn>
+References: <20260326022828.998541-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,67 +78,102 @@ List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
-Message-ID: <20260405195722.a-yN6lD0q76f4f_C0w1SNjy191jmWhjLPxUaXA0Vzgo@z>
 
-On Thu, 2 Apr 2026 12:24:49 +0530
-Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com> wrote:
+On Thu, 26 Mar 2026 10:28:28 +0800
+Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
-> The AXGBE MAC supports only full-duplex operation at all speeds.
-> However, the PHY auto-negotiation configuration could advertise
-> half-duplex modes, including 10BASE-T, 100BASE-TX, and 1000BASE-T,
-> which are not supported by the MAC.
+> This patch optimizes the ZXDH PMD's receive and transmit path for better
+> performance through several improvements:
 > 
-> Update the Clause 22 and Clause 40 PHY advertisement handling to mask
-> all half-duplex modes while preserving existing PHY, strap, and
-> vendor-specific configuration using read-modify-write.
+> - Add simple TX/RX burst functions (zxdh_xmit_pkts_simple and
+>   zxdh_recv_single_pkts) for single-segment packet scenarios.
+> - Remove RX software ring (sw_ring) to reduce memory allocation and
+>   copy.
+> - Optimize descriptor management with prefetching and simplified
+>   cleanup.
+> - Reorganize structure fields for better cache locality.
 > 
-> To maintain backward compatibility, full-duplex advertisement for
-> 10/100 and 1000BASE-T is preserved by default when no explicit PHY
-> advertising mask is provided.
+> These changes reduce CPU cycles and memory bandwidth consumption,
+> resulting in improved packet processing throughput.
 > 
-> This ensures IEEE 802.3 compliant PHY advertisement while avoiding
-> regressions on platforms relying on PHY default configuration.
-> 
-> Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
-> ---
+> Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
 
-AI review noticed possible issues with thsi.
-Which may be an issue, or false positive.
+I saw some things when reviewing but AI found lots more
 
+On Thu, 26 Mar 2026 10:28:28 +0800
+Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
+> This patch optimizes the ZXDH PMD's receive and transmit path for better
+> performance through several improvements:
 
-> The AXGBE MAC supports only full-duplex operation at all speeds.
-> However, the PHY auto-negotiation configuration could advertise
-> half-duplex modes, including 10BASE-T, 100BASE-TX, and 1000BASE-T,
-> which are not supported by the MAC.
-> 
-> Update the Clause 22 and Clause 40 PHY advertisement handling to mask
-> all half-duplex modes while preserving existing PHY, strap, and
-> vendor-specific configuration using read-modify-write.
+Several issues found in review.
 
-The read-modify-write approach is good, and the Clause 22 / Clause 40
-separation is clean.
+Errors:
 
-> +	if (!adv) {
-> +		advert |= ADVERTISE_10FULL | ADVERTISE_100FULL;
-> +	} else {
+1. zxdh_rxtx.c, pkt_padding(): The return value is never checked by
+   the caller submit_to_backend_simple(). If rte_pktmbuf_prepend()
+   fails and pkt_padding() returns -1, the descriptor is still
+   written with the mbuf's iova and data_len, submitting a corrupt
+   packet to the device. Must check the return value and skip the
+   packet on failure.
 
-The original code unconditionally sets ADVERTISE_PAUSE_CAP:
+2. zxdh_rxtx.c, zxdh_recv_single_pkts(): When zxdh_init_mbuf() fails
+   the loop does "break" instead of continuing or freeing the
+   remaining mbufs. The mbufs at rcv_pkts[i+1] through
+   rcv_pkts[num-1] were already dequeued from the virtqueue by
+   zxdh_dequeue_burst_rx_packed() but are never freed, leaking them.
 
-	advert |= ADVERTISE_FULL;
-	advert |= ADVERTISE_PAUSE_CAP;
+3. zxdh_rxtx.c, refill_desc_unwrap(): Descriptors are written with a
+   plain store "start_dp[idx].flags = flags" instead of using
+   zxdh_queue_store_flags_packed(). The original
+   zxdh_enqueue_recv_refill_packed() uses the store-barrier version
+   to ensure addr/len are visible before the flags. Without the
+   barrier, the device could see the available flag before the
+   descriptor data is committed. The rte_io_wmb() at the end of
+   refill_que_descs() is after all flags are already written, so
+   it does not help.
 
-In the legacy path (adv == 0), the new code advertises 10/100 full-duplex
-but drops pause advertisement. This is a behavioral regression for
-platforms relying on the default configuration -- exactly the scenario the
-commit message says should avoid regressions. The !adv block should also
-set ADVERTISE_PAUSE_CAP to match the old behavior.
+4. zxdh_rxtx.c, zxdh_xmit_pkts_prepare(): The removal of
+   rte_net_intel_cksum_prepare() means packets requesting checksum
+   offload will not have their pseudo-headers prepared. If the HW
+   expects a pseudo-header, transmitted checksums will be incorrect.
 
-> +#define AXGBE_PHY_MII_CTRL1000_1000T_FULL	0x0200
-> +#define AXGBE_PHY_MII_CTRL1000_1000T_HALF	0x0100
+5. zxdh_queue.h, zxdh_queue_enable_intr(): This function checks
+   "if (event_flags_shadow == DISABLE)" then sets it to DISABLE
+   again. It never actually enables interrupts. Pre-existing bug
+   but this patch touches the function and should fix it.
 
-These are standard IEEE 802.3 Clause 40 bits. Since axgbe_phy.h already
-mirrors the Linux MII defines for Clause 22, consider adding these as
-ADVERTISE_1000FULL / ADVERTISE_1000HALF in the existing MII section for
-consistency rather than under the M88E1512-specific block.
+6. zxdh_ethdev.c, zxdh_init_queue(): The hdr_mz NULL check logic is
+   contradictory. Lines 158-162 check "if (hdr_mz == NULL)" and goto
+   fail_q_alloc, but line 169 then checks "if (hdr_mz)" before
+   assigning zxdh_net_hdr_mem. If the first check fires, the second
+   is unreachable. If it doesn't fire, the second is always true.
+   Pick one guard and use it consistently.
+
+Warnings:
+
+1. zxdh_rxtx.c, zxdh_xmit_pkts_simple(): stats.bytes is never
+   incremented. The packed path uses zxdh_update_packet_stats() but
+   the simple path only counts packets and idle. The good_bytes
+   xstat will always read zero on the simple TX path.
+
+2. zxdh_rxtx.c, zxdh_recv_single_pkts(): Same issue -- stats.bytes
+   is never incremented, so good_bytes will always be zero on the
+   single-packet receive path.
+
+3. zxdh_rxtx.c, zxdh_init_mbuf(): rte_pktmbuf_dump(stdout, rxm, 40)
+   should not be in production code. It writes to stdout
+   unconditionally on the error path. Use PMD_RX_LOG or remove it.
+
+4. zxdh_ethdev.c, zxdh_dev_free_mbufs(): Changed from
+   rte_pktmbuf_free() to rte_pktmbuf_free_seg(). If any mbufs in
+   the TX queue are multi-segment (from the packed path which
+   handles multi-seg via zxdh_xmit_enqueue_append), only the first
+   segment will be freed, leaking the rest.
+
+5. This patch is large (~800 lines, 8 files) and combines multiple
+   independent changes: structure reorganization, new fast-path
+   functions, sw_ring removal, descriptor management, removal of
+   rte_net_intel_cksum_prepare, and MTU validation. Splitting into
+   separate patches would make review and bisection easier.
 
