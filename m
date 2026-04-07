@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBA5FF5106
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75917FF5106
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:18:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9DC0F40659;
-	Tue,  7 Apr 2026 17:18:05 +0200 (CEST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
- [209.85.215.177])
- by mails.dpdk.org (Postfix) with ESMTP id 1E678406A2
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:18:04 +0200 (CEST)
-Received: by mail-pg1-f177.google.com with SMTP id
- 41be03b00d2f7-c70ea5e9e9dso2117393a12.1
- for <dev@dpdk.org>; Tue, 07 Apr 2026 08:18:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 79DD340430;
+	Tue,  7 Apr 2026 17:18:09 +0200 (CEST)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com
+ [209.85.215.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 82DFC4025F
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 17:18:08 +0200 (CEST)
+Received: by mail-pg1-f179.google.com with SMTP id
+ 41be03b00d2f7-c76cce85bd9so1898794a12.1
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 08:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575083;
- x=1776179883; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575088;
+ x=1776179888; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7bieW0CTSzRbEHG3UZ13aH+mm4B74J7/08TJsfRHTe8=;
- b=nf3brI1Z1t/AfJScbiIgww4pAShsGHmK63dHJW0kYGNGC6J9ATIgyVTWyetEjYsghE
- uimRsyD6L8edcnwgb6nPon371W6Azt5kQQaMoSYDx3JertCpAK4l0fZJythSQdBppqkL
- ykPFQi3sDt2ZOkdGPiyxvfVU92NIFAOvqfqseoBbXVLpz64YkeaKlrzaXkC5j+kEk5M0
- AuJh+/gQA5hSjzQgLYIngW65M+5ydT4i3Y4Z0bjcud0Va6h4q9+2l7gDycs3HHWZwoaN
- 50283wV23ZJhiY7260I4HszW9Mbpb5ojOKz3GBm/2yxGouvIZqK58ifvgzDYuo80ADTk
- JG+A==
+ bh=SHHr+gW0MWUCU5vdR7kcKUiiTq+56gHzGd4shfZAJTI=;
+ b=a900ezPglFnO5UyY1cwneVl/tA4cK+/gS3anmWyNajmFxEl0AlRBDEPixQ0qY3Tavl
+ uKY7gBu7ZPCDJ3fE8tuyCkLcycZMQIepCedVImm8rH7NCLq2mc7vCAqkWNaAKN34jAnD
+ JLwacC+OJI65YgTrSop271agFO2nxl5Gnfsum7qB+AsDT1PcWsqmZlHMKQObNeKCQnoW
+ LeV71A+jShbGqiY6iUi4S5t76ha/dXCNRfg0EwXLDpDVUoPIrVq4RhWtUDu2NF7+c4Uf
+ 2wM+hV3lJ4O7gzWEE+QMT3XMDSGgQKSJJOyQK3qKSOAp8o0XzQ8nQxReysUq6t2lrVZV
+ 5JIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775575083; x=1776179883;
+ d=1e100.net; s=20251104; t=1775575088; x=1776179888;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=7bieW0CTSzRbEHG3UZ13aH+mm4B74J7/08TJsfRHTe8=;
- b=o+AtyE6NmEAJpJkSyk34jobCxEjKGqzJOA6lhYext/95Zq5vy9+SOq3Fc6/IGaDOTJ
- 5/Wh3LKUEjctrCfvqdfHYjVI7h2CnvykK6BsTiVFs1wI9jDI7ImyTXCAUb4Aqrn629mz
- H1SHlRIytIhrN0CNxwTYPHnteSSyzO6DhIwAMK1kpjuA1jOhVtwKHle1EbDhFQqRK6VR
- bU3peFkQwGTvb1Qjj4+UidUd/DWFjgPeInh8Dg0i3LfAGwNz56U/z5hBr6gBOyVp7SjV
- rvK5jRPqfLE6j/pxh2ZeQUuyT5CL9dLUzwY2DDAO6EyXVXtqGDwoOpjo/T6RCczBxnoz
- GK2Q==
-X-Gm-Message-State: AOJu0YzbIml4sxxVoqjnWT4EzbHiWSxlzZFpDw+hrftZZX1kPVbFjCSj
- CGCSKHp9G8eflxvHcO0eqGke+PsQkkwcrHxl4F0yVGMl+1WvD2B6lLA+ISEFCVtxmkMT8d65y+B
- yPal4
-X-Gm-Gg: AeBDietegH0eKQO0smpXL7xDWnQSU8s0HaahqsfmvrxEtj9cUWjfa3wL2o8pzWh9hoZ
- ahEzp6rWudj/Vdx72FN6Ddx73jKDRceTe5yGX8bULLFpYPbqQIv5GwKPHHwEBHxNf7b7/H28ZgR
- 4nvSlW0NVyzbGHo8oC1t5JwxIlGhcP0xfokwt4TfVPU7soMZX1jNhKdjkDY1MWqruNFBzk0OSLf
- +4R+HPMS/nhROMfxqb/UHhxo2M7vVl3BTRll8FF4XuQgMo+EVqG9XmVHgRJ3foxM3Pw1xPn5qgL
- kIHPdk8vlkXP2D2MSzxq3pOLe7fFR3764n5Q9hDOES1l9xE73kE5VSvt3c6wcMbZNrzTkKpnAMY
- KBXxfvLnJLnCc/I3AewgUtMflNHRMx7gW3kd8ju8y/hhxh8Y50l46xOaFEtalhRSGs32WXhlETD
- i3WWDVq74AJ+EtNlcYv9pgdIuxX1WF60D1
-X-Received: by 2002:a05:6a21:99a6:b0:39b:8933:a300 with SMTP id
- adf61e73a8af0-39f2f0f8c6fmr16964046637.52.1775575083220; 
- Tue, 07 Apr 2026 08:18:03 -0700 (PDT)
+ bh=SHHr+gW0MWUCU5vdR7kcKUiiTq+56gHzGd4shfZAJTI=;
+ b=soGNPW2EfTUIQz2orznaqQTk90tw51QjYMBbctK1kmXV/sNfvdE1a0wilxPwHJiVIk
+ 8juC9ajzNp70p1I3GpnSO1qb/5CVE1y0K2LcZkevDc7SM0MW9BROlvSOofUsK6+j3mxI
+ BthYeS3NRyBulCiCwzzPgNzBbcjMhb4gZv5Sobw3zkCkFHfCi98gYClPsmQKxSoDGrdJ
+ RXoL1e1FWX+83NXQiNt8wrZmOnPJ1akB46YVyR/wh0E64/5MOCASdUBw52MUlcnQshUj
+ j7BlrxkaaktgUTo/RWJkxuflujz0TH7NjzW8F4BDKWOOWvOEImh4QZ7NHmj/myQ694Vx
+ ltUA==
+X-Gm-Message-State: AOJu0YzBzH43o+KkcJKCoPWSnr4pCOVIvstUZWJBqtbg7e3q2i7Lv3hM
+ 4/BUXtXL8H5+K9ITeXsovexqJBZ+gDYNyrDeYTm4H5okNzFiLKMqCs27QnJQRBXEznWFoAehOew
+ wDIaA
+X-Gm-Gg: AeBDies7b4SRpvIvhy9OfOHRnOsuQlzZlfeRGOWWdl4UcWuujAYHQ6fRQUfSl5l/RgV
+ h7Y7A0sNdLG3QYNphK5M1UpQ8dBIAJqvq6wHtmN9SBmrmoYHHmlr7nYcpKciJuuasoVc5RzxR3A
+ 60pk4z8koFwSh6MlRp0c4tGONgJLH3BlV/ZJowHZs8RR60enuClMDTNPzNisHbcLoZLRyqKzLMl
+ PU+agNycurIc6JbxnRpt/fhFds9D+fmW+xVN4vndGRkvpbM0JfY3pYg30rdigum9zIC99Z0ocVq
+ OG/OCJRzTfDUai58zGkgW0H8gF20TufhoOx9GDv6PB5emWZwrvcQDXQUunUZ/T4Fi2u/3Dy34tE
+ uU17Zk+rpI51svClydSaxJcPSgI2iUvFBMmowYmJ+V2KIRaCJ9mO7te52w87iwT8SEdIOsZUfj5
+ hqFEgQMswz+2y3t5ZNkbBCZGix0qIfhTmS
+X-Received: by 2002:a05:6a21:6daa:b0:39f:2ad9:e547 with SMTP id
+ adf61e73a8af0-39f2e93f0dfmr18704998637.0.1775575086700; 
+ Tue, 07 Apr 2026 08:18:06 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.18.00
+ 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.18.03
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 08:18:02 -0700 (PDT)
+ Tue, 07 Apr 2026 08:18:06 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Yipeng Wang <yipeng1.wang@intel.com>
-Subject: [PATCH v2 07/23] examples/server_node_efd: resolve shadow variable
- warning
-Date: Tue,  7 Apr 2026 08:16:03 -0700
-Message-ID: <20260407151732.272195-8-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>, Ori Kam <orika@nvidia.com>
+Subject: [PATCH v2 08/23] examples/flow_filtering: resolve shadowed variable
+ warnings
+Date: Tue,  7 Apr 2026 08:16:04 -0700
+Message-ID: <20260407151732.272195-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260407151732.272195-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
@@ -84,46 +83,85 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Argument to parse_numa_nodes() shadowed global variable.
+Rename places where argument name is shadowing a global variable.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- examples/server_node_efd/efd_server/args.c      | 6 +++---
- examples/server_node_efd/efd_server/meson.build | 1 -
- 2 files changed, 3 insertions(+), 4 deletions(-)
+ examples/flow_filtering/flow_skeleton.c | 10 +++++-----
+ examples/flow_filtering/main.c          |  4 ++--
+ examples/flow_filtering/meson.build     |  1 -
+ 3 files changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/examples/server_node_efd/efd_server/args.c b/examples/server_node_efd/efd_server/args.c
-index 0e5e89705d..cb0486a952 100644
---- a/examples/server_node_efd/efd_server/args.c
-+++ b/examples/server_node_efd/efd_server/args.c
-@@ -81,15 +81,15 @@ parse_portmask(uint8_t max_ports, const char *portmask)
-  * and convert to a number to store in the num_nodes variable
-  */
- static int
--parse_num_nodes(const char *nodes)
-+parse_num_nodes(const char *arg)
+diff --git a/examples/flow_filtering/flow_skeleton.c b/examples/flow_filtering/flow_skeleton.c
+index 7e57b13b55..bc1d07fbe3 100644
+--- a/examples/flow_filtering/flow_skeleton.c
++++ b/examples/flow_filtering/flow_skeleton.c
+@@ -14,7 +14,7 @@ struct rte_flow_attr flow_attr;
+ struct rte_flow_op_attr ops_attr = { .postpone = 0 };
+ 
+ static struct rte_flow *
+-create_flow_non_template(uint16_t port_id, struct rte_flow_attr *flow_attr,
++create_flow_non_template(uint16_t port_id, struct rte_flow_attr *attr,
+ 						struct rte_flow_item *patterns,
+ 						struct rte_flow_action *actions,
+ 						struct rte_flow_error *error)
+@@ -22,13 +22,13 @@ create_flow_non_template(uint16_t port_id, struct rte_flow_attr *flow_attr,
+ 	struct rte_flow *flow = NULL;
+ 
+ 	/* Validate the rule and create it. */
+-	if (rte_flow_validate(port_id, flow_attr, patterns, actions, error) == 0)
+-		flow = rte_flow_create(port_id, flow_attr, patterns, actions, error);
++	if (rte_flow_validate(port_id, attr, patterns, actions, error) == 0)
++		flow = rte_flow_create(port_id, attr, patterns, actions, error);
+ 	return flow;
+ }
+ 
+ static struct rte_flow *
+-create_flow_template(uint16_t port_id, struct rte_flow_op_attr *ops_attr,
++create_flow_template(uint16_t port_id, struct rte_flow_op_attr *attr,
+ 					struct rte_flow_item *patterns,
+ 					struct rte_flow_action *actions,
+ 					struct rte_flow_error *error)
+@@ -42,7 +42,7 @@ create_flow_template(uint16_t port_id, struct rte_flow_op_attr *ops_attr,
+ 
+ 	return rte_flow_async_create(port_id,
+ 		1, /* Flow queue used to insert the rule. */
+-		ops_attr,
++		attr,
+ 		table,
+ 		patterns,
+ 		0, /* Pattern template index in the table. */
+diff --git a/examples/flow_filtering/main.c b/examples/flow_filtering/main.c
+index 8ea6596ed4..f2124881a0 100644
+--- a/examples/flow_filtering/main.c
++++ b/examples/flow_filtering/main.c
+@@ -125,7 +125,7 @@ assert_link_status(void)
+ }
+ 
+ static void
+-configure_port_template(uint16_t port_id)
++configure_port_template(void)
  {
- 	char *end = NULL;
- 	unsigned long temp;
+ 	int ret;
+ 	uint16_t std_queue;
+@@ -254,7 +254,7 @@ init_port(void)
+ 			"rte_eth_dev_stop:err=%d, port=%u\n",
+ 			ret, port_id);
  
--	if (nodes == NULL || *nodes == '\0')
-+	if (arg == NULL || *arg == '\0')
- 		return -1;
+-	configure_port_template(port_id);
++	configure_port_template();
+ 	ret = rte_eth_dev_start(port_id);
+ 	if (ret < 0)
+ 		rte_exit(EXIT_FAILURE,
+diff --git a/examples/flow_filtering/meson.build b/examples/flow_filtering/meson.build
+index e2d5850a19..e82d63ad8b 100644
+--- a/examples/flow_filtering/meson.build
++++ b/examples/flow_filtering/meson.build
+@@ -33,4 +33,3 @@ sources = files(
  
--	temp = strtoul(nodes, &end, 10);
-+	temp = strtoul(arg, &end, 10);
- 	if (end == NULL || *end != '\0' || temp == 0)
- 		return -1;
- 
-diff --git a/examples/server_node_efd/efd_server/meson.build b/examples/server_node_efd/efd_server/meson.build
-index fa0e15d73a..f1a6616738 100644
---- a/examples/server_node_efd/efd_server/meson.build
-+++ b/examples/server_node_efd/efd_server/meson.build
-@@ -10,4 +10,3 @@ allow_experimental_apis = true
- deps += 'efd'
- sources += files('args.c', 'init.c', 'main.c')
- includes += include_directories('../shared')
+ # The code snippets are not utilized.
+ cflags += '-Wno-unused-function'
 -cflags += no_shadow_cflag
 -- 
 2.53.0
