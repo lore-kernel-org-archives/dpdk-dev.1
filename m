@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05837FF5104
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:12:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D555FF5105
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:12:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CC3384060A;
-	Tue,  7 Apr 2026 17:12:44 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3AA934065A;
+	Tue,  7 Apr 2026 17:12:49 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 5CFA54025F
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:12:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 4BDF54065A
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 17:12:48 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C955B3293;
- Tue,  7 Apr 2026 08:12:36 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3C5D3293;
+ Tue,  7 Apr 2026 08:12:41 -0700 (PDT)
 Received: from cesw-grace-nv-1s-n2-01.lab.cambridge.arm.com
  (cesw-grace-nv-1s-n2-01.lab.cambridge.arm.com [10.7.10.64])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 63B5E3F7D8;
- Tue,  7 Apr 2026 08:12:41 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5CE473F7D8;
+ Tue,  7 Apr 2026 08:12:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
- t=1775574762; bh=ogCINwqwglDMF6cfm/voSqktWXBpV56u0O0ns7SxJSA=;
+ t=1775574767; bh=eFdP28gZCQW1Qc8/KTt89IPSWU9AtNR0o++hkYdWCqc=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=R9b0HHjsjJDKh9Ae/yWD0A9BrCJpJt+nzrdyS7/vMD1D1E4ocd1gBuVSdah88ol3U
- PJpwcFEtuwBHlBTj+sQyLPg94uddoHnmBKKnDbQJ7Gk5gMz52TwX4qk4Krp+pVTYOc
- NVraqkq9PSLc273s9SgRRMKhlvZ7GuC/DXW7M+xs=
+ b=Cl3Vml4PjgYBk4wkzhDZb5IIWcxiVlZK8iYfmiIR+wDYgOLqE+IxOqZXHUyKcIrKy
+ Y5d17fP78AssvONW9GoPGQwGg+y6dYoPQKTDqp1KenkCIfLHtVCufDUYP0GH7syLPY
+ LzJ/G3lx8UgjGN8LpHBkY0iNOOxLGaNHZqyS32rE=
 From: Jay Wang <jay.wang2@arm.com>
 To: Thomas Monjalon <thomas@monjalon.net>,
  Bruce Richardson <bruce.richardson@intel.com>,
@@ -30,9 +30,9 @@ To: Thomas Monjalon <thomas@monjalon.net>,
 Cc: dev@dpdk.org,
 	nd@arm.com,
 	Jay Wang <jay.wang2@arm.com>
-Subject: [PATCH v1 1/1] net/ice: add Neon-optimised Rx/Tx vector paths
-Date: Tue,  7 Apr 2026 15:12:22 +0000
-Message-ID: <20260407151225.1416270-2-jay.wang2@arm.com>
+Subject: [PATCH v2] net/ice: add NEON-optimised Rx/Tx vector paths
+Date: Tue,  7 Apr 2026 15:12:23 +0000
+Message-ID: <20260407151225.1416270-3-jay.wang2@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260407151225.1416270-1-jay.wang2@arm.com>
 References: <20260324162525.4083381-3-jay.wang2@arm.com>
@@ -52,7 +52,7 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch adds the Neon-optimised Rx and Tx paths to the ice driver.
+This patch adds the NEON-optimised Rx and Tx paths to the ice driver.
 
 Tested on Ampere One platform with Intel E810-C NIC and 100G connection.
 Tested with a single core and testpmd io forwarding mode. Observed
@@ -65,9 +65,9 @@ Signed-off-by: Jay Wang <jay.wang2@arm.com>
  drivers/net/intel/ice/ice_ethdev.h        |   3 +
  drivers/net/intel/ice/ice_rxtx.c          |  53 +-
  drivers/net/intel/ice/ice_rxtx.h          |   6 +
- drivers/net/intel/ice/ice_rxtx_vec_neon.c | 747 ++++++++++++++++++++++
+ drivers/net/intel/ice/ice_rxtx_vec_neon.c | 761 ++++++++++++++++++++++
  drivers/net/intel/ice/meson.build         |   2 +
- 6 files changed, 810 insertions(+), 2 deletions(-)
+ 6 files changed, 824 insertions(+), 2 deletions(-)
  create mode 100644 drivers/net/intel/ice/ice_rxtx_vec_neon.c
 
 diff --git a/.mailmap b/.mailmap
@@ -221,10 +221,10 @@ index 77ed41f9fd..999b6b30d6 100644
  int ice_rxq_vec_setup(struct ci_rx_queue *rxq);
 diff --git a/drivers/net/intel/ice/ice_rxtx_vec_neon.c b/drivers/net/intel/ice/ice_rxtx_vec_neon.c
 new file mode 100644
-index 0000000000..afd038efb5
+index 0000000000..8ec5942541
 --- /dev/null
 +++ b/drivers/net/intel/ice/ice_rxtx_vec_neon.c
-@@ -0,0 +1,747 @@
+@@ -0,0 +1,761 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright(c) 2026 Intel Corporation
 + * Copyright(c) 2026 Arm Limited
@@ -275,7 +275,8 @@ index 0000000000..afd038efb5
 +
 +	uint32x4_t tmp_desc, flags, rss_vlan;
 +
-+	/* mask everything except checksum, RSS and VLAN flags
++	/**
++	 * mask everything except checksum, RSS and VLAN flags
 +	 * bit fields defined in enum ice_rx_flex_desc_status_error_0_bits
 +	 * bit7:4 for checksum.
 +	 * bit12 for RSS indication.
@@ -293,7 +294,8 @@ index 0000000000..afd038efb5
 +		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD
 +	};
 +
-+	/* map the checksum, rss and vlan fields to the checksum, rss
++	/**
++	 * map the checksum, rss and vlan fields to the checksum, rss
 +	 * and vlan flag.
 +	 */
 +	const uint8x16_t cksum_flags = {
@@ -339,7 +341,8 @@ index 0000000000..afd038efb5
 +		0, 0, 0, 0
 +	};
 +
-+	/* extract status_error0 field from 4 descriptors,
++	/**
++	 * extract status_error0 field from 4 descriptors,
 +	 * and mask out everything else not in desc_mask
 +	 */
 +	flags = vzip2q_u32(vreinterpretq_u32_u64(descs[0]),
@@ -351,14 +354,16 @@ index 0000000000..afd038efb5
 +
 +	tmp_desc = vandq_u32(tmp_desc, desc_mask);
 +
-+	/* shift each 32-bit lane right by 4 so that we can use
++	/**
++	 * shift each 32-bit lane right by 4 so that we can use
 +	 * the checksum bit as an index into cksum_flags
 +	 */
 +	tmp_desc = vshrq_n_u32(tmp_desc, 4);
 +	flags = vreinterpretq_u32_u8(vqtbl1q_u8(cksum_flags,
 +			vreinterpretq_u8_u32(tmp_desc)));
 +
-+	/* shift left by 1 bit because we shift right by 1 bit
++	/**
++	 * shift left by 1 bit because we shift right by 1 bit
 +	 * in cksum_flags
 +	 */
 +	flags = vshlq_n_u32(flags, 1);
@@ -373,7 +378,8 @@ index 0000000000..afd038efb5
 +	uint32x4_t l3_l4_flags = vandq_u32(flags, l3_l4_mask);
 +	flags = vorrq_u32(l3_l4_flags, l4_outer_flags);
 +
-+	/* we need to mask out the redundant bits introduced by RSS or
++	/**
++	 * we need to mask out the redundant bits introduced by RSS or
 +	 * VLAN fields.
 +	 */
 +	flags = vandq_u32(flags, cksum_mask);
@@ -483,11 +489,11 @@ index 0000000000..afd038efb5
 +	uint32_t *ptype_tbl = rxq->ice_vsi->adapter->ptype_tbl;
 +
 +	uint16x8_t crc_adjust = {
-+		0, 0,	/* ignore pkt_type field */
++		0, 0,			/* ignore pkt_type field */
 +		rxq->crc_len,	/* sub crc on pkt_len */
-+		0,	/* ignore high-16bits of pkt_len */
++		0,				/* ignore high-16bits of pkt_len */
 +		rxq->crc_len,	/* sub crc on data_len */
-+		0, 0, 0	/* ignore non-length fields */
++		0, 0, 0			/* ignore non-length fields */
 +	};
 +
 +	/* mask to shuffle from flex descriptor to mbuf */
@@ -555,7 +561,8 @@ index 0000000000..afd038efb5
 +	/* move the next 'n' mbufs into the cache */
 +	sw_ring = &rxq->sw_ring[rxq->rx_tail];
 +
-+	/* A. load 4 packets in one loop
++	/**
++	 * A. load 4 packets in one loop
 +	 * [A*. mask out 4 unused dirty fields in desc]
 +	 * B. copy 4 mbuf pointers from sw_ring to rx_pkts
 +	 * C. count the number of DD bits among the 4 packets
@@ -698,10 +705,13 @@ index 0000000000..afd038efb5
 +		/* C* extract and record EOP bits */
 +		if (split_packet) {
 +			uint8x16_t eop_bits;
++
 +			/* and with mask to extract bits, flipping 1-0 */
 +			eop_bits = vmvnq_u8(vreinterpretq_u8_u16(staterr));
 +			eop_bits = vandq_u8(eop_bits, eop_check);
-+			/* the staterr values are not in order, even though
++
++			/**
++			 * the staterr values are not in order, even though
 +			 * the count of DD bits doesn't care. However, for
 +			 * end of packet tracking, we do care, so shuffle.
 +			 * Previously: descs[3] descs[1] descs[2] descs[0]
@@ -718,11 +728,14 @@ index 0000000000..afd038efb5
 +		/* C.3 count available number of descriptors */
 +		/* mask everything except DD bit */
 +		staterr = vandq_u16(staterr, dd_check);
-+		/* move the statue bit (bit0) into the sign bit (bit15)
++		/**
++		 * move the statue bit (bit0) into the sign bit (bit15)
 +		 * of each 16-bit lane
 +		 */
 +		staterr = vshlq_n_u16(staterr, ICE_UINT16_BIT - 1);
-+		/* reinterpret staterr as a signed 16-bit and
++
++		/**
++		 * reinterpret staterr as a signed 16-bit and
 +		 * arithmetic-shift-right by 15
 +		 * each lane becomes 0xFFFF if original DD bit was 1, otherwise 0.
 +		 * then interpret back to unsigned u16 vector
@@ -730,7 +743,8 @@ index 0000000000..afd038efb5
 +		staterr = vreinterpretq_u16_s16(vshrq_n_s16(vreinterpretq_s16_u16(staterr),
 +				ICE_UINT16_BIT - 1));
 +
-+		/* reinterpret u16x8 vector as u64x2, and fetch the low u64
++		/**
++		 * reinterpret u16x8 vector as u64x2, and fetch the low u64
 +		 * which contains the first four 16-bit lanes, and invert
 +		 * all bits.
 +		 */
