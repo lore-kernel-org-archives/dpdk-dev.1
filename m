@@ -2,66 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE95FB5190
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 03:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E246FB5190
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 03:53:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0404740A67;
-	Tue,  7 Apr 2026 05:52:33 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0BB1F40698;
+	Tue,  7 Apr 2026 05:52:34 +0200 (CEST)
 Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
- by mails.dpdk.org (Postfix) with ESMTP id 33F844066B
- for <dev@dpdk.org>; Tue,  7 Apr 2026 05:52:28 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2085E40687
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 05:52:29 +0200 (CEST)
 Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-1279eced0b9so5269016c88.0
- for <dev@dpdk.org>; Mon, 06 Apr 2026 20:52:28 -0700 (PDT)
+ a92af1059eb24-1273349c56bso5687627c88.0
+ for <dev@dpdk.org>; Mon, 06 Apr 2026 20:52:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775533947;
- x=1776138747; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775533948;
+ x=1776138748; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=DtyW6bb7BrOxb5YSe7/rWGzJ04QGtJElFlyoH3EuEFY=;
- b=vJymImyu+GHAl4/caMP94MYUC8WR3cyxzuTCb28BO7aqUKTqFHma+/74zBP0Hj2ubY
- sOCCvu5jsBi8F4KVeJZmVQyaGphG8F5wewu3A/SUAChpOy3IjZuNVS24zJWxwkwwSU94
- vRJfNMAmsvSk9xAMM1TewN83OwHU6bg4nfOtOoOu0RU1vXTxjLw2jEBPEeq54uXTS0AO
- YVwsM7fj9uq/XlD7VgESrGKpebP0mwOBSH9dT4YHgUAkSxEDlEWIstV3ByGn8bTH6xFm
- 4vxesRt3w08EJX2I0wCQCeEij2kmrJO1d1Pp2Kz19VAtdLRu2R81Omqik1d5aHgRo1oC
- SQdw==
+ bh=nFfZL8vGx9ZVd4z8iyNlSTxal5c9tWmwJUPNjO/IOqQ=;
+ b=TgiOPyc7vyWZB2KO1Ow9UM/L7adEQ7MIM9vYjk+YeMNBS1YRv0P/mbKCiBBenx4uxH
+ TtwTwSoTl9/hupgI19hWcnl7PkB5N+6eVRK7DPGqfT/7Cn5DxFIP6WGCMsZeqMA5z3O+
+ V/Ob+PJeYMHlZIAdVE3Y9Lg2KE1SGVoV/JGeYWQU1nO53d35zKCJzhN8xBn49vXY86T6
+ /YOyvKx9PxAlvTI+DoHMDfRF06Hlcmb2wm65B72b14LjvyEmw6nIa+gVpAj0IhMgGwRN
+ 5i6U3qhQqN0+GJcofdYUJLo0cyqJyOkjZ4EbdCyo1EkTYoWgKK3ySw8cQBdS50gKpvIA
+ J+VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775533947; x=1776138747;
+ d=1e100.net; s=20251104; t=1775533948; x=1776138748;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=DtyW6bb7BrOxb5YSe7/rWGzJ04QGtJElFlyoH3EuEFY=;
- b=iUCahy059In4liu9sKa68Wjv558Q6xIOl6eo6BypEdXusHXzIyOJW1TTsLy9VSwziO
- i11Ji/pyuaewazMRpTJwqYcjabnbRWPRnXqCUEsMkpI8twiYDoUe9F9LhN1xyeqNbCod
- XAL2iCM5mMuYK7jQuqepDosU1gf20qZm8uMPCWIRlOn5PJRF8CT2E/7otEWYt4E7XpYF
- ZLyv25vw74npM3nyzu6820GGwJPNiC1ZXL9hYrWm2hd/syzagttYR8t2I4hK3rJKO9ph
- k0xZa1KyyEFAcxph20+Wkch1XAq9DgLAUPYHBZWcMio65hNoSKDXZrGoQSURVkhgasb/
- x7Ew==
-X-Gm-Message-State: AOJu0YwesWdclaCY/DCyh4ZycS4W3pK4ZPtWMCHUi/VIlWrwuIzmWYtW
- KmgOnxuUSTEw8JnkGTQne7Ecxjlt54fiZnihw1YejjjczvI5Pf2zfP+edNtr3VKOIFAUX+u+c+G
- pLHIV
-X-Gm-Gg: AeBDievsy3LB6CqSmK4QWaEnK8v4PUt00bQOJCRv/b9EqPh7/mIz1eAEfCuRxN/EzS7
- kxiVOTD8qTvEQmtu/nsJz6a7DrKbi6zYfQRr8s1aTDzVlGUcWaFyfDz8NvvFtHFRZQnu5Zw/pDr
- 6t6OnG5mmNudVZ16rqVwsUvf6lriqo5B06K+3wonK6H59bQ5a1zVN2YnMLsquzbu5pfoBYr8vbw
- ZdPn0IUJlFdDMnlWvQ3PcoR63Ph9Ca3ZEueLWdE29Np3PTYFyX7DeEtPyrafO9B541ZTcklMgeB
- gUZNX5jY0hyLV4bxQoU0rtil48xMg3Zp9t1uMPsT/ICGiPVhoZEgYbPmFglLJP5CYyZ0Ua45Pfd
- 3qxTgad4U1YutcA/7uMoEGXVYmEQ8h8WR2yV7PSOb9tr1kdInf9WIg4ExiZMH8lgOj4wO/a569x
- YGL97/4VqJGIYCFJb/JBpqfiPG6ZaiZjKm
-X-Received: by 2002:a05:7022:90e:b0:128:d752:e074 with SMTP id
- a92af1059eb24-12bfb6e7b54mr7072575c88.1.1775533947231; 
- Mon, 06 Apr 2026 20:52:27 -0700 (PDT)
+ bh=nFfZL8vGx9ZVd4z8iyNlSTxal5c9tWmwJUPNjO/IOqQ=;
+ b=URZP01YxOk4Eon6CirulTDiAUREWviLd9v2lZXZvOJ16nFBP/FMbrl52+sLPdqalJ9
+ rjZ8LQir9dJWFBqSzeaQVDdD6mqtvtOlNpuWHocKIojjCFTq8Iyo/yYWMFVu+MDT0dFQ
+ CzAN0ejdAN146Ocui3/pmasSgH4lx3NtGikFqehS5c8KOGLl9W+PyVIRl/CVxo/Ae8nm
+ LZBoK7c5jamjZOJuptk/xun/XkR9vWZnVWHa2DDzU4lc25ufoy4DhbzvMEkaGtRWQSgt
+ a2blz1DsWnvwdl+2br/ssd43HQKnTCMBQ0JM1pD6YGBTWhGzRArFTiHmct/+Br9P//Pq
+ VkfQ==
+X-Gm-Message-State: AOJu0Yw4qXwyuqBALcmcFLoBjiEHvawmzLwmNSoQ9bPiR5rtG8Y301Vh
+ af/TwtxFrtK6LfYhM1YGGXBtv/6IoemKhKCOnirlSuNPZbztqkdW7lJowGQefx/PCoamhqzGnRP
+ EZ8qu
+X-Gm-Gg: AeBDiesSx2eKMeaDCATeFW5VcQs1C3+jBNQuF0yzGnS7GzN9RNg/SDLrVeTgss19mr2
+ KkkP+Ygy6wTwGYp7jOlbPr2/Lf0TkpUH3ZRhEM4wPZJl5m49G8FMkXbBgRfpEotlPCAwUPCz00Q
+ zZroVg5nmkWilnh/PHayiJyESeIxK0FfyFC2nDcuSXP4IMFvHvtb3TMyLah6sRzH4Fhkpllh1Un
+ 74adbSYHW+5ZsIlMNgOHGKvtfID6ugC8gskuhAjOHcuf3b59ipKtl2tzoiuZhjrni2gCXG4Qv5w
+ oqHw2Y+7sPWH4JrUeTbtuejwwXRVcCHUCNu5fsvdkSOODRstTtmIFxAE2uOIIbwUKbAYfpt+csF
+ OkOu3RB/VPyy01lqpSJloZE3keFrrUKr1URkW65WLMJrPIWPDPDvXhe4xVLm4yEtm2577ttLLg7
+ Vsg7oKDd3QTrkVi3b7qprwEtx7LQkiI0/6
+X-Received: by 2002:a05:7022:fd05:b0:128:d51a:5157 with SMTP id
+ a92af1059eb24-12bfb7790a4mr7759738c88.33.1775533948156; 
+ Mon, 06 Apr 2026 20:52:28 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12bede545e8sm12716093c88.11.2026.04.06.20.52.26
+ a92af1059eb24-12bede545e8sm12716093c88.11.2026.04.06.20.52.27
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 06 Apr 2026 20:52:26 -0700 (PDT)
+ Mon, 06 Apr 2026 20:52:27 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH 16/23] examples/qos_sched: eliminate shadowed variables
-Date: Mon,  6 Apr 2026 20:49:42 -0700
-Message-ID: <20260407035209.650419-17-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 17/23] examples/l2fwd-jobstats: fix shadowed variable
+Date: Mon,  6 Apr 2026 20:49:43 -0700
+Message-ID: <20260407035209.650419-18-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260407035209.650419-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
@@ -80,105 +79,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The port_params and subport_params are global variables,
-then passed to load functions. The names clash so just use
-the globals.
+The inner loop across ports was shadowing other definition
+of variable i.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/qos_sched/cfg_file.c  | 12 ++++++------
- examples/qos_sched/cfg_file.h  |  4 ++--
- examples/qos_sched/init.c      |  4 ++--
- examples/qos_sched/meson.build |  1 -
- 4 files changed, 10 insertions(+), 11 deletions(-)
+ examples/l2fwd-jobstats/main.c      | 6 +++---
+ examples/l2fwd-jobstats/meson.build | 1 -
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/examples/qos_sched/cfg_file.c b/examples/qos_sched/cfg_file.c
-index c75cf9db2e..3ca06c2ff9 100644
---- a/examples/qos_sched/cfg_file.c
-+++ b/examples/qos_sched/cfg_file.c
-@@ -41,20 +41,20 @@ int parse_u64(const char *entry, uint64_t *val)
- }
+diff --git a/examples/l2fwd-jobstats/main.c b/examples/l2fwd-jobstats/main.c
+index 036bd4f951..f2c284cebb 100644
+--- a/examples/l2fwd-jobstats/main.c
++++ b/examples/l2fwd-jobstats/main.c
+@@ -515,7 +515,6 @@ l2fwd_main_loop(void)
+ 			uint64_t repeats = 0;
  
- int
--cfg_load_port(struct rte_cfgfile *cfg, struct rte_sched_port_params *port_params)
-+cfg_load_port(struct rte_cfgfile *cfg)
- {
- 	const char *entry;
+ 			do {
+-				uint8_t i;
+ 				uint64_t now = rte_get_timer_cycles();
  
--	if (!cfg || !port_params)
-+	if (!cfg)
- 		return -1;
+ 				repeats++;
+@@ -526,8 +525,9 @@ l2fwd_main_loop(void)
+ 					rte_memory_order_relaxed);
+ 				need_manage |= stats_read_pending;
  
- 	entry = rte_cfgfile_get_entry(cfg, "port", "frame overhead");
- 	if (entry)
--		port_params->frame_overhead = (uint32_t)atoi(entry);
-+		port_params.frame_overhead = (uint32_t)atoi(entry);
+-				for (i = 0; i < qconf->n_rx_port && !need_manage; i++)
+-					need_manage = qconf->rx_timers[i].expire < now;
++				for (uint16_t port_id = 0;
++				     port_id < qconf->n_rx_port && !need_manage; port_id++)
++					need_manage = qconf->rx_timers[port_id].expire < now;
  
- 	entry = rte_cfgfile_get_entry(cfg, "port", "number of subports per port");
- 	if (entry)
--		port_params->n_subports_per_port = (uint32_t)atoi(entry);
-+		port_params.n_subports_per_port = (uint32_t)atoi(entry);
+ 			} while (!need_manage);
  
- 	return 0;
- }
-@@ -279,13 +279,13 @@ cfg_load_subport_profile(struct rte_cfgfile *cfg,
- }
- 
- int
--cfg_load_subport(struct rte_cfgfile *cfg, struct rte_sched_subport_params *subport_params)
-+cfg_load_subport(struct rte_cfgfile *cfg)
- {
- 	bool cman_enabled = false;
- 	const char *entry;
- 	int i, j, k;
- 
--	if (!cfg || !subport_params)
-+	if (!cfg)
- 		return -1;
- 
- 	memset(app_pipe_to_profile, -1, sizeof(app_pipe_to_profile));
-diff --git a/examples/qos_sched/cfg_file.h b/examples/qos_sched/cfg_file.h
-index 71d280718f..26552f1e30 100644
---- a/examples/qos_sched/cfg_file.h
-+++ b/examples/qos_sched/cfg_file.h
-@@ -10,11 +10,11 @@
- 
- int parse_u64(const char *entry, uint64_t *val);
- 
--int cfg_load_port(struct rte_cfgfile *cfg, struct rte_sched_port_params *port);
-+int cfg_load_port(struct rte_cfgfile *cfg);
- 
- int cfg_load_pipe(struct rte_cfgfile *cfg, struct rte_sched_pipe_params *pipe);
- 
--int cfg_load_subport(struct rte_cfgfile *cfg, struct rte_sched_subport_params *subport);
-+int cfg_load_subport(struct rte_cfgfile *cfg);
- 
- int cfg_load_subport_profile(struct rte_cfgfile *cfg,
- 			     struct rte_sched_subport_profile_params
-diff --git a/examples/qos_sched/init.c b/examples/qos_sched/init.c
-index ace7279c67..561f9e0619 100644
---- a/examples/qos_sched/init.c
-+++ b/examples/qos_sched/init.c
-@@ -296,11 +296,11 @@ app_load_cfg_profile(const char *profile)
- 	if (file == NULL)
- 		rte_exit(EXIT_FAILURE, "Cannot load configuration profile %s\n", profile);
- 
--	ret = cfg_load_port(file, &port_params);
-+	ret = cfg_load_port(file);
- 	if (ret)
- 		goto _app_load_cfg_profile_error_return;
- 
--	ret = cfg_load_subport(file, subport_params);
-+	ret = cfg_load_subport(file);
- 	if (ret)
- 		goto _app_load_cfg_profile_error_return;
- 
-diff --git a/examples/qos_sched/meson.build b/examples/qos_sched/meson.build
-index 4657c756a1..92657ce8a5 100644
---- a/examples/qos_sched/meson.build
-+++ b/examples/qos_sched/meson.build
-@@ -18,4 +18,3 @@ sources = files(
-         'stats.c',
+diff --git a/examples/l2fwd-jobstats/meson.build b/examples/l2fwd-jobstats/meson.build
+index 51da6e277e..d59d3d6555 100644
+--- a/examples/l2fwd-jobstats/meson.build
++++ b/examples/l2fwd-jobstats/meson.build
+@@ -12,4 +12,3 @@ sources = files(
+         'main.c',
  )
  cflags += no_wvla_cflag
 -cflags += no_shadow_cflag
