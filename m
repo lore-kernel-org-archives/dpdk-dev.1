@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C945BFF5106
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36AB6FF5106
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:17:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9326340659;
-	Tue,  7 Apr 2026 17:17:44 +0200 (CEST)
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
- [209.85.215.173])
- by mails.dpdk.org (Postfix) with ESMTP id 7600240654
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:17:43 +0200 (CEST)
-Received: by mail-pg1-f173.google.com with SMTP id
- 41be03b00d2f7-c76b95e652bso1642017a12.3
- for <dev@dpdk.org>; Tue, 07 Apr 2026 08:17:43 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 910A440430;
+	Tue,  7 Apr 2026 17:17:47 +0200 (CEST)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com
+ [209.85.215.177])
+ by mails.dpdk.org (Postfix) with ESMTP id 911EF40664
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 17:17:46 +0200 (CEST)
+Received: by mail-pg1-f177.google.com with SMTP id
+ 41be03b00d2f7-c76ffd06593so474037a12.0
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 08:17:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575062;
- x=1776179862; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575066;
+ x=1776179866; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=+LH0sVG46i6spXShnxf5US5jJVkIYroHe739/z0Bcvc=;
- b=ieTTgC8lOze70gE5meWhungDsdtAyZ61r0U86btsv1VyM+D3fksblLF94zdHaXVcZ2
- K4fqbaHKjaJ9k+4qvfyIfOLzZ+szPXxh9iQKFSToOkUpREFMQ+cSfXFRwJeZGgPxrua/
- GyaGIfGRpRaodM73Oun2rutrGnUTxN4QsFWKgNXzi5OYdPi74rz1ixqC1GXLzA0TcElG
- wh/AeXJYk7ozFh30n/ij9i5Bdk2S1+5G2ENicRJ7AhOoHbCSuIgUz4NKNm6OFhwm5dQP
- EQPGi+y6EcqV0iHxmgXRtVKqIwVbto/+23kBEWw7b6d3tsojmqgKjoRRBaY42EiH/X9X
- B2Hw==
+ bh=UwHmQ2PRbGRhsF9pqMmzveqxAWBY9EEY9xGgP77PbqE=;
+ b=zCyQmo2bmNjA9B7a9qPn/T9dHTCDLdQQCeRbC7Y6wn59LAEecyhxnH8WhvseqVI17x
+ RtWusYinJBkIWRviU/IRm8z/L5IT+2wFwntmM51gNImCTM/zLxGjS9zxWkFDJXEdWgt+
+ XZUCf1WzKxFldojNVfpqH/Nwn5V3U42UTZPeautRAbhLNLD4Kj0KsMVkQjvHHNflv6RQ
+ Nvc5tNAVwZqkkzMHHaTHHs00Je7tDpQVeFXKZbHZefvPZq/4rMl4kIms6PmONKA/gcmx
+ ZiQzZoc4ZMzwO6Bx6FTauxh4Ug7aIDXNw9ImZZbfyCzZQMbxCi3bnwFS6vjv5leoBo8J
+ fBqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775575062; x=1776179862;
+ d=1e100.net; s=20251104; t=1775575066; x=1776179866;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=+LH0sVG46i6spXShnxf5US5jJVkIYroHe739/z0Bcvc=;
- b=NJbooavJXWQU/26tiesR0z7i8e3nm8SRFptETEmXo1lvsVFACGKXbkpKpvdb0NH/fT
- ZFcaQnW58uGwsHwRgkKv8zxG+tu+96lXpdnv62VA9i4yTTyvgj7+fFhY1kHfjgMU2gL6
- eM2AV57wrQ4i6kCw+w+hsPXjXWU51fsuS3JvNYQF2Iu0ErQubTKNIypfZ5/1NSB2X4AR
- Lp8XtxZTTqBT2LBCgUcJ/r4EiA1i0GDbN0kr+Tx2B1iq4Nb5ysopLNHkM2fs7O5R2Exh
- i6WvkK98DqVAelex0bupEwuCzwuVKdcH1dh36Rsq3C4CIVdizb/Y0UCtTFFDaFc8TObQ
- IVPA==
-X-Gm-Message-State: AOJu0YwckyawwU871Q/Z5b8vA5m4LYO4iGNwvSdI3QRZbGgodAfpd/c6
- vKPJLvZ54rofuT7uOMHC+C1MHJJIbCA+IBHsAmwdLqchftRMZorNPIJaFiGSYTwbr4IqNLwHDQC
- WZkzK
-X-Gm-Gg: AeBDietrIqmrUROx2UltGHUjmjh3p5z33p1SSE8zYHWVvfdazAnd1UoKF+I3neBw+XG
- AoInwuhUnE8WZ8jFmRFLAwPPZwiLT94q1VYFVeJP0l91DcRJHHyryCOEy7vozfPfEBxZ2h6w2JP
- UI+HEG7OdopToGRwiMSdswvYSbyHj+DenPuNv43HEUl9ZBL5XPxgFQn47j8j1oOD4s9JsAXKorM
- 6Gb3K8U9aryDun7n1N4I5t+IaAo3RES+9gVd7DH4xnEwt80fGwbhpT9CevpamdWmJlSxl7EpVUo
- C5kwiHMu+3DF/L8j1M7Kor6i9hEHStOt73YG+0EXfa3rHQDIK9uV0bmR5M+pD02T859WbIlhaPK
- O7V6TP/oBD9pqum8yXOWW2QCI3owADFL2pS7taOtDmaGYA/RJAumEeRiuCYSIx9CLhfgoWIKT65
- AlBaHf6DbWPNiqgGxrNIeK05j6wVAdM7iN
-X-Received: by 2002:a05:6a20:958e:b0:398:a027:4732 with SMTP id
- adf61e73a8af0-39f2f0a3accmr16760036637.52.1775575062576; 
- Tue, 07 Apr 2026 08:17:42 -0700 (PDT)
+ bh=UwHmQ2PRbGRhsF9pqMmzveqxAWBY9EEY9xGgP77PbqE=;
+ b=aJXT29fpmwZueJy54GKUzcGhWIGIpdwfDUMB/MshikTj5bHhutQNV2QRL8KUzDqTiA
+ GZ6TLJYOQMQgB0ruL4WgQfpGjUG1e1D0CSzjwkSXuqMSXpqNhjJJZ129Lf/kJ0Rlwvhl
+ H6iExNtXQ6jc3DV9es8GbvbqfiEoYi4WpP2gaSzI9ci9JXvXS5vxM8Tjx0zFcJmR0mjb
+ C3diqs16m2+rhBk3j3Iy/pp6gcpaJiUAO6YJB+r1AI2M4S4QZrKfw18wcN+lrFim/bBp
+ LbA0gY4Vst92UwpD5qWTBJ2gHTsl9M8/jYAXQs6bbDDr4KCBkCMq84cnFigvyVXYOd1L
+ WExQ==
+X-Gm-Message-State: AOJu0Ywvehe2jw1N4ztrBFw108Xe8FlMMm2XxrKZa4AM/1ia29qnZo8v
+ Y07vcMJq/piF7HUk5QOTI1MwhMY/uOZ6QURLsHWvYfkBoKw5hydv8RMllxgqyR0tehSGoUh2YOr
+ UnatQ
+X-Gm-Gg: AeBDieuVN+FysEsQryua/qRYe7GhP4hUyOwH/wrGxko9XGrd1HnXtv8uagDXzHSGzlt
+ wLYKZIH4bVMWszhW8mNzDt1O2ryiLkn3tVSjBSEVpJcCLzAUSMp3sfSt2uO3ACmHnyCDMMG4Lrm
+ 9NJIdj+dcQ2MvBMdRWZA8+SdoRiZr4rDVVwooQJ/Q07BVUTlrCenxcEjw78l/I5l5pibGxAmUE3
+ n5eqmSOuIUxQV32pd/HOV8x7U1etIIH787OrUqT95aeQCXZVj6jGdzyYRvDDkF9PFVnJbmqzAia
+ WMbbCgnUWrVVI+B8DlCcX2SwcZnQ0x6lHjVPrw2V01T9JfmqsiYxOkvGcH9IZ1LJ9ejQyuE8xD3
+ 2QZv1GnjTddehVciGNDIHsSRtnEgQUorIWxBO9R0Eh4NEPFlaPJBfKmkSb1RaKQjfbhLdbTzs1L
+ n1AQls8fwq1nz0AVK7bIBbqUGNpeJakq4L
+X-Received: by 2002:a05:6a21:3397:b0:398:ba99:bc87 with SMTP id
+ adf61e73a8af0-39f2ed7adcamr17694020637.3.1775575065521; 
+ Tue, 07 Apr 2026 08:17:45 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.17.40
+ 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.17.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 08:17:42 -0700 (PDT)
+ Tue, 07 Apr 2026 08:17:45 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2 01/23] examples/ethtool: resolve shadow variable warnings
-Date: Tue,  7 Apr 2026 08:15:57 -0700
-Message-ID: <20260407151732.272195-2-stephen@networkplumber.org>
+Subject: [PATCH v2 02/23] examples/eventdev_pipeline: resolve shadow variable
+ warning
+Date: Tue,  7 Apr 2026 08:15:58 -0700
+Message-ID: <20260407151732.272195-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260407151732.272195-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
@@ -82,53 +83,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix shadow variable warning by renaming the function parameter
-from 'app_cfg' to 'ptr_cfg' to avoid shadowing the global variable.
+Fix shadow variable warning by reusing the existing 'ret' variable
+instead of declaring a new one with the same name.
 
-../examples/ethtool/ethtool-app/main.c:89:44: warning: declaration of
-'app_cfg' shadows a global declaration [-Wshadow]
+../examples/eventdev_pipeline/pipeline_worker_tx.c:877:25: warning:
+declaration of 'ret' shadows a previous local [-Wshadow]
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- examples/ethtool/ethtool-app/main.c | 4 ++--
- examples/ethtool/meson.build        | 1 -
+ examples/eventdev_pipeline/meson.build          | 1 -
+ examples/eventdev_pipeline/pipeline_worker_tx.c | 4 ++--
  2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/examples/ethtool/ethtool-app/main.c b/examples/ethtool/ethtool-app/main.c
-index b6bbae70d2..6545eb322d 100644
---- a/examples/ethtool/ethtool-app/main.c
-+++ b/examples/ethtool/ethtool-app/main.c
-@@ -86,7 +86,7 @@ void mark_port_newmac(int idx_port)
- 	ptr_port->port_dirty = 1;
- }
- 
--static void setup_ports(struct app_config *app_cfg, int cnt_ports)
-+static void setup_ports(struct app_config *ptr_cfg, int cnt_ports)
- {
- 	int idx_port;
- 	int size_pktpool;
-@@ -101,7 +101,7 @@ static void setup_ports(struct app_config *app_cfg, int cnt_ports)
- 	cfg_port.txmode.mq_mode = RTE_ETH_MQ_TX_NONE;
- 
- 	for (idx_port = 0; idx_port < cnt_ports; idx_port++) {
--		struct app_port *ptr_port = &app_cfg->ports[idx_port];
-+		struct app_port *ptr_port = &ptr_cfg->ports[idx_port];
- 
- 		ret = rte_eth_dev_info_get(idx_port, &dev_info);
- 		if (ret != 0)
-diff --git a/examples/ethtool/meson.build b/examples/ethtool/meson.build
-index 3ad948d109..d7f63d48af 100644
---- a/examples/ethtool/meson.build
-+++ b/examples/ethtool/meson.build
-@@ -17,7 +17,6 @@ sources = files(
-         'ethtool-app/main.c',
+diff --git a/examples/eventdev_pipeline/meson.build b/examples/eventdev_pipeline/meson.build
+index c317f4b3e2..b8f5cfe109 100644
+--- a/examples/eventdev_pipeline/meson.build
++++ b/examples/eventdev_pipeline/meson.build
+@@ -13,4 +13,3 @@ sources = files(
+         'pipeline_worker_generic.c',
+         'pipeline_worker_tx.c',
  )
- includes = include_directories('lib', 'ethtool-app')
 -cflags += no_shadow_cflag
+diff --git a/examples/eventdev_pipeline/pipeline_worker_tx.c b/examples/eventdev_pipeline/pipeline_worker_tx.c
+index f7b7937d6a..a3090e3b49 100644
+--- a/examples/eventdev_pipeline/pipeline_worker_tx.c
++++ b/examples/eventdev_pipeline/pipeline_worker_tx.c
+@@ -874,8 +874,8 @@ init_adapters(uint16_t nb_ports)
+ 		service.callback = service_rx_adapter;
+ 		service.callback_userdata = (void *)adptr_services;
  
- deps += 'bus_pci'
- if dpdk_conf.has('RTE_NET_IXGBE')
+-		int32_t ret = rte_service_component_register(&service,
+-				&fdata->rxadptr_service_id);
++		ret = rte_service_component_register(&service,
++					&fdata->rxadptr_service_id);
+ 		if (ret)
+ 			rte_exit(EXIT_FAILURE,
+ 				"Rx adapter service register failed");
 -- 
 2.53.0
 
