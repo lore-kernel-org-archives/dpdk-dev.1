@@ -2,69 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A56FFD5F87
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 08:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B974DFD5F92
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 08:25:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 292154060A;
-	Wed,  8 Apr 2026 10:25:42 +0200 (CEST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com
- [209.85.208.179])
- by mails.dpdk.org (Postfix) with ESMTP id 2E7DB4025F
- for <dev@dpdk.org>; Tue,  7 Apr 2026 13:47:34 +0200 (CEST)
-Received: by mail-lj1-f179.google.com with SMTP id
- 38308e7fff4ca-3870778358aso41200111fa.1
- for <dev@dpdk.org>; Tue, 07 Apr 2026 04:47:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 49C794014F;
+	Wed,  8 Apr 2026 10:25:43 +0200 (CEST)
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com
+ [209.85.167.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 8074540265
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 16:19:56 +0200 (CEST)
+Received: by mail-oi1-f171.google.com with SMTP id
+ 5614622812f47-46a9ae3f860so1708501b6e.1
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 07:19:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1775562453; x=1776167253; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1775571595; x=1776176395; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=sC0938m/KXZmLe560SWoY/bQXn8cgdg0AUmSOpnPLIA=;
- b=O406Qtxk6xohS1Eih5L87mBf+42ltPrbGfI6Wgrz8dJApVousWofWtjaY10xJwNWXA
- Ef4jslCP4nT6iLzZQZbI+RPlhTiNLAt1pUrgv9IpmviKuTnUMoYgQva38mVWQsZS0qdg
- WDR2Lsjkxy4qkSxQ0INUnpzHhGCOGHWgH+kuXyHDp6L5tE/9D+JB63byecnRwBGmDf0a
- 8KAwHHfo+gwawxizCMpPCKBOP1XC64jZ20KadtdVY4xbJ2tGIzBCbyarJLhB8/DGY1zr
- V/u3prowwy28yUNTCWGTaUvc18nKi9VcFFtizkayGRYi9gkvEg+CnNCTc5S1XBehs7iO
- subA==
+ bh=CkecN2gXN4vQMjbgKxh1sORindU3tyECdthnMMR+Cps=;
+ b=MNVGlI+X/kixyho+dztpn1ilP7mNlQAQ9QQrkzO1AyTTVcoInj6jXe4s6l51bPlN9y
+ HwNyeIi07K+kVlYGTEZw2HFVg9FMQBONqzRY9bWl8kOr3dhxws/rgVJniwoe2veBSXZt
+ KhRxu322ApGh6DKuOewUMxrXVJ9jFHfUhVb96PA9EaTmw25Jwyc/jpGyNtSNDAhmyZUr
+ kZU4b2GuL5E47X8SkJy0sgI2twBGpx/eNrQf6s3oAjZr7Iyw3IQCfSaVXOm6iL61rUJR
+ bo7mJ8Ala+fMSh5yTEr/TetWgvmHZf5w8N0q911zCovc7h6UnJOJCjA3idC3Ufa2X1sH
+ LjAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775562453; x=1776167253;
+ d=1e100.net; s=20251104; t=1775571595; x=1776176395;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=sC0938m/KXZmLe560SWoY/bQXn8cgdg0AUmSOpnPLIA=;
- b=aFytLlq3GXauOPEabtd/1WlLQLB9yy9eKAqJ1yHg76nn5eIRjBVoe8IdUvGxd79DQU
- LIjwaHqr79/yR1c0NZ5dE1KOmNgVwplcl0K5O9MvOC1DLyU87guql66Li3+LBWC56Kig
- dLMwSWCInpbsTVvVZGyTEXufFY23lt/1c0f+uFbb06fm0tBfPxy6UF+e0hznAEf9qKdQ
- WteAEGvPG2fPl4p4eiOTwy2r/J3lF3WqfTDdSHBhP1prUnc+fA00vAgwYP3AJvUdcXHo
- 5DKeuvmAlRP8v5s9IK1godDxoaXIv/uy5jQijWOcMctTBAJQrkN8gTj0OeDlaBMrB91O
- EiEw==
-X-Gm-Message-State: AOJu0Yz9ytGCObBhXLFnqfsa/Qjt6IoHhKy77dwNowblsPi+LAq3LZGw
- kRfPHvCKdt8sPWV0sgH7yd58ALJty1wh/riQc060nbDDkVqsCGWvhWI=
-X-Gm-Gg: AeBDieuSHAIM4VDX0zf+v4Cl9usGFHkl8JVAOQdNL8Ov5nwUmhnzVGIvma7DB9dvWfC
- Sq4HJM/QqBLxhcl6ocXCTDi731z5xFgirlupuCuXB+kUD3egpJnOoWDSWtD/6i2cKpGKppVMqAS
- Z/93z0vFckNKZltsxFhU3d+y6kIVubzM6s0WlJyfm5n0W3E6gWT860QPlstjb5iimTa16qUvO3y
- w85zLEK73NAZwFTb776V/vUAmigat89bMOrtO7Eb8w1SPNgkbfat/4xhNnJv0SKRcych0QOi6HT
- LnJB3HirH+2xDGxTtKkElLlWfHKf4iqUlbPx1FRydtyc4qmO8Zn4OEAuEatYdpTVMH1NWSoBZNP
- jcj7hT4tYSwUeBmabUn5F2Ut/e1COYvHoLL171P0o9sBPq/Buhti5JPC/8Nf2KUlOaOc6Hn6+za
- 391hV1YCVRiqlD4JBUZDOM3hAB6u88/klj
-X-Received: by 2002:a05:651c:2114:b0:38a:d532:47c6 with SMTP id
- 38308e7fff4ca-38d91bf7404mr55858601fa.17.1775562453173; 
- Tue, 07 Apr 2026 04:47:33 -0700 (PDT)
-Received: from dev-debian-1.home ([81.94.128.221])
- by smtp.gmail.com with ESMTPSA id
- 38308e7fff4ca-38cd2108cb3sm35274681fa.25.2026.04.07.04.47.32
+ bh=CkecN2gXN4vQMjbgKxh1sORindU3tyECdthnMMR+Cps=;
+ b=hu4sv7GGmehnH2nmXMgXYlldVV0NZgMMgK+CZO4ThXf+kWBU+mwLxseLng5/EyOHXu
+ xOIsOv8Wrg9GXcq2Du6YfIs/skoZ1uLxs9TLhmSt2vIVLLw1rtIsgymkU6viNLcIrWov
+ Nhn3UUTC7ct3EvrI2iAT6g6VEhn3lNWwj16qNn51QNs42E45qIqYAsVOUIqhXAPIxBNB
+ l5kWkym2WGdesX3rlbJMIAAyvBP7FGicyiE/Td3m8U8TSIGiXt5OQ9fCH09TaSQGUN5U
+ ooGQHpF5whQQYZtLGblZ+sGJkdz4N4tnW5f68TBi7noqqpgA2Edg8Cx7HVbiU4NVlV73
+ 7zhw==
+X-Gm-Message-State: AOJu0YzJOxp6L4eVScXX6ooEaFJ7tP+DBaRqfiMU+WRzwtSAwT2UD1wl
+ nVNnrwLzO+NTIvUwYUDCTT+zoGuSYrIo2HvaDxPO1CQRa9zMcAF5asqo
+X-Gm-Gg: AeBDievV5WP/Pgg5xWRUnUtdfV6XnTn+AlsxUPqmzS+RrFQw06EvVNLwZxGkqYQye/D
+ WohRZ7QhuB1ojcqjHJoI1d/Y0qdx/KNJ807208dPNeHtUL+lCAPksPO7zCPJ20gGxQ2y8mEYgxy
+ DzcLljhy937trDYyjSoK7UxP+2SXgInpEhT8Wf7kyEEE74RBLkE+xHBRHVQeARj8KdejqSjOqrQ
+ JKNdqvhmBvmZENUnIt0XZR4+AaDAQuldKWfCaALAb/4JHY6hvi+36+O7+/De44UyJijl+oqHDyY
+ OIluGQvq+U0I8JU+5L5SDAnnEQVQz4r1H5Vj2VaHwavOe9jJMyWb8MIOFxwLDMa6qXZRDDEwsza
+ Oq6WUgAHu06Hm+iG0JEeKZSMgH0yqO7X6HZJXjoUGz3C9VsFi9X0NjHGJKHqhY1iwA45cMtIkH8
+ gaLBray8YipOSaw4lZI95ZN5s=
+X-Received: by 2002:a05:6808:3027:b0:468:776:1ec3 with SMTP id
+ 5614622812f47-46ef65fa7d8mr8061619b6e.24.1775571595573; 
+ Tue, 07 Apr 2026 07:19:55 -0700 (PDT)
+Received: from gmail.com ([50.93.222.110]) by smtp.gmail.com with ESMTPSA id
+ 5614622812f47-46d9387a763sm9994080b6e.18.2026.04.07.07.19.54
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 04:47:32 -0700 (PDT)
-From: Sergei Iashin <yashin.sergey@gmail.com>
-To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Qiming Yang <qiming.yang@intel.com>, Ting Xu <ting.xu@intel.com>,
- Qi Zhang <qi.z.zhang@intel.com>
+ Tue, 07 Apr 2026 07:19:55 -0700 (PDT)
+From: Weijun Pan <wpan3636@gmail.com>
+X-Google-Original-From: Weijun Pan <wpan36@wisc.edu>
+To: Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
 Cc: dev@dpdk.org,
-	stable@dpdk.org,
-	Sergei Iashin <yashin.sergey@gmail.com>
-Subject: [PATCH] net/iavf: remove dead code in TM node parameter check
-Date: Tue,  7 Apr 2026 14:47:30 +0300
-Message-Id: <20260407114730.1222526-1-yashin.sergey@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	Weijun Pan <wpan36@wisc.edu>,
+	stable@dpdk.org
+Subject: [PATCH] bus/fslmc: fix shadowed variables in queue storage macros
+Date: Tue,  7 Apr 2026 09:19:27 -0500
+Message-Id: <20260407141928.9426-1-wpan36@wisc.edu>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Wed, 08 Apr 2026 10:25:39 +0200
@@ -81,39 +80,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The non-leaf validation in iavf_node_param_check() unconditionally
-rejects a non-NULL wfq_weight_mode pointer at the top of the block.
-The else-if clause below re-tests the same pointer, which is guaranteed
-NULL at that point, making the branch unreachable dead code.
+The queue storage allocation and free macros declare local variables
+named ret and i, which shadow local variables in
+rte_dpaa2_create_dpci_device() and trigger -Wshadow warnings.
 
-Remove the dead else-if block. No functional change.
+Rename the macro-local variables to avoid shadowing without changing
+behavior.
 
-Fixes: 44d0a720a538 ("net/iavf: query QoS capabilities and set queue TC mapping")
-Cc: ting.xu@intel.com
+Bugzilla ID: 1744
+Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
+Cc: jun.yang@nxp.com
 Cc: stable@dpdk.org
 
-Signed-off-by: Sergei Iashin <yashin.sergey@gmail.com>
+Signed-off-by: Weijun Pan <wpan36@wisc.edu>
 ---
- drivers/net/intel/iavf/iavf_tm.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/bus/fslmc/portal/dpaa2_hw_pvt.h | 28 ++++++++++++-------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/net/intel/iavf/iavf_tm.c b/drivers/net/intel/iavf/iavf_tm.c
-index 1d12196ba6..efdbb45b62 100644
---- a/drivers/net/intel/iavf/iavf_tm.c
-+++ b/drivers/net/intel/iavf/iavf_tm.c
-@@ -178,12 +178,6 @@ iavf_node_param_check(struct iavf_info *vf, uint32_t node_id,
- 				RTE_TM_ERROR_TYPE_NODE_PARAMS_N_SP_PRIORITIES;
- 			error->message = "SP priority not supported";
- 			return -EINVAL;
--		} else if (params->nonleaf.wfq_weight_mode &&
--			   !(*params->nonleaf.wfq_weight_mode)) {
--			error->type =
--				RTE_TM_ERROR_TYPE_NODE_PARAMS_WFQ_WEIGHT_MODE;
--			error->message = "WFP should be byte mode";
--			return -EINVAL;
- 		}
+diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+index e625a5c035..bbeccd8fc3 100644
+--- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
++++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
+@@ -204,33 +204,33 @@ struct swp_active_dqs {
  
- 		return 0;
+ #define dpaa2_queue_storage_alloc(q, num) \
+ ({ \
+-	int ret = 0, i; \
++	int qs_ret = 0, qs_idx; \
+ 	\
+-	for (i = 0; i < (num); i++) { \
+-		(q)->q_storage[i] = rte_zmalloc(NULL, \
++	for (qs_idx = 0; qs_idx < (num); qs_idx++) { \
++		(q)->q_storage[qs_idx] = rte_zmalloc(NULL, \
+ 			sizeof(struct queue_storage_info_t), \
+ 			RTE_CACHE_LINE_SIZE); \
+-		if (!(q)->q_storage[i]) { \
+-			ret = -ENOBUFS; \
++		if (!(q)->q_storage[qs_idx]) { \
++			qs_ret = -ENOBUFS; \
+ 			break; \
+ 		} \
+-		ret = dpaa2_alloc_dq_storage((q)->q_storage[i]); \
+-		if (ret) \
++		qs_ret = dpaa2_alloc_dq_storage((q)->q_storage[qs_idx]); \
++		if (qs_ret) \
+ 			break; \
+ 	} \
+-	ret; \
++	qs_ret; \
+ })
+ 
+ #define dpaa2_queue_storage_free(q, num) \
+ ({ \
+ 	if (q) { \
+-		int i; \
++		int qs_idx; \
+ 		\
+-		for (i = 0; i < (num); i++) { \
+-			if ((q)->q_storage[i]) { \
+-				dpaa2_free_dq_storage((q)->q_storage[i]); \
+-				rte_free((q)->q_storage[i]); \
+-				(q)->q_storage[i] = NULL; \
++		for (qs_idx = 0; qs_idx < (num); qs_idx++) { \
++			if ((q)->q_storage[qs_idx]) { \
++				dpaa2_free_dq_storage((q)->q_storage[qs_idx]); \
++				rte_free((q)->q_storage[qs_idx]); \
++				(q)->q_storage[qs_idx] = NULL; \
+ 			} \
+ 		} \
+ 	} \
 -- 
-2.39.5
+2.34.1
 
