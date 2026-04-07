@@ -2,70 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74990F3D5E1
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 07:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94063EDB7CA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 07:33:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6EDF040293;
-	Tue,  7 Apr 2026 09:06:27 +0200 (CEST)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com
- [209.85.210.53]) by mails.dpdk.org (Postfix) with ESMTP id DE05B40265
- for <dev@dpdk.org>; Sat,  4 Apr 2026 19:19:40 +0200 (CEST)
-Received: by mail-ot1-f53.google.com with SMTP id
- 46e09a7af769-7d9b1c57a4cso2388209a34.3
- for <dev@dpdk.org>; Sat, 04 Apr 2026 10:19:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1775323180; x=1775927980; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=CkecN2gXN4vQMjbgKxh1sORindU3tyECdthnMMR+Cps=;
- b=fDEcmAYSKxanvJDABLGSBO8mEA/nBv41DTiI49t1WfTOV+Tt9fkWBK3fBh+qstNEXQ
- aF3Kgit609g4XG4D6warT8h868INFRilGWkqiJPGxYg1DAYmhknkJf74UyoLntEM470s
- 2VkWUHXA77iiGkefS2kxrrfTKdqLAUcnbJqS1XOeBJPBqw2iUSl/ncl7eUlD7wp5e1X0
- 0SfFcc7RUiFxR/eCf5Vv7ET22LlibjLpfcWYbu30kWf6n/VjyKR20KEM7yXtlZhgXWlI
- ymU2iNEu8dHnuZY+FT3KE+Dmr6Nzy2Qxp3utAu12eXwQ7vAb1EDb28ThSb0h9bKWaRbg
- ndGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775323180; x=1775927980;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=CkecN2gXN4vQMjbgKxh1sORindU3tyECdthnMMR+Cps=;
- b=UsO96VX9YhsLspnJeLLYNsMj4eFMbttKop+wWF4ZJw18UAfJ0GQotyJU/bp5RjoMWR
- KPVywrd2w8Qwst80ftLS+Ia683jp6JqKi7onWd2cOTzqO8sZdW2auXzOeFFJR6+c1GuZ
- FAhAJ1plsSiSM6GqNLs6CisMSdheSx15TbKAcC5IlNsirUfqKJGxHXwlXiD6m72kUAcX
- iHFSPyoAtWL8Yxheda9saA5JSPj5WVNeTATJDeB6gBi0h7R3FTjamn8Oh22Zl52XQ1gK
- fTPYgh4F77Unwu4I5rgGQMLd1caMbUOlhDvTk+3ujtjHmqYsCcUDViN3SgE8NJxwsV3E
- HShA==
-X-Gm-Message-State: AOJu0YxnXpicHnLNsLjN5SRwPNo0DILKArh7aLXMc1XIeJEsm02fEyq/
- qmKz8Xsr0ojvwQizY18Mf5/NboJmqCTiysbaOPPLX3Fp7FScM6HR6Fk0
-X-Gm-Gg: AeBDieuy2KW2K0Yr9mtdv+YAeCMrx2epme3qzAF4icYDrfjlbwPrAAx2XBa/PruNvG3
- NLCLRjnOqtrvyN3fRDiyGDu627WcDL1L/9FRyWH/n6oTnRJYdrIyy7QkLQpuQ+o2umK9iI0pd+A
- KlnLni/wtjWm3XVy0K/9szFcVIEAqNUuHvuipTqrosHRaQr3Redh4IPmn+I2QFO3edALG9Zwbvl
- 770Lo+UJijaHoA/9Tu2V+SeXK2pGb2vOC1UdZBY18snRBYEG141U8EChhzK2pKs///Wkt6m0AWW
- HhbwbOCwlkYEMl1fBzYegsBqYzUA5dCwvf37M3o7sKSUv9aOdyRHEr4dzz6SK39tI3ueRgymMPV
- 3N61irh7pOdIAAKQduGQ05z6NzO2+7bZHjReejoua+3sISFtDRKpIYNiNloR8BJv7Rv3Ws/z2PQ
- ==
-X-Received: by 2002:a05:6830:6ae7:b0:7da:37fe:7b34 with SMTP id
- 46e09a7af769-7dbb7576b6bmr4176136a34.25.1775323179895; 
- Sat, 04 Apr 2026 10:19:39 -0700 (PDT)
-Received: from gmail.com ([50.93.222.110]) by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7dba71261dbsm6580665a34.6.2026.04.04.10.19.38
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 04 Apr 2026 10:19:39 -0700 (PDT)
-From: Weijun Pan <wpan3636@gmail.com>
-X-Google-Original-From: Weijun Pan <wpan36@wisc.edu>
-To: Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
-Cc: dev@dpdk.org,
-	Weijun Pan <wpan36@wisc.edu>,
-	stable@dpdk.org
-Subject: [PATCH] bus/fslmc: fix shadowed variables in queue storage macros
-Date: Sat,  4 Apr 2026 12:19:11 -0500
-Message-Id: <20260404171912.48947-1-wpan36@wisc.edu>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id B2E284025A;
+	Tue,  7 Apr 2026 09:33:04 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+ by mails.dpdk.org (Postfix) with ESMTP id 901A84014F
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 09:33:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1775547184; x=1807083184;
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=gwDqKUhQ0RvmUhHNuyCDTrp2EBihNZkRECjsnp41SU0=;
+ b=XUrVLQrQ1J0MbD+xyyGcRCk95VU3++vKIzfdrQXYXNc35q1JdKe1tjYI
+ RP2b1ek0TlZWplxcGgIqqvSxOP++oaBl6vyXmrZdxxl7ozPi5fClsnN+0
+ xKdNTocxwCt5Cf0BGnlSZpI1H7L+vJGEe52wJbaC9KwWKqeqezV3La406
+ HUDZWKu1Th6Ts+VLG+Guv2DXeK9SGCxHMh1GwhCDwDETGyudxbEhopDIu
+ R2oJ5HtD++FjEIGUnKrlvEUoz1KshZDnw7F68LcvFMF+oQnTQfEDJ3DSX
+ PUPIRX/XC2I4NVJ2GGSzmrr8uUp3l0QMsydch9F5LvJjEvRGue5wk5t/Z A==;
+X-CSE-ConnectionGUID: FtcL9UfiSuKgWtJoHvjqwQ==
+X-CSE-MsgGUID: fHGQB1dfQHCbQwR1rW9/Fg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11751"; a="64049902"
+X-IronPort-AV: E=Sophos;i="6.23,165,1770624000"; d="scan'208";a="64049902"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Apr 2026 00:33:02 -0700
+X-CSE-ConnectionGUID: uHdbWHpnQQqb37nC4vx3gg==
+X-CSE-MsgGUID: syKpF4/VRH+ciwIRjG+K2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,165,1770624000"; d="scan'208";a="225346686"
+Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
+ by fmviesa008.fm.intel.com with ESMTP; 07 Apr 2026 00:33:00 -0700
+From: Soumyadeep Hore <soumyadeep.hore@intel.com>
+To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
+ aman.deep.singh@intel.com, dev@dpdk.org, rajesh3.kumar@intel.com
+Subject: [PATCH v2] net/idpf: harden PTP frequency adjustment
+Date: Tue,  7 Apr 2026 16:04:05 -0400
+Message-ID: <20260407200405.1568940-1-soumyadeep.hore@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20260312184344.1475052-1-soumyadeep.hore@intel.com>
+References: <20260312184344.1475052-1-soumyadeep.hore@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mailman-Approved-At: Tue, 07 Apr 2026 09:06:25 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,75 +59,75 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The queue storage allocation and free macros declare local variables
-named ret and i, which shadow local variables in
-rte_dpaa2_create_dpci_device() and trigger -Wshadow warnings.
+Normalize ppm to an unsigned magnitude before using it in the
+increment value scaling path.
 
-Rename the macro-local variables to avoid shadowing without changing
-behavior.
+This avoids negating INT64_MIN and also prevents subtracting 62
+from the reduced log sum unless the sum is still above the
+overflow threshold reported by Coverity.
 
-Bugzilla ID: 1744
-Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
-Cc: jun.yang@nxp.com
-Cc: stable@dpdk.org
+Coverity issue: 501832
 
-Signed-off-by: Weijun Pan <wpan36@wisc.edu>
+Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
- drivers/bus/fslmc/portal/dpaa2_hw_pvt.h | 28 ++++++++++++-------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+v2:
+-Addressed Bruce's comments
+---
+ drivers/net/intel/idpf/idpf_ethdev.c | 38 ++++------------------------
+ 1 file changed, 5 insertions(+), 33 deletions(-)
 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-index e625a5c035..bbeccd8fc3 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-@@ -204,33 +204,33 @@ struct swp_active_dqs {
+diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
+index 5e57a45775..23a2af6332 100644
+--- a/drivers/net/intel/idpf/idpf_ethdev.c
++++ b/drivers/net/intel/idpf/idpf_ethdev.c
+@@ -1005,42 +1005,14 @@ idpf_timesync_adjust_freq(struct rte_eth_dev *dev, int64_t ppm)
+ 	struct idpf_vport *vport = dev->data->dev_private;
+ 	struct idpf_adapter *adapter = vport->adapter;
+ 	struct idpf_ptp *ptp = adapter->ptp;
+-	int64_t incval, diff = 0;
+-	bool negative = false;
+-	uint64_t div, rem;
+-	uint64_t divisor = 1000000ULL << 16;
+-	int shift;
++	uint64_t incval;
++	__int128 diff;
+ 	int ret;
  
- #define dpaa2_queue_storage_alloc(q, num) \
- ({ \
--	int ret = 0, i; \
-+	int qs_ret = 0, qs_idx; \
- 	\
--	for (i = 0; i < (num); i++) { \
--		(q)->q_storage[i] = rte_zmalloc(NULL, \
-+	for (qs_idx = 0; qs_idx < (num); qs_idx++) { \
-+		(q)->q_storage[qs_idx] = rte_zmalloc(NULL, \
- 			sizeof(struct queue_storage_info_t), \
- 			RTE_CACHE_LINE_SIZE); \
--		if (!(q)->q_storage[i]) { \
--			ret = -ENOBUFS; \
-+		if (!(q)->q_storage[qs_idx]) { \
-+			qs_ret = -ENOBUFS; \
- 			break; \
- 		} \
--		ret = dpaa2_alloc_dq_storage((q)->q_storage[i]); \
--		if (ret) \
-+		qs_ret = dpaa2_alloc_dq_storage((q)->q_storage[qs_idx]); \
-+		if (qs_ret) \
- 			break; \
- 	} \
--	ret; \
-+	qs_ret; \
- })
++	/* ppm is scaled by 2^16 to match Linux adjfine. */
+ 	incval = ptp->base_incval;
+-
+-	if (ppm < 0) {
+-		negative = true;
+-		ppm = -ppm;
+-	}
+-
+-	/* can incval * ppm overflow ? */
+-	if (rte_log2_u64(incval) + rte_log2_u64(ppm) > 62) {
+-		rem = ppm % divisor;
+-		div = ppm / divisor;
+-		diff = div * incval;
+-		ppm = rem;
+-
+-		shift = rte_log2_u64(incval) + rte_log2_u64(ppm) - 62;
+-		if (shift > 0) {
+-			/* drop precision */
+-			ppm >>= shift;
+-			divisor >>= shift;
+-		}
+-	}
+-
+-	if (divisor)
+-		diff = diff + incval * ppm / divisor;
+-
+-	if (negative)
+-		incval -= diff;
+-	else
+-		incval += diff;
++	diff = ((__int128)incval * ppm) / (1000000LL << 16);
++	incval += (int64_t)diff;
  
- #define dpaa2_queue_storage_free(q, num) \
- ({ \
- 	if (q) { \
--		int i; \
-+		int qs_idx; \
- 		\
--		for (i = 0; i < (num); i++) { \
--			if ((q)->q_storage[i]) { \
--				dpaa2_free_dq_storage((q)->q_storage[i]); \
--				rte_free((q)->q_storage[i]); \
--				(q)->q_storage[i] = NULL; \
-+		for (qs_idx = 0; qs_idx < (num); qs_idx++) { \
-+			if ((q)->q_storage[qs_idx]) { \
-+				dpaa2_free_dq_storage((q)->q_storage[qs_idx]); \
-+				rte_free((q)->q_storage[qs_idx]); \
-+				(q)->q_storage[qs_idx] = NULL; \
- 			} \
- 		} \
- 	} \
+ 	ret = idpf_ptp_adj_dev_clk_fine(adapter, incval);
+ 	if (ret) {
 -- 
-2.34.1
+2.47.1
 
