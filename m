@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E47FF5106
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C09BDFF5105
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:19:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 70D6440670;
-	Tue,  7 Apr 2026 17:18:44 +0200 (CEST)
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com
- [209.85.215.171])
- by mails.dpdk.org (Postfix) with ESMTP id D537840659
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:18:42 +0200 (CEST)
-Received: by mail-pg1-f171.google.com with SMTP id
- 41be03b00d2f7-c74f0c3fc16so1749758a12.2
- for <dev@dpdk.org>; Tue, 07 Apr 2026 08:18:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 656F64060A;
+	Tue,  7 Apr 2026 17:18:47 +0200 (CEST)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
+ [209.85.215.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 5A95A4067D
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 17:18:46 +0200 (CEST)
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-b6ce6d1d3dcso1830122a12.3
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 08:18:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575122;
- x=1776179922; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575125;
+ x=1776179925; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=VAbgAEY0TXqFX9g1MMumoWFUlqbJ9yuyo1sKRpe25VY=;
- b=T5O8cJZSV89HVqDOC1Fa9BqRTZWDWCOSa+0rxwsO02FC4hK+cFyxXsGO5Qygaogc3B
- HMyyFsg26B3h+JzOpfw1U1CDcQWzI5OFCzsVXMhbH/cEGdZFKk7YFjCzayH0Hs0j5R99
- l34I2VAhqrKsGwLHrFy0Sxc+4RbweixxWPwS7a5O8QoBC8X6BrlPgunBhkQJWFIms0yw
- yaffR8vKNUK1rgqQ/2qT9+hJ7NKDYhVY+dI8ftWCn9m5pfUSd8vFOghaylI9Zqhml0yz
- ZhM49puCQIBKTUU26QfzZgUxwya9MPrObaukpHEMJYBNfgsMAWA7TP9LxBStBT6aQwnE
- kaYg==
+ bh=Ab5x31bjvXsjTp3Ct0O4VBqTWx2UEEGFD3pTLuzvjc4=;
+ b=ULT+eax4HfCU734VS/ttGr3dhidBiKj9Nyby39oCaaF1n5FbfewptYonwBdNn/TU2t
+ iASc6YbjdNn7phdqOVPN8fRlyv+nxYfCTw8sHL69uTnnp2WjsN924/IE6XQlB9Zayrww
+ elxIT9uqU8vHGrLfwyn2dKoYTZcybsgnJc8bz78EC/feHwSxB/xOdPT3iEBpSOu/bxQj
+ 4vW7tTsVR+MX9MxV8TMtsFKZVpIIZDcjD32dsnJhW8lGwVc3Kutg0WZz1Mrx08wcfRdR
+ Nwz8j+1JNh0kgf8bp7ybMFuoHV1bOTrCX/yNsLFXDmMzL7w9Gwkl8qV3oAiHH8mDzVV5
+ Y6sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775575122; x=1776179922;
+ d=1e100.net; s=20251104; t=1775575125; x=1776179925;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=VAbgAEY0TXqFX9g1MMumoWFUlqbJ9yuyo1sKRpe25VY=;
- b=gQrD6C2AXBAkcenDBu6uiOuoPXmeCezUfMq0FF1QLGfp/teuYY1RAv2shpKnBMtmtT
- gjYXaSsc88fErQcIz1FNQkYiffBCjy5PFwMT8jYYBG8ptHebwA4t99IiMdVuNUj8Fnx0
- IUnekn9byIlLuM52ElxycHGdp4JCclCzYt0v0RgkYM/xeR3hlB4RQVQiftgqmNI0O1aE
- EmHpfyW/H1tb32QoA9ZF1FHy1YRtgG0UxhwLhhzpn/GO1CSm3deEaSP/IBQ08YalscLo
- 3VEnedhdlAd1z/kV00LTwi054os8klAP6oktVsemdTrNHEtFALUb/XVZHL4nlhidOX6O
- NfAg==
-X-Gm-Message-State: AOJu0YzgXQWxsLqbuYHG/+6Jy18YxkORp/6ph1OHkM1he/1SaHy4JrxF
- q70TeV820uh4phaLYFJNiOYB6bFEc7MuPNKuTx72uB6HZBYCiRPu1uxQ2U89DXjWzT0EiCqEurR
- 88M3+
-X-Gm-Gg: AeBDievkkSLoidN4GKq7JIk36A5pbEbUkOA1K93OgExRfxCC6LBzNZI2ELJbnhzDW5F
- e5J0H1Ap6XbcOoX4ArbaJ19+2/d/IbdAZTVfyAqhLylDbQuce/UpXoym9CLrkLz2dsR04sGZve2
- PjC7Y0jpOHgxUPYerNohTbJLE2JyPmQ/ZD07xlfAFm2NRuZoZwUeebS0dTQVAfvw5Ydj52SjUG3
- Li+FWx8x+Pj5OZJ/ZqJR1ZbBb0P7ImyZrE1+HCSAx4xoogCmvST8GMHPib2M1s9pRIEyNIsPP7N
- JaT/CK/TFwHZ1MexM9up3mHODpmYWXES7rn377kCLmk2zm8y+UDhaDAseRjPNKgBdv6VEGRhlV3
- +y4enxyt4X3WjweCwWHzyrAQMQfX8RetmGsl6M/Ui6ekJv05A8GiPnbxIRJ7jxnEu4gLoZ+R5zN
- lePhwfF3XAowefhLDmFfQBs4uXNlc6Px+2
-X-Received: by 2002:a05:6a20:ce48:b0:39f:59c8:f302 with SMTP id
- adf61e73a8af0-39f59c92317mr12126224637.37.1775575121799; 
- Tue, 07 Apr 2026 08:18:41 -0700 (PDT)
+ bh=Ab5x31bjvXsjTp3Ct0O4VBqTWx2UEEGFD3pTLuzvjc4=;
+ b=bH4nzfbJKKaie70fRlVr+WoxNkDrHvE865W7Q3sysfrLu1T9foKb3PtnsWaKIWPDA/
+ 37/l9s3OwOJQy1B74cE2atSTREyB6Z+7bjxVvzVqpij9GTN1B0drR2nHyKs7jS8jnefx
+ HiSMAQ6OK36OY9iNAs/hiI5+35mgySeggyaIZdXN+qbvo+pfR+3T1ItOX8Lj0WlzgJar
+ aN4l87/H4VaL2BMM27Ban8GmTI5xe+tTx6jt1zp32IevXc8arD1p6jqrV5Y0YaY3VlIs
+ 7PW3RY2V3LiN5zQoXdyq2zo80/WSzZdTruVKYO6YPQmgSwYU4oWzbKOfFOUJQb/Lyk8C
+ 9VsQ==
+X-Gm-Message-State: AOJu0YwLtCbYI+xaZ+UxTuNgNBeh25RNqVnad5DEhKMjFLoBL13ZWl9S
+ m7fhzNUDX6Qsm2mtwt6UZJjrKrwuJjD+tlVE7NTSmBcw0CTS8vepg2PWmjciOgCj+joNPDre68s
+ fx9/g
+X-Gm-Gg: AeBDiesq8ED/iDsijxnmc3TCmAEb98fAw41tunzAfOXRVhyIJOIpVBb47VuJg/wFk89
+ YIH7pvKJZC03B1Y8RYByYS3Xnh2H6ARZMbi8CfR43wniJykfPnxvii3DeSusgh1V2AwyrU0lkhp
+ D9EuqHu8jUKhapwl+QGF2RJS7OEjZI+kgrz9zMbsydfbbLTlcAueNGTnBxpv9h2/sHCOD5w7xDv
+ 2trIt0OnKtljZ8JB6SqjJj7ue+zyVyQscEm3MJHmvzl5lvSeQEN9Uvu981EB4HZ499TPE6swmtw
+ I63DRizZlhAIFaTX+ZlFgZTYYkObRhVFNlAyK/fd3Xcac5AMQTXCa61b5v++9PE6UAVnXwpbGhG
+ mr3U0IuAe9mT4TuVcE4sX3hHyEuxleZtEAEB7icIkcN2FvUgOLztzAvjQfUSpgDZe2tcgRJHlmf
+ +94I4sALxUIciXcqvZ2CJ7U7LndPyTh8ba
+X-Received: by 2002:a05:6a20:2450:b0:39b:8905:4e13 with SMTP id
+ adf61e73a8af0-39f2ef75d49mr17571729637.6.1775575125475; 
+ Tue, 07 Apr 2026 08:18:45 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.18.38
+ 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.18.42
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 08:18:41 -0700 (PDT)
+ Tue, 07 Apr 2026 08:18:45 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Bruce Richardson <bruce.richardson@intel.com>,
- Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>
-Subject: [PATCH v2 18/23] examples/l2fwd-crypto: resolve shadow variable
-Date: Tue,  7 Apr 2026 08:16:14 -0700
-Message-ID: <20260407151732.272195-19-stephen@networkplumber.org>
+ Sunil Kumar Kori <skori@marvell.com>,
+ Pavan Nikhilesh <pbhagavatula@marvell.com>
+Subject: [PATCH v2 19/23] examples/l2fwd-event: resolve shadowed variable
+Date: Tue,  7 Apr 2026 08:16:15 -0700
+Message-ID: <20260407151732.272195-20-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260407151732.272195-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
@@ -83,160 +84,59 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace shadowed optarg with parameter named arg.
+Replace shadowed global optarg with parameter named arg.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- examples/l2fwd-crypto/main.c      | 50 +++++++++++++++----------------
- examples/l2fwd-crypto/meson.build |  1 -
- 2 files changed, 25 insertions(+), 26 deletions(-)
+ examples/l2fwd-event/main.c      | 15 +++++++--------
+ examples/l2fwd-event/meson.build |  1 -
+ 2 files changed, 7 insertions(+), 9 deletions(-)
 
-diff --git a/examples/l2fwd-crypto/main.c b/examples/l2fwd-crypto/main.c
-index a441312f55..ff189b5fab 100644
---- a/examples/l2fwd-crypto/main.c
-+++ b/examples/l2fwd-crypto/main.c
-@@ -1030,15 +1030,15 @@ l2fwd_crypto_usage(const char *prgname)
- 
- /** Parse crypto device type command line argument */
- static int
--parse_cryptodev_type(enum cdev_type *type, char *optarg)
-+parse_cryptodev_type(enum cdev_type *type, const char *arg)
- {
--	if (strcmp("HW", optarg) == 0) {
-+	if (strcmp("HW", arg) == 0) {
- 		*type = CDEV_TYPE_HW;
- 		return 0;
--	} else if (strcmp("SW", optarg) == 0) {
-+	} else if (strcmp("SW", arg) == 0) {
- 		*type = CDEV_TYPE_SW;
- 		return 0;
--	} else if (strcmp("ANY", optarg) == 0) {
-+	} else if (strcmp("ANY", arg) == 0) {
- 		*type = CDEV_TYPE_ANY;
- 		return 0;
- 	}
-@@ -1048,21 +1048,21 @@ parse_cryptodev_type(enum cdev_type *type, char *optarg)
- 
- /** Parse crypto chain xform command line argument */
- static int
--parse_crypto_opt_chain(struct l2fwd_crypto_options *options, char *optarg)
-+parse_crypto_opt_chain(struct l2fwd_crypto_options *options, const char *arg)
- {
--	if (strcmp("CIPHER_HASH", optarg) == 0) {
-+	if (strcmp("CIPHER_HASH", arg) == 0) {
- 		options->xform_chain = L2FWD_CRYPTO_CIPHER_HASH;
- 		return 0;
--	} else if (strcmp("HASH_CIPHER", optarg) == 0) {
-+	} else if (strcmp("HASH_CIPHER", arg) == 0) {
- 		options->xform_chain = L2FWD_CRYPTO_HASH_CIPHER;
- 		return 0;
--	} else if (strcmp("CIPHER_ONLY", optarg) == 0) {
-+	} else if (strcmp("CIPHER_ONLY", arg) == 0) {
- 		options->xform_chain = L2FWD_CRYPTO_CIPHER_ONLY;
- 		return 0;
--	} else if (strcmp("HASH_ONLY", optarg) == 0) {
-+	} else if (strcmp("HASH_ONLY", arg) == 0) {
- 		options->xform_chain = L2FWD_CRYPTO_HASH_ONLY;
- 		return 0;
--	} else if (strcmp("AEAD", optarg) == 0) {
-+	} else if (strcmp("AEAD", arg) == 0) {
- 		options->xform_chain = L2FWD_CRYPTO_AEAD;
- 		return 0;
- 	}
-@@ -1072,10 +1072,10 @@ parse_crypto_opt_chain(struct l2fwd_crypto_options *options, char *optarg)
- 
- /** Parse crypto cipher algo option command line argument */
- static int
--parse_cipher_algo(enum rte_crypto_cipher_algorithm *algo, char *optarg)
-+parse_cipher_algo(enum rte_crypto_cipher_algorithm *algo, const char *arg)
- {
- 
--	if (rte_cryptodev_get_cipher_algo_enum(algo, optarg) < 0) {
-+	if (rte_cryptodev_get_cipher_algo_enum(algo, arg) < 0) {
- 		RTE_LOG(ERR, USER1, "Cipher algorithm specified "
- 				"not supported!\n");
- 		return -1;
-@@ -1086,12 +1086,12 @@ parse_cipher_algo(enum rte_crypto_cipher_algorithm *algo, char *optarg)
- 
- /** Parse crypto cipher operation command line argument */
- static int
--parse_cipher_op(enum rte_crypto_cipher_operation *op, char *optarg)
-+parse_cipher_op(enum rte_crypto_cipher_operation *op, const char *arg)
- {
--	if (strcmp("ENCRYPT", optarg) == 0) {
-+	if (strcmp("ENCRYPT", arg) == 0) {
- 		*op = RTE_CRYPTO_CIPHER_OP_ENCRYPT;
- 		return 0;
--	} else if (strcmp("DECRYPT", optarg) == 0) {
-+	} else if (strcmp("DECRYPT", arg) == 0) {
- 		*op = RTE_CRYPTO_CIPHER_OP_DECRYPT;
- 		return 0;
- 	}
-@@ -1146,9 +1146,9 @@ parse_size(int *size, const char *q_arg)
- 
- /** Parse crypto cipher operation command line argument */
- static int
--parse_auth_algo(enum rte_crypto_auth_algorithm *algo, char *optarg)
-+parse_auth_algo(enum rte_crypto_auth_algorithm *algo, const char *arg)
- {
--	if (rte_cryptodev_get_auth_algo_enum(algo, optarg) < 0) {
-+	if (rte_cryptodev_get_auth_algo_enum(algo, arg) < 0) {
- 		RTE_LOG(ERR, USER1, "Authentication algorithm specified "
- 				"not supported!\n");
- 		return -1;
-@@ -1158,12 +1158,12 @@ parse_auth_algo(enum rte_crypto_auth_algorithm *algo, char *optarg)
+diff --git a/examples/l2fwd-event/main.c b/examples/l2fwd-event/main.c
+index 7600b9e9cf..2d31d4c6ad 100644
+--- a/examples/l2fwd-event/main.c
++++ b/examples/l2fwd-event/main.c
+@@ -82,24 +82,23 @@ l2fwd_event_parse_timer_period(const char *q_arg)
  }
  
- static int
--parse_auth_op(enum rte_crypto_auth_operation *op, char *optarg)
-+parse_auth_op(enum rte_crypto_auth_operation *op, const char *arg)
+ static void
+-l2fwd_event_parse_mode(const char *optarg,
+-		       struct l2fwd_resources *rsrc)
++l2fwd_event_parse_mode(const char *arg, struct l2fwd_resources *rsrc)
  {
--	if (strcmp("VERIFY", optarg) == 0) {
-+	if (strcmp("VERIFY", arg) == 0) {
- 		*op = RTE_CRYPTO_AUTH_OP_VERIFY;
- 		return 0;
--	} else if (strcmp("GENERATE", optarg) == 0) {
-+	} else if (strcmp("GENERATE", arg) == 0) {
- 		*op = RTE_CRYPTO_AUTH_OP_GENERATE;
- 		return 0;
- 	}
-@@ -1173,9 +1173,9 @@ parse_auth_op(enum rte_crypto_auth_operation *op, char *optarg)
+-	if (!strncmp(optarg, "poll", 4))
++	if (!strncmp(arg, "poll", 4))
+ 		rsrc->event_mode = false;
+-	else if (!strncmp(optarg, "eventdev", 8))
++	else if (!strncmp(arg, "eventdev", 8))
+ 		rsrc->event_mode = true;
  }
  
- static int
--parse_aead_algo(enum rte_crypto_aead_algorithm *algo, char *optarg)
-+parse_aead_algo(enum rte_crypto_aead_algorithm *algo, const char *arg)
+ static void
+-l2fwd_event_parse_eventq_sched(const char *optarg,
++l2fwd_event_parse_eventq_sched(const char *arg,
+ 			       struct l2fwd_resources *rsrc)
  {
--	if (rte_cryptodev_get_aead_algo_enum(algo, optarg) < 0) {
-+	if (rte_cryptodev_get_aead_algo_enum(algo, arg) < 0) {
- 		RTE_LOG(ERR, USER1, "AEAD algorithm specified "
- 				"not supported!\n");
- 		return -1;
-@@ -1185,12 +1185,12 @@ parse_aead_algo(enum rte_crypto_aead_algorithm *algo, char *optarg)
+-	if (!strncmp(optarg, "ordered", 7))
++	if (!strncmp(arg, "ordered", 7))
+ 		rsrc->sched_type = RTE_SCHED_TYPE_ORDERED;
+-	else if (!strncmp(optarg, "atomic", 6))
++	else if (!strncmp(arg, "atomic", 6))
+ 		rsrc->sched_type = RTE_SCHED_TYPE_ATOMIC;
+-	else if (!strncmp(optarg, "parallel", 8))
++	else if (!strncmp(arg, "parallel", 8))
+ 		rsrc->sched_type = RTE_SCHED_TYPE_PARALLEL;
  }
  
- static int
--parse_aead_op(enum rte_crypto_aead_operation *op, char *optarg)
-+parse_aead_op(enum rte_crypto_aead_operation *op, const char *arg)
- {
--	if (strcmp("ENCRYPT", optarg) == 0) {
-+	if (strcmp("ENCRYPT", arg) == 0) {
- 		*op = RTE_CRYPTO_AEAD_OP_ENCRYPT;
- 		return 0;
--	} else if (strcmp("DECRYPT", optarg) == 0) {
-+	} else if (strcmp("DECRYPT", arg) == 0) {
- 		*op = RTE_CRYPTO_AEAD_OP_DECRYPT;
- 		return 0;
- 	}
-diff --git a/examples/l2fwd-crypto/meson.build b/examples/l2fwd-crypto/meson.build
-index 8c5432cb7f..c21722b85c 100644
---- a/examples/l2fwd-crypto/meson.build
-+++ b/examples/l2fwd-crypto/meson.build
-@@ -15,4 +15,3 @@ sources = files(
-         'main.c',
+diff --git a/examples/l2fwd-event/meson.build b/examples/l2fwd-event/meson.build
+index ff171189ba..5bc8188086 100644
+--- a/examples/l2fwd-event/meson.build
++++ b/examples/l2fwd-event/meson.build
+@@ -17,4 +17,3 @@ sources = files(
+         'l2fwd_event_internal_port.c',
+         'l2fwd_poll.c',
  )
- cflags += no_wvla_cflag
 -cflags += no_shadow_cflag
 -- 
 2.53.0
