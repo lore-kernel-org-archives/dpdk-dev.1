@@ -2,69 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C95FD5F92
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 08:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0DBFD5F88
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 08:26:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 55DFB40654;
-	Wed,  8 Apr 2026 10:25:44 +0200 (CEST)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com
- [209.85.167.173])
- by mails.dpdk.org (Postfix) with ESMTP id CE1DB4025F
- for <dev@dpdk.org>; Tue,  7 Apr 2026 16:20:00 +0200 (CEST)
-Received: by mail-oi1-f173.google.com with SMTP id
- 5614622812f47-463a0e14abfso2809184b6e.2
- for <dev@dpdk.org>; Tue, 07 Apr 2026 07:20:00 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5EEE740659;
+	Wed,  8 Apr 2026 10:25:45 +0200 (CEST)
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com
+ [209.85.161.46]) by mails.dpdk.org (Postfix) with ESMTP id 5A0604025F
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 16:37:55 +0200 (CEST)
+Received: by mail-oo1-f46.google.com with SMTP id
+ 006d021491bc7-67e0d3f288aso3200374eaf.0
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 07:37:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1775571600; x=1776176400; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=2MENlSx4Ne/ayFhCdAhk03aU6tshnblVsa0L6Tx6zdE=;
- b=F7vqF9rUrKE2jKm+ClG6yYHeXEHYdZgYFydIjsvPZdN6ibc6zQiaVn8EmqZRYRdx8m
- iAte4cAPq8pJi4Ukb9sTXRSzVfMslRIoL/ZaQCw7KcRi5EmNr70OG2DqOp28SMNpq7I3
- TgbtyxQlIhhUaaN22RTkdmz2GvsS3Lqp4aNk9uEvwOmTkIiEPoPognmPy+9/MjpQ+d/o
- Fd39YIiclqSWifmsn4BM/Mz2sY4QhiaHJeAGX9xaB6Uz9+0eQXuxymLNRv4ecU3Uv1Gf
- CJgMXcjifD0I8uuAdQPzLsBI4uBMMLJyLJs37dhX0ETrxhrh/HzBhYQIvx8lrfZQTQhC
- lLwA==
+ d=gmail.com; s=20251104; t=1775572674; x=1776177474; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=/eRLUHgMuSo55cXxCCKLTUiCqMsyU6B7NqUQ6ZNskak=;
+ b=QM7tXuRc9PHMWUFZzOJ8Fx5N/jqwsTOfi2YYK3oD7BiGNsNiRXLamU7k0NMRb5AWsZ
+ t6Dkt0EDmsxEKLBZg+ReIRvu0V8w/Et6k0xmw+SgHfrUm19sMWrPysccH1/Yxgl0ywBu
+ JTNTKDvFJa11n2k96jWSLNRV4OxgDCh7hHI4DZaSaB+kQ/M41U4WE0frPVrB4dhtX2ZS
+ ogageIvok1BuT8pK9iuqYBK2Kq1wTjHIFH01cSyX3icvvuAj+kE62Z1xlblUQXcR9kHF
+ +lX4g65yB53dL9ML/oPKYIv5Mwrnsd2VcFNhky814OZmKUolJU5meZHs3Mt4XINJAnyo
+ r3WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775571600; x=1776176400;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=2MENlSx4Ne/ayFhCdAhk03aU6tshnblVsa0L6Tx6zdE=;
- b=kAeDGp1zr55vAWcfm3aquR4t8CvWIr0RklHDkdJrJG/Z616plVijpG3Luxk5DqaopR
- ARlTDt6R1JXR9Wv9ybfOBz/w8oDxrH35O39wc17DXhP2ZF4w7tBw++tb+Wqys9eNvSQy
- i8AhSF5yCvuMS1qyw2Q5/cuj89IHPpNFq2A7lnJVTv44L/cElN/CIuPe14HLkbaaNZ1n
- 8rpf3b0kr9/QC0buIvTXgRlWLQj+nz2P9oR6tmyKAYT50wMvN4osTEAPuceEuiHyHd2u
- e40HcLaA24KJ1z+kH6S3InK0r94+GpuUFzcol6FVTvMRCIT6D50XFgOQyutB25ftbenI
- nsHA==
-X-Gm-Message-State: AOJu0Ywe/qJBlRE6GuiJ9kyV4iT67BR3WUQ6Mg8i7O9hLTZuLFJWIIUX
- oE7CE/DhMl3zCVMFVRju+NV8YDUaGn/H2Dfe8eyYDJw4ksFGcmG2+vRtgLieCfF+
-X-Gm-Gg: AeBDievbOtvxt7oHEYsKOQ/qHOupsa4tAixzTpHiRFWQTlVqkXBFrRvVUusXSEgZYhr
- wtVqzBc76LIqb5cF7++Sf3bsQicZxNPDbtb7Tcwr9wfGkHeJueku8YjMiAgd26gvunLQqT9eHCF
- rgERVVEwGs3Sf7N8iPjiwlDJ05EAi0Lda/O7LGX47LEaLf5c7eg2UHz3Arq3AGywVoJ3X36bERZ
- dIcog/h4TKcjENduXGpui+eB+pNUXGSLLXq6x3j9ZqTfOUOhP51+2LAvmb9ysVXoiX0khis7NBi
- ocnI0D/Q/D8nEUe8njFqP4aLQdtjdU8lvo0p0D+M50xNCEVw3zjnG5Vaj0OPJzM2H2yPHD/ghYE
- C3RMrvi4o36yZDkC2MFc9oWstq/XTqCEKlTCmfyu2QRoxnlMCFcQBM1qsalQhxFVd8fKkzz9/Vg
- bLTJQuWLNnBV9v
-X-Received: by 2002:a05:6808:320f:b0:460:f435:2a70 with SMTP id
- 5614622812f47-46ef8845559mr9177889b6e.47.1775571600024; 
- Tue, 07 Apr 2026 07:20:00 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1775572674; x=1776177474;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=/eRLUHgMuSo55cXxCCKLTUiCqMsyU6B7NqUQ6ZNskak=;
+ b=YJPbvW/MYRtttjzN9zDCGK4YlwNsMxL8seOTc8o9S4oHphnmEBZct5+BfrR0OecJEG
+ B9dgLtWZLv3s1he0N+Htw2Czj2tsx+52aSUURPiVBeHyiZt62Blj3ipAqfXJL0mEsvQy
+ ta3TnmIRFOpT/mn+0n1/Pi4bLRE8B6WbDL/3H06htInMTRXwxO+BfjlfzcZ9TSir+P6h
+ vu5u2WXFFhYaGFLrjzXZP+S+kt5kMKVwHO8+cGIRRhgXGDaSiL7TzPh1m3N8AUNm2NuY
+ 5bKWNdYftB6fLgxusmqQTY3itc4QPEduQd6IV/gNiD75ZlDyB7bJdyqcwJhs+X/eZyFO
+ 86XQ==
+X-Gm-Message-State: AOJu0YxtphGs90moDynkvo6gTe2rtAXO5F+eXq9gke4234RNUy60R2Bd
+ Xvbc5XkPmYfbjltwy3KxZZ0V54ojBuVzQyEsVEILGvWc9eI7XxPF6x4X
+X-Gm-Gg: AeBDievV01LWoQuxfpikGmUfZHHLUJjuQdyjf3Z3uWZyL5e53rvg/F4PFK3t5nefYPk
+ zIJzs009JXyvM+SubF89H52mUSazrCEXBsr2ng9iWKmexxbSa0lTub0eQFwk33//ap3H+g+ZyTO
+ g8oZWka+FBEi47ImyvbA+yTlfqxqSQAPDPUiYn/iQjwYlHBO37qIXkYBJkdbLaptdTN81GBy86j
+ FR/gBWvoyjxmCwf2F2fgrIJbxaDIxQBMiB1qcWL3vmRvlFtovdudW1eg5rxCrKjAPcqeIYnlZqI
+ aREwOhb20/MD2owUAucEonUk//DosbJGdUkEob2TPqQfZcKwetC5JEcURB2UULX6zO9JNaDfZRj
+ 8a7j/UIYUjmE9ksWVUUnuinM4nGLx9FUw0WSI4wO9pF65WOWITz5ZxkR5zo0pttT013NA34do9k
+ sO/coP4xrE0ajg
+X-Received: by 2002:a05:6820:81c4:b0:67b:b8d0:a7d5 with SMTP id
+ 006d021491bc7-6822024fab7mr10092694eaf.53.1775572674476; 
+ Tue, 07 Apr 2026 07:37:54 -0700 (PDT)
 Received: from gmail.com ([50.93.222.110]) by smtp.gmail.com with ESMTPSA id
- 5614622812f47-46d9387a763sm9994080b6e.18.2026.04.07.07.19.59
+ 006d021491bc7-6823d419d09sm7870603eaf.15.2026.04.07.07.37.53
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 07:19:59 -0700 (PDT)
+ Tue, 07 Apr 2026 07:37:53 -0700 (PDT)
 From: Weijun Pan <wpan3636@gmail.com>
 X-Google-Original-From: Weijun Pan <wpan36@wisc.edu>
 To: Rosen Xu <rosen.xu@altera.com>
 Cc: dev@dpdk.org,
 	Weijun Pan <wpan36@wisc.edu>
-Subject: [PATCH] raw/ifpga: replace printf calls with logging
-Date: Tue,  7 Apr 2026 09:19:28 -0500
-Message-Id: <20260407141928.9426-2-wpan36@wisc.edu>
+Subject: [PATCH v2] raw/ifpga: replace printf calls with logging
+Date: Tue,  7 Apr 2026 09:36:56 -0500
+Message-Id: <20260407143656.9960-1-wpan36@wisc.edu>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20260407141928.9426-1-wpan36@wisc.edu>
-References: <20260407141928.9426-1-wpan36@wisc.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Wed, 08 Apr 2026 10:25:39 +0200
@@ -87,6 +83,9 @@ to standard output.
 
 Replace the remaining direct printf() calls in ifpga_rawdev.c with
 the driver logging macros.
+
+Resend as a standalone patch after the previous submission was
+accidentally sent together with an unrelated patch.
 
 Signed-off-by: Weijun Pan <wpan36@wisc.edu>
 ---
