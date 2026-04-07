@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA52FF5106
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0AAFF5106
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:19:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E3F540A6F;
-	Tue,  7 Apr 2026 17:18:19 +0200 (CEST)
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com
- [209.85.215.182])
- by mails.dpdk.org (Postfix) with ESMTP id 3A7824065C
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:18:18 +0200 (CEST)
-Received: by mail-pg1-f182.google.com with SMTP id
- 41be03b00d2f7-c76e702e01aso1018250a12.3
- for <dev@dpdk.org>; Tue, 07 Apr 2026 08:18:18 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B8EBA4066E;
+	Tue,  7 Apr 2026 17:18:23 +0200 (CEST)
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com
+ [209.85.215.179])
+ by mails.dpdk.org (Postfix) with ESMTP id 0D80D4066E
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 17:18:22 +0200 (CEST)
+Received: by mail-pg1-f179.google.com with SMTP id
+ 41be03b00d2f7-c766cf593daso3679800a12.3
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 08:18:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575097;
- x=1776179897; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575101;
+ x=1776179901; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=wWQhc8jVkipjeT1npLBJUThOmnS30FqL4Z3TvxE7VlA=;
- b=MvMirFKJRzOstnunBLpmxiudl7GpsK8+HXcxpE9OZpqd6emF4CPcV/6SuXGZZhatya
- 1+PnesnI40JdCmIAPk9mFeL4LrqVoRBdumaQ9trM86OzLto/CVW91Hsa9QdW7VpUzCpd
- 5hofscx5Uh+n2CtTrs+pEguMl+NkiVmBlPIWm3ZiGAumm+c8JmuzOiTLXGPZj1gV/JQW
- 45XWCgJ+g8eUPGS5BmYnLn9qQXeafAYk11cQJ0wSpxjVJrcz0BAchyz7iR0OHDV9JuKL
- 7wFeeHAy7ciRMrTc4YO+XQ3PecCPzVOSSSeffm3Z8t45QkUW/BuOFm7rgtCq7O2xfl5V
- tQvw==
+ bh=yr4q3jzFGAmZefaSW5dJ4fCAfvNiHXI94JoTG+pfpOI=;
+ b=HXARj4wF8FCYvq1iukYFoyPG0Qjsqq0AanvFChjScM+upuTWbwBSpFWOCvgBnasUkP
+ n5QH8Ohyer7/u4Qjy8zFKd8hT4leNAVCMUIkcvanVMCph0Q24+nWtmAxD99Scg8ppPes
+ J4J/bRO1K8rQzi9HDKp8Xf6pWIshKXIA5pgy73I7YCrR8dhxB1Fc23z21nwFjuuenwsA
+ wNkRPw+0LHXEwZRdj+Zz8yFHSvHpKGobTm+G5zDE3rmaZX73d5Oa3K2hWVS3phZLkG7J
+ vsQDdK3WOyOXMN9PRcVlaYoHV+tdWDKpMzgnxxp+moN6nQZVxpbsNQU2EeDTOhJp2sco
+ fKiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775575097; x=1776179897;
+ d=1e100.net; s=20251104; t=1775575101; x=1776179901;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=wWQhc8jVkipjeT1npLBJUThOmnS30FqL4Z3TvxE7VlA=;
- b=cM2vQ+jT7AZf0K/zbV1l1Ri4xYAfsvSxkdInoNhasUxcrwOChtmP+Tld1YeQPdkb3Z
- JV6V9P155xsZH/o0cKZ8UfYuwDRDmEfg0uartQ1xLUO+F1LnKOEMYd3tK7+/rB9oURgB
- mzCC+H+oPw1juiLEYQNM6cLXdUw5uP6axVeFsb0vmQ1aDHn6X/VejuITX5Or6TLpxsGx
- J1y4+s1CowfeOlR5RljTlJZTR44kdvNkJmTM3jMY3zg96Sccs8OKpRe5ZrNF3x6dDTEv
- WchfmKrClpfE3fNg8hVH8Llom/+0jyoKfgbwwahxk0nGFq8KcKO4e/F2VMeTZLuciYbK
- sHgw==
-X-Gm-Message-State: AOJu0YyhlojaA767wTyJsRhYS4MLI1aHo0wZ2Ulec0Xz7iPkiufSxB4y
- bAWaocv3lL/ltYewJDWXk+zgTQhrGomCUkDebEaeWzdvfOLGeXcCw8XFTLm0WA4ZniEdddX2f/t
- JlHiJ
-X-Gm-Gg: AeBDievyQWVAOoYJTUKXcMK6U5YRvyaMBwPQaZphesA2N8Bb6jNCQ+f8zEx/fFcqt3d
- qmGAmVwUDGetDACcZH6Gl1OCY4KKGOUTGkXhsWbi850fHLonEd22K2NY6fed+ezfzq7A2kVGy8M
- dYEOwzNlC+dXwOPQath1teeuE6J1fZ+o6gMDyeuEaqiIWmVMbVNOjW+3tDIYpY5flwa+CtFFWr3
- VCPtNOXqQv2dw5lWutVTvjqf+5Wp4Dvg4dQGRZEsxZAacVPzT+nOeDQ5vxxaZetX/IilkrBd5Kl
- QkdzswqKKL+43qovRtQLwkrKo+g0YgGZo9WBsrLKmdEMyyCPMks6P1xeWusxDbTZflY1ze5wWHA
- BSbhqoYUmh+ww1skbfM4LZZxynLF4Rzg49qEfIZEagrq0hSc4dEwBzTTH5/Cf7wBszvge/FfwHo
- BQq+Z1moSIeigAtmk1D/1KGn00loPc3Cux
-X-Received: by 2002:a05:6a20:6a28:b0:39b:d937:8020 with SMTP id
- adf61e73a8af0-39f2f2f6eaemr16747023637.42.1775575097372; 
- Tue, 07 Apr 2026 08:18:17 -0700 (PDT)
+ bh=yr4q3jzFGAmZefaSW5dJ4fCAfvNiHXI94JoTG+pfpOI=;
+ b=OvE95PnTF+/brNXM9/XXxhkcRw6CkeEGuLFtdzxS03xwBUni9nVsNX8grOlEefg0fS
+ Hht1vc7xk7Z8SGkLbKZe/5BX4eqa1GA6dpQ1WL1Y+DgdL2RJa40te6RbKaxV9+rcPPM4
+ OMpNLBCjz0o3TmKq1Em6KY2uDVqraNi6D0RnacZRr486D/x6vqlmznuezFlzZXHrP6sS
+ QWcAviPd1+um8nO1wyL9k1G0wMTL1Ru8q0q2tMMeZhDAqNup0YZq3EqUdlkCObcJWDBN
+ p0wHo3ZDhfb1x5IJWGnzGGKWZg6OcwpB1AkXXfbyvZQKqn4+JkU8qc0XT4iMPZV6CjCN
+ PNMA==
+X-Gm-Message-State: AOJu0Ywyx+FDBYyD/Ve1YEP/Jwf+Hv4yQEot9JK5pW/AK/sp8wDdhHG5
+ /SvS1UajzTqYLugo+P6dwBbF1ZNCWgDF6QeY+dKNTeJqGFNt014rnkjFl/whjo3G7H4KVyg5fTv
+ VlyHT
+X-Gm-Gg: AeBDietJOJ98zfuP7D3vOKl9Dgli8oLszIaPYDJuTqugQQvfH6+5RP+x4MXmRxbSQjg
+ 9obpzIN2zQ80gwjcgGQ7rQQyC8kw6FXNETK5M5+ac/O5ph/ujm7OOFraowLWml+VZORpMt2nTa6
+ U5VA+qEdKElKIYtHXvZjgh3t5GZBAVT62cWGAmawxp/4izwRZCpGniQMaa0XxRafe/kQLbXaHJm
+ U7dYQP5KpPC2Pmrp1RNFgTp1jJVwjddPAAm4DtCVwJHqChS4kF4xQI1U42DLNnpw+/f5BKDw9Mw
+ VTMo+hZtIboE2kon9NBn/d5eoBFrh0xOAb0mYQwlujaCuldWYZCGwsyPN3Z5bomMP95My2zi3oz
+ jWheT2WnP/AyQRCeefTfdG6p4uT+w5o1SOo/cGNY1cFpQHlR1ztJhiRuiXvlCXA4/UyKBranvMO
+ PtAO6BLMbno5pa58qlAeqlgawc7e4khd0u/uUfrVYUc08=
+X-Received: by 2002:a05:6a21:3396:b0:398:8cb2:84c1 with SMTP id
+ adf61e73a8af0-39f2e93e9d9mr17533475637.0.1775575101060; 
+ Tue, 07 Apr 2026 08:18:21 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.18.14
+ 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.18.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 08:18:17 -0700 (PDT)
+ Tue, 07 Apr 2026 08:18:20 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH v2 11/23] examples/multi_process: resolve shadowed variable
- warnings
-Date: Tue,  7 Apr 2026 08:16:07 -0700
-Message-ID: <20260407151732.272195-12-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>
+Subject: [PATCH v2 12/23] examples/vm_power_manage: enable shadow warnings
+Date: Tue,  7 Apr 2026 08:16:08 -0700
+Message-ID: <20260407151732.272195-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260407151732.272195-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
@@ -84,71 +84,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The string passed to parsing function number of clients
-shadowed global declaration. Also avoid similar problem in
-parsing portmask.
+No problems in this code, re-enable the warning.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- .../multi_process/client_server_mp/mp_server/args.c  | 12 ++++++------
- .../client_server_mp/mp_server/meson.build           |  1 -
- 2 files changed, 6 insertions(+), 7 deletions(-)
+ examples/vm_power_manager/guest_cli/meson.build | 1 -
+ examples/vm_power_manager/meson.build           | 1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/examples/multi_process/client_server_mp/mp_server/args.c b/examples/multi_process/client_server_mp/mp_server/args.c
-index 3c2ca266b0..60dbb3c626 100644
---- a/examples/multi_process/client_server_mp/mp_server/args.c
-+++ b/examples/multi_process/client_server_mp/mp_server/args.c
-@@ -42,18 +42,18 @@ usage(void)
-  * array variable
-  */
- static int
--parse_portmask(const char *portmask)
-+parse_portmask(const char *str)
- {
- 	char *end = NULL;
- 	unsigned long long pm;
- 	uint16_t id;
- 
--	if (portmask == NULL || *portmask == '\0')
-+	if (str == NULL || *str == '\0')
- 		return -1;
- 
- 	/* convert parameter to a number and verify */
- 	errno = 0;
--	pm = strtoull(portmask, &end, 16);
-+	pm = strtoull(str, &end, 16);
- 	if (errno != 0 || end == NULL || *end != '\0')
- 		return -1;
- 
-@@ -80,15 +80,15 @@ parse_portmask(const char *portmask)
-  * and convert to a number to store in the num_clients variable
-  */
- static int
--parse_num_clients(const char *clients)
-+parse_num_clients(const char *str)
- {
- 	char *end = NULL;
- 	unsigned long temp;
- 
--	if (clients == NULL || *clients == '\0')
-+	if (str == NULL || *str == '\0')
- 		return -1;
- 
--	temp = strtoul(clients, &end, 10);
-+	temp = strtoul(str, &end, 10);
- 	if (end == NULL || *end != '\0' || temp == 0)
- 		return -1;
- 
-diff --git a/examples/multi_process/client_server_mp/mp_server/meson.build b/examples/multi_process/client_server_mp/mp_server/meson.build
-index a31eea764e..9e585e80b9 100644
---- a/examples/multi_process/client_server_mp/mp_server/meson.build
-+++ b/examples/multi_process/client_server_mp/mp_server/meson.build
-@@ -14,4 +14,3 @@ sources = files(
-         'init.c',
-         'main.c',
+diff --git a/examples/vm_power_manager/guest_cli/meson.build b/examples/vm_power_manager/guest_cli/meson.build
+index 45f2edab22..6a6809240e 100644
+--- a/examples/vm_power_manager/guest_cli/meson.build
++++ b/examples/vm_power_manager/guest_cli/meson.build
+@@ -13,7 +13,6 @@ sources = files(
+         'parse.c',
+         'vm_power_cli_guest.c',
  )
 -cflags += no_shadow_cflag
+ 
+ allow_experimental_apis = true
+ 
+diff --git a/examples/vm_power_manager/meson.build b/examples/vm_power_manager/meson.build
+index 6bc84d752d..53949ce6d8 100644
+--- a/examples/vm_power_manager/meson.build
++++ b/examples/vm_power_manager/meson.build
+@@ -29,7 +29,6 @@ sources = files(
+         'power_manager.c',
+         'vm_power_cli.c',
+ )
+-cflags += no_shadow_cflag
+ 
+ # If we're on X86, pull in the x86 code for the branch monitor algo.
+ if dpdk_conf.has('RTE_ARCH_X86_64')
 -- 
 2.53.0
 
