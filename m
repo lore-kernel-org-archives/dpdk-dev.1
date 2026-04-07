@@ -2,146 +2,144 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2372FFF510D
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 254F0FF5110
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 16:12:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 595F840293;
-	Tue,  7 Apr 2026 17:57:25 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 1014640269
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:57:23 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3353C40293;
+	Tue,  7 Apr 2026 18:12:56 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+ by mails.dpdk.org (Postfix) with ESMTP id 4DB8C40269
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 18:12:54 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775577444; x=1807113444;
+ t=1775578374; x=1807114374;
  h=date:from:to:cc:subject:message-id:references:
- content-transfer-encoding:in-reply-to:mime-version;
- bh=70vDms6acNIj9uc2fuHrI+U6LXbi5abEks4dxHpyyXU=;
- b=GGeoNiUXD+JH/MGVcuwRGO+SRY692R9B0B2bb9YP+VFswgLFeJ7C8HgX
- T8CsRTkwoVM1ragfSLjQU1pr9q3WcN7T+odOk/H18cE7Lhos2wSOp35Yd
- /FnPvS2IJw+S/uTBXdoK0TkivQ5SYYOXMm6dUwR/6zgonu98Tg2KqVTmc
- vpQ/8r5WCEdcDOiMBAkO8rT2ccgMOfA7ClT2W/XV9lDI1p90AszNjW6Q8
- hKC6brndha7OmEHu1bTOS8jTk5tDtkZEaHPZAKzYqON1/nH8/Z66g+471
- 8QILd3TihKM3ZHjznwBkaK4qfh6mwDdzkSsTZprm2iNt06GaFrXkMd5Oj A==;
-X-CSE-ConnectionGUID: KPa0u/mETMC8G/8AMuvjqw==
-X-CSE-MsgGUID: SD1sYtBIQUarWb0paYP4bA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11752"; a="87929780"
-X-IronPort-AV: E=Sophos;i="6.23,165,1770624000"; d="scan'208";a="87929780"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Apr 2026 08:57:02 -0700
-X-CSE-ConnectionGUID: ZCQbctVlQdiEGR+ZYvdDXQ==
-X-CSE-MsgGUID: zCmwAberTm2L9o6excVvhA==
+ in-reply-to:mime-version;
+ bh=/7Zpu2yy8zx9241pXV8CDQYx7jJZqgamL6lE6tKPN0U=;
+ b=ixwEp6dyTDz+veWFyr6QXT2WxAatsrLerRXt0NYi/xFMvGpWDIgQnEnO
+ ASc+vOeTBqs0pN3+J+qpvb0kN9h1COdDCU28h/6xLxXwGWa62KVfgWLxO
+ BHyGlYBa2rWlQUXDZlcjR55ihkpQj9ZxgVcVpti6goqKgDV37OjB4mLpZ
+ PRolaCpRfvPLVfwK5nWJpQ1yEBaUBJQk7gPWiIIrgXIEciW/SSFJZqVTd
+ LObYRhQ40Ogw95HH+u936Cvf34C5nTVa0ppbfepnCR+HRcmyRNsOK8fOt
+ 8pbKj6e6/DVALRCXTwYSfn4JfW+EtzjFPjxvAxYIFwxoLDG61igqFUYAk w==;
+X-CSE-ConnectionGUID: K4yk+3J5QaqdLfTQGCZQRw==
+X-CSE-MsgGUID: H0FNZ+RjRhqis5uTbVPTCA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11752"; a="87250597"
+X-IronPort-AV: E=Sophos;i="6.23,165,1770624000"; d="scan'208";a="87250597"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Apr 2026 09:12:53 -0700
+X-CSE-ConnectionGUID: thn0UPCLRZS5RZhkSWKwHw==
+X-CSE-MsgGUID: 1bfwNbw9SDGXYjEIJ5rjAA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,165,1770624000"; d="scan'208";a="233082118"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 Apr 2026 08:57:02 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.23,165,1770624000"; d="scan'208";a="225453499"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
+ by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 07 Apr 2026 09:12:53 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 7 Apr 2026 08:57:01 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ 15.2.2562.37; Tue, 7 Apr 2026 09:12:53 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 7 Apr 2026 08:57:01 -0700
-Received: from BYAPR05CU005.outbound.protection.outlook.com (52.101.85.20) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
+ 15.2.2562.37 via Frontend Transport; Tue, 7 Apr 2026 09:12:53 -0700
+Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.24) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 7 Apr 2026 08:57:01 -0700
+ 15.2.2562.37; Tue, 7 Apr 2026 09:12:51 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=l+hFrHMB0liWzQJ3SPxI0JS4xRVS7eBp82gAA54xaFbXScw7Q5i6IGtE9nTZKEkFmxqHXdzXL5M5TGu5AVFcQ4UpZSD1yGIBn8URN1VmTRq7T231CUOoe+lgscjEIpYXHk+xJC/JHiUbiYFQNt1oMY8JgCbXh+aSpa2CL499mojEcPKd+r+2gzcrpNCmFBFegjMcjhGWL9HF/xfGNLJ93BZwdbAWja7hsuVkDK7cw97zBkQqWeJVJTiW6GqpbEmCJ/nxrigYutrsr6i74nkpObGVfI+RKzUehc939AhrZS5J7lWLonE9FRqMCqAdWbkHiZbkCpbwbqKcub75dsCnow==
+ b=L4mnqeRPuuKY+EIxA/iE1RGDht9tV5W7ZEKmoouPhwq4Dk2+8t+jx2ajAQOp9z10SQmfGJ9WBg7l1L1haWbCqw77UgdaOmG+q5+aJxDGzCGR2NiJjS66vaontu3ANjhEb6fRIwt8gPC1bNYYBxAzaByR9h3ZnbXlefk7ksNzJgYAhnNnzl+271kk6l9wN93FeQyisuibxtY1YoGrqvCM2NUaTlGY2M5F2AHYVSllD2llQsL9NCbNzMIYs/gVc0N4PQKjVP7koHaYVl/cLHGcPBbis9Jb60aSqh+4bqa+51KuXMMAMolTGFBJmLp7XUm4pYd3PgI5vnJR9YW8bPeDiw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BtDgD1m79PWXSc1wNhyIfCW/miBqbXH0OskK2SE80hA=;
- b=Ywlt2Zfz1PGPj8JAhe11jHrMxLiBxG4kNS6ZbZYGcX303MUsEeTdDyvT3zAg/UaHBdkB76w1RMnHO4y/Q9XDyCkhtx+3JtCWvv2xrSe+xM5kRn0FZgJt/Ln30XGEGL5WfNT/bFI1sYiTFjhmGkSvI69QTeEvmI8VrnjYK3b8bIg8THY3C4eHtehFUAhw0W3hePrV/B8aYy/vXBfrOY4pCH3RnTyZ6uNdxra4yeX8iT6enUMDNhkrXbbjH6gRx2GHmJCreg2AxI/512vS+zHSTIgmTXFmyEOFosB9E2PmR/cMZo5aPAa4QgEsLkKKCc/fU8ZP3NgjOz0C2YuQ4lHX8A==
+ bh=1OGoNEspAGBL8EnAgdg7jsX+65s73jd8PepM4ZwUUu4=;
+ b=Kxw/ldU/QnNYsPsN7fJtYcYCQiv9TOKk1qQxqway1WXeot160itrj3Uq1JTIt4SYQvfbDCzCatXJetM0rzQL+g1psZk2hze4iVDlvsr1woA2LlAWMzwJ2+h4QbWkNXrWSYTyJmYNjx0csUnulChVQJXUK0T30wBQcUQG1THSMVKjcGT1hVf8W7yC395+1AmWoDPKi8OVP2RoiPxmVZuXyVvSVm2zeMOoTBbYHm/TJoVBfnFK3fy6TbWROzfZ7HcszzpmY4F5FYsnMuar5rqfx3oimS6nLiy8um9iZdtVy/8oUoT4lR+s2eJWdneH3CviWS4sT8UlDM5GHefuue2+Kw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DM3PPF0644BB20C.namprd11.prod.outlook.com (2603:10b6:f:fc00::f06) with
+ by PH7PR11MB6745.namprd11.prod.outlook.com (2603:10b6:510:1af::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.15; Tue, 7 Apr
- 2026 15:56:59 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Tue, 7 Apr
+ 2026 16:12:49 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9769.018; Tue, 7 Apr 2026
- 15:56:59 +0000
-Date: Tue, 7 Apr 2026 16:56:53 +0100
+ 16:12:49 +0000
+Date: Tue, 7 Apr 2026 17:12:44 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: Soumyadeep Hore <soumyadeep.hore@intel.com>,
- <manoj.kumar.subbarao@intel.com>, <aman.deep.singh@intel.com>,
- <dev@dpdk.org>, <rajesh3.kumar@intel.com>
-Subject: Re: [PATCH v1] net/idpf: harden PTP frequency adjustment
-Message-ID: <adUpRQk8X0kt_ZDT@bricha3-mobl1.ger.corp.intel.com>
-References: <20260312184344.1475052-1-soumyadeep.hore@intel.com>
- <abKqLQmzhTE6P6bU@bricha3-mobl1.ger.corp.intel.com>
- <20260407081445.39d5cd22@phoenix.local>
-Content-Type: text/plain; charset="iso-8859-1"
+To: Jay Wang <Jay.Wang2@arm.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, nd <nd@arm.com>, Paul Szczepanek
+ <Paul.Szczepanek@arm.com>, Dhruv Tripathi <Dhruv.Tripathi@arm.com>
+Subject: Re: [PATCH v3] net/ice: add NEON-optimised Rx/Tx vector paths
+Message-ID: <adUs_MMCPqx5HpVD@bricha3-mobl1.ger.corp.intel.com>
+References: <20260324162525.4083381-3-jay.wang2@arm.com>
+ <20260407151225.1416270-1-jay.wang2@arm.com>
+ <20260407151225.1416270-4-jay.wang2@arm.com>
+ <PAWPR08MB94460AB72013149B1E1CFB66BA5AA@PAWPR08MB9446.eurprd08.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20260407081445.39d5cd22@phoenix.local>
-X-ClientProxiedBy: DUZPR01CA0314.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4ba::21) To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <PAWPR08MB94460AB72013149B1E1CFB66BA5AA@PAWPR08MB9446.eurprd08.prod.outlook.com>
+X-ClientProxiedBy: DUZPR01CA0019.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46b::10) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DM3PPF0644BB20C:EE_
-X-MS-Office365-Filtering-Correlation-Id: 90277431-4336-4eb1-04b7-08de94be4cfb
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|PH7PR11MB6745:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0ab989ff-2e3f-4009-d0fc-08de94c0834a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|22082099003|18002099003|56012099003; 
-X-Microsoft-Antispam-Message-Info: W0uh/f8z8SpDLBFb9Cznu3LdkMjDwHPG45lva4CsPhxIhUHI1M0nyY9l7ixBbY44R4jOf888C2EOwDY99s+y1WiR27XUo0IseCNMoYirh27ouFLJXMZGtrZowTJZ2as9WXzBnW4HawhEJLiltgaB59T0NWEltaxyivckcCr925+EgAX6ZVCJyVabrDC7qjg4P1QoGh8KVS5VSZTGlof0l+OhsfG8tW56LA9EeAwgm+lg+kbZ6hYExfVqoPdK5FoSZ/31Od25gMX+/CmToSq6GKduPmcoWq3sh99s/GuwF4T5UUyMX4cmLvOj2bXtk+p0shbe3/wimzfWD3pBaKHK99gM6bN9EWuvFu3NmM3csJXw3Nel0fYPh0c/ON8D0OGXB2wqEJlDNxV3ntmslJyBsQz9dgKfQ+HIhZhbVOv0DvOSO2A00YN6Cjn8DN4sPWDkqf0KblyEQijvcVHMvZFXnNTRAukstudirW78ZoGz+QbjBdybOnysjMrWV3u1M5SYOTTW5dxTXnpT/s3ojAkKaDyo3u6Zrx/JVhzelizAUmwkR++WmKxOb5BkjvzNJDMkgcVyRSXkmkQyxTRd/t4uO936+Zot1OE04TY2TACYudb/kunZXJXzociVgWZfxuTiUQW3eDzHOMztwylZzcfpi87+pPXNa1EQidscFYUO55ISuHfVJswPeRcgr1oq1qlLCPn5JtH93rIB7OU1FP+TY4JipV5040IHPvkU+I6RbXM=
+ ARA:13230040|366016|376014|1800799024|18002099003|22082099003|56012099003; 
+X-Microsoft-Antispam-Message-Info: 5e1qrvB6vAtjWsOnBkAchJR3au84SKpSVIs+C90mlpesKjNGmbYU0Q+JpTQ449k0j76KyFYM18m4IADKr/zDooJ3SBt/6um6rzlB1uxRD+8EFJkKylBnQsrGm7jbOMj9wmERjzbO9/3PFH/wQCpLL4I3QGjejT+Rj3oyac1cVZ9mfyAR/WM+crK6XRwiUjbN5s0nlMbQNBJxWCPwhk0k3czw36y0iHcRGeCdIKd7iSTATlnL4gwmFqE81GrR8zPFsqrcE3kjl5EQE0LojQGk9KPd9p0M8RGGxqkL0emKX10c3nNSYSu2DQq7HgLanXZBtgK29mTWZSLevdQRB0tfcd6fwGFPhUQt9DzhTymAa3Nx2Fg4MFJqn15t2LMwPgVhgm/xipLXOU437JnNCkTamZnCTkPAcGS6MA+FW8dBlkvU74dBmmwncg24FGKWQcgPLaTmBIWOuwRdmEIkPo/16IfGbDrVSEzPsOjnVSg3RGSFrPbU6Egk/ZUwQFsi/gxa0VlW+yAmg5H06tLAbd4/V8Kfc9OgZwfYC/ZveXooyhB/WWGH4YsJUQup13sr0Qw2eNt3kDi4KlJjIfkOv6Srt2+qZ8J1RzjEPnLMcI+ihPJ7jHi7BCt6URd8XZIyNiwecgaKXbpOFcZbw4DZOO3UDhEbDrUdRR5deeaViN3kheczCAamPmJFym4ACi0isQX2wAzZRTf2hRcEn1/VFjfdkJJftl6rtA05EGRksBqbKJk=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(22082099003)(18002099003)(56012099003);
+ SFS:(13230040)(366016)(376014)(1800799024)(18002099003)(22082099003)(56012099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?F+reMsEW+7u64A0IyaQIrI7ZuJN/GFPBcz3Y1FU9ppJt5t3SjbEvS5Kebo?=
- =?iso-8859-1?Q?LTrBZLVez3yMI0kcSHI8iL7h83V3ZGOe7vczzlsPNfhJpCYP/3LIdJQnK3?=
- =?iso-8859-1?Q?43SBKwvRt0aDJt0ThZ6lZ8sP4a996hzNr+NmvnQ5G0QVeTpqSvhcaJavBF?=
- =?iso-8859-1?Q?LSY68tiWVVgTaZP7kX3lw5/8kD95TkG/EOgqBv5pkrh+brM77UKOhsn4ad?=
- =?iso-8859-1?Q?WfGpvP6cr0fkvMg7DHf+mJWypui1oTc4U1+SKMBqNICukfpQS7KBlazAXh?=
- =?iso-8859-1?Q?VVyXZxvjVBghXbFRkT5KVYnEbxjEfTZ836TchJSAi7j7wkE2FJ1IXMaIbM?=
- =?iso-8859-1?Q?sLYCSH2Ll1yk4AiUmsRMFbKit+8+nAbVFmM/+sQBqSxctkymLGF6xCvPS3?=
- =?iso-8859-1?Q?NIQe/SRcFlQir7nfORGNotaDJXaw0xVirTS00ccojDAZevpp0v2ZBv73Yh?=
- =?iso-8859-1?Q?z8FhbeAP3Wz4MoECIx5Cf/LTEYPy7v5MSF2jodIHNHuAvVW12HgVlcj82f?=
- =?iso-8859-1?Q?cuZvrY7NzxI8S1X2iteju+x5c1pl/lTpHCRUj9sg1Writj3Ib0Nul91wBT?=
- =?iso-8859-1?Q?vWVoTWTA4Y4vpAgTL4tdZTaj2VJBebqBrJJ/IgsGkdeD/x72BM+YIQDxyM?=
- =?iso-8859-1?Q?cxKOY2VRBBgQxh9wSaxuvdAj5xXaSLw+ShqAsAmhW7bEBYfzORFUjaoCNV?=
- =?iso-8859-1?Q?sZX5oxyqK+TWQ+aa8/MhuP0y5mM+9YqBQaoNqeF1+/tYS+4O+HmS+ZTe68?=
- =?iso-8859-1?Q?shI9mRZxSNnbV6TKo1IipePaGwoLV4TqES4gbqRP1Zjm0cMcfrbGcp5wlP?=
- =?iso-8859-1?Q?trfQmhtYVDsniIFuMFfhX0vGrmkuhJBddzc8RENeniwpMgIicu6CJnDcUm?=
- =?iso-8859-1?Q?7TvMc8vZ/ZO5EO8Gl7c427PENJtnF6dX/1seIaCJKXBHgAdXjmRT0hCp9g?=
- =?iso-8859-1?Q?F1seqXbrlDOVaoiXZkaOvAcrY2KBtH3NK7rHcriUwt2pWGuNAtCMq3Vw5K?=
- =?iso-8859-1?Q?BpvKy/cNaX/Lz4AVP7AfG0DYyt9R/VO3c1xHFxVJlz5AWEjYdz7JIUOJDk?=
- =?iso-8859-1?Q?1HrxR9fQUuGGd0S5uR1RccXdQICS7GX8IScZVDrmLmexRPytGe+4lwnt3Z?=
- =?iso-8859-1?Q?/x3wpJNZRwXpQSALJ4GmevmQJt8cZ97Cp9EmFGkXquEJXS2Hl4hZ+sWu2e?=
- =?iso-8859-1?Q?STM1iKP0dec3K+X+mukHQAFUWaRGk/rR7KbMSrwHIkrTEYEpW28zs9tVhu?=
- =?iso-8859-1?Q?CCER8fhLnLf/HW01mh0gUFYPI/RrC2NXJ2JpCD9ji4SAU0yv9XsxDeXoqi?=
- =?iso-8859-1?Q?tyDtNHo9kQ0P+/6ivzsW+B1S9ovGFQRSG43JmZkuOHuptV6ziEY97MU+Q9?=
- =?iso-8859-1?Q?oGTiHrQR75Jxzvgh9siQuMNE32dt7n50T7HTVD8wLrlAJPMYF3H9sPcpPD?=
- =?iso-8859-1?Q?gw7HSqdeG5Q/is2UVc7tABSocSotV3/K6g8XO0G1PRTA2l4pMxLI8l4QrE?=
- =?iso-8859-1?Q?3cqU2eiqf5P8sFWVwiNfaEJJRYivAuRMxVVLLjnDUgWIdRbEL8RoQ6ns5i?=
- =?iso-8859-1?Q?EkziWc6/bgesv4wNlAmVP4oc8nBDo0UtB0Aso9OpEXr7adpmCBHP03sJ4n?=
- =?iso-8859-1?Q?V8unjFhxhB4gNS2fQkTuwTAzxM6wuOiO/b8kbAeLLODA3Us+NGfWuCWdgU?=
- =?iso-8859-1?Q?DmztmZffzXv0yb5YVd/k5IQD0sWctOHtGxW10um0M3gPCTznQtdW+Mz7lD?=
- =?iso-8859-1?Q?Rr194bVNRO+xZUEjTrxNxrwcOoZkomZFETDyMYKmrB9xOMgnZFQfEWxA11?=
- =?iso-8859-1?Q?6hnJIK/JrYt7T7njG4IEKvYwDCpiZpY=3D?=
-X-Exchange-RoutingPolicyChecked: ZyqG/NhSstyIZ6xatbX7T6IyAPi7ClfCtjnR+86R78Z4B11adMYcJiwBEgnZjjlRC1xZ3RZOwfkKErj8bSdScLFdWiGIDSTBehi6foLQ638k+K+naSGRo9LfsAB4x6/IXtyf57jJh8Kzvp0dVCM5TT/VSAJBBYFczg5ehc6QCJdz/0YGUwvBOSb5xvx78JyAh5k+rlERMYOeRlYJul/2e9JHjIDE7XOc7S+EudSh4SutYX9pjZkZChtohGkIBGR3IuPIYuA70tcrg0qoupKyppdOJV/UBJ+v6cv5QT1rqNYAxCsNTwIvUD7CMPW7uAEMMbJ+3XLDG0zGERGyku4M0w==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90277431-4336-4eb1-04b7-08de94be4cfb
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?z+CR6e1nE4LhGVNMcv241kwjD+RZ1k/xGTqMUAer6LLFjk/a+Hk2BKH2+yrL?=
+ =?us-ascii?Q?u9OVZTUPRPt3eMrXQ5HODYQyLkd6I2AF+yvZh5LdgzwLN3ejfX8ad6vPepk2?=
+ =?us-ascii?Q?JVYFuNL4eyU1jRrM3R0is5GTh3JCv3+ovcNi11flsTt9Wucg2VEEVXWkTFnW?=
+ =?us-ascii?Q?kL/rsBXgdqH55XMylgZrDChQ+VU1zHLWk5q6lbPURemz6sdRVXa+VoBgIQ2K?=
+ =?us-ascii?Q?N3xhcge7iIWrElRSp8NXxkpMg/2yVWbXE0B9gMc45V0VA0/jOwJwqw5cuS1y?=
+ =?us-ascii?Q?/sRBYjSn5WrwF7GgCcVIIzqZd5zApBvWilBArKYIIeGQpr9W5W0MyyucKu3P?=
+ =?us-ascii?Q?ytG2C+eYXYOZKoYVaUUM3KTnxqHC+7tfsDAD167WD6jhMboAN8iTjPYc4kyt?=
+ =?us-ascii?Q?nMWzbnvqwoSxNAOmo6SqpRG7eqBhzREddg7PPCVmdAjJJj7V/bgxLcW4foMR?=
+ =?us-ascii?Q?wzGpFxP79dENuRRT9ZNGUsRsgCYkNV/ldC5K8vdHirWFZSBJen6z8j4oaPLf?=
+ =?us-ascii?Q?+3Tx3hAj/Vehh/lNCLReqJK+NGOIy6aCxNquTQ24UR1aQGbIRd9bWyvnAFCJ?=
+ =?us-ascii?Q?Vxp25Ekl+wYRRe6o6Ota11l56FDpXpQjtxCRhJUqIC8oyCnsU5bO6NmYLgqd?=
+ =?us-ascii?Q?n1X2v9Mjia4jZGDdmLIGQwZSr+XlxzRztli7jN13+HqIKsRANekOptjLRAL9?=
+ =?us-ascii?Q?Pk30kYqRtf3NRNv1ssfrY6KMuCL5VZ/QT9X0dfc4vnHeFddlIMmjUKy1yhyM?=
+ =?us-ascii?Q?hFBX6kmYK7oQNVX5VROzGcCTTtPtGHQIgDlGY50G4KLwpAhuZBFoP/GUU1s3?=
+ =?us-ascii?Q?IFMR6A0+F89nfEAkqmE2vyS0RQyXT5yZd9NJ0PuvjUySAimV4qKd04qMr9XK?=
+ =?us-ascii?Q?MxKlRQqIOANWbnE1Dlv6GWvwmwdlt6GLgDXpcXUbXDqwW1okur6W4qpOeiC+?=
+ =?us-ascii?Q?9KagbV/VVGo77S7XEjtpjo3ubFQbdcKdKDb7chFBYUV7F4lHnBQx4ZUxU30G?=
+ =?us-ascii?Q?e/OweZKJvimXZLSLgIreTKxX3ECgwFdbOFwG6VM3EIYMKN7FfjmSM4WCpF24?=
+ =?us-ascii?Q?Wg5lInxh9dCK0sFrBYN+UeeBCpAZm4M6SNXYapNlXvCEVqh4XmitfonLdMJD?=
+ =?us-ascii?Q?9Qyv0wJGn/JjF62ryoYueOla78oAGrjSN2tU5jGS4MTkw0Ye+1FTb+D33Jn3?=
+ =?us-ascii?Q?tcLZ+USBXaiZWXcsSPYaY4ClPWn4SdRdGMdKMTlh/9foxGy9w0L0nSmW1qaJ?=
+ =?us-ascii?Q?6RM2buaxAQFFEGarEbld9Z3xvB9umz5p5K67a5UF5CbxRyEg4Zr85IFoSnT4?=
+ =?us-ascii?Q?VfPrDFyyWHL2I0jsXf0o2G15fCCkKFoFdrAkwr1JdvXGHAs2Mcp4L0Rf3TKw?=
+ =?us-ascii?Q?5BaMZVdyZmGYbWTQn4UE4LLnf68RZD9WfI22t6AGDDr2A2ZkAfhZGisyo8KO?=
+ =?us-ascii?Q?JaWlVDkqqF/14T3Pe/qPWDmzlbQrzHkwHajGmDF15mVdV3YPR/CIda1C8Ts4?=
+ =?us-ascii?Q?1/gEu+RfNKqVDeaqkJd4E3YIwu4ORcfcunavsOUEXwt9GSzcmpi8ERkwh2/h?=
+ =?us-ascii?Q?T0+hGacus48nTKiUjX4D4u+e0/5K/ctOEZ+NjODXD4zAcAs3Rm8hjqqyGuvS?=
+ =?us-ascii?Q?nyCFW/pIHgVi5QE90YuJcqNv7OI3AVfn9yFY1MzLx8e0OC934M3OLGysFNbO?=
+ =?us-ascii?Q?JlUD/bzbBePzWpNGpYNksWWtr8y/mD0Bg4v50xg4EFBeov4sXbYWtmEGSZZ3?=
+ =?us-ascii?Q?8Hpvv4S20Al+KEaA27ZV8enBj1+EVBk=3D?=
+X-Exchange-RoutingPolicyChecked: L2Jqqe4OByfc75CvVygUEODErVIM5WMtzRYMMx57H2WfSTBm/BHrb2srqCDBT1+CTZAJLPGdBcS9A+/I31SbJi4YFi9Y836UBNy3Ur7+yE+jWAiza5P0dIZRgfp9bPbZ+4r0lbwyuBn++rh92VI8BB2Ru0w5rdNrRcZM0B+5VCRLP3YFgZscIU001ocDWlkT7FjccoKJtBYQ1mqmD6yb3VIJQi6W/s2EkcQWxrxbVloz78JZlLUs/5PcfaWym8pe03BAx72fQX/MiPqT5T4l2jYk09mxufkUg8A05rEAz3D7qoVWAl+I2sAbmTna4SS/GHPG9A/lrKuKtnXTXIEgIQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ab989ff-2e3f-4009-d0fc-08de94c0834a
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2026 15:56:59.1935 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Apr 2026 16:12:49.2397 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: A+2nWp2baaDr1gexHdlmDTIX95LOlCokkmQkgfOSE8/aOdYej9nRL3XflBH7PdqobdxxFAK5OTB1K/nePbdvy+TGADzQwtMF5qKXOJYTOaA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF0644BB20C
+X-MS-Exchange-CrossTenant-UserPrincipalName: p1Pf+4y5i8iv6VBQpDeLmksaFfsZYKSl8y5uoCS/Kw+49ufr4W7sOWyLbnkROZ/BRFBXb+etut376zPRe/qFjbBd3ZVowNU4IeEmWIK+hPw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6745
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -156,137 +154,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Apr 07, 2026 at 08:14:45AM -0700, Stephen Hemminger wrote:
-> On Thu, 12 Mar 2026 11:57:33 +0000
-> Bruce Richardson <bruce.richardson@intel.com> wrote:
+On Tue, Apr 07, 2026 at 03:42:29PM +0000, Jay Wang wrote:
+> Hi Bruce,
 > 
-> > On Thu, Mar 12, 2026 at 02:43:44PM -0400, Soumyadeep Hore wrote:
-> > > Normalize ppm to an unsigned magnitude before using it in the
-> > > increment value scaling path.
-> > > 
-> > > This avoids negating INT64_MIN and also prevents subtracting 62
-> > > from the reduced log sum unless the sum is still above the
-> > > overflow threshold reported by Coverity.
-> > > 
-> > > Coverity issue: 501832
-> > > 
-> > > Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
-> > > ---
-> > >  drivers/net/intel/idpf/idpf_ethdev.c | 32 +++++++++++++++++-----------
-> > >  1 file changed, 20 insertions(+), 12 deletions(-)
-> > > 
-> > > diff --git a/drivers/net/intel/idpf/idpf_ethdev.c b/drivers/net/intel/idpf/idpf_ethdev.c
-> > > index 5e57a45775..1c5bd2ee12 100644
-> > > --- a/drivers/net/intel/idpf/idpf_ethdev.c
-> > > +++ b/drivers/net/intel/idpf/idpf_ethdev.c
-> > > @@ -1007,7 +1007,7 @@ idpf_timesync_adjust_freq(struct rte_eth_dev *dev, int64_t ppm)
-> > >  	struct idpf_ptp *ptp = adapter->ptp;
-> > >  	int64_t incval, diff = 0;
-> > >  	bool negative = false;
-> > > -	uint64_t div, rem;
-> > > +	uint64_t abs_ppm, div, rem;
-> > >  	uint64_t divisor = 1000000ULL << 16;
-> > >  	int shift;
-> > >  	int ret;
-> > > @@ -1016,26 +1016,34 @@ idpf_timesync_adjust_freq(struct rte_eth_dev *dev, int64_t ppm)
-> > >  
-> > >  	if (ppm < 0) {
-> > >  		negative = true;
-> > > -		ppm = -ppm;
-> > > +		abs_ppm = ppm == INT64_MIN ? (uint64_t)INT64_MAX + 1 :
-> > > +			(uint64_t)(-ppm);
-> > > +	} else {
-> > > +		abs_ppm = (uint64_t)ppm;
-> > >  	}
-> > >  
-> > >  	/* can incval * ppm overflow ? */
-> > > -	if (rte_log2_u64(incval) + rte_log2_u64(ppm) > 62) {
-> > > -		rem = ppm % divisor;
-> > > -		div = ppm / divisor;
-> > > +	if (rte_log2_u64(incval) + rte_log2_u64(abs_ppm) > 62) {
-> > > +		rem = abs_ppm % divisor;
-> > > +		div = abs_ppm / divisor;
-> > >  		diff = div * incval;
-> > > -		ppm = rem;
-> > > +		abs_ppm = rem;
-> > > +
-> > > +		if (abs_ppm != 0) {
-> > > +			uint32_t log_sum;
-> > >  
-> > > -		shift = rte_log2_u64(incval) + rte_log2_u64(ppm) - 62;
-> > > -		if (shift > 0) {
-> > > -			/* drop precision */
-> > > -			ppm >>= shift;
-> > > -			divisor >>= shift;
-> > > +			log_sum = rte_log2_u64(incval) + rte_log2_u64(abs_ppm);
-> > > +			if (log_sum > 62) {
-> > > +				shift = log_sum - 62;
-> > > +				/* drop precision */
-> > > +				abs_ppm >>= shift;
-> > > +				divisor >>= shift;
-> > > +			}
-> > >  		}
-> > >  	}
-> > >  
-> > >  	if (divisor)
-> > > -		diff = diff + incval * ppm / divisor;
-> > > +		diff = diff + incval * abs_ppm / divisor;
-> > >    
-> > 
-> > Asking Claude AI about this code and how to simplify it a bit while also
-> > avoiding the INT64_MIN issue, it suggests using __int128 type, giving much
-> > shorter code:
-> > 
-> > 	__int128 diff;
-> > 	int ret;
-> > 
-> > 	/*
-> > 	 * ppm is scaled ppm: 1 ppm = 2^16 units (matching Linux adjfine).
-> > 	 * Use __int128 to avoid overflow without complex split/shift logic,
-> > 	 * and to correctly handle ppm == INT64_MIN.
-> > 	 */
-> > 	incval = ptp->base_incval;
-> > 	diff = ((__int128)incval * ppm) / (1000000LL << 16);
-> > 	incval += (int64_t)diff;
-> > 
-> > 	ret = idpf_ptp_adj_dev_clk_fine(adapter, incval);
-> > 	if (ret != 0)
-> > 		PMD_DRV_LOG(ERR, "PTP failed to set incval, err %d", ret);
-> > 	return ret;
-> > 
-> > Maybe worth considering?
-> > 
-> > /Bruce
+> I think it would be better to restrict compilation of the vectorised paths to AArch64 only. 
+> So, rather than modifying the intrinsics as I proposed earlier, I added an extra check in the meson build configuration file, as shown in the following code snippet.
+> Could you please help verify the patch again? I also did a sanity check by cross building DPDK for AArch32 on my local AArch64 machine, and the file was not compiled, so no build errors were reported.
 > 
-> Claude AI review of this patch spotted some possible math issues.
-> 
-> 
-> 
-> Normalize ppm to an unsigned magnitude before using it in the
-> increment value scaling path.
-> This avoids negating INT64_MIN and also prevents subtracting 62
-> from the reduced log sum unless the sum is still above the
-> overflow threshold reported by Coverity.
-> 
-> The simplification is a nice improvement and the __int128 approach
-> is correct for realistic hardware values.
-> 
-> One concern:
-> Warning: drivers/net/intel/idpf/idpf_ethdev.c
-> The cast (int64_t)diff silently truncates if diff does not fit in
-> 64 bits.  The __int128 multiplication itself never overflows (both
-> UINT64_MAX × INT64_MAX and UINT64_MAX × INT64_MIN fit within signed
-> __int128), but after dividing by 1000000LL << 16 the quotient can
-> still exceed INT64_MAX when incval is large and ppm is extreme.
-> For realistic PTP hardware (base_incval around 2^32) this is fine,
-> but the API accepts the full int64_t range without documented bounds.
-> Adding an explicit clamp or assertion before the cast would preserve
-> the defensive character of the code being replaced:
 
-Sadly, the CI is also complaining. It seems that __int128 doesn't seem to
-be available for 32-bit ARM. :-( Not sure what the best approach here is,
-whether to add a more complicated fallback path for that case, or just
-disallow the timesync on the unsupported platforms for now. [32-bit x86
-doesn't seem to have issues, for example]
+The CI should run this patch through the various builds and report the
+output in patchwork. Once that goes clean I can consider merging the patch,
+and if not, you can submit a v4.
 
-/Bruce
+> Sorry for duplicating the previous patches on the website. I've marked them as superseded.
+> 
+
+No problem.
+
+> Thanks,
+> Jay Wang
+> 
+> > diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
+> > index 293577676f..a205304c89 100644
+> > --- a/drivers/net/intel/ice/meson.build
+> > +++ b/drivers/net/intel/ice/meson.build
+> > @@ -33,6 +33,8 @@  endif
+> >  if arch_subdir == 'x86'
+> >   sources_avx2 += files('ice_rxtx_vec_avx2.c')
+> >   sources_avx512 += files('ice_rxtx_vec_avx512.c')
+> > +elif arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
+> > +    sources += files('ice_rxtx_vec_neon.c')
+> >  endif
