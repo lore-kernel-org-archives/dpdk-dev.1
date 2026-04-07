@@ -2,66 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E65FB5190
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 03:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B907CFB5188
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 03:52:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3A91D402F1;
-	Tue,  7 Apr 2026 05:52:21 +0200 (CEST)
-Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
- by mails.dpdk.org (Postfix) with ESMTP id C56CE402AC
- for <dev@dpdk.org>; Tue,  7 Apr 2026 05:52:17 +0200 (CEST)
-Received: by mail-dl1-f41.google.com with SMTP id
- a92af1059eb24-12c0b72daf7so74704c88.0
- for <dev@dpdk.org>; Mon, 06 Apr 2026 20:52:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3EB32402E3;
+	Tue,  7 Apr 2026 05:52:22 +0200 (CEST)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mails.dpdk.org (Postfix) with ESMTP id 8A3C1402B6
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 05:52:18 +0200 (CEST)
+Received: by mail-dl1-f51.google.com with SMTP id
+ a92af1059eb24-127380532eeso2679370c88.1
+ for <dev@dpdk.org>; Mon, 06 Apr 2026 20:52:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775533937;
- x=1776138737; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775533938;
+ x=1776138738; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=BgRfmiiPjEpKuJwq3dJzlztM2bsHTG7GBU6AMBdbYFA=;
- b=eRw0WEMMdcP6Pw+S89vOe3xvwBEhPK6V63hQD7Cfug6gts8X2emjxLMBR8QiQdhVAK
- WxeIBg5ZMDfUqil5gdlueE0pr4x0GAHML/IwcoeOjLVFQpjHyqvhkJeKeJTThqlitKer
- JeYqzTtmGM9avhetYbbgh/w9dV0aL7cJxyEGqnUZkrrFRGvosPNat9CTYkTQHMZthyNJ
- mC8Sr/HoYJ5XHP85cSQ4nieUHHY3bDnLT/TXT6Z5aTTiV1v7tlP5RPgaM8sOXOyGEEsE
- 0vNxpshg/T2pULJcTtQDoxQ2Vvw/iAjTBwxQ4LE7H/hfm4YZ9oPLmQZxpa6m0HktJJNR
- G9Ww==
+ bh=nSIwLhfRDrpyOLBE8Pj8Pu9oHVF1+m6eJ/Vf/76VF9Y=;
+ b=R0pmskhH/tzdFJMZKs6ePLDomEPdTsjor2vMiF8mY9zawVvYlqBHs1HQkIJQvpgA+/
+ 5OVMRthhvFpzNSd4cZZJNwQdrjP4aUbhMdzDgKkG05P95aYeUTHnMjvXSQCK8x3GmfX2
+ P+S1PC/8PBeOzLmPUPdiPF8BSjtrQXLBGgioD2IQ0E0NkHvpuSoN3PQP08I4akiB5llP
+ jqDa2wPc8n5jVEVZusAxuAtQJxmoNWlIaj9/e3OqoXeEGOqKikmA+8Lug3QSFr/K64Ka
+ RtfNaZTIKSfAfDFAlcwjuMH3fLo+fAp6Rq+tj5xYud6t0y77vwicflqLzB+IfWbLIC3W
+ iSow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775533937; x=1776138737;
+ d=1e100.net; s=20251104; t=1775533938; x=1776138738;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=BgRfmiiPjEpKuJwq3dJzlztM2bsHTG7GBU6AMBdbYFA=;
- b=KSo5aBSRXnIZEDo/4mza/HcPjeCLd05EgAGNYgEeIfcxDB6uS9oJPfyMGZqg+jh4kp
- hjfzVP9liKFHwAX4hRZuq0Pcm5nNwtO/6cMgtsYyKmXgJfIQoF5svjlhHcwYJLl5oLjo
- e064BizKXkKTGWR1AEsZb3J6sbGCMva95WRUASiuEVAwHNAbczWUpvOHmyoZMs1NUTW4
- 5le+L++rxcrBXf08na5sGx6Qwtf3tClsmYGHhrLuWTpqj7LVYobdwYlr1lAz0xZ9FfOR
- ZUK/3bUNNO8Lf0VvFxHyF2RxwLTEZNuDQ/uKjEUsVW+mHuX/WjE35mKQXtS3FHKir4KJ
- ocAA==
-X-Gm-Message-State: AOJu0Yxd5SkOge8a7Y/e/LwytEUhofjnJZNiJKXwvqfAis0jw4hOTjQa
- aDgmVtrCtEve0QnkyhcxTQ2Me63kMmVJBU4T7br+WbEi2qEueTPI9Goy7Z+WyHLzZz/19U4kJW0
- bA2i+
-X-Gm-Gg: AeBDiessbLtUyhWs/jEjTNgYfRLcv8/KxASbQjGBf6CmrPVvdohP774W/J82oh38bsi
- zysznr8MCrvOYv+ZP825JopMapehv41W+WqLg7VwBDPyxSFh4UUR6Ireydu0XG+attM6j089Ff/
- AhRRUxmjrHIGQ1RbEk7MhZKrwbskVI8KJyEByKidErKPLNjlQiX5d0RT+BbdYBHEzOKwV7hwzO8
- vvdyR28g8C6N5u7aCi3WpcwqQHba4kzraYL7ejZB7hN6eqX+z9HiT+D812qx6Npmdrd6YBVHjqF
- aKLlXkFzESNV9t6FTmeY+JMzSG5zzYI+Akk6ucXhORkVeQIaubwA8XQKMKvtmI7T35dZ8PmoD1N
- 0QTJhWuOfl4zGOMTZV2fx6/XW8Nh8iuK11nNnMQU4O0xCmUopP8dRkBvWhvVN+90DGNpFFbOEto
- c8kP/32bke8kFaHYcBAGUwQVPGUUV+dMY+
-X-Received: by 2002:a05:7022:2221:b0:127:33e0:ea33 with SMTP id
- a92af1059eb24-12bfb74c9bcmr8115275c88.22.1775533936791; 
- Mon, 06 Apr 2026 20:52:16 -0700 (PDT)
+ bh=nSIwLhfRDrpyOLBE8Pj8Pu9oHVF1+m6eJ/Vf/76VF9Y=;
+ b=Zv0x2jzsHzzZCMyhqFNxhZDhmJz57v0DDcV2kd3zMzDd3s+bEgJEFEm0ZMBYFfunn/
+ 1j+ibRGNcaXZDdqJ0VI68P0IXvH25UD6Ix4pUOC86A3m6ok99LNqCE3rlDozBVeVeBjn
+ 1IphNRUgMamEEx6brXPINbk31vTZp9dYPGXUPfsXmugpmyjtjSKLY14tmSLIIG0K/MlD
+ H5tMsibOipDo66N+qhVpRqVkEehIMC/Mx8d5bHEpw+xjA0O/RgcCHLW4djlhAWNqxjat
+ eaDgbK8oetE2WTSARHm376wpXun7dOkvPNYbt4bzpUuTSKqLShJrXqLn0feJcCvKuQRe
+ mBxQ==
+X-Gm-Message-State: AOJu0YwzmtIuLXh8qIuR96nSlIXR/xrx2JWZ8c/t22I5S3MWMWJ449F2
+ aTvSfLAyMfGohgvOIwBMOGeakd07qN+PfyaeH/ZsMV3dEVSiL6ESesgVrNUsHH+2TKi8BXGU7GF
+ 7O5+b
+X-Gm-Gg: AeBDievIuXUa310flEtRmsJv+X6eqz4dOCgI+sakj1GgvT37eqxCaYdnCSWx+hXJWMk
+ 7JJ7gcZjVRN0YJ860ra9mWUnACeX8QFAicZWLserDZVKBpti9C3yd2QsQeYbzbpE+8Mp4NF0gFC
+ 1KsJG+6PPkBgBORDSKnVfrneLS++634v3iYC8d8JnFw6KIidOmflLq6JUt2UNGKkKEBIQt+Lko1
+ OG48dTdtUJ4JZhzFKDNi1KDj6VCeYYod8knETlaT3PDM7YKI+dTsB8cccOAHDiToSpRyCnWVWBS
+ a0qn/nMpkDXzfPq4MISDgOU6zYaB+O5Zgxwjr5HaSvZk7gBe6ehMsa8lK2dGBetQu1AZpoyk1fu
+ NCsc8E+XnG2WEtC0TekOFnWpwpxvQ5jIQvoedRpi0OYZJCptT0yjCCF0jRZ2bybw/4K61Xyv1xy
+ wH3idZIlTC0No3xKOckpY9ZjwzF7QKNIZW
+X-Received: by 2002:a05:7023:b0c:b0:11f:3483:bba6 with SMTP id
+ a92af1059eb24-12bfb700f5emr7740293c88.13.1775533937639; 
+ Mon, 06 Apr 2026 20:52:17 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12bede545e8sm12716093c88.11.2026.04.06.20.52.16
+ a92af1059eb24-12bede545e8sm12716093c88.11.2026.04.06.20.52.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 06 Apr 2026 20:52:16 -0700 (PDT)
+ Mon, 06 Apr 2026 20:52:17 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>
-Subject: [PATCH 05/23] examples/bond: fix shadow variable warnings
-Date: Mon,  6 Apr 2026 20:49:31 -0700
-Message-ID: <20260407035209.650419-6-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 06/23] examples/vmdq: fix shadow variable warning
+Date: Mon,  6 Apr 2026 20:49:32 -0700
+Message-ID: <20260407035209.650419-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260407035209.650419-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
@@ -80,113 +79,52 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Fix shadow variable warnings
-- remove mbuf_pool parameters since member_port_init() and
-  bond_port_init() always called with same pool.
-- rename members array used in show command
-- make the variables static
+Rename parameter of get_eth_conf to avoid conflicting
+with global variable.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/bond/main.c      | 21 ++++++++++-----------
- examples/bond/meson.build |  1 -
- 2 files changed, 10 insertions(+), 12 deletions(-)
+ examples/vmdq/main.c      | 8 ++++----
+ examples/vmdq/meson.build | 1 -
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/examples/bond/main.c b/examples/bond/main.c
-index 4e8eeb7a5e..99359cd6fb 100644
---- a/examples/bond/main.c
-+++ b/examples/bond/main.c
-@@ -96,13 +96,12 @@
- 		":%02"PRIx8":%02"PRIx8":%02"PRIx8,	\
- 		RTE_ETHER_ADDR_BYTES(&addr))
+diff --git a/examples/vmdq/main.c b/examples/vmdq/main.c
+index 12ef5bffc2..8c9d885090 100644
+--- a/examples/vmdq/main.c
++++ b/examples/vmdq/main.c
+@@ -135,19 +135,19 @@ static struct rte_ether_addr vmdq_ports_eth_addr[RTE_MAX_ETHPORTS];
  
--uint16_t members[RTE_MAX_ETHPORTS];
--uint16_t members_count;
-+static uint16_t members[RTE_MAX_ETHPORTS];
-+static uint16_t members_count;
-+static struct rte_mempool *mbuf_pool;
- 
- static uint16_t BOND_PORT = 0xffff;
- 
--static struct rte_mempool *mbuf_pool;
--
- static struct rte_eth_conf port_conf = {
- 	.rxmode = {
- 		.mq_mode = RTE_ETH_MQ_RX_NONE,
-@@ -119,7 +118,7 @@ static struct rte_eth_conf port_conf = {
- };
- 
- static void
--member_port_init(uint16_t portid, struct rte_mempool *mbuf_pool)
-+member_port_init(uint16_t portid)
+  /* Building correct configuration for vdmq. 8< */
+ static inline int
+-get_eth_conf(struct rte_eth_conf *eth_conf, uint32_t num_pools)
++get_eth_conf(struct rte_eth_conf *eth_conf, uint32_t max_pools)
  {
- 	int retval;
- 	uint16_t nb_rxd = RTE_RX_DESC_DEFAULT;
-@@ -204,7 +203,7 @@ member_port_init(uint16_t portid, struct rte_mempool *mbuf_pool)
- }
+ 	struct rte_eth_vmdq_rx_conf conf;
+ 	unsigned i;
  
- static void
--bond_port_init(struct rte_mempool *mbuf_pool)
-+bond_port_init(void)
- {
- 	int retval;
- 	uint8_t i;
-@@ -462,10 +461,10 @@ static inline void get_string(struct cmd_send_result *res, char *buf, uint8_t si
- 		((unsigned)((unsigned char *)&(res->ip.addr.ipv4))[3])
- 		);
- }
-+
- void
- cmd_send_parsed(void *parsed_result, __rte_unused struct cmdline *cl, __rte_unused void *data)
- {
--
- 	struct cmd_send_result *res = parsed_result;
- 	char ip_str[INET6_ADDRSTRLEN];
+-	conf.nb_queue_pools = (enum rte_eth_nb_pools)num_pools;
+-	conf.nb_pool_maps = num_pools;
++	conf.nb_queue_pools = (enum rte_eth_nb_pools)max_pools;
++	conf.nb_pool_maps = max_pools;
+ 	conf.enable_default_pool = 0;
+ 	conf.default_pool = 0; /* set explicit value, even if not used */
  
-@@ -635,7 +634,7 @@ cmd_quit_parsed(__rte_unused void *parsed_result, struct cmdline *cl, __rte_unus
- void
- cmd_show_parsed(__rte_unused void *parsed_result, struct cmdline *cl, __rte_unused void *data)
- {
--	uint16_t members[16] = {0};
-+	uint16_t act_members[16] = {0};
- 	uint8_t len = 16;
- 	struct rte_ether_addr addr;
- 	uint16_t i;
-@@ -658,7 +657,7 @@ cmd_show_parsed(__rte_unused void *parsed_result, struct cmdline *cl, __rte_unus
- 	cmdline_printf(cl,
- 			"Active_members:%d "
- 			"packets received:Tot:%d Arp:%d IPv4:%d\n",
--			rte_eth_bond_active_members_get(BOND_PORT, members, len),
-+			rte_eth_bond_active_members_get(BOND_PORT, act_members, len),
- 			global_flag_stru_p->port_packets[0],
- 			global_flag_stru_p->port_packets[1],
- 			global_flag_stru_p->port_packets[2]);
-@@ -706,11 +705,11 @@ main(int argc, char *argv[])
- 	/* initialize all ports */
- 	members_count = nb_ports;
- 	RTE_ETH_FOREACH_DEV(i) {
--		member_port_init(i, mbuf_pool);
-+		member_port_init(i);
- 		members[i] = i;
+ 	for (i = 0; i < conf.nb_pool_maps; i++) {
+ 		conf.pool_map[i].vlan_id = vlan_tags[i];
+-		conf.pool_map[i].pools = (1UL << (i % num_pools));
++		conf.pool_map[i].pools = (1UL << (i % max_pools));
  	}
  
--	bond_port_init(mbuf_pool);
-+	bond_port_init();
- 
- 	rte_spinlock_init(&global_flag_stru_p->lock);
- 
-diff --git a/examples/bond/meson.build b/examples/bond/meson.build
-index 45389998e4..5a6db9a870 100644
---- a/examples/bond/meson.build
-+++ b/examples/bond/meson.build
-@@ -11,7 +11,6 @@ allow_experimental_apis = true
+ 	*eth_conf = vmdq_conf_default;
+diff --git a/examples/vmdq/meson.build b/examples/vmdq/meson.build
+index 6fcde9815c..441678bbe5 100644
+--- a/examples/vmdq/meson.build
++++ b/examples/vmdq/meson.build
+@@ -10,4 +10,3 @@ allow_experimental_apis = true
  sources = files(
          'main.c',
  )
 -cflags += no_shadow_cflag
- 
- cmd_h = custom_target('commands_hdr',
-         output: 'commands.h',
 -- 
 2.53.0
 
