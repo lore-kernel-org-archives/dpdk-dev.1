@@ -2,59 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9508FB5183
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 02:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0066FB5190
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 03:52:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C67754025A;
-	Tue,  7 Apr 2026 04:14:41 +0200 (CEST)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id 0A9164014F;
- Tue,  7 Apr 2026 04:14:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tencent.com;
- s=s201512; t=1775528077;
- bh=jM9VFRfZduXLTAL0yxNoyDNpfnuhxgnBySi/W0bhDTs=;
- h=From:To:Subject:Date:Message-ID:MIME-Version;
- b=SRV2ECFYrKfpL3LB1r6QQmhY+Dn8/PtH6VAm8QKR75vlPmN6iHYnXScOMPePt2M8b
- HKuBThIKsW9FlNj8Kg3TUqhWxDrNvJ0gbjUW1izc2hyTKsOpsf56CH+p4Ate+xLmFm
- u3CZUk7/W15q+0gXWrhuZ/CofNqu9nIll764qLLY=
-X-QQ-mid: zesmtpsz3t1775528073tebd08913
-X-QQ-Originating-IP: QHK7rQLA7QjjzmcWcW7wYnTT4+6eK8gaFQejqhMDkac=
-Received: from spikeouyan-PC1.tencent.com ( [119.147.10.194])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Tue, 07 Apr 2026 10:14:30 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 14260860049649245537
-From: "=?gb18030?B?T3V5YW5nIEhhbw==?=" <ouyanghao@tencent.com>
+	by mails.dpdk.org (Postfix) with ESMTP id D57E54025A;
+	Tue,  7 Apr 2026 05:52:14 +0200 (CEST)
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+ by mails.dpdk.org (Postfix) with ESMTP id 8E86C4014F
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 05:52:13 +0200 (CEST)
+Received: by mail-dl1-f48.google.com with SMTP id
+ a92af1059eb24-128e4d0cc48so4784122c88.1
+ for <dev@dpdk.org>; Mon, 06 Apr 2026 20:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775533932;
+ x=1776138732; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=kOQZhpf9KHWM3owC0yNBsCz9WH868IwH8vAeW7HbiCI=;
+ b=hloOAsZxpJ7uFZIEafkQ4aiYZDU2m82o7w8ncAXCuy5LIFTc4g7ISqJuUGtNGAgyOX
+ htC/v3tZLlWTnqsnBaRQplppyrLoWIV6ZBpr4bXGKUf9G5pCwpq5nx7B2pm1bbS+Y3zY
+ 7vk8IXLyGOZsJrC2fxlrh5ovQ2VOzO4ZTrDS7SyxOk1TTUgheF382HmrCmd1RV/PAEKB
+ wlRMuCYNJ2xBOVd/LKHlJfZXZ55dpKyCXJm0VRwoIe1SzFBUoshcitWLuCRU6dXmeLLd
+ 4Nnr3bik5KEeaGmjQxwq/vxCfXUF/3Rn105qIguESDLFZz7ADcNZqeEV8O+1fcJg2P+/
+ DamQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1775533932; x=1776138732;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=kOQZhpf9KHWM3owC0yNBsCz9WH868IwH8vAeW7HbiCI=;
+ b=dN+M1wf+dSmIbCzgDP3P5fTqBAlGFr/BIHtmJ9zPg0PnhGjc6fXCF4t3zSfKJG+qBm
+ 7oTIuFdBAD4EIFKmnslmNsLXHMeN23jRIUEdYmoRAq8vE0Gh0qZKzI54DPCH3TPw4IUb
+ tjPWiLI4RVzTywNTOEr8KQQy4rAIcIW9qRiu8uFBCpiveELs8444u7optDlT/rQg0u00
+ SFPvi/8HLWUAPqudLywv0y2yb1umAmQZMw+3XC0O8gkQIktMVBpQqbSP+1lUytmAuegx
+ wEuE32avIBHnjgibSQM9pbwTpiIxpIP8kVGitj4k8Cs3jWq45h9zGMNHmD4VRjuTLcZ3
+ eH9A==
+X-Gm-Message-State: AOJu0YyjoU396XnQ+dNiENPnNQF3pv4h82W7WZu0D52fwUZnZmCJjDm/
+ Lr/mTXqXfW4kPOQeKpVVAQi0QzABtsWoiJBhu/AX4pjw7c7Kdl2VMXlSyvKeY7f0nSNIGZ350j9
+ kSAel
+X-Gm-Gg: AeBDiev5/9B78ikArAeYE2zC5ljM3fGNC+EjChE1gHXBxLeMKrQja+uNkAt6u7O5zFC
+ dgVHtkxuvb14TLWgEHzE+vPPSHir/SD059nGmqqkciqn/4BuB5Yi3lceVCXQZSBCdym/BtynB72
+ BisLaaceo3zc+xWeji1l9TnkUcyBSwksQYaRgjtl0/OGzUWL/Ls/J7FQf6DUmw0WvEmJBVy7BFx
+ XdNtZ7jo5gzuGcRzel066P0iddAFyzniS26KtXL4zAl3A0hfIPo4hhahmfk6qFfNQY71sQzX3ee
+ 0eUTqjtf1cgPolfpzUWacarql56G7sjmg6V7dycHAErzc6AqMeIat94g9H8NI3uW7j0uUq1vMOc
+ ewON1IjgK46eBeLD9G2EYFrReOnVSt9nwKOxShURZJ38uoHYHO2+QnCuV8tWalDN9BAZz7w9eNc
+ EZfo70x2x4Y0wpvNhkkZ9/g8zNmEyOVdJr
+X-Received: by 2002:a05:7022:f31a:b0:12c:8b9:7208 with SMTP id
+ a92af1059eb24-12c08b973a1mr1993724c88.26.1775533932106; 
+ Mon, 06 Apr 2026 20:52:12 -0700 (PDT)
+Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-12bede545e8sm12716093c88.11.2026.04.06.20.52.11
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 06 Apr 2026 20:52:11 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: ciara.loftus@intel.com, mtahhan@redhat.com, stable@dpdk.org,
- Ouyang Hao <ouyanghao@tencent.com>
-Subject: [PATCH] net/af_xdp: fix resource leak in eth_dev_close
-Date: Tue,  7 Apr 2026 10:14:28 +0800
-Message-ID: <FEA1D5B98F367DFC+20260407021428.620-1-ouyanghao@tencent.com>
-X-Mailer: git-send-email 2.45.2.windows.1
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 00/23] examples: enable -Wshadow across all examples
+Date: Mon,  6 Apr 2026 20:49:26 -0700
+Message-ID: <20260407035209.650419-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:tencent.com:qybglogicsvrsz:qybglogicsvrsz4b-0
-X-QQ-XMAILINFO: NxTUUilgc1vawIotF97/hcO3GM9+HbCuzkssd16H3ojiUEY+UBXygnGe
- I5wQLQhQwnW9GA7A97CEvEEC8aP4vPmPZMDzX0dWqtYvWGp5zRxG++WwcnBClGtB8+1tHQW
- sWsyDfrmLrhaptGaJqnNclQVGdE6R+Bhx2TLgCyBQNScJJv83G38IXS5L8jdHG+j61vD9Fw
- 6+9BZ1YPI1irrid2UO/uvrlge4BbaOz01WlpISVHYqj/V7efTqGWOz7bGO+jR39Z6Mx749W
- No5vsCLyzinC6diy+mtVlwnDFBJbRLH/imGAhC/PpJSHhZGstjm0vbOUlU5MVtB7fwwfSga
- 7TCCzgkED2fxpbPGKd4w1h+4/EHlWjeenLlI2jXgJGwsdyvZLUgRZQ7BRHm6OH2UAkMpc9p
- yQPS4Vr5PoAgLcXrbl8Kj8Mjfrm7fuRAPRxnf0cOKw0Rj7ejScSFsiUwGm3b9iC/jHuGQZL
- 4MfF5hHwlQ37yof7z82jlDPI9bA36tQBl5gCNUnM2FdzlIaWwpgqRyk+fQDtpc9Xsj7+xMB
- ESq5N9z7GHmb8Gn4qIixaxSQZ29t3MROSPo2yASRjEukejnUuvfJ2ulxNiSHSgsjAFYHbwK
- il3TTqw/7vC7NpKdrMf5VlrBdykou659PvU32b1K7SfTnv1aihuxSw12QH8nCCHCWkByo8v
- LRI5AvB6WP4anrj4W4lqUVKAY6igmB69ZkW4nLRRDqYfEgyXvw0gbXwAEc5iRsgjQZb5pio
- s2ctSVyrw3o5k0nxwlK6yd2X6rqtfCFtihk73pXLIA5gE+ePiFv6N622arq+IPBmCIReifF
- Py1mnvcIe05KOOIPekxvuQnRNcF3ORkJRO7aWZCv0qXhLtkEMx8IWyGqgNP1AP0b+pWswFO
- mUrHom/5RQBRHz7eGpGPdzwMYI4Dlnw99tqp4VUP6YUNrdGBeUjJm7e4sbih4eSOFs4jHU8
- 8JVowUGLXz65gwhuDOYHqQNXkS4AXum9g3KlZ9NH1SzmIL5hJYyyHrFuMIMbFM+XsfEwo2t
- ELdz/0qathaGRMDcR4rLSPNw0R/Mg=
-X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -68,55 +76,105 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The rx_queues and tx_queues arrays are allocated as contiguous
-blocks via rte_zmalloc_socket() in init_internals(). However,
-eth_dev_close() incorrectly calls rte_free() on individual array
-elements (rxq and rxq->pair) inside the per-queue cleanup loop.
+Several DPDK examples had -Wshadow disabled via no_shadow_cflag in
+their meson.build files. This series fixes all shadow variable
+warnings and removes the suppression flag, so that -Wshadow is
+enabled uniformly across every example.
 
-Since rte_free(&rx_queues[0]) releases the entire contiguous
-block, the memory backing queues[1..N-1] becomes invalid after
-the first iteration. On subsequent iterations, accessing the
-freed memory may read NULL (or garbage), causing the loop to
-break early via the (rxq->umem == NULL) check.
+The fixes fall into three categories:
+ - Renaming function parameters or local variables that shadow
+   globals (most patches)
+ - Removing unused function parameters that duplicated globals
+   (dma, bond, flow_filtering, ipsec-secgw, vhost, qos_sched)
+ - Simply removing no_shadow_cflag where there were no warnings
+   (vm_power_manage, bbdev_app, l2fwd-crypto, l2fwd-event,
+   l3fwd-graph)
 
-This results in:
-- XSK sockets for queues 1..N-1 not being deleted
-- UMEM reference counts not being decremented, leaking memory
-- Potential use-after-free if freed memory is reallocated
+All the patches are listed as fixes they are not worth
+back porting so no Fixes: tag is given.
 
-Fix by removing the per-element rte_free() calls from inside
-the loop and instead freeing the entire tx_queues and rx_queues
-arrays after the loop completes.
+Stephen Hemminger (23):
+  examples/ethtool: fix shadow variable warning
+  examples/eventdev_pipeline: fix shadow variable warning
+  examples/dma: fix shadow variable warnings
+  examples/packet_ordering: fix shadow variable warning
+  examples/bond: fix shadow variable warnings
+  examples/vmdq: fix shadow variable warning
+  examples/server_node_efd: fix shadowed variable
+  examples/flow_filtering: fix shadowed variables
+  examples/ipsec-secgw: fix shadowed variables
+  examples/ip_pipeline: fix shadow variable
+  examples/multi_process: fix shadowed variable
+  examples/vm_power_manage: enable shadow warnings
+  examples/bbdev_app: enable shadow warnings
+  examples/ptpclient: fix shadow variable warnings
+  examples/vhost: fix shadow warnings
+  examples/qos_sched: eliminate shadowed variables
+  examples/l2fwd-jobstats: fix shadowed variable
+  examples/l2fwd-crypto: remove no shadow flag
+  examples/l2fwd-event: remove no shadow flag
+  examples/l2fwd-keepalive: fix shadow variable warning
+  examples/l3fwd-graph: remove no shadow flag
+  examples/l3fwd: fix shadow variable warnings
+  examples/l3fwd-power: fix shadow variable warnings
 
-Fixes: 339b88c6a91f ("net/af_xdp: support multi-queue")
-Cc: stable@dpdk.org
+ examples/bbdev_app/meson.build                |   1 -
+ examples/bond/main.c                          |  21 ++-
+ examples/bond/meson.build                     |   1 -
+ examples/dma/dmafwd.c                         |  10 +-
+ examples/dma/meson.build                      |   1 -
+ examples/ethtool/ethtool-app/main.c           |   4 +-
+ examples/ethtool/meson.build                  |   1 -
+ examples/eventdev_pipeline/meson.build        |   1 -
+ .../eventdev_pipeline/pipeline_worker_tx.c    |   4 +-
+ examples/flow_filtering/flow_skeleton.c       |  10 +-
+ examples/flow_filtering/main.c                |   4 +-
+ examples/flow_filtering/meson.build           |   1 -
+ examples/ip_pipeline/cli.c                    |   9 +-
+ examples/ip_pipeline/meson.build              |   1 -
+ examples/ipsec-secgw/ipsec-secgw.c            |   3 +-
+ examples/ipsec-secgw/ipsec.c                  |   3 +-
+ examples/ipsec-secgw/ipsec.h                  |   1 -
+ examples/ipsec-secgw/ipsec_worker.c           |  30 ++--
+ examples/ipsec-secgw/ipsec_worker.h           |   4 +-
+ examples/ipsec-secgw/meson.build              |   1 -
+ examples/ipsec-secgw/sa.c                     |  34 ++---
+ examples/l2fwd-crypto/meson.build             |   1 -
+ examples/l2fwd-event/meson.build              |   1 -
+ examples/l2fwd-jobstats/main.c                |   6 +-
+ examples/l2fwd-jobstats/meson.build           |   1 -
+ examples/l2fwd-keepalive/main.c               |   2 +-
+ examples/l2fwd-keepalive/meson.build          |   1 -
+ examples/l3fwd-graph/meson.build              |   1 -
+ examples/l3fwd-power/main.c                   |  12 +-
+ examples/l3fwd-power/meson.build              |   1 -
+ examples/l3fwd/l3fwd.h                        |   2 +-
+ examples/l3fwd/l3fwd_em.c                     |  32 ++--
+ examples/l3fwd/l3fwd_em_hlm.h                 |   8 +-
+ examples/l3fwd/l3fwd_lpm.c                    |   4 +-
+ examples/l3fwd/l3fwd_route.h                  |  12 +-
+ examples/l3fwd/main.c                         |  12 +-
+ examples/l3fwd/meson.build                    |   1 -
+ .../client_server_mp/mp_server/args.c         |  12 +-
+ .../client_server_mp/mp_server/meson.build    |   1 -
+ examples/packet_ordering/main.c               |   6 +-
+ examples/packet_ordering/meson.build          |   1 -
+ examples/ptpclient/meson.build                |   1 -
+ examples/ptpclient/ptpclient.c                | 138 +++++++++---------
+ examples/qos_sched/cfg_file.c                 |  12 +-
+ examples/qos_sched/cfg_file.h                 |   4 +-
+ examples/qos_sched/init.c                     |   4 +-
+ examples/qos_sched/meson.build                |   1 -
+ examples/server_node_efd/efd_server/args.c    |   6 +-
+ .../server_node_efd/efd_server/meson.build    |   1 -
+ examples/vhost/main.c                         |  19 +--
+ examples/vhost/meson.build                    |   1 -
+ .../vm_power_manager/guest_cli/meson.build    |   1 -
+ examples/vm_power_manager/meson.build         |   1 -
+ examples/vmdq/main.c                          |   8 +-
+ examples/vmdq/meson.build                     |   1 -
+ 55 files changed, 216 insertions(+), 244 deletions(-)
 
-Signed-off-by: Ouyang Hao <ouyanghao@tencent.com>
----
- drivers/net/af_xdp/rte_eth_af_xdp.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 10dbcf1333..2cdb533276 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -1069,12 +1069,10 @@ eth_dev_close(struct rte_eth_dev *dev)
- 		if (rte_atomic_fetch_sub_explicit(&rxq->umem->refcnt, 1,
- 				rte_memory_order_acquire) - 1 == 0)
- 			xdp_umem_destroy(rxq->umem);
--
--		/* free pkt_tx_queue */
--		rte_free(rxq->pair);
--		rte_free(rxq);
- 	}
--
-+	/* Free Tx and Rx queue arrays */
-+	rte_free(internals->tx_queues);
-+	rte_free(internals->rx_queues);
- 	/*
- 	 * MAC is not allocated dynamically, setting it to NULL would prevent
- 	 * from releasing it in rte_eth_dev_release_port.
 -- 
-2.37.1
-
+2.53.0
 
