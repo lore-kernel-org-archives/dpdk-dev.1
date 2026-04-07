@@ -2,27 +2,27 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D555FF5105
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D777FF5105
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:13:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3AA934065A;
-	Tue,  7 Apr 2026 17:12:49 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9569240666;
+	Tue,  7 Apr 2026 17:12:55 +0200 (CEST)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
- by mails.dpdk.org (Postfix) with ESMTP id 4BDF54065A
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:12:48 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AA10440665
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 17:12:53 +0200 (CEST)
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
- by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3C5D3293;
- Tue,  7 Apr 2026 08:12:41 -0700 (PDT)
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 566B21BB2;
+ Tue,  7 Apr 2026 08:12:47 -0700 (PDT)
 Received: from cesw-grace-nv-1s-n2-01.lab.cambridge.arm.com
  (cesw-grace-nv-1s-n2-01.lab.cambridge.arm.com [10.7.10.64])
- by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5CE473F7D8;
- Tue,  7 Apr 2026 08:12:46 -0700 (PDT)
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 12B833FC07;
+ Tue,  7 Apr 2026 08:12:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
- t=1775574767; bh=eFdP28gZCQW1Qc8/KTt89IPSWU9AtNR0o++hkYdWCqc=;
+ t=1775574773; bh=8Za6xCH9mc1pVB+k5jrWz4CUT8lnfdchFPDQA94Ar3M=;
  h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
- b=Cl3Vml4PjgYBk4wkzhDZb5IIWcxiVlZK8iYfmiIR+wDYgOLqE+IxOqZXHUyKcIrKy
- Y5d17fP78AssvONW9GoPGQwGg+y6dYoPQKTDqp1KenkCIfLHtVCufDUYP0GH7syLPY
- LzJ/G3lx8UgjGN8LpHBkY0iNOOxLGaNHZqyS32rE=
+ b=fhLMRgbrz/i+0HedUbN5ZicEt5w6xevIBkBXPQwFobkKKzU3/V11gyV7J5ci7ToT8
+ ekN6zf8DlMYg6eTlHfhyB+C7xT+P3HL8moLrk87L/5Cd99rknh0S6kvvuBuQtms6Ug
+ j4wvYJ+UQ8Px8HXO2Gtn6pJ2NdmIcAAjf0Wr8Oj0=
 From: Jay Wang <jay.wang2@arm.com>
 To: Thomas Monjalon <thomas@monjalon.net>,
  Bruce Richardson <bruce.richardson@intel.com>,
@@ -30,9 +30,9 @@ To: Thomas Monjalon <thomas@monjalon.net>,
 Cc: dev@dpdk.org,
 	nd@arm.com,
 	Jay Wang <jay.wang2@arm.com>
-Subject: [PATCH v2] net/ice: add NEON-optimised Rx/Tx vector paths
-Date: Tue,  7 Apr 2026 15:12:23 +0000
-Message-ID: <20260407151225.1416270-3-jay.wang2@arm.com>
+Subject: [PATCH v3] net/ice: add NEON-optimised Rx/Tx vector paths
+Date: Tue,  7 Apr 2026 15:12:24 +0000
+Message-ID: <20260407151225.1416270-4-jay.wang2@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260407151225.1416270-1-jay.wang2@arm.com>
 References: <20260324162525.4083381-3-jay.wang2@arm.com>
@@ -987,14 +987,14 @@ index 0000000000..8ec5942541
 +	return RTE_MIN(128, rte_vect_get_max_simd_bitwidth());
 +}
 diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
-index 293577676f..1dc7c0109a 100644
+index 293577676f..a205304c89 100644
 --- a/drivers/net/intel/ice/meson.build
 +++ b/drivers/net/intel/ice/meson.build
 @@ -33,6 +33,8 @@ endif
  if arch_subdir == 'x86'
      sources_avx2 += files('ice_rxtx_vec_avx2.c')
      sources_avx512 += files('ice_rxtx_vec_avx512.c')
-+elif arch_subdir == 'arm'
++elif arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
 +    sources += files('ice_rxtx_vec_neon.c')
  endif
  
