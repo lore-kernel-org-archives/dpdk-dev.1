@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B974DFD5F92
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 08:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57C95FD5F92
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 08:26:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 49C794014F;
-	Wed,  8 Apr 2026 10:25:43 +0200 (CEST)
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com
- [209.85.167.171])
- by mails.dpdk.org (Postfix) with ESMTP id 8074540265
- for <dev@dpdk.org>; Tue,  7 Apr 2026 16:19:56 +0200 (CEST)
-Received: by mail-oi1-f171.google.com with SMTP id
- 5614622812f47-46a9ae3f860so1708501b6e.1
- for <dev@dpdk.org>; Tue, 07 Apr 2026 07:19:56 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 55DFB40654;
+	Wed,  8 Apr 2026 10:25:44 +0200 (CEST)
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com
+ [209.85.167.173])
+ by mails.dpdk.org (Postfix) with ESMTP id CE1DB4025F
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 16:20:00 +0200 (CEST)
+Received: by mail-oi1-f173.google.com with SMTP id
+ 5614622812f47-463a0e14abfso2809184b6e.2
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 07:20:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1775571595; x=1776176395; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=CkecN2gXN4vQMjbgKxh1sORindU3tyECdthnMMR+Cps=;
- b=MNVGlI+X/kixyho+dztpn1ilP7mNlQAQ9QQrkzO1AyTTVcoInj6jXe4s6l51bPlN9y
- HwNyeIi07K+kVlYGTEZw2HFVg9FMQBONqzRY9bWl8kOr3dhxws/rgVJniwoe2veBSXZt
- KhRxu322ApGh6DKuOewUMxrXVJ9jFHfUhVb96PA9EaTmw25Jwyc/jpGyNtSNDAhmyZUr
- kZU4b2GuL5E47X8SkJy0sgI2twBGpx/eNrQf6s3oAjZr7Iyw3IQCfSaVXOm6iL61rUJR
- bo7mJ8Ala+fMSh5yTEr/TetWgvmHZf5w8N0q911zCovc7h6UnJOJCjA3idC3Ufa2X1sH
- LjAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775571595; x=1776176395;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=gmail.com; s=20251104; t=1775571600; x=1776176400; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=CkecN2gXN4vQMjbgKxh1sORindU3tyECdthnMMR+Cps=;
- b=hu4sv7GGmehnH2nmXMgXYlldVV0NZgMMgK+CZO4ThXf+kWBU+mwLxseLng5/EyOHXu
- xOIsOv8Wrg9GXcq2Du6YfIs/skoZ1uLxs9TLhmSt2vIVLLw1rtIsgymkU6viNLcIrWov
- Nhn3UUTC7ct3EvrI2iAT6g6VEhn3lNWwj16qNn51QNs42E45qIqYAsVOUIqhXAPIxBNB
- l5kWkym2WGdesX3rlbJMIAAyvBP7FGicyiE/Td3m8U8TSIGiXt5OQ9fCH09TaSQGUN5U
- ooGQHpF5whQQYZtLGblZ+sGJkdz4N4tnW5f68TBi7noqqpgA2Edg8Cx7HVbiU4NVlV73
- 7zhw==
-X-Gm-Message-State: AOJu0YzJOxp6L4eVScXX6ooEaFJ7tP+DBaRqfiMU+WRzwtSAwT2UD1wl
- nVNnrwLzO+NTIvUwYUDCTT+zoGuSYrIo2HvaDxPO1CQRa9zMcAF5asqo
-X-Gm-Gg: AeBDievV5WP/Pgg5xWRUnUtdfV6XnTn+AlsxUPqmzS+RrFQw06EvVNLwZxGkqYQye/D
- WohRZ7QhuB1ojcqjHJoI1d/Y0qdx/KNJ807208dPNeHtUL+lCAPksPO7zCPJ20gGxQ2y8mEYgxy
- DzcLljhy937trDYyjSoK7UxP+2SXgInpEhT8Wf7kyEEE74RBLkE+xHBRHVQeARj8KdejqSjOqrQ
- JKNdqvhmBvmZENUnIt0XZR4+AaDAQuldKWfCaALAb/4JHY6hvi+36+O7+/De44UyJijl+oqHDyY
- OIluGQvq+U0I8JU+5L5SDAnnEQVQz4r1H5Vj2VaHwavOe9jJMyWb8MIOFxwLDMa6qXZRDDEwsza
- Oq6WUgAHu06Hm+iG0JEeKZSMgH0yqO7X6HZJXjoUGz3C9VsFi9X0NjHGJKHqhY1iwA45cMtIkH8
- gaLBray8YipOSaw4lZI95ZN5s=
-X-Received: by 2002:a05:6808:3027:b0:468:776:1ec3 with SMTP id
- 5614622812f47-46ef65fa7d8mr8061619b6e.24.1775571595573; 
- Tue, 07 Apr 2026 07:19:55 -0700 (PDT)
+ bh=2MENlSx4Ne/ayFhCdAhk03aU6tshnblVsa0L6Tx6zdE=;
+ b=F7vqF9rUrKE2jKm+ClG6yYHeXEHYdZgYFydIjsvPZdN6ibc6zQiaVn8EmqZRYRdx8m
+ iAte4cAPq8pJi4Ukb9sTXRSzVfMslRIoL/ZaQCw7KcRi5EmNr70OG2DqOp28SMNpq7I3
+ TgbtyxQlIhhUaaN22RTkdmz2GvsS3Lqp4aNk9uEvwOmTkIiEPoPognmPy+9/MjpQ+d/o
+ Fd39YIiclqSWifmsn4BM/Mz2sY4QhiaHJeAGX9xaB6Uz9+0eQXuxymLNRv4ecU3Uv1Gf
+ CJgMXcjifD0I8uuAdQPzLsBI4uBMMLJyLJs37dhX0ETrxhrh/HzBhYQIvx8lrfZQTQhC
+ lLwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1775571600; x=1776176400;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=2MENlSx4Ne/ayFhCdAhk03aU6tshnblVsa0L6Tx6zdE=;
+ b=kAeDGp1zr55vAWcfm3aquR4t8CvWIr0RklHDkdJrJG/Z616plVijpG3Luxk5DqaopR
+ ARlTDt6R1JXR9Wv9ybfOBz/w8oDxrH35O39wc17DXhP2ZF4w7tBw++tb+Wqys9eNvSQy
+ i8AhSF5yCvuMS1qyw2Q5/cuj89IHPpNFq2A7lnJVTv44L/cElN/CIuPe14HLkbaaNZ1n
+ 8rpf3b0kr9/QC0buIvTXgRlWLQj+nz2P9oR6tmyKAYT50wMvN4osTEAPuceEuiHyHd2u
+ e40HcLaA24KJ1z+kH6S3InK0r94+GpuUFzcol6FVTvMRCIT6D50XFgOQyutB25ftbenI
+ nsHA==
+X-Gm-Message-State: AOJu0Ywe/qJBlRE6GuiJ9kyV4iT67BR3WUQ6Mg8i7O9hLTZuLFJWIIUX
+ oE7CE/DhMl3zCVMFVRju+NV8YDUaGn/H2Dfe8eyYDJw4ksFGcmG2+vRtgLieCfF+
+X-Gm-Gg: AeBDievbOtvxt7oHEYsKOQ/qHOupsa4tAixzTpHiRFWQTlVqkXBFrRvVUusXSEgZYhr
+ wtVqzBc76LIqb5cF7++Sf3bsQicZxNPDbtb7Tcwr9wfGkHeJueku8YjMiAgd26gvunLQqT9eHCF
+ rgERVVEwGs3Sf7N8iPjiwlDJ05EAi0Lda/O7LGX47LEaLf5c7eg2UHz3Arq3AGywVoJ3X36bERZ
+ dIcog/h4TKcjENduXGpui+eB+pNUXGSLLXq6x3j9ZqTfOUOhP51+2LAvmb9ysVXoiX0khis7NBi
+ ocnI0D/Q/D8nEUe8njFqP4aLQdtjdU8lvo0p0D+M50xNCEVw3zjnG5Vaj0OPJzM2H2yPHD/ghYE
+ C3RMrvi4o36yZDkC2MFc9oWstq/XTqCEKlTCmfyu2QRoxnlMCFcQBM1qsalQhxFVd8fKkzz9/Vg
+ bLTJQuWLNnBV9v
+X-Received: by 2002:a05:6808:320f:b0:460:f435:2a70 with SMTP id
+ 5614622812f47-46ef8845559mr9177889b6e.47.1775571600024; 
+ Tue, 07 Apr 2026 07:20:00 -0700 (PDT)
 Received: from gmail.com ([50.93.222.110]) by smtp.gmail.com with ESMTPSA id
- 5614622812f47-46d9387a763sm9994080b6e.18.2026.04.07.07.19.54
+ 5614622812f47-46d9387a763sm9994080b6e.18.2026.04.07.07.19.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 07:19:55 -0700 (PDT)
+ Tue, 07 Apr 2026 07:19:59 -0700 (PDT)
 From: Weijun Pan <wpan3636@gmail.com>
 X-Google-Original-From: Weijun Pan <wpan36@wisc.edu>
-To: Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@nxp.com>, Jun Yang <jun.yang@nxp.com>
+To: Rosen Xu <rosen.xu@altera.com>
 Cc: dev@dpdk.org,
-	Weijun Pan <wpan36@wisc.edu>,
-	stable@dpdk.org
-Subject: [PATCH] bus/fslmc: fix shadowed variables in queue storage macros
-Date: Tue,  7 Apr 2026 09:19:27 -0500
-Message-Id: <20260407141928.9426-1-wpan36@wisc.edu>
+	Weijun Pan <wpan36@wisc.edu>
+Subject: [PATCH] raw/ifpga: replace printf calls with logging
+Date: Tue,  7 Apr 2026 09:19:28 -0500
+Message-Id: <20260407141928.9426-2-wpan36@wisc.edu>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20260407141928.9426-1-wpan36@wisc.edu>
+References: <20260407141928.9426-1-wpan36@wisc.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Wed, 08 Apr 2026 10:25:39 +0200
@@ -80,75 +81,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The queue storage allocation and free macros declare local variables
-named ret and i, which shadow local variables in
-rte_dpaa2_create_dpci_device() and trigger -Wshadow warnings.
+The ifpga rawdev driver uses printf() directly for runtime messages.
+DPDK drivers should use the logging framework instead of printing
+to standard output.
 
-Rename the macro-local variables to avoid shadowing without changing
-behavior.
-
-Bugzilla ID: 1744
-Fixes: 12d98eceb8ac ("bus/fslmc: enhance QBMAN DQ storage logic")
-Cc: jun.yang@nxp.com
-Cc: stable@dpdk.org
+Replace the remaining direct printf() calls in ifpga_rawdev.c with
+the driver logging macros.
 
 Signed-off-by: Weijun Pan <wpan36@wisc.edu>
 ---
- drivers/bus/fslmc/portal/dpaa2_hw_pvt.h | 28 ++++++++++++-------------
- 1 file changed, 14 insertions(+), 14 deletions(-)
+ drivers/raw/ifpga/ifpga_rawdev.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-index e625a5c035..bbeccd8fc3 100644
---- a/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-+++ b/drivers/bus/fslmc/portal/dpaa2_hw_pvt.h
-@@ -204,33 +204,33 @@ struct swp_active_dqs {
+diff --git a/drivers/raw/ifpga/ifpga_rawdev.c b/drivers/raw/ifpga/ifpga_rawdev.c
+index 5b9b596435..e004e002b7 100644
+--- a/drivers/raw/ifpga/ifpga_rawdev.c
++++ b/drivers/raw/ifpga/ifpga_rawdev.c
+@@ -434,7 +434,7 @@ static int set_surprise_link_check_aer(
+ 	uint32_t aer_new0, aer_new1;
  
- #define dpaa2_queue_storage_alloc(q, num) \
- ({ \
--	int ret = 0, i; \
-+	int qs_ret = 0, qs_idx; \
- 	\
--	for (i = 0; i < (num); i++) { \
--		(q)->q_storage[i] = rte_zmalloc(NULL, \
-+	for (qs_idx = 0; qs_idx < (num); qs_idx++) { \
-+		(q)->q_storage[qs_idx] = rte_zmalloc(NULL, \
- 			sizeof(struct queue_storage_info_t), \
- 			RTE_CACHE_LINE_SIZE); \
--		if (!(q)->q_storage[i]) { \
--			ret = -ENOBUFS; \
-+		if (!(q)->q_storage[qs_idx]) { \
-+			qs_ret = -ENOBUFS; \
- 			break; \
- 		} \
--		ret = dpaa2_alloc_dq_storage((q)->q_storage[i]); \
--		if (ret) \
-+		qs_ret = dpaa2_alloc_dq_storage((q)->q_storage[qs_idx]); \
-+		if (qs_ret) \
- 			break; \
- 	} \
--	ret; \
-+	qs_ret; \
- })
+ 	if (!ifpga_rdev || !ifpga_rdev->rawdev) {
+-		printf("\n device does not exist\n");
++		IFPGA_RAWDEV_PMD_ERR("device does not exist");
+ 		return -EFAULT;
+ 	}
  
- #define dpaa2_queue_storage_free(q, num) \
- ({ \
- 	if (q) { \
--		int i; \
-+		int qs_idx; \
- 		\
--		for (i = 0; i < (num); i++) { \
--			if ((q)->q_storage[i]) { \
--				dpaa2_free_dq_storage((q)->q_storage[i]); \
--				rte_free((q)->q_storage[i]); \
--				(q)->q_storage[i] = NULL; \
-+		for (qs_idx = 0; qs_idx < (num); qs_idx++) { \
-+			if ((q)->q_storage[qs_idx]) { \
-+				dpaa2_free_dq_storage((q)->q_storage[qs_idx]); \
-+				rte_free((q)->q_storage[qs_idx]); \
-+				(q)->q_storage[qs_idx] = NULL; \
- 			} \
- 		} \
- 	} \
+@@ -491,7 +491,7 @@ static int set_surprise_link_check_aer(
+ 		if (fd != -1)
+ 			close(fd);
+ 
+-		printf(">>>>>>Set AER %x,%x %x,%x\n",
++		IFPGA_RAWDEV_PMD_INFO(">>>>>>Set AER %x,%x %x,%x",
+ 			ifpga_rdev->aer_old[0], ifpga_rdev->aer_old[1],
+ 			aer_new0, aer_new1);
+ 
+@@ -527,7 +527,7 @@ ifpga_rawdev_gsd_handle(__rte_unused void *param)
+ 		}
+ 
+ 		if (gsd_enable)
+-			printf(">>>>>>Pls Shutdown APP\n");
++			IFPGA_RAWDEV_PMD_WARN(">>>>>>Pls Shutdown APP");
+ 
+ 		rte_delay_us(100 * MS);
+ 	}
 -- 
 2.34.1
 
