@@ -2,69 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CD1FF5106
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5F0FF5105
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:19:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1BC6140B94;
-	Tue,  7 Apr 2026 17:18:33 +0200 (CEST)
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com
- [209.85.215.181])
- by mails.dpdk.org (Postfix) with ESMTP id 638A640A82
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:18:32 +0200 (CEST)
-Received: by mail-pg1-f181.google.com with SMTP id
- 41be03b00d2f7-c76af7b0f94so3382153a12.1
- for <dev@dpdk.org>; Tue, 07 Apr 2026 08:18:32 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 10F8040687;
+	Tue,  7 Apr 2026 17:18:37 +0200 (CEST)
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com
+ [209.85.216.48]) by mails.dpdk.org (Postfix) with ESMTP id 27A3140665
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 17:18:36 +0200 (CEST)
+Received: by mail-pj1-f48.google.com with SMTP id
+ 98e67ed59e1d1-3585ec417f6so2355111a91.1
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 08:18:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575111;
- x=1776179911; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575115;
+ x=1776179915; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=2ins924ZO8CqUNomWTl6/vwHZE4eJ0YbFINlEA8r+yo=;
- b=nlx4C1qbrAkyM4ZkIFj80rTkHQLGAlFgDRqInmHXNt6PZaEMfItfr8nj5uXIBvcDNc
- rLMdnibLOfG5JSrkpWoaBITPua4RTSSjGNK7a4sjZ8PlEhI0L2mmSnYMAzkwfytElID9
- +gNOtHHvuJiZzrsKSGG6avk3n21QH9D8HxvhpGZgqiKmXqOx2Uli0KVMBfcjf+6YOykL
- ho/1qIDle8KYgT+TT0v5mUqJn/+wP8Fux/WT+qRgCvpC957DUGhlYU5G5vvaxncvCU1U
- PtFkTqmz8IoN4l9ydlqbFBJrfUp4wcoknOpkYb/kPrMT3WIKQAI/7pEazF0vA+8ipm9w
- nI0w==
+ bh=HybjI3zVDQ9IPyJ10rdRl3tRuSk8dof3BPcL/9foi2U=;
+ b=aX2Y0sLkUw5ZxSuYVF90qhWTOltV4JKscxF2wPMpj+aXR91Uh9f7uoibSc6979WDTR
+ KbIzmKKlkZg3JgGGaEQNzmQYTPk3XE7ZjGMzpjGt0+Tqj/1IbU4oDB++BIgQMSupajSB
+ DfDLquxfZBJyS0T04G/ZHFw6aXFSIdjKU8UDH7qd51WfzKAwMTUgJVwHE/0T+Y1LszGP
+ PdX6Fw6Z5TsMd126F5NhMUsTYjuIzzlAWkxozLTxlUkz7sDxK03llyfnLaiQnlxunKLC
+ O/BiOnrpWSArRHu43ySxWyoYowDZ6rR2lBl1uRbbWNH1u6GxTBOT/uSduL7D1dVymvus
+ eePQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775575111; x=1776179911;
+ d=1e100.net; s=20251104; t=1775575115; x=1776179915;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=2ins924ZO8CqUNomWTl6/vwHZE4eJ0YbFINlEA8r+yo=;
- b=pR7GPE5y+IVdmbttx/Fooci9LCir+mRESsA8UWPNGouDUl+w4blwPJZVGq37hC/mLG
- 0ut9/GTKFeabUNv5BVAkc0mu0H7Ur9B2Z32ZGaxFgl1AG5iI+/iQBXcGirP8aT7YzeBk
- Vexf3GKC+e82z3iCZuWujvlDZICoQ3lIzgclCMWDYq4O5XZBBOLKj5PWTTfZoB1O3a2v
- ax3LZFO9KThYJj5Br70Wsj4MoZeOkAUy6WDVzas/z94+na1mw9oN4V3k9yYpIna5Okl6
- CXb5jfl28sHlZCH0eP5CSCqN+2OSSI+jmrNkyeVSzE0fjwM3KEi6Wo+zqiBWRRCroQ1Q
- 3VYQ==
-X-Gm-Message-State: AOJu0Yz2maO6nnl1cIy7lVyFZHJoQwuWZf/h/5i4PvtUjTKeTtjphxB6
- Th9r4+dwfH6UUqShHCgHhb3IAx7WLjT82pFe9ZUs5ZbByPu3xx0TAWpWQ8GDd4eKV9ar7ZRFQO1
- 167ZD
-X-Gm-Gg: AeBDiev0oCfCb5BixjsCZJLOHwtRSaCW3OD1OJqXjRGjrK1poZi5wWD3tDwe0IO3gSu
- 8HAvphlNeKGYaLoPObuQk7vApEwK7FisQf6nM4UxeC+OgWaytBaJlYEItvDIMC4gQH6Ecsl71VG
- o3B4EXiZ8/ZT6RAR1HuvlyKWbz9QuAly37UXZJ6WRaP16jTZ5iPH2W0Ak/wdDP9LiPilz6GlJ3l
- ytxUwrqrHfAWwpLLWwHe3SghbDC3knhtFlWfKLrgPfCPi+ln3h4Y2nhnVQYCBx/SVVjKQF1aVI7
- awTi7wWb5JTUReGhgnVV311fj+EkbkVCGRX0KFNGjtMC02e3KFSux6zGkr97dM3RRGz5oVMIRnd
- 01sSEoz/n292A2ADRUE2Wl88zFSWz/vOCCbsqPBxokP/wjse7OcHJBXjZZZDggS6r5Ba7afYJgw
- OvaaM0n41CTd1H5i7Vyob3kLFM6pGovbKL
-X-Received: by 2002:a05:6a20:958e:b0:39c:2b9d:93ae with SMTP id
- adf61e73a8af0-39f2f1ae00dmr16902243637.60.1775575111543; 
- Tue, 07 Apr 2026 08:18:31 -0700 (PDT)
+ bh=HybjI3zVDQ9IPyJ10rdRl3tRuSk8dof3BPcL/9foi2U=;
+ b=CEtMZFCbVOri9MdkmPams+bmWkNUd9dG1GJG/PLWzun7YDu0eOyJ3v5A6LG59tQHe+
+ uYpG1f/7agqxJF1NM/7Y0E1vN89T7jKfUHmhiRM2sRnySOcbaMULgpAnDoAPyzfZ0iue
+ yPziaME0bdiFHeV8KjNVMRbbJFp/N+/9fPCn6d7nm+lKBGHNU1mDSYVdNpDudWvrvyOt
+ BkPluZsgYoX3u0B1wKaboBPitTi0UQFJujDrLRlIMRbAzhaCPDgr19K0r/4TS98jPKBV
+ U3Z2QK/ThSMvRCwP8GBZCswLhdqADUz2y3Z3DCJfIBVvsy/jVo4FuwhZjB3IW5XErcu1
+ gFEA==
+X-Gm-Message-State: AOJu0YxOGDhkQ7mPio/ben5rlNtozHusXYM8aQQO3+AnNRNAXFu8lNNT
+ cx+k8Dwv45CAgbaM40NVvjpVCa6pYwRTJJzSWO+IVbJcwQE1RMXXKRfwlkt5Erpytk3aGRJGZXb
+ TejFH
+X-Gm-Gg: AeBDievdFY8ESfKsCu9DOFIndmTq4IaLazSsQoiYJZYTTgHgpO1IB9yGmmcgmc+D11u
+ 368MyLhmrXzXdeuWVJsRmu0slQMY2BDc5Ko+PdZm1B7S/HYTYraaee+2iCq5HMf4vKds3GbGBt2
+ GZqfmJPQS93EA5a8y0rKOdiqazxS7Hxn++/mrtqxPQdDGMk4nDPyQKSsWSWzEuT9vsFxNySBUWf
+ MYi2HoMC8hTWTMsGmSJ+JIR+yE6FPj019cOikH0Kt3vmr4PzGVBhzLddNeyMXF9qFXODK6AU3KH
+ s87Zn4UtANGA5d2AvQ/L8KNdaiFv/6NXUgX1RG6Naypt2e7frk7P1k3mQJcNo5x64Vk30MAlRCG
+ KBEAdyFY0loweI/1cWIPMwMVWekwdBCFLNIWnz/VoRbiwUkvDLWfqhcaf94o1h413wz4mCIWMiH
+ cyKRTn9bYNFw/YYTZtEOS03BUM5XToL1btizQM1H3m3G4=
+X-Received: by 2002:a17:90b:48cb:b0:35d:9d7b:85ef with SMTP id
+ 98e67ed59e1d1-35dd677829fmr18706622a91.6.1775575114920; 
+ Tue, 07 Apr 2026 08:18:34 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.18.28
+ 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.18.32
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 08:18:31 -0700 (PDT)
+ Tue, 07 Apr 2026 08:18:34 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Bruce Richardson <bruce.richardson@intel.com>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH v2 15/23] examples/vhost: resolve shadow warnings
-Date: Tue,  7 Apr 2026 08:16:11 -0700
-Message-ID: <20260407151732.272195-16-stephen@networkplumber.org>
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH v2 16/23] examples/qos_sched: eliminate shadowed variables
+Date: Tue,  7 Apr 2026 08:16:12 -0700
+Message-ID: <20260407151732.272195-17-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260407151732.272195-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
@@ -84,120 +82,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The mbuf_pool was being passed as parameter with same as
-global; resolve conflict by making variable local to main
-and passing where needed.
-
-The num_devices was global but also passed as arg.
-Remove the parameter.
+The port_params and subport_params are global variables,
+then passed to load functions. The names clash so just use
+the globals.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- examples/vhost/main.c      | 19 ++++++++++---------
- examples/vhost/meson.build |  1 -
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ examples/qos_sched/cfg_file.c  | 12 ++++++------
+ examples/qos_sched/cfg_file.h  |  4 ++--
+ examples/qos_sched/init.c      |  4 ++--
+ examples/qos_sched/meson.build |  1 -
+ 4 files changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/examples/vhost/main.c b/examples/vhost/main.c
-index ac888348d2..5978a50cfe 100644
---- a/examples/vhost/main.c
-+++ b/examples/vhost/main.c
-@@ -86,7 +86,6 @@ static uint32_t promiscuous;
- static uint32_t num_queues = 0;
- static uint32_t num_devices;
- 
--static struct rte_mempool *mbuf_pool;
- static int mergeable;
- 
- /* Enable VM2VM communications. If this is disabled then the MAC address compare is skipped. */
-@@ -387,7 +386,7 @@ open_dma(const char *value)
-  * according to the pool & queue limits.
-  */
- static inline int
--get_eth_conf(struct rte_eth_conf *eth_conf, uint32_t num_devices)
-+get_eth_conf(struct rte_eth_conf *eth_conf)
- {
- 	struct rte_eth_vmdq_rx_conf conf;
- 	struct rte_eth_vmdq_rx_conf *def_conf =
-@@ -415,7 +414,7 @@ get_eth_conf(struct rte_eth_conf *eth_conf, uint32_t num_devices)
-  * coming from the mbuf_pool passed as parameter
-  */
- static inline int
--port_init(uint16_t port)
-+port_init(uint16_t port, struct rte_mempool *mbuf_pool)
- {
- 	struct rte_eth_dev_info dev_info;
- 	struct rte_eth_conf port_conf;
-@@ -460,7 +459,7 @@ port_init(uint16_t port)
- 	}
- 
- 	/* Get port configuration. */
--	retval = get_eth_conf(&port_conf, num_devices);
-+	retval = get_eth_conf(&port_conf);
- 	if (retval < 0)
- 		return retval;
- 	/* NIC queues are divided into pf queues and vmdq queues.  */
-@@ -1440,7 +1439,7 @@ uint16_t sync_dequeue_pkts(struct vhost_dev *dev, uint16_t queue_id,
+diff --git a/examples/qos_sched/cfg_file.c b/examples/qos_sched/cfg_file.c
+index c75cf9db2e..3ca06c2ff9 100644
+--- a/examples/qos_sched/cfg_file.c
++++ b/examples/qos_sched/cfg_file.c
+@@ -41,20 +41,20 @@ int parse_u64(const char *entry, uint64_t *val)
  }
  
- static __rte_always_inline void
--drain_virtio_tx(struct vhost_dev *vdev)
-+drain_virtio_tx(struct vhost_dev *vdev, struct rte_mempool *mbuf_pool)
- {
- 	struct rte_mbuf *pkts[MAX_PKT_BURST];
- 	uint16_t count;
-@@ -1477,8 +1476,9 @@ drain_virtio_tx(struct vhost_dev *vdev)
-  * }
-  */
- static int
--switch_worker(void *arg __rte_unused)
-+switch_worker(void *arg)
- {
-+	struct rte_mempool *mbuf_pool = arg;
- 	unsigned i;
- 	unsigned lcore_id = rte_lcore_id();
- 	struct vhost_dev *vdev;
-@@ -1519,7 +1519,7 @@ switch_worker(void *arg __rte_unused)
- 				drain_eth_rx(vdev);
- 
- 			if (likely(!vdev->remove))
--				drain_virtio_tx(vdev);
-+				drain_virtio_tx(vdev, mbuf_pool);
- 		}
- 	}
- 
-@@ -1906,6 +1906,7 @@ reset_dma(void)
  int
- main(int argc, char *argv[])
+-cfg_load_port(struct rte_cfgfile *cfg, struct rte_sched_port_params *port_params)
++cfg_load_port(struct rte_cfgfile *cfg)
  {
-+	struct rte_mempool *mbuf_pool = NULL;
- 	unsigned lcore_id, core_id = 0;
- 	unsigned nb_ports, valid_num_ports;
- 	int ret, i;
-@@ -1982,7 +1983,7 @@ main(int argc, char *argv[])
- 				"Skipping disabled port %d\n", portid);
- 			continue;
- 		}
--		if (port_init(portid) != 0)
-+		if (port_init(portid, mbuf_pool) != 0)
- 			rte_exit(EXIT_FAILURE,
- 				"Cannot initialize network ports\n");
- 	}
-@@ -1998,7 +1999,7 @@ main(int argc, char *argv[])
+ 	const char *entry;
  
- 	/* Launch all data cores. */
- 	RTE_LCORE_FOREACH_WORKER(lcore_id)
--		rte_eal_remote_launch(switch_worker, NULL, lcore_id);
-+		rte_eal_remote_launch(switch_worker, mbuf_pool, lcore_id);
+-	if (!cfg || !port_params)
++	if (!cfg)
+ 		return -1;
  
- 	if (client_mode)
- 		flags |= RTE_VHOST_USER_CLIENT;
-diff --git a/examples/vhost/meson.build b/examples/vhost/meson.build
-index af5049c7ef..e938be8f45 100644
---- a/examples/vhost/meson.build
-+++ b/examples/vhost/meson.build
-@@ -19,4 +19,3 @@ sources = files(
-         'virtio_net.c',
+ 	entry = rte_cfgfile_get_entry(cfg, "port", "frame overhead");
+ 	if (entry)
+-		port_params->frame_overhead = (uint32_t)atoi(entry);
++		port_params.frame_overhead = (uint32_t)atoi(entry);
+ 
+ 	entry = rte_cfgfile_get_entry(cfg, "port", "number of subports per port");
+ 	if (entry)
+-		port_params->n_subports_per_port = (uint32_t)atoi(entry);
++		port_params.n_subports_per_port = (uint32_t)atoi(entry);
+ 
+ 	return 0;
+ }
+@@ -279,13 +279,13 @@ cfg_load_subport_profile(struct rte_cfgfile *cfg,
+ }
+ 
+ int
+-cfg_load_subport(struct rte_cfgfile *cfg, struct rte_sched_subport_params *subport_params)
++cfg_load_subport(struct rte_cfgfile *cfg)
+ {
+ 	bool cman_enabled = false;
+ 	const char *entry;
+ 	int i, j, k;
+ 
+-	if (!cfg || !subport_params)
++	if (!cfg)
+ 		return -1;
+ 
+ 	memset(app_pipe_to_profile, -1, sizeof(app_pipe_to_profile));
+diff --git a/examples/qos_sched/cfg_file.h b/examples/qos_sched/cfg_file.h
+index 71d280718f..26552f1e30 100644
+--- a/examples/qos_sched/cfg_file.h
++++ b/examples/qos_sched/cfg_file.h
+@@ -10,11 +10,11 @@
+ 
+ int parse_u64(const char *entry, uint64_t *val);
+ 
+-int cfg_load_port(struct rte_cfgfile *cfg, struct rte_sched_port_params *port);
++int cfg_load_port(struct rte_cfgfile *cfg);
+ 
+ int cfg_load_pipe(struct rte_cfgfile *cfg, struct rte_sched_pipe_params *pipe);
+ 
+-int cfg_load_subport(struct rte_cfgfile *cfg, struct rte_sched_subport_params *subport);
++int cfg_load_subport(struct rte_cfgfile *cfg);
+ 
+ int cfg_load_subport_profile(struct rte_cfgfile *cfg,
+ 			     struct rte_sched_subport_profile_params
+diff --git a/examples/qos_sched/init.c b/examples/qos_sched/init.c
+index ace7279c67..561f9e0619 100644
+--- a/examples/qos_sched/init.c
++++ b/examples/qos_sched/init.c
+@@ -296,11 +296,11 @@ app_load_cfg_profile(const char *profile)
+ 	if (file == NULL)
+ 		rte_exit(EXIT_FAILURE, "Cannot load configuration profile %s\n", profile);
+ 
+-	ret = cfg_load_port(file, &port_params);
++	ret = cfg_load_port(file);
+ 	if (ret)
+ 		goto _app_load_cfg_profile_error_return;
+ 
+-	ret = cfg_load_subport(file, subport_params);
++	ret = cfg_load_subport(file);
+ 	if (ret)
+ 		goto _app_load_cfg_profile_error_return;
+ 
+diff --git a/examples/qos_sched/meson.build b/examples/qos_sched/meson.build
+index 4657c756a1..92657ce8a5 100644
+--- a/examples/qos_sched/meson.build
++++ b/examples/qos_sched/meson.build
+@@ -18,4 +18,3 @@ sources = files(
+         'stats.c',
  )
  cflags += no_wvla_cflag
 -cflags += no_shadow_cflag
