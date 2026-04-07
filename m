@@ -2,69 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 841E0FF5106
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C945BFF5106
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 15:17:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A571B40265;
-	Tue,  7 Apr 2026 17:17:42 +0200 (CEST)
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com
- [209.85.215.174])
- by mails.dpdk.org (Postfix) with ESMTP id AB0824025F
- for <dev@dpdk.org>; Tue,  7 Apr 2026 17:17:40 +0200 (CEST)
-Received: by mail-pg1-f174.google.com with SMTP id
- 41be03b00d2f7-c70fb6aa323so1851671a12.3
- for <dev@dpdk.org>; Tue, 07 Apr 2026 08:17:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9326340659;
+	Tue,  7 Apr 2026 17:17:44 +0200 (CEST)
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com
+ [209.85.215.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 7600240654
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 17:17:43 +0200 (CEST)
+Received: by mail-pg1-f173.google.com with SMTP id
+ 41be03b00d2f7-c76b95e652bso1642017a12.3
+ for <dev@dpdk.org>; Tue, 07 Apr 2026 08:17:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575060;
- x=1776179860; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775575062;
+ x=1776179862; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=hKTBVN8Y5/6ng4XquO2TpBUFhR59h+OPOnQfXtUwhaM=;
- b=ipiOfZSUZPDkMgumT9GtHUe+Bfxg17XirEpx8hMLzc3CrWoiSgzYOW9RBtPUkfSOtQ
- GoeoCBmr93SBsZneZLy/YTi73PkYz1KZOCi478QFH0jhDxRPUydxyxrhdq/oBe7dUuta
- KVPaDNdVLhiriLBZdf7sz/yAu2qqZYudrzsUnPFJi62w210JBqFgJDCJq0672Ey8iag4
- oYf93VHZxfay+1bFzMhGtMpGVERzG7cHvXPGBYMxE4oI15XJ7Ml5b3+GutDdOkhoa8B5
- pjk3UddNc1oD2YMFy25Zd4wN6kSQEjedW/PncKiS+aY1eBGy1yL3wXUeETfUsdnP1bYN
- 3Pwg==
+ bh=+LH0sVG46i6spXShnxf5US5jJVkIYroHe739/z0Bcvc=;
+ b=ieTTgC8lOze70gE5meWhungDsdtAyZ61r0U86btsv1VyM+D3fksblLF94zdHaXVcZ2
+ K4fqbaHKjaJ9k+4qvfyIfOLzZ+szPXxh9iQKFSToOkUpREFMQ+cSfXFRwJeZGgPxrua/
+ GyaGIfGRpRaodM73Oun2rutrGnUTxN4QsFWKgNXzi5OYdPi74rz1ixqC1GXLzA0TcElG
+ wh/AeXJYk7ozFh30n/ij9i5Bdk2S1+5G2ENicRJ7AhOoHbCSuIgUz4NKNm6OFhwm5dQP
+ EQPGi+y6EcqV0iHxmgXRtVKqIwVbto/+23kBEWw7b6d3tsojmqgKjoRRBaY42EiH/X9X
+ B2Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775575060; x=1776179860;
+ d=1e100.net; s=20251104; t=1775575062; x=1776179862;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=hKTBVN8Y5/6ng4XquO2TpBUFhR59h+OPOnQfXtUwhaM=;
- b=XBscMAwBLIlNC+WG1ZkEtRDzRYxQ62xJvIO982zeQvt0vsNUtpFSnF8pJbLa+veC4r
- xVkOdxjAZLEkn85Mp+2SO6CSzLrNzTAH09pW4EWtaw03FoMbuYmR5V8NVo3WRPmfXS71
- CBxIUR3AFtuwe8rt5Bb0/DwHoCBRNuLtO3QoS9sjVvEFZit15CuEzzZAPMrOEyIB46w1
- RE2vdZNYhIGEdwqDUlE3cr3tY8ym6qmK3PEQMJlRDAuZ1j9vd9GGt2YE8ikuRB5EMb4E
- ItTetCZjomfI5fPBqyvf8WgPdhAVuLHHSubzw1yq/krm+dLbZXsyPgDwdIM6rtDTgC1a
- WIRA==
-X-Gm-Message-State: AOJu0YymK38YdFGF65OgYBcQACQvJTLOnnefzQAU5k/uE/NX0rc+zzl6
- XfHY4hbWz2fL3EKddCfj4/OFwsObtzE2WAA5IynhbbKQCF+/4CTsxs+nq8vlz6IRjQqpExFhvdD
- 5QrwU
-X-Gm-Gg: AeBDietBccswh3gumkLoOZjylzMNFhXBuXTut6m7r0xohYbUQYnBIw1JQUXlNEfEMCz
- RVsPXSHknOc01lOMtGL5TOwZFpwhAmQI8FBOLDk8bmX3DZmp5Cvdi/hO69Q+46lryxqr+hc5T9c
- heeCalZInsyY5JO65QG9SfC+xrOYVBoxxqH7bIrwYSbn/OaqNVpOL0s4s0wV6Jlgqkux97FWoqD
- ED0Bk9UBuH0ktrr+Q24mN3QpVSGnX5RofsW18qdPvjuNZhVP+LCpjQCfOCGR6OOYwrQLUCA94+i
- iqaMwMtdZpNjMcg9jIUysZhhnKIHuevouLoMLhX9Q2oy8d6p/ZpGW+blyWtQeIjUdCBCm5EnmK9
- 3pHP/SBAkKaaXG5InwkdGecZiXRfc56tsI6zhbW2xgAoDpK8np7cEBT2Yj/IgCwdspBuMoJryn4
- R2mx75kn9SrIueIIDForQ9iFQlZJIkYjov
-X-Received: by 2002:a05:6a20:12c5:b0:398:7357:bb81 with SMTP id
- adf61e73a8af0-39f2ee56b16mr18303142637.15.1775575059603; 
- Tue, 07 Apr 2026 08:17:39 -0700 (PDT)
+ bh=+LH0sVG46i6spXShnxf5US5jJVkIYroHe739/z0Bcvc=;
+ b=NJbooavJXWQU/26tiesR0z7i8e3nm8SRFptETEmXo1lvsVFACGKXbkpKpvdb0NH/fT
+ ZFcaQnW58uGwsHwRgkKv8zxG+tu+96lXpdnv62VA9i4yTTyvgj7+fFhY1kHfjgMU2gL6
+ eM2AV57wrQ4i6kCw+w+hsPXjXWU51fsuS3JvNYQF2Iu0ErQubTKNIypfZ5/1NSB2X4AR
+ Lp8XtxZTTqBT2LBCgUcJ/r4EiA1i0GDbN0kr+Tx2B1iq4Nb5ysopLNHkM2fs7O5R2Exh
+ i6WvkK98DqVAelex0bupEwuCzwuVKdcH1dh36Rsq3C4CIVdizb/Y0UCtTFFDaFc8TObQ
+ IVPA==
+X-Gm-Message-State: AOJu0YwckyawwU871Q/Z5b8vA5m4LYO4iGNwvSdI3QRZbGgodAfpd/c6
+ vKPJLvZ54rofuT7uOMHC+C1MHJJIbCA+IBHsAmwdLqchftRMZorNPIJaFiGSYTwbr4IqNLwHDQC
+ WZkzK
+X-Gm-Gg: AeBDietrIqmrUROx2UltGHUjmjh3p5z33p1SSE8zYHWVvfdazAnd1UoKF+I3neBw+XG
+ AoInwuhUnE8WZ8jFmRFLAwPPZwiLT94q1VYFVeJP0l91DcRJHHyryCOEy7vozfPfEBxZ2h6w2JP
+ UI+HEG7OdopToGRwiMSdswvYSbyHj+DenPuNv43HEUl9ZBL5XPxgFQn47j8j1oOD4s9JsAXKorM
+ 6Gb3K8U9aryDun7n1N4I5t+IaAo3RES+9gVd7DH4xnEwt80fGwbhpT9CevpamdWmJlSxl7EpVUo
+ C5kwiHMu+3DF/L8j1M7Kor6i9hEHStOt73YG+0EXfa3rHQDIK9uV0bmR5M+pD02T859WbIlhaPK
+ O7V6TP/oBD9pqum8yXOWW2QCI3owADFL2pS7taOtDmaGYA/RJAumEeRiuCYSIx9CLhfgoWIKT65
+ AlBaHf6DbWPNiqgGxrNIeK05j6wVAdM7iN
+X-Received: by 2002:a05:6a20:958e:b0:398:a027:4732 with SMTP id
+ adf61e73a8af0-39f2f0a3accmr16760036637.52.1775575062576; 
+ Tue, 07 Apr 2026 08:17:42 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.17.37
+ 41be03b00d2f7-c76c6477bbcsm15842933a12.3.2026.04.07.08.17.40
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 07 Apr 2026 08:17:39 -0700 (PDT)
+ Tue, 07 Apr 2026 08:17:42 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 00/23] examples: fix -Wshadow warnings
-Date: Tue,  7 Apr 2026 08:15:56 -0700
-Message-ID: <20260407151732.272195-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 01/23] examples/ethtool: resolve shadow variable warnings
+Date: Tue,  7 Apr 2026 08:15:57 -0700
+Message-ID: <20260407151732.272195-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260407035209.650419-1-stephen@networkplumber.org>
+In-Reply-To: <20260407151732.272195-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
+ <20260407151732.272195-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,108 +82,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Several DPDK examples had -Wshadow disabled via no_shadow_cflag in
-their meson.build files. This series fixes all shadow variable
-warnings and removes the suppression flag, so that -Wshadow is
-enabled uniformly across every example.
+Fix shadow variable warning by renaming the function parameter
+from 'app_cfg' to 'ptr_cfg' to avoid shadowing the global variable.
 
-The fixes fall into three categories:
- - Renaming function parameters or local variables that shadow
-   globals (most patches)
- - Removing unused function parameters that duplicated globals
-   (dma, bond, flow_filtering, ipsec-secgw, vhost, qos_sched)
- - Simply removing no_shadow_cflag where there were no warnings
-   (vm_power_manage, bbdev_app, l2fwd-crypto, l2fwd-event,
-   l3fwd-graph)
+../examples/ethtool/ethtool-app/main.c:89:44: warning: declaration of
+'app_cfg' shadows a global declaration [-Wshadow]
 
-v2 - fix additional shadow warnings only visible with clang
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+ examples/ethtool/ethtool-app/main.c | 4 ++--
+ examples/ethtool/meson.build        | 1 -
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-Stephen Hemminger (23):
-  examples/ethtool: resolve shadow variable warnings
-  examples/eventdev_pipeline: resolve shadow variable warning
-  examples/dma: resolve shadow variable warnings
-  examples/packet_ordering: resolve shadow variable warning
-  examples/bond: resolve shadow variable warnings
-  examples/vmdq: resolve shadow variable warning
-  examples/server_node_efd: resolve shadow variable warning
-  examples/flow_filtering: resolve shadowed variable warnings
-  examples/ipsec-secgw: resolve shadowed variable warnings
-  examples/ip_pipeline: resolve shadow variable warning
-  examples/multi_process: resolve shadowed variable warnings
-  examples/vm_power_manage: enable shadow warnings
-  examples/bbdev_app: enable shadow warnings
-  examples/ptpclient: resolve shadow variable warnings
-  examples/vhost: resolve shadow warnings
-  examples/qos_sched: eliminate shadowed variables
-  examples/l2fwd-jobstats: resolve shadowed variable
-  examples/l2fwd-crypto: resolve shadow variable
-  examples/l2fwd-event: resolve shadowed variable
-  examples/l2fwd-keepalive: resolve shadow variable warning
-  examples/l3fwd-graph: resolve shadow variable warning
-  examples/l3fwd: resolve shadow variable warnings
-  examples/l3fwd-power: resolve shadow variable warnings
-
- examples/bbdev_app/main.c                     |   4 +-
- examples/bbdev_app/meson.build                |   1 -
- examples/bond/main.c                          |  21 ++-
- examples/bond/meson.build                     |   1 -
- examples/dma/dmafwd.c                         |  10 +-
- examples/dma/meson.build                      |   1 -
- examples/ethtool/ethtool-app/main.c           |   4 +-
- examples/ethtool/meson.build                  |   1 -
- examples/eventdev_pipeline/meson.build        |   1 -
- .../eventdev_pipeline/pipeline_worker_tx.c    |   4 +-
- examples/flow_filtering/flow_skeleton.c       |  10 +-
- examples/flow_filtering/main.c                |   4 +-
- examples/flow_filtering/meson.build           |   1 -
- examples/ip_pipeline/cli.c                    |   9 +-
- examples/ip_pipeline/meson.build              |   1 -
- examples/ipsec-secgw/ipsec-secgw.c            |  17 +--
- examples/ipsec-secgw/ipsec.c                  |   3 +-
- examples/ipsec-secgw/ipsec.h                  |   1 -
- examples/ipsec-secgw/ipsec_worker.c           |  30 ++--
- examples/ipsec-secgw/ipsec_worker.h           |   4 +-
- examples/ipsec-secgw/meson.build              |   1 -
- examples/ipsec-secgw/sa.c                     |  34 ++---
- examples/l2fwd-crypto/main.c                  |  50 +++----
- examples/l2fwd-crypto/meson.build             |   1 -
- examples/l2fwd-event/main.c                   |  15 +-
- examples/l2fwd-event/meson.build              |   1 -
- examples/l2fwd-jobstats/main.c                |   6 +-
- examples/l2fwd-jobstats/meson.build           |   1 -
- examples/l2fwd-keepalive/main.c               |   2 +-
- examples/l2fwd-keepalive/meson.build          |   1 -
- examples/l3fwd-graph/main.c                   |   8 +-
- examples/l3fwd-graph/meson.build              |   1 -
- examples/l3fwd-power/main.c                   |  12 +-
- examples/l3fwd-power/meson.build              |   1 -
- examples/l3fwd/l3fwd.h                        |   2 +-
- examples/l3fwd/l3fwd_em.c                     |  32 ++--
- examples/l3fwd/l3fwd_em_hlm.h                 |   8 +-
- examples/l3fwd/l3fwd_lpm.c                    |   4 +-
- examples/l3fwd/l3fwd_route.h                  |  12 +-
- examples/l3fwd/main.c                         |  68 ++++-----
- examples/l3fwd/meson.build                    |   1 -
- .../client_server_mp/mp_server/args.c         |  12 +-
- .../client_server_mp/mp_server/meson.build    |   1 -
- examples/packet_ordering/main.c               |   6 +-
- examples/packet_ordering/meson.build          |   1 -
- examples/ptpclient/meson.build                |   1 -
- examples/ptpclient/ptpclient.c                | 138 +++++++++---------
- examples/qos_sched/cfg_file.c                 |  12 +-
- examples/qos_sched/cfg_file.h                 |   4 +-
- examples/qos_sched/init.c                     |   4 +-
- examples/qos_sched/meson.build                |   1 -
- examples/server_node_efd/efd_server/args.c    |   6 +-
- .../server_node_efd/efd_server/meson.build    |   1 -
- examples/vhost/main.c                         |  19 +--
- examples/vhost/meson.build                    |   1 -
- .../vm_power_manager/guest_cli/meson.build    |   1 -
- examples/vm_power_manager/meson.build         |   1 -
- examples/vmdq/main.c                          |   8 +-
- examples/vmdq/meson.build                     |   1 -
- 59 files changed, 288 insertions(+), 319 deletions(-)
-
+diff --git a/examples/ethtool/ethtool-app/main.c b/examples/ethtool/ethtool-app/main.c
+index b6bbae70d2..6545eb322d 100644
+--- a/examples/ethtool/ethtool-app/main.c
++++ b/examples/ethtool/ethtool-app/main.c
+@@ -86,7 +86,7 @@ void mark_port_newmac(int idx_port)
+ 	ptr_port->port_dirty = 1;
+ }
+ 
+-static void setup_ports(struct app_config *app_cfg, int cnt_ports)
++static void setup_ports(struct app_config *ptr_cfg, int cnt_ports)
+ {
+ 	int idx_port;
+ 	int size_pktpool;
+@@ -101,7 +101,7 @@ static void setup_ports(struct app_config *app_cfg, int cnt_ports)
+ 	cfg_port.txmode.mq_mode = RTE_ETH_MQ_TX_NONE;
+ 
+ 	for (idx_port = 0; idx_port < cnt_ports; idx_port++) {
+-		struct app_port *ptr_port = &app_cfg->ports[idx_port];
++		struct app_port *ptr_port = &ptr_cfg->ports[idx_port];
+ 
+ 		ret = rte_eth_dev_info_get(idx_port, &dev_info);
+ 		if (ret != 0)
+diff --git a/examples/ethtool/meson.build b/examples/ethtool/meson.build
+index 3ad948d109..d7f63d48af 100644
+--- a/examples/ethtool/meson.build
++++ b/examples/ethtool/meson.build
+@@ -17,7 +17,6 @@ sources = files(
+         'ethtool-app/main.c',
+ )
+ includes = include_directories('lib', 'ethtool-app')
+-cflags += no_shadow_cflag
+ 
+ deps += 'bus_pci'
+ if dpdk_conf.has('RTE_NET_IXGBE')
 -- 
 2.53.0
 
