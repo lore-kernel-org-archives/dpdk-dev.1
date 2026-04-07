@@ -2,67 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61370FB5190
-	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 03:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5673CFB5190
+	for <dpdk-dev@archiver.kernel.org>; Tue,  7 Apr 2026 03:54:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EF1BB4069D;
-	Tue,  7 Apr 2026 05:52:35 +0200 (CEST)
-Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
- by mails.dpdk.org (Postfix) with ESMTP id 2531540696
- for <dev@dpdk.org>; Tue,  7 Apr 2026 05:52:31 +0200 (CEST)
-Received: by mail-dl1-f49.google.com with SMTP id
- a92af1059eb24-12c19d23b19so27558c88.0
+	by mails.dpdk.org (Postfix) with ESMTP id E84CB40A71;
+	Tue,  7 Apr 2026 05:52:36 +0200 (CEST)
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+ by mails.dpdk.org (Postfix) with ESMTP id 108EB406B4
+ for <dev@dpdk.org>; Tue,  7 Apr 2026 05:52:32 +0200 (CEST)
+Received: by mail-dl1-f48.google.com with SMTP id
+ a92af1059eb24-128e4d0cc48so4784259c88.1
  for <dev@dpdk.org>; Mon, 06 Apr 2026 20:52:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775533950;
- x=1776138750; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775533951;
+ x=1776138751; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=SGQurNypu0ewoYhEVJtowEC2NV6CjFTgJQwuKFLqOXU=;
- b=rYEsZRyrUT1iY9gXolgLZFE2MJDwsUz/V2QLfwCIaCm3u0KexVsFsBn4DQHXfsCkCf
- /MHzjs+sV4SfAVNrx/widZA2UI0yejhdsOlCijmfAStSehq+jnUfqYwnG5D3p7PBpKYo
- 7CiVh5UU1szk0bKDCdL9MUAhb+LYsBTCdVJ4OXqFmJZcjUvjxdlI+ncdTNjJP23tANON
- o39PNo/QQkdJnXHEdCESp+HMrdAinF+1VD+eZyEdUBn6+k/gMTACQTm9FR2Q6KOgeHq5
- dAAJhPZJ3zPjvCPEIz3ax69nWW2JUB/rZbQha7NYIlMPUoChmVIG1LkUzqSPoQDzJXkP
- 8s5w==
+ bh=ENJNvScxwch/qToD0MRboz+gTRis0V9IOxYM7Q97FpI=;
+ b=w61qP+7TEtLD8mPa6nZUbW1Qgf79SXyT/dz/74jg3VEKlV7TAC0D6XZmg6dDkzU4JY
+ xwfWP/13NBnxMCbkffzHhQ4IdFHv5AMCKNdEqjF17fLr7GKNVUfWUIS6OSPbGJBOFbOL
+ dmj8Qn1yiGe0vuEAt+4PAeIZz+D/pm15RZCMmrmViuOrjhKMAysOSxek8Ko6c3wfj9Lk
+ ybyHtMT+Ij5dr7jxx0zoHHAfTIGJ/hq2+IFSW06r6jvup/4unIRZsSmKKlDus88rlo9R
+ 9MLQfmtX4y1smaxeg29ZSGDQAsh3tW5tFkdZqGArTr8j8UDNf9kGGgbCthZuWqXH+yOg
+ q2CQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775533950; x=1776138750;
+ d=1e100.net; s=20251104; t=1775533951; x=1776138751;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=SGQurNypu0ewoYhEVJtowEC2NV6CjFTgJQwuKFLqOXU=;
- b=ZAFX35/0mESzH7cCkarqJ1pWt5q1gaIQ/F1+OKP/N67wt1pcg0D1bsAHMjTx/pUsMf
- 31mPuEuZG44TsP4dnSo3XqK3SQ+yjm7LBLZDQPCwp5bpo1sELOO1uS5aR2TLZ1Hm+BDn
- v5XaJbGOSF/FL24N9SyeEEthW459xLu0gSd2TLoXpPlCFXxKmzsiXl8As3jBI7ZnNmD9
- qz2hm51dRcS9eimS6nJ+g0pDU7Z4DNBFZVAKNrGevJs2+1tbGlnc+VQbUGxyvUmT/eej
- PxZorMqG11fIR8kv0xg4aZyXqAg+RNjW189CiUYNywoJRd0BJsuPkKmxHmKIKfxBgUMm
- DX3Q==
-X-Gm-Message-State: AOJu0Yyq4hjdkqzbJh1itnSYv49RxHx4QXRqGH2TxGuWGv45ONZP4A9H
- svd7qU79UC8eADI+rNXGb1ZByRBEeFwAuYDXgSJa2vfFnh7A3gI1wZuQphwV/rJEmgYCfLOu95q
- /qLgE
-X-Gm-Gg: AeBDies3aDjfjU8/tvnoXUr4hyQl9A41jORan/DQYS9ALcTPBpJfxmgcQkmcqcw7Xey
- VeXzzt0lEg4MCYwtbcIr7etO47tA6Bi4kHnnlc5MNUeO/CCHpZzyM77jljy2YpO4BFEpd0WeeQt
- 6CYslkxqQjRwJfMVEfmJoinVq1Z7coQ6vUT0Vp89Zj0VoVZwgqPY1sE5DvqbqUsmMcP8q2WnhbC
- ZOdlnAmaSUUAf3NomCRpjBDd/pxaWFCbqpoad1EkNmGE0G/UhaaZH835Fjpo6Dytsh0Yd7DqDoR
- bR/xp/tkxpbx32ULmc1nGX36ZQp7Jwo1lXIEstpWtox8p9mybIebU8+jpgwUlhJdU8J523rHuUJ
- 00HjqQW+4hPjrtlJ8vqKaKiDSfDxhjAlR/IS32FMxxfyvNbFRCIeulGsbCm4mYM29Oc9UAZViCy
- PLqzSGQ0ci0vSdZQwRMN4daQNgREjmjsrmFaKrdujZ/OM=
-X-Received: by 2002:a05:7022:ea2f:b0:128:ca83:5aa3 with SMTP id
- a92af1059eb24-12bfb6ee08dmr8250327c88.1.1775533950103; 
- Mon, 06 Apr 2026 20:52:30 -0700 (PDT)
+ bh=ENJNvScxwch/qToD0MRboz+gTRis0V9IOxYM7Q97FpI=;
+ b=oMVNjiPEUioahNF/yWhCPLlDEreDDVrugfBoTFCwSftvsqtIR7p43Qu6pctGAPcdAl
+ qXCvc8+/gABvy3AjU5qIfi01+5Q7JdwM8WzUVSX5zkc+l/FO8DhOH+1Vio+Y9aJM7+6G
+ 8RD9deRtNcl4R15SCiiEQHZUHQhYfN3njvk5rqejzpEPvzR/YTbM6i8mA3WJRMlxVkvL
+ uJo1dFc7YdbRNHkpJqTirQO0TYprfLJwSzetCc4BxTibsf7xbD7pUJEtqhqZPmzKTZFX
+ h31G4xqrof8+8EWN28mhccfbObcTM+B0sJ9usUQHCHV3EnrfxmRgEibsctY7DyMWodj/
+ SmOA==
+X-Gm-Message-State: AOJu0YytOlQ9X2JS3QzkRVj8xhNSeow22fqS66pBnSTkQi+fbqVTAQ/u
+ 1HEZ09nA29EV63F2qBMLxyGBrY0qsIlizUITQSjS6nJePDjH8vhulqKT2lhbr1NVKuh9i54gPWK
+ faumJ
+X-Gm-Gg: AeBDieuX+EgZwTfRIjpD1ZF+mLYH9aUPi8Pw6Q/1rI00xKyIFAzItaT5hWz9G7KGH33
+ cZCSPq44e+yCVI228CceY1vJjIBBpfPCE/cUaNLKkHmUdNS6qmrCHLCo21Dc9W7suATdX2HJ9Uf
+ gsNcZlhxF1WWYsF/lUpMV2xAf418ab/XjRTGUSGsa6GM784ZLDZniQpSSlDz7yR9NBc5syX3p1U
+ VhwkDjqhJ5Kon72Y/MrKl48l1Q0H3ypXSjxZVqsHEFHswWVUH+mIHDs0m6ZXCbdJYREGryfMQKH
+ m8rwgIi15pNf0IiHnY1PaT9xhxlpd1qXQl+iWnyFRod5niO+xd19erxyYH4W8Z0jrhmEnydl1cZ
+ 2QLXm/ZEaDwhQgfiWlFTiVQnq69IhYvBf394dKgACIh0wVwwvEidQHsneoKs1hvZA19hUDiEaZh
+ czMfrQ6/PVmm34N/WY1LIZWstIoh49F3oQ
+X-Received: by 2002:a05:7022:6097:b0:12b:f8d6:d4bc with SMTP id
+ a92af1059eb24-12bfb76773bmr7106032c88.34.1775533951022; 
+ Mon, 06 Apr 2026 20:52:31 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12bede545e8sm12716093c88.11.2026.04.06.20.52.29
+ a92af1059eb24-12bede545e8sm12716093c88.11.2026.04.06.20.52.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 06 Apr 2026 20:52:29 -0700 (PDT)
+ Mon, 06 Apr 2026 20:52:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Sunil Kumar Kori <skori@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>
-Subject: [PATCH 19/23] examples/l2fwd-event: remove no shadow flag
-Date: Mon,  6 Apr 2026 20:49:45 -0700
-Message-ID: <20260407035209.650419-20-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 20/23] examples/l2fwd-keepalive: fix shadow variable warning
+Date: Mon,  6 Apr 2026 20:49:46 -0700
+Message-ID: <20260407035209.650419-21-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260407035209.650419-1-stephen@networkplumber.org>
 References: <20260407035209.650419-1-stephen@networkplumber.org>
@@ -81,20 +79,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There are no shadow variable warnings in this example.
+The qconf parameter can reused, fixing a shadow warning.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- examples/l2fwd-event/meson.build | 1 -
- 1 file changed, 1 deletion(-)
+ examples/l2fwd-keepalive/main.c      | 2 +-
+ examples/l2fwd-keepalive/meson.build | 1 -
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/examples/l2fwd-event/meson.build b/examples/l2fwd-event/meson.build
-index ff171189ba..5bc8188086 100644
---- a/examples/l2fwd-event/meson.build
-+++ b/examples/l2fwd-event/meson.build
-@@ -17,4 +17,3 @@ sources = files(
-         'l2fwd_event_internal_port.c',
-         'l2fwd_poll.c',
+diff --git a/examples/l2fwd-keepalive/main.c b/examples/l2fwd-keepalive/main.c
+index 993e0bf9da..12ca60c3e4 100644
+--- a/examples/l2fwd-keepalive/main.c
++++ b/examples/l2fwd-keepalive/main.c
+@@ -780,7 +780,7 @@ main(int argc, char **argv)
+ 	}
+ 	/* launch per-lcore init on every worker lcore */
+ 	RTE_LCORE_FOREACH_WORKER(lcore_id) {
+-		struct lcore_queue_conf *qconf = &lcore_queue_conf[lcore_id];
++		qconf = &lcore_queue_conf[lcore_id];
+ 
+ 		if (qconf->n_rx_port == 0)
+ 			RTE_LOG(INFO, L2FWD,
+diff --git a/examples/l2fwd-keepalive/meson.build b/examples/l2fwd-keepalive/meson.build
+index 258f3baf08..e3f72aedb8 100644
+--- a/examples/l2fwd-keepalive/meson.build
++++ b/examples/l2fwd-keepalive/meson.build
+@@ -19,4 +19,3 @@ sources = files(
+         'main.c',
+         'shm.c',
  )
 -cflags += no_shadow_cflag
 -- 
