@@ -2,67 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 223DF10F995A
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 16:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F2D10F9958
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 16:20:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8A76F40654;
-	Wed,  8 Apr 2026 18:19:54 +0200 (CEST)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 4E8D74013F
- for <dev@dpdk.org>; Wed,  8 Apr 2026 18:19:53 +0200 (CEST)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-2ba9c484e5eso6408207eec.1
- for <dev@dpdk.org>; Wed, 08 Apr 2026 09:19:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9208540663;
+	Wed,  8 Apr 2026 18:19:55 +0200 (CEST)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 98AC14065A
+ for <dev@dpdk.org>; Wed,  8 Apr 2026 18:19:54 +0200 (CEST)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-2b4520f6b32so7199343eec.0
+ for <dev@dpdk.org>; Wed, 08 Apr 2026 09:19:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775665192;
- x=1776269992; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775665194;
+ x=1776269994; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=AeHR90fv606RDHOY/snQJnZMVJX1xDCiZWmck6OW9Ao=;
- b=bQZa6DG6X9B+gnNdJpvQE+tIipcjj1I1R3C1WYsOreso1vIhgmSCl4xxSojuHsNOdu
- YFYc9ZvH5q1WtXYnbMy4qIrGzwHDXKp0UXVu4J6a23qjZWg/a/W6BOirNfNh9lGH+7sG
- K/Vzj4lRhkImcectYTIA9T1sScj6xv6Rs3Brenw0B0Y1OI3eSvCopbIIC6wDtDiva445
- 2obYFP/Nvrx5ke0QT57V7UajQGcdgZqqwl3vmQ48vPGegqAHRdmJHycoPad823Oaj1kk
- 7fOIMsIBc1i0YvmuKCrAqgkuwrKKH/L65W2ThUv2ok4wNIz37PKPwkCzLIT75cPlr9s9
- kAPA==
+ bh=Xr3kwQbl3QyMD99al6P+lCJtLWoe4rg4jrNY1mIf/S4=;
+ b=lYEy/ckGvGQvaKu1i2S3lwsQMGNEHTntw+H0VfCLd2MV2OPS/WBhc/nw0nx7eAZmRK
+ Gl85b19n9lH5SVqRUt1xzm0dgAP4VIlL/g03hwV4fVyQgLGm7nT7RTRIytkYOc0vRk+t
+ BkKp34TgVz6qFNaCc/+WEEZ+Vq8uj7rp+oKYUJsekkdY2ho9gRr/mJtW51/kL50YEsRd
+ Dt6jhP4qpRm8+rEjhnwKVtp0rcuGwf4//c2HDIrsPGNyst1YEdXX7LPpvKm1KMqyC5JU
+ CE2rFTqcYiaDLsbOMj5THd9mBTG0Ak0D51BHBQmKRSGaUsd43hFzvbLe95t5Snu1jRqF
+ VHcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775665192; x=1776269992;
+ d=1e100.net; s=20251104; t=1775665194; x=1776269994;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=AeHR90fv606RDHOY/snQJnZMVJX1xDCiZWmck6OW9Ao=;
- b=dB4gpFwZtR+kW2MJ1o+C85XVXOI9L0IAMETnfI+R+k9nCiyG6QuksSYdj18KmYv+E7
- U9bBKC9kmbTvEhv6t8PCnt+42nD3hBibB0370ox4ADQO8x4FYTTpY7lUejViqiFALz2o
- Mw5t0l5YqvQXh1FZTlXBlLRsqzaYqRUGWIcFcOEzbNGVL/91KUOA8Cjin5+IJWX/LtMC
- d39pqOeXZhBtDY9fSlE1W2pEa6iCz6TA4eIOVDsoVeO5yEk/0y/IN1GXNY9mgRNojvhB
- pbboZ6Hmqr+YsODQ7kZg4sRPZk9BFC9Oha1PcWai8YOzjN4Bl7HwQSz8YdPjTqr89Ygu
- M2Bw==
-X-Gm-Message-State: AOJu0YwbnS7dgGzIj2kISVrbRbg9kJ9GT8woENRJPioAfU3W4l1weExH
- mLm4Msu+y6kFoBAltkEfAEm3d61fzm1vE7jS8A44bO+rkxC6VmsNaziYiwZkuAVP2d0v5vEwJeo
- 09uEh
-X-Gm-Gg: AeBDievMR63qOp4TFb69NfQ1xo1cmpDfe5lmANSdKcMLMUAFj5bwpCpxvnmqEjfBHmG
- C5OijrXj9bYB5G5JP5b2FyK7ZOo2DFL28Wshc05kSHF3KszTwpK7htEEDXAiv7WauDUJBNG3BjS
- EvIPwe/6w5O7QjQPbqcerbxtCD8vwEYHXQ4K2XmGW05n2joH95vUgW6dE4lnbpCBCMi7j8xdVyA
- LU31tqFt/j4mJvCP9cO5INAfmegkDbrogadQRy/PCbIulkWpwR1bd+q0O40TEViy3FHJKI8cmEE
- z0fd5OiOb2fO/jSo8CfraM7SRXNzAsiXEMPKWQSfZ16CSq7b3OrUGVbQEWdLLMyEc6YgymFw4if
- MlKW4+5P03VB9r34SIHmrVowJmvUQRngGvizbz9/6r7PT3HcMpv55Q0pZzuXwkqSppOSdbQfol0
- Nbn9wrPoSYAduy58Lc3Z7k+HYuAMleOAUi
-X-Received: by 2002:a05:7300:a40e:b0:2c8:fe46:eeb6 with SMTP id
- 5a478bee46e88-2d40e0f61ccmr76537eec.16.1775665192310; 
- Wed, 08 Apr 2026 09:19:52 -0700 (PDT)
+ bh=Xr3kwQbl3QyMD99al6P+lCJtLWoe4rg4jrNY1mIf/S4=;
+ b=HflXk5ikjt659koWrQg7AK1DeNi9QgfPfhw2AI4PCCRA98UWFOJmjAtDmakHhe1Lqf
+ fSgRDrl+eICec8TMhylXAqqHB+GMXwB09oArcvDyO/OanY/IYdqUwqWOR4greQCSBM/V
+ mUrmqsybsHd9IyObLcUpCi1yklStZs4tQR2bjFJ2DwRX4bgNYc6d0g02dk2fUzTMNoOA
+ ct4uwMhqCOhmpR1uWjPsedV/WNP2R0+T0ITKQ3knqpGzWJkloVcziXhu6wfE9NkIMBJS
+ D/+mM/m4B1kTFn/461wAezdtSxknSCMmuO/VHcs4XA9uB/KO7uPkQvPRRImCOaYb5FfK
+ 0nTg==
+X-Gm-Message-State: AOJu0Yxe3HfY9VsNkXne2piIWPLIwlwLHYgUKh4pFOf2afHggKfAQX8t
+ yDotlWDY0qCzAuJjwBizH1RUKIBLcx+2B8DgAmeh4HvOVGtySVivfhToBTeSKs0wcHteoJ28Nxb
+ kP5qO
+X-Gm-Gg: AeBDieu/M/sCWrKYj4fycj1z0MjHT0AcS1pSKhInCendwBgQ1m7A5fRZb9JadKUDH8Z
+ zTPZu42IASjd/ddGj2cbAqPEJkAQ3on4OW+5wqficzn6UwRtqMUBo5q1Lln/JEhxJub+/1hA9rT
+ q+i+q4M44wNzq0v8VnQc3T7tO3bPsDP6AQkqEbEeSnxBEoB5AHFLHJyXuhYsel+mWSvorI7P32M
+ gobwzedkpazjkpXkQAuPUkAVnD6Wy7c+lWgckX38uuube47VQV3nz5vauMctA6o8RsiECXPUYAQ
+ AlS/1kZan9T1RNRhfSQcKPo5KcjajlgoZ72JvEpAC8UzkAtBHlfOShBbaa58Q+40dhF5PNNZc5Z
+ XzRY7q4EqEVzPgsXmfO8SCf395HhE9vOr0JXBcPvvc/CiapnTzxjwTvC/M/ScqVhh6rSRoy14Ri
+ 5KGlhRCKzWKPM3CkFdVgzfzEpA5ICxDUVO
+X-Received: by 2002:a05:7300:641a:b0:2c8:7172:3b8d with SMTP id
+ 5a478bee46e88-2cbf99ef517mr10370147eec.2.1775665193578; 
+ Wed, 08 Apr 2026 09:19:53 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2ca78df5ed3sm21080062eec.6.2026.04.08.09.19.51
+ 5a478bee46e88-2ca78df5ed3sm21080062eec.6.2026.04.08.09.19.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 08 Apr 2026 09:19:51 -0700 (PDT)
+ Wed, 08 Apr 2026 09:19:53 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
  Konstantin Ananyev <konstantin.ananyev@huawei.com>,
- Allain Legacy <allain.legacy@windriver.com>
-Subject: [PATCH 1/2] ip_frag: fix unsafe TAILQ usage
-Date: Wed,  8 Apr 2026 09:16:16 -0700
-Message-ID: <20260408161947.285185-2-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Thomas Monjalon <thomas@monjalon.net>
+Subject: [PATCH 2/2] ip_frag: randomize hash seed
+Date: Wed,  8 Apr 2026 09:16:17 -0700
+Message-ID: <20260408161947.285185-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260408161947.285185-1-stephen@networkplumber.org>
 References: <20260408161947.285185-1-stephen@networkplumber.org>
@@ -81,64 +82,123 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The frag table next pointer was being access after TAILQ_REMOVE().
-This is not safe since it depends on TAILQ_REMOVE() not changing
-next pointer. Fix by using RTE_TAILQ_FOREACH_SAFE().
+Both ipv4_frag_hash() and ipv6_frag_hash() use CRC32 (x86/ARM)
+or jhash with a fixed, publicly known prime seed (0xeaad8405).
+An attacker who can send crafted IP fragments can precompute hash
+collisions, causing all fragments to land in the same bucket.
+After bucket_entries concurrent flows collide, new flows are  dropped.
 
-Fixes: 95908f52393d ("ip_frag: free mbufs on reassembly table destroy")
+Fix by using a random hash seed added at table creation time.
+
+Fixes: 416707812c03 ("ip_frag: refactor reassembly code into a proper library")
 Cc: stable@dpdk.org
-
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/ip_frag/ip_frag_common.h     |  1 +
- lib/ip_frag/rte_ip_frag_common.c | 20 ++++++++++----------
- 2 files changed, 11 insertions(+), 10 deletions(-)
+ lib/ip_frag/ip_frag_internal.c   | 18 ++++++++----------
+ lib/ip_frag/ip_reassembly.h      |  1 +
+ lib/ip_frag/rte_ip_frag_common.c |  1 +
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/lib/ip_frag/ip_frag_common.h b/lib/ip_frag/ip_frag_common.h
-index 51fc9d47fb..34be5bb6ab 100644
---- a/lib/ip_frag/ip_frag_common.h
-+++ b/lib/ip_frag/ip_frag_common.h
-@@ -8,6 +8,7 @@
- #include <sys/queue.h>
+diff --git a/lib/ip_frag/ip_frag_internal.c b/lib/ip_frag/ip_frag_internal.c
+index 7cbef647df..382f42d0e1 100644
+--- a/lib/ip_frag/ip_frag_internal.c
++++ b/lib/ip_frag/ip_frag_internal.c
+@@ -9,8 +9,6 @@
  
- #include <rte_common.h>
-+#include <rte_tailq.h>
+ #include "ip_frag_common.h"
  
- #if defined(RTE_ARCH_ARM64)
- #include <rte_cmp_arm64.h>
+-#define	PRIME_VALUE	0xeaad8405
+-
+ #define	IP_FRAG_TBL_POS(tbl, sig)	\
+ 	((tbl)->pkt + ((sig) & (tbl)->entry_mask))
+ 
+@@ -38,7 +36,7 @@ ip_frag_tbl_reuse(struct rte_ip_frag_tbl *tbl, struct rte_ip_frag_death_row *dr,
+ 
+ 
+ static inline void
+-ipv4_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2)
++ipv4_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2, uint32_t seed)
+ {
+ 	uint32_t v;
+ 	const uint32_t *p;
+@@ -46,12 +44,12 @@ ipv4_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2)
+ 	p = (const uint32_t *)&key->src_dst;
+ 
+ #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
+-	v = rte_hash_crc_4byte(p[0], PRIME_VALUE);
++	v = rte_hash_crc_4byte(p[0], seed);
+ 	v = rte_hash_crc_4byte(p[1], v);
+ 	v = rte_hash_crc_4byte(key->id, v);
+ #else
+ 
+-	v = rte_jhash_3words(p[0], p[1], key->id, PRIME_VALUE);
++	v = rte_jhash_3words(p[0], p[1], key->id, seed);
+ #endif /* RTE_ARCH_X86 */
+ 
+ 	*v1 =  v;
+@@ -59,7 +57,7 @@ ipv4_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2)
+ }
+ 
+ static inline void
+-ipv6_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2)
++ipv6_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2, uint32_t seed)
+ {
+ 	uint32_t v;
+ 	const uint32_t *p;
+@@ -67,7 +65,7 @@ ipv6_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2)
+ 	p = (const uint32_t *) &key->src_dst;
+ 
+ #if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
+-	v = rte_hash_crc_4byte(p[0], PRIME_VALUE);
++	v = rte_hash_crc_4byte(p[0], seed);
+ 	v = rte_hash_crc_4byte(p[1], v);
+ 	v = rte_hash_crc_4byte(p[2], v);
+ 	v = rte_hash_crc_4byte(p[3], v);
+@@ -78,7 +76,7 @@ ipv6_frag_hash(const struct ip_frag_key *key, uint32_t *v1, uint32_t *v2)
+ 	v = rte_hash_crc_4byte(key->id, v);
+ #else
+ 
+-	v = rte_jhash_3words(p[0], p[1], p[2], PRIME_VALUE);
++	v = rte_jhash_3words(p[0], p[1], p[2], seed);
+ 	v = rte_jhash_3words(p[3], p[4], p[5], v);
+ 	v = rte_jhash_3words(p[6], p[7], key->id, v);
+ #endif /* RTE_ARCH_X86 */
+@@ -301,9 +299,9 @@ ip_frag_lookup(struct rte_ip_frag_tbl *tbl,
+ 
+ 	/* different hashing methods for IPv4 and IPv6 */
+ 	if (key->key_len == IPV4_KEYLEN)
+-		ipv4_frag_hash(key, &sig1, &sig2);
++		ipv4_frag_hash(key, &sig1, &sig2, tbl->seed);
+ 	else
+-		ipv6_frag_hash(key, &sig1, &sig2);
++		ipv6_frag_hash(key, &sig1, &sig2, tbl->seed);
+ 
+ 	p1 = IP_FRAG_TBL_POS(tbl, sig1);
+ 	p2 = IP_FRAG_TBL_POS(tbl, sig2);
+diff --git a/lib/ip_frag/ip_reassembly.h b/lib/ip_frag/ip_reassembly.h
+index 54afed5417..9e1666ef67 100644
+--- a/lib/ip_frag/ip_reassembly.h
++++ b/lib/ip_frag/ip_reassembly.h
+@@ -79,6 +79,7 @@ struct rte_ip_frag_tbl {
+ 	uint32_t bucket_entries; /* hash associativity. */
+ 	uint32_t nb_entries;     /* total size of the table. */
+ 	uint32_t nb_buckets;     /* num of associativity lines. */
++	uint32_t seed;		 /* hash function init value */
+ 	struct ip_frag_pkt *last;     /* last used entry. */
+ 	struct ip_pkt_list lru;       /* LRU list for table entries. */
+ 	struct ip_frag_tbl_stat stat; /* statistics counters. */
 diff --git a/lib/ip_frag/rte_ip_frag_common.c b/lib/ip_frag/rte_ip_frag_common.c
-index ee9aa93027..79ac45289b 100644
+index 79ac45289b..00bf9476de 100644
 --- a/lib/ip_frag/rte_ip_frag_common.c
 +++ b/lib/ip_frag/rte_ip_frag_common.c
-@@ -135,18 +135,18 @@ rte_ip_frag_table_del_expired_entries(struct rte_ip_frag_tbl *tbl,
- 	struct rte_ip_frag_death_row *dr, uint64_t tms)
- {
- 	uint64_t max_cycles;
--	struct ip_frag_pkt *fp;
-+	struct ip_frag_pkt *fp, *tmp;
+@@ -79,6 +79,7 @@ rte_ip_frag_table_create(uint32_t bucket_num, uint32_t bucket_entries,
+ 	tbl->nb_buckets = bucket_num;
+ 	tbl->bucket_entries = bucket_entries;
+ 	tbl->entry_mask = (tbl->nb_entries - 1) & ~(tbl->bucket_entries  - 1);
++	tbl->seed = rte_rand();
  
- 	max_cycles = tbl->max_cycles;
- 
--	TAILQ_FOREACH(fp, &tbl->lru, lru)
--		if (max_cycles + fp->start < tms) {
--			/* check that death row has enough space */
--			if (RTE_IP_FRAG_DEATH_ROW_MBUF_LEN - dr->cnt >=
--					fp->last_idx)
--				ip_frag_tbl_del(tbl, dr, fp);
--			else
--				return;
--		} else
-+	RTE_TAILQ_FOREACH_SAFE(fp, &tbl->lru, lru, tmp) {
-+		if (max_cycles + fp->start >= tms)
-+			return;
-+
-+		/* check that death row has enough space */
-+		if (RTE_IP_FRAG_DEATH_ROW_MBUF_LEN - dr->cnt < fp->last_idx)
- 			return;
-+
-+		ip_frag_tbl_del(tbl, dr, fp);
-+	}
- }
+ 	TAILQ_INIT(&(tbl->lru));
+ 	return tbl;
 -- 
 2.53.0
 
