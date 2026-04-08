@@ -2,53 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E37DD10F9963
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 17:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A0810F996A
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 18:18:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79B8640650;
-	Wed,  8 Apr 2026 19:44:19 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
- by mails.dpdk.org (Postfix) with ESMTP id 6BE74402E4
- for <dev@dpdk.org>; Wed,  8 Apr 2026 19:44:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775670258; x=1807206258;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=7XFS33XsrJEy93uqJzc2jHofmOjsx1BC2qS7TeommYY=;
- b=M3kSesh/8zUiE1WQizaj0AxXrtivRCW5UzFa7/YRHatQA5Q+xVwhhoQH
- j8WyIuxV5fYdSBtfXgRsXhWnMQwkVQkeo5zMZRaqf1J0ZEZ5naD13oUwM
- tvECoJ5cnCoaRQTE+gBZhz+6ycslccw8JV3eNMj/hbLoQka/SqY8cQBVr
- uY4N8te05jitnenezTzsdH9aN1AGDs0wVYwEzaHTZmBpkgHjQfDhdI0Wr
- BfPYMb/6qDmn2HGsTwWK5eV2njh3abFo0FRTfMiNIEyLYiXe/PnBMBcPn
- 2CieuzG6HGC30ahqrGqJZW+gELi2A7y4G02S7og0tRnT5RpLJ0xdF7MqU w==;
-X-CSE-ConnectionGUID: IJhzeZ/OR3OszluJf9lwMQ==
-X-CSE-MsgGUID: TAUnszkZTQyfP49+mmWLEg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11753"; a="76851173"
-X-IronPort-AV: E=Sophos;i="6.23,168,1770624000"; d="scan'208";a="76851173"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Apr 2026 10:44:17 -0700
-X-CSE-ConnectionGUID: RI43xyxRRXegGza+ySCGfg==
-X-CSE-MsgGUID: OoFzwcvWSRCA5XUFxjk2BQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,168,1770624000"; d="scan'208";a="266510690"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa001.jf.intel.com with ESMTP; 08 Apr 2026 10:44:16 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id CA4F040299;
+	Wed,  8 Apr 2026 20:18:39 +0200 (CEST)
+Received: from fhigh-a6-smtp.messagingengine.com
+ (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+ by mails.dpdk.org (Postfix) with ESMTP id 82FC24014F;
+ Wed,  8 Apr 2026 20:18:38 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id EFC751400088;
+ Wed,  8 Apr 2026 14:18:37 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-05.internal (MEProxy); Wed, 08 Apr 2026 14:18:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1775672317;
+ x=1775758717; bh=D9888Epv6sqTPjnVVJmkm6tBaP/E42jKHDieMM7R2Ok=; b=
+ Teh3DbXXd+bqkS4kbUizm9yvAcqn3tAIYp1M3uN5NStLhEbMjU7klWX6kKeaI5LV
+ PAT0N0n4qb3+OIJf4rJjaM92zBT9pHFR2omcQTogNxQ8nJS9jPeoWelgv5qaQN1i
+ POl8eQ+6QmJgc+OP5klS6WyxUOmC9V5hxKleutudjnMR0rC/BAJV8daPAA+4XHBs
+ qfHJh0JI0ICBiWQDs6QYxE9yCwkkqTNSu3Agf7fAgfWr8zDzN5v03LjBqwvykCLM
+ uonrI65+lVhCD5vUj0i5aEHOfeuf05Ik5xekSRn5QrCsfKPn1BQ3hBs0o5ZtCNiD
+ MV2UCOMyH7sMs0Vy/e2k0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1775672317; x=
+ 1775758717; bh=D9888Epv6sqTPjnVVJmkm6tBaP/E42jKHDieMM7R2Ok=; b=k
+ 8i3ZNoEI0OBaBp5keSohhJYmfT6MDrN5oqACV9qc1m2nqclS/L8FYAXkl12/bfKD
+ upvijmw2sy/7nK4f0iakJUgti6wFfD4PKB+xfWugo3Ktsct/f5R60QNAjRot+rXL
+ efM08gqD34YZEwbeYoeFQDPv/a53irX3unzl1kpe9RXO5U50RegUCzuWLU55FGLD
+ X4/zGZ9ucOIe3/XjP06+NK0S6BKOLqB3a3Kri8MpmjELQGvnwXFm9fl8W1XViEx0
+ 9pgn3ZJmNPZssDrrQRJyF6WyXsFnB1JfBGUCaiDqEI2IQVBPn/oaBArQ4/0Gpp42
+ yE+r+CoD6Wv2ITpTFQ+ng==
+X-ME-Sender: <xms:_ZvWaeUP2I_xlaVT4RoS-XUWL36b3hakumvlmY5hK_HcfqetFJlboA>
+ <xme:_ZvWaVihkinQMbUKK8g_Xohq1iKYMi0QADxmOlUCaPTPQWVyQBYvlk6n0A5AgCcbk
+ 5C85fMBDfb_GvZFc3QK8F3IKPs2bc5fqFwU1_Csz3LkbLbNC_qEZw>
+X-ME-Received: <xmr:_ZvWaRY5jIt9rqpOWG5dtXlNdOlbX1IT90e_hP2JnraxTk3GzWIADPYrbxyX_8fXm_8_mFCmijXlltxRQMpdAa2PoA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddvgedvjecutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepjedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpth
+ htohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopegrnhgrthholhihrdgs
+ uhhrrghkohhvsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhivhgrphhrrghsrggurd
+ htuhhmmhgrlhgrsegrmhgurdgtohhmpdhrtghpthhtohepmhgrrhgtihhngidrhhgrjhhk
+ ohifshhkihesihhnthgvlhdrtghomhdprhgtphhtthhopehluhhkrghsiiigrdhkrhgrkh
+ hofihirghksehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhukhgrshiigidrghhoshhi
+ vgifshhkihesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:_ZvWaaoWFBmiFwK8drwE1mpYGM4Nn5ytxIoNw7-NePhCdAQx-WnTTg>
+ <xmx:_ZvWaWM-5vVY30rs25oab6oO9TOumprHFdB_kDAxab8lVscaW3yQRw>
+ <xmx:_ZvWaVrwCHvTEJ2tzDA7SSYs1Kr-DcwcKg38_IvesC6Zf2w2IKstFw>
+ <xmx:_ZvWabcGbFFd0OIFs0jfldZJYcfEYWf9v4WkGgHH6UBVg19wN27zdg>
+ <xmx:_ZvWaRXw_LSgbhL0TqVLH-6TuiRyyJihDTBZqeT2HqAMwnLh7tTe16Vf>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 8 Apr 2026 14:18:35 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: david.marchand@redhat.com, thomas@monjalon.net,
- Bruce Richardson <bruce.richardson@intel.com>,
- Adam Hassick <ahassick@iol.unh.edu>
-Subject: [PATCH v3 2/2] test: simplify spawning extra test processes
-Date: Wed,  8 Apr 2026 18:44:04 +0100
-Message-ID: <20260408174404.2002743-3-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260408174404.2002743-1-bruce.richardson@intel.com>
-References: <20260319171334.1151425-1-bruce.richardson@intel.com>
- <20260408174404.2002743-1-bruce.richardson@intel.com>
+Cc: stable@dpdk.org, Anatoly Burakov <anatoly.burakov@intel.com>,
+ Sivaprasad Tummala <sivaprasad.tummala@amd.com>,
+ Marcin Hajkowski <marcinx.hajkowski@intel.com>,
+ Lukasz Krakowiak <lukaszx.krakowiak@intel.com>,
+ Lukasz Gosiewski <lukaszx.gosiewski@intel.com>
+Subject: Re: [PATCH] examples/vm_power_manager: fix const discarding
+Date: Wed, 08 Apr 2026 20:18:33 +0200
+Message-ID: <3469901.tdWV9SEqCh@thomas>
+In-Reply-To: <20260401093502.1420779-1-thomas@monjalon.net>
+References: <20260401093502.1420779-1-thomas@monjalon.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,73 +95,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A number of tests require secondary processes or additional primary
-process instances, so we have common code for managing that in the test
-binary. Simplify that code a little, in the process removing dependency
-on procfs on FreeBSD, by using argv[0] as the binary to run, rather than
-querying procfs for /proc/self/exe (or /proc/curproc/file on FreeBSD).
-The unit tests should never be running in a way that leads to argv[0]
-not being the actual test binary.
+01/04/2026 11:35, Thomas Monjalon:
+> When compiling with GCC 15.2.1, a const qualifier issue
+> is seen with this warning:
+> 
+> In function 'get_resource_name_from_chn_path':
+> examples/vm_power_manager/channel_monitor.c:139:16:
+> error: assignment discards 'const' qualifier from pointer target type
+>   139 |         substr = strstr(channel_path, CHANNEL_MGR_FIFO_PATTERN_NAME);
+>       |                ^
+> 
+> The function get_resource_name_from_chn_path is used only once
+> and call a single function (strstr),
+> so it can be replaced with a direct call to strstr().
+> 
+> Fixes: 221e7026d521 ("examples/power: add FIFO per core for JSON interface")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-Tested-by: Adam Hassick <ahassick@iol.unh.edu>
----
- app/test/process.h | 20 ++------------------
- 1 file changed, 2 insertions(+), 18 deletions(-)
+Applied to fix building with a recent GCC.
 
-diff --git a/app/test/process.h b/app/test/process.h
-index df43966a2a..3ee899dbc8 100644
---- a/app/test/process.h
-+++ b/app/test/process.h
-@@ -19,14 +19,6 @@
- #include <rte_devargs.h>
- #include <rte_eal.h>
- 
--#ifdef RTE_EXEC_ENV_FREEBSD
--#define self "curproc"
--#define exe "file"
--#else
--#define self "self"
--#define exe "exe"
--#endif
--
- #ifdef RTE_LIB_PDUMP
- #ifdef RTE_NET_RING
- #include <rte_thread.h>
-@@ -96,7 +88,6 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 	int driver_path_num;
- 	int argv_num;
- 	int i, status;
--	char path[32];
- #ifdef RTE_LIB_PDUMP
- #ifdef RTE_NET_RING
- 	rte_thread_t thread;
-@@ -132,7 +123,7 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 
- #ifdef RTE_EXEC_ENV_LINUX
- 		{
--			const char *procdir = "/proc/" self "/fd/";
-+			const char *procdir = "/proc/self/fd/";
- 			struct dirent *dirent;
- 			char *endptr;
- 			int fd, fdir;
-@@ -188,15 +179,8 @@ process_dup(const char *const argv[], int numargs, const char *env_value)
- 		/* set the environment variable */
- 		if (setenv(RECURSIVE_ENV_VAR, env_value, 1) != 0)
- 			rte_panic("Cannot export environment variable\n");
--
--		strlcpy(path, "/proc/" self "/" exe, sizeof(path));
--		if (execv(path, argv_cpy) < 0) {
--			if (errno == ENOENT) {
--				printf("Could not find '%s', is procfs mounted?\n",
--						path);
--			}
-+		if (execv(argv_cpy[0], argv_cpy) < 0)
- 			rte_panic("Cannot exec: %s\n", strerror(errno));
--		}
- 	}
- 	/* parent process does a wait */
- #ifdef RTE_LIB_PDUMP
--- 
-2.51.0
 
