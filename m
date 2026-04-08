@@ -2,143 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6361BFD5F87
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 08:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 997151073CB6
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 13:25:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3012F402A9;
-	Wed,  8 Apr 2026 10:49:04 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
- by mails.dpdk.org (Postfix) with ESMTP id 659054014F
- for <dev@dpdk.org>; Wed,  8 Apr 2026 10:49:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 9E0D24014F;
+	Wed,  8 Apr 2026 15:25:37 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+ by mails.dpdk.org (Postfix) with ESMTP id E3D724013F
+ for <dev@dpdk.org>; Wed,  8 Apr 2026 15:25:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775638144; x=1807174144;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=jQZzZiwDFPJLJKOBNyFGoase578h93D6EpCbFNPdzdE=;
- b=R/jGntHao/spk2MD/AKaZoDT4ewQ06kLWvGAeeS9c9svDDjWXo5CoONy
- 4K6dh5RWlcAr6cFiV9qgrs0Mg5OQISRLEMbw4zuAfGmIoFCCUyFAvm4RI
- 4pZy8MFPalEfJjN6vjcs/gE1BTC3dBP6pSHvrJngO0V1NJVnEuEDbnirk
- MP4PquKMzkeOgXYGRo9u2BYKMmxNMwCawo66IKzmYG7vAWru5Ync/acTR
- C+6CprWAcI8uGzlz/oSaU65WVdham10xfDahg//toulonjWsrGvxR/J7s
- hhXUhSeEKUnlbk36uXNUCsTFGwjiu8f7YT5BMqs8ZQ8sD9NzJPzg16dhO w==;
-X-CSE-ConnectionGUID: 6M1YoiIjTdmfb96YY2nmOg==
-X-CSE-MsgGUID: GayaPaHUQ8S1nbiT68CVRw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11752"; a="76627109"
-X-IronPort-AV: E=Sophos;i="6.23,167,1770624000"; d="scan'208";a="76627109"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
- by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Apr 2026 01:49:02 -0700
-X-CSE-ConnectionGUID: ygV+JJl6SAabokKHh3ek3w==
-X-CSE-MsgGUID: wZvd7Ss/T5ihfoQLpTK4UQ==
+ t=1775654736; x=1807190736;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=8lmmu0/Z4hvOqg8kG5sm2z22mt/eejaVD4HX2+iFnXk=;
+ b=gZYJtV3p6+CbwUxVAr8xGuOcGw951KMsY9F44fE7iHvVXcD3QU2vY/ri
+ CgCmOzORORnHxkGWh0d/5qLJ/EMIodTN1vBh0V+k5uqsm6Ou4TtOR4+u8
+ uOSfmil5w3IAasyUjrvNePGH2L2jXexZpy1r8G8N1LDt2WS0hPHOg9FEw
+ YXnHNEUbfkYxK8R2fXpC4gc4LRmmli5ujPoO571iBHMVWr6BLtBfSFEuh
+ kVJX7KkpixX4nzYHLYMUI8mIDnilsehvp83Pm1Ham7XVgNOi6YjmTv/Am
+ P0Z/0RSOXkNjTFEwZZiuHTMxkTw8EKeTbmOD9SZ297dg4Ht9ZS+n2MR/E Q==;
+X-CSE-ConnectionGUID: hcHvXmCwQJSASH/prMETPg==
+X-CSE-MsgGUID: iXxpJWwQQmehiQ0cBNPi2Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11753"; a="76601638"
+X-IronPort-AV: E=Sophos;i="6.23,167,1770624000"; d="scan'208";a="76601638"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+ by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 Apr 2026 06:25:34 -0700
+X-CSE-ConnectionGUID: ME1o5XIpRRmJuLKFKzUOzg==
+X-CSE-MsgGUID: J3eI91ZaRW63ouZ7Spmimw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,167,1770624000"; d="scan'208";a="223652830"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Apr 2026 01:49:02 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 8 Apr 2026 01:49:01 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 8 Apr 2026 01:49:01 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.51) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 8 Apr 2026 01:48:56 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dWc6RiK2KK+9dkxoIagGLpvrOtnb8kydr7/tLoO2VBQnEM9npJtY1HwhpQRIwu8AtRglmRO+Aycm0vX7vfBH6J0Z7jxROw4jA1vC3poDE4MwHimULp4Akn8eE8Cx0VbiYu/FDYW/Axoozq8oMlyP5GkXnemWaVxFYHRDYiKWZ+cI1RAKlG/bIHL57kRpbnDsDI4DWt/bAlyY59vpYRys0KY4ILSmyTUND0efnU5dTikoCnM+AZ75pU/LVEvgOxQAMefSpYHM9c63Yfar2T1cO34cNTeyXycye+cE+6DaUqt0YoIVGK+Kb1EQ/Urch3jHgiTQg4/ZVZBAN45XZ/62+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=widEy1VE8hHMhsU7pf8kZrelt/Vy+29kO0Eltno/QtA=;
- b=fZCvU2eaXSZYO4Q3VZXalPaeLm9mKtBtea/EA2rJHbyXo5KZdFv3sydqShiDBB90OanoWQtQKtAQQxRv1cyrV8QteR6vaqg0CIfeOLqwsel9ZOYJpo9jNBjOZ1LJ47Ekl0hceEsvb+RspvcH+bHe9n+1Yk3e3VUAM0/0OAcXvoz90jqOU8JH98S1+oaC6W8oBk7zpynkGRFxz2AuRtHkU0PsMO07WaZpaSclY/PX3eXennGqmZT9ZY92TDey2sfJaJp+iKTww1d9VjVcL4zd9h+lsyGIvT98zrWU4lizpl71vd+7+MT2/jxGOwQuXlR8azJ4qxlQfE5b74euCWZ2uA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by DS4PPF3FCD980E2.namprd11.prod.outlook.com (2603:10b6:f:fc02::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.20; Wed, 8 Apr
- 2026 08:48:47 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9769.018; Wed, 8 Apr 2026
- 08:48:46 +0000
-Date: Wed, 8 Apr 2026 09:48:41 +0100
+X-IronPort-AV: E=Sophos;i="6.23,167,1770624000"; d="scan'208";a="227471465"
+Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
+ by orviesa006.jf.intel.com with ESMTP; 08 Apr 2026 06:25:34 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
-To: Weijun Pan <wpan3636@gmail.com>
-CC: Rosen Xu <rosen.xu@altera.com>, <dev@dpdk.org>, Weijun Pan
- <wpan36@wisc.edu>
-Subject: Re: [PATCH v2] raw/ifpga: replace printf calls with logging
-Message-ID: <adYWaVl8VPgzkVw8@bricha3-mobl1.ger.corp.intel.com>
-References: <20260407143656.9960-1-wpan36@wisc.edu>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260407143656.9960-1-wpan36@wisc.edu>
-X-ClientProxiedBy: DU7PR01CA0044.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:50e::28) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+To: dev@dpdk.org
+Cc: mb@smartsharesystems.com,
+	Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2] net/intel: optimize for fast-free hint
+Date: Wed,  8 Apr 2026 14:25:15 +0100
+Message-ID: <20260408132515.1314728-1-bruce.richardson@intel.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20260123112032.2174361-1-bruce.richardson@intel.com>
+References: <20260123112032.2174361-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|DS4PPF3FCD980E2:EE_
-X-MS-Office365-Filtering-Correlation-Id: 85a84aab-118f-462f-4403-08de954ba592
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|1800799024|18002099003|22082099003|56012099003; 
-X-Microsoft-Antispam-Message-Info: H3XK++6CRkx+uQZi0e80sFmSzCtmgp7j6cg50Cmb17VqdzG5S44+K1phBxHKGzAIbx7Tk0pu5AEne4GyeP8677lxNJ3KfYQ/v6diGSPUnEwg0WjdfnLq0VvxMVi8xEaYh9DQYnoZPMaitBr4pXuObLZI8aVP2+shTqB4FOs++tZEzVPvlb5ilPlGrBIaUn/+4gAfcIvTxBsTyVWZMWLv3Firo1ZEoonvDo2GVumarUwVgjbT0tht30jOQfmYdtzih/noLMuMImL1S3qNbOm1NfQKgDkVBHAoxuTd3DncAwlmtkpsLGKYeDzyTy31L7AYOUrixfPTAcxFA5ryTDliFYDF0IlVxsLAziaAXvnyv/4fLlgG6Cx4SkGTQZBxQdL/nnzF1crJNe5D0qWoNeHJ/kbzK+kfMVBHHbnqbuq3Dolalmn0itsiK4mcLUGELh9nX1jWofPH3uctmx+TpwnKEylN06CYSurRHee2kfXHgD7Pmri+oev1ccwISAz5SDn9L3kjzHTP/LoREYhcLsUjvliJT0zOBvov/LzRwEzv3LevVdIjMbyXiHmzrtgXIf5V/DxGshDeCtkpjwN5UAdMDygDkzEI7dU9vnr0T/Vxt1h3XFZzFSGHBnak4h90awe9kZw77g5zSjLJ6rwray9gUDMWzyHH/O0BxmNBbJqt4m8Fos/YciKmgXynnXuzrjs3dPlZtcDcS+EhXyJf3gPvnoYV0zOKsbAZOITTiHpvCtE=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(18002099003)(22082099003)(56012099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?B74CoIxGBJv9wR8w3urDCsDXr0vAFuoxOnz71DAleAy81kgT8QGPzmMgb0uE?=
- =?us-ascii?Q?WzybPleP8pZBo4QG0RqNhpxN7c57J42iWx+Q+P4w36drM24eGjLTIkNK5QkA?=
- =?us-ascii?Q?vrb8MN4b6q1mqIkSeQQPFIB5uNsyjgE4YebCROaTHUqkw7pcpfdjoJMpBGRF?=
- =?us-ascii?Q?bQR0gf7vmN9iGvqBtD+QE/p1Cbo7seTtSVoEX0Pku/yEwD3z921KbTeVbMtM?=
- =?us-ascii?Q?z4so9E9FTxVQJ0bFPwbEptB0J2wwk/J89VXc6c/aAd9Q44/t1i3cT0xsLYwc?=
- =?us-ascii?Q?GBA3sbPpR8awpJqIjho9ylEcy02g9Y4ofV4qGlvNtnd2kD6chsQvGfsJD97U?=
- =?us-ascii?Q?GAtkewhiOV91RfgUVMBqir97uDCyPRjzHKo0r8gJe4g0od0RpuQVEmuvp0DI?=
- =?us-ascii?Q?wjf0DFrQe7kXCzRzXhCs32PVx+tQpS0sQUA37afLaAM3i5SEKxxEwMtRjy3c?=
- =?us-ascii?Q?7+L24qeGp3iI4Ea2NnqalFbeAF8iMDcr8+4skx0OQ50AMw1seWGWQ5ybv8iZ?=
- =?us-ascii?Q?u4PoVvWB7m2Z3fTY3txBlFNoW5WDw06SeK11rq3lcEeLhGC8jxIsMMvwMmAp?=
- =?us-ascii?Q?NXG9C7YvkLFFV6B37doos/apv09NVyEKoXOkl3izZcNcJVTQKgvG19Hs5b2e?=
- =?us-ascii?Q?zCcg5cCuQdZEJOjcYoUNm+/1fgy6gbvpoXQi25AcRF+EIQauaLU6Nd5bntZL?=
- =?us-ascii?Q?xKC3zgvOpXeewxCScPJN9dsSKjP3qFcnFiEUxxFrCZwTNd6DWjYvxacgkglC?=
- =?us-ascii?Q?vtsVqZehxWn4UNUmEHVRSQpQDN7NocRt6Rm6DJpHUz5CTKUMsUXAytsM+W4D?=
- =?us-ascii?Q?5HPNMU6ncWagYCWJcNGCmiEjkBLWqv80RRNiu4soGH22zYqljNf5VkjeefCN?=
- =?us-ascii?Q?Bd6Q2aTDbVA5OzOH7n+lsOnzWn5tPiulvkNIfecM+weXSU/Dc5uyL6nGR5Qt?=
- =?us-ascii?Q?grAiJabP12AEVyPshTAnj/TM8QZTlvqcH9cpput8MKJ375Ub3ytEXEFyfEi6?=
- =?us-ascii?Q?NwAGAew5Ylgu0ySA3/1nxutvJjWMDHEUODlvAyQJ25LZ55mmXoA8BTCxNBQQ?=
- =?us-ascii?Q?53GMkrtup+H8jMMedh9TDjdeUBnb1oYsG1LOJ8zWJa1BTyYQhhAALxsVmkAJ?=
- =?us-ascii?Q?9+e0jSmHwUz5cHgwf0K2Sw6gntBR2dnbKDRf3x8O8wY/yUMaIihE0QQvK2NG?=
- =?us-ascii?Q?VLr12Ojv68QvQoR4lNX2i4D1hrctTn0vlZgxZ+IDsblaXcbLcbgqVEy/rkpZ?=
- =?us-ascii?Q?khyZnpLEH67mVJmPwPnSxahlyO5htato7/m4nVxUAC5m+d8FPHEKG0pEEs5i?=
- =?us-ascii?Q?HxB1F8BxIWLt5EaRyVD3FDUSUSF+K7jvv6PzUOyk994nXy7wSPx4wITR1emh?=
- =?us-ascii?Q?9kgFiSPHaJaXX/YGgzvxsZr/3bUu9UerLFPmuZhTR3Ee03Bj6ewjMZWP4xoE?=
- =?us-ascii?Q?U0BFT0sitA5lyBOkw083VkxrwoJjtbqraLsoW7H6W43u4UYxO+dvBl9gPuxq?=
- =?us-ascii?Q?qC9BcPebH1CDHQbsjqjRHOI1XAw2GOq/wzN5UHS96xoPzQhW7Xgtm4SqSAsX?=
- =?us-ascii?Q?OV9bhpFgNCgpy3OuM9zG7Sxv6M8QDcRWO6d1hSYa4PNNcIZqF3zKcxMKaeH8?=
- =?us-ascii?Q?4B4vGw/j3OqYAZ1G9hJvMCeNLObLO7iIWi0I6G7mwrF1huTUply9WpB57gWA?=
- =?us-ascii?Q?rkkW67Zn3GiJJ25426oNvBqQT/5wnwP6CSJJvZYYQkuM17C5+OR/xVEwMP/m?=
- =?us-ascii?Q?YJuUydlY3hSyO/Xn9KxZ3bApY0/BRCA=3D?=
-X-Exchange-RoutingPolicyChecked: HXo2zTsjqlcUZwMGvLpw1PwijElbaDPABj7OgmLk5+NsD5Le1hp6YD74ohfR8s4C30nP/fzVwOzql2dLnnVu/jVwAOO3aTLbTxIMlsZ8cO/7jRZ9SiyDLxaSKneLrl5obb4kCiLT6HKDFG1w92Hf6/4niDfdSWYE/kZLVeqYkW0PRlPHptpMqrLULHqHCcal8EwiJF//0Yi2IQ0W29K+D8lEgFHhL8Chx2wb3f1Eco5Kdks6eVrJdGx6Gpw53zLqQ6n/gZWycGcu6ZR6kJWRoAGoGpjyq4nMAmpyvZauk7imCEhwtIcCRjamJTw4trboHTjt7KctAZD5XVA9BxuX0A==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 85a84aab-118f-462f-4403-08de954ba592
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Apr 2026 08:48:46.8244 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: roMkorscxvxNGpEkMkygsXbxoNegV5tDFoQQJ4r7l8A4hKkcXtIGUJvNZvbHo6xGEUixmQ75SmhF5PW4IbAR6Yo/25KUVBmlUCpn+vImXeY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF3FCD980E2
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,68 +60,225 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Apr 07, 2026 at 09:36:56AM -0500, Weijun Pan wrote:
-> The ifpga rawdev driver uses printf() directly for runtime messages.
-> DPDK drivers should use the logging framework instead of printing
-> to standard output.
-> 
-> Replace the remaining direct printf() calls in ifpga_rawdev.c with
-> the driver logging macros.
-> 
-> Resend as a standalone patch after the previous submission was
-> accidentally sent together with an unrelated patch.
+When the fast-free hint is provided to the driver we know that the mbufs
+have refcnt of 1 and are from the same mempool. Therefore, we can
+optimize a bit for this case by:
 
-JFYI: details about resends or new versions are better put as a notes under
-the cutline "---", so they get stripped automatically by git when patch is
-applied.
+* resetting the necessary mbuf fields, ie. nb_seg and next pointer when
+  we are accessing the mbuf on writing the descriptor.
+* on cleanup of buffers after transmit, we can just write those buffers
+  straight to the mempool without accessing them.
 
-> 
-> Signed-off-by: Weijun Pan <wpan36@wisc.edu>
-> ---
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+---
+V2: Fix issues with original submission:
+* missed check for NULL mbufs
+* fixed issue with freeing directly from sw_ring in scalar path which
+  doesn't work as thats not a flag array of pointers
+* fixed missing null assignment in case of large segments for TSO
+---
+ drivers/net/intel/common/tx.h        | 21 ++++--
+ drivers/net/intel/common/tx_scalar.h | 95 ++++++++++++++++++++++------
+ 2 files changed, 90 insertions(+), 26 deletions(-)
 
-Agree that these should be properly logged. Only question is the log level
-for each. One question inline below about that.
+diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
+index 283bd58d5d..f2123f069c 100644
+--- a/drivers/net/intel/common/tx.h
++++ b/drivers/net/intel/common/tx.h
+@@ -363,13 +363,22 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
+ 		return;
+ 
+ 	if (!txq->use_vec_entry) {
+-		/* Regular scalar path uses sw_ring with ci_tx_entry */
+-		for (uint16_t i = 0; i < txq->nb_tx_desc; i++) {
+-			if (txq->sw_ring[i].mbuf != NULL) {
+-				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
+-				txq->sw_ring[i].mbuf = NULL;
+-			}
++		/* Free mbufs from (last_desc_cleaned + 1) to (tx_tail - 1). */
++		const uint16_t start = (txq->last_desc_cleaned + 1) % txq->nb_tx_desc;
++		const uint16_t nb_desc = txq->nb_tx_desc;
++		const uint16_t end = txq->tx_tail;
++
++		uint16_t i = start;
++		if (end < i) {
++			for (; i < nb_desc; i++)
++				if (txq->sw_ring[i].mbuf != NULL)
++					rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
++			i = 0;
+ 		}
++		for (; i < end; i++)
++			if (txq->sw_ring[i].mbuf != NULL)
++				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
++		memset(txq->sw_ring, 0, sizeof(txq->sw_ring[0]) * nb_desc);
+ 		return;
+ 	}
+ 
+diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
+index 9fcd2e4733..adbc4bafee 100644
+--- a/drivers/net/intel/common/tx_scalar.h
++++ b/drivers/net/intel/common/tx_scalar.h
+@@ -197,16 +197,63 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
+ 	const uint16_t rs_idx = (last_desc_cleaned == nb_tx_desc - 1) ?
+ 			0 :
+ 			(last_desc_cleaned + 1) >> txq->log2_rs_thresh;
+-	uint16_t desc_to_clean_to = (rs_idx << txq->log2_rs_thresh) + (txq->tx_rs_thresh - 1);
++	const uint16_t dd_idx = txq->rs_last_id[rs_idx];
++	const uint16_t first_to_clean = rs_idx << txq->log2_rs_thresh;
+ 
+-	/* Check if descriptor is done  */
+-	if ((txd[txq->rs_last_id[rs_idx]].cmd_type_offset_bsz &
+-			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
+-				rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
++	/* Check if descriptor is done - all drivers use 0xF as done value in bits 3:0 */
++	if ((txd[dd_idx].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
++			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
++		/* Descriptor not yet processed by hardware */
+ 		return -1;
+ 
++	/* DD bit is set, descriptors are done. Now free the mbufs. */
++	/* Note: nb_tx_desc is guaranteed to be a multiple of tx_rs_thresh,
++	 * validated during queue setup. This means cleanup never wraps around
++	 * the ring within a single burst (e.g., ring=256, rs_thresh=32 gives
++	 * bursts of 0-31, 32-63, ..., 224-255).
++	 */
++	const uint16_t nb_to_clean = txq->tx_rs_thresh;
++	struct ci_tx_entry *sw_ring = txq->sw_ring;
++
++	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
++		/* FAST_FREE path: mbufs are already reset, just return to pool */
++		void *free[CI_TX_MAX_FREE_BUF_SZ];
++		uint16_t nb_free = 0;
++
++		/* Get cached mempool pointer, or cache it on first use */
++		struct rte_mempool *mp =
++			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
++			txq->fast_free_mp :
++			(txq->fast_free_mp = sw_ring[dd_idx].mbuf->pool);
++
++		/* Pack non-NULL mbufs in-place at start of sw_ring range.
++		 * No modulo needed in loop since we're guaranteed not to wrap.
++		 */
++		for (uint16_t i = 0; i < nb_to_clean; i++) {
++			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
++			if (m == NULL)
++				continue;
++			free[nb_free++] = m;
++			if (unlikely(nb_free == CI_TX_MAX_FREE_BUF_SZ)) {
++				rte_mempool_put_bulk(mp, free, nb_free);
++				nb_free = 0;
++			}
++		}
++
++		/* Bulk return to mempool using packed sw_ring entries directly */
++		if (nb_free > 0)
++			rte_mempool_put_bulk(mp, free, nb_free);
++	} else {
++		/* Non-FAST_FREE path: use prefree_seg for refcount checks */
++		for (uint16_t i = 0; i < nb_to_clean; i++) {
++			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
++			if (m != NULL)
++				rte_pktmbuf_free_seg(m);
++		}
++	}
++
+ 	/* Update the txq to reflect the last descriptor that was cleaned */
+-	txq->last_desc_cleaned = desc_to_clean_to;
++	txq->last_desc_cleaned = first_to_clean + txq->tx_rs_thresh - 1;
+ 	txq->nb_tx_free += txq->tx_rs_thresh;
+ 
+ 	return 0;
+@@ -450,8 +497,6 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			txd = &ci_tx_ring[tx_id];
+ 			tx_id = txe->next_id;
+ 
+-			if (txe->mbuf)
+-				rte_pktmbuf_free_seg(txe->mbuf);
+ 			txe->mbuf = tx_pkt;
+ 			/* Setup TX Descriptor */
+ 			td_cmd |= CI_TX_DESC_CMD_EOP;
+@@ -472,10 +517,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 
+ 			txn = &sw_ring[txe->next_id];
+ 			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+-			if (txe->mbuf) {
+-				rte_pktmbuf_free_seg(txe->mbuf);
+-				txe->mbuf = NULL;
+-			}
++			txe->mbuf = NULL;
+ 
+ 			write_txd(ctx_txd, cd_qw0, cd_qw1);
+ 
+@@ -489,10 +531,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 
+ 			txn = &sw_ring[txe->next_id];
+ 			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
+-			if (txe->mbuf) {
+-				rte_pktmbuf_free_seg(txe->mbuf);
+-				txe->mbuf = NULL;
+-			}
++			txe->mbuf = NULL;
+ 
+ 			ipsec_txd[0] = ipsec_qw0;
+ 			ipsec_txd[1] = ipsec_qw1;
+@@ -507,10 +546,21 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 			txd = &ci_tx_ring[tx_id];
+ 			txn = &sw_ring[txe->next_id];
+ 
+-			if (txe->mbuf)
+-				rte_pktmbuf_free_seg(txe->mbuf);
+ 			txe->mbuf = m_seg;
+ 
++			/* For FAST_FREE: reset mbuf fields while we have it in cache.
++			 * FAST_FREE guarantees refcnt=1 and direct mbufs, so we only
++			 * need to reset nb_segs and next pointer as per rte_pktmbuf_prefree_seg.
++			 * Save next pointer before resetting since we need it for loop iteration.
++			 */
++			struct rte_mbuf *next_seg = m_seg->next;
++			if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
++				if (m_seg->nb_segs != 1)
++					m_seg->nb_segs = 1;
++				if (next_seg != NULL)
++					m_seg->next = NULL;
++			}
++
+ 			/* Setup TX Descriptor */
+ 			/* Calculate segment length, using IPsec callback if provided */
+ 			if (ipsec_ops != NULL)
+@@ -528,18 +578,23 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 					((uint64_t)CI_MAX_DATA_PER_TXD << CI_TXD_QW1_TX_BUF_SZ_S) |
+ 					((uint64_t)td_tag << CI_TXD_QW1_L2TAG1_S);
+ 				write_txd(txd, buf_dma_addr, cmd_type_offset_bsz);
++				/* txe for this slot has already been written (e.g. above outside
++				 * loop), so we write the extra NULL mbuf pointer for this
++				 * descriptor after we increment txe below.
++				 */
+ 
+ 				buf_dma_addr += CI_MAX_DATA_PER_TXD;
+ 				slen -= CI_MAX_DATA_PER_TXD;
+ 
+ 				tx_id = txe->next_id;
+ 				txe = txn;
++				txe->mbuf = NULL;
+ 				txd = &ci_tx_ring[tx_id];
+ 				txn = &sw_ring[txe->next_id];
+ 			}
+ 
+ 			/* fill the last descriptor with End of Packet (EOP) bit */
+-			if (m_seg->next == NULL)
++			if (next_seg == NULL)
+ 				td_cmd |= CI_TX_DESC_CMD_EOP;
+ 
+ 			const uint64_t cmd_type_offset_bsz = CI_TX_DESC_DTYPE_DATA |
+@@ -551,7 +606,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+ 
+ 			tx_id = txe->next_id;
+ 			txe = txn;
+-			m_seg = m_seg->next;
++			m_seg = next_seg;
+ 		} while (m_seg);
+ end_pkt:
+ 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
+-- 
+2.51.0
 
-
->  drivers/raw/ifpga/ifpga_rawdev.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/raw/ifpga/ifpga_rawdev.c b/drivers/raw/ifpga/ifpga_rawdev.c
-> index 5b9b596435..e004e002b7 100644
-> --- a/drivers/raw/ifpga/ifpga_rawdev.c
-> +++ b/drivers/raw/ifpga/ifpga_rawdev.c
-> @@ -434,7 +434,7 @@ static int set_surprise_link_check_aer(
->  	uint32_t aer_new0, aer_new1;
->  
->  	if (!ifpga_rdev || !ifpga_rdev->rawdev) {
-> -		printf("\n device does not exist\n");
-> +		IFPGA_RAWDEV_PMD_ERR("device does not exist");
->  		return -EFAULT;
->  	}
->  
-> @@ -491,7 +491,7 @@ static int set_surprise_link_check_aer(
->  		if (fd != -1)
->  			close(fd);
->  
-> -		printf(">>>>>>Set AER %x,%x %x,%x\n",
-> +		IFPGA_RAWDEV_PMD_INFO(">>>>>>Set AER %x,%x %x,%x",
->  			ifpga_rdev->aer_old[0], ifpga_rdev->aer_old[1],
->  			aer_new0, aer_new1);
->  
-
-I wonder if this needs to be an info message. Might it be better as a debug
-level one?
-
-> @@ -527,7 +527,7 @@ ifpga_rawdev_gsd_handle(__rte_unused void *param)
->  		}
->  
->  		if (gsd_enable)
-> -			printf(">>>>>>Pls Shutdown APP\n");
-> +			IFPGA_RAWDEV_PMD_WARN(">>>>>>Pls Shutdown APP");
->  
->  		rte_delay_us(100 * MS);
->  	}
-> -- 
-> 2.34.1
-> 
