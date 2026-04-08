@@ -2,51 +2,37 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997151073CB6
-	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 13:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C071073CBF
+	for <dpdk-dev@archiver.kernel.org>; Wed,  8 Apr 2026 14:13:22 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9E0D24014F;
-	Wed,  8 Apr 2026 15:25:37 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id E3D724013F
- for <dev@dpdk.org>; Wed,  8 Apr 2026 15:25:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775654736; x=1807190736;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=8lmmu0/Z4hvOqg8kG5sm2z22mt/eejaVD4HX2+iFnXk=;
- b=gZYJtV3p6+CbwUxVAr8xGuOcGw951KMsY9F44fE7iHvVXcD3QU2vY/ri
- CgCmOzORORnHxkGWh0d/5qLJ/EMIodTN1vBh0V+k5uqsm6Ou4TtOR4+u8
- uOSfmil5w3IAasyUjrvNePGH2L2jXexZpy1r8G8N1LDt2WS0hPHOg9FEw
- YXnHNEUbfkYxK8R2fXpC4gc4LRmmli5ujPoO571iBHMVWr6BLtBfSFEuh
- kVJX7KkpixX4nzYHLYMUI8mIDnilsehvp83Pm1Ham7XVgNOi6YjmTv/Am
- P0Z/0RSOXkNjTFEwZZiuHTMxkTw8EKeTbmOD9SZ297dg4Ht9ZS+n2MR/E Q==;
-X-CSE-ConnectionGUID: hcHvXmCwQJSASH/prMETPg==
-X-CSE-MsgGUID: iXxpJWwQQmehiQ0cBNPi2Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11753"; a="76601638"
-X-IronPort-AV: E=Sophos;i="6.23,167,1770624000"; d="scan'208";a="76601638"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Apr 2026 06:25:34 -0700
-X-CSE-ConnectionGUID: ME1o5XIpRRmJuLKFKzUOzg==
-X-CSE-MsgGUID: J3eI91ZaRW63ouZ7Spmimw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,167,1770624000"; d="scan'208";a="227471465"
-Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by orviesa006.jf.intel.com with ESMTP; 08 Apr 2026 06:25:34 -0700
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: dev@dpdk.org
-Cc: mb@smartsharesystems.com,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v2] net/intel: optimize for fast-free hint
-Date: Wed,  8 Apr 2026 14:25:15 +0100
-Message-ID: <20260408132515.1314728-1-bruce.richardson@intel.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260123112032.2174361-1-bruce.richardson@intel.com>
-References: <20260123112032.2174361-1-bruce.richardson@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 4CD284014F;
+	Wed,  8 Apr 2026 16:13:21 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 990584013F
+ for <dev@dpdk.org>; Wed,  8 Apr 2026 16:13:19 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7D2402041E;
+ Wed,  8 Apr 2026 16:13:18 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Wed, 8 Apr 2026 16:13:17 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Praveen Shetty <praveen.shetty@intel.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+Subject: [PATCH] mempool: improve cache behaviour and performance
+Date: Wed,  8 Apr 2026 14:13:15 +0000
+Message-ID: <20260408141315.904381-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 08 Apr 2026 14:13:17.0646 (UTC)
+ FILETIME=[D8BF8EE0:01DCC761]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,225 +46,416 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When the fast-free hint is provided to the driver we know that the mbufs
-have refcnt of 1 and are from the same mempool. Therefore, we can
-optimize a bit for this case by:
+This patch refactors the mempool cache to eliminate some unexpected
+behaviour and reduce the mempool cache miss rate.
 
-* resetting the necessary mbuf fields, ie. nb_seg and next pointer when
-  we are accessing the mbuf on writing the descriptor.
-* on cleanup of buffers after transmit, we can just write those buffers
-  straight to the mempool without accessing them.
+1.
+The actual cache size was 1.5 times the cache size specified at run-time
+mempool creation.
+This was obviously not expected by application developers.
 
-Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
+2.
+In get operations, the check for when to use the cache as bounce buffer
+did not respect the run-time configured cache size,
+but compared to the build time maximum possible cache size
+(RTE_MEMPOOL_CACHE_MAX_SIZE, default 512).
+E.g. with a configured cache size of 32 objects, getting 256 objects
+would first fetch 32 + 256 = 288 objects into the cache,
+and then move the 256 objects from the cache to the destination memory,
+instead of fetching the 256 objects directly to the destination memory.
+This had a performance cost.
+However, this is unlikely to occur in real applications, so it is not
+important in itself.
+
+3.
+When putting objects into a mempool, and the mempool cache did not have
+free space for so many objects,
+the cache was flushed completely, and the new objects were then put into
+the cache.
+I.e. the cache drain level was zero.
+This (complete cache flush) meant that a subsequent get operation (with
+the same number of objects) completely emptied the cache,
+so another subsequent get operation required replenishing the cache.
+
+Similarly,
+When getting objects from a mempool, and the mempool cache did not hold so
+many objects,
+the cache was replenished to cache->size + remaining objects,
+and then (the remaining part of) the requested objects were fetched via
+the cache,
+which left the cache filled (to cache->size) at completion.
+I.e. the cache refill level was cache->size (plus some, depending on
+request size).
+
+(1) was improved by generally comparing to cache->size instead of
+cache->flushthresh.
+The cache->flushthresh field is kept for API/ABI compatibility purposes,
+and initialized to cache->size instead of cache->size * 1.5.
+
+(2) was improved by generally comparing to cache->size instead of
+RTE_MEMPOOL_CACHE_MAX_SIZE.
+
+(3) was improved by flushing and replenishing the cache by half its size,
+so an flush/replenish can be followed randomly by get or put requests.
+This also reduced the number of objects in each flush/replenish operation.
+
+As a consequence of these changes, the size of the array holding the
+objects in the cache (cache->objs[]) no longer needs to be
+2 * RTE_MEMPOOL_CACHE_MAX_SIZE, and was reduced to
+RTE_MEMPOOL_CACHE_MAX_SIZE.
+For ABI compatibility purposes, keeping the size of the rte_mempool_cache
+unchanged, a filler array (cache->unused_objs[]) was added.
+
+Performance data:
+With a real WAN Optimization application, where the number of allocated
+packets varies (as they are held in e.g. shaper queues), the mempool
+cache miss rate dropped from ca. 1/20 objects to ca. 1/48 objects.
+This was deployed in production at an ISP, and using an effective cache
+size of 384 objects.
+
+In addition to the Mempool library changes, some Intel network drivers
+bypassing the Mempool API to access the mempool cache were updated
+accordingly.
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
 ---
-V2: Fix issues with original submission:
-* missed check for NULL mbufs
-* fixed issue with freeing directly from sw_ring in scalar path which
-  doesn't work as thats not a flag array of pointers
-* fixed missing null assignment in case of large segments for TSO
----
- drivers/net/intel/common/tx.h        | 21 ++++--
- drivers/net/intel/common/tx_scalar.h | 95 ++++++++++++++++++++++------
- 2 files changed, 90 insertions(+), 26 deletions(-)
+ drivers/net/intel/common/tx.h                 | 36 +-------
+ .../net/intel/idpf/idpf_common_rxtx_avx512.c  | 15 ++--
+ lib/mempool/rte_mempool.c                     | 14 +--
+ lib/mempool/rte_mempool.h                     | 86 ++++++++++---------
+ 4 files changed, 60 insertions(+), 91 deletions(-)
 
 diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 283bd58d5d..f2123f069c 100644
+index 283bd58d5d..c5114f756d 100644
 --- a/drivers/net/intel/common/tx.h
 +++ b/drivers/net/intel/common/tx.h
-@@ -363,13 +363,22 @@ ci_txq_release_all_mbufs(struct ci_tx_queue *txq, bool use_ctx)
- 		return;
+@@ -284,43 +284,11 @@ ci_tx_free_bufs_vec(struct ci_tx_queue *txq, ci_desc_done_fn desc_done, bool ctx
+ 			txq->fast_free_mp :
+ 			(txq->fast_free_mp = txep[0].mbuf->pool);
  
- 	if (!txq->use_vec_entry) {
--		/* Regular scalar path uses sw_ring with ci_tx_entry */
--		for (uint16_t i = 0; i < txq->nb_tx_desc; i++) {
--			if (txq->sw_ring[i].mbuf != NULL) {
--				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
--				txq->sw_ring[i].mbuf = NULL;
--			}
-+		/* Free mbufs from (last_desc_cleaned + 1) to (tx_tail - 1). */
-+		const uint16_t start = (txq->last_desc_cleaned + 1) % txq->nb_tx_desc;
-+		const uint16_t nb_desc = txq->nb_tx_desc;
-+		const uint16_t end = txq->tx_tail;
-+
-+		uint16_t i = start;
-+		if (end < i) {
-+			for (; i < nb_desc; i++)
-+				if (txq->sw_ring[i].mbuf != NULL)
-+					rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
-+			i = 0;
- 		}
-+		for (; i < end; i++)
-+			if (txq->sw_ring[i].mbuf != NULL)
-+				rte_pktmbuf_free_seg(txq->sw_ring[i].mbuf);
-+		memset(txq->sw_ring, 0, sizeof(txq->sw_ring[0]) * nb_desc);
- 		return;
+-	if (mp != NULL && (n & 31) == 0) {
+-		void **cache_objs;
+-		struct rte_mempool_cache *cache = rte_mempool_default_cache(mp, rte_lcore_id());
+-
+-		if (cache == NULL)
+-			goto normal;
+-
+-		cache_objs = &cache->objs[cache->len];
+-
+-		if (n > RTE_MEMPOOL_CACHE_MAX_SIZE) {
+-			rte_mempool_ops_enqueue_bulk(mp, (void *)txep, n);
+-			goto done;
+-		}
+-
+-		/* The cache follows the following algorithm
+-		 *   1. Add the objects to the cache
+-		 *   2. Anything greater than the cache min value (if it
+-		 *   crosses the cache flush threshold) is flushed to the ring.
+-		 */
+-		/* Add elements back into the cache */
+-		uint32_t copied = 0;
+-		/* n is multiple of 32 */
+-		while (copied < n) {
+-			memcpy(&cache_objs[copied], &txep[copied], 32 * sizeof(void *));
+-			copied += 32;
+-		}
+-		cache->len += n;
+-
+-		if (cache->len >= cache->flushthresh) {
+-			rte_mempool_ops_enqueue_bulk(mp, &cache->objs[cache->size],
+-					cache->len - cache->size);
+-			cache->len = cache->size;
+-		}
++	if (mp != NULL) {
++		rte_mbuf_raw_free_bulk(mp, (void *)txep, n);
+ 		goto done;
  	}
  
-diff --git a/drivers/net/intel/common/tx_scalar.h b/drivers/net/intel/common/tx_scalar.h
-index 9fcd2e4733..adbc4bafee 100644
---- a/drivers/net/intel/common/tx_scalar.h
-+++ b/drivers/net/intel/common/tx_scalar.h
-@@ -197,16 +197,63 @@ ci_tx_xmit_cleanup(struct ci_tx_queue *txq)
- 	const uint16_t rs_idx = (last_desc_cleaned == nb_tx_desc - 1) ?
- 			0 :
- 			(last_desc_cleaned + 1) >> txq->log2_rs_thresh;
--	uint16_t desc_to_clean_to = (rs_idx << txq->log2_rs_thresh) + (txq->tx_rs_thresh - 1);
-+	const uint16_t dd_idx = txq->rs_last_id[rs_idx];
-+	const uint16_t first_to_clean = rs_idx << txq->log2_rs_thresh;
+-normal:
+ 	m = rte_pktmbuf_prefree_seg(txep[0].mbuf);
+ 	if (likely(m)) {
+ 		free[0] = m;
+diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+index 9af275cd9d..e5eb56552f 100644
+--- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
++++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
+@@ -148,14 +148,19 @@ idpf_singleq_rearm(struct idpf_rx_queue *rxq)
+ 	/* Can this be satisfied from the cache? */
+ 	if (cache->len < IDPF_RXQ_REARM_THRESH) {
+ 		/* No. Backfill the cache first, and then fill from it */
+-		uint32_t req = IDPF_RXQ_REARM_THRESH + (cache->size -
+-							cache->len);
  
--	/* Check if descriptor is done  */
--	if ((txd[txq->rs_last_id[rs_idx]].cmd_type_offset_bsz &
--			rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
--				rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
-+	/* Check if descriptor is done - all drivers use 0xF as done value in bits 3:0 */
-+	if ((txd[dd_idx].cmd_type_offset_bsz & rte_cpu_to_le_64(CI_TXD_QW1_DTYPE_M)) !=
-+			rte_cpu_to_le_64(CI_TX_DESC_DTYPE_DESC_DONE))
-+		/* Descriptor not yet processed by hardware */
- 		return -1;
- 
-+	/* DD bit is set, descriptors are done. Now free the mbufs. */
-+	/* Note: nb_tx_desc is guaranteed to be a multiple of tx_rs_thresh,
-+	 * validated during queue setup. This means cleanup never wraps around
-+	 * the ring within a single burst (e.g., ring=256, rs_thresh=32 gives
-+	 * bursts of 0-31, 32-63, ..., 224-255).
-+	 */
-+	const uint16_t nb_to_clean = txq->tx_rs_thresh;
-+	struct ci_tx_entry *sw_ring = txq->sw_ring;
-+
-+	if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
-+		/* FAST_FREE path: mbufs are already reset, just return to pool */
-+		void *free[CI_TX_MAX_FREE_BUF_SZ];
-+		uint16_t nb_free = 0;
-+
-+		/* Get cached mempool pointer, or cache it on first use */
-+		struct rte_mempool *mp =
-+			likely(txq->fast_free_mp != (void *)UINTPTR_MAX) ?
-+			txq->fast_free_mp :
-+			(txq->fast_free_mp = sw_ring[dd_idx].mbuf->pool);
-+
-+		/* Pack non-NULL mbufs in-place at start of sw_ring range.
-+		 * No modulo needed in loop since we're guaranteed not to wrap.
-+		 */
-+		for (uint16_t i = 0; i < nb_to_clean; i++) {
-+			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
-+			if (m == NULL)
-+				continue;
-+			free[nb_free++] = m;
-+			if (unlikely(nb_free == CI_TX_MAX_FREE_BUF_SZ)) {
-+				rte_mempool_put_bulk(mp, free, nb_free);
-+				nb_free = 0;
-+			}
+-		/* How many do we require i.e. number to fill the cache + the request */
++		/* Backfill would exceed the cache bounce buffer limit? */
++		__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
++		if (unlikely(IDPF_RXQ_REARM_THRESH > cache->size / 2)) {
++			idpf_singleq_rearm_common(rxq);
++			return;
 +		}
 +
-+		/* Bulk return to mempool using packed sw_ring entries directly */
-+		if (nb_free > 0)
-+			rte_mempool_put_bulk(mp, free, nb_free);
-+	} else {
-+		/* Non-FAST_FREE path: use prefree_seg for refcount checks */
-+		for (uint16_t i = 0; i < nb_to_clean; i++) {
-+			struct rte_mbuf *m = sw_ring[first_to_clean + i].mbuf;
-+			if (m != NULL)
-+				rte_pktmbuf_free_seg(m);
-+		}
-+	}
-+
- 	/* Update the txq to reflect the last descriptor that was cleaned */
--	txq->last_desc_cleaned = desc_to_clean_to;
-+	txq->last_desc_cleaned = first_to_clean + txq->tx_rs_thresh - 1;
- 	txq->nb_tx_free += txq->tx_rs_thresh;
++		/* Backfill the cache from the backend; fetch (size / 2) objects. */
+ 		int ret = rte_mempool_ops_dequeue_bulk
+-				(rxq->mp, &cache->objs[cache->len], req);
++				(rxq->mp, &cache->objs[cache->len], cache->size / 2);
+ 		if (ret == 0) {
+-			cache->len += req;
++			cache->len += cache->size / 2;
+ 		} else {
+ 			if (rxq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
+ 			    rxq->nb_rx_desc) {
+diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
+index 3042d94c14..805b52cc58 100644
+--- a/lib/mempool/rte_mempool.c
++++ b/lib/mempool/rte_mempool.c
+@@ -52,11 +52,6 @@ static void
+ mempool_event_callback_invoke(enum rte_mempool_event event,
+ 			      struct rte_mempool *mp);
  
- 	return 0;
-@@ -450,8 +497,6 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 			txd = &ci_tx_ring[tx_id];
- 			tx_id = txe->next_id;
+-/* Note: avoid using floating point since that compiler
+- * may not think that is constant.
+- */
+-#define CALC_CACHE_FLUSHTHRESH(c) (((c) * 3) / 2)
+-
+ #if defined(RTE_ARCH_X86)
+ /*
+  * return the greatest common divisor between a and b (fast algorithm)
+@@ -757,13 +752,8 @@ rte_mempool_free(struct rte_mempool *mp)
+ static void
+ mempool_cache_init(struct rte_mempool_cache *cache, uint32_t size)
+ {
+-	/* Check that cache have enough space for flush threshold */
+-	RTE_BUILD_BUG_ON(CALC_CACHE_FLUSHTHRESH(RTE_MEMPOOL_CACHE_MAX_SIZE) >
+-			 RTE_SIZEOF_FIELD(struct rte_mempool_cache, objs) /
+-			 RTE_SIZEOF_FIELD(struct rte_mempool_cache, objs[0]));
+-
+ 	cache->size = size;
+-	cache->flushthresh = CALC_CACHE_FLUSHTHRESH(size);
++	cache->flushthresh = size; /* Obsolete; for API/ABI compatibility purposes only */
+ 	cache->len = 0;
+ }
  
--			if (txe->mbuf)
--				rte_pktmbuf_free_seg(txe->mbuf);
- 			txe->mbuf = tx_pkt;
- 			/* Setup TX Descriptor */
- 			td_cmd |= CI_TX_DESC_CMD_EOP;
-@@ -472,10 +517,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+@@ -850,7 +840,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
  
- 			txn = &sw_ring[txe->next_id];
- 			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
--			if (txe->mbuf) {
--				rte_pktmbuf_free_seg(txe->mbuf);
--				txe->mbuf = NULL;
--			}
-+			txe->mbuf = NULL;
+ 	/* asked cache too big */
+ 	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE ||
+-	    CALC_CACHE_FLUSHTHRESH(cache_size) > n) {
++	    cache_size > n) {
+ 		rte_errno = EINVAL;
+ 		return NULL;
+ 	}
+diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
+index 2e54fc4466..dafe98d1c2 100644
+--- a/lib/mempool/rte_mempool.h
++++ b/lib/mempool/rte_mempool.h
+@@ -89,7 +89,7 @@ struct __rte_cache_aligned rte_mempool_debug_stats {
+  */
+ struct __rte_cache_aligned rte_mempool_cache {
+ 	uint32_t size;	      /**< Size of the cache */
+-	uint32_t flushthresh; /**< Threshold before we flush excess elements */
++	uint32_t flushthresh; /**< Obsolete; for API/ABI compatibility purposes only */
+ 	uint32_t len;	      /**< Current cache count */
+ #ifdef RTE_LIBRTE_MEMPOOL_STATS
+ 	uint32_t unused;
+@@ -104,13 +104,11 @@ struct __rte_cache_aligned rte_mempool_cache {
+ 		uint64_t get_success_objs;  /**< Objects successfully allocated. */
+ 	} stats;                        /**< Statistics */
+ #endif
+-	/**
+-	 * Cache objects
+-	 *
+-	 * Cache is allocated to this size to allow it to overflow in certain
+-	 * cases to avoid needless emptying of cache.
+-	 */
+-	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE * 2];
++	/** Cache objects */
++	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE];
++	/** Unused; for ABI compatibility purposes only */
++	void *unused_objs[RTE_MEMPOOL_CACHE_MAX_SIZE];
++	/* Note: Remember to add an RTE_CACHE_GUARD here, if removing unused_objs. */
+ };
  
- 			write_txd(ctx_txd, cd_qw0, cd_qw1);
+ /**
+@@ -1047,11 +1045,16 @@ rte_mempool_free(struct rte_mempool *mp);
+  *   If cache_size is non-zero, the rte_mempool library will try to
+  *   limit the accesses to the common lockless pool, by maintaining a
+  *   per-lcore object cache. This argument must be lower or equal to
+- *   RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5.
++ *   RTE_MEMPOOL_CACHE_MAX_SIZE and n.
+  *   The access to the per-lcore table is of course
+  *   faster than the multi-producer/consumer pool. The cache can be
+  *   disabled if the cache_size argument is set to 0; it can be useful to
+  *   avoid losing objects in cache.
++ *   Note:
++ *   Mempool put/get requests of more than cache_size / 2 objects may be
++ *   partially or fully served directly by the multi-producer/consumer
++ *   pool, to avoid the overhead of copying the objects twice (instead of
++ *   once) when using the cache as a bounce buffer.
+  * @param private_data_size
+  *   The size of the private data appended after the mempool
+  *   structure. This is useful for storing some private data after the
+@@ -1377,7 +1380,7 @@ rte_mempool_cache_flush(struct rte_mempool_cache *cache,
+  *   A pointer to a mempool cache structure. May be NULL if not needed.
+  */
+ static __rte_always_inline void
+-rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
++rte_mempool_do_generic_put(struct rte_mempool *mp, void * const * __rte_restrict obj_table,
+ 			   unsigned int n, struct rte_mempool_cache *cache)
+ {
+ 	void **cache_objs;
+@@ -1390,24 +1393,26 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
  
-@@ -489,10 +531,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+-	__rte_assume(cache->flushthresh <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
+-	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
+-	__rte_assume(cache->len <= cache->flushthresh);
+-	if (likely(cache->len + n <= cache->flushthresh)) {
++	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
++	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
++	__rte_assume(cache->len <= cache->size);
++	if (likely(cache->len + n <= cache->size)) {
+ 		/* Sufficient room in the cache for the objects. */
+ 		cache_objs = &cache->objs[cache->len];
+ 		cache->len += n;
+-	} else if (n <= cache->flushthresh) {
++	} else if (n <= cache->size / 2) {
+ 		/*
+-		 * The cache is big enough for the objects, but - as detected by
+-		 * the comparison above - has insufficient room for them.
+-		 * Flush the cache to make room for the objects.
++		 * The number of objects is within the cache bounce buffer limit,
++		 * but - as detected by the comparison above - the cache has
++		 * insufficient room for them.
++		 * Flush the cache to the backend to make room for the objects;
++		 * flush (size / 2) objects.
+ 		 */
+-		cache_objs = &cache->objs[0];
+-		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache->len);
+-		cache->len = n;
++		cache_objs = &cache->objs[cache->len - cache->size / 2];
++		cache->len = cache->len - cache->size / 2 + n;
++		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache->size / 2);
+ 	} else {
+-		/* The request itself is too big for the cache. */
++		/* The request itself is too big. */
+ 		goto driver_enqueue_stats_incremented;
+ 	}
  
- 			txn = &sw_ring[txe->next_id];
- 			RTE_MBUF_PREFETCH_TO_FREE(txn->mbuf);
--			if (txe->mbuf) {
--				rte_pktmbuf_free_seg(txe->mbuf);
--				txe->mbuf = NULL;
--			}
-+			txe->mbuf = NULL;
+@@ -1418,13 +1423,13 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
  
- 			ipsec_txd[0] = ipsec_qw0;
- 			ipsec_txd[1] = ipsec_qw1;
-@@ -507,10 +546,21 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 			txd = &ci_tx_ring[tx_id];
- 			txn = &sw_ring[txe->next_id];
+ driver_enqueue:
  
--			if (txe->mbuf)
--				rte_pktmbuf_free_seg(txe->mbuf);
- 			txe->mbuf = m_seg;
+-	/* increment stat now, adding in mempool always success */
++	/* Increment stats now, adding in mempool always succeeds. */
+ 	RTE_MEMPOOL_STAT_ADD(mp, put_bulk, 1);
+ 	RTE_MEMPOOL_STAT_ADD(mp, put_objs, n);
  
-+			/* For FAST_FREE: reset mbuf fields while we have it in cache.
-+			 * FAST_FREE guarantees refcnt=1 and direct mbufs, so we only
-+			 * need to reset nb_segs and next pointer as per rte_pktmbuf_prefree_seg.
-+			 * Save next pointer before resetting since we need it for loop iteration.
-+			 */
-+			struct rte_mbuf *next_seg = m_seg->next;
-+			if (txq->offloads & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE) {
-+				if (m_seg->nb_segs != 1)
-+					m_seg->nb_segs = 1;
-+				if (next_seg != NULL)
-+					m_seg->next = NULL;
-+			}
-+
- 			/* Setup TX Descriptor */
- 			/* Calculate segment length, using IPsec callback if provided */
- 			if (ipsec_ops != NULL)
-@@ -528,18 +578,23 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
- 					((uint64_t)CI_MAX_DATA_PER_TXD << CI_TXD_QW1_TX_BUF_SZ_S) |
- 					((uint64_t)td_tag << CI_TXD_QW1_L2TAG1_S);
- 				write_txd(txd, buf_dma_addr, cmd_type_offset_bsz);
-+				/* txe for this slot has already been written (e.g. above outside
-+				 * loop), so we write the extra NULL mbuf pointer for this
-+				 * descriptor after we increment txe below.
-+				 */
+ driver_enqueue_stats_incremented:
  
- 				buf_dma_addr += CI_MAX_DATA_PER_TXD;
- 				slen -= CI_MAX_DATA_PER_TXD;
+-	/* push objects to the backend */
++	/* Push the objects to the backend. */
+ 	rte_mempool_ops_enqueue_bulk(mp, obj_table, n);
+ }
  
- 				tx_id = txe->next_id;
- 				txe = txn;
-+				txe->mbuf = NULL;
- 				txd = &ci_tx_ring[tx_id];
- 				txn = &sw_ring[txe->next_id];
- 			}
+@@ -1442,7 +1447,7 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
+  *   A pointer to a mempool cache structure. May be NULL if not needed.
+  */
+ static __rte_always_inline void
+-rte_mempool_generic_put(struct rte_mempool *mp, void * const *obj_table,
++rte_mempool_generic_put(struct rte_mempool *mp, void * const * __rte_restrict obj_table,
+ 			unsigned int n, struct rte_mempool_cache *cache)
+ {
+ 	rte_mempool_trace_generic_put(mp, obj_table, n, cache);
+@@ -1465,7 +1470,7 @@ rte_mempool_generic_put(struct rte_mempool *mp, void * const *obj_table,
+  *   The number of objects to add in the mempool from obj_table.
+  */
+ static __rte_always_inline void
+-rte_mempool_put_bulk(struct rte_mempool *mp, void * const *obj_table,
++rte_mempool_put_bulk(struct rte_mempool *mp, void * const * __rte_restrict obj_table,
+ 		     unsigned int n)
+ {
+ 	struct rte_mempool_cache *cache;
+@@ -1507,7 +1512,7 @@ rte_mempool_put(struct rte_mempool *mp, void *obj)
+  *   - <0: Error; code of driver dequeue function.
+  */
+ static __rte_always_inline int
+-rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
++rte_mempool_do_generic_get(struct rte_mempool *mp, void ** __rte_restrict obj_table,
+ 			   unsigned int n, struct rte_mempool_cache *cache)
+ {
+ 	int ret;
+@@ -1524,7 +1529,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	/* The cache is a stack, so copy will be in reverse order. */
+ 	cache_objs = &cache->objs[cache->len];
  
- 			/* fill the last descriptor with End of Packet (EOP) bit */
--			if (m_seg->next == NULL)
-+			if (next_seg == NULL)
- 				td_cmd |= CI_TX_DESC_CMD_EOP;
+-	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
++	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
+ 	if (likely(n <= cache->len)) {
+ 		/* The entire request can be satisfied from the cache. */
+ 		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
+@@ -1548,13 +1553,13 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	for (index = 0; index < len; index++)
+ 		*obj_table++ = *--cache_objs;
  
- 			const uint64_t cmd_type_offset_bsz = CI_TX_DESC_DTYPE_DATA |
-@@ -551,7 +606,7 @@ ci_xmit_pkts(struct ci_tx_queue *txq,
+-	/* Dequeue below would overflow mem allocated for cache? */
+-	if (unlikely(remaining > RTE_MEMPOOL_CACHE_MAX_SIZE))
++	/* Dequeue below would exceed the cache bounce buffer limit? */
++	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
++	if (unlikely(remaining > cache->size / 2))
+ 		goto driver_dequeue;
  
- 			tx_id = txe->next_id;
- 			txe = txn;
--			m_seg = m_seg->next;
-+			m_seg = next_seg;
- 		} while (m_seg);
- end_pkt:
- 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
+-	/* Fill the cache from the backend; fetch size + remaining objects. */
+-	ret = rte_mempool_ops_dequeue_bulk(mp, cache->objs,
+-			cache->size + remaining);
++	/* Fill the cache from the backend; fetch (size / 2) objects. */
++	ret = rte_mempool_ops_dequeue_bulk(mp, cache->objs, cache->size / 2);
+ 	if (unlikely(ret < 0)) {
+ 		/*
+ 		 * We are buffer constrained, and not able to fetch all that.
+@@ -1568,10 +1573,11 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
+ 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
+ 
+-	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
+-	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE);
+-	cache_objs = &cache->objs[cache->size + remaining];
+-	cache->len = cache->size;
++	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
++	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
++	__rte_assume(remaining <= cache->size / 2);
++	cache_objs = &cache->objs[cache->size / 2];
++	cache->len = cache->size / 2 - remaining;
+ 	for (index = 0; index < remaining; index++)
+ 		*obj_table++ = *--cache_objs;
+ 
+@@ -1629,7 +1635,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
+  *   - -ENOENT: Not enough entries in the mempool; no object is retrieved.
+  */
+ static __rte_always_inline int
+-rte_mempool_generic_get(struct rte_mempool *mp, void **obj_table,
++rte_mempool_generic_get(struct rte_mempool *mp, void ** __rte_restrict obj_table,
+ 			unsigned int n, struct rte_mempool_cache *cache)
+ {
+ 	int ret;
+@@ -1663,7 +1669,7 @@ rte_mempool_generic_get(struct rte_mempool *mp, void **obj_table,
+  *   - -ENOENT: Not enough entries in the mempool; no object is retrieved.
+  */
+ static __rte_always_inline int
+-rte_mempool_get_bulk(struct rte_mempool *mp, void **obj_table, unsigned int n)
++rte_mempool_get_bulk(struct rte_mempool *mp, void ** __rte_restrict obj_table, unsigned int n)
+ {
+ 	struct rte_mempool_cache *cache;
+ 	cache = rte_mempool_default_cache(mp, rte_lcore_id());
+@@ -1692,7 +1698,7 @@ rte_mempool_get_bulk(struct rte_mempool *mp, void **obj_table, unsigned int n)
+  *   - -ENOENT: Not enough entries in the mempool; no object is retrieved.
+  */
+ static __rte_always_inline int
+-rte_mempool_get(struct rte_mempool *mp, void **obj_p)
++rte_mempool_get(struct rte_mempool *mp, void ** __rte_restrict obj_p)
+ {
+ 	return rte_mempool_get_bulk(mp, obj_p, 1);
+ }
 -- 
-2.51.0
+2.43.0
 
