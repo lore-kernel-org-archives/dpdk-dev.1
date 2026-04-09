@@ -2,25 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5430110FC466
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 01:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23517E98FB0
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 05:23:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1C42402E4;
-	Thu,  9 Apr 2026 03:55:30 +0200 (CEST)
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id C233C402B3;
- Thu,  9 Apr 2026 03:55:29 +0200 (CEST)
-Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 3A64C20B6F01; Wed,  8 Apr 2026 18:55:29 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3A64C20B6F01
-From: Long Li <longli@microsoft.com>
-To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
- Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org
-Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH] net/mana: fix RX mempool leak on port stop
-Date: Wed,  8 Apr 2026 18:55:19 -0700
-Message-ID: <20260409015519.350034-1-longli@microsoft.com>
-X-Mailer: git-send-email 2.43.7
+	by mails.dpdk.org (Postfix) with ESMTP id E9F1D402D3;
+	Thu,  9 Apr 2026 07:23:26 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+ by mails.dpdk.org (Postfix) with ESMTP id 61B8D402D1
+ for <dev@dpdk.org>; Thu,  9 Apr 2026 07:23:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1775712205; x=1807248205;
+ h=from:to:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=GvEE7TWOBtmgYjKE3DhhqDbw5Ede/GaKuKDpARv56nY=;
+ b=mR65wpmLZWNildBjrOu4CpDoGYuKX2STrqaGf7MkLjaRKk1hAdcgXrxy
+ 67xbQr3gufLTB2Ml/RBm+HjqedrPS5qJc01d+DkbG5RvW1R6T8n7W6vIJ
+ AYsGxL2jE7SnOw/ybR3cZsc991AGtGRZHA0/ouYmm5moQ40CJaSpylNqX
+ g9U5A3gp02S8J4MdI92qc5OAiRkvTdDkFpmjQw1PZbJqzQ/pkJTFXQj+u
+ 6CIjHo0ESlaN+thJLGqbFjLCwn7jduXaK4po274r6y0UjfbH+x0IkpkDN
+ grpkBs5USl1oUiD1c9c1dNK9jdgaRfDkRT0ZkBjJ0r3G2wNmjwo5EH9Te A==;
+X-CSE-ConnectionGUID: r46SMgRBRvW3MxDj/OFcCA==
+X-CSE-MsgGUID: wjwTnu4NRD+1lGtkKXMunQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11753"; a="75744480"
+X-IronPort-AV: E=Sophos;i="6.23,169,1770624000"; d="scan'208";a="75744480"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+ by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 Apr 2026 22:23:23 -0700
+X-CSE-ConnectionGUID: KZtk03+XQeG530SpDSh0+w==
+X-CSE-MsgGUID: 5WrLgTrfS2+YYbPyZXGj3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,169,1770624000"; d="scan'208";a="225495958"
+Received: from unknown (HELO sprmax15..) ([10.138.182.128])
+ by fmviesa007.fm.intel.com with ESMTP; 08 Apr 2026 22:23:22 -0700
+From: Shaiq Wani <shaiq.wani@intel.com>
+To: dev@dpdk.org,
+	bruce.richardson@intel.com,
+	aman.deep.singh@intel.com
+Subject: [PATCH v2] net/ice: detect L2TPv2 tunnel type in pre-scan loop
+Date: Thu,  9 Apr 2026 10:48:34 +0530
+Message-ID: <20260409051835.3413336-1-shaiq.wani@intel.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -36,93 +58,36 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The RX descriptor ring drain loop in mana_stop_rx_queues() uses
-'while (tail != head)' to free posted mbufs. The RX ring is likely
-completely full because every consumed WQE is immediately replenished,
-so head == tail when the ring is full. The drain loop never executes,
-leaking all RX mbufs on every port stop.
+The pre-scan in ice_fdir_parse_pattern() recognises VXLAN and
+GTPU items but not L2TPV2.  When an L2TPv2 item is present, tunnel_type
+stays NONE, so the ETH item handler stores MAC addresses in the inner
+ext_data struct instead of ext_data_outer resulting in rule not matching.
 
-Fix by adding a desc_ring_len counter to mana_rxq (matching mana_txq)
-and using 'while (desc_ring_len > 0)' as the drain condition. Apply
-the same change to the TX drain loop for consistency.
+Add ICE_FDIR_TUNNEL_TYPE_L2TPV2 detection alongside the existing VXLAN
+check.
 
-Fixes: 5f705ac26259 ("net/mana: start/stop Rx queues")
-Cc: stable@dpdk.org
-
-Signed-off-by: Long Li <longli@microsoft.com>
+Fixes: 733640dae75e ("net/ice: support L2TPv2 flow pattern matching")
+Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
- drivers/net/mana/mana.h | 2 +-
- drivers/net/mana/rx.c   | 6 +++++-
- drivers/net/mana/tx.c   | 2 +-
- 3 files changed, 7 insertions(+), 3 deletions(-)
+v2:
+- Split from combined outer-MAC patch into separate fix (review feedback).
 
-diff --git a/drivers/net/mana/mana.h b/drivers/net/mana/mana.h
-index 7d94840dc4..79cc47b6ab 100644
---- a/drivers/net/mana/mana.h
-+++ b/drivers/net/mana/mana.h
-@@ -443,7 +443,7 @@ struct mana_rxq {
- 	/* desc_ring_head is where we put pending requests to ring,
- 	 * completion pull off desc_ring_tail
- 	 */
--	uint32_t desc_ring_head, desc_ring_tail;
-+	uint32_t desc_ring_head, desc_ring_tail, desc_ring_len;
- 
- #ifdef RTE_ARCH_32
- 	/* For storing wqe increment count btw each short doorbell ring */
-diff --git a/drivers/net/mana/rx.c b/drivers/net/mana/rx.c
-index f196d43aee..1b8ba1f3a9 100644
---- a/drivers/net/mana/rx.c
-+++ b/drivers/net/mana/rx.c
-@@ -102,6 +102,7 @@ mana_post_rx_wqe(struct mana_rxq *rxq, struct rte_mbuf *mbuf)
- 		rxq->wqe_cnt_to_short_db += wqe_size_in_bu;
- #endif
- 		rxq->desc_ring_head = (rxq->desc_ring_head + 1) % rxq->num_desc;
-+		rxq->desc_ring_len++;
- 	} else {
- 		DP_LOG(DEBUG, "failed to post recv ret %d", ret);
- 		return ret;
-@@ -215,7 +216,7 @@ mana_stop_rx_queues(struct rte_eth_dev *dev)
- 		}
- 
- 		/* Drain and free posted WQEs */
--		while (rxq->desc_ring_tail != rxq->desc_ring_head) {
-+		while (rxq->desc_ring_len > 0) {
- 			struct mana_rxq_desc *desc =
- 				&rxq->desc_ring[rxq->desc_ring_tail];
- 
-@@ -223,9 +224,11 @@ mana_stop_rx_queues(struct rte_eth_dev *dev)
- 
- 			rxq->desc_ring_tail =
- 				(rxq->desc_ring_tail + 1) % rxq->num_desc;
-+			rxq->desc_ring_len--;
- 		}
- 		rxq->desc_ring_head = 0;
- 		rxq->desc_ring_tail = 0;
-+		rxq->desc_ring_len = 0;
- 
- 		memset(&rxq->gdma_rq, 0, sizeof(rxq->gdma_rq));
- 		memset(&rxq->gdma_cq, 0, sizeof(rxq->gdma_cq));
-@@ -560,6 +563,7 @@ mana_rx_burst(void *dpdk_rxq, struct rte_mbuf **pkts, uint16_t pkts_n)
- 			rxq->desc_ring_tail = 0;
- 
- 		rxq->gdma_rq.tail += desc->wqe_size_in_bu;
-+		rxq->desc_ring_len--;
- 
- 		/* Record the number of the RX WQE we need to post to replenish
- 		 * consumed RX requests
-diff --git a/drivers/net/mana/tx.c b/drivers/net/mana/tx.c
-index e5ab566e8a..57dbbc3651 100644
---- a/drivers/net/mana/tx.c
-+++ b/drivers/net/mana/tx.c
-@@ -39,7 +39,7 @@ mana_stop_tx_queues(struct rte_eth_dev *dev)
- 		}
- 
- 		/* Drain and free posted WQEs */
--		while (txq->desc_ring_tail != txq->desc_ring_head) {
-+		while (txq->desc_ring_len > 0) {
- 			struct mana_txq_desc *desc =
- 				&txq->desc_ring[txq->desc_ring_tail];
- 
+ drivers/net/intel/ice/ice_fdir_filter.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
+index 3522d77123..1cbc613020 100644
+--- a/drivers/net/intel/ice/ice_fdir_filter.c
++++ b/drivers/net/intel/ice/ice_fdir_filter.c
+@@ -1911,6 +1911,8 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+ 	for (item = pattern; item->type != RTE_FLOW_ITEM_TYPE_END; item++) {
+ 		if (item->type == RTE_FLOW_ITEM_TYPE_VXLAN)
+ 			tunnel_type = ICE_FDIR_TUNNEL_TYPE_VXLAN;
++		if (item->type == RTE_FLOW_ITEM_TYPE_L2TPV2)
++			tunnel_type = ICE_FDIR_TUNNEL_TYPE_L2TPV2;
+ 		/* To align with shared code behavior, save gtpu outer
+ 		 * fields in inner struct.
+ 		 */
 -- 
 2.43.0
 
