@@ -2,51 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0294E98FB0
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 05:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC08CE98FD0
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 06:40:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E0CF5402F0;
-	Thu,  9 Apr 2026 07:23:27 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
- by mails.dpdk.org (Postfix) with ESMTP id E4F89402D3
- for <dev@dpdk.org>; Thu,  9 Apr 2026 07:23:25 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A90EC402D3;
+	Thu,  9 Apr 2026 08:40:28 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 179B0402D1;
+ Thu,  9 Apr 2026 08:40:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775712206; x=1807248206;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=iR5T+/HAf2AFzl9X6dNTfO5XWva1TEaBs3u0GqHZhxM=;
- b=nfFrv99D9KTvzBoke4N7taOLXcNN1K30Y+P1foMmv3xv83rS/7nczPVm
- bEsiuTjECGjeAOE//bQGCtQPiVRSetk8g39wCgsLgiCCnMJ82tJa3YtHL
- 9G+DFFc5teo9FH4quazx+8oxAgMhBXMLjmS4HuHn59hy+bo7ITJideRpe
- mpManCh1ofLS1KIDMA8l9dRSptNt72LaltXHcV5zbHvCNqCSXnnhn8oFN
- c4AqifcLJ8fQdMJPTbS7cZqrxBq7gMTdFnkjWJafhrWyIPW6VMpaLp1gk
- dOm91xsIRFZtcf/E2qi9FXkm1XkK8bCVM8jqMJqCRyJZu4LUKdpwFcUny A==;
-X-CSE-ConnectionGUID: Fun+4eiCTE2hTwqHsvTtDg==
-X-CSE-MsgGUID: Z4V8tahZSp6vqbGk25DNIw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11753"; a="75744483"
-X-IronPort-AV: E=Sophos;i="6.23,169,1770624000"; d="scan'208";a="75744483"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
- by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 Apr 2026 22:23:25 -0700
-X-CSE-ConnectionGUID: Yv7jyqR8QeaMxfDPC5+s/A==
-X-CSE-MsgGUID: 6q9xRHAGTjeFbXRWhQY8+A==
+ t=1775716828; x=1807252828;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=EyDa9ORmWV/YWNJdirdoGtcJaOWwPdRccWdqz8AFCm0=;
+ b=Xt/Xegx0U5C4h+6RoQJL9tliVF5fcucYS/PGG1ousiYx7SfpQhJqjhS+
+ TOhv82sYrlAY6YFDo8LMaTagjXd87o8sFsSKyZ5x6yCtA9k75nVdBUjks
+ TYiF/tBhK74HkD4mnwXdANlrv0mXK8VlhQkm8U3BcpTBPGBAgpFrTQUNy
+ xlSnMUp21My8EUSvu+L3XCEwGs+VWQLYBYoZDLa1+wOclLQwbBKV4aQe/
+ 2ijunpyvVlD/ccuO4obk/uiu4Tn43I6INqBySMb2t1wPAkvbsVWjrjb+o
+ tbjEqAiGrnsQFVID22e9RWLVo3Msv/0bvbZV8BQCziGULSPK8jQtBqJ9G g==;
+X-CSE-ConnectionGUID: rZIdZXQeRJOXaG77dgtniw==
+X-CSE-MsgGUID: e6+MeKgqRN26Jt3TqXrv7g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11753"; a="80574083"
+X-IronPort-AV: E=Sophos;i="6.23,169,1770624000"; d="scan'208";a="80574083"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 08 Apr 2026 23:40:26 -0700
+X-CSE-ConnectionGUID: uLPGuHsnQf6APP+3BBzteA==
+X-CSE-MsgGUID: vdGE5vX5ThOSyZOCfLm3uA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,169,1770624000"; d="scan'208";a="225495965"
-Received: from unknown (HELO sprmax15..) ([10.138.182.128])
- by fmviesa007.fm.intel.com with ESMTP; 08 Apr 2026 22:23:24 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
+Received: from icx009.iind.intel.com ([10.190.212.240])
+ by fmviesa003.fm.intel.com with ESMTP; 08 Apr 2026 23:40:24 -0700
+From: KAVYA AV <kavyax.a.v@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH v2] net/ice: fix L2TPv2 outer MAC in training packet
-Date: Thu,  9 Apr 2026 10:48:35 +0530
-Message-ID: <20260409051835.3413336-2-shaiq.wani@intel.com>
+Cc: shaiq.wani@intel.com,
+	KAVYA AV <kavyax.a.v@intel.com>,
+	stable@dpdk.org
+Subject: [PATCH v4] app/testpmd: fix DCB queue allocation for VMDq devices
+Date: Thu,  9 Apr 2026 06:43:46 +0000
+Message-ID: <20260409064346.3513111-1-kavyax.a.v@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260409051835.3413336-1-shaiq.wani@intel.com>
-References: <20260409051835.3413336-1-shaiq.wani@intel.com>
+In-Reply-To: <20260313101553.1827216-1-kavyax.a.v@intel.com>
+References: <20260313101553.1827216-1-kavyax.a.v@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -61,93 +62,53 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-In ice_fdir_get_gen_prgm_pkt() there are two pointers into the
-training-packet buffer:
+When using DCB mode with VT disabled and requesting more queues than
+traffic classes (e.g., rxq=64 with 8 TCs), testpmd crashes with null
+pointer errors because it artificially limits queue allocation to
+num_tcs.
 
-pkt  – start of the full packet (outer Ethernet header, offset 0)
-loc  – start of the current protocol segment; equals pkt for
-       non-tunnel flows but points past the tunnel header for
-       tunnel flows
+For VMDq devices, use actual VMDq queue layout (vmdq_queue_num) instead
+of limiting to num_tcs. This allows VMDq devices to utilize their full
+queue capacity while maintaining compatibility with non-VMDq devices.
 
-The L2TPv2 cases wrote the outer source and destination MAC addresses
-through loc.  For non-tunnel L2TPv2, loc == pkt so this happened to
-work, but it is semantically wrong: outer Ethernet fields must always
-be written relative to pkt so the code remains correct regardless of
-the tunnel/non-tunnel path taken.
+Fixes: 2169699b15fc ("app/testpmd: add queue restriction in DCB command")
+Cc: stable@dpdk.org
 
-Replace loc with pkt in the four L2TPv2 MAC-insertion case blocks
-(IPv4 control, IPv4 data/PPP, IPv6 control, IPv6 data/PPP)
-
-Fixes: bf662653976e ("net/ice/base: support L2TPv2 flow rule")
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+Signed-off-by: KAVYA AV <kavyax.a.v@intel.com>
 ---
 
-v2:
-- Split from combined outer-MAC patch into separate fix.
-- Add comment documenting difference between pkt vs loc pointers.
+v4:
+* Replaced configured queue count with PF-based layout.
+* Revised commit message.
 
- drivers/net/intel/ice/base/ice_fdir.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+v3:
+* Replaced configured queue count with actual VMDQ queue layout.
+* Changed comment accordingly.
+* Revised commit message.
 
-diff --git a/drivers/net/intel/ice/base/ice_fdir.c b/drivers/net/intel/ice/base/ice_fdir.c
-index 2c0cb99854..f6c826e5b5 100644
---- a/drivers/net/intel/ice/base/ice_fdir.c
-+++ b/drivers/net/intel/ice/base/ice_fdir.c
-@@ -3830,6 +3830,12 @@ ice_fdir_get_gen_prgm_pkt(struct ice_hw *hw, struct ice_fdir_fltr *input,
- 	enum ice_fltr_ptype flow;
- 	u16 tnl_port;
- 	u8 *loc;
-+
-+	/* pkt  = start of full packet buffer (outer Ethernet header, offset 0).
-+	 * loc  = start of current protocol segment; equals pkt for non-tunnel
-+	 *        flows, but points past the tunnel header for tunnel flows.
-+	 * Use pkt for outer L2 fields, loc for the active segment.
-+	 */
- 	u16 idx;
- 	u16 flags_version;
- 	u16 pos;
-@@ -4599,16 +4605,16 @@ ice_fdir_get_gen_prgm_pkt(struct ice_hw *hw, struct ice_fdir_fltr *input,
- 				     input->ip.v6.tc);
- 		break;
- 	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_CONTROL:
--		ice_pkt_insert_mac_addr(loc, input->ext_data_outer.dst_mac);
--		ice_pkt_insert_mac_addr(loc + ETH_ALEN,
-+		ice_pkt_insert_mac_addr(pkt, input->ext_data_outer.dst_mac);
-+		ice_pkt_insert_mac_addr(pkt + ETH_ALEN,
- 					input->ext_data_outer.src_mac);
- 		ice_pkt_insert_u16(loc, ICE_IPV4_L2TPV2_LEN_SESS_ID_OFFSET,
- 				   input->l2tpv2_data.session_id);
- 		break;
- 	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2:
- 	case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP:
--		ice_pkt_insert_mac_addr(loc, input->ext_data_outer.dst_mac);
--		ice_pkt_insert_mac_addr(loc + ETH_ALEN,
-+		ice_pkt_insert_mac_addr(pkt, input->ext_data_outer.dst_mac);
-+		ice_pkt_insert_mac_addr(pkt + ETH_ALEN,
- 					input->ext_data_outer.src_mac);
- 		flags_version = BE16_TO_CPU(input->l2tpv2_data.flags_version);
- 		if (flags_version & ICE_L2TPV2_FLAGS_LEN) {
-@@ -4622,16 +4628,16 @@ ice_fdir_get_gen_prgm_pkt(struct ice_hw *hw, struct ice_fdir_fltr *input,
+v2: Moved the comment inside the else block.
+---
+ app/test-pmd/testpmd.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index e2569d9e30..23a27322f8 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -4481,8 +4481,11 @@ init_port_dcb_config(portid_t pid,
+ 				nb_rxq = rte_port->dev_info.max_rx_queues;
+ 				nb_txq = rte_port->dev_info.max_tx_queues;
+ 			} else {
+-				nb_rxq = (queueid_t)num_tcs;
+-				nb_txq = (queueid_t)num_tcs;
++				/* Use PF queue count for DCB-only mode with VMDQ devices */
++				nb_rxq = rte_port->dev_info.max_rx_queues -
++					 rte_port->dev_info.vmdq_queue_num;
++				nb_txq = rte_port->dev_info.max_tx_queues -
++					 rte_port->dev_info.vmdq_queue_num;
+ 			}
  		}
- 		break;
- 	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_CONTROL:
--		ice_pkt_insert_mac_addr(loc, input->ext_data_outer.dst_mac);
--		ice_pkt_insert_mac_addr(loc + ETH_ALEN,
-+		ice_pkt_insert_mac_addr(pkt, input->ext_data_outer.dst_mac);
-+		ice_pkt_insert_mac_addr(pkt + ETH_ALEN,
- 					input->ext_data_outer.src_mac);
- 		ice_pkt_insert_u16(loc, ICE_IPV6_L2TPV2_LEN_SESS_ID_OFFSET,
- 				   input->l2tpv2_data.session_id);
- 		break;
- 	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2:
- 	case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP:
--		ice_pkt_insert_mac_addr(loc, input->ext_data_outer.dst_mac);
--		ice_pkt_insert_mac_addr(loc + ETH_ALEN,
-+		ice_pkt_insert_mac_addr(pkt, input->ext_data_outer.dst_mac);
-+		ice_pkt_insert_mac_addr(pkt + ETH_ALEN,
- 					input->ext_data_outer.src_mac);
- 		flags_version = BE16_TO_CPU(input->l2tpv2_data.flags_version);
- 		if (flags_version & ICE_L2TPV2_FLAGS_LEN) {
+ 	}
 -- 
 2.43.0
 
