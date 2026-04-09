@@ -2,45 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6DD9F364B1
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 20:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76C6F364AF
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 20:10:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CECE74028D;
-	Thu,  9 Apr 2026 22:02:17 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 9D8DB40276
- for <dev@dpdk.org>; Thu,  9 Apr 2026 22:02:16 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 8D46D4AE70; Thu,  9 Apr 2026 22:02:16 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1932] cn10k/cn20k: IPv6 header parsing bugs
-Date: Thu, 09 Apr 2026 20:02:16 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 26.03
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: critical
-X-Bugzilla-Who: stephen@networkplumber.org
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1932-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id A0666402E2;
+	Thu,  9 Apr 2026 22:10:48 +0200 (CEST)
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+ by mails.dpdk.org (Postfix) with ESMTP id 404E440276
+ for <dev@dpdk.org>; Thu,  9 Apr 2026 22:10:48 +0200 (CEST)
+Received: by mail-dl1-f42.google.com with SMTP id
+ a92af1059eb24-12bfa7fe691so448136c88.0
+ for <dev@dpdk.org>; Thu, 09 Apr 2026 13:10:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1775765447;
+ x=1776370247; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=0zYWNoNLYtcZNqCNyWAVPpJd0f+/VsMpM76BSwcmiNo=;
+ b=WCgeJndvZ1OUBYJQQ+47j9s1iClePQNMpXcsVT9zV4dDBSfYL10GtMAwNT0gD1MRVZ
+ zqn91UUjIMs2zh4Uvdh0LjnCjZvBxkl7Wni+OO6eXmP0fdc9AgJEASr6ed2fUn+CJR/B
+ edF1AJ2EEpGtT6SB73m98vHTFmP4Ozl6PEdT6j8d3aBZHrF/xcYacsVGdNf92seyfeuW
+ b8LcItYS+cpDPPjpnM2s6lHBvxEeelVuimKaa3dPArxEXPKvr4ezZMPU6P5gKrcjabEz
+ GMpgvaf+UPy7QLHYUkSf59q4EO8w8F4FhpRjG/AYIA1RgwVyN8e3+2upyY/dlSEy5dQu
+ 94Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1775765447; x=1776370247;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=0zYWNoNLYtcZNqCNyWAVPpJd0f+/VsMpM76BSwcmiNo=;
+ b=L5ZRGAwiDNXUQiLDQTOSfVMV2gL0iEDgnRX1fDhvKKIsJ3xr6EensFPjtklDaerc4v
+ K8SB8q8J/tGcSFtWgY21vhTZHnZTw4OrJxAsNkmd8khIs90Sw7aszIBWQcZBkOGePqrS
+ dpiMjuuDPYRxAWFScsq42NjYgAyXvFLMO71bolSv7tKl1EBEM1KxnA8qY25uTVztF31K
+ DghlNbz8hy+MFKAflBWVDBwW0crb5uWRcSOv3JezIxjCb0+5g1ReP+WOPNUYENcQJHi1
+ ge/j4yWZ2GZ+ghC6P9qNx/AWUtvK3XLtGKlI9DZ3aW2jn9MUtineXLJG1MQCk0C0zepK
+ Gj3Q==
+X-Gm-Message-State: AOJu0YxTRnyDg5K+4nsim982+znQAO6buApS19mDhvdYO4iG5wHRV2Be
+ BbB2nkl1xNfNAd0tmz13HpD+407K6Y845ys+ap9S6zsuO8fq2nCvVqxBUeAA7mypOg0=
+X-Gm-Gg: AeBDietyY/NKxseyFe5zYtSTHozhvsqhJK2M0yVkg3WCGQYKVmI3lCTuEDhngkAbgGb
+ xG107+5rdXE1rvlU9Oti19gHejV+DPuVWmm7m8RB0DNpMoQpWbp41M36W0eOEod3/DaD//OTpsr
+ g8gGjv7aDJL8R8pzaFylF9eqXpXngO/abhyCTBj75aBAKd5H46HCarULMWekFvS7tE45+1nsqsS
+ pvfhsfv+ksm9MehxYd6Z4yb37Z78yzV8NoceY9tMB0W9v0K7oDbWasNcCgZDl3iAi7BCGqVcDdd
+ EW2BhOYW3KvIi5mgZtop8I5qX+48N+l2VK2o0n6qkC81wdEJAZR5vxpg06wGdKF81DrpYOJhW/3
+ Ou3wQacvEBC0ZEkg7yuJtGudOiWOVr0k2panhsTnpDK5QiS40VReTRVQTsUy7TthBEwwvWAQAg4
+ u8jktAWhaZwSxZwheJN9TlztQAQW0UDUpwcRs=
+X-Received: by 2002:a05:7022:6627:b0:11d:c86c:652e with SMTP id
+ a92af1059eb24-12c34e45328mr298503c88.5.1775765447022; 
+ Thu, 09 Apr 2026 13:10:47 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-12c3459fa73sm1120375c88.1.2026.04.09.13.10.46
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 09 Apr 2026 13:10:46 -0700 (PDT)
+Date: Thu, 9 Apr 2026 13:10:44 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>
+Subject: Re: DPDK ip_frag security analyis
+Message-ID: <20260409131044.242b8b2d@phoenix.local>
+In-Reply-To: <282c899d27cb40b292d199c7490f3ede@huawei.com>
+References: <20260407172750.34e1aaf0@phoenix.local>
+ <282c899d27cb40b292d199c7490f3ede@huawei.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,113 +80,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1932
+On Thu, 9 Apr 2026 13:04:52 +0000
+Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
 
-            Bug ID: 1932
-           Summary: cn10k/cn20k: IPv6 header parsing bugs
-           Product: DPDK
-           Version: 26.03
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: critical
-          Priority: Normal
-         Component: ethdev
-          Assignee: dev@dpdk.org
-          Reporter: stephen@networkplumber.org
-  Target Milestone: ---
+> >    Fix: use TAILQ_FOREACH_SAFE, or save TAILQ_NEXT(fp, lru) before
+> >    calling ip_frag_tbl_del().  
+> 
+> ACK, that looks like a valid one to me.
 
-The code in net/cnxk and crypto/cnxk is buggy in face of malicious IPv6
-headers.
-TLDR; IPV6 headers may contain bogus data (bad length) bad options and there
-maybe a DoS attack with multiple extension headers.
+I sent patch for that one:
+https://patchwork.dpdk.org/project/dpdk/patch/20260408161947.285185-2-stephen@networkplumber.org/
 
-Setting the severity of this to critical since it is the kind of bug securi=
-ty
-researchers like to target.
+> > 6. Hash collision DoS via fixed seed
+> > 
+> >    Both ipv4_frag_hash() and ipv6_frag_hash() use CRC32 (x86/ARM)
+> >    or jhash with a fixed, publicly known prime seed (0xeaad8405).
+> >    An attacker who can send crafted IP fragments can precompute hash
+> >    collisions, causing all fragments to land in the same bucket.
+> >    After bucket_entries concurrent flows collide, new flows are
+> >    dropped.
+> > 
+> >    Fix: randomize the hash seed at table creation time.  
+> 
+> ACK, seems valid - needs to be fixed.
 
-Longer AI generated full report:
-Title: net/cnxk: IPv6 extension header parsing lacks bounds checks and error
-handling
+Sent patch for that one:
+https://patchwork.dpdk.org/project/dpdk/patch/20260408161947.285185-3-stephen@networkplumber.org/
 
-Component: ethdev
-Version: current main
-Hardware: Marvell cn9k/cn10k/cn20k
-Severity: normal
-
-Description:
-
-The IPv6 extension header walking loops in the cnxk drivers have
-several related issues that can be triggered by crafted packets.
-The loops use rte_ipv6_get_next_ext() which reads the extension
-header length directly from packet data without any validation.
-
-Affected files:
-  - drivers/crypto/cnxk/cn9k_ipsec_la_ops.h  (ipsec_po_out_rlen_get)
-  - drivers/net/cnxk/cn10k_rx.h  (nix_sec_reass_first_frag_update)
-  - drivers/net/cnxk/cn20k_rx.h  (nix_sec_reass_first_frag_update)
-
---- Issue 1: No iteration limit ---
-
-All three loops use "while (nh !=3D -EINVAL)" with no cap on the
-number of iterations.  A packet with a pathological chain of
-syntactically valid extension headers can burn CPU cycles in the
-fast path.  By comparison, rte_net_skip_ip6_ext() in lib/net caps
-iterations at 5.
-
---- Issue 2: No bounds checking on extension length ---
-
-rte_ipv6_get_next_ext() returns the length byte from the packet
-without checking it against the mbuf data.  All three callers then
-advance a raw pointer (nxt_hdr +=3D ext_len) without verifying that
-the pointer stays within the first mbuf segment.  A bogus length
-byte causes out-of-bounds reads.
-
-In cn9k this corrupts adj_len, which feeds into the output buffer
-length passed to hardware.  In cn10k/cn20k this corrupts *ihl and
-tot_len, which are used as rte_memcpy offsets.
-
---- Issue 3: Unconditional fragment header removal ---
-
-In cn10k and cn20k, nix_sec_reass_first_frag_update() unconditionally
-executes the fragment-header removal path (rte_memcpy to shift
-headers forward by 8 bytes, data_off +=3D 8, data_len -=3D 8) regardless
-of whether the extension header walk actually found IPPROTO_FRAGMENT.
-
-If the walk exits early (malformed packet, bounds check, iteration
-limit, or simply no fragment header present), the memcpy uses a
-wrong offset (tot_len may be 0 or incomplete) and the mbuf metadata
-is corrupted by the unconditional 8-byte adjustment.
-
-The function has a void return type, so callers have no way to
-detect the failure.
-
---- Issue 4: Return type prevents error handling ---
-
-nix_sec_reass_first_frag_update() returns void.  Even if the above
-issues are fixed by breaking out of the loop, the callers
-(nix_sec_reass_resolve and the inline reassembly path) cannot
-distinguish success from failure and will continue processing a
-corrupted mbuf.  The function should return an error indicator so
-callers can drop the packet.
-
---- Suggested approach ---
-
-1. Add an iteration cap (e.g., 5) to all three loops.
-2. Add a bounds check (nxt_hdr + ext_len vs segment end) before
-   each pointer advance.
-3. Track whether IPPROTO_FRAGMENT was found; skip the memcpy and
-   data_off/data_len adjustment if not.
-4. Change the return type to int and update callers to handle errors.
-
-The cn10k and cn20k loops are nearly identical and could share a
-common helper, but that is a cleanup to consider separately.
-
-Note: the correct error-handling behavior in the callers (free the
-mbuf chain, set RTE_MBUF_F_RX_SEC_OFFLOAD_FAILED, bump a counter,
-etc.) depends on the hardware behavior and driver conventions, and
-should be decided by the maintainer with access to test hardware.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+Probably should go to a better hash function to be really paranoid.
+Linux and BSD switched over to siphash because of this.
