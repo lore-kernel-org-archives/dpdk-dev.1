@@ -2,41 +2,139 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7A4EA3C23
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 10:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B4EEA3C22
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 10:30:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 74D4E402D3;
-	Thu,  9 Apr 2026 12:25:47 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 3C7824028F
- for <dev@dpdk.org>; Thu,  9 Apr 2026 12:25:46 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 2BE112041E;
- Thu,  9 Apr 2026 12:25:45 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Thu, 9 Apr 2026 12:25:44 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Jingjing Wu <jingjing.wu@intel.com>,
- Praveen Shetty <praveen.shetty@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>,
- Sachin Saxena <sachin.saxena@oss.nxp.com>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-Subject: [PATCH v2] mempool: improve cache behaviour and performance
-Date: Thu,  9 Apr 2026 10:25:43 +0000
-Message-ID: <20260409102543.960750-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260408141315.904381-1-mb@smartsharesystems.com>
-References: <20260408141315.904381-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3514F402D3;
+	Thu,  9 Apr 2026 12:30:54 +0200 (CEST)
+Received: from AM0PR83CU005.outbound.protection.outlook.com
+ (mail-westeuropeazon11010065.outbound.protection.outlook.com [52.101.69.65])
+ by mails.dpdk.org (Postfix) with ESMTP id 1117C4028F
+ for <dev@dpdk.org>; Thu,  9 Apr 2026 12:30:52 +0200 (CEST)
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=J/+UBIpMJEVCKiVCBzmzzQxhnstQ/M6A7Z9eLYUcmWvfk7x98mls9eMeQUHyCOoKten8Jh/T1reGOZz0wVJjf6QAItMm0A1gzzw8gOR/q/pFxB5Msz9uHDZwGNDeuaJT7H4rXPEwiYs2T/V+UnWRJRT7x43X8a5DzJdiZgKOdTFdn6k6bvfwn7EWVGp6f6Np6z7C/Jj1HaJs1FE7qXAIibRTjHSGygfB4DiQ/qQPk2kV39Yf45YTFLwf+5WUxgWM8CtYlr7hRrmMOpVk9YMmXbhLcNCCGq0J1IlnZ3XCVyfKuAHmcxhKjj+ShBhKdxtiuohUPyya5wukgcmBNU/iGQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tehxa2HGFlhgdsx5B5CALgMrl5Eg3/c8fAZ0J7rbzj8=;
+ b=iLdHqOWGUYhUiH8hvFf73+B1wVMMlSDPSqGTtWTFx0txiQwQLYhmWJLPIUlbgafAWJfpb+M/Fk/uV2zdmRdYZZrjwBh4SrefT4lzy6WHTmFjO7leVle/gb+YPLY6YP9dxZwxbwJqlx/wB6VCc2co8LMXloSf3psTXVr7FynQlouSRe4B3lK9ZQXr83DN5HO+vLZBvV/OOYv9OdOZHWG2XnsbopTCqlpgid2Bk3nmf3maDQThDqMOa3GCpFGZQ0v3/v48YT6l8oZbpYWTPUuwwx1riRxOt/sfWp5RZPmdCe2VtQQ5+8r25X036EQzJAWD/eSfWp4Mdc9D4TQI3iRU9w==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=intel.com smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tehxa2HGFlhgdsx5B5CALgMrl5Eg3/c8fAZ0J7rbzj8=;
+ b=RmzNviKFCY49/VnOZpQqtdsM3w1lNYoE2cxZPk31H5GOyCsOaM86gRqnOir+V9o9pEjF542VhcZaEQIeUZm/A48YAmPPxeaBMRMvhjp61wtv9BcSWjq1PXUV3blpcjtnyNqH5y8+7ahPtQSKe8t1FX6qaqQF1ilu9xGalDZuoCs=
+Received: from AS4PR10CA0028.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:5d8::13)
+ by DU5PR08MB10437.eurprd08.prod.outlook.com (2603:10a6:10:524::7)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Thu, 9 Apr
+ 2026 10:30:50 +0000
+Received: from AM1PEPF000252DF.eurprd07.prod.outlook.com
+ (2603:10a6:20b:5d8:cafe::c7) by AS4PR10CA0028.outlook.office365.com
+ (2603:10a6:20b:5d8::13) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.40 via Frontend Transport; Thu,
+ 9 Apr 2026 10:30:48 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM1PEPF000252DF.mail.protection.outlook.com (10.167.16.57) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.17
+ via Frontend Transport; Thu, 9 Apr 2026 10:30:47 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mqiNv6IDqOWA+2pXL9mpmDLd2g+1UJ6w/n885jGMFd5I/a8O3NonWEYZAImciZSYpDr/qiP7ynZhPGFAYdDlKD6EcQlhe3N/TdBdVIewUCg2JpaSqXX2MMhGVeWY3WLR8w+I+AR89prSpEQkqthepP3VPd04Fhwxeo7Z/tH2A5ZQgRWt/CToaryklyeUfMeO9SbdrY2oL89jaZxX6O8tHvsns3hABfOajCqef0iSuJsoW9TPpHWV0KBDxDEsH+SUO/6gFkOQZtSpk76mZ1PvPmkyW0aVLunozsYUgx0/nimc8Olpdxk05vcPapSwMKvq3DSn9HcuEcfXuvBI4Jjovg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tehxa2HGFlhgdsx5B5CALgMrl5Eg3/c8fAZ0J7rbzj8=;
+ b=KcnN4g4bG0L8P6c+8eA/1m3BbeqAkcC8eOQ29KXbirs8rjjJyuNvA1VJSSysZPPCT/v8p8xbtoFmgI/Ckg0raKdRHwXZDV+n5yFzVv6KG7mO2LhtUOmoiE9vPByVdirB+tOpe1I/U2wxDDCqR3ZIAiHN3+Tgf0kGmYMRQWvpK5zRaHnYwIz8Uv1c2kZls7Vo6tC6iuqsCQeNUld4PiuCom2htUtxUfrqioH8GUwRqZOG3eNcAIYNUslE+jM4MvFtOuWqXjBDDNjvVUltKzfGnoSAD6oDKnC8dmhXMhSk4UW3hZ1rACDYtlokdeI/DFKpkgbkEWoJICxRZ3mr7PRnuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tehxa2HGFlhgdsx5B5CALgMrl5Eg3/c8fAZ0J7rbzj8=;
+ b=RmzNviKFCY49/VnOZpQqtdsM3w1lNYoE2cxZPk31H5GOyCsOaM86gRqnOir+V9o9pEjF542VhcZaEQIeUZm/A48YAmPPxeaBMRMvhjp61wtv9BcSWjq1PXUV3blpcjtnyNqH5y8+7ahPtQSKe8t1FX6qaqQF1ilu9xGalDZuoCs=
+Received: from PAWPR08MB9446.eurprd08.prod.outlook.com (2603:10a6:102:2f3::7)
+ by DB4PR08MB9141.eurprd08.prod.outlook.com (2603:10a6:10:3ff::17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9769.17; Thu, 9 Apr
+ 2026 10:29:43 +0000
+Received: from PAWPR08MB9446.eurprd08.prod.outlook.com
+ ([fe80::c095:9483:83f:66e6]) by PAWPR08MB9446.eurprd08.prod.outlook.com
+ ([fe80::c095:9483:83f:66e6%5]) with mapi id 15.20.9769.018; Thu, 9 Apr 2026
+ 10:29:43 +0000
+From: Jay Wang <Jay.Wang2@arm.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>, nd <nd@arm.com>, Paul Szczepanek
+ <Paul.Szczepanek@arm.com>, Dhruv Tripathi <Dhruv.Tripathi@arm.com>
+Subject: RE: [PATCH v3] net/ice: add NEON-optimised Rx/Tx vector paths
+Thread-Topic: [PATCH v3] net/ice: add NEON-optimised Rx/Tx vector paths
+Thread-Index: AQHcxqEEGY1CHqkbuECHRHenL0iD7rXTuKzQgAAMzQCAAsHwgA==
+Date: Thu, 9 Apr 2026 10:29:43 +0000
+Message-ID: <PAWPR08MB94468A2F5CCC2F889EB8B5CFBA582@PAWPR08MB9446.eurprd08.prod.outlook.com>
+References: <20260324162525.4083381-3-jay.wang2@arm.com>
+ <20260407151225.1416270-1-jay.wang2@arm.com>
+ <20260407151225.1416270-4-jay.wang2@arm.com>
+ <PAWPR08MB94460AB72013149B1E1CFB66BA5AA@PAWPR08MB9446.eurprd08.prod.outlook.com>
+ <adUs_MMCPqx5HpVD@bricha3-mobl1.ger.corp.intel.com>
+In-Reply-To: <adUs_MMCPqx5HpVD@bricha3-mobl1.ger.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+x-ms-traffictypediagnostic: PAWPR08MB9446:EE_|DB4PR08MB9141:EE_|AM1PEPF000252DF:EE_|DU5PR08MB10437:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1659858c-6279-4356-690c-08de96231024
+x-checkrecipientrouted: true
+nodisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted: BCL:0;
+ ARA:13230040|1800799024|376014|366016|38070700021|22082099003|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info-Original: VU4oJsZgOwss9ftPoMrxrT4/PtkClaBsrx8G31S69XlPoxjqwMs2AcprR6XNG1DepT3fZvbz4F1ey2cNo3KI5XxFRidRk+pjgv0Tgr4qtENNF4/7ep2id6d4rhqTd6sI+hTc/9CwpfXoq/0RLMArtmokM7y3LjiqVR+xvIXbxlKdblAAVsO4xe4WyQh3r3CaCqQ2ksyetc4QGPIxLSdl6oqKzhdibMMusPeos2Qhk1w6JHm65bASVwhvrfOHS0ysHEcGIzGz1F4HGW7kGJeaOKvc3z7tbB3HTBBCsXV/UF6YKfkpbp+QKEhDQe/0+qE9lXZbQkuRVQZf8Cj9HWunFmYmfVBR9QHgdkr+gbb12Zbff8af7MrL+qmzm67bShd6JKK2i4ay1YNBHDjUEG9JolF0jN02qo54sNZsjCP9yzkcYRzqjjvwKkLo+cWMAN0L0WmaCMkdfT99XXIwABry+0TxTfLYe2ByNvkgB5Wmzx7cG+EGCeqbR1vNtXyzyP2zhj84V5rV5p+d+jGK1/lqIWgkEdyWwFP1n99iiLk1dhFr8oAHZHQyZq4WnA51Jmpj68QNZslaeA6xoWVj4HTdOG3BTIeDIN48KBIwfSd7+sMuFSmaVozqoUj1rmxbsgrsSrEN0VLE3DN3IGLeny8ilccTg6/Bptl1mbrCpLFN5YIJwMLLK909egrrU2GuNbljOYE2B1ydnUt/l555EogfYvb3XuuSQ0E1XjS1yENVWqj2aC+JrK0MylFD36HwkmPeYyopyUYKtsOzrFoi8VQ0QU21w+W2JhRorKwSABxnchc=
+X-Forefront-Antispam-Report-Untrusted: CIP:255.255.255.255; CTRY:; LANG:en;
+ SCL:1; SRV:; IPV:NLI; SFV:NSPM; H:PAWPR08MB9446.eurprd08.prod.outlook.com;
+ PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(366016)(38070700021)(22082099003)(18002099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 09 Apr 2026 10:25:44.0750 (UTC)
- FILETIME=[3966B4E0:01DCC80B]
+X-Exchange-RoutingPolicyChecked: RwgkDYTMZBJZEqRWtY029uqpFH5bK51bShE8xjIpoAxda9Drp1ZZ1lYyOohao0VXcEw4Et5dEyK31drd/Iu5g7XWhTMznGhbONjB9O4hdX1XsHsiWB2spwooVaYdbVOt/+8E4njr1D8Agry3UarA0MhFmexSgrxor7OUFy2JZ91idzrzLH0331PxqzmQsgYqV+rIhCmX2gDK2pzl/9kqIN+L1KP83oTI4yzDWrNR9wi74MhHpuesQYLfYmMmcP3oNVV+AWaa9XveYBAV/tJzIZMVsJnWoiUYjug2d86l7FLCi/eZ/IpEDPW8zFJnMZicDT5bZjKzp4F4a1i63mSptg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR08MB9141
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: AM1PEPF000252DF.eurprd07.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs: 62c90fcd-1897-4bff-a286-08de9622e9f6
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|82310400026|36860700016|1800799024|14060799003|376014|35042699022|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info: NyfnQHVdlmLqSzxj7OtMY2FLnWPAKufwbNmDSFVjwi/tYEOqqQFD7NXmeV52osZdMjnAm5BpIscOs29IWGxjsi+GM9RRVCRK7VBubG7ZQdCbPX4jPqYbo0ucIaA3vD7yMVox4Fp/Y5d4F2MaVrZ1gcoD9oFivWv1yuL8rGD7WVZirtFJDEcoUo+dXsnmYcFSpiejin5G67YHy31K0SAsppSys3BEvRDC5WawSYAVBGoqwyhPa5odsgrTpLlHuFKgbCZzyz1lNx6TW8kPsmuksgnjpC0Ovc3amMJRKj9f8uva9/yvhSxdymSgzNiZj7PHbgGlFBs1eKKwSzXAZE3PFvhXmqK3XSIUTQX6Wg+iMGiLTzEf91cRpvqmTIuBhnv6d5lp+4I67hneCfoCEMmcGF8JNU4zaKybdw7m28PmMknJr+sdluZBn7+/VWYI8nKdxuaTPvkqW7ctycPIcdPhbvY7UwR/x9VylQZPJAgflLHfWMNR9SERl6HWiMolVqaEbC7t6q6cUO1Hi5WCpjNcO2usIEX+0jswkKKGX+FK0xMwpYoZtg98JwGwOwVzfuwjRUa5tDckVqK5Z6IxZSqP33Z+p5UtgqVpMUHVQfM+1ys+mnvbQj6Z/9xcennFU/PWcqY5VW7wdselQSeVuYCWjqPXGlr8n9innUQmupWuxEI3qfAs8aeASKeBpuaz5jNsQtzxQXeYmDO2+1JZZYXsPm6nsmrJNkSiippBSnvs5l4L6eQoFk0++Qg+/d8SjM69btEpilvp67cx2dbe4fcnNw==
+X-Forefront-Antispam-Report: CIP:4.158.2.129; CTRY:GB; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:outbound-uk1.az.dlp.m.darktrace.com;
+ PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(82310400026)(36860700016)(1800799024)(14060799003)(376014)(35042699022)(18002099003)(22082099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 4ZRPZaX4fmy9gpht4k6/EoG4PX4HStyCLK1xCiW0n93aLCijm9NvR10Cr7fUYn/RfaaaNYPq2CpTtAZFdP3qvtG1NpAIlmfeUpSpnKQ2fTvdqvhSDfQZo13x5OAjP5i61USTdOObCQS37fydQKA3bLfGmeFJITtrZTiQxO0u72W/XJ7C8yhlrpiHMvpjXv0cZr4vE6hoxFqpPhoj8lzYcfLiGybwBKk/ee2GTHp7fGvpG3I56FkgSM8CLtJ8ZVBPLurZsFtX05t3BCjiZjZ9sa6lVbauGX9ZNkfk9OBfVPUwIDUdJtGYyA9AlGRjQyFeEi87LBHBbLgNEjNhpftYbeQk7bMrKN3MPPft3uj5PhlaQnZwzgcom45kDIxfAOH4YVGCWRwROBHKQp9NnCH3S4sz18lagP4kAVbKGRtIdFYrt+X8hfczfhezoBZaN67Y
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2026 10:30:47.1615 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1659858c-6279-4356-690c-08de96231024
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d; Ip=[4.158.2.129];
+ Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource: AM1PEPF000252DF.eurprd07.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU5PR08MB10437
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -50,613 +148,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This patch refactors the mempool cache to eliminate some unexpected
-behaviour and reduce the mempool cache miss rate.
+Hi Bruce,
 
-1.
-The actual cache size was 1.5 times the cache size specified at run-time
-mempool creation.
-This was obviously not expected by application developers.
+> The CI should run this patch through the various builds and report the ou=
+tput in patchwork. Once that goes clean I can consider merging the patch, a=
+nd if not, you can submit a v4.
+I just wanted to let you know that I've been able to reproduce the failing =
+test cases(pmd_buffer_scatter, port_control, port_stats, dynamic_config) on=
+ the Arm Grace + Intel E810 testbed in my local environment with my patch a=
+pplied.
 
-2.
-In get operations, the check for when to use the cache as bounce buffer
-did not respect the run-time configured cache size,
-but compared to the build time maximum possible cache size
-(RTE_MEMPOOL_CACHE_MAX_SIZE, default 512).
-E.g. with a configured cache size of 32 objects, getting 256 objects
-would first fetch 32 + 256 = 288 objects into the cache,
-and then move the 256 objects from the cache to the destination memory,
-instead of fetching the 256 objects directly to the destination memory.
-This had a performance cost.
-However, this is unlikely to occur in real applications, so it is not
-important in itself.
+I'm currently root-causing the issue locally and will submit a v4 once I ha=
+ve identified and fixed the problem.
 
-3.
-When putting objects into a mempool, and the mempool cache did not have
-free space for so many objects,
-the cache was flushed completely, and the new objects were then put into
-the cache.
-I.e. the cache drain level was zero.
-This (complete cache flush) meant that a subsequent get operation (with
-the same number of objects) completely emptied the cache,
-so another subsequent get operation required replenishing the cache.
+Thanks very much for your patience and support!
 
-Similarly,
-When getting objects from a mempool, and the mempool cache did not hold so
-many objects,
-the cache was replenished to cache->size + remaining objects,
-and then (the remaining part of) the requested objects were fetched via
-the cache,
-which left the cache filled (to cache->size) at completion.
-I.e. the cache refill level was cache->size (plus some, depending on
-request size).
-
-(1) was improved by generally comparing to cache->size instead of
-cache->flushthresh.
-The cache->flushthresh field is kept for API/ABI compatibility purposes,
-and initialized to cache->size instead of cache->size * 1.5.
-
-(2) was improved by generally comparing to cache->size instead of
-RTE_MEMPOOL_CACHE_MAX_SIZE.
-
-(3) was improved by flushing and replenishing the cache by half its size,
-so a flush/refill can be followed randomly by get or put requests.
-This also reduced the number of objects in each flush/refill operation.
-
-As a consequence of these changes, the size of the array holding the
-objects in the cache (cache->objs[]) no longer needs to be
-2 * RTE_MEMPOOL_CACHE_MAX_SIZE, and can be reduced to
-RTE_MEMPOOL_CACHE_MAX_SIZE at an API/ABI breaking release.
-
-Performance data:
-With a real WAN Optimization application, where the number of allocated
-packets varies (as they are held in e.g. shaper queues), the mempool
-cache miss rate dropped from ca. 1/20 objects to ca. 1/48 objects.
-This was deployed in production at an ISP, and using an effective cache
-size of 384 objects.
-
-In addition to the Mempool library changes, some Intel network drivers
-bypassing the Mempool API to access the mempool cache were updated
-accordingly.
-The Intel idpf AVX512 driver was missing some mbuf instrumentation when
-bypassing the Packet Buffer (mbuf) API, so this was added.
-
-Furthermore, the NXP dpaa and dpaa2 mempool drivers were updated
-accordingly, specifically to not set the flush threshold.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
-v2:
-* Fixed issue found by abidiff:
-  Reverted cache objects array size reduction. Added a note instead.
-* Added missing mbuf instrumentation to the Intel idpf AVX512 driver.
-* Updated idpf_splitq_rearm() like idpf_singleq_rearm().
-* Added a few more __rte_assume(), inspired by AI review feedback.
-* Updated NXP dpaa and dpaa2 mempool drivers to not set mempool cache
-  flush threshold.
-* Added release notes.
-* Added deprecation notes.
----
- doc/guides/rel_notes/deprecation.rst          |  7 ++
- doc/guides/rel_notes/release_26_07.rst        | 18 +++++
- drivers/mempool/dpaa/dpaa_mempool.c           | 14 ----
- drivers/mempool/dpaa2/dpaa2_hw_mempool.c      | 14 ----
- drivers/net/intel/common/tx.h                 | 38 +--------
- .../net/intel/idpf/idpf_common_rxtx_avx512.c  | 58 ++++++++++---
- lib/mempool/rte_mempool.c                     | 14 +---
- lib/mempool/rte_mempool.h                     | 81 +++++++++++--------
- 8 files changed, 123 insertions(+), 121 deletions(-)
-
-diff --git a/doc/guides/rel_notes/deprecation.rst b/doc/guides/rel_notes/deprecation.rst
-index 35c9b4e06c..1389e6e6b1 100644
---- a/doc/guides/rel_notes/deprecation.rst
-+++ b/doc/guides/rel_notes/deprecation.rst
-@@ -154,3 +154,10 @@ Deprecation Notices
- * bus/vmbus: Starting DPDK 25.11, all the vmbus API defined in
-   ``drivers/bus/vmbus/rte_bus_vmbus.h`` will become internal to DPDK.
-   Those API functions are used internally by DPDK core and netvsc PMD.
-+
-+* mempool: The ``flushthresh`` field in ``struct rte_mempool_cache``
-+  is obsolete, and will be removed in DPDK 26.11.
-+
-+* mempool: The object array in ``struct rte_mempool_cache`` is oversize by
-+  factor two, and will be reduced to ``RTE_MEMPOOL_CACHE_MAX_SIZE`` in
-+  DPDK 26.11.
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 060b26ff61..ab461bc4da 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -24,6 +24,24 @@ DPDK Release 26.07
- New Features
- ------------
- 
-+* **Changed effective size of mempool cache.**
-+
-+  * The effective size of a mempool cache was changed to match the specified size at mempool creation; the effective size was previously 50 % larger than requested.
-+  * The ``flushthresh`` field of the ``struct rte_mempool_cache`` became obsolete, but was kept for API/ABI compatibility purposes.
-+  * The effective size of the ``objs`` array in the ``struct rte_mempool_cache`` was reduced to ``RTE_MEMPOOL_CACHE_MAX_SIZE``, but its size was kept for API/ABI compatibility purposes.
-+
-+* **Improved mempool cache flush/refill algorithm.**
-+
-+  * The mempool cache flush/refill algorithm was improved, to reduce the mempool cache miss rate.
-+
-+* **Updated Intel common driver.**
-+
-+  * Added missing mbuf history marking to vectorized Tx path for MBUF_FAST_FREE.
-+
-+* **Updated Intel idpf driver.**
-+
-+  * Added missing mbuf history marking to AVX512 vectorized Rx path.
-+
- .. This section should contain new features added in this release.
-    Sample format:
- 
-diff --git a/drivers/mempool/dpaa/dpaa_mempool.c b/drivers/mempool/dpaa/dpaa_mempool.c
-index 2f9395b3f4..2f8555a026 100644
---- a/drivers/mempool/dpaa/dpaa_mempool.c
-+++ b/drivers/mempool/dpaa/dpaa_mempool.c
-@@ -58,8 +58,6 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	struct bman_pool_params params = {
- 		.flags = BMAN_POOL_FLAG_DYNAMIC_BPID
- 	};
--	unsigned int lcore_id;
--	struct rte_mempool_cache *cache;
- 
- 	MEMPOOL_INIT_FUNC_TRACE();
- 
-@@ -129,18 +127,6 @@ dpaa_mbuf_create_pool(struct rte_mempool *mp)
- 	rte_memcpy(bp_info, (void *)&rte_dpaa_bpid_info[bpid],
- 		   sizeof(struct dpaa_bp_info));
- 	mp->pool_data = (void *)bp_info;
--	/* Update per core mempool cache threshold to optimal value which is
--	 * number of buffers that can be released to HW buffer pool in
--	 * a single API call.
--	 */
--	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		cache = &mp->local_cache[lcore_id];
--		DPAA_MEMPOOL_DEBUG("lCore %d: cache->flushthresh %d -> %d",
--			lcore_id, cache->flushthresh,
--			(uint32_t)(cache->size + DPAA_MBUF_MAX_ACQ_REL));
--		if (cache->flushthresh)
--			cache->flushthresh = cache->size + DPAA_MBUF_MAX_ACQ_REL;
--	}
- 
- 	DPAA_MEMPOOL_INFO("BMAN pool created for bpid =%d", bpid);
- 	return 0;
-diff --git a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-index 02b6741853..ee001d8ce0 100644
---- a/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-+++ b/drivers/mempool/dpaa2/dpaa2_hw_mempool.c
-@@ -54,8 +54,6 @@ rte_hw_mbuf_create_pool(struct rte_mempool *mp)
- 	struct dpaa2_bp_info *bp_info;
- 	struct dpbp_attr dpbp_attr;
- 	uint32_t bpid;
--	unsigned int lcore_id;
--	struct rte_mempool_cache *cache;
- 	int ret;
- 
- 	avail_dpbp = dpaa2_alloc_dpbp_dev();
-@@ -152,18 +150,6 @@ rte_hw_mbuf_create_pool(struct rte_mempool *mp)
- 	DPAA2_MEMPOOL_DEBUG("BP List created for bpid =%d", dpbp_attr.bpid);
- 
- 	h_bp_list = bp_list;
--	/* Update per core mempool cache threshold to optimal value which is
--	 * number of buffers that can be released to HW buffer pool in
--	 * a single API call.
--	 */
--	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
--		cache = &mp->local_cache[lcore_id];
--		DPAA2_MEMPOOL_DEBUG("lCore %d: cache->flushthresh %d -> %d",
--			lcore_id, cache->flushthresh,
--			(uint32_t)(cache->size + DPAA2_MBUF_MAX_ACQ_REL));
--		if (cache->flushthresh)
--			cache->flushthresh = cache->size + DPAA2_MBUF_MAX_ACQ_REL;
--	}
- 
- 	return 0;
- err4:
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 283bd58d5d..044ca68e2f 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -284,43 +284,13 @@ ci_tx_free_bufs_vec(struct ci_tx_queue *txq, ci_desc_done_fn desc_done, bool ctx
- 			txq->fast_free_mp :
- 			(txq->fast_free_mp = txep[0].mbuf->pool);
- 
--	if (mp != NULL && (n & 31) == 0) {
--		void **cache_objs;
--		struct rte_mempool_cache *cache = rte_mempool_default_cache(mp, rte_lcore_id());
--
--		if (cache == NULL)
--			goto normal;
--
--		cache_objs = &cache->objs[cache->len];
--
--		if (n > RTE_MEMPOOL_CACHE_MAX_SIZE) {
--			rte_mempool_ops_enqueue_bulk(mp, (void *)txep, n);
--			goto done;
--		}
--
--		/* The cache follows the following algorithm
--		 *   1. Add the objects to the cache
--		 *   2. Anything greater than the cache min value (if it
--		 *   crosses the cache flush threshold) is flushed to the ring.
--		 */
--		/* Add elements back into the cache */
--		uint32_t copied = 0;
--		/* n is multiple of 32 */
--		while (copied < n) {
--			memcpy(&cache_objs[copied], &txep[copied], 32 * sizeof(void *));
--			copied += 32;
--		}
--		cache->len += n;
--
--		if (cache->len >= cache->flushthresh) {
--			rte_mempool_ops_enqueue_bulk(mp, &cache->objs[cache->size],
--					cache->len - cache->size);
--			cache->len = cache->size;
--		}
-+	if (mp != NULL) {
-+		static_assert(sizeof(*txep) == sizeof(struct rte_mbuf *),
-+				"txep is not similar to an array of rte_mbuf pointers");
-+		rte_mbuf_raw_free_bulk(mp, (void *)txep, n);
- 		goto done;
- 	}
- 
--normal:
- 	m = rte_pktmbuf_prefree_seg(txep[0].mbuf);
- 	if (likely(m)) {
- 		free[0] = m;
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-index 9af275cd9d..eb7a804780 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx_avx512.c
-@@ -148,14 +148,20 @@ idpf_singleq_rearm(struct idpf_rx_queue *rxq)
- 	/* Can this be satisfied from the cache? */
- 	if (cache->len < IDPF_RXQ_REARM_THRESH) {
- 		/* No. Backfill the cache first, and then fill from it */
--		uint32_t req = IDPF_RXQ_REARM_THRESH + (cache->size -
--							cache->len);
- 
--		/* How many do we require i.e. number to fill the cache + the request */
-+		/* Backfill would exceed the cache bounce buffer limit? */
-+		__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-+		if (unlikely(IDPF_RXQ_REARM_THRESH > cache->size / 2)) {
-+			idpf_singleq_rearm_common(rxq);
-+			return;
-+		}
-+
-+		/* Backfill the cache from the backend; fetch (size / 2) objects. */
-+		__rte_assume(cache->len < cache->size / 2);
- 		int ret = rte_mempool_ops_dequeue_bulk
--				(rxq->mp, &cache->objs[cache->len], req);
-+				(rxq->mp, &cache->objs[cache->len], cache->size / 2);
- 		if (ret == 0) {
--			cache->len += req;
-+			cache->len += cache->size / 2;
- 		} else {
- 			if (rxq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
- 			    rxq->nb_rx_desc) {
-@@ -221,6 +227,17 @@ idpf_singleq_rearm(struct idpf_rx_queue *rxq)
- 		_mm512_storeu_si512(RTE_CAST_PTR(void *, (rxdp + 4)), desc4_5);
- 		_mm512_storeu_si512(RTE_CAST_PTR(void *, (rxdp + 6)), desc6_7);
- 
-+		/* Instrumentation as in rte_mbuf_raw_alloc_bulk() */
-+		__rte_mbuf_raw_sanity_check_mp(rxp[0], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[1], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[2], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[3], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[4], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[5], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[6], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[7], rxq->mp);
-+		rte_mbuf_history_mark_bulk(rxp, 8, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
-+
- 		rxp += IDPF_DESCS_PER_LOOP_AVX;
- 		rxdp += IDPF_DESCS_PER_LOOP_AVX;
- 		cache->len -= IDPF_DESCS_PER_LOOP_AVX;
-@@ -565,14 +582,20 @@ idpf_splitq_rearm(struct idpf_rx_queue *rx_bufq)
- 	/* Can this be satisfied from the cache? */
- 	if (cache->len < IDPF_RXQ_REARM_THRESH) {
- 		/* No. Backfill the cache first, and then fill from it */
--		uint32_t req = IDPF_RXQ_REARM_THRESH + (cache->size -
--							cache->len);
- 
--		/* How many do we require i.e. number to fill the cache + the request */
-+		/* Backfill would exceed the cache bounce buffer limit? */
-+		__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-+		if (unlikely(IDPF_RXQ_REARM_THRESH > cache->size / 2)) {
-+			idpf_splitq_rearm_common(rx_bufq);
-+			return;
-+		}
-+
-+		/* Backfill the cache from the backend; fetch (size / 2) objects. */
-+		__rte_assume(cache->len < cache->size / 2);
- 		int ret = rte_mempool_ops_dequeue_bulk
--				(rx_bufq->mp, &cache->objs[cache->len], req);
-+				(rx_bufq->mp, &cache->objs[cache->len], cache->size / 2);
- 		if (ret == 0) {
--			cache->len += req;
-+			cache->len += cache->size / 2;
- 		} else {
- 			if (rx_bufq->rxrearm_nb + IDPF_RXQ_REARM_THRESH >=
- 			    rx_bufq->nb_rx_desc) {
-@@ -585,8 +608,8 @@ idpf_splitq_rearm(struct idpf_rx_queue *rx_bufq)
- 							 dma_addr0);
- 				}
- 			}
--		rte_atomic_fetch_add_explicit(&rx_bufq->rx_stats.mbuf_alloc_failed,
--				   IDPF_RXQ_REARM_THRESH, rte_memory_order_relaxed);
-+			rte_atomic_fetch_add_explicit(&rx_bufq->rx_stats.mbuf_alloc_failed,
-+					   IDPF_RXQ_REARM_THRESH, rte_memory_order_relaxed);
- 			return;
- 		}
- 	}
-@@ -629,6 +652,17 @@ idpf_splitq_rearm(struct idpf_rx_queue *rx_bufq)
- 		rxdp[7].split_rd.pkt_addr =
- 			_mm_cvtsi128_si64(_mm512_extracti32x4_epi32(iova_addrs_1, 3));
- 
-+		/* Instrumentation as in rte_mbuf_raw_alloc_bulk() */
-+		__rte_mbuf_raw_sanity_check_mp(rxp[0], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[1], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[2], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[3], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[4], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[5], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[6], rxq->mp);
-+		__rte_mbuf_raw_sanity_check_mp(rxp[7], rxq->mp);
-+		rte_mbuf_history_mark_bulk(rxp, 8, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
-+
- 		rxp += IDPF_DESCS_PER_LOOP_AVX;
- 		rxdp += IDPF_DESCS_PER_LOOP_AVX;
- 		cache->len -= IDPF_DESCS_PER_LOOP_AVX;
-diff --git a/lib/mempool/rte_mempool.c b/lib/mempool/rte_mempool.c
-index 3042d94c14..805b52cc58 100644
---- a/lib/mempool/rte_mempool.c
-+++ b/lib/mempool/rte_mempool.c
-@@ -52,11 +52,6 @@ static void
- mempool_event_callback_invoke(enum rte_mempool_event event,
- 			      struct rte_mempool *mp);
- 
--/* Note: avoid using floating point since that compiler
-- * may not think that is constant.
-- */
--#define CALC_CACHE_FLUSHTHRESH(c) (((c) * 3) / 2)
--
- #if defined(RTE_ARCH_X86)
- /*
-  * return the greatest common divisor between a and b (fast algorithm)
-@@ -757,13 +752,8 @@ rte_mempool_free(struct rte_mempool *mp)
- static void
- mempool_cache_init(struct rte_mempool_cache *cache, uint32_t size)
- {
--	/* Check that cache have enough space for flush threshold */
--	RTE_BUILD_BUG_ON(CALC_CACHE_FLUSHTHRESH(RTE_MEMPOOL_CACHE_MAX_SIZE) >
--			 RTE_SIZEOF_FIELD(struct rte_mempool_cache, objs) /
--			 RTE_SIZEOF_FIELD(struct rte_mempool_cache, objs[0]));
--
- 	cache->size = size;
--	cache->flushthresh = CALC_CACHE_FLUSHTHRESH(size);
-+	cache->flushthresh = size; /* Obsolete; for API/ABI compatibility purposes only */
- 	cache->len = 0;
- }
- 
-@@ -850,7 +840,7 @@ rte_mempool_create_empty(const char *name, unsigned n, unsigned elt_size,
- 
- 	/* asked cache too big */
- 	if (cache_size > RTE_MEMPOOL_CACHE_MAX_SIZE ||
--	    CALC_CACHE_FLUSHTHRESH(cache_size) > n) {
-+	    cache_size > n) {
- 		rte_errno = EINVAL;
- 		return NULL;
- 	}
-diff --git a/lib/mempool/rte_mempool.h b/lib/mempool/rte_mempool.h
-index 2e54fc4466..aa2d51bbd5 100644
---- a/lib/mempool/rte_mempool.h
-+++ b/lib/mempool/rte_mempool.h
-@@ -89,7 +89,7 @@ struct __rte_cache_aligned rte_mempool_debug_stats {
-  */
- struct __rte_cache_aligned rte_mempool_cache {
- 	uint32_t size;	      /**< Size of the cache */
--	uint32_t flushthresh; /**< Threshold before we flush excess elements */
-+	uint32_t flushthresh; /**< Obsolete; for API/ABI compatibility purposes only */
- 	uint32_t len;	      /**< Current cache count */
- #ifdef RTE_LIBRTE_MEMPOOL_STATS
- 	uint32_t unused;
-@@ -107,8 +107,10 @@ struct __rte_cache_aligned rte_mempool_cache {
- 	/**
- 	 * Cache objects
- 	 *
--	 * Cache is allocated to this size to allow it to overflow in certain
--	 * cases to avoid needless emptying of cache.
-+	 * Note:
-+	 * Cache is allocated at double size for API/ABI compatibility purposes only.
-+	 * When reducing its size at an API/ABI breaking release,
-+	 * remember to add a cache guard after it.
- 	 */
- 	alignas(RTE_CACHE_LINE_SIZE) void *objs[RTE_MEMPOOL_CACHE_MAX_SIZE * 2];
- };
-@@ -1047,11 +1049,16 @@ rte_mempool_free(struct rte_mempool *mp);
-  *   If cache_size is non-zero, the rte_mempool library will try to
-  *   limit the accesses to the common lockless pool, by maintaining a
-  *   per-lcore object cache. This argument must be lower or equal to
-- *   RTE_MEMPOOL_CACHE_MAX_SIZE and n / 1.5.
-+ *   RTE_MEMPOOL_CACHE_MAX_SIZE and n.
-  *   The access to the per-lcore table is of course
-  *   faster than the multi-producer/consumer pool. The cache can be
-  *   disabled if the cache_size argument is set to 0; it can be useful to
-  *   avoid losing objects in cache.
-+ *   Note:
-+ *   Mempool put/get requests of more than cache_size / 2 objects may be
-+ *   partially or fully served directly by the multi-producer/consumer
-+ *   pool, to avoid the overhead of copying the objects twice (instead of
-+ *   once) when using the cache as a bounce buffer.
-  * @param private_data_size
-  *   The size of the private data appended after the mempool
-  *   structure. This is useful for storing some private data after the
-@@ -1377,7 +1384,7 @@ rte_mempool_cache_flush(struct rte_mempool_cache *cache,
-  *   A pointer to a mempool cache structure. May be NULL if not needed.
-  */
- static __rte_always_inline void
--rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
-+rte_mempool_do_generic_put(struct rte_mempool *mp, void * const * __rte_restrict obj_table,
- 			   unsigned int n, struct rte_mempool_cache *cache)
- {
- 	void **cache_objs;
-@@ -1390,24 +1397,27 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_bulk, 1);
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, put_objs, n);
- 
--	__rte_assume(cache->flushthresh <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
--	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
--	__rte_assume(cache->len <= cache->flushthresh);
--	if (likely(cache->len + n <= cache->flushthresh)) {
-+	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
-+	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
-+	__rte_assume(cache->len <= cache->size);
-+	if (likely(cache->len + n <= cache->size)) {
- 		/* Sufficient room in the cache for the objects. */
- 		cache_objs = &cache->objs[cache->len];
- 		cache->len += n;
--	} else if (n <= cache->flushthresh) {
-+	} else if (n <= cache->size / 2) {
- 		/*
--		 * The cache is big enough for the objects, but - as detected by
--		 * the comparison above - has insufficient room for them.
--		 * Flush the cache to make room for the objects.
-+		 * The number of objects is within the cache bounce buffer limit,
-+		 * but - as detected by the comparison above - the cache has
-+		 * insufficient room for them.
-+		 * Flush the cache to the backend to make room for the objects;
-+		 * flush (size / 2) objects.
- 		 */
--		cache_objs = &cache->objs[0];
--		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache->len);
--		cache->len = n;
-+		__rte_assume(cache->len > cache->size / 2);
-+		cache_objs = &cache->objs[cache->len - cache->size / 2];
-+		cache->len = cache->len - cache->size / 2 + n;
-+		rte_mempool_ops_enqueue_bulk(mp, cache_objs, cache->size / 2);
- 	} else {
--		/* The request itself is too big for the cache. */
-+		/* The request itself is too big. */
- 		goto driver_enqueue_stats_incremented;
- 	}
- 
-@@ -1418,13 +1428,13 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
- 
- driver_enqueue:
- 
--	/* increment stat now, adding in mempool always success */
-+	/* Increment stats now, adding in mempool always succeeds. */
- 	RTE_MEMPOOL_STAT_ADD(mp, put_bulk, 1);
- 	RTE_MEMPOOL_STAT_ADD(mp, put_objs, n);
- 
- driver_enqueue_stats_incremented:
- 
--	/* push objects to the backend */
-+	/* Push the objects to the backend. */
- 	rte_mempool_ops_enqueue_bulk(mp, obj_table, n);
- }
- 
-@@ -1442,7 +1452,7 @@ rte_mempool_do_generic_put(struct rte_mempool *mp, void * const *obj_table,
-  *   A pointer to a mempool cache structure. May be NULL if not needed.
-  */
- static __rte_always_inline void
--rte_mempool_generic_put(struct rte_mempool *mp, void * const *obj_table,
-+rte_mempool_generic_put(struct rte_mempool *mp, void * const * __rte_restrict obj_table,
- 			unsigned int n, struct rte_mempool_cache *cache)
- {
- 	rte_mempool_trace_generic_put(mp, obj_table, n, cache);
-@@ -1465,7 +1475,7 @@ rte_mempool_generic_put(struct rte_mempool *mp, void * const *obj_table,
-  *   The number of objects to add in the mempool from obj_table.
-  */
- static __rte_always_inline void
--rte_mempool_put_bulk(struct rte_mempool *mp, void * const *obj_table,
-+rte_mempool_put_bulk(struct rte_mempool *mp, void * const * __rte_restrict obj_table,
- 		     unsigned int n)
- {
- 	struct rte_mempool_cache *cache;
-@@ -1507,7 +1517,7 @@ rte_mempool_put(struct rte_mempool *mp, void *obj)
-  *   - <0: Error; code of driver dequeue function.
-  */
- static __rte_always_inline int
--rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
-+rte_mempool_do_generic_get(struct rte_mempool *mp, void ** __rte_restrict obj_table,
- 			   unsigned int n, struct rte_mempool_cache *cache)
- {
- 	int ret;
-@@ -1524,7 +1534,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	/* The cache is a stack, so copy will be in reverse order. */
- 	cache_objs = &cache->objs[cache->len];
- 
--	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE * 2);
-+	__rte_assume(cache->len <= RTE_MEMPOOL_CACHE_MAX_SIZE);
- 	if (likely(n <= cache->len)) {
- 		/* The entire request can be satisfied from the cache. */
- 		RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
-@@ -1548,13 +1558,13 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	for (index = 0; index < len; index++)
- 		*obj_table++ = *--cache_objs;
- 
--	/* Dequeue below would overflow mem allocated for cache? */
--	if (unlikely(remaining > RTE_MEMPOOL_CACHE_MAX_SIZE))
-+	/* Dequeue below would exceed the cache bounce buffer limit? */
-+	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-+	if (unlikely(remaining > cache->size / 2))
- 		goto driver_dequeue;
- 
--	/* Fill the cache from the backend; fetch size + remaining objects. */
--	ret = rte_mempool_ops_dequeue_bulk(mp, cache->objs,
--			cache->size + remaining);
-+	/* Fill the cache from the backend; fetch (size / 2) objects. */
-+	ret = rte_mempool_ops_dequeue_bulk(mp, cache->objs, cache->size / 2);
- 	if (unlikely(ret < 0)) {
- 		/*
- 		 * We are buffer constrained, and not able to fetch all that.
-@@ -1568,10 +1578,11 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_bulk, 1);
- 	RTE_MEMPOOL_CACHE_STAT_ADD(cache, get_success_objs, n);
- 
--	__rte_assume(cache->size <= RTE_MEMPOOL_CACHE_MAX_SIZE);
--	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE);
--	cache_objs = &cache->objs[cache->size + remaining];
--	cache->len = cache->size;
-+	__rte_assume(cache->size / 2 <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-+	__rte_assume(remaining <= RTE_MEMPOOL_CACHE_MAX_SIZE / 2);
-+	__rte_assume(remaining <= cache->size / 2);
-+	cache_objs = &cache->objs[cache->size / 2];
-+	cache->len = cache->size / 2 - remaining;
- 	for (index = 0; index < remaining; index++)
- 		*obj_table++ = *--cache_objs;
- 
-@@ -1629,7 +1640,7 @@ rte_mempool_do_generic_get(struct rte_mempool *mp, void **obj_table,
-  *   - -ENOENT: Not enough entries in the mempool; no object is retrieved.
-  */
- static __rte_always_inline int
--rte_mempool_generic_get(struct rte_mempool *mp, void **obj_table,
-+rte_mempool_generic_get(struct rte_mempool *mp, void ** __rte_restrict obj_table,
- 			unsigned int n, struct rte_mempool_cache *cache)
- {
- 	int ret;
-@@ -1663,7 +1674,7 @@ rte_mempool_generic_get(struct rte_mempool *mp, void **obj_table,
-  *   - -ENOENT: Not enough entries in the mempool; no object is retrieved.
-  */
- static __rte_always_inline int
--rte_mempool_get_bulk(struct rte_mempool *mp, void **obj_table, unsigned int n)
-+rte_mempool_get_bulk(struct rte_mempool *mp, void ** __rte_restrict obj_table, unsigned int n)
- {
- 	struct rte_mempool_cache *cache;
- 	cache = rte_mempool_default_cache(mp, rte_lcore_id());
-@@ -1692,7 +1703,7 @@ rte_mempool_get_bulk(struct rte_mempool *mp, void **obj_table, unsigned int n)
-  *   - -ENOENT: Not enough entries in the mempool; no object is retrieved.
-  */
- static __rte_always_inline int
--rte_mempool_get(struct rte_mempool *mp, void **obj_p)
-+rte_mempool_get(struct rte_mempool *mp, void ** __rte_restrict obj_p)
- {
- 	return rte_mempool_get_bulk(mp, obj_p, 1);
- }
--- 
-2.43.0
-
+Cheers,
+Jay
