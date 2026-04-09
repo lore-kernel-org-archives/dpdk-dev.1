@@ -2,152 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DED81EA3C55
-	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 12:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D29EA3C59
+	for <dpdk-dev@archiver.kernel.org>; Thu,  9 Apr 2026 13:04:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 75E174028F;
-	Thu,  9 Apr 2026 14:18:37 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
- by mails.dpdk.org (Postfix) with ESMTP id 3192340276
- for <dev@dpdk.org>; Thu,  9 Apr 2026 14:18:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775737116; x=1807273116;
- h=message-id:date:subject:to:references:from:in-reply-to:
- content-transfer-encoding:mime-version;
- bh=b/w/zpIrxmQvs9fUqD5M/ssJ3f42WO7whm8W28BWjpk=;
- b=AvX5CdG3yBwkl6DDy0Fhm4eB4lEp+UYfnwFEWdDrzBeh13BPwC3fsNFS
- 3M7vNr89oQP+3OyVDQnjqpM0M/Q21XCNsZHVwaDV0gBgEBtFBoKOJQAQl
- 64Q9YHJesz34/nm2r21OCECIQKFSdj0xGTJrtPKzaTGZiMn4ahiqkI411
- Ms1t3otzTsks4XcF/gcTuDzfyJHBY9Oghtg5cfwIHMaxrNygZz7CWR4FN
- Wa9DZDVNCrLBY3NmBPK5WBx0diS7zZDnXL2IK3QQ3l3Pzgr1fe5uxFJOB
- 11M/dzahhB8g6xwJnR9tiq5KYsWCSA4QLS7LpZYmuMu4iinrpi4yTvyxK g==;
-X-CSE-ConnectionGUID: ng8btt4AQTCpI60h/Mhpyw==
-X-CSE-MsgGUID: n9ycPe5tRFGkf2dZkiCrmA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11753"; a="87364062"
-X-IronPort-AV: E=Sophos;i="6.23,169,1770624000"; d="scan'208";a="87364062"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
- by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Apr 2026 05:18:35 -0700
-X-CSE-ConnectionGUID: WmTi+sc1QyiVHa6NREYKfA==
-X-CSE-MsgGUID: 3pdRIxSyTPGp9t/9gkmiKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,169,1770624000"; d="scan'208";a="266731026"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
- by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 09 Apr 2026 05:18:35 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 5A6B24028F;
+	Thu,  9 Apr 2026 15:04:55 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 28C6240276
+ for <dev@dpdk.org>; Thu,  9 Apr 2026 15:04:53 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fs0WR4ZZZzJ46C9;
+ Thu,  9 Apr 2026 21:04:19 +0800 (CST)
+Received: from dubpeml100001.china.huawei.com (unknown [7.214.144.137])
+ by mail.maildlp.com (Postfix) with ESMTPS id E75BB40570;
+ Thu,  9 Apr 2026 21:04:52 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100001.china.huawei.com (7.214.144.137) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 9 Apr 2026 05:18:34 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Thu, 9 Apr 2026 05:18:34 -0700
-Received: from CO1PR03CU002.outbound.protection.outlook.com (52.101.46.64) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 9 Apr 2026 05:18:32 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XX0WF8o5gyLoEpzAkGfFTF1I4FuV6za2l3/61yQVbdW0dX7GmOSbDuE/o1HWLnW+l5a+UdulRY7QE0TqimmBPS1XGMsX/o8iXW35ylOnAJahC+snbBhKKwzwhJYyn61bdhpepDq5ZpZ/jV3/GwACJ7T+DOP7snXG7O6/S/SUiLte01BL0DgC1b4im59WzlPzuZT/Mhbp9o6+VNRuIcvkJny1x89ASqEUSD9cZUksydaIbjJj92i+Ldagw2xp+e8qwP1ecpAHieX2ey8mTo5yGrb3iUNeeeIIoljgu58RPxbaB9IqV6pupdk1LsxiqJ5QXxFuirZeSTxvaWd3f7Pj7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F++xlYqClHV85sN1/BdT1sxJX9R6s8H5opuZzyHyvC8=;
- b=UDd8/8nZN6uJUVhe6xnPRiu95APXfU0ZNHJD7S17KR7fhhJ61/Gw2DhfTyr9snVg9TcHKUsPWHGjXF1qkayf8H7gNC/sCr1OVEEQqjDFozx9qX20Ol5gSZgXLzBHAFcmKOrW01/a4u0myFkdm4jP0WpZ4wdcI52FInSc43Di62JM2u/8xYMCY6AAjrwfcgEjwbmQAgaWnn8ucIFE1uXj/tAUBZtS8BGP3gEN4h7tGU26/fGXPHEtIUPyzedhlJKwGdPNJbVPo29cS/ltDoUopBAJtuHFo8TA/o6i+/o46aRrQxaPMANqXlKsWsBNSFICpjoY//Lr3MkHlZoRd3CqBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- DS0PR11MB7766.namprd11.prod.outlook.com (2603:10b6:8:138::10) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9769.19; Thu, 9 Apr 2026 12:18:30 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.20.9769.016; Thu, 9 Apr 2026
- 12:18:30 +0000
-Message-ID: <105e86f9-0f2b-46d4-bea3-4b55bf5ed92a@intel.com>
-Date: Thu, 9 Apr 2026 14:18:25 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/ixgbe: shrink size of context index
-To: Bruce Richardson <bruce.richardson@intel.com>, <dev@dpdk.org>
-References: <20260408154804.1596060-1-bruce.richardson@intel.com>
+ 15.2.1544.36; Thu, 9 Apr 2026 14:04:52 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Thu, 9 Apr 2026 14:04:52 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: DPDK ip_frag security analyis
+Thread-Topic: DPDK ip_frag security analyis
+Thread-Index: AQHcxu6OwPWYwelGwEyDNrAcMAAZcLXWoTxg
+Date: Thu, 9 Apr 2026 13:04:52 +0000
+Message-ID: <282c899d27cb40b292d199c7490f3ede@huawei.com>
+References: <20260407172750.34e1aaf0@phoenix.local>
+In-Reply-To: <20260407172750.34e1aaf0@phoenix.local>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-In-Reply-To: <20260408154804.1596060-1-bruce.richardson@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PR3P189CA0029.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:102:52::34) To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.195.245.152]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|DS0PR11MB7766:EE_
-X-MS-Office365-Filtering-Correlation-Id: eb4a02ba-3fc1-4768-0b1c-08de96321c58
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|18002099003|22082099003|56012099003; 
-X-Microsoft-Antispam-Message-Info: A0NcZJ7LYyVQ7c4Ke85xI/F+e66R316Orj26y31opUcLHXybnLpVzWO+unE+jJba+68gf15mhDZUUZUwlRAYRxz2eSoz9kQpnt8DPIXoT8URUlR39vAK5wW12o7NC4xXaVEPuB9x9RNoF07tKzNDyXC+oLqgxzj6Ck409Wzmbts7ZoGTZ2ZevufJWwnq9DdqUnmCEPNN9m2ZNRKX47PzjTqG4uQns+G5Xsc7oK2AOw7PbqDsQJ1sdm0vRRUDKBGxcTKZLA5AH/a7Hvm8ATPvsMg7kjh5hqjt6cfYs80TCB1wREKLEowvFskw4ER22TDj9iE7g2JUeu5edcS8b5C6kI4Sj31jhQytGvQK8BRBUD2MH9tK/aF1Fi3e+rB2USzzy3woA+8DoyC4WoI5BAzG24BFZohp1rERjXQ74lCpJLdTOqrIBAhdQc++ANUfmnvhF4M/eFqaF7RBbsvrd5HEjrTOBouOryTWl4JZofImipxoG02vfSb2QhuqiMi0utuwzkCK+WX1qJLi/QHtzcl2Gw053MFjLOwZnCpWF5cv31VAOHDiWZ1+syrMMH9SrhHhxAXdaI8XCUfiND8MZr30jXYAA8x7V4sMplu77YHga9CntFKSOZmraV+abmeh1lOZi8pkZIB6oa/z25ny6h6wQtYWIjtyCZ9RfaWOHw9/TyfIXimACnlLeafizrTu+5D1EPkppuMdMcdOjtGDQMrPiALwp6nhuaOCd7shhjJN33A=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Z3lpUUhHNTlHZWNSU0pUR2hNd21sVC93UktydnJnS29RaXAxR3pqZnM0WDd4?=
- =?utf-8?B?NGZyeEczd09ha2xBa1pBUTl2NW1mSUtQL2FIbmJnUFZ2SE1uR09JV2VNMU1u?=
- =?utf-8?B?bURhcTVBUEVhSkMxcUxEWWxMcVNLWUdHR0tEYzE2RlNERzhqS29UUlpDZ0Q0?=
- =?utf-8?B?a0F5OFllKzhWcU9OK0dKRG9vU2dXTDFBdGk0Z2tPM0hEZU9WODdpcGtlL25p?=
- =?utf-8?B?WWNyOFBCZmkzK0pTRkVOcnVZNm14Q0FNMDBScEtNQUsxdGIyVzlKem1zWUhl?=
- =?utf-8?B?MERmMkg3R3FWR24vbFRMdFlRcU02NWcvcFJpZ1N5TElVaFUyR3B2cWxadUNm?=
- =?utf-8?B?bG5jRDk1WWxhUjZxVGZiS2gwOVpud01iOU52b0Jwa2N6eURtc21BU3BTeGVt?=
- =?utf-8?B?S09BaXhNaVlNV1RXV2Urd3BicFB2RnJyaDBBSDdwWk90NlplZSt6UlBIcERu?=
- =?utf-8?B?N094L2RkUjcyenhnbE5yZzVnME50dFIzTGpEcEhmakp0bkxxcytrTVdLcWtx?=
- =?utf-8?B?dS8ySFdDM2RaVFU4d2d6a3lOdUFLMFN2UTFmSm9XVGhmRktSUXdMRGlNT3ZJ?=
- =?utf-8?B?S0Q0T294L3JGOHN5YnFGWWZLUFhoSExEVkJ2R21PaEwrNTFVU1dxRXlaQjF3?=
- =?utf-8?B?WUZHMXY3ME9mWEtjeHNpaXp0VEZmbUhQd0lxK0h3QzMvT093UTQ2ZGU0ZXZx?=
- =?utf-8?B?RlE3b09WV2M1Rlh3UU1nbGFSUU9nWG5uWXZ4K1QzYlBqMnJIT2F1RUc2Nk9i?=
- =?utf-8?B?aTl2VTdUT25kZStDMVJWWFlPMHl5eFJzdUFSUjJMNmxnbEZoTVYyY0NWSURG?=
- =?utf-8?B?QTlqQXBmeUlEMVYrVWhXWUdXbnVYSG1BdzRsa3RpcXN5MTZZeWFFRTlNRXdq?=
- =?utf-8?B?ZGxGYnh6YjVUQXRoaE9ONUQwRlozNG9Bc3VCcGlSZENxWGNkdDFtTGR5M0Nu?=
- =?utf-8?B?ejdqMEU0aHJONkJXNWJRWm1CMHlBcXU5S2tsY2JleFJsOXZwMzJvMG5oTDdS?=
- =?utf-8?B?c0xoamJJWHBnQ1F3cDlqREdxVXZzelVPTW5OR0FZYTRwWWdWRDR1cExtRlRh?=
- =?utf-8?B?MFRHVndVVHpHTFNnalhPQ0tKaWJpbnJjUjg5U1VrNnpzK2xuUjRSK1RKR1dl?=
- =?utf-8?B?Nk1NT0xUYk1nZWVhUTR1QXRpNlRobHFjMWU5NHFaUDdzQVllNHQ2ZEQ0V2ZH?=
- =?utf-8?B?bDFhODdDUnlrRm5TbEd3UmZaYi9IbU5RaWVzUHMzdXo0eUkyUExiWm00b09G?=
- =?utf-8?B?Smpwc2RpZ1FYWFd4ejJ6N3pGMnp3OVNCa2REWml4cDlpS1RXaHB4UE1lWlBj?=
- =?utf-8?B?L21XclhIK3Z4eFFzRjRWMkdUeGJNOVNOQ3p5aTJDRzNUb2ozcmRFMVhEdUl2?=
- =?utf-8?B?Ym9sWkxRbGlvdTdXUThzYUxERjNIWlJweGl5MFdySllZazk4MXhDcVVsK2Ja?=
- =?utf-8?B?Y0grSzR2NlNKT1FhUXh4bW42Y0NrRVhMVjNQaWxtS1Y4YzRKSlRGeWJzcVpm?=
- =?utf-8?B?cy9oZVdITGdlU3lwT2gxUllFR3VRMHBIQ0JrWTloYmt3ejR0MU9tSnc2YlBZ?=
- =?utf-8?B?TzUyR3JBeUFWMGlVOUV6NGNTVFhEN3YrZ0JBcW5uR3M4QlQ4aEpySGs1Qit3?=
- =?utf-8?B?RlY5cmhocmNHS3BCZHhlUjNJaEVpMnpJYnVoZXZ5RXlaQlBKd2U4Q2YyRHhm?=
- =?utf-8?B?cXlaNUFyZ1FEbFYrd0lsck1RRjI1VlRBUlBST09xdEQrdDVvRW1xSUZhYWpO?=
- =?utf-8?B?aE9uaGU1aFVUY3JtYUtraXlFMnhzeDBkd2UxN2tRSU9kVjRLM2NRVHhqeDZB?=
- =?utf-8?B?YmN2T05OMytTTTlWb2VCSUJSSXRKMzRJMnRIVWlmNi9QWTA4RjV1Ti9XYjdI?=
- =?utf-8?B?Vk1QZit3T2ZhazJTMUxrWkNmWForTHZCZ0xuOHlnT0VOMXhBWmdBVWhpNGNw?=
- =?utf-8?B?cXdPb1VoZFhmV00xVWJiZWI0YTN0UG5lNFlkeGU0NCtVY2F4ckcrVTN6VGZ6?=
- =?utf-8?B?S0tYeVdhN1lINU41WEdLYmxKcWRCWmlQdnBKZ2owZWdoRzZXMVN1cjVGSlVY?=
- =?utf-8?B?N2k4YlVvdVBMUVg1RFBVVElURUZ1VERMcFRUZWVZeThsYzBsZU9peEU5WjFJ?=
- =?utf-8?B?aTVYdVhyRmI3Qnp5a2puZmZTK1JZZk45RWpLN3RrL1FTMU1STjJvK21JZG1h?=
- =?utf-8?B?b093dVpZM2pkdkhUMW9FSTZWQ2NPSnV0VjhkNTYrUzR5a2NTcU51MlZRMStl?=
- =?utf-8?B?U0kxbVBjdWw5NU45MnVMZlI0K2cxN3ROVnUxV0xOejUxa1VoamdYYUY4RERG?=
- =?utf-8?B?U0pjeEdZVEw3RHJOZTR3MUYrbUZWczlHQTU1bVFCZDlxdFkxdmtoZTlPUFFR?=
- =?utf-8?Q?Et/zOh2yUZ/cqdbQ=3D?=
-X-Exchange-RoutingPolicyChecked: VRo5aswB8xk0fGToOtdxorHlb+FUDFv+dBsdvJxeYdz9a6QMFSdxgwJDo1HXoNShgcykOfT94S2inA2mzDQ162Z+FhBuLJDkjYpLE4ESxHLaQEcSnGcckRCzWBntqRvWE+Lg2Jw4/4xvFh0t/rA80cm69aqTtmSTpo60dnukGgBT+8ih3dbT85j8PCeoKyTZMCFXDQXlnPg4cZWbL6TpniusUpSakoGYHSamWT7olydqERsNyfR3xk7riTA+MleNa1JjYz9tkYEx/j8toXWQc+y3rfrmDtj4TRhzesW/tp/Blu4GgrlI+MzIQdbTQbymvy+NjFoj9sVhpeuiHRAtWQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: eb4a02ba-3fc1-4768-0b1c-08de96321c58
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Apr 2026 12:18:30.4317 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vLelp18j++78RbPe7WsFG947KjN0Eq3h3MJPLsjIgPc6y2v+TWSc8yz6rA3GZQ2vW3kw+RPtiP2vVTYUa+JiDSbr3ziAn6a6qv07IZ+jtv8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7766
-X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -161,19 +54,211 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 4/8/2026 5:48 PM, Bruce Richardson wrote:
-> The ixgbe driver only supports two contexts, so using uint32_t for the
-> context index is excessive. Reducing this to uint8_t shrinks the ixgbe
-> part of the union from 32 bytes to 24. Although it does not in itself
-> shrink the space for the whole struct, it is worth doing as ixgbe is the
-> second-largest block in the union, so may become relevant if other
-> rework shrinks the idpf-specific block.
-> 
-> Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
-> ---
 
-Acked-by: Anatoly Burakov <anatoly.burakov@intel.com>
 
--- 
-Thanks,
-Anatoly
+> Subject: Security analysis of lib/ip_frag (fragmentation & reassembly)
+>=20
+> Hi,
+>=20
+> Below is a security-focused review of the DPDK ip_frag library
+> covering ip_frag_common.h, ip_frag_internal.c, ip_reassembly.h,
+> rte_ip_frag.h, rte_ip_frag_common.c, rte_ipv4_fragmentation.c,
+> rte_ipv4_reassembly.c, rte_ipv6_fragmentation.c, and
+> rte_ipv6_reassembly.c.
+>=20
+> Findings are grouped by severity.
+>=20
+>=20
+> ERRORS
+> =3D=3D=3D=3D=3D=3D
+>=20
+> 1. TAILQ_FOREACH modification during iteration in
+>    rte_ip_frag_table_del_expired_entries()
+>=20
+>    File: rte_ip_frag_common.c, lines 142-151
+>=20
+>    TAILQ_FOREACH(fp, &tbl->lru, lru) iterates the LRU list while
+>    ip_frag_tbl_del() calls TAILQ_REMOVE() on the current element
+>    inside the loop body. TAILQ_FOREACH reads fp->lru.tqe_next in
+>    the loop-advance step *after* the body executes. After
+>    TAILQ_REMOVE, the removed element's tqe_next is stale.
+>=20
+>    On glibc/BSD this happens to work because TAILQ_REMOVE does not
+>    zero tqe_next, but this violates the TAILQ API contract. If the
+>    implementation ever changes, or if a debug TAILQ that poisons
+>    removed entries is used, this becomes a use-after-remove bug.
+>=20
+>    Fix: use TAILQ_FOREACH_SAFE, or save TAILQ_NEXT(fp, lru) before
+>    calling ip_frag_tbl_del().
+
+ACK, that looks like a valid one to me.
+
+>=20
+> 2. No overlapping fragment detection (teardrop-class attacks,
+>    RFC 5722 violation for IPv6)
+>=20
+>    File: ip_frag_internal.c, ip_frag_process()
+>=20
+>    ip_frag_process() does not check whether a newly arrived fragment
+>    overlaps with any previously stored fragment. It only detects
+>    duplicate first/last fragments. For middle fragments, it blindly
+>    increments last_idx and stores the fragment.
+>=20
+>    The reassembly functions happen to fail on overlapping fragments
+>    because the offset-matching chain walk cannot find a match, so
+>    the hole-detection fires. The mitigation is accidental rather
+>    than intentional.
+
+Nope, it is not accidental, it was intentional design choice.
+Checking for each incoming fragment that there is no overlaps might be
+quite expensive. So, we postpone that check till we have all fragments
+arrive and start re-assemble process.
+It is sort of trade-off speed vs keeping mbuf with overlapping fragment
+for a bit longer. =20
+Looks like a false positive to me.
+
+>    For IPv6, RFC 5722 mandates that overlapping fragments MUST
+>    cause the entire datagram to be silently dropped. The current
+>    code does eventually drop them, but only after accumulating
+>    fragments and burning table slots until timeout. An attacker can
+>    exhaust fragment table entries by sending overlapping fragments.
+>=20
+>    Fix: check new fragment offset/length against existing entries
+>    in frags[] before storing. For IPv6, drop immediately per
+>    RFC 5722.
+>=20
+>=20
+> 3. Death row buffer overflow -- IP_FRAG_MBUF2DR has no bounds check
+>=20
+>    File: ip_frag_common.h, line 38
+>=20
+>    The IP_FRAG_MBUF2DR(dr, mb) macro writes to dr->row[dr->cnt++]
+>    with no bounds check. Similarly, ip_frag_free() adds up to
+>    IP_MAX_FRAG_NUM (8) entries without checking capacity.
+>=20
+>    The death row is sized for RTE_IP_FRAG_DEATH_ROW_LEN *
+>    (MAX_FRAG + 1) =3D 288 entries. The del_expired_entries() function
+>    does check capacity, but the hot-path reassembly functions call
+>    ip_frag_find() -> ip_frag_tbl_del() and ip_frag_process() ->
+>    ip_frag_free() + IP_FRAG_MBUF2DR() without any capacity check.
+>=20
+>    If an application calls reassembly in a tight loop without
+>    draining the death row between calls, dr->cnt can exceed
+>    RTE_IP_FRAG_DEATH_ROW_MBUF_LEN, causing an out-of-bounds write.
+>    The death row is typically stack-allocated, so this is a potential
+>    stack buffer overflow.
+>=20
+>    ip_frag_find() can evict a stale entry AND an LRU entry in a
+>    single call (up to 16 mbufs), then ip_frag_process() can add 9
+>    more on error.A burst of 32 bad fragments hitting different
+>    stale entries could overflow.
+
+That seems not entirely correct, as we just remove stale entry from
+the table and the LRU list, so max  IP_MAX_FRAG_NUM (8) can be deleted
+in one go.
+But overall, yes it is a potential problem, as we assume that user will
+always operate in bursts of 32 packes, and call free_death_row()
+after each such burst is processed.
+Which might not be the always the case.
+Needs to be addressed.
+
+>    Fix: add a bounds check in IP_FRAG_MBUF2DR and ip_frag_free(),
+>    or document the maximum number of reassembly calls permitted
+>    between death row drains.
+>=20
+>=20
+> WARNINGS
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> 4. IPv6 move_len underflow in ipv6_frag_reassemble()
+>=20
+>    File: rte_ipv6_reassembly.c, line 104
+>=20
+>    move_len =3D m->l2_len + m->l3_len - sizeof(*frag_hdr);
+>=20
+>    move_len is uint32_t. If a buggy caller sets l2_len + l3_len < 8,
+>    move_len wraps to ~4 billion. The subsequent ip_frag_memmove()
+>    would attempt to copy gigabytes of data, causing a segfault or
+>    memory corruption.
+>=20
+>    The API documents that callers must set l2_len/l3_len correctly,
+>    and for a valid IPv6 fragment l3_len alone should be >=3D 48 bytes.
+>    But there is no defensive validation.
+>=20
+>    Fix: add a sanity check that l2_len + l3_len >=3D sizeof(*frag_hdr)
+>    before computing move_len.
+
+I don't think we need to do anything here.
+It should be safe to assume that input mbuf fields are valid,
+specially if it is already documented. =20
+
+>=20
+>=20
+> 5. rte_ipv6_frag_get_ipv6_fragment_header() only inspects the
+>    first extension header
+>=20
+>    File: rte_ip_frag.h, line 143
+>=20
+>    This function checks only hdr->proto =3D=3D IPPROTO_FRAGMENT. If any
+>    other extension header (hop-by-hop, routing, destination options)
+>    precedes the fragment header, this function returns NULL and the
+>    packet is treated as non-fragmented.
+>=20
+>    An attacker can evade reassembly by inserting a preceding
+>    extension header, causing fragments to be forwarded as-is. This
+>    can bypass firewall rules that rely on seeing reassembled traffic.
+>=20
+>    The limitation is documented but is a security-relevant design
+>    gap for applications using this library.
+
+Yep, it is a well-known and long-standing  limitation that needs to be addr=
+essed.
+I think it was even attempt to fix it, but for whatever reason it wasn't ac=
+cepted.=20
+
+>    Fix: walk the extension header chain to find the fragment header,
+>    or clearly document the security implications in the API header.
+>=20
+>=20
+> INFORMATIONAL
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+> 6. Hash collision DoS via fixed seed
+>=20
+>    Both ipv4_frag_hash() and ipv6_frag_hash() use CRC32 (x86/ARM)
+>    or jhash with a fixed, publicly known prime seed (0xeaad8405).
+>    An attacker who can send crafted IP fragments can precompute hash
+>    collisions, causing all fragments to land in the same bucket.
+>    After bucket_entries concurrent flows collide, new flows are
+>    dropped.
+>=20
+>    Fix: randomize the hash seed at table creation time.
+
+ACK, seems valid - needs to be fixed.
+=20
+>=20
+> 7. max_cycles + fp->start wraparound
+>=20
+>    The timeout comparison (max_cycles + fp->start < tms) at multiple
+>    locations uses uint64_t arithmetic. If the sum wraps past 2^64,
+>    entries appear timed out when they are not. With rdtsc-based
+>    timestamps this requires running for hundreds of years, so it is
+>    not practically exploitable. Worth noting for alternative time
+>    sources with faster-incrementing values.
+
+False positive.
+
+>=20
+> 8. No total reassembled size limit before table insertion
+>=20
+>    The library accepts and stores fragments up to IP_MAX_FRAG_NUM
+>    per datagram, but there is no explicit limit on total reassembled
+>    size. An attacker can claim total_size =3D 65535 via a crafted last
+>    fragment, then send middle fragments that consume table entries
+>    and death row capacity during the attack window, even though
+>    reassembly will ultimately fail when frag_size exceeds
+>    total_size.
+
+We do have max number of frags perf packet.
+Honestly I don't think there is a need for such extra check.=20
+
