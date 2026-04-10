@@ -2,51 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCFEF44868
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Apr 2026 13:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1561F44872
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Apr 2026 14:33:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB83340A72;
-	Fri, 10 Apr 2026 15:23:01 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
- by mails.dpdk.org (Postfix) with ESMTP id 1274840650
- for <dev@dpdk.org>; Fri, 10 Apr 2026 15:22:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1775827379; x=1807363379;
- h=from:to:subject:date:message-id:in-reply-to:references:
- mime-version:content-transfer-encoding;
- bh=C9hBoG7lK7MFOs4ctKz04zWrALHr11FKS/pzXzCqTpQ=;
- b=ebofT1yaZwoAOM5AwnyoZE4hXLOSp/Y866hgntsqeknV4ELK4FothNQ+
- fvJHnWPGBtkfdGp+6d55AejemDK8JZf5Z39jpUp7Jz1naYHgv7RmbMyNi
- XrdNrI37SezrjvmI38lX4Nwp3WonKlmCcG1itqNadvQOosx2YBdY/XuOd
- EQRx4B0XjMTEw7fF+geVwczmpKIiXVaPOLmC++dQiKWnzKMmfnQcNA2L/
- EL0WAGw4glLnnBBJgZAKtOCry5h/qX2C/Z509fTWVZf/m5ndrgLPpsE4b
- 5lIjscshzLZtk5+fJnjdAWRKJRKJTe3gBTC1oKN1qCWcfp52D/Vm7Wa6J w==;
-X-CSE-ConnectionGUID: mLxKLhwaSdq/mH3abDJAKg==
-X-CSE-MsgGUID: p3F/mi5BReGxY1329ADuCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11754"; a="76753684"
-X-IronPort-AV: E=Sophos;i="6.23,171,1770624000"; d="scan'208";a="76753684"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
- by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 10 Apr 2026 06:22:58 -0700
-X-CSE-ConnectionGUID: rWPdWE8ZR3uxmEkjdf2VzA==
-X-CSE-MsgGUID: iOV235NTT9mWt4uhQIRejQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,171,1770624000"; d="scan'208";a="252451169"
-Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by fmviesa001.fm.intel.com with ESMTP; 10 Apr 2026 06:22:56 -0700
-From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v3 29/29] net/ice: use common action checks for ACL
-Date: Fri, 10 Apr 2026 14:22:49 +0100
-Message-ID: <055a4056c74abc8ffcc7152ce9fa39827d3779ba.1775826526.git.anatoly.burakov@intel.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <cover.1775826526.git.anatoly.burakov@intel.com>
- <cover.1775826526.git.anatoly.burakov@intel.com>
-References: 
+	by mails.dpdk.org (Postfix) with ESMTP id 8B4EF4026C;
+	Fri, 10 Apr 2026 16:33:04 +0200 (CEST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com
+ [209.85.218.42]) by mails.dpdk.org (Postfix) with ESMTP id 90149400D5
+ for <dev@dpdk.org>; Fri, 10 Apr 2026 16:33:02 +0200 (CEST)
+Received: by mail-ej1-f42.google.com with SMTP id
+ a640c23a62f3a-b9c3e2cf3c0so332804266b.1
+ for <dev@dpdk.org>; Fri, 10 Apr 2026 07:33:02 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1775831582; cv=none;
+ d=google.com; s=arc-20240605;
+ b=KrpQphKW3gqg5Nd7QPGIDp+S+Xo98najEc461TzHQZo4IOkVw67l+yJUUHXMnz2d5J
+ qbgEX4souwNX+invoOGmOCbr7tTlvwH+CP12CLPJ4lzgIiUVw0wxkuNENGm8rVgK47Mb
+ miPaZSpkcuTWVPfm2qCnEm2o9dEIW1MbNhS20ciEQ832cQsevhbudTqm2kvgimd+NC/p
+ EaQP5nbwsjGLBDstVUZukSH8q1HWtYpqrPbR/vhWoBm6IS2/rQ3Z3t/amYVbkqURIw/u
+ elM56UBe4nxsVMWIq8B8+V8Y3gwBYX/cahQZcyL6zNj5K8Ziu0Yn8YQNSrGf190ulHAu
+ 9b4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=tj1tM0NVwE453nitbneVMAo6mbpNDIgQdk67MWPc6TU=;
+ fh=52L7fDMUwbOnuICi8WLVtxJFOcvT3+vZov9tofBOVeY=;
+ b=gBJiL2ILdC1KLFSUN4/qE4tCDEsn1IH2rFigo9FffAqdtMhpbTOo8zXtmkoIhb7rT1
+ pTtL1TGwnfl4iWTVfJr8BPgUnpM1MIrHYSFi5x7GBGAh9Dx64Ilb5SYbKRqL6qBtfEa9
+ fFzmtMJXJVWYPawp74U+VJd5tDEslXEfknel8sXxYe7YBNxlANg2kQ28eP7eznubF8rz
+ yTuLKABISxASDQshgYVeRUDKCk5Rz6rN4rbujYT+lq0CPo249s0Y+jWKFuUHWh3IkC7F
+ iIkROuT4/8ZxOWQy9m4H6thXb0l/a8GfDhZ92hdVpccsK0TK2bYy52MxbXScHJMdRH3Q
+ bGkQ==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1775831582; x=1776436382; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=tj1tM0NVwE453nitbneVMAo6mbpNDIgQdk67MWPc6TU=;
+ b=jkrwmrhZIpJSyPkwTArf0MqgZXocasSBap4d0XhOIVHg3QqZKF3nNdNjS8lQaUqcmf
+ bd/fU/PA6r4FN0Di3E1Mn1CuiiczD/ZAhjKOqt9RiPCdrC/XDsM9fgb4/aqwiEHbaMlN
+ HD4T2m46TRSSDvYtbbAM5levXzNpzwHhX+nzk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1775831582; x=1776436382;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=tj1tM0NVwE453nitbneVMAo6mbpNDIgQdk67MWPc6TU=;
+ b=H++RhOZ+PtlGsegeivbjeZJyZfIlN6ME0wVUqF5kb4Pc2Hr3MmiX5SBmqvjEt8x93q
+ /2inbS/xORKUs3y4XGOGKSb2W5zYjgxXeFazPsc+a2y8Ro1fwpx7nCeSHxXivixaNwd9
+ VvrEN4I3fkP35ekJuZfAA9SH/mvpJxLMbtKFnW3j5yYiRY2wOvfgs/yy4D0VlRSdm/F0
+ s8twfWo7vMLhgYMBp17Fb4AFKVnGCbaZhdlP1vI7zSFPKP1KCk3DVEqaSq0LKhN0cjME
+ 10MzfKPVozAQ3hgOBoBYQJRwkq7hnhb8jQZmesBDu/kO7eDanrG631ecL1DHBTrUO9/7
+ YyAA==
+X-Forwarded-Encrypted: i=1;
+ AJvYcCUkfdKfdBAYXozbw5ME6seOqwclMpKlBpVNlYopkxoe3I6YftRp3aHOY7HFa60bmvRgRRE=@dpdk.org
+X-Gm-Message-State: AOJu0YwBsOeKFToo7DQ0fV6TjImL3942gpvaRrBSdDQSa+xWRRK/bBX7
+ +PM5i4FXSSkmSa7DtYaB+8QIMw7lkivGfJJCW1eOt84X7kMbnbRwm0HcaUpnWdTIZjteVHXOp5d
+ 139v2GlC7jTMqQPafv/M0UXqPkHXKWGeiau1PWFpprA==
+X-Gm-Gg: AeBDievowo78BqgXNDsUohTuZbmMUBqyqTXhqB8azI1herblHbWotmGypxD/dzeUpbF
+ YdSI47G88eDImzk8GeWlO9c5mSZzIDrDN3HgMmQx+pu7tIgb6VgC5nOJNtFVraf79598jIyA5As
+ iISNL05jU+xiBSRQp6fli6idO1UFEYfkYIY8X0adXLgS9g7rHNWJUGpnUn3+A9CNzpvUKfB+8re
+ aPaN5bKuPdv4CEKAe1/PoT82ZcfRCywh3PoUw46EtsnoYUSdEe8BZQYCryaHwRAl7Q+5kqeNuTq
+ F04H5zQ+gjclOffVNq6/ypaVyQ34svAo7Efg5KQf
+X-Received: by 2002:a17:907:3e8a:b0:b9c:1a5:acb4 with SMTP id
+ a640c23a62f3a-b9d72832198mr196526166b.45.1775831581827; Fri, 10 Apr 2026
+ 07:33:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260225182616.71972-1-abailey@iol.unh.edu>
+ <20260312185330.226227-1-abailey@iol.unh.edu>
+In-Reply-To: <20260312185330.226227-1-abailey@iol.unh.edu>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Fri, 10 Apr 2026 10:32:50 -0400
+X-Gm-Features: AQROBzA6dSxPnZ4xQxY4AoNDH8xn5q2GolzRwS7jKr6r5LBVCKbspjnwu4O96Wg
+Message-ID: <CABJ3N2W68R3A-osKBAUG0KOJLsy_zeWkVySK3eutZNUh6mzXUQ@mail.gmail.com>
+Subject: Re: [PATCH v8] dts: port speed capabilities test suite to next DTS
+To: probb@iol.unh.edu
+Cc: dmarx@iol.unh.edu, luca.vizzarro@arm.com, dev@dpdk.org
+Content-Type: multipart/alternative; boundary="0000000000009db17b064f1c029c"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,198 +92,19 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+--0000000000009db17b064f1c029c
+Content-Type: text/plain; charset="UTF-8"
 
-Use the common flow action checking parsing infrastructure for checking
-flow actions for ACL filter.
+This is a simple update indicating the status of this patch.
 
-Signed-off-by: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
----
- drivers/net/intel/ice/ice_acl_filter.c | 143 +++++++++++++++----------
- 1 file changed, 84 insertions(+), 59 deletions(-)
+This patch is in its final version, awaiting review to be merged.
 
-diff --git a/drivers/net/intel/ice/ice_acl_filter.c b/drivers/net/intel/ice/ice_acl_filter.c
-index 0421578b32..90fd3c2c05 100644
---- a/drivers/net/intel/ice/ice_acl_filter.c
-+++ b/drivers/net/intel/ice/ice_acl_filter.c
-@@ -645,60 +645,6 @@ ice_acl_filter_free(struct rte_flow *flow)
- 	flow->rule = NULL;
- }
- 
--static int
--ice_acl_parse_action(__rte_unused struct ice_adapter *ad,
--		     const struct rte_flow_action actions[],
--		     struct rte_flow_error *error,
--		     struct ice_acl_conf *filter)
--{
--	struct ice_pf *pf = &ad->pf;
--	const struct rte_flow_action_queue *act_q;
--	uint32_t dest_num = 0;
--
--	for (; actions->type != RTE_FLOW_ACTION_TYPE_END; actions++) {
--		switch (actions->type) {
--		case RTE_FLOW_ACTION_TYPE_VOID:
--			break;
--		case RTE_FLOW_ACTION_TYPE_DROP:
--			dest_num++;
--
--			filter->input.dest_ctl =
--				ICE_FLTR_PRGM_DESC_DEST_DROP_PKT;
--			break;
--		case RTE_FLOW_ACTION_TYPE_QUEUE:
--			dest_num++;
--
--			act_q = actions->conf;
--			filter->input.q_index = act_q->index;
--			if (filter->input.q_index >=
--					pf->dev_data->nb_rx_queues) {
--				rte_flow_error_set(error, EINVAL,
--						   RTE_FLOW_ERROR_TYPE_ACTION,
--						   actions,
--						   "Invalid queue for FDIR.");
--				return -rte_errno;
--			}
--			filter->input.dest_ctl =
--				ICE_FLTR_PRGM_DESC_DEST_DIRECT_PKT_QINDEX;
--			break;
--		default:
--			rte_flow_error_set(error, EINVAL,
--				   RTE_FLOW_ERROR_TYPE_ACTION, actions,
--				   "Invalid action.");
--			return -rte_errno;
--		}
--	}
--
--	if (dest_num == 0 || dest_num >= 2) {
--		rte_flow_error_set(error, EINVAL,
--			   RTE_FLOW_ERROR_TYPE_ACTION, actions,
--			   "Unsupported action combination");
--		return -rte_errno;
--	}
--
--	return 0;
--}
--
- static int
- ice_acl_parse_pattern(__rte_unused struct ice_adapter *ad,
- 		       const struct rte_flow_item pattern[],
-@@ -966,6 +912,69 @@ ice_acl_parse_pattern(__rte_unused struct ice_adapter *ad,
- 	return 0;
- }
- 
-+static int
-+ice_acl_parse_action(const struct ci_flow_actions *actions,
-+		struct ice_acl_conf *filter,
-+		struct rte_flow_error *error)
-+{
-+	const struct rte_flow_action *act = actions->actions[0];
-+
-+	switch (act->type) {
-+	case RTE_FLOW_ACTION_TYPE_DROP:
-+		filter->input.dest_ctl =
-+			ICE_FLTR_PRGM_DESC_DEST_DROP_PKT;
-+		break;
-+	case RTE_FLOW_ACTION_TYPE_QUEUE:
-+	{
-+		const struct rte_flow_action_queue *act_q = act->conf;
-+
-+		filter->input.q_index = act_q->index;
-+		filter->input.dest_ctl =
-+			ICE_FLTR_PRGM_DESC_DEST_DIRECT_PKT_QINDEX;
-+		break;
-+	}
-+	default:
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, act,
-+				"Invalid action.");
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+ice_acl_parse_action_check(const struct ci_flow_actions *actions,
-+		const struct ci_flow_actions_check_param *param,
-+		struct rte_flow_error *error)
-+{
-+	struct ice_adapter *ad = param->driver_ctx;
-+	struct ice_pf *pf = &ad->pf;
-+	const struct rte_flow_action *act = actions->actions[0];
-+
-+	switch (act->type) {
-+	case RTE_FLOW_ACTION_TYPE_DROP:
-+		break;
-+	case RTE_FLOW_ACTION_TYPE_QUEUE:
-+	{
-+		const struct rte_flow_action_queue *act_q = act->conf;
-+
-+		if (act_q->index >= pf->dev_data->nb_rx_queues) {
-+			return rte_flow_error_set(error, EINVAL,
-+					RTE_FLOW_ERROR_TYPE_ACTION, act,
-+					"Invalid queue for ACL.");
-+		}
-+		break;
-+	}
-+	default:
-+		/* shouldn't happen */
-+		return rte_flow_error_set(error, EINVAL,
-+				RTE_FLOW_ERROR_TYPE_ACTION, act,
-+				"Invalid action.");
-+	}
-+
-+	return 0;
-+}
-+
- static int
- ice_acl_parse(struct ice_adapter *ad,
- 	       struct ice_pattern_match_item *array,
-@@ -976,17 +985,33 @@ ice_acl_parse(struct ice_adapter *ad,
- 	       void **meta,
- 	       struct rte_flow_error *error)
- {
-+	struct ci_flow_actions parsed_actions = {0};
-+	struct ci_flow_actions_check_param param = {
-+		.allowed_types = (enum rte_flow_action_type[]){
-+			RTE_FLOW_ACTION_TYPE_DROP,
-+			RTE_FLOW_ACTION_TYPE_QUEUE,
-+			RTE_FLOW_ACTION_TYPE_END
-+		},
-+		.max_actions = 1,
-+		.check = ice_acl_parse_action_check,
-+		.driver_ctx = ad,
-+	};
- 	struct ice_pf *pf = &ad->pf;
- 	struct ice_acl_conf *filter = &pf->acl.conf;
- 	struct ice_pattern_match_item *item = NULL;
- 	uint64_t input_set;
- 	int ret;
- 
--	ret = ci_flow_check_attr(attr, NULL, error);
--	if (ret)
--		return ret;
--
- 	memset(filter, 0, sizeof(*filter));
-+
-+	ret = ci_flow_check_attr(attr, NULL, error);
-+	if (ret)
-+		return ret;
-+
-+	ret = ci_flow_check_actions(actions, &param, &parsed_actions, error);
-+	if (ret)
-+		return ret;
-+
- 	item = ice_search_pattern_match_item(ad, pattern, array, array_len,
- 					     error);
- 	if (!item)
-@@ -1005,7 +1030,7 @@ ice_acl_parse(struct ice_adapter *ad,
- 		goto error;
- 	}
- 
--	ret = ice_acl_parse_action(ad, actions, error, filter);
-+	ret = ice_acl_parse_action(&parsed_actions, filter, error);
- 	if (ret)
- 		goto error;
- 
--- 
-2.47.3
+--0000000000009db17b064f1c029c
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+<div dir=3D"ltr">This is a simple update indicating the status of this patc=
+h.<br><br>This patch is in its final version, awaiting=C2=A0review to be me=
+rged.</div>
+
+--0000000000009db17b064f1c029c--
