@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C2DBF45A0A
-	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Apr 2026 20:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 318A1F45A0D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 10 Apr 2026 20:16:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 79F434066B;
-	Fri, 10 Apr 2026 22:16:11 +0200 (CEST)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id C5C9140654
- for <dev@dpdk.org>; Fri, 10 Apr 2026 22:16:08 +0200 (CEST)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-488d2079582so21591455e9.2
- for <dev@dpdk.org>; Fri, 10 Apr 2026 13:16:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A92E740650;
+	Fri, 10 Apr 2026 22:16:09 +0200 (CEST)
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com
+ [209.85.128.42]) by mails.dpdk.org (Postfix) with ESMTP id 1E5B640649
+ for <dev@dpdk.org>; Fri, 10 Apr 2026 22:16:03 +0200 (CEST)
+Received: by mail-wm1-f42.google.com with SMTP id
+ 5b1f17b1804b1-488a8ca4aadso27933015e9.3
+ for <dev@dpdk.org>; Fri, 10 Apr 2026 13:16:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dyna-nic.com; s=google; t=1775852168; x=1776456968; darn=dpdk.org;
+ d=dyna-nic.com; s=google; t=1775852163; x=1776456963; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=bCQeLMn96eq+tE1onSsVRrT6F1Wv0IVZ6rCB1WS+ZEc=;
- b=yOSDk1N73ajwwoKzu+3R/lVyaX9cxndneEvmCuiLobGI0gru7KNrlgGE/N5L1nkJhv
- 8UgKhU7eBPxT3w6sc91EGoJU0ivFVhPGMkGmbdT0BMt45Kb43dAdgNndpcIiVvNUpaI1
- Hy2kuWG4uTxP4NSAFhFf/5gZNtWBG9Ecb3fFVrRdjn7H5VlsTbJ9RSiREUX6Kdz6vT7s
- SYQVArhLPTYvnwFepyudNuGj1v4kmyyW5CDSlMgzR/naJ0BnZm6XYtx5F4XMAgL3945j
- l2j1H6f8lUuU5VyXtt4quDivvfpvQoSRlI7FMo5p+0yI6lHed2SFTTuYXE7NyJzRodqN
- eWUw==
+ bh=2MPtw4FYPh9i+F0deMNfUtc+qWVbgquv5x/yQqZTpRE=;
+ b=JEEVYu5KdCouHrck1lsFr3GfB7gtSgU33/yzkUapmkeUPAGa6XKFeHsKBUasbJFcO1
+ OfoKp6Pu9pIRBHtAlhZcjIhI4uZj0sbD9CFqz85I6F2WWVd4v1ielEKsBv7SZaMPKkYJ
+ lGAQf94qiyf3hxMo7tOf88ETEeaoVTRpLqpd+yL8BFydP63MHhO4ZmEw7U4/jkY+qe5s
+ C8g4ZfM1x/NSOyuJkHu6xJpyr4kLCFJW22ekQadyRswMyPRHWkYCaXetY3oc5Jzcckd0
+ QrBacQH+jGb6q60nZmzZ9ChyoZcHkYNTFw1qCIlighIkMwVPbGFtA1J5Ik9qSwpL5E5P
+ bYqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1775852168; x=1776456968;
+ d=1e100.net; s=20251104; t=1775852163; x=1776456963;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=bCQeLMn96eq+tE1onSsVRrT6F1Wv0IVZ6rCB1WS+ZEc=;
- b=BYk1YcdIvTzOPWtkQ0ZrFbA9NZBSUeqWpJ5zTMUHzyH3GjerVUKALzK9IMbUfaYhO/
- zecpYq49n5JsZ3Udje9MvWpMh312ObDRbm8BJT5vfN1gNK/ZQ2LFQQXEf+LmRtmEsnnS
- EP4Z5k/0aLwPeeiThkRFQDrEHNIeiltKPqoKQ31o0/6fp6Mgn/hyKsdcxAjT+Q4umQBA
- IEkssM5sLAhDAPLOt2BS3vtg1VRcCxFbPTjs812mTX1Fjl4OsaXQVK6Iy6s8Hy1Q/+kV
- sre0hKjuA/Yw5Wlb8n67gH9XrTpYa1tHzTCZTJ+Xx3Li4uP9EUfr4l4MczNsAbrkbXu0
- +D6w==
-X-Gm-Message-State: AOJu0YyhGIXtGcxbtmIVISK9/tQNKZnaxuB7o6spYknbidq5VsaUSMW0
- 2d/YDv6zpWYURL9rBb02xoNWi3dLbiPE4rDs066SDbtPSsdrBv96KjP2Lv+JUH3lFKQ=
-X-Gm-Gg: AeBDieuUL4zL2ih1pQJzaAcbbrKTfTZK2kAdnM2J2wUP/3Ne16R/zbSKsQxfPZesZhe
- L/Bmoo19Z8J2XupHO1/jCuJvNaBIX8twsBAWRotEQF0o8mOh02CI/YuYfz6if/IVQ2v6b7lMl9E
- obvIbNKOVoWANcDpUIZLb3U8UrSjkQFgBu5q1XVNSlG4qPEVHvsgS+CM5T6yP/ix4ZbxEb41jWS
- 6SYZ1TmVGIJ3fjJP5L71JR3cJUIxi6cz1VIL0XyenflnJm5vqyRvBw9qYdcdQBhuwF1C6kVzh1I
- SGE4Z7iB0ZPhJaQE2CHIMdG4vf0oq4WKinmh9vJ4Dr+kHvr0aREGB/CoUH5FSkRTwvXW+sYKvNu
- 0g4O9xG11XQ6RuxPF1Ntp1InzTGuTt3x7jLhWHAgZK2u1dvixtvDSa+4rXbUaubP5Fgi5LTpjci
- zY0MXkFS5HFN944il8G4SoF52+qMexjZyUuDh/8hgiJ0AJn14XuyEIktanyEY5zBQ=
-X-Received: by 2002:a05:600c:3f0d:b0:485:40fd:8390 with SMTP id
- 5b1f17b1804b1-488d68769f9mr53664775e9.26.1775852167750; 
- Fri, 10 Apr 2026 13:16:07 -0700 (PDT)
+ bh=2MPtw4FYPh9i+F0deMNfUtc+qWVbgquv5x/yQqZTpRE=;
+ b=ZtPjxu4Ij3eEf02hFzsBTQLSGYvK7Gy24PODUyUvQXCRqruu4ngWgHThzpO6DNL9IR
+ 9KwTo32YwnpgmWI8cRGTuEAf8xMIoH+VN3YahQgWxEk1TOXaTKPwWldNJxyhywaq0qB2
+ kuZU1BeoebXocm8cz5KVikXrLbFSY1FVDlqHVrnLwkVnCgjbDHHPQ0UYIBwic/eRk+uP
+ lXht/Mi6ASsViThUSSQOzVrUuAeCkPIp1tgOcoOu6x9R1x3dk4MSyk/wQKNd/kJ7sx86
+ o2MFOgO7JxnK35knr2nvHJIqM6dL9GxQJGfwK+VMWWc2C5ZPTQJ6lf8te8FOvff9P4n7
+ KKUg==
+X-Gm-Message-State: AOJu0YynOdBQ/xEvDqw9EIveEpEifWGrQS+IuZq/p1u5qFt1PoTarDzu
+ mrIVNgdZyGYDGHqP/Dx+RwOSJ7FXad9XbmzjwAh7DJbZCZr7R13fbLpCxyXRRUTO1jM=
+X-Gm-Gg: AeBDiev8fkT1VLs7aoRARQe0CqgaWm7ljkqEnWp4EjrKc0xPv2mci15XqNCmaWzPcrM
+ irsjj4xVrzsAdPsZWEHnLktjZcfiYIHEeZjb5aFbfHXViN/l4fkSR3KXtvet/eT4sftkP15+Pnx
+ tOhUrgRPUO1h0RHUE1/gv9VPe1G22EWhiRI4MYljDLGpwNKOHkC4bXZZ+ivhlzFfVpc/Zq213jq
+ E4qf8TwcoV4dZ+EJURipC/lzOdkxT7K2mSQ64di4L44YUxc+6w90/MQzjrn8Y5p5iLyVSs7nZob
+ O0oG8+6r4gqhY9VIM8jyY88vTL35VIRCoo8L/U6rR+tDmT08qcN7rzrx2ipIqan0O6+Xcf64e9S
+ 1luOZiPIgELUEMaDkb5S6WUQIJPSPyr43n9mX7qynPE0AdImxOiBbpb+wGJNKp2M+Bbq/3ZemTb
+ AeLuHFuTpxzHrTDTIYOOk79rmPB3i2mwCdFWt9UBPkTRh2pNbCvNRao6oZO/Brtto=
+X-Received: by 2002:a05:600c:8b30:b0:488:b14f:b8ed with SMTP id
+ 5b1f17b1804b1-488d6657928mr62030165e9.0.1775852161831; 
+ Fri, 10 Apr 2026 13:16:01 -0700 (PDT)
 Received: from dpdk-test6.liberouter.org (rt-tmc-kou.liberouter.org.
  [195.113.172.126]) by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-488d684406bsm26044405e9.24.2026.04.10.13.16.06
+ 5b1f17b1804b1-488d684406bsm26044405e9.24.2026.04.10.13.15.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 10 Apr 2026 13:16:07 -0700 (PDT)
+ Fri, 10 Apr 2026 13:16:00 -0700 (PDT)
 From: Lukas Sismis <sismis@dyna-nic.com>
 To: orika@nvidia.com
 Cc: dev@dpdk.org, stephen@networkplumber.org, thomas@monjalon.net,
  Lukas Sismis <sismis@dyna-nic.com>
-Subject: [PATCH v11 6/6] test: add flow parser functional tests
-Date: Fri, 10 Apr 2026 22:15:44 +0200
-Message-ID: <396777ba10f689eac04526afbc5896e48309bfb6.1775850858.git.sismis@dyna-nic.com>
+Subject: [PATCH v11 4/6] app/testpmd: use flow parser from ethdev
+Date: Fri, 10 Apr 2026 22:15:42 +0200
+Message-ID: <faae94c419c4f34268608cd1c1f02587bde7172f.1775850858.git.sismis@dyna-nic.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <cover.1775850858.git.sismis@dyna-nic.com>
 References: <cover.1775850858.git.sismis@dyna-nic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -80,1303 +79,16177 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Unit tests covering:
+Replace the embedded flow command parser with the shared parser
+from librte_ethdev.
 
-- Simple API: parse_attr_str, parse_pattern_str,
-  parse_actions_str, parse_flow_rule
-- Cmdline API: rte_flow_parser_parse with flow create,
-  validate, indirect_action, meter, modify_field, queue,
-  and port_id commands
-- Setter APIs: raw_encap/decap set + get round-trip,
-  boundary checks for out-of-range indices
-- Config registration: pointer identity verification
-- Cmdline integration: dynamic token population
+Testpmd owns all configuration storage (encap/decap, raw, ipv6_ext,
+sample slots) and registers it via rte_flow_parser_config_register.
+Parsed flow commands are dispatched to port_flow_* functions.
 
-Simple API tests work without config registration.
+SET commands (raw_encap, raw_decap, sample_actions, ipv6_ext_push,
+ipv6_ext_remove) are handled by testpmd's own cmdline callback,
+which delegates pattern/action item tokenization to the library
+for tab completion.
 
 Signed-off-by: Lukas Sismis <sismis@dyna-nic.com>
 ---
- MAINTAINERS                        |   1 +
- app/test/meson.build               |   2 +
- app/test/test_flow_parser.c        | 791 +++++++++++++++++++++++++++++
- app/test/test_flow_parser_simple.c | 445 ++++++++++++++++
- 4 files changed, 1239 insertions(+)
- create mode 100644 app/test/test_flow_parser.c
- create mode 100644 app/test/test_flow_parser_simple.c
+ MAINTAINERS                    |     1 +
+ app/test-pmd/cmd_flex_item.c   |    47 +-
+ app/test-pmd/cmdline.c         |   249 +-
+ app/test-pmd/cmdline_flow.c    | 14434 -------------------------------
+ app/test-pmd/config.c          |   115 +-
+ app/test-pmd/flow_parser.c     |   288 +
+ app/test-pmd/flow_parser_cli.c |   479 +
+ app/test-pmd/meson.build       |     3 +-
+ app/test-pmd/testpmd.h         |   135 +-
+ 9 files changed, 958 insertions(+), 14793 deletions(-)
+ delete mode 100644 app/test-pmd/cmdline_flow.c
+ create mode 100644 app/test-pmd/flow_parser.c
+ create mode 100644 app/test-pmd/flow_parser_cli.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index fdd841c835..42e3f7674b 100644
+index c4bc6632cc..fdd0555bb4 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -450,6 +450,7 @@ F: app/test-pmd/flow_parser*
+@@ -446,6 +446,7 @@ M: Ori Kam <orika@nvidia.com>
+ T: git://dpdk.org/next/dpdk-next-net
+ F: doc/guides/prog_guide/ethdev/flow_offload.rst
+ F: doc/guides/prog_guide/flow_parser_lib.rst
++F: app/test-pmd/flow_parser*
  F: lib/ethdev/rte_flow*
- F: doc/guides/sample_app_ug/flow_parsing.rst
- F: examples/flow_parsing/
-+F: app/test/test_flow_parser*
  
  Traffic Management API
- M: Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 7d458f9c07..242527516d 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -88,6 +88,8 @@ source_file_deps = {
-     'test_fib6_perf.c': ['fib'],
-     'test_fib_perf.c': ['net', 'fib'],
-     'test_flow_classify.c': ['net', 'acl', 'table', 'ethdev', 'flow_classify'],
-+    'test_flow_parser.c': ['ethdev', 'cmdline'],
-+    'test_flow_parser_simple.c': ['ethdev'],
-     'test_func_reentrancy.c': ['hash', 'lpm'],
-     'test_graph.c': ['graph'],
-     'test_graph_feature_arc.c': ['graph'],
-diff --git a/app/test/test_flow_parser.c b/app/test/test_flow_parser.c
+diff --git a/app/test-pmd/cmd_flex_item.c b/app/test-pmd/cmd_flex_item.c
+index af6c087feb..b355d52135 100644
+--- a/app/test-pmd/cmd_flex_item.c
++++ b/app/test-pmd/cmd_flex_item.c
+@@ -15,6 +15,7 @@
+ #include <cmdline_parse_string.h>
+ #include <cmdline_parse_num.h>
+ #include <rte_flow.h>
++#include <rte_flow_parser_cmdline.h>
+ 
+ #include "testpmd.h"
+ 
+@@ -126,39 +127,47 @@ enum flex_link_type {
+ static int
+ flex_link_item_parse(const char *src, struct rte_flow_item *item)
+ {
+-#define  FLEX_PARSE_DATA_SIZE 1024
+-
+-	int ret;
+-	uint8_t *ptr, data[FLEX_PARSE_DATA_SIZE] = {0,};
++	uint8_t *ptr;
+ 	char flow_rule[256];
+-	struct rte_flow_attr *attr;
+-	struct rte_flow_item *pattern;
+-	struct rte_flow_action *actions;
++	union {
++		uint8_t raw[4096];
++		struct rte_flow_parser_output parsed;
++	} outbuf;
++	struct rte_flow_parser_output *out = &outbuf.parsed;
++	int ret;
+ 
+-	sprintf(flow_rule,
++	ret = snprintf(flow_rule, sizeof(flow_rule),
+ 		"flow create 0 pattern %s / end actions drop / end", src);
+-	src = flow_rule;
+-	ret = flow_parse(src, (void *)data, sizeof(data),
+-			 &attr, &pattern, &actions);
++	if (ret < 0 || ret >= (int)sizeof(flow_rule))
++		return -EINVAL;
++	memset(&outbuf, 0, sizeof(outbuf));
++	ret = rte_flow_parser_parse(flow_rule, out, sizeof(outbuf));
+ 	if (ret)
+ 		return ret;
+-	item->type = pattern->type;
+-	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_MASK, NULL, 0, item, NULL);
+-	if ((ret > 0) && pattern->spec) {
++	if (out->command != RTE_FLOW_PARSER_CMD_CREATE)
++		return -EINVAL;
++
++	if (out->args.vc.pattern == NULL || out->args.vc.pattern_n == 0)
++		return -EINVAL;
++
++	item->type = out->args.vc.pattern[0].type;
++	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ITEM_MASK, NULL, 0,
++			    &out->args.vc.pattern[0], NULL);
++	if ((ret > 0) && out->args.vc.pattern[0].spec) {
+ 		ptr = (void *)(uintptr_t)item->spec;
+-		memcpy(ptr, pattern->spec, ret);
++		memcpy(ptr, out->args.vc.pattern[0].spec, ret);
+ 	} else {
+ 		item->spec = NULL;
+ 	}
+-	if ((ret > 0) && pattern->mask) {
++	if ((ret > 0) && out->args.vc.pattern[0].mask) {
+ 		ptr = (void *)(uintptr_t)item->mask;
+-		memcpy(ptr, pattern->mask, ret);
++		memcpy(ptr, out->args.vc.pattern[0].mask, ret);
+ 	} else {
+ 		item->mask = NULL;
+ 	}
+-	if ((ret > 0) && pattern->last) {
++	if ((ret > 0) && out->args.vc.pattern[0].last) {
+ 		ptr = (void *)(uintptr_t)item->last;
+-		memcpy(ptr, pattern->last, ret);
++		memcpy(ptr, out->args.vc.pattern[0].last, ret);
+ 	} else {
+ 		item->last = NULL;
+ 	}
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index c5abeb5730..a3391ab3e1 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -36,6 +36,7 @@
+ #include <rte_string_fns.h>
+ #include <rte_devargs.h>
+ #include <rte_flow.h>
++#include <rte_flow_parser_cmdline.h>
+ #ifdef RTE_LIB_GRO
+ #include <rte_gro.h>
+ #endif
+@@ -2358,11 +2359,9 @@ cmd_config_rss_parsed(void *parsed_result,
+ 			fprintf(stderr, "flowtype_id should be greater than 0 and less than 64.\n");
+ 			return;
+ 		}
+-	} else if (!strcmp(res->value, "none")) {
+-		rss_conf.rss_hf = 0;
+ 	} else {
+-		rss_conf.rss_hf = str_to_rsstypes(res->value);
+-		if (rss_conf.rss_hf == 0) {
++		if (rte_eth_rss_type_from_str(res->value,
++				&rss_conf.rss_hf) != 0) {
+ 			fprintf(stderr, "Unknown parameter\n");
+ 			return;
+ 		}
+@@ -9522,8 +9521,7 @@ do { \
+ 	} \
+ } while (0)
+ 
+-/* Generic flow interface command. */
+-extern cmdline_parse_inst_t cmd_flow;
++/* Generic flow interface command (declared in testpmd.h). */
+ 
+ /* *** ADD/REMOVE A MULTICAST MAC ADDRESS TO/FROM A PORT *** */
+ struct cmd_mcast_addr_result {
+@@ -10422,6 +10420,8 @@ static void cmd_set_vxlan_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_vxlan_result *res = parsed_result;
++	struct rte_flow_parser_vxlan_encap_conf *vxlan_conf =
++		&testpmd_vxlan_conf;
+ 	union {
+ 		uint32_t vxlan_id;
+ 		uint8_t vni[4];
+@@ -10429,39 +10429,40 @@ static void cmd_set_vxlan_parsed(void *parsed_result,
+ 		.vxlan_id = rte_cpu_to_be_32(res->vni) & RTE_BE32(0x00ffffff),
+ 	};
+ 
+-	vxlan_encap_conf.select_tos_ttl = 0;
++	if (vxlan_conf == NULL)
++		return;
++
++	vxlan_conf->select_tos_ttl = 0;
+ 	if (strcmp(res->vxlan, "vxlan") == 0)
+-		vxlan_encap_conf.select_vlan = 0;
++		vxlan_conf->select_vlan = 0;
+ 	else if (strcmp(res->vxlan, "vxlan-with-vlan") == 0)
+-		vxlan_encap_conf.select_vlan = 1;
++		vxlan_conf->select_vlan = 1;
+ 	else if (strcmp(res->vxlan, "vxlan-tos-ttl") == 0) {
+-		vxlan_encap_conf.select_vlan = 0;
+-		vxlan_encap_conf.select_tos_ttl = 1;
++		vxlan_conf->select_vlan = 0;
++		vxlan_conf->select_tos_ttl = 1;
+ 	}
+ 	if (strcmp(res->ip_version, "ipv4") == 0)
+-		vxlan_encap_conf.select_ipv4 = 1;
++		vxlan_conf->select_ipv4 = 1;
+ 	else if (strcmp(res->ip_version, "ipv6") == 0)
+-		vxlan_encap_conf.select_ipv4 = 0;
++		vxlan_conf->select_ipv4 = 0;
+ 	else
+ 		return;
+-	rte_memcpy(vxlan_encap_conf.vni, &id.vni[1], 3);
+-	vxlan_encap_conf.udp_src = rte_cpu_to_be_16(res->udp_src);
+-	vxlan_encap_conf.udp_dst = rte_cpu_to_be_16(res->udp_dst);
+-	vxlan_encap_conf.ip_tos = res->tos;
+-	vxlan_encap_conf.ip_ttl = res->ttl;
+-	if (vxlan_encap_conf.select_ipv4) {
+-		IPV4_ADDR_TO_UINT(res->ip_src, vxlan_encap_conf.ipv4_src);
+-		IPV4_ADDR_TO_UINT(res->ip_dst, vxlan_encap_conf.ipv4_dst);
++	memcpy(vxlan_conf->vni, &id.vni[1], sizeof(vxlan_conf->vni));
++	vxlan_conf->udp_src = rte_cpu_to_be_16(res->udp_src);
++	vxlan_conf->udp_dst = rte_cpu_to_be_16(res->udp_dst);
++	vxlan_conf->ip_tos = res->tos;
++	vxlan_conf->ip_ttl = res->ttl;
++	if (vxlan_conf->select_ipv4) {
++		IPV4_ADDR_TO_UINT(res->ip_src, vxlan_conf->ipv4_src);
++		IPV4_ADDR_TO_UINT(res->ip_dst, vxlan_conf->ipv4_dst);
+ 	} else {
+-		IPV6_ADDR_TO_ARRAY(res->ip_src, vxlan_encap_conf.ipv6_src);
+-		IPV6_ADDR_TO_ARRAY(res->ip_dst, vxlan_encap_conf.ipv6_dst);
++		IPV6_ADDR_TO_ARRAY(res->ip_src, vxlan_conf->ipv6_src);
++		IPV6_ADDR_TO_ARRAY(res->ip_dst, vxlan_conf->ipv6_dst);
+ 	}
+-	if (vxlan_encap_conf.select_vlan)
+-		vxlan_encap_conf.vlan_tci = rte_cpu_to_be_16(res->tci);
+-	rte_memcpy(vxlan_encap_conf.eth_src, res->eth_src.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
+-	rte_memcpy(vxlan_encap_conf.eth_dst, res->eth_dst.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
++	if (vxlan_conf->select_vlan)
++		vxlan_conf->vlan_tci = rte_cpu_to_be_16(res->tci);
++	rte_ether_addr_copy(&res->eth_src, &vxlan_conf->eth_src);
++	rte_ether_addr_copy(&res->eth_dst, &vxlan_conf->eth_dst);
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_vxlan = {
+@@ -10622,6 +10623,8 @@ static void cmd_set_nvgre_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_nvgre_result *res = parsed_result;
++	struct rte_flow_parser_nvgre_encap_conf *nvgre_conf =
++		&testpmd_nvgre_conf;
+ 	union {
+ 		uint32_t nvgre_tni;
+ 		uint8_t tni[4];
+@@ -10629,30 +10632,31 @@ static void cmd_set_nvgre_parsed(void *parsed_result,
+ 		.nvgre_tni = rte_cpu_to_be_32(res->tni) & RTE_BE32(0x00ffffff),
+ 	};
+ 
++	if (nvgre_conf == NULL)
++		return;
++
+ 	if (strcmp(res->nvgre, "nvgre") == 0)
+-		nvgre_encap_conf.select_vlan = 0;
++		nvgre_conf->select_vlan = 0;
+ 	else if (strcmp(res->nvgre, "nvgre-with-vlan") == 0)
+-		nvgre_encap_conf.select_vlan = 1;
++		nvgre_conf->select_vlan = 1;
+ 	if (strcmp(res->ip_version, "ipv4") == 0)
+-		nvgre_encap_conf.select_ipv4 = 1;
++		nvgre_conf->select_ipv4 = 1;
+ 	else if (strcmp(res->ip_version, "ipv6") == 0)
+-		nvgre_encap_conf.select_ipv4 = 0;
++		nvgre_conf->select_ipv4 = 0;
+ 	else
+ 		return;
+-	rte_memcpy(nvgre_encap_conf.tni, &id.tni[1], 3);
+-	if (nvgre_encap_conf.select_ipv4) {
+-		IPV4_ADDR_TO_UINT(res->ip_src, nvgre_encap_conf.ipv4_src);
+-		IPV4_ADDR_TO_UINT(res->ip_dst, nvgre_encap_conf.ipv4_dst);
++	memcpy(nvgre_conf->tni, &id.tni[1], sizeof(nvgre_conf->tni));
++	if (nvgre_conf->select_ipv4) {
++		IPV4_ADDR_TO_UINT(res->ip_src, nvgre_conf->ipv4_src);
++		IPV4_ADDR_TO_UINT(res->ip_dst, nvgre_conf->ipv4_dst);
+ 	} else {
+-		IPV6_ADDR_TO_ARRAY(res->ip_src, nvgre_encap_conf.ipv6_src);
+-		IPV6_ADDR_TO_ARRAY(res->ip_dst, nvgre_encap_conf.ipv6_dst);
++		IPV6_ADDR_TO_ARRAY(res->ip_src, nvgre_conf->ipv6_src);
++		IPV6_ADDR_TO_ARRAY(res->ip_dst, nvgre_conf->ipv6_dst);
+ 	}
+-	if (nvgre_encap_conf.select_vlan)
+-		nvgre_encap_conf.vlan_tci = rte_cpu_to_be_16(res->tci);
+-	rte_memcpy(nvgre_encap_conf.eth_src, res->eth_src.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
+-	rte_memcpy(nvgre_encap_conf.eth_dst, res->eth_dst.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
++	if (nvgre_conf->select_vlan)
++		nvgre_conf->vlan_tci = rte_cpu_to_be_16(res->tci);
++	rte_ether_addr_copy(&res->eth_src, &nvgre_conf->eth_src);
++	rte_ether_addr_copy(&res->eth_dst, &nvgre_conf->eth_dst);
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_nvgre = {
+@@ -10753,23 +10757,23 @@ static void cmd_set_l2_encap_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_l2_encap_result *res = parsed_result;
++	struct rte_flow_parser_l2_encap_conf *l2_conf =
++		&testpmd_l2_encap_conf;
+ 
+ 	if (strcmp(res->l2_encap, "l2_encap") == 0)
+-		l2_encap_conf.select_vlan = 0;
++		l2_conf->select_vlan = 0;
+ 	else if (strcmp(res->l2_encap, "l2_encap-with-vlan") == 0)
+-		l2_encap_conf.select_vlan = 1;
++		l2_conf->select_vlan = 1;
+ 	if (strcmp(res->ip_version, "ipv4") == 0)
+-		l2_encap_conf.select_ipv4 = 1;
++		l2_conf->select_ipv4 = 1;
+ 	else if (strcmp(res->ip_version, "ipv6") == 0)
+-		l2_encap_conf.select_ipv4 = 0;
++		l2_conf->select_ipv4 = 0;
+ 	else
+ 		return;
+-	if (l2_encap_conf.select_vlan)
+-		l2_encap_conf.vlan_tci = rte_cpu_to_be_16(res->tci);
+-	rte_memcpy(l2_encap_conf.eth_src, res->eth_src.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
+-	rte_memcpy(l2_encap_conf.eth_dst, res->eth_dst.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
++	if (l2_conf->select_vlan)
++		l2_conf->vlan_tci = rte_cpu_to_be_16(res->tci);
++	rte_ether_addr_copy(&res->eth_src, &l2_conf->eth_src);
++	rte_ether_addr_copy(&res->eth_dst, &l2_conf->eth_dst);
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_l2_encap = {
+@@ -10832,11 +10836,13 @@ static void cmd_set_l2_decap_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_l2_decap_result *res = parsed_result;
++	struct rte_flow_parser_l2_decap_conf *l2_conf =
++		&testpmd_l2_decap_conf;
+ 
+ 	if (strcmp(res->l2_decap, "l2_decap") == 0)
+-		l2_decap_conf.select_vlan = 0;
++		l2_conf->select_vlan = 0;
+ 	else if (strcmp(res->l2_decap, "l2_decap-with-vlan") == 0)
+-		l2_decap_conf.select_vlan = 1;
++		l2_conf->select_vlan = 1;
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_l2_decap = {
+@@ -10931,6 +10937,8 @@ static void cmd_set_mplsogre_encap_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_mplsogre_encap_result *res = parsed_result;
++	struct rte_flow_parser_mplsogre_encap_conf *mplsogre_conf =
++		&testpmd_mplsogre_encap_conf;
+ 	union {
+ 		uint32_t mplsogre_label;
+ 		uint8_t label[4];
+@@ -10939,29 +10947,27 @@ static void cmd_set_mplsogre_encap_parsed(void *parsed_result,
+ 	};
+ 
+ 	if (strcmp(res->mplsogre, "mplsogre_encap") == 0)
+-		mplsogre_encap_conf.select_vlan = 0;
++		mplsogre_conf->select_vlan = 0;
+ 	else if (strcmp(res->mplsogre, "mplsogre_encap-with-vlan") == 0)
+-		mplsogre_encap_conf.select_vlan = 1;
++		mplsogre_conf->select_vlan = 1;
+ 	if (strcmp(res->ip_version, "ipv4") == 0)
+-		mplsogre_encap_conf.select_ipv4 = 1;
++		mplsogre_conf->select_ipv4 = 1;
+ 	else if (strcmp(res->ip_version, "ipv6") == 0)
+-		mplsogre_encap_conf.select_ipv4 = 0;
++		mplsogre_conf->select_ipv4 = 0;
+ 	else
+ 		return;
+-	rte_memcpy(mplsogre_encap_conf.label, &id.label, 3);
+-	if (mplsogre_encap_conf.select_ipv4) {
+-		IPV4_ADDR_TO_UINT(res->ip_src, mplsogre_encap_conf.ipv4_src);
+-		IPV4_ADDR_TO_UINT(res->ip_dst, mplsogre_encap_conf.ipv4_dst);
++	memcpy(mplsogre_conf->label, &id.label, sizeof(mplsogre_conf->label));
++	if (mplsogre_conf->select_ipv4) {
++		IPV4_ADDR_TO_UINT(res->ip_src, mplsogre_conf->ipv4_src);
++		IPV4_ADDR_TO_UINT(res->ip_dst, mplsogre_conf->ipv4_dst);
+ 	} else {
+-		IPV6_ADDR_TO_ARRAY(res->ip_src, mplsogre_encap_conf.ipv6_src);
+-		IPV6_ADDR_TO_ARRAY(res->ip_dst, mplsogre_encap_conf.ipv6_dst);
++		IPV6_ADDR_TO_ARRAY(res->ip_src, mplsogre_conf->ipv6_src);
++		IPV6_ADDR_TO_ARRAY(res->ip_dst, mplsogre_conf->ipv6_dst);
+ 	}
+-	if (mplsogre_encap_conf.select_vlan)
+-		mplsogre_encap_conf.vlan_tci = rte_cpu_to_be_16(res->tci);
+-	rte_memcpy(mplsogre_encap_conf.eth_src, res->eth_src.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
+-	rte_memcpy(mplsogre_encap_conf.eth_dst, res->eth_dst.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
++	if (mplsogre_conf->select_vlan)
++		mplsogre_conf->vlan_tci = rte_cpu_to_be_16(res->tci);
++	rte_ether_addr_copy(&res->eth_src, &mplsogre_conf->eth_src);
++	rte_ether_addr_copy(&res->eth_dst, &mplsogre_conf->eth_dst);
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_mplsogre_encap = {
+@@ -11046,15 +11052,17 @@ static void cmd_set_mplsogre_decap_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_mplsogre_decap_result *res = parsed_result;
++	struct rte_flow_parser_mplsogre_decap_conf *mplsogre_conf =
++		&testpmd_mplsogre_decap_conf;
+ 
+ 	if (strcmp(res->mplsogre, "mplsogre_decap") == 0)
+-		mplsogre_decap_conf.select_vlan = 0;
++		mplsogre_conf->select_vlan = 0;
+ 	else if (strcmp(res->mplsogre, "mplsogre_decap-with-vlan") == 0)
+-		mplsogre_decap_conf.select_vlan = 1;
++		mplsogre_conf->select_vlan = 1;
+ 	if (strcmp(res->ip_version, "ipv4") == 0)
+-		mplsogre_decap_conf.select_ipv4 = 1;
++		mplsogre_conf->select_ipv4 = 1;
+ 	else if (strcmp(res->ip_version, "ipv6") == 0)
+-		mplsogre_decap_conf.select_ipv4 = 0;
++		mplsogre_conf->select_ipv4 = 0;
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_mplsogre_decap = {
+@@ -11167,6 +11175,8 @@ static void cmd_set_mplsoudp_encap_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_mplsoudp_encap_result *res = parsed_result;
++	struct rte_flow_parser_mplsoudp_encap_conf *mplsoudp_conf =
++		&testpmd_mplsoudp_encap_conf;
+ 	union {
+ 		uint32_t mplsoudp_label;
+ 		uint8_t label[4];
+@@ -11175,31 +11185,29 @@ static void cmd_set_mplsoudp_encap_parsed(void *parsed_result,
+ 	};
+ 
+ 	if (strcmp(res->mplsoudp, "mplsoudp_encap") == 0)
+-		mplsoudp_encap_conf.select_vlan = 0;
++		mplsoudp_conf->select_vlan = 0;
+ 	else if (strcmp(res->mplsoudp, "mplsoudp_encap-with-vlan") == 0)
+-		mplsoudp_encap_conf.select_vlan = 1;
++		mplsoudp_conf->select_vlan = 1;
+ 	if (strcmp(res->ip_version, "ipv4") == 0)
+-		mplsoudp_encap_conf.select_ipv4 = 1;
++		mplsoudp_conf->select_ipv4 = 1;
+ 	else if (strcmp(res->ip_version, "ipv6") == 0)
+-		mplsoudp_encap_conf.select_ipv4 = 0;
++		mplsoudp_conf->select_ipv4 = 0;
+ 	else
+ 		return;
+-	rte_memcpy(mplsoudp_encap_conf.label, &id.label, 3);
+-	mplsoudp_encap_conf.udp_src = rte_cpu_to_be_16(res->udp_src);
+-	mplsoudp_encap_conf.udp_dst = rte_cpu_to_be_16(res->udp_dst);
+-	if (mplsoudp_encap_conf.select_ipv4) {
+-		IPV4_ADDR_TO_UINT(res->ip_src, mplsoudp_encap_conf.ipv4_src);
+-		IPV4_ADDR_TO_UINT(res->ip_dst, mplsoudp_encap_conf.ipv4_dst);
++	memcpy(mplsoudp_conf->label, &id.label, sizeof(mplsoudp_conf->label));
++	mplsoudp_conf->udp_src = rte_cpu_to_be_16(res->udp_src);
++	mplsoudp_conf->udp_dst = rte_cpu_to_be_16(res->udp_dst);
++	if (mplsoudp_conf->select_ipv4) {
++		IPV4_ADDR_TO_UINT(res->ip_src, mplsoudp_conf->ipv4_src);
++		IPV4_ADDR_TO_UINT(res->ip_dst, mplsoudp_conf->ipv4_dst);
+ 	} else {
+-		IPV6_ADDR_TO_ARRAY(res->ip_src, mplsoudp_encap_conf.ipv6_src);
+-		IPV6_ADDR_TO_ARRAY(res->ip_dst, mplsoudp_encap_conf.ipv6_dst);
++		IPV6_ADDR_TO_ARRAY(res->ip_src, mplsoudp_conf->ipv6_src);
++		IPV6_ADDR_TO_ARRAY(res->ip_dst, mplsoudp_conf->ipv6_dst);
+ 	}
+-	if (mplsoudp_encap_conf.select_vlan)
+-		mplsoudp_encap_conf.vlan_tci = rte_cpu_to_be_16(res->tci);
+-	rte_memcpy(mplsoudp_encap_conf.eth_src, res->eth_src.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
+-	rte_memcpy(mplsoudp_encap_conf.eth_dst, res->eth_dst.addr_bytes,
+-		   RTE_ETHER_ADDR_LEN);
++	if (mplsoudp_conf->select_vlan)
++		mplsoudp_conf->vlan_tci = rte_cpu_to_be_16(res->tci);
++	rte_ether_addr_copy(&res->eth_src, &mplsoudp_conf->eth_src);
++	rte_ether_addr_copy(&res->eth_dst, &mplsoudp_conf->eth_dst);
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_mplsoudp_encap = {
+@@ -11293,15 +11301,17 @@ static void cmd_set_mplsoudp_decap_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_mplsoudp_decap_result *res = parsed_result;
++	struct rte_flow_parser_mplsoudp_decap_conf *mplsoudp_conf =
++		&testpmd_mplsoudp_decap_conf;
+ 
+ 	if (strcmp(res->mplsoudp, "mplsoudp_decap") == 0)
+-		mplsoudp_decap_conf.select_vlan = 0;
++		mplsoudp_conf->select_vlan = 0;
+ 	else if (strcmp(res->mplsoudp, "mplsoudp_decap-with-vlan") == 0)
+-		mplsoudp_decap_conf.select_vlan = 1;
++		mplsoudp_conf->select_vlan = 1;
+ 	if (strcmp(res->ip_version, "ipv4") == 0)
+-		mplsoudp_decap_conf.select_ipv4 = 1;
++		mplsoudp_conf->select_ipv4 = 1;
+ 	else if (strcmp(res->ip_version, "ipv6") == 0)
+-		mplsoudp_decap_conf.select_ipv4 = 0;
++		mplsoudp_conf->select_ipv4 = 0;
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_mplsoudp_decap = {
+@@ -11480,25 +11490,26 @@ static void cmd_set_conntrack_common_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_conntrack_common_result *res = parsed_result;
++	struct rte_flow_action_conntrack *ct = &testpmd_conntrack;
+ 
+ 	/* No need to swap to big endian. */
+-	conntrack_context.peer_port = res->peer_port;
+-	conntrack_context.is_original_dir = res->is_original;
+-	conntrack_context.enable = res->en;
+-	conntrack_context.live_connection = res->is_live;
+-	conntrack_context.selective_ack = res->s_ack;
+-	conntrack_context.challenge_ack_passed = res->c_ack;
+-	conntrack_context.last_direction = res->ld;
+-	conntrack_context.liberal_mode = res->lb;
+-	conntrack_context.state = (enum rte_flow_conntrack_state)res->stat;
+-	conntrack_context.max_ack_window = res->factor;
+-	conntrack_context.retransmission_limit = res->re_num;
+-	conntrack_context.last_window = res->lw;
+-	conntrack_context.last_index =
++	ct->peer_port = res->peer_port;
++	ct->is_original_dir = res->is_original;
++	ct->enable = res->en;
++	ct->live_connection = res->is_live;
++	ct->selective_ack = res->s_ack;
++	ct->challenge_ack_passed = res->c_ack;
++	ct->last_direction = res->ld;
++	ct->liberal_mode = res->lb;
++	ct->state = (enum rte_flow_conntrack_state)res->stat;
++	ct->max_ack_window = res->factor;
++	ct->retransmission_limit = res->re_num;
++	ct->last_window = res->lw;
++	ct->last_index =
+ 		(enum rte_flow_conntrack_tcp_last_index)res->li;
+-	conntrack_context.last_seq = res->ls;
+-	conntrack_context.last_ack = res->la;
+-	conntrack_context.last_end = res->le;
++	ct->last_seq = res->ls;
++	ct->last_ack = res->la;
++	ct->last_end = res->le;
+ }
+ 
+ static cmdline_parse_inst_t cmd_set_conntrack_common = {
+@@ -11629,12 +11640,13 @@ static void cmd_set_conntrack_dir_parsed(void *parsed_result,
+ 	__rte_unused void *data)
+ {
+ 	struct cmd_set_conntrack_dir_result *res = parsed_result;
++	struct rte_flow_action_conntrack *ct = &testpmd_conntrack;
+ 	struct rte_flow_tcp_dir_param *dir = NULL;
+ 
+ 	if (strcmp(res->dir, "orig") == 0)
+-		dir = &conntrack_context.original_dir;
++		dir = &ct->original_dir;
+ 	else if (strcmp(res->dir, "rply") == 0)
+-		dir = &conntrack_context.reply_dir;
++		dir = &ct->reply_dir;
+ 	else
+ 		return;
+ 	dir->scale = res->factor;
+@@ -14412,6 +14424,9 @@ init_cmdline(void)
+ 	unsigned int count;
+ 	unsigned int i;
+ 
++	/* Register app-owned config storage and cmdline integration. */
++	testpmd_flow_parser_config_init();
++
+ 	/* initialize non-constant commands */
+ 	cmd_set_fwd_mode_init();
+ 	cmd_set_fwd_retry_mode_init();
+diff --git a/app/test-pmd/cmdline_flow.c b/app/test-pmd/cmdline_flow.c
+deleted file mode 100644
+index ebc036b14b..0000000000
+--- a/app/test-pmd/cmdline_flow.c
++++ /dev/null
+@@ -1,14434 +0,0 @@
+-/* SPDX-License-Identifier: BSD-3-Clause
+- * Copyright 2016 6WIND S.A.
+- * Copyright 2016 Mellanox Technologies, Ltd
+- */
+-
+-#include <stddef.h>
+-#include <stdint.h>
+-#include <stdio.h>
+-#include <stdlib.h>
+-#include <inttypes.h>
+-#include <errno.h>
+-#include <ctype.h>
+-#include <string.h>
+-
+-#include <rte_string_fns.h>
+-#include <rte_common.h>
+-#include <rte_ethdev.h>
+-#include <rte_byteorder.h>
+-#include <cmdline_parse.h>
+-#include <cmdline_parse_etheraddr.h>
+-#include <cmdline_parse_string.h>
+-#include <cmdline_parse_num.h>
+-#include <rte_flow.h>
+-#include <rte_hexdump.h>
+-#include <rte_vxlan.h>
+-#include <rte_gre.h>
+-#include <rte_mpls.h>
+-#include <rte_gtp.h>
+-#include <rte_geneve.h>
+-
+-#include "testpmd.h"
+-
+-/** Parser token indices. */
+-enum index {
+-	/* Special tokens. */
+-	ZERO = 0,
+-	END,
+-	START_SET,
+-	END_SET,
+-
+-	/* Common tokens. */
+-	COMMON_INTEGER,
+-	COMMON_UNSIGNED,
+-	COMMON_PREFIX,
+-	COMMON_BOOLEAN,
+-	COMMON_STRING,
+-	COMMON_HEX,
+-	COMMON_FILE_PATH,
+-	COMMON_MAC_ADDR,
+-	COMMON_IPV4_ADDR,
+-	COMMON_IPV6_ADDR,
+-	COMMON_RULE_ID,
+-	COMMON_PORT_ID,
+-	COMMON_GROUP_ID,
+-	COMMON_PRIORITY_LEVEL,
+-	COMMON_INDIRECT_ACTION_ID,
+-	COMMON_PROFILE_ID,
+-	COMMON_POLICY_ID,
+-	COMMON_FLEX_HANDLE,
+-	COMMON_FLEX_TOKEN,
+-	COMMON_PATTERN_TEMPLATE_ID,
+-	COMMON_ACTIONS_TEMPLATE_ID,
+-	COMMON_TABLE_ID,
+-	COMMON_QUEUE_ID,
+-	COMMON_METER_COLOR_NAME,
+-
+-	/* TOP-level command. */
+-	ADD,
+-
+-	/* Top-level command. */
+-	SET,
+-	/* Sub-leve commands. */
+-	SET_RAW_ENCAP,
+-	SET_RAW_DECAP,
+-	SET_RAW_INDEX,
+-	SET_SAMPLE_ACTIONS,
+-	SET_SAMPLE_INDEX,
+-	SET_IPV6_EXT_REMOVE,
+-	SET_IPV6_EXT_PUSH,
+-	SET_IPV6_EXT_INDEX,
+-
+-	/* Top-level command. */
+-	FLOW,
+-	/* Sub-level commands. */
+-	INFO,
+-	CONFIGURE,
+-	PATTERN_TEMPLATE,
+-	ACTIONS_TEMPLATE,
+-	TABLE,
+-	FLOW_GROUP,
+-	INDIRECT_ACTION,
+-	VALIDATE,
+-	CREATE,
+-	DESTROY,
+-	UPDATE,
+-	FLUSH,
+-	DUMP,
+-	QUERY,
+-	LIST,
+-	AGED,
+-	ISOLATE,
+-	TUNNEL,
+-	FLEX,
+-	QUEUE,
+-	PUSH,
+-	PULL,
+-	HASH,
+-
+-	/* Flex arguments */
+-	FLEX_ITEM_CREATE,
+-	FLEX_ITEM_DESTROY,
+-
+-	/* Pattern template arguments. */
+-	PATTERN_TEMPLATE_CREATE,
+-	PATTERN_TEMPLATE_DESTROY,
+-	PATTERN_TEMPLATE_CREATE_ID,
+-	PATTERN_TEMPLATE_DESTROY_ID,
+-	PATTERN_TEMPLATE_RELAXED_MATCHING,
+-	PATTERN_TEMPLATE_INGRESS,
+-	PATTERN_TEMPLATE_EGRESS,
+-	PATTERN_TEMPLATE_TRANSFER,
+-	PATTERN_TEMPLATE_SPEC,
+-
+-	/* Actions template arguments. */
+-	ACTIONS_TEMPLATE_CREATE,
+-	ACTIONS_TEMPLATE_DESTROY,
+-	ACTIONS_TEMPLATE_CREATE_ID,
+-	ACTIONS_TEMPLATE_DESTROY_ID,
+-	ACTIONS_TEMPLATE_INGRESS,
+-	ACTIONS_TEMPLATE_EGRESS,
+-	ACTIONS_TEMPLATE_TRANSFER,
+-	ACTIONS_TEMPLATE_SPEC,
+-	ACTIONS_TEMPLATE_MASK,
+-
+-	/* Queue arguments. */
+-	QUEUE_CREATE,
+-	QUEUE_DESTROY,
+-	QUEUE_FLOW_UPDATE_RESIZED,
+-	QUEUE_UPDATE,
+-	QUEUE_AGED,
+-	QUEUE_INDIRECT_ACTION,
+-
+-	/* Queue create arguments. */
+-	QUEUE_CREATE_POSTPONE,
+-	QUEUE_TEMPLATE_TABLE,
+-	QUEUE_PATTERN_TEMPLATE,
+-	QUEUE_ACTIONS_TEMPLATE,
+-	QUEUE_RULE_ID,
+-
+-	/* Queue destroy arguments. */
+-	QUEUE_DESTROY_ID,
+-	QUEUE_DESTROY_POSTPONE,
+-
+-	/* Queue update arguments. */
+-	QUEUE_UPDATE_ID,
+-
+-	/* Queue indirect action arguments */
+-	QUEUE_INDIRECT_ACTION_CREATE,
+-	QUEUE_INDIRECT_ACTION_LIST_CREATE,
+-	QUEUE_INDIRECT_ACTION_UPDATE,
+-	QUEUE_INDIRECT_ACTION_DESTROY,
+-	QUEUE_INDIRECT_ACTION_QUERY,
+-	QUEUE_INDIRECT_ACTION_QUERY_UPDATE,
+-
+-	/* Queue indirect action create arguments */
+-	QUEUE_INDIRECT_ACTION_CREATE_ID,
+-	QUEUE_INDIRECT_ACTION_INGRESS,
+-	QUEUE_INDIRECT_ACTION_EGRESS,
+-	QUEUE_INDIRECT_ACTION_TRANSFER,
+-	QUEUE_INDIRECT_ACTION_CREATE_POSTPONE,
+-	QUEUE_INDIRECT_ACTION_SPEC,
+-	QUEUE_INDIRECT_ACTION_LIST,
+-
+-	/* Queue indirect action update arguments */
+-	QUEUE_INDIRECT_ACTION_UPDATE_POSTPONE,
+-
+-	/* Queue indirect action destroy arguments */
+-	QUEUE_INDIRECT_ACTION_DESTROY_ID,
+-	QUEUE_INDIRECT_ACTION_DESTROY_POSTPONE,
+-
+-	/* Queue indirect action query arguments */
+-	QUEUE_INDIRECT_ACTION_QUERY_POSTPONE,
+-
+-	/* Queue indirect action query_update arguments */
+-	QUEUE_INDIRECT_ACTION_QU_MODE,
+-
+-	/* Push arguments. */
+-	PUSH_QUEUE,
+-
+-	/* Pull arguments. */
+-	PULL_QUEUE,
+-
+-	/* Table arguments. */
+-	TABLE_CREATE,
+-	TABLE_DESTROY,
+-	TABLE_RESIZE,
+-	TABLE_RESIZE_COMPLETE,
+-	TABLE_CREATE_ID,
+-	TABLE_DESTROY_ID,
+-	TABLE_RESIZE_ID,
+-	TABLE_RESIZE_RULES_NUMBER,
+-	TABLE_INSERTION_TYPE,
+-	TABLE_INSERTION_TYPE_NAME,
+-	TABLE_HASH_FUNC,
+-	TABLE_HASH_FUNC_NAME,
+-	TABLE_GROUP,
+-	TABLE_PRIORITY,
+-	TABLE_INGRESS,
+-	TABLE_EGRESS,
+-	TABLE_TRANSFER,
+-	TABLE_TRANSFER_WIRE_ORIG,
+-	TABLE_TRANSFER_VPORT_ORIG,
+-	TABLE_RESIZABLE,
+-	TABLE_RULES_NUMBER,
+-	TABLE_PATTERN_TEMPLATE,
+-	TABLE_ACTIONS_TEMPLATE,
+-
+-	/* Group arguments */
+-	GROUP_ID,
+-	GROUP_INGRESS,
+-	GROUP_EGRESS,
+-	GROUP_TRANSFER,
+-	GROUP_SET_MISS_ACTIONS,
+-
+-	/* Hash calculation arguments. */
+-	HASH_CALC_TABLE,
+-	HASH_CALC_PATTERN_INDEX,
+-	HASH_CALC_PATTERN,
+-	HASH_CALC_ENCAP,
+-	HASH_CALC_DEST,
+-	ENCAP_HASH_FIELD_SRC_PORT,
+-	ENCAP_HASH_FIELD_GRE_FLOW_ID,
+-
+-	/* Tunnel arguments. */
+-	TUNNEL_CREATE,
+-	TUNNEL_CREATE_TYPE,
+-	TUNNEL_LIST,
+-	TUNNEL_DESTROY,
+-	TUNNEL_DESTROY_ID,
+-
+-	/* Destroy arguments. */
+-	DESTROY_RULE,
+-	DESTROY_IS_USER_ID,
+-
+-	/* Query arguments. */
+-	QUERY_ACTION,
+-	QUERY_IS_USER_ID,
+-
+-	/* List arguments. */
+-	LIST_GROUP,
+-
+-	/* Destroy aged flow arguments. */
+-	AGED_DESTROY,
+-
+-	/* Validate/create arguments. */
+-	VC_GROUP,
+-	VC_PRIORITY,
+-	VC_INGRESS,
+-	VC_EGRESS,
+-	VC_TRANSFER,
+-	VC_TUNNEL_SET,
+-	VC_TUNNEL_MATCH,
+-	VC_USER_ID,
+-	VC_IS_USER_ID,
+-
+-	/* Dump arguments */
+-	DUMP_ALL,
+-	DUMP_ONE,
+-	DUMP_IS_USER_ID,
+-
+-	/* Configure arguments */
+-	CONFIG_QUEUES_NUMBER,
+-	CONFIG_QUEUES_SIZE,
+-	CONFIG_COUNTERS_NUMBER,
+-	CONFIG_AGING_OBJECTS_NUMBER,
+-	CONFIG_METERS_NUMBER,
+-	CONFIG_CONN_TRACK_NUMBER,
+-	CONFIG_QUOTAS_NUMBER,
+-	CONFIG_FLAGS,
+-	CONFIG_HOST_PORT,
+-
+-	/* Indirect action arguments */
+-	INDIRECT_ACTION_CREATE,
+-	INDIRECT_ACTION_LIST_CREATE,
+-	INDIRECT_ACTION_FLOW_CONF_CREATE,
+-	INDIRECT_ACTION_UPDATE,
+-	INDIRECT_ACTION_DESTROY,
+-	INDIRECT_ACTION_QUERY,
+-	INDIRECT_ACTION_QUERY_UPDATE,
+-
+-	/* Indirect action create arguments */
+-	INDIRECT_ACTION_CREATE_ID,
+-	INDIRECT_ACTION_INGRESS,
+-	INDIRECT_ACTION_EGRESS,
+-	INDIRECT_ACTION_TRANSFER,
+-	INDIRECT_ACTION_SPEC,
+-	INDIRECT_ACTION_LIST,
+-	INDIRECT_ACTION_FLOW_CONF,
+-
+-	/* Indirect action destroy arguments */
+-	INDIRECT_ACTION_DESTROY_ID,
+-
+-	/* Indirect action query-and-update arguments */
+-	INDIRECT_ACTION_QU_MODE,
+-	INDIRECT_ACTION_QU_MODE_NAME,
+-
+-	/* Validate/create pattern. */
+-	ITEM_PATTERN,
+-	ITEM_PARAM_IS,
+-	ITEM_PARAM_SPEC,
+-	ITEM_PARAM_LAST,
+-	ITEM_PARAM_MASK,
+-	ITEM_PARAM_PREFIX,
+-	ITEM_NEXT,
+-	ITEM_END,
+-	ITEM_VOID,
+-	ITEM_INVERT,
+-	ITEM_ANY,
+-	ITEM_ANY_NUM,
+-	ITEM_PORT_ID,
+-	ITEM_PORT_ID_ID,
+-	ITEM_MARK,
+-	ITEM_MARK_ID,
+-	ITEM_RAW,
+-	ITEM_RAW_RELATIVE,
+-	ITEM_RAW_SEARCH,
+-	ITEM_RAW_OFFSET,
+-	ITEM_RAW_LIMIT,
+-	ITEM_RAW_PATTERN,
+-	ITEM_RAW_PATTERN_HEX,
+-	ITEM_ETH,
+-	ITEM_ETH_DST,
+-	ITEM_ETH_SRC,
+-	ITEM_ETH_TYPE,
+-	ITEM_ETH_HAS_VLAN,
+-	ITEM_VLAN,
+-	ITEM_VLAN_TCI,
+-	ITEM_VLAN_PCP,
+-	ITEM_VLAN_DEI,
+-	ITEM_VLAN_VID,
+-	ITEM_VLAN_INNER_TYPE,
+-	ITEM_VLAN_HAS_MORE_VLAN,
+-	ITEM_IPV4,
+-	ITEM_IPV4_VER_IHL,
+-	ITEM_IPV4_TOS,
+-	ITEM_IPV4_LENGTH,
+-	ITEM_IPV4_ID,
+-	ITEM_IPV4_FRAGMENT_OFFSET,
+-	ITEM_IPV4_TTL,
+-	ITEM_IPV4_PROTO,
+-	ITEM_IPV4_SRC,
+-	ITEM_IPV4_DST,
+-	ITEM_IPV6,
+-	ITEM_IPV6_TC,
+-	ITEM_IPV6_FLOW,
+-	ITEM_IPV6_LEN,
+-	ITEM_IPV6_PROTO,
+-	ITEM_IPV6_HOP,
+-	ITEM_IPV6_SRC,
+-	ITEM_IPV6_DST,
+-	ITEM_IPV6_HAS_FRAG_EXT,
+-	ITEM_IPV6_ROUTING_EXT,
+-	ITEM_IPV6_ROUTING_EXT_TYPE,
+-	ITEM_IPV6_ROUTING_EXT_NEXT_HDR,
+-	ITEM_IPV6_ROUTING_EXT_SEG_LEFT,
+-	ITEM_ICMP,
+-	ITEM_ICMP_TYPE,
+-	ITEM_ICMP_CODE,
+-	ITEM_ICMP_IDENT,
+-	ITEM_ICMP_SEQ,
+-	ITEM_UDP,
+-	ITEM_UDP_SRC,
+-	ITEM_UDP_DST,
+-	ITEM_TCP,
+-	ITEM_TCP_SRC,
+-	ITEM_TCP_DST,
+-	ITEM_TCP_FLAGS,
+-	ITEM_SCTP,
+-	ITEM_SCTP_SRC,
+-	ITEM_SCTP_DST,
+-	ITEM_SCTP_TAG,
+-	ITEM_SCTP_CKSUM,
+-	ITEM_VXLAN,
+-	ITEM_VXLAN_VNI,
+-	ITEM_VXLAN_FLAG_G,
+-	ITEM_VXLAN_FLAG_VER,
+-	ITEM_VXLAN_FLAG_I,
+-	ITEM_VXLAN_FLAG_P,
+-	ITEM_VXLAN_FLAG_B,
+-	ITEM_VXLAN_FLAG_O,
+-	ITEM_VXLAN_FLAG_D,
+-	ITEM_VXLAN_FLAG_A,
+-	ITEM_VXLAN_GBP_ID,
+-	/* Used for "struct rte_vxlan_hdr", GPE Next protocol */
+-	ITEM_VXLAN_GPE_PROTO,
+-	ITEM_VXLAN_FIRST_RSVD,
+-	ITEM_VXLAN_SECND_RSVD,
+-	ITEM_VXLAN_THIRD_RSVD,
+-	ITEM_VXLAN_LAST_RSVD,
+-	ITEM_E_TAG,
+-	ITEM_E_TAG_GRP_ECID_B,
+-	ITEM_NVGRE,
+-	ITEM_NVGRE_TNI,
+-	ITEM_MPLS,
+-	ITEM_MPLS_LABEL,
+-	ITEM_MPLS_TC,
+-	ITEM_MPLS_S,
+-	ITEM_MPLS_TTL,
+-	ITEM_GRE,
+-	ITEM_GRE_PROTO,
+-	ITEM_GRE_C_RSVD0_VER,
+-	ITEM_GRE_C_BIT,
+-	ITEM_GRE_K_BIT,
+-	ITEM_GRE_S_BIT,
+-	ITEM_FUZZY,
+-	ITEM_FUZZY_THRESH,
+-	ITEM_GTP,
+-	ITEM_GTP_FLAGS,
+-	ITEM_GTP_MSG_TYPE,
+-	ITEM_GTP_TEID,
+-	ITEM_GTPC,
+-	ITEM_GTPU,
+-	ITEM_GENEVE,
+-	ITEM_GENEVE_VNI,
+-	ITEM_GENEVE_PROTO,
+-	ITEM_GENEVE_OPTLEN,
+-	ITEM_VXLAN_GPE,
+-	ITEM_VXLAN_GPE_VNI,
+-	/* Used for "struct rte_vxlan_gpe_hdr", deprecated, prefer ITEM_VXLAN_GPE_PROTO */
+-	ITEM_VXLAN_GPE_PROTO_IN_DEPRECATED_VXLAN_GPE_HDR,
+-	ITEM_VXLAN_GPE_FLAGS,
+-	ITEM_VXLAN_GPE_RSVD0,
+-	ITEM_VXLAN_GPE_RSVD1,
+-	ITEM_ARP_ETH_IPV4,
+-	ITEM_ARP_ETH_IPV4_SHA,
+-	ITEM_ARP_ETH_IPV4_SPA,
+-	ITEM_ARP_ETH_IPV4_THA,
+-	ITEM_ARP_ETH_IPV4_TPA,
+-	ITEM_IPV6_EXT,
+-	ITEM_IPV6_EXT_NEXT_HDR,
+-	ITEM_IPV6_FRAG_EXT,
+-	ITEM_IPV6_FRAG_EXT_NEXT_HDR,
+-	ITEM_IPV6_FRAG_EXT_FRAG_DATA,
+-	ITEM_IPV6_FRAG_EXT_ID,
+-	ITEM_ICMP6,
+-	ITEM_ICMP6_TYPE,
+-	ITEM_ICMP6_CODE,
+-	ITEM_ICMP6_ECHO_REQUEST,
+-	ITEM_ICMP6_ECHO_REQUEST_ID,
+-	ITEM_ICMP6_ECHO_REQUEST_SEQ,
+-	ITEM_ICMP6_ECHO_REPLY,
+-	ITEM_ICMP6_ECHO_REPLY_ID,
+-	ITEM_ICMP6_ECHO_REPLY_SEQ,
+-	ITEM_ICMP6_ND_NS,
+-	ITEM_ICMP6_ND_NS_TARGET_ADDR,
+-	ITEM_ICMP6_ND_NA,
+-	ITEM_ICMP6_ND_NA_TARGET_ADDR,
+-	ITEM_ICMP6_ND_OPT,
+-	ITEM_ICMP6_ND_OPT_TYPE,
+-	ITEM_ICMP6_ND_OPT_SLA_ETH,
+-	ITEM_ICMP6_ND_OPT_SLA_ETH_SLA,
+-	ITEM_ICMP6_ND_OPT_TLA_ETH,
+-	ITEM_ICMP6_ND_OPT_TLA_ETH_TLA,
+-	ITEM_META,
+-	ITEM_META_DATA,
+-	ITEM_RANDOM,
+-	ITEM_RANDOM_VALUE,
+-	ITEM_GRE_KEY,
+-	ITEM_GRE_KEY_VALUE,
+-	ITEM_GRE_OPTION,
+-	ITEM_GRE_OPTION_CHECKSUM,
+-	ITEM_GRE_OPTION_KEY,
+-	ITEM_GRE_OPTION_SEQUENCE,
+-	ITEM_GTP_PSC,
+-	ITEM_GTP_PSC_QFI,
+-	ITEM_GTP_PSC_PDU_T,
+-	ITEM_PPPOES,
+-	ITEM_PPPOED,
+-	ITEM_PPPOE_SEID,
+-	ITEM_PPPOE_PROTO_ID,
+-	ITEM_HIGIG2,
+-	ITEM_HIGIG2_CLASSIFICATION,
+-	ITEM_HIGIG2_VID,
+-	ITEM_TAG,
+-	ITEM_TAG_DATA,
+-	ITEM_TAG_INDEX,
+-	ITEM_L2TPV3OIP,
+-	ITEM_L2TPV3OIP_SESSION_ID,
+-	ITEM_ESP,
+-	ITEM_ESP_SPI,
+-	ITEM_AH,
+-	ITEM_AH_SPI,
+-	ITEM_PFCP,
+-	ITEM_PFCP_S_FIELD,
+-	ITEM_PFCP_SEID,
+-	ITEM_ECPRI,
+-	ITEM_ECPRI_COMMON,
+-	ITEM_ECPRI_COMMON_TYPE,
+-	ITEM_ECPRI_COMMON_TYPE_IQ_DATA,
+-	ITEM_ECPRI_COMMON_TYPE_RTC_CTRL,
+-	ITEM_ECPRI_COMMON_TYPE_DLY_MSR,
+-	ITEM_ECPRI_MSG_IQ_DATA_PCID,
+-	ITEM_ECPRI_MSG_RTC_CTRL_RTCID,
+-	ITEM_ECPRI_MSG_DLY_MSR_MSRID,
+-	ITEM_GENEVE_OPT,
+-	ITEM_GENEVE_OPT_CLASS,
+-	ITEM_GENEVE_OPT_TYPE,
+-	ITEM_GENEVE_OPT_LENGTH,
+-	ITEM_GENEVE_OPT_DATA,
+-	ITEM_INTEGRITY,
+-	ITEM_INTEGRITY_LEVEL,
+-	ITEM_INTEGRITY_VALUE,
+-	ITEM_CONNTRACK,
+-	ITEM_POL_PORT,
+-	ITEM_POL_METER,
+-	ITEM_POL_POLICY,
+-	ITEM_PORT_REPRESENTOR,
+-	ITEM_PORT_REPRESENTOR_PORT_ID,
+-	ITEM_REPRESENTED_PORT,
+-	ITEM_REPRESENTED_PORT_ETHDEV_PORT_ID,
+-	ITEM_FLEX,
+-	ITEM_FLEX_ITEM_HANDLE,
+-	ITEM_FLEX_PATTERN_HANDLE,
+-	ITEM_L2TPV2,
+-	ITEM_L2TPV2_TYPE,
+-	ITEM_L2TPV2_TYPE_DATA,
+-	ITEM_L2TPV2_TYPE_DATA_L,
+-	ITEM_L2TPV2_TYPE_DATA_S,
+-	ITEM_L2TPV2_TYPE_DATA_O,
+-	ITEM_L2TPV2_TYPE_DATA_L_S,
+-	ITEM_L2TPV2_TYPE_CTRL,
+-	ITEM_L2TPV2_MSG_DATA_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_SESSION_ID,
+-	ITEM_L2TPV2_MSG_DATA_L_LENGTH,
+-	ITEM_L2TPV2_MSG_DATA_L_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_L_SESSION_ID,
+-	ITEM_L2TPV2_MSG_DATA_S_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_S_SESSION_ID,
+-	ITEM_L2TPV2_MSG_DATA_S_NS,
+-	ITEM_L2TPV2_MSG_DATA_S_NR,
+-	ITEM_L2TPV2_MSG_DATA_O_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_O_SESSION_ID,
+-	ITEM_L2TPV2_MSG_DATA_O_OFFSET,
+-	ITEM_L2TPV2_MSG_DATA_L_S_LENGTH,
+-	ITEM_L2TPV2_MSG_DATA_L_S_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_L_S_SESSION_ID,
+-	ITEM_L2TPV2_MSG_DATA_L_S_NS,
+-	ITEM_L2TPV2_MSG_DATA_L_S_NR,
+-	ITEM_L2TPV2_MSG_CTRL_LENGTH,
+-	ITEM_L2TPV2_MSG_CTRL_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_CTRL_SESSION_ID,
+-	ITEM_L2TPV2_MSG_CTRL_NS,
+-	ITEM_L2TPV2_MSG_CTRL_NR,
+-	ITEM_PPP,
+-	ITEM_PPP_ADDR,
+-	ITEM_PPP_CTRL,
+-	ITEM_PPP_PROTO_ID,
+-	ITEM_METER,
+-	ITEM_METER_COLOR,
+-	ITEM_QUOTA,
+-	ITEM_QUOTA_STATE,
+-	ITEM_QUOTA_STATE_NAME,
+-	ITEM_AGGR_AFFINITY,
+-	ITEM_AGGR_AFFINITY_VALUE,
+-	ITEM_TX_QUEUE,
+-	ITEM_TX_QUEUE_VALUE,
+-	ITEM_IB_BTH,
+-	ITEM_IB_BTH_OPCODE,
+-	ITEM_IB_BTH_PKEY,
+-	ITEM_IB_BTH_DST_QPN,
+-	ITEM_IB_BTH_PSN,
+-	ITEM_IPV6_PUSH_REMOVE_EXT,
+-	ITEM_IPV6_PUSH_REMOVE_EXT_TYPE,
+-	ITEM_PTYPE,
+-	ITEM_PTYPE_VALUE,
+-	ITEM_NSH,
+-	ITEM_COMPARE,
+-	ITEM_COMPARE_OP,
+-	ITEM_COMPARE_OP_VALUE,
+-	ITEM_COMPARE_FIELD_A_TYPE,
+-	ITEM_COMPARE_FIELD_A_TYPE_VALUE,
+-	ITEM_COMPARE_FIELD_A_LEVEL,
+-	ITEM_COMPARE_FIELD_A_LEVEL_VALUE,
+-	ITEM_COMPARE_FIELD_A_TAG_INDEX,
+-	ITEM_COMPARE_FIELD_A_TYPE_ID,
+-	ITEM_COMPARE_FIELD_A_CLASS_ID,
+-	ITEM_COMPARE_FIELD_A_OFFSET,
+-	ITEM_COMPARE_FIELD_B_TYPE,
+-	ITEM_COMPARE_FIELD_B_TYPE_VALUE,
+-	ITEM_COMPARE_FIELD_B_LEVEL,
+-	ITEM_COMPARE_FIELD_B_LEVEL_VALUE,
+-	ITEM_COMPARE_FIELD_B_TAG_INDEX,
+-	ITEM_COMPARE_FIELD_B_TYPE_ID,
+-	ITEM_COMPARE_FIELD_B_CLASS_ID,
+-	ITEM_COMPARE_FIELD_B_OFFSET,
+-	ITEM_COMPARE_FIELD_B_VALUE,
+-	ITEM_COMPARE_FIELD_B_POINTER,
+-	ITEM_COMPARE_FIELD_WIDTH,
+-
+-	/* Validate/create actions. */
+-	ACTIONS,
+-	ACTION_NEXT,
+-	ACTION_END,
+-	ACTION_VOID,
+-	ACTION_PASSTHRU,
+-	ACTION_SKIP_CMAN,
+-	ACTION_JUMP,
+-	ACTION_JUMP_GROUP,
+-	ACTION_MARK,
+-	ACTION_MARK_ID,
+-	ACTION_FLAG,
+-	ACTION_QUEUE,
+-	ACTION_QUEUE_INDEX,
+-	ACTION_DROP,
+-	ACTION_COUNT,
+-	ACTION_COUNT_ID,
+-	ACTION_RSS,
+-	ACTION_RSS_FUNC,
+-	ACTION_RSS_LEVEL,
+-	ACTION_RSS_FUNC_DEFAULT,
+-	ACTION_RSS_FUNC_TOEPLITZ,
+-	ACTION_RSS_FUNC_SIMPLE_XOR,
+-	ACTION_RSS_FUNC_SYMMETRIC_TOEPLITZ,
+-	ACTION_RSS_TYPES,
+-	ACTION_RSS_TYPE,
+-	ACTION_RSS_KEY,
+-	ACTION_RSS_KEY_LEN,
+-	ACTION_RSS_QUEUES,
+-	ACTION_RSS_QUEUE,
+-	ACTION_PF,
+-	ACTION_VF,
+-	ACTION_VF_ORIGINAL,
+-	ACTION_VF_ID,
+-	ACTION_PORT_ID,
+-	ACTION_PORT_ID_ORIGINAL,
+-	ACTION_PORT_ID_ID,
+-	ACTION_METER,
+-	ACTION_METER_COLOR,
+-	ACTION_METER_COLOR_TYPE,
+-	ACTION_METER_COLOR_GREEN,
+-	ACTION_METER_COLOR_YELLOW,
+-	ACTION_METER_COLOR_RED,
+-	ACTION_METER_ID,
+-	ACTION_METER_MARK,
+-	ACTION_METER_MARK_CONF,
+-	ACTION_METER_MARK_CONF_COLOR,
+-	ACTION_METER_PROFILE,
+-	ACTION_METER_PROFILE_ID2PTR,
+-	ACTION_METER_POLICY,
+-	ACTION_METER_POLICY_ID2PTR,
+-	ACTION_METER_COLOR_MODE,
+-	ACTION_METER_STATE,
+-	ACTION_OF_DEC_NW_TTL,
+-	ACTION_OF_POP_VLAN,
+-	ACTION_OF_PUSH_VLAN,
+-	ACTION_OF_PUSH_VLAN_ETHERTYPE,
+-	ACTION_OF_SET_VLAN_VID,
+-	ACTION_OF_SET_VLAN_VID_VLAN_VID,
+-	ACTION_OF_SET_VLAN_PCP,
+-	ACTION_OF_SET_VLAN_PCP_VLAN_PCP,
+-	ACTION_OF_POP_MPLS,
+-	ACTION_OF_POP_MPLS_ETHERTYPE,
+-	ACTION_OF_PUSH_MPLS,
+-	ACTION_OF_PUSH_MPLS_ETHERTYPE,
+-	ACTION_VXLAN_ENCAP,
+-	ACTION_VXLAN_DECAP,
+-	ACTION_NVGRE_ENCAP,
+-	ACTION_NVGRE_DECAP,
+-	ACTION_L2_ENCAP,
+-	ACTION_L2_DECAP,
+-	ACTION_MPLSOGRE_ENCAP,
+-	ACTION_MPLSOGRE_DECAP,
+-	ACTION_MPLSOUDP_ENCAP,
+-	ACTION_MPLSOUDP_DECAP,
+-	ACTION_SET_IPV4_SRC,
+-	ACTION_SET_IPV4_SRC_IPV4_SRC,
+-	ACTION_SET_IPV4_DST,
+-	ACTION_SET_IPV4_DST_IPV4_DST,
+-	ACTION_SET_IPV6_SRC,
+-	ACTION_SET_IPV6_SRC_IPV6_SRC,
+-	ACTION_SET_IPV6_DST,
+-	ACTION_SET_IPV6_DST_IPV6_DST,
+-	ACTION_SET_TP_SRC,
+-	ACTION_SET_TP_SRC_TP_SRC,
+-	ACTION_SET_TP_DST,
+-	ACTION_SET_TP_DST_TP_DST,
+-	ACTION_MAC_SWAP,
+-	ACTION_DEC_TTL,
+-	ACTION_SET_TTL,
+-	ACTION_SET_TTL_TTL,
+-	ACTION_SET_MAC_SRC,
+-	ACTION_SET_MAC_SRC_MAC_SRC,
+-	ACTION_SET_MAC_DST,
+-	ACTION_SET_MAC_DST_MAC_DST,
+-	ACTION_INC_TCP_SEQ,
+-	ACTION_INC_TCP_SEQ_VALUE,
+-	ACTION_DEC_TCP_SEQ,
+-	ACTION_DEC_TCP_SEQ_VALUE,
+-	ACTION_INC_TCP_ACK,
+-	ACTION_INC_TCP_ACK_VALUE,
+-	ACTION_DEC_TCP_ACK,
+-	ACTION_DEC_TCP_ACK_VALUE,
+-	ACTION_RAW_ENCAP,
+-	ACTION_RAW_DECAP,
+-	ACTION_RAW_ENCAP_SIZE,
+-	ACTION_RAW_ENCAP_INDEX,
+-	ACTION_RAW_ENCAP_INDEX_VALUE,
+-	ACTION_RAW_DECAP_INDEX,
+-	ACTION_RAW_DECAP_INDEX_VALUE,
+-	ACTION_SET_TAG,
+-	ACTION_SET_TAG_DATA,
+-	ACTION_SET_TAG_INDEX,
+-	ACTION_SET_TAG_MASK,
+-	ACTION_SET_META,
+-	ACTION_SET_META_DATA,
+-	ACTION_SET_META_MASK,
+-	ACTION_SET_IPV4_DSCP,
+-	ACTION_SET_IPV4_DSCP_VALUE,
+-	ACTION_SET_IPV6_DSCP,
+-	ACTION_SET_IPV6_DSCP_VALUE,
+-	ACTION_AGE,
+-	ACTION_AGE_TIMEOUT,
+-	ACTION_AGE_UPDATE,
+-	ACTION_AGE_UPDATE_TIMEOUT,
+-	ACTION_AGE_UPDATE_TOUCH,
+-	ACTION_SAMPLE,
+-	ACTION_SAMPLE_RATIO,
+-	ACTION_SAMPLE_INDEX,
+-	ACTION_SAMPLE_INDEX_VALUE,
+-	ACTION_INDIRECT,
+-	ACTION_INDIRECT_LIST,
+-	ACTION_INDIRECT_LIST_HANDLE,
+-	ACTION_INDIRECT_LIST_CONF,
+-	INDIRECT_LIST_ACTION_ID2PTR_HANDLE,
+-	INDIRECT_LIST_ACTION_ID2PTR_CONF,
+-	ACTION_SHARED_INDIRECT,
+-	INDIRECT_ACTION_PORT,
+-	INDIRECT_ACTION_ID2PTR,
+-	ACTION_MODIFY_FIELD,
+-	ACTION_MODIFY_FIELD_OP,
+-	ACTION_MODIFY_FIELD_OP_VALUE,
+-	ACTION_MODIFY_FIELD_DST_TYPE,
+-	ACTION_MODIFY_FIELD_DST_TYPE_VALUE,
+-	ACTION_MODIFY_FIELD_DST_LEVEL,
+-	ACTION_MODIFY_FIELD_DST_LEVEL_VALUE,
+-	ACTION_MODIFY_FIELD_DST_TAG_INDEX,
+-	ACTION_MODIFY_FIELD_DST_TYPE_ID,
+-	ACTION_MODIFY_FIELD_DST_CLASS_ID,
+-	ACTION_MODIFY_FIELD_DST_OFFSET,
+-	ACTION_MODIFY_FIELD_SRC_TYPE,
+-	ACTION_MODIFY_FIELD_SRC_TYPE_VALUE,
+-	ACTION_MODIFY_FIELD_SRC_LEVEL,
+-	ACTION_MODIFY_FIELD_SRC_LEVEL_VALUE,
+-	ACTION_MODIFY_FIELD_SRC_TAG_INDEX,
+-	ACTION_MODIFY_FIELD_SRC_TYPE_ID,
+-	ACTION_MODIFY_FIELD_SRC_CLASS_ID,
+-	ACTION_MODIFY_FIELD_SRC_OFFSET,
+-	ACTION_MODIFY_FIELD_SRC_VALUE,
+-	ACTION_MODIFY_FIELD_SRC_POINTER,
+-	ACTION_MODIFY_FIELD_WIDTH,
+-	ACTION_CONNTRACK,
+-	ACTION_CONNTRACK_UPDATE,
+-	ACTION_CONNTRACK_UPDATE_DIR,
+-	ACTION_CONNTRACK_UPDATE_CTX,
+-	ACTION_POL_G,
+-	ACTION_POL_Y,
+-	ACTION_POL_R,
+-	ACTION_PORT_REPRESENTOR,
+-	ACTION_PORT_REPRESENTOR_PORT_ID,
+-	ACTION_REPRESENTED_PORT,
+-	ACTION_REPRESENTED_PORT_ETHDEV_PORT_ID,
+-	ACTION_SEND_TO_KERNEL,
+-	ACTION_QUOTA_CREATE,
+-	ACTION_QUOTA_CREATE_LIMIT,
+-	ACTION_QUOTA_CREATE_MODE,
+-	ACTION_QUOTA_CREATE_MODE_NAME,
+-	ACTION_QUOTA_QU,
+-	ACTION_QUOTA_QU_LIMIT,
+-	ACTION_QUOTA_QU_UPDATE_OP,
+-	ACTION_QUOTA_QU_UPDATE_OP_NAME,
+-	ACTION_IPV6_EXT_REMOVE,
+-	ACTION_IPV6_EXT_REMOVE_INDEX,
+-	ACTION_IPV6_EXT_REMOVE_INDEX_VALUE,
+-	ACTION_IPV6_EXT_PUSH,
+-	ACTION_IPV6_EXT_PUSH_INDEX,
+-	ACTION_IPV6_EXT_PUSH_INDEX_VALUE,
+-	ACTION_NAT64,
+-	ACTION_NAT64_MODE,
+-	ACTION_JUMP_TO_TABLE_INDEX,
+-	ACTION_JUMP_TO_TABLE_INDEX_TABLE,
+-	ACTION_JUMP_TO_TABLE_INDEX_TABLE_VALUE,
+-	ACTION_JUMP_TO_TABLE_INDEX_INDEX,
+-};
+-
+-/** Maximum size for pattern in struct rte_flow_item_raw. */
+-#define ITEM_RAW_PATTERN_SIZE 512
+-
+-/** Maximum size for GENEVE option data pattern in bytes. */
+-#define ITEM_GENEVE_OPT_DATA_SIZE 124
+-
+-/** Storage size for struct rte_flow_item_raw including pattern. */
+-#define ITEM_RAW_SIZE \
+-	(sizeof(struct rte_flow_item_raw) + ITEM_RAW_PATTERN_SIZE)
+-
+-static const char *const compare_ops[] = {
+-	"eq", "ne", "lt", "le", "gt", "ge", NULL
+-};
+-
+-/** Maximum size for external pattern in struct rte_flow_field_data. */
+-#define FLOW_FIELD_PATTERN_SIZE 32
+-
+-/** Storage size for struct rte_flow_action_modify_field including pattern. */
+-#define ACTION_MODIFY_SIZE \
+-	(sizeof(struct rte_flow_action_modify_field) + \
+-	FLOW_FIELD_PATTERN_SIZE)
+-
+-/** Maximum number of queue indices in struct rte_flow_action_rss. */
+-#define ACTION_RSS_QUEUE_NUM 128
+-
+-/** Storage for struct rte_flow_action_rss including external data. */
+-struct action_rss_data {
+-	struct rte_flow_action_rss conf;
+-	uint8_t key[RSS_HASH_KEY_LENGTH];
+-	uint16_t queue[ACTION_RSS_QUEUE_NUM];
+-};
+-
+-/** Maximum data size in struct rte_flow_action_raw_encap. */
+-#define ACTION_RAW_ENCAP_MAX_DATA 512
+-#define RAW_ENCAP_CONFS_MAX_NUM 8
+-
+-/** Storage for struct rte_flow_action_raw_encap. */
+-struct raw_encap_conf {
+-	uint8_t data[ACTION_RAW_ENCAP_MAX_DATA];
+-	uint8_t preserve[ACTION_RAW_ENCAP_MAX_DATA];
+-	size_t size;
+-};
+-
+-struct raw_encap_conf raw_encap_confs[RAW_ENCAP_CONFS_MAX_NUM];
+-
+-/** Storage for struct rte_flow_action_raw_encap including external data. */
+-struct action_raw_encap_data {
+-	struct rte_flow_action_raw_encap conf;
+-	uint8_t data[ACTION_RAW_ENCAP_MAX_DATA];
+-	uint8_t preserve[ACTION_RAW_ENCAP_MAX_DATA];
+-	uint16_t idx;
+-};
+-
+-/** Storage for struct rte_flow_action_raw_decap. */
+-struct raw_decap_conf {
+-	uint8_t data[ACTION_RAW_ENCAP_MAX_DATA];
+-	size_t size;
+-};
+-
+-struct raw_decap_conf raw_decap_confs[RAW_ENCAP_CONFS_MAX_NUM];
+-
+-/** Storage for struct rte_flow_action_raw_decap including external data. */
+-struct action_raw_decap_data {
+-	struct rte_flow_action_raw_decap conf;
+-	uint8_t data[ACTION_RAW_ENCAP_MAX_DATA];
+-	uint16_t idx;
+-};
+-
+-/** Maximum data size in struct rte_flow_action_ipv6_ext_push. */
+-#define ACTION_IPV6_EXT_PUSH_MAX_DATA 512
+-#define IPV6_EXT_PUSH_CONFS_MAX_NUM 8
+-
+-/** Storage for struct rte_flow_action_ipv6_ext_push. */
+-struct ipv6_ext_push_conf {
+-	uint8_t data[ACTION_IPV6_EXT_PUSH_MAX_DATA];
+-	size_t size;
+-	uint8_t type;
+-};
+-
+-struct ipv6_ext_push_conf ipv6_ext_push_confs[IPV6_EXT_PUSH_CONFS_MAX_NUM];
+-
+-/** Storage for struct rte_flow_action_ipv6_ext_push including external data. */
+-struct action_ipv6_ext_push_data {
+-	struct rte_flow_action_ipv6_ext_push conf;
+-	uint8_t data[ACTION_IPV6_EXT_PUSH_MAX_DATA];
+-	uint8_t type;
+-	uint16_t idx;
+-};
+-
+-/** Storage for struct rte_flow_action_ipv6_ext_remove. */
+-struct ipv6_ext_remove_conf {
+-	struct rte_flow_action_ipv6_ext_remove conf;
+-	uint8_t type;
+-};
+-
+-struct ipv6_ext_remove_conf ipv6_ext_remove_confs[IPV6_EXT_PUSH_CONFS_MAX_NUM];
+-
+-/** Storage for struct rte_flow_action_ipv6_ext_remove including external data. */
+-struct action_ipv6_ext_remove_data {
+-	struct rte_flow_action_ipv6_ext_remove conf;
+-	uint8_t type;
+-	uint16_t idx;
+-};
+-
+-struct vxlan_encap_conf vxlan_encap_conf = {
+-	.select_ipv4 = 1,
+-	.select_vlan = 0,
+-	.select_tos_ttl = 0,
+-	.vni = { 0x00, 0x00, 0x00 },
+-	.udp_src = 0,
+-	.udp_dst = RTE_BE16(RTE_VXLAN_DEFAULT_PORT),
+-	.ipv4_src = RTE_IPV4(127, 0, 0, 1),
+-	.ipv4_dst = RTE_IPV4(255, 255, 255, 255),
+-	.ipv6_src = RTE_IPV6_ADDR_LOOPBACK,
+-	.ipv6_dst = RTE_IPV6(0, 0, 0, 0, 0, 0, 0, 0x1111),
+-	.vlan_tci = 0,
+-	.ip_tos = 0,
+-	.ip_ttl = 255,
+-	.eth_src = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+-	.eth_dst = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
+-};
+-
+-/** Maximum number of items in struct rte_flow_action_vxlan_encap. */
+-#define ACTION_VXLAN_ENCAP_ITEMS_NUM 6
+-
+-/** Storage for struct rte_flow_action_vxlan_encap including external data. */
+-struct action_vxlan_encap_data {
+-	struct rte_flow_action_vxlan_encap conf;
+-	struct rte_flow_item items[ACTION_VXLAN_ENCAP_ITEMS_NUM];
+-	struct rte_flow_item_eth item_eth;
+-	struct rte_flow_item_vlan item_vlan;
+-	union {
+-		struct rte_flow_item_ipv4 item_ipv4;
+-		struct rte_flow_item_ipv6 item_ipv6;
+-	};
+-	struct rte_flow_item_udp item_udp;
+-	struct rte_flow_item_vxlan item_vxlan;
+-};
+-
+-struct nvgre_encap_conf nvgre_encap_conf = {
+-	.select_ipv4 = 1,
+-	.select_vlan = 0,
+-	.tni = { 0x00, 0x00, 0x00 },
+-	.ipv4_src = RTE_IPV4(127, 0, 0, 1),
+-	.ipv4_dst = RTE_IPV4(255, 255, 255, 255),
+-	.ipv6_src = RTE_IPV6_ADDR_LOOPBACK,
+-	.ipv6_dst = RTE_IPV6(0, 0, 0, 0, 0, 0, 0, 0x1111),
+-	.vlan_tci = 0,
+-	.eth_src = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+-	.eth_dst = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },
+-};
+-
+-/** Maximum number of items in struct rte_flow_action_nvgre_encap. */
+-#define ACTION_NVGRE_ENCAP_ITEMS_NUM 5
+-
+-/** Storage for struct rte_flow_action_nvgre_encap including external data. */
+-struct action_nvgre_encap_data {
+-	struct rte_flow_action_nvgre_encap conf;
+-	struct rte_flow_item items[ACTION_NVGRE_ENCAP_ITEMS_NUM];
+-	struct rte_flow_item_eth item_eth;
+-	struct rte_flow_item_vlan item_vlan;
+-	union {
+-		struct rte_flow_item_ipv4 item_ipv4;
+-		struct rte_flow_item_ipv6 item_ipv6;
+-	};
+-	struct rte_flow_item_nvgre item_nvgre;
+-};
+-
+-struct l2_encap_conf l2_encap_conf;
+-
+-struct l2_decap_conf l2_decap_conf;
+-
+-struct mplsogre_encap_conf mplsogre_encap_conf;
+-
+-struct mplsogre_decap_conf mplsogre_decap_conf;
+-
+-struct mplsoudp_encap_conf mplsoudp_encap_conf;
+-
+-struct mplsoudp_decap_conf mplsoudp_decap_conf;
+-
+-struct rte_flow_action_conntrack conntrack_context;
+-
+-#define ACTION_SAMPLE_ACTIONS_NUM 10
+-#define RAW_SAMPLE_CONFS_MAX_NUM 8
+-/** Storage for struct rte_flow_action_sample including external data. */
+-struct action_sample_data {
+-	struct rte_flow_action_sample conf;
+-	uint32_t idx;
+-};
+-/** Storage for struct rte_flow_action_sample. */
+-struct raw_sample_conf {
+-	struct rte_flow_action data[ACTION_SAMPLE_ACTIONS_NUM];
+-};
+-struct raw_sample_conf raw_sample_confs[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct rte_flow_action_mark sample_mark[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct rte_flow_action_queue sample_queue[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct rte_flow_action_count sample_count[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct rte_flow_action_port_id sample_port_id[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct rte_flow_action_raw_encap sample_encap[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct action_vxlan_encap_data sample_vxlan_encap[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct action_nvgre_encap_data sample_nvgre_encap[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct action_rss_data sample_rss_data[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct rte_flow_action_vf sample_vf[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct rte_flow_action_ethdev sample_port_representor[RAW_SAMPLE_CONFS_MAX_NUM];
+-struct rte_flow_action_ethdev sample_represented_port[RAW_SAMPLE_CONFS_MAX_NUM];
+-
+-static const char *const modify_field_ops[] = {
+-	"set", "add", "sub", NULL
+-};
+-
+-static const char *const flow_field_ids[] = {
+-	"start", "mac_dst", "mac_src",
+-	"vlan_type", "vlan_id", "mac_type",
+-	"ipv4_dscp", "ipv4_ttl", "ipv4_src", "ipv4_dst",
+-	"ipv6_dscp", "ipv6_hoplimit", "ipv6_src", "ipv6_dst",
+-	"tcp_port_src", "tcp_port_dst",
+-	"tcp_seq_num", "tcp_ack_num", "tcp_flags",
+-	"udp_port_src", "udp_port_dst",
+-	"vxlan_vni", "geneve_vni", "gtp_teid",
+-	"tag", "mark", "meta", "pointer", "value",
+-	"ipv4_ecn", "ipv6_ecn", "gtp_psc_qfi", "meter_color",
+-	"ipv6_proto",
+-	"flex_item",
+-	"hash_result",
+-	"geneve_opt_type", "geneve_opt_class", "geneve_opt_data", "mpls",
+-	"tcp_data_off", "ipv4_ihl", "ipv4_total_len", "ipv6_payload_len",
+-	"ipv4_proto",
+-	"ipv6_flow_label", "ipv6_traffic_class",
+-	"esp_spi", "esp_seq_num", "esp_proto",
+-	"random",
+-	"vxlan_last_rsvd",
+-	NULL
+-};
+-
+-static const char *const meter_colors[] = {
+-	"green", "yellow", "red", "all", NULL
+-};
+-
+-static const char *const table_insertion_types[] = {
+-	"pattern", "index", "index_with_pattern", NULL
+-};
+-
+-static const char *const table_hash_funcs[] = {
+-	"default", "linear", "crc32", "crc16", NULL
+-};
+-
+-#define RAW_IPSEC_CONFS_MAX_NUM 8
+-
+-/** Maximum number of subsequent tokens and arguments on the stack. */
+-#define CTX_STACK_SIZE 16
+-
+-/** Parser context. */
+-struct context {
+-	/** Stack of subsequent token lists to process. */
+-	const enum index *next[CTX_STACK_SIZE];
+-	/** Arguments for stacked tokens. */
+-	const void *args[CTX_STACK_SIZE];
+-	enum index curr; /**< Current token index. */
+-	enum index prev; /**< Index of the last token seen. */
+-	int next_num; /**< Number of entries in next[]. */
+-	int args_num; /**< Number of entries in args[]. */
+-	uint32_t eol:1; /**< EOL has been detected. */
+-	uint32_t last:1; /**< No more arguments. */
+-	portid_t port; /**< Current port ID (for completions). */
+-	uint32_t objdata; /**< Object-specific data. */
+-	void *object; /**< Address of current object for relative offsets. */
+-	void *objmask; /**< Object a full mask must be written to. */
+-};
+-
+-/** Token argument. */
+-struct arg {
+-	uint32_t hton:1; /**< Use network byte ordering. */
+-	uint32_t sign:1; /**< Value is signed. */
+-	uint32_t bounded:1; /**< Value is bounded. */
+-	uintmax_t min; /**< Minimum value if bounded. */
+-	uintmax_t max; /**< Maximum value if bounded. */
+-	uint32_t offset; /**< Relative offset from ctx->object. */
+-	uint32_t size; /**< Field size. */
+-	const uint8_t *mask; /**< Bit-mask to use instead of offset/size. */
+-};
+-
+-/** Parser token definition. */
+-struct token {
+-	/** Type displayed during completion (defaults to "TOKEN"). */
+-	const char *type;
+-	/** Help displayed during completion (defaults to token name). */
+-	const char *help;
+-	/** Private data used by parser functions. */
+-	const void *priv;
+-	/**
+-	 * Lists of subsequent tokens to push on the stack. Each call to the
+-	 * parser consumes the last entry of that stack.
+-	 */
+-	const enum index *const *next;
+-	/** Arguments stack for subsequent tokens that need them. */
+-	const struct arg *const *args;
+-	/**
+-	 * Token-processing callback, returns -1 in case of error, the
+-	 * length of the matched string otherwise. If NULL, attempts to
+-	 * match the token name.
+-	 *
+-	 * If buf is not NULL, the result should be stored in it according
+-	 * to context. An error is returned if not large enough.
+-	 */
+-	int (*call)(struct context *ctx, const struct token *token,
+-		    const char *str, unsigned int len,
+-		    void *buf, unsigned int size);
+-	/**
+-	 * Callback that provides possible values for this token, used for
+-	 * completion. Returns -1 in case of error, the number of possible
+-	 * values otherwise. If NULL, the token name is used.
+-	 *
+-	 * If buf is not NULL, entry index ent is written to buf and the
+-	 * full length of the entry is returned (same behavior as
+-	 * snprintf()).
+-	 */
+-	int (*comp)(struct context *ctx, const struct token *token,
+-		    unsigned int ent, char *buf, unsigned int size);
+-	/** Mandatory token name, no default value. */
+-	const char *name;
+-};
+-
+-/** Static initializer for the next field. */
+-#define NEXT(...) (const enum index *const []){ __VA_ARGS__, NULL, }
+-
+-/** Static initializer for a NEXT() entry. */
+-#define NEXT_ENTRY(...) (const enum index []){ __VA_ARGS__, ZERO, }
+-
+-/** Static initializer for the args field. */
+-#define ARGS(...) (const struct arg *const []){ __VA_ARGS__, NULL, }
+-
+-/** Static initializer for ARGS() to target a field. */
+-#define ARGS_ENTRY(s, f) \
+-	(&(const struct arg){ \
+-		.offset = offsetof(s, f), \
+-		.size = sizeof(((s *)0)->f), \
+-	})
+-
+-/** Static initializer for ARGS() to target a bit-field. */
+-#define ARGS_ENTRY_BF(s, f, b) \
+-	(&(const struct arg){ \
+-		.size = sizeof(s), \
+-		.mask = (const void *)&(const s){ .f = (1 << (b)) - 1 }, \
+-	})
+-
+-/** Static initializer for ARGS() to target a field with limits. */
+-#define ARGS_ENTRY_BOUNDED(s, f, i, a) \
+-	(&(const struct arg){ \
+-		.bounded = 1, \
+-		.min = (i), \
+-		.max = (a), \
+-		.offset = offsetof(s, f), \
+-		.size = sizeof(((s *)0)->f), \
+-	})
+-
+-/** Static initializer for ARGS() to target an arbitrary bit-mask. */
+-#define ARGS_ENTRY_MASK(s, f, m) \
+-	(&(const struct arg){ \
+-		.offset = offsetof(s, f), \
+-		.size = sizeof(((s *)0)->f), \
+-		.mask = (const void *)(m), \
+-	})
+-
+-/** Same as ARGS_ENTRY_MASK() using network byte ordering for the value. */
+-#define ARGS_ENTRY_MASK_HTON(s, f, m) \
+-	(&(const struct arg){ \
+-		.hton = 1, \
+-		.offset = offsetof(s, f), \
+-		.size = sizeof(((s *)0)->f), \
+-		.mask = (const void *)(m), \
+-	})
+-
+-/** Static initializer for ARGS() to target a pointer. */
+-#define ARGS_ENTRY_PTR(s, f) \
+-	(&(const struct arg){ \
+-		.size = sizeof(*((s *)0)->f), \
+-	})
+-
+-/** Static initializer for ARGS() with arbitrary offset and size. */
+-#define ARGS_ENTRY_ARB(o, s) \
+-	(&(const struct arg){ \
+-		.offset = (o), \
+-		.size = (s), \
+-	})
+-
+-/** Same as ARGS_ENTRY_ARB() with bounded values. */
+-#define ARGS_ENTRY_ARB_BOUNDED(o, s, i, a) \
+-	(&(const struct arg){ \
+-		.bounded = 1, \
+-		.min = (i), \
+-		.max = (a), \
+-		.offset = (o), \
+-		.size = (s), \
+-	})
+-
+-/** Same as ARGS_ENTRY() using network byte ordering. */
+-#define ARGS_ENTRY_HTON(s, f) \
+-	(&(const struct arg){ \
+-		.hton = 1, \
+-		.offset = offsetof(s, f), \
+-		.size = sizeof(((s *)0)->f), \
+-	})
+-
+-/** Same as ARGS_ENTRY_HTON() for a single argument, without structure. */
+-#define ARG_ENTRY_HTON(s) \
+-	(&(const struct arg){ \
+-		.hton = 1, \
+-		.offset = 0, \
+-		.size = sizeof(s), \
+-	})
+-
+-/** Parser output buffer layout expected by cmd_flow_parsed(). */
+-struct buffer {
+-	enum index command; /**< Flow command. */
+-	portid_t port; /**< Affected port ID. */
+-	queueid_t queue; /** Async queue ID. */
+-	bool postpone; /** Postpone async operation */
+-	union {
+-		struct {
+-			struct rte_flow_port_attr port_attr;
+-			uint32_t nb_queue;
+-			struct rte_flow_queue_attr queue_attr;
+-		} configure; /**< Configuration arguments. */
+-		struct {
+-			uint32_t *template_id;
+-			uint32_t template_id_n;
+-		} templ_destroy; /**< Template destroy arguments. */
+-		struct {
+-			uint32_t id;
+-			struct rte_flow_template_table_attr attr;
+-			uint32_t *pat_templ_id;
+-			uint32_t pat_templ_id_n;
+-			uint32_t *act_templ_id;
+-			uint32_t act_templ_id_n;
+-		} table; /**< Table arguments. */
+-		struct {
+-			uint32_t *table_id;
+-			uint32_t table_id_n;
+-		} table_destroy; /**< Template destroy arguments. */
+-		struct {
+-			uint32_t *action_id;
+-			uint32_t action_id_n;
+-		} ia_destroy; /**< Indirect action destroy arguments. */
+-		struct {
+-			uint32_t action_id;
+-			enum rte_flow_query_update_mode qu_mode;
+-		} ia; /* Indirect action query arguments */
+-		struct {
+-			uint32_t table_id;
+-			uint32_t pat_templ_id;
+-			uint32_t rule_id;
+-			uint32_t act_templ_id;
+-			struct rte_flow_attr attr;
+-			struct tunnel_ops tunnel_ops;
+-			uintptr_t user_id;
+-			struct rte_flow_item *pattern;
+-			struct rte_flow_action *actions;
+-			struct rte_flow_action *masks;
+-			uint32_t pattern_n;
+-			uint32_t actions_n;
+-			uint8_t *data;
+-			enum rte_flow_encap_hash_field field;
+-			uint8_t encap_hash;
+-		} vc; /**< Validate/create arguments. */
+-		struct {
+-			uint64_t *rule;
+-			uint64_t rule_n;
+-			bool is_user_id;
+-		} destroy; /**< Destroy arguments. */
+-		struct {
+-			char file[128];
+-			bool mode;
+-			uint64_t rule;
+-			bool is_user_id;
+-		} dump; /**< Dump arguments. */
+-		struct {
+-			uint64_t rule;
+-			struct rte_flow_action action;
+-			bool is_user_id;
+-		} query; /**< Query arguments. */
+-		struct {
+-			uint32_t *group;
+-			uint32_t group_n;
+-		} list; /**< List arguments. */
+-		struct {
+-			int set;
+-		} isolate; /**< Isolated mode arguments. */
+-		struct {
+-			int destroy;
+-		} aged; /**< Aged arguments. */
+-		struct {
+-			uint32_t policy_id;
+-		} policy;/**< Policy arguments. */
+-		struct {
+-			uint16_t token;
+-			uintptr_t uintptr;
+-			char filename[128];
+-		} flex; /**< Flex arguments*/
+-	} args; /**< Command arguments. */
+-};
+-
+-/** Private data for pattern items. */
+-struct parse_item_priv {
+-	enum rte_flow_item_type type; /**< Item type. */
+-	uint32_t size; /**< Size of item specification structure. */
+-};
+-
+-#define PRIV_ITEM(t, s) \
+-	(&(const struct parse_item_priv){ \
+-		.type = RTE_FLOW_ITEM_TYPE_ ## t, \
+-		.size = s, \
+-	})
+-
+-/** Private data for actions. */
+-struct parse_action_priv {
+-	enum rte_flow_action_type type; /**< Action type. */
+-	uint32_t size; /**< Size of action configuration structure. */
+-};
+-
+-#define PRIV_ACTION(t, s) \
+-	(&(const struct parse_action_priv){ \
+-		.type = RTE_FLOW_ACTION_TYPE_ ## t, \
+-		.size = s, \
+-	})
+-
+-static const enum index next_flex_item[] = {
+-	FLEX_ITEM_CREATE,
+-	FLEX_ITEM_DESTROY,
+-	ZERO,
+-};
+-
+-static const enum index next_config_attr[] = {
+-	CONFIG_QUEUES_NUMBER,
+-	CONFIG_QUEUES_SIZE,
+-	CONFIG_COUNTERS_NUMBER,
+-	CONFIG_AGING_OBJECTS_NUMBER,
+-	CONFIG_METERS_NUMBER,
+-	CONFIG_CONN_TRACK_NUMBER,
+-	CONFIG_QUOTAS_NUMBER,
+-	CONFIG_FLAGS,
+-	CONFIG_HOST_PORT,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_pt_subcmd[] = {
+-	PATTERN_TEMPLATE_CREATE,
+-	PATTERN_TEMPLATE_DESTROY,
+-	ZERO,
+-};
+-
+-static const enum index next_pt_attr[] = {
+-	PATTERN_TEMPLATE_CREATE_ID,
+-	PATTERN_TEMPLATE_RELAXED_MATCHING,
+-	PATTERN_TEMPLATE_INGRESS,
+-	PATTERN_TEMPLATE_EGRESS,
+-	PATTERN_TEMPLATE_TRANSFER,
+-	PATTERN_TEMPLATE_SPEC,
+-	ZERO,
+-};
+-
+-static const enum index next_pt_destroy_attr[] = {
+-	PATTERN_TEMPLATE_DESTROY_ID,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_at_subcmd[] = {
+-	ACTIONS_TEMPLATE_CREATE,
+-	ACTIONS_TEMPLATE_DESTROY,
+-	ZERO,
+-};
+-
+-static const enum index next_at_attr[] = {
+-	ACTIONS_TEMPLATE_CREATE_ID,
+-	ACTIONS_TEMPLATE_INGRESS,
+-	ACTIONS_TEMPLATE_EGRESS,
+-	ACTIONS_TEMPLATE_TRANSFER,
+-	ACTIONS_TEMPLATE_SPEC,
+-	ZERO,
+-};
+-
+-static const enum index next_at_destroy_attr[] = {
+-	ACTIONS_TEMPLATE_DESTROY_ID,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_group_attr[] = {
+-	GROUP_INGRESS,
+-	GROUP_EGRESS,
+-	GROUP_TRANSFER,
+-	GROUP_SET_MISS_ACTIONS,
+-	ZERO,
+-};
+-
+-static const enum index next_table_subcmd[] = {
+-	TABLE_CREATE,
+-	TABLE_DESTROY,
+-	TABLE_RESIZE,
+-	TABLE_RESIZE_COMPLETE,
+-	ZERO,
+-};
+-
+-static const enum index next_table_attr[] = {
+-	TABLE_CREATE_ID,
+-	TABLE_GROUP,
+-	TABLE_INSERTION_TYPE,
+-	TABLE_HASH_FUNC,
+-	TABLE_PRIORITY,
+-	TABLE_INGRESS,
+-	TABLE_EGRESS,
+-	TABLE_TRANSFER,
+-	TABLE_TRANSFER_WIRE_ORIG,
+-	TABLE_TRANSFER_VPORT_ORIG,
+-	TABLE_RESIZABLE,
+-	TABLE_RULES_NUMBER,
+-	TABLE_PATTERN_TEMPLATE,
+-	TABLE_ACTIONS_TEMPLATE,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_table_destroy_attr[] = {
+-	TABLE_DESTROY_ID,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_queue_subcmd[] = {
+-	QUEUE_CREATE,
+-	QUEUE_DESTROY,
+-	QUEUE_FLOW_UPDATE_RESIZED,
+-	QUEUE_UPDATE,
+-	QUEUE_AGED,
+-	QUEUE_INDIRECT_ACTION,
+-	ZERO,
+-};
+-
+-static const enum index next_queue_destroy_attr[] = {
+-	QUEUE_DESTROY_ID,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_qia_subcmd[] = {
+-	QUEUE_INDIRECT_ACTION_CREATE,
+-	QUEUE_INDIRECT_ACTION_UPDATE,
+-	QUEUE_INDIRECT_ACTION_DESTROY,
+-	QUEUE_INDIRECT_ACTION_QUERY,
+-	QUEUE_INDIRECT_ACTION_QUERY_UPDATE,
+-	ZERO,
+-};
+-
+-static const enum index next_qia_create_attr[] = {
+-	QUEUE_INDIRECT_ACTION_CREATE_ID,
+-	QUEUE_INDIRECT_ACTION_INGRESS,
+-	QUEUE_INDIRECT_ACTION_EGRESS,
+-	QUEUE_INDIRECT_ACTION_TRANSFER,
+-	QUEUE_INDIRECT_ACTION_CREATE_POSTPONE,
+-	QUEUE_INDIRECT_ACTION_SPEC,
+-	QUEUE_INDIRECT_ACTION_LIST,
+-	ZERO,
+-};
+-
+-static const enum index next_qia_update_attr[] = {
+-	QUEUE_INDIRECT_ACTION_UPDATE_POSTPONE,
+-	QUEUE_INDIRECT_ACTION_SPEC,
+-	ZERO,
+-};
+-
+-static const enum index next_qia_destroy_attr[] = {
+-	QUEUE_INDIRECT_ACTION_DESTROY_POSTPONE,
+-	QUEUE_INDIRECT_ACTION_DESTROY_ID,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_qia_query_attr[] = {
+-	QUEUE_INDIRECT_ACTION_QUERY_POSTPONE,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_ia_create_attr[] = {
+-	INDIRECT_ACTION_CREATE_ID,
+-	INDIRECT_ACTION_INGRESS,
+-	INDIRECT_ACTION_EGRESS,
+-	INDIRECT_ACTION_TRANSFER,
+-	INDIRECT_ACTION_SPEC,
+-	INDIRECT_ACTION_LIST,
+-	INDIRECT_ACTION_FLOW_CONF,
+-	ZERO,
+-};
+-
+-static const enum index next_ia[] = {
+-	INDIRECT_ACTION_ID2PTR,
+-	ACTION_NEXT,
+-	ZERO
+-};
+-
+-static const enum index next_ial[] = {
+-	ACTION_INDIRECT_LIST_HANDLE,
+-	ACTION_INDIRECT_LIST_CONF,
+-	ACTION_NEXT,
+-	ZERO
+-};
+-
+-static const enum index next_qia_qu_attr[] = {
+-	QUEUE_INDIRECT_ACTION_QU_MODE,
+-	QUEUE_INDIRECT_ACTION_UPDATE_POSTPONE,
+-	INDIRECT_ACTION_SPEC,
+-	ZERO
+-};
+-
+-static const enum index next_ia_qu_attr[] = {
+-	INDIRECT_ACTION_QU_MODE,
+-	INDIRECT_ACTION_SPEC,
+-	ZERO
+-};
+-
+-static const enum index next_dump_subcmd[] = {
+-	DUMP_ALL,
+-	DUMP_ONE,
+-	DUMP_IS_USER_ID,
+-	ZERO,
+-};
+-
+-static const enum index next_ia_subcmd[] = {
+-	INDIRECT_ACTION_CREATE,
+-	INDIRECT_ACTION_UPDATE,
+-	INDIRECT_ACTION_DESTROY,
+-	INDIRECT_ACTION_QUERY,
+-	INDIRECT_ACTION_QUERY_UPDATE,
+-	ZERO,
+-};
+-
+-static const enum index next_vc_attr[] = {
+-	VC_GROUP,
+-	VC_PRIORITY,
+-	VC_INGRESS,
+-	VC_EGRESS,
+-	VC_TRANSFER,
+-	VC_TUNNEL_SET,
+-	VC_TUNNEL_MATCH,
+-	VC_USER_ID,
+-	ITEM_PATTERN,
+-	ZERO,
+-};
+-
+-static const enum index next_destroy_attr[] = {
+-	DESTROY_RULE,
+-	DESTROY_IS_USER_ID,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_dump_attr[] = {
+-	COMMON_FILE_PATH,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_query_attr[] = {
+-	QUERY_IS_USER_ID,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_list_attr[] = {
+-	LIST_GROUP,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_aged_attr[] = {
+-	AGED_DESTROY,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_ia_destroy_attr[] = {
+-	INDIRECT_ACTION_DESTROY_ID,
+-	END,
+-	ZERO,
+-};
+-
+-static const enum index next_async_insert_subcmd[] = {
+-	QUEUE_PATTERN_TEMPLATE,
+-	QUEUE_RULE_ID,
+-	ZERO,
+-};
+-
+-static const enum index next_async_pattern_subcmd[] = {
+-	QUEUE_PATTERN_TEMPLATE,
+-	QUEUE_ACTIONS_TEMPLATE,
+-	ZERO,
+-};
+-
+-static const enum index item_param[] = {
+-	ITEM_PARAM_IS,
+-	ITEM_PARAM_SPEC,
+-	ITEM_PARAM_LAST,
+-	ITEM_PARAM_MASK,
+-	ITEM_PARAM_PREFIX,
+-	ZERO,
+-};
+-
+-static const enum index next_item[] = {
+-	ITEM_END,
+-	ITEM_VOID,
+-	ITEM_INVERT,
+-	ITEM_ANY,
+-	ITEM_PORT_ID,
+-	ITEM_MARK,
+-	ITEM_RAW,
+-	ITEM_ETH,
+-	ITEM_VLAN,
+-	ITEM_IPV4,
+-	ITEM_IPV6,
+-	ITEM_ICMP,
+-	ITEM_UDP,
+-	ITEM_TCP,
+-	ITEM_SCTP,
+-	ITEM_VXLAN,
+-	ITEM_E_TAG,
+-	ITEM_NVGRE,
+-	ITEM_MPLS,
+-	ITEM_GRE,
+-	ITEM_FUZZY,
+-	ITEM_GTP,
+-	ITEM_GTPC,
+-	ITEM_GTPU,
+-	ITEM_GENEVE,
+-	ITEM_VXLAN_GPE,
+-	ITEM_ARP_ETH_IPV4,
+-	ITEM_IPV6_EXT,
+-	ITEM_IPV6_FRAG_EXT,
+-	ITEM_IPV6_ROUTING_EXT,
+-	ITEM_ICMP6,
+-	ITEM_ICMP6_ECHO_REQUEST,
+-	ITEM_ICMP6_ECHO_REPLY,
+-	ITEM_ICMP6_ND_NS,
+-	ITEM_ICMP6_ND_NA,
+-	ITEM_ICMP6_ND_OPT,
+-	ITEM_ICMP6_ND_OPT_SLA_ETH,
+-	ITEM_ICMP6_ND_OPT_TLA_ETH,
+-	ITEM_META,
+-	ITEM_RANDOM,
+-	ITEM_GRE_KEY,
+-	ITEM_GRE_OPTION,
+-	ITEM_GTP_PSC,
+-	ITEM_PPPOES,
+-	ITEM_PPPOED,
+-	ITEM_PPPOE_PROTO_ID,
+-	ITEM_HIGIG2,
+-	ITEM_TAG,
+-	ITEM_L2TPV3OIP,
+-	ITEM_ESP,
+-	ITEM_AH,
+-	ITEM_PFCP,
+-	ITEM_ECPRI,
+-	ITEM_GENEVE_OPT,
+-	ITEM_INTEGRITY,
+-	ITEM_CONNTRACK,
+-	ITEM_PORT_REPRESENTOR,
+-	ITEM_REPRESENTED_PORT,
+-	ITEM_FLEX,
+-	ITEM_L2TPV2,
+-	ITEM_PPP,
+-	ITEM_METER,
+-	ITEM_QUOTA,
+-	ITEM_AGGR_AFFINITY,
+-	ITEM_TX_QUEUE,
+-	ITEM_IB_BTH,
+-	ITEM_PTYPE,
+-	ITEM_NSH,
+-	ITEM_COMPARE,
+-	END_SET,
+-	ZERO,
+-};
+-
+-static const enum index item_fuzzy[] = {
+-	ITEM_FUZZY_THRESH,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_any[] = {
+-	ITEM_ANY_NUM,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_port_id[] = {
+-	ITEM_PORT_ID_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_mark[] = {
+-	ITEM_MARK_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_raw[] = {
+-	ITEM_RAW_RELATIVE,
+-	ITEM_RAW_SEARCH,
+-	ITEM_RAW_OFFSET,
+-	ITEM_RAW_LIMIT,
+-	ITEM_RAW_PATTERN,
+-	ITEM_RAW_PATTERN_HEX,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_eth[] = {
+-	ITEM_ETH_DST,
+-	ITEM_ETH_SRC,
+-	ITEM_ETH_TYPE,
+-	ITEM_ETH_HAS_VLAN,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_vlan[] = {
+-	ITEM_VLAN_TCI,
+-	ITEM_VLAN_PCP,
+-	ITEM_VLAN_DEI,
+-	ITEM_VLAN_VID,
+-	ITEM_VLAN_INNER_TYPE,
+-	ITEM_VLAN_HAS_MORE_VLAN,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ipv4[] = {
+-	ITEM_IPV4_VER_IHL,
+-	ITEM_IPV4_TOS,
+-	ITEM_IPV4_LENGTH,
+-	ITEM_IPV4_ID,
+-	ITEM_IPV4_FRAGMENT_OFFSET,
+-	ITEM_IPV4_TTL,
+-	ITEM_IPV4_PROTO,
+-	ITEM_IPV4_SRC,
+-	ITEM_IPV4_DST,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ipv6[] = {
+-	ITEM_IPV6_TC,
+-	ITEM_IPV6_FLOW,
+-	ITEM_IPV6_LEN,
+-	ITEM_IPV6_PROTO,
+-	ITEM_IPV6_HOP,
+-	ITEM_IPV6_SRC,
+-	ITEM_IPV6_DST,
+-	ITEM_IPV6_HAS_FRAG_EXT,
+-	ITEM_IPV6_ROUTING_EXT,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ipv6_routing_ext[] = {
+-	ITEM_IPV6_ROUTING_EXT_TYPE,
+-	ITEM_IPV6_ROUTING_EXT_NEXT_HDR,
+-	ITEM_IPV6_ROUTING_EXT_SEG_LEFT,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp[] = {
+-	ITEM_ICMP_TYPE,
+-	ITEM_ICMP_CODE,
+-	ITEM_ICMP_IDENT,
+-	ITEM_ICMP_SEQ,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_udp[] = {
+-	ITEM_UDP_SRC,
+-	ITEM_UDP_DST,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_tcp[] = {
+-	ITEM_TCP_SRC,
+-	ITEM_TCP_DST,
+-	ITEM_TCP_FLAGS,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_sctp[] = {
+-	ITEM_SCTP_SRC,
+-	ITEM_SCTP_DST,
+-	ITEM_SCTP_TAG,
+-	ITEM_SCTP_CKSUM,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_vxlan[] = {
+-	ITEM_VXLAN_VNI,
+-	ITEM_VXLAN_FLAG_G,
+-	ITEM_VXLAN_FLAG_VER,
+-	ITEM_VXLAN_FLAG_I,
+-	ITEM_VXLAN_FLAG_P,
+-	ITEM_VXLAN_FLAG_B,
+-	ITEM_VXLAN_FLAG_O,
+-	ITEM_VXLAN_FLAG_D,
+-	ITEM_VXLAN_FLAG_A,
+-	ITEM_VXLAN_GBP_ID,
+-	ITEM_VXLAN_GPE_PROTO,
+-	ITEM_VXLAN_FIRST_RSVD,
+-	ITEM_VXLAN_SECND_RSVD,
+-	ITEM_VXLAN_THIRD_RSVD,
+-	ITEM_VXLAN_LAST_RSVD,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_e_tag[] = {
+-	ITEM_E_TAG_GRP_ECID_B,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_nvgre[] = {
+-	ITEM_NVGRE_TNI,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_mpls[] = {
+-	ITEM_MPLS_LABEL,
+-	ITEM_MPLS_TC,
+-	ITEM_MPLS_S,
+-	ITEM_MPLS_TTL,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_gre[] = {
+-	ITEM_GRE_PROTO,
+-	ITEM_GRE_C_RSVD0_VER,
+-	ITEM_GRE_C_BIT,
+-	ITEM_GRE_K_BIT,
+-	ITEM_GRE_S_BIT,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_gre_key[] = {
+-	ITEM_GRE_KEY_VALUE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_gre_option[] = {
+-	ITEM_GRE_OPTION_CHECKSUM,
+-	ITEM_GRE_OPTION_KEY,
+-	ITEM_GRE_OPTION_SEQUENCE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_gtp[] = {
+-	ITEM_GTP_FLAGS,
+-	ITEM_GTP_MSG_TYPE,
+-	ITEM_GTP_TEID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_geneve[] = {
+-	ITEM_GENEVE_VNI,
+-	ITEM_GENEVE_PROTO,
+-	ITEM_GENEVE_OPTLEN,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_vxlan_gpe[] = {
+-	ITEM_VXLAN_GPE_VNI,
+-	ITEM_VXLAN_GPE_PROTO_IN_DEPRECATED_VXLAN_GPE_HDR,
+-	ITEM_VXLAN_GPE_FLAGS,
+-	ITEM_VXLAN_GPE_RSVD0,
+-	ITEM_VXLAN_GPE_RSVD1,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_arp_eth_ipv4[] = {
+-	ITEM_ARP_ETH_IPV4_SHA,
+-	ITEM_ARP_ETH_IPV4_SPA,
+-	ITEM_ARP_ETH_IPV4_THA,
+-	ITEM_ARP_ETH_IPV4_TPA,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ipv6_ext[] = {
+-	ITEM_IPV6_EXT_NEXT_HDR,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ipv6_frag_ext[] = {
+-	ITEM_IPV6_FRAG_EXT_NEXT_HDR,
+-	ITEM_IPV6_FRAG_EXT_FRAG_DATA,
+-	ITEM_IPV6_FRAG_EXT_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp6[] = {
+-	ITEM_ICMP6_TYPE,
+-	ITEM_ICMP6_CODE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp6_echo_request[] = {
+-	ITEM_ICMP6_ECHO_REQUEST_ID,
+-	ITEM_ICMP6_ECHO_REQUEST_SEQ,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp6_echo_reply[] = {
+-	ITEM_ICMP6_ECHO_REPLY_ID,
+-	ITEM_ICMP6_ECHO_REPLY_SEQ,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp6_nd_ns[] = {
+-	ITEM_ICMP6_ND_NS_TARGET_ADDR,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp6_nd_na[] = {
+-	ITEM_ICMP6_ND_NA_TARGET_ADDR,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp6_nd_opt[] = {
+-	ITEM_ICMP6_ND_OPT_TYPE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp6_nd_opt_sla_eth[] = {
+-	ITEM_ICMP6_ND_OPT_SLA_ETH_SLA,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_icmp6_nd_opt_tla_eth[] = {
+-	ITEM_ICMP6_ND_OPT_TLA_ETH_TLA,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_meta[] = {
+-	ITEM_META_DATA,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_random[] = {
+-	ITEM_RANDOM_VALUE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_gtp_psc[] = {
+-	ITEM_GTP_PSC_QFI,
+-	ITEM_GTP_PSC_PDU_T,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_pppoed[] = {
+-	ITEM_PPPOE_SEID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_pppoes[] = {
+-	ITEM_PPPOE_SEID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_pppoe_proto_id[] = {
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_higig2[] = {
+-	ITEM_HIGIG2_CLASSIFICATION,
+-	ITEM_HIGIG2_VID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_esp[] = {
+-	ITEM_ESP_SPI,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ah[] = {
+-	ITEM_AH_SPI,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_pfcp[] = {
+-	ITEM_PFCP_S_FIELD,
+-	ITEM_PFCP_SEID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index next_set_raw[] = {
+-	SET_RAW_INDEX,
+-	ITEM_ETH,
+-	ZERO,
+-};
+-
+-static const enum index item_tag[] = {
+-	ITEM_TAG_DATA,
+-	ITEM_TAG_INDEX,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv3oip[] = {
+-	ITEM_L2TPV3OIP_SESSION_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ecpri[] = {
+-	ITEM_ECPRI_COMMON,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ecpri_common[] = {
+-	ITEM_ECPRI_COMMON_TYPE,
+-	ZERO,
+-};
+-
+-static const enum index item_ecpri_common_type[] = {
+-	ITEM_ECPRI_COMMON_TYPE_IQ_DATA,
+-	ITEM_ECPRI_COMMON_TYPE_RTC_CTRL,
+-	ITEM_ECPRI_COMMON_TYPE_DLY_MSR,
+-	ZERO,
+-};
+-
+-static const enum index item_geneve_opt[] = {
+-	ITEM_GENEVE_OPT_CLASS,
+-	ITEM_GENEVE_OPT_TYPE,
+-	ITEM_GENEVE_OPT_LENGTH,
+-	ITEM_GENEVE_OPT_DATA,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_integrity[] = {
+-	ITEM_INTEGRITY_LEVEL,
+-	ITEM_INTEGRITY_VALUE,
+-	ZERO,
+-};
+-
+-static const enum index item_integrity_lv[] = {
+-	ITEM_INTEGRITY_LEVEL,
+-	ITEM_INTEGRITY_VALUE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_port_representor[] = {
+-	ITEM_PORT_REPRESENTOR_PORT_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_represented_port[] = {
+-	ITEM_REPRESENTED_PORT_ETHDEV_PORT_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_flex[] = {
+-	ITEM_FLEX_PATTERN_HANDLE,
+-	ITEM_FLEX_ITEM_HANDLE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv2[] = {
+-	ITEM_L2TPV2_TYPE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv2_type[] = {
+-	ITEM_L2TPV2_TYPE_DATA,
+-	ITEM_L2TPV2_TYPE_DATA_L,
+-	ITEM_L2TPV2_TYPE_DATA_S,
+-	ITEM_L2TPV2_TYPE_DATA_O,
+-	ITEM_L2TPV2_TYPE_DATA_L_S,
+-	ITEM_L2TPV2_TYPE_CTRL,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv2_type_data[] = {
+-	ITEM_L2TPV2_MSG_DATA_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_SESSION_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv2_type_data_l[] = {
+-	ITEM_L2TPV2_MSG_DATA_L_LENGTH,
+-	ITEM_L2TPV2_MSG_DATA_L_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_L_SESSION_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv2_type_data_s[] = {
+-	ITEM_L2TPV2_MSG_DATA_S_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_S_SESSION_ID,
+-	ITEM_L2TPV2_MSG_DATA_S_NS,
+-	ITEM_L2TPV2_MSG_DATA_S_NR,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv2_type_data_o[] = {
+-	ITEM_L2TPV2_MSG_DATA_O_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_O_SESSION_ID,
+-	ITEM_L2TPV2_MSG_DATA_O_OFFSET,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv2_type_data_l_s[] = {
+-	ITEM_L2TPV2_MSG_DATA_L_S_LENGTH,
+-	ITEM_L2TPV2_MSG_DATA_L_S_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_DATA_L_S_SESSION_ID,
+-	ITEM_L2TPV2_MSG_DATA_L_S_NS,
+-	ITEM_L2TPV2_MSG_DATA_L_S_NR,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_l2tpv2_type_ctrl[] = {
+-	ITEM_L2TPV2_MSG_CTRL_LENGTH,
+-	ITEM_L2TPV2_MSG_CTRL_TUNNEL_ID,
+-	ITEM_L2TPV2_MSG_CTRL_SESSION_ID,
+-	ITEM_L2TPV2_MSG_CTRL_NS,
+-	ITEM_L2TPV2_MSG_CTRL_NR,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ppp[] = {
+-	ITEM_PPP_ADDR,
+-	ITEM_PPP_CTRL,
+-	ITEM_PPP_PROTO_ID,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_meter[] = {
+-	ITEM_METER_COLOR,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_quota[] = {
+-	ITEM_QUOTA_STATE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_aggr_affinity[] = {
+-	ITEM_AGGR_AFFINITY_VALUE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_tx_queue[] = {
+-	ITEM_TX_QUEUE_VALUE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ib_bth[] = {
+-	ITEM_IB_BTH_OPCODE,
+-	ITEM_IB_BTH_PKEY,
+-	ITEM_IB_BTH_DST_QPN,
+-	ITEM_IB_BTH_PSN,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ptype[] = {
+-	ITEM_PTYPE_VALUE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_nsh[] = {
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_compare_field[] = {
+-	ITEM_COMPARE_OP,
+-	ITEM_COMPARE_FIELD_A_TYPE,
+-	ITEM_COMPARE_FIELD_B_TYPE,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index compare_field_a[] = {
+-	ITEM_COMPARE_FIELD_A_TYPE,
+-	ITEM_COMPARE_FIELD_A_LEVEL,
+-	ITEM_COMPARE_FIELD_A_TAG_INDEX,
+-	ITEM_COMPARE_FIELD_A_TYPE_ID,
+-	ITEM_COMPARE_FIELD_A_CLASS_ID,
+-	ITEM_COMPARE_FIELD_A_OFFSET,
+-	ITEM_COMPARE_FIELD_B_TYPE,
+-	ZERO,
+-};
+-
+-static const enum index compare_field_b[] = {
+-	ITEM_COMPARE_FIELD_B_TYPE,
+-	ITEM_COMPARE_FIELD_B_LEVEL,
+-	ITEM_COMPARE_FIELD_B_TAG_INDEX,
+-	ITEM_COMPARE_FIELD_B_TYPE_ID,
+-	ITEM_COMPARE_FIELD_B_CLASS_ID,
+-	ITEM_COMPARE_FIELD_B_OFFSET,
+-	ITEM_COMPARE_FIELD_B_VALUE,
+-	ITEM_COMPARE_FIELD_B_POINTER,
+-	ITEM_COMPARE_FIELD_WIDTH,
+-	ZERO,
+-};
+-
+-static const enum index next_action[] = {
+-	ACTION_END,
+-	ACTION_VOID,
+-	ACTION_PASSTHRU,
+-	ACTION_SKIP_CMAN,
+-	ACTION_JUMP,
+-	ACTION_MARK,
+-	ACTION_FLAG,
+-	ACTION_QUEUE,
+-	ACTION_DROP,
+-	ACTION_COUNT,
+-	ACTION_RSS,
+-	ACTION_PF,
+-	ACTION_VF,
+-	ACTION_PORT_ID,
+-	ACTION_METER,
+-	ACTION_METER_COLOR,
+-	ACTION_METER_MARK,
+-	ACTION_METER_MARK_CONF,
+-	ACTION_OF_DEC_NW_TTL,
+-	ACTION_OF_POP_VLAN,
+-	ACTION_OF_PUSH_VLAN,
+-	ACTION_OF_SET_VLAN_VID,
+-	ACTION_OF_SET_VLAN_PCP,
+-	ACTION_OF_POP_MPLS,
+-	ACTION_OF_PUSH_MPLS,
+-	ACTION_VXLAN_ENCAP,
+-	ACTION_VXLAN_DECAP,
+-	ACTION_NVGRE_ENCAP,
+-	ACTION_NVGRE_DECAP,
+-	ACTION_L2_ENCAP,
+-	ACTION_L2_DECAP,
+-	ACTION_MPLSOGRE_ENCAP,
+-	ACTION_MPLSOGRE_DECAP,
+-	ACTION_MPLSOUDP_ENCAP,
+-	ACTION_MPLSOUDP_DECAP,
+-	ACTION_SET_IPV4_SRC,
+-	ACTION_SET_IPV4_DST,
+-	ACTION_SET_IPV6_SRC,
+-	ACTION_SET_IPV6_DST,
+-	ACTION_SET_TP_SRC,
+-	ACTION_SET_TP_DST,
+-	ACTION_MAC_SWAP,
+-	ACTION_DEC_TTL,
+-	ACTION_SET_TTL,
+-	ACTION_SET_MAC_SRC,
+-	ACTION_SET_MAC_DST,
+-	ACTION_INC_TCP_SEQ,
+-	ACTION_DEC_TCP_SEQ,
+-	ACTION_INC_TCP_ACK,
+-	ACTION_DEC_TCP_ACK,
+-	ACTION_RAW_ENCAP,
+-	ACTION_RAW_DECAP,
+-	ACTION_SET_TAG,
+-	ACTION_SET_META,
+-	ACTION_SET_IPV4_DSCP,
+-	ACTION_SET_IPV6_DSCP,
+-	ACTION_AGE,
+-	ACTION_AGE_UPDATE,
+-	ACTION_SAMPLE,
+-	ACTION_INDIRECT,
+-	ACTION_INDIRECT_LIST,
+-	ACTION_SHARED_INDIRECT,
+-	ACTION_MODIFY_FIELD,
+-	ACTION_CONNTRACK,
+-	ACTION_CONNTRACK_UPDATE,
+-	ACTION_PORT_REPRESENTOR,
+-	ACTION_REPRESENTED_PORT,
+-	ACTION_SEND_TO_KERNEL,
+-	ACTION_QUOTA_CREATE,
+-	ACTION_QUOTA_QU,
+-	ACTION_IPV6_EXT_REMOVE,
+-	ACTION_IPV6_EXT_PUSH,
+-	ACTION_NAT64,
+-	ACTION_JUMP_TO_TABLE_INDEX,
+-	ZERO,
+-};
+-
+-static const enum index action_quota_create[] = {
+-	ACTION_QUOTA_CREATE_LIMIT,
+-	ACTION_QUOTA_CREATE_MODE,
+-	ACTION_NEXT,
+-	ZERO
+-};
+-
+-static const enum index action_quota_update[] = {
+-	ACTION_QUOTA_QU_LIMIT,
+-	ACTION_QUOTA_QU_UPDATE_OP,
+-	ACTION_NEXT,
+-	ZERO
+-};
+-
+-static const enum index action_mark[] = {
+-	ACTION_MARK_ID,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_queue[] = {
+-	ACTION_QUEUE_INDEX,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_count[] = {
+-	ACTION_COUNT_ID,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_rss[] = {
+-	ACTION_RSS_FUNC,
+-	ACTION_RSS_LEVEL,
+-	ACTION_RSS_TYPES,
+-	ACTION_RSS_KEY,
+-	ACTION_RSS_KEY_LEN,
+-	ACTION_RSS_QUEUES,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_vf[] = {
+-	ACTION_VF_ORIGINAL,
+-	ACTION_VF_ID,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_port_id[] = {
+-	ACTION_PORT_ID_ORIGINAL,
+-	ACTION_PORT_ID_ID,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_meter[] = {
+-	ACTION_METER_ID,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_meter_color[] = {
+-	ACTION_METER_COLOR_TYPE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_meter_mark[] = {
+-	ACTION_METER_PROFILE,
+-	ACTION_METER_POLICY,
+-	ACTION_METER_COLOR_MODE,
+-	ACTION_METER_STATE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_of_push_vlan[] = {
+-	ACTION_OF_PUSH_VLAN_ETHERTYPE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_of_set_vlan_vid[] = {
+-	ACTION_OF_SET_VLAN_VID_VLAN_VID,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_of_set_vlan_pcp[] = {
+-	ACTION_OF_SET_VLAN_PCP_VLAN_PCP,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_of_pop_mpls[] = {
+-	ACTION_OF_POP_MPLS_ETHERTYPE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_of_push_mpls[] = {
+-	ACTION_OF_PUSH_MPLS_ETHERTYPE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_ipv4_src[] = {
+-	ACTION_SET_IPV4_SRC_IPV4_SRC,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_mac_src[] = {
+-	ACTION_SET_MAC_SRC_MAC_SRC,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_ipv4_dst[] = {
+-	ACTION_SET_IPV4_DST_IPV4_DST,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_ipv6_src[] = {
+-	ACTION_SET_IPV6_SRC_IPV6_SRC,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_ipv6_dst[] = {
+-	ACTION_SET_IPV6_DST_IPV6_DST,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_tp_src[] = {
+-	ACTION_SET_TP_SRC_TP_SRC,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_tp_dst[] = {
+-	ACTION_SET_TP_DST_TP_DST,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_ttl[] = {
+-	ACTION_SET_TTL_TTL,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_jump[] = {
+-	ACTION_JUMP_GROUP,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_mac_dst[] = {
+-	ACTION_SET_MAC_DST_MAC_DST,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_inc_tcp_seq[] = {
+-	ACTION_INC_TCP_SEQ_VALUE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_dec_tcp_seq[] = {
+-	ACTION_DEC_TCP_SEQ_VALUE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_inc_tcp_ack[] = {
+-	ACTION_INC_TCP_ACK_VALUE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_dec_tcp_ack[] = {
+-	ACTION_DEC_TCP_ACK_VALUE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_raw_encap[] = {
+-	ACTION_RAW_ENCAP_SIZE,
+-	ACTION_RAW_ENCAP_INDEX,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_raw_decap[] = {
+-	ACTION_RAW_DECAP_INDEX,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_ipv6_ext_remove[] = {
+-	ACTION_IPV6_EXT_REMOVE_INDEX,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_ipv6_ext_push[] = {
+-	ACTION_IPV6_EXT_PUSH_INDEX,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_tag[] = {
+-	ACTION_SET_TAG_DATA,
+-	ACTION_SET_TAG_INDEX,
+-	ACTION_SET_TAG_MASK,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_meta[] = {
+-	ACTION_SET_META_DATA,
+-	ACTION_SET_META_MASK,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_ipv4_dscp[] = {
+-	ACTION_SET_IPV4_DSCP_VALUE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_set_ipv6_dscp[] = {
+-	ACTION_SET_IPV6_DSCP_VALUE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_age[] = {
+-	ACTION_AGE,
+-	ACTION_AGE_TIMEOUT,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_age_update[] = {
+-	ACTION_AGE_UPDATE,
+-	ACTION_AGE_UPDATE_TIMEOUT,
+-	ACTION_AGE_UPDATE_TOUCH,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_sample[] = {
+-	ACTION_SAMPLE,
+-	ACTION_SAMPLE_RATIO,
+-	ACTION_SAMPLE_INDEX,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index next_action_sample[] = {
+-	ACTION_QUEUE,
+-	ACTION_RSS,
+-	ACTION_MARK,
+-	ACTION_COUNT,
+-	ACTION_PORT_ID,
+-	ACTION_RAW_ENCAP,
+-	ACTION_VXLAN_ENCAP,
+-	ACTION_NVGRE_ENCAP,
+-	ACTION_REPRESENTED_PORT,
+-	ACTION_PORT_REPRESENTOR,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ipv6_push_ext[] = {
+-	ITEM_IPV6_PUSH_REMOVE_EXT,
+-	ZERO,
+-};
+-
+-static const enum index item_ipv6_push_ext_type[] = {
+-	ITEM_IPV6_PUSH_REMOVE_EXT_TYPE,
+-	ZERO,
+-};
+-
+-static const enum index item_ipv6_push_ext_header[] = {
+-	ITEM_IPV6_ROUTING_EXT,
+-	ITEM_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_modify_field_dst[] = {
+-	ACTION_MODIFY_FIELD_DST_LEVEL,
+-	ACTION_MODIFY_FIELD_DST_TAG_INDEX,
+-	ACTION_MODIFY_FIELD_DST_TYPE_ID,
+-	ACTION_MODIFY_FIELD_DST_CLASS_ID,
+-	ACTION_MODIFY_FIELD_DST_OFFSET,
+-	ACTION_MODIFY_FIELD_SRC_TYPE,
+-	ZERO,
+-};
+-
+-static const enum index action_modify_field_src[] = {
+-	ACTION_MODIFY_FIELD_SRC_LEVEL,
+-	ACTION_MODIFY_FIELD_SRC_TAG_INDEX,
+-	ACTION_MODIFY_FIELD_SRC_TYPE_ID,
+-	ACTION_MODIFY_FIELD_SRC_CLASS_ID,
+-	ACTION_MODIFY_FIELD_SRC_OFFSET,
+-	ACTION_MODIFY_FIELD_SRC_VALUE,
+-	ACTION_MODIFY_FIELD_SRC_POINTER,
+-	ACTION_MODIFY_FIELD_WIDTH,
+-	ZERO,
+-};
+-
+-static const enum index action_update_conntrack[] = {
+-	ACTION_CONNTRACK_UPDATE_DIR,
+-	ACTION_CONNTRACK_UPDATE_CTX,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_port_representor[] = {
+-	ACTION_PORT_REPRESENTOR_PORT_ID,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_represented_port[] = {
+-	ACTION_REPRESENTED_PORT_ETHDEV_PORT_ID,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index action_nat64[] = {
+-	ACTION_NAT64_MODE,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static const enum index next_hash_subcmd[] = {
+-	HASH_CALC_TABLE,
+-	HASH_CALC_ENCAP,
+-	ZERO,
+-};
+-
+-static const enum index next_hash_encap_dest_subcmd[] = {
+-	ENCAP_HASH_FIELD_SRC_PORT,
+-	ENCAP_HASH_FIELD_GRE_FLOW_ID,
+-	ZERO,
+-};
+-
+-static const enum index action_jump_to_table_index[] = {
+-	ACTION_JUMP_TO_TABLE_INDEX_TABLE,
+-	ACTION_JUMP_TO_TABLE_INDEX_INDEX,
+-	ACTION_NEXT,
+-	ZERO,
+-};
+-
+-static int parse_set_raw_encap_decap(struct context *, const struct token *,
+-				     const char *, unsigned int,
+-				     void *, unsigned int);
+-static int parse_set_sample_action(struct context *, const struct token *,
+-				   const char *, unsigned int,
+-				   void *, unsigned int);
+-static int parse_set_ipv6_ext_action(struct context *, const struct token *,
+-				     const char *, unsigned int,
+-				     void *, unsigned int);
+-static int parse_set_init(struct context *, const struct token *,
+-			  const char *, unsigned int,
+-			  void *, unsigned int);
+-static int
+-parse_flex_handle(struct context *, const struct token *,
+-		  const char *, unsigned int, void *, unsigned int);
+-static int parse_init(struct context *, const struct token *,
+-		      const char *, unsigned int,
+-		      void *, unsigned int);
+-static int parse_vc(struct context *, const struct token *,
+-		    const char *, unsigned int,
+-		    void *, unsigned int);
+-static int parse_vc_spec(struct context *, const struct token *,
+-			 const char *, unsigned int, void *, unsigned int);
+-static int parse_vc_conf(struct context *, const struct token *,
+-			 const char *, unsigned int, void *, unsigned int);
+-static int parse_vc_conf_timeout(struct context *, const struct token *,
+-				 const char *, unsigned int, void *,
+-				 unsigned int);
+-static int parse_vc_item_ecpri_type(struct context *, const struct token *,
+-				    const char *, unsigned int,
+-				    void *, unsigned int);
+-static int parse_vc_item_l2tpv2_type(struct context *, const struct token *,
+-				    const char *, unsigned int,
+-				    void *, unsigned int);
+-static int parse_vc_action_meter_color_type(struct context *,
+-					const struct token *,
+-					const char *, unsigned int, void *,
+-					unsigned int);
+-static int parse_vc_action_rss(struct context *, const struct token *,
+-			       const char *, unsigned int, void *,
+-			       unsigned int);
+-static int parse_vc_action_rss_func(struct context *, const struct token *,
+-				    const char *, unsigned int, void *,
+-				    unsigned int);
+-static int parse_vc_action_rss_type(struct context *, const struct token *,
+-				    const char *, unsigned int, void *,
+-				    unsigned int);
+-static int parse_vc_action_rss_queue(struct context *, const struct token *,
+-				     const char *, unsigned int, void *,
+-				     unsigned int);
+-static int parse_vc_action_vxlan_encap(struct context *, const struct token *,
+-				       const char *, unsigned int, void *,
+-				       unsigned int);
+-static int parse_vc_action_nvgre_encap(struct context *, const struct token *,
+-				       const char *, unsigned int, void *,
+-				       unsigned int);
+-static int parse_vc_action_l2_encap(struct context *, const struct token *,
+-				    const char *, unsigned int, void *,
+-				    unsigned int);
+-static int parse_vc_action_l2_decap(struct context *, const struct token *,
+-				    const char *, unsigned int, void *,
+-				    unsigned int);
+-static int parse_vc_action_mplsogre_encap(struct context *,
+-					  const struct token *, const char *,
+-					  unsigned int, void *, unsigned int);
+-static int parse_vc_action_mplsogre_decap(struct context *,
+-					  const struct token *, const char *,
+-					  unsigned int, void *, unsigned int);
+-static int parse_vc_action_mplsoudp_encap(struct context *,
+-					  const struct token *, const char *,
+-					  unsigned int, void *, unsigned int);
+-static int parse_vc_action_mplsoudp_decap(struct context *,
+-					  const struct token *, const char *,
+-					  unsigned int, void *, unsigned int);
+-static int parse_vc_action_raw_encap(struct context *,
+-				     const struct token *, const char *,
+-				     unsigned int, void *, unsigned int);
+-static int parse_vc_action_raw_decap(struct context *,
+-				     const struct token *, const char *,
+-				     unsigned int, void *, unsigned int);
+-static int parse_vc_action_raw_encap_index(struct context *,
+-					   const struct token *, const char *,
+-					   unsigned int, void *, unsigned int);
+-static int parse_vc_action_raw_decap_index(struct context *,
+-					   const struct token *, const char *,
+-					   unsigned int, void *, unsigned int);
+-static int parse_vc_action_ipv6_ext_remove(struct context *ctx, const struct token *token,
+-					   const char *str, unsigned int len, void *buf,
+-					   unsigned int size);
+-static int parse_vc_action_ipv6_ext_remove_index(struct context *ctx,
+-						 const struct token *token,
+-						 const char *str, unsigned int len,
+-						 void *buf,
+-						 unsigned int size);
+-static int parse_vc_action_ipv6_ext_push(struct context *ctx, const struct token *token,
+-					 const char *str, unsigned int len, void *buf,
+-					 unsigned int size);
+-static int parse_vc_action_ipv6_ext_push_index(struct context *ctx,
+-					       const struct token *token,
+-					       const char *str, unsigned int len,
+-					       void *buf,
+-					       unsigned int size);
+-static int parse_vc_action_set_meta(struct context *ctx,
+-				    const struct token *token, const char *str,
+-				    unsigned int len, void *buf,
+-					unsigned int size);
+-static int parse_vc_action_sample(struct context *ctx,
+-				    const struct token *token, const char *str,
+-				    unsigned int len, void *buf,
+-				    unsigned int size);
+-static int
+-parse_vc_action_sample_index(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len, void *buf,
+-				unsigned int size);
+-static int
+-parse_vc_modify_field_op(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len, void *buf,
+-				unsigned int size);
+-static int
+-parse_vc_modify_field_id(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len, void *buf,
+-				unsigned int size);
+-static int
+-parse_vc_modify_field_level(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len, void *buf,
+-				unsigned int size);
+-static int
+-parse_vc_action_conntrack_update(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size);
+-static int parse_destroy(struct context *, const struct token *,
+-			 const char *, unsigned int,
+-			 void *, unsigned int);
+-static int parse_flush(struct context *, const struct token *,
+-		       const char *, unsigned int,
+-		       void *, unsigned int);
+-static int parse_dump(struct context *, const struct token *,
+-		      const char *, unsigned int,
+-		      void *, unsigned int);
+-static int parse_query(struct context *, const struct token *,
+-		       const char *, unsigned int,
+-		       void *, unsigned int);
+-static int parse_action(struct context *, const struct token *,
+-			const char *, unsigned int,
+-			void *, unsigned int);
+-static int parse_list(struct context *, const struct token *,
+-		      const char *, unsigned int,
+-		      void *, unsigned int);
+-static int parse_aged(struct context *, const struct token *,
+-		      const char *, unsigned int,
+-		      void *, unsigned int);
+-static int parse_isolate(struct context *, const struct token *,
+-			 const char *, unsigned int,
+-			 void *, unsigned int);
+-static int parse_configure(struct context *, const struct token *,
+-			   const char *, unsigned int,
+-			   void *, unsigned int);
+-static int parse_template(struct context *, const struct token *,
+-			  const char *, unsigned int,
+-			  void *, unsigned int);
+-static int parse_template_destroy(struct context *, const struct token *,
+-				  const char *, unsigned int,
+-				  void *, unsigned int);
+-static int parse_table(struct context *, const struct token *,
+-		       const char *, unsigned int, void *, unsigned int);
+-static int parse_table_destroy(struct context *, const struct token *,
+-			       const char *, unsigned int,
+-			       void *, unsigned int);
+-static int parse_jump_table_id(struct context *, const struct token *,
+-			       const char *, unsigned int,
+-			       void *, unsigned int);
+-static int parse_qo(struct context *, const struct token *,
+-		    const char *, unsigned int,
+-		    void *, unsigned int);
+-static int parse_qo_destroy(struct context *, const struct token *,
+-			    const char *, unsigned int,
+-			    void *, unsigned int);
+-static int parse_qia(struct context *, const struct token *,
+-		     const char *, unsigned int,
+-		     void *, unsigned int);
+-static int parse_qia_destroy(struct context *, const struct token *,
+-			     const char *, unsigned int,
+-			     void *, unsigned int);
+-static int parse_push(struct context *, const struct token *,
+-		      const char *, unsigned int,
+-		      void *, unsigned int);
+-static int parse_pull(struct context *, const struct token *,
+-		      const char *, unsigned int,
+-		      void *, unsigned int);
+-static int parse_group(struct context *, const struct token *,
+-		       const char *, unsigned int,
+-		       void *, unsigned int);
+-static int parse_hash(struct context *, const struct token *,
+-		      const char *, unsigned int,
+-		      void *, unsigned int);
+-static int parse_tunnel(struct context *, const struct token *,
+-			const char *, unsigned int,
+-			void *, unsigned int);
+-static int parse_flex(struct context *, const struct token *,
+-		      const char *, unsigned int, void *, unsigned int);
+-static int parse_int(struct context *, const struct token *,
+-		     const char *, unsigned int,
+-		     void *, unsigned int);
+-static int parse_prefix(struct context *, const struct token *,
+-			const char *, unsigned int,
+-			void *, unsigned int);
+-static int parse_boolean(struct context *, const struct token *,
+-			 const char *, unsigned int,
+-			 void *, unsigned int);
+-static int parse_string(struct context *, const struct token *,
+-			const char *, unsigned int,
+-			void *, unsigned int);
+-static int parse_hex(struct context *ctx, const struct token *token,
+-			const char *str, unsigned int len,
+-			void *buf, unsigned int size);
+-static int parse_string0(struct context *, const struct token *,
+-			const char *, unsigned int,
+-			void *, unsigned int);
+-static int parse_mac_addr(struct context *, const struct token *,
+-			  const char *, unsigned int,
+-			  void *, unsigned int);
+-static int parse_ipv4_addr(struct context *, const struct token *,
+-			   const char *, unsigned int,
+-			   void *, unsigned int);
+-static int parse_ipv6_addr(struct context *, const struct token *,
+-			   const char *, unsigned int,
+-			   void *, unsigned int);
+-static int parse_port(struct context *, const struct token *,
+-		      const char *, unsigned int,
+-		      void *, unsigned int);
+-static int parse_ia(struct context *, const struct token *,
+-		    const char *, unsigned int,
+-		    void *, unsigned int);
+-static int parse_ia_destroy(struct context *ctx, const struct token *token,
+-			    const char *str, unsigned int len,
+-			    void *buf, unsigned int size);
+-static int parse_ia_id2ptr(struct context *ctx, const struct token *token,
+-			   const char *str, unsigned int len, void *buf,
+-			   unsigned int size);
+-
+-static int parse_indlst_id2ptr(struct context *ctx, const struct token *token,
+-			       const char *str, unsigned int len, void *buf,
+-			       unsigned int size);
+-static int parse_ia_port(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size);
+-static int parse_mp(struct context *, const struct token *,
+-		    const char *, unsigned int,
+-		    void *, unsigned int);
+-static int parse_meter_profile_id2ptr(struct context *ctx,
+-				      const struct token *token,
+-				      const char *str, unsigned int len,
+-				      void *buf, unsigned int size);
+-static int parse_meter_policy_id2ptr(struct context *ctx,
+-				     const struct token *token,
+-				     const char *str, unsigned int len,
+-				     void *buf, unsigned int size);
+-static int parse_meter_color(struct context *ctx, const struct token *token,
+-			     const char *str, unsigned int len, void *buf,
+-			     unsigned int size);
+-static int parse_insertion_table_type(struct context *ctx, const struct token *token,
+-				      const char *str, unsigned int len, void *buf,
+-				      unsigned int size);
+-static int parse_hash_table_type(struct context *ctx, const struct token *token,
+-				 const char *str, unsigned int len, void *buf,
+-				 unsigned int size);
+-static int
+-parse_quota_state_name(struct context *ctx, const struct token *token,
+-		       const char *str, unsigned int len, void *buf,
+-		       unsigned int size);
+-static int
+-parse_quota_mode_name(struct context *ctx, const struct token *token,
+-		      const char *str, unsigned int len, void *buf,
+-		      unsigned int size);
+-static int
+-parse_quota_update_name(struct context *ctx, const struct token *token,
+-			const char *str, unsigned int len, void *buf,
+-			unsigned int size);
+-static int
+-parse_qu_mode_name(struct context *ctx, const struct token *token,
+-		   const char *str, unsigned int len, void *buf,
+-		   unsigned int size);
+-static int comp_none(struct context *, const struct token *,
+-		     unsigned int, char *, unsigned int);
+-static int comp_boolean(struct context *, const struct token *,
+-			unsigned int, char *, unsigned int);
+-static int comp_action(struct context *, const struct token *,
+-		       unsigned int, char *, unsigned int);
+-static int comp_port(struct context *, const struct token *,
+-		     unsigned int, char *, unsigned int);
+-static int comp_rule_id(struct context *, const struct token *,
+-			unsigned int, char *, unsigned int);
+-static int comp_vc_action_rss_type(struct context *, const struct token *,
+-				   unsigned int, char *, unsigned int);
+-static int comp_vc_action_rss_queue(struct context *, const struct token *,
+-				    unsigned int, char *, unsigned int);
+-static int comp_set_raw_index(struct context *, const struct token *,
+-			      unsigned int, char *, unsigned int);
+-static int comp_set_sample_index(struct context *, const struct token *,
+-			      unsigned int, char *, unsigned int);
+-static int comp_set_ipv6_ext_index(struct context *ctx, const struct token *token,
+-				   unsigned int ent, char *buf, unsigned int size);
+-static int comp_set_modify_field_op(struct context *, const struct token *,
+-			      unsigned int, char *, unsigned int);
+-static int comp_set_modify_field_id(struct context *, const struct token *,
+-			      unsigned int, char *, unsigned int);
+-static int comp_pattern_template_id(struct context *, const struct token *,
+-				    unsigned int, char *, unsigned int);
+-static int comp_actions_template_id(struct context *, const struct token *,
+-				    unsigned int, char *, unsigned int);
+-static int comp_table_id(struct context *, const struct token *,
+-			 unsigned int, char *, unsigned int);
+-static int comp_queue_id(struct context *, const struct token *,
+-			 unsigned int, char *, unsigned int);
+-static int comp_meter_color(struct context *, const struct token *,
+-			    unsigned int, char *, unsigned int);
+-static int comp_insertion_table_type(struct context *, const struct token *,
+-				     unsigned int, char *, unsigned int);
+-static int comp_hash_table_type(struct context *, const struct token *,
+-				unsigned int, char *, unsigned int);
+-static int
+-comp_quota_state_name(struct context *ctx, const struct token *token,
+-		      unsigned int ent, char *buf, unsigned int size);
+-static int
+-comp_quota_mode_name(struct context *ctx, const struct token *token,
+-		     unsigned int ent, char *buf, unsigned int size);
+-static int
+-comp_quota_update_name(struct context *ctx, const struct token *token,
+-		       unsigned int ent, char *buf, unsigned int size);
+-static int
+-comp_qu_mode_name(struct context *ctx, const struct token *token,
+-		  unsigned int ent, char *buf, unsigned int size);
+-static int
+-comp_set_compare_field_id(struct context *ctx, const struct token *token,
+-			  unsigned int ent, char *buf, unsigned int size);
+-static int
+-comp_set_compare_op(struct context *ctx, const struct token *token,
+-		    unsigned int ent, char *buf, unsigned int size);
+-static int
+-parse_vc_compare_op(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size);
+-static int
+-parse_vc_compare_field_id(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len, void *buf,
+-			  unsigned int size);
+-static int
+-parse_vc_compare_field_level(struct context *ctx, const struct token *token,
+-			     const char *str, unsigned int len, void *buf,
+-			     unsigned int size);
+-
+-struct indlst_conf {
+-	uint32_t id;
+-	uint32_t conf_num;
+-	struct rte_flow_action *actions;
+-	const void **conf;
+-	SLIST_ENTRY(indlst_conf) next;
+-};
+-
+-static const struct indlst_conf *indirect_action_list_conf_get(uint32_t conf_id);
+-
+-/** Token definitions. */
+-static const struct token token_list[] = {
+-	/* Special tokens. */
+-	[ZERO] = {
+-		.name = "ZERO",
+-		.help = "null entry, abused as the entry point",
+-		.next = NEXT(NEXT_ENTRY(FLOW, ADD)),
+-	},
+-	[END] = {
+-		.name = "",
+-		.type = "RETURN",
+-		.help = "command may end here",
+-	},
+-	[START_SET] = {
+-		.name = "START_SET",
+-		.help = "null entry, abused as the entry point for set",
+-		.next = NEXT(NEXT_ENTRY(SET)),
+-	},
+-	[END_SET] = {
+-		.name = "end_set",
+-		.type = "RETURN",
+-		.help = "set command may end here",
+-	},
+-	/* Common tokens. */
+-	[COMMON_INTEGER] = {
+-		.name = "{int}",
+-		.type = "INTEGER",
+-		.help = "integer value",
+-		.call = parse_int,
+-		.comp = comp_none,
+-	},
+-	[COMMON_UNSIGNED] = {
+-		.name = "{unsigned}",
+-		.type = "UNSIGNED",
+-		.help = "unsigned integer value",
+-		.call = parse_int,
+-		.comp = comp_none,
+-	},
+-	[COMMON_PREFIX] = {
+-		.name = "{prefix}",
+-		.type = "PREFIX",
+-		.help = "prefix length for bit-mask",
+-		.call = parse_prefix,
+-		.comp = comp_none,
+-	},
+-	[COMMON_BOOLEAN] = {
+-		.name = "{boolean}",
+-		.type = "BOOLEAN",
+-		.help = "any boolean value",
+-		.call = parse_boolean,
+-		.comp = comp_boolean,
+-	},
+-	[COMMON_STRING] = {
+-		.name = "{string}",
+-		.type = "STRING",
+-		.help = "fixed string",
+-		.call = parse_string,
+-		.comp = comp_none,
+-	},
+-	[COMMON_HEX] = {
+-		.name = "{hex}",
+-		.type = "HEX",
+-		.help = "fixed string",
+-		.call = parse_hex,
+-	},
+-	[COMMON_FILE_PATH] = {
+-		.name = "{file path}",
+-		.type = "STRING",
+-		.help = "file path",
+-		.call = parse_string0,
+-		.comp = comp_none,
+-	},
+-	[COMMON_MAC_ADDR] = {
+-		.name = "{MAC address}",
+-		.type = "MAC-48",
+-		.help = "standard MAC address notation",
+-		.call = parse_mac_addr,
+-		.comp = comp_none,
+-	},
+-	[COMMON_IPV4_ADDR] = {
+-		.name = "{IPv4 address}",
+-		.type = "IPV4 ADDRESS",
+-		.help = "standard IPv4 address notation",
+-		.call = parse_ipv4_addr,
+-		.comp = comp_none,
+-	},
+-	[COMMON_IPV6_ADDR] = {
+-		.name = "{IPv6 address}",
+-		.type = "IPV6 ADDRESS",
+-		.help = "standard IPv6 address notation",
+-		.call = parse_ipv6_addr,
+-		.comp = comp_none,
+-	},
+-	[COMMON_RULE_ID] = {
+-		.name = "{rule id}",
+-		.type = "RULE ID",
+-		.help = "rule identifier",
+-		.call = parse_int,
+-		.comp = comp_rule_id,
+-	},
+-	[COMMON_PORT_ID] = {
+-		.name = "{port_id}",
+-		.type = "PORT ID",
+-		.help = "port identifier",
+-		.call = parse_port,
+-		.comp = comp_port,
+-	},
+-	[COMMON_GROUP_ID] = {
+-		.name = "{group_id}",
+-		.type = "GROUP ID",
+-		.help = "group identifier",
+-		.call = parse_int,
+-		.comp = comp_none,
+-	},
+-	[COMMON_PRIORITY_LEVEL] = {
+-		.name = "{level}",
+-		.type = "PRIORITY",
+-		.help = "priority level",
+-		.call = parse_int,
+-		.comp = comp_none,
+-	},
+-	[COMMON_INDIRECT_ACTION_ID] = {
+-		.name = "{indirect_action_id}",
+-		.type = "INDIRECT_ACTION_ID",
+-		.help = "indirect action id",
+-		.call = parse_int,
+-		.comp = comp_none,
+-	},
+-	[COMMON_PROFILE_ID] = {
+-		.name = "{profile_id}",
+-		.type = "PROFILE_ID",
+-		.help = "profile id",
+-		.call = parse_int,
+-		.comp = comp_none,
+-	},
+-	[COMMON_POLICY_ID] = {
+-		.name = "{policy_id}",
+-		.type = "POLICY_ID",
+-		.help = "policy id",
+-		.call = parse_int,
+-		.comp = comp_none,
+-	},
+-	[COMMON_FLEX_TOKEN] = {
+-		.name = "{flex token}",
+-		.type = "flex token",
+-		.help = "flex token",
+-		.call = parse_int,
+-		.comp = comp_none,
+-	},
+-	[COMMON_FLEX_HANDLE] = {
+-		.name = "{flex handle}",
+-		.type = "FLEX HANDLE",
+-		.help = "fill flex item data",
+-		.call = parse_flex_handle,
+-		.comp = comp_none,
+-	},
+-	[COMMON_PATTERN_TEMPLATE_ID] = {
+-		.name = "{pattern_template_id}",
+-		.type = "PATTERN_TEMPLATE_ID",
+-		.help = "pattern template id",
+-		.call = parse_int,
+-		.comp = comp_pattern_template_id,
+-	},
+-	[COMMON_ACTIONS_TEMPLATE_ID] = {
+-		.name = "{actions_template_id}",
+-		.type = "ACTIONS_TEMPLATE_ID",
+-		.help = "actions template id",
+-		.call = parse_int,
+-		.comp = comp_actions_template_id,
+-	},
+-	[COMMON_TABLE_ID] = {
+-		.name = "{table_id}",
+-		.type = "TABLE_ID",
+-		.help = "table id",
+-		.call = parse_int,
+-		.comp = comp_table_id,
+-	},
+-	[COMMON_QUEUE_ID] = {
+-		.name = "{queue_id}",
+-		.type = "QUEUE_ID",
+-		.help = "queue id",
+-		.call = parse_int,
+-		.comp = comp_queue_id,
+-	},
+-	[COMMON_METER_COLOR_NAME] = {
+-		.name = "color_name",
+-		.help = "meter color name",
+-		.call = parse_meter_color,
+-		.comp = comp_meter_color,
+-	},
+-	/* Top-level command. */
+-	[FLOW] = {
+-		.name = "flow",
+-		.type = "{command} {port_id} [{arg} [...]]",
+-		.help = "manage ingress/egress flow rules",
+-		.next = NEXT(NEXT_ENTRY
+-			     (INFO,
+-			      CONFIGURE,
+-			      PATTERN_TEMPLATE,
+-			      ACTIONS_TEMPLATE,
+-			      TABLE,
+-			      FLOW_GROUP,
+-			      INDIRECT_ACTION,
+-			      VALIDATE,
+-			      CREATE,
+-			      DESTROY,
+-			      UPDATE,
+-			      FLUSH,
+-			      DUMP,
+-			      LIST,
+-			      AGED,
+-			      QUERY,
+-			      ISOLATE,
+-			      TUNNEL,
+-			      FLEX,
+-			      QUEUE,
+-			      PUSH,
+-			      PULL,
+-			      HASH)),
+-		.call = parse_init,
+-	},
+-	/* Top-level command. */
+-	[INFO] = {
+-		.name = "info",
+-		.help = "get information about flow engine",
+-		.next = NEXT(NEXT_ENTRY(END),
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_configure,
+-	},
+-	/* Top-level command. */
+-	[CONFIGURE] = {
+-		.name = "configure",
+-		.help = "configure flow engine",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_configure,
+-	},
+-	/* Configure arguments. */
+-	[CONFIG_QUEUES_NUMBER] = {
+-		.name = "queues_number",
+-		.help = "number of queues",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.configure.nb_queue)),
+-	},
+-	[CONFIG_QUEUES_SIZE] = {
+-		.name = "queues_size",
+-		.help = "number of elements in queues",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.configure.queue_attr.size)),
+-	},
+-	[CONFIG_COUNTERS_NUMBER] = {
+-		.name = "counters_number",
+-		.help = "number of counters",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.configure.port_attr.nb_counters)),
+-	},
+-	[CONFIG_AGING_OBJECTS_NUMBER] = {
+-		.name = "aging_counters_number",
+-		.help = "number of aging objects",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.configure.port_attr.nb_aging_objects)),
+-	},
+-	[CONFIG_QUOTAS_NUMBER] = {
+-		.name = "quotas_number",
+-		.help = "number of quotas",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-				     args.configure.port_attr.nb_quotas)),
+-	},
+-	[CONFIG_METERS_NUMBER] = {
+-		.name = "meters_number",
+-		.help = "number of meters",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.configure.port_attr.nb_meters)),
+-	},
+-	[CONFIG_CONN_TRACK_NUMBER] = {
+-		.name = "conn_tracks_number",
+-		.help = "number of connection trackings",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.configure.port_attr.nb_conn_tracks)),
+-	},
+-	[CONFIG_FLAGS] = {
+-		.name = "flags",
+-		.help = "configuration flags",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.configure.port_attr.flags)),
+-	},
+-	[CONFIG_HOST_PORT] = {
+-		.name = "host_port",
+-		.help = "host port for shared objects",
+-		.next = NEXT(next_config_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.configure.port_attr.host_port_id)),
+-	},
+-	/* Top-level command. */
+-	[PATTERN_TEMPLATE] = {
+-		.name = "pattern_template",
+-		.type = "{command} {port_id} [{arg} [...]]",
+-		.help = "manage pattern templates",
+-		.next = NEXT(next_pt_subcmd, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_template,
+-	},
+-	/* Sub-level commands. */
+-	[PATTERN_TEMPLATE_CREATE] = {
+-		.name = "create",
+-		.help = "create pattern template",
+-		.next = NEXT(next_pt_attr),
+-		.call = parse_template,
+-	},
+-	[PATTERN_TEMPLATE_DESTROY] = {
+-		.name = "destroy",
+-		.help = "destroy pattern template",
+-		.next = NEXT(NEXT_ENTRY(PATTERN_TEMPLATE_DESTROY_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_template_destroy,
+-	},
+-	/* Pattern template arguments. */
+-	[PATTERN_TEMPLATE_CREATE_ID] = {
+-		.name = "pattern_template_id",
+-		.help = "specify a pattern template id to create",
+-		.next = NEXT(next_pt_attr,
+-			     NEXT_ENTRY(COMMON_PATTERN_TEMPLATE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.pat_templ_id)),
+-	},
+-	[PATTERN_TEMPLATE_DESTROY_ID] = {
+-		.name = "pattern_template",
+-		.help = "specify a pattern template id to destroy",
+-		.next = NEXT(next_pt_destroy_attr,
+-			     NEXT_ENTRY(COMMON_PATTERN_TEMPLATE_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer,
+-					    args.templ_destroy.template_id)),
+-		.call = parse_template_destroy,
+-	},
+-	[PATTERN_TEMPLATE_RELAXED_MATCHING] = {
+-		.name = "relaxed",
+-		.help = "is matching relaxed",
+-		.next = NEXT(next_pt_attr,
+-			     NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY_BF(struct buffer,
+-			     args.vc.attr.reserved, 1)),
+-	},
+-	[PATTERN_TEMPLATE_INGRESS] = {
+-		.name = "ingress",
+-		.help = "attribute pattern to ingress",
+-		.next = NEXT(next_pt_attr),
+-		.call = parse_template,
+-	},
+-	[PATTERN_TEMPLATE_EGRESS] = {
+-		.name = "egress",
+-		.help = "attribute pattern to egress",
+-		.next = NEXT(next_pt_attr),
+-		.call = parse_template,
+-	},
+-	[PATTERN_TEMPLATE_TRANSFER] = {
+-		.name = "transfer",
+-		.help = "attribute pattern to transfer",
+-		.next = NEXT(next_pt_attr),
+-		.call = parse_template,
+-	},
+-	[PATTERN_TEMPLATE_SPEC] = {
+-		.name = "template",
+-		.help = "specify item to create pattern template",
+-		.next = NEXT(next_item),
+-	},
+-	/* Top-level command. */
+-	[ACTIONS_TEMPLATE] = {
+-		.name = "actions_template",
+-		.type = "{command} {port_id} [{arg} [...]]",
+-		.help = "manage actions templates",
+-		.next = NEXT(next_at_subcmd, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_template,
+-	},
+-	/* Sub-level commands. */
+-	[ACTIONS_TEMPLATE_CREATE] = {
+-		.name = "create",
+-		.help = "create actions template",
+-		.next = NEXT(next_at_attr),
+-		.call = parse_template,
+-	},
+-	[ACTIONS_TEMPLATE_DESTROY] = {
+-		.name = "destroy",
+-		.help = "destroy actions template",
+-		.next = NEXT(NEXT_ENTRY(ACTIONS_TEMPLATE_DESTROY_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_template_destroy,
+-	},
+-	/* Actions template arguments. */
+-	[ACTIONS_TEMPLATE_CREATE_ID] = {
+-		.name = "actions_template_id",
+-		.help = "specify an actions template id to create",
+-		.next = NEXT(NEXT_ENTRY(ACTIONS_TEMPLATE_MASK),
+-			     NEXT_ENTRY(ACTIONS_TEMPLATE_SPEC),
+-			     NEXT_ENTRY(COMMON_ACTIONS_TEMPLATE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.act_templ_id)),
+-	},
+-	[ACTIONS_TEMPLATE_DESTROY_ID] = {
+-		.name = "actions_template",
+-		.help = "specify an actions template id to destroy",
+-		.next = NEXT(next_at_destroy_attr,
+-			     NEXT_ENTRY(COMMON_ACTIONS_TEMPLATE_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer,
+-					    args.templ_destroy.template_id)),
+-		.call = parse_template_destroy,
+-	},
+-	[ACTIONS_TEMPLATE_INGRESS] = {
+-		.name = "ingress",
+-		.help = "attribute actions to ingress",
+-		.next = NEXT(next_at_attr),
+-		.call = parse_template,
+-	},
+-	[ACTIONS_TEMPLATE_EGRESS] = {
+-		.name = "egress",
+-		.help = "attribute actions to egress",
+-		.next = NEXT(next_at_attr),
+-		.call = parse_template,
+-	},
+-	[ACTIONS_TEMPLATE_TRANSFER] = {
+-		.name = "transfer",
+-		.help = "attribute actions to transfer",
+-		.next = NEXT(next_at_attr),
+-		.call = parse_template,
+-	},
+-	[ACTIONS_TEMPLATE_SPEC] = {
+-		.name = "template",
+-		.help = "specify action to create actions template",
+-		.next = NEXT(next_action),
+-		.call = parse_template,
+-	},
+-	[ACTIONS_TEMPLATE_MASK] = {
+-		.name = "mask",
+-		.help = "specify action mask to create actions template",
+-		.next = NEXT(next_action),
+-		.call = parse_template,
+-	},
+-	/* Top-level command. */
+-	[TABLE] = {
+-		.name = "template_table",
+-		.type = "{command} {port_id} [{arg} [...]]",
+-		.help = "manage template tables",
+-		.next = NEXT(next_table_subcmd, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_table,
+-	},
+-	/* Sub-level commands. */
+-	[TABLE_CREATE] = {
+-		.name = "create",
+-		.help = "create template table",
+-		.next = NEXT(next_table_attr),
+-		.call = parse_table,
+-	},
+-	[TABLE_DESTROY] = {
+-		.name = "destroy",
+-		.help = "destroy template table",
+-		.next = NEXT(NEXT_ENTRY(TABLE_DESTROY_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_table_destroy,
+-	},
+-	[TABLE_RESIZE] = {
+-		.name = "resize",
+-		.help = "resize template table",
+-		.next = NEXT(NEXT_ENTRY(TABLE_RESIZE_ID)),
+-		.call = parse_table
+-	},
+-	[TABLE_RESIZE_COMPLETE] = {
+-		.name = "resize_complete",
+-		.help = "complete table resize",
+-		.next = NEXT(NEXT_ENTRY(TABLE_DESTROY_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_table_destroy,
+-	},
+-	/* Table  arguments. */
+-	[TABLE_CREATE_ID] = {
+-		.name = "table_id",
+-		.help = "specify table id to create",
+-		.next = NEXT(next_table_attr,
+-			     NEXT_ENTRY(COMMON_TABLE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.table.id)),
+-	},
+-	[TABLE_DESTROY_ID] = {
+-		.name = "table",
+-		.help = "table id",
+-		.next = NEXT(next_table_destroy_attr,
+-			     NEXT_ENTRY(COMMON_TABLE_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer,
+-					    args.table_destroy.table_id)),
+-		.call = parse_table_destroy,
+-	},
+-	[TABLE_RESIZE_ID] = {
+-		.name = "table_resize_id",
+-		.help = "table resize id",
+-		.next = NEXT(NEXT_ENTRY(TABLE_RESIZE_RULES_NUMBER),
+-			     NEXT_ENTRY(COMMON_TABLE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.table.id)),
+-		.call = parse_table
+-	},
+-	[TABLE_RESIZE_RULES_NUMBER] = {
+-		.name = "table_resize_rules_num",
+-		.help = "table resize rules number",
+-		.next = NEXT(NEXT_ENTRY(END), NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.table.attr.nb_flows)),
+-		.call = parse_table
+-	},
+-	[TABLE_INSERTION_TYPE] = {
+-		.name = "insertion_type",
+-		.help = "specify insertion type",
+-		.next = NEXT(next_table_attr,
+-			     NEXT_ENTRY(TABLE_INSERTION_TYPE_NAME)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.table.attr.insertion_type)),
+-	},
+-	[TABLE_INSERTION_TYPE_NAME] = {
+-		.name = "insertion_type_name",
+-		.help = "insertion type name",
+-		.call = parse_insertion_table_type,
+-		.comp = comp_insertion_table_type,
+-	},
+-	[TABLE_HASH_FUNC] = {
+-		.name = "hash_func",
+-		.help = "specify hash calculation function",
+-		.next = NEXT(next_table_attr,
+-			     NEXT_ENTRY(TABLE_HASH_FUNC_NAME)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.table.attr.hash_func)),
+-	},
+-	[TABLE_HASH_FUNC_NAME] = {
+-		.name = "hash_func_name",
+-		.help = "hash calculation function name",
+-		.call = parse_hash_table_type,
+-		.comp = comp_hash_table_type,
+-	},
+-	[TABLE_GROUP] = {
+-		.name = "group",
+-		.help = "specify a group",
+-		.next = NEXT(next_table_attr, NEXT_ENTRY(COMMON_GROUP_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.table.attr.flow_attr.group)),
+-	},
+-	[TABLE_PRIORITY] = {
+-		.name = "priority",
+-		.help = "specify a priority level",
+-		.next = NEXT(next_table_attr, NEXT_ENTRY(COMMON_PRIORITY_LEVEL)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.table.attr.flow_attr.priority)),
+-	},
+-	[TABLE_EGRESS] = {
+-		.name = "egress",
+-		.help = "affect rule to egress",
+-		.next = NEXT(next_table_attr),
+-		.call = parse_table,
+-	},
+-	[TABLE_INGRESS] = {
+-		.name = "ingress",
+-		.help = "affect rule to ingress",
+-		.next = NEXT(next_table_attr),
+-		.call = parse_table,
+-	},
+-	[TABLE_TRANSFER] = {
+-		.name = "transfer",
+-		.help = "affect rule to transfer",
+-		.next = NEXT(next_table_attr),
+-		.call = parse_table,
+-	},
+-	[TABLE_TRANSFER_WIRE_ORIG] = {
+-		.name = "wire_orig",
+-		.help = "affect rule direction to transfer",
+-		.next = NEXT(next_table_attr),
+-		.call = parse_table,
+-	},
+-	[TABLE_TRANSFER_VPORT_ORIG] = {
+-		.name = "vport_orig",
+-		.help = "affect rule direction to transfer",
+-		.next = NEXT(next_table_attr),
+-		.call = parse_table,
+-	},
+-	[TABLE_RESIZABLE] = {
+-		.name = "resizable",
+-		.help = "set resizable attribute",
+-		.next = NEXT(next_table_attr),
+-		.call = parse_table,
+-	},
+-	[TABLE_RULES_NUMBER] = {
+-		.name = "rules_number",
+-		.help = "number of rules in table",
+-		.next = NEXT(next_table_attr,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.table.attr.nb_flows)),
+-		.call = parse_table,
+-	},
+-	[TABLE_PATTERN_TEMPLATE] = {
+-		.name = "pattern_template",
+-		.help = "specify pattern template id",
+-		.next = NEXT(next_table_attr,
+-			     NEXT_ENTRY(COMMON_PATTERN_TEMPLATE_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer,
+-					    args.table.pat_templ_id)),
+-		.call = parse_table,
+-	},
+-	[TABLE_ACTIONS_TEMPLATE] = {
+-		.name = "actions_template",
+-		.help = "specify actions template id",
+-		.next = NEXT(next_table_attr,
+-			     NEXT_ENTRY(COMMON_ACTIONS_TEMPLATE_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer,
+-					    args.table.act_templ_id)),
+-		.call = parse_table,
+-	},
+-	/* Top-level command. */
+-	[FLOW_GROUP] = {
+-		.name = "group",
+-		.help = "manage flow groups",
+-		.next = NEXT(NEXT_ENTRY(GROUP_ID), NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_group,
+-	},
+-	/* Sub-level commands. */
+-	[GROUP_SET_MISS_ACTIONS] = {
+-		.name = "set_miss_actions",
+-		.help = "set group miss actions",
+-		.next = NEXT(next_action),
+-		.call = parse_group,
+-	},
+-	/* Group arguments */
+-	[GROUP_ID]	= {
+-		.name = "group_id",
+-		.help = "group id",
+-		.next = NEXT(next_group_attr, NEXT_ENTRY(COMMON_GROUP_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.attr.group)),
+-	},
+-	[GROUP_INGRESS] = {
+-		.name = "ingress",
+-		.help = "group ingress attr",
+-		.next = NEXT(next_group_attr),
+-		.call = parse_group,
+-	},
+-	[GROUP_EGRESS] = {
+-		.name = "egress",
+-		.help = "group egress attr",
+-		.next = NEXT(next_group_attr),
+-		.call = parse_group,
+-	},
+-	[GROUP_TRANSFER] = {
+-		.name = "transfer",
+-		.help = "group transfer attr",
+-		.next = NEXT(next_group_attr),
+-		.call = parse_group,
+-	},
+-	/* Top-level command. */
+-	[QUEUE] = {
+-		.name = "queue",
+-		.help = "queue a flow rule operation",
+-		.next = NEXT(next_queue_subcmd, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_qo,
+-	},
+-	/* Sub-level commands. */
+-	[QUEUE_CREATE] = {
+-		.name = "create",
+-		.help = "create a flow rule",
+-		.next = NEXT(NEXT_ENTRY(QUEUE_TEMPLATE_TABLE),
+-			     NEXT_ENTRY(COMMON_QUEUE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, queue)),
+-		.call = parse_qo,
+-	},
+-	[QUEUE_DESTROY] = {
+-		.name = "destroy",
+-		.help = "destroy a flow rule",
+-		.next = NEXT(NEXT_ENTRY(QUEUE_DESTROY_POSTPONE),
+-			     NEXT_ENTRY(COMMON_QUEUE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, queue)),
+-		.call = parse_qo_destroy,
+-	},
+-	[QUEUE_FLOW_UPDATE_RESIZED] = {
+-		.name = "update_resized",
+-		.help = "update a flow after table resize",
+-		.next = NEXT(NEXT_ENTRY(QUEUE_DESTROY_ID),
+-			     NEXT_ENTRY(COMMON_QUEUE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, queue)),
+-		.call = parse_qo_destroy,
+-	},
+-	[QUEUE_UPDATE] = {
+-		.name = "update",
+-		.help = "update a flow rule",
+-		.next = NEXT(NEXT_ENTRY(QUEUE_UPDATE_ID),
+-			     NEXT_ENTRY(COMMON_QUEUE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, queue)),
+-		.call = parse_qo,
+-	},
+-	[QUEUE_AGED] = {
+-		.name = "aged",
+-		.help = "list and destroy aged flows",
+-		.next = NEXT(next_aged_attr, NEXT_ENTRY(COMMON_QUEUE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, queue)),
+-		.call = parse_aged,
+-	},
+-	[QUEUE_INDIRECT_ACTION] = {
+-		.name = "indirect_action",
+-		.help = "queue indirect actions",
+-		.next = NEXT(next_qia_subcmd, NEXT_ENTRY(COMMON_QUEUE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, queue)),
+-		.call = parse_qia,
+-	},
+-	/* Queue  arguments. */
+-	[QUEUE_TEMPLATE_TABLE] = {
+-		.name = "template_table",
+-		.help = "specify table id",
+-		.next = NEXT(next_async_insert_subcmd,
+-			     NEXT_ENTRY(COMMON_TABLE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.vc.table_id)),
+-		.call = parse_qo,
+-	},
+-	[QUEUE_PATTERN_TEMPLATE] = {
+-		.name = "pattern_template",
+-		.help = "specify pattern template index",
+-		.next = NEXT(NEXT_ENTRY(QUEUE_ACTIONS_TEMPLATE),
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.vc.pat_templ_id)),
+-		.call = parse_qo,
+-	},
+-	[QUEUE_ACTIONS_TEMPLATE] = {
+-		.name = "actions_template",
+-		.help = "specify actions template index",
+-		.next = NEXT(NEXT_ENTRY(QUEUE_CREATE_POSTPONE),
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.vc.act_templ_id)),
+-		.call = parse_qo,
+-	},
+-	[QUEUE_RULE_ID] = {
+-		.name = "rule_index",
+-		.help = "specify flow rule index",
+-		.next = NEXT(next_async_pattern_subcmd,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.vc.rule_id)),
+-		.call = parse_qo,
+-	},
+-	[QUEUE_CREATE_POSTPONE] = {
+-		.name = "postpone",
+-		.help = "postpone create operation",
+-		.next = NEXT(NEXT_ENTRY(ITEM_PATTERN),
+-			     NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, postpone)),
+-		.call = parse_qo,
+-	},
+-	[QUEUE_DESTROY_POSTPONE] = {
+-		.name = "postpone",
+-		.help = "postpone destroy operation",
+-		.next = NEXT(NEXT_ENTRY(QUEUE_DESTROY_ID),
+-			     NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, postpone)),
+-		.call = parse_qo_destroy,
+-	},
+-	[QUEUE_DESTROY_ID] = {
+-		.name = "rule",
+-		.help = "specify rule id to destroy",
+-		.next = NEXT(next_queue_destroy_attr,
+-			NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer,
+-					    args.destroy.rule)),
+-		.call = parse_qo_destroy,
+-	},
+-	[QUEUE_UPDATE_ID] = {
+-		.name = "rule",
+-		.help = "specify rule id to update",
+-		.next = NEXT(NEXT_ENTRY(QUEUE_ACTIONS_TEMPLATE),
+-			NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-				     args.vc.rule_id)),
+-		.call = parse_qo,
+-	},
+-	/* Queue indirect action arguments */
+-	[QUEUE_INDIRECT_ACTION_CREATE] = {
+-		.name = "create",
+-		.help = "create indirect action",
+-		.next = NEXT(next_qia_create_attr),
+-		.call = parse_qia,
+-	},
+-	[QUEUE_INDIRECT_ACTION_UPDATE] = {
+-		.name = "update",
+-		.help = "update indirect action",
+-		.next = NEXT(next_qia_update_attr,
+-			     NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.attr.group)),
+-		.call = parse_qia,
+-	},
+-	[QUEUE_INDIRECT_ACTION_DESTROY] = {
+-		.name = "destroy",
+-		.help = "destroy indirect action",
+-		.next = NEXT(next_qia_destroy_attr),
+-		.call = parse_qia_destroy,
+-	},
+-	[QUEUE_INDIRECT_ACTION_QUERY] = {
+-		.name = "query",
+-		.help = "query indirect action",
+-		.next = NEXT(next_qia_query_attr,
+-			     NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.ia.action_id)),
+-		.call = parse_qia,
+-	},
+-	/* Indirect action destroy arguments. */
+-	[QUEUE_INDIRECT_ACTION_DESTROY_POSTPONE] = {
+-		.name = "postpone",
+-		.help = "postpone destroy operation",
+-		.next = NEXT(next_qia_destroy_attr,
+-			     NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, postpone)),
+-	},
+-	[QUEUE_INDIRECT_ACTION_DESTROY_ID] = {
+-		.name = "action_id",
+-		.help = "specify a indirect action id to destroy",
+-		.next = NEXT(next_qia_destroy_attr,
+-			     NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer,
+-					    args.ia_destroy.action_id)),
+-		.call = parse_qia_destroy,
+-	},
+-	[QUEUE_INDIRECT_ACTION_QUERY_UPDATE] = {
+-		.name = "query_update",
+-		.help = "indirect query [and|or] update action",
+-		.next = NEXT(next_qia_qu_attr, NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.ia.action_id)),
+-		.call = parse_qia
+-	},
+-	[QUEUE_INDIRECT_ACTION_QU_MODE] = {
+-		.name = "mode",
+-		.help = "indirect query [and|or] update action",
+-		.next = NEXT(next_qia_qu_attr,
+-			     NEXT_ENTRY(INDIRECT_ACTION_QU_MODE_NAME)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.ia.qu_mode)),
+-		.call = parse_qia
+-	},
+-	/* Indirect action update arguments. */
+-	[QUEUE_INDIRECT_ACTION_UPDATE_POSTPONE] = {
+-		.name = "postpone",
+-		.help = "postpone update operation",
+-		.next = NEXT(next_qia_update_attr,
+-			     NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, postpone)),
+-	},
+-	/* Indirect action update arguments. */
+-	[QUEUE_INDIRECT_ACTION_QUERY_POSTPONE] = {
+-		.name = "postpone",
+-		.help = "postpone query operation",
+-		.next = NEXT(next_qia_query_attr,
+-			     NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, postpone)),
+-	},
+-	/* Indirect action create arguments. */
+-	[QUEUE_INDIRECT_ACTION_CREATE_ID] = {
+-		.name = "action_id",
+-		.help = "specify a indirect action id to create",
+-		.next = NEXT(next_qia_create_attr,
+-			     NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.attr.group)),
+-	},
+-	[QUEUE_INDIRECT_ACTION_INGRESS] = {
+-		.name = "ingress",
+-		.help = "affect rule to ingress",
+-		.next = NEXT(next_qia_create_attr),
+-		.call = parse_qia,
+-	},
+-	[QUEUE_INDIRECT_ACTION_EGRESS] = {
+-		.name = "egress",
+-		.help = "affect rule to egress",
+-		.next = NEXT(next_qia_create_attr),
+-		.call = parse_qia,
+-	},
+-	[QUEUE_INDIRECT_ACTION_TRANSFER] = {
+-		.name = "transfer",
+-		.help = "affect rule to transfer",
+-		.next = NEXT(next_qia_create_attr),
+-		.call = parse_qia,
+-	},
+-	[QUEUE_INDIRECT_ACTION_CREATE_POSTPONE] = {
+-		.name = "postpone",
+-		.help = "postpone create operation",
+-		.next = NEXT(next_qia_create_attr,
+-			     NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, postpone)),
+-	},
+-	[QUEUE_INDIRECT_ACTION_SPEC] = {
+-		.name = "action",
+-		.help = "specify action to create indirect handle",
+-		.next = NEXT(next_action),
+-	},
+-	[QUEUE_INDIRECT_ACTION_LIST] = {
+-		.name = "list",
+-		.help = "specify actions for indirect handle list",
+-		.next = NEXT(NEXT_ENTRY(ACTIONS, END)),
+-		.call = parse_qia,
+-	},
+-	/* Top-level command. */
+-	[PUSH] = {
+-		.name = "push",
+-		.help = "push enqueued operations",
+-		.next = NEXT(NEXT_ENTRY(PUSH_QUEUE), NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_push,
+-	},
+-	/* Sub-level commands. */
+-	[PUSH_QUEUE] = {
+-		.name = "queue",
+-		.help = "specify queue id",
+-		.next = NEXT(NEXT_ENTRY(END), NEXT_ENTRY(COMMON_QUEUE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, queue)),
+-	},
+-	/* Top-level command. */
+-	[PULL] = {
+-		.name = "pull",
+-		.help = "pull flow operations results",
+-		.next = NEXT(NEXT_ENTRY(PULL_QUEUE), NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_pull,
+-	},
+-	/* Sub-level commands. */
+-	[PULL_QUEUE] = {
+-		.name = "queue",
+-		.help = "specify queue id",
+-		.next = NEXT(NEXT_ENTRY(END), NEXT_ENTRY(COMMON_QUEUE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, queue)),
+-	},
+-	/* Top-level command. */
+-	[HASH] = {
+-		.name = "hash",
+-		.help = "calculate hash for a given pattern in a given template table",
+-		.next = NEXT(next_hash_subcmd, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_hash,
+-	},
+-	/* Sub-level commands. */
+-	[HASH_CALC_TABLE] = {
+-		.name = "template_table",
+-		.help = "specify table id",
+-		.next = NEXT(NEXT_ENTRY(HASH_CALC_PATTERN_INDEX),
+-			     NEXT_ENTRY(COMMON_TABLE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.vc.table_id)),
+-		.call = parse_hash,
+-	},
+-	[HASH_CALC_ENCAP] = {
+-		.name = "encap",
+-		.help = "calculates encap hash",
+-		.next = NEXT(next_hash_encap_dest_subcmd),
+-		.call = parse_hash,
+-	},
+-	[HASH_CALC_PATTERN_INDEX] = {
+-		.name = "pattern_template",
+-		.help = "specify pattern template id",
+-		.next = NEXT(NEXT_ENTRY(ITEM_PATTERN),
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer,
+-					args.vc.pat_templ_id)),
+-		.call = parse_hash,
+-	},
+-	[ENCAP_HASH_FIELD_SRC_PORT] = {
+-		.name = "hash_field_sport",
+-		.help = "the encap hash field is src port",
+-		.next = NEXT(NEXT_ENTRY(ITEM_PATTERN)),
+-		.call = parse_hash,
+-	},
+-	[ENCAP_HASH_FIELD_GRE_FLOW_ID] = {
+-		.name = "hash_field_flow_id",
+-		.help = "the encap hash field is NVGRE flow id",
+-		.next = NEXT(NEXT_ENTRY(ITEM_PATTERN)),
+-		.call = parse_hash,
+-	},
+-	/* Top-level command. */
+-	[INDIRECT_ACTION] = {
+-		.name = "indirect_action",
+-		.type = "{command} {port_id} [{arg} [...]]",
+-		.help = "manage indirect actions",
+-		.next = NEXT(next_ia_subcmd, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_ia,
+-	},
+-	/* Sub-level commands. */
+-	[INDIRECT_ACTION_CREATE] = {
+-		.name = "create",
+-		.help = "create indirect action",
+-		.next = NEXT(next_ia_create_attr),
+-		.call = parse_ia,
+-	},
+-	[INDIRECT_ACTION_UPDATE] = {
+-		.name = "update",
+-		.help = "update indirect action",
+-		.next = NEXT(NEXT_ENTRY(INDIRECT_ACTION_SPEC),
+-			     NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.attr.group)),
+-		.call = parse_ia,
+-	},
+-	[INDIRECT_ACTION_DESTROY] = {
+-		.name = "destroy",
+-		.help = "destroy indirect action",
+-		.next = NEXT(NEXT_ENTRY(INDIRECT_ACTION_DESTROY_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_ia_destroy,
+-	},
+-	[INDIRECT_ACTION_QUERY] = {
+-		.name = "query",
+-		.help = "query indirect action",
+-		.next = NEXT(NEXT_ENTRY(END),
+-			     NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.ia.action_id)),
+-		.call = parse_ia,
+-	},
+-	[INDIRECT_ACTION_QUERY_UPDATE] = {
+-		.name = "query_update",
+-		.help = "query [and|or] update",
+-		.next = NEXT(next_ia_qu_attr, NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.ia.action_id)),
+-		.call = parse_ia
+-	},
+-	[INDIRECT_ACTION_QU_MODE] = {
+-		.name = "mode",
+-		.help = "query_update mode",
+-		.next = NEXT(next_ia_qu_attr,
+-			     NEXT_ENTRY(INDIRECT_ACTION_QU_MODE_NAME)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.ia.qu_mode)),
+-		.call = parse_ia,
+-	},
+-	[INDIRECT_ACTION_QU_MODE_NAME] = {
+-		.name = "mode_name",
+-		.help = "query-update mode name",
+-		.call = parse_qu_mode_name,
+-		.comp = comp_qu_mode_name,
+-	},
+-	[VALIDATE] = {
+-		.name = "validate",
+-		.help = "check whether a flow rule can be created",
+-		.next = NEXT(next_vc_attr, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_vc,
+-	},
+-	[CREATE] = {
+-		.name = "create",
+-		.help = "create a flow rule",
+-		.next = NEXT(next_vc_attr, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_vc,
+-	},
+-	[DESTROY] = {
+-		.name = "destroy",
+-		.help = "destroy specific flow rules",
+-		.next = NEXT(next_destroy_attr,
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_destroy,
+-	},
+-	[UPDATE] = {
+-		.name = "update",
+-		.help = "update a flow rule with new actions",
+-		.next = NEXT(NEXT_ENTRY(VC_IS_USER_ID, END),
+-			     NEXT_ENTRY(ACTIONS),
+-			     NEXT_ENTRY(COMMON_RULE_ID),
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.rule_id),
+-			     ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_vc,
+-	},
+-	[FLUSH] = {
+-		.name = "flush",
+-		.help = "destroy all flow rules",
+-		.next = NEXT(NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_flush,
+-	},
+-	[DUMP] = {
+-		.name = "dump",
+-		.help = "dump single/all flow rules to file",
+-		.next = NEXT(next_dump_subcmd, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_dump,
+-	},
+-	[QUERY] = {
+-		.name = "query",
+-		.help = "query an existing flow rule",
+-		.next = NEXT(next_query_attr, NEXT_ENTRY(QUERY_ACTION),
+-			     NEXT_ENTRY(COMMON_RULE_ID),
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.query.action.type),
+-			     ARGS_ENTRY(struct buffer, args.query.rule),
+-			     ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_query,
+-	},
+-	[LIST] = {
+-		.name = "list",
+-		.help = "list existing flow rules",
+-		.next = NEXT(next_list_attr, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_list,
+-	},
+-	[AGED] = {
+-		.name = "aged",
+-		.help = "list and destroy aged flows",
+-		.next = NEXT(next_aged_attr, NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_aged,
+-	},
+-	[ISOLATE] = {
+-		.name = "isolate",
+-		.help = "restrict ingress traffic to the defined flow rules",
+-		.next = NEXT(NEXT_ENTRY(COMMON_BOOLEAN),
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.isolate.set),
+-			     ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_isolate,
+-	},
+-	[FLEX] = {
+-		.name = "flex_item",
+-		.help = "flex item API",
+-		.next = NEXT(next_flex_item),
+-		.call = parse_flex,
+-	},
+-	[FLEX_ITEM_CREATE] = {
+-		.name = "create",
+-		.help = "flex item create",
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.flex.filename),
+-			     ARGS_ENTRY(struct buffer, args.flex.token),
+-			     ARGS_ENTRY(struct buffer, port)),
+-		.next = NEXT(NEXT_ENTRY(COMMON_FILE_PATH),
+-			     NEXT_ENTRY(COMMON_FLEX_TOKEN),
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.call = parse_flex
+-	},
+-	[FLEX_ITEM_DESTROY] = {
+-		.name = "destroy",
+-		.help = "flex item destroy",
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.flex.token),
+-			     ARGS_ENTRY(struct buffer, port)),
+-		.next = NEXT(NEXT_ENTRY(COMMON_FLEX_TOKEN),
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.call = parse_flex
+-	},
+-	[TUNNEL] = {
+-		.name = "tunnel",
+-		.help = "new tunnel API",
+-		.next = NEXT(NEXT_ENTRY
+-			     (TUNNEL_CREATE, TUNNEL_LIST, TUNNEL_DESTROY)),
+-		.call = parse_tunnel,
+-	},
+-	/* Tunnel arguments. */
+-	[TUNNEL_CREATE] = {
+-		.name = "create",
+-		.help = "create new tunnel object",
+-		.next = NEXT(NEXT_ENTRY(TUNNEL_CREATE_TYPE),
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_tunnel,
+-	},
+-	[TUNNEL_CREATE_TYPE] = {
+-		.name = "type",
+-		.help = "create new tunnel",
+-		.next = NEXT(NEXT_ENTRY(COMMON_FILE_PATH)),
+-		.args = ARGS(ARGS_ENTRY(struct tunnel_ops, type)),
+-		.call = parse_tunnel,
+-	},
+-	[TUNNEL_DESTROY] = {
+-		.name = "destroy",
+-		.help = "destroy tunnel",
+-		.next = NEXT(NEXT_ENTRY(TUNNEL_DESTROY_ID),
+-			     NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_tunnel,
+-	},
+-	[TUNNEL_DESTROY_ID] = {
+-		.name = "id",
+-		.help = "tunnel identifier to destroy",
+-		.next = NEXT(NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct tunnel_ops, id)),
+-		.call = parse_tunnel,
+-	},
+-	[TUNNEL_LIST] = {
+-		.name = "list",
+-		.help = "list existing tunnels",
+-		.next = NEXT(NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_tunnel,
+-	},
+-	/* Destroy arguments. */
+-	[DESTROY_RULE] = {
+-		.name = "rule",
+-		.help = "specify a rule identifier",
+-		.next = NEXT(next_destroy_attr, NEXT_ENTRY(COMMON_RULE_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer, args.destroy.rule)),
+-		.call = parse_destroy,
+-	},
+-	[DESTROY_IS_USER_ID] = {
+-		.name = "user_id",
+-		.help = "rule identifier is user-id",
+-		.next = NEXT(next_destroy_attr),
+-		.call = parse_destroy,
+-	},
+-	/* Dump arguments. */
+-	[DUMP_ALL] = {
+-		.name = "all",
+-		.help = "dump all",
+-		.next = NEXT(next_dump_attr),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.dump.file)),
+-		.call = parse_dump,
+-	},
+-	[DUMP_ONE] = {
+-		.name = "rule",
+-		.help = "dump one rule",
+-		.next = NEXT(next_dump_attr, NEXT_ENTRY(COMMON_RULE_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.dump.file),
+-				ARGS_ENTRY(struct buffer, args.dump.rule)),
+-		.call = parse_dump,
+-	},
+-	[DUMP_IS_USER_ID] = {
+-		.name = "user_id",
+-		.help = "rule identifier is user-id",
+-		.next = NEXT(next_dump_subcmd),
+-		.call = parse_dump,
+-	},
+-	/* Query arguments. */
+-	[QUERY_ACTION] = {
+-		.name = "{action}",
+-		.type = "ACTION",
+-		.help = "action to query, must be part of the rule",
+-		.call = parse_action,
+-		.comp = comp_action,
+-	},
+-	[QUERY_IS_USER_ID] = {
+-		.name = "user_id",
+-		.help = "rule identifier is user-id",
+-		.next = NEXT(next_query_attr),
+-		.call = parse_query,
+-	},
+-	/* List arguments. */
+-	[LIST_GROUP] = {
+-		.name = "group",
+-		.help = "specify a group",
+-		.next = NEXT(next_list_attr, NEXT_ENTRY(COMMON_GROUP_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer, args.list.group)),
+-		.call = parse_list,
+-	},
+-	[AGED_DESTROY] = {
+-		.name = "destroy",
+-		.help = "specify aged flows need be destroyed",
+-		.call = parse_aged,
+-		.comp = comp_none,
+-	},
+-	/* Validate/create attributes. */
+-	[VC_GROUP] = {
+-		.name = "group",
+-		.help = "specify a group",
+-		.next = NEXT(next_vc_attr, NEXT_ENTRY(COMMON_GROUP_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_attr, group)),
+-		.call = parse_vc,
+-	},
+-	[VC_PRIORITY] = {
+-		.name = "priority",
+-		.help = "specify a priority level",
+-		.next = NEXT(next_vc_attr, NEXT_ENTRY(COMMON_PRIORITY_LEVEL)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_attr, priority)),
+-		.call = parse_vc,
+-	},
+-	[VC_INGRESS] = {
+-		.name = "ingress",
+-		.help = "affect rule to ingress",
+-		.next = NEXT(next_vc_attr),
+-		.call = parse_vc,
+-	},
+-	[VC_EGRESS] = {
+-		.name = "egress",
+-		.help = "affect rule to egress",
+-		.next = NEXT(next_vc_attr),
+-		.call = parse_vc,
+-	},
+-	[VC_TRANSFER] = {
+-		.name = "transfer",
+-		.help = "apply rule directly to endpoints found in pattern",
+-		.next = NEXT(next_vc_attr),
+-		.call = parse_vc,
+-	},
+-	[VC_TUNNEL_SET] = {
+-		.name = "tunnel_set",
+-		.help = "tunnel steer rule",
+-		.next = NEXT(next_vc_attr, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct tunnel_ops, id)),
+-		.call = parse_vc,
+-	},
+-	[VC_TUNNEL_MATCH] = {
+-		.name = "tunnel_match",
+-		.help = "tunnel match rule",
+-		.next = NEXT(next_vc_attr, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct tunnel_ops, id)),
+-		.call = parse_vc,
+-	},
+-	[VC_USER_ID] = {
+-		.name = "user_id",
+-		.help = "specify a user id to create",
+-		.next = NEXT(next_vc_attr, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.user_id)),
+-		.call = parse_vc,
+-	},
+-	[VC_IS_USER_ID] = {
+-		.name = "user_id",
+-		.help = "rule identifier is user-id",
+-		.call = parse_vc,
+-	},
+-	/* Validate/create pattern. */
+-	[ITEM_PATTERN] = {
+-		.name = "pattern",
+-		.help = "submit a list of pattern items",
+-		.next = NEXT(next_item),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PARAM_IS] = {
+-		.name = "is",
+-		.help = "match value perfectly (with full bit-mask)",
+-		.call = parse_vc_spec,
+-	},
+-	[ITEM_PARAM_SPEC] = {
+-		.name = "spec",
+-		.help = "match value according to configured bit-mask",
+-		.call = parse_vc_spec,
+-	},
+-	[ITEM_PARAM_LAST] = {
+-		.name = "last",
+-		.help = "specify upper bound to establish a range",
+-		.call = parse_vc_spec,
+-	},
+-	[ITEM_PARAM_MASK] = {
+-		.name = "mask",
+-		.help = "specify bit-mask with relevant bits set to one",
+-		.call = parse_vc_spec,
+-	},
+-	[ITEM_PARAM_PREFIX] = {
+-		.name = "prefix",
+-		.help = "generate bit-mask from a prefix length",
+-		.call = parse_vc_spec,
+-	},
+-	[ITEM_NEXT] = {
+-		.name = "/",
+-		.help = "specify next pattern item",
+-		.next = NEXT(next_item),
+-	},
+-	[ITEM_END] = {
+-		.name = "end",
+-		.help = "end list of pattern items",
+-		.priv = PRIV_ITEM(END, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTIONS, END)),
+-		.call = parse_vc,
+-	},
+-	[ITEM_VOID] = {
+-		.name = "void",
+-		.help = "no-op pattern item",
+-		.priv = PRIV_ITEM(VOID, 0),
+-		.next = NEXT(NEXT_ENTRY(ITEM_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ITEM_INVERT] = {
+-		.name = "invert",
+-		.help = "perform actions when pattern does not match",
+-		.priv = PRIV_ITEM(INVERT, 0),
+-		.next = NEXT(NEXT_ENTRY(ITEM_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ANY] = {
+-		.name = "any",
+-		.help = "match any protocol for the current layer",
+-		.priv = PRIV_ITEM(ANY, sizeof(struct rte_flow_item_any)),
+-		.next = NEXT(item_any),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ANY_NUM] = {
+-		.name = "num",
+-		.help = "number of layers covered",
+-		.next = NEXT(item_any, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_any, num)),
+-	},
+-	[ITEM_PORT_ID] = {
+-		.name = "port_id",
+-		.help = "match traffic from/to a given DPDK port ID",
+-		.priv = PRIV_ITEM(PORT_ID,
+-				  sizeof(struct rte_flow_item_port_id)),
+-		.next = NEXT(item_port_id),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PORT_ID_ID] = {
+-		.name = "id",
+-		.help = "DPDK port ID",
+-		.next = NEXT(item_port_id, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_port_id, id)),
+-	},
+-	[ITEM_MARK] = {
+-		.name = "mark",
+-		.help = "match traffic against value set in previously matched rule",
+-		.priv = PRIV_ITEM(MARK, sizeof(struct rte_flow_item_mark)),
+-		.next = NEXT(item_mark),
+-		.call = parse_vc,
+-	},
+-	[ITEM_MARK_ID] = {
+-		.name = "id",
+-		.help = "Integer value to match against",
+-		.next = NEXT(item_mark, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_mark, id)),
+-	},
+-	[ITEM_RAW] = {
+-		.name = "raw",
+-		.help = "match an arbitrary byte string",
+-		.priv = PRIV_ITEM(RAW, ITEM_RAW_SIZE),
+-		.next = NEXT(item_raw),
+-		.call = parse_vc,
+-	},
+-	[ITEM_RAW_RELATIVE] = {
+-		.name = "relative",
+-		.help = "look for pattern after the previous item",
+-		.next = NEXT(item_raw, NEXT_ENTRY(COMMON_BOOLEAN), item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_raw,
+-					   relative, 1)),
+-	},
+-	[ITEM_RAW_SEARCH] = {
+-		.name = "search",
+-		.help = "search pattern from offset (see also limit)",
+-		.next = NEXT(item_raw, NEXT_ENTRY(COMMON_BOOLEAN), item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_raw,
+-					   search, 1)),
+-	},
+-	[ITEM_RAW_OFFSET] = {
+-		.name = "offset",
+-		.help = "absolute or relative offset for pattern",
+-		.next = NEXT(item_raw, NEXT_ENTRY(COMMON_INTEGER), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_raw, offset)),
+-	},
+-	[ITEM_RAW_LIMIT] = {
+-		.name = "limit",
+-		.help = "search area limit for start of pattern",
+-		.next = NEXT(item_raw, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_raw, limit)),
+-	},
+-	[ITEM_RAW_PATTERN] = {
+-		.name = "pattern",
+-		.help = "byte string to look for",
+-		.next = NEXT(item_raw,
+-			     NEXT_ENTRY(COMMON_STRING),
+-			     NEXT_ENTRY(ITEM_PARAM_IS,
+-					ITEM_PARAM_SPEC,
+-					ITEM_PARAM_MASK)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_raw, pattern),
+-			     ARGS_ENTRY(struct rte_flow_item_raw, length),
+-			     ARGS_ENTRY_ARB(sizeof(struct rte_flow_item_raw),
+-					    ITEM_RAW_PATTERN_SIZE)),
+-	},
+-	[ITEM_RAW_PATTERN_HEX] = {
+-		.name = "pattern_hex",
+-		.help = "hex string to look for",
+-		.next = NEXT(item_raw,
+-			     NEXT_ENTRY(COMMON_HEX),
+-			     NEXT_ENTRY(ITEM_PARAM_IS,
+-					ITEM_PARAM_SPEC,
+-					ITEM_PARAM_MASK)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_raw, pattern),
+-			     ARGS_ENTRY(struct rte_flow_item_raw, length),
+-			     ARGS_ENTRY_ARB(sizeof(struct rte_flow_item_raw),
+-					    ITEM_RAW_PATTERN_SIZE)),
+-	},
+-	[ITEM_ETH] = {
+-		.name = "eth",
+-		.help = "match Ethernet header",
+-		.priv = PRIV_ITEM(ETH, sizeof(struct rte_flow_item_eth)),
+-		.next = NEXT(item_eth),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ETH_DST] = {
+-		.name = "dst",
+-		.help = "destination MAC",
+-		.next = NEXT(item_eth, NEXT_ENTRY(COMMON_MAC_ADDR), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_eth, hdr.dst_addr)),
+-	},
+-	[ITEM_ETH_SRC] = {
+-		.name = "src",
+-		.help = "source MAC",
+-		.next = NEXT(item_eth, NEXT_ENTRY(COMMON_MAC_ADDR), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_eth, hdr.src_addr)),
+-	},
+-	[ITEM_ETH_TYPE] = {
+-		.name = "type",
+-		.help = "EtherType",
+-		.next = NEXT(item_eth, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_eth, hdr.ether_type)),
+-	},
+-	[ITEM_ETH_HAS_VLAN] = {
+-		.name = "has_vlan",
+-		.help = "packet header contains VLAN",
+-		.next = NEXT(item_eth, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_eth,
+-					   has_vlan, 1)),
+-	},
+-	[ITEM_VLAN] = {
+-		.name = "vlan",
+-		.help = "match 802.1Q/ad VLAN tag",
+-		.priv = PRIV_ITEM(VLAN, sizeof(struct rte_flow_item_vlan)),
+-		.next = NEXT(item_vlan),
+-		.call = parse_vc,
+-	},
+-	[ITEM_VLAN_TCI] = {
+-		.name = "tci",
+-		.help = "tag control information",
+-		.next = NEXT(item_vlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vlan, hdr.vlan_tci)),
+-	},
+-	[ITEM_VLAN_PCP] = {
+-		.name = "pcp",
+-		.help = "priority code point",
+-		.next = NEXT(item_vlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_vlan,
+-						  hdr.vlan_tci, "\xe0\x00")),
+-	},
+-	[ITEM_VLAN_DEI] = {
+-		.name = "dei",
+-		.help = "drop eligible indicator",
+-		.next = NEXT(item_vlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_vlan,
+-						  hdr.vlan_tci, "\x10\x00")),
+-	},
+-	[ITEM_VLAN_VID] = {
+-		.name = "vid",
+-		.help = "VLAN identifier",
+-		.next = NEXT(item_vlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_vlan,
+-						  hdr.vlan_tci, "\x0f\xff")),
+-	},
+-	[ITEM_VLAN_INNER_TYPE] = {
+-		.name = "inner_type",
+-		.help = "inner EtherType",
+-		.next = NEXT(item_vlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vlan,
+-					     hdr.eth_proto)),
+-	},
+-	[ITEM_VLAN_HAS_MORE_VLAN] = {
+-		.name = "has_more_vlan",
+-		.help = "packet header contains another VLAN",
+-		.next = NEXT(item_vlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vlan,
+-					   has_more_vlan, 1)),
+-	},
+-	[ITEM_IPV4] = {
+-		.name = "ipv4",
+-		.help = "match IPv4 header",
+-		.priv = PRIV_ITEM(IPV4, sizeof(struct rte_flow_item_ipv4)),
+-		.next = NEXT(item_ipv4),
+-		.call = parse_vc,
+-	},
+-	[ITEM_IPV4_VER_IHL] = {
+-		.name = "version_ihl",
+-		.help = "match header length",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_ipv4,
+-				     hdr.version_ihl)),
+-	},
+-	[ITEM_IPV4_TOS] = {
+-		.name = "tos",
+-		.help = "type of service",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv4,
+-					     hdr.type_of_service)),
+-	},
+-	[ITEM_IPV4_LENGTH] = {
+-		.name = "length",
+-		.help = "total length",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv4,
+-					     hdr.total_length)),
+-	},
+-	[ITEM_IPV4_ID] = {
+-		.name = "packet_id",
+-		.help = "fragment packet id",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv4,
+-					     hdr.packet_id)),
+-	},
+-	[ITEM_IPV4_FRAGMENT_OFFSET] = {
+-		.name = "fragment_offset",
+-		.help = "fragmentation flags and fragment offset",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv4,
+-					     hdr.fragment_offset)),
+-	},
+-	[ITEM_IPV4_TTL] = {
+-		.name = "ttl",
+-		.help = "time to live",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv4,
+-					     hdr.time_to_live)),
+-	},
+-	[ITEM_IPV4_PROTO] = {
+-		.name = "proto",
+-		.help = "next protocol ID",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv4,
+-					     hdr.next_proto_id)),
+-	},
+-	[ITEM_IPV4_SRC] = {
+-		.name = "src",
+-		.help = "source address",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_IPV4_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv4,
+-					     hdr.src_addr)),
+-	},
+-	[ITEM_IPV4_DST] = {
+-		.name = "dst",
+-		.help = "destination address",
+-		.next = NEXT(item_ipv4, NEXT_ENTRY(COMMON_IPV4_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv4,
+-					     hdr.dst_addr)),
+-	},
+-	[ITEM_IPV6] = {
+-		.name = "ipv6",
+-		.help = "match IPv6 header",
+-		.priv = PRIV_ITEM(IPV6, sizeof(struct rte_flow_item_ipv6)),
+-		.next = NEXT(item_ipv6),
+-		.call = parse_vc,
+-	},
+-	[ITEM_IPV6_TC] = {
+-		.name = "tc",
+-		.help = "traffic class",
+-		.next = NEXT(item_ipv6, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_ipv6,
+-						  hdr.vtc_flow,
+-						  "\x0f\xf0\x00\x00")),
+-	},
+-	[ITEM_IPV6_FLOW] = {
+-		.name = "flow",
+-		.help = "flow label",
+-		.next = NEXT(item_ipv6, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_ipv6,
+-						  hdr.vtc_flow,
+-						  "\x00\x0f\xff\xff")),
+-	},
+-	[ITEM_IPV6_LEN] = {
+-		.name = "length",
+-		.help = "payload length",
+-		.next = NEXT(item_ipv6, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6,
+-					     hdr.payload_len)),
+-	},
+-	[ITEM_IPV6_PROTO] = {
+-		.name = "proto",
+-		.help = "protocol (next header)",
+-		.next = NEXT(item_ipv6, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6,
+-					     hdr.proto)),
+-	},
+-	[ITEM_IPV6_HOP] = {
+-		.name = "hop",
+-		.help = "hop limit",
+-		.next = NEXT(item_ipv6, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6,
+-					     hdr.hop_limits)),
+-	},
+-	[ITEM_IPV6_SRC] = {
+-		.name = "src",
+-		.help = "source address",
+-		.next = NEXT(item_ipv6, NEXT_ENTRY(COMMON_IPV6_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6,
+-					     hdr.src_addr)),
+-	},
+-	[ITEM_IPV6_DST] = {
+-		.name = "dst",
+-		.help = "destination address",
+-		.next = NEXT(item_ipv6, NEXT_ENTRY(COMMON_IPV6_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6,
+-					     hdr.dst_addr)),
+-	},
+-	[ITEM_IPV6_HAS_FRAG_EXT] = {
+-		.name = "has_frag_ext",
+-		.help = "fragment packet attribute",
+-		.next = NEXT(item_ipv6, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_ipv6,
+-					   has_frag_ext, 1)),
+-	},
+-	[ITEM_IPV6_ROUTING_EXT] = {
+-		.name = "ipv6_routing_ext",
+-		.help = "match IPv6 routing extension header",
+-		.priv = PRIV_ITEM(IPV6_ROUTING_EXT,
+-				  sizeof(struct rte_flow_item_ipv6_routing_ext)),
+-		.next = NEXT(item_ipv6_routing_ext),
+-		.call = parse_vc,
+-	},
+-	[ITEM_IPV6_ROUTING_EXT_TYPE] = {
+-		.name = "ext_type",
+-		.help = "match IPv6 routing extension header type",
+-		.next = NEXT(item_ipv6_routing_ext, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6_routing_ext,
+-					     hdr.type)),
+-	},
+-	[ITEM_IPV6_ROUTING_EXT_NEXT_HDR] = {
+-		.name = "ext_next_hdr",
+-		.help = "match IPv6 routing extension header next header type",
+-		.next = NEXT(item_ipv6_routing_ext, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6_routing_ext,
+-					     hdr.next_hdr)),
+-	},
+-	[ITEM_IPV6_ROUTING_EXT_SEG_LEFT] = {
+-		.name = "ext_seg_left",
+-		.help = "match IPv6 routing extension header segment left",
+-		.next = NEXT(item_ipv6_routing_ext, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6_routing_ext,
+-					     hdr.segments_left)),
+-	},
+-	[ITEM_ICMP] = {
+-		.name = "icmp",
+-		.help = "match ICMP header",
+-		.priv = PRIV_ITEM(ICMP, sizeof(struct rte_flow_item_icmp)),
+-		.next = NEXT(item_icmp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP_TYPE] = {
+-		.name = "type",
+-		.help = "ICMP packet type",
+-		.next = NEXT(item_icmp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp,
+-					     hdr.icmp_type)),
+-	},
+-	[ITEM_ICMP_CODE] = {
+-		.name = "code",
+-		.help = "ICMP packet code",
+-		.next = NEXT(item_icmp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp,
+-					     hdr.icmp_code)),
+-	},
+-	[ITEM_ICMP_IDENT] = {
+-		.name = "ident",
+-		.help = "ICMP packet identifier",
+-		.next = NEXT(item_icmp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp,
+-					     hdr.icmp_ident)),
+-	},
+-	[ITEM_ICMP_SEQ] = {
+-		.name = "seq",
+-		.help = "ICMP packet sequence number",
+-		.next = NEXT(item_icmp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp,
+-					     hdr.icmp_seq_nb)),
+-	},
+-	[ITEM_UDP] = {
+-		.name = "udp",
+-		.help = "match UDP header",
+-		.priv = PRIV_ITEM(UDP, sizeof(struct rte_flow_item_udp)),
+-		.next = NEXT(item_udp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_UDP_SRC] = {
+-		.name = "src",
+-		.help = "UDP source port",
+-		.next = NEXT(item_udp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_udp,
+-					     hdr.src_port)),
+-	},
+-	[ITEM_UDP_DST] = {
+-		.name = "dst",
+-		.help = "UDP destination port",
+-		.next = NEXT(item_udp, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_udp,
+-					     hdr.dst_port)),
+-	},
+-	[ITEM_TCP] = {
+-		.name = "tcp",
+-		.help = "match TCP header",
+-		.priv = PRIV_ITEM(TCP, sizeof(struct rte_flow_item_tcp)),
+-		.next = NEXT(item_tcp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_TCP_SRC] = {
+-		.name = "src",
+-		.help = "TCP source port",
+-		.next = NEXT(item_tcp, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_tcp,
+-					     hdr.src_port)),
+-	},
+-	[ITEM_TCP_DST] = {
+-		.name = "dst",
+-		.help = "TCP destination port",
+-		.next = NEXT(item_tcp, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_tcp,
+-					     hdr.dst_port)),
+-	},
+-	[ITEM_TCP_FLAGS] = {
+-		.name = "flags",
+-		.help = "TCP flags",
+-		.next = NEXT(item_tcp, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_tcp,
+-					     hdr.tcp_flags)),
+-	},
+-	[ITEM_SCTP] = {
+-		.name = "sctp",
+-		.help = "match SCTP header",
+-		.priv = PRIV_ITEM(SCTP, sizeof(struct rte_flow_item_sctp)),
+-		.next = NEXT(item_sctp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_SCTP_SRC] = {
+-		.name = "src",
+-		.help = "SCTP source port",
+-		.next = NEXT(item_sctp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_sctp,
+-					     hdr.src_port)),
+-	},
+-	[ITEM_SCTP_DST] = {
+-		.name = "dst",
+-		.help = "SCTP destination port",
+-		.next = NEXT(item_sctp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_sctp,
+-					     hdr.dst_port)),
+-	},
+-	[ITEM_SCTP_TAG] = {
+-		.name = "tag",
+-		.help = "validation tag",
+-		.next = NEXT(item_sctp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_sctp,
+-					     hdr.tag)),
+-	},
+-	[ITEM_SCTP_CKSUM] = {
+-		.name = "cksum",
+-		.help = "checksum",
+-		.next = NEXT(item_sctp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_sctp,
+-					     hdr.cksum)),
+-	},
+-	[ITEM_VXLAN] = {
+-		.name = "vxlan",
+-		.help = "match VXLAN header",
+-		.priv = PRIV_ITEM(VXLAN, sizeof(struct rte_flow_item_vxlan)),
+-		.next = NEXT(item_vxlan),
+-		.call = parse_vc,
+-	},
+-	[ITEM_VXLAN_VNI] = {
+-		.name = "vni",
+-		.help = "VXLAN identifier",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan, hdr.vni)),
+-	},
+-	[ITEM_VXLAN_FLAG_G] = {
+-		.name = "flag_g",
+-		.help = "VXLAN GBP bit",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vxlan,
+-					   hdr.flag_g, 1)),
+-	},
+-	[ITEM_VXLAN_FLAG_VER] = {
+-		.name = "flag_ver",
+-		.help = "VXLAN GPE version",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vxlan,
+-					   hdr.flag_ver, 2)),
+-	},
+-	[ITEM_VXLAN_FLAG_I] = {
+-		.name = "flag_i",
+-		.help = "VXLAN Instance bit",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vxlan,
+-					   hdr.flag_i, 1)),
+-	},
+-	[ITEM_VXLAN_FLAG_P] = {
+-		.name = "flag_p",
+-		.help = "VXLAN GPE Next Protocol bit",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vxlan,
+-					   hdr.flag_p, 1)),
+-	},
+-	[ITEM_VXLAN_FLAG_B] = {
+-		.name = "flag_b",
+-		.help = "VXLAN GPE Ingress-Replicated BUM",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vxlan,
+-					   hdr.flag_b, 1)),
+-	},
+-	[ITEM_VXLAN_FLAG_O] = {
+-		.name = "flag_o",
+-		.help = "VXLAN GPE OAM Packet bit",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vxlan,
+-					   hdr.flag_o, 1)),
+-	},
+-	[ITEM_VXLAN_FLAG_D] = {
+-		.name = "flag_d",
+-		.help = "VXLAN GBP Don't Learn bit",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vxlan,
+-					   hdr.flag_d, 1)),
+-	},
+-	[ITEM_VXLAN_FLAG_A] = {
+-		.name = "flag_a",
+-		.help = "VXLAN GBP Applied bit",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_vxlan,
+-					   hdr.flag_a, 1)),
+-	},
+-	[ITEM_VXLAN_GBP_ID] = {
+-		.name = "group_policy_id",
+-		.help = "VXLAN GBP ID",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan,
+-					     hdr.policy_id)),
+-	},
+-	[ITEM_VXLAN_GPE_PROTO] = {
+-		.name = "protocol",
+-		.help = "VXLAN GPE next protocol",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan,
+-					     hdr.proto)),
+-	},
+-	[ITEM_VXLAN_FIRST_RSVD] = {
+-		.name = "first_rsvd",
+-		.help = "VXLAN rsvd0 first byte",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan,
+-					     hdr.rsvd0[0])),
+-	},
+-	[ITEM_VXLAN_SECND_RSVD] = {
+-		.name = "second_rsvd",
+-		.help = "VXLAN rsvd0 second byte",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan,
+-					     hdr.rsvd0[1])),
+-	},
+-	[ITEM_VXLAN_THIRD_RSVD] = {
+-		.name = "third_rsvd",
+-		.help = "VXLAN rsvd0 third byte",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan,
+-					     hdr.rsvd0[2])),
+-	},
+-	[ITEM_VXLAN_LAST_RSVD] = {
+-		.name = "last_rsvd",
+-		.help = "VXLAN last reserved byte",
+-		.next = NEXT(item_vxlan, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan,
+-					     hdr.last_rsvd)),
+-	},
+-	[ITEM_E_TAG] = {
+-		.name = "e_tag",
+-		.help = "match E-Tag header",
+-		.priv = PRIV_ITEM(E_TAG, sizeof(struct rte_flow_item_e_tag)),
+-		.next = NEXT(item_e_tag),
+-		.call = parse_vc,
+-	},
+-	[ITEM_E_TAG_GRP_ECID_B] = {
+-		.name = "grp_ecid_b",
+-		.help = "GRP and E-CID base",
+-		.next = NEXT(item_e_tag, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_e_tag,
+-						  rsvd_grp_ecid_b,
+-						  "\x3f\xff")),
+-	},
+-	[ITEM_NVGRE] = {
+-		.name = "nvgre",
+-		.help = "match NVGRE header",
+-		.priv = PRIV_ITEM(NVGRE, sizeof(struct rte_flow_item_nvgre)),
+-		.next = NEXT(item_nvgre),
+-		.call = parse_vc,
+-	},
+-	[ITEM_NVGRE_TNI] = {
+-		.name = "tni",
+-		.help = "virtual subnet ID",
+-		.next = NEXT(item_nvgre, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_nvgre, tni)),
+-	},
+-	[ITEM_MPLS] = {
+-		.name = "mpls",
+-		.help = "match MPLS header",
+-		.priv = PRIV_ITEM(MPLS, sizeof(struct rte_flow_item_mpls)),
+-		.next = NEXT(item_mpls),
+-		.call = parse_vc,
+-	},
+-	[ITEM_MPLS_LABEL] = {
+-		.name = "label",
+-		.help = "MPLS label",
+-		.next = NEXT(item_mpls, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_mpls,
+-						  label_tc_s,
+-						  "\xff\xff\xf0")),
+-	},
+-	[ITEM_MPLS_TC] = {
+-		.name = "tc",
+-		.help = "MPLS Traffic Class",
+-		.next = NEXT(item_mpls, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_mpls,
+-						  label_tc_s,
+-						  "\x00\x00\x0e")),
+-	},
+-	[ITEM_MPLS_S] = {
+-		.name = "s",
+-		.help = "MPLS Bottom-of-Stack",
+-		.next = NEXT(item_mpls, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_mpls,
+-						  label_tc_s,
+-						  "\x00\x00\x01")),
+-	},
+-	[ITEM_MPLS_TTL] = {
+-		.name = "ttl",
+-		.help = "MPLS Time-to-Live",
+-		.next = NEXT(item_mpls, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_mpls, ttl)),
+-	},
+-	[ITEM_GRE] = {
+-		.name = "gre",
+-		.help = "match GRE header",
+-		.priv = PRIV_ITEM(GRE, sizeof(struct rte_flow_item_gre)),
+-		.next = NEXT(item_gre),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GRE_PROTO] = {
+-		.name = "protocol",
+-		.help = "GRE protocol type",
+-		.next = NEXT(item_gre, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_gre,
+-					     protocol)),
+-	},
+-	[ITEM_GRE_C_RSVD0_VER] = {
+-		.name = "c_rsvd0_ver",
+-		.help =
+-			"checksum (1b), undefined (1b), key bit (1b),"
+-			" sequence number (1b), reserved 0 (9b),"
+-			" version (3b)",
+-		.next = NEXT(item_gre, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_gre,
+-					     c_rsvd0_ver)),
+-	},
+-	[ITEM_GRE_C_BIT] = {
+-		.name = "c_bit",
+-		.help = "checksum bit (C)",
+-		.next = NEXT(item_gre, NEXT_ENTRY(COMMON_BOOLEAN),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_gre,
+-						  c_rsvd0_ver,
+-						  "\x80\x00\x00\x00")),
+-	},
+-	[ITEM_GRE_S_BIT] = {
+-		.name = "s_bit",
+-		.help = "sequence number bit (S)",
+-		.next = NEXT(item_gre, NEXT_ENTRY(COMMON_BOOLEAN), item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_gre,
+-						  c_rsvd0_ver,
+-						  "\x10\x00\x00\x00")),
+-	},
+-	[ITEM_GRE_K_BIT] = {
+-		.name = "k_bit",
+-		.help = "key bit (K)",
+-		.next = NEXT(item_gre, NEXT_ENTRY(COMMON_BOOLEAN), item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_gre,
+-						  c_rsvd0_ver,
+-						  "\x20\x00\x00\x00")),
+-	},
+-	[ITEM_FUZZY] = {
+-		.name = "fuzzy",
+-		.help = "fuzzy pattern match, expect faster than default",
+-		.priv = PRIV_ITEM(FUZZY,
+-				sizeof(struct rte_flow_item_fuzzy)),
+-		.next = NEXT(item_fuzzy),
+-		.call = parse_vc,
+-	},
+-	[ITEM_FUZZY_THRESH] = {
+-		.name = "thresh",
+-		.help = "match accuracy threshold",
+-		.next = NEXT(item_fuzzy, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_fuzzy,
+-					thresh)),
+-	},
+-	[ITEM_GTP] = {
+-		.name = "gtp",
+-		.help = "match GTP header",
+-		.priv = PRIV_ITEM(GTP, sizeof(struct rte_flow_item_gtp)),
+-		.next = NEXT(item_gtp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GTP_FLAGS] = {
+-		.name = "v_pt_rsv_flags",
+-		.help = "GTP flags",
+-		.next = NEXT(item_gtp, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_gtp,
+-					hdr.gtp_hdr_info)),
+-	},
+-	[ITEM_GTP_MSG_TYPE] = {
+-		.name = "msg_type",
+-		.help = "GTP message type",
+-		.next = NEXT(item_gtp, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_gtp, hdr.msg_type)),
+-	},
+-	[ITEM_GTP_TEID] = {
+-		.name = "teid",
+-		.help = "tunnel endpoint identifier",
+-		.next = NEXT(item_gtp, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_gtp, hdr.teid)),
+-	},
+-	[ITEM_GTPC] = {
+-		.name = "gtpc",
+-		.help = "match GTP header",
+-		.priv = PRIV_ITEM(GTPC, sizeof(struct rte_flow_item_gtp)),
+-		.next = NEXT(item_gtp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GTPU] = {
+-		.name = "gtpu",
+-		.help = "match GTP header",
+-		.priv = PRIV_ITEM(GTPU, sizeof(struct rte_flow_item_gtp)),
+-		.next = NEXT(item_gtp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GENEVE] = {
+-		.name = "geneve",
+-		.help = "match GENEVE header",
+-		.priv = PRIV_ITEM(GENEVE, sizeof(struct rte_flow_item_geneve)),
+-		.next = NEXT(item_geneve),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GENEVE_VNI] = {
+-		.name = "vni",
+-		.help = "virtual network identifier",
+-		.next = NEXT(item_geneve, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_geneve, vni)),
+-	},
+-	[ITEM_GENEVE_PROTO] = {
+-		.name = "protocol",
+-		.help = "GENEVE protocol type",
+-		.next = NEXT(item_geneve, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_geneve,
+-					     protocol)),
+-	},
+-	[ITEM_GENEVE_OPTLEN] = {
+-		.name = "optlen",
+-		.help = "GENEVE options length in dwords",
+-		.next = NEXT(item_geneve, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK_HTON(struct rte_flow_item_geneve,
+-						  ver_opt_len_o_c_rsvd0,
+-						  "\x3f\x00")),
+-	},
+-	[ITEM_VXLAN_GPE] = {
+-		.name = "vxlan-gpe",
+-		.help = "match VXLAN-GPE header",
+-		.priv = PRIV_ITEM(VXLAN_GPE,
+-				  sizeof(struct rte_flow_item_vxlan_gpe)),
+-		.next = NEXT(item_vxlan_gpe),
+-		.call = parse_vc,
+-	},
+-	[ITEM_VXLAN_GPE_VNI] = {
+-		.name = "vni",
+-		.help = "VXLAN-GPE identifier",
+-		.next = NEXT(item_vxlan_gpe, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan_gpe,
+-					     hdr.vni)),
+-	},
+-	[ITEM_VXLAN_GPE_PROTO_IN_DEPRECATED_VXLAN_GPE_HDR] = {
+-		.name = "protocol",
+-		.help = "VXLAN-GPE next protocol",
+-		.next = NEXT(item_vxlan_gpe, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan_gpe,
+-					     protocol)),
+-	},
+-	[ITEM_VXLAN_GPE_FLAGS] = {
+-		.name = "flags",
+-		.help = "VXLAN-GPE flags",
+-		.next = NEXT(item_vxlan_gpe, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan_gpe,
+-					     flags)),
+-	},
+-	[ITEM_VXLAN_GPE_RSVD0] = {
+-		.name = "rsvd0",
+-		.help = "VXLAN-GPE rsvd0",
+-		.next = NEXT(item_vxlan_gpe, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan_gpe,
+-					     rsvd0)),
+-	},
+-	[ITEM_VXLAN_GPE_RSVD1] = {
+-		.name = "rsvd1",
+-		.help = "VXLAN-GPE rsvd1",
+-		.next = NEXT(item_vxlan_gpe, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_vxlan_gpe,
+-					     rsvd1)),
+-	},
+-	[ITEM_ARP_ETH_IPV4] = {
+-		.name = "arp_eth_ipv4",
+-		.help = "match ARP header for Ethernet/IPv4",
+-		.priv = PRIV_ITEM(ARP_ETH_IPV4,
+-				  sizeof(struct rte_flow_item_arp_eth_ipv4)),
+-		.next = NEXT(item_arp_eth_ipv4),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ARP_ETH_IPV4_SHA] = {
+-		.name = "sha",
+-		.help = "sender hardware address",
+-		.next = NEXT(item_arp_eth_ipv4, NEXT_ENTRY(COMMON_MAC_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_arp_eth_ipv4,
+-					     hdr.arp_data.arp_sha)),
+-	},
+-	[ITEM_ARP_ETH_IPV4_SPA] = {
+-		.name = "spa",
+-		.help = "sender IPv4 address",
+-		.next = NEXT(item_arp_eth_ipv4, NEXT_ENTRY(COMMON_IPV4_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_arp_eth_ipv4,
+-					     hdr.arp_data.arp_sip)),
+-	},
+-	[ITEM_ARP_ETH_IPV4_THA] = {
+-		.name = "tha",
+-		.help = "target hardware address",
+-		.next = NEXT(item_arp_eth_ipv4, NEXT_ENTRY(COMMON_MAC_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_arp_eth_ipv4,
+-					     hdr.arp_data.arp_tha)),
+-	},
+-	[ITEM_ARP_ETH_IPV4_TPA] = {
+-		.name = "tpa",
+-		.help = "target IPv4 address",
+-		.next = NEXT(item_arp_eth_ipv4, NEXT_ENTRY(COMMON_IPV4_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_arp_eth_ipv4,
+-					     hdr.arp_data.arp_tip)),
+-	},
+-	[ITEM_IPV6_EXT] = {
+-		.name = "ipv6_ext",
+-		.help = "match presence of any IPv6 extension header",
+-		.priv = PRIV_ITEM(IPV6_EXT,
+-				  sizeof(struct rte_flow_item_ipv6_ext)),
+-		.next = NEXT(item_ipv6_ext),
+-		.call = parse_vc,
+-	},
+-	[ITEM_IPV6_EXT_NEXT_HDR] = {
+-		.name = "next_hdr",
+-		.help = "next header",
+-		.next = NEXT(item_ipv6_ext, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6_ext,
+-					     next_hdr)),
+-	},
+-	[ITEM_IPV6_FRAG_EXT] = {
+-		.name = "ipv6_frag_ext",
+-		.help = "match presence of IPv6 fragment extension header",
+-		.priv = PRIV_ITEM(IPV6_FRAG_EXT,
+-				sizeof(struct rte_flow_item_ipv6_frag_ext)),
+-		.next = NEXT(item_ipv6_frag_ext),
+-		.call = parse_vc,
+-	},
+-	[ITEM_IPV6_FRAG_EXT_NEXT_HDR] = {
+-		.name = "next_hdr",
+-		.help = "next header",
+-		.next = NEXT(item_ipv6_frag_ext, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_ipv6_frag_ext,
+-					hdr.next_header)),
+-	},
+-	[ITEM_IPV6_FRAG_EXT_FRAG_DATA] = {
+-		.name = "frag_data",
+-		.help = "fragment flags and offset",
+-		.next = NEXT(item_ipv6_frag_ext, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6_frag_ext,
+-					     hdr.frag_data)),
+-	},
+-	[ITEM_IPV6_FRAG_EXT_ID] = {
+-		.name = "packet_id",
+-		.help = "fragment packet id",
+-		.next = NEXT(item_ipv6_frag_ext, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6_frag_ext,
+-					     hdr.id)),
+-	},
+-	[ITEM_ICMP6] = {
+-		.name = "icmp6",
+-		.help = "match any ICMPv6 header",
+-		.priv = PRIV_ITEM(ICMP6, sizeof(struct rte_flow_item_icmp6)),
+-		.next = NEXT(item_icmp6),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP6_TYPE] = {
+-		.name = "type",
+-		.help = "ICMPv6 type",
+-		.next = NEXT(item_icmp6, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6,
+-					     type)),
+-	},
+-	[ITEM_ICMP6_CODE] = {
+-		.name = "code",
+-		.help = "ICMPv6 code",
+-		.next = NEXT(item_icmp6, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6,
+-					     code)),
+-	},
+-	[ITEM_ICMP6_ECHO_REQUEST] = {
+-		.name = "icmp6_echo_request",
+-		.help = "match ICMPv6 echo request",
+-		.priv = PRIV_ITEM(ICMP6_ECHO_REQUEST,
+-				  sizeof(struct rte_flow_item_icmp6_echo)),
+-		.next = NEXT(item_icmp6_echo_request),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP6_ECHO_REQUEST_ID] = {
+-		.name = "ident",
+-		.help = "ICMPv6 echo request identifier",
+-		.next = NEXT(item_icmp6_echo_request, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6_echo,
+-					     hdr.identifier)),
+-	},
+-	[ITEM_ICMP6_ECHO_REQUEST_SEQ] = {
+-		.name = "seq",
+-		.help = "ICMPv6 echo request sequence",
+-		.next = NEXT(item_icmp6_echo_request, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6_echo,
+-					     hdr.sequence)),
+-	},
+-	[ITEM_ICMP6_ECHO_REPLY] = {
+-		.name = "icmp6_echo_reply",
+-		.help = "match ICMPv6 echo reply",
+-		.priv = PRIV_ITEM(ICMP6_ECHO_REPLY,
+-				  sizeof(struct rte_flow_item_icmp6_echo)),
+-		.next = NEXT(item_icmp6_echo_reply),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP6_ECHO_REPLY_ID] = {
+-		.name = "ident",
+-		.help = "ICMPv6 echo reply identifier",
+-		.next = NEXT(item_icmp6_echo_reply, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6_echo,
+-					     hdr.identifier)),
+-	},
+-	[ITEM_ICMP6_ECHO_REPLY_SEQ] = {
+-		.name = "seq",
+-		.help = "ICMPv6 echo reply sequence",
+-		.next = NEXT(item_icmp6_echo_reply, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6_echo,
+-					     hdr.sequence)),
+-	},
+-	[ITEM_ICMP6_ND_NS] = {
+-		.name = "icmp6_nd_ns",
+-		.help = "match ICMPv6 neighbor discovery solicitation",
+-		.priv = PRIV_ITEM(ICMP6_ND_NS,
+-				  sizeof(struct rte_flow_item_icmp6_nd_ns)),
+-		.next = NEXT(item_icmp6_nd_ns),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP6_ND_NS_TARGET_ADDR] = {
+-		.name = "target_addr",
+-		.help = "target address",
+-		.next = NEXT(item_icmp6_nd_ns, NEXT_ENTRY(COMMON_IPV6_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6_nd_ns,
+-					     target_addr)),
+-	},
+-	[ITEM_ICMP6_ND_NA] = {
+-		.name = "icmp6_nd_na",
+-		.help = "match ICMPv6 neighbor discovery advertisement",
+-		.priv = PRIV_ITEM(ICMP6_ND_NA,
+-				  sizeof(struct rte_flow_item_icmp6_nd_na)),
+-		.next = NEXT(item_icmp6_nd_na),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP6_ND_NA_TARGET_ADDR] = {
+-		.name = "target_addr",
+-		.help = "target address",
+-		.next = NEXT(item_icmp6_nd_na, NEXT_ENTRY(COMMON_IPV6_ADDR),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6_nd_na,
+-					     target_addr)),
+-	},
+-	[ITEM_ICMP6_ND_OPT] = {
+-		.name = "icmp6_nd_opt",
+-		.help = "match presence of any ICMPv6 neighbor discovery"
+-			" option",
+-		.priv = PRIV_ITEM(ICMP6_ND_OPT,
+-				  sizeof(struct rte_flow_item_icmp6_nd_opt)),
+-		.next = NEXT(item_icmp6_nd_opt),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP6_ND_OPT_TYPE] = {
+-		.name = "type",
+-		.help = "ND option type",
+-		.next = NEXT(item_icmp6_nd_opt, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_icmp6_nd_opt,
+-					     type)),
+-	},
+-	[ITEM_ICMP6_ND_OPT_SLA_ETH] = {
+-		.name = "icmp6_nd_opt_sla_eth",
+-		.help = "match ICMPv6 neighbor discovery source Ethernet"
+-			" link-layer address option",
+-		.priv = PRIV_ITEM
+-			(ICMP6_ND_OPT_SLA_ETH,
+-			 sizeof(struct rte_flow_item_icmp6_nd_opt_sla_eth)),
+-		.next = NEXT(item_icmp6_nd_opt_sla_eth),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP6_ND_OPT_SLA_ETH_SLA] = {
+-		.name = "sla",
+-		.help = "source Ethernet LLA",
+-		.next = NEXT(item_icmp6_nd_opt_sla_eth,
+-			     NEXT_ENTRY(COMMON_MAC_ADDR), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_item_icmp6_nd_opt_sla_eth, sla)),
+-	},
+-	[ITEM_ICMP6_ND_OPT_TLA_ETH] = {
+-		.name = "icmp6_nd_opt_tla_eth",
+-		.help = "match ICMPv6 neighbor discovery target Ethernet"
+-			" link-layer address option",
+-		.priv = PRIV_ITEM
+-			(ICMP6_ND_OPT_TLA_ETH,
+-			 sizeof(struct rte_flow_item_icmp6_nd_opt_tla_eth)),
+-		.next = NEXT(item_icmp6_nd_opt_tla_eth),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ICMP6_ND_OPT_TLA_ETH_TLA] = {
+-		.name = "tla",
+-		.help = "target Ethernet LLA",
+-		.next = NEXT(item_icmp6_nd_opt_tla_eth,
+-			     NEXT_ENTRY(COMMON_MAC_ADDR), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_item_icmp6_nd_opt_tla_eth, tla)),
+-	},
+-	[ITEM_META] = {
+-		.name = "meta",
+-		.help = "match metadata header",
+-		.priv = PRIV_ITEM(META, sizeof(struct rte_flow_item_meta)),
+-		.next = NEXT(item_meta),
+-		.call = parse_vc,
+-	},
+-	[ITEM_META_DATA] = {
+-		.name = "data",
+-		.help = "metadata value",
+-		.next = NEXT(item_meta, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK(struct rte_flow_item_meta,
+-					     data, "\xff\xff\xff\xff")),
+-	},
+-	[ITEM_RANDOM] = {
+-		.name = "random",
+-		.help = "match random value",
+-		.priv = PRIV_ITEM(RANDOM, sizeof(struct rte_flow_item_random)),
+-		.next = NEXT(item_random),
+-		.call = parse_vc,
+-	},
+-	[ITEM_RANDOM_VALUE] = {
+-		.name = "value",
+-		.help = "random value",
+-		.next = NEXT(item_random, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_MASK(struct rte_flow_item_random,
+-					     value, "\xff\xff\xff\xff")),
+-	},
+-	[ITEM_GRE_KEY] = {
+-		.name = "gre_key",
+-		.help = "match GRE key",
+-		.priv = PRIV_ITEM(GRE_KEY, sizeof(rte_be32_t)),
+-		.next = NEXT(item_gre_key),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GRE_KEY_VALUE] = {
+-		.name = "value",
+-		.help = "key value",
+-		.next = NEXT(item_gre_key, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARG_ENTRY_HTON(rte_be32_t)),
+-	},
+-	[ITEM_GRE_OPTION] = {
+-		.name = "gre_option",
+-		.help = "match GRE optional fields",
+-		.priv = PRIV_ITEM(GRE_OPTION,
+-				  sizeof(struct rte_flow_item_gre_opt)),
+-		.next = NEXT(item_gre_option),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GRE_OPTION_CHECKSUM] = {
+-		.name = "checksum",
+-		.help = "match GRE checksum",
+-		.next = NEXT(item_gre_option, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_gre_opt,
+-					     checksum_rsvd.checksum)),
+-	},
+-	[ITEM_GRE_OPTION_KEY] = {
+-		.name = "key",
+-		.help = "match GRE key",
+-		.next = NEXT(item_gre_option, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_gre_opt,
+-					     key.key)),
+-	},
+-	[ITEM_GRE_OPTION_SEQUENCE] = {
+-		.name = "sequence",
+-		.help = "match GRE sequence",
+-		.next = NEXT(item_gre_option, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_gre_opt,
+-					     sequence.sequence)),
+-	},
+-	[ITEM_GTP_PSC] = {
+-		.name = "gtp_psc",
+-		.help = "match GTP extension header with type 0x85",
+-		.priv = PRIV_ITEM(GTP_PSC,
+-				sizeof(struct rte_flow_item_gtp_psc)),
+-		.next = NEXT(item_gtp_psc),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GTP_PSC_QFI] = {
+-		.name = "qfi",
+-		.help = "QoS flow identifier",
+-		.next = NEXT(item_gtp_psc, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_gtp_psc,
+-					hdr.qfi, 6)),
+-	},
+-	[ITEM_GTP_PSC_PDU_T] = {
+-		.name = "pdu_t",
+-		.help = "PDU type",
+-		.next = NEXT(item_gtp_psc, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_item_gtp_psc,
+-					hdr.type, 4)),
+-	},
+-	[ITEM_PPPOES] = {
+-		.name = "pppoes",
+-		.help = "match PPPoE session header",
+-		.priv = PRIV_ITEM(PPPOES, sizeof(struct rte_flow_item_pppoe)),
+-		.next = NEXT(item_pppoes),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PPPOED] = {
+-		.name = "pppoed",
+-		.help = "match PPPoE discovery header",
+-		.priv = PRIV_ITEM(PPPOED, sizeof(struct rte_flow_item_pppoe)),
+-		.next = NEXT(item_pppoed),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PPPOE_SEID] = {
+-		.name = "seid",
+-		.help = "session identifier",
+-		.next = NEXT(item_pppoes, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_pppoe,
+-					session_id)),
+-	},
+-	[ITEM_PPPOE_PROTO_ID] = {
+-		.name = "pppoe_proto_id",
+-		.help = "match PPPoE session protocol identifier",
+-		.priv = PRIV_ITEM(PPPOE_PROTO_ID,
+-				sizeof(struct rte_flow_item_pppoe_proto_id)),
+-		.next = NEXT(item_pppoe_proto_id, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_item_pppoe_proto_id, proto_id)),
+-		.call = parse_vc,
+-	},
+-	[ITEM_HIGIG2] = {
+-		.name = "higig2",
+-		.help = "matches higig2 header",
+-		.priv = PRIV_ITEM(HIGIG2,
+-				sizeof(struct rte_flow_item_higig2_hdr)),
+-		.next = NEXT(item_higig2),
+-		.call = parse_vc,
+-	},
+-	[ITEM_HIGIG2_CLASSIFICATION] = {
+-		.name = "classification",
+-		.help = "matches classification of higig2 header",
+-		.next = NEXT(item_higig2, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_higig2_hdr,
+-					hdr.ppt1.classification)),
+-	},
+-	[ITEM_HIGIG2_VID] = {
+-		.name = "vid",
+-		.help = "matches vid of higig2 header",
+-		.next = NEXT(item_higig2, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_higig2_hdr,
+-					hdr.ppt1.vid)),
+-	},
+-	[ITEM_TAG] = {
+-		.name = "tag",
+-		.help = "match tag value",
+-		.priv = PRIV_ITEM(TAG, sizeof(struct rte_flow_item_tag)),
+-		.next = NEXT(item_tag),
+-		.call = parse_vc,
+-	},
+-	[ITEM_TAG_DATA] = {
+-		.name = "data",
+-		.help = "tag value to match",
+-		.next = NEXT(item_tag, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_tag, data)),
+-	},
+-	[ITEM_TAG_INDEX] = {
+-		.name = "index",
+-		.help = "index of tag array to match",
+-		.next = NEXT(item_tag, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     NEXT_ENTRY(ITEM_PARAM_IS)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_tag, index)),
+-	},
+-	[ITEM_L2TPV3OIP] = {
+-		.name = "l2tpv3oip",
+-		.help = "match L2TPv3 over IP header",
+-		.priv = PRIV_ITEM(L2TPV3OIP,
+-				  sizeof(struct rte_flow_item_l2tpv3oip)),
+-		.next = NEXT(item_l2tpv3oip),
+-		.call = parse_vc,
+-	},
+-	[ITEM_L2TPV3OIP_SESSION_ID] = {
+-		.name = "session_id",
+-		.help = "session identifier",
+-		.next = NEXT(item_l2tpv3oip, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv3oip,
+-					     session_id)),
+-	},
+-	[ITEM_ESP] = {
+-		.name = "esp",
+-		.help = "match ESP header",
+-		.priv = PRIV_ITEM(ESP, sizeof(struct rte_flow_item_esp)),
+-		.next = NEXT(item_esp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ESP_SPI] = {
+-		.name = "spi",
+-		.help = "security policy index",
+-		.next = NEXT(item_esp, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_esp,
+-				hdr.spi)),
+-	},
+-	[ITEM_AH] = {
+-		.name = "ah",
+-		.help = "match AH header",
+-		.priv = PRIV_ITEM(AH, sizeof(struct rte_flow_item_ah)),
+-		.next = NEXT(item_ah),
+-		.call = parse_vc,
+-	},
+-	[ITEM_AH_SPI] = {
+-		.name = "spi",
+-		.help = "security parameters index",
+-		.next = NEXT(item_ah, NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ah, spi)),
+-	},
+-	[ITEM_PFCP] = {
+-		.name = "pfcp",
+-		.help = "match pfcp header",
+-		.priv = PRIV_ITEM(PFCP, sizeof(struct rte_flow_item_pfcp)),
+-		.next = NEXT(item_pfcp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PFCP_S_FIELD] = {
+-		.name = "s_field",
+-		.help = "S field",
+-		.next = NEXT(item_pfcp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_pfcp,
+-				s_field)),
+-	},
+-	[ITEM_PFCP_SEID] = {
+-		.name = "seid",
+-		.help = "session endpoint identifier",
+-		.next = NEXT(item_pfcp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_pfcp, seid)),
+-	},
+-	[ITEM_ECPRI] = {
+-		.name = "ecpri",
+-		.help = "match eCPRI header",
+-		.priv = PRIV_ITEM(ECPRI, sizeof(struct rte_flow_item_ecpri)),
+-		.next = NEXT(item_ecpri),
+-		.call = parse_vc,
+-	},
+-	[ITEM_ECPRI_COMMON] = {
+-		.name = "common",
+-		.help = "eCPRI common header",
+-		.next = NEXT(item_ecpri_common),
+-	},
+-	[ITEM_ECPRI_COMMON_TYPE] = {
+-		.name = "type",
+-		.help = "type of common header",
+-		.next = NEXT(item_ecpri_common_type),
+-		.args = ARGS(ARG_ENTRY_HTON(struct rte_flow_item_ecpri)),
+-	},
+-	[ITEM_ECPRI_COMMON_TYPE_IQ_DATA] = {
+-		.name = "iq_data",
+-		.help = "Type #0: IQ Data",
+-		.next = NEXT(NEXT_ENTRY(ITEM_ECPRI_MSG_IQ_DATA_PCID,
+-					ITEM_NEXT)),
+-		.call = parse_vc_item_ecpri_type,
+-	},
+-	[ITEM_ECPRI_MSG_IQ_DATA_PCID] = {
+-		.name = "pc_id",
+-		.help = "Physical Channel ID",
+-		.next = NEXT(NEXT_ENTRY(ITEM_ECPRI_MSG_IQ_DATA_PCID,
+-				ITEM_ECPRI_COMMON, ITEM_NEXT),
+-				NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ecpri,
+-				hdr.type0.pc_id)),
+-	},
+-	[ITEM_ECPRI_COMMON_TYPE_RTC_CTRL] = {
+-		.name = "rtc_ctrl",
+-		.help = "Type #2: Real-Time Control Data",
+-		.next = NEXT(NEXT_ENTRY(ITEM_ECPRI_MSG_RTC_CTRL_RTCID,
+-					ITEM_NEXT)),
+-		.call = parse_vc_item_ecpri_type,
+-	},
+-	[ITEM_ECPRI_MSG_RTC_CTRL_RTCID] = {
+-		.name = "rtc_id",
+-		.help = "Real-Time Control Data ID",
+-		.next = NEXT(NEXT_ENTRY(ITEM_ECPRI_MSG_RTC_CTRL_RTCID,
+-				ITEM_ECPRI_COMMON, ITEM_NEXT),
+-				NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ecpri,
+-				hdr.type2.rtc_id)),
+-	},
+-	[ITEM_ECPRI_COMMON_TYPE_DLY_MSR] = {
+-		.name = "delay_measure",
+-		.help = "Type #5: One-Way Delay Measurement",
+-		.next = NEXT(NEXT_ENTRY(ITEM_ECPRI_MSG_DLY_MSR_MSRID,
+-					ITEM_NEXT)),
+-		.call = parse_vc_item_ecpri_type,
+-	},
+-	[ITEM_ECPRI_MSG_DLY_MSR_MSRID] = {
+-		.name = "msr_id",
+-		.help = "Measurement ID",
+-		.next = NEXT(NEXT_ENTRY(ITEM_ECPRI_MSG_DLY_MSR_MSRID,
+-				ITEM_ECPRI_COMMON, ITEM_NEXT),
+-				NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ecpri,
+-				hdr.type5.msr_id)),
+-	},
+-	[ITEM_GENEVE_OPT] = {
+-		.name = "geneve-opt",
+-		.help = "GENEVE header option",
+-		.priv = PRIV_ITEM(GENEVE_OPT,
+-				  sizeof(struct rte_flow_item_geneve_opt) +
+-				  ITEM_GENEVE_OPT_DATA_SIZE),
+-		.next = NEXT(item_geneve_opt),
+-		.call = parse_vc,
+-	},
+-	[ITEM_GENEVE_OPT_CLASS]	= {
+-		.name = "class",
+-		.help = "GENEVE option class",
+-		.next = NEXT(item_geneve_opt, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_geneve_opt,
+-					     option_class)),
+-	},
+-	[ITEM_GENEVE_OPT_TYPE] = {
+-		.name = "type",
+-		.help = "GENEVE option type",
+-		.next = NEXT(item_geneve_opt, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_geneve_opt,
+-					option_type)),
+-	},
+-	[ITEM_GENEVE_OPT_LENGTH] = {
+-		.name = "length",
+-		.help = "GENEVE option data length (in 32b words)",
+-		.next = NEXT(item_geneve_opt, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_BOUNDED(
+-				struct rte_flow_item_geneve_opt, option_len,
+-				0, 31)),
+-	},
+-	[ITEM_GENEVE_OPT_DATA] = {
+-		.name = "data",
+-		.help = "GENEVE option data pattern",
+-		.next = NEXT(item_geneve_opt, NEXT_ENTRY(COMMON_HEX),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_geneve_opt, data),
+-			     ARGS_ENTRY_ARB(0, 0),
+-			     ARGS_ENTRY_ARB
+-				(sizeof(struct rte_flow_item_geneve_opt),
+-				ITEM_GENEVE_OPT_DATA_SIZE)),
+-	},
+-	[ITEM_INTEGRITY] = {
+-		.name = "integrity",
+-		.help = "match packet integrity",
+-		.priv = PRIV_ITEM(INTEGRITY,
+-				  sizeof(struct rte_flow_item_integrity)),
+-		.next = NEXT(item_integrity),
+-		.call = parse_vc,
+-	},
+-	[ITEM_INTEGRITY_LEVEL] = {
+-		.name = "level",
+-		.help = "integrity level",
+-		.next = NEXT(item_integrity_lv, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_integrity, level)),
+-	},
+-	[ITEM_INTEGRITY_VALUE] = {
+-		.name = "value",
+-		.help = "integrity value",
+-		.next = NEXT(item_integrity_lv, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_integrity, value)),
+-	},
+-	[ITEM_CONNTRACK] = {
+-		.name = "conntrack",
+-		.help = "conntrack state",
+-		.priv = PRIV_ITEM(CONNTRACK,
+-				  sizeof(struct rte_flow_item_conntrack)),
+-		.next = NEXT(NEXT_ENTRY(ITEM_NEXT), NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_conntrack, flags)),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PORT_REPRESENTOR] = {
+-		.name = "port_representor",
+-		.help = "match traffic entering the embedded switch from the given ethdev",
+-		.priv = PRIV_ITEM(PORT_REPRESENTOR,
+-				  sizeof(struct rte_flow_item_ethdev)),
+-		.next = NEXT(item_port_representor),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PORT_REPRESENTOR_PORT_ID] = {
+-		.name = "port_id",
+-		.help = "ethdev port ID",
+-		.next = NEXT(item_port_representor, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_ethdev, port_id)),
+-	},
+-	[ITEM_REPRESENTED_PORT] = {
+-		.name = "represented_port",
+-		.help = "match traffic entering the embedded switch from the entity represented by the given ethdev",
+-		.priv = PRIV_ITEM(REPRESENTED_PORT,
+-				  sizeof(struct rte_flow_item_ethdev)),
+-		.next = NEXT(item_represented_port),
+-		.call = parse_vc,
+-	},
+-	[ITEM_REPRESENTED_PORT_ETHDEV_PORT_ID] = {
+-		.name = "ethdev_port_id",
+-		.help = "ethdev port ID",
+-		.next = NEXT(item_represented_port, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_ethdev, port_id)),
+-	},
+-	[ITEM_FLEX] = {
+-		.name = "flex",
+-		.help = "match flex header",
+-		.priv = PRIV_ITEM(FLEX, sizeof(struct rte_flow_item_flex)),
+-		.next = NEXT(item_flex),
+-		.call = parse_vc,
+-	},
+-	[ITEM_FLEX_ITEM_HANDLE] = {
+-		.name = "item",
+-		.help = "flex item handle",
+-		.next = NEXT(item_flex, NEXT_ENTRY(COMMON_FLEX_HANDLE),
+-			     NEXT_ENTRY(ITEM_PARAM_IS)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_flex, handle)),
+-	},
+-	[ITEM_FLEX_PATTERN_HANDLE] = {
+-		.name = "pattern",
+-		.help = "flex pattern handle",
+-		.next = NEXT(item_flex, NEXT_ENTRY(COMMON_FLEX_HANDLE),
+-			     NEXT_ENTRY(ITEM_PARAM_IS)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_flex, pattern)),
+-	},
+-	[ITEM_L2TPV2] = {
+-		.name = "l2tpv2",
+-		.help = "match L2TPv2 header",
+-		.priv = PRIV_ITEM(L2TPV2, sizeof(struct rte_flow_item_l2tpv2)),
+-		.next = NEXT(item_l2tpv2),
+-		.call = parse_vc,
+-	},
+-	[ITEM_L2TPV2_TYPE] = {
+-		.name = "type",
+-		.help = "type of l2tpv2",
+-		.next = NEXT(item_l2tpv2_type),
+-		.args = ARGS(ARG_ENTRY_HTON(struct rte_flow_item_l2tpv2)),
+-	},
+-	[ITEM_L2TPV2_TYPE_DATA] = {
+-		.name = "data",
+-		.help = "Type #7: data message without any options",
+-		.next = NEXT(item_l2tpv2_type_data),
+-		.call = parse_vc_item_l2tpv2_type,
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_TUNNEL_ID] = {
+-		.name = "tunnel_id",
+-		.help = "tunnel identifier",
+-		.next = NEXT(item_l2tpv2_type_data,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type7.tunnel_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_SESSION_ID] = {
+-		.name = "session_id",
+-		.help = "session identifier",
+-		.next = NEXT(item_l2tpv2_type_data,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type7.session_id)),
+-	},
+-	[ITEM_L2TPV2_TYPE_DATA_L] = {
+-		.name = "data_l",
+-		.help = "Type #6: data message with length option",
+-		.next = NEXT(item_l2tpv2_type_data_l),
+-		.call = parse_vc_item_l2tpv2_type,
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_L_LENGTH] = {
+-		.name = "length",
+-		.help = "message length",
+-		.next = NEXT(item_l2tpv2_type_data_l,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type6.length)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_L_TUNNEL_ID] = {
+-		.name = "tunnel_id",
+-		.help = "tunnel identifier",
+-		.next = NEXT(item_l2tpv2_type_data_l,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type6.tunnel_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_L_SESSION_ID] = {
+-		.name = "session_id",
+-		.help = "session identifier",
+-		.next = NEXT(item_l2tpv2_type_data_l,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type6.session_id)),
+-	},
+-	[ITEM_L2TPV2_TYPE_DATA_S] = {
+-		.name = "data_s",
+-		.help = "Type #5: data message with ns, nr option",
+-		.next = NEXT(item_l2tpv2_type_data_s),
+-		.call = parse_vc_item_l2tpv2_type,
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_S_TUNNEL_ID] = {
+-		.name = "tunnel_id",
+-		.help = "tunnel identifier",
+-		.next = NEXT(item_l2tpv2_type_data_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type5.tunnel_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_S_SESSION_ID] = {
+-		.name = "session_id",
+-		.help = "session identifier",
+-		.next = NEXT(item_l2tpv2_type_data_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type5.session_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_S_NS] = {
+-		.name = "ns",
+-		.help = "sequence number for message",
+-		.next = NEXT(item_l2tpv2_type_data_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type5.ns)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_S_NR] = {
+-		.name = "nr",
+-		.help = "sequence number for next receive message",
+-		.next = NEXT(item_l2tpv2_type_data_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type5.nr)),
+-	},
+-	[ITEM_L2TPV2_TYPE_DATA_O] = {
+-		.name = "data_o",
+-		.help = "Type #4: data message with offset option",
+-		.next = NEXT(item_l2tpv2_type_data_o),
+-		.call = parse_vc_item_l2tpv2_type,
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_O_TUNNEL_ID] = {
+-		.name = "tunnel_id",
+-		.help = "tunnel identifier",
+-		.next = NEXT(item_l2tpv2_type_data_o,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type4.tunnel_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_O_SESSION_ID] = {
+-		.name = "session_id",
+-		.help = "session identifier",
+-		.next = NEXT(item_l2tpv2_type_data_o,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type5.session_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_O_OFFSET] = {
+-		.name = "offset_size",
+-		.help = "the size of offset padding",
+-		.next = NEXT(item_l2tpv2_type_data_o,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type4.offset_size)),
+-	},
+-	[ITEM_L2TPV2_TYPE_DATA_L_S] = {
+-		.name = "data_l_s",
+-		.help = "Type #3: data message contains length, ns, nr "
+-			"options",
+-		.next = NEXT(item_l2tpv2_type_data_l_s),
+-		.call = parse_vc_item_l2tpv2_type,
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_L_S_LENGTH] = {
+-		.name = "length",
+-		.help = "message length",
+-		.next = NEXT(item_l2tpv2_type_data_l_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.length)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_L_S_TUNNEL_ID] = {
+-		.name = "tunnel_id",
+-		.help = "tunnel identifier",
+-		.next = NEXT(item_l2tpv2_type_data_l_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.tunnel_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_L_S_SESSION_ID] = {
+-		.name = "session_id",
+-		.help = "session identifier",
+-		.next = NEXT(item_l2tpv2_type_data_l_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.session_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_L_S_NS] = {
+-		.name = "ns",
+-		.help = "sequence number for message",
+-		.next = NEXT(item_l2tpv2_type_data_l_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.ns)),
+-	},
+-	[ITEM_L2TPV2_MSG_DATA_L_S_NR] = {
+-		.name = "nr",
+-		.help = "sequence number for next receive message",
+-		.next = NEXT(item_l2tpv2_type_data_l_s,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.nr)),
+-	},
+-	[ITEM_L2TPV2_TYPE_CTRL] = {
+-		.name = "control",
+-		.help = "Type #3: conrtol message contains length, ns, nr "
+-			"options",
+-		.next = NEXT(item_l2tpv2_type_ctrl),
+-		.call = parse_vc_item_l2tpv2_type,
+-	},
+-	[ITEM_L2TPV2_MSG_CTRL_LENGTH] = {
+-		.name = "length",
+-		.help = "message length",
+-		.next = NEXT(item_l2tpv2_type_ctrl,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.length)),
+-	},
+-	[ITEM_L2TPV2_MSG_CTRL_TUNNEL_ID] = {
+-		.name = "tunnel_id",
+-		.help = "tunnel identifier",
+-		.next = NEXT(item_l2tpv2_type_ctrl,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.tunnel_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_CTRL_SESSION_ID] = {
+-		.name = "session_id",
+-		.help = "session identifier",
+-		.next = NEXT(item_l2tpv2_type_ctrl,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.session_id)),
+-	},
+-	[ITEM_L2TPV2_MSG_CTRL_NS] = {
+-		.name = "ns",
+-		.help = "sequence number for message",
+-		.next = NEXT(item_l2tpv2_type_ctrl,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.ns)),
+-	},
+-	[ITEM_L2TPV2_MSG_CTRL_NR] = {
+-		.name = "nr",
+-		.help = "sequence number for next receive message",
+-		.next = NEXT(item_l2tpv2_type_ctrl,
+-			     NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_l2tpv2,
+-					     hdr.type3.nr)),
+-	},
+-	[ITEM_PPP] = {
+-		.name = "ppp",
+-		.help = "match PPP header",
+-		.priv = PRIV_ITEM(PPP, sizeof(struct rte_flow_item_ppp)),
+-		.next = NEXT(item_ppp),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PPP_ADDR] = {
+-		.name = "addr",
+-		.help = "PPP address",
+-		.next = NEXT(item_ppp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_ppp, hdr.addr)),
+-	},
+-	[ITEM_PPP_CTRL] = {
+-		.name = "ctrl",
+-		.help = "PPP control",
+-		.next = NEXT(item_ppp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_ppp, hdr.ctrl)),
+-	},
+-	[ITEM_PPP_PROTO_ID] = {
+-		.name = "proto_id",
+-		.help = "PPP protocol identifier",
+-		.next = NEXT(item_ppp, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_ppp,
+-					hdr.proto_id)),
+-	},
+-	[ITEM_METER] = {
+-		.name = "meter",
+-		.help = "match meter color",
+-		.priv = PRIV_ITEM(METER_COLOR,
+-				  sizeof(struct rte_flow_item_meter_color)),
+-		.next = NEXT(item_meter),
+-		.call = parse_vc,
+-	},
+-	[ITEM_METER_COLOR] = {
+-		.name = "color",
+-		.help = "meter color",
+-		.next = NEXT(item_meter,
+-			     NEXT_ENTRY(COMMON_METER_COLOR_NAME),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_meter_color,
+-					color)),
+-	},
+-	[ITEM_QUOTA] = {
+-		.name = "quota",
+-		.help = "match quota",
+-		.priv = PRIV_ITEM(QUOTA, sizeof(struct rte_flow_item_quota)),
+-		.next = NEXT(item_quota),
+-		.call = parse_vc
+-	},
+-	[ITEM_QUOTA_STATE] = {
+-		.name = "quota_state",
+-		.help = "quota state",
+-		.next = NEXT(item_quota, NEXT_ENTRY(ITEM_QUOTA_STATE_NAME),
+-			     NEXT_ENTRY(ITEM_PARAM_SPEC, ITEM_PARAM_MASK)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_quota, state))
+-	},
+-	[ITEM_QUOTA_STATE_NAME] = {
+-		.name = "state_name",
+-		.help = "quota state name",
+-		.call = parse_quota_state_name,
+-		.comp = comp_quota_state_name
+-	},
+-	[ITEM_IB_BTH] = {
+-		.name = "ib_bth",
+-		.help = "match ib bth fields",
+-		.priv = PRIV_ITEM(IB_BTH,
+-				  sizeof(struct rte_flow_item_ib_bth)),
+-		.next = NEXT(item_ib_bth),
+-		.call = parse_vc,
+-	},
+-	[ITEM_IB_BTH_OPCODE] = {
+-		.name = "opcode",
+-		.help = "match ib bth opcode",
+-		.next = NEXT(item_ib_bth, NEXT_ENTRY(COMMON_UNSIGNED),
+-				 item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ib_bth,
+-						 hdr.opcode)),
+-	},
+-	[ITEM_IB_BTH_PKEY] = {
+-		.name = "pkey",
+-		.help = "partition key",
+-		.next = NEXT(item_ib_bth, NEXT_ENTRY(COMMON_UNSIGNED),
+-				 item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ib_bth,
+-						 hdr.pkey)),
+-	},
+-	[ITEM_IB_BTH_DST_QPN] = {
+-		.name = "dst_qp",
+-		.help = "destination qp",
+-		.next = NEXT(item_ib_bth, NEXT_ENTRY(COMMON_UNSIGNED),
+-				 item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ib_bth,
+-						 hdr.dst_qp)),
+-	},
+-	[ITEM_IB_BTH_PSN] = {
+-		.name = "psn",
+-		.help = "packet sequence number",
+-		.next = NEXT(item_ib_bth, NEXT_ENTRY(COMMON_UNSIGNED),
+-				 item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ib_bth,
+-						 hdr.psn)),
+-	},
+-	[ITEM_PTYPE] = {
+-		.name = "ptype",
+-		.help = "match L2/L3/L4 and tunnel information",
+-		.priv = PRIV_ITEM(PTYPE,
+-				  sizeof(struct rte_flow_item_ptype)),
+-		.next = NEXT(item_ptype),
+-		.call = parse_vc,
+-	},
+-	[ITEM_PTYPE_VALUE] = {
+-		.name = "packet_type",
+-		.help = "packet type as defined in rte_mbuf_ptype",
+-		.next = NEXT(item_ptype, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_ptype, packet_type)),
+-	},
+-	[ITEM_NSH] = {
+-		.name = "nsh",
+-		.help = "match NSH header",
+-		.priv = PRIV_ITEM(NSH,
+-				  sizeof(struct rte_flow_item_nsh)),
+-		.next = NEXT(item_nsh),
+-		.call = parse_vc,
+-	},
+-	[ITEM_COMPARE] = {
+-		.name = "compare",
+-		.help = "match with the comparison result",
+-		.priv = PRIV_ITEM(COMPARE, sizeof(struct rte_flow_item_compare)),
+-		.next = NEXT(NEXT_ENTRY(ITEM_COMPARE_OP)),
+-		.call = parse_vc,
+-	},
+-	[ITEM_COMPARE_OP] = {
+-		.name = "op",
+-		.help = "operation type",
+-		.next = NEXT(item_compare_field,
+-			NEXT_ENTRY(ITEM_COMPARE_OP_VALUE), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare, operation)),
+-	},
+-	[ITEM_COMPARE_OP_VALUE] = {
+-		.name = "{operation}",
+-		.help = "operation type value",
+-		.call = parse_vc_compare_op,
+-		.comp = comp_set_compare_op,
+-	},
+-	[ITEM_COMPARE_FIELD_A_TYPE] = {
+-		.name = "a_type",
+-		.help = "compared field type",
+-		.next = NEXT(compare_field_a,
+-			NEXT_ENTRY(ITEM_COMPARE_FIELD_A_TYPE_VALUE), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare, a.field)),
+-	},
+-	[ITEM_COMPARE_FIELD_A_TYPE_VALUE] = {
+-		.name = "{a_type}",
+-		.help = "compared field type value",
+-		.call = parse_vc_compare_field_id,
+-		.comp = comp_set_compare_field_id,
+-	},
+-	[ITEM_COMPARE_FIELD_A_LEVEL] = {
+-		.name = "a_level",
+-		.help = "compared field level",
+-		.next = NEXT(compare_field_a,
+-			     NEXT_ENTRY(ITEM_COMPARE_FIELD_A_LEVEL_VALUE), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare, a.level)),
+-	},
+-	[ITEM_COMPARE_FIELD_A_LEVEL_VALUE] = {
+-		.name = "{a_level}",
+-		.help = "compared field level value",
+-		.call = parse_vc_compare_field_level,
+-		.comp = comp_none,
+-	},
+-	[ITEM_COMPARE_FIELD_A_TAG_INDEX] = {
+-		.name = "a_tag_index",
+-		.help = "compared field tag array",
+-		.next = NEXT(compare_field_a,
+-			     NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					a.tag_index)),
+-	},
+-	[ITEM_COMPARE_FIELD_A_TYPE_ID] = {
+-		.name = "a_type_id",
+-		.help = "compared field type ID",
+-		.next = NEXT(compare_field_a,
+-			     NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					a.type)),
+-	},
+-	[ITEM_COMPARE_FIELD_A_CLASS_ID] = {
+-		.name = "a_class",
+-		.help = "compared field class ID",
+-		.next = NEXT(compare_field_a,
+-			     NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_compare,
+-					     a.class_id)),
+-	},
+-	[ITEM_COMPARE_FIELD_A_OFFSET] = {
+-		.name = "a_offset",
+-		.help = "compared field bit offset",
+-		.next = NEXT(compare_field_a,
+-			     NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					a.offset)),
+-	},
+-	[ITEM_COMPARE_FIELD_B_TYPE] = {
+-		.name = "b_type",
+-		.help = "comparator field type",
+-		.next = NEXT(compare_field_b,
+-			NEXT_ENTRY(ITEM_COMPARE_FIELD_B_TYPE_VALUE), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					b.field)),
+-	},
+-	[ITEM_COMPARE_FIELD_B_TYPE_VALUE] = {
+-		.name = "{b_type}",
+-		.help = "comparator field type value",
+-		.call = parse_vc_compare_field_id,
+-		.comp = comp_set_compare_field_id,
+-	},
+-	[ITEM_COMPARE_FIELD_B_LEVEL] = {
+-		.name = "b_level",
+-		.help = "comparator field level",
+-		.next = NEXT(compare_field_b,
+-			     NEXT_ENTRY(ITEM_COMPARE_FIELD_B_LEVEL_VALUE), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					b.level)),
+-	},
+-	[ITEM_COMPARE_FIELD_B_LEVEL_VALUE] = {
+-		.name = "{b_level}",
+-		.help = "comparator field level value",
+-		.call = parse_vc_compare_field_level,
+-		.comp = comp_none,
+-	},
+-	[ITEM_COMPARE_FIELD_B_TAG_INDEX] = {
+-		.name = "b_tag_index",
+-		.help = "comparator field tag array",
+-		.next = NEXT(compare_field_b,
+-			     NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					b.tag_index)),
+-	},
+-	[ITEM_COMPARE_FIELD_B_TYPE_ID] = {
+-		.name = "b_type_id",
+-		.help = "comparator field type ID",
+-		.next = NEXT(compare_field_b,
+-			     NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					b.type)),
+-	},
+-	[ITEM_COMPARE_FIELD_B_CLASS_ID] = {
+-		.name = "b_class",
+-		.help = "comparator field class ID",
+-		.next = NEXT(compare_field_b,
+-			     NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_compare,
+-					     b.class_id)),
+-	},
+-	[ITEM_COMPARE_FIELD_B_OFFSET] = {
+-		.name = "b_offset",
+-		.help = "comparator field bit offset",
+-		.next = NEXT(compare_field_b,
+-			     NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					b.offset)),
+-	},
+-	[ITEM_COMPARE_FIELD_B_VALUE] = {
+-		.name = "b_value",
+-		.help = "comparator immediate value",
+-		.next = NEXT(compare_field_b,
+-			     NEXT_ENTRY(COMMON_HEX), item_param),
+-		.args = ARGS(ARGS_ENTRY_ARB(0, 0),
+-			     ARGS_ENTRY_ARB(0, 0),
+-			     ARGS_ENTRY(struct rte_flow_item_compare,
+-					b.value)),
+-	},
+-	[ITEM_COMPARE_FIELD_B_POINTER] = {
+-		.name = "b_ptr",
+-		.help = "pointer to comparator immediate value",
+-		.next = NEXT(compare_field_b,
+-			     NEXT_ENTRY(COMMON_HEX), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					b.pvalue),
+-			     ARGS_ENTRY_ARB(0, 0),
+-			     ARGS_ENTRY_ARB
+-				(sizeof(struct rte_flow_item_compare),
+-				 FLOW_FIELD_PATTERN_SIZE)),
+-	},
+-	[ITEM_COMPARE_FIELD_WIDTH] = {
+-		.name = "width",
+-		.help = "number of bits to compare",
+-		.next = NEXT(item_compare_field,
+-			NEXT_ENTRY(COMMON_UNSIGNED), item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_compare,
+-					width)),
+-	},
+-
+-	/* Validate/create actions. */
+-	[ACTIONS] = {
+-		.name = "actions",
+-		.help = "submit a list of associated actions",
+-		.next = NEXT(next_action),
+-		.call = parse_vc,
+-	},
+-	[ACTION_NEXT] = {
+-		.name = "/",
+-		.help = "specify next action",
+-		.next = NEXT(next_action),
+-	},
+-	[ACTION_END] = {
+-		.name = "end",
+-		.help = "end list of actions",
+-		.priv = PRIV_ACTION(END, 0),
+-		.call = parse_vc,
+-	},
+-	[ACTION_VOID] = {
+-		.name = "void",
+-		.help = "no-op action",
+-		.priv = PRIV_ACTION(VOID, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_PASSTHRU] = {
+-		.name = "passthru",
+-		.help = "let subsequent rule process matched packets",
+-		.priv = PRIV_ACTION(PASSTHRU, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SKIP_CMAN] = {
+-		.name = "skip_cman",
+-		.help = "bypass cman on received packets",
+-		.priv = PRIV_ACTION(SKIP_CMAN, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_JUMP] = {
+-		.name = "jump",
+-		.help = "redirect traffic to a given group",
+-		.priv = PRIV_ACTION(JUMP, sizeof(struct rte_flow_action_jump)),
+-		.next = NEXT(action_jump),
+-		.call = parse_vc,
+-	},
+-	[ACTION_JUMP_GROUP] = {
+-		.name = "group",
+-		.help = "group to redirect traffic to",
+-		.next = NEXT(action_jump, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_jump, group)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MARK] = {
+-		.name = "mark",
+-		.help = "attach 32 bit value to packets",
+-		.priv = PRIV_ACTION(MARK, sizeof(struct rte_flow_action_mark)),
+-		.next = NEXT(action_mark),
+-		.call = parse_vc,
+-	},
+-	[ACTION_MARK_ID] = {
+-		.name = "id",
+-		.help = "32 bit value to return with packets",
+-		.next = NEXT(action_mark, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_mark, id)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_FLAG] = {
+-		.name = "flag",
+-		.help = "flag packets",
+-		.priv = PRIV_ACTION(FLAG, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_QUEUE] = {
+-		.name = "queue",
+-		.help = "assign packets to a given queue index",
+-		.priv = PRIV_ACTION(QUEUE,
+-				    sizeof(struct rte_flow_action_queue)),
+-		.next = NEXT(action_queue),
+-		.call = parse_vc,
+-	},
+-	[ACTION_QUEUE_INDEX] = {
+-		.name = "index",
+-		.help = "queue index to use",
+-		.next = NEXT(action_queue, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_queue, index)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_DROP] = {
+-		.name = "drop",
+-		.help = "drop packets (note: passthru has priority)",
+-		.priv = PRIV_ACTION(DROP, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_COUNT] = {
+-		.name = "count",
+-		.help = "enable counters for this rule",
+-		.priv = PRIV_ACTION(COUNT,
+-				    sizeof(struct rte_flow_action_count)),
+-		.next = NEXT(action_count),
+-		.call = parse_vc,
+-	},
+-	[ACTION_COUNT_ID] = {
+-		.name = "identifier",
+-		.help = "counter identifier to use",
+-		.next = NEXT(action_count, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_count, id)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_RSS] = {
+-		.name = "rss",
+-		.help = "spread packets among several queues",
+-		.priv = PRIV_ACTION(RSS, sizeof(struct action_rss_data)),
+-		.next = NEXT(action_rss),
+-		.call = parse_vc_action_rss,
+-	},
+-	[ACTION_RSS_FUNC] = {
+-		.name = "func",
+-		.help = "RSS hash function to apply",
+-		.next = NEXT(action_rss,
+-			     NEXT_ENTRY(ACTION_RSS_FUNC_DEFAULT,
+-					ACTION_RSS_FUNC_TOEPLITZ,
+-					ACTION_RSS_FUNC_SIMPLE_XOR,
+-					ACTION_RSS_FUNC_SYMMETRIC_TOEPLITZ)),
+-	},
+-	[ACTION_RSS_FUNC_DEFAULT] = {
+-		.name = "default",
+-		.help = "default hash function",
+-		.call = parse_vc_action_rss_func,
+-	},
+-	[ACTION_RSS_FUNC_TOEPLITZ] = {
+-		.name = "toeplitz",
+-		.help = "Toeplitz hash function",
+-		.call = parse_vc_action_rss_func,
+-	},
+-	[ACTION_RSS_FUNC_SIMPLE_XOR] = {
+-		.name = "simple_xor",
+-		.help = "simple XOR hash function",
+-		.call = parse_vc_action_rss_func,
+-	},
+-	[ACTION_RSS_FUNC_SYMMETRIC_TOEPLITZ] = {
+-		.name = "symmetric_toeplitz",
+-		.help = "Symmetric Toeplitz hash function",
+-		.call = parse_vc_action_rss_func,
+-	},
+-	[ACTION_RSS_LEVEL] = {
+-		.name = "level",
+-		.help = "encapsulation level for \"types\"",
+-		.next = NEXT(action_rss, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_ARB
+-			     (offsetof(struct action_rss_data, conf) +
+-			      offsetof(struct rte_flow_action_rss, level),
+-			      sizeof(((struct rte_flow_action_rss *)0)->
+-				     level))),
+-	},
+-	[ACTION_RSS_TYPES] = {
+-		.name = "types",
+-		.help = "specific RSS hash types",
+-		.next = NEXT(action_rss, NEXT_ENTRY(ACTION_RSS_TYPE)),
+-	},
+-	[ACTION_RSS_TYPE] = {
+-		.name = "{type}",
+-		.help = "RSS hash type",
+-		.call = parse_vc_action_rss_type,
+-		.comp = comp_vc_action_rss_type,
+-	},
+-	[ACTION_RSS_KEY] = {
+-		.name = "key",
+-		.help = "RSS hash key",
+-		.next = NEXT(action_rss, NEXT_ENTRY(COMMON_HEX)),
+-		.args = ARGS(ARGS_ENTRY_ARB
+-			     (offsetof(struct action_rss_data, conf) +
+-			      offsetof(struct rte_flow_action_rss, key),
+-			      sizeof(((struct rte_flow_action_rss *)0)->key)),
+-			     ARGS_ENTRY_ARB
+-			     (offsetof(struct action_rss_data, conf) +
+-			      offsetof(struct rte_flow_action_rss, key_len),
+-			      sizeof(((struct rte_flow_action_rss *)0)->
+-				     key_len)),
+-			     ARGS_ENTRY(struct action_rss_data, key)),
+-	},
+-	[ACTION_RSS_KEY_LEN] = {
+-		.name = "key_len",
+-		.help = "RSS hash key length in bytes",
+-		.next = NEXT(action_rss, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_ARB_BOUNDED
+-			     (offsetof(struct action_rss_data, conf) +
+-			      offsetof(struct rte_flow_action_rss, key_len),
+-			      sizeof(((struct rte_flow_action_rss *)0)->
+-				     key_len),
+-			      0,
+-			      RSS_HASH_KEY_LENGTH)),
+-	},
+-	[ACTION_RSS_QUEUES] = {
+-		.name = "queues",
+-		.help = "queue indices to use",
+-		.next = NEXT(action_rss, NEXT_ENTRY(ACTION_RSS_QUEUE)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_RSS_QUEUE] = {
+-		.name = "{queue}",
+-		.help = "queue index",
+-		.call = parse_vc_action_rss_queue,
+-		.comp = comp_vc_action_rss_queue,
+-	},
+-	[ACTION_PF] = {
+-		.name = "pf",
+-		.help = "direct traffic to physical function",
+-		.priv = PRIV_ACTION(PF, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_VF] = {
+-		.name = "vf",
+-		.help = "direct traffic to a virtual function ID",
+-		.priv = PRIV_ACTION(VF, sizeof(struct rte_flow_action_vf)),
+-		.next = NEXT(action_vf),
+-		.call = parse_vc,
+-	},
+-	[ACTION_VF_ORIGINAL] = {
+-		.name = "original",
+-		.help = "use original VF ID if possible",
+-		.next = NEXT(action_vf, NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_action_vf,
+-					   original, 1)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_VF_ID] = {
+-		.name = "id",
+-		.help = "VF ID",
+-		.next = NEXT(action_vf, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_vf, id)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_PORT_ID] = {
+-		.name = "port_id",
+-		.help = "direct matching traffic to a given DPDK port ID",
+-		.priv = PRIV_ACTION(PORT_ID,
+-				    sizeof(struct rte_flow_action_port_id)),
+-		.next = NEXT(action_port_id),
+-		.call = parse_vc,
+-	},
+-	[ACTION_PORT_ID_ORIGINAL] = {
+-		.name = "original",
+-		.help = "use original DPDK port ID if possible",
+-		.next = NEXT(action_port_id, NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_action_port_id,
+-					   original, 1)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_PORT_ID_ID] = {
+-		.name = "id",
+-		.help = "DPDK port ID",
+-		.next = NEXT(action_port_id, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_port_id, id)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_METER] = {
+-		.name = "meter",
+-		.help = "meter the directed packets at given id",
+-		.priv = PRIV_ACTION(METER,
+-				    sizeof(struct rte_flow_action_meter)),
+-		.next = NEXT(action_meter),
+-		.call = parse_vc,
+-	},
+-	[ACTION_METER_COLOR] = {
+-		.name = "color",
+-		.help = "meter color for the packets",
+-		.priv = PRIV_ACTION(METER_COLOR,
+-				sizeof(struct rte_flow_action_meter_color)),
+-		.next = NEXT(action_meter_color),
+-		.call = parse_vc,
+-	},
+-	[ACTION_METER_COLOR_TYPE] = {
+-		.name = "type",
+-		.help = "specific meter color",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT),
+-				NEXT_ENTRY(ACTION_METER_COLOR_GREEN,
+-					ACTION_METER_COLOR_YELLOW,
+-					ACTION_METER_COLOR_RED)),
+-	},
+-	[ACTION_METER_COLOR_GREEN] = {
+-		.name = "green",
+-		.help = "meter color green",
+-		.call = parse_vc_action_meter_color_type,
+-	},
+-	[ACTION_METER_COLOR_YELLOW] = {
+-		.name = "yellow",
+-		.help = "meter color yellow",
+-		.call = parse_vc_action_meter_color_type,
+-	},
+-	[ACTION_METER_COLOR_RED] = {
+-		.name = "red",
+-		.help = "meter color red",
+-		.call = parse_vc_action_meter_color_type,
+-	},
+-	[ACTION_METER_ID] = {
+-		.name = "mtr_id",
+-		.help = "meter id to use",
+-		.next = NEXT(action_meter, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_meter, mtr_id)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_METER_MARK] = {
+-		.name = "meter_mark",
+-		.help = "meter the directed packets using profile and policy",
+-		.priv = PRIV_ACTION(METER_MARK,
+-				    sizeof(struct rte_flow_action_meter_mark)),
+-		.next = NEXT(action_meter_mark),
+-		.call = parse_vc,
+-	},
+-	[ACTION_METER_MARK_CONF] = {
+-		.name = "meter_mark_conf",
+-		.help = "meter mark configuration",
+-		.priv = PRIV_ACTION(METER_MARK,
+-				    sizeof(struct rte_flow_action_meter_mark)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_METER_MARK_CONF_COLOR)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_METER_MARK_CONF_COLOR] = {
+-		.name = "mtr_update_init_color",
+-		.help = "meter update init color",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT),
+-			     NEXT_ENTRY(COMMON_METER_COLOR_NAME)),
+-		.args = ARGS(ARGS_ENTRY
+-			     (struct rte_flow_indirect_update_flow_meter_mark,
+-			      init_color)),
+-	},
+-	[ACTION_METER_PROFILE] = {
+-		.name = "mtr_profile",
+-		.help = "meter profile id to use",
+-		.next = NEXT(NEXT_ENTRY(ACTION_METER_PROFILE_ID2PTR)),
+-		.args = ARGS(ARGS_ENTRY_ARB(0, sizeof(uint32_t))),
+-	},
+-	[ACTION_METER_PROFILE_ID2PTR] = {
+-		.name = "{mtr_profile_id}",
+-		.type = "PROFILE_ID",
+-		.help = "meter profile id",
+-		.next = NEXT(action_meter_mark),
+-		.call = parse_meter_profile_id2ptr,
+-		.comp = comp_none,
+-	},
+-	[ACTION_METER_POLICY] = {
+-		.name = "mtr_policy",
+-		.help = "meter policy id to use",
+-		.next = NEXT(NEXT_ENTRY(ACTION_METER_POLICY_ID2PTR)),
+-		ARGS(ARGS_ENTRY_ARB(0, sizeof(uint32_t))),
+-	},
+-	[ACTION_METER_POLICY_ID2PTR] = {
+-		.name = "{mtr_policy_id}",
+-		.type = "POLICY_ID",
+-		.help = "meter policy id",
+-		.next = NEXT(action_meter_mark),
+-		.call = parse_meter_policy_id2ptr,
+-		.comp = comp_none,
+-	},
+-	[ACTION_METER_COLOR_MODE] = {
+-		.name = "mtr_color_mode",
+-		.help = "meter color awareness mode",
+-		.next = NEXT(action_meter_mark, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_meter_mark, color_mode)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_METER_STATE] = {
+-		.name = "mtr_state",
+-		.help = "meter state",
+-		.next = NEXT(action_meter_mark, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_meter_mark, state)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_OF_DEC_NW_TTL] = {
+-		.name = "of_dec_nw_ttl",
+-		.help = "OpenFlow's OFPAT_DEC_NW_TTL",
+-		.priv = PRIV_ACTION(OF_DEC_NW_TTL, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_OF_POP_VLAN] = {
+-		.name = "of_pop_vlan",
+-		.help = "OpenFlow's OFPAT_POP_VLAN",
+-		.priv = PRIV_ACTION(OF_POP_VLAN, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_OF_PUSH_VLAN] = {
+-		.name = "of_push_vlan",
+-		.help = "OpenFlow's OFPAT_PUSH_VLAN",
+-		.priv = PRIV_ACTION
+-			(OF_PUSH_VLAN,
+-			 sizeof(struct rte_flow_action_of_push_vlan)),
+-		.next = NEXT(action_of_push_vlan),
+-		.call = parse_vc,
+-	},
+-	[ACTION_OF_PUSH_VLAN_ETHERTYPE] = {
+-		.name = "ethertype",
+-		.help = "EtherType",
+-		.next = NEXT(action_of_push_vlan, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_of_push_vlan,
+-			      ethertype)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_OF_SET_VLAN_VID] = {
+-		.name = "of_set_vlan_vid",
+-		.help = "OpenFlow's OFPAT_SET_VLAN_VID",
+-		.priv = PRIV_ACTION
+-			(OF_SET_VLAN_VID,
+-			 sizeof(struct rte_flow_action_of_set_vlan_vid)),
+-		.next = NEXT(action_of_set_vlan_vid),
+-		.call = parse_vc,
+-	},
+-	[ACTION_OF_SET_VLAN_VID_VLAN_VID] = {
+-		.name = "vlan_vid",
+-		.help = "VLAN id",
+-		.next = NEXT(action_of_set_vlan_vid,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_of_set_vlan_vid,
+-			      vlan_vid)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_OF_SET_VLAN_PCP] = {
+-		.name = "of_set_vlan_pcp",
+-		.help = "OpenFlow's OFPAT_SET_VLAN_PCP",
+-		.priv = PRIV_ACTION
+-			(OF_SET_VLAN_PCP,
+-			 sizeof(struct rte_flow_action_of_set_vlan_pcp)),
+-		.next = NEXT(action_of_set_vlan_pcp),
+-		.call = parse_vc,
+-	},
+-	[ACTION_OF_SET_VLAN_PCP_VLAN_PCP] = {
+-		.name = "vlan_pcp",
+-		.help = "VLAN priority",
+-		.next = NEXT(action_of_set_vlan_pcp,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_of_set_vlan_pcp,
+-			      vlan_pcp)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_OF_POP_MPLS] = {
+-		.name = "of_pop_mpls",
+-		.help = "OpenFlow's OFPAT_POP_MPLS",
+-		.priv = PRIV_ACTION(OF_POP_MPLS,
+-				    sizeof(struct rte_flow_action_of_pop_mpls)),
+-		.next = NEXT(action_of_pop_mpls),
+-		.call = parse_vc,
+-	},
+-	[ACTION_OF_POP_MPLS_ETHERTYPE] = {
+-		.name = "ethertype",
+-		.help = "EtherType",
+-		.next = NEXT(action_of_pop_mpls, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_of_pop_mpls,
+-			      ethertype)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_OF_PUSH_MPLS] = {
+-		.name = "of_push_mpls",
+-		.help = "OpenFlow's OFPAT_PUSH_MPLS",
+-		.priv = PRIV_ACTION
+-			(OF_PUSH_MPLS,
+-			 sizeof(struct rte_flow_action_of_push_mpls)),
+-		.next = NEXT(action_of_push_mpls),
+-		.call = parse_vc,
+-	},
+-	[ACTION_OF_PUSH_MPLS_ETHERTYPE] = {
+-		.name = "ethertype",
+-		.help = "EtherType",
+-		.next = NEXT(action_of_push_mpls, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_of_push_mpls,
+-			      ethertype)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_VXLAN_ENCAP] = {
+-		.name = "vxlan_encap",
+-		.help = "VXLAN encapsulation, uses configuration set by \"set"
+-			" vxlan\"",
+-		.priv = PRIV_ACTION(VXLAN_ENCAP,
+-				    sizeof(struct action_vxlan_encap_data)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_vxlan_encap,
+-	},
+-	[ACTION_VXLAN_DECAP] = {
+-		.name = "vxlan_decap",
+-		.help = "Performs a decapsulation action by stripping all"
+-			" headers of the VXLAN tunnel network overlay from the"
+-			" matched flow.",
+-		.priv = PRIV_ACTION(VXLAN_DECAP, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_NVGRE_ENCAP] = {
+-		.name = "nvgre_encap",
+-		.help = "NVGRE encapsulation, uses configuration set by \"set"
+-			" nvgre\"",
+-		.priv = PRIV_ACTION(NVGRE_ENCAP,
+-				    sizeof(struct action_nvgre_encap_data)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_nvgre_encap,
+-	},
+-	[ACTION_NVGRE_DECAP] = {
+-		.name = "nvgre_decap",
+-		.help = "Performs a decapsulation action by stripping all"
+-			" headers of the NVGRE tunnel network overlay from the"
+-			" matched flow.",
+-		.priv = PRIV_ACTION(NVGRE_DECAP, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_L2_ENCAP] = {
+-		.name = "l2_encap",
+-		.help = "l2 encap, uses configuration set by"
+-			" \"set l2_encap\"",
+-		.priv = PRIV_ACTION(RAW_ENCAP,
+-				    sizeof(struct action_raw_encap_data)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_l2_encap,
+-	},
+-	[ACTION_L2_DECAP] = {
+-		.name = "l2_decap",
+-		.help = "l2 decap, uses configuration set by"
+-			" \"set l2_decap\"",
+-		.priv = PRIV_ACTION(RAW_DECAP,
+-				    sizeof(struct action_raw_decap_data)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_l2_decap,
+-	},
+-	[ACTION_MPLSOGRE_ENCAP] = {
+-		.name = "mplsogre_encap",
+-		.help = "mplsogre encapsulation, uses configuration set by"
+-			" \"set mplsogre_encap\"",
+-		.priv = PRIV_ACTION(RAW_ENCAP,
+-				    sizeof(struct action_raw_encap_data)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_mplsogre_encap,
+-	},
+-	[ACTION_MPLSOGRE_DECAP] = {
+-		.name = "mplsogre_decap",
+-		.help = "mplsogre decapsulation, uses configuration set by"
+-			" \"set mplsogre_decap\"",
+-		.priv = PRIV_ACTION(RAW_DECAP,
+-				    sizeof(struct action_raw_decap_data)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_mplsogre_decap,
+-	},
+-	[ACTION_MPLSOUDP_ENCAP] = {
+-		.name = "mplsoudp_encap",
+-		.help = "mplsoudp encapsulation, uses configuration set by"
+-			" \"set mplsoudp_encap\"",
+-		.priv = PRIV_ACTION(RAW_ENCAP,
+-				    sizeof(struct action_raw_encap_data)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_mplsoudp_encap,
+-	},
+-	[ACTION_MPLSOUDP_DECAP] = {
+-		.name = "mplsoudp_decap",
+-		.help = "mplsoudp decapsulation, uses configuration set by"
+-			" \"set mplsoudp_decap\"",
+-		.priv = PRIV_ACTION(RAW_DECAP,
+-				    sizeof(struct action_raw_decap_data)),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_mplsoudp_decap,
+-	},
+-	[ACTION_SET_IPV4_SRC] = {
+-		.name = "set_ipv4_src",
+-		.help = "Set a new IPv4 source address in the outermost"
+-			" IPv4 header",
+-		.priv = PRIV_ACTION(SET_IPV4_SRC,
+-			sizeof(struct rte_flow_action_set_ipv4)),
+-		.next = NEXT(action_set_ipv4_src),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_IPV4_SRC_IPV4_SRC] = {
+-		.name = "ipv4_addr",
+-		.help = "new IPv4 source address to set",
+-		.next = NEXT(action_set_ipv4_src, NEXT_ENTRY(COMMON_IPV4_ADDR)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			(struct rte_flow_action_set_ipv4, ipv4_addr)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_IPV4_DST] = {
+-		.name = "set_ipv4_dst",
+-		.help = "Set a new IPv4 destination address in the outermost"
+-			" IPv4 header",
+-		.priv = PRIV_ACTION(SET_IPV4_DST,
+-			sizeof(struct rte_flow_action_set_ipv4)),
+-		.next = NEXT(action_set_ipv4_dst),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_IPV4_DST_IPV4_DST] = {
+-		.name = "ipv4_addr",
+-		.help = "new IPv4 destination address to set",
+-		.next = NEXT(action_set_ipv4_dst, NEXT_ENTRY(COMMON_IPV4_ADDR)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			(struct rte_flow_action_set_ipv4, ipv4_addr)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_IPV6_SRC] = {
+-		.name = "set_ipv6_src",
+-		.help = "Set a new IPv6 source address in the outermost"
+-			" IPv6 header",
+-		.priv = PRIV_ACTION(SET_IPV6_SRC,
+-			sizeof(struct rte_flow_action_set_ipv6)),
+-		.next = NEXT(action_set_ipv6_src),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_IPV6_SRC_IPV6_SRC] = {
+-		.name = "ipv6_addr",
+-		.help = "new IPv6 source address to set",
+-		.next = NEXT(action_set_ipv6_src, NEXT_ENTRY(COMMON_IPV6_ADDR)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			(struct rte_flow_action_set_ipv6, ipv6_addr)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_IPV6_DST] = {
+-		.name = "set_ipv6_dst",
+-		.help = "Set a new IPv6 destination address in the outermost"
+-			" IPv6 header",
+-		.priv = PRIV_ACTION(SET_IPV6_DST,
+-			sizeof(struct rte_flow_action_set_ipv6)),
+-		.next = NEXT(action_set_ipv6_dst),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_IPV6_DST_IPV6_DST] = {
+-		.name = "ipv6_addr",
+-		.help = "new IPv6 destination address to set",
+-		.next = NEXT(action_set_ipv6_dst, NEXT_ENTRY(COMMON_IPV6_ADDR)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			(struct rte_flow_action_set_ipv6, ipv6_addr)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_TP_SRC] = {
+-		.name = "set_tp_src",
+-		.help = "set a new source port number in the outermost"
+-			" TCP/UDP header",
+-		.priv = PRIV_ACTION(SET_TP_SRC,
+-			sizeof(struct rte_flow_action_set_tp)),
+-		.next = NEXT(action_set_tp_src),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_TP_SRC_TP_SRC] = {
+-		.name = "port",
+-		.help = "new source port number to set",
+-		.next = NEXT(action_set_tp_src, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_set_tp, port)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_TP_DST] = {
+-		.name = "set_tp_dst",
+-		.help = "set a new destination port number in the outermost"
+-			" TCP/UDP header",
+-		.priv = PRIV_ACTION(SET_TP_DST,
+-			sizeof(struct rte_flow_action_set_tp)),
+-		.next = NEXT(action_set_tp_dst),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_TP_DST_TP_DST] = {
+-		.name = "port",
+-		.help = "new destination port number to set",
+-		.next = NEXT(action_set_tp_dst, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_set_tp, port)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MAC_SWAP] = {
+-		.name = "mac_swap",
+-		.help = "Swap the source and destination MAC addresses"
+-			" in the outermost Ethernet header",
+-		.priv = PRIV_ACTION(MAC_SWAP, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_DEC_TTL] = {
+-		.name = "dec_ttl",
+-		.help = "decrease network TTL if available",
+-		.priv = PRIV_ACTION(DEC_TTL, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_TTL] = {
+-		.name = "set_ttl",
+-		.help = "set ttl value",
+-		.priv = PRIV_ACTION(SET_TTL,
+-			sizeof(struct rte_flow_action_set_ttl)),
+-		.next = NEXT(action_set_ttl),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_TTL_TTL] = {
+-		.name = "ttl_value",
+-		.help = "new ttl value to set",
+-		.next = NEXT(action_set_ttl, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_set_ttl, ttl_value)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_MAC_SRC] = {
+-		.name = "set_mac_src",
+-		.help = "set source mac address",
+-		.priv = PRIV_ACTION(SET_MAC_SRC,
+-			sizeof(struct rte_flow_action_set_mac)),
+-		.next = NEXT(action_set_mac_src),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_MAC_SRC_MAC_SRC] = {
+-		.name = "mac_addr",
+-		.help = "new source mac address",
+-		.next = NEXT(action_set_mac_src, NEXT_ENTRY(COMMON_MAC_ADDR)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_set_mac, mac_addr)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_MAC_DST] = {
+-		.name = "set_mac_dst",
+-		.help = "set destination mac address",
+-		.priv = PRIV_ACTION(SET_MAC_DST,
+-			sizeof(struct rte_flow_action_set_mac)),
+-		.next = NEXT(action_set_mac_dst),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_MAC_DST_MAC_DST] = {
+-		.name = "mac_addr",
+-		.help = "new destination mac address to set",
+-		.next = NEXT(action_set_mac_dst, NEXT_ENTRY(COMMON_MAC_ADDR)),
+-		.args = ARGS(ARGS_ENTRY_HTON
+-			     (struct rte_flow_action_set_mac, mac_addr)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_INC_TCP_SEQ] = {
+-		.name = "inc_tcp_seq",
+-		.help = "increase TCP sequence number",
+-		.priv = PRIV_ACTION(INC_TCP_SEQ, sizeof(rte_be32_t)),
+-		.next = NEXT(action_inc_tcp_seq),
+-		.call = parse_vc,
+-	},
+-	[ACTION_INC_TCP_SEQ_VALUE] = {
+-		.name = "value",
+-		.help = "the value to increase TCP sequence number by",
+-		.next = NEXT(action_inc_tcp_seq, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARG_ENTRY_HTON(rte_be32_t)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_DEC_TCP_SEQ] = {
+-		.name = "dec_tcp_seq",
+-		.help = "decrease TCP sequence number",
+-		.priv = PRIV_ACTION(DEC_TCP_SEQ, sizeof(rte_be32_t)),
+-		.next = NEXT(action_dec_tcp_seq),
+-		.call = parse_vc,
+-	},
+-	[ACTION_DEC_TCP_SEQ_VALUE] = {
+-		.name = "value",
+-		.help = "the value to decrease TCP sequence number by",
+-		.next = NEXT(action_dec_tcp_seq, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARG_ENTRY_HTON(rte_be32_t)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_INC_TCP_ACK] = {
+-		.name = "inc_tcp_ack",
+-		.help = "increase TCP acknowledgment number",
+-		.priv = PRIV_ACTION(INC_TCP_ACK, sizeof(rte_be32_t)),
+-		.next = NEXT(action_inc_tcp_ack),
+-		.call = parse_vc,
+-	},
+-	[ACTION_INC_TCP_ACK_VALUE] = {
+-		.name = "value",
+-		.help = "the value to increase TCP acknowledgment number by",
+-		.next = NEXT(action_inc_tcp_ack, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARG_ENTRY_HTON(rte_be32_t)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_DEC_TCP_ACK] = {
+-		.name = "dec_tcp_ack",
+-		.help = "decrease TCP acknowledgment number",
+-		.priv = PRIV_ACTION(DEC_TCP_ACK, sizeof(rte_be32_t)),
+-		.next = NEXT(action_dec_tcp_ack),
+-		.call = parse_vc,
+-	},
+-	[ACTION_DEC_TCP_ACK_VALUE] = {
+-		.name = "value",
+-		.help = "the value to decrease TCP acknowledgment number by",
+-		.next = NEXT(action_dec_tcp_ack, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARG_ENTRY_HTON(rte_be32_t)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_RAW_ENCAP] = {
+-		.name = "raw_encap",
+-		.help = "encapsulation data, defined by set raw_encap",
+-		.priv = PRIV_ACTION(RAW_ENCAP,
+-			sizeof(struct action_raw_encap_data)),
+-		.next = NEXT(action_raw_encap),
+-		.call = parse_vc_action_raw_encap,
+-	},
+-	[ACTION_RAW_ENCAP_SIZE] = {
+-		.name = "size",
+-		.help = "raw encap size",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT),
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_raw_encap, size)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_RAW_ENCAP_INDEX] = {
+-		.name = "index",
+-		.help = "the index of raw_encap_confs",
+-		.next = NEXT(NEXT_ENTRY(ACTION_RAW_ENCAP_INDEX_VALUE)),
+-	},
+-	[ACTION_RAW_ENCAP_INDEX_VALUE] = {
+-		.name = "{index}",
+-		.type = "UNSIGNED",
+-		.help = "unsigned integer value",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_raw_encap_index,
+-		.comp = comp_set_raw_index,
+-	},
+-	[ACTION_RAW_DECAP] = {
+-		.name = "raw_decap",
+-		.help = "decapsulation data, defined by set raw_encap",
+-		.priv = PRIV_ACTION(RAW_DECAP,
+-			sizeof(struct action_raw_decap_data)),
+-		.next = NEXT(action_raw_decap),
+-		.call = parse_vc_action_raw_decap,
+-	},
+-	[ACTION_RAW_DECAP_INDEX] = {
+-		.name = "index",
+-		.help = "the index of raw_encap_confs",
+-		.next = NEXT(NEXT_ENTRY(ACTION_RAW_DECAP_INDEX_VALUE)),
+-	},
+-	[ACTION_RAW_DECAP_INDEX_VALUE] = {
+-		.name = "{index}",
+-		.type = "UNSIGNED",
+-		.help = "unsigned integer value",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_raw_decap_index,
+-		.comp = comp_set_raw_index,
+-	},
+-	[ACTION_MODIFY_FIELD] = {
+-		.name = "modify_field",
+-		.help = "modify destination field with data from source field",
+-		.priv = PRIV_ACTION(MODIFY_FIELD, ACTION_MODIFY_SIZE),
+-		.next = NEXT(NEXT_ENTRY(ACTION_MODIFY_FIELD_OP)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_MODIFY_FIELD_OP] = {
+-		.name = "op",
+-		.help = "operation type",
+-		.next = NEXT(NEXT_ENTRY(ACTION_MODIFY_FIELD_DST_TYPE),
+-			NEXT_ENTRY(ACTION_MODIFY_FIELD_OP_VALUE)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_OP_VALUE] = {
+-		.name = "{operation}",
+-		.help = "operation type value",
+-		.call = parse_vc_modify_field_op,
+-		.comp = comp_set_modify_field_op,
+-	},
+-	[ACTION_MODIFY_FIELD_DST_TYPE] = {
+-		.name = "dst_type",
+-		.help = "destination field type",
+-		.next = NEXT(action_modify_field_dst,
+-			NEXT_ENTRY(ACTION_MODIFY_FIELD_DST_TYPE_VALUE)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_DST_TYPE_VALUE] = {
+-		.name = "{dst_type}",
+-		.help = "destination field type value",
+-		.call = parse_vc_modify_field_id,
+-		.comp = comp_set_modify_field_id,
+-	},
+-	[ACTION_MODIFY_FIELD_DST_LEVEL] = {
+-		.name = "dst_level",
+-		.help = "destination field level",
+-		.next = NEXT(action_modify_field_dst,
+-			     NEXT_ENTRY(ACTION_MODIFY_FIELD_DST_LEVEL_VALUE)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_DST_LEVEL_VALUE] = {
+-		.name = "{dst_level}",
+-		.help = "destination field level value",
+-		.call = parse_vc_modify_field_level,
+-		.comp = comp_none,
+-	},
+-	[ACTION_MODIFY_FIELD_DST_TAG_INDEX] = {
+-		.name = "dst_tag_index",
+-		.help = "destination field tag array",
+-		.next = NEXT(action_modify_field_dst,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					dst.tag_index)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_DST_TYPE_ID] = {
+-		.name = "dst_type_id",
+-		.help = "destination field type ID",
+-		.next = NEXT(action_modify_field_dst,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					dst.type)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_DST_CLASS_ID] = {
+-		.name = "dst_class",
+-		.help = "destination field class ID",
+-		.next = NEXT(action_modify_field_dst,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_action_modify_field,
+-					     dst.class_id)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_DST_OFFSET] = {
+-		.name = "dst_offset",
+-		.help = "destination field bit offset",
+-		.next = NEXT(action_modify_field_dst,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					dst.offset)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_TYPE] = {
+-		.name = "src_type",
+-		.help = "source field type",
+-		.next = NEXT(action_modify_field_src,
+-			NEXT_ENTRY(ACTION_MODIFY_FIELD_SRC_TYPE_VALUE)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_TYPE_VALUE] = {
+-		.name = "{src_type}",
+-		.help = "source field type value",
+-		.call = parse_vc_modify_field_id,
+-		.comp = comp_set_modify_field_id,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_LEVEL] = {
+-		.name = "src_level",
+-		.help = "source field level",
+-		.next = NEXT(action_modify_field_src,
+-			     NEXT_ENTRY(ACTION_MODIFY_FIELD_SRC_LEVEL_VALUE)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_LEVEL_VALUE] = {
+-		.name = "{src_level}",
+-		.help = "source field level value",
+-		.call = parse_vc_modify_field_level,
+-		.comp = comp_none,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_TAG_INDEX] = {
+-		.name = "src_tag_index",
+-		.help = "source field tag array",
+-		.next = NEXT(action_modify_field_src,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					src.tag_index)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_TYPE_ID] = {
+-		.name = "src_type_id",
+-		.help = "source field type ID",
+-		.next = NEXT(action_modify_field_src,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					src.type)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_CLASS_ID] = {
+-		.name = "src_class",
+-		.help = "source field class ID",
+-		.next = NEXT(action_modify_field_src,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_action_modify_field,
+-					     src.class_id)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_OFFSET] = {
+-		.name = "src_offset",
+-		.help = "source field bit offset",
+-		.next = NEXT(action_modify_field_src,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					src.offset)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_VALUE] = {
+-		.name = "src_value",
+-		.help = "source immediate value",
+-		.next = NEXT(NEXT_ENTRY(ACTION_MODIFY_FIELD_WIDTH),
+-			     NEXT_ENTRY(COMMON_HEX)),
+-		.args = ARGS(ARGS_ENTRY_ARB(0, 0),
+-			     ARGS_ENTRY_ARB(0, 0),
+-			     ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					src.value)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_SRC_POINTER] = {
+-		.name = "src_ptr",
+-		.help = "pointer to source immediate value",
+-		.next = NEXT(NEXT_ENTRY(ACTION_MODIFY_FIELD_WIDTH),
+-			     NEXT_ENTRY(COMMON_HEX)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					src.pvalue),
+-			     ARGS_ENTRY_ARB(0, 0),
+-			     ARGS_ENTRY_ARB
+-				(sizeof(struct rte_flow_action_modify_field),
+-				 FLOW_FIELD_PATTERN_SIZE)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_MODIFY_FIELD_WIDTH] = {
+-		.name = "width",
+-		.help = "number of bits to copy",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT),
+-			NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_modify_field,
+-					width)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SEND_TO_KERNEL] = {
+-		.name = "send_to_kernel",
+-		.help = "send packets to kernel",
+-		.priv = PRIV_ACTION(SEND_TO_KERNEL, 0),
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_IPV6_EXT_REMOVE] = {
+-		.name = "ipv6_ext_remove",
+-		.help = "IPv6 extension type, defined by set ipv6_ext_remove",
+-		.priv = PRIV_ACTION(IPV6_EXT_REMOVE,
+-			sizeof(struct action_ipv6_ext_remove_data)),
+-		.next = NEXT(action_ipv6_ext_remove),
+-		.call = parse_vc_action_ipv6_ext_remove,
+-	},
+-	[ACTION_IPV6_EXT_REMOVE_INDEX] = {
+-		.name = "index",
+-		.help = "the index of ipv6_ext_remove",
+-		.next = NEXT(NEXT_ENTRY(ACTION_IPV6_EXT_REMOVE_INDEX_VALUE)),
+-	},
+-	[ACTION_IPV6_EXT_REMOVE_INDEX_VALUE] = {
+-		.name = "{index}",
+-		.type = "UNSIGNED",
+-		.help = "unsigned integer value",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_ipv6_ext_remove_index,
+-		.comp = comp_set_ipv6_ext_index,
+-	},
+-	[ACTION_IPV6_EXT_PUSH] = {
+-		.name = "ipv6_ext_push",
+-		.help = "IPv6 extension data, defined by set ipv6_ext_push",
+-		.priv = PRIV_ACTION(IPV6_EXT_PUSH,
+-			sizeof(struct action_ipv6_ext_push_data)),
+-		.next = NEXT(action_ipv6_ext_push),
+-		.call = parse_vc_action_ipv6_ext_push,
+-	},
+-	[ACTION_IPV6_EXT_PUSH_INDEX] = {
+-		.name = "index",
+-		.help = "the index of ipv6_ext_push",
+-		.next = NEXT(NEXT_ENTRY(ACTION_IPV6_EXT_PUSH_INDEX_VALUE)),
+-	},
+-	[ACTION_IPV6_EXT_PUSH_INDEX_VALUE] = {
+-		.name = "{index}",
+-		.type = "UNSIGNED",
+-		.help = "unsigned integer value",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_ipv6_ext_push_index,
+-		.comp = comp_set_ipv6_ext_index,
+-	},
+-	[ACTION_NAT64] = {
+-		.name = "nat64",
+-		.help = "NAT64 IP headers translation",
+-		.priv = PRIV_ACTION(NAT64, sizeof(struct rte_flow_action_nat64)),
+-		.next = NEXT(action_nat64),
+-		.call = parse_vc,
+-	},
+-	[ACTION_NAT64_MODE] = {
+-		.name = "type",
+-		.help = "NAT64 translation type",
+-		.next = NEXT(action_nat64, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_nat64, type)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_JUMP_TO_TABLE_INDEX] = {
+-		.name = "jump_to_table_index",
+-		.help = "Jump to table index",
+-		.priv = PRIV_ACTION(JUMP_TO_TABLE_INDEX,
+-				    sizeof(struct rte_flow_action_jump_to_table_index)),
+-		.next = NEXT(action_jump_to_table_index),
+-		.call = parse_vc,
+-	},
+-	[ACTION_JUMP_TO_TABLE_INDEX_TABLE] = {
+-		.name = "table",
+-		.help = "table id to redirect traffic to",
+-		.next = NEXT(action_jump_to_table_index,
+-			NEXT_ENTRY(ACTION_JUMP_TO_TABLE_INDEX_TABLE_VALUE)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_jump_to_table_index, table)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_JUMP_TO_TABLE_INDEX_TABLE_VALUE] = {
+-		.name = "{table_id}",
+-		.type = "TABLE_ID",
+-		.help = "table id for jump action",
+-		.call = parse_jump_table_id,
+-		.comp = comp_table_id,
+-	},
+-	[ACTION_JUMP_TO_TABLE_INDEX_INDEX] = {
+-		.name = "index",
+-		.help = "rule index to redirect traffic to",
+-		.next = NEXT(action_jump_to_table_index, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_jump_to_table_index, index)),
+-		.call = parse_vc_conf,
+-	},
+-
+-	/* Top level command. */
+-	[SET] = {
+-		.name = "set",
+-		.help = "set raw encap/decap/sample data",
+-		.type = "set raw_encap|raw_decap <index> <pattern>"
+-				" or set sample_actions <index> <action>",
+-		.next = NEXT(NEXT_ENTRY
+-			     (SET_RAW_ENCAP,
+-			      SET_RAW_DECAP,
+-			      SET_SAMPLE_ACTIONS,
+-			      SET_IPV6_EXT_REMOVE,
+-			      SET_IPV6_EXT_PUSH)),
+-		.call = parse_set_init,
+-	},
+-	/* Sub-level commands. */
+-	[SET_RAW_ENCAP] = {
+-		.name = "raw_encap",
+-		.help = "set raw encap data",
+-		.next = NEXT(next_set_raw),
+-		.args = ARGS(ARGS_ENTRY_ARB_BOUNDED
+-				(offsetof(struct buffer, port),
+-				 sizeof(((struct buffer *)0)->port),
+-				 0, RAW_ENCAP_CONFS_MAX_NUM - 1)),
+-		.call = parse_set_raw_encap_decap,
+-	},
+-	[SET_RAW_DECAP] = {
+-		.name = "raw_decap",
+-		.help = "set raw decap data",
+-		.next = NEXT(next_set_raw),
+-		.args = ARGS(ARGS_ENTRY_ARB_BOUNDED
+-				(offsetof(struct buffer, port),
+-				 sizeof(((struct buffer *)0)->port),
+-				 0, RAW_ENCAP_CONFS_MAX_NUM - 1)),
+-		.call = parse_set_raw_encap_decap,
+-	},
+-	[SET_RAW_INDEX] = {
+-		.name = "{index}",
+-		.type = "COMMON_UNSIGNED",
+-		.help = "index of raw_encap/raw_decap data",
+-		.next = NEXT(next_item),
+-		.call = parse_port,
+-	},
+-	[SET_SAMPLE_INDEX] = {
+-		.name = "{index}",
+-		.type = "UNSIGNED",
+-		.help = "index of sample actions",
+-		.next = NEXT(next_action_sample),
+-		.call = parse_port,
+-	},
+-	[SET_SAMPLE_ACTIONS] = {
+-		.name = "sample_actions",
+-		.help = "set sample actions list",
+-		.next = NEXT(NEXT_ENTRY(SET_SAMPLE_INDEX)),
+-		.args = ARGS(ARGS_ENTRY_ARB_BOUNDED
+-				(offsetof(struct buffer, port),
+-				 sizeof(((struct buffer *)0)->port),
+-				 0, RAW_SAMPLE_CONFS_MAX_NUM - 1)),
+-		.call = parse_set_sample_action,
+-	},
+-	[SET_IPV6_EXT_PUSH] = {
+-		.name = "ipv6_ext_push",
+-		.help = "set IPv6 extension header",
+-		.next = NEXT(NEXT_ENTRY(SET_IPV6_EXT_INDEX)),
+-		.args = ARGS(ARGS_ENTRY_ARB_BOUNDED
+-				(offsetof(struct buffer, port),
+-				 sizeof(((struct buffer *)0)->port),
+-				 0, IPV6_EXT_PUSH_CONFS_MAX_NUM - 1)),
+-		.call = parse_set_ipv6_ext_action,
+-	},
+-	[SET_IPV6_EXT_REMOVE] = {
+-		.name = "ipv6_ext_remove",
+-		.help = "set IPv6 extension header",
+-		.next = NEXT(NEXT_ENTRY(SET_IPV6_EXT_INDEX)),
+-		.args = ARGS(ARGS_ENTRY_ARB_BOUNDED
+-				(offsetof(struct buffer, port),
+-				 sizeof(((struct buffer *)0)->port),
+-				 0, IPV6_EXT_PUSH_CONFS_MAX_NUM - 1)),
+-		.call = parse_set_ipv6_ext_action,
+-	},
+-	[SET_IPV6_EXT_INDEX] = {
+-		.name = "{index}",
+-		.type = "UNSIGNED",
+-		.help = "index of ipv6 extension push/remove actions",
+-		.next = NEXT(item_ipv6_push_ext),
+-		.call = parse_port,
+-	},
+-	[ITEM_IPV6_PUSH_REMOVE_EXT] = {
+-		.name = "ipv6_ext",
+-		.help = "set IPv6 extension header",
+-		.priv = PRIV_ITEM(IPV6_EXT,
+-				  sizeof(struct rte_flow_item_ipv6_ext)),
+-		.next = NEXT(item_ipv6_push_ext_type),
+-		.call = parse_vc,
+-	},
+-	[ITEM_IPV6_PUSH_REMOVE_EXT_TYPE] = {
+-		.name = "type",
+-		.help = "set IPv6 extension type",
+-		.args = ARGS(ARGS_ENTRY_HTON(struct rte_flow_item_ipv6_ext,
+-					     next_hdr)),
+-		.next = NEXT(item_ipv6_push_ext_header, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-	},
+-	[ACTION_SET_TAG] = {
+-		.name = "set_tag",
+-		.help = "set tag",
+-		.priv = PRIV_ACTION(SET_TAG,
+-			sizeof(struct rte_flow_action_set_tag)),
+-		.next = NEXT(action_set_tag),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_TAG_INDEX] = {
+-		.name = "index",
+-		.help = "index of tag array",
+-		.next = NEXT(action_set_tag, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_set_tag, index)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_TAG_DATA] = {
+-		.name = "data",
+-		.help = "tag value",
+-		.next = NEXT(action_set_tag, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY
+-			     (struct rte_flow_action_set_tag, data)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_TAG_MASK] = {
+-		.name = "mask",
+-		.help = "mask for tag value",
+-		.next = NEXT(action_set_tag, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY
+-			     (struct rte_flow_action_set_tag, mask)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_META] = {
+-		.name = "set_meta",
+-		.help = "set metadata",
+-		.priv = PRIV_ACTION(SET_META,
+-			sizeof(struct rte_flow_action_set_meta)),
+-		.next = NEXT(action_set_meta),
+-		.call = parse_vc_action_set_meta,
+-	},
+-	[ACTION_SET_META_DATA] = {
+-		.name = "data",
+-		.help = "metadata value",
+-		.next = NEXT(action_set_meta, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY
+-			     (struct rte_flow_action_set_meta, data)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_META_MASK] = {
+-		.name = "mask",
+-		.help = "mask for metadata value",
+-		.next = NEXT(action_set_meta, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY
+-			     (struct rte_flow_action_set_meta, mask)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_IPV4_DSCP] = {
+-		.name = "set_ipv4_dscp",
+-		.help = "set DSCP value",
+-		.priv = PRIV_ACTION(SET_IPV4_DSCP,
+-			sizeof(struct rte_flow_action_set_dscp)),
+-		.next = NEXT(action_set_ipv4_dscp),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_IPV4_DSCP_VALUE] = {
+-		.name = "dscp_value",
+-		.help = "new IPv4 DSCP value to set",
+-		.next = NEXT(action_set_ipv4_dscp, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY
+-			     (struct rte_flow_action_set_dscp, dscp)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SET_IPV6_DSCP] = {
+-		.name = "set_ipv6_dscp",
+-		.help = "set DSCP value",
+-		.priv = PRIV_ACTION(SET_IPV6_DSCP,
+-			sizeof(struct rte_flow_action_set_dscp)),
+-		.next = NEXT(action_set_ipv6_dscp),
+-		.call = parse_vc,
+-	},
+-	[ACTION_SET_IPV6_DSCP_VALUE] = {
+-		.name = "dscp_value",
+-		.help = "new IPv6 DSCP value to set",
+-		.next = NEXT(action_set_ipv6_dscp, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY
+-			     (struct rte_flow_action_set_dscp, dscp)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_AGE] = {
+-		.name = "age",
+-		.help = "set a specific metadata header",
+-		.next = NEXT(action_age),
+-		.priv = PRIV_ACTION(AGE,
+-			sizeof(struct rte_flow_action_age)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_AGE_TIMEOUT] = {
+-		.name = "timeout",
+-		.help = "flow age timeout value",
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_action_age,
+-					   timeout, 24)),
+-		.next = NEXT(action_age, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_AGE_UPDATE] = {
+-		.name = "age_update",
+-		.help = "update aging parameter",
+-		.next = NEXT(action_age_update),
+-		.priv = PRIV_ACTION(AGE,
+-				    sizeof(struct rte_flow_update_age)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_AGE_UPDATE_TIMEOUT] = {
+-		.name = "timeout",
+-		.help = "age timeout update value",
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_update_age,
+-					   timeout, 24)),
+-		.next = NEXT(action_age_update, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.call = parse_vc_conf_timeout,
+-	},
+-	[ACTION_AGE_UPDATE_TOUCH] = {
+-		.name = "touch",
+-		.help = "this flow is touched",
+-		.next = NEXT(action_age_update, NEXT_ENTRY(COMMON_BOOLEAN)),
+-		.args = ARGS(ARGS_ENTRY_BF(struct rte_flow_update_age,
+-					   touch, 1)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_SAMPLE] = {
+-		.name = "sample",
+-		.help = "set a sample action",
+-		.next = NEXT(action_sample),
+-		.priv = PRIV_ACTION(SAMPLE,
+-			sizeof(struct action_sample_data)),
+-		.call = parse_vc_action_sample,
+-	},
+-	[ACTION_SAMPLE_RATIO] = {
+-		.name = "ratio",
+-		.help = "flow sample ratio value",
+-		.next = NEXT(action_sample, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY_ARB
+-			     (offsetof(struct action_sample_data, conf) +
+-			      offsetof(struct rte_flow_action_sample, ratio),
+-			      sizeof(((struct rte_flow_action_sample *)0)->
+-				     ratio))),
+-	},
+-	[ACTION_SAMPLE_INDEX] = {
+-		.name = "index",
+-		.help = "the index of sample actions list",
+-		.next = NEXT(NEXT_ENTRY(ACTION_SAMPLE_INDEX_VALUE)),
+-	},
+-	[ACTION_SAMPLE_INDEX_VALUE] = {
+-		.name = "{index}",
+-		.type = "COMMON_UNSIGNED",
+-		.help = "unsigned integer value",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_vc_action_sample_index,
+-		.comp = comp_set_sample_index,
+-	},
+-	[ACTION_CONNTRACK] = {
+-		.name = "conntrack",
+-		.help = "create a conntrack object",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.priv = PRIV_ACTION(CONNTRACK,
+-				    sizeof(struct rte_flow_action_conntrack)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_CONNTRACK_UPDATE] = {
+-		.name = "conntrack_update",
+-		.help = "update a conntrack object",
+-		.next = NEXT(action_update_conntrack),
+-		.priv = PRIV_ACTION(CONNTRACK,
+-				    sizeof(struct rte_flow_modify_conntrack)),
+-		.call = parse_vc,
+-	},
+-	[ACTION_CONNTRACK_UPDATE_DIR] = {
+-		.name = "dir",
+-		.help = "update a conntrack object direction",
+-		.next = NEXT(action_update_conntrack),
+-		.call = parse_vc_action_conntrack_update,
+-	},
+-	[ACTION_CONNTRACK_UPDATE_CTX] = {
+-		.name = "ctx",
+-		.help = "update a conntrack object context",
+-		.next = NEXT(action_update_conntrack),
+-		.call = parse_vc_action_conntrack_update,
+-	},
+-	[ACTION_PORT_REPRESENTOR] = {
+-		.name = "port_representor",
+-		.help = "at embedded switch level, send matching traffic to the given ethdev",
+-		.priv = PRIV_ACTION(PORT_REPRESENTOR,
+-				    sizeof(struct rte_flow_action_ethdev)),
+-		.next = NEXT(action_port_representor),
+-		.call = parse_vc,
+-	},
+-	[ACTION_PORT_REPRESENTOR_PORT_ID] = {
+-		.name = "port_id",
+-		.help = "ethdev port ID",
+-		.next = NEXT(action_port_representor,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_ethdev,
+-					port_id)),
+-		.call = parse_vc_conf,
+-	},
+-	[ACTION_REPRESENTED_PORT] = {
+-		.name = "represented_port",
+-		.help = "at embedded switch level, send matching traffic to the entity represented by the given ethdev",
+-		.priv = PRIV_ACTION(REPRESENTED_PORT,
+-				sizeof(struct rte_flow_action_ethdev)),
+-		.next = NEXT(action_represented_port),
+-		.call = parse_vc,
+-	},
+-	[ACTION_REPRESENTED_PORT_ETHDEV_PORT_ID] = {
+-		.name = "ethdev_port_id",
+-		.help = "ethdev port ID",
+-		.next = NEXT(action_represented_port,
+-			     NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_ethdev,
+-					port_id)),
+-		.call = parse_vc_conf,
+-	},
+-	/* Indirect action destroy arguments. */
+-	[INDIRECT_ACTION_DESTROY_ID] = {
+-		.name = "action_id",
+-		.help = "specify a indirect action id to destroy",
+-		.next = NEXT(next_ia_destroy_attr,
+-			     NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY_PTR(struct buffer,
+-					    args.ia_destroy.action_id)),
+-		.call = parse_ia_destroy,
+-	},
+-	/* Indirect action create arguments. */
+-	[INDIRECT_ACTION_CREATE_ID] = {
+-		.name = "action_id",
+-		.help = "specify a indirect action id to create",
+-		.next = NEXT(next_ia_create_attr,
+-			     NEXT_ENTRY(COMMON_INDIRECT_ACTION_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.vc.attr.group)),
+-	},
+-	[ACTION_INDIRECT] = {
+-		.name = "indirect",
+-		.help = "apply indirect action by id",
+-		.priv = PRIV_ACTION(INDIRECT, 0),
+-		.next = NEXT(next_ia),
+-		.args = ARGS(ARGS_ENTRY_ARB(0, sizeof(uint32_t))),
+-		.call = parse_vc,
+-	},
+-	[ACTION_INDIRECT_LIST] = {
+-		.name = "indirect_list",
+-		.help = "apply indirect list action by id",
+-		.priv = PRIV_ACTION(INDIRECT_LIST,
+-				    sizeof(struct
+-					   rte_flow_action_indirect_list)),
+-		.next = NEXT(next_ial),
+-		.call = parse_vc,
+-	},
+-	[ACTION_INDIRECT_LIST_HANDLE] = {
+-		.name = "handle",
+-		.help = "indirect list handle",
+-		.next = NEXT(next_ial, NEXT_ENTRY(INDIRECT_LIST_ACTION_ID2PTR_HANDLE)),
+-		.args = ARGS(ARGS_ENTRY_ARB(0, sizeof(uint32_t))),
+-	},
+-	[ACTION_INDIRECT_LIST_CONF] = {
+-		.name = "conf",
+-		.help = "indirect list configuration",
+-		.next = NEXT(next_ial, NEXT_ENTRY(INDIRECT_LIST_ACTION_ID2PTR_CONF)),
+-		.args = ARGS(ARGS_ENTRY_ARB(0, sizeof(uint32_t))),
+-	},
+-	[INDIRECT_LIST_ACTION_ID2PTR_HANDLE] = {
+-		.type = "UNSIGNED",
+-		.help = "unsigned integer value",
+-		.call = parse_indlst_id2ptr,
+-		.comp = comp_none,
+-	},
+-	[INDIRECT_LIST_ACTION_ID2PTR_CONF] = {
+-		.type = "UNSIGNED",
+-		.help = "unsigned integer value",
+-		.call = parse_indlst_id2ptr,
+-		.comp = comp_none,
+-	},
+-	[ACTION_SHARED_INDIRECT] = {
+-		.name = "shared_indirect",
+-		.help = "apply indirect action by id and port",
+-		.priv = PRIV_ACTION(INDIRECT, 0),
+-		.next = NEXT(NEXT_ENTRY(INDIRECT_ACTION_PORT)),
+-		.args = ARGS(ARGS_ENTRY_ARB(0, sizeof(uint32_t)),
+-			     ARGS_ENTRY_ARB(0, sizeof(uint32_t))),
+-		.call = parse_vc,
+-	},
+-	[INDIRECT_ACTION_PORT] = {
+-		.name = "{indirect_action_port}",
+-		.type = "INDIRECT_ACTION_PORT",
+-		.help = "indirect action port",
+-		.next = NEXT(NEXT_ENTRY(INDIRECT_ACTION_ID2PTR)),
+-		.call = parse_ia_port,
+-		.comp = comp_none,
+-	},
+-	[INDIRECT_ACTION_ID2PTR] = {
+-		.name = "{action_id}",
+-		.type = "INDIRECT_ACTION_ID",
+-		.help = "indirect action id",
+-		.next = NEXT(NEXT_ENTRY(ACTION_NEXT)),
+-		.call = parse_ia_id2ptr,
+-		.comp = comp_none,
+-	},
+-	[INDIRECT_ACTION_INGRESS] = {
+-		.name = "ingress",
+-		.help = "affect rule to ingress",
+-		.next = NEXT(next_ia_create_attr),
+-		.call = parse_ia,
+-	},
+-	[INDIRECT_ACTION_EGRESS] = {
+-		.name = "egress",
+-		.help = "affect rule to egress",
+-		.next = NEXT(next_ia_create_attr),
+-		.call = parse_ia,
+-	},
+-	[INDIRECT_ACTION_TRANSFER] = {
+-		.name = "transfer",
+-		.help = "affect rule to transfer",
+-		.next = NEXT(next_ia_create_attr),
+-		.call = parse_ia,
+-	},
+-	[INDIRECT_ACTION_SPEC] = {
+-		.name = "action",
+-		.help = "specify action to create indirect handle",
+-		.next = NEXT(next_action),
+-	},
+-	[INDIRECT_ACTION_LIST] = {
+-		.name = "list",
+-		.help = "specify actions for indirect handle list",
+-		.next = NEXT(NEXT_ENTRY(ACTIONS, END)),
+-		.call = parse_ia,
+-	},
+-	[INDIRECT_ACTION_FLOW_CONF] = {
+-		.name = "flow_conf",
+-		.help = "specify actions configuration for indirect handle list",
+-		.next = NEXT(NEXT_ENTRY(ACTIONS, END)),
+-		.call = parse_ia,
+-	},
+-	[ACTION_POL_G] = {
+-		.name = "g_actions",
+-		.help = "submit a list of associated actions for green",
+-		.next = NEXT(next_action),
+-		.call = parse_mp,
+-	},
+-	[ACTION_POL_Y] = {
+-		.name = "y_actions",
+-		.help = "submit a list of associated actions for yellow",
+-		.next = NEXT(next_action),
+-	},
+-	[ACTION_POL_R] = {
+-		.name = "r_actions",
+-		.help = "submit a list of associated actions for red",
+-		.next = NEXT(next_action),
+-	},
+-	[ACTION_QUOTA_CREATE] = {
+-		.name = "quota_create",
+-		.help = "create quota action",
+-		.priv = PRIV_ACTION(QUOTA,
+-				    sizeof(struct rte_flow_action_quota)),
+-		.next = NEXT(action_quota_create),
+-		.call = parse_vc
+-	},
+-	[ACTION_QUOTA_CREATE_LIMIT] = {
+-		.name = "limit",
+-		.help = "quota limit",
+-		.next = NEXT(action_quota_create, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_quota, quota)),
+-		.call = parse_vc_conf
+-	},
+-	[ACTION_QUOTA_CREATE_MODE] = {
+-		.name = "mode",
+-		.help = "quota mode",
+-		.next = NEXT(action_quota_create,
+-			     NEXT_ENTRY(ACTION_QUOTA_CREATE_MODE_NAME)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_action_quota, mode)),
+-		.call = parse_vc_conf
+-	},
+-	[ACTION_QUOTA_CREATE_MODE_NAME] = {
+-		.name = "mode_name",
+-		.help = "quota mode name",
+-		.call = parse_quota_mode_name,
+-		.comp = comp_quota_mode_name
+-	},
+-	[ACTION_QUOTA_QU] = {
+-		.name = "quota_update",
+-		.help = "update quota action",
+-		.priv = PRIV_ACTION(QUOTA,
+-				    sizeof(struct rte_flow_update_quota)),
+-		.next = NEXT(action_quota_update),
+-		.call = parse_vc
+-	},
+-	[ACTION_QUOTA_QU_LIMIT] = {
+-		.name = "limit",
+-		.help = "quota limit",
+-		.next = NEXT(action_quota_update, NEXT_ENTRY(COMMON_UNSIGNED)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_update_quota, quota)),
+-		.call = parse_vc_conf
+-	},
+-	[ACTION_QUOTA_QU_UPDATE_OP] = {
+-		.name = "update_op",
+-		.help = "query update op SET|ADD",
+-		.next = NEXT(action_quota_update,
+-			     NEXT_ENTRY(ACTION_QUOTA_QU_UPDATE_OP_NAME)),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_update_quota, op)),
+-		.call = parse_vc_conf
+-	},
+-	[ACTION_QUOTA_QU_UPDATE_OP_NAME] = {
+-		.name = "update_op_name",
+-		.help = "quota update op name",
+-		.call = parse_quota_update_name,
+-		.comp = comp_quota_update_name
+-	},
+-
+-	/* Top-level command. */
+-	[ADD] = {
+-		.name = "add",
+-		.type = "port meter policy {port_id} {arg}",
+-		.help = "add port meter policy",
+-		.next = NEXT(NEXT_ENTRY(ITEM_POL_PORT)),
+-		.call = parse_init,
+-	},
+-	/* Sub-level commands. */
+-	[ITEM_POL_PORT] = {
+-		.name = "port",
+-		.help = "add port meter policy",
+-		.next = NEXT(NEXT_ENTRY(ITEM_POL_METER)),
+-	},
+-	[ITEM_POL_METER] = {
+-		.name = "meter",
+-		.help = "add port meter policy",
+-		.next = NEXT(NEXT_ENTRY(ITEM_POL_POLICY)),
+-	},
+-	[ITEM_POL_POLICY] = {
+-		.name = "policy",
+-		.help = "add port meter policy",
+-		.next = NEXT(NEXT_ENTRY(ACTION_POL_R),
+-				NEXT_ENTRY(ACTION_POL_Y),
+-				NEXT_ENTRY(ACTION_POL_G),
+-				NEXT_ENTRY(COMMON_POLICY_ID),
+-				NEXT_ENTRY(COMMON_PORT_ID)),
+-		.args = ARGS(ARGS_ENTRY(struct buffer, args.policy.policy_id),
+-				ARGS_ENTRY(struct buffer, port)),
+-		.call = parse_mp,
+-	},
+-	[ITEM_AGGR_AFFINITY] = {
+-		.name = "aggr_affinity",
+-		.help = "match on the aggregated port receiving the packets",
+-		.priv = PRIV_ITEM(AGGR_AFFINITY,
+-				  sizeof(struct rte_flow_item_aggr_affinity)),
+-		.next = NEXT(item_aggr_affinity),
+-		.call = parse_vc,
+-	},
+-	[ITEM_AGGR_AFFINITY_VALUE] = {
+-		.name = "affinity",
+-		.help = "aggregated affinity value",
+-		.next = NEXT(item_aggr_affinity, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_aggr_affinity,
+-					affinity)),
+-	},
+-	[ITEM_TX_QUEUE] = {
+-		.name = "tx_queue",
+-		.help = "match on the tx queue of send packet",
+-		.priv = PRIV_ITEM(TX_QUEUE,
+-				  sizeof(struct rte_flow_item_tx_queue)),
+-		.next = NEXT(item_tx_queue),
+-		.call = parse_vc,
+-	},
+-	[ITEM_TX_QUEUE_VALUE] = {
+-		.name = "tx_queue_value",
+-		.help = "tx queue value",
+-		.next = NEXT(item_tx_queue, NEXT_ENTRY(COMMON_UNSIGNED),
+-			     item_param),
+-		.args = ARGS(ARGS_ENTRY(struct rte_flow_item_tx_queue,
+-					tx_queue)),
+-	},
+-};
+-
+-/** Remove and return last entry from argument stack. */
+-static const struct arg *
+-pop_args(struct context *ctx)
+-{
+-	return ctx->args_num ? ctx->args[--ctx->args_num] : NULL;
+-}
+-
+-/** Add entry on top of the argument stack. */
+-static int
+-push_args(struct context *ctx, const struct arg *arg)
+-{
+-	if (ctx->args_num == CTX_STACK_SIZE)
+-		return -1;
+-	ctx->args[ctx->args_num++] = arg;
+-	return 0;
+-}
+-
+-/** Spread value into buffer according to bit-mask. */
+-static size_t
+-arg_entry_bf_fill(void *dst, uintmax_t val, const struct arg *arg)
+-{
+-	uint32_t i = arg->size;
+-	uint32_t end = 0;
+-	int sub = 1;
+-	int add = 0;
+-	size_t len = 0;
+-
+-	if (!arg->mask)
+-		return 0;
+-#if RTE_BYTE_ORDER == RTE_LITTLE_ENDIAN
+-	if (!arg->hton) {
+-		i = 0;
+-		end = arg->size;
+-		sub = 0;
+-		add = 1;
+-	}
+-#endif
+-	while (i != end) {
+-		unsigned int shift = 0;
+-		uint8_t *buf = (uint8_t *)dst + arg->offset + (i -= sub);
+-
+-		for (shift = 0; arg->mask[i] >> shift; ++shift) {
+-			if (!(arg->mask[i] & (1 << shift)))
+-				continue;
+-			++len;
+-			if (!dst)
+-				continue;
+-			*buf &= ~(1 << shift);
+-			*buf |= (val & 1) << shift;
+-			val >>= 1;
+-		}
+-		i += add;
+-	}
+-	return len;
+-}
+-
+-/** Compare a string with a partial one of a given length. */
+-static int
+-strcmp_partial(const char *full, const char *partial, size_t partial_len)
+-{
+-	int r = strncmp(full, partial, partial_len);
+-
+-	if (r)
+-		return r;
+-	if (strlen(full) <= partial_len)
+-		return 0;
+-	return full[partial_len];
+-}
+-
+-/**
+- * Parse a prefix length and generate a bit-mask.
+- *
+- * Last argument (ctx->args) is retrieved to determine mask size, storage
+- * location and whether the result must use network byte ordering.
+- */
+-static int
+-parse_prefix(struct context *ctx, const struct token *token,
+-	     const char *str, unsigned int len,
+-	     void *buf, unsigned int size)
+-{
+-	const struct arg *arg = pop_args(ctx);
+-	static const uint8_t conv[] = { 0x00, 0x80, 0xc0, 0xe0, 0xf0,
+-					0xf8, 0xfc, 0xfe, 0xff };
+-	char *end;
+-	uintmax_t u;
+-	unsigned int bytes;
+-	unsigned int extra;
+-
+-	(void)token;
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	errno = 0;
+-	u = strtoumax(str, &end, 0);
+-	if (errno || (size_t)(end - str) != len)
+-		goto error;
+-	if (arg->mask) {
+-		uintmax_t v = 0;
+-
+-		extra = arg_entry_bf_fill(NULL, 0, arg);
+-		if (u > extra)
+-			goto error;
+-		if (!ctx->object)
+-			return len;
+-		extra -= u;
+-		while (u--) {
+-			v <<= 1;
+-			v |= 1;
+-		}
+-		v <<= extra;
+-		if (!arg_entry_bf_fill(ctx->object, v, arg) ||
+-		    !arg_entry_bf_fill(ctx->objmask, -1, arg))
+-			goto error;
+-		return len;
+-	}
+-	bytes = u / 8;
+-	extra = u % 8;
+-	size = arg->size;
+-	if (bytes > size || bytes + !!extra > size)
+-		goto error;
+-	if (!ctx->object)
+-		return len;
+-	buf = (uint8_t *)ctx->object + arg->offset;
+-#if RTE_BYTE_ORDER == RTE_LITTLE_ENDIAN
+-	if (!arg->hton) {
+-		memset((uint8_t *)buf + size - bytes, 0xff, bytes);
+-		memset(buf, 0x00, size - bytes);
+-		if (extra)
+-			((uint8_t *)buf)[size - bytes - 1] = conv[extra];
+-	} else
+-#endif
+-	{
+-		memset(buf, 0xff, bytes);
+-		memset((uint8_t *)buf + bytes, 0x00, size - bytes);
+-		if (extra)
+-			((uint8_t *)buf)[bytes] = conv[extra];
+-	}
+-	if (ctx->objmask)
+-		memset((uint8_t *)ctx->objmask + arg->offset, 0xff, size);
+-	return len;
+-error:
+-	push_args(ctx, arg);
+-	return -1;
+-}
+-
+-/** Default parsing function for token name matching. */
+-static int
+-parse_default(struct context *ctx, const struct token *token,
+-	      const char *str, unsigned int len,
+-	      void *buf, unsigned int size)
+-{
+-	(void)ctx;
+-	(void)buf;
+-	(void)size;
+-	if (strcmp_partial(token->name, str, len))
+-		return -1;
+-	return len;
+-}
+-
+-/** Parse flow command, initialize output buffer for subsequent tokens. */
+-static int
+-parse_init(struct context *ctx, const struct token *token,
+-	   const char *str, unsigned int len,
+-	   void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	/* Make sure buffer is large enough. */
+-	if (size < sizeof(*out))
+-		return -1;
+-	/* Initialize buffer. */
+-	memset(out, 0x00, sizeof(*out));
+-	memset((uint8_t *)out + sizeof(*out), 0x22, size - sizeof(*out));
+-	ctx->objdata = 0;
+-	ctx->object = out;
+-	ctx->objmask = NULL;
+-	return len;
+-}
+-
+-/** Parse tokens for indirect action commands. */
+-static int
+-parse_ia(struct context *ctx, const struct token *token,
+-	 const char *str, unsigned int len,
+-	 void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != INDIRECT_ACTION)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case INDIRECT_ACTION_CREATE:
+-	case INDIRECT_ACTION_UPDATE:
+-	case INDIRECT_ACTION_QUERY_UPDATE:
+-		out->args.vc.actions =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		out->args.vc.attr.group = UINT32_MAX;
+-		/* fallthrough */
+-	case INDIRECT_ACTION_QUERY:
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	case INDIRECT_ACTION_EGRESS:
+-		out->args.vc.attr.egress = 1;
+-		return len;
+-	case INDIRECT_ACTION_INGRESS:
+-		out->args.vc.attr.ingress = 1;
+-		return len;
+-	case INDIRECT_ACTION_TRANSFER:
+-		out->args.vc.attr.transfer = 1;
+-		return len;
+-	case INDIRECT_ACTION_QU_MODE:
+-		return len;
+-	case INDIRECT_ACTION_LIST:
+-		out->command = INDIRECT_ACTION_LIST_CREATE;
+-		return len;
+-	case INDIRECT_ACTION_FLOW_CONF:
+-		out->command = INDIRECT_ACTION_FLOW_CONF_CREATE;
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-
+-/** Parse tokens for indirect action destroy command. */
+-static int
+-parse_ia_destroy(struct context *ctx, const struct token *token,
+-		 const char *str, unsigned int len,
+-		 void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	uint32_t *action_id;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command || out->command == INDIRECT_ACTION) {
+-		if (ctx->curr != INDIRECT_ACTION_DESTROY)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.ia_destroy.action_id =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		return len;
+-	}
+-	action_id = out->args.ia_destroy.action_id
+-		    + out->args.ia_destroy.action_id_n++;
+-	if ((uint8_t *)action_id > (uint8_t *)out + size)
+-		return -1;
+-	ctx->objdata = 0;
+-	ctx->object = action_id;
+-	ctx->objmask = NULL;
+-	return len;
+-}
+-
+-/** Parse tokens for indirect action commands. */
+-static int
+-parse_qia(struct context *ctx, const struct token *token,
+-	  const char *str, unsigned int len,
+-	  void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != QUEUE)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case QUEUE_INDIRECT_ACTION:
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_CREATE:
+-	case QUEUE_INDIRECT_ACTION_UPDATE:
+-	case QUEUE_INDIRECT_ACTION_QUERY_UPDATE:
+-		out->args.vc.actions =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		out->args.vc.attr.group = UINT32_MAX;
+-		/* fallthrough */
+-	case QUEUE_INDIRECT_ACTION_QUERY:
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_EGRESS:
+-		out->args.vc.attr.egress = 1;
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_INGRESS:
+-		out->args.vc.attr.ingress = 1;
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_TRANSFER:
+-		out->args.vc.attr.transfer = 1;
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_CREATE_POSTPONE:
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_QU_MODE:
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_LIST:
+-		out->command = QUEUE_INDIRECT_ACTION_LIST_CREATE;
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-/** Parse tokens for indirect action destroy command. */
+-static int
+-parse_qia_destroy(struct context *ctx, const struct token *token,
+-		  const char *str, unsigned int len,
+-		  void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	uint32_t *action_id;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command || out->command == QUEUE) {
+-		if (ctx->curr != QUEUE_INDIRECT_ACTION_DESTROY)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.ia_destroy.action_id =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case QUEUE_INDIRECT_ACTION:
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_DESTROY_ID:
+-		action_id = out->args.ia_destroy.action_id
+-				+ out->args.ia_destroy.action_id_n++;
+-		if ((uint8_t *)action_id > (uint8_t *)out + size)
+-			return -1;
+-		ctx->objdata = 0;
+-		ctx->object = action_id;
+-		ctx->objmask = NULL;
+-		return len;
+-	case QUEUE_INDIRECT_ACTION_DESTROY_POSTPONE:
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-/** Parse tokens for meter policy action commands. */
+-static int
+-parse_mp(struct context *ctx, const struct token *token,
+-	const char *str, unsigned int len,
+-	void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != ITEM_POL_POLICY)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case ACTION_POL_G:
+-		out->args.vc.actions =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					sizeof(double));
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-/** Parse tokens for validate/create commands. */
+-static int
+-parse_vc(struct context *ctx, const struct token *token,
+-	 const char *str, unsigned int len,
+-	 void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	uint8_t *data;
+-	uint32_t data_size;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != VALIDATE && ctx->curr != CREATE &&
+-		    ctx->curr != PATTERN_TEMPLATE_CREATE &&
+-		    ctx->curr != ACTIONS_TEMPLATE_CREATE &&
+-		    ctx->curr != UPDATE)
+-			return -1;
+-		if (ctx->curr == UPDATE)
+-			out->args.vc.pattern =
+-				(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-						       sizeof(double));
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		return len;
+-	}
+-	ctx->objdata = 0;
+-	switch (ctx->curr) {
+-	default:
+-		ctx->object = &out->args.vc.attr;
+-		break;
+-	case VC_TUNNEL_SET:
+-	case VC_TUNNEL_MATCH:
+-		ctx->object = &out->args.vc.tunnel_ops;
+-		break;
+-	case VC_USER_ID:
+-		ctx->object = out;
+-		break;
+-	}
+-	ctx->objmask = NULL;
+-	switch (ctx->curr) {
+-	case VC_GROUP:
+-	case VC_PRIORITY:
+-	case VC_USER_ID:
+-		return len;
+-	case VC_TUNNEL_SET:
+-		out->args.vc.tunnel_ops.enabled = 1;
+-		out->args.vc.tunnel_ops.actions = 1;
+-		return len;
+-	case VC_TUNNEL_MATCH:
+-		out->args.vc.tunnel_ops.enabled = 1;
+-		out->args.vc.tunnel_ops.items = 1;
+-		return len;
+-	case VC_INGRESS:
+-		out->args.vc.attr.ingress = 1;
+-		return len;
+-	case VC_EGRESS:
+-		out->args.vc.attr.egress = 1;
+-		return len;
+-	case VC_TRANSFER:
+-		out->args.vc.attr.transfer = 1;
+-		return len;
+-	case ITEM_PATTERN:
+-		out->args.vc.pattern =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		ctx->object = out->args.vc.pattern;
+-		ctx->objmask = NULL;
+-		return len;
+-	case ITEM_END:
+-		if ((out->command == VALIDATE || out->command == CREATE) &&
+-		    ctx->last)
+-			return -1;
+-		if (out->command == PATTERN_TEMPLATE_CREATE &&
+-		    !ctx->last)
+-			return -1;
+-		break;
+-	case ACTIONS:
+-		out->args.vc.actions = out->args.vc.pattern ?
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)
+-					       (out->args.vc.pattern +
+-						out->args.vc.pattern_n),
+-					       sizeof(double)) :
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		ctx->object = out->args.vc.actions;
+-		ctx->objmask = NULL;
+-		return len;
+-	case VC_IS_USER_ID:
+-		out->args.vc.user_id = true;
+-		return len;
+-	default:
+-		if (!token->priv)
+-			return -1;
+-		break;
+-	}
+-	if (!out->args.vc.actions) {
+-		const struct parse_item_priv *priv = token->priv;
+-		struct rte_flow_item *item =
+-			out->args.vc.pattern + out->args.vc.pattern_n;
+-
+-		data_size = priv->size * 3; /* spec, last, mask */
+-		data = (void *)RTE_ALIGN_FLOOR((uintptr_t)
+-					       (out->args.vc.data - data_size),
+-					       sizeof(double));
+-		if ((uint8_t *)item + sizeof(*item) > data)
+-			return -1;
+-		*item = (struct rte_flow_item){
+-			.type = priv->type,
+-		};
+-		++out->args.vc.pattern_n;
+-		ctx->object = item;
+-		ctx->objmask = NULL;
+-	} else {
+-		const struct parse_action_priv *priv = token->priv;
+-		struct rte_flow_action *action =
+-			out->args.vc.actions + out->args.vc.actions_n;
+-
+-		data_size = priv->size; /* configuration */
+-		data = (void *)RTE_ALIGN_FLOOR((uintptr_t)
+-					       (out->args.vc.data - data_size),
+-					       sizeof(double));
+-		if ((uint8_t *)action + sizeof(*action) > data)
+-			return -1;
+-		*action = (struct rte_flow_action){
+-			.type = priv->type,
+-			.conf = data_size ? data : NULL,
+-		};
+-		++out->args.vc.actions_n;
+-		ctx->object = action;
+-		ctx->objmask = NULL;
+-	}
+-	memset(data, 0, data_size);
+-	out->args.vc.data = data;
+-	ctx->objdata = data_size;
+-	return len;
+-}
+-
+-/** Parse pattern item parameter type. */
+-static int
+-parse_vc_spec(struct context *ctx, const struct token *token,
+-	      const char *str, unsigned int len,
+-	      void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_item *item;
+-	uint32_t data_size;
+-	int index;
+-	int objmask = 0;
+-
+-	(void)size;
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Parse parameter types. */
+-	switch (ctx->curr) {
+-	case ITEM_PARAM_IS:
+-		index = 0;
+-		objmask = 1;
+-		break;
+-	case ITEM_PARAM_SPEC:
+-		index = 0;
+-		break;
+-	case ITEM_PARAM_LAST:
+-		index = 1;
+-		break;
+-	case ITEM_PARAM_PREFIX:
+-		/* Modify next token to expect a prefix. */
+-		if (ctx->next_num < 2)
+-			return -1;
+-		ctx->next[ctx->next_num - 2] = NEXT_ENTRY(COMMON_PREFIX);
+-		/* Fall through. */
+-	case ITEM_PARAM_MASK:
+-		index = 2;
+-		break;
+-	default:
+-		return -1;
+-	}
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->args.vc.pattern_n)
+-		return -1;
+-	item = &out->args.vc.pattern[out->args.vc.pattern_n - 1];
+-	data_size = ctx->objdata / 3; /* spec, last, mask */
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data + (data_size * index);
+-	if (objmask) {
+-		ctx->objmask = out->args.vc.data + (data_size * 2); /* mask */
+-		item->mask = ctx->objmask;
+-	} else
+-		ctx->objmask = NULL;
+-	/* Update relevant item pointer. */
+-	*((const void **[]){ &item->spec, &item->last, &item->mask })[index] =
+-		ctx->object;
+-	return len;
+-}
+-
+-/** Parse action configuration field. */
+-static int
+-parse_vc_conf(struct context *ctx, const struct token *token,
+-	      const char *str, unsigned int len,
+-	      void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	(void)size;
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	return len;
+-}
+-
+-/** Parse action configuration field. */
+-static int
+-parse_vc_conf_timeout(struct context *ctx, const struct token *token,
+-		      const char *str, unsigned int len,
+-		      void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_update_age *update;
+-
+-	(void)size;
+-	if (ctx->curr != ACTION_AGE_UPDATE_TIMEOUT)
+-		return -1;
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Update the timeout is valid. */
+-	update = (struct rte_flow_update_age *)out->args.vc.data;
+-	update->timeout_valid = 1;
+-	return len;
+-}
+-
+-/** Parse eCPRI common header type field. */
+-static int
+-parse_vc_item_ecpri_type(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len,
+-			 void *buf, unsigned int size)
+-{
+-	struct rte_flow_item_ecpri *ecpri;
+-	struct rte_flow_item_ecpri *ecpri_mask;
+-	struct rte_flow_item *item;
+-	uint32_t data_size;
+-	uint8_t msg_type;
+-	struct buffer *out = buf;
+-	const struct arg *arg;
+-
+-	(void)size;
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	switch (ctx->curr) {
+-	case ITEM_ECPRI_COMMON_TYPE_IQ_DATA:
+-		msg_type = RTE_ECPRI_MSG_TYPE_IQ_DATA;
+-		break;
+-	case ITEM_ECPRI_COMMON_TYPE_RTC_CTRL:
+-		msg_type = RTE_ECPRI_MSG_TYPE_RTC_CTRL;
+-		break;
+-	case ITEM_ECPRI_COMMON_TYPE_DLY_MSR:
+-		msg_type = RTE_ECPRI_MSG_TYPE_DLY_MSR;
+-		break;
+-	default:
+-		return -1;
+-	}
+-	if (!ctx->object)
+-		return len;
+-	arg = pop_args(ctx);
+-	if (!arg)
+-		return -1;
+-	ecpri = (struct rte_flow_item_ecpri *)out->args.vc.data;
+-	ecpri->hdr.common.type = msg_type;
+-	data_size = ctx->objdata / 3; /* spec, last, mask */
+-	ecpri_mask = (struct rte_flow_item_ecpri *)(out->args.vc.data +
+-						    (data_size * 2));
+-	ecpri_mask->hdr.common.type = 0xFF;
+-	if (arg->hton) {
+-		ecpri->hdr.common.u32 = rte_cpu_to_be_32(ecpri->hdr.common.u32);
+-		ecpri_mask->hdr.common.u32 =
+-				rte_cpu_to_be_32(ecpri_mask->hdr.common.u32);
+-	}
+-	item = &out->args.vc.pattern[out->args.vc.pattern_n - 1];
+-	item->spec = ecpri;
+-	item->mask = ecpri_mask;
+-	return len;
+-}
+-
+-/** Parse L2TPv2 common header type field. */
+-static int
+-parse_vc_item_l2tpv2_type(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len,
+-			 void *buf, unsigned int size)
+-{
+-	struct rte_flow_item_l2tpv2 *l2tpv2;
+-	struct rte_flow_item_l2tpv2 *l2tpv2_mask;
+-	struct rte_flow_item *item;
+-	uint32_t data_size;
+-	uint16_t msg_type = 0;
+-	struct buffer *out = buf;
+-	const struct arg *arg;
+-
+-	(void)size;
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	switch (ctx->curr) {
+-	case ITEM_L2TPV2_TYPE_DATA:
+-		msg_type |= RTE_L2TPV2_MSG_TYPE_DATA;
+-		break;
+-	case ITEM_L2TPV2_TYPE_DATA_L:
+-		msg_type |= RTE_L2TPV2_MSG_TYPE_DATA_L;
+-		break;
+-	case ITEM_L2TPV2_TYPE_DATA_S:
+-		msg_type |= RTE_L2TPV2_MSG_TYPE_DATA_S;
+-		break;
+-	case ITEM_L2TPV2_TYPE_DATA_O:
+-		msg_type |= RTE_L2TPV2_MSG_TYPE_DATA_O;
+-		break;
+-	case ITEM_L2TPV2_TYPE_DATA_L_S:
+-		msg_type |= RTE_L2TPV2_MSG_TYPE_DATA_L_S;
+-		break;
+-	case ITEM_L2TPV2_TYPE_CTRL:
+-		msg_type |= RTE_L2TPV2_MSG_TYPE_CONTROL;
+-		break;
+-	default:
+-		return -1;
+-	}
+-	if (!ctx->object)
+-		return len;
+-	arg = pop_args(ctx);
+-	if (!arg)
+-		return -1;
+-	l2tpv2 = (struct rte_flow_item_l2tpv2 *)out->args.vc.data;
+-	l2tpv2->hdr.common.flags_version |= msg_type;
+-	data_size = ctx->objdata / 3; /* spec, last, mask */
+-	l2tpv2_mask = (struct rte_flow_item_l2tpv2 *)(out->args.vc.data +
+-						    (data_size * 2));
+-	l2tpv2_mask->hdr.common.flags_version = 0xFFFF;
+-	if (arg->hton) {
+-		l2tpv2->hdr.common.flags_version =
+-			rte_cpu_to_be_16(l2tpv2->hdr.common.flags_version);
+-		l2tpv2_mask->hdr.common.flags_version =
+-		    rte_cpu_to_be_16(l2tpv2_mask->hdr.common.flags_version);
+-	}
+-	item = &out->args.vc.pattern[out->args.vc.pattern_n - 1];
+-	item->spec = l2tpv2;
+-	item->mask = l2tpv2_mask;
+-	return len;
+-}
+-
+-/** Parse operation for compare match item. */
+-static int
+-parse_vc_compare_op(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size)
+-{
+-	struct rte_flow_item_compare *compare_item;
+-	unsigned int i;
+-
+-	(void)token;
+-	(void)buf;
+-	(void)size;
+-	if (ctx->curr != ITEM_COMPARE_OP_VALUE)
+-		return -1;
+-	for (i = 0; compare_ops[i]; ++i)
+-		if (!strcmp_partial(compare_ops[i], str, len))
+-			break;
+-	if (!compare_ops[i])
+-		return -1;
+-	if (!ctx->object)
+-		return len;
+-	compare_item = ctx->object;
+-	compare_item->operation = (enum rte_flow_item_compare_op)i;
+-	return len;
+-}
+-
+-/** Parse id for compare match item. */
+-static int
+-parse_vc_compare_field_id(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len, void *buf,
+-			  unsigned int size)
+-{
+-	struct rte_flow_item_compare *compare_item;
+-	unsigned int i;
+-
+-	(void)token;
+-	(void)buf;
+-	(void)size;
+-	if (ctx->curr != ITEM_COMPARE_FIELD_A_TYPE_VALUE &&
+-		ctx->curr != ITEM_COMPARE_FIELD_B_TYPE_VALUE)
+-		return -1;
+-	for (i = 0; flow_field_ids[i]; ++i)
+-		if (!strcmp_partial(flow_field_ids[i], str, len))
+-			break;
+-	if (!flow_field_ids[i])
+-		return -1;
+-	if (!ctx->object)
+-		return len;
+-	compare_item = ctx->object;
+-	if (ctx->curr == ITEM_COMPARE_FIELD_A_TYPE_VALUE)
+-		compare_item->a.field = (enum rte_flow_field_id)i;
+-	else
+-		compare_item->b.field = (enum rte_flow_field_id)i;
+-	return len;
+-}
+-
+-/** Parse level for compare match item. */
+-static int
+-parse_vc_compare_field_level(struct context *ctx, const struct token *token,
+-			     const char *str, unsigned int len, void *buf,
+-			     unsigned int size)
+-{
+-	struct rte_flow_item_compare *compare_item;
+-	struct flex_item *fp = NULL;
+-	uint32_t val;
+-	struct buffer *out = buf;
+-	char *end;
+-
+-	(void)token;
+-	(void)size;
+-	if (ctx->curr != ITEM_COMPARE_FIELD_A_LEVEL_VALUE &&
+-		ctx->curr != ITEM_COMPARE_FIELD_B_LEVEL_VALUE)
+-		return -1;
+-	if (!ctx->object)
+-		return len;
+-	compare_item = ctx->object;
+-	errno = 0;
+-	val = strtoumax(str, &end, 0);
+-	if (errno || (size_t)(end - str) != len)
+-		return -1;
+-	/* No need to validate action template mask value */
+-	if (out->args.vc.masks) {
+-		if (ctx->curr == ITEM_COMPARE_FIELD_A_LEVEL_VALUE)
+-			compare_item->a.level = val;
+-		else
+-			compare_item->b.level = val;
+-		return len;
+-	}
+-	if ((ctx->curr == ITEM_COMPARE_FIELD_A_LEVEL_VALUE &&
+-		compare_item->a.field == RTE_FLOW_FIELD_FLEX_ITEM) ||
+-		(ctx->curr == ITEM_COMPARE_FIELD_B_LEVEL_VALUE &&
+-		compare_item->b.field == RTE_FLOW_FIELD_FLEX_ITEM)) {
+-		if (val >= FLEX_MAX_PARSERS_NUM) {
+-			printf("Bad flex item handle\n");
+-			return -1;
+-		}
+-		fp = flex_items[ctx->port][val];
+-		if (!fp) {
+-			printf("Bad flex item handle\n");
+-			return -1;
+-		}
+-	}
+-	if (ctx->curr == ITEM_COMPARE_FIELD_A_LEVEL_VALUE) {
+-		if (compare_item->a.field != RTE_FLOW_FIELD_FLEX_ITEM)
+-			compare_item->a.level = val;
+-		else
+-			compare_item->a.flex_handle = fp->flex_handle;
+-	} else if (ctx->curr == ITEM_COMPARE_FIELD_B_LEVEL_VALUE) {
+-		if (compare_item->b.field != RTE_FLOW_FIELD_FLEX_ITEM)
+-			compare_item->b.level = val;
+-		else
+-			compare_item->b.flex_handle = fp->flex_handle;
+-	}
+-	return len;
+-}
+-
+-/** Parse meter color action type. */
+-static int
+-parse_vc_action_meter_color_type(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len,
+-				void *buf, unsigned int size)
+-{
+-	struct rte_flow_action *action_data;
+-	struct rte_flow_action_meter_color *conf;
+-	enum rte_color color;
+-
+-	(void)buf;
+-	(void)size;
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	switch (ctx->curr) {
+-	case ACTION_METER_COLOR_GREEN:
+-		color = RTE_COLOR_GREEN;
+-	break;
+-	case ACTION_METER_COLOR_YELLOW:
+-		color = RTE_COLOR_YELLOW;
+-	break;
+-	case ACTION_METER_COLOR_RED:
+-		color = RTE_COLOR_RED;
+-	break;
+-	default:
+-		return -1;
+-	}
+-
+-	if (!ctx->object)
+-		return len;
+-	action_data = ctx->object;
+-	conf = (struct rte_flow_action_meter_color *)
+-					(uintptr_t)(action_data->conf);
+-	conf->color = color;
+-	return len;
+-}
+-
+-/** Parse RSS action. */
+-static int
+-parse_vc_action_rss(struct context *ctx, const struct token *token,
+-		    const char *str, unsigned int len,
+-		    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_rss_data *action_rss_data;
+-	unsigned int i;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Set up default configuration. */
+-	action_rss_data = ctx->object;
+-	*action_rss_data = (struct action_rss_data){
+-		.conf = (struct rte_flow_action_rss){
+-			.func = RTE_ETH_HASH_FUNCTION_DEFAULT,
+-			.level = 0,
+-			.types = rss_hf,
+-			.key_len = 0,
+-			.queue_num = RTE_MIN(nb_rxq, ACTION_RSS_QUEUE_NUM),
+-			.key = NULL,
+-			.queue = action_rss_data->queue,
+-		},
+-		.queue = { 0 },
+-	};
+-	for (i = 0; i < action_rss_data->conf.queue_num; ++i)
+-		action_rss_data->queue[i] = i;
+-	action->conf = &action_rss_data->conf;
+-	return ret;
+-}
+-
+-/**
+- * Parse func field for RSS action.
+- *
+- * The RTE_ETH_HASH_FUNCTION_* value to assign is derived from the
+- * ACTION_RSS_FUNC_* index that called this function.
+- */
+-static int
+-parse_vc_action_rss_func(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len,
+-			 void *buf, unsigned int size)
+-{
+-	struct action_rss_data *action_rss_data;
+-	enum rte_eth_hash_function func;
+-
+-	(void)buf;
+-	(void)size;
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	switch (ctx->curr) {
+-	case ACTION_RSS_FUNC_DEFAULT:
+-		func = RTE_ETH_HASH_FUNCTION_DEFAULT;
+-		break;
+-	case ACTION_RSS_FUNC_TOEPLITZ:
+-		func = RTE_ETH_HASH_FUNCTION_TOEPLITZ;
+-		break;
+-	case ACTION_RSS_FUNC_SIMPLE_XOR:
+-		func = RTE_ETH_HASH_FUNCTION_SIMPLE_XOR;
+-		break;
+-	case ACTION_RSS_FUNC_SYMMETRIC_TOEPLITZ:
+-		func = RTE_ETH_HASH_FUNCTION_SYMMETRIC_TOEPLITZ;
+-		break;
+-	default:
+-		return -1;
+-	}
+-	if (!ctx->object)
+-		return len;
+-	action_rss_data = ctx->object;
+-	action_rss_data->conf.func = func;
+-	return len;
+-}
+-
+-/**
+- * Parse type field for RSS action.
+- *
+- * Valid tokens are type field names and the "end" token.
+- */
+-static int
+-parse_vc_action_rss_type(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len,
+-			  void *buf, unsigned int size)
+-{
+-	struct action_rss_data *action_rss_data;
+-	unsigned int i;
+-
+-	(void)token;
+-	(void)buf;
+-	(void)size;
+-	if (ctx->curr != ACTION_RSS_TYPE)
+-		return -1;
+-	if (!(ctx->objdata >> 16) && ctx->object) {
+-		action_rss_data = ctx->object;
+-		action_rss_data->conf.types = 0;
+-	}
+-	if (!strcmp_partial("end", str, len)) {
+-		ctx->objdata &= 0xffff;
+-		return len;
+-	}
+-	for (i = 0; rss_type_table[i].str; ++i)
+-		if (!strcmp_partial(rss_type_table[i].str, str, len))
+-			break;
+-	if (!rss_type_table[i].str)
+-		return -1;
+-	ctx->objdata = 1 << 16 | (ctx->objdata & 0xffff);
+-	/* Repeat token. */
+-	if (ctx->next_num == RTE_DIM(ctx->next))
+-		return -1;
+-	ctx->next[ctx->next_num++] = NEXT_ENTRY(ACTION_RSS_TYPE);
+-	if (!ctx->object)
+-		return len;
+-	action_rss_data = ctx->object;
+-	action_rss_data->conf.types |= rss_type_table[i].rss_type;
+-	return len;
+-}
+-
+-/**
+- * Parse queue field for RSS action.
+- *
+- * Valid tokens are queue indices and the "end" token.
+- */
+-static int
+-parse_vc_action_rss_queue(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len,
+-			  void *buf, unsigned int size)
+-{
+-	struct action_rss_data *action_rss_data;
+-	const struct arg *arg;
+-	int ret;
+-	int i;
+-
+-	(void)token;
+-	(void)buf;
+-	(void)size;
+-	if (ctx->curr != ACTION_RSS_QUEUE)
+-		return -1;
+-	i = ctx->objdata >> 16;
+-	if (!strcmp_partial("end", str, len)) {
+-		ctx->objdata &= 0xffff;
+-		goto end;
+-	}
+-	if (i >= ACTION_RSS_QUEUE_NUM)
+-		return -1;
+-	arg = ARGS_ENTRY_ARB(offsetof(struct action_rss_data, queue) +
+-			     i * sizeof(action_rss_data->queue[i]),
+-			     sizeof(action_rss_data->queue[i]));
+-	if (push_args(ctx, arg))
+-		return -1;
+-	ret = parse_int(ctx, token, str, len, NULL, 0);
+-	if (ret < 0) {
+-		pop_args(ctx);
+-		return -1;
+-	}
+-	++i;
+-	ctx->objdata = i << 16 | (ctx->objdata & 0xffff);
+-	/* Repeat token. */
+-	if (ctx->next_num == RTE_DIM(ctx->next))
+-		return -1;
+-	ctx->next[ctx->next_num++] = NEXT_ENTRY(ACTION_RSS_QUEUE);
+-end:
+-	if (!ctx->object)
+-		return len;
+-	action_rss_data = ctx->object;
+-	action_rss_data->conf.queue_num = i;
+-	action_rss_data->conf.queue = i ? action_rss_data->queue : NULL;
+-	return len;
+-}
+-
+-/** Setup VXLAN encap configuration. */
+-static int
+-parse_setup_vxlan_encap_data(struct action_vxlan_encap_data *action_vxlan_encap_data)
+-{
+-	/* Set up default configuration. */
+-	*action_vxlan_encap_data = (struct action_vxlan_encap_data){
+-		.conf = (struct rte_flow_action_vxlan_encap){
+-			.definition = action_vxlan_encap_data->items,
+-		},
+-		.items = {
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_ETH,
+-				.spec = &action_vxlan_encap_data->item_eth,
+-				.mask = &rte_flow_item_eth_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_VLAN,
+-				.spec = &action_vxlan_encap_data->item_vlan,
+-				.mask = &rte_flow_item_vlan_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_IPV4,
+-				.spec = &action_vxlan_encap_data->item_ipv4,
+-				.mask = &rte_flow_item_ipv4_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_UDP,
+-				.spec = &action_vxlan_encap_data->item_udp,
+-				.mask = &rte_flow_item_udp_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_VXLAN,
+-				.spec = &action_vxlan_encap_data->item_vxlan,
+-				.mask = &rte_flow_item_vxlan_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_END,
+-			},
+-		},
+-		.item_eth.hdr.ether_type = 0,
+-		.item_vlan = {
+-			.hdr.vlan_tci = vxlan_encap_conf.vlan_tci,
+-			.hdr.eth_proto = 0,
+-		},
+-		.item_ipv4.hdr = {
+-			.src_addr = vxlan_encap_conf.ipv4_src,
+-			.dst_addr = vxlan_encap_conf.ipv4_dst,
+-		},
+-		.item_udp.hdr = {
+-			.src_port = vxlan_encap_conf.udp_src,
+-			.dst_port = vxlan_encap_conf.udp_dst,
+-		},
+-		.item_vxlan.hdr.flags = 0,
+-	};
+-	memcpy(action_vxlan_encap_data->item_eth.hdr.dst_addr.addr_bytes,
+-	       vxlan_encap_conf.eth_dst, RTE_ETHER_ADDR_LEN);
+-	memcpy(action_vxlan_encap_data->item_eth.hdr.src_addr.addr_bytes,
+-	       vxlan_encap_conf.eth_src, RTE_ETHER_ADDR_LEN);
+-	if (!vxlan_encap_conf.select_ipv4) {
+-		memcpy(&action_vxlan_encap_data->item_ipv6.hdr.src_addr,
+-		       &vxlan_encap_conf.ipv6_src,
+-		       sizeof(vxlan_encap_conf.ipv6_src));
+-		memcpy(&action_vxlan_encap_data->item_ipv6.hdr.dst_addr,
+-		       &vxlan_encap_conf.ipv6_dst,
+-		       sizeof(vxlan_encap_conf.ipv6_dst));
+-		action_vxlan_encap_data->items[2] = (struct rte_flow_item){
+-			.type = RTE_FLOW_ITEM_TYPE_IPV6,
+-			.spec = &action_vxlan_encap_data->item_ipv6,
+-			.mask = &rte_flow_item_ipv6_mask,
+-		};
+-	}
+-	if (!vxlan_encap_conf.select_vlan)
+-		action_vxlan_encap_data->items[1].type =
+-			RTE_FLOW_ITEM_TYPE_VOID;
+-	if (vxlan_encap_conf.select_tos_ttl) {
+-		if (vxlan_encap_conf.select_ipv4) {
+-			static struct rte_flow_item_ipv4 ipv4_mask_tos;
+-
+-			memcpy(&ipv4_mask_tos, &rte_flow_item_ipv4_mask,
+-			       sizeof(ipv4_mask_tos));
+-			ipv4_mask_tos.hdr.type_of_service = 0xff;
+-			ipv4_mask_tos.hdr.time_to_live = 0xff;
+-			action_vxlan_encap_data->item_ipv4.hdr.type_of_service =
+-					vxlan_encap_conf.ip_tos;
+-			action_vxlan_encap_data->item_ipv4.hdr.time_to_live =
+-					vxlan_encap_conf.ip_ttl;
+-			action_vxlan_encap_data->items[2].mask =
+-							&ipv4_mask_tos;
+-		} else {
+-			static struct rte_flow_item_ipv6 ipv6_mask_tos;
+-
+-			memcpy(&ipv6_mask_tos, &rte_flow_item_ipv6_mask,
+-			       sizeof(ipv6_mask_tos));
+-			ipv6_mask_tos.hdr.vtc_flow |=
+-				RTE_BE32(0xfful << RTE_IPV6_HDR_TC_SHIFT);
+-			ipv6_mask_tos.hdr.hop_limits = 0xff;
+-			action_vxlan_encap_data->item_ipv6.hdr.vtc_flow |=
+-				rte_cpu_to_be_32
+-					((uint32_t)vxlan_encap_conf.ip_tos <<
+-					 RTE_IPV6_HDR_TC_SHIFT);
+-			action_vxlan_encap_data->item_ipv6.hdr.hop_limits =
+-					vxlan_encap_conf.ip_ttl;
+-			action_vxlan_encap_data->items[2].mask =
+-							&ipv6_mask_tos;
+-		}
+-	}
+-	memcpy(action_vxlan_encap_data->item_vxlan.hdr.vni, vxlan_encap_conf.vni,
+-	       RTE_DIM(vxlan_encap_conf.vni));
+-	return 0;
+-}
+-
+-/** Parse VXLAN encap action. */
+-static int
+-parse_vc_action_vxlan_encap(struct context *ctx, const struct token *token,
+-			    const char *str, unsigned int len,
+-			    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_vxlan_encap_data *action_vxlan_encap_data;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	action_vxlan_encap_data = ctx->object;
+-	parse_setup_vxlan_encap_data(action_vxlan_encap_data);
+-	action->conf = &action_vxlan_encap_data->conf;
+-	return ret;
+-}
+-
+-/** Setup NVGRE encap configuration. */
+-static int
+-parse_setup_nvgre_encap_data(struct action_nvgre_encap_data *action_nvgre_encap_data)
+-{
+-	/* Set up default configuration. */
+-	*action_nvgre_encap_data = (struct action_nvgre_encap_data){
+-		.conf = (struct rte_flow_action_nvgre_encap){
+-			.definition = action_nvgre_encap_data->items,
+-		},
+-		.items = {
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_ETH,
+-				.spec = &action_nvgre_encap_data->item_eth,
+-				.mask = &rte_flow_item_eth_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_VLAN,
+-				.spec = &action_nvgre_encap_data->item_vlan,
+-				.mask = &rte_flow_item_vlan_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_IPV4,
+-				.spec = &action_nvgre_encap_data->item_ipv4,
+-				.mask = &rte_flow_item_ipv4_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_NVGRE,
+-				.spec = &action_nvgre_encap_data->item_nvgre,
+-				.mask = &rte_flow_item_nvgre_mask,
+-			},
+-			{
+-				.type = RTE_FLOW_ITEM_TYPE_END,
+-			},
+-		},
+-		.item_eth.hdr.ether_type = 0,
+-		.item_vlan = {
+-			.hdr.vlan_tci = nvgre_encap_conf.vlan_tci,
+-			.hdr.eth_proto = 0,
+-		},
+-		.item_ipv4.hdr = {
+-		       .src_addr = nvgre_encap_conf.ipv4_src,
+-		       .dst_addr = nvgre_encap_conf.ipv4_dst,
+-		},
+-		.item_nvgre.c_k_s_rsvd0_ver = RTE_BE16(0x2000),
+-		.item_nvgre.protocol = RTE_BE16(RTE_ETHER_TYPE_TEB),
+-		.item_nvgre.flow_id = 0,
+-	};
+-	memcpy(action_nvgre_encap_data->item_eth.hdr.dst_addr.addr_bytes,
+-	       nvgre_encap_conf.eth_dst, RTE_ETHER_ADDR_LEN);
+-	memcpy(action_nvgre_encap_data->item_eth.hdr.src_addr.addr_bytes,
+-	       nvgre_encap_conf.eth_src, RTE_ETHER_ADDR_LEN);
+-	if (!nvgre_encap_conf.select_ipv4) {
+-		memcpy(&action_nvgre_encap_data->item_ipv6.hdr.src_addr,
+-		       &nvgre_encap_conf.ipv6_src,
+-		       sizeof(nvgre_encap_conf.ipv6_src));
+-		memcpy(&action_nvgre_encap_data->item_ipv6.hdr.dst_addr,
+-		       &nvgre_encap_conf.ipv6_dst,
+-		       sizeof(nvgre_encap_conf.ipv6_dst));
+-		action_nvgre_encap_data->items[2] = (struct rte_flow_item){
+-			.type = RTE_FLOW_ITEM_TYPE_IPV6,
+-			.spec = &action_nvgre_encap_data->item_ipv6,
+-			.mask = &rte_flow_item_ipv6_mask,
+-		};
+-	}
+-	if (!nvgre_encap_conf.select_vlan)
+-		action_nvgre_encap_data->items[1].type =
+-			RTE_FLOW_ITEM_TYPE_VOID;
+-	memcpy(action_nvgre_encap_data->item_nvgre.tni, nvgre_encap_conf.tni,
+-	       RTE_DIM(nvgre_encap_conf.tni));
+-	return 0;
+-}
+-
+-/** Parse NVGRE encap action. */
+-static int
+-parse_vc_action_nvgre_encap(struct context *ctx, const struct token *token,
+-			    const char *str, unsigned int len,
+-			    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_nvgre_encap_data *action_nvgre_encap_data;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	action_nvgre_encap_data = ctx->object;
+-	parse_setup_nvgre_encap_data(action_nvgre_encap_data);
+-	action->conf = &action_nvgre_encap_data->conf;
+-	return ret;
+-}
+-
+-/** Parse l2 encap action. */
+-static int
+-parse_vc_action_l2_encap(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len,
+-			 void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_raw_encap_data *action_encap_data;
+-	struct rte_flow_item_eth eth = { .hdr.ether_type = 0, };
+-	struct rte_flow_item_vlan vlan = {
+-		.hdr.vlan_tci = mplsoudp_encap_conf.vlan_tci,
+-		.hdr.eth_proto = 0,
+-	};
+-	uint8_t *header;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	action_encap_data = ctx->object;
+-	*action_encap_data = (struct action_raw_encap_data) {
+-		.conf = (struct rte_flow_action_raw_encap){
+-			.data = action_encap_data->data,
+-		},
+-		.data = {},
+-	};
+-	header = action_encap_data->data;
+-	if (l2_encap_conf.select_vlan)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
+-	else if (l2_encap_conf.select_ipv4)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-	else
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-	memcpy(eth.hdr.dst_addr.addr_bytes,
+-	       l2_encap_conf.eth_dst, RTE_ETHER_ADDR_LEN);
+-	memcpy(eth.hdr.src_addr.addr_bytes,
+-	       l2_encap_conf.eth_src, RTE_ETHER_ADDR_LEN);
+-	memcpy(header, &eth.hdr, sizeof(struct rte_ether_hdr));
+-	header += sizeof(struct rte_ether_hdr);
+-	if (l2_encap_conf.select_vlan) {
+-		if (l2_encap_conf.select_ipv4)
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-		else
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-		memcpy(header, &vlan.hdr, sizeof(struct rte_vlan_hdr));
+-		header += sizeof(struct rte_vlan_hdr);
+-	}
+-	action_encap_data->conf.size = header -
+-		action_encap_data->data;
+-	action->conf = &action_encap_data->conf;
+-	return ret;
+-}
+-
+-/** Parse l2 decap action. */
+-static int
+-parse_vc_action_l2_decap(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len,
+-			 void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_raw_decap_data *action_decap_data;
+-	struct rte_flow_item_eth eth = { .hdr.ether_type = 0, };
+-	struct rte_flow_item_vlan vlan = {
+-		.hdr.vlan_tci = mplsoudp_encap_conf.vlan_tci,
+-		.hdr.eth_proto = 0,
+-	};
+-	uint8_t *header;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	action_decap_data = ctx->object;
+-	*action_decap_data = (struct action_raw_decap_data) {
+-		.conf = (struct rte_flow_action_raw_decap){
+-			.data = action_decap_data->data,
+-		},
+-		.data = {},
+-	};
+-	header = action_decap_data->data;
+-	if (l2_decap_conf.select_vlan)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
+-	memcpy(header, &eth.hdr, sizeof(struct rte_ether_hdr));
+-	header += sizeof(struct rte_ether_hdr);
+-	if (l2_decap_conf.select_vlan) {
+-		memcpy(header, &vlan.hdr, sizeof(struct rte_vlan_hdr));
+-		header += sizeof(struct rte_vlan_hdr);
+-	}
+-	action_decap_data->conf.size = header -
+-		action_decap_data->data;
+-	action->conf = &action_decap_data->conf;
+-	return ret;
+-}
+-
+-#define ETHER_TYPE_MPLS_UNICAST 0x8847
+-
+-/** Parse MPLSOGRE encap action. */
+-static int
+-parse_vc_action_mplsogre_encap(struct context *ctx, const struct token *token,
+-			       const char *str, unsigned int len,
+-			       void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_raw_encap_data *action_encap_data;
+-	struct rte_flow_item_eth eth = { .hdr.ether_type = 0, };
+-	struct rte_flow_item_vlan vlan = {
+-		.hdr.vlan_tci = mplsogre_encap_conf.vlan_tci,
+-		.hdr.eth_proto = 0,
+-	};
+-	struct rte_flow_item_ipv4 ipv4 = {
+-		.hdr =  {
+-			.src_addr = mplsogre_encap_conf.ipv4_src,
+-			.dst_addr = mplsogre_encap_conf.ipv4_dst,
+-			.next_proto_id = IPPROTO_GRE,
+-			.version_ihl = RTE_IPV4_VHL_DEF,
+-			.time_to_live = IPDEFTTL,
+-		},
+-	};
+-	struct rte_flow_item_ipv6 ipv6 = {
+-		.hdr =  {
+-			.proto = IPPROTO_GRE,
+-			.hop_limits = IPDEFTTL,
+-		},
+-	};
+-	struct rte_flow_item_gre gre = {
+-		.protocol = rte_cpu_to_be_16(ETHER_TYPE_MPLS_UNICAST),
+-	};
+-	struct rte_flow_item_mpls mpls = {
+-		.ttl = 0,
+-	};
+-	uint8_t *header;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	action_encap_data = ctx->object;
+-	*action_encap_data = (struct action_raw_encap_data) {
+-		.conf = (struct rte_flow_action_raw_encap){
+-			.data = action_encap_data->data,
+-		},
+-		.data = {},
+-		.preserve = {},
+-	};
+-	header = action_encap_data->data;
+-	if (mplsogre_encap_conf.select_vlan)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
+-	else if (mplsogre_encap_conf.select_ipv4)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-	else
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-	memcpy(eth.hdr.dst_addr.addr_bytes,
+-	       mplsogre_encap_conf.eth_dst, RTE_ETHER_ADDR_LEN);
+-	memcpy(eth.hdr.src_addr.addr_bytes,
+-	       mplsogre_encap_conf.eth_src, RTE_ETHER_ADDR_LEN);
+-	memcpy(header, &eth.hdr, sizeof(struct rte_ether_hdr));
+-	header += sizeof(struct rte_ether_hdr);
+-	if (mplsogre_encap_conf.select_vlan) {
+-		if (mplsogre_encap_conf.select_ipv4)
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-		else
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-		memcpy(header, &vlan.hdr, sizeof(struct rte_vlan_hdr));
+-		header += sizeof(struct rte_vlan_hdr);
+-	}
+-	if (mplsogre_encap_conf.select_ipv4) {
+-		memcpy(header, &ipv4, sizeof(ipv4));
+-		header += sizeof(ipv4);
+-	} else {
+-		memcpy(&ipv6.hdr.src_addr,
+-		       &mplsogre_encap_conf.ipv6_src,
+-		       sizeof(mplsogre_encap_conf.ipv6_src));
+-		memcpy(&ipv6.hdr.dst_addr,
+-		       &mplsogre_encap_conf.ipv6_dst,
+-		       sizeof(mplsogre_encap_conf.ipv6_dst));
+-		memcpy(header, &ipv6, sizeof(ipv6));
+-		header += sizeof(ipv6);
+-	}
+-	memcpy(header, &gre, sizeof(gre));
+-	header += sizeof(gre);
+-	memcpy(mpls.label_tc_s, mplsogre_encap_conf.label,
+-	       RTE_DIM(mplsogre_encap_conf.label));
+-	mpls.label_tc_s[2] |= 0x1;
+-	memcpy(header, &mpls, sizeof(mpls));
+-	header += sizeof(mpls);
+-	action_encap_data->conf.size = header -
+-		action_encap_data->data;
+-	action->conf = &action_encap_data->conf;
+-	return ret;
+-}
+-
+-/** Parse MPLSOGRE decap action. */
+-static int
+-parse_vc_action_mplsogre_decap(struct context *ctx, const struct token *token,
+-			       const char *str, unsigned int len,
+-			       void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_raw_decap_data *action_decap_data;
+-	struct rte_flow_item_eth eth = { .hdr.ether_type = 0, };
+-	struct rte_flow_item_vlan vlan = {.hdr.vlan_tci = 0};
+-	struct rte_flow_item_ipv4 ipv4 = {
+-		.hdr =  {
+-			.next_proto_id = IPPROTO_GRE,
+-		},
+-	};
+-	struct rte_flow_item_ipv6 ipv6 = {
+-		.hdr =  {
+-			.proto = IPPROTO_GRE,
+-		},
+-	};
+-	struct rte_flow_item_gre gre = {
+-		.protocol = rte_cpu_to_be_16(ETHER_TYPE_MPLS_UNICAST),
+-	};
+-	struct rte_flow_item_mpls mpls;
+-	uint8_t *header;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	action_decap_data = ctx->object;
+-	*action_decap_data = (struct action_raw_decap_data) {
+-		.conf = (struct rte_flow_action_raw_decap){
+-			.data = action_decap_data->data,
+-		},
+-		.data = {},
+-	};
+-	header = action_decap_data->data;
+-	if (mplsogre_decap_conf.select_vlan)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
+-	else if (mplsogre_encap_conf.select_ipv4)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-	else
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-	memcpy(eth.hdr.dst_addr.addr_bytes,
+-	       mplsogre_encap_conf.eth_dst, RTE_ETHER_ADDR_LEN);
+-	memcpy(eth.hdr.src_addr.addr_bytes,
+-	       mplsogre_encap_conf.eth_src, RTE_ETHER_ADDR_LEN);
+-	memcpy(header, &eth.hdr, sizeof(struct rte_ether_hdr));
+-	header += sizeof(struct rte_ether_hdr);
+-	if (mplsogre_encap_conf.select_vlan) {
+-		if (mplsogre_encap_conf.select_ipv4)
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-		else
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-		memcpy(header, &vlan.hdr, sizeof(struct rte_vlan_hdr));
+-		header += sizeof(struct rte_vlan_hdr);
+-	}
+-	if (mplsogre_encap_conf.select_ipv4) {
+-		memcpy(header, &ipv4, sizeof(ipv4));
+-		header += sizeof(ipv4);
+-	} else {
+-		memcpy(header, &ipv6, sizeof(ipv6));
+-		header += sizeof(ipv6);
+-	}
+-	memcpy(header, &gre, sizeof(gre));
+-	header += sizeof(gre);
+-	memset(&mpls, 0, sizeof(mpls));
+-	memcpy(header, &mpls, sizeof(mpls));
+-	header += sizeof(mpls);
+-	action_decap_data->conf.size = header -
+-		action_decap_data->data;
+-	action->conf = &action_decap_data->conf;
+-	return ret;
+-}
+-
+-/** Parse MPLSOUDP encap action. */
+-static int
+-parse_vc_action_mplsoudp_encap(struct context *ctx, const struct token *token,
+-			       const char *str, unsigned int len,
+-			       void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_raw_encap_data *action_encap_data;
+-	struct rte_flow_item_eth eth = { .hdr.ether_type = 0, };
+-	struct rte_flow_item_vlan vlan = {
+-		.hdr.vlan_tci = mplsoudp_encap_conf.vlan_tci,
+-		.hdr.eth_proto = 0,
+-	};
+-	struct rte_flow_item_ipv4 ipv4 = {
+-		.hdr =  {
+-			.src_addr = mplsoudp_encap_conf.ipv4_src,
+-			.dst_addr = mplsoudp_encap_conf.ipv4_dst,
+-			.next_proto_id = IPPROTO_UDP,
+-			.version_ihl = RTE_IPV4_VHL_DEF,
+-			.time_to_live = IPDEFTTL,
+-		},
+-	};
+-	struct rte_flow_item_ipv6 ipv6 = {
+-		.hdr =  {
+-			.proto = IPPROTO_UDP,
+-			.hop_limits = IPDEFTTL,
+-		},
+-	};
+-	struct rte_flow_item_udp udp = {
+-		.hdr = {
+-			.src_port = mplsoudp_encap_conf.udp_src,
+-			.dst_port = mplsoudp_encap_conf.udp_dst,
+-		},
+-	};
+-	struct rte_flow_item_mpls mpls;
+-	uint8_t *header;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	action_encap_data = ctx->object;
+-	*action_encap_data = (struct action_raw_encap_data) {
+-		.conf = (struct rte_flow_action_raw_encap){
+-			.data = action_encap_data->data,
+-		},
+-		.data = {},
+-		.preserve = {},
+-	};
+-	header = action_encap_data->data;
+-	if (mplsoudp_encap_conf.select_vlan)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
+-	else if (mplsoudp_encap_conf.select_ipv4)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-	else
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-	memcpy(eth.hdr.dst_addr.addr_bytes,
+-	       mplsoudp_encap_conf.eth_dst, RTE_ETHER_ADDR_LEN);
+-	memcpy(eth.hdr.src_addr.addr_bytes,
+-	       mplsoudp_encap_conf.eth_src, RTE_ETHER_ADDR_LEN);
+-	memcpy(header, &eth.hdr, sizeof(struct rte_ether_hdr));
+-	header += sizeof(struct rte_ether_hdr);
+-	if (mplsoudp_encap_conf.select_vlan) {
+-		if (mplsoudp_encap_conf.select_ipv4)
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-		else
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-		memcpy(header, &vlan.hdr, sizeof(struct rte_vlan_hdr));
+-		header += sizeof(struct rte_vlan_hdr);
+-	}
+-	if (mplsoudp_encap_conf.select_ipv4) {
+-		memcpy(header, &ipv4, sizeof(ipv4));
+-		header += sizeof(ipv4);
+-	} else {
+-		memcpy(&ipv6.hdr.src_addr,
+-		       &mplsoudp_encap_conf.ipv6_src,
+-		       sizeof(mplsoudp_encap_conf.ipv6_src));
+-		memcpy(&ipv6.hdr.dst_addr,
+-		       &mplsoudp_encap_conf.ipv6_dst,
+-		       sizeof(mplsoudp_encap_conf.ipv6_dst));
+-		memcpy(header, &ipv6, sizeof(ipv6));
+-		header += sizeof(ipv6);
+-	}
+-	memcpy(header, &udp, sizeof(udp));
+-	header += sizeof(udp);
+-	memcpy(mpls.label_tc_s, mplsoudp_encap_conf.label,
+-	       RTE_DIM(mplsoudp_encap_conf.label));
+-	mpls.label_tc_s[2] |= 0x1;
+-	memcpy(header, &mpls, sizeof(mpls));
+-	header += sizeof(mpls);
+-	action_encap_data->conf.size = header -
+-		action_encap_data->data;
+-	action->conf = &action_encap_data->conf;
+-	return ret;
+-}
+-
+-/** Parse MPLSOUDP decap action. */
+-static int
+-parse_vc_action_mplsoudp_decap(struct context *ctx, const struct token *token,
+-			       const char *str, unsigned int len,
+-			       void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_raw_decap_data *action_decap_data;
+-	struct rte_flow_item_eth eth = { .hdr.ether_type = 0, };
+-	struct rte_flow_item_vlan vlan = {.hdr.vlan_tci = 0};
+-	struct rte_flow_item_ipv4 ipv4 = {
+-		.hdr =  {
+-			.next_proto_id = IPPROTO_UDP,
+-		},
+-	};
+-	struct rte_flow_item_ipv6 ipv6 = {
+-		.hdr =  {
+-			.proto = IPPROTO_UDP,
+-		},
+-	};
+-	struct rte_flow_item_udp udp = {
+-		.hdr = {
+-			.dst_port = rte_cpu_to_be_16(6635),
+-		},
+-	};
+-	struct rte_flow_item_mpls mpls;
+-	uint8_t *header;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	action_decap_data = ctx->object;
+-	*action_decap_data = (struct action_raw_decap_data) {
+-		.conf = (struct rte_flow_action_raw_decap){
+-			.data = action_decap_data->data,
+-		},
+-		.data = {},
+-	};
+-	header = action_decap_data->data;
+-	if (mplsoudp_decap_conf.select_vlan)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
+-	else if (mplsoudp_encap_conf.select_ipv4)
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-	else
+-		eth.hdr.ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-	memcpy(eth.hdr.dst_addr.addr_bytes,
+-	       mplsoudp_encap_conf.eth_dst, RTE_ETHER_ADDR_LEN);
+-	memcpy(eth.hdr.src_addr.addr_bytes,
+-	       mplsoudp_encap_conf.eth_src, RTE_ETHER_ADDR_LEN);
+-	memcpy(header, &eth.hdr, sizeof(struct rte_ether_hdr));
+-	header += sizeof(struct rte_ether_hdr);
+-	if (mplsoudp_encap_conf.select_vlan) {
+-		if (mplsoudp_encap_conf.select_ipv4)
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
+-		else
+-			vlan.hdr.eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
+-		memcpy(header, &vlan.hdr, sizeof(struct rte_vlan_hdr));
+-		header += sizeof(struct rte_vlan_hdr);
+-	}
+-	if (mplsoudp_encap_conf.select_ipv4) {
+-		memcpy(header, &ipv4, sizeof(ipv4));
+-		header += sizeof(ipv4);
+-	} else {
+-		memcpy(header, &ipv6, sizeof(ipv6));
+-		header += sizeof(ipv6);
+-	}
+-	memcpy(header, &udp, sizeof(udp));
+-	header += sizeof(udp);
+-	memset(&mpls, 0, sizeof(mpls));
+-	memcpy(header, &mpls, sizeof(mpls));
+-	header += sizeof(mpls);
+-	action_decap_data->conf.size = header -
+-		action_decap_data->data;
+-	action->conf = &action_decap_data->conf;
+-	return ret;
+-}
+-
+-static int
+-parse_vc_action_raw_decap_index(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len, void *buf,
+-				unsigned int size)
+-{
+-	struct action_raw_decap_data *action_raw_decap_data;
+-	struct rte_flow_action *action;
+-	const struct arg *arg;
+-	struct buffer *out = buf;
+-	int ret;
+-	uint16_t idx;
+-
+-	RTE_SET_USED(token);
+-	RTE_SET_USED(buf);
+-	RTE_SET_USED(size);
+-	arg = ARGS_ENTRY_ARB_BOUNDED
+-		(offsetof(struct action_raw_decap_data, idx),
+-		 sizeof(((struct action_raw_decap_data *)0)->idx),
+-		 0, RAW_ENCAP_CONFS_MAX_NUM - 1);
+-	if (push_args(ctx, arg))
+-		return -1;
+-	ret = parse_int(ctx, token, str, len, NULL, 0);
+-	if (ret < 0) {
+-		pop_args(ctx);
+-		return -1;
+-	}
+-	if (!ctx->object)
+-		return len;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	action_raw_decap_data = ctx->object;
+-	idx = action_raw_decap_data->idx;
+-	action_raw_decap_data->conf.data = raw_decap_confs[idx].data;
+-	action_raw_decap_data->conf.size = raw_decap_confs[idx].size;
+-	action->conf = &action_raw_decap_data->conf;
+-	return len;
+-}
+-
+-
+-static int
+-parse_vc_action_raw_encap_index(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len, void *buf,
+-				unsigned int size)
+-{
+-	struct action_raw_encap_data *action_raw_encap_data;
+-	struct rte_flow_action *action;
+-	const struct arg *arg;
+-	struct buffer *out = buf;
+-	int ret;
+-	uint16_t idx;
+-
+-	RTE_SET_USED(token);
+-	RTE_SET_USED(buf);
+-	RTE_SET_USED(size);
+-	if (ctx->curr != ACTION_RAW_ENCAP_INDEX_VALUE)
+-		return -1;
+-	arg = ARGS_ENTRY_ARB_BOUNDED
+-		(offsetof(struct action_raw_encap_data, idx),
+-		 sizeof(((struct action_raw_encap_data *)0)->idx),
+-		 0, RAW_ENCAP_CONFS_MAX_NUM - 1);
+-	if (push_args(ctx, arg))
+-		return -1;
+-	ret = parse_int(ctx, token, str, len, NULL, 0);
+-	if (ret < 0) {
+-		pop_args(ctx);
+-		return -1;
+-	}
+-	if (!ctx->object)
+-		return len;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	action_raw_encap_data = ctx->object;
+-	idx = action_raw_encap_data->idx;
+-	action_raw_encap_data->conf.data = raw_encap_confs[idx].data;
+-	action_raw_encap_data->conf.size = raw_encap_confs[idx].size;
+-	action_raw_encap_data->conf.preserve = NULL;
+-	action->conf = &action_raw_encap_data->conf;
+-	return len;
+-}
+-
+-static int
+-parse_vc_action_raw_encap(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len, void *buf,
+-			  unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	return ret;
+-}
+-
+-static int
+-parse_vc_action_raw_decap(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len, void *buf,
+-			  unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_raw_decap_data *action_raw_decap_data = NULL;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	action_raw_decap_data = ctx->object;
+-	action_raw_decap_data->conf.data = raw_decap_confs[0].data;
+-	action_raw_decap_data->conf.size = raw_decap_confs[0].size;
+-	action->conf = &action_raw_decap_data->conf;
+-	return ret;
+-}
+-
+-static int
+-parse_vc_action_ipv6_ext_remove(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len, void *buf,
+-				unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_ipv6_ext_remove_data *ipv6_ext_remove_data = NULL;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	ipv6_ext_remove_data = ctx->object;
+-	ipv6_ext_remove_data->conf.type = ipv6_ext_remove_confs[0].type;
+-	action->conf = &ipv6_ext_remove_data->conf;
+-	return ret;
+-}
+-
+-static int
+-parse_vc_action_ipv6_ext_remove_index(struct context *ctx, const struct token *token,
+-				      const char *str, unsigned int len, void *buf,
+-				      unsigned int size)
+-{
+-	struct action_ipv6_ext_remove_data *action_ipv6_ext_remove_data;
+-	struct rte_flow_action *action;
+-	const struct arg *arg;
+-	struct buffer *out = buf;
+-	int ret;
+-	uint16_t idx;
+-
+-	RTE_SET_USED(token);
+-	RTE_SET_USED(buf);
+-	RTE_SET_USED(size);
+-	arg = ARGS_ENTRY_ARB_BOUNDED
+-		(offsetof(struct action_ipv6_ext_remove_data, idx),
+-		 sizeof(((struct action_ipv6_ext_remove_data *)0)->idx),
+-		 0, IPV6_EXT_PUSH_CONFS_MAX_NUM - 1);
+-	if (push_args(ctx, arg))
+-		return -1;
+-	ret = parse_int(ctx, token, str, len, NULL, 0);
+-	if (ret < 0) {
+-		pop_args(ctx);
+-		return -1;
+-	}
+-	if (!ctx->object)
+-		return len;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	action_ipv6_ext_remove_data = ctx->object;
+-	idx = action_ipv6_ext_remove_data->idx;
+-	action_ipv6_ext_remove_data->conf.type = ipv6_ext_remove_confs[idx].type;
+-	action->conf = &action_ipv6_ext_remove_data->conf;
+-	return len;
+-}
+-
+-static int
+-parse_vc_action_ipv6_ext_push(struct context *ctx, const struct token *token,
+-			      const char *str, unsigned int len, void *buf,
+-			      unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_ipv6_ext_push_data *ipv6_ext_push_data = NULL;
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	ipv6_ext_push_data = ctx->object;
+-	ipv6_ext_push_data->conf.type = ipv6_ext_push_confs[0].type;
+-	ipv6_ext_push_data->conf.data = ipv6_ext_push_confs[0].data;
+-	ipv6_ext_push_data->conf.size = ipv6_ext_push_confs[0].size;
+-	action->conf = &ipv6_ext_push_data->conf;
+-	return ret;
+-}
+-
+-static int
+-parse_vc_action_ipv6_ext_push_index(struct context *ctx, const struct token *token,
+-				    const char *str, unsigned int len, void *buf,
+-				    unsigned int size)
+-{
+-	struct action_ipv6_ext_push_data *action_ipv6_ext_push_data;
+-	struct rte_flow_action *action;
+-	const struct arg *arg;
+-	struct buffer *out = buf;
+-	int ret;
+-	uint16_t idx;
+-
+-	RTE_SET_USED(token);
+-	RTE_SET_USED(buf);
+-	RTE_SET_USED(size);
+-	arg = ARGS_ENTRY_ARB_BOUNDED
+-		(offsetof(struct action_ipv6_ext_push_data, idx),
+-		 sizeof(((struct action_ipv6_ext_push_data *)0)->idx),
+-		 0, IPV6_EXT_PUSH_CONFS_MAX_NUM - 1);
+-	if (push_args(ctx, arg))
+-		return -1;
+-	ret = parse_int(ctx, token, str, len, NULL, 0);
+-	if (ret < 0) {
+-		pop_args(ctx);
+-		return -1;
+-	}
+-	if (!ctx->object)
+-		return len;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	action_ipv6_ext_push_data = ctx->object;
+-	idx = action_ipv6_ext_push_data->idx;
+-	action_ipv6_ext_push_data->conf.type = ipv6_ext_push_confs[idx].type;
+-	action_ipv6_ext_push_data->conf.size = ipv6_ext_push_confs[idx].size;
+-	action_ipv6_ext_push_data->conf.data = ipv6_ext_push_confs[idx].data;
+-	action->conf = &action_ipv6_ext_push_data->conf;
+-	return len;
+-}
+-
+-static int
+-parse_vc_action_set_meta(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size)
+-{
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	ret = rte_flow_dynf_metadata_register();
+-	if (ret < 0)
+-		return -1;
+-	return len;
+-}
+-
+-static int
+-parse_vc_action_sample(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_action *action;
+-	struct action_sample_data *action_sample_data = NULL;
+-	static struct rte_flow_action end_action = {
+-		RTE_FLOW_ACTION_TYPE_END, 0
+-	};
+-	int ret;
+-
+-	ret = parse_vc(ctx, token, str, len, buf, size);
+-	if (ret < 0)
+-		return ret;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return ret;
+-	if (!out->args.vc.actions_n)
+-		return -1;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	/* Point to selected object. */
+-	ctx->object = out->args.vc.data;
+-	ctx->objmask = NULL;
+-	/* Copy the headers to the buffer. */
+-	action_sample_data = ctx->object;
+-	action_sample_data->conf.actions = &end_action;
+-	action->conf = &action_sample_data->conf;
+-	return ret;
+-}
+-
+-static int
+-parse_vc_action_sample_index(struct context *ctx, const struct token *token,
+-				const char *str, unsigned int len, void *buf,
+-				unsigned int size)
+-{
+-	struct action_sample_data *action_sample_data;
+-	struct rte_flow_action *action;
+-	const struct arg *arg;
+-	struct buffer *out = buf;
+-	int ret;
+-	uint16_t idx;
+-
+-	RTE_SET_USED(token);
+-	RTE_SET_USED(buf);
+-	RTE_SET_USED(size);
+-	if (ctx->curr != ACTION_SAMPLE_INDEX_VALUE)
+-		return -1;
+-	arg = ARGS_ENTRY_ARB_BOUNDED
+-		(offsetof(struct action_sample_data, idx),
+-		 sizeof(((struct action_sample_data *)0)->idx),
+-		 0, RAW_SAMPLE_CONFS_MAX_NUM - 1);
+-	if (push_args(ctx, arg))
+-		return -1;
+-	ret = parse_int(ctx, token, str, len, NULL, 0);
+-	if (ret < 0) {
+-		pop_args(ctx);
+-		return -1;
+-	}
+-	if (!ctx->object)
+-		return len;
+-	action = &out->args.vc.actions[out->args.vc.actions_n - 1];
+-	action_sample_data = ctx->object;
+-	idx = action_sample_data->idx;
+-	action_sample_data->conf.actions = raw_sample_confs[idx].data;
+-	action->conf = &action_sample_data->conf;
+-	return len;
+-}
+-
+-/** Parse operation for modify_field command. */
+-static int
+-parse_vc_modify_field_op(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size)
+-{
+-	struct rte_flow_action_modify_field *action_modify_field;
+-	unsigned int i;
+-
+-	(void)token;
+-	(void)buf;
+-	(void)size;
+-	if (ctx->curr != ACTION_MODIFY_FIELD_OP_VALUE)
+-		return -1;
+-	for (i = 0; modify_field_ops[i]; ++i)
+-		if (!strcmp_partial(modify_field_ops[i], str, len))
+-			break;
+-	if (!modify_field_ops[i])
+-		return -1;
+-	if (!ctx->object)
+-		return len;
+-	action_modify_field = ctx->object;
+-	action_modify_field->operation = (enum rte_flow_modify_op)i;
+-	return len;
+-}
+-
+-/** Parse id for modify_field command. */
+-static int
+-parse_vc_modify_field_id(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size)
+-{
+-	struct rte_flow_action_modify_field *action_modify_field;
+-	unsigned int i;
+-
+-	(void)token;
+-	(void)buf;
+-	(void)size;
+-	if (ctx->curr != ACTION_MODIFY_FIELD_DST_TYPE_VALUE &&
+-		ctx->curr != ACTION_MODIFY_FIELD_SRC_TYPE_VALUE)
+-		return -1;
+-	for (i = 0; flow_field_ids[i]; ++i)
+-		if (!strcmp_partial(flow_field_ids[i], str, len))
+-			break;
+-	if (!flow_field_ids[i])
+-		return -1;
+-	if (!ctx->object)
+-		return len;
+-	action_modify_field = ctx->object;
+-	if (ctx->curr == ACTION_MODIFY_FIELD_DST_TYPE_VALUE)
+-		action_modify_field->dst.field = (enum rte_flow_field_id)i;
+-	else
+-		action_modify_field->src.field = (enum rte_flow_field_id)i;
+-	return len;
+-}
+-
+-/** Parse level for modify_field command. */
+-static int
+-parse_vc_modify_field_level(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size)
+-{
+-	struct rte_flow_action_modify_field *action;
+-	struct flex_item *fp = NULL;
+-	uint32_t val;
+-	struct buffer *out = buf;
+-	char *end;
+-
+-	(void)token;
+-	(void)size;
+-	if (ctx->curr != ACTION_MODIFY_FIELD_DST_LEVEL_VALUE &&
+-		ctx->curr != ACTION_MODIFY_FIELD_SRC_LEVEL_VALUE)
+-		return -1;
+-	if (!ctx->object)
+-		return len;
+-	action = ctx->object;
+-	errno = 0;
+-	val = strtoumax(str, &end, 0);
+-	if (errno || (size_t)(end - str) != len)
+-		return -1;
+-	/* No need to validate action template mask value */
+-	if (out->args.vc.masks) {
+-		if (ctx->curr == ACTION_MODIFY_FIELD_DST_LEVEL_VALUE)
+-			action->dst.level = val;
+-		else
+-			action->src.level = val;
+-		return len;
+-	}
+-	if ((ctx->curr == ACTION_MODIFY_FIELD_DST_LEVEL_VALUE &&
+-		action->dst.field == RTE_FLOW_FIELD_FLEX_ITEM) ||
+-		(ctx->curr == ACTION_MODIFY_FIELD_SRC_LEVEL_VALUE &&
+-		action->src.field == RTE_FLOW_FIELD_FLEX_ITEM)) {
+-		if (val >= FLEX_MAX_PARSERS_NUM) {
+-			printf("Bad flex item handle\n");
+-			return -1;
+-		}
+-		fp = flex_items[ctx->port][val];
+-		if (!fp) {
+-			printf("Bad flex item handle\n");
+-			return -1;
+-		}
+-	}
+-	if (ctx->curr == ACTION_MODIFY_FIELD_DST_LEVEL_VALUE) {
+-		if (action->dst.field != RTE_FLOW_FIELD_FLEX_ITEM)
+-			action->dst.level = val;
+-		else
+-			action->dst.flex_handle = fp->flex_handle;
+-	} else if (ctx->curr == ACTION_MODIFY_FIELD_SRC_LEVEL_VALUE) {
+-		if (action->src.field != RTE_FLOW_FIELD_FLEX_ITEM)
+-			action->src.level = val;
+-		else
+-			action->src.flex_handle = fp->flex_handle;
+-	}
+-	return len;
+-}
+-
+-/** Parse the conntrack update, not a rte_flow_action. */
+-static int
+-parse_vc_action_conntrack_update(struct context *ctx, const struct token *token,
+-			 const char *str, unsigned int len, void *buf,
+-			 unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_flow_modify_conntrack *ct_modify = NULL;
+-
+-	(void)size;
+-	if (ctx->curr != ACTION_CONNTRACK_UPDATE_CTX &&
+-	    ctx->curr != ACTION_CONNTRACK_UPDATE_DIR)
+-		return -1;
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	ct_modify = (struct rte_flow_modify_conntrack *)out->args.vc.data;
+-	if (ctx->curr == ACTION_CONNTRACK_UPDATE_DIR) {
+-		ct_modify->new_ct.is_original_dir =
+-				conntrack_context.is_original_dir;
+-		ct_modify->direction = 1;
+-	} else {
+-		uint32_t old_dir;
+-
+-		old_dir = ct_modify->new_ct.is_original_dir;
+-		memcpy(&ct_modify->new_ct, &conntrack_context,
+-		       sizeof(conntrack_context));
+-		ct_modify->new_ct.is_original_dir = old_dir;
+-		ct_modify->state = 1;
+-	}
+-	return len;
+-}
+-
+-/** Parse tokens for destroy command. */
+-static int
+-parse_destroy(struct context *ctx, const struct token *token,
+-	      const char *str, unsigned int len,
+-	      void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != DESTROY)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.destroy.rule =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		return len;
+-	}
+-	if (ctx->curr == DESTROY_IS_USER_ID) {
+-		out->args.destroy.is_user_id = true;
+-		return len;
+-	}
+-	if (((uint8_t *)(out->args.destroy.rule + out->args.destroy.rule_n) +
+-	     sizeof(*out->args.destroy.rule)) > (uint8_t *)out + size)
+-		return -1;
+-	ctx->objdata = 0;
+-	ctx->object = out->args.destroy.rule + out->args.destroy.rule_n++;
+-	ctx->objmask = NULL;
+-	return len;
+-}
+-
+-/** Parse tokens for flush command. */
+-static int
+-parse_flush(struct context *ctx, const struct token *token,
+-	    const char *str, unsigned int len,
+-	    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != FLUSH)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-	}
+-	return len;
+-}
+-
+-/** Parse tokens for dump command. */
+-static int
+-parse_dump(struct context *ctx, const struct token *token,
+-	    const char *str, unsigned int len,
+-	    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != DUMP)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case DUMP_ALL:
+-	case DUMP_ONE:
+-		out->args.dump.mode = (ctx->curr == DUMP_ALL) ? true : false;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	case DUMP_IS_USER_ID:
+-		out->args.dump.is_user_id = true;
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-/** Parse tokens for query command. */
+-static int
+-parse_query(struct context *ctx, const struct token *token,
+-	    const char *str, unsigned int len,
+-	    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != QUERY)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-	}
+-	if (ctx->curr == QUERY_IS_USER_ID) {
+-		out->args.query.is_user_id = true;
+-		return len;
+-	}
+-	return len;
+-}
+-
+-/** Parse action names. */
+-static int
+-parse_action(struct context *ctx, const struct token *token,
+-	     const char *str, unsigned int len,
+-	     void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	const struct arg *arg = pop_args(ctx);
+-	unsigned int i;
+-
+-	(void)size;
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	/* Parse action name. */
+-	for (i = 0; next_action[i]; ++i) {
+-		const struct parse_action_priv *priv;
+-
+-		token = &token_list[next_action[i]];
+-		if (strcmp_partial(token->name, str, len))
+-			continue;
+-		priv = token->priv;
+-		if (!priv)
+-			goto error;
+-		if (out)
+-			memcpy((uint8_t *)ctx->object + arg->offset,
+-			       &priv->type,
+-			       arg->size);
+-		return len;
+-	}
+-error:
+-	push_args(ctx, arg);
+-	return -1;
+-}
+-
+-/** Parse tokens for list command. */
+-static int
+-parse_list(struct context *ctx, const struct token *token,
+-	   const char *str, unsigned int len,
+-	   void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != LIST)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.list.group =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		return len;
+-	}
+-	if (((uint8_t *)(out->args.list.group + out->args.list.group_n) +
+-	     sizeof(*out->args.list.group)) > (uint8_t *)out + size)
+-		return -1;
+-	ctx->objdata = 0;
+-	ctx->object = out->args.list.group + out->args.list.group_n++;
+-	ctx->objmask = NULL;
+-	return len;
+-}
+-
+-/** Parse tokens for list all aged flows command. */
+-static int
+-parse_aged(struct context *ctx, const struct token *token,
+-	   const char *str, unsigned int len,
+-	   void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command || out->command == QUEUE) {
+-		if (ctx->curr != AGED && ctx->curr != QUEUE_AGED)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-	}
+-	if (ctx->curr == AGED_DESTROY)
+-		out->args.aged.destroy = 1;
+-	return len;
+-}
+-
+-/** Parse tokens for isolate command. */
+-static int
+-parse_isolate(struct context *ctx, const struct token *token,
+-	      const char *str, unsigned int len,
+-	      void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != ISOLATE)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-	}
+-	return len;
+-}
+-
+-/** Parse tokens for info/configure command. */
+-static int
+-parse_configure(struct context *ctx, const struct token *token,
+-		const char *str, unsigned int len,
+-		void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != INFO && ctx->curr != CONFIGURE)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-	}
+-	return len;
+-}
+-
+-/** Parse tokens for template create command. */
+-static int
+-parse_template(struct context *ctx, const struct token *token,
+-	       const char *str, unsigned int len,
+-	       void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != PATTERN_TEMPLATE &&
+-		    ctx->curr != ACTIONS_TEMPLATE)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case PATTERN_TEMPLATE_CREATE:
+-		out->args.vc.pattern =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		out->args.vc.pat_templ_id = UINT32_MAX;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	case PATTERN_TEMPLATE_EGRESS:
+-		out->args.vc.attr.egress = 1;
+-		return len;
+-	case PATTERN_TEMPLATE_INGRESS:
+-		out->args.vc.attr.ingress = 1;
+-		return len;
+-	case PATTERN_TEMPLATE_TRANSFER:
+-		out->args.vc.attr.transfer = 1;
+-		return len;
+-	case ACTIONS_TEMPLATE_CREATE:
+-		out->args.vc.act_templ_id = UINT32_MAX;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	case ACTIONS_TEMPLATE_SPEC:
+-		out->args.vc.actions =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		ctx->object = out->args.vc.actions;
+-		ctx->objmask = NULL;
+-		return len;
+-	case ACTIONS_TEMPLATE_MASK:
+-		out->args.vc.masks =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)
+-					       (out->args.vc.actions +
+-						out->args.vc.actions_n),
+-					       sizeof(double));
+-		ctx->object = out->args.vc.masks;
+-		ctx->objmask = NULL;
+-		return len;
+-	case ACTIONS_TEMPLATE_EGRESS:
+-		out->args.vc.attr.egress = 1;
+-		return len;
+-	case ACTIONS_TEMPLATE_INGRESS:
+-		out->args.vc.attr.ingress = 1;
+-		return len;
+-	case ACTIONS_TEMPLATE_TRANSFER:
+-		out->args.vc.attr.transfer = 1;
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-/** Parse tokens for template destroy command. */
+-static int
+-parse_template_destroy(struct context *ctx, const struct token *token,
+-		       const char *str, unsigned int len,
+-		       void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	uint32_t *template_id;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command ||
+-		out->command == PATTERN_TEMPLATE ||
+-		out->command == ACTIONS_TEMPLATE) {
+-		if (ctx->curr != PATTERN_TEMPLATE_DESTROY &&
+-			ctx->curr != ACTIONS_TEMPLATE_DESTROY)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.templ_destroy.template_id =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		return len;
+-	}
+-	template_id = out->args.templ_destroy.template_id
+-		    + out->args.templ_destroy.template_id_n++;
+-	if ((uint8_t *)template_id > (uint8_t *)out + size)
+-		return -1;
+-	ctx->objdata = 0;
+-	ctx->object = template_id;
+-	ctx->objmask = NULL;
+-	return len;
+-}
+-
+-/** Parse tokens for table create command. */
+-static int
+-parse_table(struct context *ctx, const struct token *token,
+-	    const char *str, unsigned int len,
+-	    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	uint32_t *template_id;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != TABLE)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case TABLE_CREATE:
+-	case TABLE_RESIZE:
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.table.id = UINT32_MAX;
+-		return len;
+-	case TABLE_PATTERN_TEMPLATE:
+-		out->args.table.pat_templ_id =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		template_id = out->args.table.pat_templ_id
+-				+ out->args.table.pat_templ_id_n++;
+-		if ((uint8_t *)template_id > (uint8_t *)out + size)
+-			return -1;
+-		ctx->objdata = 0;
+-		ctx->object = template_id;
+-		ctx->objmask = NULL;
+-		return len;
+-	case TABLE_ACTIONS_TEMPLATE:
+-		out->args.table.act_templ_id =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)
+-					       (out->args.table.pat_templ_id +
+-						out->args.table.pat_templ_id_n),
+-					       sizeof(double));
+-		template_id = out->args.table.act_templ_id
+-				+ out->args.table.act_templ_id_n++;
+-		if ((uint8_t *)template_id > (uint8_t *)out + size)
+-			return -1;
+-		ctx->objdata = 0;
+-		ctx->object = template_id;
+-		ctx->objmask = NULL;
+-		return len;
+-	case TABLE_INGRESS:
+-		out->args.table.attr.flow_attr.ingress = 1;
+-		return len;
+-	case TABLE_EGRESS:
+-		out->args.table.attr.flow_attr.egress = 1;
+-		return len;
+-	case TABLE_TRANSFER:
+-		out->args.table.attr.flow_attr.transfer = 1;
+-		return len;
+-	case TABLE_TRANSFER_WIRE_ORIG:
+-		if (!out->args.table.attr.flow_attr.transfer)
+-			return -1;
+-		out->args.table.attr.specialize |= RTE_FLOW_TABLE_SPECIALIZE_TRANSFER_WIRE_ORIG;
+-		return len;
+-	case TABLE_TRANSFER_VPORT_ORIG:
+-		if (!out->args.table.attr.flow_attr.transfer)
+-			return -1;
+-		out->args.table.attr.specialize |= RTE_FLOW_TABLE_SPECIALIZE_TRANSFER_VPORT_ORIG;
+-		return len;
+-	case TABLE_RESIZABLE:
+-		out->args.table.attr.specialize |=
+-			RTE_FLOW_TABLE_SPECIALIZE_RESIZABLE;
+-		return len;
+-	case TABLE_RULES_NUMBER:
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		return len;
+-	case TABLE_RESIZE_ID:
+-	case TABLE_RESIZE_RULES_NUMBER:
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-/** Parse tokens for table destroy command. */
+-static int
+-parse_table_destroy(struct context *ctx, const struct token *token,
+-		    const char *str, unsigned int len,
+-		    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	uint32_t *table_id;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command || out->command == TABLE) {
+-		if (ctx->curr != TABLE_DESTROY &&
+-		    ctx->curr != TABLE_RESIZE_COMPLETE)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.table_destroy.table_id =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		return len;
+-	}
+-	table_id = out->args.table_destroy.table_id
+-		    + out->args.table_destroy.table_id_n++;
+-	if ((uint8_t *)table_id > (uint8_t *)out + size)
+-		return -1;
+-	ctx->objdata = 0;
+-	ctx->object = table_id;
+-	ctx->objmask = NULL;
+-	return len;
+-}
+-
+-/** Parse table id and convert to table pointer for jump_to_table_index action. */
+-static int
+-parse_jump_table_id(struct context *ctx, const struct token *token,
+-		    const char *str, unsigned int len,
+-		    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	struct rte_port *port;
+-	struct port_table *pt;
+-	uint32_t table_id;
+-	const struct arg *arg;
+-	void *entry_ptr;
+-
+-	/* Get the arg before parse_int consumes it */
+-	arg = pop_args(ctx);
+-	if (!arg)
+-		return -1;
+-	/* Push it back and do the standard integer parsing */
+-	if (push_args(ctx, arg) < 0)
+-		return -1;
+-	if (parse_int(ctx, token, str, len, buf, size) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer */
+-	if (!out || !ctx->object)
+-		return len;
+-	/* Get the parsed table ID from where parse_int stored it */
+-	entry_ptr = (uint8_t *)ctx->object + arg->offset;
+-	memcpy(&table_id, entry_ptr, sizeof(uint32_t));
+-	/* Look up the table using table ID */
+-	port = &ports[ctx->port];
+-	for (pt = port->table_list; pt != NULL; pt = pt->next) {
+-		if (pt->id == table_id)
+-			break;
+-	}
+-	if (!pt || !pt->table) {
+-		printf("Table #%u not found on port %u\n", table_id, ctx->port);
+-		return -1;
+-	}
+-	/* Replace the table ID with the table pointer */
+-	memcpy(entry_ptr, &pt->table, sizeof(struct rte_flow_template_table *));
+-	return len;
+-}
+-
+-/** Parse tokens for queue create commands. */
+-static int
+-parse_qo(struct context *ctx, const struct token *token,
+-	 const char *str, unsigned int len,
+-	 void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != QUEUE)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case QUEUE_CREATE:
+-	case QUEUE_UPDATE:
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.rule_id = UINT32_MAX;
+-		return len;
+-	case QUEUE_TEMPLATE_TABLE:
+-	case QUEUE_PATTERN_TEMPLATE:
+-	case QUEUE_ACTIONS_TEMPLATE:
+-	case QUEUE_CREATE_POSTPONE:
+-	case QUEUE_RULE_ID:
+-	case QUEUE_UPDATE_ID:
+-		return len;
+-	case ITEM_PATTERN:
+-		out->args.vc.pattern =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		ctx->object = out->args.vc.pattern;
+-		ctx->objmask = NULL;
+-		return len;
+-	case ACTIONS:
+-		out->args.vc.actions =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)
+-					       (out->args.vc.pattern +
+-						out->args.vc.pattern_n),
+-					       sizeof(double));
+-		ctx->object = out->args.vc.actions;
+-		ctx->objmask = NULL;
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-/** Parse tokens for queue destroy command. */
+-static int
+-parse_qo_destroy(struct context *ctx, const struct token *token,
+-		 const char *str, unsigned int len,
+-		 void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-	uint64_t *flow_id;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command || out->command == QUEUE) {
+-		if (ctx->curr != QUEUE_DESTROY &&
+-		    ctx->curr != QUEUE_FLOW_UPDATE_RESIZED)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.destroy.rule =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case QUEUE_DESTROY_ID:
+-		flow_id = out->args.destroy.rule
+-				+ out->args.destroy.rule_n++;
+-		if ((uint8_t *)flow_id > (uint8_t *)out + size)
+-			return -1;
+-		ctx->objdata = 0;
+-		ctx->object = flow_id;
+-		ctx->objmask = NULL;
+-		return len;
+-	case QUEUE_DESTROY_POSTPONE:
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-/** Parse tokens for push queue command. */
+-static int
+-parse_push(struct context *ctx, const struct token *token,
+-	   const char *str, unsigned int len,
+-	   void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != PUSH)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-	}
+-	return len;
+-}
+-
+-/** Parse tokens for pull command. */
+-static int
+-parse_pull(struct context *ctx, const struct token *token,
+-	   const char *str, unsigned int len,
+-	   void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != PULL)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-	}
+-	return len;
+-}
+-
+-/** Parse tokens for hash calculation commands. */
+-static int
+-parse_hash(struct context *ctx, const struct token *token,
+-	 const char *str, unsigned int len,
+-	 void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != HASH)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case HASH_CALC_TABLE:
+-	case HASH_CALC_PATTERN_INDEX:
+-		return len;
+-	case ITEM_PATTERN:
+-		out->args.vc.pattern =
+-			(void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-					       sizeof(double));
+-		ctx->object = out->args.vc.pattern;
+-		ctx->objmask = NULL;
+-		return len;
+-	case HASH_CALC_ENCAP:
+-		out->args.vc.encap_hash = 1;
+-		return len;
+-	case ENCAP_HASH_FIELD_SRC_PORT:
+-		out->args.vc.field = RTE_FLOW_ENCAP_HASH_FIELD_SRC_PORT;
+-		return len;
+-	case ENCAP_HASH_FIELD_GRE_FLOW_ID:
+-		out->args.vc.field = RTE_FLOW_ENCAP_HASH_FIELD_NVGRE_FLOW_ID;
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-static int
+-parse_group(struct context *ctx, const struct token *token,
+-	    const char *str, unsigned int len,
+-	    void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != FLOW_GROUP)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		return len;
+-	}
+-	switch (ctx->curr) {
+-	case GROUP_INGRESS:
+-		out->args.vc.attr.ingress = 1;
+-		return len;
+-	case GROUP_EGRESS:
+-		out->args.vc.attr.egress = 1;
+-		return len;
+-	case GROUP_TRANSFER:
+-		out->args.vc.attr.transfer = 1;
+-		return len;
+-	case GROUP_SET_MISS_ACTIONS:
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		out->args.vc.actions = (void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-							       sizeof(double));
+-		return len;
+-	default:
+-		return -1;
+-	}
+-}
+-
+-static int
+-parse_flex(struct context *ctx, const struct token *token,
+-	     const char *str, unsigned int len,
+-	     void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (out->command == ZERO) {
+-		if (ctx->curr != FLEX)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-	} else {
+-		switch (ctx->curr) {
+-		default:
+-			break;
+-		case FLEX_ITEM_CREATE:
+-		case FLEX_ITEM_DESTROY:
+-			out->command = ctx->curr;
+-			break;
+-		}
+-	}
+-
+-	return len;
+-}
+-
+-static int
+-parse_tunnel(struct context *ctx, const struct token *token,
+-	     const char *str, unsigned int len,
+-	     void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	if (!out->command) {
+-		if (ctx->curr != TUNNEL)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-	} else {
+-		switch (ctx->curr) {
+-		default:
+-			break;
+-		case TUNNEL_CREATE:
+-		case TUNNEL_DESTROY:
+-		case TUNNEL_LIST:
+-			out->command = ctx->curr;
+-			break;
+-		case TUNNEL_CREATE_TYPE:
+-		case TUNNEL_DESTROY_ID:
+-			ctx->object = &out->args.vc.tunnel_ops;
+-			break;
+-		}
+-	}
+-
+-	return len;
+-}
+-
+-/**
+- * Parse signed/unsigned integers 8 to 64-bit long.
+- *
+- * Last argument (ctx->args) is retrieved to determine integer type and
+- * storage location.
+- */
+-static int
+-parse_int(struct context *ctx, const struct token *token,
+-	  const char *str, unsigned int len,
+-	  void *buf, unsigned int size)
+-{
+-	const struct arg *arg = pop_args(ctx);
+-	uintmax_t u;
+-	char *end;
+-
+-	(void)token;
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	errno = 0;
+-	u = arg->sign ?
+-		(uintmax_t)strtoimax(str, &end, 0) :
+-		strtoumax(str, &end, 0);
+-	if (errno || (size_t)(end - str) != len)
+-		goto error;
+-	if (arg->bounded &&
+-	    ((arg->sign && ((intmax_t)u < (intmax_t)arg->min ||
+-			    (intmax_t)u > (intmax_t)arg->max)) ||
+-	     (!arg->sign && (u < arg->min || u > arg->max))))
+-		goto error;
+-	if (!ctx->object)
+-		return len;
+-	if (arg->mask) {
+-		if (!arg_entry_bf_fill(ctx->object, u, arg) ||
+-		    !arg_entry_bf_fill(ctx->objmask, -1, arg))
+-			goto error;
+-		return len;
+-	}
+-	buf = (uint8_t *)ctx->object + arg->offset;
+-	size = arg->size;
+-	if (u > RTE_LEN2MASK(size * CHAR_BIT, uint64_t))
+-		return -1;
+-objmask:
+-	switch (size) {
+-	case sizeof(uint8_t):
+-		*(uint8_t *)buf = u;
+-		break;
+-	case sizeof(uint16_t):
+-		*(uint16_t *)buf = arg->hton ? rte_cpu_to_be_16(u) : u;
+-		break;
+-	case sizeof(uint8_t [3]):
+-#if RTE_BYTE_ORDER == RTE_LITTLE_ENDIAN
+-		if (!arg->hton) {
+-			((uint8_t *)buf)[0] = u;
+-			((uint8_t *)buf)[1] = u >> 8;
+-			((uint8_t *)buf)[2] = u >> 16;
+-			break;
+-		}
+-#endif
+-		((uint8_t *)buf)[0] = u >> 16;
+-		((uint8_t *)buf)[1] = u >> 8;
+-		((uint8_t *)buf)[2] = u;
+-		break;
+-	case sizeof(uint32_t):
+-		*(uint32_t *)buf = arg->hton ? rte_cpu_to_be_32(u) : u;
+-		break;
+-	case sizeof(uint64_t):
+-		*(uint64_t *)buf = arg->hton ? rte_cpu_to_be_64(u) : u;
+-		break;
+-	default:
+-		goto error;
+-	}
+-	if (ctx->objmask && buf != (uint8_t *)ctx->objmask + arg->offset) {
+-		u = -1;
+-		buf = (uint8_t *)ctx->objmask + arg->offset;
+-		goto objmask;
+-	}
+-	return len;
+-error:
+-	push_args(ctx, arg);
+-	return -1;
+-}
+-
+-/**
+- * Parse a string.
+- *
+- * Three arguments (ctx->args) are retrieved from the stack to store data,
+- * its actual length and address (in that order).
+- */
+-static int
+-parse_string(struct context *ctx, const struct token *token,
+-	     const char *str, unsigned int len,
+-	     void *buf, unsigned int size)
+-{
+-	const struct arg *arg_data = pop_args(ctx);
+-	const struct arg *arg_len = pop_args(ctx);
+-	const struct arg *arg_addr = pop_args(ctx);
+-	char tmp[16]; /* Ought to be enough. */
+-	int ret;
+-
+-	/* Arguments are expected. */
+-	if (!arg_data)
+-		return -1;
+-	if (!arg_len) {
+-		push_args(ctx, arg_data);
+-		return -1;
+-	}
+-	if (!arg_addr) {
+-		push_args(ctx, arg_len);
+-		push_args(ctx, arg_data);
+-		return -1;
+-	}
+-	size = arg_data->size;
+-	/* Bit-mask fill is not supported. */
+-	if (arg_data->mask || size < len)
+-		goto error;
+-	if (!ctx->object)
+-		return len;
+-	/* Let parse_int() fill length information first. */
+-	ret = snprintf(tmp, sizeof(tmp), "%u", len);
+-	if (ret < 0)
+-		goto error;
+-	push_args(ctx, arg_len);
+-	ret = parse_int(ctx, token, tmp, ret, NULL, 0);
+-	if (ret < 0) {
+-		pop_args(ctx);
+-		goto error;
+-	}
+-	buf = (uint8_t *)ctx->object + arg_data->offset;
+-	/* Output buffer is not necessarily NUL-terminated. */
+-	memcpy(buf, str, len);
+-	memset((uint8_t *)buf + len, 0x00, size - len);
+-	if (ctx->objmask)
+-		memset((uint8_t *)ctx->objmask + arg_data->offset, 0xff, len);
+-	/* Save address if requested. */
+-	if (arg_addr->size) {
+-		memcpy((uint8_t *)ctx->object + arg_addr->offset,
+-		       (void *[]){
+-			(uint8_t *)ctx->object + arg_data->offset
+-		       },
+-		       arg_addr->size);
+-		if (ctx->objmask)
+-			memcpy((uint8_t *)ctx->objmask + arg_addr->offset,
+-			       (void *[]){
+-				(uint8_t *)ctx->objmask + arg_data->offset
+-			       },
+-			       arg_addr->size);
+-	}
+-	return len;
+-error:
+-	push_args(ctx, arg_addr);
+-	push_args(ctx, arg_len);
+-	push_args(ctx, arg_data);
+-	return -1;
+-}
+-
+-static int
+-parse_hex_string(const char *src, uint8_t *dst, uint32_t *size)
+-{
+-	const uint8_t *head = dst;
+-	uint32_t left;
+-
+-	if (*size == 0)
+-		return -1;
+-
+-	left = *size;
+-
+-	/* Convert chars to bytes */
+-	while (left) {
+-		char tmp[3], *end = tmp;
+-		uint32_t read_lim = left & 1 ? 1 : 2;
+-
+-		snprintf(tmp, read_lim + 1, "%s", src);
+-		*dst = strtoul(tmp, &end, 16);
+-		if (*end) {
+-			*dst = 0;
+-			*size = (uint32_t)(dst - head);
+-			return -1;
+-		}
+-		left -= read_lim;
+-		src += read_lim;
+-		dst++;
+-	}
+-	*dst = 0;
+-	*size = (uint32_t)(dst - head);
+-	return 0;
+-}
+-
+-static int
+-parse_hex(struct context *ctx, const struct token *token,
+-		const char *str, unsigned int len,
+-		void *buf, unsigned int size)
+-{
+-	const struct arg *arg_data = pop_args(ctx);
+-	const struct arg *arg_len = pop_args(ctx);
+-	const struct arg *arg_addr = pop_args(ctx);
+-	char tmp[16]; /* Ought to be enough. */
+-	int ret;
+-	unsigned int hexlen = len;
+-	uint8_t hex_tmp[256];
+-
+-	/* Arguments are expected. */
+-	if (!arg_data)
+-		return -1;
+-	if (!arg_len) {
+-		push_args(ctx, arg_data);
+-		return -1;
+-	}
+-	if (!arg_addr) {
+-		push_args(ctx, arg_len);
+-		push_args(ctx, arg_data);
+-		return -1;
+-	}
+-	size = arg_data->size;
+-	/* Bit-mask fill is not supported. */
+-	if (arg_data->mask)
+-		goto error;
+-	if (!ctx->object)
+-		return len;
+-
+-	/* translate bytes string to array. */
+-	if (str[0] == '0' && ((str[1] == 'x') ||
+-			(str[1] == 'X'))) {
+-		str += 2;
+-		hexlen -= 2;
+-	}
+-	if (hexlen > RTE_DIM(hex_tmp))
+-		goto error;
+-	ret = parse_hex_string(str, hex_tmp, &hexlen);
+-	if (ret < 0)
+-		goto error;
+-	/* Check the converted binary fits into data buffer. */
+-	if (hexlen > size)
+-		goto error;
+-	/* Let parse_int() fill length information first. */
+-	ret = snprintf(tmp, sizeof(tmp), "%u", hexlen);
+-	if (ret < 0)
+-		goto error;
+-	/* Save length if requested. */
+-	if (arg_len->size) {
+-		push_args(ctx, arg_len);
+-		ret = parse_int(ctx, token, tmp, ret, NULL, 0);
+-		if (ret < 0) {
+-			pop_args(ctx);
+-			goto error;
+-		}
+-	}
+-	buf = (uint8_t *)ctx->object + arg_data->offset;
+-	/* Output buffer is not necessarily NUL-terminated. */
+-	memcpy(buf, hex_tmp, hexlen);
+-	memset((uint8_t *)buf + hexlen, 0x00, size - hexlen);
+-	if (ctx->objmask)
+-		memset((uint8_t *)ctx->objmask + arg_data->offset,
+-					0xff, hexlen);
+-	/* Save address if requested. */
+-	if (arg_addr->size) {
+-		memcpy((uint8_t *)ctx->object + arg_addr->offset,
+-		       (void *[]){
+-			(uint8_t *)ctx->object + arg_data->offset
+-		       },
+-		       arg_addr->size);
+-		if (ctx->objmask)
+-			memcpy((uint8_t *)ctx->objmask + arg_addr->offset,
+-			       (void *[]){
+-				(uint8_t *)ctx->objmask + arg_data->offset
+-			       },
+-			       arg_addr->size);
+-	}
+-	return len;
+-error:
+-	push_args(ctx, arg_addr);
+-	push_args(ctx, arg_len);
+-	push_args(ctx, arg_data);
+-	return -1;
+-
+-}
+-
+-/**
+- * Parse a zero-ended string.
+- */
+-static int
+-parse_string0(struct context *ctx, const struct token *token __rte_unused,
+-	     const char *str, unsigned int len,
+-	     void *buf, unsigned int size)
+-{
+-	const struct arg *arg_data = pop_args(ctx);
+-
+-	/* Arguments are expected. */
+-	if (!arg_data)
+-		return -1;
+-	size = arg_data->size;
+-	/* Bit-mask fill is not supported. */
+-	if (arg_data->mask || size < len + 1)
+-		goto error;
+-	if (!ctx->object)
+-		return len;
+-	buf = (uint8_t *)ctx->object + arg_data->offset;
+-	strncpy(buf, str, len);
+-	if (ctx->objmask)
+-		memset((uint8_t *)ctx->objmask + arg_data->offset, 0xff, len);
+-	return len;
+-error:
+-	push_args(ctx, arg_data);
+-	return -1;
+-}
+-
+-/**
+- * Parse a MAC address.
+- *
+- * Last argument (ctx->args) is retrieved to determine storage size and
+- * location.
+- */
+-static int
+-parse_mac_addr(struct context *ctx, const struct token *token,
+-	       const char *str, unsigned int len,
+-	       void *buf, unsigned int size)
+-{
+-	const struct arg *arg = pop_args(ctx);
+-	struct rte_ether_addr tmp;
+-	int ret;
+-
+-	(void)token;
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	size = arg->size;
+-	/* Bit-mask fill is not supported. */
+-	if (arg->mask || size != sizeof(tmp))
+-		goto error;
+-	/* Only network endian is supported. */
+-	if (!arg->hton)
+-		goto error;
+-	ret = cmdline_parse_etheraddr(NULL, str, &tmp, size);
+-	if (ret < 0 || (unsigned int)ret != len)
+-		goto error;
+-	if (!ctx->object)
+-		return len;
+-	buf = (uint8_t *)ctx->object + arg->offset;
+-	memcpy(buf, &tmp, size);
+-	if (ctx->objmask)
+-		memset((uint8_t *)ctx->objmask + arg->offset, 0xff, size);
+-	return len;
+-error:
+-	push_args(ctx, arg);
+-	return -1;
+-}
+-
+-/**
+- * Parse an IPv4 address.
+- *
+- * Last argument (ctx->args) is retrieved to determine storage size and
+- * location.
+- */
+-static int
+-parse_ipv4_addr(struct context *ctx, const struct token *token,
+-		const char *str, unsigned int len,
+-		void *buf, unsigned int size)
+-{
+-	const struct arg *arg = pop_args(ctx);
+-	char str2[INET_ADDRSTRLEN];
+-	struct in_addr tmp;
+-	int ret;
+-
+-	/* Length is longer than the max length an IPv4 address can have. */
+-	if (len >= INET_ADDRSTRLEN)
+-		return -1;
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	size = arg->size;
+-	/* Bit-mask fill is not supported. */
+-	if (arg->mask || size != sizeof(tmp))
+-		goto error;
+-	/* Only network endian is supported. */
+-	if (!arg->hton)
+-		goto error;
+-	memcpy(str2, str, len);
+-	str2[len] = '\0';
+-	ret = inet_pton(AF_INET, str2, &tmp);
+-	if (ret != 1) {
+-		/* Attempt integer parsing. */
+-		push_args(ctx, arg);
+-		return parse_int(ctx, token, str, len, buf, size);
+-	}
+-	if (!ctx->object)
+-		return len;
+-	buf = (uint8_t *)ctx->object + arg->offset;
+-	memcpy(buf, &tmp, size);
+-	if (ctx->objmask)
+-		memset((uint8_t *)ctx->objmask + arg->offset, 0xff, size);
+-	return len;
+-error:
+-	push_args(ctx, arg);
+-	return -1;
+-}
+-
+-/**
+- * Parse an IPv6 address.
+- *
+- * Last argument (ctx->args) is retrieved to determine storage size and
+- * location.
+- */
+-static int
+-parse_ipv6_addr(struct context *ctx, const struct token *token,
+-		const char *str, unsigned int len,
+-		void *buf, unsigned int size)
+-{
+-	const struct arg *arg = pop_args(ctx);
+-	char str2[INET6_ADDRSTRLEN];
+-	struct rte_ipv6_addr tmp;
+-	int ret;
+-
+-	(void)token;
+-	/* Length is longer than the max length an IPv6 address can have. */
+-	if (len >= INET6_ADDRSTRLEN)
+-		return -1;
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	size = arg->size;
+-	/* Bit-mask fill is not supported. */
+-	if (arg->mask || size != sizeof(tmp))
+-		goto error;
+-	/* Only network endian is supported. */
+-	if (!arg->hton)
+-		goto error;
+-	memcpy(str2, str, len);
+-	str2[len] = '\0';
+-	ret = inet_pton(AF_INET6, str2, &tmp);
+-	if (ret != 1)
+-		goto error;
+-	if (!ctx->object)
+-		return len;
+-	buf = (uint8_t *)ctx->object + arg->offset;
+-	memcpy(buf, &tmp, size);
+-	if (ctx->objmask)
+-		memset((uint8_t *)ctx->objmask + arg->offset, 0xff, size);
+-	return len;
+-error:
+-	push_args(ctx, arg);
+-	return -1;
+-}
+-
+-/** Boolean values (even indices stand for false). */
+-static const char *const boolean_name[] = {
+-	"0", "1",
+-	"false", "true",
+-	"no", "yes",
+-	"N", "Y",
+-	"off", "on",
+-	NULL,
+-};
+-
+-/**
+- * Parse a boolean value.
+- *
+- * Last argument (ctx->args) is retrieved to determine storage size and
+- * location.
+- */
+-static int
+-parse_boolean(struct context *ctx, const struct token *token,
+-	      const char *str, unsigned int len,
+-	      void *buf, unsigned int size)
+-{
+-	const struct arg *arg = pop_args(ctx);
+-	unsigned int i;
+-	int ret;
+-
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	for (i = 0; boolean_name[i]; ++i)
+-		if (!strcmp_partial(boolean_name[i], str, len))
+-			break;
+-	/* Process token as integer. */
+-	if (boolean_name[i])
+-		str = i & 1 ? "1" : "0";
+-	push_args(ctx, arg);
+-	ret = parse_int(ctx, token, str, strlen(str), buf, size);
+-	return ret > 0 ? (int)len : ret;
+-}
+-
+-/** Parse port and update context. */
+-static int
+-parse_port(struct context *ctx, const struct token *token,
+-	   const char *str, unsigned int len,
+-	   void *buf, unsigned int size)
+-{
+-	struct buffer *out = &(struct buffer){ .port = 0 };
+-	int ret;
+-
+-	if (buf)
+-		out = buf;
+-	else {
+-		ctx->objdata = 0;
+-		ctx->object = out;
+-		ctx->objmask = NULL;
+-		size = sizeof(*out);
+-	}
+-	ret = parse_int(ctx, token, str, len, out, size);
+-	if (ret >= 0)
+-		ctx->port = out->port;
+-	if (!buf)
+-		ctx->object = NULL;
+-	return ret;
+-}
+-
+-/** Parse tokens for shared indirect actions. */
+-static int
+-parse_ia_port(struct context *ctx, const struct token *token,
+-	      const char *str, unsigned int len,
+-	      void *buf, unsigned int size)
+-{
+-	struct rte_flow_action *action = ctx->object;
+-	uint32_t id;
+-	int ret;
+-
+-	(void)buf;
+-	(void)size;
+-	ctx->objdata = 0;
+-	ctx->object = &id;
+-	ctx->objmask = NULL;
+-	ret = parse_int(ctx, token, str, len, ctx->object, sizeof(id));
+-	ctx->object = action;
+-	if (ret != (int)len)
+-		return ret;
+-	/* set indirect action */
+-	if (action)
+-		action->conf = (void *)(uintptr_t)id;
+-	return ret;
+-}
+-
+-static int
+-parse_ia_id2ptr(struct context *ctx, const struct token *token,
+-		const char *str, unsigned int len,
+-		void *buf, unsigned int size)
+-{
+-	struct rte_flow_action *action = ctx->object;
+-	uint32_t id;
+-	int ret;
+-
+-	(void)buf;
+-	(void)size;
+-	ctx->objdata = 0;
+-	ctx->object = &id;
+-	ctx->objmask = NULL;
+-	ret = parse_int(ctx, token, str, len, ctx->object, sizeof(id));
+-	ctx->object = action;
+-	if (ret != (int)len)
+-		return ret;
+-	/* set indirect action */
+-	if (action) {
+-		portid_t port_id = ctx->port;
+-		if (ctx->prev == INDIRECT_ACTION_PORT)
+-			port_id = (portid_t)(uintptr_t)action->conf;
+-		action->conf = port_action_handle_get_by_id(port_id, id);
+-		ret = (action->conf) ? ret : -1;
+-	}
+-	return ret;
+-}
+-
+-static int
+-parse_indlst_id2ptr(struct context *ctx, const struct token *token,
+-		    const char *str, unsigned int len,
+-		    __rte_unused void *buf, __rte_unused unsigned int size)
+-{
+-	struct rte_flow_action *action = ctx->object;
+-	struct rte_flow_action_indirect_list *action_conf;
+-	const struct indlst_conf *indlst_conf;
+-	uint32_t id;
+-	int ret;
+-
+-	ctx->objdata = 0;
+-	ctx->object = &id;
+-	ctx->objmask = NULL;
+-	ret = parse_int(ctx, token, str, len, ctx->object, sizeof(id));
+-	ctx->object = action;
+-	if (ret != (int)len)
+-		return ret;
+-
+-	/* set handle and conf */
+-	if (action) {
+-		action_conf = (void *)(uintptr_t)action->conf;
+-		action_conf->conf = NULL;
+-		switch (ctx->curr) {
+-		case INDIRECT_LIST_ACTION_ID2PTR_HANDLE:
+-		action_conf->handle = (typeof(action_conf->handle))
+-					port_action_handle_get_by_id(ctx->port, id);
+-			if (!action_conf->handle) {
+-				printf("no indirect list handle for id %u\n", id);
+-				return -1;
+-			}
+-			break;
+-		case INDIRECT_LIST_ACTION_ID2PTR_CONF:
+-			indlst_conf = indirect_action_list_conf_get(id);
+-			if (!indlst_conf)
+-				return -1;
+-			action_conf->conf = (const void **)indlst_conf->conf;
+-			break;
+-		default:
+-			break;
+-		}
+-	}
+-	return ret;
+-}
+-
+-static int
+-parse_meter_profile_id2ptr(struct context *ctx, const struct token *token,
+-		const char *str, unsigned int len,
+-		void *buf, unsigned int size)
+-{
+-	struct rte_flow_action *action = ctx->object;
+-	struct rte_flow_action_meter_mark *meter;
+-	struct rte_flow_meter_profile *profile = NULL;
+-	uint32_t id = 0;
+-	int ret;
+-
+-	(void)buf;
+-	(void)size;
+-	ctx->objdata = 0;
+-	ctx->object = &id;
+-	ctx->objmask = NULL;
+-	ret = parse_int(ctx, token, str, len, ctx->object, sizeof(id));
+-	ctx->object = action;
+-	if (ret != (int)len)
+-		return ret;
+-	/* set meter profile */
+-	if (action) {
+-		meter = (struct rte_flow_action_meter_mark *)
+-			(uintptr_t)(action->conf);
+-		profile = port_meter_profile_get_by_id(ctx->port, id);
+-		meter->profile = profile;
+-		ret = (profile) ? ret : -1;
+-	}
+-	return ret;
+-}
+-
+-static int
+-parse_meter_policy_id2ptr(struct context *ctx, const struct token *token,
+-		const char *str, unsigned int len,
+-		void *buf, unsigned int size)
+-{
+-	struct rte_flow_action *action = ctx->object;
+-	struct rte_flow_action_meter_mark *meter;
+-	struct rte_flow_meter_policy *policy = NULL;
+-	uint32_t id = 0;
+-	int ret;
+-
+-	(void)buf;
+-	(void)size;
+-	ctx->objdata = 0;
+-	ctx->object = &id;
+-	ctx->objmask = NULL;
+-	ret = parse_int(ctx, token, str, len, ctx->object, sizeof(id));
+-	ctx->object = action;
+-	if (ret != (int)len)
+-		return ret;
+-	/* set meter policy */
+-	if (action) {
+-		meter = (struct rte_flow_action_meter_mark *)
+-			(uintptr_t)(action->conf);
+-		policy = port_meter_policy_get_by_id(ctx->port, id);
+-		meter->policy = policy;
+-		ret = (policy) ? ret : -1;
+-	}
+-	return ret;
+-}
+-
+-/** Parse set command, initialize output buffer for subsequent tokens. */
+-static int
+-parse_set_raw_encap_decap(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len,
+-			  void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	/* Make sure buffer is large enough. */
+-	if (size < sizeof(*out))
+-		return -1;
+-	ctx->objdata = 0;
+-	ctx->objmask = NULL;
+-	ctx->object = out;
+-	if (!out->command)
+-		return -1;
+-	out->command = ctx->curr;
+-	/* For encap/decap we need is pattern */
+-	out->args.vc.pattern = (void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-						       sizeof(double));
+-	return len;
+-}
+-
+-/** Parse set command, initialize output buffer for subsequent tokens. */
+-static int
+-parse_set_sample_action(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len,
+-			  void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	/* Make sure buffer is large enough. */
+-	if (size < sizeof(*out))
+-		return -1;
+-	ctx->objdata = 0;
+-	ctx->objmask = NULL;
+-	ctx->object = out;
+-	if (!out->command)
+-		return -1;
+-	out->command = ctx->curr;
+-	/* For sampler we need is actions */
+-	out->args.vc.actions = (void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-						       sizeof(double));
+-	return len;
+-}
+-
+-/** Parse set command, initialize output buffer for subsequent tokens. */
+-static int
+-parse_set_ipv6_ext_action(struct context *ctx, const struct token *token,
+-			  const char *str, unsigned int len,
+-			  void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	/* Make sure buffer is large enough. */
+-	if (size < sizeof(*out))
+-		return -1;
+-	ctx->objdata = 0;
+-	ctx->objmask = NULL;
+-	ctx->object = out;
+-	if (!out->command)
+-		return -1;
+-	out->command = ctx->curr;
+-	/* For ipv6_ext_push/remove we need is pattern */
+-	out->args.vc.pattern = (void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-						       sizeof(double));
+-	return len;
+-}
+-
+-/**
+- * Parse set raw_encap/raw_decap command,
+- * initialize output buffer for subsequent tokens.
+- */
+-static int
+-parse_set_init(struct context *ctx, const struct token *token,
+-	       const char *str, unsigned int len,
+-	       void *buf, unsigned int size)
+-{
+-	struct buffer *out = buf;
+-
+-	/* Token name must match. */
+-	if (parse_default(ctx, token, str, len, NULL, 0) < 0)
+-		return -1;
+-	/* Nothing else to do if there is no buffer. */
+-	if (!out)
+-		return len;
+-	/* Make sure buffer is large enough. */
+-	if (size < sizeof(*out))
+-		return -1;
+-	/* Initialize buffer. */
+-	memset(out, 0x00, sizeof(*out));
+-	memset((uint8_t *)out + sizeof(*out), 0x22, size - sizeof(*out));
+-	ctx->objdata = 0;
+-	ctx->object = out;
+-	ctx->objmask = NULL;
+-	if (!out->command) {
+-		if (ctx->curr != SET)
+-			return -1;
+-		if (sizeof(*out) > size)
+-			return -1;
+-		out->command = ctx->curr;
+-		out->args.vc.data = (uint8_t *)out + size;
+-		ctx->object  = (void *)RTE_ALIGN_CEIL((uintptr_t)(out + 1),
+-						       sizeof(double));
+-	}
+-	return len;
+-}
+-
+-/*
+- * Replace testpmd handles in a flex flow item with real values.
+- */
+-static int
+-parse_flex_handle(struct context *ctx, const struct token *token,
+-		  const char *str, unsigned int len,
+-		  void *buf, unsigned int size)
+-{
+-	struct rte_flow_item_flex *spec, *mask;
+-	const struct rte_flow_item_flex *src_spec, *src_mask;
+-	const struct arg *arg = pop_args(ctx);
+-	uint32_t offset;
+-	uint16_t handle;
+-	int ret;
+-
+-	if (!arg) {
+-		printf("Bad environment\n");
+-		return -1;
+-	}
+-	offset = arg->offset;
+-	push_args(ctx, arg);
+-	ret = parse_int(ctx, token, str, len, buf, size);
+-	if (ret <= 0 || !ctx->object)
+-		return ret;
+-	if (ctx->port >= RTE_MAX_ETHPORTS) {
+-		printf("Bad port\n");
+-		return -1;
+-	}
+-	if (offset == offsetof(struct rte_flow_item_flex, handle)) {
+-		const struct flex_item *fp;
+-		spec = ctx->object;
+-		handle = (uint16_t)(uintptr_t)spec->handle;
+-		if (handle >= FLEX_MAX_PARSERS_NUM) {
+-			printf("Bad flex item handle\n");
+-			return -1;
+-		}
+-		fp = flex_items[ctx->port][handle];
+-		if (!fp) {
+-			printf("Bad flex item handle\n");
+-			return -1;
+-		}
+-		spec->handle = fp->flex_handle;
+-		mask = spec + 2; /* spec, last, mask */
+-		mask->handle = fp->flex_handle;
+-	} else if (offset == offsetof(struct rte_flow_item_flex, pattern)) {
+-		handle = (uint16_t)(uintptr_t)
+-			((struct rte_flow_item_flex *)ctx->object)->pattern;
+-		if (handle >= FLEX_MAX_PATTERNS_NUM) {
+-			printf("Bad pattern handle\n");
+-			return -1;
+-		}
+-		src_spec = &flex_patterns[handle].spec;
+-		src_mask = &flex_patterns[handle].mask;
+-		spec = ctx->object;
+-		mask = spec + 2; /* spec, last, mask */
+-		/* fill flow rule spec and mask parameters */
+-		spec->length = src_spec->length;
+-		spec->pattern = src_spec->pattern;
+-		mask->length = src_mask->length;
+-		mask->pattern = src_mask->pattern;
+-	} else {
+-		printf("Bad arguments - unknown flex item offset\n");
+-		return -1;
+-	}
+-	return ret;
+-}
+-
+-/** Parse Meter color name */
+-static int
+-parse_meter_color(struct context *ctx, const struct token *token,
+-		  const char *str, unsigned int len, void *buf,
+-		  unsigned int size)
+-{
+-	unsigned int i;
+-	struct buffer *out = buf;
+-
+-	(void)token;
+-	(void)buf;
+-	(void)size;
+-	for (i = 0; meter_colors[i]; ++i)
+-		if (!strcmp_partial(meter_colors[i], str, len))
+-			break;
+-	if (!meter_colors[i])
+-		return -1;
+-	if (!ctx->object)
+-		return len;
+-	if (ctx->prev == ACTION_METER_MARK_CONF_COLOR) {
+-		struct rte_flow_action *action =
+-			out->args.vc.actions + out->args.vc.actions_n - 1;
+-		const struct arg *arg = pop_args(ctx);
+-
+-		if (!arg)
+-			return -1;
+-		*(int *)RTE_PTR_ADD(action->conf, arg->offset) = i;
+-	} else {
+-		((struct rte_flow_item_meter_color *)
+-			ctx->object)->color = (enum rte_color)i;
+-	}
+-	return len;
+-}
+-
+-/** Parse Insertion Table Type name */
+-static int
+-parse_insertion_table_type(struct context *ctx, const struct token *token,
+-			   const char *str, unsigned int len, void *buf,
+-			   unsigned int size)
+-{
+-	const struct arg *arg = pop_args(ctx);
+-	unsigned int i;
+-	char tmp[2];
+-	int ret;
+-
+-	(void)size;
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	for (i = 0; table_insertion_types[i]; ++i)
+-		if (!strcmp_partial(table_insertion_types[i], str, len))
+-			break;
+-	if (!table_insertion_types[i])
+-		return -1;
+-	push_args(ctx, arg);
+-	snprintf(tmp, sizeof(tmp), "%u", i);
+-	ret = parse_int(ctx, token, tmp, strlen(tmp), buf, sizeof(i));
+-	return ret > 0 ? (int)len : ret;
+-}
+-
+-/** Parse Hash Calculation Table Type name */
+-static int
+-parse_hash_table_type(struct context *ctx, const struct token *token,
+-		      const char *str, unsigned int len, void *buf,
+-		      unsigned int size)
+-{
+-	const struct arg *arg = pop_args(ctx);
+-	unsigned int i;
+-	char tmp[2];
+-	int ret;
+-
+-	(void)size;
+-	/* Argument is expected. */
+-	if (!arg)
+-		return -1;
+-	for (i = 0; table_hash_funcs[i]; ++i)
+-		if (!strcmp_partial(table_hash_funcs[i], str, len))
+-			break;
+-	if (!table_hash_funcs[i])
+-		return -1;
+-	push_args(ctx, arg);
+-	snprintf(tmp, sizeof(tmp), "%u", i);
+-	ret = parse_int(ctx, token, tmp, strlen(tmp), buf, sizeof(i));
+-	return ret > 0 ? (int)len : ret;
+-}
+-
+-static int
+-parse_name_to_index(struct context *ctx, const struct token *token,
+-		    const char *str, unsigned int len, void *buf,
+-		    unsigned int size,
+-		    const char *const names[], size_t names_size, uint32_t *dst)
+-{
+-	int ret;
+-	uint32_t i;
+-
+-	RTE_SET_USED(token);
+-	RTE_SET_USED(buf);
+-	RTE_SET_USED(size);
+-	if (!ctx->object)
+-		return len;
+-	for (i = 0; i < names_size; i++) {
+-		if (!names[i])
+-			continue;
+-		ret = strcmp_partial(names[i], str,
+-				     RTE_MIN(len, strlen(names[i])));
+-		if (!ret) {
+-			*dst = i;
+-			return len;
+-		}
+-	}
+-	return -1;
+-}
+-
+-static const char *const quota_mode_names[] = {
+-	NULL,
+-	[RTE_FLOW_QUOTA_MODE_PACKET] = "packet",
+-	[RTE_FLOW_QUOTA_MODE_L2] = "l2",
+-	[RTE_FLOW_QUOTA_MODE_L3] = "l3"
+-};
+-
+-static const char *const quota_state_names[] = {
+-	[RTE_FLOW_QUOTA_STATE_PASS] = "pass",
+-	[RTE_FLOW_QUOTA_STATE_BLOCK] = "block"
+-};
+-
+-static const char *const quota_update_names[] = {
+-	[RTE_FLOW_UPDATE_QUOTA_SET] = "set",
+-	[RTE_FLOW_UPDATE_QUOTA_ADD] = "add"
+-};
+-
+-static const char *const query_update_mode_names[] = {
+-	[RTE_FLOW_QU_QUERY_FIRST] = "query_first",
+-	[RTE_FLOW_QU_UPDATE_FIRST] = "update_first"
+-};
+-
+-static int
+-parse_quota_state_name(struct context *ctx, const struct token *token,
+-		       const char *str, unsigned int len, void *buf,
+-		       unsigned int size)
+-{
+-	struct rte_flow_item_quota *quota = ctx->object;
+-
+-	return parse_name_to_index(ctx, token, str, len, buf, size,
+-				   quota_state_names,
+-				   RTE_DIM(quota_state_names),
+-				   (uint32_t *)&quota->state);
+-}
+-
+-static int
+-parse_quota_mode_name(struct context *ctx, const struct token *token,
+-		      const char *str, unsigned int len, void *buf,
+-		      unsigned int size)
+-{
+-	struct rte_flow_action_quota *quota = ctx->object;
+-
+-	return parse_name_to_index(ctx, token, str, len, buf, size,
+-				   quota_mode_names,
+-				   RTE_DIM(quota_mode_names),
+-				   (uint32_t *)&quota->mode);
+-}
+-
+-static int
+-parse_quota_update_name(struct context *ctx, const struct token *token,
+-			const char *str, unsigned int len, void *buf,
+-			unsigned int size)
+-{
+-	struct rte_flow_update_quota *update = ctx->object;
+-
+-	return parse_name_to_index(ctx, token, str, len, buf, size,
+-				   quota_update_names,
+-				   RTE_DIM(quota_update_names),
+-				   (uint32_t *)&update->op);
+-}
+-
+-static int
+-parse_qu_mode_name(struct context *ctx, const struct token *token,
+-		   const char *str, unsigned int len, void *buf,
+-		   unsigned int size)
+-{
+-	struct buffer *out = ctx->object;
+-
+-	return parse_name_to_index(ctx, token, str, len, buf, size,
+-				   query_update_mode_names,
+-				   RTE_DIM(query_update_mode_names),
+-				   (uint32_t *)&out->args.ia.qu_mode);
+-}
+-
+-/** No completion. */
+-static int
+-comp_none(struct context *ctx, const struct token *token,
+-	  unsigned int ent, char *buf, unsigned int size)
+-{
+-	(void)ctx;
+-	(void)token;
+-	(void)ent;
+-	(void)buf;
+-	(void)size;
+-	return 0;
+-}
+-
+-/** Complete boolean values. */
+-static int
+-comp_boolean(struct context *ctx, const struct token *token,
+-	     unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i;
+-
+-	(void)ctx;
+-	(void)token;
+-	for (i = 0; boolean_name[i]; ++i)
+-		if (buf && i == ent)
+-			return strlcpy(buf, boolean_name[i], size);
+-	if (buf)
+-		return -1;
+-	return i;
+-}
+-
+-/** Complete action names. */
+-static int
+-comp_action(struct context *ctx, const struct token *token,
+-	    unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i;
+-
+-	(void)ctx;
+-	(void)token;
+-	for (i = 0; next_action[i]; ++i)
+-		if (buf && i == ent)
+-			return strlcpy(buf, token_list[next_action[i]].name,
+-				       size);
+-	if (buf)
+-		return -1;
+-	return i;
+-}
+-
+-/** Complete available ports. */
+-static int
+-comp_port(struct context *ctx, const struct token *token,
+-	  unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i = 0;
+-	portid_t p;
+-
+-	(void)ctx;
+-	(void)token;
+-	RTE_ETH_FOREACH_DEV(p) {
+-		if (buf && i == ent)
+-			return snprintf(buf, size, "%u", p);
+-		++i;
+-	}
+-	if (buf)
+-		return -1;
+-	return i;
+-}
+-
+-/** Complete available rule IDs. */
+-static int
+-comp_rule_id(struct context *ctx, const struct token *token,
+-	     unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i = 0;
+-	struct rte_port *port;
+-	struct port_flow *pf;
+-
+-	(void)token;
+-	if (port_id_is_invalid(ctx->port, DISABLED_WARN) ||
+-	    ctx->port == (portid_t)RTE_PORT_ALL)
+-		return -1;
+-	port = &ports[ctx->port];
+-	for (pf = port->flow_list; pf != NULL; pf = pf->next) {
+-		if (buf && i == ent)
+-			return snprintf(buf, size, "%"PRIu64, pf->id);
+-		++i;
+-	}
+-	if (buf)
+-		return -1;
+-	return i;
+-}
+-
+-/** Complete operation for compare match item. */
+-static int
+-comp_set_compare_op(struct context *ctx, const struct token *token,
+-		    unsigned int ent, char *buf, unsigned int size)
+-{
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	if (!buf)
+-		return RTE_DIM(compare_ops);
+-	if (ent < RTE_DIM(compare_ops) - 1)
+-		return strlcpy(buf, compare_ops[ent], size);
+-	return -1;
+-}
+-
+-/** Complete field id for compare match item. */
+-static int
+-comp_set_compare_field_id(struct context *ctx, const struct token *token,
+-			  unsigned int ent, char *buf, unsigned int size)
+-{
+-	const char *name;
+-
+-	RTE_SET_USED(token);
+-	if (!buf)
+-		return RTE_DIM(flow_field_ids);
+-	if (ent >= RTE_DIM(flow_field_ids) - 1)
+-		return -1;
+-	name = flow_field_ids[ent];
+-	if (ctx->curr == ITEM_COMPARE_FIELD_B_TYPE ||
+-	    (strcmp(name, "pointer") && strcmp(name, "value")))
+-		return strlcpy(buf, name, size);
+-	return -1;
+-}
+-
+-/** Complete type field for RSS action. */
+-static int
+-comp_vc_action_rss_type(struct context *ctx, const struct token *token,
+-			unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i;
+-
+-	(void)ctx;
+-	(void)token;
+-	for (i = 0; rss_type_table[i].str; ++i)
+-		;
+-	if (!buf)
+-		return i + 1;
+-	if (ent < i)
+-		return strlcpy(buf, rss_type_table[ent].str, size);
+-	if (ent == i)
+-		return snprintf(buf, size, "end");
+-	return -1;
+-}
+-
+-/** Complete queue field for RSS action. */
+-static int
+-comp_vc_action_rss_queue(struct context *ctx, const struct token *token,
+-			 unsigned int ent, char *buf, unsigned int size)
+-{
+-	(void)ctx;
+-	(void)token;
+-	if (!buf)
+-		return nb_rxq + 1;
+-	if (ent < nb_rxq)
+-		return snprintf(buf, size, "%u", ent);
+-	if (ent == nb_rxq)
+-		return snprintf(buf, size, "end");
+-	return -1;
+-}
+-
+-/** Complete index number for set raw_encap/raw_decap commands. */
+-static int
+-comp_set_raw_index(struct context *ctx, const struct token *token,
+-		   unsigned int ent, char *buf, unsigned int size)
+-{
+-	uint16_t idx = 0;
+-	uint16_t nb = 0;
+-
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	for (idx = 0; idx < RAW_ENCAP_CONFS_MAX_NUM; ++idx) {
+-		if (buf && idx == ent)
+-			return snprintf(buf, size, "%u", idx);
+-		++nb;
+-	}
+-	return nb;
+-}
+-
+-/** Complete index number for set raw_ipv6_ext_push/ipv6_ext_remove commands. */
+-static int
+-comp_set_ipv6_ext_index(struct context *ctx, const struct token *token,
+-			unsigned int ent, char *buf, unsigned int size)
+-{
+-	uint16_t idx = 0;
+-	uint16_t nb = 0;
+-
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	for (idx = 0; idx < IPV6_EXT_PUSH_CONFS_MAX_NUM; ++idx) {
+-		if (buf && idx == ent)
+-			return snprintf(buf, size, "%u", idx);
+-		++nb;
+-	}
+-	return nb;
+-}
+-
+-/** Complete index number for set raw_encap/raw_decap commands. */
+-static int
+-comp_set_sample_index(struct context *ctx, const struct token *token,
+-		   unsigned int ent, char *buf, unsigned int size)
+-{
+-	uint16_t idx = 0;
+-	uint16_t nb = 0;
+-
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	for (idx = 0; idx < RAW_SAMPLE_CONFS_MAX_NUM; ++idx) {
+-		if (buf && idx == ent)
+-			return snprintf(buf, size, "%u", idx);
+-		++nb;
+-	}
+-	return nb;
+-}
+-
+-/** Complete operation for modify_field command. */
+-static int
+-comp_set_modify_field_op(struct context *ctx, const struct token *token,
+-		   unsigned int ent, char *buf, unsigned int size)
+-{
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	if (!buf)
+-		return RTE_DIM(modify_field_ops);
+-	if (ent < RTE_DIM(modify_field_ops) - 1)
+-		return strlcpy(buf, modify_field_ops[ent], size);
+-	return -1;
+-}
+-
+-/** Complete field id for modify_field command. */
+-static int
+-comp_set_modify_field_id(struct context *ctx, const struct token *token,
+-		   unsigned int ent, char *buf, unsigned int size)
+-{
+-	const char *name;
+-
+-	RTE_SET_USED(token);
+-	if (!buf)
+-		return RTE_DIM(flow_field_ids);
+-	if (ent >= RTE_DIM(flow_field_ids) - 1)
+-		return -1;
+-	name = flow_field_ids[ent];
+-	if (ctx->curr == ACTION_MODIFY_FIELD_SRC_TYPE ||
+-	    (strcmp(name, "pointer") && strcmp(name, "value")))
+-		return strlcpy(buf, name, size);
+-	return -1;
+-}
+-
+-/** Complete available pattern template IDs. */
+-static int
+-comp_pattern_template_id(struct context *ctx, const struct token *token,
+-			 unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i = 0;
+-	struct rte_port *port;
+-	struct port_template *pt;
+-
+-	(void)token;
+-	if (port_id_is_invalid(ctx->port, DISABLED_WARN) ||
+-	    ctx->port == (portid_t)RTE_PORT_ALL)
+-		return -1;
+-	port = &ports[ctx->port];
+-	for (pt = port->pattern_templ_list; pt != NULL; pt = pt->next) {
+-		if (buf && i == ent)
+-			return snprintf(buf, size, "%u", pt->id);
+-		++i;
+-	}
+-	if (buf)
+-		return -1;
+-	return i;
+-}
+-
+-/** Complete available actions template IDs. */
+-static int
+-comp_actions_template_id(struct context *ctx, const struct token *token,
+-			 unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i = 0;
+-	struct rte_port *port;
+-	struct port_template *pt;
+-
+-	(void)token;
+-	if (port_id_is_invalid(ctx->port, DISABLED_WARN) ||
+-	    ctx->port == (portid_t)RTE_PORT_ALL)
+-		return -1;
+-	port = &ports[ctx->port];
+-	for (pt = port->actions_templ_list; pt != NULL; pt = pt->next) {
+-		if (buf && i == ent)
+-			return snprintf(buf, size, "%u", pt->id);
+-		++i;
+-	}
+-	if (buf)
+-		return -1;
+-	return i;
+-}
+-
+-/** Complete available table IDs. */
+-static int
+-comp_table_id(struct context *ctx, const struct token *token,
+-	      unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i = 0;
+-	struct rte_port *port;
+-	struct port_table *pt;
+-
+-	(void)token;
+-	if (port_id_is_invalid(ctx->port, DISABLED_WARN) ||
+-	    ctx->port == (portid_t)RTE_PORT_ALL)
+-		return -1;
+-	port = &ports[ctx->port];
+-	for (pt = port->table_list; pt != NULL; pt = pt->next) {
+-		if (buf && i == ent)
+-			return snprintf(buf, size, "%u", pt->id);
+-		++i;
+-	}
+-	if (buf)
+-		return -1;
+-	return i;
+-}
+-
+-/** Complete available queue IDs. */
+-static int
+-comp_queue_id(struct context *ctx, const struct token *token,
+-	      unsigned int ent, char *buf, unsigned int size)
+-{
+-	unsigned int i = 0;
+-	struct rte_port *port;
+-
+-	(void)token;
+-	if (port_id_is_invalid(ctx->port, DISABLED_WARN) ||
+-	    ctx->port == (portid_t)RTE_PORT_ALL)
+-		return -1;
+-	port = &ports[ctx->port];
+-	for (i = 0; i < port->queue_nb; i++) {
+-		if (buf && i == ent)
+-			return snprintf(buf, size, "%u", i);
+-	}
+-	if (buf)
+-		return -1;
+-	return i;
+-}
+-
+-static int
+-comp_names_to_index(struct context *ctx, const struct token *token,
+-		    unsigned int ent, char *buf, unsigned int size,
+-		    const char *const names[], size_t names_size)
+-{
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	if (!buf)
+-		return names_size;
+-	if (ent < names_size && names[ent] != NULL)
+-		return rte_strscpy(buf, names[ent], size);
+-	return -1;
+-
+-}
+-
+-/** Complete available Meter colors. */
+-static int
+-comp_meter_color(struct context *ctx, const struct token *token,
+-		 unsigned int ent, char *buf, unsigned int size)
+-{
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	if (!buf)
+-		return RTE_DIM(meter_colors);
+-	if (ent < RTE_DIM(meter_colors) - 1)
+-		return strlcpy(buf, meter_colors[ent], size);
+-	return -1;
+-}
+-
+-/** Complete available Insertion Table types. */
+-static int
+-comp_insertion_table_type(struct context *ctx, const struct token *token,
+-			  unsigned int ent, char *buf, unsigned int size)
+-{
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	if (!buf)
+-		return RTE_DIM(table_insertion_types);
+-	if (ent < RTE_DIM(table_insertion_types) - 1)
+-		return rte_strscpy(buf, table_insertion_types[ent], size);
+-	return -1;
+-}
+-
+-/** Complete available Hash Calculation Table types. */
+-static int
+-comp_hash_table_type(struct context *ctx, const struct token *token,
+-		     unsigned int ent, char *buf, unsigned int size)
+-{
+-	RTE_SET_USED(ctx);
+-	RTE_SET_USED(token);
+-	if (!buf)
+-		return RTE_DIM(table_hash_funcs);
+-	if (ent < RTE_DIM(table_hash_funcs) - 1)
+-		return rte_strscpy(buf, table_hash_funcs[ent], size);
+-	return -1;
+-}
+-
+-static int
+-comp_quota_state_name(struct context *ctx, const struct token *token,
+-		      unsigned int ent, char *buf, unsigned int size)
+-{
+-	return comp_names_to_index(ctx, token, ent, buf, size,
+-				   quota_state_names,
+-				   RTE_DIM(quota_state_names));
+-}
+-
+-static int
+-comp_quota_mode_name(struct context *ctx, const struct token *token,
+-		     unsigned int ent, char *buf, unsigned int size)
+-{
+-	return comp_names_to_index(ctx, token, ent, buf, size,
+-				   quota_mode_names,
+-				   RTE_DIM(quota_mode_names));
+-}
+-
+-static int
+-comp_quota_update_name(struct context *ctx, const struct token *token,
+-		       unsigned int ent, char *buf, unsigned int size)
+-{
+-	return comp_names_to_index(ctx, token, ent, buf, size,
+-				   quota_update_names,
+-				   RTE_DIM(quota_update_names));
+-}
+-
+-static int
+-comp_qu_mode_name(struct context *ctx, const struct token *token,
+-		  unsigned int ent, char *buf, unsigned int size)
+-{
+-	return comp_names_to_index(ctx, token, ent, buf, size,
+-				   query_update_mode_names,
+-				   RTE_DIM(query_update_mode_names));
+-}
+-
+-/** Internal context. */
+-static struct context cmd_flow_context;
+-
+-/** Global parser instance (cmdline API). */
+-cmdline_parse_inst_t cmd_flow;
+-cmdline_parse_inst_t cmd_set_raw;
+-
+-/** Initialize context. */
+-static void
+-cmd_flow_context_init(struct context *ctx)
+-{
+-	/* A full memset() is not necessary. */
+-	ctx->curr = ZERO;
+-	ctx->prev = ZERO;
+-	ctx->next_num = 0;
+-	ctx->args_num = 0;
+-	ctx->eol = 0;
+-	ctx->last = 0;
+-	ctx->port = 0;
+-	ctx->objdata = 0;
+-	ctx->object = NULL;
+-	ctx->objmask = NULL;
+-}
+-
+-/** Parse a token (cmdline API). */
+-static int
+-cmd_flow_parse(cmdline_parse_token_hdr_t *hdr, const char *src, void *result,
+-	       unsigned int size)
+-{
+-	struct context *ctx = &cmd_flow_context;
+-	const struct token *token;
+-	const enum index *list;
+-	int len;
+-	int i;
+-
+-	(void)hdr;
+-	token = &token_list[ctx->curr];
+-	/* Check argument length. */
+-	ctx->eol = 0;
+-	ctx->last = 1;
+-	for (len = 0; src[len]; ++len)
+-		if (src[len] == '#' || isspace(src[len]))
+-			break;
+-	if (!len)
+-		return -1;
+-	/* Last argument and EOL detection. */
+-	for (i = len; src[i]; ++i)
+-		if (src[i] == '#' || src[i] == '\r' || src[i] == '\n')
+-			break;
+-		else if (!isspace(src[i])) {
+-			ctx->last = 0;
+-			break;
+-		}
+-	for (; src[i]; ++i)
+-		if (src[i] == '\r' || src[i] == '\n') {
+-			ctx->eol = 1;
+-			break;
+-		}
+-	/* Initialize context if necessary. */
+-	if (!ctx->next_num) {
+-		if (!token->next)
+-			return 0;
+-		ctx->next[ctx->next_num++] = token->next[0];
+-	}
+-	/* Process argument through candidates. */
+-	ctx->prev = ctx->curr;
+-	list = ctx->next[ctx->next_num - 1];
+-	for (i = 0; list[i]; ++i) {
+-		const struct token *next = &token_list[list[i]];
+-		int tmp;
+-
+-		ctx->curr = list[i];
+-		if (next->call)
+-			tmp = next->call(ctx, next, src, len, result, size);
+-		else
+-			tmp = parse_default(ctx, next, src, len, result, size);
+-		if (tmp == -1 || tmp != len)
+-			continue;
+-		token = next;
+-		break;
+-	}
+-	if (!list[i])
+-		return -1;
+-	--ctx->next_num;
+-	/* Push subsequent tokens if any. */
+-	if (token->next)
+-		for (i = 0; token->next[i]; ++i) {
+-			if (ctx->next_num == RTE_DIM(ctx->next))
+-				return -1;
+-			ctx->next[ctx->next_num++] = token->next[i];
+-		}
+-	/* Push arguments if any. */
+-	if (token->args)
+-		for (i = 0; token->args[i]; ++i) {
+-			if (ctx->args_num == RTE_DIM(ctx->args))
+-				return -1;
+-			ctx->args[ctx->args_num++] = token->args[i];
+-		}
+-	return len;
+-}
+-
+-int
+-flow_parse(const char *src, void *result, unsigned int size,
+-	   struct rte_flow_attr **attr,
+-	   struct rte_flow_item **pattern, struct rte_flow_action **actions)
+-{
+-	int ret;
+-	struct context saved_flow_ctx = cmd_flow_context;
+-
+-	cmd_flow_context_init(&cmd_flow_context);
+-	do {
+-		ret = cmd_flow_parse(NULL, src, result, size);
+-		if (ret > 0) {
+-			src += ret;
+-			while (isspace(*src))
+-				src++;
+-		}
+-	} while (ret > 0 && strlen(src));
+-	cmd_flow_context = saved_flow_ctx;
+-	*attr = &((struct buffer *)result)->args.vc.attr;
+-	*pattern = ((struct buffer *)result)->args.vc.pattern;
+-	*actions = ((struct buffer *)result)->args.vc.actions;
+-	return (ret >= 0 && !strlen(src)) ? 0 : -1;
+-}
+-
+-/** Return number of completion entries (cmdline API). */
+-static int
+-cmd_flow_complete_get_nb(cmdline_parse_token_hdr_t *hdr)
+-{
+-	struct context *ctx = &cmd_flow_context;
+-	const struct token *token = &token_list[ctx->curr];
+-	const enum index *list;
+-	int i;
+-
+-	(void)hdr;
+-	/* Count number of tokens in current list. */
+-	if (ctx->next_num)
+-		list = ctx->next[ctx->next_num - 1];
+-	else
+-		list = token->next[0];
+-	for (i = 0; list[i]; ++i)
+-		;
+-	if (!i)
+-		return 0;
+-	/*
+-	 * If there is a single token, use its completion callback, otherwise
+-	 * return the number of entries.
+-	 */
+-	token = &token_list[list[0]];
+-	if (i == 1 && token->comp) {
+-		/* Save index for cmd_flow_get_help(). */
+-		ctx->prev = list[0];
+-		return token->comp(ctx, token, 0, NULL, 0);
+-	}
+-	return i;
+-}
+-
+-/** Return a completion entry (cmdline API). */
+-static int
+-cmd_flow_complete_get_elt(cmdline_parse_token_hdr_t *hdr, int index,
+-			  char *dst, unsigned int size)
+-{
+-	struct context *ctx = &cmd_flow_context;
+-	const struct token *token = &token_list[ctx->curr];
+-	const enum index *list;
+-	int i;
+-
+-	(void)hdr;
+-	/* Count number of tokens in current list. */
+-	if (ctx->next_num)
+-		list = ctx->next[ctx->next_num - 1];
+-	else
+-		list = token->next[0];
+-	for (i = 0; list[i]; ++i)
+-		;
+-	if (!i)
+-		return -1;
+-	/* If there is a single token, use its completion callback. */
+-	token = &token_list[list[0]];
+-	if (i == 1 && token->comp) {
+-		/* Save index for cmd_flow_get_help(). */
+-		ctx->prev = list[0];
+-		return token->comp(ctx, token, index, dst, size) < 0 ? -1 : 0;
+-	}
+-	/* Otherwise make sure the index is valid and use defaults. */
+-	if (index >= i)
+-		return -1;
+-	token = &token_list[list[index]];
+-	strlcpy(dst, token->name, size);
+-	/* Save index for cmd_flow_get_help(). */
+-	ctx->prev = list[index];
+-	return 0;
+-}
+-
+-/** Populate help strings for current token (cmdline API). */
+-static int
+-cmd_flow_get_help(cmdline_parse_token_hdr_t *hdr, char *dst, unsigned int size)
+-{
+-	struct context *ctx = &cmd_flow_context;
+-	const struct token *token = &token_list[ctx->prev];
+-
+-	(void)hdr;
+-	if (!size)
+-		return -1;
+-	/* Set token type and update global help with details. */
+-	strlcpy(dst, (token->type ? token->type : "TOKEN"), size);
+-	if (token->help)
+-		cmd_flow.help_str = token->help;
+-	else
+-		cmd_flow.help_str = token->name;
+-	return 0;
+-}
+-
+-/** Token definition template (cmdline API). */
+-static struct cmdline_token_hdr cmd_flow_token_hdr = {
+-	.ops = &(struct cmdline_token_ops){
+-		.parse = cmd_flow_parse,
+-		.complete_get_nb = cmd_flow_complete_get_nb,
+-		.complete_get_elt = cmd_flow_complete_get_elt,
+-		.get_help = cmd_flow_get_help,
+-	},
+-	.offset = 0,
+-};
+-
+-/** Populate the next dynamic token. */
+-static void
+-cmd_flow_tok(cmdline_parse_token_hdr_t **hdr,
+-	     cmdline_parse_token_hdr_t **hdr_inst)
+-{
+-	struct context *ctx = &cmd_flow_context;
+-
+-	/* Always reinitialize context before requesting the first token. */
+-	if (!(hdr_inst - cmd_flow.tokens))
+-		cmd_flow_context_init(ctx);
+-	/* Return NULL when no more tokens are expected. */
+-	if (!ctx->next_num && ctx->curr) {
+-		*hdr = NULL;
+-		return;
+-	}
+-	/* Determine if command should end here. */
+-	if (ctx->eol && ctx->last && ctx->next_num) {
+-		const enum index *list = ctx->next[ctx->next_num - 1];
+-		int i;
+-
+-		for (i = 0; list[i]; ++i) {
+-			if (list[i] != END)
+-				continue;
+-			*hdr = NULL;
+-			return;
+-		}
+-	}
+-	*hdr = &cmd_flow_token_hdr;
+-}
+-
+-static SLIST_HEAD(, indlst_conf) indlst_conf_head =
+-	SLIST_HEAD_INITIALIZER();
+-
+-static void
+-indirect_action_flow_conf_create(const struct buffer *in)
+-{
+-	int len, ret;
+-	uint32_t i;
+-	struct indlst_conf *indlst_conf = NULL;
+-	size_t base = RTE_ALIGN(sizeof(*indlst_conf), 8);
+-	struct rte_flow_action *src = in->args.vc.actions;
+-
+-	if (!in->args.vc.actions_n)
+-		goto end;
+-	len = rte_flow_conv(RTE_FLOW_CONV_OP_ACTIONS, NULL, 0, src, NULL);
+-	if (len <= 0)
+-		goto end;
+-	len = RTE_ALIGN(len, 16);
+-
+-	indlst_conf = calloc(1, base + len +
+-			     in->args.vc.actions_n * sizeof(uintptr_t));
+-	if (!indlst_conf)
+-		goto end;
+-	indlst_conf->id = in->args.vc.attr.group;
+-	indlst_conf->conf_num = in->args.vc.actions_n - 1;
+-	indlst_conf->actions = RTE_PTR_ADD(indlst_conf, base);
+-	ret = rte_flow_conv(RTE_FLOW_CONV_OP_ACTIONS, indlst_conf->actions,
+-			    len, src, NULL);
+-	if (ret <= 0) {
+-		free(indlst_conf);
+-		indlst_conf = NULL;
+-		goto end;
+-	}
+-	indlst_conf->conf = RTE_PTR_ADD(indlst_conf, base + len);
+-	for (i = 0; i < indlst_conf->conf_num; i++)
+-		indlst_conf->conf[i] = indlst_conf->actions[i].conf;
+-	SLIST_INSERT_HEAD(&indlst_conf_head, indlst_conf, next);
+-end:
+-	if (indlst_conf)
+-		printf("created indirect action list configuration %u\n",
+-		       in->args.vc.attr.group);
+-	else
+-		printf("cannot create indirect action list configuration %u\n",
+-		       in->args.vc.attr.group);
+-}
+-
+-static const struct indlst_conf *
+-indirect_action_list_conf_get(uint32_t conf_id)
+-{
+-	const struct indlst_conf *conf;
+-
+-	SLIST_FOREACH(conf, &indlst_conf_head, next) {
+-		if (conf->id == conf_id)
+-			return conf;
+-	}
+-	return NULL;
+-}
+-
+-/** Dispatch parsed buffer to function calls. */
+-static void
+-cmd_flow_parsed(const struct buffer *in)
+-{
+-	switch (in->command) {
+-	case INFO:
+-		port_flow_get_info(in->port);
+-		break;
+-	case CONFIGURE:
+-		port_flow_configure(in->port,
+-				    &in->args.configure.port_attr,
+-				    in->args.configure.nb_queue,
+-				    &in->args.configure.queue_attr);
+-		break;
+-	case PATTERN_TEMPLATE_CREATE:
+-		port_flow_pattern_template_create(in->port,
+-				in->args.vc.pat_templ_id,
+-				&((const struct rte_flow_pattern_template_attr) {
+-					.relaxed_matching = in->args.vc.attr.reserved,
+-					.ingress = in->args.vc.attr.ingress,
+-					.egress = in->args.vc.attr.egress,
+-					.transfer = in->args.vc.attr.transfer,
+-				}),
+-				in->args.vc.pattern);
+-		break;
+-	case PATTERN_TEMPLATE_DESTROY:
+-		port_flow_pattern_template_destroy(in->port,
+-				in->args.templ_destroy.template_id_n,
+-				in->args.templ_destroy.template_id);
+-		break;
+-	case ACTIONS_TEMPLATE_CREATE:
+-		port_flow_actions_template_create(in->port,
+-				in->args.vc.act_templ_id,
+-				&((const struct rte_flow_actions_template_attr) {
+-					.ingress = in->args.vc.attr.ingress,
+-					.egress = in->args.vc.attr.egress,
+-					.transfer = in->args.vc.attr.transfer,
+-				}),
+-				in->args.vc.actions,
+-				in->args.vc.masks);
+-		break;
+-	case ACTIONS_TEMPLATE_DESTROY:
+-		port_flow_actions_template_destroy(in->port,
+-				in->args.templ_destroy.template_id_n,
+-				in->args.templ_destroy.template_id);
+-		break;
+-	case TABLE_CREATE:
+-		port_flow_template_table_create(in->port, in->args.table.id,
+-			&in->args.table.attr, in->args.table.pat_templ_id_n,
+-			in->args.table.pat_templ_id, in->args.table.act_templ_id_n,
+-			in->args.table.act_templ_id);
+-		break;
+-	case TABLE_DESTROY:
+-		port_flow_template_table_destroy(in->port,
+-					in->args.table_destroy.table_id_n,
+-					in->args.table_destroy.table_id);
+-		break;
+-	case TABLE_RESIZE_COMPLETE:
+-		port_flow_template_table_resize_complete
+-			(in->port, in->args.table_destroy.table_id[0]);
+-		break;
+-	case GROUP_SET_MISS_ACTIONS:
+-		port_queue_group_set_miss_actions(in->port, &in->args.vc.attr,
+-						  in->args.vc.actions);
+-		break;
+-	case TABLE_RESIZE:
+-		port_flow_template_table_resize(in->port, in->args.table.id,
+-						in->args.table.attr.nb_flows);
+-		break;
+-	case QUEUE_CREATE:
+-		port_queue_flow_create(in->port, in->queue, in->postpone,
+-			in->args.vc.table_id, in->args.vc.rule_id,
+-			in->args.vc.pat_templ_id, in->args.vc.act_templ_id,
+-			in->args.vc.pattern, in->args.vc.actions);
+-		break;
+-	case QUEUE_DESTROY:
+-		port_queue_flow_destroy(in->port, in->queue, in->postpone,
+-					in->args.destroy.rule_n,
+-					in->args.destroy.rule);
+-		break;
+-	case QUEUE_FLOW_UPDATE_RESIZED:
+-		port_queue_flow_update_resized(in->port, in->queue,
+-					       in->postpone,
+-					       in->args.destroy.rule[0]);
+-		break;
+-	case QUEUE_UPDATE:
+-		port_queue_flow_update(in->port, in->queue, in->postpone,
+-				in->args.vc.rule_id, in->args.vc.act_templ_id,
+-				in->args.vc.actions);
+-		break;
+-	case PUSH:
+-		port_queue_flow_push(in->port, in->queue);
+-		break;
+-	case PULL:
+-		port_queue_flow_pull(in->port, in->queue);
+-		break;
+-	case HASH:
+-		if (!in->args.vc.encap_hash)
+-			port_flow_hash_calc(in->port, in->args.vc.table_id,
+-					    in->args.vc.pat_templ_id,
+-					    in->args.vc.pattern);
+-		else
+-			port_flow_hash_calc_encap(in->port, in->args.vc.field,
+-						  in->args.vc.pattern);
+-		break;
+-	case QUEUE_AGED:
+-		port_queue_flow_aged(in->port, in->queue,
+-				     in->args.aged.destroy);
+-		break;
+-	case QUEUE_INDIRECT_ACTION_CREATE:
+-	case QUEUE_INDIRECT_ACTION_LIST_CREATE:
+-		port_queue_action_handle_create(
+-				in->port, in->queue, in->postpone,
+-				in->args.vc.attr.group,
+-				in->command == QUEUE_INDIRECT_ACTION_LIST_CREATE,
+-				&((const struct rte_flow_indir_action_conf) {
+-					.ingress = in->args.vc.attr.ingress,
+-					.egress = in->args.vc.attr.egress,
+-					.transfer = in->args.vc.attr.transfer,
+-				}),
+-				in->args.vc.actions);
+-		break;
+-	case QUEUE_INDIRECT_ACTION_DESTROY:
+-		port_queue_action_handle_destroy(in->port,
+-					   in->queue, in->postpone,
+-					   in->args.ia_destroy.action_id_n,
+-					   in->args.ia_destroy.action_id);
+-		break;
+-	case QUEUE_INDIRECT_ACTION_UPDATE:
+-		port_queue_action_handle_update(in->port,
+-						in->queue, in->postpone,
+-						in->args.vc.attr.group,
+-						in->args.vc.actions);
+-		break;
+-	case QUEUE_INDIRECT_ACTION_QUERY:
+-		port_queue_action_handle_query(in->port,
+-					       in->queue, in->postpone,
+-					       in->args.ia.action_id);
+-		break;
+-	case QUEUE_INDIRECT_ACTION_QUERY_UPDATE:
+-		port_queue_action_handle_query_update(in->port, in->queue,
+-						      in->postpone,
+-						      in->args.ia.action_id,
+-						      in->args.ia.qu_mode,
+-						      in->args.vc.actions);
+-		break;
+-	case INDIRECT_ACTION_CREATE:
+-	case INDIRECT_ACTION_LIST_CREATE:
+-		port_action_handle_create(
+-				in->port, in->args.vc.attr.group,
+-				in->command == INDIRECT_ACTION_LIST_CREATE,
+-				&((const struct rte_flow_indir_action_conf) {
+-					.ingress = in->args.vc.attr.ingress,
+-					.egress = in->args.vc.attr.egress,
+-					.transfer = in->args.vc.attr.transfer,
+-				}),
+-				in->args.vc.actions);
+-		break;
+-	case INDIRECT_ACTION_FLOW_CONF_CREATE:
+-		indirect_action_flow_conf_create(in);
+-		break;
+-	case INDIRECT_ACTION_DESTROY:
+-		port_action_handle_destroy(in->port,
+-					   in->args.ia_destroy.action_id_n,
+-					   in->args.ia_destroy.action_id);
+-		break;
+-	case INDIRECT_ACTION_UPDATE:
+-		port_action_handle_update(in->port, in->args.vc.attr.group,
+-					  in->args.vc.actions);
+-		break;
+-	case INDIRECT_ACTION_QUERY:
+-		port_action_handle_query(in->port, in->args.ia.action_id);
+-		break;
+-	case INDIRECT_ACTION_QUERY_UPDATE:
+-		port_action_handle_query_update(in->port,
+-						in->args.ia.action_id,
+-						in->args.ia.qu_mode,
+-						in->args.vc.actions);
+-		break;
+-	case VALIDATE:
+-		port_flow_validate(in->port, &in->args.vc.attr,
+-				   in->args.vc.pattern, in->args.vc.actions,
+-				   &in->args.vc.tunnel_ops);
+-		break;
+-	case CREATE:
+-		port_flow_create(in->port, &in->args.vc.attr,
+-				 in->args.vc.pattern, in->args.vc.actions,
+-				 &in->args.vc.tunnel_ops, in->args.vc.user_id);
+-		break;
+-	case DESTROY:
+-		port_flow_destroy(in->port, in->args.destroy.rule_n,
+-				  in->args.destroy.rule,
+-				  in->args.destroy.is_user_id);
+-		break;
+-	case UPDATE:
+-		port_flow_update(in->port, in->args.vc.rule_id,
+-				 in->args.vc.actions, in->args.vc.user_id);
+-		break;
+-	case FLUSH:
+-		port_flow_flush(in->port);
+-		break;
+-	case DUMP_ONE:
+-	case DUMP_ALL:
+-		port_flow_dump(in->port, in->args.dump.mode,
+-				in->args.dump.rule, in->args.dump.file,
+-				in->args.dump.is_user_id);
+-		break;
+-	case QUERY:
+-		port_flow_query(in->port, in->args.query.rule,
+-				&in->args.query.action,
+-				in->args.query.is_user_id);
+-		break;
+-	case LIST:
+-		port_flow_list(in->port, in->args.list.group_n,
+-			       in->args.list.group);
+-		break;
+-	case ISOLATE:
+-		port_flow_isolate(in->port, in->args.isolate.set);
+-		break;
+-	case AGED:
+-		port_flow_aged(in->port, in->args.aged.destroy);
+-		break;
+-	case TUNNEL_CREATE:
+-		port_flow_tunnel_create(in->port, &in->args.vc.tunnel_ops);
+-		break;
+-	case TUNNEL_DESTROY:
+-		port_flow_tunnel_destroy(in->port, in->args.vc.tunnel_ops.id);
+-		break;
+-	case TUNNEL_LIST:
+-		port_flow_tunnel_list(in->port);
+-		break;
+-	case ACTION_POL_G:
+-		port_meter_policy_add(in->port, in->args.policy.policy_id,
+-					in->args.vc.actions);
+-		break;
+-	case FLEX_ITEM_CREATE:
+-		flex_item_create(in->port, in->args.flex.token,
+-				 in->args.flex.filename);
+-		break;
+-	case FLEX_ITEM_DESTROY:
+-		flex_item_destroy(in->port, in->args.flex.token);
+-		break;
+-	default:
+-		break;
+-	}
+-	fflush(stdout);
+-}
+-
+-/** Token generator and output processing callback (cmdline API). */
+-static void
+-cmd_flow_cb(void *arg0, struct cmdline *cl, void *arg2)
+-{
+-	if (cl == NULL)
+-		cmd_flow_tok(arg0, arg2);
+-	else
+-		cmd_flow_parsed(arg0);
+-}
+-
+-/** Global parser instance (cmdline API). */
+-cmdline_parse_inst_t cmd_flow = {
+-	.f = cmd_flow_cb,
+-	.data = NULL, /**< Unused. */
+-	.help_str = NULL, /**< Updated by cmd_flow_get_help(). */
+-	.tokens = {
+-		NULL,
+-	}, /**< Tokens are returned by cmd_flow_tok(). */
+-};
+-
+-/** set cmd facility. Reuse cmd flow's infrastructure as much as possible. */
+-
+-static void
+-update_fields(uint8_t *buf, struct rte_flow_item *item, uint16_t next_proto)
+-{
+-	struct rte_ipv4_hdr *ipv4;
+-	struct rte_ether_hdr *eth;
+-	struct rte_ipv6_hdr *ipv6;
+-	struct rte_vxlan_hdr *vxlan;
+-	struct rte_vxlan_gpe_hdr *gpe;
+-	struct rte_flow_item_nvgre *nvgre;
+-	uint32_t ipv6_vtc_flow;
+-
+-	switch (item->type) {
+-	case RTE_FLOW_ITEM_TYPE_ETH:
+-		eth = (struct rte_ether_hdr *)buf;
+-		if (next_proto)
+-			eth->ether_type = rte_cpu_to_be_16(next_proto);
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_IPV4:
+-		ipv4 = (struct rte_ipv4_hdr *)buf;
+-		if (!ipv4->version_ihl)
+-			ipv4->version_ihl = RTE_IPV4_VHL_DEF;
+-		if (next_proto && ipv4->next_proto_id == 0)
+-			ipv4->next_proto_id = (uint8_t)next_proto;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_IPV6:
+-		ipv6 = (struct rte_ipv6_hdr *)buf;
+-		if (next_proto && ipv6->proto == 0)
+-			ipv6->proto = (uint8_t)next_proto;
+-		ipv6_vtc_flow = rte_be_to_cpu_32(ipv6->vtc_flow);
+-		ipv6_vtc_flow &= 0x0FFFFFFF; /* reset version bits. */
+-		ipv6_vtc_flow |= 0x60000000; /* set ipv6 version. */
+-		ipv6->vtc_flow = rte_cpu_to_be_32(ipv6_vtc_flow);
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_VXLAN:
+-		vxlan = (struct rte_vxlan_hdr *)buf;
+-		if (!vxlan->flags)
+-			vxlan->flags = 0x08;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_VXLAN_GPE:
+-		gpe = (struct rte_vxlan_gpe_hdr *)buf;
+-		gpe->vx_flags = 0x0C;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_NVGRE:
+-		nvgre = (struct rte_flow_item_nvgre *)buf;
+-		nvgre->protocol = rte_cpu_to_be_16(0x6558);
+-		nvgre->c_k_s_rsvd0_ver = rte_cpu_to_be_16(0x2000);
+-		break;
+-	default:
+-		break;
+-	}
+-}
+-
+-/** Helper of get item's default mask. */
+-static const void *
+-flow_item_default_mask(const struct rte_flow_item *item)
+-{
+-	const void *mask = NULL;
+-	static rte_be32_t gre_key_default_mask = RTE_BE32(UINT32_MAX);
+-	static struct rte_flow_item_ipv6_routing_ext ipv6_routing_ext_default_mask = {
+-		.hdr = {
+-			.next_hdr = 0xff,
+-			.type = 0xff,
+-			.segments_left = 0xff,
+-		},
+-	};
+-
+-	switch (item->type) {
+-	case RTE_FLOW_ITEM_TYPE_ANY:
+-		mask = &rte_flow_item_any_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_PORT_ID:
+-		mask = &rte_flow_item_port_id_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_RAW:
+-		mask = &rte_flow_item_raw_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_ETH:
+-		mask = &rte_flow_item_eth_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_VLAN:
+-		mask = &rte_flow_item_vlan_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_IPV4:
+-		mask = &rte_flow_item_ipv4_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_IPV6:
+-		mask = &rte_flow_item_ipv6_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_ICMP:
+-		mask = &rte_flow_item_icmp_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_UDP:
+-		mask = &rte_flow_item_udp_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_TCP:
+-		mask = &rte_flow_item_tcp_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_SCTP:
+-		mask = &rte_flow_item_sctp_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_VXLAN:
+-		mask = &rte_flow_item_vxlan_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_VXLAN_GPE:
+-		mask = &rte_flow_item_vxlan_gpe_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_E_TAG:
+-		mask = &rte_flow_item_e_tag_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_NVGRE:
+-		mask = &rte_flow_item_nvgre_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_MPLS:
+-		mask = &rte_flow_item_mpls_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_GRE:
+-		mask = &rte_flow_item_gre_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_GRE_KEY:
+-		mask = &gre_key_default_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_META:
+-		mask = &rte_flow_item_meta_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_RANDOM:
+-		mask = &rte_flow_item_random_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_FUZZY:
+-		mask = &rte_flow_item_fuzzy_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_GTP:
+-		mask = &rte_flow_item_gtp_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_GTP_PSC:
+-		mask = &rte_flow_item_gtp_psc_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_GENEVE:
+-		mask = &rte_flow_item_geneve_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_GENEVE_OPT:
+-		mask = &rte_flow_item_geneve_opt_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_PPPOE_PROTO_ID:
+-		mask = &rte_flow_item_pppoe_proto_id_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_L2TPV3OIP:
+-		mask = &rte_flow_item_l2tpv3oip_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_ESP:
+-		mask = &rte_flow_item_esp_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_AH:
+-		mask = &rte_flow_item_ah_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_PFCP:
+-		mask = &rte_flow_item_pfcp_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_PORT_REPRESENTOR:
+-	case RTE_FLOW_ITEM_TYPE_REPRESENTED_PORT:
+-		mask = &rte_flow_item_ethdev_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_L2TPV2:
+-		mask = &rte_flow_item_l2tpv2_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_PPP:
+-		mask = &rte_flow_item_ppp_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_METER_COLOR:
+-		mask = &rte_flow_item_meter_color_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_IPV6_ROUTING_EXT:
+-		mask = &ipv6_routing_ext_default_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_AGGR_AFFINITY:
+-		mask = &rte_flow_item_aggr_affinity_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_TX_QUEUE:
+-		mask = &rte_flow_item_tx_queue_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_IB_BTH:
+-		mask = &rte_flow_item_ib_bth_mask;
+-		break;
+-	case RTE_FLOW_ITEM_TYPE_PTYPE:
+-		mask = &rte_flow_item_ptype_mask;
+-		break;
+-	default:
+-		break;
+-	}
+-	return mask;
+-}
+-
+-/** Dispatch parsed buffer to function calls. */
+-static void
+-cmd_set_ipv6_ext_parsed(const struct buffer *in)
+-{
+-	uint32_t n = in->args.vc.pattern_n;
+-	int i = 0;
+-	struct rte_flow_item *item = NULL;
+-	size_t size = 0;
+-	uint8_t *data = NULL;
+-	uint8_t *type = NULL;
+-	size_t *total_size = NULL;
+-	uint16_t idx = in->port; /* We borrow port field as index */
+-	struct rte_flow_item_ipv6_routing_ext *ext;
+-	const struct rte_flow_item_ipv6_ext *ipv6_ext;
+-
+-	RTE_ASSERT(in->command == SET_IPV6_EXT_PUSH ||
+-		   in->command == SET_IPV6_EXT_REMOVE);
+-
+-	if (in->command == SET_IPV6_EXT_REMOVE) {
+-		if (n != 1 || in->args.vc.pattern->type !=
+-		    RTE_FLOW_ITEM_TYPE_IPV6_EXT) {
+-			fprintf(stderr, "Error - Not supported item\n");
+-			return;
+-		}
+-		type = (uint8_t *)&ipv6_ext_remove_confs[idx].type;
+-		item = in->args.vc.pattern;
+-		ipv6_ext = item->spec;
+-		*type = ipv6_ext->next_hdr;
+-		return;
+-	}
+-
+-	total_size = &ipv6_ext_push_confs[idx].size;
+-	data = (uint8_t *)&ipv6_ext_push_confs[idx].data;
+-	type = (uint8_t *)&ipv6_ext_push_confs[idx].type;
+-
+-	*total_size = 0;
+-	memset(data, 0x00, ACTION_RAW_ENCAP_MAX_DATA);
+-	for (i = n - 1 ; i >= 0; --i) {
+-		item = in->args.vc.pattern + i;
+-		switch (item->type) {
+-		case RTE_FLOW_ITEM_TYPE_IPV6_EXT:
+-			ipv6_ext = item->spec;
+-			*type = ipv6_ext->next_hdr;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_IPV6_ROUTING_EXT:
+-			ext = (struct rte_flow_item_ipv6_routing_ext *)(uintptr_t)item->spec;
+-			if (!ext->hdr.hdr_len) {
+-				size = sizeof(struct rte_ipv6_routing_ext) +
+-				(ext->hdr.segments_left << 4);
+-				ext->hdr.hdr_len = ext->hdr.segments_left << 1;
+-				/* Indicate no TLV once SRH. */
+-				if (ext->hdr.type == 4)
+-					ext->hdr.last_entry = ext->hdr.segments_left - 1;
+-			} else {
+-				size = sizeof(struct rte_ipv6_routing_ext) +
+-				(ext->hdr.hdr_len << 3);
+-			}
+-			*total_size += size;
+-			memcpy(data, ext, size);
+-			break;
+-		default:
+-			fprintf(stderr, "Error - Not supported item\n");
+-			goto error;
+-		}
+-	}
+-	RTE_ASSERT((*total_size) <= ACTION_IPV6_EXT_PUSH_MAX_DATA);
+-	return;
+-error:
+-	*total_size = 0;
+-	memset(data, 0x00, ACTION_IPV6_EXT_PUSH_MAX_DATA);
+-}
+-
+-/** Dispatch parsed buffer to function calls. */
+-static void
+-cmd_set_raw_parsed_sample(const struct buffer *in)
+-{
+-	uint32_t n = in->args.vc.actions_n;
+-	uint32_t i = 0;
+-	struct rte_flow_action *action = NULL;
+-	struct rte_flow_action *data = NULL;
+-	const struct rte_flow_action_rss *rss = NULL;
+-	size_t size = 0;
+-	uint16_t idx = in->port; /* We borrow port field as index */
+-	uint32_t max_size = sizeof(struct rte_flow_action) *
+-						ACTION_SAMPLE_ACTIONS_NUM;
+-
+-	RTE_ASSERT(in->command == SET_SAMPLE_ACTIONS);
+-	data = (struct rte_flow_action *)&raw_sample_confs[idx].data;
+-	memset(data, 0x00, max_size);
+-	for (; i <= n - 1; i++) {
+-		action = in->args.vc.actions + i;
+-		if (action->type == RTE_FLOW_ACTION_TYPE_END)
+-			break;
+-		switch (action->type) {
+-		case RTE_FLOW_ACTION_TYPE_MARK:
+-			size = sizeof(struct rte_flow_action_mark);
+-			rte_memcpy(&sample_mark[idx],
+-				(const void *)action->conf, size);
+-			action->conf = &sample_mark[idx];
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_COUNT:
+-			size = sizeof(struct rte_flow_action_count);
+-			rte_memcpy(&sample_count[idx],
+-				(const void *)action->conf, size);
+-			action->conf = &sample_count[idx];
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_QUEUE:
+-			size = sizeof(struct rte_flow_action_queue);
+-			rte_memcpy(&sample_queue[idx],
+-				(const void *)action->conf, size);
+-			action->conf = &sample_queue[idx];
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_RSS:
+-			size = sizeof(struct rte_flow_action_rss);
+-			rss = action->conf;
+-			rte_memcpy(&sample_rss_data[idx].conf,
+-				   (const void *)rss, size);
+-			if (rss->key_len && rss->key) {
+-				sample_rss_data[idx].conf.key =
+-						sample_rss_data[idx].key;
+-				rte_memcpy((void *)((uintptr_t)
+-					   sample_rss_data[idx].conf.key),
+-					   (const void *)rss->key,
+-					   sizeof(uint8_t) * rss->key_len);
+-			}
+-			if (rss->queue_num && rss->queue) {
+-				sample_rss_data[idx].conf.queue =
+-						sample_rss_data[idx].queue;
+-				rte_memcpy((void *)((uintptr_t)
+-					   sample_rss_data[idx].conf.queue),
+-					   (const void *)rss->queue,
+-					   sizeof(uint16_t) * rss->queue_num);
+-			}
+-			action->conf = &sample_rss_data[idx].conf;
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_RAW_ENCAP:
+-			size = sizeof(struct rte_flow_action_raw_encap);
+-			rte_memcpy(&sample_encap[idx],
+-				(const void *)action->conf, size);
+-			action->conf = &sample_encap[idx];
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_PORT_ID:
+-			size = sizeof(struct rte_flow_action_port_id);
+-			rte_memcpy(&sample_port_id[idx],
+-				(const void *)action->conf, size);
+-			action->conf = &sample_port_id[idx];
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_PF:
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_VF:
+-			size = sizeof(struct rte_flow_action_vf);
+-			rte_memcpy(&sample_vf[idx],
+-					(const void *)action->conf, size);
+-			action->conf = &sample_vf[idx];
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_VXLAN_ENCAP:
+-			size = sizeof(struct rte_flow_action_vxlan_encap);
+-			parse_setup_vxlan_encap_data(&sample_vxlan_encap[idx]);
+-			action->conf = &sample_vxlan_encap[idx].conf;
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_NVGRE_ENCAP:
+-			size = sizeof(struct rte_flow_action_nvgre_encap);
+-			parse_setup_nvgre_encap_data(&sample_nvgre_encap[idx]);
+-			action->conf = &sample_nvgre_encap[idx];
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR:
+-			size = sizeof(struct rte_flow_action_ethdev);
+-			rte_memcpy(&sample_port_representor[idx],
+-					(const void *)action->conf, size);
+-			action->conf = &sample_port_representor[idx];
+-			break;
+-		case RTE_FLOW_ACTION_TYPE_REPRESENTED_PORT:
+-			size = sizeof(struct rte_flow_action_ethdev);
+-			rte_memcpy(&sample_represented_port[idx],
+-					(const void *)action->conf, size);
+-			action->conf = &sample_represented_port[idx];
+-			break;
+-		default:
+-			fprintf(stderr, "Error - Not supported action\n");
+-			return;
+-		}
+-		*data = *action;
+-		data++;
+-	}
+-}
+-
+-/** Dispatch parsed buffer to function calls. */
+-static void
+-cmd_set_raw_parsed(const struct buffer *in)
+-{
+-	uint32_t n = in->args.vc.pattern_n;
+-	int i = 0;
+-	struct rte_flow_item *item = NULL;
+-	size_t size = 0;
+-	uint8_t *data = NULL;
+-	uint8_t *data_tail = NULL;
+-	size_t *total_size = NULL;
+-	uint16_t upper_layer = 0;
+-	uint16_t proto = 0;
+-	uint16_t idx = in->port; /* We borrow port field as index */
+-	int gtp_psc = -1; /* GTP PSC option index. */
+-	const void *src_spec;
+-
+-	if (in->command == SET_SAMPLE_ACTIONS) {
+-		cmd_set_raw_parsed_sample(in);
+-		return;
+-	}
+-	else if (in->command == SET_IPV6_EXT_PUSH ||
+-			 in->command == SET_IPV6_EXT_REMOVE) {
+-		cmd_set_ipv6_ext_parsed(in);
+-		return;
+-	}
+-	RTE_ASSERT(in->command == SET_RAW_ENCAP ||
+-		   in->command == SET_RAW_DECAP);
+-	if (in->command == SET_RAW_ENCAP) {
+-		total_size = &raw_encap_confs[idx].size;
+-		data = (uint8_t *)&raw_encap_confs[idx].data;
+-	} else {
+-		total_size = &raw_decap_confs[idx].size;
+-		data = (uint8_t *)&raw_decap_confs[idx].data;
+-	}
+-	*total_size = 0;
+-	memset(data, 0x00, ACTION_RAW_ENCAP_MAX_DATA);
+-	/* process hdr from upper layer to low layer (L3/L4 -> L2). */
+-	data_tail = data + ACTION_RAW_ENCAP_MAX_DATA;
+-	for (i = n - 1 ; i >= 0; --i) {
+-		const struct rte_flow_item_gtp *gtp;
+-		const struct rte_flow_item_geneve_opt *geneve_opt;
+-		struct rte_flow_item_ipv6_routing_ext *ext;
+-
+-		item = in->args.vc.pattern + i;
+-		if (item->spec == NULL)
+-			item->spec = flow_item_default_mask(item);
+-		src_spec = item->spec;
+-		switch (item->type) {
+-		case RTE_FLOW_ITEM_TYPE_ETH:
+-			size = sizeof(struct rte_ether_hdr);
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_VLAN:
+-			size = sizeof(struct rte_vlan_hdr);
+-			proto = RTE_ETHER_TYPE_VLAN;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_IPV4:
+-			size = sizeof(struct rte_ipv4_hdr);
+-			proto = RTE_ETHER_TYPE_IPV4;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_IPV6:
+-			size = sizeof(struct rte_ipv6_hdr);
+-			proto = RTE_ETHER_TYPE_IPV6;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_IPV6_ROUTING_EXT:
+-			ext = (struct rte_flow_item_ipv6_routing_ext *)(uintptr_t)item->spec;
+-			if (!ext->hdr.hdr_len) {
+-				size = sizeof(struct rte_ipv6_routing_ext) +
+-					(ext->hdr.segments_left << 4);
+-				ext->hdr.hdr_len = ext->hdr.segments_left << 1;
+-				/* SRv6 without TLV. */
+-				if (ext->hdr.type == RTE_IPV6_SRCRT_TYPE_4)
+-					ext->hdr.last_entry = ext->hdr.segments_left - 1;
+-			} else {
+-				size = sizeof(struct rte_ipv6_routing_ext) +
+-					(ext->hdr.hdr_len << 3);
+-			}
+-			proto = IPPROTO_ROUTING;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_UDP:
+-			size = sizeof(struct rte_udp_hdr);
+-			proto = 0x11;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_TCP:
+-			size = sizeof(struct rte_tcp_hdr);
+-			proto = 0x06;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_VXLAN:
+-			size = sizeof(struct rte_vxlan_hdr);
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_VXLAN_GPE:
+-			size = sizeof(struct rte_vxlan_gpe_hdr);
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_GRE:
+-			size = sizeof(struct rte_gre_hdr);
+-			proto = 0x2F;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_GRE_KEY:
+-			size = sizeof(rte_be32_t);
+-			proto = 0x0;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_MPLS:
+-			size = sizeof(struct rte_mpls_hdr);
+-			proto = 0x0;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_NVGRE:
+-			size = sizeof(struct rte_flow_item_nvgre);
+-			proto = 0x2F;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_GENEVE:
+-			size = sizeof(struct rte_geneve_hdr);
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_GENEVE_OPT:
+-			geneve_opt = (const struct rte_flow_item_geneve_opt *)
+-								item->spec;
+-			size = offsetof(struct rte_flow_item_geneve_opt,
+-					option_len) + sizeof(uint8_t);
+-			if (geneve_opt->option_len && geneve_opt->data) {
+-				*total_size += geneve_opt->option_len *
+-					       sizeof(uint32_t);
+-				rte_memcpy(data_tail - (*total_size),
+-					   geneve_opt->data,
+-					   geneve_opt->option_len * sizeof(uint32_t));
+-			}
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_L2TPV3OIP:
+-			size = sizeof(rte_be32_t);
+-			proto = 0x73;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_ESP:
+-			size = sizeof(struct rte_esp_hdr);
+-			proto = 0x32;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_AH:
+-			size = sizeof(struct rte_flow_item_ah);
+-			proto = 0x33;
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_GTP:
+-			if (gtp_psc < 0) {
+-				size = sizeof(struct rte_gtp_hdr);
+-				break;
+-			}
+-			if (gtp_psc != i + 1) {
+-				fprintf(stderr,
+-					"Error - GTP PSC does not follow GTP\n");
+-				goto error;
+-			}
+-			gtp = item->spec;
+-			if (gtp->hdr.s == 1 || gtp->hdr.pn == 1) {
+-				/* Only E flag should be set. */
+-				fprintf(stderr,
+-					"Error - GTP unsupported flags\n");
+-				goto error;
+-			} else {
+-				struct rte_gtp_hdr_ext_word ext_word = {
+-					.next_ext = 0x85
+-				};
+-
+-				/* We have to add GTP header extra word. */
+-				*total_size += sizeof(ext_word);
+-				rte_memcpy(data_tail - (*total_size),
+-					   &ext_word, sizeof(ext_word));
+-			}
+-			size = sizeof(struct rte_gtp_hdr);
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_GTP_PSC:
+-			if (gtp_psc >= 0) {
+-				fprintf(stderr,
+-					"Error - Multiple GTP PSC items\n");
+-				goto error;
+-			} else {
+-				const struct rte_flow_item_gtp_psc
+-					*gtp_opt = item->spec;
+-				struct rte_gtp_psc_generic_hdr *hdr;
+-				size_t hdr_size = RTE_ALIGN(sizeof(*hdr),
+-							 sizeof(int32_t));
+-
+-				*total_size += hdr_size;
+-				hdr = (typeof(hdr))(data_tail - (*total_size));
+-				memset(hdr, 0, hdr_size);
+-				*hdr = gtp_opt->hdr;
+-				hdr->ext_hdr_len = 1;
+-				gtp_psc = i;
+-				size = 0;
+-			}
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_PFCP:
+-			size = sizeof(struct rte_flow_item_pfcp);
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_FLEX:
+-			if (item->spec != NULL) {
+-				size = ((const struct rte_flow_item_flex *)item->spec)->length;
+-				src_spec = ((const struct rte_flow_item_flex *)item->spec)->pattern;
+-			} else {
+-				size = 0;
+-				src_spec = NULL;
+-			}
+-			break;
+-		case RTE_FLOW_ITEM_TYPE_GRE_OPTION:
+-			size = 0;
+-			if (item->spec) {
+-				const struct rte_flow_item_gre_opt
+-					*gre_opt = item->spec;
+-				if (gre_opt->checksum_rsvd.checksum) {
+-					*total_size +=
+-						sizeof(gre_opt->checksum_rsvd);
+-					rte_memcpy(data_tail - (*total_size),
+-						   &gre_opt->checksum_rsvd,
+-						   sizeof(gre_opt->checksum_rsvd));
+-				}
+-				if (gre_opt->key.key) {
+-					*total_size += sizeof(gre_opt->key.key);
+-					rte_memcpy(data_tail - (*total_size),
+-						   &gre_opt->key.key,
+-						   sizeof(gre_opt->key.key));
+-				}
+-				if (gre_opt->sequence.sequence) {
+-					*total_size += sizeof(gre_opt->sequence.sequence);
+-					rte_memcpy(data_tail - (*total_size),
+-						   &gre_opt->sequence.sequence,
+-						   sizeof(gre_opt->sequence.sequence));
+-				}
+-			}
+-			proto = 0x2F;
+-			break;
+-		default:
+-			fprintf(stderr, "Error - Not supported item\n");
+-			goto error;
+-		}
+-		if (size) {
+-			*total_size += size;
+-			rte_memcpy(data_tail - (*total_size), src_spec, size);
+-			/* update some fields which cannot be set by cmdline */
+-			update_fields((data_tail - (*total_size)), item,
+-				      upper_layer);
+-			upper_layer = proto;
+-		}
+-	}
+-	if (verbose_level & 0x1)
+-		printf("total data size is %zu\n", (*total_size));
+-	RTE_ASSERT((*total_size) <= ACTION_RAW_ENCAP_MAX_DATA);
+-	memmove(data, (data_tail - (*total_size)), *total_size);
+-	return;
+-
+-error:
+-	*total_size = 0;
+-	memset(data, 0x00, ACTION_RAW_ENCAP_MAX_DATA);
+-}
+-
+-/** Populate help strings for current token (cmdline API). */
+-static int
+-cmd_set_raw_get_help(cmdline_parse_token_hdr_t *hdr, char *dst,
+-		     unsigned int size)
+-{
+-	struct context *ctx = &cmd_flow_context;
+-	const struct token *token = &token_list[ctx->prev];
+-
+-	(void)hdr;
+-	if (!size)
+-		return -1;
+-	/* Set token type and update global help with details. */
+-	snprintf(dst, size, "%s", (token->type ? token->type : "TOKEN"));
+-	if (token->help)
+-		cmd_set_raw.help_str = token->help;
+-	else
+-		cmd_set_raw.help_str = token->name;
+-	return 0;
+-}
+-
+-/** Token definition template (cmdline API). */
+-static struct cmdline_token_hdr cmd_set_raw_token_hdr = {
+-	.ops = &(struct cmdline_token_ops){
+-		.parse = cmd_flow_parse,
+-		.complete_get_nb = cmd_flow_complete_get_nb,
+-		.complete_get_elt = cmd_flow_complete_get_elt,
+-		.get_help = cmd_set_raw_get_help,
+-	},
+-	.offset = 0,
+-};
+-
+-/** Populate the next dynamic token. */
+-static void
+-cmd_set_raw_tok(cmdline_parse_token_hdr_t **hdr,
+-	     cmdline_parse_token_hdr_t **hdr_inst)
+-{
+-	struct context *ctx = &cmd_flow_context;
+-
+-	/* Always reinitialize context before requesting the first token. */
+-	if (!(hdr_inst - cmd_set_raw.tokens)) {
+-		cmd_flow_context_init(ctx);
+-		ctx->curr = START_SET;
+-	}
+-	/* Return NULL when no more tokens are expected. */
+-	if (!ctx->next_num && (ctx->curr != START_SET)) {
+-		*hdr = NULL;
+-		return;
+-	}
+-	/* Determine if command should end here. */
+-	if (ctx->eol && ctx->last && ctx->next_num) {
+-		const enum index *list = ctx->next[ctx->next_num - 1];
+-		int i;
+-
+-		for (i = 0; list[i]; ++i) {
+-			if (list[i] != END)
+-				continue;
+-			*hdr = NULL;
+-			return;
+-		}
+-	}
+-	*hdr = &cmd_set_raw_token_hdr;
+-}
+-
+-/** Token generator and output processing callback (cmdline API). */
+-static void
+-cmd_set_raw_cb(void *arg0, struct cmdline *cl, void *arg2)
+-{
+-	if (cl == NULL)
+-		cmd_set_raw_tok(arg0, arg2);
+-	else
+-		cmd_set_raw_parsed(arg0);
+-}
+-
+-/** Global parser instance (cmdline API). */
+-cmdline_parse_inst_t cmd_set_raw = {
+-	.f = cmd_set_raw_cb,
+-	.data = NULL, /**< Unused. */
+-	.help_str = NULL, /**< Updated by cmd_flow_get_help(). */
+-	.tokens = {
+-		NULL,
+-	}, /**< Tokens are returned by cmd_flow_tok(). */
+-};
+-
+-/* *** display raw_encap/raw_decap buf */
+-struct cmd_show_set_raw_result {
+-	cmdline_fixed_string_t cmd_show;
+-	cmdline_fixed_string_t cmd_what;
+-	cmdline_fixed_string_t cmd_all;
+-	uint16_t cmd_index;
+-};
+-
+-static void
+-cmd_show_set_raw_parsed(void *parsed_result, struct cmdline *cl, void *data)
+-{
+-	struct cmd_show_set_raw_result *res = parsed_result;
+-	uint16_t index = res->cmd_index;
+-	uint8_t all = 0;
+-	uint8_t *raw_data = NULL;
+-	size_t raw_size = 0;
+-	char title[16] = {0};
+-
+-	RTE_SET_USED(cl);
+-	RTE_SET_USED(data);
+-	if (!strcmp(res->cmd_all, "all")) {
+-		all = 1;
+-		index = 0;
+-	} else if (index >= RAW_ENCAP_CONFS_MAX_NUM) {
+-		fprintf(stderr, "index should be 0-%u\n",
+-			RAW_ENCAP_CONFS_MAX_NUM - 1);
+-		return;
+-	}
+-	do {
+-		if (!strcmp(res->cmd_what, "raw_encap")) {
+-			raw_data = (uint8_t *)&raw_encap_confs[index].data;
+-			raw_size = raw_encap_confs[index].size;
+-			snprintf(title, 16, "\nindex: %u", index);
+-			rte_hexdump(stdout, title, raw_data, raw_size);
+-		} else {
+-			raw_data = (uint8_t *)&raw_decap_confs[index].data;
+-			raw_size = raw_decap_confs[index].size;
+-			snprintf(title, 16, "\nindex: %u", index);
+-			rte_hexdump(stdout, title, raw_data, raw_size);
+-		}
+-	} while (all && ++index < RAW_ENCAP_CONFS_MAX_NUM);
+-}
+-
+-static cmdline_parse_token_string_t cmd_show_set_raw_cmd_show =
+-	TOKEN_STRING_INITIALIZER(struct cmd_show_set_raw_result,
+-			cmd_show, "show");
+-static cmdline_parse_token_string_t cmd_show_set_raw_cmd_what =
+-	TOKEN_STRING_INITIALIZER(struct cmd_show_set_raw_result,
+-			cmd_what, "raw_encap#raw_decap");
+-static cmdline_parse_token_num_t cmd_show_set_raw_cmd_index =
+-	TOKEN_NUM_INITIALIZER(struct cmd_show_set_raw_result,
+-			cmd_index, RTE_UINT16);
+-static cmdline_parse_token_string_t cmd_show_set_raw_cmd_all =
+-	TOKEN_STRING_INITIALIZER(struct cmd_show_set_raw_result,
+-			cmd_all, "all");
+-cmdline_parse_inst_t cmd_show_set_raw = {
+-	.f = cmd_show_set_raw_parsed,
+-	.data = NULL,
+-	.help_str = "show <raw_encap|raw_decap> <index>",
+-	.tokens = {
+-		(void *)&cmd_show_set_raw_cmd_show,
+-		(void *)&cmd_show_set_raw_cmd_what,
+-		(void *)&cmd_show_set_raw_cmd_index,
+-		NULL,
+-	},
+-};
+-cmdline_parse_inst_t cmd_show_set_raw_all = {
+-	.f = cmd_show_set_raw_parsed,
+-	.data = NULL,
+-	.help_str = "show <raw_encap|raw_decap> all",
+-	.tokens = {
+-		(void *)&cmd_show_set_raw_cmd_show,
+-		(void *)&cmd_show_set_raw_cmd_what,
+-		(void *)&cmd_show_set_raw_cmd_all,
+-		NULL,
+-	},
+-};
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index 32c885de0b..4d3c3c0238 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -40,6 +40,7 @@
+ #include <rte_string_fns.h>
+ #include <rte_cycles.h>
+ #include <rte_flow.h>
++#include <rte_flow_parser_cmdline.h>
+ #include <rte_mtr.h>
+ #include <rte_errno.h>
+ #ifdef RTE_NET_IXGBE
+@@ -89,73 +90,6 @@ static const struct {
+ 	},
+ };
+ 
+-const struct rss_type_info rss_type_table[] = {
+-	/* Group types */
+-	{ "all", RTE_ETH_RSS_ETH | RTE_ETH_RSS_VLAN | RTE_ETH_RSS_IP | RTE_ETH_RSS_TCP |
+-		RTE_ETH_RSS_UDP | RTE_ETH_RSS_SCTP | RTE_ETH_RSS_L2_PAYLOAD |
+-		RTE_ETH_RSS_L2TPV3 | RTE_ETH_RSS_ESP | RTE_ETH_RSS_AH | RTE_ETH_RSS_PFCP |
+-		RTE_ETH_RSS_GTPU | RTE_ETH_RSS_ECPRI | RTE_ETH_RSS_MPLS | RTE_ETH_RSS_L2TPV2 |
+-		RTE_ETH_RSS_IB_BTH },
+-	{ "none", 0 },
+-	{ "ip", RTE_ETH_RSS_IP },
+-	{ "udp", RTE_ETH_RSS_UDP },
+-	{ "tcp", RTE_ETH_RSS_TCP },
+-	{ "sctp", RTE_ETH_RSS_SCTP },
+-	{ "tunnel", RTE_ETH_RSS_TUNNEL },
+-	{ "vlan", RTE_ETH_RSS_VLAN },
+-
+-	/* Individual type */
+-	{ "ipv4", RTE_ETH_RSS_IPV4 },
+-	{ "ipv4-frag", RTE_ETH_RSS_FRAG_IPV4 },
+-	{ "ipv4-tcp", RTE_ETH_RSS_NONFRAG_IPV4_TCP },
+-	{ "ipv4-udp", RTE_ETH_RSS_NONFRAG_IPV4_UDP },
+-	{ "ipv4-sctp", RTE_ETH_RSS_NONFRAG_IPV4_SCTP },
+-	{ "ipv4-other", RTE_ETH_RSS_NONFRAG_IPV4_OTHER },
+-	{ "ipv6", RTE_ETH_RSS_IPV6 },
+-	{ "ipv6-frag", RTE_ETH_RSS_FRAG_IPV6 },
+-	{ "ipv6-tcp", RTE_ETH_RSS_NONFRAG_IPV6_TCP },
+-	{ "ipv6-udp", RTE_ETH_RSS_NONFRAG_IPV6_UDP },
+-	{ "ipv6-sctp", RTE_ETH_RSS_NONFRAG_IPV6_SCTP },
+-	{ "ipv6-other", RTE_ETH_RSS_NONFRAG_IPV6_OTHER },
+-	{ "l2-payload", RTE_ETH_RSS_L2_PAYLOAD },
+-	{ "ipv6-ex", RTE_ETH_RSS_IPV6_EX },
+-	{ "ipv6-tcp-ex", RTE_ETH_RSS_IPV6_TCP_EX },
+-	{ "ipv6-udp-ex", RTE_ETH_RSS_IPV6_UDP_EX },
+-	{ "port", RTE_ETH_RSS_PORT },
+-	{ "vxlan", RTE_ETH_RSS_VXLAN },
+-	{ "geneve", RTE_ETH_RSS_GENEVE },
+-	{ "nvgre", RTE_ETH_RSS_NVGRE },
+-	{ "gtpu", RTE_ETH_RSS_GTPU },
+-	{ "eth", RTE_ETH_RSS_ETH },
+-	{ "s-vlan", RTE_ETH_RSS_S_VLAN },
+-	{ "c-vlan", RTE_ETH_RSS_C_VLAN },
+-	{ "esp", RTE_ETH_RSS_ESP },
+-	{ "ah", RTE_ETH_RSS_AH },
+-	{ "l2tpv3", RTE_ETH_RSS_L2TPV3 },
+-	{ "pfcp", RTE_ETH_RSS_PFCP },
+-	{ "pppoe", RTE_ETH_RSS_PPPOE },
+-	{ "ecpri", RTE_ETH_RSS_ECPRI },
+-	{ "mpls", RTE_ETH_RSS_MPLS },
+-	{ "ipv4-chksum", RTE_ETH_RSS_IPV4_CHKSUM },
+-	{ "l4-chksum", RTE_ETH_RSS_L4_CHKSUM },
+-	{ "l2tpv2", RTE_ETH_RSS_L2TPV2 },
+-	{ "l3-pre96", RTE_ETH_RSS_L3_PRE96 },
+-	{ "l3-pre64", RTE_ETH_RSS_L3_PRE64 },
+-	{ "l3-pre56", RTE_ETH_RSS_L3_PRE56 },
+-	{ "l3-pre48", RTE_ETH_RSS_L3_PRE48 },
+-	{ "l3-pre40", RTE_ETH_RSS_L3_PRE40 },
+-	{ "l3-pre32", RTE_ETH_RSS_L3_PRE32 },
+-	{ "l2-dst-only", RTE_ETH_RSS_L2_DST_ONLY },
+-	{ "l2-src-only", RTE_ETH_RSS_L2_SRC_ONLY },
+-	{ "l4-dst-only", RTE_ETH_RSS_L4_DST_ONLY },
+-	{ "l4-src-only", RTE_ETH_RSS_L4_SRC_ONLY },
+-	{ "l3-dst-only", RTE_ETH_RSS_L3_DST_ONLY },
+-	{ "l3-src-only", RTE_ETH_RSS_L3_SRC_ONLY },
+-	{ "ipv6-flow-label", RTE_ETH_RSS_IPV6_FLOW_LABEL },
+-	{ "ib-bth", RTE_ETH_RSS_IB_BTH },
+-	{ NULL, 0},
+-};
+-
+ static const struct {
+ 	enum rte_eth_fec_mode mode;
+ 	const char *name;
+@@ -731,32 +665,6 @@ print_dev_capabilities(uint64_t capabilities)
+ 	}
+ }
+ 
+-uint64_t
+-str_to_rsstypes(const char *str)
+-{
+-	uint16_t i;
+-
+-	for (i = 0; rss_type_table[i].str != NULL; i++) {
+-		if (strcmp(rss_type_table[i].str, str) == 0)
+-			return rss_type_table[i].rss_type;
+-	}
+-
+-	return 0;
+-}
+-
+-const char *
+-rsstypes_to_str(uint64_t rss_type)
+-{
+-	uint16_t i;
+-
+-	for (i = 0; rss_type_table[i].str != NULL; i++) {
+-		if (rss_type_table[i].rss_type == rss_type)
+-			return rss_type_table[i].str;
+-	}
+-
+-	return NULL;
+-}
+-
+ static void
+ rss_offload_types_display(uint64_t offload_types, uint16_t char_num_per_line)
+ {
+@@ -769,7 +677,7 @@ rss_offload_types_display(uint64_t offload_types, uint16_t char_num_per_line)
+ 	for (i = 0; i < sizeof(offload_types) * CHAR_BIT; i++) {
+ 		rss_offload = RTE_BIT64(i);
+ 		if ((offload_types & rss_offload) != 0) {
+-			const char *p = rsstypes_to_str(rss_offload);
++			const char *p = rte_eth_rss_type_to_str(rss_offload);
+ 
+ 			user_defined_str_len =
+ 				strlen("user-defined-") + (i / 10 + 1);
+@@ -1540,6 +1448,7 @@ port_flow_complain(struct rte_flow_error *error)
+ static void
+ rss_types_display(uint64_t rss_types, uint16_t char_num_per_line)
+ {
++	const struct rte_eth_rss_type_info *tbl = rte_eth_rss_type_info_get();
+ 	uint16_t total_len = 0;
+ 	uint16_t str_len;
+ 	uint16_t i;
+@@ -1547,19 +1456,18 @@ rss_types_display(uint64_t rss_types, uint16_t char_num_per_line)
+ 	if (rss_types == 0)
+ 		return;
+ 
+-	for (i = 0; rss_type_table[i].str; i++) {
+-		if (rss_type_table[i].rss_type == 0)
++	for (i = 0; tbl[i].str; i++) {
++		if (tbl[i].rss_type == 0)
+ 			continue;
+ 
+-		if ((rss_types & rss_type_table[i].rss_type) ==
+-					rss_type_table[i].rss_type) {
++		if ((rss_types & tbl[i].rss_type) == tbl[i].rss_type) {
+ 			/* Contain two spaces */
+-			str_len = strlen(rss_type_table[i].str) + 2;
++			str_len = strlen(tbl[i].str) + 2;
+ 			if (total_len + str_len > char_num_per_line) {
+ 				printf("\n");
+ 				total_len = 0;
+ 			}
+-			printf("  %s", rss_type_table[i].str);
++			printf("  %s", tbl[i].str);
+ 			total_len += str_len;
+ 		}
+ 	}
+@@ -1871,8 +1779,10 @@ action_handle_create(portid_t port_id,
+ 	} else if (action->type == RTE_FLOW_ACTION_TYPE_CONNTRACK) {
+ 		struct rte_flow_action_conntrack *ct =
+ 			(struct rte_flow_action_conntrack *)(uintptr_t)(action->conf);
++		const struct rte_flow_action_conntrack *ct_ctx =
++			&testpmd_conntrack;
+ 
+-		memcpy(ct, &conntrack_context, sizeof(*ct));
++		memcpy(ct, ct_ctx, sizeof(*ct));
+ 	}
+ 	pia->type = action->type;
+ 	pia->handle = rte_flow_action_handle_create(port_id, conf, action,
+@@ -4982,7 +4892,8 @@ port_rss_hash_key_update(portid_t port_id, char rss_type[], uint8_t *hash_key,
+ 	if (diag == 0) {
+ 		rss_conf.rss_key = hash_key;
+ 		rss_conf.rss_key_len = hash_key_len;
+-		rss_conf.rss_hf = str_to_rsstypes(rss_type);
++		if (rte_eth_rss_type_from_str(rss_type, &rss_conf.rss_hf) != 0)
++			rss_conf.rss_hf = 0;
+ 		diag = rte_eth_dev_rss_hash_update(port_id, &rss_conf);
+ 	}
+ 	if (diag == 0)
+diff --git a/app/test-pmd/flow_parser.c b/app/test-pmd/flow_parser.c
 new file mode 100644
-index 0000000000..9eb1e7803e
+index 0000000000..77dedfbf90
 --- /dev/null
-+++ b/app/test/test_flow_parser.c
-@@ -0,0 +1,791 @@
++++ b/app/test-pmd/flow_parser.c
+@@ -0,0 +1,288 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 DynaNIC Semiconductors, Ltd.
++ * Copyright 2016 6WIND S.A.
++ * Copyright 2016 Mellanox Technologies, Ltd
++ * Copyright 2026 DynaNIC Semiconductors, Ltd.
 + */
 +
-+#include <stdint.h>
-+#include <inttypes.h>
 +#include <string.h>
-+#include <errno.h>
 +
-+#include <rte_byteorder.h>
 +#include <rte_flow.h>
 +#include <rte_flow_parser_cmdline.h>
 +
-+#include "test.h"
++#include "testpmd.h"
 +
-+static struct rte_flow_parser_vxlan_encap_conf test_vxlan_conf;
-+static struct rte_flow_parser_nvgre_encap_conf test_nvgre_conf;
-+static struct rte_flow_parser_l2_encap_conf test_l2_encap_conf;
-+static struct rte_flow_parser_l2_decap_conf test_l2_decap_conf;
-+static struct rte_flow_parser_mplsogre_encap_conf test_mplsogre_encap_conf;
-+static struct rte_flow_parser_mplsogre_decap_conf test_mplsogre_decap_conf;
-+static struct rte_flow_parser_mplsoudp_encap_conf test_mplsoudp_encap_conf;
-+static struct rte_flow_parser_mplsoudp_decap_conf test_mplsoudp_decap_conf;
-+static struct rte_flow_action_conntrack test_conntrack;
-+
-+static struct rte_flow_parser_raw_encap_data test_raw_encap[RAW_ENCAP_CONFS_MAX_NUM];
-+static struct rte_flow_parser_raw_decap_data test_raw_decap[RAW_ENCAP_CONFS_MAX_NUM];
-+static struct rte_flow_parser_ipv6_ext_push_data test_ipv6_push[IPV6_EXT_PUSH_CONFS_MAX_NUM];
-+static struct rte_flow_parser_ipv6_ext_remove_data test_ipv6_remove[IPV6_EXT_PUSH_CONFS_MAX_NUM];
-+static struct rte_flow_parser_sample_slot test_sample[RAW_SAMPLE_CONFS_MAX_NUM];
-+
-+static void test_dispatch_cb(const struct rte_flow_parser_output *in __rte_unused);
-+static cmdline_parse_inst_t test_flow_inst;
-+
-+static void
-+test_register_config(void)
++static const struct tunnel_ops *
++parser_tunnel_convert(const struct rte_flow_parser_tunnel_ops *src,
++		      struct tunnel_ops *dst)
 +{
-+	memset(&test_raw_encap, 0, sizeof(test_raw_encap));
-+	memset(&test_raw_decap, 0, sizeof(test_raw_decap));
-+	memset(&test_ipv6_push, 0, sizeof(test_ipv6_push));
-+	memset(&test_ipv6_remove, 0, sizeof(test_ipv6_remove));
-+	memset(&test_sample, 0, sizeof(test_sample));
-+	memset(&test_conntrack, 0, sizeof(test_conntrack));
-+	memset(&test_l2_encap_conf, 0, sizeof(test_l2_encap_conf));
-+	memset(&test_l2_decap_conf, 0, sizeof(test_l2_decap_conf));
-+	memset(&test_mplsogre_encap_conf, 0, sizeof(test_mplsogre_encap_conf));
-+	memset(&test_mplsogre_decap_conf, 0, sizeof(test_mplsogre_decap_conf));
-+	memset(&test_mplsoudp_encap_conf, 0, sizeof(test_mplsoudp_encap_conf));
-+	memset(&test_mplsoudp_decap_conf, 0, sizeof(test_mplsoudp_decap_conf));
++	if (src == NULL)
++		return NULL;
++	memset(dst, 0, sizeof(*dst));
++	dst->id = src->id;
++	strlcpy(dst->type, src->type, sizeof(dst->type));
++	dst->enabled = src->enabled;
++	dst->actions = src->actions;
++	dst->items = src->items;
++	return dst;
++}
 +
-+	test_vxlan_conf = (struct rte_flow_parser_vxlan_encap_conf){
++/** Dispatch a parsed flow command to testpmd port_flow_* functions. */
++void
++testpmd_flow_dispatch(const struct rte_flow_parser_output *in)
++{
++	struct tunnel_ops tops;
++
++	switch (in->command) {
++	case RTE_FLOW_PARSER_CMD_INFO:
++		port_flow_get_info(in->port);
++		break;
++	case RTE_FLOW_PARSER_CMD_CONFIGURE:
++		port_flow_configure(in->port,
++				    &in->args.configure.port_attr,
++				    in->args.configure.nb_queue,
++				    &in->args.configure.queue_attr);
++		break;
++	case RTE_FLOW_PARSER_CMD_PATTERN_TEMPLATE_CREATE:
++		port_flow_pattern_template_create(in->port,
++			in->args.vc.pat_templ_id,
++			&((const struct rte_flow_pattern_template_attr) {
++				.relaxed_matching = in->args.vc.attr.reserved,
++				.ingress = in->args.vc.attr.ingress,
++				.egress = in->args.vc.attr.egress,
++				.transfer = in->args.vc.attr.transfer,
++			}),
++			in->args.vc.pattern);
++		break;
++	case RTE_FLOW_PARSER_CMD_PATTERN_TEMPLATE_DESTROY:
++		port_flow_pattern_template_destroy(in->port,
++			in->args.templ_destroy.template_id_n,
++			in->args.templ_destroy.template_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_ACTIONS_TEMPLATE_CREATE:
++		port_flow_actions_template_create(in->port,
++			in->args.vc.act_templ_id,
++			&((const struct rte_flow_actions_template_attr) {
++				.ingress = in->args.vc.attr.ingress,
++				.egress = in->args.vc.attr.egress,
++				.transfer = in->args.vc.attr.transfer,
++			}),
++			in->args.vc.actions,
++			in->args.vc.masks);
++		break;
++	case RTE_FLOW_PARSER_CMD_ACTIONS_TEMPLATE_DESTROY:
++		port_flow_actions_template_destroy(in->port,
++			in->args.templ_destroy.template_id_n,
++			in->args.templ_destroy.template_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_TABLE_CREATE:
++		port_flow_template_table_create(in->port,
++			in->args.table.id, &in->args.table.attr,
++			in->args.table.pat_templ_id_n,
++			in->args.table.pat_templ_id,
++			in->args.table.act_templ_id_n,
++			in->args.table.act_templ_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_TABLE_DESTROY:
++		port_flow_template_table_destroy(in->port,
++			in->args.table_destroy.table_id_n,
++			in->args.table_destroy.table_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_TABLE_RESIZE_COMPLETE:
++		port_flow_template_table_resize_complete(in->port,
++			in->args.table_destroy.table_id[0]);
++		break;
++	case RTE_FLOW_PARSER_CMD_GROUP_SET_MISS_ACTIONS:
++		port_queue_group_set_miss_actions(in->port,
++			&in->args.vc.attr, in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_TABLE_RESIZE:
++		port_flow_template_table_resize(in->port,
++			in->args.table.id,
++			in->args.table.attr.nb_flows);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_CREATE:
++		port_queue_flow_create(in->port, in->queue,
++			in->postpone, in->args.vc.table_id,
++			in->args.vc.rule_id, in->args.vc.pat_templ_id,
++			in->args.vc.act_templ_id,
++			in->args.vc.pattern, in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_DESTROY:
++		port_queue_flow_destroy(in->port, in->queue,
++			in->postpone, in->args.destroy.rule_n,
++			in->args.destroy.rule);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_FLOW_UPDATE_RESIZED:
++		port_queue_flow_update_resized(in->port, in->queue,
++			in->postpone,
++			(uint32_t)in->args.destroy.rule[0]);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_UPDATE:
++		port_queue_flow_update(in->port, in->queue,
++			in->postpone, in->args.vc.rule_id,
++			in->args.vc.act_templ_id, in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_PUSH:
++		port_queue_flow_push(in->port, in->queue);
++		break;
++	case RTE_FLOW_PARSER_CMD_PULL:
++		port_queue_flow_pull(in->port, in->queue);
++		break;
++	case RTE_FLOW_PARSER_CMD_HASH:
++		if (in->args.vc.encap_hash == 0)
++			port_flow_hash_calc(in->port,
++				in->args.vc.table_id,
++				in->args.vc.pat_templ_id,
++				in->args.vc.pattern);
++		else
++			port_flow_hash_calc_encap(in->port,
++				in->args.vc.field,
++				in->args.vc.pattern);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_AGED:
++		port_queue_flow_aged(in->port, in->queue,
++			in->args.aged.destroy);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_CREATE:
++	case RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_LIST_CREATE:
++		port_queue_action_handle_create(in->port, in->queue,
++			in->postpone, in->args.vc.attr.group,
++			in->command == RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_LIST_CREATE,
++			&((const struct rte_flow_indir_action_conf) {
++				.ingress = in->args.vc.attr.ingress,
++				.egress = in->args.vc.attr.egress,
++				.transfer = in->args.vc.attr.transfer,
++			}),
++			in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_DESTROY:
++		port_queue_action_handle_destroy(in->port, in->queue,
++			in->postpone, in->args.ia_destroy.action_id_n,
++			in->args.ia_destroy.action_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_UPDATE:
++		port_queue_action_handle_update(in->port, in->queue,
++			in->postpone, in->args.vc.attr.group,
++			in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_QUERY:
++		port_queue_action_handle_query(in->port, in->queue,
++			in->postpone, in->args.ia.action_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_QUERY_UPDATE:
++		port_queue_action_handle_query_update(in->port,
++			in->queue, in->postpone,
++			in->args.ia.action_id, in->args.ia.qu_mode,
++			in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_CREATE:
++	case RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_LIST_CREATE:
++		port_action_handle_create(in->port,
++			in->args.vc.attr.group,
++			in->command == RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_LIST_CREATE,
++			&((const struct rte_flow_indir_action_conf) {
++				.ingress = in->args.vc.attr.ingress,
++				.egress = in->args.vc.attr.egress,
++				.transfer = in->args.vc.attr.transfer,
++			}),
++			in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_DESTROY:
++		port_action_handle_destroy(in->port,
++			in->args.ia_destroy.action_id_n,
++			in->args.ia_destroy.action_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_UPDATE:
++		port_action_handle_update(in->port,
++			in->args.vc.attr.group, in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_QUERY:
++		port_action_handle_query(in->port,
++			in->args.ia.action_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_QUERY_UPDATE:
++		port_action_handle_query_update(in->port,
++			in->args.ia.action_id, in->args.ia.qu_mode,
++			in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_VALIDATE:
++		port_flow_validate(in->port, &in->args.vc.attr,
++			in->args.vc.pattern, in->args.vc.actions,
++			parser_tunnel_convert(
++				(const struct rte_flow_parser_tunnel_ops *)
++				&in->args.vc.tunnel_ops, &tops));
++		break;
++	case RTE_FLOW_PARSER_CMD_CREATE:
++		port_flow_create(in->port, &in->args.vc.attr,
++			in->args.vc.pattern, in->args.vc.actions,
++			parser_tunnel_convert(
++				(const struct rte_flow_parser_tunnel_ops *)
++				&in->args.vc.tunnel_ops, &tops),
++			in->args.vc.user_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_DESTROY:
++		port_flow_destroy(in->port,
++			in->args.destroy.rule_n,
++			in->args.destroy.rule,
++			in->args.destroy.is_user_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_UPDATE:
++		port_flow_update(in->port, in->args.vc.rule_id,
++			in->args.vc.actions, in->args.vc.is_user_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_FLUSH:
++		port_flow_flush(in->port);
++		break;
++	case RTE_FLOW_PARSER_CMD_DUMP_ONE:
++	case RTE_FLOW_PARSER_CMD_DUMP_ALL:
++		port_flow_dump(in->port, in->args.dump.mode,
++			in->args.dump.rule, in->args.dump.file,
++			in->args.dump.is_user_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_QUERY:
++		port_flow_query(in->port, in->args.query.rule,
++			&in->args.query.action,
++			in->args.query.is_user_id);
++		break;
++	case RTE_FLOW_PARSER_CMD_LIST:
++		port_flow_list(in->port, in->args.list.group_n,
++			in->args.list.group);
++		break;
++	case RTE_FLOW_PARSER_CMD_ISOLATE:
++		port_flow_isolate(in->port, in->args.isolate.set);
++		break;
++	case RTE_FLOW_PARSER_CMD_AGED:
++		port_flow_aged(in->port, (uint8_t)in->args.aged.destroy);
++		break;
++	case RTE_FLOW_PARSER_CMD_TUNNEL_CREATE:
++		port_flow_tunnel_create(in->port,
++			parser_tunnel_convert(
++				(const struct rte_flow_parser_tunnel_ops *)
++				&in->args.vc.tunnel_ops, &tops));
++		break;
++	case RTE_FLOW_PARSER_CMD_TUNNEL_DESTROY:
++		port_flow_tunnel_destroy(in->port,
++			in->args.vc.tunnel_ops.id);
++		break;
++	case RTE_FLOW_PARSER_CMD_TUNNEL_LIST:
++		port_flow_tunnel_list(in->port);
++		break;
++	case RTE_FLOW_PARSER_CMD_ACTION_POL_G:
++		port_meter_policy_add(in->port,
++			in->args.policy.policy_id,
++			in->args.vc.actions);
++		break;
++	case RTE_FLOW_PARSER_CMD_FLEX_ITEM_CREATE:
++		flex_item_create(in->port,
++			in->args.flex.token, in->args.flex.filename);
++		break;
++	case RTE_FLOW_PARSER_CMD_FLEX_ITEM_DESTROY:
++		flex_item_destroy(in->port, in->args.flex.token);
++		break;
++	default:
++		fprintf(stderr, "unhandled flow parser command %d\n",
++			in->command);
++		break;
++	}
++	fflush(stdout);
++}
+diff --git a/app/test-pmd/flow_parser_cli.c b/app/test-pmd/flow_parser_cli.c
+new file mode 100644
+index 0000000000..fc535351d1
+--- /dev/null
++++ b/app/test-pmd/flow_parser_cli.c
+@@ -0,0 +1,479 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2016 6WIND S.A.
++ * Copyright 2016 Mellanox Technologies, Ltd
++ * Copyright 2026 DynaNIC Semiconductors, Ltd.
++ */
++
++#include <stdint.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++
++#include <rte_string_fns.h>
++
++#include <cmdline_parse.h>
++#include <cmdline_parse_string.h>
++#include <cmdline_parse_num.h>
++#include <rte_hexdump.h>
++
++#include <rte_flow_parser_cmdline.h>
++
++#include "testpmd.h"
++
++/* Application-owned flow parser configuration storage */
++struct rte_flow_parser_vxlan_encap_conf testpmd_vxlan_conf;
++struct rte_flow_parser_nvgre_encap_conf testpmd_nvgre_conf;
++struct rte_flow_parser_l2_encap_conf testpmd_l2_encap_conf;
++struct rte_flow_parser_l2_decap_conf testpmd_l2_decap_conf;
++struct rte_flow_parser_mplsogre_encap_conf testpmd_mplsogre_encap_conf;
++struct rte_flow_parser_mplsogre_decap_conf testpmd_mplsogre_decap_conf;
++struct rte_flow_parser_mplsoudp_encap_conf testpmd_mplsoudp_encap_conf;
++struct rte_flow_parser_mplsoudp_decap_conf testpmd_mplsoudp_decap_conf;
++struct rte_flow_action_conntrack testpmd_conntrack;
++
++static struct rte_flow_parser_raw_encap_data testpmd_raw_encap[RAW_ENCAP_CONFS_MAX_NUM];
++static struct rte_flow_parser_raw_decap_data testpmd_raw_decap[RAW_ENCAP_CONFS_MAX_NUM];
++static struct rte_flow_parser_ipv6_ext_push_data testpmd_ipv6_push[IPV6_EXT_PUSH_CONFS_MAX_NUM];
++static struct rte_flow_parser_ipv6_ext_remove_data testpmd_ipv6_remove[IPV6_EXT_PUSH_CONFS_MAX_NUM];
++static struct rte_flow_parser_sample_slot testpmd_sample[RAW_SAMPLE_CONFS_MAX_NUM];
++
++void
++testpmd_flow_parser_config_init(void)
++{
++	/* VXLAN defaults: IPv4, standard port, placeholder addresses */
++	testpmd_vxlan_conf = (struct rte_flow_parser_vxlan_encap_conf){
 +		.select_ipv4 = 1,
 +		.udp_dst = RTE_BE16(RTE_VXLAN_DEFAULT_PORT),
 +		.ipv4_src = RTE_IPV4(127, 0, 0, 1),
 +		.ipv4_dst = RTE_IPV4(255, 255, 255, 255),
++		.ipv6_src = RTE_IPV6_ADDR_LOOPBACK,
++		.ipv6_dst = RTE_IPV6(0, 0, 0, 0, 0, 0, 0, 0x1111),
 +		.ip_ttl = 255,
 +		.eth_dst = { .addr_bytes = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } },
 +	};
-+	test_nvgre_conf = (struct rte_flow_parser_nvgre_encap_conf){
++	/* NVGRE defaults: IPv4, placeholder addresses */
++	testpmd_nvgre_conf = (struct rte_flow_parser_nvgre_encap_conf){
 +		.select_ipv4 = 1,
 +		.ipv4_src = RTE_IPV4(127, 0, 0, 1),
 +		.ipv4_dst = RTE_IPV4(255, 255, 255, 255),
++		.ipv6_src = RTE_IPV6_ADDR_LOOPBACK,
++		.ipv6_dst = RTE_IPV6(0, 0, 0, 0, 0, 0, 0, 0x1111),
 +		.eth_dst = { .addr_bytes = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff } },
 +	};
 +
 +	struct rte_flow_parser_config cfg = {
-+		.vxlan_encap = &test_vxlan_conf,
-+		.nvgre_encap = &test_nvgre_conf,
-+		.l2_encap = &test_l2_encap_conf,
-+		.l2_decap = &test_l2_decap_conf,
-+		.mplsogre_encap = &test_mplsogre_encap_conf,
-+		.mplsogre_decap = &test_mplsogre_decap_conf,
-+		.mplsoudp_encap = &test_mplsoudp_encap_conf,
-+		.mplsoudp_decap = &test_mplsoudp_decap_conf,
-+		.conntrack = &test_conntrack,
-+		.raw_encap = { test_raw_encap, RAW_ENCAP_CONFS_MAX_NUM },
-+		.raw_decap = { test_raw_decap, RAW_ENCAP_CONFS_MAX_NUM },
-+		.ipv6_ext_push = { test_ipv6_push, IPV6_EXT_PUSH_CONFS_MAX_NUM },
-+		.ipv6_ext_remove = { test_ipv6_remove, IPV6_EXT_PUSH_CONFS_MAX_NUM },
-+		.sample = { test_sample, RAW_SAMPLE_CONFS_MAX_NUM },
-+		.cmd_flow = &test_flow_inst,
-+		.dispatch = test_dispatch_cb,
++		.vxlan_encap = &testpmd_vxlan_conf,
++		.nvgre_encap = &testpmd_nvgre_conf,
++		.l2_encap = &testpmd_l2_encap_conf,
++		.l2_decap = &testpmd_l2_decap_conf,
++		.mplsogre_encap = &testpmd_mplsogre_encap_conf,
++		.mplsogre_decap = &testpmd_mplsogre_decap_conf,
++		.mplsoudp_encap = &testpmd_mplsoudp_encap_conf,
++		.mplsoudp_decap = &testpmd_mplsoudp_decap_conf,
++		.conntrack = &testpmd_conntrack,
++		.raw_encap = { testpmd_raw_encap, RAW_ENCAP_CONFS_MAX_NUM },
++		.raw_decap = { testpmd_raw_decap, RAW_ENCAP_CONFS_MAX_NUM },
++		.ipv6_ext_push = { testpmd_ipv6_push, IPV6_EXT_PUSH_CONFS_MAX_NUM },
++		.ipv6_ext_remove = { testpmd_ipv6_remove, IPV6_EXT_PUSH_CONFS_MAX_NUM },
++		.sample = { testpmd_sample, RAW_SAMPLE_CONFS_MAX_NUM },
++		.cmd_flow = &cmd_flow,
++		.dispatch = testpmd_flow_dispatch,
 +	};
 +	rte_flow_parser_config_register(&cfg);
 +}
 +
-+static int
-+flow_parser_setup(void)
-+{
-+	return 0;
-+}
-+
-+static int
-+flow_parser_case_setup(void)
-+{
-+	test_register_config();
-+	return 0;
-+}
++struct cmd_show_set_raw_result {
++	cmdline_fixed_string_t cmd_show;
++	cmdline_fixed_string_t cmd_what;
++	cmdline_fixed_string_t cmd_all;
++	uint16_t cmd_index;
++};
 +
 +static void
-+flow_parser_teardown(void)
++cmd_show_set_raw_parsed(void *parsed_result, struct cmdline *cl, void *data)
 +{
-+	test_register_config();
++	struct cmd_show_set_raw_result *res = parsed_result;
++	uint16_t index = res->cmd_index;
++	const uint8_t *raw_data = NULL;
++	size_t raw_size = 0;
++	char title[16] = { 0 };
++	int all = 0;
++
++	RTE_SET_USED(cl);
++	RTE_SET_USED(data);
++	if (strcmp(res->cmd_all, "all") == 0) {
++		all = 1;
++		index = 0;
++	} else if (index >= RAW_ENCAP_CONFS_MAX_NUM) {
++		fprintf(stderr, "index should be 0-%u\n",
++			RAW_ENCAP_CONFS_MAX_NUM - 1);
++		return;
++	}
++	do {
++		if (strcmp(res->cmd_what, "raw_encap") == 0) {
++			const struct rte_flow_action_raw_encap *conf =
++				rte_flow_parser_raw_encap_conf(index);
++
++			if (conf == NULL || conf->data == NULL || conf->size == 0) {
++				fprintf(stderr,
++					"raw_encap %u not configured\n",
++					index);
++				goto next;
++			}
++			raw_data = conf->data;
++			raw_size = conf->size;
++		} else if (strcmp(res->cmd_what, "raw_decap") == 0) {
++			const struct rte_flow_action_raw_decap *conf =
++				rte_flow_parser_raw_decap_conf(index);
++
++			if (conf == NULL || conf->data == NULL || conf->size == 0) {
++				fprintf(stderr,
++					"raw_decap %u not configured\n",
++					index);
++				goto next;
++			}
++			raw_data = conf->data;
++			raw_size = conf->size;
++		}
++		snprintf(title, sizeof(title), "\nindex: %u", index);
++		rte_hexdump(stdout, title, raw_data, raw_size);
++next:
++		raw_data = NULL;
++		raw_size = 0;
++	} while (all && ++index < RAW_ENCAP_CONFS_MAX_NUM);
 +}
 +
-+/* Cmdline API tests */
++static cmdline_parse_token_string_t cmd_show_set_raw_cmd_show =
++	TOKEN_STRING_INITIALIZER(struct cmd_show_set_raw_result,
++			cmd_show, "show");
++static cmdline_parse_token_string_t cmd_show_set_raw_cmd_what =
++	TOKEN_STRING_INITIALIZER(struct cmd_show_set_raw_result,
++			cmd_what, "raw_encap#raw_decap");
++static cmdline_parse_token_num_t cmd_show_set_raw_cmd_index =
++	TOKEN_NUM_INITIALIZER(struct cmd_show_set_raw_result,
++			cmd_index, RTE_UINT16);
++static cmdline_parse_token_string_t cmd_show_set_raw_cmd_all =
++	TOKEN_STRING_INITIALIZER(struct cmd_show_set_raw_result,
++			cmd_all, "all");
 +
-+static int
-+test_flow_parser_cmdline_command_mapping(void)
-+{
-+	static const char *create_cmd =
-+		"flow create 0 ingress pattern eth / end "
-+		"actions drop / end";
-+	static const char *list_cmd = "flow list 0";
-+	static const char *destroy_cmd = "flow destroy 0 rule 1";
-+	static const char *flush_cmd = "flow flush 0";
-+	static const char *validate_cmd =
-+		"flow validate 0 ingress pattern eth / end actions drop / end";
-+	uint8_t outbuf[4096];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(create_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow create parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_CREATE,
-+		"expected CREATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 2,
-+		"expected 2 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"expected ETH pattern, got %d", out->args.vc.pattern[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type, RTE_FLOW_ITEM_TYPE_END,
-+		"expected END pattern, got %d", out->args.vc.pattern[1].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 2,
-+		"expected 2 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_DROP,
-+		"expected DROP action, got %d", out->args.vc.actions[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_END,
-+		"expected END action, got %d", out->args.vc.actions[1].type);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 1 &&
-+		out->args.vc.attr.egress == 0,
-+		"expected ingress=1 egress=0");
-+
-+	ret = rte_flow_parser_parse(list_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow list parse failed: %s", strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_LIST,
-+		"expected LIST command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+
-+	ret = rte_flow_parser_parse(destroy_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow destroy parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_DESTROY,
-+		"expected DESTROY command, got %d", out->command);
-+
-+	ret = rte_flow_parser_parse(flush_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow flush parse failed: %s", strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_FLUSH,
-+		"expected FLUSH command, got %d", out->command);
-+
-+	ret = rte_flow_parser_parse(validate_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow validate parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_VALIDATE,
-+		"expected VALIDATE command, got %d", out->command);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_cmdline_indirect_action(void)
-+{
-+	static const char *flow_indirect_sample =
-+		"flow indirect_action 0 create transfer list "
-+		"actions sample ratio 1 index 1 / jump group 2 / end";
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_action *actions;
-+	const struct rte_flow_action_sample *sample_conf;
-+	const struct rte_flow_action_ethdev *repr;
-+	uint32_t actions_n;
-+	int ret;
-+
-+	/* Pre-configure sample actions via the setter API. */
-+	ret = rte_flow_parser_parse_actions_str(
-+		"port_representor port_id 0xffff / end",
-+		&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "parse sample actions failed: %s",
-+		strerror(-ret));
-+
-+	ret = rte_flow_parser_sample_actions_set(1, actions, actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "sample_actions_set failed: %s",
-+		strerror(-ret));
-+
-+	/* Parse an indirect_action that references sample index 1. */
-+	ret = rte_flow_parser_parse(flow_indirect_sample, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "indirect sample parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(out->command == RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_LIST_CREATE ||
-+		out->command == RTE_FLOW_PARSER_CMD_INDIRECT_ACTION_CREATE ||
-+		out->command == RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_LIST_CREATE ||
-+		out->command == RTE_FLOW_PARSER_CMD_QUEUE_INDIRECT_ACTION_CREATE,
-+		"expected indirect action create command, got %d", out->command);
-+	TEST_ASSERT(out->args.vc.actions_n >= 3,
-+		"expected sample + jump + end actions for indirect action");
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_SAMPLE, "indirect actions[0] not SAMPLE");
-+	sample_conf = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(sample_conf, "indirect sample conf missing");
-+	TEST_ASSERT_NOT_NULL(sample_conf->actions,
-+		"indirect sample actions missing");
-+	TEST_ASSERT_EQUAL(sample_conf->actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_PORT_REPRESENTOR,
-+		"indirect sample action[0] type mismatch: %d",
-+		sample_conf->actions[0].type);
-+	repr = sample_conf->actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(repr, "indirect sample port conf missing");
-+	TEST_ASSERT_EQUAL(repr->port_id, 0xffff,
-+		"indirect sample port representor id mismatch");
-+	TEST_ASSERT_EQUAL(sample_conf->actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_END,
-+		"indirect sample actions should end");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_cmdline_meter(void)
-+{
-+	/* meter itself needs to be created beforehand; here we just test parsing */
-+	static const char *flow_meter =
-+		"flow create 0 ingress group 1 pattern eth / end "
-+		"actions meter mtr_id 101 / end";
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_action_meter *meter_conf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(flow_meter, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow meter parse failed: %s", strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_CREATE,
-+		"expected CREATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 1 &&
-+		out->args.vc.attr.egress == 0,
-+		"expected ingress=1 egress=0");
-+	TEST_ASSERT_EQUAL(out->args.vc.attr.group, 1,
-+		"expected group 1, got %u", out->args.vc.attr.group);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 2,
-+		"expected 2 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"expected ETH pattern, got %d", out->args.vc.pattern[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type, RTE_FLOW_ITEM_TYPE_END,
-+		"expected END pattern, got %d", out->args.vc.pattern[1].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 2,
-+		"expected 2 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_METER, "actions[0] not METER");
-+	meter_conf = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(meter_conf, "meter action configuration missing");
-+	TEST_ASSERT_EQUAL(meter_conf->mtr_id, 101,
-+		"expected mtr_id 101, got %u", meter_conf->mtr_id);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_END, "actions[1] not END");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_cmdline_queue_set_meta(void)
-+{
-+	static const char *flow_queue_meta =
-+		"flow create 0 ingress pattern eth / ipv4 / tcp dst is 80 / end "
-+		"actions queue index 0 / set_meta data 0x1234 / end";
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_item_tcp *tcp_spec;
-+	const struct rte_flow_action_queue *queue_conf;
-+	const struct rte_flow_action_set_meta *set_meta_conf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(flow_queue_meta, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow queue set_meta parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_CREATE,
-+		"expected CREATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 1 &&
-+		out->args.vc.attr.egress == 0,
-+		"expected ingress=1 egress=0");
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 4,
-+		"expected 4 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH, got %d", out->args.vc.pattern[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
-+		"pattern[1] expected IPV4, got %d", out->args.vc.pattern[1].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[2].type, RTE_FLOW_ITEM_TYPE_TCP,
-+		"pattern[2] expected TCP, got %d", out->args.vc.pattern[2].type);
-+	tcp_spec = out->args.vc.pattern[2].spec;
-+	TEST_ASSERT_NOT_NULL(tcp_spec, "tcp spec missing");
-+	TEST_ASSERT_EQUAL(tcp_spec->hdr.dst_port, rte_cpu_to_be_16(80),
-+		"tcp dst port mismatch");
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[3].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[3] expected END, got %d", out->args.vc.pattern[3].type);
-+
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 3,
-+		"expected 3 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_QUEUE, "actions[0] not QUEUE");
-+	queue_conf = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(queue_conf, "queue action configuration missing");
-+	TEST_ASSERT_EQUAL(queue_conf->index, 0,
-+		"queue index expected 0, got %u", queue_conf->index);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_SET_META, "actions[1] not SET_META");
-+	set_meta_conf = out->args.vc.actions[1].conf;
-+	TEST_ASSERT_NOT_NULL(set_meta_conf,
-+		"set_meta action configuration missing");
-+	TEST_ASSERT_EQUAL(set_meta_conf->data, 0x1234,
-+		"set_meta data expected 0x1234, got %#x",
-+		set_meta_conf->data);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[2].type,
-+		RTE_FLOW_ACTION_TYPE_END, "actions[2] not END");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_cmdline_modify_field_count(void)
-+{
-+	static const char *flow_modify_field =
-+		"flow validate 1 egress pattern "
-+		"tx_queue tx_queue_value is 0 / meta data is 0x1234 / end "
-+		"actions modify_field op set dst_type ipv4_src src_type value "
-+		"src_value 0x0a000001 width 32 / count / end";
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_item_tx_queue *tx_queue_spec;
-+	const struct rte_flow_item_meta *meta_spec;
-+	const struct rte_flow_action_modify_field *modify_conf;
-+	const struct rte_flow_action_count *count_conf;
-+	const uint8_t expected_src_value[16] = { 0x0a, 0x00, 0x00, 0x01 };
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(flow_modify_field, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow modify_field parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_VALIDATE,
-+		"expected VALIDATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 1, "expected port 1, got %u", out->port);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 0 &&
-+		out->args.vc.attr.egress == 1,
-+		"expected ingress=0 egress=1");
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 3,
-+		"expected 3 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type,
-+		RTE_FLOW_ITEM_TYPE_TX_QUEUE,
-+		"pattern[0] expected TX_QUEUE, got %d",
-+		out->args.vc.pattern[0].type);
-+	tx_queue_spec = out->args.vc.pattern[0].spec;
-+	TEST_ASSERT_NOT_NULL(tx_queue_spec, "tx_queue spec missing");
-+	TEST_ASSERT_EQUAL(tx_queue_spec->tx_queue, 0,
-+		"tx_queue value expected 0, got %u",
-+		tx_queue_spec->tx_queue);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type,
-+		RTE_FLOW_ITEM_TYPE_META,
-+		"pattern[1] expected META, got %d",
-+		out->args.vc.pattern[1].type);
-+	meta_spec = out->args.vc.pattern[1].spec;
-+	TEST_ASSERT_NOT_NULL(meta_spec, "meta spec missing");
-+	TEST_ASSERT_EQUAL(meta_spec->data, 0x1234,
-+		"meta data expected 0x1234, got %#x",
-+		meta_spec->data);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[2].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[2] expected END, got %d", out->args.vc.pattern[2].type);
-+
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 3,
-+		"expected 3 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_MODIFY_FIELD, "actions[0] not MODIFY_FIELD");
-+	modify_conf = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(modify_conf,
-+		"modify_field action configuration missing");
-+	TEST_ASSERT_EQUAL(modify_conf->operation, RTE_FLOW_MODIFY_SET,
-+		"modify_field operation expected SET, got %d",
-+		modify_conf->operation);
-+	TEST_ASSERT_EQUAL(modify_conf->dst.field, RTE_FLOW_FIELD_IPV4_SRC,
-+		"modify_field dst field expected IPV4_SRC, got %d",
-+		modify_conf->dst.field);
-+	TEST_ASSERT_EQUAL(modify_conf->src.field, RTE_FLOW_FIELD_VALUE,
-+		"modify_field src field expected VALUE, got %d",
-+		modify_conf->src.field);
-+	TEST_ASSERT_EQUAL(modify_conf->width, 32,
-+		"modify_field width expected 32, got %u",
-+		modify_conf->width);
-+	TEST_ASSERT_BUFFERS_ARE_EQUAL(modify_conf->src.value,
-+		expected_src_value, sizeof(expected_src_value),
-+		"modify_field src value mismatch");
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_COUNT, "actions[1] not COUNT");
-+	count_conf = out->args.vc.actions[1].conf;
-+	TEST_ASSERT_NOT_NULL(count_conf, "count action configuration missing");
-+	TEST_ASSERT_EQUAL(count_conf->id, 0,
-+		"count id expected 0, got %u", count_conf->id);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[2].type,
-+		RTE_FLOW_ACTION_TYPE_END, "actions[2] not END");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_cmdline_raw_decap_rss(void)
-+{
-+	char flow_raw_decap_rss[160];
-+	const uint16_t raw_decap_index = 0;
-+	uint8_t outbuf[8192];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	const struct rte_flow_item *items;
-+	uint32_t items_n;
-+	const struct rte_flow_action_raw_decap *raw_decap_action;
-+	const struct rte_flow_action_rss *rss_conf;
-+	const struct rte_flow_action_raw_decap *decap_conf;
-+	const struct rte_vxlan_hdr *vxlan_hdr;
-+	uint32_t vni;
-+	int len;
-+	int ret;
-+
-+	/* Use the setter API: parse pattern, then set raw decap config. */
-+	ret = rte_flow_parser_parse_pattern_str(
-+		"vxlan vni is 33 / end", &items, &items_n);
-+	TEST_ASSERT_SUCCESS(ret, "pattern parse failed: %s", strerror(-ret));
-+
-+	ret = rte_flow_parser_raw_decap_conf_set(raw_decap_index,
-+		items, items_n);
-+	TEST_ASSERT_SUCCESS(ret, "raw_decap_conf_set failed: %s",
-+		strerror(-ret));
-+
-+	/* Verify the stored config via getter. */
-+	decap_conf = rte_flow_parser_raw_decap_conf(raw_decap_index);
-+	TEST_ASSERT_NOT_NULL(decap_conf, "raw_decap config missing");
-+	TEST_ASSERT(decap_conf->size >= sizeof(struct rte_vxlan_hdr),
-+		"raw_decap config size too small: %zu", decap_conf->size);
-+	vxlan_hdr = (const struct rte_vxlan_hdr *)decap_conf->data;
-+	vni = ((uint32_t)vxlan_hdr->vni[0] << 16) |
-+	      ((uint32_t)vxlan_hdr->vni[1] << 8) |
-+	      (uint32_t)vxlan_hdr->vni[2];
-+	TEST_ASSERT_EQUAL(vni, 33,
-+		"raw_decap vxlan vni expected 33, got %u", vni);
-+
-+	/* Parse a flow rule that uses the stored raw_decap config. */
-+	len = snprintf(flow_raw_decap_rss, sizeof(flow_raw_decap_rss),
-+		"flow create 0 ingress pattern eth / ipv4 / end "
-+		"actions raw_decap index %u / rss / end",
-+		raw_decap_index);
-+	TEST_ASSERT(len > 0 && len < (int)sizeof(flow_raw_decap_rss),
-+		"flow raw_decap rss command truncated");
-+
-+	ret = rte_flow_parser_parse(flow_raw_decap_rss, out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "flow raw_decap rss parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(out->command, RTE_FLOW_PARSER_CMD_CREATE,
-+		"expected CREATE command, got %d", out->command);
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+	TEST_ASSERT(out->args.vc.attr.ingress == 1 &&
-+		out->args.vc.attr.egress == 0,
-+		"expected ingress=1 egress=0");
-+
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern_n, 3,
-+		"expected 3 pattern items, got %u", out->args.vc.pattern_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH, got %d", out->args.vc.pattern[0].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
-+		"pattern[1] expected IPV4, got %d", out->args.vc.pattern[1].type);
-+	TEST_ASSERT_EQUAL(out->args.vc.pattern[2].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[2] expected END, got %d", out->args.vc.pattern[2].type);
-+
-+	TEST_ASSERT_EQUAL(out->args.vc.actions_n, 3,
-+		"expected 3 action items, got %u", out->args.vc.actions_n);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[0].type,
-+		RTE_FLOW_ACTION_TYPE_RAW_DECAP, "actions[0] not RAW_DECAP");
-+	raw_decap_action = out->args.vc.actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(raw_decap_action,
-+		"raw_decap action configuration missing");
-+	TEST_ASSERT_NOT_NULL(raw_decap_action->data,
-+		"raw_decap action data missing");
-+	TEST_ASSERT(raw_decap_action->size >= sizeof(struct rte_vxlan_hdr),
-+		"raw_decap action size too small: %zu",
-+		raw_decap_action->size);
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[1].type,
-+		RTE_FLOW_ACTION_TYPE_RSS, "actions[1] not RSS");
-+	rss_conf = out->args.vc.actions[1].conf;
-+	TEST_ASSERT_NOT_NULL(rss_conf, "rss action configuration missing");
-+	TEST_ASSERT_EQUAL(out->args.vc.actions[2].type,
-+		RTE_FLOW_ACTION_TYPE_END, "actions[2] not END");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_cmdline_invalid_args(void)
-+{
-+	uint8_t outbuf[sizeof(struct rte_flow_parser_output)];
-+	int ret;
-+
-+	/* Test NULL command string */
-+	ret = rte_flow_parser_parse(NULL, (void *)outbuf, sizeof(outbuf));
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL cmd should return -EINVAL");
-+
-+	/* Test NULL output buffer */
-+	ret = rte_flow_parser_parse("flow list 0", NULL, sizeof(outbuf));
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL output should return -EINVAL");
-+
-+	/* Test output buffer too small */
-+	ret = rte_flow_parser_parse("flow list 0", (void *)outbuf,
-+		sizeof(struct rte_flow_parser_output) - 1);
-+	TEST_ASSERT_EQUAL(ret, -ENOBUFS, "short output buffer not rejected");
-+
-+	/* Test zero-length output buffer */
-+	ret = rte_flow_parser_parse("flow list 0", (void *)outbuf, 0);
-+	TEST_ASSERT_EQUAL(ret, -ENOBUFS, "zero-length output buffer not rejected");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_cmdline_invalid_syntax(void)
-+{
-+	static const char *invalid_cmd = "flow invalid 0";
-+	static const char *wrong_cmd =
-+		"flow create 0 rule 7"; /* destroy syntax in create */
-+	static const char *actions_before_pattern =
-+		"flow create 0 ingress actions drop / end pattern eth / end";
-+	static const char *missing_actions_keyword =
-+		"flow create 0 ingress pattern eth / end drop / end";
-+	static const char *missing_pattern_keyword =
-+		"flow create 0 ingress actions drop / end";
-+	static const char *missing_action_separator =
-+		"flow create 0 ingress pattern eth / end actions drop end";
-+	static const char *missing_pattern_end =
-+		"flow create 0 ingress pattern eth / ipv4 actions drop / end";
-+	static const char *missing_port_id =
-+		"flow create ingress pattern eth / end actions drop / end";
-+	static const char *extra_trailing_token =
-+		"flow create 0 ingress pattern eth / end actions drop / end junk";
-+	static const char *empty_command = "";
-+	static const char *whitespace_only = "   ";
-+	uint8_t outbuf[4096];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse(invalid_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0, "unexpected status for invalid cmd: %d", ret);
-+
-+	ret = rte_flow_parser_parse(wrong_cmd, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for wrong command usage: %d", ret);
-+
-+	ret = rte_flow_parser_parse(actions_before_pattern, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for actions before pattern: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_actions_keyword, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing actions keyword: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_pattern_keyword, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing pattern keyword: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_action_separator, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing action separator: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_pattern_end, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing pattern end: %d", ret);
-+
-+	ret = rte_flow_parser_parse(missing_port_id, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for missing port id: %d", ret);
-+
-+	ret = rte_flow_parser_parse(extra_trailing_token, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for extra trailing token: %d", ret);
-+
-+	ret = rte_flow_parser_parse(empty_command, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for empty command: %d", ret);
-+
-+	ret = rte_flow_parser_parse(whitespace_only, out, sizeof(outbuf));
-+	TEST_ASSERT(ret < 0,
-+		"expected failure for whitespace-only command: %d", ret);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_cmdline_port_id(void)
-+{
-+	uint8_t outbuf[4096];
-+	struct rte_flow_parser_output *out = (void *)outbuf;
-+	int ret;
-+
-+	/* Test various port IDs */
-+	ret = rte_flow_parser_parse("flow list 0", out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "port 0 parse failed");
-+	TEST_ASSERT_EQUAL(out->port, 0, "expected port 0, got %u", out->port);
-+
-+	ret = rte_flow_parser_parse("flow list 1", out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "port 1 parse failed");
-+	TEST_ASSERT_EQUAL(out->port, 1, "expected port 1, got %u", out->port);
-+
-+	ret = rte_flow_parser_parse("flow list 255", out, sizeof(outbuf));
-+	TEST_ASSERT_SUCCESS(ret, "port 255 parse failed");
-+	TEST_ASSERT_EQUAL(out->port, 255, "expected port 255, got %u", out->port);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Cmdline integration tests */
-+
-+static void
-+test_dispatch_cb(const struct rte_flow_parser_output *in __rte_unused)
-+{
-+}
-+
-+static cmdline_parse_inst_t test_flow_inst = {
++cmdline_parse_inst_t cmd_flow = {
 +	.f = rte_flow_parser_cmd_flow_cb,
 +	.data = NULL,
 +	.help_str = NULL,
-+	.tokens = { NULL },
++	.tokens = {
++		NULL,
++	},
 +};
 +
-+static int
-+test_flow_parser_cmdline_register(void)
-+{
-+	cmdline_parse_token_hdr_t *tok = NULL;
-+
-+	rte_flow_parser_cmd_flow_cb(&tok, NULL, &test_flow_inst.tokens[0]);
-+	TEST_ASSERT_NOT_NULL(tok, "first dynamic token should not be NULL");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Encap/decap setter tests */
-+
-+static int
-+test_flow_parser_raw_encap_setter(void)
-+{
-+	const struct rte_flow_item *items;
-+	uint32_t items_n;
-+	const struct rte_flow_action_raw_encap *conf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse_pattern_str(
-+		"eth / ipv4 / udp / vxlan / end", &items, &items_n);
-+	TEST_ASSERT_SUCCESS(ret, "pattern parse failed: %s", strerror(-ret));
-+
-+	ret = rte_flow_parser_raw_encap_conf_set(0, items, items_n);
-+	TEST_ASSERT_SUCCESS(ret, "raw_encap_conf_set failed: %s",
-+		strerror(-ret));
-+
-+	conf = rte_flow_parser_raw_encap_conf(0);
-+	TEST_ASSERT_NOT_NULL(conf, "raw_encap config missing after set");
-+	TEST_ASSERT_NOT_NULL(conf->data, "raw_encap data missing");
-+	TEST_ASSERT(conf->size > 0, "raw_encap size is 0");
-+	TEST_ASSERT(conf->size >= 50,
-+		"raw_encap size too small for eth/ipv4/udp/vxlan: %zu",
-+		conf->size);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_raw_decap_setter(void)
-+{
-+	const struct rte_flow_item *items;
-+	uint32_t items_n;
-+	const struct rte_flow_action_raw_decap *conf;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse_pattern_str(
-+		"eth / end", &items, &items_n);
-+	TEST_ASSERT_SUCCESS(ret, "pattern parse failed: %s", strerror(-ret));
-+
-+	ret = rte_flow_parser_raw_decap_conf_set(0, items, items_n);
-+	TEST_ASSERT_SUCCESS(ret, "raw_decap_conf_set failed: %s",
-+		strerror(-ret));
-+
-+	conf = rte_flow_parser_raw_decap_conf(0);
-+	TEST_ASSERT_NOT_NULL(conf, "raw_decap config missing after set");
-+	TEST_ASSERT_NOT_NULL(conf->data, "raw_decap data missing");
-+	TEST_ASSERT(conf->size >= 14,
-+		"raw_decap size too small for eth: %zu", conf->size);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_raw_setter_boundary(void)
-+{
-+	const struct rte_flow_item *items;
-+	uint32_t items_n;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse_pattern_str(
-+		"eth / end", &items, &items_n);
-+	TEST_ASSERT_SUCCESS(ret, "pattern parse failed");
-+
-+	ret = rte_flow_parser_raw_encap_conf_set(RAW_ENCAP_CONFS_MAX_NUM,
-+		items, items_n);
-+	TEST_ASSERT(ret < 0, "out-of-range index should fail");
-+
-+	ret = rte_flow_parser_raw_decap_conf_set(RAW_ENCAP_CONFS_MAX_NUM,
-+		items, items_n);
-+	TEST_ASSERT(ret < 0, "out-of-range index should fail");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_config_register_identity(void)
-+{
-+	struct rte_flow_parser_vxlan_encap_conf local_vxlan = { 0 };
-+	struct rte_flow_parser_config cfg = { .vxlan_encap = &local_vxlan };
-+
-+	TEST_ASSERT_SUCCESS(rte_flow_parser_config_register(&cfg),
-+		"config_register failed");
-+
-+	/* Write through registered config, verify it's the same object */
-+	local_vxlan.select_ipv4 = 1;
-+	local_vxlan.vni[0] = 0xAA;
-+	TEST_ASSERT_EQUAL(cfg.vxlan_encap->vni[0], 0xAA,
-+		"registered config not the same object");
-+
-+	/* Restore test config */
-+	test_register_config();
-+	return TEST_SUCCESS;
-+}
-+
-+static struct unit_test_suite flow_parser_tests = {
-+	.suite_name = "flow parser autotest",
-+	.setup = flow_parser_setup,
-+	.teardown = NULL,
-+	.unit_test_cases = {
-+		/* Cmdline API tests (rte_flow_parser_cmdline.h) */
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_command_mapping),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_invalid_args),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_invalid_syntax),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_port_id),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_indirect_action),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_meter),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_queue_set_meta),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_modify_field_count),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_raw_decap_rss),
-+		/* Cmdline integration tests */
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_cmdline_register),
-+		/* Setter tests */
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_raw_encap_setter),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_raw_decap_setter),
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_raw_setter_boundary),
-+		/* Config registration test */
-+		TEST_CASE_ST(flow_parser_case_setup, flow_parser_teardown,
-+			test_flow_parser_config_register_identity),
-+		TEST_CASES_END()
-+	}
++enum testpmd_set_type {
++	TESTPMD_SET_RAW_ENCAP,
++	TESTPMD_SET_RAW_DECAP,
++	TESTPMD_SET_SAMPLE_ACTIONS,
++	TESTPMD_SET_IPV6_EXT_PUSH,
++	TESTPMD_SET_IPV6_EXT_REMOVE,
++	TESTPMD_SET_UNKNOWN,
 +};
-+
-+static int
-+test_flow_parser(void)
-+{
-+	return unit_test_suite_runner(&flow_parser_tests);
-+}
-+
-+REGISTER_FAST_TEST(flow_parser_autotest, NOHUGE_OK, ASAN_OK, test_flow_parser);
-diff --git a/app/test/test_flow_parser_simple.c b/app/test/test_flow_parser_simple.c
-new file mode 100644
-index 0000000000..a8767b19f7
---- /dev/null
-+++ b/app/test/test_flow_parser_simple.c
-@@ -0,0 +1,445 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 DynaNIC Semiconductors, Ltd.
-+ */
 +
 +/*
-+ * Tests for the simple flow parser API (rte_flow_parser.h).
-+ * These tests do NOT require config registration — the simple API
-+ * is self-contained and works without rte_flow_parser_cmdline.h.
++ * Tokenization-phase subcommand type.
++ *
++ * During cmdline tokenization the subcmd parse callback runs before the
++ * index callback, and during the matching pass (res==NULL) there is no
++ * output buffer to write to.  This static carries the subcommand type
++ * from parse_subcmd to parse_index so the correct ctx_init variant is
++ * called.  The dispatch callback reads from out->command instead.
 + */
-+
-+#include <stdint.h>
-+#include <string.h>
-+#include <errno.h>
-+
-+#include <rte_byteorder.h>
-+#include <rte_flow.h>
-+#include <rte_flow_parser.h>
-+
-+#include "test.h"
++static enum testpmd_set_type set_tok_subcmd;
 +
 +static int
-+test_flow_parser_public_attr_parsing(void)
++testpmd_set_parse_keyword(cmdline_parse_token_hdr_t *tk, const char *buf,
++			  void *res, unsigned int ressize)
 +{
-+	struct rte_flow_attr attr;
-+	int ret;
-+
-+	/* Test basic ingress attribute */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("ingress", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "ingress attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(attr.ingress == 1 && attr.egress == 0,
-+		"attr flags mismatch ingress=%u egress=%u",
-+		attr.ingress, attr.egress);
-+
-+	/* Test egress attribute */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("egress", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "egress attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(attr.ingress == 0 && attr.egress == 1,
-+		"attr flags mismatch ingress=%u egress=%u",
-+		attr.ingress, attr.egress);
-+
-+	/* Test transfer attribute */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("transfer", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "transfer attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(attr.transfer == 1, "transfer flag not set");
-+
-+	/* Test combined attributes with group and priority */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("ingress group 1 priority 5", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "combined attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(attr.group, 1, "attr group mismatch: %u", attr.group);
-+	TEST_ASSERT_EQUAL(attr.priority, 5,
-+		"attr priority mismatch: %u", attr.priority);
-+	TEST_ASSERT(attr.ingress == 1 && attr.egress == 0,
-+		"attr flags mismatch ingress=%u egress=%u",
-+		attr.ingress, attr.egress);
-+
-+	/* Test multiple direction attributes (last one wins) */
-+	memset(&attr, 0, sizeof(attr));
-+	ret = rte_flow_parser_parse_attr_str("ingress egress", &attr);
-+	TEST_ASSERT_SUCCESS(ret, "multi-direction attr parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT(attr.ingress == 1 && attr.egress == 1,
-+		"both ingress and egress should be set");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_pattern_parsing(void)
-+{
-+	const struct rte_flow_item *pattern = NULL;
-+	uint32_t pattern_n = 0;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "simple pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 2, "expected 2 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH, got %d", pattern[0].type);
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[1] expected END, got %d", pattern[1].type);
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / ipv4 / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "eth/ipv4 pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 3, "expected 3 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH, got %d", pattern[0].type);
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
-+		"pattern[1] expected IPV4, got %d", pattern[1].type);
-+	TEST_ASSERT_EQUAL(pattern[2].type, RTE_FLOW_ITEM_TYPE_END,
-+		"pattern[2] expected END, got %d", pattern[2].type);
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / ipv4 / tcp / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "complex pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 4, "expected 4 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT(pattern[0].type == RTE_FLOW_ITEM_TYPE_ETH &&
-+		pattern[1].type == RTE_FLOW_ITEM_TYPE_IPV4 &&
-+		pattern[2].type == RTE_FLOW_ITEM_TYPE_TCP &&
-+		pattern[3].type == RTE_FLOW_ITEM_TYPE_END,
-+		"complex pattern type mismatch");
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / ipv6 / udp / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "ipv6/udp pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 4, "expected 4 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV6,
-+		"pattern[1] expected IPV6, got %d", pattern[1].type);
-+	TEST_ASSERT_EQUAL(pattern[2].type, RTE_FLOW_ITEM_TYPE_UDP,
-+		"pattern[2] expected UDP, got %d", pattern[2].type);
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / vlan / ipv4 / end",
-+						&pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "vlan pattern parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(pattern_n, 4, "expected 4 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_VLAN,
-+		"pattern[1] expected VLAN, got %d", pattern[1].type);
-+
-+	/* Pattern without trailing "/ end" should succeed (auto-appended). */
-+	ret = rte_flow_parser_parse_pattern_str("eth / ipv4", &pattern, &pattern_n);
-+	TEST_ASSERT_SUCCESS(ret, "pattern without end should auto-complete: %s",
-+		strerror(-ret));
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_actions_parsing(void)
-+{
-+	const struct rte_flow_action *actions = NULL;
-+	const struct rte_flow_action_queue *queue_conf;
-+	const struct rte_flow_action_mark *mark_conf;
-+	uint32_t actions_n = 0;
-+	int ret;
-+
-+	ret = rte_flow_parser_parse_actions_str("drop / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "drop action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions_n, 2, "expected 2 action items, got %u",
-+		actions_n);
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_DROP,
-+		"actions[0] expected DROP, got %d", actions[0].type);
-+	TEST_ASSERT_EQUAL(actions[1].type, RTE_FLOW_ACTION_TYPE_END,
-+		"actions[1] expected END, got %d", actions[1].type);
-+
-+	ret = rte_flow_parser_parse_actions_str("queue index 3 / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "queue action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions_n, 2, "expected 2 action items, got %u",
-+		actions_n);
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_QUEUE,
-+		"actions[0] expected QUEUE, got %d", actions[0].type);
-+	queue_conf = actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(queue_conf, "queue action configuration missing");
-+	TEST_ASSERT_EQUAL(queue_conf->index, 3,
-+		"queue index expected 3, got %u", queue_conf->index);
-+
-+	ret = rte_flow_parser_parse_actions_str("mark id 42 / drop / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "multi-action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions_n, 3, "expected 3 action items, got %u",
-+		actions_n);
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_MARK,
-+		"actions[0] expected MARK, got %d", actions[0].type);
-+	mark_conf = actions[0].conf;
-+	TEST_ASSERT_NOT_NULL(mark_conf, "mark action configuration missing");
-+	TEST_ASSERT_EQUAL(mark_conf->id, 42,
-+		"mark id expected 42, got %u", mark_conf->id);
-+	TEST_ASSERT_EQUAL(actions[1].type, RTE_FLOW_ACTION_TYPE_DROP,
-+		"actions[1] expected DROP, got %d", actions[1].type);
-+	TEST_ASSERT_EQUAL(actions[2].type, RTE_FLOW_ACTION_TYPE_END,
-+		"actions[2] expected END, got %d", actions[2].type);
-+
-+	ret = rte_flow_parser_parse_actions_str("rss / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "rss action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_RSS,
-+		"actions[0] expected RSS, got %d", actions[0].type);
-+
-+	ret = rte_flow_parser_parse_actions_str("count / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "count action parse failed: %s",
-+		strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_COUNT,
-+		"actions[0] expected COUNT, got %d", actions[0].type);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_invalid_args(void)
-+{
-+	const struct rte_flow_item *pattern = NULL;
-+	const struct rte_flow_action *actions = NULL;
-+	struct rte_flow_attr attr;
-+	uint32_t count = 0;
-+	int ret;
-+
-+	/* Test NULL attribute string */
-+	ret = rte_flow_parser_parse_attr_str(NULL, &attr);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL attr string should fail");
-+
-+	/* Test NULL attribute output */
-+	ret = rte_flow_parser_parse_attr_str("ingress", NULL);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL attr output should fail");
-+
-+	/* Test NULL pattern string */
-+	ret = rte_flow_parser_parse_pattern_str(NULL, &pattern, &count);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL pattern string should fail");
-+
-+	/* Test NULL pattern output */
-+	ret = rte_flow_parser_parse_pattern_str("eth / end", NULL, &count);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL pattern out should fail");
-+
-+	/* Test NULL pattern count */
-+	ret = rte_flow_parser_parse_pattern_str("eth / end", &pattern, NULL);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL pattern count should fail");
-+
-+	/* Test NULL actions string */
-+	ret = rte_flow_parser_parse_actions_str(NULL, &actions, &count);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL actions string should fail");
-+
-+	/* Test NULL actions output */
-+	ret = rte_flow_parser_parse_actions_str("drop / end", NULL, &count);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL actions out should fail");
-+
-+	/* Test NULL actions count */
-+	ret = rte_flow_parser_parse_actions_str("drop / end", &actions, NULL);
-+	TEST_ASSERT_EQUAL(ret, -EINVAL, "NULL actions count should fail");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_invalid_syntax(void)
-+{
-+	const struct rte_flow_item *pattern = NULL;
-+	const struct rte_flow_action *actions = NULL;
-+	struct rte_flow_attr attr;
-+	uint32_t count = 0;
-+	int ret;
-+
-+	/* Invalid attribute syntax */
-+	ret = rte_flow_parser_parse_attr_str("ingress group", &attr);
-+	TEST_ASSERT(ret < 0, "expected attr failure for missing group id: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_attr_str("priority foo", &attr);
-+	TEST_ASSERT(ret < 0, "expected attr failure for invalid priority: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_attr_str("ingress bogus 1", &attr);
-+	TEST_ASSERT(ret < 0, "expected attr failure for unknown token: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_pattern_str("eth / unknown / end",
-+		&pattern, &count);
-+	TEST_ASSERT(ret < 0, "expected pattern failure for unknown item: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_pattern_str("", &pattern, &count);
-+	TEST_ASSERT(ret < 0, "expected pattern failure for empty string: %d",
-+		ret);
-+
-+	/* Invalid actions syntax */
-+	ret = rte_flow_parser_parse_actions_str("queue index / end",
-+		&actions, &count);
-+	TEST_ASSERT(ret < 0, "expected actions failure for missing index: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_actions_str("mark id / end",
-+		&actions, &count);
-+	TEST_ASSERT(ret < 0, "expected actions failure for missing id: %d",
-+		ret);
-+
-+	ret = rte_flow_parser_parse_actions_str("bogus / end",
-+		&actions, &count);
-+	TEST_ASSERT(ret < 0, "expected actions failure for unknown action: %d",
-+		ret);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_public_parse_flow_rule(void)
-+{
-+	struct rte_flow_attr attr;
-+	const struct rte_flow_item *pattern = NULL;
-+	uint32_t pattern_n = 0;
-+	const struct rte_flow_action *actions = NULL;
-+	uint32_t actions_n = 0;
-+	int ret;
-+
-+	/* Basic ingress drop rule */
-+	ret = rte_flow_parser_parse_flow_rule(
-+		"ingress pattern eth / ipv4 / end actions drop / end",
-+		&attr, &pattern, &pattern_n, &actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret, "parse_flow_rule failed: %d", ret);
-+	TEST_ASSERT(attr.ingress == 1, "expected ingress");
-+	TEST_ASSERT(attr.egress == 0, "expected no egress");
-+	TEST_ASSERT(pattern_n >= 3, "expected >= 3 pattern items, got %u",
-+		pattern_n);
-+	TEST_ASSERT_EQUAL(pattern[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+		"pattern[0] expected ETH");
-+	TEST_ASSERT_EQUAL(pattern[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
-+		"pattern[1] expected IPV4");
-+	TEST_ASSERT_EQUAL(pattern[pattern_n - 1].type, RTE_FLOW_ITEM_TYPE_END,
-+		"last pattern item expected END");
-+	TEST_ASSERT(actions_n >= 2, "expected >= 2 actions, got %u", actions_n);
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_DROP,
-+		"actions[0] expected DROP");
-+	TEST_ASSERT_EQUAL(actions[actions_n - 1].type,
-+		RTE_FLOW_ACTION_TYPE_END, "last action expected END");
-+
-+	/* NULL argument checks */
-+	ret = rte_flow_parser_parse_flow_rule(NULL,
-+		&attr, &pattern, &pattern_n, &actions, &actions_n);
-+	TEST_ASSERT(ret < 0, "NULL src should fail");
-+	ret = rte_flow_parser_parse_flow_rule(
-+		"ingress pattern eth / end actions drop / end",
-+		NULL, &pattern, &pattern_n, &actions, &actions_n);
-+	TEST_ASSERT(ret < 0, "NULL attr should fail");
-+
-+	/* NULL pattern output */
-+	ret = rte_flow_parser_parse_flow_rule(
-+		"ingress pattern eth / end actions drop / end",
-+		&attr, NULL, &pattern_n, &actions, &actions_n);
-+	TEST_ASSERT(ret < 0, "NULL pattern should fail");
-+
-+	/* NULL pattern count */
-+	ret = rte_flow_parser_parse_flow_rule(
-+		"ingress pattern eth / end actions drop / end",
-+		&attr, &pattern, NULL, &actions, &actions_n);
-+	TEST_ASSERT(ret < 0, "NULL pattern_n should fail");
-+
-+	/* NULL actions output */
-+	ret = rte_flow_parser_parse_flow_rule(
-+		"ingress pattern eth / end actions drop / end",
-+		&attr, &pattern, &pattern_n, NULL, &actions_n);
-+	TEST_ASSERT(ret < 0, "NULL actions should fail");
-+
-+	/* NULL actions count */
-+	ret = rte_flow_parser_parse_flow_rule(
-+		"ingress pattern eth / end actions drop / end",
-+		&attr, &pattern, &pattern_n, &actions, NULL);
-+	TEST_ASSERT(ret < 0, "NULL actions_n should fail");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_flow_parser_no_registration(void)
-+{
-+	const struct rte_flow_action *actions = NULL;
-+	uint32_t actions_n = 0;
-+	int ret;
-+
-+	/*
-+	 * Actions that depend on registered config (vxlan_encap, nvgre_encap,
-+	 * l2_encap, etc.) must not crash when no config is registered.
-+	 * The simple API never calls config_register, so the registry is
-+	 * empty. The parser should either parse successfully with NULL conf
-+	 * or fail gracefully.
++	(void)tk; (void)res; (void)ressize;
++	if (strncmp(buf, "set", 3) != 0 || (buf[3] != '\0' && buf[3] != ' '))
++		return -1;
++	/* Reset the shared parser context so that cmd_flow's prior probe
++	 * (which runs before cmd_set_raw) does not leave stale state.
 +	 */
-+	ret = rte_flow_parser_parse_actions_str("vxlan_encap / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT(ret < 0,
-+		"vxlan_encap without registration should fail, got %d", ret);
-+
-+	ret = rte_flow_parser_parse_actions_str("nvgre_encap / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT(ret < 0,
-+		"nvgre_encap without registration should fail, got %d", ret);
-+
-+	ret = rte_flow_parser_parse_actions_str("l2_encap / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT(ret < 0,
-+		"l2_encap without registration should fail, got %d", ret);
-+
-+	ret = rte_flow_parser_parse_actions_str("l2_decap / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT(ret < 0,
-+		"l2_decap without registration should fail, got %d", ret);
-+
-+	/* Non-config-dependent actions should still work */
-+	ret = rte_flow_parser_parse_actions_str("drop / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret,
-+		"drop should work without registration: %s", strerror(-ret));
-+	TEST_ASSERT_EQUAL(actions[0].type, RTE_FLOW_ACTION_TYPE_DROP,
-+		"expected DROP action");
-+
-+	ret = rte_flow_parser_parse_actions_str("queue index 0 / end",
-+						&actions, &actions_n);
-+	TEST_ASSERT_SUCCESS(ret,
-+		"queue should work without registration: %s", strerror(-ret));
-+
-+	return TEST_SUCCESS;
++	rte_flow_parser_set_ctx_init(RTE_FLOW_PARSER_SET_ITEMS_PATTERN,
++				     NULL, 0);
++	return 3;
 +}
 +
-+static struct unit_test_suite flow_parser_simple_tests = {
-+	.suite_name = "flow parser simple API autotest",
-+	.unit_test_cases = {
-+		TEST_CASE(test_flow_parser_public_attr_parsing),
-+		TEST_CASE(test_flow_parser_public_pattern_parsing),
-+		TEST_CASE(test_flow_parser_public_actions_parsing),
-+		TEST_CASE(test_flow_parser_public_invalid_args),
-+		TEST_CASE(test_flow_parser_public_invalid_syntax),
-+		TEST_CASE(test_flow_parser_public_parse_flow_rule),
-+		TEST_CASE(test_flow_parser_no_registration),
-+		TEST_CASES_END()
++static int
++testpmd_set_complete_keyword_nb(cmdline_parse_token_hdr_t *tk)
++{
++	(void)tk;
++	return 1;
++}
++
++static int
++testpmd_set_complete_keyword_elt(cmdline_parse_token_hdr_t *tk, int idx,
++				 char *dst, unsigned int size)
++{
++	(void)tk;
++	if (idx == 0) {
++		strlcpy(dst, "set", size);
++		return 0;
 +	}
++	return -1;
++}
++
++static int
++testpmd_set_help_keyword(cmdline_parse_token_hdr_t *tk, char *buf,
++			 unsigned int size)
++{
++	(void)tk;
++	strlcpy(buf, "set", size);
++	return 0;
++}
++
++static struct cmdline_token_ops testpmd_set_keyword_ops = {
++	.parse = testpmd_set_parse_keyword,
++	.complete_get_nb = testpmd_set_complete_keyword_nb,
++	.complete_get_elt = testpmd_set_complete_keyword_elt,
++	.get_help = testpmd_set_help_keyword,
++};
++static struct cmdline_token_hdr testpmd_set_keyword_hdr = {
++	.ops = &testpmd_set_keyword_ops,
++	.offset = 0,
++};
++
++static const char *const testpmd_set_subcmds[] = {
++	"raw_encap", "raw_decap", "sample_actions",
++	"ipv6_ext_push", "ipv6_ext_remove", NULL,
 +};
 +
 +static int
-+test_flow_parser_simple(void)
++testpmd_set_parse_subcmd(cmdline_parse_token_hdr_t *tk, const char *buf,
++			 void *res, unsigned int ressize)
 +{
-+	return unit_test_suite_runner(&flow_parser_simple_tests);
++	(void)tk; (void)res; (void)ressize;
++	for (int i = 0; testpmd_set_subcmds[i]; i++) {
++		int len = strlen(testpmd_set_subcmds[i]);
++
++		if (strncmp(buf, testpmd_set_subcmds[i], len) == 0 &&
++		    (buf[len] == '\0' || buf[len] == ' ')) {
++			set_tok_subcmd = (enum testpmd_set_type)i;
++			return len;
++		}
++	}
++	return -1;
 +}
 +
-+REGISTER_FAST_TEST(flow_parser_simple_autotest, NOHUGE_OK, ASAN_OK,
-+		   test_flow_parser_simple);
++static int
++testpmd_set_complete_subcmd_nb(cmdline_parse_token_hdr_t *tk)
++{
++	(void)tk;
++	int count = 0;
++
++	while (testpmd_set_subcmds[count])
++		count++;
++	return count;
++}
++
++static int
++testpmd_set_complete_subcmd_elt(cmdline_parse_token_hdr_t *tk, int idx,
++				char *dst, unsigned int size)
++{
++	(void)tk;
++	if (idx >= 0 && testpmd_set_subcmds[idx] != NULL) {
++		strlcpy(dst, testpmd_set_subcmds[idx], size);
++		return 0;
++	}
++	return -1;
++}
++
++static int
++testpmd_set_help_subcmd(cmdline_parse_token_hdr_t *tk, char *buf,
++			unsigned int size)
++{
++	(void)tk;
++	strlcpy(buf,
++		"raw_encap|raw_decap|sample_actions|ipv6_ext_push|ipv6_ext_remove",
++		size);
++	return 0;
++}
++
++static struct cmdline_token_ops testpmd_set_subcmd_ops = {
++	.parse = testpmd_set_parse_subcmd,
++	.complete_get_nb = testpmd_set_complete_subcmd_nb,
++	.complete_get_elt = testpmd_set_complete_subcmd_elt,
++	.get_help = testpmd_set_help_subcmd,
++};
++static struct cmdline_token_hdr testpmd_set_subcmd_hdr = {
++	.ops = &testpmd_set_subcmd_ops,
++	.offset = 0,
++};
++
++static int
++testpmd_set_parse_index(cmdline_parse_token_hdr_t *tk, const char *buf,
++			void *res, unsigned int ressize)
++{
++	(void)tk;
++	char *end;
++	unsigned long val = strtoul(buf, &end, 10);
++	enum rte_flow_parser_set_item_kind kind;
++	void *obj = NULL;
++
++	if (end == buf || val > UINT16_MAX)
++		return -1;
++
++	if (res != NULL && ressize >= sizeof(struct rte_flow_parser_output)) {
++		struct rte_flow_parser_output *out = res;
++
++		memset(out, 0x00, sizeof(*out));
++		memset((uint8_t *)out + sizeof(*out), 0x22,
++		       ressize - sizeof(*out));
++		out->port = (uint16_t)val;
++		out->command = (enum rte_flow_parser_command)set_tok_subcmd;
++		out->args.vc.data = (uint8_t *)out + ressize;
++		if (set_tok_subcmd == TESTPMD_SET_SAMPLE_ACTIONS)
++			out->args.vc.actions = (void *)RTE_ALIGN_CEIL(
++				(uintptr_t)(out + 1), sizeof(double));
++		else
++			out->args.vc.pattern = (void *)RTE_ALIGN_CEIL(
++				(uintptr_t)(out + 1), sizeof(double));
++		obj = (void *)RTE_ALIGN_CEIL(
++			(uintptr_t)(out + 1), sizeof(double));
++	}
++
++	if (set_tok_subcmd == TESTPMD_SET_SAMPLE_ACTIONS)
++		kind = RTE_FLOW_PARSER_SET_ITEMS_ACTION;
++	else if (set_tok_subcmd == TESTPMD_SET_IPV6_EXT_PUSH ||
++		 set_tok_subcmd == TESTPMD_SET_IPV6_EXT_REMOVE)
++		kind = RTE_FLOW_PARSER_SET_ITEMS_IPV6_EXT;
++	else
++		kind = RTE_FLOW_PARSER_SET_ITEMS_PATTERN;
++
++	/*
++	 * Must be called even when res==NULL (completion/matching pass)
++	 * so that the library context is ready for subsequent tokens.
++	 */
++	rte_flow_parser_set_ctx_init(kind, obj, ressize);
++
++	return end - buf;
++}
++
++static int
++testpmd_set_help_index(cmdline_parse_token_hdr_t *tk, char *buf,
++		       unsigned int size)
++{
++	(void)tk;
++	strlcpy(buf, "UNSIGNED", size);
++	return 0;
++}
++
++static struct cmdline_token_ops testpmd_set_index_ops = {
++	.parse = testpmd_set_parse_index,
++	.complete_get_nb = NULL,
++	.complete_get_elt = NULL,
++	.get_help = testpmd_set_help_index,
++};
++static struct cmdline_token_hdr testpmd_set_index_hdr = {
++	.ops = &testpmd_set_index_ops,
++	.offset = 0,
++};
++
++static void
++testpmd_set_tok(cmdline_parse_token_hdr_t **hdr,
++		cmdline_parse_token_hdr_t **hdr_inst)
++{
++	cmdline_parse_token_hdr_t **tokens = cmd_set_raw.tokens;
++	int pos = hdr_inst - tokens;
++
++	switch (pos) {
++	case 0:
++		*hdr = &testpmd_set_keyword_hdr;
++		break;
++	case 1:
++		*hdr = &testpmd_set_subcmd_hdr;
++		break;
++	case 2:
++		*hdr = &testpmd_set_index_hdr;
++		break;
++	default:
++		rte_flow_parser_set_item_tok(hdr);
++		break;
++	}
++}
++
++static void
++testpmd_set_dispatch(struct rte_flow_parser_output *out)
++{
++	uint16_t idx = out->port;
++	enum testpmd_set_type type = (enum testpmd_set_type)out->command;
++	int ret = 0;
++
++	switch (type) {
++	case TESTPMD_SET_RAW_ENCAP:
++		ret = rte_flow_parser_raw_encap_conf_set(idx,
++			out->args.vc.pattern, out->args.vc.pattern_n);
++		break;
++	case TESTPMD_SET_RAW_DECAP:
++		ret = rte_flow_parser_raw_decap_conf_set(idx,
++			out->args.vc.pattern, out->args.vc.pattern_n);
++		break;
++	case TESTPMD_SET_SAMPLE_ACTIONS:
++		ret = rte_flow_parser_sample_actions_set(idx,
++			out->args.vc.actions, out->args.vc.actions_n);
++		break;
++	case TESTPMD_SET_IPV6_EXT_PUSH:
++		ret = rte_flow_parser_ipv6_ext_push_set(idx,
++			out->args.vc.pattern, out->args.vc.pattern_n);
++		break;
++	case TESTPMD_SET_IPV6_EXT_REMOVE:
++		ret = rte_flow_parser_ipv6_ext_remove_set(idx,
++			out->args.vc.pattern, out->args.vc.pattern_n);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++	if (ret != 0)
++		fprintf(stderr, "set command failed: %s\n", strerror(-ret));
++}
++
++static void
++testpmd_cmd_set_raw_cb(void *arg0, struct cmdline *cl, void *arg2)
++{
++	if (cl == NULL) {
++		testpmd_set_tok(arg0, arg2);
++		return;
++	}
++	testpmd_set_dispatch(arg0);
++}
++
++cmdline_parse_inst_t cmd_set_raw = {
++	.f = testpmd_cmd_set_raw_cb,
++	.data = NULL,
++	.help_str = "set <raw_encap|raw_decap|sample_actions"
++		    "|ipv6_ext_push|ipv6_ext_remove> <index> <items>",
++	.tokens = {
++		NULL,
++	},
++};
++
++cmdline_parse_inst_t cmd_show_set_raw = {
++	.f = cmd_show_set_raw_parsed,
++	.data = NULL,
++	.help_str = "show <raw_encap|raw_decap> <index>",
++	.tokens = {
++		(void *)&cmd_show_set_raw_cmd_show,
++		(void *)&cmd_show_set_raw_cmd_what,
++		(void *)&cmd_show_set_raw_cmd_index,
++		NULL,
++	},
++};
++
++cmdline_parse_inst_t cmd_show_set_raw_all = {
++	.f = cmd_show_set_raw_parsed,
++	.data = NULL,
++	.help_str = "show <raw_encap|raw_decap> all",
++	.tokens = {
++		(void *)&cmd_show_set_raw_cmd_show,
++		(void *)&cmd_show_set_raw_cmd_what,
++		(void *)&cmd_show_set_raw_cmd_all,
++		NULL,
++	},
++};
+diff --git a/app/test-pmd/meson.build b/app/test-pmd/meson.build
+index 83163a5406..459082ac00 100644
+--- a/app/test-pmd/meson.build
++++ b/app/test-pmd/meson.build
+@@ -7,13 +7,14 @@ sources = files(
+         '5tswap.c',
+         'cmdline.c',
+         'cmdline_cman.c',
+-        'cmdline_flow.c',
+         'cmdline_mtr.c',
+         'cmdline_tm.c',
+         'cmd_flex_item.c',
+         'config.c',
+         'csumonly.c',
+         'flowgen.c',
++        'flow_parser.c',
++        'flow_parser_cli.c',
+         'hairpin.c',
+         'icmpecho.c',
+         'ieee1588fwd.c',
+diff --git a/app/test-pmd/testpmd.h b/app/test-pmd/testpmd.h
+index 9b60ebd7fc..79bb669ca3 100644
+--- a/app/test-pmd/testpmd.h
++++ b/app/test-pmd/testpmd.h
+@@ -16,6 +16,7 @@
+ #include <rte_os_shim.h>
+ #include <rte_ethdev.h>
+ #include <rte_flow.h>
++#include <rte_flow_parser_cmdline.h>
+ #include <rte_mbuf_dyn.h>
+ 
+ #include <cmdline.h>
+@@ -155,18 +156,6 @@ struct pkt_burst_stats {
+ 
+ 
+ #define TESTPMD_RSS_TYPES_CHAR_NUM_PER_LINE 64
+-/** Information for a given RSS type. */
+-struct rss_type_info {
+-	const char *str; /**< Type name. */
+-	uint64_t rss_type; /**< Type value. */
+-};
+-
+-/**
+- * RSS type information table.
+- *
+- * An entry with a NULL type name terminates the list.
+- */
+-extern const struct rss_type_info rss_type_table[];
+ 
+ /**
+  * Dynf name array.
+@@ -482,6 +471,7 @@ extern struct fwd_engine ieee1588_fwd_engine;
+ extern struct fwd_engine shared_rxq_engine;
+ 
+ extern struct fwd_engine * fwd_engines[]; /**< NULL terminated array. */
++extern cmdline_parse_inst_t cmd_flow;
+ extern cmdline_parse_inst_t cmd_set_raw;
+ extern cmdline_parse_inst_t cmd_show_set_raw;
+ extern cmdline_parse_inst_t cmd_show_set_raw_all;
+@@ -734,109 +724,8 @@ extern struct gso_status gso_ports[RTE_MAX_ETHPORTS];
+ extern uint16_t gso_max_segment_size;
+ #endif /* RTE_LIB_GSO */
+ 
+-/* VXLAN encap/decap parameters. */
+-struct vxlan_encap_conf {
+-	uint32_t select_ipv4:1;
+-	uint32_t select_vlan:1;
+-	uint32_t select_tos_ttl:1;
+-	uint8_t vni[3];
+-	rte_be16_t udp_src;
+-	rte_be16_t udp_dst;
+-	rte_be32_t ipv4_src;
+-	rte_be32_t ipv4_dst;
+-	struct rte_ipv6_addr ipv6_src;
+-	struct rte_ipv6_addr ipv6_dst;
+-	rte_be16_t vlan_tci;
+-	uint8_t ip_tos;
+-	uint8_t ip_ttl;
+-	uint8_t eth_src[RTE_ETHER_ADDR_LEN];
+-	uint8_t eth_dst[RTE_ETHER_ADDR_LEN];
+-};
+-
+-extern struct vxlan_encap_conf vxlan_encap_conf;
+-
+-/* NVGRE encap/decap parameters. */
+-struct nvgre_encap_conf {
+-	uint32_t select_ipv4:1;
+-	uint32_t select_vlan:1;
+-	uint8_t tni[3];
+-	rte_be32_t ipv4_src;
+-	rte_be32_t ipv4_dst;
+-	struct rte_ipv6_addr ipv6_src;
+-	struct rte_ipv6_addr ipv6_dst;
+-	rte_be16_t vlan_tci;
+-	uint8_t eth_src[RTE_ETHER_ADDR_LEN];
+-	uint8_t eth_dst[RTE_ETHER_ADDR_LEN];
+-};
+-
+-extern struct nvgre_encap_conf nvgre_encap_conf;
+-
+-/* L2 encap parameters. */
+-struct l2_encap_conf {
+-	uint32_t select_ipv4:1;
+-	uint32_t select_vlan:1;
+-	rte_be16_t vlan_tci;
+-	uint8_t eth_src[RTE_ETHER_ADDR_LEN];
+-	uint8_t eth_dst[RTE_ETHER_ADDR_LEN];
+-};
+-extern struct l2_encap_conf l2_encap_conf;
+-
+-/* L2 decap parameters. */
+-struct l2_decap_conf {
+-	uint32_t select_vlan:1;
+-};
+-extern struct l2_decap_conf l2_decap_conf;
+-
+-/* MPLSoGRE encap parameters. */
+-struct mplsogre_encap_conf {
+-	uint32_t select_ipv4:1;
+-	uint32_t select_vlan:1;
+-	uint8_t label[3];
+-	rte_be32_t ipv4_src;
+-	rte_be32_t ipv4_dst;
+-	struct rte_ipv6_addr ipv6_src;
+-	struct rte_ipv6_addr ipv6_dst;
+-	rte_be16_t vlan_tci;
+-	uint8_t eth_src[RTE_ETHER_ADDR_LEN];
+-	uint8_t eth_dst[RTE_ETHER_ADDR_LEN];
+-};
+-extern struct mplsogre_encap_conf mplsogre_encap_conf;
+-
+-/* MPLSoGRE decap parameters. */
+-struct mplsogre_decap_conf {
+-	uint32_t select_ipv4:1;
+-	uint32_t select_vlan:1;
+-};
+-extern struct mplsogre_decap_conf mplsogre_decap_conf;
+-
+-/* MPLSoUDP encap parameters. */
+-struct mplsoudp_encap_conf {
+-	uint32_t select_ipv4:1;
+-	uint32_t select_vlan:1;
+-	uint8_t label[3];
+-	rte_be16_t udp_src;
+-	rte_be16_t udp_dst;
+-	rte_be32_t ipv4_src;
+-	rte_be32_t ipv4_dst;
+-	struct rte_ipv6_addr ipv6_src;
+-	struct rte_ipv6_addr ipv6_dst;
+-	rte_be16_t vlan_tci;
+-	uint8_t eth_src[RTE_ETHER_ADDR_LEN];
+-	uint8_t eth_dst[RTE_ETHER_ADDR_LEN];
+-};
+-extern struct mplsoudp_encap_conf mplsoudp_encap_conf;
+-
+-/* MPLSoUDP decap parameters. */
+-struct mplsoudp_decap_conf {
+-	uint32_t select_ipv4:1;
+-	uint32_t select_vlan:1;
+-};
+-extern struct mplsoudp_decap_conf mplsoudp_decap_conf;
+-
+ extern enum rte_eth_rx_mq_mode rx_mq_mode;
+ 
+-extern struct rte_flow_action_conntrack conntrack_context;
+-
+ extern int proc_id;
+ extern unsigned int num_procs;
+ 
+@@ -948,9 +837,22 @@ unsigned int parse_hdrs_list(const char *str, const char *item_name,
+ void launch_args_parse(int argc, char** argv);
+ void cmd_reconfig_device_queue(portid_t id, uint8_t dev, uint8_t queue);
+ int cmdline_read_from_file(const char *filename, bool echo);
++void testpmd_flow_parser_config_init(void);
++
++/* Application-owned flow parser configuration objects (flow_parser_cli.c) */
++extern struct rte_flow_parser_vxlan_encap_conf testpmd_vxlan_conf;
++extern struct rte_flow_parser_nvgre_encap_conf testpmd_nvgre_conf;
++extern struct rte_flow_parser_l2_encap_conf testpmd_l2_encap_conf;
++extern struct rte_flow_parser_l2_decap_conf testpmd_l2_decap_conf;
++extern struct rte_flow_parser_mplsogre_encap_conf testpmd_mplsogre_encap_conf;
++extern struct rte_flow_parser_mplsogre_decap_conf testpmd_mplsogre_decap_conf;
++extern struct rte_flow_parser_mplsoudp_encap_conf testpmd_mplsoudp_encap_conf;
++extern struct rte_flow_parser_mplsoudp_decap_conf testpmd_mplsoudp_decap_conf;
++extern struct rte_flow_action_conntrack testpmd_conntrack;
+ int init_cmdline(void);
+ void prompt(void);
+ void prompt_exit(void);
++void testpmd_flow_dispatch(const struct rte_flow_parser_output *in);
+ void nic_stats_display(portid_t port_id);
+ void nic_stats_clear(portid_t port_id);
+ void nic_xstats_display(portid_t port_id);
+@@ -1289,18 +1191,11 @@ void flex_item_create(portid_t port_id, uint16_t flex_id, const char *filename);
+ void flex_item_destroy(portid_t port_id, uint16_t flex_id);
+ void port_flex_item_flush(portid_t port_id);
+ 
+-extern int flow_parse(const char *src, void *result, unsigned int size,
+-		      struct rte_flow_attr **attr,
+-		      struct rte_flow_item **pattern,
+-		      struct rte_flow_action **actions);
+ int setup_hairpin_queues(portid_t pi, portid_t p_pi, uint16_t cnt_pi);
+ int hairpin_bind(uint16_t cfg_pi, portid_t *pl, portid_t *peer_pl);
+ void hairpin_map_usage(void);
+ int parse_hairpin_map(const char *hpmap);
+ 
+-uint64_t str_to_rsstypes(const char *str);
+-const char *rsstypes_to_str(uint64_t rss_type);
+-
+ uint16_t str_to_flowtype(const char *string);
+ const char *flowtype_to_str(uint16_t flow_type);
+ 
 -- 
 2.43.7
 
