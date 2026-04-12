@@ -2,67 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E9AE937EA
-	for <dpdk-dev@archiver.kernel.org>; Sun, 12 Apr 2026 16:21:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A7EE937EA
+	for <dpdk-dev@archiver.kernel.org>; Sun, 12 Apr 2026 16:22:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E778F402BD;
-	Sun, 12 Apr 2026 18:21:08 +0200 (CEST)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com
- [209.85.210.53]) by mails.dpdk.org (Postfix) with ESMTP id 3385E4025A
- for <dev@dpdk.org>; Sun, 12 Apr 2026 18:21:06 +0200 (CEST)
-Received: by mail-ot1-f53.google.com with SMTP id
- 46e09a7af769-7dbe437b072so1971159a34.2
- for <dev@dpdk.org>; Sun, 12 Apr 2026 09:21:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0F7754025A;
+	Sun, 12 Apr 2026 18:22:53 +0200 (CEST)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com
+ [209.85.210.52]) by mails.dpdk.org (Postfix) with ESMTP id 3ACD240150
+ for <dev@dpdk.org>; Sun, 12 Apr 2026 18:22:52 +0200 (CEST)
+Received: by mail-ot1-f52.google.com with SMTP id
+ 46e09a7af769-7dbcf927395so2125909a34.0
+ for <dev@dpdk.org>; Sun, 12 Apr 2026 09:22:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776010865;
- x=1776615665; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776010971;
+ x=1776615771; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7zwYM93/SmARa8ZQYnN2LZ0eqQz15V02vGHzJbmxOMk=;
- b=UWo8Z5phKxCuAglPk74Kd8IKS+4qK8cHe2CUAJMH2y7SRSxxyD+jv0MLqXR25m3P+Q
- NmYVd9sYAeMIqprPYbl1D3KgRl/4XRT/nlFkgHs16tGYFajKRWSW3gHSL8hJRjxzKTMk
- 94E0Ak2ikJQCeXy9o5gCOZc/3VUOLtBd5PZS/JoYSbMOptCLN+mRmSxchV7EiRxOFR7h
- Ji+J7d1fz5JDKjAyVHa1deQkH/7xPr3/Eh+4RcKqQJeOz7s4VviRKOS2FJ/b6m/B4aUw
- r0Tv1ARGhbvinmKC9fyzsel4rnT/9F3LF1+HiLMVYsh0oVqSvt4kxX9J93fIZRUdbMuC
- SN1Q==
+ bh=i+1Zjk3vYKtoIg/3SGQD6m2ZAAYFrs4wJncDyFSxRas=;
+ b=iEhqaJXcm0B54LgOsRW07QtLvMvbks2EoSOUaBdkDKzTrbK9vgW0LuhDz7yZGOl3fT
+ 78pvA55EzSIX7avTv3ahWuiPBRPBgV1RXmHsH7dpHBaQvcLOiZzw8uT3i8bTcO57CkMr
+ iqY0K9ETRFIBAlWazosrzbAWY73WC5BlDlQr11ZVnn9/l6va2fDdV8Uc5ttdiw9dhX3Y
+ akQqT+uiS4qDSA/eb96qJZ8v7UXMsasXP2iuAjtsJQXYr2nhJ3TXel1w3vankmGg12uJ
+ OVz2pLYguU/WE3tePl7G4U+rteVoLV5TZZqTrhiLE3l5z6PR2PB1jv9Q8qLjz3+AWk+H
+ giMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776010865; x=1776615665;
+ d=1e100.net; s=20251104; t=1776010971; x=1776615771;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=7zwYM93/SmARa8ZQYnN2LZ0eqQz15V02vGHzJbmxOMk=;
- b=R4HNeef8gRInbKEKBMPn/gah9R6TVnj0uGJWohtbcAsB+weYvhZEy0Ww9K5nQC+hkI
- fAe/Fu1rlqAz3JavasVxFbR7qNe1ULBlCaT/KHeKK6pzqTAcZHfj81jea6RioEt4dpWu
- 6O3xLlyYz1meBHenI0JsaBms2Ki72V38cdEulyIr2sCfwQicXvIxv4TkEN+T711t1Wb2
- m+5N8a75Nu27gvBqxD3gMSpIrSyQ+3KDsSxEVYgoCpwUrzwZS+uvGYO/BONBFfJpCgOD
- MqsytGU1jF22h3ht9zThQKf3D3jfPnDpcq6v7rm33pVXJ/3w6NSxVRKZqFppnsCH+2yf
- iXoA==
-X-Gm-Message-State: AOJu0Yxgq+i607/xwWpsoYHLa0oFasD1X0yVyap1wiP/CUW+aj/4Azpe
- qINJCSaHRflfFSNBSHN8FzDm2EmjLkpXyQyK/pkylLER+Ic+KsttIppHcNQizLi9VmM=
-X-Gm-Gg: AeBDieszxAu6UAM8u2cv7KcS6YhDtzGPwXF6Iy3F1D4eKNIqNPyDL6KuphQWtcr4xJg
- iXqUeA2ux2RCUrKpb+nhRed0SzWfvJv0SEK4019CfN8PiU/7elk8iuiiO0jQ7ssu5CPPZb7KiYT
- lIZzl8BGIZs+2fBRT+dZXy8bkTc2+iZqRvvWn9wTeJE+PF5ii5AJ3U5uV+9uY36J+UECo8J+Mm9
- fPvKj1mQ0Ox3YhTl5S3BuhJ5uo8tk7MnvFMn9cSrJK3izFMhhFm46/A5eGWx9VJt26Q9uj4fkCS
- lssqFgNrASh44bpI4fNCezL8woahs0pudst8UmnVbAsnM3gHMwuKWnP073YppZvfQAw1O1PFEAz
- AtKyIK2V7PSxt96w5xHNPsmHNqyLauuPJhSIe1NgoHAJ6kLq/kyR3wK4e9AXGYIN8tIES37QCfW
- q2BZsAQJIk021dGqFWoiTMqEVy05PiRUvVF0M=
-X-Received: by 2002:a05:6830:4490:b0:7d9:b10c:c85b with SMTP id
- 46e09a7af769-7dc27cbe979mr5987608a34.11.1776010865363; 
- Sun, 12 Apr 2026 09:21:05 -0700 (PDT)
+ bh=i+1Zjk3vYKtoIg/3SGQD6m2ZAAYFrs4wJncDyFSxRas=;
+ b=cbXpyuwyHc9hSctjziQFh7fT+bNhe6gXSgvCWjJWe+fCZBCDrUVcoqROz7nia1QlBn
+ JVuu8OmXn1zbupE3U3/zyY0nW4Mk4wRhZIG+54qUD9rZ1KxyywARQsmXvDLkBkFJFTMq
+ 3a1qpYD1UoFI5bNUpn8lRP1jUvFP9fapNerUPe9Jk6Ku7zv3FzQKHKFROrjOs+1sd2Tk
+ Ysjf7r+EF6+Y3G3zkOaJUX93ZRd9P5+ih4AMVAf/wBdvpSHfUaVNcyAYXT56EvQEIewX
+ 1+CQqfDYlD+txTohXnmp2QXxPajJ8myHw02TqxzouerZEVFhsIJJjMmjbfeV1Z1BdFsZ
+ PDkw==
+X-Gm-Message-State: AOJu0YzcLsqbEDLX/V0u8gzm9nqaYmE7nT3C5i+/MeqeHaLQ3TMQ4Yuu
+ FjFtdpLeY3rlW/dBQnUxs3NuPHqZJIqq/KB9EMQcJMn24sCP0qxcmfQrqTE5y/fU0FuxcmC+Ous
+ l2xgd
+X-Gm-Gg: AeBDieuSgCSGEiery836WfnpJyd9u/Wdtfi5RncoX4jNfigdMv0cjlSyMDe6YqIJn6V
+ MFfsyRiCtkOWsbvyCSBqJQsQkEbZ/nJ5infsAU3jILIJAvt3vfKgoFdAlq6dkJrMSULqXQR0xZX
+ iE5jFKVFVYG/gMUeY0Da9gCZazoqfmbwVfsANWUWfun/H6jiUbt/II7/X6zvIpYqLyKwOxC1Uqe
+ +6qHaShE9Dtlg8cjyOBmFTFCeeFy7ft4Nq2H4VlZbBO0+t+4FstKSs2/9akcn9IkyzD4sNi5JXt
+ A67vQ5n0VKJlRZhqoQZB7grJKxPMGrD7anEtA7KFlk8s9KN4bU16AVV+NC3t7hqzOyCkdnlxG4C
+ XJEqvX/CLjbyYHmzt6wzpf09n7EmiF761GJju7mYepmF2Wp9uE6G+aFFRj5iUwBTIe98wNVzuw+
+ V1KxScdbySQyPaf4cdtyKosXBOjgUBVC4q0xY=
+X-Received: by 2002:a05:6820:328c:b0:67c:28b0:41e3 with SMTP id
+ 006d021491bc7-68be8dd1293mr3353260eaf.57.1776010971347; 
+ Sun, 12 Apr 2026 09:22:51 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7dc2657335csm6688046a34.5.2026.04.12.09.21.04
+ 006d021491bc7-68bc7dfd5f1sm4293244eaf.1.2026.04.12.09.22.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 12 Apr 2026 09:21:05 -0700 (PDT)
-Date: Sun, 12 Apr 2026 09:21:02 -0700
+ Sun, 12 Apr 2026 09:22:50 -0700 (PDT)
+Date: Sun, 12 Apr 2026 09:22:48 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Long Li <longli@microsoft.com>
-Cc: dev@dpdk.org, Wei Hu <weh@microsoft.com>, stable@dpdk.org
-Subject: Re: [PATCH] net/mana: fix RX mempool leak on port stop
-Message-ID: <20260412092102.476e85b8@phoenix.local>
-In-Reply-To: <20260409015519.350034-1-longli@microsoft.com>
-References: <20260409015519.350034-1-longli@microsoft.com>
+To: dev@dpdk.org
+Cc: Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
+Subject: Re: [PATCH 3/4] net/zxdh: remove unnecessary null check
+Message-ID: <20260412092248.295f72f4@phoenix.local>
+In-Reply-To: <20260401164108.201404-4-stephen@networkplumber.org>
+References: <20260401164108.201404-1-stephen@networkplumber.org>
+ <20260401164108.201404-4-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -79,22 +81,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  8 Apr 2026 18:55:19 -0700
-Long Li <longli@microsoft.com> wrote:
+On Wed,  1 Apr 2026 09:40:24 -0700
+Stephen Hemminger <stephen@networkplumber.org> wrote:
 
-> The RX descriptor ring drain loop in mana_stop_rx_queues() uses
-> 'while (tail != head)' to free posted mbufs. The RX ring is likely
-> completely full because every consumed WQE is immediately replenished,
-> so head == tail when the ring is full. The drain loop never executes,
-> leaking all RX mbufs on every port stop.
+> No need to check for null before calling free.
+> Found by coccinelle script null_free.
 > 
-> Fix by adding a desc_ring_len counter to mana_rxq (matching mana_txq)
-> and using 'while (desc_ring_len > 0)' as the drain condition. Apply
-> the same change to the TX drain loop for consistency.
-> 
-> Fixes: 5f705ac26259 ("net/mana: start/stop Rx queues")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Long Li <longli@microsoft.com>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
 
-Applied to next-net
+Trivial, applied to next-net
