@@ -2,90 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 053CBF531C3
-	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Apr 2026 19:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9F9F531C9
+	for <dpdk-dev@archiver.kernel.org>; Mon, 13 Apr 2026 19:30:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0CFF8402EE;
-	Mon, 13 Apr 2026 21:18:19 +0200 (CEST)
-Received: from fout-b5-smtp.messagingengine.com
- (fout-b5-smtp.messagingengine.com [202.12.124.148])
- by mails.dpdk.org (Postfix) with ESMTP id 45FCB402CC
- for <dev@dpdk.org>; Mon, 13 Apr 2026 21:18:17 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1BF47402E1;
+	Mon, 13 Apr 2026 21:30:43 +0200 (CEST)
+Received: from fhigh-b8-smtp.messagingengine.com
+ (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+ by mails.dpdk.org (Postfix) with ESMTP id 2AC38402CC
+ for <dev@dpdk.org>; Mon, 13 Apr 2026 21:30:42 +0200 (CEST)
 Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id D97A31D0018B;
- Mon, 13 Apr 2026 15:18:15 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Mon, 13 Apr 2026 15:18:16 -0400
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 0ABB17A0133;
+ Mon, 13 Apr 2026 15:30:41 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-06.internal (MEProxy); Mon, 13 Apr 2026 15:30:41 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1776107895;
- x=1776194295; bh=qmLwwtrtttxWEMeWdvuRypHfnFAfc/vluOeQDw5XtzU=; b=
- JIjf9OQeGANM4HT2UXFY+Q6CbIBBGK7VE0K5O9jChyaJHtk7kzQ6977IKWtFvy1t
- Vb5/qT3ke80l5DddIlTk/CtDu3FsP79nsdAHqqNTmvkz8MCTzwLOBxKsEZQE9RVG
- g8deECuAN/D/RXa05fPVrRMw6SGtWxfeN1OHy+TtsWe+CDF3SjKT/znPhxnGTg3x
- EX/RPiydmkexnQ3DfAfhBSEpXyATBEBKwoVuq76MruLi6tY0fPlGiXDoclJSoFuv
- p2DJwygcaQFS+S8Bwrwjd1oggPmmuQf00r31xQYZjfVta1pXr1FvP/cgS4Fzys6N
- rZ45M4Fo48QpgZaOTaLkQQ==
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1776108640;
+ x=1776195040; bh=5tlFKSGHEDFaRkz0TNMenp+DisU7fRx9YDRZ04wNT7s=; b=
+ VCdzkwY11oMWUu1w6E9JGfREus3vcfzMVVugCz3fs3lUk5Pwpyxef8uY00+UmKqd
+ Op0djP/l8pznpp+kcYZiS8VKJl3poBDpw3+WZJgkYoHNNV6PQDiQUA92VODmZ0Ly
+ 0wYxxK4wxT6YHYAF1m9PXue/wScMLFQbYUrgbX5wXlkdlQ/tIcZvdU69vTIJJLIE
+ JLZvGA0W6gg7KR70xDMzhWwfy/YiJBm5Igj8vbg2TbQYDidH72wo6X/lsThQvfNQ
+ xMPa/yaXKEvc0L7ssG5ZAsVYQvg5fomAXXlS7WxDKYrruE/c125RaDODViNzfHuJ
+ Yh6EHqdAGNuCjfAQ+ItpJg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1776107895; x=
- 1776194295; bh=qmLwwtrtttxWEMeWdvuRypHfnFAfc/vluOeQDw5XtzU=; b=E
- V8inlSD0qiBEyE0dnND34bH9bbhdthdHD2mvFa6nOTRSpWpu8LGkcXPYeEw2MDyU
- wF8k8+pVqFfGpPWlwHIp+F2J2tPqxYM3eouVBgTCzCjarXB9v+5XCUZ7x+F3uiwP
- UZnfVxIfiW/+JlSZZluVaG6l4U6fR3RkWnjNdqfsUtfubz0GvC9c6CKXcpXVEg6j
- faVkdwRVMNIj+d8dqMAF16rW8zPNbQ0qQ+xo57g7W7WQhVYjdDyqMZ+mzMT1Zb8O
- BpBAyUDsAyAZGHO+8Rtqta7oIMjFdi0HMjLz4LAvIJCfnmXMZFfWkOpNk0tF3d6m
- WozZ12snBcj2zrCQgIdAg==
-X-ME-Sender: <xms:dkHdaXhhSOdTACYsWsI4SWKZkbgcK-mgKICITxvICKVcyaKY7hH6RQ>
- <xme:dkHdaZmvth9w-fP5S_2GHwlVmfp9OLBP_78BsTf8mtFYV8-rMVjgReFoXZj1rmaao
- FetDnnLeH_t4f3ijqYqNC-ccvgDugIr4HKTQFcSLkN0ohP8DeU>
-X-ME-Received: <xmr:dkHdaQrC6UVvf_OnsuQ-LwNZqCE4WsN4y7eAtsql6_9Q13eJitYb0qeqZUMFySutk88OENooNW3ha4DYXJiHCLA_0w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdefledthecutefuodetggdotefrod
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1776108640; x=
+ 1776195040; bh=5tlFKSGHEDFaRkz0TNMenp+DisU7fRx9YDRZ04wNT7s=; b=L
+ Qp2khbSC5rPZTrytANU9NUa5ogymWvgX8Ghk3nVIBPqVMnt8erRlsbKzG+AqvePS
+ 0EXLXQ9ToD8Xq5UJ3K4wi+q+f7L/FhcGV/U45PJHYqR1pYFTOJngiebHEoyPaRk4
+ GvjetPnIsEYvpouunbeVD+7sB4FDoe855bcRNNtg7XAoecpgfh9YgZ/SydgmxZfp
+ CluS6whgiH82CrkZZwpo7mvp75llqBPbMOdI9JCb7YDgQ4jC/VtHdHa0OeLg9/Wc
+ JKkqgYwS036insrx0tpO786ap2qnen2m3DVE6VKJV4EDvAkRuRPTe3+LIIl2dSov
+ x32VVdGi8KxIQWLxYxWTw==
+X-ME-Sender: <xms:YETdaU6N8mwygb6oyBf2BOx1CLL97DEWZA0ccCJp0rb9enASgGA__Q>
+ <xme:YETdaW28WnLhS3QtCvKeZFuvLZdjuje5M82b_i_owHZeK5nkPRy4eKzWPkyPCQvVS
+ PYQtAuYVtkQbk9t2Hq1B_eN6xp7Ddlj1aftXnlIURv5aaGrlEw>
+X-ME-Received: <xmr:YETdaTwuFU_XMTLZhfMJz3dWjDPBQzXYfUJJpgH7Q9yx9zdmxCqrZkRVlU1caw0LhcbZM4r7YYM6mA5P639MaPzVHg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdefledtjecutefuodetggdotefrod
  ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
  ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
  hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
  ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
  grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
  gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepudejpdhm
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepudekpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrh
  gvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
  ohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtoh
- ephhgvmhgrnhhtrdgrghhrrgifrghlsehngihprdgtohhmpdhrtghpthhtohepmhgrgihi
- mhgvsehlvghrohihshdrfhhrpdhrtghpthhtohepkhhtrhgrhihnohhrsehrvgguhhgrth
- drtghomhdprhgtphhtthhopehprghrrghvsehnvhhiughirgdrtghomhdprhgtphhtthho
- peiguhgvmhhinhhglhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepnhhiphhunhdrgh
- huphhtrgesrghmugdrtghomh
-X-ME-Proxy: <xmx:dkHdaVLYmjUkn9fRAoWqQTPcHvPqyN7VXxACWy-Qm98VeeUmNcRMeA>
- <xmx:dkHdacDi2-4sl3x4_mos-DARcLocnLp3f1GbjL1ZEjLeZ8HXGwDZiA>
- <xmx:dkHdaX5Xvpvt-PzhAgYrG_GZLt0MYVFtnd2Cg7VOYi3Hf74-Xbj-DA>
- <xmx:dkHdaYGyzQ4VIwpSItQ73ADPMWApZ2cSRuBIQOO-dYRForItBsRLjg>
- <xmx:d0HdaVgLyeF0RO8SH3FNjREDS6PxRLdt1PG9UadVT4sfG-WCo0MLjo5e>
+ eprhhjrghrrhihsehrvgguhhgrthdrtghomhdprhgtphhtthhopehhvghmrghnthdrrghg
+ rhgrfigrlhesnhigphdrtghomhdprhgtphhtthhopehmrgigihhmvgeslhgvrhhohihsrd
+ hfrhdprhgtphhtthhopehkthhrrgihnhhorhesrhgvughhrghtrdgtohhmpdhrtghpthht
+ ohepfhgvnhhgtghhvghnghifvghnsehhuhgrfigvihdrtghomhdprhgtphhtthhopehprg
+ hrrghvsehnvhhiughirgdrtghomh
+X-ME-Proxy: <xmx:YETdaXlhYAjcrUJYMLCFY94eMryAYOZmLd3vQVaR62YiYahD3mE12w>
+ <xmx:YETdae_YHayS8DKpr4MeQPT99qic5GVtcSfKE2UzUGRJDHUBra0z0w>
+ <xmx:YETdaarWNKEI4QbNUDfKKedR82tWYamQl8wIx582PJouoCgHRp6HoA>
+ <xmx:YETdaaK-9S94N0q3hS84CF_jJ0pa7bHILZsaRdSEF5DSd7ikLhPHTg>
+ <xmx:YETdaU8dCpVI4TWjW2Wh4LE1OHG1dyyebPYtl9mD44bWPrNlXrOvXqjw>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 13 Apr 2026 15:18:12 -0400 (EDT)
+ 13 Apr 2026 15:30:37 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: David Marchand <david.marchand@redhat.com>
 Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>, Maxime Leroy <maxime@leroys.fr>,
- Kevin Traynor <ktraynor@redhat.com>, Parav Pandit <parav@nvidia.com>,
+ Robin Jarry <rjarry@redhat.com>, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Maxime Leroy <maxime@leroys.fr>, Kevin Traynor <ktraynor@redhat.com>,
+ Chengwen Feng <fengchengwen@huawei.com>, Parav Pandit <parav@nvidia.com>,
  Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
  Nikhil Agarwal <nikhil.agarwal@amd.com>,
  Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>,
- Tomasz Duszynski <tduszynski@marvell.com>,
- Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>, Long Li <longli@microsoft.com>,
  Wei Hu <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>
-Subject: Re: [PATCH v3 5/7] bus: factorize devargs lookup
-Date: Mon, 13 Apr 2026 21:18:10 +0200
-Message-ID: <2054977.usQuhbGJ8B@thomas>
-In-Reply-To: <20260407115211.1903623-6-david.marchand@redhat.com>
+Subject: Re: [PATCH v3 6/7] bus: factorize device selection
+Date: Mon, 13 Apr 2026 21:30:36 +0200
+Message-ID: <24331929.6Emhk5qWAg@thomas>
+In-Reply-To: <20260407115211.1903623-7-david.marchand@redhat.com>
 References: <20260323105306.1531689-1-david.marchand@redhat.com>
  <20260407115211.1903623-1-david.marchand@redhat.com>
- <20260407115211.1903623-6-david.marchand@redhat.com>
+ <20260407115211.1903623-7-david.marchand@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="utf-8"
@@ -103,46 +103,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 07/04/2026 13:52, David Marchand:
-> Each bus reimplements some similar devargs lookup code.
-> 
-> The differences are in how some bus (PCI, VMBUS etc...) normalizes the
-> device names. We can't use the .parse existing handler from outside the
-> bus code itself, as the size of the bus specific device location address
-> is unknown.
-> Introduce a bus specific helper to compare two device names and
-> hide this ugly detail.
-
-I agree with introducing a new bus helper.
-
-[...]
-> +		/* The name in the devargs is usually prefixed with <bus>: */
-
-Is it usually prefixed or always prefixed?
-
-> +		if (strncmp(devargs_name, bus_name, strlen(bus_name)) == 0)
-> +			devargs_name += strlen(bus_name) + 1;
-
-If I understand well, if it is prefixed with bus name,
-it is assumed that a colon character will follow.
+> All buses (thankfully) implement the same logic when it comes to
+> selecting the devices to probe based on -a/-b options.
+> As we want to adjust how devices are selected, provide a common helper
+> in EAL and use it in the buses.
 
 [...]
 > +/**
-> + * Bus specific device name comparison function.
-> + * Bus can normalize the names of devices using an internal representation.
-> + * This helper makes it possible to check whether two names refer to the same device.
-> + *
-> + * @param[in] name1
-> + *	device name
-> + * @param[in] name2
-> + *	device name
-> + *
-> + * @return
-> + *      0 if the two names refer to the same device.
-> + *      !0 otherwise.
+> + * Indicate if a device should be skipped during probing of a bus.
 > + */
-> +typedef int (*rte_bus_devname_compare_t)(const char *name1, const char *name2);
+> +__rte_internal
+> +bool rte_bus_is_ignored_device(const struct rte_bus *bus, const char *dev_name);
 
-The helper compares internal representation of the device, not the names.
-The function should be rte_bus_dev_compare_t.
+Name suggestion:
+rte_bus_device_is_ignored looks easier to read
+
+Actually it is ignored only when probing the bus.
+What about rte_bus_device_is_ignored_on_probing? Too long?
 
 
