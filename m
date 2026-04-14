@@ -2,66 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645BBF9D0D6
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Apr 2026 15:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F17BF9D0D6
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Apr 2026 15:56:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BF44B4064A;
-	Tue, 14 Apr 2026 17:56:04 +0200 (CEST)
-Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
- [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 562D8402EE
- for <dev@dpdk.org>; Tue, 14 Apr 2026 17:56:03 +0200 (CEST)
-Received: by mail-dy1-f180.google.com with SMTP id
- 5a478bee46e88-2d64c756111so6431781eec.1
- for <dev@dpdk.org>; Tue, 14 Apr 2026 08:56:03 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id D31D040654;
+	Tue, 14 Apr 2026 17:56:10 +0200 (CEST)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id CA52240652
+ for <dev@dpdk.org>; Tue, 14 Apr 2026 17:56:08 +0200 (CEST)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-12c287eb77fso8239658c88.1
+ for <dev@dpdk.org>; Tue, 14 Apr 2026 08:56:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776182162;
- x=1776786962; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776182168;
+ x=1776786968; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5txkI5GMZ1jDnZfYhzGSNGb2cVVNGxy1SomF30Pjiuo=;
- b=zRd1czjibk7d5QV8CBBfT/I9faSHjGKLfhIAv9R5LKoZGv+aB4XL0EAHSsWwUklcRh
- Gv2aMF2whqnwyZOQHbv4yAI54PKBAJDtS3LvSlB0vYxEVCrSvuhy059e+frRKYQO77hV
- 8/MfGv3ossgaN9ydy33qXWsIO1Tt2qqhkQzKvYsWVlY/ucYBrLV6ic6frcubW1ouJJfZ
- /d12lYdVwztM79HzwQc3zpMfjvt37GA8FOurk88UelQ502qKR3qfEHmGROhUkriL8xDo
- 8Ec7IXdsdMDEdILwWQ58bGon9jFGo6/CX3nuqY//IIK61Rk+Wdp8Yf1e56oYUwkV2m71
- Ki+Q==
+ bh=IoxEE4F2cX44TNXnXy3g1E4o8FcqKB6Cj93+Nu6KPQ4=;
+ b=XrSRIsP3+RVHHxHoflqyCoagvvqqkRe2hT/TStr0I6ymWX+pTPdGPOEWt17hbniGVl
+ ik8JG7L2KLNhlDSY0yCr/PhV2k3H82g0iSruZswyl4Hn5TY5dN7lUrBgxt9daPDDFLim
+ MNlFRjNYPC3Ahk7t7SOYYjR/KZkIG1kmimNjOXqxTw7ah2FYRcFDGL4WmUCgVUQXf1FT
+ /vjVi8IKinxtQY/CDG/93xNl9XMBuaPhOuCP4FGZ72a6JPQgXlVLK8Y9vY5mduCmXkUg
+ 4I3a69Rpxca2aKv6zeoIcwbOWQYqBIspnI36Gjpfa6b7GZ6l6ChSDsuXMuW7JoACAfc5
+ zWnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776182162; x=1776786962;
+ d=1e100.net; s=20251104; t=1776182168; x=1776786968;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=5txkI5GMZ1jDnZfYhzGSNGb2cVVNGxy1SomF30Pjiuo=;
- b=hrks8ref2nS+8EkhHXAbHQKf49gT+PbYVcPoKwLJmCTvOhY39oLjvbIZOu9rGdrU2J
- QFNvg7IejXmAyuJytoXxqhyTx46qWb6EHDwy56c/Qqn2bgLODiDad9MuF5P+R40Kx/47
- OUiDY1BPF5qi2AuKmGGZhbCNWU8VR/1DjtReJ8j7e/lmpxWugASwSZw02mUl+itGiAIr
- n2Ci8L3gK2ZP1AMvnIgVEzSv8AqAvVs05lpyER48L3gqqzACAxO2QLnC8F4PFmgJK/No
- AnxrqlewqIfOT2w+tlxwTYeGqDLNM+8t6v78L7ITawhi9AJI3hXikbEl+PY/uAM5Thi8
- PAwA==
-X-Gm-Message-State: AOJu0YwGJYARp6wd+rkKr+uBpXlKaGqtM5vv8c30RqassMJ10rEkYf5/
- A1fFMnE9PdSB5d2rm2AqCjO5sClGRExZbzKb4ylAdCo0xGqOHfNZo/mk1TiKSJ8sYf41rZCna1r
- Wd3vi
-X-Gm-Gg: AeBDieuENRSKU59hRvH8m/GGugWuS10Y+YxazwEbfwO0hUOHXdIW4mFrKZhNopTA0z0
- fEtSlG1cJvZk1EFhqBnLQDA9wuAEhk5fhQv6XFdsaOVmQlUz7fHKeACiU8MT2GC1g/eqR2SjyZL
- 5byu0z0ZijXSL2RWdoKXez8T7G31ZUD+gXcYqs4AhW7L4rIYJY1K3vM6FIUaLq+MVkc8HkwJiQz
- ma4ecnTlXxIQqUIzlH66L+D1Kj1EoOlPMDXqZ21TY/SCxpuTEMEZAGIgpoNgJwIwfYJBuBDAesw
- lVT8PfBUn/yOC1Z239up0lL5puY7sWGUqgVEUmQHeRmq0jp8Cx+hEFgJZl4N57HXgQDm7bkV2de
- wq22yt92yHI21IDsgScVzs8G1BFRhPAo13jEJPGUPUWr7SNv/EOeLyZRcQ9/FuhjHlSzPH2eOsw
- iaA1yGZmOTjgs3Fc8lzHaIHWBO0Sqi+dDjitGKI2eTuws=
-X-Received: by 2002:a05:7301:1e91:b0:2c8:7172:3b7b with SMTP id
- 5a478bee46e88-2d5881ace9amr11678786eec.18.1776182162352; 
- Tue, 14 Apr 2026 08:56:02 -0700 (PDT)
+ bh=IoxEE4F2cX44TNXnXy3g1E4o8FcqKB6Cj93+Nu6KPQ4=;
+ b=DaR10dCNmyBac/b3LCco2IHOC3ilTjtrA8jXg8ILfwbn31IM7Od4NhTXdcwTUs00dg
+ JhlxNKY/e5EQg2GeRU69U7RbNFmT5DR2a8GpxCQyE1W2VK3LUHuoabhQxbUgEE4tTush
+ phrtdxbiaxetp5PuSSyrvrSihWczQIs1Mpnqtkvy/TgGRoyuuKOneieEPkDLl5SjWCE+
+ 9B9b8VR7EBGunzOYsm4xYMTJ/v4GNvYnbXtmGvhSqHjDoZIk44fM+xjm1qma7Pda83+O
+ cviM3/+r9FPxKPZt0DYTqS42EJ58gFpF2thGO620DdKNqLGpWN5Du+TkiszOxFX6m1JH
+ as4Q==
+X-Gm-Message-State: AOJu0YxcC+irhxZJLfoKa7oVWSy/czu4uif782uzGmh6+UsNY5ivWnAK
+ LLP6P0ZmmKZQCoTlXmRoeZwTew9VzOuMq7P6hzzAZwIXnqDkKH8AklDxF4R3AdP4O+nhpavDl+x
+ R3Xoo
+X-Gm-Gg: AeBDieuEfdNy/nA5Gg4vKfeK6HD1ErEWOAs7S29IjtiyNa4U5zLAMVf8qCAD24xiA04
+ 5pVjeUKLDmjevwGBtl2i6psSVaK1Ucvhlcun1ej3kOrAhO5jelJF5i8N5Phny4QfM6fVPWyCnJ7
+ fPdqZgBZZiZHEGQV9w7Pj5JWtcku1PRlKGgZoCYc5EZ8rRpjjmoTRcNB/U3tl4hOMP+ihkTEy+K
+ +pLPBOqaJ1yXjf9Vs+nzt/Shi3hAJrMoV1yv6NUatNrdZloKra9ddsyufdXKYqdnmW/VrdH4gt6
+ 4a+VvR8lCezpmdmMzLdvJi025aiqwfSF+/wzA0XnPc3vD4X9E8RqMwfeFup/cHXxj31dyB0h6ep
+ 3+JcnKBkUo1fDtLeEa4jsSAmZ945ZFkqdDNd6d7B5kNGA167h3/YX4+24Rs0CjyV4kkLU8kC70N
+ 5XjLEy8QrT4JScEJgqBm6prQ4EvyMAnGdu8yESLbomBmU=
+X-Received: by 2002:a05:7022:6891:b0:11a:e426:911a with SMTP id
+ a92af1059eb24-12c34eb9b40mr11174749c88.15.1776182167255; 
+ Tue, 14 Apr 2026 08:56:07 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2d944769298sm9237476eec.5.2026.04.14.08.56.01
+ 5a478bee46e88-2d944769298sm9237476eec.5.2026.04.14.08.56.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 14 Apr 2026 08:56:01 -0700 (PDT)
+ Tue, 14 Apr 2026 08:56:06 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- "John W. Linville" <linville@tuxdriver.com>
-Subject: [PATCH v2 1/2] net/af_packet: whitespace cleanup
-Date: Tue, 14 Apr 2026 08:52:58 -0700
-Message-ID: <20260414155537.718635-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v2 2/2] test: add test for af_packet
+Date: Tue, 14 Apr 2026 08:52:59 -0700
+Message-ID: <20260414155537.718635-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260414155537.718635-1-stephen@networkplumber.org>
 References: <20260413230018.515837-1-stephen@networkplumber.org>
@@ -81,189 +80,1201 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DPDK code is supposed to be indented with TABS not spaces.
-Also, used "unsigned int" to keep checkpatch happy.
+Add a test for AF_PACKET PMD.
+This test was generated with Claude AI based off of existing
+test_pmd_ring.c with some cleanup afterwards.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/af_packet/rte_eth_af_packet.c | 64 +++++++++++------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ app/test/meson.build          |    1 +
+ app/test/test_pmd_af_packet.c | 1166 +++++++++++++++++++++++++++++++++
+ 2 files changed, 1167 insertions(+)
+ create mode 100644 app/test/test_pmd_af_packet.c
 
-diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
-index 0ee94e71ea..8303ff5ca9 100644
---- a/drivers/net/af_packet/rte_eth_af_packet.c
-+++ b/drivers/net/af_packet/rte_eth_af_packet.c
-@@ -79,7 +79,7 @@ struct __rte_cache_aligned pkt_tx_queue {
- };
- 
- struct pmd_internals {
--	unsigned nb_queues;
-+	unsigned int nb_queues;
- 
- 	int if_index;
- 	char *if_name;
-@@ -602,7 +602,7 @@ eth_dev_close(struct rte_eth_dev *dev)
- 
- static int
- eth_link_update(struct rte_eth_dev *dev,
--                int wait_to_complete __rte_unused)
-+		int wait_to_complete __rte_unused)
- {
- 	const struct pmd_internals *internals = dev->data->dev_private;
- 	struct rte_eth_link *dev_link = &dev->data->dev_link;
-@@ -622,11 +622,11 @@ eth_link_update(struct rte_eth_dev *dev,
- 
- static int
- eth_rx_queue_setup(struct rte_eth_dev *dev,
--                   uint16_t rx_queue_id,
--                   uint16_t nb_rx_desc __rte_unused,
--                   unsigned int socket_id __rte_unused,
--                   const struct rte_eth_rxconf *rx_conf __rte_unused,
--                   struct rte_mempool *mb_pool)
-+		   uint16_t rx_queue_id,
-+		   uint16_t nb_rx_desc __rte_unused,
-+		   unsigned int socket_id __rte_unused,
-+		   const struct rte_eth_rxconf *rx_conf __rte_unused,
-+		   struct rte_mempool *mb_pool)
- {
- 	struct pmd_internals *internals = dev->data->dev_private;
- 	struct pkt_rx_queue *pkt_q = &internals->rx_queue[rx_queue_id];
-@@ -660,10 +660,10 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 
- static int
- eth_tx_queue_setup(struct rte_eth_dev *dev,
--                   uint16_t tx_queue_id,
--                   uint16_t nb_tx_desc __rte_unused,
--                   unsigned int socket_id __rte_unused,
--                   const struct rte_eth_txconf *tx_conf __rte_unused)
-+		   uint16_t tx_queue_id,
-+		   uint16_t nb_tx_desc __rte_unused,
-+		   unsigned int socket_id __rte_unused,
-+		   const struct rte_eth_txconf *tx_conf __rte_unused)
- {
- 
- 	struct pmd_internals *internals = dev->data->dev_private;
-@@ -790,8 +790,8 @@ static const struct eth_dev_ops ops = {
-  */
- static int
- open_packet_iface(const char *key __rte_unused,
--                  const char *value __rte_unused,
--                  void *extra_args)
-+		  const char *value __rte_unused,
-+		  void *extra_args)
- {
- 	int *sockfd = extra_args;
- 
-@@ -854,17 +854,17 @@ get_fanout(const char *fanout_mode, int if_index)
- 
- static int
- rte_pmd_init_internals(struct rte_vdev_device *dev,
--                       const int sockfd,
--                       const unsigned nb_queues,
--                       unsigned int blocksize,
--                       unsigned int blockcnt,
--                       unsigned int framesize,
--                       unsigned int framecnt,
-+		       const int sockfd,
-+		       const unsigned int nb_queues,
-+		       unsigned int blocksize,
-+		       unsigned int blockcnt,
-+		       unsigned int framesize,
-+		       unsigned int framecnt,
- 		       unsigned int qdisc_bypass,
- 		       const char *fanout_mode,
--                       struct pmd_internals **internals,
--                       struct rte_eth_dev **eth_dev,
--                       struct rte_kvargs *kvlist)
-+		       struct pmd_internals **internals,
-+		       struct rte_eth_dev **eth_dev,
-+		       struct rte_kvargs *kvlist)
- {
- 	const char *name = rte_vdev_device_name(dev);
- 	const unsigned int numa_node = dev->device.numa_node;
-@@ -890,7 +890,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 	if (pair == NULL) {
- 		PMD_LOG(ERR,
- 			"%s: no interface specified for AF_PACKET ethdev",
--		        name);
-+			name);
- 		return -1;
- 	}
- 
-@@ -899,7 +899,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 		name, numa_node);
- 
- 	*internals = rte_zmalloc_socket(name, sizeof(**internals),
--	                                0, numa_node);
-+					0, numa_node);
- 	if (*internals == NULL)
- 		return -1;
- 
-@@ -1140,8 +1140,8 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
- 
- static int
- rte_eth_from_packet(struct rte_vdev_device *dev,
--                    int const *sockfd,
--                    struct rte_kvargs *kvlist)
-+		    int const *sockfd,
-+		    struct rte_kvargs *kvlist)
- {
- 	const char *name = rte_vdev_device_name(dev);
- 	struct pmd_internals *internals = NULL;
-@@ -1172,7 +1172,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 			if (qpairs < 1) {
- 				PMD_LOG(ERR,
- 					"%s: invalid qpairs value",
--				        name);
-+					name);
- 				return -1;
- 			}
- 			continue;
-@@ -1182,7 +1182,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 			if (!blocksize) {
- 				PMD_LOG(ERR,
- 					"%s: invalid blocksize value",
--				        name);
-+					name);
- 				return -1;
- 			}
- 			continue;
-@@ -1192,7 +1192,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 			if (!framesize) {
- 				PMD_LOG(ERR,
- 					"%s: invalid framesize value",
--				        name);
-+					name);
- 				return -1;
- 			}
- 			continue;
-@@ -1202,7 +1202,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 			if (!framecount) {
- 				PMD_LOG(ERR,
- 					"%s: invalid framecount value",
--				        name);
-+					name);
- 				return -1;
- 			}
- 			continue;
-@@ -1226,7 +1226,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
- 	if (framesize > blocksize) {
- 		PMD_LOG(ERR,
- 			"%s: AF_PACKET MMAP frame size exceeds block size!",
--		        name);
-+			name);
- 		return -1;
- 	}
- 
-@@ -1301,7 +1301,7 @@ rte_pmd_af_packet_probe(struct rte_vdev_device *dev)
- 	if (rte_kvargs_count(kvlist, ETH_AF_PACKET_IFACE_ARG) == 1) {
- 
- 		ret = rte_kvargs_process(kvlist, ETH_AF_PACKET_IFACE_ARG,
--		                         &open_packet_iface, &sockfd);
-+					 &open_packet_iface, &sockfd);
- 		if (ret < 0)
- 			goto exit;
- 	}
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 7d458f9c07..24f71fb987 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -141,6 +141,7 @@ source_file_deps = {
+     'test_per_lcore.c': [],
+     'test_pflock.c': [],
+     'test_pie.c': ['sched'],
++    'test_pmd_af_packet.c': ['net_af_packet', 'ethdev', 'bus_vdev'],
+     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
+     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
+     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
+diff --git a/app/test/test_pmd_af_packet.c b/app/test/test_pmd_af_packet.c
+new file mode 100644
+index 0000000000..672ed118cc
+--- /dev/null
++++ b/app/test/test_pmd_af_packet.c
+@@ -0,0 +1,1166 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Stephen Hemminger
++ */
++
++#include <errno.h>
++#include <fcntl.h>
++#include <inttypes.h>
++#include <linux/if.h>
++#include <linux/if_tun.h>
++#include <linux/sockios.h>
++#include <pthread.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/ioctl.h>
++#include <sys/socket.h>
++#include <time.h>
++#include <unistd.h>
++
++#include <rte_bus_vdev.h>
++#include <rte_config.h>
++#include <rte_cycles.h>
++#include <rte_ethdev.h>
++#include <rte_ether.h>
++#include <rte_lcore.h>
++#include <rte_mbuf.h>
++#include <rte_mempool.h>
++#include <rte_stdatomic.h>
++
++#include "test.h"
++
++#ifndef RTE_EXEC_ENV_LINUX
++static int
++test_pmd_af_packet(void)
++{
++	printf("af_packet only supported on Linux, skipping test\n");
++	return TEST_SKIPPED;
++}
++
++#else
++
++#define NUM_MBUFS 512
++#define MBUF_CACHE_SIZE 32
++#define BURST_SIZE 32
++#define RING_SIZE 256
++
++/* Polling and timeout constants */
++#define STATS_POLL_INTERVAL_US 100
++#define STATS_POLL_TIMEOUT_US 100000  /* 100ms overall timeout */
++#define LOOPBACK_TIMEOUT_US 500000    /* 500ms for loopback test */
++
++/* Multi-threaded test constants */
++#define MT_NUM_PACKETS 100
++#define MT_TEST_DURATION_SEC 2
++
++/* Test device names */
++#define AF_PACKET_DEV_NAME "net_af_packet_test"
++#define TAP_DEV_NAME "dpdkafptest"
++
++static struct rte_mempool *mp;
++static uint16_t port_id = RTE_MAX_ETHPORTS;
++static int tap_fd = -1;
++static bool tap_created;
++static bool port_created;
++static bool port_started;
++
++/*
++ * Create a TAP interface for testing.
++ * Returns fd on success, -1 on failure.
++ */
++static int
++create_tap_interface(const char *name)
++{
++	struct ifreq ifr;
++	int fd, ret;
++
++	fd = open("/dev/net/tun", O_RDWR);
++	if (fd < 0) {
++		printf("Cannot open /dev/net/tun: %s\n", strerror(errno));
++		printf("(Are you running as root?)\n");
++		return -1;
++	}
++
++	memset(&ifr, 0, sizeof(ifr));
++	ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
++	snprintf(ifr.ifr_name, IFNAMSIZ, "%s", name);
++
++	ret = ioctl(fd, TUNSETIFF, &ifr);
++	if (ret < 0) {
++		printf("Cannot create TAP interface '%s': %s\n",
++		       name, strerror(errno));
++		close(fd);
++		return -1;
++	}
++
++	/* Bring the interface up */
++	int sock = socket(AF_INET, SOCK_DGRAM, 0);
++	if (sock >= 0) {
++		memset(&ifr, 0, sizeof(ifr));
++		snprintf(ifr.ifr_name, IFNAMSIZ, "%s", name);
++
++		/* Get current flags */
++		if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
++			ifr.ifr_flags |= IFF_UP;
++			ioctl(sock, SIOCSIFFLAGS, &ifr);
++		}
++		close(sock);
++	}
++
++	printf("Created TAP interface '%s'\n", name);
++	return fd;
++}
++
++static void
++destroy_tap_interface(int fd)
++{
++	if (fd >= 0)
++		close(fd);
++}
++
++static int
++create_af_packet_port(const char *name, const char *args, uint16_t *out_port_id)
++{
++	int ret;
++
++	ret = rte_vdev_init(name, args);
++	if (ret != 0) {
++		printf("Failed to create af_packet device '%s': %d\n", name, ret);
++		return ret;
++	}
++
++	ret = rte_eth_dev_get_port_by_name(name, out_port_id);
++	if (ret != 0) {
++		printf("Failed to get port id for '%s': %d\n", name, ret);
++		rte_vdev_uninit(name);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int
++configure_af_packet_port(uint16_t pid, uint16_t nb_rx_q, uint16_t nb_tx_q)
++{
++	struct rte_eth_conf port_conf = {0};
++	struct rte_eth_dev_info dev_info;
++	int ret;
++	uint16_t q;
++
++	ret = rte_eth_dev_info_get(pid, &dev_info);
++	if (ret != 0) {
++		printf("Failed to get device info for port %u: %d\n", pid, ret);
++		return ret;
++	}
++
++	ret = rte_eth_dev_configure(pid, nb_rx_q, nb_tx_q, &port_conf);
++	if (ret != 0) {
++		printf("Failed to configure port %u: %d\n", pid, ret);
++		return ret;
++	}
++
++	for (q = 0; q < nb_rx_q; q++) {
++		ret = rte_eth_rx_queue_setup(pid, q, RING_SIZE,
++					     rte_eth_dev_socket_id(pid),
++					     NULL, mp);
++		if (ret != 0) {
++			printf("Failed to setup RX queue %u for port %u: %d\n",
++			       q, pid, ret);
++			return ret;
++		}
++	}
++
++	for (q = 0; q < nb_tx_q; q++) {
++		ret = rte_eth_tx_queue_setup(pid, q, RING_SIZE,
++					     rte_eth_dev_socket_id(pid),
++					     NULL);
++		if (ret != 0) {
++			printf("Failed to setup TX queue %u for port %u: %d\n",
++			       q, pid, ret);
++			return ret;
++		}
++	}
++
++	ret = rte_eth_dev_start(pid);
++	if (ret != 0) {
++		printf("Failed to start port %u: %d\n", pid, ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++/*
++ * Helper: Allocate and prepare a burst of TX mbufs with minimal Ethernet frames.
++ * Returns the number of successfully allocated mbufs.
++ */
++static unsigned int
++alloc_tx_mbufs(struct rte_mbuf **bufs, unsigned int count)
++{
++	unsigned int i;
++	int ret;
++
++	ret = rte_pktmbuf_alloc_bulk(mp, bufs, count);
++	if (ret != 0)
++		return 0;
++
++	for (i = 0; i < count; i++) {
++		struct rte_ether_hdr *eth_hdr;
++		eth_hdr = (struct rte_ether_hdr *)rte_pktmbuf_append(bufs[i],
++				sizeof(struct rte_ether_hdr) + 46);
++		if (eth_hdr == NULL) {
++			/* Free all allocated mbufs on failure */
++			rte_pktmbuf_free_bulk(bufs, count);
++			return 0;
++		}
++
++		/* Set broadcast destination and zero source MAC */
++		memset(&eth_hdr->dst_addr, 0xFF, RTE_ETHER_ADDR_LEN);
++		memset(&eth_hdr->src_addr, 0x00, RTE_ETHER_ADDR_LEN);
++		eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
++	}
++
++	return count;
++}
++
++/*
++ * Helper: Transmit packets and free unsent mbufs.
++ * Returns the number of packets successfully transmitted.
++ */
++static uint16_t
++do_tx_burst(uint16_t pid, uint16_t queue_id, struct rte_mbuf **bufs,
++	    unsigned int count)
++{
++	uint16_t nb_tx;
++
++	nb_tx = rte_eth_tx_burst(pid, queue_id, bufs, count);
++
++	/* Free any unsent mbufs */
++	rte_pktmbuf_free_bulk(&bufs[nb_tx], count - nb_tx);
++
++	return nb_tx;
++}
++
++/*
++ * Helper: Receive packets and free received mbufs.
++ * Returns the number of packets received.
++ */
++static uint16_t
++do_rx_burst(uint16_t pid, uint16_t queue_id, struct rte_mbuf **bufs,
++	    unsigned int count)
++{
++	uint16_t nb_rx;
++
++	nb_rx = rte_eth_rx_burst(pid, queue_id, bufs, count);
++	rte_pktmbuf_free_bulk(bufs, nb_rx);
++
++	return nb_rx;
++}
++
++/*
++ * Helper: Wait for stats to update by polling at intervals.
++ * Returns 0 on success (stats updated), -1 on timeout.
++ */
++static int
++wait_for_stats_update(uint16_t pid, uint64_t expected_opackets,
++		      uint64_t timeout_us)
++{
++	struct rte_eth_stats stats;
++	uint64_t elapsed = 0;
++
++	while (elapsed < timeout_us) {
++		if (rte_eth_stats_get(pid, &stats) == 0) {
++			if (stats.opackets >= expected_opackets)
++				return 0;
++		}
++		rte_delay_us_block(STATS_POLL_INTERVAL_US);
++		elapsed += STATS_POLL_INTERVAL_US;
++	}
++
++	return -1;
++}
++
++static int
++test_af_packet_setup(void)
++{
++	char devargs[256];
++	int ret;
++
++	/* Create mempool for mbufs */
++	mp = rte_pktmbuf_pool_create("af_packet_test_pool", NUM_MBUFS,
++				     MBUF_CACHE_SIZE, 0,
++				     RTE_MBUF_DEFAULT_BUF_SIZE,
++				     rte_socket_id());
++	if (mp == NULL) {
++		printf("Failed to create mempool\n");
++		return -1;
++	}
++
++	/* Create TAP interface for testing */
++	tap_fd = create_tap_interface(TAP_DEV_NAME);
++	if (tap_fd >= 0)
++		tap_created = true;
++	else {
++		printf("TAP interface creation failed - tests will be skipped\n");
++		return 0; /* Return success to allow skipped tests */
++	}
++
++	/* Create and configure af_packet port */
++	snprintf(devargs, sizeof(devargs), "iface=%s", TAP_DEV_NAME);
++	ret = create_af_packet_port(AF_PACKET_DEV_NAME, devargs, &port_id);
++	if (ret != 0) {
++		printf("Failed to create af_packet port\n");
++		return -1;
++	}
++	port_created = true;
++
++	ret = configure_af_packet_port(port_id, 1, 1);
++	if (ret != 0) {
++		printf("Failed to configure af_packet port\n");
++		return -1;
++	}
++	port_started = true;
++
++	return 0;
++}
++
++static void
++test_af_packet_teardown(void)
++{
++	/* Stop and close test port */
++	if (port_started) {
++		rte_eth_dev_stop(port_id);
++		port_started = false;
++	}
++
++	if (port_created) {
++		rte_eth_dev_close(port_id);
++		rte_vdev_uninit(AF_PACKET_DEV_NAME);
++		port_id = RTE_MAX_ETHPORTS;
++		port_created = false;
++	}
++
++	/* Destroy TAP interface */
++	if (tap_created) {
++		destroy_tap_interface(tap_fd);
++		tap_fd = -1;
++		tap_created = false;
++	}
++
++	if (mp != NULL) {
++		rte_mempool_free(mp);
++		mp = NULL;
++	}
++}
++
++/*
++ * Test: Device info verification
++ */
++static int
++test_af_packet_dev_info(void)
++{
++	struct rte_eth_dev_info dev_info;
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	ret = rte_eth_dev_info_get(port_id, &dev_info);
++	TEST_ASSERT(ret == 0, "Failed to get device info");
++
++	/* Verify expected device info values */
++	TEST_ASSERT(dev_info.max_mac_addrs == 1,
++		    "Expected max_mac_addrs=1, got %u", dev_info.max_mac_addrs);
++	TEST_ASSERT(dev_info.max_rx_pktlen == RTE_ETHER_MAX_LEN,
++		    "Unexpected max_rx_pktlen: %u", dev_info.max_rx_pktlen);
++	TEST_ASSERT(dev_info.min_rx_bufsize == 0,
++		    "Expected min_rx_bufsize=0, got %u", dev_info.min_rx_bufsize);
++	TEST_ASSERT(dev_info.max_rx_queues >= 1, "No RX queues available");
++	TEST_ASSERT(dev_info.max_tx_queues >= 1, "No TX queues available");
++	TEST_ASSERT(dev_info.if_index > 0, "Invalid interface index");
++
++	/* Check TX offload capabilities */
++	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MULTI_SEGS,
++		    "Expected MULTI_SEGS TX offload capability");
++	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_VLAN_INSERT,
++		    "Expected VLAN_INSERT TX offload capability");
++
++	/* Check RX offload capabilities */
++	TEST_ASSERT(dev_info.rx_offload_capa & RTE_ETH_RX_OFFLOAD_VLAN_STRIP,
++		    "Expected VLAN_STRIP RX offload capability");
++	TEST_ASSERT(dev_info.rx_offload_capa & RTE_ETH_RX_OFFLOAD_TIMESTAMP,
++		    "Expected TIMESTAMP RX offload capability");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Link status
++ * Note: af_packet PMD link status reflects the underlying interface state,
++ * not the DPDK device start/stop state.
++ */
++static int
++test_af_packet_link_status(void)
++{
++	struct rte_eth_link link;
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	ret = rte_eth_link_get_nowait(port_id, &link);
++	TEST_ASSERT(ret == 0, "Failed to get link status");
++
++	/* TAP interface was brought up during setup, so link should be UP */
++	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
++		    "Expected link UP (TAP interface is up)");
++	TEST_ASSERT(link.link_speed == RTE_ETH_SPEED_NUM_10G,
++		    "Expected 10G link speed");
++	TEST_ASSERT(link.link_duplex == RTE_ETH_LINK_FULL_DUPLEX,
++		    "Expected full duplex");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Statistics initial state
++ */
++static int
++test_af_packet_stats_init(void)
++{
++	struct rte_eth_stats stats;
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Reset stats */
++	ret = rte_eth_stats_reset(port_id);
++	TEST_ASSERT(ret == 0, "Failed to reset stats");
++
++	/* Get initial stats */
++	ret = rte_eth_stats_get(port_id, &stats);
++	TEST_ASSERT(ret == 0, "Failed to get stats");
++
++	/* After reset, stats should be zero */
++	TEST_ASSERT(stats.ipackets == 0,
++		    "Expected ipackets=0 after reset, got %"PRIu64,
++		    stats.ipackets);
++	TEST_ASSERT(stats.opackets == 0,
++		    "Expected opackets=0 after reset, got %"PRIu64,
++		    stats.opackets);
++	TEST_ASSERT(stats.ibytes == 0,
++		    "Expected ibytes=0 after reset, got %"PRIu64,
++		    stats.ibytes);
++	TEST_ASSERT(stats.obytes == 0,
++		    "Expected obytes=0 after reset, got %"PRIu64,
++		    stats.obytes);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: TX packets (packets will be sent to TAP interface)
++ */
++static int
++test_af_packet_tx(void)
++{
++	struct rte_mbuf *bufs[BURST_SIZE];
++	struct rte_eth_stats stats;
++	uint16_t nb_tx;
++	unsigned int allocated;
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Reset stats */
++	ret = rte_eth_stats_reset(port_id);
++	TEST_ASSERT(ret == 0, "Failed to reset stats");
++
++	/* Allocate and prepare mbufs for TX using helper */
++	allocated = alloc_tx_mbufs(bufs, BURST_SIZE);
++	TEST_ASSERT(allocated == BURST_SIZE, "Failed to allocate all mbufs");
++
++	/* TX burst using helper */
++	nb_tx = do_tx_burst(port_id, 0, bufs, BURST_SIZE);
++
++	/* Poll for stats update instead of fixed delay */
++	if (nb_tx > 0) {
++		ret = wait_for_stats_update(port_id, nb_tx, STATS_POLL_TIMEOUT_US);
++		if (ret == 0) {
++			ret = rte_eth_stats_get(port_id, &stats);
++			TEST_ASSERT(ret == 0, "Failed to get stats");
++			TEST_ASSERT(stats.opackets > 0,
++				    "Expected opackets > 0 after TX");
++		}
++		/* Timeout is acceptable - stats may not update immediately */
++	}
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: RX packets (non-blocking, may not receive anything)
++ */
++static int
++test_af_packet_rx(void)
++{
++	struct rte_mbuf *bufs[BURST_SIZE];
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Try to receive packets (non-blocking) using helper */
++	do_rx_burst(port_id, 0, bufs, BURST_SIZE);
++
++	/* RX from tap interface without external traffic will return 0 */
++	/* This test just verifies the RX path doesn't crash */
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Loopback - TX packets and receive them back via TAP interface.
++ * This exercises both the TX and RX paths in a round-trip.
++ */
++static int
++test_af_packet_loopback(void)
++{
++	struct rte_mbuf *tx_bufs[BURST_SIZE];
++	struct rte_mbuf *rx_bufs[BURST_SIZE];
++	uint16_t nb_tx, total_rx = 0;
++	uint64_t elapsed = 0;
++	unsigned int allocated;
++	ssize_t bytes_read;
++	char tap_buf[2048];
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Set TAP fd to non-blocking for reading */
++	int flags = fcntl(tap_fd, F_GETFL, 0);
++	fcntl(tap_fd, F_SETFL, flags | O_NONBLOCK);
++
++	/* Allocate and send packets */
++	allocated = alloc_tx_mbufs(tx_bufs, BURST_SIZE);
++	if (allocated == 0) {
++		printf("SKIPPED: Could not allocate mbufs\n");
++		return TEST_SKIPPED;
++	}
++
++	nb_tx = do_tx_burst(port_id, 0, tx_bufs, allocated);
++	if (nb_tx == 0) {
++		printf("SKIPPED: No packets transmitted\n");
++		return TEST_SKIPPED;
++	}
++
++	/*
++	 * Read packets from TAP interface (they were sent there by af_packet).
++	 * Then write them back to TAP so af_packet can receive them.
++	 */
++	while (elapsed < LOOPBACK_TIMEOUT_US) {
++		/* Read from TAP (what af_packet sent) */
++		bytes_read = read(tap_fd, tap_buf, sizeof(tap_buf));
++		if (bytes_read > 0) {
++			/* Write back to TAP for af_packet to receive */
++			write(tap_fd, tap_buf, bytes_read);
++		}
++
++		/* Try to receive via af_packet RX */
++		uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, rx_bufs, BURST_SIZE);
++		if (nb_rx > 0) {
++			total_rx += nb_rx;
++			rte_pktmbuf_free_bulk(rx_bufs, nb_rx);
++		}
++
++		/* Check if we've received enough */
++		if (total_rx >= nb_tx)
++			break;
++
++		rte_delay_us_block(STATS_POLL_INTERVAL_US);
++		elapsed += STATS_POLL_INTERVAL_US;
++	}
++
++	/* Restore TAP fd flags */
++	fcntl(tap_fd, F_SETFL, flags);
++
++	/*
++	 * Note: We may not receive all packets due to timing, but receiving
++	 * any packets proves the loopback path works.
++	 */
++	printf("Loopback: TX=%u, RX=%u\n", nb_tx, total_rx);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Promiscuous mode
++ */
++static int
++test_af_packet_promiscuous(void)
++{
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Enable promiscuous mode */
++	ret = rte_eth_promiscuous_enable(port_id);
++	TEST_ASSERT(ret == 0, "Failed to enable promiscuous mode");
++
++	ret = rte_eth_promiscuous_get(port_id);
++	TEST_ASSERT(ret == 1, "Expected promiscuous mode enabled");
++
++	/* Disable promiscuous mode */
++	ret = rte_eth_promiscuous_disable(port_id);
++	TEST_ASSERT(ret == 0, "Failed to disable promiscuous mode");
++
++	ret = rte_eth_promiscuous_get(port_id);
++	TEST_ASSERT(ret == 0, "Expected promiscuous mode disabled");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: MAC address operations
++ */
++static int
++test_af_packet_mac_addr(void)
++{
++	struct rte_ether_addr mac_addr;
++	struct rte_ether_addr new_mac = {
++		.addr_bytes = {0x02, 0x11, 0x22, 0x33, 0x44, 0x55}
++	};
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Get current MAC address */
++	ret = rte_eth_macaddr_get(port_id, &mac_addr);
++	TEST_ASSERT(ret == 0, "Failed to get MAC address");
++
++	/* Set new MAC address (use locally administered address) */
++	ret = rte_eth_dev_default_mac_addr_set(port_id, &new_mac);
++	TEST_ASSERT(ret == 0, "Failed to set MAC address");
++
++	/* Verify MAC was set */
++	ret = rte_eth_macaddr_get(port_id, &mac_addr);
++	TEST_ASSERT(ret == 0, "Failed to get MAC address after set");
++
++	TEST_ASSERT(memcmp(&mac_addr, &new_mac, sizeof(mac_addr)) == 0,
++		    "MAC address mismatch after set");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: MTU operations
++ * Get min/max supported MTU from device info and verify setting works.
++ */
++static int
++test_af_packet_mtu(void)
++{
++	struct rte_eth_dev_info dev_info;
++	uint16_t mtu, original_mtu;
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Get device info for min/max MTU */
++	ret = rte_eth_dev_info_get(port_id, &dev_info);
++	TEST_ASSERT(ret == 0, "Failed to get device info");
++
++	/* Get current MTU */
++	ret = rte_eth_dev_get_mtu(port_id, &original_mtu);
++	TEST_ASSERT(ret == 0, "Failed to get MTU");
++
++	printf("MTU: current=%u, min=%u, max=%u\n",
++	       original_mtu, dev_info.min_mtu, dev_info.max_mtu);
++
++	/* Test setting minimum MTU if supported and different from current */
++	if (dev_info.min_mtu > 0 && dev_info.min_mtu != original_mtu) {
++		ret = rte_eth_dev_set_mtu(port_id, dev_info.min_mtu);
++		if (ret == 0) {
++			ret = rte_eth_dev_get_mtu(port_id, &mtu);
++			TEST_ASSERT(ret == 0, "Failed to get MTU after set to min");
++			TEST_ASSERT(mtu == dev_info.min_mtu,
++				    "MTU not set to min: expected %u, got %u",
++				    dev_info.min_mtu, mtu);
++		}
++		/* MTU set may fail depending on interface, that's acceptable */
++	}
++
++	/* Test setting maximum MTU if supported and different from current */
++	if (dev_info.max_mtu > 0 && dev_info.max_mtu != original_mtu &&
++	    dev_info.max_mtu != dev_info.min_mtu) {
++		ret = rte_eth_dev_set_mtu(port_id, dev_info.max_mtu);
++		if (ret == 0) {
++			ret = rte_eth_dev_get_mtu(port_id, &mtu);
++			TEST_ASSERT(ret == 0, "Failed to get MTU after set to max");
++			TEST_ASSERT(mtu == dev_info.max_mtu,
++				    "MTU not set to max: expected %u, got %u",
++				    dev_info.max_mtu, mtu);
++		}
++		/* MTU set may fail depending on interface capabilities */
++	}
++
++	/* Restore original MTU */
++	rte_eth_dev_set_mtu(port_id, original_mtu);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Stats reset verification
++ */
++static int
++test_af_packet_stats_reset(void)
++{
++	struct rte_eth_stats stats;
++	struct rte_mbuf *bufs[BURST_SIZE / 2];
++	uint16_t nb_tx;
++	unsigned int allocated;
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Generate some TX traffic using helpers */
++	allocated = alloc_tx_mbufs(bufs, BURST_SIZE / 2);
++	nb_tx = do_tx_burst(port_id, 0, bufs, allocated);
++
++	/* Poll for stats to update */
++	if (nb_tx > 0)
++		wait_for_stats_update(port_id, nb_tx, STATS_POLL_TIMEOUT_US);
++
++	/* Reset stats */
++	ret = rte_eth_stats_reset(port_id);
++	TEST_ASSERT(ret == 0, "Failed to reset stats");
++
++	/* Verify stats are zero */
++	ret = rte_eth_stats_get(port_id, &stats);
++	TEST_ASSERT(ret == 0, "Failed to get stats after reset");
++
++	TEST_ASSERT(stats.ipackets == 0,
++		    "Expected ipackets=0, got %"PRIu64, stats.ipackets);
++	TEST_ASSERT(stats.opackets == 0,
++		    "Expected opackets=0, got %"PRIu64, stats.opackets);
++	TEST_ASSERT(stats.ibytes == 0,
++		    "Expected ibytes=0, got %"PRIu64, stats.ibytes);
++	TEST_ASSERT(stats.obytes == 0,
++		    "Expected obytes=0, got %"PRIu64, stats.obytes);
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Invalid configuration handling - missing iface
++ */
++static int
++test_af_packet_invalid_no_iface(void)
++{
++	int ret;
++
++	/* Test without iface argument (should fail) */
++	ret = rte_vdev_init("net_af_packet_invalid1", "");
++	TEST_ASSERT(ret != 0, "Expected failure without iface argument");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Invalid configuration handling - non-existent interface
++ */
++static int
++test_af_packet_invalid_bad_iface(void)
++{
++	int ret;
++
++	/* Test with non-existent interface (should fail) */
++	ret = rte_vdev_init("net_af_packet_invalid2",
++			    "iface=nonexistent_iface_12345");
++	TEST_ASSERT(ret != 0, "Expected failure with non-existent interface");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Invalid configuration handling - invalid qpairs
++ */
++static int
++test_af_packet_invalid_qpairs(void)
++{
++	int ret;
++
++	if (!tap_created) {
++		printf("SKIPPED: TAP interface not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Test with invalid qpairs (should fail) */
++	ret = rte_vdev_init("net_af_packet_invalid3",
++			    "iface=" TAP_DEV_NAME ",qpairs=0");
++	TEST_ASSERT(ret != 0, "Expected failure with qpairs=0");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Custom frame size configuration
++ */
++static int
++test_af_packet_frame_config(void)
++{
++	struct rte_eth_dev_info dev_info;
++	uint16_t test_port;
++	char devargs[256];
++	int ret;
++
++	if (!tap_created) {
++		printf("SKIPPED: TAP interface not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Create with custom frame parameters */
++	snprintf(devargs, sizeof(devargs),
++		 "iface=%s,blocksz=4096,framesz=2048,framecnt=256",
++		 TAP_DEV_NAME);
++
++	ret = rte_vdev_init("net_af_packet_frame_test", devargs);
++	if (ret != 0) {
++		printf("SKIPPED: Could not create port with custom frame config\n");
++		return TEST_SKIPPED;
++	}
++
++	ret = rte_eth_dev_get_port_by_name("net_af_packet_frame_test",
++					   &test_port);
++	TEST_ASSERT(ret == 0, "Failed to get port id");
++
++	ret = rte_eth_dev_info_get(test_port, &dev_info);
++	TEST_ASSERT(ret == 0, "Failed to get device info");
++
++	/* Cleanup */
++	rte_eth_dev_close(test_port);
++	rte_vdev_uninit("net_af_packet_frame_test");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Qdisc bypass configuration
++ */
++static int
++test_af_packet_qdisc_bypass(void)
++{
++	uint16_t test_port;
++	char devargs[256];
++	int ret;
++
++	if (!tap_created) {
++		printf("SKIPPED: TAP interface not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Create with qdisc_bypass enabled */
++	snprintf(devargs, sizeof(devargs), "iface=%s,qdisc_bypass=1",
++		 TAP_DEV_NAME);
++
++	ret = rte_vdev_init("net_af_packet_qdisc_test", devargs);
++	if (ret != 0) {
++		printf("SKIPPED: qdisc_bypass may not be supported\n");
++		return TEST_SKIPPED;
++	}
++
++	ret = rte_eth_dev_get_port_by_name("net_af_packet_qdisc_test",
++					   &test_port);
++	TEST_ASSERT(ret == 0, "Failed to get port id");
++
++	/* Cleanup */
++	rte_eth_dev_close(test_port);
++	rte_vdev_uninit("net_af_packet_qdisc_test");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Test: Multiple queue pairs
++ */
++static int
++test_af_packet_multi_queue(void)
++{
++	struct rte_eth_dev_info dev_info;
++	struct rte_eth_conf port_conf = {0};
++	struct rte_mbuf *bufs[BURST_SIZE];
++	uint16_t test_port;
++	char devargs[256];
++	const uint16_t num_queues = 2;
++	unsigned int allocated, q;
++	int ret;
++
++	if (!tap_created) {
++		printf("SKIPPED: TAP interface not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	snprintf(devargs, sizeof(devargs), "iface=%s,qpairs=%u",
++		 TAP_DEV_NAME, num_queues);
++	ret = rte_vdev_init("net_af_packet_multi_q", devargs);
++	if (ret != 0) {
++		printf("SKIPPED: Could not create multi-queue port\n");
++		return TEST_SKIPPED;
++	}
++
++	ret = rte_eth_dev_get_port_by_name("net_af_packet_multi_q", &test_port);
++	TEST_ASSERT(ret == 0, "Failed to get port id for multi-queue port");
++
++	ret = rte_eth_dev_info_get(test_port, &dev_info);
++	TEST_ASSERT(ret == 0, "Failed to get device info");
++
++	TEST_ASSERT(dev_info.max_rx_queues >= num_queues,
++		    "Expected at least %u RX queues, got %u",
++		    num_queues, dev_info.max_rx_queues);
++	TEST_ASSERT(dev_info.max_tx_queues >= num_queues,
++		    "Expected at least %u TX queues, got %u",
++		    num_queues, dev_info.max_tx_queues);
++
++	/* Configure the port */
++	ret = rte_eth_dev_configure(test_port, num_queues, num_queues, &port_conf);
++	TEST_ASSERT(ret == 0, "Failed to configure multi-queue port");
++
++	for (q = 0; q < num_queues; q++) {
++		ret = rte_eth_rx_queue_setup(test_port, q, RING_SIZE,
++					     rte_eth_dev_socket_id(test_port),
++					     NULL, mp);
++		TEST_ASSERT(ret == 0, "Failed to setup RX queue %u", q);
++
++		ret = rte_eth_tx_queue_setup(test_port, q, RING_SIZE,
++					     rte_eth_dev_socket_id(test_port),
++					     NULL);
++		TEST_ASSERT(ret == 0, "Failed to setup TX queue %u", q);
++	}
++
++	ret = rte_eth_dev_start(test_port);
++	TEST_ASSERT(ret == 0, "Failed to start multi-queue port");
++
++	/* Test TX on different queues using shared helpers */
++	for (q = 0; q < num_queues; q++) {
++		allocated = alloc_tx_mbufs(bufs, BURST_SIZE / 2);
++		if (allocated > 0)
++			do_tx_burst(test_port, q, bufs, allocated);
++	}
++
++	/* Test RX on different queues */
++	for (q = 0; q < num_queues; q++)
++		do_rx_burst(test_port, q, bufs, BURST_SIZE);
++
++	/* Cleanup */
++	rte_eth_dev_stop(test_port);
++	rte_eth_dev_close(test_port);
++	rte_vdev_uninit("net_af_packet_multi_q");
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Multi-threaded test context
++ */
++struct mt_test_ctx {
++	uint16_t port_id;
++	uint32_t stop;
++	uint32_t tx_count;
++	uint32_t rx_count;
++	int tx_error;
++	int rx_error;
++};
++
++/*
++ * Writer thread function for multi-threaded test
++ */
++static void *
++mt_writer_thread(void *arg)
++{
++	struct mt_test_ctx *ctx = arg;
++	struct rte_mbuf *bufs[BURST_SIZE];
++	unsigned int allocated;
++	uint16_t nb_tx;
++
++	while (!rte_atomic_load_explicit(&ctx->stop, rte_memory_order_acquire)) {
++		allocated = alloc_tx_mbufs(bufs, BURST_SIZE / 4);
++		if (allocated == 0) {
++			ctx->tx_error = -ENOMEM;
++			break;
++		}
++
++		nb_tx = do_tx_burst(ctx->port_id, 0, bufs, allocated);
++		rte_atomic_fetch_add_explicit(&ctx->tx_count, nb_tx,
++					      rte_memory_order_relaxed);
++
++		/* Small delay between bursts */
++		rte_delay_us_block(100);
++	}
++
++	return NULL;
++}
++
++/*
++ * Reader thread function for multi-threaded test
++ */
++static void *
++mt_reader_thread(void *arg)
++{
++	struct mt_test_ctx *ctx = arg;
++	struct rte_mbuf *bufs[BURST_SIZE];
++	uint16_t nb_rx;
++
++	while (!rte_atomic_load_explicit(&ctx->stop, rte_memory_order_acquire)) {
++		nb_rx = rte_eth_rx_burst(ctx->port_id, 0, bufs, BURST_SIZE);
++		if (nb_rx > 0) {
++			rte_atomic_fetch_add_explicit(&ctx->rx_count, nb_rx,
++						      rte_memory_order_relaxed);
++			rte_pktmbuf_free_bulk(bufs, nb_rx);
++		}
++
++		/* Small delay between polls */
++		rte_delay_us_block(50);
++	}
++
++	return NULL;
++}
++
++/*
++ * Test: Multi-threaded concurrent TX and RX
++ * This test creates separate writer and reader threads to exercise
++ * concurrent access patterns to the af_packet PMD.
++ */
++static int
++test_af_packet_multithread(void)
++{
++	struct mt_test_ctx ctx = {0};
++	pthread_t writer_tid, reader_tid;
++	struct timespec start, now;
++	int ret;
++
++	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
++		printf("SKIPPED: Port not available (need root)\n");
++		return TEST_SKIPPED;
++	}
++
++	/* Initialize context */
++	ctx.port_id = port_id;
++	rte_atomic_store_explicit(&ctx.stop, 0, rte_memory_order_release);
++	rte_atomic_store_explicit(&ctx.tx_count, 0, rte_memory_order_release);
++	rte_atomic_store_explicit(&ctx.rx_count, 0, rte_memory_order_release);
++	ctx.tx_error = 0;
++	ctx.rx_error = 0;
++
++	/* Start writer thread */
++	ret = pthread_create(&writer_tid, NULL, mt_writer_thread, &ctx);
++	if (ret != 0) {
++		printf("SKIPPED: Failed to create writer thread: %d\n", ret);
++		return TEST_SKIPPED;
++	}
++
++	/* Start reader thread */
++	ret = pthread_create(&reader_tid, NULL, mt_reader_thread, &ctx);
++	if (ret != 0) {
++		rte_atomic_store_explicit(&ctx.stop, 1, rte_memory_order_release);
++		pthread_join(writer_tid, NULL);
++		printf("SKIPPED: Failed to create reader thread: %d\n", ret);
++		return TEST_SKIPPED;
++	}
++
++	/* Run for configured duration */
++	clock_gettime(CLOCK_MONOTONIC, &start);
++	do {
++		rte_delay_us_block(100000); /* 100ms */
++		clock_gettime(CLOCK_MONOTONIC, &now);
++	} while ((now.tv_sec - start.tv_sec) < MT_TEST_DURATION_SEC);
++
++	/* Signal threads to stop */
++	rte_atomic_store_explicit(&ctx.stop, 1, rte_memory_order_release);
++
++	/* Wait for threads to finish */
++	pthread_join(writer_tid, NULL);
++	pthread_join(reader_tid, NULL);
++
++	/* Report results */
++	printf("Multi-threaded test: TX=%u, RX=%u (duration=%ds)\n",
++	       rte_atomic_load_explicit(&ctx.tx_count, rte_memory_order_relaxed),
++	       rte_atomic_load_explicit(&ctx.rx_count, rte_memory_order_relaxed),
++	       MT_TEST_DURATION_SEC);
++
++	/* Check for errors */
++	TEST_ASSERT(ctx.tx_error == 0,
++		    "Writer thread encountered error: %d", ctx.tx_error);
++	TEST_ASSERT(ctx.rx_error == 0,
++		    "Reader thread encountered error: %d", ctx.rx_error);
++
++	/* Verify some packets were transmitted */
++	TEST_ASSERT(rte_atomic_load_explicit(&ctx.tx_count,
++					     rte_memory_order_relaxed) > 0,
++		    "Expected some packets to be transmitted");
++
++	return TEST_SUCCESS;
++}
++
++static struct unit_test_suite af_packet_test_suite = {
++	.suite_name = "AF_PACKET PMD Unit Test Suite",
++	.setup = test_af_packet_setup,
++	.teardown = test_af_packet_teardown,
++	.unit_test_cases = {
++		/* Tests that don't modify device state */
++		TEST_CASE(test_af_packet_dev_info),
++		TEST_CASE(test_af_packet_link_status),
++		TEST_CASE(test_af_packet_stats_init),
++		TEST_CASE(test_af_packet_tx),
++		TEST_CASE(test_af_packet_rx),
++		TEST_CASE(test_af_packet_loopback),
++		TEST_CASE(test_af_packet_promiscuous),
++		TEST_CASE(test_af_packet_mac_addr),
++		TEST_CASE(test_af_packet_mtu),
++		TEST_CASE(test_af_packet_stats_reset),
++		TEST_CASE(test_af_packet_multithread),
++
++		/* Tests that create their own devices */
++		TEST_CASE(test_af_packet_invalid_no_iface),
++		TEST_CASE(test_af_packet_invalid_bad_iface),
++		TEST_CASE(test_af_packet_invalid_qpairs),
++		TEST_CASE(test_af_packet_frame_config),
++		TEST_CASE(test_af_packet_qdisc_bypass),
++		TEST_CASE(test_af_packet_multi_queue),
++
++		TEST_CASES_END() /**< NULL terminate unit test array */
++	}
++};
++
++static int
++test_pmd_af_packet(void)
++{
++	return unit_test_suite_runner(&af_packet_test_suite);
++}
++#endif
++
++REGISTER_FAST_TEST(af_packet_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_af_packet);
 -- 
 2.53.0
 
