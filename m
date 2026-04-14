@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C751EF9D0DA
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Apr 2026 16:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A84F9D0E2
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Apr 2026 16:12:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E813C40E01;
-	Tue, 14 Apr 2026 18:10:41 +0200 (CEST)
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com
- [209.85.160.49]) by mails.dpdk.org (Postfix) with ESMTP id 3703D40B9A
- for <dev@dpdk.org>; Tue, 14 Apr 2026 18:10:39 +0200 (CEST)
-Received: by mail-oa1-f49.google.com with SMTP id
- 586e51a60fabf-42321c8b8f5so4633087fac.1
- for <dev@dpdk.org>; Tue, 14 Apr 2026 09:10:39 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3895E40DF5;
+	Tue, 14 Apr 2026 18:10:43 +0200 (CEST)
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com
+ [209.85.160.45]) by mails.dpdk.org (Postfix) with ESMTP id 2ABD840DDA
+ for <dev@dpdk.org>; Tue, 14 Apr 2026 18:10:40 +0200 (CEST)
+Received: by mail-oa1-f45.google.com with SMTP id
+ 586e51a60fabf-4043b27ddeaso2993329fac.1
+ for <dev@dpdk.org>; Tue, 14 Apr 2026 09:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776183038;
- x=1776787838; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776183039;
+ x=1776787839; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ptgpR4n6Cp7PgN9ERmAHbIMLx9/65nDPjgF5NnCQJr8=;
- b=EsL4jKV+5vL6zM7G517z12cXHqNNkCaTfG8zCW6LL39lpAjiNkC5/4GWjf0UeI6cj8
- s/QiDOEtQlnpCm/B11cx9nwh8/YY5XNrIKTk7a+2dB+6iiWneTno65zCE7zBzm5V8uVx
- I4Un6UJsWxIJee3d8OCytCoguOA0tT/MOryPg8nBn64aQVEIzjxZc0sjot5Gnc4w5lbG
- o5gmM1lfo7NSQmrT7sTVuJbKVUFwiLI+elQy50EUbQ+OiuJjcoZYYdOFwaXP7OjuQqSx
- gdIjgqgTuNgcyBInP5sCByByBqZYHgvpuLH5cwYmrWBFZMHpaMiy4gxnGDylY0dmITxt
- tlfA==
+ bh=6QcwuAKLbTtEJzZI6UZ5JwhmkS1y1Ay0WbuG0cXi3LY=;
+ b=iEpCkKHZwV8gByQYrxJdc8Cznui+zDFcUOXntpLb0ZTkmNbUd8p6wLNDR5HqSxp7t6
+ A4DG94OfGGrIe0NTgJnDTyovJzNNWuDrJx0csOt5FzSJH5L7WATt9Yo2SQBLrwusQHnt
+ 0hd2c1K/dRZeEWFuNRS1wEFOPn5J+U6+498Uwpj6/vZ6AosZOIysjQ05BbxX/jhiFQ7c
+ DCc+TwnqvpL6RrRyGdjD/5jx62UejrqjE67FL0mLfXmA5Va7505Nn/SCKsy2VD2PTK+w
+ s40DGGnwKp1meCjoMsYu80HIgnHC0Et2KN9PEY4092h7mQ3qBjCKR5q7WcJi1Dn2pQq2
+ yJdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776183038; x=1776787838;
+ d=1e100.net; s=20251104; t=1776183039; x=1776787839;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ptgpR4n6Cp7PgN9ERmAHbIMLx9/65nDPjgF5NnCQJr8=;
- b=hEBF2ggbKYpjQIIph2e5Yl+SsJ/Jx6fGwUWfeK6q/EGuNFIU/fTFIYXBShPgM9SghU
- rJA0wV5h3oZ4quSQGygHBA83EhMXMh/UuP7qteWYZ8aEL1aotcj/1EsXALFDuN88CJZA
- 6WyGOedyrR2qTAiR2G+saHc+AvliKGu/zTlwr82JbFppuvWkxUGLc6835bSZypi/XBlQ
- yeEOZlhXLWkRCnb5XPd2i8tGOXLpCs7ZXGHdNkyHNtAJXCAo6cMFGtn+DaCk2IS+P+5z
- O+bpH8VspDM80lcbn3+etOTeqJSu5x/jh+Fx/Mk5E6Xgb4lmcD5AaMqPQU4UZ09Ih6zu
- iVzw==
-X-Gm-Message-State: AOJu0YwQMmJFxmGbqWL6dlvCNtBUVFUiXKVqbQQGBFWLR/NVDJh9EK6h
- adftp97+u5yRBK+Q+c5+fjr7zMJtzYWEZDc4pukyM+5BSt8/3SSSEfLoxihgD7ACYEKlHZ+Y8aX
- 7GEs7
-X-Gm-Gg: AeBDiet+cWhDLRGFjhOvyF+oKJp79rQbwZAgWVgrMJtQG+tCiAonZo/Xgy8iZR6daqt
- oNp5daqyrlhutlSH8hftmMw0B+EVYa7NIdHrAJ5mlM66mMYizY33BjBgpKgipQGLeP79i0VqaSR
- fkjOHv1+33hp3HTMmfF3s7nzcinwGnKUzsxQQraODv7BuIThWveZ7uRGj0yRsBGncXaR4Qo1qxK
- W48vfgj8qBqfcHqyXfBzFETUZ0qBJMsRuMTMoRWP1ocUjVcQLuktP6sIBonufOsrjr/ptvXuLqq
- upt7w5n8eeamkqga/6hh9kDlSbi5rAGyH3X1WVxDZz3W+er9yqBlkSAHWWi571mqYJdGAlnjK9P
- 8ifMFONF9Jlhf5iAvUMayg2qx5U9c4exZ+SEF80Ce4e0MGqyoerU49nqzXJ2humLnIuC9TPUbUf
- r4YYPQ6CRwqWEK1O1BxppIMzLt1Xnj7QlAeferRiB07qw=
-X-Received: by 2002:a05:6871:c967:b0:423:4260:2e0d with SMTP id
- 586e51a60fabf-423bccab0aamr10791216fac.8.1776183038265; 
- Tue, 14 Apr 2026 09:10:38 -0700 (PDT)
+ bh=6QcwuAKLbTtEJzZI6UZ5JwhmkS1y1Ay0WbuG0cXi3LY=;
+ b=UkJck86u5jKhJ93ly9he8g+cXL8Inh2MY/b9R+c92+/hYyFBkGckU5LlKwZFq1Ke57
+ AfNx6Cm9w7R0Yjk0jGbDm0y9e8T0JxO931IRtccyikXvAFktkdNaeMpp8we7uyNjSydX
+ eRoq/pGO3NmD4z2RUPKMea/TlAne/oThMnKiCak788s3DY6ivRLEbwFe9NzPzbT4gZiq
+ uvamezGJS0fjfmU3Q0ZVX1c1LFr2ws9l+PxeaA+vuz1JSxTMk8g2vrhDXxmOueKE8qfc
+ zC+LD7Z2+vCj9QVZ0Nr6D0uqEisYSwNarT5MwYJROcqtkQpOVC1szeK8YMom4E6rR8zK
+ 9EPg==
+X-Gm-Message-State: AOJu0Yz1apgRAjURiPDLgp6ki5HZW2Dzgn2/6BmJU/hoXW8p5hwKCqQQ
+ rofO+gri42+EO0qgkXLz4FEdC4ZuUlWo/vy2oNrBL8p3bMRgDl0TkMgc5/k+AoidVQy99xbA9f5
+ uzWG6
+X-Gm-Gg: AeBDieubo/LD/y2dH5522C67PRIX4GwlyR6JXvWL7DoVveiB5CET2BVA4Z7jww5aIg5
+ p5gS+eY62dnQ1YFBHWSa0RCvTLZZG9alF2Vn0FWH4h57NpsefRYKxhdfv9sHxdlO000gtFq/KkI
+ eT46yQTuX7+kEuMnkWVMdw0/N8uXWW/E6ugzWGV1h5M7SDwdjUV4oaZ7enqMxCetGwJlVnXtGVt
+ qv/qMv4hap+IsUDSNWnzRo0CwkVMDo4/kpImUSHxUAaPTycdbT+kQ6OOErwcDHqalUc40F8GPWf
+ uyap+XcliJo0ukAR2OaJFd4Zwkqhd6MGD73leSLrLwR8520ST7GzNqwT6QnUe3WelcK2GAMDNQg
+ PYoDdL0BXt9wo6uVKMrUa1V1t203O+sTLjUc4OAGDS+zzW6G7PC/RhdvSvLxo2nMsY3hoi4MJJM
+ ZCjtzD9+VgfJLZGlFAPXPbmfmZnZ5aXXSJDMB9N2aqLgc=
+X-Received: by 2002:a05:6871:a841:b0:417:6237:cf7e with SMTP id
+ 586e51a60fabf-423e0e5d2bdmr9891923fac.8.1776183039280; 
+ Tue, 14 Apr 2026 09:10:39 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-423dd396960sm11809554fac.2.2026.04.14.09.10.37
+ 586e51a60fabf-423dd396960sm11809554fac.2.2026.04.14.09.10.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 14 Apr 2026 09:10:37 -0700 (PDT)
+ Tue, 14 Apr 2026 09:10:38 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v22 21/24] net/pcap: add Rx scatter offload
-Date: Tue, 14 Apr 2026 09:08:12 -0700
-Message-ID: <20260414161011.756101-22-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v22 22/24] net/pcap: add link status change support for iface
+ mode
+Date: Tue, 14 Apr 2026 09:08:13 -0700
+Message-ID: <20260414161011.756101-23-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260414161011.756101-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,135 +81,165 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add RTE_ETH_RX_OFFLOAD_SCATTER to the advertised receive offload
-capabilities if not using infinite_rx mode.
+Add LSC interrupt support for pass-through (iface=) mode so
+applications can receive link state change notifications via
+the standard ethdev callback mechanism.
 
-Validate in rx_queue_setup that the mbuf pool data room is
-large enough when scatter is not enabled, following the
-same pattern as the virtio driver.
-
-Gate the multi-segment receive path on the scatter offload flag
-and drop oversized packets when scatter is disabled.
-Reject scatter with infinite_rx mode since the ring-based replay
-path does not support multi-segment mbufs.
+Uses alarm-based polling to periodically check the underlying
+interface state via osdep_iface_link_get(). The LSC flag is
+advertised only for iface mode devices, and polling is gated
+on the application enabling intr_conf.lsc in port configuration.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/pcap/pcap_ethdev.c | 47 ++++++++++++++++++++++++++++++++--
- 1 file changed, 45 insertions(+), 2 deletions(-)
+ doc/guides/nics/features/pcap.ini      |  1 +
+ doc/guides/nics/pcap.rst               |  5 +++
+ doc/guides/rel_notes/release_26_07.rst |  1 +
+ drivers/net/pcap/pcap_ethdev.c         | 45 ++++++++++++++++++++++++++
+ 4 files changed, 52 insertions(+)
 
+diff --git a/doc/guides/nics/features/pcap.ini b/doc/guides/nics/features/pcap.ini
+index 9f234aa7b9..38dd298603 100644
+--- a/doc/guides/nics/features/pcap.ini
++++ b/doc/guides/nics/features/pcap.ini
+@@ -5,6 +5,7 @@
+ ;
+ [Features]
+ Link status          = Y
++Link status event    = Y
+ Queue start/stop     = Y
+ Timestamp offload    = P
+ Basic stats          = Y
+diff --git a/doc/guides/nics/pcap.rst b/doc/guides/nics/pcap.rst
+index b66202e125..91763c27c0 100644
+--- a/doc/guides/nics/pcap.rst
++++ b/doc/guides/nics/pcap.rst
+@@ -277,3 +277,8 @@ Features and Limitations
+ 
+ *  If ``RTE_ETH_RX_OFFLOAD_TIMESTAMP`` is enabled then the timestamp
+    from the pcap file is converted to DPDK format.
++
++*  In ``iface`` mode, the PMD supports link status change (LSC) notifications.
++   When the application enables ``intr_conf.lsc`` in the port configuration,
++   the driver polls the underlying network interface once per second and
++   generates a ``RTE_ETH_EVENT_INTR_LSC`` callback when the link state changes.
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index d34ed3a8bd..38c2a67749 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -61,6 +61,7 @@ New Features
+   * Added support for reporting link state in ``iface`` mode.
+   * Receive timestamps support nanosecond precision.
+   * Added ``snaplen`` devarg to configure packet capture snapshot length.
++  * Added support for Link State interrupt in ``iface`` mode.
+ 
+ 
+ Removed Items
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 602b898a72..c2dec9167d 100644
+index c2dec9167d..2276aaf513 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -79,6 +79,7 @@ struct pcap_rx_queue {
- 	uint16_t port_id;
- 	uint16_t queue_id;
+@@ -17,6 +17,7 @@
+ 
+ #include <pcap.h>
+ 
++#include <rte_alarm.h>
+ #include <rte_cycles.h>
+ #include <rte_ring.h>
+ #include <rte_ethdev.h>
+@@ -48,6 +49,8 @@
+ /* This is defined in libpcap but not exposed in headers */
+ #define ETH_PCAP_MAXIMUM_SNAPLEN      262144
+ 
++#define ETH_PCAP_LSC_POLL_INTERVAL_US (1000 * 1000) /* 1 second */
++
+ #define ETH_PCAP_ARG_MAXLEN	64
+ 
+ #define RTE_PMD_PCAP_MAX_QUEUES 16
+@@ -115,6 +118,7 @@ struct pmd_internals {
  	bool vlan_strip;
-+	bool rx_scatter;
+ 	bool rx_scatter;
  	bool timestamp_offloading;
- 	struct rte_mempool *mb_pool;
- 	struct queue_stat rx_stat;
-@@ -112,6 +113,7 @@ struct pmd_internals {
- 	bool phy_mac;
- 	bool infinite_rx;
- 	bool vlan_strip;
-+	bool rx_scatter;
- 	bool timestamp_offloading;
++	bool lsc_active;
  };
  
-@@ -342,14 +344,19 @@ eth_pcap_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			/* pcap packet will fit in the mbuf, can copy it */
- 			rte_memcpy(rte_pktmbuf_mtod(mbuf, void *), packet, len);
- 			mbuf->data_len = len;
--		} else {
--			/* Try read jumbo frame into multi mbufs. */
-+		} else if (pcap_q->rx_scatter) {
-+			/* Scatter into multi-segment mbufs. */
- 			if (unlikely(eth_pcap_rx_jumbo(pcap_q->mb_pool,
- 						       mbuf, packet, len) == -1)) {
- 				pcap_q->rx_stat.err_pkts++;
- 				rte_pktmbuf_free(mbuf);
- 				break;
- 			}
-+		} else {
-+			/* Packet too large and scatter not enabled, drop it. */
-+			pcap_q->rx_stat.err_pkts++;
-+			rte_pktmbuf_free(mbuf);
-+			continue;
- 		}
+ struct pmd_process_private {
+@@ -163,6 +167,9 @@ static const char *valid_arguments[] = {
  
- 		mbuf->pkt_len = len;
-@@ -926,6 +933,7 @@ eth_dev_configure(struct rte_eth_dev *dev)
- 	const struct rte_eth_rxmode *rxmode = &dev_conf->rxmode;
+ RTE_LOG_REGISTER_DEFAULT(eth_pcap_logtype, NOTICE);
  
- 	internals->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
-+	internals->rx_scatter = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_SCATTER);
- 	internals->timestamp_offloading = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP);
++/* Forward declarations */
++static int eth_link_update(struct rte_eth_dev *dev, int wait_to_complete);
++
+ static struct queue_missed_stat*
+ queue_missed_stat_update(struct rte_eth_dev *dev, unsigned int qid)
+ {
+@@ -785,6 +792,28 @@ count_packets_in_pcap(pcap_t **pcap, struct pcap_rx_queue *pcap_q)
+ 	return pcap_pkt_count;
+ }
  
- 	if (internals->timestamp_offloading && timestamp_rx_dynflag == 0) {
-@@ -958,6 +966,9 @@ eth_dev_info(struct rte_eth_dev *dev,
- 	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP |
- 		RTE_ETH_RX_OFFLOAD_TIMESTAMP;
++/*
++ * Periodic alarm to poll link state.
++ * Enabled when link state interrupt is enabled in single_iface mode.
++ */
++static void
++eth_pcap_lsc_alarm(void *arg)
++{
++	struct rte_eth_dev *dev = arg;
++	struct pmd_internals *internals = dev->data->dev_private;
++	struct rte_eth_link old_link, new_link;
++
++	rte_eth_linkstatus_get(dev, &old_link);
++	eth_link_update(dev, 0);
++	rte_eth_linkstatus_get(dev, &new_link);
++
++	if (old_link.link_status != new_link.link_status)
++		rte_eth_dev_callback_process(dev, RTE_ETH_EVENT_INTR_LSC, NULL);
++
++	if (internals->lsc_active)
++		rte_eal_alarm_set(ETH_PCAP_LSC_POLL_INTERVAL_US, eth_pcap_lsc_alarm, dev);
++}
++
+ static int
+ set_iface_direction(const char *iface, pcap_t *pcap,
+ 		pcap_direction_t direction)
+@@ -867,6 +896,13 @@ eth_dev_start(struct rte_eth_dev *dev)
  
-+	if (!internals->infinite_rx)
-+		dev_info->rx_offload_capa |= RTE_ETH_RX_OFFLOAD_SCATTER;
+ 	dev->data->dev_link.link_status = RTE_ETH_LINK_UP;
+ 
++	/* Start LSC polling for iface mode if application requested it */
++	if (internals->single_iface && dev->data->dev_conf.intr_conf.lsc) {
++		internals->lsc_active = true;
++		rte_eal_alarm_set(ETH_PCAP_LSC_POLL_INTERVAL_US,
++				  eth_pcap_lsc_alarm, dev);
++	}
 +
  	return 0;
  }
  
-@@ -1117,11 +1128,37 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- {
- 	struct pmd_internals *internals = dev->data->dev_private;
- 	struct pcap_rx_queue *pcap_q = &internals->rx_queue[rx_queue_id];
-+	uint16_t buf_size;
-+	bool rx_scatter;
-+
-+	buf_size = rte_pktmbuf_data_room_size(mb_pool) - RTE_PKTMBUF_HEADROOM;
-+	rx_scatter = !!(dev->data->dev_conf.rxmode.offloads &
-+			RTE_ETH_RX_OFFLOAD_SCATTER);
-+
-+	/*
-+	 * If Rx scatter is not enabled, verify that the mbuf data room
-+	 * can hold the largest received packet in a single segment.
-+	 * Use the MTU-derived frame size as the expected maximum, not
-+	 * snapshot_len which is a capture truncation limit rather than
-+	 * an expected packet size.
-+	 */
-+	if (!rx_scatter) {
-+		uint32_t max_rx_pktlen = dev->data->mtu + RTE_ETHER_HDR_LEN;
-+
-+		if (max_rx_pktlen > buf_size) {
-+			PMD_LOG(ERR,
-+				"Rx scatter is disabled and RxQ mbuf pool object size is too small "
-+				"(buf_size=%u, max_rx_pkt_len=%u)",
-+				buf_size, max_rx_pktlen);
-+			return -EINVAL;
-+		}
-+	}
+@@ -884,6 +920,12 @@ eth_dev_stop(struct rte_eth_dev *dev)
  
- 	pcap_q->mb_pool = mb_pool;
- 	pcap_q->port_id = dev->data->port_id;
- 	pcap_q->queue_id = rx_queue_id;
- 	pcap_q->vlan_strip = internals->vlan_strip;
-+	pcap_q->rx_scatter = rx_scatter;
- 	dev->data->rx_queues[rx_queue_id] = pcap_q;
- 	pcap_q->timestamp_offloading = internals->timestamp_offloading;
- 
-@@ -1134,6 +1171,12 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
- 		pcap_t **pcap;
- 		bool save_vlan_strip;
- 
-+		if (rx_scatter) {
-+			PMD_LOG(ERR,
-+				"Rx scatter is not supported with infinite_rx mode");
-+			return -EINVAL;
+ 	/* Special iface case. Single pcap is open and shared between tx/rx. */
+ 	if (internals->single_iface) {
++		/* Cancel LSC polling before closing pcap handles */
++		if (internals->lsc_active) {
++			internals->lsc_active = false;
++			rte_eal_alarm_cancel(eth_pcap_lsc_alarm, dev);
 +		}
 +
- 		pp = rte_eth_devices[pcap_q->port_id].process_private;
- 		pcap = &pp->rx_pcap[pcap_q->queue_id];
+ 		queue_missed_stat_on_stop_update(dev, 0);
+ 		if (pp->tx_pcap[0] != NULL) {
+ 			pcap_close(pp->tx_pcap[0]);
+@@ -1691,6 +1733,9 @@ eth_from_pcaps(struct rte_vdev_device *vdev,
+ 		internals->if_index =
+ 			osdep_iface_index_get(rx_queues->queue[0].name);
  
++		/* Enable LSC interrupt support for iface mode */
++		eth_dev->data->dev_flags |= RTE_ETH_DEV_INTR_LSC;
++
+ 		/* phy_mac arg is applied only if "iface" devarg is provided */
+ 		if (rx_queues->phy_mac) {
+ 			if (eth_pcap_update_mac(rx_queues->queue[0].name,
 -- 
 2.53.0
 
