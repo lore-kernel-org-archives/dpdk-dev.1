@@ -2,69 +2,92 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F4EF45A1C
-	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Apr 2026 05:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E13ED7B96
+	for <dpdk-dev@archiver.kernel.org>; Tue, 14 Apr 2026 10:26:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ADFDF4042F;
-	Tue, 14 Apr 2026 07:26:09 +0200 (CEST)
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com
- [209.85.210.54]) by mails.dpdk.org (Postfix) with ESMTP id 9DD1D402EA
- for <dev@dpdk.org>; Tue, 14 Apr 2026 07:26:08 +0200 (CEST)
-Received: by mail-ot1-f54.google.com with SMTP id
- 46e09a7af769-7dbcb467f2bso4708287a34.3
- for <dev@dpdk.org>; Mon, 13 Apr 2026 22:26:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776144367;
- x=1776749167; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=MduX+wyd6uK/clSrw2PeT51nOgylx4nPcuyLPj8+eYw=;
- b=svfiCpcRiSG70aP9n7sYpB/VbDWBKqxlInfnNPPv+Ez3OtN2Pg4LqbTwCCnTxy+aKa
- ueRjDMiDQnWs4rT3JesAaLZO7aRSmDd84ihcAaXC61+UehM+zp0a3Vt1vLAZwa9adBWA
- gGD5SlKx724VBlalbtvFkVYcG5654rWpOZ22/dGV8ib43bZJy6mdFUYiE2296OVSh2ea
- hEYzI+FuJ9sXnRW0T5LItoGpRQB8lv6gQHLpkpQtI2qM0ONJKqdSllb75KXW/cSFwo9F
- 6UH8vUDfei9NfRXBAi8zY2Oj3c1sb3pWSGoEFkgukMrreS/vROtol2MXejt51lzIuDf/
- uMlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776144367; x=1776749167;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=MduX+wyd6uK/clSrw2PeT51nOgylx4nPcuyLPj8+eYw=;
- b=BSNCDEQzE0TenGUJIfHJNwG8p6Eof2Mt2EBsL+zo/UFsObGdtQrx5HGG5aYiUIYGuM
- asUVppQB3PavpxsWXe2zC4uBtUXCe4LJB5qdLN7+DmgYj7RAiR+Mx+nfCXBBaMRn0I/r
- myIEJKG5K3LiSOx6kopMZE955NsuQCNhuZ5y1NOLHX8hDDfmdhbi1de5XSImB7FrG0nn
- iyV9M8EP7uGMjlFCl2TOSL1TOpJdkymMqOyDctGpFGbKxaqNgbbUIS+imiZ/pwkrKt9A
- 703IUrIUzHT4LC2c2QRfZT7CviUbZaHh5+th+sbfzayJ7+61pR9xk4yUpICEmQ2ng/ac
- 9qrw==
-X-Gm-Message-State: AOJu0YzNGL8R266PratIj22MFuM4Ne1GDc1ITd2HDGZ3Oo2dJGXFpnHJ
- NCDPRDNMhxuwefbls84H5y1+ppPO6hStvagxjAuQtUVsmXGe83vk3gPpu9NEYNQvOKgRyhswi6l
- 1p0VP
-X-Gm-Gg: AeBDievipCj4h7xaN5G43wKpMpqTG67kRKA9Oncx+LhKJw0uT/0+QO3HyPmHIdGPPA4
- OAckIzx6dRdVwbMqcU4NZo+JnUPiolUBSx0ZFHPtkMxIkrMbE3X1OcDh2B8x8aFdl1Bkeyi90+7
- ZJvii+WmrgmN6094r0HY7VM57OTOzYae/9zLgBcGkqbIQep3nCb431fUOBDg1pHbCXGNj9z8H3p
- jOGTk5xvyDQrdAdAt7JCr8jjf0jRJnkfj7lJGg/msn0Dtx7V38wyDKIvqJbkjlhRPwABhXBWrZL
- dG7gpjF/2bvFVSK5JD9+2ZHVbpP22LthYNXew2nn3kxo7OX4uWNkI+vSWhnamrj5y9iJ5JIdTqF
- Jb+ADX1KFzdgHd1J/+hSzduBt22PK9pYG9ttQZzia2igEEfbiHZIzZtOKobTnh/h/XgIoTYeWww
- dwPzC06bTQBcZwRgLjvVVCPeeL5QBIrxE6abuiLA2O/yA=
-X-Received: by 2002:a05:6830:81fa:b0:7d7:f5c6:9fa3 with SMTP id
- 46e09a7af769-7dc27e2e2admr11397816a34.8.1776144367532; 
- Mon, 13 Apr 2026 22:26:07 -0700 (PDT)
-Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 46e09a7af769-7dc3959099fsm7386762a34.9.2026.04.13.22.26.06
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 13 Apr 2026 22:26:07 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Bruce Richardson <bruce.richardson@intel.com>,
- Ciara Loftus <ciara.loftus@intel.com>
-Subject: [PATCH] net/i40e: reduce debug messages
-Date: Mon, 13 Apr 2026 22:26:02 -0700
-Message-ID: <20260414052603.201114-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id C7CFF402E1;
+	Tue, 14 Apr 2026 12:26:26 +0200 (CEST)
+Received: from fout-b1-smtp.messagingengine.com
+ (fout-b1-smtp.messagingengine.com [202.12.124.144])
+ by mails.dpdk.org (Postfix) with ESMTP id 21726402DE
+ for <dev@dpdk.org>; Tue, 14 Apr 2026 12:26:25 +0200 (CEST)
+Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
+ by mailfout.stl.internal (Postfix) with ESMTP id AEFD41D0003A;
+ Tue, 14 Apr 2026 06:26:23 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-02.internal (MEProxy); Tue, 14 Apr 2026 06:26:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1776162383;
+ x=1776248783; bh=qt2gca7K4sUukk7HXjuh64lS7OE5hxUv6eKPbNUb4Yg=; b=
+ sUc/j1DjxI7gycxtJXGSq4v3cG2mbq+UTE8XtWUWSfR1/rE7G8kZvQ4UxqHLjlvt
+ kusvf1D/4zGKxOz1WEW/5oNQmsvdOhrNiWUICFgAKvQjOrnCpEqn+BzPh8VuXjYn
+ sp2bKGTg7nCL3+c8mvDO/HS6FjY281Oznnu8eGBVzQsqD0xR6Lw7Ng794idmZ/S/
+ cauJ5HdJIF/SgytmG1rhxH1rGCoXWgCNDA/AnuCEMxBUO7FZH4iO1yhlKmJ01+bi
+ Jf5+KWYy1CSILwuff7C1+58iXwLn0ODSJhhwpL2IRWyDLq4iMegiScRiRegbsZ9+
+ NR9d3XRdSZZ2ltHDxJPt7w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1776162383; x=
+ 1776248783; bh=qt2gca7K4sUukk7HXjuh64lS7OE5hxUv6eKPbNUb4Yg=; b=E
+ Kwvh8wjzHf5bIvqnb3zV/tu2EUNTpBO2C+CWKtwxtACvWfnvwZf6wgnLZX3eh9gF
+ FRot8roYOhkfqdxQ57bRbmOYJJ6mlYCXZz2ssAmqts51xm0ha9u33D6MY01HGjFg
+ O2k6cMevLPVP23Q4gIOflrtqLCmSA895Y4122BD9TbAVjYJsQ3CKw5bYYQFTWNMd
+ gMykNoa8cs2s+88VumLRqvjiwjd3Kc5GUghQ0GW6ZAdjsnh3XWJBfmKAbhHBvuQi
+ CSb2BPNzxhg0hbgv1cOCUL9ioPffRhbtkEqNai9v/1i5D2HsUqgKOpNkAwc9bWRP
+ PjxebFrL5qvmNRarq67Yw==
+X-ME-Sender: <xms:ThbeaWP6aPVgi23_8noHIioi2FPst4fm7BwpvZYHALTsaioQ6PEXDg>
+ <xme:Thbeaajtni9F7Tx1hbEpeKTiCTjJNSXUCoXYUwGR_KgC6LKuTnGaLp9kTwIMTNDH6
+ vPaYJtMyPw62jDFzgi03Isg-wxTcko2510CTNASy2vosoDGD9Y6JRI>
+X-ME-Received: <xmr:ThbeaW2oYeuddCFC7VX_nJgVZirHJUSiaXsv2Wi3txY3OF_KIC83OvTEv6itBPYvV2-HbStKa4iFY59ltoblbFPOvw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdegtdeltdcutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepudejpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhmrghrtghhrghnugesrh
+ gvughhrghtrdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthht
+ ohepsghruhgtvgdrrhhitghhrghrughsohhnsehinhhtvghlrdgtohhmpdhrtghpthhtoh
+ ephhgvmhgrnhhtrdgrghhrrgifrghlsehngihprdgtohhmpdhrtghpthhtohepmhgrgihi
+ mhgvsehlvghrohihshdrfhhrpdhrtghpthhtohepkhhtrhgrhihnohhrsehrvgguhhgrth
+ drtghomhdprhgtphhtthhopehprghrrghvsehnvhhiughirgdrtghomhdprhgtphhtthho
+ peiguhgvmhhinhhglhesnhhvihguihgrrdgtohhmpdhrtghpthhtohepnhhiphhunhdrgh
+ huphhtrgesrghmugdrtghomh
+X-ME-Proxy: <xmx:ThbeaXni6J-ImDJRT0fF1g52EiNCkm3F_hhRCnu5FUNR3zR9e-OKHA>
+ <xmx:ThbeaVs_KX1z9L-QM-HevtmqTsuN8by-eARakrifJYgVwhTYWXRMaw>
+ <xmx:ThbeaX0HxnzdefzkrLDPKXV3NYKXrc7UDzua6N1wz3eeKTZKNIeHGg>
+ <xmx:ThbeaRS8RijAwkDp2cCPdmljztLNHc1Eo_PGlxohLVFuhXUo-8JZ3w>
+ <xmx:TxbeaQcEWCt_Z-zjc_s_HDd15WosF9fdWR_MK7s2qePXjr7-1tIl986I>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 14 Apr 2026 06:26:20 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Maxime Leroy <maxime@leroys.fr>,
+ Kevin Traynor <ktraynor@redhat.com>, Parav Pandit <parav@nvidia.com>,
+ Xueming Li <xuemingl@nvidia.com>, Nipun Gupta <nipun.gupta@amd.com>,
+ Nikhil Agarwal <nikhil.agarwal@amd.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>, Chenbo Xia <chenbox@nvidia.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>,
+ Chengwen Feng <fengchengwen@huawei.com>, Long Li <longli@microsoft.com>,
+ Wei Hu <weh@microsoft.com>, Kevin Laatz <kevin.laatz@intel.com>
+Subject: Re: [PATCH v3 5/7] bus: factorize devargs lookup
+Date: Tue, 14 Apr 2026 12:26:18 +0200
+Message-ID: <6806263.GXAFRqVoOG@thomas>
+In-Reply-To: <2267120.Mh6RI2rZIc@thomas>
+References: <20260323105306.1531689-1-david.marchand@redhat.com>
+ <2054977.usQuhbGJ8B@thomas> <2267120.Mh6RI2rZIc@thomas>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,41 +101,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The driver logs normal things like choice of AVX at NOTICE level.
-This shows up as unnecessary noise to regular users.
+13/04/2026 21:48, Thomas Monjalon:
+> 13/04/2026 21:18, Thomas Monjalon:
+> In the function rte_bus_find_devargs(), there is this comment:
+> 
+> +               /* The name in the devargs is usually prefixed with : */
+> +               if (strncmp(devargs_name, bus_name, strlen(bus_name)) == 0)
+> +                       devargs_name += strlen(bus_name) + 1;
+> 
+> I think you mean "prefixed with <bus>:".
 
-Bugzilla ID: 1936
-Fixes: 3f24891594c1 ("net/i40e: use common Rx path selection infrastructure")
-Fixes: 8d57c1788806 ("net/i40e: use common Tx path selection infrastructure")
-Cc: stable@dpdk.org
+Actually this is what you wrote but my mail software hides it because of a bug.
+You can ignore this comment.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- drivers/net/intel/i40e/i40e_rxtx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
-index c5ac75e0f0..d00548ac89 100644
---- a/drivers/net/intel/i40e/i40e_rxtx.c
-+++ b/drivers/net/intel/i40e/i40e_rxtx.c
-@@ -3042,7 +3042,7 @@ i40e_set_rx_function(struct rte_eth_dev *dev)
- 
- out:
- 	dev->rx_pkt_burst = i40e_rx_path_infos[ad->rx_func_type].pkt_burst;
--	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
-+	PMD_DRV_LOG(DEBUG, "Using %s (port %d).",
- 			i40e_rx_path_infos[ad->rx_func_type].info, dev->data->port_id);
- }
- 
-@@ -3124,7 +3124,7 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
- 					 i40e_tx_path_infos[ad->tx_func_type].pkt_burst;
- 	dev->tx_pkt_prepare = i40e_tx_path_infos[ad->tx_func_type].pkt_prep;
- 
--	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
-+	PMD_DRV_LOG(DEBUG, "Using %s (port %d).",
- 		i40e_tx_path_infos[ad->tx_func_type].info, dev->data->port_id);
- 
- 	if (ad->tx_func_type == I40E_TX_SCALAR_SIMPLE ||
--- 
-2.53.0
 
