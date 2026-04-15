@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9EEF43830
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 14:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316C0F43830
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 14:48:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5A8C40651;
-	Wed, 15 Apr 2026 16:48:10 +0200 (CEST)
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com
- [209.85.167.181])
- by mails.dpdk.org (Postfix) with ESMTP id C659340611
- for <dev@dpdk.org>; Wed, 15 Apr 2026 16:48:09 +0200 (CEST)
-Received: by mail-oi1-f181.google.com with SMTP id
- 5614622812f47-464ba2bb3aeso3956678b6e.1
- for <dev@dpdk.org>; Wed, 15 Apr 2026 07:48:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C2A5A4065A;
+	Wed, 15 Apr 2026 16:48:14 +0200 (CEST)
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com
+ [209.85.167.175])
+ by mails.dpdk.org (Postfix) with ESMTP id 485BF40658
+ for <dev@dpdk.org>; Wed, 15 Apr 2026 16:48:11 +0200 (CEST)
+Received: by mail-oi1-f175.google.com with SMTP id
+ 5614622812f47-47018d34159so4995251b6e.2
+ for <dev@dpdk.org>; Wed, 15 Apr 2026 07:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776264489;
- x=1776869289; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776264490;
+ x=1776869290; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1Vbp4u9gM9TWygNLGhiTUb6nULz7qpRw1eo/ENs94tw=;
- b=tpRlE7N4J1Mq2SYZnxnOU7gPXmxWAtEmxlpMoSOYeC4abrmkUWUuNZCBwBCGZmqdXb
- SEg4I75zO2/186ROvQQzKh6J0Nw5uclQFu2v+XH7Mw9AYXsyoPeXWOGD/RIRJMPi+k01
- zzI4k9z8YkrZoC+fSXP/vPF2gfcFFiluFfgME9gf6DBWhKjEZ3z2gtPYvN9Pr/SH2Now
- YOGnug01WXr7T1QUF26/B6whQD5LOt7j382nN7pQNw4mCjgKkRvpSEBSdVdCTUsQXEVN
- DKJElyAaaa1IwH9tV24ufkxRmrSpMyu/VaGKfIugvwKVhS/xDSZzrOPogD/kLN0TXCbb
- W5TQ==
+ bh=W+g3M8JUHPzbXrTMsGrSCsacJ+kXkE+jTUGXNaJTKQ4=;
+ b=bW4Tw44rLNK7MGcw6xXwOfCcKCeW678fQNw2+wbgyoHdauJL5w6NGYtJhJWVI2sJ2b
+ BC/NjqMr7DBn7cUcK0G02PBG1c8N7+5hQ3sQa10kmN1A0NJ76gDztOEeNX/nKI89N/pl
+ Dx+F8VfSNMpAppo0yZRqNkZ/0I93y+3BZ8pOWHnPB05luqG7ap7O0qJHXtiBZE/Gn8fL
+ DFNLi6ZGKiIdsyt0TPPdrfraN6qBccztYZsKRVv9+9s42SyhJIBhE0x74X6gl3rAsMSW
+ j6dB7zIWDKsuT0G/QUqvuEofZHstNT8onqd10XW5WnhkPcokkJU71ofSOsTDxEihn2sU
+ icBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776264489; x=1776869289;
+ d=1e100.net; s=20251104; t=1776264490; x=1776869290;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=1Vbp4u9gM9TWygNLGhiTUb6nULz7qpRw1eo/ENs94tw=;
- b=XBqaMqRT5TTNmGQeXygfJJm1Hi1StZes8F1zT9GoDb/z/zN94PKxvQNELf/FFWjauX
- 9onRBfs2U219WIUMZETcfQjwdEOc1uouBACAt2HdW01SRLc35np+9F5RdEhWmAHcYa5+
- Ip/Aobhg4Nw7aff4fPMd4teDjg7bwNUFYYrciFtpvwd+ZG16rWNhSIpxwRASBXRVmuGg
- pG/urL5J7e4Q4HpT5QazK+e1GPS86HtTD1tPTBdocOBDULXlTdNEyrb+nurH6rI6obUg
- LksC+h+371P6RBlRPjsHzTV/wN6yWV8zlYuRddpGCJyHSNA86HCNMjvIj7SvzDLta4ei
- k7IA==
-X-Gm-Message-State: AOJu0Yy1aFtUDO4IeDQU8uUlkuoyxzKl7JhwMjTHhbVFh3ul9++IbO/M
- pga3IOzODxo/O/My5O6MsUxzRehQ68Lo05Y/BJuZ8P2O+sGRiO6bFiQep0goX4xOvi1e373cjTA
- Y3oDZ
-X-Gm-Gg: AeBDieuQ5WKPqYohCNRII2G+nV7KBhTMedf4aT+zTAdzV0T5Uvmu3sWFfhyFbokBEMj
- tyR3vW5IToJMfpe4bBdcKJXbbrWIb/NDGaCMOdkKg5NXlNaO+6OyKje/0LPnGnLZyyH6mJj9MJ6
- la3FFekGnk9POUYjHsqw2tvGVv7p2WiKv0vPXDvODz7+aYV4KJiGL31/tcMmrAZRuCvNELsAaFn
- xZHD//eX4izsr7Jy5k60bXJ4qbF7tjF6z9lr3ZsyZbuCnhJs/TGa1wRx+jdM/dnN6onJL6uAZSE
- h/bi/wQseKOmcFrbHPlwj58HD+5eg++sPlyy+al16Ik8buQQxJ8IEYhvGbRWaGxK2xe0j0ErWqu
- KViTcAKGXq2860OBaVPpDmd/SVgylVJOOoFKNmMBxn+CsaUfMuTdfIhvhECJsYqt7vnfPfnHcvd
- +RZJWr0G+ST0f1Em4r0z6V6JblbFEp3t8CvQs+5D5lsqE=
-X-Received: by 2002:a05:6808:181f:b0:467:153a:2d9c with SMTP id
- 5614622812f47-4772b07a821mr11322142b6e.15.1776264488954; 
- Wed, 15 Apr 2026 07:48:08 -0700 (PDT)
+ bh=W+g3M8JUHPzbXrTMsGrSCsacJ+kXkE+jTUGXNaJTKQ4=;
+ b=LnY9l6TAkm7oAQsBYaL1BKlwLHJLK7MOw1Frfr98xqSo0KO8bp2KEyaiyEhtukjoXN
+ vWo73fOLHI1R/MPirYQ7QfEL2udHfoBopF9D6MqZYSB/LPh7aTrxG1iK5Wwe8BQ1T1cr
+ sWHUxrxSKbcvButgEQQdZTYKZVgwqtIdp+gSD5Xksd95iUvSzcs10UIOnbfT8y/qdVGy
+ NV4vBaypdMB38uR1QeKHNn4+CDfeXZTRf4V9DSYZfMOf5YpNZ9NdCGXskNxVr3123YIY
+ 53NZyU2ZBFDgvdB5FlaiIeYeuyNUOAFxFmH1C5AGfj0SnuuWRf//t0muFFdcIkz3zWUY
+ 74qA==
+X-Gm-Message-State: AOJu0YzrWaX4xX4DINkIalnhKEfmg9C3OMVeFWYsHSIiMAjzKVMB8ujB
+ N1LTy2dW7bUSc16WIT/L3k7jIu9vnoycIex6aizrtB/ai0vqtABR6lKG4DvTaA7GlG4hYYk3Tcf
+ uJD/I
+X-Gm-Gg: AeBDietBnq1A6RvK653qdRt3+sCODUXferkIaXAN9n3Q6gaO/mfan0CY0nZizhPAoo8
+ 7/1ZYIHRQmUi5GuJvGdTy1OTIBhthmPhbIQvo29C3dLWA3pjT4y04wcN3kXYbZ+ByrE03IX0i5h
+ PwAej4EcDYDG4THiAasPedn0wjV4L3QSJdylrVoetAemb8pjVR4FZkiUEzOFCvicYRNk0vRKbGY
+ h6Rp+8iiM5kTfcgolbe4/g6yDLXzORDCnzkVCq3moaOiZ6E5WA7TF7eqDUrBHCgqWa7nWhoasII
+ jrWO0VXPw8kXvUMj3LB8H2n7Iul+AfjFzliwZrPMEoviGsPf5Mv0qPxY7mEtuHKbhH8SjvQHTo+
+ Sisa/QoxMs1Rd6zqonGKJrNzhg0Uqzerdt+7SzAwxIH3mWdvVyXqSTNjK15FsOpL4YIu1dHYKOR
+ T2KVU7yprjUd112C5KsfMyObDv6ouQ2FTn5N0hLEfpka4=
+X-Received: by 2002:a05:6808:1993:b0:450:bcc7:18d7 with SMTP id
+ 5614622812f47-4789c847e64mr13147165b6e.2.1776264490431; 
+ Wed, 15 Apr 2026 07:48:10 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5614622812f47-4797a53b1fesm945798b6e.16.2026.04.15.07.48.07
+ 5614622812f47-4797a53b1fesm945798b6e.16.2026.04.15.07.48.09
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 15 Apr 2026 07:48:08 -0700 (PDT)
+ Wed, 15 Apr 2026 07:48:10 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Thomas Monjalon <thomas@monjalon.net>
-Subject: [PATCH v23 01/24] maintainers: update for pcap driver
-Date: Wed, 15 Apr 2026 07:45:50 -0700
-Message-ID: <20260415144717.226161-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ David Marchand <david.marchand@redhat.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
+Subject: [PATCH v23 02/24] net/pcap: fix build on Windows
+Date: Wed, 15 Apr 2026 07:45:51 -0700
+Message-ID: <20260415144717.226161-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260415144717.226161-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -83,27 +85,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Nominate myself to take care of this since already doing pcapng
-and pdump code.
+The log messages in the pcap OS dependent code for Windows
+was never converted during the last release.
+
+It looks like the osdep part of pcap was not being built.
+Building requires have libpcap for Windows built which is not
+part of the CI infrastructure.
+
+Fixes: 2b843cac232e ("drivers: use per line logging in helpers")
+Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+Acked-by: Chengwen Feng <fengchengwen@huawei.com>
+Acked-by: David Marchand <david.marchand@redhat.com>
 ---
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/pcap/pcap_osdep_windows.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0f5539f851..580113a658 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1116,6 +1116,7 @@ F: doc/guides/nics/zxdh.rst
- F: doc/guides/nics/features/zxdh.ini
+diff --git a/drivers/net/pcap/pcap_osdep_windows.c b/drivers/net/pcap/pcap_osdep_windows.c
+index 1d398dc7ed..0965c2f5c9 100644
+--- a/drivers/net/pcap/pcap_osdep_windows.c
++++ b/drivers/net/pcap/pcap_osdep_windows.c
+@@ -53,7 +53,7 @@ osdep_iface_index_get(const char *device_name)
  
- PCAP PMD
-+M: Stephen Hemminger <stephen@networkplumber.org>
- F: drivers/net/pcap/
- F: doc/guides/nics/pcap.rst
- F: doc/guides/nics/features/pcap.ini
+ 	ret = GetAdapterIndex(adapter_name, &index);
+ 	if (ret != NO_ERROR) {
+-		PMD_LOG(ERR, "GetAdapterIndex(%S) = %lu\n", adapter_name, ret);
++		PMD_LOG(ERR, "GetAdapterIndex(%S) = %lu", adapter_name, ret);
+ 		return -1;
+ 	}
+ 
+@@ -75,20 +75,20 @@ osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
+ 
+ 	sys_ret = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, NULL, &size);
+ 	if (sys_ret != ERROR_BUFFER_OVERFLOW) {
+-		PMD_LOG(ERR, "GetAdapterAddresses() = %lu, expected %lu\n",
++		PMD_LOG(ERR, "GetAdapterAddresses() = %lu, expected %lu",
+ 			sys_ret, ERROR_BUFFER_OVERFLOW);
+ 		return -1;
+ 	}
+ 
+ 	info = (IP_ADAPTER_ADDRESSES *)malloc(size);
+ 	if (info == NULL) {
+-		PMD_LOG(ERR, "Cannot allocate adapter address info\n");
++		PMD_LOG(ERR, "Cannot allocate adapter address info");
+ 		return -1;
+ 	}
+ 
+ 	sys_ret = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, info, &size);
+ 	if (sys_ret != ERROR_SUCCESS) {
+-		PMD_LOG(ERR, "GetAdapterAddresses() = %lu\n", sys_ret);
++		PMD_LOG(ERR, "GetAdapterAddresses() = %lu", sys_ret);
+ 		free(info);
+ 		return -1;
+ 	}
 -- 
 2.53.0
 
