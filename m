@@ -2,87 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF3BF43825
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 14:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E719F43830
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 14:48:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AE6DB402F0;
-	Wed, 15 Apr 2026 16:18:16 +0200 (CEST)
-Received: from mail-yx1-f44.google.com (mail-yx1-f44.google.com
- [74.125.224.44]) by mails.dpdk.org (Postfix) with ESMTP id 8EF9E402E1
- for <dev@dpdk.org>; Wed, 15 Apr 2026 16:18:15 +0200 (CEST)
-Received: by mail-yx1-f44.google.com with SMTP id
- 956f58d0204a3-64e87a81639so6301781d50.0
- for <dev@dpdk.org>; Wed, 15 Apr 2026 07:18:15 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776262695; cv=none;
- d=google.com; s=arc-20240605;
- b=PM1ujv8KhDdCpJDqag4YqSzzBlNx0u/uE6QfzKcjEz6SExqK5JQewJM02Sjvx3yeCX
- 562Sc1eO9BnbojPhdNJM0LvorLIY9KX4JHeVZ+FT3U4DZxWEraPZlYDk98Y4zt+ETTgv
- 9jK5JgwlrSGV89MDTx5hzLqN46Gkvi/Ly3yK2Xx2iaYnVxhntSyCl3HjQ9X6ZPl27x8H
- LvB9l1CrU3qjJx/uhHVXfA0z/33iydudXPKaZTcKcuhdXHR5gYRghuUOT0MXt53Oe+X4
- WdU9iuW1VGPQnYcnCREGwBPaL8QaYSiSX7WLCVStSpd4fjjSuxmvi+O+Uel2M8x9izaS
- KbZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=faHnVO2JcjW6KpEsplMzI5dtesdJzTD0TAzqziMjeNA=;
- fh=Va0OzcunXq0lgeATQStsYJiqBEu6HXe1LCGPq65d/Gs=;
- b=DV0Tsa/Kbz/kD7AK6TVCf18mV3lcOUoFdt+iU1UUowwuYHPdcvR/TuL0+CnjrPgaWY
- /FiULd/d21mfWbmoo+Iqw642xnhqw1DxeKxBDH/Z0BYfrVStFHUd75n5tJ6gCsuuGcAE
- IJay43N7rKgvVmjeJ2ruV+LtpvSQSmr6nlvQuEcwTYQ+d9cxg8HFU8PiznGAxU+BJWV2
- U2JoXU0MPd1a2cN7ClZSje5PRbq4A1zZyzdYzWYXm9rkeX2PSqSQ165j+JE8HS4o1zQK
- +o1t5ykolCGphZsSvo92DWWh2ZekaaPWE8PeTHl5l/kT7qiRVsC53QfL7yUKA2QUmeHr
- azhg==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 195304064A;
+	Wed, 15 Apr 2026 16:48:10 +0200 (CEST)
+Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com
+ [209.85.167.178])
+ by mails.dpdk.org (Postfix) with ESMTP id A18FF40611
+ for <dev@dpdk.org>; Wed, 15 Apr 2026 16:48:08 +0200 (CEST)
+Received: by mail-oi1-f178.google.com with SMTP id
+ 5614622812f47-47018d341f8so4506683b6e.3
+ for <dev@dpdk.org>; Wed, 15 Apr 2026 07:48:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1776262695; x=1776867495; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=faHnVO2JcjW6KpEsplMzI5dtesdJzTD0TAzqziMjeNA=;
- b=JyhdzEnCw0JfKvrLppuMnM0DN6PvnwalIUOOjlHxAqDMwl+am+pSFY5x32aSmGT9JB
- Hl2Cv7cKtQRqL7r3O0mffVfR1bYS7FzUqe1E4Vrc6qsuJG/8xRrlRwRLlC3ah6ZPx2XQ
- 4wtD6E+UgJwZkscRh5qLaJsu4xhdjXs+jH1S7m+mhrw6eXrnC8OgXlL8ld3jdYW2A+9c
- lltDhNAlTXQFhjDio4bkySL9aNTaack1IoljpE8Sv3e3BIERpueJhr5MSMRCLIYzO7WU
- tcLHKuYy+yKCrX3e2K6JCNIPr+ukMBkThtRUlMTM7GHIJf/yH7fk0qL9Ap41wcutVCkG
- N4qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776262695; x=1776867495;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776264488;
+ x=1776869288; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=faHnVO2JcjW6KpEsplMzI5dtesdJzTD0TAzqziMjeNA=;
- b=Hxi5mwjLr+JVuTPgK6czlup9T3ScOqLlB7F273B5F2/PuAKe1gW9D8U5LjSJtxgfqk
- sY7jIdfhM81p/7C2uT4wXZTb1+YnrZder0aKT5pVdKuttBCBQCnbLvzQNGNJR/O8QsCB
- IKFvFcF5eVC1kM7o+8I1FFz7KR4rzzL8WZHCw1BWx1VucjLyE29xOhkctO1pkTVr55yl
- XRz49j4HvZYDpIMiIOAW+xqww5pwxh3grkLAJDyQcGVC7kXdc5DufirPr1orJ0jWOEc5
- 9DBKCVEzwo8B1qK9seawndX3BsoMGww4K3uZuVqB0aKxqUwnBMky6752MdKFeV7dTgeg
- oeYA==
-X-Forwarded-Encrypted: i=1;
- AFNElJ8KCrtIi3cgFtMW56dNYoqHPTu1+iuF0nvGiG/Gkur52ropryGVv51P3mHJ9b3ETfT/eGg=@dpdk.org
-X-Gm-Message-State: AOJu0Yz4fUbW1EuvmKFPdoTEKBmHCR+Iia4aaJfDv8jtPOaIPQduchlC
- jv/aoRtHa1BoZ1xa922FPuHY3b7YcUyGlBgFW+6kXcURhmn7xVg/ka27jkAvQBcqQ+tt8QBdtLW
- pKis7NnACaR4lFgmMfTvw+B8EZC2CzGj5Xg==
-X-Gm-Gg: AeBDieuYRDXGYPW4BfjRL6bCq/mGy5JvUVs9rN6HbJntHmHc33DH4QCeNDislfASuxR
- 9QexpCMAByHdCjGkwLtQiN+XWWautiYtWbL5x8tX5bU7K83EukMXXC2uMNiCDlvuM+8/6HYySq1
- QCkhdun4a5fXHBZqNcP4MCT75naUcqmULOOHdVjwhSVKvwTtsdwkWkKQ+i4MSlk5B0yA2wxGgP9
- uymADBlTASuYnp14yfirURyIZ104iZj9BQxTlqlTSQ2oWMKg3I5Qz4basWUrtCVQ/ACupLtAV0I
- RySOJOHJHhK/C4dR42tgNFlo0mhT2ks8wWGde0ubKw==
-X-Received: by 2002:a05:690e:11c9:b0:651:d179:d316 with SMTP id
- 956f58d0204a3-651d179d3d6mr10283033d50.21.1776262694558; Wed, 15 Apr 2026
- 07:18:14 -0700 (PDT)
+ bh=7ppCUyZ5qAp41FJcQuS+FXJjg348TLi5byl+s+q+a08=;
+ b=VZMq9FkjPErlaHcQsZZts+brP0Jpb9JjDfBMX3EGb+adz1RNDknBt2OWKv9bpsE8ni
+ UHfFNWwQRzP/rNTAfsPdySoTFQcjZlwhLB7Ge2bDKYXR2xVy0G6jnu3xkVlmPNl1ti+n
+ V/D1fV17wuSbZyOktNpuSlRitJny88fg27FNzRQfRaQoviM+3I3MlqdM21/LOvYbiynf
+ 8TKMGjWvh6gI+MTZUYtDmunISzn10MoDX+wdpADDYy5ipm3eW8OXH/YAASB3cOxGcCi5
+ l9nDhmgUTTtDV0YlrudJLrnZfjaPquF7OsK5x2AswfkXlyxXp5M88qux7PqjMk0bRYzS
+ U5FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1776264488; x=1776869288;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=7ppCUyZ5qAp41FJcQuS+FXJjg348TLi5byl+s+q+a08=;
+ b=GSiOCIE9H96RH73JO/E7kidnmQrXD1Rb232dPmSUWaY/eWqicHdcz553XxaZEIjn1q
+ 8IIpaQuve38WZhh6nwovUmY5i/9C2PJtKP/Ki+dYG4qmmUZrPmK/0p0bAGMRXDYnxI3S
+ RiyvpIaQd1ICOKkheDClUE2I0Ehp9XsnTMJlkSVT2dzCeKpJeDZt/M2UsYrQwRkyZabi
+ r69Wpq+IWINJJZShrtHT5FtqBNGBk4prCxt0n1Pr1+XGXKOOFBSJYVrsiBghPEWr5m4a
+ Lt72TcN8Co+ArEBlBVYyzjJXcgiC+IiwBXmGwwP84TWaqA7MwGW5Nl/nvk/oLMGc4FBc
+ HhXg==
+X-Gm-Message-State: AOJu0Ywa85o7Nyr0g/BDZlTzr8egX9/mUhimn/e+wu3ypW8Fd/1v3cqu
+ qgsVQzVGwYQk7UtZ1lmwMV79B/fgg0/+LjkM7vTH2TZfQBUCNsH/5ym3R/0+/6ldvZqUqteb7kl
+ 1kuWG
+X-Gm-Gg: AeBDietex5ELhY5enyyZ9oGD5ZC5jn33dV0ScUdqAGhnXe5w/8DVt2Ax0954uNN9HR8
+ I+JqmGZOZkyMUEH9hDblE7Wx1Mpgn7fWY8/nYOy1d5/h1DTjvkMF3nNNAdPUnOmVh7trgWVKR8X
+ CfzSdVK6tB95Gts0bhpYoiFE+ReHY4bfvm3SiVlzI+J95xPpoIcfkadeJyp2zunYKrOrv92oH0l
+ WRrcyEAo2Km4jCH+2fv5IxlOmMAW6vTXtCsaJf9ZGtrmzUeXzX1/WTpukzMNKG15BlDqOxMlpi0
+ jCNxsKOQSvV+XzF0k/AqyYF2xISWXMASaL3YPPZ2EzxqRkhtiUDAgM1p3BwukuOJ0JICCTXKAFR
+ u0H/+wObZDAPPRnJS57TZAs+NM8AC6TyPDkyxHb8eSAEl8v64CjF/ZZaRHE1ZmdDeWBjpeiR8rq
+ mkN59v2hihXC/zP3jkpjqJ3+TdPwHiMobg8ofReNfEgZg=
+X-Received: by 2002:a05:6808:518e:b0:467:1f38:bc19 with SMTP id
+ 5614622812f47-4789d94ddadmr10231481b6e.9.1776264487722; 
+ Wed, 15 Apr 2026 07:48:07 -0700 (PDT)
+Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
+ 5614622812f47-4797a53b1fesm945798b6e.16.2026.04.15.07.48.06
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 15 Apr 2026 07:48:07 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v23 00/24] net/pcap: fixes, test and enhancements
+Date: Wed, 15 Apr 2026 07:45:49 -0700
+Message-ID: <20260415144717.226161-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260106182823.192350-1-stephen@networkplumber.org>
+References: <20260106182823.192350-1-stephen@networkplumber.org>
 MIME-Version: 1.0
-References: <20260404095902.856502-1-luca.boccassi@gmail.com>
- <DS4PPF00BBED10CD8DA7B76160DFF4558979F222@DS4PPF00BBED10C.namprd11.prod.outlook.com>
-In-Reply-To: <DS4PPF00BBED10CD8DA7B76160DFF4558979F222@DS4PPF00BBED10C.namprd11.prod.outlook.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Wed, 15 Apr 2026 15:18:03 +0100
-X-Gm-Features: AQROBzDhwisaqQrvGnpaqtu_FBhVKbFSmo3Euusd4E8vVMs8dJYf2l1bBKmi2qg
-Message-ID: <CAMw=ZnRjy5aTX2jD0hYpDdebJorrUVzLsXRy4s1ikG77arpPyA@mail.gmail.com>
-Subject: Re: 24.11.5 patches review and test
-To: "Xu, HailinX" <hailinx.xu@intel.com>
-Cc: "stable@dpdk.org" <stable@dpdk.org>, "dev@dpdk.org" <dev@dpdk.org>, 
- "Mcnamara, John" <john.mcnamara@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,71 +80,96 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 15 Apr 2026 at 02:24, Xu, HailinX <hailinx.xu@intel.com> wrote:
->
-> > -----Original Message-----
-> > From: luca.boccassi@gmail.com <luca.boccassi@gmail.com>
-> > Sent: Saturday, April 4, 2026 5:59 PM
-> > To: stable@dpdk.org
-> > Cc: dev@dpdk.org; Abhishek Marathe <Abhishek.Marathe@microsoft.com>;
-> > Ali Alnubani <alialnu@nvidia.com>; David Christensen
-> > <drc@linux.vnet.ibm.com>; Hemant Agrawal <hemant.agrawal@nxp.com>;
-> > Ian Stokes <ian.stokes@intel.com>; Jerin Jacob <jerinj@marvell.com>;
-> > Mcnamara, John <john.mcnamara@intel.com>; Ju-Hyoung Lee
-> > <juhlee@microsoft.com>; Kevin Traynor <ktraynor@redhat.com>; Luca
-> > Boccassi <bluca@debian.org>; Pei Zhang <pezhang@redhat.com>; Raslan
-> > Darawsheh <rasland@nvidia.com>; Thomas Monjalon
-> > <thomas@monjalon.net>; Yanghang Liu <yanghliu@redhat.com>
-> > Subject: 24.11.5 patches review and test
-> >
-> > Hi all,
-> >
-> > Here is a list of patches targeted for stable release 24.11.5.
-> >
-> > The planned date for the final release is April 16th.
-> >
-> > Please help with testing and validation of your use cases and report any
-> > issues/results with reply-all to this mail. For the final release the fixes and
-> > reported validations will be added to the release notes.
-> >
-> > A release candidate tarball can be found at:
-> >
-> >     https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.5-rc1
-> >
-> > These patches are located at branch 24.11 of dpdk-stable repo:
-> >     https://dpdk.org/browse/dpdk-stable/
-> >
-> > Thanks.
-> >
-> > Luca Boccassi
-> >
-> > ---
-> Update the test status for Intel part. dpdk24.11.5-rc1 all validation test done. found two new issues.
->
-> * Build & CFLAG compile: cover the build test with latest GCC/Clang version on the following OS(all passed)
->   - Ubuntu25.04/Ubuntu24.04.3
->   - RHEL9.6/RHEL10
->   - Fedora42
->   - FreeBSD14.3
->   - SUSE15.6
->   - OpenAnolis8.10
->   - OpenEuler24.04-SP2
->   - AzureLinux3.0
->
-> * Function tests: All test done and passed
->   - i40E-(XXV710, X722) PF/VF: test scenarios including basic/RTE_FLOW/TSO/Jumboframe/checksum offload/mac_filter/VLAN/VXLAN/RSS, etc.
->   - IXGBE-(E610) PF/VF: test scenarios including basic/RTE_FLOW/TSO/Jumboframe/checksum offload/mac_filter/VLAN/VXLAN/RSS, etc.
->   - ICE-(E810, E2100) PF/VF: test scenarios including basic/Switch/Package Management/Flow Director/Advanced Tx/Advanced RSS/ACL/DCF/Flexible Descriptor, etc.
->   - IPsec: test scenarios including ipsec/ipsec-gw/ipsec library basic test - QAT&SW/FIB library, etc.
->   - Virtio: both function and performance test are covered. Such as PVP/Virtio_loopback/virtio-user loopback/virtio-net VM2VM perf testing/VMAWARE ESXI 8.0, etc.
->   - Cryptodev: test scenarios including Cryptodev API testing/CompressDev ISA-L/QAT/ZLIB PMD Testing/FIPS, etc.
->   - DLB: test scenarios including DLB2.0 and DLB2.5
->   - Other: test scenarios including AF_XDP, Power, CBDMA, DSA
->
-> * Performance test: All test done and passed
->   - Thoughput Performance
->   - Cryptodev Latency
->   - PF/VF NIC single core
->   - XXV710/E810 NIC Performance
+This series contains improvements to the PCAP PMD including new
+features, bug fixes, code cleanup, and a comprehensive test suite.
 
-That's great, thank you
+New features:
+  - VLAN tag insertion on Tx (via tx_prepare) and stripping on Rx
+  - Runtime VLAN offload configuration via vlan_offload_set callback
+  - Nanosecond precision timestamps (when libpcap supports it)
+  - Link state reporting in interface mode
+  - Link status change (LSC) interrupt support in interface mode
+  - EOF notification via link status change for rx_pcap mode
+  - Advertise RTE_ETH_TX_OFFLOAD_MULTI_SEGS capability
+  - Configurable snapshot length via snaplen devarg
+  - Rx scatter offload support with mbuf pool validation
+
+Bug fixes:
+  - Fix build on Windows from RTE_LOG_LINE changes.
+  - Fix multi-segment transmit to dynamically allocate instead of
+    silently truncating packets larger than 9K stack buffer
+  - Fix Tx burst error handling: distinguish malformed mbufs (counted
+    as errors) from pcap_sendpacket backpressure (break and retry)
+  - Reject non-Ethernet interfaces to prevent malformed packets
+    and kernel warnings on FreeBSD/macOS loopback
+  - Fix infinite_rx ring fill applying VLAN strip and timestamp
+    offloads to template packets, preventing those offloads from
+    working correctly during packet delivery
+  - Preserve VLAN tags in dpdk-pdump captures by converting
+    stripped VLAN metadata to Tx insert requests and calling
+    rte_eth_tx_prepare() on the pcap vdev
+
+Code cleanup:
+  - Convert internal flags from int to bool
+  - Remove unnecessary casts of void* from rte_zmalloc
+  - Replace rte_malloc/rte_memcpy with libc equivalents in osdep code
+  - Include headers explicitly rather than relying on indirect includes
+  - Reduce scope of file-level variables
+
+Testing:
+  - Add comprehensive unit test suite covering basic file I/O,
+    timestamps, jumbo frames, VLAN strip/insert, multi-queue,
+    scatter receive, snaplen, EOF notification, and link status
+  - Test discovers network interfaces using pcap_findalldevs API
+    for portable interface enumeration across Linux, FreeBSD, macOS,
+    and Windows
+  - Tests use packet_burst_generator for standardized test packet
+    creation
+
+v23 - fix ASAN bugs in test code
+
+Stephen Hemminger (24):
+  maintainers: update for pcap driver
+  net/pcap: fix build on Windows
+  doc: update features for PCAP PMD
+  net/pcap: include used headers
+  net/pcap: remove unnecessary casts
+  net/pcap: avoid using rte_malloc and rte_memcpy
+  net/pcap: advertise Tx multi segment
+  net/pcap: replace stack bounce buffer
+  net/pcap: fix error accounting and backpressure on transmit
+  net/pcap: clean up TX dumper return value and types
+  net/pcap: add datapath debug logging
+  net/pcap: consolidate boolean flag handling
+  net/pcap: support VLAN strip and insert offloads
+  net/pcap: add link status for interface mode
+  net/pcap: support nanosecond timestamp precision
+  net/pcap: reject non-Ethernet interfaces
+  net/pcap: reduce scope of file-level variables
+  net/pcap: clarify maximum received packet
+  eal/windows: add wrapper for access function
+  net/pcap: add snapshot length devarg
+  net/pcap: add Rx scatter offload
+  net/pcap: add link status change support for iface mode
+  net/pcap: add EOF notification via link status change
+  test: add comprehensive test suite for pcap PMD
+
+ MAINTAINERS                            |    1 +
+ app/test/meson.build                   |    2 +
+ app/test/test_pmd_pcap.c               | 3452 ++++++++++++++++++++++++
+ doc/guides/nics/features/pcap.ini      |    9 +
+ doc/guides/nics/pcap.rst               |   47 +
+ doc/guides/rel_notes/release_26_07.rst |   12 +
+ drivers/net/pcap/pcap_ethdev.c         |  859 ++++--
+ drivers/net/pcap/pcap_osdep.h          |   27 +
+ drivers/net/pcap/pcap_osdep_freebsd.c  |   43 +-
+ drivers/net/pcap/pcap_osdep_linux.c    |   33 +-
+ drivers/net/pcap/pcap_osdep_windows.c  |   76 +-
+ lib/eal/windows/include/rte_os_shim.h  |    1 +
+ lib/eal/windows/include/unistd.h       |    7 +
+ 13 files changed, 4354 insertions(+), 215 deletions(-)
+ create mode 100644 app/test/test_pmd_pcap.c
+
+-- 
+2.53.0
+
