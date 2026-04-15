@@ -2,69 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D83EF43828
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 14:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01ADDF43828
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 14:53:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B137540685;
-	Wed, 15 Apr 2026 16:52:34 +0200 (CEST)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id AD1304065B
- for <dev@dpdk.org>; Wed, 15 Apr 2026 16:52:32 +0200 (CEST)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-12732165d1eso17837071c88.1
- for <dev@dpdk.org>; Wed, 15 Apr 2026 07:52:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776264752;
- x=1776869552; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=x72VMPJw/+dMqnJFbPk9VX4gqY8RUqIlfggeTdvFxlM=;
- b=aNutc8oveMIXx60dOLhzDvms8NYCOgv2nHdqR4+HvGxuDjesK+CfX7yDHB6Hum6nf1
- wHy1z8OzzNaxHDdO87pie0QeS+sk3dQ360OFE0UCn2VwMedMTL5IhYJ90CkDjKQsen0b
- hXQ88Udr1bChwqdHaTaRQxLD+AffOENbxgsGrH6AzmGUlY6ZZau1u6EUCdF16T5xF+LN
- CXc22OgxHeNOTf3RC1qekPR7PHHRIM1qi89tdErageZrVd/r0yroxTbT7GljXhXHTnIn
- PjcFxJiniQjlzSyyht0+bsJI019471/shDP+La0DKEYc7B6n/bdkGPwr2UEhF7on2jJh
- aEXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776264752; x=1776869552;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=x72VMPJw/+dMqnJFbPk9VX4gqY8RUqIlfggeTdvFxlM=;
- b=lPuiPACaJ+pCVhrvErKLjdh+B3cXnxFoSAACE6YJZsjW6iu0ylNEoWMjKP1bfAPoQ8
- VKgOC+oefxMkx5Qy4tw5BxG4GUhdmOdezNBUZ7rPkDCNmz9/p4EXjWQS1oK8b1xdlVCP
- 8Y1PHWsA00LBKR4QopbImJVl0x9Snqusv2NCmL1o/qlBn+1xcV8UlVNScNOdCtb6r+nn
- bBKqosIuzWy3Of4LtfRznik7p+AeTcJJyrqvVfRoAFvJHgdkZwTbsgbgEGcGqf9XqJXs
- uH362fjQwoLr7Uywd+ApQEawV3MGYvKHK5PsVtoUQu3vzt9vOkgRyr1+WC8YR+RGtW0f
- RJ4A==
-X-Gm-Message-State: AOJu0YzSS5l5lUQPIYRJVOLk0zY1b6UTEbbulibwtRjQN30c4YHSF7Be
- JYIywRKBqGLVXE3bRajbXZlu32LfYECjj8+Tl9YPi/G/Z99CbFLi7BCnwIIsXU93x3/0ZorXhgq
- CulL+
-X-Gm-Gg: AeBDiet6eIQS1ZEtMnkcpaZh5LHMrdhR3yJLxNbOI6Kd0tlcEhU2Zy8u3/lSlK74KpO
- 3DdbIKZsYDBdIRCizvN65M770lHCzRgGITjpzJemrmnKUlEyvbRVBvtprugAG67J0/T/a4JqlOF
- qZ/VKUUO/PakZ86JV4omlCJ0ZY4wIdAiNbEfO/c4aEJoexxLGcBHUiQeBoNXmsvPXTZseOejurQ
- Dx0sjrpK2Axs0KpLK2FnQvfclMT7hFE4QH7G6H108LtwYO5JKv7csVN4Wam6ektvSCrABNJ26KC
- zyrJQqEtMxVzKFRliEIiR4cHpMkZAOOb547HTSB1hr1ZccdU4m6LjS0UbUtp/0Nwh2wyK8XsW3k
- 7sSC9EzGckI3fD6aWgXmR91vfHc60cdneINVZoIFK0Acrp7sPucaW6BtF881udgZI/7Udkx02wR
- aKLwllxM9aqYNLoY4lgNiwUp9npCkVrgakbvdIfAM9N9+zuUNBMbcVVg==
-X-Received: by 2002:a05:7022:4589:b0:12a:6902:ddce with SMTP id
- a92af1059eb24-12c34e6012fmr12408542c88.10.1776264751402; 
- Wed, 15 Apr 2026 07:52:31 -0700 (PDT)
-Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12c5e6a8778sm2055529c88.9.2026.04.15.07.52.30
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 15 Apr 2026 07:52:30 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v3 2/2] test: add test for af_packet
-Date: Wed, 15 Apr 2026 07:51:40 -0700
-Message-ID: <20260415145226.259277-3-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260415145226.259277-1-stephen@networkplumber.org>
-References: <20260413171836.123467-1-stephen@networkplumber.org>
- <20260415145226.259277-1-stephen@networkplumber.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 505EA4066A;
+	Wed, 15 Apr 2026 16:53:16 +0200 (CEST)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+ by mails.dpdk.org (Postfix) with ESMTP id C20B34066A
+ for <dev@dpdk.org>; Wed, 15 Apr 2026 16:53:14 +0200 (CEST)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+ by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F38A302A;
+ Wed, 15 Apr 2026 07:53:08 -0700 (PDT)
+Received: from cesw-grace-nv-1s-n2-01.lab.cambridge.arm.com
+ (cesw-grace-nv-1s-n2-01.lab.cambridge.arm.com [10.7.10.64])
+ by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CEC5F3F7D8;
+ Wed, 15 Apr 2026 07:53:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=arm.com; s=foss;
+ t=1776264793; bh=9uN8p9Qe89MFSB3kOU88Y5i/55yJnLf4Elho/MCejZs=;
+ h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+ b=TaPEs9L/j6OnPkovW/Va/QHKswo3/CbdRbx40cyuNOhZ6zL04bmDA9+hWuRxIqXcl
+ K/H5SkRSHCK4kowrjiMFpQmddOskaf3ITtCPPAolqe5LYvOptuuUQU8yp1YOLvGXyb
+ zVQmKnB5PY8/26Cj+mVUVaEFSj6JuS6A7uegR7u0=
+From: Jay Wang <jay.wang2@arm.com>
+To: Thomas Monjalon <thomas@monjalon.net>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, nd@arm.com, Jay Wang <jay.wang2@arm.com>,
+ Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v5] net/ice: add NEON-optimised Rx/Tx vector paths
+Date: Wed, 15 Apr 2026 14:52:52 +0000
+Message-ID: <20260415145256.2293455-1-jay.wang2@arm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260409164133.1692748-2-jay.wang2@arm.com>
+References: <20260409164133.1692748-2-jay.wang2@arm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -80,1209 +50,977 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a test for AF_PACKET PMD.
-This test was generated with Claude AI based off of existing
-test_pmd_ring.c with some cleanup afterwards.
+This patch adds the NEON-optimised Rx and Tx paths to the ice driver on
+AArch64.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+The single-core testpmd benchmarking was conducted by Andrew Bailey on
+an Arm Grace system with an Intel E810 100G NIC. The test was run with
+txq/rxq = 1 and 2048 descriptors. The throughput performance uplift is
+shown in the following table.
+
+| buffer sz (B) | prev (MPPS) | optimised (MPPS) | uplift |
+| ------------- | ----------- | ---------------- | ------ |
+| 64            | 77.613      | 110.874          | 42.9%  |
+| 128           | 77.187      | 103.547          | 34.2%  |
+| 256           | 55.183      | 55.240           | 0.1%   |
+| 512           | 28.800      | 29.031           | 0.8%   |
+| 1024          | 14.609      | 14.556           | -0.4%  |
+| 1518          | 9.726       | 9.756            | 0.3%   |
+
+Signed-off-by: Jay Wang <jay.wang2@arm.com>
+Tested-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- app/test/meson.build          |    1 +
- app/test/test_pmd_af_packet.c | 1174 +++++++++++++++++++++++++++++++++
- 2 files changed, 1175 insertions(+)
- create mode 100644 app/test/test_pmd_af_packet.c
+v5:
+- Updated benchmark results on Grace with Intel E810
+- Fixed a few coding style issues
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 7d458f9c07..24f71fb987 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -141,6 +141,7 @@ source_file_deps = {
-     'test_per_lcore.c': [],
-     'test_pflock.c': [],
-     'test_pie.c': ['sched'],
-+    'test_pmd_af_packet.c': ['net_af_packet', 'ethdev', 'bus_vdev'],
-     'test_pmd_perf.c': ['ethdev', 'net'] + packet_burst_generator_deps,
-     'test_pmd_ring.c': ['net_ring', 'ethdev', 'bus_vdev'],
-     'test_pmd_ring_perf.c': ['ethdev', 'net_ring', 'bus_vdev'],
-diff --git a/app/test/test_pmd_af_packet.c b/app/test/test_pmd_af_packet.c
+v4:
+- Resolved the icorrect Rx vector DD bit extraction issue leading to the
+  wrong czt-based counting of the received packets
+
+v3:
+- Fixed the compiling errors when cross build AArch32 on AArch64 by
+  restricting the compilation of ice_rxtx_vec_neon.c to AArch64
+
+v2:
+- Fixed the coding style issues reported by the checkpatch script
+
+ .mailmap                                  |   1 +
+ drivers/net/intel/ice/ice_ethdev.h        |   3 +
+ drivers/net/intel/ice/ice_rxtx.c          |  58 +-
+ drivers/net/intel/ice/ice_rxtx.h          |   6 +
+ drivers/net/intel/ice/ice_rxtx_vec_neon.c | 745 ++++++++++++++++++++++
+ drivers/net/intel/ice/meson.build         |   2 +
+ 6 files changed, 813 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/net/intel/ice/ice_rxtx_vec_neon.c
+
+diff --git a/.mailmap b/.mailmap
+index 0e0d83e1c6..873bc62d0d 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -695,6 +695,7 @@ Javen Xu <javen_xu@realsil.com.cn>
+ Jay Ding <jay.ding@broadcom.com>
+ Jay Jayatheerthan <jay.jayatheerthan@intel.com>
+ Jay Rolette <rolette@infiniteio.com>
++Jay Wang <jay.wang2@arm.com>
+ Jay Zhou <jianjay.zhou@huawei.com>
+ Jayaprakash Shanmugam <jayaprakash.shanmugam@intel.com>
+ Jean Dao <jean.dao@6wind.com>
+diff --git a/drivers/net/intel/ice/ice_ethdev.h b/drivers/net/intel/ice/ice_ethdev.h
+index 4b3718f715..f6fd3bf106 100644
+--- a/drivers/net/intel/ice/ice_ethdev.h
++++ b/drivers/net/intel/ice/ice_ethdev.h
+@@ -204,6 +204,8 @@ enum ice_rx_func_type {
+ 	ICE_RX_AVX512_SCATTERED,
+ 	ICE_RX_AVX512_OFFLOAD,
+ 	ICE_RX_AVX512_SCATTERED_OFFLOAD,
++	ICE_RX_NEON,
++	ICE_RX_NEON_SCATTERED,
+ };
+ 
+ enum ice_tx_func_type {
+@@ -213,6 +215,7 @@ enum ice_tx_func_type {
+ 	ICE_TX_AVX2_OFFLOAD,
+ 	ICE_TX_AVX512,
+ 	ICE_TX_AVX512_OFFLOAD,
++	ICE_TX_NEON,
+ };
+ 
+ struct ice_adapter;
+diff --git a/drivers/net/intel/ice/ice_rxtx.c b/drivers/net/intel/ice/ice_rxtx.c
+index 31b74be9ba..12eac6e41e 100644
+--- a/drivers/net/intel/ice/ice_rxtx.c
++++ b/drivers/net/intel/ice/ice_rxtx.c
+@@ -2515,7 +2515,9 @@ ice_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
+ 	    ad->rx_func_type == ICE_RX_AVX512 ||
+ 	    ad->rx_func_type == ICE_RX_AVX512_SCATTERED ||
+ 	    ad->rx_func_type == ICE_RX_AVX512_OFFLOAD ||
+-	    ad->rx_func_type == ICE_RX_AVX512_SCATTERED_OFFLOAD)
++	    ad->rx_func_type == ICE_RX_AVX512_SCATTERED_OFFLOAD ||
++	    ad->rx_func_type == ICE_RX_NEON ||
++	    ad->rx_func_type == ICE_RX_NEON_SCATTERED)
+ 		return ptypes;
+ 
+ 	return NULL;
+@@ -3356,6 +3358,26 @@ static const struct ci_rx_path_info ice_rx_path_infos[] = {
+ 		}
+ 	},
+ #endif
++#elif defined(RTE_ARCH_ARM64)
++	[ICE_RX_NEON] = {
++		.pkt_burst = ice_recv_pkts_vec,
++		.info = "Vector Neon",
++		.features = {
++			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_128,
++			.bulk_alloc = true
++		}
++	},
++	[ICE_RX_NEON_SCATTERED] = {
++		.pkt_burst = ice_recv_scattered_pkts_vec,
++		.info = "Vector Neon Scattered",
++		.features = {
++			.rx_offloads = ICE_RX_VECTOR_OFFLOAD_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_128,
++			.scattered = true,
++			.bulk_alloc = true
++		}
++	},
+ #endif
+ };
+ 
+@@ -3384,6 +3406,15 @@ ice_set_rx_function(struct rte_eth_dev *dev)
+ 			if (ice_rx_vec_dev_check(dev) == -1)
+ 				rx_simd_width = RTE_VECT_SIMD_DISABLED;
+ 	}
++#elif defined(RTE_ARCH_ARM64)
++	if (ad->ptp_ena || !ad->rx_bulk_alloc_allowed) {
++		rx_simd_width = RTE_VECT_SIMD_DISABLED;
++	} else {
++		rx_simd_width = ice_get_max_simd_bitwidth();
++		if (rx_simd_width >= RTE_VECT_SIMD_128)
++			if (ice_rx_vec_dev_check(dev) == -1)
++				rx_simd_width = RTE_VECT_SIMD_DISABLED;
++	}
+ #endif
+ 
+ 	req_features.simd_width = rx_simd_width;
+@@ -3404,6 +3435,14 @@ ice_set_rx_function(struct rte_eth_dev *dev)
+ 		for (i = 0; i < dev->data->nb_rx_queues; i++)
+ 			if (dev->data->rx_queues[i])
+ 				ice_rxq_vec_setup(dev->data->rx_queues[i]);
++#elif defined(RTE_ARCH_ARM64)
++	int i;
++
++	if (ice_rx_path_infos[ad->rx_func_type].features.simd_width >= RTE_VECT_SIMD_128)
++		/* Vector function selected. Prepare the rxq accordingly. */
++		for (i = 0; i < dev->data->nb_rx_queues; i++)
++			if (dev->data->rx_queues[i])
++				ice_rxq_vec_setup(dev->data->rx_queues[i]);
+ #endif
+ 
+ out:
+@@ -3535,6 +3574,16 @@ static const struct ci_tx_path_info ice_tx_path_infos[] = {
+ 		.pkt_prep = ice_prep_pkts
+ 	},
+ #endif
++#elif defined(RTE_ARCH_ARM64)
++	[ICE_TX_NEON] = {
++		.pkt_burst = ice_xmit_pkts_vec,
++		.info = "Vector Neon",
++		.features = {
++			.tx_offloads = ICE_TX_VECTOR_OFFLOADS,
++			.simd_width = RTE_VECT_SIMD_128
++		},
++		.pkt_prep = rte_eth_tx_pkt_prepare_dummy
++	},
+ #endif
+ };
+ 
+@@ -3718,7 +3767,7 @@ ice_set_tx_function(struct rte_eth_dev *dev)
+ 
+ 	req_features.simple_tx = ad->tx_simple_allowed;
+ 
+-#ifdef RTE_ARCH_X86
++#if defined(RTE_ARCH_X86) || defined(RTE_ARCH_ARM64)
+ 	if (ice_tx_vec_dev_check(dev) != -1)
+ 		req_features.simd_width = ice_get_max_simd_bitwidth();
+ #endif
+@@ -3729,8 +3778,13 @@ ice_set_tx_function(struct rte_eth_dev *dev)
+ 						ICE_TX_DEFAULT);
+ 
+ out:
++#if defined(RTE_ARCH_X86)
+ 	ad->tx_vec_allowed =
+ 		(ice_tx_path_infos[ad->tx_func_type].features.simd_width >= RTE_VECT_SIMD_256);
++#elif defined(RTE_ARCH_ARM64)
++	ad->tx_vec_allowed =
++		(ice_tx_path_infos[ad->tx_func_type].features.simd_width >= RTE_VECT_SIMD_128);
++#endif
+ 
+ 	dev->tx_pkt_burst = mbuf_check ? ice_xmit_pkts_check :
+ 					 ice_tx_path_infos[ad->tx_func_type].pkt_burst;
+diff --git a/drivers/net/intel/ice/ice_rxtx.h b/drivers/net/intel/ice/ice_rxtx.h
+index 77ed41f9fd..999b6b30d6 100644
+--- a/drivers/net/intel/ice/ice_rxtx.h
++++ b/drivers/net/intel/ice/ice_rxtx.h
+@@ -261,6 +261,12 @@ const uint32_t *ice_dev_supported_ptypes_get(struct rte_eth_dev *dev,
+ void ice_select_rxd_to_pkt_fields_handler(struct ci_rx_queue *rxq,
+ 					  uint32_t rxdid);
+ 
++uint16_t ice_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
++				uint16_t nb_pkts);
++uint16_t ice_recv_scattered_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
++				uint16_t nb_pkts);
++uint16_t ice_xmit_pkts_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
++				uint16_t nb_pkts);
+ int ice_rx_vec_dev_check(struct rte_eth_dev *dev);
+ int ice_tx_vec_dev_check(struct rte_eth_dev *dev);
+ int ice_rxq_vec_setup(struct ci_rx_queue *rxq);
+diff --git a/drivers/net/intel/ice/ice_rxtx_vec_neon.c b/drivers/net/intel/ice/ice_rxtx_vec_neon.c
 new file mode 100644
-index 0000000000..9cae573846
+index 0000000000..1d17916852
 --- /dev/null
-+++ b/app/test/test_pmd_af_packet.c
-@@ -0,0 +1,1174 @@
++++ b/drivers/net/intel/ice/ice_rxtx_vec_neon.c
+@@ -0,0 +1,745 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Stephen Hemminger
++ * Copyright(c) 2026 Intel Corporation
++ * Copyright(c) 2026 Arm Limited
 + */
 +
-+#include <errno.h>
-+#include <fcntl.h>
-+#include <inttypes.h>
-+#include <linux/if.h>
-+#include <linux/if_tun.h>
-+#include <linux/sockios.h>
-+#include <pthread.h>
-+#include <stdbool.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/socket.h>
-+#include <time.h>
-+#include <unistd.h>
++#include "ice_rxtx_vec_common.h"
 +
-+#include <rte_bus_vdev.h>
-+#include <rte_config.h>
-+#include <rte_cycles.h>
-+#include <rte_ethdev.h>
-+#include <rte_ether.h>
-+#include <rte_lcore.h>
-+#include <rte_mbuf.h>
-+#include <rte_mempool.h>
-+#include <rte_stdatomic.h>
++#include "../common/rx_vec_arm.h"
 +
-+#include "test.h"
++#include <rte_vect.h>
 +
-+#ifndef RTE_EXEC_ENV_LINUX
-+static int
-+test_pmd_af_packet(void)
++#define ICE_UINT16_BIT	(CHAR_BIT * sizeof(uint16_t))
++
++static __rte_always_inline uint32x4_t
++ice_flex_rxd_to_fdir_flags_vec(const uint32x4_t fdir_id0_3)
 +{
-+	printf("af_packet only supported on Linux, skipping test\n");
-+	return TEST_SKIPPED;
++#define FDID_MIS_MAGIC 0xFFFFFFFFu
++	RTE_BUILD_BUG_ON(RTE_MBUF_F_RX_FDIR != (1u << 2));
++	RTE_BUILD_BUG_ON(RTE_MBUF_F_RX_FDIR_ID != (1u << 13));
++
++	const uint32x4_t pkt_fdir_bit = vdupq_n_u32((uint32_t)(RTE_MBUF_F_RX_FDIR |
++		RTE_MBUF_F_RX_FDIR_ID));
++
++	const uint32x4_t fdir_mis_mask = vdupq_n_u32(FDID_MIS_MAGIC);
++
++	/* desc->flow_id field == 0xFFFFFFFF means fdir mismatch */
++	uint32x4_t fdir_mask = vceqq_u32(fdir_id0_3, fdir_mis_mask);
++
++	/* XOR with 0xFFFFFFFF bit-reverses the mask */
++	fdir_mask = veorq_u32(fdir_mask, fdir_mis_mask);
++	const uint32x4_t fdir_flags = vandq_u32(fdir_mask, pkt_fdir_bit);
++
++	return fdir_flags;
 +}
 +
-+#else
++static __rte_always_inline void
++ice_rxq_rearm(struct ci_rx_queue *rxq)
++{
++	ci_rxq_rearm(rxq);
++}
 +
-+#define NUM_MBUFS 512
-+#define MBUF_CACHE_SIZE 32
-+#define BURST_SIZE 32
-+#define RING_SIZE 256
++static __rte_always_inline void
++ice_flex_rxd_to_olflags_v(struct ci_rx_queue *rxq, uint64x2_t descs[4],
++	struct rte_mbuf **rx_pkts)
++{
++	const uint64x2_t mbuf_init = {rxq->mbuf_initializer, 0};
++	uint64x2_t rearm0, rearm1, rearm2, rearm3;
 +
-+/* Polling and timeout constants */
-+#define STATS_POLL_INTERVAL_US 100
-+#define STATS_POLL_TIMEOUT_US 100000  /* 100ms overall timeout */
-+#define LOOPBACK_TIMEOUT_US 500000    /* 500ms for loopback test */
++	uint32x4_t tmp_desc, flags, rss_vlan;
 +
-+/* Multi-threaded test constants */
-+#define MT_NUM_PACKETS 100
-+#define MT_TEST_DURATION_SEC 2
++	/**
++	 * mask everything except checksum, RSS and VLAN flags
++	 * bit fields defined in enum ice_rx_flex_desc_status_error_0_bits
++	 * bit7:4 for checksum.
++	 * bit12 for RSS indication.
++	 * bit13 for VLAN indication.
++	 */
++	const uint32x4_t desc_mask = {0x30f0, 0x30f0, 0x30f0, 0x30f0};
++	const uint32x4_t cksum_mask = {
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD,
++		RTE_MBUF_F_RX_IP_CKSUM_MASK | RTE_MBUF_F_RX_L4_CKSUM_MASK |
++		RTE_MBUF_F_RX_OUTER_L4_CKSUM_MASK | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD
++	};
 +
-+/* Test device names */
-+#define AF_PACKET_DEV_NAME "net_af_packet_test"
-+#define TAP_DEV_NAME "dpdkafptest"
++	/**
++	 * map the checksum, rss and vlan fields to the checksum, rss
++	 * and vlan flag.
++	 */
++	const uint8x16_t cksum_flags = {
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++		 RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_L4_CKSUM_BAD |
++		 RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++		 RTE_MBUF_F_RX_L4_CKSUM_GOOD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_GOOD) >> 1,
++		(RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD >> 20 | RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD |
++		 RTE_MBUF_F_RX_L4_CKSUM_BAD | RTE_MBUF_F_RX_IP_CKSUM_BAD) >> 1
++	};
 +
-+static struct rte_mempool *mp;
-+static uint16_t port_id = RTE_MAX_ETHPORTS;
-+static int tap_fd = -1;
-+static bool tap_created;
-+static bool port_created;
-+static bool port_started;
++	const uint8x16_t rss_vlan_flags = {
++		0, RTE_MBUF_F_RX_RSS_HASH, RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		RTE_MBUF_F_RX_RSS_HASH | RTE_MBUF_F_RX_VLAN | RTE_MBUF_F_RX_VLAN_STRIPPED,
++		0, 0, 0, 0,
++		0, 0, 0, 0,
++		0, 0, 0, 0
++	};
 +
-+/*
-+ * Create a TAP interface for testing.
-+ * Returns fd on success, -1 on failure.
++	/**
++	 * extract status_error0 field from 4 descriptors,
++	 * and mask out everything else not in desc_mask
++	 */
++	flags = vzip2q_u32(vreinterpretq_u32_u64(descs[0]),
++			vreinterpretq_u32_u64(descs[1]));
++	tmp_desc = vzip2q_u32(vreinterpretq_u32_u64(descs[2]),
++			vreinterpretq_u32_u64(descs[3]));
++	tmp_desc = vreinterpretq_u32_u64(vzip1q_u64(vreinterpretq_u64_u32(flags),
++			vreinterpretq_u64_u32(tmp_desc)));
++
++	tmp_desc = vandq_u32(tmp_desc, desc_mask);
++
++	/**
++	 * shift each 32-bit lane right by 4 so that we can use
++	 * the checksum bit as an index into cksum_flags
++	 */
++	tmp_desc = vshrq_n_u32(tmp_desc, 4);
++	flags = vreinterpretq_u32_u8(vqtbl1q_u8(cksum_flags,
++			vreinterpretq_u8_u32(tmp_desc)));
++
++	/**
++	 * shift left by 1 bit because we shift right by 1 bit
++	 * in cksum_flags
++	 */
++	flags = vshlq_n_u32(flags, 1);
++
++	/* first check the outer L4 checksum */
++	uint32x4_t l4_outer_mask = {0x6, 0x6, 0x6, 0x6};
++	uint32x4_t l4_outer_flags = vandq_u32(flags, l4_outer_mask);
++	l4_outer_flags = vshlq_n_u32(l4_outer_flags, 20);
++
++	/* then check the rest of cksum bits */
++	uint32x4_t l3_l4_mask = {~0x6, ~0x6, ~0x6, ~0x6};
++	uint32x4_t l3_l4_flags = vandq_u32(flags, l3_l4_mask);
++	flags = vorrq_u32(l3_l4_flags, l4_outer_flags);
++
++	/**
++	 * we need to mask out the redundant bits introduced by RSS or
++	 * VLAN fields.
++	 */
++	flags = vandq_u32(flags, cksum_mask);
++
++	/* map RSS, VLAN flags in HW desc to RTE_MBUF */
++	tmp_desc = vshrq_n_u32(tmp_desc, 8);
++	rss_vlan = vreinterpretq_u32_u8(vqtbl1q_u8(rss_vlan_flags,
++			vreinterpretq_u8_u32(tmp_desc)));
++
++	/* merge the flags */
++	flags = vorrq_u32(flags, rss_vlan);
++
++	/* check the additional fdir_flags if fdir is enabled */
++	if (rxq->fdir_enabled) {
++		const uint32x4_t fdir_id0_1 =
++			vzip2q_u32(vreinterpretq_u32_u64(descs[0]),
++				vreinterpretq_u32_u64(descs[1]));
++		const uint32x4_t fdir_id2_3 =
++			vzip2q_u32(vreinterpretq_u32_u64(descs[2]),
++				vreinterpretq_u32_u64(descs[3]));
++		const uint32x4_t fdir_id0_3 =
++			vreinterpretq_u32_u64(vzip2q_u64(vreinterpretq_u64_u32(fdir_id0_1),
++				vreinterpretq_u64_u32(fdir_id2_3)));
++		const uint32x4_t fdir_flags =
++				ice_flex_rxd_to_fdir_flags_vec(fdir_id0_3);
++
++		/* merge with fdir_flags */
++		flags = vorrq_u32(flags, fdir_flags);
++
++		/* write fdir_id to mbuf */
++		rx_pkts[0]->hash.fdir.hi = vgetq_lane_u32(fdir_id0_3, 0);
++		rx_pkts[1]->hash.fdir.hi = vgetq_lane_u32(fdir_id0_3, 1);
++		rx_pkts[2]->hash.fdir.hi = vgetq_lane_u32(fdir_id0_3, 2);
++		rx_pkts[3]->hash.fdir.hi = vgetq_lane_u32(fdir_id0_3, 3);
++	}
++
++	/**
++	 * At this point, we have the 4 sets of flags in the low 16-bits
++	 * of each 32-bit value in flags.
++	 * We want to extract these, and merge them with the mbuf init data
++	 * so we can do a single 16-byte write to the mbuf to set the flags
++	 * and all the other initialization fields. Extracting the
++	 * appropriate flags means that we have to do a shift and blend for
++	 * each mbuf before we do the write.
++	 */
++	rearm0 = vsetq_lane_u64(vgetq_lane_u32(flags, 0), mbuf_init, 1);
++	rearm1 = vsetq_lane_u64(vgetq_lane_u32(flags, 1), mbuf_init, 1);
++	rearm2 = vsetq_lane_u64(vgetq_lane_u32(flags, 2), mbuf_init, 1);
++	rearm3 = vsetq_lane_u64(vgetq_lane_u32(flags, 3), mbuf_init, 1);
++
++	/* compile time check */
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, ol_flags) !=
++			offsetof(struct rte_mbuf, rearm_data) + 8);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, rearm_data) !=
++			RTE_ALIGN(offsetof(struct rte_mbuf, rearm_data), 16));
++
++	/* write the rearm data and the olflags in one write */
++	vst1q_u64((uint64_t *)&rx_pkts[0]->rearm_data, rearm0);
++	vst1q_u64((uint64_t *)&rx_pkts[1]->rearm_data, rearm1);
++	vst1q_u64((uint64_t *)&rx_pkts[2]->rearm_data, rearm2);
++	vst1q_u64((uint64_t *)&rx_pkts[3]->rearm_data, rearm3);
++}
++
++static __rte_always_inline void
++ice_flex_rxd_to_ptype_v(uint64x2_t descs[4], struct rte_mbuf **rx_pkts,
++	uint32_t *ptype_tbl)
++{
++	const uint16x8_t ptype_mask = {
++		0, ICE_RX_FLEX_DESC_PTYPE_M,
++		0, ICE_RX_FLEX_DESC_PTYPE_M,
++		0, ICE_RX_FLEX_DESC_PTYPE_M,
++		0, ICE_RX_FLEX_DESC_PTYPE_M
++	};
++
++	uint32x4_t ptype_01 = vzip1q_u32(vreinterpretq_u32_u64(descs[0]),
++			vreinterpretq_u32_u64(descs[1]));
++	uint32x4_t ptype_23 = vzip1q_u32(vreinterpretq_u32_u64(descs[2]),
++			vreinterpretq_u32_u64(descs[3]));
++	uint32x4_t ptype_all_u32 =
++			vreinterpretq_u32_u64(vzip1q_u64(vreinterpretq_u64_u32(ptype_01),
++				vreinterpretq_u64_u32(ptype_23)));
++	uint16x8_t ptype_all = vreinterpretq_u16_u32(ptype_all_u32);
++
++	ptype_all = vandq_u16(ptype_all, ptype_mask);
++
++	rx_pkts[0]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 1)];
++	rx_pkts[1]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 3)];
++	rx_pkts[2]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 5)];
++	rx_pkts[3]->packet_type = ptype_tbl[vgetq_lane_u16(ptype_all, 7)];
++}
++
++/**
++ * vPMD raw receive routine, only accept(nb_pkts >= ICE_VPMD_DESCS_PER_LOOP)
++ *
++ * Notice:
++ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
++ * - floor align nb_pkts to a ICE_VPMD_DESCS_PER_LOOP power-of-two
 + */
-+static int
-+create_tap_interface(const char *name)
++static __rte_always_inline uint16_t
++_ice_recv_raw_pkts_vec(struct ci_rx_queue *rxq, struct rte_mbuf **rx_pkts,
++	uint16_t nb_pkts, uint8_t *split_packet)
 +{
-+	struct ifreq ifr;
-+	int fd, ret;
++	volatile union ci_rx_flex_desc *rxdp;
++	struct ci_rx_entry *sw_ring;
++	uint16_t nb_pkts_recd;
++	int pos;
++	uint32_t *ptype_tbl = rxq->ice_vsi->adapter->ptype_tbl;
 +
-+	fd = open("/dev/net/tun", O_RDWR);
-+	if (fd < 0) {
-+		printf("Cannot open /dev/net/tun: %s\n", strerror(errno));
-+		printf("(Are you running as root?)\n");
-+		return -1;
-+	}
++	uint16x8_t crc_adjust = {
++		0, 0,          /* ignore pkt_type field */
++		rxq->crc_len,  /* sub crc on pkt_len */
++		0,             /* ignore high-16bits of pkt_len */
++		rxq->crc_len,  /* sub crc on data_len */
++		0, 0, 0        /* ignore non-length field */
++	};
 +
-+	memset(&ifr, 0, sizeof(ifr));
-+	ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
-+	snprintf(ifr.ifr_name, IFNAMSIZ, "%s", name);
++	/* mask to shuffle from flex descriptor to mbuf */
++	const uint8x16_t shuf_msk = {
++		0xFF, 0xFF,		/* pkt_type set as unknown */
++		0xFF, 0xFF,		/* pkt_type set as unknown */
++		4, 5,			/* octet 4~5, low bits pkt_len */
++		0xFF, 0xFF,		/* skip high 16 bits pkt_len, zero out */
++		4, 5,			/* octet 4~5, 16 bits data_len */
++		10, 11,			/* octet 10~11, 16 bits vlan_macip */
++		0xFF, 0xFF,		/* rss hash parsed separately */
++		0xFF, 0xFF,
++	};
 +
-+	ret = ioctl(fd, TUNSETIFF, &ifr);
-+	if (ret < 0) {
-+		printf("Cannot create TAP interface '%s': %s\n",
-+		       name, strerror(errno));
-+		close(fd);
-+		return -1;
-+	}
++	/* compile-time check the above crc_adjust layout is correct */
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, pkt_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 4);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, data_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 8);
 +
-+	/* Bring the interface up */
-+	int sock = socket(AF_INET, SOCK_DGRAM, 0);
-+	if (sock >= 0) {
-+		memset(&ifr, 0, sizeof(ifr));
-+		snprintf(ifr.ifr_name, IFNAMSIZ, "%s", name);
++	/* 4 packets DD mask */
++	const uint16x8_t dd_check = {
++		0x0001, 0x0001, 0x0001, 0x0001,
++		0, 0, 0, 0
++	};
 +
-+		/* Get current flags */
-+		if (ioctl(sock, SIOCGIFFLAGS, &ifr) == 0) {
-+			ifr.ifr_flags |= IFF_UP;
-+			ioctl(sock, SIOCSIFFLAGS, &ifr);
-+		}
-+		close(sock);
-+	}
++	/* 4 packets EOP mask */
++	const uint8x16_t eop_check = {
++		0x2, 0, 0x2, 0, 0x2, 0, 0x2, 0,
++		0, 0, 0, 0, 0, 0, 0, 0
++	};
 +
-+	printf("Created TAP interface '%s'\n", name);
-+	return fd;
-+}
++	/* nb_pkts has to be floor-aligned to ICE_VPMD_DESCS_PER_LOOP */
++	nb_pkts = RTE_ALIGN_FLOOR(nb_pkts, ICE_VPMD_DESCS_PER_LOOP);
 +
-+static void
-+destroy_tap_interface(int fd)
-+{
-+	if (fd >= 0)
-+		close(fd);
-+}
++	rxdp = rxq->rx_flex_ring + rxq->rx_tail;
++	rte_prefetch0(rxdp);
 +
-+static int
-+create_af_packet_port(const char *name, const char *args, uint16_t *out_port_id)
-+{
-+	int ret;
++	/* see if we need to rearm the Rx queue */
++	if (rxq->rxrearm_nb > ICE_VPMD_RXQ_REARM_THRESH)
++		ice_rxq_rearm(rxq);
 +
-+	ret = rte_vdev_init(name, args);
-+	if (ret != 0) {
-+		printf("Failed to create af_packet device '%s': %d\n", name, ret);
-+		return ret;
-+	}
-+
-+	ret = rte_eth_dev_get_port_by_name(name, out_port_id);
-+	if (ret != 0) {
-+		printf("Failed to get port id for '%s': %d\n", name, ret);
-+		rte_vdev_uninit(name);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int
-+configure_af_packet_port(uint16_t pid, uint16_t nb_rx_q, uint16_t nb_tx_q)
-+{
-+	struct rte_eth_conf port_conf = {0};
-+	struct rte_eth_dev_info dev_info;
-+	int ret;
-+	uint16_t q;
-+
-+	ret = rte_eth_dev_info_get(pid, &dev_info);
-+	if (ret != 0) {
-+		printf("Failed to get device info for port %u: %d\n", pid, ret);
-+		return ret;
-+	}
-+
-+	ret = rte_eth_dev_configure(pid, nb_rx_q, nb_tx_q, &port_conf);
-+	if (ret != 0) {
-+		printf("Failed to configure port %u: %d\n", pid, ret);
-+		return ret;
-+	}
-+
-+	for (q = 0; q < nb_rx_q; q++) {
-+		ret = rte_eth_rx_queue_setup(pid, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(pid),
-+					     NULL, mp);
-+		if (ret != 0) {
-+			printf("Failed to setup RX queue %u for port %u: %d\n",
-+			       q, pid, ret);
-+			return ret;
-+		}
-+	}
-+
-+	for (q = 0; q < nb_tx_q; q++) {
-+		ret = rte_eth_tx_queue_setup(pid, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(pid),
-+					     NULL);
-+		if (ret != 0) {
-+			printf("Failed to setup TX queue %u for port %u: %d\n",
-+			       q, pid, ret);
-+			return ret;
-+		}
-+	}
-+
-+	ret = rte_eth_dev_start(pid);
-+	if (ret != 0) {
-+		printf("Failed to start port %u: %d\n", pid, ret);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Helper: Allocate and prepare a burst of TX mbufs with minimal Ethernet frames.
-+ * Returns the number of successfully allocated mbufs.
-+ */
-+static unsigned int
-+alloc_tx_mbufs(struct rte_mbuf **bufs, unsigned int count)
-+{
-+	unsigned int i;
-+	int ret;
-+
-+	ret = rte_pktmbuf_alloc_bulk(mp, bufs, count);
-+	if (ret != 0)
++	/* check to see if there is actually a packet available */
++	if (!(rxdp->wb.status_error0 &
++	      rte_cpu_to_le_32(1 << ICE_RX_FLEX_DESC_STATUS0_DD_S)))
 +		return 0;
 +
-+	for (i = 0; i < count; i++) {
-+		struct rte_ether_hdr *eth_hdr;
-+		eth_hdr = (struct rte_ether_hdr *)rte_pktmbuf_append(bufs[i],
-+				sizeof(struct rte_ether_hdr) + 46);
-+		if (eth_hdr == NULL) {
-+			/* Free all allocated mbufs on failure */
-+			rte_pktmbuf_free_bulk(bufs, count);
-+			return 0;
++	/* compile-time verification of the shuffle mask again */
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, pkt_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 4);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, data_len) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 8);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, vlan_tci) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 10);
++	RTE_BUILD_BUG_ON(offsetof(struct rte_mbuf, hash) !=
++			offsetof(struct rte_mbuf, rx_descriptor_fields1) + 12);
++
++	/* move the next 'n' mbufs into the cache */
++	sw_ring = &rxq->sw_ring[rxq->rx_tail];
++
++	/**
++	 * A. load 4 packets in one loop
++	 * [A*. mask out 4 unused dirty fields in desc]
++	 * B. copy 4 mbuf pointers from sw_ring to rx_pkts
++	 * C. count the number of DD bits among the 4 packets
++	 * [C*. extract the end-of-packet bit, if requested]
++	 * D. fill info. from desc to mbuf
++	 */
++	for (pos = 0, nb_pkts_recd = 0; pos < nb_pkts;
++		 pos += ICE_VPMD_DESCS_PER_LOOP,
++		 rxdp += ICE_VPMD_DESCS_PER_LOOP) {
++		uint64x2_t descs[ICE_VPMD_DESCS_PER_LOOP];
++		uint8x16_t pkt_mb0, pkt_mb1, pkt_mb2, pkt_mb3;
++		uint16x8_t sterr_tmp1, sterr_tmp2;
++		uint64x2_t mbp1, mbp2;
++		uint16x8_t staterr;
++		uint16x8_t tmp;
++		uint64_t stat;
++
++		/* A.1 load descs[3-0] */
++		descs[3] =  vld1q_u64(RTE_CAST_PTR(uint64_t *, rxdp + 3));
++		descs[2] =  vld1q_u64(RTE_CAST_PTR(uint64_t *, rxdp + 2));
++		descs[1] =  vld1q_u64(RTE_CAST_PTR(uint64_t *, rxdp + 1));
++		descs[0] =  vld1q_u64(RTE_CAST_PTR(uint64_t *, rxdp + 0));
++
++		/* use acquire fence to order loads of descriptor qwords */
++		rte_atomic_thread_fence(rte_memory_order_acquire);
++		/* A.2 reload qword0 to make it ordered after qword1 load */
++		descs[3] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, rxdp + 3),
++				descs[3], 0);
++		descs[2] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, rxdp + 2),
++				descs[2], 0);
++		descs[1] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, rxdp + 1),
++				descs[1], 0);
++		descs[0] = vld1q_lane_u64(RTE_CAST_PTR(uint64_t *, rxdp),
++				descs[0], 0);
++
++		/* B.1 load 4 mbuf pointers */
++		mbp1 = vld1q_u64((uint64_t *)&sw_ring[pos]);
++		mbp2 = vld1q_u64((uint64_t *)&sw_ring[pos + 2]);
++
++		/* B.2 copy 4 mbuf pointers into rx_pkts  */
++		vst1q_u64((uint64_t *)&rx_pkts[pos], mbp1);
++		vst1q_u64((uint64_t *)&rx_pkts[pos + 2], mbp2);
++
++		/* prefetch mbufs if it is a chained buffer */
++		if (split_packet) {
++			rte_mbuf_prefetch_part2(rx_pkts[pos]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 1]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 2]);
++			rte_mbuf_prefetch_part2(rx_pkts[pos + 3]);
 +		}
 +
-+		/* Set broadcast destination and zero source MAC */
-+		memset(&eth_hdr->dst_addr, 0xFF, RTE_ETHER_ADDR_LEN);
-+		memset(&eth_hdr->src_addr, 0x00, RTE_ETHER_ADDR_LEN);
-+		eth_hdr->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
++		ice_flex_rxd_to_olflags_v(rxq, descs, &rx_pkts[pos]);
++
++		/* D.1 pkts convert format from desc to pktmbuf */
++		pkt_mb3 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[3]), shuf_msk);
++		pkt_mb2 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[2]), shuf_msk);
++		pkt_mb1 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[1]), shuf_msk);
++		pkt_mb0 = vqtbl1q_u8(vreinterpretq_u8_u64(descs[0]), shuf_msk);
++
++		/* D.2 pkts set in in_port/nb_seg and remove crc */
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb3), crc_adjust);
++		pkt_mb3 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb2), crc_adjust);
++		pkt_mb2 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb1), crc_adjust);
++		pkt_mb1 = vreinterpretq_u8_u16(tmp);
++		tmp = vsubq_u16(vreinterpretq_u16_u8(pkt_mb0), crc_adjust);
++		pkt_mb0 = vreinterpretq_u8_u16(tmp);
++
++#ifndef	RTE_NET_INTEL_USE_16BYTE_DESC
++
++		/**
++		 * needs to load 2nd 16B of each desc for RSS hash parsing,
++		 * will cause performance drop to get into this context.
++		 */
++		if (rxq->ice_vsi->adapter->pf.dev_data->dev_conf.rxmode.offloads &
++				RTE_ETH_RX_OFFLOAD_RSS_HASH) {
++			/* load bottom half of every 32B desc */
++			const uint64x2_t raw_desc_bh3 =
++					vld1q_u64(RTE_CAST_PTR(const uint64_t *,
++						&rxdp[3].wb.status_error1));
++			const uint64x2_t raw_desc_bh2 =
++					vld1q_u64(RTE_CAST_PTR(const uint64_t *,
++						&rxdp[2].wb.status_error1));
++			const uint64x2_t raw_desc_bh1 =
++					vld1q_u64(RTE_CAST_PTR(const uint64_t *,
++						&rxdp[1].wb.status_error1));
++			const uint64x2_t raw_desc_bh0 =
++					vld1q_u64(RTE_CAST_PTR(const uint64_t *,
++						&rxdp[0].wb.status_error1));
++
++			/**
++			 * to shift the 32b RSS hash value to the
++			 * highest 32b of each 128b before mask
++			 */
++			uint64x2_t rss_hash3 = vshlq_n_u64(raw_desc_bh3, 32);
++			uint64x2_t rss_hash2 = vshlq_n_u64(raw_desc_bh2, 32);
++			uint64x2_t rss_hash1 = vshlq_n_u64(raw_desc_bh1, 32);
++			uint64x2_t rss_hash0 = vshlq_n_u64(raw_desc_bh0, 32);
++
++			const uint32x4_t rss_hash_msk = {0, 0, 0, 0xFFFFFFFFu};
++
++			rss_hash3 =
++				vreinterpretq_u64_u32(vandq_u32(vreinterpretq_u32_u64(rss_hash3),
++					rss_hash_msk));
++			rss_hash2 =
++				vreinterpretq_u64_u32(vandq_u32(vreinterpretq_u32_u64(rss_hash2),
++					rss_hash_msk));
++			rss_hash1 =
++				vreinterpretq_u64_u32(vandq_u32(vreinterpretq_u32_u64(rss_hash1),
++					rss_hash_msk));
++			rss_hash0 =
++				vreinterpretq_u64_u32(vandq_u32(vreinterpretq_u32_u64(rss_hash0),
++					rss_hash_msk));
++
++			pkt_mb3 = vorrq_u8(pkt_mb3, vreinterpretq_u8_u64(rss_hash3));
++			pkt_mb2 = vorrq_u8(pkt_mb2, vreinterpretq_u8_u64(rss_hash2));
++			pkt_mb1 = vorrq_u8(pkt_mb1, vreinterpretq_u8_u64(rss_hash1));
++			pkt_mb0 = vorrq_u8(pkt_mb0, vreinterpretq_u8_u64(rss_hash0));
++		}
++#endif
++
++		/* D.3 copy final data to rx_pkts */
++		vst1q_u8((void *)&rx_pkts[pos + 3]->rx_descriptor_fields1, pkt_mb3);
++		vst1q_u8((void *)&rx_pkts[pos + 2]->rx_descriptor_fields1, pkt_mb2);
++		vst1q_u8((void *)&rx_pkts[pos + 1]->rx_descriptor_fields1, pkt_mb1);
++		vst1q_u8((void *)&rx_pkts[pos + 0]->rx_descriptor_fields1, pkt_mb0);
++
++		ice_flex_rxd_to_ptype_v(descs, &rx_pkts[pos], ptype_tbl);
++
++		/* C.1 filter staterr info only */
++		sterr_tmp1 = vzip2q_u16(vreinterpretq_u16_u64(descs[0]),
++				vreinterpretq_u16_u64(descs[1]));
++		sterr_tmp2 = vzip2q_u16(vreinterpretq_u16_u64(descs[2]),
++				vreinterpretq_u16_u64(descs[3]));
++
++		/* C.2 get 4 pkts status_error0 value */
++		staterr = vzip1q_u16(sterr_tmp1, sterr_tmp2);
++
++		/* C* extract and record EOP bits */
++		if (split_packet) {
++			uint8x16_t eop_bits;
++
++			/* and with mask to extract bits, flipping 1-0 */
++			eop_bits = vmvnq_u8(vreinterpretq_u8_u16(staterr));
++			eop_bits = vandq_u8(eop_bits, eop_check);
++
++			/* store the resulting 32-bit value */
++			vst1q_lane_u32((uint32_t *)split_packet,
++					vreinterpretq_u32_u8(eop_bits), 0);
++			split_packet += ICE_VPMD_DESCS_PER_LOOP;
++		}
++
++		/* C.3 count available number of descriptors */
++		/* mask everything except DD bit */
++		staterr = vandq_u16(staterr, dd_check);
++		/**
++		 * move the statue bit (bit0) into the sign bit (bit15)
++		 * of each 16-bit lane
++		 */
++		staterr = vshlq_n_u16(staterr, ICE_UINT16_BIT - 1);
++
++		/**
++		 * reinterpret staterr as a signed 16-bit and
++		 * arithmetic-shift-right by 15
++		 * each lane becomes 0xFFFF if original DD bit was 1, otherwise 0.
++		 * then interpret back to unsigned u16 vector
++		 */
++		staterr = vreinterpretq_u16_s16(vshrq_n_s16(vreinterpretq_s16_u16(staterr),
++				ICE_UINT16_BIT - 1));
++
++		/**
++		 * reinterpret u16x8 vector as u64x2, and fetch the low u64
++		 * which contains the first four 16-bit lanes, and invert
++		 * all bits.
++		 */
++		stat = ~vgetq_lane_u64(vreinterpretq_u64_u16(staterr), 0);
++
++		if (likely(stat == 0)) {
++			nb_pkts_recd += ICE_VPMD_DESCS_PER_LOOP;
++		} else {
++			nb_pkts_recd += rte_ctz64(stat) / ICE_UINT16_BIT;
++			break;
++		}
 +	}
 +
-+	return count;
++	/* Update our internal tail pointer */
++	rxq->rx_tail = (uint16_t)(rxq->rx_tail + nb_pkts_recd);
++	rxq->rx_tail = (uint16_t)(rxq->rx_tail & (rxq->nb_rx_desc - 1));
++	rxq->rxrearm_nb = (uint16_t)(rxq->rxrearm_nb + nb_pkts_recd);
++
++	return nb_pkts_recd;
 +}
 +
-+/*
-+ * Helper: Transmit packets and free unsent mbufs.
-+ * Returns the number of packets successfully transmitted.
++/**
++ * Notice:
++ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
++ * - nb_pkts > ICE_VPMD_RX_BURST, only scan ICE_VPMD_RX_BURST
++ *   numbers of DD bits
++ */
++uint16_t
++ice_recv_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
++	uint16_t nb_pkts)
++{
++	return _ice_recv_raw_pkts_vec(rx_queue, rx_pkts, nb_pkts, NULL);
++}
++
++/**
++ * vPMD receive routine that reassembles single burst of 32 scattered packets
++ *
++ * Notice:
++ * - nb_pkts < ICE_VPMD_DESCS_PER_LOOP, just return no packet
 + */
 +static uint16_t
-+do_tx_burst(uint16_t pid, uint16_t queue_id, struct rte_mbuf **bufs,
-+	    unsigned int count)
++ice_recv_scattered_burst_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
++	uint16_t nb_pkts)
 +{
-+	uint16_t nb_tx;
++	struct ci_rx_queue *rxq = rx_queue;
++	uint8_t split_flags[ICE_VPMD_RX_BURST] = {0};
 +
-+	nb_tx = rte_eth_tx_burst(pid, queue_id, bufs, count);
++	/* get some new buffers */
++	uint16_t nb_bufs = _ice_recv_raw_pkts_vec(rxq, rx_pkts, nb_pkts,
++						split_flags);
++	if (nb_bufs == 0)
++		return 0;
 +
-+	/* Free any unsent mbufs */
-+	rte_pktmbuf_free_bulk(&bufs[nb_tx], count - nb_tx);
++	/* happy day case, full burst + no packets to be joined */
++	const uint64_t *split_fl64 = (uint64_t *)split_flags;
++
++	/* check no split flags in both previous and current bursts */
++	if (!rxq->pkt_first_seg &&
++		split_fl64[0] == 0 && split_fl64[1] == 0 &&
++		split_fl64[2] == 0 && split_fl64[3] == 0)
++		return nb_bufs;
++
++	/* reassemble any packets that need reassembly */
++	unsigned int i = 0;
++
++	if (!rxq->pkt_first_seg) {
++		/* find the first split flag, and only reassemble then */
++		while (i < nb_bufs && !split_flags[i])
++			i++;
++		if (i == nb_bufs)
++			return nb_bufs;
++		rxq->pkt_first_seg = rx_pkts[i];
++	}
++	return i + ci_rx_reassemble_packets(&rx_pkts[i], nb_bufs - i, &split_flags[i],
++			&rxq->pkt_first_seg, &rxq->pkt_last_seg, rxq->crc_len);
++}
++
++/**
++ * vPMD receive routine that reassembles scattered packets.
++ */
++uint16_t
++ice_recv_scattered_pkts_vec(void *rx_queue, struct rte_mbuf **rx_pkts,
++	uint16_t nb_pkts)
++{
++	uint16_t retval = 0;
++
++	while (nb_pkts > ICE_VPMD_RX_BURST) {
++		uint16_t burst;
++
++		burst = ice_recv_scattered_burst_vec(rx_queue,
++				rx_pkts + retval,
++				ICE_VPMD_RX_BURST);
++		retval += burst;
++		nb_pkts -= burst;
++		if (burst < ICE_VPMD_RX_BURST)
++			return retval;
++	}
++
++	return retval + ice_recv_scattered_burst_vec(rx_queue,
++			rx_pkts + retval,
++			nb_pkts);
++}
++
++static __rte_always_inline void
++ice_vtx1(volatile struct ci_tx_desc *txdp, struct rte_mbuf *pkt,
++	 uint64_t flags)
++{
++	uint64_t high_qw = (CI_TX_DESC_DTYPE_DATA |
++		((uint64_t)flags << CI_TXD_QW1_CMD_S) |
++		((uint64_t)pkt->data_len << CI_TXD_QW1_TX_BUF_SZ_S));
++
++	uint64x2_t descriptor = {rte_pktmbuf_iova(pkt), high_qw};
++	vst1q_u64(RTE_CAST_PTR(uint64_t *, txdp), descriptor);
++}
++
++static __rte_always_inline void
++ice_vtx(volatile struct ci_tx_desc *txdp, struct rte_mbuf **pkt,
++	uint16_t nb_pkts, uint64_t flags)
++{
++	int i;
++
++	for (i = 0; i < nb_pkts; ++i, ++txdp, ++pkt)
++		ice_vtx1(txdp, *pkt, flags);
++}
++
++static __rte_always_inline uint16_t
++ice_xmit_fixed_burst_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
++	uint16_t nb_pkts)
++{
++	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
++	volatile struct ci_tx_desc *txdp;
++	struct ci_tx_entry_vec *txep;
++	uint16_t n, nb_commit, tx_id;
++	uint64_t flags = CI_TX_DESC_CMD_DEFAULT;
++	uint64_t rs = CI_TX_DESC_CMD_RS | CI_TX_DESC_CMD_DEFAULT;
++	int i;
++
++	/* cross rx_thresh boundary is not allowed */
++	nb_pkts = RTE_MIN(nb_pkts, txq->tx_rs_thresh);
++
++	if (txq->nb_tx_free < txq->tx_free_thresh)
++		ci_tx_free_bufs_vec(txq, ice_tx_desc_done, false);
++
++	nb_pkts = (uint16_t)RTE_MIN(txq->nb_tx_free, nb_pkts);
++	nb_commit = nb_pkts;
++	if (unlikely(nb_pkts == 0))
++		return 0;
++
++	tx_id = txq->tx_tail;
++	txdp = &txq->ci_tx_ring[tx_id];
++	txep = &txq->sw_ring_vec[tx_id];
++
++	txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_pkts);
++
++	n = (uint16_t)(txq->nb_tx_desc - tx_id);
++	if (nb_commit >= n) {
++		ci_tx_backlog_entry_vec(txep, tx_pkts, n);
++
++		for (i = 0; i < n - 1; ++i, ++tx_pkts, ++txdp)
++			ice_vtx1(txdp, *tx_pkts, flags);
++
++		/* write with RS for the last descriptor in the segment */
++		ice_vtx1(txdp, *tx_pkts++, rs);
++
++		nb_commit = (uint16_t)(nb_commit - n);
++
++		tx_id = 0;
++		txq->tx_next_rs = (uint16_t)(txq->tx_rs_thresh - 1);
++
++		/* avoid reach the end of ring */
++		txdp = &txq->ci_tx_ring[tx_id];
++		txep = &txq->sw_ring_vec[tx_id];
++	}
++
++	ci_tx_backlog_entry_vec(txep, tx_pkts, nb_commit);
++
++	ice_vtx(txdp, tx_pkts, nb_commit, flags);
++
++	tx_id = (uint16_t)(tx_id + nb_commit);
++	if (tx_id > txq->tx_next_rs) {
++		txq->ci_tx_ring[txq->tx_next_rs].cmd_type_offset_bsz |=
++			rte_cpu_to_le_64(((uint64_t)CI_TX_DESC_CMD_RS) <<
++					 CI_TXD_QW1_CMD_S);
++		txq->tx_next_rs =
++			(uint16_t)(txq->tx_next_rs + txq->tx_rs_thresh);
++	}
++
++	txq->tx_tail = tx_id;
++
++	ICE_PCI_REG_WC_WRITE(txq->qtx_tail, txq->tx_tail);
++
++	return nb_pkts;
++}
++
++uint16_t
++ice_xmit_pkts_vec(void *tx_queue, struct rte_mbuf **tx_pkts,
++	uint16_t nb_pkts)
++{
++	uint16_t nb_tx = 0;
++	struct ci_tx_queue *txq = (struct ci_tx_queue *)tx_queue;
++
++	while (nb_pkts) {
++		uint16_t ret, num;
++
++		num = (uint16_t)RTE_MIN(nb_pkts, txq->tx_rs_thresh);
++		ret = ice_xmit_fixed_burst_vec(tx_queue, &tx_pkts[nb_tx], num);
++		nb_tx += ret;
++		nb_pkts -= ret;
++		if (ret < num)
++			break;
++	}
 +
 +	return nb_tx;
 +}
 +
-+/*
-+ * Helper: Receive packets and free received mbufs.
-+ * Returns the number of packets received.
-+ */
-+static uint16_t
-+do_rx_burst(uint16_t pid, uint16_t queue_id, struct rte_mbuf **bufs,
-+	    unsigned int count)
++
++int __rte_cold
++ice_rxq_vec_setup(struct ci_rx_queue *rxq)
 +{
-+	uint16_t nb_rx;
-+
-+	nb_rx = rte_eth_rx_burst(pid, queue_id, bufs, count);
-+	rte_pktmbuf_free_bulk(bufs, nb_rx);
-+
-+	return nb_rx;
-+}
-+
-+/*
-+ * Helper: Wait for stats to update by polling at intervals.
-+ * Returns 0 on success (stats updated), -1 on timeout.
-+ */
-+static int
-+wait_for_stats_update(uint16_t pid, uint64_t expected_opackets,
-+		      uint64_t timeout_us)
-+{
-+	struct rte_eth_stats stats;
-+	uint64_t elapsed = 0;
-+
-+	while (elapsed < timeout_us) {
-+		if (rte_eth_stats_get(pid, &stats) == 0) {
-+			if (stats.opackets >= expected_opackets)
-+				return 0;
-+		}
-+		rte_delay_us_block(STATS_POLL_INTERVAL_US);
-+		elapsed += STATS_POLL_INTERVAL_US;
-+	}
-+
-+	return -1;
-+}
-+
-+static int
-+test_af_packet_setup(void)
-+{
-+	char devargs[256];
-+	int ret;
-+
-+	/* Create mempool for mbufs */
-+	mp = rte_pktmbuf_pool_create("af_packet_test_pool", NUM_MBUFS,
-+				     MBUF_CACHE_SIZE, 0,
-+				     RTE_MBUF_DEFAULT_BUF_SIZE,
-+				     rte_socket_id());
-+	if (mp == NULL) {
-+		printf("Failed to create mempool\n");
-+		return -1;
-+	}
-+
-+	/* Create TAP interface for testing */
-+	tap_fd = create_tap_interface(TAP_DEV_NAME);
-+	if (tap_fd >= 0)
-+		tap_created = true;
-+	else {
-+		printf("TAP interface creation failed - tests will be skipped\n");
-+		return 0; /* Return success to allow skipped tests */
-+	}
-+
-+	/* Create and configure af_packet port */
-+	snprintf(devargs, sizeof(devargs), "iface=%s", TAP_DEV_NAME);
-+	ret = create_af_packet_port(AF_PACKET_DEV_NAME, devargs, &port_id);
-+	if (ret != 0) {
-+		printf("Failed to create af_packet port\n");
-+		return -1;
-+	}
-+	port_created = true;
-+
-+	ret = configure_af_packet_port(port_id, 1, 1);
-+	if (ret != 0) {
-+		printf("Failed to configure af_packet port\n");
-+		return -1;
-+	}
-+	port_started = true;
-+
++	rxq->vector_rx = 1;
++	rxq->mbuf_initializer = ci_rxq_mbuf_initializer(rxq->port_id);
 +	return 0;
 +}
 +
-+static void
-+test_af_packet_teardown(void)
++int __rte_cold
++ice_rx_vec_dev_check(struct rte_eth_dev *dev)
 +{
-+	/* Stop and close test port */
-+	if (port_started) {
-+		rte_eth_dev_stop(port_id);
-+		port_started = false;
-+	}
-+
-+	if (port_created) {
-+		rte_eth_dev_close(port_id);
-+		rte_vdev_uninit(AF_PACKET_DEV_NAME);
-+		port_id = RTE_MAX_ETHPORTS;
-+		port_created = false;
-+	}
-+
-+	/* Destroy TAP interface */
-+	if (tap_created) {
-+		destroy_tap_interface(tap_fd);
-+		tap_fd = -1;
-+		tap_created = false;
-+	}
-+
-+	if (mp != NULL) {
-+		rte_mempool_free(mp);
-+		mp = NULL;
-+	}
++	return ice_rx_vec_dev_check_default(dev);
 +}
 +
-+/*
-+ * Test: Device info verification
-+ */
-+static int
-+test_af_packet_dev_info(void)
++int __rte_cold
++ice_tx_vec_dev_check(struct rte_eth_dev *dev)
 +{
-+	struct rte_eth_dev_info dev_info;
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get device info");
-+
-+	/* Verify expected device info values */
-+	TEST_ASSERT(dev_info.max_mac_addrs == 1,
-+		    "Expected max_mac_addrs=1, got %u", dev_info.max_mac_addrs);
-+
-+	/* The driver has default internal frame size of 2K */
-+	TEST_ASSERT(dev_info.max_rx_pktlen >= RTE_ETHER_MAX_LEN,
-+		    "max_rx_pktlen %u < %u",
-+		    dev_info.max_rx_pktlen, RTE_ETHER_MAX_LEN);
-+	TEST_ASSERT(dev_info.max_mtu >= RTE_ETHER_MTU,
-+		    "max_mtu %u < %u", dev_info.max_mtu, RTE_ETHER_MTU);
-+	TEST_ASSERT(dev_info.min_rx_bufsize == 0,
-+		    "Expected min_rx_bufsize=0, got %u", dev_info.min_rx_bufsize);
-+	TEST_ASSERT(dev_info.max_rx_queues >= 1, "No RX queues available");
-+	TEST_ASSERT(dev_info.max_tx_queues >= 1, "No TX queues available");
-+	TEST_ASSERT(dev_info.if_index > 0, "Invalid interface index");
-+
-+	/* Check TX offload capabilities */
-+	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MULTI_SEGS,
-+		    "Expected MULTI_SEGS TX offload capability");
-+	TEST_ASSERT(dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_VLAN_INSERT,
-+		    "Expected VLAN_INSERT TX offload capability");
-+
-+	/* Check RX offload capabilities */
-+	TEST_ASSERT(dev_info.rx_offload_capa & RTE_ETH_RX_OFFLOAD_VLAN_STRIP,
-+		    "Expected VLAN_STRIP RX offload capability");
-+	TEST_ASSERT(dev_info.rx_offload_capa & RTE_ETH_RX_OFFLOAD_TIMESTAMP,
-+		    "Expected TIMESTAMP RX offload capability");
-+
-+	return TEST_SUCCESS;
++	return ice_tx_vec_dev_check_default(dev);
 +}
 +
-+/*
-+ * Test: Link status
-+ * Note: af_packet PMD link status reflects the underlying interface state,
-+ * not the DPDK device start/stop state.
-+ */
-+static int
-+test_af_packet_link_status(void)
++enum rte_vect_max_simd
++ice_get_max_simd_bitwidth(void)
 +{
-+	struct rte_eth_link link;
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	ret = rte_eth_link_get_nowait(port_id, &link);
-+	TEST_ASSERT(ret == 0, "Failed to get link status");
-+
-+	/* TAP interface was brought up during setup, so link should be UP */
-+	TEST_ASSERT(link.link_status == RTE_ETH_LINK_UP,
-+		    "Expected link UP (TAP interface is up)");
-+	TEST_ASSERT(link.link_speed == RTE_ETH_SPEED_NUM_10G,
-+		    "Expected 10G link speed");
-+	TEST_ASSERT(link.link_duplex == RTE_ETH_LINK_FULL_DUPLEX,
-+		    "Expected full duplex");
-+
-+	return TEST_SUCCESS;
++	return RTE_MIN(128, rte_vect_get_max_simd_bitwidth());
 +}
-+
-+/*
-+ * Test: Statistics initial state
-+ */
-+static int
-+test_af_packet_stats_init(void)
-+{
-+	struct rte_eth_stats stats;
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Reset stats */
-+	ret = rte_eth_stats_reset(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to reset stats");
-+
-+	/* Get initial stats */
-+	ret = rte_eth_stats_get(port_id, &stats);
-+	TEST_ASSERT(ret == 0, "Failed to get stats");
-+
-+	/* After reset, stats should be zero */
-+	TEST_ASSERT(stats.ipackets == 0,
-+		    "Expected ipackets=0 after reset, got %"PRIu64,
-+		    stats.ipackets);
-+	TEST_ASSERT(stats.opackets == 0,
-+		    "Expected opackets=0 after reset, got %"PRIu64,
-+		    stats.opackets);
-+	TEST_ASSERT(stats.ibytes == 0,
-+		    "Expected ibytes=0 after reset, got %"PRIu64,
-+		    stats.ibytes);
-+	TEST_ASSERT(stats.obytes == 0,
-+		    "Expected obytes=0 after reset, got %"PRIu64,
-+		    stats.obytes);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: TX packets (packets will be sent to TAP interface)
-+ */
-+static int
-+test_af_packet_tx(void)
-+{
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	struct rte_eth_stats stats;
-+	uint16_t nb_tx;
-+	unsigned int allocated;
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Reset stats */
-+	ret = rte_eth_stats_reset(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to reset stats");
-+
-+	/* Allocate and prepare mbufs for TX using helper */
-+	allocated = alloc_tx_mbufs(bufs, BURST_SIZE);
-+	TEST_ASSERT(allocated == BURST_SIZE, "Failed to allocate all mbufs");
-+
-+	/* TX burst using helper */
-+	nb_tx = do_tx_burst(port_id, 0, bufs, BURST_SIZE);
-+
-+	/* Poll for stats update instead of fixed delay */
-+	if (nb_tx > 0) {
-+		ret = wait_for_stats_update(port_id, nb_tx, STATS_POLL_TIMEOUT_US);
-+		if (ret == 0) {
-+			ret = rte_eth_stats_get(port_id, &stats);
-+			TEST_ASSERT(ret == 0, "Failed to get stats");
-+			TEST_ASSERT(stats.opackets > 0,
-+				    "Expected opackets > 0 after TX");
-+		}
-+		/* Timeout is acceptable - stats may not update immediately */
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: RX packets (non-blocking, may not receive anything)
-+ */
-+static int
-+test_af_packet_rx(void)
-+{
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Try to receive packets (non-blocking) using helper */
-+	do_rx_burst(port_id, 0, bufs, BURST_SIZE);
-+
-+	/* RX from tap interface without external traffic will return 0 */
-+	/* This test just verifies the RX path doesn't crash */
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Loopback - TX packets and receive them back via TAP interface.
-+ * This exercises both the TX and RX paths in a round-trip.
-+ */
-+static int
-+test_af_packet_loopback(void)
-+{
-+	struct rte_mbuf *tx_bufs[BURST_SIZE];
-+	struct rte_mbuf *rx_bufs[BURST_SIZE];
-+	uint16_t nb_tx, total_rx = 0;
-+	uint64_t elapsed = 0;
-+	unsigned int allocated;
-+	char tap_buf[2048];
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Set TAP fd to non-blocking for reading */
-+	int flags = fcntl(tap_fd, F_GETFL, 0);
-+	fcntl(tap_fd, F_SETFL, flags | O_NONBLOCK);
-+
-+	/* Allocate and send packets */
-+	allocated = alloc_tx_mbufs(tx_bufs, BURST_SIZE);
-+	if (allocated == 0) {
-+		printf("SKIPPED: Could not allocate mbufs\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	nb_tx = do_tx_burst(port_id, 0, tx_bufs, allocated);
-+	if (nb_tx == 0) {
-+		printf("SKIPPED: No packets transmitted\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/*
-+	 * Read packets from TAP interface (they were sent there by af_packet).
-+	 * Then write them back to TAP so af_packet can receive them.
-+	 */
-+	while (elapsed < LOOPBACK_TIMEOUT_US) {
-+		ssize_t bytes_read, bytes_written;
-+
-+		/* Read from TAP (what af_packet sent) */
-+		bytes_read = read(tap_fd, tap_buf, sizeof(tap_buf));
-+		if (bytes_read > 0) {
-+			/* Write back to TAP for af_packet to receive */
-+			bytes_written = write(tap_fd, tap_buf, bytes_read);
-+			TEST_ASSERT(bytes_read == bytes_written, "TAP write %zd != %zd",
-+				    bytes_read, bytes_written);
-+		}
-+
-+		/* Try to receive via af_packet RX */
-+		uint16_t nb_rx = rte_eth_rx_burst(port_id, 0, rx_bufs, BURST_SIZE);
-+		if (nb_rx > 0) {
-+			total_rx += nb_rx;
-+			rte_pktmbuf_free_bulk(rx_bufs, nb_rx);
-+		}
-+
-+		/* Check if we've received enough */
-+		if (total_rx >= nb_tx)
-+			break;
-+
-+		rte_delay_us_block(STATS_POLL_INTERVAL_US);
-+		elapsed += STATS_POLL_INTERVAL_US;
-+	}
-+
-+	/* Restore TAP fd flags */
-+	fcntl(tap_fd, F_SETFL, flags);
-+
-+	/*
-+	 * Note: We may not receive all packets due to timing, but receiving
-+	 * any packets proves the loopback path works.
-+	 */
-+	printf("Loopback: TX=%u, RX=%u\n", nb_tx, total_rx);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Promiscuous mode
-+ */
-+static int
-+test_af_packet_promiscuous(void)
-+{
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Enable promiscuous mode */
-+	ret = rte_eth_promiscuous_enable(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to enable promiscuous mode");
-+
-+	ret = rte_eth_promiscuous_get(port_id);
-+	TEST_ASSERT(ret == 1, "Expected promiscuous mode enabled");
-+
-+	/* Disable promiscuous mode */
-+	ret = rte_eth_promiscuous_disable(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to disable promiscuous mode");
-+
-+	ret = rte_eth_promiscuous_get(port_id);
-+	TEST_ASSERT(ret == 0, "Expected promiscuous mode disabled");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: MAC address operations
-+ */
-+static int
-+test_af_packet_mac_addr(void)
-+{
-+	struct rte_ether_addr mac_addr;
-+	struct rte_ether_addr new_mac = {
-+		.addr_bytes = {0x02, 0x11, 0x22, 0x33, 0x44, 0x55}
-+	};
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Get current MAC address */
-+	ret = rte_eth_macaddr_get(port_id, &mac_addr);
-+	TEST_ASSERT(ret == 0, "Failed to get MAC address");
-+
-+	/* Set new MAC address (use locally administered address) */
-+	ret = rte_eth_dev_default_mac_addr_set(port_id, &new_mac);
-+	TEST_ASSERT(ret == 0, "Failed to set MAC address");
-+
-+	/* Verify MAC was set */
-+	ret = rte_eth_macaddr_get(port_id, &mac_addr);
-+	TEST_ASSERT(ret == 0, "Failed to get MAC address after set");
-+
-+	TEST_ASSERT(memcmp(&mac_addr, &new_mac, sizeof(mac_addr)) == 0,
-+		    "MAC address mismatch after set");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: MTU operations
-+ * Get min/max supported MTU from device info and verify setting works.
-+ */
-+static int
-+test_af_packet_mtu(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	uint16_t mtu, original_mtu;
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Get device info for min/max MTU */
-+	ret = rte_eth_dev_info_get(port_id, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get device info");
-+
-+	/* Get current MTU */
-+	ret = rte_eth_dev_get_mtu(port_id, &original_mtu);
-+	TEST_ASSERT(ret == 0, "Failed to get MTU");
-+
-+	printf("MTU: current=%u, min=%u, max=%u\n",
-+	       original_mtu, dev_info.min_mtu, dev_info.max_mtu);
-+
-+	/* Test setting minimum MTU if supported and different from current */
-+	if (dev_info.min_mtu > 0 && dev_info.min_mtu != original_mtu) {
-+		ret = rte_eth_dev_set_mtu(port_id, dev_info.min_mtu);
-+		if (ret == 0) {
-+			ret = rte_eth_dev_get_mtu(port_id, &mtu);
-+			TEST_ASSERT(ret == 0, "Failed to get MTU after set to min");
-+			TEST_ASSERT(mtu == dev_info.min_mtu,
-+				    "MTU not set to min: expected %u, got %u",
-+				    dev_info.min_mtu, mtu);
-+		}
-+		/* MTU set may fail depending on interface, that's acceptable */
-+	}
-+
-+	/* Test setting maximum MTU if supported and different from current */
-+	if (dev_info.max_mtu > 0 && dev_info.max_mtu != original_mtu &&
-+	    dev_info.max_mtu != dev_info.min_mtu) {
-+		ret = rte_eth_dev_set_mtu(port_id, dev_info.max_mtu);
-+		if (ret == 0) {
-+			ret = rte_eth_dev_get_mtu(port_id, &mtu);
-+			TEST_ASSERT(ret == 0, "Failed to get MTU after set to max");
-+			TEST_ASSERT(mtu == dev_info.max_mtu,
-+				    "MTU not set to max: expected %u, got %u",
-+				    dev_info.max_mtu, mtu);
-+		}
-+		/* MTU set may fail depending on interface capabilities */
-+	}
-+
-+	/* Restore original MTU */
-+	rte_eth_dev_set_mtu(port_id, original_mtu);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Stats reset verification
-+ */
-+static int
-+test_af_packet_stats_reset(void)
-+{
-+	struct rte_eth_stats stats;
-+	struct rte_mbuf *bufs[BURST_SIZE / 2];
-+	uint16_t nb_tx;
-+	unsigned int allocated;
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Generate some TX traffic using helpers */
-+	allocated = alloc_tx_mbufs(bufs, BURST_SIZE / 2);
-+	nb_tx = do_tx_burst(port_id, 0, bufs, allocated);
-+
-+	/* Poll for stats to update */
-+	if (nb_tx > 0)
-+		wait_for_stats_update(port_id, nb_tx, STATS_POLL_TIMEOUT_US);
-+
-+	/* Reset stats */
-+	ret = rte_eth_stats_reset(port_id);
-+	TEST_ASSERT(ret == 0, "Failed to reset stats");
-+
-+	/* Verify stats are zero */
-+	ret = rte_eth_stats_get(port_id, &stats);
-+	TEST_ASSERT(ret == 0, "Failed to get stats after reset");
-+
-+	TEST_ASSERT(stats.ipackets == 0,
-+		    "Expected ipackets=0, got %"PRIu64, stats.ipackets);
-+	TEST_ASSERT(stats.opackets == 0,
-+		    "Expected opackets=0, got %"PRIu64, stats.opackets);
-+	TEST_ASSERT(stats.ibytes == 0,
-+		    "Expected ibytes=0, got %"PRIu64, stats.ibytes);
-+	TEST_ASSERT(stats.obytes == 0,
-+		    "Expected obytes=0, got %"PRIu64, stats.obytes);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Invalid configuration handling - missing iface
-+ */
-+static int
-+test_af_packet_invalid_no_iface(void)
-+{
-+	int ret;
-+
-+	/* Test without iface argument (should fail) */
-+	ret = rte_vdev_init("net_af_packet_invalid1", "");
-+	TEST_ASSERT(ret != 0, "Expected failure without iface argument");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Invalid configuration handling - non-existent interface
-+ */
-+static int
-+test_af_packet_invalid_bad_iface(void)
-+{
-+	int ret;
-+
-+	/* Test with non-existent interface (should fail) */
-+	ret = rte_vdev_init("net_af_packet_invalid2",
-+			    "iface=nonexistent_iface_12345");
-+	TEST_ASSERT(ret != 0, "Expected failure with non-existent interface");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Invalid configuration handling - invalid qpairs
-+ */
-+static int
-+test_af_packet_invalid_qpairs(void)
-+{
-+	int ret;
-+
-+	if (!tap_created) {
-+		printf("SKIPPED: TAP interface not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Test with invalid qpairs (should fail) */
-+	ret = rte_vdev_init("net_af_packet_invalid3",
-+			    "iface=" TAP_DEV_NAME ",qpairs=0");
-+	TEST_ASSERT(ret != 0, "Expected failure with qpairs=0");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Custom frame size configuration
-+ */
-+static int
-+test_af_packet_frame_config(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	uint16_t test_port;
-+	char devargs[256];
-+	int ret;
-+
-+	if (!tap_created) {
-+		printf("SKIPPED: TAP interface not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Create with custom frame parameters */
-+	snprintf(devargs, sizeof(devargs),
-+		 "iface=%s,blocksz=4096,framesz=2048,framecnt=256",
-+		 TAP_DEV_NAME);
-+
-+	ret = rte_vdev_init("net_af_packet_frame_test", devargs);
-+	if (ret != 0) {
-+		printf("SKIPPED: Could not create port with custom frame config\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	ret = rte_eth_dev_get_port_by_name("net_af_packet_frame_test",
-+					   &test_port);
-+	TEST_ASSERT(ret == 0, "Failed to get port id");
-+
-+	ret = rte_eth_dev_info_get(test_port, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get device info");
-+
-+	/* Cleanup */
-+	rte_eth_dev_close(test_port);
-+	rte_vdev_uninit("net_af_packet_frame_test");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Qdisc bypass configuration
-+ */
-+static int
-+test_af_packet_qdisc_bypass(void)
-+{
-+	uint16_t test_port;
-+	char devargs[256];
-+	int ret;
-+
-+	if (!tap_created) {
-+		printf("SKIPPED: TAP interface not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Create with qdisc_bypass enabled */
-+	snprintf(devargs, sizeof(devargs), "iface=%s,qdisc_bypass=1",
-+		 TAP_DEV_NAME);
-+
-+	ret = rte_vdev_init("net_af_packet_qdisc_test", devargs);
-+	if (ret != 0) {
-+		printf("SKIPPED: qdisc_bypass may not be supported\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	ret = rte_eth_dev_get_port_by_name("net_af_packet_qdisc_test",
-+					   &test_port);
-+	TEST_ASSERT(ret == 0, "Failed to get port id");
-+
-+	/* Cleanup */
-+	rte_eth_dev_close(test_port);
-+	rte_vdev_uninit("net_af_packet_qdisc_test");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Test: Multiple queue pairs
-+ */
-+static int
-+test_af_packet_multi_queue(void)
-+{
-+	struct rte_eth_dev_info dev_info;
-+	struct rte_eth_conf port_conf = {0};
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	uint16_t test_port;
-+	char devargs[256];
-+	const uint16_t num_queues = 2;
-+	unsigned int allocated, q;
-+	int ret;
-+
-+	if (!tap_created) {
-+		printf("SKIPPED: TAP interface not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	snprintf(devargs, sizeof(devargs), "iface=%s,qpairs=%u",
-+		 TAP_DEV_NAME, num_queues);
-+	ret = rte_vdev_init("net_af_packet_multi_q", devargs);
-+	if (ret != 0) {
-+		printf("SKIPPED: Could not create multi-queue port\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	ret = rte_eth_dev_get_port_by_name("net_af_packet_multi_q", &test_port);
-+	TEST_ASSERT(ret == 0, "Failed to get port id for multi-queue port");
-+
-+	ret = rte_eth_dev_info_get(test_port, &dev_info);
-+	TEST_ASSERT(ret == 0, "Failed to get device info");
-+
-+	TEST_ASSERT(dev_info.max_rx_queues >= num_queues,
-+		    "Expected at least %u RX queues, got %u",
-+		    num_queues, dev_info.max_rx_queues);
-+	TEST_ASSERT(dev_info.max_tx_queues >= num_queues,
-+		    "Expected at least %u TX queues, got %u",
-+		    num_queues, dev_info.max_tx_queues);
-+
-+	/* Configure the port */
-+	ret = rte_eth_dev_configure(test_port, num_queues, num_queues, &port_conf);
-+	TEST_ASSERT(ret == 0, "Failed to configure multi-queue port");
-+
-+	for (q = 0; q < num_queues; q++) {
-+		ret = rte_eth_rx_queue_setup(test_port, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(test_port),
-+					     NULL, mp);
-+		TEST_ASSERT(ret == 0, "Failed to setup RX queue %u", q);
-+
-+		ret = rte_eth_tx_queue_setup(test_port, q, RING_SIZE,
-+					     rte_eth_dev_socket_id(test_port),
-+					     NULL);
-+		TEST_ASSERT(ret == 0, "Failed to setup TX queue %u", q);
-+	}
-+
-+	ret = rte_eth_dev_start(test_port);
-+	TEST_ASSERT(ret == 0, "Failed to start multi-queue port");
-+
-+	/* Test TX on different queues using shared helpers */
-+	for (q = 0; q < num_queues; q++) {
-+		allocated = alloc_tx_mbufs(bufs, BURST_SIZE / 2);
-+		if (allocated > 0)
-+			do_tx_burst(test_port, q, bufs, allocated);
-+	}
-+
-+	/* Test RX on different queues */
-+	for (q = 0; q < num_queues; q++)
-+		do_rx_burst(test_port, q, bufs, BURST_SIZE);
-+
-+	/* Cleanup */
-+	rte_eth_dev_stop(test_port);
-+	rte_eth_dev_close(test_port);
-+	rte_vdev_uninit("net_af_packet_multi_q");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/*
-+ * Multi-threaded test context
-+ */
-+struct mt_test_ctx {
-+	uint16_t port_id;
-+	uint32_t stop;
-+	uint32_t tx_count;
-+	uint32_t rx_count;
-+	int tx_error;
-+	int rx_error;
-+};
-+
-+/*
-+ * Writer thread function for multi-threaded test
-+ */
-+static void *
-+mt_writer_thread(void *arg)
-+{
-+	struct mt_test_ctx *ctx = arg;
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	unsigned int allocated;
-+	uint16_t nb_tx;
-+
-+	while (!rte_atomic_load_explicit(&ctx->stop, rte_memory_order_acquire)) {
-+		allocated = alloc_tx_mbufs(bufs, BURST_SIZE / 4);
-+		if (allocated == 0) {
-+			ctx->tx_error = -ENOMEM;
-+			break;
-+		}
-+
-+		nb_tx = do_tx_burst(ctx->port_id, 0, bufs, allocated);
-+		rte_atomic_fetch_add_explicit(&ctx->tx_count, nb_tx,
-+					      rte_memory_order_relaxed);
-+
-+		/* Small delay between bursts */
-+		rte_delay_us_block(100);
-+	}
-+
-+	return NULL;
-+}
-+
-+/*
-+ * Reader thread function for multi-threaded test
-+ */
-+static void *
-+mt_reader_thread(void *arg)
-+{
-+	struct mt_test_ctx *ctx = arg;
-+	struct rte_mbuf *bufs[BURST_SIZE];
-+	uint16_t nb_rx;
-+
-+	while (!rte_atomic_load_explicit(&ctx->stop, rte_memory_order_acquire)) {
-+		nb_rx = rte_eth_rx_burst(ctx->port_id, 0, bufs, BURST_SIZE);
-+		if (nb_rx > 0) {
-+			rte_atomic_fetch_add_explicit(&ctx->rx_count, nb_rx,
-+						      rte_memory_order_relaxed);
-+			rte_pktmbuf_free_bulk(bufs, nb_rx);
-+		}
-+
-+		/* Small delay between polls */
-+		rte_delay_us_block(50);
-+	}
-+
-+	return NULL;
-+}
-+
-+/*
-+ * Test: Multi-threaded concurrent TX and RX
-+ * This test creates separate writer and reader threads to exercise
-+ * concurrent access patterns to the af_packet PMD.
-+ */
-+static int
-+test_af_packet_multithread(void)
-+{
-+	struct mt_test_ctx ctx = {0};
-+	pthread_t writer_tid, reader_tid;
-+	struct timespec start, now;
-+	int ret;
-+
-+	if (!tap_created || port_id >= RTE_MAX_ETHPORTS) {
-+		printf("SKIPPED: Port not available (need root)\n");
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Initialize context */
-+	ctx.port_id = port_id;
-+	rte_atomic_store_explicit(&ctx.stop, 0, rte_memory_order_release);
-+	rte_atomic_store_explicit(&ctx.tx_count, 0, rte_memory_order_release);
-+	rte_atomic_store_explicit(&ctx.rx_count, 0, rte_memory_order_release);
-+	ctx.tx_error = 0;
-+	ctx.rx_error = 0;
-+
-+	/* Start writer thread */
-+	ret = pthread_create(&writer_tid, NULL, mt_writer_thread, &ctx);
-+	if (ret != 0) {
-+		printf("SKIPPED: Failed to create writer thread: %d\n", ret);
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Start reader thread */
-+	ret = pthread_create(&reader_tid, NULL, mt_reader_thread, &ctx);
-+	if (ret != 0) {
-+		rte_atomic_store_explicit(&ctx.stop, 1, rte_memory_order_release);
-+		pthread_join(writer_tid, NULL);
-+		printf("SKIPPED: Failed to create reader thread: %d\n", ret);
-+		return TEST_SKIPPED;
-+	}
-+
-+	/* Run for configured duration */
-+	clock_gettime(CLOCK_MONOTONIC, &start);
-+	do {
-+		rte_delay_us_block(100000); /* 100ms */
-+		clock_gettime(CLOCK_MONOTONIC, &now);
-+	} while ((now.tv_sec - start.tv_sec) < MT_TEST_DURATION_SEC);
-+
-+	/* Signal threads to stop */
-+	rte_atomic_store_explicit(&ctx.stop, 1, rte_memory_order_release);
-+
-+	/* Wait for threads to finish */
-+	pthread_join(writer_tid, NULL);
-+	pthread_join(reader_tid, NULL);
-+
-+	/* Report results */
-+	printf("Multi-threaded test: TX=%u, RX=%u (duration=%ds)\n",
-+	       rte_atomic_load_explicit(&ctx.tx_count, rte_memory_order_relaxed),
-+	       rte_atomic_load_explicit(&ctx.rx_count, rte_memory_order_relaxed),
-+	       MT_TEST_DURATION_SEC);
-+
-+	/* Check for errors */
-+	TEST_ASSERT(ctx.tx_error == 0,
-+		    "Writer thread encountered error: %d", ctx.tx_error);
-+	TEST_ASSERT(ctx.rx_error == 0,
-+		    "Reader thread encountered error: %d", ctx.rx_error);
-+
-+	/* Verify some packets were transmitted */
-+	TEST_ASSERT(rte_atomic_load_explicit(&ctx.tx_count,
-+					     rte_memory_order_relaxed) > 0,
-+		    "Expected some packets to be transmitted");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static struct unit_test_suite af_packet_test_suite = {
-+	.suite_name = "AF_PACKET PMD Unit Test Suite",
-+	.setup = test_af_packet_setup,
-+	.teardown = test_af_packet_teardown,
-+	.unit_test_cases = {
-+		/* Tests that don't modify device state */
-+		TEST_CASE(test_af_packet_dev_info),
-+		TEST_CASE(test_af_packet_link_status),
-+		TEST_CASE(test_af_packet_stats_init),
-+		TEST_CASE(test_af_packet_tx),
-+		TEST_CASE(test_af_packet_rx),
-+		TEST_CASE(test_af_packet_loopback),
-+		TEST_CASE(test_af_packet_promiscuous),
-+		TEST_CASE(test_af_packet_mac_addr),
-+		TEST_CASE(test_af_packet_mtu),
-+		TEST_CASE(test_af_packet_stats_reset),
-+		TEST_CASE(test_af_packet_multithread),
-+
-+		/* Tests that create their own devices */
-+		TEST_CASE(test_af_packet_invalid_no_iface),
-+		TEST_CASE(test_af_packet_invalid_bad_iface),
-+		TEST_CASE(test_af_packet_invalid_qpairs),
-+		TEST_CASE(test_af_packet_frame_config),
-+		TEST_CASE(test_af_packet_qdisc_bypass),
-+		TEST_CASE(test_af_packet_multi_queue),
-+
-+		TEST_CASES_END() /**< NULL terminate unit test array */
-+	}
-+};
-+
-+static int
-+test_pmd_af_packet(void)
-+{
-+	return unit_test_suite_runner(&af_packet_test_suite);
-+}
-+#endif
-+
-+REGISTER_FAST_TEST(af_packet_pmd_autotest, NOHUGE_OK, ASAN_OK, test_pmd_af_packet);
+diff --git a/drivers/net/intel/ice/meson.build b/drivers/net/intel/ice/meson.build
+index 293577676f..a205304c89 100644
+--- a/drivers/net/intel/ice/meson.build
++++ b/drivers/net/intel/ice/meson.build
+@@ -33,6 +33,8 @@ endif
+ if arch_subdir == 'x86'
+     sources_avx2 += files('ice_rxtx_vec_avx2.c')
+     sources_avx512 += files('ice_rxtx_vec_avx512.c')
++elif arch_subdir == 'arm' and dpdk_conf.get('RTE_ARCH_64')
++    sources += files('ice_rxtx_vec_neon.c')
+ endif
+ 
+ sources += files(
 -- 
-2.53.0
+2.43.0
 
