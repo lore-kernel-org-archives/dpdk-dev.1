@@ -2,39 +2,126 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21ED9F4385C
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 17:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F7EF41995
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 17:52:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ED7A040659;
-	Wed, 15 Apr 2026 19:17:27 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id CFB1E40611
- for <dev@dpdk.org>; Wed, 15 Apr 2026 19:17:26 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4fwnqt5VHHzJ46F6;
- Thu, 16 Apr 2026 01:16:42 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (unknown [7.214.147.241])
- by mail.maildlp.com (Postfix) with ESMTPS id 30FFA40569;
- Thu, 16 Apr 2026 01:17:26 +0800 (CST)
-Received: from localhost (10.220.239.45) by dubpeml500001.china.huawei.com
- (7.214.147.241) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 15 Apr
- 2026 18:17:25 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: <dev@dpdk.org>
-CC: <wathsala.vithanage@arm.com>
-Subject: [PATCH v1 2/2] ring: introduce peek API for soring
-Date: Wed, 15 Apr 2026 18:16:26 +0100
-Message-ID: <20260415171626.161370-3-konstantin.ananyev@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20260415171626.161370-1-konstantin.ananyev@huawei.com>
-References: <20260415171626.161370-1-konstantin.ananyev@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 319C9402D7;
+	Wed, 15 Apr 2026 19:52:19 +0200 (CEST)
+Received: from BL2PR02CU003.outbound.protection.outlook.com
+ (mail-eastusazon11011064.outbound.protection.outlook.com [52.101.52.64])
+ by mails.dpdk.org (Postfix) with ESMTP id 68F6B402D5
+ for <dev@dpdk.org>; Wed, 15 Apr 2026 19:52:17 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QReyqf/M2CHc3xCkpX26OpZkAbbQrkIErY4L33ZhyraRGRvQkT65zxcUnrGFwdtckDEHjrYc4IpzbKp43zDZRIVBLuux+hd1+LVhtfVgJMSnX/cLQM9Y2WNKHBYQuxTlEGZCgZNdVPNTXiBQ4XiKVhzyNIWtUz+PzbsZQjMlUbXgjYOzh6VTIbs9NNmbZbW8Ebi8dhrZqoUc4slFemNWEyD3gufRKJDb1lYh2CpPf0plB7Fn8XYaZvi4EliQ7nJEHqc3FUwfmSEkrEBqd+hS08WOuSY0kQXGB4pfBAn1HZ4dLVsRPEgaj3s6YzUHLvCmeu4JrgpxoIcsRAIGIKjDEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eoIDp+ABLDmCXGndh7/XquxvNKgFLF3T/qpi73q9BNk=;
+ b=TXV2wCKiqHLiSxw5aRkkjRRVjX90DHkAj7ifAfnlkRA6aUuBK12ycSkuQpIf0vZMyzMw639WbJMcgHGa54OKd33WZ0wrFEanvKDYtTy95NKJTmueCAJDZT3jJSD86Pl4lBDloT663oWULkvYsewt4sj9vhtRfrkO90JfrD1s7jloBWApjqpTWxg/4dfXJ/sgM0lqJ0IUs6Wh8qBKHGaSGRW8GPZC9GQxnYTNMlNUwEx87EsfdR5aETLnqU5aL5RgTp8mcL95TLiOzCaQh0CwViGPI1McpJLdI9U2lLbiRIVhUWZ8yr+Wlk9nOrk7LEkQN7DVZoOJIPWiDzwRSfbZCg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eoIDp+ABLDmCXGndh7/XquxvNKgFLF3T/qpi73q9BNk=;
+ b=qFIj1Eo6dC1mwj57Kxb6oxZzKgTi/Ch/SSu56m4sVgIe+GB2jG6iTZzvXTCSawCj4Zz8hQPsxTSuOFDUmsCqZqIufehp7HHBXLimA51JosWI4WIvzP4oCBcENOhi+DaXkQO9Inq7wGcTPK2dMCXm8q/1zVCc/00G5VXjW65QU8I=
+Received: from PH7PR12MB8596.namprd12.prod.outlook.com (2603:10b6:510:1b7::6)
+ by SJ1PR12MB6314.namprd12.prod.outlook.com (2603:10b6:a03:457::9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.21; Wed, 15 Apr
+ 2026 17:52:15 +0000
+Received: from PH7PR12MB8596.namprd12.prod.outlook.com
+ ([fe80::5909:724e:563f:49d1]) by PH7PR12MB8596.namprd12.prod.outlook.com
+ ([fe80::5909:724e:563f:49d1%4]) with mapi id 15.20.9769.014; Wed, 15 Apr 2026
+ 17:52:15 +0000
+From: "Varghese, Vipin" <Vipin.Varghese@amd.com>
+To: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, "Tummala, Sivaprasad"
+ <Sivaprasad.Tummala@amd.com>
+CC: "konstantin.ananyev@huawei.com" <konstantin.ananyev@huawei.com>,
+ "wathsala.vithanage@arm.com" <wathsala.vithanage@arm.com>,
+ "bruce.richardson@intel.com" <bruce.richardson@intel.com>,
+ "viktorin@cesnet.cz" <viktorin@cesnet.cz>
+Subject: RE: [PATCH v5 v5 1/3] eal/topology: add Topology grouping for lcores
+Thread-Topic: [PATCH v5 v5 1/3] eal/topology: add Topology grouping for lcores
+Thread-Index: AQHczEZ+K4UGjNswFkeVyJC9t8VgQrXgKamAgAA66cA=
+Date: Wed, 15 Apr 2026 17:52:15 +0000
+Message-ID: <PH7PR12MB8596A6F86F3F200F2D74448A82222@PH7PR12MB8596.namprd12.prod.outlook.com>
+References: <20241105102849.1947-1-vipin.varghese@amd.com>
+ <20260414193850.1696-1-vipin.varghese@amd.com>
+ <20260414193850.1696-2-vipin.varghese@amd.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F657EE@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F657EE@smartserver.smartshare.dk>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-Mentions: mb@smartsharesystems.com
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=True;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2026-04-15T17:37:41.0000000Z;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only; MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=3;
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH7PR12MB8596:EE_|SJ1PR12MB6314:EE_
+x-ms-office365-filtering-correlation-id: 2e5d0c5f-efbe-4815-b191-08de9b17baa4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|366016|376014|1800799024|38070700021|56012099003|18002099003|22082099003;
+x-microsoft-antispam-message-info: q3Tux2egyhxD8JWQJRYMm+Oji99LE89ojNSsNb4XQe/MQuwwyafOElE4b3iDC7ohP5cPx1ziuAy5D8hkm8yp57IXdJ16RiqIsxLmxtSNrIEfVvzdJbNoirhIhhqB/pUbelco12eOGGiNd+Ng3aRtFsCsQAyhCQpyIlbhBc4x4SZu9PZnSLuKTpwnt5gmVSI1Xs1BwCllvbbQtjddfagjsH7rpVXRsNQQMeBxKWgcxeCYfrlAU/aekTqqo1/TII3ZmgfpQV5qvFrUkxyh1632JZZnMyY9WDNb6lF8HfdI3ClL9Ddw3mSeQYt9qjBe6djTj/8RiaxlJB9ArtZpmvLshitKxOl9AANF9V53S5YvDgEOoRgQQko9uZGtV4cuppuVMX06GLx5NgLHzixA+5Xnay6IcnKs4eOCfzaBXlMuuhS0gUXXheEhCBpgkgWRrv9WUPus8bG2mBCEca7Lg32PQ7qWgEwyTPDfO4CYT1wB6E6XcOui6OZVNAz1FQRPGoC1iLmiH+yFbDjeTTXfThMauyzl88jduSWeqlpMOn8p1q0gjP3xEqqxFGFpWSujA0TWtUAee4m2sOXCyOpmg6y6j/sb3DBP2hdHtJ+Qwgaj0on//itfQ/s9DIdnkQ0IIAkJo5DCqd29JBXSeIl2iZoeDHddLntbx1btbF3iSm4L5xo76EAz1kxLGTB/xz0qtu84/5I3PQYMj55TDi3LlEmuT8GaN/kr+J3VYy/4WwmFq5tjS+9FlHLywG6LcfSmwLar
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:PH7PR12MB8596.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(376014)(1800799024)(38070700021)(56012099003)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?N7x36jVJ+HwaKaMuJ3ZmNA9xqEn2qbXzu1igVBvsxA+Z4DUGXjZdEA5gnq?=
+ =?iso-8859-1?Q?APXfTR5mzv01MQgdlS6XBeGvhrQiszRg8/SZakCSxEfXpGVFj2Jmy7YZnd?=
+ =?iso-8859-1?Q?/9QVAwP1eQFqGbyoAjrlvo1/QbjAcpXQwuC36REXU0vtX8rlIub+PdinzH?=
+ =?iso-8859-1?Q?xPxI6upyy8KSVYG9nxC2uV8Zf58FWAyo/uYWFHd766ee27YgKyrGISqh3y?=
+ =?iso-8859-1?Q?d6dQrjBrn+OHAzizsWoAFpJwDKPvNsph6PmltNr3+lHG9zDIShdPN5ZiGv?=
+ =?iso-8859-1?Q?8X3vTtuV3Y4eJcU8M8t0rJzvczvtXzOnpAyQP/OwDBFNH2+unG/L4b/pGo?=
+ =?iso-8859-1?Q?RjiXV+2UgTAuZCRRrWOQXwwOKHOJKhu2mvAkrz1+p1w+lKgsW443VFezPI?=
+ =?iso-8859-1?Q?X5Rm76rONgQzQ8FNa4lNE2ID/MtcJ9nMxSuaPujbamGDbVKgRzWG4dSLVP?=
+ =?iso-8859-1?Q?UJ9W4gXDbyta3NI6Haj3PxhQ8Kefdn3pKaUc/BhMhcvCqHIDsBKUgJKf24?=
+ =?iso-8859-1?Q?yPqIqUbplC+DDwMHpFVdigv8ap7a4GS1yqcCC4nRkTq+BWMcwusIVgE8Kk?=
+ =?iso-8859-1?Q?hYXShi0SRPCXUTU8Q4Sn4iFgUhH46cfs7dDcpVSRqwAMYaH8V6BjHa9yCV?=
+ =?iso-8859-1?Q?9xzHiMz07dZ+8qrETQsjs3MIuug82XkRKccNf0vmXFWoams0AjrzTF5Asd?=
+ =?iso-8859-1?Q?KibiQ1Rc83Hf+sojcxKHKzpyuaie3Z1uh9S/PBEkLwRKBJzBuCAUXMkvi3?=
+ =?iso-8859-1?Q?6leEKwMPl7/TkJ8sowVETebaMHaV5wkARR8lDYWUQd/LQ1BM05mhH8wIQN?=
+ =?iso-8859-1?Q?YLAfry/dGTVkyD1HkL9uOvRRES6IcNiiJ/d7SG7yX7kDXGzZR73wqdluYZ?=
+ =?iso-8859-1?Q?ZF7MpvlOCEzE2GlQbgc1witEJ7W1Clxj7b7BzRkJs42w7c6mtvEcU09d4w?=
+ =?iso-8859-1?Q?lL4m36XH4Vzwfsl1zzNlXJ4B0HRfD28fWWWEpNT3oXohZCRNkfYfqqkxdJ?=
+ =?iso-8859-1?Q?/JwkOksk1CWQNxB/Z/7JmuetTK+6YWkifoB7HCsb2v5V7GePJRun1n9qaZ?=
+ =?iso-8859-1?Q?8FPBizUn1RHMxoGgecASFtBlh0n5j7TglXXfPHUjY52zs/AUS3wMwNSlQ5?=
+ =?iso-8859-1?Q?Vl04nRDptn28x6ABrexAWGl0d9KTqaax2YGhlPAneMKd7nxy1Nb+9Dp7b2?=
+ =?iso-8859-1?Q?kidc9+BVlqg2zPUD82amx/RdECcUggaJ9fsjYTcanQAAje+5uZ530DwfYG?=
+ =?iso-8859-1?Q?a707r9KW692rXC56t4OWAcpslBEw2ngZbf2xhlmE4VX2CqdBelGBomYsSF?=
+ =?iso-8859-1?Q?EQ9T+rGRDkpcyOUoDDAmv9FM2cXjDu8b8OQA6hsjIU/sHH7SZBz866Gu8j?=
+ =?iso-8859-1?Q?za9rya7M4UaAnAJxNjVq0qO1UW9W0ZjS8xu9pYlDfitb5LIbtoEBLpggiV?=
+ =?iso-8859-1?Q?z8I2FRbQBuWA35t2eKRQI2zp4vXBT5CzY91X3YpohCc0pGXgA4eZ11rPeR?=
+ =?iso-8859-1?Q?lCDOvsVFlfZWCs31fnwOOeyK4kuysiaiClfV5LJZRaPLbEnk4Fsy3cPViu?=
+ =?iso-8859-1?Q?LKoQg/s8r2smZ9Y4IanIya/Ljnd79DwxhFmzK8SvaHtymawDJc34F27jKK?=
+ =?iso-8859-1?Q?v3wRq2KRfEJXwRnyr36jX0XVTkp6VG7KYvBTKPsPImwtCsoop2yLVa4msi?=
+ =?iso-8859-1?Q?/Ln5HyIqawipw+bvSVDNpYQBuPuhj3hRd9UlPwugFsR7in/xStS8BMr891?=
+ =?iso-8859-1?Q?YtHuVWAcRqcK7JeN6oXoqNfiLa6v81E8Mayv1zsAB8WLrK?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.220.239.45]
-X-ClientProxiedBy: frapema500002.china.huawei.com (7.182.19.148) To
- dubpeml500001.china.huawei.com (7.214.147.241)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB8596.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2e5d0c5f-efbe-4815-b191-08de9b17baa4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Apr 2026 17:52:15.0469 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AJLZzbgoW38BHsJAIP3ok5IbsXq/6mtLlTzKWj79DIUS2CypwCbJq0p23HPmCMGlkETun2XwT1or3JhhbVg/hA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6314
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -48,929 +135,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Follow the same pattern as conventional rte_ring and introduce peek API
-for soring too.
-Basically it provides similar functionality and similar opportunities
-for the user, while similar constraints remain - only rings with
-certain sync types are supported:
-1) Single Producer/Single Consumer (RTE_RING_SYNC_ST)
-2) Serialized Producer/Serialized Consumer (RTE_RING_SYNC_MT_HTS).
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-Signed-off-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
----
- app/test/meson.build               |   1 +
- app/test/test_soring_mt_stress.c   |  74 ++++++++
- app/test/test_soring_peek_stress.c |  75 ++++++++
- app/test/test_soring_stress.c      |   3 +
- app/test/test_soring_stress.h      |   1 +
- app/test/test_soring_stress_impl.h |  87 +---------
- lib/ring/rte_soring.h              | 264 +++++++++++++++++++++++++++++
- lib/ring/soring.c                  | 237 ++++++++++++++++++++++++--
- 8 files changed, 652 insertions(+), 90 deletions(-)
- create mode 100644 app/test/test_soring_peek_stress.c
+Thank you @Morten Br=F8rup
 
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 7d458f9c07..033eaebb80 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -185,6 +185,7 @@ source_file_deps = {
-     'test_service_cores.c': [],
-     'test_soring.c': [],
-     'test_soring_mt_stress.c': [],
-+    'test_soring_peek_stress.c': [],
-     'test_soring_stress.c': [],
-     'test_spinlock.c': [],
-     'test_stack.c': ['stack'],
-diff --git a/app/test/test_soring_mt_stress.c b/app/test/test_soring_mt_stress.c
-index 2f90bb4598..b4493b19de 100644
---- a/app/test/test_soring_mt_stress.c
-+++ b/app/test/test_soring_mt_stress.c
-@@ -33,8 +33,82 @@ _st_ring_release(struct rte_soring *r, uint32_t stage, uint32_t token,
- 	rte_soring_release(r, NULL, stage, num, token);
- }
- 
-+static const struct test_case tests[] = {
-+	{
-+		.name = "MT_DEQENQ-MT_STG1-PRCS",
-+		.func = test_sym_mt1,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "MT_DEQENQ-MT_STG1-AVG",
-+		.func = test_sym_mt1,
-+		.wfunc = test_worker_avg,
-+	},
-+	{
-+		.name = "MT_DEQENQ-MT_STG4-PRCS",
-+		.func = test_sym_mt4,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "MT_DEQENQ-MT_STG4-AVG",
-+		.func = test_sym_mt4,
-+		.wfunc = test_worker_avg,
-+	},
-+	{
-+		.name = "MTRTS_DEQENQ-MT_STG4-PRCS",
-+		.func = test_sym_mt_rts4,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "MTRTS_DEQENQ-MT_STG4-AVG",
-+		.func = test_sym_mt_rts4,
-+		.wfunc = test_worker_avg,
-+	},
-+	{
-+		.name = "MTHTS_DEQENQ-MT_STG4-PRCS",
-+		.func = test_sym_mt_hts4,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "MTHTS_DEQENQ-MT_STG4-AVG",
-+		.func = test_sym_mt_hts4,
-+		.wfunc = test_worker_avg,
-+	},
-+	{
-+		.name = "MT_DEQENQ-MT_STG5-1:1-PRCS",
-+		.func = test_even_odd_mt5,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "MT_DEQENQ-MT_STG5-1:1-AVG",
-+		.func = test_even_odd_mt5,
-+		.wfunc = test_worker_avg,
-+	},
-+	{
-+		.name = "MT_DEQENQ-MT_STG3-1:3-PRCS",
-+		.func = test_div_mt3,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "MT_DEQENQ_MT_STG3-1:3-AVG",
-+		.func = test_div_mt3,
-+		.wfunc = test_worker_avg,
-+	},
-+	{
-+		.name = "ST_DEQENQ-MT_STG4-PRCS",
-+		.func = test_stdenq_stage4,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "ST_DEQENQ-MT_STG4-AVG",
-+		.func = test_stdenq_stage4,
-+		.wfunc = test_worker_avg,
-+	},
-+};
-+
- const struct test test_soring_mt_stress = {
- 	.name = "MT",
- 	.nb_case = RTE_DIM(tests),
- 	.cases = tests,
- };
-+
-diff --git a/app/test/test_soring_peek_stress.c b/app/test/test_soring_peek_stress.c
-new file mode 100644
-index 0000000000..6ac638f8d7
---- /dev/null
-+++ b/app/test/test_soring_peek_stress.c
-@@ -0,0 +1,75 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2024 Huawei Technologies Co., Ltd
-+ */
-+
-+#include "test_soring_stress_impl.h"
-+
-+static inline uint32_t
-+_st_ring_dequeue_burst(struct rte_soring *r, void **obj, uint32_t n,
-+	uint32_t *avail)
-+{
-+	uint32_t m;
-+
-+	m = rte_soring_dequeue_burst_start(r, obj, n, avail);
-+	if (m != 0)
-+		rte_soring_dequeue_finish(r, m);
-+	return m;
-+}
-+
-+static inline uint32_t
-+_st_ring_enqueue_bulk(struct rte_soring *r, void * const *obj, uint32_t n,
-+	uint32_t *free)
-+{
-+	uint32_t m;
-+
-+	m = rte_soring_enqueue_bulk_start(r, n, free);
-+	if (m != 0)
-+		rte_soring_enqueue_finish(r, obj, m);
-+	return m;
-+}
-+
-+static inline uint32_t
-+_st_ring_acquire_burst(struct rte_soring *r, uint32_t stage, void **obj,
-+	uint32_t num, uint32_t *token, uint32_t *avail)
-+{
-+	return rte_soring_acquire_burst(r, obj, stage, num, token, avail);
-+}
-+
-+static inline void
-+_st_ring_release(struct rte_soring *r, uint32_t stage, uint32_t token,
-+	void * const *obj, uint32_t num)
-+{
-+	RTE_SET_USED(obj);
-+	rte_soring_release(r, NULL, stage, num, token);
-+}
-+
-+static const struct test_case tests[] = {
-+
-+	{
-+		.name = "MTHTS_DEQENQ-MT_STG4-PRCS",
-+		.func = test_sym_mt_hts4,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "MTHTS_DEQENQ-MT_STG4-AVG",
-+		.func = test_sym_mt_hts4,
-+		.wfunc = test_worker_avg,
-+	},
-+	{
-+		.name = "ST_DEQENQ-MT_STG4-PRCS",
-+		.func = test_stdenq_stage4,
-+		.wfunc = test_worker_prcs,
-+	},
-+	{
-+		.name = "ST_DEQENQ-MT_STG4-AVG",
-+		.func = test_stdenq_stage4,
-+		.wfunc = test_worker_avg,
-+	},
-+};
-+
-+const struct test test_soring_peek_stress = {
-+	.name = "PEEK",
-+	.nb_case = RTE_DIM(tests),
-+	.cases = tests,
-+};
-+
-diff --git a/app/test/test_soring_stress.c b/app/test/test_soring_stress.c
-index e5655d49cb..f8fda64378 100644
---- a/app/test/test_soring_stress.c
-+++ b/app/test/test_soring_stress.c
-@@ -37,6 +37,9 @@ test_ring_stress(void)
- 	n = 0;
- 	k = 0;
- 
-+	n += test_soring_peek_stress.nb_case;
-+	k += run_test(&test_soring_peek_stress);
-+
- 	n += test_soring_mt_stress.nb_case;
- 	k += run_test(&test_soring_mt_stress);
- 
-diff --git a/app/test/test_soring_stress.h b/app/test/test_soring_stress.h
-index 2341cc9f83..f988244410 100644
---- a/app/test/test_soring_stress.h
-+++ b/app/test/test_soring_stress.h
-@@ -32,3 +32,4 @@ struct test {
- };
- 
- extern const struct test test_soring_mt_stress;
-+extern const struct test test_soring_peek_stress;
-diff --git a/app/test/test_soring_stress_impl.h b/app/test/test_soring_stress_impl.h
-index 015825223d..0efc7e46a0 100644
---- a/app/test/test_soring_stress_impl.h
-+++ b/app/test/test_soring_stress_impl.h
-@@ -683,7 +683,7 @@ role_mask_denq_st(uint32_t nb_stage, uint32_t role_mask[RTE_MAX_LCORE])
- }
- 
- 
--static int
-+static int __rte_unused
- test_sym_mt1(int (*test)(void *))
- {
- 	uint32_t role_mask[RTE_MAX_LCORE];
-@@ -694,7 +694,7 @@ test_sym_mt1(int (*test)(void *))
- 			nb_stage, role_mask);
- }
- 
--static int
-+static int __rte_unused
- test_sym_mt4(int (*test)(void *))
- {
- 	uint32_t role_mask[RTE_MAX_LCORE];
-@@ -706,7 +706,7 @@ test_sym_mt4(int (*test)(void *))
- 			nb_stage, role_mask);
- }
- 
--static int
-+static int __rte_unused
- test_sym_mt_rts4(int (*test)(void *))
- {
- 	uint32_t role_mask[RTE_MAX_LCORE];
-@@ -718,7 +718,7 @@ test_sym_mt_rts4(int (*test)(void *))
- 			nb_stage, role_mask);
- }
- 
--static int
-+static int __rte_unused
- test_sym_mt_hts4(int (*test)(void *))
- {
- 	uint32_t role_mask[RTE_MAX_LCORE];
-@@ -730,7 +730,7 @@ test_sym_mt_hts4(int (*test)(void *))
- 			nb_stage, role_mask);
- }
- 
--static int
-+static int __rte_unused
- test_stdenq_stage4(int (*test)(void *))
- {
- 	uint32_t role_mask[RTE_MAX_LCORE];
-@@ -743,7 +743,7 @@ test_stdenq_stage4(int (*test)(void *))
- }
- 
- 
--static int
-+static int __rte_unused
- test_even_odd_mt5(int (*test)(void *))
- {
- 	uint32_t role_mask[RTE_MAX_LCORE];
-@@ -755,7 +755,7 @@ test_even_odd_mt5(int (*test)(void *))
- 			nb_stage, role_mask);
- }
- 
--static int
-+static int __rte_unused
- test_div_mt3(int (*test)(void *))
- {
- 	uint32_t role_mask[RTE_MAX_LCORE];
-@@ -766,76 +766,3 @@ test_div_mt3(int (*test)(void *))
- 	return test_mt(test, RTE_RING_SYNC_MT, RTE_RING_SYNC_MT,
- 			nb_stage, role_mask);
- }
--
--static const struct test_case tests[] = {
--	{
--		.name = "MT_DEQENQ-MT_STG1-PRCS",
--		.func = test_sym_mt1,
--		.wfunc = test_worker_prcs,
--	},
--	{
--		.name = "MT_DEQENQ-MT_STG1-AVG",
--		.func = test_sym_mt1,
--		.wfunc = test_worker_avg,
--	},
--	{
--		.name = "MT_DEQENQ-MT_STG4-PRCS",
--		.func = test_sym_mt4,
--		.wfunc = test_worker_prcs,
--	},
--	{
--		.name = "MT_DEQENQ-MT_STG4-AVG",
--		.func = test_sym_mt4,
--		.wfunc = test_worker_avg,
--	},
--	{
--		.name = "MTRTS_DEQENQ-MT_STG4-PRCS",
--		.func = test_sym_mt_rts4,
--		.wfunc = test_worker_prcs,
--	},
--	{
--		.name = "MTRTS_DEQENQ-MT_STG4-AVG",
--		.func = test_sym_mt_rts4,
--		.wfunc = test_worker_avg,
--	},
--	{
--		.name = "MTHTS_DEQENQ-MT_STG4-PRCS",
--		.func = test_sym_mt_hts4,
--		.wfunc = test_worker_prcs,
--	},
--	{
--		.name = "MTHTS_DEQENQ-MT_STG4-AVG",
--		.func = test_sym_mt_hts4,
--		.wfunc = test_worker_avg,
--	},
--	{
--		.name = "MT_DEQENQ-MT_STG5-1:1-PRCS",
--		.func = test_even_odd_mt5,
--		.wfunc = test_worker_prcs,
--	},
--	{
--		.name = "MT_DEQENQ-MT_STG5-1:1-AVG",
--		.func = test_even_odd_mt5,
--		.wfunc = test_worker_avg,
--	},
--	{
--		.name = "MT_DEQENQ-MT_STG3-1:3-PRCS",
--		.func = test_div_mt3,
--		.wfunc = test_worker_prcs,
--	},
--	{
--		.name = "MT_DEQENQ_MT_STG3-1:3-AVG",
--		.func = test_div_mt3,
--		.wfunc = test_worker_avg,
--	},
--	{
--		.name = "ST_DEQENQ-MT_STG4-PRCS",
--		.func = test_stdenq_stage4,
--		.wfunc = test_worker_prcs,
--	},
--	{
--		.name = "ST_DEQENQ-MT_STG4-AVG",
--		.func = test_stdenq_stage4,
--		.wfunc = test_worker_avg,
--	},
--};
-diff --git a/lib/ring/rte_soring.h b/lib/ring/rte_soring.h
-index 95c3cc4080..d2907cfe49 100644
---- a/lib/ring/rte_soring.h
-+++ b/lib/ring/rte_soring.h
-@@ -607,6 +607,270 @@ void
- rte_soring_releasx(struct rte_soring *r, const void *objs,
- 	const void *meta, uint32_t stage, uint32_t n, uint32_t ftoken);
- 
-+/**
-+ * SORING Peek API
-+ * Same as with rte_ring, for some sync modes it is possible to split
-+ * public enqueue/dequeue API into two phases:
-+ * - enqueue/dequeue start
-+ * - enqueue/dequeue finish
-+ * That allows user to inspect objects in the soring without removing them
-+ * from it (aka MT safe peek).
-+ * Note that right now this new API is available only for two sync modes:
-+ * 1) Single Producer/Single Consumer (RTE_RING_SYNC_ST)
-+ * 2) Serialized Producer/Serialized Consumer (RTE_RING_SYNC_MT_HTS).
-+ * It is a user responsibility to create/init soring with appropriate sync
-+ * modes selected for enqueue/dequeue.
-+ * For more information, please refer to corresping rte_ring peek API.
-+ */
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Start to enqueue excact number of objects on the soring.
-+ * Note that no actual objects are put in the queue by this function,
-+ * it just reserves for user such ability.
-+ * User has to call appropriate enqueue_elem_finish() to copy objects into the
-+ * queue and complete given enqueue operation.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param n
-+ *   The number of objects to add in the soring.
-+ * @param free_space
-+ *   if non-NULL, returns the amount of space in the soring after the
-+ *   enqueue operation has finished.
-+ * @return
-+ *   - Actual number of objects enqueued, either 0 or n.
-+ */
-+__rte_experimental
-+uint32_t
-+rte_soring_enqueue_bulk_start(struct rte_soring *r, uint32_t n,
-+	uint32_t *free_space);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Start to enqueue several objects (up to 'n') on the soring.
-+ * Note that no actual objects are put in the queue by this function,
-+ * it just reserves for user such ability.
-+ * User has to call appropriate enqueue_elem_finish() to copy objects into the
-+ * queue and complete given enqueue operation.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param n
-+ *   The number of objects to add in the soring.
-+ * @param free_space
-+ *   if non-NULL, returns the amount of space in the soring after the
-+ *   enqueue operation has finished.
-+ * @return
-+ *   - Actual number of objects enqueued.
-+ */
-+__rte_experimental
-+uint32_t
-+rte_soring_enqueue_burst_start(struct rte_soring *r, uint32_t n,
-+	uint32_t *free_space);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Complete to enqueue several objects plus metadata on the soring.
-+ * Note that number of objects to enqueue should not exceed previous
-+ * enqueue_start return value.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param objs
-+ *   A pointer to an array of objects to enqueue.
-+ *   Size of objects to enqueue must be the same value as 'elem_size' parameter
-+ *   used while creating the soring. Otherwise the results are undefined.
-+ * @param n
-+ *   The number of objects to add in the soring from the 'objs'.
-+ */
-+__rte_experimental
-+void
-+rte_soring_enqueue_finish(struct rte_soring *r, const void *objs, uint32_t n);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Complete to enqueue several objects plus metadata on the soring.
-+ * Note that number of objects to enqueue should not exceed previous
-+ * enqueue_start return value.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param objs
-+ *   A pointer to an array of objects to enqueue.
-+ *   Size of objects to enqueue must be the same value as 'elem_size' parameter
-+ *   used while creating the soring. Otherwise the results are undefined.
-+ * @param meta
-+ *   A pointer to an array of metadata values for each object to enqueue.
-+ *   Note that if user not using object metadata values, then this parameter
-+ *   can be NULL.
-+ *   Size of elements in this array must be the same value as 'meta_size'
-+ *   parameter used while creating the soring. If user created the soring with
-+ *   'meta_size' value equals zero, then 'meta' parameter should be NULL.
-+ *   Otherwise the results are undefined.
-+ * @param n
-+ *   The number of objects to add in the soring from the 'objs'.
-+ */
-+__rte_experimental
-+void
-+rte_soring_enqueux_finish(struct rte_soring *r, const void *objs,
-+	const void *meta, uint32_t n);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Start to dequeue several objects plus metadata from the soring.
-+ * Dequeues exactly requested number of objects or none.
-+ * Note that user has to call appropriate dequeue_finish()
-+ * to complete given dequeue operation and actually remove objects from
-+ * the soring.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param objs
-+ *   A pointer to an array of objects to dequeue.
-+ *   Size of objects to enqueue must be the same value as 'elem_size' parameter
-+ *   used while creating the soring. Otherwise the results are undefined.
-+ * @param num
-+ *   The number of objects to dequeue from the soring into the objs.
-+ * @param available
-+ *   If non-NULL, returns the number of remaining soring entries after the
-+ *   dequeue has finished.
-+ * @return
-+ *   - Actual number of objects dequeued, either 0 or 'num'.
-+ */
-+__rte_experimental
-+uint32_t
-+rte_soring_dequeue_bulk_start(struct rte_soring *r, void *objs, uint32_t num,
-+	uint32_t *available);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Start to dequeue several objects plus metadata from the soring.
-+ * Dequeues exactly requested number of objects or none.
-+ * Note that user has to call appropriate dequeue_finish()
-+ * to complete given dequeue operation and actually remove objects from
-+ * the soring.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param objs
-+ *   A pointer to an array of objects to dequeue.
-+ *   Size of objects to enqueue must be the same value as 'elem_size' parameter
-+ *   used while creating the soring. Otherwise the results are undefined.
-+ * @param meta
-+ *   A pointer to array of metadata values for each object to dequeue.
-+ *   Note that if user not using object metadata values, then this parameter
-+ *   can be NULL.
-+ *   Size of elements in this array must be the same value as 'meta_size'
-+ *   parameter used while creating the soring. If user created the soring with
-+ *   'meta_size' value equals zero, then 'meta' parameter should be NULL.
-+ *   Otherwise the results are undefined.
-+ * @param num
-+ *   The number of objects to dequeue from the soring into the objs.
-+ * @param available
-+ *   If non-NULL, returns the number of remaining soring entries after the
-+ *   dequeue has finished.
-+ * @return
-+ *   - Actual number of objects dequeued, either 0 or 'num'.
-+ */
-+__rte_experimental
-+uint32_t
-+rte_soring_dequeux_bulk_start(struct rte_soring *r, void *objs, void *meta,
-+	uint32_t num, uint32_t *available);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Start to dequeue several objects plus metadata from the soring.
-+ * Dequeues up to requested number of objects.
-+ * Note that user has to call appropriate dequeue_finish()
-+ * to complete given dequeue operation and actually remove objects from
-+ * the soring.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param objs
-+ *   A pointer to an array of objects to dequeue.
-+ *   Size of objects to enqueue must be the same value as 'elem_size' parameter
-+ *   used while creating the soring. Otherwise the results are undefined.
-+ * @param num
-+ *   The number of objects to dequeue from the soring into the objs.
-+ * @param available
-+ *   If non-NULL, returns the number of remaining soring entries after the
-+ *   dequeue has finished.
-+ * @return
-+ *   - Actual number of objects dequeued.
-+ */
-+__rte_experimental
-+uint32_t
-+rte_soring_dequeue_burst_start(struct rte_soring *r, void *objs, uint32_t num,
-+	uint32_t *available);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Start to dequeue several objects plus metadata from the soring.
-+ * Dequeues up to requested number of objects.
-+ * Note that user has to call appropriate dequeue_finish()
-+ * to complete given dequeue operation and actually remove objects from
-+ * the soring.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param objs
-+ *   A pointer to an array of objects to dequeue.
-+ *   Size of objects to enqueue must be the same value as 'elem_size' parameter
-+ *   used while creating the soring. Otherwise the results are undefined.
-+ * @param meta
-+ *   A pointer to array of metadata values for each object to dequeue.
-+ *   Note that if user not using object metadata values, then this parameter
-+ *   can be NULL.
-+ *   Size of elements in this array must be the same value as 'meta_size'
-+ *   parameter used while creating the soring. If user created the soring with
-+ *   'meta_size' value equals zero, then 'meta' parameter should be NULL.
-+ *   Otherwise the results are undefined.
-+ * @param num
-+ *   The number of objects to dequeue from the soring into the objs.
-+ * @param available
-+ *   If non-NULL, returns the number of remaining soring entries after the
-+ *   dequeue has finished.
-+ * @return
-+ *   - Actual number of objects dequeued.
-+ */
-+__rte_experimental
-+uint32_t
-+rte_soring_dequeux_burst_start(struct rte_soring *r, void *objs, void *meta,
-+	uint32_t num, uint32_t *available);
-+
-+/**
-+ * Complete to dequeue several objects from the soring.
-+ * Note that number of objects to dequeue should not exceed previous
-+ * dequeue_start return value.
-+ *
-+ * @param r
-+ *   A pointer to the soring structure.
-+ * @param n
-+ *   The number of objects to remove from the soring.
-+ */
-+__rte_experimental
-+void
-+rte_soring_dequeue_finish(struct rte_soring *r, uint32_t num);
-+
-+
- #ifdef __cplusplus
- }
- #endif
-diff --git a/lib/ring/soring.c b/lib/ring/soring.c
-index fc7fc55a21..de5b67071f 100644
---- a/lib/ring/soring.c
-+++ b/lib/ring/soring.c
-@@ -247,6 +247,28 @@ __rte_soring_stage_move_head(struct soring_stage_headtail *d,
- 	return n;
- }
- 
-+static inline void
-+__enqueue_elems(struct rte_soring *r, const void *objs, const void *meta,
-+	uint32_t head, uint32_t n)
-+{
-+	__rte_ring_do_enqueue_elems(&r[1], objs, r->size, head & r->mask,
-+		r->esize, n);
-+	if (meta != NULL)
-+		__rte_ring_do_enqueue_elems(r->meta, meta, r->size,
-+			head & r->mask, r->msize, n);
-+}
-+
-+static inline void
-+__dequeue_elems(const struct rte_soring *r, void *objs,  void *meta,
-+	uint32_t head, uint32_t n)
-+{
-+	__rte_ring_do_dequeue_elems(objs, &r[1], r->size, head & r->mask,
-+			r->esize, n);
-+	if (meta != NULL)
-+		__rte_ring_do_dequeue_elems(meta, r->meta, r->size,
-+			head & r->mask, r->msize, n);
-+}
-+
- static inline uint32_t
- soring_enqueue(struct rte_soring *r, const void *objs,
- 	const void *meta, uint32_t n, enum rte_ring_queue_behavior behavior,
-@@ -263,11 +285,7 @@ soring_enqueue(struct rte_soring *r, const void *objs,
- 	n = __rte_soring_move_prod_head(r, n, behavior, st,
- 			&prod_head, &prod_next, &nb_free);
- 	if (n != 0) {
--		__rte_ring_do_enqueue_elems(&r[1], objs, r->size,
--			prod_head & r->mask, r->esize, n);
--		if (meta != NULL)
--			__rte_ring_do_enqueue_elems(r->meta, meta, r->size,
--				prod_head & r->mask, r->msize, n);
-+		__enqueue_elems(r, objs, meta, prod_head, n);
- 		__rte_soring_update_tail(&r->prod, st, prod_head, prod_next, 1);
- 	}
- 
-@@ -276,6 +294,70 @@ soring_enqueue(struct rte_soring *r, const void *objs,
- 	return n;
- }
- 
-+static inline uint32_t
-+soring_enqueue_start(struct rte_soring *r, uint32_t num,
-+	enum rte_ring_queue_behavior behavior, uint32_t *free_space)
-+{
-+	enum rte_ring_sync_type st;
-+	uint32_t free, head, n, next;
-+
-+	RTE_ASSERT(r != NULL && r->nb_stage > 0);
-+
-+	st = r->prod.ht.sync_type;
-+
-+	switch (st) {
-+	case RTE_RING_SYNC_ST:
-+		n = __rte_ring_headtail_move_head(&r->prod.ht, &r->cons.ht,
-+			r->capacity, RTE_RING_SYNC_ST, num, behavior,
-+			&head, &next, &free);
-+		break;
-+	case RTE_RING_SYNC_MT_HTS:
-+		n = __rte_ring_hts_move_head(&r->prod.hts, &r->cons.ht,
-+			r->capacity, num, behavior, &head, &free);
-+		break;
-+	default:
-+		/* unsupported mode, shouldn't be here */
-+		RTE_ASSERT(0);
-+		free = 0;
-+		n = 0;
-+	}
-+
-+	if (free_space != NULL)
-+		*free_space = free - n;
-+	return n;
-+}
-+
-+static inline void
-+soring_enqueue_finish(struct rte_soring *r, const void *objs, const void *meta,
-+	uint32_t num)
-+{
-+	enum rte_ring_sync_type st;
-+	uint32_t n, tail;
-+
-+	RTE_ASSERT(r != NULL && r->nb_stage > 0);
-+	RTE_ASSERT(meta == NULL || r->meta != NULL);
-+
-+	st = r->prod.ht.sync_type;
-+
-+	switch (st) {
-+	case RTE_RING_SYNC_ST:
-+		n = __rte_ring_st_get_tail(&r->prod.ht, &tail, num);
-+		if (n != 0)
-+			__enqueue_elems(r, objs, meta, tail, n);
-+		__rte_ring_st_set_head_tail(&r->prod.ht, tail, n, 1);
-+		break;
-+	case RTE_RING_SYNC_MT_HTS:
-+		n = __rte_ring_hts_get_tail(&r->prod.hts, &tail, num);
-+		if (n != 0)
-+			__enqueue_elems(r, objs, meta, tail, n);
-+		__rte_ring_hts_set_head_tail(&r->prod.hts, tail, n, 1);
-+		break;
-+	default:
-+		/* unsupported mode, shouldn't be here */
-+		RTE_ASSERT(0);
-+	}
-+}
-+
- static inline uint32_t
- soring_dequeue(struct rte_soring *r, void *objs, void *meta,
- 	uint32_t num, enum rte_ring_queue_behavior behavior,
-@@ -296,11 +378,7 @@ soring_dequeue(struct rte_soring *r, void *objs, void *meta,
- 
- 	/* we have some elems to consume */
- 	if (n != 0) {
--		__rte_ring_do_dequeue_elems(objs, &r[1], r->size,
--			cons_head & r->mask, r->esize, n);
--		if (meta != NULL)
--			__rte_ring_do_dequeue_elems(meta, r->meta, r->size,
--				cons_head & r->mask, r->msize, n);
-+		__dequeue_elems(r, objs, meta, cons_head, n);
- 		__rte_soring_update_tail(&r->cons, st, cons_head, cons_next, 0);
- 	}
- 
-@@ -309,6 +387,67 @@ soring_dequeue(struct rte_soring *r, void *objs, void *meta,
- 	return n;
- }
- 
-+static inline uint32_t
-+soring_dequeue_start(struct rte_soring *r, void *objs, void *meta,
-+	uint32_t num, enum rte_ring_queue_behavior behavior,
-+	uint32_t *available)
-+{
-+	enum rte_ring_sync_type st;
-+	uint32_t avail, head, next, n, ns;
-+
-+	RTE_ASSERT(r != NULL && r->nb_stage > 0);
-+	RTE_ASSERT(meta == NULL || r->meta != NULL);
-+
-+	ns = r->nb_stage - 1;
-+	st = r->cons.ht.sync_type;
-+
-+	switch (st) {
-+	case RTE_RING_SYNC_ST:
-+		n = __rte_ring_headtail_move_head(&r->cons.ht, &r->stage[ns].ht,
-+			0, RTE_RING_SYNC_ST, num, behavior, &head, &next,
-+			&avail);
-+		break;
-+	case RTE_RING_SYNC_MT_HTS:
-+		n = __rte_ring_hts_move_head(&r->cons.hts, &r->stage[ns].ht,
-+			0, num, behavior, &head, &avail);
-+		break;
-+	default:
-+		/* unsupported mode, shouldn't be here */
-+		RTE_ASSERT(0);
-+		avail = 0;
-+		n = 0;
-+	}
-+
-+	/* we have some elems to consume */
-+	if (n != 0)
-+		__dequeue_elems(r, objs, meta, head, n);
-+
-+	if (available != NULL)
-+		*available = avail - n;
-+	return n;
-+}
-+
-+
-+static inline void
-+soring_dequeue_finish(struct rte_soring *r, uint32_t num)
-+{
-+	uint32_t n, tail;
-+
-+	switch (r->cons.ht.sync_type) {
-+	case RTE_RING_SYNC_ST:
-+		n = __rte_ring_st_get_tail(&r->cons.ht, &tail, num);
-+		__rte_ring_st_set_head_tail(&r->cons.ht, tail, n, 0);
-+		break;
-+	case RTE_RING_SYNC_MT_HTS:
-+		n = __rte_ring_hts_get_tail(&r->cons.hts, &tail, num);
-+		__rte_ring_hts_set_head_tail(&r->cons.hts, tail, n, 0);
-+		break;
-+	default:
-+		/* unsupported mode, shouldn't be here */
-+		RTE_ASSERT(0);
-+	}
-+}
-+
- /*
-  * Verify internal SORING state.
-  * WARNING: if expected value is not equal to actual one, it means that for
-@@ -598,3 +737,81 @@ rte_soring_free_count(const struct rte_soring *r)
- {
- 	return r->capacity - rte_soring_count(r);
- }
-+
-+/*
-+ * SORING public peek API
-+ */
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_enqueue_bulk_start, 26.07)
-+uint32_t
-+rte_soring_enqueue_bulk_start(struct rte_soring *r, uint32_t n,
-+	uint32_t *free_space)
-+{
-+	return soring_enqueue_start(r, n, RTE_RING_QUEUE_FIXED, free_space);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_enqueue_burst_start, 26.07)
-+uint32_t
-+rte_soring_enqueue_burst_start(struct rte_soring *r, uint32_t n,
-+	uint32_t *free_space)
-+{
-+	return soring_enqueue_start(r, n, RTE_RING_QUEUE_VARIABLE, free_space);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_enqueue_finish, 26.07)
-+void
-+rte_soring_enqueue_finish(struct rte_soring *r, const void *objs, uint32_t n)
-+{
-+	return soring_enqueue_finish(r, objs, NULL, n);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_enqueux_finish, 26.07)
-+void
-+rte_soring_enqueux_finish(struct rte_soring *r, const void *objs,
-+	const void *meta, uint32_t n)
-+{
-+	return soring_enqueue_finish(r, objs, meta, n);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_dequeue_bulk_start, 26.07)
-+uint32_t
-+rte_soring_dequeue_bulk_start(struct rte_soring *r, void *objs, uint32_t num,
-+	uint32_t *available)
-+{
-+	return soring_dequeue_start(r, objs, NULL, num, RTE_RING_QUEUE_FIXED,
-+		available);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_dequeux_bulk_start, 26.07)
-+uint32_t
-+rte_soring_dequeux_bulk_start(struct rte_soring *r, void *objs, void *meta,
-+	uint32_t num, uint32_t *available)
-+{
-+	return soring_dequeue_start(r, objs, meta, num, RTE_RING_QUEUE_FIXED,
-+		available);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_dequeue_burst_start, 26.07)
-+uint32_t
-+rte_soring_dequeue_burst_start(struct rte_soring *r, void *objs, uint32_t num,
-+	uint32_t *available)
-+{
-+	return soring_dequeue_start(r, objs, NULL, num, RTE_RING_QUEUE_VARIABLE,
-+		available);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_dequeux_burst_start, 26.07)
-+uint32_t
-+rte_soring_dequeux_burst_start(struct rte_soring *r, void *objs, void *meta,
-+	uint32_t num, uint32_t *available)
-+{
-+	return soring_dequeue_start(r, objs, meta, num, RTE_RING_QUEUE_VARIABLE,
-+		available);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_soring_dequeue_finish, 26.07)
-+void
-+rte_soring_dequeue_finish(struct rte_soring *r, uint32_t n)
-+{
-+	soring_dequeue_finish(r, n);
-+}
--- 
-2.51.0
+<snipped>
+
+> >
+> > +struct core_domain_mapping {
+> > +     rte_cpuset_t core_set;  /**< cpu_set representing lcores within
+> > domain */
+> > +     uint16_t core_count;    /**< dpdk enabled lcores within domain */
+> > +     uint16_t *cores;        /**< list of cores */
+> > +};
+>
+> In Linux, rte_cpu_set_t is the same as cpu_set_t, which is limited to CPU=
+_SETSIZE
+> (1024) cores.
+>
+> We should stop using that (fixed size) type, and use dynamically sized CP=
+U sets
+> instead.
+> Ref: https://man7.org/linux/man-pages/man3/CPU_SET.3.html
+>
+> IMHO, both the fd_set type, limited to FDSET_SIZE (1024) file descriptors=
+, and the
+> cpu_set_t type, limited to CPU_SETSIZE (1024) cores, should be considered
+> obsolete, and not used in new DPDK code.
+>
+> It's hard to change old DPDK APIs relying on the fixed size rte_cpu_set_t=
+ type, but
+> let's avoid adding new APIs using that (obsolete) type.
+>
+> Also refer to: https://bugs.dpdk.org/show_bug.cgi?id=3D1704
+>
+> PS: I guess a larger CPU_SETSIZE is available for systems built entirely =
+from
+> scratch, including libc and all libraries and applications. Not a generic=
+ solution.
+>
+> -Morten
+
+Thanks for the pointer, If I understand this correctly for given DPDK proce=
+ssing for `rte_lcore_count` is valid representation While hwloc_init can sh=
+ow upto 1024 or more. Hence step-1 identify the number of cores (or executi=
+on engines) per domain. Alloc for cpuset and use set for valid lcores.
+
+I will make this change in v6 and omit rte_cpuset_t
 
