@@ -2,73 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36FD0FA0C26
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 05:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C3AFA0C3B
+	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 07:08:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 44B3E4042F;
-	Wed, 15 Apr 2026 07:21:16 +0200 (CEST)
-Received: from mail-dy1-f196.google.com (mail-dy1-f196.google.com
- [74.125.82.196]) by mails.dpdk.org (Postfix) with ESMTP id 4240E402B0
- for <dev@dpdk.org>; Wed, 15 Apr 2026 07:21:15 +0200 (CEST)
-Received: by mail-dy1-f196.google.com with SMTP id
- 5a478bee46e88-2d52c7f92b1so5686349eec.0
- for <dev@dpdk.org>; Tue, 14 Apr 2026 22:21:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1776230474; x=1776835274; darn=dpdk.org;
- h=mime-version:user-agent:content-transfer-encoding:in-reply-to:date
- :cc:to:reply-to:from:subject:message-id:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ibJcwMgWu1G4nqMTpbdygReHEysJW5cqyWmIs/K2bTs=;
- b=Uu8RSPAv08mp4IasyOuv7VANr5ILpkCByX7n23YeBOlmNk7dYvFFGjK3rxf7o+OkYA
- kwTc38igfDb0/CzFei3qaD+uO8AbxI2Ce2qSqGjky2Nx2PBR0Fck1Cjl5yQ7sBbU28Jm
- mKLP32qHAg3OkxK86RGxPH7y0eQZc7tWB21QHkTqM5YrbYWsUEGutJQl0av0XDO6JsnR
- GiiUXdLTXd86dfx7HpVuYjNwu0RQw6DQJ0cB0rIapUPShYue7NvHWyF5GGe/foS9uaA2
- JTNDYnlZWbMdz3UCuM6Vn0R/MoDVC4LagUrWsfMqpjB7MJRqEWzVa419Bi3urY12KcqK
- l7Iw==
+	by mails.dpdk.org (Postfix) with ESMTP id B922D4042F;
+	Wed, 15 Apr 2026 09:08:17 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 867A3402B0
+ for <dev@dpdk.org>; Wed, 15 Apr 2026 09:08:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1776236894;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=xxX7rWm3CKdoUPK1fhVT40mYWsxCZUrACA1Wlt38mEw=;
+ b=ad9G4iBM17NZvAm501b0S48GGrGe9d3TEn5E5D3cSvzN+ZTLLHrEnE9FGZpEynfaFx7f1N
+ KZ5qsLI2EDjGB3ccKxMmaM0plD3C/HtFowRaaVaqz5/8Xja5HLRui1WKaLd+mt8GZc6Hik
+ HPg6OwE/yErEkR4FTO5pTCAXoRAkj4o=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-678-rG7dp7GcOcOScuInAVDNwA-1; Wed, 15 Apr 2026 03:08:13 -0400
+X-MC-Unique: rG7dp7GcOcOScuInAVDNwA-1
+X-Mimecast-MFC-AGG-ID: rG7dp7GcOcOScuInAVDNwA_1776236892
+Received: by mail-lf1-f70.google.com with SMTP id
+ 2adb3069b0e04-5a12514a844so3770083e87.2
+ for <dev@dpdk.org>; Wed, 15 Apr 2026 00:08:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776230474; x=1776835274;
- h=mime-version:user-agent:content-transfer-encoding:in-reply-to:date
- :cc:to:reply-to:from:subject:message-id:x-gm-gg:x-gm-message-state
- :from:to:cc:subject:date:message-id:reply-to;
- bh=ibJcwMgWu1G4nqMTpbdygReHEysJW5cqyWmIs/K2bTs=;
- b=CgpAZcKgVruJbv8DsLsOObaOmkffsTsgV7mPFbp+hORxEl5k9zhJVPuv8MIc0WLk6m
- IZvydOvXHyILnB7Jhcy+cax0Ne91cIG2VTe1nC5M5BojRbdABEoNkXSe4zXP2nKFISsR
- z41PB/Z+2Uosq+o4iXmOhgS0T5HPQS/LucyfL030nehOpzCq7Zx4gFNBUTFaOYj3Mb0U
- IdAaESj6q7OceEYJUqec8TMI5zjN5fTZBBNGzJYYCN80cWhYJOUmdRPbmshlV0gBPlkH
- fl2ryztl42kp0rJLcnuh4mEhPqwiVol5bYy+sRljcIc2Qphp95Yf6JTOo+u3MXPQ5rcS
- SRZg==
-X-Forwarded-Encrypted: i=1;
- AFNElJ+9bTAq6I/E45VSTHEDGOsU58ugF0/eKrawxBQRKanpTFP0xhQiRy9fv5p5hb30tQv+ZTQ=@dpdk.org
-X-Gm-Message-State: AOJu0YyQjvZ8xsS6y3plQcRf41eNgmWdU7ID8NbhXQrS+1Xjxl9Fujxl
- GiG5bL3dNBN3BkNsQvQIxCqVib9xJpJuv2T/aOWn7P460N18kcE2AUP+
-X-Gm-Gg: AeBDiev2/UzHtA8k2OhwJhRA4lja2HxklSrUUHnF09Lgxf3VO4SFLyTFqZPHLNqcDf1
- EujFDMs90zbtHZlrE6789Imq3O4RIo8ORK/y5XzKuczYkC/5G8xstcpoxZt0iWVubbxCsiWPtR5
- KNkHcXTsHJ2yfY9jGfuqomIkQffu3XS9oahJNv+mfeybOqGtnLS8zDQKdH3fsQ+AV7qtiaegR7X
- UEWo0LMCiZja/C99e7NdIH6i/uBoZTqHn+0YS30aB6Zty5QeU3+MQQz8jyykh+pFJZFRe3AbUEQ
- hUGoCqIgjgaMAAyFJOpe6pHtMuTbkrxZO1+7BvUD/rmCsPcawfWgCvNCwcTPQtms+k0E2hZbS0N
- z9JQuR9/3PD+0/NogNJA6DPJD3yLF8Gd2uS04hbS6HuVyxha+l0GL/FfAfDtQpCefbJ+dXBEHmj
- 96jCuaGttq8v0EDMoRwveBIqtOY7M2yBRvWcKv4Iczcdc4uT2LBWV+0d8LpAgT5Qc=
-X-Received: by 2002:a05:7300:e2cc:b0:2c1:7793:7bbb with SMTP id
- 5a478bee46e88-2d5898a59fdmr11496616eec.27.1776230474091; 
- Tue, 14 Apr 2026 22:21:14 -0700 (PDT)
-Received: from [10.177.177.78] (c-24-5-101-44.hsd1.ca.comcast.net.
- [24.5.101.44]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2de8f65f9bcsm1352580eec.22.2026.04.14.22.21.13
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 14 Apr 2026 22:21:13 -0700 (PDT)
-Message-ID: <29bb358f0685299cb0cb80a43f75c827f8218236.camel@gmail.com>
-Subject: Re: [PATCH v5 v5 2/3] app: add topology aware test case
-From: Sudheendra Sampath <giveback4fun@gmail.com>
-To: vipin.varghese@amd.com
-Cc: bruce.richardson@intel.com, dev@dpdk.org, konstantin.ananyev@huawei.com,
- mb@smartsharesystems.com, sivaprasad.tummala@amd.com, viktorin@cesnet.cz, 
- wathsala.vithanage@arm.com
-Date: Tue, 14 Apr 2026 22:21:12 -0700
-In-Reply-To: <20260414193850.1696-3-vipin.varghese@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2-0+deb13u1 
+ d=1e100.net; s=20251104; t=1776236892; x=1776841692;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=xxX7rWm3CKdoUPK1fhVT40mYWsxCZUrACA1Wlt38mEw=;
+ b=ODFZ9FmG9dLOMMfqe/YU4Jznb2SGNe4mrK91IcEdnw/RSQFkg8ls6JkAgsd7wQhjEg
+ oxDQim+PLynd3Vp7HLq0UxZuXw9M4REpEov5w3qbccEYhqmJiPMa//1XGKaOq9D/kR0t
+ W3S2izTbEjiZw3WLAktZ0lap3A5cBR6jZn5IwSoQBbw1tohV2Cxw56sQgwBpcz9FLu9e
+ uJIMcaaZDTtF3W7jEdmATo7TedAHHDIVWulgtyA671pZl1BbV+bFcJpjWJwJr35vJkj/
+ zvCpS47gpXoU5OBAL4QwIYUJeoe/nivW1/Zgz3Xx9bGA2OdZQ642uM5oRSL29FF7Ul8G
+ RqnA==
+X-Gm-Message-State: AOJu0YxNzKtO1sMKGVCwIDJk13hUulhYZsCQx1mFjFFvqM4XGaL/cETL
+ BJwUhvmcT+UK92pWiUVzdzsYx1AuAlIQ2CU8/5EtcmkI1krx7P7IYKCE1V0HrBd1Za5F4JONntl
+ toGck0pKAJSpjyxMlig+mT6lXLCcSC4QEaCdODR9KbxkXYkbiQN0RepxDlzYGYSMgUtSyl18ikp
+ LmXTfRLyKZcHC5jj0iQ78=
+X-Gm-Gg: AeBDieuxQ730ezcD9No5h9OOA0oBrWWjoM95Bu04DHj/Txueh7hgS3BmPllIb3cdx6L
+ u33xqu3fa8ryloBCzC0538ng3fJTL5wQPUhgnaz67+B69tHeHsn3a+6ziKuiXrLApRtbxH6VUQx
+ g0JifkvrZ+v1++xaVaGEiBpT2LO4YemOrIGxn8VHjLckqKS102SCsWBefk8TiHejbiBm0SK4Cch
+ N9fpMUhz6e+iiQVb2Kcg8vo0/72aI6ANYfWGdXNUPQLgDHJsJeD+xRumN+2nxB5Lp/ViMUAnsYx
+ 5x6t
+X-Received: by 2002:a05:6512:3a90:b0:5a2:a851:b00 with SMTP id
+ 2adb3069b0e04-5a3efb2d30dmr8535229e87.3.1776236891757; 
+ Wed, 15 Apr 2026 00:08:11 -0700 (PDT)
+X-Received: by 2002:a05:6512:3a90:b0:5a2:a851:b00 with SMTP id
+ 2adb3069b0e04-5a3efb2d30dmr8535203e87.3.1776236891059; Wed, 15 Apr 2026
+ 00:08:11 -0700 (PDT)
 MIME-Version: 1.0
+References: <20260323105306.1531689-1-david.marchand@redhat.com>
+ <20260414123900.3355883-1-david.marchand@redhat.com>
+In-Reply-To: <20260414123900.3355883-1-david.marchand@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 15 Apr 2026 09:07:58 +0200
+X-Gm-Features: AQROBzC64kXUv1hWM_ovLLj7M0blOfwDxBaq3jo64N3tFtd6e8a5pgLb_CyeNC4
+Message-ID: <CAJFAV8zCa4dXy30sDkwKEeCLfSL_cBPAdpZLCuVu=tMF+Frv=g@mail.gmail.com>
+Subject: Re: [PATCH v4 0/7] Rework device probing
+To: David Marchand <david.marchand@redhat.com>
+Cc: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>, 
+ Robin Jarry <rjarry@redhat.com>, Hemant Agrawal <hemant.agrawal@nxp.com>, 
+ Kevin Traynor <ktraynor@redhat.com>, Maxime Leroy <maxime@leroys.fr>, 
+ Stephen Hemminger <stephen@networkplumber.org>,
+ Chengwen Feng <fengchengwen@huawei.com>, 
+ Thomas Monjalon <thomas@monjalon.net>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: LbUvtE7RU3xNnd2xwhpDPgDMh1OQ9e_eGF0y-onMugQ_1776236892
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,48 +87,93 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: giveback4fun@gmail.com
 Errors-To: dev-bounces@dpdk.org
 
-Hi Vipin,
+On Tue, 14 Apr 2026 at 14:39, David Marchand <david.marchand@redhat.com> wrote:
+>
+> Applications relying on device hotplug don't work well with the default
+> probing of all available resources.
+> This series proposes to change this behavior via a new EAL option.
+>
+>
+> --
+> David Marchand
+>
+> Changes since v3:
+> - renamed some internal API,
+> - updated documentation,
+> - added a release notes entry,
+>
+> Changes since v2:
+> - rebased for late 26.03 fslmc bus changes,
+> - fixed devargs lookup,
+> - added debug logs,
+>
+> Changes since v1:
+> - restored per bus scan mode,
+> - fixed logic in device selection for dma/idxd,
+> - fixed raw/ifpga hotplug on ifpga bus,
+> - fixed some doxygen,
+>
+> Changes since RFC v3:
+> - removed per bus scan mode,
+>
+> Changes since RFC v2:
+> - went one step further and reworked devargs lookup in buses following
+>   Bruce comment (see patch 4 which is cosmetic, and patch 5),
+> - updated device selection helper accordingly and
+>   changed API to be device name based,
+> - renamed option, added check on -b presence, updated doc in the last
+>   patch,
+>
+> Changes since RFC v1:
+> - reviewed bus probe() and cleaned up NXP drivers,
+> - changed approach following Bruce comment,
+>
+> David Marchand (7):
+>   devtools: check packet forwarding in null test
+>   bus/fslmc: fix bus cleanup
+>   drivers/bus: require probe function for NXP drivers
+>   drivers/bus: cleanup devargs lookup in scan
+>   bus: factorize devargs lookup
+>   bus: factorize device selection
+>   eal: configure initial device probing
+>
+>  app/test/test_eal_flags.c                    | 63 ++++++++++++++++
+>  devtools/test-null.sh                        | 10 ++-
+>  doc/guides/linux_gsg/eal_args.include.rst    | 18 +++++
+>  doc/guides/rel_notes/release_26_07.rst       |  8 +++
+>  drivers/bus/auxiliary/auxiliary_common.c     | 33 +--------
+>  drivers/bus/auxiliary/bus_auxiliary_driver.h |  2 -
+>  drivers/bus/auxiliary/linux/auxiliary.c      |  2 +-
+>  drivers/bus/auxiliary/private.h              |  6 --
+>  drivers/bus/cdx/cdx.c                        | 34 +--------
+>  drivers/bus/dpaa/dpaa_bus.c                  | 71 ++++++++----------
+>  drivers/bus/fslmc/fslmc_bus.c                | 75 ++++++++------------
+>  drivers/bus/fslmc/fslmc_vfio.c               | 21 ++----
+>  drivers/bus/ifpga/ifpga_bus.c                |  8 ++-
+>  drivers/bus/pci/bsd/pci.c                    |  5 +-
+>  drivers/bus/pci/linux/pci.c                  |  2 +-
+>  drivers/bus/pci/pci_common.c                 | 51 ++++---------
+>  drivers/bus/pci/private.h                    | 11 ---
+>  drivers/bus/pci/windows/pci.c                |  4 +-
+>  drivers/bus/platform/platform.c              | 43 +----------
+>  drivers/bus/uacce/uacce.c                    | 39 +---------
+>  drivers/bus/vdev/vdev.c                      |  2 +-
+>  drivers/bus/vmbus/linux/vmbus_bus.c          |  2 +-
+>  drivers/bus/vmbus/private.h                  |  3 -
+>  drivers/bus/vmbus/vmbus_common.c             | 45 +++---------
+>  drivers/dma/idxd/idxd_bus.c                  | 18 +----
+>  lib/eal/common/eal_common_bus.c              | 54 ++++++++++++++
+>  lib/eal/common/eal_common_options.c          | 10 +++
+>  lib/eal/common/eal_internal_cfg.h            |  1 +
+>  lib/eal/common/eal_option_list.h             |  2 +
+>  lib/eal/include/bus_driver.h                 | 38 ++++++++++
+>  30 files changed, 314 insertions(+), 367 deletions(-)
 
-This is my first ever patch review with DPDK.  Apologies if I am not
-following the right procedure.  I welcome any feedback or help in
-correcting the procedure.
+Series applied, thanks for all the reviews!
 
-However, I had the following review related to the above patch.
 
-I see that changes to app/test/test_ring_perf.c introduced the
-following functions:
+-- 
+David Marchand
 
-get_same_numa_domains(struct lcore_pair *lcp)
-get_same_l4_domains(struct lcore_pair *lcp)
-get_same_l3_domains(struct lcore_pair *lcp)
-get_same_l2_domains(struct lcore_pair *lcp)
-get_same_l1_domains(struct lcore_pair *lcp)
-get_two_numa_domains(struct lcore_pair *lcp)
-get_two_l4_domains(struct lcore_pair *lcp)
-get_two_l3_domains(struct lcore_pair *lcp)
-get_two_l2_domains(struct lcore_pair *lcp)
-get_two_l1_domains(struct lcore_pair *lcp)
-
-In the implementation of these, most of the code is pretty much
-identical, except for the topology domain type.
-
-Curious to know if it is better to implement a 'common function' -
-get_topo_domains(struct lcore_pair *, topology_domain) - as arguments
-and call get_topo_domains() from all of the above functions. =C2=A0
-
-For example:=C2=A0
-get_same_numa_domains() calls get_topo_domains(lp,
-RTE_TOPO_DOMAIN_NUMA)
-
-This will make it more cleaner and will help changes isolated to one
-place if there are 'common' issues.
-
-Appreciate if you can let me know if my thinking aligns with the
-correct implementation.
-
-Thanks and best regards,
-
-Sudheendra G Sampath
