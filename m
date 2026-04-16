@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91203F8D762
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 18:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F7AF8D765
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 18:26:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7A1A040297;
-	Thu, 16 Apr 2026 20:26:11 +0200 (CEST)
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
- by mails.dpdk.org (Postfix) with ESMTP id A1B2740272
- for <dev@dpdk.org>; Thu, 16 Apr 2026 20:26:09 +0200 (CEST)
-Received: by mail-dl1-f47.google.com with SMTP id
- a92af1059eb24-12c637089ccso2910928c88.1
- for <dev@dpdk.org>; Thu, 16 Apr 2026 11:26:09 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4F89040431;
+	Thu, 16 Apr 2026 20:26:12 +0200 (CEST)
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
+ [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id 4205740272
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 20:26:11 +0200 (CEST)
+Received: by mail-dy1-f172.google.com with SMTP id
+ 5a478bee46e88-2ba9c484e5eso8641865eec.1
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 11:26:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776363969;
- x=1776968769; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776363970;
+ x=1776968770; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Y8cyaNut4+Rv9r02WmK+sJSstEHtk4cRsbohGgpqB0o=;
- b=DxNjrAqKPJdAtYkNMl63Hyx1VqTg80ELIfxgoCuAGFXieeZlBdSk3F26x54uZXhiPB
- a0OX56ExM1oKsvvzNbwjwKTbey9zYPg1VPnpXrqbSy+wBXGaRNua7fEzWQIfRWXeei3P
- A1rmIChjdx5W1QEU3ZD1KSLYJ4O+1Lal/kqzcZEeFWw3sYtumLX+Z+tsX701k5E+9cV/
- 79lyNX/cx812lqP1apWP7iYSXVhaqmTAdC3RSpX73xWwATDQnNUQQluiYRS3LWCGO+6n
- 7+XT8fonfvuDj4tqRvQMbbCARQiUNcmJDNhcfK+KLaQcXC+WG+BAIdA+d0tB+Cv5B1VZ
- y2QQ==
+ bh=5txkI5GMZ1jDnZfYhzGSNGb2cVVNGxy1SomF30Pjiuo=;
+ b=PjyP0iU52xkxWpcNpxp1bboB9JLSiOBIGbFa4Rvy0GET9q3FHUEAyvHVIUVtfIo/9K
+ Jgfss/9slwUSjaKaOjP/+OiGRP5ZcdrFFoRUJl5CKwSHMI18UVd8shrMFEGhsxlaIDZq
+ 8hpBZLMNxp0wamrLI48bFRrE16w2qGERz/7rYycTPsw1YS5aOfRJkHfx+lknp6avuY/+
+ g0IEK0netEu0Fg9OyTAXkKc6vYvf9yPM3SDVNfGcaLLGPWxURNPatpeFHnNTw7m1H4Q0
+ sbT+1wLtYC5jVAWZ+HPlpYvSO0QPsvY9TMA2djx3phqBiwWTweRq8O7KaXk1ttC1eB9d
+ ufvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776363969; x=1776968769;
+ d=1e100.net; s=20251104; t=1776363970; x=1776968770;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Y8cyaNut4+Rv9r02WmK+sJSstEHtk4cRsbohGgpqB0o=;
- b=j6npfAaxOF8vd84t2BbHNWRgZXKlJ7bukszELrH2OF+6FVxnc+UeFChh4IG+8163fs
- mioVefDtbbtGEVnNw3bnEw99JFbNijSXhPiYIxsMFv3wTYJtVsLjBbofPZMMza0xYbS3
- ifqZ1S48oTxiK5f12QLM6Z/jibBYtg7Q3kLkAHYzOXw9sxC1Zv0JnXfiAR6Q+o5gxYkB
- BN5HFZs8vc6B+EiyBQXpPFfM2JFOPIJuU05sChrjlUcG5bH6bnvlMy4g15VVCOcEHJgu
- eOSXrjOS4CyvQdizGf2btVBEvLdRsf7ak/R2FnJY7t262eHoqzsajyigzOz78zVkaVLj
- cQkQ==
-X-Gm-Message-State: AOJu0Yx2RN+ypoN7kHvDqS6kyxhVgM4fTIFTnwGV1Npuk4RGZ/N84swX
- RDtVccXuORZU+WXfUhp3g7Kw6Usgf4WuYbSzV26oSdFWjqpwfW7Dr5zFKw2NNBOzxfrikUcxL8n
- 710W6
-X-Gm-Gg: AeBDieu87rDYHevx29H4fX52FzTOVSASZ+S0dcjgcpdf1nG6acGO78n0dam7mi5zJjd
- tzy6mxixCwZEvrRnumPNckGUlW4QdtmlEmviqnsZc93FplCHMI7NiPfcyAurGU1qMIod+UdF1FZ
- 1AUIXzfrdaDp+5wM2GY+oRubF41eccqHajXvl37nSfA17FayOsTbVIIQrSnRcRZHU4a54h12MJ/
- w2hTDka3zGXj3mEwr9Jk2dLoHsGq3O8Yy9jAtb3yhlzxWJbRQox6YuGI7CPcEgxLWIYnJcWwtzn
- IMBSn6MbsOxkkqlzxurjnA4CeY72LQCT516pu/K4xazfQXc6g4PGGe8s7EPjIWjItr4PD8PW6W3
- VAS8IG2DifpSMoQ3T8SH8sATDi///IkpDwFKfjOvXDh9iLYtmcOxS1W3y3FYNXo/ic2jJ2PBbaJ
- LMAJsE9OWHLG0q4tbXYU36BqCbba9KVyccgNGKHhrNMeMyGeKIpk90xw==
-X-Received: by 2002:a05:7022:670f:b0:12a:94ab:e20 with SMTP id
- a92af1059eb24-12c7284c5e7mr146243c88.20.1776363968423; 
- Thu, 16 Apr 2026 11:26:08 -0700 (PDT)
+ bh=5txkI5GMZ1jDnZfYhzGSNGb2cVVNGxy1SomF30Pjiuo=;
+ b=OwG4ZN7HdnyfqZuMoNYilhEPsWByXxb7QGQkEnnuY1pT0zwyKDR1ZqHDYJAicpluVl
+ aXeeTSDr5twe7b55L9P/0UXRwV1EQQLdVZw5VWQd46VXRipr2Klc/yAVaYzo0yvtqpcl
+ N7shurM+KbFztS/Uog/1L4D98c6I2JbUpfGrdvJaV0EhWSPeSgjcmczzqxcMrEn/vcCB
+ 0gtH12tiEHGMihBn0ho2k6Z8CbOLe5AZhZy3fEoIDJj4opcJBLAdMf01QPGP8sewjiVP
+ BDMAcm7/sC/hDk3aTOXg4fVA6U02dkbdGcEcoJ/CEUzceguvgk8AGbS6IOjBuBI1aFWI
+ l08A==
+X-Gm-Message-State: AOJu0YyX/wzJu3/XB4xY68guDRjNeuheTsM7wH8b41wQbZjPVpc3MQA/
+ o48GhSBN0KzZoRQe394HA7C4f9ZcqaYoQSo1DgYUIhYbCw/1eOa6QjVaRMV6NK8pce7UznL7XKK
+ 1bNrF
+X-Gm-Gg: AeBDievfwSZrF49bgxKSZ1K3Nm4nB7typebL7Wq4H8NNSWRIwn6IAJonvajLuMbegnD
+ TZhHK8UWGlyrVKu9jIgy9hH1asvgpo9W6bQt8U6IT6tLp+5cG13m5xRXRTcD7WghX+3Emo5ekTN
+ Kzn4Acca8vbf0R5r9exxSM+PrMkMpI+JIdLWByK5rI2R41xMwo1X7IuYbobQHFNhCICxclNq3Fs
+ nr1HcTCtQJIp1i4SshEz+olcrcze7Cp9SFfAxfXgwfFRd1DeAkCF5UmHvJo77HnwH7XUSrQ2AaA
+ xxt33ja70GIlAOg6IG4ipFLtXwfXIXS3cdCg23C2IV+UKrbekAhGhEMse2udB4Uzb20IW9rp+Ak
+ uRV7XVzwIOwyrvIR3Q2Pjd8lSOS0IjW4M5s0j+sEWjmFdi7tNJJALjAhA0iINfY9m8lyO8aahQS
+ Ix81TmkZVInYEz4Q+eYL749CtzaGlCqrwRyY8f2BCqtHMzxY6Zk36xSg==
+X-Received: by 2002:a05:7301:6587:b0:2d2:d7b7:5c61 with SMTP id
+ 5a478bee46e88-2e2e4c378b6mr196276eec.14.1776363970104; 
+ Thu, 16 Apr 2026 11:26:10 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2de8eb8482asm8519273eec.15.2026.04.16.11.26.07
+ 5a478bee46e88-2de8eb8482asm8519273eec.15.2026.04.16.11.26.08
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 16 Apr 2026 11:26:07 -0700 (PDT)
+ Thu, 16 Apr 2026 11:26:09 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v4 0/2] af_packet: cleanup and test
-Date: Thu, 16 Apr 2026 10:57:26 -0700
-Message-ID: <20260416182604.1187401-1-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ "John W. Linville" <linville@tuxdriver.com>
+Subject: [PATCH v4 1/2] net/af_packet: fix indentation
+Date: Thu, 16 Apr 2026 10:57:27 -0700
+Message-ID: <20260416182604.1187401-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260413171836.123467-1-stephen@networkplumber.org>
+In-Reply-To: <20260416182604.1187401-1-stephen@networkplumber.org>
 References: <20260413171836.123467-1-stephen@networkplumber.org>
+ <20260416182604.1187401-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -79,25 +81,189 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A couple of small patches for the af_packet PMD.
-Fix indentation and add a basic test.
+DPDK code is supposed to be indented with TABS not spaces.
+Also, used "unsigned int" to keep checkpatch happy.
 
-Stephen Hemminger (2):
-  net/af_packet: fix indentation
-  test: add test for af_packet
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ drivers/net/af_packet/rte_eth_af_packet.c | 64 +++++++++++------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
-v4 - fix test to use stdatomic correctly
-
-Stephen Hemminger (2):
-  net/af_packet: fix indentation
-  test: add test for af_packet
-
- app/test/meson.build                      |    1 +
- app/test/test_pmd_af_packet.c             | 1122 +++++++++++++++++++++
- drivers/net/af_packet/rte_eth_af_packet.c |   64 +-
- 3 files changed, 1155 insertions(+), 32 deletions(-)
- create mode 100644 app/test/test_pmd_af_packet.c
-
+diff --git a/drivers/net/af_packet/rte_eth_af_packet.c b/drivers/net/af_packet/rte_eth_af_packet.c
+index 0ee94e71ea..8303ff5ca9 100644
+--- a/drivers/net/af_packet/rte_eth_af_packet.c
++++ b/drivers/net/af_packet/rte_eth_af_packet.c
+@@ -79,7 +79,7 @@ struct __rte_cache_aligned pkt_tx_queue {
+ };
+ 
+ struct pmd_internals {
+-	unsigned nb_queues;
++	unsigned int nb_queues;
+ 
+ 	int if_index;
+ 	char *if_name;
+@@ -602,7 +602,7 @@ eth_dev_close(struct rte_eth_dev *dev)
+ 
+ static int
+ eth_link_update(struct rte_eth_dev *dev,
+-                int wait_to_complete __rte_unused)
++		int wait_to_complete __rte_unused)
+ {
+ 	const struct pmd_internals *internals = dev->data->dev_private;
+ 	struct rte_eth_link *dev_link = &dev->data->dev_link;
+@@ -622,11 +622,11 @@ eth_link_update(struct rte_eth_dev *dev,
+ 
+ static int
+ eth_rx_queue_setup(struct rte_eth_dev *dev,
+-                   uint16_t rx_queue_id,
+-                   uint16_t nb_rx_desc __rte_unused,
+-                   unsigned int socket_id __rte_unused,
+-                   const struct rte_eth_rxconf *rx_conf __rte_unused,
+-                   struct rte_mempool *mb_pool)
++		   uint16_t rx_queue_id,
++		   uint16_t nb_rx_desc __rte_unused,
++		   unsigned int socket_id __rte_unused,
++		   const struct rte_eth_rxconf *rx_conf __rte_unused,
++		   struct rte_mempool *mb_pool)
+ {
+ 	struct pmd_internals *internals = dev->data->dev_private;
+ 	struct pkt_rx_queue *pkt_q = &internals->rx_queue[rx_queue_id];
+@@ -660,10 +660,10 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 
+ static int
+ eth_tx_queue_setup(struct rte_eth_dev *dev,
+-                   uint16_t tx_queue_id,
+-                   uint16_t nb_tx_desc __rte_unused,
+-                   unsigned int socket_id __rte_unused,
+-                   const struct rte_eth_txconf *tx_conf __rte_unused)
++		   uint16_t tx_queue_id,
++		   uint16_t nb_tx_desc __rte_unused,
++		   unsigned int socket_id __rte_unused,
++		   const struct rte_eth_txconf *tx_conf __rte_unused)
+ {
+ 
+ 	struct pmd_internals *internals = dev->data->dev_private;
+@@ -790,8 +790,8 @@ static const struct eth_dev_ops ops = {
+  */
+ static int
+ open_packet_iface(const char *key __rte_unused,
+-                  const char *value __rte_unused,
+-                  void *extra_args)
++		  const char *value __rte_unused,
++		  void *extra_args)
+ {
+ 	int *sockfd = extra_args;
+ 
+@@ -854,17 +854,17 @@ get_fanout(const char *fanout_mode, int if_index)
+ 
+ static int
+ rte_pmd_init_internals(struct rte_vdev_device *dev,
+-                       const int sockfd,
+-                       const unsigned nb_queues,
+-                       unsigned int blocksize,
+-                       unsigned int blockcnt,
+-                       unsigned int framesize,
+-                       unsigned int framecnt,
++		       const int sockfd,
++		       const unsigned int nb_queues,
++		       unsigned int blocksize,
++		       unsigned int blockcnt,
++		       unsigned int framesize,
++		       unsigned int framecnt,
+ 		       unsigned int qdisc_bypass,
+ 		       const char *fanout_mode,
+-                       struct pmd_internals **internals,
+-                       struct rte_eth_dev **eth_dev,
+-                       struct rte_kvargs *kvlist)
++		       struct pmd_internals **internals,
++		       struct rte_eth_dev **eth_dev,
++		       struct rte_kvargs *kvlist)
+ {
+ 	const char *name = rte_vdev_device_name(dev);
+ 	const unsigned int numa_node = dev->device.numa_node;
+@@ -890,7 +890,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 	if (pair == NULL) {
+ 		PMD_LOG(ERR,
+ 			"%s: no interface specified for AF_PACKET ethdev",
+-		        name);
++			name);
+ 		return -1;
+ 	}
+ 
+@@ -899,7 +899,7 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 		name, numa_node);
+ 
+ 	*internals = rte_zmalloc_socket(name, sizeof(**internals),
+-	                                0, numa_node);
++					0, numa_node);
+ 	if (*internals == NULL)
+ 		return -1;
+ 
+@@ -1140,8 +1140,8 @@ rte_pmd_init_internals(struct rte_vdev_device *dev,
+ 
+ static int
+ rte_eth_from_packet(struct rte_vdev_device *dev,
+-                    int const *sockfd,
+-                    struct rte_kvargs *kvlist)
++		    int const *sockfd,
++		    struct rte_kvargs *kvlist)
+ {
+ 	const char *name = rte_vdev_device_name(dev);
+ 	struct pmd_internals *internals = NULL;
+@@ -1172,7 +1172,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			if (qpairs < 1) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid qpairs value",
+-				        name);
++					name);
+ 				return -1;
+ 			}
+ 			continue;
+@@ -1182,7 +1182,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			if (!blocksize) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid blocksize value",
+-				        name);
++					name);
+ 				return -1;
+ 			}
+ 			continue;
+@@ -1192,7 +1192,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			if (!framesize) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid framesize value",
+-				        name);
++					name);
+ 				return -1;
+ 			}
+ 			continue;
+@@ -1202,7 +1202,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 			if (!framecount) {
+ 				PMD_LOG(ERR,
+ 					"%s: invalid framecount value",
+-				        name);
++					name);
+ 				return -1;
+ 			}
+ 			continue;
+@@ -1226,7 +1226,7 @@ rte_eth_from_packet(struct rte_vdev_device *dev,
+ 	if (framesize > blocksize) {
+ 		PMD_LOG(ERR,
+ 			"%s: AF_PACKET MMAP frame size exceeds block size!",
+-		        name);
++			name);
+ 		return -1;
+ 	}
+ 
+@@ -1301,7 +1301,7 @@ rte_pmd_af_packet_probe(struct rte_vdev_device *dev)
+ 	if (rte_kvargs_count(kvlist, ETH_AF_PACKET_IFACE_ARG) == 1) {
+ 
+ 		ret = rte_kvargs_process(kvlist, ETH_AF_PACKET_IFACE_ARG,
+-		                         &open_packet_iface, &sockfd);
++					 &open_packet_iface, &sockfd);
+ 		if (ret < 0)
+ 			goto exit;
+ 	}
 -- 
 2.53.0
 
