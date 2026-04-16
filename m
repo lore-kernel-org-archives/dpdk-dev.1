@@ -2,143 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7702F8A15F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 11:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12453F8A163
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 12:00:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AF20140297;
-	Thu, 16 Apr 2026 13:41:51 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
- by mails.dpdk.org (Postfix) with ESMTP id 5632740144
- for <dev@dpdk.org>; Thu, 16 Apr 2026 13:41:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1776339710; x=1807875710;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=HYhMBfmBTji4tYq1a27sPBk5flQtBf9eqx8zIdGFo1k=;
- b=Cbd2LjirNmw1zB7YxTh0w+ewlBJKWFgyQABUYWWlu7uSQI9JDDSGs6rw
- R5ykOZgq9drx8TqGzdauyXZbF01dbU/882ChU5WLfdVxdXJzT/yTgHVX/
- JKp4mLdHHGPdsH13HGgeyfobNj/MlLAT12KfNKt7rCTiwzsPk+IriyGBI
- FJB/qD3rfPAjZ7K0k0zCDf2/DsAOisp+GbAks6MXh6hbt+cpuGilJ6hmL
- cUZUrPrnErHiVbnDj19r6YWfLeA0vcwvNvFEumJUIlpnFiiLvIN2OrSKa
- 6BQGfBGqeDY/3mBLzy43/J6phoAz+dniyWj0EkujXOMfzCeuAhRm4310h A==;
-X-CSE-ConnectionGUID: c04yxuHKSfue7PNs+p4NrA==
-X-CSE-MsgGUID: HUchcvWGT2yXrRikAf/xPg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11760"; a="77210405"
-X-IronPort-AV: E=Sophos;i="6.23,181,1770624000"; d="scan'208";a="77210405"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
- by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Apr 2026 04:41:48 -0700
-X-CSE-ConnectionGUID: 2WZVZ6f5Tlanqu1iDcBauw==
-X-CSE-MsgGUID: 02eaPwFmRkeVgITkwGU2Ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,181,1770624000"; d="scan'208";a="235672465"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 16 Apr 2026 04:41:48 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id 31B4040297;
+	Thu, 16 Apr 2026 14:00:50 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 488E840144
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 14:00:49 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 63G7YjGt143734 for <dev@dpdk.org>; Thu, 16 Apr 2026 05:00:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=U
+ 6q7C0mrNJGJljmW7ohFSPw8VByBAZ94iFiFABk7Csk=; b=XHS5a5Mwy+uv/Mary
+ LIqAhIDaz9aqWOwW6M1Novy5He0vzcyJaQSzKU1jscJnn38xbmLjEJ7Gwx3V9P0U
+ Q1e5d5VifFzC7DFfUq3GiIFftVNUCJPZmZ5gpi9rHXGN5GsVInVUiKftaspyBoDT
+ yxliCFdFDxzoIPametHwC2+Sm4nykkGvXVa5MENDeiDhM65r0fYjYpO/XwjYfNVJ
+ 8OE+/rHD29TWE3CtxeZ5iHjn6lMYFFsnj0LpR3vcnSZHoIsgSLlbI/agYNMUV0DJ
+ AlyLi+4Ykk0C+upcshkYLe3zv9qrlKB5VjiOpvnbTtTAzMkDwmjQUrMHt883ATMd
+ 4Ljtg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4djugbrhwf-11
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 05:00:48 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 16 Apr 2026 04:41:47 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Thu, 16 Apr 2026 04:41:47 -0700
-Received: from BN1PR04CU002.outbound.protection.outlook.com (52.101.56.51) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 16 Apr 2026 04:41:47 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XdF4r/wgVOGyrZ0ydx9neFgn6ZV/re3RgcoDA94KWiyE1ikxYSXwu5LhCbcxzCCSToC9fqMUjx6fOSsiygi/sukgCyARODnFKC7G+YfWQeJDz1mNVapJMjbtPMyJQbejbgjgX0vdxic0voljhP+gBsdazDr0qRrbT/qExXsAmZmv02NIioFZ3XhQnamdjJ8TmRqbegkJdp9qEuU/ggHh4WLGpHu/NKis6BVlikJjUolFzlAomwe8gJP84azyA3l5B2AhHXGJCYABH2OQUbcS63UVqDQgBRui+iQHTv9swYc5c9eEagVzSjOSaB6Yojr4PS2zYtgPpOhVZEx74pwIzw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4+MWfmRyZNJ+9TAGZLu6j0kotsesxuh99E519tl4yvs=;
- b=XYh3UVdfogehzMRHg9Uqw0VMAFEw2VVFCkS63CxNmabrAAyBp7bXDp96J+MlrpFidQMvEShCOF7wzO4lQaxhdkezq9JvR2zolYHCpVcIIcn0Xao/gXUbdagG/0DUHZRCeVcAaz9+LSsI3t5isNCPBX7CTL4GfFz+g9sO8SJ+xzrJAUhSaOCTyeZQzn4vOjOd+z3iPIELHl7N5S6huMvBGFX0psmu3HHRqOwrqV/QPlFUM4UNXjBJivG2v4qCDcoDr/1pVLRELCBUXppc88NIEKPXNFqVXPq8Tf6U0vI3jd/FKj8+gbaAyZmn4DVZpfV8OXIwIo56di3LHY0hojFljg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SA1PR11MB5826.namprd11.prod.outlook.com (2603:10b6:806:235::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.20; Thu, 16 Apr
- 2026 11:41:44 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9818.023; Thu, 16 Apr 2026
- 11:41:44 +0000
-Date: Thu, 16 Apr 2026 12:41:39 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Sushmita Hoskeri <sushmita.hoskeri@intel.com>
-CC: <dev@dpdk.org>, <aman.deep.singh@intel.com>, <atul.patel@intel.com>
-Subject: Re: [PATCH v2] net/cpfl: add LEM block support in CPFL PMD
-Message-ID: <aeDK89NfJGTbGi09@bricha3-mobl1.ger.corp.intel.com>
-References: <20260217012153.36545-1-sushmita.hoskeri@intel.com>
- <20260409015121.2841143-1-sushmita.hoskeri@intel.com>
- <add11ket672X75wJ@bricha3-mobl1.ger.corp.intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <add11ket672X75wJ@bricha3-mobl1.ger.corp.intel.com>
-X-ClientProxiedBy: DU2PR04CA0269.eurprd04.prod.outlook.com
- (2603:10a6:10:28e::34) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ 15.2.1544.25; Thu, 16 Apr 2026 05:00:42 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Thu, 16 Apr 2026 05:00:42 -0700
+Received: from localhost.localdomain (unknown [10.28.36.154])
+ by maili.marvell.com (Postfix) with ESMTP id CF47E3F7089;
+ Thu, 16 Apr 2026 05:00:38 -0700 (PDT)
+From: rkudurumalla <rkudurumalla@marvell.com>
+To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
+ <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
+ <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
+CC: <dev@dpdk.org>, <jerinj@marvell.com>, Rakesh Kudurumalla
+ <rkudurumalla@marvell.com>
+Subject: [PATCH 2/2] net/cnxk: add FEC get set and capability ops
+Date: Thu, 16 Apr 2026 17:30:31 +0530
+Message-ID: <20260416120031.3553798-2-rkudurumalla@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260416120031.3553798-1-rkudurumalla@marvell.com>
+References: <20260416120031.3553798-1-rkudurumalla@marvell.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA1PR11MB5826:EE_
-X-MS-Office365-Filtering-Correlation-Id: fa9897d0-e803-4f81-10e2-08de9bad2231
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|22082099003|18002099003|56012099003; 
-X-Microsoft-Antispam-Message-Info: s0w/MZT2+tTjb46UT6vDj9FYN46NoUmCBV5xBo3y014Cj7LGsDjY24/GZ6PwiS+EDVeJL3bPZ6KHJ7bYLxG69jiNqsEp/9EuDr52L2nqQ2eA5E6gtITJ/iuWYBnmgcelCCwiZA68EuSnnC6upjvChaGfwG6pt4BGZEyNr5542Ly1s3szkh2TKcj6Pc7unbrXGHNq9AOm1UALMb0CkthOBsQmOsmxfoPF6mHn96heCTGLBHMESZZG3dZTV6IoCgGjXyvZshOJE7Cb4XOotmJ2z3GcUCWfKlSjJZhbXd3cwrJ+QCgv2tAj9wlJ2KxoJe83vNjxu6bfV6peZ6KigTQaJszUt8yymNpEP4ldUWXuHotaArECkKoA2vI5Web4sENNws9eaXjNrU9H6fPrHfOy27TO0UnFSccGOR6B3joZBKyEnnvZ1jVnoULgFGw3W53aAOKuoWxh2yrNh4bcXVxvucC2rqtAkccwJQ4Ysk87VnrG3zlc8Fhn5S9dBlkeYlkAwA9uBc7QRARFHw76A03KZGdKGuMRu8g+T5/EGGYiHQuHH22KMvTKb57ZCIxYD3nHEwcGT8Mdkpq3M1/JyT6IcBJfGxos/jvmeqjWJEKeGikE8LY9hhey3I4nEMWG8uFHLyKAFb/3pqLAn9KDztMpnZnCqfPq4+6YBzsD2giol7KCTtG6Nq9pRNBoLpUKJKr2fJJa3FxnBrDKafUoRoSF4RHIXvfow8mguCrql+oFYwk=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(22082099003)(18002099003)(56012099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?c9TaKeZgHO5xJq57ESCeLjmgcPRa6tOZAP228jMWaMq4xzirMIoboY0Hdb8o?=
- =?us-ascii?Q?6qF8DLHQYFqD91OtfkaJbTQYgRmbF0RieXiqdyRWwiIaG3hP4Mxvz2K77dAk?=
- =?us-ascii?Q?vYhb0+Z6xStMesqUmtrVLIYbyjN5YFMGYjucYWABvIsJYXMgmJI1R5Syg5qu?=
- =?us-ascii?Q?G/6+nQFb5hqzMf0+Se51SZD/d/G6Wdie8LGq/+1AkplhyEL3wnhCzV+Dcuwx?=
- =?us-ascii?Q?WYorI1fND5eilK+JHIPO8KGs8nz2/GvoU1Dgpw8yTPBs5zIcrZmtUDF0jUc2?=
- =?us-ascii?Q?czzzyBjIqH27LlxQ+DObZ68H61ciJpyF/YeaJonJwDmRPi56mHIn9/388Dyk?=
- =?us-ascii?Q?hsj2Nq7KXogGOpPLTWTmyyWSds3hwN7PR4sMsLWMlJOszvjrpygQ2mrWDr9U?=
- =?us-ascii?Q?IL/XZYxGncL+XajcJgje8uvOr5XPKtGRqt8fMtxxHhPYc3dtNXqY+wVhVV/c?=
- =?us-ascii?Q?hA2dAaURW/8DvLxddIOnMQMJddAbgS0kUMs4xW042d1wKA368GQJoRZtUAR/?=
- =?us-ascii?Q?yVACBGrXNXoMSFknGEY8bk8Ra1zD4fJYt62UZQB3CVWl0QFkYlH/pLSz3Sq2?=
- =?us-ascii?Q?mrq2sloH0y0R1ad+myFUhu30DBlz7wokmDqDA23/AF7AA9DFtG6ZfQROId2/?=
- =?us-ascii?Q?yZxu0gEnERCVz+n8sD1MLu373NOn4rkEN63TL4LiTLY0GHc4tcN84M9V/UaN?=
- =?us-ascii?Q?f1xysKFawZ7uuI13to9vy4180l6Qu9zs7xGmGLM85KbVNxJbVc3jIvFD+8Kc?=
- =?us-ascii?Q?M3EDUCVNFFUve4Jowk1Pt3o4MQ+avmbatj8FJVqzKE8JMFnB3tiputTndDJK?=
- =?us-ascii?Q?4MR+esM33za5vbU99BU5hORB0yiZGWk/VCzzisXIrFDpZJ04CKEuBsayzVf9?=
- =?us-ascii?Q?vxHbFfK7ztNQRYJ7GdVFNEreX3z7K6Apl1zsnWoiFlQstMTNhLSTm78IuxdY?=
- =?us-ascii?Q?v18/cUqAXu5cR8H7AZkZfWvNcuG66+SXNz/rzFYlMbXu2vsrCmCcfnRG0UlB?=
- =?us-ascii?Q?uKgvGjmnQAYte4rP/xAo3fi0ARxRCrILcX9J62WuDBSrgyWQID6sRMtBCkmY?=
- =?us-ascii?Q?N4YtUUyc71q3NPJZcsmJwwtWBYima2B70XSNVzAjSjeEr29k85uF0odIa0D2?=
- =?us-ascii?Q?pdnrVf3lUaaA9g5c581ZX5swALUXd4m/rTAPQMVZnu1gUJWDJWhfIDWjIYa+?=
- =?us-ascii?Q?NBaxhp3WJFp33PBuy41t+25HCbH9IQc11CHTtdGEkLGgCb+0qllq6OogKYrt?=
- =?us-ascii?Q?cruZ2XJ0Bi+8MDJzM2h2shYRn82leFESRSm8d9Mf860K1C1X4k5/yr9613DZ?=
- =?us-ascii?Q?HAUavRSQQrSj0U3bzqTy0AB7p2iS5sXkukTAz6JkRyi/kJBZ8GFtku4qRs8D?=
- =?us-ascii?Q?aodIy1vUG1X2F/IYbJG4m9FCI0Bs7aU7zDosS5DgJZmoo4p4aJCjXMBYG+bI?=
- =?us-ascii?Q?M7bX53H78CW1OPwKVvUY/IQr/w9DSVbEu8AoXXxImVsMQjwdDPf+nv8F49IW?=
- =?us-ascii?Q?J4MtL9eouUgCasmk0Z8i4dJjTBPlp5jbb5OJrhUJymrnxQ9k1vCo++irbZCA?=
- =?us-ascii?Q?w+gERwJs+OTeE8P/+45I3CWrfCEDt6k4t6YTmRmPz9YTHV1yAQp3H06Zasf0?=
- =?us-ascii?Q?9jTXQBHjISpwDS8Ce5+P8uGCA4x1GkQs3l1QxjmIQ5zayP3TJA1BPlhZHoT8?=
- =?us-ascii?Q?/Aur8qOcOTcxF9hyz1nun9ZIOsYq1pVBLiutHkfi52tcl/A+tXrgvU2+pdwA?=
- =?us-ascii?Q?bkvYyg1D3qHOMd+/Xjn08BTkkfUnfE0=3D?=
-X-Exchange-RoutingPolicyChecked: J/fDbOykUzWvE7E28uSj9BiSuWo7oW4aJ1ecT2qi+UaFUWriJdT2ONBK4pExkV1MPwE+BYPgUwUAnJasmhPIekDKx6F1J3qKd2WCTR0vLv38LqXU4xwlQKlFci/xkA8CHkh8lgPRvPUsNnmm/W2oRUiCzNUXKTwdMYxTNpzfp+9K9rioPwcMOQuZmJqGMDXVazHtucPETXOXOK6aM+lxiuiLhvGg3A0rb4+QKEQL6kze6GjsD9jHPZn+jfjWdskI2Kte9UTz/Apzpkbvw+zUQqjHPt6G6N/AQWVil5wUHUHOov+Q3D+9mPnzD8172Pp9sVOP6fK3v1AmhlybSR62ig==
-X-MS-Exchange-CrossTenant-Network-Message-Id: fa9897d0-e803-4f81-10e2-08de9bad2231
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2026 11:41:44.0601 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wFik8nck/rs9qnyxNcFtt/CAGn4xhyQ2ypd7x/Ql6Ps/jQfuaPJfGp1r4Mkvb+lSwF+YFd/cOyvPJJbCGXIf2bj58CMN0V7jaZ57XX8tH90=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB5826
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: MVXesq-2GJRDrHhWRGV3Puof-ZbIpuiG
+X-Authority-Analysis: v=2.4 cv=Y5rIdBeN c=1 sm=1 tr=0 ts=69e0cf70 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
+ a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=dnu02KUg3aPT7m2vTZUA:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDE2MDExMyBTYWx0ZWRfXzPqMMkzENjHz
+ /tqE0B7nm1ZYOyge7BOTff44eRAVt1sl3/qQDHFckbsLbMf5ykVxohw9JxOdNcmkuctUFv+vxG+
+ AnXcDQhP9J0g021NLRvfN0Ve2/0RJAaNIGF0aKxbumPpG4aEgs2dOy3qKmyYL8v21F5qBtCOsEl
+ 0TGIroes3AFPkYLpt4kpO8NuGbgaf+7FytsYwbKU1Vb1UvCjGdPGlTXrkg2JoRwe/fvJYdFFBbG
+ 0sb4dxrIusQM7gwzCyEU1ru0OF+Rqg9f32tgeM61q5Exwirhef9LPWdnyPofBFvdEOyd7jHz/Tf
+ pwmPF8ATChMd6URlBWplqqJAWQFIgAcf18tHFuypqxEqtx3+whuInj+fGB6OaA/eK/c5576ve1s
+ LF5DzQtWxgkmRtUNdqWer1TJaQN0DGyomQtrOhyExjFMujYfvURgy95sKfeduQzK+GcyYt62Osn
+ 9gZyiIh7GiJyX0PeUOg==
+X-Proofpoint-GUID: MVXesq-2GJRDrHhWRGV3Puof-ZbIpuiG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-16_03,2026-04-13_04,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -152,31 +84,157 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Apr 09, 2026 at 10:48:06AM +0100, Bruce Richardson wrote:
-> On Thu, Apr 09, 2026 at 07:21:21AM +0530, Sushmita Hoskeri wrote:
-> > Added APIs to enable support for LEM (Large Exact Match) block
-> > in CPFL PMD
-> > 
-> > Signed-off-by: Sushmita Hoskeri <sushmita.hoskeri@intel.com>
-> > Signed-off-by: Atul Patel <atul.patel@intel.com>
-> > ---
-> > v2:
-> > - Expanded the LEM acronym in the commit message
-> > - Removed code that wasn't directly related to LEM block
-> > - Removed extra blank line
-> > 
-> >  drivers/net/intel/cpfl/cpfl_flow_engine_fxp.c | 10 +++
-> >  drivers/net/intel/cpfl/cpfl_flow_parser.c     | 84 +++++++++++++++++++
-> >  drivers/net/intel/cpfl/cpfl_flow_parser.h     | 18 ++++
-> >  drivers/net/intel/cpfl/cpfl_fxp_rule.c        | 10 ++-
-> >  drivers/net/intel/cpfl/cpfl_fxp_rule.h        | 10 +++
-> >  drivers/net/intel/cpfl/cpfl_rules.c           | 36 ++++++++
-> >  drivers/net/intel/cpfl/cpfl_rules.h           | 46 +++++++++-
-> >  7 files changed, 212 insertions(+), 2 deletions(-)
-> > 
-> Acked-by: Bruce Richardson <bruce.richardson@intel.com>
+From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-Applied to dpdk-next-net-intel
+Add ethdev FEC operations for cnxk NIX driver:
+- fec_get_capability: Report supported FEC modes per speed.
+  If firmware provides supported FEC info, return actual
+  capabilities for current link speed. Otherwise, fall back
+  to a default capability table for common speeds.
+- fec_get: Query current FEC mode from link info
+- fec_set: Configure FEC mode on the link. AUTO mode
+  defaults to Reed-Solomon FEC.
 
-Thanks,
-/Bruce
+Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+---
+ drivers/net/cnxk/cnxk_ethdev.c     |  3 +
+ drivers/net/cnxk/cnxk_ethdev.h     |  6 ++
+ drivers/net/cnxk/cnxk_ethdev_ops.c | 94 ++++++++++++++++++++++++++++++
+ 3 files changed, 103 insertions(+)
+
+diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
+index 06d1c9b362..1cb0dd5bf1 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.c
++++ b/drivers/net/cnxk/cnxk_ethdev.c
+@@ -2138,6 +2138,9 @@ struct eth_dev_ops cnxk_eth_dev_ops = {
+ 	.cman_config_set = cnxk_nix_cman_config_set,
+ 	.cman_config_get = cnxk_nix_cman_config_get,
+ 	.eth_tx_descriptor_dump = cnxk_nix_tx_descriptor_dump,
++	.fec_get_capability = cnxk_nix_fec_get_capability,
++	.fec_get = cnxk_nix_fec_get,
++	.fec_set = cnxk_nix_fec_set,
+ };
+ 
+ void
+diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
+index 8691acc642..b1078397d3 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.h
++++ b/drivers/net/cnxk/cnxk_ethdev.h
+@@ -660,6 +660,12 @@ int cnxk_nix_tm_mark_ip_dscp(struct rte_eth_dev *eth_dev, int mark_green,
+ int cnxk_nix_tx_descriptor_dump(const struct rte_eth_dev *eth_dev, uint16_t qid, uint16_t offset,
+ 				uint16_t num, FILE *file);
+ 
++/* FEC */
++int cnxk_nix_fec_get_capability(struct rte_eth_dev *eth_dev,
++				struct rte_eth_fec_capa *speed_fec_capa, unsigned int num);
++int cnxk_nix_fec_get(struct rte_eth_dev *eth_dev, uint32_t *fec_capa);
++int cnxk_nix_fec_set(struct rte_eth_dev *eth_dev, uint32_t fec_capa);
++
+ /* MTR */
+ int cnxk_nix_mtr_ops_get(struct rte_eth_dev *dev, void *ops);
+ 
+diff --git a/drivers/net/cnxk/cnxk_ethdev_ops.c b/drivers/net/cnxk/cnxk_ethdev_ops.c
+index 49e77e49a6..a45721d414 100644
+--- a/drivers/net/cnxk/cnxk_ethdev_ops.c
++++ b/drivers/net/cnxk/cnxk_ethdev_ops.c
+@@ -1414,3 +1414,97 @@ cnxk_nix_tx_descriptor_dump(const struct rte_eth_dev *eth_dev, uint16_t qid, uin
+ 
+ 	return roc_nix_sq_desc_dump(nix, qid, offset, num, file);
+ }
++
++static uint32_t
++cnxk_roc_fec_to_ethdev_capa(int roc_fec)
++{
++	switch (roc_fec) {
++	case ROC_FEC_BASER:
++		return RTE_ETH_FEC_MODE_CAPA_MASK(BASER);
++	case ROC_FEC_RS:
++		return RTE_ETH_FEC_MODE_CAPA_MASK(RS);
++	default:
++		return RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC);
++	}
++}
++
++static int
++cnxk_ethdev_fec_to_roc(uint32_t fec_capa)
++{
++	if (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(RS))
++		return ROC_FEC_RS;
++	if (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(BASER))
++		return ROC_FEC_BASER;
++	return ROC_FEC_NONE;
++}
++
++static uint32_t
++cnxk_fec_capa_from_supported(uint64_t supported_fec)
++{
++	uint32_t capa = RTE_ETH_FEC_MODE_CAPA_MASK(NOFEC) | RTE_ETH_FEC_MODE_CAPA_MASK(AUTO);
++
++	if (supported_fec & (1ULL << ROC_FEC_BASER))
++		capa |= RTE_ETH_FEC_MODE_CAPA_MASK(BASER);
++	if (supported_fec & (1ULL << ROC_FEC_RS))
++		capa |= RTE_ETH_FEC_MODE_CAPA_MASK(RS);
++
++	return capa;
++}
++
++int
++cnxk_nix_fec_get_capability(struct rte_eth_dev *eth_dev, struct rte_eth_fec_capa *speed_fec_capa,
++			    unsigned int num)
++{
++	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct roc_nix *nix = &dev->nix;
++	struct roc_nix_link_info link_info;
++	uint64_t supported_fec = 0;
++	int rc;
++
++	rc = roc_nix_mac_fec_supported_get(nix, &supported_fec);
++	if (rc == 0 && supported_fec != 0) {
++		rc = roc_nix_mac_link_info_get(nix, &link_info);
++		if (rc)
++			return rc;
++
++		if (speed_fec_capa == NULL || num == 0)
++			return 1;
++
++		speed_fec_capa[0].speed = link_info.speed;
++		speed_fec_capa[0].capa = cnxk_fec_capa_from_supported(supported_fec);
++		return 1;
++	}
++
++	return rc;
++}
++
++int
++cnxk_nix_fec_get(struct rte_eth_dev *eth_dev, uint32_t *fec_capa)
++{
++	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct roc_nix *nix = &dev->nix;
++	struct roc_nix_link_info link_info;
++	int rc;
++
++	rc = roc_nix_mac_link_info_get(nix, &link_info);
++	if (rc)
++		return rc;
++
++	*fec_capa = cnxk_roc_fec_to_ethdev_capa(link_info.fec);
++	return 0;
++}
++
++int
++cnxk_nix_fec_set(struct rte_eth_dev *eth_dev, uint32_t fec_capa)
++{
++	struct cnxk_eth_dev *dev = cnxk_eth_pmd_priv(eth_dev);
++	struct roc_nix *nix = &dev->nix;
++	int roc_fec;
++
++	if (fec_capa & RTE_ETH_FEC_MODE_CAPA_MASK(AUTO))
++		roc_fec = ROC_FEC_RS;
++	else
++		roc_fec = cnxk_ethdev_fec_to_roc(fec_capa);
++
++	return roc_nix_mac_fec_set(nix, roc_fec);
++}
+-- 
+2.25.1
+
