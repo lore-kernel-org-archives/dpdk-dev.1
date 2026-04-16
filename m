@@ -2,66 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC01AF8D766
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 18:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B56F8D766
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 18:52:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9208440A79;
-	Thu, 16 Apr 2026 20:51:55 +0200 (CEST)
-Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
- [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id 4FA0140297
- for <dev@dpdk.org>; Thu, 16 Apr 2026 20:51:52 +0200 (CEST)
-Received: by mail-dy1-f177.google.com with SMTP id
- 5a478bee46e88-2b4520f6b32so9553630eec.0
- for <dev@dpdk.org>; Thu, 16 Apr 2026 11:51:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BC5C740A73;
+	Thu, 16 Apr 2026 20:51:56 +0200 (CEST)
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
+ [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 408C54069D
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 20:51:53 +0200 (CEST)
+Received: by mail-dy1-f182.google.com with SMTP id
+ 5a478bee46e88-2de831d2b20so4433024eec.1
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 11:51:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776365511;
- x=1776970311; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776365512;
+ x=1776970312; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=b7C0ZcECixXWMpCf4mh9SH0qXwyD5WcXR3QqxA2vcXc=;
- b=BjR0FcOaEqe9ArX5immX/oQwwCuiKLNx5bRBfqepwKgw6cyYqDdJigF69BwJrzjFq/
- Xg56Yg6ghVE3n4o2cNTstF8eOJgqXjqZqJQxYihp1HcwJrfPC4YYNRkANtkvm8fCwZB0
- oJFKV7ZRQqrRzNA9Ttk1kih2JwE7okgTxZ7p8ZVsW5J1dfG+CjmPNfTNXCCXTfDX0bCC
- UD41KyBVWhbDNperSBtuN0Fd5lwRvsHbke0DzuprsovsU92/V2BWdM3AHpJF/NKWyuGK
- M8H1Jv1ycTLYkp9v3i359LEvXsqoX1QwmOh6bWPGLROXilJiESHxMHOaefYhZfUUsXzC
- lm1w==
+ bh=SHvyTLl5Ryy7ZPBy8BRoBW2iPF2MZ5pOx3G/cJDj5UM=;
+ b=0Q7WDUYLakQ6ctimhU2uMsWqXJhFBJwTEE+/wDMeTY6el/kqr3I7nJa+z0L5boOGai
+ K9p1apOv76I9TsFcY3YZjynTmjA6HKdMSGAmTNKZFKEjiVySMHjGS5qJwXbXNIogQMUZ
+ Qr/GyglXk6D8J8OH9x9FlqFfNshY1qi3gpYBWizpYOMBj8ALNwgXTxjOLa8T7A7l74Q1
+ zF+IlAMjv0u7VjuRQIg6kmo1FTuhCMumpX/PO3lf6gf9wkugyU/HitRWdIl2ra7UgWpL
+ zyhgZOLop+19V8Zb+76zqBoz7ct68agYlnd/E//OBn/FMoi0PXLaWPaZEwJ2Ywmhr6FW
+ f0Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776365511; x=1776970311;
+ d=1e100.net; s=20251104; t=1776365512; x=1776970312;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=b7C0ZcECixXWMpCf4mh9SH0qXwyD5WcXR3QqxA2vcXc=;
- b=DsrBR8Rs2pk9WTeV9hyencOLoWhWwlOHO2iyih+19LryAuE755bRfznU4/6+jkfW/U
- nTaz77QOvVpKpMXNgt6ogBmDrvYneK+HW6etHHl7Buy144N0MtmX5440+mrfQZH5fu3Z
- DbN0dTJAlg7gyl1wqkndag2oLcJiEEzVCpiSsJB9cViA/fPVc2kEe4YNV8bGHmHKwtri
- x8pe7Mi1b56e1omnZzbSkudGzs7s/awHIzi+f05JgnLYUWFD2z5CXqkWD81/prIYQFOS
- ePO7bIAHItVg8vFcD1sCEqRxBbw3l7FL/eI8TD3MQ/c1s2FIBd2R37Z9gjWte8PkY7eR
- w5Pg==
-X-Gm-Message-State: AOJu0YySjMfQ383YOp3C3+2a2RiAMqSRrZ+otQSjmJVh3YVGdVhcTQhy
- m0jYCBhtWEUni+rilBeKjPTX6M4UgKbyQHFH8Oy7q338bhwL7apy1/oX1u4jAVKq5l3AuA4OAOO
- 2q2m/
-X-Gm-Gg: AeBDiesfp7+VMOB5kOImYGEuw4DfDYhsuwrhP0qUK14FWU1tZiZa5nFs21cOsGy8pIR
- PNRB368qNJaePcQTJMEu7i+MwrD1/TQVrGWkvuG4mxyDTL2n4CjZTH6d/YdSXVXUtoCNwudvzKp
- 4VwECZnfyX3Is5OoNLVgNocVxwNy2E4BrgrKUE4g/iMk2112wteJURpkr+7Dd1Sthv1zc3tUqgw
- 3a4u+FzBY3ol27mhABNrZMaALNE5xnDN6cDkoU2vdR6qaeXpTqgqtdft1zf4qh8vfX+IKzTdp0T
- 3XZcmhqaAVVaD18qB6J8mc4QB9dVkuYK0bHaLMPM1LQHWVC2XaNXsgUh/sLo7/9yhyR29DAGVIP
- 5Hx2OcpHSTR6plAZTuA46V8sA0pF+cYZPvt2C13e6UqZPkSM0gq43AZA9VL2YCvSpoiyS6FhWkd
- 1RIdeVPc4d2C59AFaHabbMPpRTdRtoWXybjipix4hk4mI=
-X-Received: by 2002:a05:7301:6788:b0:2be:7885:31df with SMTP id
- 5a478bee46e88-2e2e4f21fdemr285291eec.17.1776365511428; 
- Thu, 16 Apr 2026 11:51:51 -0700 (PDT)
+ bh=SHvyTLl5Ryy7ZPBy8BRoBW2iPF2MZ5pOx3G/cJDj5UM=;
+ b=Re1sxP4srftIK+AqS6RLE2HQrDd16tkSaEp12xmRuPqp5KQkqi5O1Inee2vfRG1xJl
+ zsEfgf2540Y7ceMqMutfOXIlM9swYCk7Yj0eyJoYyEtAFX8Ot0JhhS8mUbB0mJmcOP98
+ M4tIyrdcyEf8IWlcBmEbWHuYVCCvJxnz7N7/5czo5by7MT1jq3plX5j+L166RJNPfxhc
+ ihGAQBWIqGkjddyT2i3CQXn5BdrdOEta4KnlvSwDTsPNYceRX1zV6cn2sMrpPsfsSw2U
+ LIKbmwHfEB9DstLzbXQrcHfqIqsM76yAXvZTsNbEObNz9U5K40fLixRJv5HJnFS448LI
+ X6Eg==
+X-Gm-Message-State: AOJu0YxlSykzAhBtEYCorDTPF7QJnKXr+zcdHi4xqO81cCVjN5KebAPb
+ DaMPJCy7UJH4GPNIIn7wLPumevmcm/6no/hSkyigX2hZPfoAGqw7VxPTahMP96Ulwte7tOv3rgH
+ Vw9wX
+X-Gm-Gg: AeBDieslOvdnwAUS76RQITfwoUG6wqTRRQJ/5dwrxSy9XLUrq07dJQo+uabarnHcccG
+ kxnFjXbOBWL6REi5eD2oLQQgMnlfdnmMfPlqvm+i9WBwDk4HhGwbXCg1osgr9xjhvMpUoRRcheT
+ 9ihgVYdmqu4zLyINJvLRG/GY5VzIi/gnBAS7NxbOK30OQ7KMTXC7+klFaBsGyXaTOUoqDAIfcfF
+ RwWYHGxsF0mH+GFYO9qL3OuQr4lt6JWVyHq63BFaeVJjXLKGO02taKc0b4jJjTwIiX21Pc8c3Mu
+ 5gAGMwZAAH4/i5H+QJXNOkSEId3y9LYfqRUd5Tp3TqhM2ulJVNVKI1grAZOkX03FxaPmp3wb332
+ fgPyCxhA+2rrJp5m4FSeWUg72GDP0x6PbrFsUBTSiHTp7nwa1YDEwP7c2u39HXTfa1S4eGNyNKj
+ g931Og6FXPrXZFtlTirtZB7rIPUOR3lEndCpE8nNzjwGwk+4j7KaLTPQ==
+X-Received: by 2002:a05:7300:5783:b0:2d2:129a:1682 with SMTP id
+ 5a478bee46e88-2e2e55170a6mr237557eec.16.1776365512357; 
+ Thu, 16 Apr 2026 11:51:52 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2de8f6615d5sm10602510eec.24.2026.04.16.11.51.50
+ 5a478bee46e88-2de8f6615d5sm10602510eec.24.2026.04.16.11.51.51
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 16 Apr 2026 11:51:50 -0700 (PDT)
+ Thu, 16 Apr 2026 11:51:51 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v24 04/24] net/pcap: include used headers
-Date: Thu, 16 Apr 2026 11:48:21 -0700
-Message-ID: <20260416185144.1359260-5-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v24 05/24] net/pcap: remove unnecessary casts
+Date: Thu, 16 Apr 2026 11:48:22 -0700
+Message-ID: <20260416185144.1359260-6-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260416185144.1359260-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,57 +80,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Include the used headers instead of relying on getting
-the headers indirectly through other headers.
+The function rte_zmalloc returns void * so cast is unnecessary.
+Use numa aware allocation and add tag for tracing.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/pcap/pcap_ethdev.c | 9 ++++++++-
- drivers/net/pcap/pcap_osdep.h  | 1 +
- 2 files changed, 9 insertions(+), 1 deletion(-)
+ drivers/net/pcap/pcap_ethdev.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index f323c0b0df..4513d46d61 100644
+index 4513d46d61..d6fe062b92 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -4,16 +4,23 @@
-  * All rights reserved.
-  */
+@@ -1217,13 +1217,11 @@ pmd_init_internals(struct rte_vdev_device *vdev,
+ 	struct pmd_process_private *pp;
+ 	unsigned int numa_node = vdev->device.numa_node;
  
-+#include <stdio.h>
- #include <stdlib.h>
- #include <time.h>
+-	PMD_LOG(INFO, "Creating pcap-backed ethdev on numa socket %d",
++	PMD_LOG(INFO, "Creating pcap-backed ethdev on numa socket %u",
+ 		numa_node);
+ 
+-	pp = (struct pmd_process_private *)
+-		rte_zmalloc(NULL, sizeof(struct pmd_process_private),
+-				RTE_CACHE_LINE_SIZE);
 -
-+#include <inttypes.h>
-+#include <errno.h>
-+#include <sys/time.h>
-+#include <sys/types.h>
- #include <pcap.h>
++	pp = rte_zmalloc_socket("pcap_private", sizeof(struct pmd_process_private),
++		RTE_CACHE_LINE_SIZE, numa_node);
+ 	if (pp == NULL) {
+ 		PMD_LOG(ERR,
+ 			"Failed to allocate memory for process private");
+@@ -1284,7 +1282,7 @@ eth_pcap_update_mac(const char *if_name, struct rte_eth_dev *eth_dev,
+ 	if (osdep_iface_mac_get(if_name, &mac) < 0)
+ 		return -1;
  
- #include <rte_cycles.h>
-+#include <rte_ring.h>
-+#include <rte_ethdev.h>
- #include <ethdev_driver.h>
- #include <ethdev_vdev.h>
- #include <rte_kvargs.h>
- #include <rte_malloc.h>
-+#include <rte_memcpy.h>
- #include <rte_mbuf.h>
- #include <rte_mbuf_dyn.h>
- #include <bus_vdev_driver.h>
-diff --git a/drivers/net/pcap/pcap_osdep.h b/drivers/net/pcap/pcap_osdep.h
-index 2aa13f3629..a0e2b5ace9 100644
---- a/drivers/net/pcap/pcap_osdep.h
-+++ b/drivers/net/pcap/pcap_osdep.h
-@@ -6,6 +6,7 @@
- #define _RTE_PCAP_OSDEP_
+-	mac_addrs = rte_zmalloc_socket(NULL, RTE_ETHER_ADDR_LEN, 0, numa_node);
++	mac_addrs = rte_zmalloc_socket("pcap_mac", RTE_ETHER_ADDR_LEN, 0, numa_node);
+ 	if (mac_addrs == NULL)
+ 		return -1;
  
- #include <rte_ether.h>
-+#include <rte_log.h>
+@@ -1590,11 +1588,8 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
+ 		unsigned int i;
  
- #define PMD_LOG(level, ...) \
- 	RTE_LOG_LINE_PREFIX(level, ETH_PCAP, "%s(): ", __func__, __VA_ARGS__)
+ 		internal = eth_dev->data->dev_private;
+-			pp = (struct pmd_process_private *)
+-				rte_zmalloc(NULL,
+-					sizeof(struct pmd_process_private),
+-					RTE_CACHE_LINE_SIZE);
+-
++		pp = rte_zmalloc("pcap_private", sizeof(struct pmd_process_private),
++			 RTE_CACHE_LINE_SIZE);
+ 		if (pp == NULL) {
+ 			PMD_LOG(ERR,
+ 				"Failed to allocate memory for process private");
 -- 
 2.53.0
 
