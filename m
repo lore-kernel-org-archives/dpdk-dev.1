@@ -2,87 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19638F428F5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 15 Apr 2026 21:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E2CF433D6
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 03:06:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 024CC402ED;
-	Wed, 15 Apr 2026 23:01:49 +0200 (CEST)
-Received: from mail-yx1-f46.google.com (mail-yx1-f46.google.com
- [74.125.224.46]) by mails.dpdk.org (Postfix) with ESMTP id 29CC5402EA
- for <dev@dpdk.org>; Wed, 15 Apr 2026 23:01:48 +0200 (CEST)
-Received: by mail-yx1-f46.google.com with SMTP id
- 956f58d0204a3-6501c9903edso8130449d50.1
- for <dev@dpdk.org>; Wed, 15 Apr 2026 14:01:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1776286907; cv=none;
- d=google.com; s=arc-20240605;
- b=SXMy68GusoN7XRtStJ5P/e4zeemHxJ+RBGafL+2py63DS3GCFyLuM6ataqu0HI1xjk
- fTkb0sy/5EREpgfcRSyhV/N87b8IXF/gwuz0+4fADyGQskWuS+Ej2ePlFjgVV1M7IWvS
- qdVZzfVxbGpJiBS84jFzdMR6Gq3mpO0F4z07YXTQiXxjftBVqS6LOCkYaebeHWjQy1we
- 1e2lHyRUZgv+1GzPN3QxVctGsZfefkXtawp9cD3ul6J84c51FT2RhcaMdn2MfOe7FR+J
- BtCaPyMIJZkmdiYMJkWMOLQxqaRTdvCQIDwH5Y8fjMqjtsCDFArrBQmw4TvORMWZX0C+
- 4Dyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:dkim-signature;
- bh=0B4zQjSoYkZeX5KYgkIEBSEGMdmeZfJrOh9DU5SiaHY=;
- fh=b444qT3A4A4Ay1O0PNmQXyBbmRmtJGAqapNMCIiq/AA=;
- b=bsFYbsC8fSPcDR3loc8BO9boVT52whZMRFg3N47JquwZJ7/kN1sEIhoca/rgxDZNpr
- Ti0J5Xr9zw0XT3/GEccgEXmgvlyqpopiCOBwlprRLvnyYlnG+AkfUZv33b0ypFK1GQao
- vypmk422a4Mxwzo0f0gobN66FP1BBsp/pehp2UCM/9X1I5GNAAnbashSnw43Hc1u7Lys
- Fj9k/R+UqMhgMJa9wx0898yb+451TUvegiVy2HbH04dIA9KJrvrEP//jbsYngPVreeI6
- ApAVwR0uADemXG6+cbdXC7s1DuBK/WqzPeo0O39yd+xoSeQfDeyMGynjaY3U8vLV9BUd
- 7dvA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1776286907; x=1776891707; darn=dpdk.org;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:from:to:cc:subject:date:message-id:reply-to;
- bh=0B4zQjSoYkZeX5KYgkIEBSEGMdmeZfJrOh9DU5SiaHY=;
- b=CO0KO2fcaq6WvZAAehtIc0IVLiXtE+qCfEeVNflDyX2Z8Dag14XvGZz2dxcIBtXToL
- v//dDXAzw6evd6QgK7jtSQrlQuU1dZQ6SFrAb5OjXLeXHt7+flE0k51Y2AHdtt9mCR3l
- 2LFUJ2f9F5c+quUbN1+7R/pNP61kQqTDcUCbtzrQS1k0FEqhwb7ePVXFbz/pi2dJdxSP
- zDUkaIgZeSHTwmG1U5Z2dfJW8K3ZUrUtlioMM6Hpnr2iXBlO7/6zQJUDkHQG4WaUozzr
- iBnV7tWZk4rT6UUJeymVwtoGepPay9FAIamrZURwgQUvZ8NtL9JgMLdz0eGrLnAznZgm
- JFhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776286907; x=1776891707;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=0B4zQjSoYkZeX5KYgkIEBSEGMdmeZfJrOh9DU5SiaHY=;
- b=rnc16hLWuf5qvCXp/aU2r5++MwKX4SAo4eY7pRosf0qkDKOCw69/ZqnAz3Vl0idF5d
- 7JYV/RvR3ww5EzZaiSEW7ur2gUsrI+G+wCsJFWIPhDPk0wh0dAcVQV9PseXfNPF824rV
- Y+/VH00mJtqpPFtPaF6l/yc03z5uiuBFrSp4k6ZuEbehjdW9MgHIIsZn53HA+rGbQ8sv
- iKH/23VUqqm0Qxzivb8INXok+gvhjN/bCsH0bdu4X6J9Ob+NWLdBUhYF3alkNx8BTZO9
- 9fm+FgesbJ5tVPG0sM56Na8b0RrqdxW7td+CJEoYJk363xNNFdrZsOVtYkhWfepKovea
- U3WQ==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/X948CDYBa5VnxRlo9CLgdmeWbw1qABhNzuyE6v0KLQkKXcOZmXeNUxIDBpajUz9t7prY=@dpdk.org
-X-Gm-Message-State: AOJu0Yxqv5eyGvRlbZ2NZf7CvkE9WK1hc4YoC+pCj+pzvUIUCDN7+WPP
- jjciYpu4I+x3TNR3tFHGstyuniPyurO76KlmuARNMkoRDCC7+ESjYWEk/8aCuP/DJxC7Ac9j4f8
- DV2CQzpO7OKeWfU1qstG7gGm75Y4lmIs=
-X-Gm-Gg: AeBDietFnP6Tp2Na6cxsmdOkCRA5mgYpJDIpmno1Lsovw/deNIH+Y3EKeBf6weocso/
- lCVMI8BppPoClrbY+dExohErICLzCGymrXuz6WWiMYDu9SFqd1EPAhaQoEuiL+7EBaK/WeTC3Us
- Oii1bZq9MXQOJTZPU+DbLIB18npTUtLoLMTzJoWtx/FTm+VvxV710VfWvT+qLdq7Qs81TOrCU6W
- GSj0GfHTsyqugsRzuwSjUGmk5/XSNAa5cygPNydgD/ACVyhr7xxTcKeu+M/rFDm3VZxUfGnHKxb
- h0uDwNvwq4liunG8Li7CxUCNs1Oc2EiSrL1Zw1hs
-X-Received: by 2002:a53:d007:0:b0:651:c065:a261 with SMTP id
- 956f58d0204a3-651c065decfmr13681646d50.57.1776286907232; Wed, 15 Apr 2026
- 14:01:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B6244402ED;
+	Thu, 16 Apr 2026 05:06:19 +0200 (CEST)
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
+ [113.46.200.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 7A2F440297
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 05:06:17 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=37j0STF2ijPA+PvxWbpNzb4viLeVIJi90SLq1fuDh68=;
+ b=VL3A28vY1n8jqfLEqp3j9Xj6CN4RfsaZe8OnVpoOdaoRDz7z6gzAF6F5moUZvytzfVcZ50Rdd
+ I0VKMM1Tdwh6rl0P9q5M6fHE83ZPZQ1r18t4gB1pQgOPuu/4kEVOoLBLuGlpy49djGbI5qJrG9Y
+ usA2AB39Fv+G82yCUnqoiSw=
+Received: from mail.maildlp.com (unknown [172.19.163.15])
+ by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4fx2mp3kS9zmVCS;
+ Thu, 16 Apr 2026 10:59:54 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id C672A40571;
+ Thu, 16 Apr 2026 11:06:14 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 16 Apr 2026 11:06:14 +0800
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Thu, 16 Apr 2026 11:06:14 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
+CC: <dev@dpdk.org>, <thomas@monjalon.net>, <fengchengwen@huawei.com>,
+ <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>
+Subject: [PATCH v1 03/15] power/amd_pstate: enforce enabled lcore ID check
+Date: Thu, 16 Apr 2026 11:06:00 +0800
+Message-ID: <20260416030612.2379407-4-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20260416030612.2379407-1-lihuisong@huawei.com>
+References: <20260416030612.2379407-1-lihuisong@huawei.com>
 MIME-Version: 1.0
-References: <20260404095902.856502-1-luca.boccassi@gmail.com>
- <cf6b2387-dec2-46b7-a1e7-5e09c8b7bae7@nvidia.com>
-In-Reply-To: <cf6b2387-dec2-46b7-a1e7-5e09c8b7bae7@nvidia.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Wed, 15 Apr 2026 22:01:35 +0100
-X-Gm-Features: AQROBzCSjX3aClzwAMm6nd72gcFrVQFs1lwyTKZKCOiBDuR-5Sp39DmY0Yh9r3Q
-Message-ID: <CAMw=ZnTXBoyTkkkOQN-qE0-SgkJaEaHg_RX-yCCEjzUfat3F2g@mail.gmail.com>
-Subject: Re: 24.11.5 patches review and test
-To: Ali Alnubani <alialnu@nvidia.com>
-Cc: stable@dpdk.org, dev@dpdk.org, John McNamara <john.mcnamara@intel.com>, 
- Raslan Darawsheh <rasland@nvidia.com>, Thomas Monjalon <thomas@monjalon.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,62 +60,172 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 15 Apr 2026 at 20:59, Ali Alnubani <alialnu@nvidia.com> wrote:
->
-> On 4/4/26 12:58 PM, luca.boccassi@gmail.com wrote:
->
-> > Hi all,
-> >
-> > Here is a list of patches targeted for stable release 24.11.5.
-> >
-> > The planned date for the final release is April 16th.
-> >
-> > Please help with testing and validation of your use cases and report
-> > any issues/results with reply-all to this mail. For the final release
-> > the fixes and reported validations will be added to the release notes.
-> >
-> > A release candidate tarball can be found at:
-> >
-> >      https://dpdk.org/browse/dpdk-stable/tag/?id=v24.11.5-rc1
-> >
-> > These patches are located at branch 24.11 of dpdk-stable repo:
-> >      https://dpdk.org/browse/dpdk-stable/
-> >
-> > Thanks.
-> >
-> > Luca Boccassi
->
-> Hello Luca,
->
-> Apologies for the delayed report and thank you for your patience,
->
-> We ran the following functional tests with Nvidia hardware on v24.11.5-rc1:
-> - Basic functionality:
->     Send and receive multiple types of traffic.
-> - testpmd xstats counter test.
-> - testpmd timestamp test.
-> - Changing/checking link status through testpmd.
-> - rte_flow tests
-> (https://doc.dpdk.org/guides/nics/mlx5.html#supported-hardware-offloads)
-> - RSS tests.
-> - VLAN filtering, stripping, and insertion tests.
-> - Checksum and TSO tests.
-> - ptype tests.
-> - link_status_interrupt example application tests.
-> - l3fwd-power example application tests.
-> - Multi-process example applications tests.
-> - Hardware LRO tests.
-> - Buffer Split tests.
-> - Tx scheduling tests.
->
-> Functional tests ran on the following environments:
->
-> - NIC: ConnectX-6 Dx / OS: Ubuntu 22.04 / Driver:
-> MLNX_OFED_LINUX-24.10-4.1.4.0 / Firmware: 22.43.4100
-> - NIC: ConnectX-7 / OS: Ubuntu 22.04 / Driver:
-> MLNX_OFED_LINUX-24.10-4.1.4.0 / Firmware: 28.43.4100
-> - DPU: BlueField-2 / DOCA SW version: 2.9.4 / Firmware: 24.43.4100
->
-> We did not find issues caused by changes in this release.
+The locre ID in cpufreq power must be enabled core in application.
+Use rte_lcore_is_enabled to verify lcore_id.
 
-That's great, thanks
+Fixes: 6f987b594fa6 ("power: refactor core power management")
+Cc: stable@dpdk.org
+
+Signed-off-by: Huisong Li <lihuisong@huawei.com>
+---
+ drivers/power/amd_pstate/amd_pstate_cpufreq.c | 56 +++++++++----------
+ 1 file changed, 28 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/power/amd_pstate/amd_pstate_cpufreq.c b/drivers/power/amd_pstate/amd_pstate_cpufreq.c
+index 95495bff7d..68d4d3472c 100644
+--- a/drivers/power/amd_pstate/amd_pstate_cpufreq.c
++++ b/drivers/power/amd_pstate/amd_pstate_cpufreq.c
+@@ -360,9 +360,8 @@ power_amd_pstate_cpufreq_init(unsigned int lcore_id)
+ 		return -1;
+ 	}
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Lcore id %u can not exceeds %u",
+-				lcore_id, RTE_MAX_LCORE - 1U);
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -443,11 +442,11 @@ power_amd_pstate_cpufreq_exit(unsigned int lcore_id)
+ 	struct amd_pstate_power_info *pi;
+ 	uint32_t exp_state;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Lcore id %u can not exceeds %u",
+-				lcore_id, RTE_MAX_LCORE - 1U);
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
++
+ 	pi = &lcore_power_info[lcore_id];
+ 	exp_state = POWER_USED;
+ 	/* The power in use state works as a guard variable between
+@@ -493,8 +492,8 @@ power_amd_pstate_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t
+ {
+ 	struct amd_pstate_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return 0;
+ 	}
+ 
+@@ -516,8 +515,8 @@ power_amd_pstate_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t
+ uint32_t
+ power_amd_pstate_cpufreq_get_freq(unsigned int lcore_id)
+ {
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return RTE_POWER_INVALID_FREQ_INDEX;
+ 	}
+ 
+@@ -527,8 +526,8 @@ power_amd_pstate_cpufreq_get_freq(unsigned int lcore_id)
+ int
+ power_amd_pstate_cpufreq_set_freq(unsigned int lcore_id, uint32_t index)
+ {
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -540,8 +539,8 @@ power_amd_pstate_cpufreq_freq_down(unsigned int lcore_id)
+ {
+ 	struct amd_pstate_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -558,8 +557,8 @@ power_amd_pstate_cpufreq_freq_up(unsigned int lcore_id)
+ {
+ 	struct amd_pstate_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -575,8 +574,8 @@ power_amd_pstate_cpufreq_freq_up(unsigned int lcore_id)
+ int
+ power_amd_pstate_cpufreq_freq_max(unsigned int lcore_id)
+ {
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -600,8 +599,8 @@ power_amd_pstate_cpufreq_freq_min(unsigned int lcore_id)
+ {
+ 	struct amd_pstate_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -616,8 +615,8 @@ power_amd_pstate_turbo_status(unsigned int lcore_id)
+ {
+ 	struct amd_pstate_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -631,8 +630,8 @@ power_amd_pstate_enable_turbo(unsigned int lcore_id)
+ {
+ 	struct amd_pstate_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -667,8 +666,8 @@ power_amd_pstate_disable_turbo(unsigned int lcore_id)
+ {
+ 	struct amd_pstate_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
+ 
+@@ -695,10 +694,11 @@ power_amd_pstate_get_capabilities(unsigned int lcore_id,
+ {
+ 	struct amd_pstate_power_info *pi;
+ 
+-	if (lcore_id >= RTE_MAX_LCORE) {
+-		POWER_LOG(ERR, "Invalid lcore ID");
++	if (!rte_lcore_is_enabled(lcore_id)) {
++		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+ 		return -1;
+ 	}
++
+ 	if (caps == NULL) {
+ 		POWER_LOG(ERR, "Invalid argument");
+ 		return -1;
+-- 
+2.33.0
+
