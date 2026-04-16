@@ -2,42 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 955CEF433D6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 03:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331E4F433D9
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 03:07:07 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BE1DE4066F;
-	Thu, 16 Apr 2026 05:06:29 +0200 (CEST)
-Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
- [113.46.200.217])
- by mails.dpdk.org (Postfix) with ESMTP id 91E46402DD
+	by mails.dpdk.org (Postfix) with ESMTP id CA5DF40684;
+	Thu, 16 Apr 2026 05:06:30 +0200 (CEST)
+Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com
+ [113.46.200.216])
+ by mails.dpdk.org (Postfix) with ESMTP id B5107402E2
  for <dev@dpdk.org>; Thu, 16 Apr 2026 05:06:19 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=5Uj8/8zmXGj28oK/43PUIYe9RX1v3ydThNj20ZZnQeE=;
- b=KtHzy6fhC41iUD6dEf443KGsq8v3YgQYsRmLFaQSaJBAQ3QOxigIh7nnqpRyBo10jgWN19Fi9
- I+Gw6ZhkSc2vgUW8ZrKFXiLkdf8MPfnu24i7VQOnHl88DreqivMN7jE1CyTVFOH7HQfA/dtqzgT
- Nb8rQeHKJr40BGua3HIsDvQ=
-Received: from mail.maildlp.com (unknown [172.19.163.104])
- by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4fx2mf3JQczcb19;
- Thu, 16 Apr 2026 10:59:46 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
- by mail.maildlp.com (Postfix) with ESMTPS id E1B8B4056A;
- Thu, 16 Apr 2026 11:06:17 +0800 (CST)
+ bh=sHMSu7lXt17V8TQS6zMAu6S83WIsjMwEmNtweo18Cgs=;
+ b=BewJ41Q10TA/BkCOu0ah6d54aQIa7w6Q4mJ8PbX0rHITbHkxCiUxbDzJ7lyvdB/rXI4aHs3xd
+ QOeCBVlh4YMc3kIH2hZXHiOaeJ428KDX+jW+AOdZyCHRJr79K4leGPzQ507g7j72tyhAgQYgqDC
+ 4dXS2gVzU26GQefsfwIIqWQ=
+Received: from mail.maildlp.com (unknown [172.19.162.144])
+ by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4fx2nD3WK6z1T4Kc;
+ Thu, 16 Apr 2026 11:00:16 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id 31C374056E;
+ Thu, 16 Apr 2026 11:06:18 +0800 (CST)
 Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 16 Apr 2026 11:06:15 +0800
+ 15.2.1544.11; Thu, 16 Apr 2026 11:06:17 +0800
 Received: from localhost.localdomain (10.50.163.32) by
  kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 16 Apr 2026 11:06:15 +0800
+ 15.2.1544.36; Thu, 16 Apr 2026 11:06:17 +0800
 From: Huisong Li <lihuisong@huawei.com>
 To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <fengchengwen@huawei.com>,
  <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>
-Subject: [PATCH v1 06/15] power: enforce enabled lcore ID check
-Date: Thu, 16 Apr 2026 11:06:03 +0800
-Message-ID: <20260416030612.2379407-7-lihuisong@huawei.com>
+Subject: [PATCH v1 13/15] power/cppc_cpufreq: remove the verification of lcore
+ ID
+Date: Thu, 16 Apr 2026 11:06:10 +0800
+Message-ID: <20260416030612.2379407-14-lihuisong@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20260416030612.2379407-1-lihuisong@huawei.com>
 References: <20260416030612.2379407-1-lihuisong@huawei.com>
@@ -60,84 +61,173 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The locre ID in cpufreq power must be enabled core in application.
-Use rte_lcore_is_enabled to verify it.
-
-Fixes: 6f987b594fa6 ("power: refactor core power management")
-Cc: stable@dpdk.org
+Now the lcore ID has been verified in framework API, so remove
+the verification in driver.
 
 Signed-off-by: Huisong Li <lihuisong@huawei.com>
 ---
- lib/power/rte_power_pmd_mgmt.c | 21 +++++++++++----------
- 1 file changed, 11 insertions(+), 10 deletions(-)
+ drivers/power/cppc/cppc_cpufreq.c | 65 -------------------------------
+ 1 file changed, 65 deletions(-)
 
-diff --git a/lib/power/rte_power_pmd_mgmt.c b/lib/power/rte_power_pmd_mgmt.c
-index a4d53aac2a..a5fc1c3a94 100644
---- a/lib/power/rte_power_pmd_mgmt.c
-+++ b/lib/power/rte_power_pmd_mgmt.c
-@@ -511,7 +511,8 @@ rte_power_ethdev_pmgmt_queue_enable(unsigned int lcore_id, uint16_t port_id,
- 
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -EINVAL);
- 
--	if (queue_id >= RTE_MAX_QUEUES_PER_PORT || lcore_id >= RTE_MAX_LCORE) {
-+	if (queue_id >= RTE_MAX_QUEUES_PER_PORT ||
-+	    !rte_lcore_is_enabled(lcore_id)) {
- 		ret = -EINVAL;
- 		goto end;
+diff --git a/drivers/power/cppc/cppc_cpufreq.c b/drivers/power/cppc/cppc_cpufreq.c
+index e63cec7ce5..529f68e574 100644
+--- a/drivers/power/cppc/cppc_cpufreq.c
++++ b/drivers/power/cppc/cppc_cpufreq.c
+@@ -346,11 +346,6 @@ power_cppc_cpufreq_init(unsigned int lcore_id)
+ 		return -1;
  	}
-@@ -627,7 +628,7 @@ rte_power_ethdev_pmgmt_queue_disable(unsigned int lcore_id,
  
- 	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -EINVAL);
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 	exp_state = POWER_IDLE;
+ 	/* The power in use state works as a guard variable between
+@@ -428,11 +423,6 @@ power_cppc_cpufreq_exit(unsigned int lcore_id)
+ 	struct cppc_power_info *pi;
+ 	uint32_t exp_state;
  
--	if (lcore_id >= RTE_MAX_LCORE || queue_id >= RTE_MAX_QUEUES_PER_PORT)
-+	if (!rte_lcore_is_enabled(lcore_id) || queue_id >= RTE_MAX_QUEUES_PER_PORT)
- 		return -EINVAL;
- 
- 	/* check if the queue is stopped */
-@@ -729,8 +730,8 @@ RTE_EXPORT_SYMBOL(rte_power_pmd_mgmt_set_scaling_freq_min)
- int
- rte_power_pmd_mgmt_set_scaling_freq_min(unsigned int lcore, unsigned int min)
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 	exp_state = POWER_USED;
+ 	/* The power in use state works as a guard variable between
+@@ -478,11 +468,6 @@ power_cppc_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t num)
  {
--	if (lcore >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID: %u", lcore);
-+	if (!rte_lcore_is_enabled(lcore)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore);
- 		return -EINVAL;
- 	}
+ 	struct cppc_power_info *pi;
  
-@@ -747,8 +748,8 @@ RTE_EXPORT_SYMBOL(rte_power_pmd_mgmt_set_scaling_freq_max)
- int
- rte_power_pmd_mgmt_set_scaling_freq_max(unsigned int lcore, unsigned int max)
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return 0;
+-	}
+-
+ 	if (freqs == NULL) {
+ 		POWER_LOG(ERR, "NULL buffer supplied");
+ 		return 0;
+@@ -501,22 +486,12 @@ power_cppc_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t num)
+ uint32_t
+ power_cppc_cpufreq_get_freq(unsigned int lcore_id)
  {
--	if (lcore >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID: %u", lcore);
-+	if (!rte_lcore_is_enabled(lcore)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore);
- 		return -EINVAL;
- 	}
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return RTE_POWER_INVALID_FREQ_INDEX;
+-	}
+-
+ 	return lcore_power_info[lcore_id].curr_idx;
+ }
  
-@@ -769,8 +770,8 @@ RTE_EXPORT_SYMBOL(rte_power_pmd_mgmt_get_scaling_freq_min)
  int
- rte_power_pmd_mgmt_get_scaling_freq_min(unsigned int lcore)
+ power_cppc_cpufreq_set_freq(unsigned int lcore_id, uint32_t index)
  {
--	if (lcore >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID: %u", lcore);
-+	if (!rte_lcore_is_enabled(lcore)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore);
- 		return -EINVAL;
- 	}
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	return set_freq_internal(&(lcore_power_info[lcore_id]), index);
+ }
  
-@@ -784,8 +785,8 @@ RTE_EXPORT_SYMBOL(rte_power_pmd_mgmt_get_scaling_freq_max)
+@@ -525,11 +500,6 @@ power_cppc_cpufreq_freq_down(unsigned int lcore_id)
+ {
+ 	struct cppc_power_info *pi;
+ 
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 	if (pi->curr_idx + 1 == pi->nb_freqs)
+ 		return 0;
+@@ -543,11 +513,6 @@ power_cppc_cpufreq_freq_up(unsigned int lcore_id)
+ {
+ 	struct cppc_power_info *pi;
+ 
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 	if (pi->curr_idx == 0 || (pi->curr_idx == 1 &&
+ 		pi->turbo_available && !pi->turbo_enable))
+@@ -560,11 +525,6 @@ power_cppc_cpufreq_freq_up(unsigned int lcore_id)
  int
- rte_power_pmd_mgmt_get_scaling_freq_max(unsigned int lcore)
+ power_cppc_cpufreq_freq_max(unsigned int lcore_id)
  {
--	if (lcore >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID: %u", lcore);
-+	if (!rte_lcore_is_enabled(lcore)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore);
- 		return -EINVAL;
- 	}
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	/* Frequencies in the array are from high to low. */
+ 	if (lcore_power_info[lcore_id].turbo_available) {
+ 		if (lcore_power_info[lcore_id].turbo_enable)
+@@ -584,11 +544,6 @@ power_cppc_cpufreq_freq_min(unsigned int lcore_id)
+ {
+ 	struct cppc_power_info *pi;
  
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 
+ 	/* Frequencies in the array are from high to low. */
+@@ -600,11 +555,6 @@ power_cppc_turbo_status(unsigned int lcore_id)
+ {
+ 	struct cppc_power_info *pi;
+ 
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 
+ 	return pi->turbo_enable;
+@@ -615,11 +565,6 @@ power_cppc_enable_turbo(unsigned int lcore_id)
+ {
+ 	struct cppc_power_info *pi;
+ 
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 
+ 	if (pi->turbo_available)
+@@ -651,11 +596,6 @@ power_cppc_disable_turbo(unsigned int lcore_id)
+ {
+ 	struct cppc_power_info *pi;
+ 
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	pi = &lcore_power_info[lcore_id];
+ 
+ 	pi->turbo_enable = 0;
+@@ -679,11 +619,6 @@ power_cppc_get_capabilities(unsigned int lcore_id,
+ {
+ 	struct cppc_power_info *pi;
+ 
+-	if (!rte_lcore_is_enabled(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
+-		return -1;
+-	}
+-
+ 	if (caps == NULL) {
+ 		POWER_LOG(ERR, "Invalid argument");
+ 		return -1;
 -- 
 2.33.0
 
