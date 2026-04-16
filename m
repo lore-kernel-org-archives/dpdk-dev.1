@@ -2,51 +2,95 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77BFFF433D6
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 03:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B598FF8808E
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 07:06:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4E0D440B92;
-	Thu, 16 Apr 2026 05:06:38 +0200 (CEST)
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com
- [113.46.200.224])
- by mails.dpdk.org (Postfix) with ESMTP id 1E1C1402B0
- for <dev@dpdk.org>; Thu, 16 Apr 2026 05:06:21 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=aLpf6JszmjfQnlhmhFzxqUuw9Wm7ECHsYM34JRkUm4M=;
- b=dLq6TsPjMgrtRq46bEb1Njxubt0lQOseQmqgr51gtkn+PiZBgrFqgKW5GoySdyH5v+mclVRKF
- /x14GWBFSP6zZp/2TC92V2PxAgPCKrwDDsKJI0bjZ5Pu3uDjCwAoFbkMw8Q1sXUdkBKNed52koG
- UWe5fYqM5qKhHHOe4iCEpTU=
-Received: from mail.maildlp.com (unknown [172.19.163.15])
- by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4fx2mw60l7z1cyPZ;
- Thu, 16 Apr 2026 11:00:00 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
- by mail.maildlp.com (Postfix) with ESMTPS id D4E8440571;
- Thu, 16 Apr 2026 11:06:18 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 16 Apr 2026 11:06:14 +0800
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 16 Apr 2026 11:06:14 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <fengchengwen@huawei.com>,
- <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>
-Subject: [PATCH v1 04/15] power/cppc_cpufreq: enforce enabled lcore ID check
-Date: Thu, 16 Apr 2026 11:06:01 +0800
-Message-ID: <20260416030612.2379407-5-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20260416030612.2379407-1-lihuisong@huawei.com>
-References: <20260416030612.2379407-1-lihuisong@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 9A19C402A3;
+	Thu, 16 Apr 2026 09:06:07 +0200 (CEST)
+Received: from CY7PR03CU001.outbound.protection.outlook.com
+ (mail-westcentralusazon11010062.outbound.protection.outlook.com
+ [40.93.198.62]) by mails.dpdk.org (Postfix) with ESMTP id 838A74025D
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 09:06:05 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tZ92V58FCLt0VWeSQdfU2c53pCBZMs2dpw02Y1vt7AxCy0qwn2AExpGdzcAptbRVWVV6UHmLCUaBNN/Ez+i1l56FezHI+jelKII4aX7/6xWH7OniBFL44imSXYPs3LtEpmS43/fFDSuXwl6Pdak3wROy1SUhmwGNv71e1zJzf0Cctxvsni/S+W+9VlnpVn/YcbLLEqCuMqbkUCc5Ep4m+emamL0bkS1hnNndJ4rsb7bwIUGVW5bhp18teSs0AI9L/TmYLMDbczeZqFQLJ5eV/WGAyTjCCKJKxv6+s8nQx9eWDXD9YI4iOf7DCqy8SXkgkTbhOtqs99YzKdOO4X2W0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ppg92CChytczelT/Hr8QHeWnFc2R9rCjmrnEZx9SYxY=;
+ b=rmWMHtAxMOXPm+SHnt81UGirqilPNVgsUTHCWTHJt+0qCX6tuA4nGCsMxnP7u0/qe/RgR8gr9ZYs3ly42fQ8RbAWWW/zS1SIdWpYiCPTPgCNRAB0VMxT3FXaU7j1N7ZgJ5oIL3jLpT8tdRvwimxmEA9wAUY04qdI+gS6RuAWQdxaeERq92//mF6anUfw1lO9c5EuKjUuoIRk9m8umXoA57GKoOanOv9S3OgMjzJBLG+AxhQDSSuJZi1Orhbe7W+i6N0Dpir4Ji07qRhBnM9/Ox5D31L5umtkvKFp0PmTo4zeUSL1JnvJdaUCSRrkBrgEajQn9cmGlwgQ+9+fvz7ThQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=dpdk.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1; 
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ppg92CChytczelT/Hr8QHeWnFc2R9rCjmrnEZx9SYxY=;
+ b=sZYu5rZKIgpEs8JnzMspbPlTXNMflT4p6l9RlHPhg5aYk139nlYCpKB8sW2ScHU2tYQNV+BZmpq0p2jKE8XtIArHtLMJa9oqpuL/bTzgvh7+RZB/zIvX4Ac0okUhjGILNC7vZlymOo9CdjDPuXtEKxltt8IDARvKQwTZWelh9pw=
+Received: from BLAPR03CA0090.namprd03.prod.outlook.com (2603:10b6:208:329::35)
+ by BN7PPF3C1137D8A.namprd12.prod.outlook.com
+ (2603:10b6:40f:fc02::6cd) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.20; Thu, 16 Apr
+ 2026 07:06:01 +0000
+Received: from BL6PEPF0001AB4C.namprd04.prod.outlook.com
+ (2603:10b6:208:329:cafe::ea) by BLAPR03CA0090.outlook.office365.com
+ (2603:10b6:208:329::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9769.49 via Frontend Transport; Thu,
+ 16 Apr 2026 07:06:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BL6PEPF0001AB4C.mail.protection.outlook.com (10.167.242.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9769.17 via Frontend Transport; Thu, 16 Apr 2026 07:06:01 +0000
+Received: from BLRASNATARA.amd.com (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Thu, 16 Apr
+ 2026 02:05:57 -0500
+From: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
+To: <dev@dpdk.org>
+CC: <Selwin.Sebastian@amd.com>, Ashok Kumar Natarajan
+ <ashokkumar.natarajan@amd.com>
+Subject: [PATCH v4] net/axgbe: mask unsupported PHY half-duplex modes
+Date: Thu, 16 Apr 2026 12:35:24 +0530
+Message-ID: <20260416070526.1504-1-ashokkumar.natarajan@amd.com>
+X-Mailer: git-send-email 2.53.0.windows.1
+In-Reply-To: <20260402065450.1074-1-ashokkumar.natarajan@amd.com>
+References: <20260402065450.1074-1-ashokkumar.natarajan@amd.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: satlexmb08.amd.com (10.181.42.217) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4C:EE_|BN7PPF3C1137D8A:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44c11824-49f4-4c10-0213-08de9b869e0a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|376014|36860700016|82310400026|22082099003|18002099003|56012099003;
+X-Microsoft-Antispam-Message-Info: I27L7ve7iKVaevx8nNr5StIVh4XmJMQWwmdyByOzveWBx9BFwtJ3o37x07jRiCsaV5aI6eRubJ8cQapBKnq0bCMkpNixqBdad3dxQv3s93nr/dhPqkkf1bwu4kF7WjSXWOXdiBkA9c44vKpBedM6/VYCXyQlyLBYMlgDvj5j80k1D5m+tODEQYIYHfTPxM4WMK+5wo1x9PNjkD8HnQsBy7MWq9LMCm0O1sg9VF0xuq3Mt/VBGxoaDYoN/ZiX9GzrdlxnLg0KPmjft6X0xukejtsDEAS57YBX0F1p34F8g7If82mX8JXT6Gzhm0hiItMtZXIS7J4iLM7E11cY1oUbd+sOTKFgmdERMYIX6zqT9DuAhn0m971Ld9D7SA5W59uN/hmQCf2P9h7KmzWRCa5+xEZ/dpaOBy1WLBlatKjIUrC0FwkmoF4FD5P56VsQfsa8TF3mgRZ4oLjwfEKZ+ZvRPwyDkoaKjqjz8scpE8IZOTefI7cIgOvLauFtGqtOyhewpfrXsswyA4/CT6xPPIsZx3eOZhNWHjCy3kGu/ByRDpLF+hnGKqr4VW4/eoJBkV+lrRU7xRUn/Dy/3lN6XUsqa5u/6BLcRFxTRwxhFT7ipvw1wszO6QVXTEhm6CE8SnUdkTdbl12bKGqHxtzFsJpzsxx9yE6w/q7yhJZ9sO8lh4Ed1lSbTxDVjosMheJIlDI434wOaIF0FX2zVHiGdfdiCUh9Jaj4nq2guk+5CJWfvMz8HsgUrRjY2GU8daBcM1ddGmniI699aXCn9/KbS7YqgA==
+X-Forefront-Antispam-Report: CIP:165.204.84.17; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:satlexmb07.amd.com; PTR:InfoDomainNonexistent; CAT:NONE;
+ SFS:(13230040)(1800799024)(376014)(36860700016)(82310400026)(22082099003)(18002099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: qMFCPLQbDZP4XnPkEeRSDzc3uieUQrqPw9kUNlm503e4mvtObONS8OpnEFYYFuNeaasKH8X4n/WBuVHbWX92gD67/HTMDk7YMm1PM3TBk5vcKHly1EVH3Wq2LRsvV0cOdMTAfSwoQ6MNtRQGJF+Hy72fCWW1nqu+0rOMDoAyalylnbz2QsUHhJyBZyjbRL8i1bq23O2z5E3B1E7BX+3BpNQoSsoudQLDU5yfKkQ1fXbiy32FBi51tHUTG+Xqdrj32kMbj3YSQ8R1s9HmiPOOql+seBmwOBB3P1qyzouIoPeNSWpp95LcmynTwyvup5KWFMV6cj0ElmrFEXsfS9jDCMcnHoohPHeNxb0NQCAJeqBqOJGwRFYDQ7fJPFztduq003WMhtAq6bfYXpGGY+l3LW4qEmaHVxQWliFrnw2xEYSCf/iT0fFEh+fTRylHWJqf
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Apr 2026 07:06:01.2129 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44c11824-49f4-4c10-0213-08de9b869e0a
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d; Ip=[165.204.84.17];
+ Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: BL6PEPF0001AB4C.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PPF3C1137D8A
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,172 +104,168 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The locre ID in cpufreq power must be enabled core in application.
-Use rte_lcore_is_enabled to verify lcore_id.
+The AXGBE MAC supports only full-duplex operation at all speeds.
+However, the PHY auto-negotiation configuration could advertise
+half-duplex modes, including 10BASE-T, 100BASE-TX, and 1000BASE-T,
+which are not supported by the MAC.
 
-Fixes: 6f987b594fa6 ("power: refactor core power management")
-Cc: stable@dpdk.org
+Update the Clause 22 and Clause 40 PHY advertisement handling to mask
+all half-duplex modes while preserving existing PHY, strap, and
+vendor-specific configuration using read-modify-write.
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
+To maintain backward compatibility, full-duplex advertisement for
+10/100 and 1000BASE-T is preserved by default when no explicit PHY
+advertising mask is provided.
+
+This ensures IEEE 802.3 compliant PHY advertisement while avoiding
+regressions on platforms relying on PHY default configuration.
+
+Signed-off-by: Ashok Kumar Natarajan <ashokkumar.natarajan@amd.com>
 ---
- drivers/power/cppc/cppc_cpufreq.c | 56 +++++++++++++++----------------
- 1 file changed, 28 insertions(+), 28 deletions(-)
+ drivers/net/axgbe/axgbe_phy.h      |   4 ++
+ drivers/net/axgbe/axgbe_phy_impl.c | 103 +++++++++++++++++++++++++++--
+ 2 files changed, 101 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/power/cppc/cppc_cpufreq.c b/drivers/power/cppc/cppc_cpufreq.c
-index 3cd4165c83..e63cec7ce5 100644
---- a/drivers/power/cppc/cppc_cpufreq.c
-+++ b/drivers/power/cppc/cppc_cpufreq.c
-@@ -346,9 +346,8 @@ power_cppc_cpufreq_init(unsigned int lcore_id)
- 		return -1;
+diff --git a/drivers/net/axgbe/axgbe_phy.h b/drivers/net/axgbe/axgbe_phy.h
+index e5568cce5f..9d6496c3cf 100644
+--- a/drivers/net/axgbe/axgbe_phy.h
++++ b/drivers/net/axgbe/axgbe_phy.h
+@@ -82,6 +82,10 @@
+ #define ADVERTISE_LPACK         0x4000  /* Ack link partners response  */
+ #define ADVERTISE_NPAGE         0x8000  /* Next page bit               */
+ 
++/* IEEE 802.3 Clause 40: 1000BASE-T Advertisement Control */
++#define ADVERTISE_1000FULL	0x0200
++#define ADVERTISE_1000HALF	0x0100
++
+ #define ADVERTISE_FULL          (ADVERTISE_100FULL | ADVERTISE_10FULL | \
+ 		ADVERTISE_CSMA)
+ #define ADVERTISE_ALL           (ADVERTISE_10HALF | ADVERTISE_10FULL | \
+diff --git a/drivers/net/axgbe/axgbe_phy_impl.c b/drivers/net/axgbe/axgbe_phy_impl.c
+index 369d766884..4abf5fdea9 100644
+--- a/drivers/net/axgbe/axgbe_phy_impl.c
++++ b/drivers/net/axgbe/axgbe_phy_impl.c
+@@ -303,23 +303,114 @@ static int axgbe_phy_write(struct axgbe_port *pdata, u16 reg, u16 value)
+ 
+ static int axgbe_phy_config_advert(struct axgbe_port *pdata)
+ {
+-	u16 advert;
++	u32 adv = pdata->phy.advertising;
++	u16 advert, orig_advert;
++	u16 ctrl1000, orig_ctrl1000;
+ 	int ret;
+ 
++	/*
++	 * Clause 22 (10/100) advertisement configuration.
++	 *
++	 * AXGBE MAC supports only full-duplex operation.
++	 * Half-duplex modes are masked while preserving any
++	 * PHY-specific or reserved bits.
++	 */
+ 	ret = pdata->phy_if.phy_impl.read(pdata, MII_ADVERTISE, &advert);
+ 	if (ret) {
+-		PMD_DRV_LOG_LINE(ERR, "Failed to read ADVERTISE register");
++		PMD_DRV_LOG_LINE(ERR,
++				"PHY read failed: MII_ADVERTISE");
+ 		return ret;
  	}
  
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Lcore id %u can not exceeds %u",
--				lcore_id, RTE_MAX_LCORE - 1U);
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
+-	advert |= ADVERTISE_FULL;
+-	advert |= ADVERTISE_PAUSE_CAP;
++	orig_advert = advert;
++
++	/* Always advertise IEEE 802.3 CSMA/CD selector */
++	advert |= ADVERTISE_CSMA;
++
++	/* AXGBE does not support 10/100 half-duplex */
++	advert &= ~(ADVERTISE_10HALF | ADVERTISE_100HALF);
++
++	/*
++	 * Treat adv == 0 as a legacy/default configuration where the driver
++	 * does not impose an explicit policy and preserves the historical
++	 * behavior of advertising all supported full-duplex speeds.
++	 */
++	if (!adv) {
++		advert |= ADVERTISE_10FULL | ADVERTISE_100FULL;
++		advert |= ADVERTISE_PAUSE_CAP;
++	} else {
++		if (adv & ADVERTISED_10baseT_Full)
++			advert |= ADVERTISE_10FULL;
++		else
++			advert &= ~ADVERTISE_10FULL;
++
++		if (adv & ADVERTISED_100baseT_Full)
++			advert |= ADVERTISE_100FULL;
++		else
++			advert &= ~ADVERTISE_100FULL;
++
++		if (adv & ADVERTISED_Pause)
++			advert |= ADVERTISE_PAUSE_CAP;
++		else
++			advert &= ~ADVERTISE_PAUSE_CAP;
  
-@@ -429,11 +428,11 @@ power_cppc_cpufreq_exit(unsigned int lcore_id)
- 	struct cppc_power_info *pi;
- 	uint32_t exp_state;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Lcore id %u can not exceeds %u",
--				lcore_id, RTE_MAX_LCORE - 1U);
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
+-	ret = pdata->phy_if.phy_impl.write(pdata, MII_ADVERTISE, advert);
++		if (adv & ADVERTISED_Asym_Pause)
++			advert |= ADVERTISE_PAUSE_ASYM;
++		else
++			advert &= ~ADVERTISE_PAUSE_ASYM;
++	}
++
++	if (advert != orig_advert) {
++		ret = pdata->phy_if.phy_impl.write(pdata,
++				MII_ADVERTISE,
++				advert);
++		if (ret) {
++			PMD_DRV_LOG_LINE(ERR,
++					"PHY write failed: MII_ADVERTISE");
++			return ret;
++		}
++	}
++
++	/*
++	 * Clause 40 (1000BASE-T) advertisement configuration.
++	 *
++	 * AXGBE MAC supports only full-duplex operation at 1Gbps.
++	 * Half-duplex advertisement is always cleared.
++	 * Existing PHY or vendor-specific bits are preserved.
++	 */
++	ret = pdata->phy_if.phy_impl.read(pdata, MII_CTRL1000, &ctrl1000);
+ 	if (ret) {
+-		PMD_DRV_LOG_LINE(ERR, "Failed to write ADVERTISE register");
++		PMD_DRV_LOG_LINE(ERR,
++				"PHY read failed: MII_CTRL1000");
+ 		return ret;
  	}
 +
- 	pi = &lcore_power_info[lcore_id];
- 	exp_state = POWER_USED;
- 	/* The power in use state works as a guard variable between
-@@ -479,8 +478,8 @@ power_cppc_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t num)
- {
- 	struct cppc_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return 0;
- 	}
- 
-@@ -502,8 +501,8 @@ power_cppc_cpufreq_freqs(unsigned int lcore_id, uint32_t *freqs, uint32_t num)
- uint32_t
- power_cppc_cpufreq_get_freq(unsigned int lcore_id)
- {
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return RTE_POWER_INVALID_FREQ_INDEX;
- 	}
- 
-@@ -513,8 +512,8 @@ power_cppc_cpufreq_get_freq(unsigned int lcore_id)
- int
- power_cppc_cpufreq_set_freq(unsigned int lcore_id, uint32_t index)
- {
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
- 
-@@ -526,8 +525,8 @@ power_cppc_cpufreq_freq_down(unsigned int lcore_id)
- {
- 	struct cppc_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
- 
-@@ -544,8 +543,8 @@ power_cppc_cpufreq_freq_up(unsigned int lcore_id)
- {
- 	struct cppc_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
- 
-@@ -561,8 +560,8 @@ power_cppc_cpufreq_freq_up(unsigned int lcore_id)
- int
- power_cppc_cpufreq_freq_max(unsigned int lcore_id)
- {
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
- 
-@@ -585,8 +584,8 @@ power_cppc_cpufreq_freq_min(unsigned int lcore_id)
- {
- 	struct cppc_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
- 
-@@ -601,8 +600,8 @@ power_cppc_turbo_status(unsigned int lcore_id)
- {
- 	struct cppc_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
- 
-@@ -616,8 +615,8 @@ power_cppc_enable_turbo(unsigned int lcore_id)
- {
- 	struct cppc_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
- 
-@@ -652,8 +651,8 @@ power_cppc_disable_turbo(unsigned int lcore_id)
- {
- 	struct cppc_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
- 
-@@ -680,10 +679,11 @@ power_cppc_get_capabilities(unsigned int lcore_id,
- {
- 	struct cppc_power_info *pi;
- 
--	if (lcore_id >= RTE_MAX_LCORE) {
--		POWER_LOG(ERR, "Invalid lcore ID");
-+	if (!rte_lcore_is_enabled(lcore_id)) {
-+		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
- 		return -1;
- 	}
++	orig_ctrl1000 = ctrl1000;
 +
- 	if (caps == NULL) {
- 		POWER_LOG(ERR, "Invalid argument");
- 		return -1;
++	/* Clear unsupported 1000BASE-T half-duplex */
++	ctrl1000 &= ~ADVERTISE_1000HALF;
++
++	/*
++	 * As with Clause 22 advertisement, adv == 0 indicates that no explicit
++	 * advertising policy was requested. In this case, preserve the legacy
++	 * behaviour of advertising 1000BASE-T full-duplex by default.
++	 */
++	if (!adv || (adv & ADVERTISED_1000baseT_Full))
++		ctrl1000 |= ADVERTISE_1000FULL;
++	else
++		ctrl1000 &= ~ADVERTISE_1000FULL;
++
++	if (ctrl1000 != orig_ctrl1000) {
++		ret = pdata->phy_if.phy_impl.write(pdata,
++				MII_CTRL1000,
++				ctrl1000);
++		if (ret) {
++			PMD_DRV_LOG_LINE(ERR,
++					"PHY write failed: MII_CTRL1000");
++			return ret;
++		}
++	}
++
+ 	return 0;
+ }
+ 
 -- 
-2.33.0
+2.43.0
 
