@@ -2,65 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C93F8D766
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 18:52:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2033F8D765
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 18:52:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D47FE40BA4;
-	Thu, 16 Apr 2026 20:52:02 +0200 (CEST)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id 7ED2E40A87
- for <dev@dpdk.org>; Thu, 16 Apr 2026 20:51:58 +0200 (CEST)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-12c6df0b9bbso122281c88.1
- for <dev@dpdk.org>; Thu, 16 Apr 2026 11:51:58 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 24FC040B8C;
+	Thu, 16 Apr 2026 20:52:04 +0200 (CEST)
+Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
+ by mails.dpdk.org (Postfix) with ESMTP id 77BBB40A82
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 20:51:59 +0200 (CEST)
+Received: by mail-dl1-f47.google.com with SMTP id
+ a92af1059eb24-12c080efc1eso836855c88.0
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 11:51:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776365517;
- x=1776970317; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776365518;
+ x=1776970318; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fns9HMM4d3YH9P170C5Ks4p6FiIa/zNkb3rsNjQNKjM=;
- b=wR+dx+cUnToF/fU1Ly5GcEyg0yGxkRgaBTdEJg+AZ5sCYkJBj36uY374KLtjOC0+uR
- oxxX3Uny53Dkz5wLjAS+d+NLB38uc6ayT8UPKOWPCcJFRV1v9b3+enLbCxYe0OUPKn9N
- Uy0ZXrcTfd0JatSbMAaOyyroCsorR0gzG7YAUKzY3AoEUkd8Lq5mzKq6QLnrA2HnA5rH
- RYglYc04bkBLD7SJNso3G/E5RAnXc+AHy2P2Ac/TC+tiG3p0zYwFUxpkBITAKsLDaP5W
- uTM3/lpSJ4lfUMIUjqj78YHb9m1McWeIF1NMkr/dcpBHvJla97yom0FwniocdnthRNga
- xfpA==
+ bh=+p0BlIi5nyoRG41T/6sRoBq1TfDZiXU1XmUIeFK5dPw=;
+ b=l6vecwwtfLN8hIPRz371a8OWF79E27sCZ0KlRyG3rNFh+cAbVQ5l8spY3XyLZW9UIG
+ xW1xl1wDOkMpriHhZMmRUtktJqTn+BI8lqRofUSj7CQ0NJJtP3iqThSN8fzIMOhVzIiF
+ bxmXdG1kdsX/0+Z98u8Oh7/sQrH4cHaTVELazOoRACmRfGm96Kj+bknvE9QYrDzeyIkA
+ Py+KrQjAWr11x0rmBBz2wzfoxbp1jh0roVinHSjBhNB785KYLU/JXzcAyEe4cg8f8bWl
+ j1CeAoJMFILpi6jB8COWGOXkQu86FPeNbBsLS5UrCluGLsJeEdH0422IamlfdOyFNorN
+ +fyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776365517; x=1776970317;
+ d=1e100.net; s=20251104; t=1776365518; x=1776970318;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fns9HMM4d3YH9P170C5Ks4p6FiIa/zNkb3rsNjQNKjM=;
- b=dvEcL/uh/7NDrgRtlkuqEItTVVwrvBx0YuPgYgbF1wIZ5hwXOfZ1u76TFUsH1jY/lP
- 4Z/KNZv1XBpLKXISjYwqAl69fyNommWi4K/kdPrXROif0KtRdqX1V+lUKuMvDm015Hv6
- uHn//IGDl2mQMA+RKVXQ1CR04r4Mikm7dGghh2oiz+KEUKYXbPyFzEIW5z3G6QE7hEJr
- FDcGa9CMQrsSuJSRvIMndy/EzOQn33WOWIsP7ImJ8Aeufmzw5fz/w+CvaEQUVP2EATHf
- X18MUBZhJAUXhL4hOY64fW3SwJ9EMLBgSDxYwQV5yhLnJDW79ppy4mlYPgGdS4Dt9vEc
- s4eQ==
-X-Gm-Message-State: AOJu0YzXU0wOpCjxnoL4MhwyY+2wfkVchoohDISeDQoSLeAdYLGntMCZ
- PNcYnczRqqV7wU618d9Pb+uFYmBaivEVNL03slnrZYvJwJUXhn8IVgacVbj/C6diCYNy/ziFeVx
- tMWkp
-X-Gm-Gg: AeBDieus302BfSMsHPYhd6Pct6WKfe7BWHk53HKtv34RzUurLkHA4lagXZHUkUQcABK
- WmuLMqRGla1DAtWPpN3lmY/RXeMH7CSCBn9slkIA/JzfNkjq/hPaepTPixGcO2dEjedJNe9a+KA
- XmZ4d5XXJpj7pRN55kw8m7YtUpY1dlTCCDlZEx4+z8K1v697qdYEH9j6C6Oz7DuI4cZGcOv927P
- l04Gj2td6XtyyuFqIVcEJllNIOGBOrPCvzV8UTaZeJXcT61yG0f0Bkv+2hXcFZX14rUKdojPP7e
- tEMo60A8r0DE2PcoGBMaQmDXoQy6aD/1o3bHbqBYasmDBHj3ACN+9QIoDP1M0q8JmAdH/tNEnVE
- wBcEHlMogYc8hBGskIDfvGKX0DRh4vuG6/3UGSP9pgBq62GJTl5YR99/YAY0kHdzrf94pg6vxU5
- f/6IcrYzMmbtboDj7rNlW1AsEFCGB8aBsd8/6W776xXA0=
-X-Received: by 2002:a05:7301:d0b:b0:2d1:d434:cfe3 with SMTP id
- 5a478bee46e88-2e2e110a423mr287359eec.0.1776365517540; 
- Thu, 16 Apr 2026 11:51:57 -0700 (PDT)
+ bh=+p0BlIi5nyoRG41T/6sRoBq1TfDZiXU1XmUIeFK5dPw=;
+ b=iwNqxwEXAA/thSq4jq/+VYMLVGK/arGpQvI35ri11NAg+rtbfsS2qV0ERfdy6Xq+UN
+ dWRJ7fIUo5KshhWUUQ2eMEYKsTjNvVaU4FfpSgCwPxEPbtWkLm3vVLnUYtKUEskjxq3Y
+ F51FRSCgqKYhh+vTRCPQl6NnTQ3f3+MxcUWAPasGiZLBXBAyGuSLjIgrzxO2pp3y8pSE
+ ACSMFoF6KeR/UFicqvonQeLgtSrYaFCqldGLdNXcnzh5s608l7R5L0vNqot7DEfdhNtd
+ 5ALZBJft8mR68WWztp1ASyrP17zxsvSdcIcpwEG5JPvoa4KKka8b5zVhU+p7CAdvxTHZ
+ thlQ==
+X-Gm-Message-State: AOJu0YzuuZTfYDxwN7VaAngQs4e9vvhWoEHn2cE7FAqiNwWsTnritcFe
+ d0hg4dupE/HMDH+erMWW8FWfBSgLjOZ1e/vGpzgRsId+F82gUIYGkqHkKXEcoV4wyJQfp7c4Ej/
+ I14gg
+X-Gm-Gg: AeBDievSrCAvu1yOT89XuxdRZJr+hIJR9c8s41UEy/NsK1ucvIK2TzHKzr1JqVklD3Z
+ 5CRKpwyoz/wRcnycoViZCiqiTDTyIXz8t90sQb14YCZCNbzegNy1bw3PPKf9FxvVZuhWBu+VHIU
+ 42DCLIlE4nQB+PQT9gDq3UGTPAXP7qgghvVWeEKSE3XC6yD138BRV8syYQUqToXMSrU7dagj3nS
+ vaiCFMd494QgBhuFHVYlmsOLiR+c4CFi7vWqWzSQdjWadkTG8svgSTMxd0t5s3v0jjBSNbIiZYD
+ W6g7FNtBoZN3oKbynkMGDlkBWKjUDbfRqJ12LTw0m0NFyyUzQlR+pReoZY+gzNGFJUYi/ZlDquE
+ x+eO/fEKvLUJ4uaMtvWMji19GwSftG2e45/PnY16WlJTAypQ10YUrxJIJkBL/wDLoswyAkV8wQV
+ gTjFfUZ4yrz+9GzW2BqTS8Tf+M3ikLc2Mi9cFPOV0d+m4=
+X-Received: by 2002:a05:7300:b905:b0:2c9:ee15:a0ee with SMTP id
+ 5a478bee46e88-2e2e3e677c4mr194683eec.12.1776365518463; 
+ Thu, 16 Apr 2026 11:51:58 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2de8f6615d5sm10602510eec.24.2026.04.16.11.51.56
+ 5a478bee46e88-2de8f6615d5sm10602510eec.24.2026.04.16.11.51.57
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 16 Apr 2026 11:51:57 -0700 (PDT)
+ Thu, 16 Apr 2026 11:51:58 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v24 10/24] net/pcap: clean up TX dumper return value and types
-Date: Thu, 16 Apr 2026 11:48:27 -0700
-Message-ID: <20260416185144.1359260-11-stephen@networkplumber.org>
+Subject: [PATCH v24 11/24] net/pcap: add datapath debug logging
+Date: Thu, 16 Apr 2026 11:48:28 -0700
+Message-ID: <20260416185144.1359260-12-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260416185144.1359260-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -80,65 +80,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Use uint32_t for packet lengths to match rte_pktmbuf_pkt_len()
-return type. Split rte_pktmbuf_read() out of the pcap_dump() call
-and add RTE_ASSERT for bogus mbuf detection. Remove incorrect
-err_pkts accounting since the dumper loop cannot partially fail,
-and return the loop index for consistency with eth_pcap_tx.
+Add datapath debug logging macros (PMD_RX_LOG, PMD_TX_LOG) gated
+on RTE_ETHDEV_DEBUG_RX/TX. Use PMD_TX_LOG in transmit error paths
+to aid debugging without impacting normal datapath performance.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pcap/pcap_ethdev.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ drivers/net/pcap/pcap_ethdev.c |  2 +-
+ drivers/net/pcap/pcap_osdep.h  | 14 ++++++++++++++
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index ca08b8e342..8df66ebb96 100644
+index 8df66ebb96..cfdbf3eace 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -407,7 +407,8 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	 * dumper */
- 	for (i = 0; i < nb_pkts; i++) {
- 		struct rte_mbuf *mbuf = bufs[i];
--		size_t len, caplen;
-+		uint32_t len, caplen;
-+		const uint8_t *data;
+@@ -500,7 +500,7 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  
- 		len = rte_pktmbuf_pkt_len(mbuf);
- 		caplen = RTE_MIN(len, RTE_ETH_PCAP_SNAPSHOT_LEN);
-@@ -415,15 +416,16 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 		calculate_timestamp(&header.ts);
- 		header.len = len;
- 		header.caplen = caplen;
--		/* rte_pktmbuf_read() returns a pointer to the data directly
--		 * in the mbuf (when the mbuf is contiguous) or, otherwise,
--		 * a pointer to temp_data after copying into it.
--		 */
--		pcap_dump((u_char *)dumper, &header,
--			rte_pktmbuf_read(mbuf, 0, caplen, temp_data));
+ 		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) &&
+ 				len > RTE_ETH_PCAP_SNAPSHOT_LEN)) {
+-			PMD_LOG(ERR,
++			PMD_TX_LOG(ERR,
+ 				"Dropping multi segment PCAP packet. Size (%u) > max size (%u).",
+ 				len, RTE_ETH_PCAP_SNAPSHOT_LEN);
+ 			tx_queue->tx_stat.err_pkts++;
+diff --git a/drivers/net/pcap/pcap_osdep.h b/drivers/net/pcap/pcap_osdep.h
+index a0e2b5ace9..fe7399ff9f 100644
+--- a/drivers/net/pcap/pcap_osdep.h
++++ b/drivers/net/pcap/pcap_osdep.h
+@@ -13,6 +13,20 @@
+ extern int eth_pcap_logtype;
+ #define RTE_LOGTYPE_ETH_PCAP eth_pcap_logtype
+ 
++#ifdef RTE_ETHDEV_DEBUG_RX
++#define PMD_RX_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, ETH_PCAP, "%s() rx: ", __func__, __VA_ARGS__)
++#else
++#define PMD_RX_LOG(...) do { } while (0)
++#endif
 +
-+		data = rte_pktmbuf_read(mbuf, 0, caplen, temp_data);
++#ifdef RTE_ETHDEV_DEBUG_TX
++#define PMD_TX_LOG(level, ...) \
++	RTE_LOG_LINE_PREFIX(level, ETH_PCAP, "%s() tx: ", __func__, __VA_ARGS__)
++#else
++#define PMD_TX_LOG(...) do { } while (0)
++#endif
 +
-+		/* This could only happen if mbuf is bogus pkt_len > data_len */
-+		RTE_ASSERT(data != NULL);
-+		pcap_dump((u_char *)dumper, &header, data);
+ int osdep_iface_index_get(const char *name);
+ int osdep_iface_mac_get(const char *name, struct rte_ether_addr *mac);
  
- 		num_tx++;
- 		tx_bytes += caplen;
-+
- 		rte_pktmbuf_free(mbuf);
- 	}
- 
-@@ -435,9 +437,8 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 	pcap_dump_flush(dumper);
- 	dumper_q->tx_stat.pkts += num_tx;
- 	dumper_q->tx_stat.bytes += tx_bytes;
--	dumper_q->tx_stat.err_pkts += nb_pkts - num_tx;
- 
--	return nb_pkts;
-+	return i;
- }
- 
- /*
 -- 
 2.53.0
 
