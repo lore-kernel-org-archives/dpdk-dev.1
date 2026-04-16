@@ -2,42 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD80F8A146
-	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 09:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28F2F8A14D
+	for <dpdk-dev@archiver.kernel.org>; Thu, 16 Apr 2026 09:58:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AB31A40297;
-	Thu, 16 Apr 2026 11:36:18 +0200 (CEST)
-Received: from mail.amicon.ru (mail.amicon.ru [77.108.111.100])
- by mails.dpdk.org (Postfix) with ESMTP id 5FCDA40144;
- Thu, 16 Apr 2026 11:36:17 +0200 (CEST)
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; d=amicon.ru; s=mail; c=simple/simple;
- t=1776332175; h=from:subject:to:date:message-id;
- bh=jaUA7hfaiuUdCKWc5gZZ6Q+3t0+8ZhlYSnrYD59VZ+s=;
- b=f1SKDTpS6Rt8G2YyltEH+vKW9oojrkINupw6ptF6PB4f6+svmBLeluD4IelqBj/bIHZjPgZY5Zq
- 06LZX0oZvfSVWa1gixmTbssO0q1dV0Uw0UIe0eUBOJEq03kK/3WKS07DEe/2j3ZHZj0YPEQfp20G/
- P1VDEDb3qzzXutLxdElunLgkgE7jGgAB/XQz8NocP+ninWZQPbBdjW8rlYvOXNMAC7kGqPUqrvB2y
- A0VU0fKgX1bXnjR+wVcgB6w7iph11GOKhYzLPQWKFiTn012rBBasNkUTCAdNCwPiUO3qeOB03CjRU
- Zdsa5lLfTYZedfvUuNvvqfRcGte8XffVqJZA==
-Received: from dish.amicon.lan (172.16.2.39) by mail.amicon.lan (192.168.0.59)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Thu, 16 Apr
- 2026 12:36:15 +0300
-From: Daniil Iskhakov <dish@amicon.ru>
-To: Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
- Abhinandan Gujjar <abhinandan.gujjar@intel.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, Daniil Iskhakov <dish@amicon.ru>,
- Daniil Agalakov <ade@amicon.ru>, <sdl.dpdk@linuxtesting.org>, <rrv@amicon.ru>
-Subject: [PATCH] cryptodev: reset resource pointers in init error path
-Date: Thu, 16 Apr 2026 12:34:36 +0300
-Message-ID: <20260416093437.711435-1-dish@amicon.ru>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id C310F40297;
+	Thu, 16 Apr 2026 11:58:11 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+ by mails.dpdk.org (Postfix) with ESMTP id B852C40144;
+ Thu, 16 Apr 2026 11:58:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1776333490; x=1807869490;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=gk8NScug3k5EmIVUcDx31GRUWrfcQgjCKdIQAgQ41gY=;
+ b=ZJSLzwgwIPAJu+QLQL0vzZDzhCmTxaaj5pGEpQb9h6yiaqiWQQG6Z7Lo
+ +Vcza04N2TBRU4+DiXnpDIsVfM9bu/Nkc814YrnLxzRZPA4mgXu/1/ZCZ
+ sf9YFbFCLK3QGFsVrjdSACh2HWZuRnOSXH4UF8WgpwFyTVGDoNxQH6eeZ
+ DDwHaMt1essdnvxVXiiUQiqEN9MBy+Y7X6HJpWbkLq87kYBolgTv0YRaT
+ WpRXBq7KWSikqVvpJVvYYrgfARoNfrmeOA+zG+IhzZpwBBoBab7TOYBbY
+ 5PrWmiVchjad5q+vYsbrpDx/ac/MNkK105czSDMHTXqBeNUZ7l/dds2Ve Q==;
+X-CSE-ConnectionGUID: bP4Ar90KTFC8MRAdVTLNcQ==
+X-CSE-MsgGUID: DDhBGnsfSrWHSBpGGUS57A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11760"; a="102789170"
+X-IronPort-AV: E=Sophos;i="6.23,181,1770624000"; d="scan'208";a="102789170"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 16 Apr 2026 02:58:08 -0700
+X-CSE-ConnectionGUID: 239tuwKSQiWJ8AjPoKvgoQ==
+X-CSE-MsgGUID: ENTXq9MMQUqibdiF/WlEKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,181,1770624000"; d="scan'208";a="229857189"
+Received: from silpixa00401749.ir.intel.com ([10.20.224.233])
+ by orviesa010.jf.intel.com with ESMTP; 16 Apr 2026 02:58:07 -0700
+From: Radu Nicolau <radu.nicolau@intel.com>
+To: dev@dpdk.org
+Cc: Radu Nicolau <radu.nicolau@intel.com>, fanzhang.oss@gmail.com,
+ stable@dpdk.org, Kai Ji <kai.ji@intel.com>,
+ Akhil Goyal <gakhil@marvell.com>
+Subject: [PATCH] crypto/scheduler: fix typo
+Date: Thu, 16 Apr 2026 09:57:39 +0000
+Message-ID: <20260416095739.105062-1-radu.nicolau@intel.com>
+X-Mailer: git-send-email 2.52.0
 MIME-Version: 1.0
-X-Originating-IP: [172.16.2.39]
-X-ClientProxiedBy: mail.amicon.lan (192.168.0.59) To mail.amicon.lan
- (192.168.0.59)
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,43 +59,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-cryptodev_cb_init() may free partially allocated resources on failure,
-but does not reset their pointers afterwards.
+Small typo, pending_deq_ops used instead of pending_enq_ops.
 
-A later call to cryptodev_cb_cleanup() may then attempt to release both
-resources even when one of them has already been freed, because the
-cleanup logic does not rely on both pointers being valid independently.
+Bugzilla ID: 1537
 
-Set freed pointers to NULL in the cryptodev_cb_init() error path to
-make subsequent cleanup safe.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 1c3ffb95595e ("cryptodev: add enqueue and dequeue callbacks")
+Fixes: 6812b9bf470e ("crypto/scheduler: use unified session")
+Cc: fanzhang.oss@gmail.com
 Cc: stable@dpdk.org
 
-Signed-off-by: Daniil Agalakov <ade@amicon.ru>
-Signed-off-by: Daniil Iskhakov <dish@amicon.ru>
+Signed-off-by: Radu Nicolau <radu.nicolau@intel.com>
 ---
-Cc: abhinandan.gujjar@intel.com
-Cc: sdl.dpdk@linuxtesting.org
-Cc: rrv@amicon.ru
----
- lib/cryptodev/rte_cryptodev.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/scheduler/scheduler_multicore.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
-index 50071935c2..5cb9c93c77 100644
---- a/lib/cryptodev/rte_cryptodev.c
-+++ b/lib/cryptodev/rte_cryptodev.c
-@@ -811,6 +811,7 @@ cryptodev_cb_init(struct rte_cryptodev *dev)
- 	if (dev->deq_cbs == NULL) {
- 		CDEV_LOG_ERR("Failed to allocate memory for deq callbacks");
- 		rte_free(dev->enq_cbs);
-+		dev->enq_cbs = NULL;
- 		return -ENOMEM;
- 	}
- 
+diff --git a/drivers/crypto/scheduler/scheduler_multicore.c b/drivers/crypto/scheduler/scheduler_multicore.c
+index a21b522f9f..70f8a25b70 100644
+--- a/drivers/crypto/scheduler/scheduler_multicore.c
++++ b/drivers/crypto/scheduler/scheduler_multicore.c
+@@ -191,11 +191,11 @@ mc_scheduler_worker(struct rte_cryptodev *dev)
+ 					worker->qp_id,
+ 					&enq_ops[pending_enq_ops_idx],
+ 					pending_enq_ops);
+-			if (processed_ops < pending_deq_ops)
++			if (processed_ops < pending_enq_ops)
+ 				scheduler_retrieve_sessions(
+ 					&enq_ops[pending_enq_ops_idx +
+ 						processed_ops],
+-					pending_deq_ops - processed_ops);
++					pending_enq_ops - processed_ops);
+ 			pending_enq_ops -= processed_ops;
+ 			pending_enq_ops_idx += processed_ops;
+ 			inflight_ops += processed_ops;
 -- 
-2.43.0
+2.52.0
 
