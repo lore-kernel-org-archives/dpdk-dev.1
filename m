@@ -2,49 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C162BF8E4A0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Apr 2026 02:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F9F8E4A0
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Apr 2026 02:54:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B856940608;
-	Fri, 17 Apr 2026 04:51:54 +0200 (CEST)
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com
- [113.46.200.220])
- by mails.dpdk.org (Postfix) with ESMTP id D16EB402E0
- for <dev@dpdk.org>; Fri, 17 Apr 2026 04:51:52 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D1BED40650;
+	Fri, 17 Apr 2026 04:54:04 +0200 (CEST)
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
+ [113.46.200.223])
+ by mails.dpdk.org (Postfix) with ESMTP id 770F940608
+ for <dev@dpdk.org>; Fri, 17 Apr 2026 04:54:01 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=twY19SLykMBleG4c/7sKZXF7Tk3RcjXZUubYJnvBcvs=;
- b=JA732B1eizon5cHMICfDMC5IDoI76ShCmAd5vfRPuZJEuogy/EalWIOxhr8SVVCOGYRVsPbgV
- 6QXNGgQNvTNnKIdPO91idPURv4oxD52eIe8aVAb/GK06u6sZZYSJYv1foD8jotUKLWk3B8Nqdg+
- 56ubVqe0SRX/Sx9htxgxkUY=
-Received: from mail.maildlp.com (unknown [172.19.162.140])
- by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4fxfPn2M3hz12LDP;
- Fri, 17 Apr 2026 10:45:33 +0800 (CST)
-Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
- by mail.maildlp.com (Postfix) with ESMTPS id 5029F2012A;
- Fri, 17 Apr 2026 10:51:50 +0800 (CST)
+ bh=j7ia668geuVl9SmdSBU97WEdp1f7qbD6KvnKwDqJKdo=;
+ b=C2FxB2Tx02a0PpPYDzanCa0x4GwDk7QYkxBRRPyiA+DWaire6JtEdvt/441As71tsQy0VxgT/
+ l/4g/Xi08yhqUkQ6CW5pgGpjupz9PB4T7hip4N8LpnwVgia/lZMsGwxicTOxvTZX1+MYeX4ghYt
+ UUf2zMjyUB9bFFEgGYv1F4s=
+Received: from mail.maildlp.com (unknown [172.19.162.92])
+ by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4fxfSB3xxBzmV69;
+ Fri, 17 Apr 2026 10:47:38 +0800 (CST)
+Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id 6B9004056E;
+ Fri, 17 Apr 2026 10:53:59 +0800 (CST)
 Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 17 Apr 2026 10:51:50 +0800
+ 15.2.1544.11; Fri, 17 Apr 2026 10:53:54 +0800
 Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
  (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Fri, 17 Apr
- 2026 10:51:49 +0800
-Message-ID: <46a0f67d-a8be-49a5-914c-e7a5f02ff3a8@huawei.com>
-Date: Fri, 17 Apr 2026 10:51:48 +0800
+ 2026 10:53:53 +0800
+Message-ID: <4f28d51f-5af7-4561-a65b-14da05a0a26f@huawei.com>
+Date: Fri, 17 Apr 2026 10:53:53 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 01/15] power/kvm_vm: enforce enabled lcore ID check
+Subject: Re: [PATCH v1 00/15] power: unify and improve lcore ID verification
 To: Stephen Hemminger <stephen@networkplumber.org>
 CC: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>, <dev@dpdk.org>, 
  <thomas@monjalon.net>, <fengchengwen@huawei.com>, <yangxingui@huawei.com>, 
  <zhanjie9@hisilicon.com>
 References: <20260416030612.2379407-1-lihuisong@huawei.com>
- <20260416030612.2379407-2-lihuisong@huawei.com>
- <20260416084825.0a371d4a@phoenix.local>
+ <20260416085146.7c268cb8@phoenix.local>
 From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20260416084825.0a371d4a@phoenix.local>
+In-Reply-To: <20260416085146.7c268cb8@phoenix.local>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [10.67.121.59]
@@ -64,32 +63,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
 Errors-To: dev-bounces@dpdk.org
 
 
-On 4/16/2026 11:48 PM, Stephen Hemminger wrote:
-> On Thu, 16 Apr 2026 11:05:58 +0800
+On 4/16/2026 11:51 PM, Stephen Hemminger wrote:
+> On Thu, 16 Apr 2026 11:05:57 +0800
 > Huisong Li <lihuisong@huawei.com> wrote:
 >
->> The locre ID in cpufreq power must be enabled core in application.
-> Spelling error, use checkpatch next time, it runs a spell checker.
-> Also run devtools/check-git-log there other issues in the commit messages.
-Sorry for this.
-Yeah, I used checkpatch.sh and check-git-log.sh before sent out.
-But it didn't found this. I guess that because the "locre" is not a word.
->> Use rte_lcore_is_enabled to verify lcore_id.
+>> This patch series reworks the lcore ID verification logic within the power
+>> library to ensure consistency and improve maintainability. Currently, various
+>> cpufreq drivers implement their own lcore ID checks, often relying on simple
+>> range checks that do not account for whether a core is actually enabled in
+>> the application.
 >>
->> Fixes: 6f987b594fa6 ("power: refactor core power management")
->> Cc: stable@dpdk.org
+>> Key Changes:
+>> 1. Replaces basic range checks with rte_lcore_is_enabled() across all
+>>     cpufreq drivers (ACPI, AMD P-state, CPPC, Intel P-state, and KVM VM).
+>>     This ensures the power library only operates on lcores assigned to the
+>>     application.
+>> 2. Introduces a common macro in the power library's internal headers to
+>>     standardize lcore ID verification.
+>> 3. Moves the verification logic from individual driver implementations up
+>>     to the high-level framework API. This reduces duplication code and
+>>     ensures that all drivers benefit from uniform validation.
+>> 4. Updates the power QoS and PMD Management libraries to use the new macro.
 >>
->> Signed-off-by: Huisong Li <lihuisong@huawei.com>
->> ---
-> The rte_lcore_is_enabled() will return false for service lcores.
-> Is this a bug or a feature here?
-My understanding is that the ROLE_RTE core is used to tasks on data 
-plane and the ROLE_SERVICE core is used to periodic or control-plane tasks.
-Currently, power management in DPDK is mainly processed based on 
-services on the data plane, like the usage in pmd_mgmt or l3fwd-power.
-However, the tasks on the service cores may also occupy 100% CPU.
-Therefore, power library or driver should be able to be work with these 
-tasks.
- From this perspective, allowing the ROLE_SERVICE core to set power has 
-the least impact on applications in this series.
-what do you think, Stephen?
+>> Huisong Li (15):
+>>    power/kvm_vm: enforce enabled lcore ID check
+>>    power/acpi_cpufreq: enforce enabled lcore ID check
+>>    power/amd_pstate: enforce enabled lcore ID check
+>>    power/cppc_cpufreq: enforce enabled lcore ID check
+>>    power/intel_pstate: enforce enabled lcore ID check
+>>    power: enforce enabled lcore ID check
+>>    power: add a common macro to verify lcore ID
+>>    power/pmd_mgmt: replace lcore ID verification with new macro
+>>    power/qos: replace the lcore ID verification with new macro
+>>    power/cpufreq: add the lcore ID verification to framework
+>>    power/acpi_cpufreq: remove the verification of lcore ID
+>>    power/amd_pstate: remove the verification of lcore ID
+>>    power/cppc_cpufreq: remove the verification of lcore ID
+>>    power/intel_pstate: remove the verification of lcore ID
+>>    power/kvm_vm: remove the verification of lcore ID
+>>
+>>   drivers/power/acpi/acpi_cpufreq.c             | 65 -------------------
+>>   drivers/power/amd_pstate/amd_pstate_cpufreq.c | 65 -------------------
+>>   drivers/power/cppc/cppc_cpufreq.c             | 65 -------------------
+>>   .../power/intel_pstate/intel_pstate_cpufreq.c | 65 -------------------
+>>   drivers/power/kvm_vm/kvm_vm.c                 | 10 ---
+>>   lib/power/power_common.h                      |  7 ++
+>>   lib/power/rte_power_cpufreq.c                 | 14 ++++
+>>   lib/power/rte_power_pmd_mgmt.c                | 25 ++-----
+>>   lib/power/rte_power_qos.c                     | 10 +--
+>>   9 files changed, 30 insertions(+), 296 deletions(-)
+>>
+> Patch 3 did not get sent in the series maybe too big or mail issue?
+It is in the series. I can see it in dpdk patch list.
+https://patches.dpdk.org/project/dpdk/patch/20260416030612.2379407-2-lihuisong@huawei.com/ 
+
