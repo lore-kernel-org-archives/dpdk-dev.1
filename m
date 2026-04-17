@@ -2,68 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060B7F436BF
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Apr 2026 16:55:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0B5F436BF
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Apr 2026 16:55:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C28A04064E;
-	Fri, 17 Apr 2026 18:55:38 +0200 (CEST)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id 1916440665
- for <dev@dpdk.org>; Fri, 17 Apr 2026 18:55:37 +0200 (CEST)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-12c45281a06so1257403c88.1
- for <dev@dpdk.org>; Fri, 17 Apr 2026 09:55:37 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 088704066E;
+	Fri, 17 Apr 2026 18:55:41 +0200 (CEST)
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
+ [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 2118A4066B
+ for <dev@dpdk.org>; Fri, 17 Apr 2026 18:55:38 +0200 (CEST)
+Received: by mail-dy1-f182.google.com with SMTP id
+ 5a478bee46e88-2e622a9da9cso115043eec.0
+ for <dev@dpdk.org>; Fri, 17 Apr 2026 09:55:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776444936;
- x=1777049736; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776444937;
+ x=1777049737; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LWuvkSO3E41sodgzKi46wA4JRsszdPj5cao24NoRk2c=;
- b=ZXnPwfiPr/Jjztkjalwg5L+fKOcm9hYdFwSuFwsvdDpGRWzWLq4YsMRrFstBA3ZZQi
- 1185ZDU4I19w3RIsiFlGc8Qaxfwr8Bwji+PsTv0P5jbqrKLd4SPWo6HsXrBzpVqWLeak
- r/93x4W3u0sWE+lt2ZoGH8tspujiZ93E/8ZbyPI6FbUdQaoI959cfFcup9hkjub8egEL
- iVA2itOZilxsoaGd16gbLGBzfSkDbGDSU6mOmFj07+oFGf/Gt/769Bso8i/lyFuoKCjZ
- BKWag4d9pjvQGQ9GOdSXMRaB6oyYkDxRNQBs+8eXwSNqOSF6oovJd5dOfk7y9brm0jT3
- DzEw==
+ bh=qjXWpw02ox++PKHv07yxq2Qz+ai0GWVcXF5rcgOBBK4=;
+ b=MYhWUGdcjPEBPqjucn95FlVPhU+C7w+mRBIKWvwknVShAUHMB2UXNtS9ZFDPKAgzgr
+ /Fgvq6H35hiTt8IoShxWDzAyuX465ewKRYicHZf5ATfEwFY2C4wDmxLlUtpPtphx/HYC
+ MaHBtruvRg1sGoJ42cnsujzlyblIP/0v3jsO6xCPppBYikEiwrRh/DQzvrCsvBTQT4A9
+ k1r9CjvJAL6Rkb0i0vNSLaNHJpDJvv2etGjqWVSVtjXd+TATX9l2x0MGlH6UXpOAbDcz
+ oz8L1GSkaRHdglInR4b7EE8t0JZsXt7FnOe2bZS+8Gv+v3bC5xSblJAagR6HB04ZATun
+ lqdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776444936; x=1777049736;
+ d=1e100.net; s=20251104; t=1776444937; x=1777049737;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=LWuvkSO3E41sodgzKi46wA4JRsszdPj5cao24NoRk2c=;
- b=f53MHAqWsG4rv2EfPXPwi6/MjxsJpBuoMIEfEDtInYhhTRm1lPfmnMcr/6rojUJ2I+
- akjp5q34B9UAajSoZn1R5PdwyT0MkbivyXME4d31tbNU0WESyZFoKf2P40xj0RaOLeE9
- encPjJobHfoxQrnPTP9br0DIUo3b3AyOa0Jk8MY1yyrnAVDdXRAM0KSvtFtWhVLpbB61
- 8/lSYiU+hhQPhv0GHOkKIPNVYjqGktEnPhtjzJZIgOVxdzdsdEobZqtp9KBi4uOTckKI
- Zjkfk5Hb1Bb7G8buK30qCAkX0FI00b0WDVIhPpY4rM4C0Vwh/F6NO/JCCBkXRXv2Hmm4
- tlCQ==
-X-Gm-Message-State: AOJu0YxD2AiuWHNry+HkRloDNDj4Aw8Ysh3gjDHB3IXKIUCsweUHLTaq
- Qx8JL2jVZOzD/sXU2+rf95KDd1q0Z1MoLTFTYEXf4fNxGkUhC7mRcWMyCdTg6alcMrv2UCrvjaV
- WgawN
-X-Gm-Gg: AeBDiesJ0bfGimCRq37B361fMnml0GRZZjdO8WoTqeW0H4kO25JkeeAVhCyajTLLIym
- P5EvXyrmUa7H241vFUfxNf4l0ddWBsaJK7liKQAH1Iimey3YFp0X+sAbz/6zO1ehzG6/JhlbIsv
- kvJQmH/0XklhzfCY1xDSNdqj/IcyQmCl9biRNfEjFMaqEqb5HZU04kY9jqpgxDYHr2I0axyRL/w
- os48PMFnLqWdCO5dV2239KWVy/JM2vyz9zsH/vjxSRiWQYx8MgpXfsaGDbEE03aeAJG9lWAhBET
- kYg2ICFGZYKOVIlGFSOq0Bu8lBiMkkTvpLoI31S/yjIDnZoyktLAblz//sF7p/smExrVG5+EoIa
- 1DjdU/VCB0ELp/84r9TS1OuRWMzsQxloI23GsSfligsSTBwGVHOU7GcGwgXWwZa8iAZ/Wjg08E/
- /6lQNRqxIG8ROq1j7HgsxQS59LjFORL9mPGn9uaT3k2Yw=
-X-Received: by 2002:a05:7022:6189:b0:12c:44a5:fb51 with SMTP id
- a92af1059eb24-12c73f74b2fmr1732677c88.9.1776444935703; 
- Fri, 17 Apr 2026 09:55:35 -0700 (PDT)
+ bh=qjXWpw02ox++PKHv07yxq2Qz+ai0GWVcXF5rcgOBBK4=;
+ b=Wk1lK71yfzOkY7nFCLBMq8g1zfRVv4MNQtxIvHzUvNv4ZZ/OZMQ55x51bu2DaSwM//
+ D4Wbk0ggkYCgYF96ii7Lfoi9sT4xdR2OD8iUJg2I/C3PmxX2Wcp3wF8kDumReZnzUgfm
+ FxyvD9c9+fzwATudNAoNZbLUbKw226pK/iltBur2Xulj4gj0pCgKZmbJgKzbpU9z+DwJ
+ Vs3WfQ3g7NCxNUfmZLW4p/LbiAM+y9GZCoaMdG7K7XiH82Yw2Ly8sxn0mRJa/0vbpwYT
+ 9BqSzEJy66qe+TdHjohIiYEuGUvNyWRfgWS5Qjj8lt9QTkjze3xb+9uhhMfclnSaaFRS
+ Eqxw==
+X-Gm-Message-State: AOJu0YzOmkHVjDo2FjK4ms/NRkgvWqQ5IkGdU6x/sWNKUbykbHOgnZMh
+ ljBpxom7Z4s9D/C3/XMs8RX3n39ZSErEMkqM65vPvzzJcg78bsCz7MPtw/dSu4iI5PgpncNA9I+
+ C/D5J
+X-Gm-Gg: AeBDiesMILQmLiE3aagNGZXqoknK7lf68E3i7NpNvDQqNn6v1j9TMj3YwWj8rQhrK6z
+ v4qz+6IgQSqz4N2hzfbYhm18pP7JNvc/ramcrsVeWfvArMrEYGk9MXcO6PKXJD6UFFLzdoswfYC
+ gyxod+DxF+yFGC/P3EpXCelgRzDTVA+wk3sBLLZUnEFCsjCmMJlzQwuiUfimgB48THH9rfngxfq
+ zgvCW8SlFmbUYvVmfWs3XuvImKvy5vJYu/1qvQkNpJ5+TmUOvOT/IQVsuCxEAW+iwz+gj5fDxmE
+ Lz+55/2Avhb+BoDedSnnvvlNSsabb22ozEhpO7ox55GrbxlXcet/RAgHwRUVn5jCu64uwTFbGba
+ yObprCc6qaYLwTF6h65cUggOcSUWtwcLhemJXzhZR60hTO4bbS8SPXKRz1hBjoJLxqiNmb6sRzB
+ I1IaIBWipj9tI4df+JST8PPhKehFhIi8uz90j2lakOkjE=
+X-Received: by 2002:a05:7301:9f10:b0:2d4:532e:7e45 with SMTP id
+ 5a478bee46e88-2e47930fdf6mr1926158eec.23.1776444937069; 
+ Fri, 17 Apr 2026 09:55:37 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2e539fa6134sm2891264eec.3.2026.04.17.09.55.34
+ 5a478bee46e88-2e539fa6134sm2891264eec.3.2026.04.17.09.55.36
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 17 Apr 2026 09:55:35 -0700 (PDT)
+ Fri, 17 Apr 2026 09:55:36 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>,
- Qi Zhang <qi.z.zhang@intel.com>
-Subject: [PATCH 2/3] net/bonding: prevent crash on Rx/Tx from secondary process
-Date: Fri, 17 Apr 2026 09:51:36 -0700
-Message-ID: <20260417165530.653328-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>
+Subject: [PATCH 3/3] net/bonding: remove redundant function names from log
+Date: Fri, 17 Apr 2026 09:51:37 -0700
+Message-ID: <20260417165530.653328-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260417165530.653328-1-stephen@networkplumber.org>
 References: <20260417165530.653328-1-stephen@networkplumber.org>
@@ -82,107 +80,91 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The bonding PMD's secondary process attach path registered the
-ethdev but never installed rx_pkt_burst or tx_pkt_burst, leaving
-both as NULL. Any rx_burst or tx_burst call from a secondary
-process therefore crashed with a NULL pointer dereference.
-
-Fully sharing bonding state across processes would be
-overly complex. Instead, install blackhole burst functions
-in the secondary so the data path is safe by default. Rx returns 0
-and Tx frees the mbufs and reports them as transmitted,
-matching /dev/null semantics so applications do not spin
-retrying. Each stub logs once at NOTICE level on first use.
-
-Also reject bond mode changes from a secondary process.
-rte_eth_bond_mode_set() is callable from secondary, and
-without this guard it would overwrite the secondary's safe
-burst stubs with real per-mode functions whose internal
-state is not valid outside the primary, reintroducing the
-crash by another path.
-
-This keeps secondary support available for the more
-common use cases of procinfo and packet capture.
-
-Bugzilla ID: 1698
-Fixes: 4852aa8f6e21 ("drivers/net: enable hotplug on secondary process")
-Cc: stable@dpdk.org
+The function name is already printed as part of RTE_BOND_LOG().
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bonding/rte_eth_bond_pmd.c | 43 +++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
+ drivers/net/bonding/rte_eth_bond_api.c |  4 ++--
+ drivers/net/bonding/rte_eth_bond_pmd.c | 23 ++++++++++-------------
+ 2 files changed, 12 insertions(+), 15 deletions(-)
 
+diff --git a/drivers/net/bonding/rte_eth_bond_api.c b/drivers/net/bonding/rte_eth_bond_api.c
+index 9e5df67c18..78361e73d4 100644
+--- a/drivers/net/bonding/rte_eth_bond_api.c
++++ b/drivers/net/bonding/rte_eth_bond_api.c
+@@ -485,8 +485,8 @@ __eth_bond_member_add_lock_free(uint16_t bonding_port_id, uint16_t member_port_i
+ 	ret = rte_eth_dev_info_get(member_port_id, &dev_info);
+ 	if (ret != 0) {
+ 		RTE_BOND_LOG(ERR,
+-			"%s: Error during getting device (port %u) info: %s",
+-			__func__, member_port_id, strerror(-ret));
++			"Error during getting device (port %u) info: %s",
++			member_port_id, strerror(-ret));
+ 
+ 		return ret;
+ 	}
 diff --git a/drivers/net/bonding/rte_eth_bond_pmd.c b/drivers/net/bonding/rte_eth_bond_pmd.c
-index 96725071da..6a42257d2b 100644
+index 6a42257d2b..e2819c931b 100644
 --- a/drivers/net/bonding/rte_eth_bond_pmd.c
 +++ b/drivers/net/bonding/rte_eth_bond_pmd.c
-@@ -56,6 +56,33 @@ get_vlan_offset(struct rte_ether_hdr *eth_hdr, uint16_t *proto)
- 	return vlan_offset;
- }
- 
-+static uint16_t
-+bond_ethdev_rx_secondary(void *queue __rte_unused,
-+			 struct rte_mbuf **bufs __rte_unused, uint16_t nb_pkts __rte_unused)
-+{
-+	static bool once = true;
-+
-+	if (once) {
-+		/* once per process is enough of a notice */
-+		RTE_BOND_LOG(NOTICE, "receive not supported in secondary");
-+		once = false;
-+	}
-+	return 0;
-+}
-+
-+static uint16_t
-+bond_ethdev_tx_secondary(void *queue __rte_unused, struct rte_mbuf **bufs, uint16_t nb_pkts)
-+{
-+	static bool once = true;
-+
-+	if (once) {
-+		RTE_BOND_LOG(NOTICE, "transmit not supported in secondary");
-+		once = false;
-+	}
-+	rte_pktmbuf_free_bulk(bufs, nb_pkts);
-+	return nb_pkts;
-+}
-+
- static uint16_t
- bond_ethdev_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- {
-@@ -1599,6 +1626,11 @@ bond_ethdev_mode_set(struct rte_eth_dev *eth_dev, uint8_t mode)
- {
- 	struct bond_dev_private *internals;
- 
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
-+		RTE_BOND_LOG(ERR, "Setting mode in secondary not allowed");
-+		return -1;
-+	}
-+
- 	internals = eth_dev->data->dev_private;
- 
- 	switch (mode) {
-@@ -3799,9 +3831,18 @@ bond_probe(struct rte_vdev_device *dev)
- 			RTE_BOND_LOG(ERR, "Failed to probe %s", name);
- 			return -1;
- 		}
--		/* TODO: request info from primary to set up Rx and Tx */
-+
- 		eth_dev->dev_ops = &default_dev_ops;
- 		eth_dev->device = &dev->device;
-+
-+		/*
-+		 * Propagation of bond mode would require adding
-+		 * MP client/server support and lots of error handling.
-+		 *
-+		 * For now just install a black hole.
-+		 */
-+		eth_dev->tx_pkt_burst = bond_ethdev_tx_secondary;
-+		eth_dev->rx_pkt_burst = bond_ethdev_rx_secondary;
- 		rte_eth_dev_probing_finish(eth_dev);
- 		return 0;
+@@ -210,8 +210,8 @@ bond_ethdev_8023ad_flow_verify(struct rte_eth_dev *bond_dev,
+ 	int ret = rte_flow_validate(member_port, &flow_attr_8023ad,
+ 			flow_item_8023ad, actions, &error);
+ 	if (ret < 0) {
+-		RTE_BOND_LOG(ERR, "%s: %s (member_port=%d queue_id=%d)",
+-				__func__, error.message, member_port,
++		RTE_BOND_LOG(ERR, "%s (member_port=%u queue_id=%u)",
++				error.message, member_port,
+ 				internals->mode4.dedicated_queues.rx_qid);
+ 		return -1;
  	}
+@@ -219,8 +219,8 @@ bond_ethdev_8023ad_flow_verify(struct rte_eth_dev *bond_dev,
+ 	ret = rte_eth_dev_info_get(member_port, &member_info);
+ 	if (ret != 0) {
+ 		RTE_BOND_LOG(ERR,
+-			"%s: Error during getting device (port %u) info: %s",
+-			__func__, member_port, strerror(-ret));
++			"Error during getting device (port %u) info: %s",
++			member_port, strerror(-ret));
+ 
+ 		return ret;
+ 	}
+@@ -228,8 +228,8 @@ bond_ethdev_8023ad_flow_verify(struct rte_eth_dev *bond_dev,
+ 	if (member_info.max_rx_queues < bond_dev->data->nb_rx_queues ||
+ 			member_info.max_tx_queues < bond_dev->data->nb_tx_queues) {
+ 		RTE_BOND_LOG(ERR,
+-			"%s: Member %d capabilities doesn't allow allocating additional queues",
+-			__func__, member_port);
++			"Member %u capabilities doesn't allow allocating additional queues",
++			member_port);
+ 		return -1;
+ 	}
+ 
+@@ -249,9 +249,8 @@ bond_8023ad_slow_pkt_hw_filter_supported(uint16_t port_id) {
+ 		ret = rte_eth_dev_info_get(bond_dev->data->port_id, &bond_info);
+ 		if (ret != 0) {
+ 			RTE_BOND_LOG(ERR,
+-				"%s: Error during getting device (port %u) info: %s",
+-				__func__, bond_dev->data->port_id,
+-				strerror(-ret));
++				"Error during getting device (port %u) info: %s",
++				bond_dev->data->port_id, strerror(-ret));
+ 
+ 			return ret;
+ 		}
+@@ -2347,10 +2346,8 @@ bond_ethdev_info(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
+ 			ret = rte_eth_dev_info_get(member.port_id, &member_info);
+ 			if (ret != 0) {
+ 				RTE_BOND_LOG(ERR,
+-					"%s: Error during getting device (port %u) info: %s",
+-					__func__,
+-					member.port_id,
+-					strerror(-ret));
++					"Error during getting device (port %u) info: %s",
++					member.port_id, strerror(-ret));
+ 
+ 				return ret;
+ 			}
 -- 
 2.53.0
 
