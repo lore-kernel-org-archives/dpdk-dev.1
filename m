@@ -2,53 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46F9F8E4A0
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Apr 2026 02:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DEEF8E4AB
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Apr 2026 05:19:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1BED40650;
-	Fri, 17 Apr 2026 04:54:04 +0200 (CEST)
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com
- [113.46.200.223])
- by mails.dpdk.org (Postfix) with ESMTP id 770F940608
- for <dev@dpdk.org>; Fri, 17 Apr 2026 04:54:01 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=j7ia668geuVl9SmdSBU97WEdp1f7qbD6KvnKwDqJKdo=;
- b=C2FxB2Tx02a0PpPYDzanCa0x4GwDk7QYkxBRRPyiA+DWaire6JtEdvt/441As71tsQy0VxgT/
- l/4g/Xi08yhqUkQ6CW5pgGpjupz9PB4T7hip4N8LpnwVgia/lZMsGwxicTOxvTZX1+MYeX4ghYt
- UUf2zMjyUB9bFFEgGYv1F4s=
-Received: from mail.maildlp.com (unknown [172.19.162.92])
- by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4fxfSB3xxBzmV69;
- Fri, 17 Apr 2026 10:47:38 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
- by mail.maildlp.com (Postfix) with ESMTPS id 6B9004056E;
- Fri, 17 Apr 2026 10:53:59 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 17 Apr 2026 10:53:54 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.36; Fri, 17 Apr
- 2026 10:53:53 +0800
-Message-ID: <4f28d51f-5af7-4561-a65b-14da05a0a26f@huawei.com>
-Date: Fri, 17 Apr 2026 10:53:53 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 03E8C4042F;
+	Fri, 17 Apr 2026 07:19:16 +0200 (CEST)
+Received: from mail-dl1-f68.google.com (mail-dl1-f68.google.com [74.125.82.68])
+ by mails.dpdk.org (Postfix) with ESMTP id 035B3402A7
+ for <dev@dpdk.org>; Fri, 17 Apr 2026 07:19:14 +0200 (CEST)
+Received: by mail-dl1-f68.google.com with SMTP id
+ a92af1059eb24-1273349c56bso365625c88.0
+ for <dev@dpdk.org>; Thu, 16 Apr 2026 22:19:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1776403154; x=1777007954; darn=dpdk.org;
+ h=mime-version:user-agent:content-transfer-encoding:references
+ :in-reply-to:date:cc:to:reply-to:from:subject:message-id:from:to:cc
+ :subject:date:message-id:reply-to;
+ bh=pM8NXpvAlfmbl6rbXBAYSAGbScMvkLKtHRcQJuLsnV8=;
+ b=Xoa15VII3Ouz7MQJdmBk+h3Np03S/8x01LYuNQ8ICaEn3UCKZhx4IiOJs2hSFiSegy
+ odvJrXuIRs6mRfbrx0oP7rQZUnqQebOYcDxfHsg3w3LEMFSmNjmRsB8AQ1cj/vrfrP3M
+ Hg7K+YK5X6VhP8XFsTQJuXq0SqdJ8TMunbY9iazGmE5sIwLK9l3jPV3U+K3D9SgMkfwL
+ AO2vpxgDbNnHSufAy/USPMNgLOIr8/ckmjjkJBVJ+ou72vpxtbvpTUnRjwqE5GU4QP7f
+ 6YVmuFrYfoQ3DHPf+HY4SwEXU3oKxt0Y12R4UDF1476ji8CVc0CWbuM/LwinOEq5w2ej
+ tMbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1776403154; x=1777007954;
+ h=mime-version:user-agent:content-transfer-encoding:references
+ :in-reply-to:date:cc:to:reply-to:from:subject:message-id:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=pM8NXpvAlfmbl6rbXBAYSAGbScMvkLKtHRcQJuLsnV8=;
+ b=ixRXXcD+dsYJCdCJZ8QWIAcbtdXwrImYR2fIgeMcCK/VpDcF7c+Rm4IncZUUidQHnq
+ mBzyjGEz0dp2/qAOnijQB8MHsQTsk5nrWKx+lvsOb3QM5+VYLRtA2glLgUexp938WLJb
+ 6sbAhNyPHfkeJapoTPATgCDJDZgD+8ueFrPyonb47i7Ci6l/ZJ5MOhuTZbW9/Z1HMq7a
+ QeVIAHSazHZ9+LqPnTM+fGbs+7baJNgVLzz0w2p39DIbLj8J8MYXZ4GB1EHLRX2kwANM
+ MuTIvy4hQzwJJ9exE1Mui0qIXEiD8jnmpbT/HjuktvKtjVuqgXnDmbPEA12yUzYj4xkw
+ LLlw==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ9ZyhYXI0bE1t7N0BfB7XbZY4KV9K746GEh0JFcx284sRjvZuLDYjDis9F6Dw194/87IZo=@dpdk.org
+X-Gm-Message-State: AOJu0YzAED7of1jwpWQ4oAF9sb+2wR+8vx5nLnwwcKeQlPwkMB5+9pXt
+ eGzBx9LxTs/MI/GXfGrG5bi3v2ruYnMDRJuaL4wdLcn8hiSzSNj6Ehgy
+X-Gm-Gg: AeBDievuic0CcSCNkXbHDIraMQescXwVfQpTr84n4GkirtKoeQfMmllegUdm10yCVZ4
+ VjvUaUYgijN4fdFOZQLIsKUww4e7tF8YfbxZfQpUjl3Giv2tG5wUFkdslj/r7PFPmBuUu0opKGo
+ l99nVc359lFREOCnIXwz9PCrYwavGS1gsZgftOj9O46IE5tjb9aiLAws3RTTWJKtCqqVJCJ0B9O
+ qOKYYTLtil14Lye4WkCjSp6JuncLw8kMAISC45vc2Yzb6JW5c+RuEaKths36fCZVnQTa27GFBr/
+ JfQO96ccKNvq++m0cieFy/dynKVdja4v/dJI5iHetxj499WmdQ6mYg+pGEyvLoT39DT+dwgZ2Gb
+ pvI65MwQpwtYP8JhBYXDQ7IHLtJCgcsFdPKRVVKTlWgeNtEULHwfBV9Hvna32sRBtEIxyjCEpCb
+ inYc0l4ttPxvfCb5MohiJrNKj9ZqJNSb5bGbiuP6m/zcrN5CjLNEwHwS+XSxldh+cbui1mNZLDM
+ nVJ7sJJ8i9Q
+X-Received: by 2002:a05:7022:383:b0:128:d4db:447a with SMTP id
+ a92af1059eb24-12c73fa73e6mr618874c88.29.1776403153619; 
+ Thu, 16 Apr 2026 22:19:13 -0700 (PDT)
+Received: from [10.177.177.78] (c-24-5-101-44.hsd1.ca.comcast.net.
+ [24.5.101.44]) by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2e536e54562sm818670eec.0.2026.04.16.22.19.12
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 16 Apr 2026 22:19:13 -0700 (PDT)
+Message-ID: <c0451147f1b2b7ba217c8e770e806e4a45f3e374.camel@gmail.com>
+Subject: Re: [PATCH v5 v5 2/3] app: add topology aware test case
+From: Sudheendra Sampath <giveback4fun@gmail.com>
+To: "Varghese, Vipin" <Vipin.Varghese@amd.com>, "dev@dpdk.org"
+ <dev@dpdk.org>,  "Tummala, Sivaprasad" <Sivaprasad.Tummala@amd.com>
+Cc: "konstantin.ananyev@huawei.com" <konstantin.ananyev@huawei.com>, 
+ "wathsala.vithanage@arm.com"
+ <wathsala.vithanage@arm.com>, "bruce.richardson@intel.com"
+ <bruce.richardson@intel.com>, "viktorin@cesnet.cz" <viktorin@cesnet.cz>, 
+ "mb@smartsharesystems.com" <mb@smartsharesystems.com>
+Date: Thu, 16 Apr 2026 22:19:12 -0700
+In-Reply-To: <PH7PR12MB859698AFEFF656FD908A729882202@PH7PR12MB8596.namprd12.prod.outlook.com>
+References: <20241105102849.1947-1-vipin.varghese@amd.com>
+ <20260414193850.1696-1-vipin.varghese@amd.com>
+ <20260414193850.1696-3-vipin.varghese@amd.com>
+ <PH7PR12MB85969978BB6EB2C2E9034A8E82232@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <PH7PR12MB859644299B4823DD03A125DD82232@PH7PR12MB8596.namprd12.prod.outlook.com>
+ <PH7PR12MB859698AFEFF656FD908A729882202@PH7PR12MB8596.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-0+deb13u1 
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 00/15] power: unify and improve lcore ID verification
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>, <dev@dpdk.org>, 
- <thomas@monjalon.net>, <fengchengwen@huawei.com>, <yangxingui@huawei.com>, 
- <zhanjie9@hisilicon.com>
-References: <20260416030612.2379407-1-lihuisong@huawei.com>
- <20260416085146.7c268cb8@phoenix.local>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20260416085146.7c268cb8@phoenix.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.59]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemn100009.china.huawei.com (7.202.194.112)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,60 +90,17 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
+Reply-To: giveback4fun@gmail.com
 Errors-To: dev-bounces@dpdk.org
 
+Hi Vipin,
 
-On 4/16/2026 11:51 PM, Stephen Hemminger wrote:
-> On Thu, 16 Apr 2026 11:05:57 +0800
-> Huisong Li <lihuisong@huawei.com> wrote:
->
->> This patch series reworks the lcore ID verification logic within the power
->> library to ensure consistency and improve maintainability. Currently, various
->> cpufreq drivers implement their own lcore ID checks, often relying on simple
->> range checks that do not account for whether a core is actually enabled in
->> the application.
->>
->> Key Changes:
->> 1. Replaces basic range checks with rte_lcore_is_enabled() across all
->>     cpufreq drivers (ACPI, AMD P-state, CPPC, Intel P-state, and KVM VM).
->>     This ensures the power library only operates on lcores assigned to the
->>     application.
->> 2. Introduces a common macro in the power library's internal headers to
->>     standardize lcore ID verification.
->> 3. Moves the verification logic from individual driver implementations up
->>     to the high-level framework API. This reduces duplication code and
->>     ensures that all drivers benefit from uniform validation.
->> 4. Updates the power QoS and PMD Management libraries to use the new macro.
->>
->> Huisong Li (15):
->>    power/kvm_vm: enforce enabled lcore ID check
->>    power/acpi_cpufreq: enforce enabled lcore ID check
->>    power/amd_pstate: enforce enabled lcore ID check
->>    power/cppc_cpufreq: enforce enabled lcore ID check
->>    power/intel_pstate: enforce enabled lcore ID check
->>    power: enforce enabled lcore ID check
->>    power: add a common macro to verify lcore ID
->>    power/pmd_mgmt: replace lcore ID verification with new macro
->>    power/qos: replace the lcore ID verification with new macro
->>    power/cpufreq: add the lcore ID verification to framework
->>    power/acpi_cpufreq: remove the verification of lcore ID
->>    power/amd_pstate: remove the verification of lcore ID
->>    power/cppc_cpufreq: remove the verification of lcore ID
->>    power/intel_pstate: remove the verification of lcore ID
->>    power/kvm_vm: remove the verification of lcore ID
->>
->>   drivers/power/acpi/acpi_cpufreq.c             | 65 -------------------
->>   drivers/power/amd_pstate/amd_pstate_cpufreq.c | 65 -------------------
->>   drivers/power/cppc/cppc_cpufreq.c             | 65 -------------------
->>   .../power/intel_pstate/intel_pstate_cpufreq.c | 65 -------------------
->>   drivers/power/kvm_vm/kvm_vm.c                 | 10 ---
->>   lib/power/power_common.h                      |  7 ++
->>   lib/power/rte_power_cpufreq.c                 | 14 ++++
->>   lib/power/rte_power_pmd_mgmt.c                | 25 ++-----
->>   lib/power/rte_power_qos.c                     | 10 +--
->>   9 files changed, 30 insertions(+), 296 deletions(-)
->>
-> Patch 3 did not get sent in the series maybe too big or mail issue?
-It is in the series. I can see it in dpdk patch list.
-https://patches.dpdk.org/project/dpdk/patch/20260416030612.2379407-2-lihuisong@huawei.com/ 
+Pardon my ignorance.  I am not sure I understand what you mean by
+"current function test format". =C2=A0
 
+Can you let me know where I can read about the current function test
+format ?
+
+Thanks
+
+Sudheendra Sampath
