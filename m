@@ -2,56 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1964DFB44C2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Apr 2026 07:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DEEFB44C2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Apr 2026 07:06:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7ACB0402C4;
-	Fri, 24 Apr 2026 09:05:52 +0200 (CEST)
-Received: from send129.i.mail.ru (send129.i.mail.ru [89.221.237.224])
- by mails.dpdk.org (Postfix) with ESMTP id 5D85E402A7;
- Fri, 17 Apr 2026 07:23:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
- s=mail4; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:Cc:
- To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
- Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
- Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
- X-Cloud-Ids:Disposition-Notification-To;
- bh=YJCsJFhY7zg4fHzaYwR7AbJQVAj4N8ykuC97AAX7UTw=; t=1776403426; x=1776493426; 
- b=r+qzlaCkR1/p/YHPQ3AMo/VA83MpWhCrDxK9+WwmTiNFfmqVSN1paeyCEn6BeeDBVUekXJN0WNM
- oSfq3PL74I2YQ3zEKY6znvXZ8W55yHyeUBJ1PFjZHoX25q6cU23pQD+AkZvBKcoE3IaPRjMGHZWyC
- YMyWbq6lCasIXBkcBRAdeSCkrxE/689lXBQQrcpcM6EmftF3VD9jU7B3vbcILvdOBslH9kiXhgvCW
- qGodN7EKa4fuhq9DyY9h8+kI05z27W0p822X25qbgE2ym7/KTbhUu8YVZzLnylaKtM2vRq/1AD08U
- 8SmaPnFB4BZIszMtE0LZLmh9m+lr20IJQNJw==;
-Received: by exim-smtp-5c94f89c8c-jm97c with esmtpa (envelope-from
- <lyulin.2003@mail.ru>)
- id 1wDbg8-000000006wY-3Xmd; Fri, 17 Apr 2026 08:23:45 +0300
-From: Denis Lyulin <lyulin.2003@mail.ru>
-To: Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>,
- Somnath Kotur <somnath.kotur@broadcom.com>,
- Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Cc: dev@dpdk.org,
-	stable@dpdk.org,
-	Denis Lyulin <lyulin.2003@mail.ru>
-Subject: [PATCH] net/bnxt: add cast to wider type before multiplication
-Date: Fri, 17 Apr 2026 08:23:33 +0300
-Message-Id: <20260417052334.2217652-1-lyulin.2003@mail.ru>
-X-Mailer: git-send-email 2.34.1
+	by mails.dpdk.org (Postfix) with ESMTP id 8374040667;
+	Fri, 24 Apr 2026 09:05:53 +0200 (CEST)
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com
+ [209.85.218.43]) by mails.dpdk.org (Postfix) with ESMTP id 22AE9402A3
+ for <dev@dpdk.org>; Fri, 17 Apr 2026 12:49:08 +0200 (CEST)
+Received: by mail-ej1-f43.google.com with SMTP id
+ a640c23a62f3a-b9825ba7f9dso244444966b.0
+ for <dev@dpdk.org>; Fri, 17 Apr 2026 03:49:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1776422948; x=1777027748; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=fx2nkFBOxDlVD1oxzMUbuJG3W0fbXg3wng5h2t6dh00=;
+ b=reXDicKMDu+J9oG8WhnjrIuVjkhGjgDe3Tk07RrF+MywJI2mGueyb1/oLNtTdZvKee
+ /EKxOr7oLnR4sVboHng+sV/Tni26u+PJXM729eB6pElWutEX6QLJ0kCMXOVOaXRouyh9
+ YyzBDneQbA2zSotzKseP7Wlwr4iaBhFUOCSmdch+Xx3zfwDF3+1wEvVxJC5H5lbki4gA
+ xtvrdDiO5CVbzCOI5slRI2HwNg4gBmV6BLGQ5OEQZ8UVWQ+lUwkNBuEROi8A2TAwOavB
+ YIe7BV5LL3JwFKe3eX+Uz9819H41tlMm/23I4T6bw9QRj4Dwqz2fEcdWDlbalewr8nMP
+ WmhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1776422948; x=1777027748;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=fx2nkFBOxDlVD1oxzMUbuJG3W0fbXg3wng5h2t6dh00=;
+ b=Tk5f9Fnsw1oAZ24sAFU/7Gws6+8YMUNkxeOF4FQbrNOyxwPTNq4Ef2Cm82vheihhiE
+ LIf9PDWca+k4PS89BaZmb0JX0eSOKu9yHolMg5iLa7UkKahLKsat1/yuA7ybDvWhVGCm
+ NB4/i2rsELnYfLu2KhXVi9Wkl+/mrqEZfBkTMUJYnoAPpQRcBdcj8KenggZGJOyh073O
+ CK0KpYJr0TgvfxWmBRcDKukw0+to7Bzw8UXdMrk+T+hxY0jH6qLzxVsd+r8T4e60VYLK
+ viEX81OLrm2nKEa5M2o30dB7YmFFexmo+tH0sAzLZsoDajsIItz3Fc9gvBntL+MbQ3jb
+ YNeQ==
+X-Gm-Message-State: AOJu0Yx8xfqs2TtC9auotV93+iUhC+WoufcM7rmok5hCE+f9IFTkOpCz
+ aOs9LUZoEBAdzcwe8AuDGL5EtFQKr7g/sTQH9DvvvsxartuihHs0/zo226WDe03mZU0=
+X-Gm-Gg: AeBDieuH8/OHlXF9ag82AKksBeRgXkAserDkn3YO/rp9+WmiHkBFRBoVFjZYFJjDf6I
+ DygECTQqg2GMl+ejU2QyQzytQrm2T/hfNlXj71KkN0OHXwOHQmyc97r1/lS6YLK7EyhUDYum4lX
+ df2BPIMUr/I7dkiPEs5+qMaOOKqg5AhvFqKBWZdwzM4fsCnzbFtU1i+07dukot5KrWSfuN4ZMWG
+ 7SMYInjEPGjK/XI4Bo/6kvXRLcShRnBc549qhbZYws5IasQsHNA2Ywex69w3R6gCQ3BRrd1jhJN
+ /sSiCskmqYEAfIxBxNHQTMcB3z/LEpT06o7mvM8yzdjif9QE3yyAXBXMcs7TOnKtyEwWg6GJCxW
+ ZsC2rnPVAKzS6BGE6dWP72Q9y1tB912U4yctOgiW6SFkhbixezVvzz63SEVWH5tqzTfktO+WrmJ
+ 3/y4bSOiNdv9Ppe2N+Y5RAQ+OQKvvkBFxrmZvfw6u+GuREBySh05MKn8g7kHjSAhChbDkjiZFpx
+ vk=
+X-Received: by 2002:a17:906:c102:b0:b97:b88c:386b with SMTP id
+ a640c23a62f3a-ba4229d7784mr108292566b.29.1776422947459; 
+ Fri, 17 Apr 2026 03:49:07 -0700 (PDT)
+Received: from work.cisco.com ([2603:5004:20a0:100c:fa09:d9cc:a4b8:91d6])
+ by smtp.gmail.com with ESMTPSA id
+ a640c23a62f3a-ba454d1b379sm41257166b.39.2026.04.17.03.49.06
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 17 Apr 2026 03:49:07 -0700 (PDT)
+From: Maxime Peim <maxime.peim@gmail.com>
+To: dev@dpdk.org
+Cc: david.marchand@redhat.com
+Subject: [PATCH] eal: fix core_index for non-EAL registered threads
+Date: Fri, 17 Apr 2026 12:48:38 +0200
+Message-ID: <20260417104838.342531-1-maxime.peim@gmail.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: exim-smtp-5c94f89c8c-jm97c;
- auth=pass smtp.auth=lyulin.2003@mail.ru
- smtp.mailfrom=lyulin.2003@mail.ru
-X-Mailru-Src: smtp
-X-7564579A: B8F34718100C35BD
-X-77F55803: 4F1203BC0FB41BD933EB536A6C38181680DC6D983A512C44603D2E84CEE93B6C182A05F538085040A33C4A5CB83BD25F3DE06ABAFEAF6705C359E0A46D311F4D9840CBEF3A87A59C492007A4EDD3F072
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE768BD42809A772657EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637AC83A81C8FD4AD23D82A6BABE6F325AC2E85FA5F3EDFCBAA7353EFBB553375663BEDCB502AD08FC077CEBB4A405AC2E54C4950E3BD506B1160AE831A1641E1188EEF46B7454FC60B9742502CCDD46D0DEDCF5861DED71B2F389733CBF5DBD5E913377AFFFEAFD269176DF2183F8FC7C084ED00A64A654CBE8941B15DA834481FCF19DD082D7633A0EF3E4896CB9E6436389733CBF5DBD5E9D5E8D9A59859A8B6042F1592492B88C6CC7F00164DA146DA6F5DAA56C3B73B237318B6A418E8EAB8D32BA5DBAC0009BE9E8FC8737B5C2249699DF0255595E9BD76E601842F6C81A12EF20D2F80756B5FB606B96278B59C4276E601842F6C81A127C277FBC8AE2E8B17800100564F618E3AA81AA40904B5D99C9F4D5AE37F343AD1F44FA8B9022EA23BBE47FD9DD3FB595F5C1EE8F4F765FC72CEEB2601E22B093A03B725D353964B0B7D0EA88DDEDAC722CA9DD8327EE493D58E677C372A3F47E5B2F3A2B87CD4C8C4224003CC83647689D4C264860C145E
-X-C1DE0DAB: 0D63561A33F958A57A18343150B229AE5002B1117B3ED69604C1CC046FB9C5870E58516B1639A14B823CB91A9FED034534781492E4B8EEADB30A456A8F293845C79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
-X-C8649E89: 1C3962B70DF3F0AD73CAD6646DEDE191716CD42B3DD1D34C77DD89D51EBB774225B6776AC983F447FC0B9F89525902EE6F57B2FD27647F25E66C117BDB76D659D7C5FCE942FC844959825FFA88CD4C094516E82459BA60BF0D94128D7D6298844874354D9325D57AB8341EE9D5BE9A0A218FF574BB53ABDCCAB6EC2174C8E175BB1BC6834C0A8E00DABE3362BFED2FD64C41F94D744909CE5DDE6AB186FA14AA15C35E0BAFFE8D415811D22EBD454E4C3FCF178C6DD14203
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+ObcCpyrx6l7KImUglyhkEat/+ysWwi0gdhEs0JGjl6ggRWTy1haxBpVdbIX1nthFXMZebaIdHP2ghjoIc/363UZI6Kf1ptIMVbj/KpoGcZAL3pUXBPQowTI=
-X-Mailru-Sender: C0FC423AA8FD9F6963CC77E2AC28C4C9E2DD7D1A192C5B95B951B70A5BD4BD8E585157FE113586B1404621D10D0FE5F2CFB1E98417576B9F6EFAE8183A2EAE0DD521319575DF8831E3C55DE776B662A175379CF7CCB93CA93DDE9B364B0DF289AE208404248635DF
-X-Mras: Ok
 X-Mailman-Approved-At: Fri, 24 Apr 2026 09:05:46 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,61 +77,66 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Some static analyzers generate warnings about possible integer
-overflow on multiplication. The first parameter of
-`rte_eal_alarm_set()` is `uint64_t`, so this commit adds cast
-of `uint32_t` values before the multiplication to prevent overflow.
-The fix is cosmetic.
+Threads registered via rte_thread_register() are assigned a valid
+lcore_id by eal_lcore_non_eal_allocate(), but their core_index in
+lcore_config is left at -1. This value was set during rte_eal_cpu_init()
+for lcores with ROLE_OFF (undetected CPUs) and is never updated when the
+lcore is later allocated to a non-EAL thread.
 
-Fixes: 9d0cbaecc91a ("net/bnxt: support periodic FW health monitoring")
-Cc: kalesh-anakkur.purayil@broadcom.com
-Cc: stable@dpdk.org
+As a result, rte_lcore_index() returns -1 for registered non-EAL
+threads. Libraries that use rte_lcore_index() to select per-lcore
+caches fall back to a shared global path when it returns -1, causing
+severe contention under concurrent access from multiple registered
+threads.
 
-Signed-off-by: Denis Lyulin <lyulin.2003@mail.ru>
+A concrete example is the mlx5 indexed memory pool (mlx5_ipool), which
+uses rte_lcore_index() in mlx5_ipool_malloc_cache() to select a per-core
+cache slot. When core_index is -1, all registered threads are funneled
+into a single shared slot protected by a spinlock. In testing with VPP
+(which registers worker threads via rte_thread_register()), this caused
+async flow rule insertion throughput to drop from ~6.4M rules/sec to
+~1.2M rules/sec with 4 workers -- a 5x regression attributable entirely
+to spinlock contention in the ipool allocator.
+
+Fix by setting core_index to the next sequential index (cfg->lcore_count)
+in eal_lcore_non_eal_allocate() before incrementing the count. Also reset
+core_index back to -1 on the error rollback path and in
+eal_lcore_non_eal_release() for correctness.
+
+Fixes: 5c307ba2a5b1 ("eal: register non-EAL threads as lcores")
+Signed-off-by: Maxime Peim <maxime.peim@gmail.com>
 ---
- drivers/net/bnxt/bnxt_ethdev.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ lib/eal/common/eal_common_lcore.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/bnxt/bnxt_ethdev.c b/drivers/net/bnxt/bnxt_ethdev.c
-index b677f9491d..bdfab3eef2 100644
---- a/drivers/net/bnxt/bnxt_ethdev.c
-+++ b/drivers/net/bnxt/bnxt_ethdev.c
-@@ -4861,7 +4861,7 @@ static void bnxt_dev_recover(void *arg)
- void bnxt_dev_reset_and_resume(void *arg)
- {
- 	struct bnxt *bp = arg;
--	uint32_t us = US_PER_MS * bp->fw_reset_min_msecs;
-+	uint64_t us = US_PER_MS * (uint64_t)bp->fw_reset_min_msecs;
- 	uint16_t val = 0;
- 	int rc;
- 
-@@ -5008,7 +5008,7 @@ static void bnxt_check_fw_health(void *arg)
- 
- 	info->last_reset_counter = val;
- 
--	rte_eal_alarm_set(US_PER_MS * info->driver_polling_freq,
-+	rte_eal_alarm_set(US_PER_MS * (uint64_t)info->driver_polling_freq,
- 			  bnxt_check_fw_health, (void *)bp);
- 
- 	return;
-@@ -5030,7 +5030,7 @@ static void bnxt_check_fw_health(void *arg)
- 	else
- 		wait_msec = info->normal_func_wait_period;
- 
--	rte_eal_alarm_set(US_PER_MS * wait_msec,
-+	rte_eal_alarm_set(US_PER_MS * (uint64_t)wait_msec,
- 			  bnxt_fw_reset_cb, (void *)bp);
- }
- 
-@@ -5048,7 +5048,7 @@ void bnxt_schedule_fw_health_check(struct bnxt *bp)
- 
- 	polling_freq = bp->recovery_info->driver_polling_freq;
- 
--	rte_eal_alarm_set(US_PER_MS * polling_freq,
-+	rte_eal_alarm_set(US_PER_MS * (uint64_t)polling_freq,
- 			  bnxt_check_fw_health, (void *)bp);
- 	bp->flags |= BNXT_FLAG_FW_HEALTH_CHECK_SCHEDULED;
- 
+diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
+index 39411f9370..ae085d73e4 100644
+--- a/lib/eal/common/eal_common_lcore.c
++++ b/lib/eal/common/eal_common_lcore.c
+@@ -378,6 +378,7 @@ eal_lcore_non_eal_allocate(void)
+ 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
+ 		if (cfg->lcore_role[lcore_id] != ROLE_OFF)
+ 			continue;
++		lcore_config[lcore_id].core_index = cfg->lcore_count;
+ 		cfg->lcore_role[lcore_id] = ROLE_NON_EAL;
+ 		cfg->lcore_count++;
+ 		break;
+@@ -399,6 +400,7 @@ eal_lcore_non_eal_allocate(void)
+ 		}
+ 		EAL_LOG(DEBUG, "Initialization refused for lcore %u.",
+ 			lcore_id);
++		lcore_config[lcore_id].core_index = -1;
+ 		cfg->lcore_role[lcore_id] = ROLE_OFF;
+ 		cfg->lcore_count--;
+ 		lcore_id = RTE_MAX_LCORE;
+@@ -420,6 +422,7 @@ eal_lcore_non_eal_release(unsigned int lcore_id)
+ 		goto out;
+ 	TAILQ_FOREACH(callback, &lcore_callbacks, next)
+ 		callback_uninit(callback, lcore_id);
++	lcore_config[lcore_id].core_index = -1;
+ 	cfg->lcore_role[lcore_id] = ROLE_OFF;
+ 	cfg->lcore_count--;
+ out:
 -- 
-2.34.1
+2.43.0
 
