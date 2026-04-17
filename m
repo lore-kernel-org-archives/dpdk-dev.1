@@ -2,143 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F05CF4368F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Apr 2026 10:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFF9F43697
+	for <dpdk-dev@archiver.kernel.org>; Fri, 17 Apr 2026 13:00:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5BE3B402B0;
-	Fri, 17 Apr 2026 12:57:49 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id 5BE93402A7
- for <dev@dpdk.org>; Fri, 17 Apr 2026 12:57:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id AF9AD402A7;
+	Fri, 17 Apr 2026 15:00:07 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+ by mails.dpdk.org (Postfix) with ESMTP id 10D4C402A3
+ for <dev@dpdk.org>; Fri, 17 Apr 2026 15:00:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1776423467; x=1807959467;
+ t=1776430806; x=1807966806;
  h=date:from:to:cc:subject:message-id:references:
  in-reply-to:mime-version;
- bh=GdRRbUVzP/nFSJiSgN5c4d9hxEdPabkBAYCicv+BokA=;
- b=k93lEs4cZC9EjgLvbIqPFutaS5PJBjb/oY8UVgQUjsDqEMOknYcFjR7U
- sraEwemWul4YIQd6WHKsl6rwXNEy3759C0WrpCHv5rzQhWy0KWjQiEf31
- C82L4QvEEJ1oHeMQOkfB5J54idhCeq/9dHZzwJyrNlglKVLFUSrfx3b+d
- OVW92r+yZ85IuKDXm+m8S1osdCD5Bk9Qlsz1g+kY1aTozZI74dIunhWM7
- 6fZp7IJG62IOEm3xX1pFcTBoFBAcwwLAU6lKEcxBgXhWVZj38zNvdtPnR
- iC2VrcKWgQz2d1vjn3USVOOK8+WuzWL7/2Twdz+VFajREHPerpS3K6JMn Q==;
-X-CSE-ConnectionGUID: fdH8YadqRTagvUikYkxcLA==
-X-CSE-MsgGUID: 2dQeL++VQRy6Zv11izC0Sw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11761"; a="77312658"
-X-IronPort-AV: E=Sophos;i="6.23,184,1770624000"; d="scan'208";a="77312658"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Apr 2026 03:57:46 -0700
-X-CSE-ConnectionGUID: 5yAUjcM0QrutYv1Ni0ldfQ==
-X-CSE-MsgGUID: 74OsCqldTg+ZPvI2dhUdzA==
+ bh=+XIMHIq9ReyWOvVujjROaoPtsBaF5tS1FIbwzxXUMZI=;
+ b=HfU5PlMgDKdOHvp1ciGMntCnTljvNEf5LkChRQWQxZEGvWBN3/Pel5hl
+ 0aKCZuIjwg5EuoZt2obUVg9wH9nt5SGKhyJrl6HSuCBT7FAXHbyAzzWS6
+ +xtG/fsRwM55F0zPF8vHCsAyBdDQDtySNL/tCgn3rW33D71Jt8OP0ljjm
+ OTz9pIV+uA20YONxmWwk+SvQ4LDd+zCBQF9W+QnnTFEtZ4MFJRZtCejfX
+ JfKRX/QVcyEQeIhWKQunXfh1KuHpHlFqVuGMIeiYfqA8bsNoj08B8aQ96
+ Y0+QE4fDkvFxFzx5uFom9+gknaRYwdnXzcPzVBMN5pQ+c1ohe1201YQ9i Q==;
+X-CSE-ConnectionGUID: 2DvSCIhtS0O4l9qV1OYNDQ==
+X-CSE-MsgGUID: j5vIUuAYSUWpNqiSouFVpA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11761"; a="77454355"
+X-IronPort-AV: E=Sophos;i="6.23,184,1770624000"; d="scan'208";a="77454355"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Apr 2026 06:00:04 -0700
+X-CSE-ConnectionGUID: B9DiLqhrSjmtEaqtFw2auQ==
+X-CSE-MsgGUID: VZe7WXrETiu2Bn5LrbbMBw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,184,1770624000"; d="scan'208";a="232755677"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 17 Apr 2026 03:57:46 -0700
-Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.23,184,1770624000"; d="scan'208";a="235024270"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 17 Apr 2026 06:00:03 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 17 Apr 2026 03:57:45 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ 15.2.2562.37; Fri, 17 Apr 2026 06:00:03 -0700
+Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Fri, 17 Apr 2026 03:57:45 -0700
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (40.93.195.29)
- by edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ 15.2.2562.37 via Frontend Transport; Fri, 17 Apr 2026 06:00:03 -0700
+Received: from DM1PR04CU001.outbound.protection.outlook.com (52.101.61.63) by
+ edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Fri, 17 Apr 2026 03:57:42 -0700
+ 15.2.2562.37; Fri, 17 Apr 2026 06:00:01 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Og//tyHMiSonDozqyiVwRt3PpZP+QnJS34izEFiUfhihDnifKI1ViE/rk/gq1mf47ZNcDFwIoGg3ReFOORAUd14iFHMuzZG9iuwIokfamjxahUv0/5TKGl5E85Qw1c7ESu5y5BLerU0Mc9WhoLFovrG55FrmV5eWnQqTW71aPNUQt8kZJOtK1+tcqYeNsjEVNfDJofog3BlA1jgAHLHOZl76DROouNPt6Mo0Nk468rw0BA7k70GbHqur+kwylfpWOBLri4bY0wMhKkq9Wjn4DRORwNcRJfyPudlc2ZjlmxdBnaf1La6zMYvG2dBzXYOW8sHxhZNT9b9DiIA43O/L8w==
+ b=XWs3+YPMha3u1CZ28o1bDCkWSG+CmxVvVret1ETGdMsljl9Jn4LnOv8vtx0ufwmTV1IWIO4tE+3F+IyZBvaVNH3P6F72mij+4tt7IXNEAiD4QRPq1DUgd+/oCVUp5KbW1HaNRmuBBaVcFc/zRb2zDVxgZ994tjr2kznJp0C/BsvArtrzvTpmPZUUis+x333FpMcFFJTJygR5k9Y68Zqwyoc0rc/WwMHMahGvf9fyrN6OJLP4Wqa/ueNFTCeITvEyme1A9RiJKhe1oEgauaLGKq2s1EK8DI74N6DsL9qEU4+uSWYIEIB4Oi2gaX/pfluv78R4PPLVs2T+A8YsgCtmLQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q10X3yIB3XPUGtpTh/A3z5GPUehb10+aBW/RP7Ed25E=;
- b=SweEa1JtDsPrYMS4717DP6TrMcNNTc4+tdLyyQbcIc9fmLkz8CJPQFHuILzeq5wgMoo+gKa8DXT2F27uXyEVEeHFcIdkF8tAHNI9pjs6mQv/DXpyCWuUWN/RKgHPXDSDAPXEbGZ8ilYdnGhWHMopYgrIsr2q2CWx9sabS5lMhiZ1VbWpIdkv3Op4Ei8ETM/wEqy1NMIZ0yv2mMsK8kSJkwIQx2pyyPnyLssZ/X7tixPw06GEIAQIKnrk8NpxB1L0SoiRrNtIJc90tPgx7OsBFnANNAsjlPnfDHlcmywwdbzQ6HECSiJV1/EuqfsrTqcyle/eBIMvoE38UJLmxBtw+g==
+ bh=5OZyxPUFFrlb38iT+bdQdt4SYWY6XnWiiO3hmeCsegA=;
+ b=RLHLnWDwU8nTbkeR56kt+XlfQLRfUmyzQZYNov6QFmToNmzaveEg1LhrtZnY414xFdTRPu41Zfzam8YFl5vZMP0R45c94K18pvuC6+XGwDx7nmV1gnG6sVFSwuDPTYH9gKodHxxhNdGSEXc6vHElaJe+sZA4M/dIEIjbtbkB9vFePEhFzuRCua7RTCsAZ+ou3y4og6ipdiePxhVB9eF9Y/54fBo+5PR7lkhjDcOXXrT+xQ7fK2tOvkHO8vtZjRwYTAqnQfrrh36HNZuWpHSekGaZHz5RhpSJlmI+d58/tnT5+9+d7vJ3K5fd/Y+1pxd5t1BXOEHny4OnhlU7HNl4YA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by IA1PR11MB8223.namprd11.prod.outlook.com (2603:10b6:208:450::19) with
+ by SA1PR11MB8396.namprd11.prod.outlook.com (2603:10b6:806:38d::18) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.25; Fri, 17 Apr
- 2026 10:57:38 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9818.20; Fri, 17 Apr
+ 2026 12:59:59 +0000
 Received: from DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
  ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9818.023; Fri, 17 Apr 2026
- 10:57:38 +0000
-Date: Fri, 17 Apr 2026 11:57:34 +0100
+ 12:59:59 +0000
+Date: Fri, 17 Apr 2026 13:59:54 +0100
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: Ciara Loftus <ciara.loftus@intel.com>
 CC: <dev@dpdk.org>
-Subject: Re: [PATCH v3 1/3] net/iavf: support LLDP Tx via mbuf ptype or
- dynfield
-Message-ID: <aeISHrR7qdHJSNh0@bricha3-mobl1.ger.corp.intel.com>
-References: <20260306115214.467033-1-ciara.loftus@intel.com>
- <20260417100804.1143121-1-ciara.loftus@intel.com>
- <20260417100804.1143121-2-ciara.loftus@intel.com>
+Subject: Re: [PATCH v4 2/3] net/iavf: add AVX2 context descriptor Tx paths
+Message-ID: <aeIuyj5mGdEwI8Td@bricha3-mobl1.ger.corp.intel.com>
+References: <20260417100804.1143121-1-ciara.loftus@intel.com>
+ <20260417105610.1161242-1-ciara.loftus@intel.com>
+ <20260417105610.1161242-3-ciara.loftus@intel.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20260417100804.1143121-2-ciara.loftus@intel.com>
-X-ClientProxiedBy: DU2PR04CA0017.eurprd04.prod.outlook.com
- (2603:10a6:10:3b::22) To DS0PR11MB7309.namprd11.prod.outlook.com
+In-Reply-To: <20260417105610.1161242-3-ciara.loftus@intel.com>
+X-ClientProxiedBy: DUZPR01CA0257.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b5::29) To DS0PR11MB7309.namprd11.prod.outlook.com
  (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA1PR11MB8223:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f0f6472-1fe4-43e4-42a4-08de9c7023e2
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SA1PR11MB8396:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4bc8f7c6-74a5-4f8c-2bac-08de9c813b7a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|376014|1800799024|366016|56012099003|18002099003|22082099003; 
-X-Microsoft-Antispam-Message-Info: AA2LCseL6ca/PtQhKxNKo+7CO2PNV+Ta8sjlzsE70sQ4sPjAdRsKIP76os9ml8mmv+AnnkAkYA69aun/nEsbX0ukpJXCbv/To0+2DP/5h20D+R7hJgUaG5ozLaAxMh/Q+trAkfvzsXknSX1cf3L4bHRrSPaXbTOqj6yR1jG1ICpGQJhUeirAI30ddrqDhxvjXvtjdRPL4ffokS4aC6E4zYyM2T5pIZg640hrYWycG7Ya9nhMhwkRi973VktDFUhSNjgZWZRwMgHZprurzIm+R4cPp00N4OD42qpvGNbRTBZfkauRzUBH0b8Da+8sFzQtZzfg5zm/W7WGDJCaT2rzv6Kp2iA/UUC3AaOCRaw3p44mXrIJvB4JJYiqqzXUMou5JgFXPUe20Upy2GUbROccXLWasSjRxe+zzabNX8wopjRwPrEbtU9jG1WwnT0TI6uoFCxNm2A5HX8Teblca04e//qFgtrueyoQl1eqB6xFWjeds2WFemirjPU6bJVqjtDnjOYeEr/8DGDk5QRDRdz71f4WRP1EgUMF3A6w3Fi5ZO7FmcbOgIlS7701hnFKdhE2xQatkGMflXpZ9VsoUKfZ7NjNWIt6aJqlAn6tufhoSlC5NxGlrcCQTJ5Emu3RxRFdyPEUVl1jj1OFcDdLHKBHfl699yEm3LYw+/AgqAAhWi7MPaHfEZ+00WjdXn45sIuFP6rZu+IeGfgkxqkC50r1dyOiQHQgnUgFbkQVfAOOdrI=
+ ARA:13230040|366016|1800799024|376014|22082099003|18002099003|56012099003; 
+X-Microsoft-Antispam-Message-Info: WebuGOiMeP/8Wr5pQTp6VVloUNDw2UVWkAf0cLg2rA4QqEI3uiAnL/GTIMarmMxD7wbhmtqEMrsV6ZU8Um13srk72pv341d5HiN2yIuPSz8+bDHLIpyfQGT86XDhYg+wRc33QlpjcReC6P/kGmtgDSL/wJXnyUHDgtS4F6MqkWY5FNFuCdIwUMCz9WhiffOkd4mgFDNrIrHpxFhxChhlStHa6/gp84O5zmN6JR22NNREHMyIUV7BPQ/2SZ6a2bVSPb7dZ94UJdNSU9zBh89hvT8CN5iG+kPvAi8mHgM8yowSYdj+V3CNWGQXC8iBkpT/p/tjSQEakxGMNG5N0xFryph//B5Hj5DrZ1z7Zh7bz1uUt8k2vHNqH41jP6d3GrMflY7P+ec6ULnr35ZPPNERqV0k/gpVldApGwAHq+PGqeFp214cJo2VhAXFng6saDDmaSWPpZ46+/lNFb0OcnktiteKnda+tzDOuM/Lbv70bMEbiRg/J1/Io7o+tQrLX7Vi0iJtnBUPJB2fUqtIgHfEq3dxWT9wuzPt4N9e5TAfjKx9r4YBeql8sy5uSM4eyUZ89HLu3juCVqg8LH5XobEIdM/CXX681p5jnk7BMaNcz6g43XmlSmRdHb68sonsnweYvALsUragSTXNJoCZi+7THZKyQkSnLabqxWmxJH68u7Ebigl0lXY+3inJemWmk8Yh/9MwKOsIFIRjObU/aYVshvD+FqxWEn29uSj9zLFEvCM=
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
  IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(376014)(1800799024)(366016)(56012099003)(18002099003)(22082099003);
+ SFS:(13230040)(366016)(1800799024)(376014)(22082099003)(18002099003)(56012099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VZA/DMt+L+2eh9MJCV2vvctjTyHrIWXuCboain4Pc6kItPghdr6ox7BizldA?=
- =?us-ascii?Q?ATyUhVmeRvftmZIynvZ1na9KVokhgsux1w/wYOk/N9CcOTnRqLVwxt3EYuUd?=
- =?us-ascii?Q?cfhEHjxJzHOZWkJBl4nff6HlShAbtCUVNsEpPPttXEzRoSDlRlqelCkAzAgH?=
- =?us-ascii?Q?fKiRq4jKvxkeqZLNrUwS3QJF12nC2Rp3EoxxITIVKSsMmtGcp/Ill8Cbxq0x?=
- =?us-ascii?Q?D5sAFawEZ7svsoNykZFeXnRjnFvfOwsZ17+y025leWDTgU+hjEborOG55YAf?=
- =?us-ascii?Q?9UHIywUjwfiap9T/zk1U7pGvE0+B+Nh4zC2BCDvKWxcsqnZEEEngh3MUmUEK?=
- =?us-ascii?Q?FXOfp7kr+YUTqYV+r5jH5yIp+E8vph7o1oyq7ozLSCNaX1K1ftAUUynzh0j5?=
- =?us-ascii?Q?d4A/7xk3rJKXAuIO1Kg6lSTQX9+HQp52LugD1eSeQ7BJC7nhm+4+jC2KO7JB?=
- =?us-ascii?Q?70i9o9f9A9h/y/aRn1qsckDV4zXXTYZkxqFMVDF9LyJagNtBuphQU1rYTb6U?=
- =?us-ascii?Q?GRJLvFtK/emTAYPW4L+t56KhoAYPL4PywtK4069b2NTFIE2hg3gv82nci2vZ?=
- =?us-ascii?Q?rZZEJ8ZzOsI+qpKtTMTXzMabVL/lXqUt4bMtqpk/mdg+6H+rHjqADVP9TBl+?=
- =?us-ascii?Q?hz0dNzDQZJCo/ibKx4WXOPbeJd4TeotfRsOUC3efqsagOH62mTshy1/jFiQ4?=
- =?us-ascii?Q?Qlh9u63SH/noBhBQAzfO0d9oVyRUP02ZySLGOBB9iMMsxUlFH47+nVhpHTU1?=
- =?us-ascii?Q?q18A9aRnAssWlXR/FZsrtKsU62Fq+BFi1ihqTIEbUq3HztacBVolAZYf7Sli?=
- =?us-ascii?Q?gTRrJRly8QPtDxarsycE81ntRaTar6LXPWtR/FjFvcpa/s2OXy8r8rxrCdr4?=
- =?us-ascii?Q?D1gSxMblLei9PSyCNRmqJJ33fBWK/dLZdjUyDBNeDM7JbOcYbml2rd8rylHf?=
- =?us-ascii?Q?btyqMPMoj5HE1S7qagEdhxAfEdWK6cKZXt7kT3ZDES9ceP67kW4EJRxNJMqg?=
- =?us-ascii?Q?DjL+RHj+JozXSgNXoze31HACWtUMCc1QBAjQXjjPd+rDuos/0CyF0+zrYQte?=
- =?us-ascii?Q?phNxCFFAVcgXlbWH8APmT8zD0GWJs7eGRVjdn7qkw8CiX6SZyQvO2rrivwt7?=
- =?us-ascii?Q?3iidqfbvVO/wSiw7qdZrigV6gZY+Ka6jB+2ythGxqf2Nr+yGQw1f9BvQuivc?=
- =?us-ascii?Q?lKEBFyhYwb5y8UE35mDIkvxYSxiJGqZBOxe/6vPDmecp7VbqlXWT9gt0p1vH?=
- =?us-ascii?Q?aBdY4Ljt0y5glm6qEwYgBwndAFGAhYgjq9t3KcsxTRdUAAvYC9rqk5+DMmam?=
- =?us-ascii?Q?foOSVcFgSDLYatP21xlbGnioYjsovsJr9IWdEo8T1xJOBdw+FCRdnt3+2QEk?=
- =?us-ascii?Q?dHZb230dg94Bv/hnt3QqzpL2hUZaZF5ulmZIvMvsFAevr6ZltoCLWOZsanfi?=
- =?us-ascii?Q?soAxt3W2zixut98xEfXPI9ekKHZ93WgfSfNNZBj6UDsCbN6AxFJ0K+u7PU0Q?=
- =?us-ascii?Q?TfCKmpwo39qdMVEKnwXNG5Y92p4M/nS7FQIjfePuRjrseF8paKbchLJsXmpV?=
- =?us-ascii?Q?AV07MHCJB+y/3cp2VV+23lkHrFUSCn6357G89ZNjglp8oFE3ZENXyBO2WdWL?=
- =?us-ascii?Q?mPDOtz/yBjAknZ3eE/YYZBdurnUOaF/Cyh/bHR1rWhR/so3PwniXF/1wmGOX?=
- =?us-ascii?Q?4NQE4WG3Mrwd/1VJ9JuQqzDmu8obidPV45QULwZoTZMkIxHKD/TeF+7E/ThS?=
- =?us-ascii?Q?7Iu4m+Tvrw=3D=3D?=
-X-Exchange-RoutingPolicyChecked: fXmnaUiVsKyZE5fa0THHtyWJYY6bTH4PPYsd1h00OfxVjI/dqWujcl4BIGcCrCgzVJmqh20P9Gb3dD3l5LuddaZMDzsmtFZi1GnbJ8NDg0MtgWTvoBD1/HlWzMINaL6CNQLmGS3Vl5+Ps4e2lHaHdksmtJrYDfjCYpxblgR5pUGmC2Gm6ALGZIk6scNqchTBpqC/TxkLO0pjih5to7k8rH3kNzecAkXodswUYJdLhJN/uZY5ocV3qse0f8wmJqH3rQ4T3XuXA6F7Eovo/gV8ndnP4FSlW/T1dLjNzym92Ykk/UVfYbnKKkpGQ72PuNw+JDRJD0CSjpGxSOXSFYv+yQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f0f6472-1fe4-43e4-42a4-08de9c7023e2
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?dgEzXnfgyTVbDCYg1m7ovtT84N3aEg6tJBAa1DWn9kS08RdvpdPd61bHV6VI?=
+ =?us-ascii?Q?fYOMiq3hDQX3/c19ppiYuLW0z0FQ27KMTXRRVGKq3wef/UwibrivEAV4hjON?=
+ =?us-ascii?Q?2Zt5QuDZi8Jwh0rbFU8iiAiEsLnA6WdP1pGEBIVzlarhYkm5QzkFK9tWupIH?=
+ =?us-ascii?Q?ZROvAcSm/lWbVTbDXEwzmgegdvilwsbn82S8Lxz35DcjcSDjf1ttSmN3UMh7?=
+ =?us-ascii?Q?au+3gHmPK2sMaA9Wceoqdl11XCSJldKcf2Xk8xut3RwEqzXbhB10S/6NMKfq?=
+ =?us-ascii?Q?xCEA161gfnqTHYqRpC9iId2dcyY6gPSIr8HngabCz0kBEu4ASXpl7oMBCHrf?=
+ =?us-ascii?Q?RXgQyO2gWb2EWwGjJJJHHLbjTPYQ6ZzTpwnB/NVT0CFMLYdihgeW1XjOl9FU?=
+ =?us-ascii?Q?STAEH07wxH2b0GnoCCtp24cLaguN8Lz/kRzUIie7aXdoB+D6XILegNHzDOce?=
+ =?us-ascii?Q?b4QnnqL3t3u476yODydfMuPhDfLrEZZZ2JVRevQuOCiq7NUys4mhpEHijYDn?=
+ =?us-ascii?Q?qkC+kZPJISvblIZi7JDvyo4yonrsArg/+zMVN0WNMBEf+CQ4h4oeByL90/GM?=
+ =?us-ascii?Q?zczvYCF/WFCm48VPZtZJ3t/a8D1lBPxXMCJ9f2X3BB2+ePHfph/0VJSgxTNu?=
+ =?us-ascii?Q?o7qhmfmTOyLks2dJQDlShmX5eqBIl6atrbW7rdRlqsGFUYQ02T1MIoanqquL?=
+ =?us-ascii?Q?uDr1m+/rK3Q/LnXk7+RVgSNmIsQSvegWQRmexUQBNxqUItIcig0iiPAUGzjP?=
+ =?us-ascii?Q?CVSQssSno2vjfJuSIgQnltkiZygS1GcVto9U5mJSys/fZnk6K4LdLiNYKjSS?=
+ =?us-ascii?Q?bcs7/xaYZ7T5aJDZ+uU4g3mXax096byUr5NXkRbfgzN19bUgGUdeY61T1636?=
+ =?us-ascii?Q?sjH14lJyA8YndIbKKUMkySkl4GK8VjnjXw61cJcEYRTFkwLAn/DgsnX5Pu1t?=
+ =?us-ascii?Q?VCXHB9DYua/cfn3vjZj2qkAFaKnTfVp+68wwVwcQ/s585ViRXCMOAT6FxMfV?=
+ =?us-ascii?Q?28qBuIBvg1bmNXvlBQLUjg0gTc4oxqh5IH7HCVTTpTBT8Naqg6YPVoT+JH9b?=
+ =?us-ascii?Q?Eq43yDdED65RPcA1trLndm+o269l9rcke9cSkopRSv0q/JGWK+mxxCymsOf2?=
+ =?us-ascii?Q?VzUMEOgAEzunNdXqLnsJlbH0is9AaQvls/MiRGphUcP/BHe6t+XVZuisDFCD?=
+ =?us-ascii?Q?UeXcdhvOh48On1qwb7U9nqRx5ehtSO2t/onnDQODZpZbBZghkTWTiBeFQiUn?=
+ =?us-ascii?Q?cdjLnmfeFAlmjH6Qc1FMHXze6coMYWpT1/kicprKaali85kK5MK0IZNnigXs?=
+ =?us-ascii?Q?QeGYA+U4E5ejhr+7A8vWk483CjLISEVMulymrGaQV56OQheKEcTP3yfsLtqY?=
+ =?us-ascii?Q?pdhlRP5khyMBBKcH6UlWn3xDptunVqaw+I+JlRkaH8UXnN/EM7VCtew9IKTg?=
+ =?us-ascii?Q?MiQ5jNYkPD0GPyIvnh32v0tPiHxq+wH4WjCG97/fFgQnOecgZ9UQ9Z/vRiUf?=
+ =?us-ascii?Q?BLv/HEUGF6asM9/kxZbfsptwdQf9XCSYSHqAL2cDuKCly++8+tvOPPYLMXZ9?=
+ =?us-ascii?Q?1/Lgwm8d6chSn7ebG95D6o9BaGyqs9rxFbmkkzv2T0RDKMpG9GPoCFWlqnWv?=
+ =?us-ascii?Q?GAZlwGt2PpOMruN1DaSO5ZK3tu+umQ53ChlU44jqsK7PLWgA7CWP5JdwM4fM?=
+ =?us-ascii?Q?vFS5HOHJ2aMNXurgN97j3/8gdFU4UNC1AmTeqSod6n0m0nSneYvmkRHATrOl?=
+ =?us-ascii?Q?qVXhR6w73mKgn9xHSb0k14nN55KrJ0o=3D?=
+X-Exchange-RoutingPolicyChecked: YuC59f0c1r+PKWt04ADsRvU4baZdQlQ5dv6LpbtfzTlnPdZwozl6xKAAxYgrd9KkNJoOuYsrgcF1gOzVtQl0lK3xZvTysNXtL0pbACOEmmsuBH8sNY+HPzGPq+ZYJ5XUlrliu9fNrbPw6y/ogZ8ikXkZI1HlN9Y9iXA72I10DDGFQ+EhaVn9iYk5hYXqPKVT7MUmyBLPqPuWzphtFxwdrch2aqja1qawFpCFiBLt1+9Ca6w/nKBNdVC2fAqzhpcSd2JkFn91/ah/mq4qThIUJXb/d7Q2EVTNbdTbOnYLlVBkKcfxF9UYIyNFrZQzsKDQFrx7pQddCSv6kGP0NXGxtA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4bc8f7c6-74a5-4f8c-2bac-08de9c813b7a
 X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2026 10:57:38.7538 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Apr 2026 12:59:59.7304 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Cgm5NgrvIF9MnbzPTNhgOjeJwZaIpKOAQ2HZYyvS7WFUs4PX58eoIi9e8GwviDXpT1voMS6XTfbJshFnvgCpVC5LcPEC2NLdgDLw6uspIes=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8223
+X-MS-Exchange-CrossTenant-UserPrincipalName: uHCfBFroZRCnhduHeEXMkCaO8q+RaPyfyhK6drteGfqiFSBRjOOMu3A9xceb+Joipn3gHqo7kMh631MVkfr2xs8MQsznH048i6eLvQIV8/Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8396
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -153,218 +152,12 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, Apr 17, 2026 at 10:08:02AM +0000, Ciara Loftus wrote:
-> Previously, the only way to transmit LLDP packets via the iavf PMD
-> was to register the IAVF_TX_LLDP_DYNFIELD dynamic mbuf field and set
-> it to a non-zero value on each LLDP mbuf before Tx.
-> 
-> This patch adds an alternative. If the new devarg `enable_ptype_lldp` is
-> set to 1, and if the mbuf packet type is set to RTE_PTYPE_L2_ETHER_LLDP
-> then a Tx path with context descriptor support will be selected and any
-> packets with the LLDP ptype will be transmitted.
-> 
-> The dynamic mbuf field support is still present however it is intended
-> that it will be removed in a future release, at which point only the
-> packet type approach will be supported.
+On Fri, Apr 17, 2026 at 10:56:09AM +0000, Ciara Loftus wrote:
+> Prior to this commit the transmit paths implemented for AVX2 used the
+> transmit descriptor only, making some offloads and features unavailable
+> on the AVX2 path, like LLDP. Enable two new AVX2 transmit paths, both
+> of which support using a context descriptor, one which performs offload
+> and the other which does not.
 > 
 > Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
-> ---
-> v3:
-> * Enable ptype LLDP via new devarg
-> ---
-
-Some feedback around documentation inline below.
-
-/Bruce
-
->  doc/guides/nics/intel_vf.rst           | 21 ++++++++++++++++-----
->  doc/guides/rel_notes/release_26_07.rst |  5 +++++
->  drivers/net/intel/iavf/iavf.h          |  1 +
->  drivers/net/intel/iavf/iavf_ethdev.c   | 15 +++++++++++++++
->  drivers/net/intel/iavf/iavf_rxtx.c     |  2 +-
->  drivers/net/intel/iavf/iavf_rxtx.h     |  9 +++++----
->  6 files changed, 43 insertions(+), 10 deletions(-)
-> 
-> diff --git a/doc/guides/nics/intel_vf.rst b/doc/guides/nics/intel_vf.rst
-> index 5fa2ddc9ea..4b65fa50cc 100644
-> --- a/doc/guides/nics/intel_vf.rst
-> +++ b/doc/guides/nics/intel_vf.rst
-> @@ -675,12 +675,14 @@ Inline IPsec Support
->  Diagnostic Utilities
->  --------------------
->  
-> -Register mbuf dynfield to test Tx LLDP
-> -~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> +Tx LLDP Testing
-> +~~~~~~~~~~~~~~~
->  
-> -Register an mbuf dynfield ``IAVF_TX_LLDP_DYNFIELD`` on ``dev_start``
-> -to indicate the need to send LLDP packet.
-> -This dynfield needs to be set to 1 when preparing packet.
-> +There are two methods to trigger LLDP packet transmission from the VF.
-> +
-> +The first method is to register an mbuf dynfield ``IAVF_TX_LLDP_DYNFIELD`` before
-> +``dev_start``. This dynfield needs to be set to 1 when preparing an LLDP packet
-> +intended for transmission.
->  
-
-Switch the order of the methods in the docs. We should always start with
-the best/recommended method first, so the user doesn't have to read through
-the less-recommended methods in order to get to the best one.
-
-Also not when describing the dyn-field method that it is deprecated and
-will be removed in future.
-
->  For ``dpdk-testpmd`` application, it needs to stop and restart Tx port to take effect.
->  
-> @@ -688,6 +690,15 @@ Usage::
->  
->      testpmd> set tx lldp on
->  
-> +An alternative method for transmitting LLDP packets is to set the ``packet_type`` of
-> +the mbuf to ``RTE_PTYPE_L2_ETHER_LLDP``. This, in conjunction with enabling the
-> +``enable_ptype_lldp`` devarg will cause such packets to be transmitted::
-> +
-> +    -a 0000:xx:xx.x,enable_ptype_lldp=1
-> +
-> +When ``enable_ptype_lldp`` is not set (default), ptype-based LLDP detection is
-> +disabled, but LLDP transmission via the dynamic mbuf field remains available.
-> +
-
-The previous method describes testpmd use. Do we need such a description
-here too?
-
->  
->  Limitations or Knowing issues
->  -----------------------------
-> diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-> index 060b26ff61..e0b27a554a 100644
-> --- a/doc/guides/rel_notes/release_26_07.rst
-> +++ b/doc/guides/rel_notes/release_26_07.rst
-> @@ -56,6 +56,11 @@ New Features
->       =======================================================
->  
->  
-> +* **Updated Intel iavf driver.**
-> +
-> +  * Added support for transmitting LLDP packets based on mbuf packet type.
-> +
-> +
->  Removed Items
->  -------------
->  
-> diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-> index f8008d0fda..ef503a1b64 100644
-> --- a/drivers/net/intel/iavf/iavf.h
-> +++ b/drivers/net/intel/iavf/iavf.h
-> @@ -323,6 +323,7 @@ struct iavf_devargs {
->  	int auto_reconfig;
->  	int no_poll_on_link_down;
->  	uint64_t mbuf_check;
-> +	int enable_ptype_lldp;
->  };
->  
->  struct iavf_security_ctx;
-> diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-> index 3126d9b644..77e8c6b54b 100644
-> --- a/drivers/net/intel/iavf/iavf_ethdev.c
-> +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-> @@ -44,9 +44,11 @@
->  #define IAVF_ENABLE_AUTO_RECONFIG_ARG "auto_reconfig"
->  #define IAVF_NO_POLL_ON_LINK_DOWN_ARG "no-poll-on-link-down"
->  #define IAVF_MBUF_CHECK_ARG       "mbuf_check"
-> +#define IAVF_ENABLE_PTYPE_LLDP_ARG "enable_ptype_lldp"
->  uint64_t iavf_timestamp_dynflag;
->  int iavf_timestamp_dynfield_offset = -1;
->  int rte_pmd_iavf_tx_lldp_dynfield_offset = -1;
-> +bool iavf_ptype_lldp_enabled;
->  
->  static const char * const iavf_valid_args[] = {
->  	IAVF_PROTO_XTR_ARG,
-> @@ -56,6 +58,7 @@ static const char * const iavf_valid_args[] = {
->  	IAVF_ENABLE_AUTO_RECONFIG_ARG,
->  	IAVF_NO_POLL_ON_LINK_DOWN_ARG,
->  	IAVF_MBUF_CHECK_ARG,
-> +	IAVF_ENABLE_PTYPE_LLDP_ARG,
->  	NULL
->  };
->  
-> @@ -1016,6 +1019,11 @@ iavf_dev_start(struct rte_eth_dev *dev)
->  	/* Check Tx LLDP dynfield */
->  	rte_pmd_iavf_tx_lldp_dynfield_offset =
->  		rte_mbuf_dynfield_lookup(IAVF_TX_LLDP_DYNFIELD, NULL);
-> +	if (rte_pmd_iavf_tx_lldp_dynfield_offset > 0)
-> +		PMD_DRV_LOG(WARNING,
-> +			"The LLDP Tx dynamic mbuf field will be removed in a future release.");
-
-I think this message could do with being expanded and clarified, even if it
-is longer. For example: "Using a dynamic mbuf field to identify LLDP
-packets is deprecated. Set the 'enable_ptype_lldp' driver option and mbuf
-LLDP ptypes instead"
-
-> +	iavf_ptype_lldp_enabled = adapter->devargs.enable_ptype_lldp ||
-> +					rte_pmd_iavf_tx_lldp_dynfield_offset > 0;
->  
->  	if (iavf_init_queues(dev) != 0) {
->  		PMD_DRV_LOG(ERR, "failed to do Queue init");
-> @@ -2445,6 +2453,11 @@ static int iavf_parse_devargs(struct rte_eth_dev *dev)
->  	if (ret)
->  		goto bail;
->  
-> +	ret = rte_kvargs_process(kvlist, IAVF_ENABLE_PTYPE_LLDP_ARG,
-> +				 &parse_bool, &ad->devargs.enable_ptype_lldp);
-> +	if (ret)
-> +		goto bail;
-> +
->  bail:
->  	rte_kvargs_free(kvlist);
->  	return ret;
-> @@ -2795,6 +2808,8 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
->  		 */
->  		rte_pmd_iavf_tx_lldp_dynfield_offset =
->  			rte_mbuf_dynfield_lookup(IAVF_TX_LLDP_DYNFIELD, NULL);
-> +		iavf_ptype_lldp_enabled = adapter->devargs.enable_ptype_lldp ||
-> +						rte_pmd_iavf_tx_lldp_dynfield_offset > 0;
->  		iavf_set_tx_function(eth_dev);
->  		return 0;
->  	}
-> diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-> index 4ff6c18dc4..bb62ab07de 100644
-> --- a/drivers/net/intel/iavf/iavf_rxtx.c
-> +++ b/drivers/net/intel/iavf/iavf_rxtx.c
-> @@ -3886,7 +3886,7 @@ iavf_set_tx_function(struct rte_eth_dev *dev)
->  	if (iavf_tx_vec_dev_check(dev) != -1)
->  		req_features.simd_width = iavf_get_max_simd_bitwidth();
->  
-> -	if (rte_pmd_iavf_tx_lldp_dynfield_offset > 0)
-> +	if (iavf_ptype_lldp_enabled)
->  		req_features.ctx_desc = true;
->  
->  	for (i = 0; i < dev->data->nb_tx_queues; i++) {
-> diff --git a/drivers/net/intel/iavf/iavf_rxtx.h b/drivers/net/intel/iavf/iavf_rxtx.h
-> index 80b06518b0..0157c4c37e 100644
-> --- a/drivers/net/intel/iavf/iavf_rxtx.h
-> +++ b/drivers/net/intel/iavf/iavf_rxtx.h
-> @@ -157,14 +157,15 @@
->  
->  #define IAVF_TX_LLDP_DYNFIELD "intel_pmd_dynfield_tx_lldp"
->  #define IAVF_CHECK_TX_LLDP(m) \
-> -	((rte_pmd_iavf_tx_lldp_dynfield_offset > 0) && \
-> -	(*RTE_MBUF_DYNFIELD((m), \
-> -			rte_pmd_iavf_tx_lldp_dynfield_offset, \
-> -			uint8_t *)))
-> +	(iavf_ptype_lldp_enabled && \
-> +	(((m)->packet_type & RTE_PTYPE_L2_MASK) == RTE_PTYPE_L2_ETHER_LLDP || \
-> +	(rte_pmd_iavf_tx_lldp_dynfield_offset > 0 && \
-> +	*RTE_MBUF_DYNFIELD((m), rte_pmd_iavf_tx_lldp_dynfield_offset, uint8_t *))))
->  
->  extern uint64_t iavf_timestamp_dynflag;
->  extern int iavf_timestamp_dynfield_offset;
->  extern int rte_pmd_iavf_tx_lldp_dynfield_offset;
-> +extern bool iavf_ptype_lldp_enabled;
->  
->  typedef void (*iavf_rxd_to_pkt_fields_t)(struct ci_rx_queue *rxq,
->  				struct rte_mbuf *mb,
-> -- 
-> 2.43.0
-> 
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
