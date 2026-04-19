@@ -2,69 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A49EA71A1
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Apr 2026 16:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1706BEA71A1
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Apr 2026 16:11:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 960F0402EB;
-	Sun, 19 Apr 2026 18:11:08 +0200 (CEST)
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com
- [209.85.161.53]) by mails.dpdk.org (Postfix) with ESMTP id CDC2540653
- for <dev@dpdk.org>; Sun, 19 Apr 2026 18:11:06 +0200 (CEST)
-Received: by mail-oo1-f53.google.com with SMTP id
- 006d021491bc7-68a3b605bdcso1325006eaf.2
- for <dev@dpdk.org>; Sun, 19 Apr 2026 09:11:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 854984065F;
+	Sun, 19 Apr 2026 18:11:09 +0200 (CEST)
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com
+ [209.85.160.49]) by mails.dpdk.org (Postfix) with ESMTP id 296FF402EB
+ for <dev@dpdk.org>; Sun, 19 Apr 2026 18:11:08 +0200 (CEST)
+Received: by mail-oa1-f49.google.com with SMTP id
+ 586e51a60fabf-4042905015cso1423052fac.0
+ for <dev@dpdk.org>; Sun, 19 Apr 2026 09:11:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776615066;
- x=1777219866; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776615067;
+ x=1777219867; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=W+g3M8JUHPzbXrTMsGrSCsacJ+kXkE+jTUGXNaJTKQ4=;
- b=DDrvXlE/rRb7jQTI8DpOte3lJacLKJNOjPI6jGqlcuqASSzIqbonu78jexg6CiYIAC
- LihNX4AFQETUtwZsrrqAkWJTeMRLfQO05hMXXWuHMwK9+xSknt1c4SapAcCRm9Q4IzZ8
- 0G6Yevp+YxCiy+hSlPj15AzuGtVxvZY/4Nz4wyyx2+VzfuHvEqBV0hm7VQSLsDF8XLew
- pfnUQ3Q0WC+7yTYn47XqvdcZmOx2MDoFHCkYLSH1cDs7QF1kve4Pe+0gg7ksimvYJi0r
- hTvwwARIXBRyk3l58FY4ZEkskgWThNhIsBFBxbGtNln7rVaaNLQkyaaFCbCFrobfCd8w
- 9XxA==
+ bh=6oziFIePaGAtnlP6qcWP6qzC3ifZoFwAoS63sMQuE14=;
+ b=HnzZ0p4eaJRjnxAoGq0rD6mN9yA04/klnAa5Wt7TkShImg/1ypMpGsbu1fvH9/0wjE
+ bN/g/wynvfiBKKUr7gOPsxugBPt2OspCs8WYNwEikDA6kAhi34L2IB7FWEn8+aHU6b5+
+ 9/UTe7dnEVv1aFMK4Loizd4cIhLVOwTTdWu5N0hJBeb2TnjBE/ZEF5Vl6nUY5YeIcGVo
+ J34+xao9HwZ0gub/BVNZAEBzsaz4SZBhGOHlnuGTmN4lAKcGvQt75ohdkcNoBcCys9y6
+ NjOmy0M55DZGq0CHFsHO+EFhyd430i6IgB1Smd7Q82wcBw4WxCUiJU9Kt9ugh5PrS7vO
+ riqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776615066; x=1777219866;
+ d=1e100.net; s=20251104; t=1776615067; x=1777219867;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=W+g3M8JUHPzbXrTMsGrSCsacJ+kXkE+jTUGXNaJTKQ4=;
- b=oaNvpvP14ZBr+NAegZtvJexrSw7wVpN5IGjQkla7CZI3xeH1uWLfKvWnbueBESRr50
- 3JWCbqfia0kyka9w7tmEp9Tbo6vRo/qvGIsUsRhstoCvH1ohrNP0uY7AgIHlN0nAwUhc
- vPhLBT1nyFaDawuAavraCzM0hCjsf2gInO74fSSJLemrjaAI6Li4eFEE2xmWwV8myxVU
- Zh9VejoulbbfZ74Ja48p2LN/DGI37fT4uhh5yyXouEx0YAJFH4Z8iP/6ZZyP4ZZPdkPl
- DZtoSYgenzRpPTmqqf56w7gUkwIMGPNr0CRXq/ZKSqjxwSKMLg2E3QuAWJlru1Y7pvLD
- YEBg==
-X-Gm-Message-State: AOJu0Ywt/mdbFSijxKOFnmc+i765A7whlnvnu5HPPVHXx17e5+sEgfor
- 5ONN83dI5jUXREXtNYr5vRdYM2xuWjBjUrNZvKeFwNObt7/HodcBdohlrslECMDtW6upqS8VxmI
- yOI8B
-X-Gm-Gg: AeBDievSofBoNz5zxDIwuzECFPiDWW5rXnJv2iuMAp6hEF9wzt0F3JTHsPLpjfnaZZS
- CYiQmzqEj8KGBtkLaLRt7GRK8tbs0mTazH4DHukDCk9V9nmvUKhSv8Zu0zkcizKZfRfjXC8x/ZT
- 53gMEz4GRpH7/z2CXfAzrexK5qe4he1gwO21APwaWuSgaytejzaTNlSF7eOhUAJQYFvj0CyHUjc
- XSzfR6EQigyna4A7KBhScwqKmFxM/5JN7Xmu9r+HD+QRKieOPaxVGNkI2dZ7R30lRJEI3dHwtJO
- 4k81HSD0tR2ELiFV3yHHVTQe4bQG5up6rEN4b3/gQHjlTY6LfyYZ+ud3fIiTSFgP7j+Q4lOIm7x
- cNtite15qRoE5DNNMInDIvordG1UW8D03xhcoq/nNwc8QUgQAEdXpqZ0yh6JprnUuLViCobLjly
- YUqRySxrcOG2C6iXdC1zVyqCdVUa3fR5GKZoA8bGpIur0=
-X-Received: by 2002:a05:6820:210e:b0:693:7a6f:b313 with SMTP id
- 006d021491bc7-69462de0c1bmr6128905eaf.2.1776615066069; 
- Sun, 19 Apr 2026 09:11:06 -0700 (PDT)
+ bh=6oziFIePaGAtnlP6qcWP6qzC3ifZoFwAoS63sMQuE14=;
+ b=eNI8fi5JHSmjU6uLNs9phZV7PXGPLI7uPI5HCqOT3E7wNOAmsaLeJw4aPOyVIcP/1e
+ ul8DZtOc5CwuK0fsxQuIq1bdtkr6npseKzow1/gpfzu1KMON+2WnVAznzhkkb//82/fb
+ jtEDfc2qy1GAqwx9+/QbikD1PnX47zTe8FJl7lhqVvUxr/rRszqup9Eu9RGlRSMZDEnw
+ FLUA6eANE9tMRUtO6xKP5LhTtqYzi3JBWzsIpfQ8y+I9nBRGanT2QilswArOAJ5QY4+/
+ GOGg1LZA88UKe0eMMgpsHEYvbWyKF6mC2aOXPJ3idBcFN8FpRrSiVzql7jwMOv9Ch9L9
+ srJw==
+X-Gm-Message-State: AOJu0Yx3yMLGLjxUTx1Ugw5VmgsDdlpOHJ4Mkuq9sEASycDUsT2BWBFG
+ x4M/Zv/9CDikWnov2KUIYmPxixMlRiT/ZN//2hZidMVnz8MhOEmvgmI7Ly4qxCg7+qabDo+1yY6
+ lYRgz
+X-Gm-Gg: AeBDievkZotYT/kQTWEs4F1WdFvNxXExt11WOmxNMV/dNmkcQYLkAnLdu/WLIAf3GAS
+ U5jIsgXpjRXbKtfY3g20uvGLjcyL8EXJ05q+zlDsGY6Djg3HHf44Pd+lD4K2dZ2x1Mne5mIcNvD
+ 5zH+CxQPESPzAkZTLeQjgI2p89BjftyfrybdpWlw8599W7bNQr4H0E/hgNEZWQLkGEbrAx2cvEu
+ Gg7IHBbLvSMRUQAe9B+RF1HV7Uc8gaRIAjLpWsf8m0YelES7l3kHlxvO8t6Aba4ZBJ9YX5bhkHd
+ 3X1OWFBXCo10l8llTq5QzR5mm/gOLPVK5p+xzdpWV49ZuVvF8OiGjNz07zK1USPYXq0raY62iQM
+ o5wiAe171P5PJTUYA9HvoNY9iNXZZn9nMsymwZdumSQs3+bw64CO8I/jCn/9xwbLyAmFCsklxQY
+ WJaMlNWsPGdfM61ntF7Kl/X4v461tYa58PqcvuM/S4YTQ=
+X-Received: by 2002:a05:6870:6390:b0:417:23f2:6d77 with SMTP id
+ 586e51a60fabf-42abf2ecb41mr5707592fac.16.1776615067404; 
+ Sun, 19 Apr 2026 09:11:07 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-42b930bca47sm5970632fac.7.2026.04.19.09.11.04
+ 586e51a60fabf-42b930bca47sm5970632fac.7.2026.04.19.09.11.06
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 19 Apr 2026 09:11:05 -0700 (PDT)
+ Sun, 19 Apr 2026 09:11:07 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Chengwen Feng <fengchengwen@huawei.com>,
- David Marchand <david.marchand@redhat.com>,
- Thomas Monjalon <thomas@monjalon.net>,
- Andrew Rybchenko <andrew.rybchenko@oktetlabs.ru>
-Subject: [PATCH v25 02/24] net/pcap: fix build on Windows
-Date: Sun, 19 Apr 2026 09:09:35 -0700
-Message-ID: <20260419161059.205954-3-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v25 03/24] doc: update features for PCAP PMD
+Date: Sun, 19 Apr 2026 09:09:36 -0700
+Message-ID: <20260419161059.205954-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260419161059.205954-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -84,60 +81,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The log messages in the pcap OS dependent code for Windows
-was never converted during the last release.
-
-It looks like the osdep part of pcap was not being built.
-Building requires have libpcap for Windows built which is not
-part of the CI infrastructure.
-
-Fixes: 2b843cac232e ("drivers: use per line logging in helpers")
-Cc: stable@dpdk.org
+The PCAP PMD supports more features that were not flagged
+in the feature matrix.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Chengwen Feng <fengchengwen@huawei.com>
-Acked-by: David Marchand <david.marchand@redhat.com>
+Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/pcap/pcap_osdep_windows.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ doc/guides/nics/features/pcap.ini | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/net/pcap/pcap_osdep_windows.c b/drivers/net/pcap/pcap_osdep_windows.c
-index 1d398dc7ed..0965c2f5c9 100644
---- a/drivers/net/pcap/pcap_osdep_windows.c
-+++ b/drivers/net/pcap/pcap_osdep_windows.c
-@@ -53,7 +53,7 @@ osdep_iface_index_get(const char *device_name)
- 
- 	ret = GetAdapterIndex(adapter_name, &index);
- 	if (ret != NO_ERROR) {
--		PMD_LOG(ERR, "GetAdapterIndex(%S) = %lu\n", adapter_name, ret);
-+		PMD_LOG(ERR, "GetAdapterIndex(%S) = %lu", adapter_name, ret);
- 		return -1;
- 	}
- 
-@@ -75,20 +75,20 @@ osdep_iface_mac_get(const char *device_name, struct rte_ether_addr *mac)
- 
- 	sys_ret = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, NULL, &size);
- 	if (sys_ret != ERROR_BUFFER_OVERFLOW) {
--		PMD_LOG(ERR, "GetAdapterAddresses() = %lu, expected %lu\n",
-+		PMD_LOG(ERR, "GetAdapterAddresses() = %lu, expected %lu",
- 			sys_ret, ERROR_BUFFER_OVERFLOW);
- 		return -1;
- 	}
- 
- 	info = (IP_ADAPTER_ADDRESSES *)malloc(size);
- 	if (info == NULL) {
--		PMD_LOG(ERR, "Cannot allocate adapter address info\n");
-+		PMD_LOG(ERR, "Cannot allocate adapter address info");
- 		return -1;
- 	}
- 
- 	sys_ret = GetAdaptersAddresses(AF_UNSPEC, 0, NULL, info, &size);
- 	if (sys_ret != ERROR_SUCCESS) {
--		PMD_LOG(ERR, "GetAdapterAddresses() = %lu\n", sys_ret);
-+		PMD_LOG(ERR, "GetAdapterAddresses() = %lu", sys_ret);
- 		free(info);
- 		return -1;
- 	}
+diff --git a/doc/guides/nics/features/pcap.ini b/doc/guides/nics/features/pcap.ini
+index 7fd22b190e..99ba3b8e1f 100644
+--- a/doc/guides/nics/features/pcap.ini
++++ b/doc/guides/nics/features/pcap.ini
+@@ -4,8 +4,15 @@
+ ; Refer to default.ini for the full list of available PMD features.
+ ;
+ [Features]
++Link status          = Y
++Queue start/stop     = Y
++Timestamp offload    = P
+ Basic stats          = Y
++Stats per queue      = Y
+ Multiprocess aware   = Y
++FreeBSD              = Y
++Linux                = Y
++Windows              = Y
+ ARMv7                = Y
+ ARMv8                = Y
+ Power8               = Y
 -- 
 2.53.0
 
