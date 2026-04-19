@@ -2,65 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DEEFB44C2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Apr 2026 07:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A28FB44C2
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Apr 2026 07:06:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8374040667;
-	Fri, 24 Apr 2026 09:05:53 +0200 (CEST)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com
- [209.85.218.43]) by mails.dpdk.org (Postfix) with ESMTP id 22AE9402A3
- for <dev@dpdk.org>; Fri, 17 Apr 2026 12:49:08 +0200 (CEST)
-Received: by mail-ej1-f43.google.com with SMTP id
- a640c23a62f3a-b9825ba7f9dso244444966b.0
- for <dev@dpdk.org>; Fri, 17 Apr 2026 03:49:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8B8494066E;
+	Fri, 24 Apr 2026 09:05:54 +0200 (CEST)
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com
+ [209.85.160.181])
+ by mails.dpdk.org (Postfix) with ESMTP id 16A6D402B5
+ for <dev@dpdk.org>; Sun, 19 Apr 2026 18:48:46 +0200 (CEST)
+Received: by mail-qt1-f181.google.com with SMTP id
+ d75a77b69052e-50d8da3e656so27252961cf.1
+ for <dev@dpdk.org>; Sun, 19 Apr 2026 09:48:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1776422948; x=1777027748; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1776617325; x=1777222125; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=fx2nkFBOxDlVD1oxzMUbuJG3W0fbXg3wng5h2t6dh00=;
- b=reXDicKMDu+J9oG8WhnjrIuVjkhGjgDe3Tk07RrF+MywJI2mGueyb1/oLNtTdZvKee
- /EKxOr7oLnR4sVboHng+sV/Tni26u+PJXM729eB6pElWutEX6QLJ0kCMXOVOaXRouyh9
- YyzBDneQbA2zSotzKseP7Wlwr4iaBhFUOCSmdch+Xx3zfwDF3+1wEvVxJC5H5lbki4gA
- xtvrdDiO5CVbzCOI5slRI2HwNg4gBmV6BLGQ5OEQZ8UVWQ+lUwkNBuEROi8A2TAwOavB
- YIe7BV5LL3JwFKe3eX+Uz9819H41tlMm/23I4T6bw9QRj4Dwqz2fEcdWDlbalewr8nMP
- WmhA==
+ bh=+Tsbf6frJpRJ0sHsOHkQ1ue8ac5SffTnF1tNHbd6ETc=;
+ b=JS7o2KNGs/i20CyMEQHuobxwvR76OK0p8cW4r9QI2xrDVmPdM37T+kAJ9qsa4x0sE+
+ FROX9ZpsV6qpxa0q6EYOAbI1CdS/OQ8ZRorAf0aGVXzqlkS5LLmkMUvZ+nWD3Fff8DBp
+ 79E+ApygygICAMJ1jDsoECVaPnuofWKq1MvR1hCQojcYfINOI+ueZbUmQwRet1mGJRKc
+ i3MIWtVZvuPZSqSpCTE99ilcE/Xui2Y6ncJH8/zaYQWZVLVqAmMGuyfL++swf36O4d0d
+ oItvclCVn7xoQtyRSWNbJjCUiLbtus6rnjHyrzpJm7x5izljfOx7m4L502oUxSIqYdpZ
+ I5hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776422948; x=1777027748;
+ d=1e100.net; s=20251104; t=1776617325; x=1777222125;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fx2nkFBOxDlVD1oxzMUbuJG3W0fbXg3wng5h2t6dh00=;
- b=Tk5f9Fnsw1oAZ24sAFU/7Gws6+8YMUNkxeOF4FQbrNOyxwPTNq4Ef2Cm82vheihhiE
- LIf9PDWca+k4PS89BaZmb0JX0eSOKu9yHolMg5iLa7UkKahLKsat1/yuA7ybDvWhVGCm
- NB4/i2rsELnYfLu2KhXVi9Wkl+/mrqEZfBkTMUJYnoAPpQRcBdcj8KenggZGJOyh073O
- CK0KpYJr0TgvfxWmBRcDKukw0+to7Bzw8UXdMrk+T+hxY0jH6qLzxVsd+r8T4e60VYLK
- viEX81OLrm2nKEa5M2o30dB7YmFFexmo+tH0sAzLZsoDajsIItz3Fc9gvBntL+MbQ3jb
- YNeQ==
-X-Gm-Message-State: AOJu0Yx8xfqs2TtC9auotV93+iUhC+WoufcM7rmok5hCE+f9IFTkOpCz
- aOs9LUZoEBAdzcwe8AuDGL5EtFQKr7g/sTQH9DvvvsxartuihHs0/zo226WDe03mZU0=
-X-Gm-Gg: AeBDieuH8/OHlXF9ag82AKksBeRgXkAserDkn3YO/rp9+WmiHkBFRBoVFjZYFJjDf6I
- DygECTQqg2GMl+ejU2QyQzytQrm2T/hfNlXj71KkN0OHXwOHQmyc97r1/lS6YLK7EyhUDYum4lX
- df2BPIMUr/I7dkiPEs5+qMaOOKqg5AhvFqKBWZdwzM4fsCnzbFtU1i+07dukot5KrWSfuN4ZMWG
- 7SMYInjEPGjK/XI4Bo/6kvXRLcShRnBc549qhbZYws5IasQsHNA2Ywex69w3R6gCQ3BRrd1jhJN
- /sSiCskmqYEAfIxBxNHQTMcB3z/LEpT06o7mvM8yzdjif9QE3yyAXBXMcs7TOnKtyEwWg6GJCxW
- ZsC2rnPVAKzS6BGE6dWP72Q9y1tB912U4yctOgiW6SFkhbixezVvzz63SEVWH5tqzTfktO+WrmJ
- 3/y4bSOiNdv9Ppe2N+Y5RAQ+OQKvvkBFxrmZvfw6u+GuREBySh05MKn8g7kHjSAhChbDkjiZFpx
- vk=
-X-Received: by 2002:a17:906:c102:b0:b97:b88c:386b with SMTP id
- a640c23a62f3a-ba4229d7784mr108292566b.29.1776422947459; 
- Fri, 17 Apr 2026 03:49:07 -0700 (PDT)
-Received: from work.cisco.com ([2603:5004:20a0:100c:fa09:d9cc:a4b8:91d6])
- by smtp.gmail.com with ESMTPSA id
- a640c23a62f3a-ba454d1b379sm41257166b.39.2026.04.17.03.49.06
+ bh=+Tsbf6frJpRJ0sHsOHkQ1ue8ac5SffTnF1tNHbd6ETc=;
+ b=mGyg9vxnKdX+udRBxdMYiT8+9PC2Et4kFt+NIMF9H2ssfuwE0KSQO6KeR0Ii7jUQ1w
+ TGwUwan3omEYUIPjIFEdqwZf+iuu33VFsd+vZoNZ0rQHdhQl6ZEBQRnCleZ4aOoB09A0
+ UByILjbqngYGlwwAw9Y9T12lpnUy4zHDUYqtt94o6I2hCcOjIjlfAHhCtVl3B4RwvQpS
+ z7L1/GvT/Wrat2V7Xis8uvu2BbbJ6KH6tGIIIy8lhAVi5f2Rw40Zjdum4wVTO+HZmh33
+ 7wJ8UZ+lGaLUdNjX3clUt0HawmwWUtYL60iP4exuRO2mfbmKBTQr07xzvPrboJAFADOO
+ 6+Lg==
+X-Gm-Message-State: AOJu0YxvTdWWySic9pQxjhLUzeokrmDDlkMf256vg13hdhGi5p9mwaBl
+ O5Fjaqaczqfq+NoRTzb6iPTqBHejqkV+MDqVMq7RWINCHpas22igWi9OwHPHPxqW
+X-Gm-Gg: AeBDieuubGtON2pNfzp9p+a9NUY7EVyC+/hJpL70CpUETyke/v3u0UXVLuebwC9Vk3j
+ K9L7FG1n048GBsAB4vN8dY3+gGC28l8hYGFTRaJ+aybYINMpSLhxuSGqh6pYBgbk/UonIZIPwM1
+ pnV4gAYelUYKOraMLH9OLlwiTHfjZdsEP/zPOKUuC+WGRTtJwatFMC++XWQDZDZb4Wc1rZakJUG
+ MVj3NCCPHi/kziuaYDg87s06lyCwhIm6YrbPlxRGBpil596adbp7IHLTSS7evaUY8IjaI3CjgBX
+ SZuaODgYXgUV8+xEjsoVeMOGqX4WlUrWipz+4ckk8XEX8DSQe4Y40Tak/hHZeoJnSBoiXMZmy1R
+ GmbQ3Hdep3bRGU5p/OI5I7c5XLZlCI4mRP6by3CDJNTkrKFDw1a3ds9TVxY5pXrTDtWCTBNb/dX
+ LLmy/sMnvgIMCgoQOPgpuwqZc=
+X-Received: by 2002:a05:622a:84:b0:50d:9efe:97e2 with SMTP id
+ d75a77b69052e-50e36c4da3dmr155660041cf.44.1776617324961; 
+ Sun, 19 Apr 2026 09:48:44 -0700 (PDT)
+Received: from gmail.com ([50.93.222.110]) by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-50e3bf260fbsm72875771cf.10.2026.04.19.09.48.44
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 17 Apr 2026 03:49:07 -0700 (PDT)
-From: Maxime Peim <maxime.peim@gmail.com>
-To: dev@dpdk.org
-Cc: david.marchand@redhat.com
-Subject: [PATCH] eal: fix core_index for non-EAL registered threads
-Date: Fri, 17 Apr 2026 12:48:38 +0200
-Message-ID: <20260417104838.342531-1-maxime.peim@gmail.com>
-X-Mailer: git-send-email 2.43.0
+ Sun, 19 Apr 2026 09:48:44 -0700 (PDT)
+From: Weijun Pan <wpan3636@gmail.com>
+X-Google-Original-From: Weijun Pan <wpan36@wisc.edu>
+To: 
+Cc: dev@dpdk.org,
+	Weijun Pan <wpan36@wisc.edu>
+Subject: [PATCH] test: parenthesize assertion macro parameters
+Date: Sun, 19 Apr 2026 11:48:18 -0500
+Message-Id: <20260419164818.20609-1-wpan36@wisc.edu>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Mailman-Approved-At: Fri, 24 Apr 2026 09:05:46 +0200
@@ -77,66 +78,121 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Threads registered via rte_thread_register() are assigned a valid
-lcore_id by eal_lcore_non_eal_allocate(), but their core_index in
-lcore_config is left at -1. This value was set during rte_eal_cpu_init()
-for lcores with ROLE_OFF (undetected CPUs) and is never updated when the
-lcore is later allocated to a non-EAL thread.
+Some test assertion macros use parameters directly in expressions,
+which can lead to unexpected evaluation due to operator precedence
+after macro substitution.
 
-As a result, rte_lcore_index() returns -1 for registered non-EAL
-threads. Libraries that use rte_lcore_index() to select per-lcore
-caches fall back to a shared global path when it returns -1, causing
-severe contention under concurrent access from multiple registered
-threads.
+Fix this by parenthesizing macro parameters and the resulting
+expressions in rte_test.h and app/test/test.h.
 
-A concrete example is the mlx5 indexed memory pool (mlx5_ipool), which
-uses rte_lcore_index() in mlx5_ipool_malloc_cache() to select a per-core
-cache slot. When core_index is -1, all registered threads are funneled
-into a single shared slot protected by a spinlock. In testing with VPP
-(which registers worker threads via rte_thread_register()), this caused
-async flow rule insertion throughput to drop from ~6.4M rules/sec to
-~1.2M rules/sec with 4 workers -- a 5x regression attributable entirely
-to spinlock contention in the ipool allocator.
+Bugzilla ID: 1925
 
-Fix by setting core_index to the next sequential index (cfg->lcore_count)
-in eal_lcore_non_eal_allocate() before incrementing the count. Also reset
-core_index back to -1 on the error rollback path and in
-eal_lcore_non_eal_release() for correctness.
-
-Fixes: 5c307ba2a5b1 ("eal: register non-EAL threads as lcores")
-Signed-off-by: Maxime Peim <maxime.peim@gmail.com>
+Signed-off-by: Weijun Pan <wpan36@wisc.edu>
 ---
- lib/eal/common/eal_common_lcore.c | 3 +++
- 1 file changed, 3 insertions(+)
+ app/test/test.h            | 34 +++++++++++++++++-----------------
+ lib/eal/include/rte_test.h | 12 ++++++------
+ 2 files changed, 23 insertions(+), 23 deletions(-)
 
-diff --git a/lib/eal/common/eal_common_lcore.c b/lib/eal/common/eal_common_lcore.c
-index 39411f9370..ae085d73e4 100644
---- a/lib/eal/common/eal_common_lcore.c
-+++ b/lib/eal/common/eal_common_lcore.c
-@@ -378,6 +378,7 @@ eal_lcore_non_eal_allocate(void)
- 	for (lcore_id = 0; lcore_id < RTE_MAX_LCORE; lcore_id++) {
- 		if (cfg->lcore_role[lcore_id] != ROLE_OFF)
- 			continue;
-+		lcore_config[lcore_id].core_index = cfg->lcore_count;
- 		cfg->lcore_role[lcore_id] = ROLE_NON_EAL;
- 		cfg->lcore_count++;
- 		break;
-@@ -399,6 +400,7 @@ eal_lcore_non_eal_allocate(void)
- 		}
- 		EAL_LOG(DEBUG, "Initialization refused for lcore %u.",
- 			lcore_id);
-+		lcore_config[lcore_id].core_index = -1;
- 		cfg->lcore_role[lcore_id] = ROLE_OFF;
- 		cfg->lcore_count--;
- 		lcore_id = RTE_MAX_LCORE;
-@@ -420,6 +422,7 @@ eal_lcore_non_eal_release(unsigned int lcore_id)
- 		goto out;
- 	TAILQ_FOREACH(callback, &lcore_callbacks, next)
- 		callback_uninit(callback, lcore_id);
-+	lcore_config[lcore_id].core_index = -1;
- 	cfg->lcore_role[lcore_id] = ROLE_OFF;
- 	cfg->lcore_count--;
- out:
+diff --git a/app/test/test.h b/app/test/test.h
+index 1f12fc5397..b1174e4973 100644
+--- a/app/test/test.h
++++ b/app/test/test.h
+@@ -34,7 +34,7 @@
+ 
+ /* Compare two buffers (length in bytes) */
+ #define TEST_ASSERT_BUFFERS_ARE_EQUAL(a, b, len,  msg, ...) do {	\
+-	if (memcmp(a, b, len)) {                                        \
++	if (memcmp((a), (b), (len))) {                                        \
+ 		printf("TestCase %s() line %d failed: "              \
+ 			msg "\n", __func__, __LINE__, ##__VA_ARGS__);    \
+ 		TEST_TRACE_FAILURE(__FILE__, __LINE__, __func__);    \
+@@ -44,21 +44,21 @@
+ 
+ /* Compare two buffers with offset (length and offset in bytes) */
+ #define TEST_ASSERT_BUFFERS_ARE_EQUAL_OFFSET(a, b, len, off, msg, ...) do { \
+-	const uint8_t *_a_with_off = (const uint8_t *)a + off;              \
+-	const uint8_t *_b_with_off = (const uint8_t *)b + off;              \
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL(_a_with_off, _b_with_off, len, msg);  \
++	const uint8_t *_a_with_off = (const uint8_t *)(a) + (off);              \
++	const uint8_t *_b_with_off = (const uint8_t *)(b) + (off);              \
++	TEST_ASSERT_BUFFERS_ARE_EQUAL(_a_with_off, _b_with_off, (len), msg);  \
+ } while (0)
+ 
+ /* Compare two buffers (length in bits) */
+ #define TEST_ASSERT_BUFFERS_ARE_EQUAL_BIT(a, b, len, msg, ...) do {	\
+ 	uint8_t _last_byte_a, _last_byte_b;                       \
+ 	uint8_t _last_byte_mask, _last_byte_bits;                  \
+-	TEST_ASSERT_BUFFERS_ARE_EQUAL(a, b, (len >> 3), msg);     \
+-	if (len % 8) {                                              \
+-		_last_byte_bits = len % 8;                   \
++	TEST_ASSERT_BUFFERS_ARE_EQUAL((a), (b), ((len) >> 3), msg);     \
++	if ((len) % 8) {                                              \
++		_last_byte_bits = (len) % 8;                   \
+ 		_last_byte_mask = ~((1 << (8 - _last_byte_bits)) - 1); \
+-		_last_byte_a = ((const uint8_t *)a)[len >> 3];            \
+-		_last_byte_b = ((const uint8_t *)b)[len >> 3];            \
++		_last_byte_a = ((const uint8_t *)(a))[(len) >> 3];            \
++		_last_byte_b = ((const uint8_t *)(b))[(len) >> 3];            \
+ 		_last_byte_a &= _last_byte_mask;                     \
+ 		_last_byte_b &= _last_byte_mask;                    \
+ 		if (_last_byte_a != _last_byte_b) {                  \
+@@ -74,16 +74,16 @@
+ #define TEST_ASSERT_BUFFERS_ARE_EQUAL_BIT_OFFSET(a, b, len, off, msg, ...) do {	\
+ 	uint8_t _first_byte_a, _first_byte_b;                                 \
+ 	uint8_t _first_byte_mask, _first_byte_bits;                           \
+-	uint32_t _len_without_first_byte = (off % 8) ?                       \
+-				len - (8 - (off % 8)) :                       \
+-				len;                                          \
+-	uint32_t _off_in_bytes = (off % 8) ? (off >> 3) + 1 : (off >> 3);     \
+-	const uint8_t *_a_with_off = (const uint8_t *)a + _off_in_bytes;      \
+-	const uint8_t *_b_with_off = (const uint8_t *)b + _off_in_bytes;      \
++	uint32_t _len_without_first_byte = ((off) % 8) ?                       \
++				((len) - (8 - ((off) % 8))) :                       \
++				(len);                                          \
++	uint32_t _off_in_bytes = ((off) % 8) ? (((off) >> 3) + 1) : ((off) >> 3);     \
++	const uint8_t *_a_with_off = (const uint8_t *)(a) + _off_in_bytes;      \
++	const uint8_t *_b_with_off = (const uint8_t *)(b) + _off_in_bytes;      \
+ 	TEST_ASSERT_BUFFERS_ARE_EQUAL_BIT(_a_with_off, _b_with_off,           \
+ 				_len_without_first_byte, msg);                \
+-	if (off % 8) {                                                        \
+-		_first_byte_bits = 8 - (off % 8);                             \
++	if ((off) % 8) {                                                        \
++		_first_byte_bits = 8 - ((off) % 8);                             \
+ 		_first_byte_mask = (1 << _first_byte_bits) - 1;               \
+ 		_first_byte_a = *(_a_with_off - 1);                           \
+ 		_first_byte_b = *(_b_with_off - 1);                           \
+diff --git a/lib/eal/include/rte_test.h b/lib/eal/include/rte_test.h
+index 62c8f165af..b73d4e75c2 100644
+--- a/lib/eal/include/rte_test.h
++++ b/lib/eal/include/rte_test.h
+@@ -26,21 +26,21 @@
+ } while (0)
+ 
+ #define RTE_TEST_ASSERT_EQUAL(a, b, msg, ...) \
+-	RTE_TEST_ASSERT(a == b, msg, ##__VA_ARGS__)
++	RTE_TEST_ASSERT(((a) == (b)), msg, ##__VA_ARGS__)
+ 
+ #define RTE_TEST_ASSERT_NOT_EQUAL(a, b, msg, ...) \
+-	RTE_TEST_ASSERT(a != b, msg, ##__VA_ARGS__)
++	RTE_TEST_ASSERT(((a) != (b)), msg, ##__VA_ARGS__)
+ 
+ #define RTE_TEST_ASSERT_SUCCESS(val, msg, ...) \
+-	RTE_TEST_ASSERT(val == 0, msg, ##__VA_ARGS__)
++	RTE_TEST_ASSERT(((val) == 0), msg, ##__VA_ARGS__)
+ 
+ #define RTE_TEST_ASSERT_FAIL(val, msg, ...) \
+-	RTE_TEST_ASSERT(val != 0, msg, ##__VA_ARGS__)
++	RTE_TEST_ASSERT(((val) != 0), msg, ##__VA_ARGS__)
+ 
+ #define RTE_TEST_ASSERT_NULL(val, msg, ...) \
+-	RTE_TEST_ASSERT(val == NULL, msg, ##__VA_ARGS__)
++	RTE_TEST_ASSERT(((val) == NULL), msg, ##__VA_ARGS__)
+ 
+ #define RTE_TEST_ASSERT_NOT_NULL(val, msg, ...) \
+-	RTE_TEST_ASSERT(val != NULL, msg, ##__VA_ARGS__)
++	RTE_TEST_ASSERT(((val) != NULL), msg, ##__VA_ARGS__)
+ 
+ #endif /* _RTE_TEST_H_ */
 -- 
-2.43.0
+2.34.1
 
