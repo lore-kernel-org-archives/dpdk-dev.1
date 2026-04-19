@@ -2,36 +2,40 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CDE9EA71AE
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Apr 2026 22:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB16EA71AA
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Apr 2026 22:20:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 56FFC402B5;
-	Mon, 20 Apr 2026 00:12:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 49ED5402B5;
+	Mon, 20 Apr 2026 00:20:03 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id DC5114026E;
- Mon, 20 Apr 2026 00:12:23 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B06A44026E
+ for <dev@dpdk.org>; Mon, 20 Apr 2026 00:20:02 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id A7A6A20735;
- Mon, 20 Apr 2026 00:12:22 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Mon, 20 Apr 2026 00:12:22 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Shani Peretz <shperetz@nvidia.com>,
- Thomas Monjalon <thomas@monjalon.net>
-Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- stable@dpdk.org
-Subject: [PATCH] mbuf: fix mbuf operations history recording
-Date: Sun, 19 Apr 2026 22:12:20 +0000
-Message-ID: <20260419221220.86455-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 6F74120735;
+ Mon, 20 Apr 2026 00:20:02 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 19 Apr 2026 22:12:22.0284 (UTC)
- FILETIME=[986E7CC0:01DCD049]
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: [PATCH] maintainers: update dts maintainer email
+Date: Mon, 20 Apr 2026 00:20:00 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F657FE@smartserver.smartshare.dk>
+In-Reply-To: <20260419194836.27602-1-patrickrobb1997@gmail.com>
+X-MS-Has-Attach: 
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH] maintainers: update dts maintainer email
+Thread-Index: AdzQNZIDUeuB2YIRTpa3VL0x6FkihQAFGeOQ
+References: <20260419194836.27602-1-patrickrobb1997@gmail.com>
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: "Patrick Robb" <patrickrobb1997@gmail.com>,
+	<thomas@monjalon.net>
+Cc: <dev@dpdk.org>, <aconole@redhat.com>, <lylavoie@iol.unh.edu>,
+ <abailey@iol.unh.edu>, <dmarx@iol.unh.edu>, <knimoji@iol.unh.edu>,
+ <luca.vizzarro@arm.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -45,66 +49,25 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This addresses two bugs in mbuf operations history recording.
+> diff --git a/.mailmap b/.mailmap
+> index 0e0d83e1c6..0ce0cfc1a8 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -1232,7 +1232,7 @@ Patrick Fu <patrick.fu@intel.com>
+>  Patrick Kutch <patrick.g.kutch@intel.com>
+>  Patrick Lu <patrick.lu@intel.com>
+>  Patrick MacArthur <patrick@patrickmacarthur.net>
+> -Patrick Robb <probb@iol.unh.edu>
+> +Patrick Robb <patrickrobb1997@gmail.com>
 
-1. With mbuf operations history recording enabled, when allocating mbufs
-from a mempool failed, the array of fetched mbuf pointers was not set, but
-it was dereferenced for mbuf operations history recording anyway, which
-would trigger a segmentation fault or cause undefined behavior.
+In the mailmap file, both addresses should be present, to tie them =
+together:
+-Patrick Robb <probb@iol.unh.edu>
++Patrick Robb <patrickrobb1997@gmail.com> <probb@iol.unh.edu>
 
-This was fixed by changing how the return value from the mempool
-allocation is checked, so the function returns early on failure, and only
-proceeds on success.
+Look at other entries with multiple addresses, e.g.:
+Thomas Monjalon <thomas@monjalon.net> <thomas.monjalon@6wind.com>
 
-2. When allocating a bulk of mbufs using rte_pktmbuf_alloc_bulk(), two
-mbuf library allocation operations were recorded on the mbuf, because the
-function calls rte_mbuf_raw_alloc_bulk() for allocation, and both
-functions record a mbuf library allocation operation.
-
-This was fixed by not recording a mbuf library allocation operation in
-rte_pktmbuf_alloc_bulk().
-
-Fixes: d265a24a32a4 ("mbuf: record mbuf operations history")
-Cc: stable@dpdk.org
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
----
- lib/mbuf/rte_mbuf.h | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
-
-diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
-index e7c3bbadd4..60ec8158cd 100644
---- a/lib/mbuf/rte_mbuf.h
-+++ b/lib/mbuf/rte_mbuf.h
-@@ -663,14 +663,14 @@ static __rte_always_inline int
- rte_mbuf_raw_alloc_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned int count)
- {
- 	int rc = rte_mempool_get_bulk(mp, (void **)mbufs, count);
--	if (likely(rc == 0)) {
--		for (unsigned int idx = 0; idx < count; idx++)
--			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], mp);
--	}
-+	if (unlikely(rc))
-+		return rc;
-+	for (unsigned int idx = 0; idx < count; idx++)
-+		__rte_mbuf_raw_sanity_check_mp(mbufs[idx], mp);
- 
- 	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
- 
--	return rc;
-+	return 0;
- }
- 
- /**
-@@ -1068,8 +1068,6 @@ static inline int rte_pktmbuf_alloc_bulk(struct rte_mempool *pool,
- 	if (unlikely(rc))
- 		return rc;
- 
--	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
--
- 	rte_mbuf_raw_reset_bulk(pool, mbufs, count);
- 
- 	return 0;
--- 
-2.43.0
+With that fixed,
+Acked-by: Morten Br=F8rup <mb@smartsharesystems.com>
 
