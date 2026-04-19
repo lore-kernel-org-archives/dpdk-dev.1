@@ -2,66 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 120A0EA71A1
-	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Apr 2026 16:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685A5EA71A1
+	for <dpdk-dev@archiver.kernel.org>; Sun, 19 Apr 2026 16:12:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 21F9840A4B;
-	Sun, 19 Apr 2026 18:11:23 +0200 (CEST)
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com
- [209.85.160.53]) by mails.dpdk.org (Postfix) with ESMTP id 39A55402D9
- for <dev@dpdk.org>; Sun, 19 Apr 2026 18:11:21 +0200 (CEST)
-Received: by mail-oa1-f53.google.com with SMTP id
- 586e51a60fabf-41708f6c3feso1494350fac.3
- for <dev@dpdk.org>; Sun, 19 Apr 2026 09:11:21 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 8729F40A6F;
+	Sun, 19 Apr 2026 18:11:25 +0200 (CEST)
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com
+ [209.85.160.48]) by mails.dpdk.org (Postfix) with ESMTP id C97E3406BC
+ for <dev@dpdk.org>; Sun, 19 Apr 2026 18:11:22 +0200 (CEST)
+Received: by mail-oa1-f48.google.com with SMTP id
+ 586e51a60fabf-42306f82341so1391782fac.2
+ for <dev@dpdk.org>; Sun, 19 Apr 2026 09:11:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776615080;
- x=1777219880; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776615082;
+ x=1777219882; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qSj3EHrq8mIN0pgpodHkBCFn7bbeyihjtBya7H0ghXU=;
- b=OOZP1mbMNR+NHIPQT23nKEJMNCyHSmar2IK4M2hrDQsZbaSb5c669Fc313xzLLHdu3
- /Xw2vvlRm1ucsg/sYHKrs41d9MX13mAh26tSRTsr4HfKkOxdziG/rVFkvHjQzEcOFoBr
- p0iVpWtioaXkUBfaxnOgOEZDB0i9SVFx2GgOTmqJc4DPGemxZB12kp/tGsUhZrwbdB3A
- /GVOswUXFaa7vUh+HgMBQdlu/PRf3c2zlpUmpNX5RJaQMODdvMWPaHuY4qd/k3lNdYzj
- phDSxtNhYhDSaqkSHbg7+SOWDifs+s/22uVoROLPs2rbHmVYbCqWGx4t8qdk4XfCF8By
- ZQ7w==
+ bh=q+0m1MvEtxsHAoe8mIdrIHjYM3szeOE7Dhb6fsbQYIE=;
+ b=kdT2adlIqc4GRVbtvnByBPrVQeB/DL1o53XsfYnJ/bXyk+k6C46Lc9TkOWDAO7CMqk
+ Z6lUwFfCE2IPWkJsMDrJtCo8oiCBhiDfOYNBFbqFQairAMIZA3WXVhSj8XsIFzQKVkDJ
+ ZFSwGB/BNGGfKnjsB5+/tiIh8Nz8S7HmaFob13VHdzLjPcb9z8ExAKQU/RaBxa/5caQB
+ zzextdfxU5WWxU5jPDXXnDf0p7+fm8pvwyJjo/WqqAT2MFmWvej4PHrV5ZTlvMwWPJXn
+ A74loMYGmt25hDUgkTAmskTtpqd6anmll49bVvVGFtipgLcux3FzkDSYSZLxPe7Aljxj
+ G0cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776615080; x=1777219880;
+ d=1e100.net; s=20251104; t=1776615082; x=1777219882;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=qSj3EHrq8mIN0pgpodHkBCFn7bbeyihjtBya7H0ghXU=;
- b=i7hrDKCkHwnimRHVwoNRXz4SbmN5/xNbAyGhdhPkfKMisw0VVBWdAtt5XY3reP/Cgj
- 46hRo36L3pP75kP0goHGixhGNKWHpN5osQHUffFVODkOKU+kKVbU/k6ZVmwd827sei+s
- /8Ic1h6WnAo6jLgMgJzqAv03WZKWeRnsVd1E/xFG3UEeYrnYH/UsuGB2Lk6k+SGfY19u
- BIFCp7bJXTCVvgVVC17S2zR8pCmzOWqQw4zf1d+AKsVrzbLUXj4cOhDmCmxeMCbnbeYU
- 6/8wYS9OEcduHbHw43BHXGZpqodSdcpJ0q+c3/KYWANYk/iJ82oE0z/4CqILgnTT8fsi
- 210A==
-X-Gm-Message-State: AOJu0YyBblEZ0KD1/2mSMOQlyCNtfnByjUAFUH9lH5lxrZD1djlQSze3
- nvjs880Jv/hxibgk8W97AJfFg57Uezc7TdW9ZyL55SKnXIjoKbQ4BrJKD3zFACtZkKtZfYkya1c
- SBzfW
-X-Gm-Gg: AeBDietIiO95rAsGbmaOT3DChs7QZfe7sTAFXD+9TuDnQnwRsnGsEZx8gUDNqKtTOJN
- XIn+U6C04j/ZjJqC29BlQwDmHIKdvNZSbwidZBQTJfcVLx4wC2yZGmEcTVoXzp16SSD7y0MyePO
- cVs3t5NumKoK9M09XojotnsgI+3wW4LUo0pswrNRmY1DsBvy5PsoqqMeyzNVsb4vIAVrymn4d4O
- EVk6KmaUNUCqW002RvegcNflACWGQ+28XkbYOP+kfJpM2xnBZtcgpHvrJDpaVHSeqkUA03pd86N
- LXM5ZrUW3jSeRnWoKg0A1B1gp/JgGV8X0DtPuencljQIM9QO7qq5NCDtJs//7vAEjKSjig8SdHL
- 1VhKFpXNoVGByVvcUAnOm2pOYeopYDA/hs52WQMxT6oQW2IcP3tZoKtgWsND2UgtwHgY+A2yBT/
- FbFeKe8O2TR6CbRXZdGL3u4dccTiPmdGurAYmgDoL50ck=
-X-Received: by 2002:a05:6870:b50c:b0:416:414:bbd7 with SMTP id
- 586e51a60fabf-42adecf70a8mr6317706fac.21.1776615080516; 
- Sun, 19 Apr 2026 09:11:20 -0700 (PDT)
+ bh=q+0m1MvEtxsHAoe8mIdrIHjYM3szeOE7Dhb6fsbQYIE=;
+ b=glLy9zOlJFOo7YFPMwyuBlmBbIRem83me1Izo3AvdkDBACYBOvJVp6xVjhwD1A9cMM
+ AQwUkAqnAtHmrEYpB1hEtMH/sEQirMDGADjGOc7T7rPRFlwV7KoWDpDa7MD4Ps71zyp2
+ NUVm/eGI+UJIIbXTiCA/3vomzghOGkrCJhsgSWAAXm/fROF/jm+yC3ErscnSt4RMJGt2
+ Bfm/1ze3X3xBTQxJc5y+zLTwEWqwuHt6/fcVt9ncLvneaKWPbPYZJRTfGffbEmhCaD4l
+ rQ4Gl2TksnTN8oCZm0PzgVWH6x0NPvHjmMNYz5CsEyCOIJwZ12M3ZYL9w5RcnTojg2kb
+ GNCQ==
+X-Gm-Message-State: AOJu0YyFP3CDaJwtpaWj2iTj0au/2QaRvxuZI/i0FJKM1nc/ExRiE+Gy
+ 2USlOUbO+MwTu2X2X/d1kqgw5R3L8D2M3UgcB5gRSzDrQssf3JeCoODty176G9FOa+lJjVWLvuS
+ uKh6/
+X-Gm-Gg: AeBDietqcLzFOWJNjgWsZ1XgPIBz1QTjQJpAKTyq57pTPIiTefAfgX6QwEIDHqSDoPp
+ yOh7RPeWZe4d0xNasnlbwsSNL8gCAw8toGwydsRDCe0U/yBq+nBjRLxpV6ZdwWrv3N0IYC9A01C
+ bodqcALMVG4jY8tt0hkE1fZ0ayn+YWUvAuSHTwoK3izrZIKG32q1HGTImJn90Kau38pWOG6fdn/
+ GkzyJTi7bTRhXrG5PI8yZaSJu/gdWRJYKiBRv/63x88jhoXsbnVJ5qvi27Ij+U+c7F75nm+p+06
+ hWnNOL1vvOG00t6++tFaHnIbGRnKkAciPkkpR22Nosa4MeKRgYVBdIRdOwsFF9rvdBC9/jbGxE5
+ t3Ku/5s+SAouMKGTwvb6xmkt6JaXoY9SxywbsjLRZjB6lPoyib1d4CHrYXHLNhqaRoruVo6TJpE
+ Uwmu5ICFesAbFAoig0bP61y6+3r6NjCksxLXLedGvmsvUyMOHKOsyYxw==
+X-Received: by 2002:a05:6871:689:b0:3e7:fa5f:7269 with SMTP id
+ 586e51a60fabf-42abf21fc10mr5785732fac.2.1776615082013; 
+ Sun, 19 Apr 2026 09:11:22 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-42b930bca47sm5970632fac.7.2026.04.19.09.11.19
+ 586e51a60fabf-42b930bca47sm5970632fac.7.2026.04.19.09.11.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 19 Apr 2026 09:11:19 -0700 (PDT)
+ Sun, 19 Apr 2026 09:11:21 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v25 12/24] net/pcap: consolidate boolean flag handling
-Date: Sun, 19 Apr 2026 09:09:45 -0700
-Message-ID: <20260419161059.205954-13-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH v25 13/24] net/pcap: support VLAN strip and insert offloads
+Date: Sun, 19 Apr 2026 09:09:46 -0700
+Message-ID: <20260419161059.205954-14-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260419161059.205954-1-stephen@networkplumber.org>
 References: <20260106182823.192350-1-stephen@networkplumber.org>
@@ -81,160 +80,319 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Convert internal flag fields from int/unsigned int to bool for clarity
-and reduced structure size.
+Add VLAN tag handling to the pcap PMD, similar to virtio
+and af_packet drivers. This also helps if with
+capture of VLAN tagged packets when legacy pdump is used.
 
-Merge the separate select_phy_mac() and get_infinite_rx_arg() functions
-into a single process_bool_flag() handler. The new function also adds
-proper validation, rejecting values other than "0", "1", or empty (which
-defaults to true).
+RX strip: when RTE_ETH_RX_OFFLOAD_VLAN_STRIP is enabled, the driver
+calls rte_vlan_strip() on received packets in both normal and
+infinite_rx modes. For infinite_rx, offloads are deferred to
+packet delivery rather than applied during ring fill, so the
+stored template packets remain unmodified.
 
-Also change num_of_queue from unsigned int to uint16_t since it cannot
-exceed RTE_PMD_PCAP_MAX_QUEUES.
+TX insert: when RTE_MBUF_F_TX_VLAN is set on an mbuf, the driver
+inserts the VLAN tag via rte_vlan_insert() before writing to pcap
+or sending to the interface. Indirect or shared mbufs get a new
+header mbuf to avoid modifying the original.
+
+Runtime reconfiguration is supported through vlan_offload_set,
+which propagates the strip setting to all active RX queues.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- drivers/net/pcap/pcap_ethdev.c | 67 +++++++++++++++-------------------
- 1 file changed, 29 insertions(+), 38 deletions(-)
+ doc/guides/nics/features/pcap.ini      |   1 +
+ doc/guides/nics/pcap.rst               |  10 +++
+ doc/guides/rel_notes/release_26_07.rst |   5 ++
+ drivers/net/pcap/pcap_ethdev.c         | 120 ++++++++++++++++++++++++-
+ 4 files changed, 132 insertions(+), 4 deletions(-)
 
+diff --git a/doc/guides/nics/features/pcap.ini b/doc/guides/nics/features/pcap.ini
+index 99ba3b8e1f..9f234aa7b9 100644
+--- a/doc/guides/nics/features/pcap.ini
++++ b/doc/guides/nics/features/pcap.ini
+@@ -9,6 +9,7 @@ Queue start/stop     = Y
+ Timestamp offload    = P
+ Basic stats          = Y
+ Stats per queue      = Y
++VLAN offload         = Y
+ Multiprocess aware   = Y
+ FreeBSD              = Y
+ Linux                = Y
+diff --git a/doc/guides/nics/pcap.rst b/doc/guides/nics/pcap.rst
+index fbfe854bb1..2c5fc0b500 100644
+--- a/doc/guides/nics/pcap.rst
++++ b/doc/guides/nics/pcap.rst
+@@ -247,3 +247,13 @@ will be discarded by the Rx flushing operation.
+    The network interface provided to the PMD should be up.
+    The PMD will return an error if the interface is down,
+    and the PMD itself won't change the status of the external network interface.
++
++Features and Limitations
++~~~~~~~~~~~~~~~~~~~~~~~~
++
++*  When ``RTE_ETH_RX_OFFLOAD_VLAN_STRIP`` is enabled, the driver removes the
++   outermost VLAN tag from received packets via ``rte_vlan_strip()``.
++   The strip setting can be changed at runtime through ``vlan_offload_set``.
++
++*  The PMD will transparently insert a VLAN tag to transmitted packets if
++   the mbuf has ``RTE_MBUF_F_TX_VLAN`` set.
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index f012d47a4b..f6af296684 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -63,6 +63,11 @@ New Features
+     ``rte_eal_init`` and the application is responsible for probing each device,
+   * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
+ 
++* **Updated PCAP ethernet driver.**
++
++  * Added support for VLAN insertion and stripping.
++
++
+ 
+ Removed Items
+ -------------
 diff --git a/drivers/net/pcap/pcap_ethdev.c b/drivers/net/pcap/pcap_ethdev.c
-index 707d71fe81..2ca6837052 100644
+index 2ca6837052..9d9e2f1fc4 100644
 --- a/drivers/net/pcap/pcap_ethdev.c
 +++ b/drivers/net/pcap/pcap_ethdev.c
-@@ -7,6 +7,7 @@
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
-+#include <stdbool.h>
- #include <time.h>
- #include <inttypes.h>
- #include <errno.h>
-@@ -102,9 +103,9 @@ struct pmd_internals {
- 	char devargs[ETH_PCAP_ARG_MAXLEN];
- 	struct rte_ether_addr eth_addr;
- 	int if_index;
--	int single_iface;
--	int phy_mac;
--	unsigned int infinite_rx;
-+	bool single_iface;
-+	bool phy_mac;
-+	bool infinite_rx;
+@@ -76,6 +76,7 @@ struct queue_missed_stat {
+ struct pcap_rx_queue {
+ 	uint16_t port_id;
+ 	uint16_t queue_id;
++	bool vlan_strip;
+ 	struct rte_mempool *mb_pool;
+ 	struct queue_stat rx_stat;
+ 	struct queue_missed_stat missed_stat;
+@@ -106,6 +107,7 @@ struct pmd_internals {
+ 	bool single_iface;
+ 	bool phy_mac;
+ 	bool infinite_rx;
++	bool vlan_strip;
  };
  
  struct pmd_process_private {
-@@ -114,25 +115,25 @@ struct pmd_process_private {
- };
+@@ -270,7 +272,11 @@ eth_pcap_rx_infinite(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		bufs[i]->data_len = pcap_buf->data_len;
+ 		bufs[i]->pkt_len = pcap_buf->pkt_len;
+ 		bufs[i]->port = pcap_q->port_id;
+-		rx_bytes += pcap_buf->data_len;
++
++		if (pcap_q->vlan_strip)
++			rte_vlan_strip(bufs[i]);
++
++		rx_bytes += bufs[i]->data_len;
  
- struct pmd_devargs {
--	unsigned int num_of_queue;
-+	uint16_t num_of_queue;
-+	bool phy_mac;
- 	struct devargs_queue {
- 		pcap_dumper_t *dumper;
- 		pcap_t *pcap;
- 		const char *name;
- 		const char *type;
- 	} queue[RTE_PMD_PCAP_MAX_QUEUES];
--	int phy_mac;
- };
- 
- struct pmd_devargs_all {
- 	struct pmd_devargs rx_queues;
- 	struct pmd_devargs tx_queues;
--	int single_iface;
--	unsigned int is_tx_pcap;
--	unsigned int is_tx_iface;
--	unsigned int is_rx_pcap;
--	unsigned int is_rx_iface;
--	unsigned int infinite_rx;
-+	bool single_iface;
-+	bool is_tx_pcap;
-+	bool is_tx_iface;
-+	bool is_rx_pcap;
-+	bool is_rx_iface;
-+	bool infinite_rx;
- };
- 
- static const char *valid_arguments[] = {
-@@ -881,7 +882,7 @@ eth_dev_close(struct rte_eth_dev *dev)
+ 		/* Enqueue packet back on ring to allow infinite rx. */
+ 		rte_ring_enqueue(pcap_q->pkts, pcap_buf);
+@@ -336,6 +342,10 @@ eth_pcap_rx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
  		}
+ 
+ 		mbuf->pkt_len = len;
++
++		if (pcap_q->vlan_strip)
++			rte_vlan_strip(mbuf);
++
+ 		uint64_t us = (uint64_t)header->ts.tv_sec * US_PER_S + header->ts.tv_usec;
+ 
+ 		*RTE_MBUF_DYNFIELD(mbuf, timestamp_dynfield_offset, rte_mbuf_timestamp_t *) = us;
+@@ -382,6 +392,45 @@ calculate_timestamp(struct timeval *ts) {
  	}
+ }
  
--	if (internals->phy_mac == 0)
-+	if (!internals->phy_mac)
- 		/* not dynamically allocated, must not be freed */
- 		dev->data->mac_addrs = NULL;
++/*
++ * Insert VLAN tag into packet.
++ *
++ * rte_vlan_insert() modifies the mbuf in place, prepending
++ * RTE_VLAN_HLEN bytes. If mbuf cannot safely be modified in place
++ * a private copy is made first.
++ *
++ * The caller's mbuf pointer is updated on success; on failure the
++ * original mbuf is freed and -1 is returned.
++ */
++static int
++pcap_tx_vlan_insert(struct rte_mbuf **m)
++{
++	struct rte_mbuf *mbuf = *m;
++
++	if (rte_mbuf_refcnt_read(mbuf) > 1 ||
++	    rte_pktmbuf_headroom(mbuf) < RTE_VLAN_HLEN) {
++		struct rte_mbuf *copy;
++
++		copy = rte_pktmbuf_copy(mbuf, mbuf->pool, 0, UINT32_MAX);
++		if (unlikely(copy == NULL)) {
++			rte_pktmbuf_free(mbuf);
++			return -1;
++		}
++		copy->ol_flags |= RTE_MBUF_F_TX_VLAN;
++		copy->vlan_tci = mbuf->vlan_tci;
++		rte_pktmbuf_free(mbuf);
++		*m = copy;
++		mbuf = copy;
++	}
++
++	if (unlikely(rte_vlan_insert(&mbuf) != 0)) {
++		rte_pktmbuf_free(mbuf);
++		return -1;
++	}
++	*m = mbuf;
++	return 0;
++}
++
+ /*
+  * Callback to handle writing packets to a pcap file.
+  */
+@@ -411,10 +460,20 @@ eth_pcap_tx_dumper(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 		uint32_t len, caplen;
+ 		const uint8_t *data;
  
-@@ -1206,29 +1207,19 @@ open_tx_iface(const char *key, const char *value, void *extra_args)
++		/* Do VLAN tag insertion */
++		if (unlikely(mbuf->ol_flags & RTE_MBUF_F_TX_VLAN)) {
++			if (pcap_tx_vlan_insert(&mbuf) != 0) {
++				dumper_q->tx_stat.err_pkts++;
++				continue;
++			}
++			bufs[i] = mbuf;
++		}
++
+ 		len = rte_pktmbuf_pkt_len(mbuf);
+ 		caplen = RTE_MIN(len, RTE_ETH_PCAP_SNAPSHOT_LEN);
+ 
+ 		calculate_timestamp(&header.ts);
++
+ 		header.len = len;
+ 		header.caplen = caplen;
+ 
+@@ -496,9 +555,20 @@ eth_pcap_tx(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 
+ 	for (i = 0; i < nb_pkts; i++) {
+ 		struct rte_mbuf *mbuf = bufs[i];
+-		uint32_t len = rte_pktmbuf_pkt_len(mbuf);
++		uint32_t len;
+ 		const uint8_t *data;
+ 
++		/* Do VLAN tag insertion */
++		if (unlikely(mbuf->ol_flags & RTE_MBUF_F_TX_VLAN)) {
++			if (pcap_tx_vlan_insert(&mbuf) != 0) {
++				tx_queue->tx_stat.err_pkts++;
++				continue;
++			}
++			bufs[i] = mbuf;
++		}
++
++		len = rte_pktmbuf_pkt_len(mbuf);
++
+ 		if (unlikely(!rte_pktmbuf_is_contiguous(mbuf) &&
+ 				len > RTE_ETH_PCAP_SNAPSHOT_LEN)) {
+ 			PMD_TX_LOG(ERR,
+@@ -746,8 +816,13 @@ eth_dev_stop(struct rte_eth_dev *dev)
  }
  
  static int
--select_phy_mac(const char *key __rte_unused, const char *value,
--		void *extra_args)
-+process_bool_flag(const char *key, const char *value, void *extra_args)
+-eth_dev_configure(struct rte_eth_dev *dev __rte_unused)
++eth_dev_configure(struct rte_eth_dev *dev)
  {
--	if (extra_args) {
--		const int phy_mac = atoi(value);
--		int *enable_phy_mac = extra_args;
--
--		if (phy_mac)
--			*enable_phy_mac = 1;
--	}
--	return 0;
--}
--
--static int
--get_infinite_rx_arg(const char *key __rte_unused,
--		const char *value, void *extra_args)
--{
--	if (extra_args) {
--		const int infinite_rx = atoi(value);
--		int *enable_infinite_rx = extra_args;
--
--		if (infinite_rx > 0)
--			*enable_infinite_rx = 1;
-+	bool *flag = extra_args;
++	struct pmd_internals *internals = dev->data->dev_private;
++	struct rte_eth_conf *dev_conf = &dev->data->dev_conf;
++	const struct rte_eth_rxmode *rxmode = &dev_conf->rxmode;
 +
-+	if (value == NULL || *value == '\0') {
-+		*flag = true; /* default with no additional argument */
-+	} else if (strcmp(value, "0") == 0) {
-+		*flag = false;
-+	} else if (strcmp(value, "1") == 0) {
-+		*flag = true;
-+	} else {
-+		PMD_LOG(ERR, "Invalid '%s' value '%s'", key, value);
-+		return -1;
- 	}
++	internals->vlan_strip = !!(rxmode->offloads & RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
  	return 0;
  }
-@@ -1503,7 +1494,7 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 		dumpers.queue[0] = pcaps.queue[0];
  
- 		ret = rte_kvargs_process(kvlist, ETH_PCAP_PHY_MAC_ARG,
--				&select_phy_mac, &pcaps.phy_mac);
-+					 &process_bool_flag, &pcaps.phy_mac);
- 		if (ret < 0)
- 			goto free_kvlist;
+@@ -763,7 +838,9 @@ eth_dev_info(struct rte_eth_dev *dev,
+ 	dev_info->max_rx_queues = dev->data->nb_rx_queues;
+ 	dev_info->max_tx_queues = dev->data->nb_tx_queues;
+ 	dev_info->min_rx_bufsize = 0;
+-	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS;
++	dev_info->tx_offload_capa = RTE_ETH_TX_OFFLOAD_MULTI_SEGS |
++		RTE_ETH_TX_OFFLOAD_VLAN_INSERT;
++	dev_info->rx_offload_capa = RTE_ETH_RX_OFFLOAD_VLAN_STRIP;
  
-@@ -1543,8 +1534,8 @@ pmd_pcap_probe(struct rte_vdev_device *dev)
- 		if (infinite_rx_arg_cnt == 1) {
- 			ret = rte_kvargs_process(kvlist,
- 					ETH_PCAP_INFINITE_RX_ARG,
--					&get_infinite_rx_arg,
--					&devargs_all.infinite_rx);
-+					 &process_bool_flag,
-+					 &devargs_all.infinite_rx);
- 			if (ret < 0)
- 				goto free_kvlist;
- 			PMD_LOG(INFO, "infinite_rx has been %s for %s",
-@@ -1693,5 +1684,5 @@ RTE_PMD_REGISTER_PARAM_STRING(net_pcap,
- 	ETH_PCAP_RX_IFACE_IN_ARG "=<ifc> "
- 	ETH_PCAP_TX_IFACE_ARG "=<ifc> "
- 	ETH_PCAP_IFACE_ARG "=<ifc> "
--	ETH_PCAP_PHY_MAC_ARG "=<int>"
-+	ETH_PCAP_PHY_MAC_ARG "=<0|1> "
- 	ETH_PCAP_INFINITE_RX_ARG "=<0|1>");
+ 	return 0;
+ }
+@@ -910,6 +987,7 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 	pcap_q->mb_pool = mb_pool;
+ 	pcap_q->port_id = dev->data->port_id;
+ 	pcap_q->queue_id = rx_queue_id;
++	pcap_q->vlan_strip = internals->vlan_strip;
+ 	dev->data->rx_queues[rx_queue_id] = pcap_q;
+ 
+ 	if (internals->infinite_rx) {
+@@ -919,6 +997,7 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 		uint64_t pcap_pkt_count = 0;
+ 		struct rte_mbuf *bufs[1];
+ 		pcap_t **pcap;
++		bool save_vlan_strip;
+ 
+ 		pp = rte_eth_devices[pcap_q->port_id].process_private;
+ 		pcap = &pp->rx_pcap[pcap_q->queue_id];
+@@ -938,11 +1017,20 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 		if (!pcap_q->pkts)
+ 			return -ENOENT;
+ 
++		/*
++		 * Temporarily disable offloads while filling the ring
++		 * with raw packets. VLAN strip and timestamp will be
++		 * applied later in eth_pcap_rx_infinite() on each copy.
++		 */
++		save_vlan_strip = pcap_q->vlan_strip;
++		pcap_q->vlan_strip = false;
++
+ 		/* Fill ring with packets from PCAP file one by one. */
+ 		while (eth_pcap_rx(pcap_q, bufs, 1)) {
+ 			/* Check for multiseg mbufs. */
+ 			if (bufs[0]->nb_segs != 1) {
+ 				infinite_rx_ring_free(pcap_q->pkts);
++				pcap_q->vlan_strip = save_vlan_strip;
+ 				PMD_LOG(ERR,
+ 					"Multiseg mbufs are not supported in infinite_rx mode.");
+ 				return -EINVAL;
+@@ -952,6 +1040,9 @@ eth_rx_queue_setup(struct rte_eth_dev *dev,
+ 					(void * const *)bufs, 1, NULL);
+ 		}
+ 
++		/* Restore offloads for use during packet delivery */
++		pcap_q->vlan_strip = save_vlan_strip;
++
+ 		if (rte_ring_count(pcap_q->pkts) < pcap_pkt_count) {
+ 			infinite_rx_ring_free(pcap_q->pkts);
+ 			PMD_LOG(ERR,
+@@ -1036,6 +1127,26 @@ eth_tx_queue_stop(struct rte_eth_dev *dev, uint16_t tx_queue_id)
+ 	return 0;
+ }
+ 
++static int
++eth_vlan_offload_set(struct rte_eth_dev *dev, int mask)
++{
++	struct pmd_internals *internals = dev->data->dev_private;
++	unsigned int i;
++
++	if (mask & RTE_ETH_VLAN_STRIP_MASK) {
++		bool vlan_strip = !!(dev->data->dev_conf.rxmode.offloads &
++				     RTE_ETH_RX_OFFLOAD_VLAN_STRIP);
++
++		internals->vlan_strip = vlan_strip;
++
++		/* Update all RX queues */
++		for (i = 0; i < dev->data->nb_rx_queues; i++)
++			internals->rx_queue[i].vlan_strip = vlan_strip;
++	}
++
++	return 0;
++}
++
+ static const struct eth_dev_ops ops = {
+ 	.dev_start = eth_dev_start,
+ 	.dev_stop = eth_dev_stop,
+@@ -1052,6 +1163,7 @@ static const struct eth_dev_ops ops = {
+ 	.link_update = eth_link_update,
+ 	.stats_get = eth_stats_get,
+ 	.stats_reset = eth_stats_reset,
++	.vlan_offload_set = eth_vlan_offload_set,
+ };
+ 
+ static int
 -- 
 2.53.0
 
