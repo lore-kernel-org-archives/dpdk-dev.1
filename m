@@ -2,82 +2,86 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C79CF89244
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Apr 2026 10:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34F82F89244
+	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Apr 2026 10:02:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D1A86402B8;
-	Tue, 21 Apr 2026 12:01:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8962340647;
+	Tue, 21 Apr 2026 12:02:45 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 718D74029D
- for <dev@dpdk.org>; Tue, 21 Apr 2026 12:01:27 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 15A49402B8
+ for <dev@dpdk.org>; Tue, 21 Apr 2026 12:02:43 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1776765686;
+ s=mimecast20190719; t=1776765763;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=Jx8U06Mt2ng2TwlIUWy+HixT6wdGLKLxMHFz0JOj5Uc=;
- b=RhdnzHKGgCL/2UBTPDQ3HeXWWmzRbP1NwCPrr7B04v/Mw6RHjrrVYOy6klHa1tWTCRjBsC
- wQMMSn59QJKqPYdCWyxBAPnAjiyyac82rSw0rAwve6w0w/X7lbTiilbeXcmS1kgXeFSjLG
- /e2e4P+b8BKbdyaddyDZ7fgMM6Rkwvc=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=DrXxYMa2cjh9awhPj5EP6RqpNUr+kJ/Sk50wv8WDZOM=;
+ b=bZ0WI5FMBJ0Xy+H/Gs5Nc+ZVIFm8hLN5EOjlfTe7wR7osg8l04RPDji7Mg817iQ0MCo9wP
+ B8UeyjJGYvDO8SXWJgy0kUHs/tC8//651CRAMRSAaPOMvpaSdJqhbSf39S0xLgCIhJPN5d
+ yan2E1J3wdOGt9SFwM4NqsnTfasxKFA=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-307-pwNmKW0MNMuwb8tpfA25Ng-1; Tue, 21 Apr 2026 06:01:24 -0400
-X-MC-Unique: pwNmKW0MNMuwb8tpfA25Ng-1
-X-Mimecast-MFC-AGG-ID: pwNmKW0MNMuwb8tpfA25Ng_1776765683
-Received: by mail-ej1-f69.google.com with SMTP id
- a640c23a62f3a-b844098869cso303132066b.2
- for <dev@dpdk.org>; Tue, 21 Apr 2026 03:01:24 -0700 (PDT)
+ us-mta-641-YgjaYeM4MAme-ONCoBw6GQ-1; Tue, 21 Apr 2026 06:02:42 -0400
+X-MC-Unique: YgjaYeM4MAme-ONCoBw6GQ-1
+X-Mimecast-MFC-AGG-ID: YgjaYeM4MAme-ONCoBw6GQ_1776765761
+Received: by mail-wr1-f70.google.com with SMTP id
+ ffacd0b85a97d-43d7757463eso2775318f8f.0
+ for <dev@dpdk.org>; Tue, 21 Apr 2026 03:02:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776765683; x=1777370483;
+ d=1e100.net; s=20251104; t=1776765761; x=1777370561;
  h=content-transfer-encoding:in-reply-to:autocrypt:from
  :content-language:references:cc:to:subject:user-agent:mime-version
  :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Jx8U06Mt2ng2TwlIUWy+HixT6wdGLKLxMHFz0JOj5Uc=;
- b=sZjLCkAczBjPVbqAkg2XzBq+18cmFxgcKY8yieqZuoSQleYYYvnRld+QTONvTmEB6e
- DYcUoHQVZGM0d+L0faTaDUBP51LAj2PEE2x028kx5rKVglSr1vq1tx4Fha+8G9UHaELi
- /3Vz9O7f3/PUSjeBNAcFwdAzf95ofLMzT/BQzxUv5GrIYVvkhFck8m2EZwyQtCvatcbb
- 4oy/c1z7TDwput4N8nuCHpXFKHS5vjokstXtlnlMZRIckGgQR6dxUiUX5osAov0HycjN
- POf6wLD/+vqXSDHyfzUYNTjsXWpTki7pZnr1PcekCQ1AmCg99MM47EG4LHN6r9zOgA6f
- rk+Q==
-X-Gm-Message-State: AOJu0Ywg5t7I0Z2xsft+Qs5vCkLsfKBLfUBj+pYK0ujIkihmZbKSUHvS
- ElWSRBrj+H8PVNndeC/GQlZipZDn6AYykGRi9U9OxKZNppoapqGRTnTf2z7yXV2j7m2j49oFaHX
- 9q7BvtnrEAeMHKkCiFJHDrgiJPj0Az/Vzpa52Vpz5aIBE
-X-Gm-Gg: AeBDiesD0BkcyJZ4z2k7OozqZKzx0ERPA/d78DV/AjOtzGrQQG850pQyESgMo2hEPky
- Qvoz364Fy7llWWzwxBYFVnkx2hLTCsxAgMvO79hrvIUOYuSPvBJQMJqvhhul6eX7oyd5R1CsrVR
- +CpP6zG2xCB38lNwNseb//2Kl0FLJTZ4kf+7Ic3H/oIVzGDVpaaSXO3zMTX8weiv2wxHj2oy7Z+
- YhGQdsdagtAtxkk9D1G+CsX77lb2aYAslKZ2zP073XZy6rTr1ACPYime1uzhkc6Xo6ss25bNRdq
- EoGGGYcdcEq4pZJMaPC6hUTcbST+uINJfZOUZ8eqf+DT7UA9gDA1sthakfve5ZPdhvtTdKgQqgp
- v/IjreSyAUHJf52v8kCtckLodhQn47s2/sg==
-X-Received: by 2002:a05:6402:2714:b0:676:54d5:bc70 with SMTP id
- 4fb4d7f45d1cf-67654d5c1f2mr2819943a12.25.1776765682868; 
- Tue, 21 Apr 2026 03:01:22 -0700 (PDT)
-X-Received: by 2002:a05:6402:2714:b0:676:54d5:bc70 with SMTP id
- 4fb4d7f45d1cf-67654d5c1f2mr2819882a12.25.1776765682203; 
- Tue, 21 Apr 2026 03:01:22 -0700 (PDT)
+ bh=DrXxYMa2cjh9awhPj5EP6RqpNUr+kJ/Sk50wv8WDZOM=;
+ b=BCkLJuRhzCCHJTW5ZAHU/cvfNYkaCCqG2qRg2RGDQtgkUQwdXqLCCcu6SHa7cPhxr4
+ jbxhUW14qPdXmoMWSj54zIyG6jTHa4t9f7pamn73n/hvFnSR0MmUd+jPj9Kb47Xx3Ifc
+ 2Y2k8B/K1SJohWmCi5jtipvZIwDMDpN/Pz5Ar3qHa6/tyYdBJNE1W4x41Mv/niFjoFPB
+ tRbYt44HuEjf1gPGGxGUojeRVmf4mo1/GwBPs4o5uFv7GcNwh25PREokXb3zqY8e6M9x
+ TYoqdtnmpneG5cOr+7Euaaupeeky8Ov08gEBjXn7D7g5e33/hpAARpEYLpjF46CLlOUE
+ UZsQ==
+X-Gm-Message-State: AOJu0Ywpl4JvWjcsynn+OaD0z/xpweBmhiUTOIuqpvrSXkJqaSYBPZpW
+ ePugj8DYH0giEZkoCd/4zmR8ZJQ9AJl3l2VHr1zhVS6cxxi5isfRA0iU5hzzJ/M/IUDFTkvttCh
+ CYThEve+TR+KQlHel+ehHZG2LLh0XzifwGtb6h5Ff8WBZ
+X-Gm-Gg: AeBDies5SR+q1181LQlgoUzZv2V7Pvr+ejZk1lb0c2zCCED3K5C+vW5SwaoBhjEaPxZ
+ DjBEGYGS3Cb7SGBtfxNLFfK4RizkPjUpplpmYltw+LgubdGkpV8xWbdvfBvIeIecsSw503yFsc6
+ W5yd5Rq13S1tr1o4mDyxxR7fRoyKjuEySNBb9kUV9FFdDUyuVSACsoaPkmvfWKVWZPRWDsouPjy
+ 7fB4WvbGO4mz5cCBpnD3h0WxICozDVDnk1k0AUpvFPr8TB9vBAKdE4RLQ7oWZLxBeNeXBvA7pc6
+ si90q/7Qef0PfhpI9fQPleOrsr3x5MWw2Um+5Yo+XNic+/eS2/6SGk+zxoP5ngu8VEgB9ljGz3R
+ SLJvhDgGWyG53v/b8aLuAR8viejfBtUiZnQ==
+X-Received: by 2002:a05:6000:2dc6:b0:43d:7512:6f7b with SMTP id
+ ffacd0b85a97d-43fe3f35785mr27232282f8f.5.1776765758209; 
+ Tue, 21 Apr 2026 03:02:38 -0700 (PDT)
+X-Received: by 2002:a05:6000:2dc6:b0:43d:7512:6f7b with SMTP id
+ ffacd0b85a97d-43fe3f35785mr27232092f8f.5.1776765756529; 
+ Tue, 21 Apr 2026 03:02:36 -0700 (PDT)
 Received: from [192.168.0.65] ([78.16.130.40])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4412150a071sm945221f8f.21.2026.04.21.03.01.19
+ ffacd0b85a97d-4411c9f4f03sm6943211f8f.1.2026.04.21.03.02.34
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Tue, 21 Apr 2026 03:01:20 -0700 (PDT)
-Message-ID: <d24d7948-2087-453f-8978-431a73b6dd66@redhat.com>
-Date: Tue, 21 Apr 2026 11:01:18 +0100
+ Tue, 21 Apr 2026 03:02:35 -0700 (PDT)
+Message-ID: <3218ea91-e9ed-4a14-a17f-b4aa9fa68061@redhat.com>
+Date: Tue, 21 Apr 2026 11:02:33 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: 25.11.1 patches review and test
-To: "Xu, HailinX" <hailinx.xu@intel.com>, "stable@dpdk.org" <stable@dpdk.org>
-Cc: "dev@dpdk.org" <dev@dpdk.org>,
- "Puttaswamy, Rajesh T" <rajesh.t.puttaswamy@intel.com>,
- "Hosamani, Manjunathgouda" <manjunathgouda.hosamani@intel.com>,
- Luca Boccassi <bluca@debian.org>, Thomas Monjalon <thomas@monjalon.net>,
- "yuan.peng@intel.com" <yuan.peng@intel.com>,
- "zhaoyan.chen@intel.com" <zhaoyan.chen@intel.com>,
+To: Riley Fletcher <rileyf@linux.ibm.com>, stable@dpdk.org
+Cc: dev@dpdk.org, Abhishek Marathe <Abhishek.Marathe@microsoft.com>,
+ Ali Alnubani <alialnu@nvidia.com>, benjamin.walker@intel.com,
+ David Christensen <drc@linux.vnet.ibm.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>, Ian Stokes <ian.stokes@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>, John McNamara <john.mcnamara@intel.com>,
+ Ju-Hyoung Lee <juhlee@microsoft.com>, Luca Boccassi <bluca@debian.org>,
+ Pei Zhang <pezhang@redhat.com>, qian.q.xu@intel.com,
+ Raslan Darawsheh <rasland@nvidia.com>, Thomas Monjalon
+ <thomas@monjalon.net>, Yanghang Liu <yanghliu@redhat.com>,
+ yuan.peng@intel.com, zhaoyan.chen@intel.com,
  Shani Peretz <shperetz@nvidia.com>
 References: <20260402164454.669125-1-ktraynor@redhat.com>
- <DS4PPF00BBED10C3C2A50F6C7CFB30360539F2C2@DS4PPF00BBED10C.namprd11.prod.outlook.com>
+ <0ccdfe867dfbd01e6d13017c00465696fafe0d46.camel@linux.ibm.com>
 From: Kevin Traynor <ktraynor@redhat.com>
 Autocrypt: addr=ktraynor@redhat.com; keydata=
  xsFNBF2J2awBEADUEPNhgNI+nJNgiTAUcw4YIgVXEoHlsNPyyzG1BEXkWXALy0Y3fNTiw6+r
@@ -122,9 +126,9 @@ Autocrypt: addr=ktraynor@redhat.com; keydata=
  yWzMcVrcGJDQLC9JLKEpoyUF6gdTKaiDL2Vao4+XRIA3Y57b6MO35a3HuzAv7+i5Z0mnDEJO
  XxXqTOmKYpMIGexzM/PtuA0712sT1abG9tAJ17ao/B7cqMW5IkKkalemFbWfI2unns4Papvo
  tk9igVqyp6EJDU98z5TJioCVojwK2laDaoIjTJk9YYv3iwCsqPd5feU=
-In-Reply-To: <DS4PPF00BBED10C3C2A50F6C7CFB30360539F2C2@DS4PPF00BBED10C.namprd11.prod.outlook.com>
+In-Reply-To: <0ccdfe867dfbd01e6d13017c00465696fafe0d46.camel@linux.ibm.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: WjizsjP3mQY-CjU02X1WUFCqoy_VKaWuDVuTFfey_Yw_1776765683
+X-Mimecast-MFC-PROC-ID: FzCmXtGhrA5V09pK_ixSQVJBTUKB0Ueom3QLLfJLaVw_1776765761
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
@@ -142,82 +146,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 4/21/26 2:44 AM, Xu, HailinX wrote:
+On 4/21/26 6:47 AM, Riley Fletcher wrote:
+> IBM - Power Systems Testing
+> DPDK v25.11.1-rc1
 > 
->> -----Original Message-----
->> From: Kevin Traynor <ktraynor@redhat.com>
->> Sent: Friday, April 3, 2026 12:45 AM
->> To: stable@dpdk.org
->> Cc: dev@dpdk.org; Abhishek Marathe <Abhishek.Marathe@microsoft.com>;
->> Ali Alnubani <alialnu@nvidia.com>; benjamin.walker@intel.com; David
->> Christensen <drc@linux.vnet.ibm.com>; Hemant Agrawal
->> <hemant.agrawal@nxp.com>; Ian Stokes <ian.stokes@intel.com>; Jerin Jacob
->> <jerinj@marvell.com>; Mcnamara, John <john.mcnamara@intel.com>; Ju-
->> Hyoung Lee <juhlee@microsoft.com>; Kevin Traynor <ktraynor@redhat.com>;
->> Luca Boccassi <bluca@debian.org>; Pei Zhang <pezhang@redhat.com>;
->> qian.q.xu@intel.com; Raslan Darawsheh <rasland@nvidia.com>; Thomas
->> Monjalon <thomas@monjalon.net>; Yanghang Liu <yanghliu@redhat.com>;
->> yuan.peng@intel.com; zhaoyan.chen@intel.com; Shani Peretz
->> <shperetz@nvidia.com>
->> Subject: 25.11.1 patches review and test
->>
->> Hi all,
->>
->> Here is a list of patches targeted for stable release 25.11.1.
->>
->> The planned date for the final release is 21st April 2026.
->>
->> Please help with testing and validation of your use cases and report any
->> issues/results with reply-all to this mail. For the final release the fixes and
->> reported validations will be added to the release notes.
->>
->> A release candidate tarball can be found at:
->>
->>     https://dpdk.org/browse/dpdk-stable/tag/?id=v25.11.1-rc1
->>
->> These patches are located at branch 25.11 of dpdk-stable repo:
->>     https://dpdk.org/browse/dpdk-stable/
->>
->> Thanks.
->>
->> Kevin
->>
->> ---
-> Update the test status for Intel part. dpdk25.11.1-rc1 all validation test done. not found new issues.
+> * Build CI on Fedora 40, 41, 42 and 43 container images for ppc64le
+> * Basic PF on Mellanox: No issues found
+> * Performance: TestPMD throughput single core tests
+> * OS:- RHEL 10.1  kernel: 6.12.0-124.39.1.el10_1.ppc64le
+>          with gcc version 14.2.1 20250110 (Red Hat 14.2.1-7)
 > 
-
-Hi Hailin, great - thank you for testing and reporting this.
-
-thanks
-Kevin.
-
-> * Build & CFLAG compile: cover the build test with latest GCC/Clang version on the following OS(all passed)
->   - Ubuntu25.04/Ubuntu24.04.3
->   - RHEL10/RHEL9.6
->   - Fedora43
->   - FreeBSD15
->   - SUSE16
->   - OpenAnolis8.10
->   - OpenEuler24.04-SP2
->   - AzureLinux3.0
+> Systems tested:
+>   - LPARs on IBM Power11 CHRP IBM, 9105-22A
+>      NICs:
+>      - Mellanox Technologies MT4129 Family [ConnectX-7 100 GbE 2-Port]
+>      - Firmware Version: 28.47.1088
+>      - OFED 26.01-1.0.0
 > 
-> * Function tests: All test done and passed
->   - i40E-(XXV710, X722) PF/VF: test scenarios including basic/RTE_FLOW/TSO/Jumboframe/checksum offload/mac_filter/VLAN/VXLAN/RSS, etc. 
->   - IXGBE-(E610) PF/VF: test scenarios including basic/RTE_FLOW/TSO/Jumboframe/checksum offload/mac_filter/VLAN/VXLAN/RSS, etc. 
->   - ICE-(E810, E830, E2100) PF/VF: test scenarios including basic/Switch/Package Management/Flow Director/Advanced Tx/Advanced RSS/ACL/DCF/Flexible Descriptor, etc.
->   - IPsec: test scenarios including ipsec/ipsec-gw/ipsec library basic test - QAT&SW/FIB library, etc.
->   - Virtio: both function and performance test are covered. Such as PVP/Virtio_loopback/virtio-user loopback/virtio-net VM2VM perf testing/VMAWARE ESXI 8.0, etc.
->   - Cryptodev: test scenarios including Cryptodev API testing/CompressDev ISA-L/QAT/ZLIB PMD Testing/FIPS, etc.
->   - DLB: test scenarios including DLB2.0 and DLB2.5
->   - Other: test scenarios including AF_XDP, Power, CBDMA, DSA
-> 
-> * Performance test: All test done and passed
->   - Thoughput Performance
->   - Cryptodev Latency
->   - PF/VF NIC single core
->   - XXV710/E810 NIC Performance
-> 
+> All looks well on our end.
 > 
 > Regards,
-> Xu, Hailin
+> 
+> Riley Fletcher
+
+Hi Riley,
+
+Thanks for testing this. Great to have you onboard testing LTS!
+
+thanks,
+Kevin.
 
