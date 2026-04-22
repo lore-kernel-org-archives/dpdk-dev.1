@@ -2,74 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48156F94CB3
-	for <dpdk-dev@archiver.kernel.org>; Tue, 21 Apr 2026 21:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D908F94CBC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 02:23:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 645DD4028F;
-	Tue, 21 Apr 2026 23:57:00 +0200 (CEST)
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com
- [209.85.160.54]) by mails.dpdk.org (Postfix) with ESMTP id EB22840144
- for <dev@dpdk.org>; Tue, 21 Apr 2026 23:56:58 +0200 (CEST)
-Received: by mail-oa1-f54.google.com with SMTP id
- 586e51a60fabf-40ea36b56b7so3649693fac.3
- for <dev@dpdk.org>; Tue, 21 Apr 2026 14:56:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776808618;
- x=1777413418; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=VJrukwb/pXnFwbd37Lbbv2KuzyAvmQVJRXd42gq/dHI=;
- b=XJ4gEFjWlCXqNaBRtQgs0Gruq8MmgIms+Y+6XgAMKxmIvYsaV2tDWyEdq0QNM9hI/f
- c4MuSb06quvvZ66geq/TgENQ6EPVUpUDbwAWanoSBCZCPSvXyKdt5ETghx6B63nIzbNg
- 9YOvHp7iCiUtPs0gc5l2IYkmdv04M/nk83EF7Xi1S8JTVPzHoj/gwpwcdrah/G7GFylA
- Uy+MrgtsXYJd+0Z2dq18pqynXkbVsjumztKySg3WmwxcUu/sIMcO0QMjfsckjgHkxFFq
- B3+PAwmFULOlokYVN/0DOPzrSj2ZAfyldnTg14TFSLLmtSSi4KiOvZeD+Nk2z/aE2Mmf
- F0iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776808618; x=1777413418;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=VJrukwb/pXnFwbd37Lbbv2KuzyAvmQVJRXd42gq/dHI=;
- b=KwB93uSy7sdkOSFONpWvNQqRLvreHdXBTTP4rsPoqAULGbCOUHp0RPblK68olDLNHQ
- VkLLUZbfj2j9DlwqZHTfrGMVntjeryl6EWPRZ3ATydMQICBquoL2xdaWhkJS/R7eLm6M
- P9DpB75J+HT3ujEcNj+thAac4x3MKn45IpDNxXvxZcL7PcA6awp6ZbfWMu5Qi/PdCx/J
- 2LX950H9he58xCzYoGl9vMstvhg+c3kVHehNmykCoE8VvUBSivdx3qdab0SYeZBDcwis
- hEsAsMsFukwZ6DYUQ+x/3A6ABSzM7tL/+e2Js3A+evqtozylF/CraEtvA2A4iquYebbz
- 2cOw==
-X-Gm-Message-State: AOJu0YyU6haSLiQ1XA+BAp6YDv7+4rJX5Zahea6LyO3VM8jmGO4mct6r
- 6vh6RSiqZHxuXgckCz1jV/PjqSaSHX81R7J6Dm9LskhcF6ZCwMGMgBH5Tqe0Sh1NnJc=
-X-Gm-Gg: AeBDies910ZKDD3CBAbJlvAG0oRXaq9VwNIxbpkxF9CrcWK+oIK3F+HHVRpGtH27fmG
- /lVAAh4eSFtsLFnq+5WTTzHKxHudfSa1gFFnYemn7Jwd58kukn7vsblkvrtFeiMVUjxiICLF+26
- m+G+jbojv6kMM5FERI82+qynhd8dWqQONWj8AerRYUROnL0NOlCeUp1zT0b/jI1TkwmfhLT5iYI
- gG4sDclSJ7pBfCv6nakWw09Mn8+MSVpYy4oEE4rnbioTDrGmHJp1O05rnqUrYChaq9IX3IE87w7
- 8LpZvl2o7PQuHJUT50+tiX/8yWm9vPsKVKDpqAJlXE1APZJF2EkD9mPJ8Ue9VoIdIJJygA+Z2sN
- 23s6W6bkHG+jftsltwbkccGKtbRIOcr5pNp1e3m7tf4fpJHtr9+mHXId/j2iFTpNA72Lq0Y0gkI
- 9zf3XH8guc4XW4RngPbCCXuyRP8AjfS/FlM21z/3JKvUaXCA==
-X-Received: by 2002:a05:6870:b30f:b0:423:994:9b76 with SMTP id
- 586e51a60fabf-42aded1de0fmr11728830fac.24.1776808617951; 
- Tue, 21 Apr 2026 14:56:57 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-42b934a2e8esm13481403fac.10.2026.04.21.14.56.56
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 21 Apr 2026 14:56:57 -0700 (PDT)
-Date: Tue, 21 Apr 2026 14:56:54 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, Dariusz Sosnowski <dsosnowski@nvidia.com>, Viacheslav
- Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>
-Subject: Re: [PATCH dpdk] net/mlx5: add option to reduce Tx datapath
- compilation time
-Message-ID: <20260421145654.6ee9715b@phoenix.local>
-In-Reply-To: <20260421212356.573976-1-rjarry@redhat.com>
-References: <20260421212356.573976-1-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id F40AE40272;
+	Wed, 22 Apr 2026 04:23:52 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 381BE40144
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 04:23:52 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 1B2754B060; Wed, 22 Apr 2026 04:23:52 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/core Bug 1937] [dpdk23.11.7-rc1] DPDK build failed with
+ clang21.1.8 on Fedora43
+Date: Wed, 22 Apr 2026 02:23:51 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: 23.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: daxuex.gao@intel.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1937-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,14 +55,129 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 21 Apr 2026 23:23:55 +0200
-Robin Jarry <rjarry@redhat.com> wrote:
+http://bugs.dpdk.org/show_bug.cgi?id=3D1937
 
-> The mlx5 Tx datapath compiles 42 variants of the burst function, each
-> a specialization of mlx5_tx_burst_tmpl() with a different combination
-> of offload flags. The compiler must instantiate and optimize the entire
-> 3800+ line template for every variant, which dominates build time for
-> all the code base.
+            Bug ID: 1937
+           Summary: [dpdk23.11.7-rc1] DPDK build failed with clang21.1.8
+                    on Fedora43
+           Product: DPDK
+           Version: 23.11
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: daxuex.gao@intel.com
+  Target Milestone: ---
 
-PS: I am going to reject any new drivers that do this kind of nonsense.
-The cnxk and mlx5 drivers are setting a bad precedent.
+[Environment]
+DPDK version:=20
+commit f919fadc148d11f2ef68def4b7638503323515b2 (HEAD, tag: v23.11.7-rc1,
+origin/23.11)
+Author: Shani Peretz <shperetz@nvidia.com>
+Date:   Tue Apr 21 09:24:45 2026 +0300
+
+    version: 23.11.7-rc1
+
+    Signed-off-by: Shani Peretz <shperetz@nvidia.com>
+
+OS:  Fedora43-64/6.17.1-300.fc43.x86_64
+Compiler: clang 21.1.8 (Fedora 21.1.8-4.fc43)
+
+[Test Setup]
+# build cmd:=20
+CC=3Dclang meson --werror -Dlibdir=3Dlib -Dexamples=3Dall --default-library=
+=3Dstatic
+x86_64-native-linuxapp-clang
+
+ninja  -C x86_64-native-linuxapp-clang/
+
+[Output]
+FAILED: app/dpdk-test.p/test_test_event_dma_adapter.c.o=20
+clang -Iapp/dpdk-test.p -Iapp -I../app -Ilib/cmdline -I../lib/cmdline -I. -=
+I..
+-Iconfig -I../config -Ilib/eal/include -I../lib/eal/include
+-Ilib/eal/linux/include -I../lib/eal/linux/include -Ilib/eal/x86/include
+-I../lib/eal/x86/include -Ilib/eal/common -I../lib/eal/common -Ilib/eal
+-I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metr=
+ics
+-I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/net -I../lib/net
+-Ilib/mbuf -I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring
+-I../lib/ring -Idrivers/net/ring -I../drivers/net/ring -Ilib/ethdev
+-I../lib/ethdev -Ilib/meter -I../lib/meter -Idrivers/bus/pci
+-I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci -I../lib/pci
+-Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib/acl -I../lib/acl -Ilib/hash
+-I../lib/hash -Ilib/rcu -I../lib/rcu -Ilib/bitratestats -I../lib/bitratesta=
+ts
+-Ilib/bpf -I../lib/bpf -Ilib/compressdev -I../lib/compressdev -Ilib/cryptod=
+ev
+-I../lib/cryptodev -Ilib/security -I../lib/security -Ilib/dispatcher
+-I../lib/dispatcher -Ilib/eventdev -I../lib/eventdev -Ilib/timer -I../lib/t=
+imer
+-Ilib/dmadev -I../lib/dmadev -Ilib/distributor -I../lib/distributor -Ilib/e=
+fd
+-I../lib/efd -Ilib/fib -I../lib/fib -Ilib/rib -I../lib/rib -Ilib/table
+-I../lib/table -Ilib/port -I../lib/port -Ilib/sched -I../lib/sched
+-Ilib/ip_frag -I../lib/ip_frag -Ilib/lpm -I../lib/lpm -Ilib/graph
+-I../lib/graph -Ilib/pcapng -I../lib/pcapng -Ilib/ipsec -I../lib/ipsec
+-Ilib/latencystats -I../lib/latencystats -Idrivers/net/bonding
+-I../drivers/net/bonding -Idrivers/net/null -I../drivers/net/null -Ilib/mem=
+ber
+-I../lib/member -Ilib/pdcp -I../lib/pdcp -Ilib/reorder -I../lib/reorder
+-Ilib/pdump -I../lib/pdump -Ilib/power -I../lib/power -Ilib/rawdev
+-I../lib/rawdev -Ilib/stack -I../lib/stack -Ilib/pipeline -I../lib/pipeline
+-Idrivers/crypto/scheduler -I../drivers/crypto/scheduler
+-fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -=
+Wextra
+-Werror -std=3Dc11 -O3 -include rte_config.h -Wcast-qual -Wdeprecated -Wfor=
+mat
+-Wformat-nonliteral -Wformat-security -Wmissing-declarations
+-Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith
+-Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings
+-Wno-address-of-packed-member -Wno-missing-field-initializers -D_GNU_SOURCE
+-DWITH_GZFILEOP -march=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API
+-Wno-format-truncation -fno-strict-aliasing -DALLOW_INTERNAL_API -MD -MQ
+app/dpdk-test.p/test_test_event_dma_adapter.c.o -MF
+app/dpdk-test.p/test_test_event_dma_adapter.c.o.d -o
+app/dpdk-test.p/test_test_event_dma_adapter.c.o -c
+../app/test/test_event_dma_adapter.c
+../app/test/test_event_dma_adapter.c:594:32: error: variable 'event' is
+uninitialized when passed as a const pointer argument here
+[-Werror,-Wuninitialized-const-pointer]
+  594 |=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20
+TEST_DMA_VCHAN_ID, &event);
+      |=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
+=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
+        ^~~~~
+1 error generated.
+[2526/2823] Compiling C object app/dpdk-test.p/test_test_efd_perf.c.o
+[2527/2823] Compiling C object app/dpdk-test.p/test_test_ethdev_link.c.o
+[2528/2823] Compiling C object app/dpdk-test.p/test_test_distributor.c.o
+[2529/2823] Compiling C object
+app/dpdk-test.p/test_test_event_crypto_adapter.c.o
+[2530/2823] Compiling C object
+app/dpdk-test.p/test_test_event_eth_tx_adapter.c.o
+[2531/2823] Compiling C object app/dpdk-test.p/test_test_event_ring.c.o
+[2532/2823] Compiling C object
+app/dpdk-test.p/test_test_event_eth_rx_adapter.c.o
+[2533/2823] Compiling C object app/dpdk-test.p/test_test_cryptodev.c.o
+[2534/2823] Compiling C object
+app/dpdk-test.p/test_test_event_timer_adapter.c.o
+
+[Expected Result]
+Build Passed
+
+[Regression]
+Is this issue a regression: (Y/N)N
+This is a new issue discovered on Fedora 43 OS; it was not found on Fedora =
+42
+OS.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
