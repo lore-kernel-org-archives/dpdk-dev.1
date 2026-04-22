@@ -2,35 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FDAFF9EDC0
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 12:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204ADF9EDC0
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 12:29:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 14B6F4042C;
-	Wed, 22 Apr 2026 14:27:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 161B04042C;
+	Wed, 22 Apr 2026 14:29:32 +0200 (CEST)
 Received: from dkmailrelay1.smartsharesystems.com
  (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 97E84402E0
- for <dev@dpdk.org>; Wed, 22 Apr 2026 14:27:25 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BCD01402E0
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 14:29:30 +0200 (CEST)
 Received: from smartserver.smartsharesystems.com
  (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 3F94F2073F
- for <dev@dpdk.org>; Wed, 22 Apr 2026 14:27:25 +0200 (CEST)
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 87F082073F
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 14:29:30 +0200 (CEST)
 Content-class: urn:content-classes:message
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="utf-8"
 Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v5] mempool: improve cache behaviour and performance
-Date: Wed, 22 Apr 2026 14:27:22 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65808@smartserver.smartshare.dk>
-In-Reply-To: <20260419095526.39526-1-mb@smartsharesystems.com>
+Subject: RE: [PATCH] mbuf: fix mbuf operations history recording
+Date: Wed, 22 Apr 2026 14:29:28 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65809@smartserver.smartshare.dk>
+In-Reply-To: <20260419221220.86455-1-mb@smartsharesystems.com>
 X-MimeOLE: Produced By Microsoft Exchange V6.5
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v5] mempool: improve cache behaviour and performance
-Thread-Index: AdzP4qoNb2t0Ok1ZRbiYs0AZNsQKHQCcKG/Q
-References: <20260408141315.904381-1-mb@smartsharesystems.com>
- <20260419095526.39526-1-mb@smartsharesystems.com>
+Thread-Topic: [PATCH] mbuf: fix mbuf operations history recording
+Thread-Index: AdzQSZix3GUJjXceTwuZRtzo1/5tmQCCge4A
+References: <20260419221220.86455-1-mb@smartsharesystems.com>
 From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
 To: <dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
