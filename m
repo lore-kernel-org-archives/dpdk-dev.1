@@ -2,70 +2,90 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E322FA1FC5
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 16:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0D7FA1FDC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 18:35:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 89F54402B5;
-	Wed, 22 Apr 2026 18:32:20 +0200 (CEST)
-Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
- [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id E6163402A3
- for <dev@dpdk.org>; Wed, 22 Apr 2026 18:32:19 +0200 (CEST)
-Received: by mail-dy1-f176.google.com with SMTP id
- 5a478bee46e88-2bdcf5970cdso4727469eec.0
- for <dev@dpdk.org>; Wed, 22 Apr 2026 09:32:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776875539;
- x=1777480339; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=IZpXxGlGQIWuEHjy9dxysRiYGE2kAQUv8peukSWF0QM=;
- b=pvlpJlN2ShF+SFqhiRwgiX8bGkPUdW5ehz2yYxWuhjqQSn2cZ81xTzubpjOPrBssfq
- ADKBkiJItQ2t5zG87xAw0kR+edjfIZ7b4snBOc7lIDmucjQBmtiqr0K/TXpdnVt7HDET
- NKD/RRgtosuPsUapPjf9u+xb3pWjHN6X/ouxMq9fr7t3klE/Ml8pT6Ksv9vDjcnQScvX
- xsDoB7j3X2BvHRGleNqjCEC3v4gwacHmf8jyhTNSTGxzYB6FtF7h6te9giQJTA5zB6UW
- Cyz/C3mxhS7UAjz0kLLFBr5ipXwLcKeAadcFoH5YHyAdL7HClyk5EDvqYBOsaV0Y+bRd
- PGaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776875539; x=1777480339;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=IZpXxGlGQIWuEHjy9dxysRiYGE2kAQUv8peukSWF0QM=;
- b=sI3LoGLcdr3iF1FFtiAU8cAOyagdQ/jfgxBIu9A1dkIk9Z46ZiPvW+FfVGa6z63yjt
- 5B/njyliNiwj6+RtmBl9+Wmo9k7EIoTf7niHDDW1dloCIpM0+7aSun/nO7AaVB55lIle
- FGAMwNSSkBfotWeCkPXajeZAsPmsy+fTYV0G5iDgcIhb1Bf5undSzBqzJDAz5JPfnga/
- bi0t0i/qwNnt0Jq/3pz3cXBxjzibfKIltRSOwkl5nib/Pr9wjvMJu7Tyr/xQaYd/EVj2
- Uxg0wtzu2axGJuC45bKki7EaaIsssWQH/KWGLFeuxZ39i3CwAu5lpqZ/s/ynPSJcWoES
- uzCA==
-X-Gm-Message-State: AOJu0YwoUEI1w+TkXEbHKv5XkcUlqMjRbnHMEZj0hGXhel+BcsuwAYlz
- RCtF2/vspQPxxiCWd1v3CP0jg3uq9R+3Otd/yYjVaSDrNENnlsUZHnLHGjK2Z4GJPnU=
-X-Gm-Gg: AeBDietDM0VthN23Dakr57UHWUjSnt7N2Y6C6Yi4rc1bAaXw28H/tEjCdnquip882au
- vBv3Ly51RtiOr0qmbUbZux9a6LGl0qTa32RYJvPwFMtfA+9T8bqrjbkOtVQ6hBjH8/flwSUtGY7
- NioS3H+zRB7vMnIjWNd0L2mRqW/TQnGTx/TJuLfrAlZZo2j8mC/Dya/PfGnxLG1vV/0EV9K73fa
- xN7I/YQNvQv5N70aXxoT0Tv+4mzOdFACbe2WpjiT3FQiZR4t0QD303dSobVA0kFD0nJvrcXuSRJ
- 7vaghB71ND0QGx1hKZjTAmOgGSYO/3FpBzHwZj/inv30MV9IgFJt0HdDBJ5rEMBH0HHil5XMgRJ
- +5jBKScWx4mvqez9sBwASyVEDEVjca8dN4WBXHNVJKWodWUYL4KcBH8so40ozAzm7BArfOTb3B4
- rpIgueX6eaYFlUx5KP/JZo7r74w6Y26ayk3YuHW6R8kI30/Q==
-X-Received: by 2002:a05:7300:dc92:b0:2c6:7896:e2b2 with SMTP id
- 5a478bee46e88-2e42dc07c36mr9039478eec.13.1776875538588; 
- Wed, 22 Apr 2026 09:32:18 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2e53a4a64e5sm23744567eec.7.2026.04.22.09.32.18
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 22 Apr 2026 09:32:18 -0700 (PDT)
-Date: Wed, 22 Apr 2026 09:32:15 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH dpdk] net/tap: use offsets provided by rte_net_get_ptype
-Message-ID: <20260422093215.001c1c00@phoenix.local>
-In-Reply-To: <20260422133615.680318-2-rjarry@redhat.com>
-References: <20260422133615.680318-2-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5E04840647;
+	Wed, 22 Apr 2026 20:35:52 +0200 (CEST)
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com
+ [148.163.158.5])
+ by mails.dpdk.org (Postfix) with ESMTP id 4327A402B5;
+ Wed, 22 Apr 2026 20:35:51 +0200 (CEST)
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+ by mx0a-001b2d01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 63MGMFPH3107426; Wed, 22 Apr 2026 18:35:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+ :content-transfer-encoding:date:from:message-id:mime-version
+ :subject:to; s=pp1; bh=qM8ey30hyYmmyzrqncxH4O6OpP2vEBygBM6d1sTSL
+ DQ=; b=S85dK9xppRnZJFZFpOLNOJQZXBSZP+S2JHXv5JdJMhxkpGYM+ANqqNqaQ
+ SCKnAQ4dMh3QWP6IgdIDz8sMh4jpzOIL6NsiocTUHTzQ1prosqggc4xwKPwl4tWS
+ 5M1jwgTjoGkFEnKIxklSTOr2a2VnY4O0SK+lS7QFdDQDNfWGOGgfmYemrR2xqq84
+ wC1+CumU+kZDx98AxWJA6QyFmlDANoQcFR2zqpsKL9wQs2h/vBsL/cZtwH499YPJ
+ iDunf3wKwdFlCBTwxoXdBbtCcpuGN6trhqH8CNC4RUokbDU8tZ7n2VbnJTrDAjex
+ h0HJc53LyS4ExzxizILyFYmEATQqw==
+Received: from ppma12.dal12v.mail.ibm.com
+ (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+ by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4dpeu6cqmw-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 22 Apr 2026 18:35:47 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+ by ppma12.dal12v.mail.ibm.com (8.18.1.7/8.18.1.7) with ESMTP id 63MIZIDM020346;
+ Wed, 22 Apr 2026 18:35:46 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+ by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4dpjkxuf2b-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Wed, 22 Apr 2026 18:35:46 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com
+ [10.39.53.232])
+ by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id
+ 63MIZkHh31589094
+ (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+ Wed, 22 Apr 2026 18:35:46 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id 3371558053;
+ Wed, 22 Apr 2026 18:35:46 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+ by IMSVA (Postfix) with ESMTP id CBFEA58043;
+ Wed, 22 Apr 2026 18:35:45 +0000 (GMT)
+Received: from li-4c4c4544-0048-3510-8036-cac04f563434.atx-us.ibm.com (unknown
+ [9.16.58.171]) by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+ Wed, 22 Apr 2026 18:35:45 +0000 (GMT)
+From: Riley Fletcher <rileyf@linux.ibm.com>
+To: dev@dpdk.org
+Cc: stable@dpdk.org, patrickrobb1997@gmail.com, Luca.Vizzarro@arm.com,
+ Riley Fletcher <rileyf@linux.ibm.com>
+Subject: [PATCH v2] dts: fix port info getter when port is not found
+Date: Wed, 22 Apr 2026 13:35:24 -0500
+Message-ID: <20260422183524.2012369-1-rileyf@linux.ibm.com>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Reinject: loops=2 maxloops=12
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDIyMDE3NyBTYWx0ZWRfX5SsVc63fdY8G
+ G8hTnL/VAzsDpaXMPTigPFe7bhC7pYe/+y5eAK4e6/8rWJrYSSxfMB1fmuav+8zAJg+fnQWeYMO
+ /Xl8ES08rMnR/s4vISvbLFI24mfCW7wnUHo2+cd+v9OZBZaxHNEh6uuAzT9HMpar7qjtEDCDTrA
+ WDtrbjgWQbgzsXEK1AA/DTmKGgIcdvw5xM8Ur7ZZPEw1EZn+RyOV38ZclJiC3X+pS5ycaIi/f1W
+ k6AaKGTPz/P1xulhDGJgBLm5A3/0eXJjCAlZ5iTnpls50B+0NQnIhCKD2J6fUH3CuXJnj2lzx1e
+ v3WZJdCc/96KdxNbxbOa6RwGD8T7ph/ACewr1KWPWojoa7zFSXMO1PqumCvz+l0kWtyaioF5xV1
+ /WWwt7A49hrZqFcSlXNkFPQlEe18AYnI/tRn+Uz1Ka53VTs7NsOQ4oGDO+7w3+j6XR7ulypocQC
+ el900/cZjf6uHEed5oQ==
+X-Proofpoint-ORIG-GUID: TYCwKqoh0ebUtKcNYajX-JfB6-UWNFWW
+X-Proofpoint-GUID: Oz2jfc2Vq8IqU-nREGkvfw_g8dK7nOxu
+X-Authority-Analysis: v=2.4 cv=BYfoFLt2 c=1 sm=1 tr=0 ts=69e91504 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=RnoormkPH1_aCDwRdu11:22
+ a=RzCfie-kr_QcCd8fBx8p:22 a=8rWy6zfcAAAA:8 a=VnNF1IyMAAAA:8
+ a=Pi44RHbeux0Oy0Td5_UA:9 a=YjdVzJdQTyZRADMV7wFX:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-04-22_02,2026-04-21_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 impostorscore=0 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 adultscore=0 spamscore=0 clxscore=1015 bulkscore=0
+ phishscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2604200000
+ definitions=main-2604220177
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,69 +99,30 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 22 Apr 2026 15:36:16 +0200
-Robin Jarry <rjarry@redhat.com> wrote:
+In DTS, when providing an nonexisting PCI address, a ConfigurationError
+should be thrown. Instead, because the next() is not given a default
+None, it instead hits a StopIteration error, which is harder to debug.
 
-> Instead of guessing what are the proper header lengths, pass
-> a rte_net_hdr_lens struct to rte_net_get_ptype and use it to get the
-> proper header lengths/offsets in tap_verify_csum.
-> 
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
-> ---
+Fixes: 0a210d88c36 ("dts: improve port model")
+Cc: stable@dpdk.org
+Signed-off-by: Riley Fletcher <rileyf@linux.ibm.com>
+---
+ dts/framework/testbed_model/linux_session.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-AI review feedback spotted some things I didn't
+diff --git a/dts/framework/testbed_model/linux_session.py b/dts/framework/testbed_model/linux_session.py
+index ee943462c2..3de92b549e 100644
+--- a/dts/framework/testbed_model/linux_session.py
++++ b/dts/framework/testbed_model/linux_session.py
+@@ -168,7 +168,7 @@ def get_port_info(self, pci_address: str) -> PortInfo:
+             ConfigurationError: If the port could not be found.
+         """
+         bus_info = f"pci@{pci_address}"
+-        port = next(port for port in self._lshw_net_info if port.get("businfo") == bus_info)
++        port = next((port for port in self._lshw_net_info if port.get("businfo") == bus_info), None)
+         if port is None:
+             raise ConfigurationError(f"Port {pci_address} could not be found on the node.")
+ 
+-- 
+2.53.0
 
-On Wed, 22 Apr 2026 15:36:16 +0200
-Robin Jarry <rjarry@redhat.com> wrote:
-
-> Instead of guessing what are the proper header lengths, pass
-> a rte_net_hdr_lens struct to rte_net_get_ptype and use it to get the
-> proper header lengths/offsets in tap_verify_csum.
-
-The two bounds checks this patch drops are not redundant with the new
-l4_off check and need to stay in some form:
-
--	if (l2_len + rte_be_to_cpu_16(iph->total_length) >
--			rte_pktmbuf_data_len(mbuf))
--		return;
-...
--	if (l2_len + l3_len + rte_be_to_cpu_16(iph->payload_len) >
--			rte_pktmbuf_data_len(mbuf))
--		return;
-
-rte_ipv4_udptcp_cksum_verify() -> __rte_ipv4_udptcp_cksum() does:
-
-	l3_len = rte_be_to_cpu_16(ipv4_hdr->total_length);
-	...
-	l4_len = l3_len - ip_hdr_len;
-	cksum = rte_raw_cksum(l4_hdr, l4_len);
-
-and the IPv6 variant reads payload_len the same way. Both are untrusted
-values from the wire. Without the checks above, a packet whose
-total_length / payload_len exceeds what was actually received causes
-rte_raw_cksum() to read past the valid data - uninitialized tail room at
-best, outside buf_len at worst. The IP/L4 CKSUM flags set on the mbuf
-will then be computed over stale memory.
-
-These checks were added deliberately in:
-
-  1168a4fd193 ("net/tap: add buffer overflow checks before checksum")
-
-Please restore equivalent validation after rte_net_get_ptype(), e.g.
-check iph->total_length (IPv4) and hdr_lens->l3_len + iph->payload_len
-(IPv6) against rte_pktmbuf_data_len(mbuf) - hdr_lens->l2_len before
-calling the checksum verifier.
-
-One other thing: rte_net_get_ptype() returns RTE_PTYPE_L3_IPV6_EXT when
-IPv6 extensions are present. The new "else if (l3 != RTE_PTYPE_L3_IPV6)"
-clause falls through to return without setting any CKSUM flag for that
-case. That matches pre-patch behavior, but the comment the patch removed
-was the only thing documenting it. Either accept IPv6_EXT here (l3_len
-now spans the extensions, so the existing helpers work as long as the
-next header is TCP/UDP) or keep the comment.
-
-Nit: the memset(&hdr_lens, 0, ...) runs on every Rx packet even when
-RX_OFFLOAD_CHECKSUM is disabled. Moving it plus the &hdr_lens argument
-inside the offload branch (passing NULL otherwise) avoids that.
-
-I prefer initialization instead of memset, less error prone and easier.
