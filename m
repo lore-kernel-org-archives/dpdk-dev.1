@@ -2,46 +2,145 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D908F94CBC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 02:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 220B2F94CD8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 07:28:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F40AE40272;
-	Wed, 22 Apr 2026 04:23:52 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 381BE40144
- for <dev@dpdk.org>; Wed, 22 Apr 2026 04:23:52 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 1B2754B060; Wed, 22 Apr 2026 04:23:52 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1937] [dpdk23.11.7-rc1] DPDK build failed with
- clang21.1.8 on Fedora43
-Date: Wed, 22 Apr 2026 02:23:51 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: new
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 23.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: daxuex.gao@intel.com
-X-Bugzilla-Status: UNCONFIRMED
-X-Bugzilla-Resolution: 
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
- op_sys bug_status bug_severity priority component assigned_to reporter
- target_milestone
-Message-ID: <bug-1937-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id 0D79840272;
+	Wed, 22 Apr 2026 09:28:16 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 1C6F840144
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 09:28:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+ t=1776842894; x=1808378894;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=1GQYUD6JL8cjQnOvTNGAtOOVqZNB4crZdmbbbkaM3iE=;
+ b=N51aVXpffwM2UazfM0Qlei9I8sAWHx1xXW9Etse5AVoIIqw4kRed47Jm
+ PS/c026dobEI0xDk7UpWypDsSW0wOYWyedkW0/DNd/H5S8SccqMJVMUOy
+ gAS6gBNEekBU8X60ryNCNt4lUTB1S1kQAiRUP45aiAVw7wKf82zhF9zqy
+ hEvP1Q16LeVODvQQfGe0A+u/WMxKkg3kHpIrfTV1QNbdlcql3qQIYWapE
+ rDkThdaZMxPZ39fNZgvYklW6ef4JG5JtJjlVVb83wstF8JxHPm0bmNnwv
+ Jz+39ZCWqrTGLKuCObQ2fJ9ik+aWjQrJFxm3sATW8I1vlzS7lhNKc66TF g==;
+X-CSE-ConnectionGUID: BfFsGRvVROCnZSv2UIfmng==
+X-CSE-MsgGUID: 5oZaOHBgTRGlfN8W3ymAlA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11763"; a="81655132"
+X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="81655132"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Apr 2026 00:27:56 -0700
+X-CSE-ConnectionGUID: Wb50uItFQpWWJRUSuVInCg==
+X-CSE-MsgGUID: ddCpRRidQAOfmhEr6jUkCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="231387804"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Apr 2026 00:27:57 -0700
+Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Wed, 22 Apr 2026 00:27:55 -0700
+Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
+ FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Wed, 22 Apr 2026 00:27:55 -0700
+Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.44) by
+ edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Wed, 22 Apr 2026 00:27:54 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=laSe2FfoRSj92rFDWqsv5+OoHRIOi42TeV1tk8BJrQEXjnlBKCjTezexP/1D6lLiyuZKkRJ4ZspP2iuhGx75i2eYdgVluGe2SjjUst/j9m4/K3G2uzyQ5vLnerwwP74BqQPbnt6irpv3NXyn3HPZ234n2Qy7OGs1iDRrNWZArDxPuKX8q49CEGJ+YCT5K8dc5AxN9RgCD0C2nURLrekliS0MQNbbi/+WtNmJM864+YdwrsrVzfaWhzfNoRuc48J+oy+ivfZd/QPVkTArwnZRTRRmItyOOdKkeI5QinGVLxJgeUKf1r+//A9TEo/5asce0Q3LG8vHtoOsucDab8/txg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rW3gToeqKjre5y9YiQV7gfHW+bU2/NW2Ek5Ke0MqgHM=;
+ b=K1T5/TuI6QqG7th2H1h29sLpuLC9PR/tY2xXFIADdExqtIoGAbyEz00zQzKMTbk3FjAR0Os8jRdlcAqc0WfSD/yWS192XiyKrspYV3EmtO/bQLFa83Dkkz3GaCOUiDqft8U+pSP9BFeOI0wQ3vZk1MHFXOOi5C1Ms6SStQ4cE7WzQwwVt3M1Gk0V+7qDNCjcAGrm/HyRubYcI/YKy6vb1ghjlMcpnhzS7CmNHPOEqfpTgF3pWhyvernJTQQ1v3LDYx8DjKfLr0RODTiKcsOd2/GnC3viNArT8WMS9gaNA63wFiHiO1nYyx2fX6cIVm54gGGEg1kpHvwslqO8CJ05qg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by IA1PR11MB8830.namprd11.prod.outlook.com (2603:10b6:208:599::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.19; Wed, 22 Apr
+ 2026 07:27:45 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9846.016; Wed, 22 Apr 2026
+ 07:27:45 +0000
+Date: Wed, 22 Apr 2026 08:27:39 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Robin Jarry <rjarry@redhat.com>
+CC: <dev@dpdk.org>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
+ Ovsiienko" <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: Re: [PATCH dpdk] net/mlx5: add option to reduce Tx datapath
+ compilation time
+Message-ID: <aeh4a5HS9iFtm9_D@bricha3-mobl1.ger.corp.intel.com>
+References: <20260421212356.573976-1-rjarry@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260421212356.573976-1-rjarry@redhat.com>
+X-ClientProxiedBy: DUZPR01CA0004.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:3c3::20) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA1PR11MB8830:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8458d0d7-9286-434f-84b8-08dea040a586
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|366016|376014|18002099003|22082099003|56012099003; 
+X-Microsoft-Antispam-Message-Info: Ip5gRfz7I9gpKOR6n/j1Sh1Ub5lFLO3ARfvwQmJgIPGExN9CphbarV7fV2imiYY7pAEZpKtc5fYOFmQXIrYUv0+EDUhDBoRMoBuzhfhzXjZZvJ4qzWFud/f+NiERDLe0guiQPnI6LykO+smx4ueKgp5zdPLHcbkA0f+A9N9fR2unK/xvo1FbSFGoblymq+LTyeTd6zk0TD7MTnPgsn453vBAvEnFGfDx8EDo2mgBTIFmPSSUnrQ685SVGgy647T2tJ/GJuybsxRGScvMr1JLWx0/k3g7o51LDk8LoumHUlhzIRJRItfio83QO/pn5cm6upCKApjUUD583c9Zj5NDZFL4OlW94BiZZmQxiOtIBrnjRdpyXpK4E7uDZ5ytSnaM8nTd2deT6MkKUxfCQoZ6C9MeSyv11TDPdhUw78GMbqgLKZeh6l6i5hzyWx3hupxM5NBN4YduG56RjwxL7Jhg7ICbP2jnHnSH0xHGCaQOYOUtcuZaEk5UfEJvDIUMHBNsg4y6rcBj72PbQ02+73fzc9vPFj7uDpCKUTW3/2dcvelSorldcHhXdNjCV1ipr9UmILPKBPco6c/2yBCAIfvFpECFlU19Mq7YzdUKq2DU8y6T92XINPH6HmBDBluqjKg3MEjtQDTxvw6N7/5Zx1j8MgHLeBCeGmb8plGiGPPwA+TSRIwZeO3SXVe0+bOcrNfGFlKisoUkmPEtcFQRzmipykHzkM66AUpH/n6xnntjyuU=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?r0UMxYTaeY/Wp88/vaVktT0BQZw768NF619nqavJDzuoMeyTyq2+DeApHUpe?=
+ =?us-ascii?Q?CjP62m0yCzs5P5cL7azlZMLJWlYGe09o7f/w4EYjKlvzkFoxQrkCGmVjxLfA?=
+ =?us-ascii?Q?utjzyHVbBkLOLtoRm1wZ29usdaU6IiFobHF2nhrcm9HATNQ0lODHVrvCrNFm?=
+ =?us-ascii?Q?crAHfzFb/94xGbGswLEdjs2fVzCRgxTCBUoONIjsQ24jvYHaemW69Mwh8qbh?=
+ =?us-ascii?Q?a/gVl0UYXmd+EbGKujELjLwdFzgfm2boeMOrkx23bleFyUNJxu4d/l/NCdSl?=
+ =?us-ascii?Q?8SlFcKgmcjyxng2lmB1H93Y1I2kjTi5dxGqRLSyjTTIo5M/bjL1BTVgZDjFu?=
+ =?us-ascii?Q?6wjMgEhSPJPQp/Xt8iRsiSfUiGFmNuIEfsQt9uUFxQfJZoSQfIg7G6nN/MvC?=
+ =?us-ascii?Q?Slbz/51QydIcTO+dxJuczCe1APLcJzt84LLhEfaOdkSbfBz2gaQ9Bbz8+gQZ?=
+ =?us-ascii?Q?iBDu3rDCXjanNjrNiXwjAsoKcAqlIs1jytNTH7HTZGbY6CpcDpblpEx8aAi/?=
+ =?us-ascii?Q?KnZYbUUtEVM/UJzJ0MG60M2xhlX4B278Wvp2srlxVEzL3GkFxn3ILzKLy2jd?=
+ =?us-ascii?Q?p1iPtVjKFFkCWOjIhpYJjCwKk0aDiDdWSE3UYVStIIiw6rg2gB1B2roPY+XA?=
+ =?us-ascii?Q?469THR6LWTqKjNtIiyyJQT52mXGfZUP3lSxtgnEP8ZPVwq/obxddn34aE1Xq?=
+ =?us-ascii?Q?7RLqFjqwMB63wo72a9PZNB8hSuWaN5e+++qzEe9d+PwlM8rcp2pkYhPTPd3F?=
+ =?us-ascii?Q?3nweEAnhpiPBGiHKanezFskUTClkOFsq6UW2NWsODgp6/TeGDKs39A656BIp?=
+ =?us-ascii?Q?i3gEAPhAzcEyzPm1D6qF4cAY2cFl9oskN6I+qx1qpXln61/ioaA67PmO6P1+?=
+ =?us-ascii?Q?pKBW9CQMSUcXE0Q1yYNYL87UoKfDsZWxGx2JYeEmZglohQgZR1eVdF27yp8A?=
+ =?us-ascii?Q?kwRTU1m0saNQxVtlfIRDnfME78YhNkvNdgjZSgUWAxFjiVaDyTNdTuK8IcSm?=
+ =?us-ascii?Q?oPXdhtnGqF2Pwpdb2MW4N8jJCrUUbGjlsBhS6ms4K8IxJng4qHA0cCWePdu5?=
+ =?us-ascii?Q?Lt2EQYwoFnOnBLmumTBNcutsIgB66aN0a3p4gOQHMLTDWbSei6zNmnlqd8o8?=
+ =?us-ascii?Q?t/3Fvaqnp9ASWhOxTppCWeuB5JFV4Qkdgq14w6eXJpxcdMu3gH6jeh5aprm+?=
+ =?us-ascii?Q?wtN3k8kzxSALPC8W16Upxmv0ih+rFfUDVX/Idj0voGsQ186gMD7/czDPS6cc?=
+ =?us-ascii?Q?c+JIoHQp8bJF61B1nmDrH1gTslHYdJc1rSrIF1kvK0cqb8dxfCDpwkOiHYms?=
+ =?us-ascii?Q?Hduj6+ijh/HdhhY1TYDOyid9jtSvvJzY5vHKX1in8DNiNK77YfGX3SBbTu6C?=
+ =?us-ascii?Q?ZMqeKiQa3IdaXxqrY7J+IWGwPTcWpq4yG0p6RNJp9PChVyC0Ieu2c8orwBrK?=
+ =?us-ascii?Q?TTYokbGZDniQxe1M+Fx80O92ypKId2LLSx3tGBrbvQncC8dHXMUrnXoMtWXM?=
+ =?us-ascii?Q?5KLo23wgUXwXbj4e/jjf1/CFmxe8oRzrnkCowpPpsLpCvHQIGTZkCQcTpaap?=
+ =?us-ascii?Q?PpIcD8vgzKAXJy2K/vxC6CRBYq7jlcR8ecCLdTbI0DZs3KdpYQ/E12/559Jy?=
+ =?us-ascii?Q?NO7pwcYZaLjD69TQ1MOzXg2mP0vXS+2LV8QUqq8aSAJ3PmnDHEJlrjV8WI3Y?=
+ =?us-ascii?Q?d3cN7TM5TROqpP7lZj9rPgF0yMF1Yklz/DkICv2BC3eOikclLgGcA7o8b5z2?=
+ =?us-ascii?Q?vUpNK0BIEEO9nrRMwaMyAhjp2IhaZnw=3D?=
+X-Exchange-RoutingPolicyChecked: q/pXDTvTEFBKycqFtW1UrL6394QX4NfMl9vag83ku74O5rJQoPzGECjHlMe+SIaogSs6UCbW6mqzFMQpBLo8WnPZEzdB7FksehmJU8m136Dadg9QbzyRt4SCtrR6xF7dUZGNuL4U+KQx1lJOR3JbhD9wRtZJzngQHV70cetOnNacWf57VB4catsTQbE2+2b49v58/vIHSE8uSLQ3pTf6nCSGEZ8tI2lzUd1BNKM4lHMFPwoYGvcXnXhujhgfXNR4IKmiq12W0RKP51qwsk1Or6T3Cz27hECbuVdskXPxDidyjqOmS3ewhB0eo13wKa+nGBYTg890YJH1SwY0Z0/SuQ==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8458d0d7-9286-434f-84b8-08dea040a586
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2026 07:27:45.0613 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YImFzEctS6uIPbGqv9h/zeVYe8iy2C7x7By083RdmNEP/e7+i2rQknFfnxsSWO96uJfVEZyT6L68TJzQgZofkmjIYaUtvxnpTbaRFdqLGP0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8830
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,129 +154,62 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1937
+On Tue, Apr 21, 2026 at 11:23:55PM +0200, Robin Jarry wrote:
+> The mlx5 Tx datapath compiles 42 variants of the burst function, each
+> a specialization of mlx5_tx_burst_tmpl() with a different combination
+> of offload flags. The compiler must instantiate and optimize the entire
+> 3800+ line template for every variant, which dominates build time for
+> all the code base.
+> 
+> When MLX5_MINIMAL_TX is defined, only 11 variants are compiled instead
+> of 42. Two new "full without inline" superset variants (full_noi and
+> full_noi_empw) are introduced to satisfy the selection algorithm
+> constraint that the INLINE bit must match exactly between request and
+> variant. The remaining 9 variants are existing ones that already cover
+> all reachable combinations of the EMPW, MPW, INLINE and TXPP flags.
+> 
+> The selection function is unchanged. At runtime, it picks the best
+> matching variant from whatever is available. With the minimal set, each
+> selected variant may include a few unnecessary offload checks compared
+> to the precisely-tailored original, which has negligible impact on
+> performance since modern branch predictors handle static never-taken
+> branches well.
+> 
+> Compilation times (MM:SS) measured on Intel Core Ultra 7 165U with GCC
+> 16.0.1:
+> 
+> FILE              BUILD          BEFORE   AFTER   DELTA
+> ================= ============== ======== ======= ===============
+> mlx5_tx_mpw.c     debug          00:31    00:22   -00:09 (-29.0%)
+> mlx5_tx_txpp.c                   00:39    00:25   -00:14 (-35.9%)
+> mlx5_tx_empw.c                   01:11    00:19   -00:52 (-73.2%)
+> mlx5_tx_nompw.c                  01:13    00:16   -00:57 (-78.1%)
+> ----------------- -------------- -------- ------- ---------------
+> mlx5_tx_mpw.c     debug+asan     03:15    02:45   -00:30 (-15.4%)
+> mlx5_tx_txpp.c                  *06:28*   03:13   -03:15 (-50.3%)
+> mlx5_tx_empw.c                  *12:07*   01:55   -10:12 (-84.2%)
+> mlx5_tx_nompw.c                 *12:54*   01:45   -11:09 (-86.4%)
+> ----------------- -------------- -------- ------- ---------------
+> mlx5_tx_mpw.c     release        00:12    00:09   -00:03 (-25.0%)
+> mlx5_tx_txpp.c                   00:31    00:24   -00:07 (-22.6%)
+> mlx5_tx_empw.c                   00:32    00:18   -00:14 (-43.8%)
+> mlx5_tx_nompw.c                  00:34    00:16   -00:18 (-52.9%)
+> ----------------- -------------- -------- ------- ---------------
+> mlx5_tx_mpw.c     release+asan   00:25    00:23   -00:02 (-8.0%)
+> mlx5_tx_empw.c                   01:24    00:42   -00:42 (-50.0%)
+> mlx5_tx_txpp.c                   01:32    00:59   -00:33 (-35.9%)
+> mlx5_tx_nompw.c                  01:38    00:37   -01:01 (-62.2%)
+> 
+> To enable, pass -DMLX5_MINIMAL_TX via c_args:
+> 
+>   meson setup build -Dc_args='-DMLX5_MINIMAL_TX'
+> 
+> Signed-off-by: Robin Jarry <rjarry@redhat.com>
 
-            Bug ID: 1937
-           Summary: [dpdk23.11.7-rc1] DPDK build failed with clang21.1.8
-                    on Fedora43
-           Product: DPDK
-           Version: 23.11
-          Hardware: All
-                OS: All
-            Status: UNCONFIRMED
-          Severity: normal
-          Priority: Normal
-         Component: core
-          Assignee: dev@dpdk.org
-          Reporter: daxuex.gao@intel.com
-  Target Milestone: ---
+Out of interest, do you have any numbers for the performance delta between
+the release builds with and without the new flag? I'm just wondering if the
+flag can be the default to speed up builds generally? [Not that it should
+affect me that much, I generally use -Denable_drivers flag when configuring
+my builds to only select the specific drivers I want]
 
-[Environment]
-DPDK version:=20
-commit f919fadc148d11f2ef68def4b7638503323515b2 (HEAD, tag: v23.11.7-rc1,
-origin/23.11)
-Author: Shani Peretz <shperetz@nvidia.com>
-Date:   Tue Apr 21 09:24:45 2026 +0300
-
-    version: 23.11.7-rc1
-
-    Signed-off-by: Shani Peretz <shperetz@nvidia.com>
-
-OS:  Fedora43-64/6.17.1-300.fc43.x86_64
-Compiler: clang 21.1.8 (Fedora 21.1.8-4.fc43)
-
-[Test Setup]
-# build cmd:=20
-CC=3Dclang meson --werror -Dlibdir=3Dlib -Dexamples=3Dall --default-library=
-=3Dstatic
-x86_64-native-linuxapp-clang
-
-ninja  -C x86_64-native-linuxapp-clang/
-
-[Output]
-FAILED: app/dpdk-test.p/test_test_event_dma_adapter.c.o=20
-clang -Iapp/dpdk-test.p -Iapp -I../app -Ilib/cmdline -I../lib/cmdline -I. -=
-I..
--Iconfig -I../config -Ilib/eal/include -I../lib/eal/include
--Ilib/eal/linux/include -I../lib/eal/linux/include -Ilib/eal/x86/include
--I../lib/eal/x86/include -Ilib/eal/common -I../lib/eal/common -Ilib/eal
--I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metr=
-ics
--I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/net -I../lib/net
--Ilib/mbuf -I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring
--I../lib/ring -Idrivers/net/ring -I../drivers/net/ring -Ilib/ethdev
--I../lib/ethdev -Ilib/meter -I../lib/meter -Idrivers/bus/pci
--I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci -I../lib/pci
--Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib/acl -I../lib/acl -Ilib/hash
--I../lib/hash -Ilib/rcu -I../lib/rcu -Ilib/bitratestats -I../lib/bitratesta=
-ts
--Ilib/bpf -I../lib/bpf -Ilib/compressdev -I../lib/compressdev -Ilib/cryptod=
-ev
--I../lib/cryptodev -Ilib/security -I../lib/security -Ilib/dispatcher
--I../lib/dispatcher -Ilib/eventdev -I../lib/eventdev -Ilib/timer -I../lib/t=
-imer
--Ilib/dmadev -I../lib/dmadev -Ilib/distributor -I../lib/distributor -Ilib/e=
-fd
--I../lib/efd -Ilib/fib -I../lib/fib -Ilib/rib -I../lib/rib -Ilib/table
--I../lib/table -Ilib/port -I../lib/port -Ilib/sched -I../lib/sched
--Ilib/ip_frag -I../lib/ip_frag -Ilib/lpm -I../lib/lpm -Ilib/graph
--I../lib/graph -Ilib/pcapng -I../lib/pcapng -Ilib/ipsec -I../lib/ipsec
--Ilib/latencystats -I../lib/latencystats -Idrivers/net/bonding
--I../drivers/net/bonding -Idrivers/net/null -I../drivers/net/null -Ilib/mem=
-ber
--I../lib/member -Ilib/pdcp -I../lib/pdcp -Ilib/reorder -I../lib/reorder
--Ilib/pdump -I../lib/pdump -Ilib/power -I../lib/power -Ilib/rawdev
--I../lib/rawdev -Ilib/stack -I../lib/stack -Ilib/pipeline -I../lib/pipeline
--Idrivers/crypto/scheduler -I../drivers/crypto/scheduler
--fdiagnostics-color=3Dalways -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -=
-Wextra
--Werror -std=3Dc11 -O3 -include rte_config.h -Wcast-qual -Wdeprecated -Wfor=
-mat
--Wformat-nonliteral -Wformat-security -Wmissing-declarations
--Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith
--Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings
--Wno-address-of-packed-member -Wno-missing-field-initializers -D_GNU_SOURCE
--DWITH_GZFILEOP -march=3Dnative -mrtm -DALLOW_EXPERIMENTAL_API
--Wno-format-truncation -fno-strict-aliasing -DALLOW_INTERNAL_API -MD -MQ
-app/dpdk-test.p/test_test_event_dma_adapter.c.o -MF
-app/dpdk-test.p/test_test_event_dma_adapter.c.o.d -o
-app/dpdk-test.p/test_test_event_dma_adapter.c.o -c
-../app/test/test_event_dma_adapter.c
-../app/test/test_event_dma_adapter.c:594:32: error: variable 'event' is
-uninitialized when passed as a const pointer argument here
-[-Werror,-Wuninitialized-const-pointer]
-  594 |=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20
-TEST_DMA_VCHAN_ID, &event);
-      |=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20
-        ^~~~~
-1 error generated.
-[2526/2823] Compiling C object app/dpdk-test.p/test_test_efd_perf.c.o
-[2527/2823] Compiling C object app/dpdk-test.p/test_test_ethdev_link.c.o
-[2528/2823] Compiling C object app/dpdk-test.p/test_test_distributor.c.o
-[2529/2823] Compiling C object
-app/dpdk-test.p/test_test_event_crypto_adapter.c.o
-[2530/2823] Compiling C object
-app/dpdk-test.p/test_test_event_eth_tx_adapter.c.o
-[2531/2823] Compiling C object app/dpdk-test.p/test_test_event_ring.c.o
-[2532/2823] Compiling C object
-app/dpdk-test.p/test_test_event_eth_rx_adapter.c.o
-[2533/2823] Compiling C object app/dpdk-test.p/test_test_cryptodev.c.o
-[2534/2823] Compiling C object
-app/dpdk-test.p/test_test_event_timer_adapter.c.o
-
-[Expected Result]
-Build Passed
-
-[Regression]
-Is this issue a regression: (Y/N)N
-This is a new issue discovered on Fedora 43 OS; it was not found on Fedora =
-42
-OS.
-
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+/Bruce
