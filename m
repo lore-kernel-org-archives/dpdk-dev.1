@@ -2,145 +2,43 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220B2F94CD8
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 07:28:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0B9F94CD8
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 07:53:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D79840272;
-	Wed, 22 Apr 2026 09:28:16 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 1C6F840144
- for <dev@dpdk.org>; Wed, 22 Apr 2026 09:28:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1776842894; x=1808378894;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=1GQYUD6JL8cjQnOvTNGAtOOVqZNB4crZdmbbbkaM3iE=;
- b=N51aVXpffwM2UazfM0Qlei9I8sAWHx1xXW9Etse5AVoIIqw4kRed47Jm
- PS/c026dobEI0xDk7UpWypDsSW0wOYWyedkW0/DNd/H5S8SccqMJVMUOy
- gAS6gBNEekBU8X60ryNCNt4lUTB1S1kQAiRUP45aiAVw7wKf82zhF9zqy
- hEvP1Q16LeVODvQQfGe0A+u/WMxKkg3kHpIrfTV1QNbdlcql3qQIYWapE
- rDkThdaZMxPZ39fNZgvYklW6ef4JG5JtJjlVVb83wstF8JxHPm0bmNnwv
- Jz+39ZCWqrTGLKuCObQ2fJ9ik+aWjQrJFxm3sATW8I1vlzS7lhNKc66TF g==;
-X-CSE-ConnectionGUID: BfFsGRvVROCnZSv2UIfmng==
-X-CSE-MsgGUID: 5oZaOHBgTRGlfN8W3ymAlA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11763"; a="81655132"
-X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="81655132"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Apr 2026 00:27:56 -0700
-X-CSE-ConnectionGUID: Wb50uItFQpWWJRUSuVInCg==
-X-CSE-MsgGUID: ddCpRRidQAOfmhEr6jUkCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="231387804"
-Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
- by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Apr 2026 00:27:57 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id AE9FF40272;
+	Wed, 22 Apr 2026 09:53:35 +0200 (CEST)
+Received: from canpmsgout12.his.huawei.com (canpmsgout12.his.huawei.com
+ [113.46.200.227])
+ by mails.dpdk.org (Postfix) with ESMTP id EA09A40144
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 09:53:33 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=so31hw5UaANQ+ptRozcUXqpKz8zSdokhNyDN4Oy+/eU=;
+ b=wL5ZzVdXO1yObycjRCsA851i8IS9ajKBfl0EJTd4tPq3GPomdT1TMilpetQovRSycOP8df1KN
+ HmslAqxnxCmUeEmt6gimxXsugwxgQzs/cZKZ2MZSbphqpNsVZQKyO6g/s7tOqCfHeCG8TxeN1gr
+ bfcOSto/HsU7imfHk54LZs8=
+Received: from mail.maildlp.com (unknown [172.19.162.92])
+ by canpmsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4g0rsd6B3mznTWD;
+ Wed, 22 Apr 2026 15:47:17 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id C895D40562;
+ Wed, 22 Apr 2026 15:53:31 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 22 Apr 2026 00:27:55 -0700
-Received: from fmsedg903.ED.cps.intel.com (10.1.192.145) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Wed, 22 Apr 2026 00:27:55 -0700
-Received: from PH8PR06CU001.outbound.protection.outlook.com (40.107.209.44) by
- edgegateway.intel.com (192.55.55.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Wed, 22 Apr 2026 00:27:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=laSe2FfoRSj92rFDWqsv5+OoHRIOi42TeV1tk8BJrQEXjnlBKCjTezexP/1D6lLiyuZKkRJ4ZspP2iuhGx75i2eYdgVluGe2SjjUst/j9m4/K3G2uzyQ5vLnerwwP74BqQPbnt6irpv3NXyn3HPZ234n2Qy7OGs1iDRrNWZArDxPuKX8q49CEGJ+YCT5K8dc5AxN9RgCD0C2nURLrekliS0MQNbbi/+WtNmJM864+YdwrsrVzfaWhzfNoRuc48J+oy+ivfZd/QPVkTArwnZRTRRmItyOOdKkeI5QinGVLxJgeUKf1r+//A9TEo/5asce0Q3LG8vHtoOsucDab8/txg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rW3gToeqKjre5y9YiQV7gfHW+bU2/NW2Ek5Ke0MqgHM=;
- b=K1T5/TuI6QqG7th2H1h29sLpuLC9PR/tY2xXFIADdExqtIoGAbyEz00zQzKMTbk3FjAR0Os8jRdlcAqc0WfSD/yWS192XiyKrspYV3EmtO/bQLFa83Dkkz3GaCOUiDqft8U+pSP9BFeOI0wQ3vZk1MHFXOOi5C1Ms6SStQ4cE7WzQwwVt3M1Gk0V+7qDNCjcAGrm/HyRubYcI/YKy6vb1ghjlMcpnhzS7CmNHPOEqfpTgF3pWhyvernJTQQ1v3LDYx8DjKfLr0RODTiKcsOd2/GnC3viNArT8WMS9gaNA63wFiHiO1nYyx2fX6cIVm54gGGEg1kpHvwslqO8CJ05qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by IA1PR11MB8830.namprd11.prod.outlook.com (2603:10b6:208:599::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.19; Wed, 22 Apr
- 2026 07:27:45 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9846.016; Wed, 22 Apr 2026
- 07:27:45 +0000
-Date: Wed, 22 Apr 2026 08:27:39 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Robin Jarry <rjarry@redhat.com>
-CC: <dev@dpdk.org>, Dariusz Sosnowski <dsosnowski@nvidia.com>, "Viacheslav
- Ovsiienko" <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
- <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
- <matan@nvidia.com>
-Subject: Re: [PATCH dpdk] net/mlx5: add option to reduce Tx datapath
- compilation time
-Message-ID: <aeh4a5HS9iFtm9_D@bricha3-mobl1.ger.corp.intel.com>
-References: <20260421212356.573976-1-rjarry@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260421212356.573976-1-rjarry@redhat.com>
-X-ClientProxiedBy: DUZPR01CA0004.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:3c3::20) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
+ 15.2.1544.11; Wed, 22 Apr 2026 15:53:31 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>
+CC: <dev@dpdk.org>, <liuyonglong@huawei.com>, <qianweili@huawei.com>
+Subject: [PATCH] bus/uacce: support no-iommu mode
+Date: Wed, 22 Apr 2026 15:53:26 +0800
+Message-ID: <20260422075326.34206-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|IA1PR11MB8830:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8458d0d7-9286-434f-84b8-08dea040a586
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|18002099003|22082099003|56012099003; 
-X-Microsoft-Antispam-Message-Info: Ip5gRfz7I9gpKOR6n/j1Sh1Ub5lFLO3ARfvwQmJgIPGExN9CphbarV7fV2imiYY7pAEZpKtc5fYOFmQXIrYUv0+EDUhDBoRMoBuzhfhzXjZZvJ4qzWFud/f+NiERDLe0guiQPnI6LykO+smx4ueKgp5zdPLHcbkA0f+A9N9fR2unK/xvo1FbSFGoblymq+LTyeTd6zk0TD7MTnPgsn453vBAvEnFGfDx8EDo2mgBTIFmPSSUnrQ685SVGgy647T2tJ/GJuybsxRGScvMr1JLWx0/k3g7o51LDk8LoumHUlhzIRJRItfio83QO/pn5cm6upCKApjUUD583c9Zj5NDZFL4OlW94BiZZmQxiOtIBrnjRdpyXpK4E7uDZ5ytSnaM8nTd2deT6MkKUxfCQoZ6C9MeSyv11TDPdhUw78GMbqgLKZeh6l6i5hzyWx3hupxM5NBN4YduG56RjwxL7Jhg7ICbP2jnHnSH0xHGCaQOYOUtcuZaEk5UfEJvDIUMHBNsg4y6rcBj72PbQ02+73fzc9vPFj7uDpCKUTW3/2dcvelSorldcHhXdNjCV1ipr9UmILPKBPco6c/2yBCAIfvFpECFlU19Mq7YzdUKq2DU8y6T92XINPH6HmBDBluqjKg3MEjtQDTxvw6N7/5Zx1j8MgHLeBCeGmb8plGiGPPwA+TSRIwZeO3SXVe0+bOcrNfGFlKisoUkmPEtcFQRzmipykHzkM66AUpH/n6xnntjyuU=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?r0UMxYTaeY/Wp88/vaVktT0BQZw768NF619nqavJDzuoMeyTyq2+DeApHUpe?=
- =?us-ascii?Q?CjP62m0yCzs5P5cL7azlZMLJWlYGe09o7f/w4EYjKlvzkFoxQrkCGmVjxLfA?=
- =?us-ascii?Q?utjzyHVbBkLOLtoRm1wZ29usdaU6IiFobHF2nhrcm9HATNQ0lODHVrvCrNFm?=
- =?us-ascii?Q?crAHfzFb/94xGbGswLEdjs2fVzCRgxTCBUoONIjsQ24jvYHaemW69Mwh8qbh?=
- =?us-ascii?Q?a/gVl0UYXmd+EbGKujELjLwdFzgfm2boeMOrkx23bleFyUNJxu4d/l/NCdSl?=
- =?us-ascii?Q?8SlFcKgmcjyxng2lmB1H93Y1I2kjTi5dxGqRLSyjTTIo5M/bjL1BTVgZDjFu?=
- =?us-ascii?Q?6wjMgEhSPJPQp/Xt8iRsiSfUiGFmNuIEfsQt9uUFxQfJZoSQfIg7G6nN/MvC?=
- =?us-ascii?Q?Slbz/51QydIcTO+dxJuczCe1APLcJzt84LLhEfaOdkSbfBz2gaQ9Bbz8+gQZ?=
- =?us-ascii?Q?iBDu3rDCXjanNjrNiXwjAsoKcAqlIs1jytNTH7HTZGbY6CpcDpblpEx8aAi/?=
- =?us-ascii?Q?KnZYbUUtEVM/UJzJ0MG60M2xhlX4B278Wvp2srlxVEzL3GkFxn3ILzKLy2jd?=
- =?us-ascii?Q?p1iPtVjKFFkCWOjIhpYJjCwKk0aDiDdWSE3UYVStIIiw6rg2gB1B2roPY+XA?=
- =?us-ascii?Q?469THR6LWTqKjNtIiyyJQT52mXGfZUP3lSxtgnEP8ZPVwq/obxddn34aE1Xq?=
- =?us-ascii?Q?7RLqFjqwMB63wo72a9PZNB8hSuWaN5e+++qzEe9d+PwlM8rcp2pkYhPTPd3F?=
- =?us-ascii?Q?3nweEAnhpiPBGiHKanezFskUTClkOFsq6UW2NWsODgp6/TeGDKs39A656BIp?=
- =?us-ascii?Q?i3gEAPhAzcEyzPm1D6qF4cAY2cFl9oskN6I+qx1qpXln61/ioaA67PmO6P1+?=
- =?us-ascii?Q?pKBW9CQMSUcXE0Q1yYNYL87UoKfDsZWxGx2JYeEmZglohQgZR1eVdF27yp8A?=
- =?us-ascii?Q?kwRTU1m0saNQxVtlfIRDnfME78YhNkvNdgjZSgUWAxFjiVaDyTNdTuK8IcSm?=
- =?us-ascii?Q?oPXdhtnGqF2Pwpdb2MW4N8jJCrUUbGjlsBhS6ms4K8IxJng4qHA0cCWePdu5?=
- =?us-ascii?Q?Lt2EQYwoFnOnBLmumTBNcutsIgB66aN0a3p4gOQHMLTDWbSei6zNmnlqd8o8?=
- =?us-ascii?Q?t/3Fvaqnp9ASWhOxTppCWeuB5JFV4Qkdgq14w6eXJpxcdMu3gH6jeh5aprm+?=
- =?us-ascii?Q?wtN3k8kzxSALPC8W16Upxmv0ih+rFfUDVX/Idj0voGsQ186gMD7/czDPS6cc?=
- =?us-ascii?Q?c+JIoHQp8bJF61B1nmDrH1gTslHYdJc1rSrIF1kvK0cqb8dxfCDpwkOiHYms?=
- =?us-ascii?Q?Hduj6+ijh/HdhhY1TYDOyid9jtSvvJzY5vHKX1in8DNiNK77YfGX3SBbTu6C?=
- =?us-ascii?Q?ZMqeKiQa3IdaXxqrY7J+IWGwPTcWpq4yG0p6RNJp9PChVyC0Ieu2c8orwBrK?=
- =?us-ascii?Q?TTYokbGZDniQxe1M+Fx80O92ypKId2LLSx3tGBrbvQncC8dHXMUrnXoMtWXM?=
- =?us-ascii?Q?5KLo23wgUXwXbj4e/jjf1/CFmxe8oRzrnkCowpPpsLpCvHQIGTZkCQcTpaap?=
- =?us-ascii?Q?PpIcD8vgzKAXJy2K/vxC6CRBYq7jlcR8ecCLdTbI0DZs3KdpYQ/E12/559Jy?=
- =?us-ascii?Q?NO7pwcYZaLjD69TQ1MOzXg2mP0vXS+2LV8QUqq8aSAJ3PmnDHEJlrjV8WI3Y?=
- =?us-ascii?Q?d3cN7TM5TROqpP7lZj9rPgF0yMF1Yklz/DkICv2BC3eOikclLgGcA7o8b5z2?=
- =?us-ascii?Q?vUpNK0BIEEO9nrRMwaMyAhjp2IhaZnw=3D?=
-X-Exchange-RoutingPolicyChecked: q/pXDTvTEFBKycqFtW1UrL6394QX4NfMl9vag83ku74O5rJQoPzGECjHlMe+SIaogSs6UCbW6mqzFMQpBLo8WnPZEzdB7FksehmJU8m136Dadg9QbzyRt4SCtrR6xF7dUZGNuL4U+KQx1lJOR3JbhD9wRtZJzngQHV70cetOnNacWf57VB4catsTQbE2+2b49v58/vIHSE8uSLQ3pTf6nCSGEZ8tI2lzUd1BNKM4lHMFPwoYGvcXnXhujhgfXNR4IKmiq12W0RKP51qwsk1Or6T3Cz27hECbuVdskXPxDidyjqOmS3ewhB0eo13wKa+nGBYTg890YJH1SwY0Z0/SuQ==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8458d0d7-9286-434f-84b8-08dea040a586
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Apr 2026 07:27:45.0613 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YImFzEctS6uIPbGqv9h/zeVYe8iy2C7x7By083RdmNEP/e7+i2rQknFfnxsSWO96uJfVEZyT6L68TJzQgZofkmjIYaUtvxnpTbaRFdqLGP0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8830
-X-OriginatorOrg: intel.com
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -154,62 +52,146 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, Apr 21, 2026 at 11:23:55PM +0200, Robin Jarry wrote:
-> The mlx5 Tx datapath compiles 42 variants of the burst function, each
-> a specialization of mlx5_tx_burst_tmpl() with a different combination
-> of offload flags. The compiler must instantiate and optimize the entire
-> 3800+ line template for every variant, which dominates build time for
-> all the code base.
-> 
-> When MLX5_MINIMAL_TX is defined, only 11 variants are compiled instead
-> of 42. Two new "full without inline" superset variants (full_noi and
-> full_noi_empw) are introduced to satisfy the selection algorithm
-> constraint that the INLINE bit must match exactly between request and
-> variant. The remaining 9 variants are existing ones that already cover
-> all reachable combinations of the EMPW, MPW, INLINE and TXPP flags.
-> 
-> The selection function is unchanged. At runtime, it picks the best
-> matching variant from whatever is available. With the minimal set, each
-> selected variant may include a few unnecessary offload checks compared
-> to the precisely-tailored original, which has negligible impact on
-> performance since modern branch predictors handle static never-taken
-> branches well.
-> 
-> Compilation times (MM:SS) measured on Intel Core Ultra 7 165U with GCC
-> 16.0.1:
-> 
-> FILE              BUILD          BEFORE   AFTER   DELTA
-> ================= ============== ======== ======= ===============
-> mlx5_tx_mpw.c     debug          00:31    00:22   -00:09 (-29.0%)
-> mlx5_tx_txpp.c                   00:39    00:25   -00:14 (-35.9%)
-> mlx5_tx_empw.c                   01:11    00:19   -00:52 (-73.2%)
-> mlx5_tx_nompw.c                  01:13    00:16   -00:57 (-78.1%)
-> ----------------- -------------- -------- ------- ---------------
-> mlx5_tx_mpw.c     debug+asan     03:15    02:45   -00:30 (-15.4%)
-> mlx5_tx_txpp.c                  *06:28*   03:13   -03:15 (-50.3%)
-> mlx5_tx_empw.c                  *12:07*   01:55   -10:12 (-84.2%)
-> mlx5_tx_nompw.c                 *12:54*   01:45   -11:09 (-86.4%)
-> ----------------- -------------- -------- ------- ---------------
-> mlx5_tx_mpw.c     release        00:12    00:09   -00:03 (-25.0%)
-> mlx5_tx_txpp.c                   00:31    00:24   -00:07 (-22.6%)
-> mlx5_tx_empw.c                   00:32    00:18   -00:14 (-43.8%)
-> mlx5_tx_nompw.c                  00:34    00:16   -00:18 (-52.9%)
-> ----------------- -------------- -------- ------- ---------------
-> mlx5_tx_mpw.c     release+asan   00:25    00:23   -00:02 (-8.0%)
-> mlx5_tx_empw.c                   01:24    00:42   -00:42 (-50.0%)
-> mlx5_tx_txpp.c                   01:32    00:59   -00:33 (-35.9%)
-> mlx5_tx_nompw.c                  01:38    00:37   -01:01 (-62.2%)
-> 
-> To enable, pass -DMLX5_MINIMAL_TX via c_args:
-> 
->   meson setup build -Dc_args='-DMLX5_MINIMAL_TX'
-> 
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+The uacce bus originally only supports devices with SVA capability.
+This patch extends the uacce bus to support no-iommu mode for devices
+without or not enabling IOMMU/SVA.
 
-Out of interest, do you have any numbers for the performance delta between
-the release builds with and without the new flag? I'm just wondering if the
-flag can be the default to speed up builds generally? [Not that it should
-affect me that much, I generally use -Denable_drivers flag when configuring
-my builds to only select the specific drivers I want]
+For no-iommu mode UACCE devices:
+- The device api name is suffixed with _noiommu
+- The device flags bit1 was set (UACCE_DEV_FLAG_NOIOMMU)
 
-/Bruce
+To support such devices, DPDK device drivers can mark
+RTE_UACCE_DRV_SUPPORT_NOIOMMU_MODE in drv_flags to declare capability
+of working with no-iommu devices.
+
+This commit also fixes typo UACCE_DEV_FLGA_SVA -> UACCE_DEV_FLAG_SVA.
+
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+---
+ doc/guides/rel_notes/release_26_07.rst |  4 ++++
+ drivers/bus/uacce/bus_uacce_driver.h   |  8 ++++++++
+ drivers/bus/uacce/uacce.c              | 24 +++++++++++++++++-------
+ 3 files changed, 29 insertions(+), 7 deletions(-)
+
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index f012d47a4b..1f53e1253e 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -63,6 +63,10 @@ New Features
+     ``rte_eal_init`` and the application is responsible for probing each device,
+   * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
+ 
++* **UACCE bus supports no-iommu mode.**
++
++  Support no-iommu mode for devices without or not enabling IOMMU/SVA.
++
+ 
+ Removed Items
+ -------------
+diff --git a/drivers/bus/uacce/bus_uacce_driver.h b/drivers/bus/uacce/bus_uacce_driver.h
+index c7445778a6..7ff9c7b483 100644
+--- a/drivers/bus/uacce/bus_uacce_driver.h
++++ b/drivers/bus/uacce/bus_uacce_driver.h
+@@ -15,6 +15,7 @@
+ #include <stdlib.h>
+ #include <linux/types.h>
+ 
++#include <rte_bitops.h>
+ #include <rte_compat.h>
+ #include <rte_devargs.h>
+ #include <dev_driver.h>
+@@ -28,6 +29,11 @@ extern "C" {
+ #define RTE_UACCE_ALGS_NAME_SIZE	384
+ #define RTE_UACCE_ATTR_MAX_SIZE		384
+ 
++/* UACCE device flag of SVA. */
++#define UACCE_DEV_FLAG_SVA	RTE_BIT32(0)
++/* UACCE device flag of NOIOMMU */
++#define UACCE_DEV_FLAG_NOIOMMU	RTE_BIT32(1)
++
+ /*
+  * Definition for queue file region type.
+  */
+@@ -106,6 +112,8 @@ struct rte_uacce_driver {
+ 
+ /** Device driver supports forward compatibility device */
+ #define RTE_UACCE_DRV_FORWARD_COMPATIBILITY_DEV	0x1
++/** Device driver supports NO-IOMMU mode */
++#define RTE_UACCE_DRV_SUPPORT_NOIOMMU_MODE	0x2
+ 
+ /**
+  * Get available queue number.
+diff --git a/drivers/bus/uacce/uacce.c b/drivers/bus/uacce/uacce.c
+index ade2452ad5..2dab3e1c4d 100644
+--- a/drivers/bus/uacce/uacce.c
++++ b/drivers/bus/uacce/uacce.c
+@@ -15,7 +15,6 @@
+ #include <sys/types.h>
+ 
+ #include <eal_export.h>
+-#include <rte_bitops.h>
+ #include <rte_common.h>
+ #include <rte_devargs.h>
+ #include <rte_eal_paging.h>
+@@ -28,9 +27,6 @@
+ 
+ #define UACCE_BUS_CLASS_PATH	"/sys/class/uacce"
+ 
+-/* UACCE device flag of SVA. */
+-#define UACCE_DEV_FLGA_SVA	RTE_BIT32(0)
+-
+ /* Support -a uacce:device-name when start DPDK application. */
+ #define UACCE_DEV_PREFIX	"uacce:"
+ 
+@@ -151,9 +147,19 @@ uacce_read_attr_u32(const char *dev_root, const char *attr, uint32_t *val)
+ static int
+ uacce_read_api(struct rte_uacce_device *dev)
+ {
+-	int ret = uacce_read_attr(dev->dev_root, "api", dev->api, sizeof(dev->api) - 1);
++#define NOIOMMU_SUBFIX		"_noiommu"
++	size_t api_len, sub_len;
++	int ret;
++
++	ret = uacce_read_attr(dev->dev_root, "api", dev->api, sizeof(dev->api) - 1);
+ 	if (ret < 0)
+ 		return ret;
++
++	api_len = strlen(dev->api);
++	sub_len = strlen(NOIOMMU_SUBFIX);
++	if (api_len > sub_len && strcmp(dev->api + api_len - sub_len, NOIOMMU_SUBFIX) == 0)
++		dev->api[api_len - sub_len] = 0;
++
+ 	return 0;
+ }
+ 
+@@ -196,8 +202,8 @@ uacce_read_qfrt_sz(struct rte_uacce_device *dev)
+ static int
+ uacce_verify(struct rte_uacce_device *dev)
+ {
+-	if (!(dev->flags & UACCE_DEV_FLGA_SVA)) {
+-		UACCE_BUS_WARN("device %s don't support SVA, skip it!", dev->name);
++	if (!(dev->flags & (UACCE_DEV_FLAG_SVA | UACCE_DEV_FLAG_NOIOMMU))) {
++		UACCE_BUS_WARN("device %s don't support SVA or NOIOMMU, skip it!", dev->name);
+ 		return 1; /* >0 will skip this device. */
+ 	}
+ 
+@@ -333,12 +339,16 @@ static bool
+ uacce_match(const struct rte_uacce_driver *dr, struct rte_uacce_device *dev)
+ {
+ 	bool forward_compat = !!(dr->drv_flags & RTE_UACCE_DRV_FORWARD_COMPATIBILITY_DEV);
++	bool support_noiommu = !!(dr->drv_flags & RTE_UACCE_DRV_SUPPORT_NOIOMMU_MODE);
+ 	uint32_t api_ver = uacce_calc_api_ver(dev->api, NULL);
+ 	const struct rte_uacce_id *id_table;
+ 	const char *map;
+ 	uint32_t len;
+ 
+ 	for (id_table = dr->id_table; id_table->dev_api != NULL; id_table++) {
++		if ((dev->flags & UACCE_DEV_FLAG_NOIOMMU) && !support_noiommu)
++			continue;
++
+ 		if (!uacce_match_api(dev, forward_compat, id_table))
+ 			continue;
+ 
+-- 
+2.17.1
+
