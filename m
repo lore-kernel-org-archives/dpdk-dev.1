@@ -2,84 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F00D0F9EDC9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 13:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC28F9EDC9
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 13:24:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26D45402E0;
-	Wed, 22 Apr 2026 15:18:16 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CF0EC4065A;
+	Wed, 22 Apr 2026 15:24:04 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 32C39402DC
- for <dev@dpdk.org>; Wed, 22 Apr 2026 15:18:15 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9F0C8402E0
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 15:24:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1776863894;
+ s=mimecast20190719; t=1776864243;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=T9R6vHW7v+RFo33nMRcINB7y9Z/bJ2dBf2d2FCOslXc=;
- b=JW+V7wqLO8euHqeWS15LXOfp2P0748R9YXYzmV9nBXY9Ihgkeg8FyNkKg5jGjvOgiSOcxz
- 1aaCZpjmAUVgiPc4+TKWe96zuQ2SqCrsn7I71Ysiiiv++XY4ivYuw/KMyY3w7QknR1HAzR
- MwkYpXiNAYO7W4D11EI8KH7+AH2ckTc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=ttID12/9hB8lKkUbEqrxrux0X/bWDHhlHIHXACppy2k=;
+ b=ASdw3avjcEqhY2Fs+UqHJe0jAvyLNHVJ7xcCJKuI1XHyu1nDus8hHJGO6c10XV6wUAOhEx
+ BCXzetk3SSuYYN2EvA8QDWisl9jQ5bsIoB7XLI/28EYkDr75jmmVi3NC9QitdOemumVozD
+ 3+ztQ8qeG1RMc59LqqmahQX4nTzhFRg=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-541-4iVFRUgbMeuRG5H7eDMirg-1; Wed, 22 Apr 2026 09:18:13 -0400
-X-MC-Unique: 4iVFRUgbMeuRG5H7eDMirg-1
-X-Mimecast-MFC-AGG-ID: 4iVFRUgbMeuRG5H7eDMirg_1776863892
-Received: by mail-wm1-f72.google.com with SMTP id
- 5b1f17b1804b1-488c2aa6becso52892745e9.2
- for <dev@dpdk.org>; Wed, 22 Apr 2026 06:18:13 -0700 (PDT)
+ us-mta-247-qoWu74lpMoCCPS6cOKevmg-1; Wed, 22 Apr 2026 09:24:01 -0400
+X-MC-Unique: qoWu74lpMoCCPS6cOKevmg-1
+X-Mimecast-MFC-AGG-ID: qoWu74lpMoCCPS6cOKevmg_1776864240
+Received: by mail-lj1-f200.google.com with SMTP id
+ 38308e7fff4ca-3870692eb93so33471761fa.0
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 06:24:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776863892; x=1777468692;
- h=in-reply-to:references:user-agent:to:from:cc:subject:message-id
- :date:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=U5fk67jxwopGPSvoiZxiERQ5bZFrQgN9o9eFAc/GbZ4=;
- b=SkhbVjcrTsokXhiAevgFVHNYpbB888pXWJpvDSFNbhZAQQCh0JMLgCtW+GBebLSHCL
- vQ81zOxW8CKY3TizqUVIUAmlen9NcEvw+xW+r7xLaQyoWdABAuqLRy8XeGqRPBfU7i6z
- XNfAKgkE/zo+knxYFOrhVbOiGm3z6lYCL7Ox5Zli+avuie3zhegsprPRzCwfNV2If4jT
- VSYANrAMUTZDfuntNwKEPs9VjvSx7W00MPHcrDA8LCfc3QOaghjx+FSUoJdJ2lDeCiEe
- yGh2V4Ygz+0aZNO7yZNSazR1ysk8oti8g1i0+mZ5OvyMW0JByTZ3hGtHzlpHYDwVGo7S
- 9GQw==
-X-Gm-Message-State: AOJu0YxPCY6BFivQP0GJVH17uj5V2mf3t0ojwOlVEKxgIhQRiqmU2Z4h
- PSzqv3++FoJ7EoOyRZy2iSj0FmBTo138THO9VDIq8nGYGyJiOaoZS4Ta8J1lgeSLXcDyMVam0Y7
- idVhP1PDWHJxH6R0f0qtU3Kt0Ycx9tYP3P0pPGAUU5lDibeoMIQtg
-X-Gm-Gg: AeBDietItbyIRhn3DO2sZaeLBZi4jHqJcPK8kMnZgAbW4Zo4UEOKHtVCdkB2gqdzvii
- PGByOsGZzredypUwTScXwWbYogR2Wf1claCe0LYgOlI8MQgCXedorKMSdwAZnRswYKbcCXPuFQg
- PG5sks90CCCvcavE/H0Ee+VlT2eBEP0eW+RdM9pU51pgmpEvSgJIf0+OCRe07bUprbguzps61x2
- eLExRKIEp+2uyoC3oUR0IISwgki3DL8mkcSXSzL+tIaCjhD/BVUcDRlygwwPOpwHPgGazD5xY95
- hDMr6wq3XGR+7Q0fySnMbF/hZb2ge2H3n8kHbDkXzBhNV1r3oa/7dUgwhCu4IyTHsIBk/Pyk0w6
- KL7rqTc28J+7+EVaId9/l6ZcF+q4HBYeDJuKu5LnZ4ROY8qzpGyQ3b++6JIgfeJG/UbYPAokjQ8
- Vuq7Mq7B4GeMTBOQY=
-X-Received: by 2002:a05:600c:c4ab:b0:487:1fb4:7e1 with SMTP id
- 5b1f17b1804b1-488fb7864c3mr322608505e9.22.1776863892048; 
- Wed, 22 Apr 2026 06:18:12 -0700 (PDT)
-X-Received: by 2002:a05:600c:c4ab:b0:487:1fb4:7e1 with SMTP id
- 5b1f17b1804b1-488fb7864c3mr322608035e9.22.1776863891587; 
- Wed, 22 Apr 2026 06:18:11 -0700 (PDT)
-Received: from localhost (2a01cb00021ec000b06e6b63494bd4c5.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:b06e:6b63:494b:d4c5])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48a52d232afsm56152295e9.31.2026.04.22.06.18.10
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Wed, 22 Apr 2026 06:18:11 -0700 (PDT)
-Mime-Version: 1.0
-Date: Wed, 22 Apr 2026 15:18:10 +0200
-Message-Id: <DHZPOIDFOZW7.9EC6OGSQC2D@redhat.com>
-Subject: Re: [PATCH dpdk v2] net: fix L2 ptype assignment in VLAN loop
-Cc: <dev@dpdk.org>, "Gregory Etelson" <getelson@nvidia.com>, <stable@dpdk.org>
-From: "Robin Jarry" <rjarry@redhat.com>
-To: "Thomas Monjalon" <thomas@monjalon.net>
-User-Agent: aerc/0.21.0-142-gcff39137b013-dirty
+ d=1e100.net; s=20251104; t=1776864240; x=1777469040;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=ttID12/9hB8lKkUbEqrxrux0X/bWDHhlHIHXACppy2k=;
+ b=WpFQlFKpuuVfD9Y4yyhoFVRDKXt/3LPhsGc5KWXT9BkBXyyY8U/YcmysW8BYowymSK
+ FC4IOoEX/yE456e6ClIUT1q7aagKkPaPAi0rb85jtORXZagBuueHRmdCQPFU4ImykHaw
+ mVV+Qjc6SYJoadd2QGqoZfCdx9yjTiftHdPFty9WFDzAddQp2YbmXyjfxYLwktSPcLxM
+ DDBxhE5NU+bBAFecWjQGG02RB8A6D2dWE78hbUeD65kPDxvdFp0GqPddcgUKjXQ5QaeV
+ f5L/+qFT891XI0IlKTgvKK7agBf+LCZc53ZdPC1KUaSjjnrb/TJf5hDRoTy/plH1eSz/
+ STxw==
+X-Gm-Message-State: AOJu0YzpjCYnI4ua2aIyhbA3U22euNRi7ivmcVhsFK5dqa2xcfvSwpI5
+ dAJrPg+whenCQmCr9iXNdVGps0YzODod043tC1iyIxa26R5JpVJiSlb+Sk88JtB2dOmAfhfFvRd
+ +cQRzFpc5Dg6TrTSPVJqeZ4RA4820dd20Fu7FJaKEev8+jZ804u8q0ZYoZqPiAF02VT4znF9Neg
+ wltLuo3vBi9tPvrK+o9YA=
+X-Gm-Gg: AeBDiet/FGeF25mzb4a7LyTdKrSJZ2YTio8tsB/hMg4RkSIKDKfPX1IaRn7FWV8RuKI
+ O3uH2V6ocIneN7uJUnOzMfmQkNcNXELPnk7vWMvtBUXkJlVedouyP2bORlrnJofe/TLN+IiEsiQ
+ E/0cIc8MQwoJxP8SOshBQTdWTFE1ma8zp+c6/qdCNtmuaNd/FB5b6WmjHJl0r07zgp4HReIAyxT
+ vI43kmCAVvz59cHZGP60lS1o5zXkzW3Ga51DfDRSlHKxIINGwLGCso1MYgEAK50+eNCRtQMMBAJ
+ pZPM
+X-Received: by 2002:a2e:8a89:0:b0:38e:d870:1db4 with SMTP id
+ 38308e7fff4ca-38ed8701e72mr56180071fa.22.1776864239847; 
+ Wed, 22 Apr 2026 06:23:59 -0700 (PDT)
+X-Received: by 2002:a2e:8a89:0:b0:38e:d870:1db4 with SMTP id
+ 38308e7fff4ca-38ed8701e72mr56179921fa.22.1776864239263; Wed, 22 Apr 2026
+ 06:23:59 -0700 (PDT)
+MIME-Version: 1.0
 References: <20260422102814.645299-2-rjarry@redhat.com>
- <20260422103838.649578-2-rjarry@redhat.com> <1924482.atdPhlSkOF@thomas>
-In-Reply-To: <1924482.atdPhlSkOF@thomas>
+ <20260422103838.649578-2-rjarry@redhat.com>
+In-Reply-To: <20260422103838.649578-2-rjarry@redhat.com>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 22 Apr 2026 15:23:46 +0200
+X-Gm-Features: AQROBzC4Wkgo9fYLKWKSaujpBdT5MdysgfGks15XP57xkEdcVXO2TWs6-_CZHWI
+Message-ID: <CAJFAV8wa36zYGZmPp8idnERafcpSoSLaWnMps0oQovfabmLsXw@mail.gmail.com>
+Subject: Re: [PATCH dpdk v2] net: fix L2 ptype assignment in VLAN loop
+To: Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, Gregory Etelson <getelson@nvidia.com>, stable@dpdk.org
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: gPJdNEgTFEELhklRchXbo-wXmN4MLXHD-QlLyIcX5AU_1776863892
+X-Mimecast-MFC-PROC-ID: D7dufJ9-jW46oWFjKD6JpXiO8zETB9V1YyKnrKBFkzw_1776864240
 X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,24 +84,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thomas Monjalon, Apr 22, 2026 at 15:16:
-> 22/04/2026 12:38, Robin Jarry:
->> Since commit 1f250674085a ("net: fix packet type for stacked VLAN"),
->> rte_net_get_ptype() uses |=3D to set the L2 ptype inside the VLAN
->> parsing loop. Since pkt_type is already initialized with
->> RTE_PTYPE_L2_ETHER (0x1), or-ing it with RTE_PTYPE_L2_ETHER_VLAN
->> (0x6) results in RTE_PTYPE_L2_ETHER_QINQ (0x7). This causes single
->> VLAN frames to be misidentified as QinQ.
->
-> Thanks for finding this major regression.
->
-> Minor nit about the title (for whoever will merge it):
-> we don't really care the problem is in a loop.
-> I think this title is easier to read:
-> =09net: fix VLAN packet type
+On Wed, 22 Apr 2026 at 12:39, Robin Jarry <rjarry@redhat.com> wrote:
+> +static int
+> +test_get_ptype(struct rte_mempool *pool, const char *pktdata, size_t len,
+> +              uint32_t expected_l2, uint8_t expected_l2_len)
+> +{
+> +       struct rte_net_hdr_lens hdr_lens;
+> +       struct rte_mbuf *m;
+> +       uint32_t ptype;
+> +       uint32_t l2;
+> +       char *data;
+> +
+> +       m = rte_pktmbuf_alloc(pool);
+> +       RTE_TEST_ASSERT_NOT_NULL(m, "cannot allocate mbuf");
+> +
+> +       data = rte_pktmbuf_append(m, len);
+> +       if (data == NULL) {
+> +               rte_pktmbuf_free(m);
+> +               RTE_TEST_ASSERT_NOT_NULL(data, "cannot append data");
+> +       }
+> +
+> +       memcpy(data, pktdata, len);
+> +
+> +       ptype = rte_net_get_ptype(m, &hdr_lens, RTE_PTYPE_ALL_MASK);
+> +       l2 = ptype & RTE_PTYPE_L2_MASK;
+> +
+> +       rte_pktmbuf_free(m);
+> +
+> +       RTE_TEST_ASSERT_EQUAL(l2, expected_l2,
+> +               "unexpected L2 ptype: got 0x%x, expected 0x%x",
+> +               l2, expected_l2);
+> +       RTE_TEST_ASSERT_EQUAL(hdr_lens.l2_len, expected_l2_len,
+> +               "unexpected l2_len: got %u, expected %u",
+> +               hdr_lens.l2_len, expected_l2_len);
 
-I will send a v3 with a different approach. Currently my fix breaks the
-detection of QinQ if it is followed by a plain vlan header.
+Since this test asks for RTE_PTYPE_ALL_MASK, let's validate the full
+returned ptype, and the returned offsets.
 
-I'll adjust the title.
+
+> +
+> +       return 0;
+
+
+-- 
+David Marchand
 
