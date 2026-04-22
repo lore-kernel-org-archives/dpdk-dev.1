@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67425F9B5E1
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 08:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C08AF9B5E2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 08:35:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8672440648;
-	Wed, 22 Apr 2026 10:28:28 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 6AD4640272;
- Wed, 22 Apr 2026 10:28:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 5973240272;
+	Wed, 22 Apr 2026 10:35:36 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+ by mails.dpdk.org (Postfix) with ESMTP id E2A4440144;
+ Wed, 22 Apr 2026 10:35:34 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1776846508; x=1808382508;
+ t=1776846936; x=1808382936;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=Yw3/27WFoqOY5fmit7i/En3dgS2w7M2prD/9Y3la2cI=;
- b=CGRmY++2wHFGgQJ8wyAVCSJQc5hu7paFg7p2hnNYL7Qyz7HY3KgaPj4o
- hhljIsDPZhLy+xX2I2AYtbxEYMwKlp2imsoMlu6v+rdoqxI77yStVXYRE
- 6cv2gQSwemzTTTwEc3JcWUUYK4mAxansn7XmS58Yr67OxBPxwj1FuAycd
- r8hO9AZhGeveHV5BBGYtWozU2NW27EJnxZSH9YZvD5g3CiiEN9IYQQxYf
- Q1yGQqfEIWgoA46NoJlJw8sDg0+RN7KjeQVJ2Yw4LSW+N/UvB+mAN15Fe
- R9GGqLktB9DQefstePZQmehk+O2LVqOX8+XkUCRBNr+Jf/gCB7kbZuP+Z g==;
-X-CSE-ConnectionGUID: Mq2GFSZhSi+pgTySba3qdQ==
-X-CSE-MsgGUID: lA2rJ6VDQLCu8eThWu+DLA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11763"; a="88096456"
-X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="88096456"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
- by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Apr 2026 01:28:26 -0700
-X-CSE-ConnectionGUID: a03er3bLRsa4BcsFRvdJQA==
-X-CSE-MsgGUID: Aswtw4IkR5mfya++RIQi9g==
+ bh=A4WzwGrpuT77BoqMEYZLVHRUw3V+xNOq13hmjnv53Ww=;
+ b=f8TRLdiDiD0JbLMwVIgho/Exur2Q5rdGvVeLLyTAMwPa3xRAFbSeldoC
+ 3hlS7wdQEg7Xxo7VObnNJ8nhIJ4Dhguutfjmke4crNkFtX2Tn1Bda9sHJ
+ LRLcTxXxT88Cq5aG2JHnMF/1bPbbey7UKSw0bzJnkYVJh6sfTyuMWTQbf
+ qde/mMQSd3s0/lcR2B2mZ8DiewqTDKUcFqEHvdO4NWrqQ2u4oKvLGJ9y9
+ Zj3RpBEGWHtV2WVp8WGiOSkzodqyoDaImSpht/gfGtR1oMgzBh9FX+Fcr
+ +bvSxO/oBeMiJZmFpBtc0SxXlCSWfQ0XaTOZOa9atqvYdA58UjUgvr8HC w==;
+X-CSE-ConnectionGUID: HP6tzgnQScC6CektQXNynA==
+X-CSE-MsgGUID: Q58daHxDTYqhERdrXKtPBA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11763"; a="77671634"
+X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="77671634"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+ by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Apr 2026 01:35:35 -0700
+X-CSE-ConnectionGUID: RhnCelY/TuG9Ja/GrAczjw==
+X-CSE-MsgGUID: Zujcj0VcR/6cc47wraLiZw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="255553477"
+X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="229622522"
 Received: from unknown (HELO sprmax15..) ([10.138.182.128])
- by fmviesa002.fm.intel.com with ESMTP; 22 Apr 2026 01:28:25 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 22 Apr 2026 01:35:32 -0700
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
 Cc: stable@dpdk.org
-Subject: [PATCH v2] net/intel/idpf: fix multi-segment mbuf leak in split Tx
-Date: Wed, 22 Apr 2026 13:48:21 +0530
-Message-ID: <20260422081821.871970-1-shaiq.wani@intel.com>
+Subject: [PATCH v3] net/idpf: fix multi-segment mbuf leak in split Tx
+Date: Wed, 22 Apr 2026 13:56:42 +0530
+Message-ID: <20260422082642.882407-1-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260312110133.629246-1-shaiq.wani@intel.com>
 References: <20260312110133.629246-1-shaiq.wani@intel.com>
@@ -71,6 +71,9 @@ Cc: stable@dpdk.org
 
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
+v3:
+* fix commit title prefix: net/intel/idpf -> net/idpf
+
 v2:
 * drop the enqueue-side mbuf free raised in review, since a non-NULL
   software ring entry indicates an unreclaimed slot
