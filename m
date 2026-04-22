@@ -2,50 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C08AF9B5E2
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 08:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52250F9B5F2
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 09:16:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5973240272;
-	Wed, 22 Apr 2026 10:35:36 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
- by mails.dpdk.org (Postfix) with ESMTP id E2A4440144;
- Wed, 22 Apr 2026 10:35:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 6947340616;
+	Wed, 22 Apr 2026 11:16:25 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id 7CA21402E0
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 11:16:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1776846936; x=1808382936;
+ t=1776849384; x=1808385384;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=A4WzwGrpuT77BoqMEYZLVHRUw3V+xNOq13hmjnv53Ww=;
- b=f8TRLdiDiD0JbLMwVIgho/Exur2Q5rdGvVeLLyTAMwPa3xRAFbSeldoC
- 3hlS7wdQEg7Xxo7VObnNJ8nhIJ4Dhguutfjmke4crNkFtX2Tn1Bda9sHJ
- LRLcTxXxT88Cq5aG2JHnMF/1bPbbey7UKSw0bzJnkYVJh6sfTyuMWTQbf
- qde/mMQSd3s0/lcR2B2mZ8DiewqTDKUcFqEHvdO4NWrqQ2u4oKvLGJ9y9
- Zj3RpBEGWHtV2WVp8WGiOSkzodqyoDaImSpht/gfGtR1oMgzBh9FX+Fcr
- +bvSxO/oBeMiJZmFpBtc0SxXlCSWfQ0XaTOZOa9atqvYdA58UjUgvr8HC w==;
-X-CSE-ConnectionGUID: HP6tzgnQScC6CektQXNynA==
-X-CSE-MsgGUID: Q58daHxDTYqhERdrXKtPBA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11763"; a="77671634"
-X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="77671634"
+ bh=8q7pNveeXvrCKw07yhYF/x7ftX2vmBmuQbBXx6v7GgM=;
+ b=D1erhnjCjdM2FkL1nmH3IejOtpH9ZvaYF9jO1Yazqi1Kn4BZcyVYVud2
+ mG2qF0pFFrMt/8VNj94lUE7ayXOWr8WUlcXdg6cpCK9ijWrXyUIddgSBe
+ Zq9ghCmYhEnqQQGZSrjuNzanksTpgN1MNRjFf5+qIPQeH62Gs6LqVVdNr
+ VWYP2sFQbP0349t0bbpMV/7hxyXGoLXl39HS8dzD16EM8+BSEBSFiKbB6
+ JSYmOQ9lGhPwCy1hPRnOqB32j0vfZ6KsUl4EnaOSw/mZfVv8L8bFkBbIb
+ HpKaCXtsCOxUSAH3rdXGJQ4Yld3wpwOQ6mf9dRDJ2SsBrn9XPX9FgMhKf A==;
+X-CSE-ConnectionGUID: K+yp037AQYuSJq1Kqw0ZZQ==
+X-CSE-MsgGUID: 4zQQYC++Tpmm+gR/5SWzzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11763"; a="89266805"
+X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="89266805"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 22 Apr 2026 01:35:35 -0700
-X-CSE-ConnectionGUID: RhnCelY/TuG9Ja/GrAczjw==
-X-CSE-MsgGUID: Zujcj0VcR/6cc47wraLiZw==
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 22 Apr 2026 02:16:23 -0700
+X-CSE-ConnectionGUID: bpzBKQ8CQcmCdERaC+8dZQ==
+X-CSE-MsgGUID: Cmm3Y1wbQeqIowEMdybEgA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="229622522"
-Received: from unknown (HELO sprmax15..) ([10.138.182.128])
- by fmviesa008.fm.intel.com with ESMTP; 22 Apr 2026 01:35:32 -0700
-From: Shaiq Wani <shaiq.wani@intel.com>
-To: dev@dpdk.org,
-	bruce.richardson@intel.com,
-	aman.deep.singh@intel.com
-Cc: stable@dpdk.org
-Subject: [PATCH v3] net/idpf: fix multi-segment mbuf leak in split Tx
-Date: Wed, 22 Apr 2026 13:56:42 +0530
-Message-ID: <20260422082642.882407-1-shaiq.wani@intel.com>
+X-IronPort-AV: E=Sophos;i="6.23,192,1770624000"; d="scan'208";a="229631838"
+Received: from silpixa00401921.ir.intel.com ([10.20.224.96])
+ by fmviesa008.fm.intel.com with ESMTP; 22 Apr 2026 02:16:23 -0700
+From: Ciara Loftus <ciara.loftus@intel.com>
+To: dev@dpdk.org
+Cc: Ciara Loftus <ciara.loftus@intel.com>
+Subject: [PATCH v5 0/3] iavf: LLDP ptype and AVX2 ctx paths
+Date: Wed, 22 Apr 2026 09:16:06 +0000
+Message-ID: <20260422091609.1797686-1-ciara.loftus@intel.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260312110133.629246-1-shaiq.wani@intel.com>
-References: <20260312110133.629246-1-shaiq.wani@intel.com>
+In-Reply-To: <20260417105610.1161242-4-ciara.loftus@intel.com>
+References: <20260417105610.1161242-4-ciara.loftus@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -61,89 +59,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-RS completion only frees the EOP entry's mbuf, leaking preceding
-segments of multi-segment packets. Add a first_id field to the Tx
-entry struct, record the first sw_id at the EOP entry during submit,
-and walk forward from first to EOP to free all segments on completion.
+This series adds another way to detect LLDP packets in the Tx paths
+of the iavf PMD, which is based on the mbuf packet type field. This is
+in addition to the existing method of using a dynamic field. The series
+also adds new AVX2 context descriptor Tx paths that support LLDP. Finally,
+a deprecation notice is added to the documentation to flag that the
+dynamic mbuf field method of LLDP packet detection will be removed in a
+future release.
 
-Fixes: 8c6098afa075 ("common/idpf: add Rx/Tx data path")
-Cc: stable@dpdk.org
+Patch 1 flags "CHECK:MACRO_ARG_REUSE" in checkpatch for the
+IAVF_CHECK_TX_LLDP macro. This is a false positive because the inputs to
+the macro are not reused in a way that would cause issues.
 
-Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
----
-v3:
-* fix commit title prefix: net/intel/idpf -> net/idpf
+v5:
+* Updated the documentation
+* Made the "lldp mode" per-device rather than a global value. This is
+necessary because the devarg is per-device unlike the global dynfield.
+The mode is added to the iavf-specific flags in the ci_tx_queue struct
+so that it can be read for each device on the datapath.
 
-v2:
-* drop the enqueue-side mbuf free raised in review, since a non-NULL
-  software ring entry indicates an unreclaimed slot
+Ciara Loftus (3):
+  net/iavf: support LLDP Tx via mbuf ptype or dynfield
+  net/iavf: add AVX2 context descriptor Tx paths
+  doc: announce change to LLDP packet detection in iavf PMD
 
- drivers/net/intel/common/tx.h             |  1 +
- drivers/net/intel/idpf/idpf_common_rxtx.c | 23 ++++++++++++++++++++---
- 2 files changed, 21 insertions(+), 3 deletions(-)
+ doc/guides/nics/intel_vf.rst                  |  33 +-
+ doc/guides/rel_notes/deprecation.rst          |   4 +
+ doc/guides/rel_notes/release_26_07.rst        |   6 +
+ drivers/net/intel/common/tx.h                 |   1 +
+ drivers/net/intel/iavf/iavf.h                 |   3 +
+ drivers/net/intel/iavf/iavf_ethdev.c          |  27 ++
+ drivers/net/intel/iavf/iavf_rxtx.c            |  33 +-
+ drivers/net/intel/iavf/iavf_rxtx.h            |  21 +-
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 387 ++++++++++++++++++
+ drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c |  21 +-
+ 10 files changed, 508 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/net/intel/common/tx.h b/drivers/net/intel/common/tx.h
-index 283bd58d5d..53e61c0b62 100644
---- a/drivers/net/intel/common/tx.h
-+++ b/drivers/net/intel/common/tx.h
-@@ -121,6 +121,7 @@ struct ci_tx_queue;
- struct ci_tx_entry {
- 	struct rte_mbuf *mbuf; /* mbuf associated with TX desc, if any. */
- 	uint16_t next_id; /* Index of next descriptor in ring. */
-+	uint16_t first_id; /* Split-queue: first sw_id of packet at EOP entry. */
- };
- 
- /**
-diff --git a/drivers/net/intel/idpf/idpf_common_rxtx.c b/drivers/net/intel/idpf/idpf_common_rxtx.c
-index f73716e57c..c56ba86f1e 100644
---- a/drivers/net/intel/idpf/idpf_common_rxtx.c
-+++ b/drivers/net/intel/idpf/idpf_common_rxtx.c
-@@ -825,11 +825,23 @@ idpf_split_tx_free(struct ci_tx_queue *cq)
- 		txq->last_desc_cleaned = q_head;
- 		break;
- 	case IDPF_TXD_COMPLT_RS:
--		/* q_head indicates sw_id when ctype is 2 */
-+		/* Walk from first segment to EOP, freeing each segment. */
- 		txe = &txq->sw_ring[q_head];
- 		if (txe->mbuf != NULL) {
--			rte_pktmbuf_free_seg(txe->mbuf);
--			txe->mbuf = NULL;
-+			uint16_t first = txe->first_id;
-+			uint16_t idx = first;
-+			uint16_t end = (q_head + 1 == txq->sw_nb_desc) ?
-+					0 : q_head + 1;
-+
-+			do {
-+				txe = &txq->sw_ring[idx];
-+				if (txe->mbuf != NULL) {
-+					rte_pktmbuf_free_seg(txe->mbuf);
-+					txe->mbuf = NULL;
-+				}
-+				idx = (idx + 1 == txq->sw_nb_desc) ?
-+					0 : idx + 1;
-+			} while (idx != end);
- 		}
- 		break;
- 	default:
-@@ -979,6 +991,8 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 				tx_id = 0;
- 		}
- 
-+		uint16_t first_sw_id = sw_id;
-+
- 		do {
- 			txd = &txr[tx_id];
- 			txn = &sw_ring[txe->next_id];
-@@ -1002,6 +1016,9 @@ idpf_dp_splitq_xmit_pkts(void *tx_queue, struct rte_mbuf **tx_pkts,
- 		/* fill the last descriptor with End of Packet (EOP) bit */
- 		txd->qw1.cmd_dtype |= IDPF_TXD_FLEX_FLOW_CMD_EOP;
- 
-+		/* Record first sw_id at EOP so completion can walk forward. */
-+		sw_ring[txd->qw1.compl_tag].first_id = first_sw_id;
-+
- 		txq->nb_tx_free = (uint16_t)(txq->nb_tx_free - nb_used);
- 		txq->rs_compl_count += nb_used;
- 
 -- 
 2.43.0
 
