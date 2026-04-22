@@ -2,75 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC28F9EDC9
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 13:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EDDF9EDCB
+	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 13:33:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF0EC4065A;
-	Wed, 22 Apr 2026 15:24:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id B5788402E0;
+	Wed, 22 Apr 2026 15:33:16 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 9F0C8402E0
- for <dev@dpdk.org>; Wed, 22 Apr 2026 15:24:03 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 037F7402DC
+ for <dev@dpdk.org>; Wed, 22 Apr 2026 15:33:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1776864243;
+ s=mimecast20190719; t=1776864794;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=ttID12/9hB8lKkUbEqrxrux0X/bWDHhlHIHXACppy2k=;
- b=ASdw3avjcEqhY2Fs+UqHJe0jAvyLNHVJ7xcCJKuI1XHyu1nDus8hHJGO6c10XV6wUAOhEx
- BCXzetk3SSuYYN2EvA8QDWisl9jQ5bsIoB7XLI/28EYkDr75jmmVi3NC9QitdOemumVozD
- 3+ztQ8qeG1RMc59LqqmahQX4nTzhFRg=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-247-qoWu74lpMoCCPS6cOKevmg-1; Wed, 22 Apr 2026 09:24:01 -0400
-X-MC-Unique: qoWu74lpMoCCPS6cOKevmg-1
-X-Mimecast-MFC-AGG-ID: qoWu74lpMoCCPS6cOKevmg_1776864240
-Received: by mail-lj1-f200.google.com with SMTP id
- 38308e7fff4ca-3870692eb93so33471761fa.0
- for <dev@dpdk.org>; Wed, 22 Apr 2026 06:24:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776864240; x=1777469040;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=ttID12/9hB8lKkUbEqrxrux0X/bWDHhlHIHXACppy2k=;
- b=WpFQlFKpuuVfD9Y4yyhoFVRDKXt/3LPhsGc5KWXT9BkBXyyY8U/YcmysW8BYowymSK
- FC4IOoEX/yE456e6ClIUT1q7aagKkPaPAi0rb85jtORXZagBuueHRmdCQPFU4ImykHaw
- mVV+Qjc6SYJoadd2QGqoZfCdx9yjTiftHdPFty9WFDzAddQp2YbmXyjfxYLwktSPcLxM
- DDBxhE5NU+bBAFecWjQGG02RB8A6D2dWE78hbUeD65kPDxvdFp0GqPddcgUKjXQ5QaeV
- f5L/+qFT891XI0IlKTgvKK7agBf+LCZc53ZdPC1KUaSjjnrb/TJf5hDRoTy/plH1eSz/
- STxw==
-X-Gm-Message-State: AOJu0YzpjCYnI4ua2aIyhbA3U22euNRi7ivmcVhsFK5dqa2xcfvSwpI5
- dAJrPg+whenCQmCr9iXNdVGps0YzODod043tC1iyIxa26R5JpVJiSlb+Sk88JtB2dOmAfhfFvRd
- +cQRzFpc5Dg6TrTSPVJqeZ4RA4820dd20Fu7FJaKEev8+jZ804u8q0ZYoZqPiAF02VT4znF9Neg
- wltLuo3vBi9tPvrK+o9YA=
-X-Gm-Gg: AeBDiet/FGeF25mzb4a7LyTdKrSJZ2YTio8tsB/hMg4RkSIKDKfPX1IaRn7FWV8RuKI
- O3uH2V6ocIneN7uJUnOzMfmQkNcNXELPnk7vWMvtBUXkJlVedouyP2bORlrnJofe/TLN+IiEsiQ
- E/0cIc8MQwoJxP8SOshBQTdWTFE1ma8zp+c6/qdCNtmuaNd/FB5b6WmjHJl0r07zgp4HReIAyxT
- vI43kmCAVvz59cHZGP60lS1o5zXkzW3Ga51DfDRSlHKxIINGwLGCso1MYgEAK50+eNCRtQMMBAJ
- pZPM
-X-Received: by 2002:a2e:8a89:0:b0:38e:d870:1db4 with SMTP id
- 38308e7fff4ca-38ed8701e72mr56180071fa.22.1776864239847; 
- Wed, 22 Apr 2026 06:23:59 -0700 (PDT)
-X-Received: by 2002:a2e:8a89:0:b0:38e:d870:1db4 with SMTP id
- 38308e7fff4ca-38ed8701e72mr56179921fa.22.1776864239263; Wed, 22 Apr 2026
- 06:23:59 -0700 (PDT)
-MIME-Version: 1.0
+ bh=7Aau+OZOfDXV+pTY+TSfcCrSVOdBOm4v3/zDshp42aw=;
+ b=VorEeJ6r/3BfriRb+6b0mi37lCG1E3ZFGsgk9i6HWbeUFYiLQzFwd+UW1+eYOUOJDYTwbR
+ UutQMutSMOsbVR8vwvkZSy5teDzUujCi9Ms5YCRtePsSx5e/FLz6jAkEBh7vzTwGNIVp+/
+ zYY2MlgJYYwIkFg/nztN2GxC0n6XwQE=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-251-Kb9aoAZ2M5minuewvTtz_A-1; Wed,
+ 22 Apr 2026 09:33:10 -0400
+X-MC-Unique: Kb9aoAZ2M5minuewvTtz_A-1
+X-Mimecast-MFC-AGG-ID: Kb9aoAZ2M5minuewvTtz_A_1776864789
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 4189C195605F; Wed, 22 Apr 2026 13:33:09 +0000 (UTC)
+Received: from ringo.home (unknown [10.44.32.51])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id BD65D1956095; Wed, 22 Apr 2026 13:33:07 +0000 (UTC)
+From: Robin Jarry <rjarry@redhat.com>
+To: dev@dpdk.org,
+	Gregory Etelson <getelson@nvidia.com>
+Cc: stable@dpdk.org
+Subject: [PATCH dpdk v3] net: fix VLAN packet type
+Date: Wed, 22 Apr 2026 15:32:19 +0200
+Message-ID: <20260422133217.675900-3-rjarry@redhat.com>
+In-Reply-To: <20260422102814.645299-2-rjarry@redhat.com>
 References: <20260422102814.645299-2-rjarry@redhat.com>
- <20260422103838.649578-2-rjarry@redhat.com>
-In-Reply-To: <20260422103838.649578-2-rjarry@redhat.com>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 22 Apr 2026 15:23:46 +0200
-X-Gm-Features: AQROBzC4Wkgo9fYLKWKSaujpBdT5MdysgfGks15XP57xkEdcVXO2TWs6-_CZHWI
-Message-ID: <CAJFAV8wa36zYGZmPp8idnERafcpSoSLaWnMps0oQovfabmLsXw@mail.gmail.com>
-Subject: Re: [PATCH dpdk v2] net: fix L2 ptype assignment in VLAN loop
-To: Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, Gregory Etelson <getelson@nvidia.com>, stable@dpdk.org
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: D7dufJ9-jW46oWFjKD6JpXiO8zETB9V1YyKnrKBFkzw_1776864240
+X-Mimecast-MFC-PROC-ID: 5V3AIx_gERYu2InxhHKItqkcwP6SdzRyQwJwpC_Yr9I_1776864789
 X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,48 +67,324 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 22 Apr 2026 at 12:39, Robin Jarry <rjarry@redhat.com> wrote:
-> +static int
-> +test_get_ptype(struct rte_mempool *pool, const char *pktdata, size_t len,
-> +              uint32_t expected_l2, uint8_t expected_l2_len)
-> +{
-> +       struct rte_net_hdr_lens hdr_lens;
-> +       struct rte_mbuf *m;
-> +       uint32_t ptype;
-> +       uint32_t l2;
-> +       char *data;
-> +
-> +       m = rte_pktmbuf_alloc(pool);
-> +       RTE_TEST_ASSERT_NOT_NULL(m, "cannot allocate mbuf");
-> +
-> +       data = rte_pktmbuf_append(m, len);
-> +       if (data == NULL) {
-> +               rte_pktmbuf_free(m);
-> +               RTE_TEST_ASSERT_NOT_NULL(data, "cannot append data");
-> +       }
-> +
-> +       memcpy(data, pktdata, len);
-> +
-> +       ptype = rte_net_get_ptype(m, &hdr_lens, RTE_PTYPE_ALL_MASK);
-> +       l2 = ptype & RTE_PTYPE_L2_MASK;
-> +
-> +       rte_pktmbuf_free(m);
-> +
-> +       RTE_TEST_ASSERT_EQUAL(l2, expected_l2,
-> +               "unexpected L2 ptype: got 0x%x, expected 0x%x",
-> +               l2, expected_l2);
-> +       RTE_TEST_ASSERT_EQUAL(hdr_lens.l2_len, expected_l2_len,
-> +               "unexpected l2_len: got %u, expected %u",
-> +               hdr_lens.l2_len, expected_l2_len);
+Since commit 1f250674085a ("net: fix packet type for stacked VLAN"),
+rte_net_get_ptype() uses |= to set the L2 ptype inside the VLAN
+parsing loop. Since pkt_type is already initialized with
+RTE_PTYPE_L2_ETHER (0x1), or-ing it with RTE_PTYPE_L2_ETHER_VLAN
+(0x6) results in RTE_PTYPE_L2_ETHER_QINQ (0x7). This causes single
+VLAN frames to be misidentified as QinQ.
 
-Since this test asks for RTE_PTYPE_ALL_MASK, let's validate the full
-returned ptype, and the returned offsets.
+This was detected while testing DPDK 25.11.1 in grout. The net/tap
+driver calls rte_net_get_ptype() in tap_verify_csum() to determine the
+L2 header length. With the wrong ptype, l2_len is set to 22 (ether
++ QinQ = 14 + 8) instead of 18 (ether + VLAN = 14 + 4), shifting the IP
+header pointer by 4 bytes. The checksum is then computed on garbage
+data, causing valid packets to be dropped.
 
+Initialize pkt_type to 0 and defer the RTE_PTYPE_L2_ETHER assignment to
+the l3 label, only if no VLAN/QinQ type was set in the loop. This avoids
+the bitwise-or conflict between the L2 ptype constants entirely.
 
-> +
-> +       return 0;
+Add a new net_ptype_autotest unit test that verifies the ptype and
+header lengths (l2_len, l3_len, l4_len) returned by rte_net_get_ptype()
+for plain Ethernet, single VLAN, stacked VLAN (two 802.1Q tags), and
+QinQ (802.1ad + 802.1Q) frames, with both IPv4/IPv6 and UDP/TCP
+combinations.
 
+Fixes: 1f250674085a ("net: fix packet type for stacked VLAN")
+Cc: stable@dpdk.org
 
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
+---
+
+Notes:
+    v3:
+    
+    * changed the approach: initialize pkt_type=0 and only set it to
+      RTE_PTYPE_L2_ETHER if neither of VLAN nor QINQ matched.
+    * extended the unit tests to check for header lengths and added ipv6 / tcp
+      cases.
+    
+    v2: added new ptype tests
+
+ app/test/meson.build      |   1 +
+ app/test/test_net_ptype.c | 231 ++++++++++++++++++++++++++++++++++++++
+ lib/net/rte_net.c         |   4 +-
+ 3 files changed, 235 insertions(+), 1 deletion(-)
+ create mode 100644 app/test/test_net_ptype.c
+
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 7d458f9c079a..9f4afb040a46 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -135,6 +135,7 @@ source_file_deps = {
+     'test_mp_secondary.c': ['hash'],
+     'test_net_ether.c': ['net'],
+     'test_net_ip6.c': ['net'],
++    'test_net_ptype.c': ['net'],
+     'test_pcapng.c': ['net_null', 'net', 'ethdev', 'pcapng', 'bus_vdev'],
+     'test_pdcp.c': ['eventdev', 'pdcp', 'net', 'timer', 'security'],
+     'test_pdump.c': ['pdump'] + sample_packet_forward_deps,
+diff --git a/app/test/test_net_ptype.c b/app/test/test_net_ptype.c
+new file mode 100644
+index 000000000000..bfe85da13543
+--- /dev/null
++++ b/app/test/test_net_ptype.c
+@@ -0,0 +1,231 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright 2026 Red Hat, Inc.
++ */
++
++#include <stdint.h>
++#include <string.h>
++
++#include <rte_mbuf.h>
++#include <rte_net.h>
++
++#include <rte_test.h>
++#include "test.h"
++
++#define MEMPOOL_CACHE_SIZE 0
++#define MBUF_DATA_SIZE 256
++#define NB_MBUF 128
++
++/* Ether()/IP()/UDP()/Raw('x') */
++static const uint8_t pkt_ether_ipv4_udp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x45, 0x00,
++	0x00, 0x1d, 0x00, 0x01, 0x00, 0x00, 0x40, 0x11,
++	0x7c, 0xcd, 0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00,
++	0x00, 0x01, 0x00, 0x35, 0x00, 0x35, 0x00, 0x09,
++	0x89, 0x6f, 0x78,
++};
++
++/* Ether()/IP()/TCP() */
++static const uint8_t pkt_ether_ipv4_tcp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x45, 0x00,
++	0x00, 0x28, 0x00, 0x01, 0x00, 0x00, 0x40, 0x06,
++	0x7c, 0xcd, 0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00,
++	0x00, 0x01, 0x00, 0x14, 0x00, 0x50, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x50, 0x02,
++	0x20, 0x00, 0x91, 0x7c, 0x00, 0x00,
++};
++
++/* Ether()/IPv6()/UDP()/Raw('x') */
++static const uint8_t pkt_ether_ipv6_udp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x86, 0xdd, 0x60, 0x00,
++	0x00, 0x00, 0x00, 0x09, 0x11, 0x40, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x35,
++	0x00, 0x35, 0x00, 0x09, 0x87, 0x70, 0x78,
++};
++
++/* Ether()/IPv6()/TCP() */
++static const uint8_t pkt_ether_ipv6_tcp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x86, 0xdd, 0x60, 0x00,
++	0x00, 0x00, 0x00, 0x14, 0x06, 0x40, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x14,
++	0x00, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x50, 0x02, 0x20, 0x00, 0x8f, 0x7d,
++	0x00, 0x00,
++};
++
++/* Ether()/IP(options='\x00')/UDP()/Raw('x') -- ihl=6 */
++static const uint8_t pkt_ether_ipv4_opts_udp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x08, 0x00, 0x46, 0x00,
++	0x00, 0x21, 0x00, 0x01, 0x00, 0x00, 0x40, 0x11,
++	0x7b, 0xc9, 0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00,
++	0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x35,
++	0x00, 0x35, 0x00, 0x09, 0x89, 0x6f, 0x78,
++};
++
++/* Ether()/Dot1Q(vlan=42)/IP()/UDP()/Raw('x') */
++static const uint8_t pkt_vlan_ipv4_udp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x81, 0x00, 0x00, 0x2a,
++	0x08, 0x00, 0x45, 0x00, 0x00, 0x1d, 0x00, 0x01,
++	0x00, 0x00, 0x40, 0x11, 0x7c, 0xcd, 0x7f, 0x00,
++	0x00, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x00, 0x35,
++	0x00, 0x35, 0x00, 0x09, 0x89, 0x6f, 0x78,
++};
++
++/* Ether()/Dot1Q(vlan=42)/IPv6()/TCP() */
++static const uint8_t pkt_vlan_ipv6_tcp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x81, 0x00, 0x00, 0x2a,
++	0x86, 0xdd, 0x60, 0x00, 0x00, 0x00, 0x00, 0x14,
++	0x06, 0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x01, 0x00, 0x14, 0x00, 0x50, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x50, 0x02,
++	0x20, 0x00, 0x8f, 0x7d, 0x00, 0x00,
++};
++
++/* Ether()/Dot1AD(vlan=42)/Dot1Q(vlan=43)/IP()/UDP()/Raw('x') */
++static const uint8_t pkt_qinq_ipv4_udp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x88, 0xa8, 0x00, 0x2a,
++	0x81, 0x00, 0x00, 0x2b, 0x08, 0x00, 0x45, 0x00,
++	0x00, 0x1d, 0x00, 0x01, 0x00, 0x00, 0x40, 0x11,
++	0x7c, 0xcd, 0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00,
++	0x00, 0x01, 0x00, 0x35, 0x00, 0x35, 0x00, 0x09,
++	0x89, 0x6f, 0x78,
++};
++
++/* Ether()/Dot1Q(vlan=42)/Dot1Q(vlan=43)/IP()/UDP()/Raw('x') */
++static const uint8_t pkt_vlan_vlan_ipv4_udp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x81, 0x00, 0x00, 0x2a,
++	0x81, 0x00, 0x00, 0x2b, 0x08, 0x00, 0x45, 0x00,
++	0x00, 0x1d, 0x00, 0x01, 0x00, 0x00, 0x40, 0x11,
++	0x7c, 0xcd, 0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00,
++	0x00, 0x01, 0x00, 0x35, 0x00, 0x35, 0x00, 0x09,
++	0x89, 0x6f, 0x78,
++};
++
++/* Ether()/Dot1AD(vlan=42)/Dot1Q(vlan=43)/IPv6()/TCP() */
++static const uint8_t pkt_qinq_ipv6_tcp[] = {
++	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x88, 0xa8, 0x00, 0x2a,
++	0x81, 0x00, 0x00, 0x2b, 0x86, 0xdd, 0x60, 0x00,
++	0x00, 0x00, 0x00, 0x14, 0x06, 0x40, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x14,
++	0x00, 0x50, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
++	0x00, 0x00, 0x50, 0x02, 0x20, 0x00, 0x8f, 0x7d,
++	0x00, 0x00,
++};
++
++static int
++test_get_ptype(struct rte_mempool *pool, const char *name,
++	       const uint8_t *pktdata, size_t len, uint32_t expected_ptype,
++	       uint8_t expected_l2_len, uint16_t expected_l3_len,
++	       uint8_t expected_l4_len)
++{
++	struct rte_net_hdr_lens hdr_lens;
++	struct rte_mbuf *m;
++	uint32_t ptype;
++	char *data;
++
++	RTE_LOG(INFO, EAL, "%s: %s\n", __func__, name);
++
++	m = rte_pktmbuf_alloc(pool);
++	RTE_TEST_ASSERT_NOT_NULL(m, "cannot allocate mbuf");
++
++	data = rte_pktmbuf_append(m, len);
++	if (data == NULL) {
++		rte_pktmbuf_free(m);
++		RTE_TEST_ASSERT_NOT_NULL(data, "cannot append data");
++	}
++
++	memcpy(data, pktdata, len);
++
++	memset(&hdr_lens, 0, sizeof(hdr_lens));
++	ptype = rte_net_get_ptype(m, &hdr_lens, RTE_PTYPE_ALL_MASK);
++
++	rte_pktmbuf_free(m);
++
++	RTE_TEST_ASSERT_EQUAL(ptype, expected_ptype,
++		"unexpected ptype: got 0x%x, expected 0x%x",
++		ptype, expected_ptype);
++	RTE_TEST_ASSERT_EQUAL(hdr_lens.l2_len, expected_l2_len,
++		"unexpected l2_len: got %u, expected %u",
++		hdr_lens.l2_len, expected_l2_len);
++	RTE_TEST_ASSERT_EQUAL(hdr_lens.l3_len, expected_l3_len,
++		"unexpected l3_len: got %u, expected %u",
++		hdr_lens.l3_len, expected_l3_len);
++	RTE_TEST_ASSERT_EQUAL(hdr_lens.l4_len, expected_l4_len,
++		"unexpected l4_len: got %u, expected %u",
++		hdr_lens.l4_len, expected_l4_len);
++
++	return 0;
++}
++
++#define test_case(pool, pkt, expected_ptype, l2, l3, l4) \
++	test_get_ptype(pool, #pkt, pkt, sizeof(pkt), expected_ptype, l2, l3, l4)
++
++static int
++test_net_ptype(void)
++{
++	struct rte_mempool *pool;
++	int ret = 0;
++
++	pool = rte_pktmbuf_pool_create("test_ptype_mbuf_pool",
++			NB_MBUF, MEMPOOL_CACHE_SIZE, 0, MBUF_DATA_SIZE,
++			SOCKET_ID_ANY);
++	RTE_TEST_ASSERT_NOT_NULL(pool, "cannot allocate mbuf pool");
++
++	ret |= test_case(pool, pkt_ether_ipv4_udp,
++			 RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP,
++			 14, 20, 8);
++	ret |= test_case(pool, pkt_ether_ipv4_tcp,
++			 RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_TCP,
++			 14, 20, 20);
++	ret |= test_case(pool, pkt_ether_ipv6_udp,
++			 RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_UDP,
++			 14, 40, 8);
++	ret |= test_case(pool, pkt_ether_ipv6_tcp,
++			 RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_TCP,
++			 14, 40, 20);
++	ret |= test_case(pool, pkt_ether_ipv4_opts_udp,
++			 RTE_PTYPE_L2_ETHER | RTE_PTYPE_L3_IPV4_EXT | RTE_PTYPE_L4_UDP,
++			 14, 24, 8);
++	ret |= test_case(pool, pkt_vlan_ipv4_udp,
++			 RTE_PTYPE_L2_ETHER_VLAN | RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP,
++			 18, 20, 8);
++	ret |= test_case(pool, pkt_vlan_ipv6_tcp,
++			 RTE_PTYPE_L2_ETHER_VLAN | RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_TCP,
++			 18, 40, 20);
++	ret |= test_case(pool, pkt_qinq_ipv4_udp,
++			 RTE_PTYPE_L2_ETHER_QINQ | RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP,
++			 22, 20, 8);
++	ret |= test_case(pool, pkt_vlan_vlan_ipv4_udp,
++			 RTE_PTYPE_L2_ETHER_VLAN | RTE_PTYPE_L3_IPV4 | RTE_PTYPE_L4_UDP,
++			 22, 20, 8);
++	ret |= test_case(pool, pkt_qinq_ipv6_tcp,
++			 RTE_PTYPE_L2_ETHER_QINQ | RTE_PTYPE_L3_IPV6 | RTE_PTYPE_L4_TCP,
++			 22, 40, 20);
++
++	rte_mempool_free(pool);
++
++	return ret;
++}
++
++REGISTER_FAST_TEST(net_ptype_autotest, NOHUGE_OK, ASAN_OK, test_net_ptype);
+diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
+index 458b4814a9c9..0228f1eb2f18 100644
+--- a/lib/net/rte_net.c
++++ b/lib/net/rte_net.c
+@@ -331,8 +331,8 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+ 	struct rte_net_hdr_lens local_hdr_lens;
+ 	const struct rte_ether_hdr *eh;
+ 	struct rte_ether_hdr eh_copy;
+-	uint32_t pkt_type = RTE_PTYPE_L2_ETHER;
+ 	uint32_t off = 0, vlan_depth = 0;
++	uint32_t pkt_type = 0;
+ 	uint16_t proto;
+ 	int ret;
+ 
+@@ -392,6 +392,8 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+ 	}
+ 
+ l3:
++	if (pkt_type == 0)
++		pkt_type = RTE_PTYPE_L2_ETHER;
+ 	if ((layers & RTE_PTYPE_L3_MASK) == 0)
+ 		return pkt_type;
+ 
 -- 
-David Marchand
+2.53.0
 
