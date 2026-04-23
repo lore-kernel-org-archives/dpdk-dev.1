@@ -2,71 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBA1FDEE45
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 19:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11FEFDEE48
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 19:24:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 760A5406B8;
-	Thu, 23 Apr 2026 21:04:38 +0200 (CEST)
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com
- [209.85.160.174])
- by mails.dpdk.org (Postfix) with ESMTP id 5A0DC40669
- for <dev@dpdk.org>; Thu, 23 Apr 2026 21:04:34 +0200 (CEST)
-Received: by mail-qt1-f174.google.com with SMTP id
- d75a77b69052e-506a747448dso51494781cf.0
- for <dev@dpdk.org>; Thu, 23 Apr 2026 12:04:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DB76A40272;
+	Thu, 23 Apr 2026 21:24:05 +0200 (CEST)
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com
+ [209.85.161.45]) by mails.dpdk.org (Postfix) with ESMTP id 2DD2540270
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 21:24:04 +0200 (CEST)
+Received: by mail-oo1-f45.google.com with SMTP id
+ 006d021491bc7-6948ed7139eso2167504eaf.0
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 12:24:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1776971074; x=1777575874; darn=dpdk.org;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776972243;
+ x=1777577043; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=FwCpRj95noqLPrMq1G7aWs0UZXIjrpNqb74iKX2EuQE=;
- b=PcoJHH9+glN9kA9hr+QsXoEfOaZ/z+LFXRIpOFKXNzn6DrtwaucoQIvaE5xrW8QfKL
- 7mBe/AyjClpone4tzK6RQh6DVK5m5zhLZZJUfzBZnx9YsvipK/g5l1RRr84ZLu7P6NzK
- t9bviigu5H1XpwWZPH5hVMs0u4oQzStkkg5OE=
+ bh=p5FHViG8lPuiAJTKAq/dzBQnM4Nv3auSWAcnUuD9CnI=;
+ b=PPE0D+r0RipfvDWH0DEUAhCM1SZWcQWJOcFxULLjs56zbjRHgdcpC5K7D4qoryZj0J
+ ZQIIoltFPoz4ptPcD55SAOSn5Lw18nxrkJ0FqB2qLytvQmoggA7eC9KkEnX4m7+ZcFPj
+ YNF306crE1SS1qNmHZBGP8MSoxG569hnz88UkplI9z6gX9sbjGmwsO0WasXGBebKoOC7
+ C35PjfwQaE32SJFtKv03h1ZjUhocsWHnsAz5F7vZw1vk9m/tJdtweDrkPs+d6dGWDXBv
+ 2v2CyQqahD/YaK51BEu/l7j9f5XDXyhYPiBM6rUyxHxNJ/ib/Udd1fzehJ3fG5DhU/Dz
+ i7Ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776971074; x=1777575874;
+ d=1e100.net; s=20251104; t=1776972243; x=1777577043;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=FwCpRj95noqLPrMq1G7aWs0UZXIjrpNqb74iKX2EuQE=;
- b=KImoT8aejVKZy/6KX8yfIWjc0P7IIqLAz5Xh4SNOMmgpz7tq60Np+oJeiC9l9ZvwBG
- qxPmTa+hBqv7oP1r0WsCsWTJ6kR6MOknnDK+X6fPsdpLGWnQ5Ah1Kd4HT4nug5UFxDJf
- oPzBG3zUJZe5+LalABhEbgXb+uOtdzhLr8kT6yrW+u879L5jbdpnhjE/v8++mMsnfwf5
- iF9Ob96U5LMp8hpX3OKuSdZOuvTnSL7+dm+/pMhNs03lkM7jlooYcs6RcNKWqdWoLqhg
- pAl7X/7QEdH53qOTY+lT+u7DqQbijuQmGRrFPoWNPCq+XnbSgANz3WJey1qIFVsDe4iU
- Ptgg==
-X-Gm-Message-State: AOJu0Yxh6SafczSuXkd+50ocCXPhGEGTCPNP3V2KRAlZxAnwD6FpMY81
- 6FAwe9n2yows4Kf8dHdJG/9lR/o5g0EryiAubsPPn9SNQKS4bAUdGKIRHa4k3u+JUAA=
-X-Gm-Gg: AeBDieszXBnD1PoPvNvU3G/JHwB/wmlUzq1WGI8RmkCctgbHIOGugddFUWe3qqHzPhO
- fdEET6jHuMyEwNW+xHNBqQdtwE9AvAlms8Gkfqh9yvPlV0bwWZvEXVbxIqR5h8sO1piFCfNXUXF
- kEldkh8F5ydXRuvvGw2zlUHsz8w4Urt84VCm7dp3n754eyIKkvc4X69rorzJKLSaVopsMv3nzP+
- 1nG7Wtj6SExjNvLBB7ZUhrrhy/3vHz/I2pvdkrVuZ4y7kA0L2v8P6w3LzWdIBI5z0P0s9pHUBjv
- mDn0nvOHeoN9ceBPy4VoeDQc2fXSzvn0E909YePlnGG4PKYDqGD286NDT3RYt2Ctejar87Gh1Xk
- f92NDUJQ2cQ/waw/brUCFGoCg50sMmCgExg2m6iqunrIwjNnHmxhgq3Xg56sJzmVFLUuyv0D9GF
- 9I/sGunHNaj+UkO6SEd9byy4yFG9RAIWbw1s8Yo4SRwmRP5nI41Sfqz6rOLg4q7CVAuziSVHYz
-X-Received: by 2002:a05:622a:98e:b0:50d:ec19:6d11 with SMTP id
- d75a77b69052e-50e36c7779emr437012501cf.43.1776971073141; 
- Thu, 23 Apr 2026 12:04:33 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
+ bh=p5FHViG8lPuiAJTKAq/dzBQnM4Nv3auSWAcnUuD9CnI=;
+ b=MIhtE8cb42CLjfQpIFw3jk9FfVxxU+avicFm9EHRJjvXZnmzoz75m7AN3a1d8gupnV
+ 4Ju/66H6QgT8L9jqz8I39lj9vfxZkENd8EMACZx+t6kxoXMZlGo28De0EXZLF2eEb2HM
+ HSBgUCO293rFj6PMe6QWH3V8d/wZxef6IToC47hacuWVDzfdXiE9w1Yvb09dgGE9xV7k
+ IJy0dhISU/qA+eAEfdw3kX1d2G8CJGQoyTJ+Jorfd5DoTUxx0qFwZCGw5tXcRe0e+SbE
+ KCHybcYBOTml6XHc6WNU1c5WcAJrgW8JdkIUyMsR5IzDPCpq/hg/adTtYe9yReYPNYKi
+ 0GaA==
+X-Gm-Message-State: AOJu0Yxm2p2a2Im77g9na+syXsFO9NMZ5akGjsT1tBiyLhvTErHfflme
+ rYUrjOK0BWpXuuvJAuZ4edhZxm3psNh/DnVK9Y/JPeKizAzEMR32QoSn1Chfm1HQozKKBscWjwi
+ EzmJF
+X-Gm-Gg: AeBDiet7vO2cZM2t+sF3xrywuYNmO0xYxmS8A9cdkqfMpAgduRGIU3dmg2966Z//Lh+
+ HDvlYmL4EMSBEAmwZdnOU4PKsAlHXXDuqGXAc7tC+dN4Bg4VX6f0KRufSJ/Hs/PwZKiH7GRXCIr
+ dQLfNqkU6keJbErgGmT1kOMrRIzXUXMH2HsbSsr5ZsCQiwAnhg/DiRUhG5uae+7+HOEIXj2q12X
+ AjtH9JZg+qo4rpS8tJ+dc1wL/tIo4/BHjASNgc2zanYAiHiUj7i+0lJSxjN46YQSr3aXoH3XlbP
+ /xFvoeW7nsEgpq4dTsLcMyEDt7k9Xu0Fi8+p/uljt0Lgx9czlVWTJxLP7ZCquPr6BwxgQputsqL
+ Yfs1Xq4Tb7wxlfea/iyuumBWhAAJF61zMoU40PUNvBd/PxaEDjFLclSe0VJDnSLMBWc2trfHYBa
+ 2bCR1zVASsys0bx4zZisZXEyOiMrlGq9tUcQrCq/KsMbqifA==
+X-Received: by 2002:a05:6820:2d04:b0:694:8cb0:4efe with SMTP id
+ 006d021491bc7-6948cb0515emr10522228eaf.17.1776972243131; 
+ Thu, 23 Apr 2026 12:24:03 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-50fc9715610sm34624441cf.10.2026.04.23.12.04.32
+ 006d021491bc7-696148cd37dsm2464525eaf.8.2026.04.23.12.24.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Apr 2026 12:04:32 -0700 (PDT)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: patrickrobb1997@gmail.com, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
-Cc: dev@dpdk.org,
-	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v2 7/7] dts: separate Linux session into interface and logic
-Date: Thu, 23 Apr 2026 15:04:22 -0400
-Message-ID: <20260423190424.41619-8-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260423190424.41619-1-dmarx@iol.unh.edu>
-References: <20260423170331.33193-1-dmarx@iol.unh.edu>
- <20260423190424.41619-1-dmarx@iol.unh.edu>
+ Thu, 23 Apr 2026 12:24:02 -0700 (PDT)
+Date: Thu, 23 Apr 2026 12:23:57 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Junlong Wang <wang.junlong1@zte.com.cn>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v2 0/3] net/zxdh: optimize Rx/Tx path performance
+Message-ID: <20260423122357.3a91bccf@phoenix.local>
+In-Reply-To: <20260423011820.2426203-1-wang.junlong1@zte.com.cn>
+References: <20260326022828.998541-1-wang.junlong1@zte.com.cn>
+ <20260423011820.2426203-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,895 +81,209 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Separate Linux session into an interface for the API,
-and a logical module in the framework.
+On Thu, 23 Apr 2026 09:18:15 +0800
+Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
----
- ...st => api.testbed_model.linux_session.rst} |   2 +-
- doc/api/dts/framework.linux_session.rst       |   8 +
- doc/api/dts/index.rst                         |   1 +
- dts/api/testbed_model/linux_session.py        | 366 +----------------
- dts/api/testbed_model/node.py                 |  11 +-
- dts/api/testbed_model/os_session.py           |  16 +
- dts/framework/linux_session.py                | 375 ++++++++++++++++++
- 7 files changed, 424 insertions(+), 355 deletions(-)
- rename doc/api/dts/{framework.testbed_model.linux_session.rst => api.testbed_model.linux_session.rst} (74%)
- create mode 100644 doc/api/dts/framework.linux_session.rst
- create mode 100644 dts/framework/linux_session.py
+> v2:
+>   - zxdh_rxtx.c, pkt_padding(): modifyed the return value of pkt_padding(=
+);
+>   - zxdh_rxtx.c, zxdh_recv_single_pkts(): modifyed When zxdh_init_mbuf() =
+fails
+>     the loop does "continue" and free mbufs;
+>   - zxdh_rxtx.c, refill_desc_unwrap(): Add rte_io_wmb() before writing fl=
+ags
+>     in the refill_que_descs();
+>   - zxdh_queue.h, zxdh_queue_enable_intr(): Remove unnecessary function o=
+f zxdh_queue_enable_intr;
+>   - zxdh_ethdev.c, zxdh_init_queue(): changed the hdr_mz NULL check logic;
+>=20
+>   - zxdh_rxtx.c, zxdh_xmit_pkts_simple()=E3=80=81zxdh_recv_single_pkts():=
+ add stats.bytes count;
+>   - zxdh_rxtx.c, zxdh_init_mbuf():remove  rte_pktmbuf_dump(stdout, rxm, 4=
+0);
+>   - zxdh_ethdev.c, zxdh_dev_free_mbufs(): using rte_pktmbuf_free() to fre=
+e mbufs;
+>   - Splitting into separate patches, structure reorganization and sw_ring=
+ removal=E3=80=81
+>     RX recv optimize=E3=80=81Tx xmit optimize=E3=80=81Tx;
+>=20
+> v1:
+>   This patch optimizes the ZXDH PMD's receive and transmit path for better
+>   performance through several improvements:
+>=20
+> - Add simple TX/RX burst functions (zxdh_xmit_pkts_simple and
+>   zxdh_recv_single_pkts) for single-segment packet scenarios.
+> - Remove RX software ring (sw_ring) to reduce memory allocation and
+>   copy.
+> - Optimize descriptor management with prefetching and simplified
+>   cleanup.
+> - Reorganize structure fields for better cache locality.
+>=20
+>   These changes reduce CPU cycles and memory bandwidth consumption,
+>   resulting in improved packet processing throughput.
+>=20
+> Junlong Wang (3):
+>   net/zxdh: optimize queue structure to improve performance
+>   net/zxdh: optimize Rx recv pkts performance
+>   net/zxdh: optimize Tx xmit pkts performance
+>=20
+>  drivers/net/zxdh/zxdh_ethdev.c     |  88 ++---
+>  drivers/net/zxdh/zxdh_ethdev_ops.c |  24 +-
+>  drivers/net/zxdh/zxdh_ethdev_ops.h |   4 +
+>  drivers/net/zxdh/zxdh_pci.c        |   2 +-
+>  drivers/net/zxdh/zxdh_queue.c      |  31 +-
+>  drivers/net/zxdh/zxdh_queue.h      | 125 +++----
+>  drivers/net/zxdh/zxdh_rxtx.c       | 520 +++++++++++++++++++++--------
+>  drivers/net/zxdh/zxdh_rxtx.h       |  27 +-
+>  8 files changed, 527 insertions(+), 294 deletions(-)
+>=20
 
-diff --git a/doc/api/dts/framework.testbed_model.linux_session.rst b/doc/api/dts/api.testbed_model.linux_session.rst
-similarity index 74%
-rename from doc/api/dts/framework.testbed_model.linux_session.rst
-rename to doc/api/dts/api.testbed_model.linux_session.rst
-index 7567816199..cfe79d8bca 100644
---- a/doc/api/dts/framework.testbed_model.linux_session.rst
-+++ b/doc/api/dts/api.testbed_model.linux_session.rst
-@@ -3,6 +3,6 @@
- linux\_session - Linux Remote Session
- =====================================
- 
--.. automodule:: framework.testbed_model.linux_session
-+.. automodule:: api.testbed_model.linux_session
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.linux_session.rst b/doc/api/dts/framework.linux_session.rst
-new file mode 100644
-index 0000000000..5cb2d04db1
---- /dev/null
-+++ b/doc/api/dts/framework.linux_session.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+linux\_session - Linux Remote Session
-+=====================================
-+
-+.. automodule:: framework.linux_session
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index e89e782ac0..0dbc18b75c 100644
---- a/doc/api/dts/index.rst
-+++ b/doc/api/dts/index.rst
-@@ -37,6 +37,7 @@ Modules
-    framework.parser
-    api.utils
-    api.exception
-+   framework.linux_session
- 
- 
- Indices and tables
-diff --git a/dts/api/testbed_model/linux_session.py b/dts/api/testbed_model/linux_session.py
-index 7307b2abe2..da3da4461c 100644
---- a/dts/api/testbed_model/linux_session.py
-+++ b/dts/api/testbed_model/linux_session.py
-@@ -2,366 +2,26 @@
- # Copyright(c) 2023 PANTHEON.tech s.r.o.
- # Copyright(c) 2023 University of New Hampshire
- 
--"""Linux OS translator.
-+"""Linux OS session interface.
- 
--Translate OS-unaware calls into Linux calls/utilities. Most of Linux distributions are mostly
--compliant with POSIX standards, so this module only implements the parts that aren't.
--This intermediate module implements the common parts of mostly POSIX compliant distributions.
-+Extends the base :class:`~.os_session.OSSession` with methods specific to Linux nodes.
-+The concrete implementation containing all backend logic lives in the framework package.
- """
- 
--import json
--import re
--from collections.abc import Iterable
--from functools import cached_property
--from pathlib import PurePath
--from typing import TypedDict
-+from abc import ABC, abstractmethod
- 
--from typing_extensions import NotRequired
- 
--from api.exception import (
--    ConfigurationError,
--    InternalError,
--    RemoteCommandExecutionError,
--)
--from api.testbed_model.port import PortInfo
--from api.utils import expand_range
-+class LinuxSession(ABC):
-+    """Abstract interface for Linux-specific OS session operations.
- 
--from .cpu import LogicalCore
--from .port import Port
--from .posix_session import PosixSession
--
--
--class LshwConfigurationOutput(TypedDict):
--    """The relevant parts of ``lshw``'s ``configuration`` section."""
--
--    #:
--    driver: str
--    #:
--    link: str
--
--
--class LshwOutput(TypedDict):
--    """A model of the relevant information from ``lshw``'s json output.
--
--    Example:
--        ::
--
--            {
--            ...
--            "businfo" : "pci@0000:08:00.0",
--            "logicalname" : "enp8s0",
--            "version" : "00",
--            "serial" : "52:54:00:59:e1:ac",
--            ...
--            "configuration" : {
--              ...
--              "link" : "yes",
--              ...
--            },
--            ...
-+    API consumers should type-hint against this class when they need access
-+    to Linux-only capabilities beyond the base :class:`~.os_session.OSSession` contract.
-     """
- 
--    #:
--    businfo: str
--    #:
--    logicalname: NotRequired[str]
--    #:
--    serial: NotRequired[str]
--    #:
--    configuration: LshwConfigurationOutput
--
--
--class LinuxSession(PosixSession):
--    """The implementation of non-Posix compliant parts of Linux."""
--
--    @staticmethod
--    def _get_privileged_command(command: str) -> str:
--        command = command.replace(r"'", r"\'")
--        return f"sudo -- sh -c '{command}'"
--
--    def get_remote_cpus(self) -> list[LogicalCore]:
--        """Overrides :meth:`~.os_session.OSSession.get_remote_cpus`."""
--        cpu_info = self.send_command("lscpu -p=CPU,CORE,SOCKET,NODE|grep -v \\#").stdout
--        lcores = []
--        for cpu_line in cpu_info.splitlines():
--            lcore, core, socket, node = map(int, cpu_line.split(","))
--            lcores.append(LogicalCore(lcore, core, socket, node))
--        return lcores
--
--    def get_dpdk_file_prefix(self, dpdk_prefix: str) -> str:
--        """Overrides :meth:`~.os_session.OSSession.get_dpdk_file_prefix`."""
--        return dpdk_prefix
--
--    def setup_hugepages(self, number_of: int, hugepage_size: int, force_first_numa: bool) -> None:
--        """Overrides :meth:`~.os_session.OSSession.setup_hugepages`.
--
--        Raises:
--            ConfigurationError: If the given `hugepage_size` is not supported by the OS.
--        """
--        self._logger.info("Getting Hugepage information.")
--        if (
--            f"hugepages-{hugepage_size}kB"
--            not in self.send_command("ls /sys/kernel/mm/hugepages").stdout
--        ):
--            raise ConfigurationError("hugepage size not supported by operating system")
--        hugepages_total = self._get_hugepages_total(hugepage_size)
--        self._numa_nodes = self._get_numa_nodes()
--
--        if force_first_numa or hugepages_total < number_of:
--            # when forcing numa, we need to clear existing hugepages regardless
--            # of size, so they can be moved to the first numa node
--            self._configure_huge_pages(number_of, hugepage_size, force_first_numa)
--        else:
--            self._logger.info("Hugepages already configured.")
--        self._mount_huge_pages()
--
--    def _get_hugepages_total(self, hugepage_size: int) -> int:
--        hugepages_total = self.send_command(
--            f"cat /sys/kernel/mm/hugepages/hugepages-{hugepage_size}kB/nr_hugepages"
--        ).stdout
--        return int(hugepages_total)
--
--    def _get_numa_nodes(self) -> list[int]:
--        try:
--            numa_count = self.send_command(
--                "cat /sys/devices/system/node/online", verify=True
--            ).stdout
--            numa_range = expand_range(numa_count)
--        except RemoteCommandExecutionError:
--            # the file doesn't exist, meaning the node doesn't support numa
--            numa_range = []
--        return numa_range
--
--    def _mount_huge_pages(self) -> None:
--        self._logger.info("Re-mounting Hugepages.")
--        hugapge_fs_cmd = "awk '/hugetlbfs/ { print $2 }' /proc/mounts"
--        self.send_command(f"umount $({hugapge_fs_cmd})", privileged=True)
--        result = self.send_command(hugapge_fs_cmd)
--        if result.stdout == "":
--            remote_mount_path = "/mnt/huge"
--            self.send_command(f"mkdir -p {remote_mount_path}", privileged=True)
--            self.send_command(f"mount -t hugetlbfs nodev {remote_mount_path}", privileged=True)
--
--    def _supports_numa(self) -> bool:
--        # the system supports numa if self._numa_nodes is non-empty and there are more
--        # than one numa node (in the latter case it may actually support numa, but
--        # there's no reason to do any numa specific configuration)
--        return len(self._numa_nodes) > 1
--
--    def _configure_huge_pages(self, number_of: int, size: int, force_first_numa: bool) -> None:
--        self._logger.info("Configuring Hugepages.")
--        hugepage_config_path = f"/sys/kernel/mm/hugepages/hugepages-{size}kB/nr_hugepages"
--        if force_first_numa and self._supports_numa():
--            # clear non-numa hugepages
--            self.send_command(f"echo 0 | tee {hugepage_config_path}", privileged=True)
--            hugepage_config_path = (
--                f"/sys/devices/system/node/node{self._numa_nodes[0]}/hugepages"
--                f"/hugepages-{size}kB/nr_hugepages"
--            )
--
--        self.send_command(f"echo {number_of} | tee {hugepage_config_path}", privileged=True)
--
--    def get_port_info(self, pci_address: str) -> PortInfo:
--        """Overrides :meth:`~.os_session.OSSession.get_port_info`.
--
--        Raises:
--            ConfigurationError: If the port could not be found.
--        """
--        bus_info = f"pci@{pci_address}"
--        port = next(port for port in self._lshw_net_info if port.get("businfo") == bus_info)
--        if port is None:
--            raise ConfigurationError(f"Port {pci_address} could not be found on the node.")
--
--        logical_name = port.get("logicalname", "")
--        mac_address = port.get("serial", "")
--
--        configuration = port.get("configuration", {})
--        driver = configuration.get("driver", "")
--        is_link_up = configuration.get("link", "down") == "up"
--
--        return PortInfo(mac_address, logical_name, driver, is_link_up)
--
--    def bind_ports_to_driver(self, ports: list[Port], driver_name: str) -> None:
--        """Overrides :meth:`~.os_session.OSSession.bind_ports_to_driver`.
--
--        The :attr:`~.devbind_script_path` property must be setup in order to call this method.
--        """
--        ports_pci_addrs = " ".join(port.pci for port in ports)
--
--        self.send_command(
--            f"{self.devbind_script_path} -b {driver_name} --force {ports_pci_addrs}",
--            privileged=True,
--            verify=True,
--        )
--
--        del self._lshw_net_info
--
--    def bring_up_link(self, ports: Iterable[Port]) -> None:
--        """Overrides :meth:`~.os_session.OSSession.bring_up_link`."""
--        for port in ports:
--            self.send_command(
--                f"ip link set dev {port.logical_name} up", privileged=True, verify=True
--            )
--
--        del self._lshw_net_info
--
--    def set_interface_link_up(self, name: str) -> None:
--        """Overrides :meth:`~.os_session.OSSession.set_interface_link_up`."""
--        self.send_command(f"ip link set dev {name} up", privileged=True, verify=True)
--
--    def delete_interface(self, name: str) -> None:
--        """Overrides :meth:`~.os_session.OSSession.delete_interface`."""
--        self.send_command(f"ip link delete {name}", privileged=True)
--
--    @cached_property
--    def devbind_script_path(self) -> PurePath:
--        """The path to the dpdk-devbind.py script on the node.
--
--        Needs to be manually assigned first in order to be used.
--
--        Raises:
--            InternalError: If accessed before environment setup.
--        """
--        raise InternalError("Accessed devbind script path before setup.")
--
--    def load_vfio(self, pf_port: Port) -> None:
--        """Overrides :meth:`~os_session.OSSession,load_vfio`."""
--        cmd_result = self.send_command(f"lspci -nn -s {pf_port.pci}")
--        device = re.search(r":([0-9a-fA-F]{4})\]", cmd_result.stdout)
--        if device and device.group(1) in ["37c8", "0435", "19e2"]:
--            self.send_command(
--                "modprobe -r vfio_iommu_type1; modprobe -r vfio_pci",
--                privileged=True,
--            )
--            self.send_command(
--                "modprobe -r vfio_virqfd; modprobe -r vfio",
--                privileged=True,
--            )
--            self.send_command(
--                "modprobe vfio-pci disable_denylist=1 enable_sriov=1", privileged=True
--            )
--            self.send_command(
--                "echo 1 | tee /sys/module/vfio/parameters/enable_unsafe_noiommu_mode",
--                privileged=True,
--            )
--        else:
--            self.send_command("modprobe vfio-pci")
--        self.refresh_lshw()
--
--    def create_crypto_vfs(self, pf_port: list[Port]) -> None:
--        """Overrides :meth:`~os_session.OSSession.create_crypto_vfs`.
--
--        Raises:
--            InternalError: If there are existing VFs which have to be deleted.
--        """
--        for port in pf_port:
--            self.delete_crypto_vfs(port)
--        for port in pf_port:
--            sys_bus_path = f"/sys/bus/pci/devices/{port.pci}".replace(":", "\\:")
--            curr_num_vfs = int(
--                self.send_command(f"cat {sys_bus_path}/sriov_numvfs", privileged=True).stdout
--            )
--            if 0 < curr_num_vfs:
--                raise InternalError("There are existing VFs on the port which must be deleted.")
--            num_vfs = int(
--                self.send_command(f"cat {sys_bus_path}/sriov_totalvfs", privileged=True).stdout
--            )
--            self.send_command(
--                f"echo {num_vfs} | sudo tee {sys_bus_path}/sriov_numvfs", privileged=True
--            )
--
--        self.refresh_lshw()
--
--    def create_vfs(self, pf_port: Port) -> None:
--        """Overrides :meth:`~.os_session.OSSession.create_vfs`.
-+    @abstractmethod
-+    def configure_ipv4_forwarding(self, enable: bool) -> None:
-+        """Enable or disable IPv4 forwarding on the node.
- 
--        Raises:
--            InternalError: If there are existing VFs which have to be deleted.
-+        Args:
-+            enable: True to enable forwarding, False to disable.
-         """
--        sys_bus_path = f"/sys/bus/pci/devices/{pf_port.pci}".replace(":", "\\:")
--        curr_num_vfs = int(
--            self.send_command(f"cat {sys_bus_path}/sriov_numvfs", privileged=True).stdout
--        )
--        if 0 < curr_num_vfs:
--            raise InternalError("There are existing VFs on the port which must be deleted.")
--        if curr_num_vfs == 0:
--            self.send_command(f"echo 1 | sudo tee {sys_bus_path}/sriov_numvfs", privileged=True)
--            self.refresh_lshw()
--
--    def delete_crypto_vfs(self, pf_port: Port) -> None:
--        """Overrides :meth:`~.os_session.OSSession.delete_crypto_vfs`."""
--        self.send_command(
--            f"echo 1 | sudo tee /sys/bus/pci/devices/{pf_port.pci}/remove".replace(":", "\\:"),
--            privileged=True,
--        )
--        self.send_command("echo 1 | sudo tee /sys/bus/pci/rescan", privileged=True)
--
--    def delete_vfs(self, pf_port: Port) -> None:
--        """Overrides :meth:`~.os_session.OSSession.delete_vfs`."""
--        sys_bus_path = f"/sys/bus/pci/devices/{pf_port.pci}".replace(":", "\\:")
--        curr_num_vfs = int(
--            self.send_command(f"cat {sys_bus_path}/sriov_numvfs", privileged=True).stdout
--        )
--        if curr_num_vfs == 0:
--            self._logger.debug(f"No VFs found on port {pf_port.pci}, skipping deletion")
--        else:
--            self.send_command(f"echo 0 | sudo tee {sys_bus_path}/sriov_numvfs", privileged=True)
--
--    def get_pci_addr_of_crypto_vfs(self, pf_port: Port) -> list[str]:
--        """Overrides :meth:`~.os_session.OSSession.get_pci_addr_of_crypto_vfs`."""
--        sys_bus_path = f"/sys/bus/pci/devices/{pf_port.pci}".replace(":", "\\:")
--        curr_num_vfs = int(self.send_command(f"cat {sys_bus_path}/sriov_numvfs").stdout)
--        if curr_num_vfs > 0:
--            pci_addrs = self.send_command(
--                f"readlink {sys_bus_path}/virtfn*",
--                privileged=True,
--            )
--            return [pci.replace("../", "") for pci in pci_addrs.stdout.splitlines()]
--        return []
--
--    def get_pci_addr_of_vfs(self, pf_port: Port) -> list[str]:
--        """Overrides :meth:`~.os_session.OSSession.get_pci_addr_of_vfs`."""
--        sys_bus_path = f"/sys/bus/pci/devices/{pf_port.pci}".replace(":", "\\:")
--        curr_num_vfs = int(self.send_command(f"cat {sys_bus_path}/sriov_numvfs").stdout)
--        if curr_num_vfs > 0:
--            pci_addrs = self.send_command(
--                'awk -F "PCI_SLOT_NAME=" "/PCI_SLOT_NAME=/ {print \\$2}" '
--                + f"{sys_bus_path}/virtfn*/uevent",
--                privileged=True,
--            )
--            return pci_addrs.stdout.splitlines()
--        else:
--            return []
--
--    @cached_property
--    def _lshw_net_info(self) -> list[LshwOutput]:
--        output = self.send_command("lshw -quiet -json -C network", verify=True)
--        return json.loads(output.stdout)
--
--    def refresh_lshw(self) -> None:
--        """Force refresh of cached lshw network info."""
--        if "_lshw_net_info" in self.__dict__:
--            del self.__dict__["_lshw_net_info"]
--        _ = self._lshw_net_info
--
--    def _update_port_attr(self, port: Port, attr_value: str | None, attr_name: str) -> None:
--        if attr_value:
--            setattr(port, attr_name, attr_value)
--            self._logger.debug(f"Found '{attr_name}' of port {port.pci}: '{attr_value}'.")
--        else:
--            self._logger.warning(
--                f"Attempted to get '{attr_name}' of port {port.pci}, but it doesn't exist."
--            )
--
--    def configure_port_mtu(self, mtu: int, port: Port) -> None:
--        """Overrides :meth:`~.os_session.OSSession.configure_port_mtu`."""
--        self.send_command(
--            f"ip link set dev {port.logical_name} mtu {mtu}",
--            privileged=True,
--            verify=True,
--        )
--
--    def configure_ipv4_forwarding(self, enable: bool) -> None:
--        """Overrides :meth:`~.os_session.OSSession.configure_ipv4_forwarding`."""
--        state = 1 if enable else 0
--        self.send_command(f"sysctl -w net.ipv4.ip_forward={state}", privileged=True)
-diff --git a/dts/api/testbed_model/node.py b/dts/api/testbed_model/node.py
-index 40dd7f0666..3cab51855d 100644
---- a/dts/api/testbed_model/node.py
-+++ b/dts/api/testbed_model/node.py
-@@ -25,7 +25,6 @@
- from framework.logger import DTSLogger, get_dts_logger
- 
- from .cpu import Architecture, LogicalCore
--from .linux_session import LinuxSession
- from .os_session import OSSession, OSSessionInfo
- from .port import Port
- 
-@@ -201,16 +200,26 @@ def close(self) -> None:
- def create_session(node_config: NodeConfiguration, name: str, logger: DTSLogger) -> OSSession:
-     """Factory for OS-aware sessions.
- 
-+    Creates a concrete :class:`~.os_session.OSSession` implementation appropriate for the
-+    operating system specified in `node_config`. The concrete session classes live in the
-+    framework package and are imported lazily to avoid circular dependencies between the
-+    API and framework layers.
-+
-     Args:
-         node_config: The test run configuration of the node to connect to.
-         name: The name of the session.
-         logger: The logger instance this session will use.
- 
-+    Returns:
-+        An OS-aware session connected to the node.
-+
-     Raises:
-         ConfigurationError: If the node's OS is unsupported.
-     """
-     match node_config.os:
-         case OS.linux:
-+            from framework.linux_session import LinuxSession
-+
-             return LinuxSession(node_config, name, logger)
-         case _:
-             raise ConfigurationError(f"Unsupported OS {node_config.os}")
-diff --git a/dts/api/testbed_model/os_session.py b/dts/api/testbed_model/os_session.py
-index b1e0538ac9..618a5bc45c 100644
---- a/dts/api/testbed_model/os_session.py
-+++ b/dts/api/testbed_model/os_session.py
-@@ -166,6 +166,22 @@ def close(self) -> None:
-         """Close the underlying remote session."""
-         self.remote_session.close()
- 
-+    @property
-+    @abstractmethod
-+    def devbind_script_path(self) -> PurePath:
-+        """The path to the dpdk-devbind.py script on the node.
-+
-+        Must be set up during environment initialization before access.
-+
-+        Raises:
-+            InternalError: If accessed before environment setup.
-+        """
-+
-+    @devbind_script_path.setter
-+    @abstractmethod
-+    def devbind_script_path(self, value: PurePath) -> None:
-+        """Set the devbind script path after environment setup."""
-+
-     @staticmethod
-     @abstractmethod
-     def _get_privileged_command(command: str) -> str:
-diff --git a/dts/framework/linux_session.py b/dts/framework/linux_session.py
-new file mode 100644
-index 0000000000..54c6370d53
---- /dev/null
-+++ b/dts/framework/linux_session.py
-@@ -0,0 +1,375 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2023 PANTHEON.tech s.r.o.
-+# Copyright(c) 2023 University of New Hampshire
-+
-+"""Linux OS session implementation.
-+
-+Translates OS-unaware calls into Linux-specific commands and utilities.
-+Implements the :class:`~api.linux_session.LinuxSession` contract for Linux distributions,
-+building on :class:`~.posix_session.PosixSession` for POSIX-compliant operations.
-+"""
-+
-+import json
-+import re
-+from collections.abc import Iterable
-+from pathlib import PurePath
-+from typing import TypedDict
-+
-+from typing_extensions import NotRequired
-+
-+from api.exception import (
-+    ConfigurationError,
-+    InternalError,
-+    RemoteCommandExecutionError,
-+)
-+from api.testbed_model.cpu import LogicalCore
-+from api.testbed_model.linux_session import LinuxSession as LinuxSessionBase
-+from api.testbed_model.port import Port, PortInfo
-+from api.testbed_model.posix_session import PosixSession
-+from api.utils import expand_range
-+
-+
-+class LshwConfigurationOutput(TypedDict):
-+    """The relevant parts of ``lshw``'s ``configuration`` section."""
-+
-+    #:
-+    driver: str
-+    #:
-+    link: str
-+
-+
-+class LshwOutput(TypedDict):
-+    """A model of the relevant information from ``lshw``'s json output.
-+
-+    Example:
-+        ::
-+
-+            {
-+            ...
-+            "businfo" : "pci@0000:08:00.0",
-+            "logicalname" : "enp8s0",
-+            "version" : "00",
-+            "serial" : "52:54:00:59:e1:ac",
-+            ...
-+            "configuration" : {
-+              ...
-+              "link" : "yes",
-+              ...
-+            },
-+            ...
-+    """
-+
-+    #:
-+    businfo: str
-+    #:
-+    logicalname: NotRequired[str]
-+    #:
-+    serial: NotRequired[str]
-+    #:
-+    configuration: LshwConfigurationOutput
-+
-+
-+class LinuxSession(PosixSession, LinuxSessionBase):
-+    """Linux-specific implementation of the OS session interface.
-+
-+    Inherits POSIX-compliant operations from
-+    :class:`~.posix_session.PosixSession` and implements the
-+    :class:`~api.linux_session.LinuxSession` contract. All backend logic —
-+    ``lshw`` caching, hugepage sysfs interaction, VFIO module loading,
-+    SR-IOV management — lives here in the framework.
-+    """
-+
-+    _devbind_script_path: PurePath | None
-+
-+    def __init__(self, *args, **kwargs) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.__init__`."""
-+        self._devbind_script_path = None
-+        super().__init__(*args, **kwargs)
-+
-+    @staticmethod
-+    def _get_privileged_command(command: str) -> str:
-+        command = command.replace(r"'", r"\'")
-+        return f"sudo -- sh -c '{command}'"
-+
-+    def get_remote_cpus(self) -> list[LogicalCore]:
-+        """Overrides :meth:`~.os_session.OSSession.get_remote_cpus`."""
-+        cpu_info = self.send_command("lscpu -p=CPU,CORE,SOCKET,NODE|grep -v \\#").stdout
-+        lcores = []
-+        for cpu_line in cpu_info.splitlines():
-+            lcore, core, socket, node = map(int, cpu_line.split(","))
-+            lcores.append(LogicalCore(lcore, core, socket, node))
-+        return lcores
-+
-+    def get_dpdk_file_prefix(self, dpdk_prefix: str) -> str:
-+        """Overrides :meth:`~.os_session.OSSession.get_dpdk_file_prefix`."""
-+        return dpdk_prefix
-+
-+    @property
-+    def devbind_script_path(self) -> PurePath:
-+        """Overrides :attr:`~.os_session.OSSession.devbind_script_path`.
-+
-+        Raises:
-+            InternalError: If accessed before environment setup.
-+        """
-+        if self._devbind_script_path is None:
-+            raise InternalError("Accessed devbind script path before setup.")
-+        return self._devbind_script_path
-+
-+    @devbind_script_path.setter
-+    def devbind_script_path(self, value: PurePath) -> None:
-+        """Set the devbind script path after environment setup."""
-+        self._devbind_script_path = value
-+
-+    def setup_hugepages(self, number_of: int, hugepage_size: int, force_first_numa: bool) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.setup_hugepages`.
-+
-+        Raises:
-+            ConfigurationError: If the given `hugepage_size` is not supported by the OS.
-+        """
-+        self._logger.info("Getting Hugepage information.")
-+        if (
-+            f"hugepages-{hugepage_size}kB"
-+            not in self.send_command("ls /sys/kernel/mm/hugepages").stdout
-+        ):
-+            raise ConfigurationError("hugepage size not supported by operating system")
-+        hugepages_total = self._get_hugepages_total(hugepage_size)
-+        self._numa_nodes = self._get_numa_nodes()
-+
-+        if force_first_numa or hugepages_total < number_of:
-+            self._configure_huge_pages(number_of, hugepage_size, force_first_numa)
-+        else:
-+            self._logger.info("Hugepages already configured.")
-+        self._mount_huge_pages()
-+
-+    def _get_hugepages_total(self, hugepage_size: int) -> int:
-+        hugepages_total = self.send_command(
-+            f"cat /sys/kernel/mm/hugepages/hugepages-{hugepage_size}kB/nr_hugepages"
-+        ).stdout
-+        return int(hugepages_total)
-+
-+    def _get_numa_nodes(self) -> list[int]:
-+        try:
-+            numa_count = self.send_command(
-+                "cat /sys/devices/system/node/online", verify=True
-+            ).stdout
-+            numa_range = expand_range(numa_count)
-+        except RemoteCommandExecutionError:
-+            numa_range = []
-+        return numa_range
-+
-+    def _mount_huge_pages(self) -> None:
-+        self._logger.info("Re-mounting Hugepages.")
-+        hugapge_fs_cmd = "awk '/hugetlbfs/ { print $2 }' /proc/mounts"
-+        self.send_command(f"umount $({hugapge_fs_cmd})", privileged=True)
-+        result = self.send_command(hugapge_fs_cmd)
-+        if result.stdout == "":
-+            remote_mount_path = "/mnt/huge"
-+            self.send_command(f"mkdir -p {remote_mount_path}", privileged=True)
-+            self.send_command(f"mount -t hugetlbfs nodev {remote_mount_path}", privileged=True)
-+
-+    def _supports_numa(self) -> bool:
-+        return len(self._numa_nodes) > 1
-+
-+    def _configure_huge_pages(self, number_of: int, size: int, force_first_numa: bool) -> None:
-+        self._logger.info("Configuring Hugepages.")
-+        hugepage_config_path = f"/sys/kernel/mm/hugepages/hugepages-{size}kB/nr_hugepages"
-+        if force_first_numa and self._supports_numa():
-+            self.send_command(f"echo 0 | tee {hugepage_config_path}", privileged=True)
-+            hugepage_config_path = (
-+                f"/sys/devices/system/node/node{self._numa_nodes[0]}/hugepages"
-+                f"/hugepages-{size}kB/nr_hugepages"
-+            )
-+        self.send_command(f"echo {number_of} | tee {hugepage_config_path}", privileged=True)
-+
-+    def get_port_info(self, pci_address: str) -> PortInfo:
-+        """Overrides :meth:`~.os_session.OSSession.get_port_info`.
-+
-+        Raises:
-+            ConfigurationError: If the port could not be found.
-+        """
-+        bus_info = f"pci@{pci_address}"
-+        port = next(port for port in self._lshw_net_info if port.get("businfo") == bus_info)
-+        if port is None:
-+            raise ConfigurationError(f"Port {pci_address} could not be found on the node.")
-+
-+        logical_name = port.get("logicalname", "")
-+        mac_address = port.get("serial", "")
-+
-+        configuration = port.get("configuration", {})
-+        driver = configuration.get("driver", "")
-+        is_link_up = configuration.get("link", "down") == "up"
-+
-+        return PortInfo(mac_address, logical_name, driver, is_link_up)
-+
-+    @property
-+    def _lshw_net_info(self) -> list[LshwOutput]:
-+        """Cached lshw network info, fetched on first access."""
-+        if not hasattr(self, "_lshw_net_cache"):
-+            output = self.send_command("lshw -quiet -json -C network", verify=True)
-+            self._lshw_net_cache: list[LshwOutput] = json.loads(output.stdout)
-+        return self._lshw_net_cache
-+
-+    def _refresh_lshw(self) -> None:
-+        """Force refresh of cached lshw network info.
-+
-+        Called internally after operations that change port/driver state.
-+        """
-+        if hasattr(self, "_lshw_net_cache"):
-+            del self._lshw_net_cache
-+        _ = self._lshw_net_info
-+
-+    def _update_port_attr(self, port: Port, attr_value: str | None, attr_name: str) -> None:
-+        if attr_value:
-+            setattr(port, attr_name, attr_value)
-+            self._logger.debug(f"Found '{attr_name}' of port {port.pci}: '{attr_value}'.")
-+        else:
-+            self._logger.warning(
-+                f"Attempted to get '{attr_name}' of port {port.pci}, but it doesn't exist."
-+            )
-+
-+    def bind_ports_to_driver(self, ports: list[Port], driver_name: str) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.bind_ports_to_driver`."""
-+        ports_pci_addrs = " ".join(port.pci for port in ports)
-+        self.send_command(
-+            f"{self.devbind_script_path} -b {driver_name} --force {ports_pci_addrs}",
-+            privileged=True,
-+            verify=True,
-+        )
-+        self._refresh_lshw()
-+
-+    def bring_up_link(self, ports: Iterable[Port]) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.bring_up_link`."""
-+        for port in ports:
-+            self.send_command(
-+                f"ip link set dev {port.logical_name} up", privileged=True, verify=True
-+            )
-+        self._refresh_lshw()
-+
-+    def set_interface_link_up(self, name: str) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.set_interface_link_up`."""
-+        self.send_command(f"ip link set dev {name} up", privileged=True, verify=True)
-+
-+    def delete_interface(self, name: str) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.delete_interface`."""
-+        self.send_command(f"ip link delete {name}", privileged=True)
-+
-+    def load_vfio(self, pf_port: Port) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.load_vfio`."""
-+        cmd_result = self.send_command(f"lspci -nn -s {pf_port.pci}")
-+        device = re.search(r":([0-9a-fA-F]{4})\]", cmd_result.stdout)
-+        if device and device.group(1) in ["37c8", "0435", "19e2"]:
-+            self.send_command(
-+                "modprobe -r vfio_iommu_type1; modprobe -r vfio_pci",
-+                privileged=True,
-+            )
-+            self.send_command(
-+                "modprobe -r vfio_virqfd; modprobe -r vfio",
-+                privileged=True,
-+            )
-+            self.send_command(
-+                "modprobe vfio-pci disable_denylist=1 enable_sriov=1", privileged=True
-+            )
-+            self.send_command(
-+                "echo 1 | tee /sys/module/vfio/parameters/enable_unsafe_noiommu_mode",
-+                privileged=True,
-+            )
-+        else:
-+            self.send_command("modprobe vfio-pci")
-+        self._refresh_lshw()
-+
-+    def create_vfs(self, pf_port: Port) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.create_vfs`.
-+
-+        Raises:
-+            InternalError: If there are existing VFs which have to be deleted.
-+        """
-+        sys_bus_path = f"/sys/bus/pci/devices/{pf_port.pci}".replace(":", "\\:")
-+        curr_num_vfs = int(
-+            self.send_command(f"cat {sys_bus_path}/sriov_numvfs", privileged=True).stdout
-+        )
-+        if 0 < curr_num_vfs:
-+            raise InternalError("There are existing VFs on the port which must be deleted.")
-+        if curr_num_vfs == 0:
-+            self.send_command(f"echo 1 | sudo tee {sys_bus_path}/sriov_numvfs", privileged=True)
-+            self._refresh_lshw()
-+
-+    def delete_vfs(self, pf_port: Port) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.delete_vfs`."""
-+        sys_bus_path = f"/sys/bus/pci/devices/{pf_port.pci}".replace(":", "\\:")
-+        curr_num_vfs = int(
-+            self.send_command(f"cat {sys_bus_path}/sriov_numvfs", privileged=True).stdout
-+        )
-+        if curr_num_vfs == 0:
-+            self._logger.debug(f"No VFs found on port {pf_port.pci}, skipping deletion")
-+        else:
-+            self.send_command(f"echo 0 | sudo tee {sys_bus_path}/sriov_numvfs", privileged=True)
-+
-+    def get_pci_addr_of_vfs(self, pf_port: Port) -> list[str]:
-+        """Overrides :meth:`~.os_session.OSSession.get_pci_addr_of_vfs`."""
-+        sys_bus_path = f"/sys/bus/pci/devices/{pf_port.pci}".replace(":", "\\:")
-+        curr_num_vfs = int(self.send_command(f"cat {sys_bus_path}/sriov_numvfs").stdout)
-+        if curr_num_vfs > 0:
-+            pci_addrs = self.send_command(
-+                'awk -F "PCI_SLOT_NAME=" "/PCI_SLOT_NAME=/ {print \\$2}" '
-+                + f"{sys_bus_path}/virtfn*/uevent",
-+                privileged=True,
-+            )
-+            return pci_addrs.stdout.splitlines()
-+        else:
-+            return []
-+
-+    def create_crypto_vfs(self, pf_port: list[Port]) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.create_crypto_vfs`.
-+
-+        Raises:
-+            InternalError: If there are existing VFs which have to be deleted.
-+        """
-+        for port in pf_port:
-+            self.delete_crypto_vfs(port)
-+        for port in pf_port:
-+            sys_bus_path = f"/sys/bus/pci/devices/{port.pci}".replace(":", "\\:")
-+            curr_num_vfs = int(
-+                self.send_command(f"cat {sys_bus_path}/sriov_numvfs", privileged=True).stdout
-+            )
-+            if 0 < curr_num_vfs:
-+                raise InternalError("There are existing VFs on the port which must be deleted.")
-+            num_vfs = int(
-+                self.send_command(f"cat {sys_bus_path}/sriov_totalvfs", privileged=True).stdout
-+            )
-+            self.send_command(
-+                f"echo {num_vfs} | sudo tee {sys_bus_path}/sriov_numvfs", privileged=True
-+            )
-+        self._refresh_lshw()
-+
-+    def delete_crypto_vfs(self, pf_port: Port) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.delete_crypto_vfs`."""
-+        self.send_command(
-+            f"echo 1 | sudo tee /sys/bus/pci/devices/{pf_port.pci}/remove".replace(":", "\\:"),
-+            privileged=True,
-+        )
-+        self.send_command("echo 1 | sudo tee /sys/bus/pci/rescan", privileged=True)
-+
-+    def get_pci_addr_of_crypto_vfs(self, pf_port: Port) -> list[str]:
-+        """Overrides :meth:`~.os_session.OSSession.get_pci_addr_of_crypto_vfs`."""
-+        sys_bus_path = f"/sys/bus/pci/devices/{pf_port.pci}".replace(":", "\\:")
-+        curr_num_vfs = int(self.send_command(f"cat {sys_bus_path}/sriov_numvfs").stdout)
-+        if curr_num_vfs > 0:
-+            pci_addrs = self.send_command(
-+                f"readlink {sys_bus_path}/virtfn*",
-+                privileged=True,
-+            )
-+            return [pci.replace("../", "") for pci in pci_addrs.stdout.splitlines()]
-+        return []
-+
-+    def configure_port_mtu(self, mtu: int, port: Port) -> None:
-+        """Overrides :meth:`~.os_session.OSSession.configure_port_mtu`."""
-+        self.send_command(
-+            f"ip link set dev {port.logical_name} mtu {mtu}",
-+            privileged=True,
-+            verify=True,
-+        )
-+
-+    def configure_ipv4_forwarding(self, enable: bool) -> None:
-+        """Implements :meth:`~api.linux_session.LinuxSession.configure_ipv4_forwarding`."""
-+        state = 1 if enable else 0
-+        self.send_command(f"sysctl -w net.ipv4.ip_forward={state}", privileged=True)
--- 
-2.52.0
+Here is the full AI review of this patchset
+```
+Review of v2 series: net/zxdh queue/Rx/Tx optimization
 
+Overall: needs a v3. Findings below, organized by patch.
+
+
+Patch 1/3 (optimize queue structure)
+------------------------------------
+
+Warning: zxdh_queue_notify() in zxdh_queue.h now hardcodes the bit-31
+avail-wrap into notify_data unconditionally, removing the
+zxdh_pci_with_feature(hw, ZXDH_F_RING_PACKED) gate that the previous
+out-of-line version in zxdh_pci.c had.  The series also adds a
+vq_split member to the virtqueue union, which suggests split-ring
+support is planned.  Once that exists, this helper will corrupt notify
+data for split rings.  Either reinstate the feature gate or keep the
+dispatch going through VTPCI_OPS()->notify_queue().
+
+Warning: rx_queue_intr_enable/rx_queue_intr_disable dev_ops and the
+zxdh_queue_enable_intr() helper are removed.  The commit log talks
+about cache locality and sw_ring removal but not this.  Please split
+it into its own patch with a justification, or at minimum call it out
+in the commit message.
+
+Minor: fail_q_alloc now does "if (hdr_mz) rte_memzone_free(hdr_mz);".
+rte_memzone_free() accepts NULL; the guard is unnecessary.
+
+Minor: The new "if (hdr_mz =3D=3D NULL)" check inside the VTNET_TQ branch
+of zxdh_init_queue() is unreachable.  hdr_mz was already validated
+earlier in the function.
+
+Minor: Doxygen close "**/" used in several places where "*/" is the
+correct terminator.
+
+
+Patch 2/3 (optimize Rx recv pkts performance)
+---------------------------------------------
+
+Error: Double-free in zxdh_recv_single_pkts().  Both error paths
+inside zxdh_init_mbuf() already call rte_pktmbuf_free(rxm), but the
+caller also frees rxm on return < 0:
+
+        if (unlikely(zxdh_init_mbuf(rxm, len, hw, &vq->rxq) < 0)) {
+                rte_pktmbuf_free(rxm);   /* already freed inside */
+                continue;
+        }
+
+Drop either the caller's free or the callees' frees, not both.
+
+Warning: zxdh_set_rxtx_funcs() silently drops the
+ZXDH_NET_F_MRG_RXBUF negotiation check.  The previous version
+returned -1 if MRG_RXBUF was not advertised; the new version selects a
+burst function unconditionally.  The multi-seg path
+zxdh_recv_pkts_packed() reads header->type_hdr.num_buffers, which is
+only meaningful when MRG_RXBUF is negotiated with the peer.
+
+Warning: xstats "full", "norefill", "multicast_packets",
+"broadcast_packets" (rx) and "norefill", "multicast_packets",
+"broadcast_packets" (tx) are removed from the name tables.  If these
+counters were never being updated, say so in the commit log.  If they
+were, multicast_packets/broadcast_packets in particular are
+operator-facing counters and this is a user-visible regression.
+
+Warning: zxdh_scattered_rx() reads eth_dev->data->min_rx_buf_size,
+which is populated during rx_queue_setup().  Depending on when
+zxdh_set_rxtx_funcs() runs, "min_rx_buf_size - RTE_PKTMBUF_HEADROOM"
+can underflow (uint16_t wraps) if min_rx_buf_size is 0 at that point.
+
+Minor: Open-coded rte_pktmbuf_mtod().  Both the new zxdh_init_mbuf()
+and the modified zxdh_recv_pkts_packed() use
+
+        (char *)rxm->buf_addr + RTE_PKTMBUF_HEADROOM
+
+where rte_pktmbuf_mtod(rxm, struct zxdh_net_hdr_ul *) expresses the
+same intent.  data_off equals RTE_PKTMBUF_HEADROOM here because the
+refill path aligns the hardware write target to
+buf_iova + RTE_PKTMBUF_HEADROOM.
+
+Minor: zxdh_init_mbuf() zeroes rxm->ol_flags, rxm->vlan_tci, and
+rxm->vlan_tci_outer.  All three are already cleared by
+rte_pktmbuf_reset() on alloc from the pool.
+
+Minor: rxq_get_vq(q) is a trivial one-line macro aliasing "q->vq"
+with no functional benefit.  Either drop it or apply it consistently.
+
+
+Patch 3/3 (optimize Tx xmit pkts performance)
+---------------------------------------------
+
+Error: zxdh_xmit_pkts_simple() does not write txdp->id.  tx_bunch()
+and tx1() write addr, len, and flags but leave id untouched.  The new
+zxdh_xmit_fast_flush() reads "id =3D desc[used_idx].id" as the
+chain-terminator for its inner do-while loop
+("while (curr_id !=3D id)").
+
+Descriptors submitted by the simple path therefore carry stale ids:
+either 0 at cold start from memzone init, or the self-index written
+by a previous flush pass.  Because the flush rewrites
+desc[used_idx].id =3D used_idx during processing, after one full warmup
+cycle every desc[i].id =3D=3D i and the inner do-while happens to exit
+after one iteration.  But on a cold ring, or any ring whose
+descriptors were left with non-self ids by a preceding append-path
+burst, the inner loop keeps iterating, freeing cookies and advancing
+used_idx across descriptors the backend has not marked used, until
+used_idx wraps back to 0.  That corrupts vq_free_cnt and
+vq_used_cons_idx accounting.
+
+Fix: set txdp->id =3D avail_idx + i in tx_bunch/tx1 so the invariant is
+explicit rather than relying on the flush's self-rewrite side effect.
+
+Warning: zxdh_xmit_pkts_prepare() drops the
+rte_net_intel_cksum_prepare() call.  If the driver still advertises
+L4 checksum offload, pseudo-header checksum preparation becomes the
+application's responsibility.  That's a user-visible contract change
+and needs justification in the commit log, or should be paired with a
+matching capability change.
+
+Warning: zxdh_xmit_enqueue_append() now sets dxp->cookie =3D NULL for
+the head slot and stores cookies per descriptor via dep[idx].cookie.
+This works with the new per-descriptor free in
+zxdh_xmit_fast_flush() (rte_pktmbuf_free_seg), but any residual code
+path still reading vq_descx[head_id].cookie will see NULL.  Worth a
+comment documenting the new invariant.
+
+Minor: Extra initialization.  In pkt_padding(),
+
+        struct zxdh_net_hdr_dl *hdr =3D NULL;
+
+is immediately overwritten by the rte_pktmbuf_prepend() return.  In
+submit_to_backend_simple(),
+
+        struct rte_mbuf *m =3D NULL;
+
+is overwritten on first use inside the loop.  Drop both initializers.
+
+Minor: "mainpart =3D (nb_pkts & ((uint32_t)~N_PER_LOOP_MASK));" =E2=80=94 t=
+he
+uint32_t cast is pointless.  nb_pkts is uint16_t and N_PER_LOOP_MASK
+is a small integer constant.
+
+Minor: submit_to_backend_simple() uses "*(tx_pkts + i + j)" where
+"tx_pkts[i + j]" reads more naturally and matches style elsewhere.
+
+Minor: tx_bunch() is named to imply a variable batch but is hardcoded
+to N_PER_LOOP iterations for single-segment packets only.  A one-line
+comment noting that the simple path handles single-segment only
+(selected when TX_OFFLOAD_MULTI_SEGS is off) would help.
+```
