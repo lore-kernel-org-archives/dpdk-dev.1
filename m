@@ -2,69 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B2DFA1FFA
-	for <dpdk-dev@archiver.kernel.org>; Wed, 22 Apr 2026 20:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 059F5FAD3E1
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 01:48:15 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2F07940648;
-	Wed, 22 Apr 2026 22:54:57 +0200 (CEST)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id C126240648
- for <dev@dpdk.org>; Wed, 22 Apr 2026 22:54:55 +0200 (CEST)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-2c15849aa2cso8085073eec.0
- for <dev@dpdk.org>; Wed, 22 Apr 2026 13:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776891294;
- x=1777496094; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=uSm6GaBVqDJtD/ezRlB+FEQOf44Q5Mh8au89J/BCtQE=;
- b=Z7G2BY+0eLgbfEW5BAQhy4IRRuDdB3RQuL8+FVylfiJPN8e2dfiCejjJs+nashnSev
- hhtYIKzfMTbXXESYL/u3X3udwA/rCUMQV71uPJgtNLjy8DIShj15a6SSToASezHNBnWG
- HojFU3kCH3zKJ/4WyTZL5O04ZDTSMjBBSooutAYct3L0iWq0n5tsFK5ezhooBIwdno4c
- WGjduGfppgiBoN9m0tVnkdMSgnNlohJb6EUDXLtylXD3Igkdat2avWtdnwkMBEZvY/+a
- XeU1XsLRGsn1B6jJaZnd8JCjV7eeOG4y+UNbbxWu4X6UL9RK1TgHyx8cFbwC7IVm/LqH
- SB0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776891294; x=1777496094;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=uSm6GaBVqDJtD/ezRlB+FEQOf44Q5Mh8au89J/BCtQE=;
- b=O2+Qgvtvu2KkY/jwuLaNvoemcaeBJmN0dbS4UMRRJb/mOrCF/ztZUkEjpwNHik0bZy
- 5Z7x6dtcAsKOCJ9xj/ZeyTpeEjAR/JDOqJHOidFJbOyoOw7pZXHaWj2eLiPkzFqGX5Cd
- cVmujUjDZj5VOk46dEKcLRFxdAnWaz49cwKmX1IdrvJB6akz3NIZBzYgviaQ9XQJNjpc
- 36eBP1gbrR5I3iJAG5l/9wuuSvF35zQR0PoTkGeZv6UVN613TnfC5qC1Y92D/aVG8vuE
- WfP9dvKEjeq+9GdAfcXC0zljsiDqkVGtkhMsqJk0vOlMt7RMAul40tJo023gDRiBIn14
- g1CA==
-X-Gm-Message-State: AOJu0YyIpddo3Oc+x7czgKHMDcG/boYSlZPp0b5X8h0+cbfwVbrG8dQk
- Mefqy2Bq3TTUMIQfj9yQqdgRmrskIubKv2wq9O2+6IbVz1JgZJJU4Kh5Xys+l/lZthzLXi7iaz9
- V3Mm1
-X-Gm-Gg: AeBDievg4v42WHR1YCz09q/1kLQ3NsY+ncoViYNwLjulZ7K5bpJF5+W76dx1cz7S/a9
- NzsW7gFeYho7sT9xFBlJwuk1UPS6O7ESCBy9QyxAnR/Q1cag3q5G8ocXkOU0QRTrkoQY214OEeK
- C6lOo2sQ35RVD2mJsDZVoZkYbHy9rgacyt7sL7goByLTdmbh/I0T6k7g/EB4xV0dZvAPmEQzJz4
- OfqRrIOBaOh3kGJRKFfe4+xVfa0pWjpdEB2JO1HPc4H6UBshwcf5nvxxo0gdsqL5idZTuf/TiF8
- MtJODf/FKNCSkabxd0gdHmXa4vwViT4jwPO0y/wbUzXTo8Ze820jEdNAsMTwhipdyKtQA+KPJ0A
- HRb78KkZ7/iMVNQjuE+WxYgKJRHlqp6amfm04vC+8RSquQXvmdWOBXtv9LM5dThNFr0fWWJQN+j
- z/CtfnWz2gz2r8fJwALucupzxtm6v+u/5sc1OsC8jx0/c=
-X-Received: by 2002:a05:7300:3252:b0:2c4:ec89:bc7 with SMTP id
- 5a478bee46e88-2e464dacc71mr13914380eec.10.1776891294444; 
- Wed, 22 Apr 2026 13:54:54 -0700 (PDT)
-Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2e53a4a8018sm31482244eec.8.2026.04.22.13.54.53
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 22 Apr 2026 13:54:53 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Neil Horman <nhorman@tuxdriver.com>,
- David Marchand <david.marchand@redhat.com>
-Subject: [RFC] eal: add destructor to unregister tailq on unload
-Date: Wed, 22 Apr 2026 13:54:49 -0700
-Message-ID: <20260422205449.289861-1-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
+	by mails.dpdk.org (Postfix) with ESMTP id 112F44029D;
+	Thu, 23 Apr 2026 03:48:15 +0200 (CEST)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id 6676D40150
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 03:48:12 +0200 (CEST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4g1Jrm6j93z51STh;
+ Thu, 23 Apr 2026 09:48:08 +0800 (CST)
+Received: from szxl2zmapp05.zte.com.cn ([10.1.32.37])
+ by mse-fl1.zte.com.cn with SMTP id 63N1m2Ar035464;
+ Thu, 23 Apr 2026 09:48:02 +0800 (+08)
+ (envelope-from wang.junlong1@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Thu, 23 Apr 2026 09:48:03 +0800
+X-Zmail-TransId: 3e8169e97a4e007-8161d
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: wang.junlong1@zte.com.cn
+From: Junlong Wang <wang.junlong1@zte.com.cn>
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>
+Subject: [PATCH v2 0/3] net/zxdh: optimize Rx/Tx path performance
+Date: Thu, 23 Apr 2026 09:18:15 +0800
+Message-ID: <20260423011820.2426203-1-wang.junlong1@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260326022828.998541-1-wang.junlong1@zte.com.cn>
+References: <20260326022828.998541-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 63N1m2Ar035464
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Thu, 23 Apr 2026 09:48:08 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 69E97A58.002/4g1Jrm6j93z51STh
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,81 +59,140 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Libraries that use EAL_REGISTER_TAILQ insert a pointer to a static
-struct rte_tailq_elem into the process-local tailq list via a
-constructor, but have no matching destructor. When such a library
-is loaded as a dependency of a plugin via dlopen() and later
-unloaded via dlclose(), the list retains a dangling pointer to the
-now-unmapped static. Reloading the plugin crashes in
-rte_eal_tailq_local_register() when it traverses the stale entry.
 
-Add rte_eal_tailq_unregister() and extend the EAL_REGISTER_TAILQ
-macro to emit an RTE_FINI destructor alongside the existing
-RTE_INIT constructor. Every library that uses the macro
-automatically gets both sides; no per-library changes are needed.
 
-Bugzilla ID: 1081
-Fixes: 873a61c7526b ("tailq: introduce dynamic register system")
-Cc: stable@dpdk.org
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- lib/eal/common/eal_common_tailqs.c |  8 ++++++++
- lib/eal/include/rte_tailq.h        | 17 +++++++++++++++++
- 2 files changed, 25 insertions(+)
 
-diff --git a/lib/eal/common/eal_common_tailqs.c b/lib/eal/common/eal_common_tailqs.c
-index c581f43b6f..714f91d0ec 100644
---- a/lib/eal/common/eal_common_tailqs.c
-+++ b/lib/eal/common/eal_common_tailqs.c
-@@ -148,6 +148,14 @@ rte_eal_tailq_register(struct rte_tailq_elem *t)
- 	return -1;
- }
- 
-+RTE_EXPORT_SYMBOL(rte_eal_tailq_unregister)
-+void
-+rte_eal_tailq_unregister(struct rte_tailq_elem *t)
-+{
-+	TAILQ_REMOVE(&rte_tailq_elem_head, t, next);
-+	t->head = NULL;
-+}
-+
- int
- rte_eal_tailqs_init(void)
- {
-diff --git a/lib/eal/include/rte_tailq.h b/lib/eal/include/rte_tailq.h
-index e7caed6812..c5d5cb782f 100644
---- a/lib/eal/include/rte_tailq.h
-+++ b/lib/eal/include/rte_tailq.h
-@@ -117,11 +117,28 @@ struct rte_tailq_head *rte_eal_tailq_lookup(const char *name);
-  */
- int rte_eal_tailq_register(struct rte_tailq_elem *t);
- 
-+/**
-+ * Remove a tail queue element from the local list.
-+ * This function is mainly used for EAL_REGISTER_TAILQ macro which pairs
-+ * an RTE_FINI destructor with the existing RTE_INIT constructor.
-+ * The destructor calls this function during dlclose() to prevent
-+ * dangling pointers to unmapped library data.
-+ *
-+ * @param t
-+ *   The tailq element which contains the name of the tailq you want to
-+ *   delete
-+ */
-+void rte_eal_tailq_unregister(struct rte_tailq_elem *t);
-+
- #define EAL_REGISTER_TAILQ(t) \
- RTE_INIT(tailqinitfn_ ##t) \
- { \
- 	if (rte_eal_tailq_register(&t) < 0) \
- 		rte_panic("Cannot initialize tailq: %s\n", t.name); \
-+} \
-+RTE_FINI(tailqfinifn_ ##t) \
-+{ \
-+	rte_eal_tailq_unregister(&t); \
- }
- 
- /* This macro permits both remove and free var within the loop safely.*/
--- 
-2.53.0
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
+
+
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djI6DQogIC0genhkaF9yeHR4LmMsIHBrdF9wYWRkaW5nKCk6IG1vZGlmeWVkIHRoZSByZXR1cm4g
+dmFsdWUgb2YgcGt0X3BhZGRpbmcoKTsNCiAgLSB6eGRoX3J4dHguYywgenhkaF9yZWN2X3Npbmds
+ZV9wa3RzKCk6IG1vZGlmeWVkIFdoZW4genhkaF9pbml0X21idWYoKSBmYWlscw0KICAgIHRoZSBs
+b29wIGRvZXMgImNvbnRpbnVlIiBhbmQgZnJlZSBtYnVmczsNCiAgLSB6eGRoX3J4dHguYywgcmVm
+aWxsX2Rlc2NfdW53cmFwKCk6IEFkZCBydGVfaW9fd21iKCkgYmVmb3JlIHdyaXRpbmcgZmxhZ3MN
+CiAgICBpbiB0aGUgcmVmaWxsX3F1ZV9kZXNjcygpOw0KICAtIHp4ZGhfcXVldWUuaCwgenhkaF9x
+dWV1ZV9lbmFibGVfaW50cigpOiBSZW1vdmUgdW5uZWNlc3NhcnkgZnVuY3Rpb24gb2YgenhkaF9x
+dWV1ZV9lbmFibGVfaW50cjsNCiAgLSB6eGRoX2V0aGRldi5jLCB6eGRoX2luaXRfcXVldWUoKTog
+Y2hhbmdlZCB0aGUgaGRyX216IE5VTEwgY2hlY2sgbG9naWM7DQoNCiAgLSB6eGRoX3J4dHguYywg
+enhkaF94bWl0X3BrdHNfc2ltcGxlKCnjgIF6eGRoX3JlY3Zfc2luZ2xlX3BrdHMoKTogYWRkIHN0
+YXRzLmJ5dGVzIGNvdW50Ow0KICAtIHp4ZGhfcnh0eC5jLCB6eGRoX2luaXRfbWJ1ZigpOnJlbW92
+ZSAgcnRlX3BrdG1idWZfZHVtcChzdGRvdXQsIHJ4bSwgNDApOw0KICAtIHp4ZGhfZXRoZGV2LmMs
+IHp4ZGhfZGV2X2ZyZWVfbWJ1ZnMoKTogdXNpbmcgcnRlX3BrdG1idWZfZnJlZSgpIHRvIGZyZWUg
+bWJ1ZnM7DQogIC0gU3BsaXR0aW5nIGludG8gc2VwYXJhdGUgcGF0Y2hlcywgc3RydWN0dXJlIHJl
+b3JnYW5pemF0aW9uIGFuZCBzd19yaW5nIHJlbW92YWzjgIENCiAgICBSWCByZWN2IG9wdGltaXpl
+44CBVHggeG1pdCBvcHRpbWl6ZeOAgVR4Ow0KDQp2MToNCiAgVGhpcyBwYXRjaCBvcHRpbWl6ZXMg
+dGhlIFpYREggUE1EJ3MgcmVjZWl2ZSBhbmQgdHJhbnNtaXQgcGF0aCBmb3IgYmV0dGVyDQogIHBl
+cmZvcm1hbmNlIHRocm91Z2ggc2V2ZXJhbCBpbXByb3ZlbWVudHM6DQoNCi0gQWRkIHNpbXBsZSBU
+WC9SWCBidXJzdCBmdW5jdGlvbnMgKHp4ZGhfeG1pdF9wa3RzX3NpbXBsZSBhbmQNCiAgenhkaF9y
+ZWN2X3NpbmdsZV9wa3RzKSBmb3Igc2luZ2xlLXNlZ21lbnQgcGFja2V0IHNjZW5hcmlvcy4NCi0g
+UmVtb3ZlIFJYIHNvZnR3YXJlIHJpbmcgKHN3X3JpbmcpIHRvIHJlZHVjZSBtZW1vcnkgYWxsb2Nh
+dGlvbiBhbmQNCiAgY29weS4NCi0gT3B0aW1pemUgZGVzY3JpcHRvciBtYW5hZ2VtZW50IHdpdGgg
+cHJlZmV0Y2hpbmcgYW5kIHNpbXBsaWZpZWQNCiAgY2xlYW51cC4NCi0gUmVvcmdhbml6ZSBzdHJ1
+Y3R1cmUgZmllbGRzIGZvciBiZXR0ZXIgY2FjaGUgbG9jYWxpdHkuDQoNCiAgVGhlc2UgY2hhbmdl
+cyByZWR1Y2UgQ1BVIGN5Y2xlcyBhbmQgbWVtb3J5IGJhbmR3aWR0aCBjb25zdW1wdGlvbiwNCiAg
+cmVzdWx0aW5nIGluIGltcHJvdmVkIHBhY2tldCBwcm9jZXNzaW5nIHRocm91Z2hwdXQuDQoNCkp1
+bmxvbmcgV2FuZyAoMyk6DQogIG5ldC96eGRoOiBvcHRpbWl6ZSBxdWV1ZSBzdHJ1Y3R1cmUgdG8g
+aW1wcm92ZSBwZXJmb3JtYW5jZQ0KICBuZXQvenhkaDogb3B0aW1pemUgUnggcmVjdiBwa3RzIHBl
+cmZvcm1hbmNlDQogIG5ldC96eGRoOiBvcHRpbWl6ZSBUeCB4bWl0IHBrdHMgcGVyZm9ybWFuY2UN
+Cg0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhkZXYuYyAgICAgfCAgODggKystLS0NCiBkcml2
+ZXJzL25ldC96eGRoL3p4ZGhfZXRoZGV2X29wcy5jIHwgIDI0ICstDQogZHJpdmVycy9uZXQvenhk
+aC96eGRoX2V0aGRldl9vcHMuaCB8ICAgNCArDQogZHJpdmVycy9uZXQvenhkaC96eGRoX3BjaS5j
+ICAgICAgICB8ICAgMiArLQ0KIGRyaXZlcnMvbmV0L3p4ZGgvenhkaF9xdWV1ZS5jICAgICAgfCAg
+MzEgKy0NCiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfcXVldWUuaCAgICAgIHwgMTI1ICsrKy0tLS0N
+CiBkcml2ZXJzL25ldC96eGRoL3p4ZGhfcnh0eC5jICAgICAgIHwgNTIwICsrKysrKysrKysrKysr
+KysrKysrKy0tLS0tLS0tDQogZHJpdmVycy9uZXQvenhkaC96eGRoX3J4dHguaCAgICAgICB8ICAy
+NyArLQ0KIDggZmlsZXMgY2hhbmdlZCwgNTI3IGluc2VydGlvbnMoKyksIDI5NCBkZWxldGlvbnMo
+LSkNCg0KLS0gDQoyLjI3LjA=
+
+
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
+
+djI6PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3p4ZGhfcnh0eC5jLCZuYnNwO3BrdF9wYWRkaW5n
+KCk6Jm5ic3A7bW9kaWZ5ZWQmbmJzcDt0aGUmbmJzcDtyZXR1cm4mbmJzcDt2YWx1ZSZuYnNwO29m
+Jm5ic3A7cGt0X3BhZGRpbmcoKTs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9yeHR4LmMs
+Jm5ic3A7enhkaF9yZWN2X3NpbmdsZV9wa3RzKCk6Jm5ic3A7bW9kaWZ5ZWQmbmJzcDtXaGVuJm5i
+c3A7enhkaF9pbml0X21idWYoKSZuYnNwO2ZhaWxzPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7dGhlJm5ic3A7bG9vcCZuYnNwO2RvZXMmbmJzcDsmcXVvdDtjb250aW51ZSZxdW90OyZuYnNw
+O2FuZCZuYnNwO2ZyZWUmbmJzcDttYnVmczs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9y
+eHR4LmMsJm5ic3A7cmVmaWxsX2Rlc2NfdW53cmFwKCk6Jm5ic3A7QWRkJm5ic3A7cnRlX2lvX3dt
+YigpJm5ic3A7YmVmb3JlJm5ic3A7d3JpdGluZyZuYnNwO2ZsYWdzPGJyIC8+Jm5ic3A7Jm5ic3A7
+Jm5ic3A7Jm5ic3A7aW4mbmJzcDt0aGUmbmJzcDtyZWZpbGxfcXVlX2Rlc2NzKCk7PGJyIC8+Jm5i
+c3A7Jm5ic3A7LSZuYnNwO3p4ZGhfcXVldWUuaCwmbmJzcDt6eGRoX3F1ZXVlX2VuYWJsZV9pbnRy
+KCk6Jm5ic3A7UmVtb3ZlJm5ic3A7dW5uZWNlc3NhcnkmbmJzcDtmdW5jdGlvbiZuYnNwO29mJm5i
+c3A7enhkaF9xdWV1ZV9lbmFibGVfaW50cjs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9l
+dGhkZXYuYywmbmJzcDt6eGRoX2luaXRfcXVldWUoKTombmJzcDtjaGFuZ2VkJm5ic3A7dGhlJm5i
+c3A7aGRyX216Jm5ic3A7TlVMTCZuYnNwO2NoZWNrJm5ic3A7bG9naWM7PGJyIC8+DTxiciAvPiZu
+YnNwOyZuYnNwOy0mbmJzcDt6eGRoX3J4dHguYywmbmJzcDt6eGRoX3htaXRfcGt0c19zaW1wbGUo
+KeOAgXp4ZGhfcmVjdl9zaW5nbGVfcGt0cygpOiZuYnNwO2FkZCZuYnNwO3N0YXRzLmJ5dGVzJm5i
+c3A7Y291bnQ7PGJyIC8+Jm5ic3A7Jm5ic3A7LSZuYnNwO3p4ZGhfcnh0eC5jLCZuYnNwO3p4ZGhf
+aW5pdF9tYnVmKCk6cmVtb3ZlJm5ic3A7Jm5ic3A7cnRlX3BrdG1idWZfZHVtcChzdGRvdXQsJm5i
+c3A7cnhtLCZuYnNwOzQwKTs8YnIgLz4mbmJzcDsmbmJzcDstJm5ic3A7enhkaF9ldGhkZXYuYywm
+bmJzcDt6eGRoX2Rldl9mcmVlX21idWZzKCk6Jm5ic3A7dXNpbmcmbmJzcDtydGVfcGt0bWJ1Zl9m
+cmVlKCkmbmJzcDt0byZuYnNwO2ZyZWUmbmJzcDttYnVmczs8YnIgLz4mbmJzcDsmbmJzcDstJm5i
+c3A7U3BsaXR0aW5nJm5ic3A7aW50byZuYnNwO3NlcGFyYXRlJm5ic3A7cGF0Y2hlcywmbmJzcDtz
+dHJ1Y3R1cmUmbmJzcDtyZW9yZ2FuaXphdGlvbiZuYnNwO2FuZCZuYnNwO3N3X3JpbmcmbmJzcDty
+ZW1vdmFs44CBPGJyIC8+Jm5ic3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7UlgmbmJzcDtyZWN2Jm5ic3A7
+b3B0aW1pemXjgIFUeCZuYnNwO3htaXQmbmJzcDtvcHRpbWl6ZeOAgVR4OzxiciAvPg08YnIgLz52
+MTo8YnIgLz4mbmJzcDsmbmJzcDtUaGlzJm5ic3A7cGF0Y2gmbmJzcDtvcHRpbWl6ZXMmbmJzcDt0
+aGUmbmJzcDtaWERIJm5ic3A7UE1EJmFwb3M7cyZuYnNwO3JlY2VpdmUmbmJzcDthbmQmbmJzcDt0
+cmFuc21pdCZuYnNwO3BhdGgmbmJzcDtmb3ImbmJzcDtiZXR0ZXI8YnIgLz4mbmJzcDsmbmJzcDtw
+ZXJmb3JtYW5jZSZuYnNwO3Rocm91Z2gmbmJzcDtzZXZlcmFsJm5ic3A7aW1wcm92ZW1lbnRzOjxi
+ciAvPg08YnIgLz4tJm5ic3A7QWRkJm5ic3A7c2ltcGxlJm5ic3A7VFgvUlgmbmJzcDtidXJzdCZu
+YnNwO2Z1bmN0aW9ucyZuYnNwOyh6eGRoX3htaXRfcGt0c19zaW1wbGUmbmJzcDthbmQ8YnIgLz4m
+bmJzcDsmbmJzcDt6eGRoX3JlY3Zfc2luZ2xlX3BrdHMpJm5ic3A7Zm9yJm5ic3A7c2luZ2xlLXNl
+Z21lbnQmbmJzcDtwYWNrZXQmbmJzcDtzY2VuYXJpb3MuPGJyIC8+LSZuYnNwO1JlbW92ZSZuYnNw
+O1JYJm5ic3A7c29mdHdhcmUmbmJzcDtyaW5nJm5ic3A7KHN3X3JpbmcpJm5ic3A7dG8mbmJzcDty
+ZWR1Y2UmbmJzcDttZW1vcnkmbmJzcDthbGxvY2F0aW9uJm5ic3A7YW5kPGJyIC8+Jm5ic3A7Jm5i
+c3A7Y29weS48YnIgLz4tJm5ic3A7T3B0aW1pemUmbmJzcDtkZXNjcmlwdG9yJm5ic3A7bWFuYWdl
+bWVudCZuYnNwO3dpdGgmbmJzcDtwcmVmZXRjaGluZyZuYnNwO2FuZCZuYnNwO3NpbXBsaWZpZWQ8
+YnIgLz4mbmJzcDsmbmJzcDtjbGVhbnVwLjxiciAvPi0mbmJzcDtSZW9yZ2FuaXplJm5ic3A7c3Ry
+dWN0dXJlJm5ic3A7ZmllbGRzJm5ic3A7Zm9yJm5ic3A7YmV0dGVyJm5ic3A7Y2FjaGUmbmJzcDts
+b2NhbGl0eS48YnIgLz4NPGJyIC8+Jm5ic3A7Jm5ic3A7VGhlc2UmbmJzcDtjaGFuZ2VzJm5ic3A7
+cmVkdWNlJm5ic3A7Q1BVJm5ic3A7Y3ljbGVzJm5ic3A7YW5kJm5ic3A7bWVtb3J5Jm5ic3A7YmFu
+ZHdpZHRoJm5ic3A7Y29uc3VtcHRpb24sPGJyIC8+Jm5ic3A7Jm5ic3A7cmVzdWx0aW5nJm5ic3A7
+aW4mbmJzcDtpbXByb3ZlZCZuYnNwO3BhY2tldCZuYnNwO3Byb2Nlc3NpbmcmbmJzcDt0aHJvdWdo
+cHV0LjxiciAvPg08YnIgLz5KdW5sb25nJm5ic3A7V2FuZyZuYnNwOygzKTo8YnIgLz4mbmJzcDsm
+bmJzcDtuZXQvenhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO3F1ZXVlJm5ic3A7c3RydWN0dXJlJm5i
+c3A7dG8mbmJzcDtpbXByb3ZlJm5ic3A7cGVyZm9ybWFuY2U8YnIgLz4mbmJzcDsmbmJzcDtuZXQv
+enhkaDombmJzcDtvcHRpbWl6ZSZuYnNwO1J4Jm5ic3A7cmVjdiZuYnNwO3BrdHMmbmJzcDtwZXJm
+b3JtYW5jZTxiciAvPiZuYnNwOyZuYnNwO25ldC96eGRoOiZuYnNwO29wdGltaXplJm5ic3A7VHgm
+bmJzcDt4bWl0Jm5ic3A7cGt0cyZuYnNwO3BlcmZvcm1hbmNlPGJyIC8+DTxiciAvPiZuYnNwO2Ry
+aXZlcnMvbmV0L3p4ZGgvenhkaF9ldGhkZXYuYyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+O3wmbmJzcDsmbmJzcDs4OCZuYnNwOysrLS0tPGJyIC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96
+eGRoX2V0aGRldl9vcHMuYyZuYnNwO3wmbmJzcDsmbmJzcDsyNCZuYnNwOystPGJyIC8+Jm5ic3A7
+ZHJpdmVycy9uZXQvenhkaC96eGRoX2V0aGRldl9vcHMuaCZuYnNwO3wmbmJzcDsmbmJzcDsmbmJz
+cDs0Jm5ic3A7KzxiciAvPiZuYnNwO2RyaXZlcnMvbmV0L3p4ZGgvenhkaF9wY2kuYyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDsmbmJz
+cDsyJm5ic3A7Ky08YnIgLz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfcXVldWUuYyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDsmbmJzcDszMSZuYnNwOystPGJy
+IC8+Jm5ic3A7ZHJpdmVycy9uZXQvenhkaC96eGRoX3F1ZXVlLmgmbmJzcDsmbmJzcDsmbmJzcDsm
+bmJzcDsmbmJzcDsmbmJzcDt8Jm5ic3A7MTI1Jm5ic3A7KysrLS0tLTxiciAvPiZuYnNwO2RyaXZl
+cnMvbmV0L3p4ZGgvenhkaF9yeHR4LmMmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJzcDsmbmJz
+cDsmbmJzcDt8Jm5ic3A7NTIwJm5ic3A7KysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS08YnIg
+Lz4mbmJzcDtkcml2ZXJzL25ldC96eGRoL3p4ZGhfcnh0eC5oJm5ic3A7Jm5ic3A7Jm5ic3A7Jm5i
+c3A7Jm5ic3A7Jm5ic3A7Jm5ic3A7fCZuYnNwOyZuYnNwOzI3Jm5ic3A7Ky08YnIgLz4mbmJzcDs4
+Jm5ic3A7ZmlsZXMmbmJzcDtjaGFuZ2VkLCZuYnNwOzUyNyZuYnNwO2luc2VydGlvbnMoKyksJm5i
+c3A7Mjk0Jm5ic3A7ZGVsZXRpb25zKC0pPGJyIC8+DTxiciAvPi0tJm5ic3A7DTxiciAvPjIuMjcu
+MDxiciAvPg==
+
+
+--=====_003_next=====--
+
+--=====_002_next=====--
+
+--=====_001_next=====--
 
