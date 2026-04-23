@@ -2,54 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4650FDEE45
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 19:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0700FDEE43
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 19:04:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6014340666;
-	Thu, 23 Apr 2026 21:04:33 +0200 (CEST)
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com
- [209.85.160.171])
- by mails.dpdk.org (Postfix) with ESMTP id 3F67A40650
- for <dev@dpdk.org>; Thu, 23 Apr 2026 21:04:30 +0200 (CEST)
-Received: by mail-qt1-f171.google.com with SMTP id
- d75a77b69052e-506aa68065eso51970341cf.1
- for <dev@dpdk.org>; Thu, 23 Apr 2026 12:04:30 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 6B4044066A;
+	Thu, 23 Apr 2026 21:04:34 +0200 (CEST)
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
+ [209.85.160.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 6F1AB40665
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 21:04:31 +0200 (CEST)
+Received: by mail-qt1-f176.google.com with SMTP id
+ d75a77b69052e-50e594413c2so36600671cf.0
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 12:04:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1776971069; x=1777575869; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1776971071; x=1777575871; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=U3Id3KRnh1xWpV0X+r0tfmDFsBRIa8yDSdbLcHigUR0=;
- b=eRyMaVCE9fAPj0jE7f7/0Ol5cWphj0yg+6hap0tRrtcFeFlQItBQydRv1pyZTGV6vm
- ojjGxgv1DakihCVh8wcaf7duegkhyrsXZC9pdWiHVyCT3YpHDQu00I3enIUoFom4XvSg
- 2bhD2m67PBC2eq2qGwBNAEInlSIcWFxp7g8Ws=
+ bh=FCjXwQ+h/ic+194AtJf8rmHEDxANWaFczQxgbzAygGg=;
+ b=AZJ3eTtnTuAMmC7Mde8ATraDDXkPsRNWrACWj+Ds3RytFxTYQMsESC1bZJ/fdHSHvE
+ pFA0rD3yaheH7EkfICAjrDv8YnFCd6ezEtTHuNCeQsGpu0GwghAKiILH/LT2sKWHa8HQ
+ 3Tww7SJ1Cex+yaJZ1lA0QR5iHrnnJ3vnZk/EM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776971069; x=1777575869;
+ d=1e100.net; s=20251104; t=1776971071; x=1777575871;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=U3Id3KRnh1xWpV0X+r0tfmDFsBRIa8yDSdbLcHigUR0=;
- b=A1/F6l5vsjajn0aZNfznTQOiLTL5Wa2kbd+SPxsDHC36B84Tg3KoGHh0qdtfGvJDLi
- GnKJm5EkNMmaVsLJXMvatIQmZPX1t5E1AIlnfIPsDqmUxNv6zZ2ncfwaHZWpFYcpZOZw
- uK+QRc4AaOBPaSg4MoUOzYATTUO2T2JBx4SHCuvClGpiElH6YvBs+7QPssBphIQPcpkA
- fSpkwJ1JXA6ScsfPTsahkd1uQpyIkpbmQTDciL+/tCXX8iYugeWZwwPXXY1XR/yr7O+K
- Sp9LZpjKEYuBm6qrnTyGvTPpNs7h4DCVP+TlRi2FiwvUduFjEJONwGjD9QfP7/ICXwg7
- 2ACg==
-X-Gm-Message-State: AOJu0YyLPSOrc7w44u/SODgjcM+9ZV133DNGsCu5XFpSAsB2KQCtdjJW
- JkLxaPfm0gdSij3659azVoGJviCIRnfemmi4iuJStw3oJZStP1x0ynCFeXb4HLVBgHE=
-X-Gm-Gg: AeBDiessnuYUkkZMP09OQdUjIzLr2Ru0F0ojeBa9k1p3AHGpj3Ch/74MNuqwfQJMv4O
- FVcSq8dqaYysOGMLYHlTBZx0Pef9NubY3psjvkegw1RgVWLEy5MNgFnVZNmhyu393hjKWaEN7jS
- ABYXY+askB7ozwpXPivZxlcSetqtf7YjKL3DqedGO3knDLNjE+eSTtz48gplPH/rxL+3dwCZh/I
- CT1jUIdQacZFArk1rjukxvZV/4coByRula1RqTwbD4TIP725Cf6a38iM6mCQCCYS9lBWPC1sGo+
- gFRC39TRpLwCEpiFikUfxizFlj8+49jz4Nv3qaZht/sZJpuQZ3OIK7MhbCCj1DFIQPOi83c9gck
- Yy6gpq3TEeS/cEWOTAw0CPn8x4zg3PPTLMhXKDlxHCzQB+MkNThF3ieze+6Q6j6Vr5BEdSDrzuD
- pxuFIuTSyZMqdQitSPCoKD4dXbDdA5/VGyMfoeTn1kVILh0CtXbH9YyWccJGIkSnbp1EEfzXwu
-X-Received: by 2002:a05:622a:409:b0:50e:89e6:669c with SMTP id
- d75a77b69052e-50e89e6697dmr246412661cf.37.1776971069405; 
- Thu, 23 Apr 2026 12:04:29 -0700 (PDT)
+ bh=FCjXwQ+h/ic+194AtJf8rmHEDxANWaFczQxgbzAygGg=;
+ b=hMlNjCFLNvRB/rvP3yw0C6DYMLQoahsKHM2hvHFIRm84H4FJrCmtPQaGLlsfC1Wl8n
+ eMKcMpX6yU9B/CZxf2cNODU8ZObiKah3MX0zouI/55i9tFTRuWr647NWlKPiwhnteyxj
+ HyI2WKF3JrzbikkwIkaVvmDafHKiXoe/hSmP6ts/a4SuIl4683lZhQttK/gwqu0d6LJk
+ i+XoXgftUEhneRceYLbiIe9S+12cED5oOMJM/ghYJye3ck1gaIid8cib3oGDSyIYml1h
+ d2KqV/Fo0dRZ4ozY6big2dKPbgTCgjVgMDTsQt2DpBz6V5RTqnV9hFa5gnVzbnDHpP3S
+ iKBw==
+X-Gm-Message-State: AOJu0YxGIWdgBDg9GdTMkaSl3IQr2jALEu55ZGHbKYR9EbHtFcwde483
+ jVFiF1Umzr0Nk3B/p/uCf0LSsAKuvZomGWRaoos0XKLqGQ1IWJsOCkZMWW77j6CrVL4=
+X-Gm-Gg: AeBDievBstz+rIrS9zolRm8FrLIilEM8hc1UUCDONcnGEKdt6HYRnl+QxeTj6r5gPAA
+ gEOSZRHeLS4c7IGmAneUedxMrWr1AmaQvBXdF4iNdHDV5WjstvKnwgbAIYwx8/zAeL6Voealoox
+ J9xvQPrh6eBXU9EGXKK0fH0a0S0JYomOwI9KAf4uESnnfm6tbOFqcwsdC5WmJqB00hRfjLygi7K
+ XWU0whj/eR/20yNWZvhWdcdZMP/gj6E3rKWXOs/qumZXW7YRbVQhR2mJ2qCsarHUbJuZYwrGe61
+ V+0FUg9w/qVwClGSrkX2aDRSTRZnnd/UQJTH6DZJ/4ZxsbIm4j/e2wxOehc01DGpg6zadWcICJq
+ e+OabwupcWTSQkTPPG5Z5kLRTBy0wh6iuGyuiHE+B2HZ+dOdB9YuoxoLbu9ZGRybU3X+RZBu4cU
+ D54I7OFJawnXPtnDCaEXWiCVodLZse6C9s0BJ+JIAh5kC9tixkniKjCn4gN0fB5Yg4fCINQrYw0
+ whVx4i82rQ=
+X-Received: by 2002:ac8:5988:0:b0:50d:9cfd:b01f with SMTP id
+ d75a77b69052e-50e367967e3mr359205251cf.32.1776971070459; 
+ Thu, 23 Apr 2026 12:04:30 -0700 (PDT)
 Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
  by smtp.gmail.com with ESMTPSA id
- d75a77b69052e-50fc9715610sm34624441cf.10.2026.04.23.12.04.28
+ d75a77b69052e-50fc9715610sm34624441cf.10.2026.04.23.12.04.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
  Thu, 23 Apr 2026 12:04:29 -0700 (PDT)
 From: Dean Marx <dmarx@iol.unh.edu>
@@ -57,9 +58,9 @@ To: patrickrobb1997@gmail.com, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
  Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
 Cc: dev@dpdk.org,
 	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v2 3/7] dts: move exception module from framework to API
-Date: Thu, 23 Apr 2026 15:04:18 -0400
-Message-ID: <20260423190424.41619-4-dmarx@iol.unh.edu>
+Subject: [PATCH v2 4/7] dts: move utils from framework to API
+Date: Thu, 23 Apr 2026 15:04:19 -0400
+Message-ID: <20260423190424.41619-5-dmarx@iol.unh.edu>
 X-Mailer: git-send-email 2.52.0
 In-Reply-To: <20260423190424.41619-1-dmarx@iol.unh.edu>
 References: <20260423170331.33193-1-dmarx@iol.unh.edu>
@@ -79,475 +80,241 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Multiple test suites currently import the exception module
-from the framework in order to catch certain errors during
-test execution. Move this to the API.
+The utils module is used to generate a set of random
+packets in certain test suites. Move this to the API.
 
 Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
 ---
- .../dts/{framework.exception.rst => api.exception.rst} |  2 +-
- doc/api/dts/index.rst                                  |  2 +-
- dts/api/artifact.py                                    |  2 +-
- dts/api/cryptodev/__init__.py                          |  2 +-
- dts/{framework => api}/exception.py                    |  0
- dts/api/packet.py                                      |  2 +-
- dts/api/test.py                                        |  2 +-
- dts/api/test_suite.py                                  |  2 +-
- dts/api/testpmd/__init__.py                            |  2 +-
- dts/framework/config/__init__.py                       |  2 +-
- dts/framework/config/test_run.py                       |  2 +-
- dts/framework/context.py                               |  2 +-
- dts/framework/parser.py                                |  2 +-
- dts/framework/remote_session/dpdk.py                   |  2 +-
- .../remote_session/interactive_remote_session.py       |  2 +-
- dts/framework/remote_session/interactive_shell.py      |  6 +++---
- dts/framework/remote_session/remote_session.py         |  4 ++--
- dts/framework/runner.py                                |  2 +-
- dts/framework/test_result.py                           |  3 +--
- dts/framework/test_run.py                              |  4 ++--
- dts/framework/utils.py                                 |  2 +-
- dts/tests/TestSuite_cryptodev_throughput.py            |  2 +-
- dts/tests/TestSuite_dynamic_queue_conf.py              |  2 +-
- dts/tests/TestSuite_mac_filter.py                      |  2 +-
- dts/tests/TestSuite_pmd_rss.py                         |  2 +-
- dts/tests/TestSuite_rte_flow.py                        | 10 +++++-----
- 26 files changed, 33 insertions(+), 34 deletions(-)
- rename doc/api/dts/{framework.exception.rst => api.exception.rst} (77%)
- rename dts/{framework => api}/exception.py (100%)
+ doc/api/dts/{framework.utils.rst => api.utils.rst} | 2 +-
+ doc/api/dts/index.rst                              | 2 +-
+ dts/api/cryptodev/config.py                        | 2 +-
+ dts/api/packet.py                                  | 2 +-
+ dts/api/test_suite.py                              | 2 +-
+ dts/api/testpmd/config.py                          | 2 +-
+ dts/api/testpmd/types.py                           | 2 +-
+ dts/{framework => api}/utils.py                    | 0
+ dts/framework/config/node.py                       | 2 +-
+ dts/framework/config/test_run.py                   | 2 +-
+ dts/framework/remote_session/dpdk.py               | 2 +-
+ dts/tests/TestSuite_l2fwd.py                       | 2 +-
+ dts/tests/TestSuite_pmd_rss.py                     | 2 +-
+ dts/tests/TestSuite_smoke_tests.py                 | 2 +-
+ dts/tests/TestSuite_softnic.py                     | 2 +-
+ 15 files changed, 14 insertions(+), 14 deletions(-)
+ rename doc/api/dts/{framework.utils.rst => api.utils.rst} (80%)
+ rename dts/{framework => api}/utils.py (100%)
 
-diff --git a/doc/api/dts/framework.exception.rst b/doc/api/dts/api.exception.rst
-similarity index 77%
-rename from doc/api/dts/framework.exception.rst
-rename to doc/api/dts/api.exception.rst
-index efb47dc5ae..8e6bff5ee7 100644
---- a/doc/api/dts/framework.exception.rst
-+++ b/doc/api/dts/api.exception.rst
+diff --git a/doc/api/dts/framework.utils.rst b/doc/api/dts/api.utils.rst
+similarity index 80%
+rename from doc/api/dts/framework.utils.rst
+rename to doc/api/dts/api.utils.rst
+index cc06d4c3c3..0b4baff1b5 100644
+--- a/doc/api/dts/framework.utils.rst
++++ b/doc/api/dts/api.utils.rst
 @@ -3,6 +3,6 @@
- exception - Exceptions
- ======================
+ utils - Various Utilities
+ =========================
  
--.. automodule:: framework.exception
-+.. automodule:: api.exception
+-.. automodule:: framework.utils
++.. automodule:: api.utils
     :members:
     :show-inheritance:
 diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index 527cc8ce53..3b9ffab4ce 100644
+index 3b9ffab4ce..ced42ac241 100644
 --- a/doc/api/dts/index.rst
 +++ b/doc/api/dts/index.rst
-@@ -36,7 +36,7 @@ Modules
+@@ -35,7 +35,7 @@ Modules
+    framework.context
     framework.logger
     framework.parser
-    framework.utils
--   framework.exception
-+   api.exception
+-   framework.utils
++   api.utils
+    api.exception
  
  
- Indices and tables
-diff --git a/dts/api/artifact.py b/dts/api/artifact.py
-index 025c87bbfa..02d807241f 100644
---- a/dts/api/artifact.py
-+++ b/dts/api/artifact.py
-@@ -47,8 +47,8 @@
- from paramiko import SFTPClient, SFTPFile
- from typing_extensions import Buffer
+diff --git a/dts/api/cryptodev/config.py b/dts/api/cryptodev/config.py
+index 69ff7aa59a..a88e70d45c 100644
+--- a/dts/api/cryptodev/config.py
++++ b/dts/api/cryptodev/config.py
+@@ -6,9 +6,9 @@
+ from enum import auto
+ from typing import Literal
  
-+from api.exception import InternalError
- from api.testbed_model.node import Node, NodeIdentifier, get_node
--from framework.exception import InternalError
- from framework.logger import DTSLogger, get_dts_logger
- from framework.settings import SETTINGS
++from api.utils import StrEnum
+ from framework.params import Params, Switch
+ from framework.params.eal import EalParams
+-from framework.utils import StrEnum
  
-diff --git a/dts/api/cryptodev/__init__.py b/dts/api/cryptodev/__init__.py
-index a4fafc3713..c6a220dced 100644
---- a/dts/api/cryptodev/__init__.py
-+++ b/dts/api/cryptodev/__init__.py
-@@ -22,8 +22,8 @@
-     ThroughputResults,
-     VerifyResults,
- )
-+from api.exception import RemoteCommandExecutionError, SkippedTestException
- from framework.context import get_ctx
--from framework.exception import RemoteCommandExecutionError, SkippedTestException
- from framework.remote_session.dpdk_shell import compute_eal_params
+ Silent = Literal[""]
  
- if TYPE_CHECKING:
-diff --git a/dts/framework/exception.py b/dts/api/exception.py
-similarity index 100%
-rename from dts/framework/exception.py
-rename to dts/api/exception.py
 diff --git a/dts/api/packet.py b/dts/api/packet.py
-index d30d455485..2bf31aa753 100644
+index 2bf31aa753..2be00ad48a 100644
 --- a/dts/api/packet.py
 +++ b/dts/api/packet.py
-@@ -27,6 +27,7 @@
- from scapy.layers.l2 import Ether
- from scapy.packet import Packet, Padding, raw
- 
-+from api.exception import InternalError
- from api.test import fail, log_debug
- from api.testbed_model.traffic_generator.capturing_traffic_generator import (
-     PacketFilteringConfig,
-@@ -35,7 +36,6 @@
+@@ -35,8 +35,8 @@
+ from api.testbed_model.traffic_generator.performance_traffic_generator import (
      PerformanceTrafficStats,
  )
++from api.utils import get_packet_summaries
  from framework.context import get_ctx
--from framework.exception import InternalError
- from framework.utils import get_packet_summaries
+-from framework.utils import get_packet_summaries
  
  
-diff --git a/dts/api/test.py b/dts/api/test.py
-index e17babe0ca..9cad9a9495 100644
---- a/dts/api/test.py
-+++ b/dts/api/test.py
-@@ -10,8 +10,8 @@
- from datetime import datetime
- 
- from api.artifact import Artifact
-+from api.exception import InternalError, SkippedTestException, TestCaseVerifyError
- from framework.context import get_ctx
--from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
- from framework.logger import DTSLogger
- 
- 
+ def send_packet_and_capture(
 diff --git a/dts/api/test_suite.py b/dts/api/test_suite.py
-index ebb07a9cae..be13485f9b 100644
+index be13485f9b..7feb35a9f8 100644
 --- a/dts/api/test_suite.py
 +++ b/dts/api/test_suite.py
-@@ -29,10 +29,10 @@
- from scapy.packet import Packet
- from typing_extensions import Self
- 
-+from api.exception import ConfigurationError, InternalError
+@@ -32,9 +32,9 @@
+ from api.exception import ConfigurationError, InternalError
  from api.testbed_model.capability import TestProtocol
  from api.testbed_model.topology import Topology
++from api.utils import to_pascal_case
  from framework.config.common import FrozenModel
--from framework.exception import ConfigurationError, InternalError
  from framework.logger import DTSLogger, get_dts_logger
- from framework.utils import to_pascal_case
+-from framework.utils import to_pascal_case
  
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-index e9187440bb..9498d723d5 100644
---- a/dts/api/testpmd/__init__.py
-+++ b/dts/api/testpmd/__init__.py
-@@ -32,6 +32,7 @@
- from typing_extensions import Unpack
+ if TYPE_CHECKING:
+     from framework.context import Context
+diff --git a/dts/api/testpmd/config.py b/dts/api/testpmd/config.py
+index e71a3e1ef0..8b688834ee 100644
+--- a/dts/api/testpmd/config.py
++++ b/dts/api/testpmd/config.py
+@@ -13,6 +13,7 @@
+ from pathlib import PurePath
+ from typing import Literal, NamedTuple
  
- from api.capabilities import LinkTopology, NicCapability
-+from api.exception import InteractiveCommandExecutionError, InternalError
- from api.testpmd.config import PortTopology, SimpleForwardingModes, TestPmdParams
- from api.testpmd.types import (
-     ChecksumOffloadOptions,
-@@ -55,7 +56,6 @@
-     VLANOffloadFlag,
++from api.utils import StrEnum
+ from framework.params import (
+     Params,
+     Switch,
+@@ -24,7 +25,6 @@
+     str_from_flag_value,
  )
- from framework.context import get_ctx
--from framework.exception import InteractiveCommandExecutionError, InternalError
- from framework.params.types import TestPmdParamsDict
- from framework.remote_session.dpdk_shell import DPDKShell
- from framework.remote_session.interactive_shell import only_active
-diff --git a/dts/framework/config/__init__.py b/dts/framework/config/__init__.py
-index 6f4f9d82f8..3a3580aaf7 100644
---- a/dts/framework/config/__init__.py
-+++ b/dts/framework/config/__init__.py
-@@ -35,7 +35,7 @@
- from pydantic import Field, TypeAdapter, ValidationError, model_validator
+ from framework.params.eal import EalParams
+-from framework.utils import StrEnum
+ 
+ 
+ class PortTopology(StrEnum):
+diff --git a/dts/api/testpmd/types.py b/dts/api/testpmd/types.py
+index 0d322aece2..5c847b4bd6 100644
+--- a/dts/api/testpmd/types.py
++++ b/dts/api/testpmd/types.py
+@@ -15,8 +15,8 @@
+ 
  from typing_extensions import Self
  
--from framework.exception import ConfigurationError
-+from api.exception import ConfigurationError
++from api.utils import REGEX_FOR_MAC_ADDRESS, StrEnum
+ from framework.parser import ParserFn, TextParser
+-from framework.utils import REGEX_FOR_MAC_ADDRESS, StrEnum
  
- from .common import FrozenModel, ValidationContext
- from .node import NodeConfiguration
+ RxTxLiteralSwitch = Literal["rx", "tx"]
+ 
+diff --git a/dts/framework/utils.py b/dts/api/utils.py
+similarity index 100%
+rename from dts/framework/utils.py
+rename to dts/api/utils.py
+diff --git a/dts/framework/config/node.py b/dts/framework/config/node.py
+index 63062a31b5..d7122d13d8 100644
+--- a/dts/framework/config/node.py
++++ b/dts/framework/config/node.py
+@@ -14,7 +14,7 @@
+ from pydantic import Field, model_validator
+ from typing_extensions import Self
+ 
+-from framework.utils import REGEX_FOR_IDENTIFIER, REGEX_FOR_PCI_ADDRESS, StrEnum
++from api.utils import REGEX_FOR_IDENTIFIER, REGEX_FOR_PCI_ADDRESS, StrEnum
+ 
+ from .common import FrozenModel
+ 
 diff --git a/dts/framework/config/test_run.py b/dts/framework/config/test_run.py
-index 2c16a712eb..1b051fbadf 100644
+index 1b051fbadf..10901c740d 100644
 --- a/dts/framework/config/test_run.py
 +++ b/dts/framework/config/test_run.py
-@@ -27,7 +27,7 @@
- )
+@@ -28,7 +28,7 @@
  from typing_extensions import TYPE_CHECKING, Self
  
--from framework.exception import InternalError
-+from api.exception import InternalError
- from framework.utils import REGEX_FOR_PORT_LINK, StrEnum
+ from api.exception import InternalError
+-from framework.utils import REGEX_FOR_PORT_LINK, StrEnum
++from api.utils import REGEX_FOR_PORT_LINK, StrEnum
  
  from .common import FrozenModel, load_fields_from_settings
-diff --git a/dts/framework/context.py b/dts/framework/context.py
-index 618eb3dda7..7ed4cc5665 100644
---- a/dts/framework/context.py
-+++ b/dts/framework/context.py
-@@ -8,10 +8,10 @@
- from dataclasses import MISSING, dataclass, field, fields
- from typing import TYPE_CHECKING, Any, Optional, ParamSpec, Union
  
-+from api.exception import InternalError
- from api.testbed_model.cpu import LogicalCoreCount, LogicalCoreList
- from api.testbed_model.node import Node
- from api.testbed_model.topology import Topology
--from framework.exception import InternalError
- from framework.remote_session.shell_pool import ShellPool
- from framework.settings import SETTINGS
- 
-diff --git a/dts/framework/parser.py b/dts/framework/parser.py
-index 3075c36857..ebf470ad30 100644
---- a/dts/framework/parser.py
-+++ b/dts/framework/parser.py
-@@ -15,7 +15,7 @@
- 
- from typing_extensions import Self
- 
--from framework.exception import InternalError
-+from api.exception import InternalError
- 
- 
- class ParserFn(TypedDict):
 diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-index c955f4def2..91173e0796 100644
+index 91173e0796..1a4fec8ec9 100644
 --- a/dts/framework/remote_session/dpdk.py
 +++ b/dts/framework/remote_session/dpdk.py
-@@ -13,6 +13,7 @@
- from pathlib import Path, PurePath
- from typing import ClassVar, Final
- 
-+from api.exception import ConfigurationError, RemoteFileNotFoundError
- from api.testbed_model.cpu import LogicalCore, LogicalCoreCount, LogicalCoreList, lcore_filter
+@@ -18,6 +18,7 @@
  from api.testbed_model.node import Node
  from api.testbed_model.os_session import OSSession
-@@ -29,7 +30,6 @@
-     RemoteDPDKTreeLocation,
- )
- from framework.context import get_ctx
--from framework.exception import ConfigurationError, RemoteFileNotFoundError
+ from api.testbed_model.virtual_device import VirtualDevice
++from api.utils import MesonArgs, TarCompressionFormat
+ from framework.config.test_run import (
+     DPDKBuildConfiguration,
+     DPDKBuildOptionsConfiguration,
+@@ -33,7 +34,6 @@
  from framework.logger import DTSLogger, get_dts_logger
  from framework.params.eal import EalParams
  from framework.remote_session.remote_session import CommandResult
-diff --git a/dts/framework/remote_session/interactive_remote_session.py b/dts/framework/remote_session/interactive_remote_session.py
-index c8156b4345..04f45e0df8 100644
---- a/dts/framework/remote_session/interactive_remote_session.py
-+++ b/dts/framework/remote_session/interactive_remote_session.py
-@@ -15,8 +15,8 @@
-     SSHException,
- )
- 
-+from api.exception import SSHConnectionError
- from framework.config.node import NodeConfiguration
--from framework.exception import SSHConnectionError
- from framework.logger import DTSLogger
+-from framework.utils import MesonArgs, TarCompressionFormat
  
  
-diff --git a/dts/framework/remote_session/interactive_shell.py b/dts/framework/remote_session/interactive_shell.py
-index 23d05fbdff..15743949e7 100644
---- a/dts/framework/remote_session/interactive_shell.py
-+++ b/dts/framework/remote_session/interactive_shell.py
-@@ -29,13 +29,13 @@
- from paramiko import Channel, channel
- from typing_extensions import Self
- 
--from api.testbed_model.node import Node
--from framework.context import get_ctx
--from framework.exception import (
-+from api.exception import (
-     InteractiveCommandExecutionError,
-     InteractiveSSHSessionDeadError,
-     InteractiveSSHTimeoutError,
- )
-+from api.testbed_model.node import Node
-+from framework.context import get_ctx
- from framework.logger import DTSLogger, get_dts_logger
- from framework.params import Params
- from framework.settings import SETTINGS
-diff --git a/dts/framework/remote_session/remote_session.py b/dts/framework/remote_session/remote_session.py
-index 158325bb7f..f49966070f 100644
---- a/dts/framework/remote_session/remote_session.py
-+++ b/dts/framework/remote_session/remote_session.py
-@@ -24,13 +24,13 @@
-     SSHException,
- )
- 
--from framework.config.node import NodeConfiguration
--from framework.exception import (
-+from api.exception import (
-     RemoteCommandExecutionError,
-     SSHConnectionError,
-     SSHSessionDeadError,
-     SSHTimeoutError,
- )
-+from framework.config.node import NodeConfiguration
- from framework.logger import DTSLogger
- from framework.settings import SETTINGS
- 
-diff --git a/dts/framework/runner.py b/dts/framework/runner.py
-index 0e245a515b..29be7b80fe 100644
---- a/dts/framework/runner.py
-+++ b/dts/framework/runner.py
-@@ -12,9 +12,9 @@
- import sys
- import textwrap
- 
-+from api.exception import ConfigurationError
- from api.testbed_model.node import Node
- from framework.config.common import ValidationContext
--from framework.exception import ConfigurationError
- from framework.test_run import TestRun
- 
- from .config import Configuration, load_config
-diff --git a/dts/framework/test_result.py b/dts/framework/test_result.py
-index e2efff8681..5f945163ce 100644
---- a/dts/framework/test_result.py
-+++ b/dts/framework/test_result.py
-@@ -35,12 +35,11 @@
- )
- from typing_extensions import OrderedDict
- 
-+from api.exception import DTSError, ErrorSeverity, InternalError
- from api.testbed_model.os_session import OSSessionInfo
- from framework.remote_session.dpdk import DPDKBuildInfo
- from framework.settings import SETTINGS
- 
--from .exception import DTSError, ErrorSeverity, InternalError
--
- 
- class Result(IntEnum):
-     """The possible states that a setup, a teardown or a test case may end up in."""
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index 14c04d1ce0..9972d26b04 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -106,6 +106,7 @@
- from types import MethodType
- from typing import ClassVar, Protocol, Union
- 
-+from api.exception import InternalError, SkippedTestException, TestCaseVerifyError
- from api.test_suite import BaseConfig, TestCase, TestCaseType, TestSuite
- from api.testbed_model.capability import (
-     Capability,
-@@ -117,7 +118,6 @@
- from api.testbed_model.traffic_generator import create_traffic_generator
- from framework.config.test_run import TestRunConfiguration
- from framework.context import Context, init_ctx
--from framework.exception import InternalError, SkippedTestException, TestCaseVerifyError
- from framework.logger import DTSLogger, get_dts_logger
- from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
- from framework.settings import SETTINGS
-@@ -136,7 +136,7 @@ class TestRun:
-     If an error occurs, the current stage is aborted, the error is recorded, everything in
-     the inner stages is marked as blocked and the run continues in the next iteration
-     of the same stage. The return code is the highest `severity` of all
--    :class:`~.framework.exception.DTSError`\s.
-+    :class:`~.api.exception.DTSError`\s.
- 
-     Example:
-         An error occurs in a test suite setup. The current test suite is aborted,
-diff --git a/dts/framework/utils.py b/dts/framework/utils.py
-index 9917ffbfaa..28e344871a 100644
---- a/dts/framework/utils.py
-+++ b/dts/framework/utils.py
-@@ -26,7 +26,7 @@
- from scapy.layers.inet import IP, TCP, UDP, Ether
- from scapy.packet import Packet
- 
--from .exception import InternalError
-+from api.exception import InternalError
- 
- REGEX_FOR_PCI_ADDRESS: str = r"[0-9a-fA-F]{4}:[0-9a-fA-F]{2}:[0-9a-fA-F]{2}.[0-9]{1}"
- _REGEX_FOR_COLON_OR_HYPHEN_SEP_MAC: str = r"(?:[\da-fA-F]{2}[:-]){5}[\da-fA-F]{2}"
-diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
-index 83ce94d4df..fb6fda3bac 100644
---- a/dts/tests/TestSuite_cryptodev_throughput.py
-+++ b/dts/tests/TestSuite_cryptodev_throughput.py
-@@ -29,11 +29,11 @@
- from api.cryptodev.types import (
-     CryptodevResults,
- )
-+from api.exception import SkippedTestException
- from api.test import verify
- from api.test_suite import BaseConfig, TestSuite, crypto_test
- from api.testbed_model.virtual_device import VirtualDevice
- from framework.context import get_ctx
--from framework.exception import SkippedTestException
- 
- config_list: list[dict[str, int | float | str]] = [
-     {"buff_size": 64, "Gbps": 1.00},
-diff --git a/dts/tests/TestSuite_dynamic_queue_conf.py b/dts/tests/TestSuite_dynamic_queue_conf.py
-index e0ef1f447a..24584c7d60 100644
---- a/dts/tests/TestSuite_dynamic_queue_conf.py
-+++ b/dts/tests/TestSuite_dynamic_queue_conf.py
-@@ -35,12 +35,12 @@
-     NicCapability,
-     requires_nic_capability,
- )
-+from api.exception import InteractiveCommandExecutionError
- from api.packet import send_packets
- from api.test import fail, verify
- from api.test_suite import TestSuite, func_test
+ @dataclass(slots=True, frozen=True)
+diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py
+index 63f771d594..0b0b7bc931 100644
+--- a/dts/tests/TestSuite_l2fwd.py
++++ b/dts/tests/TestSuite_l2fwd.py
+@@ -22,8 +22,8 @@
+ from api.testbed_model.cpu import LogicalCoreCount
  from api.testpmd import TestPmd
- from api.testpmd.config import PortTopology, SimpleForwardingModes
--from framework.exception import InteractiveCommandExecutionError
- 
- 
- def setup_and_teardown_test(
-diff --git a/dts/tests/TestSuite_mac_filter.py b/dts/tests/TestSuite_mac_filter.py
-index 98c12459f6..eb1413f336 100644
---- a/dts/tests/TestSuite_mac_filter.py
-+++ b/dts/tests/TestSuite_mac_filter.py
-@@ -23,11 +23,11 @@
-     NicCapability,
-     requires_nic_capability,
- )
-+from api.exception import InteractiveCommandExecutionError
- from api.packet import send_packet_and_capture
- from api.test import fail, verify
- from api.test_suite import TestSuite, func_test
- from api.testpmd import TestPmd
--from framework.exception import InteractiveCommandExecutionError
+ from api.testpmd.config import EthPeer, SimpleForwardingModes
++from api.utils import generate_random_packets
+ from framework.context import filter_cores
+-from framework.utils import generate_random_packets
  
  
  @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
 diff --git a/dts/tests/TestSuite_pmd_rss.py b/dts/tests/TestSuite_pmd_rss.py
-index 8777d446cd..dae90ee2d5 100644
+index dae90ee2d5..162e08ccbc 100644
 --- a/dts/tests/TestSuite_pmd_rss.py
 +++ b/dts/tests/TestSuite_pmd_rss.py
-@@ -20,6 +20,7 @@
-     requires_link_topology,
-     requires_nic_capability,
- )
-+from api.exception import InteractiveCommandExecutionError
- from api.packet import send_packets_and_capture
- from api.test import verify
- from api.test_suite import BaseConfig, TestSuite, func_test
-@@ -30,7 +31,6 @@
+@@ -31,7 +31,7 @@
      RSSOffloadTypesFlag,
      TestPmdVerbosePacket,
  )
--from framework.exception import InteractiveCommandExecutionError
- from framework.utils import StrEnum
+-from framework.utils import StrEnum
++from api.utils import StrEnum
  
  
-diff --git a/dts/tests/TestSuite_rte_flow.py b/dts/tests/TestSuite_rte_flow.py
-index 3d74decb11..8c5c59edec 100644
---- a/dts/tests/TestSuite_rte_flow.py
-+++ b/dts/tests/TestSuite_rte_flow.py
-@@ -21,16 +21,16 @@
- from scapy.packet import Packet, Raw
- 
- from api.capabilities import NicCapability, requires_nic_capability
-+from api.exception import (
-+    InteractiveCommandExecutionError,
-+    SkippedTestException,
-+    TestCaseVerifyError,
-+)
- from api.packet import send_packet_and_capture
- from api.test import fail, log, verify
+ class Config(BaseConfig):
+diff --git a/dts/tests/TestSuite_smoke_tests.py b/dts/tests/TestSuite_smoke_tests.py
+index 157dec7585..b3eb325fc0 100644
+--- a/dts/tests/TestSuite_smoke_tests.py
++++ b/dts/tests/TestSuite_smoke_tests.py
+@@ -22,9 +22,9 @@
  from api.test_suite import TestSuite, func_test
+ from api.testbed_model.linux_session import LinuxSession
  from api.testpmd import TestPmd
- from api.testpmd.types import FlowRule
--from framework.exception import (
--    InteractiveCommandExecutionError,
--    SkippedTestException,
--    TestCaseVerifyError,
--)
++from api.utils import REGEX_FOR_PCI_ADDRESS
+ from framework.config.node import PortConfig
+ from framework.settings import SETTINGS
+-from framework.utils import REGEX_FOR_PCI_ADDRESS
  
  
- @dataclass
+ @requires_link_topology(LinkTopology.NO_LINK)
+diff --git a/dts/tests/TestSuite_softnic.py b/dts/tests/TestSuite_softnic.py
+index 0696933053..05a6d3aa18 100644
+--- a/dts/tests/TestSuite_softnic.py
++++ b/dts/tests/TestSuite_softnic.py
+@@ -22,7 +22,7 @@
+ from api.testbed_model.virtual_device import VirtualDevice
+ from api.testpmd import TestPmd
+ from api.testpmd.config import EthPeer
+-from framework.utils import generate_random_packets
++from api.utils import generate_random_packets
+ 
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
 -- 
 2.52.0
 
