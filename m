@@ -2,71 +2,125 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A20FDEE2C
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 17:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1084FDEE27
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 17:06:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9D96A406FF;
-	Thu, 23 Apr 2026 19:03:47 +0200 (CEST)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com
- [209.85.222.177])
- by mails.dpdk.org (Postfix) with ESMTP id 3B7E640655
- for <dev@dpdk.org>; Thu, 23 Apr 2026 19:03:43 +0200 (CEST)
-Received: by mail-qk1-f177.google.com with SMTP id
- af79cd13be357-8ec9f099fc6so450148385a.0
- for <dev@dpdk.org>; Thu, 23 Apr 2026 10:03:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1776963822; x=1777568622; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=iyMiEqvRjoiFvYcECmyJadtddvmbTJeIAP2V6fX34AM=;
- b=i8RajwSRccRaVDdVEMkACeA/tuXZ9iYoz7OyD8p+nOzVZ+VKLUVd2IvhelvNybxrad
- gWiwULDUve9gLVzWLVY9gvZ5o0nDokOihpXEZuDJXRz+bEEnJR+2lKUgvY2ooFzamu2i
- S1yiqE/ZwVO0VduqGJd4Up6KXr8GPQ7MNk9r4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776963822; x=1777568622;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=iyMiEqvRjoiFvYcECmyJadtddvmbTJeIAP2V6fX34AM=;
- b=KS0za06L1v0Bt5WrzeWp2CK/cGGLPb/XN67drpz5+1K0gn7xPtgO7asn5yhNCzd9kf
- ZUSt5ttFGF1XVyn/+ITP3Lx1cA0IVjwhLSGVxCajIAIrbMasjo2Hpo7iGRupFnjbfzjY
- ltfiW/K5K5//MrZhSNmqIxbqhaCs2FZTVuJnXyTmoCyvHpvBgiXTifh8Tq7jGyaibvqq
- Y8Lx6s+mo9DNK70yLnpruoEQvWbq197iYiVaZv+RWImR75PT4j4q44JWZ2xU0Fl6SA9P
- 9cOQGl6hxZ/6zYbXNab8cgrEP5pm8BTXA2Mi9HPR79fxkt3XFrIG8Zpgosf7yCCI8LC6
- vGRg==
-X-Gm-Message-State: AOJu0YwQRRSR+A8YtCTkx5gfeZCZe5yyXqtmas1c5RCY+VA5Ex4e3oAm
- Pi4oVw3Gvr55MzFMt86xcH6FDCjMdIC/Yjen7cePmz6gYfvXZaDrA5BbCz9onNFcZ0U=
-X-Gm-Gg: AeBDieuyQUpKzydGq3mw/OOs+dVVaD6ij+gEfMPCOrh47gX00YY+oNKrJYKdeITKxf3
- bhhHOK2U+43AcY5dUUVBj0j9TsFEb/fDn08CQY0+TEbS3X1YhVmej54xWVyLCkmNyFNsthBSINX
- 4HVkWjbh6Z2zDx72FiRtAnHcHge3oswWx5WEnFd6nbybxRtOOlZIARWFD4M9vFLxfBcfcppxk1M
- pccqnJ5WqIT1u3RSEeQgbW8dgtx49KqPlznHPDk/J8uZmhnjdYOqkf8pTbYQOtDRm+OjJowkjjl
- aNGajjyHvBr3exeeRy+1ND36MoUySkWSFVRMojpOQJd3poe8SmojBi+QCwOVoyTejsIvmUvnI1e
- gGSN4vSdq4gnorb3uoDTBoUNIfRZh6SW+kFWMx4eIqc40BLUZhKVyWkUZdSwg1H+7fkiNaf2jXm
- AeX4sT9m6HyVw/7CAjMXL1RcUEj3yv3Ze2SUPc6kblQICJDeUFF87pUSNXTuXzzD8PPyjNZKBi0
- aEl4GSdtoc=
-X-Received: by 2002:a05:620a:a2cf:20b0:8ea:addd:8951 with SMTP id
- af79cd13be357-8eaaddd8d80mr1965641885a.42.1776963822281; 
- Thu, 23 Apr 2026 10:03:42 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
- by smtp.gmail.com with ESMTPSA id
- af79cd13be357-8e7d8edb734sm1869831585a.29.2026.04.23.10.03.41
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Apr 2026 10:03:41 -0700 (PDT)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: patrickrobb1997@gmail.com, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
-Cc: dev@dpdk.org,
-	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v1 8/8] dts: update API rst files for doc build
-Date: Thu, 23 Apr 2026 13:03:20 -0400
-Message-ID: <20260423170331.33193-9-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260423170331.33193-1-dmarx@iol.unh.edu>
-References: <20240925192013.17446-1-jspewock@iol.unh.edu>
- <20260423170331.33193-1-dmarx@iol.unh.edu>
+	by mails.dpdk.org (Postfix) with ESMTP id 10124402B2;
+	Thu, 23 Apr 2026 19:06:13 +0200 (CEST)
+Received: from DM1PR04CU001.outbound.protection.outlook.com
+ (mail-centralusazon11010059.outbound.protection.outlook.com [52.101.61.59])
+ by mails.dpdk.org (Postfix) with ESMTP id E6C45402B0
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 19:06:11 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EyKH2KXpKw461ZAG8EmaXecogNvdasVbNc7rGacyeMvaVW74CtLNoPKOE8GGhoFQUKsG3S5JQ2M9vb+zhboHYEDEarTdcE0rYaQz0gov59Fg8NDViEBU0zfNkvO5zPaDt7kNKAQLx30bpWe8nZQWQEjuwc0a5B/Yiw2mhHMj64h0P3e2Xha5XccdA/ElXcXJPBS+LIsWj8fLur4khXPYTPEO+9ALEs4WwQLoeiiinhVlvUaiJ3Flt+U6ammHyl/ii3S8eaKWNpm1socwS1nOYeAj4+cnkhLIqyW82DB+ZUy0TtIFJrOWQmX3xqQREkdAVXzJ+SyuUu8lok0BgA6UAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZHPhCQJNTYfzK4MzBNKfTgpWh1F1ARho6tqjbuAaHZw=;
+ b=MqCiBK0pTnIhjVG9fp7Y/4t5Sz+CYXIFX/aN+yLazE9stM2PM4xV3bReIo8loW2nqdSA32CVi86N2/YZZwdUGJ3/ps/JrVyhC7sTe7Ja4VZIukL5dlnYEvIZNl5aBmK9Jajz9CoOQfrDrIyWjy2Usq+I041uepx1yDI86WZdP8Mcd6xzHEjn7YYI5KAgkPrIxdzNXcFd+JliU/YTZEQmSogbVm/EMIeHV+PA3f5LQSIAlMKwjps6+cOrAQaKLORXQLc3qpg4iTs5NzcTklZ4RXsdtsH7YCghDSBqNcA+HZsmNK5/5FaOARCoMW6s4rx7qh6j4zxFLp8KPlLp4VOSIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZHPhCQJNTYfzK4MzBNKfTgpWh1F1ARho6tqjbuAaHZw=;
+ b=pVbTnpiJc2nIr8YMfZSL2tioTXQkezuF2UA2GPq82DxatXQbs0xIloZAtSfAWmzGwWAAx+iCsvt45d/UefB+4tCgdvIidspUNrRBEVSO+4UTwWaH1npzCIgFuORl5iVWgB2DZLzkY3ozSf20JEzy9bXTWASCe9rvvdJdeE4JkZGGA6peA6JKo/JGFiFOXjul+VEL/O1uNJYiEPV1+TyswTsvGYUkfeu8BatpPqqoBzi9JJGj1Q0MsvsYG4EjD1BF3w8ljTkJaCZJ+uoJPV1fHRx5VgxBzuHKc9hqDoefe64TOlWDd6bvUPix51vTn39kWk5fzB95dCIYKYE53YQS4A==
+Received: from SN7PR12MB6960.namprd12.prod.outlook.com (2603:10b6:806:260::18)
+ by EAYPR12MB999131.namprd12.prod.outlook.com (2603:10b6:303:2be::6)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.12; Thu, 23 Apr
+ 2026 17:06:09 +0000
+Received: from SN7PR12MB6960.namprd12.prod.outlook.com
+ ([fe80::faca:1bd8:d3be:a464]) by SN7PR12MB6960.namprd12.prod.outlook.com
+ ([fe80::faca:1bd8:d3be:a464%3]) with mapi id 15.20.9846.021; Thu, 23 Apr 2026
+ 17:06:09 +0000
+From: Cliff Burdick <cburdick@nvidia.com>
+To: "Burakov, Anatoly" <anatoly.burakov@intel.com>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: "NBU-Contact-Thomas Monjalon (EXTERNAL)" <thomas@monjalon.net>
+Subject: RE: [PATCH v4 1/2] eal: support dmabuf
+Thread-Topic: [PATCH v4 1/2] eal: support dmabuf
+Thread-Index: AQHcle5ljmlbJM5vaEi9DF71TnQg6LV/Iz6AgG40N0A=
+Date: Thu, 23 Apr 2026 17:06:09 +0000
+Message-ID: <SN7PR12MB69604B778A001E389DB929B4AB2A2@SN7PR12MB6960.namprd12.prod.outlook.com>
+References: <20260203230338.1066297-1-cburdick@nvidia.com>
+ <20260204155206.2345189-1-cburdick@nvidia.com>
+ <20260204155206.2345189-2-cburdick@nvidia.com>
+ <39632c4b-10c3-4bdc-b4ea-9010391b4ada@intel.com>
+In-Reply-To: <39632c4b-10c3-4bdc-b4ea-9010391b4ada@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN7PR12MB6960:EE_|EAYPR12MB999131:EE_
+x-ms-office365-filtering-correlation-id: d43db375-4dd4-4fe6-5b44-08dea15a9d5b
+x-ld-processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+ ARA:13230040|376014|1800799024|366016|38070700021|56012099003|18002099003|22082099003;
+x-microsoft-antispam-message-info: BUetiiNGwH+Tx5gnt7zxO6rm8oIukl8TbiUT7m6tKe+xFlhFlw/RWcluzUHD5nMel1gp2633oQqQmqZKh8dTVmhMRPRaQ6CuWPvtghlZdGCBpEaT/7qa7SIKsWHGQrDBYUHRN+PGukRDSm0fQAgUSQokD9D1OTUk8oA34vTJZblf0bbm2s0SqZOKLj95PGPy+jhamAlBQUOigyvpIP1xak/WwvL4U37A0FHYsVQ1lXjVvfHVVUrmrfy/DwORSQi4B0YWB2D63V8UuvkmMyAZ/0EOBWb9Rz1gunl8MMRKP28wyj9zCXoM/RsAp5wsbvPWXas1a5Lw/QfmI5Nimzm9JRH3uhlRqFjaAL2zJUWQ9FIg9ALwtjwozL9vaZd/4PLeqTZyzaWEvqo87mjeYvVulMG7q5mdB1/RdUgXZlSDG2qTBp+xREKcqGqKbH5MI21gDz4/ZPa60KW3Ss65Uo3yZfwWMVe9mT0N9T/fpu+na3+kGi+raU2qo5mMkv/w/WUhcwgZ1ocGT6gyK3JfwH2E1zTpu7vc4dIDpbMI3YrkYyIvL23O46zr6GZe0OxRx/prmn4ZroaT9KKtnRrZ2n/6BzSYZqrSRyqkoIsY7Hv42/qGya8bdtzLjtmzyFnlc6/hGkvLu94dJeMaX/xotcJ6l3WG9SmZsbzrhETqEE9Bm1wNA5PEhPDzzw7xMujJKBVXGB8QA0E+CwVo/g4j1ZVKiGH8FGBV29wo9GJycrE/UfJAI3c62R9PIvP43Ez1WCa3fyP1YcynmZbzans2wUKhhS4kJfCxflX/ydtS5OiUmTo=
+x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:SN7PR12MB6960.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(376014)(1800799024)(366016)(38070700021)(56012099003)(18002099003)(22082099003);
+ DIR:OUT; SFP:1101; 
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VlY4YkxwNU04VEFnQnlqbzBZNkNnY01tNDI4Q0RyZElISENhNHJRdzBrdFlZ?=
+ =?utf-8?B?WDQwL0t1cFc2R2RmMllRZ2dQN1FaalVSQU5yK2x6TE1yYzQvRGhjVXlFcG1P?=
+ =?utf-8?B?SVJjbVcwbTlvekFqU1d1WjYzWkVCZTZEcGVjVGdycVUzOUlsaHQwR1dlMUtD?=
+ =?utf-8?B?a3RvdjF2M2ZPdmhyRjc2STlzbG93Q0doWXNhNVZMb01vYUk2UXFLUW0yWlBy?=
+ =?utf-8?B?Z3RUdDl3Vm1kZFRockMzVEY2TDhSLzR1RnUvLzlpQVVsdU5MdytHTjBFdklj?=
+ =?utf-8?B?Mm5oUnIwRjV2SWEyd2ZIWDFDeDFSTVAxMklEQ0lZVThyeitLWHNZdDF3M3cr?=
+ =?utf-8?B?SXdDZnJ5UmpGbHRoWmphSGxBYzBKaFlmd1JjL2U2cmFldk14R3g1OXpudFVy?=
+ =?utf-8?B?eWl3YS96bXV3eW1iVmIrR0VHaUlXSGt0MTBLY2wwR1UzV0RKclZpVlB0Nlcz?=
+ =?utf-8?B?MVZhczRaaHNVc2ZSSTdiS01WZ01DbTdzSXBJTmlGR1BQcWpmOUJpaG8xTFZC?=
+ =?utf-8?B?U0VqbVplaFNTZjRqcDZJc3dlcDVlYjlHNUQ4WGp5YVNiN1BkRmc0QkZwbHYx?=
+ =?utf-8?B?V3dCZFNTcjdQQkZ5ajlPRnlsNGgzRXJWSmpQdUxIcisyRmxaOGE3TWxUR3Bu?=
+ =?utf-8?B?S2FHa3lOVGJpTTc3UzRpR3lYQTNNM2xTK0Z2dmNHdmdyS2M3czBjYngrT0Y0?=
+ =?utf-8?B?WEpicVhVWDVGbjRPN2E4VDE4ZGM3Z2xxU1lmejFHUzNvaldwbGloR0ZVU0xs?=
+ =?utf-8?B?WE9qOVhuT29FazJuS2VwY2xNNHRWRVp1L0Iydk1Mc3V0WFZFd09kUDE2VGJZ?=
+ =?utf-8?B?ZktHais5RytkU0JYZjZGU1hMRk9FMk9jYWhUazUxZnVsVHhBTXBSbzZWaGJX?=
+ =?utf-8?B?WjYrN29VaFdxSU5RVVpqcXhaY09PUmdyblhYeElmTU5Jd25sdU5neE4yYUJZ?=
+ =?utf-8?B?elRTSk9TeFpEM2I0RVRyK1FQbnR0VnJFZld4MCtRb2RHS3k0TnNIR3FiWlVv?=
+ =?utf-8?B?WjBaZS8xSUJoZFdjcFBTWEhydDZmVjVIT0l0Q3NSdHFYdkpad3NmRXpudzBE?=
+ =?utf-8?B?OTVDT0VmL3RBZzZXbzlVU0tUeHNnc3pJTWRtdnV3aEN3K1F3YVpjc0taaGc2?=
+ =?utf-8?B?SWV4clVCeGlNbStqaUE2dXNLNHIxdS9kMWZYdXFsNlBXdjQxYVNHSVpieDhY?=
+ =?utf-8?B?RWVScXo2TW52R3hBcG5FSTVabFNBV25EaC91YXRiWDZvN3JBZmxzdncwbHlo?=
+ =?utf-8?B?d1dZc2JEZmdkM2NEaGEvYmZ3NGVmOERjbXVMTzhwU1drTXFFajFrRGhJYVNK?=
+ =?utf-8?B?SmtodlZudXhORVhvWE1EcVZyTFByekpUWENuQWUzWTV1MitPVUdZOTNRVjFP?=
+ =?utf-8?B?Q0RVR1BDRHBmQTZpcnVPUGE5Mm5xZGxFREwvcEVIU2czbGJ0aEhrTkJkZHo2?=
+ =?utf-8?B?UFFEcWVkYWZiL1psNStzTWlLVWYxQnVQVFJub0NpcFlNODNyZE0wbFhnT1hs?=
+ =?utf-8?B?anRHRVRIT2tpWDNnQVZWVTVQMWFLNDJPY045WVF1N21SLzZLUWJ3YWFWK0J3?=
+ =?utf-8?B?YW9NZGlLd3B3OHF5OExxVm5VS1g0OGJWRENiVUZmaFRYaWFsZEZBKzNEY0xq?=
+ =?utf-8?B?eGhydzg4VWZBaVZjeHZ6VEdMazlUQkVZVkpYeWV3dGYyckVGVGtKM0FDSE04?=
+ =?utf-8?B?TlVtTUpPYWpldjRoOWtTdElzN0w2N2ZxSUVxcWwrM1Ftd3VFMkFTbUxGMmY1?=
+ =?utf-8?B?VmRzL3B6TjBrMnFjazFlNzNPdEpicWF6SXEwdjRZTVBEMEJOMS9laXhjNmZi?=
+ =?utf-8?B?ay9SdWJidWNDa1FZRU5tMFN6d0c5bm9CRG5oMlVnSC9hWXN3QVR6UkFXS1ZW?=
+ =?utf-8?B?NU43cWdoeGtBaU1vUHN3QWhWOUV6VHJLRHJQZDB2cXNDUEgxanhraXFnNkpL?=
+ =?utf-8?B?VDl0RVhaemJCaEU2d1dPb1VYWmE1dUNvUDNOOGxJemFneHl6d1lRK1Q2RDVI?=
+ =?utf-8?B?ZXhqY0VhQmFiOWNnQlhKS0ZKTFBmUFNycU53dGx6cW1tRXdDamdwOExBOHQz?=
+ =?utf-8?B?VnpxTVhZcFJNSE84ZWFXTFFQSmRCL3gyU2NWNDJqT2hrcVZQdDRFcWVmMVZB?=
+ =?utf-8?B?K2hmaUs4ZlJzNnZyWU1VMXZ3Tmx6MDdLV3o0YklRdmJOUy9VSEFkWVlDT2dn?=
+ =?utf-8?B?dUUvUUl2cStVc2w5UyswU3JwdTh0ckl5VE1Jb3h1UWxkd3YxLzhVaG9YZzVL?=
+ =?utf-8?B?K0tXQVNkNzV3Tm9uTzdHdTRpTVgra1BnbWl3b1Y3TlZRRTZtYVNWQUNBd1V5?=
+ =?utf-8?B?dGt5cXFYT1plUVRGWWZwblEvMUF3MU9id2pqU2dGMzZ6YVNiZXJBZz09?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB6960.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d43db375-4dd4-4fe6-5b44-08dea15a9d5b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Apr 2026 17:06:09.1965 (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ly00ip0WctjI+HMdlhQi3T62p6dshfCS/rGsodOtkAdIe2L+wCh8H6UzOFerWmFWpB38b1Ka3dxk7SXq+p5xsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: EAYPR12MB999131
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,589 +134,71 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Appropriately rename/update the framework rst files
-which have been moved to the API in this series.
-Resolve circular dependency issues in api/params/types
-and api/testpmd.
-
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
----
- ...{framework.context.rst => api.context.rst} |  2 +-
- ...mework.exception.rst => api.exception.rst} |  2 +-
- ...work.params.eal.rst => api.params.eal.rst} |  2 +-
- .../{framework.params.rst => api.params.rst}  |  6 ++--
- ....params.types.rst => api.params.types.rst} |  2 +-
- ...work.test_suite.rst => api.test_suite.rst} |  2 +-
- ...y.rst => api.testbed_model.capability.rst} |  2 +-
- ...odel.cpu.rst => api.testbed_model.cpu.rst} |  2 +-
- ...st => api.testbed_model.linux_session.rst} |  2 +-
- ...el.node.rst => api.testbed_model.node.rst} |  2 +-
- ...n.rst => api.testbed_model.os_session.rst} |  2 +-
- ...el.port.rst => api.testbed_model.port.rst} |  2 +-
- ...st => api.testbed_model.posix_session.rst} |  2 +-
- doc/api/dts/api.testbed_model.rst             | 28 +++++++++++++++++++
- ...ogy.rst => api.testbed_model.topology.rst} |  2 +-
- ...generator.capturing_traffic_generator.rst} |  2 +-
- .../api.testbed_model.traffic_generator.rst   | 16 +++++++++++
- ...testbed_model.traffic_generator.scapy.rst} |  2 +-
- ...l.traffic_generator.traffic_generator.rst} |  2 +-
- ...t => api.testbed_model.virtual_device.rst} |  2 +-
- .../{framework.utils.rst => api.utils.rst}    |  2 +-
- doc/api/dts/framework.linux_session.rst       |  8 ++++++
- doc/api/dts/framework.testbed_model.rst       | 28 -------------------
- ...mework.testbed_model.traffic_generator.rst | 16 -----------
- doc/api/dts/index.rst                         | 15 +++++-----
- dts/api/params/types.py                       |  8 ++++--
- dts/api/testpmd/__init__.py                   |  7 ++++-
- 27 files changed, 93 insertions(+), 75 deletions(-)
- rename doc/api/dts/{framework.context.rst => api.context.rst} (80%)
- rename doc/api/dts/{framework.exception.rst => api.exception.rst} (77%)
- rename doc/api/dts/{framework.params.eal.rst => api.params.eal.rst} (79%)
- rename doc/api/dts/{framework.params.rst => api.params.rst} (71%)
- rename doc/api/dts/{framework.params.types.rst => api.params.types.rst} (80%)
- rename doc/api/dts/{framework.test_suite.rst => api.test_suite.rst} (81%)
- rename doc/api/dts/{framework.testbed_model.capability.rst => api.testbed_model.capability.rst} (74%)
- rename doc/api/dts/{framework.testbed_model.cpu.rst => api.testbed_model.cpu.rst} (78%)
- rename doc/api/dts/{framework.testbed_model.linux_session.rst => api.testbed_model.linux_session.rst} (74%)
- rename doc/api/dts/{framework.testbed_model.node.rst => api.testbed_model.node.rst} (71%)
- rename doc/api/dts/{framework.testbed_model.os_session.rst => api.testbed_model.os_session.rst} (76%)
- rename doc/api/dts/{framework.testbed_model.port.rst => api.testbed_model.port.rst} (77%)
- rename doc/api/dts/{framework.testbed_model.posix_session.rst => api.testbed_model.posix_session.rst} (74%)
- create mode 100644 doc/api/dts/api.testbed_model.rst
- rename doc/api/dts/{framework.testbed_model.topology.rst => api.testbed_model.topology.rst} (73%)
- rename doc/api/dts/{framework.testbed_model.traffic_generator.capturing_traffic_generator.rst => api.testbed_model.traffic_generator.capturing_traffic_generator.rst} (68%)
- create mode 100644 doc/api/dts/api.testbed_model.traffic_generator.rst
- rename doc/api/dts/{framework.testbed_model.traffic_generator.scapy.rst => api.testbed_model.traffic_generator.scapy.rst} (70%)
- rename doc/api/dts/{framework.testbed_model.traffic_generator.traffic_generator.rst => api.testbed_model.traffic_generator.traffic_generator.rst} (65%)
- rename doc/api/dts/{framework.testbed_model.virtual_device.rst => api.testbed_model.virtual_device.rst} (72%)
- rename doc/api/dts/{framework.utils.rst => api.utils.rst} (80%)
- create mode 100644 doc/api/dts/framework.linux_session.rst
- delete mode 100644 doc/api/dts/framework.testbed_model.rst
- delete mode 100644 doc/api/dts/framework.testbed_model.traffic_generator.rst
-
-diff --git a/doc/api/dts/framework.context.rst b/doc/api/dts/api.context.rst
-similarity index 80%
-rename from doc/api/dts/framework.context.rst
-rename to doc/api/dts/api.context.rst
-index 925c160360..65b4ab9a47 100644
---- a/doc/api/dts/framework.context.rst
-+++ b/doc/api/dts/api.context.rst
-@@ -3,6 +3,6 @@
- context - DTS execution context
- ===============================
- 
--.. automodule:: framework.context
-+.. automodule:: api.context
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.exception.rst b/doc/api/dts/api.exception.rst
-similarity index 77%
-rename from doc/api/dts/framework.exception.rst
-rename to doc/api/dts/api.exception.rst
-index efb47dc5ae..8e6bff5ee7 100644
---- a/doc/api/dts/framework.exception.rst
-+++ b/doc/api/dts/api.exception.rst
-@@ -3,6 +3,6 @@
- exception - Exceptions
- ======================
- 
--.. automodule:: framework.exception
-+.. automodule:: api.exception
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.params.eal.rst b/doc/api/dts/api.params.eal.rst
-similarity index 79%
-rename from doc/api/dts/framework.params.eal.rst
-rename to doc/api/dts/api.params.eal.rst
-index 6999b00233..4531cb1fe1 100644
---- a/doc/api/dts/framework.params.eal.rst
-+++ b/doc/api/dts/api.params.eal.rst
-@@ -3,6 +3,6 @@
- eal - EAL Parameters Modelling
- ==============================
- 
--.. automodule:: framework.params.eal
-+.. automodule:: api.params.eal
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.params.rst b/doc/api/dts/api.params.rst
-similarity index 71%
-rename from doc/api/dts/framework.params.rst
-rename to doc/api/dts/api.params.rst
-index d8c6af9667..3ea7f9215e 100644
---- a/doc/api/dts/framework.params.rst
-+++ b/doc/api/dts/api.params.rst
-@@ -3,7 +3,7 @@
- params - Command Line Parameters Modelling
- ==========================================
- 
--.. automodule:: framework.params
-+.. automodule:: api.params
-    :members:
-    :show-inheritance:
- 
-@@ -11,5 +11,5 @@ params - Command Line Parameters Modelling
-    :hidden:
-    :maxdepth: 1
- 
--   framework.params.eal
--   framework.params.types
-+   api.params.eal
-+   api.params.types
-diff --git a/doc/api/dts/framework.params.types.rst b/doc/api/dts/api.params.types.rst
-similarity index 80%
-rename from doc/api/dts/framework.params.types.rst
-rename to doc/api/dts/api.params.types.rst
-index 6d609038be..4754b3a665 100644
---- a/doc/api/dts/framework.params.types.rst
-+++ b/doc/api/dts/api.params.types.rst
-@@ -3,6 +3,6 @@
- params.types - Parameters Modelling Types
- =========================================
- 
--.. automodule:: framework.params.types
-+.. automodule:: api.params.types
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.test_suite.rst b/doc/api/dts/api.test_suite.rst
-similarity index 81%
-rename from doc/api/dts/framework.test_suite.rst
-rename to doc/api/dts/api.test_suite.rst
-index 9517f51a4a..4acb7b103a 100644
---- a/doc/api/dts/framework.test_suite.rst
-+++ b/doc/api/dts/api.test_suite.rst
-@@ -3,6 +3,6 @@
- test\_suite - Common Test Suite Features
- ========================================
- 
--.. automodule:: framework.test_suite
-+.. automodule:: api.test_suite
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.capability.rst b/doc/api/dts/api.testbed_model.capability.rst
-similarity index 74%
-rename from doc/api/dts/framework.testbed_model.capability.rst
-rename to doc/api/dts/api.testbed_model.capability.rst
-index fab91cad83..88e396dddb 100644
---- a/doc/api/dts/framework.testbed_model.capability.rst
-+++ b/doc/api/dts/api.testbed_model.capability.rst
-@@ -3,6 +3,6 @@
- capability - Testbed Capabilities
- =================================
- 
--.. automodule:: framework.testbed_model.capability
-+.. automodule:: api.testbed_model.capability
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.cpu.rst b/doc/api/dts/api.testbed_model.cpu.rst
-similarity index 78%
-rename from doc/api/dts/framework.testbed_model.cpu.rst
-rename to doc/api/dts/api.testbed_model.cpu.rst
-index 997f2a9795..dbbb29480a 100644
---- a/doc/api/dts/framework.testbed_model.cpu.rst
-+++ b/doc/api/dts/api.testbed_model.cpu.rst
-@@ -3,6 +3,6 @@
- cpu - CPU Representation and Utilities
- ======================================
- 
--.. automodule:: framework.testbed_model.cpu
-+.. automodule:: api.testbed_model.cpu
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.linux_session.rst b/doc/api/dts/api.testbed_model.linux_session.rst
-similarity index 74%
-rename from doc/api/dts/framework.testbed_model.linux_session.rst
-rename to doc/api/dts/api.testbed_model.linux_session.rst
-index 7567816199..cfe79d8bca 100644
---- a/doc/api/dts/framework.testbed_model.linux_session.rst
-+++ b/doc/api/dts/api.testbed_model.linux_session.rst
-@@ -3,6 +3,6 @@
- linux\_session - Linux Remote Session
- =====================================
- 
--.. automodule:: framework.testbed_model.linux_session
-+.. automodule:: api.testbed_model.linux_session
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.node.rst b/doc/api/dts/api.testbed_model.node.rst
-similarity index 71%
-rename from doc/api/dts/framework.testbed_model.node.rst
-rename to doc/api/dts/api.testbed_model.node.rst
-index 23c6c46a00..15f522e5f7 100644
---- a/doc/api/dts/framework.testbed_model.node.rst
-+++ b/doc/api/dts/api.testbed_model.node.rst
-@@ -3,6 +3,6 @@
- node - Base Node
- ================
- 
--.. automodule:: framework.testbed_model.node
-+.. automodule:: api.testbed_model.node
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.os_session.rst b/doc/api/dts/api.testbed_model.os_session.rst
-similarity index 76%
-rename from doc/api/dts/framework.testbed_model.os_session.rst
-rename to doc/api/dts/api.testbed_model.os_session.rst
-index ecfb352311..e7e3f9894f 100644
---- a/doc/api/dts/framework.testbed_model.os_session.rst
-+++ b/doc/api/dts/api.testbed_model.os_session.rst
-@@ -3,6 +3,6 @@
- os\_session - OS-aware Remote Session ABC
- =========================================
- 
--.. automodule:: framework.testbed_model.os_session
-+.. automodule:: api.testbed_model.os_session
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.port.rst b/doc/api/dts/api.testbed_model.port.rst
-similarity index 77%
-rename from doc/api/dts/framework.testbed_model.port.rst
-rename to doc/api/dts/api.testbed_model.port.rst
-index fdb7ca8a1d..d64501aef0 100644
---- a/doc/api/dts/framework.testbed_model.port.rst
-+++ b/doc/api/dts/api.testbed_model.port.rst
-@@ -3,7 +3,7 @@
- port - NIC Port Representation
- ==============================
- 
--.. automodule:: framework.testbed_model.port
-+.. automodule:: api.testbed_model.port
-    :members:
-    :show-inheritance:
-    :noindex:
-diff --git a/doc/api/dts/framework.testbed_model.posix_session.rst b/doc/api/dts/api.testbed_model.posix_session.rst
-similarity index 74%
-rename from doc/api/dts/framework.testbed_model.posix_session.rst
-rename to doc/api/dts/api.testbed_model.posix_session.rst
-index e65585fd85..9f0e9ff18d 100644
---- a/doc/api/dts/framework.testbed_model.posix_session.rst
-+++ b/doc/api/dts/api.testbed_model.posix_session.rst
-@@ -3,6 +3,6 @@
- posix\_session - Posix Remote Session
- =====================================
- 
--.. automodule:: framework.testbed_model.posix_session
-+.. automodule:: api.testbed_model.posix_session
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/api.testbed_model.rst b/doc/api/dts/api.testbed_model.rst
-new file mode 100644
-index 0000000000..5e2e5189b2
---- /dev/null
-+++ b/doc/api/dts/api.testbed_model.rst
-@@ -0,0 +1,28 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+testbed\_model - Testbed Modelling Package
-+==========================================
-+
-+.. automodule:: api.testbed_model
-+   :members:
-+   :show-inheritance:
-+
-+.. toctree::
-+   :hidden:
-+   :maxdepth: 2
-+
-+   api.testbed_model.traffic_generator
-+
-+.. toctree::
-+   :hidden:
-+   :maxdepth: 1
-+
-+   api.testbed_model.os_session
-+   api.testbed_model.linux_session
-+   api.testbed_model.posix_session
-+   api.testbed_model.node
-+   api.testbed_model.capability
-+   api.testbed_model.cpu
-+   api.testbed_model.port
-+   api.testbed_model.topology
-+   api.testbed_model.virtual_device
-diff --git a/doc/api/dts/framework.testbed_model.topology.rst b/doc/api/dts/api.testbed_model.topology.rst
-similarity index 73%
-rename from doc/api/dts/framework.testbed_model.topology.rst
-rename to doc/api/dts/api.testbed_model.topology.rst
-index 496f2a895f..bb63fe38dc 100644
---- a/doc/api/dts/framework.testbed_model.topology.rst
-+++ b/doc/api/dts/api.testbed_model.topology.rst
-@@ -3,6 +3,6 @@
- topology - Testbed Topology
- ===========================
- 
--.. automodule:: framework.testbed_model.topology
-+.. automodule:: api.testbed_model.topology
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.traffic_generator.capturing_traffic_generator.rst b/doc/api/dts/api.testbed_model.traffic_generator.capturing_traffic_generator.rst
-similarity index 68%
-rename from doc/api/dts/framework.testbed_model.traffic_generator.capturing_traffic_generator.rst
-rename to doc/api/dts/api.testbed_model.traffic_generator.capturing_traffic_generator.rst
-index 29fa834042..cfe03201a7 100644
---- a/doc/api/dts/framework.testbed_model.traffic_generator.capturing_traffic_generator.rst
-+++ b/doc/api/dts/api.testbed_model.traffic_generator.capturing_traffic_generator.rst
-@@ -3,6 +3,6 @@
- capturing\_traffic\_generator - Base Capturing TG ABC
- =====================================================
- 
--.. automodule:: framework.testbed_model.traffic_generator.capturing_traffic_generator
-+.. automodule:: api.testbed_model.traffic_generator.capturing_traffic_generator
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/api.testbed_model.traffic_generator.rst b/doc/api/dts/api.testbed_model.traffic_generator.rst
-new file mode 100644
-index 0000000000..311bdcf6b9
---- /dev/null
-+++ b/doc/api/dts/api.testbed_model.traffic_generator.rst
-@@ -0,0 +1,16 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+traffic\_generator Subpackage
-+=============================
-+
-+.. automodule:: api.testbed_model.traffic_generator
-+   :members:
-+   :show-inheritance:
-+
-+.. toctree::
-+   :hidden:
-+   :maxdepth: 1
-+
-+   api.testbed_model.traffic_generator.traffic_generator
-+   api.testbed_model.traffic_generator.capturing_traffic_generator
-+   api.testbed_model.traffic_generator.scapy
-diff --git a/doc/api/dts/framework.testbed_model.traffic_generator.scapy.rst b/doc/api/dts/api.testbed_model.traffic_generator.scapy.rst
-similarity index 70%
-rename from doc/api/dts/framework.testbed_model.traffic_generator.scapy.rst
-rename to doc/api/dts/api.testbed_model.traffic_generator.scapy.rst
-index df78ac9514..949bb66632 100644
---- a/doc/api/dts/framework.testbed_model.traffic_generator.scapy.rst
-+++ b/doc/api/dts/api.testbed_model.traffic_generator.scapy.rst
-@@ -3,6 +3,6 @@
- scapy - Capturing Traffic Generator
- ===================================
- 
--.. automodule:: framework.testbed_model.traffic_generator.scapy
-+.. automodule:: api.testbed_model.traffic_generator.scapy
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.traffic_generator.traffic_generator.rst b/doc/api/dts/api.testbed_model.traffic_generator.traffic_generator.rst
-similarity index 65%
-rename from doc/api/dts/framework.testbed_model.traffic_generator.traffic_generator.rst
-rename to doc/api/dts/api.testbed_model.traffic_generator.traffic_generator.rst
-index bfec728dee..1045e534b5 100644
---- a/doc/api/dts/framework.testbed_model.traffic_generator.traffic_generator.rst
-+++ b/doc/api/dts/api.testbed_model.traffic_generator.traffic_generator.rst
-@@ -3,6 +3,6 @@
- traffic\_generator - Base TG ABC
- ================================
- 
--.. automodule:: framework.testbed_model.traffic_generator.traffic_generator
-+.. automodule:: api.testbed_model.traffic_generator.traffic_generator
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.virtual_device.rst b/doc/api/dts/api.testbed_model.virtual_device.rst
-similarity index 72%
-rename from doc/api/dts/framework.testbed_model.virtual_device.rst
-rename to doc/api/dts/api.testbed_model.virtual_device.rst
-index a6b0420e75..97adc895f6 100644
---- a/doc/api/dts/framework.testbed_model.virtual_device.rst
-+++ b/doc/api/dts/api.testbed_model.virtual_device.rst
-@@ -3,6 +3,6 @@
- virtual\_device - Virtual Devices
- =================================
- 
--.. automodule:: framework.testbed_model.virtual_device
-+.. automodule:: api.testbed_model.virtual_device
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.utils.rst b/doc/api/dts/api.utils.rst
-similarity index 80%
-rename from doc/api/dts/framework.utils.rst
-rename to doc/api/dts/api.utils.rst
-index cc06d4c3c3..0b4baff1b5 100644
---- a/doc/api/dts/framework.utils.rst
-+++ b/doc/api/dts/api.utils.rst
-@@ -3,6 +3,6 @@
- utils - Various Utilities
- =========================
- 
--.. automodule:: framework.utils
-+.. automodule:: api.utils
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/framework.linux_session.rst b/doc/api/dts/framework.linux_session.rst
-new file mode 100644
-index 0000000000..5cb2d04db1
---- /dev/null
-+++ b/doc/api/dts/framework.linux_session.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+linux\_session - Linux Remote Session
-+=====================================
-+
-+.. automodule:: framework.linux_session
-+   :members:
-+   :show-inheritance:
-diff --git a/doc/api/dts/framework.testbed_model.rst b/doc/api/dts/framework.testbed_model.rst
-deleted file mode 100644
-index f283178f6a..0000000000
---- a/doc/api/dts/framework.testbed_model.rst
-+++ /dev/null
-@@ -1,28 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--testbed\_model - Testbed Modelling Package
--==========================================
--
--.. automodule:: framework.testbed_model
--   :members:
--   :show-inheritance:
--
--.. toctree::
--   :hidden:
--   :maxdepth: 2
--
--   framework.testbed_model.traffic_generator
--
--.. toctree::
--   :hidden:
--   :maxdepth: 1
--
--   framework.testbed_model.os_session
--   framework.testbed_model.linux_session
--   framework.testbed_model.posix_session
--   framework.testbed_model.node
--   framework.testbed_model.capability
--   framework.testbed_model.cpu
--   framework.testbed_model.port
--   framework.testbed_model.topology
--   framework.testbed_model.virtual_device
-diff --git a/doc/api/dts/framework.testbed_model.traffic_generator.rst b/doc/api/dts/framework.testbed_model.traffic_generator.rst
-deleted file mode 100644
-index 24c250ee3a..0000000000
---- a/doc/api/dts/framework.testbed_model.traffic_generator.rst
-+++ /dev/null
-@@ -1,16 +0,0 @@
--.. SPDX-License-Identifier: BSD-3-Clause
--
--traffic\_generator Subpackage
--=============================
--
--.. automodule:: framework.testbed_model.traffic_generator
--   :members:
--   :show-inheritance:
--
--.. toctree::
--   :hidden:
--   :maxdepth: 1
--
--   framework.testbed_model.traffic_generator.traffic_generator
--   framework.testbed_model.traffic_generator.capturing_traffic_generator
--   framework.testbed_model.traffic_generator.scapy
-diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index c719297c11..bdb8462622 100644
---- a/doc/api/dts/index.rst
-+++ b/doc/api/dts/index.rst
-@@ -16,9 +16,9 @@ Packages
- 
-    tests
-    api
--   framework.testbed_model
-+   api.testbed_model
-    framework.remote_session
--   framework.params
-+   api.params
-    framework.config
- 
- Modules
-@@ -29,14 +29,15 @@ Modules
- 
-    framework.runner
-    framework.test_run
--   framework.test_suite
-+   framework.linux_session
-+   api.test_suite
-    framework.test_result
-    framework.settings
--   framework.context
-+   api.context
-    framework.logger
-    framework.parser
--   framework.utils
--   framework.exception
-+   api.utils
-+   api.exception
- 
- 
- Indices and tables
-@@ -44,4 +45,4 @@ Indices and tables
- 
- * :ref:`genindex`
- * :ref:`modindex`
--* :ref:`search`
-+* :ref:`search`
-\ No newline at end of file
-diff --git a/dts/api/params/types.py b/dts/api/params/types.py
-index 55a0e546c1..280c87ec92 100644
---- a/dts/api/params/types.py
-+++ b/dts/api/params/types.py
-@@ -12,8 +12,10 @@ def create_testpmd(**kwargs: Unpack[TestPmdParamsDict]):
-             params = TestPmdParams(**kwargs)
- """
- 
-+from __future__ import annotations
-+
- from pathlib import PurePath
--from typing import TypedDict
-+from typing import TYPE_CHECKING, TypedDict
- 
- from api.cryptodev.config import (
-     AeadAlgName,
-@@ -32,7 +34,9 @@ def create_testpmd(**kwargs: Unpack[TestPmdParamsDict]):
-     TestType,
-     TLSVersion,
- )
--from api.params import Switch, YesNoSwitch
-+
-+if TYPE_CHECKING:
-+    from api.params import Switch, YesNoSwitch
- from api.testbed_model.cpu import LogicalCoreList
- from api.testbed_model.port import Port
- from api.testbed_model.virtual_device import VirtualDevice
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-index e9cd822bac..09974048e7 100644
---- a/dts/api/testpmd/__init__.py
-+++ b/dts/api/testpmd/__init__.py
-@@ -14,6 +14,8 @@
-     testpmd.close()
- """
- 
-+from __future__ import annotations
-+
- import functools
- import re
- import time
-@@ -21,6 +23,7 @@
- from enum import Flag
- from pathlib import PurePath
- from typing import (
-+    TYPE_CHECKING,
-     Any,
-     Callable,
-     ClassVar,
-@@ -34,7 +37,9 @@
- from api.capabilities import LinkTopology, NicCapability
- from api.context import get_ctx
- from api.exception import InteractiveCommandExecutionError, InternalError
--from api.params.types import TestPmdParamsDict
-+
-+if TYPE_CHECKING:
-+    from api.params.types import TestPmdParamsDict
- from api.testpmd.config import PortTopology, SimpleForwardingModes, TestPmdParams
- from api.testpmd.types import (
-     ChecksumOffloadOptions,
--- 
-2.52.0
-
+PiAgWy0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ICBGcm9tOiBCdXJha292LCBBbmF0b2x5
+IDxhbmF0b2x5LmJ1cmFrb3ZAaW50ZWwuY29tPg0KPiAgU2VudDogVGh1cnNkYXksIEZlYnJ1YXJ5
+IDEyLCAyMDI2IDU6NTggQU0NCj4gIFRvOiBDbGlmZiBCdXJkaWNrIDxjYnVyZGlja0BudmlkaWEu
+Y29tPjsgZGV2QGRwZGsub3JnDQo+ICBDYzogTkJVLUNvbnRhY3QtVGhvbWFzIE1vbmphbG9uIChF
+WFRFUk5BTCkgPHRob21hc0Btb25qYWxvbi5uZXQ+DQo+ICBTdWJqZWN0OiBSZTogW1BBVENIIHY0
+IDEvMl0gZWFsOiBzdXBwb3J0IGRtYWJ1Zl0oKQ0KPiAgIA0KPiAgRXh0ZXJuYWwgZW1haWw6IFVz
+ZSBjYXV0aW9uIG9wZW5pbmcgbGlua3Mgb3IgYXR0YWNobWVudHMNCj4gICANCj4gICANCj4gIE9u
+IDIvNC8yMDI2IDQ6NTAgUE0sIENsaWZmIEJ1cmRpY2sgd3JvdGU6DQo+ICA+IGRtYWJ1ZiBpcyBh
+IG1vZGVybiBMaW51eCBrZXJuZWwgZmVhdHVyZSB0byBhbGxvdyBETUEgdHJhbnNmZXJzIGJldHdl
+ZW4NCj4gID4gdHdvIGRyaXZlcnMuIENvbW1vbiBleGFtcGxlcyBvZiB1c2FnZSBhcmUgc3RyZWFt
+aW5nIHZpZGVvIGRldmljZXMgYW5kDQo+ICA+IE5JQyB0byBHUFUgdHJhbnNmZXJzLiBQcmlvciB0
+byBkbWFidWYgdXNlcnMgaGFkIHRvIGxvYWQgcHJvcHJpZXRhcnkNCj4gID4gZHJpdmVycyB0byBl
+eHBvc2UgdGhlIERNQSBtYXBwaW5ncy4gV2l0aCBkbWFidWYgdGhlIHByb3ByaWV0YXJ5DQo+ICA+
+IGRyaXZlcnMgYXJlIG5vIGxvbmdlciByZXF1aXJlZC4NCj4gID4gDQo+ICA+IEEgbmV3IGFwaSBm
+dW5jdGlvbiBydGVfZXh0bWVtX3JlZ2lzdGVyX2RtYWJ1ZiBpcyBpbnRyb2R1Y2VkIHRvIGNyZWF0
+ZQ0KPiAgPiB0aGUgbWFwcGluZyBmcm9tIGEgZG1hYnVmIGZpbGUgZGVzY3JpcHRvci4gZG1hYnVm
+IHVzZXMgYSBmaWxlDQo+ICA+IGRlc2NyaXB0b3IgYW5kIGFuIG9mZnNldCB0aGF0IGhhcyBiZWVu
+IHByZS1vcGVuZWQgd2l0aCB0aGUga2VybmVsLiBUaGUNCj4gID4ga2VybmVsIHVzZXMgdGhlIGZp
+bGUgZGVzY3JpcHRvciB0byBtYXAgdG8gYSBWQSBwb2ludGVyLiBUbyBhdm9pZCBBQkkNCj4gID4g
+Y2hhbmdlcywgYSBzdGF0aWMgc3RydWN0IGlzIHVzZWQgaW5zaWRlIG9mIGVhbF9jb21tb25fbWVt
+b3J5LmMsIGFuZA0KPiAgPiBsb29rdXBzIGFyZSBkb25lIG9uIHRoaXMgc3RydWN0IHJhdGhlciB0
+aGFuIGZyb20gdGhlIHJ0ZV9tZW1zZWdfbGlzdC4NCj4gID4gDQo+ICA+IElkZWFsbHkgd2Ugd291
+bGQgbGlrZSB0byBhZGQgYm90aCB0aGUgZG1hYnVmIGZpbGUgZGVzY3JpcHRvciBhbmQNCj4gID4g
+b2Zmc2V0IHRvIHJ0ZV9tZW1zZWdfbGlzdCwgYnV0IGl0J3Mgbm90IGNsZWFyIGlmIHdlIGNhbiBy
+ZXVzZSBleGlzdGluZw0KPiAgPiBmaWVsZHMgd2hlbiB1c2luZyB0aGUgZG1hYnVmIEFQSS4NCj4g
+ID4gDQo+ICA+IFdlIGNvdWxkIHJlbmFtZSB0aGUgZXh0ZXJuYWwgZmxhZyB0byBhIG1vcmUgZ2Vu
+ZXJpYyAicHJvcGVydGllcyIgZmxhZw0KPiAgPiB3aGVyZSAiZXh0ZXJuYWwiIGlzIHRoZSBsb3dl
+c3QgYml0LCB0aGVuIHdlIGNhbiB1c2UgdGhlIHNlY29uZCBiaXQgdG8NCj4gID4gaW5kaWNhdGUg
+dGhlIHByZXNlbmNlIG9mIGRtYWJ1Zi4gSW4gdGhlIHByZXNlbmNlIG9mIHRoZSBmbGFnIGZvcg0K
+PiAgPiBkbWFidWYgd2UgY291bGQgcmV1c2UgdGhlIGJhc2VfdmEgYWRkcmVzcyBmaWVsZCBmb3Ig
+dGhlIGRtYWJ1ZiBvZmZzZXQsDQo+ICA+IGFuZCB0aGUgc29ja2V0X2lkIGZvciB0aGUgZmlsZSBk
+ZXNjcmlwdG9yLg0KPiAgPiANCj4gID4gU2lnbmVkLW9mZi1ieTogQ2xpZmYgQnVyZGljayA8W2Ni
+dXJkaWNrQG52aWRpYS5jb21dKG1haWx0bzpjYnVyZGlja0BudmlkaWEuY29tKT4NCj4gID4gLS0t
+DQo+ICAgDQo+ICBIaSwNCj4gICANCj4gIEEgZmV3IHJhbmRvbSB0aG91Z2h0cyBhYm91dCB0aGUg
+cGF0Y2hzZXQuDQo+ICAgDQo+ICBGb3Igb25lLCB0aGlzIEFQSSBpcyBvYnZpb3VzbHkgTGludXgt
+b25seS4gVGhpcyBpbiBpdHNlbGYgaXMgbm90IGEgcHJvYmxlbSAod2UgZG8gaGF2ZSBWRklPIEFQ
+SS4uLikgYnV0IEkgd291bGQgcmVhbGx5IGxpa2UgdG8gYXZvaWQgdGhhdCBpZiBwb3NzaWJsZS4N
+Cj4gICANCj4gIEZvciBhbm90aGVyLCBJIGRvbid0IHNlZSBhbnkgc3VwcG9ydCBmb3Igc2Vjb25k
+YXJ5IHByb2Nlc3NlcyAtIHRoZSBkbWFidWYgYXJyYXkgaXMgcHJvY2Vzcy1sb2NhbCwgYW5kIGNh
+bGxpbmcgcmVnaXN0ZXIoKSBmcm9tIHNlY29uZGFyeSBwcm9jZXNzIHdvdWxkIHByZXN1bWFibHkg
+ZWl0aGVyIGZhaWwgb3IgY3JlYXRlIGEgZHVwbGljYXRlIHNlZ21lbnQsIGRlcGVuZGluZyBvbiBl
+eGFjdGx5IHdoYXQgeW91IHBhc3MgaW50byB0aGUgcmVnaXN0ZXIgY2FsbC4gSWYgdGhpcyBzY2Vu
+YXJpbyBpc24ndCBzdXBwb3J0ZWQsIGl0IHNob3VsZCBhdCBsZWFzdCBiZSBleHBsaWNpdGx5IGRp
+c2FsbG93ZWQgYW5kIGRvY3VtZW50ZWQgdG8gYmUgc3VjaC4NCj4gICANCj4gIE15IGJpZ2dlc3Qg
+Y29uY2VybiBpcyB0aGF0IHRoaXMgaXMgY3JlYXRpbmcgYW5vdGhlciB0eXBlIG9mIGV4dGVybmFs
+IG1lbW9yeSBzZWdtZW50IGFuZCB0aHVzIHNlZ3JlZ2F0aW5nIHRoZSBBUEksIGJ1dCBpc24ndCBk
+b2luZyBpdCBpbiBhIHdheSB0aGF0IGlzIGdlbmVyaWMuIEkgY2FuIHNlZSBhIHZhbGlkIHVzZWNh
+c2UgZm9yIHRoaXMsIGJ1dCB3aGF0IHdlJ3JlIGVzc2VudGlhbGx5IGRvaW5nIGhlcmUgaXMgc3Rv
+cmluZyBzb21lIG1ldGFkYXRhIHRvZ2V0aGVyIHdpdGggdGhlIHNlZ21lbnQuIFNvLCBwZXJoYXBz
+LCB0aGlzIGlzIHdoYXQgd2Ugc2hvdWxkIGRvPyBUaGF0IHdvdWxkIHNlZW0gbGlrZSBhIGNsZWFu
+ZXN0IHNvbHV0aW9uIGZvciBtZSwgYW5kIGl0IHdvdWxkIGV4dGVuZCB1c2VmdWxuZXNzIG9mIHRo
+ZSBBUEkgdG8gb3RoZXIgdXNlIGNhc2VzIHdoZXJlIHRoZXJlIG1heSBiZSBhIHJlcXVpcmVtZW50
+IHRvIHN0b3JlIHNvbWUgbWV0YWRhdGEvZmQvd2hhdGV2ZXIgd2l0aCB0aGUgc2VnbWVudC4NCj4g
+ICANCj4gIFlvdSBjb3VsZCB0aGVuIGJ1aWxkIGFub3RoZXIgQVBJIG9uIHRvcCBvZiB0aGlzIChh
+IGxpYnJhcnk/KSB0aGF0IHdvdWxkIGhhbmRsZSB0aGluZ3MgbGlrZSBzZWNvbmRhcnkgcHJvY2Vz
+cyBzeW5jaHJvbml6YXRpb24gd2l0aCBJUEMsIHNvIHRoYXQgeW91IGhhdmUgYWxsIGZkJ3MgdmFs
+aWQgaW4gYWxsIHByb2Nlc3Nlcy4NCj4gICANCj4gIFRob3VnaHRzPw0KPiAgLS0NCj4gIFRoYW5r
+cywNCj4gIEFuYXRvbHkNCg0KSGkgQW5hdG9seSwgc29ycnkgZm9yIHRoZSBkZWxheS4gSXQgaXMg
+dHJ1ZSB0aGF0IGl0J3MgTGludXgtb25seS4gSSBkaWQgbm90IHNlZSBlaXRoZXIgQlNEIG9yIFdp
+bmRvd3MgaGF2aW5nIGFuIGVxdWl2YWxlbnQgdG8gZG1hYnVmLCBidXQgSSdtIG5vdCB2ZXJ5IGZh
+bWlsaWFyIHdpdGggdGhlbS4gDQoNCkFkZGluZyBzdXBwb3J0IGZvciBzZWNvbmRhcnkgcHJvY2Vz
+c2VzIGlzIHNvbWV0aGluZyBJJ2QgcmF0aGVyIGRlbGF5IGZvciBhIGxhdGVyIHJlbGVhc2UgaWYg
+cG9zc2libGUgc2luY2UgaXQgY291bGQgYmUgYSBsb3QgbW9yZSB3b3JrLiBJIGNhbiBhZGQgYSBn
+dWFyZCB0aGF0IHNheXMgaXQncyBub3Qgc3VwcG9ydGVkIGlmIGEgc2Vjb25kYXJ5IHByb2Nlc3Mg
+Y2FsbHMgdGhlIHJlZ2lzdGVyIGZ1bmN0aW9uLg0KDQpGb3IgYSBtb3JlIGdlbmVyaWMgQVBJIGFy
+ZSB5b3Ugc3VnZ2VzdGluZyBzb21ldGhpbmcgbGlrZSBydGVfZXh0bWVtX3JlZ2lzdGVyX2V4KCkg
+dGhhdCB3b3VsZCB0YWtlIGFuIGVudW0gdHlwZSBhbG9uZyB3aXRoIHNvbWUgb3BhcXVlIG1ldGFk
+YXRhLCBvZiB3aGljaCBETUFCVUYgaXMgb25lIHR5cGU/DQo=
