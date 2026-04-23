@@ -2,69 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B11FEFDEE48
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 19:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BF6EFDEE28
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 23:39:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DB76A40272;
-	Thu, 23 Apr 2026 21:24:05 +0200 (CEST)
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com
- [209.85.161.45]) by mails.dpdk.org (Postfix) with ESMTP id 2DD2540270
- for <dev@dpdk.org>; Thu, 23 Apr 2026 21:24:04 +0200 (CEST)
-Received: by mail-oo1-f45.google.com with SMTP id
- 006d021491bc7-6948ed7139eso2167504eaf.0
- for <dev@dpdk.org>; Thu, 23 Apr 2026 12:24:04 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 62A51402A2;
+	Fri, 24 Apr 2026 01:39:42 +0200 (CEST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id D0FF640279
+ for <dev@dpdk.org>; Fri, 24 Apr 2026 01:39:40 +0200 (CEST)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-2dec803f9f0so4255033eec.0
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 16:39:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776972243;
- x=1777577043; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1776987580;
+ x=1777592380; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=p5FHViG8lPuiAJTKAq/dzBQnM4Nv3auSWAcnUuD9CnI=;
- b=PPE0D+r0RipfvDWH0DEUAhCM1SZWcQWJOcFxULLjs56zbjRHgdcpC5K7D4qoryZj0J
- ZQIIoltFPoz4ptPcD55SAOSn5Lw18nxrkJ0FqB2qLytvQmoggA7eC9KkEnX4m7+ZcFPj
- YNF306crE1SS1qNmHZBGP8MSoxG569hnz88UkplI9z6gX9sbjGmwsO0WasXGBebKoOC7
- C35PjfwQaE32SJFtKv03h1ZjUhocsWHnsAz5F7vZw1vk9m/tJdtweDrkPs+d6dGWDXBv
- 2v2CyQqahD/YaK51BEu/l7j9f5XDXyhYPiBM6rUyxHxNJ/ib/Udd1fzehJ3fG5DhU/Dz
- i7Ag==
+ bh=GGg8zwWBir02IgDS0nrVrmi64rvb+lRwKHWTk8UzSdg=;
+ b=D086v/QxteauAuLfWhg7LArBDOZqho8jJpQbaU08oUkPdqXwafKmXoJKa4W4b+bIz4
+ T9cNJeYGrj/dlph6m5IsJdQJYj3IT7JR3m1GZsYnn0ddRTJwizktTXysR4d7vEuZU1IS
+ ggDBaJB/v8LiDB38HBpGaIGZKXZiffnuTLOUEHBiNFxJbF+u25e7gHfH0Hy8ifu1Qbym
+ kWY9iqo7LpUoeY1X3gcpNvRd4CiIiP8bumfPzdK22qmuAijd6bGvq84s5qPu9qul1hkU
+ Pu+ssQSVN2DbA3QOPD0qU1dYfTuhuVo6stERWzN91O0tZzqP1GAYOBQO+6POJO+Rkl5w
+ zN3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776972243; x=1777577043;
+ d=1e100.net; s=20251104; t=1776987580; x=1777592380;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=p5FHViG8lPuiAJTKAq/dzBQnM4Nv3auSWAcnUuD9CnI=;
- b=MIhtE8cb42CLjfQpIFw3jk9FfVxxU+avicFm9EHRJjvXZnmzoz75m7AN3a1d8gupnV
- 4Ju/66H6QgT8L9jqz8I39lj9vfxZkENd8EMACZx+t6kxoXMZlGo28De0EXZLF2eEb2HM
- HSBgUCO293rFj6PMe6QWH3V8d/wZxef6IToC47hacuWVDzfdXiE9w1Yvb09dgGE9xV7k
- IJy0dhISU/qA+eAEfdw3kX1d2G8CJGQoyTJ+Jorfd5DoTUxx0qFwZCGw5tXcRe0e+SbE
- KCHybcYBOTml6XHc6WNU1c5WcAJrgW8JdkIUyMsR5IzDPCpq/hg/adTtYe9yReYPNYKi
- 0GaA==
-X-Gm-Message-State: AOJu0Yxm2p2a2Im77g9na+syXsFO9NMZ5akGjsT1tBiyLhvTErHfflme
- rYUrjOK0BWpXuuvJAuZ4edhZxm3psNh/DnVK9Y/JPeKizAzEMR32QoSn1Chfm1HQozKKBscWjwi
- EzmJF
-X-Gm-Gg: AeBDiet7vO2cZM2t+sF3xrywuYNmO0xYxmS8A9cdkqfMpAgduRGIU3dmg2966Z//Lh+
- HDvlYmL4EMSBEAmwZdnOU4PKsAlHXXDuqGXAc7tC+dN4Bg4VX6f0KRufSJ/Hs/PwZKiH7GRXCIr
- dQLfNqkU6keJbErgGmT1kOMrRIzXUXMH2HsbSsr5ZsCQiwAnhg/DiRUhG5uae+7+HOEIXj2q12X
- AjtH9JZg+qo4rpS8tJ+dc1wL/tIo4/BHjASNgc2zanYAiHiUj7i+0lJSxjN46YQSr3aXoH3XlbP
- /xFvoeW7nsEgpq4dTsLcMyEDt7k9Xu0Fi8+p/uljt0Lgx9czlVWTJxLP7ZCquPr6BwxgQputsqL
- Yfs1Xq4Tb7wxlfea/iyuumBWhAAJF61zMoU40PUNvBd/PxaEDjFLclSe0VJDnSLMBWc2trfHYBa
- 2bCR1zVASsys0bx4zZisZXEyOiMrlGq9tUcQrCq/KsMbqifA==
-X-Received: by 2002:a05:6820:2d04:b0:694:8cb0:4efe with SMTP id
- 006d021491bc7-6948cb0515emr10522228eaf.17.1776972243131; 
- Thu, 23 Apr 2026 12:24:03 -0700 (PDT)
+ bh=GGg8zwWBir02IgDS0nrVrmi64rvb+lRwKHWTk8UzSdg=;
+ b=NEVELhLjTUh6jf8clkw7EUyZkPENWbtdV8fx4YPtaxtpx1draP4QYt6Sz94+qw4rzK
+ buFbGNmbxxGGO5LjV3xUSI38WonXCxk6LxkXwli9SjOz4ldan/8sg/pkF87Ha+GHzmU/
+ GfdFjfmTzze7KzcqqcMSehv5fvA4HTavaB5Wr8Ow8q8k6OUuxR+IdZRz7JCsanZSkIjw
+ c/ryIfZvcF3/cefwy+AH1Zxy1+wnWt5JqdL4WR0I+q2yd/E/soxfvVQtOOiQ8oFpPPBC
+ MlhgsnLtZCWMSHggXKBkFC3YT+/c5w+2yPBOiZGciVyzkFi2xLFaIWmKiMuBSvJoOaCT
+ BlDA==
+X-Gm-Message-State: AOJu0YzMzrktHyLFymKO4cKFqLpEK1k1Euj61lPSjW4yf7IM8/mixHxw
+ 3Igh8boL5/GOH7QPf/ntgInuQLULMNDCpI9G2hPIySRe6MRnW9JY/X/o1IhRhZtFJjk=
+X-Gm-Gg: AeBDieu61AxP53ecwEtr+BO/NF2R/iUtG50H8aG6yhUAlE2OJ1sO4NtYVV0IWxEolND
+ tUZoo0K8lc5J3FTQP2PlN4u7ZhdYvlet57MXUK9M7zNu/pajxJC65oDJqkKX6mJRduktbA9UFdY
+ 69jNqWAUO84vrW5/eHZBZ59gzCpf/I4Fm/vwXN01KgiKXdTghqvV5/XYhTvzAOPv2dVg0vyC+Yp
+ mSPkq79GlVZFXRSzLnPMTe79jiUIsrYeSuiC1GjjvD7zTGJXnGMAbA/3QAhl82gjDup5DY3aSJl
+ vrTMnhcTi6/j3GyM8Ir7rD3vmAw0r7QOEDXOknEYZZlcaKMOoWEu4THAanxhCnyNr2P9bpmWPUR
+ rX7mIuf//yJFLoM3w5204qiyyQbOdjaGFVhYNm4uOrfO05TLvnX9XAFc8Mgc0RmfetBzjlJV5v4
+ 8Hj56WgJoy9HdrERRD6EML4prOHBv/Kb0GInWzC6pedtLZ8A==
+X-Received: by 2002:a05:7300:8622:b0:2c1:7480:ff9b with SMTP id
+ 5a478bee46e88-2e42e6e99b7mr12561879eec.18.1776987579339; 
+ Thu, 23 Apr 2026 16:39:39 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 006d021491bc7-696148cd37dsm2464525eaf.8.2026.04.23.12.24.02
+ 5a478bee46e88-2e539fa5c86sm35879637eec.1.2026.04.23.16.39.38
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 23 Apr 2026 12:24:02 -0700 (PDT)
-Date: Thu, 23 Apr 2026 12:23:57 -0700
+ Thu, 23 Apr 2026 16:39:38 -0700 (PDT)
+Date: Thu, 23 Apr 2026 16:39:36 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Junlong Wang <wang.junlong1@zte.com.cn>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/3] net/zxdh: optimize Rx/Tx path performance
-Message-ID: <20260423122357.3a91bccf@phoenix.local>
-In-Reply-To: <20260423011820.2426203-1-wang.junlong1@zte.com.cn>
+Subject: Re: [PATCH v2 2/3] net/zxdh: optimize Rx recv pkts performance
+Message-ID: <20260423163936.30b243a9@phoenix.local>
+In-Reply-To: <20260423011820.2426203-3-wang.junlong1@zte.com.cn>
 References: <20260326022828.998541-1-wang.junlong1@zte.com.cn>
  <20260423011820.2426203-1-wang.junlong1@zte.com.cn>
+ <20260423011820.2426203-3-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,209 +81,107 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 23 Apr 2026 09:18:15 +0800
+On Thu, 23 Apr 2026 09:18:17 +0800
 Junlong Wang <wang.junlong1@zte.com.cn> wrote:
 
-> v2:
->   - zxdh_rxtx.c, pkt_padding(): modifyed the return value of pkt_padding(=
-);
->   - zxdh_rxtx.c, zxdh_recv_single_pkts(): modifyed When zxdh_init_mbuf() =
-fails
->     the loop does "continue" and free mbufs;
->   - zxdh_rxtx.c, refill_desc_unwrap(): Add rte_io_wmb() before writing fl=
-ags
->     in the refill_que_descs();
->   - zxdh_queue.h, zxdh_queue_enable_intr(): Remove unnecessary function o=
-f zxdh_queue_enable_intr;
->   - zxdh_ethdev.c, zxdh_init_queue(): changed the hdr_mz NULL check logic;
->=20
->   - zxdh_rxtx.c, zxdh_xmit_pkts_simple()=E3=80=81zxdh_recv_single_pkts():=
- add stats.bytes count;
->   - zxdh_rxtx.c, zxdh_init_mbuf():remove  rte_pktmbuf_dump(stdout, rxm, 4=
-0);
->   - zxdh_ethdev.c, zxdh_dev_free_mbufs(): using rte_pktmbuf_free() to fre=
-e mbufs;
->   - Splitting into separate patches, structure reorganization and sw_ring=
- removal=E3=80=81
->     RX recv optimize=E3=80=81Tx xmit optimize=E3=80=81Tx;
->=20
-> v1:
->   This patch optimizes the ZXDH PMD's receive and transmit path for better
->   performance through several improvements:
->=20
-> - Add simple TX/RX burst functions (zxdh_xmit_pkts_simple and
->   zxdh_recv_single_pkts) for single-segment packet scenarios.
-> - Remove RX software ring (sw_ring) to reduce memory allocation and
->   copy.
-> - Optimize descriptor management with prefetching and simplified
->   cleanup.
-> - Reorganize structure fields for better cache locality.
->=20
->   These changes reduce CPU cycles and memory bandwidth consumption,
->   resulting in improved packet processing throughput.
->=20
-> Junlong Wang (3):
->   net/zxdh: optimize queue structure to improve performance
->   net/zxdh: optimize Rx recv pkts performance
->   net/zxdh: optimize Tx xmit pkts performance
->=20
->  drivers/net/zxdh/zxdh_ethdev.c     |  88 ++---
->  drivers/net/zxdh/zxdh_ethdev_ops.c |  24 +-
->  drivers/net/zxdh/zxdh_ethdev_ops.h |   4 +
->  drivers/net/zxdh/zxdh_pci.c        |   2 +-
->  drivers/net/zxdh/zxdh_queue.c      |  31 +-
->  drivers/net/zxdh/zxdh_queue.h      | 125 +++----
->  drivers/net/zxdh/zxdh_rxtx.c       | 520 +++++++++++++++++++++--------
->  drivers/net/zxdh/zxdh_rxtx.h       |  27 +-
->  8 files changed, 527 insertions(+), 294 deletions(-)
->=20
+> +
+> +	PMD_DRV_LOG(DEBUG, "port %d min_rx_buf_size %d",
+> +		eth_dev->data->port_id, eth_dev->data->min_rx_buf_size);
 
-Here is the full AI review of this patchset
-```
-Review of v2 series: net/zxdh queue/Rx/Tx optimization
+Don't use %d when printing unsigned values.
 
-Overall: needs a v3. Findings below, organized by patch.
++	/* If device is started, refuse mtu that requires the support of
++	 * scattered packets when this feature has not been enabled before.
++	 */
++	if (dev->data->dev_started &&
++		((!dev->data->scattered_rx &&
++		 ((uint32_t)ZXDH_MTU_TO_PKTLEN(new_mtu) >
++		 (dev->data->min_rx_buf_size - RTE_PKTMBUF_HEADROOM))) ||
++		 (dev->data->scattered_rx &&
++		 ((uint32_t)ZXDH_MTU_TO_PKTLEN(new_mtu) <=3D
++		 (dev->data->min_rx_buf_size - RTE_PKTMBUF_HEADROOM))))) {
++		PMD_DRV_LOG(ERR, "Stop port first.");
++		return -EINVAL;
++	}
 
+You can use lines up to 100 characters, and break up this into multiple
+if statements to avoid such a complex expression. Looks like multiple
+parts are the same?
 
-Patch 1/3 (optimize queue structure)
-------------------------------------
+> =20
+> +#define ZXDH_VLAN_TAG_LEN   4
+Why not use RTE_VLAN_HLEN?
 
-Warning: zxdh_queue_notify() in zxdh_queue.h now hardcodes the bit-31
-avail-wrap into notify_data unconditionally, removing the
-zxdh_pci_with_feature(hw, ZXDH_F_RING_PACKED) gate that the previous
-out-of-line version in zxdh_pci.c had.  The series also adds a
-vq_split member to the virtqueue union, which suggests split-ring
-support is planned.  Once that exists, this helper will corrupt notify
-data for split rings.  Either reinstate the feature gate or keep the
-dispatch going through VTPCI_OPS()->notify_queue().
+> +#define ZXDH_ETH_OVERHEAD  (RTE_ETHER_HDR_LEN + RTE_ETHER_CRC_LEN + ZXDH=
+_VLAN_TAG_LEN * 2)
+> +#define ZXDH_MTU_TO_PKTLEN(mtu) ((mtu) + ZXDH_ETH_OVERHEAD)
 
-Warning: rx_queue_intr_enable/rx_queue_intr_disable dev_ops and the
-zxdh_queue_enable_intr() helper are removed.  The commit log talks
-about cache locality and sw_ring removal but not this.  Please split
-it into its own patch with a justification, or at minimum call it out
-in the commit message.
+> +static inline int zxdh_init_mbuf(struct rte_mbuf *rxm, uint16_t len,
+> +		struct zxdh_hw *hw, struct zxdh_virtnet_rx *rxvq)
+> +{
+> +	uint16_t hdr_size =3D 0;
+> +	struct zxdh_net_hdr_ul *header;
+> +
+> +	header =3D (struct zxdh_net_hdr_ul *)((char *)
+> +					rxm->buf_addr + RTE_PKTMBUF_HEADROOM);
 
-Minor: fail_q_alloc now does "if (hdr_mz) rte_memzone_free(hdr_mz);".
-rte_memzone_free() accepts NULL; the guard is unnecessary.
+Please use rte_pktmbuf_mtod instead for this.
 
-Minor: The new "if (hdr_mz =3D=3D NULL)" check inside the VTNET_TQ branch
-of zxdh_init_queue() is unreachable.  hdr_mz was already validated
-earlier in the function.
+> +uint16_t zxdh_recv_single_pkts(void *rx_queue, struct rte_mbuf **rcv_pkt=
+s, uint16_t nb_pkts)
+> +{
+> +	struct zxdh_virtnet_rx *rxvq =3D rx_queue;
+> +	struct zxdh_virtqueue *vq =3D rxq_get_vq(rxvq);
+> +	struct zxdh_hw *hw =3D vq->hw;
+> +	struct rte_mbuf *rxm;
+> +	uint32_t lens[ZXDH_MBUF_BURST_SZ];
+> +	uint16_t len =3D 0;
+> +	uint16_t nb_rx =3D 0;
+> +	uint16_t num;
+> +	uint16_t i =3D 0;
 
-Minor: Doxygen close "**/" used in several places where "*/" is the
-correct terminator.
+Useless initialization of i.
+
+> =20
+> -			dev->data->rx_mbuf_alloc_failed +=3D free_cnt;
+> +	num =3D nb_pkts;
+> +	if (unlikely(num > ZXDH_MBUF_BURST_SZ))
+> +		num =3D ZXDH_MBUF_BURST_SZ;
 
 
-Patch 2/3 (optimize Rx recv pkts performance)
----------------------------------------------
 
-Error: Double-free in zxdh_recv_single_pkts().  Both error paths
-inside zxdh_init_mbuf() already call rte_pktmbuf_free(rxm), but the
-caller also frees rxm on return < 0:
+> +	num =3D zxdh_dequeue_burst_rx_packed(vq, rcv_pkts, lens, num);
+> +	if (num =3D=3D 0) {
+> +		rxvq->stats.idle++;
+> +		goto refill;
 
-        if (unlikely(zxdh_init_mbuf(rxm, len, hw, &vq->rxq) < 0)) {
-                rte_pktmbuf_free(rxm);   /* already freed inside */
-                continue;
-        }
+Since this is normal path on idle network, the counter will grow
+rapidly. Do you need it?
 
-Drop either the caller's free or the callees' frees, not both.
+> +	}
+> +
+> +	for (i =3D 0; i < num; i++) {
+> +		rxm =3D rcv_pkts[i];
+> +		len =3D lens[i];
+> +		if (unlikely(zxdh_init_mbuf(rxm, len, hw, &vq->rxq) < 0)) {
+> +			rte_pktmbuf_free(rxm);
+> +			continue;
+>  		}
 
-Warning: zxdh_set_rxtx_funcs() silently drops the
-ZXDH_NET_F_MRG_RXBUF negotiation check.  The previous version
-returned -1 if MRG_RXBUF was not advertised; the new version selects a
-burst function unconditionally.  The multi-seg path
-zxdh_recv_pkts_packed() reads header->type_hdr.num_buffers, which is
-only meaningful when MRG_RXBUF is negotiated with the peer.
+Better practice to make rxm and len variables scoped to the loop.
 
-Warning: xstats "full", "norefill", "multicast_packets",
-"broadcast_packets" (rx) and "norefill", "multicast_packets",
-"broadcast_packets" (tx) are removed from the name tables.  If these
-counters were never being updated, say so in the commit log.  If they
-were, multicast_packets/broadcast_packets in particular are
-operator-facing counters and this is a user-visible regression.
+AI review noticed that there is now a double free in the error path.
+Both error paths inside zxdh_init_mbuf() already call rte_pktmbuf_free(rxm)=
+ before returning -1. The caller's rte_pktmbuf_free(rxm) then frees it a se=
+cond time. Remove the caller's free, or stop freeing inside zxdh_init_mbuf(=
+).
 
-Warning: zxdh_scattered_rx() reads eth_dev->data->min_rx_buf_size,
-which is populated during rx_queue_setup().  Depending on when
-zxdh_set_rxtx_funcs() runs, "min_rx_buf_size - RTE_PKTMBUF_HEADROOM"
-can underflow (uint16_t wraps) if min_rx_buf_size is 0 at that point.
-
-Minor: Open-coded rte_pktmbuf_mtod().  Both the new zxdh_init_mbuf()
-and the modified zxdh_recv_pkts_packed() use
-
-        (char *)rxm->buf_addr + RTE_PKTMBUF_HEADROOM
-
-where rte_pktmbuf_mtod(rxm, struct zxdh_net_hdr_ul *) expresses the
-same intent.  data_off equals RTE_PKTMBUF_HEADROOM here because the
-refill path aligns the hardware write target to
-buf_iova + RTE_PKTMBUF_HEADROOM.
-
-Minor: zxdh_init_mbuf() zeroes rxm->ol_flags, rxm->vlan_tci, and
-rxm->vlan_tci_outer.  All three are already cleared by
-rte_pktmbuf_reset() on alloc from the pool.
-
-Minor: rxq_get_vq(q) is a trivial one-line macro aliasing "q->vq"
-with no functional benefit.  Either drop it or apply it consistently.
+(zxdh_set_rxtx_funcs) =E2=80=94 dropped mergeable-rxbuf feature check: The =
+old code returned -1 with an error log when the peer did not negotiate ZXDH=
+_NET_F_MRG_RXBUF. The new code silently drops that check. If the negotiated=
+ feature set doesn't include MRG_RXBUF, the multi-segment rx path may now b=
+e selected against a peer that doesn't support it.
 
 
-Patch 3/3 (optimize Tx xmit pkts performance)
----------------------------------------------
 
-Error: zxdh_xmit_pkts_simple() does not write txdp->id.  tx_bunch()
-and tx1() write addr, len, and flags but leave id untouched.  The new
-zxdh_xmit_fast_flush() reads "id =3D desc[used_idx].id" as the
-chain-terminator for its inner do-while loop
-("while (curr_id !=3D id)").
 
-Descriptors submitted by the simple path therefore carry stale ids:
-either 0 at cold start from memzone init, or the self-index written
-by a previous flush pass.  Because the flush rewrites
-desc[used_idx].id =3D used_idx during processing, after one full warmup
-cycle every desc[i].id =3D=3D i and the inner do-while happens to exit
-after one iteration.  But on a cold ring, or any ring whose
-descriptors were left with non-self ids by a preceding append-path
-burst, the inner loop keeps iterating, freeing cookies and advancing
-used_idx across descriptors the backend has not marked used, until
-used_idx wraps back to 0.  That corrupts vq_free_cnt and
-vq_used_cons_idx accounting.
-
-Fix: set txdp->id =3D avail_idx + i in tx_bunch/tx1 so the invariant is
-explicit rather than relying on the flush's self-rewrite side effect.
-
-Warning: zxdh_xmit_pkts_prepare() drops the
-rte_net_intel_cksum_prepare() call.  If the driver still advertises
-L4 checksum offload, pseudo-header checksum preparation becomes the
-application's responsibility.  That's a user-visible contract change
-and needs justification in the commit log, or should be paired with a
-matching capability change.
-
-Warning: zxdh_xmit_enqueue_append() now sets dxp->cookie =3D NULL for
-the head slot and stores cookies per descriptor via dep[idx].cookie.
-This works with the new per-descriptor free in
-zxdh_xmit_fast_flush() (rte_pktmbuf_free_seg), but any residual code
-path still reading vq_descx[head_id].cookie will see NULL.  Worth a
-comment documenting the new invariant.
-
-Minor: Extra initialization.  In pkt_padding(),
-
-        struct zxdh_net_hdr_dl *hdr =3D NULL;
-
-is immediately overwritten by the rte_pktmbuf_prepend() return.  In
-submit_to_backend_simple(),
-
-        struct rte_mbuf *m =3D NULL;
-
-is overwritten on first use inside the loop.  Drop both initializers.
-
-Minor: "mainpart =3D (nb_pkts & ((uint32_t)~N_PER_LOOP_MASK));" =E2=80=94 t=
-he
-uint32_t cast is pointless.  nb_pkts is uint16_t and N_PER_LOOP_MASK
-is a small integer constant.
-
-Minor: submit_to_backend_simple() uses "*(tx_pkts + i + j)" where
-"tx_pkts[i + j]" reads more naturally and matches style elsewhere.
-
-Minor: tx_bunch() is named to imply a variable batch but is hardcoded
-to N_PER_LOOP iterations for single-segment packets only.  A one-line
-comment noting that the simple path handles single-segment only
-(selected when TX_OFFLOAD_MULTI_SEGS is off) would help.
-```
