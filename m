@@ -2,57 +2,55 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174BEF99344
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 07:54:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E872F99344
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 08:22:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DD53D40272;
-	Thu, 23 Apr 2026 09:54:07 +0200 (CEST)
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
- by mails.dpdk.org (Postfix) with ESMTP id 76C9640270;
- Thu, 23 Apr 2026 09:54:04 +0200 (CEST)
-X-QQ-mid: Yeas3t1776930842t068t45114
+	by mails.dpdk.org (Postfix) with ESMTP id 14C6E402B8;
+	Thu, 23 Apr 2026 10:22:41 +0200 (CEST)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+ by mails.dpdk.org (Postfix) with ESMTP id 9FA3340270;
+ Thu, 23 Apr 2026 10:22:38 +0200 (CEST)
+X-QQ-mid: Yeas3t1776932552t506t64001
 Received: from 3DB253DBDE8942B29385B9DFB0B7E889 (jiawenwu@trustnetic.com
  [115.220.225.180])
 X-QQ-SSF: 0000000000000000000000000000000
 From: =?utf-8?b?Smlhd2VuIFd1?= <jiawenwu@trustnetic.com>
-X-BIZMAIL-ID: 3416191575930411949
+X-BIZMAIL-ID: 8381481365702199847
 To: "'Zaiyu Wang'" <zaiyuwang@trustnetic.com>,
 	<dev@dpdk.org>
 Cc: <stable@dpdk.org>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260423034024.14404-9-zaiyuwang@trustnetic.com>
-In-Reply-To: <20260423034024.14404-9-zaiyuwang@trustnetic.com>
-Subject: RE: [PATCH 08/18] net/txgbe: fix link flow control registers for
- Amber-Lite
-Date: Thu, 23 Apr 2026 15:54:00 +0800
-Message-ID: <025901dcd2f6$58e1e7e0$0aa5b7a0$@trustnetic.com>
+ <20260423034024.14404-13-zaiyuwang@trustnetic.com>
+In-Reply-To: <20260423034024.14404-13-zaiyuwang@trustnetic.com>
+Subject: RE: [PATCH 12/18] net/txgbe: fix link stability for 25G NIC
+Date: Thu, 23 Apr 2026 16:22:31 +0800
+Message-ID: <026a01dcd2fa$5481c540$fd854fc0$@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 X-Mailer: Microsoft Outlook 16.0
 Content-Language: zh-cn
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwIWF43StS8GcVA=
+Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwIqvBxstS5iiQA=
 X-QQ-SENDSIZE: 520
 Feedback-ID: Yeas:trustnetic.com:qybglogicsvrgz:qybglogicsvrgz6b-0
-X-QQ-XMAILINFO: NV9lVvsB36OpHeBCehCBIyTF7p/dMikxuexb5gopXqjGGebq98GeAbFX
- 42L2Vuw0nkkLLWVNN9MIsPVC1cSVEPv0B2oPRs8BDMhi0lCGSE2PzeFeRpLDc5uRekJkuKZ
- SsCY8Xq5IFg4f5M8X7RsCmc9jhZfWQKPHFceb7TQdwjQEHpgl4f/BkucAZUtLgbuMcg+FnH
- kGo/BMewYDS++NiiY8+ikgXoS1HlKzXVXW0QBBHkZEG8aP9A7E6K08QzlSp6Y/0EQT93TeY
- RoJjqNia0y0//p5DrP7reb5A5U6BF3W70oeRD2tIeLOrrTKs4Xx9SgLF3vE4JRO6RNL3OIv
- PfvFpmUXTU+aMMMwbmZ1WNDJracxDdxHuT6nlYCwxfsG+mCB8h6zPEChXxvzdglURyeyeXL
- 8Sk1QNMwjANCj96qw0UBJbqxGg1MpfHJ2TtyrGQE469w3etOjUAW6Ul70XtVfjfXmEw4i21
- dBIsd74dGQz7u/ZiVT3IlMHTTk9+k7SevN9rw6ocYQxcXjo1hhuvZtqDz9wje4CVwALgqMZ
- 0e1egaJitLv1NSXkx1KTvQLseXtnNcaQUhmtAJmf8CcGNn/0ABX7jtUid2tWclqYqGWhljV
- /Uh5zLdmEr8wHuEjKTUbxidOcakSGvg7m4d28U2y5rxQKzDCZIP/BJuJ1aMCAnC49Gq4qtb
- ycYbBxzbsnJ4rfvGvoKtwPH1V1UcmEIlXtbofSVNyqGE/5A4c7IDJuftlJb56LBMlBcXWWv
- o0AQrbQDwHt9TquP/XCdjJCDMZxc47edGGZeW7wT55KECTYQ9L9IONftaB6natxbiLnircq
- OE4i6ceeYjLqmDa3ZMXS8WIohNKfEi13OLgTY9D34adrkOJsFzIhB5P7VEyGQs1FD6TkZfD
- ASSHgt0MXwUEZ0c/I/ew6c2VyE1ioWykdfdXWhq7MIFLZH2/JtvXuFjdOGmtOT/KdmeyU1L
- pIB0LkUWesjlk8FP1Q0BXQzRtiUoHVwMGG6ygAytugqjpyMNIJIp469/JF8IENPfXvPRrv+
- 54KoLNclNx6wn99kCeDM/ZSD3F5qXmv1eaMN10A7gvClCgp9Cw8fNskolsdfuvCNyWVG2NC
- nT+DbrGAKvKvY3LAN7fG9o=
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
+X-QQ-XMAILINFO: Nr5N425iK0yrNhGHWdpUCrNyYMU/Pktx8zGxvbQQDjjswQwGelcmAn0z
+ 1VasxE7Rkw9GB8JLBaZJ9IzZ11zFAuyo4jZBrXGmnCBSLB8mhzfdpmW9iKugzwp2MfWvLJg
+ T8sTaUTv2C+V9foBR7WaqQpjoC59Yvj2OGyRnlElyeOF/1nY32TLki9sIez86RoiwYsXLy4
+ 7j9e2gJpHRj0WnyZZC7aJEzffN65MmCsyTCPDD7lUEi1QXgsqyRLhp+fDCgFIQ+uhsmU/W4
+ N/vjs8zL1vStkMohTnoodUmccE8X8QSMQMDVTSXhjvuMJDmATfaQ1BvFe3kfxUWEoUM89PM
+ uzcnefEKe1iRPGO4mt7IDXQJjt8v3gYt1AuS0nEQVwd35w4Ys9fXlWvBTcLHsaPSxiY2wRd
+ RVmHns36DHWyOzuFjzxyrYxnvUkhD76ugKHqyHNZijJtqUyVJFKqszygTMfJc87+7vM1R8w
+ sJ/XCrC2kfYZF7PrXPPAAzvYClM/f7VmU1PNTXoWFEaL3IiNct4c2nM4Ri4DYRrdmQ9K0pL
+ uZHsi2Ev8B5G6KmmPrxAtxqwA5MMhmGNYRM8m4SAIXl9S+SJA2JuDdk/mUI3hArfKuqT32G
+ V1gMVW2SQbED95hLo3ryaBQkvp+ulc/6maEE+5fpCWowAVapc+Iv/E8deLXLdLPz/I7MqmX
+ 6/M+HT+eAz9exG1hVMi8dz3gAWYboLE+ornGfqzFhNp0QB6MRdJgghfSKgxqVT7clzEZ3I9
+ CI7yghZdIvAnsQKn4uY2v9kkkNNyTOzD4XZIZmoujrS6SUyBgxIDxJqSlJJO/X6fZnMUpLZ
+ oqoDrJYT0qgw+Djzhj6+6ueYU1gs+1bfuprycgpN26NbzAagcqWxmnTpPGq1M02kzMSJ3T/
+ 3fGvtiF5GRQmhCVExoEELQvrbWYPO9XbZ8mF6xl200juukGpTX00xtRJoFxaEBZrwA9+2YL
+ nEPmmIOVHihWVHxMEXq8U35FaPB63ch9lf6QwjYoLERuZ8+OaNnERiCNOalNBLs6snbPGtx
+ gJiHM+6+9FKb83CKgYDnr5zM18zKXvdrDg1J5kXf4yplER8/m7
+X-QQ-XMRINFO: MSVp+SPm3vtSI1QTLgDHQqIV1w2oNKDqfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -67,82 +65,100 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-
-
-> -----Original Message-----
-> From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-> Sent: Thursday, April 23, 2026 11:40 AM
-> To: dev@dpdk.org
-> Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>; stable@dpdk.org; Jiawen Wu <jiawenwu@trustnetic.com>
-> Subject: [PATCH 08/18] net/txgbe: fix link flow control registers for Amber-Lite
+> @@ -197,33 +204,80 @@ s32 txgbe_setup_mac_link_aml(struct txgbe_hw *hw,
+>  	if (status)
+>  		return status;
 > 
-> The flow control counter registers on AML NICs differ from those on SP
-> NICs. Update the register offsets accordingly to ensure the counters
-> work correctly.
-> 
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
-> ---
->  drivers/net/txgbe/base/txgbe_hw.c   |  5 +++++
->  drivers/net/txgbe/base/txgbe_regs.h |  2 ++
->  drivers/net/txgbe/txgbe_ethdev.c    | 10 ++++++++--
->  3 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
-> index 0f3db3a1ad..52fead6171 100644
-> --- a/drivers/net/txgbe/base/txgbe_hw.c
-> +++ b/drivers/net/txgbe/base/txgbe_hw.c
-> @@ -394,6 +394,11 @@ s32 txgbe_clear_hw_cntrs(struct txgbe_hw *hw)
->  	rd32(hw, TXGBE_PBTXLNKXON);
->  	rd32(hw, TXGBE_PBTXLNKXOFF);
-> 
-> +	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-> +		wr32(hw, TXGBE_PBRXLNKXON_AML, 0);
-> +		wr32(hw, TXGBE_PBRXLNKXOFF_AML, 0);
+> +	/* setup the highest link when no autoneg */
+> +	if (!autoneg) {
+> +		if (speed & TXGBE_LINK_SPEED_25GB_FULL)
+> +			speed = TXGBE_LINK_SPEED_25GB_FULL;
+> +		else if (speed & TXGBE_LINK_SPEED_10GB_FULL)
+> +			speed = TXGBE_LINK_SPEED_10GB_FULL;
 > +	}
 > +
->  	/* DMA Stats */
->  	rd32(hw, TXGBE_DMARXPKT);
->  	rd32(hw, TXGBE_DMATXPKT);
-> diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-> index 060757323a..de382601c9 100644
-> --- a/drivers/net/txgbe/base/txgbe_regs.h
-> +++ b/drivers/net/txgbe/base/txgbe_regs.h
-> @@ -1085,6 +1085,8 @@ enum txgbe_5tuple_protocol {
->  #define TXGBE_PBRXDROP                    0x019068
->  #define TXGBE_PBRXLNKXOFF                 0x011988
->  #define TXGBE_PBRXLNKXON                  0x011E0C
-> +#define TXGBE_PBRXLNKXOFF_AML             0x011F80
-> +#define TXGBE_PBRXLNKXON_AML              0x011F84
->  #define TXGBE_PBRXUPXON(up)               (0x011E30 + (up) * 4)
->  #define TXGBE_PBRXUPXOFF(up)              (0x011E10 + (up) * 4)
+>  	speed &= link_capabilities;
+>  	if (speed == TXGBE_LINK_SPEED_UNKNOWN)
+>  		return TXGBE_ERR_LINK_SETUP;
 > 
-> diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-> index 414107d7a7..e3492c9cd7 100644
-> --- a/drivers/net/txgbe/txgbe_ethdev.c
-> +++ b/drivers/net/txgbe/txgbe_ethdev.c
-> @@ -2331,8 +2331,14 @@ txgbe_read_stats_registers(struct txgbe_hw *hw,
->  		hw_stats->up[i].rx_up_dropped +=
->  				rd32(hw, TXGBE_PBRXMISS(i));
->  	}
-> -	hw_stats->rx_xon_packets += rd32(hw, TXGBE_PBRXLNKXON);
-> -	hw_stats->rx_xoff_packets += rd32(hw, TXGBE_PBRXLNKXOFF);
+> -	value = rd32(hw, TXGBE_GPIOEXT);
+> -	if (value & (TXGBE_SFP1_MOD_ABS_LS | TXGBE_SFP1_RX_LOS_LS))
+> +	if (txgbe_gpio_ext_check(hw, TXGBE_SFP1_MOD_ABS_LS |
+> +				 TXGBE_SFP1_RX_LOS_LS)) {
+> +		DEBUGOUT("RX LOS");
+>  		return status;
+> +	}
+> 
+> -	status = hw->mac.check_link(hw, &link_speed, &link_up,
+> -				    autoneg_wait_to_complete);
+> +	for (i = 0; i < 4; i++) {
+> +		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
+> +		if (link_up) {
+> +			DEBUGOUT("check phy link_up");
+> +			break;
+> +		}
+> +		msleep(250);
+> +	}
+> 
+> -	if (link_up && speed == TXGBE_LINK_SPEED_25GB_FULL)
+> +	if (speed == TXGBE_LINK_SPEED_25GB_FULL)
+>  		hw->cur_fec_link = txgbe_phy_fec_get(hw);
+> 
+>  	if (link_speed == speed && link_up &&
+> -	   !(speed == TXGBE_LINK_SPEED_25GB_FULL &&
+> -	   !(hw->fec_mode & hw->cur_fec_link)))
+> -		return status;
+> +	    !(speed == TXGBE_LINK_SPEED_25GB_FULL &&
+> +	    !(hw->fec_mode & hw->cur_fec_link)))
+> +		goto out;
+> 
+> -	if (speed & TXGBE_LINK_SPEED_25GB_FULL)
+> -		speed = 0x10;
+> -	else if (speed & TXGBE_LINK_SPEED_10GB_FULL)
+> -		speed = 0x08;
+> +	rte_spinlock_lock(&hw->phy_lock);
+> +	ret_status = txgbe_set_link_to_amlite(hw, speed);
+> +	rte_spinlock_unlock(&hw->phy_lock);
 > +
-> +	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-> +		hw_stats->rx_xon_packets = rd32(hw, TXGBE_PBRXLNKXON_AML);
-> +		hw_stats->rx_xoff_packets = rd32(hw, TXGBE_PBRXLNKXOFF_AML);
-
-What happens to these counters after .stats_reset()?
-
+> +	if (ret_status == TXGBE_ERR_PHY_INIT_NOT_DONE)
+> +		goto out;
+> 
+> -	status = hw->phy.set_link_hostif(hw, (u8)speed, autoneg, true);
+> +	if (ret_status == TXGBE_ERR_TIMEOUT) {
+> +		hw->link_valid = false;
+> +		*need_reset = true;
+> +		goto out;
 > +	} else {
-> +		hw_stats->rx_xon_packets += rd32(hw, TXGBE_PBRXLNKXON);
-> +		hw_stats->rx_xoff_packets += rd32(hw, TXGBE_PBRXLNKXOFF);
+> +		hw->link_valid = true;
 > +	}
->  	hw_stats->tx_xon_packets += rd32(hw, TXGBE_PBTXLNKXON);
->  	hw_stats->tx_xoff_packets += rd32(hw, TXGBE_PBTXLNKXOFF);
+> +
+> +	if (speed == TXGBE_LINK_SPEED_25GB_FULL) {
+> +		txgbe_e56_fec_polling(hw, &link_up);
+> +	} else {
+> +		for (i = 0; i < 4; i++) {
+> +			txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
+> +			if (link_up)
+> +				goto out;
+> +			msleep(250);
+> +		}
+> +	}
 > 
-> --
-> 2.21.0.windows.1
+> -	txgbe_wait_for_link_up_aml(hw, speed);
+> +out:
+> +	if (link_up) {
+> +		value = rd32(hw, TXGBE_PORTSTAT);
+> +		if (!(value & TXGBE_PORTSTAT_UP)) {
+> +			PMD_DRV_LOG(DEBUG, "MAC link 0x14404: 0x%x", value);
+> +			*need_reset = true;
+> +			value = rd32(hw, 0x110b0);
+> +			PMD_DRV_LOG(DEBUG, "MAC intr status 0x110b0: 0x%x", value);
+> +		}
+> +	} else {
+> +		*need_reset = true;
+> +		PMD_DRV_LOG(DEBUG, "Link reconfiguration required. Reset scheduled in 2000ms.");
+> +	}
 > 
+ 
+DEBUGOUT() and PMD_DRV_LOG(DEBUG, ...) can be unified in this function.
+ 
 
