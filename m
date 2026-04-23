@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E58FAD3F7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 03:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B70DCFAD3F7
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 03:41:54 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EA0FB40693;
-	Thu, 23 Apr 2026 05:41:14 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id 4569840693;
- Thu, 23 Apr 2026 05:41:11 +0200 (CEST)
-X-QQ-mid: zesmtpgz4t1776915668td93e6901
-X-QQ-Originating-IP: kBJvuTcASnKciAiqlji85V3efzha6oUz99RMYjchvNg=
+	by mails.dpdk.org (Postfix) with ESMTP id 3888A40671;
+	Thu, 23 Apr 2026 05:41:18 +0200 (CEST)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+ by mails.dpdk.org (Postfix) with ESMTP id 8DDCB40671;
+ Thu, 23 Apr 2026 05:41:15 +0200 (CEST)
+X-QQ-mid: zesmtpgz4t1776915671t7b36ab15
+X-QQ-Originating-IP: Ft4Ppik/2+laqSkbhcOrr74kz8l0e2481ouKXP6GD6o=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.220.225.180])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 23 Apr 2026 11:41:07 +0800 (CST)
+ id ; Thu, 23 Apr 2026 11:41:09 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12783357493678094000
+X-BIZMAIL-ID: 12941673506579306576
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH 08/18] net/txgbe: fix link flow control registers for
- Amber-Lite
-Date: Thu, 23 Apr 2026 11:40:13 +0800
-Message-Id: <20260423034024.14404-9-zaiyuwang@trustnetic.com>
+Subject: [PATCH 09/18] net/txgbe: fix link flow control config for Sapphire
+Date: Thu, 23 Apr 2026 11:40:14 +0800
+Message-Id: <20260423034024.14404-10-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +33,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: M/NR0wiIuy70VJkDj6cU084OhXnNDYB+uXchobjy5VyY4IlS3g5FlrwU
- g5z42M70BE7CEkFZsYwEDtf9cEz3Mj9jkouAy7Vg7pevwG5F07TWAXKFsxtwzwXBGgUron6
- I1CZjP/efHKHY2QhJnjde64I3KWZUToVSD73QokoK2ecFMhexrlSWffFicPTS9G5iT16vn7
- t3B5Log/KmQB0uyoRb/l4DF+yDGvotPuge0ewbTZhrpy2Wem+dCG1I0SmnC7OZybZUhz4Ma
- 027qhXTuoqsv0FAHC8ZhRYRIbNhf8W0PJN4ze0LvTEgWucRb53egJ/MIJ4B1St+DRFqxpRE
- YAV51vPpKWbnpTkJu1uv/FwcwE90eWeBnEgDqdHs2dp5i4BLumBa7c/jTxcq3F7rB5mI57Q
- A7NZGH0OmppyMW6KqsngkHgEgX+U79nXcU4gRmGLzCLz+V5RSUUVRFTiAt10WUtkDXMvFBI
- aCc3bLGeiBuZ0PmkUNY76xjb5HmWsQBVkAA4f9+SD8CJ4V3hzS4yf6uiagW21532ua0xr33
- ApykLHeURWysT1Gj2f07Q+wkT9oFnyt9ULH2Tjq3ZznTc7UH2yfsgdLaMrHPPX/WChBOukE
- YM2IBsJkeAtG113kwvI61IGidJ+qcnXDA99CgrW9XivcIQSCrbMBXtwOdPrA4HUTS6kKhkA
- eDdI86u6ln+AngMI+ep/Xw19RrzORA1lNahcXZaHWx9ZpJFojhLm2Hu4qFwBpu67fhgIUcs
- f15a/kxtJNnAxL1KMLarwCIu5pPjnEMrpaOJxPQnwoyM9aup7PCLohxlDAmjIBWhZMriR4Y
- dFN3S9KvbFZmC8WE/HYy+EX63SzDEob6Fq4oeV7x+Ar4reeYmi/dekyeLzNJ8PC4cWFz1E9
- MC8GothhvetXxehOPY8gJzNsith4/pzTq9PFGCjG60LUNXX21JUGMihycavj0ImbULFrJhE
- 4kO+uniXAjmUst4dHI13S97W6w4fS7yyiMw33Q66gHnanEYEELA8uQf3t7qR0KZlRT1ykvH
- /6p8F0s2up666H1GiTsu95guDLBPdgi9kkL0+RsGomQRoSwhD8eardi0Y67L0ydrAmW3fHF
- c/JXCpsLb8b
-X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
+X-QQ-XMAILINFO: OAplO0LdqKgi6CkdTKU3PsxJNzBwV/WMa6Ct963QjI83CycHJHtUCYUN
+ Z8LQqSOgzN1kBm0XK+Xl9/2gXsJh/kZkN/1LQRQHyyxoWBb7hprh5D0CKrLypCpCN7jNiuj
+ mgi8ld8f8E0Pd8NnouN+7H4yuBRJIknk9rQBn/orxl0p7pfyrk5c/wRs+Z6O5Kt0SYs5PYy
+ U4QuraE3m03B3p1p+236/U8cOUVXNGV5fgBJojZxR9vPL8VdJ+MQWI5U93kjjJ4PBqOlyFR
+ 8PD5GKgfi6mQ824PSmdyHccSp/gnNrUh8lX5CJkb9rSQQMFY0H8RWj7F2cYCCtrGsViJtTU
+ DxD2Gd6gHFxsuCeYz/H57rerfji3Zv+YOLix/HUE+eGe8rqlwOeJjvdor/4nwx5f0Nskgg5
+ DU9FskkBFfmq1d+xLIkBmALoy7tNv00TbKUh7IF7C1JyhimItFVy9lMjlAVm2h6Ds05YFM4
+ pzsAW7NCuEB8zHMcWJ6z9eb21U1oDuFIo/p+3dbMIfcdzElftuHkIC+BLWXUDgbXE2MYS/+
+ ZfIXw8ktOFHL4OmvIYuD8Yg/MWMXWKWNQJdeHK6vR+t98kjmyrk6IJnwSC1OcJ2R5Y7jvFz
+ wGSEQhy0PrnH0U2LKQ7Cve5nfjhAG4VLQsaoweoNLtEhADfsqx9pqGv1jOkISWPT6ZgcpmU
+ vYlbWgD6F0zirU1ExgszvfuGdUWgIEiRcJRiH4s7108O/BXGlSmsEZ6BD7rXfu9qN8l+s2l
+ fScQPXvTZxALOutQI+WDeacC7XHOxvNmxcEVnOVpDw9SLaWJ0pkU1dp7v8SU1Qq5u/sKRFl
+ 0Yx3zYPTowkm9rCm9YCqbfsZavNY4hNN3912qac/ok9FN1NcF4tIK9MYgWRobdY6WtaErzh
+ 3/sI+HdU9VtHujPgF5bffx40vehOF9vhGBPSe8FGqnUnHzs2X6ay9LmXE1q5J3vb6P0cECR
+ fET//E1QCI7YujIwuO+B59zOnJ+xJ3uAEqHH16zfGkuwFSG6RJWv/kvIsDhRWWPT9ktfo5c
+ 5mh9qhbgUAs2yOu6bE7/LH1zEymFeofywmen11dUZNEgZk3vg2odDe4DTAW+0NuG3+07kD6
+ 3u7LxnSckVW
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,69 +65,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The flow control counter registers on AML NICs differ from those on SP
-NICs. Update the register offsets accordingly to ensure the counters
-work correctly.
+SP chips have a hardware bug preventing XON flow control support,
+so the driver disables it.
 
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_hw.c   |  5 +++++
- drivers/net/txgbe/base/txgbe_regs.h |  2 ++
- drivers/net/txgbe/txgbe_ethdev.c    | 10 ++++++++--
- 3 files changed, 15 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/base/txgbe_hw.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
-index 0f3db3a1ad..52fead6171 100644
+index 52fead6171..0719b56e3c 100644
 --- a/drivers/net/txgbe/base/txgbe_hw.c
 +++ b/drivers/net/txgbe/base/txgbe_hw.c
-@@ -394,6 +394,11 @@ s32 txgbe_clear_hw_cntrs(struct txgbe_hw *hw)
- 	rd32(hw, TXGBE_PBTXLNKXON);
- 	rd32(hw, TXGBE_PBTXLNKXOFF);
- 
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-+		wr32(hw, TXGBE_PBRXLNKXON_AML, 0);
-+		wr32(hw, TXGBE_PBRXLNKXOFF_AML, 0);
-+	}
-+
- 	/* DMA Stats */
- 	rd32(hw, TXGBE_DMARXPKT);
- 	rd32(hw, TXGBE_DMATXPKT);
-diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
-index 060757323a..de382601c9 100644
---- a/drivers/net/txgbe/base/txgbe_regs.h
-+++ b/drivers/net/txgbe/base/txgbe_regs.h
-@@ -1085,6 +1085,8 @@ enum txgbe_5tuple_protocol {
- #define TXGBE_PBRXDROP                    0x019068
- #define TXGBE_PBRXLNKXOFF                 0x011988
- #define TXGBE_PBRXLNKXON                  0x011E0C
-+#define TXGBE_PBRXLNKXOFF_AML             0x011F80
-+#define TXGBE_PBRXLNKXON_AML              0x011F84
- #define TXGBE_PBRXUPXON(up)               (0x011E30 + (up) * 4)
- #define TXGBE_PBRXUPXOFF(up)              (0x011E10 + (up) * 4)
- 
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 414107d7a7..e3492c9cd7 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2331,8 +2331,14 @@ txgbe_read_stats_registers(struct txgbe_hw *hw,
- 		hw_stats->up[i].rx_up_dropped +=
- 				rd32(hw, TXGBE_PBRXMISS(i));
- 	}
--	hw_stats->rx_xon_packets += rd32(hw, TXGBE_PBRXLNKXON);
--	hw_stats->rx_xoff_packets += rd32(hw, TXGBE_PBRXLNKXOFF);
-+
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
-+		hw_stats->rx_xon_packets = rd32(hw, TXGBE_PBRXLNKXON_AML);
-+		hw_stats->rx_xoff_packets = rd32(hw, TXGBE_PBRXLNKXOFF_AML);
-+	} else {
-+		hw_stats->rx_xon_packets += rd32(hw, TXGBE_PBRXLNKXON);
-+		hw_stats->rx_xoff_packets += rd32(hw, TXGBE_PBRXLNKXOFF);
-+	}
- 	hw_stats->tx_xon_packets += rd32(hw, TXGBE_PBTXLNKXON);
- 	hw_stats->tx_xoff_packets += rd32(hw, TXGBE_PBTXLNKXOFF);
- 
+@@ -1035,8 +1035,10 @@ s32 txgbe_fc_enable(struct txgbe_hw *hw)
+ 	for (i = 0; i < TXGBE_DCB_TC_MAX; i++) {
+ 		if ((hw->fc.current_mode & txgbe_fc_tx_pause) &&
+ 		    hw->fc.high_water[i]) {
+-			fcrtl = TXGBE_FCWTRLO_TH(hw->fc.low_water[i]) |
+-				TXGBE_FCWTRLO_XON;
++			fcrtl = TXGBE_FCWTRLO_TH(hw->fc.low_water[i]);
++			/* SP doesn't support xon */
++			if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
++				fcrtl |= TXGBE_FCWTRLO_XON;
+ 			fcrth = TXGBE_FCWTRHI_TH(hw->fc.high_water[i]) |
+ 				TXGBE_FCWTRHI_XOFF;
+ 		} else {
 -- 
 2.21.0.windows.1
 
