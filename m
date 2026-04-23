@@ -2,130 +2,88 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C6BF9935D
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 09:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E51F99344
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 09:49:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8D3A84026E;
-	Thu, 23 Apr 2026 11:20:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 105534028F;
+	Thu, 23 Apr 2026 11:49:54 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 0C3894026E
- for <dev@dpdk.org>; Thu, 23 Apr 2026 11:20:01 +0200 (CEST)
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id E75364026E
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 11:49:51 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1776936001;
+ s=mimecast20190719; t=1776937791;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=P+rxS3ZYOWusyX6wNmncQPMi/6qUb2CsvFmVfR/RnQA=;
- b=KqkX42zr5jRw239a4//6LKbmVuBEhCpYpG/CvPWydbZ0dDJ8moYLTECv46qwOTc6Kp9qyP
- CuomhpJYM/yR+pmXyCWIje3PFqCcazh/E4OQX3ZT5O70JT8UH0usXgFjhq/YeG23L0eNX4
- yKAqe5h6QpSUTCrOQ5qBoVKC0unzXyg=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ in-reply-to:in-reply-to:references:references;
+ bh=BXYl/F2JIXAYdCO6BBMxiIkXwzPzUto1sC7Bmf09TEM=;
+ b=HmY1GOsOKX22UaSIVX8icmRfRlI4/yOgcqPODbCgnIEXZCdP9wt5JlSz7D9IVgZUKqt5te
+ xJVevvqvYnSb8fuASSsIUmZWYNUT+UzOqkD68Te7GUjzQsK8oie4ibaSDl+rFs5dYkhHzZ
+ /se5hjv44qs0RPy+dHQbpA3zPa+SEMg=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-596-gyNOUPw8N96002ARKhtZUg-1; Thu, 23 Apr 2026 05:20:00 -0400
-X-MC-Unique: gyNOUPw8N96002ARKhtZUg-1
-X-Mimecast-MFC-AGG-ID: gyNOUPw8N96002ARKhtZUg_1776935999
-Received: by mail-wr1-f69.google.com with SMTP id
- ffacd0b85a97d-43d780757eeso3923574f8f.1
- for <dev@dpdk.org>; Thu, 23 Apr 2026 02:20:00 -0700 (PDT)
+ us-mta-539-I_yAqHW7PvCVnTlpt5l_QQ-1; Thu, 23 Apr 2026 05:49:49 -0400
+X-MC-Unique: I_yAqHW7PvCVnTlpt5l_QQ-1
+X-Mimecast-MFC-AGG-ID: I_yAqHW7PvCVnTlpt5l_QQ_1776937789
+Received: by mail-wm1-f72.google.com with SMTP id
+ 5b1f17b1804b1-488c0120047so37151435e9.0
+ for <dev@dpdk.org>; Thu, 23 Apr 2026 02:49:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1776935999; x=1777540799;
- h=content-transfer-encoding:in-reply-to:autocrypt:from
- :content-language:references:cc:to:subject:user-agent:mime-version
- :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
- :message-id:reply-to;
- bh=P+rxS3ZYOWusyX6wNmncQPMi/6qUb2CsvFmVfR/RnQA=;
- b=R2MOh8dYlUugu071a7nU15Lg7cITppcZxSH3I7kb30o2yOssmBh1GV/87BQFu8j+tX
- BcVqkrL69aW2lYuvYyQlgttLK99SRUyYD9i+2U/n5KiREW0dkoWlWZElEr6z2Kh+3xx6
- Bz3n0O3t/9K1I/0ZjtWZeO2MZHFrNlvQ7M+bv9X9dlsMTOkbttf3bt69tn3kZd/0PxPW
- 9hIb7G+0MyplNzMDVgJZh+mGktsXi1SlxZkuxfOf7081eZtW0LoEuqLMsPBiCXF0B1KI
- D3BoZ9uBsRiskHQbEq+WMSWlc0kL9iw4wja3WPLhZQeUY3NH+HMAmLcZYfWQOuZexB3G
- 4NTQ==
+ d=1e100.net; s=20251104; t=1776937788; x=1777542588;
+ h=in-reply-to:references:user-agent:from:cc:subject:to:message-id
+ :date:content-transfer-encoding:mime-version:x-gm-gg
+ :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=cMr4mmE/mKCFN6M6evcQYfcGDN1ebwTqCG4EfmxTjHg=;
+ b=XNWTW1KwCObXoRAXxZRBpcv0/Vn+immgY1xTXKyuXLCjpYaiqacAHDNPKKFBnlxAod
+ w86YkV2tJSuU6sNfATLkKSvZGgc7zOXoeR+/6S20gYTcHR9iqKSHAjWBqcMLskM9+qOJ
+ 3FkWsrIqEC1AlBTD3ivNR4Q4O3bPN/8oXgozwgVn9A4bwza+Pg9+EMohFgaEUOcI74GT
+ fg21VEjnt21zC+as0rx+JzjHLNUGExWUMXxT1yS9TUiq7eK2Dmamguytg5yFsscComLn
+ Fzyv8cYfk7LwBOkhQVgWaNXCWIkIGGU26wIZpbWGkrBxEhZ2rH0AGLhco4K9JN7zg0w/
+ 7jnQ==
 X-Forwarded-Encrypted: i=1;
- AFNElJ/kLLSDKQkxefF2fA0CPvRyIk3HjdjlOE8LnwzKrLa8spQ4dHL66GLHQRhWBZ+lyHljg1k=@dpdk.org
-X-Gm-Message-State: AOJu0YyYITB5mIctPBSA4dwcN571ZKJmPYdeCyo1fU3Z17TADA8ymNEA
- pxkiZ3dsIYDIULgDlt7AUNSMmLQ/INQsfuEqHSF/xvUhHiHNiXpIIqIlzYATRWDl7BFkYxXDvP9
- 8NIRKsOrTx9ySMYleLtHgUaxnVVt7uAsHeRoTrOnuHL9H
-X-Gm-Gg: AeBDievXL5fgFFH9yL5wDEWIBb7Zyeh7dqOvQmEYbt+KkRRCgJqjRLxONtgtmVMsMZV
- f7eLae/HI/8q7IZGWyoV7ws2pi/q+uilX/Jy5RAC/36DVdMUCNJhjKn+EE+p0ZFYM8mAh/hws18
- u4MRBh5ND0VA4SCUT16DC6Cws5mCphG0fhV5ScFjwpesPUwEjgFZ75nXgIOuZhZCEwgJ/l5Zv1J
- AmY3lD8OvAS7X3/NH8Guck7sww4t7pK9bndoRV+NnXpUAu97KGlO5QvtgDSMG6yP/nOGskRpQhv
- vdA6k9maqnuZnWPZDSR3IEFk7MhDZR7hqgcSvnZ4qLkMgEsJkYc+uizHw4AuR4D/uel7Iboo13c
- 5n2lTys47VJOj6zW5GkOtw1iN6euNezSo
-X-Received: by 2002:a05:6000:4a1a:b0:43e:a8d8:f3dc with SMTP id
- ffacd0b85a97d-43fe4052190mr34282374f8f.13.1776935998924; 
- Thu, 23 Apr 2026 02:19:58 -0700 (PDT)
-X-Received: by 2002:a05:6000:4a1a:b0:43e:a8d8:f3dc with SMTP id
- ffacd0b85a97d-43fe4052190mr34282304f8f.13.1776935998284; 
- Thu, 23 Apr 2026 02:19:58 -0700 (PDT)
-Received: from [192.168.0.65] ([78.16.130.40])
+ AFNElJ+doRiTWRjfa0aEabsUO9VC+/GY568ni3tqjBHInHVZMcWPtYpaX3AUopD356Fccys4QH0=@dpdk.org
+X-Gm-Message-State: AOJu0Yy2nL6PKMQcOSr0wRP7IeiqtHyIzGFV1Yr024RFVlCCoMrSeilz
+ PoJBbwANJ8x++eGdcyUswj/4JzkCDy1F6yanIjzi8+OMS+ISha7+RVQs3XYmeKpxr58FjM8r7F2
+ ntV53EYlwqZ5fkD5ykQU9fq6ZUV/QYvuSRrxHF35fCSzF
+X-Gm-Gg: AeBDiesp8AsGXTYeLd4kVz88n1kZvdqDQ04SJHPn4EEsxDVncOnDfMbgeyw6WS7eSCz
+ miuCSaZHglc6irr9vNEcrctWFz+QbrIwMXj1m/mxqdz4D2oX7rbcsd28jH6aA3c5beL4c0S7yZF
+ c4sSOTJFyipyDy6u7uGp4tIhtJAD09UsHqpMKFjMx353MWrJZATIrmuzS9homVfIQvaA+PthxzN
+ nnkFym97Kugj5/RdUJ9Eg9WX4FBT9UAkqeMR0CY34Ue5r1DiWhkXL/+pYHRW5agBNIE1b4FHFHu
+ 08jNv04cGSkIo5afZpIeihSYJ4V7oockAgJBzI8R5zYeRpp2DtTWEIDMow+7+8VxWEXpZXS7ne6
+ hypgmepuQ3s98ciuWbqTu1k+ukpCKzb9W1p7CEAWHSWGUyHgtnUfkFxuLy7tm4clPW0ZCjQcmyg
+ Z+vmnbTqOmbmxWP/c=
+X-Received: by 2002:a05:600c:4e14:b0:489:1f08:91b with SMTP id
+ 5b1f17b1804b1-4891f080a7emr236013645e9.16.1776937788677; 
+ Thu, 23 Apr 2026 02:49:48 -0700 (PDT)
+X-Received: by 2002:a05:600c:4e14:b0:489:1f08:91b with SMTP id
+ 5b1f17b1804b1-4891f080a7emr236013185e9.16.1776937788195; 
+ Thu, 23 Apr 2026 02:49:48 -0700 (PDT)
+Received: from localhost (2a01cb00021ec000b06e6b63494bd4c5.ipv6.abo.wanadoo.fr.
+ [2a01:cb00:21e:c000:b06e:6b63:494b:d4c5])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-4412150a071sm16875832f8f.21.2026.04.23.02.19.57
+ 5b1f17b1804b1-488fc1393f5sm477093305e9.9.2026.04.23.02.49.47
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Thu, 23 Apr 2026 02:19:57 -0700 (PDT)
-Message-ID: <66613eae-13f6-42f9-bada-d1f3b5d9cee0@redhat.com>
-Date: Thu, 23 Apr 2026 10:19:56 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+ Thu, 23 Apr 2026 02:49:47 -0700 (PDT)
+Mime-Version: 1.0
+Date: Thu, 23 Apr 2026 11:49:47 +0200
+Message-Id: <DI0FVI2TG9UU.JRHQ224VBSMW@redhat.com>
+To: "Kevin Traynor" <ktraynor@redhat.com>, <dev@dpdk.org>, "Gregory Etelson"
+ <getelson@nvidia.com>
 Subject: Re: [PATCH dpdk v3] net: fix VLAN packet type
-To: Robin Jarry <rjarry@redhat.com>, dev@dpdk.org,
- Gregory Etelson <getelson@nvidia.com>
-Cc: stable@dpdk.org
+Cc: <stable@dpdk.org>
+From: "Robin Jarry" <rjarry@redhat.com>
+User-Agent: aerc/0.21.0-142-gcff39137b013-dirty
 References: <20260422102814.645299-2-rjarry@redhat.com>
  <20260422133217.675900-3-rjarry@redhat.com>
-From: Kevin Traynor <ktraynor@redhat.com>
-Autocrypt: addr=ktraynor@redhat.com; keydata=
- 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
-In-Reply-To: <20260422133217.675900-3-rjarry@redhat.com>
+ <66613eae-13f6-42f9-bada-d1f3b5d9cee0@redhat.com>
+In-Reply-To: <66613eae-13f6-42f9-bada-d1f3b5d9cee0@redhat.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 3gJ0VFnaz6bqqFkhgkfbfkn55eTuyM7OA4aXBPDpmZI_1776935999
+X-Mimecast-MFC-PROC-ID: MJlkNA7-cRe18iwH03-pmChmcDknxUjfsQoQy0QoUbM_1776937789
 X-Mimecast-Originator: redhat.com
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -139,99 +97,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 4/22/26 2:32 PM, Robin Jarry wrote:
-> Since commit 1f250674085a ("net: fix packet type for stacked VLAN"),
-> rte_net_get_ptype() uses |= to set the L2 ptype inside the VLAN
-> parsing loop. Since pkt_type is already initialized with
-> RTE_PTYPE_L2_ETHER (0x1), or-ing it with RTE_PTYPE_L2_ETHER_VLAN
-> (0x6) results in RTE_PTYPE_L2_ETHER_QINQ (0x7). This causes single
-> VLAN frames to be misidentified as QinQ.
-> 
-> This was detected while testing DPDK 25.11.1 in grout. The net/tap
-> driver calls rte_net_get_ptype() in tap_verify_csum() to determine the
-> L2 header length. With the wrong ptype, l2_len is set to 22 (ether
-> + QinQ = 14 + 8) instead of 18 (ether + VLAN = 14 + 4), shifting the IP
-> header pointer by 4 bytes. The checksum is then computed on garbage
-> data, causing valid packets to be dropped.
-> 
-> Initialize pkt_type to 0 and defer the RTE_PTYPE_L2_ETHER assignment to
-> the l3 label, only if no VLAN/QinQ type was set in the loop. This avoids
-> the bitwise-or conflict between the L2 ptype constants entirely.
-> 
-> Add a new net_ptype_autotest unit test that verifies the ptype and
-> header lengths (l2_len, l3_len, l4_len) returned by rte_net_get_ptype()
-> for plain Ethernet, single VLAN, stacked VLAN (two 802.1Q tags), and
-> QinQ (802.1ad + 802.1Q) frames, with both IPv4/IPv6 and UDP/TCP
-> combinations.
-> 
-> Fixes: 1f250674085a ("net: fix packet type for stacked VLAN")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Robin Jarry <rjarry@redhat.com>
+Kevin Traynor, Apr 23, 2026 at 11:19:
+> Not shown in diff, but for:
+>
+> =09=09pkt_type |=3D
+> =09=09=09proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ?
+> =09=09=09=09 RTE_PTYPE_L2_ETHER_VLAN :
+> =09=09=09=09 RTE_PTYPE_L2_ETHER_QINQ;
+>
+> It seems to be produce the right result, but I'm not sure we should be
+> treating the ptype L2 defines as bitmasks. Maybe I'm wrong and it was
+> planned, but it looks like a coincidence it works now because QINQ (0x7)
+> happens to be a superset of VLAN (0x6) for the OR.
+>
+> Perhaps you could check vlan_depth and assign VLAN or QINQ based on that?
 
-Hi Robin,
+I hadn't considered this. It would make sense to have something like:
 
-Thanks for reporting this.
+l3:
+=09switch (vlan_depth) {
+=09case 0:
+=09=09pkt_type =3D RTE_PTYPE_L2_ETHER;
+=09=09break;
+=09case 1:
+=09=09pkt_type =3D RTE_PTYPE_L2_ETHER_VLAN;
+=09=09break;
+=09default:
+=09=09pkt_type =3D RTE_PTYPE_L2_ETHER_QINQ;
+=09=09break;
+=09}
 
-> ---
-> 
-> Notes:
->     v3:
->     
->     * changed the approach: initialize pkt_type=0 and only set it to
->       RTE_PTYPE_L2_ETHER if neither of VLAN nor QINQ matched.
->     * extended the unit tests to check for header lengths and added ipv6 / tcp
->       cases.
->     
->     v2: added new ptype tests
-> 
->  app/test/meson.build      |   1 +
->  app/test/test_net_ptype.c | 231 ++++++++++++++++++++++++++++++++++++++
->  lib/net/rte_net.c         |   4 +-
->  3 files changed, 235 insertions(+), 1 deletion(-)
->  create mode 100644 app/test/test_net_ptype.c
-> 
+Mind that this will report RTE_PTYPE_L2_ETHER_QINQ even if we have
+double stacked 802.1Q tags (ether type 0x8100) and no 802.1ad S-tag
+(QinQ 0x88A8). I don't think this is an issue, but I'll let you judge.
 
-<snip>
-> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
-> index 458b4814a9c9..0228f1eb2f18 100644
-> --- a/lib/net/rte_net.c
-> +++ b/lib/net/rte_net.c
-> @@ -331,8 +331,8 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
->  	struct rte_net_hdr_lens local_hdr_lens;
->  	const struct rte_ether_hdr *eh;
->  	struct rte_ether_hdr eh_copy;
-> -	uint32_t pkt_type = RTE_PTYPE_L2_ETHER;
->  	uint32_t off = 0, vlan_depth = 0;
-> +	uint32_t pkt_type = 0;
->  	uint16_t proto;
->  	int ret;
->  
-> @@ -392,6 +392,8 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
->  	}
->  
-
-Not shown in diff, but for:
-
-		pkt_type |=
-			proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ?
-				 RTE_PTYPE_L2_ETHER_VLAN :
-				 RTE_PTYPE_L2_ETHER_QINQ;
-
-It seems to be produce the right result, but I'm not sure we should be
-treating the ptype L2 defines as bitmasks. Maybe I'm wrong and it was
-planned, but it looks like a coincidence it works now because QINQ (0x7)
-happens to be a superset of VLAN (0x6) for the OR.
-
-Perhaps you could check vlan_depth and assign VLAN or QINQ based on that?
-
-thanks,
-Kevin.
-
->  l3:
-> +	if (pkt_type == 0)
-> +		pkt_type = RTE_PTYPE_L2_ETHER;
->  	if ((layers & RTE_PTYPE_L3_MASK) == 0)
->  		return pkt_type;
->  
+I can send a v4 with this if that suits you.
 
