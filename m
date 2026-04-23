@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B59FAD3F7
-	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 03:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52109FAD3F8
+	for <dpdk-dev@archiver.kernel.org>; Thu, 23 Apr 2026 03:41:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AC4AA4066B;
-	Thu, 23 Apr 2026 05:41:04 +0200 (CEST)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
- by mails.dpdk.org (Postfix) with ESMTP id 75C13402E0;
- Thu, 23 Apr 2026 05:41:00 +0200 (CEST)
-X-QQ-mid: zesmtpgz4t1776915656t5598ed58
-X-QQ-Originating-IP: zyWSjIK8Rb7TyCbNcDGtRVaKNTx2v+JOYpvv8j8P1yk=
+	by mails.dpdk.org (Postfix) with ESMTP id CA9DD40678;
+	Thu, 23 Apr 2026 05:41:06 +0200 (CEST)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+ by mails.dpdk.org (Postfix) with ESMTP id 544A440150;
+ Thu, 23 Apr 2026 05:41:03 +0200 (CEST)
+X-QQ-mid: zesmtpgz4t1776915660t3e4ec7ce
+X-QQ-Originating-IP: oGmA4C3vqmAvI0Zmo0ggDqwZmTeEBC6XY8AlNcB58qc=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.220.225.180])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Thu, 23 Apr 2026 11:40:54 +0800 (CST)
+ id ; Thu, 23 Apr 2026 11:40:57 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 17257714575413334979
+X-BIZMAIL-ID: 1539962495263407949
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH 04/18] net/ngbe: fix VF promiscuous and allmulticast
-Date: Thu, 23 Apr 2026 11:40:09 +0800
-Message-Id: <20260423034024.14404-5-zaiyuwang@trustnetic.com>
+Subject: [PATCH 05/18] net/txgbe: fix inaccuracy in TX rate limiting
+Date: Thu, 23 Apr 2026 11:40:10 +0800
+Message-Id: <20260423034024.14404-6-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -33,22 +33,22 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NvWYEgjCCjcV0j6jwDp47Hl7ObwL+mcV95fOHVgYnbfn9/DXpsWWgROT
- X6iz9YOLe7HiITIA18jn/yN30SWeSSr3oFxY/uA/tgpMvGxLzY8fqZCZnXKNzIjECiB+HlC
- c6scKbAJlEHPThnlgRm4LgmmUEEx932dd7TvNDNEIlGhJxyaECJ8U1N0rfC2WGMiPVHR269
- 2vaOXFY5kMYqabBzurnAN6+7ZVqIcdFrmnsrkxQ43YxHvJYZpRS0pn7mf2V1Gps22NvaLzJ
- buamL2HzH0qQ794UZWV9YBuVXJc74WLswwNotNWrkeYJEvKhEOj5OfMKjNsz63uajCBlQoG
- hwq/X+yGmN7OQZE9GZcE2urr7KjJS25p8Hn1t8k+KJqwwYcvnUc1H/+iuL6QFW/Ds9b8TBp
- 3cIre2PRZAnm5skh8XC7sMHvJADlIWItImBjM/KeKSKMLwJBJixIqhbWRF6QHuKGXs7L/xO
- 6Q8zFAFBwdxUYNgMpUHFuWpf+87I1nfJLzm2p/sOKL0LzI7bKDk/DELF3u5xHKKBBsfgHpg
- fqhZIJzHVoNTmSZmqUV4y/TvC9zCsRoF5Og548h3q72qFbX7MISiY0mIuuHAF1omV3sfkDP
- ttAI0IznYDqjDq87fXRQ8NqmbcjMac1Ywy4VRhiY0VTqqA7OUPCvbW7XMWwVxeI3sqLuXhs
- LmlECm/OdasTzRcdYwlq8dFdLh1bTF6r00t+avu7pJPSJT/umdyWEeXjKiwABAc7ZpLuXTt
- 6AurQBfR+5GNjZDdB7qj9x5Mz1wvtQY2iN1++RL/60j9gDb9gU4XppInOSPGdUAyyppxRFY
- Zr6WTDJpDQbj4YXpjezqA8kUgMM84RxO3WMerTo/TmlE5dCvD0tGJZIABawsTLKOOT4b/Hn
- UOs1ng8yOC2G+IE1dsJLR4sRSxe5P9M2DjuzJNl1VKRPK9QO4zfg0Zf8XIreXOUHZIH18Xe
- 3iUHwkHWfipqOh6eTExcdctebILismBNZaEW+k9x2OsJ7yHympC9RyM3byyz7NFkf1QMZkd
- 5EWFFkCFudPI40mNN17WigkzRx3udKv9NQ1cVRmHzvm8htrLtQ
+X-QQ-XMAILINFO: ObFHHlrAm440NqUjyUYpeJmZuqWNqDEsuqdKI6vnALeytHiqBbktRgue
+ VKKk7t7kVaeA2TLsgek9reZZzeg29agH5Ck1OsVFeaUsAESkP9RwDkRs8t/yAIKd5nYBeA/
+ k4wl/n5ovDtEbP3nWVwOvStNeYX5b8kN99MxWqHr81aNQ18AQJw7sRYNZPCzzHJR6MlUf9E
+ SeKob3iuKP/wHuiMWcnnzoKMMrlZP0d2054BJzeK8nbrSfwoLXUailUyaK12BYm6jnWCDHn
+ YKDH7Nv7r9ivNkex8YQGIv37S5d+Q0gL94dsb7xLp35NwCO3AAspwBxNbzgTzGeFN+BfeKV
+ TOf7brDEMedoMkG1ov3KUW2kOMM29q3id6pH4SGhQImnY4VN1vAvznxkZuH2f+7TBh+MS5r
+ qZoVRbBvm2X6nmrCEqFCCZrt24u6pGJ3qrPPCIoA2mHZ94rqaq+GP46QKzbxNXhRMofxmqy
+ aEas1DRVkLft5jwOzHR/VpHJdZ2yzPcM6AQcCeIOizLn4485e5i7ha/xNNYY7nj3jYyxgMy
+ pOu4DaNak/JHxQ3TpakOWbrXYrurb9cWd8IxXN9y3agdHFE2XC4NsbXZpF7E2adS8bSfTqt
+ 8afv3I1AuuW3gdVwqydHw4//pVUMZmTmMbjYCrnOLbOmwLx6R933Xf6gFcmTfpu9fc0Vm67
+ RZ9+eNzImiYIhBwpKfm1z/22D4WBWqmxee99JSDWZIwkfjK+M+eH9kzZzGA6pI+Q3hrHl/Y
+ Z/j2++9W9xy6PvwmX6xq4bl2zRIrPMET5dESPsSwMPI9Og4oLWaN9u8aiK/SQ+ZQqOREElp
+ 1yV6ctTaKcz4564vQGoH0viSpmhPxAbNBqXgy1TnVyCEGhNskUnJq07jWd4b72n4st+o6f+
+ 6tU1PiwC1l27lHvTXvQ+IqeHXS97eAwgSpY6fCLlRBYvG8364IabFD4qBf91mGoG9GQb+/9
+ /fyhME2HswjiSEyjUW148QQOA0CbxBYhJMkq+L7vBKXEZE/EFEFJ8YP2Sbpi8WrqHktEAXI
+ B3uVS70FqC1J08xQQBy7sRAUHqfoIl14o2s1vJXFITv+sg4XNvpMWEyUwj9OI=
 X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
@@ -64,61 +64,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The configuration of allmulti and promiscuous modes conflicts
-together. For instance, if we enable promiscuous mode, then enable and
-disable allmulti, then the promiscuous mode is wrongly disabled.
+Amber-lite NIC's TX rate limiting has large deviations for small
+packets. To fix this issue, there are some changes:
 
-Fix this behavior by:
-- doing nothing when we set/unset allmulti if promiscuous mode is on
-- restorting the proper mode (none or allmulti) when we disable
-  promiscuous mode
+1. Set TDM_RL_ADJ (0x1820c) to 21B (includes 7B Ethernet preamble,
+   1B SFD, 1B EFD, and 12B IPG).
+2) Remove the rate offset in the driver (e.g., 105 / 100, a rough
+   compensation value from Linux kernel driver tests).
 
-Fixes: 7744e90805b5 ("net/ngbe: add promiscuous and allmulticast ops for VF device")
+After these changes, accuracy deviation for 64B packets is within
+~5%, while large packets show lower deviation.
+
+Fixes: a309ab43acf3 ("net/txgbe: support Tx queue rate limiting for Amber-Lite")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/ngbe/ngbe_ethdev_vf.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/base/txgbe_regs.h | 1 +
+ drivers/net/txgbe/txgbe_ethdev.c    | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ngbe/ngbe_ethdev_vf.c b/drivers/net/ngbe/ngbe_ethdev_vf.c
-index 6406df40d0..81511fed8a 100644
---- a/drivers/net/ngbe/ngbe_ethdev_vf.c
-+++ b/drivers/net/ngbe/ngbe_ethdev_vf.c
-@@ -1196,9 +1196,13 @@ static int
- ngbevf_dev_promiscuous_disable(struct rte_eth_dev *dev)
- {
- 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
-+	int mode = NGBEVF_XCAST_MODE_NONE;
- 	int ret;
+diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
+index 95c585a025..060757323a 100644
+--- a/drivers/net/txgbe/base/txgbe_regs.h
++++ b/drivers/net/txgbe/base/txgbe_regs.h
+@@ -1670,6 +1670,7 @@ enum txgbe_5tuple_protocol {
+ #define   TXGBE_TDM_FACTOR_INT_SHIFT    16
+ #define   TXGBE_TDM_FACTOR_FRA_SHIFT    2
  
--	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_NONE)) {
-+	if (dev->data->all_multicast)
-+		mode = NGBEVF_XCAST_MODE_ALLMULTI;
-+
-+	switch (hw->mac.update_xcast_mode(hw, mode)) {
- 	case 0:
- 		ret = 0;
- 		break;
-@@ -1219,7 +1223,7 @@ ngbevf_dev_allmulticast_enable(struct rte_eth_dev *dev)
- 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
- 	int ret;
++#define TXGBE_TDM_RL_ADJ                0x1820C
+ #define TXGBE_TDM_RL_VM_IDX             0x018218
+ #define TXGBE_TDM_RL_VM_CFG             0x01821C
+ #define TXGBE_TDM_RL_CFG                0x018400
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 779874aac9..414107d7a7 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -4314,7 +4314,6 @@ txgbe_set_queue_rate_limit(struct rte_eth_dev *dev,
+ 			u16 frac;
  
--	if (dev->data->promiscuous == 1)
-+	if (dev->data->promiscuous)
- 		return 0;
+ 			link_speed = dev->data->dev_link.link_speed;
+-			tx_rate  = tx_rate * 105 / 100;
+ 			/* Calculate the rate factor values to set */
+ 			factor_int = link_speed / tx_rate;
+ 			frac = (link_speed % tx_rate) * 10000 / tx_rate;
+@@ -4324,6 +4323,7 @@ txgbe_set_queue_rate_limit(struct rte_eth_dev *dev,
+ 				factor_fra = 0;
+ 			}
  
- 	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_ALLMULTI)) {
-@@ -1243,6 +1247,9 @@ ngbevf_dev_allmulticast_disable(struct rte_eth_dev *dev)
- 	struct ngbe_hw *hw = ngbe_dev_hw(dev);
- 	int ret;
- 
-+	if (dev->data->promiscuous)
-+		return 0;
-+
- 	switch (hw->mac.update_xcast_mode(hw, NGBEVF_XCAST_MODE_MULTI)) {
- 	case 0:
- 		ret = 0;
++			wr32(hw, TXGBE_TDM_RL_ADJ, 21);
+ 			wr32(hw, TXGBE_TDM_RL_QUEUE_IDX, queue_idx);
+ 			wr32m(hw, TXGBE_TDM_RL_QUEUE_CFG,
+ 			      TXGBE_TDM_FACTOR_INT_MASK, factor_int << TXGBE_TDM_FACTOR_INT_SHIFT);
 -- 
 2.21.0.windows.1
 
