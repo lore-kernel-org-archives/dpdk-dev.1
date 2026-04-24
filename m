@@ -2,66 +2,102 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E0F9FB44C2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Apr 2026 07:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA07FE51E9
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Apr 2026 08:52:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id F264C40689;
-	Fri, 24 Apr 2026 09:05:57 +0200 (CEST)
-Received: from send63.i.mail.ru (send63.i.mail.ru [89.221.237.158])
- by mails.dpdk.org (Postfix) with ESMTP id A7B7640144;
- Wed, 22 Apr 2026 06:44:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
- s=mail4; h=References:In-Reply-To:Content-Type:Message-Id:Date:MIME-Version:
- Subject:Reply-To:Cc:To:From:From:Sender:Subject:To:Cc:Content-Type:
- Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
- Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
- List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
- X-Cloud-Ids; bh=ZaukuQ/3NDwc8k55ZU8/oeAgK37BUS9thGR8urLCWys=; t=1776833075;
- x=1776923075; b=HfYZEFLP1IhkJGjvnFrOfpYDm5RRnW5X1DoLxiyfBWpAeQrcAgdhfj6yw85jI
- TX7pkRVeiTW3bkZY946PjZkKqSgb8nsRRR5DsvyWfSsVtnog0TTtXuK6asCoNWrIfnrzd8h1BI56T
- auwjaXtmDYuBt7JgUOx1q5qBkjZPwTMGkxjgu1TcRaael/qe5cdE7vGIwIPA5HXf7i7IvcKmeJbD6
- 23SKwo923Wd33/gUvbIoDwbGv/Oc6aYdwjRX7CXuU1JUMfP9xfQEUf9aDKmBVMGWFd3gTCbSPAT7+
- 1JHwCwqlLF3m6QMAubIbTK4XyKAX4PpAGQ9IuJN+/dWpsatcAg==;
-Received: by exim-f-d85b6bf98-v7kc6 with local (envelope-from
- <lyulin.2003@mail.ru>)
- id 1wFPRy-000000009FK-0sEx; Wed, 22 Apr 2026 07:44:34 +0300
-Received: by e.mail.ru with HTTP;
-	Wed, 22 Apr 2026 07:44:34 +0300
-From: =?UTF-8?B?0JTQtdC90LjRgSDQm9GO0LvQuNC9?= <lyulin.2003@mail.ru>
-To: =?UTF-8?B?U3RlcGhlbiBIZW1taW5nZXI=?= <stephen@networkplumber.org>
-Cc: =?UTF-8?B?QWppdCBLaGFwYXJkZQ==?= <ajit.khaparde@broadcom.com>,
- =?UTF-8?B?U3JpaGFyc2hhIEJhc2F2YXBhdG5h?= <sriharsha.basavapatna@broadcom.com>, 
- dev@dpdk.org, stable@dpdk.org,
- =?UTF-8?B?S2lzaG9yZSBQYWRtYW5hYmhh?= <kishore.padmanabha@broadcom.com>
-Subject: =?UTF-8?B?UmVbMl06IFtQQVRDSCAxLzFdIG5ldC9ibnh0OiBmaXggc3RyaW5nIGJvdW5k?=
- =?UTF-8?B?cyBjaGVja3MgYW5kIGZvcm1hdCBzcGVjaWZpZXJz?=
+	by mails.dpdk.org (Postfix) with ESMTP id 01C58402A2;
+	Fri, 24 Apr 2026 10:52:42 +0200 (CEST)
+Received: from PH8PR06CU001.outbound.protection.outlook.com
+ (mail-westus3azon11012007.outbound.protection.outlook.com [40.107.209.7])
+ by mails.dpdk.org (Postfix) with ESMTP id 8A605402A0
+ for <dev@dpdk.org>; Fri, 24 Apr 2026 10:52:40 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U9ar7qDuQMcjDskzTAu0S6gupiZrPbTUSXrQvytYCQ8BTGivJQJ8aSuJs9HtRnuOp/WkvkZrlI31YjaEcDT39Fihju7JR44sHCJxcWo39o82teyCLx7NfMkcQq9YFi9+Q6X3feM8S3/H2fCQiQbV9HHpJDLlOzueX5QFJkQZp7OKPBqwNS5jfFIrvX8/JJj0rqvtxLFyLsc1yjxmrHQf94qi4NX49ouaaBk4m4wPmS+uduHstecU+h1d2LdW8gpuu6PmiXHiZlV56Hn9bPTuCQJQKP8x40rJJnrNkxBWFx/nFwNMiDXKzGyyfA15boccWOpBsA+iffBrJXghhYv72g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yUPkQBpr6/1Y4oipU/xqfSWyl46voLjpxzjQQMnz8UM=;
+ b=Neblx5J9wHkc6FpLaNZhaOhml81SbehrQG9YuAR0rpADpv358zo/7cEg48FoXJewqNjBdiou/NFHdMJbEXv0/5OuToPQSwVczN/1LO1FcDJtWPjy3Bq02vLT+IXwCBJNsd/4NU/zpm/nmee4uZxQ0v8maKTeW5dJHKuxKklw7Zf5a+NZuCjwTXVDbBycaBKqgIhf6R88iVw+15kY9S0fjNCsAGxJoc4jXV5+aLjYqxLeFC35Wv9lAnJjeCl/sPTe7Uq5dKMe4IEugMn74o0xlkRA6xQ1U78+op0Lwj+dAwnN7W9ufbZepXz2elDPfzfM5U1TrHAmreD85gsaAjnLOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yUPkQBpr6/1Y4oipU/xqfSWyl46voLjpxzjQQMnz8UM=;
+ b=bDDNAapju6+V5DrOJ0DyvNIFRIztaF16lfFkOnpqDq+o+Bh/zzQxrjItfcK1rcnWwIZJEsHNEEHZWd6aCx0AEbR1cz3la/LpdbR9LgwXjhJZJfodN7DabLuFg98LgraXkqTlfqlRwVHV9ruhaTSSI8bikuksHBB3sTL8V+OpGZDvvG/mDwU9pfT61ZJWf1HavLTE8VE9SM3A5NVCWzkjQUYvW4vChVqLMkRk7ni83vPhdbfoxfgNsfUg3XM/6Agh/RE1jgTppgvUTSloEJ9Wlbrn1CaZqv7A6ke2M6KKqhG7SgvxxLIWySiUtWj/C+lKE19j38Xhj6rG+0/BOh4B5g==
+Received: from SA0PR11CA0162.namprd11.prod.outlook.com (2603:10b6:806:1bb::17)
+ by SA3PR12MB7783.namprd12.prod.outlook.com (2603:10b6:806:314::19)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.21; Fri, 24 Apr
+ 2026 08:52:33 +0000
+Received: from SN1PEPF0002636C.namprd02.prod.outlook.com
+ (2603:10b6:806:1bb:cafe::68) by SA0PR11CA0162.outlook.office365.com
+ (2603:10b6:806:1bb::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9846.22 via Frontend Transport; Fri,
+ 24 Apr 2026 08:52:33 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com;
+ dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SN1PEPF0002636C.mail.protection.outlook.com (10.167.241.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9846.18 via Frontend Transport; Fri, 24 Apr 2026 08:52:33 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 24 Apr
+ 2026 01:52:17 -0700
+Received: from nvidia.com (10.126.230.37) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 24 Apr
+ 2026 01:52:16 -0700
+Date: Fri, 24 Apr 2026 10:52:14 +0200
+From: Dariusz Sosnowski <dsosnowski@nvidia.com>
+To: Rayane Boussanni <rboussanni@gmail.com>
+CC: <dev@dpdk.org>, <rasland@nvidia.com>, Viacheslav Ovsiienko
+ <viacheslavo@nvidia.com>, Bing Zhao <bingz@nvidia.com>, Ori Kam
+ <orika@nvidia.com>, Suanming Mou <suanmingm@nvidia.com>, Matan Azrad
+ <matan@nvidia.com>
+Subject: Re: [PATCH] net/mlx5: query hardware capability for max lro size
+Message-ID: <7z76boxf6nf3hzvspmc76ldy6idbynhusjcvlik2trkccupfiw@5ldoyqampej3>
+References: <20260420184808.751-1-rboussanni@gmail.com>
 MIME-Version: 1.0
-X-Priority: 3 (Normal)
-X-Mailer: Mail.Ru Mailer 1.0
-X-Senderfield-Remsg: 17764454431941097980
-Date: Wed, 22 Apr 2026 07:44:34 +0300
-Message-Id: <1776833074.769361490@f461.i.mail.ru>
-Content-Type: multipart/alternative;
- boundary="--ALT--w6sI7efT7Xzzxhy65eEDTgb67Avkxd4B1776833074"
-In-Reply-To: <20260417100357.7ef0dd36@phoenix.local>
-References: <20260417045640.2217188-1-lyulin.2003@mail.ru>
- <CA+BST0=Ntw_W_57uZ7DqLLFhxs9fvFsGBOiKGiZvy7GFwwubHA@mail.gmail.com>
- <20260417100357.7ef0dd36@phoenix.local>
-Authentication-Results: exim-f-d85b6bf98-v7kc6;
- auth=pass smtp.auth=lyulin.2003@mail.ru
- smtp.mailfrom=lyulin.2003@mail.ru
-X-Mailru-Src: fe
-X-7564579A: 78E4E2B564C1792B
-X-77F55803: 119C1F4DF6A9251C6FE63450884E50B521F1B17BE1CEFFB5C272AE19810A11D18FD872164937FA4CF7C7AEB05C7451633DE06ABAFEAF670545704A3CAF6850DC66BB6FB3E9B681B60B9091E8913A9467
-X-7FA49CB5: 70AAF3C13DB70168C09775C1D3CA48CF4964A708C60C975ACEDC9CE4EAAF8441BD4B6F7A4D31EC0BF3A348AD53D4D78F85486F6F803D29411E561CDFBCA1751FB8C8017905B5345AB5C8C57E37DE458B3094104A59EF76B68638F802B75D45FFA18204E546F3947C978BC0718161B9C8AC83A81C8FD4AD23E2E44EFD321A7F275571747095F342E85644E22E05AA81AEE6DE07D961CB05C233AC447995A7AD180B8ADF238913687C52120BFB3F63BC18BE95F64BC9A3199D1BDDB23E98D2D38BAC5E2E0391675A951D1EED481010A04937FF9E8F5525E23E8EC39131BBC9C8C21DF9E95F17B0083B26EA987F6312C9EC33AC447995A7AD18CB629EEF1311BF91D2E47CDBA5A96583C09775C1D3CA48CFCA5A41EBD8A3A0199FA2833FD35BB23D2EF20D2F80756B5F868A13BD56FB6657A471835C12D1D977725E5C173C3A84C317B107DEF921CE79117882F4460429728AD0CFFFB425014E868A13BD56FB6657E2021AF6380DFAD1A18204E546F3947CB11811A4A51E3B096D1867E19FE1407959CC434672EE6371089D37D7C0E48F6C8AA50765F79006373C7C2BBD16229762EFF80C71ABB335746BA297DBC24807EABDAD6C7F3747799A
-X-C1DE0DAB: 0D63561A33F958A5F18EA624012306855002B1117B3ED6967DC392EA25EEF5734A0A47EBA01A636A823CB91A9FED034534781492E4B8EEADFCE5E68AF59B345DBDAD6C7F3747799A
-X-C8649E89: 1C3962B70DF3F0AD73CAD6646DEDE191543584D22441D85277DD89D51EBB774225B6776AC983F447FC0B9F89525902EE6F57B2FD27647F25E66C117BDB76D659F9367E995BECCAA133160B348682E4EB61ACCA5595BCB892ED67517EAB9A58BB45D78EDADA28FE72B8341EE9D5BE9A0A5854D750B7F792B1866C4CB4DD2C9E351478EEF576AEE690721D270AA2B885D14C41F94D744909CE5DDE6AB186FA14AA15C35E0BAFFE8D415811D22EBD454E4C3FCF178C6DD14203
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu53w8ahmwBjZKM/YPHZyZHvz5uv+WouB9+Od3uM/CLT152eL7j4ZacoUSF0MSa0v5VBmEtSutdC50BIKdL3VIRlkt/X9Gr7QWYXucPUinHATAeHXorM+S1NQOd7Dfgh+EyScIG5088VEFEjMvfbqqkuZU=
-X-Mailru-MI: 20000000010000000000000800
-X-Mailru-Sender: 4397411AEADCD8A1C7DA46C2A3C298F9B408CCB2802C6C7B1539016F7DE3F2938CBB8916E2324DF941E43F9DA8ED8AE827C7DECABA7C38E6A62EE05E655F157F886CA5A3CC6DCBF5F3BC886747D28295BFB63B341B54916EB34FC69B7DAD59CBCCDA83F9FBF8B40662F87B7200F944B00D4ABDE8C577C2ED
-X-Mras: Ok
-X-Spam: undefined
-X-Mailman-Approved-At: Fri, 24 Apr 2026 09:05:46 +0200
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260420184808.751-1-rboussanni@gmail.com>
+X-Originating-IP: [10.126.230.37]
+X-ClientProxiedBy: rnnvmail202.nvidia.com (10.129.68.7) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN1PEPF0002636C:EE_|SA3PR12MB7783:EE_
+X-MS-Office365-Filtering-Correlation-Id: f610a4a8-2c2c-45e4-5612-08dea1ded338
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|36860700016|376014|82310400026|56012099003|22082099003|18002099003;
+X-Microsoft-Antispam-Message-Info: SuhbnyhaN04T6a8MLMKREueBUDYqjDU0OpNohywP1FGmICiavd7j1CEeu+1vkUbY5It0BOnCGOlw1Jsuzh+cICYX6rXGa/vrivgSIJ0m4BWDAeNXOLhzQJAelmVt5iaIJeC9sAu6lpUdxjNXM6wbOF8cJyBnkTYfkoaAok5dkN4W5J9PovkuEAgR06JWLrGPYcLa75gMXwaj32K8dEJ48IvDPcMUQw2ZYTXdGON+C0WpvAjA/2PV0LQPsqGy6XP3xcojD4J9Bn5e6P6SLB0bIkah6kUs4xQwm7BVBgaCN/6qGn/Hdvpa1Omqx1av5NGong/5S/So/onsW6e69ksIXAVKYQ+Whnq1hUoIF9NL7l3efLk7KAejvbwUyXrT2ZhIsxRoxJJLax6QTZ1QpPuC/GtVymL/QYrquXxBR/sngSGgJlCmybBV/F7VTd4tqjgjmZFGonVVDroDdHsUk0Bi28FqOJtzKYVIP0EDj422tbwVJaJAnemJNYnRcSFZZX9wuGQPrYwGd4foSLTZLdHfP+twq8Kd3Ou4jL9gjPb+nI7qPseQ2wp31uN6w1dfaCYpSdbVl+zUBPhvUb7A4LWp3ZNxkPosENQgb/QdrMB6mJjt0YRBMsqgtDgGm+3nELO1ENa2isSyuzzBf5BTwDCkMBvKif4KzlW4bmz1fWmDABYj7MVWPjNa8a4ITlS1h1FhYJ8Ac7dtnpB8x5ECoaDRjNYaGHdAmDComc1FP7t6Q64n8zqVEtDbp7zENIVYD+Z2nZuJPuY8Z+F0YVD58EIUtQ==
+X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
+ SFS:(13230040)(1800799024)(36860700016)(376014)(82310400026)(56012099003)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: FdtGeBDzLyJlDTIObb+G22923tmrJggMCCctI6+j4t6++FmrP4QDwwkB32MhkcFubNERKolyAD8/wSuDxoQXXMCJUtDQ4UIS5UQnugeUqfp4ACGMxepDPL2ZAJvDZgbcxm3vi3LObTV6fpoehzMeTWk9bNpNIFg6jIzmBBJNNbQFyl+Nk2GV6x//VKWgflQajXvu09lfp50VoqQyZ4BGoUCm0KZ7+c7VgGfh4s5vux/ReKZ0e9iHhp+uWv0WD/k5rZfQlY5TszGyDoUWBa+uYukvYhN4O0Ngtv3wvoEsRUcNQgYg7asYy1FJChksE9jseneJOlTAE70OOUVe8UTe27XzY0UguSoyPONxhB5gX7yBq6aJYQvHquwKSCAAJ4UtIBkzbDnUmmO5EgFNxAAOhIQsS1/idCn/m+oyhm+/T5GDnWl3ls2XMbEnRpF9HMzV
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Apr 2026 08:52:33.0331 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f610a4a8-2c2c-45e4-5612-08dea1ded338
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
+ Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: SN1PEPF0002636C.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7783
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -73,105 +109,44 @@ List-Post: <mailto:dev@dpdk.org>
 List-Help: <mailto:dev-request@dpdk.org?subject=help>
 List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
-Reply-To: =?UTF-8?B?0JTQtdC90LjRgSDQm9GO0LvQuNC9?= <lyulin.2003@mail.ru>
 Errors-To: dev-bounces@dpdk.org
 
+Thank you for the contribution.
 
-----ALT--w6sI7efT7Xzzxhy65eEDTgb67Avkxd4B1776833074
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
++cc mlx5 maintainers
 
-PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ibnh0L2JueHRfZXRoZGV2LmMKPiA+IGIvZHJp
-dmVycy9uZXQvYm54dC9ibnh0X2V0aGRldi5jCj4gPiBpbmRleCBiNjc3Zjk0OTFkLi5iYjAyYTI1
-NzliIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9uZXQvYm54dC9ibnh0X2V0aGRldi5jCj4gPiAr
-KysgYi9kcml2ZXJzL25ldC9ibnh0L2JueHRfZXRoZGV2LmMKPiA+IEBAIC02NTIsOCArNjUyLDkg
-QEAgc3RhdGljIGludCBibnh0X2luaXRfZmNfY3R4X21lbShzdHJ1Y3QgYm54dCAqYnApCj4gPgo+
-ID4gbWF4X2ZjID0gYnAtPmZsb3dfc3RhdC0+bWF4X2ZjOwo+ID4KPiA+IC0gc3ByaW50Zih0eXBl
-LCAiYm54dF9yeF9mY19pbl8iIFBDSV9QUklfRk1ULCBwZGV2LT5hZGRyLmRvbWFpbiwKPiA+IC0g
-cGRldi0+YWRkci5idXMsIHBkZXYtPmFkZHIuZGV2aWQsIHBkZXYtPmFkZHIuZnVuY3Rpb24pOwo+
-ID4gKyBzbnByaW50Zih0eXBlLCBSVEVfTUVNWk9ORV9OQU1FU0laRSwgImJueHRfcnhfZmNfaW5f
-IiBQQ0lfUFJJX0ZNVCwKPiA+ICsgcGRldi0+YWRkci5kb21haW4sIHBkZXYtPmFkZHIuYnVzLAo+
-ID4gKyBwZGV2LT5hZGRyLmRldmlkLCBwZGV2LT5hZGRyLmZ1bmN0aW9uKTsKPiA+IC8qIDQgYnl0
-ZXMgZm9yIGVhY2ggY291bnRlci1pZCAqLwoKPlJhdGhlciB0aGFuIHNpbGVudGx5IHRydW5jYXRp
-bmcsIGl0IHNob3VsZCByZXR1cm4gYW4gZXJyb3IuCgpBcyBmYXIgYXMgSSB1bmRlcnN0YW5kLCB0
-aGVzZSBzdHJpbmdzIGFyZSB1c2VkIGFzIGRpYWdub3N0aWMgaW5mb3JtYXRpb24gd2hlbiB0cmFj
-aW5nIGlzIGVuYWJsZWQuIElzIHRoZSB0cnVuY2F0aW9uIG9mIGEgZGVidWcgc3RyaW5nIHNvIGNy
-aXRpY2FsIHRoYXQgd2Ugc2hvdWxkIGludGVycnVwdCBkZXZpY2UgaW5pdGlhbGl6YXRpb24gYnkg
-cmV0dXJuaW5nIGFuIGVycm9yPyBGb3IgZXhhbXBsZSwgTGludXgga2VybmVsIHRydW5jYXRlcyB3
-b3JrZXIgdGhyZWFkIG5hbWVzIGlmIHRoZSBzdHJpbmdzIGFyZSB0b28gbG9uZwoK0L/Rj9GC0L3Q
-uNGG0LAsIDE3INCw0L/RgNC10LvRjyAyMDI20LMuLCAyMDowNCArMDM6MDAg0L7RgiBTdGVwaGVu
-IEhlbW1pbmdlciBzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZyA6Cgo+IAo+IE9uIEZyaSwgMTcg
-QXByIDIwMjYgMTI6NDM6MDcgLTA0MDAKPiBLaXNob3JlIFBhZG1hbmFiaGEgPGtpc2hvcmUucGFk
-bWFuYWJoYUBicm9hZGNvbS5jb20gKAo+IC9jb21wb3NlP1RvPWtpc2hvcmUucGFkbWFuYWJoYUBi
-cm9hZGNvbS5jb20gKT4gd3JvdGU6Cj4gCj4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9i
-bnh0L2JueHRfZXRoZGV2LmMKPiA+ID4gYi9kcml2ZXJzL25ldC9ibnh0L2JueHRfZXRoZGV2LmMK
-PiA+ID4gaW5kZXggYjY3N2Y5NDkxZC4uYmIwMmEyNTc5YiAxMDA2NDQKPiA+ID4gLS0tIGEvZHJp
-dmVycy9uZXQvYm54dC9ibnh0X2V0aGRldi5jCj4gPiA+ICsrKyBiL2RyaXZlcnMvbmV0L2JueHQv
-Ym54dF9ldGhkZXYuYwo+ID4gPiBAQCAtNjUyLDggKzY1Miw5IEBAIHN0YXRpYyBpbnQgYm54dF9p
-bml0X2ZjX2N0eF9tZW0oc3RydWN0IGJueHQgKmJwKQo+ID4gPgo+ID4gPiBtYXhfZmMgPSBicC0+
-Zmxvd19zdGF0LT5tYXhfZmM7Cj4gPiA+Cj4gPiA+IC0gc3ByaW50Zih0eXBlLCAiYm54dF9yeF9m
-Y19pbl8iIFBDSV9QUklfRk1ULCBwZGV2LT5hZGRyLmRvbWFpbiwKPiA+ID4gLSBwZGV2LT5hZGRy
-LmJ1cywgcGRldi0+YWRkci5kZXZpZCwgcGRldi0+YWRkci5mdW5jdGlvbik7Cj4gPiA+ICsgc25w
-cmludGYodHlwZSwgUlRFX01FTVpPTkVfTkFNRVNJWkUsICJibnh0X3J4X2ZjX2luXyIgUENJX1BS
-SV9GTVQsCj4gPiA+ICsgcGRldi0+YWRkci5kb21haW4sIHBkZXYtPmFkZHIuYnVzLAo+ID4gPiAr
-IHBkZXYtPmFkZHIuZGV2aWQsIHBkZXYtPmFkZHIuZnVuY3Rpb24pOwo+ID4gPiAvKiA0IGJ5dGVz
-IGZvciBlYWNoIGNvdW50ZXItaWQgKi8KPiAKPiBSYXRoZXIgdGhhbiBzaWxlbnRseSB0cnVuY2F0
-aW5nLCBpdCBzaG91bGQgcmV0dXJuIGFuIGVycm9yLgo+
+On Mon, Apr 20, 2026 at 02:48:08PM -0400, Rayane Boussanni wrote:
+> Resolve a FIXME in mlx5_dev_infos_get() by dynamically checking the
+> hardware lro_cap flag instead of unconditionally advertising
+> MLX5_MAX_LRO_SIZE. Retains the standard 32-byte fallback for
+> min_rx_bufsize.
+> 
+> Signed-off-by: Rayane Boussanni <rboussanni@gmail.com>
+> ---
+>  drivers/net/mlx5/mlx5_ethdev.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/mlx5/mlx5_ethdev.c b/drivers/net/mlx5/mlx5_ethdev.c
+> index a29cdeeb50..fb51de031b 100644
+> --- a/drivers/net/mlx5/mlx5_ethdev.c
+> +++ b/drivers/net/mlx5/mlx5_ethdev.c
+> @@ -363,9 +363,9 @@ mlx5_dev_infos_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *info)
+>  	info->min_mtu = priv->min_mtu;
+>  	info->max_mtu = priv->max_mtu;
+>  	info->max_rx_pktlen = info->max_mtu + MLX5_ETH_OVERHEAD;
+> -	/* FIXME: we should ask the device for these values. */
+>  	info->min_rx_bufsize = 32;
+> -	info->max_lro_pkt_size = MLX5_MAX_LRO_SIZE;
+> +	info->max_lro_pkt_size = priv->sh->cdev->config.hca_attr.lro_cap ?
+> +				 MLX5_MAX_LRO_SIZE : 0;
 
-----ALT--w6sI7efT7Xzzxhy65eEDTgb67Avkxd4B1776833074
-Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: base64
+Could you please change the condition to use priv->sh->config.lro_allowed?
+This field is used in other cases where LRO capability is checked,
+since it covers both hca_attr and DevX support checks.
 
-CjxIVE1MPjxCT0RZPjxwIHN0eWxlPSdtYXJnaW4tdG9wOiAwcHg7JyBkaXI9Imx0ciI+Jmd0OyAm
-Z3Q7IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ibnh0L2JueHRfZXRoZGV2LmM8YnI+CiZndDsg
-Jmd0OyBiL2RyaXZlcnMvbmV0L2JueHQvYm54dF9ldGhkZXYuYzxicj4KJmd0OyAmZ3Q7IGluZGV4
-IGI2NzdmOTQ5MWQuLmJiMDJhMjU3OWIgMTAwNjQ0PGJyPgomZ3Q7ICZndDsgLS0tIGEvZHJpdmVy
-cy9uZXQvYm54dC9ibnh0X2V0aGRldi5jPGJyPgomZ3Q7ICZndDsgKysrIGIvZHJpdmVycy9uZXQv
-Ym54dC9ibnh0X2V0aGRldi5jPGJyPgomZ3Q7ICZndDsgQEAgLTY1Miw4ICs2NTIsOSBAQCBzdGF0
-aWMgaW50IGJueHRfaW5pdF9mY19jdHhfbWVtKHN0cnVjdCBibnh0ICpicCk8YnI+CiZndDsgJmd0
-Ozxicj4KJmd0OyAmZ3Q7IG1heF9mYyA9IGJwLSZndDtmbG93X3N0YXQtJmd0O21heF9mYzs8YnI+
-CiZndDsgJmd0Ozxicj4KJmd0OyAmZ3Q7IC0gc3ByaW50Zih0eXBlLCAiYm54dF9yeF9mY19pbl8i
-IFBDSV9QUklfRk1ULCBwZGV2LSZndDthZGRyLmRvbWFpbiw8YnI+CiZndDsgJmd0OyAtIHBkZXYt
-Jmd0O2FkZHIuYnVzLCBwZGV2LSZndDthZGRyLmRldmlkLCBwZGV2LSZndDthZGRyLmZ1bmN0aW9u
-KTs8YnI+CiZndDsgJmd0OyArIHNucHJpbnRmKHR5cGUsIFJURV9NRU1aT05FX05BTUVTSVpFLCAi
-Ym54dF9yeF9mY19pbl8iIFBDSV9QUklfRk1ULDxicj4KJmd0OyAmZ3Q7ICsgcGRldi0mZ3Q7YWRk
-ci5kb21haW4sIHBkZXYtJmd0O2FkZHIuYnVzLDxicj4KJmd0OyAmZ3Q7ICsgcGRldi0mZ3Q7YWRk
-ci5kZXZpZCwgcGRldi0mZ3Q7YWRkci5mdW5jdGlvbik7PGJyPgomZ3Q7ICZndDsgLyogNCBieXRl
-cyBmb3IgZWFjaCBjb3VudGVyLWlkICovPC9wPgo8cCBkaXI9Imx0ciI+Jmd0O1JhdGhlciB0aGFu
-IHNpbGVudGx5IHRydW5jYXRpbmcsIGl0IHNob3VsZCByZXR1cm4gYW4gZXJyb3IuPC9wPgo8cCBk
-aXI9Imx0ciI+QXMgZmFyIGFzIEkgdW5kZXJzdGFuZCwgdGhlc2Ugc3RyaW5ncyBhcmUgdXNlZCBh
-cyBkaWFnbm9zdGljIGluZm9ybWF0aW9uIHdoZW4gdHJhY2luZyBpcyBlbmFibGVkLiBJcyB0aGUg
-dHJ1bmNhdGlvbiBvZiBhIGRlYnVnIHN0cmluZyBzbyBjcml0aWNhbCB0aGF0IHdlIHNob3VsZCBp
-bnRlcnJ1cHQgZGV2aWNlIGluaXRpYWxpemF0aW9uIGJ5IHJldHVybmluZyBhbiBlcnJvcj8gRm9y
-IGV4YW1wbGUsIExpbnV4IGtlcm5lbCB0cnVuY2F0ZXMgd29ya2VyIHRocmVhZCBuYW1lcyBpZiB0
-aGUgc3RyaW5ncyBhcmUgdG9vIGxvbmc8L3A+CtC/0Y/RgtC90LjRhtCwLCAxNyDQsNC/0YDQtdC7
-0Y8gMjAyNtCzLiwgMjA6MDQgKzAzOjAwINC+0YIgU3RlcGhlbiBIZW1taW5nZXIgPGEgaHJlZj0i
-bWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnIj5zdGVwaGVuQG5ldHdvcmtwbHVtYmVy
-Lm9yZzwvYT46PGJyPjxicj48YmxvY2txdW90ZSBpZD0ibWFpbC1hcHAtYXV0by1xdW90ZSIgY2l0
-ZT0iMTc3NjQ0NTQ0MzE5NDEwOTc5ODAiIHN0eWxlPSJib3JkZXItbGVmdDoxcHggc29saWQgIzI5
-N0JFRjsgbWFyZ2luOjBweCAwcHggMHB4IDEwcHg7IHBhZGRpbmc6MHB4IDBweCAwcHggMTBweDsi
-PjxkaXYgY2xhc3M9ImpzLWhlbHBlciBqcy1yZWFkbXNnLW1zZyI+CiAgICAKICAgIDxzdHlsZSB0
-eXBlPSJ0ZXh0L2NzcyI+PC9zdHlsZT4KICAgIDxiYXNlIHRhcmdldD0iX3NlbGYiIGhyZWY9Imh0
-dHBzOi8vZS5tYWlsLnJ1LyIgLz4KICAgIDxkaXYgaWQ9InN0eWxlXzE3NzY0NDU0NDMxOTQxMDk3
-OTgwIj4KICAgICAgICA8ZGl2IGlkPSJzdHlsZV8xNzc2NDQ1NDQzMTk0MTA5Nzk4MF9CT0RZIj5P
-biBGcmksIDE3IEFwciAyMDI2IDEyOjQzOjA3IC0wNDAwPGJyPgpLaXNob3JlIFBhZG1hbmFiaGEg
-PDxhIGhyZWY9Ii9jb21wb3NlP1RvPWtpc2hvcmUucGFkbWFuYWJoYUBicm9hZGNvbS5jb20iPmtp
-c2hvcmUucGFkbWFuYWJoYUBicm9hZGNvbS5jb208L2E+PiB3cm90ZTo8YnI+Cjxicj4KPiA+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ibnh0L2JueHRfZXRoZGV2LmM8YnI+Cj4gPiBiL2RyaXZl
-cnMvbmV0L2JueHQvYm54dF9ldGhkZXYuYzxicj4KPiA+IGluZGV4IGI2NzdmOTQ5MWQuLmJiMDJh
-MjU3OWIgMTAwNjQ0PGJyPgo+ID4gLS0tIGEvZHJpdmVycy9uZXQvYm54dC9ibnh0X2V0aGRldi5j
-PGJyPgo+ID4gKysrIGIvZHJpdmVycy9uZXQvYm54dC9ibnh0X2V0aGRldi5jPGJyPgo+ID4gQEAg
-LTY1Miw4ICs2NTIsOSBAQCBzdGF0aWMgaW50IGJueHRfaW5pdF9mY19jdHhfbWVtKHN0cnVjdCBi
-bnh0ICpicCk8YnI+Cj4gPjxicj4KPiA+ICAgICAgICAgbWF4X2ZjID0gYnAtPmZsb3dfc3RhdC0+
-bWF4X2ZjOzxicj4KPiA+PGJyPgo+ID4gLSAgICAgICBzcHJpbnRmKHR5cGUsICJibnh0X3J4X2Zj
-X2luXyIgUENJX1BSSV9GTVQsIHBkZXYtPmFkZHIuZG9tYWluLDxicj4KPiA+IC0gICAgICAgICAg
-ICAgICBwZGV2LT5hZGRyLmJ1cywgcGRldi0+YWRkci5kZXZpZCwgcGRldi0+YWRkci5mdW5jdGlv
-bik7PGJyPgo+ID4gKyAgICAgICBzbnByaW50Zih0eXBlLCBSVEVfTUVNWk9ORV9OQU1FU0laRSwg
-ImJueHRfcnhfZmNfaW5fIiBQQ0lfUFJJX0ZNVCw8YnI+Cj4gPiArICAgICAgICAgICAgICAgcGRl
-di0+YWRkci5kb21haW4sIHBkZXYtPmFkZHIuYnVzLDxicj4KPiA+ICsgICAgICAgICAgICAgICBw
-ZGV2LT5hZGRyLmRldmlkLCBwZGV2LT5hZGRyLmZ1bmN0aW9uKTs8YnI+Cj4gPiAgICAgICAgIC8q
-IDQgYnl0ZXMgZm9yIGVhY2ggY291bnRlci1pZCAqLzxicj4KPGJyPgpSYXRoZXIgdGhhbiBzaWxl
-bnRseSB0cnVuY2F0aW5nLCBpdCBzaG91bGQgcmV0dXJuIGFuIGVycm9yLjwvZGl2PgogICAgICAg
-IAogICAgPC9kaXY+CjwvZGl2PjwvYmxvY2txdW90ZT48L0JPRFk+PC9IVE1MPgo=
+>  	/*
+>  	 * Since we need one CQ per QP, the limit is the minimum number
+>  	 * between the two values.
 
-----ALT--w6sI7efT7Xzzxhy65eEDTgb67Avkxd4B1776833074--
+Best regards,
+Dariusz Sosnowski
