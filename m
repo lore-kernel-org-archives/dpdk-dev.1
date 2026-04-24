@@ -2,70 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B672FED3F2
-	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Apr 2026 17:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239B4FF8855
+	for <dpdk-dev@archiver.kernel.org>; Fri, 24 Apr 2026 21:59:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DEEA540670;
-	Fri, 24 Apr 2026 19:02:14 +0200 (CEST)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com
- [209.85.221.175])
- by mails.dpdk.org (Postfix) with ESMTP id 64ACF40648
- for <dev@dpdk.org>; Fri, 24 Apr 2026 19:02:13 +0200 (CEST)
-Received: by mail-vk1-f175.google.com with SMTP id
- 71dfb90a1353d-570f7bd671bso1585936e0c.3
- for <dev@dpdk.org>; Fri, 24 Apr 2026 10:02:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 16C35402A0;
+	Fri, 24 Apr 2026 23:59:32 +0200 (CEST)
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com
+ [209.85.167.180])
+ by mails.dpdk.org (Postfix) with ESMTP id 55F0040291
+ for <dev@dpdk.org>; Fri, 24 Apr 2026 23:59:30 +0200 (CEST)
+Received: by mail-oi1-f180.google.com with SMTP id
+ 5614622812f47-479d9b155deso2186380b6e.3
+ for <dev@dpdk.org>; Fri, 24 Apr 2026 14:59:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1777050133; x=1777654933; darn=dpdk.org;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777067969;
+ x=1777672769; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=TPCPst9vo3Xsc8FHL6NQx7VvJJy86rHjS0ttv0htqGc=;
- b=cjAuEhtfFiyhIARdIeU4f1/FA4VQkz3M+UlvTq/eaz524mcasX7cAuvZzFfq8w4H0E
- svlg7NGtNAsLhEUKXC6RGK2Y9IrK+HHqf05cbqTYUlwc/dslx7+VR6LsoOBLEhW9caRj
- VyuKSX0nl1ZGMm8n1wXUIw7lChLgd1e20Yg+8=
+ bh=Ufb0s/gfUlTov0EsKmMzd0uPOYozRwJQdgBd/fl4lAI=;
+ b=bphRHY+Gh5Dd4ntVWi2ADfYgmnsm53L7y7w4h7/XIRfN/rvP6XcR638dWpDZqs59tB
+ ticIjCbBUfEirQcc9hsMlnPNv4QM1q1+8GCpKhBr+PPa3FspqPanrHoVk+RXR9E4566d
+ FFK3ZDlQgwYIacw+ylGWwjN47j/lo8nRw9X0JrcvtIJipF5aO/cwAQBzzfnt5tS6c6qO
+ 4k9WzlJ4GHfuEGxC36ce7JQlZ6slvVfOhFFEBCE0G8kfokIDlywQRm+zoSoMdxgiJ2Jj
+ jVQZK2KioqQSjAXLGh2bp0P4jZtZQip3GZcv7r7hBoNW1Py4F7XvFBti5vYm2V/MJ+Ay
+ n19w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777050133; x=1777654933;
+ d=1e100.net; s=20251104; t=1777067969; x=1777672769;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=TPCPst9vo3Xsc8FHL6NQx7VvJJy86rHjS0ttv0htqGc=;
- b=gW9O+SfGs0fUumLu9pqJLaM9GlarU3/Ln6RvjXb3UeF5nviKTNkqc3DDAgN+HWx8sL
- IYKAuv2TNxMzR2XnEjMqZ391OAUGncCNWszBJT7Z5pV974TaNX3CT8+wygXDSciZADWU
- 8ZWR86gynW4iO40S5mUFjAgCJgdzniH0l02DH7u0bxDS6kDDEhOKYOkBocugJSlfwfF8
- nrTzv5mtEEsWPtfJo5OU3TLrZjDAkZibx7DKstKojBI5kuVQOqaQb7GOeWAZdquddyFL
- m0+yS7hQ1gWu8eFZ0d2bAzXHg9QUzS7LVanbD+HXdnOBKaynLIOVvZb962PBadPZCOYF
- woKg==
-X-Gm-Message-State: AOJu0YyzWgQkDhagXRI6bJF5e2wUmLWHoL4pxsIye97HwegU+xN+o5YL
- pxAw+M89gy9NCthsB3iPbCh+cjy1CJHcdiSqY1lfBJlgtXXmyK8rtWJwRw/1U2HCFLk=
-X-Gm-Gg: AeBDievUvUtSyoxzazEqe3i1Tuhl189lGfudKpZmjzBz/jl7AfDO2Lvo3kUwkRUsg7g
- LKC6q2aZ1SzOecOMzhxwur/usTofKBHizDJAsocKTMKaADXBRWytKBr9X8T9G6ZzD5etMiTFN5W
- c83CdQLkepKvvWrbY3QW7y5K/suUtsDGFuJ/V74yhODbnhr4Is1saNvj/2fL1pO2t9VvDa+m8MW
- kHeS/EO2cZPUPliz52ZfqxoAvV9GOYUIZUfUc+6qbor+Q/I/EexpHEFt1OQt90/v+sCxvbTrjjl
- igY2aAOokES/qg3PtOtfkCQPpmHA6ASo8gMUiS/dnYlNoY9POvbHW24rCbICcDDE2Hc1/Xi4/RK
- +dL/vtm4U/8YY8ZrwjvAKpGJ5mIxRZOQ/pQ1lU7a70xygjJygqopu5rL8WA9J49dEelE/I+1mgF
- l1tz2RSjCh/0xdHmvvxIlZO0QDIFzHsy1UwIQcGqlkZ13W+hmPMFqz2Fb7Z1YRktsEp1lCTXZS
-X-Received: by 2002:a05:6122:78c:b0:570:f5d3:e499 with SMTP id
- 71dfb90a1353d-570f5d3e655mr11277225e0c.10.1777050105894; 
- Fri, 24 Apr 2026 10:01:45 -0700 (PDT)
-Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
+ bh=Ufb0s/gfUlTov0EsKmMzd0uPOYozRwJQdgBd/fl4lAI=;
+ b=jSvOqeqyJwWm5WEr9gRH4KNwEndGJZ3hElqrbT/4IBvfp5FgaNATOPn+B2Xo9ZbIk3
+ KiOMaVL9vJJxLN3FjfK70GtsalyyttyflQ9GQ7Qt7Gs/f28jgut2uoRO5friD3yeM/vD
+ MNrz12PeDGIMf61SEZyYahN6h/VLHTEv1lKdoW58/Fsf4f7fH+iOTIb7a89O+vTHjPAk
+ +BY+gLMxOVPA6gA5MQJKULkYqHi+gfG3QOAqN+zrm8rmKptjSl6f4VbgRsJuUdEpFCV+
+ L8/KcVFASBk59wHaLlhk5ty9kEqSIgCGj9PZrG+5QDeKnjhoxzKbxh6yYZjkqZOogh7s
+ 1JFg==
+X-Gm-Message-State: AOJu0YyI/NCrAaqEsuZpSlUVKNF6NctH18ExW8PPlka/mgDzBPpuY2Vs
+ mdSRiOe/mIOg8ahJFbbKFJjqK2QKX1ltjSDlvudWMScqWrdNdfqrY3q2PKVpY+gYpQU=
+X-Gm-Gg: AeBDietpuJX6aXAyYKOamCGMVKvzQo+MeGVfhdwy+7ibUjjHaooXvDoxMUtefX/mJdG
+ 5rVALjKUOC1AW54qwEvGQil4nbiC8vfjYUaSoENs9AT3wfFz/7l/QU8hzq5w70cW+xlciuTQcb7
+ GvHZZrlegB8tOTf5duqJMgKgsvfE7J2TfawT8i/lRwD3x0tBg2dGCSkbMT6m8cLbpyirV459nob
+ 8luuB22d8ByihkHTj+Jwe5ZHr9/bqLsFbFM6DQRQNJ4+e3yg2RGQRuLiwTQmDc7Bp3832RKWpmy
+ poq9n745cwh5JG4EKWXTKBdKx8zvo3gcne6ui9LomjD4JMD1SVwMc4pCjFk/o3bVukq3rppiqS5
+ JrS167UUOYOon0sbxPbFj3NvgxQ4b3PiEx1Shx79AWQUVEgUlVJuCCw905ZcCqHeaUhGPfBo1KD
+ 49ZbUpBwXu6+lPyEYYgy3BeMW/JoNpsIc82DuCPdLIFCQz7HOHXGagZGUl
+X-Received: by 2002:a05:6808:1826:b0:46c:cdf4:1be4 with SMTP id
+ 5614622812f47-4799c81620fmr21473796b6e.10.1777067969294; 
+ Fri, 24 Apr 2026 14:59:29 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8b031f65a27sm184065416d6.16.2026.04.24.10.01.45
+ 5614622812f47-479f4a284d8sm7923310b6e.15.2026.04.24.14.59.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 24 Apr 2026 10:01:45 -0700 (PDT)
-From: Dean Marx <dmarx@iol.unh.edu>
-To: patrickrobb1997@gmail.com, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
- Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
-Cc: dev@dpdk.org,
-	Dean Marx <dmarx@iol.unh.edu>
-Subject: [PATCH v3 3/7] dts: move context from framework to API
-Date: Fri, 24 Apr 2026 13:01:35 -0400
-Message-ID: <20260424170139.20592-4-dmarx@iol.unh.edu>
-X-Mailer: git-send-email 2.52.0
-In-Reply-To: <20260424170139.20592-1-dmarx@iol.unh.edu>
-References: <20260423190424.41619-1-dmarx@iol.unh.edu>
- <20260424170139.20592-1-dmarx@iol.unh.edu>
+ Fri, 24 Apr 2026 14:59:28 -0700 (PDT)
+Date: Fri, 24 Apr 2026 14:59:25 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: Re: [PATCH 18/18] net/txgbe: fix get eeprom operation
+Message-ID: <20260424145925.43e00e12@phoenix.local>
+In-Reply-To: <20260423034024.14404-19-zaiyuwang@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
+ <20260423034024.14404-19-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -79,332 +81,31 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-A couple test suites import and get the run context
-during execution. Move this to the API.
+On Thu, 23 Apr 2026 11:40:23 +0800
+Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 
-Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
----
- .../dts/{framework.context.rst => api.context.rst} |  2 +-
- doc/api/dts/index.rst                              |  2 +-
- dts/api/artifact.py                                |  2 +-
- dts/{framework => api}/context.py                  |  0
- dts/api/cryptodev/__init__.py                      |  2 +-
- dts/api/packet.py                                  |  4 ++--
- dts/api/test.py                                    |  2 +-
- dts/api/testpmd/__init__.py                        |  2 +-
- dts/framework/remote_session/blocking_app.py       |  2 +-
- dts/framework/remote_session/dpdk.py               |  2 +-
- dts/framework/remote_session/dpdk_shell.py         |  2 +-
- dts/framework/remote_session/interactive_shell.py  |  2 +-
- dts/framework/test_run.py                          |  2 +-
- dts/framework/test_suite.py                        |  4 ++--
- dts/framework/testbed_model/node.py                |  2 +-
- dts/framework/testbed_model/topology.py            | 14 +++++++-------
- dts/tests/TestSuite_cryptodev_throughput.py        |  2 +-
- dts/tests/TestSuite_l2fwd.py                       |  2 +-
- 18 files changed, 25 insertions(+), 25 deletions(-)
- rename doc/api/dts/{framework.context.rst => api.context.rst} (80%)
- rename dts/{framework => api}/context.py (100%)
+> The original I2C access flow in the module information retrieval
+> process was flawed. Correct the implementation to properly fetch
+> module info.
+> 
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 
-diff --git a/doc/api/dts/framework.context.rst b/doc/api/dts/api.context.rst
-similarity index 80%
-rename from doc/api/dts/framework.context.rst
-rename to doc/api/dts/api.context.rst
-index 925c160360..65b4ab9a47 100644
---- a/doc/api/dts/framework.context.rst
-+++ b/doc/api/dts/api.context.rst
-@@ -3,6 +3,6 @@
- context - DTS execution context
- ===============================
- 
--.. automodule:: framework.context
-+.. automodule:: api.context
-    :members:
-    :show-inheritance:
-diff --git a/doc/api/dts/index.rst b/doc/api/dts/index.rst
-index 783270f6e9..98269d6e80 100644
---- a/doc/api/dts/index.rst
-+++ b/doc/api/dts/index.rst
-@@ -32,7 +32,7 @@ Modules
-    framework.test_suite
-    framework.test_result
-    framework.settings
--   framework.context
-+   api.context
-    framework.logger
-    framework.parser
-    api.utils
-diff --git a/dts/api/artifact.py b/dts/api/artifact.py
-index 7d04c7ab49..f3dd07de56 100644
---- a/dts/api/artifact.py
-+++ b/dts/api/artifact.py
-@@ -86,7 +86,7 @@ def make_file_path(
- 
-         path /= custom_path
-     else:
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         try:
-             ctx = get_ctx()
-diff --git a/dts/framework/context.py b/dts/api/context.py
-similarity index 100%
-rename from dts/framework/context.py
-rename to dts/api/context.py
-diff --git a/dts/api/cryptodev/__init__.py b/dts/api/cryptodev/__init__.py
-index c6a220dced..67dcb02130 100644
---- a/dts/api/cryptodev/__init__.py
-+++ b/dts/api/cryptodev/__init__.py
-@@ -23,7 +23,7 @@
-     VerifyResults,
- )
- from api.exception import RemoteCommandExecutionError, SkippedTestException
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.remote_session.dpdk_shell import compute_eal_params
- 
- if TYPE_CHECKING:
-diff --git a/dts/api/packet.py b/dts/api/packet.py
-index b7a9bb28bf..59f26da833 100644
---- a/dts/api/packet.py
-+++ b/dts/api/packet.py
-@@ -30,7 +30,7 @@
- from api.exception import InternalError
- from api.test import fail, log_debug
- from api.utils import get_packet_summaries
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
-     PacketFilteringConfig,
- )
-@@ -82,7 +82,7 @@ def send_packets_and_capture(
-     Returns:
-         A list of received packets.
-     """
--    from framework.context import get_ctx
-+    from api.context import get_ctx
-     from framework.testbed_model.traffic_generator.capturing_traffic_generator import (
-         CapturingTrafficGenerator,
-     )
-diff --git a/dts/api/test.py b/dts/api/test.py
-index 9cad9a9495..a1f2326075 100644
---- a/dts/api/test.py
-+++ b/dts/api/test.py
-@@ -11,7 +11,7 @@
- 
- from api.artifact import Artifact
- from api.exception import InternalError, SkippedTestException, TestCaseVerifyError
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.logger import DTSLogger
- 
- 
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-index 9498d723d5..a528663c21 100644
---- a/dts/api/testpmd/__init__.py
-+++ b/dts/api/testpmd/__init__.py
-@@ -55,7 +55,7 @@
-     TxOffloadConfiguration,
-     VLANOffloadFlag,
- )
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.params.types import TestPmdParamsDict
- from framework.remote_session.dpdk_shell import DPDKShell
- from framework.remote_session.interactive_shell import only_active
-diff --git a/dts/framework/remote_session/blocking_app.py b/dts/framework/remote_session/blocking_app.py
-index c3b02dcc62..07db6dfeb0 100644
---- a/dts/framework/remote_session/blocking_app.py
-+++ b/dts/framework/remote_session/blocking_app.py
-@@ -30,7 +30,7 @@
- 
- from typing_extensions import Self
- 
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.params import Params
- from framework.params.eal import EalParams
- from framework.remote_session.dpdk_shell import compute_eal_params
-diff --git a/dts/framework/remote_session/dpdk.py b/dts/framework/remote_session/dpdk.py
-index 69b47b823b..9f7cd60dfe 100644
---- a/dts/framework/remote_session/dpdk.py
-+++ b/dts/framework/remote_session/dpdk.py
-@@ -26,7 +26,7 @@
-     RemoteDPDKTarballLocation,
-     RemoteDPDKTreeLocation,
- )
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.logger import DTSLogger, get_dts_logger
- from framework.params.eal import EalParams
- from framework.remote_session.remote_session import CommandResult
-diff --git a/dts/framework/remote_session/dpdk_shell.py b/dts/framework/remote_session/dpdk_shell.py
-index 269c2cada4..a8f169787c 100644
---- a/dts/framework/remote_session/dpdk_shell.py
-+++ b/dts/framework/remote_session/dpdk_shell.py
-@@ -10,7 +10,7 @@
- from abc import ABC, abstractmethod
- from pathlib import PurePath
- 
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.params.eal import EalParams
- from framework.remote_session.interactive_shell import (
-     InteractiveShell,
-diff --git a/dts/framework/remote_session/interactive_shell.py b/dts/framework/remote_session/interactive_shell.py
-index fdd074be3a..d138727c85 100644
---- a/dts/framework/remote_session/interactive_shell.py
-+++ b/dts/framework/remote_session/interactive_shell.py
-@@ -34,7 +34,7 @@
-     InteractiveSSHSessionDeadError,
-     InteractiveSSHTimeoutError,
- )
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.logger import DTSLogger, get_dts_logger
- from framework.params import Params
- from framework.settings import SETTINGS
-diff --git a/dts/framework/test_run.py b/dts/framework/test_run.py
-index bbaf4f1fdf..605a916ebb 100644
---- a/dts/framework/test_run.py
-+++ b/dts/framework/test_run.py
-@@ -108,7 +108,7 @@
- 
- from api.exception import InternalError, SkippedTestException, TestCaseVerifyError
- from framework.config.test_run import TestRunConfiguration
--from framework.context import Context, init_ctx
-+from api.context import Context, init_ctx
- from framework.logger import DTSLogger, get_dts_logger
- from framework.remote_session.dpdk import DPDKBuildEnvironment, DPDKRuntimeEnvironment
- from framework.settings import SETTINGS
-diff --git a/dts/framework/test_suite.py b/dts/framework/test_suite.py
-index 426c98fdf6..6066f7a77a 100644
---- a/dts/framework/test_suite.py
-+++ b/dts/framework/test_suite.py
-@@ -38,7 +38,7 @@
- from .logger import DTSLogger, get_dts_logger
- 
- if TYPE_CHECKING:
--    from framework.context import Context
-+    from api.context import Context
- 
- 
- class BaseConfig(FrozenModel):
-@@ -92,7 +92,7 @@ def __init__(self, config: BaseConfig) -> None:
-         Args:
-             config: The test suite configuration.
-         """
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         self.config = config
-         self._ctx = get_ctx()
-diff --git a/dts/framework/testbed_model/node.py b/dts/framework/testbed_model/node.py
-index 4f42bf6aeb..40dd7f0666 100644
---- a/dts/framework/testbed_model/node.py
-+++ b/dts/framework/testbed_model/node.py
-@@ -242,7 +242,7 @@ def get_node(node_identifier: NodeIdentifier) -> Node | None:
-     if node_identifier == "local":
-         return None
- 
--    from framework.context import get_ctx
-+    from api.context import get_ctx
- 
-     ctx = get_ctx()
-     if node_identifier == "sut":
-diff --git a/dts/framework/testbed_model/topology.py b/dts/framework/testbed_model/topology.py
-index 805a762c19..5b6ff2add5 100644
---- a/dts/framework/testbed_model/topology.py
-+++ b/dts/framework/testbed_model/topology.py
-@@ -96,7 +96,7 @@ def node_and_ports_from_id(self, node_identifier: NodeIdentifier) -> tuple[Node,
-         Raises:
-             InternalError: If the given `node_identifier` is invalid.
-         """
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         ctx = get_ctx()
-         match node_identifier:
-@@ -180,7 +180,7 @@ def instantiate_crypto_ports(self) -> None:
-         Raises:
-             InternalError: If crypto virtual functions could not be created on a port.
-         """
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         ctx = get_ctx()
-         for port in ctx.sut_node.cryptodevs:
-@@ -206,7 +206,7 @@ def instantiate_vf_ports(self) -> None:
-         Raises:
-             InternalError: If virtual function creation fails.
-         """
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         ctx = get_ctx()
- 
-@@ -235,7 +235,7 @@ def instantiate_vf_ports(self) -> None:
- 
-     def delete_vf_ports(self) -> None:
-         """Delete virtual functions from the SUT node during test run teardown."""
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         ctx = get_ctx()
- 
-@@ -246,7 +246,7 @@ def delete_vf_ports(self) -> None:
- 
-     def delete_crypto_vf_ports(self) -> None:
-         """Delete crypto virtual functions from the SUT node during test run teardown."""
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         ctx = get_ctx()
- 
-@@ -259,7 +259,7 @@ def bind_cryptodevs(self, driver: DriverKind):
-         Args:
-             driver: The driver to bind the crypto functions
-         """
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         self._bind_ports_to_drivers(get_ctx().sut_node, self.crypto_vf_ports, driver)
- 
-@@ -318,7 +318,7 @@ def _prepare_devbind_script(self) -> None:
-         Raises:
-             InternalError: If dpdk-devbind.py could not be found.
-         """
--        from framework.context import get_ctx
-+        from api.context import get_ctx
- 
-         local_script_path = Path("..", "usertools", "dpdk-devbind.py").resolve()
-         valid_script_path = local_script_path.exists()
-diff --git a/dts/tests/TestSuite_cryptodev_throughput.py b/dts/tests/TestSuite_cryptodev_throughput.py
-index f36b48a153..39784cbcac 100644
---- a/dts/tests/TestSuite_cryptodev_throughput.py
-+++ b/dts/tests/TestSuite_cryptodev_throughput.py
-@@ -31,7 +31,7 @@
- )
- from api.exception import SkippedTestException
- from api.test import verify
--from framework.context import get_ctx
-+from api.context import get_ctx
- from framework.test_suite import BaseConfig, TestSuite, crypto_test
- from framework.testbed_model.virtual_device import VirtualDevice
- 
-diff --git a/dts/tests/TestSuite_l2fwd.py b/dts/tests/TestSuite_l2fwd.py
-index 1e99b82b8c..c018efb1f7 100644
---- a/dts/tests/TestSuite_l2fwd.py
-+++ b/dts/tests/TestSuite_l2fwd.py
-@@ -21,7 +21,7 @@
- from api.testpmd import TestPmd
- from api.testpmd.config import EthPeer, SimpleForwardingModes
- from api.utils import generate_random_packets
--from framework.context import filter_cores
-+from api.context import filter_cores
- from framework.test_suite import TestSuite, func_test
- from framework.testbed_model.cpu import LogicalCoreCount
- 
--- 
-2.52.0
-
+Build errors. Must fix.
+clang -Idrivers/libtmp_rte_net_txgbe.a.p -Idrivers -I../drivers -Idrivers/net/txgbe -I../drivers/net/txgbe -Idrivers/net/txgbe/base -I../drivers/net/txgbe/base -Ilib/ethdev -I../lib/ethdev -Ilib/eal/common -I../lib/eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include -I../lib/eal/include -Ilib/eal/linux/include -I../lib/eal/linux/include -Ilib/eal/x86/include -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal -I../lib/eal -Ilib/kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I../lib/metrics -Ilib/telemetry -I../lib/telemetry -Ilib/argparse -I../lib/argparse -Ilib/net -I../lib/net -Ilib/mbuf -I../lib/mbuf -Ilib/mempool -I../lib/mempool -Ilib/ring -I../lib/ring -Ilib/meter -I../lib/meter -Idrivers/bus/pci -I../drivers/bus/pci -I../drivers/bus/pci/linux -Ilib/pci -I../lib/pci -Idrivers/bus/vdev -I../drivers/bus/vdev -Ilib/hash -I../lib/hash -Ilib/rcu -I../lib/rcu -Ilib/security -I../lib/security -Ilib/cryptodev -I../lib/cryptodev -Xclang -fcolor-diagnostics -pipe -D
+ _FILE_OFFSET_BITS=64 -Wall -Winvalid-pch -Wextra -Werror -std=c11 -O3 -include rte_config.h -Wvla -Wcast-qual -Wcomma -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wold-style-definition -Wpointer-arith -Wshadow -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite-strings -Wno-missing-field-initializers -D_GNU_SOURCE -fPIC -march=native -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API -Wno-format-truncation -Wno-address-of-packed-member -Wno-vla -Wno-shadow -DRTE_LOG_DEFAULT_LOGTYPE=pmd.net.txgbe -DRTE_ANNOTATE_LOCKS -Wthread-safety -MD -MQ drivers/libtmp_rte_net_txgbe.a.p/net_txgbe_base_txgbe_e56_bp.c.o -MF drivers/libtmp_rte_net_txgbe.a.p/net_txgbe_base_txgbe_e56_bp.c.o.d -o drivers/libtmp_rte_net_txgbe.a.p/net_txgbe_base_txgbe_e56_bp.c.o -c ../drivers/net/txgbe/base/txgbe_e56_bp.c
+../drivers/net/txgbe/base/txgbe_e56_bp.c:352:13: error: variable 'CMVAR_SEC_LOW_TH' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+352 |         } else if (speed == 25) {
+|                    ^~~~~~~~~~~
+../drivers/net/txgbe/base/txgbe_e56_bp.c:376:21: note: uninitialized use occurs here
+376 |         if (SECOND_CODE <= CMVAR_SEC_LOW_TH) {
+|                            ^~~~~~~~~~~~~~~~
+../drivers/net/txgbe/base/txgbe_e56_bp.c:352:9: note: remove the 'if' if its condition is always true
+352 |         } else if (speed == 25) {
+|                ^~~~~~~~~~~~~~~~
+../drivers/net/txgbe/base/txgbe_e56_bp.c:322:22: note: initialize the variable 'CMVAR_SEC_LOW_TH' to silence this warning
+322 |         int CMVAR_SEC_LOW_TH;
+|                             ^
+|                              = 0
+1 error generated.
