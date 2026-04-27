@@ -2,47 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45224FF885D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 02:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E86FF885D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 02:40:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1415340293;
-	Mon, 27 Apr 2026 04:40:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1BF2140648;
+	Mon, 27 Apr 2026 04:40:03 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 596744025F
+ by mails.dpdk.org (Postfix) with ESMTP id F1E254025F
  for <dev@dpdk.org>; Mon, 27 Apr 2026 04:39:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
  t=1777257600; x=1808793600;
- h=from:to:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=ipOmOwC+3j5Mcrcbor+FfHWSuqsitnjPHcggLXJxNxk=;
- b=VwxCOCIGyl7lMr8SvV+4Cq/rN8/PpvtSGmJAPoN1v698xzA/ujk2FhJ4
- lF0xVWSSo0zZKfbINlK5RJOLoWh74iaLfJXatjxd2ZcK1NBwfwYv+W80T
- zEdRr/TmT4GaF9lJqnGMLQsphjuC9kERcQT/jbI19L0tsaWjfX6jburtF
- wJWdHDfGYm1F/QtbH+QlmvzBZ/uVqgkhiIN1vuDmSCLBEG6R7COOJzg3l
- bc+ilPQcv5Z2ioI8Wyd1M8seyI/ozC81jA0oCg1lLxbp26KHMYJkIITIu
- 9p63PHC6PpY24ifWfBe+SRFHypMj4yqqFA+sYdHSJ29r6Q6eDr8ie1MK1 Q==;
-X-CSE-ConnectionGUID: DQkvQd/GQLWYFbQf/9vcJQ==
-X-CSE-MsgGUID: hxxh4l2STTS4ssSAG1HbWA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11768"; a="95703502"
-X-IronPort-AV: E=Sophos;i="6.23,201,1770624000"; d="scan'208";a="95703502"
+ h=from:to:subject:date:message-id:in-reply-to:references:
+ mime-version:content-transfer-encoding;
+ bh=zkQQAtYmsq0q6yMYv7E0QAy5RuGsexetGH3iwVECXEc=;
+ b=U4WG5BhzP8Aup1FICYQhVR09+y9uA1cBXvWUCRHDJvgoEuDgpuXE7FnI
+ daTKy554hWz4+SiY6ClLBS+BkaPs9WG0iiE2XVq+syJk9bn4WgXLDGpEJ
+ kit5hF8UHj+Ew7YDlF9yIOKdkQBciEs+Q4Yvvr0Fy3TNbVLYQAYAyh3wN
+ xh8C+cjJX/jZ6dTHs2pIs4xrgbVmjFpEoRBGCKd5/mPlcRf6jeLP7zyJ1
+ QwRbAFLjcwQ4Lp3YGe46Wx7oRb5Nq//0bty/UYJn+tmw/WyADXHbc6DvL
+ zpSyI//ljx629Vb8F0r2H6IVDfQrug+2eIgmF5ArUpWH66z97U9i4t5fa g==;
+X-CSE-ConnectionGUID: TZJiR60rTmi60NOtiCegWA==
+X-CSE-MsgGUID: uMVO/B1+RqCdXVITAjczGw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11768"; a="95703503"
+X-IronPort-AV: E=Sophos;i="6.23,201,1770624000"; d="scan'208";a="95703503"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Apr 2026 19:39:58 -0700
-X-CSE-ConnectionGUID: S8891DQ0RNGvQ6ldsMpIbQ==
-X-CSE-MsgGUID: +3XWY49bTyKT/zInPwBkvg==
+ 26 Apr 2026 19:40:00 -0700
+X-CSE-ConnectionGUID: 9BIJcpmJQp++JYuC1cv3kA==
+X-CSE-MsgGUID: fMdOrMitQAOkEem9PfIDWw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,201,1770624000"; d="scan'208";a="271637673"
+X-IronPort-AV: E=Sophos;i="6.23,201,1770624000"; d="scan'208";a="271637678"
 Received: from unknown (HELO sprmax15..) ([10.138.182.128])
- by orviesa001.jf.intel.com with ESMTP; 26 Apr 2026 19:39:56 -0700
+ by orviesa001.jf.intel.com with ESMTP; 26 Apr 2026 19:39:58 -0700
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH 0/7] net/ice: L2TPv2 flow rule fixes
-Date: Mon, 27 Apr 2026 08:01:08 +0530
-Message-ID: <20260427023115.1225843-1-shaiq.wani@intel.com>
+Subject: [PATCH 1/7] net/ice: use granular PTYPEs for L2TPv2 PPP
+Date: Mon, 27 Apr 2026 08:01:09 +0530
+Message-ID: <20260427023115.1225843-2-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260427023115.1225843-1-shaiq.wani@intel.com>
+References: <20260427023115.1225843-1-shaiq.wani@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -58,55 +60,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The original L2TPv2 flow support (733640dae75e) mapped every PPP tunnel
-variant to a single generic PTYPE and programmed both segments with
-identical headers. This caused several interrelated problems:
-cross-protocol matches, silent inner-field drops, rule deletion
-failures, and unintended side-effects on GTP-U flows.
+All L2TPv2 PPP variants map to ICE_MAC_IPV4_L2TPV2 (398), so inner
+protocol type is not differentiated, allowing cross-protocol flow
+matches (e.g. a PPP/IPv4 rule hitting a PPP/IPv6 packet).
 
-This series addresses each issue:
+Fix ice_ptype_map[] to use the 30 granular L2TPv2 PTYPEs (396-425)
+defined by the DDP package. Also add PPP inner protocol flow types to
+ice_fdir_gen_l2tpv2_pkt() so training packets get dynamically built
+L2TPv2 headers instead of static templates.
 
-  1/7  Use the 30 granular HW PTYPEs (396-425) defined by the DDP
-       package instead of the generic ICE_MAC_IPV4_L2TPV2, and
-       extend the training-packet switch to cover the new flow types.
+Fixes: 733640dae75e ("net/ice: support L2TPv2 flow pattern matching")
+Fixes: bf662653976e ("net/ice/base: support L2TPv2 flow rule")
+Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
+---
+ drivers/net/intel/ice/base/ice_fdir.c    | 12 ++++++++++
+ drivers/net/intel/ice/ice_generic_flow.c | 28 ++++++++++++------------
+ 2 files changed, 26 insertions(+), 14 deletions(-)
 
-  2/7  Add the 8 missing tunnel inset-to-flow-field mappings so
-       inner IP/L4 fields are no longer silently dropped during
-       field parsing.
-
-  3/7  Pass a segment index to ice_fdir_input_set_hdrs() and expand
-       each L2TPv2/PPP ptype into its own case with distinct outer
-       and inner header sets. Also always program inner-segment
-       headers for tunnel profiles, even when no inner fields are
-       extracted, so ptype-only narrowing works.
-
-  4/7  Fix deletion of bare L2TPv2 rules (no PPP) by switching to a
-       single-segment profile, and normalize the L2TPv2 flags in the
-       SW hash key to prevent lookup mismatches.
-
-  5/7  Stop L2TPv2 tunnel detection from overwriting the GTP-U
-       tunnel profile, which caused GTP-U flow rules to fail.
-
-  6/7  Invalidate stale HW profiles when the L2TPv2 subtype changes
-       between rule creations.
-
-  7/7  Pin the outer Ethertype (0x0800 / 0x86DD) in L2TPv2 rules
-       so IPv4 and IPv6 flows are not cross-matched.
-
-Shaiq Wani (7):
-  net/ice: use granular PTYPEs for L2TPv2 PPP
-  net/ice: add tunnel inset bits to flow input set map
-  net/ice: fix L2TPv2 inner segment header setup
-  net/ice: fix bare L2TPv2 flow rule deletion
-  net/ice: fix GTP-U failure due to wrong tunnel profile
-  net/ice: fix stale profile after L2TPv2 subtype change
-  net/ice: pin outer Ethertype for L2TPv2 flow rules
-
- drivers/net/intel/ice/base/ice_fdir.c    |  12 ++
- drivers/net/intel/ice/ice_fdir_filter.c  | 215 +++++++++++++++++++++--
- drivers/net/intel/ice/ice_generic_flow.c |  28 +--
- 3 files changed, 223 insertions(+), 32 deletions(-)
-
+diff --git a/drivers/net/intel/ice/base/ice_fdir.c b/drivers/net/intel/ice/base/ice_fdir.c
+index 1846fbc515..a30e87ddcc 100644
+--- a/drivers/net/intel/ice/base/ice_fdir.c
++++ b/drivers/net/intel/ice/base/ice_fdir.c
+@@ -3886,6 +3886,12 @@ ice_fdir_get_gen_prgm_pkt(struct ice_hw *hw, struct ice_fdir_fltr *input,
+ 		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_CONTROL:
+ 		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2:
+ 		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP:
++		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4:
++		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4_UDP:
++		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV4_TCP:
++		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6:
++		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6_UDP:
++		case ICE_FLTR_PTYPE_NONF_IPV4_L2TPV2_PPP_IPV6_TCP:
+ 			offset = ICE_FDIR_IPV4_L2TPV2_PPP_PKT_OFF;
+ 			ice_fdir_gen_l2tpv2_pkt(pkt, &input->l2tpv2_data,
+ 						idx, offset, tun);
+@@ -3893,6 +3899,12 @@ ice_fdir_get_gen_prgm_pkt(struct ice_hw *hw, struct ice_fdir_fltr *input,
+ 		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_CONTROL:
+ 		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2:
+ 		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP:
++		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4:
++		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4_UDP:
++		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV4_TCP:
++		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6:
++		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6_UDP:
++		case ICE_FLTR_PTYPE_NONF_IPV6_L2TPV2_PPP_IPV6_TCP:
+ 			offset = ICE_FDIR_IPV6_L2TPV2_PPP_PKT_OFF;
+ 			ice_fdir_gen_l2tpv2_pkt(pkt, &input->l2tpv2_data,
+ 						idx, offset, tun);
+diff --git a/drivers/net/intel/ice/ice_generic_flow.c b/drivers/net/intel/ice/ice_generic_flow.c
+index 62f0c334a1..f838a987e7 100644
+--- a/drivers/net/intel/ice/ice_generic_flow.c
++++ b/drivers/net/intel/ice/ice_generic_flow.c
+@@ -2183,21 +2183,21 @@ static struct ice_ptype_match ice_ptype_map[] = {
+ 	{pattern_eth_ipv4_ah,				ICE_MAC_IPV4_AH},
+ 	{pattern_eth_ipv4_l2tp,				ICE_MAC_IPV4_L2TPV3},
+ 	{pattern_eth_ipv4_udp_l2tpv2,		ICE_MAC_IPV4_L2TPV2},
+-	{pattern_eth_ipv4_udp_l2tpv2_ppp,		ICE_MAC_IPV4_L2TPV2},
+-	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4,		ICE_MAC_IPV4_L2TPV2},
+-	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_udp,	ICE_MAC_IPV4_L2TPV2},
+-	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_tcp,	ICE_MAC_IPV4_L2TPV2},
+-	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6,		ICE_MAC_IPV4_L2TPV2},
+-	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_udp,	ICE_MAC_IPV4_L2TPV2},
+-	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_tcp,	ICE_MAC_IPV4_L2TPV2},
++	{pattern_eth_ipv4_udp_l2tpv2_ppp,		ICE_MAC_IPV4_PPPOL2TPV2},
++	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4,		ICE_MAC_IPV4_PPPOL2TPV2_IPV4_PAY},
++	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_udp,	ICE_MAC_IPV4_PPPOL2TPV2_IPV4_UDP_PAY},
++	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv4_tcp,	ICE_MAC_IPV4_PPPOL2TPV2_IPV4_TCP},
++	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6,		ICE_MAC_IPV4_PPPOL2TPV2_IPV6_PAY},
++	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_udp,	ICE_MAC_IPV4_PPPOL2TPV2_IPV6_UDP_PAY},
++	{pattern_eth_ipv4_udp_l2tpv2_ppp_ipv6_tcp,	ICE_MAC_IPV4_PPPOL2TPV2_IPV6_TCP},
+ 	{pattern_eth_ipv6_udp_l2tpv2,		ICE_MAC_IPV6_L2TPV2},
+-	{pattern_eth_ipv6_udp_l2tpv2_ppp,		ICE_MAC_IPV6_L2TPV2},
+-	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4,		ICE_MAC_IPV6_L2TPV2},
+-	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_udp,	ICE_MAC_IPV6_L2TPV2},
+-	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_tcp,	ICE_MAC_IPV6_L2TPV2},
+-	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6,		ICE_MAC_IPV6_L2TPV2},
+-	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_udp,	ICE_MAC_IPV6_L2TPV2},
+-	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_tcp,	ICE_MAC_IPV6_L2TPV2},
++	{pattern_eth_ipv6_udp_l2tpv2_ppp,		ICE_MAC_IPV6_PPPOL2TPV2},
++	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4,		ICE_MAC_IPV6_PPPOL2TPV2_IPV4_PAY},
++	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_udp,	ICE_MAC_IPV6_PPPOL2TPV2_IPV4_UDP_PAY},
++	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv4_tcp,	ICE_MAC_IPV6_PPPOL2TPV2_IPV4_TCP},
++	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6,		ICE_MAC_IPV6_PPPOL2TPV2_IPV6_PAY},
++	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_udp,	ICE_MAC_IPV6_PPPOL2TPV2_IPV6_UDP_PAY},
++	{pattern_eth_ipv6_udp_l2tpv2_ppp_ipv6_tcp,	ICE_MAC_IPV6_PPPOL2TPV2_IPV6_TCP},
+ 
+ 	{pattern_eth_ipv4_pfcp,				ICE_MAC_IPV4_PFCP_SESSION},
+ 	{pattern_eth_ipv6,				ICE_PTYPE_IPV6_PAY},
 -- 
 2.43.0
 
