@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F06FF885D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 02:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9357FF885D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 02:40:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 92C2D4065E;
-	Mon, 27 Apr 2026 04:40:09 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 86EEE4066A;
+	Mon, 27 Apr 2026 04:40:10 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
- by mails.dpdk.org (Postfix) with ESMTP id 2664E40655
- for <dev@dpdk.org>; Mon, 27 Apr 2026 04:40:07 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8175C4060F
+ for <dev@dpdk.org>; Mon, 27 Apr 2026 04:40:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777257608; x=1808793608;
+ t=1777257609; x=1808793609;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=+C1+CZXBWNFruWGqOjYUuKdPiMyiIGb0WEOJl3P1r4g=;
- b=Pul1sGkLwR2xJ9uPFeQp1FO+7/GVCLXJiFlv7PojJAcR6lfvH9s+Px/Z
- ADthJsz0QUSBjNin15mjc1A2J5uA+7g58Yp1oSPsNLcwKSe4eE8uCabSN
- hWYmXACau9OCmDjTOn3L/cpTVHaHk4x+IPMF6oSH4IK0VwpYRpqSw6VvB
- gyagvuGyAFXAJTk5HEkZplq+B/TMfZR+aDZEFtisHi4CIdn10DGC2io00
- Opfe+5/Q1WyfpGtdjv48fqfeJAjZfUbuqpsZq9OYm8ISQPdlWcCIq3DDg
- ZLrtvSrFmSEEZyocmFWvyLLwGH4jcLqdFS55LeO0qVueemkuO/VxmMZQh g==;
-X-CSE-ConnectionGUID: kjVXvmZdSn++U1GZJeqm7w==
-X-CSE-MsgGUID: Z26f74N3Txqpgt9N01Wazw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11768"; a="95703510"
-X-IronPort-AV: E=Sophos;i="6.23,201,1770624000"; d="scan'208";a="95703510"
+ bh=xAiHIqudguEPaJ5+Oi2lldklvHUdrj6tSfGpGDt8Aw8=;
+ b=Yn+KrcLWO2WWBM6qn3TosnqqYHFfoz02yACmoMQZVipKMfnQgFVtDXAX
+ 7Qc7+Zh3o1HaYrSkNvy+DwqJBKQ9yDKw1TcO0wuxtUHEks9Lw4PEj8U8l
+ Vi8RqXJxD/qAKGW4+Ed2FcTe8s25oLwvT0b5it8JLQyA33gQDM9FWyz6M
+ qp4ebdwug4+4IKLLy0CpZCoU0OpEs9QMwyLpJCktrV/d3IewqgifZXh6A
+ sw/onxFxk9nsnJf7/twNbrKgf2hEWjeDca/lSaVvy5DizVuoWmwAtcgBH
+ gUVua7XTQsosZalLeu6jl5M+0x1jhhGqHJ7L5DJB8y6Xt+r3xl5D8uFiZ Q==;
+X-CSE-ConnectionGUID: 9woafzVSS7upmN7JNOEu+A==
+X-CSE-MsgGUID: K2e45WRtR5aVx7RPW7pl1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11768"; a="95703511"
+X-IronPort-AV: E=Sophos;i="6.23,201,1770624000"; d="scan'208";a="95703511"
 Received: from orviesa001.jf.intel.com ([10.64.159.141])
  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 26 Apr 2026 19:40:07 -0700
-X-CSE-ConnectionGUID: IRuz3vf/R8extDbE1YXuwA==
-X-CSE-MsgGUID: rL2IoHMKRSOp5SqAatTI0A==
+ 26 Apr 2026 19:40:08 -0700
+X-CSE-ConnectionGUID: AhHhlQgZTjmVsWdTAXG/Dg==
+X-CSE-MsgGUID: h1ykcTThSCurquU3vbZQuA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,201,1770624000"; d="scan'208";a="271637697"
+X-IronPort-AV: E=Sophos;i="6.23,201,1770624000"; d="scan'208";a="271637700"
 Received: from unknown (HELO sprmax15..) ([10.138.182.128])
- by orviesa001.jf.intel.com with ESMTP; 26 Apr 2026 19:40:05 -0700
+ by orviesa001.jf.intel.com with ESMTP; 26 Apr 2026 19:40:07 -0700
 From: Shaiq Wani <shaiq.wani@intel.com>
 To: dev@dpdk.org,
 	bruce.richardson@intel.com,
 	aman.deep.singh@intel.com
-Subject: [PATCH 6/7] net/ice: fix stale profile after L2TPv2 subtype change
-Date: Mon, 27 Apr 2026 08:01:14 +0530
-Message-ID: <20260427023115.1225843-7-shaiq.wani@intel.com>
+Subject: [PATCH 7/7] net/ice: pin outer Ethertype for L2TPv2 flow rules
+Date: Mon, 27 Apr 2026 08:01:15 +0530
+Message-ID: <20260427023115.1225843-8-shaiq.wani@intel.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260427023115.1225843-1-shaiq.wani@intel.com>
 References: <20260427023115.1225843-1-shaiq.wani@intel.com>
@@ -60,45 +60,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-After a rule is destroyed, the HW profile for that ptype persists.
-If a new rule with the same ptype but a different L2TPv2 subtype is
-created (e.g. data then data_l), the old profile is reused via -EEXIST
-with stale field extraction offsets.  Since data and data_l have
-session_id at different byte offsets, the NIC matches on the wrong
-field and packets with mismatched session_id incorrectly hit the rule.
+L2TPv2 flow rules do not include the outer Ethertype in the input set,
+so a rule created for outer IPv6 also matches packets with outer IPv4
+(and vice versa). The hardware profile cannot distinguish the two
+families because nothing in the match key differentiates them.
 
-Remove the HW profile in ice_fdir_destroy_filter when the last
-filter for a given ptype is destroyed so the next rule creates a fresh
-profile with the correct offsets.
+Add ICE_INSET_ETHERTYPE to input_set_o and set ext_data.ether_type to
+0x0800 or 0x86DD based on the outer L3 item, so the profile includes
+the Ethertype field and rejects cross-family mismatches.
 
 Fixes: 733640dae75e ("net/ice: support L2TPv2 flow pattern matching")
 Signed-off-by: Shaiq Wani <shaiq.wani@intel.com>
 ---
- drivers/net/intel/ice/ice_fdir_filter.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/net/intel/ice/ice_fdir_filter.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index 0531208066..5ea74a4a5c 100644
+index 5ea74a4a5c..2f843d66b9 100644
 --- a/drivers/net/intel/ice/ice_fdir_filter.c
 +++ b/drivers/net/intel/ice/ice_fdir_filter.c
-@@ -1777,6 +1777,17 @@ ice_fdir_destroy_filter(struct ice_adapter *ad,
+@@ -2958,6 +2958,19 @@ ice_fdir_parse_pattern(__rte_unused struct ice_adapter *ad,
+ 	    input_set_i == 0 && !ppp_present)
+ 		tunnel_type = ICE_FDIR_TUNNEL_TYPE_NONE;
  
- 	ice_fdir_cnt_update(pf, filter->input.flow_type, is_tun, false);
- 
-+	/* Remove the FDIR HW profile when no filters of this ptype
-+	 * remain.  The profile encodes field extraction offsets that
-+	 * vary between L2TPv2 subtypes (e.g. data vs data_l).  If the
-+	 * profile is not removed, a subsequent rule with a different
-+	 * subtype but the same ptype reuses the stale profile via
-+	 * -EEXIST and the NIC extracts session_id from the wrong
-+	 * offset, causing mismatched packets to hit the rule.
-+	 */
-+	if (pf->fdir_fltr_cnt[filter->input.flow_type][is_tun] == 0)
-+		ice_fdir_prof_rm(pf, filter->input.flow_type, is_tun);
++	/* Match outer IPv4/IPv6 for L2TPv2 via Ethertype. */
++	if (tunnel_type == ICE_FDIR_TUNNEL_TYPE_L2TPV2) {
++		if (l3 == RTE_FLOW_ITEM_TYPE_IPV4) {
++			input_set_o |= ICE_INSET_ETHERTYPE;
++			filter->input.ext_data.ether_type =
++				rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
++		} else if (l3 == RTE_FLOW_ITEM_TYPE_IPV6) {
++			input_set_o |= ICE_INSET_ETHERTYPE;
++			filter->input.ext_data.ether_type =
++				rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
++		}
++	}
 +
- 	if (filter->mark_flag == 1)
- 		ice_fdir_rx_parsing_enable(ad, 0);
- 
+ 	filter->tunnel_type = tunnel_type;
+ 	filter->input.flow_type = flow_type;
+ 	filter->input_set_o = input_set_o;
 -- 
 2.43.0
 
