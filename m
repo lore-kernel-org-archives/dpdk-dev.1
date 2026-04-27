@@ -2,52 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DBFFF8868
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 19:36:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0FAFF8868
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 20:24:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B589140664;
-	Mon, 27 Apr 2026 21:35:41 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 5EC934066E
- for <dev@dpdk.org>; Mon, 27 Apr 2026 21:35:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777318540; x=1808854540;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=bCxrnkMyoCn4TyGhcrzA9wPMel5X5xG+06yIciQ+MoM=;
- b=lDCZLRwbSyzehO1/WwZtUd+qOE4VTIDK9IdqIy7vYIZboz8uUfXj4fRC
- G2+U9Vpv4ersEmpp596c4YVQb7stgF9z/zRys9z/KFHRXax/dDS6vB47h
- xrs4DVDSstiHb9etcezjpLuOpFhuhgdzTUEfAByMBYgRJzMHTPX6d0gHv
- 4z86dIKUCyuHzd1Q7uiQY+RRpGDjQgNykdu1upxmjISY8yPkkprpcqsam
- VQifym4td2v2cxkBPli0gJMjqifIOqqLnY0cpoPzBb7iPbmeauxY2gHj6
- GvjmqlgeoCAnAYihxdMsuajUs/C+OaVChyPTUnpPYpTXs7e+xZD5ZzXR9 A==;
-X-CSE-ConnectionGUID: sizJw5mER3m5M0Yof2QGyQ==
-X-CSE-MsgGUID: 6a69z8ZiQSmz6iEOgWlEeA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11769"; a="81826676"
-X-IronPort-AV: E=Sophos;i="6.23,202,1770624000"; d="scan'208";a="81826676"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Apr 2026 12:35:39 -0700
-X-CSE-ConnectionGUID: GsTshCkERrq9gmnDC+OFmg==
-X-CSE-MsgGUID: uZ30GwZUTmqCtB/IohGG8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,202,1770624000"; d="scan'208";a="227210676"
-Received: from icx008.iind.intel.com ([10.190.212.196])
- by fmviesa009.fm.intel.com with ESMTP; 27 Apr 2026 12:35:37 -0700
-From: Rajesh Kumar <rajesh3.kumar@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id AAB5940652;
+	Mon, 27 Apr 2026 22:24:23 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id DA684402A3
+ for <dev@dpdk.org>; Mon, 27 Apr 2026 22:24:21 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id C409C4B0BB; Mon, 27 Apr 2026 22:24:21 +0200 (CEST)
+From: bugzilla@dpdk.org
 To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
- rajesh3.kumar@intel.com
-Subject: [RFC v1 4/4] doc: add PTP software relay sample app guide
-Date: Tue, 28 Apr 2026 06:31:06 +0530
-Message-ID: <20260428010117.692626-5-rajesh3.kumar@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260428010117.692626-1-rajesh3.kumar@intel.com>
-References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
-MIME-Version: 1.0
+Subject: [DPDK/DTS Bug 1939] dts: cryptodev latency parsing error
+Date: Mon, 27 Apr 2026 20:24:21 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: DTS
+X-Bugzilla-Version: unspecified
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: abailey@iol.unh.edu
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter cc
+ target_milestone
+Message-ID: <bug-1939-3@http.bugs.dpdk.org/>
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,246 +54,28 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a sample application user guide for the ptp_tap_relay_sw example.
-The guide covers the application topology, packet flow, compilation,
-command-line options, and a code walkthrough explaining the two-pass
-relay burst design and CLOCK_MONOTONIC_RAW timestamp source selection.
+http://bugs.dpdk.org/show_bug.cgi?id=3D1939
 
-Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
----
- doc/guides/sample_app_ug/index.rst            |   1 +
- doc/guides/sample_app_ug/ptp_tap_relay_sw.rst | 210 ++++++++++++++++++
- 2 files changed, 211 insertions(+)
- create mode 100644 doc/guides/sample_app_ug/ptp_tap_relay_sw.rst
+            Bug ID: 1939
+           Summary: dts: cryptodev latency parsing error
+           Product: DPDK
+           Version: unspecified
+          Hardware: All
+                OS: All
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: DTS
+          Assignee: dev@dpdk.org
+          Reporter: abailey@iol.unh.edu
+                CC: juraj.linkes@pantheon.tech, probb@iol.unh.edu
+  Target Milestone: ---
 
-diff --git a/doc/guides/sample_app_ug/index.rst b/doc/guides/sample_app_ug/index.rst
-index e895f692f9..f12623bb66 100644
---- a/doc/guides/sample_app_ug/index.rst
-+++ b/doc/guides/sample_app_ug/index.rst
-@@ -51,6 +51,7 @@ Sample Applications User Guides
-     dist_app
-     vm_power_management
-     ptpclient
-+    ptp_tap_relay_sw
-     fips_validation
-     ipsec_secgw
-     bbdev_app
-diff --git a/doc/guides/sample_app_ug/ptp_tap_relay_sw.rst b/doc/guides/sample_app_ug/ptp_tap_relay_sw.rst
-new file mode 100644
-index 0000000000..1924bafe98
---- /dev/null
-+++ b/doc/guides/sample_app_ug/ptp_tap_relay_sw.rst
-@@ -0,0 +1,210 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2026 Intel Corporation.
-+
-+PTP Software Relay Sample Application
-+======================================
-+
-+The PTP Software Relay sample application demonstrates how to use the
-+DPDK ``lib/ptp`` library to build a minimal PTP Transparent Clock relay
-+between a DPDK-bound physical NIC and a kernel TAP interface using
-+**software timestamps only**.
-+
-+No patched kernel modules or custom TAP PMD changes are required.
-+The application works with an unmodified Linux kernel and stock DPDK.
-+
-+For background on PTP see:
-+`Precision Time Protocol
-+<https://en.wikipedia.org/wiki/Precision_Time_Protocol>`_.
-+
-+
-+Limitations
-+-----------
-+
-+* Only L2 PTP (EtherType 0x88F7) is supported on the wire.
-+* Only PTP v2 messages are processed.
-+* Software timestamps have microsecond-class jitter; sub-microsecond
-+  precision depends on system load and NIC-to-TAP forwarding latency.
-+* The PTP master must be reachable on the physical NIC's L2 network.
-+* Only one physical port and one TAP port are supported.
-+
-+
-+How the Application Works
-+-------------------------
-+
-+Topology
-+~~~~~~~~
-+
-+::
-+
-+    PTP Master            Physical NIC             TAP (kernel)
-+    (ptp4l -H)  ──L2──  (DPDK vfio-pci)  ──────  dtap0
-+                              │                      │
-+                        ptp_tap_relay_sw            ptp4l -S
-+                     (correctionField +=        (SW timestamps,
-+                      residence time)           adjusts CLOCK_REALTIME)
-+
-+The relay sits between a DPDK-owned physical NIC and a kernel TAP
-+virtual interface.  ``ptp4l`` runs on the TAP interface in software
-+timestamp mode (``-S``) as a PTP time receiver.
-+
-+Packet Flow
-+~~~~~~~~~~~
-+
-+1. The physical NIC receives PTP (and non-PTP) packets via DPDK RX.
-+2. A software RX timestamp is recorded using
-+   ``clock_gettime(CLOCK_MONOTONIC_RAW)``.
-+3. Each packet is classified with ``rte_ptp_classify()``.
-+4. For PTP **event** messages (Sync, Delay_Req, PDelay_Req, PDelay_Resp),
-+   a TX software timestamp is taken just before transmission.
-+5. The residence time (``tx_ts − rx_ts``) is added to the PTP
-+   ``correctionField`` via ``rte_ptp_add_correction()`` — standard
-+   IEEE 1588-2019 Transparent Clock behaviour (§10.2).
-+6. Packets are forwarded bidirectionally:
-+
-+   * PHY → TAP  (network → ptp4l)
-+   * TAP → PHY  (ptp4l → network)
-+
-+A two-pass design is used: first all packets are classified and PTP
-+header pointers saved, then a single TX timestamp is taken immediately
-+before applying corrections and calling ``rte_eth_tx_burst()``.
-+This minimises the gap between the measured timestamp and the actual
-+wire egress.
-+
-+
-+Compiling the Application
-+-------------------------
-+
-+To compile the sample application see :doc:`compiling`.
-+
-+The application is located in the ``ptp_tap_relay_sw`` sub-directory.
-+
-+.. note::
-+
-+   The application depends on the ``ptp`` library.
-+   Ensure that ``lib/ptp`` is built (it is built by default).
-+
-+
-+Running the Application
-+-----------------------
-+
-+Prerequisites
-+~~~~~~~~~~~~~
-+
-+* A PTP-capable physical NIC bound to DPDK (e.g. via ``vfio-pci``).
-+* ``linuxptp`` (``ptp4l``) installed on the system.
-+* A PTP time transmitter reachable on the same L2 network.
-+
-+Start the relay
-+~~~~~~~~~~~~~~~~
-+
-+.. code-block:: console
-+
-+   ./<build_dir>/examples/dpdk-ptp_tap_relay_sw \
-+       -l 18-19 -a 0000:cc:00.1 --vdev=net_tap0,iface=dtap0 -- \
-+       -p 0 -t 1 -T 10
-+
-+Command-line Options
-+~~~~~~~~~~~~~~~~~~~~
-+
-+* ``-p PORT`` — Physical NIC port ID (default: 0).
-+* ``-t PORT`` — TAP port ID (default: 1).
-+* ``-T SECS`` — Statistics print interval in seconds (default: 10).
-+
-+Start PTP time transmitter (master)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+On a separate terminal or remote host, start ``ptp4l`` as time
-+transmitter with hardware timestamps on the physical NIC:
-+
-+.. code-block:: console
-+
-+   ptp4l -i <iface> -m -2 -H --masterOnly=1 \
-+       --logSyncInterval=-4 --logMinDelayReqInterval=-4
-+
-+Start PTP time receiver (slave)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+On the TAP interface, start ``ptp4l`` in software timestamp mode:
-+
-+.. code-block:: console
-+
-+   ptp4l -i dtap0 -m -2 -s -S \
-+       --delay_filter=moving_median --delay_filter_length=10
-+
-+The time receiver will enter UNCALIBRATED state for approximately 60
-+seconds while the PI servo estimates the frequency offset, then step
-+the clock and enter SLAVE state.  Steady-state RMS offset of 500–1000 ns
-+is typical on a lightly loaded system with a hardware-timestamped time
-+transmitter.
-+
-+Example Output
-+~~~~~~~~~~~~~~
-+
-+Relay statistics printed every ``-T`` seconds:
-+
-+::
-+
-+   [PTP-SW] === Statistics ===
-+   [PTP-SW]   PHY RX total:   5646
-+   [PTP-SW]   PHY RX PTP:     5598
-+   [PTP-SW]   TAP TX:         5646
-+   [PTP-SW]   TAP RX total:   1800
-+   [PTP-SW]   TAP RX PTP:     1788
-+   [PTP-SW]   PHY TX:         1800
-+   [PTP-SW]   Corrections:    3635
-+
-+Slave ``ptp4l`` output after convergence:
-+
-+::
-+
-+   ptp4l[451534.520]: rms  630 max 1166 freq -44365 +/- 100 delay 37668 +/-  71
-+   ptp4l[451539.525]: rms  602 max 1177 freq -44339 +/- 119 delay 37517 +/-  43
-+   ptp4l[451544.530]: rms  535 max 1194 freq -44345 +/- 103 delay 37410 +/-  81
-+
-+
-+Code Explanation
-+----------------
-+
-+The following sections explain the main components of the application.
-+
-+Relay Burst Function
-+~~~~~~~~~~~~~~~~~~~~
-+
-+The core relay logic is in ``relay_burst()``, which handles one direction
-+(PHY→TAP or TAP→PHY) per call:
-+
-+**Pass 1 — Classify:**
-+
-+For each received packet, ``rte_ptp_classify()`` determines if it is a
-+PTP message.  For event messages, ``rte_ptp_hdr_get()`` retrieves a
-+pointer to the PTP header, which is saved for the second pass.
-+
-+**Pass 2 — Timestamp and correct:**
-+
-+A single software TX timestamp is taken via
-+``clock_gettime(CLOCK_MONOTONIC_RAW)``.  The residence time
-+(``tx_ts − rx_ts``) is added to each saved PTP header's
-+``correctionField`` using ``rte_ptp_add_correction()``.
-+The burst is then transmitted with ``rte_eth_tx_burst()``.
-+
-+Main Loop
-+~~~~~~~~~
-+
-+The ``relay_loop()`` function polls both directions in a tight loop:
-+
-+.. code-block:: c
-+
-+   while (!force_quit) {
-+       relay_burst(phy_port, tap_port, ...);   /* PHY → TAP */
-+       relay_burst(tap_port, phy_port, ...);   /* TAP → PHY */
-+   }
-+
-+Statistics are printed at the interval specified by ``-T``.
-+
-+Timestamp Source
-+~~~~~~~~~~~~~~~~
-+
-+``CLOCK_MONOTONIC_RAW`` is used rather than ``CLOCK_REALTIME`` because
-+the PTP time receiver's servo continuously adjusts ``CLOCK_REALTIME``.
-+Using ``CLOCK_REALTIME`` would corrupt residence time measurements
-+during clock stepping or frequency slewing.
--- 
-2.52.0
+the latency parsing for dts has an incorrect regex that does not capture the
+attribute "burst size". I will submit a fix for this as part of my series t=
+hat
+adds the cryptodev latency test suite.
 
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
