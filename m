@@ -2,84 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB50DFF8868
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 15:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A80FAFF8868
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 17:26:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ACFB040611;
-	Mon, 27 Apr 2026 17:53:18 +0200 (CEST)
-Received: from fout-b4-smtp.messagingengine.com
- (fout-b4-smtp.messagingengine.com [202.12.124.147])
- by mails.dpdk.org (Postfix) with ESMTP id 57325402EA;
- Mon, 27 Apr 2026 17:53:17 +0200 (CEST)
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
- by mailfout.stl.internal (Postfix) with ESMTP id 68CE31D001BA;
- Mon, 27 Apr 2026 11:53:16 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-07.internal (MEProxy); Mon, 27 Apr 2026 11:53:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm2; t=1777305196;
- x=1777391596; bh=LGnUr6iIdQvzFIxi35alGaHIkbTxjpPfHchygpolIBU=; b=
- cmNWB+1URN+nQe/mS5UqIPBpxIhhoaHOPGurjQsbNwAsdYnS4JmPfUoDX4Jjvg+l
- CFBI42cUDqVhFLgGP71zUzLAl2P1ZS7vTROanxXZ823Aay1vn9uvjHVQlGxv4eYk
- b76PAJg3aCor4ykIzdSwZRV7DDCH7WqBbTDG63ITkxxzQDEWftikEHdzaRWY6QEY
- O7qml21xny6msWKo13AUDRFPXC0vwnYPgkvpHWqsyLveWVnj+w3F/3NK87xkzZV7
- ysUqSFxRakx29PfJZUcvX7EJQgqmGWx8jiE1J2QfD0hFN1vMt70I+czJcWyyZYwT
- r4AzVsEITrMt2T+Cxswsyg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1777305196; x=
- 1777391596; bh=LGnUr6iIdQvzFIxi35alGaHIkbTxjpPfHchygpolIBU=; b=e
- 4D3/xifpMrDOKx2CNj+te1A8ef1ff21rUNB/ZlsYlhZmTEOXGGuuZrX6GGvR7Id9
- Wk+mbwqSATKwMVECn+thyPFyq5a8uvL2hKANk9f/TH4qGywkSgeA9PGSYMEjL0hT
- vW8SYcRDFQiWrVQZro1d4/iPRo2bTcWR00KPt0g9ebzS5NCK9CouCSNqme+05Tw2
- aZO63jg8/UwJpscw0fGRPPBTqEB4vbolcZQGS+J07iDQEWgW66z/dsbK0/GUFzfb
- hG+DtEYxFq2/vCKf+xhH6tFLJC0VflsTNzYlNv0aSDXOhGy6IAd2wh9omYtVHCme
- RozcEHKNMyMdYtVEWrbPw==
-X-ME-Sender: <xms:bIbvaSoXZB6qwQ75jLXDVnMXwOxhU7eOkXGBaEkSZYYQEay2wj_n_Q>
- <xme:bIbvabm3VTMk7A-vDAxjzS9VJBQCRTwwMypNKs7H9IQDOk5dEqddhyE5k1pd5yf0W
- THy49yVcqiXUUaqNWVSjRdnENvZEFNg8qOV6hytIl36sWf21cNwvWE>
-X-ME-Received: <xmr:bIbvaWPmI7l32vj_5Lyo6uXcsfOIf5I-JmRLVzi6IjJvfaHyQxwjt0EeePqYZbtuah5uqZfvPj_qFUyfo8WGeQ2NDA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdejledutdcutefuodetggdotefrod
- ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
- ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
- hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
- ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
- grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
- gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
- epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepjedpmhho
- uggvpehsmhhtphhouhhtpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthhgrnhgusehrvg
- guhhgrthdrtghomhdprhgtphhtthhopehrjhgrrhhrhiesrhgvughhrghtrdgtohhmpdhr
- tghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohepghgvthgvlhhsohhnse
- hnvhhiughirgdrtghomhdprhgtphhtthhopehsthgrsghlvgesughpughkrdhorhhgpdhr
- tghpthhtohepkhhtrhgrhihnohhrsehrvgguhhgrthdrtghomhdprhgtphhtthhopegslh
- hutggrseguvggsihgrnhdrohhrgh
-X-ME-Proxy: <xmx:bIbvaXMOWFGEs1geohNkFI66d_BMXmCrU79LGcWNSkaYU16P6Gs7oQ>
- <xmx:bIbvafhUwbb1QhXMaCzdhjulda7SxXF0EUgrUiwTVDRUTA61bZ-B8g>
- <xmx:bIbvactr93Vozy_E_uchgWJLX8WQVoXF1H7GpkalnRJ_vXjAKPpB8Q>
- <xmx:bIbvadQbCjZOde5KBIkJQeC9J6SifvO5pukvwnd-VzdEIbpYe2Xxww>
- <xmx:bIbvaQE7dL65oL_OEEKoT1Q6SY6yJbL92YdzVr3RLDx59kbAkqp796AX>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 Apr 2026 11:53:15 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: David Marchand <david.marchand@redhat.com>, Robin Jarry <rjarry@redhat.com>
-Cc: dev@dpdk.org, Gregory Etelson <getelson@nvidia.com>, stable@dpdk.org,
- Kevin Traynor <ktraynor@redhat.com>, Luca Boccassi <bluca@debian.org>
-Subject: Re: [PATCH dpdk v4] net: fix VLAN packet type
-Date: Mon, 27 Apr 2026 17:53:13 +0200
-Message-ID: <40394769.10thIPus4b@thomas>
-In-Reply-To: <DI3VM171VBSL.3E3J3C1HJ1GZG@redhat.com>
-References: <20260422102814.645299-2-rjarry@redhat.com>
- <CAJFAV8yAhr-iXkn6JvderT_Yy4rB91LVWqYvwRqJH0DdmNkJ1g@mail.gmail.com>
- <DI3VM171VBSL.3E3J3C1HJ1GZG@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6E47940611;
+	Mon, 27 Apr 2026 19:26:22 +0200 (CEST)
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com
+ [209.85.161.43]) by mails.dpdk.org (Postfix) with ESMTP id AFBB0402EA
+ for <dev@dpdk.org>; Mon, 27 Apr 2026 19:26:21 +0200 (CEST)
+Received: by mail-oo1-f43.google.com with SMTP id
+ 006d021491bc7-6949831a7bcso3804912eaf.1
+ for <dev@dpdk.org>; Mon, 27 Apr 2026 10:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777310781;
+ x=1777915581; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=tstIt7OQzpk+cJq/AW8NOIw/IAdRuHyBRvpEsycM/dQ=;
+ b=DjS0iR2mgbIU0qksSAosC92Dd3vgOmDcwN/ZA01zlLS+Hc3msbnVZSFem3uXA46n7W
+ ikZ1LUBh8kYh5UT1F8i/SrL46J55IJ17J+AUdS5dXaGA3QJG8FTzmp1OYJh+Ue1dHxXW
+ 3wMxXvH5jnlz5J95LHXU/Dweb6kLfz2yeoidQroVpW6CYLW/U7f/Apa73ZncTfbYrebI
+ zXhSLuSGORtSJSASTLo8pXZMRhGv48KAg1NI54ifrhr4uVhzjK8L4sl0Y/ISV2mOMpRy
+ JFN6wJ/0CN0gtxgruWhCJt372J54kwziHXWmU01uFVLYMT6JjYQV7mVvUKugVtShbzMY
+ TsZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1777310781; x=1777915581;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=tstIt7OQzpk+cJq/AW8NOIw/IAdRuHyBRvpEsycM/dQ=;
+ b=UB8LLURDRw32kwGGjR0hpOt7TNBo0c+8PmP1muxRalOSD1NU7OhiwYg7N4kWiIXSPI
+ RLHO/bDeU5UcrNcLSMw48VCDwABtMeBCVnwL3s9/066R4CeQYlZImQVHVol7jwTuhRr5
+ xbO4kGF2Ujfnav2leqvs1Nycbd+GsTbL+sfIQVHOo9oSCQNYGNaH6Jmwv0f7itA0celW
+ mTh3Nnfkn7OYK3X9u2PV7FjcbJ6eTEzJc2RqSfF+sgixmcxD41i9VD98XLh+r9DXEqGY
+ uyMRB9qevqYSMz4O4Y7A/nl45Mr+LkBetF714T4pevhzILY9rZOycW/dxEAEsTB/sugF
+ TmyA==
+X-Gm-Message-State: AOJu0YwAoNYukqgmIpizEJit1IMK89sQJgeT7mqUE1R/p/7KQHa96xk9
+ FKhTL1R6FusMYjKRhknswNr+iPukxtm5Qi9EP16Gpr1UQupNczJSZ8uPqMigzvQr/2gTAtbwQ/c
+ hHy7m
+X-Gm-Gg: AeBDiesklkQJeFQsShCOVvsvp8x65NCFRLhR78UKj8IUQMeD/NAMmxt8+Bu/qh7a/4u
+ hwQatfKtWPmkSLM6QOiOCFglduCsP3ZsFthC+fBtDsDvij78yRHWu3Bzwc5vQntH6R/QrBXIXdk
+ t2DKrrT2cCGoNXBwBx98ON2b3D/vmAVKfqLeZr6FcV2YOOLmUftozdNbZqtcqBL31s0MxOdref8
+ v0bQlkk/L33HEvNY9idf7JKmwTpBARUoNPnatSfzvacJcjPs5gYrLgZ7wodlm4ar6BMJrUJaBks
+ h4hPZi2ELurkEj6VjYaTlZ1YyQ+HxPeseJ3cqysCXIosDcPYPdf5KVt+6HZyJOhLuxBY1P8X0Nx
+ kkHRW6GfjNn50Igu1tYQH/+0bU0f9wnYuSEX8buF5XDN8Ap3Xz2ZIqgTt4XsPR7Fzv3VlVxiXEb
+ vEuPmn7I8r8aolVRB/jcnyFuUro5QzKdWJfbDx7hpYuBY=
+X-Received: by 2002:a05:6820:1c8f:b0:696:1cbd:27ac with SMTP id
+ 006d021491bc7-6961cbe02fdmr10299409eaf.49.1777310780681; 
+ Mon, 27 Apr 2026 10:26:20 -0700 (PDT)
+Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
+ 586e51a60fabf-42b9ac54ec5sm27940929fac.13.2026.04.27.10.26.19
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 27 Apr 2026 10:26:20 -0700 (PDT)
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: dev@dpdk.org
+Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
+ Sunyang Wu <sunyang.wu@jaguarmicro.com>,
+ Aman Singh <aman.deep.singh@intel.com>,
+ Olivier Matz <olivier.matz@6wind.com>
+Subject: [PATCH] app/test-pmd: terminate process on second signal
+Date: Mon, 27 Apr 2026 10:26:17 -0700
+Message-ID: <20260427172617.295684-1-stephen@networkplumber.org>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260427105741.14348-1-sunyang.wu@jaguarmicro.com>
+References: <20260427105741.14348-1-sunyang.wu@jaguarmicro.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -93,16 +82,45 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-27/04/2026 12:47, Robin Jarry:
-> David Marchand, Apr 25, 2026 at 10:40:
-> > On Thu, 23 Apr 2026 at 13:25, Robin Jarry <rjarry@redhat.com> wrote:
-> > This is untested, but what do you think?
-> 
-> That looks correct. But you don't impose a limit in the number of VLANs?
-> 
-> I don't see any good reason to support more than 2 stacked tags.
+The SIGINT/SIGTERM handler starts a graceful shutdown via
+prompt_exit(), after which prompt() frees the cmdline object with
+cmdline_stdin_exit(). A second signal delivered during or after
+that free re-enters prompt_exit() and dereferences testpmd_cl,
+producing a use-after-free.
 
-Look in the mailing list.
-I remember it was to limit a risk of infinite loop.
+Set SA_RESETHAND so the second signal terminates the process via
+SIG_DFL instead of re-running the shutdown path. On Windows the
+C runtime's signal() already resets the disposition after delivery,
+so behavior is consistent without an #ifdef.
 
+Fixes: f1d0993e034e ("app/testpmd: fix interactive mode on Windows")
+Cc: stable@dpdk.org
+Reported-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ app/test-pmd/testpmd.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
+index e2569d9e30..d93c696057 100644
+--- a/app/test-pmd/testpmd.c
++++ b/app/test-pmd/testpmd.c
+@@ -4603,9 +4603,14 @@ main(int argc, char** argv)
+ 	signal(SIGINT, signal_handler);
+ 	signal(SIGTERM, signal_handler);
+ #else
+-	/* Want read() not to be restarted on signal */
++	/*
++	 * Do not restart read() on signal (no SA_RESTART), and reset
++	 * to SIG_DFL after first delivery so a second SIGINT/SIGTERM
++	 * terminates instead of re-entering the shutdown path.
++	 */
+ 	struct sigaction action = {
+ 		.sa_handler = signal_handler,
++		.sa_flags = SA_RESETHAND,
+ 	};
+ 
+ 	sigaction(SIGINT, &action, NULL);
+-- 
+2.53.0
 
