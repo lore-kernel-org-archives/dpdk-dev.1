@@ -2,87 +2,109 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9130AFF885E
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 10:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D07BFF8861
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 10:58:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DC2CA40651;
-	Mon, 27 Apr 2026 12:47:52 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3FB3F40651
- for <dev@dpdk.org>; Mon, 27 Apr 2026 12:47:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1777286869;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=T3AqZ8aZzxlXL7UZQqtAHBlRwJTnLGfv8ZglcyZRAjE=;
- b=Tluf+/WWlJs6yjSYNOdoWNyNP8AsPXCf1qTCwAkclm9uTfzjMtjyAGuB9dmESwJSoMsMdJ
- BCweRhv7Euo7n+vq7E3gmewPxuK3HZm6WJu2emeYWkMwqYylQ2HRX7f812Z5i2ol1LJpud
- NjKAZUcRzHRUaca4LGBPUnnV/vkPU1c=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-329-qUX4g8hrPkaIcGHeAwu4XQ-1; Mon, 27 Apr 2026 06:47:47 -0400
-X-MC-Unique: qUX4g8hrPkaIcGHeAwu4XQ-1
-X-Mimecast-MFC-AGG-ID: qUX4g8hrPkaIcGHeAwu4XQ_1777286865
-Received: by mail-wm1-f70.google.com with SMTP id
- 5b1f17b1804b1-488c0120047so59491345e9.0
- for <dev@dpdk.org>; Mon, 27 Apr 2026 03:47:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777286865; x=1777891665;
- h=in-reply-to:references:user-agent:to:from:cc:subject:message-id
- :date:content-transfer-encoding:mime-version:x-gm-gg
- :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=T3AqZ8aZzxlXL7UZQqtAHBlRwJTnLGfv8ZglcyZRAjE=;
- b=e453OtQ4y6u//I5px95lpdGQWzn1H0toAv7rR0viANEj5e9wHCp1vbKzRIhBflnKzJ
- j9I8Thxqh4nNsBHbpt96ZBtURDnkM0ix5ULsW7wNE6X8lv6yUnY5P7MIBECqqQVjtSup
- 2UJHgkDuZA7pDRMYyJrpMxobJY7JIus7ygiU8xyzJ1AN6ZEoVQp2va2EEDFsg8hGllB1
- MLuT3hjUknVJkdmdVr+8wCM2FYCR1uXKhofbjKzU2b5ubImVdy5o3MK+JiHgtOjywpMN
- dvbLPnES2le2RyqWeqo+DBSYU1P7LkpDJfbpzvRpELIEhKLBG9/56cr6lzfRvDxjjnie
- hDXw==
-X-Gm-Message-State: AOJu0Yyi6DocucWerCN6OYsA3yDDFn+NoHqoHEqgYE4JQuaMJIe12YJu
- S6yzZLZ6N9XzQ0sEHcP0jbZTaCC16ovXRXC/hRSdyr7dj32zBVXqu4esINwRxTAcEY8XGm8WhKV
- 1AsoRFeQHdn2AeUp3RAoq7hQ8vpNTfsEE7KX7TeS+JuGN
-X-Gm-Gg: AeBDietBqKrwq4RNJFXxvLLscg556KxTVczRO4N0Alizd1C9c2invlGCUTxIH43ypPb
- YntS3cIWeyswFUkeH/XqcpyKXT8dg8zk5OvHAJV3bzdR5lyw4o1UQxxnin3p7MamaaPAlc0aIUv
- TQJSAUX26t9KjEL2wpCgAimr8am3AumlIGjslTHmNnDDS0PX5kTr3UKrtg572mMYDVnTc3Udt9C
- FUQg0ZH9yHpPpBl4vapo4hjWDWJcv2z8RPugNm4oHId1i6sMz42vlVHFRJkoUJb3QtjFPRRZgQW
- EXvpqvIDAnpn0i+ozng5Pu4eASchqJBmM81pWKMp8o8DEcxLUExZxzq131BjgANOYnx0+3/mAi1
- wvqWQ1rOS61b+lDw314cqDkD3tW0jWxNXuV4ftRZRiYmhKLX1ihN6IBV/IrE8zn8EFh5YeC44BE
- 93gzKfR7tNhdhzixA=
-X-Received: by 2002:a05:600c:4fc6:b0:48a:53ea:1408 with SMTP id
- 5b1f17b1804b1-48a53ea15a4mr390997755e9.8.1777286865374; 
- Mon, 27 Apr 2026 03:47:45 -0700 (PDT)
-X-Received: by 2002:a05:600c:4fc6:b0:48a:53ea:1408 with SMTP id
- 5b1f17b1804b1-48a53ea15a4mr390997305e9.8.1777286864907; 
- Mon, 27 Apr 2026 03:47:44 -0700 (PDT)
-Received: from localhost (2a01cb00021ec0002fb5ec50e5a775d4.ipv6.abo.wanadoo.fr.
- [2a01:cb00:21e:c000:2fb5:ec50:e5a7:75d4])
- by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48a66533ff4sm107883345e9.6.2026.04.27.03.47.43
- (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Mon, 27 Apr 2026 03:47:44 -0700 (PDT)
-Mime-Version: 1.0
-Date: Mon, 27 Apr 2026 12:47:42 +0200
-Message-Id: <DI3VM171VBSL.3E3J3C1HJ1GZG@redhat.com>
-Subject: Re: [PATCH dpdk v4] net: fix VLAN packet type
-Cc: <dev@dpdk.org>, "Gregory Etelson" <getelson@nvidia.com>,
- <stable@dpdk.org>, "Thomas Monjalon" <thomas@monjalon.net>, "Kevin Traynor"
- <ktraynor@redhat.com>, "Luca Boccassi" <bluca@debian.org>
-From: "Robin Jarry" <rjarry@redhat.com>
-To: "David Marchand" <david.marchand@redhat.com>
-User-Agent: aerc/0.21.0-142-gcff39137b013-dirty
-References: <20260422102814.645299-2-rjarry@redhat.com>
- <20260423112458.865674-1-rjarry@redhat.com>
- <CAJFAV8yAhr-iXkn6JvderT_Yy4rB91LVWqYvwRqJH0DdmNkJ1g@mail.gmail.com>
-In-Reply-To: <CAJFAV8yAhr-iXkn6JvderT_Yy4rB91LVWqYvwRqJH0DdmNkJ1g@mail.gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: uChTT8NzGpCQUCFH9ggevHPeuBxiY--bLRs1wA7hNPM_1777286865
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+	by mails.dpdk.org (Postfix) with ESMTP id CB0134064F;
+	Mon, 27 Apr 2026 12:58:11 +0200 (CEST)
+Received: from TYDPR03CU002.outbound.protection.outlook.com
+ (mail-japaneastazon11023130.outbound.protection.outlook.com [52.101.127.130])
+ by mails.dpdk.org (Postfix) with ESMTP id BD1CD402B2;
+ Mon, 27 Apr 2026 12:58:10 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZDVNv84qE4Xy5ZNnAPVLxpa4/lEJQCnVhcF8MxH1immLfduY0S+hsPTrKZ3IUrUmZVSMDs7O+IbLbvQbC43Eo15INoQKnL4padok46ZgdEMR02cRmHYJ2JEdq9VnMYOefiCoINjz0wB/gFxUax7Bns0VUU+YPO6tlts1aQGYq3RLfGikYTX04iEPowYmKHXWsrbeGZ8ukbTtKLue8YOqTUTvcmagpDCrWhksBln6GOvjoIt8XGr098qB6gLRpoFqrZOLT1PX0CdJd/N1MA5AObKXLKk+MPEItASl6zuSYHpzLQfEKlgyZZaPc439TW7n5Ele43YMns7DEIb3ZX8A3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bNFyDwVhPMmrjEgkLcgCObIhBtBBwW+ZnFcP47SHHYU=;
+ b=sT2PSmiAOKNHK747fVqKTahs3YO1bFtxP6scP5KuB22kZw5aUC3KWe1B9UXP70+W2jo4I6cubtUtfUIDmdZrTiLCo7KVKUQyY1en9FbwdAQIE9xvJjRqlfpbs83oOuXZUCxRhcNu4a2jpz0HEovowtDJR9KH7Imn6oKJh6Jm7VbRJg5yUDtLM0PCU4wHC3GKoKaH9xXRo/dU0JKFOgbXoiyMMZebX5ZFeoMo1Ytw3m3Mu+gW1AbkPebbnoeFULzN2s2mk+SfZLAGb3R0syarYJSUDtNAbPrzRcAsVALH7dUmhUk7XtmOmqCZfgL83Imdmnj3G0tVnoSUKr6DtCdjmg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=jaguarmicro.com; dmarc=pass action=none
+ header.from=jaguarmicro.com; dkim=pass header.d=jaguarmicro.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jaguarmicro.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bNFyDwVhPMmrjEgkLcgCObIhBtBBwW+ZnFcP47SHHYU=;
+ b=d2h35VokP07Wto1+DVqQ5BjWZXqFO8Pz1lgtz73VYYHdCBIWUWYpKIo4s+E3OJpA5jVt3iBBRMA55hX9aSiM9eAKl2d3kPvEFQJ5H8p6/SXBr+cu759ux+Pw9pMzC0S3c3SwDpMMQXXS/7yNVjf2NIhoZnRuImDs1QKzdZQW2L5zIC4l5lbOOoZl2ldgOz4KPBpNqU6jhWg9MLI/1d5nmWeVP1SU9+LyJ4cT2DxhrFS34JkitI1sIuPhs0PjMqOwdBUddeO0D+R2iB+cOSGGjES6KBObMhC5rmU2RkjgLYA+82YKbYVYvDDg5shCkrJEBCLkR6WXy05Gr29rj0MxuA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=jaguarmicro.com;
+Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
+ (2603:1096:820:c5::14) by SEYPR06MB5352.apcprd06.prod.outlook.com
+ (2603:1096:101:68::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9846.26; Mon, 27 Apr
+ 2026 10:58:07 +0000
+Received: from KL1PR0601MB5567.apcprd06.prod.outlook.com
+ ([fe80::5d45:e82a:e0bd:49f5]) by KL1PR0601MB5567.apcprd06.prod.outlook.com
+ ([fe80::5d45:e82a:e0bd:49f5%5]) with mapi id 15.20.9846.025; Mon, 27 Apr 2026
+ 10:58:07 +0000
+From: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+To: dev@dpdk.org
+Cc: aman.deep.singh@intel.com,
+	bruce.richardson@intel.com,
+	stable@dpdk.org
+Subject: [PATCH v2] app/testpmd: avoid cmdline use-after-free on SIGINT
+Date: Mon, 27 Apr 2026 18:57:41 +0800
+Message-Id: <20260427105741.14348-1-sunyang.wu@jaguarmicro.com>
+X-Mailer: git-send-email 2.19.0.rc0.windows.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYWP286CA0001.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:178::12) To KL1PR0601MB5567.apcprd06.prod.outlook.com
+ (2603:1096:820:c5::14)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB5567:EE_|SEYPR06MB5352:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54848044-a3f0-495f-dc03-08dea44bdcf8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|52116014|376014|1800799024|56012099003|18002099003|38350700014;
+X-Microsoft-Antispam-Message-Info: V+WzB58Wzcq60SV5XufPJDL43YRHR73Z2TkGv0h2RSdAEwpkb2/dbkL2WDexb6kL2tuIFCkm192QvsSu+TQZ+MVO/alwSyycYL26DiubAir5e9vFIgvwVogkW5gARi2QamLIqdoiDPeMhztmYBWi7orMjeXTAChZpXEHdUUeU5UNJx/6KSq/sx+poIeYqxdxeqZ54/kjEZUtsdHZdaf6r23oLPlNNxtuPvGIaXej2t8uiL0KO5XefnxiQ7SUCSKM54nKsPZsUNJFGoAXugwcm3kHTW7yKJZ+DEK6RzOsTztRyvVYknyV7orq//bEmujmJPQKHJLvl9/XsarsGpSRiWjYJVXVSDMx5Vc2w516MATnMM7shFJfrEtwuxWRrIYFRmIYqmmCET8FoijXxRZQFJZ9he98ruu9MiOk1yexPizOb4L6+ILPBOLvEpUpMSEVXp2zFd1AUqdtK8rzpj18cMbVZYJY6iCHd7stYaA+5dH0mrAyezTYV+rt1J1DlGmlwl0cjEwFEbQMGjDEFcHK1YS4RtNvlAlaOWTfT1JCZ4hFLpBllgfLeRDX5l6By0fsYW1V1n38AyE6MhKNrj4dZu8js63YCOud/GDwHIVNeAYNvpsmrEEEOijS83I2Ggl+F94cZX3ukU0AjeVQ2U16oLmhq744Zd8V3poyuSjNBsyRmIundnpPq+JbQexkGieX3ZYWXBCdORksk2UGaiGKeiipSLTyune1PNCwbxJCK8gJbPC2iPd/HT3/3VbSyjzxWaGBsTvh706zc8jU2OlEnX/SgVIrFM5VXT39Na8Uc1M=
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:KL1PR0601MB5567.apcprd06.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(52116014)(376014)(1800799024)(56012099003)(18002099003)(38350700014);
+ DIR:OUT; SFP:1102; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?hTTmmrberxRBrAyjYCaD1awK02IDxZsvgVS4FTEEoQE0A7YUJCxxV5G+jiwM?=
+ =?us-ascii?Q?IMlQZb5/nk/bVuHMb13AelVLppEV9BGub/5+WmLXB5jpEjKQSgRqBEd4Bo4Z?=
+ =?us-ascii?Q?hmgbaHO8+oVN0BZKy/T5l41jVcqTQzRPY5PEDP6BDBjXcAzGFDlMbFm4bMCl?=
+ =?us-ascii?Q?x+uzQmKav59IbDZMyItOgrwN9OIGQzategvwPkvyr7X4hNlB2EvRAOvvT0sr?=
+ =?us-ascii?Q?OOpPXVs0XMLxAyWm8qOFdb0wVUARejO8mjqhrIDzTf7PZYC3njngDwDbYmml?=
+ =?us-ascii?Q?Fa3E/nLsOL/VFXe6BNPZ35JNue4EspVs/IZmItkqjh5ExOH7sRNR1YNLkasX?=
+ =?us-ascii?Q?FL2tg1r6LBCpc40A8r/3nk/6APwG22QIwFDsWewQeKOROLJh1T72chtNMexA?=
+ =?us-ascii?Q?DX3bE73KG9GCP2MXqFOL8DnSbCXEpVkJ4dX2v6Tm6hS9SuJOpl/nJUHmZvof?=
+ =?us-ascii?Q?kIbg7mxqHVj2jdZSrUNUt5WBsOGZC2ZInnHmJluR2zToClgJOCtsPr+7aY+v?=
+ =?us-ascii?Q?XZ3NQoPCFx1qG7q1pLs1UMh53W6EUfuICtjGRWVMOPRJTPe6KvuycRBXINkT?=
+ =?us-ascii?Q?wz18MbebYO0CsPj+uaT7lgl6w403YQdnYblI7J3UrJCYjZrnBpMdgw0QEHn3?=
+ =?us-ascii?Q?QUy47OKubiKxeyYTDC5TTTCxHmGPwz7QItdQ9cKtpqcX7wiVOWvVr3fiU1TG?=
+ =?us-ascii?Q?t8iE02YIutEVPJlG8hu7Qqixq5NvtjLhQp2oAuSq1b9mUa/gN+FdbePDkLhH?=
+ =?us-ascii?Q?zF3WixldSNohrr0xjGmjBwlXbD6mLl4BZb7PnPgGsuVYxI+R6X+GMBUEGIH7?=
+ =?us-ascii?Q?xdPUGC8ltEiqNuMo2DJ2gswsPWi/XyvxHhik4EaAl3C7eHqhICBfQAxRP2Qu?=
+ =?us-ascii?Q?ypFye4g+Z1PGDWs2ayxn6b804CJY2V3LAF4KoMYoD7ihZFRv7pl9QgQflJJD?=
+ =?us-ascii?Q?lWM+iyiXwR++LeepqgruU2IEoEWUUeD0DGHGoDN2I6anGTG9zKsqS2490o77?=
+ =?us-ascii?Q?BTW9RFfqtKRr9dnsuPUa8BjL1/T2fmqLZwsu7BXHIozafuaSDi0wXpsLJ4+4?=
+ =?us-ascii?Q?gVNCLObUi7VxJJECmbXLpAJDRFJmTDLYL5FAtYkNa08w070z4OCbRJEjj8XC?=
+ =?us-ascii?Q?e/OegaBehIS//ujrMixK5G7DvcRGAwdLf9M8HKDn1f2MgUK9N4nM7J1KfkJ6?=
+ =?us-ascii?Q?r+V/MBG6e/PK/eHdDkLsIRFQqhXtfkmsk/b5TlQAaMi8/gZk1h2+LGvdtydM?=
+ =?us-ascii?Q?S89pkYzyKvwrLXjr62Ia2v/DPjkZIRRdB5Cso6ZApQh2rmI12Ipf20xas1Bv?=
+ =?us-ascii?Q?ewSaI+DB0G3Dt+me3lG0cSyfMPnOkiEhmT6UiWxFXmwpoWcitkusMlLdqwEK?=
+ =?us-ascii?Q?xKHJMZ5lhZAC2Zqtxyu+MpSLJmbnQoLgvsTCxSf6Lujs8xtTGfWush4Pmz6q?=
+ =?us-ascii?Q?QdyUmfkN/vft0VKLnKnfP4g8ZbMnVkK7hvD0Dqdf8i/MH61YYBaA3h7MOlin?=
+ =?us-ascii?Q?mcb4GqGUiXXgvd8ockRl6KHVC/mj5U8mBFf6nq5oy6bOYUHS7Ewi659X7/n2?=
+ =?us-ascii?Q?YHBn0UzMEZxRH0sG8vzhOJqOI4aoG76DeT+w+3G45iLsu49vOMefuhb8MpuZ?=
+ =?us-ascii?Q?+chKsuczRc6JxSMY+INU6n8Z21ZRT1oWWNQQ16/nhWQxtWjI26pazWh6LMe7?=
+ =?us-ascii?Q?FmJUrv4cVLjqN48pA0jRTlPwMabFGz4c8V1/JoydtorNhibABaTxmYUqMTFa?=
+ =?us-ascii?Q?62EGJK8k2dNgsLHLnFX1JPwge7V62p0=3D?=
+X-OriginatorOrg: jaguarmicro.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54848044-a3f0-495f-dc03-08dea44bdcf8
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5567.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Apr 2026 10:58:07.2257 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 1e45a5c2-d3e1-46b3-a0e6-c5ebf6d8ba7b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iAnzx74AtJ8pPjbglL6HUqsUHKVfLvX7+r/BSx4+cuSNOpjCuttYyll65Nr3m7IsCZuF9kIa52wyLRg9nHtWsQOzJAW/Yuhmd1zbPpLRJ8Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB5352
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,100 +118,73 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-David Marchand, Apr 25, 2026 at 10:40:
-> On Thu, 23 Apr 2026 at 13:25, Robin Jarry <rjarry@redhat.com> wrote:
->> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
->> index 458b4814a9c9..a871318b21c2 100644
->> --- a/lib/net/rte_net.c
->> +++ b/lib/net/rte_net.c
->> @@ -357,12 +357,14 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *=
-m,
->>                 const struct rte_vlan_hdr *vh;
->>                 struct rte_vlan_hdr vh_copy;
->>
->> +               if (vlan_depth =3D=3D 0) {
->> +                       pkt_type =3D
->> +                               proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_=
-TYPE_VLAN) ?
->> +                                        RTE_PTYPE_L2_ETHER_VLAN :
->> +                                        RTE_PTYPE_L2_ETHER_QINQ;
->> +               }
->
-> This code is becoming too complex.
-> The original usecase with more than 2 stacked vlan is a bit strange,
-> but the max depth limit seems just arbitrary (why 8?).
-> We have clear boundaries, with the size of the packet (see below,
-> check on vh =3D=3D NULL).
->
-> The offending commit also allows stacking mpls on top of vlan, without
-> mentioning it.
-> I think we want this behavior, but still was it intended?
->
-> In the end, reverting the previous fix then just advancing off and
-> breaking once proto is not a vlan/qinq type gives a much simpler fix
-> when compared to v25.11.
->
-> (ignoring indent changes with -w)
->
-> $ git diff -w v25.11 lib/net/rte_net.c
-> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
-> index c70b57fdc0..f58d699c83 100644
-> --- a/lib/net/rte_net.c
-> +++ b/lib/net/rte_net.c
-> @@ -349,30 +349,28 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m=
-,
->         if (proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4))
->                 goto l3; /* fast path if packet is IPv4 */
->
-> -       if (proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) {
-> +       if (proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
-> +                       proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ=
-)) {
->                 const struct rte_vlan_hdr *vh;
->                 struct rte_vlan_hdr vh_copy;
->
-> +               if (proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN))
->                         pkt_type =3D RTE_PTYPE_L2_ETHER_VLAN;
-> +               else
-> +                       pkt_type =3D RTE_PTYPE_L2_ETHER_QINQ;
-> +
-> +               do {
->                         vh =3D rte_pktmbuf_read(m, off, sizeof(*vh), &vh_=
-copy);
->                         if (unlikely(vh =3D=3D NULL))
->                                 return pkt_type;
->                         off +=3D sizeof(*vh);
->                         hdr_lens->l2_len +=3D sizeof(*vh);
->                         proto =3D vh->eth_proto;
-> -       } else if (proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
-> -               const struct rte_vlan_hdr *vh;
-> -               struct rte_vlan_hdr vh_copy;
-> +               } while (proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_VLA=
-N) ||
-> +                               proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_T=
-YPE_QINQ));
-> +       }
->
-> -               pkt_type =3D RTE_PTYPE_L2_ETHER_QINQ;
-> -               vh =3D rte_pktmbuf_read(m, off + sizeof(*vh), sizeof(*vh)=
-,
-> -                       &vh_copy);
-> -               if (unlikely(vh =3D=3D NULL))
-> -                       return pkt_type;
-> -               off +=3D 2 * sizeof(*vh);
-> -               hdr_lens->l2_len +=3D 2 * sizeof(*vh);
-> -               proto =3D vh->eth_proto;
-> -       } else if ((proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) |=
-|
-> +       if ((proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) ||
->                 (proto =3D=3D rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLSM))) {
->                 unsigned int i;
->                 const struct rte_mpls_hdr *mh;
->
->
-> This is untested, but what do you think?
+When testpmd runs in interactive mode, SIGINT is handled by setting
+the quit flag and calling prompt_exit() so the cmdline input path can
+be interrupted.
 
-That looks correct. But you don't impose a limit in the number of VLANs?
+However, prompt() frees the cmdline object with cmdline_stdin_exit()
+after cmdline_interact() returns, while the global testpmd_cl pointer
+may still be observed by a later signal during shutdown. If SIGINT
+arrives after the cmdline object is freed, prompt_exit() may call
+cmdline_quit() on stale state and trigger a use-after-free.
 
-I don't see any good reason to support more than 2 stacked tags.
+Keep the existing prompt_exit() behavior so interactive input can
+still be cancelled, but move the cmdline object lifetime under a
+local pointer and use atomic load/store for testpmd_cl so the signal
+path cannot observe freed state.
+
+This preserves the interactive-mode fix introduced for Windows while
+avoiding a shutdown-time use-after-free.
+
+Fixes: f1d0993e034e ("app/testpmd: fix interactive mode on Windows")
+Cc: stable@dpdk.org
+
+Signed-off-by: Sunyang Wu <sunyang.wu@jaguarmicro.com>
+---
+ app/test-pmd/cmdline.c | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+
+diff --git a/app/test-pmd/cmdline.c b/app/test-pmd/cmdline.c
+index c5abeb5730..bdc5c3e3eb 100644
+--- a/app/test-pmd/cmdline.c
++++ b/app/test-pmd/cmdline.c
+@@ -14500,22 +14500,31 @@ cmdline_read_from_file(const char *filename, bool echo)
+ void
+ prompt_exit(void)
+ {
+-	cmdline_quit(testpmd_cl);
++	struct cmdline *cl;
++
++	cl = __atomic_load_n(&testpmd_cl, __ATOMIC_ACQUIRE);
++	if (cl != NULL)
++		cmdline_quit(cl);
+ }
+ 
+ /* prompt function, called from main on MAIN lcore */
+ void
+ prompt(void)
+ {
+-	testpmd_cl = cmdline_stdin_new(main_ctx, "testpmd> ");
+-	if (testpmd_cl == NULL) {
++	struct cmdline *cl;
++
++	cl = cmdline_stdin_new(main_ctx, "testpmd> ");
++	if (cl == NULL) {
+ 		fprintf(stderr,
+ 			"Failed to create stdin based cmdline context\n");
+ 		return;
+ 	}
+ 
+-	cmdline_interact(testpmd_cl);
+-	cmdline_stdin_exit(testpmd_cl);
++	__atomic_store_n(&testpmd_cl, cl, __ATOMIC_RELEASE);
++	cmdline_interact(cl);
++	/* Clear global pointer before freeing cmdline object. */
++	__atomic_store_n(&testpmd_cl, NULL, __ATOMIC_RELEASE);
++	cmdline_stdin_exit(cl);
+ }
+ 
+ void
+-- 
+2.19.0.rc0.windows.1
 
