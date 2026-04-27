@@ -2,37 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66A6FF8867
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 09:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8856EFF8875
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 09:58:33 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7AE5240655;
-	Wed, 29 Apr 2026 11:58:21 +0200 (CEST)
-Received: from mail.amicon.ru (mail.amicon.ru [77.108.111.100])
- by mails.dpdk.org (Postfix) with ESMTP id BDC22402BC;
- Mon, 27 Apr 2026 17:16:52 +0200 (CEST)
-Content-Type: text/plain; charset="UTF-8"
+	by mails.dpdk.org (Postfix) with ESMTP id 83F1D40664;
+	Wed, 29 Apr 2026 11:58:22 +0200 (CEST)
+Received: from mail.amicon.ru (unknown [77.108.111.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 2C55B402BC;
+ Mon, 27 Apr 2026 17:37:37 +0200 (CEST)
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; d=amicon.ru; s=mail; c=simple/simple;
- t=1777303011; h=from:subject:to:date:message-id;
- bh=cCc8dMmgGEa3kjiPidAihmiCNr4kUm2lowz+zK0Dh2Y=;
- b=W0nVb31/Q2OXdAxeNa55JNJRXjP+RTbwW0Oe555Fw/CwhEmq9p1kJUFEZ70ZjM/ESKCRQR79Rxq
- DWdHAx0LY7q8nMQU9w6IRq5mPdqb0UliBJkS5DDGip9qLEUVXFVKIbE1yKAG7ZtuJwNiCCRAIF22p
- l16IKro0/Rc/Y63OIalsaCpNfZbxaWr3wY2I61jF1ocavmMdCNQnu6Ri2jnmEeRIht29C05FP0gos
- On4BckLXke+iF0A8HC/UnNPgwRGIq6CBqyRxBFeHMY/G+FsEEVxiQkvx0Sw25wCXjHfQ8YY3dQLC5
- u+OFwx+1gUwrkCskYGlr1/l3AIPTP8/zA21g==
+ t=1777304256; h=from:subject:to:date:message-id;
+ bh=4AekriRMVMkv7Di7Fxz/IN/dyP+pPoS889THVixyat8=;
+ b=VgLijv6lWzCEpzBTgGNXQr31668R+Viah/+gOvf284L2bp1m6EFr3IP8mQ9o488PWfDiMBk+fy6
+ gxQrpKOlF46CjLsgRtqKnw61cWKuogDjrMqW3ifDhNnGGnxII8K5eg7ZiacvBie99ljfP58/ClgRw
+ jf6Y45wwPhb9j+TJ6c4tjVfC8JNqvtQmCc0WmJ7jIZhiZFGQB0NjDmMw5GabfcF6san9Z/BgdTIZB
+ v2nmz8s89TriAWGYWSgAA9L88rpyrrYy5W3WgsDWOcTOopp2OO/ho90jLSv0M0H8k9L8vQqQXxtYq
+ FrBfoXgPH2T6ZAcq2UBMcgAK1vDfP46DE7DA==
 Received: from dish.amicon.lan (172.16.2.39) by mail.amicon.lan (192.168.0.59)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Mon, 27 Apr
- 2026 18:16:51 +0300
+ 2026 18:37:36 +0300
 From: Daniil Iskhakov <dish@amicon.ru>
-To: <dev@dpdk.org>, Anatoly Burakov <anatoly.burakov@intel.com>, Vladimir
- Medvedkin <vladimir.medvedkin@intel.com>, Wei Zhao <wei.zhao1@intel.com>,
- Wenzhuo Lu <wenzhuo.lu@intel.com>
-CC: Daniil Iskhakov <dish@amicon.ru>, <stable@dpdk.org>, Daniil Agalakov
- <ade@amicon.ru>, <sdl.dpdk@linuxtesting.org>, <rrv@amicon.ru>
-Subject: [PATCH] net/ixgbe: incorrect MAC/VLAN item validation for ntuple
-Date: Mon, 27 Apr 2026 18:16:04 +0300
-Message-ID: <20260427151605.1789289-1-dish@amicon.ru>
+To: <dev@dpdk.org>
+CC: Daniil Iskhakov <dish@amicon.ru>, <stable@dpdk.org>,
+ <sdl.dpdk@linuxtesting.org>, <rrv@amicon.ru>
+Subject: [PATCH v2] cmdline: prevent out-of-bounds read in completion buffer
+Date: Mon, 27 Apr 2026 18:34:30 +0300
+Message-ID: <20260427153430.1805689-1-dish@amicon.ru>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 X-Originating-IP: [172.16.2.39]
@@ -52,94 +50,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When parsing an ntuple filter, the code attempts to ensure that if the
-first item is ETH (or VLAN), its spec and mask must be NULL (i.e.
-zeroed structure). The current check is:
+tmp_buf is populated by the completion callback and is not guaranteed
+to be NUL-terminated.
 
-  if ((item->spec || item->mask) &&
-      (memcmp(spec, &null_struct, size) ||
-          memcmp(mask, &null_struct, size)))
+The code already accounts for this when computing tmp_size with
+strnlen(tmp_buf, sizeof(tmp_buf)). However, another loop in the same
+path still walks tmp_buf until a NUL byte is found, without checking
+the buffer limit.
 
-This condition is logically incorrect. If item->spec points to a
-zero-filled structure and item->mask is NULL, memcmp(mask) would
-dereference a NULL pointer.
+If the callback writes a full-sized non-NUL-terminated string, the loop
+may read past the end of tmp_buf.
 
-The intention os code is to reject any non‑zero spec or mask.
-
-Split the check into two independent conditions for spec and mask.
+Fix this by bounding the iteration with sizeof(tmp_buf).
 
 Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Fixes: 46ea969177f3 ("net/ixgbe: add ntuple support to flow parser")
+Fixes: af75078fece3 ("first public release")
 Cc: stable@dpdk.org
 
-Signed-off-by: Daniil Agalakov <ade@amicon.ru>
 Signed-off-by: Daniil Iskhakov <dish@amicon.ru>
 ---
-Cc: wei.zhao1@intel.com
+v2:
+- Resent to dev@dpdk.org because v1 was accidentally sent only to
+maintainers.
+
 Cc: sdl.dpdk@linuxtesting.org
 Cc: rrv@amicon.ru
 ---
- drivers/net/intel/ixgbe/ixgbe_flow.c | 37 +++++++++++++++++-----------
- 1 file changed, 22 insertions(+), 15 deletions(-)
+ lib/cmdline/cmdline_rdline.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 01cd4f9bde..9edfff413e 100644
---- a/drivers/net/intel/ixgbe/ixgbe_flow.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -238,14 +238,18 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 
- 		}
- 		/* if the first item is MAC, the content should be NULL */
--		if ((item->spec || item->mask) &&
--			(memcmp(eth_spec, &eth_null,
--				sizeof(struct rte_flow_item_eth)) ||
--			 memcmp(eth_mask, &eth_null,
--				sizeof(struct rte_flow_item_eth)))) {
-+		if (item->spec && memcmp(eth_spec, &eth_null,
-+			sizeof(struct rte_flow_item_eth))) {
- 			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
-+			  RTE_FLOW_ERROR_TYPE_ITEM,
-+			  item, "Not supported by ntuple filter");
-+			return -rte_errno;
-+		}
-+		if (item->mask && memcmp(eth_mask, &eth_null,
-+			sizeof(struct rte_flow_item_eth))) {
-+			rte_flow_error_set(error, EINVAL,
-+			  RTE_FLOW_ERROR_TYPE_ITEM,
-+			  item, "Not supported by ntuple filter");
- 			return -rte_errno;
- 		}
- 		/* check if the next not void item is IPv4 or Vlan */
-@@ -271,15 +275,18 @@ cons_parse_ntuple_filter(const struct rte_flow_attr *attr,
- 			return -rte_errno;
- 		}
- 		/* the content should be NULL */
--		if ((item->spec || item->mask) &&
--			(memcmp(vlan_spec, &vlan_null,
--				sizeof(struct rte_flow_item_vlan)) ||
--			 memcmp(vlan_mask, &vlan_null,
--				sizeof(struct rte_flow_item_vlan)))) {
--
-+		if (item->spec && memcmp(vlan_spec, &vlan_null,
-+			sizeof(struct rte_flow_item_vlan))) {
- 			rte_flow_error_set(error, EINVAL,
--				RTE_FLOW_ERROR_TYPE_ITEM,
--				item, "Not supported by ntuple filter");
-+			  RTE_FLOW_ERROR_TYPE_ITEM,
-+			  item, "Not supported by ntuple filter");
-+			return -rte_errno;
-+		}
-+		if (item->mask && memcmp(vlan_mask, &vlan_null,
-+			sizeof(struct rte_flow_item_vlan))) {
-+			rte_flow_error_set(error, EINVAL,
-+			  RTE_FLOW_ERROR_TYPE_ITEM,
-+			  item, "Not supported by ntuple filter");
- 			return -rte_errno;
- 		}
- 		/* check if the next not void item is IPv4 */
+diff --git a/lib/cmdline/cmdline_rdline.c b/lib/cmdline/cmdline_rdline.c
+index ee070f0af3..bc91dc6002 100644
+--- a/lib/cmdline/cmdline_rdline.c
++++ b/lib/cmdline/cmdline_rdline.c
+@@ -445,7 +445,7 @@ rdline_char_in(struct rdline *rdl, char c)
+ 				rdline_puts(rdl, "\r\n");
+ 				while (ret) {
+ 					rdl->write_char(rdl, ' ');
+-					for (i=0 ; i < sizeof(tmp_buf) && tmp_buf[i]; i++)
++					for (i = 0 ; i < tmp_buf[i]; i++)
+ 						rdl->write_char(rdl, tmp_buf[i]);
+ 					rdline_puts(rdl, "\r\n");
+ 					ret = rdl->complete(rdl, rdl->left_buf,
 -- 
 2.43.0
 
