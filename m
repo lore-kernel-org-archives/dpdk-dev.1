@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40776FF886F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Apr 2026 17:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F02FF886D
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Apr 2026 17:04:00 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B1F2C40661;
-	Tue, 28 Apr 2026 19:03:38 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E7C7D40679;
+	Tue, 28 Apr 2026 19:03:40 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 2037640666
- for <dev@dpdk.org>; Tue, 28 Apr 2026 19:03:36 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 1B1A040666
+ for <dev@dpdk.org>; Tue, 28 Apr 2026 19:03:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777395818; x=1808931818;
+ t=1777395819; x=1808931819;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=rtCmH9MorX/A11YjFheGT8orRb/ZJB1ZHKIf05BDk/w=;
- b=EigGlU8I6dj60fwUw5Kkta1hCpP1C8eDaF4SvED/vISyQf6eY8gO0Vn4
- BCibjA9d0OUg5tGjYG2N64W+2v3V8Ze3xTnV880GJlVcLMwlqYA3fcJ7U
- 1V2vzw5IoCtYoJfFEPEJlJvowtG5xRYbOOeZzk0T0r8QEnSEoTxlXQXZz
- /Mtfu5JsfR42KGO/XDAAd+BpVNr1+ciTeA1IXehr00vn76LfewsnOhQn0
- pqznFvvdOfdieyHQ3Ji7OtrOgnNloB6eIxhTWAOGGrBQe2Rk8IgdJG9fr
- AkSogPFX/jNv5cQspua97W5ZhyH1Pp3a7tI7cPR5adduMKxVRfj1tVF/K A==;
-X-CSE-ConnectionGUID: 61WJFecmQp6nzFxKdR8EhQ==
-X-CSE-MsgGUID: lymvYOCDQO2UepfMxEXurA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11770"; a="82180168"
-X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="82180168"
+ bh=UHsBA0j8Rx4QoTMheywc67WQxLJfjcDbo8NF4OPkDmw=;
+ b=Wcr3WTJuuca1yqUXjONzajnXbFUqOF9VIv9lCV+tfHlNhmOgE8m6lCy7
+ N6m7pRMbY28hHVbLbfv7Ya/s/IlvJYUCK9QEd4EvCZfanTmvp+sAeHxAz
+ qQJm8PkUTZlOpmwedSjrvBZC8AQvTW+TAd88qHzJY80O57lp2PiwumlT0
+ HSBUZEc4vJt9VKVEBGvV2ZEkTZXwyc7DxrpXDlBNreQ2qOTStL166j0K0
+ sH75xM1urnvo1mf0qESEiKUAcSWUgygjn01dSTKXO5cpjXbCUbDymCuCK
+ doSCC1KcZBLnLBshV9h+JJtO9Y2QzkP4QqK2ox4Zf4oEpThG5U7S6wPk7 Q==;
+X-CSE-ConnectionGUID: 4jOXdDIjQW6NbP2dzd5Kpw==
+X-CSE-MsgGUID: 9Dsw1hJFT5aTm2HelR+Yhw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11770"; a="82180178"
+X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="82180178"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Apr 2026 10:03:20 -0700
-X-CSE-ConnectionGUID: mExrpTVHQF6Wt907+HwlXg==
-X-CSE-MsgGUID: H60UBV6OQ9eMvPv3KaknIA==
+ 28 Apr 2026 10:03:25 -0700
+X-CSE-ConnectionGUID: aoPkesJzSeedLSJvd8pAZw==
+X-CSE-MsgGUID: zlysvk+KRcCzuIoQgqWMuw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="233973048"
+X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="233973066"
 Received: from icx008.iind.intel.com ([10.190.212.196])
- by orviesa009.jf.intel.com with ESMTP; 28 Apr 2026 10:03:18 -0700
+ by orviesa009.jf.intel.com with ESMTP; 28 Apr 2026 10:03:22 -0700
 From: Rajesh Kumar <rajesh3.kumar@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
  stephen@networkplumber.org, Rajesh Kumar <rajesh3.kumar@intel.com>
-Subject: [RFC v2 2/6] doc: add PTP library programmer's guide
-Date: Wed, 29 Apr 2026 03:58:33 +0530
-Message-ID: <fd4fc664fd573e01ea5323348991555eaae4569f.1777413123.git.rajesh3.kumar@intel.com>
+Subject: [RFC v2 3/6] examples/ptp_tap_relay_sw: add software PTP relay example
+Date: Wed, 29 Apr 2026 03:58:34 +0530
+Message-ID: <fb446db3fd82af6ae4188b0ccc6e574d1cbb04c1.1777413123.git.rajesh3.kumar@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <cover.1777413123.git.rajesh3.kumar@intel.com>
 References: <cover.1777413123.git.rajesh3.kumar@intel.com>
@@ -61,268 +61,569 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add programmer's guide for the PTP protocol library covering
-message types, header structures, packet classification API,
-inline helpers, and usage examples.
+Add a minimal PTP Transparent Clock relay that bridges PTP packets
+between a DPDK-bound physical NIC and a kernel TAP interface using
+software timestamps only.
 
-Add PTP header to Doxygen API index under layers section.
+The relay uses the rte_ptp library for packet classification and
+correctionField manipulation. For each PTP event message, it records
+software timestamps (CLOCK_MONOTONIC_RAW) at ingress and egress,
+then adds the residence time to the correctionField per IEEE 1588-2019
+section 10.2.
+
+A two-pass design is used: first all packets are classified and PTP
+header pointers saved, then a single TX timestamp is taken immediately
+before applying corrections and calling rte_eth_tx_burst(). This
+minimises the gap between the measured timestamp and actual wire
+egress.
 
 Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
 ---
- doc/api/doxy-api-index.md         |   1 +
- doc/api/doxy-api.conf.in          |   1 +
- doc/guides/prog_guide/index.rst   |   1 +
- doc/guides/prog_guide/ptp_lib.rst | 205 ++++++++++++++++++++++++++++++
- 4 files changed, 208 insertions(+)
- create mode 100644 doc/guides/prog_guide/ptp_lib.rst
+ doc/guides/rel_notes/release_26_07.rst       |   6 +
+ examples/meson.build                         |   1 +
+ examples/ptp_tap_relay_sw/Makefile           |  41 ++
+ examples/ptp_tap_relay_sw/meson.build        |  14 +
+ examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c | 433 +++++++++++++++++++
+ 5 files changed, 495 insertions(+)
+ create mode 100644 examples/ptp_tap_relay_sw/Makefile
+ create mode 100644 examples/ptp_tap_relay_sw/meson.build
+ create mode 100644 examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c
 
-diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
-index 9296042119..bbc79168bb 100644
---- a/doc/api/doxy-api-index.md
-+++ b/doc/api/doxy-api-index.md
-@@ -137,6 +137,7 @@ The public API headers are grouped by topics:
-   [eCPRI](@ref rte_ecpri.h),
-   [PDCP hdr](@ref rte_pdcp_hdr.h),
-   [PDCP](@ref rte_pdcp.h),
-+  [PTP](@ref rte_ptp.h),
-   [L2TPv2](@ref rte_l2tpv2.h),
-   [PPP](@ref rte_ppp.h),
-   [IB](@ref rte_ib.h)
-diff --git a/doc/api/doxy-api.conf.in b/doc/api/doxy-api.conf.in
-index bedd944681..f15d962733 100644
---- a/doc/api/doxy-api.conf.in
-+++ b/doc/api/doxy-api.conf.in
-@@ -72,6 +72,7 @@ INPUT                   = @TOPDIR@/doc/api/doxy-api-index.md \
-                           @TOPDIR@/lib/pmu \
-                           @TOPDIR@/lib/port \
-                           @TOPDIR@/lib/power \
-+                          @TOPDIR@/lib/ptp \
-                           @TOPDIR@/lib/ptr_compress \
-                           @TOPDIR@/lib/rawdev \
-                           @TOPDIR@/lib/rcu \
-diff --git a/doc/guides/prog_guide/index.rst b/doc/guides/prog_guide/index.rst
-index e6f24945b0..60dad4475c 100644
---- a/doc/guides/prog_guide/index.rst
-+++ b/doc/guides/prog_guide/index.rst
-@@ -97,6 +97,7 @@ Protocol Processing Libraries
-     :maxdepth: 1
-     :numbered:
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index b2208d6fb3..5c2329d867 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -70,6 +70,12 @@ New Features
+   parsing, and correctionField manipulation across L2, VLAN-tagged,
+   UDP/IPv4, and UDP/IPv6 transports.
  
-+    ptp_lib
-     pdcp_lib
-     ipsec_lib
++* **Added PTP software relay example application.**
++
++  Added a new example application ``ptp_tap_relay_sw`` demonstrating a
++  software PTP Transparent Clock relay between a DPDK port and a kernel
++  TAP interface.
++
  
-diff --git a/doc/guides/prog_guide/ptp_lib.rst b/doc/guides/prog_guide/ptp_lib.rst
+ Removed Items
+ -------------
+diff --git a/examples/meson.build b/examples/meson.build
+index 25d9c88457..ab82cf5fbd 100644
+--- a/examples/meson.build
++++ b/examples/meson.build
+@@ -43,6 +43,7 @@ all_examples = [
+         'packet_ordering',
+         'pipeline',
+         'ptpclient',
++        'ptp_tap_relay_sw',
+         'qos_meter',
+         'qos_sched',
+         'rxtx_callbacks',
+diff --git a/examples/ptp_tap_relay_sw/Makefile b/examples/ptp_tap_relay_sw/Makefile
 new file mode 100644
-index 0000000000..3f2e80a9e2
+index 0000000000..fd178f46ae
 --- /dev/null
-+++ b/doc/guides/prog_guide/ptp_lib.rst
-@@ -0,0 +1,205 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright(c) 2026 Intel Corporation.
++++ b/examples/ptp_tap_relay_sw/Makefile
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 Intel Corporation
 +
-+PTP Protocol Library
-+====================
++# binary name
++APP = dpdk-ptp_tap_relay_sw
 +
-+The DPDK PTP library provides IEEE 1588 / Precision Time Protocol (PTP)
-+packet structures, constants, and helper functions for PTP packet processing.
++# all source are stored in SRCS-y
++SRCS-y := ptp_tap_relay_sw.c
 +
-+The library supports classification and header parsing of PTP messages
-+across multiple transport encapsulations:
++PKGCONF ?= pkg-config
 +
-+- L2 PTP (EtherType 0x88F7)
-+- VLAN-tagged L2 PTP (single or double VLAN, TPIDs 0x8100 and 0x88A8)
-+- PTP over UDP/IPv4 (destination ports 319 and 320)
-+- PTP over UDP/IPv6 (destination ports 319 and 320)
-+- VLAN-tagged PTP over UDP/IPv4 or UDP/IPv6
++# Build using pkg-config variables if possible
++ifneq ($(shell $(PKGCONF) --exists libdpdk && echo 0),0)
++$(error "no installation of DPDK found")
++endif
 +
-+The library conforms to
-+`IEEE 1588-2019 <https://standards.ieee.org/ieee/1588/6825/>`_
-+(Precision Time Protocol).
++all: shared
++.PHONY: shared static
++shared: build/$(APP)-shared
++	ln -sf $(APP)-shared build/$(APP)
++static: build/$(APP)-static
++	ln -sf $(APP)-static build/$(APP)
 +
-+Overview
-+--------
++PC_FILE := $(shell $(PKGCONF) --path libdpdk 2>/dev/null)
++CFLAGS += -O3 $(shell $(PKGCONF) --cflags libdpdk)
++LDFLAGS_SHARED = $(shell $(PKGCONF) --libs libdpdk)
++LDFLAGS_STATIC = $(shell $(PKGCONF) --static --libs libdpdk)
 +
-+PTP is the foundation of time synchronization in networking.
-+DPDK applications that relay, classify, or timestamp PTP packets
-+currently duplicate header definitions and parsing logic.
-+This library provides a shared, tested implementation.
++build/$(APP)-shared: $(SRCS-y) Makefile $(PC_FILE) | build
++	$(CC) $(CFLAGS) $(SRCS-y) -o $@ $(LDFLAGS) $(LDFLAGS_SHARED)
 +
-+The library provides:
++build/$(APP)-static: $(SRCS-y) Makefile $(PC_FILE) | build
++	$(CC) $(CFLAGS) $(SRCS-y) -o $@ $(LDFLAGS) $(LDFLAGS_STATIC)
 +
-+#. Packed header structures matching the IEEE 1588-2019 wire format
-+#. Constants for message types, flags, ports, and multicast addresses
-+#. Inline helpers for common field extraction and manipulation
-+#. Packet classification across L2, VLAN, UDP/IPv4, and UDP/IPv6 transports
-+#. Correction field manipulation for Transparent Clock residence time
++build:
++	@mkdir -p $@
 +
-+PTP Message Types
-+-----------------
++.PHONY: clean
++clean:
++	rm -f build/$(APP) build/$(APP)-static build/$(APP)-shared
++	test -d build && rmdir -p build || true
+diff --git a/examples/ptp_tap_relay_sw/meson.build b/examples/ptp_tap_relay_sw/meson.build
+new file mode 100644
+index 0000000000..56abad02ed
+--- /dev/null
++++ b/examples/ptp_tap_relay_sw/meson.build
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: BSD-3-Clause
++# Copyright(c) 2026 Intel Corporation
 +
-+IEEE 1588-2019 defines the following message types, all supported by the library:
++# meson file, for building this example as part of a main DPDK build.
++#
++# To build this example as a standalone application with an already-installed
++# DPDK instance, use 'make'
 +
-+.. csv-table:: PTP Message Types
-+   :header: "Type", "Name", "Category", "Macro"
-+   :widths: 5, 20, 10, 30
++allow_experimental_apis = true
++sources = files(
++        'ptp_tap_relay_sw.c',
++)
++deps += ['net', 'ptp']
++cflags += no_shadow_cflag
+diff --git a/examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c b/examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c
+new file mode 100644
+index 0000000000..eb674e49b9
+--- /dev/null
++++ b/examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c
+@@ -0,0 +1,433 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2026 Intel Corporation
++ */
 +
-+   "0x0", "Sync", "Event", "``RTE_PTP_MSGTYPE_SYNC``"
-+   "0x1", "Delay_Req", "Event", "``RTE_PTP_MSGTYPE_DELAY_REQ``"
-+   "0x2", "Peer_Delay_Req", "Event", "``RTE_PTP_MSGTYPE_PDELAY_REQ``"
-+   "0x3", "Peer_Delay_Resp", "Event", "``RTE_PTP_MSGTYPE_PDELAY_RESP``"
-+   "0x8", "Follow_Up", "General", "``RTE_PTP_MSGTYPE_FOLLOW_UP``"
-+   "0x9", "Delay_Resp", "General", "``RTE_PTP_MSGTYPE_DELAY_RESP``"
-+   "0xA", "PDelay_Resp_Follow_Up", "General", "``RTE_PTP_MSGTYPE_PDELAY_RESP_FU``"
-+   "0xB", "Announce", "General", "``RTE_PTP_MSGTYPE_ANNOUNCE``"
-+   "0xC", "Signaling", "General", "``RTE_PTP_MSGTYPE_SIGNALING``"
-+   "0xD", "Management", "General", "``RTE_PTP_MSGTYPE_MANAGEMENT``"
++/*
++ * PTP Software Relay — lib/ptp usage example
++ *
++ * A minimal PTP relay between a DPDK-bound physical NIC and a kernel
++ * TAP interface using software timestamps only.  No patched TUN driver
++ * or ptp_proxy kernel module is required.
++ *
++ * How it works:
++ *   1. Physical NIC receives PTP (and non-PTP) packets via DPDK RX.
++ *   2. For PTP event messages (Sync, Delay_Req, PDelay_Req, PDelay_Resp)
++ *      the relay records an RX software timestamp (clock_gettime).
++ *   3. Just before TX on the other side it records a TX software timestamp.
++ *   4. The relay residence time (tx_ts − rx_ts) is added to the PTP
++ *      correctionField via rte_ptp_add_correction() — standard
++ *      Transparent Clock behaviour (IEEE 1588-2019 §10.2).
++ *   5. Packets are forwarded bi-directionally:
++ *        PHY → TAP   (network → ptp4l)
++ *        TAP → PHY   (ptp4l → network)
++ *
++ * ptp4l runs in software-timestamping mode on the TAP interface:
++ *
++ *   ptp4l -i dtap0 -m -s -S   # -S = software timestamps
++ *
++ * Topology:
++ *
++ *   Time Transmitter (remote) ──L2── Physical NIC (DPDK)
++ *                                      │
++ *                                PTP SW Relay  ← correctionField update
++ *                                      │
++ *                                TAP (kernel) ── ptp4l -S (time receiver)
++ *
++ * Usage:
++ *   dpdk-ptp_tap_relay_sw -l 0-1 --vdev=net_tap0,iface=dtap0 -- \
++ *       -p 0 -t 1
++ *
++ * Parameters:
++ *   -p PORT    Physical NIC port ID (default: 0)
++ *   -t PORT    TAP port ID (default: 1)
++ *   -T SECS    Stats print interval in seconds (default: 10)
++ */
 +
-+Event messages (types 0x0–0x3) require hardware timestamps for accurate
-+time transfer.
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <stdint.h>
++#include <stdbool.h>
++#include <signal.h>
++#include <getopt.h>
++#include <time.h>
 +
-+Header Structures
-+-----------------
++#include <rte_eal.h>
++#include <rte_ethdev.h>
++#include <rte_mbuf.h>
++#include <rte_cycles.h>
++#include <rte_lcore.h>
++#include <rte_ptp.h>
 +
-+The library defines the following packed structures that map directly to
-+the IEEE 1588-2019 wire format:
++/* Ring sizes */
++#define RX_RING_SIZE  1024
++#define TX_RING_SIZE  1024
 +
-+``struct rte_ptp_hdr``
-+   Common PTP message header (34 bytes). All PTP messages begin with this header.
-+   Contains message type, version, flags, correction field, source port identity,
-+   sequence ID, and log message interval.
++/* Mempool */
++#define NUM_MBUFS     8191
++#define MBUF_CACHE    250
++#define BURST_SIZE    32
 +
-+``struct rte_ptp_timestamp``
-+   PTP timestamp (10 bytes). Used in Sync, Delay_Req, and Follow_Up message bodies.
-+   Contains seconds (48-bit) and nanoseconds (32-bit).
++#define NSEC_PER_SEC  1000000000ULL
 +
-+``struct rte_ptp_port_id``
-+   PTP port identity (10 bytes). Contains an EUI-64 clock identity and a
-+   16-bit port number.
++/* Logging helpers */
++#define LOG_INFO(fmt, ...) \
++	fprintf(stdout, "[PTP-SW] " fmt "\n", ##__VA_ARGS__)
++#define LOG_ERR(fmt, ...) \
++	fprintf(stderr, "[PTP-SW ERROR] " fmt "\n", ##__VA_ARGS__)
 +
-+Packet Classification API
-+--------------------------
++static volatile bool force_quit;
 +
-+``rte_ptp_classify()``
-+~~~~~~~~~~~~~~~~~~~~~~
++/* Port IDs */
++static uint16_t phy_port;
++static uint16_t tap_port = 1;
++static unsigned int stats_interval = 10;  /* seconds */
 +
-+Classify a packet and return the PTP message type.
++/* Statistics */
++static struct {
++	uint64_t phy_rx;        /* total packets from PHY */
++	uint64_t phy_rx_ptp;    /* PTP packets from PHY */
++	uint64_t tap_tx;        /* packets forwarded to TAP */
++	uint64_t tap_rx;        /* total packets from TAP */
++	uint64_t tap_rx_ptp;    /* PTP packets from TAP */
++	uint64_t phy_tx;        /* packets forwarded to PHY */
++	uint64_t corrections;   /* correctionField updates */
++} stats;
 +
-+.. code-block:: C
++static void
++signal_handler(int signum)
++{
++	if (signum == SIGINT || signum == SIGTERM) {
++		LOG_INFO("Signal %d received, shutting down...", signum);
++		force_quit = true;
++	}
++}
 +
-+   int rte_ptp_classify(const struct rte_mbuf *m);
++/* Helpers */
 +
-+Examines the mbuf to determine if it contains a PTP message.
-+Returns the PTP message type (0x0–0xF) on success,
-+or ``RTE_PTP_MSGTYPE_INVALID`` (-1) if the packet is not PTP.
++/* Read monotonic clock in nanoseconds (for residence time). */
++static inline uint64_t
++sw_timestamp_ns(void)
++{
++	struct timespec ts;
 +
-+Supported encapsulations (VLAN TPIDs recognised: 0x8100 and 0x88A8):
++	clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
++	return (uint64_t)ts.tv_sec * NSEC_PER_SEC + (uint64_t)ts.tv_nsec;
++}
 +
-+- EtherType 0x88F7 (L2 PTP)
-+- Single VLAN (0x8100 or 0x88A8) + EtherType 0x88F7
-+- Double VLAN (any combination of 0x8100 / 0x88A8) + EtherType 0x88F7
-+- IPv4 + UDP destination port 319 or 320
-+- IPv6 + UDP destination port 319 or 320
-+- Single or double VLAN + IPv4/IPv6 + UDP destination port 319 or 320
++/* Port Init */
 +
-+``rte_ptp_hdr_get()``
-+~~~~~~~~~~~~~~~~~~~~~
++static int
++port_init(uint16_t port, struct rte_mempool *mp)
++{
++	struct rte_eth_conf port_conf;
++	struct rte_eth_dev_info dev_info;
++	uint16_t nb_rxd = RX_RING_SIZE;
++	uint16_t nb_txd = TX_RING_SIZE;
++	int ret;
 +
-+Get a pointer to the PTP header inside a packet.
++	memset(&port_conf, 0, sizeof(port_conf));
 +
-+.. code-block:: C
++	ret = rte_eth_dev_info_get(port, &dev_info);
++	if (ret != 0) {
++		LOG_ERR("rte_eth_dev_info_get(port %u) failed: %d", port, ret);
++		return ret;
++	}
 +
-+   struct rte_ptp_hdr *rte_ptp_hdr_get(const struct rte_mbuf *m);
++	if (dev_info.tx_offload_capa & RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE)
++		port_conf.txmode.offloads |=
++			RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
 +
-+Returns a pointer to the PTP header, or NULL if the packet is not PTP.
-+Handles the same set of encapsulations as ``rte_ptp_classify()``.
++	ret = rte_eth_dev_configure(port, 1, 1, &port_conf);
++	if (ret != 0)
++		return ret;
 +
-+``rte_ptp_msg_type_str()``
-+~~~~~~~~~~~~~~~~~~~~~~~~~~
++	ret = rte_eth_dev_adjust_nb_rx_tx_desc(port, &nb_rxd, &nb_txd);
++	if (ret != 0)
++		return ret;
 +
-+Convert a PTP message type to a human-readable string.
++	ret = rte_eth_rx_queue_setup(port, 0, nb_rxd,
++			rte_eth_dev_socket_id(port), NULL, mp);
++	if (ret < 0)
++		return ret;
 +
-+.. code-block:: C
++	ret = rte_eth_tx_queue_setup(port, 0, nb_txd,
++			rte_eth_dev_socket_id(port), NULL);
++	if (ret < 0)
++		return ret;
 +
-+   const char *rte_ptp_msg_type_str(int msg_type);
++	ret = rte_eth_dev_start(port);
++	if (ret < 0)
++		return ret;
 +
-+Returns a string such as ``"Sync"``, ``"Delay_Req"``, ``"Follow_Up"``, etc.
-+Returns ``"Not_PTP"`` for invalid message types.
++	ret = rte_eth_promiscuous_enable(port);
++	if (ret != 0) {
++		LOG_ERR("Failed to enable promiscuous on port %u: %s",
++			port, rte_strerror(-ret));
++		return ret;
++	}
 +
-+Inline Helpers
-+--------------
++	return 0;
++}
 +
-+The following inline functions operate on ``struct rte_ptp_hdr`` and require
-+no function call overhead:
++/* Relay one direction */
 +
-+.. csv-table:: Inline Helper Functions
-+   :header: "Function", "Returns", "Description"
-+   :widths: 30, 15, 40
++/*
++ * Forward packets from src_port to dst_port.
++ * For PTP event messages, record SW timestamps around the
++ * relay path and add the residence time to the correctionField.
++ *
++ * This implements a Transparent Clock (IEEE 1588-2019 §10.2):
++ *   correctionField += (t_egress − t_ingress)
++ *
++ * Note: a single rx_ts / tx_ts pair is used for the entire burst.
++ * At typical PTP rates (logSyncInterval >= -4, i.e. <= 16 pkt/s)
++ * bursts contain at most one packet, so this is exact.  At higher
++ * rates, early packets in a burst are slightly under-corrected and
++ * late ones over-corrected by up to one poll-loop iteration.
++ */
++static void
++relay_burst(uint16_t src_port, uint16_t dst_port,
++	    uint64_t *rx_cnt, uint64_t *rx_ptp_cnt,
++	    uint64_t *tx_cnt)
++{
++	struct rte_mbuf *bufs[BURST_SIZE];
++	struct rte_ptp_hdr *ptp_hdrs[BURST_SIZE];
++	uint64_t rx_ts;
++	uint16_t nb_rx, nb_tx, i;
 +
-+   "``rte_ptp_msg_type()``", "``uint8_t``", "Extract message type (lower nibble)"
-+   "``rte_ptp_transport_specific()``", "``uint8_t``", "Extract transport-specific field (upper nibble)"
-+   "``rte_ptp_version()``", "``uint8_t``", "Extract PTP version number"
-+   "``rte_ptp_seq_id()``", "``uint16_t``", "Get sequence ID in host byte order"
-+   "``rte_ptp_domain()``", "``uint8_t``", "Get PTP domain number"
-+   "``rte_ptp_is_event()``", "``bool``", "Check if message type is an event (0x0–0x3)"
-+   "``rte_ptp_is_two_step()``", "``bool``", "Check if two-step flag is set"
-+   "``rte_ptp_correction_ns()``", "``int64_t``", "Get correctionField in nanoseconds (from 48.16 fixed-point)"
-+   "``rte_ptp_add_correction()``", "``void``", "Add residence time to correctionField (for Transparent Clocks)"
-+   "``rte_ptp_timestamp_to_ns()``", "``uint64_t``", "Convert PTP timestamp struct to nanoseconds"
++	nb_rx = rte_eth_rx_burst(src_port, 0, bufs, BURST_SIZE);
++	if (nb_rx == 0)
++		return;
 +
-+Usage Example
-+-------------
++	/* Record a single RX software timestamp for the whole burst.
++	 * All packets in one burst arrived at essentially the same instant
++	 * from rte_eth_rx_burst()'s perspective.
++	 */
++	rx_ts = sw_timestamp_ns();
 +
-+Classifying and processing PTP packets:
++	*rx_cnt += nb_rx;
 +
-+.. code-block:: C
++	/*
++	 * Pass 1: Classify packets and remember PTP event header pointers.
++	 * This avoids taking the TX timestamp too early — we want it as
++	 * close to the actual rte_eth_tx_burst() call as possible.
++	 */
++	memset(ptp_hdrs, 0, sizeof(ptp_hdrs[0]) * nb_rx);
++	for (i = 0; i < nb_rx; i++) {
++		int ptp_type = rte_ptp_classify(bufs[i]);
 +
-+   #include <rte_ptp.h>
++		if (ptp_type == RTE_PTP_MSGTYPE_INVALID)
++			continue;
 +
-+   void process_packets(struct rte_mbuf **pkts, uint16_t nb_pkts)
-+   {
-+       for (uint16_t i = 0; i < nb_pkts; i++) {
-+           int ptp_type = rte_ptp_classify(pkts[i]);
-+           if (ptp_type == RTE_PTP_MSGTYPE_INVALID)
-+               continue;
++		(*rx_ptp_cnt)++;
 +
-+           struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(pkts[i]);
++		/* Only event messages carry timestamps that need correction */
++		if (!rte_ptp_is_event(ptp_type))
++			continue;
 +
-+           printf("PTP %s seq=%u domain=%u\n",
-+                  rte_ptp_msg_type_str(ptp_type),
-+                  rte_ptp_seq_id(hdr),
-+                  rte_ptp_domain(hdr));
++		ptp_hdrs[i] = rte_ptp_hdr_get(bufs[i]);
++	}
 +
-+           if (rte_ptp_is_event(ptp_type)) {
-+               /* Event message — needs hardware timestamp */
-+           }
-+       }
-+   }
++	/*
++	 * Pass 2: Take a single TX timestamp right before transmission.
++	 * This minimises the gap between the measured tx_ts and the
++	 * actual kernel write inside rte_eth_tx_burst(), giving the
++	 * most accurate residence time we can achieve with SW timestamps.
++	 *
++	 * residence_time = tx_ts − rx_ts
++	 *
++	 * Remaining untracked delays:
++	 *   - Pre-RX:  NIC DMA → rx_burst return  (~1-5 µs, unavoidable)
++	 *   - Post-TX:  tx_ts → kernel TAP write   (~1-2 µs)
++	 * Both are symmetric for Sync and Delay_Req so they largely
++	 * cancel in the ptp4l offset calculation.
++	 */
++	uint64_t tx_ts = sw_timestamp_ns();
++	int64_t residence_ns = (int64_t)(tx_ts - rx_ts);
 +
-+.. note::
++	for (i = 0; i < nb_rx; i++) {
++		if (ptp_hdrs[i] == NULL)
++			continue;
++		rte_ptp_add_correction(ptp_hdrs[i], residence_ns);
++		stats.corrections++;
++	}
 +
-+   ``rte_ptp_classify()`` and ``rte_ptp_hdr_get()`` both parse the packet
-+   internally.  When the caller needs both the message type and a header
-+   pointer, calling ``rte_ptp_hdr_get()`` alone and then using
-+   ``rte_ptp_msg_type()`` on the returned header avoids parsing the
-+   packet twice.
++	/* Forward the burst */
++	nb_tx = rte_eth_tx_burst(dst_port, 0, bufs, nb_rx);
++	*tx_cnt += nb_tx;
 +
-+Adding residence time for a Transparent Clock:
++	/* Free any unsent packets */
++	for (i = nb_tx; i < nb_rx; i++)
++		rte_pktmbuf_free(bufs[i]);
++}
 +
-+.. code-block:: C
++/* Print statistics */
 +
-+   struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(pkt);
-+   if (hdr != NULL) {
-+       int64_t residence_ns = egress_ts - ingress_ts;
-+       rte_ptp_add_correction(hdr, residence_ns);
-+   }
++static void
++print_stats(void)
++{
++	LOG_INFO("=== Statistics ===");
++	LOG_INFO("  PHY RX total:   %"PRIu64, stats.phy_rx);
++	LOG_INFO("  PHY RX PTP:     %"PRIu64, stats.phy_rx_ptp);
++	LOG_INFO("  TAP TX:         %"PRIu64, stats.tap_tx);
++	LOG_INFO("  TAP RX total:   %"PRIu64, stats.tap_rx);
++	LOG_INFO("  TAP RX PTP:     %"PRIu64, stats.tap_rx_ptp);
++	LOG_INFO("  PHY TX:         %"PRIu64, stats.phy_tx);
++	LOG_INFO("  Corrections:    %"PRIu64, stats.corrections);
++}
 +
-+Limitations
-+-----------
++/* Main relay loop */
 +
-+- IPv6 extension headers are not traversed. Only the base IPv6 header
-+  with ``next_header == UDP`` is handled.
-+- Multi-segment mbufs are not supported. PTP event messages are
-+  typically less than 128 bytes and fit in a single segment.
-+- PTP over MPLS or other tunneling protocols is not supported.
++static int
++relay_loop(__rte_unused void *arg)
++{
++	uint64_t last_stats = rte_rdtsc();
++	uint64_t stats_tsc = rte_get_tsc_hz() * stats_interval;
++
++	LOG_INFO("Relay loop started on lcore %u", rte_lcore_id());
++	LOG_INFO("  PHY port %u  <-->  TAP port %u", phy_port, tap_port);
++	LOG_INFO("  Correction field updates: enabled for event messages");
++
++	while (!force_quit) {
++		/* PHY → TAP */
++		relay_burst(phy_port, tap_port,
++			    &stats.phy_rx, &stats.phy_rx_ptp,
++			    &stats.tap_tx);
++
++		/* TAP → PHY */
++		relay_burst(tap_port, phy_port,
++			    &stats.tap_rx, &stats.tap_rx_ptp,
++			    &stats.phy_tx);
++
++		/* Periodic stats */
++		if (rte_rdtsc() - last_stats > stats_tsc) {
++			print_stats();
++			last_stats = rte_rdtsc();
++		}
++	}
++
++	print_stats();
++	return 0;
++}
++
++/* Argument parsing */
++
++static void
++usage(const char *prog)
++{
++	fprintf(stderr,
++		"Usage: %s [EAL options] -- [options]\n"
++		"  -p PORT   Physical NIC port ID (default: 0)\n"
++		"  -t PORT   TAP port ID (default: 1)\n"
++		"  -T SECS   Stats interval in seconds (default: 10)\n"
++		"\n"
++		"Example:\n"
++		"  %s -l 0-1 --vdev=net_tap0,iface=dtap0 -- -p 0 -t 1\n"
++		"\n"
++		"Then run ptp4l with software timestamps:\n"
++		"  ptp4l -i dtap0 -m -s -S\n",
++		prog, prog);
++}
++
++static int
++parse_args(int argc, char **argv)
++{
++	int opt;
++
++	while ((opt = getopt(argc, argv, "p:t:T:h")) != -1) {
++		switch (opt) {
++		case 'p':
++			phy_port = (uint16_t)atoi(optarg);
++			break;
++		case 't':
++			tap_port = (uint16_t)atoi(optarg);
++			break;
++		case 'T':
++			stats_interval = (unsigned int)atoi(optarg);
++			break;
++		case 'h':
++		default:
++			usage(argv[0]);
++			return -1;
++		}
++	}
++
++	return 0;
++}
++
++/* Main */
++
++int
++main(int argc, char **argv)
++{
++	struct rte_mempool *mp;
++	uint16_t nb_ports;
++	int ret;
++
++	/* EAL init */
++	ret = rte_eal_init(argc, argv);
++	if (ret < 0)
++		rte_exit(EXIT_FAILURE, "EAL init failed\n");
++	argc -= ret;
++	argv += ret;
++
++	/* App args */
++	ret = parse_args(argc, argv);
++	if (ret < 0)
++		rte_exit(EXIT_FAILURE, "Invalid arguments\n");
++
++	signal(SIGINT, signal_handler);
++	signal(SIGTERM, signal_handler);
++
++	nb_ports = rte_eth_dev_count_avail();
++	if (nb_ports < 2)
++		rte_exit(EXIT_FAILURE,
++			 "Need at least 2 ports (PHY + TAP).\n"
++			 "Use --vdev=net_tap0,iface=dtap0\n");
++
++	if (!rte_eth_dev_is_valid_port(phy_port))
++		rte_exit(EXIT_FAILURE, "Invalid PHY port %u\n", phy_port);
++	if (!rte_eth_dev_is_valid_port(tap_port))
++		rte_exit(EXIT_FAILURE, "Invalid TAP port %u\n", tap_port);
++
++	mp = rte_pktmbuf_pool_create("MBUF_POOL", NUM_MBUFS * nb_ports,
++				     MBUF_CACHE, 0,
++				     RTE_MBUF_DEFAULT_BUF_SIZE,
++				     rte_socket_id());
++	if (mp == NULL)
++		rte_exit(EXIT_FAILURE, "Cannot create mbuf pool\n");
++
++	LOG_INFO("Initializing PHY port %u...", phy_port);
++	ret = port_init(phy_port, mp);
++	if (ret != 0)
++		rte_exit(EXIT_FAILURE, "Cannot init PHY port %u (%d)\n",
++			 phy_port, ret);
++
++	LOG_INFO("Initializing TAP port %u...", tap_port);
++	ret = port_init(tap_port, mp);
++	if (ret != 0)
++		rte_exit(EXIT_FAILURE, "Cannot init TAP port %u (%d)\n",
++			 tap_port, ret);
++
++	LOG_INFO("PTP Software Relay ready");
++	LOG_INFO("  PHY port:     %u", phy_port);
++	LOG_INFO("  TAP port:     %u", tap_port);
++	LOG_INFO("  Stats every:  %u seconds", stats_interval);
++	LOG_INFO("  Correction:   Transparent Clock (SW timestamps)");
++	LOG_INFO("");
++	LOG_INFO("Run ptp4l:  ptp4l -i dtap0 -m -s -S");
++
++	/* Run relay on main lcore */
++	relay_loop(NULL);
++
++	/* Cleanup */
++	LOG_INFO("Stopping ports...");
++	rte_eth_dev_stop(phy_port);
++	rte_eth_dev_stop(tap_port);
++	rte_eth_dev_close(phy_port);
++	rte_eth_dev_close(tap_port);
++	rte_eal_cleanup();
++
++	return 0;
++}
 -- 
 2.53.0
 
