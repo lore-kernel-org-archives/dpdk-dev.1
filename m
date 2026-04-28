@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC7BAFF886D
-	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 19:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 311EDFF886D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 27 Apr 2026 19:35:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8CC4540659;
-	Mon, 27 Apr 2026 21:35:35 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D197740658;
+	Mon, 27 Apr 2026 21:35:37 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id E355B402A3
- for <dev@dpdk.org>; Mon, 27 Apr 2026 21:35:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 9FD184065E
+ for <dev@dpdk.org>; Mon, 27 Apr 2026 21:35:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777318534; x=1808854534;
+ t=1777318536; x=1808854536;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=wOtKV+e/PhHe6tUhmqOMExZZGedZT6pGEU2xxQGl9nc=;
- b=LaINEIRlT2GfrZnj6VBixDEPPC7c6NZpLzcvgJklMOQJ9ZjJ2gBLhxsO
- 2jpNAzKqOLaum8EK+cc/TDxM6XvqncqTYcPJOYroUTadSzeYBiatbCaqJ
- SVnKQX2Ntf6ogKCS7PN2mNigT41YOB7jfkZLXCdzuP5RmidouDv0F1Aow
- Sw5z4R2AdjElam3wgHLV4LUCCKV744U035CbR3KaMGgV3ni3VfvFqRxyd
- yDcR+BRx0/8C25TqaI5HNGqRogXcYFxqvjL1jivdtOzeyDdUmSoxkyrCF
- oQ/UbcGcDcrN2UHJ53JC5FLqy9b/9g0w7ZQEk/lLVwwybi4lEIwJ9QlhV w==;
-X-CSE-ConnectionGUID: IUcV1OtiSzGJTMdgNg5BWA==
-X-CSE-MsgGUID: NM7shoAhTd6H8HP4JHucjA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11769"; a="81826668"
-X-IronPort-AV: E=Sophos;i="6.23,202,1770624000"; d="scan'208";a="81826668"
+ bh=4hpJ6g7OCEC/ZZupGF51pQVRPRD7tFxxB4iWWOZ/7/w=;
+ b=YS3M+hH/TruqLyhNtNxGqE7EUsNpwAsCCob0/iAy0C0ilFlPWo0nl9a2
+ JhAHSl0qHgFj2cw2aUB2U+0qbwJs/q4Q/u22eaUk4HE99d01jVuuImt50
+ J8udkRN+5BAOSbbqqfU7jWx1HFySZb0V8m9aCZuzZnK4msG4BNbNzNqJX
+ mlk2P7ur3//XVfrL/6HzeHaL6+hx1zK7309MhsV8REswq3H88y2MBOCKV
+ 5avvcU5ZqgxF2JN4TZliqTyGJNtK+bzTKMV+NLLIrtNRbYzZP+3qONXWI
+ 6MiS7Y4RjpQk8zwFRsXzUTen3wCiO+6iSSROEuUys6iRSSqujbj14o/h6 g==;
+X-CSE-ConnectionGUID: J6B0SzX6TZqLCwP8MMdt9A==
+X-CSE-MsgGUID: NgAS341iThWcmfsIBLUYOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11769"; a="81826670"
+X-IronPort-AV: E=Sophos;i="6.23,202,1770624000"; d="scan'208";a="81826670"
 Received: from fmviesa009.fm.intel.com ([10.60.135.149])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 27 Apr 2026 12:35:34 -0700
-X-CSE-ConnectionGUID: IEtj7TJZR9iOrNQ320Rrng==
-X-CSE-MsgGUID: UjudBIf8TwmX/p1fueGthA==
+ 27 Apr 2026 12:35:35 -0700
+X-CSE-ConnectionGUID: xVuIvPF6RYuvdobovzzNgw==
+X-CSE-MsgGUID: loWHux0FQuS5RIDBmkJL6w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,202,1770624000"; d="scan'208";a="227210654"
+X-IronPort-AV: E=Sophos;i="6.23,202,1770624000"; d="scan'208";a="227210661"
 Received: from icx008.iind.intel.com ([10.190.212.196])
- by fmviesa009.fm.intel.com with ESMTP; 27 Apr 2026 12:35:31 -0700
+ by fmviesa009.fm.intel.com with ESMTP; 27 Apr 2026 12:35:33 -0700
 From: Rajesh Kumar <rajesh3.kumar@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
  rajesh3.kumar@intel.com
-Subject: [RFC v1 1/4] ptp: introduce PTP protocol library
-Date: Tue, 28 Apr 2026 06:31:03 +0530
-Message-ID: <20260428010117.692626-2-rajesh3.kumar@intel.com>
+Subject: [RFC v1 2/4] doc: add PTP library programmer's guide
+Date: Tue, 28 Apr 2026 06:31:04 +0530
+Message-ID: <20260428010117.692626-3-rajesh3.kumar@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260428010117.692626-1-rajesh3.kumar@intel.com>
 References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
@@ -61,611 +61,258 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add IEEE 1588-2019 Precision Time Protocol (PTP) processing library.
+Add programmer's guide for the PTP protocol library covering
+message types, header structures, packet classification API,
+inline helpers, and usage examples.
 
-The library provides packet classification, header structures, and
-helper functions for PTP packet processing in DPDK. This avoids
-duplicate PTP header definitions across multiple applications and
-drivers.
-
-Supported transports:
-1. L2 PTP (EtherType 0x88F7)
-2. VLAN-tagged L2 PTP (single and QinQ)
-3. PTP over UDP/IPv4 (ports 319/320)
-4. PTP over UDP/IPv6 (ports 319/320)
-
-Public APIs:
-1. rte_ptp_classify()
-2. rte_ptp_hdr_get()
-3. rte_ptp_msg_type_str()
+Add PTP header to Doxygen API index under layers section.
 
 Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
 ---
- MAINTAINERS         |   5 +
- lib/meson.build     |   1 +
- lib/ptp/meson.build |   6 +
- lib/ptp/rte_ptp.c   | 195 ++++++++++++++++++++++++++
- lib/ptp/rte_ptp.h   | 328 ++++++++++++++++++++++++++++++++++++++++++++
- 5 files changed, 535 insertions(+)
- create mode 100644 lib/ptp/meson.build
- create mode 100644 lib/ptp/rte_ptp.c
- create mode 100644 lib/ptp/rte_ptp.h
+ doc/api/doxy-api-index.md         |   1 +
+ doc/api/doxy-api.conf.in          |   1 +
+ doc/guides/prog_guide/index.rst   |   1 +
+ doc/guides/prog_guide/ptp_lib.rst | 195 ++++++++++++++++++++++++++++++
+ 4 files changed, 198 insertions(+)
+ create mode 100644 doc/guides/prog_guide/ptp_lib.rst
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0f5539f851..f2b47acfc3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1665,6 +1665,11 @@ F: doc/guides/prog_guide/ipsec_lib.rst
- M: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
- F: app/test-sad/
+diff --git a/doc/api/doxy-api-index.md b/doc/api/doxy-api-index.md
+index 9296042119..bbc79168bb 100644
+--- a/doc/api/doxy-api-index.md
++++ b/doc/api/doxy-api-index.md
+@@ -137,6 +137,7 @@ The public API headers are grouped by topics:
+   [eCPRI](@ref rte_ecpri.h),
+   [PDCP hdr](@ref rte_pdcp_hdr.h),
+   [PDCP](@ref rte_pdcp.h),
++  [PTP](@ref rte_ptp.h),
+   [L2TPv2](@ref rte_l2tpv2.h),
+   [PPP](@ref rte_ppp.h),
+   [IB](@ref rte_ib.h)
+diff --git a/doc/api/doxy-api.conf.in b/doc/api/doxy-api.conf.in
+index bedd944681..f15d962733 100644
+--- a/doc/api/doxy-api.conf.in
++++ b/doc/api/doxy-api.conf.in
+@@ -72,6 +72,7 @@ INPUT                   = @TOPDIR@/doc/api/doxy-api-index.md \
+                           @TOPDIR@/lib/pmu \
+                           @TOPDIR@/lib/port \
+                           @TOPDIR@/lib/power \
++                          @TOPDIR@/lib/ptp \
+                           @TOPDIR@/lib/ptr_compress \
+                           @TOPDIR@/lib/rawdev \
+                           @TOPDIR@/lib/rcu \
+diff --git a/doc/guides/prog_guide/index.rst b/doc/guides/prog_guide/index.rst
+index e6f24945b0..60dad4475c 100644
+--- a/doc/guides/prog_guide/index.rst
++++ b/doc/guides/prog_guide/index.rst
+@@ -97,6 +97,7 @@ Protocol Processing Libraries
+     :maxdepth: 1
+     :numbered:
  
-+PTP - EXPERIMENTAL
-+M: Rajesh Kumar <rajesh3.kumar@intel.com>
-+F: lib/ptp/
-+F: doc/guides/prog_guide/ptp_lib.rst
-+
- PDCP - EXPERIMENTAL
- M: Anoob Joseph <anoobj@marvell.com>
- M: Volodymyr Fialko <vfialko@marvell.com>
-diff --git a/lib/meson.build b/lib/meson.build
-index 8f5cfd28a5..78d694f951 100644
---- a/lib/meson.build
-+++ b/lib/meson.build
-@@ -50,6 +50,7 @@ libraries = [
-         'member',
-         'pcapng',
-         'power',
-+        'ptp',
-         'rawdev',
-         'regexdev',
-         'mldev',
-diff --git a/lib/ptp/meson.build b/lib/ptp/meson.build
++    ptp_lib
+     pdcp_lib
+     ipsec_lib
+ 
+diff --git a/doc/guides/prog_guide/ptp_lib.rst b/doc/guides/prog_guide/ptp_lib.rst
 new file mode 100644
-index 0000000000..05f9d87cbe
+index 0000000000..46770f1bd7
 --- /dev/null
-+++ b/lib/ptp/meson.build
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 Intel Corporation
-+
-+sources = files('rte_ptp.c')
-+headers = files('rte_ptp.h')
-+deps += ['mbuf', 'net']
-diff --git a/lib/ptp/rte_ptp.c b/lib/ptp/rte_ptp.c
-new file mode 100644
-index 0000000000..cc851c5080
---- /dev/null
-+++ b/lib/ptp/rte_ptp.c
++++ b/doc/guides/prog_guide/ptp_lib.rst
 @@ -0,0 +1,195 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ *
-+ * IEEE 1588 / PTP Protocol Library — Implementation
-+ */
-+
-+#include <rte_ether.h>
-+#include <rte_ip.h>
-+#include <rte_udp.h>
-+
-+#include "rte_ptp.h"
-+
-+#include <eal_export.h>
-+
-+/*
-+ * Internal: find PTP header offset within a packet.
-+ * Returns pointer to PTP header or NULL.
-+ */
-+static struct rte_ptp_hdr *
-+ptp_hdr_find(const struct rte_mbuf *m)
-+{
-+	const struct rte_ether_hdr *eth;
-+	uint16_t ether_type;
-+	const uint8_t *p;
-+	uint32_t offset;
-+
-+	if (rte_pktmbuf_data_len(m) < sizeof(struct rte_ether_hdr))
-+		return NULL;
-+
-+	eth = rte_pktmbuf_mtod(m, const struct rte_ether_hdr *);
-+	ether_type = rte_be_to_cpu_16(eth->ether_type);
-+	offset = sizeof(struct rte_ether_hdr);
-+
-+	/* L2 PTP: EtherType 0x88F7 */
-+	if (ether_type == RTE_PTP_ETHERTYPE) {
-+		if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_ptp_hdr))
-+			return NULL;
-+		p = (const uint8_t *)eth + offset;
-+		return (struct rte_ptp_hdr *)(uintptr_t)p;
-+	}
-+
-+	/* VLAN-tagged L2 PTP */
-+	if (ether_type == RTE_ETHER_TYPE_VLAN) {
-+		if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_vlan_hdr))
-+			return NULL;
-+		const struct rte_vlan_hdr *vlan =
-+			(const struct rte_vlan_hdr *)((const uint8_t *)eth + offset);
-+		ether_type = rte_be_to_cpu_16(vlan->eth_proto);
-+		offset += sizeof(struct rte_vlan_hdr);
-+
-+		if (ether_type == RTE_PTP_ETHERTYPE) {
-+			if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_ptp_hdr))
-+				return NULL;
-+			p = (const uint8_t *)eth + offset;
-+			return (struct rte_ptp_hdr *)(uintptr_t)p;
-+		}
-+
-+		/* Double-tagged VLAN (QinQ) */
-+		if (ether_type == RTE_ETHER_TYPE_QINQ ||
-+		    ether_type == RTE_ETHER_TYPE_VLAN) {
-+			if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_vlan_hdr))
-+				return NULL;
-+			vlan = (const struct rte_vlan_hdr *)
-+				((const uint8_t *)eth + offset);
-+			ether_type = rte_be_to_cpu_16(vlan->eth_proto);
-+			offset += sizeof(struct rte_vlan_hdr);
-+
-+			if (ether_type == RTE_PTP_ETHERTYPE) {
-+				if (rte_pktmbuf_data_len(m) <
-+				    offset + sizeof(struct rte_ptp_hdr))
-+					return NULL;
-+				p = (const uint8_t *)eth + offset;
-+				return (struct rte_ptp_hdr *)(uintptr_t)p;
-+			}
-+		}
-+	}
-+
-+	/* PTP over UDP/IPv4 */
-+	if (ether_type == RTE_ETHER_TYPE_IPV4) {
-+		const struct rte_ipv4_hdr *iph;
-+		uint16_t ihl;
-+
-+		if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_ipv4_hdr))
-+			return NULL;
-+
-+		iph = (const struct rte_ipv4_hdr *)((const uint8_t *)eth + offset);
-+		if (iph->next_proto_id != IPPROTO_UDP)
-+			return NULL;
-+
-+		ihl = (iph->version_ihl & 0x0F) * 4;
-+		offset += ihl;
-+
-+		if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_udp_hdr))
-+			return NULL;
-+
-+		const struct rte_udp_hdr *udp =
-+			(const struct rte_udp_hdr *)((const uint8_t *)eth + offset);
-+		uint16_t dst_port = rte_be_to_cpu_16(udp->dst_port);
-+
-+		if (dst_port != RTE_PTP_EVENT_PORT &&
-+		    dst_port != RTE_PTP_GENERAL_PORT)
-+			return NULL;
-+
-+		offset += sizeof(struct rte_udp_hdr);
-+		if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_ptp_hdr))
-+			return NULL;
-+
-+		p = (const uint8_t *)eth + offset;
-+		return (struct rte_ptp_hdr *)(uintptr_t)p;
-+	}
-+
-+	/* PTP over UDP/IPv6 */
-+	if (ether_type == RTE_ETHER_TYPE_IPV6) {
-+		const struct rte_ipv6_hdr *ip6h;
-+
-+		if (rte_pktmbuf_data_len(m) <
-+		    offset + sizeof(struct rte_ipv6_hdr))
-+			return NULL;
-+
-+		ip6h = (const struct rte_ipv6_hdr *)
-+			((const uint8_t *)eth + offset);
-+		if (ip6h->proto != IPPROTO_UDP)
-+			return NULL;
-+
-+		offset += sizeof(struct rte_ipv6_hdr);
-+
-+		if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_udp_hdr))
-+			return NULL;
-+
-+		const struct rte_udp_hdr *udp =
-+			(const struct rte_udp_hdr *)
-+			((const uint8_t *)eth + offset);
-+		uint16_t dst_port = rte_be_to_cpu_16(udp->dst_port);
-+
-+		if (dst_port != RTE_PTP_EVENT_PORT &&
-+		    dst_port != RTE_PTP_GENERAL_PORT)
-+			return NULL;
-+
-+		offset += sizeof(struct rte_udp_hdr);
-+		if (rte_pktmbuf_data_len(m) < offset + sizeof(struct rte_ptp_hdr))
-+			return NULL;
-+
-+		p = (const uint8_t *)eth + offset;
-+		return (struct rte_ptp_hdr *)(uintptr_t)p;
-+	}
-+
-+	return NULL;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ptp_classify, 26.07)
-+int
-+rte_ptp_classify(const struct rte_mbuf *m)
-+{
-+	struct rte_ptp_hdr *hdr = ptp_hdr_find(m);
-+
-+	if (hdr == NULL)
-+		return RTE_PTP_MSGTYPE_INVALID;
-+
-+	return rte_ptp_msg_type(hdr);
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ptp_hdr_get, 26.07)
-+struct rte_ptp_hdr *
-+rte_ptp_hdr_get(const struct rte_mbuf *m)
-+{
-+	return ptp_hdr_find(m);
-+}
-+
-+static const char * const ptp_msg_names[] = {
-+	[RTE_PTP_MSGTYPE_SYNC]           = "Sync",
-+	[RTE_PTP_MSGTYPE_DELAY_REQ]      = "Delay_Req",
-+	[RTE_PTP_MSGTYPE_PDELAY_REQ]     = "PDelay_Req",
-+	[RTE_PTP_MSGTYPE_PDELAY_RESP]    = "PDelay_Resp",
-+	[0x4]                            = "Reserved_4",
-+	[0x5]                            = "Reserved_5",
-+	[0x6]                            = "Reserved_6",
-+	[0x7]                            = "Reserved_7",
-+	[RTE_PTP_MSGTYPE_FOLLOW_UP]      = "Follow_Up",
-+	[RTE_PTP_MSGTYPE_DELAY_RESP]     = "Delay_Resp",
-+	[RTE_PTP_MSGTYPE_PDELAY_RESP_FU] = "PDelay_Resp_Follow_Up",
-+	[RTE_PTP_MSGTYPE_ANNOUNCE]       = "Announce",
-+	[RTE_PTP_MSGTYPE_SIGNALING]      = "Signaling",
-+	[RTE_PTP_MSGTYPE_MANAGEMENT]     = "Management",
-+	[0xE]                            = "Reserved_E",
-+	[0xF]                            = "Reserved_F",
-+};
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_ptp_msg_type_str, 26.07)
-+const char *
-+rte_ptp_msg_type_str(int msg_type)
-+{
-+	if (msg_type < 0 || msg_type > 0xF)
-+		return "Not_PTP";
-+	return ptp_msg_names[msg_type];
-+}
-diff --git a/lib/ptp/rte_ptp.h b/lib/ptp/rte_ptp.h
-new file mode 100644
-index 0000000000..689e0d140b
---- /dev/null
-+++ b/lib/ptp/rte_ptp.h
-@@ -0,0 +1,328 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ *
-+ * IEEE 1588 / PTP Protocol Library
-+ *
-+ * Provides header structures, packet classification, and helper functions
-+ * for Precision Time Protocol (IEEE 1588-2019) packet processing in DPDK.
-+ *
-+ * Supports:
-+ *   - L2 PTP (EtherType 0x88F7)
-+ *   - VLAN-tagged L2 PTP
-+ *   - PTP over UDP/IPv4 (ports 319/320)
-+ *   - PTP over UDP/IPv6 (ports 319/320)
-+ *   - Two-step and one-step message identification
-+ *   - correctionField manipulation (scaled nanoseconds, 48.16 fixed-point)
-+ */
-+
-+#ifndef _RTE_PTP_H_
-+#define _RTE_PTP_H_
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+#include <stdint.h>
-+#include <stdbool.h>
-+#include <rte_byteorder.h>
-+#include <rte_mbuf.h>
-+#include <rte_common.h>
-+
-+/**
-+ * @file
-+ * IEEE 1588 PTP protocol definitions and helpers.
-+ */
-+
-+/* ============================================================
-+ *  PTP Constants
-+ * ============================================================
-+ */
-+
-+/** PTP EtherType (IEEE 802.1AS / IEEE 1588) */
-+#define RTE_PTP_ETHERTYPE         0x88F7
-+
-+/** PTP over UDP event port (Sync, Delay_Req, PDelay_Req, PDelay_Resp) */
-+#define RTE_PTP_EVENT_PORT        319
-+
-+/** PTP over UDP general port (Follow_Up, Delay_Resp, Announce, etc.) */
-+#define RTE_PTP_GENERAL_PORT      320
-+
-+/** PTP multicast MAC address: 01:1B:19:00:00:00 */
-+#define RTE_PTP_MULTICAST_MAC     { 0x01, 0x1B, 0x19, 0x00, 0x00, 0x00 }
-+
-+/** PTP peer delay multicast MAC: 01:80:C2:00:00:0E */
-+#define RTE_PTP_PDELAY_MULTICAST_MAC { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x0E }
-+
-+/* ============================================================
-+ *  PTP Message Types (IEEE 1588-2019 Table 36)
-+ * ============================================================
-+ */
-+
-+#define RTE_PTP_MSGTYPE_SYNC            0x0  /**< Sync (event) */
-+#define RTE_PTP_MSGTYPE_DELAY_REQ       0x1  /**< Delay_Req (event) */
-+#define RTE_PTP_MSGTYPE_PDELAY_REQ      0x2  /**< Peer_Delay_Req (event) */
-+#define RTE_PTP_MSGTYPE_PDELAY_RESP     0x3  /**< Peer_Delay_Resp (event) */
-+#define RTE_PTP_MSGTYPE_FOLLOW_UP       0x8  /**< Follow_Up (general) */
-+#define RTE_PTP_MSGTYPE_DELAY_RESP      0x9  /**< Delay_Resp (general) */
-+#define RTE_PTP_MSGTYPE_PDELAY_RESP_FU  0xA  /**< Peer_Delay_Resp_Follow_Up */
-+#define RTE_PTP_MSGTYPE_ANNOUNCE        0xB  /**< Announce (general) */
-+#define RTE_PTP_MSGTYPE_SIGNALING       0xC  /**< Signaling (general) */
-+#define RTE_PTP_MSGTYPE_MANAGEMENT      0xD  /**< Management (general) */
-+
-+/** Invalid / not a PTP packet */
-+#define RTE_PTP_MSGTYPE_INVALID         (-1)
-+
-+/* ============================================================
-+ *  PTP Flag Field Bits (IEEE 1588-2019 Table 37)
-+ * ============================================================
-+ */
-+
-+#define RTE_PTP_FLAG_TWO_STEP    (1 << 1)  /**< Two-step flag (bit 1) */
-+#define RTE_PTP_FLAG_UNICAST     (1 << 2)  /**< Unicast flag */
-+#define RTE_PTP_FLAG_LI_61       (1 << 0)  /**< Leap indicator 61 */
-+#define RTE_PTP_FLAG_LI_59       (1 << 1)  /**< Leap indicator 59 (byte 1) */
-+
-+/* ============================================================
-+ *  PTP Header Structures (IEEE 1588-2019)
-+ * ============================================================
-+ */
-+
-+/**
-+ * PTP Port Identity (10 bytes).
-+ */
-+struct __rte_packed_begin rte_ptp_port_id {
-+	uint8_t  clock_id[8];   /**< clockIdentity (EUI-64) */
-+	uint16_t port_number;   /**< portNumber */
-+} __rte_packed_end;
-+
-+/**
-+ * PTP Common Message Header (34 bytes).
-+ * All PTP messages begin with this header.
-+ */
-+struct __rte_packed_begin rte_ptp_hdr {
-+	uint8_t  msg_type;       /**< transportSpecific (4) | messageType (4) */
-+	uint8_t  version;        /**< reserved (4) | versionPTP (4) */
-+	uint16_t msg_length;     /**< Total message length in bytes */
-+	uint8_t  domain_number;  /**< PTP domain (0-255) */
-+	uint8_t  minor_sdo_id;   /**< minorSdoId (IEEE 1588-2019) */
-+	uint16_t flags;          /**< Flag field (see RTE_PTP_FLAG_*) */
-+	int64_t  correction;     /**< correctionField (scaled ns, 48.16 fixed) */
-+	uint32_t msg_type_specific; /**< messageTypeSpecific */
-+	struct rte_ptp_port_id source_port_id; /**< sourcePortIdentity */
-+	uint16_t sequence_id;    /**< sequenceId */
-+	uint8_t  control;        /**< controlField (deprecated in 1588-2019) */
-+	int8_t   log_msg_interval; /**< logMessageInterval */
-+} __rte_packed_end;
-+
-+/**
-+ * PTP Timestamp (10 bytes, used in Sync/Delay_Req/Follow_Up bodies).
-+ */
-+struct __rte_packed_begin rte_ptp_timestamp {
-+	uint16_t seconds_hi;     /**< Upper 16 bits of seconds */
-+	uint32_t seconds_lo;     /**< Lower 32 bits of seconds */
-+	uint32_t nanoseconds;    /**< Nanoseconds (0-999999999) */
-+} __rte_packed_end;
-+
-+/* ============================================================
-+ *  Inline Helpers
-+ * ============================================================
-+ */
-+
-+/**
-+ * Extract PTP message type from header.
-+ *
-+ * @param hdr
-+ *   Pointer to PTP header.
-+ * @return
-+ *   Message type (0x0-0xF).
-+ */
-+static inline uint8_t
-+rte_ptp_msg_type(const struct rte_ptp_hdr *hdr)
-+{
-+	return hdr->msg_type & 0x0F;
-+}
-+
-+/**
-+ * Extract transport-specific field from header.
-+ *
-+ * @param hdr
-+ *   Pointer to PTP header.
-+ * @return
-+ *   Transport-specific value (upper nibble, 0x0-0xF).
-+ */
-+static inline uint8_t
-+rte_ptp_transport_specific(const struct rte_ptp_hdr *hdr)
-+{
-+	return (hdr->msg_type >> 4) & 0x0F;
-+}
-+
-+/**
-+ * Extract PTP version from header.
-+ *
-+ * @param hdr
-+ *   Pointer to PTP header.
-+ * @return
-+ *   PTP version number (typically 2).
-+ */
-+static inline uint8_t
-+rte_ptp_version(const struct rte_ptp_hdr *hdr)
-+{
-+	return hdr->version & 0x0F;
-+}
-+
-+/**
-+ * Get sequence ID from PTP header (host byte order).
-+ *
-+ * @param hdr
-+ *   Pointer to PTP header.
-+ * @return
-+ *   Sequence ID in host byte order.
-+ */
-+static inline uint16_t
-+rte_ptp_seq_id(const struct rte_ptp_hdr *hdr)
-+{
-+	return rte_be_to_cpu_16(hdr->sequence_id);
-+}
-+
-+/**
-+ * Get PTP domain number.
-+ *
-+ * @param hdr
-+ *   Pointer to PTP header.
-+ * @return
-+ *   Domain number (0-255).
-+ */
-+static inline uint8_t
-+rte_ptp_domain(const struct rte_ptp_hdr *hdr)
-+{
-+	return hdr->domain_number;
-+}
-+
-+/**
-+ * Check if PTP message type is an event message.
-+ * Event messages (msg_type 0x0-0x3) require hardware timestamps.
-+ *
-+ * @param msg_type
-+ *   PTP message type value (0x0-0xF).
-+ * @return
-+ *   true if event message, false otherwise.
-+ */
-+static inline bool
-+rte_ptp_is_event(uint8_t msg_type)
-+{
-+	return msg_type <= RTE_PTP_MSGTYPE_PDELAY_RESP;
-+}
-+
-+/**
-+ * Check if the two-step flag is set in a PTP header.
-+ *
-+ * @param hdr
-+ *   Pointer to PTP header.
-+ * @return
-+ *   true if two-step flag is set.
-+ */
-+static inline bool
-+rte_ptp_is_two_step(const struct rte_ptp_hdr *hdr)
-+{
-+	return (rte_be_to_cpu_16(hdr->flags) & RTE_PTP_FLAG_TWO_STEP) != 0;
-+}
-+
-+/**
-+ * Get correctionField value in nanoseconds (from 48.16 fixed-point).
-+ *
-+ * @param hdr
-+ *   Pointer to PTP header.
-+ * @return
-+ *   Correction value in nanoseconds.
-+ */
-+static inline int64_t
-+rte_ptp_correction_ns(const struct rte_ptp_hdr *hdr)
-+{
-+	return (int64_t)rte_be_to_cpu_64(hdr->correction) >> 16;
-+}
-+
-+/**
-+ * Add a residence time (in nanoseconds) to the correctionField.
-+ * Used by Transparent Clocks to account for relay transit delay.
-+ * The correctionField uses IEEE 1588 scaled nanoseconds (48.16 fixed-point).
-+ *
-+ * @param hdr
-+ *   Pointer to PTP header (will be modified in-place).
-+ * @param residence_ns
-+ *   Residence time in nanoseconds to add.
-+ */
-+static inline void
-+rte_ptp_add_correction(struct rte_ptp_hdr *hdr, int64_t residence_ns)
-+{
-+	int64_t cf = (int64_t)rte_be_to_cpu_64(hdr->correction);
-+	cf += (residence_ns << 16);
-+	hdr->correction = rte_cpu_to_be_64(cf);
-+}
-+
-+/**
-+ * Convert a PTP timestamp structure to nanoseconds since epoch.
-+ *
-+ * @param ts
-+ *   Pointer to PTP timestamp.
-+ * @return
-+ *   Time in nanoseconds since epoch.
-+ */
-+static inline uint64_t
-+rte_ptp_timestamp_to_ns(const struct rte_ptp_timestamp *ts)
-+{
-+	uint64_t sec = ((uint64_t)rte_be_to_cpu_16(ts->seconds_hi) << 32) |
-+		       rte_be_to_cpu_32(ts->seconds_lo);
-+	return sec * 1000000000ULL + rte_be_to_cpu_32(ts->nanoseconds);
-+}
-+
-+/* ============================================================
-+ *  Packet Classification Functions (implemented in rte_ptp.c)
-+ * ============================================================
-+ */
-+
-+/**
-+ * Classify a packet as PTP and return the message type.
-+ *
-+ * Examines the mbuf to determine if it contains a PTP message.
-+ * Supports L2 (EtherType 0x88F7), VLAN-tagged L2, and PTP over
-+ * UDP/IPv4 (ports 319/320).
-+ *
-+ * @param m
-+ *   Pointer to the mbuf to classify.
-+ * @return
-+ *   PTP message type (0x0-0xF) on success, RTE_PTP_MSGTYPE_INVALID (-1)
-+ *   if the packet is not PTP.
-+ */
-+__rte_experimental
-+int rte_ptp_classify(const struct rte_mbuf *m);
-+
-+/**
-+ * Get a pointer to the PTP header inside an mbuf.
-+ *
-+ * Locates the PTP header within the packet, handling L2, VLAN-tagged L2,
-+ * and PTP over UDP/IPv4 encapsulations.
-+ *
-+ * @param m
-+ *   Pointer to the mbuf.
-+ * @return
-+ *   Pointer to the PTP header, or NULL if not a PTP packet.
-+ */
-+__rte_experimental
-+struct rte_ptp_hdr *rte_ptp_hdr_get(const struct rte_mbuf *m);
-+
-+/**
-+ * Get a human-readable name for a PTP message type.
-+ *
-+ * @param msg_type
-+ *   PTP message type (0x0-0xF or RTE_PTP_MSGTYPE_INVALID).
-+ * @return
-+ *   Static string with the message type name (e.g., "Sync", "Follow_Up").
-+ */
-+__rte_experimental
-+const char *rte_ptp_msg_type_str(int msg_type);
-+
-+#ifdef __cplusplus
-+}
-+#endif
-+
-+#endif /* _RTE_PTP_H_ */
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright(c) 2026 Intel Corporation.
++
++PTP Protocol Library
++====================
++
++The DPDK PTP library provides IEEE 1588 / Precision Time Protocol (PTP)
++packet structures, constants, and helper functions for PTP packet processing.
++
++The library supports classification and header parsing of PTP messages
++across multiple transport encapsulations:
++
++- L2 PTP (EtherType 0x88F7)
++- VLAN-tagged L2 PTP (single and double/QinQ)
++- PTP over UDP/IPv4 (destination ports 319 and 320)
++- PTP over UDP/IPv6 (destination ports 319 and 320)
++
++The library conforms to
++`IEEE 1588-2019 <https://standards.ieee.org/ieee/1588/6825/>`_
++(Precision Time Protocol).
++
++Overview
++--------
++
++PTP is the foundation of time synchronization in networking.
++DPDK applications that relay, classify, or timestamp PTP packets
++currently duplicate header definitions and parsing logic.
++This library provides a shared, tested implementation.
++
++The library provides:
++
++#. Packed header structures matching the IEEE 1588-2019 wire format
++#. Constants for message types, flags, ports, and multicast addresses
++#. Inline helpers for common field extraction and manipulation
++#. Packet classification across L2, VLAN, UDP/IPv4, and UDP/IPv6 transports
++#. Correction field manipulation for Transparent Clock residence time
++
++PTP Message Types
++-----------------
++
++IEEE 1588-2019 defines the following message types, all supported by the library:
++
++.. csv-table:: PTP Message Types
++   :header: "Type", "Name", "Category", "Macro"
++   :widths: 5, 20, 10, 30
++
++   "0x0", "Sync", "Event", "``RTE_PTP_MSGTYPE_SYNC``"
++   "0x1", "Delay_Req", "Event", "``RTE_PTP_MSGTYPE_DELAY_REQ``"
++   "0x2", "Peer_Delay_Req", "Event", "``RTE_PTP_MSGTYPE_PDELAY_REQ``"
++   "0x3", "Peer_Delay_Resp", "Event", "``RTE_PTP_MSGTYPE_PDELAY_RESP``"
++   "0x8", "Follow_Up", "General", "``RTE_PTP_MSGTYPE_FOLLOW_UP``"
++   "0x9", "Delay_Resp", "General", "``RTE_PTP_MSGTYPE_DELAY_RESP``"
++   "0xA", "PDelay_Resp_Follow_Up", "General", "``RTE_PTP_MSGTYPE_PDELAY_RESP_FU``"
++   "0xB", "Announce", "General", "``RTE_PTP_MSGTYPE_ANNOUNCE``"
++   "0xC", "Signaling", "General", "``RTE_PTP_MSGTYPE_SIGNALING``"
++   "0xD", "Management", "General", "``RTE_PTP_MSGTYPE_MANAGEMENT``"
++
++Event messages (types 0x0–0x3) require hardware timestamps for accurate
++time transfer.
++
++Header Structures
++-----------------
++
++The library defines the following packed structures that map directly to
++the IEEE 1588-2019 wire format:
++
++``struct rte_ptp_hdr``
++   Common PTP message header (34 bytes). All PTP messages begin with this header.
++   Contains message type, version, flags, correction field, source port identity,
++   sequence ID, and log message interval.
++
++``struct rte_ptp_timestamp``
++   PTP timestamp (10 bytes). Used in Sync, Delay_Req, and Follow_Up message bodies.
++   Contains seconds (48-bit) and nanoseconds (32-bit).
++
++``struct rte_ptp_port_id``
++   PTP port identity (10 bytes). Contains an EUI-64 clock identity and a
++   16-bit port number.
++
++Packet Classification API
++--------------------------
++
++``rte_ptp_classify()``
++~~~~~~~~~~~~~~~~~~~~~~
++
++Classify a packet and return the PTP message type.
++
++.. code-block:: C
++
++   int rte_ptp_classify(const struct rte_mbuf *m);
++
++Examines the mbuf to determine if it contains a PTP message.
++Returns the PTP message type (0x0–0xF) on success,
++or ``RTE_PTP_MSGTYPE_INVALID`` (-1) if the packet is not PTP.
++
++Supported encapsulations:
++
++- EtherType 0x88F7 (L2 PTP)
++- Single VLAN + EtherType 0x88F7
++- Double VLAN (QinQ) + EtherType 0x88F7
++- IPv4 + UDP destination port 319 or 320
++- IPv6 + UDP destination port 319 or 320
++
++``rte_ptp_hdr_get()``
++~~~~~~~~~~~~~~~~~~~~~
++
++Get a pointer to the PTP header inside a packet.
++
++.. code-block:: C
++
++   struct rte_ptp_hdr *rte_ptp_hdr_get(const struct rte_mbuf *m);
++
++Returns a pointer to the PTP header, or NULL if the packet is not PTP.
++Handles the same set of encapsulations as ``rte_ptp_classify()``.
++
++``rte_ptp_msg_type_str()``
++~~~~~~~~~~~~~~~~~~~~~~~~~~
++
++Convert a PTP message type to a human-readable string.
++
++.. code-block:: C
++
++   const char *rte_ptp_msg_type_str(int msg_type);
++
++Returns a string such as ``"Sync"``, ``"Delay_Req"``, ``"Follow_Up"``, etc.
++Returns ``"Not_PTP"`` for invalid message types.
++
++Inline Helpers
++--------------
++
++The following inline functions operate on ``struct rte_ptp_hdr`` and require
++no function call overhead:
++
++.. csv-table:: Inline Helper Functions
++   :header: "Function", "Returns", "Description"
++   :widths: 30, 15, 40
++
++   "``rte_ptp_msg_type()``", "``uint8_t``", "Extract message type (lower nibble)"
++   "``rte_ptp_transport_specific()``", "``uint8_t``", "Extract transport-specific field (upper nibble)"
++   "``rte_ptp_version()``", "``uint8_t``", "Extract PTP version number"
++   "``rte_ptp_seq_id()``", "``uint16_t``", "Get sequence ID in host byte order"
++   "``rte_ptp_domain()``", "``uint8_t``", "Get PTP domain number"
++   "``rte_ptp_is_event()``", "``bool``", "Check if message type is an event (0x0–0x3)"
++   "``rte_ptp_is_two_step()``", "``bool``", "Check if two-step flag is set"
++   "``rte_ptp_correction_ns()``", "``int64_t``", "Get correctionField in nanoseconds (from 48.16 fixed-point)"
++   "``rte_ptp_add_correction()``", "``void``", "Add residence time to correctionField (for Transparent Clocks)"
++   "``rte_ptp_timestamp_to_ns()``", "``uint64_t``", "Convert PTP timestamp struct to nanoseconds"
++
++Usage Example
++-------------
++
++Classifying and processing PTP packets:
++
++.. code-block:: C
++
++   #include <rte_ptp.h>
++
++   void process_packets(struct rte_mbuf **pkts, uint16_t nb_pkts)
++   {
++       for (uint16_t i = 0; i < nb_pkts; i++) {
++           int ptp_type = rte_ptp_classify(pkts[i]);
++           if (ptp_type == RTE_PTP_MSGTYPE_INVALID)
++               continue;
++
++           struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(pkts[i]);
++
++           printf("PTP %s seq=%u domain=%u\n",
++                  rte_ptp_msg_type_str(ptp_type),
++                  rte_ptp_seq_id(hdr),
++                  rte_ptp_domain(hdr));
++
++           if (rte_ptp_is_event((uint8_t)ptp_type)) {
++               /* Event message — needs hardware timestamp */
++           }
++       }
++   }
++
++Adding residence time for a Transparent Clock:
++
++.. code-block:: C
++
++   struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(pkt);
++   if (hdr != NULL) {
++       int64_t residence_ns = egress_ts - ingress_ts;
++       rte_ptp_add_correction(hdr, residence_ns);
++   }
++
++Limitations
++-----------
++
++- IPv6 extension headers are not traversed. Only the base IPv6 header
++  with ``next_header == UDP`` is handled.
++- Multi-segment mbufs are not supported. PTP event messages are
++  typically less than 128 bytes and fit in a single segment.
++- PTP over MPLS or other tunneling protocols is not supported.
 -- 
 2.52.0
 
