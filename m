@@ -2,49 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2EFFF886F
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Apr 2026 17:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FE2FF885A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Apr 2026 18:08:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7E44C4069F;
-	Tue, 28 Apr 2026 19:03:44 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
- by mails.dpdk.org (Postfix) with ESMTP id 2324B40674
- for <dev@dpdk.org>; Tue, 28 Apr 2026 19:03:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777395823; x=1808931823;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=Xt8loCKcHQkjP/a3KpwOW4g4rlp6fM383izjGCGWQeE=;
- b=CWimV+hRYyuOkrD8bbw8RaTRoqDySqgz1Tt07ZY5twqkHT2a++wlMY+w
- i4wCq2vQccKdjkafzphVLEIWAFqlcZnj9iEItH2yuHbiKGZiwWIfAzXIm
- eJnscGqdYVCVJWGcdu39uR/WqWjDqwXB7w0zlvbox8nmtv5UFybtcSauq
- zMf3yTYfmM8R4zLRnhPcgwfTrnVoh9PbljuLYKl78zii0/w4C/Bm1WY1f
- ABlMYVNLeuuO9KDyK0MNOo9yl0ww3M7Kwv1ml4eTYeCyjKOKF5tmAl0w5
- wY+jn6b5obNxzgFbBgyA918W04B3NdYKt2IkK7K50y1GRjZzPKepM6OHE g==;
-X-CSE-ConnectionGUID: VDgXzTwnRUmZRESvrgG/tg==
-X-CSE-MsgGUID: /u5fET9ISXmu//6Z5yyUMA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11770"; a="82180220"
-X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="82180220"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Apr 2026 10:03:38 -0700
-X-CSE-ConnectionGUID: cE0pas1FQ0WyoL8MmTC7gQ==
-X-CSE-MsgGUID: 9WDIWH1CSCm1oYzdTpsTgw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="233973125"
-Received: from icx008.iind.intel.com ([10.190.212.196])
- by orviesa009.jf.intel.com with ESMTP; 28 Apr 2026 10:03:35 -0700
-From: Rajesh Kumar <rajesh3.kumar@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
- stephen@networkplumber.org, Rajesh Kumar <rajesh3.kumar@intel.com>
-Subject: [RFC v2 6/6] examples/ptpclient: use shared PTP library definitions
-Date: Wed, 29 Apr 2026 03:58:37 +0530
-Message-ID: <d026980b95f3f138d3fc77f3b9cb348d76d876e2.1777413123.git.rajesh3.kumar@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <cover.1777413123.git.rajesh3.kumar@intel.com>
-References: <cover.1777413123.git.rajesh3.kumar@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6D0A140655;
+	Tue, 28 Apr 2026 20:08:46 +0200 (CEST)
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com
+ [209.85.160.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 8328840650
+ for <dev@dpdk.org>; Tue, 28 Apr 2026 20:08:44 +0200 (CEST)
+Received: by mail-qt1-f173.google.com with SMTP id
+ d75a77b69052e-5062fc5d86aso94873501cf.1
+ for <dev@dpdk.org>; Tue, 28 Apr 2026 11:08:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=iol.unh.edu; s=unh-iol; t=1777399724; x=1778004524; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=e5tZv1m77JNEV1Q+rBvVVDGARqMzfS5kwTytpNYpBeI=;
+ b=azemkpPUytzp143Wz78l23OIGOl/98t+R6kamvdPXCSGLrtkPSdtyRUzFD3nAgAXDt
+ msaCNJEapA/4P0gkQTzWQW5O1rzj6LHUdiG2mCzOfZxpqp1UrV5BedQeSQZ6kSAB/05f
+ e6z8RXrJZJBCySp2qp10z+l5DG4S/GKMpsfTA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1777399724; x=1778004524;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=e5tZv1m77JNEV1Q+rBvVVDGARqMzfS5kwTytpNYpBeI=;
+ b=jYGfgUHfR0i2NbA+wdego45vi288gzxupHVw88Fa57yuxVoDeCcFFeQEUO9oJ3cHbf
+ JOuBlNCPWG9YmoJm34qRHlbBMuHpiBBVvb/J+hhj13i38Bd5M8nfStJCdL01c4BeecBc
+ 2oUOO4CtOD/4LqSvf2ti41reIlKDzkQu2R3hdN4G/oLnCaAnhioFliuQdhBE1fLsUGOj
+ dQagyVe9GwezHPQed5qKaCvbFs7vWYWaI/4ervslisiGa5/MwBgTcaf/JRsBE4XkZpdF
+ bWnYd8RA9GRyj5jkVXqQiPFajMAK0kunWkjGrSvV/bPpmMPA8wd/jkX3d8wUK/TvAN9d
+ 2Ndw==
+X-Gm-Message-State: AOJu0Yzvmac5cdvwgExg6aZc4uZa2J6Joyo0sKsRVL/N77sSH7CedbxA
+ XiNvfvo3vTveXkW1Q3CMrX+OeUBjrfQQwKk7mM8Eq28VAydjkMb0utHhsVsakcv7e6I=
+X-Gm-Gg: AeBDietl4+oK28qfExaTjNslfh6LSeM9zo3R8ZqbiMp6aCWvdcPV9S7qycwpkLBWQ/8
+ Cw57vOPq19F0BZH2w70LRthrjJ2cxA4qSbRoRvFVstUlhtVrm55l1zOuN7mt99mjfUriYSqg15G
+ 5inZu5uFgZTZZy9J9jmrojsCEcgtj94P5S9RTfHO3RmleHhXh0wpt2pK5rN5cQDz7NOPejwqy9u
+ Db0Vf+lEh1iAHHuFqS4CtZPR/cqLfMY2B/vQ0EDdad4lzXhLWPsi/nvx3jXgTvjuT3gH/Ustru+
+ xh1Kd3ucdmup8+n8eOHm1F/uOO1RchXa71x/I1t0MM8KV/vwrPkOzCXIVZigpVFppNNdfGpJS2h
+ 0Hs9otBpF4JTu6DjNoegc684BZY52+fkyySIqFJOBdngASpXlgLoVIfEEejoHE/Qp8dykKmQOzo
+ dfK0D9A53k95AETdNZk028IDJP9YY3Bo8SF7mv5JiyLpcXUPLNvsecPa6LBCiGttxax/3FFx1cT
+ Hz9LPgxkDg=
+X-Received: by 2002:a05:622a:53c8:b0:50f:b6ef:e10b with SMTP id
+ d75a77b69052e-5100e1466acmr58457851cf.27.1777399723763; 
+ Tue, 28 Apr 2026 11:08:43 -0700 (PDT)
+Received: from fedora.iol.unh.edu ([2606:4100:3880:1271:ac5d:4186:4dc6:47eb])
+ by smtp.gmail.com with ESMTPSA id
+ d75a77b69052e-5100fbfc73bsm19792351cf.12.2026.04.28.11.08.42
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 28 Apr 2026 11:08:43 -0700 (PDT)
+From: Dean Marx <dmarx@iol.unh.edu>
+To: patrickrobb1997@gmail.com, luca.vizzarro@arm.com, yoan.picchi@foss.arm.com,
+ Honnappa.Nagarahalli@arm.com, paul.szczepanek@arm.com
+Cc: dev@dpdk.org,
+	Dean Marx <dmarx@iol.unh.edu>
+Subject: [PATCH v4 0/7] dts: move test suite imports from framework to API
+Date: Tue, 28 Apr 2026 14:08:33 -0400
+Message-ID: <20260428180840.18596-1-dmarx@iol.unh.edu>
+X-Mailer: git-send-email 2.52.0
+In-Reply-To: <20260424170139.20592-1-dmarx@iol.unh.edu>
+References: <20260424170139.20592-1-dmarx@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -60,374 +79,202 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace local PTP struct and constant definitions with the shared
-rte_ptp.h library types introduced earlier in this series:
-- struct ptp_header  -> struct rte_ptp_hdr
-- struct tstamp      -> struct rte_ptp_timestamp
-- struct clock_id    -> uint8_t clock_id[8] (from rte_ptp_port_id)
-- SYNC/FOLLOW_UP/DELAY_* defines -> RTE_PTP_MSGTYPE_* constants
-- PTP_PROTOCOL       -> RTE_PTP_ETHERTYPE
-- hardcoded multicast -> RTE_PTP_MULTICAST_MAC
-- ptp_hdr->msg_type switch -> rte_ptp_msg_type() accessor
+This series moves various modules from the framework directory
+to the API based on which are being imported by test suites.
 
-No functional change.
+These include:
+  - test_suite
+  - testbed_model
+  - exception
+  - utils
+  - context
+  - params
 
-Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
+This eliminates all test suite framework imports except for
+the remote_session imports in packet_capture, as well
+as the settings/config imports in smoke_tests. I believe these
+imports, and what to do with them, should be a topic of discussion
+in future DTS meetings, as I don't believe they should reside in the
+API, even if they are being imported in test suites.
+
+In addition to these changes, I've split the linux_session module
+into an interface in api/testbed_model/linux_session and an
+implementation in framework/linux_session. This way, users
+can still import linux session if necessary, without exposing
+the backend implementation.
+
+Signed-off-by: Dean Marx <dmarx@iol.unh.edu>
+
 ---
- examples/ptpclient/meson.build |   1 +
- examples/ptpclient/ptpclient.c | 188 +++++++++++++--------------------
- 2 files changed, 73 insertions(+), 116 deletions(-)
+v2:
+* Integrated rst updates with corresponding commits for build testing
 
-diff --git a/examples/ptpclient/meson.build b/examples/ptpclient/meson.build
-index 2e9b7625fc..ab074c9cb1 100644
---- a/examples/ptpclient/meson.build
-+++ b/examples/ptpclient/meson.build
-@@ -7,6 +7,7 @@
- # DPDK instance, use 'make'
- 
- allow_experimental_apis = true
-+deps += ['ptp']
- sources = files(
-         'ptpclient.c',
- )
-diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
-index 174ca5dd70..ee93f511d7 100644
---- a/examples/ptpclient/ptpclient.c
-+++ b/examples/ptpclient/ptpclient.c
-@@ -17,6 +17,7 @@
- #include <rte_lcore.h>
- #include <rte_mbuf.h>
- #include <rte_ip.h>
-+#include <rte_ptp.h>
- #include <limits.h>
- #include <sys/time.h>
- #include <getopt.h>
-@@ -30,21 +31,8 @@ static volatile bool force_quit;
- #define NUM_MBUFS            8191
- #define MBUF_CACHE_SIZE       250
- 
--/* Values for the PTP messageType field. */
--#define SYNC                  0x0
--#define DELAY_REQ             0x1
--#define PDELAY_REQ            0x2
--#define PDELAY_RESP           0x3
--#define FOLLOW_UP             0x8
--#define DELAY_RESP            0x9
--#define PDELAY_RESP_FOLLOW_UP 0xA
--#define ANNOUNCE              0xB
--#define SIGNALING             0xC
--#define MANAGEMENT            0xD
--
- #define NSEC_PER_SEC        1000000000L
- #define KERNEL_TIME_ADJUST_LIMIT  20000
--#define PTP_PROTOCOL             0x88F7
- 
- struct rte_mempool *mbuf_pool;
- uint32_t ptp_enabled_port_mask;
-@@ -52,66 +40,36 @@ uint8_t ptp_enabled_port_nb;
- static uint8_t ptp_enabled_ports[RTE_MAX_ETHPORTS];
- 
- static const struct rte_ether_addr ether_multicast = {
--	.addr_bytes = {0x01, 0x1b, 0x19, 0x0, 0x0, 0x0}
--};
--
--/* Structs used for PTP handling. */
--struct __rte_packed_begin tstamp {
--	uint16_t   sec_msb;
--	uint32_t   sec_lsb;
--	uint32_t   ns;
--} __rte_packed_end;
--
--struct clock_id {
--	uint8_t id[8];
-+	.addr_bytes = RTE_PTP_MULTICAST_MAC
- };
- 
--struct __rte_packed_begin port_id {
--	struct clock_id        clock_id;
--	uint16_t               port_number;
--} __rte_packed_end;
--
--struct __rte_packed_begin ptp_header {
--	uint8_t              msg_type;
--	uint8_t              ver;
--	uint16_t             message_length;
--	uint8_t              domain_number;
--	uint8_t              reserved1;
--	uint8_t              flag_field[2];
--	int64_t              correction;
--	uint32_t             reserved2;
--	struct port_id       source_port_id;
--	uint16_t             seq_id;
--	uint8_t              control;
--	int8_t               log_message_interval;
--} __rte_packed_end;
--
-+/* Message body structs using the library PTP header and timestamp. */
- struct __rte_packed_begin sync_msg {
--	struct ptp_header   hdr;
--	struct tstamp       origin_tstamp;
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp origin_tstamp;
- } __rte_packed_end;
- 
- struct __rte_packed_begin follow_up_msg {
--	struct ptp_header   hdr;
--	struct tstamp       precise_origin_tstamp;
--	uint8_t             suffix[];
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp precise_origin_tstamp;
-+	uint8_t                  suffix[];
- } __rte_packed_end;
- 
- struct __rte_packed_begin delay_req_msg {
--	struct ptp_header   hdr;
--	struct tstamp       origin_tstamp;
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp origin_tstamp;
- } __rte_packed_end;
- 
- struct __rte_packed_begin delay_resp_msg {
--	struct ptp_header    hdr;
--	struct tstamp        rx_tstamp;
--	struct port_id       req_port_id;
--	uint8_t              suffix[];
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp rx_tstamp;
-+	struct rte_ptp_port_id   req_port_id;
-+	uint8_t                  suffix[];
- } __rte_packed_end;
- 
- struct ptp_message {
- 	union __rte_packed_begin {
--		struct ptp_header          header;
-+		struct rte_ptp_hdr         header;
- 		struct sync_msg            sync;
- 		struct delay_req_msg       delay_req;
- 		struct follow_up_msg       follow_up;
-@@ -125,8 +83,8 @@ struct ptpv2_time_receiver_ordinary {
- 	struct timespec tstamp2;
- 	struct timespec tstamp3;
- 	struct timespec tstamp4;
--	struct clock_id client_clock_id;
--	struct clock_id transmitter_clock_id;
-+	uint8_t client_clock_id[8];
-+	uint8_t transmitter_clock_id[8];
- 	struct timeval new_adj;
- 	int64_t delta;
- 	uint16_t portid;
-@@ -272,14 +230,14 @@ print_clock_info(struct ptpv2_time_receiver_ordinary *ptp_data)
- 	struct timespec net_time, sys_time;
- 
- 	printf("time transmitter clock id: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
--		ptp_data->transmitter_clock_id.id[0],
--		ptp_data->transmitter_clock_id.id[1],
--		ptp_data->transmitter_clock_id.id[2],
--		ptp_data->transmitter_clock_id.id[3],
--		ptp_data->transmitter_clock_id.id[4],
--		ptp_data->transmitter_clock_id.id[5],
--		ptp_data->transmitter_clock_id.id[6],
--		ptp_data->transmitter_clock_id.id[7]);
-+		ptp_data->transmitter_clock_id[0],
-+		ptp_data->transmitter_clock_id[1],
-+		ptp_data->transmitter_clock_id[2],
-+		ptp_data->transmitter_clock_id[3],
-+		ptp_data->transmitter_clock_id[4],
-+		ptp_data->transmitter_clock_id[5],
-+		ptp_data->transmitter_clock_id[6],
-+		ptp_data->transmitter_clock_id[7]);
- 
- 	printf("\nT2 - time receiver clock.  %lds %ldns",
- 			(ptp_data->tstamp2.tv_sec),
-@@ -356,20 +314,20 @@ delta_eval(struct ptpv2_time_receiver_ordinary *ptp_data)
- static void
- parse_sync(struct ptpv2_time_receiver_ordinary *ptp_data, uint16_t rx_tstamp_idx)
- {
--	struct ptp_header *ptp_hdr;
-+	struct rte_ptp_hdr *ptp_hdr;
- 
--	ptp_hdr = rte_pktmbuf_mtod_offset(ptp_data->m, struct ptp_header *,
-+	ptp_hdr = rte_pktmbuf_mtod_offset(ptp_data->m, struct rte_ptp_hdr *,
- 					  sizeof(struct rte_ether_hdr));
--	ptp_data->seqID_SYNC = rte_be_to_cpu_16(ptp_hdr->seq_id);
-+	ptp_data->seqID_SYNC = rte_be_to_cpu_16(ptp_hdr->sequence_id);
- 
- 	if (ptp_data->ptpset == 0) {
--		ptp_data->transmitter_clock_id = ptp_hdr->source_port_id.clock_id;
-+		memcpy(ptp_data->transmitter_clock_id,
-+		       ptp_hdr->source_port_id.clock_id, 8);
- 		ptp_data->ptpset = 1;
- 	}
- 
--	if (memcmp(&ptp_data->transmitter_clock_id,
--			&ptp_hdr->source_port_id.clock_id,
--			sizeof(struct clock_id)) == 0) {
-+	if (memcmp(ptp_data->transmitter_clock_id,
-+			ptp_hdr->source_port_id.clock_id, 8) == 0) {
- 
- 		if (ptp_data->ptpset == 1)
- 			rte_eth_timesync_read_rx_timestamp(ptp_data->portid,
-@@ -386,12 +344,12 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- {
- 	struct rte_ether_hdr *eth_hdr;
- 	struct rte_ether_addr eth_addr;
--	struct ptp_header *ptp_hdr;
--	struct clock_id *client_clkid;
-+	struct rte_ptp_hdr *ptp_hdr;
-+	uint8_t *client_clkid;
- 	struct ptp_message *ptp_msg;
- 	struct delay_req_msg *req_msg;
- 	struct rte_mbuf *created_pkt;
--	struct tstamp *origin_tstamp;
-+	struct rte_ptp_timestamp *origin_tstamp;
- 	struct rte_ether_addr eth_multicast = ether_multicast;
- 	size_t pkt_size;
- 	int wait_us;
-@@ -399,22 +357,21 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- 	int ret;
- 
- 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
--	ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
-+	ptp_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ptp_hdr *,
- 					  sizeof(struct rte_ether_hdr));
--	if (memcmp(&ptp_data->transmitter_clock_id,
--			&ptp_hdr->source_port_id.clock_id,
--			sizeof(struct clock_id)) != 0)
-+	if (memcmp(ptp_data->transmitter_clock_id,
-+			ptp_hdr->source_port_id.clock_id, 8) != 0)
- 		return;
- 
--	ptp_data->seqID_FOLLOWUP = rte_be_to_cpu_16(ptp_hdr->seq_id);
-+	ptp_data->seqID_FOLLOWUP = rte_be_to_cpu_16(ptp_hdr->sequence_id);
- 	ptp_msg = rte_pktmbuf_mtod_offset(m, struct ptp_message *,
- 					  sizeof(struct rte_ether_hdr));
- 
- 	origin_tstamp = &ptp_msg->follow_up.precise_origin_tstamp;
--	ptp_data->tstamp1.tv_nsec = ntohl(origin_tstamp->ns);
-+	ptp_data->tstamp1.tv_nsec = ntohl(origin_tstamp->nanoseconds);
- 	ptp_data->tstamp1.tv_sec =
--		((uint64_t)ntohl(origin_tstamp->sec_lsb)) |
--		(((uint64_t)ntohs(origin_tstamp->sec_msb)) << 32);
-+		((uint64_t)ntohl(origin_tstamp->seconds_lo)) |
-+		(((uint64_t)ntohs(origin_tstamp->seconds_hi)) << 32);
- 
- 	if (ptp_data->seqID_FOLLOWUP == ptp_data->seqID_SYNC) {
- 		ret = rte_eth_macaddr_get(ptp_data->portid, &eth_addr);
-@@ -441,34 +398,34 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- 		/* Set multicast address 01-1B-19-00-00-00. */
- 		rte_ether_addr_copy(&eth_multicast, &eth_hdr->dst_addr);
- 
--		eth_hdr->ether_type = htons(PTP_PROTOCOL);
-+		eth_hdr->ether_type = htons(RTE_PTP_ETHERTYPE);
- 		req_msg = rte_pktmbuf_mtod_offset(created_pkt,
- 			struct delay_req_msg *, sizeof(struct
- 			rte_ether_hdr));
- 
--		req_msg->hdr.seq_id = htons(ptp_data->seqID_SYNC);
--		req_msg->hdr.msg_type = DELAY_REQ;
--		req_msg->hdr.ver = 2;
-+		req_msg->hdr.sequence_id = htons(ptp_data->seqID_SYNC);
-+		req_msg->hdr.msg_type = RTE_PTP_MSGTYPE_DELAY_REQ;
-+		req_msg->hdr.version = 2;
- 		req_msg->hdr.control = 1;
--		req_msg->hdr.log_message_interval = 127;
--		req_msg->hdr.message_length =
-+		req_msg->hdr.log_msg_interval = 127;
-+		req_msg->hdr.msg_length =
- 			htons(sizeof(struct delay_req_msg));
- 		req_msg->hdr.domain_number = ptp_hdr->domain_number;
- 
- 		/* Set up clock id. */
- 		client_clkid =
--			&req_msg->hdr.source_port_id.clock_id;
-+			req_msg->hdr.source_port_id.clock_id;
- 
--		client_clkid->id[0] = eth_hdr->src_addr.addr_bytes[0];
--		client_clkid->id[1] = eth_hdr->src_addr.addr_bytes[1];
--		client_clkid->id[2] = eth_hdr->src_addr.addr_bytes[2];
--		client_clkid->id[3] = 0xFF;
--		client_clkid->id[4] = 0xFE;
--		client_clkid->id[5] = eth_hdr->src_addr.addr_bytes[3];
--		client_clkid->id[6] = eth_hdr->src_addr.addr_bytes[4];
--		client_clkid->id[7] = eth_hdr->src_addr.addr_bytes[5];
-+		client_clkid[0] = eth_hdr->src_addr.addr_bytes[0];
-+		client_clkid[1] = eth_hdr->src_addr.addr_bytes[1];
-+		client_clkid[2] = eth_hdr->src_addr.addr_bytes[2];
-+		client_clkid[3] = 0xFF;
-+		client_clkid[4] = 0xFE;
-+		client_clkid[5] = eth_hdr->src_addr.addr_bytes[3];
-+		client_clkid[6] = eth_hdr->src_addr.addr_bytes[4];
-+		client_clkid[7] = eth_hdr->src_addr.addr_bytes[5];
- 
--		ptp_data->client_clock_id = *client_clkid;
-+		memcpy(ptp_data->client_clock_id, client_clkid, 8);
- 
- 		/* Enable flag for hardware timestamping. */
- 		created_pkt->ol_flags |= RTE_MBUF_F_TX_IEEE1588_TMST;
-@@ -534,21 +491,20 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp_data)
- {
- 	struct rte_mbuf *m = ptp_data->m;
- 	struct ptp_message *ptp_msg;
--	struct tstamp *rx_tstamp;
-+	struct rte_ptp_timestamp *rx_tstamp;
- 	uint16_t seq_id;
- 
- 	ptp_msg = rte_pktmbuf_mtod_offset(m, struct ptp_message *,
- 					  sizeof(struct rte_ether_hdr));
--	seq_id = rte_be_to_cpu_16(ptp_msg->delay_resp.hdr.seq_id);
--	if (memcmp(&ptp_data->client_clock_id,
--		   &ptp_msg->delay_resp.req_port_id.clock_id,
--		   sizeof(struct clock_id)) == 0) {
-+	seq_id = rte_be_to_cpu_16(ptp_msg->delay_resp.hdr.sequence_id);
-+	if (memcmp(ptp_data->client_clock_id,
-+		   ptp_msg->delay_resp.req_port_id.clock_id, 8) == 0) {
- 		if (seq_id == ptp_data->seqID_FOLLOWUP) {
- 			rx_tstamp = &ptp_msg->delay_resp.rx_tstamp;
--			ptp_data->tstamp4.tv_nsec = ntohl(rx_tstamp->ns);
-+			ptp_data->tstamp4.tv_nsec = ntohl(rx_tstamp->nanoseconds);
- 			ptp_data->tstamp4.tv_sec =
--				((uint64_t)ntohl(rx_tstamp->sec_lsb)) |
--				(((uint64_t)ntohs(rx_tstamp->sec_msb)) << 32);
-+				((uint64_t)ntohl(rx_tstamp->seconds_lo)) |
-+				(((uint64_t)ntohs(rx_tstamp->seconds_hi)) << 32);
- 
- 			/* Evaluate the delta for adjustment. */
- 			ptp_data->delta = delta_eval(ptp_data);
-@@ -575,27 +531,27 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp_data)
- /* Parse ptp frames. 8< */
- static void
- parse_ptp_frames(uint16_t portid, struct rte_mbuf *m) {
--	struct ptp_header *ptp_hdr;
-+	struct rte_ptp_hdr *ptp_hdr;
- 	struct rte_ether_hdr *eth_hdr;
- 	uint16_t eth_type;
- 
- 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
- 	eth_type = rte_be_to_cpu_16(eth_hdr->ether_type);
- 
--	if (eth_type == PTP_PROTOCOL) {
-+	if (eth_type == RTE_PTP_ETHERTYPE) {
- 		ptp_data.m = m;
- 		ptp_data.portid = portid;
--		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
-+		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ptp_hdr *,
- 						  sizeof(struct rte_ether_hdr));
- 
--		switch (ptp_hdr->msg_type) {
--		case SYNC:
-+		switch (rte_ptp_msg_type(ptp_hdr)) {
-+		case RTE_PTP_MSGTYPE_SYNC:
- 			parse_sync(&ptp_data, m->timesync);
- 			break;
--		case FOLLOW_UP:
-+		case RTE_PTP_MSGTYPE_FOLLOW_UP:
- 			parse_fup(&ptp_data);
- 			break;
--		case DELAY_RESP:
-+		case RTE_PTP_MSGTYPE_DELAY_RESP:
- 			parse_drsp(&ptp_data);
- 			print_clock_info(&ptp_data);
- 			break;
+v3:
+* Fixed commit ordering to resolve import inconsistency
+* Updated Linux Session interface with test suite methods
+
+v4:
+* Added missing SPDX tag to framework.linux_session.rst
+* Added lazy linux session import in node.py to
+  resolve circular import issue
+
+Dean Marx (7):
+  dts: move exception module from framework to API
+  dts: move utils from framework to API
+  dts: move context from framework to API
+  dts: move testbed model from framework to API
+  dts: move test suite module from framework to API
+  dts: move params directory from framework to API
+  dts: separate Linux session into interface and logic
+
+ ...{framework.context.rst => api.context.rst} |  2 +-
+ ...mework.exception.rst => api.exception.rst} |  2 +-
+ ...work.params.eal.rst => api.params.eal.rst} |  2 +-
+ .../{framework.params.rst => api.params.rst}  |  6 +--
+ ....params.types.rst => api.params.types.rst} |  2 +-
+ ...work.test_suite.rst => api.test_suite.rst} |  2 +-
+ ...y.rst => api.testbed_model.capability.rst} |  2 +-
+ ...odel.cpu.rst => api.testbed_model.cpu.rst} |  2 +-
+ ...st => api.testbed_model.linux_session.rst} |  2 +-
+ ...el.node.rst => api.testbed_model.node.rst} |  2 +-
+ ...n.rst => api.testbed_model.os_session.rst} |  2 +-
+ ...el.port.rst => api.testbed_model.port.rst} |  2 +-
+ ...st => api.testbed_model.posix_session.rst} |  2 +-
+ doc/api/dts/api.testbed_model.rst             | 28 +++++++++++++
+ ...ogy.rst => api.testbed_model.topology.rst} |  2 +-
+ ...generator.capturing_traffic_generator.rst} |  2 +-
+ .../api.testbed_model.traffic_generator.rst   | 16 ++++++++
+ ...testbed_model.traffic_generator.scapy.rst} |  2 +-
+ ...l.traffic_generator.traffic_generator.rst} |  2 +-
+ ...t => api.testbed_model.virtual_device.rst} |  2 +-
+ .../{framework.utils.rst => api.utils.rst}    |  2 +-
+ doc/api/dts/framework.linux_session.rst       |  8 ++++
+ doc/api/dts/framework.testbed_model.rst       | 28 -------------
+ ...mework.testbed_model.traffic_generator.rst | 16 --------
+ doc/api/dts/index.rst                         | 13 +++---
+ dts/api/artifact.py                           |  6 +--
+ dts/api/capabilities.py                       | 14 +++----
+ dts/{framework => api}/context.py             | 14 +++----
+ dts/api/cryptodev/__init__.py                 |  6 +--
+ dts/api/cryptodev/config.py                   |  6 +--
+ dts/{framework => api}/exception.py           |  0
+ dts/api/packet.py                             | 18 ++++----
+ dts/{framework => api}/params/__init__.py     |  0
+ dts/{framework => api}/params/eal.py          |  8 ++--
+ dts/{framework => api}/params/types.py        | 14 ++++---
+ dts/api/test.py                               |  4 +-
+ dts/{framework => api}/test_suite.py          | 15 ++++---
+ .../testbed_model/__init__.py                 |  0
+ .../testbed_model/capability.py               | 18 ++++----
+ dts/{framework => api}/testbed_model/cpu.py   |  4 +-
+ dts/api/testbed_model/linux_session.py        | 41 +++++++++++++++++++
+ dts/{framework => api}/testbed_model/node.py  | 12 +++---
+ .../testbed_model/os_session.py               |  8 ++--
+ dts/{framework => api}/testbed_model/port.py  |  2 +-
+ .../testbed_model/posix_session.py            |  6 +--
+ .../testbed_model/topology.py                 | 20 ++++-----
+ .../traffic_generator/__init__.py             |  4 +-
+ .../capturing_traffic_generator.py            |  4 +-
+ .../performance_traffic_generator.py          |  0
+ .../testbed_model/traffic_generator/scapy.py  | 14 +++----
+ .../traffic_generator/traffic_generator.py    |  8 ++--
+ .../testbed_model/traffic_generator/trex.py   | 16 ++++----
+ .../testbed_model/virtual_device.py           |  0
+ dts/api/testpmd/__init__.py                   | 11 +++--
+ dts/api/testpmd/config.py                     |  6 +--
+ dts/api/testpmd/types.py                      |  2 +-
+ dts/{framework => api}/utils.py               |  2 +-
+ dts/framework/config/__init__.py              |  6 +--
+ dts/framework/config/node.py                  |  2 +-
+ dts/framework/config/test_run.py              | 12 +++---
+ .../{testbed_model => }/linux_session.py      | 15 ++++---
+ dts/framework/parser.py                       |  2 +-
+ dts/framework/remote_session/blocking_app.py  |  8 ++--
+ dts/framework/remote_session/dpdk.py          | 16 ++++----
+ dts/framework/remote_session/dpdk_shell.py    |  6 +--
+ .../interactive_remote_session.py             |  2 +-
+ .../remote_session/interactive_shell.py       |  8 ++--
+ .../remote_session/remote_session.py          |  4 +-
+ dts/framework/runner.py                       |  4 +-
+ dts/framework/test_result.py                  |  5 +--
+ dts/framework/test_run.py                     | 24 +++++------
+ dts/tests/TestSuite_blocklist.py              |  4 +-
+ dts/tests/TestSuite_checksum_offload.py       |  2 +-
+ dts/tests/TestSuite_cryptodev_throughput.py   |  8 ++--
+ dts/tests/TestSuite_dual_vlan.py              |  2 +-
+ dts/tests/TestSuite_dynamic_config.py         |  2 +-
+ dts/tests/TestSuite_dynamic_queue_conf.py     |  4 +-
+ dts/tests/TestSuite_hello_world.py            |  2 +-
+ dts/tests/TestSuite_l2fwd.py                  |  8 ++--
+ dts/tests/TestSuite_mac_filter.py             |  4 +-
+ dts/tests/TestSuite_mtu.py                    |  2 +-
+ dts/tests/TestSuite_packet_capture.py         | 12 +++---
+ dts/tests/TestSuite_pmd_buffer_scatter.py     |  2 +-
+ dts/tests/TestSuite_pmd_rss.py                |  6 +--
+ dts/tests/TestSuite_port_control.py           |  2 +-
+ ...stSuite_port_restart_config_persistency.py |  2 +-
+ dts/tests/TestSuite_port_stats.py             |  2 +-
+ dts/tests/TestSuite_promisc_support.py        |  2 +-
+ dts/tests/TestSuite_qinq.py                   |  2 +-
+ dts/tests/TestSuite_queue_start_stop.py       |  2 +-
+ dts/tests/TestSuite_rte_flow.py               | 12 +++---
+ dts/tests/TestSuite_rx_tx_offload.py          |  2 +-
+ .../TestSuite_single_core_forward_perf.py     |  4 +-
+ dts/tests/TestSuite_smoke_tests.py            |  6 +--
+ dts/tests/TestSuite_softnic.py                |  6 +--
+ dts/tests/TestSuite_uni_pkt.py                |  2 +-
+ dts/tests/TestSuite_virtio_fwd.py             |  8 ++--
+ dts/tests/TestSuite_vlan.py                   |  2 +-
+ 98 files changed, 359 insertions(+), 301 deletions(-)
+ rename doc/api/dts/{framework.context.rst => api.context.rst} (80%)
+ rename doc/api/dts/{framework.exception.rst => api.exception.rst} (77%)
+ rename doc/api/dts/{framework.params.eal.rst => api.params.eal.rst} (79%)
+ rename doc/api/dts/{framework.params.rst => api.params.rst} (71%)
+ rename doc/api/dts/{framework.params.types.rst => api.params.types.rst} (80%)
+ rename doc/api/dts/{framework.test_suite.rst => api.test_suite.rst} (81%)
+ rename doc/api/dts/{framework.testbed_model.capability.rst => api.testbed_model.capability.rst} (74%)
+ rename doc/api/dts/{framework.testbed_model.cpu.rst => api.testbed_model.cpu.rst} (78%)
+ rename doc/api/dts/{framework.testbed_model.linux_session.rst => api.testbed_model.linux_session.rst} (74%)
+ rename doc/api/dts/{framework.testbed_model.node.rst => api.testbed_model.node.rst} (71%)
+ rename doc/api/dts/{framework.testbed_model.os_session.rst => api.testbed_model.os_session.rst} (76%)
+ rename doc/api/dts/{framework.testbed_model.port.rst => api.testbed_model.port.rst} (77%)
+ rename doc/api/dts/{framework.testbed_model.posix_session.rst => api.testbed_model.posix_session.rst} (74%)
+ create mode 100644 doc/api/dts/api.testbed_model.rst
+ rename doc/api/dts/{framework.testbed_model.topology.rst => api.testbed_model.topology.rst} (73%)
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.capturing_traffic_generator.rst => api.testbed_model.traffic_generator.capturing_traffic_generator.rst} (68%)
+ create mode 100644 doc/api/dts/api.testbed_model.traffic_generator.rst
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.scapy.rst => api.testbed_model.traffic_generator.scapy.rst} (70%)
+ rename doc/api/dts/{framework.testbed_model.traffic_generator.traffic_generator.rst => api.testbed_model.traffic_generator.traffic_generator.rst} (65%)
+ rename doc/api/dts/{framework.testbed_model.virtual_device.rst => api.testbed_model.virtual_device.rst} (72%)
+ rename doc/api/dts/{framework.utils.rst => api.utils.rst} (80%)
+ create mode 100644 doc/api/dts/framework.linux_session.rst
+ delete mode 100644 doc/api/dts/framework.testbed_model.rst
+ delete mode 100644 doc/api/dts/framework.testbed_model.traffic_generator.rst
+ rename dts/{framework => api}/context.py (90%)
+ rename dts/{framework => api}/exception.py (100%)
+ rename dts/{framework => api}/params/__init__.py (100%)
+ rename dts/{framework => api}/params/eal.py (89%)
+ rename dts/{framework => api}/params/types.py (94%)
+ rename dts/{framework => api}/test_suite.py (98%)
+ rename dts/{framework => api}/testbed_model/__init__.py (100%)
+ rename dts/{framework => api}/testbed_model/capability.py (98%)
+ rename dts/{framework => api}/testbed_model/cpu.py (99%)
+ create mode 100644 dts/api/testbed_model/linux_session.py
+ rename dts/{framework => api}/testbed_model/node.py (96%)
+ rename dts/{framework => api}/testbed_model/os_session.py (99%)
+ rename dts/{framework => api}/testbed_model/port.py (98%)
+ rename dts/{framework => api}/testbed_model/posix_session.py (99%)
+ rename dts/{framework => api}/testbed_model/topology.py (96%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/__init__.py (95%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/capturing_traffic_generator.py (98%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/performance_traffic_generator.py (100%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/scapy.py (98%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/traffic_generator.py (91%)
+ rename dts/{framework => api}/testbed_model/traffic_generator/trex.py (96%)
+ rename dts/{framework => api}/testbed_model/virtual_device.py (100%)
+ rename dts/{framework => api}/utils.py (99%)
+ rename dts/framework/{testbed_model => }/linux_session.py (97%)
+
 -- 
-2.53.0
+2.52.0
 
