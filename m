@@ -2,45 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C01FF8867
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 09:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73575FF8867
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 09:59:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A916840672;
-	Wed, 29 Apr 2026 11:58:28 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id CB52C40693;
+	Wed, 29 Apr 2026 11:58:29 +0200 (CEST)
 Received: from mx1.wirefilter.com (mx1.wirefilter.com [82.147.223.86])
- by mails.dpdk.org (Postfix) with ESMTP id 334D1402A3;
- Tue, 28 Apr 2026 09:03:43 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id B24A640285;
+ Tue, 28 Apr 2026 09:05:00 +0200 (CEST)
 Received: from egw.wirefilter.com (localhost.localdomain [127.0.0.1])
- by mx1.wirefilter.com (Proxmox) with ESMTP id 31F6EC1758;
- Tue, 28 Apr 2026 10:03:42 +0300 (+03)
+ by mx1.wirefilter.com (Proxmox) with ESMTP id 3A496C171F;
+ Tue, 28 Apr 2026 10:05:00 +0300 (+03)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wirefilter.com;
  h=cc:cc:content-type:content-type:date:from:from:in-reply-to
  :message-id:mime-version:references:reply-to:subject:subject:to
- :to; s=default; bh=3q/BzzUMUsLwmERpdg5TdCXTmz6x+3LQMxW1XDkf+II=; b=
- ugCww0CKUMAuliiinBoZ9y+m5p4G/kag2l8HG6YbKRVNfb6Z0KH9DgJymZ3PV7cH
- Wrlw+mdf2CdwpiqUUpVaPBhzkUVwCrnw4xAxerCUHBXrsD4saEzlQsd7LI0a8en3
- bJtMKEYj5zCpelmKX4kJvLtIeSabTEjfgqmanx4yyA9rDERPWsEOoPjGIOdl6I3s
- 3g2PfvXzrPzgaR92J7LcfO0tL12wYQjDuH40d1IQD2ZNX6l//4MAlSqWPi3Io+sI
- b372U3eAaqjg39X/hzeNyV8q7xqqmBs2qycZpMnMCVc1eqQhcFW6DrBUYYdLpfZy
- q8rUnTLPY0yR8ZdJSasN5A==
-Date: Tue, 28 Apr 2026 10:03:41 +0300 (AST)
+ :to; s=default; bh=ntQNRlao2mPYk+1Z+7bux7cKbc9P+5B78QmY5TPu5qc=; b=
+ XcGs8Rpbw/p/N5n/miVBNsvMJ2Pj63agvOYRvMh9ch/nosh62PMMhlyQuW+j6uDH
+ gHefu2kSHMRIXTXffpf2okPkDsWZ4u9WwQiVqD5U0xe3RLtkwxj6EOYsFdRAQxwh
+ 7dNeyDMuF385Mbwv7Bwjw6Cg5ZAxp1R6+hFvIlvu8A3ZOhpyLdJvRrNpzAZ89UUe
+ PHKVfg0hzap4+Jp2sENcy9ZZvF05kEkVpNDsKC5QYPAdawcJQlYyHNfjYwTTMa4g
+ AD58q5uE6dxNgvC8GJ7b0ZmKrGKDE45W2xRJIphPo7cbAW7ivQQbWlPUg4bDgy+C
+ D9cYdqq5AvHjpE5yVzVLPg==
+Date: Tue, 28 Apr 2026 10:05:00 +0300 (AST)
 From: Abdulrahman Alshawi <ashawi@wirefilter.com>
 To: dev <dev@dpdk.org>
 Cc: bharat <bharat@chelsio.com>, stable <stable@dpdk.org>, 
  vipinpv85 <vipinpv85@gmail.com>
-Message-ID: <1076242828.15909769.1777359821929.JavaMail.zimbra@wirefilter.com>
-In-Reply-To: <48263833.15868423.1777308172969.JavaMail.zimbra@wirefilter.com>
+Message-ID: <430997417.15909938.1777359900023.JavaMail.zimbra@wirefilter.com>
+In-Reply-To: <1991720957.15868387.1777308056746.JavaMail.zimbra@wirefilter.com>
 References: <2136264989.15868282.1777307418083.JavaMail.zimbra@wirefilter.com>
- <48263833.15868423.1777308172969.JavaMail.zimbra@wirefilter.com>
-Subject: Re: [PATCH 2/2] net/cxgbe: restrict rte flow rules to ingress port
+ <1991720957.15868387.1777308056746.JavaMail.zimbra@wirefilter.com>
+Subject: Re: [PATCH 1/2] net/cxgbe: fix Rx handling for packed responses
 MIME-Version: 1.0
 Content-Type: multipart/alternative; 
- boundary="=_d7ff3640-e10f-41c0-9c44-83110c995ce1"
+ boundary="=_bd862c0c-6a2d-4a7e-909a-8c87184f07ef"
 X-Originating-IP: [10.1.1.3]
 X-Mailer: Zimbra 10.1.16_GA_4850 (ZimbraModernWebClient - GC147
  (Mac)/10.1.16_GA_4850)
-Thread-Topic: net/cxgbe: restrict rte flow rules to ingress port
-Thread-Index: vibgbhNHf0ETdtVkwLuwbZrWfuFjrSUCB5/6H58k6yc=
+Thread-Topic: net/cxgbe: fix Rx handling for packed responses
+Thread-Index: vibgbhNHf0ETdtVkwLuwbZrWfuFjrQpAUFJekIjF01Q=
 X-Mailman-Approved-At: Wed, 29 Apr 2026 11:58:18 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -55,16 +55,17 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
---=_d7ff3640-e10f-41c0-9c44-83110c995ce1
+--=_bd862c0c-6a2d-4a7e-909a-8c87184f07ef
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
 =20
-=C2=A0=20
-=20
+
 Adding Vipin Varghese
 
-
+=20
+=20
+=C2=A0=20
 =20
 =20
 =20
@@ -74,556 +75,425 @@ Adding Vipin Varghese
 From: Abdulrahman <ashawi@wirefilter.com>
 To: dev <dev@dpdk.org>
 Cc: bharat <bharat@chelsio.com>; stable <stable@dpdk.org>
-Date: Monday, 27 April 2026 7:42 PM +03
-Subject: [PATCH 2/2] net/cxgbe: restrict rte flow rules to ingress port
+Date: Monday, 27 April 2026 7:40 PM +03
+Subject: [PATCH 1/2] net/cxgbe: fix Rx handling for packed responses
 
 =20
-=20
- Chelsio filters are programmed in adapter-wide LE/TCAM tables shared by al=
-l ports. rte_flow rules, however, are created on a specific ethdev and are =
-expected to apply to traffic arriving on that port. =C2=A0 The PMD already =
-supports ingress-port matching in the hardware filter spec. The iport field=
- is validated, used for hash-region selection when tp.port_shift is availab=
-le, and emitted in the firmware filter work request. But the rte_flow parse=
-r never sets fs.val.iport/fs.mask.iport for normal per-port rules. =C2=A0 A=
-s a result, a rule created on one port is installed as an adapter-wide matc=
-h and can steer traffic received on sibling ports of the same adapter. =C2=
-=A0 In practice this causes cross-port steering. For example, a rule like =
-=C2=A0 =C2=A0 vlan 100 -> queue 3 =C2=A0 created on port 0 can also match V=
-LAN 100 traffic arriving on port 1 and redirect it into port 0's queue 3. =
-=C2=A0 Fix this by stamping the creating ethdev's physical ingress port int=
-o the filter spec before filter placement is decided. =C2=A0 Only do this w=
-hen the active filter mode includes the port field (tp.port_shift >=3D 0). =
-If port matching is not available in the current filter mode, keep the exis=
-ting adapter-wide behavior. =C2=A0 Reproduce (two ports of the same adapter=
- bound to DPDK): =C2=A0 =C2=A0 dpdk-testpmd -l 1-9 -a 0000:18:00.4 -a 0000:=
-18:00.5 \ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 -- --rxq=3D4 --txq=3D4 --forwa=
-rd-mode=3Drxonly -i =C2=A0 testpmd> flow create 0 ingress pattern eth \ =C2=
-=A0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 / vlan tci is 100 / end actions queue=
- index 3 / end =C2=A0 testpmd> start =C2=A0 Without this patch, VLAN 100 tr=
-affic received on port 1 can be steered by the rule created on port 0. With=
- the patch, the rule only matches traffic arriving on port 0. =C2=A0 Signed=
--off-by: Abdulrahman Alshawi <ashawi@wirefilter.com> --- =C2=A0.mailmap =C2=
-=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 |=
-=C2=A0 1 + =C2=A0drivers/net/cxgbe/cxgbe_flow.c | 19 +++++++++++++++++++ =
-=C2=A02 files changed, 20 insertions(+) =C2=A0 diff --git a/.mailmap b/.mai=
-lmap index 0e0d83e1c6..a6bcbd5756 100644 --- a/.mailmap +++ b/.mailmap @@ -=
-4,6 +4,7 @@ Aaro Koskinen <aaro.koskinen@nsn.com> =C2=A0Aaron Campbell <aar=
-on@arbor.net> =C2=A0Aaron Conole <aconole@redhat.com> =C2=A0Abdullah =C3=96=
-mer Yama=C3=A7 <omer.yamac@ceng.metu.edu.tr> <aomeryamac@gmail.com> +Abdulr=
-ahman Alshawi <ashawi@wirefilter.com> =C2=A0Abdullah Sevincer <abdullah.sev=
-incer@intel.com> =C2=A0Abed Kamaluddin <akamaluddin@marvell.com> =C2=A0Abhi=
-jit Gangurde <abhijit.gangurde@amd.com> diff --git a/drivers/net/cxgbe/cxgb=
-e_flow.c b/drivers/net/cxgbe/cxgbe_flow.c index 14b9b49792..dd0634131e 1006=
-44 --- a/drivers/net/cxgbe/cxgbe_flow.c +++ b/drivers/net/cxgbe/cxgbe_flow.=
-c @@ -172,6 +172,24 @@ cxgbe_fill_filter_region(struct adapter *adap, =C2=
-=A0 fs->cap =3D 1; /* use hash region */ =C2=A0} =C2=A0 +static void +cxgbe=
-_scope_flow_to_port(struct rte_flow *flow) +{ + struct adapter *adap =3D et=
-hdev2adap(flow->dev); + struct port_info *pi =3D ethdev2pinfo(flow->dev); +=
- + /* + * Chelsio filters are programmed in adapter-global tables. DPDK + *=
- ingress rte_flow rules are created on a specific ethdev, so include + * th=
-e physical ingress port when the active filter mode supports it. + */ + if =
-(adap->params.tp.port_shift < 0) +  return; + + flow->fs.val.iport =3D pi->=
-port_id; + flow->fs.mask.iport =3D (1U << IPORT_BITWIDTH) - 1; +} + =C2=A0s=
-tatic int =C2=A0ch_rte_parsetype_eth(const void *dmask, const struct rte_fl=
-ow_item *item, =C2=A0  =C2=A0 =C2=A0 struct ch_filter_specification *fs, @@=
- -986,6 +1004,7 @@ cxgbe_rtef_parse_items(struct rte_flow *flow, =C2=A0 } =
-=C2=A0 =C2=A0 cxgbe_tweak_filter_spec(adap, &flow->fs); + cxgbe_scope_flow_=
-to_port(flow); =C2=A0 cxgbe_fill_filter_region(adap, &flow->fs); =C2=A0 =C2=
-=A0 return 0; --=C2=A0 2.39.5 =20
-=20
-=C2=A0=20
-=20
-=20
-=20
-From: Abdulrahman <ashawi@wirefilter.com>
-To: dev <dev@dpdk.org>
-Cc: bharat <bharat@chelsio.com>; stable <stable@dpdk.org>
-Date: Monday, 27 April 2026 7:30 PM +03
-Subject: [PATCH 0/2] net/cxgbe: fix packed Rx handling and flow port scopin=
-g
+ The Rx path assumes every SGE response starts a new Free List buffer: =C2=
+=A0 =C2=A0 =C2=A0 BUG_ON(!(len & F_RSPD_NEWBUF)); =C2=A0 That is not always=
+ true. On T5/T6, small packets can be packed into the same FL buffer. Only =
+the first response for that buffer has NEWBUF set; later responses can refe=
+r to the same buffer with a different payload offset. =C2=A0 The current PM=
+D consumes one FL buffer per response. When packed responses are delivered,=
+ the FL consumer state goes out of sync with the hardware and the affected =
+ingress queue stops making progress. From user space this shows up as: =C2=
+=A0 =C2=A0 - rx_bgN_dropped_packets increasing at line rate =C2=A0 - q_ipac=
+kets for the affected queue staying at 0 =C2=A0 - imissed increasing =C2=A0=
+ - no recovery until the port is restarted =C2=A0 Fix this by tracking pack=
+ed-buffer alignment and copying packet payload from the current FL buffer a=
+t q->offset, only freeing the FL buffer once it has actually been consumed.=
+ =C2=A0 This patch: =C2=A0 - adds sge::fl_align from the ingress pad/pack s=
+ettings =C2=A0 - introduces cxgbe_copy_rx_pkt() to copy from packed FL buff=
+ers =C2=A0 - advances q->offset by len rounded up to fl_align =C2=A0 - free=
+s an FL buffer only after full consumption =C2=A0 - drains the previous buf=
+fer when a later response arrives with NEWBUF =C2=A0 Reproduce (T62100-LP-C=
+R, FW 2.1.19.0 / TP 0.1.23.2): =C2=A0 =C2=A0 dpdk-testpmd -l 1-9 -a 0000:18=
+:00.4 -- \ =C2=A0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 --rxq=3D32 --txq=
+=3D32 --nb-cores=3D8 --forward-mode=3Drxonly -i =C2=A0 =C2=A0 testpmd> port=
+ stop all =C2=A0 testpmd> flow flush 0 =C2=A0 testpmd> flow create 0 ingres=
+s pattern eth \ =C2=A0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 / vlan tci spec 0 =
+tci mask 0x0007 \ =C2=A0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 / end actions qu=
+eue index 5 / end =C2=A0 testpmd> port start all =C2=A0 testpmd> start =C2=
+=A0 Without this patch, rx_qN_packets stays at 0 while rx_bgN_dropped_packe=
+ts rises at line rate. With the patch, rx_qN_packets tracks received traffi=
+c and rx_bgN_dropped_packets stays at 0. =C2=A0 Signed-off-by: Abdulrahman =
+Alshawi <ashawi@wirefilter.com> --- =C2=A0drivers/net/cxgbe/base/adapter.h =
+| =C2=A0 1 + =C2=A0drivers/net/cxgbe/sge.c=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 | 122 ++++++++++++++++++++++++------- =C2=A02 files changed, 98 inserti=
+ons(+), 25 deletions(-) =C2=A0 diff --git a/drivers/net/cxgbe/base/adapter.=
+h b/drivers/net/cxgbe/base/adapter.h index 207f3ecb88..e67cf22950 100644 --=
+- a/drivers/net/cxgbe/base/adapter.h +++ b/drivers/net/cxgbe/base/adapter.h=
+ @@ -280,6 +280,7 @@ struct sge { =C2=A0 =C2=A0 u16 max_ethqsets; =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 /* # of available Ethernet queue sets */ =C2=A0=
+ =C2=A0 u32 stat_len; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* l=
+ength of status page at ring end */ =C2=A0 =C2=A0 u32 pktshift; =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 /* padding between CPL & packet data=
+ */ + =C2=A0 u32 fl_align; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ /* packed Rx packet alignment */ =C2=A0 =C2=A0 =C2=A0 /* response queue in=
+terrupt parameters */ =C2=A0 =C2=A0 u16 timer_val[SGE_NTIMERS]; diff --git =
+a/drivers/net/cxgbe/sge.c b/drivers/net/cxgbe/sge.c index e9d45f24c4..7cf5c=
+70775 100644 --- a/drivers/net/cxgbe/sge.c +++ b/drivers/net/cxgbe/sge.c @@=
+ -1492,6 +1492,90 @@ static inline void cxgbe_fill_mbuf_info(struct adapter=
+ *adap, =C2=A0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 RTE_MBUF_F_RX_L4_CKSUM_BAD); =C2=A0} =C2=A0 +static int cxgbe_copy_rx_p=
+kt(struct sge_rspq *q, struct sge_eth_rxq *rxq, + =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 u32 len, struct rte_mbuf **out) +{ + =C2=A0 struct=
+ sge *s =3D &q->adapter->sge; + =C2=A0 struct rte_mbuf *pkt; + =C2=A0 char =
+*dst; + =C2=A0 u32 copied =3D 0; + =C2=A0 u32 remaining =3D len; + + =C2=A0=
+ pkt =3D rte_pktmbuf_alloc(q->mb_pool); + =C2=A0 if (unlikely(!pkt)) { + =
+=C2=A0 =C2=A0 =C2=A0 rxq->rspq.eth_dev->data->rx_mbuf_alloc_failed++; + =C2=
+=A0 =C2=A0 =C2=A0 rxq->stats.rx_drops++; + =C2=A0 =C2=A0 =C2=A0 return -ENO=
+MEM; + =C2=A0 } + + =C2=A0 dst =3D rte_pktmbuf_append(pkt, len); + =C2=A0 i=
+f (unlikely(!dst)) { + =C2=A0 =C2=A0 =C2=A0 rte_pktmbuf_free(pkt); + =C2=A0=
+ =C2=A0 =C2=A0 rxq->stats.rx_drops++; + =C2=A0 =C2=A0 =C2=A0 return -ENOMEM=
+; + =C2=A0 } + + =C2=A0 while (remaining) { + =C2=A0 =C2=A0 =C2=A0 const st=
+ruct rx_sw_desc *rsd =3D &rxq->fl.sdesc[rxq->fl.cidx]; + =C2=A0 =C2=A0 =C2=
+=A0 struct rte_mbuf *src =3D rsd->buf; + =C2=A0 =C2=A0 =C2=A0 u32 bufsz =3D=
+ get_buf_size(q->adapter, rsd); + =C2=A0 =C2=A0 =C2=A0 u32 copy_len; + + =
+=C2=A0 =C2=A0 =C2=A0 if (unlikely(!src || q->offset < 0 || + =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (u32)q->offset >=3D bufsz)) { + =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_pktmbuf_free(pkt); + =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 rxq->stats.rx_drops++; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 r=
+eturn -EINVAL; + =C2=A0 =C2=A0 =C2=A0 } + + =C2=A0 =C2=A0 =C2=A0 copy_len =
+=3D RTE_MIN(bufsz - (u32)q->offset, remaining); + =C2=A0 =C2=A0 =C2=A0 rte_=
+memcpy(dst + copied, + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rte_pktmbu=
+f_mtod_offset(src, const void *, q->offset), + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 copy_len); + + =C2=A0 =C2=A0 =C2=A0 copied +=3D copy_len; + =
+=C2=A0 =C2=A0 =C2=A0 remaining -=3D copy_len; + =C2=A0 =C2=A0 =C2=A0 q->off=
+set +=3D copy_len; + + =C2=A0 =C2=A0 =C2=A0 if (remaining) { + =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 free_rx_bufs(&rxq->fl, 1); + =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 q->offset =3D 0; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 continu=
+e; + =C2=A0 =C2=A0 =C2=A0 } + + =C2=A0 =C2=A0 =C2=A0 q->offset =3D RTE_ALIG=
+N_CEIL(q->offset, s->fl_align); + =C2=A0 =C2=A0 =C2=A0 if ((u32)q->offset >=
+=3D bufsz) { + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 free_rx_bufs(&rxq->fl, 1)=
+; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 q->offset =3D 0; + =C2=A0 =C2=A0 =C2=
+=A0 } + =C2=A0 } + + =C2=A0 *out =3D pkt; + =C2=A0 return 0; +} + +static u=
+nsigned int cxgbe_fl_pkt_align(struct adapter *adap) +{ + =C2=A0 u32 sge_co=
+ntrol =3D t4_read_reg(adap, A_SGE_CONTROL); + =C2=A0 unsigned int ingpad_sh=
+ift, ingpad, fl_align; + + =C2=A0 ingpad_shift =3D CHELSIO_CHIP_VERSION(ada=
+p->params.chip) <=3D CHELSIO_T5 ? + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 X_INGPADBOUNDARY_SHIFT : X_T6_INGPADBOUNDARY_SHIFT; + =C2=A0 ingpad =3D=
+ 1U << (G_INGPADBOUNDARY(sge_control) + ingpad_shift); + =C2=A0 fl_align =
+=3D ingpad; + + =C2=A0 if (!is_t4(adap->params.chip)) { + =C2=A0 =C2=A0 =C2=
+=A0 u32 sge_control2 =3D t4_read_reg(adap, A_SGE_CONTROL2); + =C2=A0 =C2=A0=
+ =C2=A0 unsigned int ingpack =3D G_INGPACKBOUNDARY(sge_control2); + + =C2=
+=A0 =C2=A0 =C2=A0 ingpack =3D ingpack =3D=3D X_INGPACKBOUNDARY_16B ? +=C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 16 : 1U << (ingpack + X_INGPACKBOUND=
+ARY_SHIFT); + =C2=A0 =C2=A0 =C2=A0 fl_align =3D RTE_MAX(ingpad, ingpack); +=
+ =C2=A0 } + + =C2=A0 return fl_align ? fl_align : RTE_CACHE_LINE_SIZE; +} +=
+ =C2=A0/** =C2=A0 * process_responses - process responses from an SGE respo=
+nse queue =C2=A0 * @q: the ingress queue to process @@ -1535,14 +1619,12 @@=
+ static int process_responses(struct sge_rspq *q, int budget, =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 stat_pidx =3D ntohs(q->stat->pidx); =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 stat_pidx_diff =3D P_IDXDIFF(q, stat_pidx);=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 while (stat_pidx_diff && budget_=
+left) { - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 const struct rx_=
+sw_desc *rsd =3D - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 &rxq->fl.sdesc[rxq->fl.cidx]; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 const struct rss_header *rss_hdr =3D =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (const void *)q->cur_desc=
+; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 const struct cpl_=
+rx_pkt *cpl =3D =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 (const void *)&q->cur_desc[1]; - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 struct rte_mbuf *pkt, *npkt; - =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 u32 len, bufsz; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 struct rte_mbuf *pkt; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 u32 len; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 rc =3D (const struct rsp_ctrl *) =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ((const char *)q->cur_desc + @@ =
+-1553,28 +1635,16 @@ static int process_responses(struct sge_rspq *q, int b=
+udget, =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 break; =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 l=
+en =3D ntohl(rc->pldbuflen_qid); - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 BUG_ON(!(len & F_RSPD_NEWBUF)); - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 pkt =3D rsd->buf; - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 npkt =3D pkt; - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 len =3D G_RSPD_LEN(len); - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 pkt->pkt_len =3D len; - - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 /* Chain mbufs into len if necessary */ - =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 while (len) { - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 =C2=A0 =C2=A0 =C2=A0 struct rte_mbuf *new_pkt =3D rsd->buf; - - =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 bufsz =3D min(g=
+et_buf_size(q->adapter, - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rsd), len); - =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 new_pkt->data_l=
+en =3D bufsz; - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 unmap_rx_buf(&rxq->fl); - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 len -=3D bufsz; - =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 npkt->next =3D new_pkt; - =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 npkt =3D new_pkt; - =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pkt->nb_segs++; - =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rsd =3D &rxq->fl.sd=
+esc[rxq->fl.cidx]; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (l=
+en & F_RSPD_NEWBUF) { + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 if (q->offset > 0) { + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 free_rx_bufs(&rxq->fl, 1); + =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 q->of=
+fset =3D 0; + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 } =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 } - =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 npkt->next =3D NULL; - =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pkt->nb_segs--; + =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 len =3D G_RSPD_LEN(len); + =C2=A0 =C2=A0 =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 ret =3D cxgbe_copy_rx_pkt(q, rxq, len, &=
+pkt); + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 if (unlikely(ret))=
+ + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 break; =
+=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 cxgbe_fill_m=
+buf_info(q->adapter, cpl, pkt); =C2=A0 @@ -2379,6 +2449,7 @@ int t4_sge_ini=
+t(struct adapter *adap) =C2=A0 =C2=A0 sge_control =3D t4_read_reg(adap, A_S=
+GE_CONTROL); =C2=A0 =C2=A0 s->pktshift =3D G_PKTSHIFT(sge_control); =C2=A0 =
+=C2=A0 s->stat_len =3D (sge_control & F_EGRSTATUSPAGESIZE) ? 128 : 64; + =
+=C2=A0 s->fl_align =3D cxgbe_fl_pkt_align(adap); =C2=A0 =C2=A0 ret =3D t4_s=
+ge_init_soft(adap); =C2=A0 =C2=A0 if (ret < 0) { =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 dev_err(adap, "%s: t4_sge_init_soft failed, error %d\n", @@ -2516,6 +25=
+87,7 @@ int t4vf_sge_init(struct adapter *adap) =C2=A0 =C2=A0 s->stat_len =
+=3D ((sge_control & F_EGRSTATUSPAGESIZE) =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
+ =C2=A0 ? 128 : 64); =C2=A0 =C2=A0 s->pktshift =3D G_PKTSHIFT(sge_control);=
+ + =C2=A0 s->fl_align =3D RTE_CACHE_LINE_SIZE; =C2=A0 =C2=A0 =C2=A0 /* =C2=
+=A0 =C2=A0 * A FL with <=3D fl_starve_thres buffers is starving and a perio=
+dic --=C2=A0 2.39.5    =20
 
-=20
-=20
-=20
-=20
-
-This series fixes two correctness issues in the cxgbe PMD that can cause
-traffic loss on Chelsio T6 adapters, especially when rte_flow QUEUE
-rules concentrate ingress on a small set of RX queues.=20
-
-Patch 1 fixes packed Rx response handling. The current PMD assumes every
-response descriptor starts a new Free List buffer by requiring
-F_RSPD_NEWBUF on each response. That assumption does not always hold for
-packed ingress responses. Under sustained small-packet traffic to a
-single ingress queue, the FL/IQ state goes out of sync and the affected
-Rx path stops making forward progress.=20
-
-Patch 2 scopes rte_flow rules to the ingress port they were created on.
-Chelsio filters are programmed in adapter-wide tables, and the PMD
-already supports the iport field in the hardware filter spec. However,
-the flow parser never fills it for normal per-port rules, so a rule
-created on one port can also match traffic arriving on sibling ports of
-the same adapter.=20
-
-Both issues reproduce with stock testpmd on T62100-LP-CR. The per-patch
-commit messages include the details and reproducers.=20
-
-Abdulrahman Alshawi (2):
-net/cxgbe: fix Rx handling for packed responses
-net/cxgbe: restrict rte_flow rules to ingress port=20
-
-.mailmap | 1 +
-drivers/net/cxgbe/base/adapter.h | 1 +
-drivers/net/cxgbe/cxgbe_flow.c | 19 +++++
-drivers/net/cxgbe/sge.c | 122 ++++++++++++++++++++++++-------
-4 files changed, 118 insertions(+), 25 deletions(-)=20
-
---
-2.39.5  =20
-        =20
-
---=_d7ff3640-e10f-41c0-9c44-83110c995ce1
+--=_bd862c0c-6a2d-4a7e-909a-8c87184f07ef
 Content-Type: text/html; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-<html><body><div style=3D"font-size: 11pt; font-family: arial, helvetica, s=
-ans-serif; direction: null; color: #000000;" data-attr=3D"forced_root_block=
-_attrs">
+<html><body><div style="font-size: 11pt; font-family: arial, helvetica, sans-serif; direction: null; color: #000000;" data-attr="forced_root_block_attrs">
+<div><br>Adding Vipin Varghese<br><br></div>
+<div id="signature-content-no-signature" data-marker="__SIG_PRE__"></div>
 <div>&nbsp;</div>
-<div id=3D"signature-content-no-signature" data-marker=3D"__SIG_PRE__"></di=
-v>
-<div>Adding Vipin Varghese<br><br><br></div>
 <div>
 
-<div id=3D"OLK_SRC_BODY_SECTION">
-<blockquote style=3D"margin: 0 0 0 .8em; border-left: 1px #ccc solid; paddi=
-ng-left: 1em;"><hr id=3D"MESSAGE_DATA_MARKER"><strong>From: </strong>Abdulr=
-ahman &lt;ashawi@wirefilter.com&gt;<br><strong>To: </strong>dev &lt;dev@dpd=
-k.org&gt;<br><strong>Cc: </strong>bharat &lt;bharat@chelsio.com&gt;; stable=
- &lt;stable@dpdk.org&gt;<br><strong>Date: </strong>Monday, 27 April 2026 7:=
-42 PM +03<br><strong>Subject: </strong>[PATCH 2/2] net/cxgbe: restrict rte =
-flow rules to ingress port<br><br>
-<div style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-se=
-rif; color: #000000;">
-<div>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">C=
-helsio filters are programmed in adapter-wide LE/TCAM tables shared by</spa=
-n></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">a=
-ll ports. rte_flow rules, however, are created on a specific ethdev and</sp=
-an></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">a=
-re expected to apply to traffic arriving on that port.</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">T=
-he PMD already supports ingress-port matching in the hardware filter</span>=
-</p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">s=
-pec. The iport field is validated, used for hash-region selection when</spa=
-n></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">t=
-p.port_shift is available, and emitted in the firmware filter work</span></=
-p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">r=
-equest. But the rte_flow parser never sets fs.val.iport/fs.mask.iport</span=
-></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">f=
-or normal per-port rules.</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">A=
-s a result, a rule created on one port is installed as an adapter-wide</spa=
-n></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">m=
-atch and can steer traffic received on sibling ports of the same</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">a=
-dapter.</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">I=
-n practice this causes cross-port steering. For example, a rule like</span>=
-</p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp; vlan 100 -&gt; queue 3</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">c=
-reated on port 0 can also match VLAN 100 traffic arriving on port 1 and</sp=
-an></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">r=
-edirect it into port 0's queue 3.</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">F=
-ix this by stamping the creating ethdev's physical ingress port into</span>=
-</p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">t=
-he filter spec before filter placement is decided.</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">O=
-nly do this when the active filter mode includes the port field</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">(=
-tp.port_shift &gt;=3D 0). If port matching is not available in the current<=
-/span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">f=
-ilter mode, keep the existing adapter-wide behavior.</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">R=
-eproduce (two ports of the same adapter bound to DPDK):</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp; dpdk-testpmd -l 1-9 -a 0000:18:00.4 -a 0000:18:00.5 \</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp; &nbsp; &nbsp; &nbsp; &nbsp; -- --rxq=3D4 --txq=3D4 --forward-mode=3Dr=
-xonly -i</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp; testpmd&gt; flow create 0 ingress pattern eth \</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; / vlan tci is 100 / end actions que=
-ue index 3 / end</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp; testpmd&gt; start</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">W=
-ithout this patch, VLAN 100 traffic received on port 1 can be steered</span=
-></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">b=
-y the rule created on port 0. With the patch, the rule only matches</span><=
-/p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">t=
-raffic arriving on port 0.</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">S=
-igned-off-by: Abdulrahman Alshawi &lt;ashawi@wirefilter.com&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">-=
---</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;.mailmap &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp=
-; &nbsp; &nbsp; |&nbsp; 1 +</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;drivers/net/cxgbe/cxgbe_flow.c | 19 +++++++++++++++++++</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;2 files changed, 20 insertions(+)</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">d=
-iff --git a/.mailmap b/.mailmap</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">i=
-ndex 0e0d83e1c6..a6bcbd5756 100644</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">-=
--- a/.mailmap</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-++ b/.mailmap</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@=
-@ -4,6 +4,7 @@ Aaro Koskinen &lt;aaro.koskinen@nsn.com&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;Aaron Campbell &lt;aaron@arbor.net&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;Aaron Conole &lt;aconole@redhat.com&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;Abdullah =C3=96mer Yama=C3=A7 &lt;omer.yamac@ceng.metu.edu.tr&gt; &lt;=
-aomeryamac@gmail.com&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-Abdulrahman Alshawi &lt;ashawi@wirefilter.com&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;Abdullah Sevincer &lt;abdullah.sevincer@intel.com&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;Abed Kamaluddin &lt;akamaluddin@marvell.com&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;Abhijit Gangurde &lt;abhijit.gangurde@amd.com&gt;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">d=
-iff --git a/drivers/net/cxgbe/cxgbe_flow.c b/drivers/net/cxgbe/cxgbe_flow.c=
-</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">i=
-ndex 14b9b49792..dd0634131e 100644</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">-=
--- a/drivers/net/cxgbe/cxgbe_flow.c</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-++ b/drivers/net/cxgbe/cxgbe_flow.c</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@=
-@ -172,6 +172,24 @@ cxgbe_fill_filter_region(struct adapter *adap,</span></=
-p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;<span style=3D"white-space: pre;"> </span>fs-&gt;cap =3D 1;<span style=
-=3D"white-space: pre;"> </span>/* use hash region */</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;}</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-static void</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-cxgbe_scope_flow_to_port(struct rte_flow *flow)</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-{</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>struct adapter *adap =3D ethdev2a=
-dap(flow-&gt;dev);</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>struct port_info *pi =3D ethdev2p=
-info(flow-&gt;dev);</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>/*</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>* Chelsio filters are programmed =
-in adapter-global tables. DPDK</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>* ingress rte_flow rules are crea=
-ted on a specific ethdev, so include</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>* the physical ingress port when =
-the active filter mode supports it.</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>*/</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>if (adap-&gt;params.tp.port_shift=
- &lt; 0)</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span><span style=3D"white-space: pre;"=
-> </span>return;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>flow-&gt;fs.val.iport =3D pi-&gt;=
-port_id;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>flow-&gt;fs.mask.iport =3D (1U &l=
-t;&lt; IPORT_BITWIDTH) - 1;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-}</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;static int</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;ch_rte_parsetype_eth(const void *dmask, const struct rte_flow_item *it=
-em,</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;<span style=3D"white-space: pre;"> </span><span style=3D"white-space: =
-pre;"> </span>&nbsp; &nbsp; struct ch_filter_specification *fs,</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@=
-@ -986,6 +1004,7 @@ cxgbe_rtef_parse_items(struct rte_flow *flow,</span></p=
->
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;<span style=3D"white-space: pre;"> </span>}</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;<span style=3D"white-space: pre;"> </span>cxgbe_tweak_filter_spec(adap=
-, &amp;flow-&gt;fs);</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+=
-<span style=3D"white-space: pre;"> </span>cxgbe_scope_flow_to_port(flow);</=
-span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;<span style=3D"white-space: pre;"> </span>cxgbe_fill_filter_region(ada=
-p, &amp;flow-&gt;fs);</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-heigh=
-t: 15px;"><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica=
-' , sans-serif;">&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&=
-nbsp;<span style=3D"white-space: pre;"> </span>return 0;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">-=
--&nbsp;</span></p>
-<p style=3D"margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span st=
-yle=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">2=
-.39.5</span></p>
-</div>
-<div id=3D"signature-content-no-signature"></div>
-<div><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , s=
-ans-serif;">&nbsp;</span></div>
-<div>
-<div id=3D"OLK_SRC_BODY_SECTION">
-<div id=3D"OLK_SRC_BODY_SECTION">
-<blockquote style=3D"margin: 0 0 0 0.8em; border-left: 1px #ccc solid; padd=
-ing-left: 1em;"><hr id=3D"MESSAGE_DATA_MARKER"><span style=3D"font-size: 11=
-pt; font-family: 'arial' , 'helvetica' , sans-serif;"><strong>From: </stron=
-g>Abdulrahman &lt;ashawi@wirefilter.com&gt;</span><br><span style=3D"font-s=
-ize: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;"><strong>To: </=
-strong>dev &lt;dev@dpdk.org&gt;</span><br><span style=3D"font-size: 11pt; f=
-ont-family: 'arial' , 'helvetica' , sans-serif;"><strong>Cc: </strong>bhara=
-t &lt;bharat@chelsio.com&gt;; stable &lt;stable@dpdk.org&gt;</span><br><spa=
-n style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif=
-;"><strong>Date: </strong>Monday, 27 April 2026 7:30 PM +03</span><br><span=
- style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;=
-"><strong>Subject: </strong>[PATCH 0/2] net/cxgbe: fix packed Rx handling a=
-nd flow port scoping</span><br><br>
-<div style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-se=
-rif; color: #000000;">
-<div>
-<div>
-<p><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , san=
-s-serif;">This series fixes two correctness issues in the cxgbe PMD that ca=
-n cause</span><br><span style=3D"font-size: 11pt; font-family: 'arial' , 'h=
-elvetica' , sans-serif;">traffic loss on Chelsio T6 adapters, especially wh=
-en rte_flow QUEUE</span><br><span style=3D"font-size: 11pt; font-family: 'a=
-rial' , 'helvetica' , sans-serif;">rules concentrate ingress on a small set=
- of RX queues.</span></p>
-<p><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , san=
-s-serif;">Patch 1 fixes packed Rx response handling. The current PMD assume=
-s every</span><br><span style=3D"font-size: 11pt; font-family: 'arial' , 'h=
-elvetica' , sans-serif;">response descriptor starts a new Free List buffer =
-by requiring</span><br><span style=3D"font-size: 11pt; font-family: 'arial'=
- , 'helvetica' , sans-serif;">F_RSPD_NEWBUF on each response. That assumpti=
-on does not always hold for</span><br><span style=3D"font-size: 11pt; font-=
-family: 'arial' , 'helvetica' , sans-serif;">packed ingress responses. Unde=
-r sustained small-packet traffic to a</span><br><span style=3D"font-size: 1=
-1pt; font-family: 'arial' , 'helvetica' , sans-serif;">single ingress queue=
-, the FL/IQ state goes out of sync and the affected</span><br><span style=
-=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">Rx p=
-ath stops making forward progress.</span></p>
-<p><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , san=
-s-serif;">Patch 2 scopes rte_flow rules to the ingress port they were creat=
-ed on.</span><br><span style=3D"font-size: 11pt; font-family: 'arial' , 'he=
-lvetica' , sans-serif;">Chelsio filters are programmed in adapter-wide tabl=
-es, and the PMD</span><br><span style=3D"font-size: 11pt; font-family: 'ari=
-al' , 'helvetica' , sans-serif;">already supports the iport field in the ha=
-rdware filter spec. However,</span><br><span style=3D"font-size: 11pt; font=
--family: 'arial' , 'helvetica' , sans-serif;">the flow parser never fills i=
-t for normal per-port rules, so a rule</span><br><span style=3D"font-size: =
-11pt; font-family: 'arial' , 'helvetica' , sans-serif;">created on one port=
- can also match traffic arriving on sibling ports of</span><br><span style=
-=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">the =
-same adapter.</span></p>
-<p><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , san=
-s-serif;">Both issues reproduce with stock testpmd on T62100-LP-CR. The per=
--patch</span><br><span style=3D"font-size: 11pt; font-family: 'arial' , 'he=
-lvetica' , sans-serif;">commit messages include the details and reproducers=
-.</span></p>
-<p><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , san=
-s-serif;">Abdulrahman Alshawi (2):</span><br><span style=3D"font-size: 11pt=
-; font-family: 'arial' , 'helvetica' , sans-serif;">net/cxgbe: fix Rx handl=
-ing for packed responses</span><br><span style=3D"font-size: 11pt; font-fam=
-ily: 'arial' , 'helvetica' , sans-serif;">net/cxgbe: restrict rte_flow rule=
-s to ingress port</span></p>
-<p><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , san=
-s-serif;">.mailmap | 1 +</span><br><span style=3D"font-size: 11pt; font-fam=
-ily: 'arial' , 'helvetica' , sans-serif;">drivers/net/cxgbe/base/adapter.h =
-| 1 +</span><br><span style=3D"font-size: 11pt; font-family: 'arial' , 'hel=
-vetica' , sans-serif;">drivers/net/cxgbe/cxgbe_flow.c | 19 +++++</span><br>=
-<span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-s=
-erif;">drivers/net/cxgbe/sge.c | 122 ++++++++++++++++++++++++-------</span>=
-<br><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , sa=
-ns-serif;">4 files changed, 118 insertions(+), 25 deletions(-)</span></p>
-<p><span style=3D"font-size: 11pt; font-family: 'arial' , 'helvetica' , san=
-s-serif;">--</span><br><span style=3D"font-size: 11pt; font-family: 'arial'=
- , 'helvetica' , sans-serif;">2.39.5</span></p>
-</div>
-</div>
-<div id=3D"signature-content-no-signature"></div>
+<div id="OLK_SRC_BODY_SECTION">
+<div id="OLK_SRC_BODY_SECTION">
+<blockquote style="margin: 0 0 0 .8em; border-left: 1px #ccc solid; padding-left: 1em;"><hr id="MESSAGE_DATA_MARKER"><strong>From: </strong>Abdulrahman &lt;ashawi@wirefilter.com&gt;<br><strong>To: </strong>dev &lt;dev@dpdk.org&gt;<br><strong>Cc: </strong>bharat &lt;bharat@chelsio.com&gt;; stable &lt;stable@dpdk.org&gt;<br><strong>Date: </strong>Monday, 27 April 2026 7:40 PM +03<br><strong>Subject: </strong>[PATCH 1/2] net/cxgbe: fix Rx handling for packed responses<br><br>
+<div style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif; color: #000000;">
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">The Rx path assumes every SGE response starts a new Free List buffer:</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; BUG_ON(!(len &amp; F_RSPD_NEWBUF));</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">That is not always true. On T5/T6, small packets can be packed into the</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">same FL buffer. Only the first response for that buffer has NEWBUF set;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">later responses can refer to the same buffer with a different payload</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">offset.</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">The current PMD consumes one FL buffer per response. When packed</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">responses are delivered, the FL consumer state goes out of sync with the</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">hardware and the affected ingress queue stops making progress. From user</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">space this shows up as:</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - rx_bgN_dropped_packets increasing at line rate</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - q_ipackets for the affected queue staying at 0</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - imissed increasing</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - no recovery until the port is restarted</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">Fix this by tracking packed-buffer alignment and copying packet payload</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">from the current FL buffer at q-&gt;offset, only freeing the FL buffer once</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">it has actually been consumed.</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">This patch:</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - adds sge::fl_align from the ingress pad/pack settings</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - introduces cxgbe_copy_rx_pkt() to copy from packed FL buffers</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - advances q-&gt;offset by len rounded up to fl_align</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - frees an FL buffer only after full consumption</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; - drains the previous buffer when a later response arrives with NEWBUF</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">Reproduce (T62100-LP-CR, FW 2.1.19.0 / TP 0.1.23.2):</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; dpdk-testpmd -l 1-9 -a 0000:18:00.4 -- \</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; --rxq=32 --txq=32 --nb-cores=8 --forward-mode=rxonly -i</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; testpmd&gt; port stop all</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; testpmd&gt; flow flush 0</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; testpmd&gt; flow create 0 ingress pattern eth \</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; / vlan tci spec 0 tci mask 0x0007 \</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; / end actions queue index 5 / end</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; testpmd&gt; port start all</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; testpmd&gt; start</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">Without this patch, rx_qN_packets stays at 0 while</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">rx_bgN_dropped_packets rises at line rate. With the patch,</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">rx_qN_packets tracks received traffic and rx_bgN_dropped_packets</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">stays at 0.</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">Signed-off-by: Abdulrahman Alshawi &lt;ashawi@wirefilter.com&gt;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">---</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;drivers/net/cxgbe/base/adapter.h | &nbsp; 1 +</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;drivers/net/cxgbe/sge.c&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | 122 ++++++++++++++++++++++++-------</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;2 files changed, 98 insertions(+), 25 deletions(-)</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">diff --git a/drivers/net/cxgbe/base/adapter.h b/drivers/net/cxgbe/base/adapter.h</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">index 207f3ecb88..e67cf22950 100644</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">--- a/drivers/net/cxgbe/base/adapter.h</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+++ b/drivers/net/cxgbe/base/adapter.h</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@@ -280,6 +280,7 @@ struct sge {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; u16 max_ethqsets; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; /* # of available Ethernet queue sets */</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; u32 stat_len; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; /* length of status page at ring end */</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; u32 pktshift; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; /* padding between CPL &amp; packet data */</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; u32 fl_align; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; /* packed Rx packet alignment */</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; /* response queue interrupt parameters */</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; u16 timer_val[SGE_NTIMERS];</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">diff --git a/drivers/net/cxgbe/sge.c b/drivers/net/cxgbe/sge.c</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">index e9d45f24c4..7cf5c70775 100644</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">--- a/drivers/net/cxgbe/sge.c</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+++ b/drivers/net/cxgbe/sge.c</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@@ -1492,6 +1492,90 @@ static inline void cxgbe_fill_mbuf_info(struct adapter *adap,</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; RTE_MBUF_F_RX_L4_CKSUM_BAD);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;}</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+static int cxgbe_copy_rx_pkt(struct sge_rspq *q, struct sge_eth_rxq *rxq,</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; u32 len, struct rte_mbuf **out)</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+{</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; struct sge *s = &amp;q-&gt;adapter-&gt;sge;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; struct rte_mbuf *pkt;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; char *dst;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; u32 copied = 0;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; u32 remaining = len;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; pkt = rte_pktmbuf_alloc(q-&gt;mb_pool);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; if (unlikely(!pkt)) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; rxq-&gt;rspq.eth_dev-&gt;data-&gt;rx_mbuf_alloc_failed++;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; rxq-&gt;stats.rx_drops++;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; return -ENOMEM;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; dst = rte_pktmbuf_append(pkt, len);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; if (unlikely(!dst)) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; rte_pktmbuf_free(pkt);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; rxq-&gt;stats.rx_drops++;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; return -ENOMEM;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; while (remaining) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; const struct rx_sw_desc *rsd = &amp;rxq-&gt;fl.sdesc[rxq-&gt;fl.cidx];</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; struct rte_mbuf *src = rsd-&gt;buf;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; u32 bufsz = get_buf_size(q-&gt;adapter, rsd);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; u32 copy_len;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; if (unlikely(!src || q-&gt;offset &lt; 0 ||</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; (u32)q-&gt;offset &gt;= bufsz)) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rte_pktmbuf_free(pkt);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rxq-&gt;stats.rx_drops++;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return -EINVAL;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; copy_len = RTE_MIN(bufsz - (u32)q-&gt;offset, remaining);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; rte_memcpy(dst + copied,</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rte_pktmbuf_mtod_offset(src, const void *, q-&gt;offset),</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; copy_len);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; copied += copy_len;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; remaining -= copy_len;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; q-&gt;offset += copy_len;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; if (remaining) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; free_rx_bufs(&amp;rxq-&gt;fl, 1);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; q-&gt;offset = 0;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; continue;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; q-&gt;offset = RTE_ALIGN_CEIL(q-&gt;offset, s-&gt;fl_align);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; if ((u32)q-&gt;offset &gt;= bufsz) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; free_rx_bufs(&amp;rxq-&gt;fl, 1);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; q-&gt;offset = 0;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; *out = pkt;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; return 0;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+}</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+static unsigned int cxgbe_fl_pkt_align(struct adapter *adap)</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+{</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; u32 sge_control = t4_read_reg(adap, A_SGE_CONTROL);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; unsigned int ingpad_shift, ingpad, fl_align;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; ingpad_shift = CHELSIO_CHIP_VERSION(adap-&gt;params.chip) &lt;= CHELSIO_T5 ?</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; X_INGPADBOUNDARY_SHIFT : X_T6_INGPADBOUNDARY_SHIFT;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; ingpad = 1U &lt;&lt; (G_INGPADBOUNDARY(sge_control) + ingpad_shift);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; fl_align = ingpad;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; if (!is_t4(adap-&gt;params.chip)) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; u32 sge_control2 = t4_read_reg(adap, A_SGE_CONTROL2);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; unsigned int ingpack = G_INGPACKBOUNDARY(sge_control2);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; ingpack = ingpack == X_INGPACKBOUNDARY_16B ?</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 16 : 1U &lt;&lt; (ingpack + X_INGPACKBOUNDARY_SHIFT);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; fl_align = RTE_MAX(ingpad, ingpack);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; return fl_align ? fl_align : RTE_CACHE_LINE_SIZE;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+}</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;/**</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; * process_responses - process responses from an SGE response queue</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; * @q: the ingress queue to process</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@@ -1535,14 +1619,12 @@ static int process_responses(struct sge_rspq *q, int budget,</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; stat_pidx = ntohs(q-&gt;stat-&gt;pidx);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; stat_pidx_diff = P_IDXDIFF(q, stat_pidx);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; while (stat_pidx_diff &amp;&amp; budget_left) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const struct rx_sw_desc *rsd =</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &amp;rxq-&gt;fl.sdesc[rxq-&gt;fl.cidx];</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const struct rss_header *rss_hdr =</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; (const void *)q-&gt;cur_desc;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const struct cpl_rx_pkt *cpl =</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; (const void *)&amp;q-&gt;cur_desc[1];</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; struct rte_mbuf *pkt, *npkt;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; u32 len, bufsz;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; struct rte_mbuf *pkt;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; u32 len;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rc = (const struct rsp_ctrl *)</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ((const char *)q-&gt;cur_desc +</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@@ -1553,28 +1635,16 @@ static int process_responses(struct sge_rspq *q, int budget,</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; break;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; len = ntohl(rc-&gt;pldbuflen_qid);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; BUG_ON(!(len &amp; F_RSPD_NEWBUF));</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; pkt = rsd-&gt;buf;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; npkt = pkt;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; len = G_RSPD_LEN(len);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; pkt-&gt;pkt_len = len;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">-</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; /* Chain mbufs into len if necessary */</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; while (len) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; struct rte_mbuf *new_pkt = rsd-&gt;buf;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">-</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; bufsz = min(get_buf_size(q-&gt;adapter,</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rsd), len);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; new_pkt-&gt;data_len = bufsz;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; unmap_rx_buf(&amp;rxq-&gt;fl);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; len -= bufsz;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; npkt-&gt;next = new_pkt;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; npkt = new_pkt;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; pkt-&gt;nb_segs++;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; rsd = &amp;rxq-&gt;fl.sdesc[rxq-&gt;fl.cidx];</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (len &amp; F_RSPD_NEWBUF) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (q-&gt;offset &gt; 0) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; free_rx_bufs(&amp;rxq-&gt;fl, 1);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; q-&gt;offset = 0;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; npkt-&gt;next = NULL;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; pkt-&gt;nb_segs--;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; len = G_RSPD_LEN(len);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ret = cxgbe_copy_rx_pkt(q, rxq, len, &amp;pkt);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (unlikely(ret))</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; break;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; cxgbe_fill_mbuf_info(q-&gt;adapter, cpl, pkt);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@@ -2379,6 +2449,7 @@ int t4_sge_init(struct adapter *adap)</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; sge_control = t4_read_reg(adap, A_SGE_CONTROL);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; s-&gt;pktshift = G_PKTSHIFT(sge_control);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; s-&gt;stat_len = (sge_control &amp; F_EGRSTATUSPAGESIZE) ? 128 : 64;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; s-&gt;fl_align = cxgbe_fl_pkt_align(adap);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; ret = t4_sge_init_soft(adap);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; if (ret &lt; 0) {</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; dev_err(adap, "%s: t4_sge_init_soft failed, error %d\n",</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">@@ -2516,6 +2587,7 @@ int t4vf_sge_init(struct adapter *adap)</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; s-&gt;stat_len = ((sge_control &amp; F_EGRSTATUSPAGESIZE)</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ? 128 : 64);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; s-&gt;pktshift = G_PKTSHIFT(sge_control);</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">+ &nbsp; s-&gt;fl_align = RTE_CACHE_LINE_SIZE;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue'; min-height: 15px;"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; /*</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">&nbsp; &nbsp; * A FL with &lt;= fl_starve_thres buffers is starving and a periodic</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">--&nbsp;</span></p>
+<p style="margin: 0px 0px 0px 0px; font: 13px 'helvetica neue';"><span style="font-size: 11pt; font-family: 'arial' , 'helvetica' , sans-serif;">2.39.5</span></p>
 </div>
 </blockquote>
 </div>
-</div>
-</div>
-</div>
-</blockquote>
 </div></div>
 </div></body></html>
---=_d7ff3640-e10f-41c0-9c44-83110c995ce1--
+--=_bd862c0c-6a2d-4a7e-909a-8c87184f07ef--
 
