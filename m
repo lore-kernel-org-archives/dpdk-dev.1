@@ -2,70 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E16FF886D
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Apr 2026 18:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381E6FF885A
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Apr 2026 19:36:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B35BD40664;
-	Tue, 28 Apr 2026 20:26:27 +0200 (CEST)
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com
- [209.85.219.49]) by mails.dpdk.org (Postfix) with ESMTP id D042D4064C
- for <dev@dpdk.org>; Tue, 28 Apr 2026 20:26:24 +0200 (CEST)
-Received: by mail-qv1-f49.google.com with SMTP id
- 6a1803df08f44-8a151012558so126764366d6.3
- for <dev@dpdk.org>; Tue, 28 Apr 2026 11:26:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 2D68C40651;
+	Tue, 28 Apr 2026 21:36:02 +0200 (CEST)
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com
+ [209.85.222.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 3128040650
+ for <dev@dpdk.org>; Tue, 28 Apr 2026 21:36:01 +0200 (CEST)
+Received: by mail-qk1-f174.google.com with SMTP id
+ af79cd13be357-8d65f4073bfso1584762285a.3
+ for <dev@dpdk.org>; Tue, 28 Apr 2026 12:36:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1777400784; x=1778005584; darn=dpdk.org;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=2ccCcVN1M9iCHT6r94FFQTfK8iqF2N5Zovyx6jPWznQ=;
- b=Y/pBk3La46oAOSnT/cNPu3gkU/pFKsqwyz/K0+AHiuKGscTNkD4q0dJV75nBtAnm5D
- +gnMhGWghMPO6D64OszFcieOSr4PgCXBdABlrM0B49PflGQ2RFHp6DV9c7szpa3Uopi3
- yfbHgFzFkK5szbdLQ0FfGigZlu6qyTdW27wwI=
+ d=iol.unh.edu; s=unh-iol; t=1777404960; x=1778009760; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:from:to:cc:subject:date:message-id:reply-to;
+ bh=9yyQ7OrZHY1ga/03Zs49hBhwhxHL0tMI+nqlKc9PJTg=;
+ b=ISPJbmqg0Yj62Gke+kHKoq+JQk6EXva0gXtX/atFoGZZKm5NfB4bBpT6Ai15Frh8yz
+ yAIfXbbZqQDMR/dFYyx1c0BGipsk85nPi0ob/1w4HYsOPCV4upDRnRPeAh7syPj1nDr7
+ AcmFOtIwu5UAcEm1JOiRLxUqktBAfzsTQPwyM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777400784; x=1778005584;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=2ccCcVN1M9iCHT6r94FFQTfK8iqF2N5Zovyx6jPWznQ=;
- b=FzNYPb6yDaSjvdSjuF6XObIlQ26xUlo4NAUbKqTEb8OIxGg/6HCdbAB1cVm4ozDqFm
- qkZ/7Wmp5htdtAbf6taqczef1fKurPbLYQbstTPpN+KOdp2OhGFwsRIGTD3gcGbNPjzg
- lHt6OF447Vs9YMFcKMB7UgeOJ1NAt/dPjGdcyX0A/w+rX0HzjquAdVASyAySx5p71xGe
- rE8Em8wFM8qAjtxexnlxq2VYPfF9TN2/Msv2pCTNPX9szZtHHDz9yY2asEMzzT+3xWwH
- +8mIEfPX1YAIy21n2B/SqeP4GKr4Lc1Et7i9pWLpay6YGgjmTOcNDaJZs7Z6xHBrz4SL
- 7upw==
-X-Gm-Message-State: AOJu0Yxn8GTzltth4+K+NZ2q6TVlZtRaiTJ7T6iw5Cwoa+A6X21QdZ5p
- tcNQBC740V9J7/5etTmpXFQpiRNE4Ej75y1wdU97JRMJtNRuNlgMWWV/7y7Os3JnfEXsRw/sC6l
- ruqmqtK+ru4t9KMukpnmlBvsfBtJWPLnOV0QPx0q2/bmU6W/m8UorEobEwRHZ8TuG5NctTD/+0c
- 5vU6JulkgorIkKlQjMWJF/fNOR+Ws=
-X-Gm-Gg: AeBDies9HUDHx3GBagDLdJy+lmZTL8nNcAOQHcmk6IhHweALNSXj3ravU0SDwtYX/DG
- hN9br/0Kx8rA3+127Rwbke5LpsiawmYEpPM8A6EIHGDrBS+v8I8E+3GvdOOcpxIKSJKFTDHm8BO
- mXi8+E8JHLi4+zJzgCAYSoYg4+tMFyh3E/p93h8JjV5OeZMg4L1f98KsiUkmNv9Eg3MKSuayFUt
- mrswQ5zyvAsaQR0fxM4ZdnbLUziTZnL3rksf3E4zc6NVCaAgXwzRMO3pvmt8RxmNf169fxy6LMa
- nZ5T2pwgxzBSUVRPuFRPg5nYo6F3lAK8mhx+NZi9D52CC88FR01P7ky4eEtRl8e2k2LrENED3oc
- pgVTeIeLNVoX7pdeYpHaTu7kEHlN9r0oSCxNp7P5Uqh50ZLRYs903CY411DoCtqY6KlRiPX2BOH
- 4RCJ61l74HHedKLd0pm1zkhnd1nSARIPMu0fL2VeZzLvUwlm9MCMeJtAr14IhjVNQ4GYh/rg2gL
- zA=
-X-Received: by 2002:a05:6214:428b:b0:8ae:61bb:95e3 with SMTP id
- 6a1803df08f44-8b3e3091e21mr72960486d6.36.1777400783515; 
- Tue, 28 Apr 2026 11:26:23 -0700 (PDT)
+ d=1e100.net; s=20251104; t=1777404960; x=1778009760;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=9yyQ7OrZHY1ga/03Zs49hBhwhxHL0tMI+nqlKc9PJTg=;
+ b=F3PrXUsGVCtGXnVSwHQT4LHEptvGMvu9XsyWBI8gxjDwiWdIoROk8VeaXjPUw6SgZ9
+ E9RccMsnoye7UKsUgvhyVwQOhmEhmA3aTc3qzjSx5McL5SeGGe1eBmYptXQX/QdLLqxN
+ UsiZLJhMeEzZ3ta86RaZT+vGRyQiX7aEEOonTqyMn55GyxwwPHPdclB9CVx70+PmF5u0
+ fxIg9lVSQAaO79ilf8zaOZNGG/dM310JCtOFVTeHO1EIcEO//OIP4nxwr5en7ni+SafP
+ mrQHokiS10Z6ynVy2d8CQWxrhRnkD5EvYtGViyPFIZR4jjVQCIPa4U26jx/vPCWSdTBk
+ ULzA==
+X-Gm-Message-State: AOJu0YzdYUuAaS84HZOPkdLoyx7jTwC+fYZwKSRusyzeFrTNcDvUTCO8
+ r7DiFe/vnuwud1xC5FqZ9MvZaJI0daqMT0grVdCh946DZQvvE0WeLeNAc8TmUtaNiSE7wRXwPGX
+ OjTgwM0vr+TCOQNNdynsXdIgmzcyOVeHoVDnxZIKjhiq0mq+/MRDe6pCoVKolB2LeWnEU4z/okR
+ TsGINtFuk8eUbuQjoxTXIrORfFanY=
+X-Gm-Gg: AeBDieuM0/DXK7I5J+NmZ2Mn63Qbp3X66IiMT5CN2s2XjdwaPyBJ3Dx3fJHcA1VAuaR
+ MuOIqmZRYufbVro0ki6jIzLBu/A+L5dGUwycKS4/2cOa6u994b2UHb/yenPzXaUMzig7nDevsSn
+ MjLk+cwuS4mXhoF88S9HyM8ewJbbyWfKtFMKweRH8aLbG+qs8Moy8pK0LnZvoe/HoLR3UM7h596
+ fsTAVkdKSWHTuGYXvfD3Q+JhEHoGmifKAhUqgG2EUteFv4ZfY/zFbV2wq+Pq+H0vanEo6y9s6ra
+ 1SDr6O5+VwTr2YKWaiqlyvGViS+ZU3Y0yKhHH0BDiO7Ks9XXmGcSSBiCPaSZdcIOVNWLXGzTwBj
+ dN9dKCdBy9gNbpRZkW3gxeG3zlBiJJJSEW/88/ow/sbeZAWolcKHrTy9Bmqf2ldvD3PYrNiFMTy
+ DB7/6nrqYk8pvVp6v5cK3ot39syp4zzi+kVz7zgdaQzy3UVUVGKxgk4H27yYDBWY//gTB5h0NIh
+ D8=
+X-Received: by 2002:a05:620a:46a5:b0:8ed:d906:a8ff with SMTP id
+ af79cd13be357-8f7d7242f38mr619514185a.14.1777404959909; 
+ Tue, 28 Apr 2026 12:35:59 -0700 (PDT)
 Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8b3ee9e75a5sm603946d6.20.2026.04.28.11.26.22
+ 6a1803df08f44-8b3ee9e75a5sm1965586d6.20.2026.04.28.12.35.58
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 28 Apr 2026 11:26:22 -0700 (PDT)
+ Tue, 28 Apr 2026 12:35:59 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: dev@dpdk.org,
 	luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
-Cc: lylavoie@iol.unh.edu, ahassick@iol.unh.edu, knimoji@iol.unh.edu,
+Cc: lylavoie@iol.unh.edu, knimoji@iol.unh.edu, ahassick@iol.unh.edu,
  dmarx@iol.unh.edu, Andrew Bailey <abailey@iol.unh.edu>
-Subject: [RFC PATCH 2/2] dts: add latency coverage for cryptodev testing
-Date: Tue, 28 Apr 2026 14:15:01 -0400
-Message-ID: <20260428181501.72434-2-abailey@iol.unh.edu>
+Subject: [RFC] dts: add verify coverage for cryptodev testing
+Date: Tue, 28 Apr 2026 15:35:41 -0400
+Message-ID: <20260428193541.79005-1-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260428181501.72434-1-abailey@iol.unh.edu>
-References: <20260428181501.72434-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -81,47 +79,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Currently, next DTS only has cryptodev testing coverage for throughput
-metrics. This patch adds a test suite to include latency testing for
-crypto devices.
+Currently, next-DTS only covers throughput testing through the
+dpdk-test-crypto application. This series adds coverage for the verify
+option to next DTS to allow functional testing for various algorithms of
+crypto devices and virtual devices.
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- .../dts/tests.TestSuite_cryptodev_latency.rst |   8 +
- dts/tests/TestSuite_cryptodev_latency.py      | 356 ++++++++++++++++++
- 2 files changed, 364 insertions(+)
- create mode 100644 doc/api/dts/tests.TestSuite_cryptodev_latency.rst
- create mode 100644 dts/tests/TestSuite_cryptodev_latency.py
+ dts/tests/TestSuite_cryptodev_verify.py | 228 ++++++++++++++++++++++++
+ tests.TestSuite_cryptodev_verify.rst    |   8 +
+ 2 files changed, 236 insertions(+)
+ create mode 100644 dts/tests/TestSuite_cryptodev_verify.py
+ create mode 100644 tests.TestSuite_cryptodev_verify.rst
 
-diff --git a/doc/api/dts/tests.TestSuite_cryptodev_latency.rst b/doc/api/dts/tests.TestSuite_cryptodev_latency.rst
+diff --git a/dts/tests/TestSuite_cryptodev_verify.py b/dts/tests/TestSuite_cryptodev_verify.py
 new file mode 100644
-index 0000000000..1bf4a0f4b0
+index 0000000000..a3f797b225
 --- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_cryptodev_latency.rst
-@@ -0,0 +1,8 @@
-+.. SPDX-License-Identifier: BSD-3-Clause
-+
-+cryptodev_latency Test Suite
-+============================
-+
-+.. automodule:: tests.TestSuite_cryptodev_latency
-+   :members:
-+   :show-inheritance:
-diff --git a/dts/tests/TestSuite_cryptodev_latency.py b/dts/tests/TestSuite_cryptodev_latency.py
-new file mode 100644
-index 0000000000..39c9ee02c4
---- /dev/null
-+++ b/dts/tests/TestSuite_cryptodev_latency.py
-@@ -0,0 +1,356 @@
++++ b/dts/tests/TestSuite_cryptodev_verify.py
+@@ -0,0 +1,228 @@
 +# SPDX-License-Identifier: BSD-3-Clause
 +# Copyright(c) 2026 University of New Hampshire
 +
-+"""DPDK cryptodev performance test suite.
++"""DPDK cryptodev verify test suite.
 +
-+The main goal of this test suite is to utilize the dpdk-test-cryptodev application to gather
-+performance metrics for various cryptographic operations supported by DPDK cryptodev-pmd.
-+It will then compare the results against a predefined baseline given in the test_config file to
-+ensure performance standards are met.
++The main goal of this test suite is to utilize the verify mode of dpdk-test-crypto application
++to ensure functional correctness for various cryptographic operations supported by DPDK
++cryptodev-pmd.
 +"""
 +
 +from api.capabilities import (
@@ -149,13 +133,9 @@ index 0000000000..39c9ee02c4
 +from framework.test_suite import BaseConfig, TestSuite, crypto_test
 +from framework.testbed_model.virtual_device import VirtualDevice
 +
-+config_list: list[dict[str, int | float | str]] = [
-+    {"buff_size": 64, "avg_cycles": 9999.00, "avg_time_us": 9999.0},
-+    {"buff_size": 512, "avg_cycles": 9999.00, "avg_time_us": 9999.0},
-+    {"buff_size": 2048, "avg_cycles": 9999.00, "avg_time_us": 9999.0},
-+]
-+
 +TOTAL_OPS = 10_000_000
++TEST_FILE = "/path/to/test/vector/file.data"
++config_list = [64, 512, 1024, 2048]
 +
 +
 +class Config(BaseConfig):
@@ -163,46 +143,41 @@ index 0000000000..39c9ee02c4
 +
 +    Attributes:
 +        delta_tolerance: The allowed tolerance below a given baseline.
-+        latency_test_parameters: The test parameters to use in the test suite.
++        throughput_test_parameters: The test parameters to use in the test suite.
 +    """
 +
 +    delta_tolerance: float = 0.05
 +
-+    latency_test_parameters: dict[str, list[dict[str, int | float | str]]] = {
-+        "aes_gcm": config_list,
-+        "aes_cbc_sha1_hmac": config_list,
-+        "aes_cbc": config_list,
-+        "vdev_aesni_gcm": config_list,
-+        "vdev_aesni_mb": config_list,
-+        "vdev_aesni_mb_cipher_then_auth": config_list,
++    verify_test_parameters: dict[str, list[int]] = {
++        "aesni_mb_vdev": config_list,
++        "openssl_vdev": config_list,
++        "sha1_hmac_buff_32": config_list,
 +    }
 +
 +
 +@requires_link_topology(LinkTopology.NO_LINK)
-+class TestCryptodevLatency(TestSuite):
++class TestCryptodevVerify(TestSuite):
 +    """DPDK Crypto Device Testing Suite."""
 +
 +    config: Config
 +
 +    def set_up_suite(self) -> None:
 +        """Set up the test suite."""
-+        self.latency_test_parameters: dict[str, list[dict[str, int | float | str]]] = (
-+            self.config.latency_test_parameters
-+        )
++        self.verify_test_parameters: dict[str, list[int]] = self.config.verify_test_parameters
 +        self.delta_tolerance: float = self.config.delta_tolerance
 +        self.device_type: DeviceType | None = get_device_from_str(
 +            str(get_ctx().sut_node.crypto_device_type)
 +        )
 +        self.buffer_sizes = {}
 +
-+        for k, v in self.latency_test_parameters.items():
-+            self.buffer_sizes[k] = ListWrapper([int(run["buff_size"]) for run in v])
++        for k, v in self.verify_test_parameters.items():
++            self.buffer_sizes[k] = ListWrapper(v)
 +
-+    def _print_stats(self, test_vals: list[dict[str, int | float | str]]) -> None:
-+        element_len = len("Avg Time us Target")
++    def _print_stats(self, test_vals: list[dict[str, int | float]]) -> None:
++        element_len = len("Delta Tolerance")
 +        border_len = (element_len + 1) * (len(test_vals[0]))
 +
-+        print(f"{'Latency Results'.center(border_len)}\n{'=' * border_len}")
++        print(f"{'Verify Results'.center(border_len)}\n{'=' * border_len}")
 +        for k, v in test_vals[0].items():
 +            print(f"|{k.title():<{element_len}}", end="")
 +        print(f"|\n{'='*border_len}")
@@ -212,263 +187,159 @@ index 0000000000..39c9ee02c4
 +                print(f"|{v:<{element_len}}", end="")
 +            print(f"|\n{'='*border_len}")
 +
-+    def _verify_latency(
++    def _verify_output(
 +        self,
 +        results: list[CryptodevResults],
 +        key: str,
-+    ) -> list[dict[str, int | float | str]]:
-+        result_list: list[dict[str, int | float | str]] = []
++    ) -> list[dict[str, int | float]]:
++        result_list: list[dict[str, int | float]] = []
++        if key not in self.verify_test_parameters:
++            skip(f"{key} test not configured")
 +
++        results_list = []
++        passed = True
 +        for result in results:
-+            # get the corresponding baseline for the current buffer size
-+            parameters: dict[str, int | float | str] = list(
-+                filter(
-+                    lambda x: x["buff_size"] == result.buffer_size,
-+                    self.latency_test_parameters[key],
-+                )
-+            )[0]
-+            test_result = True
-+            expected_cycles = parameters["avg_cycles"]
-+            expected_time_us = parameters["avg_time_us"]
-+            measured_time_delta = abs(
-+                (getattr(result, "avg_time_us") - expected_time_us) / expected_time_us
-+            )
-+            measured_cycles_delta = abs(
-+                (getattr(result, "avg_cycles") - expected_cycles) / expected_cycles
-+            )
-+
-+            # result did not meet the given cycles parameter, check if within delta.
-+            if getattr(result, "avg_cycles") > expected_cycles:
-+                if self.delta_tolerance < measured_cycles_delta:
-+                    test_result = False
-+            # result did not meet the given time parameter, check if within delta.
-+            if getattr(result, "avg_time_us") > expected_time_us:
-+                if self.delta_tolerance < measured_time_delta:
-+                    test_result = False
-+            result_list.append(
++            if getattr(result, "failed_enqueue") / TOTAL_OPS > self.delta_tolerance:
++                passed = False
++            if getattr(result, "failed_dequeue") / TOTAL_OPS > self.delta_tolerance:
++                passed = False
++            if getattr(result, "failed_ops") / TOTAL_OPS > self.delta_tolerance:
++                passed = False
++            results_list.append(
 +                {
-+                    "Buffer Size": parameters["buff_size"],
-+                    "delta tolerance": self.delta_tolerance,
-+                    "cycles delta": round(measured_cycles_delta, 5),
-+                    "Avg cycles": round(getattr(result, "avg_cycles"), 5),
-+                    "Avg cycles target": expected_cycles,
-+                    "time delta": round(measured_time_delta, 5),
-+                    "Avg time us": round(getattr(result, "avg_time_us"), 5),
-+                    "Avg time us target": expected_time_us,
-+                    "passed": "PASS" if test_result else "FAIL",
++                    "Failed Enqueue": getattr(result, "failed_enqueue"),
++                    "Failed Dequeue": getattr(result, "failed_dequeue"),
++                    "Failed Operations": getattr(result, "failed_ops"),
++                    "Delta Tolerance": self.delta_tolerance,
++                    "Passed": passed,
 +                }
 +            )
 +        return result_list
 +
 +    @crypto_test
-+    def aes_gcm(self) -> None:
-+        """aes_gcm latency test.
++    def aesni_mb_vdev(self) -> None:
++        """aesni_mb_vdev test.
 +
 +        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
++            * Create a cryptodev instance with aesni_mb virtual device and provided buffer sizes.
 +        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
 +        """
-+        if "aes_gcm" not in self.latency_test_parameters:
++        if "aesni_mb_vdev" not in self.verify_test_parameters:
 +            skip("test not configured")
 +        app = Cryptodev(
-+            ptest=TestType.latency,
-+            burst_sz=32,
-+            buffer_sz=ListWrapper(self.buffer_sizes["aes_gcm"]),
-+            devtype=self.device_type,
-+            optype=OperationType.aead,
-+            aead_algo=AeadAlgName.aes_gcm,
-+            aead_op=EncryptDecryptSwitch.encrypt,
-+            aead_key_sz=16,
-+            aead_iv_sz=12,
-+            aead_aad_sz=16,
-+            digest_sz=16,
-+            total_ops=TOTAL_OPS,
-+        )
-+        results = self._verify_latency(app.run_app(), "aes_gcm")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency fell more than the delta tolerance below baseline",
-+            )
-+
-+    @crypto_test
-+    def aes_cbc_sha1_hmac(self) -> None:
-+        """aes_cbc_sha1_hmac latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aes_cbc_sha1_hmac" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            burst_sz=32,
-+            buffer_sz=ListWrapper(self.buffer_sizes["aes_cbc_sha1_hmac"]),
-+            devtype=self.device_type,
++            vdevs=[VirtualDevice("crypto_aesni_mb0")],
++            ptest=TestType.verify,
++            test_file=TEST_FILE,
++            test_name="sha1_hmac_buff_32",
++            devtype=DeviceType.crypto_aesni_mb,
 +            optype=OperationType.cipher_then_auth,
 +            cipher_algo=CipherAlgorithm.aes_cbc,
 +            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
++            cipher_key_sz=32,
++            cipher_iv_sz=16,
 +            auth_algo=AuthenticationAlgorithm.sha1_hmac,
 +            auth_op=AuthenticationOpMode.generate,
 +            auth_key_sz=64,
 +            digest_sz=12,
-+            total_ops=TOTAL_OPS,
-+        )
-+        results = self._verify_latency(app.run_app(), "aes_cbc_sha1_hmac")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency fell more than the delta tolerance below baseline",
-+            )
-+
-+    @crypto_test
-+    def aes_cbc(self) -> None:
-+        """aes_cbc latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "aes_cbc" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
 +            burst_sz=32,
-+            buffer_sz=ListWrapper(self.buffer_sizes["aes_cbc"]),
-+            devtype=self.device_type,
-+            optype=OperationType.cipher_only,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
 +            total_ops=TOTAL_OPS,
++            buffer_sz=self.buffer_sizes["aesni_mb_vdev"],
 +        )
-+        results = self._verify_latency(app.run_app(), "aes_cbc")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency fell more than the delta tolerance below baseline",
-+            )
-+
-+    @crypto_test
-+    def vdev_aesni_gcm(self) -> None:
-+        """aesni_gcm virtual device latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "vdev_aesni_gcm" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_aesni_gcm0")],
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes["vdev_aesni_gcm"],
-+            devtype=DeviceType.crypto_aesni_gcm,
-+            optype=OperationType.aead,
-+            aead_op=EncryptDecryptSwitch.encrypt,
-+            aead_key_sz=16,
-+            aead_iv_sz=12,
-+            aead_aad_sz=16,
-+            digest_sz=16,
-+            total_ops=TOTAL_OPS,
-+        )
-+        results = self._verify_latency(app.run_app(), "vdev_aesni_gcm")
-+        self._print_stats(results)
-+        for result in results:
-+            verify(result["passed"] == "PASS", "latency fell more than the delta tolerance")
-+
-+    @crypto_test
-+    def vdev_aesni_mb(self) -> None:
-+        """aesni_mb vdev latency test.
-+
-+        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
-+        Verify:
-+            * The latency is below or within delta of provided baseline.
-+
-+        Raises:
-+            SkippedTestException: When configuration is not provided.
-+        """
-+        if "vdev_aesni_mb" not in self.latency_test_parameters:
-+            skip("test not configured")
-+        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_aesni_mb0")],
-+            burst_sz=32,
-+            buffer_sz=self.buffer_sizes["vdev_aesni_mb"],
-+            devtype=DeviceType.crypto_aesni_mb,
-+            optype=OperationType.cipher_only,
-+            cipher_algo=CipherAlgorithm.aes_cbc,
-+            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
-+            cipher_iv_sz=16,
-+            total_ops=TOTAL_OPS,
-+        )
-+        results = self._verify_latency(app.run_app(), "vdev_aesni_mb")
++        results = self._verify_output(app.run_app(), "aesni_mb_vdev")
 +        self._print_stats(results)
 +        for result in results:
 +            verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
 +
 +    @crypto_test
-+    def vdev_aesni_mb_cipher_then_auth(self) -> None:
-+        """aesni_mb vdev cipher and auth latency test.
++    def openssl_vdev(self) -> None:
++        """Openssl vdev test.
 +
 +        Steps:
-+            * Create a cryptodev instance with provided device type and buffer sizes.
++            * Create a cryptodev instance with openssl virtual device and provided buffer sizes.
 +        Verify:
-+            * The latency is below or within delta of provided baseline.
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
 +
 +        Raises:
 +            SkippedTestException: When configuration is not provided.
 +        """
-+        if "vdev_aesni_mb" not in self.latency_test_parameters:
++        if "openssl_vdev" not in self.verify_test_parameters:
 +            skip("test not configured")
 +        app = Cryptodev(
-+            ptest=TestType.latency,
-+            vdevs=[VirtualDevice("crypto_aesni_mb0")],
++            vdevs=[VirtualDevice("crypto_openssl0")],
++            ptest=TestType.verify,
++            test_file=TEST_FILE,
++            test_name="aes_gcm_buff_32",
++            devtype=DeviceType.crypto_openssl,
++            optype=OperationType.aead,
++            aead_algo=AeadAlgName.aes_gcm,
++            aead_op=EncryptDecryptSwitch.encrypt,
++            aead_key_sz=16,
++            aead_aad_sz=16,
++            aead_iv_sz=12,
++            digest_sz=16,
 +            burst_sz=32,
-+            buffer_sz=self.buffer_sizes["vdev_aesni_mb"],
-+            devtype=DeviceType.crypto_aesni_mb,
-+            optype=OperationType.cipher_then_auth,
++            buffer_sz=self.buffer_sizes["aesni_mb"],
++            total_ops=TOTAL_OPS,
++        )
++        results = self._verify_output(app.run_app(), "openssl_vdev")
++        self._print_stats(results)
++        for result in results:
++            verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
++
++    @crypto_test
++    def sha1_hmac_buff_32(self) -> None:
++        """aes_cbc test.
++
++        Steps:
++            * Create a cryptodev instance with provided device type and buffer sizes.
++        Verify:
++            * The aes_cbc cipher and sha1_hmac authentication algorithms are working as expected
++                with the dpdk-test-crypto application.
++
++        Raises:
++            SkippedTestException: When configuration is not provided.
++        """
++        if "sha1_hmac_buff_32" not in self.verify_test_parameters:
++            skip("test not configured")
++        app = Cryptodev(
++            ptest=TestType.verify,
++            test_file=TEST_FILE,
++            test_name="sha1_hmac_buff_32",
++            devtype=self.device_type,
++            optype=OperationType.aead,
 +            cipher_algo=CipherAlgorithm.aes_cbc,
 +            cipher_op=EncryptDecryptSwitch.encrypt,
-+            cipher_key_sz=16,
++            cipher_key_sz=32,
++            cipher_iv_sz=16,
 +            auth_algo=AuthenticationAlgorithm.sha1_hmac,
 +            auth_op=AuthenticationOpMode.generate,
 +            auth_key_sz=64,
-+            digest_sz=12,
++            digest_sz=20,
++            burst_sz=32,
++            buffer_sz=self.buffer_sizes["sha1_hmac_buff_32"],
 +            total_ops=TOTAL_OPS,
 +        )
-+        results = self._verify_latency(app.run_app(), "vdev_aesni_mb_cipher_then_auth")
++        results = self._verify_output(app.run_app(), "sha1_hmac_buff_32")
 +        self._print_stats(results)
 +        for result in results:
-+            verify(
-+                result["passed"] == "PASS",
-+                "latency fell more than the delta tolerance below baseline",
-+            )
--- 
++            verify(result["passed"] == "PASS", "Gbps fell below delta tolerance")
+diff --git a/tests.TestSuite_cryptodev_verify.rst b/tests.TestSuite_cryptodev_verify.rst
+new file mode 100644
+index 0000000000..d0a305a7d5
+--- /dev/null
++++ b/tests.TestSuite_cryptodev_verify.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
++
++cryptodev_verify Test Suite
++===========================
++
++.. automodule:: tests.TestSuite_cryptodev_verify
++   :members:
++   :show-inheritance:
+--
 2.50.1
 
