@@ -2,155 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A632BFF885A
-	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Apr 2026 16:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706F6FF886F
+	for <dpdk-dev@archiver.kernel.org>; Tue, 28 Apr 2026 17:03:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA6F7402B5;
-	Tue, 28 Apr 2026 18:52:50 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 193194026E
- for <dev@dpdk.org>; Tue, 28 Apr 2026 18:52:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8A7EA402E1;
+	Tue, 28 Apr 2026 19:03:35 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+ by mails.dpdk.org (Postfix) with ESMTP id 27EB74026E
+ for <dev@dpdk.org>; Tue, 28 Apr 2026 19:03:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777395170; x=1808931170;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=C+4nfvBxn+K55n1fiaZ2me/XQnPYD6BLE9jr4Phi5jo=;
- b=MBJDK7YjGh2MWUFIgVwCKVcokWdDWW+uC8ba7YML86NlpZeFJnjsFVIq
- 0Qzft7ciJwUnLehrkfXSVhGJjJth64HjG0qGDhHW23/LVvVPYPk6lbKIK
- eYFpiy40J1gmy6T98q67cYRVFXDkfPhiR2JIgBjRgtxEEwAdz5ZbAjI9T
- jJbPimdHzWaBNzF7WyVrdSCCbAI0YUUCr7SYcgdbX0WVdIK+sE3n7mDNk
- LGbOUPRiun3ebVNLvbFft+GjiK0m9EsZ7S6I6wIXwY1lU+4zClNbRQB+B
- wHEQvk9Hk1GKm47mlJ9rXLy4VjH4I3eDC/hzmK/iLy9P64ekA333eenwi A==;
-X-CSE-ConnectionGUID: HHLH/tlWSR+JlJwkW5QtTg==
-X-CSE-MsgGUID: cfWy79EvRB2jNEtX4zi08A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11770"; a="81917225"
-X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="81917225"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Apr 2026 09:52:49 -0700
-X-CSE-ConnectionGUID: OKQJ6B6eT6ibDKptag6AdA==
-X-CSE-MsgGUID: 1QkW1tRbR3aM6lDBid1L4w==
+ t=1777395815; x=1808931815;
+ h=from:to:cc:subject:date:message-id:in-reply-to:
+ references:mime-version:content-transfer-encoding;
+ bh=a3XjrTL6tEwRCQsk+1Zg7D1fo3OE4vNRhiR8bPyjTDs=;
+ b=YXWelrNoS0yyzy2zTNb2wSZq0ze2L5wFQb1Hap9wgMRy1JPpahnh/iRP
+ zrBomZFQUN6cU9BoenlsYX75+bmJcF1N576Png090WXKnenLyZSY8mrp4
+ eFVW6IvkhckjWoV8NVXycXGcXAul9EgTNbLKow0cRm2CCJUQgVvhmIh49
+ TRMOwzBDYS8jhSzLA1ZkKKQTjxCWmfQRuT5kgeF/1HAFmhcE+baaIcyDk
+ GmsKdy1zKPfPb5nrzwYrzdQ+5stZhfftAp8Zb2HoSdZpHzb+edbrXHq95
+ B1bWX1TFpzR8CI0wQnzcDabwdN3a4bn5Esk+PI5pETMQl4xBg395vBlXt A==;
+X-CSE-ConnectionGUID: 6akopl9PQa+G/5UjgwJF6w==
+X-CSE-MsgGUID: 0ia4K5njQ/iL1gj5qsqtMQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11770"; a="82180124"
+X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="82180124"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+ by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 28 Apr 2026 10:03:05 -0700
+X-CSE-ConnectionGUID: fKyGnWWvSj6fkg0LBk/dkA==
+X-CSE-MsgGUID: 4/SegcoST+aEzjjRVTAdsQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="235764884"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
- by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 28 Apr 2026 09:52:47 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 28 Apr 2026 09:52:47 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Tue, 28 Apr 2026 09:52:47 -0700
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.54) by
- edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Tue, 28 Apr 2026 09:52:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MmFhEWKCDgA4xYUlSwV+qNFKgFzHTZFo1LZo7Nl/LdkJeFzavaBXDOraMwykjTCRUfU6vEgu9S5ye1azFcFN6WMo44ZTFihdvfFs0Ag2MImnRjlP9c/5Iru5aSVRyJMe88QSO4eNL8CDhWf2/BS5xZR3HQmExsb04eNx36wzARJ5c+oFYr8CvGsw5B2leycyYG0b4dEgh0RZREjffwKaxFiZz3Lzh6Bt/MG62OC0rtXq84M+SHUhDeNbFtKgaXwQHa6yzO+0xTBNj0A2Anx4fXQHkMuhrvlr2F+6gd5uVMbwhBAYn/modgooZgn5JydAqyArSs0yBLuQj83O1/gGJg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WiPD5hNWm5Gg9F4xWLQBDuSVEYUqep/c6PKZn/QMRUE=;
- b=YKbsXzm+wWH2KC9w/pBexFilvh1HofmTQ9hJAarSWnj0YfoXkTVy7NF47QqcFN8c+XHtIq4q6UAHk1zsHMNq4mFquyXCTBLrKpxFRnr4AG1870Th3FPmIlAE6Klc1kmReUJNFVBjN/lk1p7kQDu/A7IaEjYMiQS2x4DCxYDPaOD0qXEb6hXfS3+g6tiP9gyRHpomi94OXEII9AkUUsODm3lSX4SZDGO/H5c2PD2YI9s8YnTw+XOBdIprHR8N2sGUy1kDdVyjFJaVl4Qld3G1VqLKD4p/zyTlmmkmmldbwUvXFqyBJZcDcsHjumwQ3/AyLl11Nx0muAIpSzp9Xu8+Nw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH0PR11MB7563.namprd11.prod.outlook.com (2603:10b6:510:286::11)
- by PH7PR11MB7122.namprd11.prod.outlook.com (2603:10b6:510:20d::16)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.16; Tue, 28 Apr
- 2026 16:52:41 +0000
-Received: from PH0PR11MB7563.namprd11.prod.outlook.com
- ([fe80::b1d9:cd5f:9d12:e954]) by PH0PR11MB7563.namprd11.prod.outlook.com
- ([fe80::b1d9:cd5f:9d12:e954%6]) with mapi id 15.20.9870.016; Tue, 28 Apr 2026
- 16:52:41 +0000
-Message-ID: <05d9e1ee-19e9-4431-b521-99d0b1881004@intel.com>
-Date: Tue, 28 Apr 2026 22:22:34 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v1 0/4] introduce PTP protocol library and software relay
- example
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, <bruce.richardson@intel.com>, <aman.deep.singh@intel.com>
+X-IronPort-AV: E=Sophos;i="6.23,204,1770624000"; d="scan'208";a="233973002"
+Received: from icx008.iind.intel.com ([10.190.212.196])
+ by orviesa009.jf.intel.com with ESMTP; 28 Apr 2026 10:03:02 -0700
+From: Rajesh Kumar <rajesh3.kumar@intel.com>
+To: dev@dpdk.org
+Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
+ stephen@networkplumber.org, Rajesh Kumar <rajesh3.kumar@intel.com>
+Subject: [RFC v2 0/6] introduce PTP protocol library and software relay
+Date: Wed, 29 Apr 2026 03:58:31 +0530
+Message-ID: <cover.1777413123.git.rajesh3.kumar@intel.com>
+X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260428010117.692626-1-rajesh3.kumar@intel.com>
 References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
- <20260427164230.6e015396@phoenix.local>
-Content-Language: en-US
-From: "Kumar, Rajesh" <rajesh3.kumar@intel.com>
-In-Reply-To: <20260427164230.6e015396@phoenix.local>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MA5P287CA0035.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:17a::6) To PH0PR11MB7563.namprd11.prod.outlook.com
- (2603:10b6:510:286::11)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR11MB7563:EE_|PH7PR11MB7122:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8595098c-932b-4522-f24c-08dea5468f80
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|376014|1800799024|22082099003|56012099003|18002099003; 
-X-Microsoft-Antispam-Message-Info: vcDnVIq84kyjnTaruAsWpQywVjY0mIQ29KFLT8Z3QrSJPljOTP4rf4Q/0LxcSX7A+Nu9RyNMTKY+vPx5uNljj6byWMFIrDI2zPnM+bYT5N76Um602sWLNTgvnQeWSmQCd+fAbEK1gOdC42spRMK2RMUwwGsTw+UwmZOtYEw424YMN2efHo/YPr3BPLfipcwesuI2v5A2rw+WnH3jFoph4a6Gue8AwdkUOr6I2B8JY/fqvWNnjiJlOtUdwdKmYiHlQjn84wATwkW4cBmpCWUYe1A47S+91R1Ot12AtPz2XB4i5EU7HhBv4VxFR0NK+IfVAlywM65lBEBOj7Szcm14E19MmhdxlZCPTylXG5uqqhkKsJxwNbPuVlYPcFDQI4bBPi2ZOO2rf/shvo5NED2NMOgQC805PuT/74rmWJYMK8jgpzbSC5o96pDhGf2GHrFAAUb0vr4iuLwixI9MZD5Zuou7FmgIGi/XJiEpHrEUPgUrkcxM9zUic0N1S5thXBOj1D2slRwN9SQgLlG6j9jfD/hMG/yHGsom/l+oqZc6HrKBBW000Dg/vmNdV8aKNVei+iqOy0jAp0CXMwgduKF69Z3Zw7w4jWzHHjkKZO5bJiPQGSdEfFLYN+ychD1dC9auhx+xy6GB1HPDRiVfe7g+WqOxYZb2r8yZhxFbQ8k0k4/hdGVT+96+AM/jHKh6j32kHWzkESziQzaDmoDR/Wl9aRIMPyOU8CQWKjNbGExQ8Ow=
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:PH0PR11MB7563.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(376014)(1800799024)(22082099003)(56012099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N1FIbzUyZnNPdmlMNjUxZUFvUWR0UFRxYkloeUFxbEwxUDRvRW1tckN3RzFU?=
- =?utf-8?B?U0tobjB6YWFVbzh5WEdEVUhROS9VU1IzZS9FUjk4TEtveTIxU0d3eU9Fd09n?=
- =?utf-8?B?S2ZQVEhHVmxWN1o0TlR3dVdLakZXU2RmdElCRW50S0pISEp6MWl1bGllZWJ3?=
- =?utf-8?B?WG8rY0d5Zys5aVdNTEQ3NlNOeURCUC84YnZ2V2g2VUpBUFllM0t5YlBuMERU?=
- =?utf-8?B?TXR6aHFDVjFLVkNrOXMvTGZJZjFpMXBXU1pIM1dyaE83NE9rRWFWVGVzSmMz?=
- =?utf-8?B?UHNWdGErVHVVVDRpK1NrRmE5TC9hcGJKcFNFYXdsSVFjUmg4N2syaWdQNSsz?=
- =?utf-8?B?SXY1QUw2WUpEMlNjNWFsUk8zUU1uNE82dFQ0bjMwTE11WFlnRXd1YjY0RzZC?=
- =?utf-8?B?ZW9ZclFiV1UzNHVWZ1VxU0ZkeSs5RFFheGZwdXE2cnczZFdINUJQSGhzVmll?=
- =?utf-8?B?bkpFKzc2ODlmYUtIdVVNbWFvV0M0blVNZ3diajFyZVFWQWl6SWRPNlI4SzNr?=
- =?utf-8?B?dThhKzVYL0dwTDhWNXFIWEdZSVhXbHhiUWpQQUh2VkR1STAvbms1WTF1WDVl?=
- =?utf-8?B?SDcwYTAzV29OaTcwQ2lEdldTVUkxNGU0R2FIZ3d2b1lwWUpQUHJDV2hIN2RO?=
- =?utf-8?B?OXZBZmVBVWM2KzRNcnVTWlFoT1VTK0NackozLzBId05JNFcxTGs1UEZMcEts?=
- =?utf-8?B?YzdxQTB2K2pOZWM0QkkzeUhXZnFYc2RyclVaT0o0SU94Q0hpZTlrRFNubkV3?=
- =?utf-8?B?M0tQVEVwb3gxNGY2Qk9QS2tTMDhDM3hBZWtFUDJwUXV1TXpmZTJYRWhRVEFj?=
- =?utf-8?B?b29ONThRSUFLTGFGQ2owR3d0eTN1c3lQNzJyK1FhM041MUUxVGlPTUc0MTBj?=
- =?utf-8?B?V0ZrLzVod2RhcExzR21uTDIwNi8vZFhiZi9JaHBkYnd5YnE1a1I1c0o5THpG?=
- =?utf-8?B?S2ZQdTZhWkF0aHI2azBUM01LUWgzQlRmMlJVOTc0aVAyVkU2aVEzam9LTlE5?=
- =?utf-8?B?VnlKTFRWQTREdllPRG5Gd3lyYUx0VkFJeHBWQ2NESzhtdzloMHM4eUdvU3Jh?=
- =?utf-8?B?dFJPaExMTzIrMmZwRWJQUm1CWTVkSXp4VlF3U21IVDlzaTN0elk0Z2I5eTJV?=
- =?utf-8?B?QTd4VStLNXJFQ0ZQbzE4SHExdHpna2xJY0dGc1FwaFNyRWgxeWMvUWhrcGNZ?=
- =?utf-8?B?eW9SVDJYNkg1Z0p1Q0tKNTlDUk5sNDRwbDJEL1d3NWhjeDc5b2JnTXd3b0hG?=
- =?utf-8?B?OU91NGg2U0lSR015alJHRmFndUh2UFQyWmlSNjMwWC83K0pncWRzOFE5T0ZF?=
- =?utf-8?B?aWlvN0xVdUl1R0FEMVBra1ZkMXU5ZDJRNmVGWTBJbVYxSnZkRHhXMkRVYTQx?=
- =?utf-8?B?ZzZXaFRjb2RrZkpYR3hTSXpHeWZid1kyVEphNUh1TEtHOFBHOGs1TytERk5N?=
- =?utf-8?B?eUdWYTZLalFhZ3JsMSswOTEvWmF5Z015MGt3ajZWRTFNVkZldVJYVFcvNlI1?=
- =?utf-8?B?MnBmWUVPYkpScHMvY2dwdlNUeUpKNU1NYkV2ZjJwUmtmYVZoY2ZtRUNJSjEx?=
- =?utf-8?B?Um5ucHA1VVlEaTZYSjZMRXMrYXR2UXdxY25oSlNHYmZUOEJUK1J4alJFWHVB?=
- =?utf-8?B?R0lCQk5seDFiRVVFa1J1Vm12aVl3Wk5qMGQyVWNTSU4wVDdBbDVCZ2d1bGtP?=
- =?utf-8?B?alhwWS91dU1ydUdqMWt2cDVYTndBZkpwbk5nTmx1Z3BDclJObUJhbDNIZHlo?=
- =?utf-8?B?SGIyVWFtUU8wTlAvRDYyeGpnU2RaY0g4SVFpYi9rS2ZPajEvbG9GN24xRmo1?=
- =?utf-8?B?eTVuc2VRQW10UUxWbGVlc3lIUXNETjZVdFptOXgxVitDampvcXhTOFptTFpS?=
- =?utf-8?B?UTFmdXA5YmhpS1d5M0c1QmdKOWNxenplQUhwYVVUbDc5RXFVNE8xWGVlQUNj?=
- =?utf-8?B?S1hLazQxNEorYWZoQjY5cjl4ZnRUWlBpejdOdlIvSm81R0ZvdVlBSjB6QmFu?=
- =?utf-8?B?YUJMd2xXeGV4MGd6ZkFFOTVhU0NwNVNaY1ZISytLRlZDSXMrc0lUT3Z2Vm1Z?=
- =?utf-8?B?TmhkZGQ4T1RlQXZGcU1LZWZiYjM0ZDB0V1pNVjBnempHaEdwMW9STnIvWTI5?=
- =?utf-8?B?U294SElOYVAxY0RvbFZiTU9Xc20xY0RESGJOL1g2ZzBvV3BtN0N4bS83SXpO?=
- =?utf-8?B?cVgxNWYxSmtpWWE2V2x4S3ArQUNMUFF3NFg5Wk1INGNyU2pMaGJQVDBtbWMv?=
- =?utf-8?B?eU9KeStwMElzY3FZNEEvVGE2NzRrUjdaYTlrWTBDZkVxT05hNUtWbythRnkz?=
- =?utf-8?B?ZUlEM3E3Q08yUlkwZ212em9vYUNmS0JoMWIvc0w2WjgzS21VR0xENzFPc09R?=
- =?utf-8?Q?8PscJZbA57YdxzbQ=3D?=
-X-Exchange-RoutingPolicyChecked: kqGsIKkX6xDU9MB2L1CrNdHjMfpWatMVsnZICGoHOiftViALq9+tyIM6dIBr0xMfNJvZG9Hkw6ismwgm+xHDP5UZdjyt+QDF4tI3HLTP5qy8X7ppGqnvcEb4+DqBkp3Yt2vclN3+4Uv+l+U8lwvSvqN6jP4FC0G5sjprKNEv+cjIxeKVQFWYW//2JxVbEe+6HEm3XonmzmyYqAi5R9F2Uz3/AtgLSV7IHzNQbnDN+kBM1C4GKiO2+kSqqCc/rf2Ez5RQJX9kOU+GTkVmMUMnZCshXEHTYGXFPyxNp3cJ+u2lph71nzF8LO01CvJ8JUSZYGRdceNv95tvkbBLmIYG6Q==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8595098c-932b-4522-f24c-08dea5468f80
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR11MB7563.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2026 16:52:41.2695 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ggWC/2W09t/tfjqN6Bgs6O/OvWkKxD6NepQ3/jlAzv9Cjky2h7W8iItIht6VnCLdvgtvgdFVd13NAooYTFZwsQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7122
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=yes
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -164,9 +61,158 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This series introduces a new DPDK library (lib/ptp) for IEEE 1588-2019
+PTP protocol packet processing and a companion example application
+(ptp_tap_relay_sw) that demonstrates its usage.
 
-On 28-04-2026 05:12 am, Stephen Hemminger wrote:
->   things I noticed were:
-> Do not use older PTP terminology master/slave; we fixed this in DPDK.
-> This would cause a NAK for me, and checkpatch would flag it
-Fixed.
+Motivation
+----------
+Several DPDK applications need to classify and manipulate PTP packets
+(e.g. ptpclient, ptp_tap_relay, custom Transparent Clocks). Today each
+application re-implements its own PTP header parsing and correctionField
+handling. A shared library avoids duplication and provides a tested,
+standards-compliant foundation.
+
+Library: lib/ptp
+----------------
+The library provides:
+  - PTP header structures (IEEE 1588-2019 common header, timestamp,
+    port identity)
+  - Packet classification: rte_ptp_classify() detects PTP over L2
+    (EtherType 0x88F7), VLAN-tagged L2 (TPIDs 0x8100/0x88A8, single
+    or double), UDP/IPv4, UDP/IPv6 (ports 319/320), and VLAN-tagged
+    UDP variants
+  - Header access: rte_ptp_hdr_get() returns a pointer to the PTP
+    header inside an mbuf
+  - Inline helpers: correctionField manipulation (48.16 fixed-point),
+    message type extraction, two-step flag check, timestamp conversion
+  - Debug: rte_ptp_msg_type_str() for human-readable message names
+
+The API is experimental (targeted for 26.07). Dependencies are minimal:
+mbuf and net libraries only.
+
+Example: ptp_tap_relay_sw
+-------------------------
+A minimal PTP Transparent Clock relay between a DPDK-bound physical NIC
+and a kernel TAP interface using software timestamps only. No patched
+kernel modules, custom TAP PMD, or hardware timestamp support is
+required.
+
+The relay:
+  1. Receives packets on the physical NIC via DPDK
+  2. Classifies PTP packets using rte_ptp_classify()
+  3. For event messages, records software timestamps
+     (CLOCK_MONOTONIC_RAW) at ingress and egress
+  4. Adds residence time to correctionField via rte_ptp_add_correction()
+     (IEEE 1588-2019 §10.2 Transparent Clock)
+  5. Forwards bidirectionally: PHY <-> TAP
+
+A two-pass design takes the TX timestamp as close to rte_eth_tx_burst()
+as possible, minimising untracked delay.
+
+Unit Tests: app/test
+--------------------
+A comprehensive test suite (ptp_autotest) covers all library APIs:
+  - Packet classification across L2, VLAN, QinQ, IPv4-UDP, IPv6-UDP,
+    and VLAN-tagged UDP encapsulations
+  - Flag bit position validation (TWO_STEP, UNICAST, LI_61, LI_59)
+  - correctionField manipulation and round-trip accuracy
+  - Timestamp conversion, message type helpers, edge cases
+  - Negative tests: truncated packets, bad IHL, non-PTP traffic
+33 test cases total.
+
+ptpclient Conversion
+--------------------
+The existing ptpclient example is converted to use lib/ptp shared
+definitions (rte_ptp_hdr, rte_ptp_timestamp, rte_ptp_port_id,
+RTE_PTP_ETHERTYPE, RTE_PTP_MULTICAST_MAC), removing ~120 lines of
+duplicate struct and constant definitions.
+
+
+Test Results
+------------
+Test setup: Intel E610 10GbE NIC (vfio-pci), ptp4l time transmitter
+with HW timestamps on physical port, ptp4l time receiver with SW
+timestamps (-S) on TAP interface, logSyncInterval=-4 (16 Sync/sec),
+120s duration.
+
+  Post-convergence (60s of locked data):
+    Average RMS offset:   929 ns
+    Worst max offset:     11615 ns (single transient)
+    Steady-state range:   489 - 1055 ns RMS
+    Corrections applied:  3635
+
+linuxptp's PI servo uses relaxed gains for software timestamps
+(kp=0.1, ki=0.001 vs kp=0.7, ki=0.3 for HW), expecting ~5-50 µs
+jitter. Sub-microsecond RMS is achieved here because the time
+transmitter uses HW timestamps and DPDK's poll-mode relay provides
+deterministic low-latency forwarding.
+
+v2:
+    Fixed below AI generated Review comments 
+  - Fixed flag bit positions for host-order representation after
+    rte_be_to_cpu_16(): TWO_STEP (1<<9), UNICAST (1<<10),
+    LI_61 (1<<0), LI_59 (1<<1).  Added unit test for all flags.
+  - Fixed QinQ classification: outer 0x88A8 (802.1ad S-tag) now
+    enters the VLAN parser alongside 0x8100.
+  - Fixed signed left-shift UB in rte_ptp_add_correction(): shift
+    is now performed on uint64_t before casting back to int64_t.
+  - Fixed promiscuous enable failure in relay example: port_init()
+    now returns error instead of logging and continuing silently.
+  - Replaced deprecated master/slave PTP terminology with IEEE
+    1588-2019 terms (time transmitter / time receiver) throughout
+    code and documentation.
+  - Documented per-burst single-timestamp design choice and its
+    accuracy characteristics in the relay example.
+  - Added IHL validation (reject IHL < 20) in IPv4 PTP-over-UDP path.
+  - Changed rte_ptp_is_event() parameter from uint8_t to int with
+    negative value guard for safe use with rte_ptp_classify() return.
+  - Changed rte_ptp_hdr_get() parameter from const to non-const mbuf
+    since it returns a non-const pointer into packet data.
+  - All pointer accesses use rte_pktmbuf_mtod_offset() — no raw
+    pointer arithmetic.
+  - Added programmer's guide note about avoiding double-parse when
+    both message type and header pointer are needed.
+
+Rajesh Kumar (6):
+  ptp: introduce PTP protocol library
+  doc: add PTP library programmer's guide
+  examples/ptp_tap_relay_sw: add software PTP relay example
+  doc: add PTP software relay sample app guide
+  app/test: add PTP library unit tests
+  examples/ptpclient: use shared PTP library definitions
+
+ MAINTAINERS                                   |    8 +
+ app/test/meson.build                          |    1 +
+ app/test/test_ptp.c                           | 1052 +++++++++++++++++
+ doc/api/doxy-api-index.md                     |    1 +
+ doc/api/doxy-api.conf.in                      |    1 +
+ doc/guides/prog_guide/index.rst               |    1 +
+ doc/guides/prog_guide/ptp_lib.rst             |  205 ++++
+ doc/guides/rel_notes/release_26_07.rst        |   13 +
+ doc/guides/sample_app_ug/index.rst            |    1 +
+ doc/guides/sample_app_ug/ptp_tap_relay_sw.rst |  210 ++++
+ examples/meson.build                          |    1 +
+ examples/ptp_tap_relay_sw/Makefile            |   41 +
+ examples/ptp_tap_relay_sw/meson.build         |   14 +
+ examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c  |  433 +++++++
+ examples/ptpclient/meson.build                |    1 +
+ examples/ptpclient/ptpclient.c                |  188 ++-
+ lib/meson.build                               |    1 +
+ lib/ptp/meson.build                           |    6 +
+ lib/ptp/rte_ptp.c                             |  185 +++
+ lib/ptp/rte_ptp.h                             |  338 ++++++
+ 20 files changed, 2585 insertions(+), 116 deletions(-)
+ create mode 100644 app/test/test_ptp.c
+ create mode 100644 doc/guides/prog_guide/ptp_lib.rst
+ create mode 100644 doc/guides/sample_app_ug/ptp_tap_relay_sw.rst
+ create mode 100644 examples/ptp_tap_relay_sw/Makefile
+ create mode 100644 examples/ptp_tap_relay_sw/meson.build
+ create mode 100644 examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c
+ create mode 100644 lib/ptp/meson.build
+ create mode 100644 lib/ptp/rte_ptp.c
+ create mode 100644 lib/ptp/rte_ptp.h
+
+-- 
+2.53.0
+
