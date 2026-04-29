@@ -2,46 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D74BFF885A
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 02:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C85FF8867
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 08:51:02 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4128A4027A;
-	Wed, 29 Apr 2026 04:28:09 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id AB5F140272
- for <dev@dpdk.org>; Wed, 29 Apr 2026 04:28:07 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 9AB2A4B0E7; Wed, 29 Apr 2026 04:28:07 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/core Bug 1937] [dpdk23.11.7-rc1] DPDK build failed with
- clang21.1.8 on Fedora43
-Date: Wed, 29 Apr 2026 02:28:07 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: core
-X-Bugzilla-Version: 23.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: normal
-X-Bugzilla-Who: daxuex.gao@intel.com
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: FIXED
-X-Bugzilla-Priority: Normal
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: ---
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: resolution bug_status
-Message-ID: <bug-1937-3-DSU5Nq5fuy@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1937-3@http.bugs.dpdk.org/>
-References: <bug-1937-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id B43A74027A;
+	Wed, 29 Apr 2026 10:51:01 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id EE51240272;
+ Wed, 29 Apr 2026 10:51:00 +0200 (CEST)
+Received: from alhe-weh-mana-dpdk-s2.corp.microsoft.com (unknown
+ [131.107.1.160])
+ by linux.microsoft.com (Postfix) with ESMTPSA id 70A4220B716C;
+ Wed, 29 Apr 2026 01:51:00 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 70A4220B716C
+From: Wei Hu <weh@microsoft.com>
+To: dev@dpdk.org,
+	stephen@networkplumber.org,
+	stable@dpdk.org
+Cc: longli@microsoft.com,
+	weh@microsoft.com
+Subject: [PATCH 0/2] net/mana: add device reset support for service events
+Date: Wed, 29 Apr 2026 01:49:53 -0700
+Message-Id: <20260429084955.39164-1-weh@microsoft.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,23 +40,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1937
+This series adds support for handling hardware service reset events
+in the MANA and netvsc drivers.
 
-gaodaxue (daxuex.gao@intel.com) changed:
+When the MANA kernel driver receives a hardware service event, it
+initiates a device reset and notifies userspace via
+IBV_EVENT_DEVICE_FATAL. The MANA PMD handles this by performing an
+automatic teardown and recovery sequence, using ethdev recovery
+events (ERR_RECOVERING, RECOVERY_SUCCESS, RECOVERY_FAILED) to
+notify upper layers.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-         Resolution|---                         |FIXED
-             Status|IN_PROGRESS                 |RESOLVED
+Patch 1 implements the reset logic in the MANA driver, including
+RCU-based data path quiescence, multi-process doorbell remap via
+IPC, and a control thread for the recovery sequence.
 
---- Comment #3 from gaodaxue (daxuex.gao@intel.com) ---
-Verified commit
-https://git.dpdk.org/dpdk-stable/commit/?h=3D23.11-staging&id=3D3e44b968b8d=
-f9299bf4fc31c5a8c2bfe4d6ce0cd
-on baseline f919fadc148d11f2ef(version: v23.11.7-rc1) Tested pass.
-OS: Fedora43-64/6.17.1-300.fc43.x86_64
-Compiler: clang 21.1.8 (Fedora 21.1.8-4.fc43)
+Patch 2 adds recovery event handlers in the netvsc driver so it
+can switch the data path to synthetic during reset and back to VF
+after successful recovery.
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+Long Li (1):
+  net/netvsc: handle VF recovery events for service reset
+
+Wei Hu (1):
+  net/mana: add device reset support
+
+ drivers/net/mana/mana.c      | 924 ++++++++++++++++++++++++++++++++---
+ drivers/net/mana/mana.h      |  33 +-
+ drivers/net/mana/meson.build |   2 +-
+ drivers/net/mana/mp.c        |  89 +++-
+ drivers/net/mana/mr.c        |   6 +-
+ drivers/net/mana/rx.c        |  24 +-
+ drivers/net/mana/tx.c        |  40 +-
+ drivers/net/netvsc/hn_vf.c   | 106 ++++
+ 8 files changed, 1121 insertions(+), 103 deletions(-)
+
+-- 
+2.34.1
+
