@@ -2,75 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DCB0CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 15:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E6DFF887E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 15:28:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B1C8A40695;
-	Wed, 29 Apr 2026 17:13:09 +0200 (CEST)
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com
- [209.85.160.54]) by mails.dpdk.org (Postfix) with ESMTP id 681004065A
- for <dev@dpdk.org>; Wed, 29 Apr 2026 17:13:08 +0200 (CEST)
-Received: by mail-oa1-f54.google.com with SMTP id
- 586e51a60fabf-40f0e14b9f9so7327796fac.1
- for <dev@dpdk.org>; Wed, 29 Apr 2026 08:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777475588;
- x=1778080388; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=CcY3ie65BG//ZRhouuUcGJk6JvhEHhS0m2wQqHOuZ+E=;
- b=Y8EAzo5/ikG6XMCnmbg7glUQDNJ5gFOLlwOsavtgIiVv8h5A/3qsgU4LIwP1lZpczx
- jTVL8P5kWJW45DMa3dy3IrAWvYXr41zkNHdcMjnV7E1oLGup96gjZR22m5Jy7Vv3YR4q
- IBdGP2MX/2W4uwOH7dWJpLolSnxMOX7BqMyFcGuueSbFZOhWSkU6Yi996atqzwvzW/XT
- rIC2JAJu0jlvAqJBJqJ5QEPooHIjbLB+z2RBKtJeKySzo/+HPZETWmC9HqxAoBAWgN20
- iSPDFzMx/tuLJ+ZzfISDScsUH/X8mQ7HWOGvaV1Yb7hRA2eMVNAyVsEvGQI9tcFkFZ0u
- 4dVA==
+	by mails.dpdk.org (Postfix) with ESMTP id 8BBA2402EE;
+	Wed, 29 Apr 2026 17:28:00 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 4693D400EF
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 17:27:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1777476478;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=/uKe7hHii6s06q5IroB8hLAK0nTvxnRCrMwdRODlIik=;
+ b=fHGBFWXNpp/p1iqODo73S7XoG6eAYt5H6b3ykR56SDwc9Fs9Nlm9VmQsqHICKNQN7o9sM2
+ 6H7uKJWKvCN6h0GDlQ6oPGuIjIJhyeuBsUVnX+S8Hux2rx4Bw2lWqostLw35LBx1bm+qNw
+ 8yglD3CDthm14d7YRvoOunmkMrSXanc=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-315-4qA5UmCAPlCJWCgYtP3b6A-1; Wed, 29 Apr 2026 11:27:56 -0400
+X-MC-Unique: 4qA5UmCAPlCJWCgYtP3b6A-1
+X-Mimecast-MFC-AGG-ID: 4qA5UmCAPlCJWCgYtP3b6A_1777476475
+Received: by mail-lj1-f199.google.com with SMTP id
+ 38308e7fff4ca-38e82540e2dso5126491fa.1
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 08:27:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777475588; x=1778080388;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=CcY3ie65BG//ZRhouuUcGJk6JvhEHhS0m2wQqHOuZ+E=;
- b=QRf8uW1020nCpd7cDlUjq0nYbRDKuLxCY3uwiwwCH/77Vmj4e4ob4+NEHzfRnDc4Jv
- vmGrwlIh2OUTFSjfY/8K9ESza139EukOyoOu/wPBd5gKcVyhgXvDK8FMJ5tZNz9nAflj
- 50RPMSGpqsVQo7k5ABxOKcOpjxSsld1sW1Cl+zRKYgvELtV15Aw+/Mb8EgKTLlc5PRXr
- W2nq4O75tU4urt/eqHL30b2x6E+K9qavyr0UnWlFKzNRc/dnYmm/EdASLJdLl7/Xpv+L
- l/Z9bAWE7KLt5DwVe2ra0nDRKjwzoAj39RGeUIvqjkyHwzUWHwqAhP9pNayXvZwEmKLq
- 3YGg==
-X-Gm-Message-State: AOJu0Yz8Z50g9GnePsO7GTtebnTq9FyS64mtnKr1NqzpGg5BGc0t+O0w
- /nQeGRpj61WuFLd1UYvRE5FkQ/0JiCUzGNJG4aRFbsFg24hCK2781VfevYa+ybZKGIFgw4j1Jj1
- DPImZ
-X-Gm-Gg: AeBDievgBVBkwNNpf3tXycTDsZWHuC4LuI46sEG0lg1oAURoEgXlOgIdjftX46yB1XC
- Gf++mvaaPXGpCQ8tymy01Y4MHMOzoJMNne7apbu/GamnWY/ECVn7OTQuksni71E0C9d9o327YPY
- LFD8LhzL6cKLUMpn8eh8hf8a8VAT0xUKOwR3hhBZ9Y804eRK20uSvFyQCPVxy2Jhe3aGr6jgauA
- x0VwHA+mBHk7R9b3/GH+NiVJKTiJ9oFaYhSfqya+eL6fIR69HrU8SDco9/w8qxvhLW47Jwty7tO
- A56njRwwXxYLDOW53jcrxLhiL+2wQIcXaoKFlDEUtgvkaCbRbIOF92GeEJSSzXbXX2gSeqRDuFl
- PTrKuNXkI3scESqwoyT81DlwBRC0sTZEzHU7Oz8XWsu5ziQ5H/EKJFc2Uw4Deh0pCYTKgt5/K4O
- 5WBzZO779eJZiZbEf7fdFILPJYqz2a1tx3cCw4HH2hsgGBAQ==
-X-Received: by 2002:a05:6870:510:b0:41c:b538:e19c with SMTP id
- 586e51a60fabf-4340ac25cbcmr2396726fac.38.1777475587579; 
- Wed, 29 Apr 2026 08:13:07 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-4340e981839sm2161537fac.13.2026.04.29.08.13.06
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Apr 2026 08:13:07 -0700 (PDT)
-Date: Wed, 29 Apr 2026 08:11:36 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Jiawen Wu <jiawenwu@trustnetic.com>,
- Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: Re: [PATCH v2 11/20] net/txgbe: fix traffic class priority
- configuration
-Message-ID: <20260429081136.3defdeba@phoenix.local>
-In-Reply-To: <20260429102515.58880-12-zaiyuwang@trustnetic.com>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260429102515.58880-1-zaiyuwang@trustnetic.com>
- <20260429102515.58880-12-zaiyuwang@trustnetic.com>
+ d=1e100.net; s=20251104; t=1777476475; x=1778081275;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=/uKe7hHii6s06q5IroB8hLAK0nTvxnRCrMwdRODlIik=;
+ b=hj45s57TNk525ycJypTTddDQd5UDTu1aCxDx/HCUmfagF/7TVnUsQdpNqVRCtgrREJ
+ uZ/0cnbJajVGNz6CDtxv9DfqLXFdc1uf0A77wHqvOhFMNTkbOe/cKpxFUCTNlKCK3RpK
+ TizQE8FSrLpPrIrZdHe/EA/Xk+1AAC+sW9FsqwAuc8xrQs+t+k50PWaxpIcud6O2V6CR
+ YOiU+7qgXxKwbR3V4nhaV3jO0HnLWnA4a6bmOLxJw4tGySU17BCBvgInEFG7FUBfrESl
+ /ARCGhApjwUzoWz7MoviWv4zAecDxqCZWl/yEY8AEzHyxU06/7z1nq8qhF2ubcZjLKOI
+ EJbw==
+X-Gm-Message-State: AOJu0Yx3YnbtDzmORnsMWLgPrBLaTiLjd+/PP7XOTiSL+QBaZvkOyFFK
+ sdwqtGNLA/h64FO/moCBpbm730Oqg8Hic0hgjkziZcsrqmpqk/h/arh+Cgb9cpvwZdOcrlvCjwi
+ F1rqyzCYiQUdBottgWfBYZqMx50GMnUm4nyTpLZ+NWzDvah/gS7g1VCNiP9QD9Uq9L9hWJ3szAy
+ z5jQp5WLvxO3sxeX2561k=
+X-Gm-Gg: AeBDiesi+Wc5muGfIYDeUI8wXrAUzRn2afnUiKQICn/GMMs1MtnLHqTI585XsRBNAsd
+ UYWrrbO9ulWzXWmr32OaRvUjRjxxgsh3uUeUNIGSwCL9UrdUnrTfVXsoYDrVj3EkQAtPyC53AOd
+ Q8JKRxrkHFVKCl2yH4eO5zeBL/YLQ+HNGolm18RuKrx9J1ydTXvCp1b6N0uTHrIdqgm47WB1WyP
+ e6ACFMHGSXGrfBmTFWDOLz+p1LVj2wkj0H6rIsYjWXIW0CpgLZnW6CYtOqUToUP/uI8jrnZPfZO
+ 4MmF
+X-Received: by 2002:a2e:9896:0:b0:389:e6e4:3c7d with SMTP id
+ 38308e7fff4ca-3924d716d8amr10667141fa.19.1777476474840; 
+ Wed, 29 Apr 2026 08:27:54 -0700 (PDT)
+X-Received: by 2002:a2e:9896:0:b0:389:e6e4:3c7d with SMTP id
+ 38308e7fff4ca-3924d716d8amr10667071fa.19.1777476474200; Wed, 29 Apr 2026
+ 08:27:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260106182823.192350-1-stephen@networkplumber.org>
+ <20260210000201.295839-1-stephen@networkplumber.org>
+ <20260210000201.295839-17-stephen@networkplumber.org>
+In-Reply-To: <20260210000201.295839-17-stephen@networkplumber.org>
+From: David Marchand <david.marchand@redhat.com>
+Date: Wed, 29 Apr 2026 17:27:42 +0200
+X-Gm-Features: AVHnY4LVo815iZAUODh48zRKMIXgIr2fGAXGUYhvLn57OTrkpZdK2p36AX5StfM
+Message-ID: <CAJFAV8xedkMJRHvAL5NnWg7tLWX-J9Pnyzfs0dDaH7R1YuDquw@mail.gmail.com>
+Subject: Re: [PATCH v13 16/16] test: add test for pcap PMD
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ElctOzsospgxcMC2Ok3_EZMfLTQadDscdqa6H845Ggw_1777476475
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,40 +85,96 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 29 Apr 2026 18:25:05 +0800
-Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
+On Tue, 10 Feb 2026 at 01:04, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> This test was generated by Claude AI with some prompting and
+> pointing at existing ring PMD test. It tests basic operations,
+> timestamps, jumbo frame, vlan handling and multiple queues
+>
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 
-> After applying the following testpmd command, 802.1Q packets with specific
-> priorities were not properly directed to the corresponding traffic classes:
->     port config 0 dcb vt off 4 pfc off
-> 
-> The old driver had two issues:
-> 1. The hardware uses a 4-bit mapping register per traffic class for
->    priority-to-TC mapping, but the driver incorrectly configured it
->    as 3 bits.
-> 2. The DCB TX configuration mistakenly wrote to the RX register.
-> 
-> Fix both issues, ensuring that tc-prio mapping works as expected.
-> 
-> Fixes: 8bdc7882f376 ("net/txgbe: support DCB")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
-> ---
+[...]
 
-AI review spotted issues:
+> +
+> +#ifdef RTE_EXEC_ENV_WINDOWS
+> +
+> +/*
+> + * Helper: Create a unique temporary file path (Windows version)
+> + */
+> +static int
+> +create_temp_path(char *buf, size_t buflen, const char *prefix)
+> +{
+> +       char temp_dir[MAX_PATH];
+> +       char temp_file[MAX_PATH];
+> +       DWORD ret;
+> +
+> +       ret = GetTempPathA(sizeof(temp_dir), temp_dir);
+> +       if (ret == 0 || ret > sizeof(temp_dir))
+> +               return -1;
+> +
+> +       if (GetTempFileNameA(temp_dir, prefix, 0, temp_file) == 0)
+> +               return -1;
+> +
+> +       ret = snprintf(buf, buflen, "%s.pcap", temp_file);
+> +       if (ret >= buflen) {
+> +               DeleteFileA(temp_file);
+> +               return -1;
+> +       }
+> +
+> +       if (MoveFileA(temp_file, buf) == 0) {
+> +               DeleteFileA(temp_file);
+> +               return -1;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Helper: Remove temporary file (Windows version)
+> + */
+> +static inline void
+> +remove_temp_file(const char *path)
+> +{
+> +       if (path[0] != '\0')
+> +               DeleteFileA(path);
+> +}
+> +
+> +#else /* POSIX */
+> +
+> +/*
+> + * Helper: Create a unique temporary file path (POSIX version)
+> + */
+> +static int
+> +create_temp_path(char *buf, size_t buflen, const char *prefix)
+> +{
+> +       int fd;
+> +
+> +       snprintf(buf, buflen, "/tmp/%s_XXXXXX.pcap", prefix);
+> +       fd = mkstemps(buf, 5);  /* 5 = strlen(".pcap") */
+> +       if (fd < 0)
+> +               return -1;
+> +       close(fd);
+> +       return 0;
+> +}
+> +
+> +/*
+> + * Helper: Remove temporary file (POSIX version)
+> + */
+> +static inline void
+> +remove_temp_file(const char *path)
+> +{
+> +       if (path[0] != '\0')
+> +               unlink(path);
+> +}
+> +
+> +#endif /* RTE_EXEC_ENV_WINDOWS */
 
-Error: The fix is incomplete. The same priority-to-TC layout is also written in drivers/net/txgbe/txgbe_rxtx.c around line 3380 in txgbe_vmdq_dcb_configure():
-for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++)
-	/*
-	 * mapping is done with 3 bits per priority,
-	 * so shift by i*3 each time
-	 */
-	queue_mapping |= ((cfg->dcb_tc[i] & 0x07) << (i * 3));
+At a quick glance, that would make it the 3rd unit test having such
+temp file manipulation helpers.
+Could we put it in some app/test/ common file?
 
-wr32(hw, TXGBE_RPUP2TC, queue_mapping);
-This writes the same TXGBE_RPUP2TC register (0x019008) the patch is fixing, using a hardcoded i*3 shift and a comment claiming 3 bits per priority. After this patch, txgbe_dcb_config_rx_arbiter_raptor() encodes priorities at 4-bit positions (via the updated TXGBE_RPUP2TC_UP_SHIFT=4), but txgbe_vmdq_dcb_configure() still uses 3-bit positions. The VMDQ+DCB path will produce a wrong tc-prio mapping. txgbe_vmdq_dcb_configure() needs the same fix (use TXGBE_RPUP2TC_UP_SHIFT and update the comment).
-Warning: TXGBE_DCBUP2TC_DEC and TXGBE_DCBUP2TC_MAP are now inconsistent. After this patch:
-#define TXGBE_DCBUP2TC_MAP(tc, v)     LS(v, 4 * (tc), 0x7)
-#define TXGBE_DCBUP2TC_DEC(tc, r)     RS(r, 3 * (tc), 0x7)
-DEC will not decode what MAP encoded for any tc > 0. TXGBE_DCBUP2TC_DEC isn't currently used in tree, so this is not a runtime bug, but it's a latent trap. Either update DEC to also use 4*(tc), or remove DEC since it has no callers.
+
+-- 
+David Marchand
+
