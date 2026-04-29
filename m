@@ -2,52 +2,52 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E20ECCFA13
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 17:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D31D4FF887E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 17:04:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 00B644111C;
-	Wed, 29 Apr 2026 18:59:51 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 06FDE427A5;
+	Wed, 29 Apr 2026 18:59:52 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 3EB7A40A70;
- Wed, 29 Apr 2026 18:59:47 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D19F84278B;
+ Wed, 29 Apr 2026 18:59:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777481988; x=1809017988;
+ t=1777481990; x=1809017990;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=4hD4gtT2YAbUCpEUR1eHOeiZyWt6gp+fdsX0s5tADDI=;
- b=bMGTeJeoFkEBELLblKjpsvWgcHe2W0d/rcQoP4oz7BsMN/uf2xFGGZ9M
- hf22DNjmTx78Iyelwl/TXxymdiKOyELjZgqSzp78DYUVl8nL+OuISIEqj
- T2mMKYzHr2dv/UMkgPZEvS/xHi/l6TYsZON4cj+A/EMtwadjLXs6aa3ko
- nROiIbvXkLgkn1zaXSJCT7tnbro5M3lVF41t/85lZdOcJK7y5Pi2D7MNN
- mHFecYakeDCfL+IL0uGPt+4xLl2PN5JFZWCBmtJRPI31KmMJEC7tI8wqS
- FbkxoDJUErmblyugSzpCA7Qaj4QKRoKMqwbB7AG6itxnxfiAcnWEBRzqd Q==;
-X-CSE-ConnectionGUID: e25KdxRcRpqWOWwSdo/5zw==
-X-CSE-MsgGUID: +DUtraOBTfu5aNmnXX3UKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="88725392"
-X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; d="scan'208";a="88725392"
+ bh=Wq2mZGp9PpyzitJp8agjXU/3BX/E2BSP4zRk/DDNQKw=;
+ b=fnVWWNXAfD7fIo/+rYoA9pVXTQqCde9M3ChGfrVCsssXaJshGZfBsCOY
+ T0o1pDa040YtYI9QsGY9dQ1j+IQL84QQcURGQRgEXG/6keUZKK9j4v8Le
+ 0Bq6c+OUt5z0Ca6rn4WWo9KlGqUP+JMz8yBhIQaocmnJ2/1xh7AJEqttT
+ krmvG/9TM4FjnR0ygiVVAa1DEjhYZ7IZTuVHqoCFPtRB9DL10I9iQ738r
+ QMKSbVMS7ImfoZ4dmtLvGesVeXc4ZN2h/PBAPNKDm4xcbJoP203MB0jmv
+ gWhiy+liNTt5Erp+BQnWMJI+cAoFYiXrOaUr4JBXnrGoLV+/lp1MdRApB w==;
+X-CSE-ConnectionGUID: aYonx/GnSIiMFSmT7XvKZw==
+X-CSE-MsgGUID: aViPNisYTrucMBnbLZ9LzQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="88725397"
+X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; d="scan'208";a="88725397"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Apr 2026 09:59:47 -0700
-X-CSE-ConnectionGUID: kY/Ocf6uQa+ozyOTydsRXw==
-X-CSE-MsgGUID: 3rK3v2+YS+yJfX9iNrDWog==
+ 29 Apr 2026 09:59:49 -0700
+X-CSE-ConnectionGUID: laFifJ/nSKi2e1nPX3thiQ==
+X-CSE-MsgGUID: U+/Xh66HStqGlRbLrNjAnw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; d="scan'208";a="264697222"
+X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; d="scan'208";a="264697227"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.227.128])
- by orviesa002.jf.intel.com with ESMTP; 29 Apr 2026 09:59:46 -0700
+ by orviesa002.jf.intel.com with ESMTP; 29 Apr 2026 09:59:47 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: techboard@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH 38/44] eal_cfg: configure defaults for easier testing and
- use
-Date: Wed, 29 Apr 2026 17:58:30 +0100
-Message-ID: <20260429165845.2136843-39-bruce.richardson@intel.com>
+Subject: [RFC PATCH 39/44] app/test: enable testing init using EAL config lib
+Date: Wed, 29 Apr 2026 17:58:31 +0100
+Message-ID: <20260429165845.2136843-40-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260429165845.2136843-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -62,226 +62,230 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a function to configure the lcore settings with the current thread
-affinities. Use that function when EAL is being initialized without any
-lcores otherwise being specified. This minics existing DPDK behaviour
-when no "-l" or "-c" flags are passed on EAL commandline. Also set the
-"in-memory" flag by default, which makes testing easier, and should be a
-sensible default for most app cases except when multi-process is
-required.
+To test the eal_cfg library initialization we need to bypass the regular
+rte_eal_init() calls in the test binary, which requires a little bit of
+rework to the existing test harness. Make those changes and then add
+some very basic init testing using the rte_eal_cfg_init() function.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal_cfg/eal_cfg.c     | 91 ++++++++++++++++++++++++++++++++++++---
- lib/eal_cfg/rte_eal_cfg.h | 48 ++++++++++++++++++++-
- 2 files changed, 133 insertions(+), 6 deletions(-)
+ app/test/test.c         | 14 +++---
+ app/test/test.h         |  1 +
+ app/test/test_eal_cfg.c | 99 +++++++++++++++++++++++++++++++----------
+ 3 files changed, 86 insertions(+), 28 deletions(-)
 
-diff --git a/lib/eal_cfg/eal_cfg.c b/lib/eal_cfg/eal_cfg.c
-index 70f0122b81..18a508e7ad 100644
---- a/lib/eal_cfg/eal_cfg.c
-+++ b/lib/eal_cfg/eal_cfg.c
-@@ -7,7 +7,9 @@
+diff --git a/app/test/test.c b/app/test/test.c
+index 58ef52f312..dba3c581a4 100644
+--- a/app/test/test.c
++++ b/app/test/test.c
+@@ -47,13 +47,11 @@ extern cmdline_parse_ctx_t main_ctx[];
  
- #include <eal_export.h>
- #include <rte_errno.h>
-+#include <rte_lcore.h>
- #include <rte_log.h>
-+#include <rte_thread.h>
+ const char *prgname; /* to be set to argv[0] */
  
- #include "eal_internal_cfg.h"
- #include "rte_eal_cfg.h"
-@@ -29,6 +31,9 @@ rte_eal_cfg_create(void)
+-static const char *recursive_call; /* used in linux for MP and other tests */
+-
+ static int
+ no_action(void){ return 0; }
+ 
+ static int
+-do_recursive_call(void)
++do_recursive_call(const char *recursive_call)
+ {
+ 	unsigned i;
+ 	struct {
+@@ -117,6 +115,13 @@ main(int argc, char **argv)
+ 	int i;
+ 	char *extra_args;
+ 	int ret;
++	const char *recursive_call = getenv(RECURSIVE_ENV_VAR);
++
++#ifdef RTE_LIB_EAL_CFG
++	/* Pre-EAL-init dispatch: for tests that test EAL init itself. */
++	if (recursive_call != NULL && strcmp(recursive_call, "test_eal_cfg_init") == 0)
++		return test_eal_cfg_init();
++#endif
+ 
+ 	extra_args = getenv("DPDK_TEST_PARAMS");
+ 	if (extra_args != NULL && strlen(extra_args) > 0) {
+@@ -174,9 +179,8 @@ main(int argc, char **argv)
+ 		goto out;
  	}
  
- 	cfg->user_cfg = EAL_USER_CFG_INITIALIZER(cfg->user_cfg);
-+	/* default to in-memory mode without a shared config */
-+	cfg->user_cfg.in_memory = true;
-+	cfg->user_cfg.no_shconf = true;
+-	recursive_call = getenv(RECURSIVE_ENV_VAR);
+ 	if (recursive_call != NULL) {
+-		ret = do_recursive_call();
++		ret = do_recursive_call(recursive_call);
+ 		goto out;
+ 	}
  
- 	return cfg;
- }
-@@ -44,21 +49,97 @@ rte_eal_cfg_free(struct rte_eal_cfg *cfg)
- 	free(cfg);
+diff --git a/app/test/test.h b/app/test/test.h
+index 1f12fc5397..b80c818249 100644
+--- a/app/test/test.h
++++ b/app/test/test.h
+@@ -179,6 +179,7 @@ int test_exit(void);
+ int test_mp_secondary(void);
+ int test_panic(void);
+ int test_timer_secondary(void);
++int test_eal_cfg_init(void);
+ 
+ int test_set_rxtx_conf(cmdline_fixed_string_t mode);
+ int test_set_rxtx_anchor(cmdline_fixed_string_t type);
+diff --git a/app/test/test_eal_cfg.c b/app/test/test_eal_cfg.c
+index 3def760b50..f714be3fd4 100644
+--- a/app/test/test_eal_cfg.c
++++ b/app/test/test_eal_cfg.c
+@@ -4,12 +4,19 @@
+ 
+ #include <errno.h>
+ 
++#include <rte_eal.h>
++#include <rte_debug.h>
+ #include <rte_errno.h>
+ 
+ #include <rte_eal_cfg.h>
++#include <stdlib.h>
+ 
+ #include "test.h"
+ 
++#ifndef RTE_EXEC_ENV_WINDOWS
++#include "process.h"
++#endif
++
+ /* Test that a config handle can be created and freed without error. */
+ static int
+ test_eal_cfg_create_free(void)
+@@ -29,14 +36,13 @@ test_eal_cfg_create_free(void)
+ 	return TEST_SUCCESS;
  }
  
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eal_cfg_set_lcores_from_affinity, 26.07)
+-/*
+- * Test initialising EAL with a freshly created (empty/default) config.
+- * Since the test binary has already initialised EAL, we expect the call to
+- * fail with EALREADY rather than succeed — but the function must forward
+- * the call through to rte_eal_runtime_init() and return its error correctly.
+- */
++#ifdef RTE_EXEC_ENV_WINDOWS
 +int
-+rte_eal_cfg_set_lcores_from_affinity(struct rte_eal_cfg *cfg, bool remap)
++test_eal_cfg_init(void) { return 0; }
++#else
++/* Test initialising EAL with a freshly created (empty/default) config. */
+ static int
+-test_eal_cfg_init_empty(void)
++subtest_eal_cfg_init_empty(void)
+ {
+ 	struct rte_eal_cfg *cfg;
+ 	int ret;
+@@ -45,29 +51,21 @@ test_eal_cfg_init_empty(void)
+ 	TEST_ASSERT_NOT_NULL(cfg, "rte_eal_cfg_create returned NULL");
+ 
+ 	ret = rte_eal_init_from_cfg("test_prog", cfg);
+-	TEST_ASSERT(ret == -1,
+-		"Expected -1 from rte_eal_init_from_cfg (EAL already init), got %d", ret);
+-	TEST_ASSERT(rte_errno == EALREADY,
+-		"Expected EALREADY, got %d", rte_errno);
++	TEST_ASSERT(ret == 0,
++		"Expected 0 from rte_eal_init_from_cfg, got %d", ret);
+ 
+ 	rte_eal_cfg_free(cfg);
++
++	rte_eal_cleanup();
+ 	return TEST_SUCCESS;
+ }
+ 
+-/* Test that passing NULL cfg to rte_eal_init_from_cfg uses default config.
+- * Since EAL is already running, we still expect EALREADY.
+- */
++/* Test that passing NULL cfg to rte_eal_init_from_cfg uses default config. */
+ static int
+-test_eal_cfg_init_null(void)
++subtest_eal_cfg_init_null(void)
+ {
+ 	int ret;
+ 
+-	ret = rte_eal_init_from_cfg("test_prog", NULL);
+-	TEST_ASSERT(ret == -1,
+-		"Expected -1 from rte_eal_init_from_cfg with NULL cfg, got %d", ret);
+-	TEST_ASSERT(rte_errno == EALREADY,
+-		"Expected EALREADY for NULL cfg, got %d", rte_errno);
+-
+ 	/* NULL progname must be rejected regardless of cfg */
+ 	ret = rte_eal_init_from_cfg(NULL, NULL);
+ 	TEST_ASSERT(ret == -1,
+@@ -75,17 +73,72 @@ test_eal_cfg_init_null(void)
+ 	TEST_ASSERT(rte_errno == EINVAL,
+ 		"Expected EINVAL for NULL progname, got %d", rte_errno);
+ 
++	ret = rte_eal_init_from_cfg("test_prog", NULL);
++	TEST_ASSERT(ret == 0,
++		"Expected 0 from rte_eal_init_from_cfg with NULL cfg, got %d", ret);
++
++	rte_eal_cleanup();
+ 	return TEST_SUCCESS;
+ }
+ 
++/*
++ * Test EAL initialisation from a default config in a fresh subprocess.
++ * Called before rte_eal_init() so that it can exercise the very first call
++ * through rte_eal_init_from_cfg(). Returns 0 on success, 1 on failure.
++ */
++int
++test_eal_cfg_init(void)
 +{
-+	rte_cpuset_t cpuset;
-+	unsigned int lcore_id = 0;
-+	int count = 0;
++#define EAL_CFG_TEST_FN "EAL_CFG_TEST_FN"
++	struct test_fns {
++		const char *name;
++		int (*fn)(void);
++	} test_fns[] = {
++#define TEST_CFG_FN(X) { #X, X }
++		TEST_CFG_FN(subtest_eal_cfg_init_null),
++		TEST_CFG_FN(subtest_eal_cfg_init_empty),
++		{ NULL, NULL }
++	};
 +
-+	if (cfg == NULL) {
-+		rte_errno = EINVAL;
-+		return -1;
-+	}
++	const char *test_fn = getenv(EAL_CFG_TEST_FN);
++	if (test_fn == NULL) {
++		/* This is the parent process: spawn a child to run the test. */
++		const char *argv[] = { prgname, NULL };
 +
-+	if (rte_thread_get_affinity_by_id(rte_thread_self(), &cpuset) != 0) {
-+		rte_errno = ENOTSUP;
-+		return -1;
-+	}
-+
-+	/* clear any existing lcore configuration before populating */
-+	for (unsigned int i = 0; i < RTE_MAX_LCORE; i++) {
-+		free(cfg->user_cfg.lcore_cpusets[i]);
-+		cfg->user_cfg.lcore_cpusets[i] = NULL;
-+	}
-+
-+	for (unsigned int cpu = 0; cpu < CPU_SETSIZE; cpu++) {
-+		if (!CPU_ISSET(cpu, &cpuset))
-+			continue;
-+		if (!remap)
-+			lcore_id = cpu;
-+		if (lcore_id >= RTE_MAX_LCORE)
-+			break;
-+		cfg->user_cfg.lcore_cpusets[lcore_id] = malloc(sizeof(rte_cpuset_t));
-+		if (cfg->user_cfg.lcore_cpusets[lcore_id] == NULL) {
-+			for (unsigned int i = 0; i < lcore_id; i++) {
-+				free(cfg->user_cfg.lcore_cpusets[i]);
-+				cfg->user_cfg.lcore_cpusets[i] = NULL;
++		for (size_t i = 0; test_fns[i].name != NULL; i++) {
++			setenv(EAL_CFG_TEST_FN, test_fns[i].name, 1);
++			int ret = process_dup(argv, 1, __func__);
++			if (ret != 0) {
++				printf("Test '%s' failed with return code %d\n",
++					test_fns[i].name, ret);
++				return -1;
 +			}
-+			rte_errno = ENOMEM;
-+			return -1;
++			printf("Test '%s' passed\n", test_fns[i].name);
 +		}
-+		CPU_ZERO(cfg->user_cfg.lcore_cpusets[lcore_id]);
-+		CPU_SET(cpu, cfg->user_cfg.lcore_cpusets[lcore_id]);
-+		count++;
-+		lcore_id++;
-+	}
++	} else {
++		/* This is the child process: run the specified test function. */
++		for (size_t i = 0; test_fns[i].name != NULL; i++) {
++			if (strcmp(test_fn, test_fns[i].name) == 0) {
++				printf("Running test '%s'\n", test_fns[i].name);
++				return test_fns[i].fn();
++			}
++		}
 +
-+	if (count == 0) {
-+		rte_errno = ENOTSUP;
++		printf("Unknown test function '%s'\n", test_fn);
 +		return -1;
 +	}
 +
 +	return 0;
 +}
++#endif /* RTE_EXEC_ENV_WINDOWS */
 +
- RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eal_init_from_cfg, 26.07)
- int
- rte_eal_init_from_cfg(const char *progname, struct rte_eal_cfg *cfg)
- {
--	struct rte_eal_cfg local_cfg = {
--		.user_cfg = EAL_USER_CFG_INITIALIZER(local_cfg.user_cfg),
--	};
-+	unsigned int i;
- 
- 	if (progname == NULL || progname[0] == '\0') {
- 		rte_errno = EINVAL;
- 		return -1;
+ static struct unit_test_suite eal_cfg_testsuite = {
+ 	.suite_name = "EAL cfg API tests",
+ 	.setup = NULL,
+ 	.teardown = NULL,
+ 	.unit_test_cases = {
+ 		TEST_CASE(test_eal_cfg_create_free),
+-		TEST_CASE(test_eal_cfg_init_empty),
+-		TEST_CASE(test_eal_cfg_init_null),
++		TEST_CASE(test_eal_cfg_init),
+ 		TEST_CASES_END()
  	}
- 
--	if (cfg == NULL)
--		cfg = &local_cfg;
-+	if (cfg == NULL) {
-+		struct rte_eal_cfg local_cfg = {
-+			.user_cfg = EAL_USER_CFG_INITIALIZER(local_cfg.user_cfg),
-+		};
-+		local_cfg.user_cfg.in_memory = true;
-+		local_cfg.user_cfg.no_shconf = true;
-+		if (rte_eal_cfg_set_lcores_from_affinity(&local_cfg, true) < 0) {
-+			eal_user_cfg_cleanup(&local_cfg.user_cfg);
-+			return -1;
-+		}
-+
-+		int ret = rte_eal_runtime_init(progname, &local_cfg.user_cfg);
-+		eal_user_cfg_cleanup(&local_cfg.user_cfg);
-+		return ret;
-+	}
-+
-+	/* If no lcores have been configured, default to the current thread's
-+	 * CPU affinity, matching rte_eal_init() behaviour when neither -c nor
-+	 * -l is passed.
-+	 */
-+	for (i = 0; i < RTE_MAX_LCORE; i++) {
-+		if (cfg->user_cfg.lcore_cpusets[i] != NULL)
-+			break;
-+	}
-+	if (i == RTE_MAX_LCORE && rte_eal_cfg_set_lcores_from_affinity(cfg, true) < 0)
-+		return -1;
- 
- 	return rte_eal_runtime_init(progname, &cfg->user_cfg);
- }
-diff --git a/lib/eal_cfg/rte_eal_cfg.h b/lib/eal_cfg/rte_eal_cfg.h
-index c0d316a6cb..ecabe136d8 100644
---- a/lib/eal_cfg/rte_eal_cfg.h
-+++ b/lib/eal_cfg/rte_eal_cfg.h
-@@ -19,6 +19,8 @@
- extern "C" {
- #endif
- 
-+#include <stdbool.h>
-+
- #include <rte_compat.h>
- 
- /**
-@@ -32,6 +34,11 @@ struct rte_eal_cfg;
-  * Allocates and initialises a configuration struct with default values
-  * equivalent to those used when rte_eal_init() is called with no options.
-  *
-+ * Returned defaults include:
-+ *   - empty lcore configuration (no lcores configured)
-+ *   - in-memory mode enabled, which disables multi-process mode,
-+ *     but allows multiple identical application instances to run concurrently.
-+ *
-  * @return
-  *   Pointer to a new configuration handle, or NULL on failure (rte_errno set).
-  */
-@@ -51,13 +58,52 @@ __rte_experimental
- void
- rte_eal_cfg_free(struct rte_eal_cfg *cfg);
- 
-+/**
-+ * Populate lcore configuration from the calling thread's CPU affinity.
-+ *
-+ * Queries the current thread's CPU affinity and replaces the lcore
-+ * configuration in @p cfg with one DPDK lcore per CPU in the affinity
-+ * set. Any existing lcore configuration in the handle is cleared before
-+ * the new mapping is applied.
-+ *
-+ * When @p remap is false, an identity mapping is used: lcore ID equals
-+ * the physical CPU number. CPUs with numbers at or above RTE_MAX_LCORE
-+ * are silently skipped. This matches the behaviour of rte_eal_init()
-+ * when neither -c nor -l is passed on the command line.
-+ *
-+ * When @p remap is true, lcore IDs are assigned sequentially starting
-+ * from 0 regardless of physical CPU numbers, so CPUs above RTE_MAX_LCORE
-+ * are usable as long as the total count stays within RTE_MAX_LCORE.
-+ *
-+ * rte_eal_init_from_cfg() calls this automatically with @p remap set to
-+ * true when no lcores have been configured in the handle.
-+ *
-+ * @param cfg
-+ *   Configuration handle created with rte_eal_cfg_create(). Must not be NULL.
-+ * @param remap
-+ *   If true, assign sequential lcore IDs (0, 1, 2, ...) to affinitised CPUs.
-+ *   If false, use identity mapping (lcore ID == physical CPU ID).
-+ * @return
-+ *   0 on success, or -1 on failure (rte_errno is set to EINVAL if cfg is NULL,
-+ *   ENOTSUP if the affinity could not be queried or yielded no usable CPUs,
-+ *   or ENOMEM on allocation failure).
-+ */
-+__rte_experimental
-+int
-+rte_eal_cfg_set_lcores_from_affinity(struct rte_eal_cfg *cfg, bool remap);
-+
- /**
-  * Initialise the EAL using a programmatic configuration handle.
-  *
-  * This function is a programmatic alternative to rte_eal_init().
-  * The caller optionally creates a configuration handle with rte_eal_cfg_create(),
-  * populates it via setter functions, and passes it to this function
-- * in place of argc/argv. If @p cfg is NULL, default EAL configuration is used.
-+ * in place of argc/argv.
-+ *
-+ * If @p cfg is NULL, default EAL configuration is used, where:
-+ *   - lcores are assigned based on the current thread's CPU affinity
-+ *   - in-memory mode is enabled, which disables multi-process mode,
-+ *     but allows multiple identical application instances to run concurrently.
-  *
-  * @param progname
-  *   The program name, used for logging. Must not be NULL or empty.
+ };
 -- 
 2.51.0
 
