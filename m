@@ -2,76 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E6DFF887E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 15:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4F3FF887E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 15:37:10 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8BBA2402EE;
-	Wed, 29 Apr 2026 17:28:00 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 4693D400EF
- for <dev@dpdk.org>; Wed, 29 Apr 2026 17:27:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1777476478;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=/uKe7hHii6s06q5IroB8hLAK0nTvxnRCrMwdRODlIik=;
- b=fHGBFWXNpp/p1iqODo73S7XoG6eAYt5H6b3ykR56SDwc9Fs9Nlm9VmQsqHICKNQN7o9sM2
- 6H7uKJWKvCN6h0GDlQ6oPGuIjIJhyeuBsUVnX+S8Hux2rx4Bw2lWqostLw35LBx1bm+qNw
- 8yglD3CDthm14d7YRvoOunmkMrSXanc=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-315-4qA5UmCAPlCJWCgYtP3b6A-1; Wed, 29 Apr 2026 11:27:56 -0400
-X-MC-Unique: 4qA5UmCAPlCJWCgYtP3b6A-1
-X-Mimecast-MFC-AGG-ID: 4qA5UmCAPlCJWCgYtP3b6A_1777476475
-Received: by mail-lj1-f199.google.com with SMTP id
- 38308e7fff4ca-38e82540e2dso5126491fa.1
- for <dev@dpdk.org>; Wed, 29 Apr 2026 08:27:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777476475; x=1778081275;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+	by mails.dpdk.org (Postfix) with ESMTP id 3C7D3402EE;
+	Wed, 29 Apr 2026 17:37:10 +0200 (CEST)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id CC39A400EF
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 17:37:08 +0200 (CEST)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-12c726f46baso16630025c88.1
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 08:37:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777477028;
+ x=1778081828; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=/uKe7hHii6s06q5IroB8hLAK0nTvxnRCrMwdRODlIik=;
- b=hj45s57TNk525ycJypTTddDQd5UDTu1aCxDx/HCUmfagF/7TVnUsQdpNqVRCtgrREJ
- uZ/0cnbJajVGNz6CDtxv9DfqLXFdc1uf0A77wHqvOhFMNTkbOe/cKpxFUCTNlKCK3RpK
- TizQE8FSrLpPrIrZdHe/EA/Xk+1AAC+sW9FsqwAuc8xrQs+t+k50PWaxpIcud6O2V6CR
- YOiU+7qgXxKwbR3V4nhaV3jO0HnLWnA4a6bmOLxJw4tGySU17BCBvgInEFG7FUBfrESl
- /ARCGhApjwUzoWz7MoviWv4zAecDxqCZWl/yEY8AEzHyxU06/7z1nq8qhF2ubcZjLKOI
- EJbw==
-X-Gm-Message-State: AOJu0Yx3YnbtDzmORnsMWLgPrBLaTiLjd+/PP7XOTiSL+QBaZvkOyFFK
- sdwqtGNLA/h64FO/moCBpbm730Oqg8Hic0hgjkziZcsrqmpqk/h/arh+Cgb9cpvwZdOcrlvCjwi
- F1rqyzCYiQUdBottgWfBYZqMx50GMnUm4nyTpLZ+NWzDvah/gS7g1VCNiP9QD9Uq9L9hWJ3szAy
- z5jQp5WLvxO3sxeX2561k=
-X-Gm-Gg: AeBDiesi+Wc5muGfIYDeUI8wXrAUzRn2afnUiKQICn/GMMs1MtnLHqTI585XsRBNAsd
- UYWrrbO9ulWzXWmr32OaRvUjRjxxgsh3uUeUNIGSwCL9UrdUnrTfVXsoYDrVj3EkQAtPyC53AOd
- Q8JKRxrkHFVKCl2yH4eO5zeBL/YLQ+HNGolm18RuKrx9J1ydTXvCp1b6N0uTHrIdqgm47WB1WyP
- e6ACFMHGSXGrfBmTFWDOLz+p1LVj2wkj0H6rIsYjWXIW0CpgLZnW6CYtOqUToUP/uI8jrnZPfZO
- 4MmF
-X-Received: by 2002:a2e:9896:0:b0:389:e6e4:3c7d with SMTP id
- 38308e7fff4ca-3924d716d8amr10667141fa.19.1777476474840; 
- Wed, 29 Apr 2026 08:27:54 -0700 (PDT)
-X-Received: by 2002:a2e:9896:0:b0:389:e6e4:3c7d with SMTP id
- 38308e7fff4ca-3924d716d8amr10667071fa.19.1777476474200; Wed, 29 Apr 2026
- 08:27:54 -0700 (PDT)
+ bh=HLlgeTc4S+QCJ2MN+hLURRFA56X31lVq8IGxOIyE108=;
+ b=fd9CYNK1trRD/AOYMEbXRJCdC+XCaXSrXOkl3b07tNrYucUSofj+dNE4QY7rCXoted
+ qonR+kzOz8jP/kvlepoChUDF/E9ruBW1vKGBBPa9pClbvHic+Pi7w7ChYECFe8lqjRar
+ Tligy9/0ZfSJcZu542baRB9RLLY+KdsawciWSjsf+HSqoGAXp3f50pWQoXVVuY6hNK/E
+ dDkn5ZMtKrHcGboH4kpALQxX7Pn7F+Pn7DtCxOLUmxg5F7QtxRG1dnM9Ujn40UcXlHVS
+ iKA0PSQ8AnnBIIy5Mzs/QOYF611C6OH5W9Jy+pJ2zPNnONmxsiFRHE8Cx/E1xaVZ+gsv
+ FcVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1777477028; x=1778081828;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=HLlgeTc4S+QCJ2MN+hLURRFA56X31lVq8IGxOIyE108=;
+ b=I18ooo6r8J3RtNcXmQqmdXbazwG3Dh/VI1V2apvS2czbYO2Yw35zrM2tFkjbRK2E8/
+ bsHFygI0nBxgyNl1t/ygQEihfTi64iF1cLTVY3v0Z54oG2qz0tUa6vR7tAyUn5PP83fI
+ w4LhK803hH1Ad0z/1hKnk8C7PWKz5Dz+hvnf7Sm/dKGnoUv5ucd/kStSeCfOyi0Y+tEp
+ 6653UHvpziaN3npEF3wpIkXwqtDQA6NjTmDv4HnijfOiy5207sPHRpEmiBSVjP0shJTW
+ DRJDFmNdhGgvSIGLpM+cxN6ZzyYEL+PNv+8MEHMXZWIjMV0M0hBdIuTriQb47wOgPtP8
+ PE5A==
+X-Gm-Message-State: AOJu0Yyh11ebvtMVTMZT8XT5zvhdRoYYn99eqMNEVoGpwujqLDNq6PBM
+ jYyT7+rxx0i/MHRJ9hAm5G1g3d7jCmAIdRSFSjnQpAhG7WgXa1zWdbckRYm5P1aVssU=
+X-Gm-Gg: AeBDieuXpwOz0Grju26pVmzipq2Y6tWHuuLz5mLx1mYbeQR/bBlRIZFiK058NsPyoln
+ fY1jDCe6xCB/29JtBPcZml8Zh8zJ/ed+WEBYkeHfwpF2baCeuCELsaL2/p6Rtc/CSO9wdrYFafE
+ CiTOZLPMi1MUdq2sAyD42Cu89Njta/gTAh/yZA48xyZQoU0oO/zswigfzdkn60GQ/Jq5/fnFQtt
+ uLnzDs713emIJueUeNNF26IFKH2qV1Z+Mb8xGv4ee+1qPbvbha8QMXEcvWNnT94Hrog/iolgkq7
+ nHtEcnNrcJQ+NEsub1dsp7UxFksNJRU8iXW6JpZmiIlHmW5YLh6Vqp9eyQhTs82f4c2Z4+it/dc
+ nDXDXJZFDzi+CqBU+tOXeo9yLdTSnTc5tkFB7xMrEF/CH3odgxoncLMukFWYPkVicD9xytI1eUd
+ 0vQgQAhwTBxgc80xxDO/O8rM/Eb17G3ztU9oeE0ajuEdSYaA==
+X-Received: by 2002:a05:7022:e04:b0:119:e56c:18b1 with SMTP id
+ a92af1059eb24-12ddd9977aemr3941230c88.25.1777477027296; 
+ Wed, 29 Apr 2026 08:37:07 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-12de326a583sm3513354c88.14.2026.04.29.08.37.06
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Wed, 29 Apr 2026 08:37:07 -0700 (PDT)
+Date: Wed, 29 Apr 2026 08:37:04 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Rajesh Kumar <rajesh3.kumar@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com
+Subject: Re: [RFC v2 0/6] introduce PTP protocol library and software relay
+Message-ID: <20260429083704.5ea3d78c@phoenix.local>
+In-Reply-To: <cover.1777413123.git.rajesh3.kumar@intel.com>
+References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
+ <cover.1777413123.git.rajesh3.kumar@intel.com>
 MIME-Version: 1.0
-References: <20260106182823.192350-1-stephen@networkplumber.org>
- <20260210000201.295839-1-stephen@networkplumber.org>
- <20260210000201.295839-17-stephen@networkplumber.org>
-In-Reply-To: <20260210000201.295839-17-stephen@networkplumber.org>
-From: David Marchand <david.marchand@redhat.com>
-Date: Wed, 29 Apr 2026 17:27:42 +0200
-X-Gm-Features: AVHnY4LVo815iZAUODh48zRKMIXgIr2fGAXGUYhvLn57OTrkpZdK2p36AX5StfM
-Message-ID: <CAJFAV8xedkMJRHvAL5NnWg7tLWX-J9Pnyzfs0dDaH7R1YuDquw@mail.gmail.com>
-Subject: Re: [PATCH v13 16/16] test: add test for pcap PMD
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: ElctOzsospgxcMC2Ok3_EZMfLTQadDscdqa6H845Ggw_1777476475
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -85,96 +80,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 10 Feb 2026 at 01:04, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> This test was generated by Claude AI with some prompting and
-> pointing at existing ring PMD test. It tests basic operations,
-> timestamps, jumbo frame, vlan handling and multiple queues
->
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+On Wed, 29 Apr 2026 03:58:31 +0530
+Rajesh Kumar <rajesh3.kumar@intel.com> wrote:
 
-[...]
-
-> +
-> +#ifdef RTE_EXEC_ENV_WINDOWS
-> +
-> +/*
-> + * Helper: Create a unique temporary file path (Windows version)
-> + */
-> +static int
-> +create_temp_path(char *buf, size_t buflen, const char *prefix)
-> +{
-> +       char temp_dir[MAX_PATH];
-> +       char temp_file[MAX_PATH];
-> +       DWORD ret;
-> +
-> +       ret = GetTempPathA(sizeof(temp_dir), temp_dir);
-> +       if (ret == 0 || ret > sizeof(temp_dir))
-> +               return -1;
-> +
-> +       if (GetTempFileNameA(temp_dir, prefix, 0, temp_file) == 0)
-> +               return -1;
-> +
-> +       ret = snprintf(buf, buflen, "%s.pcap", temp_file);
-> +       if (ret >= buflen) {
-> +               DeleteFileA(temp_file);
-> +               return -1;
-> +       }
-> +
-> +       if (MoveFileA(temp_file, buf) == 0) {
-> +               DeleteFileA(temp_file);
-> +               return -1;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +/*
-> + * Helper: Remove temporary file (Windows version)
-> + */
-> +static inline void
-> +remove_temp_file(const char *path)
-> +{
-> +       if (path[0] != '\0')
-> +               DeleteFileA(path);
-> +}
-> +
-> +#else /* POSIX */
-> +
-> +/*
-> + * Helper: Create a unique temporary file path (POSIX version)
-> + */
-> +static int
-> +create_temp_path(char *buf, size_t buflen, const char *prefix)
-> +{
-> +       int fd;
-> +
-> +       snprintf(buf, buflen, "/tmp/%s_XXXXXX.pcap", prefix);
-> +       fd = mkstemps(buf, 5);  /* 5 = strlen(".pcap") */
-> +       if (fd < 0)
-> +               return -1;
-> +       close(fd);
-> +       return 0;
-> +}
-> +
-> +/*
-> + * Helper: Remove temporary file (POSIX version)
-> + */
-> +static inline void
-> +remove_temp_file(const char *path)
-> +{
-> +       if (path[0] != '\0')
-> +               unlink(path);
-> +}
-> +
-> +#endif /* RTE_EXEC_ENV_WINDOWS */
-
-At a quick glance, that would make it the 3rd unit test having such
-temp file manipulation helpers.
-Could we put it in some app/test/ common file?
+> This series introduces a new DPDK library (lib/ptp) for IEEE 1588-2019
+> PTP protocol packet processing and a companion example application
+> (ptp_tap_relay_sw) that demonstrates its usage.
+> 
+> Motivation
+> ----------
+> Several DPDK applications need to classify and manipulate PTP packets
+> (e.g. ptpclient, ptp_tap_relay, custom Transparent Clocks). Today each
+> application re-implements its own PTP header parsing and correctionField
+> handling. A shared library avoids duplication and provides a tested,
+> standards-compliant foundation.
 
 
--- 
-David Marchand
+It would be great to have this, though not sure who would use it now.
 
+AI review spotted some things.
+
+Reviewed v2 of the PTP library series. Findings below.
+Patch 1/6 (lib/ptp):
+
+RTE_PTP_ETHERTYPE 0x88F7 duplicates RTE_ETHER_TYPE_1588 already in lib/net/rte_ether.h. Use the existing constant or alias to it.
+Comment on the version byte says "reserved (4) | versionPTP (4)"; IEEE 1588-2019 redefined the upper nibble as minorVersionPTP.
+
+Patch 2/6 (prog guide):
+
+The guide declares rte_ptp_hdr_get(const struct rte_mbuf *m) but the header has it non-const. Fix the doc, or split into const and non-const variants since the function returns a writable interior pointer.
+
+Patch 3/6 (ptp_tap_relay_sw):
+
+The standalone Makefile is missing CFLAGS += -DALLOW_EXPERIMENTAL_API. All three rte_ptp_* APIs the relay uses are __rte_experimental, so make-based builds will warn or fail under -Werror. meson is fine because meson.build sets allow_experimental_apis = true. Match examples/ptpclient/Makefile.
+relay_burst() calls rte_ptp_classify() and then rte_ptp_hdr_get() on every event packet, parsing it twice. The prog guide added in 2/6 explicitly tells callers to use rte_ptp_hdr_get() once and then rte_ptp_msg_type(hdr). The reference example should follow its own guidance.
+Minor: stats.corrections is updated via the global while the other counters are passed in by pointer. Inconsistent.
+
+Patch 4/6 (sample app guide):
+
+Limitations section claims L2-only and PTPv2-only, but the relay uses lib/ptp classification which handles VLAN/QinQ/UDPv4/UDPv6 with no version filter. Reword to "tested with L2 PTP" or drop the restriction.
+
+Patch 5/6 (test_ptp.c):
+
+Several correction tests dereference the rte_ptp_hdr_get() return without TEST_ASSERT_NOT_NULL: test_ptp_correction_zero, test_ptp_correction_known, and the four test_ptp_add_correction_* tests. test_ptp_two_step and test_ptp_seq_id get this right.
+No coverage for IPv4 with options (IHL > 5). The library's offset += ihl path is exercised by no test.
+
+Patch 6/6: no issues.
