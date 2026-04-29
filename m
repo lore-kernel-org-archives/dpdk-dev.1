@@ -2,43 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 263B2FF886D
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 09:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF246CCFA1E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 09:45:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 441DF4027A;
-	Wed, 29 Apr 2026 11:36:39 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id C9E7C40272
- for <dev@dpdk.org>; Wed, 29 Apr 2026 11:36:37 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 7C906205F2;
- Wed, 29 Apr 2026 11:36:37 +0200 (CEST)
-Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
- smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
- Wed, 29 Apr 2026 11:36:35 +0200
-From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
-To: dev@dpdk.org, Bruce Richardson <bruce.richardson@intel.com>,
- Konstantin Ananyev <konstantin.v.ananyev@yandex.ru>,
- Vipin Varghese <vipin.varghese@amd.com>,
- Stephen Hemminger <stephen@networkplumber.org>,
- Liangxing Wang <wangliangxing@hygon.cn>
-Cc: Thiyagarajan P <Thiyagarajan.P@amd.com>,
- Bala Murali Krishna <Bala.MuraliKrishna@amd.com>,
- =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
- Konstantin Ananyev <konstantin.ananyev@huawei.com>
-Subject: [PATCH v8] eal/x86: optimize memcpy of small sizes
-Date: Wed, 29 Apr 2026 09:36:28 +0000
-Message-ID: <20260429093628.215514-1-mb@smartsharesystems.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251120114554.950287-1-mb@smartsharesystems.com>
-References: <20251120114554.950287-1-mb@smartsharesystems.com>
+	by mails.dpdk.org (Postfix) with ESMTP id E4D7A4027A;
+	Wed, 29 Apr 2026 11:45:31 +0200 (CEST)
+Received: from fout-b6-smtp.messagingengine.com
+ (fout-b6-smtp.messagingengine.com [202.12.124.149])
+ by mails.dpdk.org (Postfix) with ESMTP id 647CC40272
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 11:45:30 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfout.stl.internal (Postfix) with ESMTP id 855D91D0024A;
+ Wed, 29 Apr 2026 05:45:29 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-01.internal (MEProxy); Wed, 29 Apr 2026 05:45:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:date:date:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to; s=fm2; t=1777455929; x=1777542329; bh=j2VjL/R5giZgVdWpq6VWt
+ kmDrMgyjVKXZUT4aTrrjuI=; b=rrOFZVVOlm0jbhsfU/F6gmRhOUcukKNBSaC0a
+ hU+OtjcM+RF/fKLQYR7acrTba6FoyAgmDwk8SQZZdAGAwZxwetF3oG/BH/kW9xzk
+ uapL27aEFTYtaiqWZdvd8w19H/aLoU6UG8LDAIdy+iQybmwYLKYgODTxy3FqtEpq
+ EEFy19R1AtHw2RCVNvDbYW01JfCKn2xLPVgiWtS0HwCiHzD8Jzsl5liT/QjHEwWA
+ lSNfs8SIq16WvNzmpJdHmFM+TEnS5DPgPxjqHePcAJnNxY3Guy8gFg81f1uDLMbS
+ SbDqUnJ5iiW9qWV3z2oL3Thv+OD2MT87nN4gCyskXDzIA99JQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:date:date:feedback-id:feedback-id:from:from
+ :in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+ :to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=
+ 1777455929; x=1777542329; bh=j2VjL/R5giZgVdWpq6VWtkmDrMgyjVKXZUT
+ 4aTrrjuI=; b=CqjkM1vYcnGIZv65sVPOh+6xp7NYGNPzCO4VXTg5MDD2H0LGEba
+ ynvmMMJJ7YCrwdGK/ClCWJ/WVJmkOFUWNorAJCfPJG/U857Sn6Eh4T9D26mBPOM1
+ kCl97vvHvzIJ+KYDTp2ma7XxZlFznS2+nqGSGECjzBLK9kNVkUoHYkXzkW+NMTGH
+ Tnd7KzziC/YGZjKLDX/HryjtoJ/p8o3dVXvlWU9HzBngVr9eGz7p1PDafQVE1Ida
+ Nh83XZB+dzNmvGOoamTfl/ySL2PtWPfvv77YUw4IaevfZkzi2FZJn7lmQBD5Ilr7
+ NFqjGFboXUk4sN4nFMCsUw+2Y8s2P0u35sg==
+X-ME-Sender: <xms:ONPxaZ1fu7GMEKResyfa8dWb0lytGCidR8Euz-7bMpezF71DA096Qg>
+ <xme:ONPxaaIjuKFLgiynCP9ROE2h3cYQQriQbzyvOockvaMEO1J3WQUX6doLMQJX6rMRM
+ 7JQy2ZgGLUqWkEvIi3W3q7RnPOPVmbix1FcWeYGRLe90wZfLr_4-g>
+X-ME-Received: <xmr:ONPxaZwTnRSes2W8ATn7H8bS7wt3KdUPn3uiJ0IiIt_sS2m-BK7hY7ndkoWaXSKflUfdO9tAxfAw4KnvfaY9wczf0d7zhcE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdekgeduudcutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvhhhomhgrshcuofho
+ nhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrfgrth
+ htvghrnhepveevfeevieeihfetudekgeekleeigeffueekveduteeuffeiudevteeiudek
+ feelnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepth
+ hhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepjedpmhhouggv
+ pehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtoh
+ epiihhrghnghdrhihonhhgvdehseiithgvrdgtohhmrdgtnhdprhgtphhtthhopeifrghn
+ ghdrjhhunhhlohhnghduseiithgvrdgtohhmrdgtnhdprhgtphhtthhopehshhgrnhdrlh
+ hijhhivgesiihtvgdrtghomhdrtghnpdhrtghpthhtohepfhgvnhhgtghhvghnghifvghn
+ sehhuhgrfigvihdrtghomhdprhgtphhtthhopegtlhhouhgurdifrghnghigihgrohihuh
+ hnsehhuhgrfigvihdrtghomhdprhgtphhtthhopeifrghnghhfvghifhgvihegtdeshhhu
+ rgifvghirdgtohhm
+X-ME-Proxy: <xmx:ONPxaYV8uNA3GIki4Pyx-UXLw-ash0ugSVFhZF5RWb3L_5whNcn7nA>
+ <xmx:ONPxaZhAlVIALDtAEUU56Tu2EFWLcUuu5FsH3kdCZY5QoSuTviAhRA>
+ <xmx:ONPxaYAunhJeQVOUZdCFbmRvZGJUP-bafQ1br-nv2Pgz5yEDcHzRxw>
+ <xmx:ONPxaftaXxEtCvwGAhNG66kpJfONjiaV4V60GputY_5CERv0qJqWjQ>
+ <xmx:OdPxaZCiM9LDBsaLrZN3W0DOSp792oHW2UV7n63AjW4n3kEva33rqy8C>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 29 Apr 2026 05:45:27 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: dev@dpdk.org
+Cc: Yong Zhang <zhang.yong25@zte.com.cn>,
+ Junlong Wang <wang.junlong1@zte.com.cn>,
+ Lijie Shan <shan.lijie@zte.com.cn>,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ Xiaoyun Wang <cloud.wangxiaoyun@huawei.com>,
+ Feifei Wang <wangfeifei40@huawei.com>
+Subject: [PATCH] maintainers: prune unreachable contacts
+Date: Wed, 29 Apr 2026 11:45:15 +0200
+Message-ID: <20260429094516.3558155-1-thomas@monjalon.net>
+X-Mailer: git-send-email 2.53.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 29 Apr 2026 09:36:35.0884 (UTC)
- FILETIME=[AC0076C0:01DCD7BB]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -52,569 +92,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The implementation for copying up to 64 bytes does not depend on address
-alignment with the size of the CPU's vector registers. Nonetheless, the
-exact same code for copying up to 64 bytes was present in both the aligned
-copy function and all the CPU vector register size specific variants of
-the unaligned copy functions.
-With this patch, the implementation for copying up to 64 bytes was
-consolidated into one instance, located in the common copy function,
-before checking alignment requirements.
-This provides three benefits:
-1. No copy-paste in the source code.
-2. A performance gain for copying up to 64 bytes, because the
-address alignment check is avoided in this case.
-3. Reduced instruction memory footprint, because the compiler only
-generates one instance of the function for copying up to 64 bytes, instead
-of two instances (one in the unaligned copy function, and one in the
-aligned copy function).
+Emails to the maintainers of ZTE zsda and HiSilicon uadk
+crypto and compress drivers do not respond.
 
-Furthermore, __rte_restrict was added to source and destination addresses.
-
-And finally, the missing implementation of rte_mov48() was added.
-
-Regarding performance...
-The memcpy performance test (cache-to-cache copy) shows:
-Copying up to 15 bytes takes ca. 4.5 cycles, versus ca. 6.5 cycles before.
-Copying 8 bytes takes 4 cycles, versus 7 cycles before.
-Copying 16 bytes takes 2 cycles, versus 4 cycles before.
-Copying 64 bytes takes 4 cycles, versus 7 cycles before.
-
-Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
 ---
-v8:
-* Reverted the first branch from size <= 16 back to size < 16, restored
-  the original rte_mov15_or_less() function, and removed the new
-  rte_mov16_or_less() function.
-  When rte_memcpy() is used for copying an array of pointers, and the
-  number of pointers to copy is low (size <= 64 bytes), it is more likely
-  that the number of pointers to copy is 1 than 2.
-  The rte_mov15_or_less() implementation handles copying 8 bytes more
-  efficiently than the rte_mov16_or_less() implementation, which copied
-  the 8-byte pointer twice.
-  Also note that with rte_mov15_or_less(), the compiler can optimize away
-  the branches handling n & 1, n & 2 and n & 4 when it is known at build
-  time that (8-byte) pointers are being copied. (For 32-bit architecture,
-  the n & 4 will not be optimized away when copying pointers.)
-  This reversion also makes the patch less revolutionary and more
-  incremental.
-* Removed a lot of code for handling compile time known sizes. (Bruce)
-  The rte_memcpy() function should not be used for small copies with
-  compile time known sizes, so handling it is considered superfluous.
-  Removing it improves source code readability. And reduces the size of
-  the patch.
-* Kept acks from Bruce and Konstantin (both given to v7).
-v7:
-* Updated patch description. Mainly to clarify that the changes related to
-  copying up to 64 bytes simply replaces multiple instances of copy-pasted
-  code with one common instance.
-* Fixed copy of build time known 16 bytes in rte_mov17_to_32(). (Vipin)
-* Rebased.
-v6:
-* Went back to using rte_uintN_alias structures for copying instead of
-  using memcpy(). They were there for a reason.
-  (Inspired by the discussion about optimizing the checksum function.)
-* Removed note about copying uninitialized data.
-* Added __rte_restrict to source and destination addresses.
-  Updated function descriptions from "should" to "must" not overlap.
-* Changed rte_mov48() AVX implementation to copy 32+16 bytes instead of
-  copying 32 + 32 overlapping bytes. (Konstantin)
-* Ignoring "-Wstringop-overflow" is not needed, so it was removed.
-v5:
-* Reverted v4: Replace SSE2 _mm_loadu_si128() with SSE3 _mm_lddqu_si128().
-  It was slower.
-* Improved some comments. (Konstantin Ananyev)
-* Moved the size range 17..32 inside the size <= 64 branch, so when
-  building for SSE, the generated code can start copying the first
-  16 bytes before comparing if the size is greater than 32 or not.
-* Just require RTE_MEMCPY_AVX for using rte_mov32() in rte_mov33_to_64().
-v4:
-* Replace SSE2 _mm_loadu_si128() with SSE3 _mm_lddqu_si128().
-v3:
-* Fixed typo in comment.
-v2:
-* Updated patch title to reflect that the performance is improved.
-* Use the design pattern of two overlapping stores for small copies too.
-* Expanded first branch from size < 16 to size <= 16.
-* Handle more build time constant copy sizes.
----
- lib/eal/x86/include/rte_memcpy.h | 274 ++++++++++++++-----------------
- 1 file changed, 126 insertions(+), 148 deletions(-)
+ MAINTAINERS | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/lib/eal/x86/include/rte_memcpy.h b/lib/eal/x86/include/rte_memcpy.h
-index 46d34b8081..e0645db2f1 100644
---- a/lib/eal/x86/include/rte_memcpy.h
-+++ b/lib/eal/x86/include/rte_memcpy.h
-@@ -22,11 +22,6 @@
- extern "C" {
- #endif
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 0f5539f851..9164c736db 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1201,7 +1201,6 @@ F: drivers/crypto/scheduler/
+ F: doc/guides/cryptodevs/scheduler.rst
  
--#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 100000)
--#pragma GCC diagnostic push
--#pragma GCC diagnostic ignored "-Wstringop-overflow"
--#endif
--
- /*
-  * GCC older than version 11 doesn't compile AVX properly, so use SSE instead.
-  * There are no problems with AVX2.
-@@ -40,9 +35,6 @@ extern "C" {
- /**
-  * Copy bytes from one location to another. The locations must not overlap.
-  *
-- * @note This is implemented as a macro, so it's address should not be taken
-- * and care is needed as parameter expressions may be evaluated multiple times.
-- *
-  * @param dst
-  *   Pointer to the destination of the data.
-  * @param src
-@@ -53,15 +45,15 @@ extern "C" {
-  *   Pointer to the destination data.
-  */
- static __rte_always_inline void *
--rte_memcpy(void *dst, const void *src, size_t n);
-+rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n);
+ HiSilicon UADK crypto
+-M: Zhangfei Gao <zhangfei.gao@linaro.org>
+ F: drivers/crypto/uadk/
+ F: doc/guides/cryptodevs/uadk.rst
+ F: doc/guides/cryptodevs/features/uadk.ini
+@@ -1300,7 +1299,6 @@ F: doc/guides/cryptodevs/virtio.rst
+ F: doc/guides/cryptodevs/features/virtio.ini
  
- /**
-  * Copy bytes from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  * Use with n <= 15.
-  */
- static __rte_always_inline void *
--rte_mov15_or_less(void *dst, const void *src, size_t n)
-+rte_mov15_or_less(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
- {
- 	/**
- 	 * Use the following structs to avoid violating C standard
-@@ -103,10 +95,10 @@ rte_mov15_or_less(void *dst, const void *src, size_t n)
+ ZTE Storage Data Accelerator (ZSDA)
+-M: Hanxiao Li <li.hanxiao@zte.com.cn>
+ F: drivers/crypto/zsda/
+ F: doc/guides/cryptodevs/zsda.rst
+ F: doc/guides/cryptodevs/features/zsda.ini
+@@ -1318,7 +1316,6 @@ F: doc/guides/compressdevs/octeontx.rst
+ F: doc/guides/compressdevs/features/octeontx.ini
  
- /**
-  * Copy 16 bytes from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  */
- static __rte_always_inline void
--rte_mov16(uint8_t *dst, const uint8_t *src)
-+rte_mov16(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
- {
- 	__m128i xmm0;
+ HiSilicon UADK compress
+-M: Zhangfei Gao <zhangfei.gao@linaro.org>
+ F: drivers/compress/uadk/
+ F: doc/guides/compressdevs/uadk.rst
+ F: doc/guides/compressdevs/features/uadk.ini
+@@ -1352,7 +1349,6 @@ F: doc/guides/compressdevs/zlib.rst
+ F: doc/guides/compressdevs/features/zlib.ini
  
-@@ -116,10 +108,10 @@ rte_mov16(uint8_t *dst, const uint8_t *src)
- 
- /**
-  * Copy 32 bytes from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  */
- static __rte_always_inline void
--rte_mov32(uint8_t *dst, const uint8_t *src)
-+rte_mov32(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
- {
- #if defined RTE_MEMCPY_AVX
- 	__m256i ymm0;
-@@ -132,12 +124,29 @@ rte_mov32(uint8_t *dst, const uint8_t *src)
- #endif
- }
- 
-+/**
-+ * Copy 48 bytes from one location to another,
-+ * locations must not overlap.
-+ */
-+static __rte_always_inline void
-+rte_mov48(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
-+{
-+#if defined RTE_MEMCPY_AVX
-+	rte_mov32((uint8_t *)dst, (const uint8_t *)src);
-+	rte_mov16((uint8_t *)dst + 32, (const uint8_t *)src + 32);
-+#else /* SSE implementation */
-+	rte_mov16((uint8_t *)dst + 0 * 16, (const uint8_t *)src + 0 * 16);
-+	rte_mov16((uint8_t *)dst + 1 * 16, (const uint8_t *)src + 1 * 16);
-+	rte_mov16((uint8_t *)dst + 2 * 16, (const uint8_t *)src + 2 * 16);
-+#endif
-+}
-+
- /**
-  * Copy 64 bytes from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  */
- static __rte_always_inline void
--rte_mov64(uint8_t *dst, const uint8_t *src)
-+rte_mov64(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
- {
- #if defined __AVX512F__ && defined RTE_MEMCPY_AVX512
- 	__m512i zmm0;
-@@ -152,10 +161,10 @@ rte_mov64(uint8_t *dst, const uint8_t *src)
- 
- /**
-  * Copy 128 bytes from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  */
- static __rte_always_inline void
--rte_mov128(uint8_t *dst, const uint8_t *src)
-+rte_mov128(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
- {
- 	rte_mov64(dst + 0 * 64, src + 0 * 64);
- 	rte_mov64(dst + 1 * 64, src + 1 * 64);
-@@ -163,15 +172,63 @@ rte_mov128(uint8_t *dst, const uint8_t *src)
- 
- /**
-  * Copy 256 bytes from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  */
- static __rte_always_inline void
--rte_mov256(uint8_t *dst, const uint8_t *src)
-+rte_mov256(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src)
- {
- 	rte_mov128(dst + 0 * 128, src + 0 * 128);
- 	rte_mov128(dst + 1 * 128, src + 1 * 128);
- }
- 
-+/**
-+ * Copy bytes from one location to another,
-+ * locations must not overlap.
-+ * Use with 16 <= n <= 32.
-+ */
-+static __rte_always_inline void *
-+rte_mov16_to_32(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
-+{
-+	if (__rte_constant(n) && n == 32) {
-+		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
-+		return dst;
-+	}
-+	rte_mov16((uint8_t *)dst, (const uint8_t *)src);
-+	if (__rte_constant(n) && n == 16)
-+		return dst; /* avoid (harmless) duplicate copy */
-+	rte_mov16((uint8_t *)dst - 16 + n, (const uint8_t *)src - 16 + n);
-+	return dst;
-+}
-+
-+/**
-+ * Copy bytes from one location to another,
-+ * locations must not overlap.
-+ * Use with 32 <= n <= 64.
-+ */
-+static __rte_always_inline void *
-+rte_mov32_to_64(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
-+{
-+	if (__rte_constant(n) && n == 64) {
-+		rte_mov64((uint8_t *)dst, (const uint8_t *)src);
-+		return dst;
-+	}
-+#if defined RTE_MEMCPY_AVX
-+	rte_mov32((uint8_t *)dst, (const uint8_t *)src);
-+	if (__rte_constant(n) && n == 32)
-+		return dst; /* avoid (harmless) duplicate copy */
-+	rte_mov32((uint8_t *)dst - 32 + n, (const uint8_t *)src - 32 + n);
-+#else /* SSE implementation */
-+	rte_mov16((uint8_t *)dst + 0 * 16, (const uint8_t *)src + 0 * 16);
-+	rte_mov16((uint8_t *)dst + 1 * 16, (const uint8_t *)src + 1 * 16);
-+	if (__rte_constant(n) && n == 32)
-+		return dst; /* avoid (harmless) duplicate copy */
-+	if (n > 48)
-+		rte_mov16((uint8_t *)dst + 2 * 16, (const uint8_t *)src + 2 * 16);
-+	rte_mov16((uint8_t *)dst - 16 + n, (const uint8_t *)src - 16 + n);
-+#endif
-+	return dst;
-+}
-+
- #if defined __AVX512F__ && defined RTE_MEMCPY_AVX512
- 
- /**
-@@ -182,10 +239,10 @@ rte_mov256(uint8_t *dst, const uint8_t *src)
- 
- /**
-  * Copy 128-byte blocks from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  */
- static __rte_always_inline void
--rte_mov128blocks(uint8_t *dst, const uint8_t *src, size_t n)
-+rte_mov128blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src, size_t n)
- {
- 	__m512i zmm0, zmm1;
- 
-@@ -202,10 +259,10 @@ rte_mov128blocks(uint8_t *dst, const uint8_t *src, size_t n)
- 
- /**
-  * Copy 512-byte blocks from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  */
- static inline void
--rte_mov512blocks(uint8_t *dst, const uint8_t *src, size_t n)
-+rte_mov512blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src, size_t n)
- {
- 	__m512i zmm0, zmm1, zmm2, zmm3, zmm4, zmm5, zmm6, zmm7;
- 
-@@ -232,45 +289,22 @@ rte_mov512blocks(uint8_t *dst, const uint8_t *src, size_t n)
- 	}
- }
- 
-+/**
-+ * Copy bytes from one location to another,
-+ * locations must not overlap.
-+ * Use with n > 64.
-+ */
- static __rte_always_inline void *
--rte_memcpy_generic(void *dst, const void *src, size_t n)
-+rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_restrict src,
-+		size_t n)
- {
- 	void *ret = dst;
- 	size_t dstofss;
- 	size_t bits;
- 
--	/**
--	 * Copy less than 16 bytes
--	 */
--	if (n < 16) {
--		return rte_mov15_or_less(dst, src, n);
--	}
--
- 	/**
- 	 * Fast way when copy size doesn't exceed 512 bytes
- 	 */
--	if (__rte_constant(n) && n == 32) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 32) {
--		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
--		if (__rte_constant(n) && n == 16)
--			return ret; /* avoid (harmless) duplicate copy */
--		rte_mov16((uint8_t *)dst - 16 + n,
--				  (const uint8_t *)src - 16 + n);
--		return ret;
--	}
--	if (__rte_constant(n) && n == 64) {
--		rte_mov64((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 64) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		rte_mov32((uint8_t *)dst - 32 + n,
--				  (const uint8_t *)src - 32 + n);
--		return ret;
--	}
- 	if (n <= 512) {
- 		if (n >= 256) {
- 			n -= 256;
-@@ -351,10 +385,10 @@ rte_memcpy_generic(void *dst, const void *src, size_t n)
- 
- /**
-  * Copy 128-byte blocks from one location to another,
-- * locations should not overlap.
-+ * locations must not overlap.
-  */
- static __rte_always_inline void
--rte_mov128blocks(uint8_t *dst, const uint8_t *src, size_t n)
-+rte_mov128blocks(uint8_t *__rte_restrict dst, const uint8_t *__rte_restrict src, size_t n)
- {
- 	__m256i ymm0, ymm1, ymm2, ymm3;
- 
-@@ -381,41 +415,22 @@ rte_mov128blocks(uint8_t *dst, const uint8_t *src, size_t n)
- 	}
- }
- 
-+/**
-+ * Copy bytes from one location to another,
-+ * locations must not overlap.
-+ * Use with n > 64.
-+ */
- static __rte_always_inline void *
--rte_memcpy_generic(void *dst, const void *src, size_t n)
-+rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_restrict src,
-+		size_t n)
- {
- 	void *ret = dst;
- 	size_t dstofss;
- 	size_t bits;
- 
--	/**
--	 * Copy less than 16 bytes
--	 */
--	if (n < 16) {
--		return rte_mov15_or_less(dst, src, n);
--	}
--
- 	/**
- 	 * Fast way when copy size doesn't exceed 256 bytes
- 	 */
--	if (__rte_constant(n) && n == 32) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 32) {
--		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
--		if (__rte_constant(n) && n == 16)
--			return ret; /* avoid (harmless) duplicate copy */
--		rte_mov16((uint8_t *)dst - 16 + n,
--				(const uint8_t *)src - 16 + n);
--		return ret;
--	}
--	if (n <= 64) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		rte_mov32((uint8_t *)dst - 32 + n,
--				(const uint8_t *)src - 32 + n);
--		return ret;
--	}
- 	if (n <= 256) {
- 		if (n >= 128) {
- 			n -= 128;
-@@ -482,7 +497,7 @@ rte_memcpy_generic(void *dst, const void *src, size_t n)
- /**
-  * Macro for copying unaligned block from one location to another with constant load offset,
-  * 47 bytes leftover maximum,
-- * locations should not overlap.
-+ * locations must not overlap.
-  * Requirements:
-  * - Store is aligned
-  * - Load offset is <offset>, which must be immediate value within [1, 15]
-@@ -542,7 +557,7 @@ rte_memcpy_generic(void *dst, const void *src, size_t n)
- /**
-  * Macro for copying unaligned block from one location to another,
-  * 47 bytes leftover maximum,
-- * locations should not overlap.
-+ * locations must not overlap.
-  * Use switch here because the aligning instruction requires immediate value for shift count.
-  * Requirements:
-  * - Store is aligned
-@@ -573,38 +588,23 @@ rte_memcpy_generic(void *dst, const void *src, size_t n)
-     }                                                                 \
- }
- 
-+/**
-+ * Copy bytes from one location to another,
-+ * locations must not overlap.
-+ * Use with n > 64.
-+ */
- static __rte_always_inline void *
--rte_memcpy_generic(void *dst, const void *src, size_t n)
-+rte_memcpy_generic_more_than_64(void *__rte_restrict dst, const void *__rte_restrict src,
-+		size_t n)
- {
- 	__m128i xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7, xmm8;
- 	void *ret = dst;
- 	size_t dstofss;
- 	size_t srcofs;
- 
--	/**
--	 * Copy less than 16 bytes
--	 */
--	if (n < 16) {
--		return rte_mov15_or_less(dst, src, n);
--	}
--
- 	/**
- 	 * Fast way when copy size doesn't exceed 512 bytes
- 	 */
--	if (n <= 32) {
--		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
--		if (__rte_constant(n) && n == 16)
--			return ret; /* avoid (harmless) duplicate copy */
--		rte_mov16((uint8_t *)dst - 16 + n, (const uint8_t *)src - 16 + n);
--		return ret;
--	}
--	if (n <= 64) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		if (n > 48)
--			rte_mov16((uint8_t *)dst + 32, (const uint8_t *)src + 32);
--		rte_mov16((uint8_t *)dst - 16 + n, (const uint8_t *)src - 16 + n);
--		return ret;
--	}
- 	if (n <= 128) {
- 		goto COPY_BLOCK_128_BACK15;
- 	}
-@@ -696,44 +696,17 @@ rte_memcpy_generic(void *dst, const void *src, size_t n)
- 
- #endif /* __AVX512F__ */
- 
-+/**
-+ * Copy bytes from one vector register size aligned location to another,
-+ * locations must not overlap.
-+ * Use with n > 64.
-+ */
- static __rte_always_inline void *
--rte_memcpy_aligned(void *dst, const void *src, size_t n)
-+rte_memcpy_aligned_more_than_64(void *__rte_restrict dst, const void *__rte_restrict src,
-+		size_t n)
- {
- 	void *ret = dst;
- 
--	/* Copy size < 16 bytes */
--	if (n < 16) {
--		return rte_mov15_or_less(dst, src, n);
--	}
--
--	/* Copy 16 <= size <= 32 bytes */
--	if (__rte_constant(n) && n == 32) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 32) {
--		rte_mov16((uint8_t *)dst, (const uint8_t *)src);
--		if (__rte_constant(n) && n == 16)
--			return ret; /* avoid (harmless) duplicate copy */
--		rte_mov16((uint8_t *)dst - 16 + n,
--				(const uint8_t *)src - 16 + n);
--
--		return ret;
--	}
--
--	/* Copy 32 < size <= 64 bytes */
--	if (__rte_constant(n) && n == 64) {
--		rte_mov64((uint8_t *)dst, (const uint8_t *)src);
--		return ret;
--	}
--	if (n <= 64) {
--		rte_mov32((uint8_t *)dst, (const uint8_t *)src);
--		rte_mov32((uint8_t *)dst - 32 + n,
--				(const uint8_t *)src - 32 + n);
--
--		return ret;
--	}
--
- 	/* Copy 64 bytes blocks */
- 	for (; n > 64; n -= 64) {
- 		rte_mov64((uint8_t *)dst, (const uint8_t *)src);
-@@ -749,20 +722,25 @@ rte_memcpy_aligned(void *dst, const void *src, size_t n)
- }
- 
- static __rte_always_inline void *
--rte_memcpy(void *dst, const void *src, size_t n)
-+rte_memcpy(void *__rte_restrict dst, const void *__rte_restrict src, size_t n)
- {
-+	/* Common implementation for size <= 64 bytes. */
-+	if (n < 16)
-+		return rte_mov15_or_less(dst, src, n);
-+	if (n <= 32)
-+		return rte_mov16_to_32(dst, src, n);
-+	if (n <= 64)
-+		return rte_mov32_to_64(dst, src, n);
-+
-+	/* Implementation for size > 64 bytes depends on alignment with vector register size. */
- 	if (!(((uintptr_t)dst | (uintptr_t)src) & ALIGNMENT_MASK))
--		return rte_memcpy_aligned(dst, src, n);
-+		return rte_memcpy_aligned_more_than_64(dst, src, n);
- 	else
--		return rte_memcpy_generic(dst, src, n);
-+		return rte_memcpy_generic_more_than_64(dst, src, n);
- }
- 
- #undef ALIGNMENT_MASK
- 
--#if defined(RTE_TOOLCHAIN_GCC) && (GCC_VERSION >= 100000)
--#pragma GCC diagnostic pop
--#endif
--
- #ifdef __cplusplus
- }
- #endif
+ ZTE Storage Data Accelerator (ZSDA)
+-M: Hanxiao Li <li.hanxiao@zte.com.cn>
+ F: drivers/common/zsda/
+ F: drivers/compress/zsda/
+ F: doc/guides/compressdevs/zsda.rst
 -- 
-2.43.0
+2.53.0
 
