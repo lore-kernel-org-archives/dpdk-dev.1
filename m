@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4F3FF887E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 15:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012DDFF887E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 15:57:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3C7D3402EE;
-	Wed, 29 Apr 2026 17:37:10 +0200 (CEST)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id CC39A400EF
- for <dev@dpdk.org>; Wed, 29 Apr 2026 17:37:08 +0200 (CEST)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-12c726f46baso16630025c88.1
- for <dev@dpdk.org>; Wed, 29 Apr 2026 08:37:08 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 231BB402EE;
+	Wed, 29 Apr 2026 17:57:52 +0200 (CEST)
+Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com
+ [209.85.161.41]) by mails.dpdk.org (Postfix) with ESMTP id 9D056400EF
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 17:57:50 +0200 (CEST)
+Received: by mail-oo1-f41.google.com with SMTP id
+ 006d021491bc7-67c22b05346so6674213eaf.2
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 08:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777477028;
- x=1778081828; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777478270;
+ x=1778083070; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HLlgeTc4S+QCJ2MN+hLURRFA56X31lVq8IGxOIyE108=;
- b=fd9CYNK1trRD/AOYMEbXRJCdC+XCaXSrXOkl3b07tNrYucUSofj+dNE4QY7rCXoted
- qonR+kzOz8jP/kvlepoChUDF/E9ruBW1vKGBBPa9pClbvHic+Pi7w7ChYECFe8lqjRar
- Tligy9/0ZfSJcZu542baRB9RLLY+KdsawciWSjsf+HSqoGAXp3f50pWQoXVVuY6hNK/E
- dDkn5ZMtKrHcGboH4kpALQxX7Pn7F+Pn7DtCxOLUmxg5F7QtxRG1dnM9Ujn40UcXlHVS
- iKA0PSQ8AnnBIIy5Mzs/QOYF611C6OH5W9Jy+pJ2zPNnONmxsiFRHE8Cx/E1xaVZ+gsv
- FcVw==
+ bh=kPgHni3Ad3k2TIhNdbhjCZCmxKkVPWzjDUmLGga7QKM=;
+ b=b1pO6Dvyo3fjjhb6lCq6h01FA3DOT9ZBgqYwIqsDTRMr3gU8yVXyPtuK8iQ1ukRPYK
+ KdWpy937t6ToGm/+/g5iuDVAcDp603rm4rPJRVOZbjeIYz+G+bUte9WgCz7JRB+2WUrJ
+ C9C2T0Cqw0cCVpP6FDCNi+aOWzBuM16oWDh6jUviJiTIr99R2zCbD0lCWHJiSYiUJIqr
+ RKHPFH7XfIBr8L7bfc4ruVBlTdRc7YnvsTbAo1lC6FpmaeH2hZopC8u4LDKtSTDSOaeO
+ VBRKjbdnDGK0xPZbOfVtqI4MqVWERczHH6i7oXggNV3tqfsawnXd5PPdSGBG0bCgRssW
+ HOuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777477028; x=1778081828;
+ d=1e100.net; s=20251104; t=1777478270; x=1778083070;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=HLlgeTc4S+QCJ2MN+hLURRFA56X31lVq8IGxOIyE108=;
- b=I18ooo6r8J3RtNcXmQqmdXbazwG3Dh/VI1V2apvS2czbYO2Yw35zrM2tFkjbRK2E8/
- bsHFygI0nBxgyNl1t/ygQEihfTi64iF1cLTVY3v0Z54oG2qz0tUa6vR7tAyUn5PP83fI
- w4LhK803hH1Ad0z/1hKnk8C7PWKz5Dz+hvnf7Sm/dKGnoUv5ucd/kStSeCfOyi0Y+tEp
- 6653UHvpziaN3npEF3wpIkXwqtDQA6NjTmDv4HnijfOiy5207sPHRpEmiBSVjP0shJTW
- DRJDFmNdhGgvSIGLpM+cxN6ZzyYEL+PNv+8MEHMXZWIjMV0M0hBdIuTriQb47wOgPtP8
- PE5A==
-X-Gm-Message-State: AOJu0Yyh11ebvtMVTMZT8XT5zvhdRoYYn99eqMNEVoGpwujqLDNq6PBM
- jYyT7+rxx0i/MHRJ9hAm5G1g3d7jCmAIdRSFSjnQpAhG7WgXa1zWdbckRYm5P1aVssU=
-X-Gm-Gg: AeBDieuXpwOz0Grju26pVmzipq2Y6tWHuuLz5mLx1mYbeQR/bBlRIZFiK058NsPyoln
- fY1jDCe6xCB/29JtBPcZml8Zh8zJ/ed+WEBYkeHfwpF2baCeuCELsaL2/p6Rtc/CSO9wdrYFafE
- CiTOZLPMi1MUdq2sAyD42Cu89Njta/gTAh/yZA48xyZQoU0oO/zswigfzdkn60GQ/Jq5/fnFQtt
- uLnzDs713emIJueUeNNF26IFKH2qV1Z+Mb8xGv4ee+1qPbvbha8QMXEcvWNnT94Hrog/iolgkq7
- nHtEcnNrcJQ+NEsub1dsp7UxFksNJRU8iXW6JpZmiIlHmW5YLh6Vqp9eyQhTs82f4c2Z4+it/dc
- nDXDXJZFDzi+CqBU+tOXeo9yLdTSnTc5tkFB7xMrEF/CH3odgxoncLMukFWYPkVicD9xytI1eUd
- 0vQgQAhwTBxgc80xxDO/O8rM/Eb17G3ztU9oeE0ajuEdSYaA==
-X-Received: by 2002:a05:7022:e04:b0:119:e56c:18b1 with SMTP id
- a92af1059eb24-12ddd9977aemr3941230c88.25.1777477027296; 
- Wed, 29 Apr 2026 08:37:07 -0700 (PDT)
+ bh=kPgHni3Ad3k2TIhNdbhjCZCmxKkVPWzjDUmLGga7QKM=;
+ b=qCDHdz+4/3BT0Q3kpw5d4M5HUYGD7jLWPtMiB3DEVaYqQuAVNhtyvRONmNZAjdIWPE
+ s7CqhFFS9H02vw7DlB6gp3v90DYA0ff5Sv+pgQtTB5V0etlhgac37xmL102zYGMQ+kR5
+ R1oLt7C/qgMLPz9LSjzIXimJzW0i3S9KuEMrY3Kbp8Mts1cEPGaUhyZoPgUavlANinYv
+ pNQPWRpN2V86vTmYQGVemRS12htLpXhF1T8+azdAmgUUfCryonY7+/u4UUsLJVQxdul9
+ hEFwBtIa1JYLOp9FuMljzYdc5LPBD6VZXxKqpfkvqaViSA8bqzBhaG1pRDPwoLyw6aRz
+ gy/A==
+X-Gm-Message-State: AOJu0YxUE2blEVAZaQLEUXOuAPbqPfERbxYzlpP3/XGW0iiTi7xRExnJ
+ KMkTYT/PIFFIr3YZ0BQtejyKVRdrMMNsCtTGD3wr2HpF3HYxYtBZG4864ihPb2QZb/g=
+X-Gm-Gg: AeBDieslW0i3fGZc8devtPIzT2i07nt7E5xoIVdrXMJi1/Sz+SAJfBMy74E70Md6Qa1
+ JtRj8NXQh5zeOOZoDv98gRPIxO8aC8j3c0IaUU/5oDmiT1tYpzIf3OnGkPLe2Gu7JC64R68HIxH
+ Obh2CoEmKXdrOFYi7y6qz85lV4Xm2l8my9ouvmCO5i6iLAOxrn1F8kUfopwc0wI1fGD9AZGulTU
+ 8s4F9zZJ7bmvkquq+VS4HK3x/ZGjIjJjVPKiDICq62yBSQslB+6m/L0N3LDdSEqIDyPSHOiv5B0
+ edcghTbJcAcDtwjWuvGAXVQ5grkYeFXNIvcowzkGNCrpoCwDD+wNIRTquOi7zrhm/i3qH7i7m6g
+ i3syAQW0bnrGqZgGCo86BGfgiLvL+qGZQ8knfkoj1Qy8ccCROrXvBuL0bDGZBPtDJobyrtdA2P2
+ LpnxA3MttBtIpXdqENIib9/2nlalCdHBykq1ON/dypDmgYgg==
+X-Received: by 2002:a05:6820:222a:b0:695:aea7:8c1a with SMTP id
+ 006d021491bc7-6965cbd997cmr4205357eaf.54.1777478269396; 
+ Wed, 29 Apr 2026 08:57:49 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12de326a583sm3513354c88.14.2026.04.29.08.37.06
+ 006d021491bc7-6966bbc28fdsm1375832eaf.4.2026.04.29.08.57.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Apr 2026 08:37:07 -0700 (PDT)
-Date: Wed, 29 Apr 2026 08:37:04 -0700
+ Wed, 29 Apr 2026 08:57:49 -0700 (PDT)
+Date: Wed, 29 Apr 2026 08:57:46 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Rajesh Kumar <rajesh3.kumar@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com
-Subject: Re: [RFC v2 0/6] introduce PTP protocol library and software relay
-Message-ID: <20260429083704.5ea3d78c@phoenix.local>
-In-Reply-To: <cover.1777413123.git.rajesh3.kumar@intel.com>
-References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
- <cover.1777413123.git.rajesh3.kumar@intel.com>
+To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: <dev@dpdk.org>, <wathsala.vithanage@arm.com>
+Subject: Re: [PATCH v4 0/2] few improvemnts for SORING lib
+Message-ID: <20260429085746.24bfcc3e@phoenix.local>
+In-Reply-To: <20260423091625.123642-1-konstantin.ananyev@huawei.com>
+References: <20260417212358.212692-1-konstantin.ananyev@huawei.com>
+ <20260423091625.123642-1-konstantin.ananyev@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,49 +80,60 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 29 Apr 2026 03:58:31 +0530
-Rajesh Kumar <rajesh3.kumar@intel.com> wrote:
+On Thu, 23 Apr 2026 10:16:23 +0100
+Konstantin Ananyev <konstantin.ananyev@huawei.com> wrote:
 
-> This series introduces a new DPDK library (lib/ptp) for IEEE 1588-2019
-> PTP protocol packet processing and a companion example application
-> (ptp_tap_relay_sw) that demonstrates its usage.
+> v3 -> v4
+> - Remove too aggressive optimization (patch #1)
+> - Fix AI review comments
 > 
-> Motivation
-> ----------
-> Several DPDK applications need to classify and manipulate PTP packets
-> (e.g. ptpclient, ptp_tap_relay, custom Transparent Clocks). Today each
-> application re-implements its own PTP header parsing and correctionField
-> handling. A shared library avoids duplication and provides a tested,
-> standards-compliant foundation.
+> v2 -> v3
+> - fix MSVC complaints
+> 
+> v1 -> v2
+> - fix formal API comments (doxygen complaints)
+> - add section to release notes
+> 
+> First patch aims to improve enqueue/dequeue performance, specially
+> for the cases with multiple workers lcores per stage.
+> Second one introduces 'Peek API' similar to what we have for
+> conventional rte_ring. Also it adds new test-cases for this new API.
+> 
+> Konstantin Ananyev (2):
+>   ring: make soring to always finalize its own stage
+>   ring: introduce peek API for soring
+> 
+>  app/test/meson.build                   |   1 +
+>  app/test/test_soring_mt_stress.c       |  74 +++++++
+>  app/test/test_soring_peek_stress.c     |  75 +++++++
+>  app/test/test_soring_stress.c          |   3 +
+>  app/test/test_soring_stress.h          |   1 +
+>  app/test/test_soring_stress_impl.h     |  87 +-------
+>  doc/guides/rel_notes/release_26_07.rst |   8 +
+>  lib/ring/rte_soring.h                  | 267 ++++++++++++++++++++++++
+>  lib/ring/soring.c                      | 272 ++++++++++++++++++++++---
+>  9 files changed, 680 insertions(+), 108 deletions(-)
+>  create mode 100644 app/test/test_soring_peek_stress.c
+> 
+
+I don't use soring, but looks good to me.
+
+One related observation, is that would be good if soring tests used unit_test_runner
+instead of having its own sub test call chain open coded.
 
 
-It would be great to have this, though not sure who would use it now.
+AI had some feedback.
 
-AI review spotted some things.
+Series looks good overall. One issue on patch 2/2:
+The doc comments for rte_soring_enqueue_bulk_start() and rte_soring_enqueue_burst_start() in lib/ring/rte_soring.h say:
+User has to call appropriate enqueue_elem_finish() to copy objects
+into the queue and complete given enqueue operation.
+There is no rte_soring_enqueue_elem_finish(). The text was copy-pasted from rte_ring_peek.h, which uses an elem naming convention that soring does not follow. soring's actual finish functions are rte_soring_enqueue_finish() (objects only) and rte_soring_enqueux_finish() (objects plus meta). Please update the references.
+The dequeue start docs are fine - they reference dequeue_finish(), which does exist.
+Minor nits (optional):
 
-Reviewed v2 of the PTP library series. Findings below.
-Patch 1/6 (lib/ptp):
+__dequeue_elems() has a double space in its parameter list:
+"void *objs,  void *meta"
+rte_soring_dequeue_finish() uses 'num' in the header but 'n' in the implementation.
+test_soring_peek_stress.c always pairs start with finish, so it doesn't exercise the peek-specific use cases (inspect-then-abandon, partial finish). Not a blocker; coverage of those could come later.
 
-RTE_PTP_ETHERTYPE 0x88F7 duplicates RTE_ETHER_TYPE_1588 already in lib/net/rte_ether.h. Use the existing constant or alias to it.
-Comment on the version byte says "reserved (4) | versionPTP (4)"; IEEE 1588-2019 redefined the upper nibble as minorVersionPTP.
-
-Patch 2/6 (prog guide):
-
-The guide declares rte_ptp_hdr_get(const struct rte_mbuf *m) but the header has it non-const. Fix the doc, or split into const and non-const variants since the function returns a writable interior pointer.
-
-Patch 3/6 (ptp_tap_relay_sw):
-
-The standalone Makefile is missing CFLAGS += -DALLOW_EXPERIMENTAL_API. All three rte_ptp_* APIs the relay uses are __rte_experimental, so make-based builds will warn or fail under -Werror. meson is fine because meson.build sets allow_experimental_apis = true. Match examples/ptpclient/Makefile.
-relay_burst() calls rte_ptp_classify() and then rte_ptp_hdr_get() on every event packet, parsing it twice. The prog guide added in 2/6 explicitly tells callers to use rte_ptp_hdr_get() once and then rte_ptp_msg_type(hdr). The reference example should follow its own guidance.
-Minor: stats.corrections is updated via the global while the other counters are passed in by pointer. Inconsistent.
-
-Patch 4/6 (sample app guide):
-
-Limitations section claims L2-only and PTPv2-only, but the relay uses lib/ptp classification which handles VLAN/QinQ/UDPv4/UDPv6 with no version filter. Reword to "tested with L2 PTP" or drop the restriction.
-
-Patch 5/6 (test_ptp.c):
-
-Several correction tests dereference the rte_ptp_hdr_get() return without TEST_ASSERT_NOT_NULL: test_ptp_correction_zero, test_ptp_correction_known, and the four test_ptp_add_correction_* tests. test_ptp_two_step and test_ptp_seq_id get this right.
-No coverage for IPv4 with options (IHL > 5). The library's offset += ihl path is exercised by no test.
-
-Patch 6/6: no issues.
