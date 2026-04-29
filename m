@@ -2,30 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D809FF8877
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 10:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D02A8FF8875
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 10:27:47 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B01040A75;
-	Wed, 29 Apr 2026 12:26:53 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id 9D76640665;
- Wed, 29 Apr 2026 12:26:43 +0200 (CEST)
-X-QQ-mid: esmtpgz10t1777458400t8c572f44
-X-QQ-Originating-IP: f/Uq0YUJm08JHF9SQkCwicJ77XMwqsVvVbmwKRPLEDk=
+	by mails.dpdk.org (Postfix) with ESMTP id AD95740A7D;
+	Wed, 29 Apr 2026 12:26:57 +0200 (CEST)
+Received: from smtpbgeu1.qq.com (smtpbgeu1.qq.com [52.59.177.22])
+ by mails.dpdk.org (Postfix) with ESMTP id 2D7B040669;
+ Wed, 29 Apr 2026 12:26:45 +0200 (CEST)
+X-QQ-mid: esmtpgz10t1777458403t4d04539d
+X-QQ-Originating-IP: aAO0WXrYcw7ZIc4h+3NITOACxzCrfC8qS20O2O3zApQ=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.191.108])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 29 Apr 2026 18:26:38 +0800 (CST)
+ id ; Wed, 29 Apr 2026 18:26:41 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 419243858034567535
+X-BIZMAIL-ID: 162278354834905867
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v2 13/20] net/txgbe: fix link stability for 40G NIC
-Date: Wed, 29 Apr 2026 18:25:07 +0800
-Message-Id: <20260429102515.58880-14-zaiyuwang@trustnetic.com>
+Subject: [PATCH v2 14/20] net/txgbe: fix link stability for Amber-Lite
+ backplane mode
+Date: Wed, 29 Apr 2026 18:25:08 +0800
+Message-Id: <20260429102515.58880-15-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260429102515.58880-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +35,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OQhZ3T0tjf0akXTUcSAvL2BVZ6JIbOE2UAls5vLzavAH0nEztgUDarYK
- Eqp6C0UOZ12iU/vYfoI9xbQxQ5WMFlXcnm1HQy4wdAMtsc3Dk7DGbgEDIv+EO2gi7ykfr0r
- 7af4uGqW/8paKFK5uon8M3tHIUyV4B6EXXFMiku7FDjQVOaW9alyUmbUeMUzybDEK7pbUG/
- mgmKZ8Ppc2//mh9dJVkuIANd1HGoKETpdn5+Lo++3imqOuz5o+HI8r6g/K7qO9QYHllbmfj
- NMGGSKSG8KbRfkgRx6v2DL5bb14/ZaEDBkqEedD/cw3sgk/9VLHdEsqgo3JOa8mbWhN2NZv
- DoewMnRaqi5v8TeOeDs4loKZsLxuLxOhXss7/jDHdhhH88x6rF8E2NkuYoKIpbJt5Ya0djS
- EQLRKxBNmCvowVpZkrsJdseY31BZ4y4pquEi++s8gOYigjiJjO7YtYZaV3wnbyaHckIIAh3
- 84LzRujB+TtdFwV9yo+FnJaHfUeSQTFv37GWX2vIzp1NOGsu/fdEvGtf+fCa6cGQ+b5vyb8
- kVotHeYdD5ydiNwR6G4qMqbTym+LIPvD3qswICv86mF99E63fpeInIng8g4TX0+w4ukX/xf
- hebCpcJ02MUn7DsdV9t2DLd8V7yd51+Xt/VACWMK4w/xm+wAk2WdiL9P10hWEo/4YXDP5dY
- dcHuS51Svyedq5PetbHz/D+EfTmTN55oCSw3VldKs57uOhpC/Jsk0F3DRADh3PhOw92Xn/L
- mF2cGd4jc3wte2Vaq2gywckaYd1d3xRpkzU3tOkaT4aq5tnGO0PFGjhf6GbEHDwbozY7tBV
- E0JZVR06KnDXT0LPgovCV+d3CIPiF+X35Wk+B2rF6snb+UDcyQMuFXd9OWbBi4SDA1LDn+L
- TrdTGCNfGDMi4ggKqI027+Hr3iCkeP/4N9l8Ri1T9AacbAI9hmM0/au/VswaVvZZ77+Uxq8
- UAMf/v7xKLE+/bV5UKs13QGXVbjj0VvDHvBN4JYJ4LAcwpemh91MG9Y9NNhNxL+UGPelZ4T
- Kzo3fCI6OZPgdTAvEoHBfSofaYo+3v0R9PQDKKIkhBYBj40j0yTguGgxguGKlfYQ6sbdMO6
- Q==
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
+X-QQ-XMAILINFO: MttvgvBhDmdQr/EEYLQbKqJ8/O5J2kEJC/O1X8rweKodHfsG1jHhIXYo
+ GXApR/BaYT9RVJelKg6tl4xu87xBb3CqoaHBUAtGS9xEk59chwF+d7t8vJI6v4Acezjy8vE
+ omtgIZ0OQ3oiSzrVj6G7EH9Vu99NZTV03W2izpS1yawbb+wl497r7F2j1rLdUsklZJmEKe8
+ z/0fviuP2k/O2Z6hFXNR49Tbbq3RigmTXtVWzSvC0bMgIzzQtIr+Kb1DPkk0dybbH1xZzF3
+ YjrK2bFJQ58BgxUetBpmNYFrL1tar1ve1BYZqqFfB6uXlPOq4FCQ3+pGUY/RKtIDzVshEHc
+ hjNoIFpvs1wT2XXVeSk6r1ToIgC9BwSSTPIw+w+d5r9AEKeGkdQlRgzADXepDHW1rEeEQh5
+ ygPn0UqUaYuG67CNwzqNh9npX2Hokmob2KF9hVr4hsi2oy/GBpvB9EkXGYyYFnA3oUTHMq3
+ L3WFeyb/AxtFdtpPSJ3GwcZmTD1cqwuEw/jPuqLXpiklNm2HvHHIz6QezAmaBbAsz37g2ZS
+ qxjqf4nKnhisfLhzUQSqPKH44XqInjilyITQi2qDIV7EIAUfSa+jYat2au7M0uhaS3wvJFD
+ hqf+vhCTSjNpxq+5hxGBZwoMGCvodV0HbhAuTd2beba7dKIAtAjDKpyXNhqxtaVya0iQxPu
+ GXcS5eXAkoNlOSPVSA1Gp4W0IMbZeKCVhl8epmPoPHxxzLjl8jT3gwUNsWY5zJjOFakCj4I
+ ESypvyS4NDtau3prk+fPaUtRbHisPtpUF2tL2OquDpNAhBE0NbMOv+Y3U/ql6tnZGtTNcWL
+ zMp2pYKaLsczlyLpWk06QB+5av0tYavCuhWa3TaSrjiw1Fvyc8HeFJDPQJn9rGjA+ODJUH9
+ icaFF+Lk0MVyCdqxI/54k+N6vN33a4SwJKpWE0K6QTZSfqX/CT/d8/P6ltUo9Cgs/OxZklJ
+ Qla4VSQwg+XcqsvFObx4VYOTm/2EA4Jcz+ps9fd1Avbn+3Dy3glrbpjqyb5ugg16Uy4eWmr
+ BW1xka8Ws+GzWe8vBkDcK0U18eNB6OriW0tY4eQp1gQn9x0rTiJ3Hzk70CQ90A/skXJS0c4
+ URSTDWs5zsjMDWgJdYqyVEBnpKUTUC62Q==
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -75,980 +76,811 @@ Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml40.c |   70 +-
- drivers/net/txgbe/base/txgbe_aml40.h |    6 +-
- drivers/net/txgbe/base/txgbe_e56.c   | 1471 ++++++++++++++++++++++++--
- drivers/net/txgbe/txgbe_ethdev.c     |    4 +-
- 4 files changed, 1438 insertions(+), 113 deletions(-)
+ drivers/net/txgbe/base/meson.build    |    1 +
+ drivers/net/txgbe/base/txgbe.h        |    2 +
+ drivers/net/txgbe/base/txgbe_aml.c    |   65 +-
+ drivers/net/txgbe/base/txgbe_aml40.c  |   43 +-
+ drivers/net/txgbe/base/txgbe_e56.c    |   22 +-
+ drivers/net/txgbe/base/txgbe_e56.h    |    2 +
+ drivers/net/txgbe/base/txgbe_e56_bp.c | 2593 +++++++++++++++++++++++++
+ drivers/net/txgbe/base/txgbe_e56_bp.h |    3 +
+ drivers/net/txgbe/base/txgbe_hw.c     |    6 +
+ drivers/net/txgbe/base/txgbe_hw.h     |    4 +-
+ drivers/net/txgbe/base/txgbe_osdep.h  |    4 +
+ drivers/net/txgbe/base/txgbe_phy.c    |   21 +
+ drivers/net/txgbe/base/txgbe_phy.h    |   22 +
+ drivers/net/txgbe/base/txgbe_type.h   |   25 +-
+ drivers/net/txgbe/txgbe_ethdev.c      |  109 +-
+ drivers/net/txgbe/txgbe_ethdev.h      |    2 +-
+ 16 files changed, 2894 insertions(+), 30 deletions(-)
+ create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.c
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index eefd7119fd..84c130704a 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
+diff --git a/drivers/net/txgbe/base/meson.build b/drivers/net/txgbe/base/meson.build
+index 305c0291e3..a9a02577ce 100644
+--- a/drivers/net/txgbe/base/meson.build
++++ b/drivers/net/txgbe/base/meson.build
+@@ -13,4 +13,5 @@ base_sources = files(
+         'txgbe_phy.c',
+         'txgbe_vf.c',
+         'txgbe_e56.c',
++        'txgbe_e56_bp.c',
+ )
+diff --git a/drivers/net/txgbe/base/txgbe.h b/drivers/net/txgbe/base/txgbe.h
+index 673a299860..27c3e3be38 100644
+--- a/drivers/net/txgbe/base/txgbe.h
++++ b/drivers/net/txgbe/base/txgbe.h
+@@ -13,5 +13,7 @@
+ #include "txgbe_hw.h"
+ #include "txgbe_vf.h"
+ #include "txgbe_dcb.h"
++#include "txgbe_e56.h"
++#include "txgbe_e56_bp.h"
+ 
+ #endif /* _TXGBE_H_ */
+diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
+index cdaa13c763..5cc8741f10 100644
+--- a/drivers/net/txgbe/base/txgbe_aml.c
++++ b/drivers/net/txgbe/base/txgbe_aml.c
 @@ -13,6 +13,7 @@
  #include "txgbe_hw.h"
  #include "txgbe_aml.h"
- #include "txgbe_aml40.h"
-+#include "txgbe_e56.h"
+ #include "txgbe_e56.h"
++#include "txgbe_e56_bp.h"
  
- void txgbe_init_ops_aml40(struct txgbe_hw *hw)
+ void txgbe_init_ops_aml(struct txgbe_hw *hw)
  {
-@@ -24,6 +25,7 @@ void txgbe_init_ops_aml40(struct txgbe_hw *hw)
- 
- 	/* PHY */
- 	phy->get_media_type = txgbe_get_media_type_aml40;
-+	phy->setup_link_core = txgbe_setup_phy_link_aml40;
- 
- 	/* LINK */
- 	mac->init_mac_link_ops = txgbe_init_mac_link_ops_aml40;
-@@ -52,6 +54,13 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
- 
- 	if (link_up_wait_to_complete) {
- 		for (i = 0; i < hw->mac.max_link_up_time; i++) {
-+			if (!hw->link_valid) {
-+				*link_up = false;
-+
-+				msleep(100);
-+				continue;
-+			}
-+
- 			if (!(links_reg & TXGBE_PORTSTAT_UP)) {
- 				*link_up = false;
- 			} else {
-@@ -68,6 +77,9 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
- 			*link_up = false;
+@@ -84,6 +85,13 @@ s32 txgbe_check_mac_link_aml(struct txgbe_hw *hw, u32 *speed,
+ 		*speed = TXGBE_LINK_SPEED_UNKNOWN;
  	}
  
-+	if (!hw->link_valid)
-+		*link_up = false;
-+
- 	if (*link_up) {
- 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
- 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
-@@ -107,20 +119,24 @@ u32 txgbe_get_media_type_aml40(struct txgbe_hw *hw)
- 	return txgbe_media_type_fiber_qsfp;
- }
- 
--s32 txgbe_setup_mac_link_aml40(struct txgbe_hw *hw,
--			       u32 speed,
--			       bool autoneg_wait_to_complete)
-+s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
-+				      u32 speed,
-+				      bool autoneg_wait_to_complete,
-+				      bool *need_reset)
- {
- 	bool autoneg = false;
- 	s32 status = 0;
-+	s32 ret_status = 0;
- 	u32 link_speed = TXGBE_LINK_SPEED_UNKNOWN;
- 	bool link_up = false;
-+	int i;
- 	u32 link_capabilities = TXGBE_LINK_SPEED_UNKNOWN;
-+	u32 value;
- 
--	if (hw->phy.sfp_type == txgbe_sfp_type_not_present) {
--		DEBUGOUT("SFP not detected, skip setup mac link");
--		return 0;
--	}
-+	*need_reset = false;
-+
-+	if (hw->phy.sfp_type == txgbe_sfp_type_not_present)
-+		hw->phy.identify_sfp(hw);
- 
- 	/* Check to see if speed passed in is supported. */
- 	status = hw->mac.get_link_capabilities(hw,
-@@ -132,18 +148,43 @@ s32 txgbe_setup_mac_link_aml40(struct txgbe_hw *hw,
- 	if (speed == TXGBE_LINK_SPEED_UNKNOWN)
- 		return TXGBE_ERR_LINK_SETUP;
- 
--	status = hw->mac.check_link(hw, &link_speed, &link_up,
--				    autoneg_wait_to_complete);
-+	for (i = 0; i < 4; i++) {
-+		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
-+		if (link_up)
-+			break;
-+		msleep(250);
-+	}
- 
- 	if (link_speed == speed && link_up)
--		return status;
-+		goto out;
- 
--	if (speed & TXGBE_LINK_SPEED_40GB_FULL)
--		speed = 0x20;
-+	rte_spinlock_lock(&hw->phy_lock);
-+	ret_status = txgbe_set_link_to_amlite(hw, speed);
-+	rte_spinlock_unlock(&hw->phy_lock);
- 
--	status = hw->phy.set_link_hostif(hw, (u8)speed, autoneg, true);
-+	if (ret_status == TXGBE_ERR_TIMEOUT)
-+		hw->link_valid = false;
-+
-+	for (i = 0; i < 4; i++) {
-+		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
-+		if (link_up)
-+			goto out;
-+		msleep(250);
-+	}
- 
--	txgbe_wait_for_link_up_aml(hw, speed);
-+out:
-+	if (link_up) {
-+		value = rd32(hw, TXGBE_PORTSTAT);
-+		if (!(value & TXGBE_PORTSTAT_UP)) {
-+			DEBUGOUT("MAC link 0x14404: 0x%x", value);
-+			*need_reset = true;
-+			value = rd32(hw, 0x110b0);
-+			DEBUGOUT("MAC intr status 0x110b0: 0x%x", value);
++	if (txgbe_xpcs_an_enabled(hw)) {
++		if (!hw->an_done) {
++			*link_up = false;
++			*speed = TXGBE_LINK_SPEED_UNKNOWN;
 +		}
-+	} else {
-+		*need_reset = true;
-+		DEBUGOUT("Link reconfiguration required. Reset scheduled in 2000ms.");
 +	}
- 
- 	return status;
- }
-@@ -159,6 +200,5 @@ void txgbe_init_mac_link_ops_aml40(struct txgbe_hw *hw)
- 	mac->flap_tx_laser =
- 		txgbe_flap_tx_laser_multispeed_fiber;
- 
--	mac->setup_link = txgbe_setup_mac_link_aml40;
- 	mac->set_rate_select_speed = txgbe_set_hard_rate_select_speed;
- }
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.h b/drivers/net/txgbe/base/txgbe_aml40.h
-index f31360c899..d97654fbf8 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.h
-+++ b/drivers/net/txgbe/base/txgbe_aml40.h
-@@ -14,7 +14,9 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw,
- s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
- 				      u32 *speed, bool *autoneg);
- u32 txgbe_get_media_type_aml40(struct txgbe_hw *hw);
--s32 txgbe_setup_mac_link_aml40(struct txgbe_hw *hw, u32 speed,
--			       bool autoneg_wait_to_complete);
-+s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
-+				      u32 speed,
-+				      bool autoneg_wait_to_complete,
-+				      bool *need_reset);
- void txgbe_init_mac_link_ops_aml40(struct txgbe_hw *hw);
- #endif /* _TXGBE_AML40_H_ */
-diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
-index a73b247f59..4a880b0a35 100644
---- a/drivers/net/txgbe/base/txgbe_e56.c
-+++ b/drivers/net/txgbe/base/txgbe_e56.c
-@@ -98,11 +98,29 @@ u32 txgbe_e56_tx_ffe_cfg(struct txgbe_hw *hw, u32 speed)
- 	} else if (speed == TXGBE_LINK_SPEED_25GB_FULL) {
- 		if (hw->phy.sfp_type == txgbe_sfp_type_da_cu_core0 ||
- 		    hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1) {
-+			ffe_main = S25G_TX_FFE_CFG_DAC_MAIN;
-+			pre1 = S25G_TX_FFE_CFG_DAC_PRE1;
-+			pre2 = S25G_TX_FFE_CFG_DAC_PRE2;
-+			post = S25G_TX_FFE_CFG_DAC_POST;
-+		} else {
- 			ffe_main = S25G_TX_FFE_CFG_MAIN;
- 			pre1 = S25G_TX_FFE_CFG_PRE1;
- 			pre2 = S25G_TX_FFE_CFG_PRE2;
- 			post = S25G_TX_FFE_CFG_POST;
- 		}
-+	} else if (speed == TXGBE_LINK_SPEED_40GB_FULL) {
-+		ffe_main = S10G_TX_FFE_CFG_MAIN;
-+		pre1 = S10G_TX_FFE_CFG_PRE1;
-+		pre2 = S10G_TX_FFE_CFG_PRE2;
-+		post = S10G_TX_FFE_CFG_POST;
 +
-+		if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
-+		    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
-+			ffe_main = S40G_TX_FFE_CFG_MAIN;
-+			pre1 = S40G_TX_FFE_CFG_PRE1;
-+			pre2 = S40G_TX_FFE_CFG_PRE2;
-+			post = S40G_TX_FFE_CFG_POST;
-+		}
- 	}
- 
- 	if (hw->phy.ffe_set) {
-@@ -150,6 +168,416 @@ txgbe_e56_get_temp(struct txgbe_hw *hw, int *temp)
  	return 0;
  }
  
-+u32 txgbe_e56_cfg_40g(struct txgbe_hw *hw)
+@@ -95,23 +103,41 @@ s32 txgbe_get_link_capabilities_aml(struct txgbe_hw *hw,
+ 		*speed = TXGBE_LINK_SPEED_10GB_FULL |
+ 			 TXGBE_LINK_SPEED_25GB_FULL;
+ 		*autoneg = true;
++	} else if (hw->phy.sfp_type == txgbe_sfp_type_da_cu_core0 ||
++		   hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1) {
++		if (hw->phy.fiber_suppport_speed ==
++		    TXGBE_LINK_SPEED_10GB_FULL) {
++			hw->devarg.auto_neg = false;
++			*autoneg = false;
++		} else {
++			*autoneg = true;
++		}
++		*speed = hw->phy.fiber_suppport_speed;
+ 	} else if (hw->phy.sfp_type == txgbe_sfp_type_25g_sr_core0 ||
+ 		hw->phy.sfp_type == txgbe_sfp_type_25g_sr_core1 ||
+ 		hw->phy.sfp_type == txgbe_sfp_type_25g_lr_core0 ||
+-		hw->phy.sfp_type == txgbe_sfp_type_25g_lr_core1) {
++		hw->phy.sfp_type == txgbe_sfp_type_25g_lr_core1 ||
++		hw->phy.sfp_type == txgbe_sfp_type_25g_aoc_core0 ||
++		hw->phy.sfp_type == txgbe_sfp_type_25g_aoc_core1) {
+ 		*speed = TXGBE_LINK_SPEED_25GB_FULL;
+ 		*autoneg = false;
+-	} else if (hw->phy.sfp_type == txgbe_sfp_type_25g_aoc_core0 ||
+-		   hw->phy.sfp_type == txgbe_sfp_type_25g_aoc_core1) {
+-		*speed = TXGBE_LINK_SPEED_25GB_FULL;
++	} else if (hw->phy.media_type == txgbe_media_type_backplane) {
++		/* Backplane */
++		*speed = TXGBE_LINK_SPEED_10GB_FULL |
++			 TXGBE_LINK_SPEED_25GB_FULL;
++		/* Backplane supports autonegotiation */
++		*autoneg = hw->devarg.auto_neg;
++	} else if (hw->phy.media_type == txgbe_media_type_fiber) {
++		/* Fiber */
++		*speed = TXGBE_LINK_SPEED_10GB_FULL |
++			 TXGBE_LINK_SPEED_25GB_FULL;
+ 		*autoneg = false;
+ 	} else {
+-		/* SFP */
+-		if (hw->phy.sfp_type == txgbe_sfp_type_not_present)
+-			*speed = TXGBE_LINK_SPEED_25GB_FULL;
+-		else
+-			*speed = TXGBE_LINK_SPEED_10GB_FULL;
+-		*autoneg = true;
++		/* Unknown */
++		*speed = TXGBE_LINK_SPEED_UNKNOWN;
++		*autoneg = false;
++		PMD_DRV_LOG(DEBUG, "GET link capabilities failed");
++		return TXGBE_ERR_LINK_SETUP;
+ 	}
+ 
+ 	return 0;
+@@ -193,7 +219,7 @@ s32 txgbe_setup_phy_link_aml(struct txgbe_hw *hw,
+ 
+ 	*need_reset = false;
+ 
+-	if (hw->phy.sfp_type == txgbe_sfp_type_not_present) {
++	if (hw->phy.sfp_type == txgbe_sfp_type_not_present && !txgbe_is_backplane(hw)) {
+ 		DEBUGOUT("SFP not detected, skip setup mac link");
+ 		return 0;
+ 	}
+@@ -216,6 +242,23 @@ s32 txgbe_setup_phy_link_aml(struct txgbe_hw *hw,
+ 	if (speed == TXGBE_LINK_SPEED_UNKNOWN)
+ 		return TXGBE_ERR_LINK_SETUP;
+ 
++	if (txgbe_xpcs_an_enabled(hw)) {
++		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
++		if (link_up && hw->an_done && !autoneg_wait_to_complete)
++			return status;
++		rte_spinlock_lock(&hw->phy_lock);
++		txgbe_e56_set_phy_link_mode(hw, speed, autoneg_wait_to_complete);
++		rte_spinlock_unlock(&hw->phy_lock);
++		return 0;
++	}
++
++	if (txgbe_is_backplane(hw) || txgbe_is_dac_cable(hw) ||
++	    hw->phy.ffe_set) {
++		rte_spinlock_lock(&hw->phy_lock);
++		txgbe_e56_tx_ffe_cfg(hw, speed);
++		rte_spinlock_unlock(&hw->phy_lock);
++	}
++
+ 	if (txgbe_gpio_ext_check(hw, TXGBE_SFP1_MOD_ABS_LS |
+ 				 TXGBE_SFP1_RX_LOS_LS)) {
+ 		DEBUGOUT("RX LOS");
+diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
+index 84c130704a..d350f18c4b 100644
+--- a/drivers/net/txgbe/base/txgbe_aml40.c
++++ b/drivers/net/txgbe/base/txgbe_aml40.c
+@@ -14,6 +14,7 @@
+ #include "txgbe_aml.h"
+ #include "txgbe_aml40.h"
+ #include "txgbe_e56.h"
++#include "txgbe_e56_bp.h"
+ 
+ void txgbe_init_ops_aml40(struct txgbe_hw *hw)
+ {
+@@ -98,7 +99,10 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
+ 	if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
+ 	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
+ 		*speed = TXGBE_LINK_SPEED_40GB_FULL;
+-		*autoneg = false;
++		*autoneg = true;
++	} else if (txgbe_is_backplane(hw)) {
++		*speed = TXGBE_LINK_SPEED_40GB_FULL;
++		*autoneg = true;
+ 	} else {
+ 		/*
+ 		 * Temporary workaround: set speed to 40G even if sfp not present
+@@ -115,8 +119,22 @@ s32 txgbe_get_link_capabilities_aml40(struct txgbe_hw *hw,
+ 
+ u32 txgbe_get_media_type_aml40(struct txgbe_hw *hw)
+ {
+-	UNREFERENCED_PARAMETER(hw);
+-	return txgbe_media_type_fiber_qsfp;
++	u8 device_type = hw->subsystem_device_id & 0xF0;
++	enum txgbe_media_type media_type;
++
++	switch (device_type) {
++	case TXGBE_DEV_ID_KR_KX_KX4:
++		media_type = txgbe_media_type_backplane;
++		break;
++	case TXGBE_DEV_ID_SFP:
++		media_type = txgbe_media_type_fiber_qsfp;
++		break;
++	default:
++		media_type = txgbe_media_type_unknown;
++		break;
++	}
++
++	return media_type;
+ }
+ 
+ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
+@@ -135,7 +153,7 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
+ 
+ 	*need_reset = false;
+ 
+-	if (hw->phy.sfp_type == txgbe_sfp_type_not_present)
++	if (hw->phy.sfp_type == txgbe_sfp_type_not_present && !txgbe_is_backplane(hw))
+ 		hw->phy.identify_sfp(hw);
+ 
+ 	/* Check to see if speed passed in is supported. */
+@@ -148,6 +166,23 @@ s32 txgbe_setup_phy_link_aml40(struct txgbe_hw *hw,
+ 	if (speed == TXGBE_LINK_SPEED_UNKNOWN)
+ 		return TXGBE_ERR_LINK_SETUP;
+ 
++	if (txgbe_xpcs_an_enabled(hw)) {
++		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
++		if (link_up && hw->an_done && !autoneg_wait_to_complete)
++			return status;
++		rte_spinlock_lock(&hw->phy_lock);
++		txgbe_e56_set_phy_link_mode(hw, 40, autoneg_wait_to_complete);
++		rte_spinlock_unlock(&hw->phy_lock);
++		return status;
++	}
++
++	if (txgbe_is_backplane(hw) || txgbe_is_dac_cable(hw) ||
++	    hw->phy.ffe_set) {
++		rte_spinlock_lock(&hw->phy_lock);
++		txgbe_e56_tx_ffe_cfg(hw, speed);
++		rte_spinlock_unlock(&hw->phy_lock);
++	}
++
+ 	for (i = 0; i < 4; i++) {
+ 		txgbe_e56_check_phy_link(hw, &link_speed, &link_up);
+ 		if (link_up)
+diff --git a/drivers/net/txgbe/base/txgbe_e56.c b/drivers/net/txgbe/base/txgbe_e56.c
+index 4a880b0a35..5725b8d944 100644
+--- a/drivers/net/txgbe/base/txgbe_e56.c
++++ b/drivers/net/txgbe/base/txgbe_e56.c
+@@ -49,7 +49,7 @@ int compare(const void *a, const void *b)
+ }
+ 
+ s32 txgbe_e56_check_phy_link(struct txgbe_hw *hw, u32 *speed,
+-				bool *link_up)
++				    bool *link_up)
+ {
+ 	u32 rdata = 0;
+ 	u32 links_reg = 0;
+@@ -97,7 +97,8 @@ u32 txgbe_e56_tx_ffe_cfg(struct txgbe_hw *hw, u32 speed)
+ 		post = S10G_TX_FFE_CFG_POST;
+ 	} else if (speed == TXGBE_LINK_SPEED_25GB_FULL) {
+ 		if (hw->phy.sfp_type == txgbe_sfp_type_da_cu_core0 ||
+-		    hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1) {
++		    hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1 ||
++		    txgbe_is_backplane(hw)) {
+ 			ffe_main = S25G_TX_FFE_CFG_DAC_MAIN;
+ 			pre1 = S25G_TX_FFE_CFG_DAC_PRE1;
+ 			pre2 = S25G_TX_FFE_CFG_DAC_PRE2;
+@@ -115,7 +116,8 @@ u32 txgbe_e56_tx_ffe_cfg(struct txgbe_hw *hw, u32 speed)
+ 		post = S10G_TX_FFE_CFG_POST;
+ 
+ 		if (hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
+-		    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1) {
++		    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1 ||
++		    txgbe_is_backplane(hw)) {
+ 			ffe_main = S40G_TX_FFE_CFG_MAIN;
+ 			pre1 = S40G_TX_FFE_CFG_PRE1;
+ 			pre2 = S40G_TX_FFE_CFG_PRE2;
+@@ -1504,7 +1506,7 @@ txgbe_e56_rxs_osc_init_for_temp_track_range(struct txgbe_hw *hw, u32 speed)
+ 			rdata = rd32_ephy(hw, addr);
+ 
+ 			if (timer++ > PHYINIT_TIMEOUT) {
+-				DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!\n");
++				DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!");
+ 				break;
+ 				return -1;
+ 			}
+@@ -1539,7 +1541,7 @@ txgbe_e56_rxs_osc_init_for_temp_track_range(struct txgbe_hw *hw, u32 speed)
+ 			if (((rdata >> (i * 8)) & 0x3f) == 0x21)
+ 				break;
+ 			if (timer++ > PHYINIT_TIMEOUT) {
+-				DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!\n");
++				DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!");
+ 				break;
+ 				return -1;
+ 			}
+@@ -1616,7 +1618,7 @@ txgbe_e56_rxs_osc_init_for_temp_track_range(struct txgbe_hw *hw, u32 speed)
+ 			addr  = E56PHY_CTRL_FSM_RX_STAT_0_ADDR;
+ 			rdata = rd32_ephy(hw, addr);
+ 			if (timer++ > PHYINIT_TIMEOUT) {
+-				DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!\n");
++				DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!");
+ 				break;
+ 				return -1;
+ 			}
+@@ -1663,7 +1665,7 @@ txgbe_e56_rxs_osc_init_for_temp_track_range(struct txgbe_hw *hw, u32 speed)
+ 			if (((rdata  >> (i * 8)) & 0x3f) == 0x21)
+ 				break;
+ 			if (timer++ > PHYINIT_TIMEOUT) {
+-				DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!\n");
++				DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!");
+ 				break;
+ 				return -1;
+ 			}
+@@ -1932,7 +1934,7 @@ int txgbe_temp_track_seq_40g(struct txgbe_hw *hw, u32 speed)
+ 			CMVAR_UFINE_FMIN_WRAP = S25G_CMVAR_UFINE_FMIN_WRAP;
+ 			CMVAR_FINE_FMIN_WRAP = S25G_CMVAR_FINE_FMIN_WRAP;
+ 		} else {
+-			DEBUGOUT("Error Speed\n");
++			DEBUGOUT("Error Speed");
+ 			return 0;
+ 		}
+ 
+@@ -3191,7 +3193,7 @@ static int txgbe_e56_disable_rx40G(struct txgbe_hw *hw)
+ 		rdata = rd32_ephy(hw, addr);
+ 		usec_delay(100);
+ 		if (timer++ > PHYINIT_TIMEOUT) {
+-			DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!\n");
++			DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!");
+ 			break;
+ 		}
+ 	}
+@@ -3297,7 +3299,7 @@ static int txgbe_e56_disable_rx(struct txgbe_hw *hw)
+ 			break;
+ 		usec_delay(100);
+ 		if (timer++ > PHYINIT_TIMEOUT) {
+-			DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!\n");
++			DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!");
+ 			break;
+ 		}
+ 	}
+diff --git a/drivers/net/txgbe/base/txgbe_e56.h b/drivers/net/txgbe/base/txgbe_e56.h
+index eaa3ea5085..67ccdc8c7c 100644
+--- a/drivers/net/txgbe/base/txgbe_e56.h
++++ b/drivers/net/txgbe/base/txgbe_e56.h
+@@ -1735,6 +1735,8 @@ int txgbe_temp_track_seq(struct txgbe_hw *hw, u32 speed);
+ int txgbe_e56_get_temp(struct txgbe_hw *hw, int *temp);
+ int txgbe_set_link_to_amlite(struct txgbe_hw *hw, u32 speed);
+ int txgbe_e56_reconfig_rx(struct txgbe_hw *hw, u32 speed);
++s32 txgbe_e56_check_phy_link(struct txgbe_hw *hw, u32 *speed,
++				    bool *link_up);
+ s32 txgbe_e56_fec_set(struct txgbe_hw *hw);
+ s32 txgbe_e56_fec_polling(struct txgbe_hw *hw, bool *link_up);
+ u32 txgbe_e56_tx_ffe_cfg(struct txgbe_hw *hw, u32 speed);
+diff --git a/drivers/net/txgbe/base/txgbe_e56_bp.c b/drivers/net/txgbe/base/txgbe_e56_bp.c
+new file mode 100644
+index 0000000000..4928c888bb
+--- /dev/null
++++ b/drivers/net/txgbe/base/txgbe_e56_bp.c
+@@ -0,0 +1,2593 @@
++#include "txgbe_e56.h"
++#include "txgbe_hw.h"
++#include "txgbe_osdep.h"
++#include "txgbe_phy.h"
++#include "txgbe_e56_bp.h"
++#include "txgbe.h"
++#include "../txgbe_logs.h"
++
++static int
++txgbe_e56_set_rxs_ufine_le_max(struct txgbe_hw *hw, u32 speed)
 +{
-+	u32 addr;
-+	u32 rdata = 0;
-+	int i;
++	u32 rdata, addr;
++	u32 ULTRAFINE_CODE[4] = {0};
++	int lane_num = 0, lane_idx = 0;
++	u32 CMVAR_UFINE_MAX = 0;
 +
-+	/* CMS Config Master */
-+	addr  = E56G_CMS_ANA_OVRDVAL_7_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	((E56G_CMS_ANA_OVRDVAL_7 *)&rdata)->ana_lcpll_lf_vco_swing_ctrl_i = 0xf;
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56G_CMS_ANA_OVRDEN_1_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	((E56G_CMS_ANA_OVRDEN_1 *)&rdata)->ovrd_en_ana_lcpll_lf_vco_swing_ctrl_i = 0x1;
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56G_CMS_ANA_OVRDVAL_9_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, 23, 0, 0x260000);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56G_CMS_ANA_OVRDEN_1_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	((E56G_CMS_ANA_OVRDEN_1 *)&rdata)->ovrd_en_ana_lcpll_lf_test_in_i = 0x1;
-+	wr32_ephy(hw, addr, rdata);
-+
-+	/* TXS Config Master */
-+	for (i = 0; i < 4; i++) {
-+		addr  = E56PHY_TXS_TXS_CFG_1_ADDR + (E56PHY_TXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_TXS_TXS_CFG_1_ADAPTATION_WAIT_CNT_X256, 0xf);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_TXS_WKUP_CNT_ADDR + (E56PHY_TXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_TXS_WKUP_CNTLDO_WKUP_CNT_X32, 0xff);
-+		set_fields_e56(&rdata, E56PHY_TXS_WKUP_CNTDCC_WKUP_CNT_X32, 0xff);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_TXS_PIN_OVRDVAL_6_ADDR + (E56PHY_TXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, 19, 16, 0x6);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_TXS_PIN_OVRDEN_0_ADDR + (E56PHY_TXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_TXS_PIN_OVRDEN_0_OVRD_EN_TX0_EFUSE_BITS_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_TXS_ANA_OVRDVAL_1_ADDR + (E56PHY_TXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_TXS_ANA_OVRDVAL_1_ANA_TEST_DAC_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_TXS_ANA_OVRDEN_0_ADDR + (E56PHY_TXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_TXS_ANA_OVRDEN_0_OVRD_EN_ANA_TEST_DAC_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+	}
-+	/* Setting TX FFE */
-+	txgbe_e56_tx_ffe_cfg(hw, TXGBE_LINK_SPEED_40GB_FULL);
-+
-+	/* RXS Config master */
-+	for (i = 0; i < 4; i++) {
-+		addr  = E56PHY_RXS_RXS_CFG_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_RXS_CFG_0_DSER_DATA_SEL, 0x0);
-+		set_fields_e56(&rdata, E56PHY_RXS_RXS_CFG_0_TRAIN_CLK_GATE_BYPASS_EN, 0x1fff);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_OSC_CAL_N_CDR_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		((E56G_RXS0_OSC_CAL_N_CDR_0 *)&rdata)->prediv0 = 0xfa0;
-+		((E56G_RXS0_OSC_CAL_N_CDR_0 *)&rdata)->target_cnt0 = 0x203a;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_OSC_CAL_N_CDR_4_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		((E56G_RXS0_OSC_CAL_N_CDR_4 *)&rdata)->osc_range_sel0 = 0x2;
-+		((E56G_RXS0_OSC_CAL_N_CDR_4 *)&rdata)->vco_code_init = 0x7ff;
-+		((E56G_RXS0_OSC_CAL_N_CDR_4 *)&rdata)->osc_current_boost_en0 = 0x1;
-+		((E56G_RXS0_OSC_CAL_N_CDR_4 *)&rdata)->bbcdr_current_boost0 = 0x0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_OSC_CAL_N_CDR_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_SDM_WIDTH, 0x3);
-+		set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_PROP_STEP_PRELOCK, 0xf);
-+		set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_PROP_STEP_POSTLOCK, 0xf);
-+		set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_GAIN_CTRL_POSTLOCK, 0xc);
-+		set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_GAIN_CTRL_PRELOCK, 0xf);
-+		set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BBCDR_RDY_CNT, 0x3);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_OSC_CAL_N_CDR_6_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_6_PI_GAIN_CTRL_PRELOCK, 0x7);
-+		set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_6_PI_GAIN_CTRL_POSTLOCK, 0x5);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_INTL_CONFIG_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		((E56G_RXS0_INTL_CONFIG_0 *)&rdata)->adc_intl2slice_delay0 = 0x5555;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_INTL_CONFIG_2_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		((E56G_RXS0_INTL_CONFIG_2 *)&rdata)->interleaver_hbw_disable0 = 0x1;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		rdata = 0x0000;
-+		addr  = E56PHY_RXS_TXFFE_TRAINING_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_0_ADC_DATA_PEAK_LTH, 0x56);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_0_ADC_DATA_PEAK_UTH, 0x6a);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		rdata = 0x0000;
-+		addr  = E56PHY_RXS_TXFFE_TRAINING_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_1_C1_LTH, 0x1e8);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_1_C1_UTH, 0x78);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		rdata = 0x0000;
-+		addr  = E56PHY_RXS_TXFFE_TRAINING_2_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_2_CM1_LTH, 0x100);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_2_CM1_UTH, 0xff);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		rdata = 0x0000;
-+		addr  = E56PHY_RXS_TXFFE_TRAINING_3_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_CM2_LTH, 0x4);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_CM2_UTH, 0x37);
-+		set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_TXFFE_TRAIN_MOD_TYPE, 0x38);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		rdata = 0x0000;
-+		addr  = E56PHY_RXS_VGA_TRAINING_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_0_VGA_TARGET, 0x34);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		rdata = 0x0000;
-+		addr  = E56PHY_RXS_VGA_TRAINING_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA1_CODE_INIT0, 0xa);
-+		set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA2_CODE_INIT0, 0xa);
-+		set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA1_CODE_INIT123, 0xa);
-+		set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA2_CODE_INIT123, 0xa);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_CTLE_TRAINING_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_0_CTLE_CODE_INIT0, 0x9);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_0_CTLE_CODE_INIT123, 0x9);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_CTLE_TRAINING_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_1_LFEQ_LUT, 0x1ffffea);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_CTLE_TRAINING_2_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P1,
-+			       S10G_PHY_RX_CTLE_TAP_FRACP1);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P2,
-+			       S10G_PHY_RX_CTLE_TAP_FRACP2);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P3,
-+			       S10G_PHY_RX_CTLE_TAP_FRACP3);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_CTLE_TRAINING_3_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P1,
-+			       S10G_PHY_RX_CTLE_TAPWT_WEIGHT1);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P2,
-+			       S10G_PHY_RX_CTLE_TAPWT_WEIGHT2);
-+		set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P3,
-+			       S10G_PHY_RX_CTLE_TAPWT_WEIGHT3);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADC_SLICE_DATA_AVG_CNT, 0x3);
-+		set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADC_DATA_AVG_CNT, 0x3);
-+		set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_FE_OFFSET_DAC_CLK_CNT_X8,
-+			       0xc);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_OFFSET_N_GAIN_CAL_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_1_SAMP_ADAPT_CFG, 0x5);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_FFE_TRAINING_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_FFE_TRAINING_0_FFE_TAP_EN, 0xf9ff);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_IDLE_DETECT_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MAX, 0xa);
-+		set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MIN, 0x5);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56G__RXS3_ANA_OVRDVAL_11_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		((E56G__RXS3_ANA_OVRDVAL_11 *)&rdata)->ana_test_adc_clkgen_i = 0x0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56G__RXS0_ANA_OVRDEN_2_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		((E56G__RXS0_ANA_OVRDEN_2 *)&rdata)->ovrd_en_ana_test_adc_clkgen_i = 0x0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDVAL_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDVAL_0_ANA_EN_RTERM_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDEN_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_0_OVRD_EN_ANA_EN_RTERM_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDVAL_6_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, 4, 0, 0x6);
-+		set_fields_e56(&rdata, 14, 13, 0x2);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDEN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_1_OVRD_EN_ANA_BBCDR_VCOFILT_BYP_I,
-+			       0x1);
-+		set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_1_OVRD_EN_ANA_TEST_BBCDR_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDVAL_15_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, 2, 0, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDVAL_17_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDVAL_17_ANA_VGA2_BOOST_CSTM_I, 0x0);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDEN_3_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_3_OVRD_EN_ANA_ANABS_CONFIG_I, 0x1);
-+		set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_3_OVRD_EN_ANA_VGA2_BOOST_CSTM_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDVAL_14_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, 13, 13, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56PHY_RXS_ANA_OVRDEN_4_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, 13, 13, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_EYE_SCAN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS_EYE_SCAN_1_EYE_SCAN_REF_TIMER, 0x400);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS_RINGO_0_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, 9, 4, 0x366);
-+		wr32_ephy(hw, addr, rdata);
++	switch (speed) {
++	case 10:
++		CMVAR_UFINE_MAX = S10G_CMVAR_UFINE_MAX;
++		lane_num = 1;
++		break;
++	case 40:
++		CMVAR_UFINE_MAX = S10G_CMVAR_UFINE_MAX;
++		lane_num = 4;
++		break;
++	case 25:
++		CMVAR_UFINE_MAX = S25G_CMVAR_UFINE_MAX;
++		lane_num = 1;
++		break;
++	default:
++		BP_LOG("%s %d :Invalid speed\n", __func__, __LINE__);
++		break;
 +	}
 +
-+	/* PDIG Config master */
-+	addr  = E56PHY_PMD_CFG_3_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_PMD_CFG_3_CTRL_FSM_TIMEOUT_X64K, 0x80);
-+	wr32_ephy(hw, addr, rdata);
++	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
++		/* ii get rx ana_bbcdr_ultrafine_i[14, 12] per lane */
++		addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * lane_idx);
++		rdata = rd32_ephy(hw, addr);
++		ULTRAFINE_CODE[lane_idx] = FIELD_GET_M(GENMASK(14, 12), rdata);
++		BP_LOG("ULTRAFINE_CODE[%d] = %d, CMVAR_UFINE_MAX: %x\n",
++		       lane_idx, ULTRAFINE_CODE[lane_idx], CMVAR_UFINE_MAX);
++	}
 +
-+	addr  = E56PHY_PMD_CFG_4_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_PMD_CFG_4_TRAIN_DC_ON_PERIOD_X64K, 0x18);
-+	set_fields_e56(&rdata, E56PHY_PMD_CFG_4_TRAIN_DC_PERIOD_X512K, 0x3e);
-+	wr32_ephy(hw, addr, rdata);
++	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
++		/* b. Perform the below logic sequence */
++		while (ULTRAFINE_CODE[lane_idx] > CMVAR_UFINE_MAX) {
++			ULTRAFINE_CODE[lane_idx] -= 1;
++			addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR +
++			       (E56PHY_RXS_OFFSET * lane_idx);
++			rdata = rd32_ephy(hw, addr);
++			set_fields_e56(&rdata, 14, 12, ULTRAFINE_CODE[lane_idx]);
++			wr32_ephy(hw, addr, rdata);
 +
-+	addr  = E56PHY_PMD_CFG_5_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_PMD_CFG_5_USE_RECENT_MARKER_OFFSET, 0x1);
-+	wr32_ephy(hw, addr, rdata);
++			/* ovrd_en_ana_bbcdr_ultrafine=1 override ASIC value */
++			addr = E56G__RXS0_ANA_OVRDEN_1_ADDR +
++			       (E56PHY_RXS_OFFSET * lane_idx);
++			rdata = rd32_ephy(hw, addr);
++			wr32_ephy(hw, addr, rdata | BIT(3));
 +
-+	addr  = E56PHY_CTRL_FSM_CFG_0_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_CONT_ON_ADC_GAIN_CAL_ERR, 0x1);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_DO_RX_ADC_OFST_CAL, 0x3);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_RX_ERR_ACTION_EN, 0x40);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_1_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST0_WAIT_CNT_X4096, 0xff);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST1_WAIT_CNT_X4096, 0xff);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST2_WAIT_CNT_X4096, 0xff);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST3_WAIT_CNT_X4096, 0xff);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_2_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST4_WAIT_CNT_X4096, 0x1);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST5_WAIT_CNT_X4096, 0x4);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST6_WAIT_CNT_X4096, 0x4);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST7_WAIT_CNT_X4096, 0x4);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_3_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST8_WAIT_CNT_X4096, 0x4);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST9_WAIT_CNT_X4096, 0x4);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST10_WAIT_CNT_X4096, 0x4);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST11_WAIT_CNT_X4096, 0x4);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_4_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST12_WAIT_CNT_X4096, 0x4);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST13_WAIT_CNT_X4096, 0x4);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST14_WAIT_CNT_X4096, 0x4);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST15_WAIT_CNT_X4096, 0x4);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_7_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_7_TRAIN_ST4_EN, 0x4bf);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_7_TRAIN_ST5_EN, 0xc4bf);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_8_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_8_TRAIN_ST7_EN, 0x47ff);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_12_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_12_TRAIN_ST15_EN, 0x67ff);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_13_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_13_TRAIN_ST0_DONE_EN, 0x8001);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_13_TRAIN_ST1_DONE_EN, 0x8002);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_14_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_14_TRAIN_ST3_DONE_EN, 0x8008);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_15_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_15_TRAIN_ST4_DONE_EN, 0x8004);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_17_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_17_TRAIN_ST8_DONE_EN, 0x20c0);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_18_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_18_TRAIN_ST10_DONE_EN, 0x0);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_29_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_29_TRAIN_ST15_DC_EN, 0x3f6d);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_33_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_33_TRAIN0_RATE_SEL, 0x8000);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_33_TRAIN1_RATE_SEL, 0x8000);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_CTRL_FSM_CFG_34_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_34_TRAIN2_RATE_SEL, 0x8000);
-+	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_34_TRAIN3_RATE_SEL, 0x8000);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_KRT_TFSM_CFG_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_MAX_WAIT_TIMER_X1000K, 0x49);
-+	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_MAX_WAIT_TIMER_X8000K, 0x37);
-+	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_HOLDOFF_TIMER_X256K, 0x2f);
-+	wr32_ephy(hw, addr, rdata);
-+
-+	addr  = E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2, 0x2);
-+	wr32_ephy(hw, addr, rdata);
-+
++			/* Wait until 1milliseconds or greater */
++			usec_delay(1000);
++		}
++	}
 +	return 0;
 +}
 +
- u32
- txgbe_e56_cfg_25g(struct txgbe_hw *hw)
- {
-@@ -1294,6 +1722,46 @@ txgbe_e56_rxs_osc_init_for_temp_track_range(struct txgbe_hw *hw, u32 speed)
- 	return status;
- }
- 
-+static int txgbe_e56_set_rxs_ufine_le_max_40g(struct txgbe_hw *hw, u32 speed)
++static int txgbe_e56_rxs_osc_init_for_temp_track_range(struct txgbe_hw *hw,
++		u32 speed)
 +{
-+	int status = 0;
-+	unsigned int rdata;
-+	unsigned int ULTRAFINE_CODE;
-+	int i = 0;
-+	unsigned int CMVAR_UFINE_MAX = 0;
-+	u32 addr;
++	int OFFSET_CENTRE_RANGE_H[4] = {0}, OFFSET_CENTRE_RANGE_L[4] = {}, RANGE_FINAL[4] = {};
++	int RX_COARSE_MID_TD, CMVAR_RANGE_H = 0, CMVAR_RANGE_L = 0;
++	int status = 0, lane_num = 0;
++	int T = 40, lane_id = 0;
++	u32 addr, rdata;
 +
-+	for (i = 0; i < 4; i++) {
-+		if (speed == TXGBE_LINK_SPEED_10GB_FULL || speed == TXGBE_LINK_SPEED_40GB_FULL)
-+			CMVAR_UFINE_MAX = S10G_CMVAR_UFINE_MAX;
-+		else if (speed == TXGBE_LINK_SPEED_25GB_FULL)
-+			CMVAR_UFINE_MAX = S25G_CMVAR_UFINE_MAX;
++	/* Set CMVAR_RANGE_H/L based on the link speed mode */
++	switch (speed) {
++	case 10:
++		CMVAR_RANGE_H = S10G_CMVAR_RANGE_H;
++		CMVAR_RANGE_L = S10G_CMVAR_RANGE_L;
++		lane_num = 1;
++		break;
++	case 40:
++		CMVAR_RANGE_H = S10G_CMVAR_RANGE_H;
++		CMVAR_RANGE_L = S10G_CMVAR_RANGE_L;
++		lane_num = 4;
++		break;
++	case 25:
++		CMVAR_RANGE_H = S25G_CMVAR_RANGE_H;
++		CMVAR_RANGE_L = S25G_CMVAR_RANGE_L;
++		lane_num = 1;
++		break;
++	default:
++		BP_LOG("%s %d :Invalid speed\n", __func__, __LINE__);
++		break;
++	}
 +
-+		/* a. Assign software defined variables as below */
-+		addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
++	/* 1. Read the temperature T just before RXS is enabled. */
++	txgbe_e56_get_temp(hw, &T);
++
++	/* 2. Define software variable RX_COARSE_MID_TD */
++	if (T < -5)
++		RX_COARSE_MID_TD = 10;
++	else if (T < 30)
++		RX_COARSE_MID_TD = 9;
++	else if (T < 65)
++		RX_COARSE_MID_TD = 8;
++	else if (T < 100)
++		RX_COARSE_MID_TD = 7;
++	else
++		RX_COARSE_MID_TD = 6;
++
++	for (lane_id = 0; lane_id < lane_num; lane_id++) {
++		addr  = 0x0b4 + (0x200 * lane_id);
 +		rdata = rd32_ephy(hw, addr);
-+		ULTRAFINE_CODE = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_ultrafine_i);
++		set_fields_e56(&rdata, 1, 0, CMVAR_RANGE_H);
++		wr32_ephy(hw, addr, rdata);
 +
-+		/* b. Perform the below logic sequence */
-+		while (ULTRAFINE_CODE > CMVAR_UFINE_MAX) {
-+			ULTRAFINE_CODE = ULTRAFINE_CODE - 1;
-+			addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+			rdata = rd32_ephy(hw, addr);
-+			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_ultrafine_i) = ULTRAFINE_CODE;
-+			wr32_ephy(hw, addr, rdata);
++		addr  = 0x08c + (0x200 * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 29, 29, 0x1);
++		wr32_ephy(hw, addr, rdata);
 +
-+			addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+			rdata = rd32_ephy(hw, addr);
-+			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_ultrafine_i) = 1;
-+			wr32_ephy(hw, addr, rdata);
++		addr = 0x1540 + (0x02c * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 22, 22, 0x0);
++		wr32_ephy(hw, addr, rdata);
 +
-+			/* Wait until 1milliseconds or greater */
-+			msleep(10);
++		addr  = 0x1530 + (0x02c * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 27, 27, 0x1);
++		wr32_ephy(hw, addr, rdata);
++	}
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 19, 16, GENMASK(lane_num - 1, 0));
++	wr32_ephy(hw, 0x1400, rdata);
++	status |= kr_read_poll(rd32_ephy, rdata,
++		  (((rdata & 0x3f3f3f3f) & GENMASK(8 * lane_num - 1, 0))
++		  == (0x09090909 & GENMASK(8 * lane_num - 1, 0))),
++		  100, 2000, hw,
++		  E56PHY_CTRL_FSM_RX_STAT_0_ADDR);
++	if (status)
++		BP_LOG("Wait fsm_rx_sts 1 = %x : %d, Wait rx_sts %s.\n",
++		       rdata, status, status ? "FAILED" : "SUCCESS");
++
++	for (lane_id = 0; lane_id < lane_num; lane_id++) {
++		addr  = 0x0b4 + (0x0200 * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		OFFSET_CENTRE_RANGE_H[lane_id] = (rdata >> 4) & 0xf;
++		if (OFFSET_CENTRE_RANGE_H[lane_id] > RX_COARSE_MID_TD)
++			OFFSET_CENTRE_RANGE_H[lane_id] = OFFSET_CENTRE_RANGE_H[lane_id] -
++							 RX_COARSE_MID_TD;
++		else
++			OFFSET_CENTRE_RANGE_H[lane_id] = RX_COARSE_MID_TD -
++							 OFFSET_CENTRE_RANGE_H[lane_id];
++	}
++
++	/* 7. Do SEQ::RX_DISABLE to disable RXS. */
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 19, 16, 0x0);
++	wr32_ephy(hw, 0x1400, rdata);
++	status |= kr_read_poll(rd32_ephy, rdata,
++		  (((rdata & 0x3f3f3f3f) & GENMASK(8 * lane_num - 1, 0))
++		  == (0x21212121 & GENMASK(8 * lane_num - 1, 0))),
++		  100, 2000, hw,
++		  E56PHY_CTRL_FSM_RX_STAT_0_ADDR);
++	if (status)
++		BP_LOG("Wait fsm_rx_sts 2 = %x : %d, Wait rx_sts %s.\n",
++		       rdata, status, status ? "FAILED" : "SUCCESS");
++	rdata = rd32_ephy(hw, 0x15ec);
++	wr32_ephy(hw, 0x15ec, rdata);
++
++	for (lane_id = 0; lane_id < lane_num; lane_id++) {
++		addr  = 0x0b4 + (0x200 * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 1, 0, CMVAR_RANGE_L);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x08c + (0x200 * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 29, 29, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr = 0x1540 + (0x02c * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 22, 22, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1530 + (0x02c * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 27, 27, 0x1);
++		wr32_ephy(hw, addr, rdata);
++	}
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 19, 16, 0xf);
++	wr32_ephy(hw, 0x1400, rdata);
++	status |= kr_read_poll(rd32_ephy, rdata,
++		  (((rdata & 0x3f3f3f3f) & GENMASK(8 * lane_num - 1, 0))
++		  == (0x09090909 & GENMASK(8 * lane_num - 1, 0))),
++		  100, 2000, hw,
++		  E56PHY_CTRL_FSM_RX_STAT_0_ADDR);
++	if (status)
++		BP_LOG("Wait fsm_rx_sts 3 = %x : %d, Wait rx_sts %s.\n",
++		       rdata, status, status ? "FAILED" : "SUCCESS");
++	for (lane_id = 0; lane_id < lane_num; lane_id++) {
++		addr  = 0x0b4 + (0x0200 * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		OFFSET_CENTRE_RANGE_L[lane_id] = (rdata >> 4) & 0xf;
++		if (OFFSET_CENTRE_RANGE_L[lane_id] > RX_COARSE_MID_TD)
++			OFFSET_CENTRE_RANGE_L[lane_id] = OFFSET_CENTRE_RANGE_L[lane_id] -
++							 RX_COARSE_MID_TD;
++		else
++			OFFSET_CENTRE_RANGE_L[lane_id] = RX_COARSE_MID_TD -
++							 OFFSET_CENTRE_RANGE_L[lane_id];
 +		}
++	for (lane_id = 0; lane_id < lane_num; lane_id++) {
++		RANGE_FINAL[lane_id] = OFFSET_CENTRE_RANGE_L[lane_id] <
++				       OFFSET_CENTRE_RANGE_H[lane_id] ?
++				       CMVAR_RANGE_L : CMVAR_RANGE_H;
++		BP_LOG("lane_id:%d-RANGE_L:%x-RANGE_H:%x-RANGE_FINAL:%x\n",
++		       lane_id, OFFSET_CENTRE_RANGE_L[lane_id],
++		       OFFSET_CENTRE_RANGE_H[lane_id], RANGE_FINAL[lane_id]);
 +	}
-+	return status;
-+}
 +
- static inline
- int txgbe_e56_set_rxs_ufine_le_max(struct txgbe_hw *hw, u32 speed)
- {
-@@ -1328,38 +1796,269 @@ int txgbe_e56_set_rxs_ufine_le_max(struct txgbe_hw *hw, u32 speed)
- 	return status;
- }
- 
--int txgbe_e56_rx_rd_second_code(struct txgbe_hw *hw, int *SECOND_CODE)
--{
--	int status = 0, i, N, median;
--	unsigned int rdata;
--	int array_size, RXS_BBCDR_SECOND_ORDER_ST[5];
-+int txgbe_e56_rx_rd_second_code_40g(struct txgbe_hw *hw, int *SECOND_CODE, int lane)
-+{
-+	int status = 0, i, N, median;
-+	unsigned int rdata;
-+	u32 addr;
-+	int array_size, RXS_BBCDR_SECOND_ORDER_ST[5];
++	/* 7. Do SEQ::RX_DISABLE to disable RXS. */
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 19, 16, 0x0);
++	wr32_ephy(hw, 0x1400, rdata);
++	status |= kr_read_poll(rd32_ephy, rdata,
++		  (((rdata & 0x3f3f3f3f) & GENMASK(8 * lane_num - 1, 0))
++		  == (0x21212121 & GENMASK(8 * lane_num - 1, 0))),
++		  100, 2000, hw,
++		  E56PHY_CTRL_FSM_RX_STAT_0_ADDR);
++	if (status)
++		BP_LOG("Wait fsm_rx_sts 4 = %x : %d, Wait rx_sts %s.\n",
++		       rdata, status, status ? "FAILED" : "SUCCESS");
++	rdata = rd32_ephy(hw, 0x15ec);
++	wr32_ephy(hw, 0x15ec, rdata);
 +
-+	/* Set ovrd_en=0 to read ASIC value */
-+	addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (lane *  E56PHY_RXS_OFFSET);
-+	rdata = rd32_ephy(hw, addr);
-+	EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_int_cstm_i) = 0;
-+	wr32_ephy(hw, addr, rdata);
-+
-+	/*
-+	 * As status update from RXS hardware is asynchronous to read status of SECOND_ORDER,
-+	 * follow sequence mentioned below.
-+	 */
-+	N = 5;
-+	for (i = 0; i < N; i = i + 1) {
-+		addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (lane *  E56PHY_RXS_OFFSET);
++	for (lane_id = 0; lane_id < lane_num; lane_id++) {
++		addr  = 0x0b4 + (0x0200 * lane_id);
 +		rdata = rd32_ephy(hw, addr);
-+		RXS_BBCDR_SECOND_ORDER_ST[i] = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+							 ana_bbcdr_int_cstm_i);
-+		usec_delay(100);
++		set_fields_e56(&rdata, 1, 0, RANGE_FINAL[lane_id]);
++		wr32_ephy(hw, addr, rdata);
++
++		rdata = 0x0000;
++		addr  = 0x1544 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 25, 25, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1538 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 0, 0, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1544 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 28, 28, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1538 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 3, 3, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		rdata = 0x0000;
++		addr  = 0x1544 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 16, 16, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1534 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 23, 23, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1544 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 17, 17, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1534 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 24, 24, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1544 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 31, 31, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1538 + (lane_id * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 6, 6, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1530 + (0x02c * lane_id);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 27, 27, 0x0);
++		wr32_ephy(hw, addr, rdata);
 +	}
 +
-+	/* sort array RXS_BBCDR_SECOND_ORDER_ST[i] */
-+	array_size = ARRAY_SIZE(RXS_BBCDR_SECOND_ORDER_ST);
-+	qsort(RXS_BBCDR_SECOND_ORDER_ST, array_size, sizeof(int), compare);
-+
-+	median = ((N + 1) / 2) - 1;
-+	*SECOND_CODE = RXS_BBCDR_SECOND_ORDER_ST[median];
++	/* Do SEQ::RX_ENABLE */
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_0_RX_EN_CFG, GENMASK(lane_num - 1, 0));
++	wr32_ephy(hw, 0x1400, rdata);
 +
 +	return status;
 +}
 +
-+int txgbe_e56_rx_rd_second_code(struct txgbe_hw *hw, int *SECOND_CODE)
-+{
-+	int status = 0, i, N, median;
-+	unsigned int rdata;
-+	int array_size, RXS_BBCDR_SECOND_ORDER_ST[5];
-+
-+
-+	/* Set ovrd_en=0 to read ASIC value */
-+	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_int_cstm_i, 0);
-+
-+	/*
-+	 * As status update from RXS hardware is asynchronous to read status
-+	 * of SECOND_ORDER, follow sequence mentioned below.
-+	 */
-+	N = 5;
-+	for (i = 0; i < N; i = i + 1) {
-+		EPHY_RREG(E56G__RXS0_ANA_OVRDVAL_5);
-+		RXS_BBCDR_SECOND_ORDER_ST[i] = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					       ana_bbcdr_int_cstm_i);
-+		usec_delay(100);
-+	}
-+
-+	/* sort array RXS_BBCDR_SECOND_ORDER_ST[i] */
-+	array_size = ARRAY_SIZE(RXS_BBCDR_SECOND_ORDER_ST);
-+	qsort(RXS_BBCDR_SECOND_ORDER_ST, array_size, sizeof(int), compare);
-+
-+	median = ((N + 1) / 2) - 1;
-+	*SECOND_CODE = RXS_BBCDR_SECOND_ORDER_ST[median];
-+
-+	return status;
-+}
-+
-+/*
-+ * 2.3.4 RXS post CDR lock temperature tracking sequence
-+ *
-+ * Below sequence must be run before the temperature drifts by >5degC
-+ * after the CDR locks for the first time or after the ious time this
-+ * sequence was run. It is recommended to call this sequence periodically
-+ * (eg: once every 100ms) or trigger sequence if the temperature drifts
-+ * by >=5degC. Temperature must be read from an on-die temperature sensor.
-+ */
-+int txgbe_temp_track_seq_40g(struct txgbe_hw *hw, u32 speed)
++static int txgbe_e56_rxs_post_cdr_lock_temp_track_seq(struct txgbe_hw *hw,
++		u32 speed)
 +{
 +	int status = 0;
-+	unsigned int rdata;
++	u32 rdata;
 +	int SECOND_CODE;
 +	int COARSE_CODE;
 +	int FINE_CODE;
 +	int ULTRAFINE_CODE;
 +
-+	int CMVAR_SEC_LOW_TH;
++	int CMVAR_SEC_LOW_TH = 0;
 +	int CMVAR_UFINE_MAX = 0;
-+	int CMVAR_FINE_MAX;
++	int CMVAR_FINE_MAX = 0;
 +	int CMVAR_UFINE_UMAX_WRAP = 0;
-+	int CMVAR_COARSE_MAX;
++	int CMVAR_COARSE_MAX = 0;
 +	int CMVAR_UFINE_FMAX_WRAP = 0;
 +	int CMVAR_FINE_FMAX_WRAP = 0;
-+	int CMVAR_SEC_HIGH_TH;
-+	int CMVAR_UFINE_MIN;
-+	int CMVAR_FINE_MIN;
-+	int CMVAR_UFINE_UMIN_WRAP;
-+	int CMVAR_COARSE_MIN;
-+	int CMVAR_UFINE_FMIN_WRAP;
-+	int CMVAR_FINE_FMIN_WRAP;
-+	int i;
-+	u32 addr;
-+	int temperature;
++	int CMVAR_SEC_HIGH_TH = 0;
++	int CMVAR_UFINE_MIN = 0;
++	int CMVAR_FINE_MIN = 0;
++	int CMVAR_UFINE_UMIN_WRAP = 0;
++	int CMVAR_COARSE_MIN = 0;
++	int CMVAR_UFINE_FMIN_WRAP = 0;
++	int CMVAR_FINE_FMIN_WRAP = 0;
 +
-+	for (i = 0; i < 4; i++) {
-+		if (speed == TXGBE_LINK_SPEED_10GB_FULL || speed == TXGBE_LINK_SPEED_40GB_FULL) {
-+			CMVAR_SEC_LOW_TH = S10G_CMVAR_SEC_LOW_TH;
-+			CMVAR_UFINE_MAX = S10G_CMVAR_UFINE_MAX;
-+			CMVAR_FINE_MAX = S10G_CMVAR_FINE_MAX;
-+			CMVAR_UFINE_UMAX_WRAP = S10G_CMVAR_UFINE_UMAX_WRAP;
-+			CMVAR_COARSE_MAX = S10G_CMVAR_COARSE_MAX;
-+			CMVAR_UFINE_FMAX_WRAP = S10G_CMVAR_UFINE_FMAX_WRAP;
-+			CMVAR_FINE_FMAX_WRAP = S10G_CMVAR_FINE_FMAX_WRAP;
-+			CMVAR_SEC_HIGH_TH = S10G_CMVAR_SEC_HIGH_TH;
-+			CMVAR_UFINE_MIN = S10G_CMVAR_UFINE_MIN;
-+			CMVAR_FINE_MIN = S10G_CMVAR_FINE_MIN;
-+			CMVAR_UFINE_UMIN_WRAP = S10G_CMVAR_UFINE_UMIN_WRAP;
-+			CMVAR_COARSE_MIN = S10G_CMVAR_COARSE_MIN;
-+			CMVAR_UFINE_FMIN_WRAP = S10G_CMVAR_UFINE_FMIN_WRAP;
-+			CMVAR_FINE_FMIN_WRAP = S10G_CMVAR_FINE_FMIN_WRAP;
-+		} else if (speed == TXGBE_LINK_SPEED_25GB_FULL) {
-+			CMVAR_SEC_LOW_TH = S25G_CMVAR_SEC_LOW_TH;
-+			CMVAR_UFINE_MAX = S25G_CMVAR_UFINE_MAX;
-+			CMVAR_FINE_MAX = S25G_CMVAR_FINE_MAX;
-+			CMVAR_UFINE_UMAX_WRAP = S25G_CMVAR_UFINE_UMAX_WRAP;
-+			CMVAR_COARSE_MAX = S25G_CMVAR_COARSE_MAX;
-+			CMVAR_UFINE_FMAX_WRAP = S25G_CMVAR_UFINE_FMAX_WRAP;
-+			CMVAR_FINE_FMAX_WRAP = S25G_CMVAR_FINE_FMAX_WRAP;
-+			CMVAR_SEC_HIGH_TH = S25G_CMVAR_SEC_HIGH_TH;
-+			CMVAR_UFINE_MIN = S25G_CMVAR_UFINE_MIN;
-+			CMVAR_FINE_MIN = S25G_CMVAR_FINE_MIN;
-+			CMVAR_UFINE_UMIN_WRAP = S25G_CMVAR_UFINE_UMIN_WRAP;
-+			CMVAR_COARSE_MIN = S25G_CMVAR_COARSE_MIN;
-+			CMVAR_UFINE_FMIN_WRAP = S25G_CMVAR_UFINE_FMIN_WRAP;
-+			CMVAR_FINE_FMIN_WRAP = S25G_CMVAR_FINE_FMIN_WRAP;
++	if (speed == 10) {
++		CMVAR_SEC_LOW_TH = S10G_CMVAR_SEC_LOW_TH;
++		CMVAR_UFINE_MAX = S10G_CMVAR_UFINE_MAX;
++		CMVAR_FINE_MAX = S10G_CMVAR_FINE_MAX;
++		CMVAR_UFINE_UMAX_WRAP = S10G_CMVAR_UFINE_UMAX_WRAP;
++		CMVAR_COARSE_MAX = S10G_CMVAR_COARSE_MAX;
++		CMVAR_UFINE_FMAX_WRAP = S10G_CMVAR_UFINE_FMAX_WRAP;
++		CMVAR_FINE_FMAX_WRAP = S10G_CMVAR_FINE_FMAX_WRAP;
++		CMVAR_SEC_HIGH_TH = S10G_CMVAR_SEC_HIGH_TH;
++		CMVAR_UFINE_MIN = S10G_CMVAR_UFINE_MIN;
++		CMVAR_FINE_MIN = S10G_CMVAR_FINE_MIN;
++		CMVAR_UFINE_UMIN_WRAP = S10G_CMVAR_UFINE_UMIN_WRAP;
++		CMVAR_COARSE_MIN = S10G_CMVAR_COARSE_MIN;
++		CMVAR_UFINE_FMIN_WRAP = S10G_CMVAR_UFINE_FMIN_WRAP;
++		CMVAR_FINE_FMIN_WRAP = S10G_CMVAR_FINE_FMIN_WRAP;
++	} else if (speed == 25) {
++		CMVAR_SEC_LOW_TH = S25G_CMVAR_SEC_LOW_TH;
++		CMVAR_UFINE_MAX = S25G_CMVAR_UFINE_MAX;
++		CMVAR_FINE_MAX = S25G_CMVAR_FINE_MAX;
++		CMVAR_UFINE_UMAX_WRAP = S25G_CMVAR_UFINE_UMAX_WRAP;
++		CMVAR_COARSE_MAX = S25G_CMVAR_COARSE_MAX;
++		CMVAR_UFINE_FMAX_WRAP = S25G_CMVAR_UFINE_FMAX_WRAP;
++		CMVAR_FINE_FMAX_WRAP = S25G_CMVAR_FINE_FMAX_WRAP;
++		CMVAR_SEC_HIGH_TH = S25G_CMVAR_SEC_HIGH_TH;
++		CMVAR_UFINE_MIN = S25G_CMVAR_UFINE_MIN;
++		CMVAR_FINE_MIN = S25G_CMVAR_FINE_MIN;
++		CMVAR_UFINE_UMIN_WRAP = S25G_CMVAR_UFINE_UMIN_WRAP;
++		CMVAR_COARSE_MIN = S25G_CMVAR_COARSE_MIN;
++		CMVAR_UFINE_FMIN_WRAP = S25G_CMVAR_UFINE_FMIN_WRAP;
++		CMVAR_FINE_FMIN_WRAP = S25G_CMVAR_FINE_FMIN_WRAP;
++	}
++
++	status |= txgbe_e56_rx_rd_second_code(hw, &SECOND_CODE);
++
++	EPHY_RREG(E56G__RXS0_ANA_OVRDVAL_5);
++	COARSE_CODE = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_coarse_i);
++	FINE_CODE = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_fine_i);
++	ULTRAFINE_CODE = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_ultrafine_i);
++
++	if (SECOND_CODE <= CMVAR_SEC_LOW_TH) {
++		if (ULTRAFINE_CODE < CMVAR_UFINE_MAX) {
++			txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_ultrafine_i,
++					      ULTRAFINE_CODE + 1);
++			EPHY_RREG(E56G__RXS0_ANA_OVRDEN_1);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_ultrafine_i) = 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDEN_1);
++		} else if (FINE_CODE < CMVAR_FINE_MAX) {
++			EPHY_RREG(E56G__RXS0_ANA_OVRDVAL_5);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
++				  ana_bbcdr_ultrafine_i) = CMVAR_UFINE_UMAX_WRAP;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_fine_i) = FINE_CODE + 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDVAL_5);
++			EPHY_RREG(E56G__RXS0_ANA_OVRDEN_1);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 1;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_ultrafine_i) = 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDEN_1);
++		} else if (COARSE_CODE < CMVAR_COARSE_MAX) {
++			EPHY_RREG(E56G__RXS0_ANA_OVRDVAL_5);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
++				  ana_bbcdr_ultrafine_i) = CMVAR_UFINE_FMAX_WRAP;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
++				  ana_bbcdr_fine_i) = CMVAR_FINE_FMAX_WRAP;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_coarse_i) = COARSE_CODE + 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDVAL_5);
++			EPHY_RREG(E56G__RXS0_ANA_OVRDEN_1);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_coarse_i) = 1;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 1;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_ultrafine_i) = 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDEN_1);
 +		} else {
-+			DEBUGOUT("Error Speed\n");
-+			return 0;
++			BP_LOG("ERROR: (SECOND_CODE <= CMVAR_SEC_LOW_TH) temperature tracking occurs Error condition\n");
 +		}
- 
-+		status = txgbe_e56_get_temp(hw, &temperature);
-+		if (status)
-+			return 0;
- 
--	/* Set ovrd_en=0 to read ASIC value */
--	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_int_cstm_i, 0);
-+		hw->temperature = temperature;
- 
--	/*
--	 * As status update from RXS hardware is asynchronous to read status
--	 * of SECOND_ORDER, follow sequence mentioned below.
--	 */
--	N = 5;
--	for (i = 0; i < N; i = i + 1) {
--		/* set RXS_BBCDR_SECOND_ORDER_ST[i] =
--		 * RXS::ANA_OVRDVAL[5]::ana_bbcdr_int_cstm_i[4:0]
-+		/* Assign software defined variables as below */
-+		/* a. SECOND_CODE = ALIAS::RXS::SECOND_ORDER */
-+		status |= txgbe_e56_rx_rd_second_code_40g(hw, &SECOND_CODE, i);
-+
-+		/*
-+		 * b. COARSE_CODE = ALIAS::RXS::COARSE
-+		 * c. FINE_CODE = ALIAS::RXS::FINE
-+		 * d. ULTRAFINE_CODE = ALIAS::RXS::ULTRAFINE
- 		 */
--		EPHY_RREG(E56G__RXS0_ANA_OVRDVAL_5);
--		RXS_BBCDR_SECOND_ORDER_ST[i] = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
--					       ana_bbcdr_int_cstm_i);
--		usec_delay(100);
-+		addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+		rdata = rd32_ephy(hw, addr);
-+		COARSE_CODE = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_coarse_i);
-+		FINE_CODE = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_fine_i);
-+		ULTRAFINE_CODE = EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_ultrafine_i);
-+
-+		if (SECOND_CODE <= CMVAR_SEC_LOW_TH) {
-+			if (ULTRAFINE_CODE < CMVAR_UFINE_MAX) {
-+				addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_ultrafine_i) = ULTRAFINE_CODE + 1;
-+				wr32_ephy(hw, addr, rdata);
-+
-+				/* Set ovrd_en=1 to override ASIC value */
-+				addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1,
-+					  ovrd_en_ana_bbcdr_ultrafine_i) = 1;
-+				wr32_ephy(hw, addr, rdata);
-+			} else if (FINE_CODE < CMVAR_FINE_MAX) {
-+				addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_ultrafine_i) = CMVAR_UFINE_UMAX_WRAP;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_fine_i) = FINE_CODE + 1;
-+				wr32_ephy(hw, addr, rdata);
-+				addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 1;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1,
-+					  ovrd_en_ana_bbcdr_ultrafine_i) = 1;
-+				wr32_ephy(hw, addr, rdata);
-+			} else if (COARSE_CODE < CMVAR_COARSE_MAX) {
-+				addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_ultrafine_i) = CMVAR_UFINE_FMAX_WRAP;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_fine_i) = CMVAR_FINE_FMAX_WRAP;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_coarse_i) = COARSE_CODE + 1;
-+				wr32_ephy(hw, addr, rdata);
-+
-+				addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_coarse_i) = 1;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 1;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1,
-+					  ovrd_en_ana_bbcdr_ultrafine_i) = 1;
-+				wr32_ephy(hw, addr, rdata);
-+			} else {
-+				DEBUGOUT("ERROR: (SECOND_CODE <= CMVAR_SEC_LOW_TH) temperature "
-+					 "tracking occurs Error condition");
-+			}
-+		} else if (SECOND_CODE >= CMVAR_SEC_HIGH_TH) {
-+			if (ULTRAFINE_CODE > CMVAR_UFINE_MIN) {
-+				addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_ultrafine_i) = ULTRAFINE_CODE - 1;
-+				wr32_ephy(hw, addr, rdata);
-+
-+				addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1,
-+					  ovrd_en_ana_bbcdr_ultrafine_i) = 1;
-+				wr32_ephy(hw, addr, rdata);
-+			} else if (FINE_CODE > CMVAR_FINE_MIN) {
-+				addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_ultrafine_i) = CMVAR_UFINE_UMIN_WRAP;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_fine_i) = FINE_CODE - 1;
-+				wr32_ephy(hw, addr, rdata);
-+
-+				addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 1;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1,
-+					  ovrd_en_ana_bbcdr_ultrafine_i) = 1;
-+				wr32_ephy(hw, addr, rdata);
-+			} else if (COARSE_CODE > CMVAR_COARSE_MIN) {
-+				addr = E56G__RXS0_ANA_OVRDVAL_5_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_ultrafine_i) = CMVAR_UFINE_FMIN_WRAP;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_fine_i) = CMVAR_FINE_FMIN_WRAP;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
-+					  ana_bbcdr_coarse_i) = COARSE_CODE - 1;
-+				wr32_ephy(hw, addr, rdata);
-+
-+				addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (E56PHY_RXS_OFFSET * i);
-+				rdata = rd32_ephy(hw, addr);
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_coarse_i) = 1;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 1;
-+				EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1,
-+					  ovrd_en_ana_bbcdr_ultrafine_i) = 1;
-+				wr32_ephy(hw, addr, rdata);
-+			} else {
-+				DEBUGOUT("ERROR: (SECOND_CODE >= CMVAR_SEC_HIGH_TH) temperature "
-+					 "tracking occurs Error condition");
-+			}
++	} else if (SECOND_CODE >= CMVAR_SEC_HIGH_TH) {
++		if (ULTRAFINE_CODE > CMVAR_UFINE_MIN) {
++			txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_ultrafine_i,
++					      ULTRAFINE_CODE - 1);
++			EPHY_RREG(E56G__RXS0_ANA_OVRDEN_1);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_ultrafine_i) = 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDEN_1);
++		} else if (FINE_CODE > CMVAR_FINE_MIN) {
++			EPHY_RREG(E56G__RXS0_ANA_OVRDVAL_5);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
++				  ana_bbcdr_ultrafine_i) = CMVAR_UFINE_UMIN_WRAP;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_fine_i) = FINE_CODE - 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDVAL_5);
++			EPHY_RREG(E56G__RXS0_ANA_OVRDEN_1);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 1;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_ultrafine_i) = 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDEN_1);
++		} else if (COARSE_CODE > CMVAR_COARSE_MIN) {
++			EPHY_RREG(E56G__RXS0_ANA_OVRDVAL_5);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
++				  ana_bbcdr_ultrafine_i) = CMVAR_UFINE_FMIN_WRAP;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5,
++				  ana_bbcdr_fine_i) = CMVAR_FINE_FMIN_WRAP;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDVAL_5, ana_bbcdr_coarse_i) = COARSE_CODE - 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDVAL_5);
++			EPHY_RREG(E56G__RXS0_ANA_OVRDEN_1);
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_coarse_i) = 1;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 1;
++			EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_ultrafine_i) = 1;
++			EPHY_WREG(E56G__RXS0_ANA_OVRDEN_1);
++		} else {
++			BP_LOG("ERROR: (SECOND_CODE >= CMVAR_SEC_HIGH_TH) temperature tracking occurs Error condition\n");
 +		}
- 	}
--
--	/* sort array RXS_BBCDR_SECOND_ORDER_ST[i] */
--	array_size = ARRAY_SIZE(RXS_BBCDR_SECOND_ORDER_ST);
--	qsort(RXS_BBCDR_SECOND_ORDER_ST, array_size, sizeof(int), compare);
--
--	median = ((N + 1) / 2) - 1;
--	*SECOND_CODE = RXS_BBCDR_SECOND_ORDER_ST[median];
--
- 	return status;
- }
- 
-@@ -1534,78 +2233,410 @@ int txgbe_temp_track_seq(struct txgbe_hw *hw, u32 speed)
- 			PMD_DRV_LOG(ERR, "ERROR: (SECOND_CODE >= CMVAR_SEC_HIGH_TH) "
- 				    "temperature tracking occurs Error condition");
- 		}
--	}
 +	}
 +
 +	return status;
 +}
 +
-+static inline int
-+txgbe_e56_ctle_bypass_seq(struct txgbe_hw *hw, u32 speed)
++static int txgbe_e56_ctle_bypass_seq(struct txgbe_hw *hw, u8 bp_link_mode)
 +{
-+	unsigned int rdata;
++	u32 rdata;
 +
-+	/* 1. Program the following RXS registers as mentioned below. */
 +	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDVAL_0, ana_ctle_bypass_i, 1);
 +	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDEN_0, ovrd_en_ana_ctle_bypass_i, 1);
 +
 +	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDVAL_3, ana_ctle_cz_cstm_i, 0);
 +	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDEN_0, ovrd_en_ana_ctle_cz_cstm_i, 1);
 +
-+	/* 2. Program the following PDIG registers as mentioned below. */
 +	EPHY_RREG(E56G__PMD_RXS0_OVRDVAL_1);
 +	EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1, rxs0_rx0_ctle_train_en_i) = 0;
 +	EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1, rxs0_rx0_ctle_train_done_o) = 1;
@@ -1059,8 +891,7 @@ index a73b247f59..4a880b0a35 100644
 +	EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_ctle_train_done_o) = 1;
 +	EPHY_WREG(E56G__PMD_RXS0_OVRDEN_1);
 +
-+	if (speed == TXGBE_LINK_SPEED_40GB_FULL) {
-+		/* 1. Program the following RXS registers as mentioned below. */
++	if (bp_link_mode == 40) {
 +		txgbe_e56_ephy_config(E56G__RXS1_ANA_OVRDVAL_0, ana_ctle_bypass_i, 1);
 +		txgbe_e56_ephy_config(E56G__RXS1_ANA_OVRDEN_0, ovrd_en_ana_ctle_bypass_i, 1);
 +		txgbe_e56_ephy_config(E56G__RXS2_ANA_OVRDVAL_0, ana_ctle_bypass_i, 1);
@@ -1075,7 +906,6 @@ index a73b247f59..4a880b0a35 100644
 +		txgbe_e56_ephy_config(E56G__RXS3_ANA_OVRDVAL_3, ana_ctle_cz_cstm_i, 0);
 +		txgbe_e56_ephy_config(E56G__RXS3_ANA_OVRDEN_0, ovrd_en_ana_ctle_cz_cstm_i, 1);
 +
-+		/* 2. Program the following PDIG registers as mentioned below. */
 +		EPHY_RREG(E56G__PMD_RXS1_OVRDVAL_1);
 +		EPHY_XFLD(E56G__PMD_RXS1_OVRDVAL_1, rxs1_rx0_ctle_train_en_i) = 0;
 +		EPHY_XFLD(E56G__PMD_RXS1_OVRDVAL_1, rxs1_rx0_ctle_train_done_o) = 1;
@@ -1105,364 +935,206 @@ index a73b247f59..4a880b0a35 100644
 +	return 0;
 +}
 +
-+static int txgbe_e56_rxs_calib_adapt_seq_40G(struct txgbe_hw *hw, u32 speed)
++static int txgbe_e56_rxs_adc_adapt_seq(struct txgbe_hw *hw, u32 bypass_ctle)
 +{
-+	int status = 0, i, j;
-+	u32 addr, timer;
-+	u32 rdata = 0x0;
-+	u32 bypass_ctle = true;
++	int lane_num = 0, lane_idx = 0;
++	u32 rdata = 0, addr = 0;
++	int status = 0;
 +
-+	for (i = 0; i < 4; i++) {
-+		rdata = 0x0000;
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_OFST_ADAPT_EN_I, 0x0);
-+		wr32_ephy(hw, addr, rdata);
++	int timer = 0, j = 0;
 +
-+		addr  = E56PHY_RXS0_OVRDEN_2_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata,
-+			       E56PHY_RXS0_OVRDEN_2_OVRD_EN_RXS0_RX0_ADC_OFST_ADAPT_EN_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_GAIN_ADAPT_EN_I, 0x0);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS0_OVRDEN_2_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata,
-+			       E56PHY_RXS0_OVRDEN_2_OVRD_EN_RXS0_RX0_ADC_GAIN_ADAPT_EN_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		rdata = 0x0000;
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_INTL_CAL_EN_I, 0x0);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS0_OVRDEN_1_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata,
-+			       E56PHY_RXS0_OVRDEN_1_OVRD_EN_RXS0_RX0_ADC_INTL_CAL_EN_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_INTL_CAL_DONE_O, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS0_OVRDEN_1_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata,
-+			       E56PHY_RXS0_OVRDEN_1_OVRD_EN_RXS0_RX0_ADC_INTL_CAL_DONE_O, 0x1);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_INTL_ADAPT_EN_I, 0x0);
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr  = E56PHY_RXS0_OVRDEN_2_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata,
-+			       E56PHY_RXS0_OVRDEN_2_OVRD_EN_RXS0_RX0_ADC_INTL_ADAPT_EN_I, 0x1);
-+		wr32_ephy(hw, addr, rdata);
++	switch (hw->bp_link_mode) {
++	case 10:
++		lane_num = 1;
++		break;
++	case 40:
++		lane_num = 4;
++		break;
++	case 25:
++		lane_num = 1;
++		break;
++	default:
++		BP_LOG("%s %d :Invalid speed\n", __func__, __LINE__);
++		break;
 +	}
 +
-+	if (bypass_ctle == 1)
-+		txgbe_e56_ctle_bypass_seq(hw, speed);
-+
-+	/*
-+	 * 2. Follow sequence described in 2.3.2 RXS Osc Initialization for temperature tracking
-+	 * range here. RXS would be enabled at the end of this sequence. For the case when PAM4 KR
-+	 * training is not enabled (including PAM4 mode without KR training), wait until
-+	 * ALIAS::PDIG::CTRL_FSM_RX_ST would return RX_TRAIN_15_ST (RX_RDY_ST).
-+	 */
-+	txgbe_e56_rxs_osc_init_for_temp_track_range(hw, speed);
-+
-+	addr  = E56PHY_CTRL_FSM_RX_STAT_0_ADDR;
-+	timer = 0;
-+	rdata = 0;
-+	while (EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx0_st) != E56PHY_RX_RDY_ST ||
-+	       EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx1_st) != E56PHY_RX_RDY_ST ||
-+	       EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx2_st) != E56PHY_RX_RDY_ST ||
-+	       EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx3_st) != E56PHY_RX_RDY_ST) {
-+		rdata = rd32_ephy(hw, addr);
-+		usec_delay(500);
-+		if (timer++ > PHYINIT_TIMEOUT) {
-+			rdata = 0;
-+			addr  = E56PHY_PMD_CFG_0_ADDR;
-+			rdata = rd32_ephy(hw, addr);
-+			set_fields_e56(&rdata, E56PHY_PMD_CFG_0_RX_EN_CFG, 0x0);
-+			wr32_ephy(hw, addr, rdata);
-+			return TXGBE_ERR_TIMEOUT;
-+		}
++	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
++		addr = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
++		/* Wait RXS0-3_OVRDVAL[1]::rxs0-3_rx0_cdr_rdy_o = 1 */
++		status = kr_read_poll(rd32_ephy, rdata, (rdata & BIT(12)),
++				      100, 2000, hw, 0x1544);
++		if (status)
++			BP_LOG("rxs%d_rx0_cdr_rdy_o = %x, %s.\n",
++			       lane_idx, rdata,
++			       status ? "FAILED" : "SUCCESS");
 +	}
 +
-+	rdata = 0;
-+	timer = 0;
-+	while (EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1, rxs0_rx0_cdr_rdy_o) != 1) {
-+		EPHY_RREG(E56G__PMD_RXS0_OVRDVAL_1);
-+		usec_delay(500);
-+		if (timer++ > PHYINIT_TIMEOUT)
-+			return TXGBE_ERR_TIMEOUT;
-+	}
-+
-+	rdata = 0;
-+	timer = 0;
-+	while (EPHY_XFLD(E56G__PMD_RXS1_OVRDVAL_1, rxs1_rx0_cdr_rdy_o) != 1) {
-+		EPHY_RREG(E56G__PMD_RXS1_OVRDVAL_1);
-+		usec_delay(500);
-+		if (timer++ > PHYINIT_TIMEOUT)
-+			return TXGBE_ERR_TIMEOUT;
-+	}
-+
-+	rdata = 0;
-+	timer = 0;
-+	while (EPHY_XFLD(E56G__PMD_RXS2_OVRDVAL_1, rxs2_rx0_cdr_rdy_o) != 1) {
-+		EPHY_RREG(E56G__PMD_RXS2_OVRDVAL_1);
-+		usec_delay(500);
-+		if (timer++ > PHYINIT_TIMEOUT)
-+			return TXGBE_ERR_TIMEOUT;
-+	}
-+
-+	rdata = 0;
-+	timer = 0;
-+	while (EPHY_XFLD(E56G__PMD_RXS3_OVRDVAL_1, rxs3_rx0_cdr_rdy_o) != 1) {
-+		EPHY_RREG(E56G__PMD_RXS3_OVRDVAL_1);
-+		usec_delay(500);
-+		if (timer++ > PHYINIT_TIMEOUT)
-+			return TXGBE_ERR_TIMEOUT;
-+	}
-+
-+	for (i = 0; i < 4; i++) {
++	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
 +		/* 4. Disable VGA and CTLE training so they don't interfere with ADC calibration */
 +		/* a. Set ALIAS::RXS::VGA_TRAIN_EN = 0b0 */
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		addr  = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_VGA_TRAIN_EN_I, 0x0);
++		set_fields_e56(&rdata, 7, 7, 0x0);
 +		wr32_ephy(hw, addr, rdata);
 +
-+		addr  = E56PHY_RXS0_OVRDEN_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		addr  = 0x1534 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDEN_1_OVRD_EN_RXS0_RX0_VGA_TRAIN_EN_I, 0x1);
++		set_fields_e56(&rdata, 14, 14, 0x1);
 +		wr32_ephy(hw, addr, rdata);
 +
 +		/* b. Set ALIAS::RXS::CTLE_TRAIN_EN = 0b0 */
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		addr  = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_CTLE_TRAIN_EN_I, 0x0);
++		set_fields_e56(&rdata, 9, 9, 0x0);
 +		wr32_ephy(hw, addr, rdata);
 +
-+		addr  = E56PHY_RXS0_OVRDEN_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		addr  = 0x1534 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDEN_1_OVRD_EN_RXS0_RX0_CTLE_TRAIN_EN_I, 0x1);
++		set_fields_e56(&rdata, 16, 16, 0x1);
 +		wr32_ephy(hw, addr, rdata);
 +
 +		/* 5. Perform ADC interleaver calibration */
 +		/* a. Remove the OVERRIDE on ALIAS::RXS::ADC_INTL_CAL_DONE */
-+		addr  = E56PHY_RXS0_OVRDEN_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		addr  = 0x1534 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata,
-+			       E56PHY_RXS0_OVRDEN_1_OVRD_EN_RXS0_RX0_ADC_INTL_CAL_DONE_O, 0x0);
++		set_fields_e56(&rdata, 24, 24, 0x0);
 +		wr32_ephy(hw, addr, rdata);
 +
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		addr  = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_INTL_CAL_EN_I, 0x1);
++		set_fields_e56(&rdata, 16, 16, 0x1);
 +		wr32_ephy(hw, addr, rdata);
 +
-+		addr = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
-+		timer = 0;
-+		while (((rdata >> E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_INTL_CAL_DONE_O_LSB)
-+			 & 1) != 1) {
-+			rdata = rd32_ephy(hw, addr);
-+			usec_delay(1000);
++		addr = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
++		/* Wait rxs0_rx0_adc_intl_cal_done_o bit17 = 1 */
++		status = kr_read_poll(rd32_ephy, rdata, (rdata & BIT(17)),
++				      100, 2000, hw, addr);
++		if (status)
++			BP_LOG("rxs0_rx0_adc_intl_cal_done_o = %x, %s.\n", rdata,
++				status ? "FAILED" : "SUCCESS");
 +
-+			if (timer++ > PHYINIT_TIMEOUT)
-+				break;
-+		}
-+
-+		/*
-+		 * 6. Perform ADC offset adaptation and ADC gain adaptation, repeat them a few
-+		 * times and after that keep it disabled.
++		/* 6. Perform ADC offset adaptation and ADC gain adaptation,
++		 * repeat them a few times and after that keep it disabled.
 +		 */
 +		for (j = 0; j < 16; j++) {
 +			/* a. ALIAS::RXS::ADC_OFST_ADAPT_EN = 0b1 */
-+			addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++			addr  = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +			rdata = rd32_ephy(hw, addr);
-+			set_fields_e56(&rdata,
-+				       E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_OFST_ADAPT_EN_I, 0x1);
++			set_fields_e56(&rdata, 25, 25, 0x1);
 +			wr32_ephy(hw, addr, rdata);
 +
 +			/* b. Wait for 1ms or greater */
-+			addr = E56G__PMD_RXS0_OVRDEN_2_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++			/* usec_delay(1000); */
++			/* set ovrd_en_rxs0_rx0_adc_ofst_adapt_done_o bit1=0 */
++			addr = 0x1538 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +			rdata = rd32_ephy(hw, addr);
-+			EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_2,
-+				  ovrd_en_rxs0_rx0_adc_ofst_adapt_done_o) = 0;
++			set_fields_e56(&rdata, 1, 1, 0);
 +			wr32_ephy(hw, addr, rdata);
 +
-+			rdata = 0;
-+			addr = E56G__PMD_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
-+			timer = 0;
-+			while (EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1,
-+					 rxs0_rx0_adc_ofst_adapt_done_o) != 1) {
-+				rdata = rd32_ephy(hw, addr);
-+				usec_delay(500);
-+				if (timer++ > PHYINIT_TIMEOUT)
-+					break;
-+			}
++			addr = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
++			/* Wait rxs0_rx0_adc_ofst_adapt_done_o bit26 = 0 */
++			status = kr_read_poll(rd32_ephy, rdata,
++						   !(rdata & BIT(26)),
++						   100, 2000, hw, addr);
++			if (status)
++				BP_LOG("rxs0_rx0_adc_ofst_adapt_done_o %d = %x, %s.\n",
++				       j, rdata, status ? "FAILED" : "SUCCESS");
 +
 +			/* c. ALIAS::RXS::ADC_OFST_ADAPT_EN = 0b0 */
 +			rdata = 0x0000;
-+			addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++			addr  = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +			rdata = rd32_ephy(hw, addr);
-+			set_fields_e56(&rdata,
-+				       E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_OFST_ADAPT_EN_I, 0x0);
++			set_fields_e56(&rdata, 25, 25, 0x0);
 +			wr32_ephy(hw, addr, rdata);
 +
 +			/* d. ALIAS::RXS::ADC_GAIN_ADAPT_EN = 0b1 */
 +			rdata = 0x0000;
-+			addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++			addr  = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +			rdata = rd32_ephy(hw, addr);
-+			set_fields_e56(&rdata,
-+				       E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_GAIN_ADAPT_EN_I, 0x1);
++			set_fields_e56(&rdata, 28, 28, 0x1);
 +			wr32_ephy(hw, addr, rdata);
 +
 +			/* e. Wait for 1ms or greater */
-+			addr = E56G__PMD_RXS0_OVRDEN_2_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++			/* usec_delay(1000); */
++			/* set ovrd_en_rxs0_rx0_adc_ofst_adapt_done_o bit1=0 */
++			addr = 0x1538 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +			rdata = rd32_ephy(hw, addr);
-+			EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_2,
-+				  ovrd_en_rxs0_rx0_adc_ofst_adapt_done_o) = 0;
++			set_fields_e56(&rdata, 1, 1, 0);
 +			wr32_ephy(hw, addr, rdata);
 +
-+			rdata = 0;
-+			timer = 0;
-+			addr = E56G__PMD_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
-+			while (EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1,
-+					 rxs0_rx0_adc_gain_adapt_done_o) != 1) {
-+				rdata = rd32_ephy(hw, addr);
-+				usec_delay(500);
-+
-+				if (timer++ > PHYINIT_TIMEOUT)
-+					break;
-+			}
++			addr = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
++			/* Wait rxs0_rx0_adc_gain_adapt_done_o bit29 = 0 */
++			status = kr_read_poll(rd32_ephy, rdata, !(rdata & BIT(29)),
++					      100, 2000, hw, addr);
++			if (status)
++				BP_LOG("rxs0_rx0_adc_gain_adapt_done_o %d = %x, %s.\n",
++				       j, rdata, status ? "FAILED" : "SUCCESS");
 +
 +			/* f. ALIAS::RXS::ADC_GAIN_ADAPT_EN = 0b0 */
-+			addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++			addr  = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +			rdata = rd32_ephy(hw, addr);
-+			set_fields_e56(&rdata,
-+				       E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_GAIN_ADAPT_EN_I, 0x0);
++			set_fields_e56(&rdata, 28, 28, 0x0);
 +			wr32_ephy(hw, addr, rdata);
 +		}
 +		/* g. Repeat #a to #f total 16 times */
- 
--	return status;
--}
- 
--static inline int
--txgbe_e56_ctle_bypass_seq(struct txgbe_hw *hw, u32 speed)
--{
--	unsigned int rdata;
-+		/*
-+		 * 7. Perform ADC interleaver adaptation for 10ms or greater,
++
++		/* 7. Perform ADC interleaver adaptation for 10ms or greater,
 +		 * and after that disable it
-+		 * a. ALIAS::RXS::ADC_INTL_ADAPT_EN = 0b1
 +		 */
-+		addr  = E56PHY_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		/* a. ALIAS::RXS::ADC_INTL_ADAPT_EN = 0b1 */
++		addr  = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		set_fields_e56(&rdata, E56PHY_RXS0_OVRDVAL_1_RXS0_RX0_ADC_INTL_ADAPT_EN_I, 0x1);
++		set_fields_e56(&rdata, 31, 31, 0x1);
 +		wr32_ephy(hw, addr, rdata);
 +		/* b. Wait for 10ms or greater */
-+		msleep(10);
- 
--	/* 1. Program the following RXS registers as mentioned below. */
--	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDVAL_0, ana_ctle_bypass_i, 1);
--	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDEN_0, ovrd_en_ana_ctle_bypass_i, 1);
++		msleep(20);
++
 +		/* c. ALIAS::RXS::ADC_INTL_ADAPT_EN = 0b0 */
-+		addr = E56G__PMD_RXS0_OVRDEN_2_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		/* set ovrd_en_rxs0_rx0_adc_intl_adapt_en_i=0 */
++		addr = 0x1538 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_2, ovrd_en_rxs0_rx0_adc_intl_adapt_en_i) = 0;
++		set_fields_e56(&rdata, 6, 6, 0);
 +		wr32_ephy(hw, addr, rdata);
- 
--	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDVAL_3, ana_ctle_cz_cstm_i, 0);
--	txgbe_e56_ephy_config(E56G__RXS0_ANA_OVRDEN_0, ovrd_en_ana_ctle_cz_cstm_i, 1);
-+		/*
-+		 * 8. Now re-enable VGA and CTLE trainings, so that it continues to adapt tracking
-+		 * changes in temperature or voltage
++
++		/* 8. Now re-enable VGA and CTLE trainings, so that it continues
++		 * to adapt tracking changes in temperature or voltage
++		 * <1>Set ALIAS::RXS::VGA_TRAIN_EN = 0b1
 +		 */
-+		addr = E56G__PMD_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		/* set rxs0_rx0_vga_train_en_i=1 */
++		addr = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1, rxs0_rx0_vga_train_en_i) = 1;
++		set_fields_e56(&rdata, 7, 7, 0x1);
 +		if (bypass_ctle == 0)
 +			EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1, rxs0_rx0_ctle_train_en_i) = 1;
 +		wr32_ephy(hw, addr, rdata);
- 
--	/* 2. Program the following PDIG registers as mentioned below. */
--	EPHY_RREG(E56G__PMD_RXS0_OVRDVAL_1);
--	EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1, rxs0_rx0_ctle_train_en_i) = 0;
--	EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1, rxs0_rx0_ctle_train_done_o) = 1;
--	EPHY_WREG(E56G__PMD_RXS0_OVRDVAL_1);
-+		addr = E56G__PMD_RXS0_OVRDEN_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++
++		/* <2>wait for ALIAS::RXS::VGA_TRAIN_DONE = 1 */
++		/* set ovrd_en_rxs0_rx0_vga_train_done_o = 0 */
++		addr = 0x1534 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_vga_train_done_o) = 0;
++		set_fields_e56(&rdata, 15, 15, 0x0);
 +		wr32_ephy(hw, addr, rdata);
- 
--	EPHY_RREG(E56G__PMD_RXS0_OVRDEN_1);
--	EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_ctle_train_en_i) = 1;
--	EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_ctle_train_done_o) = 1;
--	EPHY_WREG(E56G__PMD_RXS0_OVRDEN_1);
-+		rdata = 0;
-+		timer = 0;
-+		addr = E56G__PMD_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
-+		while (EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1, rxs0_rx0_vga_train_done_o) != 1) {
-+			rdata = rd32_ephy(hw, addr);
-+			usec_delay(500);
- 
--	if (speed == TXGBE_LINK_SPEED_40GB_FULL) {
--		/* 1. Program the following RXS registers as mentioned below. */
--		txgbe_e56_ephy_config(E56G__RXS1_ANA_OVRDVAL_0, ana_ctle_bypass_i, 1);
--		txgbe_e56_ephy_config(E56G__RXS1_ANA_OVRDEN_0, ovrd_en_ana_ctle_bypass_i, 1);
--		txgbe_e56_ephy_config(E56G__RXS2_ANA_OVRDVAL_0, ana_ctle_bypass_i, 1);
--		txgbe_e56_ephy_config(E56G__RXS2_ANA_OVRDEN_0, ovrd_en_ana_ctle_bypass_i, 1);
--		txgbe_e56_ephy_config(E56G__RXS3_ANA_OVRDVAL_0, ana_ctle_bypass_i, 1);
--		txgbe_e56_ephy_config(E56G__RXS3_ANA_OVRDEN_0, ovrd_en_ana_ctle_bypass_i, 1);
-+			if (timer++ > PHYINIT_TIMEOUT)
-+				break;
-+		}
- 
--		txgbe_e56_ephy_config(E56G__RXS1_ANA_OVRDVAL_3, ana_ctle_cz_cstm_i, 0);
--		txgbe_e56_ephy_config(E56G__RXS1_ANA_OVRDEN_0, ovrd_en_ana_ctle_cz_cstm_i, 1);
--		txgbe_e56_ephy_config(E56G__RXS2_ANA_OVRDVAL_3, ana_ctle_cz_cstm_i, 0);
--		txgbe_e56_ephy_config(E56G__RXS2_ANA_OVRDEN_0, ovrd_en_ana_ctle_cz_cstm_i, 1);
--		txgbe_e56_ephy_config(E56G__RXS3_ANA_OVRDVAL_3, ana_ctle_cz_cstm_i, 0);
--		txgbe_e56_ephy_config(E56G__RXS3_ANA_OVRDEN_0, ovrd_en_ana_ctle_cz_cstm_i, 1);
++
++		/* Wait rxs0_rx0_vga_train_done_o bit8 = 0 */
++		addr = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
++		status = kr_read_poll(rd32_ephy, rdata, (rdata & BIT(8)),
++					   100, 3000, hw, addr);
++		if (status)
++			BP_LOG("rxs0_rx0_vga_train_done_o = %x, %s.\n", rdata,
++			       status ? "FAILED" : "SUCCESS");
++
 +		if (bypass_ctle == 0) {
-+			addr = E56G__PMD_RXS0_OVRDEN_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++			addr = 0x1534 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +			rdata = rd32_ephy(hw, addr);
-+			EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_ctle_train_done_o) = 0;
++			EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1,
++				  ovrd_en_rxs0_rx0_ctle_train_done_o) = 0;
 +			wr32_ephy(hw, addr, rdata);
- 
--		/* 2. Program the following PDIG registers as mentioned below. */
--		EPHY_RREG(E56G__PMD_RXS1_OVRDVAL_1);
--		EPHY_XFLD(E56G__PMD_RXS1_OVRDVAL_1, rxs1_rx0_ctle_train_en_i) = 0;
--		EPHY_XFLD(E56G__PMD_RXS1_OVRDVAL_1, rxs1_rx0_ctle_train_done_o) = 1;
--		EPHY_WREG(E56G__PMD_RXS1_OVRDVAL_1);
--		EPHY_RREG(E56G__PMD_RXS2_OVRDVAL_1);
--		EPHY_XFLD(E56G__PMD_RXS2_OVRDVAL_1, rxs2_rx0_ctle_train_en_i) = 0;
--		EPHY_XFLD(E56G__PMD_RXS2_OVRDVAL_1, rxs2_rx0_ctle_train_done_o) = 1;
--		EPHY_WREG(E56G__PMD_RXS2_OVRDVAL_1);
--		EPHY_RREG(E56G__PMD_RXS3_OVRDVAL_1);
--		EPHY_XFLD(E56G__PMD_RXS3_OVRDVAL_1, rxs3_rx0_ctle_train_en_i) = 0;
--		EPHY_XFLD(E56G__PMD_RXS3_OVRDVAL_1, rxs3_rx0_ctle_train_done_o) = 1;
--		EPHY_WREG(E56G__PMD_RXS3_OVRDVAL_1);
++
 +			rdata = 0;
 +			timer = 0;
-+			addr = E56G__PMD_RXS0_OVRDVAL_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++			addr = 0x1544 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +			while (EPHY_XFLD(E56G__PMD_RXS0_OVRDVAL_1,
-+					 rxs0_rx0_ctle_train_done_o) != 1) {
++			       rxs0_rx0_ctle_train_done_o) != 1) {
 +				rdata = rd32_ephy(hw, addr);
 +				usec_delay(500);
 +
@@ -1472,356 +1144,2212 @@ index a73b247f59..4a880b0a35 100644
 +		}
 +
 +		/* a. Remove the OVERRIDE on ALIAS::RXS::VGA_TRAIN_EN */
-+		addr = E56G__PMD_RXS0_OVRDEN_1_ADDR + (E56PHY_PMD_RX_OFFSET * i);
++		addr = 0x1534 + (E56PHY_PMD_RX_OFFSET * lane_idx);
 +		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_vga_train_en_i) = 0;
++		set_fields_e56(&rdata, 15, 15, 0);
 +		/* b. Remove the OVERRIDE on ALIAS::RXS::CTLE_TRAIN_EN */
 +		if (bypass_ctle == 0)
-+			EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_ctle_train_en_i) = 0;
++			EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1,
++				  ovrd_en_rxs0_rx0_ctle_train_en_i) = 0;
 +		wr32_ephy(hw, addr, rdata);
- 
--		EPHY_RREG(E56G__PMD_RXS1_OVRDEN_1);
--		EPHY_XFLD(E56G__PMD_RXS1_OVRDEN_1, ovrd_en_rxs1_rx0_ctle_train_en_i) = 1;
--		EPHY_XFLD(E56G__PMD_RXS1_OVRDEN_1, ovrd_en_rxs1_rx0_ctle_train_done_o) = 1;
--		EPHY_WREG(E56G__PMD_RXS1_OVRDEN_1);
--		EPHY_RREG(E56G__PMD_RXS2_OVRDEN_1);
--		EPHY_XFLD(E56G__PMD_RXS2_OVRDEN_1, ovrd_en_rxs2_rx0_ctle_train_en_i) = 1;
--		EPHY_XFLD(E56G__PMD_RXS2_OVRDEN_1, ovrd_en_rxs2_rx0_ctle_train_done_o) = 1;
--		EPHY_WREG(E56G__PMD_RXS2_OVRDEN_1);
--		EPHY_RREG(E56G__PMD_RXS3_OVRDEN_1);
--		EPHY_XFLD(E56G__PMD_RXS3_OVRDEN_1, ovrd_en_rxs3_rx0_ctle_train_en_i) = 1;
--		EPHY_XFLD(E56G__PMD_RXS3_OVRDEN_1, ovrd_en_rxs3_rx0_ctle_train_done_o) = 1;
--		EPHY_WREG(E56G__PMD_RXS3_OVRDEN_1);
- 	}
--	return 0;
-+	return status;
- }
- 
- static inline int
-@@ -1978,20 +3009,42 @@ txgbe_e56_cfg_temp(struct txgbe_hw *hw)
- 	return 0;
- }
- 
--static int txgbe_e56_config_rx(struct txgbe_hw *hw, u32 speed)
-+static int txgbe_e56_config_rx_40G(struct txgbe_hw *hw, u32 speed)
- {
- 	s32 status;
- 
--	status = txgbe_e56_rxs_calib_adapt_seq(hw, speed);
-+	status = txgbe_e56_rxs_calib_adapt_seq_40G(hw, speed);
- 	if (status)
- 		return status;
- 
- 	/* Step 2 of 2.3.4 */
--	txgbe_e56_set_rxs_ufine_le_max(hw, speed);
-+	txgbe_e56_set_rxs_ufine_le_max_40g(hw, speed);
- 
- 	/* 2.3.4 RXS post CDR lock temperature tracking sequence */
--	txgbe_temp_track_seq(hw, speed);
-+	txgbe_temp_track_seq_40g(hw, speed);
++	}
 +
-+	hw->link_valid = true;
++	return status;
++}
++
++static int txgbe_e56_phy_rxs_calib_adapt_seq(struct txgbe_hw *hw,
++		u8 bp_link_mode, u32 bypass_ctle)
++{
++	int lane_num = 0, lane_idx = 0;
++	int status = 0;
++	u32 rdata, addr;
++
++	switch (bp_link_mode) {
++	case 10:
++		lane_num = 1;
++		break;
++	case 40:
++		lane_num = 4;
++		break;
++	case 25:
++		lane_num = 1;
++		break;
++	default:
++		BP_LOG("%s %d :Invalid speed\n", __func__, __LINE__);
++		break;
++	}
++
++	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
++		rdata = 0x0000;
++		addr  = 0x1544 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 25, 25, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1538 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 0, 0, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1544 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 28, 28, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1538 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 3, 3, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		rdata = 0x0000;
++		addr  = 0x1544 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 16, 16, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1534 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 23, 23, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1544 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 17, 17, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1534 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 24, 24, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1544 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 31, 31, 0x0);
++		wr32_ephy(hw, addr, rdata);
++
++		addr  = 0x1538 + (lane_idx * E56PHY_PMD_RX_OFFSET);
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 6, 6, 0x1);
++		wr32_ephy(hw, addr, rdata);
++	}
++	if (bypass_ctle != 0)
++		status |= txgbe_e56_ctle_bypass_seq(hw, bp_link_mode);
++
++	status |= txgbe_e56_rxs_osc_init_for_temp_track_range(hw, bp_link_mode);
++
++	/* Wait an fsm_rx_sts 25G */
++	BP_LOG("Wait CTRL_FSM_RX_STAT[0]::ctrl_fsm_rx0_st to be ready ...\n");
++
++	status |= kr_read_poll(rd32_ephy, rdata,
++		  (((rdata & 0x3f3f3f3f) & GENMASK(8 * lane_num - 1, 0))
++		  == (0x1b1b1b1b & GENMASK(8 * lane_num - 1, 0))),
++		  1000, 300, hw,
++		  E56PHY_CTRL_FSM_RX_STAT_0_ADDR);
++	BP_LOG("wait ctrl_fsm_rx0_st = %x, %s.\n",
++	       rdata, status ? "FAILED" : "SUCCESS");
++
++	return status;
++}
++
++static int txgbe_e56_cms_cfg_for_temp_track_range(struct txgbe_hw *hw)
++{
++	int status = 0, T = 40;
++	u32 addr, rdata;
++
++	status = txgbe_e56_get_temp(hw, &T);
++	if (T < 40) {
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDEN_0_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata,
++			E56PHY_CMS_ANA_OVRDEN_0_OVRD_EN_ANA_LCPLL_HF_LPF_SETCODE_CALIB_I, 0x1);
++		wr32_ephy(hw, addr, rdata);
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDVAL_2_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata,
++			       E56PHY_CMS_ANA_OVRDVAL_2_ANA_LCPLL_HF_LPF_SETCODE_CALIB_I, 0x1);
++		wr32_ephy(hw, addr, rdata);
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDEN_1_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata,
++			E56PHY_CMS_ANA_OVRDEN_1_OVRD_EN_ANA_LCPLL_LF_LPF_SETCODE_CALIB_I, 0x1);
++		wr32_ephy(hw, addr, rdata);
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDVAL_7_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata,
++			E56PHY_CMS_ANA_OVRDVAL_7_ANA_LCPLL_LF_LPF_SETCODE_CALIB_I, 0x1);
++		wr32_ephy(hw, addr, rdata);
++	} else if (T > 70) {
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDEN_0_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata,
++			E56PHY_CMS_ANA_OVRDEN_0_OVRD_EN_ANA_LCPLL_HF_LPF_SETCODE_CALIB_I, 0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDVAL_2_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata,
++			       E56PHY_CMS_ANA_OVRDVAL_2_ANA_LCPLL_HF_LPF_SETCODE_CALIB_I, 0x3);
++		wr32_ephy(hw, addr, rdata);
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDEN_1_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata,
++			E56PHY_CMS_ANA_OVRDEN_1_OVRD_EN_ANA_LCPLL_LF_LPF_SETCODE_CALIB_I, 0x1);
++		wr32_ephy(hw, addr, rdata);
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDVAL_7_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata,
++			       E56PHY_CMS_ANA_OVRDVAL_7_ANA_LCPLL_LF_LPF_SETCODE_CALIB_I, 0x3);
++		wr32_ephy(hw, addr, rdata);
++	} else {
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDEN_1_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, E56PHY_CMS_ANA_OVRDEN_1_OVRD_EN_ANA_LCPLL_HF_TEST_IN_I,
++			       0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDVAL_4_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 24, 24, 0x1);
++		set_fields_e56(&rdata, 31, 29, 0x4);
++		wr32_ephy(hw, addr, rdata);
++
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDVAL_5_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 1, 0, 0x0);
++		wr32_ephy(hw, addr, rdata);
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDEN_1_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, E56PHY_CMS_ANA_OVRDEN_1_OVRD_EN_ANA_LCPLL_LF_TEST_IN_I,
++			       0x1);
++		wr32_ephy(hw, addr, rdata);
++
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDVAL_9_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 24, 24, 0x1);
++		set_fields_e56(&rdata, 31, 29, 0x4);
++		wr32_ephy(hw, addr, rdata);
++
++		rdata = 0x0000;
++		addr = E56PHY_CMS_ANA_OVRDVAL_10_ADDR;
++		rdata = rd32_ephy(hw, addr);
++		set_fields_e56(&rdata, 1, 0, 0x0);
++		wr32_ephy(hw, addr, rdata);
++	}
++	return status;
++}
++
++static int txgbe_e56_bp_cfg_25g(struct txgbe_hw *hw)
++{
++	u32 addr, rdata;
++
++	rdata = 0x0000;
++	addr = E56PHY_CMS_PIN_OVRDVAL_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CMS_PIN_OVRDVAL_0_INT_PLL0_TX_SIGNAL_TYPE_I, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CMS_PIN_OVRDEN_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CMS_PIN_OVRDEN_0_OVRD_EN_PLL0_TX_SIGNAL_TYPE_I,
++		       0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CMS_ANA_OVRDVAL_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CMS_ANA_OVRDVAL_2_ANA_LCPLL_HF_VCO_SWING_CTRL_I,
++		       0xf);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CMS_ANA_OVRDEN_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata,
++		       E56PHY_CMS_ANA_OVRDEN_0_OVRD_EN_ANA_LCPLL_HF_VCO_SWING_CTRL_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CMS_ANA_OVRDVAL_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 23, 0, 0x260000);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr  = E56PHY_CMS_ANA_OVRDEN_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CMS_ANA_OVRDEN_1_OVRD_EN_ANA_LCPLL_HF_TEST_IN_I,
++		       0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_TXS_CFG_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_TXS_CFG_1_ADAPTATION_WAIT_CNT_X256, 0xf);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_WKUP_CNT_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_WKUP_CNTLDO_WKUP_CNT_X32, 0xff);
++	set_fields_e56(&rdata, E56PHY_TXS_WKUP_CNTDCC_WKUP_CNT_X32, 0xff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_PIN_OVRDVAL_6_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 27, 24, 0x5);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_PIN_OVRDEN_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_PIN_OVRDEN_0_OVRD_EN_TX0_EFUSE_BITS_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_ANA_OVRDVAL_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_ANA_OVRDVAL_1_ANA_TEST_DAC_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_ANA_OVRDEN_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_ANA_OVRDEN_0_OVRD_EN_ANA_TEST_DAC_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	txgbe_e56_tx_ffe_cfg(hw, TXGBE_LINK_SPEED_25GB_FULL);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_RXS_CFG_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_RXS_CFG_0_DSER_DATA_SEL, 0x0);
++	set_fields_e56(&rdata, E56PHY_RXS_RXS_CFG_0_TRAIN_CLK_GATE_BYPASS_EN, 0x1fff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr  = E56PHY_RXS_OSC_CAL_N_CDR_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_1_PREDIV1, 0x700);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_1_TARGET_CNT1, 0x2418);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OSC_CAL_N_CDR_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_4_OSC_RANGE_SEL1, 0x1);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_4_VCO_CODE_INIT, 0x7fb);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_4_OSC_CURRENT_BOOST_EN1, 0x0);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_4_BBCDR_CURRENT_BOOST1, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OSC_CAL_N_CDR_5_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_SDM_WIDTH, 0x3);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_PROP_STEP_PRELOCK,
++		       0xf);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_PROP_STEP_POSTLOCK,
++		       0x3);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_GAIN_CTRL_POSTLOCK,
++		       0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_GAIN_CTRL_PRELOCK,
++		       0xf);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BBCDR_RDY_CNT, 0x3);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OSC_CAL_N_CDR_6_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_6_PI_GAIN_CTRL_PRELOCK, 0x7);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_6_PI_GAIN_CTRL_POSTLOCK, 0x5);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_INTL_CONFIG_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_INTL_CONFIG_0_ADC_INTL2SLICE_DELAY1, 0x3333);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_INTL_CONFIG_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_INTL_CONFIG_2_INTERLEAVER_HBW_DISABLE1, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_TXFFE_TRAINING_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_0_ADC_DATA_PEAK_LTH, 0x56);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_0_ADC_DATA_PEAK_UTH, 0x6a);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_TXFFE_TRAINING_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_1_C1_LTH, 0x1f8);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_1_C1_UTH, 0xf0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_TXFFE_TRAINING_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_2_CM1_LTH, 0x100);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_2_CM1_UTH, 0xff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_TXFFE_TRAINING_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_CM2_LTH, 0x4);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_CM2_UTH, 0x37);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_TXFFE_TRAIN_MOD_TYPE, 0x38);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56G__RXS0_FOM_18__ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56G__RXS0_FOM_18__DFE_COEFFL_HINT__MSB,
++		       E56G__RXS0_FOM_18__DFE_COEFFL_HINT__LSB, 0x0);
++	set_fields_e56(&rdata, E56G__RXS0_FOM_18__DFE_COEFFH_HINT__MSB,
++		       E56G__RXS0_FOM_18__DFE_COEFFH_HINT__LSB, 0x0);
++	set_fields_e56(&rdata, E56G__RXS0_FOM_18__DFE_COEFF_HINT_LOAD__MSB,
++		       E56G__RXS0_FOM_18__DFE_COEFF_HINT_LOAD__LSB, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_VGA_TRAINING_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_0_VGA_TARGET, 0x34);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_VGA_TRAINING_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA1_CODE_INIT0, 0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA2_CODE_INIT0, 0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA1_CODE_INIT123, 0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA2_CODE_INIT123, 0xa);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_CTLE_TRAINING_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_0_CTLE_CODE_INIT0, 0x9);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_0_CTLE_CODE_INIT123, 0x9);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_CTLE_TRAINING_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_1_LFEQ_LUT, 0x1ffffea);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_CTLE_TRAINING_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P1, 18);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P2, 0);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P3, 0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_CTLE_TRAINING_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P1, 1);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P2, 0);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P3, 0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADC_SLICE_DATA_AVG_CNT,
++		       0x3);
++	set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADC_DATA_AVG_CNT, 0x3);
++	set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_FE_OFFSET_DAC_CLK_CNT_X8,
++		       0xc);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OFFSET_N_GAIN_CAL_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_1_SAMP_ADAPT_CFG, 0x5);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_FFE_TRAINING_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_FFE_TRAINING_0_FFE_TAP_EN, 0xf9ff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_IDLE_DETECT_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MAX, 0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MIN, 0x5);
++	wr32_ephy(hw, addr, rdata);
++
++	addr = 0x6cc;
++	rdata = 0x8020000;
++	wr32_ephy(hw, addr, rdata);
++	addr = 0x94;
++	rdata = 0;
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDVAL_0_ANA_EN_RTERM_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDEN_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_0_OVRD_EN_ANA_EN_RTERM_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_6_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 4, 0, 0x0);
++	set_fields_e56(&rdata, 14, 13, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDEN_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_1_OVRD_EN_ANA_BBCDR_VCOFILT_BYP_I,
++		       0x1);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_1_OVRD_EN_ANA_TEST_BBCDR_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_15_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 2, 0, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_17_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDVAL_17_ANA_VGA2_BOOST_CSTM_I, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDEN_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_3_OVRD_EN_ANA_ANABS_CONFIG_I, 0x1);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_3_OVRD_EN_ANA_VGA2_BOOST_CSTM_I,
++		       0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_14_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 13, 13, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDEN_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 13, 13, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_EYE_SCAN_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_EYE_SCAN_1_EYE_SCAN_REF_TIMER, 0x400);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_RINGO_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 21, 12, 0x366);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_PMD_CFG_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_3_CTRL_FSM_TIMEOUT_X64K, 0x80);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_PMD_CFG_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_4_TRAIN_DC_ON_PERIOD_X64K, 0x18);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_4_TRAIN_DC_PERIOD_X512K, 0x3e);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_PMD_CFG_5_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_5_USE_RECENT_MARKER_OFFSET, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_CONT_ON_ADC_GAIN_CAL_ERR, 0x1);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_DO_RX_ADC_OFST_CAL, 0x3);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_RX_ERR_ACTION_EN, 0x40);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST0_WAIT_CNT_X4096, 0xff);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST1_WAIT_CNT_X4096, 0xff);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST2_WAIT_CNT_X4096, 0xff);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST3_WAIT_CNT_X4096, 0xff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST4_WAIT_CNT_X4096, 0x1);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST5_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST6_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST7_WAIT_CNT_X4096, 0x4);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST8_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST9_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST10_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST11_WAIT_CNT_X4096, 0x4);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST12_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST13_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST14_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST15_WAIT_CNT_X4096, 0x4);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_7_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_7_TRAIN_ST4_EN, 0x4bf);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_7_TRAIN_ST5_EN, 0xc4bf);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_8_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_8_TRAIN_ST7_EN, 0x47ff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_12_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_12_TRAIN_ST15_EN, 0x67ff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_13_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_13_TRAIN_ST0_DONE_EN, 0x8001);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_13_TRAIN_ST1_DONE_EN, 0x8002);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_14_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_14_TRAIN_ST3_DONE_EN, 0x8008);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_15_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_15_TRAIN_ST4_DONE_EN, 0x8004);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_17_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_17_TRAIN_ST8_DONE_EN, 0x20c0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_18_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_18_TRAIN_ST10_DONE_EN, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_29_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_29_TRAIN_ST15_DC_EN, 0x3f6d);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_33_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_33_TRAIN0_RATE_SEL, 0x8000);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_33_TRAIN1_RATE_SEL, 0x8000);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_34_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_34_TRAIN2_RATE_SEL, 0x8000);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_34_TRAIN3_RATE_SEL, 0x8000);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_KRT_TFSM_CFG_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_MAX_WAIT_TIMER_X1000K, 0x49);
++	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_MAX_WAIT_TIMER_X8000K, 0x37);
++	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_HOLDOFF_TIMER_X256K, 0x2f);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2,
++		       0x2);
++	wr32_ephy(hw, addr, rdata);
 +
 +	return 0;
 +}
- 
-+static int txgbe_e56_config_rx(struct txgbe_hw *hw, u32 speed)
++
++static int txgbe_e56_bp_cfg_10g(struct txgbe_hw *hw)
 +{
-+	s32 status;
++	u32 addr, rdata;
 +
-+	if (speed == TXGBE_LINK_SPEED_40GB_FULL) {
-+		txgbe_e56_config_rx_40G(hw, speed);
-+	} else  {
-+		status = txgbe_e56_rxs_calib_adapt_seq(hw, speed);
-+		if (status)
-+			return status;
++	rdata = 0x0000;
++	addr = E56G__CMS_ANA_OVRDVAL_7_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	((E56G__CMS_ANA_OVRDVAL_7 *)&rdata)->ana_lcpll_lf_vco_swing_ctrl_i = 0xf;
++	wr32_ephy(hw, addr, rdata);
 +
-+		/* Step 2 of 2.3.4 */
-+		txgbe_e56_set_rxs_ufine_le_max(hw, speed);
++	rdata = 0x0000;
++	addr = E56G__CMS_ANA_OVRDEN_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	((E56G__CMS_ANA_OVRDEN_1 *)&rdata)->ovrd_en_ana_lcpll_lf_vco_swing_ctrl_i = 0x1;
++	wr32_ephy(hw, addr, rdata);
 +
-+		/* 2.3.4 RXS post CDR lock temperature tracking sequence */
-+		txgbe_temp_track_seq(hw, speed);
-+	}
- 	return 0;
- }
- 
-@@ -2001,6 +3054,151 @@ static int txgbe_e56_config_rx(struct txgbe_hw *hw, u32 speed)
-  * Completion of RXS powerdown can be confirmed by
-  * observing ALIAS::PDIG::CTRL_FSM_RX_ST = POWERDN_ST
-  */
-+static int txgbe_e56_disable_rx40G(struct txgbe_hw *hw)
++	rdata = 0x0000;
++	addr = E56G__CMS_ANA_OVRDVAL_9_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 23, 0, 0x260000);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr  = E56G__CMS_ANA_OVRDEN_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	((E56G__CMS_ANA_OVRDEN_1 *)&rdata)->ovrd_en_ana_lcpll_lf_test_in_i = 0x1;
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_TXS_CFG_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_TXS_CFG_1_ADAPTATION_WAIT_CNT_X256, 0xf);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_WKUP_CNT_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_WKUP_CNTLDO_WKUP_CNT_X32, 0xff);
++	set_fields_e56(&rdata, E56PHY_TXS_WKUP_CNTDCC_WKUP_CNT_X32, 0xff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_PIN_OVRDVAL_6_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 19, 16, 0x6);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_PIN_OVRDEN_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_PIN_OVRDEN_0_OVRD_EN_TX0_EFUSE_BITS_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_ANA_OVRDVAL_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_ANA_OVRDVAL_1_ANA_TEST_DAC_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_TXS_ANA_OVRDEN_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_TXS_ANA_OVRDEN_0_OVRD_EN_ANA_TEST_DAC_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	txgbe_e56_tx_ffe_cfg(hw, TXGBE_LINK_SPEED_10GB_FULL);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_RXS_CFG_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_RXS_CFG_0_DSER_DATA_SEL, 0x0);
++	set_fields_e56(&rdata, E56PHY_RXS_RXS_CFG_0_TRAIN_CLK_GATE_BYPASS_EN, 0x1fff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr  = E56PHY_RXS_OSC_CAL_N_CDR_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	((E56G_RXS0_OSC_CAL_N_CDR_0 *)&rdata)->prediv0 = 0xfa0;
++	((E56G_RXS0_OSC_CAL_N_CDR_0 *)&rdata)->target_cnt0 = 0x203a;
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OSC_CAL_N_CDR_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	((E56G_RXS0_OSC_CAL_N_CDR_4 *)&rdata)->osc_range_sel0 = 0x2;
++	((E56G_RXS0_OSC_CAL_N_CDR_4 *)&rdata)->vco_code_init = 0x7ff;
++	((E56G_RXS0_OSC_CAL_N_CDR_4 *)&rdata)->osc_current_boost_en0 = 0x1;
++	((E56G_RXS0_OSC_CAL_N_CDR_4 *)&rdata)->bbcdr_current_boost0 = 0x0;
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OSC_CAL_N_CDR_5_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_SDM_WIDTH, 0x3);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_PROP_STEP_PRELOCK,
++		       0xf);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_PROP_STEP_POSTLOCK,
++		       0xf);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_GAIN_CTRL_POSTLOCK,
++		       0xc);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BB_CDR_GAIN_CTRL_PRELOCK,
++		       0xf);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_5_BBCDR_RDY_CNT, 0x3);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OSC_CAL_N_CDR_6_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_6_PI_GAIN_CTRL_PRELOCK, 0x7);
++	set_fields_e56(&rdata, E56PHY_RXS_OSC_CAL_N_CDR_6_PI_GAIN_CTRL_POSTLOCK, 0x5);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_INTL_CONFIG_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	((E56G_RXS0_INTL_CONFIG_0 *)&rdata)->adc_intl2slice_delay0 = 0x5555;
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_INTL_CONFIG_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	((E56G_RXS0_INTL_CONFIG_2 *)&rdata)->interleaver_hbw_disable0 = 0x1;
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_TXFFE_TRAINING_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_0_ADC_DATA_PEAK_LTH, 0x56);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_0_ADC_DATA_PEAK_UTH, 0x6a);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_TXFFE_TRAINING_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_1_C1_LTH, 0x1e8);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_1_C1_UTH, 0x78);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_TXFFE_TRAINING_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_2_CM1_LTH, 0x100);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_2_CM1_UTH, 0xff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_TXFFE_TRAINING_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_CM2_LTH, 0x4);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_CM2_UTH, 0x37);
++	set_fields_e56(&rdata, E56PHY_RXS_TXFFE_TRAINING_3_TXFFE_TRAIN_MOD_TYPE, 0x38);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_VGA_TRAINING_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_0_VGA_TARGET, 0x34);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_VGA_TRAINING_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA1_CODE_INIT0, 0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA2_CODE_INIT0, 0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA1_CODE_INIT123, 0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_VGA_TRAINING_1_VGA2_CODE_INIT123, 0xa);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_CTLE_TRAINING_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_0_CTLE_CODE_INIT0, 0x9);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_0_CTLE_CODE_INIT123, 0x9);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_CTLE_TRAINING_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_1_LFEQ_LUT, 0x1ffffea);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_CTLE_TRAINING_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P1, 0x18);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P2, 0);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_2_ISI_TH_FRAC_P3, 0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_CTLE_TRAINING_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P1, 1);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P2, 0);
++	set_fields_e56(&rdata, E56PHY_RXS_CTLE_TRAINING_3_TAP_WEIGHT_P3, 0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADC_SLICE_DATA_AVG_CNT,
++		       0x3);
++	set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_ADC_DATA_AVG_CNT, 0x3);
++	set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_0_FE_OFFSET_DAC_CLK_CNT_X8,
++		       0xc);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_OFFSET_N_GAIN_CAL_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_OFFSET_N_GAIN_CAL_1_SAMP_ADAPT_CFG, 0x5);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_FFE_TRAINING_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_FFE_TRAINING_0_FFE_TAP_EN, 0xf9ff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_IDLE_DETECT_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MAX, 0xa);
++	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MIN, 0x5);
++	wr32_ephy(hw, addr, rdata);
++
++	addr = 0x6cc;
++	rdata = 0x8020000;
++	wr32_ephy(hw, addr, rdata);
++	addr = 0x94;
++	rdata = 0;
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDVAL_0_ANA_EN_RTERM_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDEN_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_0_OVRD_EN_ANA_EN_RTERM_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_6_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 4, 0, 0x6);
++	set_fields_e56(&rdata, 14, 13, 0x2);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDEN_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_1_OVRD_EN_ANA_BBCDR_VCOFILT_BYP_I,
++		       0x1);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_1_OVRD_EN_ANA_TEST_BBCDR_I, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_15_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 2, 0, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_17_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDVAL_17_ANA_VGA2_BOOST_CSTM_I, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDEN_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_3_OVRD_EN_ANA_ANABS_CONFIG_I, 0x1);
++	set_fields_e56(&rdata, E56PHY_RXS_ANA_OVRDEN_3_OVRD_EN_ANA_VGA2_BOOST_CSTM_I,
++		       0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDVAL_14_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 13, 13, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_ANA_OVRDEN_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 13, 13, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_EYE_SCAN_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_RXS_EYE_SCAN_1_EYE_SCAN_REF_TIMER, 0x400);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_RXS_RINGO_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, 21, 12, 0x366);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_PMD_CFG_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_3_CTRL_FSM_TIMEOUT_X64K, 0x80);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_PMD_CFG_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_4_TRAIN_DC_ON_PERIOD_X64K, 0x18);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_4_TRAIN_DC_PERIOD_X512K, 0x3e);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_PMD_CFG_5_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_PMD_CFG_5_USE_RECENT_MARKER_OFFSET, 0x1);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_CONT_ON_ADC_GAIN_CAL_ERR, 0x1);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_DO_RX_ADC_OFST_CAL, 0x3);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_0_RX_ERR_ACTION_EN, 0x40);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_1_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST0_WAIT_CNT_X4096, 0xff);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST1_WAIT_CNT_X4096, 0xff);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST2_WAIT_CNT_X4096, 0xff);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_1_TRAIN_ST3_WAIT_CNT_X4096, 0xff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_2_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST4_WAIT_CNT_X4096, 0x1);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST5_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST6_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_2_TRAIN_ST7_WAIT_CNT_X4096, 0x4);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_3_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST8_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST9_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST10_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_3_TRAIN_ST11_WAIT_CNT_X4096, 0x4);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_4_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST12_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST13_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST14_WAIT_CNT_X4096, 0x4);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_4_TRAIN_ST15_WAIT_CNT_X4096, 0x4);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_7_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_7_TRAIN_ST4_EN, 0x4bf);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_7_TRAIN_ST5_EN, 0xc4bf);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_8_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_8_TRAIN_ST7_EN, 0x47ff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_12_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_12_TRAIN_ST15_EN, 0x67ff);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_13_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_13_TRAIN_ST0_DONE_EN, 0x8001);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_13_TRAIN_ST1_DONE_EN, 0x8002);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_14_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_14_TRAIN_ST3_DONE_EN, 0x8008);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_15_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_15_TRAIN_ST4_DONE_EN, 0x8004);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_17_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_17_TRAIN_ST8_DONE_EN, 0x20c0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_18_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_18_TRAIN_ST10_DONE_EN, 0x0);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_29_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_29_TRAIN_ST15_DC_EN, 0x3f6d);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_33_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_33_TRAIN0_RATE_SEL, 0x8000);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_33_TRAIN1_RATE_SEL, 0x8000);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_CTRL_FSM_CFG_34_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_34_TRAIN2_RATE_SEL, 0x8000);
++	set_fields_e56(&rdata, E56PHY_CTRL_FSM_CFG_34_TRAIN3_RATE_SEL, 0x8000);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_KRT_TFSM_CFG_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_MAX_WAIT_TIMER_X1000K, 0x49);
++	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_MAX_WAIT_TIMER_X8000K, 0x37);
++	set_fields_e56(&rdata, E56PHY_KRT_TFSM_CFGKRT_TFSM_HOLDOFF_TIMER_X256K, 0x2f);
++	wr32_ephy(hw, addr, rdata);
++
++	rdata = 0x0000;
++	addr = E56PHY_FETX_FFE_TRAIN_CFG_0_ADDR;
++	rdata = rd32_ephy(hw, addr);
++	set_fields_e56(&rdata, E56PHY_FETX_FFE_TRAIN_CFG_0_KRT_FETX_INIT_FFE_CFG_2,
++		       0x2);
++	wr32_ephy(hw, addr, rdata);
++
++	return 0;
++}
++
++static int txgbe_set_phy_link_mode(struct txgbe_hw *hw,
++				   u8 bp_link_mode)
 +{
 +	int status = 0;
-+	unsigned int rdata, timer;
-+	unsigned int addr, temp;
-+	int i;
++	u32 rdata = 0;
 +
-+	for (i = 0; i < 4; i++) {
-+		/* 1. Disable OVERRIDE on below aliases */
-+		/* a. ALIAS::RXS::RANGE_SEL */
-+		rdata = 0x0000;
-+		addr = E56G__RXS0_ANA_OVRDEN_0_ADDR + (i * E56PHY_RXS_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_0, ovrd_en_ana_bbcdr_osc_range_sel_i) = 0;
-+		wr32_ephy(hw, addr, rdata);
++	u32 speed_select = 0;
++	u32 pcs_type_sel = 0;
++	u32 cns_en = 0;
++	u32 rsfec_en = 0;
++	u32 pma_type = 0;
++	u32 an0_rate_select = 0;
 +
-+		addr = E56G__RXS0_ANA_OVRDEN_1_ADDR + (i * E56PHY_RXS_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		/* b. ALIAS::RXS::COARSE */
-+		EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_coarse_i) = 0;
-+		/* c. ALIAS::RXS::FINE */
-+		EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_fine_i) = 0;
-+		/* d. ALIAS::RXS::ULTRAFINE */
-+		EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_1, ovrd_en_ana_bbcdr_ultrafine_i) = 0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		/* e. ALIAS::RXS::SAMP_CAL_DONE */
-+		addr  = E56G__PMD_RXS0_OVRDEN_0_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_0, ovrd_en_rxs0_rx0_samp_cal_done_o) = 0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56G__PMD_RXS0_OVRDEN_2_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		/* f. ALIAS::RXS::ADC_OFST_ADAPT_EN */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_2, ovrd_en_rxs0_rx0_adc_ofst_adapt_en_i) = 0;
-+		/* g. ALIAS::RXS::ADC_GAIN_ADAPT_EN */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_2, ovrd_en_rxs0_rx0_adc_gain_adapt_en_i) = 0;
-+		/* j. ALIAS::RXS::ADC_INTL_ADAPT_EN */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_2, ovrd_en_rxs0_rx0_adc_intl_adapt_en_i) = 0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56G__PMD_RXS0_OVRDEN_1_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		/* h. ALIAS::RXS::ADC_INTL_CAL_EN */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_adc_intl_cal_en_i) = 0;
-+		/* i. ALIAS::RXS::ADC_INTL_CAL_DONE */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_adc_intl_cal_done_o) = 0;
-+		/* k. ALIAS::RXS::CDR_EN */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_cdr_en_i) = 0;
-+		/* l. ALIAS::RXS::VGA_TRAIN_EN */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_vga_train_en_i) = 0;
-+		/* m. ALIAS::RXS::CTLE_TRAIN_EN */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_ctle_train_en_i) = 0;
-+		/* p. ALIAS::RXS::RX_FETX_TRAIN_DONE */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_txffe_train_done_o) = 0;
-+		/* r. ALIAS::RXS::RX_TXFFE_COEFF_CHANGE */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_txffe_coeff_change_o) = 0;
-+		/* s. ALIAS::RXS::RX_TXFFE_TRAIN_ENACK */
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_1, ovrd_en_rxs0_rx0_txffe_train_enack_o) = 0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56G__PMD_RXS0_OVRDEN_3_ADDR + (i * E56PHY_PMD_RX_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		/* n. ALIAS::RXS::RX_FETX_MOD_TYPE */
-+		/* o. ALIAS::RXS::RX_FETX_MOD_TYPE_UPDATE */
-+		temp = EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_3, ovrd_en_rxs0_rx0_spareout_o);
-+		EPHY_XFLD(E56G__PMD_RXS0_OVRDEN_3, ovrd_en_rxs0_rx0_spareout_o) = temp & 0x8F;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56G__RXS0_DIG_OVRDEN_1_ADDR + (i * E56PHY_RXS_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		/* q. ALIAS::RXS::SLICER_THRESHOLD_OVRD_EN */
-+		EPHY_XFLD(E56G__RXS0_DIG_OVRDEN_1, top_comp_th_ovrd_en) = 0;
-+		EPHY_XFLD(E56G__RXS0_DIG_OVRDEN_1, mid_comp_th_ovrd_en) = 0;
-+		EPHY_XFLD(E56G__RXS0_DIG_OVRDEN_1, bot_comp_th_ovrd_en) = 0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		/* 2. Disable pattern checker */
-+		addr = E56G__RXS0_DFT_1_ADDR + (i * E56PHY_RXS_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__RXS0_DFT_1, ber_en) = 0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		/* 3. Disable internal serial loopback mode */
-+		addr = E56G__RXS0_ANA_OVRDEN_3_ADDR + (i * E56PHY_RXS_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_3, ovrd_en_ana_sel_lpbk_i) = 0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		addr = E56G__RXS0_ANA_OVRDEN_2_ADDR + (i * E56PHY_RXS_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__RXS0_ANA_OVRDEN_2, ovrd_en_ana_en_adccal_lpbk_i) = 0;
-+		wr32_ephy(hw, addr, rdata);
-+
-+		/* 4. Enable bypass of clock gates in RXS - */
-+		addr = E56G__RXS0_RXS_CFG_0_ADDR + (i * E56PHY_RXS_OFFSET);
-+		rdata = rd32_ephy(hw, addr);
-+		EPHY_XFLD(E56G__RXS0_RXS_CFG_0, train_clk_gate_bypass_en) = 0x1FFF;
-+		wr32_ephy(hw, addr, rdata);
++	switch (bp_link_mode) {
++	case 10:
++		bp_link_mode = 10;
++		speed_select = 0; /* 10 Gb/s */
++		pcs_type_sel = 0; /* 10GBASE-R PCS Type */
++		cns_en = 0; /* CNS_EN disable */
++		rsfec_en = 0; /* RS-FEC disable */
++		pma_type = 0xb; /* 10GBASE-KR PMA/PMD type */
++		an0_rate_select = 2; /* 10G-KR */
++		break;
++	case 40:
++		bp_link_mode = 40;
++		speed_select = 3; /* 40 Gb/s */
++		pcs_type_sel = 4; /* 40GBASE-R PCS Type */
++		cns_en = 0; /* CNS_EN disable */
++		rsfec_en = 0; /* RS-FEC disable */
++		pma_type = 0b0100001; /* 40GBASE-CR PMA/PMD type */
++		an0_rate_select = 4; /* 40G-KR: 3 40G-CR: 4 */
++		break;
++	case 25:
++		bp_link_mode = 25;
++		speed_select = 5; /* 25 Gb/s */
++		pcs_type_sel = 7; /* 25GBASE-R PCS Type */
++		cns_en = 1; /* CNS_EN */
++		rsfec_en = 1; /* RS-FEC enable*/
++		pma_type = 0b0111001; /* 25GBASE-KR PMA/PMD type */
++		an0_rate_select = 9; /* 9/10/17 25GK/CR-S or 25GK/CR */
++		break;
++	default:
++		BP_LOG("%s %d :Invalid bp_link_mode\n", __func__, __LINE__);
++		break;
 +	}
 +
-+	/* 5. Disable KR training mode */
-+	/* a. ALIAS::PDIG::KR_TRAINING_MODE = 0b0 */
-+	addr = E56G__PMD_BASER_PMD_CONTROL_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	EPHY_XFLD(E56G__PMD_BASER_PMD_CONTROL, training_enable_ln0) = 0;
-+	EPHY_XFLD(E56G__PMD_BASER_PMD_CONTROL, training_enable_ln1) = 0;
-+	EPHY_XFLD(E56G__PMD_BASER_PMD_CONTROL, training_enable_ln2) = 0;
-+	EPHY_XFLD(E56G__PMD_BASER_PMD_CONTROL, training_enable_ln3) = 0;
-+	wr32_ephy(hw, addr, rdata);
-+
-+	/* 6. Disable RX to TX parallel loopback */
-+	/* a. ALIAS::PDIG::RX_TO_TX_LPBK_EN = 0b0 */
-+	addr = E56G__PMD_PMD_CFG_5_ADDR;
-+	rdata = rd32_ephy(hw, addr);
-+	EPHY_XFLD(E56G__PMD_PMD_CFG_5, rx_to_tx_lpbk_en) = 0x0;
-+	wr32_ephy(hw, addr, rdata);
-+
-+	/*
-+	 * The FSM to disable RXS is present in PDIG. The FSM disables the RXS when
-+	 * PDIG::PMD_CFG[0]::rx_en_cfg[<lane no.>] = 0b0
++	hw->curbp_link_mode = bp_link_mode;
++	/* To switch to the 40G mode Ethernet operation, complete the following steps:*/
++	/* 1. Initiate the vendor-specific software reset by programming
++	 * the VR_RST field (bit [15]) of the VR_PCS_DIG_CTRL1 register to 1.
 +	 */
-+	txgbe_e56_ephy_config(E56G__PMD_PMD_CFG_0, rx_en_cfg, 0);
++	rdata = rd32_epcs(hw, 0x038000);
++	wr32_epcs(hw, 0x038000, rdata | BIT(15));
 +
-+	/* Wait RX FSM to be POWERDN_ST */
-+	timer = 0;
++	/* 2. Wait for the hardware to clear the value for the VR_RST
++	 * field (bit [15]) of the VR_PCS_DIG_CTRL1 register.
++	 */
++	BP_LOG("Wait for the bit [15] (VR_RST) to get cleared.\n");
++	status = kr_read_poll(rd32_ephy, rdata,
++				  FIELD_GET_M(BIT(15), rdata) == 0, 100,
++				   2000, hw, 0x038000);
++	BP_LOG("Wait PHY VR_RST = %x, Wait VR_RST %s.\n",
++	       rdata, status ? "FAILED" : "SUCCESS");
 +
-+	while (EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx0_st) != 0x21 ||
-+		EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx1_st) != 0x21 ||
-+		EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx2_st) != 0x21 ||
-+		EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx3_st) != 0x21) {
-+		rdata = 0;
-+		addr  = E56PHY_CTRL_FSM_RX_STAT_0_ADDR;
-+		rdata = rd32_ephy(hw, addr);
-+		usec_delay(100);
-+		if (timer++ > PHYINIT_TIMEOUT) {
-+			DEBUGOUT("ERROR: Wait E56PHY_CTRL_FSM_RX_STAT_0_ADDR Timeout!\n");
-+			break;
-+		}
++	/* wait rx/tx/cm powerdn_st  according pmd 50   2.0.5 */
++	status = kr_read_poll(rd32_ephy, rdata,
++			     (rdata & GENMASK(3, 0)) == 0x9, 100,
++			      2000, hw, 0x14d4);
++	BP_LOG("wait ctrl_fsm_cm_st = %x, %s.\n",
++	       rdata, status ? "FAILED" : "SUCCESS");
++
++	/* 3. Write 4'b0011 to bits [5:2] of the SR_PCS_CTRL1 register.
++	 * 10G: 0 25G: 5 40G: 3
++	 */
++	rdata = rd32_epcs(hw, 0x030000);
++	set_fields_e56(&rdata, 5, 2, speed_select);
++	wr32_epcs(hw, 0x030000, rdata);
++
++	/* 4. Write pcs mode sel to bits [3:0] of the SR_PCS_CTRL2 register.
++	 * 10G: 0 25G: 4'b0111 40G: 4'b0100
++	 */
++	rdata = rd32_epcs(hw, 0x030007);
++	set_fields_e56(&rdata, 3, 0, pcs_type_sel);
++	wr32_epcs(hw, 0x030007, rdata);
++
++	/* 0 1 1 1 0 0 1 : 25GBASE-KR or 25GBASE-KR-S PMA/PMD type
++	 * 0 1 1 1 0 0 0 : 25GBASE-CR or 25GBASE-CR-S PMA/PMD type
++	 * 0 1 0 0 0 0 1 : 40GBASE-CR4 PMA/PMD type
++	 * 0 1 0 0 0 0 0 : 40GBASE-KR4 PMA/PMD type
++	 * 0 0 0 1 0 1 1 : 10GBASE-KR PMA/PMD type
++	 */
++	rdata = rd32_epcs(hw, 0x010007);
++	set_fields_e56(&rdata, 6, 0, pma_type);
++	wr32_epcs(hw, 0x010007, rdata);
++
++	/* 5. Write only 25g en to Bits [1:0] of VR_PCS_DIG_CTRL3 register. */
++	rdata = rd32_epcs(hw, 0x38003);
++	set_fields_e56(&rdata, 1, 0, cns_en);
++	wr32_epcs(hw, 0x38003, rdata);
++
++	/* 6. Program PCS_AM_CNT field of VR_PCS_AM_CNT register to 'd16383 to
++	 * configure the alignment marker interval. To speed-up simulation,
++	 * program a smaller value to this field.
++	 */
++	if (bp_link_mode == 40)
++		wr32_epcs(hw, 0x38018, 16383);
++
++	/* 7. Program bit [2] of SR_PMA_RS_FEC_CTRL register to 0
++	 * if previously 1 (as RS-FEC is supported in 25G Mode).
++	 */
++
++	rdata = rd32_epcs(hw, 0x100c8);
++	set_fields_e56(&rdata, 2, 2, rsfec_en);
++	wr32_epcs(hw, 0x100c8, rdata);
++
++	/* 8. To enable BASE-R FEC (if desired), set bit [0].
++	 * in SR_PMA_KR_FEC_CTRL register
++	 */
++
++	/* 4. set phy an status to 0 */
++	rdata = rd32_ephy(hw, 0x1434);
++	set_fields_e56(&rdata, 7, 4, 0xe);
++	wr32_ephy(hw, 0x1434, rdata);
++
++	/* 9. Program Enterprise 56G PHY regs through its own APB interface:
++	 * a. Program PHY registers as mentioned in Table 6-6 on page 1197 to
++	 *    configure the PHY to 40G
++	 *    Mode. For fast-simulation mode, additionally program,
++	 *    the registers shown in the Table 6-7 on page 1199
++	 * b. Enable the PMD by setting pmd_en field in PMD_CFG[0] (0x1400)
++	 *    register
++	 */
++
++	rdata = 0x0000;
++	rdata = rd32_ephy(hw, ANA_OVRDVAL0);
++	set_fields_e56(&rdata, 29, 29, 0x1);
++	set_fields_e56(&rdata, 1, 1, 0x1);
++	wr32_ephy(hw, ANA_OVRDVAL0, rdata);
++
++	rdata = 0x0000;
++	rdata =  rd32_ephy(hw, ANA_OVRDVAL5);
++	set_fields_e56(&rdata, 24, 24, 0x1);
++	wr32_ephy(hw, ANA_OVRDVAL5, rdata);
++
++	rdata = 0x0000;
++	rdata =  rd32_ephy(hw, ANA_OVRDEN0);
++	set_fields_e56(&rdata, 1, 1, 0x1);
++	wr32_ephy(hw, ANA_OVRDEN0, rdata);
++
++	rdata = 0x0000;
++	rdata =  rd32_ephy(hw, ANA_OVRDEN1);
++	set_fields_e56(&rdata, 30, 30, 0x1);
++	set_fields_e56(&rdata, 25, 25, 0x1);
++	wr32_ephy(hw, ANA_OVRDEN1, rdata);
++
++	rdata = 0x0000;
++	rdata =  rd32_ephy(hw, PLL0_CFG0);
++	set_fields_e56(&rdata, 25, 24, 0x1);
++	set_fields_e56(&rdata, 17, 16, 0x3);
++	wr32_ephy(hw, PLL0_CFG0, rdata);
++
++	rdata = 0x0000;
++	rdata =  rd32_ephy(hw, PLL0_CFG2);
++	set_fields_e56(&rdata, 12, 8, 0x4);
++	wr32_ephy(hw, PLL0_CFG2, rdata);
++
++	rdata = 0x0000;
++	rdata =  rd32_ephy(hw, PLL1_CFG0);
++	set_fields_e56(&rdata, 25, 24, 0x1);
++	set_fields_e56(&rdata, 17, 16, 0x3);
++	wr32_ephy(hw, PLL1_CFG0, rdata);
++
++	rdata = 0x0000;
++	rdata =  rd32_ephy(hw, PLL1_CFG2);
++	set_fields_e56(&rdata, 12, 8, 0x8);
++	wr32_ephy(hw, PLL1_CFG2, rdata);
++
++	rdata = 0x0000;
++	rdata = rd32_ephy(hw, PLL0_DIV_CFG0);
++	set_fields_e56(&rdata, 18, 8, 0x294);
++	set_fields_e56(&rdata, 4, 0, 0x8);
++	wr32_ephy(hw, PLL0_DIV_CFG0, rdata);
++
++	rdata = 0x0000;
++	rdata = rd32_ephy(hw, DATAPATH_CFG0);
++	set_fields_e56(&rdata, 30, 28, 0x7);
++	set_fields_e56(&rdata, 26, 24, 0x5);
++	if (bp_link_mode == 10 || bp_link_mode == 40)
++		set_fields_e56(&rdata, 18, 16, 0x5);
++	else if (bp_link_mode == 25)
++		set_fields_e56(&rdata, 18, 16, 0x3);
++	set_fields_e56(&rdata, 14, 12, 0x5);
++	set_fields_e56(&rdata, 10, 8, 0x5);
++	wr32_ephy(hw, DATAPATH_CFG0, rdata);
++
++	rdata = 0x0000;
++	rdata = rd32_ephy(hw, DATAPATH_CFG1);
++	set_fields_e56(&rdata, 26, 24, 0x5);
++	set_fields_e56(&rdata, 10, 8, 0x5);
++	if (bp_link_mode == 10 || bp_link_mode == 40) {
++		set_fields_e56(&rdata, 18, 16, 0x5);
++		set_fields_e56(&rdata, 2, 0, 0x5);
++	} else if (bp_link_mode == 25) {
++		set_fields_e56(&rdata, 18, 16, 0x3);
++		set_fields_e56(&rdata, 2, 0, 0x3);
 +	}
++	wr32_ephy(hw, DATAPATH_CFG1, rdata);
++
++	rdata = rd32_ephy(hw, AN_CFG1);
++	set_fields_e56(&rdata, 4, 0, an0_rate_select);
++	wr32_ephy(hw, AN_CFG1, rdata);
++
++	status = txgbe_e56_cms_cfg_for_temp_track_range(hw);
++
++	if (bp_link_mode == 10)
++		txgbe_e56_bp_cfg_10g(hw);
++	else if (bp_link_mode == 25)
++		txgbe_e56_bp_cfg_25g(hw);
++	else if (bp_link_mode == 40)
++		txgbe_e56_cfg_40g(hw);
 +
 +	return status;
 +}
 +
- static int txgbe_e56_disable_rx(struct txgbe_hw *hw)
- {
- 	int status = 0;
-@@ -2133,8 +3331,13 @@ int txgbe_e56_reconfig_rx(struct txgbe_hw *hw, u32 speed)
- 	 * 14. Do SEQ::RX_DISABLE to disable RXS. Poll ALIAS::PDIG::CTRL_FSM_RX_ST
- 	 * and confirm its value is POWERDN_ST
- 	 */
--	txgbe_e56_disable_rx(hw);
--	status = txgbe_e56_config_rx(hw, speed);
-+	if (hw->mac.type == txgbe_mac_aml40) {
-+		txgbe_e56_disable_rx40G(hw);
-+		status = txgbe_e56_config_rx_40G(hw, speed);
++int txgbe_e56_set_phy_link_mode(struct txgbe_hw *hw,
++			     u8 bp_link_mode, u32 need_restart)
++{
++	int status = 0;
++	u32 rdata;
++
++	UNREFERENCED_PARAMETER(bp_link_mode);
++
++	hw->an_done = false;
++	if (hw->curbp_link_mode == 10 && !need_restart)
++		return 0;
++	BP_LOG("Setup to backplane mode ==========\n");
++
++	u32 backplane_mode = 0;
++	u32 fec_advertise = 0;
++
++	hw->an_done = false;
++	/* pcs + phy rst */
++	rdata = rd32(hw, 0x1000c);
++	if (hw->bus.lan_id == 1)
++		rdata |= BIT(16);
++	else
++		rdata |= BIT(19);
++	wr32(hw, 0x1000c, rdata);
++	msleep(20);
++
++	/* clear interrupt */
++	wr32_epcs(hw, 0x070000, 0);
++	wr32_epcs(hw, 0x030000, 0x8000);
++	rdata = rd32_epcs(hw, 0x070000);
++	set_fields_e56(&rdata, 12, 12, 0x1);
++	wr32_epcs(hw, 0x070000, rdata);
++	wr32_epcs(hw, 0x078002, 0x0000);
++	/* pcs case fec en to work around first */
++	wr32_epcs(hw, 0x100ab, 1);
++
++	if (txgbe_is_backplane(hw)) {
++		/* backplane 10G/25G/40G */
++		/* 10GKR:7-25KR:14/15-40GKR:8-40GCR:9 */
++		/* default all speed */
++		if ((hw->device_id & 0xFF) == 0x10) {
++			backplane_mode |= BIT(7);
++			fec_advertise |= TXGBE_10G_FEC_ABL;
++		} else if ((hw->device_id & 0xFF) == 0x25) {
++			backplane_mode |= BIT(14) | BIT(15);
++			fec_advertise |= TXGBE_25G_RS_FEC_REQ |
++					 TXGBE_25G_BASE_FEC_REQ;
++		} else if ((hw->device_id & 0xFF) == 0x40) {
++			if (hw->phy.bp_capa == 0)
++				/* original configure: KR4 + CR4 */
++				backplane_mode |= BIT(9) | BIT(8);
++			else if (hw->phy.bp_capa == 1)
++				/* only 40GBASE-KR4 */
++				backplane_mode |= BIT(8);
++			else if (hw->phy.bp_capa == 2)
++				/* only 40GBASE-CR4 */
++				backplane_mode |= BIT(9);
++			fec_advertise |= TXGBE_10G_FEC_ABL;
++			BP_LOG("Advertised abilities: %d\n", backplane_mode);
++		}
 +	} else {
-+		txgbe_e56_disable_rx(hw);
-+		status = txgbe_e56_config_rx(hw, speed);
-+	}
- 
- 	addr = E56PHY_INTR_0_ADDR;
- 	wr32_ephy(hw, addr, E56PHY_INTR_0_IDLE_ENTRY1);
-@@ -2201,6 +3404,86 @@ int txgbe_set_link_to_amlite(struct txgbe_hw *hw, u32 speed)
- 	set_fields_e56(&value, 12, 12, 0);
- 	wr32_epcs(hw, SR_AN_CTRL, value);
- 
-+	if (speed == TXGBE_LINK_SPEED_40GB_FULL) {
-+		value = rd32_epcs(hw, SR_PCS_CTRL1);
-+		set_fields_e56(&value, 5, 2, 0x3);
-+		wr32_epcs(hw, SR_PCS_CTRL1, value);
++		if ((hw->phy.fiber_suppport_speed & TXGBE_LINK_SPEED_10GB_FULL)
++		     == TXGBE_LINK_SPEED_10GB_FULL) {
++			backplane_mode |= 0x80;
++			fec_advertise |= TXGBE_10G_FEC_ABL;
++		}
 +
-+		value = rd32_epcs(hw, SR_PCS_CTRL2);
-+		set_fields_e56(&value, 3, 0, 0x4);
-+		wr32_epcs(hw, SR_PCS_CTRL2, value);
++		if ((hw->phy.fiber_suppport_speed & TXGBE_LINK_SPEED_25GB_FULL)
++		    == TXGBE_LINK_SPEED_25GB_FULL) {
++			backplane_mode |= 0xc000;
++			fec_advertise |= TXGBE_25G_RS_FEC_REQ |
++					 TXGBE_25G_BASE_FEC_REQ;
++		}
 +
-+		value = rd32_ephy(hw, ANA_OVRDVAL0);
-+		set_fields_e56(&value, 29, 29, 0x1);
-+		set_fields_e56(&value, 1, 1, 0x1);
-+		wr32_ephy(hw, ANA_OVRDVAL0, value);
-+
-+		value = rd32_ephy(hw, ANA_OVRDVAL5);
-+		set_fields_e56(&value, 24, 24, 0x1);
-+		wr32_ephy(hw, ANA_OVRDVAL5, value);
-+
-+		value = rd32_ephy(hw, ANA_OVRDEN0);
-+		set_fields_e56(&value, 1, 1, 0x1);
-+		wr32_ephy(hw, ANA_OVRDEN0, value);
-+
-+		value = rd32_ephy(hw, ANA_OVRDEN1);
-+		set_fields_e56(&value, 30, 30, 0x1);
-+		set_fields_e56(&value, 25, 25, 0x1);
-+		wr32_ephy(hw, ANA_OVRDEN1, value);
-+
-+		value = rd32_ephy(hw, PLL0_CFG0);
-+		set_fields_e56(&value, 25, 24, 0x1);
-+		set_fields_e56(&value, 17, 16, 0x3);
-+		wr32_ephy(hw, PLL0_CFG0, value);
-+
-+		value = rd32_ephy(hw, PLL0_CFG2);
-+		set_fields_e56(&value, 12, 8, 0x4);
-+		wr32_ephy(hw, PLL0_CFG2, value);
-+
-+		value = rd32_ephy(hw, PLL1_CFG0);
-+		set_fields_e56(&value, 25, 24, 0x1);
-+		set_fields_e56(&value, 17, 16, 0x3);
-+		wr32_ephy(hw, PLL1_CFG0, value);
-+
-+		value = rd32_ephy(hw, PLL1_CFG2);
-+		set_fields_e56(&value, 12, 8, 0x8);
-+		wr32_ephy(hw, PLL1_CFG2, value);
-+
-+		value = rd32_ephy(hw, PLL0_DIV_CFG0);
-+		set_fields_e56(&value, 18, 8, 0x294);
-+		set_fields_e56(&value, 4, 0, 0x8);
-+		wr32_ephy(hw, PLL0_DIV_CFG0, value);
-+
-+		value = rd32_ephy(hw, DATAPATH_CFG0);
-+		set_fields_e56(&value, 30, 28, 0x7);
-+		set_fields_e56(&value, 26, 24, 0x5);
-+		set_fields_e56(&value, 18, 16, 0x5);
-+		set_fields_e56(&value, 14, 12, 0x5);
-+		set_fields_e56(&value, 10, 8, 0x5);
-+		wr32_ephy(hw, DATAPATH_CFG0, value);
-+
-+		value = rd32_ephy(hw, DATAPATH_CFG1);
-+		set_fields_e56(&value, 26, 24, 0x5);
-+		set_fields_e56(&value, 10, 8, 0x5);
-+		set_fields_e56(&value, 18, 16, 0x5);
-+		set_fields_e56(&value, 2, 0, 0x5);
-+		wr32_ephy(hw, DATAPATH_CFG1, value);
-+
-+		value = rd32_ephy(hw, AN_CFG1);
-+		set_fields_e56(&value, 4, 0, 0x2);
-+		wr32_ephy(hw, AN_CFG1, value);
-+
-+		txgbe_e56_cfg_temp(hw);
-+		txgbe_e56_cfg_40g(hw);
-+
-+		value = rd32_ephy(hw, PMD_CFG0);
-+		set_fields_e56(&value, 21, 20, 0x3);
-+		set_fields_e56(&value, 19, 12, 0xf);
-+		set_fields_e56(&value, 8, 8, 0x0);
-+		set_fields_e56(&value, 1, 1, 0x1);
-+		wr32_ephy(hw, PMD_CFG0, value);
++		if ((hw->phy.fiber_suppport_speed & TXGBE_LINK_SPEED_40GB_FULL)
++		    == TXGBE_LINK_SPEED_40GB_FULL) {
++			backplane_mode |= BIT(9) | BIT(8);
++			fec_advertise |= TXGBE_10G_FEC_ABL;
++		}
 +	}
 +
- 	if (speed == TXGBE_LINK_SPEED_25GB_FULL) {
- 		value = rd32_epcs(hw, SR_PCS_CTRL1);
- 		set_fields_e56(&value, 5, 2, 5);
++	wr32_epcs(hw, 0x070010, 0x0001);
++
++	/* 10GKR:7-25KR:14/15-40GKR:8-40GCR:9 */
++	wr32_epcs(hw, 0x070011, backplane_mode | 0x11);
++
++	/* BASE-R FEC */
++	rdata = rd32_epcs(hw, 0x70012);
++	wr32_epcs(hw, 0x70012, fec_advertise);
++
++	wr32_epcs(hw, 0x070016, 0x0000);
++	wr32_epcs(hw, 0x070017, 0x0);
++	wr32_epcs(hw, 0x070018, 0x0);
++
++	/* config timer */
++	wr32_epcs(hw, 0x078004, 0x003c);
++	wr32_epcs(hw, 0x078005, CL74_KRTR_TRAINNING_TIMEOUT);
++	wr32_epcs(hw, 0x078006, 25);
++	wr32_epcs(hw, 0x078000, 0x0008 | BIT(2));
++
++	BP_LOG("1.2 Wait 10G KR phy/pcs mode init ....\n");
++	status = txgbe_set_phy_link_mode(hw, 10);
++	BP_LOG("Wait 10g phy/pcs mode init = %x, %s.\n", rdata,
++	/* wait rx/tx/cm powerdn_st  according pmd 50   2.0.5 */
++	       status ? "FAILED" : "SUCCESS");
++
++	/* 5. CM_ENABLE */
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 21, 20, 0x3);	/* pll en */
++	set_fields_e56(&rdata, 19, 12, 0x0);	/* tx disable */
++	set_fields_e56(&rdata, 8, 8, 0x0);	/* pmd mode */
++	set_fields_e56(&rdata, 1, 1, 0x1);	/* pmd en */
++	wr32_ephy(hw, 0x1400, rdata);
++
++	/* 6, TX_ENABLE */
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 19, 12, 0x1);	/* tx en */
++	wr32_ephy(hw, 0x1400, rdata);
++
++	BP_LOG("1.3 Wait 10G PHY RXS....\n");
++	status = txgbe_e56_rxs_osc_init_for_temp_track_range(hw, 10);
++	BP_LOG("Wait 10G PHY/RXS mode init = %x, %s.\n", rdata,
++	       status ? "FAILED" : "SUCCESS");
++
++	/* Wait an 10g fsm_rx_sts */
++	status = kr_read_poll(rd32_ephy, rdata,
++				((rdata & 0x3f) == 0xb), 1000,
++				200, hw,
++				E56PHY_CTRL_FSM_RX_STAT_0_ADDR);
++	BP_LOG("Wait 10g fsm_rx_sts = %x, Wait rx_sts %s.\n", rdata,
++		status ? "FAILED" : "SUCCESS");
++	rdata = rd32_epcs(hw, 0x070000);
++	set_fields_e56(&rdata, 12, 12, 0x1);
++	wr32_epcs(hw, 0x070000, rdata);
++	BP_LOG("Setup the backplane mode========end ==\n");
++
++	return status;
++}
++
++static void txgbe_e56_print_page_status(struct txgbe_hw *hw,
++	struct txgbe_backplane_ability *local_ability,
++	struct txgbe_backplane_ability *lp_ability)
++{
++	u32 rdata = 0;
++
++	/* Read the local AN73 Base Page Ability Registers */
++	BP_LOG("Read the local Base Page Ability Registers\n");
++	rdata = rd32_epcs(hw, SR_AN_MMD_ADV_REG1);
++	local_ability->next_page = (rdata & BIT(15)) ? 1 : 0;
++	BP_LOG("\tread 70010 data %0x\n", rdata);
++	rdata = rd32_epcs(hw, SR_AN_MMD_ADV_REG2);
++	BP_LOG("\tread 70011 data %0x\n", rdata);
++	local_ability->link_ability = (rdata >> 5) & GENMASK(10, 0);
++	/* amber-lite only support 10GKR - 25GKR/CR - 25GKR-S/CR-S */
++	BP_LOG("\t10GKR : %x\t25GKR-S/CR-S: %x\t25GKR/CR : %x\n",
++	       local_ability->link_ability & BIT(ABILITY_10GBASE_KR) ? 1 : 0,
++	       local_ability->link_ability & BIT(ABILITY_25GBASE_KRCR_S) ? 1 : 0,
++	       local_ability->link_ability & BIT(ABILITY_25GBASE_KRCR) ? 1 : 0);
++	BP_LOG("\t40GCR4 : %x\t40GKR4 : %x\n",
++	       local_ability->link_ability & BIT(ABILITY_40GBASE_CR4) ? 1 : 0,
++	       local_ability->link_ability & BIT(ABILITY_40GBASE_KR4) ? 1 : 0);
++	rdata = rd32_epcs(hw, SR_AN_MMD_ADV_REG3);
++	BP_LOG("\tF1:FEC Req\tF0:FEC Sup\tF3:25GFEC\tF2:25GRS\n");
++	BP_LOG("\tF1: %d\t\tF0: %d\t\tF3: %d\t\tF2: %d\n",
++	      ((rdata >> 15) & 0x01), ((rdata >> 14) & 0x01),
++	      ((rdata >> 13) & 0x01), ((rdata >> 12) & 0x01));
++	local_ability->fec_ability = rdata;
++	BP_LOG("\tread 70012 data %0x\n", rdata);
++
++	/* Read the link partner AN73 Base Page Ability Registers */
++	BP_LOG("Read the link partner Base Page Ability Registers\n");
++	rdata = rd32_epcs(hw, SR_AN_MMD_LP_ABL1);
++	lp_ability->next_page = (rdata & BIT(15)) ? 1 : 0;
++	BP_LOG("\tread 70013 data %0x\n", rdata);
++	rdata = rd32_epcs(hw, SR_AN_MMD_LP_ABL2);
++	lp_ability->link_ability = (rdata >> 5) & GENMASK(10, 0);
++	BP_LOG("\tread 70014 data %0x\n", rdata);
++	BP_LOG("\tKX : %x\tKX4 : %x\n",
++	       lp_ability->link_ability & BIT(ABILITY_1000BASE_KX) ? 1 : 0,
++	       lp_ability->link_ability & BIT(ABILITY_10GBASE_KX4) ? 1 : 0);
++	BP_LOG("\t10GKR : %x\t25GKR-S/CR-S: %x\t25GKR/CR : %x\n",
++	       lp_ability->link_ability & BIT(ABILITY_10GBASE_KR) ? 1 : 0,
++	       lp_ability->link_ability & BIT(ABILITY_25GBASE_KRCR_S) ? 1 : 0,
++	       lp_ability->link_ability & BIT(ABILITY_25GBASE_KRCR) ? 1 : 0);
++	BP_LOG("\t40GCR4 : %x\t40GKR4 : %x\n",
++	       lp_ability->link_ability & BIT(ABILITY_40GBASE_CR4) ? 1 : 0,
++	       lp_ability->link_ability & BIT(ABILITY_40GBASE_KR4) ? 1 : 0);
++	rdata = rd32_epcs(hw, SR_AN_MMD_LP_ABL3);
++	BP_LOG("\tF1:FEC Req\tF0:FEC Sup\tF3:25GFEC\tF2:25GRS\n");
++	BP_LOG("\tF1: %d\t\tF0: %d\t\tF3: %d\t\tF2: %d\n",
++	      ((rdata >> 15) & 0x01), ((rdata >> 14) & 0x01),
++	      ((rdata >> 13) & 0x01), ((rdata >> 12) & 0x01));
++	lp_ability->fec_ability = rdata;
++
++	hw->phy.fec_mode = 0;
++	if (rdata & TXGBE_25G_RS_FEC_REQ)
++		hw->phy.fec_mode |= TXGBE_25G_RS_FEC_REQ;
++	if (rdata & TXGBE_25G_BASE_FEC_REQ)
++		hw->phy.fec_mode |= TXGBE_25G_BASE_FEC_REQ;
++	if (rdata & TXGBE_10G_FEC_ABL)
++		hw->phy.fec_mode |= TXGBE_10G_FEC_ABL;
++	if (rdata & TXGBE_10G_FEC_REQ)
++		hw->phy.fec_mode |= TXGBE_10G_FEC_REQ;
++	BP_LOG("\tread 70015 data %0x\n", rdata);
++
++	BP_LOG("\tread 70016 data %0x\n", rd32_epcs(hw, 0x70016));
++	BP_LOG("\tread 70017 data %0x\n", rd32_epcs(hw, 0x70017));
++	BP_LOG("\tread 70018 data %0x\n", rd32_epcs(hw, 0x70018));
++	BP_LOG("\tread 70019 data %0x\n", rd32_epcs(hw, 0x70019));
++	BP_LOG("\tread 7001a data %0x\n", rd32_epcs(hw, 0x7001a));
++	BP_LOG("\tread 7001b data %0x\n", rd32_epcs(hw, 0x7001b));
++}
++
++static int chk_bkp_ability(struct txgbe_hw *hw,
++	struct txgbe_backplane_ability local_ability,
++	struct txgbe_backplane_ability lp_ability)
++{
++	unsigned int com_link_ability;
++
++	BP_LOG("CheckBkpAn73Ability():\n");
++	/* Check the common link ability and take action based on the result*/
++	com_link_ability = local_ability.link_ability &
++			 lp_ability.link_ability;
++	BP_LOG("comAbility= 0x%x, Ability= 0x%x, lpAbility= 0x%x\n",
++		com_link_ability, local_ability.link_ability,
++		lp_ability.link_ability);
++
++	if (com_link_ability == 0) {
++		hw->bp_link_mode = 0;
++		BP_LOG("Do not support any compatible speed mode!\n");
++		return -EINVAL;
++	} else if (com_link_ability & BIT(ABILITY_40GBASE_KR4)) {
++		BP_LOG("Link mode is [ABILITY_40GBASE_KR4].\n");
++		hw->bp_link_mode = 40;
++	} else if (com_link_ability & BIT(ABILITY_40GBASE_CR4)) {
++		BP_LOG("Link mode is [ABILITY_40GBASE_CR4].\n");
++		hw->bp_link_mode = 40;
++	} else if (com_link_ability & BIT(ABILITY_25GBASE_KRCR_S)) {
++		BP_LOG("Link mode is [ABILITY_25GBASE_KRCR_S].\n");
++		hw->fec_mode = TXGBE_25G_RS_FEC_REQ;
++		hw->bp_link_mode = 25;
++	} else if (com_link_ability & BIT(ABILITY_25GBASE_KRCR)) {
++		BP_LOG("Link mode is [ABILITY_25GBASE_KRCR].\n");
++		hw->bp_link_mode = 25;
++	} else if (com_link_ability & BIT(ABILITY_10GBASE_KR)) {
++		BP_LOG("Link mode is [ABILITY_10GBASE_KR].\n");
++		hw->bp_link_mode = 10;
++	} else if (com_link_ability & BIT(ABILITY_10GBASE_KX4)) {
++		BP_LOG("Link mode is [ABILITY_10GBASE_KX4].\n");
++		hw->bp_link_mode = 10;
++	} else if (com_link_ability & BIT(ABILITY_1000BASE_KX)) {
++		BP_LOG("Link mode is [ABILITY_1000BASE_KX].\n");
++		hw->bp_link_mode = 1;
++	} else {
++		BP_LOG("No compatible link mode found!\n");
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int txgbe_e56_exchange_page(struct txgbe_hw *hw)
++{
++	struct txgbe_backplane_ability local_ability = {0}, lp_ability = {0};
++	u32 an_int, base_page = 0;
++	int count = 0;
++
++	an_int = rd32_epcs(hw, 0x78002);
++	/* 500ms timeout */
++	if (!(an_int & VR_AN_INTR_PG_RCV))
++		return -EINVAL;
++
++	for (count = 0; count < 500; count++) {
++		u32 fsm = rd32_epcs(hw, 0x78010);
++		u32 rdata = rd32_epcs(hw, 0x78002);
++
++		BP_LOG("-----count----- %d - fsm: %x\n", count, fsm);
++		BP_LOG("read 78002 data %0x and clear pacv\n", rdata);
++		an_int = rdata;
++		set_fields_e56(&rdata, 2, 2, 0x0);
++		wr32_epcs(hw, 0x78002, rdata);
++		if (an_int & VR_AN_INTR_PG_RCV) {
++			u32 addr;
++
++			txgbe_e56_print_page_status(hw, &local_ability, &lp_ability);
++			addr = base_page == 0 ? 0x70013 : 0x70019;
++			rdata = rd32_epcs(hw, addr);
++			if (rdata & BIT(14)) {
++				if (rdata & BIT(15)) {
++					/* always set null message */
++					wr32_epcs(hw, 0x70016, 0x2001);
++					BP_LOG("write 70016 0x%0x\n",
++					       0x2001);
++				}
++				base_page = 1;
++			}
++		}
++		if ((fsm & 0x8) == 0x8) {
++			hw->fsm = 0x8;
++			goto check_ability;
++		}
++		usec_delay(100);
++	}
++
++check_ability:
++	return chk_bkp_ability(hw, local_ability, lp_ability);
++}
++
++static int txgbe_e56_cl72_trainning(struct txgbe_hw *hw)
++{
++	u32 bylinkmode = hw->bp_link_mode;
++	u8 bypass_ctle = hw->bypass_ctle;
++	int status = 0, temp_data = 0;
++	u32 lane_num = 0, lane_idx = 0;
++	u32 __rte_unused pmd_ctrl = 0, txffe = 0;
++	int ret = 0;
++	u32 rdata;
++
++	u8 pll_en_cfg = 0;
++	u8 pmd_mode = 0;
++
++	switch (bylinkmode) {
++	case 10:
++		bylinkmode = 10;
++		lane_num = 1;
++		pll_en_cfg = 3;
++		pmd_mode = 0;
++		break;
++	case 40:
++		bylinkmode = 40;
++		lane_num = 4;
++		pll_en_cfg = 0; /* pll_en_cfg : single link to 0 */
++		pmd_mode = 1; /* pmd mode : 1 - single link */
++		break;
++	case 25:
++		bylinkmode = 25;
++		lane_num = 1;
++		pll_en_cfg = 3;
++		pmd_mode = 0;
++		break;
++	default:
++		BP_LOG("%s %d :Invalid speed\n", __func__, __LINE__);
++		break;
++	}
++
++	BP_LOG("2.3 Wait %dG KR phy mode init ....\n", bylinkmode);
++	status = txgbe_set_phy_link_mode(hw, bylinkmode);
++
++	/* 13. set phy an status to 1 - AN_CFG[0]: 4-7 lane0-lane3 */
++	rdata = rd32_ephy(hw, 0x1434);
++	set_fields_e56(&rdata, 7, 4, GENMASK(lane_num - 1, 0));
++	wr32_ephy(hw, 0x1434, rdata);
++
++	/* 14 and 15. kr training: set BASER_PMD_CONTROL[0, 7] for lane0-4 */
++	rdata = rd32_ephy(hw, 0x1640);
++	set_fields_e56(&rdata, 7, 0, GENMASK(2 * lane_num - 1, 0));
++	wr32_ephy(hw, 0x1640, rdata);
++
++	/* 16. enable CMS and its internal PLL */
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 21, 20, pll_en_cfg);
++	set_fields_e56(&rdata, 19, 12, 0); /* tx/rx off */
++	set_fields_e56(&rdata, 8, 8, pmd_mode);
++	set_fields_e56(&rdata, 1, 1, 0x1); /* pmd en */
++	wr32_ephy(hw, 0x1400, rdata);
++
++	/* 17. tx enable PMD_CFG[0] */
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 15, 12, GENMASK(lane_num - 1, 0)); /* tx en */
++	wr32_ephy(hw, 0x1400, rdata);
++
++	/* 18 */
++	/* 19. rxs calibration and adaotation sequeence */
++	BP_LOG("2.4 Wait %dG RXS.... fsm: %x\n",
++	       bylinkmode, rd32_epcs(hw, 0x78010));
++	status = txgbe_e56_phy_rxs_calib_adapt_seq(hw, bylinkmode, bypass_ctle);
++	ret |= status;
++	/* 20 */
++	BP_LOG("2.5 Wait %dG phy calibration.... fsm: %x\n",
++	       bylinkmode, rd32_epcs(hw, 0x78010));
++	txgbe_e56_set_rxs_ufine_le_max(hw, bylinkmode);
++	status = txgbe_e56_get_temp(hw, &temp_data);
++	if (bylinkmode == 40)
++		status = txgbe_temp_track_seq_40g(hw, TXGBE_LINK_SPEED_40GB_FULL);
++	else
++		status = txgbe_e56_rxs_post_cdr_lock_temp_track_seq(hw, bylinkmode);
++	/* 21 */
++	BP_LOG("2.6 Wait %dG phy kr training check.... fsm: %x\n",
++	       bylinkmode, rd32_epcs(hw, 0x78010));
++	status = kr_read_poll(rd32_ephy, rdata,
++				  ((rdata & 0xe) & GENMASK(lane_num, 1)) ==
++				  (0xe & GENMASK(lane_num, 1)), 100,
++				   10000, hw, 0x163c);
++	pmd_ctrl = rd32_ephy(hw, 0x1644);
++	BP_LOG("KR TRAINNING CHECK = %x, %s. pmd_ctrl:%lx-%lx-%lx-%lx\n",
++	       rdata, status ? "FAILED" : "SUCCESS",
++	       FIELD_GET_M(GENMASK(3, 0), pmd_ctrl),
++	       FIELD_GET_M(GENMASK(7, 4), pmd_ctrl),
++	       FIELD_GET_M(GENMASK(11, 8), pmd_ctrl),
++	       FIELD_GET_M(GENMASK(15, 12), pmd_ctrl));
++	ret |= status;
++	BP_LOG("before: %x-%x-%x-%x\n",
++	       rd32_ephy(hw, 0x141c), rd32_ephy(hw, 0x1420),
++	       rd32_ephy(hw, 0x1424), rd32_ephy(hw, 0x1428));
++
++	for (lane_idx = 0; lane_idx < lane_num; lane_idx++) {
++		txffe = rd32_ephy(hw, 0x828 + lane_idx * 0x100);
++		BP_LOG("after[%x]: %lx-%lx-%lx-%lx\n", lane_idx,
++		       FIELD_GET_M(GENMASK(6, 0), txffe),
++		       FIELD_GET_M(GENMASK(21, 16), txffe),
++		       FIELD_GET_M(GENMASK(29, 24), txffe),
++		       FIELD_GET_M(GENMASK(13, 8), txffe));
++	}
++
++	/* 22 */
++	BP_LOG("2.7 Wait %dG phy Rx adc.... fsm:%x\n",
++	       bylinkmode, rd32_epcs(hw, 0x78010));
++	status = txgbe_e56_rxs_adc_adapt_seq(hw, bypass_ctle);
++
++	return ret;
++}
++
++int handle_e56_bkp_an73_flow(struct txgbe_hw *hw)
++{
++	int status = 0;
++	u32 rdata;
++
++	BP_LOG("2.1 Wait page changed ....\n");
++	status = txgbe_e56_exchange_page(hw);
++	if (status) {
++		BP_LOG("Exchange page failed\n");
++		return status;
++	}
++
++	BP_LOG("2.2 Wait page changed ..done..\n");
++	wr32_epcs(hw, 0x100ab, 0);
++	if (AN_TRAINNING_MODE) {
++		rdata = rd32_epcs(hw, 0x70000);
++		BP_LOG("read 0x70000 data %0x\n", rdata);
++		wr32_epcs(hw, 0x70000, 0);
++		BP_LOG("write 0x70000 0x%0x\n", 0);
++	}
++
++	rdata = rd32_epcs(hw, 0x78002);
++	BP_LOG("read 78002 data %0x and clear page int\n", rdata);
++	set_fields_e56(&rdata, 2, 2, 0x0);
++	wr32_epcs(hw, 0x78002, rdata);
++
++	/* dis phy tx/rx lane */
++	rdata = rd32_ephy(hw, 0x1400);
++	set_fields_e56(&rdata, 19, 16, 0x0);
++	set_fields_e56(&rdata, 15, 12, 0x0);
++	set_fields_e56(&rdata, 1, 1, 0x0);
++	wr32_ephy(hw, 0x1400, rdata);
++	BP_LOG("Ephy Write A: 0x%x, D: 0x%x\n", 0x1400, rdata);
++
++	/* wait rx/tx/cm powerdn_st */
++	status = kr_read_poll(rd32_ephy, rdata,
++				   (rdata & GENMASK(3, 0)) == 0x9, 100,
++				   2000, hw, 0x14d4);
++	BP_LOG("wait ctrl_fsm_cm_st = %x, %s.\n",
++	       rdata, status ? "FAILED" : "SUCCESS");
++
++	if (hw->phy.fec_mode & TXGBE_25G_RS_FEC_REQ) {
++		wr32_epcs(hw, 0x180a3, 0x68c1);
++		wr32_epcs(hw, 0x180a4, 0x3321);
++		wr32_epcs(hw, 0x180a5, 0x973e);
++		wr32_epcs(hw, 0x180a6, 0xccde);
++
++		wr32_epcs(hw, 0x38018, 1024);
++		rdata = rd32_epcs(hw, 0x100c8);
++		set_fields_e56(&rdata, 2, 2, 1);
++		wr32_epcs(hw, 0x100c8, rdata);
++		BP_LOG("Advertised FEC modes : %s\n", "RS-FEC");
++		hw->cur_fec_link = TXGBE_PHY_FEC_RS;
++	} else if (hw->phy.fec_mode & TXGBE_25G_BASE_FEC_REQ) {
++		/* FEC: FC-FEC/BASE-R */
++		wr32_epcs(hw, 0x100ab, BIT(0));
++		BP_LOG("Epcs Write A: 0x%x,  D: 0x%x\n", 0x100ab, 1);
++		PMD_DRV_LOG(INFO, "Advertised FEC modes : %s", "25GBASE-R");
++		hw->cur_fec_link = TXGBE_PHY_FEC_BASER;
++	} else if (hw->fec_mode & (TXGBE_10G_FEC_REQ)) {
++		/* FEC: FC-FEC/BASE-R */
++		wr32_epcs(hw, 0x100ab, BIT(0));
++		BP_LOG("Epcs Write A: 0x%x,  D: 0x%x\n", 0x100ab, 1);
++		PMD_DRV_LOG(INFO, "Advertised FEC modes : %s", "BASE-R");
++		hw->cur_fec_link = TXGBE_PHY_FEC_BASER;
++	} else {
++		PMD_DRV_LOG(INFO, "Advertised FEC modes : %s", "NONE");
++		hw->cur_fec_link = TXGBE_PHY_FEC_OFF;
++	}
++
++	status = txgbe_e56_cl72_trainning(hw);
++
++	rdata = rd32_ephy(hw, E56PHY_RXS_IDLE_DETECT_1_ADDR);
++	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MAX, 0x28);
++	set_fields_e56(&rdata, E56PHY_RXS_IDLE_DETECT_1_IDLE_TH_ADC_PEAK_MIN, 0xa);
++	wr32_ephy(hw, E56PHY_RXS_IDLE_DETECT_1_ADDR, rdata);
++	wr32_ephy(hw, E56PHY_INTR_0_ADDR, E56PHY_INTR_0_IDLE_ENTRY1);
++	wr32_ephy(hw, E56PHY_INTR_1_ADDR, E56PHY_INTR_1_IDLE_EXIT1);
++	wr32_ephy(hw, E56PHY_INTR_0_ENABLE_ADDR, E56PHY_INTR_0_IDLE_ENTRY1);
++	wr32_ephy(hw, E56PHY_INTR_1_ENABLE_ADDR, E56PHY_INTR_1_IDLE_EXIT1);
++
++	return status;
++}
+diff --git a/drivers/net/txgbe/base/txgbe_e56_bp.h b/drivers/net/txgbe/base/txgbe_e56_bp.h
+index c58c061ea1..3e08d68545 100644
+--- a/drivers/net/txgbe/base/txgbe_e56_bp.h
++++ b/drivers/net/txgbe/base/txgbe_e56_bp.h
+@@ -272,4 +272,7 @@ typedef union {
+ #define E56PHY_CMS_ANA_OVRDVAL_10_ADDR   (E56PHY_CMS_BASE_ADDR + 0xD8)
+ #define E56PHY_CMS_ANA_OVRDVAL_7_ANA_LCPLL_LF_LPF_SETCODE_CALIB_I	8, 4
+ 
++int txgbe_e56_set_phy_link_mode(struct txgbe_hw *hw,
++				u8 bp_link_mode, u32 need_restart);
++int handle_e56_bkp_an73_flow(struct txgbe_hw *hw);
+ #endif
+diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
+index 3b683eaa04..1a297acaa6 100644
+--- a/drivers/net/txgbe/base/txgbe_hw.c
++++ b/drivers/net/txgbe/base/txgbe_hw.c
+@@ -4069,6 +4069,12 @@ s32 txgbe_reset_pipeline_raptor(struct txgbe_hw *hw)
+ 	return err;
+ }
+ 
++bool txgbe_is_backplane(struct txgbe_hw *hw)
++{
++	return hw->phy.get_media_type(hw) == txgbe_media_type_backplane ?
++						 true : false;
++}
++
+ bool txgbe_gpio_ext_check(struct txgbe_hw *hw, u8 gpio_ext_mask)
+ {
+ 	u32 gpio_ext = rd32(hw, TXGBE_GPIOEXT);
+diff --git a/drivers/net/txgbe/base/txgbe_hw.h b/drivers/net/txgbe/base/txgbe_hw.h
+index bc34d639eb..b44190bc34 100644
+--- a/drivers/net/txgbe/base/txgbe_hw.h
++++ b/drivers/net/txgbe/base/txgbe_hw.h
+@@ -118,6 +118,6 @@ s32 txgbe_reinit_fdir_tables(struct txgbe_hw *hw);
+ bool txgbe_verify_lesm_fw_enabled_raptor(struct txgbe_hw *hw);
+ s32 txgbe_fmgr_cmd_op(struct txgbe_hw *hw, u32 cmd, u32 cmd_addr);
+ s32 txgbe_flash_read_dword(struct txgbe_hw *hw, u32 addr, u32 *data);
+-s32 txgbe_e56_check_phy_link(struct txgbe_hw *hw, u32 *speed,
+-				bool *link_up);
++bool txgbe_is_backplane(struct txgbe_hw *hw);
++bool txgbe_gpio_ext_check(struct txgbe_hw *hw, u8 gpio_ext_mask);
+ #endif /* _TXGBE_HW_H_ */
+diff --git a/drivers/net/txgbe/base/txgbe_osdep.h b/drivers/net/txgbe/base/txgbe_osdep.h
+index f4282b3241..da069e94f6 100644
+--- a/drivers/net/txgbe/base/txgbe_osdep.h
++++ b/drivers/net/txgbe/base/txgbe_osdep.h
+@@ -162,6 +162,10 @@ static inline u64 REVERT_BIT_MASK64(u64 mask)
+ 	       ((mask & 0xFFFFFFFF00000000) >> 32);
+ }
+ 
++#define BITS_PER_LONG	(__SIZEOF_LONG__ * 8)
++#define GENMASK(h, l) \
++	(((~0UL) << (l)) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
++
+ #define IOMEM
+ 
+ #define BIT(nr)         (1UL << (nr))
+diff --git a/drivers/net/txgbe/base/txgbe_phy.c b/drivers/net/txgbe/base/txgbe_phy.c
+index bf7260a295..f3e3491b30 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.c
++++ b/drivers/net/txgbe/base/txgbe_phy.c
+@@ -2503,6 +2503,27 @@ void txgbe_set_phy_temp(struct txgbe_hw *hw)
+ 	}
+ }
+ 
++int txgbe_is_dac_cable(struct txgbe_hw *hw)
++{
++	if (hw->phy.sfp_type == txgbe_sfp_type_da_cu_core0 ||
++	    hw->phy.sfp_type == txgbe_sfp_type_da_cu_core1 ||
++	    hw->phy.sfp_type == txgbe_sfp_type_da_act_lmt_core0 ||
++	    hw->phy.sfp_type == txgbe_sfp_type_da_act_lmt_core1 ||
++	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core0 ||
++	    hw->phy.sfp_type == txgbe_qsfp_type_40g_cu_core1)
++		return true;
++
++	return false;
++}
++
++int txgbe_xpcs_an_enabled(struct txgbe_hw *hw)
++{
++	if (!(txgbe_is_dac_cable(hw) || txgbe_is_backplane(hw)))
++		return false;
++
++	return hw->devarg.auto_neg ? true : false;
++}
++
+ /**
+  * txgbe_kr_handle - Handle the interrupt of auto-negotiation
+  * @hw: pointer to hardware structure
+diff --git a/drivers/net/txgbe/base/txgbe_phy.h b/drivers/net/txgbe/base/txgbe_phy.h
+index c02be3cc34..3fe7a34409 100644
+--- a/drivers/net/txgbe/base/txgbe_phy.h
++++ b/drivers/net/txgbe/base/txgbe_phy.h
+@@ -105,6 +105,8 @@
+ #define   VR_AN_INTR_CMPLT		  MS16(0, 0x1)
+ #define   VR_AN_INTR_LINK		  MS16(1, 0x1)
+ #define   VR_AN_INTR_PG_RCV		  MS16(2, 0x1)
++#define   TXGBE_E56_AN_TXDIS              MS16(3, 0x1)
++#define   TXGBE_E56_AN_PG_RCV             MS16(4, 0x1)
+ #define VR_AN_KR_MODE_CL                  0x078003
+ #define   VR_AN_KR_MODE_CL_PDET		  MS16(0, 0x1)
+ #define VR_XS_OR_PCS_MMD_DIGI_CTL1        0x038000
+@@ -428,6 +430,24 @@
+ #define TXGBE_BP_M_NAUTO                     0
+ #define TXGBE_BP_M_AUTO                      1
+ 
++#define kr_read_poll(op, val, cond, sleep_us, \
++		     times, args...) \
++({ \
++	unsigned long __sleep_us = (sleep_us); \
++	u32 __times = (times); \
++	u32 i; \
++	int __cond = 0; \
++	for (i = 0; i < __times; i++) { \
++		(val) = op(args); \
++		if (cond) { \
++			__cond = 1; \
++			break; \
++		} \
++		usleep(__sleep_us);\
++	} \
++	(__cond) ? 0 : -1; \
++})
++
+ #ifndef CL72_KRTR_PRBS_MODE_EN
+ #define CL72_KRTR_PRBS_MODE_EN	0xFFFF	/* open kr prbs check */
+ #endif
+@@ -490,6 +510,8 @@ void txgbe_autoc_write(struct txgbe_hw *hw, u64 value);
+ void txgbe_bp_mode_set(struct txgbe_hw *hw);
+ void txgbe_set_phy_temp(struct txgbe_hw *hw);
+ void txgbe_bp_down_event(struct txgbe_hw *hw);
++int txgbe_is_dac_cable(struct txgbe_hw *hw);
++int txgbe_xpcs_an_enabled(struct txgbe_hw *hw);
+ s32 txgbe_kr_handle(struct txgbe_hw *hw);
+ 
+ #endif /* _TXGBE_PHY_H_ */
+diff --git a/drivers/net/txgbe/base/txgbe_type.h b/drivers/net/txgbe/base/txgbe_type.h
+index 421abc1145..aa882e87b8 100644
+--- a/drivers/net/txgbe/base/txgbe_type.h
++++ b/drivers/net/txgbe/base/txgbe_type.h
+@@ -719,6 +719,7 @@ struct txgbe_phy_info {
+ 	u32 addr;
+ 	u32 id;
+ 	enum txgbe_sfp_type sfp_type;
++	u32 fiber_suppport_speed;
+ 	bool sfp_setup_needed;
+ 	u32 revision;
+ 	u32 media_type;
+@@ -740,6 +741,7 @@ struct txgbe_phy_info {
+ 	u16 ffe_pre2;
+ 	u16 ffe_post;
+ 	u16 fec_mode;
++	u16 bp_capa;
+ };
+ 
+ #define TXGBE_DEVARG_BP_AUTO		"auto_neg"
+@@ -895,7 +897,28 @@ struct txgbe_hw {
+ 	u32 cur_fec_link;
+ 	int temperature;
+ 	u32 bp_link_mode;
+-};
++	bool dac_sfp;
++	bool bypass_ctle;
++	u32 curbp_link_mode;
++	bool an_done;
++	u32 fsm;
++	u64 bp_event_interval;
++};
++
++typedef enum {
++	ABILITY_1000BASE_KX,
++	ABILITY_10GBASE_KX4,
++	ABILITY_10GBASE_KR,
++	ABILITY_40GBASE_KR4,
++	ABILITY_40GBASE_CR4,
++	ABILITY_100GBASE_CR10,
++	ABILITY_100GBASE_KP4,
++	ABILITY_100GBASE_KR4,
++	ABILITY_100GBASE_CR4,
++	ABILITY_25GBASE_KRCR_S,
++	ABILITY_25GBASE_KRCR,
++	ABILITY_MAX,
++} ability_filed_encding;
+ 
+ struct txgbe_backplane_ability {
+ 	u32 next_page;	  /* Next Page (bit0) */
 diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 32563937b5..d515419028 100644
+index d515419028..2221153347 100644
 --- a/drivers/net/txgbe/txgbe_ethdev.c
 +++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -2054,7 +2054,7 @@ txgbe_dev_stop(struct rte_eth_dev *dev)
+@@ -2010,6 +2010,10 @@ txgbe_dev_start(struct rte_eth_dev *dev)
+ 	txgbe_l2_tunnel_conf(dev);
+ 	txgbe_filter_restore(dev);
+ 
++	hw->bp_event_interval = 100 * 1000;
++	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
++		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
++
+ 	if (tm_conf->root && !tm_conf->committed)
+ 		PMD_DRV_LOG(WARNING,
+ 			    "please call hierarchy_commit() "
+@@ -2054,8 +2058,10 @@ txgbe_dev_stop(struct rte_eth_dev *dev)
  
  	PMD_INIT_FUNC_TRACE();
  
--	if (hw->mac.type == txgbe_mac_aml)
-+	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
+-	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
++	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) {
++		rte_eal_alarm_cancel(txgbe_dev_e56_check_bp_event, dev);
  		rte_eal_alarm_cancel(txgbe_dev_setup_link_alarm_handler_aml, hw);
++	}
  
  	rte_eal_alarm_cancel(txgbe_dev_detect_sfp, dev);
-@@ -3200,7 +3200,7 @@ txgbe_dev_setup_link_thread_handler(void *param)
- 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
+ 	rte_eal_alarm_cancel(txgbe_tx_queue_clear_error, dev);
+@@ -2920,6 +2926,107 @@ txgbe_dev_supported_ptypes_get(struct rte_eth_dev *dev, size_t *no_of_elements)
+ 	return NULL;
+ }
  
- 	rte_thread_detach(rte_thread_self());
--	if (hw->mac.type == txgbe_mac_aml)
++void txgbe_dev_e56_check_bp_event(void *param)
++{
++	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
++	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
++	u32 an_int1 = 0, value = 0, fsm = 0;
++	u32 __rte_unused an_int = 0;
++	int ret = 0;
++	bool need_link_update = false;
++
++	if (!hw)
++		return;
++
++	if (!(txgbe_xpcs_an_enabled(hw)))
++		return;
++
++	if (!hw->devarg.auto_neg)
++		return;
++
++	/* only continue if link is down */
++	if (dev->data->dev_link.link_status)
++		goto out;
++
++	value = rd32_epcs(hw, VR_AN_INTR);
++	an_int = value;
++	if (value & 0xF)
++		hw->bp_event_interval = 100 * 1000;
++
++	if (value & VR_AN_INTR_CMPLT) {
++		hw->an_done = true;
++		need_link_update = true;
++		value &= ~VR_AN_INTR_CMPLT;
++		wr32_epcs(hw, VR_AN_INTR, value);
++	}
++
++	if (value & VR_AN_INTR_LINK) {
++		value &= ~VR_AN_INTR_LINK;
++		wr32_epcs(hw, VR_AN_INTR, value);
++	}
++
++	if (value & TXGBE_E56_AN_TXDIS) {
++		value &= ~TXGBE_E56_AN_TXDIS;
++		wr32_epcs(hw, VR_AN_INTR, value);
++		rte_spinlock_lock(&hw->phy_lock);
++		txgbe_e56_set_phy_link_mode(hw, 10, hw->bypass_ctle);
++		rte_spinlock_unlock(&hw->phy_lock);
++		goto an_status;
++	}
++
++	if (value & VR_AN_INTR_PG_RCV) {
++		BP_LOG("%d Enter training\n", hw->port_id);
++		ret = handle_e56_bkp_an73_flow(hw);
++		if (!AN_TRAINNING_MODE) {
++			fsm = rd32_epcs(hw, 0x78010);
++			if (fsm & 0x8)
++				goto an_status;
++			if (ret) {
++				BP_LOG("Training FAILED, do reset\n");
++				rte_spinlock_lock(&hw->phy_lock);
++				txgbe_e56_set_phy_link_mode(hw, 10, hw->bypass_ctle);
++				rte_spinlock_unlock(&hw->phy_lock);
++			} else {
++				BP_LOG("ALL SUCCEEDED\n");
++			}
++		} else {
++			if (ret) {
++				BP_LOG("Training FAILED, do reset\n");
++				rte_spinlock_lock(&hw->phy_lock);
++				txgbe_e56_set_phy_link_mode(hw, 10, hw->bypass_ctle);
++				rte_spinlock_unlock(&hw->phy_lock);
++			} else {
++				hw->an_done = true;
++			}
++		}
++	}
++
++an_status:
++	an_int1 = rd32_epcs(hw, 0x78002);
++	if (an_int1 & VR_AN_INTR_CMPLT) {
++		hw->an_done = true;
++		need_link_update = true;
++	}
++
++	BP_LOG("%d RLU:%x MLU:%x INT:%x-%x CTL:%x fsm:%x pmd_cfg0:%x an_done:%d\n",
++		hw->port_id, rd32_epcs(hw, 0x30001), rd32(hw, 0x14404),
++		an_int, an_int1,
++		rd32_epcs(hw, 0x70000),
++		rd32_epcs(hw, 0x78010),
++		rd32_ephy(hw, 0x1400),
++		hw->an_done);
++
++	if (need_link_update)
++		txgbe_dev_link_update(dev, 0);
++
++	if (dev->data->dev_link.link_status)
++		hw->bp_event_interval = 2000 * 1000;
++
++out:
 +	if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
- 		txgbe_dev_setup_link_alarm_handler_aml(hw);
- 	else
- 		txgbe_dev_setup_link_alarm_handler(dev);
++		rte_eal_alarm_set(hw->bp_event_interval, txgbe_dev_e56_check_bp_event, dev);
++}
++
+ static void
+ txgbe_dev_detect_sfp(void *param)
+ {
+diff --git a/drivers/net/txgbe/txgbe_ethdev.h b/drivers/net/txgbe/txgbe_ethdev.h
+index 1ec8e096cc..309db3bfe9 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.h
++++ b/drivers/net/txgbe/txgbe_ethdev.h
+@@ -747,5 +747,5 @@ void txgbe_vlan_hw_strip_bitmap_set(struct rte_eth_dev *dev,
+ 		uint16_t queue, bool on);
+ void txgbe_config_vlan_strip_on_all_queues(struct rte_eth_dev *dev,
+ 						  int mask);
+-
++void txgbe_dev_e56_check_bp_event(void *param);
+ #endif /* _TXGBE_ETHDEV_H_ */
 -- 
 2.21.0.windows.1
 
