@@ -2,47 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE3A0FF887E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 17:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BF8FF887E
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 17:02:26 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5065340ED6;
-	Wed, 29 Apr 2026 18:59:27 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 453C140EDD;
+	Wed, 29 Apr 2026 18:59:28 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
- by mails.dpdk.org (Postfix) with ESMTP id 89A3940E78;
- Wed, 29 Apr 2026 18:59:23 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 27B324066E;
+ Wed, 29 Apr 2026 18:59:25 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777481964; x=1809017964;
+ t=1777481966; x=1809017966;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=v4xUEMDxwJHzKSATjeBE7x3MbvbDHP7i2pSeR+Ho/rY=;
- b=dwgDIAldYG/TAE6rR/pgxPuKlnEqJFoXhARspAdAk84MZjCB31CkakGr
- Na7dr8yAjJ75hwAZsUyp31GbV/PYwCrdE2otDTZmE3s6zGhUWA68Hj8qf
- bUUpeShWBtVvXpFEEAuSJSS9TvmoKxDnKGlGKdogNixdNkaCz1k2kqG3K
- COuOTXqWNAJUfE6QZL/71Xs1mhObXJrPyQlkCj/G3Qgs4zqTR3KbUmj9u
- e/47TuCCD2RgjU8ozGkW5RVMwakdyRFbUdYy3bXelLZggE/wnMsFq/6le
- 7XYCL2kPF3mca9hV7g46v8iV/JrTCjec63wXyB8KEwI9CXzzYR/kCK/lo g==;
-X-CSE-ConnectionGUID: HUUDZmNRRX2vUdnmPPjTOQ==
-X-CSE-MsgGUID: N+FviSMwR/OdXQqRZ7bv0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="88725335"
-X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; d="scan'208";a="88725335"
+ bh=iV0lzGSdkHfaXMSiohezI0FVPu8SjWUqXsDeV1mKoC0=;
+ b=Xw1YXbBghL+KISOyR1qhc3yH1tcOyUZpJ7v30tY5BNemscXUBUwHGipc
+ JB1TqKqIHQHUYPzlzLsvzlUWm6MJQxL4Bbuf3Y2zXL/hzR0kEssv3ODrK
+ 65gNV2pdA5SKJKdlcb5FZSIqe236TzBtf2HAum83cK5CwCTheZmxian8m
+ TU0tzSj58VXifaJRNUPJK0+viqx4W3J4ZM/l8WmB3D36IS7x8YCmKpc5J
+ P+GIE+wj447w/82g11e7QDzb+SY/UnTAaW6j2l/gCeQMN4IYFStHHXLzk
+ BoDdyCZvg/1PxzPRzvLP/jgd7ABqoEcx2r88Mq0iOjR2IMBr9JZn22Uzp Q==;
+X-CSE-ConnectionGUID: /sNaTcrOT1SWmg7w4UTw/w==
+X-CSE-MsgGUID: pJBquclaSEKIdMOYG9ECug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="88725337"
+X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; d="scan'208";a="88725337"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 29 Apr 2026 09:59:24 -0700
-X-CSE-ConnectionGUID: C+mrqTUIQ0aNtxSoBDjixA==
-X-CSE-MsgGUID: Z8lhp/T+R/iaZ6wAjYKOhg==
+ 29 Apr 2026 09:59:25 -0700
+X-CSE-ConnectionGUID: EoscfQncTNOGCQA53J6OHg==
+X-CSE-MsgGUID: lKVSqr6uSFqxIWCtzZyzDA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; d="scan'208";a="264697007"
+X-IronPort-AV: E=Sophos;i="6.23,206,1770624000"; d="scan'208";a="264697011"
 Received: from silpixa00401385.ir.intel.com (HELO
  localhost.ger.corp.intel.com) ([10.20.227.128])
- by orviesa002.jf.intel.com with ESMTP; 29 Apr 2026 09:59:22 -0700
+ by orviesa002.jf.intel.com with ESMTP; 29 Apr 2026 09:59:23 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
 Cc: techboard@dpdk.org,
 	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [RFC PATCH 22/44] eal: separate runtime state update from arg parsing
-Date: Wed, 29 Apr 2026 17:58:14 +0100
-Message-ID: <20260429165845.2136843-23-bruce.richardson@intel.com>
+Subject: [RFC PATCH 23/44] eal: move devopt_list staging list into user_cfg
+Date: Wed, 29 Apr 2026 17:58:15 +0100
+Message-ID: <20260429165845.2136843-24-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260429165845.2136843-1-bruce.richardson@intel.com>
 References: <20260429165845.2136843-1-bruce.richardson@intel.com>
@@ -61,235 +61,124 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The eal_parse_args function was performing several updates to the
-runtime state that do not logically belong in a parse_args function.
-Move these to the "eal_adjust_config()" function, which is now renamed
-to the more accurate "eal_apply_runtime_state()". Ensure too, that all
-queries for the multi process mode use the runtime state rather than the
-original user provided value, which needs resolution if it's AUTO.
+The file-static devopt_list in eal_common_options.c holds device
+options (-a/-b/--vdev) staged during arg parsing for later consumption
+by eal_option_device_parse(). Rather than holding this data as statics,
+store it in the user_cfg struct.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/eal/common/eal_common_options.c | 68 +++++++++++++----------------
- lib/eal/common/eal_options.h        |  2 +-
- lib/eal/freebsd/eal.c               |  5 +--
- lib/eal/linux/eal.c                 |  5 +--
- lib/eal/linux/eal_vfio.c            |  9 ++--
- 5 files changed, 37 insertions(+), 52 deletions(-)
+ lib/eal/common/eal_common_options.c | 21 ++++++---------------
+ lib/eal/common/eal_internal_cfg.h   | 15 +++++++++++++++
+ 2 files changed, 21 insertions(+), 15 deletions(-)
 
 diff --git a/lib/eal/common/eal_common_options.c b/lib/eal/common/eal_common_options.c
-index 9b3ba64c4c..dc6f4643c4 100644
+index dc6f4643c4..71fc69e80d 100644
 --- a/lib/eal/common/eal_common_options.c
 +++ b/lib/eal/common/eal_common_options.c
-@@ -1960,7 +1960,6 @@ int
- eal_parse_args(void)
+@@ -289,18 +289,6 @@ static const char *default_solib_dir = RTE_EAL_PMD_PATH;
+ RTE_PMD_EXPORT_SYMBOL(const char, dpdk_solib_path)[] =
+ "DPDK_PLUGIN_PATH=" RTE_EAL_PMD_PATH;
+ 
+-TAILQ_HEAD(device_option_list, device_option);
+-
+-struct device_option {
+-	TAILQ_ENTRY(device_option) next;
+-
+-	enum rte_devtype type;
+-	char arg[];
+-};
+-
+-static struct device_option_list devopt_list =
+-TAILQ_HEAD_INITIALIZER(devopt_list);
+-
+ /* Returns rte_usage_hook_t */
+ rte_usage_hook_t
+ eal_get_application_usage_hook(void)
+@@ -438,6 +426,7 @@ eal_clean_saved_args(void)
+ static int
+ eal_option_device_add(enum rte_devtype type, const char *arg)
  {
- 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
- 	bool remap_lcores = (args.remap_lcore_ids != NULL);
- 	struct arg_list_elem *arg;
- 	uint16_t lcore_id_base = 0;
-@@ -2088,17 +2087,6 @@ eal_parse_args(void)
- 	if (args.main_lcore != NULL && eal_parse_main_lcore(args.main_lcore) < 0)
- 		return -1;
- 
--	if (user_cfg->main_lcore != -1) {
--		runtime_state->main_lcore = user_cfg->main_lcore;
--	} else {
--		/* default main lcore is the first one */
--		runtime_state->main_lcore = rte_get_next_lcore(-1, 0, 0);
--		if (runtime_state->main_lcore >= RTE_MAX_LCORE) {
--			EAL_LOG(ERR, "Main lcore is not enabled for DPDK");
--			return -1;
--		}
--	}
--
- 	/* memory options */
- 	if (args.memory_size != NULL) {
- 		user_cfg->memory = atoi(args.memory_size);
-@@ -2299,23 +2287,11 @@ eal_parse_args(void)
- 		}
++	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	struct device_option *devopt;
+ 	size_t arglen;
+ 	int ret;
+@@ -456,25 +445,26 @@ eal_option_device_add(enum rte_devtype type, const char *arg)
+ 		free(devopt);
+ 		return -EINVAL;
  	}
- 
--#ifndef RTE_EXEC_ENV_WINDOWS
--	/* create runtime data directory. In no_shconf mode, skip any errors */
--	if (eal_create_runtime_dir() < 0) {
--		if (!user_cfg->no_shconf) {
--			EAL_LOG(ERR, "Cannot create runtime directory");
--			return -1;
--		}
--		EAL_LOG(WARNING, "No DPDK runtime directory created");
--	}
--#endif
--
--	if (eal_adjust_config() != 0) {
--		EAL_LOG(ERR, "Invalid configuration");
--		return -1;
--	}
-+	/* sum per-NUMA memory requests into user_cfg->memory */
-+	for (int i = 0; i < RTE_MAX_NUMA_NODES; i++)
-+		user_cfg->memory += user_cfg->numa_mem[i];
- 
--	return 0;
-+	return eal_apply_runtime_state();
- }
- 
- static void
-@@ -2363,20 +2339,38 @@ eal_cleanup_config(const struct eal_user_cfg *user_cfg)
+-	TAILQ_INSERT_TAIL(&devopt_list, devopt, next);
++	TAILQ_INSERT_TAIL(&user_cfg->devopt_list, devopt, next);
+ 	return 0;
  }
  
  int
--eal_adjust_config(void)
-+eal_apply_runtime_state(void)
+ eal_option_device_parse(void)
  {
- 	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	int i;
-+	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
++	struct eal_user_cfg *user_cfg = eal_get_user_configuration();
+ 	struct device_option *devopt;
+ 	void *tmp;
+ 	int ret = 0;
  
--	if (user_cfg->process_type == RTE_PROC_AUTO)
--		user_cfg->process_type = eal_proc_type_detect();
-+	/* set the main lcore */
-+	if (user_cfg->main_lcore != -1) {
-+		runtime_state->main_lcore = user_cfg->main_lcore;
-+	} else {
-+		/* default main lcore is the first one */
-+		runtime_state->main_lcore = rte_get_next_lcore(-1, 0, 0);
-+		if (runtime_state->main_lcore >= RTE_MAX_LCORE) {
-+			EAL_LOG(ERR, "Main lcore is not enabled for DPDK");
-+			return -1;
-+		}
-+	}
- 
--	compute_ctrl_threads_cpuset();
-+#ifndef RTE_EXEC_ENV_WINDOWS
-+	/* create runtime data directory. In no_shconf mode, skip any errors */
-+	if (eal_create_runtime_dir() < 0) {
-+		if (!user_cfg->no_shconf) {
-+			EAL_LOG(ERR, "Cannot create runtime directory");
-+			return -1;
-+		}
-+		EAL_LOG(WARNING, "No DPDK runtime directory created");
-+	}
-+#endif
- 
--	/* if no memory amounts were requested, this will result in 0 and
--	 * will be overridden later, right after eal_hugepage_info_init() */
--	for (i = 0; i < RTE_MAX_NUMA_NODES; i++)
--		user_cfg->memory += user_cfg->numa_mem[i];
-+	runtime_state->process_type = (user_cfg->process_type == RTE_PROC_AUTO) ?
-+			eal_proc_type_detect() : user_cfg->process_type;
-+
-+	compute_ctrl_threads_cpuset();
- 
- 	return 0;
- }
-diff --git a/lib/eal/common/eal_options.h b/lib/eal/common/eal_options.h
-index a70c5b0c05..d5ad7a4720 100644
---- a/lib/eal/common/eal_options.h
-+++ b/lib/eal/common/eal_options.h
-@@ -13,7 +13,7 @@ struct eal_user_cfg;
- int eal_parse_log_options(void);
- int eal_parse_args(void);
- int eal_option_device_parse(void);
--int eal_adjust_config(void);
-+int eal_apply_runtime_state(void);
- int eal_cleanup_config(const struct eal_user_cfg *user_cfg);
- enum rte_proc_type_t eal_proc_type_detect(void);
- int eal_plugins_init(void);
-diff --git a/lib/eal/freebsd/eal.c b/lib/eal/freebsd/eal.c
-index 0fafb2c295..16748f965e 100644
---- a/lib/eal/freebsd/eal.c
-+++ b/lib/eal/freebsd/eal.c
-@@ -285,9 +285,6 @@ static int
- eal_mem_config_init(void)
- {
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
--	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--
--	runtime_state->process_type = user_cfg->process_type;
- 
- 	switch (runtime_state->process_type) {
- 	case RTE_PROC_PRIMARY:
-@@ -565,7 +562,7 @@ rte_eal_init(int argc, char **argv)
- 
- 	if (!user_cfg->no_hugetlbfs) {
- 		/* shared mem config not yet attached */
--		ret = user_cfg->process_type == RTE_PROC_PRIMARY ?
-+		ret = rte_eal_process_type() == RTE_PROC_PRIMARY ?
- 			eal_hugepage_info_init() :
- 			eal_hugepage_info_read();
- 		if (ret < 0) {
-diff --git a/lib/eal/linux/eal.c b/lib/eal/linux/eal.c
-index 8d3559aa37..8d67d6744f 100644
---- a/lib/eal/linux/eal.c
-+++ b/lib/eal/linux/eal.c
-@@ -369,9 +369,6 @@ static int
- eal_mem_config_init(void)
- {
- 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
--	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--
--	runtime_state->process_type = user_cfg->process_type;
- 
- 	switch (runtime_state->process_type) {
- 	case RTE_PROC_PRIMARY:
-@@ -729,7 +726,7 @@ rte_eal_init(int argc, char **argv)
- 
- 	if (!user_cfg->no_hugetlbfs) {
- 		/* shared mem config not yet attached */
--		ret = user_cfg->process_type == RTE_PROC_PRIMARY ?
-+		ret = rte_eal_process_type() == RTE_PROC_PRIMARY ?
- 				eal_hugepage_info_init() :
- 				eal_hugepage_info_read();
- 		if (ret < 0) {
-diff --git a/lib/eal/linux/eal_vfio.c b/lib/eal/linux/eal_vfio.c
-index 678ac57e87..019966593e 100644
---- a/lib/eal/linux/eal_vfio.c
-+++ b/lib/eal/linux/eal_vfio.c
-@@ -482,8 +482,7 @@ vfio_get_group_fd(struct vfio_config *vfio_cfg,
- 	 * knowledge of them. Requesting a group fd from the primary for a
- 	 * container it doesn't know about would be incorrect.
- 	 */
--	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
--	bool mp_request = (user_cfg->process_type == RTE_PROC_SECONDARY) &&
-+	bool mp_request = (rte_eal_process_type() == RTE_PROC_SECONDARY) &&
- 			(vfio_cfg == default_vfio_cfg);
- 
- 	vfio_group_fd = vfio_open_group_fd(iommu_group_num, mp_request);
-@@ -770,7 +769,6 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
- 	int iommu_group_num;
- 	rte_uuid_t vf_token;
- 	int i, ret;
--	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 
- 	/* get group number */
- 	ret = rte_vfio_get_group_num(sysfs_base, dev_addr, &iommu_group_num);
-@@ -852,7 +850,7 @@ rte_vfio_setup_device(const char *sysfs_base, const char *dev_addr,
- 		 * Note this can happen several times with the hotplug
- 		 * functionality.
- 		 */
--		if (user_cfg->process_type == RTE_PROC_PRIMARY &&
-+		if (rte_eal_process_type() == RTE_PROC_PRIMARY &&
- 				vfio_cfg->vfio_active_groups == 1 &&
- 				vfio_group_device_count(vfio_group_fd) == 0) {
- 			const struct vfio_iommu_type *t;
-@@ -1105,7 +1103,6 @@ rte_vfio_enable(const char *modname)
- 	unsigned int i, j;
- 	int vfio_available;
- 	DIR *dir;
--	const struct eal_user_cfg *user_cfg = eal_get_user_configuration();
- 
- 	rte_spinlock_recursive_t lock = RTE_SPINLOCK_RECURSIVE_INITIALIZER;
- 
-@@ -1149,7 +1146,7 @@ rte_vfio_enable(const char *modname)
+-	RTE_TAILQ_FOREACH_SAFE(devopt, &devopt_list, next, tmp) {
++	RTE_TAILQ_FOREACH_SAFE(devopt, &user_cfg->devopt_list, next, tmp) {
+ 		if (ret == 0) {
+ 			ret = rte_devargs_add(devopt->type, devopt->arg);
+ 			if (ret)
+ 				EAL_LOG(ERR, "Unable to parse device '%s'",
+ 					devopt->arg);
+ 		}
+-		TAILQ_REMOVE(&devopt_list, devopt, next);
++		TAILQ_REMOVE(&user_cfg->devopt_list, devopt, next);
+ 		free(devopt);
  	}
- 	closedir(dir);
+ 	return ret;
+@@ -498,6 +488,7 @@ eal_reset_internal_config(void)
+ 	struct eal_runtime_state *runtime_state = eal_get_runtime_state();
+ 	int i;
  
--	if (user_cfg->process_type == RTE_PROC_PRIMARY) {
-+	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
- 		if (vfio_mp_sync_setup() == -1) {
- 			default_vfio_cfg->vfio_container_fd = -1;
- 		} else {
++	TAILQ_INIT(&user_cfg->devopt_list);
+ 	user_cfg->memory = 0;
+ 	user_cfg->force_nrank = 0;
+ 	user_cfg->force_nchannel = 0;
+diff --git a/lib/eal/common/eal_internal_cfg.h b/lib/eal/common/eal_internal_cfg.h
+index 47af403c27..4decc26d2c 100644
+--- a/lib/eal/common/eal_internal_cfg.h
++++ b/lib/eal/common/eal_internal_cfg.h
+@@ -10,6 +10,9 @@
+ #ifndef EAL_INTERNAL_CFG_H
+ #define EAL_INTERNAL_CFG_H
+ 
++#include <sys/queue.h>
++
++#include <rte_devargs.h>
+ #include <rte_eal.h>
+ #include <rte_os_shim.h>
+ #include <rte_pci_dev_feature_defs.h>
+@@ -54,11 +57,23 @@ struct hugepage_file_discipline {
+ 	bool unlink_existing;
+ };
+ 
++/**
++ * A single device option (-a/-b/--vdev) staged during arg parsing.
++ * Lives in user_cfg->devopt_list; drained by eal_option_device_parse().
++ */
++struct device_option {
++	TAILQ_ENTRY(device_option) next;
++	enum rte_devtype type;
++	char arg[];
++};
++TAILQ_HEAD(eal_devopt_list, device_option);
++
+ /**
+  * User-provided EAL initialization configuration.
+  * Immutable after initialization, so no need for atomic types or locks.
+  */
+ struct eal_user_cfg {
++	struct eal_devopt_list devopt_list; /**< staged device options (-a/-b/--vdev) */
+ 	size_t memory;           /**< amount of asked memory */
+ 	size_t huge_worker_stack_size; /**< worker thread stack size */
+ 	enum rte_proc_type_t process_type; /**< requested process type */
 -- 
 2.51.0
 
