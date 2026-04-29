@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3850BFF887E
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 15:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F667CCFA13
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 15:13:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id ECA6340666;
-	Wed, 29 Apr 2026 17:13:03 +0200 (CEST)
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com
- [209.85.160.54]) by mails.dpdk.org (Postfix) with ESMTP id C746E40151
- for <dev@dpdk.org>; Wed, 29 Apr 2026 17:13:01 +0200 (CEST)
-Received: by mail-oa1-f54.google.com with SMTP id
- 586e51a60fabf-40ede943bf0so8784079fac.2
- for <dev@dpdk.org>; Wed, 29 Apr 2026 08:13:01 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id DF84740689;
+	Wed, 29 Apr 2026 17:13:06 +0200 (CEST)
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com
+ [209.85.210.41]) by mails.dpdk.org (Postfix) with ESMTP id E7D5A40673
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 17:13:04 +0200 (CEST)
+Received: by mail-ot1-f41.google.com with SMTP id
+ 46e09a7af769-7dbccf6a23dso9875034a34.2
+ for <dev@dpdk.org>; Wed, 29 Apr 2026 08:13:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777475581;
- x=1778080381; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777475584;
+ x=1778080384; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=5H+yx/G+ecote8rYI5XhBhYycsLlMNN2O8ddiu5LSyQ=;
- b=tX6iK2ZKYhiAJPq5oWd8RXzFmnk6QRJY+Eb38L2fNfBnkEzG2O5r67DLPFC4aJSDAG
- kIQQVuu/1b9yVrgbE7Ze737GPkp/aZ7/5hPRX12jkCvYv56QqsNC1oNz3qiOzmMRyz+d
- laPYbHHo/dmPqqkExdkicLsGlqYuJl0olOozP0cGV41cSFeqXpDbB9T0t57yGuEkIHrg
- 9R/xX2Jh/ypPCKyPcgZXrLd4KRC2Bhz1itaJs350hOYmu2Q3fz09Nt2SJ22EMjgtTuDs
- 4sLd8VtMAjXydeKjQEuTirqybl20PoEaH3K5Qi7d9EKh9oftBaXdzNAf7jeyt25VJHaJ
- 8qjw==
+ bh=NkvsCKEhYvK74FFDKDVL0xPrtZ9MryjWAGR6mzjbZWA=;
+ b=DMauph7E+mTLN1E5l/SONvVEfPGPD2//u6+OKKFZ17WMsPNTBzNnHsqbDRgNJeKAx/
+ vYpXyfFWAnkP1hEe923PLOJLD8Sf5Ta3RA+3+Ct6s8VLqm1KwMTUEksX3qwUMia6w1ue
+ 9lTlCwsG6nuLpp1M+jOGC0bLsyaceIOa7tTFVlLQvDVm9ZzdKGm9VIGAuwVMcIqIp1qO
+ BTejh0ZMrwRgVdKUl+m4RoGwbQgTrPHvpy8uBVc5b7jC/wAH1J8bGrX+xHIcaQY4NSK5
+ uTyfParh1aW2P2STnzxTIsEIpICdVEvr14MkLQn4JTHuKvbcGvsz3Di0FlwlpBaZj07L
+ KEww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777475581; x=1778080381;
+ d=1e100.net; s=20251104; t=1777475584; x=1778080384;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=5H+yx/G+ecote8rYI5XhBhYycsLlMNN2O8ddiu5LSyQ=;
- b=m+m2kvFwfDQxyxzK82QtPWxx5QWBxFTP0kskEtRnbcoGO4Zwc6lqzy42WzTBiuFBQ7
- dhMqdaznEvCkrhcoHoo9MgH5zRlaO0QdcHcKkiIFtf8fglgBpruKuk0xq7XbXd3sUR5y
- c6wYmV+SXVaPup0Aq2gzvqbwMERObzVHsbu/qtj7KdizkloFkbVFATHg5opfztkyw6bL
- nx4IFIIi361a7t2FFNGRhHdKSLmmwMX8bosk9U1xt/3nyYUjed274nX9/utwcF7nV5+O
- 3jIHRWCshccifGlUj/wtmWpjHUhbe8xrGY7dFhd9gzAfqegyXsJj/7nkc1cBrJpT2yNE
- i+lA==
-X-Gm-Message-State: AOJu0YzAr2HqhPlcXnmaPl/lDM8A4vCDRatUVL+xOm0sx0SzoEOT+DZD
- iQb8PX5+vPVy+j5F5aIfcIlVStQ55j848wWZIKgXTHWnRjvfCrdySZjfe8CgZ0Ro9E8=
-X-Gm-Gg: AeBDietAnU0fAPedS0PX995EUqUMGXhMsTggwQGnWkoKuKemsZ++gJLkxBcNEuo50Pm
- zyKZbj9iEn1u20GRF67O6U/gVOh+nmYsMJY61kBJw0H+kLRqlfvIPd7NGTrkeYNOEe7qK5ni0ic
- AUAuzeC9/ZP45PGWwXN6zjsWFS/8CS9c4XOn1Kk4DRaOiUq8opfTWM/1U3AQzEUNzT8hX5Mu8jE
- Fm9XhGl6aB87RlI6+T1qSfe1suC+ZEDxCn3JM76DWa8O2m+uPNzKFpliHTqrBC58Nok3uFOZXQb
- il1ThtILJquJqN/9tWDIwT524qnTqHZlSlInt6tQ5hkebJSnDhGwI/E+buwB7E+Uk1YtvrbLu/4
- Tclbx3fjCwQvR+kbrKXCwTmF3dKhQ95u3xTk96u/EFwAAULk5D8XHGHoZd8cvD6uqr4re/EUiEt
- X69VGsZw62e2TfOsU0OcXss+BUqqdlMTFy+VXOGKEEwuir1A==
-X-Received: by 2002:a05:6871:e809:b0:42c:1b45:e8c3 with SMTP id
- 586e51a60fabf-433f3ab0685mr4600014fac.33.1777475580742; 
- Wed, 29 Apr 2026 08:13:00 -0700 (PDT)
+ bh=NkvsCKEhYvK74FFDKDVL0xPrtZ9MryjWAGR6mzjbZWA=;
+ b=QdyjD/Lb5DYWXi4AqiZCsPTsLv4HIZrE+MpxzeggvYrFy12wcDOnoiXM/dOMZnrPge
+ GPJ8Eo9fBo0OQmcTV4Rqr4ojX95VfzsXz8+Y/UUs9j6oK/SXXGgw9O/DCRUmEsGgOWIv
+ gan+lO8nCA/fTR56YcbZAMVsSbQo57h8Dl+WBm3niwN5WuX7kWZyri2PwJGiZIXFiyim
+ A8/L7saiO5OIma+GLEk45fPPSHjPzDvVZUs09W7HutyTBXw7F8QuPjFPC97kwFQaNo4v
+ yeOikq2/a2e52rvwZPH0c6/1SIkeyooMoBRom/D6P+IDKE7BFqTjdfWgJeSSAqiF6uNC
+ yEoQ==
+X-Gm-Message-State: AOJu0Ywa1FziFb3XsrdUQfqriIjfxXK9ZO12rVYfJpXt3NxH0AkTlYI9
+ N12nMVMe3b6GtqLfkZwNhyVnIH0luP3rfoH7TTL5jELq2mi9hzwDmH/GqK4qVElAO2Y=
+X-Gm-Gg: AeBDietc31tybXzAjkKW53hLCObAGgmT57d4Zj8ccE1WcWoyex6WQGYGk5tAPWZKlEo
+ zYpGzGpH6JiZZxPityXtPMChn7G+TfaxZd4IQYN4meI+WL7zeQjMHqyn8B79Jn5fGJNwIceJ0m7
+ DLc0eD+mxQTK+07T7spWOuwIoQfehDnrOyiQjSuseqSsZP38DA1X4AJhM2RqnyWIK0IY36icm2R
+ l4ty4L/5JO19TIEVr/kc5Xiq0nUd17c7OUMtofPcbo/N7GCwCySPEITL2GfJtjctdISb17YIsSJ
+ lVcMyfPGZ3zdjpK33Rb/tqXefWQnXZRUD/mhbyYOmzZ6Q9StQ3eTeUFYxZSoMFoaot56fAU2byz
+ rsyCVXq2OaH/E9VFqI0pzeyaOWdrpDpxbK4E0aagrnUqkHe25etCFIghIvul/TyRcbkCyLDVE0u
+ XunCZKUxfHWw8oh2liTA6ukgqXM92QFsSfK2KSoL0aXWVU4g==
+X-Received: by 2002:a05:6820:198b:b0:695:b571:e57a with SMTP id
+ 006d021491bc7-6965cb3a35bmr4056598eaf.33.1777475583967; 
+ Wed, 29 Apr 2026 08:13:03 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-4340e981839sm2161537fac.13.2026.04.29.08.12.59
+ 586e51a60fabf-4340e981839sm2161537fac.13.2026.04.29.08.13.02
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 29 Apr 2026 08:13:00 -0700 (PDT)
-Date: Wed, 29 Apr 2026 08:10:37 -0700
+ Wed, 29 Apr 2026 08:13:03 -0700 (PDT)
+Date: Wed, 29 Apr 2026 08:12:46 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Zaiyu Wang <zaiyuwang@trustnetic.com>
 Cc: dev@dpdk.org, stable@dpdk.org, Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: Re: [PATCH v2 08/20] net/txgbe: fix link flow control registers for
- Amber-Lite
-Message-ID: <20260429081037.23d4dd63@phoenix.local>
-In-Reply-To: <20260429102515.58880-9-zaiyuwang@trustnetic.com>
+Subject: Re: [PATCH v2 12/20] net/txgbe: fix link stability for 25G NIC
+Message-ID: <20260429081246.7e93cbba@phoenix.local>
+In-Reply-To: <20260429102515.58880-13-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
  <20260429102515.58880-1-zaiyuwang@trustnetic.com>
- <20260429102515.58880-9-zaiyuwang@trustnetic.com>
+ <20260429102515.58880-13-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -82,37 +81,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 29 Apr 2026 18:25:02 +0800
+On Wed, 29 Apr 2026 18:25:06 +0800
 Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 
-> The flow control counter registers on AML NICs differ from those on SP
-> NICs. Update the register offsets accordingly to ensure the counters
-> work correctly.
+> The link was previously configured via firmware, but this approach
+> resulted in unstable link behavior. To resolve the issue, re-add the
+> PHY configuration flow directly into the driver.
 >=20
-> Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-L=
-ite")
+> Fixes: ead3616f630d ("net/txgbe: support PHY configuration via SW-FW mail=
+box")
 > Cc: stable@dpdk.org
 >=20
 > Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 > ---
 
-AI review warning:
+AI review feedback spotted some things:
 
-Warning: txgbe_ethdev.c, in the AML branch added in txgbe_read_stats_regist=
-ers(), uses assignment instead of accumulation:
-
-=EF=BF=BC
-if (hw->mac.type =3D=3D txgbe_mac_aml || hw->mac.type =3D=3D txgbe_mac_aml4=
-0) {
-	hw_stats->rx_xon_packets =3D rd32(hw, TXGBE_PBRXLNKXON_AML);
-	hw_stats->rx_xoff_packets =3D rd32(hw, TXGBE_PBRXLNKXOFF_AML);
-} else {
-	hw_stats->rx_xon_packets +=3D rd32(hw, TXGBE_PBRXLNKXON);
-The AML registers are write-clearable (cleared with wr32(reg, 0) in txgbe_c=
-lear_hw_cntrs) rather than read-on-clear. Reads return the absolute count f=
-rom the hardware. txgbe_dev_stats_reset() zeros hw_stats but does not clear=
- the hardware register, so on the next stats_get() the counters will jump b=
-ack to the absolute hardware value rather than restarting from zero. The AM=
-L path needs the same offset-tracking pattern that UPDATE_QP_COUNTER_32bit =
-uses (or the AML registers need to be cleared in stats_reset).
-
+Review of this patch is partial; the patch adds 2,489 lines in a new txgbe_=
+e56.c file plus 1,742-line and 275-line headers, and a full per-function tr=
+ace was not completed. From what I have looked at:
+Info: drivers/net/txgbe/base/txgbe_e56.c defines a generic file-scope helpe=
+r named compare for qsort. Even though it's static, the name is unhelpfully=
+ generic; consider txgbe_e56_int_cmp or similar.
+Warning: txgbe_setup_phy_link_aml(): when txgbe_set_link_to_amlite() return=
+s TXGBE_ERR_TIMEOUT the function falls through to the out: label, which the=
+n reads TXGBE_PORTSTAT and re-checks link_up. But in the timeout path link_=
+up is whatever the earlier check_phy_link loop left it as, and the function=
+ clears hw->link_valid only in this branch =E2=80=94 yet check_phy_link rea=
+ds if (!hw->link_valid) *link_up =3D false;. After clearing link_valid, no =
+further check_phy_link is called before the out: block reads link_up, so th=
+e logic still works, but it's fragile. Worth a comment or restructure.
