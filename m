@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A38A7FF8867
-	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 10:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7130BFF8875
+	for <dpdk-dev@archiver.kernel.org>; Wed, 29 Apr 2026 10:27:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C31CF40A6C;
-	Wed, 29 Apr 2026 12:26:40 +0200 (CEST)
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
- by mails.dpdk.org (Postfix) with ESMTP id 5A7084066C;
- Wed, 29 Apr 2026 12:26:36 +0200 (CEST)
-X-QQ-mid: esmtpgz10t1777458389tfb40da38
-X-QQ-Originating-IP: olSGEZtgsbGMwxx7JhWZwvH6uMDKkzCcRlUgYbBgmGo=
+	by mails.dpdk.org (Postfix) with ESMTP id 90FA040691;
+	Wed, 29 Apr 2026 12:26:46 +0200 (CEST)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+ by mails.dpdk.org (Postfix) with ESMTP id 63DD1402A3;
+ Wed, 29 Apr 2026 12:26:38 +0200 (CEST)
+X-QQ-mid: esmtpgz10t1777458391teb410e21
+X-QQ-Originating-IP: PVXwEHsO2X9+KwFkxXPCfTEWPN+bOo+CNCDT8rwbcNU=
 Received: from DSK-zaiyuwang.trustnetic.com ( [36.24.191.108])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Wed, 29 Apr 2026 18:26:27 +0800 (CST)
+ id ; Wed, 29 Apr 2026 18:26:30 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12911537797599686191
+X-BIZMAIL-ID: 14695345988711160646
 EX-QQ-RecipientCnt: 5
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>, Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH v2 09/20] net/txgbe: fix link flow control config for Sapphire
-Date: Wed, 29 Apr 2026 18:25:03 +0800
-Message-Id: <20260429102515.58880-10-zaiyuwang@trustnetic.com>
+Subject: [PATCH v2 10/20] net/txgbe: fix a mass of unknown interrupts
+Date: Wed, 29 Apr 2026 18:25:04 +0800
+Message-Id: <20260429102515.58880-11-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260429102515.58880-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: esmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NvxNySBpH0QlY+yp8nbUfbBUd8YvFZNCq2sVcFxPaephn6emkMevXTK2
- y8q06FMMVq15T0vHOw//wFbelATZBDz7RKI1v1ijBuO9+ofWJoQVt05WYkxRjfIJ2WtpXux
- Ku0TPT99XqPMTb0+k+2fFG1zlzCvu8NuQiIj+7gcFrvqm2FZgGVZN/uzWfA9txV2IF2C11D
- yHziYPC1uPWH/McwBnpU0tQHW+HfWdHEiemosI5qNTgpzZBQ4N0zBXmNyKSNsnKU0aPbvx0
- WfPwI9qjxFwLUvRReWTfBRKZO0wyyaD14nGU3RmJ72Lbznxo8pJiOy9ddkr6jnJTjf+4cOK
- c+iGPBjDJLxrEuh2Uzaav7V102lbJxjEL6Qn0MdGpFsFZczrvz/PLE39VVeWhacTT8FzR6A
- jNthfTfuOIzntBwuBf51qK1Ao3RZYJ+cG199gRiCwXsTpqsSnsgP9jBVaHZOkBmdkR8eOYz
- kgb1poy0N2dtEXUGQh0Zt4BEZ0M7BHaJtQf0lvN3Ft6oc4yR/Mtp/iD4p/wvbH5yL/KO4LX
- 01kH3I0DlonWYthS1W3X92KG+2aXZj53BrpbTFow2nbZ2e63JIlgN/I/w1fYcXzKUPTZxFU
- VB/58pHhaRjdhaJ4T/Hrg0osPPPFnZxepz09DRDuC8BNfHiAJuZyopM1sBF9TapUsAqDe6d
- MBiGhHyO7MsKK41M0qBPRbv+/6ghKZ2+83xN4UUZu7ol0tVAA9lUiJfpSDOJSQXkWE2f+DZ
- k+Z+7volby2bQg11mMkOSqk52+/rv530YYp7T+YtrWvhhTTE5PFlJL8X4BTWZmxFE+1s7Xp
- Pp3OzuUdzwuoSAVu0DhDruDQIb3A119v1qYS6eFylWc1obKSgwyvfXMqF/Hx+s0RyHCOJ8A
- uJB6102+m4wpm5mXcoVzT+q8GnDemOs0ZGoHJdep6bDiz1YBCSkZLp5Kow3aS8i2VIXDzlN
- Cqt6+ZZyzdeQRfk8gFpQdj/zzUbaBXXHs/5qf8ghf4HDweTBl0iLgCMXMP6t7F/4XkEF1i/
- ICjele6S2fnZ4kTE43neWGZn/dZRZ+P+E8AQqX4Pa1o0r8D5Hu2jsdLqsjqicMQZEefe/uh
- Kne0KP1zGsL
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-XMAILINFO: NY3HYYTs4gYSfSAwjAacFV7MYpR6JB1l3khY/NGFzNRoCboSYhRamoYg
+ o4H74nY09E+oak8Z9eVopLGk2kNroqHO6pYGVJrLBlYr3X5TTckTyAivu9+iTQbGFrfagZK
+ ps2zaxQpFUBwiCe/nzUXvmjH4Ayx5f9wmjxnoDPcKwQ7KOTXX3xLHZr4a/VaUqio44FhKfP
+ LJG/e8Vz3BzzGupqJFtC7pIXkaOt/apOcrmWIZk6cuh52N0KGw6N9Zo7/ZgjBkKIhd1fMzV
+ IL4KEifCciulVJQT4qU4ddRQsMj9I28YKwsmWtZ8xdDLdR1B6h9PVUgU/ugHsKCfueBM8i/
+ 39EJy1D8w6Z/PTkDYmf1F3xM7Pi7LU5Oca/E1jtOpRaZN4aD2S6Ch7snvqE7sU3wCa+EGFQ
+ IU00ASDeZ7VfucfYS4ocPxo7h+EzId2Z6ggl8kWIE1KH3fHSxkSNwGI5HXfaD0oXtFcCwDC
+ BG4ss/Q0dOAeZKdkvxCHAIQa1dZ5a3rSodUAmba23OJEjDW+TlgSXYgZqTq5So0SG7W9vm5
+ 5QKSNp85h0fp0aVKt+ym0nR679Vhdp2iQ31L9ZlpAYxf/olauLxGmyo9Pu8miiXf4feSqtT
+ wd60tBRM3bQZzpJnLhkQdyKlgooc23cwDARCjktryZ9eNMX3+Fkl5omWireMPaR8Sjs80Hk
+ GoDF+E5/w5UWXYBpPOobWPSZJpW5U73BnAIKMIOubzJp2/XtAFW4BVnLVq/1HNp2Yl5hu1o
+ 4V7PCVEcYMKjFoMzgwW4ZdahdqDgSzWUylkBe2Q///j/AHul9nUGTtPhVTZa/ZXrAyXvzlm
+ 6jzqVqB/jeabKsh8HtDbZQZfTObBp3w/+fcVyjqR/WOVcYNfy/oU/gd4FWgWS+lONvK4fEi
+ Bww4Ks3YZEgg6wtc+8ajmVE+onBzVkBxaKZO3OiUN/IvPphgZLXCFAgxFfL494ujO1p3U/H
+ HTPgVCHGO+JesX0DHY4GhinUvY1lODvybRL/P6szuUttPEzwTBOuabMFMpvXlzBd52lMUZJ
+ b9wwsiVCSy2vOqFk4aIYsoSlImHvLXvH4rp+8rtf47bunuoqRP1DUEH07A3/IUzKGd0a8DM
+ rzH2B2Kc+310W3GWctn1EM=
+X-QQ-XMRINFO: NS+P29fieYNwqS3WCnRCOn9D1NpZuCnCRA==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,34 +66,84 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-SP chips have a hardware bug preventing XON flow control support,
-so the driver disables it.
+When RSC is enabled, Rx ring IVAR is set to configure ITR. It causes Rx
+ring interrupts report on the default msix_vector. Thus a mass of unknown
+interrupts occupy CPU.
 
-Fixes: 69ce8c8a4ce3 ("net/txgbe: support flow control")
+Fix the issue by setting ring IVAR only when the rxq interrupt is enabled.
+
+Fixes: be797cbf4582 ("net/txgbe: add Rx and Tx init")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_hw.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/txgbe_rxtx.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_hw.c b/drivers/net/txgbe/base/txgbe_hw.c
-index 52fead6171..0719b56e3c 100644
---- a/drivers/net/txgbe/base/txgbe_hw.c
-+++ b/drivers/net/txgbe/base/txgbe_hw.c
-@@ -1035,8 +1035,10 @@ s32 txgbe_fc_enable(struct txgbe_hw *hw)
- 	for (i = 0; i < TXGBE_DCB_TC_MAX; i++) {
- 		if ((hw->fc.current_mode & txgbe_fc_tx_pause) &&
- 		    hw->fc.high_water[i]) {
--			fcrtl = TXGBE_FCWTRLO_TH(hw->fc.low_water[i]) |
--				TXGBE_FCWTRLO_XON;
-+			fcrtl = TXGBE_FCWTRLO_TH(hw->fc.low_water[i]);
-+			/* SP doesn't support xon */
-+			if (hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40)
-+				fcrtl |= TXGBE_FCWTRLO_XON;
- 			fcrth = TXGBE_FCWTRHI_TH(hw->fc.high_water[i]) |
- 				TXGBE_FCWTRHI_XOFF;
- 		} else {
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index 72a4965693..be279dc4ec 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -4354,6 +4354,8 @@ static int
+ txgbe_set_rsc(struct rte_eth_dev *dev)
+ {
+ 	struct rte_eth_rxmode *rx_conf = &dev->data->dev_conf.rxmode;
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
+ 	struct rte_eth_dev_info dev_info = { 0 };
+ 	bool rsc_capable = false;
+@@ -4404,8 +4406,6 @@ txgbe_set_rsc(struct rte_eth_dev *dev)
+ 			rd32(hw, TXGBE_RXCFG(rxq->reg_idx));
+ 		uint32_t psrtype =
+ 			rd32(hw, TXGBE_POOLRSS(rxq->reg_idx));
+-		uint32_t eitr =
+-			rd32(hw, TXGBE_ITR(rxq->reg_idx));
+ 
+ 		/*
+ 		 * txgbe PMD doesn't support header-split at the moment.
+@@ -4424,6 +4424,9 @@ txgbe_set_rsc(struct rte_eth_dev *dev)
+ 		srrctl |= txgbe_get_rscctl_maxdesc(rxq->mb_pool);
+ 		psrtype |= TXGBE_POOLRSS_L4HDR;
+ 
++		wr32(hw, TXGBE_RXCFG(rxq->reg_idx), srrctl);
++		wr32(hw, TXGBE_POOLRSS(rxq->reg_idx), psrtype);
++
+ 		/*
+ 		 * RSC: Set ITR interval corresponding to 2K ints/s.
+ 		 *
+@@ -4437,19 +4440,20 @@ txgbe_set_rsc(struct rte_eth_dev *dev)
+ 		 * For a sparse streaming case this setting will yield
+ 		 * at most 500us latency for a single RSC aggregation.
+ 		 */
+-		eitr &= ~TXGBE_ITR_IVAL_MASK;
+-		eitr |= TXGBE_ITR_IVAL_10G(TXGBE_QUEUE_ITR_INTERVAL_DEFAULT);
+-		eitr |= TXGBE_ITR_WRDSA;
++		if (rte_intr_dp_is_en(intr_handle)) {
++			uint32_t eitr = rd32(hw, TXGBE_ITR(rxq->reg_idx));
+ 
+-		wr32(hw, TXGBE_RXCFG(rxq->reg_idx), srrctl);
+-		wr32(hw, TXGBE_POOLRSS(rxq->reg_idx), psrtype);
+-		wr32(hw, TXGBE_ITR(rxq->reg_idx), eitr);
++			eitr &= ~TXGBE_ITR_IVAL_MASK;
++			eitr |= TXGBE_ITR_IVAL_10G(TXGBE_QUEUE_ITR_INTERVAL_DEFAULT);
++			eitr |= TXGBE_ITR_WRDSA;
++			wr32(hw, TXGBE_ITR(rxq->reg_idx), eitr);
+ 
+-		/*
+-		 * RSC requires the mapping of the queue to the
+-		 * interrupt vector.
+-		 */
+-		txgbe_set_ivar_map(hw, 0, rxq->reg_idx, i);
++			/*
++			 * RSC requires the mapping of the queue to the
++			 * interrupt vector.
++			 */
++			txgbe_set_ivar_map(hw, 0, rxq->reg_idx, i);
++		}
+ 	}
+ 
+ 	dev->data->lro = 1;
 -- 
 2.21.0.windows.1
 
