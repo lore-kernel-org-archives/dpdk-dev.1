@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A992CFF8875
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 11:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30321CD13DE
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 11:15:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3CC9840689;
-	Thu, 30 Apr 2026 13:15:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2543A40A6E;
+	Thu, 30 Apr 2026 13:15:05 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id 1FBE9406BB
- for <dev@dpdk.org>; Thu, 30 Apr 2026 13:15:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 445DF406BB
+ for <dev@dpdk.org>; Thu, 30 Apr 2026 13:15:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777547701; x=1809083701;
+ t=1777547702; x=1809083702;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=V6qXlV2fRdn9U+aWaKgOpx2tj+T7Z101SLYVs4g4a9g=;
- b=IrM1Rvp73QLN8bTmxklrpYz+xDOs+8zkvlS9MI3iL87QV8NbPQkuVRvP
- wciN/SFnkjxCH+GQ1HbFF7yF5NAGWFZ9V4n6zwEAUqqy3OR0zjLc/H+8R
- GTkxGco25pzsRIJKRSTjw/+RH/+jWkFylHziWlQ1z91JPOMt911DNfW0o
- m9nGAg3mQD78AUprTtzAIqD/qgo2SjWI6hN+KO+bQ9YyWKj0JqXMjRpAQ
- oE9HHjnI5hABBFI1ce2VRdEl3wsijXuQaYcPOE+VrGhSe+0q3GUUevVdY
- zvUC6Vqv9bLaE3rPPRiIAnSFsi+qrG9Gms03Wn7jnPYyQNwecKj16P5eq g==;
-X-CSE-ConnectionGUID: HNhAMy61TXuZHaZvZxXABg==
-X-CSE-MsgGUID: oiDJ2PSkQaK9eOrnQn4g+A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="78482272"
-X-IronPort-AV: E=Sophos;i="6.23,208,1770624000"; d="scan'208";a="78482272"
+ bh=NnWi0Ag/8MSfI+6WeWfp19X7ycvvi0rZtoUWCFZ1uPg=;
+ b=oHvOAwqiII3AiKPbA4w/N2NqyKWa1/MBfDl5WLYhPf7R2IgpoQghhqSd
+ 19/guCfASRUhjFF9SWPbkyco3KgTVrwHXoscqpfanemKzvdatBgl41kfJ
+ HIQGvOGQC23rCfSREEJZ/g2o90uokUA5K23k7ev80y92qRQvdXMaFRn+r
+ Z0od1QGELT3B37nqkZ0gYzj6TFJKsBA8vkMbOPIfkmaT5VGHY13+pTW0f
+ 8TuBusG6KYpMBXkyBKWbkEMkm+wm1lQD6Wba3p8x+UyiQU7Dn+EsTeVdH
+ ButD2z1bJlllafxoCLu8dlz47v9TjUl7Hp6mqd/RehDgfvdfZuUVifQEJ g==;
+X-CSE-ConnectionGUID: zFJbulLDTrG9JlO/kKysUg==
+X-CSE-MsgGUID: nEjB665DTZmAgpSDNoO5dg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="78482273"
+X-IronPort-AV: E=Sophos;i="6.23,208,1770624000"; d="scan'208";a="78482273"
 Received: from orviesa008.jf.intel.com ([10.64.159.148])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Apr 2026 04:15:01 -0700
-X-CSE-ConnectionGUID: 0IPL6I6OQMely6xcIoMcBA==
-X-CSE-MsgGUID: BxVqVT9IQL+6tKUmmDKxOQ==
+ 30 Apr 2026 04:15:02 -0700
+X-CSE-ConnectionGUID: 2l8YZFGzRquBAzWMJmeaaA==
+X-CSE-MsgGUID: KVF/s8pRRnm2v+hWFaRFUg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,208,1770624000"; d="scan'208";a="234444742"
+X-IronPort-AV: E=Sophos;i="6.23,208,1770624000"; d="scan'208";a="234444748"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa008.jf.intel.com with ESMTP; 30 Apr 2026 04:14:59 -0700
+ by orviesa008.jf.intel.com with ESMTP; 30 Apr 2026 04:15:02 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
-To: dev@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
- Wei Dai <wei.dai@intel.com>, Beilei Xing <beilei.xing@intel.com>,
- Wenzhuo Lu <wenzhuo.lu@intel.com>, Wei Zhao <wei.zhao1@intel.com>
-Subject: [PATCH v1 06/15] net/ixgbe: reset flow state on clear paths
-Date: Thu, 30 Apr 2026 12:14:35 +0100
-Message-ID: <57f6080d8e2a88cb3a3e761173ff12c909432e4a.1777547413.git.anatoly.burakov@intel.com>
+To: dev@dpdk.org,
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v1 07/15] net/ixgbe: store max VFs in adapter
+Date: Thu, 30 Apr 2026 12:14:36 +0100
+Message-ID: <359f4b27c0f27fb23f88f0e576ba0a7c508671e8.1777547413.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <cover.1777547413.git.anatoly.burakov@intel.com>
 References: 
@@ -60,68 +59,95 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When all FDIR rules are removed (either through destroy or flush), the
-driver does not fully reset its state. This can result in picking up stale
-state in some circumstances.
+Currently, `rte_flow`-related checks use `rte_eth_dev` to check for max
+VFs. With coming rework of flows, the aim is to make the code as
+multiprocess agnostic as possible, and `rte_eth_dev` pointer is
+process-local.
 
-Fix by clearing internal state when FDIR flow list is empty.
-
-Fixes: 11777435c727 ("net/ixgbe: parse flow director filter")
-Cc: stable@dpdk.org
+To support this in VF-related checks, cache max_vfs in ixgbe adapter
+during device init and read it in the rte_flow check paths to avoid direct
+dependency on `rte_eth_dev`.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ixgbe/ixgbe_fdir.c | 7 +++++++
- drivers/net/intel/ixgbe/ixgbe_flow.c | 7 ++++++-
- 2 files changed, 13 insertions(+), 1 deletion(-)
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c | 3 ++-
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h | 1 +
+ drivers/net/intel/ixgbe/ixgbe_flow.c   | 8 ++++----
+ 3 files changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/intel/ixgbe/ixgbe_fdir.c b/drivers/net/intel/ixgbe/ixgbe_fdir.c
-index 38f589623e..f51582a4bf 100644
---- a/drivers/net/intel/ixgbe/ixgbe_fdir.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_fdir.c
-@@ -1358,6 +1358,7 @@ ixgbe_fdir_filter_restore(struct rte_eth_dev *dev)
- int
- ixgbe_clear_all_fdir_filter(struct rte_eth_dev *dev)
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index 5c95507d60..1c4a2e1177 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -1084,7 +1084,7 @@ ixgbe_parse_devargs(struct ixgbe_adapter *adapter,
+ static int
+ eth_ixgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
  {
-+	struct rte_eth_fdir_conf *fdir_conf = IXGBE_DEV_FDIR_CONF(dev);
- 	struct ixgbe_hw_fdir_info *fdir_info =
- 		IXGBE_DEV_PRIVATE_TO_FDIR_INFO(dev->data->dev_private);
- 	struct ixgbe_fdir_filter *fdir_filter;
-@@ -1376,6 +1377,12 @@ ixgbe_clear_all_fdir_filter(struct rte_eth_dev *dev)
- 		rte_free(fdir_filter);
- 	}
+-	struct ixgbe_adapter *ad = eth_dev->data->dev_private;
++	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(eth_dev->data->dev_private);
+ 	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(eth_dev);
+ 	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
+ 	struct ixgbe_hw *hw =
+@@ -1151,6 +1151,7 @@ eth_ixgbe_dev_init(struct rte_eth_dev *eth_dev, void *init_params __rte_unused)
+ 	hw->vendor_id = pci_dev->id.vendor_id;
+ 	hw->hw_addr = (void *)pci_dev->mem_resource[0].addr;
+ 	hw->allow_unsupported_sfp = 1;
++	ad->max_vfs = pci_dev->max_vfs;
  
-+	/* reset internal FDIR state */
-+	fdir_info->mask = (struct ixgbe_hw_fdir_mask){0};
-+	fdir_info->flex_bytes_offset = 0;
-+	fdir_info->mask_added = FALSE;
-+	fdir_conf->mode = RTE_FDIR_MODE_NONE;
-+
- 	if (filter_flag != NULL)
- 		ret = ixgbe_fdir_flush(dev);
+ 	/* Initialize the shared code (base driver) */
+ #ifdef RTE_LIBRTE_IXGBE_BYPASS
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+index a0a2ea23b2..2fb6d55387 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+@@ -506,6 +506,7 @@ struct ixgbe_adapter {
  
+ 	/* Used for limiting SDP3 TX_DISABLE checks */
+ 	uint8_t sdp3_no_tx_disable;
++	uint16_t max_vfs;
+ 
+ 	/* Used for VF link sync with PF's physical and logical (by checking
+ 	 * mailbox status) link status.
 diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
-index 6e87d373ad..b73037d4c3 100644
+index b73037d4c3..e641a9d405 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_flow.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
-@@ -3473,11 +3473,16 @@ ixgbe_flow_destroy(struct rte_eth_dev *dev,
- 			sizeof(struct ixgbe_fdir_rule));
- 		ret = ixgbe_fdir_filter_program(dev, &fdir_rule, TRUE, FALSE);
- 		if (!ret) {
-+			struct rte_eth_fdir_conf *fdir_conf = IXGBE_DEV_FDIR_CONF(dev);
- 			TAILQ_REMOVE(&flow_lists->fdir_list,
- 				&fdir_rule_ptr->base, entries);
- 			rte_free(fdir_rule_ptr);
--			if (TAILQ_EMPTY(&flow_lists->fdir_list))
-+			if (TAILQ_EMPTY(&flow_lists->fdir_list)) {
- 				fdir_info->mask_added = false;
-+				fdir_info->mask = (struct ixgbe_hw_fdir_mask){0};
-+				fdir_info->flex_bytes_offset = 0;
-+				fdir_conf->mode = RTE_FDIR_MODE_NONE;
-+			}
- 		}
- 		break;
- 	case RTE_ETH_FILTER_L2_TUNNEL:
+@@ -1263,7 +1263,7 @@ cons_parse_l2_tn_filter(struct rte_eth_dev *dev,
+ 	const struct rte_flow_item_e_tag *e_tag_mask;
+ 	const struct rte_flow_action *act;
+ 	const struct rte_flow_action_vf *act_vf;
+-	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 
+ 	if (!pattern) {
+ 		rte_flow_error_set(error, EINVAL,
+@@ -1395,7 +1395,7 @@ cons_parse_l2_tn_filter(struct rte_eth_dev *dev,
+ 		act_vf = (const struct rte_flow_action_vf *)act->conf;
+ 		filter->pool = act_vf->id;
+ 	} else {
+-		filter->pool = pci_dev->max_vfs;
++		filter->pool = ad->max_vfs;
+ 	}
+ 
+ 	/* check if the next not void item is END */
+@@ -1421,7 +1421,7 @@ ixgbe_parse_l2_tn_filter(struct rte_eth_dev *dev,
+ {
+ 	int ret = 0;
+ 	struct ixgbe_hw *hw = IXGBE_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+-	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	struct ixgbe_adapter *ad = IXGBE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 	uint16_t vf_num;
+ 
+ 	ret = cons_parse_l2_tn_filter(dev, attr, pattern,
+@@ -1438,7 +1438,7 @@ ixgbe_parse_l2_tn_filter(struct rte_eth_dev *dev,
+ 		return -rte_errno;
+ 	}
+ 
+-	vf_num = pci_dev->max_vfs;
++	vf_num = ad->max_vfs;
+ 
+ 	if (l2_tn_filter->pool > vf_num)
+ 		return -rte_errno;
 -- 
 2.47.3
 
