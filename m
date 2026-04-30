@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD15BCCFA13
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 10:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21024CCFA13
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 11:00:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 13BF640672;
-	Thu, 30 Apr 2026 12:31:52 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 31A1C4066A
- for <dev@dpdk.org>; Thu, 30 Apr 2026 12:31:48 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 67B694028C;
+	Thu, 30 Apr 2026 13:00:52 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+ by mails.dpdk.org (Postfix) with ESMTP id A9B2E4021F
+ for <dev@dpdk.org>; Thu, 30 Apr 2026 13:00:50 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777545108; x=1809081108;
+ t=1777546851; x=1809082851;
  h=from:to:subject:date:message-id:in-reply-to:references:
  mime-version:content-transfer-encoding;
- bh=BXMAsUb/ve3BrwI9TIKCQqi8RQRtDN3IDSjOszFn7T8=;
- b=ANXg/9BGXdrzp8b0va5Ch1EncJ9f7dLaUIw5DSkBs09/UDzRz9tP7usi
- MLip0csAqdRdvs5mm+OjI/xc1d6A15yaBQoJr/jiWIy4pHCEWawUCPGrW
- EjJhBmhxeWYGFKVoknhuOMcGAckPH9qc3s6Dy7kwIsNNnbM9Iv8fyTqT4
- Ezdk6/4fplXJKOigmBWVfKK2sjWgcocjoaLdKU/tn/TLMZwlEpy78gQLd
- g3fenTbZea3caHrm+sJvw7UWBzIfl2Fg7BaFGc3Kty2Rjih76gEx+QfjT
- 3WrzGd/96c08zC6f6/VEvjXMnBymYeSYMFRavCkIYzVh1JhGPv4VdZ0gw A==;
-X-CSE-ConnectionGUID: 8gxrIYX2Rbunsh0MbgXlbg==
-X-CSE-MsgGUID: b14bwdIvSgyryiQ1GjjGuQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="82097493"
-X-IronPort-AV: E=Sophos;i="6.23,207,1770624000"; d="scan'208";a="82097493"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
- by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 30 Apr 2026 03:31:48 -0700
-X-CSE-ConnectionGUID: whVFic1QRGmnVYMtC9Ctuw==
-X-CSE-MsgGUID: TYhqIa9PRF+A1Lp3FhUnIQ==
+ bh=4n0A/HWN5Ni2YQmjMdMd+T+0JyHbSsYWaxA3O1GumxA=;
+ b=TL14R9poERJvf1xQIfDLI/rSDcVRbIysjsj+Juzw9IfkwRYCN4HR6NSG
+ xOnz6xVCuadfTwBoSlId71k+kW5NH7e1qXKFG2mQ04rT79giOgx/p6rEB
+ 40I3ZgDLVYuvtEx2cXMQWw/ka1LIpv9HgfcgReyzrzpzzUFHtVI+WYgWE
+ jUngJPkTLWgVnuasTAmDMDzY2jWKJ14x2/YHIQe6a5x1/d+DMxJi6dyVE
+ MHOyDqlCRKpVuUnt6kiSYrnj+jcEEqzx2CyRo5Z40t+93Vtrs+gATAqYE
+ m0tjjEvfKkkcmCz29JZ+cJmjnGP6Hy8TU9rs7zxoK+gltqN7Ikb1VjQLU g==;
+X-CSE-ConnectionGUID: nDUKUkLRTeaeSR7ttwTOvw==
+X-CSE-MsgGUID: FwnFmKjiSV+MXfKZRoC+mA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11771"; a="89953111"
+X-IronPort-AV: E=Sophos;i="6.23,207,1770624000"; d="scan'208";a="89953111"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+ by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 30 Apr 2026 04:00:50 -0700
+X-CSE-ConnectionGUID: 3v5e+5GgTmupC64Lyb5ZpQ==
+X-CSE-MsgGUID: 2oG0dQtKTvWpSWi/TGXehQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,207,1770624000"; d="scan'208";a="234584386"
+X-IronPort-AV: E=Sophos;i="6.23,207,1770624000"; d="scan'208";a="272671424"
 Received: from silpixa00401119.ir.intel.com ([10.20.224.206])
- by orviesa009.jf.intel.com with ESMTP; 30 Apr 2026 03:31:48 -0700
+ by orviesa001.jf.intel.com with ESMTP; 30 Apr 2026 04:00:49 -0700
 From: Anatoly Burakov <anatoly.burakov@intel.com>
 To: dev@dpdk.org,
-	Bruce Richardson <bruce.richardson@intel.com>
-Subject: [PATCH v1 4/4] net/ice: implement flow dump
-Date: Thu, 30 Apr 2026 11:31:41 +0100
-Message-ID: <b263c72cacd37d73855237627a5a79edd992793c.1777545092.git.anatoly.burakov@intel.com>
+	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Subject: [PATCH v2 1/4] net/ixgbe: implement flow dump
+Date: Thu, 30 Apr 2026 12:00:44 +0100
+Message-ID: <cc3919f5b33e633d4fea632ac2126eed2b537175.1777546834.git.anatoly.burakov@intel.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <8885d9b4e9d1290b5340b9eb3da06d7acb2973c2.1777545092.git.anatoly.burakov@intel.com>
-References: 
+References: <8885d9b4e9d1290b5340b9eb3da06d7acb2973c2.1777545092.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -63,98 +63,141 @@ Implement flow dumping API.
 
 Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
 ---
- drivers/net/intel/ice/ice_acl_filter.c    |  2 +
- drivers/net/intel/ice/ice_fdir_filter.c   |  2 +
- drivers/net/intel/ice/ice_generic_flow.c  | 77 +++++++++++++++++++++++
- drivers/net/intel/ice/ice_generic_flow.h  |  2 +
- drivers/net/intel/ice/ice_hash.c          |  2 +
- drivers/net/intel/ice/ice_switch_filter.c |  2 +
- 6 files changed, 87 insertions(+)
+ drivers/net/intel/ixgbe/ixgbe_ethdev.h |   3 +
+ drivers/net/intel/ixgbe/ixgbe_flow.c   | 141 +++++++++++++++++++++++++
+ 2 files changed, 144 insertions(+)
 
-diff --git a/drivers/net/intel/ice/ice_acl_filter.c b/drivers/net/intel/ice/ice_acl_filter.c
-index 6754a40044..3939579598 100644
---- a/drivers/net/intel/ice/ice_acl_filter.c
-+++ b/drivers/net/intel/ice/ice_acl_filter.c
-@@ -1099,7 +1099,9 @@ ice_flow_engine ice_acl_engine = {
- 	.create = ice_acl_create_filter,
- 	.destroy = ice_acl_destroy_filter,
- 	.free = ice_acl_filter_free,
-+	.name = "acl",
- 	.type = ICE_FLOW_ENGINE_ACL,
-+	.rule_size = sizeof(struct acl_rule),
- };
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.h b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+index 32d7b98ed1..3f00896943 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.h
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.h
+@@ -515,6 +515,9 @@ uint16_t ixgbe_vf_representor_tx_burst(void *tx_queue, struct rte_mbuf **tx_pkts
+ #define IXGBE_DEV_FDIR_CONF(dev) \
+ 	(&((struct ixgbe_adapter *)(dev)->data->dev_private)->fdir_conf)
  
- struct
-diff --git a/drivers/net/intel/ice/ice_fdir_filter.c b/drivers/net/intel/ice/ice_fdir_filter.c
-index ce80213429..f2b1a3a841 100644
---- a/drivers/net/intel/ice/ice_fdir_filter.c
-+++ b/drivers/net/intel/ice/ice_fdir_filter.c
-@@ -1688,7 +1688,9 @@ static struct ice_flow_engine ice_fdir_engine = {
- 	.create = ice_fdir_create_filter,
- 	.destroy = ice_fdir_destroy_filter,
- 	.query_count = ice_fdir_query_count,
-+	.name = "fdir",
- 	.type = ICE_FLOW_ENGINE_FDIR,
-+	.rule_size = sizeof(struct ice_fdir_filter_conf),
- };
++#define IXGBE_DEV_PRIVATE_TO_ADAPTER(adapter) \
++	((struct ixgbe_adapter *)adapter)
++
+ #define IXGBE_DEV_PRIVATE_TO_HW(adapter)\
+ 	(&((struct ixgbe_adapter *)adapter)->hw)
  
- static int
-diff --git a/drivers/net/intel/ice/ice_generic_flow.c b/drivers/net/intel/ice/ice_generic_flow.c
-index 62f0c334a1..924caca94b 100644
---- a/drivers/net/intel/ice/ice_generic_flow.c
-+++ b/drivers/net/intel/ice/ice_generic_flow.c
-@@ -13,6 +13,7 @@
- 
- #include <rte_ether.h>
- #include <ethdev_driver.h>
+diff --git a/drivers/net/intel/ixgbe/ixgbe_flow.c b/drivers/net/intel/ixgbe/ixgbe_flow.c
+index 01cd4f9bde..e40ece9755 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_flow.c
++++ b/drivers/net/intel/ixgbe/ixgbe_flow.c
+@@ -6,6 +6,7 @@
+ #include <stdio.h>
+ #include <errno.h>
+ #include <stdint.h>
++#include <stddef.h>
+ #include <string.h>
+ #include <unistd.h>
+ #include <stdarg.h>
+@@ -29,6 +30,7 @@
+ #include <dev_driver.h>
+ #include <rte_hash_crc.h>
+ #include <rte_flow.h>
 +#include <rte_hexdump.h>
- #include <rte_malloc.h>
- #include <rte_tailq.h>
+ #include <rte_flow_driver.h>
  
-@@ -46,6 +47,10 @@ static int ice_flow_query(struct rte_eth_dev *dev,
- 		const struct rte_flow_action *actions,
- 		void *data,
- 		struct rte_flow_error *error);
-+static int ice_flow_dev_dump(struct rte_eth_dev *dev,
-+		struct rte_flow *flow,
-+		FILE *file,
-+		struct rte_flow_error *error);
- 
- const struct rte_flow_ops ice_flow_ops = {
- 	.validate = ice_flow_validate,
-@@ -53,6 +58,7 @@ const struct rte_flow_ops ice_flow_ops = {
- 	.destroy = ice_flow_destroy,
- 	.flush = ice_flow_flush,
- 	.query = ice_flow_query,
-+	.dev_dump = ice_flow_dev_dump,
- };
- 
- /* empty */
-@@ -2649,6 +2655,77 @@ ice_flow_query(struct rte_eth_dev *dev,
- 	return ret;
+ #include "ixgbe_logs.h"
+@@ -3581,9 +3583,148 @@ ixgbe_flow_flush(struct rte_eth_dev *dev,
+ 	return 0;
  }
  
-+#define ICE_FLOW_DUMP_CHUNK_BYTES 32
++#define IXGBE_FLOW_DUMP_CHUNK_BYTES 32
++
++static const char *
++ixgbe_flow_rule_engine_name(const struct rte_flow *flow)
++{
++	if (flow->is_security)
++		return "security";
++
++	switch (flow->filter_type) {
++	case RTE_ETH_FILTER_NTUPLE:
++		return "ntuple";
++	case RTE_ETH_FILTER_ETHERTYPE:
++		return "ethertype";
++	case RTE_ETH_FILTER_SYN:
++		return "syn";
++	case RTE_ETH_FILTER_FDIR:
++		return "fdir";
++	case RTE_ETH_FILTER_L2_TUNNEL:
++		return "l2_tunnel";
++	case RTE_ETH_FILTER_HASH:
++		return "hash";
++	default:
++		return "unknown";
++	}
++}
++
++static size_t
++ixgbe_flow_rule_size(const struct rte_flow *flow)
++{
++	if (flow->is_security)
++		return 0;
++
++	switch (flow->filter_type) {
++	case RTE_ETH_FILTER_NTUPLE:
++		return sizeof(struct rte_eth_ntuple_filter);
++	case RTE_ETH_FILTER_ETHERTYPE:
++		return sizeof(struct rte_eth_ethertype_filter);
++	case RTE_ETH_FILTER_SYN:
++		return sizeof(struct rte_eth_syn_filter);
++	case RTE_ETH_FILTER_FDIR:
++		return sizeof(struct ixgbe_fdir_rule);
++	case RTE_ETH_FILTER_L2_TUNNEL:
++		return sizeof(struct ixgbe_l2_tunnel_conf);
++	case RTE_ETH_FILTER_HASH:
++		return sizeof(struct ixgbe_rte_flow_rss_conf);
++	default:
++		return 0;
++	}
++}
++
++static const void *
++ixgbe_flow_rule_data(const struct rte_flow *flow)
++{
++	if (flow->is_security || flow->rule == NULL)
++		return NULL;
++
++	switch (flow->filter_type) {
++	case RTE_ETH_FILTER_NTUPLE:
++		return RTE_PTR_ADD(flow->rule, sizeof(TAILQ_ENTRY(ixgbe_ntuple_filter_ele)));
++	case RTE_ETH_FILTER_ETHERTYPE:
++		return RTE_PTR_ADD(flow->rule, sizeof(TAILQ_ENTRY(ixgbe_ethertype_filter_ele)));
++	case RTE_ETH_FILTER_SYN:
++		return RTE_PTR_ADD(flow->rule, sizeof(TAILQ_ENTRY(ixgbe_eth_syn_filter_ele)));
++	case RTE_ETH_FILTER_FDIR:
++		return RTE_PTR_ADD(flow->rule, sizeof(TAILQ_ENTRY(ixgbe_fdir_rule_ele)));
++	case RTE_ETH_FILTER_L2_TUNNEL:
++		return RTE_PTR_ADD(flow->rule, sizeof(TAILQ_ENTRY(ixgbe_eth_l2_tunnel_conf_ele)));
++	case RTE_ETH_FILTER_HASH:
++		return RTE_PTR_ADD(flow->rule, sizeof(TAILQ_ENTRY(ixgbe_rss_conf_ele)));
++	default:
++		return NULL;
++	}
++}
 +
 +static void
-+ice_flow_dump_blob(FILE *file, const char *engine,
-+		   const void *data, size_t data_len)
++ixgbe_flow_dump_blob(FILE *file, const char *engine,
++		     const void *data, size_t data_len)
 +{
 +	const uint8_t *raw = (const uint8_t *)data;
 +	const size_t nchunks =
-+		(data_len + ICE_FLOW_DUMP_CHUNK_BYTES - 1) /
-+		ICE_FLOW_DUMP_CHUNK_BYTES;
++		(data_len + IXGBE_FLOW_DUMP_CHUNK_BYTES - 1) /
++		IXGBE_FLOW_DUMP_CHUNK_BYTES;
 +	char title[64];
 +	size_t ci;
 +
-+	fprintf(file, "FLOW DUMP: driver=ice engine=%s\n", engine);
++	fprintf(file, "FLOW DUMP: driver=ixgbe engine=%s\n", engine);
 +	fprintf(file, "FLOW DUMP: DATA size=%zu chunks=%zu chunk_bytes=%d\n",
-+		data_len, nchunks, ICE_FLOW_DUMP_CHUNK_BYTES);
++		data_len, nchunks, IXGBE_FLOW_DUMP_CHUNK_BYTES);
 +
 +	for (ci = 0; ci < nchunks; ci++) {
-+		const size_t off = ci * ICE_FLOW_DUMP_CHUNK_BYTES;
++		const size_t off = ci * IXGBE_FLOW_DUMP_CHUNK_BYTES;
 +		const size_t clen =
-+			RTE_MIN((size_t)ICE_FLOW_DUMP_CHUNK_BYTES, data_len - off);
++			RTE_MIN((size_t)IXGBE_FLOW_DUMP_CHUNK_BYTES, data_len - off);
 +
 +		snprintf(title, sizeof(title), "FLOW DUMP: chunk %03zu/%03zu",
 +			 ci + 1, nchunks);
@@ -163,39 +206,34 @@ index 62f0c334a1..924caca94b 100644
 +}
 +
 +static int
-+ice_flow_dev_dump(struct rte_eth_dev *dev,
-+		  struct rte_flow *flow,
-+		  FILE *file,
-+		  struct rte_flow_error *error)
++ixgbe_flow_dev_dump(struct rte_eth_dev *dev __rte_unused,
++		    struct rte_flow *flow,
++		    FILE *file,
++		    struct rte_flow_error *error)
 +{
-+	struct ice_adapter *ad =
-+		ICE_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
-+	struct ice_pf *pf = &ad->pf;
-+	struct rte_flow *p_flow;
++	struct ixgbe_flow_mem *flow_mem_base;
 +	bool found = false;
 +
-+	rte_spinlock_lock(&pf->flow_ops_lock);
-+	TAILQ_FOREACH(p_flow, &pf->flow_list, node) {
-+		size_t rule_size = 0;
++	TAILQ_FOREACH(flow_mem_base, &ixgbe_flow_list, entries) {
++		struct ixgbe_flow_mem *ixgbe_flow_mem_ptr =
++			(struct ixgbe_flow_mem *)flow_mem_base;
++		struct rte_flow *p_flow = ixgbe_flow_mem_ptr->flow;
 +		const void *rule_data = NULL;
++		const char *engine_name;
++		size_t rule_size = 0;
 +
 +		if (flow != NULL && p_flow != flow)
 +			continue;
 +
 +		found = true;
-+		if (p_flow->engine != NULL) {
-+			rule_size = p_flow->engine->rule_size;
-+			if (p_flow->rule != NULL)
-+				rule_data = p_flow->rule;
++		if (p_flow->rule != NULL) {
++			rule_data = ixgbe_flow_rule_data(p_flow);
++			rule_size = ixgbe_flow_rule_size(p_flow);
 +		}
-+
-+		if (p_flow->engine != NULL)
-+			ice_flow_dump_blob(file,
-+				p_flow->engine->name != NULL ?
-+				p_flow->engine->name : "unknown",
-+				rule_data, rule_size);
++		engine_name = ixgbe_flow_rule_engine_name(p_flow);
++		ixgbe_flow_dump_blob(file, engine_name,
++			rule_data, rule_size);
 +	}
-+	rte_spinlock_unlock(&pf->flow_ops_lock);
 +
 +	if (flow != NULL && !found)
 +		return rte_flow_error_set(error, ENOENT,
@@ -205,51 +243,13 @@ index 62f0c334a1..924caca94b 100644
 +	return 0;
 +}
 +
- int
- ice_flow_redirect(struct ice_adapter *ad,
- 		  struct ice_flow_redirect *rd)
-diff --git a/drivers/net/intel/ice/ice_generic_flow.h b/drivers/net/intel/ice/ice_generic_flow.h
-index c0eed84610..dbb21c47ab 100644
---- a/drivers/net/intel/ice/ice_generic_flow.h
-+++ b/drivers/net/intel/ice/ice_generic_flow.h
-@@ -539,7 +539,9 @@ struct ice_flow_engine {
- 	engine_query_t query_count;
- 	engine_redirect_t redirect;
- 	engine_free_t free;
-+	const char *name;
- 	enum ice_flow_engine_type type;
-+	size_t rule_size;
+ const struct rte_flow_ops ixgbe_flow_ops = {
+ 	.validate = ixgbe_flow_validate,
+ 	.create = ixgbe_flow_create,
+ 	.destroy = ixgbe_flow_destroy,
+ 	.flush = ixgbe_flow_flush,
++	.dev_dump = ixgbe_flow_dev_dump,
  };
- TAILQ_HEAD(ice_engine_list, ice_flow_engine);
- 
-diff --git a/drivers/net/intel/ice/ice_hash.c b/drivers/net/intel/ice/ice_hash.c
-index 77829e607b..835f113e82 100644
---- a/drivers/net/intel/ice/ice_hash.c
-+++ b/drivers/net/intel/ice/ice_hash.c
-@@ -589,7 +589,9 @@ static struct ice_flow_engine ice_hash_engine = {
- 	.destroy = ice_hash_destroy,
- 	.uninit = ice_hash_uninit,
- 	.free = ice_hash_free,
-+	.name = "hash",
- 	.type = ICE_FLOW_ENGINE_HASH,
-+	.rule_size = sizeof(struct ice_hash_flow_cfg),
- };
- 
- /* Register parser for os package. */
-diff --git a/drivers/net/intel/ice/ice_switch_filter.c b/drivers/net/intel/ice/ice_switch_filter.c
-index b25e5eaad3..2da8c5c3c8 100644
---- a/drivers/net/intel/ice/ice_switch_filter.c
-+++ b/drivers/net/intel/ice/ice_switch_filter.c
-@@ -2070,7 +2070,9 @@ ice_flow_engine ice_switch_engine = {
- 	.query_count = ice_switch_query,
- 	.redirect = ice_switch_redirect,
- 	.free = ice_switch_filter_rule_free,
-+	.name = "switch",
- 	.type = ICE_FLOW_ENGINE_SWITCH,
-+	.rule_size = sizeof(struct ice_switch_filter_conf),
- };
- 
- struct
 -- 
 2.47.3
 
