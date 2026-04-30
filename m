@@ -2,68 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60468CD13D3
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 17:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F97FCD13D3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 17:23:52 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8DAD040395;
-	Thu, 30 Apr 2026 19:22:55 +0200 (CEST)
-Received: from mail-dl1-f47.google.com (mail-dl1-f47.google.com [74.125.82.47])
- by mails.dpdk.org (Postfix) with ESMTP id 051264021F
- for <dev@dpdk.org>; Thu, 30 Apr 2026 19:22:54 +0200 (CEST)
-Received: by mail-dl1-f47.google.com with SMTP id
- a92af1059eb24-12dbd0f7ecaso2606265c88.0
- for <dev@dpdk.org>; Thu, 30 Apr 2026 10:22:53 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id A61D14021F;
+	Thu, 30 Apr 2026 19:23:51 +0200 (CEST)
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
+ [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id 07DD6400D6
+ for <dev@dpdk.org>; Thu, 30 Apr 2026 19:23:50 +0200 (CEST)
+Received: by mail-dy1-f171.google.com with SMTP id
+ 5a478bee46e88-2ed0a45e970so1401230eec.1
+ for <dev@dpdk.org>; Thu, 30 Apr 2026 10:23:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777569773;
- x=1778174573; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777569829;
+ x=1778174629; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:to:from:date:from:to:cc:subject:date:message-id
- :reply-to; bh=qb7ApX+ULciiqQCyAC7iQca6lC853MF9CviVxpL6LVM=;
- b=IQLXLKfSkvWVIFo5dPsJ9MmHMZ6i9sRAc33Itc/hMWs1Bth9eK5k3OmCETZJ9t2gWc
- tg3V/vS3UFq9aBM33NbuXuMGsjOrPDWjUHUgGB7LPlBtkB7hskxQ9lC2aCQjZ11Sy0ZT
- ykyzAIm0w+ZNkpdUByXxnumGuKkkd1giLv6J5177wV66+NFnBZcMDxaQjJORyhdXmOs7
- hAd2eUmHqV6jPlSOcGg/ztUoV5JZE80o+EHB6q0ka8mTvUeOK2cOFBlDW9lOGe9Zq0JF
- DUqx28w7BQjhELu5Q82yWf2mrVzBrHAKbmcPyyAVNO7/vq6AQU+cl70+se0JtSJ3U3od
- C2BQ==
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=kP2SPviRTXqfHbCq38AxOOto1tM1+CoJXW05T8NsLu4=;
+ b=sgqcz/+KzSReS9ErU7SSgMe8BjBxRaM1OUbkwpwCZRsJsTI4Csbg/Mkq5RfXKjdUYS
+ gWgkXmnbWSx3hRIZPyaQbZsn2/YZpfkOG3+e80pCBuUfoNULvatlkZbF/LeK3OQjzHhB
+ e4L/NRytBkNoIXm1pxv6+L+W3iEYFJRQGR7ZWElVnP8PXSEczl45d6xXSs8QAs2ILvUF
+ 3aGakt1vOfvabc5BlJhA/0dL8ona2FJ6r/UBO//OWfr/rpVHAPesSAirD+pdSfWhML/y
+ B7YjJU76dp5ADTwdm1Pg/l8DOFXBuDdyrfEY0gZRdWgLtzO1/tLQWI82NOXycPtU7iDp
+ 8RGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777569773; x=1778174573;
+ d=1e100.net; s=20251104; t=1777569829; x=1778174629;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:to:from:date:x-gm-gg:x-gm-message-state:from:to
- :cc:subject:date:message-id:reply-to;
- bh=qb7ApX+ULciiqQCyAC7iQca6lC853MF9CviVxpL6LVM=;
- b=UigQ/Lnln+Byunk/RHWtPY/L+bUQYy/i5Y7W6w2dm6CE+f49MeTqaLs1Esuw3T4gu7
- a38S1c+0SH96UVoBm3ctpVS1EALNHZnb4UOr40eB7ompBQ++Ngq7Q74AQDI1ArukjrPz
- GRFcWCcSgP24ADO1C1VtVxQBUv74dkPh12D51siReccezPJQwWkg0pXolRmtZqF45wOJ
- Wc2XO8khwsn4nCudOMtcgcV34Frmqp1TwR0PetIMIpVNJQJLEddl5wmZwTEUoVk3tllq
- SKH20k9cPYvS0M9/xQumGh47Ih59xU7T7Z//LLjR82Xu5c1FSvna9QjrJXv9mU1l/LwO
- QM7g==
-X-Gm-Message-State: AOJu0YzDVODhaMEACp9UmLD7TYgHsJLFYss3omKnRFqStpTB5k6oVoM/
- oaCHBshRmZOvoEQKmQ59b22JhhngaWXuAfCzpKrEdGrGZt7HHh3LZh0l1lyOmPnbf6eFxpoKlRi
- zCwWu
-X-Gm-Gg: AeBDiet3okkmkmq2R4iH7ImG8EC4RMzsxWmoTT5UMboxsIPm0jFOdMtMsnccpAwxtU2
- NCFGxfxWMKRkjyR+sj7TAWJjfb6pFBRZIwI6PpLTXI2qXPanjzdFsa0liboMMpz9J34oxQwUosI
- pYtulUbrm0AVZ3K3WJzGeiQPk4I3r7KdHnGqi9hTaioHGWcP6ZoUx6b5CguQSvv6CEXNHaHc0m8
- MdpL4JHDrFIVmonCWEX/jcPVnLr++WNTaul2IZkY8HaqrtVBF1UdkvTl2rFxG2QTD+TVUf79oIJ
- Bwa/gkODp1jqy174KqsHqBqrTJcC2Lm9jv1eyuazN1VDtTZnZNy0eo360vBWnmbYm4wnx7Ai0xS
- IW3HyMukE8QWPXHMUN1YxtdDn9/JvUYZmbHzNB5JN92ZvobB/5ROfq46QxzrmyttQeyqImRhB3i
- z6NIqqLsPBK2t1O5F2F6uH28NosyXlZ7vPw32fOyMAsQHxZoalrGFOuCbN
-X-Received: by 2002:a05:7022:fd09:b0:128:d714:3ca6 with SMTP id
- a92af1059eb24-12deac418f7mr2065556c88.12.1777569772973; 
- Thu, 30 Apr 2026 10:22:52 -0700 (PDT)
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=kP2SPviRTXqfHbCq38AxOOto1tM1+CoJXW05T8NsLu4=;
+ b=IMCE9jdGgMM39u2sTZ3lf7W1TEiVWf7p00JWMsbmPmnnto2QwpOge0NY4CQ5E4tQJv
+ FJUijcUOnUZcfqUn2LHGv5KDM+UWe6MTBX6bgy4uw+sb9RuXYLq4GrABhLRiJp0LG7FF
+ bOPy6sMiNufjp0VTTVKyiEJXgk0WIjriDxSbku1VOuXUPx2PcOdKXA/JKTU8tPwHygyC
+ LQv+6ieUupB5YfFmUjsGoalt0aAOe3AFJ0/0TgLu7BSss+WjzqunvdyVmFuFZInOSHS2
+ r0lI9yM1JscMOsvFoH1su1RjvkEneKP0rv1gMrYULIcOYvzqFX/k7bbTEJUpMj7l6ajy
+ pruQ==
+X-Gm-Message-State: AOJu0YwvO0ytD7b1L/bIX2/JI9NpaSIikOwYUc6ZD2LBABiVMgVc0omU
+ pmg/63AGydyxEDSaAzCkl97JDniQIEutu5Kotwjg1t3lpz/0rZExMcThACOJZZi7Pmc=
+X-Gm-Gg: AeBDiesyhVRWD3/d3mYFmbineAWkJqwzvpMJe3TSFZX+CfdDmPpLi7dXGR+XVJCoZN3
+ qWE/EZwTBqHp/F4ZhfP1zXy+uDQSSfiStd3zFJl6zwMEP+ykzSB6+VEjvEkU5vCtzqt7NBhNeRB
+ B/K3U6TdyfFvpu/iY9MfOzhb4bfYgynG/2TiaP2t1rMwVgByiPX3RnmTCweyzytpJFY90HQjhzr
+ a4mUlpW7kTITyYnrJMaUkYluSEPGGjNeZGJOG3ad9hm1y/ab6dGKmGuvXEMz4GNtgjA1/6KYjft
+ xo4SCc1eys1PCyjQObRwDgj9OIw1gg3ODJXBW72KfvJhkn7YI8LAdVjqBTM98NAopowSzmikNie
+ Mj/bdDylKc7JG8LRjwBvELH+NgbPsHzzlUf1X9dw6TEZVrpvgjMz5DKvDJjyrP70d9BXphZ8dxV
+ ysNVwDOEg6d96EwrkRfk6aq9K5UoI3X9k/ddhyRG7bsDuD+g==
+X-Received: by 2002:a05:7301:6784:b0:2ea:b85c:153d with SMTP id
+ 5a478bee46e88-2ed3e195b01mr1716116eec.27.1777569828845; 
+ Thu, 30 Apr 2026 10:23:48 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12de3216e81sm11156796c88.4.2026.04.30.10.22.52
- for <dev@dpdk.org>
+ 5a478bee46e88-2ee3c05dc28sm647294eec.30.2026.04.30.10.23.48
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 30 Apr 2026 10:22:52 -0700 (PDT)
-Date: Thu, 30 Apr 2026 10:22:49 -0700
+ Thu, 30 Apr 2026 10:23:48 -0700 (PDT)
+Date: Thu, 30 Apr 2026 10:23:46 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Subject: Re: [PATCH v6 0/3] af_packet: cleanup and add test
-Message-ID: <20260430102249.369832b0@phoenix.local>
-In-Reply-To: <20260429182055.398105-1-stephen@networkplumber.org>
-References: <20260413230018.515837-1-stephen@networkplumber.org>
- <20260429182055.398105-1-stephen@networkplumber.org>
+To: Anatoly Burakov <anatoly.burakov@intel.com>
+Cc: dev@dpdk.org, Ori Kam <orika@nvidia.com>, Aman Singh
+ <aman.deep.singh@intel.com>
+Subject: Re: [PATCH v1 1/1] app/testpmd: allow appending to flow dump file
+Message-ID: <20260430102346.2c584694@phoenix.local>
+In-Reply-To: <711f81af5087b82e7ebc27e6ef69e9c497ad8c63.1777541917.git.anatoly.burakov@intel.com>
+References: <711f81af5087b82e7ebc27e6ef69e9c497ad8c63.1777541917.git.anatoly.burakov@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,33 +80,16 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed, 29 Apr 2026 11:18:58 -0700
-Stephen Hemminger <stephen@networkplumber.org> wrote:
+On Thu, 30 Apr 2026 10:38:46 +0100
+Anatoly Burakov <anatoly.burakov@intel.com> wrote:
 
-> A couple of small patches for the af_packet PMD.
-> Fix indentation and add a basic test.
+> When dumping flows into a file, allow appending to file rather than erasing
+> it and creating a new one.
 > 
-> Stephen Hemminger (2):
->   net/af_packet: fix indentation
->   test: add test for af_packet
+> Also, to disambiguate between "mode" in terms of appending, and "mode" in
+> terms of one vs. all flows, rename `mode` variable.
 > 
-> v6 - add myself as maintainer
-> 
-> v5 - end test after 10 packets or timeout
-> 
-> v4 - fix test to use stdatomic correctly
-> 
-> Stephen Hemminger (3):
->   maintainers: nominate myself for af_packet
->   net/af_packet: fix indentation
->   test: add test for af_packet
-> 
->  MAINTAINERS                               |    3 +-
->  app/test/meson.build                      |    1 +
->  app/test/test_pmd_af_packet.c             | 1123 +++++++++++++++++++++
->  drivers/net/af_packet/rte_eth_af_packet.c |   64 +-
->  4 files changed, 1158 insertions(+), 33 deletions(-)
->  create mode 100644 app/test/test_pmd_af_packet.c
-> 
+> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
+> ---
 
-Applied to next-net 
+Looks useful, applied to next-net
