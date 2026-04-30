@@ -2,46 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73944FF8875
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 09:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C31FEFF8875
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 09:22:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 95DA840285;
-	Thu, 30 Apr 2026 11:19:31 +0200 (CEST)
-Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
- by mails.dpdk.org (Postfix) with ESMTP id 99DB040280
- for <dev@dpdk.org>; Thu, 30 Apr 2026 11:19:29 +0200 (CEST)
-Received: by inbox.dpdk.org (Postfix, from userid 33)
- id 81BCF4B0F9; Thu, 30 Apr 2026 11:19:29 +0200 (CEST)
-From: bugzilla@dpdk.org
-To: dev@dpdk.org
-Subject: [DPDK/ethdev Bug 1938] The NIC's imissed counter increments when the
- x710 VF uses dpdk-l2fwd for data forwarding.
-Date: Thu, 30 Apr 2026 09:19:29 +0000
-X-Bugzilla-Reason: AssignedTo
-X-Bugzilla-Type: changed
-X-Bugzilla-Watch-Reason: None
-X-Bugzilla-Product: DPDK
-X-Bugzilla-Component: ethdev
-X-Bugzilla-Version: 24.11
-X-Bugzilla-Keywords: 
-X-Bugzilla-Severity: major
-X-Bugzilla-Who: laitianli2000@163.com
-X-Bugzilla-Status: RESOLVED
-X-Bugzilla-Resolution: FIXED
-X-Bugzilla-Priority: High
-X-Bugzilla-Assigned-To: dev@dpdk.org
-X-Bugzilla-Target-Milestone: 24.11
-X-Bugzilla-Flags: 
-X-Bugzilla-Changed-Fields: resolution bug_status
-Message-ID: <bug-1938-3-F0jyIV8euE@http.bugs.dpdk.org/>
-In-Reply-To: <bug-1938-3@http.bugs.dpdk.org/>
-References: <bug-1938-3@http.bugs.dpdk.org/>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-X-Bugzilla-URL: http://bugs.dpdk.org/
-Auto-Submitted: auto-generated
-X-Auto-Response-Suppress: All
+	by mails.dpdk.org (Postfix) with ESMTP id EAD2040395;
+	Thu, 30 Apr 2026 11:22:42 +0200 (CEST)
+Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
+ by mails.dpdk.org (Postfix) with ESMTP id 3942440280
+ for <dev@dpdk.org>; Thu, 30 Apr 2026 11:22:40 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-05 (Coremail) with SMTP id zQCowAAHmQxdH_NpY30CDw--.12388S2;
+ Thu, 30 Apr 2026 17:22:37 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v2 0/9] net/sxe2: added Linkdata sxe2 ethernet driver
+Date: Thu, 30 Apr 2026 17:22:20 +0800
+Message-ID: <20260430092231.4068642-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260430070154.3915726-10-liujie5@linkdatatechnology.com>
+References: <20260430070154.3915726-10-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: zQCowAAHmQxdH_NpY30CDw--.12388S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr45GF4fXw48tw4DKr4Uurg_yoWrZw4UpF
+ 48ZryrZF15JFW3Ww4fJaySvFyFg3WfJryjkrW2gas3XFyvyFyUCrs0gFy3Awn7AF15JF1F
+ vrZIyr1UGa1rAr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkS14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+ 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+ I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+ 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
+ 42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+ WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
+ I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+ 4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeEfOUUUUU
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,18 +56,102 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-http://bugs.dpdk.org/show_bug.cgi?id=3D1938
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-laitianli (laitianli2000@163.com) changed:
+This patch set implements core functionality for the SXE PMD, 
+which is a Linkdata sxe2 ethernet driver.
 
-           What    |Removed                     |Added
-----------------------------------------------------------------------------
-         Resolution|---                         |FIXED
-             Status|UNCONFIRMED                 |RESOLVED
+V1:
+ - Addressed AI comments
 
---- Comment #1 from laitianli (laitianli2000@163.com) ---
-Fixed it by change IAVF_ALARM_INTERVAL to 1000
+Jie Liu (9):
+  mailmap: add Jie Liu
+  doc: add sxe2 guide and release notes
+  drivers: add sxe2 basic structures
+  common/sxe2: add base driver skeleton
+  drivers: add base driver probe skeleton
+  drivers: support PCI BAR mapping
+  common/sxe2: add ioctl interface for DMA map and unmap
+  net/sxe2: support queue setup and control
+  net/sxe2: add data path for Rx and Tx
 
---=20
-You are receiving this mail because:
-You are the assignee for the bug.=
+ .mailmap                                   |   1 +
+ doc/guides/nics/features/sxe2.ini          |  11 +
+ doc/guides/nics/index.rst                  |   1 +
+ doc/guides/nics/sxe2.rst                   |  23 +
+ doc/guides/rel_notes/release_26_07.rst     |   3 +
+ drivers/common/sxe2/meson.build            |  15 +
+ drivers/common/sxe2/sxe2_common.c          | 684 +++++++++++++++
+ drivers/common/sxe2/sxe2_common.h          |  86 ++
+ drivers/common/sxe2/sxe2_common_log.c      |  75 ++
+ drivers/common/sxe2/sxe2_common_log.h      | 263 ++++++
+ drivers/common/sxe2/sxe2_errno.h           | 110 +++
+ drivers/common/sxe2/sxe2_host_regs.h       | 707 +++++++++++++++
+ drivers/common/sxe2/sxe2_internal_ver.h    |  33 +
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      | 326 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.h      | 141 +++
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |  63 ++
+ drivers/common/sxe2/sxe2_osal.h            | 582 ++++++++++++
+ drivers/common/sxe2/sxe2_type.h            |  64 ++
+ drivers/meson.build                        |   1 +
+ drivers/net/meson.build                    |   1 +
+ drivers/net/sxe2/meson.build               |  26 +
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 319 +++++++
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  33 +
+ drivers/net/sxe2/sxe2_drv_cmd.h            | 398 +++++++++
+ drivers/net/sxe2/sxe2_ethdev.c             | 974 +++++++++++++++++++++
+ drivers/net/sxe2/sxe2_ethdev.h             | 316 +++++++
+ drivers/net/sxe2/sxe2_irq.h                |  49 ++
+ drivers/net/sxe2/sxe2_queue.c              |  39 +
+ drivers/net/sxe2/sxe2_queue.h              | 227 +++++
+ drivers/net/sxe2/sxe2_rx.c                 | 579 ++++++++++++
+ drivers/net/sxe2/sxe2_rx.h                 |  34 +
+ drivers/net/sxe2/sxe2_tx.c                 | 447 ++++++++++
+ drivers/net/sxe2/sxe2_tx.h                 |  32 +
+ drivers/net/sxe2/sxe2_txrx.c               | 249 ++++++
+ drivers/net/sxe2/sxe2_txrx.h               |  21 +
+ drivers/net/sxe2/sxe2_txrx_common.h        | 541 ++++++++++++
+ drivers/net/sxe2/sxe2_txrx_poll.c          | 782 +++++++++++++++++
+ drivers/net/sxe2/sxe2_txrx_poll.h          |  16 +
+ drivers/net/sxe2/sxe2_vsi.c                | 211 +++++
+ drivers/net/sxe2/sxe2_vsi.h                | 205 +++++
+ 40 files changed, 8688 insertions(+)
+ create mode 100644 doc/guides/nics/features/sxe2.ini
+ create mode 100644 doc/guides/nics/sxe2.rst
+ create mode 100644 drivers/common/sxe2/meson.build
+ create mode 100644 drivers/common/sxe2/sxe2_common.c
+ create mode 100644 drivers/common/sxe2/sxe2_common.h
+ create mode 100644 drivers/common/sxe2/sxe2_common_log.c
+ create mode 100644 drivers/common/sxe2/sxe2_common_log.h
+ create mode 100644 drivers/common/sxe2/sxe2_errno.h
+ create mode 100644 drivers/common/sxe2/sxe2_host_regs.h
+ create mode 100644 drivers/common/sxe2/sxe2_internal_ver.h
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.c
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.h
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl_func.h
+ create mode 100644 drivers/common/sxe2/sxe2_osal.h
+ create mode 100644 drivers/common/sxe2/sxe2_type.h
+ create mode 100644 drivers/net/sxe2/meson.build
+ create mode 100644 drivers/net/sxe2/sxe2_cmd_chnl.c
+ create mode 100644 drivers/net/sxe2/sxe2_cmd_chnl.h
+ create mode 100644 drivers/net/sxe2/sxe2_drv_cmd.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.h
+ create mode 100644 drivers/net/sxe2/sxe2_queue.c
+ create mode 100644 drivers/net/sxe2/sxe2_queue.h
+ create mode 100644 drivers/net/sxe2/sxe2_rx.c
+ create mode 100644 drivers/net/sxe2/sxe2_rx.h
+ create mode 100644 drivers/net/sxe2/sxe2_tx.c
+ create mode 100644 drivers/net/sxe2/sxe2_tx.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_common.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.h
+ create mode 100644 drivers/net/sxe2/sxe2_vsi.c
+ create mode 100644 drivers/net/sxe2/sxe2_vsi.h
+
+-- 
+2.47.3
+
