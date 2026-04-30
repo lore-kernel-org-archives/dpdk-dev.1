@@ -2,34 +2,34 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DCACCFA13
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 10:19:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164A8CCFA13
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 10:19:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E7576406BB;
-	Thu, 30 Apr 2026 12:18:40 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D675440A6E;
+	Thu, 30 Apr 2026 12:18:41 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 5F2CB4021F
+ by mails.dpdk.org (Postfix) with ESMTP id 6A2324028C
  for <dev@dpdk.org>; Thu, 30 Apr 2026 12:18:34 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowACnUW11LPNplJjRDg--.60427S10;
+ by APP-01 (Coremail) with SMTP id qwCowACnUW11LPNplJjRDg--.60427S11;
  Thu, 30 Apr 2026 18:18:31 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v3 8/9] net/sxe2: support queue setup and control
-Date: Thu, 30 Apr 2026 18:18:16 +0800
-Message-ID: <20260430101819.4094628-9-liujie5@linkdatatechnology.com>
+Subject: [PATCH v3 9/9] net/sxe2: add data path for Rx and Tx
+Date: Thu, 30 Apr 2026 18:18:17 +0800
+Message-ID: <20260430101819.4094628-10-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260430101819.4094628-1-liujie5@linkdatatechnology.com>
 References: <20260430092231.4068642-10-liujie5@linkdatatechnology.com>
  <20260430101819.4094628-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowACnUW11LPNplJjRDg--.60427S10
-X-Coremail-Antispam: 1UD129KBjvAXoWftw15tF1fCF17JFy7XFWkJFb_yoWrJrWruo
- WfKr47XFn3Gr1xCrZ8WF4xuFZrZw48uw4DArWfurn8ua15C3y7ta4xGry5XryUK3WrtF1k
- WFyIv3ySgrW7t3y5n29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+X-CM-TRANSID: qwCowACnUW11LPNplJjRDg--.60427S11
+X-Coremail-Antispam: 1UD129KBjvAXoWfKw18Aw4kJw45AF4kAr17trb_yoWrCr1Duo
+ WI9a1aqr1fXrnrCw4DX3WxuFW2v3yFg3yUCayF9Fs09F4rC3Z8Gas7K347Aw1UJF1rtF1v
+ ga4xZFZ2vw4xJrW7n29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
  AaLaJ3UjIYCTnIWjp_UUUOF7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
  Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
@@ -61,792 +61,357 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add support for Rx and Tx queue setup, release, and management.
-Implement eth_dev_ops callbacks for rx_queue_setup, tx_queue_setup,
-rx_queue_release, and tx_queue_release.
+Implement receive and transmit burst functions for sxe2 PMD.
+Add sxe2_recv_pkts and sxe2_xmit_pkts as the primary data path
+interfaces.
 
-This includes:
-- Allocating memory for hardware ring descriptors.
-- Initializing software ring structures and hardware head/tail pointers.
-- Implementing proper resource cleanup logic to prevent memory leaks
-  during queue reconfiguration or device close.
+The implementation includes:
+- Efficient descriptor fetching and mbuf allocation for Rx.
+- Descriptor setup and checksum offload handling for Tx.
+- Buffer recycling and hardware tail pointer updates.
+- Performance-oriented loop unrolling and prefetching where applicable.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/net/sxe2/meson.build   |   2 +
- drivers/net/sxe2/sxe2_ethdev.c |  64 +++-
- drivers/net/sxe2/sxe2_ethdev.h |   3 +
- drivers/net/sxe2/sxe2_rx.c     | 579 +++++++++++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_rx.h     |  34 ++
- drivers/net/sxe2/sxe2_tx.c     | 447 +++++++++++++++++++++++++
- drivers/net/sxe2/sxe2_tx.h     |  32 ++
- 7 files changed, 1143 insertions(+), 18 deletions(-)
- create mode 100644 drivers/net/sxe2/sxe2_rx.c
- create mode 100644 drivers/net/sxe2/sxe2_rx.h
- create mode 100644 drivers/net/sxe2/sxe2_tx.c
- create mode 100644 drivers/net/sxe2/sxe2_tx.h
+ drivers/common/sxe2/sxe2_common_log.h | 105 ----
+ drivers/common/sxe2/sxe2_errno.h      |   3 -
+ drivers/common/sxe2/sxe2_ioctl_chnl.c |  20 +-
+ drivers/common/sxe2/sxe2_osal.h       |   4 +-
+ drivers/common/sxe2/sxe2_type.h       |   1 -
+ drivers/net/sxe2/meson.build          |   2 +
+ drivers/net/sxe2/sxe2_ethdev.c        |  15 +-
+ drivers/net/sxe2/sxe2_txrx.c          | 249 ++++++++
+ drivers/net/sxe2/sxe2_txrx.h          |  21 +
+ drivers/net/sxe2/sxe2_txrx_poll.c     | 782 ++++++++++++++++++++++++++
+ 10 files changed, 1076 insertions(+), 126 deletions(-)
+ create mode 100644 drivers/net/sxe2/sxe2_txrx.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.c
 
+diff --git a/drivers/common/sxe2/sxe2_common_log.h b/drivers/common/sxe2/sxe2_common_log.h
+index 8ade49d020..14074fcc4f 100644
+--- a/drivers/common/sxe2/sxe2_common_log.h
++++ b/drivers/common/sxe2/sxe2_common_log.h
+@@ -260,109 +260,4 @@ sxe2_common_log_stream_init(void);
+ 
+ #define PMD_INIT_FUNC_TRACE() PMD_LOG_DEBUG(INIT, " >>")
+ 
+-#ifdef SXE2_DPDK_DEBUG
+-
+-#define LOG_DEBUG(fmt, ...) \
+-		PMD_LOG_DEBUG(DRV, fmt, ##__VA_ARGS__)
+-
+-#define LOG_INFO(fmt, ...) \
+-		PMD_LOG_INFO(DRV, fmt, ##__VA_ARGS__)
+-
+-#define LOG_WARN(fmt, ...) \
+-		PMD_LOG_WARN(DRV, fmt, ##__VA_ARGS__)
+-
+-#define LOG_ERROR(fmt, ...) \
+-		PMD_LOG_ERR(DRV, fmt, ##__VA_ARGS__)
+-
+-#define LOG_DEBUG_BDF(dev_name, fmt, ...) \
+-		PMD_LOG_DEBUG(HW, fmt, ##__VA_ARGS__)
+-
+-#define LOG_INFO_BDF(dev_name, fmt, ...) \
+-		PMD_LOG_INFO(HW, fmt, ##__VA_ARGS__)
+-
+-#define LOG_WARN_BDF(dev_name, fmt, ...) \
+-		PMD_LOG_WARN(HW, fmt, ##__VA_ARGS__)
+-
+-#define LOG_ERROR_BDF(dev_name, fmt, ...) \
+-		PMD_LOG_ERR(HW, fmt, ##__VA_ARGS__)
+-
+-#else
+-#define LOG_DEBUG(fmt, ...)
+-#define LOG_INFO(fmt, ...)
+-#define LOG_WARN(fmt, ...)
+-#define LOG_ERROR(fmt, ...)
+-#define LOG_DEBUG_BDF(dev_name, fmt, ...) \
+-		PMD_LOG_DEBUG(HW, fmt, ##__VA_ARGS__)
+-
+-#define LOG_INFO_BDF(dev_name, fmt, ...) \
+-		PMD_LOG_INFO(HW, fmt, ##__VA_ARGS__)
+-
+-#define LOG_WARN_BDF(dev_name, fmt, ...) \
+-		PMD_LOG_WARN(HW, fmt, ##__VA_ARGS__)
+-
+-#define LOG_ERROR_BDF(dev_name, fmt, ...) \
+-		PMD_LOG_ERR(HW, fmt, ##__VA_ARGS__)
+-#endif
+-
+-#ifdef SXE2_DPDK_DEBUG
+-#define LOG_DEV_DEBUG(fmt, ...) \
+-	do { \
+-		RTE_SET_USED(adapter); \
+-			LOG_DEBUG_BDF(fmt, ##__VA_ARGS__); \
+-	} while (0)
+-
+-#define LOG_DEV_INFO(fmt, ...) \
+-	do { \
+-		RTE_SET_USED(adapter); \
+-		LOG_INFO_BDF(fmt, ##__VA_ARGS__); \
+-	} while (0)
+-
+-#define LOG_DEV_WARN(fmt, ...) \
+-	do { \
+-		RTE_SET_USED(adapter); \
+-		LOG_WARN_BDF(fmt, ##__VA_ARGS__); \
+-	} while (0)
+-
+-#define LOG_DEV_ERR(fmt, ...) \
+-	do { \
+-		RTE_SET_USED(adapter); \
+-			LOG_ERROR_BDF(fmt, ##__VA_ARGS__); \
+-	} while (0)
+-
+-#define LOG_MSG_DEBUG(msglvl, fmt, ...) \
+-	do { \
+-		RTE_SET_USED(adapter); \
+-			LOG_DEBUG_BDF(fmt, ##__VA_ARGS__); \
+-	} while (0)
+-
+-#define LOG_MSG_INFO(msglvl, fmt, ...) \
+-	do { \
+-		RTE_SET_USED(adapter); \
+-		LOG_INFO_BDF(fmt, ##__VA_ARGS__); \
+-	} while (0)
+-
+-#define LOG_MSG_WARN(msglvl, fmt, ...) \
+-	do { \
+-		RTE_SET_USED(adapter); \
+-		LOG_WARN_BDF(fmt, ##__VA_ARGS__); \
+-	} while (0)
+-
+-#define LOG_MSG_ERR(msglvl, fmt, ...) \
+-	do { \
+-		RTE_SET_USED(adapter); \
+-			LOG_ERROR_BDF(fmt, ##__VA_ARGS__); \
+-	} while (0)
+-
+-#else
+-
+-#define LOG_DEV_DEBUG(fmt, ...)         RTE_SET_USED(adapter)
+-#define LOG_DEV_INFO(fmt, ...)          RTE_SET_USED(adapter)
+-#define LOG_DEV_WARN(fmt, ...)          RTE_SET_USED(adapter)
+-#define LOG_DEV_ERR(fmt, ...)           RTE_SET_USED(adapter)
+-#define LOG_MSG_DEBUG(msglvl, fmt, ...) RTE_SET_USED(adapter)
+-#define LOG_MSG_INFO(msglvl, fmt, ...)  RTE_SET_USED(adapter)
+-#define LOG_MSG_WARN(msglvl, fmt, ...)  RTE_SET_USED(adapter)
+-#define LOG_MSG_ERR(msglvl, fmt, ...)   RTE_SET_USED(adapter)
+-#endif
+-
+ #endif /* SXE2_COMMON_LOG_H__ */
+diff --git a/drivers/common/sxe2/sxe2_errno.h b/drivers/common/sxe2/sxe2_errno.h
+index 89a715eaef..1257319edf 100644
+--- a/drivers/common/sxe2/sxe2_errno.h
++++ b/drivers/common/sxe2/sxe2_errno.h
+@@ -50,9 +50,6 @@ enum sxe2_status {
+ 	SXE2_ERR_NOLCK              = -ENOLCK,
+ 	SXE2_ERR_NOSYS              = -ENOSYS,
+ 	SXE2_ERR_NOTEMPTY           = -ENOTEMPTY,
+-	SXE2_ERR_ILSEQ              = -EILSEQ,
+-	SXE2_ERR_NODATA             = -ENODATA,
+-	SXE2_ERR_CANCELED           = -ECANCELED,
+ 	SXE2_ERR_TIMEDOUT           = -ETIMEDOUT,
+ 
+ 	SXE2_ERROR                  = -150,
+diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+index 1a14d401e7..cb83fb837d 100644
+--- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
++++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
+@@ -37,7 +37,7 @@ sxe2_drv_cmd_exec(struct sxe2_common_device *cdev,
+ 
+ 	if (cdev->config.kernel_reset) {
+ 		ret = SXE2_ERR_PERM;
+-		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
+ 		goto l_end;
+ 	}
+ 
+@@ -123,7 +123,7 @@ sxe2_drv_dev_handshark(struct sxe2_common_device *cdev)
+ 
+ 	if (cdev->config.kernel_reset) {
+ 		ret = SXE2_ERR_PERM;
+-		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
+ 		goto l_end;
+ 	}
+ 
+@@ -168,7 +168,7 @@ void
+ 	void *virt = NULL;
+ 
+ 	if (cdev->config.kernel_reset) {
+-		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
+ 		goto l_err;
+ 	}
+ 
+@@ -178,13 +178,13 @@ void
+ 		goto l_err;
+ 	}
+ 
+-	PMD_LOG_DEBUG(COM, "fd=%d, bar idx=%d, len=0x%zx, src=0x%"PRIx64", offset=0x%"PRIx64"",
++	PMD_LOG_DEBUG(COM, "fd=%d, bar idx=%d, len=%"PRIu64", src=0x%"PRIx64", offset=0x%"PRIx64"",
+ 		bar_idx, cmd_fd, len, offset, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
+ 
+ 	virt = mmap(NULL, len, PROT_READ | PROT_WRITE,
+ 		MAP_SHARED, cmd_fd, SXE2_COM_PCI_OFFSET_GEN(bar_idx, offset));
+ 	if (virt == MAP_FAILED) {
+-		PMD_LOG_ERR(COM, "Failed mmap, cmd_fd=%d, len=0x%zx, offset=0x%"PRIx64", err:%s",
++		PMD_LOG_ERR(COM, "Failed mmap, cmd_fd=%d, len=%"PRIu64", offset=0x%"PRIx64", err:%s",
+ 			cmd_fd, len, offset, strerror(errno));
+ 		goto l_err;
+ 	}
+@@ -206,12 +206,12 @@ sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, u64 len)
+ 		goto l_end;
+ 	}
+ 
+-	PMD_LOG_DEBUG(COM, "Munmap virt=%p, len=0x%zx",
++	PMD_LOG_DEBUG(COM, "Munmap virt=%p, len=0x%"PRIx64"",
+ 		virt, len);
+ 
+ 	ret = munmap(virt, len);
+ 	if (ret < 0) {
+-		PMD_LOG_ERR(COM, "Failed to munmap, virt=%p, len=0x%zx, err:%s",
++		PMD_LOG_ERR(COM, "Failed to munmap, virt=%p, len=%"PRIu64", err:%s",
+ 			virt, len, strerror(errno));
+ 		ret = SXE2_ERR_IO;
+ 		goto l_end;
+@@ -233,7 +233,7 @@ sxe2_drv_dev_dma_map(struct sxe2_common_device *cdev, u64 vaddr,
+ 
+ 	if (cdev->config.kernel_reset) {
+ 		ret = SXE2_ERR_PERM;
+-		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
+ 		goto l_end;
+ 	}
+ 
+@@ -246,7 +246,7 @@ sxe2_drv_dev_dma_map(struct sxe2_common_device *cdev, u64 vaddr,
+ 		goto l_end;
+ 	} else if (iova_mode == RTE_IOVA_VA) {
+ 		if (!cdev->config.support_iommu) {
+-			PMD_LOG_ERR(COM, "no iommu not support va mode, plese use pa mode.");
++			PMD_LOG_ERR(COM, "no iommu not support va mode, please use pa mode.");
+ 			ret = SXE2_ERR_IO;
+ 			goto l_end;
+ 		}
+@@ -289,7 +289,7 @@ sxe2_drv_dev_dma_unmap(struct sxe2_common_device *cdev, u64 iova)
+ 
+ 	if (cdev->config.kernel_reset) {
+ 		ret = SXE2_ERR_PERM;
+-		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
++		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
+ 		goto l_end;
+ 	}
+ 
+diff --git a/drivers/common/sxe2/sxe2_osal.h b/drivers/common/sxe2/sxe2_osal.h
+index fd6823fe98..23882f3f52 100644
+--- a/drivers/common/sxe2/sxe2_osal.h
++++ b/drivers/common/sxe2/sxe2_osal.h
+@@ -29,8 +29,6 @@
+ #define BIT_ULL(a) (1ULL << (a))
+ #endif
+ 
+-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+-
+ #define BITS_PER_BYTE 8
+ 
+ #define IS_UNICAST_ETHER_ADDR(addr)			\
+@@ -88,7 +86,7 @@
+ 			(((n) + (typeof(n))(d) - (typeof(n))1) / (typeof(n))(d))
+ #endif
+ 
+-#define usleep_range(min, max) msleep(DIV_ROUND_UP(min, 1000))
++#define usleep_range(min) msleep(DIV_ROUND_UP(min, 1000))
+ 
+ #define __bf_shf(x) ((uint32_t)rte_bsf64(x))
+ 
+diff --git a/drivers/common/sxe2/sxe2_type.h b/drivers/common/sxe2/sxe2_type.h
+index 56d0a11f48..fbf4a6674f 100644
+--- a/drivers/common/sxe2/sxe2_type.h
++++ b/drivers/common/sxe2/sxe2_type.h
+@@ -8,7 +8,6 @@
+ #include <sys/time.h>
+ 
+ #include <stdlib.h>
+-#include <stdio.h>
+ #include <errno.h>
+ #include <stdarg.h>
+ #include <unistd.h>
 diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
-index 160a0de8ed..803e47c1aa 100644
+index 803e47c1aa..728a88b6a1 100644
 --- a/drivers/net/sxe2/meson.build
 +++ b/drivers/net/sxe2/meson.build
-@@ -17,6 +17,8 @@ sources += files(
-         'sxe2_cmd_chnl.c',
-         'sxe2_vsi.c',
+@@ -19,6 +19,8 @@ sources += files(
          'sxe2_queue.c',
-+        'sxe2_tx.c',
-+        'sxe2_rx.c',
+         'sxe2_tx.c',
+         'sxe2_rx.c',
++        'sxe2_txrx_poll.c',
++        'sxe2_txrx.c',
  )
  
  allow_internal_get_api = true
 diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
-index fa6304ebbc..c1a65f25ce 100644
+index c1a65f25ce..68d7e36cf1 100644
 --- a/drivers/net/sxe2/sxe2_ethdev.c
 +++ b/drivers/net/sxe2/sxe2_ethdev.c
-@@ -24,6 +24,8 @@
- #include "sxe2_ethdev.h"
- #include "sxe2_drv_cmd.h"
+@@ -26,6 +26,7 @@
  #include "sxe2_cmd_chnl.h"
-+#include "sxe2_tx.h"
-+#include "sxe2_rx.h"
+ #include "sxe2_tx.h"
+ #include "sxe2_rx.h"
++#include "sxe2_txrx.h"
  #include "sxe2_common.h"
  #include "sxe2_common_log.h"
  #include "sxe2_host_regs.h"
-@@ -80,14 +82,6 @@ static s32 sxe2_dev_configure(struct rte_eth_dev *dev)
- 	return ret;
- }
+@@ -131,6 +132,9 @@ static s32 sxe2_dev_start(struct rte_eth_dev *dev)
+ 		goto l_end;
+ 	}
  
--static void __rte_cold sxe2_txqs_all_stop(struct rte_eth_dev *dev __rte_unused)
--{
--}
--
--static void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev __rte_unused)
--{
--}
--
- static s32 sxe2_dev_stop(struct rte_eth_dev *dev)
- {
- 	s32 ret = SXE2_SUCCESS;
-@@ -106,16 +100,6 @@ static s32 sxe2_dev_stop(struct rte_eth_dev *dev)
- 	return ret;
- }
++	sxe2_rx_mode_func_set(dev);
++	sxe2_tx_mode_func_set(dev);
++
+ 	ret = sxe2_queues_start(dev);
+ 	if (ret) {
+ 		PMD_LOG_ERR(INIT, "enable queues failed");
+@@ -363,8 +367,8 @@ void __iomem *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
+ 	for (i = 0; i < bar_info->map_cnt; i++) {
+ 		seg_info = &bar_info->seg_info[i];
+ 		if (res_type == seg_info->type) {
+-			addr = (void __iomem *)((uintptr_t)seg_info->addr +
+-					seg_info->page_inner_offset + reg_width	* idx_in_func);
++			addr = (uint8_t __iomem *)seg_info->addr +
++					seg_info->page_inner_offset + reg_width * idx_in_func;
+ 			goto l_end;
+ 		}
+ 	}
+@@ -475,8 +479,9 @@ s32 sxe2_dev_pci_seg_map(struct sxe2_adapter *adapter,
  
--static s32 __rte_cold sxe2_txqs_all_start(struct rte_eth_dev *dev __rte_unused)
--{
--	return 0;
--}
--
--static s32 __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev __rte_unused)
--{
--	return 0;
--}
--
- static s32 sxe2_queues_start(struct rte_eth_dev *dev)
- {
- 	s32 ret = SXE2_SUCCESS;
-@@ -318,6 +302,12 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
- 	.dev_stop                   = sxe2_dev_stop,
- 	.dev_close                  = sxe2_dev_close,
- 	.dev_infos_get              = sxe2_dev_infos_get,
-+
-+	.rx_queue_setup             = sxe2_rx_queue_setup,
-+	.tx_queue_setup             = sxe2_tx_queue_setup,
-+
-+	.rxq_info_get               = sxe2_rx_queue_info_get,
-+	.txq_info_get               = sxe2_tx_queue_info_get,
- };
+ 	map_addr = sxe2_drv_dev_mmap(adapter->cdev, bar_info->bar_idx, aligned_len, aligned_offset);
+ 	if (!map_addr) {
+-		PMD_LOG_ERR(INIT, "Failed to mmap BAR space, type=%d, len=%zu, page_size=%zu",
+-					res_type, org_len, page_size);
++		PMD_LOG_ERR(INIT, "Failed to mmap BAR space, type=%d, len=%" PRIu64
++			", offset=%" PRIu64 ", page_size=%zu",
++					res_type, org_len, org_offset, page_size);
+ 		ret = SXE2_ERR_FAULT;
+ 		goto l_end;
+ 	}
+@@ -760,6 +765,8 @@ static s32 sxe2_dev_init(struct rte_eth_dev *dev, struct sxe2_dev_kvargs_info *k
  
- struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter,
-@@ -345,6 +335,44 @@ struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter
- 	return bar_info;
- }
+ 	PMD_INIT_FUNC_TRACE();
  
-+void __iomem *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
-+		enum sxe2_pci_map_resource res_type, u16 idx_in_func)
-+{
-+	struct sxe2_pci_map_context *map_ctxt = &adapter->map_ctxt;
-+	struct sxe2_pci_map_segment_info *seg_info = NULL;
-+	struct sxe2_pci_map_bar_info *bar_info = NULL;
-+	void __iomem *addr = NULL;
-+	u8 reg_width = 0;
-+	u8 i = 0;
++	sxe2_set_common_function(dev);
 +
-+	bar_info = sxe2_dev_get_bar_info(adapter, res_type);
-+	if (bar_info == NULL) {
-+		PMD_DEV_LOG_WARN(adapter, INIT, "Failed to get bar info, res_type=[%d]",
-+				res_type);
-+		goto l_end;
-+	}
-+	seg_info = bar_info->seg_info;
-+
-+	reg_width = map_ctxt->addr_info[res_type].reg_width;
-+	if (reg_width == 0) {
-+		PMD_DEV_LOG_WARN(adapter, INIT, "Invalid reg width with resource type %d",
-+				res_type);
-+		goto l_end;
-+	}
-+
-+	for (i = 0; i < bar_info->map_cnt; i++) {
-+		seg_info = &bar_info->seg_info[i];
-+		if (res_type == seg_info->type) {
-+			addr = (void __iomem *)((uintptr_t)seg_info->addr +
-+					seg_info->page_inner_offset + reg_width	* idx_in_func);
-+			goto l_end;
-+		}
-+	}
-+
-+l_end:
-+	return addr;
-+}
-+
- static void sxe2_drv_dev_caps_set(struct sxe2_adapter *adapter,
- 			struct sxe2_drv_dev_caps_resp *dev_caps)
- {
-diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
-index fb7813ef80..7999e4f331 100644
---- a/drivers/net/sxe2/sxe2_ethdev.h
-+++ b/drivers/net/sxe2/sxe2_ethdev.h
-@@ -295,6 +295,9 @@ struct sxe2_adapter {
- #define SXE2_DEV_TO_PCI(eth_dev) \
- 		RTE_DEV_TO_PCI((eth_dev)->device)
+ 	dev->dev_ops = &sxe2_eth_dev_ops;
  
-+void __iomem *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
-+		enum sxe2_pci_map_resource res_type, u16 idx_in_func);
-+
- struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter,
- 		enum sxe2_pci_map_resource res_type);
- 
-diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
+ 	ret = sxe2_hw_init(dev);
+diff --git a/drivers/net/sxe2/sxe2_txrx.c b/drivers/net/sxe2/sxe2_txrx.c
 new file mode 100644
-index 0000000000..00e24fc361
+index 0000000000..3e88ab5241
 --- /dev/null
-+++ b/drivers/net/sxe2/sxe2_rx.c
-@@ -0,0 +1,579 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#include <ethdev_driver.h>
-+#include <rte_net.h>
-+#include <rte_vect.h>
-+#include <rte_malloc.h>
-+#include <rte_memzone.h>
-+
-+#include "sxe2_ethdev.h"
-+#include "sxe2_queue.h"
-+#include "sxe2_rx.h"
-+#include "sxe2_cmd_chnl.h"
-+
-+#include "sxe2_osal.h"
-+#include "sxe2_common_log.h"
-+
-+static void __iomem *sxe2_rx_doorbell_tail_addr_get(struct sxe2_adapter *adapter, u16 queue_id)
-+{
-+	return sxe2_pci_map_addr_get(adapter, SXE2_PCI_MAP_RES_DOORBELL_RX_TAIL, queue_id);
-+}
-+
-+static void sxe2_rx_head_tail_init(struct sxe2_adapter *adapter, struct sxe2_rx_queue *rxq)
-+{
-+	rxq->rdt_reg_addr = sxe2_rx_doorbell_tail_addr_get(adapter, rxq->queue_id);
-+	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, 0);
-+}
-+
-+static void __rte_cold sxe2_rx_queue_reset(struct sxe2_rx_queue *rxq)
-+{
-+	u16 i = 0;
-+	u16 len = 0;
-+	static const union sxe2_rx_desc zeroed_desc = {{0}};
-+
-+	len = rxq->ring_depth + SXE2_RX_PKTS_BURST_BATCH_NUM;
-+	for (i = 0; i < len; ++i)
-+		rxq->desc_ring[i] = zeroed_desc;
-+
-+	memset(&rxq->fake_mbuf, 0, sizeof(rxq->fake_mbuf));
-+	for (i = rxq->ring_depth; i < len; i++)
-+		rxq->buffer_ring[i] = &rxq->fake_mbuf;
-+
-+	rxq->hold_num            = 0;
-+	rxq->next_ret_pkt        = 0;
-+	rxq->processing_idx      = 0;
-+	rxq->completed_pkts_num  = 0;
-+	rxq->batch_alloc_trigger = rxq->rx_free_thresh - 1;
-+
-+	rxq->pkt_first_seg = NULL;
-+	rxq->pkt_last_seg  = NULL;
-+
-+	rxq->realloc_num   = 0;
-+	rxq->realloc_start = 0;
-+}
-+
-+void __rte_cold sxe2_rx_queue_mbufs_release(struct sxe2_rx_queue *rxq)
-+{
-+	u16 i;
-+
-+	if (rxq->buffer_ring != NULL) {
-+		for (i = 0; i < rxq->ring_depth; i++) {
-+			if (rxq->buffer_ring[i] != NULL) {
-+				rte_pktmbuf_free(rxq->buffer_ring[i]);
-+				rxq->buffer_ring[i] = NULL;
-+			}
-+		}
-+	}
-+
-+	if (rxq->completed_pkts_num) {
-+		for (i = 0; i < rxq->completed_pkts_num; ++i) {
-+			if (rxq->completed_buf[rxq->next_ret_pkt + i] != NULL) {
-+				rte_pktmbuf_free(rxq->completed_buf[rxq->next_ret_pkt + i]);
-+				rxq->completed_buf[rxq->next_ret_pkt + i] = NULL;
-+			}
-+		}
-+		rxq->completed_pkts_num = 0;
-+	}
-+}
-+
-+const struct sxe2_rxq_ops sxe2_default_rxq_ops = {
-+	.queue_reset      = sxe2_rx_queue_reset,
-+	.mbufs_release    = sxe2_rx_queue_mbufs_release,
-+};
-+
-+static struct sxe2_rxq_ops sxe2_rx_default_ops_get(void)
-+{
-+	return sxe2_default_rxq_ops;
-+}
-+
-+void __rte_cold sxe2_rx_queue_info_get(struct rte_eth_dev *dev,
-+		u16 queue_id, struct rte_eth_rxq_info *qinfo)
-+{
-+	struct sxe2_rx_queue *rxq = NULL;
-+
-+	if (queue_id >= dev->data->nb_rx_queues) {
-+		PMD_LOG_ERR(RX, "rx queue:%u is out of range:%u",
-+			queue_id, dev->data->nb_rx_queues);
-+		goto end;
-+	}
-+
-+	rxq = dev->data->rx_queues[queue_id];
-+	if (rxq == NULL) {
-+		PMD_LOG_ERR(RX, "rx queue:%u is NULL", queue_id);
-+		goto end;
-+	}
-+
-+	qinfo->mp           = rxq->mb_pool;
-+	qinfo->nb_desc      = rxq->ring_depth;
-+	qinfo->scattered_rx = dev->data->scattered_rx;
-+	qinfo->conf.rx_free_thresh    = rxq->rx_free_thresh;
-+	qinfo->conf.rx_drop_en        = rxq->drop_en;
-+	qinfo->conf.rx_deferred_start = rxq->rx_deferred_start;
-+
-+end:
-+	return;
-+}
-+
-+s32 __rte_cold sxe2_rx_queue_stop(struct rte_eth_dev *dev, u16 rx_queue_id)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_rx_queue *rxq;
-+	s32 ret;
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (rx_queue_id >= dev->data->nb_rx_queues) {
-+		PMD_LOG_ERR(RX, "Rx queue %u is out of range %u",
-+			    rx_queue_id, dev->data->nb_rx_queues);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if (dev->data->rx_queue_state[rx_queue_id] ==
-+			RTE_ETH_QUEUE_STATE_STOPPED) {
-+		ret = SXE2_SUCCESS;
-+		goto l_end;
-+	}
-+
-+	rxq = dev->data->rx_queues[rx_queue_id];
-+	if (rxq == NULL) {
-+		ret = SXE2_SUCCESS;
-+		goto l_end;
-+	}
-+	ret = sxe2_drv_rxq_switch(adapter, rxq, false);
-+	if (ret) {
-+		PMD_LOG_ERR(RX, "Failed to switch rx queue %u off, ret = %d",
-+				rx_queue_id, ret);
-+		if (ret == SXE2_ERR_PERM)
-+			goto l_free;
-+		goto l_end;
-+	}
-+
-+l_free:
-+	rxq->ops.mbufs_release(rxq);
-+	rxq->ops.queue_reset(rxq);
-+	dev->data->rx_queue_state[rx_queue_id] =
-+		RTE_ETH_QUEUE_STATE_STOPPED;
-+l_end:
-+	return ret;
-+}
-+
-+static void __rte_cold sxe2_rx_queue_free(struct sxe2_rx_queue *rxq)
-+{
-+	if (rxq != NULL) {
-+		rxq->ops.mbufs_release(rxq);
-+		if (rxq->buffer_ring != NULL) {
-+			rte_free(rxq->buffer_ring);
-+			rxq->buffer_ring = NULL;
-+		}
-+		rte_memzone_free(rxq->mz);
-+		rte_free(rxq);
-+	}
-+}
-+
-+void __rte_cold sxe2_rx_queue_release(struct rte_eth_dev *dev,
-+					u16 queue_idx)
-+{
-+	(void)sxe2_rx_queue_stop(dev, queue_idx);
-+	sxe2_rx_queue_free(dev->data->rx_queues[queue_idx]);
-+	dev->data->rx_queues[queue_idx] = NULL;
-+}
-+
-+void __rte_cold sxe2_all_rxqs_release(struct rte_eth_dev *dev)
-+{
-+	struct rte_eth_dev_data *data = dev->data;
-+	u16 nb_rxq;
-+
-+	for (nb_rxq = 0; nb_rxq < data->nb_rx_queues; nb_rxq++) {
-+		if (data->rx_queues[nb_rxq] == NULL)
-+			continue;
-+		sxe2_rx_queue_release(dev, nb_rxq);
-+		data->rx_queues[nb_rxq] = NULL;
-+	}
-+	data->nb_rx_queues = 0;
-+}
-+
-+static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, u16 queue_idx,
-+		u16 ring_depth, u32 socket_id)
-+{
-+	struct sxe2_rx_queue *rxq;
-+	const struct rte_memzone *tz;
-+	u16 len;
-+
-+	if (dev->data->rx_queues[queue_idx] != NULL) {
-+		sxe2_rx_queue_release(dev, queue_idx);
-+		dev->data->rx_queues[queue_idx] = NULL;
-+	}
-+
-+	rxq = rte_zmalloc_socket("rx_queue", sizeof(*rxq),
-+				 RTE_CACHE_LINE_SIZE, socket_id);
-+
-+	if (rxq == NULL) {
-+		PMD_LOG_ERR(RX, "rx queue[%d] alloc failed", queue_idx);
-+		goto l_end;
-+	}
-+
-+	rxq->ring_depth = ring_depth;
-+	len = rxq->ring_depth + SXE2_RX_PKTS_BURST_BATCH_NUM;
-+
-+	rxq->buffer_ring = rte_zmalloc_socket("rx_buffer_ring",
-+					  sizeof(struct rte_mbuf *) * len,
-+					  RTE_CACHE_LINE_SIZE, socket_id);
-+
-+	if (!rxq->buffer_ring) {
-+		PMD_LOG_ERR(RX, "Rxq malloc mbuf mem failed");
-+		sxe2_rx_queue_release(dev, queue_idx);
-+		rte_free(rxq);
-+		rxq = NULL;
-+		goto l_end;
-+	}
-+
-+	tz = rte_eth_dma_zone_reserve(dev, "rx_dma", queue_idx,
-+					SXE2_RX_RING_SIZE, SXE2_DESC_ADDR_ALIGN, socket_id);
-+	if (tz == NULL) {
-+		PMD_LOG_ERR(RX, "Rxq malloc desc mem failed");
-+		sxe2_rx_queue_release(dev, queue_idx);
-+		rte_free(rxq->buffer_ring);
-+		rxq->buffer_ring = NULL;
-+		rte_free(rxq);
-+		rxq = NULL;
-+		goto l_end;
-+	}
-+
-+	rxq->mz = tz;
-+	memset(tz->addr, 0, SXE2_RX_RING_SIZE);
-+	rxq->base_addr = tz->iova;
-+	rxq->desc_ring = (union sxe2_rx_desc *)tz->addr;
-+
-+l_end:
-+	return rxq;
-+}
-+
-+s32 __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
-+			u16 queue_idx, u16 nb_desc, u32 socket_id,
-+			const struct rte_eth_rxconf *rx_conf,
-+			struct rte_mempool *mp)
-+{
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_vsi *vsi = adapter->vsi_ctxt.main_vsi;
-+	struct sxe2_rx_queue *rxq;
-+	u64 offloads;
-+	s32 ret;
-+	u16 rx_nseg;
-+	u16 i;
-+
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (queue_idx >= dev->data->nb_rx_queues) {
-+		PMD_LOG_ERR(RX, "Rx queue %u is out of range %u",
-+					queue_idx, dev->data->nb_rx_queues);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if (nb_desc % SXE2_RX_DESC_RING_ALIGN != 0 ||
-+		nb_desc > SXE2_MAX_RING_DESC ||
-+		nb_desc < SXE2_MIN_RING_DESC) {
-+		PMD_LOG_ERR(RX, "param desc num:%u is invalid", nb_desc);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if (mp != NULL)
-+		rx_nseg = 1;
-+	else
-+		rx_nseg = rx_conf->rx_nseg;
-+
-+	offloads = rx_conf->offloads | dev->data->dev_conf.rxmode.offloads;
-+
-+	if (rx_nseg > 1 && !(offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
-+		PMD_LOG_ERR(RX, "Port %u queue %u Buffer split offload not configured, but rx_nseg is %u",
-+					dev->data->port_id, queue_idx, rx_nseg);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if ((offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT) && !(rx_nseg > 1)) {
-+		PMD_LOG_ERR(RX, "Port %u queue %u Buffer split offload configured, but rx_nseg is %u",
-+					dev->data->port_id, queue_idx, rx_nseg);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if ((offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO) &&
-+		(offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)) {
-+		PMD_LOG_ERR(RX, "port_id %u queue %u, LRO can't be configure with Keep crc.",
-+					dev->data->port_id, queue_idx);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	rxq = sxe2_rx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
-+	if (rxq == NULL) {
-+		PMD_LOG_ERR(RX, "rx queue[%d] resource alloc failed", queue_idx);
-+		ret = SXE2_ERR_NO_MEMORY;
-+		goto l_end;
-+	}
-+
-+	if (offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO)
-+		dev->data->lro = 1;
-+
-+	if (rx_nseg > 1) {
-+		for (i = 0; i < rx_nseg; i++) {
-+			rte_memcpy(&rxq->rx_seg[i], &rx_conf->rx_seg[i].split,
-+					sizeof(struct rte_eth_rxseg_split));
-+		}
-+		rxq->mb_pool = rxq->rx_seg[0].mp;
-+	} else {
-+		rxq->mb_pool = mp;
-+	}
-+
-+	rxq->rx_free_thresh = rx_conf->rx_free_thresh;
-+	rxq->port_id = dev->data->port_id;
-+	rxq->offloads = offloads;
-+	if (offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)
-+		rxq->crc_len = RTE_ETHER_CRC_LEN;
-+	else
-+		rxq->crc_len = 0;
-+
-+	rxq->queue_id = queue_idx;
-+	rxq->idx_in_func = vsi->rxqs.base_idx_in_func + queue_idx;
-+	rxq->drop_en = rx_conf->rx_drop_en;
-+	rxq->rx_deferred_start = rx_conf->rx_deferred_start;
-+	rxq->vsi = vsi;
-+	rxq->ops = sxe2_rx_default_ops_get();
-+	rxq->ops.queue_reset(rxq);
-+	dev->data->rx_queues[queue_idx] = rxq;
-+
-+	ret = SXE2_SUCCESS;
-+l_end:
-+	return ret;
-+}
-+
-+struct rte_mbuf *sxe2_mbuf_raw_alloc(struct rte_mempool *mp)
-+{
-+	return rte_mbuf_raw_alloc(mp);
-+}
-+
-+static s32 __rte_cold sxe2_rx_queue_mbufs_alloc(struct sxe2_rx_queue *rxq)
-+{
-+	struct rte_mbuf **buf_ring = rxq->buffer_ring;
-+	struct rte_mbuf *mbuf = NULL;
-+	struct rte_mbuf *mbuf_pay;
-+	volatile union sxe2_rx_desc *desc;
-+	u64 dma_addr;
-+	s32 ret;
-+	u16 i, j;
-+
-+	for (i = 0; i < rxq->ring_depth; i++) {
-+		mbuf = sxe2_mbuf_raw_alloc(rxq->mb_pool);
-+		if (mbuf == NULL) {
-+			PMD_LOG_ERR(RX, "Rx queue is not available or setup");
-+			ret = SXE2_ERR_NO_MEMORY;
-+			goto l_err_free_mbuf;
-+		}
-+		buf_ring[i] = mbuf;
-+		mbuf->data_off = RTE_PKTMBUF_HEADROOM;
-+		mbuf->nb_segs = 1;
-+		mbuf->port = rxq->port_id;
-+
-+		dma_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf));
-+		desc = &rxq->desc_ring[i];
-+		if (!(rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
-+			desc->read.hdr_addr = 0;
-+			desc->read.pkt_addr = dma_addr;
-+		} else {
-+			mbuf_pay = rte_mbuf_raw_alloc(rxq->rx_seg[1].mp);
-+			if (unlikely(!mbuf_pay)) {
-+				PMD_LOG_ERR(RX, "Failed to allocate payload mbuf for RX");
-+				ret = SXE2_ERR_NO_MEMORY;
-+				goto l_err_free_mbuf;
-+			}
-+
-+			mbuf_pay->next = NULL;
-+			mbuf_pay->data_off = RTE_PKTMBUF_HEADROOM;
-+			mbuf_pay->nb_segs = 1;
-+			mbuf_pay->port = rxq->port_id;
-+			mbuf->next = mbuf_pay;
-+
-+			desc->read.hdr_addr = dma_addr;
-+			desc->read.pkt_addr =
-+				rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf_pay));
-+		}
-+
-+#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
-+		desc->read.rsvd1 = 0;
-+		desc->read.rsvd2 = 0;
-+#endif
-+	}
-+
-+	ret = SXE2_SUCCESS;
-+	goto l_end;
-+
-+l_err_free_mbuf:
-+	for (j = 0; j <= i; j++) {
-+		if (buf_ring[j] != NULL && buf_ring[j]->next != NULL) {
-+			rte_pktmbuf_free(buf_ring[j]->next);
-+			buf_ring[j]->next = NULL;
-+		}
-+
-+		if (buf_ring[j] != NULL) {
-+			rte_pktmbuf_free(buf_ring[j]);
-+			buf_ring[j] = NULL;
-+		}
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+s32 __rte_cold sxe2_rx_queue_start(struct rte_eth_dev *dev, u16 rx_queue_id)
-+{
-+	struct sxe2_rx_queue *rxq;
-+	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	s32 ret;
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (rx_queue_id >= dev->data->nb_rx_queues) {
-+		PMD_LOG_ERR(RX, "Rx queue %u is out of range %u",
-+				rx_queue_id, dev->data->nb_rx_queues);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	rxq = dev->data->rx_queues[rx_queue_id];
-+	if (rxq == NULL) {
-+		PMD_LOG_ERR(RX, "Rx queue %u is not available or setup",
-+				rx_queue_id);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if (dev->data->rx_queue_state[rx_queue_id] ==
-+			RTE_ETH_QUEUE_STATE_STARTED) {
-+		ret = SXE2_SUCCESS;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_rx_queue_mbufs_alloc(rxq);
-+	if (ret) {
-+		PMD_LOG_ERR(RX, "Rx queue %u apply desc ring fail",
-+			rx_queue_id);
-+		ret =  SXE2_ERR_NO_MEMORY;
-+		goto l_end;
-+	}
-+
-+	sxe2_rx_head_tail_init(adapter, rxq);
-+
-+	ret = sxe2_drv_rxq_ctxt_cfg(adapter, rxq, 1);
-+	if (ret) {
-+		PMD_LOG_ERR(RX, "Rx queue %u config ctxt fail, ret=%d",
-+			rx_queue_id, ret);
-+
-+		(void)sxe2_drv_rxq_switch(adapter, rxq, false);
-+		rxq->ops.mbufs_release(rxq);
-+		rxq->ops.queue_reset(rxq);
-+		goto l_end;
-+	}
-+
-+	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, rxq->ring_depth - 1);
-+	dev->data->rx_queue_state[rx_queue_id] = RTE_ETH_QUEUE_STATE_STARTED;
-+
-+l_end:
-+	return  ret;
-+}
-+
-+s32 __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev __rte_unused)
-+{
-+	struct rte_eth_dev_data *data = dev->data;
-+	struct sxe2_rx_queue *rxq;
-+	u16 nb_rxq;
-+	u16 nb_started_rxq;
-+	s32 ret;
-+	PMD_INIT_FUNC_TRACE();
-+
-+	for (nb_rxq = 0; nb_rxq < data->nb_rx_queues; nb_rxq++) {
-+		rxq = dev->data->rx_queues[nb_rxq];
-+		if (!rxq || rxq->rx_deferred_start)
-+			continue;
-+
-+		ret = sxe2_rx_queue_start(dev, nb_rxq);
-+		if (ret) {
-+			PMD_LOG_ERR(RX, "Fail to start rx queue %u", nb_rxq);
-+			goto l_free_started_queue;
-+		}
-+
-+		rte_atomic_store_explicit(&rxq->sw_stats.pkts, 0,
-+			rte_memory_order_relaxed);
-+		rte_atomic_store_explicit(&rxq->sw_stats.bytes, 0,
-+			rte_memory_order_relaxed);
-+		rte_atomic_store_explicit(&rxq->sw_stats.drop_pkts, 0,
-+			rte_memory_order_relaxed);
-+		rte_atomic_store_explicit(&rxq->sw_stats.drop_bytes, 0,
-+			rte_memory_order_relaxed);
-+		rte_atomic_store_explicit(&rxq->sw_stats.unicast_pkts, 0,
-+			rte_memory_order_relaxed);
-+		rte_atomic_store_explicit(&rxq->sw_stats.broadcast_pkts, 0,
-+			rte_memory_order_relaxed);
-+		rte_atomic_store_explicit(&rxq->sw_stats.multicast_pkts, 0,
-+			rte_memory_order_relaxed);
-+	}
-+	ret = SXE2_SUCCESS;
-+	goto l_end;
-+
-+l_free_started_queue:
-+	for (nb_started_rxq = 0; nb_started_rxq <= nb_rxq; nb_started_rxq++)
-+		(void)sxe2_rx_queue_stop(dev, nb_started_rxq);
-+l_end:
-+	return ret;
-+}
-+
-+void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev __rte_unused)
-+{
-+	struct rte_eth_dev_data *data = dev->data;
-+	struct sxe2_adapter *adapter  = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_vsi     *vsi      = adapter->vsi_ctxt.main_vsi;
-+	struct sxe2_stats   *sw_stats_prev = &vsi->vsi_stats.vsi_sw_stats_prev;
-+	struct sxe2_rx_queue *rxq = NULL;
-+	s32 ret;
-+	u16 nb_rxq;
-+	PMD_INIT_FUNC_TRACE();
-+
-+	for (nb_rxq = 0; nb_rxq < data->nb_rx_queues; nb_rxq++) {
-+		ret = sxe2_rx_queue_stop(dev, nb_rxq);
-+		if (ret) {
-+			PMD_LOG_ERR(RX, "Fail to start rx queue %u", nb_rxq);
-+			continue;
-+		}
-+
-+		rxq = dev->data->rx_queues[nb_rxq];
-+		if (rxq) {
-+			sw_stats_prev->ipackets +=
-+				rte_atomic_load_explicit(&rxq->sw_stats.pkts,
-+					rte_memory_order_relaxed);
-+			sw_stats_prev->ierrors +=
-+				rte_atomic_load_explicit(&rxq->sw_stats.drop_pkts,
-+					rte_memory_order_relaxed);
-+			sw_stats_prev->ibytes +=
-+				rte_atomic_load_explicit(&rxq->sw_stats.bytes,
-+					rte_memory_order_relaxed);
-+
-+			sw_stats_prev->rx_sw_unicast_packets +=
-+				rte_atomic_load_explicit(&rxq->sw_stats.unicast_pkts,
-+					rte_memory_order_relaxed);
-+			sw_stats_prev->rx_sw_broadcast_packets +=
-+				rte_atomic_load_explicit(&rxq->sw_stats.broadcast_pkts,
-+					rte_memory_order_relaxed);
-+			sw_stats_prev->rx_sw_multicast_packets +=
-+				rte_atomic_load_explicit(&rxq->sw_stats.multicast_pkts,
-+					rte_memory_order_relaxed);
-+			sw_stats_prev->rx_sw_drop_packets +=
-+				rte_atomic_load_explicit(&rxq->sw_stats.drop_pkts,
-+					rte_memory_order_relaxed);
-+			sw_stats_prev->rx_sw_drop_bytes +=
-+				rte_atomic_load_explicit(&rxq->sw_stats.drop_bytes,
-+					rte_memory_order_relaxed);
-+		}
-+	}
-+}
-diff --git a/drivers/net/sxe2/sxe2_rx.h b/drivers/net/sxe2/sxe2_rx.h
-new file mode 100644
-index 0000000000..7c6239b387
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_rx.h
-@@ -0,0 +1,34 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_RX_H__
-+#define __SXE2_RX_H__
-+
-+#include "sxe2_queue.h"
-+
-+s32 __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
-+				u16 queue_idx, u16 nb_desc, u32 socket_id,
-+				const struct rte_eth_rxconf *rx_conf,
-+				struct rte_mempool *mp);
-+
-+s32 __rte_cold sxe2_rx_queue_stop(struct rte_eth_dev *dev, u16 rx_queue_id);
-+
-+void __rte_cold sxe2_rx_queue_mbufs_release(struct sxe2_rx_queue *rxq);
-+
-+void __rte_cold sxe2_rx_queue_release(struct rte_eth_dev *dev, u16 queue_idx);
-+
-+void __rte_cold sxe2_all_rxqs_release(struct rte_eth_dev *dev);
-+
-+void __rte_cold sxe2_rx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
-+		struct rte_eth_rxq_info *qinfo);
-+
-+s32 __rte_cold sxe2_rx_queue_start(struct rte_eth_dev *dev, u16 rx_queue_id);
-+
-+s32 __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev);
-+
-+void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev);
-+
-+struct rte_mbuf *sxe2_mbuf_raw_alloc(struct rte_mempool *mp);
-+
-+#endif
-diff --git a/drivers/net/sxe2/sxe2_tx.c b/drivers/net/sxe2/sxe2_tx.c
-new file mode 100644
-index 0000000000..7e4dd74a51
---- /dev/null
-+++ b/drivers/net/sxe2/sxe2_tx.c
-@@ -0,0 +1,447 @@
++++ b/drivers/net/sxe2/sxe2_txrx.c
+@@ -0,0 +1,249 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 + */
@@ -857,481 +422,1060 @@ index 0000000000..7e4dd74a51
 +#include <rte_malloc.h>
 +#include <rte_memzone.h>
 +#include <ethdev_driver.h>
-+#include "sxe2_tx.h"
++#include <unistd.h>
++
++#include "sxe2_txrx.h"
++#include "sxe2_txrx_common.h"
++#include "sxe2_txrx_poll.h"
 +#include "sxe2_ethdev.h"
++
 +#include "sxe2_common_log.h"
 +#include "sxe2_errno.h"
++#include "sxe2_osal.h"
 +#include "sxe2_cmd_chnl.h"
++#if defined(RTE_ARCH_ARM64)
++#include <rte_cpuflags.h>
++#endif
 +
-+static void __iomem *sxe2_tx_doorbell_addr_get(struct sxe2_adapter *adapter, u16 queue_id)
++static s32 sxe2_tx_desciptor_status(void *tx_queue, u16 offset)
 +{
-+	return sxe2_pci_map_addr_get(adapter, SXE2_PCI_MAP_RES_DOORBELL_TX, queue_id);
-+}
++	struct sxe2_tx_queue *txq = (struct sxe2_tx_queue *)tx_queue;
++	s32 ret;
++	u16 desc_idx;
 +
-+static void sxe2_tx_tail_init(struct sxe2_adapter *adapter, struct sxe2_tx_queue *txq)
-+{
-+	txq->tdt_reg_addr = sxe2_tx_doorbell_addr_get(adapter, txq->queue_id);
-+	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, 0);
-+}
-+
-+void __rte_cold sxe2_tx_queue_reset(struct sxe2_tx_queue *txq)
-+{
-+	u16 prev, i;
-+	volatile union sxe2_tx_data_desc *txd;
-+	static const union sxe2_tx_data_desc zeroed_desc = {{0}};
-+	struct sxe2_tx_buffer *tx_buffer = txq->buffer_ring;
-+
-+	for (i = 0; i < txq->ring_depth; i++)
-+		txq->desc_ring[i] = zeroed_desc;
-+
-+	prev = txq->ring_depth - 1;
-+	for (i = 0; i < txq->ring_depth; i++) {
-+		txd = &txq->desc_ring[i];
-+		if (txd == NULL)
-+			continue;
-+
-+		txd->wb.dd = rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_DONE);
-+		tx_buffer[i].mbuf       = NULL;
-+		tx_buffer[i].last_id    = i;
-+		tx_buffer[prev].next_id = i;
-+		prev = i;
++	if (unlikely(offset >= txq->ring_depth)) {
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
 +	}
 +
-+	txq->desc_used_num = 0;
-+	txq->desc_free_num = txq->ring_depth - 1;
-+	txq->next_use      = 0;
-+	txq->next_clean    = txq->ring_depth - 1;
-+	txq->next_dd       = txq->rs_thresh  - 1;
-+	txq->next_rs       = txq->rs_thresh  - 1;
++	desc_idx = txq->next_use + offset;
++	desc_idx = DIV_ROUND_UP(desc_idx, txq->rs_thresh) * (txq->rs_thresh);
++	if (desc_idx >= txq->ring_depth) {
++		desc_idx -= txq->ring_depth;
++		if (desc_idx >= txq->ring_depth)
++			desc_idx -= txq->ring_depth;
++	}
++
++	if (desc_idx == 0)
++		desc_idx = txq->rs_thresh - 1;
++	else
++		desc_idx -= 1;
++
++	if (rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_DONE) ==
++		(txq->desc_ring[desc_idx].wb.dd &
++		rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_MASK)))
++		ret = RTE_ETH_TX_DESC_DONE;
++	else
++		ret = RTE_ETH_TX_DESC_FULL;
++
++l_end:
++	return ret;
 +}
 +
-+void __rte_cold sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq)
++static inline s32 sxe2_tx_mbuf_empty_check(struct rte_mbuf *mbuf)
 +{
-+	u32 i;
++	struct rte_mbuf *m_seg = mbuf;
 +
-+	if (txq != NULL && txq->buffer_ring != NULL) {
-+		for (i = 0; i < txq->ring_depth; i++) {
-+			if (txq->buffer_ring[i].mbuf != NULL) {
-+				rte_pktmbuf_free_seg(txq->buffer_ring[i].mbuf);
-+				txq->buffer_ring[i].mbuf = NULL;
++	while (m_seg != NULL) {
++		if (m_seg->data_len == 0)
++			return SXE2_ERR_INVAL;
++		m_seg = m_seg->next;
++	}
++
++	return SXE2_SUCCESS;
++}
++
++u16 sxe2_tx_pkts_prepare(__rte_unused void *tx_queue,
++		struct rte_mbuf **tx_pkts, u16 nb_pkts)
++{
++	struct sxe2_tx_queue *txq = tx_queue;
++	struct rte_mbuf *mbuf;
++	u64 ol_flags = 0;
++	s32 ret = SXE2_SUCCESS;
++	s32 i = 0;
++
++	for (i = 0; i < nb_pkts; i++) {
++		mbuf = tx_pkts[i];
++		if (!mbuf)
++			continue;
++		ol_flags = mbuf->ol_flags;
++		if (!(ol_flags & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))) {
++			if (mbuf->nb_segs > SXE2_TX_MTU_SEG_MAX ||
++					mbuf->pkt_len > SXE2_FRAME_SIZE_MAX) {
++				rte_errno = -SXE2_ERR_INVAL;
++				goto l_end;
 +			}
++		} else if ((mbuf->tso_segsz < SXE2_MIN_TSO_MSS) ||
++			(mbuf->tso_segsz > SXE2_MAX_TSO_MSS) ||
++			(mbuf->nb_segs   > txq->ring_depth) ||
++			(mbuf->pkt_len > SXE2_TX_TSO_PKTLEN_MAX)) {
++			rte_errno = -SXE2_ERR_INVAL;
++			goto l_end;
++		}
++
++		if (mbuf->pkt_len < SXE2_TX_MIN_PKT_LEN) {
++			rte_errno = -SXE2_ERR_INVAL;
++			goto l_end;
++		}
++
++#ifdef RTE_ETHDEV_DEBUG_TX
++		ret = rte_validate_tx_offload(mbuf);
++		if (ret != SXE2_SUCCESS) {
++			rte_errno = -ret;
++			goto l_end;
++		}
++#endif
++		ret = rte_net_intel_cksum_prepare(mbuf);
++		if (ret != SXE2_SUCCESS) {
++			rte_errno = -ret;
++			goto l_end;
++		}
++
++		ret = sxe2_tx_mbuf_empty_check(mbuf);
++		if (ret != SXE2_SUCCESS) {
++			rte_errno = -ret;
++			goto l_end;
 +		}
 +	}
-+}
-+
-+static void sxe2_tx_buffer_ring_free(struct sxe2_tx_queue *txq)
-+{
-+	if (txq != NULL && txq->buffer_ring != NULL)
-+		rte_free(txq->buffer_ring);
-+}
-+
-+const struct sxe2_txq_ops sxe2_default_txq_ops = {
-+	.queue_reset      = sxe2_tx_queue_reset,
-+	.mbufs_release    = sxe2_tx_queue_mbufs_release,
-+	.buffer_ring_free = sxe2_tx_buffer_ring_free,
-+};
-+
-+static struct sxe2_txq_ops sxe2_tx_default_ops_get(void)
-+{
-+	return sxe2_default_txq_ops;
-+}
-+
-+static s32 sxe2_txq_arg_validate(struct rte_eth_dev *dev, u16 ring_depth,
-+		u16 *rs_thresh, u16 *free_thresh, const struct rte_eth_txconf *tx_conf)
-+{
-+	s32 ret = SXE2_SUCCESS;
-+
-+	if ((ring_depth % SXE2_TX_DESC_RING_ALIGN) != 0 ||
-+		ring_depth > SXE2_MAX_RING_DESC ||
-+		ring_depth < SXE2_MIN_RING_DESC) {
-+		PMD_LOG_ERR(TX, "number:%u of receive descriptors is invalid", ring_depth);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	*free_thresh = (u16)((tx_conf->tx_free_thresh) ?
-+			tx_conf->tx_free_thresh : DEFAULT_TX_FREE_THRESH);
-+	*rs_thresh   = (u16)((tx_conf->tx_rs_thresh) ?
-+			tx_conf->tx_rs_thresh : DEFAULT_TX_RS_THRESH);
-+
-+	if (*rs_thresh >= (ring_depth - 2)) {
-+		PMD_LOG_ERR(TX, "tx_rs_thresh must be less than the number "
-+			"of tx descriptors minus 2. (tx_rs_thresh:%u port:%u)",
-+			*rs_thresh, dev->data->port_id);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if (*free_thresh >= (ring_depth - 3)) {
-+		PMD_LOG_ERR(TX, "tx_free_thresh must be less than the number "
-+			"of tx descriptors minus 3. (tx_free_thresh:%u port:%u)",
-+			*free_thresh, dev->data->port_id);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if (*rs_thresh > *free_thresh) {
-+		PMD_LOG_ERR(TX, "tx_rs_thresh must be less than or equal to "
-+			"tx_free_thresh. (tx_free_thresh:%u tx_rs_thresh:%u port:%u)",
-+			*free_thresh, *rs_thresh, dev->data->port_id);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	if ((ring_depth % *rs_thresh) != 0) {
-+		PMD_LOG_ERR(TX, "tx_rs_thresh must be a divisor of the "
-+			"number of tx descriptors. (tx_rs_thresh:%u port:%d ring_depth:%u)",
-+			*rs_thresh, dev->data->port_id, ring_depth);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	ret = SXE2_SUCCESS;
 +
 +l_end:
-+	return ret;
++	return i;
 +}
 +
-+void __rte_cold sxe2_tx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
-+		struct rte_eth_txq_info *qinfo)
-+{
-+	struct sxe2_tx_queue *txq = NULL;
-+
-+	if (queue_id >= dev->data->nb_tx_queues) {
-+		PMD_LOG_ERR(TX, "tx queue:%u is out of range:%u",
-+				queue_id, dev->data->nb_tx_queues);
-+		goto end;
-+	}
-+
-+	txq = dev->data->tx_queues[queue_id];
-+	if (txq == NULL) {
-+		PMD_LOG_WARN(TX, "tx queue:%u is NULL", queue_id);
-+		goto end;
-+	}
-+
-+	qinfo->nb_desc                = txq->ring_depth;
-+
-+	qinfo->conf.tx_thresh.pthresh = txq->pthresh;
-+	qinfo->conf.tx_thresh.hthresh = txq->hthresh;
-+	qinfo->conf.tx_thresh.wthresh = txq->wthresh;
-+	qinfo->conf.tx_free_thresh    = txq->free_thresh;
-+	qinfo->conf.tx_rs_thresh      = txq->rs_thresh;
-+	qinfo->conf.offloads          = txq->offloads;
-+	qinfo->conf.tx_deferred_start = txq->tx_deferred_start;
-+
-+end:
-+	return;
-+}
-+
-+s32 __rte_cold sxe2_tx_queue_stop(struct rte_eth_dev *dev, u16 queue_id)
++void sxe2_tx_mode_func_set(struct rte_eth_dev *dev)
 +{
 +	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_tx_queue *txq;
-+	s32 ret;
++	u32 tx_mode_flags = 0;
++
 +	PMD_INIT_FUNC_TRACE();
 +
-+	if (queue_id >= dev->data->nb_tx_queues) {
-+		PMD_LOG_ERR(TX, "tx queue:%u is out of range:%u",
-+			queue_id, dev->data->nb_tx_queues);
++	dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
++	dev->tx_pkt_burst = sxe2_tx_pkts;
++	adapter->q_ctxt.tx_mode_flags = tx_mode_flags;
++	PMD_LOG_DEBUG(TX, "Tx mode flags:0x%016x port_id:%u.",
++				tx_mode_flags, dev->data->port_id);
++}
++
++static s32 sxe2_rx_desciptor_status(void *rx_queue, u16 offset)
++{
++	struct sxe2_rx_queue *rxq = (struct sxe2_rx_queue *)rx_queue;
++	volatile union sxe2_rx_desc *desc;
++	s32 ret;
++
++	if (unlikely(offset >= rxq->ring_depth)) {
 +		ret = SXE2_ERR_INVAL;
 +		goto l_end;
 +	}
 +
-+	if (dev->data->tx_queue_state[queue_id] ==
-+			RTE_ETH_QUEUE_STATE_STOPPED) {
-+		ret = SXE2_SUCCESS;
++	if (offset >= rxq->ring_depth - rxq->hold_num) {
++		ret = RTE_ETH_RX_DESC_UNAVAIL;
 +		goto l_end;
 +	}
 +
-+	txq = dev->data->tx_queues[queue_id];
-+	if (txq == NULL) {
-+		ret = SXE2_SUCCESS;
-+		goto l_end;
-+	}
++	if (rxq->processing_idx + offset >= rxq->ring_depth)
++		desc = &rxq->desc_ring[rxq->processing_idx + offset - rxq->ring_depth];
++	else
++		desc = &rxq->desc_ring[rxq->processing_idx + offset];
 +
-+	ret = sxe2_drv_txq_switch(adapter, txq, false);
-+	if (ret) {
-+		PMD_LOG_ERR(TX, "Failed to switch tx queue %u off",
-+				queue_id);
-+		goto l_end;
-+	}
-+
-+	txq->ops.mbufs_release(txq);
-+	txq->ops.queue_reset(txq);
-+	dev->data->tx_queue_state[queue_id] = RTE_ETH_QUEUE_STATE_STOPPED;
-+	ret = SXE2_SUCCESS;
++	if (rte_le_to_cpu_64(desc->wb.status_err_ptype_len) & SXE2_RX_DESC_STATUS_DD_MASK)
++		ret = RTE_ETH_RX_DESC_DONE;
++	else
++		ret = RTE_ETH_RX_DESC_AVAIL;
 +
 +l_end:
++	PMD_LOG_DEBUG(RX, "Rx queue desc[%u] status:%d queue_id:%u port_id:%u",
++				offset, ret, rxq->queue_id, rxq->port_id);
 +	return ret;
 +}
 +
-+static void __rte_cold sxe2_tx_queue_free(struct sxe2_tx_queue *txq)
++static s32 sxe2_rx_queue_count(void *rx_queue)
 +{
-+	if (txq != NULL) {
-+		txq->ops.mbufs_release(txq);
-+		txq->ops.buffer_ring_free(txq);
++	struct sxe2_rx_queue *rxq = (struct sxe2_rx_queue *)rx_queue;
++	volatile union sxe2_rx_desc *desc;
++	u16 done_num = 0;
 +
-+		rte_memzone_free(txq->mz);
-+		rte_free(txq);
++	desc = &rxq->desc_ring[rxq->processing_idx];
++	while ((done_num < rxq->ring_depth) &&
++		(rte_le_to_cpu_64(desc->wb.status_err_ptype_len) &
++		SXE2_RX_DESC_STATUS_DD_MASK)) {
++		done_num += SXE2_RX_QUEUE_CHECK_INTERVAL_NUM;
++		if (rxq->processing_idx + done_num >= rxq->ring_depth)
++			desc = &rxq->desc_ring[rxq->processing_idx + done_num - rxq->ring_depth];
++		else
++			desc += SXE2_RX_QUEUE_CHECK_INTERVAL_NUM;
 +	}
++
++	PMD_LOG_DEBUG(RX, "Rx queue done desc count:%u queue_id:%u port_id:%u",
++				done_num, rxq->queue_id, rxq->port_id);
++
++	return done_num;
 +}
 +
-+void __rte_cold sxe2_tx_queue_release(struct rte_eth_dev *dev, u16 queue_idx)
++static bool __rte_cold sxe2_rx_offload_en_check(struct rte_eth_dev *dev, u64 offload)
 +{
-+	(void)sxe2_tx_queue_stop(dev, queue_idx);
-+	sxe2_tx_queue_free(dev->data->tx_queues[queue_idx]);
-+	dev->data->tx_queues[queue_idx] = NULL;
-+}
++	struct sxe2_rx_queue *rxq;
++	bool en = false;
++	u16 i;
 +
-+void __rte_cold sxe2_all_txqs_release(struct rte_eth_dev *dev)
-+{
-+	struct rte_eth_dev_data *data = dev->data;
-+	u16 nb_txq;
-+
-+	for (nb_txq = 0; nb_txq < data->nb_tx_queues; nb_txq++) {
-+		if (data->tx_queues[nb_txq] == NULL)
++	for (i = 0; i < dev->data->nb_rx_queues; ++i) {
++		rxq = (struct sxe2_rx_queue *)dev->data->rx_queues[i];
++		if (rxq == NULL)
 +			continue;
 +
-+		sxe2_tx_queue_release(dev, nb_txq);
-+		data->tx_queues[nb_txq] = NULL;
++		if (0 != (rxq->offloads & offload)) {
++			en = true;
++			goto l_end;
++		}
 +	}
-+	data->nb_tx_queues = 0;
-+}
-+
-+static struct sxe2_tx_queue
-+*sxe2_tx_queue_alloc(struct rte_eth_dev *dev, u16 queue_idx,
-+		u16 ring_depth, u32 socket_id)
-+{
-+	struct sxe2_tx_queue *txq;
-+	const struct rte_memzone *tz;
-+
-+	if (dev->data->tx_queues[queue_idx]) {
-+		sxe2_tx_queue_release(dev, queue_idx);
-+		dev->data->tx_queues[queue_idx] = NULL;
-+	}
-+
-+	txq = rte_zmalloc_socket("tx_queue", sizeof(struct sxe2_tx_queue),
-+			RTE_CACHE_LINE_SIZE, socket_id);
-+	if (txq == NULL) {
-+		PMD_LOG_ERR(TX, "tx queue:%d alloc failed", queue_idx);
-+		goto l_end;
-+	}
-+
-+	tz = rte_eth_dma_zone_reserve(dev, "tx_dma", queue_idx,
-+			sizeof(union sxe2_tx_data_desc) * SXE2_MAX_RING_DESC,
-+			SXE2_DESC_ADDR_ALIGN, socket_id);
-+	if (tz == NULL) {
-+		PMD_LOG_ERR(TX, "tx desc ring alloc failed, queue_id:%d", queue_idx);
-+		rte_free(txq);
-+		txq = NULL;
-+		goto l_end;
-+	}
-+
-+	txq->buffer_ring = rte_zmalloc_socket("tx_buffer_ring",
-+		sizeof(struct sxe2_tx_buffer) * ring_depth,
-+		RTE_CACHE_LINE_SIZE, socket_id);
-+	if (txq->buffer_ring == NULL) {
-+		PMD_LOG_ERR(TX, "tx buffer alloc failed, queue_id:%d", queue_idx);
-+		rte_memzone_free(tz);
-+		rte_free(txq);
-+		txq = NULL;
-+		goto l_end;
-+	}
-+
-+	txq->mz = tz;
-+	txq->base_addr = tz->iova;
-+	txq->desc_ring = (volatile union sxe2_tx_data_desc *)tz->addr;
 +
 +l_end:
-+	return txq;
++	return en;
 +}
 +
-+s32 __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
-+		u16 queue_idx, u16 nb_desc, u32 socket_id,
-+		const struct rte_eth_txconf *tx_conf)
++void sxe2_rx_mode_func_set(struct rte_eth_dev *dev)
 +{
-+	s32 ret = SXE2_SUCCESS;
-+	u16 tx_rs_thresh;
-+	u16 tx_free_thresh;
-+	struct sxe2_tx_queue *txq;
-+	struct sxe2_adapter  *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
-+	struct sxe2_vsi      *vsi     = adapter->vsi_ctxt.main_vsi;
-+	u64 offloads;
-+	PMD_INIT_FUNC_TRACE();
-+
-+	if (queue_idx >= dev->data->nb_tx_queues) {
-+		PMD_LOG_ERR(TX, "tx queue:%u is out of range:%u",
-+			queue_idx, dev->data->nb_tx_queues);
-+		ret = SXE2_ERR_INVAL;
-+		goto end;
-+	}
-+
-+	ret = sxe2_txq_arg_validate(dev, nb_desc, &tx_rs_thresh, &tx_free_thresh, tx_conf);
-+	if (ret) {
-+		PMD_LOG_ERR(TX, "tx queue:%u arg validate failed", queue_idx);
-+		goto end;
-+	}
-+
-+	offloads = tx_conf->offloads | dev->data->dev_conf.txmode.offloads;
-+
-+	txq = sxe2_tx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
-+	if (txq == NULL) {
-+		PMD_LOG_ERR(TX, "failed to alloc sxe2vf tx queue:%u resource", queue_idx);
-+		ret = SXE2_ERR_NO_MEMORY;
-+		goto end;
-+	}
-+
-+	txq->vlan_flag         = SXE2_TX_FLAGS_VLAN_TAG_LOC_L2TAG1;
-+	txq->ring_depth        = nb_desc;
-+	txq->rs_thresh         = tx_rs_thresh;
-+	txq->free_thresh       = tx_free_thresh;
-+	txq->pthresh           = tx_conf->tx_thresh.pthresh;
-+	txq->hthresh           = tx_conf->tx_thresh.hthresh;
-+	txq->wthresh           = tx_conf->tx_thresh.wthresh;
-+	txq->queue_id          = queue_idx;
-+	txq->idx_in_func       = vsi->txqs.base_idx_in_func + queue_idx;
-+	txq->port_id           = dev->data->port_id;
-+	txq->offloads          = offloads;
-+	txq->tx_deferred_start = tx_conf->tx_deferred_start;
-+	txq->vsi               = vsi;
-+	txq->ops               = sxe2_tx_default_ops_get();
-+	txq->ops.queue_reset(txq);
-+
-+	dev->data->tx_queues[queue_idx] = txq;
-+	ret = SXE2_SUCCESS;
-+
-+end:
-+	return ret;
-+}
-+
-+s32 __rte_cold sxe2_tx_queue_start(struct rte_eth_dev *dev, u16 queue_id)
-+{
-+	s32    ret = SXE2_SUCCESS;
-+	struct sxe2_tx_queue *txq;
 +	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	u32 rx_mode_flags = 0;
++
 +	PMD_INIT_FUNC_TRACE();
 +
-+	if (queue_id >= dev->data->nb_tx_queues) {
-+		PMD_LOG_ERR(TX, "tx queue:%u is out of range:%u",
-+			queue_id, dev->data->nb_tx_queues);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
++	if (sxe2_rx_offload_en_check(dev, RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT))
++		dev->rx_pkt_burst = sxe2_rx_pkts_scattered_split;
++	else
++		dev->rx_pkt_burst = sxe2_rx_pkts_scattered;
 +
-+	if (dev->data->tx_queue_state[queue_id] == RTE_ETH_QUEUE_STATE_STARTED) {
-+		ret = SXE2_SUCCESS;
-+		goto l_end;
-+	}
-+
-+	txq = dev->data->tx_queues[queue_id];
-+	if (txq == NULL) {
-+		PMD_LOG_ERR(TX, "tx queue:%u is not available or setup", queue_id);
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_drv_txq_ctxt_cfg(adapter, txq, 1);
-+	if (ret) {
-+		PMD_LOG_ERR(TX, "tx queue:%u config ctxt fail", queue_id);
-+
-+		(void)sxe2_drv_txq_switch(adapter, txq, false);
-+		txq->ops.mbufs_release(txq);
-+		txq->ops.queue_reset(txq);
-+		goto l_end;
-+	}
-+
-+	sxe2_tx_tail_init(adapter, txq);
-+
-+	dev->data->tx_queue_state[queue_id] = RTE_ETH_QUEUE_STATE_STARTED;
-+	ret = SXE2_SUCCESS;
-+
-+l_end:
-+	return ret;
++	PMD_LOG_DEBUG(RX, "Rx mode flags:0x%016x port_id:%u.",
++				rx_mode_flags, dev->data->port_id);
++	adapter->q_ctxt.rx_mode_flags = rx_mode_flags;
 +}
 +
-+s32 __rte_cold sxe2_txqs_all_start(struct rte_eth_dev *dev __rte_unused)
++void sxe2_set_common_function(struct rte_eth_dev *dev)
 +{
-+struct rte_eth_dev_data *data = dev->data;
-+	struct sxe2_tx_queue *txq;
-+	u16 nb_txq;
-+	u16 nb_started_txq;
-+	s32 ret;
 +	PMD_INIT_FUNC_TRACE();
 +
-+	for (nb_txq = 0; nb_txq < data->nb_tx_queues; nb_txq++) {
-+		txq = dev->data->tx_queues[nb_txq];
-+		if (!txq || txq->tx_deferred_start)
-+			continue;
++	dev->rx_queue_count = sxe2_rx_queue_count;
++	dev->rx_descriptor_status = sxe2_rx_desciptor_status;
++	dev->rx_pkt_burst = sxe2_rx_pkts_scattered;
 +
-+		ret = sxe2_tx_queue_start(dev, nb_txq);
-+		if (ret) {
-+			PMD_LOG_ERR(TX, "Fail to start tx queue %u", nb_txq);
-+			goto l_free_started_queue;
-+		}
-+	}
-+	ret = SXE2_SUCCESS;
-+	goto l_end;
-+
-+l_free_started_queue:
-+	for (nb_started_txq = 0; nb_started_txq <= nb_txq; nb_started_txq++)
-+		(void)sxe2_tx_queue_stop(dev, nb_started_txq);
-+
-+l_end:
-+	return ret;
++	dev->tx_descriptor_status = sxe2_tx_desciptor_status;
++	dev->tx_pkt_prepare = sxe2_tx_pkts_prepare;
++	dev->tx_pkt_burst = sxe2_tx_pkts;
 +}
-+
-+void __rte_cold sxe2_txqs_all_stop(struct rte_eth_dev *dev __rte_unused)
-+{
-+	struct rte_eth_dev_data *data = dev->data;
-+	u16 nb_txq;
-+	s32 ret;
-+
-+	for (nb_txq = 0; nb_txq < data->nb_tx_queues; nb_txq++) {
-+		ret = sxe2_tx_queue_stop(dev, nb_txq);
-+		if (ret) {
-+			PMD_LOG_WARN(TX, "Fail to stop tx queue %u", nb_txq);
-+			continue;
-+		}
-+	}
-+}
-diff --git a/drivers/net/sxe2/sxe2_tx.h b/drivers/net/sxe2/sxe2_tx.h
+diff --git a/drivers/net/sxe2/sxe2_txrx.h b/drivers/net/sxe2/sxe2_txrx.h
 new file mode 100644
-index 0000000000..58b668e337
+index 0000000000..cd9ebfa32f
 --- /dev/null
-+++ b/drivers/net/sxe2/sxe2_tx.h
-@@ -0,0 +1,32 @@
++++ b/drivers/net/sxe2/sxe2_txrx.h
+@@ -0,0 +1,21 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 + */
 +
-+#ifndef __SXE2_TX_H__
-+#define __SXE2_TX_H__
++#ifndef SXE2_TXRX_H
++#define SXE2_TXRX_H
++#include <ethdev_driver.h>
 +#include "sxe2_queue.h"
 +
-+void __rte_cold sxe2_tx_queue_reset(struct sxe2_tx_queue *txq);
++void sxe2_set_common_function(struct rte_eth_dev *dev);
 +
-+s32 __rte_cold sxe2_tx_queue_start(struct rte_eth_dev *dev, u16 queue_id);
++u16 sxe2_tx_pkts_prepare(__rte_unused void *tx_queue,
++		struct rte_mbuf **tx_pkts, u16 nb_pkts);
 +
-+void sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq);
++void sxe2_tx_mode_func_set(struct rte_eth_dev *dev);
 +
-+s32 __rte_cold sxe2_tx_queue_stop(struct rte_eth_dev *dev, u16 queue_id);
++void __rte_cold sxe2_rx_queue_reset(struct sxe2_rx_queue *rxq);
 +
-+s32 __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
-+		u16 queue_idx, u16 nb_desc, u32 socket_id,
-+		const struct rte_eth_txconf *tx_conf);
-+
-+void __rte_cold sxe2_tx_queue_release(struct rte_eth_dev *dev, u16 queue_idx);
-+
-+void __rte_cold sxe2_all_txqs_release(struct rte_eth_dev *dev);
-+
-+void __rte_cold sxe2_tx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
-+		struct rte_eth_txq_info *qinfo);
-+
-+s32 __rte_cold sxe2_txqs_all_start(struct rte_eth_dev *dev);
-+
-+void __rte_cold sxe2_txqs_all_stop(struct rte_eth_dev *dev);
++void sxe2_rx_mode_func_set(struct rte_eth_dev *dev);
 +
 +#endif
+diff --git a/drivers/net/sxe2/sxe2_txrx_poll.c b/drivers/net/sxe2/sxe2_txrx_poll.c
+new file mode 100644
+index 0000000000..55bea8b74c
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_txrx_poll.c
+@@ -0,0 +1,782 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#include <rte_common.h>
++#include <rte_net.h>
++#include <rte_vect.h>
++#include <rte_malloc.h>
++#include <rte_memzone.h>
++#include <ethdev_driver.h>
++#include <unistd.h>
++
++#include "sxe2_osal.h"
++#include "sxe2_txrx_common.h"
++#include "sxe2_txrx_poll.h"
++#include "sxe2_txrx.h"
++#include "sxe2_queue.h"
++#include "sxe2_ethdev.h"
++#include "sxe2_common_log.h"
++#include "sxe2_errno.h"
++
++static inline s32 sxe2_tx_cleanup(struct sxe2_tx_queue *txq)
++{
++	s32 ret = SXE2_SUCCESS;
++	volatile union sxe2_tx_data_desc *desc_ring = txq->desc_ring;
++	struct sxe2_tx_buffer *buffer_ring = txq->buffer_ring;
++	u16 ring_depth = txq->ring_depth;
++	u16 next_clean = txq->next_clean;
++	u16 clean_last;
++	u16 clean_num;
++
++	clean_last = next_clean + txq->rs_thresh;
++	if (clean_last >= ring_depth)
++		clean_last = clean_last - ring_depth;
++
++	clean_last = buffer_ring[clean_last].last_id;
++	if (rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_DONE) !=
++		(txq->desc_ring[clean_last].wb.dd & rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_MASK))) {
++		PMD_LOG_TX_DEBUG("desc[%u] is not done.port_id=%u queue_id=%u val=0x%" PRIx64,
++						 clean_last, txq->port_id,
++			txq->queue_id, txq->desc_ring[clean_last].wb.dd);
++		SXE2_TX_STATS_CNT(txq, tx_desc_not_done, 1);
++		ret = SXE2_ERR_DESC_NO_DONE;
++		goto l_end;
++	}
++
++	if (clean_last > next_clean)
++		clean_num = clean_last - next_clean;
++	else
++		clean_num = ring_depth - next_clean + clean_last;
++
++	desc_ring[clean_last].wb.dd = 0;
++
++	txq->next_clean = clean_last;
++	txq->desc_free_num += clean_num;
++
++	ret = SXE2_SUCCESS;
++
++l_end:
++	return ret;
++}
++
++static __rte_always_inline u16
++sxe2_tx_pkt_data_desc_count(struct rte_mbuf *tx_pkt)
++{
++	struct rte_mbuf *m_seg = tx_pkt;
++	u16 count = 0;
++
++	while (m_seg != NULL) {
++		count += DIV_ROUND_UP(m_seg->data_len,
++				SXE2_TX_MAX_DATA_NUM_PER_DESC);
++		m_seg = m_seg->next;
++	}
++
++	return count;
++}
++
++static __rte_always_inline void
++sxe2_tx_desc_checksum_fill(u64 offloads, u32 *desc_cmd, u32 *desc_offset,
++		union sxe2_tx_offload_info ol_info)
++{
++	if (offloads & RTE_MBUF_F_TX_IP_CKSUM) {
++		*desc_cmd    |= SXE2_TX_DATA_DESC_CMD_IIPT_IPV4_CSUM;
++		*desc_offset |= SXE2_TX_DATA_DESC_IPLEN_VAL(ol_info.l3_len);
++	} else if (offloads & RTE_MBUF_F_TX_IPV4) {
++		*desc_cmd    |= SXE2_TX_DATA_DESC_CMD_IIPT_IPV4;
++		*desc_offset |= SXE2_TX_DATA_DESC_IPLEN_VAL(ol_info.l3_len);
++	} else if (offloads & RTE_MBUF_F_TX_IPV6) {
++		*desc_cmd    |= SXE2_TX_DATA_DESC_CMD_IIPT_IPV6;
++		*desc_offset |= SXE2_TX_DATA_DESC_IPLEN_VAL(ol_info.l3_len);
++	}
++
++	if (offloads & RTE_MBUF_F_TX_TCP_SEG) {
++		*desc_cmd    |= SXE2_TX_DATA_DESC_CMD_L4T_EOFT_TCP;
++		*desc_offset |= SXE2_TX_DATA_DESC_L4LEN_VAL(ol_info.l4_len);
++		goto l_end;
++	}
++
++	if (offloads & RTE_MBUF_F_TX_UDP_SEG) {
++		*desc_cmd    |= SXE2_TX_DATA_DESC_CMD_L4T_EOFT_UDP;
++		*desc_offset |= SXE2_TX_DATA_DESC_L4LEN_VAL(ol_info.l4_len);
++		goto l_end;
++	}
++
++	switch (offloads & RTE_MBUF_F_TX_L4_MASK) {
++	case RTE_MBUF_F_TX_TCP_CKSUM:
++		*desc_cmd    |= SXE2_TX_DATA_DESC_CMD_L4T_EOFT_TCP;
++		*desc_offset |= SXE2_TX_DATA_DESC_L4LEN_VAL(ol_info.l4_len);
++		break;
++	case RTE_MBUF_F_TX_SCTP_CKSUM:
++		*desc_cmd    |= SXE2_TX_DATA_DESC_CMD_L4T_EOFT_SCTP;
++		*desc_offset |= SXE2_TX_DATA_DESC_L4LEN_VAL(ol_info.l4_len);
++		break;
++	case RTE_MBUF_F_TX_UDP_CKSUM:
++		*desc_cmd    |= SXE2_TX_DATA_DESC_CMD_L4T_EOFT_UDP;
++		*desc_offset |= SXE2_TX_DATA_DESC_L4LEN_VAL(ol_info.l4_len);
++		break;
++	default:
++
++		break;
++	}
++
++l_end:
++	return;
++}
++
++static __rte_always_inline u64
++sxe2_tx_data_desc_build_cobt(u32 cmd, u32 offset, u16 buf_size, u16 l2tag)
++{
++	return rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DATA |
++			(((u64)cmd)      << SXE2_TX_DATA_DESC_CMD_SHIFT) |
++			(((u64)offset)   << SXE2_TX_DATA_DESC_OFFSET_SHIFT) |
++			(((u64)buf_size) << SXE2_TX_DATA_DESC_BUF_SZ_SHIFT) |
++			(((u64)l2tag)    << SXE2_TX_DATA_DESC_L2TAG1_SHIFT));
++}
++
++u16 sxe2_tx_pkts(void *tx_queue, struct rte_mbuf **tx_pkts, u16 nb_pkts)
++{
++	struct sxe2_tx_queue *txq = tx_queue;
++	struct sxe2_tx_buffer *buffer_ring;
++	struct sxe2_tx_buffer *buffer;
++	struct sxe2_tx_buffer *next_buffer;
++	struct rte_mbuf *tx_pkt;
++	struct rte_mbuf *m_seg;
++	volatile union sxe2_tx_data_desc *desc_ring;
++	volatile union sxe2_tx_data_desc *desc;
++	volatile struct sxe2_tx_context_desc *ctxt_desc;
++	union sxe2_tx_offload_info ol_info;
++	struct sxe2_vsi *vsi = txq->vsi;
++	rte_iova_t buf_dma_addr;
++	u64 offloads;
++	u64 desc_type_cmd_tso_mss;
++	u32 desc_cmd;
++	u32 desc_offset;
++	u32 desc_tag;
++	u32 desc_tunneling_params;
++	u16 ipsec_offset;
++	u16 ctxt_desc_num;
++	u16 desc_sum_num;
++	u16 tx_num;
++	u16 seg_len;
++	u16 next_use;
++	u16 last_use;
++	u16 desc_l2tag2;
++
++	buffer_ring = txq->buffer_ring;
++	desc_ring   = txq->desc_ring;
++	next_use    = txq->next_use;
++	buffer      = &buffer_ring[next_use];
++
++	if (txq->desc_free_num < txq->free_thresh)
++		(void)sxe2_tx_cleanup(txq);
++
++	for (tx_num = 0; tx_num < nb_pkts; tx_num++) {
++		tx_pkt = *tx_pkts++;
++		desc_cmd              = 0;
++		desc_offset           = 0;
++		desc_tag              = 0;
++		desc_tunneling_params = 0;
++		ipsec_offset          = 0;
++		offloads              = tx_pkt->ol_flags;
++		ol_info.l2_len        = tx_pkt->l2_len;
++		ol_info.l3_len        = tx_pkt->l3_len;
++		ol_info.l4_len        = tx_pkt->l4_len;
++		ol_info.tso_segsz     = tx_pkt->tso_segsz;
++		ol_info.outer_l2_len  = tx_pkt->outer_l2_len;
++		ol_info.outer_l3_len  = tx_pkt->outer_l3_len;
++
++		ctxt_desc_num = (offloads &
++				SXE2_TX_OFFLOAD_CTXT_NEEDCK_MASK) ? 1 : 0;
++		if (unlikely(vsi->vsi_type == SXE2_VSI_T_DPDK_ESW))
++			ctxt_desc_num = 1;
++
++		if (offloads & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG))
++			desc_sum_num = sxe2_tx_pkt_data_desc_count(tx_pkt) + ctxt_desc_num;
++		else
++			desc_sum_num = tx_pkt->nb_segs + ctxt_desc_num;
++
++		last_use = next_use + desc_sum_num - 1;
++		if (last_use >= txq->ring_depth)
++			last_use = last_use - txq->ring_depth;
++
++		if (desc_sum_num > txq->desc_free_num) {
++			if (unlikely(sxe2_tx_cleanup(txq) != 0))
++				goto l_exit_logic;
++
++			if (unlikely(desc_sum_num > txq->rs_thresh)) {
++				while (desc_sum_num > txq->desc_free_num)
++					if (unlikely(sxe2_tx_cleanup(txq) != 0))
++						goto l_exit_logic;
++			}
++		}
++
++		desc_offset |= SXE2_TX_DATA_DESC_MACLEN_VAL(ol_info.l2_len);
++
++		if (offloads & SXE2_TX_OFFLOAD_CKSUM_MASK) {
++			sxe2_tx_desc_checksum_fill(offloads, &desc_cmd,
++					&desc_offset, ol_info);
++		}
++
++		if (offloads & (RTE_MBUF_F_TX_VLAN | RTE_MBUF_F_TX_QINQ)) {
++			desc_cmd |= SXE2_TX_DATA_DESC_CMD_IL2TAG1;
++			desc_tag = tx_pkt->vlan_tci;
++		}
++
++		if (ctxt_desc_num) {
++			ctxt_desc = (volatile struct sxe2_tx_context_desc *)
++							&desc_ring[next_use];
++			desc_l2tag2 = 0;
++			desc_type_cmd_tso_mss = SXE2_TX_DESC_DTYPE_CTXT;
++
++			next_buffer = &buffer_ring[buffer->next_id];
++			RTE_MBUF_PREFETCH_TO_FREE(next_buffer->mbuf);
++
++			if (buffer->mbuf) {
++				rte_pktmbuf_free_seg(buffer->mbuf);
++				buffer->mbuf = NULL;
++			}
++
++			if (offloads & RTE_MBUF_F_TX_QINQ) {
++				desc_l2tag2 = tx_pkt->vlan_tci_outer;
++				desc_type_cmd_tso_mss |= SXE2_TX_CTXT_DESC_CMD_IL2TAG2_MASK;
++			}
++
++			ctxt_desc->tunneling_params =
++				rte_cpu_to_le_32(desc_tunneling_params);
++			ctxt_desc->l2tag2 = rte_cpu_to_le_16(desc_l2tag2);
++			ctxt_desc->type_cmd_tso_mss = rte_cpu_to_le_64(desc_type_cmd_tso_mss);
++			ctxt_desc->ipsec_offset = rte_cpu_to_le_64(ipsec_offset);
++
++			buffer->last_id = last_use;
++			next_use        = buffer->next_id;
++			buffer          = next_buffer;
++		}
++
++		m_seg = tx_pkt;
++
++		do {
++			desc = &desc_ring[next_use];
++			next_buffer = &buffer_ring[buffer->next_id];
++			RTE_MBUF_PREFETCH_TO_FREE(next_buffer->mbuf);
++			if (buffer->mbuf) {
++				rte_pktmbuf_free_seg(buffer->mbuf);
++				buffer->mbuf = NULL;
++			}
++
++			buffer->mbuf = m_seg;
++			seg_len = m_seg->data_len;
++			buf_dma_addr = rte_mbuf_data_iova(m_seg);
++			while ((offloads & (RTE_MBUF_F_TX_TCP_SEG | RTE_MBUF_F_TX_UDP_SEG)) &&
++					unlikely(seg_len > SXE2_TX_MAX_DATA_NUM_PER_DESC)) {
++				desc->read.buf_addr = rte_cpu_to_le_64(buf_dma_addr);
++				desc->read.type_cmd_off_bsz_l2t =
++					sxe2_tx_data_desc_build_cobt(desc_cmd, desc_offset,
++						SXE2_TX_MAX_DATA_NUM_PER_DESC,
++						desc_tag);
++				buf_dma_addr += SXE2_TX_MAX_DATA_NUM_PER_DESC;
++				seg_len      -= SXE2_TX_MAX_DATA_NUM_PER_DESC;
++				buffer->last_id = last_use;
++				next_use        = buffer->next_id;
++				buffer          = next_buffer;
++				desc            = &desc_ring[next_use];
++				next_buffer     = &buffer_ring[buffer->next_id];
++				RTE_MBUF_PREFETCH_TO_FREE(next_buffer->mbuf);
++			}
++
++			desc->read.buf_addr = rte_cpu_to_le_64(buf_dma_addr);
++			desc->read.type_cmd_off_bsz_l2t =
++				sxe2_tx_data_desc_build_cobt(desc_cmd,
++					desc_offset, seg_len, desc_tag);
++
++			buffer->last_id = last_use;
++			next_use        = buffer->next_id;
++			buffer          = next_buffer;
++
++			m_seg = m_seg->next;
++		} while (m_seg);
++
++		desc_cmd |= SXE2_TX_DATA_DESC_CMD_EOP;
++		txq->desc_used_num += desc_sum_num;
++		txq->desc_free_num -= desc_sum_num;
++
++		if (txq->desc_used_num >= txq->rs_thresh) {
++			PMD_LOG_TX_DEBUG("Tx pkts set RS bit."
++					"last_use=%u port_id=%u, queue_id=%u",
++					last_use, txq->port_id, txq->queue_id);
++			desc_cmd |= SXE2_TX_DATA_DESC_CMD_RS;
++
++			txq->desc_used_num = 0;
++		}
++
++		desc->read.type_cmd_off_bsz_l2t |=
++			rte_cpu_to_le_64(((u64)desc_cmd) << SXE2_TX_DATA_DESC_CMD_SHIFT);
++	}
++
++l_exit_logic:
++	if (tx_num == 0)
++		goto l_end;
++	goto l_end_of_tx;
++
++l_end_of_tx:
++	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, next_use);
++	PMD_LOG_TX_DEBUG("port_id=%u queue_id=%u next_use=%u send_pkts=%u",
++			txq->port_id, txq->queue_id, next_use, tx_num);
++	SXE2_TX_STATS_CNT(txq, tx_pkts_num, tx_num);
++
++	txq->next_use = next_use;
++
++l_end:
++	return tx_num;
++}
++
++static inline void
++sxe2_update_rx_tail(struct sxe2_rx_queue *rxq, u16 hold_num, u16 rx_id)
++{
++	hold_num += rxq->hold_num;
++
++	if (hold_num > rxq->rx_free_thresh) {
++		rx_id = (u16)((rx_id == 0) ? (rxq->ring_depth - 1) : (rx_id - 1));
++		SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, rx_id);
++		hold_num = 0;
++	}
++	rxq->hold_num = hold_num;
++}
++
++static inline u64
++sxe2_rx_desc_error_para(__rte_unused struct sxe2_rx_queue *rxq,
++		union sxe2_rx_desc *desc)
++{
++	u64 flags = 0;
++	u64 desc_qw1 = rte_le_to_cpu_64(desc->wb.status_err_ptype_len);
++
++	if (unlikely(0 == (desc_qw1 & SXE2_RX_DESC_STATUS_L3L4_P_MASK)))
++		goto l_end;
++
++	if (likely(0 == (desc->wb.rxdid_src & SXE2_RX_DESC_EUDPE_MASK))) {
++		flags = RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD;
++	} else {
++		flags = RTE_MBUF_F_RX_OUTER_L4_CKSUM_BAD;
++		SXE2_RX_STATS_CNT(rxq, outer_l4_csum_err, 1);
++	}
++
++	if (likely(0 == (desc_qw1 & SXE2_RX_DESC_QW1_ERRORS_MASK))) {
++		flags |= (RTE_MBUF_F_RX_IP_CKSUM_GOOD |
++				RTE_MBUF_F_RX_L4_CKSUM_GOOD |
++				RTE_MBUF_F_RX_OUTER_L4_CKSUM_GOOD);
++		goto l_end;
++	}
++
++	if (likely(0 == (desc_qw1 & SXE2_RX_DESC_ERROR_CSUM_IPE_MASK))) {
++		flags |= RTE_MBUF_F_RX_IP_CKSUM_GOOD;
++	} else {
++		flags |= RTE_MBUF_F_RX_IP_CKSUM_BAD;
++		SXE2_RX_STATS_CNT(rxq, ip_csum_err, 1);
++	}
++
++	if (likely(0 == (desc_qw1 & SXE2_RX_DESC_ERROR_CSUM_L4_MASK))) {
++		flags |= RTE_MBUF_F_RX_L4_CKSUM_GOOD;
++	} else {
++		flags |= RTE_MBUF_F_RX_L4_CKSUM_BAD;
++		SXE2_RX_STATS_CNT(rxq, l4_csum_err, 1);
++	}
++
++	if (unlikely(0 != (desc_qw1 & SXE2_RX_DESC_ERROR_CSUM_EIP_MASK))) {
++		flags |= RTE_MBUF_F_RX_OUTER_IP_CKSUM_BAD;
++		SXE2_RX_STATS_CNT(rxq, outer_ip_csum_err, 1);
++	}
++
++l_end:
++	return flags;
++}
++
++static __rte_always_inline void
++sxe2_rx_mbuf_common_fields_fill(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf,
++		union sxe2_rx_desc *rxd)
++{
++	u32 *ptype_tbl = rxq->vsi->adapter->ptype_tbl;
++	u64 qword1;
++	u64 pkt_flags;
++	qword1 = rte_le_to_cpu_64(rxd->wb.status_err_ptype_len);
++
++	mbuf->ol_flags = 0;
++	mbuf->packet_type = ptype_tbl[SXE2_RX_DESC_PTYPE_VAL_GET(qword1)];
++
++	pkt_flags = sxe2_rx_desc_error_para(rxq, rxd);
++
++	SXE2_RX_STATS_CNT(rxq, ptype_pkts[SXE2_RX_DESC_PTYPE_VAL_GET(qword1)], 1);
++	SXE2_RX_STATS_CNT(rxq, rx_pkts_num, 1);
++	mbuf->ol_flags |= pkt_flags;
++}
++
++static __rte_always_inline void
++sxe2_rx_sw_stats_update(struct sxe2_rx_queue *rxq, struct rte_mbuf *mbuf,
++		union sxe2_rx_desc *rxd)
++{
++	u64 qword1 = rte_le_to_cpu_64(rxd->wb.status_err_ptype_len);
++	rte_atomic_fetch_add_explicit(&rxq->sw_stats.pkts, 1,
++		rte_memory_order_relaxed);
++	rte_atomic_fetch_add_explicit(&rxq->sw_stats.bytes,
++			mbuf->pkt_len + RTE_ETHER_CRC_LEN,
++			rte_memory_order_relaxed);
++	switch (SXE2_RX_DESC_STATUS_UMBCAST_VAL_GET(qword1)) {
++	case SXE2_RX_DESC_STATUS_UNICAST:
++		rte_atomic_fetch_add_explicit(&rxq->sw_stats.unicast_pkts, 1,
++			rte_memory_order_relaxed);
++		break;
++	case SXE2_RX_DESC_STATUS_MUTICAST:
++		rte_atomic_fetch_add_explicit(&rxq->sw_stats.multicast_pkts, 1,
++			rte_memory_order_relaxed);
++		break;
++	case SXE2_RX_DESC_STATUS_BOARDCAST:
++		rte_atomic_fetch_add_explicit(&rxq->sw_stats.broadcast_pkts, 1,
++			rte_memory_order_relaxed);
++		break;
++	default:
++		break;
++	}
++}
++
++u16 sxe2_rx_pkts_scattered(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
++{
++	struct sxe2_rx_queue *rxq = (struct sxe2_rx_queue *)rx_queue;
++	volatile union sxe2_rx_desc *desc_ring;
++	volatile union sxe2_rx_desc *desc;
++	union sxe2_rx_desc desc_tmp;
++	struct rte_mbuf **buffer_ring;
++	struct rte_mbuf **cur_buffer;
++	struct rte_mbuf *cur_mbuf;
++	struct rte_mbuf *new_mbuf;
++	struct rte_mbuf *first_seg;
++	struct rte_mbuf *last_seg;
++	u64 qword1;
++	u16 done_num;
++	u16 hold_num;
++	u16 cur_idx;
++	u16 pkt_len;
++
++	desc_ring   = rxq->desc_ring;
++	buffer_ring = rxq->buffer_ring;
++	cur_idx     = rxq->processing_idx;
++	first_seg   = rxq->pkt_first_seg;
++	last_seg    = rxq->pkt_last_seg;
++	done_num    = 0;
++	hold_num    = 0;
++	while (done_num < nb_pkts) {
++		desc = &desc_ring[cur_idx];
++		qword1 = rte_le_to_cpu_64(desc->wb.status_err_ptype_len);
++		if (0 == (SXE2_RX_DESC_STATUS_DD_MASK & qword1))
++			break;
++
++		new_mbuf = rte_mbuf_raw_alloc(rxq->mb_pool);
++		if (unlikely(new_mbuf == NULL)) {
++			rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed++;
++			PMD_LOG_INFO(RX, "Rx new_mbuf alloc failed port_id:%u "
++					"queue_id:%u", rxq->port_id, rxq->queue_id);
++			break;
++		}
++
++		hold_num++;
++		desc_tmp = *desc;
++		cur_buffer = &buffer_ring[cur_idx];
++		cur_idx++;
++		if (unlikely(cur_idx == rxq->ring_depth))
++			cur_idx = 0;
++
++		rte_prefetch0(buffer_ring[cur_idx]);
++
++		if (0 == (cur_idx & 0x3)) {
++			rte_prefetch0(&desc_ring[cur_idx]);
++			rte_prefetch0(&buffer_ring[cur_idx]);
++		}
++
++		cur_mbuf = *cur_buffer;
++
++		*cur_buffer = new_mbuf;
++
++		desc->read.hdr_addr = 0;
++		desc->read.pkt_addr =
++			rte_cpu_to_le_64(rte_mbuf_data_iova_default(new_mbuf));
++
++		pkt_len = SXE2_RX_DESC_PKT_LEN_VAL_GET(qword1);
++		cur_mbuf->data_len = pkt_len;
++		cur_mbuf->data_off = RTE_PKTMBUF_HEADROOM;
++
++		if (first_seg == NULL) {
++			first_seg = cur_mbuf;
++			first_seg->nb_segs = 1;
++			first_seg->pkt_len = pkt_len;
++		} else {
++			first_seg->pkt_len += pkt_len;
++			first_seg->nb_segs++;
++			last_seg->next = cur_mbuf;
++		}
++
++		if (0 == (qword1 & SXE2_RX_DESC_STATUS_EOP_MASK)) {
++			last_seg = cur_mbuf;
++			continue;
++		}
++
++		if (unlikely(qword1 & SXE2_RX_DESC_ERROR_RXE_MASK) ||
++			unlikely(qword1 & SXE2_RX_DESC_ERROR_OVERSIZE_MASK)) {
++			rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_pkts, 1,
++				rte_memory_order_relaxed);
++			rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_bytes,
++				first_seg->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN,
++				rte_memory_order_relaxed);
++			rte_pktmbuf_free(first_seg);
++			first_seg = NULL;
++			continue;
++		}
++
++		cur_mbuf->next = NULL;
++		if (unlikely(rxq->crc_len > 0)) {
++			first_seg->pkt_len -= RTE_ETHER_CRC_LEN;
++
++			if (pkt_len <= RTE_ETHER_CRC_LEN) {
++				rte_pktmbuf_free_seg(cur_mbuf);
++				first_seg->nb_segs--;
++				last_seg->data_len = last_seg->data_len + pkt_len -
++					RTE_ETHER_CRC_LEN;
++				last_seg->next = NULL;
++			} else {
++				cur_mbuf->data_len = pkt_len - RTE_ETHER_CRC_LEN;
++			}
++
++		} else if (pkt_len == 0) {
++			rte_pktmbuf_free_seg(cur_mbuf);
++			first_seg->nb_segs--;
++			last_seg->next = NULL;
++		}
++
++		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr, first_seg->data_off));
++		first_seg->port     = rxq->port_id;
++
++		sxe2_rx_mbuf_common_fields_fill(rxq, first_seg, &desc_tmp);
++
++		if (rxq->vsi->adapter->devargs.sw_stats_en)
++			sxe2_rx_sw_stats_update(rxq, first_seg, &desc_tmp);
++
++		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr, first_seg->data_off));
++
++		rx_pkts[done_num] = first_seg;
++		done_num++;
++
++		first_seg = NULL;
++	}
++
++	rxq->processing_idx = cur_idx;
++	rxq->pkt_first_seg  = first_seg;
++	rxq->pkt_last_seg   = last_seg;
++
++	sxe2_update_rx_tail(rxq, hold_num, cur_idx);
++
++	return done_num;
++}
++
++u16 sxe2_rx_pkts_scattered_split(void *rx_queue, struct rte_mbuf **rx_pkts, u16 nb_pkts)
++{
++	struct sxe2_rx_queue *rxq = (struct sxe2_rx_queue *)rx_queue;
++	volatile union sxe2_rx_desc *desc_ring;
++	volatile union sxe2_rx_desc *desc;
++	union sxe2_rx_desc desc_tmp;
++	struct rte_mbuf **buffer_ring;
++	struct rte_mbuf **cur_buffer;
++	struct rte_mbuf *cur_mbuf;
++	struct rte_mbuf *cur_mbuf_pay;
++	struct rte_mbuf *new_mbuf;
++	struct rte_mbuf *new_mbuf_pay;
++	struct rte_mbuf *first_seg;
++	struct rte_mbuf *last_seg;
++	u64 qword1;
++	u16 done_num;
++	u16 hold_num;
++	u16 cur_idx;
++	u16 pkt_len;
++	u16 hdr_len;
++
++	desc_ring = rxq->desc_ring;
++	buffer_ring = rxq->buffer_ring;
++	cur_idx = rxq->processing_idx;
++	first_seg = rxq->pkt_first_seg;
++	last_seg = rxq->pkt_last_seg;
++	done_num = 0;
++	hold_num = 0;
++	new_mbuf = NULL;
++
++	while (done_num < nb_pkts) {
++		desc = &desc_ring[cur_idx];
++		qword1 = rte_le_to_cpu_64(desc->wb.status_err_ptype_len);
++
++		if (0 == (SXE2_RX_DESC_STATUS_DD_MASK & qword1))
++			break;
++
++		if ((rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT) == 0 ||
++			first_seg == NULL) {
++			new_mbuf = rte_mbuf_raw_alloc(rxq->mb_pool);
++			if (unlikely(new_mbuf == NULL)) {
++				rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed++;
++				PMD_LOG_RX_INFO("Rx new_mbuf alloc failed port_id=%u "
++						"queue_id=%u", rxq->port_id,
++						rxq->idx_in_pf);
++				break;
++			}
++		}
++
++		if (rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT) {
++			new_mbuf_pay = rte_mbuf_raw_alloc(rxq->rx_seg[1].mp);
++			if (unlikely(new_mbuf_pay == NULL)) {
++				rxq->vsi->adapter->dev_info.dev_data->rx_mbuf_alloc_failed++;
++				PMD_LOG_RX_INFO("Rx new_mbuf_pay alloc failed port_id=%u "
++						"queue_id=%u", rxq->port_id,
++						rxq->idx_in_pf);
++				if (new_mbuf != NULL)
++					rte_pktmbuf_free(new_mbuf);
++				new_mbuf = NULL;
++				break;
++			}
++		}
++
++		hold_num++;
++		desc_tmp = *desc;
++		cur_buffer = &buffer_ring[cur_idx];
++		cur_idx++;
++		if (unlikely(cur_idx == rxq->ring_depth))
++			cur_idx = 0;
++		rte_prefetch0(buffer_ring[cur_idx]);
++		if (0 == (cur_idx & 0x3)) {
++			rte_prefetch0(&desc_ring[cur_idx]);
++			rte_prefetch0(&buffer_ring[cur_idx]);
++		}
++		cur_mbuf = *cur_buffer;
++		if (0 == (rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
++			*cur_buffer = new_mbuf;
++			desc->read.hdr_addr = 0;
++			desc->read.pkt_addr =
++				rte_cpu_to_le_64(rte_mbuf_data_iova_default(new_mbuf));
++		} else {
++			if (first_seg == NULL) {
++				*cur_buffer = new_mbuf;
++				new_mbuf->next = new_mbuf_pay;
++				new_mbuf->data_off = RTE_PKTMBUF_HEADROOM;
++				new_mbuf_pay->next = NULL;
++				new_mbuf_pay->data_off = RTE_PKTMBUF_HEADROOM;
++				desc->read.hdr_addr =
++					rte_cpu_to_le_64(rte_mbuf_data_iova_default(new_mbuf));
++				desc->read.pkt_addr =
++					rte_cpu_to_le_64(rte_mbuf_data_iova_default(new_mbuf_pay));
++			} else {
++				cur_mbuf_pay = cur_mbuf->next;
++				cur_mbuf->next = new_mbuf_pay;
++				new_mbuf_pay->next = NULL;
++				new_mbuf_pay->data_off = RTE_PKTMBUF_HEADROOM;
++				desc->read.hdr_addr =
++					rte_cpu_to_le_64(rte_mbuf_data_iova_default(cur_mbuf));
++				desc->read.pkt_addr =
++					rte_cpu_to_le_64(rte_mbuf_data_iova_default(new_mbuf_pay));
++				cur_mbuf = cur_mbuf_pay;
++			}
++		}
++
++		if (0 == (rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
++			pkt_len = SXE2_RX_DESC_PKT_LEN_VAL_GET(qword1);
++			cur_mbuf->data_len = pkt_len;
++			cur_mbuf->data_off = RTE_PKTMBUF_HEADROOM;
++			if (first_seg == NULL) {
++				first_seg = cur_mbuf;
++				first_seg->nb_segs = 1;
++				first_seg->pkt_len = pkt_len;
++			} else {
++				first_seg->pkt_len += pkt_len;
++				first_seg->nb_segs++;
++				last_seg->next = cur_mbuf;
++			}
++		} else {
++			if (first_seg == NULL) {
++				cur_mbuf->nb_segs = 2;
++				cur_mbuf->next->next = NULL;
++				pkt_len = SXE2_RX_DESC_PKT_LEN_VAL_GET(qword1);
++				hdr_len = SXE2_RX_DESC_HDR_LEN_VAL_GET(qword1);
++				cur_mbuf->data_len = hdr_len;
++				cur_mbuf->pkt_len = hdr_len + pkt_len;
++				cur_mbuf->next->data_len = pkt_len;
++				first_seg = cur_mbuf;
++				cur_mbuf = cur_mbuf->next;
++				last_seg = cur_mbuf;
++			} else {
++				cur_mbuf->nb_segs = 1;
++				cur_mbuf->next = NULL;
++				pkt_len = SXE2_RX_DESC_PKT_LEN_VAL_GET(qword1);
++				cur_mbuf->data_len = pkt_len;
++
++				first_seg->pkt_len += pkt_len;
++				first_seg->nb_segs++;
++				last_seg->next = cur_mbuf;
++			}
++		}
++
++#ifdef RTE_ETHDEV_DEBUG_RX
++
++		rte_pktmbuf_dump(stdout, first_seg, rte_pktmbuf_pkt_len(first_seg));
++#endif
++
++		if (0 == (rte_le_to_cpu_64(desc_tmp.wb.status_err_ptype_len) &
++					SXE2_RX_DESC_STATUS_EOP_MASK)) {
++			last_seg = cur_mbuf;
++			continue;
++		}
++
++		if (unlikely(qword1 & SXE2_RX_DESC_ERROR_RXE_MASK) ||
++			unlikely(qword1 & SXE2_RX_DESC_ERROR_OVERSIZE_MASK)) {
++			rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_pkts, 1,
++				rte_memory_order_relaxed);
++			rte_atomic_fetch_add_explicit(&rxq->sw_stats.drop_bytes,
++				first_seg->pkt_len - rxq->crc_len + RTE_ETHER_CRC_LEN,
++				rte_memory_order_relaxed);
++			rte_pktmbuf_free(first_seg);
++			first_seg = NULL;
++			continue;
++		}
++
++		cur_mbuf->next = NULL;
++		if (unlikely(rxq->crc_len > 0)) {
++			first_seg->pkt_len -= RTE_ETHER_CRC_LEN;
++			if (pkt_len <= RTE_ETHER_CRC_LEN) {
++				rte_pktmbuf_free_seg(cur_mbuf);
++				cur_mbuf = NULL;
++				first_seg->nb_segs--;
++				last_seg->data_len = last_seg->data_len +
++					pkt_len - RTE_ETHER_CRC_LEN;
++				last_seg->next = NULL;
++			} else {
++				cur_mbuf->data_len = pkt_len - RTE_ETHER_CRC_LEN;
++			}
++		} else if (pkt_len == 0) {
++			rte_pktmbuf_free_seg(cur_mbuf);
++			cur_mbuf = NULL;
++			first_seg->nb_segs--;
++			last_seg->next = NULL;
++		}
++
++		first_seg->port = rxq->port_id;
++		sxe2_rx_mbuf_common_fields_fill(rxq, first_seg, &desc_tmp);
++
++		if (rxq->vsi->adapter->devargs.sw_stats_en)
++			sxe2_rx_sw_stats_update(rxq, first_seg, &desc_tmp);
++
++		rte_prefetch0(RTE_PTR_ADD(first_seg->buf_addr, first_seg->data_off));
++
++		rx_pkts[done_num] = first_seg;
++		done_num++;
++
++		first_seg = NULL;
++	}
++
++	rxq->processing_idx = cur_idx;
++	rxq->pkt_first_seg = first_seg;
++	rxq->pkt_last_seg = last_seg;
++
++	sxe2_update_rx_tail(rxq, hold_num, cur_idx);
++
++	return done_num;
++}
 -- 
 2.47.3
 
