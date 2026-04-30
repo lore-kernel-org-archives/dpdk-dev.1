@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E19A1CD13D9
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 07:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF482CD13D3
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 07:02:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 54B7640661;
-	Thu, 30 Apr 2026 09:02:03 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2DFF34066B;
+	Thu, 30 Apr 2026 09:02:04 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 4978740299
+ by mails.dpdk.org (Postfix) with ESMTP id 8201140608
  for <dev@dpdk.org>; Thu, 30 Apr 2026 09:02:00 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowACHMGxk_vJp1I3NDg--.19626S4;
+ by APP-01 (Coremail) with SMTP id qwCowACHMGxk_vJp1I3NDg--.19626S3;
  Thu, 30 Apr 2026 15:01:56 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v1 2/9] doc: add sxe2 guide and release notes
-Date: Thu, 30 Apr 2026 15:01:44 +0800
-Message-ID: <20260430070154.3915726-3-liujie5@linkdatatechnology.com>
+Subject: [PATCH v1 1/9] mailmap: add Jie Liu
+Date: Thu, 30 Apr 2026 15:01:43 +0800
+Message-ID: <20260430070154.3915726-2-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260430070154.3915726-1-liujie5@linkdatatechnology.com>
 References: <20260430070154.3915726-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowACHMGxk_vJp1I3NDg--.19626S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZF18AF1ktrWktw15JF4rGrg_yoW5ur45pa
- n3CFySkr9xJ34xZr9xta1UAr45Ca1kAa45CF1Iq34rXFn8Cr18Zw4UKryxt34DGF95Z3Wr
- XF4jqry7CF1UW3DanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUBa14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
- x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
- Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l84
- ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AI
- xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
- vE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
- r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF04k20x
- vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
- 3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIx
- AIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAI
- cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2js
- IEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUm4EiUUUUU=
+X-CM-TRANSID: qwCowACHMGxk_vJp1I3NDg--.19626S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrJryDZw4UCw1DZrWfJFW8WFg_yoWxWrX_KF
+ WrGr4DXw4rJr1furWvvFnrJ3Z0vw10kw40kwn5KFyfZr15Ww1Ikryv9F4DKF4UXa1UWryf
+ CFn3JFsYya9xGjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+ 9fnUUIcSsGvfJTRUUUbSkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+ 6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
+ 0Ec7CjxVAFwI0_Jrv_JF4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
+ wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
+ x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267AKxVW8JVW8Jr1le2I2
+ 62IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcV
+ AFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG
+ 0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMxAIw28Icx
+ kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+ xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42
+ IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY
+ 6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
+ CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VU158n5UUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -59,96 +59,23 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Add a new guide for SXE2 PMD in the nics directory.
-The guide contains driver capabilities, prerequisites,
-and compilation/usage instructions.
-
-Update the release notes to announce the addition of the
-sxe2 network driver.
-
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- doc/guides/nics/features/sxe2.ini      | 11 +++++++++++
- doc/guides/nics/index.rst              |  1 +
- doc/guides/nics/sxe2.rst               | 23 +++++++++++++++++++++++
- doc/guides/rel_notes/release_26_07.rst |  3 +++
- 4 files changed, 38 insertions(+)
- create mode 100644 doc/guides/nics/features/sxe2.ini
- create mode 100644 doc/guides/nics/sxe2.rst
+ .mailmap | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
-new file mode 100644
-index 0000000000..cbf5a773fb
---- /dev/null
-+++ b/doc/guides/nics/features/sxe2.ini
-@@ -0,0 +1,11 @@
-+;
-+; Supported features of the 'sxe2' network poll mode driver.
-+;
-+; Refer to default.ini for the full list of available PMD features.
-+;
-+; A feature with "P" indicates only be supported when non-vector path
-+; is selected.
-+;
-+[Features]
-+Queue start/stop     = Y
-+Linux                = Y
-\ No newline at end of file
-diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
-index cb818284fe..e20be478f8 100644
---- a/doc/guides/nics/index.rst
-+++ b/doc/guides/nics/index.rst
-@@ -68,6 +68,7 @@ Network Interface Controller Drivers
-     rnp
-     sfc_efx
-     softnic
-+    sxe2
-     tap
-     thunderx
-     txgbe
-diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
-new file mode 100644
-index 0000000000..2f9ba91c33
---- /dev/null
-+++ b/doc/guides/nics/sxe2.rst
-@@ -0,0 +1,23 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+
-+SXE2 Poll Mode Driver
-+======================
-+
-+The sxe2 PMD (**librte_net_sxe2**) provides poll mode driver support for
-+10/25/50/100/200 Gbps Network Adapters.
-+The embedded switch, Physical Functions (PF),
-+and SR-IOV Virtual Functions (VF) are supported
-+
-+Implementation details
-+----------------------
-+
-+For security reasons and robustness, this driver only deals with virtual
-+memory addresses. The way resources allocations are handled by the kernel
-+combined with hardware specifications that allow it to handle virtual memory
-+addresses directly ensure that DPDK applications cannot access random
-+physical memory (or memory that does not belong to the current process).
-+
-+This capability allows the PMD to coexist with kernel network interfaces
-+which remain functional, although they stop receiving unicast packets as
-+long as they share the same MAC address.
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index 060b26ff61..93fb0072a9 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -55,6 +55,9 @@ New Features
-      Also, make sure to start the actual text at the margin.
-      =======================================================
- 
-+* **Added Linkdata sxe2 ethernet driver.**
-+
-+  Added network driver for the Linkdata Network Adapters.
- 
- Removed Items
- -------------
+diff --git a/.mailmap b/.mailmap
+index 0e0d83e1c6..a6c3319dec 100644
+--- a/.mailmap
++++ b/.mailmap
+@@ -738,6 +738,7 @@ Jiawen Wu <jiawenwu@trustnetic.com>
+ Jiayu Hu <hujiayu.hu@foxmail.com> <jiayu.hu@intel.com>
+ Jie Hai <haijie1@huawei.com>
+ Jie Liu <jie2.liu@hxt-semitech.com>
++Jie Liu <liujie5@linkdatatechnology.com>
+ Jie Pan <panjie5@jd.com>
+ Jie Wang <jie1x.wang@intel.com>
+ Jie Zhou <jizh@linux.microsoft.com> <jizh@microsoft.com>
 -- 
 2.47.3
 
