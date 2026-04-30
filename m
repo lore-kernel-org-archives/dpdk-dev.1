@@ -2,49 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C94AFF8873
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 13:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78159FF8875
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 14:05:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A0E39402A0;
-	Thu, 30 Apr 2026 15:31:01 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 401244021F;
- Thu, 30 Apr 2026 15:31:00 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4g5w5d3fy9zHnH5j;
- Thu, 30 Apr 2026 21:30:13 +0800 (CST)
-Received: from frapema100003.china.huawei.com (unknown [7.182.19.100])
- by mail.maildlp.com (Postfix) with ESMTPS id 6077940569;
- Thu, 30 Apr 2026 21:30:59 +0800 (CST)
-Received: from frapema100003.china.huawei.com (7.182.19.100) by
- frapema100003.china.huawei.com (7.182.19.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 30 Apr 2026 15:30:51 +0200
-Received: from frapema100003.china.huawei.com ([7.182.19.100]) by
- frapema100003.china.huawei.com ([7.182.19.100]) with mapi id 15.02.1544.036;
- Thu, 30 Apr 2026 15:30:50 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Thomas Monjalon <thomas@monjalon.net>, "dev@dpdk.org" <dev@dpdk.org>
-CC: "stable@dpdk.org" <stable@dpdk.org>, David Marchand
- <david.marchand@redhat.com>, Bruce Richardson <bruce.richardson@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: RE: [PATCH v2] devtools: fix SPDX tag check
-Thread-Topic: [PATCH v2] devtools: fix SPDX tag check
-Thread-Index: AQHc2KONqplSkwjYbUecaETF6wkAP7X3lfrQ
-Date: Thu, 30 Apr 2026 13:30:50 +0000
-Message-ID: <e59b182563e5498ea993d48663d8716a@huawei.com>
-References: <20260429130935.3681177-1-thomas@monjalon.net>
- <20260430131600.329636-1-thomas@monjalon.net>
-In-Reply-To: <20260430131600.329636-1-thomas@monjalon.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 334944021F;
+	Thu, 30 Apr 2026 16:05:40 +0200 (CEST)
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+ by mails.dpdk.org (Postfix) with ESMTP id 6B4D7400D6
+ for <dev@dpdk.org>; Thu, 30 Apr 2026 16:05:39 +0200 (CEST)
+Received: by mail-dl1-f46.google.com with SMTP id
+ a92af1059eb24-12c88e5f4aeso681978c88.0
+ for <dev@dpdk.org>; Thu, 30 Apr 2026 07:05:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777557938;
+ x=1778162738; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=zhhZVM0/XA105f0xUVNPCNuKTpF9dODt0Q9giJOV5ao=;
+ b=ZIFS1NbPtzfgjocRoFFHlEF3WcQizlCH3y3myCL81N5+ge3RiTn5stS8K+er6qkg+p
+ 3QkLu8J6JI5Y2r/KNOxb4f8FXlQ2NjzTUvuHzZ6RJHzzMNLZR9apvbGv7AGbr1vH4KIs
+ g85/V8/keFlGo2+TJD7FQauU5Gga7ydYf3g+2KOWjD18fcsrkQZA/rox1y+s/EaSJ4/H
+ NRMDmabYxTDDtALybeNks7MO1qLSjd4uum1OvrWfGABJbQ3yYQGalXHoX7gXlslwlbt/
+ HPfIEwuGvF+swlqRLVxAnx2IJXYff8jFzFsPmW7s9Xokoq7KQftWC0we3QQqH+fwthpO
+ nLMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1777557938; x=1778162738;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=zhhZVM0/XA105f0xUVNPCNuKTpF9dODt0Q9giJOV5ao=;
+ b=UFjbS1SLphoPfl+bwro3gGW8iHTaDAVTb438a83QAwPcCUzE1topt7K5gHPhHsRJ2J
+ fx0F5ZX7ZnKO8ubWu1KW5K5sLfaWoh5Q58jilxaYtfPaDABN5Sb22rom/Wl4h+uOEIsX
+ SiQ48rxBtmz+Q2sGGz7jtm3eSOhEO6piclPwjU31mGWeTcmEH970tw8+ZXCfRhAsuZQ7
+ 9NXEbtxk+IrAZr9MYcAMQqZlkaXVTp6xpJ2wIwgCoPG+P0aKdc/4cGs4WF/3iIEbGcnr
+ 02zrqGZDBd9CJeBBXWOa95TQNlSo+2G+ivSaVNmkHyBZjxxtVBcCejplqeWreiRLmBAp
+ VZCQ==
+X-Gm-Message-State: AOJu0YwhrS7x7AQOavjHJ6ks3C2Xg6VzGfIiflF6Ne5KxyJ5loIopMNZ
+ GbuWvDQhy3zjKxq55TzM62o+XYiNA9ZT3y676yLJXlBA7RFVHsFMIWExnUjymLtM4vo=
+X-Gm-Gg: AeBDiesd25HSDzuKOxEYEWFrXEfB8NIohwPp7iaUDOCwXCXNUen5wEeH7qNp9eys4xE
+ hQqkGHxUR7rkhRZLnJJjo4fBMRAXUHsqItZmUXqpz7aa+m1LhIgyCFKCPTMnFlmlpzb6pOupWxF
+ ctXwm3OZ430kkoiAD77YfvPqjv2iyphriL2OVOIoRRCookhjyAHBjKuT9fZCgfQKXa90/cE4X5a
+ 8Ph0yg1tLg7IMm4tdQl2B8YHM88J7QwVj74L9u77coZ17bqoQ121paj9FpbGXQzMuyoDes1uuqE
+ kV1HrbIIaH19jnudlgBKQeib6Ny7y8kLN9n4YFGTfEF5y65AHwt04+eu9yOHvtUcT2iaeFOkMaR
+ HkBKO7ueXi9Apefyz4LEKjfh3KG8n3Y6H5IXNNgYUtSaQm9jzACdkcK6+EMLJpdvoxNyWE0rLiv
+ PUSjcThp9XEXS5pU0oFV6+aMnzJEukVDfvznDUUNN+rAPplg==
+X-Received: by 2002:a05:7022:6b9b:b0:128:ceac:6db4 with SMTP id
+ a92af1059eb24-12dec70f651mr1017621c88.6.1777557937647; 
+ Thu, 30 Apr 2026 07:05:37 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ a92af1059eb24-12de32173acsm9716516c88.5.2026.04.30.07.05.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 30 Apr 2026 07:05:36 -0700 (PDT)
+Date: Thu, 30 Apr 2026 07:05:33 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Dawid Wesierski <dawid.wesierski@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, anatoly.burakov@intel.com,
+ vladimir.medvedkin@intel.com, reshma.pattan@intel.com, thomas@monjalon.net,
+ andrew.rybchenko@oktetlabs.ru, marek.kasiewicz@intel.com
+Subject: Re: [PATCH 6/7] pcapng: add user-supplied timestamp support
+Message-ID: <20260430070533.095c7e00@phoenix.local>
+In-Reply-To: <20260429073111.3712950-7-dawid.wesierski@intel.com>
+References: <20260429073111.3712950-1-dawid.wesierski@intel.com>
+ <20260429073111.3712950-7-dawid.wesierski@intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,36 +82,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> diff --git a/devtools/check-spdx-tag.sh b/devtools/check-spdx-tag.sh
-> index 2390941c74..41fc1fe01d 100755
-> --- a/devtools/check-spdx-tag.sh
-> +++ b/devtools/check-spdx-tag.sh
-> @@ -39,10 +39,8 @@ check_spdx() {
->      fi
->=20
->      files_without_spdx=3D$(cat $tmpfile)
-> -    git grep -LE '(/\*|#|;|\.\.) *SPDX-License-Identifier: [A-Z(]' -- $n=
-o_license_list > $tmpfile
-> -    for file in $files_without_spdx ; do
-> -	sed -i "/^$file$/d" $tmpfile
-> -    done
-> +    git grep -LE '(/\*|#|;|\.\.) *SPDX-License-Identifier: [A-Z(]' -- $n=
-o_license_list |
-> +    grep -vF "$files_without_spdx" > $tmpfile
->=20
->      warnings=3D$(($warnings + $(wc -l < $tmpfile)))
->      $quiet || cat $tmpfile
-> --
-> 2.53.0
+On Wed, 29 Apr 2026 03:31:10 -0400
+Dawid Wesierski <dawid.wesierski@intel.com> wrote:
 
-Sorry for forgetting to mention it right away, some kind of sentinel or if
-condition is needed if $files_without_spdx can be empty, don't know how
-realistic it is in practice and whether other parts are ready to handle thi=
-s
-case. E.g. `files_without_spdx=3D$(echo //sentinel; cat $tmpfile)`. I hope =
-it
-won't make the whole thing too complicated and not worth it.
+> From: Marek Kasiewicz <marek.kasiewicz@intel.com>
+> 
+> Add rte_pcapng_copy_ts() which accepts an optional timestamp parameter
+> in nanoseconds. When the timestamp is non-zero, it is used directly
+> instead of reading the TSC. This allows applications to provide
+> hardware PTP timestamps from the NIC, enabling accurate packet capture
+> with PTP-domain timing rather than host-local TSC values.
+> 
+> The existing rte_pcapng_copy() function is preserved as a static inline
+> wrapper that passes zero for backward compatibility.
+> 
+> The TSC-to-epoch conversion in the write path is removed since callers
+> providing hardware timestamps have already performed the conversion.
+> 
+> 
+> Signed-off-by: Marek Kasiewicz <marek.kasiewicz@intel.com>
+> Signed-off-by: Dawid Wesierski <dawid.wesierski@intel.com>
 
-Otherwise,
-
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
+Rather than having two functions, it would simpler to just use function
+versioning and add timestamp parameter. There is only one caller in the tree
+right now.
