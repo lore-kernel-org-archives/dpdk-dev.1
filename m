@@ -2,51 +2,85 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94843FF8873
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 12:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F944FF8873
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 13:12:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id BEDA8402A0;
-	Thu, 30 Apr 2026 14:33:13 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id 71A184021F;
- Thu, 30 Apr 2026 14:33:12 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4g5tpx4w3ZzHnGd0;
- Thu, 30 Apr 2026 20:32:25 +0800 (CST)
-Received: from frapema100003.china.huawei.com (unknown [7.182.19.100])
- by mail.maildlp.com (Postfix) with ESMTPS id 78AF94058D;
- Thu, 30 Apr 2026 20:33:11 +0800 (CST)
-Received: from frapema100003.china.huawei.com (7.182.19.100) by
- frapema100003.china.huawei.com (7.182.19.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Thu, 30 Apr 2026 14:33:11 +0200
-Received: from frapema100003.china.huawei.com ([7.182.19.100]) by
- frapema100003.china.huawei.com ([7.182.19.100]) with mapi id 15.02.1544.036;
- Thu, 30 Apr 2026 14:33:11 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
- <dev@dpdk.org>
-CC: Weijun Pan <wpan3636@gmail.com>, "stable@dpdk.org" <stable@dpdk.org>,
- Deepak Kumar Jain <deepak.k.jain@intel.com>, Pablo de Lara
- <pablo.de.lara.guarch@intel.com>
-Subject: RE: [PATCH 1/2] test: use inline helpers in buffer comparison macros
-Thread-Topic: [PATCH 1/2] test: use inline helpers in buffer comparison macros
-Thread-Index: AQHc1+cY0e71C4rrT0ykePhvnCDqlbX3gA1g
-Date: Thu, 30 Apr 2026 12:33:11 +0000
-Message-ID: <c842fc3b7ea640879e374897858cf051@huawei.com>
-References: <20260419164818.20609-1-wpan36@wisc.edu>
- <20260429144632.164970-1-stephen@networkplumber.org>
- <20260429144632.164970-2-stephen@networkplumber.org>
-In-Reply-To: <20260429144632.164970-2-stephen@networkplumber.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.137.78]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id 8C5DE40608;
+	Thu, 30 Apr 2026 15:12:11 +0200 (CEST)
+Received: from fout-b1-smtp.messagingengine.com
+ (fout-b1-smtp.messagingengine.com [202.12.124.144])
+ by mails.dpdk.org (Postfix) with ESMTP id C25784021F;
+ Thu, 30 Apr 2026 15:12:09 +0200 (CEST)
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+ by mailfout.stl.internal (Postfix) with ESMTP id D7CF91D0006A;
+ Thu, 30 Apr 2026 09:12:08 -0400 (EDT)
+Received: from phl-frontend-03 ([10.202.2.162])
+ by phl-compute-04.internal (MEProxy); Thu, 30 Apr 2026 09:12:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm2; t=1777554728;
+ x=1777641128; bh=aMKLDLq1JK6GJajEKlLXc9iE7earuroPqx8YXmNXxwc=; b=
+ Rt+hMlxWq9J8AGOCZs7mC8yMQs7mgDm8zCZE7IHsvV8tnEddBF4KfiDYWmSsHt22
+ SHNeqhJa4W/vAll4+v6msB7h6a/SHZcYzZ0Zn6IyIr5N20LS+wj75oISkW8BLfOW
+ Sb+qJNlON0t9zlK7GQBxfdtZ4MFKyMHy45HO2VGfRx9RkPkAWmYdjEUj6/0iqNMh
+ jb5fyNpuEbLfOD+ujnjMLG4iaJlAuiecn2Hhrwwzuyl0NgC3Ux/OgtIEQCMeuyxG
+ 6pw9L/ao8kpGAyNWNn/7DZjcTWm5J4HuCnBQbOQA/77u4ZmDOiM2DZxMG6S4xjx2
+ FPfFJJa80x3qTgsadLL2Uw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1777554728; x=
+ 1777641128; bh=aMKLDLq1JK6GJajEKlLXc9iE7earuroPqx8YXmNXxwc=; b=S
+ llzd3UurXT+iYIcWc13rx+eWs34FBr4rjTKkuodz6ptNJjtjm4K+zdDGYgUne0hV
+ bhmS1bYdfHhnaR1miwupRycCoKJapukIb2ccX+h9bh0ueVsS5kpwtoBpvGWYuvYc
+ nNF9jgeLCTvFtzv4u1n2zCLMW3dkcx38wF7EfTGe6uNvn2ECwjRQbN4xYBZ8yezZ
+ kHg042pzBSOXBRSqqQ43WGu2j/7C1WEE6wCmYsUt8PA3KEvRXVjQ3b9bFjYaXT37
+ ux1a2uVHG9NunisWqfPY68jiDG6q+f6rmxxwNylX6KG3B09x03WIvgj3yQ163iGW
+ B6FrD+6lnbzE5tVy682bw==
+X-ME-Sender: <xms:KFXzaSyWIbg7MSFZcKeGuSFtdteKr-4TMdPqNCq1jgXZbJJaimdRVQ>
+ <xme:KFXzacPAAYIX4zOdIF88wbiKrV1KvFtdpSx31HJMT9_So1PHQG9LgEF1abTs5zNj4
+ 4xIueCuhSoE2U4g8QASjKt1i5ycZBiYj51gQEp0hocvxQZg0XveHA>
+X-ME-Received: <xmr:KFXzaWqGI7M91hJQ1LT47lGwViRC-YVetMCw_q5kjVrdemxBjDLzRkWlPv3d5TkRjnt4fwaRlEtO2iEVYvrhs6PGtA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdekjeegudcutefuodetggdotefrod
+ ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+ ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+ hrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpefvhhhomhgrshcu
+ ofhonhhjrghlohhnuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqnecuggftrf
+ grthhtvghrnhepjeduveehieevuddutdevfffgtdegkeeuveejffejgedtgeegkefgvdeu
+ gfefkeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+ epthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohepiedpmhho
+ uggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhgrthdrkhhhrghlihhliheshhhurg
+ ifvghirdgtohhmpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpdhrtghpthhtohep
+ shhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopegurghvihgurdhmrghrtghhrg
+ hnugesrhgvughhrghtrdgtohhmpdhrtghpthhtohepsghruhgtvgdrrhhitghhrghrughs
+ ohhnsehinhhtvghlrdgtohhmpdhrtghpthhtohephhgvmhgrnhhtrdgrghhrrgifrghlse
+ hngihprdgtohhm
+X-ME-Proxy: <xmx:KFXzadHRXk8pNCY-WaAQxJfdV-Oqfs2AGBJBsqojD9jGuD92zG4P1Q>
+ <xmx:KFXzabqLeopPgB3tMIFtf5x4G9e3v4IlA-E5RfKsOm86C4ANT0eHDA>
+ <xmx:KFXzaWZppJGf5XAF2i4giMcUe8GTP7ZgHIDKb87q36a874zllFZ6_w>
+ <xmx:KFXzaUWj6uZnX4BGjyZjgsUeAFDGMrY4mwSO5OF-LJujaFmoAAw0SQ>
+ <xmx:KFXzaaf_3g0umUANX9B4wzdxno_KyUibh32sklb-p3c5Aq0V7TPEwJel>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 30 Apr 2026 09:12:07 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>,
+ David Marchand <david.marchand@redhat.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Hemant Agrawal <hemant.agrawal@nxp.com>
+Subject: Re: [PATCH] devtools: fix SPDX tag check
+Date: Thu, 30 Apr 2026 15:12:05 +0200
+Message-ID: <3848991.RUnXabflUD@thomas>
+In-Reply-To: <2cdb8d9fa0884d9388be9b08b8aaab09@huawei.com>
+References: <20260429130935.3681177-1-thomas@monjalon.net>
+ <2cdb8d9fa0884d9388be9b08b8aaab09@huawei.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -60,157 +94,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-With or without addressing inline comments below,
+29/04/2026 18:17, Marat Khalili:
+> Patch definitely improves the situation, but after a quick prompt Gemini suggested `| grep -vF "$files_without_spdx"` for safe filtering (man page confirms that patterns can be separated with newlines).
 
-Acked-by: Marat Khalili <marat.khalili@huawei.com>
+Yes grep looks simpler than sed for this filter.
+I'll send a v2 with your suggestion.
+Thank you
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Wednesday 29 April 2026 15:42
-> To: dev@dpdk.org
-> Cc: Stephen Hemminger <stephen@networkplumber.org>; Weijun Pan <wpan3636@=
-gmail.com>; stable@dpdk.org;
-> Deepak Kumar Jain <deepak.k.jain@intel.com>; Pablo de Lara <pablo.de.lara=
-.guarch@intel.com>
-> Subject: [PATCH 1/2] test: use inline helpers in buffer comparison macros
->=20
-> The TEST_ASSERT_BUFFERS_ARE_EQUAL family of macros had several
-> problems stemming from doing all the work inside the macro body:
->=20
->  - Macro parameters were used directly in arithmetic expressions
->    without parentheses.
->  - Arguments were evaluated multiple times.
->  - There was no type checking.
->=20
-> In addition, the _OFFSET and _BIT_OFFSET wrappers chained to the
-> inner assertion macro passing only "msg" and dropped the variadic
-> arguments, so any printf parameters after the format string were
-> silently lost on failure.
->=20
-> Move the comparison logic into static inline helpers and keep the
-> macros as thin wrappers around the printf / TEST_TRACE_FAILURE /
-> return TEST_FAILED boilerplate (which must remain a macro to
-> capture __func__ / __LINE__ and to return from the caller).
-> Each argument is now evaluated exactly once where the macro hands
-> it to the helper, the size_t parameters give the compiler real
-> types to check against, and the bit-mask arithmetic lives in C
-> rather than the preprocessor.  Existing call sites need no
-> changes.
->=20
-> Bugzilla ID: 1925
-> Suggested-by: Weijun Pan <wpan3636@gmail.com>
-> Fixes: db4faf469816 ("app/test: add new buffer comparison macros")
-> Cc: stable@dpdk.org
->=20
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
-> ---
->  app/test/test.h | 147 +++++++++++++++++++++++++++++++-----------------
->  1 file changed, 95 insertions(+), 52 deletions(-)
->=20
-> diff --git a/app/test/test.h b/app/test/test.h
-> index 1f12fc5397..ebf6727639 100644
-> --- a/app/test/test.h
-> +++ b/app/test/test.h
-> @@ -6,8 +6,12 @@
->  #define _TEST_H_
->=20
->  #include <errno.h>
-> +#include <stdbool.h>
->  #include <stddef.h>
-> +#include <stdint.h>
-> +#include <stdio.h>
->  #include <stdlib.h>
-> +#include <string.h>
->  #include <sys/queue.h>
->=20
->  #include <rte_hexdump.h>
-> @@ -32,70 +36,109 @@
->=20
->  #define TEST_ASSERT_EQUAL RTE_TEST_ASSERT_EQUAL
->=20
-> +/*
-> + * Helpers backing the TEST_ASSERT_BUFFERS_ARE_EQUAL* macros.
-> + *
-> + * Keeping the comparison logic in inline functions ensures each macro
-> + * argument is evaluated exactly once and gives the compiler real types
-> + * to check against, which the original all-macro implementation could
-> + * not provide.
-> + */
-> +static inline bool
-> +test_buffers_equal(const void *a, const void *b, size_t len)
-> +{
-> +	return memcmp(a, b, len) =3D=3D 0;
-> +}
 
-Not sure it's really justified to define a separate function for this, coul=
-d
-either use memcmp directly or if striving for symmetry call
-test_buffers_equal_offset with zero last argument.
-
-> +
-> +static inline bool
-> +test_buffers_equal_offset(const void *a, const void *b,
-> +		size_t len, size_t off)
-> +{
-> +	const uint8_t *pa =3D (const uint8_t *)a + off;
-> +	const uint8_t *pb =3D (const uint8_t *)b + off;
-> +
-> +	return memcmp(pa, pb, len) =3D=3D 0;
-> +}
-> +
-> +static inline bool
-> +test_buffers_equal_bit(const void *a, const void *b, size_t len)
-> +{
-> +	const uint8_t *pa =3D a;
-> +	const uint8_t *pb =3D b;
-> +	size_t whole =3D len >> 3;
-> +	size_t extra =3D len & 7;
-> +
-> +	if (memcmp(pa, pb, whole) !=3D 0)
-> +		return false;
-> +	if (extra !=3D 0) {
-> +		uint8_t mask =3D (uint8_t)~((1U << (8 - extra)) - 1);
-
-I know this is from the original, but I think we had some macros for this l=
-ike
-RTE_GENMASK32.
-
-> +
-> +		if ((pa[whole] & mask) !=3D (pb[whole] & mask))
-> +			return false;
-> +	}
-> +	return true;
-> +}
-> +
-> +static inline bool
-> +test_buffers_equal_bit_offset(const void *a, const void *b,
-> +		size_t len, size_t off)
-> +{
-> +	const uint8_t *pa =3D a;
-> +	const uint8_t *pb =3D b;
-> +	size_t off_bits =3D off & 7;
-> +	size_t off_bytes =3D off >> 3;
-
-Would be nice to have some consistency in naming these.
-
-> +
-> +	if (off_bits !=3D 0) {
-> +		uint8_t first_bits =3D 8 - off_bits;
-> +		uint8_t mask =3D (1U << first_bits) - 1;
-
-Could use a standard macro here as well.
-
-> +
-> +		if ((pa[off_bytes] & mask) !=3D (pb[off_bytes] & mask))
-> +			return false;
-> +		off_bytes++;
-> +		len -=3D first_bits;
-
-Would an assert that len >=3D first_bits make sense before this line?
-
-> +	}
-> +	return test_buffers_equal_bit(pa + off_bytes, pb + off_bytes, len);
-> +}
-> +
-
-// skip the rest
