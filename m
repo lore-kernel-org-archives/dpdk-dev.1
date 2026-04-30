@@ -2,71 +2,51 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA3F3CCFA13
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 12:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94843FF8873
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 12:33:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2CB01402A0;
-	Thu, 30 Apr 2026 14:05:48 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
- [67.231.148.174])
- by mails.dpdk.org (Postfix) with ESMTP id A6D0B4021F;
- Thu, 30 Apr 2026 14:05:46 +0200 (CEST)
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
- by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 63U60n8U2477642; Thu, 30 Apr 2026 05:05:45 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=TMBgAI+g6c+z6/urfYh1u/o
- dcWzHUHCn3lXXxfuzo8g=; b=Y9/oOEKX3xcyIZsWXjrK0/V14jJeb1l/Nn7qCOt
- v3n2jhW3vy9PxqmOwAWY1m9q4XClAoR1Gr+6tsFkFKT9WqWDE/KWm1QcE9Ar3fdq
- D7bbrG0anUQNE7iQh0prAMrQyXTYoqVqzQuuzY+CfEqT95q75eXq7ExXc+mxs4Tx
- 27jJNk7OdEIqUjtq+saufXJAy6gS3GnYlbeyJ4Q34B6Hwqit5X//6bvTLLXCzQsP
- AiAQLAkO1N9i948jVhVf/fVKN6bsnrXYUA+57YRafXoLMhnx+wJcO2BF1Q9Rmu2q
- /t8rqejGCEkR/l7KliNHG4tC7LYBPCaTPTMvpVsZT+N/rTw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4dun98jujj-1
- (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Thu, 30 Apr 2026 05:05:45 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+	by mails.dpdk.org (Postfix) with ESMTP id BEDA8402A0;
+	Thu, 30 Apr 2026 14:33:13 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 71A184021F;
+ Thu, 30 Apr 2026 14:33:12 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.107])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4g5tpx4w3ZzHnGd0;
+ Thu, 30 Apr 2026 20:32:25 +0800 (CST)
+Received: from frapema100003.china.huawei.com (unknown [7.182.19.100])
+ by mail.maildlp.com (Postfix) with ESMTPS id 78AF94058D;
+ Thu, 30 Apr 2026 20:33:11 +0800 (CST)
+Received: from frapema100003.china.huawei.com (7.182.19.100) by
+ frapema100003.china.huawei.com (7.182.19.100) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Thu, 30 Apr 2026 05:05:45 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Thu, 30 Apr 2026 05:05:45 -0700
-Received: from IN-lckQE5Rwctls.marvell.com (unknown [10.193.74.195])
- by maili.marvell.com (Postfix) with ESMTP id 4D9103F7079;
- Thu, 30 Apr 2026 05:05:40 -0700 (PDT)
-From: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
-To: <dev@dpdk.org>, Akhil Goyal <gakhil@marvell.com>, Fan Zhang
- <fanzhang.oss@gmail.com>, Gowrishankar Muthukrishnan
- <gmuthukrishn@marvell.com>
-CC: <stable@dpdk.org>
-Subject: [PATCH] cryptodev: update xform string array
-Date: Thu, 30 Apr 2026 17:35:25 +0530
-Message-ID: <20260430120533.2004-1-gmuthukrishn@marvell.com>
-X-Mailer: git-send-email 2.37.1
+ 15.2.1544.36; Thu, 30 Apr 2026 14:33:11 +0200
+Received: from frapema100003.china.huawei.com ([7.182.19.100]) by
+ frapema100003.china.huawei.com ([7.182.19.100]) with mapi id 15.02.1544.036;
+ Thu, 30 Apr 2026 14:33:11 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: Stephen Hemminger <stephen@networkplumber.org>, "dev@dpdk.org"
+ <dev@dpdk.org>
+CC: Weijun Pan <wpan3636@gmail.com>, "stable@dpdk.org" <stable@dpdk.org>,
+ Deepak Kumar Jain <deepak.k.jain@intel.com>, Pablo de Lara
+ <pablo.de.lara.guarch@intel.com>
+Subject: RE: [PATCH 1/2] test: use inline helpers in buffer comparison macros
+Thread-Topic: [PATCH 1/2] test: use inline helpers in buffer comparison macros
+Thread-Index: AQHc1+cY0e71C4rrT0ykePhvnCDqlbX3gA1g
+Date: Thu, 30 Apr 2026 12:33:11 +0000
+Message-ID: <c842fc3b7ea640879e374897858cf051@huawei.com>
+References: <20260419164818.20609-1-wpan36@wisc.edu>
+ <20260429144632.164970-1-stephen@networkplumber.org>
+ <20260429144632.164970-2-stephen@networkplumber.org>
+In-Reply-To: <20260429144632.164970-2-stephen@networkplumber.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.206.137.78]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=BK+DalQG c=1 sm=1 tr=0 ts=69f34599 cx=c_pps
- a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
- a=A5OVakUREuEA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=EAYMVhzMl8SCOHhVQcBL:22 a=8rWy6zfcAAAA:8 a=M5GUcnROAAAA:8
- a=dMpIRCrA1JucY64CYjEA:9 a=YjdVzJdQTyZRADMV7wFX:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNDMwMDEyMyBTYWx0ZWRfX1+PbnrCwe0hU
- c+93dL8zIS4jO2UVHhDHZU9WzHT768iBI6x7cy3hyDqi+xWW/Mq3/t97+8i8kTuefXLu3AoZIA0
- 232g2Q5Asvra2bqQg+92+ilS8kOrPAfi9uesOKye4TIhPNxu6oVVUaaOEcxpfBOCtAJaS00BzDE
- d7tSypOXO/6w3+ZRGnIBJaU6o0GLdzis3/mZq07roSN2Yv8De5a0FnlfDoYc7MsfzgKJiUHoJKS
- NoenKdPaBFE/gqBWWuGAx3EmvD9AzSnb/nDaRhryF0fwbHGCHXlhqLdWmOsscB8/DgMX01pl45m
- ymkz5pxjxG7S15kXNGk9zIbtiJkzP+gWJyBtVQzQVm2J9nTyxutvtslsgUCKllu6Ocq6n8swowZ
- nIAfhX2P+YprSOwYgUBiXg45mq9OfOyeoemJHbdaFInRYeCH0+DMbfdpngJ3ACMcevtb3qXQ1p2
- 5jR+QVaecLDquvNdIzQ==
-X-Proofpoint-GUID: xOZCKb46hyyltOK64doyr6Q13lRqMDJw
-X-Proofpoint-ORIG-GUID: xOZCKb46hyyltOK64doyr6Q13lRqMDJw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
- definitions=2026-04-30_04,2026-04-28_01,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,29 +60,157 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update xform string array for ML-KEM and ML-DSA algorithms.
+With or without addressing inline comments below,
 
-Fixes: bd3745e29065 ("cryptodev: add PQC ML algorithms")
-Cc: stable@dpdk.org
+Acked-by: Marat Khalili <marat.khalili@huawei.com>
 
-Signed-off-by: Gowrishankar Muthukrishnan <gmuthukrishn@marvell.com>
----
- lib/cryptodev/rte_cryptodev.c | 2 ++
- 1 file changed, 2 insertions(+)
+> -----Original Message-----
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Sent: Wednesday 29 April 2026 15:42
+> To: dev@dpdk.org
+> Cc: Stephen Hemminger <stephen@networkplumber.org>; Weijun Pan <wpan3636@=
+gmail.com>; stable@dpdk.org;
+> Deepak Kumar Jain <deepak.k.jain@intel.com>; Pablo de Lara <pablo.de.lara=
+.guarch@intel.com>
+> Subject: [PATCH 1/2] test: use inline helpers in buffer comparison macros
+>=20
+> The TEST_ASSERT_BUFFERS_ARE_EQUAL family of macros had several
+> problems stemming from doing all the work inside the macro body:
+>=20
+>  - Macro parameters were used directly in arithmetic expressions
+>    without parentheses.
+>  - Arguments were evaluated multiple times.
+>  - There was no type checking.
+>=20
+> In addition, the _OFFSET and _BIT_OFFSET wrappers chained to the
+> inner assertion macro passing only "msg" and dropped the variadic
+> arguments, so any printf parameters after the format string were
+> silently lost on failure.
+>=20
+> Move the comparison logic into static inline helpers and keep the
+> macros as thin wrappers around the printf / TEST_TRACE_FAILURE /
+> return TEST_FAILED boilerplate (which must remain a macro to
+> capture __func__ / __LINE__ and to return from the caller).
+> Each argument is now evaluated exactly once where the macro hands
+> it to the helper, the size_t parameters give the compiler real
+> types to check against, and the bit-mask arithmetic lives in C
+> rather than the preprocessor.  Existing call sites need no
+> changes.
+>=20
+> Bugzilla ID: 1925
+> Suggested-by: Weijun Pan <wpan3636@gmail.com>
+> Fixes: db4faf469816 ("app/test: add new buffer comparison macros")
+> Cc: stable@dpdk.org
+>=20
+> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+> ---
+>  app/test/test.h | 147 +++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 95 insertions(+), 52 deletions(-)
+>=20
+> diff --git a/app/test/test.h b/app/test/test.h
+> index 1f12fc5397..ebf6727639 100644
+> --- a/app/test/test.h
+> +++ b/app/test/test.h
+> @@ -6,8 +6,12 @@
+>  #define _TEST_H_
+>=20
+>  #include <errno.h>
+> +#include <stdbool.h>
+>  #include <stddef.h>
+> +#include <stdint.h>
+> +#include <stdio.h>
+>  #include <stdlib.h>
+> +#include <string.h>
+>  #include <sys/queue.h>
+>=20
+>  #include <rte_hexdump.h>
+> @@ -32,70 +36,109 @@
+>=20
+>  #define TEST_ASSERT_EQUAL RTE_TEST_ASSERT_EQUAL
+>=20
+> +/*
+> + * Helpers backing the TEST_ASSERT_BUFFERS_ARE_EQUAL* macros.
+> + *
+> + * Keeping the comparison logic in inline functions ensures each macro
+> + * argument is evaluated exactly once and gives the compiler real types
+> + * to check against, which the original all-macro implementation could
+> + * not provide.
+> + */
+> +static inline bool
+> +test_buffers_equal(const void *a, const void *b, size_t len)
+> +{
+> +	return memcmp(a, b, len) =3D=3D 0;
+> +}
 
-diff --git a/lib/cryptodev/rte_cryptodev.c b/lib/cryptodev/rte_cryptodev.c
-index 50071935c2..91f86c1590 100644
---- a/lib/cryptodev/rte_cryptodev.c
-+++ b/lib/cryptodev/rte_cryptodev.c
-@@ -216,6 +216,8 @@ crypto_asym_xform_strings[] = {
- 	[RTE_CRYPTO_ASYM_XFORM_ECDSA]	= "ecdsa",
- 	[RTE_CRYPTO_ASYM_XFORM_ECPM]	= "ecpm",
- 	[RTE_CRYPTO_ASYM_XFORM_SM2]	= "sm2",
-+	[RTE_CRYPTO_ASYM_XFORM_ML_KEM]	= "ml-kem",
-+	[RTE_CRYPTO_ASYM_XFORM_ML_DSA]	= "ml-dsa",
- };
- 
- /**
--- 
-2.37.1
+Not sure it's really justified to define a separate function for this, coul=
+d
+either use memcmp directly or if striving for symmetry call
+test_buffers_equal_offset with zero last argument.
 
+> +
+> +static inline bool
+> +test_buffers_equal_offset(const void *a, const void *b,
+> +		size_t len, size_t off)
+> +{
+> +	const uint8_t *pa =3D (const uint8_t *)a + off;
+> +	const uint8_t *pb =3D (const uint8_t *)b + off;
+> +
+> +	return memcmp(pa, pb, len) =3D=3D 0;
+> +}
+> +
+> +static inline bool
+> +test_buffers_equal_bit(const void *a, const void *b, size_t len)
+> +{
+> +	const uint8_t *pa =3D a;
+> +	const uint8_t *pb =3D b;
+> +	size_t whole =3D len >> 3;
+> +	size_t extra =3D len & 7;
+> +
+> +	if (memcmp(pa, pb, whole) !=3D 0)
+> +		return false;
+> +	if (extra !=3D 0) {
+> +		uint8_t mask =3D (uint8_t)~((1U << (8 - extra)) - 1);
+
+I know this is from the original, but I think we had some macros for this l=
+ike
+RTE_GENMASK32.
+
+> +
+> +		if ((pa[whole] & mask) !=3D (pb[whole] & mask))
+> +			return false;
+> +	}
+> +	return true;
+> +}
+> +
+> +static inline bool
+> +test_buffers_equal_bit_offset(const void *a, const void *b,
+> +		size_t len, size_t off)
+> +{
+> +	const uint8_t *pa =3D a;
+> +	const uint8_t *pb =3D b;
+> +	size_t off_bits =3D off & 7;
+> +	size_t off_bytes =3D off >> 3;
+
+Would be nice to have some consistency in naming these.
+
+> +
+> +	if (off_bits !=3D 0) {
+> +		uint8_t first_bits =3D 8 - off_bits;
+> +		uint8_t mask =3D (1U << first_bits) - 1;
+
+Could use a standard macro here as well.
+
+> +
+> +		if ((pa[off_bytes] & mask) !=3D (pb[off_bytes] & mask))
+> +			return false;
+> +		off_bytes++;
+> +		len -=3D first_bits;
+
+Would an assert that len >=3D first_bits make sense before this line?
+
+> +	}
+> +	return test_buffers_equal_bit(pa + off_bytes, pb + off_bytes, len);
+> +}
+> +
+
+// skip the rest
