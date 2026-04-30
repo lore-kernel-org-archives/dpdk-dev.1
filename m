@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D0EFF8875
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 10:19:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DCACCFA13
+	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 10:19:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 579D240685;
-	Thu, 30 Apr 2026 12:18:39 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id E7576406BB;
+	Thu, 30 Apr 2026 12:18:40 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 6077A40656
- for <dev@dpdk.org>; Thu, 30 Apr 2026 12:18:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5F2CB4021F
+ for <dev@dpdk.org>; Thu, 30 Apr 2026 12:18:34 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowACnUW11LPNplJjRDg--.60427S6;
- Thu, 30 Apr 2026 18:18:30 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowACnUW11LPNplJjRDg--.60427S10;
+ Thu, 30 Apr 2026 18:18:31 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v3 4/9] common/sxe2: add base driver skeleton
-Date: Thu, 30 Apr 2026 18:18:12 +0800
-Message-ID: <20260430101819.4094628-5-liujie5@linkdatatechnology.com>
+Subject: [PATCH v3 8/9] net/sxe2: support queue setup and control
+Date: Thu, 30 Apr 2026 18:18:16 +0800
+Message-ID: <20260430101819.4094628-9-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260430101819.4094628-1-liujie5@linkdatatechnology.com>
 References: <20260430092231.4068642-10-liujie5@linkdatatechnology.com>
  <20260430101819.4094628-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowACnUW11LPNplJjRDg--.60427S6
-X-Coremail-Antispam: 1UD129KBjvAXoWftrykKryUAF4kAr1fJF4fKrg_yoW5ArW7Go
- W7WFZxXw1fXrn7A3yUXw1xt3s3Ww4kW3sxJr4Fkrsru3Z8t345GF97Kw45ZF1DWF4rAr1a
- k3Z2v3yxGrs7GrWkn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
- AaLaJ3UjIYCTnIWjp_UUUOF7AC8VAFwI0_Xr0_Wr1l1xkIjI8I6I8E6xAIw20EY4v20xva
+X-CM-TRANSID: qwCowACnUW11LPNplJjRDg--.60427S10
+X-Coremail-Antispam: 1UD129KBjvAXoWftw15tF1fCF17JFy7XFWkJFb_yoWrJrWruo
+ WfKr47XFn3Gr1xCrZ8WF4xuFZrZw48uw4DArWfurn8ua15C3y7ta4xGry5XryUK3WrtF1k
+ WFyIv3ySgrW7t3y5n29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+ AaLaJ3UjIYCTnIWjp_UUUOF7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20EY4v20xva
  j40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s0DM28Irc
- Ia0xkI8VCY1x0267AKxVW8JVW5JwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
- 84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
+ Ia0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l
+ 84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j6F
  4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_
  Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6x
  IIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_
  Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0w
  CY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8
  JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1V
- AFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xII
+ AFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xII
  jxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4
  A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU
- 0xZFpf9x0JUepBfUUUUU=
+ 0xZFpf9x0JUqJmUUUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -61,1138 +61,1275 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Initialize the sxe2 PMD skeleton by implementing the PCI probe and
-remove functions. This includes the setup and cleanup of a character
-device used for control path communication between the user space
-and the hardware.
+Add support for Rx and Tx queue setup, release, and management.
+Implement eth_dev_ops callbacks for rx_queue_setup, tx_queue_setup,
+rx_queue_release, and tx_queue_release.
 
-The character device provides an interface for ioctl-based management
-operations, supporting device-specific configuration.
+This includes:
+- Allocating memory for hardware ring descriptors.
+- Initializing software ring structures and hardware head/tail pointers.
+- Implementing proper resource cleanup logic to prevent memory leaks
+  during queue reconfiguration or device close.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/meson.build            |   2 +
- drivers/common/sxe2/sxe2_common.c          | 636 +++++++++++++++++++++
- drivers/common/sxe2/sxe2_common.h          |  86 +++
- drivers/common/sxe2/sxe2_ioctl_chnl.c      | 161 ++++++
- drivers/common/sxe2/sxe2_ioctl_chnl.h      | 141 +++++
- drivers/common/sxe2/sxe2_ioctl_chnl_func.h |  45 ++
- 6 files changed, 1071 insertions(+)
- create mode 100644 drivers/common/sxe2/sxe2_common.c
- create mode 100644 drivers/common/sxe2/sxe2_common.h
- create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.c
- create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.h
- create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl_func.h
+ drivers/net/sxe2/meson.build   |   2 +
+ drivers/net/sxe2/sxe2_ethdev.c |  64 +++-
+ drivers/net/sxe2/sxe2_ethdev.h |   3 +
+ drivers/net/sxe2/sxe2_rx.c     | 579 +++++++++++++++++++++++++++++++++
+ drivers/net/sxe2/sxe2_rx.h     |  34 ++
+ drivers/net/sxe2/sxe2_tx.c     | 447 +++++++++++++++++++++++++
+ drivers/net/sxe2/sxe2_tx.h     |  32 ++
+ 7 files changed, 1143 insertions(+), 18 deletions(-)
+ create mode 100644 drivers/net/sxe2/sxe2_rx.c
+ create mode 100644 drivers/net/sxe2/sxe2_rx.h
+ create mode 100644 drivers/net/sxe2/sxe2_tx.c
+ create mode 100644 drivers/net/sxe2/sxe2_tx.h
 
-diff --git a/drivers/common/sxe2/meson.build b/drivers/common/sxe2/meson.build
-index 7d448629d5..3626fb1119 100644
---- a/drivers/common/sxe2/meson.build
-+++ b/drivers/common/sxe2/meson.build
-@@ -9,5 +9,7 @@ cflags += [
- deps += ['bus_pci', 'net', 'eal', 'ethdev']
- 
- sources = files(
-+        'sxe2_common.c',
-         'sxe2_common_log.c',
-+        'sxe2_ioctl_chnl.c',
+diff --git a/drivers/net/sxe2/meson.build b/drivers/net/sxe2/meson.build
+index 160a0de8ed..803e47c1aa 100644
+--- a/drivers/net/sxe2/meson.build
++++ b/drivers/net/sxe2/meson.build
+@@ -17,6 +17,8 @@ sources += files(
+         'sxe2_cmd_chnl.c',
+         'sxe2_vsi.c',
+         'sxe2_queue.c',
++        'sxe2_tx.c',
++        'sxe2_rx.c',
  )
-diff --git a/drivers/common/sxe2/sxe2_common.c b/drivers/common/sxe2/sxe2_common.c
+ 
+ allow_internal_get_api = true
+diff --git a/drivers/net/sxe2/sxe2_ethdev.c b/drivers/net/sxe2/sxe2_ethdev.c
+index fa6304ebbc..c1a65f25ce 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.c
++++ b/drivers/net/sxe2/sxe2_ethdev.c
+@@ -24,6 +24,8 @@
+ #include "sxe2_ethdev.h"
+ #include "sxe2_drv_cmd.h"
+ #include "sxe2_cmd_chnl.h"
++#include "sxe2_tx.h"
++#include "sxe2_rx.h"
+ #include "sxe2_common.h"
+ #include "sxe2_common_log.h"
+ #include "sxe2_host_regs.h"
+@@ -80,14 +82,6 @@ static s32 sxe2_dev_configure(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
+-static void __rte_cold sxe2_txqs_all_stop(struct rte_eth_dev *dev __rte_unused)
+-{
+-}
+-
+-static void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev __rte_unused)
+-{
+-}
+-
+ static s32 sxe2_dev_stop(struct rte_eth_dev *dev)
+ {
+ 	s32 ret = SXE2_SUCCESS;
+@@ -106,16 +100,6 @@ static s32 sxe2_dev_stop(struct rte_eth_dev *dev)
+ 	return ret;
+ }
+ 
+-static s32 __rte_cold sxe2_txqs_all_start(struct rte_eth_dev *dev __rte_unused)
+-{
+-	return 0;
+-}
+-
+-static s32 __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev __rte_unused)
+-{
+-	return 0;
+-}
+-
+ static s32 sxe2_queues_start(struct rte_eth_dev *dev)
+ {
+ 	s32 ret = SXE2_SUCCESS;
+@@ -318,6 +302,12 @@ static const struct eth_dev_ops sxe2_eth_dev_ops = {
+ 	.dev_stop                   = sxe2_dev_stop,
+ 	.dev_close                  = sxe2_dev_close,
+ 	.dev_infos_get              = sxe2_dev_infos_get,
++
++	.rx_queue_setup             = sxe2_rx_queue_setup,
++	.tx_queue_setup             = sxe2_tx_queue_setup,
++
++	.rxq_info_get               = sxe2_rx_queue_info_get,
++	.txq_info_get               = sxe2_tx_queue_info_get,
+ };
+ 
+ struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter,
+@@ -345,6 +335,44 @@ struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter
+ 	return bar_info;
+ }
+ 
++void __iomem *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type, u16 idx_in_func)
++{
++	struct sxe2_pci_map_context *map_ctxt = &adapter->map_ctxt;
++	struct sxe2_pci_map_segment_info *seg_info = NULL;
++	struct sxe2_pci_map_bar_info *bar_info = NULL;
++	void __iomem *addr = NULL;
++	u8 reg_width = 0;
++	u8 i = 0;
++
++	bar_info = sxe2_dev_get_bar_info(adapter, res_type);
++	if (bar_info == NULL) {
++		PMD_DEV_LOG_WARN(adapter, INIT, "Failed to get bar info, res_type=[%d]",
++				res_type);
++		goto l_end;
++	}
++	seg_info = bar_info->seg_info;
++
++	reg_width = map_ctxt->addr_info[res_type].reg_width;
++	if (reg_width == 0) {
++		PMD_DEV_LOG_WARN(adapter, INIT, "Invalid reg width with resource type %d",
++				res_type);
++		goto l_end;
++	}
++
++	for (i = 0; i < bar_info->map_cnt; i++) {
++		seg_info = &bar_info->seg_info[i];
++		if (res_type == seg_info->type) {
++			addr = (void __iomem *)((uintptr_t)seg_info->addr +
++					seg_info->page_inner_offset + reg_width	* idx_in_func);
++			goto l_end;
++		}
++	}
++
++l_end:
++	return addr;
++}
++
+ static void sxe2_drv_dev_caps_set(struct sxe2_adapter *adapter,
+ 			struct sxe2_drv_dev_caps_resp *dev_caps)
+ {
+diff --git a/drivers/net/sxe2/sxe2_ethdev.h b/drivers/net/sxe2/sxe2_ethdev.h
+index fb7813ef80..7999e4f331 100644
+--- a/drivers/net/sxe2/sxe2_ethdev.h
++++ b/drivers/net/sxe2/sxe2_ethdev.h
+@@ -295,6 +295,9 @@ struct sxe2_adapter {
+ #define SXE2_DEV_TO_PCI(eth_dev) \
+ 		RTE_DEV_TO_PCI((eth_dev)->device)
+ 
++void __iomem *sxe2_pci_map_addr_get(struct sxe2_adapter *adapter,
++		enum sxe2_pci_map_resource res_type, u16 idx_in_func);
++
+ struct sxe2_pci_map_bar_info *sxe2_dev_get_bar_info(struct sxe2_adapter *adapter,
+ 		enum sxe2_pci_map_resource res_type);
+ 
+diff --git a/drivers/net/sxe2/sxe2_rx.c b/drivers/net/sxe2/sxe2_rx.c
 new file mode 100644
-index 0000000000..dfdefb8b78
+index 0000000000..00e24fc361
 --- /dev/null
-+++ b/drivers/common/sxe2/sxe2_common.c
-@@ -0,0 +1,636 @@
++++ b/drivers/net/sxe2/sxe2_rx.c
+@@ -0,0 +1,579 @@
 +/* SPDX-License-Identifier: BSD-3-Clause
 + * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 + */
 +
-+#include <rte_version.h>
-+#include <rte_pci.h>
-+#include <rte_dev.h>
-+#include <rte_devargs.h>
-+#include <rte_class.h>
++#include <ethdev_driver.h>
++#include <rte_net.h>
++#include <rte_vect.h>
 +#include <rte_malloc.h>
-+#include <rte_errno.h>
-+#include <rte_fbarray.h>
-+#include <rte_eal.h>
-+#include <eal_private.h>
-+#include <eal_memcfg.h>
-+#include <bus_driver.h>
-+#include <bus_pci_driver.h>
-+#include <eal_export.h>
-+
-+#include "sxe2_errno.h"
-+#include "sxe2_common.h"
-+#include "sxe2_common_log.h"
-+#include "sxe2_ioctl_chnl_func.h"
-+
-+static TAILQ_HEAD(sxe2_class_drivers, sxe2_class_driver) sxe2_class_drivers_list =
-+				TAILQ_HEAD_INITIALIZER(sxe2_class_drivers_list);
-+
-+static TAILQ_HEAD(sxe2_common_devices, sxe2_common_device) sxe2_common_devices_list =
-+				TAILQ_HEAD_INITIALIZER(sxe2_common_devices_list);
-+
-+static pthread_mutex_t sxe2_common_devices_list_lock;
-+
-+static struct rte_pci_id *sxe2_common_pci_id_table;
-+
-+static const struct {
-+	const s8 *name;
-+	u32 class_type;
-+} sxe2_class_types[] = {
-+	{ .name = "eth", .class_type = SXE2_CLASS_TYPE_ETH },
-+	{ .name = "vdpa", .class_type = SXE2_CLASS_TYPE_VDPA },
-+};
-+
-+static u32 sxe2_class_name_to_value(const s8 *class_name)
-+{
-+	u32 class_type = SXE2_CLASS_TYPE_INVALID;
-+	u32 i;
-+
-+	for (i = 0; i < RTE_DIM(sxe2_class_types); i++) {
-+		if (strcmp(class_name, sxe2_class_types[i].name) == 0)
-+			class_type = sxe2_class_types[i].class_type;
-+	}
-+
-+	return class_type;
-+}
-+
-+static struct sxe2_common_device *sxe2_rtedev_to_cdev(struct rte_device *rte_dev)
-+{
-+	struct sxe2_common_device *cdev = NULL;
-+
-+	TAILQ_FOREACH(cdev, &sxe2_common_devices_list, next) {
-+		if (rte_dev == cdev->dev)
-+			goto l_end;
-+	}
-+
-+	cdev = NULL;
-+l_end:
-+	return cdev;
-+}
-+
-+static struct sxe2_class_driver *sxe2_class_driver_get(u32 class_type)
-+{
-+	struct sxe2_class_driver *cdrv = NULL;
-+
-+	TAILQ_FOREACH(cdrv, &sxe2_class_drivers_list, next) {
-+		if (cdrv->drv_class == class_type)
-+			goto l_end;
-+	}
-+
-+	cdrv = NULL;
-+l_end:
-+	return cdrv;
-+}
-+
-+static s32 sxe2_kvargs_preprocessing(struct sxe2_dev_kvargs_info *kv_info,
-+			const struct rte_devargs *devargs)
-+{
-+	const struct rte_kvargs_pair *pair;
-+	struct rte_kvargs *kvlist;
-+	s32 ret = SXE2_ERROR;
-+	u32 i;
-+
-+	kvlist = rte_kvargs_parse(devargs->args, NULL);
-+	if (kvlist == NULL) {
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+
-+	for	(i = 0; i < kvlist->count; i++) {
-+		pair = &kvlist->pairs[i];
-+		if (pair->value == NULL || *(pair->value) == '\0') {
-+			PMD_LOG_ERR(COM, "Key %s has no value.", pair->key);
-+			rte_kvargs_free(kvlist);
-+			ret = SXE2_ERR_INVAL;
-+			goto l_end;
-+		}
-+	}
-+
-+	kv_info->kvlist = kvlist;
-+	ret = SXE2_SUCCESS;
-+	PMD_LOG_DEBUG(COM, "kvargs %d preprocessing success.",
-+			kv_info->kvlist->count);
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_kvargs_free(struct sxe2_dev_kvargs_info *kv_info)
-+{
-+	if ((kv_info != NULL) && (kv_info->kvlist != NULL)) {
-+		rte_kvargs_free(kv_info->kvlist);
-+		kv_info->kvlist = NULL;
-+	}
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_kvargs_process)
-+s32
-+sxe2_kvargs_process(struct sxe2_dev_kvargs_info *kv_info,
-+		const s8 *const key_match, arg_handler_t handler, void *opaque_arg)
-+{
-+	const struct rte_kvargs_pair *pair;
-+	struct rte_kvargs *kvlist;
-+	u32 i;
-+	s32 ret = SXE2_SUCCESS;
-+
-+	if ((kv_info == NULL) || (kv_info->kvlist == NULL) ||
-+			(key_match == NULL)) {
-+		PMD_LOG_ERR(COM, "Failed to process kvargs, NULL parameter.");
-+		ret = SXE2_ERR_INVAL;
-+		goto l_end;
-+	}
-+	kvlist = kv_info->kvlist;
-+
-+	for (i = 0; i < kvlist->count; i++) {
-+		pair = &kvlist->pairs[i];
-+		if (strcmp(pair->key, key_match) == 0) {
-+			ret = (*handler)(pair->key, pair->value, opaque_arg);
-+			if (ret)
-+				goto l_end;
-+
-+			kv_info->is_used[i] = true;
-+			break;
-+		}
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static s32 sxe2_parse_class_type(const s8 *key, const s8 *value, void *args)
-+{
-+	u32 *class_type = (u32 *)args;
-+	s32 ret = SXE2_SUCCESS;
-+
-+	*class_type = sxe2_class_name_to_value(value);
-+	if (*class_type == SXE2_CLASS_TYPE_INVALID) {
-+		ret = SXE2_ERR_INVAL;
-+		PMD_LOG_ERR(COM, "Unsupported %s type: %s", key, value);
-+	}
-+
-+	return ret;
-+}
-+
-+static s32 sxe2_common_device_setup(struct sxe2_common_device *cdev)
-+{
-+	struct rte_pci_device *pci_dev = RTE_DEV_TO_PCI(cdev->dev);
-+	s32 ret = SXE2_SUCCESS;
-+
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		goto l_end;
-+
-+	ret = sxe2_drv_dev_open(cdev, pci_dev);
-+	if (ret != SXE2_SUCCESS) {
-+		PMD_LOG_ERR(COM, "Open pmd chrdev failed, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_drv_dev_handshark(cdev);
-+	if (ret != SXE2_SUCCESS) {
-+		PMD_LOG_ERR(COM, "Handshark failed, ret=%d", ret);
-+		goto l_close_dev;
-+	}
-+
-+	goto l_end;
-+
-+l_close_dev:
-+	sxe2_drv_dev_close(cdev);
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_common_device_cleanup(struct sxe2_common_device *cdev)
-+{
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		return;
-+
-+	if (TAILQ_EMPTY(&sxe2_common_devices_list))
-+		(void)rte_mem_event_callback_unregister("SXE2_MEM_ENVENT_CB", NULL);
-+
-+	sxe2_drv_dev_close(cdev);
-+}
-+
-+static struct sxe2_common_device *sxe2_common_device_alloc(
-+		struct rte_device *rte_dev, u32 class_type)
-+{
-+	struct sxe2_common_device *cdev = NULL;
-+
-+	cdev = rte_zmalloc("sxe2_common_device", sizeof(*cdev), 0);
-+	if (cdev == NULL) {
-+		PMD_LOG_ERR(COM, "Fail to alloc sxe2 common device.");
-+		goto l_end;
-+	}
-+	cdev->dev = rte_dev;
-+	cdev->class_type = class_type;
-+	cdev->config.kernel_reset = false;
-+	rte_ticketlock_init(&cdev->config.lock);
-+
-+	(void)pthread_mutex_lock(&sxe2_common_devices_list_lock);
-+	TAILQ_INSERT_TAIL(&sxe2_common_devices_list, cdev, next);
-+	(void)pthread_mutex_unlock(&sxe2_common_devices_list_lock);
-+
-+l_end:
-+	return cdev;
-+}
-+
-+static void sxe2_common_device_free(struct sxe2_common_device *cdev)
-+{
-+
-+	(void)pthread_mutex_lock(&sxe2_common_devices_list_lock);
-+	TAILQ_REMOVE(&sxe2_common_devices_list, cdev, next);
-+	(void)pthread_mutex_unlock(&sxe2_common_devices_list_lock);
-+
-+	rte_free(cdev);
-+}
-+
-+static bool sxe2_dev_is_pci(const struct rte_device *dev)
-+{
-+	return strcmp(dev->bus->name, "pci") == 0;
-+}
-+
-+static bool sxe2_dev_pci_id_match(const struct sxe2_class_driver *cdrv,
-+			const struct rte_device *dev)
-+{
-+	const struct rte_pci_device *pci_dev;
-+	const struct rte_pci_id *id_table;
-+	bool ret = false;
-+
-+	if (!sxe2_dev_is_pci(dev)) {
-+		PMD_LOG_ERR(COM, "Device %s is not a PCI device", dev->name);
-+		goto l_end;
-+	}
-+
-+	pci_dev = RTE_DEV_TO_PCI_CONST(dev);
-+	for (id_table = cdrv->id_table; id_table->vendor_id != 0;
-+			id_table++) {
-+
-+		if (id_table->vendor_id != pci_dev->id.vendor_id &&
-+				id_table->vendor_id != RTE_PCI_ANY_ID) {
-+			continue;
-+		}
-+		if (id_table->device_id != pci_dev->id.device_id &&
-+				id_table->device_id != RTE_PCI_ANY_ID) {
-+			continue;
-+		}
-+		if (id_table->subsystem_vendor_id !=
-+				pci_dev->id.subsystem_vendor_id &&
-+				id_table->subsystem_vendor_id != RTE_PCI_ANY_ID) {
-+			continue;
-+		}
-+		if (id_table->subsystem_device_id !=
-+				pci_dev->id.subsystem_device_id &&
-+				id_table->subsystem_device_id != RTE_PCI_ANY_ID) {
-+
-+			continue;
-+		}
-+		if (id_table->class_id != pci_dev->id.class_id &&
-+				id_table->class_id != RTE_CLASS_ANY_ID) {
-+			continue;
-+		}
-+		ret = true;
-+		break;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static s32 sxe2_classes_driver_probe(struct sxe2_common_device *cdev,
-+		struct sxe2_dev_kvargs_info *kv_info, u32 class_type)
-+{
-+	struct sxe2_class_driver *cdrv = NULL;
-+	s32 ret = SXE2_ERROR;
-+
-+	cdrv = sxe2_class_driver_get(class_type);
-+	if (cdrv == NULL) {
-+		PMD_LOG_ERR(COM, "Fail to get class type[%u] driver.", class_type);
-+		goto l_end;
-+	}
-+
-+	if (!sxe2_dev_pci_id_match(cdrv, cdev->dev)) {
-+		PMD_LOG_ERR(COM, "Fail to match pci id for driver:%s.", cdrv->name);
-+		goto l_end;
-+	}
-+
-+	ret = cdrv->probe(cdev, kv_info);
-+	if (ret) {
-+
-+		PMD_LOG_DEBUG(COM, "Fail to probe driver:%s.", cdrv->name);
-+		goto l_end;
-+	}
-+
-+	cdev->cdrv = cdrv;
-+l_end:
-+	return ret;
-+}
-+
-+static s32 sxe2_classes_driver_remove(struct sxe2_common_device *cdev)
-+{
-+	struct sxe2_class_driver *cdrv = cdev->cdrv;
-+
-+	return cdrv->remove(cdev);
-+}
-+
-+static s32 sxe2_kvargs_validate(struct sxe2_dev_kvargs_info *kv_info)
-+{
-+	s32 ret = SXE2_SUCCESS;
-+	u32 i;
-+
-+	if (rte_eal_process_type() != RTE_PROC_PRIMARY)
-+		goto l_end;
-+
-+	if (kv_info == NULL)
-+		goto l_end;
-+
-+	for (i = 0; i < kv_info->kvlist->count; i++) {
-+		if (kv_info->is_used[i] == 0) {
-+			PMD_LOG_ERR(COM, "Key \"%s\" is unsupported for the class driver.",
-+					kv_info->kvlist->pairs[i].key);
-+			ret = SXE2_ERR_INVAL;
-+			goto l_end;
-+		}
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static s32 sxe2_common_pci_probe(struct rte_pci_driver *pci_drv __rte_unused,
-+		struct rte_pci_device *pci_dev)
-+{
-+	struct rte_device *rte_dev =  &pci_dev->device;
-+	struct sxe2_common_device *cdev;
-+	struct sxe2_dev_kvargs_info *kv_info_p = NULL;
-+
-+	u32 class_type = SXE2_CLASS_TYPE_ETH;
-+	s32 ret = SXE2_ERROR;
-+
-+	PMD_LOG_INFO(COM, "Probe pci device: %s", pci_dev->name);
-+
-+	cdev = sxe2_rtedev_to_cdev(rte_dev);
-+	if (cdev != NULL) {
-+		PMD_LOG_ERR(COM, "Device %s already probed.", rte_dev->name);
-+		ret = SXE2_ERR_BUSY;
-+		goto l_end;
-+	}
-+
-+	if ((rte_dev->devargs != NULL) && (rte_dev->devargs->args != NULL)) {
-+		kv_info_p = calloc(1, sizeof(struct sxe2_dev_kvargs_info));
-+		if (!kv_info_p) {
-+			PMD_LOG_ERR(COM, "Failed to allocate memory for kv_info");
-+			goto l_end;
-+		}
-+
-+		ret = sxe2_kvargs_preprocessing(kv_info_p, rte_dev->devargs);
-+		if (ret < 0) {
-+			PMD_LOG_ERR(COM, "Unsupported device args: %s",
-+				rte_dev->devargs->args);
-+			goto l_free_kvargs;
-+		}
-+
-+		ret = sxe2_kvargs_process(kv_info_p, SXE2_DEVARGS_KEY_CLASS,
-+				sxe2_parse_class_type, &class_type);
-+		if (ret < 0) {
-+			PMD_LOG_ERR(COM, "Unsupported sxe2 driver class: %s",
-+				rte_dev->devargs->args);
-+			goto l_free_args;
-+		}
-+
-+	}
-+
-+	cdev = sxe2_common_device_alloc(rte_dev, class_type);
-+	if (cdev == NULL) {
-+		ret = SXE2_ERR_NOMEM;
-+		goto l_free_args;
-+	}
-+
-+	ret = sxe2_common_device_setup(cdev);
-+	if (ret != SXE2_SUCCESS)
-+		goto l_err_setup;
-+
-+	ret = sxe2_classes_driver_probe(cdev, kv_info_p, class_type);
-+	if (ret != SXE2_SUCCESS)
-+		goto l_err_probe;
-+
-+	ret = sxe2_kvargs_validate(kv_info_p);
-+	if (ret != SXE2_SUCCESS) {
-+		PMD_LOG_ERR(COM, "Device args validate failed: %s",
-+			rte_dev->devargs->args);
-+		goto l_err_valid;
-+	}
-+	cdev->kvargs = kv_info_p;
-+
-+	goto l_end;
-+l_err_valid:
-+	(void)sxe2_classes_driver_remove(cdev);
-+l_err_probe:
-+	sxe2_common_device_cleanup(cdev);
-+l_err_setup:
-+	sxe2_common_device_free(cdev);
-+l_free_args:
-+	sxe2_kvargs_free(kv_info_p);
-+l_free_kvargs:
-+	free(kv_info_p);
-+l_end:
-+	return ret;
-+}
-+
-+static s32 sxe2_common_pci_remove(struct rte_pci_device *pci_dev)
-+{
-+	struct sxe2_common_device *cdev;
-+	s32 ret = SXE2_ERROR;
-+
-+	PMD_LOG_INFO(COM, "Remove pci device: %s", pci_dev->name);
-+	cdev = sxe2_rtedev_to_cdev(&pci_dev->device);
-+	if (cdev == NULL) {
-+		ret = SXE2_ERR_NODEV;
-+		PMD_LOG_ERR(COM, "Fail to get remove device.");
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_classes_driver_remove(cdev);
-+	if (ret != SXE2_SUCCESS) {
-+		PMD_LOG_ERR(COM, "Fail to remove device: %s", pci_dev->name);
-+		goto l_end;
-+	}
-+
-+	sxe2_common_device_cleanup(cdev);
-+
-+	if (cdev->kvargs != NULL) {
-+		sxe2_kvargs_free(cdev->kvargs);
-+		free(cdev->kvargs);
-+		cdev->kvargs = NULL;
-+	}
-+
-+	sxe2_common_device_free(cdev);
-+
-+l_end:
-+	return ret;
-+}
-+
-+static struct rte_pci_driver sxe2_common_pci_driver = {
-+	.driver = {
-+		   .name = SXE2_COMMON_PCI_DRIVER_NAME,
-+	},
-+	.probe = sxe2_common_pci_probe,
-+	.remove = sxe2_common_pci_remove,
-+};
-+
-+static u32 sxe2_common_pci_id_table_size_get(const struct rte_pci_id *id_table)
-+{
-+	u32 table_size = 0;
-+
-+	while (id_table->vendor_id != 0) {
-+		table_size++;
-+		id_table++;
-+	}
-+
-+	return table_size;
-+}
-+
-+static bool sxe2_common_pci_id_exists(const struct rte_pci_id *id,
-+		const struct rte_pci_id *id_table, u32 next_idx)
-+{
-+	s32 current_size = next_idx - 1;
-+	s32 i;
-+	bool exists = false;
-+
-+	for (i = 0; i < current_size; i++) {
-+		if ((id->device_id == id_table[i].device_id) &&
-+				(id->vendor_id == id_table[i].vendor_id) &&
-+				(id->subsystem_vendor_id == id_table[i].subsystem_vendor_id) &&
-+				(id->subsystem_device_id == id_table[i].subsystem_device_id)) {
-+			exists = true;
-+			break;
-+		}
-+	}
-+
-+	return exists;
-+}
-+
-+static void sxe2_common_pci_id_insert(struct rte_pci_id *id_table,
-+		u32 *next_idx, const struct rte_pci_id *insert_table)
-+{
-+	for (; insert_table->vendor_id != 0; insert_table++) {
-+		if (!sxe2_common_pci_id_exists(insert_table, id_table, *next_idx)) {
-+
-+			id_table[*next_idx] = *insert_table;
-+			(*next_idx)++;
-+		}
-+	}
-+}
-+
-+static s32 sxe2_common_pci_id_table_update(const struct rte_pci_id *id_table)
-+{
-+	const struct rte_pci_id *id_iter;
-+	struct rte_pci_id *updated_table;
-+	struct rte_pci_id *old_table;
-+	u32 num_ids = 0;
-+	u32 i = 0;
-+	s32 ret = SXE2_SUCCESS;
-+
-+	old_table = sxe2_common_pci_id_table;
-+	if (old_table)
-+		num_ids = sxe2_common_pci_id_table_size_get(old_table);
-+
-+	num_ids += sxe2_common_pci_id_table_size_get(id_table);
-+
-+	num_ids += 1;
-+
-+	updated_table = calloc(num_ids, sizeof(*updated_table));
-+	if (!updated_table) {
-+		PMD_LOG_ERR(COM, "Failed to allocate memory for PCI ID table");
-+		goto l_end;
-+	}
-+
-+	if (old_table == NULL) {
-+
-+		for (id_iter = id_table; id_iter->vendor_id != 0;
-+				id_iter++, i++)
-+			updated_table[i] = *id_iter;
-+	} else {
-+
-+		for (id_iter = old_table; id_iter->vendor_id != 0;
-+				id_iter++, i++)
-+			updated_table[i] = *id_iter;
-+
-+		sxe2_common_pci_id_insert(updated_table, &i, id_table);
-+	}
-+
-+	updated_table[i].vendor_id = 0;
-+	sxe2_common_pci_driver.id_table = updated_table;
-+	sxe2_common_pci_id_table = updated_table;
-+	free(old_table);
-+
-+l_end:
-+	return ret;
-+}
-+
-+static void sxe2_common_driver_on_register_pci(struct sxe2_class_driver *driver)
-+{
-+	if (driver->id_table != NULL) {
-+		if (sxe2_common_pci_id_table_update(driver->id_table) != 0)
-+			return;
-+	}
-+
-+	if (driver->intr_lsc)
-+		sxe2_common_pci_driver.drv_flags |= RTE_PCI_DRV_INTR_LSC;
-+	if (driver->intr_rmv)
-+		sxe2_common_pci_driver.drv_flags |= RTE_PCI_DRV_INTR_RMV;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_class_driver_register)
-+void
-+sxe2_class_driver_register(struct sxe2_class_driver *driver)
-+{
-+	sxe2_common_driver_on_register_pci(driver);
-+	TAILQ_INSERT_TAIL(&sxe2_class_drivers_list, driver, next);
-+}
-+
-+static void sxe2_common_pci_init(void)
-+{
-+	const struct rte_pci_id empty_table[] = {
-+		{
-+			.vendor_id = 0
-+		},
-+	};
-+	s32 ret = SXE2_ERROR;
-+
-+	if (sxe2_common_pci_id_table == NULL) {
-+		ret = sxe2_common_pci_id_table_update(empty_table);
-+		if (ret != SXE2_SUCCESS)
-+			goto l_end;
-+	}
-+	rte_pci_register(&sxe2_common_pci_driver);
-+
-+l_end:
-+	return;
-+}
-+
-+static bool sxe2_commoin_inited;
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_common_init)
-+void
-+sxe2_common_init(void)
-+{
-+	if (sxe2_commoin_inited)
-+		goto l_end;
-+
-+	pthread_mutex_init(&sxe2_common_devices_list_lock, NULL);
-+#ifdef SXE2_DPDK_DEBUG
-+	sxe2_common_log_stream_init();
-+#endif
-+	sxe2_common_pci_init();
-+	sxe2_commoin_inited = true;
-+
-+l_end:
-+	return;
-+}
-+
-+RTE_FINI(sxe2_common_pci_finish)
-+{
-+	if (sxe2_common_pci_id_table != NULL) {
-+		rte_pci_unregister(&sxe2_common_pci_driver);
-+		free(sxe2_common_pci_id_table);
-+	}
-+}
-+
-+RTE_PMD_EXPORT_NAME(sxe2_common_pci);
-diff --git a/drivers/common/sxe2/sxe2_common.h b/drivers/common/sxe2/sxe2_common.h
-new file mode 100644
-index 0000000000..f62e00e053
---- /dev/null
-+++ b/drivers/common/sxe2/sxe2_common.h
-@@ -0,0 +1,86 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_COMMON_H__
-+#define __SXE2_COMMON_H__
-+
-+#include <rte_bitops.h>
-+#include <rte_kvargs.h>
-+#include <rte_compat.h>
-+#include <rte_memory.h>
-+#include <rte_ticketlock.h>
-+
-+#include "sxe2_type.h"
-+
-+#define SXE2_COMMON_PCI_DRIVER_NAME "sxe2_pci"
-+
-+#define SXE2_CDEV_TO_CMD_FD(cdev) \
-+	((cdev)->config.cmd_fd)
-+
-+#define SXE2_DEVARGS_KEY_CLASS "class"
-+
-+struct sxe2_class_driver;
-+
-+enum sxe2_class_type {
-+	SXE2_CLASS_TYPE_ETH = 0,
-+	SXE2_CLASS_TYPE_VDPA,
-+	SXE2_CLASS_TYPE_INVALID,
-+};
-+
-+struct sxe2_common_dev_config {
-+	s32 cmd_fd;
-+	bool support_iommu;
-+	bool kernel_reset;
-+	rte_ticketlock_t lock;
-+};
-+
-+struct sxe2_common_device {
-+	struct rte_device *dev;
-+	TAILQ_ENTRY(sxe2_common_device) next;
-+	struct sxe2_class_driver *cdrv;
-+	enum sxe2_class_type class_type;
-+	struct sxe2_common_dev_config config;
-+	struct sxe2_dev_kvargs_info *kvargs;
-+};
-+
-+struct sxe2_dev_kvargs_info {
-+	struct rte_kvargs *kvlist;
-+	bool is_used[RTE_KVARGS_MAX];
-+};
-+
-+typedef s32 (sxe2_class_driver_probe_t)(struct sxe2_common_device *scdev,
-+					struct sxe2_dev_kvargs_info *kvargs);
-+
-+typedef s32 (sxe2_class_driver_remove_t)(struct sxe2_common_device *scdev);
-+
-+struct sxe2_class_driver {
-+	TAILQ_ENTRY(sxe2_class_driver) next;
-+	enum sxe2_class_type drv_class;
-+	const s8 *name;
-+	sxe2_class_driver_probe_t *probe;
-+	sxe2_class_driver_remove_t *remove;
-+	const struct rte_pci_id *id_table;
-+	u32 intr_lsc;
-+	u32 intr_rmv;
-+};
-+
-+__rte_internal
-+void
-+sxe2_common_mem_event_cb(enum rte_mem_event type,
-+		const void *addr, size_t size, void *arg __rte_unused);
-+
-+__rte_internal
-+void
-+sxe2_class_driver_register(struct sxe2_class_driver *driver);
-+
-+__rte_internal
-+void
-+sxe2_common_init(void);
-+
-+__rte_internal
-+s32
-+sxe2_kvargs_process(struct sxe2_dev_kvargs_info *kv_info,
-+		const s8 *const key_match, arg_handler_t handler, void *opaque_arg);
-+
-+#endif
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-new file mode 100644
-index 0000000000..db09dd3126
---- /dev/null
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-@@ -0,0 +1,161 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+ #include <sys/types.h>
-+#include <sys/stat.h>
-+#include <fcntl.h>
-+#include <sys/ioctl.h>
-+#include <sys/mman.h>
-+#include <unistd.h>
-+#include <inttypes.h>
-+#include <rte_version.h>
-+#include <eal_export.h>
++#include <rte_memzone.h>
++
++#include "sxe2_ethdev.h"
++#include "sxe2_queue.h"
++#include "sxe2_rx.h"
++#include "sxe2_cmd_chnl.h"
 +
 +#include "sxe2_osal.h"
-+#include "sxe2_errno.h"
 +#include "sxe2_common_log.h"
-+#include "sxe2_ioctl_chnl.h"
-+#include "sxe2_ioctl_chnl_func.h"
 +
-+#define SXE2_CHR_DEV_NAME "/dev/sxe2-dpdk-"
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_cmd_close)
-+void
-+sxe2_drv_cmd_close(struct sxe2_common_device *cdev)
++static void __iomem *sxe2_rx_doorbell_tail_addr_get(struct sxe2_adapter *adapter, u16 queue_id)
 +{
-+	cdev->config.kernel_reset = true;
++	return sxe2_pci_map_addr_get(adapter, SXE2_PCI_MAP_RES_DOORBELL_RX_TAIL, queue_id);
 +}
 +
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_cmd_exec)
-+s32
-+sxe2_drv_cmd_exec(struct sxe2_common_device *cdev,
-+		struct sxe2_drv_cmd_params *cmd_params)
++static void sxe2_rx_head_tail_init(struct sxe2_adapter *adapter, struct sxe2_rx_queue *rxq)
 +{
-+	s32 cmd_fd;
-+	s32 ret = SXE2_ERR_IO;
++	rxq->rdt_reg_addr = sxe2_rx_doorbell_tail_addr_get(adapter, rxq->queue_id);
++	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, 0);
++}
 +
-+	if (cdev->config.kernel_reset) {
-+		ret = SXE2_ERR_PERM;
-+		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
++static void __rte_cold sxe2_rx_queue_reset(struct sxe2_rx_queue *rxq)
++{
++	u16 i = 0;
++	u16 len = 0;
++	static const union sxe2_rx_desc zeroed_desc = {{0}};
++
++	len = rxq->ring_depth + SXE2_RX_PKTS_BURST_BATCH_NUM;
++	for (i = 0; i < len; ++i)
++		rxq->desc_ring[i] = zeroed_desc;
++
++	memset(&rxq->fake_mbuf, 0, sizeof(rxq->fake_mbuf));
++	for (i = rxq->ring_depth; i < len; i++)
++		rxq->buffer_ring[i] = &rxq->fake_mbuf;
++
++	rxq->hold_num            = 0;
++	rxq->next_ret_pkt        = 0;
++	rxq->processing_idx      = 0;
++	rxq->completed_pkts_num  = 0;
++	rxq->batch_alloc_trigger = rxq->rx_free_thresh - 1;
++
++	rxq->pkt_first_seg = NULL;
++	rxq->pkt_last_seg  = NULL;
++
++	rxq->realloc_num   = 0;
++	rxq->realloc_start = 0;
++}
++
++void __rte_cold sxe2_rx_queue_mbufs_release(struct sxe2_rx_queue *rxq)
++{
++	u16 i;
++
++	if (rxq->buffer_ring != NULL) {
++		for (i = 0; i < rxq->ring_depth; i++) {
++			if (rxq->buffer_ring[i] != NULL) {
++				rte_pktmbuf_free(rxq->buffer_ring[i]);
++				rxq->buffer_ring[i] = NULL;
++			}
++		}
++	}
++
++	if (rxq->completed_pkts_num) {
++		for (i = 0; i < rxq->completed_pkts_num; ++i) {
++			if (rxq->completed_buf[rxq->next_ret_pkt + i] != NULL) {
++				rte_pktmbuf_free(rxq->completed_buf[rxq->next_ret_pkt + i]);
++				rxq->completed_buf[rxq->next_ret_pkt + i] = NULL;
++			}
++		}
++		rxq->completed_pkts_num = 0;
++	}
++}
++
++const struct sxe2_rxq_ops sxe2_default_rxq_ops = {
++	.queue_reset      = sxe2_rx_queue_reset,
++	.mbufs_release    = sxe2_rx_queue_mbufs_release,
++};
++
++static struct sxe2_rxq_ops sxe2_rx_default_ops_get(void)
++{
++	return sxe2_default_rxq_ops;
++}
++
++void __rte_cold sxe2_rx_queue_info_get(struct rte_eth_dev *dev,
++		u16 queue_id, struct rte_eth_rxq_info *qinfo)
++{
++	struct sxe2_rx_queue *rxq = NULL;
++
++	if (queue_id >= dev->data->nb_rx_queues) {
++		PMD_LOG_ERR(RX, "rx queue:%u is out of range:%u",
++			queue_id, dev->data->nb_rx_queues);
++		goto end;
++	}
++
++	rxq = dev->data->rx_queues[queue_id];
++	if (rxq == NULL) {
++		PMD_LOG_ERR(RX, "rx queue:%u is NULL", queue_id);
++		goto end;
++	}
++
++	qinfo->mp           = rxq->mb_pool;
++	qinfo->nb_desc      = rxq->ring_depth;
++	qinfo->scattered_rx = dev->data->scattered_rx;
++	qinfo->conf.rx_free_thresh    = rxq->rx_free_thresh;
++	qinfo->conf.rx_drop_en        = rxq->drop_en;
++	qinfo->conf.rx_deferred_start = rxq->rx_deferred_start;
++
++end:
++	return;
++}
++
++s32 __rte_cold sxe2_rx_queue_stop(struct rte_eth_dev *dev, u16 rx_queue_id)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_rx_queue *rxq;
++	s32 ret;
++	PMD_INIT_FUNC_TRACE();
++
++	if (rx_queue_id >= dev->data->nb_rx_queues) {
++		PMD_LOG_ERR(RX, "Rx queue %u is out of range %u",
++			    rx_queue_id, dev->data->nb_rx_queues);
++		ret = SXE2_ERR_INVAL;
 +		goto l_end;
 +	}
 +
-+	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
-+	if (cmd_fd < 0) {
-+		ret = SXE2_ERR_BADF;
-+		PMD_LOG_ERR(COM, "Fail to exec cmd, fd[%d] error", cmd_fd);
++	if (dev->data->rx_queue_state[rx_queue_id] ==
++			RTE_ETH_QUEUE_STATE_STOPPED) {
++		ret = SXE2_SUCCESS;
 +		goto l_end;
 +	}
 +
-+	PMD_LOG_DEBUG(COM, "Exec drv cmd fd[%d] trace_id[0x%"PRIx64"]"
-+			"opcode[0x%x] req_len[%d] resp_len[%d]",
-+			cmd_fd, cmd_params->trace_id, cmd_params->opcode,
-+			cmd_params->req_len, cmd_params->resp_len);
-+
-+	rte_ticketlock_lock(&cdev->config.lock);
-+	ret = ioctl(cmd_fd, SXE2_COM_CMD_PASSTHROUGH, cmd_params);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(COM, "Fail to exec cmd, fd[%d] opcode[0x%x] ret[%d], err:%s",
-+				cmd_fd, cmd_params->opcode, ret, strerror(errno));
-+		ret = -errno;
-+		rte_ticketlock_unlock(&cdev->config.lock);
++	rxq = dev->data->rx_queues[rx_queue_id];
++	if (rxq == NULL) {
++		ret = SXE2_SUCCESS;
 +		goto l_end;
 +	}
-+	rte_ticketlock_unlock(&cdev->config.lock);
++	ret = sxe2_drv_rxq_switch(adapter, rxq, false);
++	if (ret) {
++		PMD_LOG_ERR(RX, "Failed to switch rx queue %u off, ret = %d",
++				rx_queue_id, ret);
++		if (ret == SXE2_ERR_PERM)
++			goto l_free;
++		goto l_end;
++	}
 +
++l_free:
++	rxq->ops.mbufs_release(rxq);
++	rxq->ops.queue_reset(rxq);
++	dev->data->rx_queue_state[rx_queue_id] =
++		RTE_ETH_QUEUE_STATE_STOPPED;
 +l_end:
 +	return ret;
 +}
 +
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_open)
-+s32
-+sxe2_drv_dev_open(struct sxe2_common_device *cdev, struct rte_pci_device *pci_dev)
++static void __rte_cold sxe2_rx_queue_free(struct sxe2_rx_queue *rxq)
 +{
-+	s32 ret = SXE2_SUCCESS;
-+	s32 fd = 0;
-+	s8 drv_name[32] = {0};
++	if (rxq != NULL) {
++		rxq->ops.mbufs_release(rxq);
++		if (rxq->buffer_ring != NULL) {
++			rte_free(rxq->buffer_ring);
++			rxq->buffer_ring = NULL;
++		}
++		rte_memzone_free(rxq->mz);
++		rte_free(rxq);
++	}
++}
 +
-+	snprintf(drv_name, sizeof(drv_name),
-+				"%s%04"PRIx32":%02"PRIx8":%02"PRIx8".%"PRIx8,
-+				SXE2_CHR_DEV_NAME,
-+				pci_dev->addr.domain,
-+				pci_dev->addr.bus,
-+				pci_dev->addr.devid,
-+				pci_dev->addr.function);
++void __rte_cold sxe2_rx_queue_release(struct rte_eth_dev *dev,
++					u16 queue_idx)
++{
++	(void)sxe2_rx_queue_stop(dev, queue_idx);
++	sxe2_rx_queue_free(dev->data->rx_queues[queue_idx]);
++	dev->data->rx_queues[queue_idx] = NULL;
++}
 +
-+	fd = open(drv_name, O_RDWR);
-+	if (fd < 0) {
-+		ret = SXE2_ERR_BADF;
-+		PMD_LOG_ERR(COM, "Fail to open device:%s, ret=%d, err:%s",
-+				drv_name, ret, strerror(errno));
++void __rte_cold sxe2_all_rxqs_release(struct rte_eth_dev *dev)
++{
++	struct rte_eth_dev_data *data = dev->data;
++	u16 nb_rxq;
++
++	for (nb_rxq = 0; nb_rxq < data->nb_rx_queues; nb_rxq++) {
++		if (data->rx_queues[nb_rxq] == NULL)
++			continue;
++		sxe2_rx_queue_release(dev, nb_rxq);
++		data->rx_queues[nb_rxq] = NULL;
++	}
++	data->nb_rx_queues = 0;
++}
++
++static struct sxe2_rx_queue *sxe2_rx_queue_alloc(struct rte_eth_dev *dev, u16 queue_idx,
++		u16 ring_depth, u32 socket_id)
++{
++	struct sxe2_rx_queue *rxq;
++	const struct rte_memzone *tz;
++	u16 len;
++
++	if (dev->data->rx_queues[queue_idx] != NULL) {
++		sxe2_rx_queue_release(dev, queue_idx);
++		dev->data->rx_queues[queue_idx] = NULL;
++	}
++
++	rxq = rte_zmalloc_socket("rx_queue", sizeof(*rxq),
++				 RTE_CACHE_LINE_SIZE, socket_id);
++
++	if (rxq == NULL) {
++		PMD_LOG_ERR(RX, "rx queue[%d] alloc failed", queue_idx);
 +		goto l_end;
 +	}
 +
-+	SXE2_CDEV_TO_CMD_FD(cdev) = fd;
++	rxq->ring_depth = ring_depth;
++	len = rxq->ring_depth + SXE2_RX_PKTS_BURST_BATCH_NUM;
 +
-+	PMD_LOG_INFO(COM, "Successfully opened device:%s, fd=%d",
-+				drv_name, SXE2_CDEV_TO_CMD_FD(cdev));
++	rxq->buffer_ring = rte_zmalloc_socket("rx_buffer_ring",
++					  sizeof(struct rte_mbuf *) * len,
++					  RTE_CACHE_LINE_SIZE, socket_id);
++
++	if (!rxq->buffer_ring) {
++		PMD_LOG_ERR(RX, "Rxq malloc mbuf mem failed");
++		sxe2_rx_queue_release(dev, queue_idx);
++		rte_free(rxq);
++		rxq = NULL;
++		goto l_end;
++	}
++
++	tz = rte_eth_dma_zone_reserve(dev, "rx_dma", queue_idx,
++					SXE2_RX_RING_SIZE, SXE2_DESC_ADDR_ALIGN, socket_id);
++	if (tz == NULL) {
++		PMD_LOG_ERR(RX, "Rxq malloc desc mem failed");
++		sxe2_rx_queue_release(dev, queue_idx);
++		rte_free(rxq->buffer_ring);
++		rxq->buffer_ring = NULL;
++		rte_free(rxq);
++		rxq = NULL;
++		goto l_end;
++	}
++
++	rxq->mz = tz;
++	memset(tz->addr, 0, SXE2_RX_RING_SIZE);
++	rxq->base_addr = tz->iova;
++	rxq->desc_ring = (union sxe2_rx_desc *)tz->addr;
 +
 +l_end:
-+	return ret;
++	return rxq;
 +}
 +
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_close)
-+void
-+sxe2_drv_dev_close(struct sxe2_common_device *cdev)
++s32 __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
++			u16 queue_idx, u16 nb_desc, u32 socket_id,
++			const struct rte_eth_rxconf *rx_conf,
++			struct rte_mempool *mp)
 +{
-+	s32 fd = SXE2_CDEV_TO_CMD_FD(cdev);
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_vsi *vsi = adapter->vsi_ctxt.main_vsi;
++	struct sxe2_rx_queue *rxq;
++	u64 offloads;
++	s32 ret;
++	u16 rx_nseg;
++	u16 i;
 +
-+	if (fd > 0)
-+		close(fd);
-+	PMD_LOG_INFO(COM, "closed device fd=%d", fd);
-+	SXE2_CDEV_TO_CMD_FD(cdev) = -1;
-+}
++	PMD_INIT_FUNC_TRACE();
 +
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_handshark)
-+s32
-+sxe2_drv_dev_handshark(struct sxe2_common_device *cdev)
-+{
-+	s32 ret = SXE2_SUCCESS;
-+	s32 cmd_fd = 0;
-+	struct sxe2_ioctl_cmd_common_hdr cmd_params;
-+
-+	if (cdev->config.kernel_reset) {
-+		ret = SXE2_ERR_PERM;
-+		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
++	if (queue_idx >= dev->data->nb_rx_queues) {
++		PMD_LOG_ERR(RX, "Rx queue %u is out of range %u",
++					queue_idx, dev->data->nb_rx_queues);
++		ret = SXE2_ERR_INVAL;
 +		goto l_end;
 +	}
 +
-+	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
-+	if (cmd_fd < 0) {
-+		ret = SXE2_ERR_BADF;
-+		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
++	if (nb_desc % SXE2_RX_DESC_RING_ALIGN != 0 ||
++		nb_desc > SXE2_MAX_RING_DESC ||
++		nb_desc < SXE2_MIN_RING_DESC) {
++		PMD_LOG_ERR(RX, "param desc num:%u is invalid", nb_desc);
++		ret = SXE2_ERR_INVAL;
 +		goto l_end;
 +	}
 +
-+	PMD_LOG_DEBUG(COM, "Open fd=%d to handshark with kernel", cmd_fd);
-+
-+	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_cmd_common_hdr));
-+	cmd_params.dpdk_ver = SXE2_COM_VER;
-+	cmd_params.msg_len = sizeof(struct sxe2_ioctl_cmd_common_hdr);
-+
-+	rte_ticketlock_lock(&cdev->config.lock);
-+	ret = ioctl(cmd_fd, SXE2_COM_CMD_HANDSHAKE, &cmd_params);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(COM, "Failed to handshark, fd=%d, ret=%d, err:%s",
-+				cmd_fd, ret, strerror(errno));
-+		ret = SXE2_ERR_IO;
-+		rte_ticketlock_unlock(&cdev->config.lock);
-+		goto l_end;
-+	}
-+	rte_ticketlock_unlock(&cdev->config.lock);
-+
-+	if (cmd_params.cap & BIT(SXE2_COM_CAP_IOMMU_MAP))
-+		cdev->config.support_iommu = true;
++	if (mp != NULL)
++		rx_nseg = 1;
 +	else
-+		cdev->config.support_iommu = false;
++		rx_nseg = rx_conf->rx_nseg;
++
++	offloads = rx_conf->offloads | dev->data->dev_conf.rxmode.offloads;
++
++	if (rx_nseg > 1 && !(offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
++		PMD_LOG_ERR(RX, "Port %u queue %u Buffer split offload not configured, but rx_nseg is %u",
++					dev->data->port_id, queue_idx, rx_nseg);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	if ((offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT) && !(rx_nseg > 1)) {
++		PMD_LOG_ERR(RX, "Port %u queue %u Buffer split offload configured, but rx_nseg is %u",
++					dev->data->port_id, queue_idx, rx_nseg);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	if ((offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO) &&
++		(offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)) {
++		PMD_LOG_ERR(RX, "port_id %u queue %u, LRO can't be configure with Keep crc.",
++					dev->data->port_id, queue_idx);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	rxq = sxe2_rx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
++	if (rxq == NULL) {
++		PMD_LOG_ERR(RX, "rx queue[%d] resource alloc failed", queue_idx);
++		ret = SXE2_ERR_NO_MEMORY;
++		goto l_end;
++	}
++
++	if (offloads & RTE_ETH_RX_OFFLOAD_TCP_LRO)
++		dev->data->lro = 1;
++
++	if (rx_nseg > 1) {
++		for (i = 0; i < rx_nseg; i++) {
++			rte_memcpy(&rxq->rx_seg[i], &rx_conf->rx_seg[i].split,
++					sizeof(struct rte_eth_rxseg_split));
++		}
++		rxq->mb_pool = rxq->rx_seg[0].mp;
++	} else {
++		rxq->mb_pool = mp;
++	}
++
++	rxq->rx_free_thresh = rx_conf->rx_free_thresh;
++	rxq->port_id = dev->data->port_id;
++	rxq->offloads = offloads;
++	if (offloads & RTE_ETH_RX_OFFLOAD_KEEP_CRC)
++		rxq->crc_len = RTE_ETHER_CRC_LEN;
++	else
++		rxq->crc_len = 0;
++
++	rxq->queue_id = queue_idx;
++	rxq->idx_in_func = vsi->rxqs.base_idx_in_func + queue_idx;
++	rxq->drop_en = rx_conf->rx_drop_en;
++	rxq->rx_deferred_start = rx_conf->rx_deferred_start;
++	rxq->vsi = vsi;
++	rxq->ops = sxe2_rx_default_ops_get();
++	rxq->ops.queue_reset(rxq);
++	dev->data->rx_queues[queue_idx] = rxq;
++
++	ret = SXE2_SUCCESS;
++l_end:
++	return ret;
++}
++
++struct rte_mbuf *sxe2_mbuf_raw_alloc(struct rte_mempool *mp)
++{
++	return rte_mbuf_raw_alloc(mp);
++}
++
++static s32 __rte_cold sxe2_rx_queue_mbufs_alloc(struct sxe2_rx_queue *rxq)
++{
++	struct rte_mbuf **buf_ring = rxq->buffer_ring;
++	struct rte_mbuf *mbuf = NULL;
++	struct rte_mbuf *mbuf_pay;
++	volatile union sxe2_rx_desc *desc;
++	u64 dma_addr;
++	s32 ret;
++	u16 i, j;
++
++	for (i = 0; i < rxq->ring_depth; i++) {
++		mbuf = sxe2_mbuf_raw_alloc(rxq->mb_pool);
++		if (mbuf == NULL) {
++			PMD_LOG_ERR(RX, "Rx queue is not available or setup");
++			ret = SXE2_ERR_NO_MEMORY;
++			goto l_err_free_mbuf;
++		}
++		buf_ring[i] = mbuf;
++		mbuf->data_off = RTE_PKTMBUF_HEADROOM;
++		mbuf->nb_segs = 1;
++		mbuf->port = rxq->port_id;
++
++		dma_addr = rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf));
++		desc = &rxq->desc_ring[i];
++		if (!(rxq->offloads & RTE_ETH_RX_OFFLOAD_BUFFER_SPLIT)) {
++			desc->read.hdr_addr = 0;
++			desc->read.pkt_addr = dma_addr;
++		} else {
++			mbuf_pay = rte_mbuf_raw_alloc(rxq->rx_seg[1].mp);
++			if (unlikely(!mbuf_pay)) {
++				PMD_LOG_ERR(RX, "Failed to allocate payload mbuf for RX");
++				ret = SXE2_ERR_NO_MEMORY;
++				goto l_err_free_mbuf;
++			}
++
++			mbuf_pay->next = NULL;
++			mbuf_pay->data_off = RTE_PKTMBUF_HEADROOM;
++			mbuf_pay->nb_segs = 1;
++			mbuf_pay->port = rxq->port_id;
++			mbuf->next = mbuf_pay;
++
++			desc->read.hdr_addr = dma_addr;
++			desc->read.pkt_addr =
++				rte_cpu_to_le_64(rte_mbuf_data_iova_default(mbuf_pay));
++		}
++
++#ifndef RTE_LIBRTE_SXE2_16BYTE_RX_DESC
++		desc->read.rsvd1 = 0;
++		desc->read.rsvd2 = 0;
++#endif
++	}
++
++	ret = SXE2_SUCCESS;
++	goto l_end;
++
++l_err_free_mbuf:
++	for (j = 0; j <= i; j++) {
++		if (buf_ring[j] != NULL && buf_ring[j]->next != NULL) {
++			rte_pktmbuf_free(buf_ring[j]->next);
++			buf_ring[j]->next = NULL;
++		}
++
++		if (buf_ring[j] != NULL) {
++			rte_pktmbuf_free(buf_ring[j]);
++			buf_ring[j] = NULL;
++		}
++	}
 +
 +l_end:
 +	return ret;
 +}
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.h b/drivers/common/sxe2/sxe2_ioctl_chnl.h
-new file mode 100644
-index 0000000000..eedb3d6693
---- /dev/null
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl.h
-@@ -0,0 +1,141 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
 +
-+#ifndef __SXE2_IOCTL_CHNL_H__
-+#define __SXE2_IOCTL_CHNL_H__
++s32 __rte_cold sxe2_rx_queue_start(struct rte_eth_dev *dev, u16 rx_queue_id)
++{
++	struct sxe2_rx_queue *rxq;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	s32 ret;
++	PMD_INIT_FUNC_TRACE();
 +
-+#ifdef SXE2_DPDK_DRIVER
++	if (rx_queue_id >= dev->data->nb_rx_queues) {
++		PMD_LOG_ERR(RX, "Rx queue %u is out of range %u",
++				rx_queue_id, dev->data->nb_rx_queues);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
 +
-+#include <rte_version.h>
-+#include <bus_pci_driver.h>
-+#include "sxe2_type.h"
-+#endif
++	rxq = dev->data->rx_queues[rx_queue_id];
++	if (rxq == NULL) {
++		PMD_LOG_ERR(RX, "Rx queue %u is not available or setup",
++				rx_queue_id);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
 +
-+#ifdef SXE2_LINUX_DRIVER
-+#ifdef __KERNEL__
-+#include <linux/types.h>
-+#include <linux/ioctl.h>
-+#endif
-+#endif
++	if (dev->data->rx_queue_state[rx_queue_id] ==
++			RTE_ETH_QUEUE_STATE_STARTED) {
++		ret = SXE2_SUCCESS;
++		goto l_end;
++	}
 +
-+#include "sxe2_internal_ver.h"
++	ret = sxe2_rx_queue_mbufs_alloc(rxq);
++	if (ret) {
++		PMD_LOG_ERR(RX, "Rx queue %u apply desc ring fail",
++			rx_queue_id);
++		ret =  SXE2_ERR_NO_MEMORY;
++		goto l_end;
++	}
 +
-+#define SXE2_COM_INVAL_U32 0xFFFFFFFF
++	sxe2_rx_head_tail_init(adapter, rxq);
 +
-+#define SXE2_COM_PCI_OFFSET_SHIFT 40
++	ret = sxe2_drv_rxq_ctxt_cfg(adapter, rxq, 1);
++	if (ret) {
++		PMD_LOG_ERR(RX, "Rx queue %u config ctxt fail, ret=%d",
++			rx_queue_id, ret);
 +
-+#define SXE2_COM_PCI_INDEX_TO_OFFSET(index)	((u64)(index) << SXE2_COM_PCI_OFFSET_SHIFT)
-+#define SXE2_COM_PCI_OFFSET_MASK	(((u64)(1) << SXE2_COM_PCI_OFFSET_SHIFT) - 1)
-+#define SXE2_COM_PCI_OFFSET_GEN(index, off) ((((u64)(index)) << SXE2_COM_PCI_OFFSET_SHIFT) | \
-+		(((u64)(off)) & SXE2_COM_PCI_OFFSET_MASK))
++		(void)sxe2_drv_rxq_switch(adapter, rxq, false);
++		rxq->ops.mbufs_release(rxq);
++		rxq->ops.queue_reset(rxq);
++		goto l_end;
++	}
 +
-+#define SXE2_DRV_TRACE_ID_COUNT_MASK 0x003FFFFFFFFFFFFFLLU
++	SXE2_PCI_REG_WRITE_WC(rxq->rdt_reg_addr, rxq->ring_depth - 1);
++	dev->data->rx_queue_state[rx_queue_id] = RTE_ETH_QUEUE_STATE_STARTED;
 +
-+#define SXE2_DRV_CMD_DFLT_TIMEOUT (30)
-+
-+#define SXE2_COM_VER_MAJOR 1
-+#define SXE2_COM_VER_MINOR 0
-+#define SXE2_COM_VER       SXE2_MK_VER(SXE2_COM_VER_MAJOR, SXE2_COM_VER_MINOR)
-+
-+enum SXE2_COM_CMD {
-+	SXE2_DEVICE_HANDSHAKE = 1,
-+	SXE2_DEVICE_IO_IRQS_REQ,
-+	SXE2_DEVICE_EVT_IRQ_REQ,
-+	SXE2_DEVICE_RST_IRQ_REQ,
-+	SXE2_DEVICE_EVT_CAUSE_GET,
-+	SXE2_DEVICE_DMA_MAP,
-+	SXE2_DEVICE_DMA_UNMAP,
-+	SXE2_DEVICE_PASSTHROUGH,
-+	SXE2_DEVICE_MAX,
-+};
-+
-+#define SXE2_CMD_TYPE 'S'
-+
-+#define SXE2_COM_CMD_HANDSHAKE     _IO(SXE2_CMD_TYPE, SXE2_DEVICE_HANDSHAKE)
-+#define SXE2_COM_CMD_IO_IRQS_REQ   _IO(SXE2_CMD_TYPE, SXE2_DEVICE_IO_IRQS_REQ)
-+#define SXE2_COM_CMD_EVT_IRQ_REQ   _IO(SXE2_CMD_TYPE, SXE2_DEVICE_EVT_IRQ_REQ)
-+#define SXE2_COM_CMD_RST_IRQ_REQ   _IO(SXE2_CMD_TYPE, SXE2_DEVICE_RST_IRQ_REQ)
-+#define SXE2_COM_CMD_EVT_CAUSE_GET _IO(SXE2_CMD_TYPE, SXE2_DEVICE_EVT_CAUSE_GET)
-+#define SXE2_COM_CMD_DMA_MAP       _IO(SXE2_CMD_TYPE, SXE2_DEVICE_DMA_MAP)
-+#define SXE2_COM_CMD_DMA_UNMAP     _IO(SXE2_CMD_TYPE, SXE2_DEVICE_DMA_UNMAP)
-+#define SXE2_COM_CMD_PASSTHROUGH   _IO(SXE2_CMD_TYPE, SXE2_DEVICE_PASSTHROUGH)
-+
-+enum sxe2_com_cap {
-+	SXE2_COM_CAP_IOMMU_MAP = 0,
-+};
-+
-+struct sxe2_ioctl_cmd_common_hdr {
-+	u32 dpdk_ver;
-+	u32 drv_ver;
-+	u32 msg_len;
-+	u32 cap;
-+	u8  reserved[32];
-+};
-+
-+struct sxe2_drv_cmd_params {
-+	u64 trace_id;
-+	u32 timeout;
-+	u32 opcode;
-+	u16 vsi_id;
-+	u16 repr_id;
-+	u32 req_len;
-+	u32 resp_len;
-+	void *req_data;
-+	void *resp_data;
-+	u8    resv[32];
-+};
-+
-+struct sxe2_ioctl_irq_set {
-+	u32  cnt;
-+	u8   resv[4];
-+	u32  base_irq_in_com;
-+	s32 *event_fd;
-+};
-+
-+enum sxe2_com_event_cause {
-+	SXE2_COM_EC_LINK_CHG = 0,
-+	SXE2_COM_SW_MODE_LEGACY,
-+	SXE2_COM_SW_MODE_SWITCHDEV,
-+	SXE2_COM_FC_ST_CHANGE,
-+
-+	SXE2_COM_EC_RESET = 62,
-+	SXE2_COM_EC_MAX = 63,
-+};
-+
-+struct sxe2_ioctl_other_evt_set {
-+	s32 eventfd;
-+	u8  resv[4];
-+	u64 filter_table;
-+};
-+
-+struct sxe2_ioctl_other_evt_get {
-+	u64 evt_cause;
-+	u8  resv[8];
-+};
-+
-+struct sxe2_ioctl_reset_sub_set {
-+	s32 eventfd;
-+	u8  resv[4];
-+};
-+
-+struct sxe2_ioctl_iommu_dma_map {
-+	u64 vaddr;
-+	u64 iova;
-+	u64 size;
-+	u8  resv[4];
-+};
-+
-+struct sxe2_ioctl_iommu_dma_unmap {
-+	u64 iova;
-+};
-+
-+union sxe2_drv_trace_info {
-+	u64 id;
-+	struct {
-+		u64 count : 54;
-+		u64 cpu_id : 10;
-+	} sxe2_drv_trace_id_param;
-+};
-+
-+#endif
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl_func.h b/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
-new file mode 100644
-index 0000000000..0c3cb9caea
---- /dev/null
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
-@@ -0,0 +1,45 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
-+ */
-+
-+#ifndef __SXE2_IOCTL_CHNL_FUNC_H__
-+#define __SXE2_IOCTL_CHNL_FUNC_H__
-+
-+#include <rte_version.h>
-+#include <bus_pci_driver.h>
-+
-+#include "sxe2_type.h"
-+#include "sxe2_common.h"
-+#include "sxe2_ioctl_chnl.h"
-+
-+#ifdef	__cplusplus
-+extern "C" {
-+#endif
-+
-+__rte_internal
-+void
-+sxe2_drv_cmd_close(struct sxe2_common_device *cdev);
-+
-+__rte_internal
-+s32
-+sxe2_drv_cmd_exec(struct sxe2_common_device *cdev,
-+		struct sxe2_drv_cmd_params *cmd_params);
-+
-+__rte_internal
-+s32
-+sxe2_drv_dev_open(struct sxe2_common_device *cdev,
-+		struct rte_pci_device *pci_dev);
-+
-+__rte_internal
-+void
-+sxe2_drv_dev_close(struct sxe2_common_device *cdev);
-+
-+__rte_internal
-+s32
-+sxe2_drv_dev_handshark(struct sxe2_common_device *cdev);
-+
-+#ifdef __cplusplus
++l_end:
++	return  ret;
 +}
++
++s32 __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev __rte_unused)
++{
++	struct rte_eth_dev_data *data = dev->data;
++	struct sxe2_rx_queue *rxq;
++	u16 nb_rxq;
++	u16 nb_started_rxq;
++	s32 ret;
++	PMD_INIT_FUNC_TRACE();
++
++	for (nb_rxq = 0; nb_rxq < data->nb_rx_queues; nb_rxq++) {
++		rxq = dev->data->rx_queues[nb_rxq];
++		if (!rxq || rxq->rx_deferred_start)
++			continue;
++
++		ret = sxe2_rx_queue_start(dev, nb_rxq);
++		if (ret) {
++			PMD_LOG_ERR(RX, "Fail to start rx queue %u", nb_rxq);
++			goto l_free_started_queue;
++		}
++
++		rte_atomic_store_explicit(&rxq->sw_stats.pkts, 0,
++			rte_memory_order_relaxed);
++		rte_atomic_store_explicit(&rxq->sw_stats.bytes, 0,
++			rte_memory_order_relaxed);
++		rte_atomic_store_explicit(&rxq->sw_stats.drop_pkts, 0,
++			rte_memory_order_relaxed);
++		rte_atomic_store_explicit(&rxq->sw_stats.drop_bytes, 0,
++			rte_memory_order_relaxed);
++		rte_atomic_store_explicit(&rxq->sw_stats.unicast_pkts, 0,
++			rte_memory_order_relaxed);
++		rte_atomic_store_explicit(&rxq->sw_stats.broadcast_pkts, 0,
++			rte_memory_order_relaxed);
++		rte_atomic_store_explicit(&rxq->sw_stats.multicast_pkts, 0,
++			rte_memory_order_relaxed);
++	}
++	ret = SXE2_SUCCESS;
++	goto l_end;
++
++l_free_started_queue:
++	for (nb_started_rxq = 0; nb_started_rxq <= nb_rxq; nb_started_rxq++)
++		(void)sxe2_rx_queue_stop(dev, nb_started_rxq);
++l_end:
++	return ret;
++}
++
++void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev __rte_unused)
++{
++	struct rte_eth_dev_data *data = dev->data;
++	struct sxe2_adapter *adapter  = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_vsi     *vsi      = adapter->vsi_ctxt.main_vsi;
++	struct sxe2_stats   *sw_stats_prev = &vsi->vsi_stats.vsi_sw_stats_prev;
++	struct sxe2_rx_queue *rxq = NULL;
++	s32 ret;
++	u16 nb_rxq;
++	PMD_INIT_FUNC_TRACE();
++
++	for (nb_rxq = 0; nb_rxq < data->nb_rx_queues; nb_rxq++) {
++		ret = sxe2_rx_queue_stop(dev, nb_rxq);
++		if (ret) {
++			PMD_LOG_ERR(RX, "Fail to start rx queue %u", nb_rxq);
++			continue;
++		}
++
++		rxq = dev->data->rx_queues[nb_rxq];
++		if (rxq) {
++			sw_stats_prev->ipackets +=
++				rte_atomic_load_explicit(&rxq->sw_stats.pkts,
++					rte_memory_order_relaxed);
++			sw_stats_prev->ierrors +=
++				rte_atomic_load_explicit(&rxq->sw_stats.drop_pkts,
++					rte_memory_order_relaxed);
++			sw_stats_prev->ibytes +=
++				rte_atomic_load_explicit(&rxq->sw_stats.bytes,
++					rte_memory_order_relaxed);
++
++			sw_stats_prev->rx_sw_unicast_packets +=
++				rte_atomic_load_explicit(&rxq->sw_stats.unicast_pkts,
++					rte_memory_order_relaxed);
++			sw_stats_prev->rx_sw_broadcast_packets +=
++				rte_atomic_load_explicit(&rxq->sw_stats.broadcast_pkts,
++					rte_memory_order_relaxed);
++			sw_stats_prev->rx_sw_multicast_packets +=
++				rte_atomic_load_explicit(&rxq->sw_stats.multicast_pkts,
++					rte_memory_order_relaxed);
++			sw_stats_prev->rx_sw_drop_packets +=
++				rte_atomic_load_explicit(&rxq->sw_stats.drop_pkts,
++					rte_memory_order_relaxed);
++			sw_stats_prev->rx_sw_drop_bytes +=
++				rte_atomic_load_explicit(&rxq->sw_stats.drop_bytes,
++					rte_memory_order_relaxed);
++		}
++	}
++}
+diff --git a/drivers/net/sxe2/sxe2_rx.h b/drivers/net/sxe2/sxe2_rx.h
+new file mode 100644
+index 0000000000..7c6239b387
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_rx.h
+@@ -0,0 +1,34 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#ifndef __SXE2_RX_H__
++#define __SXE2_RX_H__
++
++#include "sxe2_queue.h"
++
++s32 __rte_cold sxe2_rx_queue_setup(struct rte_eth_dev *dev,
++				u16 queue_idx, u16 nb_desc, u32 socket_id,
++				const struct rte_eth_rxconf *rx_conf,
++				struct rte_mempool *mp);
++
++s32 __rte_cold sxe2_rx_queue_stop(struct rte_eth_dev *dev, u16 rx_queue_id);
++
++void __rte_cold sxe2_rx_queue_mbufs_release(struct sxe2_rx_queue *rxq);
++
++void __rte_cold sxe2_rx_queue_release(struct rte_eth_dev *dev, u16 queue_idx);
++
++void __rte_cold sxe2_all_rxqs_release(struct rte_eth_dev *dev);
++
++void __rte_cold sxe2_rx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
++		struct rte_eth_rxq_info *qinfo);
++
++s32 __rte_cold sxe2_rx_queue_start(struct rte_eth_dev *dev, u16 rx_queue_id);
++
++s32 __rte_cold sxe2_rxqs_all_start(struct rte_eth_dev *dev);
++
++void __rte_cold sxe2_rxqs_all_stop(struct rte_eth_dev *dev);
++
++struct rte_mbuf *sxe2_mbuf_raw_alloc(struct rte_mempool *mp);
++
 +#endif
+diff --git a/drivers/net/sxe2/sxe2_tx.c b/drivers/net/sxe2/sxe2_tx.c
+new file mode 100644
+index 0000000000..7e4dd74a51
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_tx.c
+@@ -0,0 +1,447 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#include <rte_common.h>
++#include <rte_net.h>
++#include <rte_vect.h>
++#include <rte_malloc.h>
++#include <rte_memzone.h>
++#include <ethdev_driver.h>
++#include "sxe2_tx.h"
++#include "sxe2_ethdev.h"
++#include "sxe2_common_log.h"
++#include "sxe2_errno.h"
++#include "sxe2_cmd_chnl.h"
++
++static void __iomem *sxe2_tx_doorbell_addr_get(struct sxe2_adapter *adapter, u16 queue_id)
++{
++	return sxe2_pci_map_addr_get(adapter, SXE2_PCI_MAP_RES_DOORBELL_TX, queue_id);
++}
++
++static void sxe2_tx_tail_init(struct sxe2_adapter *adapter, struct sxe2_tx_queue *txq)
++{
++	txq->tdt_reg_addr = sxe2_tx_doorbell_addr_get(adapter, txq->queue_id);
++	SXE2_PCI_REG_WRITE_WC(txq->tdt_reg_addr, 0);
++}
++
++void __rte_cold sxe2_tx_queue_reset(struct sxe2_tx_queue *txq)
++{
++	u16 prev, i;
++	volatile union sxe2_tx_data_desc *txd;
++	static const union sxe2_tx_data_desc zeroed_desc = {{0}};
++	struct sxe2_tx_buffer *tx_buffer = txq->buffer_ring;
++
++	for (i = 0; i < txq->ring_depth; i++)
++		txq->desc_ring[i] = zeroed_desc;
++
++	prev = txq->ring_depth - 1;
++	for (i = 0; i < txq->ring_depth; i++) {
++		txd = &txq->desc_ring[i];
++		if (txd == NULL)
++			continue;
++
++		txd->wb.dd = rte_cpu_to_le_64(SXE2_TX_DESC_DTYPE_DESC_DONE);
++		tx_buffer[i].mbuf       = NULL;
++		tx_buffer[i].last_id    = i;
++		tx_buffer[prev].next_id = i;
++		prev = i;
++	}
++
++	txq->desc_used_num = 0;
++	txq->desc_free_num = txq->ring_depth - 1;
++	txq->next_use      = 0;
++	txq->next_clean    = txq->ring_depth - 1;
++	txq->next_dd       = txq->rs_thresh  - 1;
++	txq->next_rs       = txq->rs_thresh  - 1;
++}
++
++void __rte_cold sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq)
++{
++	u32 i;
++
++	if (txq != NULL && txq->buffer_ring != NULL) {
++		for (i = 0; i < txq->ring_depth; i++) {
++			if (txq->buffer_ring[i].mbuf != NULL) {
++				rte_pktmbuf_free_seg(txq->buffer_ring[i].mbuf);
++				txq->buffer_ring[i].mbuf = NULL;
++			}
++		}
++	}
++}
++
++static void sxe2_tx_buffer_ring_free(struct sxe2_tx_queue *txq)
++{
++	if (txq != NULL && txq->buffer_ring != NULL)
++		rte_free(txq->buffer_ring);
++}
++
++const struct sxe2_txq_ops sxe2_default_txq_ops = {
++	.queue_reset      = sxe2_tx_queue_reset,
++	.mbufs_release    = sxe2_tx_queue_mbufs_release,
++	.buffer_ring_free = sxe2_tx_buffer_ring_free,
++};
++
++static struct sxe2_txq_ops sxe2_tx_default_ops_get(void)
++{
++	return sxe2_default_txq_ops;
++}
++
++static s32 sxe2_txq_arg_validate(struct rte_eth_dev *dev, u16 ring_depth,
++		u16 *rs_thresh, u16 *free_thresh, const struct rte_eth_txconf *tx_conf)
++{
++	s32 ret = SXE2_SUCCESS;
++
++	if ((ring_depth % SXE2_TX_DESC_RING_ALIGN) != 0 ||
++		ring_depth > SXE2_MAX_RING_DESC ||
++		ring_depth < SXE2_MIN_RING_DESC) {
++		PMD_LOG_ERR(TX, "number:%u of receive descriptors is invalid", ring_depth);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	*free_thresh = (u16)((tx_conf->tx_free_thresh) ?
++			tx_conf->tx_free_thresh : DEFAULT_TX_FREE_THRESH);
++	*rs_thresh   = (u16)((tx_conf->tx_rs_thresh) ?
++			tx_conf->tx_rs_thresh : DEFAULT_TX_RS_THRESH);
++
++	if (*rs_thresh >= (ring_depth - 2)) {
++		PMD_LOG_ERR(TX, "tx_rs_thresh must be less than the number "
++			"of tx descriptors minus 2. (tx_rs_thresh:%u port:%u)",
++			*rs_thresh, dev->data->port_id);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	if (*free_thresh >= (ring_depth - 3)) {
++		PMD_LOG_ERR(TX, "tx_free_thresh must be less than the number "
++			"of tx descriptors minus 3. (tx_free_thresh:%u port:%u)",
++			*free_thresh, dev->data->port_id);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	if (*rs_thresh > *free_thresh) {
++		PMD_LOG_ERR(TX, "tx_rs_thresh must be less than or equal to "
++			"tx_free_thresh. (tx_free_thresh:%u tx_rs_thresh:%u port:%u)",
++			*free_thresh, *rs_thresh, dev->data->port_id);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	if ((ring_depth % *rs_thresh) != 0) {
++		PMD_LOG_ERR(TX, "tx_rs_thresh must be a divisor of the "
++			"number of tx descriptors. (tx_rs_thresh:%u port:%d ring_depth:%u)",
++			*rs_thresh, dev->data->port_id, ring_depth);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	ret = SXE2_SUCCESS;
++
++l_end:
++	return ret;
++}
++
++void __rte_cold sxe2_tx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
++		struct rte_eth_txq_info *qinfo)
++{
++	struct sxe2_tx_queue *txq = NULL;
++
++	if (queue_id >= dev->data->nb_tx_queues) {
++		PMD_LOG_ERR(TX, "tx queue:%u is out of range:%u",
++				queue_id, dev->data->nb_tx_queues);
++		goto end;
++	}
++
++	txq = dev->data->tx_queues[queue_id];
++	if (txq == NULL) {
++		PMD_LOG_WARN(TX, "tx queue:%u is NULL", queue_id);
++		goto end;
++	}
++
++	qinfo->nb_desc                = txq->ring_depth;
++
++	qinfo->conf.tx_thresh.pthresh = txq->pthresh;
++	qinfo->conf.tx_thresh.hthresh = txq->hthresh;
++	qinfo->conf.tx_thresh.wthresh = txq->wthresh;
++	qinfo->conf.tx_free_thresh    = txq->free_thresh;
++	qinfo->conf.tx_rs_thresh      = txq->rs_thresh;
++	qinfo->conf.offloads          = txq->offloads;
++	qinfo->conf.tx_deferred_start = txq->tx_deferred_start;
++
++end:
++	return;
++}
++
++s32 __rte_cold sxe2_tx_queue_stop(struct rte_eth_dev *dev, u16 queue_id)
++{
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_tx_queue *txq;
++	s32 ret;
++	PMD_INIT_FUNC_TRACE();
++
++	if (queue_id >= dev->data->nb_tx_queues) {
++		PMD_LOG_ERR(TX, "tx queue:%u is out of range:%u",
++			queue_id, dev->data->nb_tx_queues);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	if (dev->data->tx_queue_state[queue_id] ==
++			RTE_ETH_QUEUE_STATE_STOPPED) {
++		ret = SXE2_SUCCESS;
++		goto l_end;
++	}
++
++	txq = dev->data->tx_queues[queue_id];
++	if (txq == NULL) {
++		ret = SXE2_SUCCESS;
++		goto l_end;
++	}
++
++	ret = sxe2_drv_txq_switch(adapter, txq, false);
++	if (ret) {
++		PMD_LOG_ERR(TX, "Failed to switch tx queue %u off",
++				queue_id);
++		goto l_end;
++	}
++
++	txq->ops.mbufs_release(txq);
++	txq->ops.queue_reset(txq);
++	dev->data->tx_queue_state[queue_id] = RTE_ETH_QUEUE_STATE_STOPPED;
++	ret = SXE2_SUCCESS;
++
++l_end:
++	return ret;
++}
++
++static void __rte_cold sxe2_tx_queue_free(struct sxe2_tx_queue *txq)
++{
++	if (txq != NULL) {
++		txq->ops.mbufs_release(txq);
++		txq->ops.buffer_ring_free(txq);
++
++		rte_memzone_free(txq->mz);
++		rte_free(txq);
++	}
++}
++
++void __rte_cold sxe2_tx_queue_release(struct rte_eth_dev *dev, u16 queue_idx)
++{
++	(void)sxe2_tx_queue_stop(dev, queue_idx);
++	sxe2_tx_queue_free(dev->data->tx_queues[queue_idx]);
++	dev->data->tx_queues[queue_idx] = NULL;
++}
++
++void __rte_cold sxe2_all_txqs_release(struct rte_eth_dev *dev)
++{
++	struct rte_eth_dev_data *data = dev->data;
++	u16 nb_txq;
++
++	for (nb_txq = 0; nb_txq < data->nb_tx_queues; nb_txq++) {
++		if (data->tx_queues[nb_txq] == NULL)
++			continue;
++
++		sxe2_tx_queue_release(dev, nb_txq);
++		data->tx_queues[nb_txq] = NULL;
++	}
++	data->nb_tx_queues = 0;
++}
++
++static struct sxe2_tx_queue
++*sxe2_tx_queue_alloc(struct rte_eth_dev *dev, u16 queue_idx,
++		u16 ring_depth, u32 socket_id)
++{
++	struct sxe2_tx_queue *txq;
++	const struct rte_memzone *tz;
++
++	if (dev->data->tx_queues[queue_idx]) {
++		sxe2_tx_queue_release(dev, queue_idx);
++		dev->data->tx_queues[queue_idx] = NULL;
++	}
++
++	txq = rte_zmalloc_socket("tx_queue", sizeof(struct sxe2_tx_queue),
++			RTE_CACHE_LINE_SIZE, socket_id);
++	if (txq == NULL) {
++		PMD_LOG_ERR(TX, "tx queue:%d alloc failed", queue_idx);
++		goto l_end;
++	}
++
++	tz = rte_eth_dma_zone_reserve(dev, "tx_dma", queue_idx,
++			sizeof(union sxe2_tx_data_desc) * SXE2_MAX_RING_DESC,
++			SXE2_DESC_ADDR_ALIGN, socket_id);
++	if (tz == NULL) {
++		PMD_LOG_ERR(TX, "tx desc ring alloc failed, queue_id:%d", queue_idx);
++		rte_free(txq);
++		txq = NULL;
++		goto l_end;
++	}
++
++	txq->buffer_ring = rte_zmalloc_socket("tx_buffer_ring",
++		sizeof(struct sxe2_tx_buffer) * ring_depth,
++		RTE_CACHE_LINE_SIZE, socket_id);
++	if (txq->buffer_ring == NULL) {
++		PMD_LOG_ERR(TX, "tx buffer alloc failed, queue_id:%d", queue_idx);
++		rte_memzone_free(tz);
++		rte_free(txq);
++		txq = NULL;
++		goto l_end;
++	}
++
++	txq->mz = tz;
++	txq->base_addr = tz->iova;
++	txq->desc_ring = (volatile union sxe2_tx_data_desc *)tz->addr;
++
++l_end:
++	return txq;
++}
++
++s32 __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
++		u16 queue_idx, u16 nb_desc, u32 socket_id,
++		const struct rte_eth_txconf *tx_conf)
++{
++	s32 ret = SXE2_SUCCESS;
++	u16 tx_rs_thresh;
++	u16 tx_free_thresh;
++	struct sxe2_tx_queue *txq;
++	struct sxe2_adapter  *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	struct sxe2_vsi      *vsi     = adapter->vsi_ctxt.main_vsi;
++	u64 offloads;
++	PMD_INIT_FUNC_TRACE();
++
++	if (queue_idx >= dev->data->nb_tx_queues) {
++		PMD_LOG_ERR(TX, "tx queue:%u is out of range:%u",
++			queue_idx, dev->data->nb_tx_queues);
++		ret = SXE2_ERR_INVAL;
++		goto end;
++	}
++
++	ret = sxe2_txq_arg_validate(dev, nb_desc, &tx_rs_thresh, &tx_free_thresh, tx_conf);
++	if (ret) {
++		PMD_LOG_ERR(TX, "tx queue:%u arg validate failed", queue_idx);
++		goto end;
++	}
++
++	offloads = tx_conf->offloads | dev->data->dev_conf.txmode.offloads;
++
++	txq = sxe2_tx_queue_alloc(dev, queue_idx, nb_desc, socket_id);
++	if (txq == NULL) {
++		PMD_LOG_ERR(TX, "failed to alloc sxe2vf tx queue:%u resource", queue_idx);
++		ret = SXE2_ERR_NO_MEMORY;
++		goto end;
++	}
++
++	txq->vlan_flag         = SXE2_TX_FLAGS_VLAN_TAG_LOC_L2TAG1;
++	txq->ring_depth        = nb_desc;
++	txq->rs_thresh         = tx_rs_thresh;
++	txq->free_thresh       = tx_free_thresh;
++	txq->pthresh           = tx_conf->tx_thresh.pthresh;
++	txq->hthresh           = tx_conf->tx_thresh.hthresh;
++	txq->wthresh           = tx_conf->tx_thresh.wthresh;
++	txq->queue_id          = queue_idx;
++	txq->idx_in_func       = vsi->txqs.base_idx_in_func + queue_idx;
++	txq->port_id           = dev->data->port_id;
++	txq->offloads          = offloads;
++	txq->tx_deferred_start = tx_conf->tx_deferred_start;
++	txq->vsi               = vsi;
++	txq->ops               = sxe2_tx_default_ops_get();
++	txq->ops.queue_reset(txq);
++
++	dev->data->tx_queues[queue_idx] = txq;
++	ret = SXE2_SUCCESS;
++
++end:
++	return ret;
++}
++
++s32 __rte_cold sxe2_tx_queue_start(struct rte_eth_dev *dev, u16 queue_id)
++{
++	s32    ret = SXE2_SUCCESS;
++	struct sxe2_tx_queue *txq;
++	struct sxe2_adapter *adapter = SXE2_DEV_PRIVATE_TO_ADAPTER(dev);
++	PMD_INIT_FUNC_TRACE();
++
++	if (queue_id >= dev->data->nb_tx_queues) {
++		PMD_LOG_ERR(TX, "tx queue:%u is out of range:%u",
++			queue_id, dev->data->nb_tx_queues);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	if (dev->data->tx_queue_state[queue_id] == RTE_ETH_QUEUE_STATE_STARTED) {
++		ret = SXE2_SUCCESS;
++		goto l_end;
++	}
++
++	txq = dev->data->tx_queues[queue_id];
++	if (txq == NULL) {
++		PMD_LOG_ERR(TX, "tx queue:%u is not available or setup", queue_id);
++		ret = SXE2_ERR_INVAL;
++		goto l_end;
++	}
++
++	ret = sxe2_drv_txq_ctxt_cfg(adapter, txq, 1);
++	if (ret) {
++		PMD_LOG_ERR(TX, "tx queue:%u config ctxt fail", queue_id);
++
++		(void)sxe2_drv_txq_switch(adapter, txq, false);
++		txq->ops.mbufs_release(txq);
++		txq->ops.queue_reset(txq);
++		goto l_end;
++	}
++
++	sxe2_tx_tail_init(adapter, txq);
++
++	dev->data->tx_queue_state[queue_id] = RTE_ETH_QUEUE_STATE_STARTED;
++	ret = SXE2_SUCCESS;
++
++l_end:
++	return ret;
++}
++
++s32 __rte_cold sxe2_txqs_all_start(struct rte_eth_dev *dev __rte_unused)
++{
++struct rte_eth_dev_data *data = dev->data;
++	struct sxe2_tx_queue *txq;
++	u16 nb_txq;
++	u16 nb_started_txq;
++	s32 ret;
++	PMD_INIT_FUNC_TRACE();
++
++	for (nb_txq = 0; nb_txq < data->nb_tx_queues; nb_txq++) {
++		txq = dev->data->tx_queues[nb_txq];
++		if (!txq || txq->tx_deferred_start)
++			continue;
++
++		ret = sxe2_tx_queue_start(dev, nb_txq);
++		if (ret) {
++			PMD_LOG_ERR(TX, "Fail to start tx queue %u", nb_txq);
++			goto l_free_started_queue;
++		}
++	}
++	ret = SXE2_SUCCESS;
++	goto l_end;
++
++l_free_started_queue:
++	for (nb_started_txq = 0; nb_started_txq <= nb_txq; nb_started_txq++)
++		(void)sxe2_tx_queue_stop(dev, nb_started_txq);
++
++l_end:
++	return ret;
++}
++
++void __rte_cold sxe2_txqs_all_stop(struct rte_eth_dev *dev __rte_unused)
++{
++	struct rte_eth_dev_data *data = dev->data;
++	u16 nb_txq;
++	s32 ret;
++
++	for (nb_txq = 0; nb_txq < data->nb_tx_queues; nb_txq++) {
++		ret = sxe2_tx_queue_stop(dev, nb_txq);
++		if (ret) {
++			PMD_LOG_WARN(TX, "Fail to stop tx queue %u", nb_txq);
++			continue;
++		}
++	}
++}
+diff --git a/drivers/net/sxe2/sxe2_tx.h b/drivers/net/sxe2/sxe2_tx.h
+new file mode 100644
+index 0000000000..58b668e337
+--- /dev/null
++++ b/drivers/net/sxe2/sxe2_tx.h
+@@ -0,0 +1,32 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++ */
++
++#ifndef __SXE2_TX_H__
++#define __SXE2_TX_H__
++#include "sxe2_queue.h"
++
++void __rte_cold sxe2_tx_queue_reset(struct sxe2_tx_queue *txq);
++
++s32 __rte_cold sxe2_tx_queue_start(struct rte_eth_dev *dev, u16 queue_id);
++
++void sxe2_tx_queue_mbufs_release(struct sxe2_tx_queue *txq);
++
++s32 __rte_cold sxe2_tx_queue_stop(struct rte_eth_dev *dev, u16 queue_id);
++
++s32 __rte_cold sxe2_tx_queue_setup(struct rte_eth_dev *dev,
++		u16 queue_idx, u16 nb_desc, u32 socket_id,
++		const struct rte_eth_txconf *tx_conf);
++
++void __rte_cold sxe2_tx_queue_release(struct rte_eth_dev *dev, u16 queue_idx);
++
++void __rte_cold sxe2_all_txqs_release(struct rte_eth_dev *dev);
++
++void __rte_cold sxe2_tx_queue_info_get(struct rte_eth_dev *dev, u16 queue_id,
++		struct rte_eth_txq_info *qinfo);
++
++s32 __rte_cold sxe2_txqs_all_start(struct rte_eth_dev *dev);
++
++void __rte_cold sxe2_txqs_all_stop(struct rte_eth_dev *dev);
 +
 +#endif
 -- 
