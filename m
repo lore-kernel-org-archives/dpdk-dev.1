@@ -2,74 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C395DCD13DA
-	for <dpdk-dev@archiver.kernel.org>; Fri,  1 May 2026 03:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90915FF8864
+	for <dpdk-dev@archiver.kernel.org>; Fri,  1 May 2026 03:34:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C8C6E4027D;
-	Fri,  1 May 2026 05:05:20 +0200 (CEST)
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com
- [209.85.167.176])
- by mails.dpdk.org (Postfix) with ESMTP id 2A8554026D
- for <dev@dpdk.org>; Fri,  1 May 2026 05:05:19 +0200 (CEST)
-Received: by mail-oi1-f176.google.com with SMTP id
- 5614622812f47-47c7b282d73so74129b6e.3
- for <dev@dpdk.org>; Thu, 30 Apr 2026 20:05:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777604718;
- x=1778209518; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=90gqfT9OGTstbjKXEw10ErUb3aqlRBRaTCAqzXtlp2M=;
- b=LieqC8TTBZKaklfrMnHs/lWkDjhhgZT5h77Vg1YYLe8iYgz2rkx0VJ1QJpE8e4001T
- hsj9FD3zX+WbhVCgtdlVMgrHlaS1Rtg+pwtaNlXHZxte02ig3UXoi4F9aO1U3C7kUCQR
- vgFowbG0NsIPwCrH0BQJYCmIgk4YKadieHcVKDvxSmsRLD7GA86OMwB+5t5N3VGo0HkZ
- aHt6y1qjLejSXBXXXlArWbtf7aHNAukLcuasfxI1MJhNdcnhPqKWSHbJMVYXYpXd+Dsw
- kaw6GZilaReMKUGWfyvT4y2Iqw5gH8MX9mmkqvYpbU4Rpv4TFtWcqI5EFIbgAVcbdp1B
- kvog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777604718; x=1778209518;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=90gqfT9OGTstbjKXEw10ErUb3aqlRBRaTCAqzXtlp2M=;
- b=ZfRB1ByS5KGv40MFcXN300pBej36V816wxB26kmhRoSLH+q6f08cLNm2bQS7WwQ4RI
- fCxr2tPv8WBp3oXMhQTcnS8nO/rlswanq65sJUegrJ0FZfTCn/Py+RU0/v0oYtESGnv3
- rTiL6qH5h2ERwA31EsY100SoWvGfBzFNOWaynPu3kISZW3h9tzJrlUHasJhf34g/RyiF
- JO/tChn8ZyXHO0Mw+7Bd4HM0KgnmeUdeC1H4OEbldAmI5cR7rwJ8ligYnB2tpiVKnYav
- HibDBH1KzdvRl1F6e7PYJ9AWJkm/Ir+5DW0nzpSgAoGxJLHxLaT1mhZ9teuijYCnAN5s
- 5dqw==
-X-Gm-Message-State: AOJu0YwO3YkJfyZ4XgcH1opKUWwamiiduGRHm243Z35GCmDCr5qn5Bs0
- OCT+6qCua1vb7pCxPpkrDiET5VfS5KoxGkOSx3Jb49r0MCqJ7EK0GEHKVZn9KTaslb6CwKQy4iS
- 9gLlg
-X-Gm-Gg: AeBDieuqfutZ/4ieX3EJE0SOA8lJOT3+8q37QYuin0BU8U9NE8ofXrgKYNsnPoHBOhM
- f+q72IbVMWwbKYHhNW2vfZxgvDejoS28KC8IMxKCQyuOTjbuszqcHOglXdiICz/k87XVEMhbsVW
- 9+bUse/b3TKcK0a4+jv5ltStwT69fpjnzTk0y06lncvUCZBDyUCT2zP4Ldr2SlZaIHBqrgjlEBF
- 1PVzY6odwNHvYYil1Xzl7FDpF33YOCG/smfoEAGpiAUNHmaVGvgd9sS6wwWwH+fHhMBxfi/Rp28
- l+e37unOZBvPhO6FJo/gyuvXlqsyY3NkGO0go88V+GA69QNpwYJCm1RX1/EsM5XV+dMp5sCCghm
- V6AOu6eSgatTgxCSDvKx/Ugzp0icBgXw3LykL1vZtR9WgFQZ0DDZQ9BCVztiFOW2+MqmiqZAPXO
- tlzao7k1SpA5NJmpCKt6cFFV6qrO2iXr3B9GL7yOeBDRnv5zoX9gvTeyR9
-X-Received: by 2002:a05:6808:2008:20b0:47b:c782:1214 with SMTP id
- 5614622812f47-47c75730cc8mr415205b6e.37.1777604718000; 
- Thu, 30 Apr 2026 20:05:18 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- 5614622812f47-47c763b33c1sm597923b6e.1.2026.04.30.20.05.17
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 30 Apr 2026 20:05:17 -0700 (PDT)
-Date: Thu, 30 Apr 2026 20:05:14 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: liujie5@linkdatatechnology.com
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v4 3/9] drivers: add sxe2 basic structures
-Message-ID: <20260430200514.0053998c@phoenix.local>
-In-Reply-To: <20260501015925.263486-4-liujie5@linkdatatechnology.com>
-References: <20260430101819.4094628-10-liujie5@linkdatatechnology.com>
- <20260501015925.263486-1-liujie5@linkdatatechnology.com>
- <20260501015925.263486-4-liujie5@linkdatatechnology.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 82AD740395;
+	Fri,  1 May 2026 05:34:11 +0200 (CEST)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+ by mails.dpdk.org (Postfix) with ESMTP id 769454027D
+ for <dev@dpdk.org>; Fri,  1 May 2026 05:34:09 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-01 (Coremail) with SMTP id qwCowACnE28uH_RpLB_pDg--.39396S2;
+ Fri, 01 May 2026 11:34:06 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v5 0/9] net/sxe2: added Linkdata sxe2 ethernet driver
+Date: Fri,  1 May 2026 11:33:50 +0800
+Message-ID: <20260501033401.316025-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260501015925.263486-10-liujie5@linkdatatechnology.com>
+References: <20260501015925.263486-10-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: qwCowACnE28uH_RpLB_pDg--.39396S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw1xWF1Uuw1xtF1rZw18Xwb_yoWrZr1rpF
+ 48ZryrZF15JFW3Ww4fJaySvFyFg3WfJryjkrW2gas3XFyvyFyUCrs0gFy3Awn7AF15JF1F
+ vrZIyr1UGa1rAr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkS14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+ 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+ I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+ 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
+ 42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+ WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
+ I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+ 4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeEfOUUUUU
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -83,121 +56,99 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri,  1 May 2026 09:59:18 +0800
-liujie5@linkdatatechnology.com wrote:
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-> From: Jie Liu <liujie5@linkdatatechnology.com>
-> 
-> This patch adds the base infrastructure for the sxe2 common
-> library. It includes the mandatory OS abstraction layer (OSAL),
-> common structure definitions, error codes, and the logging
-> system implementation.
-> 
-> Specifically, this commit:
->  - Implements the logging stream management using RTE_LOG_LINE.
->  - Defines device-specific error codes and status registers.
->  - Adds the initial meson build configuration for the common library.
-> 
-> Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
-> ---
-NAK.
+V5:
+ - Addressed AI comments
 
+Jie Liu (9):
+  mailmap: add Jie Liu
+  doc: add sxe2 guide and release notes
+  drivers: add sxe2 basic structures
+  common/sxe2: add base driver skeleton
+  drivers: add base driver probe skeleton
+  drivers: support PCI BAR mapping
+  common/sxe2: add ioctl interface for DMA map and unmap
+  net/sxe2: support queue setup and control
+  net/sxe2: add data path for Rx and Tx
 
-NAK.
+ .mailmap                                   |   1 +
+ doc/guides/nics/features/sxe2.ini          |  11 +
+ doc/guides/nics/index.rst                  |   1 +
+ doc/guides/nics/sxe2.rst                   |  23 +
+ doc/guides/rel_notes/release_26_07.rst     |   3 +
+ drivers/common/sxe2/meson.build            |  15 +
+ drivers/common/sxe2/sxe2_common.c          | 683 +++++++++++++++
+ drivers/common/sxe2/sxe2_common.h          |  86 ++
+ drivers/common/sxe2/sxe2_common_log.c      |  75 ++
+ drivers/common/sxe2/sxe2_common_log.h      | 263 ++++++
+ drivers/common/sxe2/sxe2_errno.h           | 110 +++
+ drivers/common/sxe2/sxe2_host_regs.h       | 707 +++++++++++++++
+ drivers/common/sxe2/sxe2_internal_ver.h    |  33 +
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      | 326 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.h      | 141 +++
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |  63 ++
+ drivers/common/sxe2/sxe2_osal.h            | 582 ++++++++++++
+ drivers/common/sxe2/sxe2_type.h            |  64 ++
+ drivers/meson.build                        |   1 +
+ drivers/net/meson.build                    |   1 +
+ drivers/net/sxe2/meson.build               |  26 +
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 319 +++++++
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  33 +
+ drivers/net/sxe2/sxe2_drv_cmd.h            | 398 +++++++++
+ drivers/net/sxe2/sxe2_ethdev.c             | 975 +++++++++++++++++++++
+ drivers/net/sxe2/sxe2_ethdev.h             | 316 +++++++
+ drivers/net/sxe2/sxe2_irq.h                |  49 ++
+ drivers/net/sxe2/sxe2_queue.c              |  39 +
+ drivers/net/sxe2/sxe2_queue.h              | 227 +++++
+ drivers/net/sxe2/sxe2_rx.c                 | 579 ++++++++++++
+ drivers/net/sxe2/sxe2_rx.h                 |  34 +
+ drivers/net/sxe2/sxe2_tx.c                 | 447 ++++++++++
+ drivers/net/sxe2/sxe2_tx.h                 |  32 +
+ drivers/net/sxe2/sxe2_txrx.c               | 249 ++++++
+ drivers/net/sxe2/sxe2_txrx.h               |  21 +
+ drivers/net/sxe2/sxe2_txrx_common.h        | 541 ++++++++++++
+ drivers/net/sxe2/sxe2_txrx_poll.c          | 782 +++++++++++++++++
+ drivers/net/sxe2/sxe2_txrx_poll.h          |  16 +
+ drivers/net/sxe2/sxe2_vsi.c                | 211 +++++
+ drivers/net/sxe2/sxe2_vsi.h                | 205 +++++
+ 40 files changed, 8688 insertions(+)
+ create mode 100644 doc/guides/nics/features/sxe2.ini
+ create mode 100644 doc/guides/nics/sxe2.rst
+ create mode 100644 drivers/common/sxe2/meson.build
+ create mode 100644 drivers/common/sxe2/sxe2_common.c
+ create mode 100644 drivers/common/sxe2/sxe2_common.h
+ create mode 100644 drivers/common/sxe2/sxe2_common_log.c
+ create mode 100644 drivers/common/sxe2/sxe2_common_log.h
+ create mode 100644 drivers/common/sxe2/sxe2_errno.h
+ create mode 100644 drivers/common/sxe2/sxe2_host_regs.h
+ create mode 100644 drivers/common/sxe2/sxe2_internal_ver.h
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.c
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.h
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl_func.h
+ create mode 100644 drivers/common/sxe2/sxe2_osal.h
+ create mode 100644 drivers/common/sxe2/sxe2_type.h
+ create mode 100644 drivers/net/sxe2/meson.build
+ create mode 100644 drivers/net/sxe2/sxe2_cmd_chnl.c
+ create mode 100644 drivers/net/sxe2/sxe2_cmd_chnl.h
+ create mode 100644 drivers/net/sxe2/sxe2_drv_cmd.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.h
+ create mode 100644 drivers/net/sxe2/sxe2_queue.c
+ create mode 100644 drivers/net/sxe2/sxe2_queue.h
+ create mode 100644 drivers/net/sxe2/sxe2_rx.c
+ create mode 100644 drivers/net/sxe2/sxe2_rx.h
+ create mode 100644 drivers/net/sxe2/sxe2_tx.c
+ create mode 100644 drivers/net/sxe2/sxe2_tx.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_common.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.h
+ create mode 100644 drivers/net/sxe2/sxe2_vsi.c
+ create mode 100644 drivers/net/sxe2/sxe2_vsi.h
 
-DPDK drivers must not reinvent their own logging, and they absolutely
-must not hijack the log stream that is shared with the application and
-the rest of DPDK. This patch does both.
+-- 
+2.47.3
 
-Concrete problems in what you posted:
-
-1. PMD_LOG_NOTICE/WARN/ERR/CRIT/ALERT/EMERG call
-   rte_openlog_stream(g_sxe2_common_log_fp) before logging and
-   rte_openlog_stream(NULL) after. rte_openlog_stream() sets the
-   *global* DPDK log stream for the entire application. A driver has
-   no business deciding where the application's logs go. As written,
-   this will silently redirect every other PMD's, every library's,
-   and the application's own output any time sxe2 emits a message.
-
-2. Those same macros emit the message twice -- once before the stream
-   is swapped and once after -- so every NOTICE/WARN/ERR comes out
-   duplicated.
-
-3. Drivers must not open files. fopen("/var/log/sxe2pmd.log.<ts>",
-   "w+") from inside a PMD is a security problem on every level:
-
-   - It runs with whatever privileges the application has, which for
-     DPDK is typically root or CAP_*-loaded. Creating files in
-     /var/log under those privileges is a classic symlink / TOCTOU
-     attack surface.
-   - The path is attacker-influenceable in the timestamp component
-     and is not created with O_CREAT|O_EXCL, no mode argument, no
-     directory fd, none of the hardening you would expect.
-   - Log content is written without any escaping; anything an
-     attacker can get into a log message ends up in a file the
-     operator will later cat or grep.
-   - It bypasses whatever logging policy the operator, distro,
-     systemd unit, container runtime, SELinux/AppArmor profile, or
-     application has configured. A driver silently writing to
-     /var/log is exactly the kind of thing those policies exist to
-     prevent.
-   - It doesn't work for non-root users, in unprivileged containers,
-     on read-only rootfs systems, or on Windows.
-
-   Drivers log through rte_log. The application decides where those
-   logs go. Full stop.
-
-4. RTE_LOG_REGISTER_SUFFIX(..., com, DEBUG) defaults the log type to
-   DEBUG. The default level is the application's choice, not the
-   driver's.
-
-5. SXE2_DPDK_DEBUG is unconditionally defined in
-   drivers/common/sxe2/meson.build, so the "debug" path with the file
-   hijacking is always on. There is no off switch.
-
-6. SXE2_PMD_LOG adds a thread id, basename, line number, and function
-   name to every line. If those are useful, they are useful for every
-   driver -- not just yours.
-
-General principles, which apply to every driver:
-
-- Drivers do not reinvent logging. Use RTE_LOG / RTE_LOG_LINE and a
-  log type registered for the driver. That is it.
-- Drivers do not open files, and do not change logging behavior that
-  is shared with the application or with other drivers. Both have
-  security implications well beyond this driver.
-- If something is genuinely missing from the common logging
-  infrastructure -- per-driver log files, richer prefixes, thread
-  ids, structured fields, whatever -- propose it as a change to
-  lib/log so every driver and every application benefits, and so it
-  gets reviewed for security by people who do that for a living. Do
-  not bury it inside one driver.
-- "It works for our embedded use case" is not an argument. DPDK runs
-  on Linux, FreeBSD, and Windows; on x86, Arm, POWER, and RISC-V; in
-  bare metal, VMs, and containers; as root and as unprivileged users.
-  A driver has to behave reasonably in all of those.
-- Once we make an exception for one driver, every subsystem will
-  expect one. That is not happening.
-
-Please drop sxe2_common_log.c and sxe2_common_log.h entirely. Use the
-existing RTE_LOG_* macros directly against a log type registered for
-your driver, and respect the level and stream that the application
-has configured.
-
-While you're at it, the same "this driver is a special snowflake"
-pattern shows up elsewhere in this series and gets the same answer:
-
-- sxe2_type.h redefines u8/u16/u32/u64/s8/.../__le16/__be32 instead
-  of using uintN_t and rte_beN_t.
-- sxe2_errno.h reinvents errno values that already exist.
-- sxe2_osal.h re-implements bitmap operations, allocation wrappers,
-  and an OS abstraction layer that DPDK already provides.
-
-This is the cost of being part of a shared community project across
-many platforms and architectures. Please rework on that basis before
-reposting.
-
-Stephen
-
-PS: AI revised this text, my initial version was probably
-not safe for public consumption.
