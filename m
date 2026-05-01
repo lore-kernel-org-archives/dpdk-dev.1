@@ -2,57 +2,49 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9833DFF886F
-	for <dpdk-dev@archiver.kernel.org>; Thu, 30 Apr 2026 23:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA9BFF886F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  1 May 2026 01:59:37 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 760E84027D;
-	Fri,  1 May 2026 01:28:34 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 71D264025E
- for <dev@dpdk.org>; Fri,  1 May 2026 01:28:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1777591711;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=5FBOVvmTSlOa5/OJosG5Gm0N+dnzbTL8KMvnjXaN74M=;
- b=VvTZsM9W2IBvWdkcSBfRiOrEyoRivndon+9ciCRpoo9ox9LFxC3ouSZ4XKcVtoRvNMa+Fi
- weHYp4rC/UmlXyIN8mhh/qAfnPRQVr6ySaSs14CnrPDsbRy2O8RTRZ3Xtot0U55inMfCWT
- k4CaIp1YCXGFg1sAoh/qP4boB0n+0YA=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-480-TQigsMZPPMiFhf0BOV3mhw-1; Thu,
- 30 Apr 2026 19:28:30 -0400
-X-MC-Unique: TQigsMZPPMiFhf0BOV3mhw-1
-X-Mimecast-MFC-AGG-ID: TQigsMZPPMiFhf0BOV3mhw_1777591709
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 746391800350; Thu, 30 Apr 2026 23:28:29 +0000 (UTC)
-Received: from ringo.redhat.com (unknown [10.44.32.5])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id EB44A180045E; Thu, 30 Apr 2026 23:28:27 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org,
-	Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH dpdk v3] net/tap: use offsets provided by rte_net_get_ptype
-Date: Fri,  1 May 2026 01:28:07 +0200
-Message-ID: <20260430232806.125220-2-rjarry@redhat.com>
-In-Reply-To: <20260422133615.680318-2-rjarry@redhat.com>
-References: <20260422133615.680318-2-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 6C7BE40288;
+	Fri,  1 May 2026 03:59:36 +0200 (CEST)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+ by mails.dpdk.org (Postfix) with ESMTP id 88C4E4027D
+ for <dev@dpdk.org>; Fri,  1 May 2026 03:59:34 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-03 (Coremail) with SMTP id rQCowADn7sUDCfRpz3C5Dw--.8605S4;
+ Fri, 01 May 2026 09:59:31 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v4 2/9] doc: add sxe2 guide and release notes
+Date: Fri,  1 May 2026 09:59:17 +0800
+Message-ID: <20260501015925.263486-3-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260501015925.263486-1-liujie5@linkdatatechnology.com>
+References: <20260430101819.4094628-10-liujie5@linkdatatechnology.com>
+ <20260501015925.263486-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 6u_5CRN4V_DiAtaKdvcuh_AMTAPrz0bsBtTwbc6n-0U_1777591709
-X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+X-CM-TRANSID: rQCowADn7sUDCfRpz3C5Dw--.8605S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF18AF1ktrWktw15JF4rGrg_yoW5ur45pa
+ n3CFySkr9xJ34xZr9xta1UAr45Ca1kAa45CF1Iq34rXFn8Cr18Zw4UKryxt34DGF95Z3Wr
+ XF4jqry7CF1UW3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUB214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+ x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+ Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1l84
+ ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Jr0_Gr1le2I2
+ 62IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcV
+ AFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG
+ 0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMxAIw28Icx
+ kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+ xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrwCI42
+ IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY
+ 6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+ CY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUeKsjUUUUU
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,141 +58,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Instead of guessing what are the proper header lengths, pass
-a rte_net_hdr_lens struct to rte_net_get_ptype and use it to get the
-proper header lengths/offsets in tap_verify_csum.
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-This allows supporting stacked VLAN/QinQ tags and IPv6 extensions.
+Add a new guide for SXE2 PMD in the nics directory.
+The guide contains driver capabilities, prerequisites,
+and compilation/usage instructions.
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
+Update the release notes to announce the addition of the
+sxe2 network driver.
+
+Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
+ doc/guides/nics/features/sxe2.ini      | 11 +++++++++++
+ doc/guides/nics/index.rst              |  1 +
+ doc/guides/nics/sxe2.rst               | 23 +++++++++++++++++++++++
+ doc/guides/rel_notes/release_26_07.rst |  3 +++
+ 4 files changed, 38 insertions(+)
+ create mode 100644 doc/guides/nics/features/sxe2.ini
+ create mode 100644 doc/guides/nics/sxe2.rst
 
-Notes:
-    v3:
-    
-    * Fixed double count for ipv6 extension headers.
-    
-    v2:
-    
-    * Restored packet length checks in IPv4/IPv6 before checking L4
-      checksums.
-    * Moved struct rte_net_hdr_lens variable next to rte_net_get_ptype call
-      and initialize it to 0 instead of calling memset().
-
- drivers/net/tap/rte_eth_tap.c | 44 +++++++++++++----------------------
- 1 file changed, 16 insertions(+), 28 deletions(-)
-
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index a5d460a0b3cb..f807697aa6a8 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -327,79 +327,66 @@ tun_alloc(struct pmd_internals *pmd, int is_keepalive, int persistent)
- }
- 
- static void
--tap_verify_csum(struct rte_mbuf *mbuf)
-+tap_verify_csum(struct rte_mbuf *mbuf, const struct rte_net_hdr_lens *hlen)
- {
--	uint32_t l2 = mbuf->packet_type & RTE_PTYPE_L2_MASK;
- 	uint32_t l3 = mbuf->packet_type & RTE_PTYPE_L3_MASK;
- 	uint32_t l4 = mbuf->packet_type & RTE_PTYPE_L4_MASK;
--	unsigned int l2_len = sizeof(struct rte_ether_hdr);
--	unsigned int l3_len;
-+	uint32_t l4_off = hlen->l2_len + hlen->l3_len;
- 	uint16_t cksum = 0;
- 	void *l3_hdr;
- 	void *l4_hdr;
--	struct rte_udp_hdr *udp_hdr;
- 
--	if (l2 == RTE_PTYPE_L2_ETHER_VLAN)
--		l2_len += 4;
--	else if (l2 == RTE_PTYPE_L2_ETHER_QINQ)
--		l2_len += 8;
- 	/* Don't verify checksum for packets with discontinuous L2 header */
--	if (unlikely(l2_len + sizeof(struct rte_ipv4_hdr) >
--		     rte_pktmbuf_data_len(mbuf)))
-+	if (unlikely(l4_off > rte_pktmbuf_data_len(mbuf)))
- 		return;
--	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len);
+diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
+new file mode 100644
+index 0000000000..cbf5a773fb
+--- /dev/null
++++ b/doc/guides/nics/features/sxe2.ini
+@@ -0,0 +1,11 @@
++;
++; Supported features of the 'sxe2' network poll mode driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++; A feature with "P" indicates only be supported when non-vector path
++; is selected.
++;
++[Features]
++Queue start/stop     = Y
++Linux                = Y
+\ No newline at end of file
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+index cb818284fe..e20be478f8 100644
+--- a/doc/guides/nics/index.rst
++++ b/doc/guides/nics/index.rst
+@@ -68,6 +68,7 @@ Network Interface Controller Drivers
+     rnp
+     sfc_efx
+     softnic
++    sxe2
+     tap
+     thunderx
+     txgbe
+diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
+new file mode 100644
+index 0000000000..2f9ba91c33
+--- /dev/null
++++ b/doc/guides/nics/sxe2.rst
+@@ -0,0 +1,23 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
 +
-+	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, hlen->l2_len);
- 	if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
- 		struct rte_ipv4_hdr *iph = l3_hdr;
- 
--		l3_len = rte_ipv4_hdr_len(iph);
--		if (unlikely(l2_len + l3_len > rte_pktmbuf_data_len(mbuf)))
--			return;
- 		/* check that the total length reported by header is not
- 		 * greater than the total received size
- 		 */
--		if (l2_len + rte_be_to_cpu_16(iph->total_length) >
-+		if (hlen->l2_len + rte_be_to_cpu_16(iph->total_length) >
- 				rte_pktmbuf_data_len(mbuf))
- 			return;
- 
--		cksum = ~rte_raw_cksum(iph, l3_len);
-+		cksum = ~rte_raw_cksum(iph, hlen->l3_len);
- 		mbuf->ol_flags |= cksum ?
- 			RTE_MBUF_F_RX_IP_CKSUM_BAD :
- 			RTE_MBUF_F_RX_IP_CKSUM_GOOD;
--	} else if (l3 == RTE_PTYPE_L3_IPV6) {
-+	} else if (l3 == RTE_PTYPE_L3_IPV6 || l3 == RTE_PTYPE_L3_IPV6_EXT) {
- 		struct rte_ipv6_hdr *iph = l3_hdr;
- 
--		l3_len = sizeof(struct rte_ipv6_hdr);
- 		/* check that the total length reported by header is not
- 		 * greater than the total received size
- 		 */
--		if (l2_len + l3_len + rte_be_to_cpu_16(iph->payload_len) >
-+		if (hlen->l2_len + sizeof(*iph) + rte_be_to_cpu_16(iph->payload_len) >
- 				rte_pktmbuf_data_len(mbuf))
- 			return;
- 	} else {
- 		/* - RTE_PTYPE_L3_IPV4_EXT_UNKNOWN cannot happen because
- 		 *   mbuf->packet_type is filled by rte_net_get_ptype() which
- 		 *   never returns this value.
--		 * - IPv6 extensions are not supported.
- 		 */
- 		return;
- 	}
- 
- 	if (l4 == RTE_PTYPE_L4_UDP || l4 == RTE_PTYPE_L4_TCP) {
- 		int cksum_ok;
--		const unsigned int l4_min_len = (l4 == RTE_PTYPE_L4_UDP)
--			? sizeof(struct rte_udp_hdr) : sizeof(struct rte_tcp_hdr);
- 
- 		/* Don't verify checksum if L4 header is truncated */
--		if (l2_len + l3_len + l4_min_len > rte_pktmbuf_data_len(mbuf))
-+		if (l4_off + hlen->l4_len > rte_pktmbuf_data_len(mbuf))
- 			return;
- 
--		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len + l3_len);
- 		/* Don't verify checksum for multi-segment packets. */
- 		if (mbuf->nb_segs > 1)
- 			return;
++SXE2 Poll Mode Driver
++======================
 +
-+		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l4_off);
- 		if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
- 			if (l4 == RTE_PTYPE_L4_UDP) {
--				udp_hdr = (struct rte_udp_hdr *)l4_hdr;
-+				struct rte_udp_hdr *udp_hdr = l4_hdr;
- 				if (udp_hdr->dgram_cksum == 0) {
- 					/*
- 					 * For IPv4, a zero UDP checksum
-@@ -561,10 +548,11 @@ pmd_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			continue;
- 		}
++The sxe2 PMD (**librte_net_sxe2**) provides poll mode driver support for
++10/25/50/100/200 Gbps Network Adapters.
++The embedded switch, Physical Functions (PF),
++and SR-IOV Virtual Functions (VF) are supported
++
++Implementation details
++----------------------
++
++For security reasons and robustness, this driver only deals with virtual
++memory addresses. The way resources allocations are handled by the kernel
++combined with hardware specifications that allow it to handle virtual memory
++addresses directly ensure that DPDK applications cannot access random
++physical memory (or memory that does not belong to the current process).
++
++This capability allows the PMD to coexist with kernel network interfaces
++which remain functional, although they stop receiving unicast packets as
++long as they share the same MAC address.
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index 060b26ff61..93fb0072a9 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -55,6 +55,9 @@ New Features
+      Also, make sure to start the actual text at the margin.
+      =======================================================
  
--		mbuf->packet_type = rte_net_get_ptype(mbuf, NULL,
-+		struct rte_net_hdr_lens hlen = {0};
-+		mbuf->packet_type = rte_net_get_ptype(mbuf, &hlen,
- 						      RTE_PTYPE_ALL_MASK);
- 		if (rxq->rxmode->offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM)
--			tap_verify_csum(mbuf);
-+			tap_verify_csum(mbuf, &hlen);
++* **Added Linkdata sxe2 ethernet driver.**
++
++  Added network driver for the Linkdata Network Adapters.
  
- 		/* account for the receive frame */
- 		bufs[num_rx++] = mbuf;
+ Removed Items
+ -------------
 -- 
-2.54.0
+2.47.3
 
