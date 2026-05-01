@@ -2,92 +2,62 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C95ECD8C92
-	for <dpdk-dev@archiver.kernel.org>; Mon,  8 Jun 2026 15:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A587CFF885A
+	for <dpdk-dev@archiver.kernel.org>; Fri,  1 May 2026 09:54:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 66D7740670;
-	Mon,  8 Jun 2026 17:49:49 +0200 (CEST)
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com
- [209.85.160.179])
- by mails.dpdk.org (Postfix) with ESMTP id 2BFA5402DD
- for <dev@dpdk.org>; Mon,  8 Jun 2026 17:49:48 +0200 (CEST)
-Received: by mail-qt1-f179.google.com with SMTP id
- d75a77b69052e-517863a2edfso35788101cf.1
- for <dev@dpdk.org>; Mon, 08 Jun 2026 08:49:48 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1780933787; cv=none;
- d=google.com; s=arc-20240605;
- b=SIOhDaLsQnD6VfAP7+tUI4MB0x7nzu6Oe5aOy3B9cMF+xOEETn+/q6JuHBYe7juRaW
- RiGSkkX5xgArto+UuQnaofmG4KCafxXRK7OiSIqllM+MeM3TJ0keA1qrUcLUs6vO6/aQ
- Qeae1JSN01c8BWOCGCtwTg0IqPi8FjK87eG5NOlzLIMRFXuClaWkHe5QCIO1X2qbXKuD
- iqpBoD7YnKL3K7DvUhZci7M3c6CYm7g6ntl+gMNuqWQYDFUquOCb1dqWy5pcEFIHokL6
- voG2g7CauPUwGRw6KgEn/e6U3ZRof53hx0yf1ES3TiOZphR+pvIOFm+g5cKcRm2Ej/wI
- BeSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=LQKkMzfW4ILTsiIA+SER/eLzbpAJJ1VdnUVk6IKdyTY=;
- fh=EWMbXYxloiF25UKa3+132FbIkngNc9Ix7z+odAXt93c=;
- b=MWDrAixmLvZxNI/RtbvYVcfKCRlZLkF8zvbETyYhRYvX+JMOGabiz+kIo/UfPdds4+
- rWOZOxbvrTgMhfzZGyJOj3FsIlTV6pjimUNYCCd0/QwktQ3ozwD//UlXbTOsN9MGmdcv
- yixCppSddmIJdyd0rV5BGS20V5LgadPqkUFbpcWY7evedsJ1Tyvv2q9BKOzkelIqyNVE
- bUzLGXaCaITew26NNj+sPKRvv5C49Z/SCrm17KTujKrUaXR7K+DRdF/JL9wzqKiaZZv8
- fYwEnK2n1y/+74sw2+zXfXMcyWFqZ7/jLLgwVSA/zIV7I34F8avl5iWPoPKeHeEbZXCG
- GdIQ==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1780933787; x=1781538587; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=LQKkMzfW4ILTsiIA+SER/eLzbpAJJ1VdnUVk6IKdyTY=;
- b=XUDKAa8y7Aj1SGD8zajgyI0GmA3L80bWFgFZglFTJ/+pSjUCLHBkONbdZufoIyNXEs
- mzstPq8roxb9aB6ldbe6qU20ioP3VbM1Jx8uFbxl4Ra5nn/BPWHnei6/SEULr9jbSWsq
- ZjjqH818M1jhtq9xm/yaUXksgIfV9nIrNoa2XyozCit2ySQ7kpjmHE0OJD+iqAkl9/yF
- qejlJwwfDKaDCK8ipm6703wwm+m5WkAfwB7xzoVz0yrLORaCSx3h627oVs/Ay/dfYeJt
- Wo7FGxjv9mzoE0ZroYJc31lPgK5D1oVv8tW1OpQFLHiH1d0AAZytpbJxGfwrhKXfvKDD
- vQhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1780933787; x=1781538587;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=LQKkMzfW4ILTsiIA+SER/eLzbpAJJ1VdnUVk6IKdyTY=;
- b=hvUQ9mnkwM9ZLfM8IrZX1CULp9FDxM/uu5zD/wc9mUc91vyg6w/tqaeDfLnzV/iiM0
- Us7zT0IsOB795RVQ/bPSKzqJFqXK1Er3EBVn8h1bbKYpVB75zrJ7ijpl7Lmvy21JRx82
- 8tv1JIRjQuqn495f98F/5Ewov4YA5ajGNnNEjsJ01sQqI17Ddv4l+cCwA61aLy36LqO6
- V/c+VV+xosqOYtuoaIjhCc8aYQGmTVFdc6yJJxbjc0CiwlPHL+ES5uSE1aHmF2yY0pm2
- x/QBLa7VFzBibjhrDt5DsOoahQbqzmp12Dc9choo5DqFfuP0E28K1pBqWDBw1o2PcjCT
- FIZA==
-X-Gm-Message-State: AOJu0YwpfCWT9tJw4krYkwYe6UQPVn2tx7tZe1c3yOVOrsf8ULl0hq87
- J+BsFxvKbZ1+ASw6Wz2ZRqAP9FLgy1nV6Wc5NVKEEFkSeeeFOI1JFAlXnAg4NRp8tH5GHtx9r7r
- aZdE+aSLx7Ha9uFShhtVJMz02rEk43Q4=
-X-Gm-Gg: Acq92OFBwcCxgjfqRu2wDzFomn30CnB/u84GkzeYgvRHPdA3FPXOyIp/sMdXEaGxwSE
- k7SdcCeVPBx8jbJjMyQVebQ1vAUUlNNVpX8ZqBSDGFINsWBYMMiVl1wECiuvlrSDTdt3zn8d5BM
- qIXKQTQ6F/vmylDCnfEhCj8bbN1J1Nd12zzL115DcMneQDo8BAaswDpE7upI/WAys38RM3N8WNr
- 6B/yJQYfswdfm5WQemQ2hQl4abLR6oTI/CjN3wmwW26FmJw6zMLfy7uz7nRocz0LilSa32s8r+L
- u8ziyMlxbb6etQ==
-X-Received: by 2002:ac8:5814:0:b0:517:8da1:4d3 with SMTP id
- d75a77b69052e-51795afdceamr226984731cf.22.1780933787268; Mon, 08 Jun 2026
- 08:49:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id F08CA40657;
+	Fri,  1 May 2026 11:54:12 +0200 (CEST)
+Received: from mails.dpdk.org (localhost [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id 5BB2740299;
+ Fri,  1 May 2026 11:54:11 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id ECD5D40288
+ for <announce@dpdk.org>; Fri,  1 May 2026 11:54:09 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1777629249;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding;
+ bh=iWw/1PdfZFOzOtJHx+DDCsIbRXNhMwP2kOc+u+7pOxo=;
+ b=VJq/w6Y26OcUIDPpbb9iqiCTl3z46nboZHSz5zFdSiroDRTPk92KH8O4vZ1I7xb0qxMlVY
+ +hur7e2Qy92ntq1lpBu2E0kSHzt9wIMuKWCs+wZGiwPRsYRloUmv3eX2rcwn15imWDHExd
+ fgfuo3/8YEn7z0u+Hq6/ctmelIDFgpE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-80-sXXp_ILYPLWrBpqCrN_0Dg-1; Fri,
+ 01 May 2026 05:54:07 -0400
+X-MC-Unique: sXXp_ILYPLWrBpqCrN_0Dg-1
+X-Mimecast-MFC-AGG-ID: sXXp_ILYPLWrBpqCrN_0Dg_1777629247
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id DCBFA1800378
+ for <announce@dpdk.org>; Fri,  1 May 2026 09:54:06 +0000 (UTC)
+Received: from rh.redhat.com (unknown [10.44.33.68])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 138F41955D84
+ for <announce@dpdk.org>; Fri,  1 May 2026 09:54:05 +0000 (UTC)
+From: Kevin Traynor <ktraynor@redhat.com>
+To: announce@dpdk.org
+Subject: DPDK 25.11.2 released
+Date: Fri,  1 May 2026 10:54:02 +0100
+Message-ID: <20260501095403.548138-1-ktraynor@redhat.com>
 MIME-Version: 1.0
-References: <20260121180845.889190-1-stephen@networkplumber.org>
- <20260413164652.33291-1-stephen@networkplumber.org>
- <20260413164652.33291-3-stephen@networkplumber.org>
-In-Reply-To: <20260413164652.33291-3-stephen@networkplumber.org>
-From: Jerin Jacob <jerinjacobk@gmail.com>
-Date: Mon, 8 Jun 2026 21:19:20 +0530
-X-Gm-Features: AVVi8Cc5rsVLe7S7-1Mf32WGLhohvbG-vq01WljiTSkoipxN3KcE_qAR4MI2Suw
-Message-ID: <CALBAE1PzEtyBzKiKaU83q0OtwRwaCTmqDETsc5NNODDQ9hzauw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] event/cnxk: add pause to spinloops
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, Pavan Nikhilesh <pbhagavatula@marvell.com>, 
- Shijith Thotton <sthotton@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-BeenThere: dev@dpdk.org
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: qXAuctQXxD18BrLmTRYBEreJMNqY67b7fjCMuf7qxQU_1777629247
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
+X-BeenThere: announce@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
+X-BeenThere: dev@dpdk.org
 List-Id: DPDK patches and discussions <dev.dpdk.org>
 List-Unsubscribe: <https://mails.dpdk.org/options/dev>,
  <mailto:dev-request@dpdk.org?subject=unsubscribe>
@@ -98,37 +68,27 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, Apr 13, 2026 at 10:36=E2=80=AFPM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On SMT systems when a spinloop is done without a pause
-> it may cause excessive latency. This problem was found
-> by the fix_empty_spinloops coccinelle script.
->
-> Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+Hi all,
 
-rte_pause() translates to YIELD instruction. Since cnxk is an
-integrated SoC and it is a single threaded core, it won't help on
-anything other than adding one instruction bit more latency.
-In general 3/3 devtool is good. Please send a it separate version so
-that 3/3 patches can be merged through the main tree.
+Here is a new stable release:
+	https://fast.dpdk.org/rel/dpdk-25.11.2.tar.xz
 
+The git tree is at:
+	https://dpdk.org/browse/dpdk-stable/?h=25.11
 
+This release is to address a regression in DPDK v25.11.1 as reported
+at https://bugs.dpdk.org/show_bug.cgi?id=1941.
 
----------------
-The YIELD instruction write up from ARMv8 manual.
+Thanks to Robin Jarry for reporting this issue.
 
-YIELD is a hint instruction in the ARMv8-A architecture. It tells the
-CPU that the current hardware thread is doing nothing useful right now
-(typically spinning in a busy-wait loop), so the processor may
-reallocate shared execution resources to other hardware threads.
+Kevin
 
-On SMT (multithreaded) cores, this can give sibling hardware threads
-more resources, improving overall throughput.
-On most current single-threaded ARM cores, YIELD executes as a NOP =E2=80=
-=94
-it has no microarchitectural effect, but it's architecturally valid
-and harmless. It does not put the core to sleep (unlike WFE/WFI).
-It's a pure hint: it never changes program correctness, only
-potentially performance/fairness.
--------------
+---
+ VERSION                                |  2 +-
+ doc/guides/rel_notes/release_25_11.rst | 16 ++++++++++++++++
+ lib/net/rte_net.c                      | 29 +++++++++++++++--------------
+ 3 files changed, 32 insertions(+), 15 deletions(-)
+Kevin Traynor (2):
+      Revert "net: fix packet type for stacked VLAN"
+      version: 25.11.2
+
