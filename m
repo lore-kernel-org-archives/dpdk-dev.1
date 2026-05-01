@@ -2,71 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFA3FF885A
-	for <dpdk-dev@archiver.kernel.org>; Fri,  1 May 2026 22:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC7ECCFA13
+	for <dpdk-dev@archiver.kernel.org>; Fri,  1 May 2026 22:57:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 282774026A;
-	Sat,  2 May 2026 00:45:44 +0200 (CEST)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id BCE914025A
- for <dev@dpdk.org>; Sat,  2 May 2026 00:45:42 +0200 (CEST)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-12c726ef332so3782954c88.1
- for <dev@dpdk.org>; Fri, 01 May 2026 15:45:42 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 27C13402D7;
+	Sat,  2 May 2026 00:57:08 +0200 (CEST)
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
+ by mails.dpdk.org (Postfix) with ESMTP id 26EAC4026A
+ for <dev@dpdk.org>; Sat,  2 May 2026 00:57:07 +0200 (CEST)
+Received: by mail-dl1-f44.google.com with SMTP id
+ a92af1059eb24-12c637089ccso3797482c88.1
+ for <dev@dpdk.org>; Fri, 01 May 2026 15:57:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777675541;
- x=1778280341; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777676226;
+ x=1778281026; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=pB8BZa9cmMMTDOgVJUtjWPLqGhQpukRd1Msk1qc5YAU=;
- b=fiAW5TMf0Z9xkAgZ+yKhNgkYvBNgYvCMxxC4I3Psr/a5FgOhqLuxvUM44PBhSBTEPu
- Qm9O1bhvc02e4nOJzLBBBvKvleZ2Aw5bR6QFq88eqH8SKGxxf4UHycd2t1VJ8DoiMqOX
- EyuwOmH9n4V27lHfn9o5saSJFVSHQqoiiUNveeerGZAv0FjtoWiFM6VicnoLFa1NxwrK
- Khwkn4TATDVVeB2LO//+RUi9hvsUq+lUcbdG7yOw4vv6hADikPudx0BbuF4OmrDnF/0r
- ucwWAkjCtwqUHUY+5viEq7jVbMf+W5fZZMwgpvIoaXOK44SB32wb+Jq/JI4FmGfgE8yj
- vqVw==
+ bh=Shh1UaXxIU++ZxclSDpofiXQXlavkgDUX1akFVqVQvg=;
+ b=kd07xPGsLjv82IDPhqnAczbc3JIn5yuAvZK5kd4htgt/GmQWZnPojCTGr/7a+Pc+4+
+ w4af58OOtD6AfxuhlnC63gH0SAGdYUsnf0Mj9piXZkEGoksbQcCXYJWylshr8pRwVWHi
+ zP3blYL+0uO2QmwOQI9pK6KAJr/HhtkuaWRNQsLsSOwib5HX9Hgx8O7OwqiyMZ7bWito
+ i3385L1PhwWcFqnMRwuzu6M1jQEEbGIyDA8N0XFT/FVXr/lwHZwaD568tK68gl52+zvc
+ /XhDljlwRQqghS8LEyFEiglfkA1ZOrpsUzEUggSmd1fGaRN72jvdsMwt2XseFm7stm1k
+ vffg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777675541; x=1778280341;
+ d=1e100.net; s=20251104; t=1777676226; x=1778281026;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=pB8BZa9cmMMTDOgVJUtjWPLqGhQpukRd1Msk1qc5YAU=;
- b=FzDRNvQSXSf7ZiKhL+vORtxaHujTsHZI35+V0B77mV6aajj+IuuYwnYji2N7mnAjof
- DVU9WiXiKds8UBPBerb8ZoW/rNc3V1dwycWd8kLoFTvfUQXv6R36By77yNvjfTfqEPx2
- qeUyGE6MenuxwvxXOh6DONxzPEMUApUeTWsOBkVIU37OclbSOs8k+Sf5T7YmiosO7Bfc
- I3fuWtIdL18doqAElL8JhLtR0zpn3wuGwYrfp9mfPM6Cg8rgLD24qRwAtJb+Aq0gGx1b
- kRAg/bZfM0H+Dg1b20RFOA3MK8Kxa81obAzCrogcP+Dz71/nkIaTTrXVAEiEILJC2cUR
- oXRA==
-X-Gm-Message-State: AOJu0YxH0iRnzt8XptLVJci8A6bNq6LMu7Ji8nu35uhO0T5y8P03cYfX
- uqlNkWsgQXWSLBtQykEO6p0EbNVoVFnQwh+4fKTssU9iIvWVX5M7nCe16tI0RbnfUHo=
-X-Gm-Gg: AeBDievC+UVpoewXYOcr9pWxy9HaMEWdIpB5+iYI53XxmD/LOF6dgjma+gp/SLOcGBM
- XlLG7gFSODo0U8CHHB7B503J2Ax4kcUepYhGP9hNOI2Q1m0RPAWC3ggPMbkvfXCjWSmFiCf2hFz
- WOIEa9SliLn0SMP7rbPqnvh2/kbTCCd+h1m9N5oEgjRFBsW81fRqy+K2a1q3hyH5uqw5CG2H8CR
- 2XbzNZDMTTt8lG9KPRDe+MPe7xBA050gPdb+ZBwSquls/Mza8yaYQE/xl9hCbks9upb/WnklGw3
- t0EKrJQQGhMDdvc/iOEwNzwBV4dNKKRuGt3GjkK5eYKelH9k31nAXnv8NW5udajyvvf+K5ZErHn
- zCOSWmCe87C6Nj9498xGdmPBHdPO0LbP4AFo32vVx/W5qQbIQMcNPIXpGRt8magU52Ks4bBjsNA
- 4qmmm07Vygfb98OJwNb59ZiFRusbaGcrk8pIwKJDyeoQb1DQ==
-X-Received: by 2002:a05:7022:e98d:b0:12d:b26f:caf7 with SMTP id
- a92af1059eb24-12dfd7ac13fmr478296c88.7.1777675541430; 
- Fri, 01 May 2026 15:45:41 -0700 (PDT)
+ bh=Shh1UaXxIU++ZxclSDpofiXQXlavkgDUX1akFVqVQvg=;
+ b=eWNvh6PCSlgslhzv1tOwq5+oL+WJarQ/9Mcrvv9en9uwfcVI300v4GD2/jnsTbs/Zs
+ +wDLMq96HqiAKLY6sWfzNWevWZSMtxP4Pt5X63etoMHaktUqQ81MJSjsZDic34wzdqa8
+ 6FwIwlL/pU1ldj/93qB8XUP+EHzuLtokkRMDF6Rv38TQRqH6mNEbOnBuLWVrb99uvfAI
+ P8Rgpl0eKQjtPzuEMBd2hZiOxA+cp7j65qF/Ep6Dd2DhykonA5QbT69DPjQdzr4gEheQ
+ uBgnwLFGqhiAkXXkqnK73arX05qSgnAarE6+zTtrPA1unT641XCA++ChZJGFDLIAuZ3+
+ mHrg==
+X-Gm-Message-State: AOJu0YxgNlqqqPMuiZ6GXYk9DbceozNRWx0at6IyJBHC5tVrIc3435b8
+ GkjL0S/nVrj5TcCn/RiR2jN0xCbGX89RoXwKWMBeEDZas6Em46IxI6+B1nBELBeoJio=
+X-Gm-Gg: AeBDievw/PYIklSkV7mF7IPMPXMH9gkbeJUH3J0Lz5lbUMPDNxzBLH1Et0gN+Vn/zEt
+ +mJaH4zr8NkfXE3+v9SJ/CAb1ob69t4ny3jVhGLWcnyG/R88oyxNX01cCBvqidE86QrUX06lNr9
+ sPbalKuVcMz3AKjsdwspSTPt7cuQt+EDa6oG/ORPkHUjqGzGq1YCOQWBUYlk7YvQsM8u9Iixybb
+ fVo7mAY1oZVVfhq8KC2rsi+aL4kNMxsMuHeuutHUvkbu12W8BEy9XnHbr7OODux31d4GZi73z1a
+ SGJfNZtavKrjR54NzAk2tKDBZ2G2LtIB0lp47uY9ez8jW9kPV8ShzOlpoejzgUDxvNAebNiP87p
+ 8gWSwtaOx960paqnnq4fzBb1RNZyPEDab4yAMEsS7fxmW1Hcr2Uj8hoS80Eh7cmBamorZbrd0nT
+ qy2UPNU22ceWfXaCAKdH0Qnay1sKaCB5F964sjx6VOk2TuQMmgjT30JOIj
+X-Received: by 2002:a05:7022:608:b0:11a:4016:44a5 with SMTP id
+ a92af1059eb24-12dfd825405mr587329c88.24.1777676225986; 
+ Fri, 01 May 2026 15:57:05 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-12df8452edesm5147919c88.14.2026.05.01.15.45.40
+ a92af1059eb24-12df8431037sm5088885c88.12.2026.05.01.15.57.05
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 01 May 2026 15:45:41 -0700 (PDT)
-Date: Fri, 1 May 2026 15:45:38 -0700
+ Fri, 01 May 2026 15:57:05 -0700 (PDT)
+Date: Fri, 1 May 2026 15:57:03 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Anatoly Burakov <anatoly.burakov@intel.com>
+To: Harsh raj Singh <singhharshraj215@gmail.com>
 Cc: dev@dpdk.org
-Subject: Re: [PATCH v7 00/18] Support VFIO cdev API in DPDK
-Message-ID: <20260501154538.39181bc4@phoenix.local>
-In-Reply-To: <cover.1772115411.git.anatoly.burakov@intel.com>
-References: <cover.1763141462.git.anatoly.burakov@intel.com>
- <cover.1772115411.git.anatoly.burakov@intel.com>
+Subject: Re: [PATCH] examples/l2fwd: fix port statistics reset inside loop
+Message-ID: <20260501155703.4614956a@phoenix.local>
+In-Reply-To: <CAN33txFohZzwnKJ2uTDyMuQ9fWpMvJQ=6BCr-TURU19RV9EY8Q@mail.gmail.com>
+References: <CAN33txFohZzwnKJ2uTDyMuQ9fWpMvJQ=6BCr-TURU19RV9EY8Q@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,50 +79,22 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, 26 Feb 2026 14:17:23 +0000
-Anatoly Burakov <anatoly.burakov@intel.com> wrote:
+On Tue, 31 Mar 2026 10:15:32 +0530
+Harsh raj Singh <singhharshraj215@gmail.com> wrote:
 
-> This patchset introduces a major refactor of the VFIO subsystem in DPDK to
-> support character device (cdev) interface introduced in Linux kernel, as =
-well as
-> make the API more streamlined and useful. The goal is to simplify device
-> management, improve compatibility, and clarify API responsibilities.
->=20
-> The following sections outline the key issues addressed by this patchset =
-and the
-> corresponding changes introduced.
+> Hi,
+> 
+> Please find attached my patch for fix port statistics reset inside
+> loop in l2fwd example
+> 
+> Thanks,
+> Harsh Raj Singh
 
+What is the problem here. That loop only happens during initialization.
 
-The patch set is still interesting but lots of build failures.
-You need to rebase and resubmit.
+The memset() is redundant and not needed but that is a different reason
+to remove it. In current code the port_statistics will start out at all zeros.
 
-Look for shadow variable warnings etc.
-ccache clang -Ilib/librte_eal.a.p -Ilib -I../lib -Ilib/eal/common -I../lib/=
-eal/common -I. -I.. -Iconfig -I../config -Ilib/eal/include -I../lib/eal/inc=
-lude -Ilib/eal/linux/include -I../lib/eal/linux/include -Ilib/eal/x86/inclu=
-de -I../lib/eal/x86/include -I../kernel/linux -Ilib/eal -I../lib/eal -Ilib/=
-kvargs -I../lib/kvargs -Ilib/log -I../lib/log -Ilib/metrics -I../lib/metric=
-s -Ilib/telemetry -I../lib/telemetry -Ilib/argparse -I../lib/argparse -Xcla=
-ng -fcolor-diagnostics -pipe -D_FILE_OFFSET_BITS=3D64 -Wall -Winvalid-pch -=
-Wextra -Werror -std=3Dc11 -O2 -g -include rte_config.h -Wvla -Wcast-qual -W=
-comma -Wdeprecated -Wformat -Wformat-nonliteral -Wformat-security -Wmissing=
--declarations -Wmissing-prototypes -Wnested-externs -Wold-style-definition =
--Wpointer-arith -Wshadow -Wsign-compare -Wstrict-prototypes -Wundef -Wwrite=
--strings -Wno-missing-field-initializers -D_GNU_SOURCE -fPIC -march=3Dcorei=
-7 -mrtm -DALLOW_EXPERIMENTAL_API -DALLOW_INTERNAL_API '-DABI_VERSION=3D"26.=
-1"' -DRTE_EAL_PTHREAD_ATTR_SETAFFINITY_NP -DRTE_LOG_DEFAULT_LOGTYPE=3Dlib.e=
-al -DRTE_ANNOTATE_LOCKS -Wthread-safety -MD -MQ lib/librte_eal.a.p/eal_linu=
-x_eal_vfio_group.c.o -MF lib/librte_eal.a.p/eal_linux_eal_vfio_group.c.o.d =
--o lib/librte_eal.a.p/eal_linux_eal_vfio_group.c.o -c ../lib/eal/linux/eal_=
-vfio_group.c
-../lib/eal/linux/eal_vfio_group.c:914:8: error: declaration shadows a local=
- variable [-Werror,-Wshadow]
-  914 |                 char dev[PATH_MAX];
-      |                      ^
-../lib/eal/linux/eal_vfio_group.c:905:94: note: previous declaration is here
-  905 | vfio_group_setup_device_fd(const char *dev_addr, struct vfio_group =
-*grp, struct vfio_device *dev)
-      |                                                                    =
-                          ^
-1 error generated.
-[97/7766] Generating
+If you want, the right fix is to pull the memset entirely.
+While your at it look for the same pattern in other variants of l2fwd and l3fwd.
+There is a lot of copy/paste here.
