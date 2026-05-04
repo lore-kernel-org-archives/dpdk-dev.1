@@ -2,49 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C41ACD3427
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 12:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E97CD3427
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 13:18:45 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7D1004027F;
-	Tue,  5 May 2026 14:32:19 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id BF42A4026C;
- Tue,  5 May 2026 14:32:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777984338; x=1809520338;
- h=from:to:cc:subject:date:message-id:mime-version:
- content-transfer-encoding;
- bh=QlOCcWhM19cin7os0yWWxhQ5uyUQrCTwbcRUxMygAgw=;
- b=MD+VLvDVsHQZlkNo67mXt3hcpJYSpezFRgnQ1ovTaLlQQEOeKsnYs2b8
- fiWBd/vbqkVTCMcf9WBIoN7+W+G5WCMp1BxCv8Q+T2shCpuDUgeEU7kAj
- kUkSRyjoAPlpukFwQyvtl4RVA/aqV4dpMS/cTo+37anATDYIT4kpKnj1h
- X0cUWbCFsa/e+KMKAKM3IzmgpsxfVU0q5wcYSJgtn5TBUPicuWNfBF9Ba
- EQMgRTy0Tcf8U62aTeB96ZNu5DkQFm8asjjtviLkLX1gvzT1pTu/YByIV
- vsw+H9kUfmtySnCr/BJ5hJ2KGVr6mqsLdsKqJIM7+LqC58hxajcZVrE9f Q==;
-X-CSE-ConnectionGUID: lFOb8247Qc6ueEIvqIMmGA==
-X-CSE-MsgGUID: /t6PH+VgSF+PawBcvpWeOw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11776"; a="90226826"
-X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="90226826"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 May 2026 05:32:17 -0700
-X-CSE-ConnectionGUID: 4HWqHlK1RLurKjXeW5l6tA==
-X-CSE-MsgGUID: 3DqjvK7wQXikuTxLul/PGw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="237576320"
-Received: from silpixa00401177.ir.intel.com ([10.20.224.214])
- by fmviesa004.fm.intel.com with ESMTP; 05 May 2026 05:32:16 -0700
-From: Ciara Loftus <ciara.loftus@intel.com>
-To: dev@dpdk.org
-Cc: Ciara Loftus <ciara.loftus@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH] net/ice: fix TM node ID validation against configured queues
-Date: Tue,  5 May 2026 12:31:57 +0000
-Message-ID: <20260505123157.1387791-1-ciara.loftus@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 072A54027F;
+	Tue,  5 May 2026 15:18:45 +0200 (CEST)
+Received: from mail.amicon.ru (unknown [77.108.111.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 196804029B;
+ Mon,  4 May 2026 14:26:59 +0200 (CEST)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; d=amicon.ru; s=mail; c=simple/simple;
+ t=1777897616; h=from:subject:to:date:message-id;
+ bh=5mB7fII0Ex6jBmQoNJmt9lwrKZe1U6zrOTz29HInq0E=;
+ b=lDQbkk9RdrZoHpf053SehFB7he8m+ilFdVfyWl9firnQ7RAnRCjDQG9SUmgR/rYTKiOAbXrRcLA
+ t3JzH9jCZviojXDFgmLQx+Ed/nnaxv9WFMB8fUGDQ16Xt8DG0GRIx8f93joFyVzwYC5u/jsyYoWAA
+ JJDL/I8KlL/bBq3QAEaC4ww9qdZxo1ctEFEk2kDm6TjBLzSUuC6wBRE0fXsDKosTmsocRdrYIraq7
+ tdFO8tzFRtYqY5LKycTQfSRsZNJvv86+8TeAB+en9KeVEOzpH/BCdZT1kIOMa6l1fXo9cIaYplBAI
+ kL1yu2aF8k7c+jUnXiqokxRn9R1ws7hr1kZQ==
+Received: from dish.amicon.lan (172.16.2.39) by mail.amicon.lan (192.168.0.59)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Mon, 4 May
+ 2026 15:26:55 +0300
+From: Daniil Iskhakov <dish@amicon.ru>
+To: Anatoly Burakov <anatoly.burakov@intel.com>, Vladimir Medvedkin
+ <vladimir.medvedkin@intel.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>, Harry van Haaren
+ <harry.van.haaren@intel.com>
+CC: <dev@dpdk.org>, <stable@dpdk.org>, Daniil Iskhakov <dish@amicon.ru>,
+ <sdl.dpdk@linuxtesting.org>, <rrv@amicon.ru>
+Subject: [PATCH] net/ixgbe: fix queue received bytes CRC adjustment
+Date: Mon, 4 May 2026 15:26:23 +0300
+Message-ID: <20260504122623.37067-1-dish@amicon.ru>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Originating-IP: [172.16.2.39]
+X-ClientProxiedBy: mail.amicon.lan (192.168.0.59) To mail.amicon.lan
+ (192.168.0.59)
+X-Mailman-Approved-At: Tue, 05 May 2026 15:18:43 +0200
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,80 +53,50 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The leaf node ID boundary is checked against the compile-time constant
-`RTE_MAX_QUEUES_PER_PORT` (1024) rather than the number of Tx queues
-configured for the port. The rte_tm specification reserves IDs 0 to
-(N-1) for leaf nodes, where N is the configured queue count, so using
-the constant produces wrong results whenever N is less than 1024. Fix by
-replacing the constant with the runtime queue count.
+For 82599, QBRC is a 36-bit clear-on-read counter, while
+QPRC is a 32-bit clear-on-read counter. ixgbe_read_stats_registers()
+accumulates QBRC in a 64-bit software counter and, when CRC stripping
+is disabled, subtracts the CRC bytes accounted for each received packet.
 
-Also add an explicit check in the non-leaf validation path that rejects
-IDs in the leaf-reserved range. This condition can be triggered
-two ways: adding a leaf node before its parent chain is complete (the
-node resolves to a non-leaf level), or assigning a leaf-range ID to a
-node intended as non-leaf.
+The CRC adjustment is computed as:
 
-Fixes: 715d449a965b ("net/ice: enhance Tx scheduler hierarchy support")
+	delta_qprc * RTE_ETHER_CRC_LEN
+
+Since delta_qprc is 32-bit, the multiplication is performed in 32 bits
+and may wrap before the result is subtracted from the 64-bit QBRC
+accumulator. A full 32-bit packet delta needs more than 32 bits to
+represent the CRC-byte adjustment.
+
+Cast delta_qprc to uint64_t before the multiplication so the adjustment
+is computed with the same effective width as the byte counter.
+
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
+
+Fixes: c03fcee9abbd ("ixgbe: remove CRC size from byte counters")
 Cc: stable@dpdk.org
 
-Signed-off-by: Ciara Loftus <ciara.loftus@intel.com>
+Signed-off-by: Daniil Iskhakov <dish@amicon.ru>
 ---
- drivers/net/intel/ice/ice_tm.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+Cc: harry.van.haaren@intel.com
+Cc: sdl.dpdk@linuxtesting.org
+Cc: rrv@amicon.ru
+---
+ drivers/net/intel/ixgbe/ixgbe_ethdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/intel/ice/ice_tm.c b/drivers/net/intel/ice/ice_tm.c
-index ff53f2acfd..7ee4070007 100644
---- a/drivers/net/intel/ice/ice_tm.c
-+++ b/drivers/net/intel/ice/ice_tm.c
-@@ -88,6 +88,7 @@ ice_node_param_check(uint32_t node_id,
- 		      uint32_t priority, uint32_t weight,
- 		      const struct rte_tm_node_params *params,
- 		      bool is_leaf,
-+		      uint16_t nb_txq,
- 		      struct rte_tm_error *error)
- {
- 	/* checked all the unsupported parameter */
-@@ -123,6 +124,11 @@ ice_node_param_check(uint32_t node_id,
+diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+index 57d929cf2c..c17ce70810 100644
+--- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
++++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
+@@ -3237,7 +3237,7 @@ ixgbe_read_stats_registers(struct ixgbe_hw *hw,
+ 		hw_stats->qbrc[i] +=
+ 		    ((uint64_t)IXGBE_READ_REG(hw, IXGBE_QBRC_H(i)) << 32);
+ 		if (crc_strip == 0)
+-			hw_stats->qbrc[i] -= delta_qprc * RTE_ETHER_CRC_LEN;
++			hw_stats->qbrc[i] -= (uint64_t)delta_qprc * RTE_ETHER_CRC_LEN;
  
- 	/* for non-leaf node */
- 	if (!is_leaf) {
-+		if (node_id < nb_txq) {
-+			error->type = RTE_TM_ERROR_TYPE_NODE_ID;
-+			error->message = "node ID is reserved for leaf nodes";
-+			return -EINVAL;
-+		}
- 		if (params->nonleaf.wfq_weight_mode) {
- 			error->type =
- 				RTE_TM_ERROR_TYPE_NODE_PARAMS_WFQ_WEIGHT_MODE;
-@@ -146,7 +152,7 @@ ice_node_param_check(uint32_t node_id,
- 	}
- 
- 	/* for leaf node */
--	if (node_id >= RTE_MAX_QUEUES_PER_PORT) {
-+	if (node_id >= nb_txq) {
- 		error->type = RTE_TM_ERROR_TYPE_NODE_ID;
- 		error->message = "Node ID out of range for a leaf node.";
- 		return -EINVAL;
-@@ -440,7 +446,8 @@ ice_tm_node_add(struct rte_eth_dev *dev, uint32_t node_id,
- 			return -EINVAL;
- 		}
- 
--		ret = ice_node_param_check(node_id, priority, weight, params, false, error);
-+		ret = ice_node_param_check(node_id, priority, weight, params, false,
-+				dev->data->nb_tx_queues, error);
- 		if (ret)
- 			return ret;
- 
-@@ -479,7 +486,8 @@ ice_tm_node_add(struct rte_eth_dev *dev, uint32_t node_id,
- 	}
- 
- 	ret = ice_node_param_check(node_id, priority, weight,
--			params, level_id == ice_get_leaf_level(pf), error);
-+			params, level_id == ice_get_leaf_level(pf),
-+			dev->data->nb_tx_queues, error);
- 	if (ret)
- 		return ret;
- 
+ 		hw_stats->qbtc[i] += IXGBE_READ_REG(hw, IXGBE_QBTC_L(i));
+ 		hw_stats->qbtc[i] +=
 -- 
 2.43.0
 
