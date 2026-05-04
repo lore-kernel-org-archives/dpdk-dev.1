@@ -2,38 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E97CD3427
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 13:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A37CD3427
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 13:18:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 072A54027F;
+	by mails.dpdk.org (Postfix) with ESMTP id E732A40668;
 	Tue,  5 May 2026 15:18:45 +0200 (CEST)
-Received: from mail.amicon.ru (unknown [77.108.111.100])
- by mails.dpdk.org (Postfix) with ESMTP id 196804029B;
- Mon,  4 May 2026 14:26:59 +0200 (CEST)
+Received: from mail.amicon.ru (mail.amicon.ru [77.108.111.100])
+ by mails.dpdk.org (Postfix) with ESMTP id 3A3AD402B2;
+ Mon,  4 May 2026 16:15:33 +0200 (CEST)
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; d=amicon.ru; s=mail; c=simple/simple;
- t=1777897616; h=from:subject:to:date:message-id;
- bh=5mB7fII0Ex6jBmQoNJmt9lwrKZe1U6zrOTz29HInq0E=;
- b=lDQbkk9RdrZoHpf053SehFB7he8m+ilFdVfyWl9firnQ7RAnRCjDQG9SUmgR/rYTKiOAbXrRcLA
- t3JzH9jCZviojXDFgmLQx+Ed/nnaxv9WFMB8fUGDQ16Xt8DG0GRIx8f93joFyVzwYC5u/jsyYoWAA
- JJDL/I8KlL/bBq3QAEaC4ww9qdZxo1ctEFEk2kDm6TjBLzSUuC6wBRE0fXsDKosTmsocRdrYIraq7
- tdFO8tzFRtYqY5LKycTQfSRsZNJvv86+8TeAB+en9KeVEOzpH/BCdZT1kIOMa6l1fXo9cIaYplBAI
- kL1yu2aF8k7c+jUnXiqokxRn9R1ws7hr1kZQ==
+ t=1777904132; h=from:subject:to:date:message-id;
+ bh=mbNH8OfnZziLQ3GEjOnsPo5vrHCpxHTXDtxFGX/dnZc=;
+ b=hHaFxq4MYazUApRccp3qZCcAo7l/v7ZVYK1yV5atvk/iVvVk5umm78uf6FXeXo8auYp5LvMsW7K
+ j3jqo/S/XdB0Q7f0FAgjvXGqnetgCdKgNmwa0RyciUXnzxcTk4u0T1voNL8UnKBc80/V/IXg1eJtb
+ eOwwryqbi5cxEqVngp0c4Q1uU1jkOQybXP6jt9Vn+BHtbgtGxLFkikE6/qW2Ot7O3dr+ltD5LRkYd
+ bGJc55u29kvn4CHvwMpy8hCndV92MynJTbN1qiQmX5I5Mm9DQm5vzLzAH4TqH/Cy+vvEQdVuhxyeV
+ K+JIcp+mMAzxGNLGZBsQvDP7TADF0a3lBdHQ==
 Received: from dish.amicon.lan (172.16.2.39) by mail.amicon.lan (192.168.0.59)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Mon, 4 May
- 2026 15:26:55 +0300
+ 2026 17:15:32 +0300
 From: Daniil Iskhakov <dish@amicon.ru>
 To: Anatoly Burakov <anatoly.burakov@intel.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, Harry van Haaren
- <harry.van.haaren@intel.com>
+ <vladimir.medvedkin@intel.com>, Harry van Haaren
+ <harry.van.haaren@intel.com>, Konstantin Ananyev
+ <konstantin.ananyev@huawei.com>
 CC: <dev@dpdk.org>, <stable@dpdk.org>, Daniil Iskhakov <dish@amicon.ru>,
  <sdl.dpdk@linuxtesting.org>, <rrv@amicon.ru>
-Subject: [PATCH] net/ixgbe: fix queue received bytes CRC adjustment
-Date: Mon, 4 May 2026 15:26:23 +0300
-Message-ID: <20260504122623.37067-1-dish@amicon.ru>
+Subject: [PATCH] net/ixgbe: fix good octets CRC adjustment
+Date: Mon, 4 May 2026 17:15:24 +0300
+Message-ID: <20260504141524.114604-1-dish@amicon.ru>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 X-Originating-IP: [172.16.2.39]
@@ -53,22 +53,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-For 82599, QBRC is a 36-bit clear-on-read counter, while
-QPRC is a 32-bit clear-on-read counter. ixgbe_read_stats_registers()
-accumulates QBRC in a 64-bit software counter and, when CRC stripping
-is disabled, subtracts the CRC bytes accounted for each received packet.
+On some devices, such as 82599, GORC is a 36-bit clear-on-read counter,
+while GPRC is a 32-bit clear-on-read counter.
+ixgbe_read_stats_registers() accumulates GORC in a 64-bit software
+counter and, when CRC stripping is disabled, subtracts the CRC bytes
+accounted for each received packet.
 
-The CRC adjustment is computed as:
+The driver does not read GPRC directly. Due to an erratum, it derives
+the good packet delta from the sum of per-queue packet receives instead.
+The 32-bit QPRC registers are used for this purpose.
 
-	delta_qprc * RTE_ETHER_CRC_LEN
+delta_gprc is used as an accumulator for those per-queue deltas and is
+then used to compute the CRC-byte adjustment. Keeping it 32-bit may wrap
+the accumulated packet delta before it is used to adjust the 64-bit GORC
+counter.
 
-Since delta_qprc is 32-bit, the multiplication is performed in 32 bits
-and may wrap before the result is subtracted from the 64-bit QBRC
-accumulator. A full 32-bit packet delta needs more than 32 bits to
-represent the CRC-byte adjustment.
-
-Cast delta_qprc to uint64_t before the multiplication so the adjustment
-is computed with the same effective width as the byte counter.
+Make delta_gprc 64-bit so the accumulated packet delta and the CRC-byte
+adjustment are computed without 32-bit overflow.
 
 Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
@@ -85,18 +86,18 @@ Cc: rrv@amicon.ru
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 57d929cf2c..c17ce70810 100644
+index 57d929cf2c..71243610ee 100644
 --- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
 +++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -3237,7 +3237,7 @@ ixgbe_read_stats_registers(struct ixgbe_hw *hw,
- 		hw_stats->qbrc[i] +=
- 		    ((uint64_t)IXGBE_READ_REG(hw, IXGBE_QBRC_H(i)) << 32);
- 		if (crc_strip == 0)
--			hw_stats->qbrc[i] -= delta_qprc * RTE_ETHER_CRC_LEN;
-+			hw_stats->qbrc[i] -= (uint64_t)delta_qprc * RTE_ETHER_CRC_LEN;
- 
- 		hw_stats->qbtc[i] += IXGBE_READ_REG(hw, IXGBE_QBTC_L(i));
- 		hw_stats->qbtc[i] +=
+@@ -3182,7 +3182,7 @@ ixgbe_read_stats_registers(struct ixgbe_hw *hw,
+ 			   uint64_t *total_qprc, uint64_t *total_qprdc)
+ {
+ 	uint32_t bprc, lxon, lxoff, total;
+-	uint32_t delta_gprc = 0;
++	uint64_t delta_gprc = 0;
+ 	unsigned i;
+ 	/* Workaround for RX byte count not including CRC bytes when CRC
+ 	 * strip is enabled. CRC bytes are removed from counters when crc_strip
 -- 
 2.43.0
 
