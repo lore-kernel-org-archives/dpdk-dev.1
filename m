@@ -2,71 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4568CD3427
-	for <dpdk-dev@archiver.kernel.org>; Mon,  4 May 2026 17:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0D6CD3427
+	for <dpdk-dev@archiver.kernel.org>; Mon,  4 May 2026 17:56:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 7CC7940656;
-	Mon,  4 May 2026 19:03:36 +0200 (CEST)
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com
- [209.85.160.43]) by mails.dpdk.org (Postfix) with ESMTP id 7B10C402B2
- for <dev@dpdk.org>; Mon,  4 May 2026 19:03:34 +0200 (CEST)
-Received: by mail-oa1-f43.google.com with SMTP id
- 586e51a60fabf-42fbf95cca8so3018309fac.0
- for <dev@dpdk.org>; Mon, 04 May 2026 10:03:34 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 25E02402B2;
+	Mon,  4 May 2026 19:56:28 +0200 (CEST)
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
+ [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id 71633400EF
+ for <dev@dpdk.org>; Mon,  4 May 2026 19:56:25 +0200 (CEST)
+Received: by mail-dy1-f172.google.com with SMTP id
+ 5a478bee46e88-2ba895adfeaso4661236eec.0
+ for <dev@dpdk.org>; Mon, 04 May 2026 10:56:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777914214;
- x=1778519014; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777917384;
+ x=1778522184; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=0IXXMSbgDJrJhDC/+zNLhEMw3tPFHK6RS9Z3/3SUino=;
- b=mquuEzVvsLOYnNIXtjZ3SaQvvA9ZnHHhVCZ+mi+6GUNglXHRRm/UfekySJ6n3ompP8
- D8ylih076Kc6TQkMkAUWUImtiT+YDKusIuTjinQnGVU0TO94Glt8tmxbmku4OzWDp/d0
- fTcNtpqC4G4yvmFbFNJ59BbsqkcvSOuT34f5NzlULvPeSwAI8uvtvExipk7lNmyCZNgc
- m6tPhzZIZcB0vzvNW3RnW22LDczbbDQT+8354qI7w13DXH1PYOtRhP+gCOubykAMzK23
- M4ayYVd8UU1nHYLiQSAYiS8I+LnwVEK2T06dhQFchBAdvFJYo2EQr4VdXD3gkkVOPAQM
- oykQ==
+ bh=sOKdKucaUi6j5U/QLlTfdzIlokY6qDl0MOtd7ZSBUJU=;
+ b=A9TnXZ++EUSrx2pP0yzSzl+mwu+VM2AszwjXFYzOxELBjlr47/pGloljTpBhTFamCb
+ Pkz9LMlYRBiI23F/uGh8yB25RoCkfFjdyfkP0awjtYiHXXqMVIH2msLocR4t3O3r6gV6
+ s3k2+8icvLttdv37xLqJDl0XpjsVDYHA37f4Gz/E3/ZcuyXIMYP7gcVqSoQDEEtBJPVo
+ jTBFVrj5uN0texQQgmAz5WRX2gOIZN4qBYWUZOtSO2pByW2XzkJSoHOvwFTrHGJ7S7M0
+ W3t1TQEl6BZjpgiec19hjnzi8iczHVoVwv+DVRy2J9W7FxhFeHOB62DCRPrpGapTLxxQ
+ rggA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777914214; x=1778519014;
+ d=1e100.net; s=20251104; t=1777917384; x=1778522184;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=0IXXMSbgDJrJhDC/+zNLhEMw3tPFHK6RS9Z3/3SUino=;
- b=JjjjlvVd0KgAxn7SWA9znvOWvcUKb7luS4AC27u5N/Y4e9ADUlhStbzV091wgaCHwq
- resBgpe7z5m/JOtoKw6Jm3NQEXYLGOdP1zzdwuico4e0ACeLZlqoouNB+GrCYd5KOEVI
- YRbhVXXh3iTsPfKgQd1SFArtZ0Iyzr86glT4+n/stM0B4z95OTBwyzTKELExeXhTwcdS
- Q4OYpwP4cLKpfy41arNmq2HRWAkpBi8bcka3V2XlaTHb7ePZ2HSuaOpmL/4WfTRhnW2a
- vzKGTeZcWsVmFNB1UHfVeRNYHpTk802l5rpSvwxJOsnLcXDWhiWule07AF0HQUcRF4X6
- +vWw==
-X-Gm-Message-State: AOJu0YyhfEBiW8Z82Yehm5QKAuWEH56UEv5a4mK0RvM2T9iGWa4ODq3/
- 4k+Bx686jeqDeO4MxsoFxoAVB4fk6cqyiMa48XJ0Du+aj+WzRndRT38axunGJOWW50ixQ/iDPF4
- x4krB
-X-Gm-Gg: AeBDieudtHznuV+8OlMr/99HeE1NbSUHCYtQYmzYzoaewQJ0bGryIHSRmHfjpMib95h
- S9DlpdVP1trzgB7y81ox+adcJR8ccv5rJxq5YacgPIoo07/Op8w1EXPRTg842yDVNFNbz1wlz84
- LPlY+ellmKV/FJ/BkSPbm6i6ZcybiLdzv9vswvJ9RqPC59GEj+TIaLKdTRG/H0ah6HeC9rLu9Eq
- EnpajMfJRK4fnvKuPHnT+JmlTEXYKVmBF6XNjjzvdvTLUK/V3Lwa8uwaSeL3gsdZQDP1dqj5DVt
- Tjo/bUicqDgTG29+o3xzVuK/ApHqlBlFe7+GlFUJO75gbEpMWDVvJK+tAaD9Vk/0TRydM0KbobX
- un2ctkYD2+p2am9J8vKYMQe97F3YgrYs1CsunuODjBh12+D4pujnuiypWGqQkp4WxDJpeAgZoGk
- t2+0xLBa2wlSVtI1VoOTVnpHCV8AcI/iH2RQZ5Ly7ZV7G9vADqJo/AXNDC
-X-Received: by 2002:a05:693c:3111:b0:2db:2089:460f with SMTP id
- 5a478bee46e88-2efb999ac57mr4606671eec.19.1777914163894; 
- Mon, 04 May 2026 10:02:43 -0700 (PDT)
+ bh=sOKdKucaUi6j5U/QLlTfdzIlokY6qDl0MOtd7ZSBUJU=;
+ b=sYAtYTXZmGe9FyJR7GMrsHE63rdlFoBwznl03VqSdI+YSeAV4YXFMqOcREaOEYemGX
+ hsSktXOFrT+jeSoxiDa6a7RLU098b/cKcjTryUbjhxTU5k2MBjfDzMSXTuhHNgUmy+Ac
+ FBMNXG5G5VDbntfxprTuHMeI/LicaLUq5dfmyjwUMF5mcDa1GonJPIZhgGM/uW9QXB64
+ eYUb/8lEa9BIPmLJ4zjyqD5KD4j5omlJ/9Dj/JK/DiORuvfju+pkodRODXGC2HRWXsDF
+ hgjXhbnXCxAw1VFhEPvvfRKQwImkdjIYt6BBgnx3mEGyR2bYn8lU1VHBHWwiDiEQClyD
+ 08QQ==
+X-Gm-Message-State: AOJu0Yyu4E3VkwhN2dmul76QcJFd++oIoHmZG9ajzYvm3YrTK457kfPi
+ UtdiaX1b5mB8GjHsNUqG5cCso4gVXvwFQsz3JzD3gTzKlLYEXBf8LW/NfPCHfsWGkCg=
+X-Gm-Gg: AeBDieumUb+ccUxmWFOD4N8VcvAQhWtfd7oqcQO3Ay12CiP4Wd0tz00Jgw08lw+TGyg
+ AkUaYz47O1dAhbw2s+GlIeBrgwptHpFqleII2M3peVbtUZyp7KSozsuEjOmZnQ5rk3ghuor1aFR
+ j33ZhvkAL4A48Jz5t8pPJKu/7SPG2j44Llio8othyqIvl0J3DeMtZkcaH84wu0cjAE9VLtx494t
+ c1AgMpFhzdqE3WzTmH1GOTHebafLV4M+e85g4W1hXKJvnLkkSEKKyJBVz9KKi/BbkVOHZhKRW6k
+ Ov/5t9elNdr5NIOmkK5I+wxs/xx+SJ7anPlAs0t1P6OCNwWtZNMMZi/HHHvSddDiIPfNdqr50xY
+ wvaQRTohVVm+6nTqUQ5oe+XiI7FFWZRTCJfURKQz0j8exX5UdTL2/jHtdB6zu0i6CotQw9JjXK/
+ VaovRnCUyKV61BETkYdGdOI+j9B697pnPF3RG16XiuMmn4hw==
+X-Received: by 2002:a05:7301:2c88:b0:2d9:cfa6:3d34 with SMTP id
+ 5a478bee46e88-2efba28a5fbmr4645323eec.23.1777917383841; 
+ Mon, 04 May 2026 10:56:23 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2ee3b29b1a4sm16733396eec.18.2026.05.04.10.02.43
+ 5a478bee46e88-2ee3b7815d4sm16138213eec.20.2026.05.04.10.56.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 04 May 2026 10:02:43 -0700 (PDT)
-Date: Mon, 4 May 2026 10:02:39 -0700
+ Mon, 04 May 2026 10:56:23 -0700 (PDT)
+Date: Mon, 4 May 2026 10:56:21 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Thomas Monjalon <thomas@monjalon.net>
-Cc: dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH] spinlock: remove volatile qualifier
-Message-ID: <20260504100239.07d48122@phoenix.local>
-In-Reply-To: <20260504083714.2904729-1-thomas@monjalon.net>
-References: <20260504083714.2904729-1-thomas@monjalon.net>
+To: Rajesh Kumar <rajesh3.kumar@intel.com>
+Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com
+Subject: Re: [RFC v3 0/6] introduce PTP protocol library and software relay
+Message-ID: <20260504105621.0eb6dbab@phoenix.local>
+In-Reply-To: <20260504091728.1406661-1-rajesh3.kumar@intel.com>
+References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
+ <20260504091728.1406661-1-rajesh3.kumar@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,26 +80,179 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  4 May 2026 10:37:14 +0200
-Thomas Monjalon <thomas@monjalon.net> wrote:
+On Mon,  4 May 2026 14:47:16 +0530
+Rajesh Kumar <rajesh3.kumar@intel.com> wrote:
 
-> diff --git a/lib/eal/include/generic/rte_spinlock.h b/lib/eal/include/generic/rte_spinlock.h
-> index c907d4e45c..19c0e34f0a 100644
-> --- a/lib/eal/include/generic/rte_spinlock.h
-> +++ b/lib/eal/include/generic/rte_spinlock.h
-> @@ -197,8 +197,8 @@ rte_spinlock_trylock_tm(rte_spinlock_t *sl)
->   */
->  typedef struct {
->  	rte_spinlock_t sl; /**< the actual spinlock */
-> -	volatile int user; /**< core id using lock, -1 for unused */
-> -	volatile int count; /**< count of time this lock has been called */
-> +	int user; /**< core id using lock, -1 for unused */
-> +	int count; /**< count of time this lock has been called */
+> This series introduces a new DPDK library (lib/ptp) for IEEE 1588-2019
+> PTP protocol packet processing and a companion example application
+> (ptp_tap_relay_sw) that demonstrates its usage.
+>=20
+> Motivation
+> ----------
+> Several DPDK applications need to classify and manipulate PTP packets
+> (e.g. ptpclient, ptp_tap_relay, custom Transparent Clocks). Today each
+> application re-implements its own PTP header parsing and correctionField
+> handling. A shared library avoids duplication and provides a tested,
+> standards-compliant foundation.
+>=20
+> Library: lib/ptp
+> ----------------
+> The library provides:
+>   - PTP header structures (IEEE 1588-2019 common header, timestamp,
+>     port identity)
+>   - Packet classification: rte_ptp_classify() detects PTP over L2
+>     (EtherType 0x88F7), VLAN-tagged L2 (TPIDs 0x8100/0x88A8, single
+>     or double), UDP/IPv4, UDP/IPv6 (ports 319/320), and VLAN-tagged
+>     UDP variants
+>   - Header access: rte_ptp_hdr_get() returns a pointer to the PTP
+>     header inside an mbuf
+>   - Inline helpers: correctionField manipulation (48.16 fixed-point),
+>     message type extraction, two-step flag check, timestamp conversion
+>   - Debug: rte_ptp_msg_type_str() for human-readable message names
+>=20
+> Example: ptp_tap_relay_sw
+> -------------------------
+> A minimal PTP Transparent Clock relay between a DPDK-bound physical NIC
+> and a kernel TAP interface using software timestamps only. No patched
+> kernel modules, custom TAP PMD, or hardware timestamp support is
+> required.
+>=20
+> The relay:
+>   1. Receives packets on the physical NIC via DPDK
+>   2. Parses packets using rte_ptp_hdr_get()
+>   3. For event messages, records software timestamps
+>      (clock_gettime(CLOCK_MONOTONIC)) at ingress and egress
+>   4. Adds residence time to correctionField via rte_ptp_add_correction()
+>      (IEEE 1588-2019 10.2 Transparent Clock)
+>   5. Forwards bidirectionally: PHY <-> TAP
+>=20
+> Unit Tests: app/test
+> --------------------
+> A comprehensive test suite (ptp_autotest) covers all library APIs,
+> including VLAN/QinQ/IPv4/IPv6 transports, correctionField helpers,
+> flags, and negative tests. This v3 also adds coverage for IPv4 options
+> (IHL > 5).
+>=20
+> v3:
+>   - Reused RTE_ETHER_TYPE_1588 via RTE_PTP_ETHERTYPE alias
+>   - Updated version field comment to minorVersionPTP|versionPTP
+>   - Fixed prog guide rte_ptp_hdr_get() signature (non-const mbuf)
+>   - Added ALLOW_EXPERIMENTAL_API to ptp_tap_relay_sw Makefile
+>   - Updated relay example to parse once (rte_ptp_hdr_get + msg_type)
+>   - Updated relay sample app limitations wording to match capabilities
+>   - Added hdr_get NULL checks in correction tests
+>   - Added IPv4 options classification test (IHL > 5)
+>   - Made correction counter update style consistent via pointer arg
+>=20
+> v2:
+>   - Fixed flag bit positions for host-order representation after
+>     rte_be_to_cpu_16(): TWO_STEP (1<<9), UNICAST (1<<10),
+>     LI_61 (1<<0), LI_59 (1<<1)
+>   - Fixed QinQ classification: outer 0x88A8 now enters VLAN parser
+>   - Fixed signed left-shift UB in rte_ptp_add_correction()
+>   - Fixed promiscuous enable failure handling in relay port_init()
+>   - Replaced deprecated master/slave terminology with IEEE terms
+>   - Added and documented IHL validation for IPv4 PTP-over-UDP
+>   - Changed rte_ptp_is_event() parameter to int with negative guard
+>   - Changed rte_ptp_hdr_get() parameter to non-const mbuf
+>   - Added programmer's guide note about avoiding double-parse
+>=20
+> Rajesh Kumar (6):
+>   ptp: introduce PTP protocol library
+>   doc: add PTP library programmer's guide
+>   examples/ptp_tap_relay_sw: add software PTP relay example
+>   doc: add PTP software relay sample app guide
+>   app/test: add PTP library unit tests
+>   examples/ptpclient: use shared PTP library definitions
+>=20
+>  MAINTAINERS                                   |    8 +
+>  app/test/meson.build                          |    1 +
+>  app/test/test_ptp.c                           | 1106 +++++++++++++++++
+>  doc/api/doxy-api-index.md                     |    1 +
+>  doc/api/doxy-api.conf.in                      |    1 +
+>  doc/guides/prog_guide/index.rst               |    1 +
+>  doc/guides/prog_guide/ptp_lib.rst             |  205 +++
+>  doc/guides/rel_notes/release_26_07.rst        |   13 +
+>  doc/guides/sample_app_ug/index.rst            |    1 +
+>  doc/guides/sample_app_ug/ptp_tap_relay_sw.rst |  212 ++++
+>  examples/meson.build                          |    1 +
+>  examples/ptp_tap_relay_sw/Makefile            |   43 +
+>  examples/ptp_tap_relay_sw/meson.build         |   14 +
+>  examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c  |  433 +++++++
+>  examples/ptpclient/meson.build                |    1 +
+>  examples/ptpclient/ptpclient.c                |  188 ++-
+>  lib/meson.build                               |    1 +
+>  lib/ptp/meson.build                           |    6 +
+>  lib/ptp/rte_ptp.c                             |  185 +++
+>  lib/ptp/rte_ptp.h                             |  339 +++++
+>  20 files changed, 2644 insertions(+), 116 deletions(-)
+>  create mode 100644 app/test/test_ptp.c
+>  create mode 100644 doc/guides/prog_guide/ptp_lib.rst
+>  create mode 100644 doc/guides/sample_app_ug/ptp_tap_relay_sw.rst
+>  create mode 100644 examples/ptp_tap_relay_sw/Makefile
+>  create mode 100644 examples/ptp_tap_relay_sw/meson.build
+>  create mode 100644 examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c
+>  create mode 100644 lib/ptp/meson.build
+>  create mode 100644 lib/ptp/rte_ptp.c
+>  create mode 100644 lib/ptp/rte_ptp.h
+>=20
+>=20
+> base-commit: 7baf81674a011ab8a2fe329566b6d43d7377244c
 
-It might make sense to use unsigned for count, and sized types.
-I.e do you really need 32 bit values?
-
-Only in tree use of recursive spinlock in vdev code.
-
-PS: I wonder if we really need to keep the transactional memory versions of stuff.
-I 
+Lots of build failures in CI.
+Looks like alot around c++ build of header etc.
+g++ -Ibuildtools/chkincs/chkincs-cpp-exp.p -Ibuildtools/chkincs -I../buildt=
+ools/chkincs -I. -I.. -Iconfig -I../config -Ibuildtools/chkincs/staging -I.=
+./buildtools/chkincs/staging -fdiagnostics-color=3Dalways -pipe -D_FILE_OFF=
+SET_BITS=3D64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Werror -g -in=
+clude rte_config.h -march=3Dcorei7 -mrtm -Wno-missing-field-initializers -W=
+no-vla -DALLOW_EXPERIMENTAL_API -MD -MQ buildtools/chkincs/chkincs-cpp-exp.=
+p/meson-generated_rte_ptp.cpp.o -MF buildtools/chkincs/chkincs-cpp-exp.p/me=
+son-generated_rte_ptp.cpp.o.d -o buildtools/chkincs/chkincs-cpp-exp.p/meson=
+-generated_rte_ptp.cpp.o -c buildtools/chkincs/chkincs-cpp-exp.p/rte_ptp.cpp
+In file included from buildtools/chkincs/staging/rte_memory.h:18,
+                 from buildtools/chkincs/staging/rte_ring_core.h:29,
+                 from buildtools/chkincs/staging/rte_ring.h:38,
+                 from buildtools/chkincs/staging/rte_mempool.h:49,
+                 from buildtools/chkincs/staging/rte_mbuf.h:39,
+                 from buildtools/chkincs/staging/rte_ether.h:20,
+                 from /home/runner/work/dpdk/dpdk/lib/ptp/rte_ptp.h:32,
+                 from buildtools/chkincs/chkincs-cpp-exp.p/rte_ptp.cpp:1:
+buildtools/chkincs/staging/rte_bitops.h:1468:1: error: conflicting declarat=
+ion of C function =E2=80=98bool rte_bit_test(const volatile uint32_t*, unsi=
+gned int)=E2=80=99
+ 1468 | rte_bit_ ## family ## fun(qualifier uint ## size ## _t *addr, arg1_=
+type arg1_name) \
+      | ^~~~~~~~
+buildtools/chkincs/staging/rte_bitops.h:1475:9: note: in expansion of macro=
+ =E2=80=98__RTE_BIT_OVERLOAD_V_2R=E2=80=99
+ 1475 |         __RTE_BIT_OVERLOAD_V_2R(family, v_, fun, qualifier volatile=
+, size, ret_type, arg1_type, \
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+buildtools/chkincs/staging/rte_bitops.h:1479:9: note: in expansion of macro=
+ =E2=80=98__RTE_BIT_OVERLOAD_SZ_2R=E2=80=99
+ 1479 |         __RTE_BIT_OVERLOAD_SZ_2R(family, fun, qualifier, 32, ret_ty=
+pe, arg1_type, arg1_name) \
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+buildtools/chkincs/staging/rte_bitops.h:1575:1: note: in expansion of macro=
+ =E2=80=98__RTE_BIT_OVERLOAD_2R=E2=80=99
+ 1575 | __RTE_BIT_OVERLOAD_2R(, test, const, bool, unsigned int, nr)
+      | ^~~~~~~~~~~~~~~~~~~~~
+buildtools/chkincs/staging/rte_bitops.h:1468:1: note: previous declaration =
+=E2=80=98bool rte_bit_test(const uint32_t*, unsigned int)=E2=80=99
+ 1468 | rte_bit_ ## family ## fun(qualifier uint ## size ## _t *addr, arg1_=
+type arg1_name) \
+      | ^~~~~~~~
+buildtools/chkincs/staging/rte_bitops.h:1474:9: note: in expansion of macro=
+ =E2=80=98__RTE_BIT_OVERLOAD_V_2R=E2=80=99
+ 1474 |         __RTE_BIT_OVERLOAD_V_2R(family,, fun, qualifier, size, ret_=
+type, arg1_type, arg1_name) \
+      |         ^~~~~~~~~~~~~~~~~~~~~~~
+buildtools/chkincs/staging/rte_bitops.h:1479:9: note: in expansion of macro=
+ =E2=80=98__RTE_BIT_OVERLOAD_SZ_2R=E2=80=99
+ 1479 |         __RTE_BIT_OVERLOAD_SZ_2R(family, fun, qualifier, 32, ret_ty=
+pe, arg1_type, arg1_name) \
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~
+buildtools/chkincs/staging/rte_bitops.h:1575:1: note: in expansion of macro=
+ =E2=80=98__RTE_BIT_OVERLOAD_2R=E2=80=99
+ 1575 | __RTE_BIT_OVERLOAD_2R(, test, const, bool, unsigned int, nr)
