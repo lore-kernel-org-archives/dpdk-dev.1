@@ -2,42 +2,71 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95555CD3427
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 13:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 120D2FF885A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 13:24:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id CF35240674;
-	Tue,  5 May 2026 15:18:46 +0200 (CEST)
-Received: from mail.amicon.ru (unknown [77.108.111.100])
- by mails.dpdk.org (Postfix) with ESMTP id 3DE6F402B2;
- Mon,  4 May 2026 16:55:11 +0200 (CEST)
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; d=amicon.ru; s=mail; c=simple/simple;
- t=1777906510; h=from:subject:to:date:message-id;
- bh=x+OIGu9co52424gtlJ8r/pZBl5cT1qEyAML+fNMl6FA=;
- b=mrpD5SBdS4ww7xoZTbpgmDwalne+u9sSQXSVL9YIb9xcQRfyermOqv4bOeQ5t0Z/DGexqB9rQWP
- 5RoiRoiDJvIJTNjsfC9i1yAC1BD840dlJjL90r7xhxSWy5N2u2EGw0fcosKuY3XowkpHs35tGFRZ7
- EZTgkpd5eMJMyWoCtYUr8w369d+OZagVc05kvO20Dojk5+oqL3EbrylBTKTqsOiaWpXCGODtoVUXG
- UBYtr1PsKDOovs1t7R52RE5h7ps6S13ybBtK4W525HohHi4H4HJNPdJE199OzN41lrzg4G+axVseE
- vTEPuX2WyTuT0731aAdNa87wKkY7ZT8N0Uyg==
-Received: from dish.amicon.lan (172.16.2.39) by mail.amicon.lan (192.168.0.59)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.27; Mon, 4 May
- 2026 17:55:10 +0300
-From: Daniil Iskhakov <dish@amicon.ru>
-To: Anatoly Burakov <anatoly.burakov@intel.com>, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>, Daniil Iskhakov <dish@amicon.ru>,
- <sdl.dpdk@linuxtesting.org>, <rrv@amicon.ru>
-Subject: [PATCH] net/ixgbe: fix flow control frame byte adjustment
-Date: Mon, 4 May 2026 17:55:02 +0300
-Message-ID: <20260504145502.160806-1-dish@amicon.ru>
-X-Mailer: git-send-email 2.43.0
+	by mails.dpdk.org (Postfix) with ESMTP id 48B5B4027F;
+	Tue,  5 May 2026 15:24:38 +0200 (CEST)
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com
+ [209.85.161.50]) by mails.dpdk.org (Postfix) with ESMTP id A51864026C
+ for <dev@dpdk.org>; Tue,  5 May 2026 15:24:36 +0200 (CEST)
+Received: by mail-oo1-f50.google.com with SMTP id
+ 006d021491bc7-679f6ee3fb0so2045686eaf.2
+ for <dev@dpdk.org>; Tue, 05 May 2026 06:24:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777987476;
+ x=1778592276; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=yvbCKS4IzmrQCxQg9d28QrD3Wu+bBlzIKIYw9kbvERs=;
+ b=YfWZUrC7cEb6oeagsoq77NOPPhEgCTIXkJ3aZ8D7oYDKEXvW6LK++u1/mwPEYH9zXc
+ cd/NkT88lY5t1bxbRIoksJevhr6PCZvwdsG3FpwPQaghcyCV0WlNKVRi5efW4BAJBjLz
+ OJVjR0f73TkMP97bFRz7xQSt+mLEr2AZcPBFZmXfnMcVJceS2RGDOqNVuRXZ+nYYhF5h
+ cL8umgG5skTCM5dN7k9BtRbWdC/MmVzsUlX+ehUVRSQKo8GK78VgU/ZOOt3ySJQZG+H/
+ DBsVVxymCKR0bWU/yib/j9AYt3g/kwUorpzIhONSmwIVftOBhcm9UISqnyVsK7A3MHXp
+ BpzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1777987476; x=1778592276;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=yvbCKS4IzmrQCxQg9d28QrD3Wu+bBlzIKIYw9kbvERs=;
+ b=lLGXdyhakAU3jkxdzREXC3l9ekCJfn3NGB7Sn5Sj7eDoiJjQDXz4an348wnB/fnqAv
+ PTKKrqE7UF3JyzhVO2o/MgBFcwk3SJKd9EzbY48g08YBfmPYTlZWzI3bbPSeqk/CNVJn
+ ymHWeSvr1XrqHfTzC1uJItelO+M5vDLOpN+N8giLle1gmM6wZ+lmdvhEXpMLM9CjPlyN
+ tGPY1bTrC9hu10mcayh108Ix0JAx+xHKh3BA7e73mlN4b3KPqBOFzJaGtqwjw8wav7OP
+ 7hpFrDxtfxfDKiNg2rkAy9B+0qZJtS+9M91ysWkyUn9vlGWK+pJ37UKFdLFml3SKs+r/
+ MUuw==
+X-Gm-Message-State: AOJu0YyWvQcwvmrT+g8KTrTr03x1l/skml4JWLLECJncaywIjHdfXDeN
+ lWjvuAlTTqgE54K/DZhfYXg4lrXM/i4DdmOwJKoobXhp+TPsEMdK0p9gp+5a1EjBej8=
+X-Gm-Gg: AeBDievZ0XOTm67FHuxffRlK9ik8sinEsjAVAGCbfiIwGlG8TMr4Abco9rJO4g4ygZw
+ rGXGf2zWfz0PMpdg2GH4FZg84uiNror6gv2VQIiCVfL2OiDXnpiB/TmzUG9NSIlnnOM/pIaZKo6
+ eccse8gbjHW1XWQIeK0a+/h5Qx7KDtiPfpeCmWSDBZ31JjTEM++OoBg7XOaFjOV0dGfg/Ao9Bfi
+ WHUTDV8oNAbJxoDimlBR5Dtct5yuIYvJaCIer+aezQj8Uqg1/hGmA8Rx2K55hZq+05WaQkKRVlH
+ kLLVU+LgfhbmDy/2/gae0Tit7GuGj2xmYZV24BijmccZAVmGWosJoh8dYbrndiCBL32vbkpVsvm
+ Fz3/eoFaZH2Q51b/OyB2TPMPQnbzrqMAOrnOx9yoQ90rhJOsLAQj/QdGAInCeaVxPkKlvSy8BOn
+ PeeOXfHI3ijbuNGKFwr3q4U4gkOGhc/OCUxM0oLquvu9n2AA==
+X-Received: by 2002:a05:6820:a01:b0:696:2b5a:b516 with SMTP id
+ 006d021491bc7-6998d460d28mr1291680eaf.41.1777987475817; 
+ Tue, 05 May 2026 06:24:35 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ 006d021491bc7-69689266bacsm8393804eaf.0.2026.05.05.06.24.35
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Tue, 05 May 2026 06:24:35 -0700 (PDT)
+Date: Tue, 5 May 2026 06:24:32 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Thomas Monjalon <thomas@monjalon.net>
+Cc: dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH] spinlock: remove volatile qualifier
+Message-ID: <20260505062432.18d9ae90@phoenix.local>
+In-Reply-To: <3066926.2VHbPRQshP@thomas>
+References: <20260504083714.2904729-1-thomas@monjalon.net>
+ <20260504100239.07d48122@phoenix.local> <3066926.2VHbPRQshP@thomas>
 MIME-Version: 1.0
-X-Originating-IP: [172.16.2.39]
-X-ClientProxiedBy: mail.amicon.lan (192.168.0.59) To mail.amicon.lan
- (192.168.0.59)
-X-Mailman-Approved-At: Tue, 05 May 2026 15:18:43 +0200
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,60 +80,13 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-LXONTXC and LXOFFTXC are 32-bit counters for transmitted XON and
-XOFF packets. ixgbe_read_stats_registers() sums their deltas and uses
-the result to adjust the transmitted byte counters by the minimum
-Ethernet frame length.
+On Tue, 05 May 2026 09:01:43 +0200
+Thomas Monjalon <thomas@monjalon.net> wrote:
 
-The sum is currently computed as:
+> > PS: I wonder if we really need to keep the transactional memory versions of stuff.  
+> 
+> I don't know, it's part of the API and has no maintenance cost.
 
-	total = lxon + lxoff
 
-Since both operands are 32-bit, the addition is performed in 32 bits
-and may wrap before the result is stored in total. The wrapped value is
-then used in the byte adjustment, which may make the software byte
-counters incorrect.
-
-Make total 64-bit and cast lxon before the addition so the XON/XOFF
-packet sum and the following byte adjustment are computed without
-32-bit overflow.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: af75078fece3 ("first public release")
-Cc: stable@dpdk.org
-
-Signed-off-by: Daniil Iskhakov <dish@amicon.ru>
----
-Cc: sdl.dpdk@linuxtesting.org
-Cc: rrv@amicon.ru
----
- drivers/net/intel/ixgbe/ixgbe_ethdev.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/intel/ixgbe/ixgbe_ethdev.c b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-index 57d929cf2c..cff2dbd900 100644
---- a/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-+++ b/drivers/net/intel/ixgbe/ixgbe_ethdev.c
-@@ -3181,7 +3181,8 @@ ixgbe_read_stats_registers(struct ixgbe_hw *hw,
- 			   uint64_t *total_missed_rx, uint64_t *total_qbrc,
- 			   uint64_t *total_qprc, uint64_t *total_qprdc)
- {
--	uint32_t bprc, lxon, lxoff, total;
-+	uint32_t bprc, lxon, lxoff;
-+	uint64_t total;
- 	uint32_t delta_gprc = 0;
- 	unsigned i;
- 	/* Workaround for RX byte count not including CRC bytes when CRC
-@@ -3310,7 +3311,7 @@ ixgbe_read_stats_registers(struct ixgbe_hw *hw,
- 	hw_stats->lxontxc += lxon;
- 	lxoff = IXGBE_READ_REG(hw, IXGBE_LXOFFTXC);
- 	hw_stats->lxofftxc += lxoff;
--	total = lxon + lxoff;
-+	total = (uint64_t)lxon + lxoff;
- 
- 	hw_stats->mptc += IXGBE_READ_REG(hw, IXGBE_MPTC);
- 	hw_stats->ptc64 += IXGBE_READ_REG(hw, IXGBE_PTC64);
--- 
-2.43.0
-
+It is not tested, only worked on x86 and most of the CPU's and tooling
+dropped support for transactional memory years ago. It was a failed idea.
