@@ -2,79 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 984A7FF885A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 05:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8091FF885A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 05:53:16 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C6D9A40659;
-	Tue,  5 May 2026 07:53:07 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id A771A40661;
+	Tue,  5 May 2026 07:53:08 +0200 (CEST)
 Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com
  [148.163.133.20])
- by mails.dpdk.org (Postfix) with ESMTP id 4955740616
- for <dev@dpdk.org>; Tue,  5 May 2026 07:53:06 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 96E8140616
+ for <dev@dpdk.org>; Tue,  5 May 2026 07:53:07 +0200 (CEST)
 Received: from pps.filterd (m0170391.ppops.net [127.0.0.1])
  by mx0a-00154904.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6450Quku969782 for <dev@dpdk.org>; Tue, 5 May 2026 01:53:05 -0400
+ 644J1sSn3705256 for <dev@dpdk.org>; Tue, 5 May 2026 01:53:06 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
  :content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=smtpout1; bh=x
- XmFL2PnBAs/4OZs7ekP9s2VrRxy8G5Cp1/LQZGXBWM=; b=VqBkvqhdJFPoM6s82
- aPwSORdGQUPokgL2m/EYHx3ls5rfaN+VBrrnS3Iq+cJuKylTOAuU/xT+EbzEmw/l
- +Yk0WcLrk6jEXsHokK6tqC+NiWdpZHof/a2F3KfjeqMyYdYCp/MXtg8bk2F5ecY7
- 0GhdtCBT57jVYN9+Rl9jvlKj8c4LjCO5O6rMmmhFvAnYUSE+FgUnAaehuo3M56Ki
- QXM4mLcez4BZ3HUMUZI/HbTESVUAvDjcmLBOJh51Wtg3aPWSJuwCXAowHl0YK+AI
- PIHXNoYN60VgpTGK4C0JBYUkzoqzLa/EUPEotCYxHYw90KSLSf6fdt6cmQ764zqA
- oWhTw==
+ :message-id:mime-version:references:subject:to; s=smtpout1; bh=l
+ x97InSopN/O1v2aDYcNgouB0arsBEJkleC9dU+DKrc=; b=lfwQU0mrzW3aOiX+B
+ 7E1atr9GpVIXbyP/A5n7QzqxC+nxGl07txpZixEkfEkgSl307LVfPu1BCQGKA5dG
+ hi5p2Dke55pKRfedAAOGq/Rulis0xvLsW7DSpivxjCQZGUt/6jZq21NZjgheMzeH
+ fz0NBkVLTms/h6bylmxNRgBJzfTYKqLTNrwc7yS2Tf/iiQN5Qtp/r2JW9gAFmMqM
+ 8a9+AXBf7ZW0CvwIB6jkXCwEtFLWrX/rmV703ctLl+8WKXol5UDBxQX3kVslReub
+ 4zFMAwBbqyCyYtxarVFZ4UfI6TZ2PXo9chbgA4yByLbR82ig38PRsiZwYWNvpAHr
+ RzIaQ==
 Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com
  [67.231.149.39])
- by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 4dwcdqsk4q-1
+ by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 4dwcdqsk4t-1
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 05 May 2026 01:53:05 -0400 (EDT)
+ for <dev@dpdk.org>; Tue, 05 May 2026 01:53:06 -0400 (EDT)
 Received: from pps.filterd (m0133268.ppops.net [127.0.0.1])
  by mx0a-00154901.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6454umMd2213920 for <dev@dpdk.org>; Tue, 5 May 2026 01:53:05 -0400
+ 6454umMe2213920 for <dev@dpdk.org>; Tue, 5 May 2026 01:53:06 -0400
 Received: from esapsmtpat05.us.dell.com (esapsmtpat05.us.dell.com
  [143.166.211.154])
- by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 4dxv9nkfc0-1
+ by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 4dxv9nkfc0-2
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK)
- for <dev@dpdk.org>; Tue, 05 May 2026 01:53:04 -0400 (EDT)
+ for <dev@dpdk.org>; Tue, 05 May 2026 01:53:06 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
- t=1777960385; x=1809496385;
+ t=1777960386; x=1809496386;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=xXmFL2PnBAs/4OZs7ekP9s2VrRxy8G5Cp1/LQZGXBWM=;
- b=LDC7WJjEgyBDmOhpnjZxOoQu7ZhvVi7QZlgYA1irIjRx52xkLCKPyude
- DxajD6HiAeFk4ApvnbqeObe2PK5Xaeh4GRU3dnbcYwoiEzwV/2Q6trIOR
- wsXJgujM2Qm7dMEb80Lyubd8CfkiU5YLHbGMsZk1TOsSr5tLAiMwXhn8s
- e9sRZJRWf2I4UZzj5mNy32FPIMsY5DbfRGK+c+scTRuXfnzx7Y+3Dt+ZX
- xgdW7P2NLhuMirBBM8gBJP3d5pHLMmPKGnABqxVM7lvZvwqwl2yo5tVvy
- GA5BNtl7v0qcWRPHFT5rWtm0a58skt5p3dzPKFsrPZLGtu27EMiaCRb+2 A==;
-X-CSE-ConnectionGUID: Bf7gdVjPRm6bLFoAVeaVEg==
-X-CSE-MsgGUID: LZIr8fe6TOy3TNZESeS8EA==
+ bh=lx97InSopN/O1v2aDYcNgouB0arsBEJkleC9dU+DKrc=;
+ b=beQAnIicgap1ZFpet03nm8LoDmW19uG1OxoDUd7tRiUAwoqJkFk0ze81
+ Sc9xnmrJGsLuyj5ggEEkQiRcOB+ZXOzw2iiMz8l8LTqi8pNURzINVBaPM
+ +ohSShajIseMmkQb3BIfjeX47OjZtxFRSYFxrFSSMxsf/GFLWA25aG3qE
+ 630HbRTXoHxTaJ8ff9hKhFP8LQDR6kDDcaj3RkmigtOYh94mokykhCNpJ
+ t83enTCrbfeKyu3uTh6zkXwdXYPoeMQCQHm/rdnOIuRoJigGm2nQjOdL3
+ tHTwt6nLSzENbZOSgguzGfHS3iRgvuMGpqTeg93SIhqUikF67Bb/aFcOS Q==;
+X-CSE-ConnectionGUID: LWrTd/v3QxCjhmBbYm7AKw==
+X-CSE-MsgGUID: 466zBz1uT+C/WBZCvLI4OA==
 X-LoopCount0: from 10.215.64.30
 X-MS-Exchange-CrossPremises-AuthAs: Internal
 Received: from mx1-adc.dell.com (HELO ieorr5-pvwed001.delllabs.net)
  ([10.215.64.30])
  by esapsmtpat05.us.dell.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 May 2026 05:53:04 +0000
-Received: from ieorr5-ppwem001.delllabs.net (100.64.0.132) by
+ 05 May 2026 05:53:06 +0000
+Received: from ieorr5-pvwer002.delllabs.net (100.64.0.135) by
  ieorr5-pvwed001.delllabs.net (10.215.64.30) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 5 May 2026 00:54:14 -0500
+ 15.2.1544.36; Tue, 5 May 2026 00:54:16 -0500
 Received: from ieorr5-pvwer002.delllabs.net (100.64.0.135) by
- ieorr5-ppwem001.delllabs.net (100.64.0.132) with Microsoft SMTP Server
+ ieorr5-pvwer002.delllabs.net (100.64.0.135) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Tue, 5 May 2026 00:53:02 -0500
+ 15.2.1544.36; Tue, 5 May 2026 00:53:04 -0500
 Received: from localhost (10.240.17.25) by smtprelay.delllabs.net
  (100.64.0.135) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
- Transport; Tue, 5 May 2026 00:53:02 -0500
+ Transport; Tue, 5 May 2026 00:53:04 -0500
 From: <pravin.bathija@dell.com>
 To: <dev@dpdk.org>, <stephen@networkplumber.org>
 CC: <pravin.bathija@dell.com>, <thomas@monjalon.net>,
  <maxime.coquelin@redhat.com>, <fengchengwen@huawei.com>
-Subject: [PATCH v11 1/5] vhost: add user to mailmap and define to vhost hdr
-Date: Tue, 5 May 2026 05:52:47 +0000
-Message-ID: <20260505055251.818594-2-pravin.bathija@dell.com>
+Subject: [PATCH v11 2/5] vhost_user: header defines for add/rem mem region
+Date: Tue, 5 May 2026 05:52:48 +0000
+Message-ID: <20260505055251.818594-3-pravin.bathija@dell.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260505055251.818594-1-pravin.bathija@dell.com>
 References: <20260505055251.818594-1-pravin.bathija@dell.com>
@@ -89,22 +89,21 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  impostorscore=0 clxscore=1015 malwarescore=0 suspectscore=0 phishscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605050052
-X-Proofpoint-ORIG-GUID: _pDfKViGApyfiYyOMmFC0pV0PoiCuMPy
-X-Authority-Analysis: v=2.4 cv=AsfeGu9P c=1 sm=1 tr=0 ts=69f985c1 cx=c_pps
+X-Proofpoint-ORIG-GUID: VKetpjtSz87pMGFxuVhWx9b-NZNrCR0O
+X-Authority-Analysis: v=2.4 cv=AsfeGu9P c=1 sm=1 tr=0 ts=69f985c2 cx=c_pps
  a=j0++y401J6f/BxNAf5EDow==:117 a=uswt3CficuEu8DJvSCSroA==:17
  a=NGcC8JguVDcA:10 a=ke5jqHz-1hQA:10 a=VkNPw1HP01LnGYTKEx00:22
  a=6gNNCFAoQcIphELLPWWu:22 a=aNt9FJNJ8fZyd9HhltU_:22 a=iLNU1ar6AAAA:8
- a=QyXUC8HyAAAA:8 a=1XWaLZrsAAAA:8 a=pGLkceISAAAA:8 a=M5GUcnROAAAA:8
- a=3CDqXdsAvEiB_ezhLkQA:9 a=gbU3OgOOxF9bX48Letew:22 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDA1MiBTYWx0ZWRfX78tK0F1JtlMc
- I/zAl/hJLFkgYrRh7S5IDdV/rrZfemzS3XgMw3VTZMOCLg+CZOFkns+bv9HjBzcKVD3MgOR0W8v
- A6no4fEP9hX7Z+JBYGVxGRo0hsjA8PEHGGif2LBwYW72FeqhwVagwjOe7f9ECc0fDbGrvyQpGPd
- 94aeY9274rvhJt/JiwroJlbPn0lN9xUDIfXhU8Tsh1+cz2eIEShM9iv6dOGkCveF5mmiksRDJIa
- BCajDXgh8i6lrH66KjrYAISUTLgag8GZozQiK9VrWFiNk3juDNmVhHDMk4XQIVVbKnfE7M+g+KL
- +QavOoOGHry22GUu6/YfCJqUxbRLSEiNNkAq4ydUOh1srEToEsxRAZ+ha8Y5b+1Wc5/cY/vW7s+
- 6XNaeKCVgzsQav8JmclpL51feQ5uawnqRQqS2iB7IMbRgWp1rFaFAESasSuOOEzI23E7JBSv5YH
- yG7sGCYGA4LaLgB0zOA==
-X-Proofpoint-GUID: _pDfKViGApyfiYyOMmFC0pV0PoiCuMPy
+ a=CCbkoWxl33X5vWekUEUA:9 a=gbU3OgOOxF9bX48Letew:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDA1MiBTYWx0ZWRfXzZ0UB0mAkAys
+ xoAvaBcLISeeHhVXWnww1/nuMWJonrGQc2dBC2nM6SBLEmJc2hkbYQfQSIBoAVnI0G1y8szoOs/
+ /o5IH1VIzuPoXx9fOjs7u8qwonjBqSJI2OW1SRPb5L/bcbBBrbvAr1ZIGwcwIOKaHZ8bxHCE/fw
+ RQiVM4hACR3HMWu3ZYL9apMQ5pLW3kVO4sWlXt859Br1P3Mw7wBsGOxho1WhkpVseROXyjTNF7f
+ Ol2MhWk9vnNRG/51Ld3vsCCX+ycqew4PXQicb8v00pTK8v6o/lPINrYlhilpOf+P8W7TgLLQ6wf
+ UgvDmYeskSUc6nFXjOLmJDtEeedfiKC/G3feAc+uvnnu3iumbmI3LBwxoWb5x3gCL2JWOlABwLA
+ +gX7Lht8v9BEDQTuW+LQc+5EdI/PMx8O/8JQ/RK+TjtRI2kUpsqwwk6qzPTY3gam3avPyJN0tsD
+ gV0aYwaIuBJ6QVNvlVQ==
+X-Proofpoint-GUID: VKetpjtSz87pMGFxuVhWx9b-NZNrCR0O
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0
  priorityscore=1501 malwarescore=0 impostorscore=0 adultscore=0
  lowpriorityscore=0 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
@@ -126,45 +125,53 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Pravin M Bathija <pravin.bathija@dell.com>
 
-- add user to mailmap file.
-- define a bit-field called VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS
-  that depicts if the feature/capability to add/remove memory regions
-  is supported. This is a part of the overall support for add/remove
-  memory region feature in this patchset.
+The changes in this file cover the enum message requests for
+supporting add/remove memory regions. The front-end vhost-user
+client sends messages like get max memory slots, add memory region
+and remove memory region which are covered in these changes which
+are on the vhost-user back-end. The changes also include data structure
+definition of memory region to be added/removed. The data structure
+VhostUserMsg has been changed to include the memory region.
 
 Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
 ---
- .mailmap              | 1 +
- lib/vhost/rte_vhost.h | 4 ++++
- 2 files changed, 5 insertions(+)
+ lib/vhost/vhost_user.h | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/.mailmap b/.mailmap
-index 0e0d83e1c6..cc44e27036 100644
---- a/.mailmap
-+++ b/.mailmap
-@@ -1295,6 +1295,7 @@ Prateek Agarwal <prateekag@cse.iitb.ac.in>
- Prathisna Padmasanan <prathisna.padmasanan@intel.com>
- Praveen Kaligineedi <pkaligineedi@google.com>
- Praveen Shetty <praveen.shetty@intel.com>
-+Pravin M Bathija <pravin.bathija@dell.com>
- Pravin Pathak <pravin.pathak.dev@gmail.com> <pravin.pathak@intel.com>
- Prince Takkar <ptakkar@marvell.com>
- Priyalee Kushwaha <priyalee.kushwaha@intel.com>
-diff --git a/lib/vhost/rte_vhost.h b/lib/vhost/rte_vhost.h
-index 2f7c4c0080..a7f9700538 100644
---- a/lib/vhost/rte_vhost.h
-+++ b/lib/vhost/rte_vhost.h
-@@ -109,6 +109,10 @@ extern "C" {
- #define VHOST_USER_PROTOCOL_F_INFLIGHT_SHMFD 12
- #endif
+diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h
+index ef486545ba..f8d921f7f1 100644
+--- a/lib/vhost/vhost_user.h
++++ b/lib/vhost/vhost_user.h
+@@ -67,6 +67,9 @@ typedef enum VhostUserRequest {
+ 	VHOST_USER_POSTCOPY_END = 30,
+ 	VHOST_USER_GET_INFLIGHT_FD = 31,
+ 	VHOST_USER_SET_INFLIGHT_FD = 32,
++	VHOST_USER_GET_MAX_MEM_SLOTS = 36,
++	VHOST_USER_ADD_MEM_REG = 37,
++	VHOST_USER_REM_MEM_REG = 38,
+ 	VHOST_USER_SET_STATUS = 39,
+ 	VHOST_USER_GET_STATUS = 40,
+ } VhostUserRequest;
+@@ -91,6 +94,11 @@ typedef struct VhostUserMemory {
+ 	VhostUserMemoryRegion regions[VHOST_MEMORY_MAX_NREGIONS];
+ } VhostUserMemory;
  
-+#ifndef VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS
-+#define VHOST_USER_PROTOCOL_F_CONFIGURE_MEM_SLOTS 15
-+#endif
++typedef struct VhostUserSingleMemReg {
++	uint64_t padding;
++	VhostUserMemoryRegion region;
++} VhostUserSingleMemReg;
 +
- #ifndef VHOST_USER_PROTOCOL_F_STATUS
- #define VHOST_USER_PROTOCOL_F_STATUS 16
- #endif
+ typedef struct VhostUserLog {
+ 	uint64_t mmap_size;
+ 	uint64_t mmap_offset;
+@@ -186,6 +194,7 @@ typedef struct __rte_packed_begin VhostUserMsg {
+ 		struct vhost_vring_state state;
+ 		struct vhost_vring_addr addr;
+ 		VhostUserMemory memory;
++		VhostUserSingleMemReg memory_single;
+ 		VhostUserLog    log;
+ 		struct vhost_iotlb_msg iotlb;
+ 		VhostUserCryptoSessionParam crypto_session;
 -- 
 2.43.0
 
