@@ -2,29 +2,31 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2AEFF8855
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 20:45:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABCCFF8855
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 20:45:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 29D7340A79;
-	Tue,  5 May 2026 22:45:21 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2316640A4B;
+	Tue,  5 May 2026 22:45:27 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id EAE7640695
- for <dev@dpdk.org>; Tue,  5 May 2026 22:45:19 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id D730A40684;
+ Tue,  5 May 2026 22:45:25 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 3CE8D20B7168; Tue,  5 May 2026 13:45:17 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3CE8D20B7168
+ id 336E320B7168; Tue,  5 May 2026 13:45:23 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 336E320B7168
 From: Long Li <longli@microsoft.com>
 To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Cc: Long Li <longli@microsoft.com>
-Subject: [PATCH 4/7] net/netvsc: add NOTICE-level debug logging for VF hotplug
- retry
-Date: Tue,  5 May 2026 13:44:53 -0700
-Message-ID: <20260505204457.267934-4-longli@microsoft.com>
+Cc: Long Li <longli@microsoft.com>,
+	stable@dpdk.org
+Subject: [PATCH 5/7] net/netvsc: retry when no matching MAC found in net
+ directory
+Date: Tue,  5 May 2026 13:44:54 -0700
+Message-ID: <20260505204457.267934-5-longli@microsoft.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260505204457.267934-1-longli@microsoft.com>
 References: <20260505204457.267934-1-longli@microsoft.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -39,84 +41,93 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add detailed NOTICE-level logging at every decision point in the
-netvsc_hotplug_retry function to diagnose VF re-attach failures:
+On multi-NIC Azure VMs, a single MANA PCI device (7870:00:00.0) hosts
+multiple VF interfaces. After PCI rescan, these interfaces register
+at different times — the management NIC's VF appears first, followed
+by the test NIC's VF.
 
-- Log each interface found in the net/ directory
-- Log when sa_family is not ARPHRD_ETHER
-- Log MAC address comparison details on mismatch
-- Log when the retry loop exits (with retry count)
+Previously, when netvsc_hotplug_retry scanned the net/ directory and
+found interfaces with non-matching MACs, it would exit the readdir
+loop and free the hotadd context, permanently giving up. The matching
+VF interface had not appeared yet.
 
-These logs help correlate DPDK hotplug retry behavior with kernel
-dmesg timestamps to identify timing issues during VF re-attach
-after PCI rescan on Azure.
+Now, when the readdir loop ends without finding a matching MAC (dir
+is NULL after loop), schedule another retry instead of giving up.
+This uses a separate mac_retry counter (limit 30, ~30 seconds) so
+the main retry loop remains unlimited.
 
+Fixes: a2a23a794b3a ("net/netvsc: support VF device hot add/remove")
+Cc: stable@dpdk.org
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/netvsc/hn_ethdev.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ drivers/net/netvsc/hn_ethdev.c | 34 ++++++++++++++++++++++++++++++++++
+ drivers/net/netvsc/hn_var.h    |  1 +
+ 2 files changed, 35 insertions(+)
 
 diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index 5d1ef10eff..124af4f1a1 100644
+index 124af4f1a1..8d9d6bbe8b 100644
 --- a/drivers/net/netvsc/hn_ethdev.c
 +++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -656,6 +656,11 @@ static void netvsc_hotplug_retry(void *args)
- 		if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
- 			continue;
+@@ -92,6 +92,12 @@ struct netvsc_mp_param {
+ /* Retry interval for hot-add VF device (microseconds) */
+ #define NETVSC_HOTADD_RETRY_INTERVAL 1000000
  
-+		PMD_DRV_LOG(NOTICE,
-+			    "%s: checking interface %s in %s (retry %d)",
-+			    __func__, dir->d_name, buf,
-+			    hot_ctx->eal_hot_plug_retry);
++/* Max retries when net/ directory exists but no matching MAC found.
++ * On multi-NIC PCI devices, a second VF may register later.
++ * 120 retries = ~2 minutes.
++ */
++#define NETVSC_MAX_MAC_RETRY 120
 +
- 		/* trying to get mac address if this is a network device*/
- 		s = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
- 		if (s == -1) {
-@@ -679,8 +684,12 @@ static void netvsc_hotplug_retry(void *args)
- 					  netvsc_hotplug_retry, hot_ctx);
- 			return;
- 		}
--		if (req.ifr_hwaddr.sa_family != ARPHRD_ETHER)
-+		if (req.ifr_hwaddr.sa_family != ARPHRD_ETHER) {
-+			PMD_DRV_LOG(NOTICE,
-+				    "%s: device %s sa_family=%d not ARPHRD_ETHER, skipping",
-+				    __func__, dir->d_name, req.ifr_hwaddr.sa_family);
- 			continue;
-+		}
- 
- 		memcpy(eth_addr.addr_bytes, req.ifr_hwaddr.sa_data,
- 		       RTE_DIM(eth_addr.addr_bytes));
-@@ -737,6 +746,20 @@ static void netvsc_hotplug_retry(void *args)
- 			if (ret)
- 				PMD_DRV_LOG(ERR, "Failed to add VF: %d", ret);
- 			break;
-+		} else {
-+			PMD_DRV_LOG(NOTICE,
-+				    "%s: MAC mismatch for %s: got %02x:%02x:%02x:%02x:%02x:%02x "
-+				    "expected %02x:%02x:%02x:%02x:%02x:%02x",
-+				    __func__, dir->d_name,
-+				    eth_addr.addr_bytes[0], eth_addr.addr_bytes[1],
-+				    eth_addr.addr_bytes[2], eth_addr.addr_bytes[3],
-+				    eth_addr.addr_bytes[4], eth_addr.addr_bytes[5],
-+				    dev->data->mac_addrs->addr_bytes[0],
-+				    dev->data->mac_addrs->addr_bytes[1],
-+				    dev->data->mac_addrs->addr_bytes[2],
-+				    dev->data->mac_addrs->addr_bytes[3],
-+				    dev->data->mac_addrs->addr_bytes[4],
-+				    dev->data->mac_addrs->addr_bytes[5]);
+ struct hn_xstats_name_off {
+ 	char name[RTE_ETH_XSTATS_NAME_SIZE];
+ 	unsigned int offset;
+@@ -763,6 +769,34 @@ static void netvsc_hotplug_retry(void *args)
  		}
  	}
  
-@@ -744,6 +767,9 @@ static void netvsc_hotplug_retry(void *args)
++	/* If we opened the net directory but didn't find a matching MAC,
++	 * the VF interface may not have appeared yet (e.g. on a multi-NIC
++	 * PCI device, the second VF registers later). Retry.
++	 */
++	if (di) {
++		closedir(di);
++		di = NULL;
++		if (!dir) {
++			/* readdir returned NULL — loop ended without match */
++			hot_ctx->mac_retry++;
++			if (hot_ctx->mac_retry < NETVSC_MAX_MAC_RETRY) {
++				PMD_DRV_LOG(NOTICE,
++					    "%s: no matching MAC found in %s, "
++					    "retrying in 1 second (mac_retry %d/%d)",
++					    __func__, buf,
++					    hot_ctx->mac_retry,
++					    NETVSC_MAX_MAC_RETRY);
++				rte_eal_alarm_set(NETVSC_HOTADD_RETRY_INTERVAL,
++						  netvsc_hotplug_retry,
++						  hot_ctx);
++				return;
++			}
++			PMD_DRV_LOG(NOTICE,
++				    "%s: no matching MAC found after %d retries, giving up",
++				    __func__, hot_ctx->mac_retry);
++		}
++	}
++
+ free_hotadd_ctx:
  	if (di)
  		closedir(di);
+diff --git a/drivers/net/netvsc/hn_var.h b/drivers/net/netvsc/hn_var.h
+index ef55dee28e..574b909c82 100644
+--- a/drivers/net/netvsc/hn_var.h
++++ b/drivers/net/netvsc/hn_var.h
+@@ -127,6 +127,7 @@ struct hv_hotadd_context {
+ 	struct hn_data *hv;
+ 	struct rte_devargs da;
+ 	int eal_hot_plug_retry;
++	int mac_retry;
+ };
  
-+	PMD_DRV_LOG(NOTICE, "%s: retry loop exiting for device %s (retry %d)",
-+		    __func__, d->name, hot_ctx->eal_hot_plug_retry);
-+
- 	rte_spinlock_lock(&hv->hotadd_lock);
- 	LIST_REMOVE(hot_ctx, list);
- 	rte_spinlock_unlock(&hv->hotadd_lock);
+ struct hn_data {
 -- 
 2.43.0
 
