@@ -2,51 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17633CD13DA
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 05:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A540CD13DA
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 05:31:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4B00A40659;
-	Tue,  5 May 2026 07:30:49 +0200 (CEST)
-Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
- [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id F1312402E8
- for <dev@dpdk.org>; Tue,  5 May 2026 07:30:47 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
- by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6454CPgf296239; Mon, 4 May 2026 22:30:45 -0700
+	by mails.dpdk.org (Postfix) with ESMTP id 411C340664;
+	Tue,  5 May 2026 07:30:52 +0200 (CEST)
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com
+ [67.231.148.174])
+ by mails.dpdk.org (Postfix) with ESMTP id 42C0E40664
+ for <dev@dpdk.org>; Tue,  5 May 2026 07:30:50 +0200 (CEST)
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+ by mx0a-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 644NRnkX3164635; Mon, 4 May 2026 22:30:49 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
  cc:content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=pfpt0220; bh=E
- O+ILIxzi2UNzIuMBSZdCTDeS7DUyMgLXz96b5m8eaE=; b=cd2lL/elixm0S21a1
- MP4OAa29jW1QKvKqGAtV9vCXrzE/tbpMZcPktCbRVjbqS6AvinSO2/fClQG7gXT9
- 7YJ0BLWABfpsWu84t23vhCjQjqb/y9aqoNqfPuwMd4by5/f/7m3GD+s03WvgVmlu
- 5vkdnpdpQeY7/xRQe1kPz5QJXCja8Hql8lIGxHwtVMtJSFVy9uLOtPCxug2SfoQe
- dCZVpQw76elo8Y8elI6n4LH5Ic7CqtktsuFP2lSHrXZK3EjI4H7KU6Xb88ygeabP
- TFM05uby8T66oMOh87muwTdamkh/JICcSsm6BYVa5jZs4WvL6t2YLzvRnNDt4xhq
- 2pxwA==
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=i
+ VMfahwMh+Plz2XPmyVAmFnh7mJsRLZ016oNHPSda8s=; b=Ukb4Sj/vZYnTjT3e6
+ LrwGlSuC9AdIxBcRmisnmaaBSCL2HnebYOot9mZ7LFdeCPQlwtD6lZwPLPqapQfH
+ q2O1gm0kgmY6G91yawGYjaJt3UjAx9MXJ2+taoyGkxo2joB18/KdbkM/GTKSLXqW
+ WziCiboFkvIqcfjtl3Q//b8mlL56wJz68UAQ0okfmlFGJSCEQk8zEJTmARdnA3rx
+ J5NTEHBaBLrtnCJFNteCYu91NSaQRbYWGPKO3hPGwaFbLNULZPZHE8/P16LILPk0
+ r4GuJxb0/tbGM4Uj0jDV7xMo3HKTC3flPYZRtK6ctTr4nSqQSzKrPoeIiRjSdRlc
+ XbsGw==
 Received: from dc5-exch05.marvell.com ([199.233.59.128])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4dx218vt3s-1
+ by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 4dy55brn3p-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
- Mon, 04 May 2026 22:30:44 -0700 (PDT)
+ Mon, 04 May 2026 22:30:49 -0700 (PDT)
 Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
  DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 4 May 2026 22:30:43 -0700
+ 15.2.1544.25; Mon, 4 May 2026 22:30:48 -0700
 Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
  (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Mon, 4 May 2026 22:30:43 -0700
+ Transport; Mon, 4 May 2026 22:30:48 -0700
 Received: from localhost.localdomain (unknown [10.28.36.154])
- by maili.marvell.com (Postfix) with ESMTP id EE3763F70B3;
- Mon,  4 May 2026 22:30:40 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id D0D4A3F70B3;
+ Mon,  4 May 2026 22:30:45 -0700 (PDT)
 From: rkudurumalla <rkudurumalla@marvell.com>
-To: Tomasz Duszynski <tduszynski@marvell.com>, Wathsala Vithanage
- <wathsala.vithanage@arm.com>
+To: Tomasz Duszynski <tduszynski@marvell.com>
 CC: <dev@dpdk.org>, <david.marchand@redhat.com>, <jerinj@marvell.com>,
  <ndabilpuram@marvell.com>, <mb@smartsharesystems.com>, Rakesh Kudurumalla
  <rkudurumalla@marvell.com>
-Subject: [PATCH v2 4/5] lib/pmu: fix out-of-bound access
-Date: Tue, 5 May 2026 11:00:22 +0530
-Message-ID: <20260505053023.3854665-4-rkudurumalla@marvell.com>
+Subject: [PATCH v2 5/5] test/pmu: improve error handling and enable test
+Date: Tue, 5 May 2026 11:00:23 +0530
+Message-ID: <20260505053023.3854665-5-rkudurumalla@marvell.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20260505053023.3854665-1-rkudurumalla@marvell.com>
 References: <20251024054830.933910-8-tduszynski@marvell.com>
@@ -54,22 +53,22 @@ References: <20251024054830.933910-8-tduszynski@marvell.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="y"
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDA0OCBTYWx0ZWRfX+zxsU2Bv+BZy
- zB7uPmsanFw4zHa2Uqn6wI/trJeDuImmsHKLzky0634FSxjEMl2OS+fuXOlpxkzaqWIJDM54/K9
- fv0Ly0BUD+TomolIZK7KvRT5COT0gnl10jy0GmEyoSey+ra9Vj8RnYKpdfsnHOnHhyp/vOeTvyM
- QyXbKXi8Mp4BicD8GkzotE5HwkKmPMLvbod7YC3FybHBIBYG4frJ6xkt1XMR5uM9667122EBNIJ
- Py2unbRxDVRKYDZXfLjDuHsUKMWCvAFlRJZ8WGi27WbjU8DOVCbMEtHSxU6SwV03B4p7AUHeWBy
- zh5ELTj6nc0Bf/G82+bAIx8LzhlvjczI490iL19XzL8ZPa182brOVo/D0+sSzpAzvQlIWUi3tDO
- D5nRGRh8o8y+8P2yZ+iIRzYrxEGJMCEJkGMMifB3eRpsEiWVH3reUwal3j0Na4Y0e9MNxMFALG5
- rgoZKbKhlHdUwPsz1gg==
-X-Proofpoint-ORIG-GUID: isUKfpTLmwR1crmAHM3pItAwy9-4dnBp
-X-Authority-Analysis: v=2.4 cv=coqrVV4i c=1 sm=1 tr=0 ts=69f98084 cx=c_pps
+X-Proofpoint-GUID: ju4HhCMII8q7wAfyUEa2o6EXlApJERml
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDA0OCBTYWx0ZWRfX+p7xu/jb2u8i
+ pdop6XIsXLbDqcFfJR0eb+W9ozMIoY//W1DvoiD4QvD4KigqMKE9MpzKsuwuxwx8gT4NBeLKdqv
+ g5x71cUej5nrBEHkQ719dTpkSYM8tozZA7B+yylymN1I/Ef5QWjZFYayN1E+rDxamDmLFCzzDHT
+ erZWENKowOvFXOtWbyEk25FpktW3SVQhKlNrqGIEIpMyQn5bLkyykoZUWwRN1cKDbSzEnRRiDlp
+ t6tYv63gQI8OpTj4EQUTTOpMM74GrN8w060U+rYbguVm75VdS49RyD8w4cnh1HUovc20hYzgSAx
+ FaC0mVa2HOEUpSwwIiJg0bQBHSUJ/QW1vjZfki97hxPraKyWr2e0XBAFJBNfBgxko9G4LmUjmkc
+ ZT8yx4nmZWuxp/q2Y0eRvU5NQR9T0mfv4DAtV/Jz+T0Hs5WRxoMvdpc2j2zo3kJCbbFcUKhH/aG
+ BdwNtfJzH4/gYf/G2kg==
+X-Proofpoint-ORIG-GUID: ju4HhCMII8q7wAfyUEa2o6EXlApJERml
+X-Authority-Analysis: v=2.4 cv=KMdqylFo c=1 sm=1 tr=0 ts=69f98089 cx=c_pps
  a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=qf4gfuq51q0A:10 a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=l0iWHRpgs5sLHlkKQ1IR:22 a=qit2iCtTFQkLgVSMPQTB:22 a=VwQbUJbxAAAA:8
- a=1XWaLZrsAAAA:8 a=M5GUcnROAAAA:8 a=0tJRoPSv-UADiWfFSEwA:9 a=3ZKOabzyN94A:10
+ a=l0iWHRpgs5sLHlkKQ1IR:22 a=TtqV-g6YmW1Jfm2GSLaY:22 a=VwQbUJbxAAAA:8
+ a=1XWaLZrsAAAA:8 a=M5GUcnROAAAA:8 a=Pi-TTh1At0rvmWiH9OMA:9 a=3ZKOabzyN94A:10
  a=k40Crp0UdiQA:10 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: isUKfpTLmwR1crmAHM3pItAwy9-4dnBp
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-05-05_01,2026-04-30_02,2025-10-01_01
@@ -88,148 +87,153 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-Make sure that out-of-bound access does not happen by saving one byte in
-buffer for NUL terminator.
+Improve test_pmu error handling to distinguish between different
+failure scenarios based on rte_pmu_init() return codes.
 
-Fixes: a8926a65ad1d ("pmu: support Arm")
-Fixes: 960c43184c4d ("pmu: introduce library for reading PMU events")
-Cc: tduszynski@marvell.com
+Changes:
+- Handle -ENODEV (no hardware) -> return TEST_SKIPPED
+  This is not a test failure, just missing hardware
 
-Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
+- Handle -EACCES (permission denied) -> return TEST_FAILED
+  This indicates a configuration issue that user must fix
+  Provide helpful hint about adjusting perf_event_paranoid
+
+- Handle other errors -> return TEST_FAILED
+  Unexpected errors should fail the test
+
+- Add error checking for rte_pmu_add_event()
+  Print event name if addition fails
+  Properly cleanup with rte_pmu_fini()
+
+- Check if PMU counter returned zero
+  Print message to help diagnose the issue
+
+- Re-enable the test by adding REGISTER_FAST_TEST()
+  Test was previously disabled due to failures
+  With improved error handling, failures can be properly diagnosed
+
+This makes test results more informative:
+- TEST_SKIPPED: No PMU hardware (expected on some platforms)
+- TEST_FAILED: Configuration issue or real bug (requires action)
+- TEST_SUCCESS: PMU working correctly
+
 Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 ---
- lib/pmu/pmu.c       | 54 +++++++++++++++++++++++++++++++++++++++++++--
- lib/pmu/pmu_arm64.c |  3 ++-
- lib/pmu/rte_pmu.h   | 12 +++++++++-
- 3 files changed, 65 insertions(+), 4 deletions(-)
+ app/test/test_pmu.c | 74 +++++++++++++++------------------------------
+ 1 file changed, 25 insertions(+), 49 deletions(-)
 
-diff --git a/lib/pmu/pmu.c b/lib/pmu/pmu.c
-index c14ffa5a2a..3f57d72a53 100644
---- a/lib/pmu/pmu.c
-+++ b/lib/pmu/pmu.c
-@@ -126,7 +126,7 @@ get_event_config(const char *name, uint64_t config[3])
- 	if (fp == NULL)
- 		return -errno;
+diff --git a/app/test/test_pmu.c b/app/test/test_pmu.c
+index a73594d73d..d1ec68e428 100644
+--- a/app/test/test_pmu.c
++++ b/app/test/test_pmu.c
+@@ -2,53 +2,18 @@
+  * Copyright(C) 2025 Marvell International Ltd.
+  */
  
--	ret = fread(buf, 1, sizeof(buf), fp);
-+	ret = fread(buf, 1, sizeof(buf) - 1, fp);
- 	if (ret == 0) {
- 		fclose(fp);
+-#include <stdbool.h>
++#include <errno.h>
+ #include <stdio.h>
+-#include <sys/types.h>
+-#include <unistd.h>
  
-@@ -419,6 +419,45 @@ rte_pmu_add_event(const char *name)
- 	return event->index;
+ #include <rte_pmu.h>
+ 
+ #include "test.h"
+ 
+-#define PERF_EVENT_PARANOID_PATH "/proc/sys/kernel/perf_event_paranoid"
+-
+-static bool perf_allowed_quirk(void)
+-{
+-	int level, ret;
+-	FILE *fp;
+-
+-	fp = fopen(PERF_EVENT_PARANOID_PATH, "r");
+-	if (!fp)
+-		return false;
+-
+-	ret = fscanf(fp, "%d", &level);
+-	fclose(fp);
+-	if (ret != 1)
+-		return false;
+-
+-	/* On vanilla Linux the default perf_event_paranoid level is 2, which allows non-privileged
+-	 * processes to access performance counters.
+-	 *
+-	 * Debian / Ubuntu and their derivatives apply patches that introduce
+-	 * additional paranoia levels:
+-	 *
+-	 * - Debian adds level 3, which restricts access to perf_event_open() for
+-	 *   monitoring other processes, but still allows unprivileged self-monitoring.
+-	 *   See: https://lore.kernel.org/all/1469630746-32279-1-git-send-email-jeffv@google.com/
+-	 * - Ubuntu adds level 4 (which is also the default), completely disabling perf_event_open()
+-	 *   for unprivileged users—effectively disabling self-monitoring.
+-	 *
+-	 * That said, check below should be sufficient to enable this test on most kernels.
+-	 */
+-	return level < 4;
+-}
+-
+ static int
+ test_pmu_read(void)
+ {
+ 	const char *name = NULL;
+-	int tries = 10, event;
++	int ret, tries = 10, event;
+ 	uint64_t val = 0;
+ 
+ #if defined(RTE_ARCH_ARM64)
+@@ -62,28 +27,39 @@ test_pmu_read(void)
+ 		return TEST_SKIPPED;
+ 	}
+ 
+-	if ((getuid() != 0) && !perf_allowed_quirk()) {
+-		printf("self-monitoring disabled\n");
++	ret = rte_pmu_init();
++	if (ret == -ENODEV) {
++		printf("PMU hardware not available or kernel lacks PMU support\n");
+ 		return TEST_SKIPPED;
+ 	}
+-
+-	if (rte_pmu_init() < 0) {
+-		printf("PMU not initialized\n");
+-		return TEST_SKIPPED;
++	if (ret == -EACCES) {
++		printf("Insufficient privileges for PMU access\n");
++		printf("Try: echo 0 | sudo tee /proc/sys/kernel/perf_event_paranoid\n");
++		return TEST_FAILED;
++	}
++	if (ret < 0) {
++		printf("PMU initialization failed: %d\n", ret);
++		return TEST_FAILED;
+ 	}
+ 
+ 	event = rte_pmu_add_event(name);
++	if (event < 0) {
++		printf("Failed to add event '%s': %d\n", name, event);
++		rte_pmu_fini();
++		return TEST_FAILED;
++	}
++
+ 	while (tries--)
+ 		val += rte_pmu_read(event);
+ 
+ 	rte_pmu_fini();
+ 
+-	/* rte_pmu_read() returns zero if it can't read perf counter. Thus series of zeros doesn't
+-	 * necessarily mean the counter is actually zero. It might just signal a problem with setup
+-	 * itself. So skip test to avoid testing failure and leave it to user to interpret this
+-	 * outcome.
+-	 */
+-	return val ? TEST_SUCCESS : TEST_SKIPPED;
++	if (val == 0) {
++		printf("PMU counter read returned zero\n");
++		return TEST_FAILED;
++	}
++
++	return TEST_SUCCESS;
  }
  
-+static int
-+check_perf_permissions(void)
-+{
-+	const char *paranoid_path = "/proc/sys/kernel/perf_event_paranoid";
-+	int level, ret;
-+	FILE *fp;
-+
-+	/* Check if user is root */
-+	if (getuid() == 0)
-+		return 0;  /* Root has access */
-+
-+	fp = fopen(paranoid_path, "r");
-+	if (!fp)
-+		return -ENOENT;  /* File doesn't exist */
-+
-+	ret = fscanf(fp, "%d", &level);
-+	fclose(fp);
-+
-+	if (ret != 1)
-+		return -EINVAL;
-+
-+	/* On vanilla Linux the default perf_event_paranoid level is 2, which allows non-privileged
-+	 * processes to access performance counters.
-+	 *
-+	 * Debian / Ubuntu and their derivatives apply patches that introduce
-+	 * additional paranoia levels:
-+	 *
-+	 * - Debian adds level 3, which restricts access to perf_event_open() for
-+	 *   monitoring other processes, but still allows unprivileged self-monitoring.
-+	 *   See: https://lore.kernel.org/all/1469630746-32279-1-git-send-email-jeffv@google.com/
-+	 * - Ubuntu adds level 4 (which is also the default), completely disabling perf_event_open()
-+	 *   for unprivileged users—effectively disabling self-monitoring.
-+	 */
-+	if (level >= 4)
-+		return -EACCES;  /* Insufficient privileges */
-+
-+	return 0;  /* Allowed */
-+}
-+
- static int
- add_events(const char *pattern)
- {
-@@ -492,10 +531,21 @@ rte_pmu_init(void)
- 	if (rte_pmu.initialized && ++rte_pmu.initialized)
- 		return 0;
- 
-+	/* Check permissions first */
-+	ret = check_perf_permissions();
-+	if (ret == -EACCES) {
-+		PMU_LOG(ERR, "Insufficient privileges for PMU access (check perf_event_paranoid)");
-+		return -EACCES;
-+	}
-+	if (ret == -ENOENT) {
-+		PMU_LOG(ERR, "Cannot access perf_event_paranoid file");
-+		return -ENODEV;
-+	}
-+
- 	ret = scan_pmus();
- 	if (ret) {
- 		PMU_LOG(ERR, "Failed to scan for event sources");
--		goto out;
-+		return -ENODEV;  /* No PMU hardware found */
- 	}
- 
- 	ret = pmu_arch_init();
-diff --git a/lib/pmu/pmu_arm64.c b/lib/pmu/pmu_arm64.c
-index 2c40b5f702..f3a817b42f 100644
---- a/lib/pmu/pmu_arm64.c
-+++ b/lib/pmu/pmu_arm64.c
-@@ -24,12 +24,13 @@ read_attr_int(const char *path, int *val)
- 	if (fd == -1)
- 		return -errno;
- 
--	ret = read(fd, buf, sizeof(buf));
-+	ret = read(fd, buf, sizeof(buf) - 1);
- 	if (ret == -1) {
- 		close(fd);
- 
- 		return -errno;
- 	}
-+	buf[ret] = '\0';
- 
- 	*val = strtol(buf, NULL, 10);
- 	close(fd);
-diff --git a/lib/pmu/rte_pmu.h b/lib/pmu/rte_pmu.h
-index 9970282c76..0c2a5d9298 100644
---- a/lib/pmu/rte_pmu.h
-+++ b/lib/pmu/rte_pmu.h
-@@ -150,10 +150,20 @@ __rte_pmu_enable_group(struct rte_pmu_event_group *group);
-  *
-  * Initialize PMU library.
-  *
-+ * This function initializes the Performance Monitoring Unit (PMU) library
-+ * by checking permissions, scanning for available PMU hardware, and setting up
-+ * necessary architecture-specific internals.
-+ *
-  * It's safe to call it multiple times.
-  *
-  * @return
-- *   0 in case of success, negative value otherwise.
-+ *   0 on success.
-+ *   -ENODEV if PMU hardware is not available or kernel lacks PMU support.
-+ *   -EACCES if insufficient privileges to access PMU.
-+ *           User should check /proc/sys/kernel/perf_event_paranoid settings.
-+ *   -ENOMEM if memory allocation failed.
-+ *   -EINVAL if invalid configuration detected.
-+ *   Other negative errno values on other failures.
-  */
- __rte_experimental
- int
+ static struct unit_test_suite pmu_tests = {
 -- 
 2.25.1
 
