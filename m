@@ -2,50 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38A8DFF885A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 06:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC7DFF885A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 07:01:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8369640668;
-	Tue,  5 May 2026 08:22:47 +0200 (CEST)
-Received: from cstnet.cn (smtp25.cstnet.cn [159.226.251.25])
- by mails.dpdk.org (Postfix) with ESMTP id A926B40659
- for <dev@dpdk.org>; Tue,  5 May 2026 08:22:45 +0200 (CEST)
-Received: from ar (unknown [119.114.153.107])
- by APP-05 (Coremail) with SMTP id zQCowABX6QyzjPlpP+RwDw--.15132S2;
- Tue, 05 May 2026 14:22:43 +0800 (CST)
-From: Sun Yuechi <sunyuechi@iscas.ac.cn>
-To: dev@dpdk.org
-Cc: Sun Yuechi <sunyuechi@iscas.ac.cn>, Zijian <zijian.oerv@isrc.iscas.ac.cn>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Pavan Nikhilesh <pbhagavatula@marvell.com>,
- =?UTF-8?q?Stanis=C5=82aw=20Kardach?= <stanislaw.kardach@gmail.com>
-Subject: [PATCH v5 2/2] node: lookup with RISC-V vector extension
-Date: Tue,  5 May 2026 14:21:41 +0800
-Message-ID: <20260505062142.575105-3-sunyuechi@iscas.ac.cn>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260331031059.2621971-1-sunyuechi@iscas.ac.cn>
-References: <20260331031059.2621971-1-sunyuechi@iscas.ac.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 6AA23402A7;
+	Tue,  5 May 2026 09:01:48 +0200 (CEST)
+Received: from fhigh-b1-smtp.messagingengine.com
+ (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+ by mails.dpdk.org (Postfix) with ESMTP id A0C1040270;
+ Tue,  5 May 2026 09:01:46 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id D83307A003F;
+ Tue,  5 May 2026 03:01:45 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-03.internal (MEProxy); Tue, 05 May 2026 03:01:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1777964505;
+ x=1778050905; bh=oEwEAS0o9x6OU1RBMwZ3x5vCUR4h49JoVTmtke69hiY=; b=
+ n/JQIPNnjPizJiWjSoBC86dIzqYP8agHMDGuUcYcCxdvzuoMDdfqERn396BLtaFU
+ YESHmIaAecEvluHu4PoRl5DGrF91oBQyO0hgfXX0vz5u4lUvcymIOaYnWIlmKJMC
+ HD4uqJP5THqt3H4A95MMEimvpADhjQRoSjSS9oGDB5PMXkxkfrUypn/3HH3bxEg0
+ s7B3U48ew1VLBthYn4uFHLP0++GbbqTtetRGjDNSapvKmVfdrbybOpiG/fk7vg9a
+ 8s1GoGFL7LMK2gnn2+htsIdNTKjfcJe9rcijGOLKiiVA2ezdstTIOlCJlyLS8AJs
+ dIx9iMR93hVEouSDUoaKfw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1777964505; x=
+ 1778050905; bh=oEwEAS0o9x6OU1RBMwZ3x5vCUR4h49JoVTmtke69hiY=; b=T
+ bOEajWct8AEYWBtJLLyjuacbB1Ga3wXiTaiiP5KdtOqPIcAyT3HDLdT/s12MQJ1Y
+ 3/5UQP05dUTnfR3mkDdCA8sufYQZkdlknkXvLzl13LXWQsehYRcxvZXyXi30wh11
+ j3GD+MSFmFlJPbdPByBIKoD8FKMxC5UvjqCUdzJ4u59ZdTD0WRPH3vRf048uQ2JT
+ C5E26FY/P2G+ReSdTukR8XZO2t/clhv8V5tMm75lCnsGx21RTdximiY2h/mR9xEY
+ oSjScXzPW5GO9kZFEhudUi/Rd3UOK+fsvKTdem7yr9UJvDMBoXPKvtBK8XZ4p3QU
+ cd50/BXxZiNVOdZHpOk+A==
+X-ME-Sender: <xms:2ZX5aaFTetqOS6q42OgAeALGTSgAPHGYjr_hhWx92oSqjnClLThtbw>
+ <xme:2ZX5afosPEFpv251aPJYor9DPFmnwlfJMFY4YluAKb3_ehQnu_KEl5luCZs67QMDt
+ YelNS6aVszL2nfuTuNrr81HjgE57jwGjGBVJGBa4BYk_0ztX_0_>
+X-ME-Received: <xmr:2ZX5aTR1FPVScIccc-6netkgmCByy1Y87ZltE6oC_NZnIlKKDcKXxfgsQgowfmiqd7sixKC0LjoHRjrULcYi9G8Ysg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddutddutdeiucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
+ hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
+ thhopehsthgrsghlvgesughpughkrdhorhhg
+X-ME-Proxy: <xmx:2ZX5acOWxJAThPrvIRHJ3ofIfCrtRrEcVeYOfuZ2XpUpv0dfhqNpkQ>
+ <xmx:2ZX5aWNraY0S01p0CevpttBdxN2ToulNCael1eWww96BrkTWa5L54Q>
+ <xmx:2ZX5acsubK7idL8z-XtPn3GGjKG14Vrq9x-MkBWK9DsJAHBRzLn69A>
+ <xmx:2ZX5aQXKnw3LHsAq-6F1q_K6Ye2lwPc8I36IhSvZLX4wB4q2HkUReA>
+ <xmx:2ZX5aVJPdFGgZ2mf0Gzt_r0_-lS5bA7S7PPdZXavVQfE0s3q7kUNFB1d>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 5 May 2026 03:01:44 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org, stable@dpdk.org
+Subject: Re: [PATCH] spinlock: remove volatile qualifier
+Date: Tue, 05 May 2026 09:01:43 +0200
+Message-ID: <3066926.2VHbPRQshP@thomas>
+In-Reply-To: <20260504100239.07d48122@phoenix.local>
+References: <20260504083714.2904729-1-thomas@monjalon.net>
+ <20260504100239.07d48122@phoenix.local>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: zQCowABX6QyzjPlpP+RwDw--.15132S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3WryktF1UWr1Uur4xKr1kGrg_yoW3Jw43p3
- 45JrWFkr93JF13G3ySva18ZFyru3W8Kr47GryDWayfCF93Cr4xCr9rtry2ka9xXryku3sr
- Xa1UZryUJr17G3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
- 6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
- 0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
- 2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
- W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
- JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
- AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIY
- rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
- v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
- JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU5oGQDU
- UUU
-X-Originating-IP: [119.114.153.107]
-X-CM-SenderInfo: 5vxq53phfkxq5lvft2wodfhubq/1tbiBgoSAmn5RoeFYwABsq
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,226 +88,32 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Implement ip4_lookup_node_process_vec function for RISC-V architecture
-using RISC-V Vector Extension instruction set.
+04/05/2026 19:02, Stephen Hemminger:
+> On Mon,  4 May 2026 10:37:14 +0200
+> Thomas Monjalon <thomas@monjalon.net> wrote:
+> 
+> > diff --git a/lib/eal/include/generic/rte_spinlock.h b/lib/eal/include/generic/rte_spinlock.h
+> > index c907d4e45c..19c0e34f0a 100644
+> > --- a/lib/eal/include/generic/rte_spinlock.h
+> > +++ b/lib/eal/include/generic/rte_spinlock.h
+> > @@ -197,8 +197,8 @@ rte_spinlock_trylock_tm(rte_spinlock_t *sl)
+> >   */
+> >  typedef struct {
+> >  	rte_spinlock_t sl; /**< the actual spinlock */
+> > -	volatile int user; /**< core id using lock, -1 for unused */
+> > -	volatile int count; /**< count of time this lock has been called */
+> > +	int user; /**< core id using lock, -1 for unused */
+> > +	int count; /**< count of time this lock has been called */
+> 
+> It might make sense to use unsigned for count, and sized types.
+> I.e do you really need 32 bit values?
 
-Signed-off-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
-Signed-off-by: Zijian <zijian.oerv@isrc.iscas.ac.cn>
----
- doc/guides/rel_notes/release_26_03.rst |   4 +
- lib/node/ip4_lookup.c                  |   5 +-
- lib/node/ip4_lookup_rvv.h              | 164 +++++++++++++++++++++++++
- 3 files changed, 172 insertions(+), 1 deletion(-)
- create mode 100644 lib/node/ip4_lookup_rvv.h
+Such a change would need to be evaluated in a performance benchmark.
 
-diff --git a/doc/guides/rel_notes/release_26_03.rst b/doc/guides/rel_notes/release_26_03.rst
-index 6bb18433f5..ea03c95477 100644
---- a/doc/guides/rel_notes/release_26_03.rst
-+++ b/doc/guides/rel_notes/release_26_03.rst
-@@ -153,6 +153,10 @@ New Features
-   Added handling of the key combination Control+L
-   to clear the screen before redisplaying the prompt.
- 
-+* **Added RISC-V vector extension support for node library.**
-+
-+  * Added vectorized IPv4 LPM lookup implementation for the node library
-+    using RISC-V Vector Extension instruction set.
- 
- Removed Items
- -------------
-diff --git a/lib/node/ip4_lookup.c b/lib/node/ip4_lookup.c
-index f6db3219f0..42db993142 100644
---- a/lib/node/ip4_lookup.c
-+++ b/lib/node/ip4_lookup.c
-@@ -44,6 +44,8 @@ static struct ip4_lookup_node_main ip4_lookup_nm;
- #include "ip4_lookup_neon.h"
- #elif defined(RTE_ARCH_X86)
- #include "ip4_lookup_sse.h"
-+#elif defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V)
-+#include "ip4_lookup_rvv.h"
- #endif
- 
- static uint16_t
-@@ -208,7 +210,8 @@ ip4_lookup_node_init(const struct rte_graph *graph, struct rte_node *node)
- 	IP4_LOOKUP_NODE_LPM(node->ctx) = ip4_lookup_nm.lpm_tbl[graph->socket];
- 	IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx) = dyn;
- 
--#if defined(__ARM_NEON) || defined(RTE_ARCH_X86)
-+#if defined(__ARM_NEON) || defined(RTE_ARCH_X86) || \
-+	(defined(RTE_ARCH_RISCV) && defined(RTE_RISCV_FEATURE_V))
- 	if (rte_vect_get_max_simd_bitwidth() >= RTE_VECT_SIMD_128)
- 		node->process = ip4_lookup_node_process_vec;
- #endif
-diff --git a/lib/node/ip4_lookup_rvv.h b/lib/node/ip4_lookup_rvv.h
-new file mode 100644
-index 0000000000..d03b78e111
---- /dev/null
-+++ b/lib/node/ip4_lookup_rvv.h
-@@ -0,0 +1,164 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2025 Institute of Software Chinese Academy of Sciences (ISCAS).
-+ */
-+
-+#ifndef __INCLUDE_IP4_LOOKUP_RVV_H__
-+#define __INCLUDE_IP4_LOOKUP_RVV_H__
-+
-+static __rte_always_inline vuint32m8_t
-+bswap32_vec(vuint32m8_t v, size_t vl)
-+{
-+	vuint32m8_t low16 = __riscv_vor_vv_u32m8(
-+		__riscv_vsll_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF, vl), 24, vl),
-+		__riscv_vsll_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF00, vl), 8, vl),
-+		vl);
-+
-+	vuint32m8_t high16 = __riscv_vor_vv_u32m8(
-+		__riscv_vsrl_vx_u32m8(__riscv_vand_vx_u32m8(v, 0xFF0000, vl), 8, vl),
-+		__riscv_vsrl_vx_u32m8(v, 24, vl),
-+		vl);
-+
-+	return __riscv_vor_vv_u32m8(low16, high16, vl);
-+}
-+
-+static __rte_always_inline void
-+ip4_lookup_rvv_lpm_lookup(const struct rte_lpm *lpm, const uint32_t *ips,
-+			uint32_t *hop, size_t vl, uint32_t defv)
-+{
-+	/* Load IP addresses (network byte order) */
-+	vuint32m8_t v_ip = bswap32_vec(__riscv_vle32_v_u32m8(ips, vl), vl);
-+
-+	vuint32m8_t v_tbl24_byte_offset = __riscv_vsll_vx_u32m8(
-+			__riscv_vsrl_vx_u32m8(v_ip, 8, vl), 2, vl);
-+
-+	vuint32m8_t vtbl_entry = __riscv_vluxei32_v_u32m8(
-+		(const uint32_t *)lpm->tbl24, v_tbl24_byte_offset, vl);
-+
-+	vbool4_t mask = __riscv_vmseq_vx_u32m8_b4(
-+		__riscv_vand_vx_u32m8(vtbl_entry, RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl),
-+		RTE_LPM_VALID_EXT_ENTRY_BITMASK, vl);
-+
-+	vuint32m8_t vtbl8_index = __riscv_vsll_vx_u32m8(
-+		__riscv_vadd_vv_u32m8(
-+			__riscv_vsll_vx_u32m8(
-+				__riscv_vand_vx_u32m8(vtbl_entry, 0x00FFFFFF, vl), 8, vl),
-+			__riscv_vand_vx_u32m8(v_ip, 0x000000FF, vl), vl),
-+		2, vl);
-+
-+	vtbl_entry = __riscv_vluxei32_v_u32m8_mu(
-+		mask, vtbl_entry, (const uint32_t *)(lpm->tbl8), vtbl8_index, vl);
-+
-+	vuint32m8_t vnext_hop = __riscv_vand_vx_u32m8(vtbl_entry, 0x00FFFFFF, vl);
-+	mask = __riscv_vmseq_vx_u32m8_b4(
-+		__riscv_vand_vx_u32m8(vtbl_entry, RTE_LPM_LOOKUP_SUCCESS, vl), 0, vl);
-+
-+	vnext_hop = __riscv_vmerge_vxm_u32m8(vnext_hop, defv, mask, vl);
-+
-+	__riscv_vse32_v_u32m8(hop, vnext_hop, vl);
-+}
-+
-+/* Can be increased further for VLEN > 256 */
-+#define RVV_MAX_BURST 64U
-+
-+static uint16_t
-+ip4_lookup_node_process_vec(struct rte_graph *graph, struct rte_node *node,
-+			void **objs, uint16_t nb_objs)
-+{
-+	struct rte_mbuf **pkts;
-+	struct rte_lpm *lpm = IP4_LOOKUP_NODE_LPM(node->ctx);
-+	const int dyn = IP4_LOOKUP_NODE_PRIV1_OFF(node->ctx);
-+	rte_edge_t next_index;
-+	void **to_next, **from;
-+	uint16_t last_spec = 0;
-+	uint16_t n_left_from;
-+	uint16_t held = 0;
-+	uint32_t drop_nh;
-+
-+	/* Temporary arrays for batch processing */
-+	uint32_t ips[RVV_MAX_BURST];
-+	uint32_t res[RVV_MAX_BURST];
-+	rte_edge_t next_hops[RVV_MAX_BURST];
-+
-+	/* Speculative next */
-+	next_index = RTE_NODE_IP4_LOOKUP_NEXT_REWRITE;
-+	/* Drop node */
-+	drop_nh = ((uint32_t)RTE_NODE_IP4_LOOKUP_NEXT_PKT_DROP) << 16;
-+
-+	pkts = (struct rte_mbuf **)objs;
-+	from = objs;
-+	n_left_from = nb_objs;
-+
-+	/* Get stream for the speculated next node */
-+	to_next = rte_node_next_stream_get(graph, node, next_index, nb_objs);
-+
-+	while (n_left_from > 0) {
-+		rte_edge_t fix_spec = 0;
-+
-+		size_t vl = __riscv_vsetvl_e32m8(RTE_MIN(n_left_from, RVV_MAX_BURST));
-+
-+		/* Extract IP addresses and metadata from current batch */
-+		for (size_t i = 0; i < vl; i++) {
-+			struct rte_ipv4_hdr *ipv4_hdr =
-+				rte_pktmbuf_mtod_offset(pkts[i], struct rte_ipv4_hdr *,
-+						sizeof(struct rte_ether_hdr));
-+			ips[i] = ipv4_hdr->dst_addr;
-+			node_mbuf_priv1(pkts[i], dyn)->cksum = ipv4_hdr->hdr_checksum;
-+			node_mbuf_priv1(pkts[i], dyn)->ttl = ipv4_hdr->time_to_live;
-+		}
-+
-+		/* Perform LPM lookup */
-+		ip4_lookup_rvv_lpm_lookup(lpm, ips, res, vl, drop_nh);
-+
-+		for (size_t i = 0; i < vl; i++) {
-+			/* Update statistics */
-+			if ((res[i] >> 16) == (drop_nh >> 16))
-+				NODE_INCREMENT_XSTAT_ID(node, 0, 1, 1);
-+
-+			/* Extract next hop and next node */
-+			node_mbuf_priv1(pkts[i], dyn)->nh = res[i] & 0xFFFF;
-+			next_hops[i] = res[i] >> 16;
-+
-+			/* Check speculation */
-+			fix_spec |= (next_index ^ next_hops[i]);
-+		}
-+
-+		if (unlikely(fix_spec)) {
-+			/* Copy successfully speculated packets before this batch */
-+			memcpy(to_next, from, last_spec * sizeof(from[0]));
-+			from += last_spec;
-+			to_next += last_spec;
-+			held += last_spec;
-+			last_spec = 0;
-+
-+			/* Process each packet in current batch individually */
-+			for (size_t i = 0; i < vl; i++) {
-+				if (next_index == next_hops[i]) {
-+					*to_next++ = from[i];
-+					held++;
-+				} else {
-+					rte_node_enqueue_x1(graph, node, next_hops[i], from[i]);
-+				}
-+			}
-+
-+			from += vl;
-+		} else {
-+			last_spec += vl;
-+		}
-+
-+		pkts += vl;
-+		n_left_from -= vl;
-+	}
-+
-+	/* Handle successfully speculated packets */
-+	if (likely(last_spec == nb_objs)) {
-+		rte_node_next_stream_move(graph, node, next_index);
-+		return nb_objs;
-+	}
-+
-+	held += last_spec;
-+	memcpy(to_next, from, last_spec * sizeof(from[0]));
-+	rte_node_next_stream_put(graph, node, next_index, held);
-+
-+	return nb_objs;
-+}
-+#endif
--- 
-2.54.0
+> Only in tree use of recursive spinlock in vdev code.
+> 
+> PS: I wonder if we really need to keep the transactional memory versions of stuff.
+
+I don't know, it's part of the API and has no maintenance cost.
+
 
