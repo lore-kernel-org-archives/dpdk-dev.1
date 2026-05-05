@@ -2,27 +2,29 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EC8CD3427
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 20:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AADDCD3427
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 20:45:20 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A9A0402A7;
-	Tue,  5 May 2026 22:45:12 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 0558340697;
+	Tue,  5 May 2026 22:45:16 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id D3CAF40275;
- Tue,  5 May 2026 22:45:10 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id BF17C4068A;
+ Tue,  5 May 2026 22:45:14 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id F173720B7168; Tue,  5 May 2026 13:45:07 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F173720B7168
+ id F402320B7168; Tue,  5 May 2026 13:45:11 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F402320B7168
 From: Long Li <longli@microsoft.com>
 To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Stephen Hemminger <stephen@networkplumber.org>
 Cc: Long Li <longli@microsoft.com>,
 	stable@dpdk.org
-Subject: [PATCH 1/7] net/netvsc: retry VF hotplug indefinitely until PCI
- device disappears
-Date: Tue,  5 May 2026 13:44:50 -0700
-Message-ID: <20260505204457.267934-1-longli@microsoft.com>
+Subject: [PATCH 2/7] net/netvsc: retry on SIOCGIFHWADDR failure during VF
+ hotplug
+Date: Tue,  5 May 2026 13:44:51 -0700
+Message-ID: <20260505204457.267934-2-longli@microsoft.com>
 X-Mailer: git-send-email 2.43.7
+In-Reply-To: <20260505204457.267934-1-longli@microsoft.com>
+References: <20260505204457.267934-1-longli@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -39,96 +41,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-After PCI rescan on Azure, the MANA kernel driver can take over 100
-seconds to probe and create the /sys/bus/pci/devices/<dev>/net directory.
-The previous fixed retry limit (NETVSC_MAX_HOTADD_RETRY=10, ~12 seconds)
-was insufficient, causing VF re-attach to fail with 'Failed to parse PCI
-device' on systems with slow MANA driver initialization.
+When the MANA VF net directory appears after PCI rescan, udev may rename
+the interface (e.g. eth1 → ens1) before DPDK can query its MAC address
+via SIOCGIFHWADDR. The ioctl fails because the interface name is stale
+during the rename window.
 
-Replace the fixed retry limit with an indefinite retry that only gives up
-when the PCI device itself disappears from sysfs. This is safe because:
+Instead of giving up when SIOCGIFHWADDR fails, close the directory and
+schedule another retry. The next attempt will re-read the directory with
+the updated interface name (e.g. ens1 instead of eth1) and succeed.
 
-- The retry uses rte_eal_alarm callbacks which are serialized on the EAL
-  interrupt thread, preventing races with VF remove or device close paths.
-- Device close (eth_hn_dev_uninit) explicitly cancels all pending hotplug
-  alarms via rte_eal_alarm_cancel and frees the context.
-- If the PCI device is removed while retrying, access() detects the
-  missing sysfs path and stops immediately.
-
-A periodic NOTICE log every 30 retries (~30s) provides visibility into
-long waits without flooding the log at DEBUG level.
+This was observed on Azure VMs where the MANA kernel driver takes >30
+seconds to probe after PCI rescan, and udev renames the interface
+immediately after registration.
 
 Fixes: a2a23a794b3a ("net/netvsc: support VF device hot add/remove")
 Cc: stable@dpdk.org
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/netvsc/hn_ethdev.c | 33 +++++++++++++++++++++++----------
- 1 file changed, 23 insertions(+), 10 deletions(-)
+ drivers/net/netvsc/hn_ethdev.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/netvsc/hn_ethdev.c b/drivers/net/netvsc/hn_ethdev.c
-index b8880edb4c..61e5aa464d 100644
+index 61e5aa464d..8bb2df3c19 100644
 --- a/drivers/net/netvsc/hn_ethdev.c
 +++ b/drivers/net/netvsc/hn_ethdev.c
-@@ -89,8 +89,8 @@ struct netvsc_mp_param {
- #define NETVSC_ARG_TXBREAK "tx_copybreak"
- #define NETVSC_ARG_RX_EXTMBUF_ENABLE "rx_extmbuf_enable"
- 
--/* The max number of retry when hot adding a VF device */
--#define NETVSC_MAX_HOTADD_RETRY 10
-+/* Retry interval for hot-add VF device (microseconds) */
-+#define NETVSC_HOTADD_RETRY_INTERVAL 1000000
- 
- struct hn_xstats_name_off {
- 	char name[RTE_ETH_XSTATS_NAME_SIZE];
-@@ -622,19 +622,32 @@ static void netvsc_hotplug_retry(void *args)
- 	PMD_DRV_LOG(DEBUG, "%s: retry count %d",
- 		    __func__, hot_ctx->eal_hot_plug_retry);
- 
--	if (hot_ctx->eal_hot_plug_retry++ > NETVSC_MAX_HOTADD_RETRY) {
--		PMD_DRV_LOG(NOTICE, "Failed to parse PCI device retry=%d",
--			    hot_ctx->eal_hot_plug_retry);
-+	hot_ctx->eal_hot_plug_retry++;
-+
-+	/* Check if PCI device still exists — if it disappeared, give up.
-+	 * Otherwise keep retrying until the net directory appears
-+	 * (MANA driver probe can take >100s after PCI rescan).
-+	 */
-+	snprintf(buf, sizeof(buf), "/sys/bus/pci/devices/%s", d->name);
-+	if (access(buf, F_OK) != 0) {
-+		PMD_DRV_LOG(NOTICE,
-+			    "PCI device %s no longer exists, giving up after %d retries",
-+			    d->name, hot_ctx->eal_hot_plug_retry);
- 		goto free_hotadd_ctx;
- 	}
- 
- 	snprintf(buf, sizeof(buf), "/sys/bus/pci/devices/%s/net", d->name);
- 	di = opendir(buf);
- 	if (!di) {
--		PMD_DRV_LOG(DEBUG, "%s: can't open directory %s, "
--			    "retrying in 1 second", __func__, buf);
--		/* The device is still being initialized, retry after 1 second */
--		rte_eal_alarm_set(1000000, netvsc_hotplug_retry, hot_ctx);
-+		if (hot_ctx->eal_hot_plug_retry % 30 == 0)
+@@ -667,10 +667,17 @@ static void netvsc_hotplug_retry(void *args)
+ 		ret = ioctl(s, SIOCGIFHWADDR, &req);
+ 		close(s);
+ 		if (ret == -1) {
+-			PMD_DRV_LOG(ERR,
+-				    "Failed to send SIOCGIFHWADDR for device %s",
++			/* Interface may be renamed by udev (e.g. eth1 → ens1),
++			 * retry instead of giving up.
++			 */
 +			PMD_DRV_LOG(NOTICE,
-+				    "%s: waiting for %s (retry %d, %ds elapsed)",
-+				    __func__, buf, hot_ctx->eal_hot_plug_retry,
-+				    hot_ctx->eal_hot_plug_retry);
-+		else
-+			PMD_DRV_LOG(DEBUG, "%s: can't open directory %s, "
-+				    "retrying in 1 second", __func__, buf);
-+		rte_eal_alarm_set(NETVSC_HOTADD_RETRY_INTERVAL, netvsc_hotplug_retry, hot_ctx);
- 		return;
- 	}
- 
-@@ -758,7 +771,7 @@ netvsc_hotadd_callback(const char *device_name, enum rte_dev_event_type type,
- 			rte_spinlock_lock(&hv->hotadd_lock);
- 			LIST_INSERT_HEAD(&hv->hotadd_list, hot_ctx, list);
- 			rte_spinlock_unlock(&hv->hotadd_lock);
--			rte_eal_alarm_set(1000000, netvsc_hotplug_retry, hot_ctx);
-+			rte_eal_alarm_set(NETVSC_HOTADD_RETRY_INTERVAL, netvsc_hotplug_retry, hot_ctx);
- 			return;
++				    "Failed to send SIOCGIFHWADDR for device %s, "
++				    "interface may be renaming, retrying",
+ 				    dir->d_name);
+-			break;
++			closedir(di);
++			rte_eal_alarm_set(NETVSC_HOTADD_RETRY_INTERVAL,
++					  netvsc_hotplug_retry, hot_ctx);
++			return;
  		}
- 
+ 		if (req.ifr_hwaddr.sa_family != ARPHRD_ETHER)
+ 			continue;
 -- 
 2.43.0
 
