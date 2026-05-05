@@ -2,25 +2,24 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 097E7FF8855
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 20:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E3EFF8855
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 20:45:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2BB5140693;
-	Tue,  5 May 2026 22:45:31 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 52C1940A87;
+	Tue,  5 May 2026 22:45:38 +0200 (CEST)
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
- by mails.dpdk.org (Postfix) with ESMTP id B809C406FF;
- Tue,  5 May 2026 22:45:29 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id E7F6240B94
+ for <dev@dpdk.org>; Tue,  5 May 2026 22:45:36 +0200 (CEST)
 Received: by linux.microsoft.com (Postfix, from userid 1202)
- id 0012B20B7168; Tue,  5 May 2026 13:45:26 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0012B20B7168
+ id 38E6B20B7168; Tue,  5 May 2026 13:45:34 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 38E6B20B7168
 From: Long Li <longli@microsoft.com>
 To: dev@dpdk.org, Wei Hu <weh@microsoft.com>,
  Stephen Hemminger <stephen@networkplumber.org>
-Cc: Long Li <longli@microsoft.com>,
-	stable@dpdk.org
-Subject: [PATCH 6/7] net/netvsc: forward per-queue stats from VF device
-Date: Tue,  5 May 2026 13:44:55 -0700
-Message-ID: <20260505204457.267934-6-longli@microsoft.com>
+Cc: Long Li <longli@microsoft.com>
+Subject: [PATCH 7/7] net/netvsc: handle VF recovery events for service reset
+Date: Tue,  5 May 2026 13:44:56 -0700
+Message-ID: <20260505204457.267934-7-longli@microsoft.com>
 X-Mailer: git-send-email 2.43.7
 In-Reply-To: <20260505204457.267934-1-longli@microsoft.com>
 References: <20260505204457.267934-1-longli@microsoft.com>
@@ -39,51 +38,221 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-hn_vf_stats_get was ignoring the qstats parameter (__rte_unused),
-calling rte_eth_stats_get which only collects aggregate stats. This
-meant per-queue stats (rx_q0_good_packets, tx_q0_good_packets, etc.)
-were always zero when VF datapath was active, even though the
-underlying MANA driver populates them in its stats_get callback.
+Register callbacks for RTE_ETH_EVENT_ERR_RECOVERING,
+RTE_ETH_EVENT_RECOVERY_SUCCESS, and RTE_ETH_EVENT_RECOVERY_FAILED
+events on the VF port to handle MANA service resets.
 
-Call the VF device's stats_get op directly with the qstats pointer
-so per-queue counters are forwarded through netvsc to the xstats
-telemetry output.
+- On ERR_RECOVERING: switch data path to synthetic but keep the
+  VF device attached in DPDK
+- On RECOVERY_SUCCESS: switch data path back to VF
+- On RECOVERY_FAILED: do full VF removal (same as INTR_RMV)
+- Unregister all recovery callbacks during detach, removal, and
+  close
 
-Fixes: dc7680e8597c ("net/netvsc: support integrated VF")
-Cc: stable@dpdk.org
+This ensures that during a service reset (kernel suspend/resume
+without PCI remove), netvsc keeps the VF attached and seamlessly
+switches back to it after recovery, without requiring a PCI
+hot-add event.
+
+This change is compatible with the current behavior when no
+service reset messages are received.
+
 Signed-off-by: Long Li <longli@microsoft.com>
 ---
- drivers/net/netvsc/hn_vf.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/netvsc/hn_vf.c | 144 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 144 insertions(+)
 
 diff --git a/drivers/net/netvsc/hn_vf.c b/drivers/net/netvsc/hn_vf.c
-index 1fcc65a712..497f747aab 100644
+index 497f747aab..f9b04fa4dc 100644
 --- a/drivers/net/netvsc/hn_vf.c
 +++ b/drivers/net/netvsc/hn_vf.c
-@@ -749,7 +749,7 @@ void hn_vf_rx_queue_release(struct hn_data *hv, uint16_t queue_id)
- 
- int hn_vf_stats_get(struct rte_eth_dev *dev,
- 		    struct rte_eth_stats *stats,
--		    struct eth_queue_stats *qstats __rte_unused)
-+		    struct eth_queue_stats *qstats)
- {
- 	struct hn_data *hv = dev->data->dev_private;
- 	struct rte_eth_dev *vf_dev;
-@@ -757,8 +757,12 @@ int hn_vf_stats_get(struct rte_eth_dev *dev,
- 
- 	rte_rwlock_read_lock(&hv->vf_lock);
- 	vf_dev = hn_get_vf_dev(hv);
--	if (vf_dev)
--		ret = rte_eth_stats_get(vf_dev->data->port_id, stats);
-+	if (vf_dev) {
-+		if (vf_dev->dev_ops->stats_get)
-+			ret = vf_dev->dev_ops->stats_get(vf_dev, stats, qstats);
-+		else
-+			ret = rte_eth_stats_get(vf_dev->data->port_id, stats);
-+	}
- 	rte_rwlock_read_unlock(&hv->vf_lock);
- 	return ret;
+@@ -50,6 +50,13 @@ static int hn_vf_match(const struct rte_eth_dev *dev)
  }
+ 
+ 
++static int hn_eth_recovering_callback(uint16_t port_id,
++	enum rte_eth_event_type event, void *cb_arg, void *out);
++static int hn_eth_recovery_success_callback(uint16_t port_id,
++	enum rte_eth_event_type event, void *cb_arg, void *out);
++static int hn_eth_recovery_failed_callback(uint16_t port_id,
++	enum rte_eth_event_type event, void *cb_arg, void *out);
++
+ /*
+  * Attach new PCI VF device and return the port_id
+  */
+@@ -111,7 +118,56 @@ static int hn_vf_attach(struct rte_eth_dev *dev, struct hn_data *hv)
+ 		return ret;
+ 	}
+ 
++	/* Register recovery event callbacks for service reset handling */
++	ret = rte_eth_dev_callback_register(hv->vf_ctx.vf_port,
++					    RTE_ETH_EVENT_ERR_RECOVERING,
++					    hn_eth_recovering_callback, hv);
++	if (ret) {
++		PMD_DRV_LOG(ERR,
++			    "Registering recovering callback failed for vf port %d ret %d",
++			    port, ret);
++		goto err_recovering;
++	}
++
++	ret = rte_eth_dev_callback_register(hv->vf_ctx.vf_port,
++					    RTE_ETH_EVENT_RECOVERY_SUCCESS,
++					    hn_eth_recovery_success_callback, hv);
++	if (ret) {
++		PMD_DRV_LOG(ERR,
++			    "Registering recovery success callback failed for vf port %d ret %d",
++			    port, ret);
++		goto err_recovery_success;
++	}
++
++	ret = rte_eth_dev_callback_register(hv->vf_ctx.vf_port,
++					    RTE_ETH_EVENT_RECOVERY_FAILED,
++					    hn_eth_recovery_failed_callback, hv);
++	if (ret) {
++		PMD_DRV_LOG(ERR,
++			    "Registering recovery failed callback failed for vf port %d ret %d",
++			    port, ret);
++		goto err_recovery_failed;
++	}
++
+ 	return 0;
++
++err_recovery_failed:
++	rte_eth_dev_callback_unregister(hv->vf_ctx.vf_port,
++					RTE_ETH_EVENT_RECOVERY_SUCCESS,
++					hn_eth_recovery_success_callback, hv);
++err_recovery_success:
++	rte_eth_dev_callback_unregister(hv->vf_ctx.vf_port,
++					RTE_ETH_EVENT_ERR_RECOVERING,
++					hn_eth_recovering_callback, hv);
++err_recovering:
++	rte_eth_dev_callback_unregister(hv->vf_ctx.vf_port,
++					RTE_ETH_EVENT_INTR_RMV,
++					hn_eth_rmv_event_callback, hv);
++	hv->vf_ctx.vf_attached = false;
++	hv->vf_ctx.vf_port = 0;
++	if (rte_eth_dev_owner_unset(port, hv->owner.id) < 0)
++		PMD_DRV_LOG(ERR, "Failed to unset owner for port %d", port);
++	return ret;
+ }
+ 
+ static void hn_vf_remove_unlocked(struct hn_data *hv);
+@@ -143,6 +199,12 @@ static void hn_remove_delayed(void *args)
+ 		PMD_DRV_LOG(ERR,
+ 			    "rte_eth_dev_callback_unregister failed ret=%d",
+ 			    ret);
++	rte_eth_dev_callback_unregister(port_id, RTE_ETH_EVENT_ERR_RECOVERING,
++					hn_eth_recovering_callback, hv);
++	rte_eth_dev_callback_unregister(port_id, RTE_ETH_EVENT_RECOVERY_SUCCESS,
++					hn_eth_recovery_success_callback, hv);
++	rte_eth_dev_callback_unregister(port_id, RTE_ETH_EVENT_RECOVERY_FAILED,
++					hn_eth_recovery_failed_callback, hv);
+ 
+ 	/* Detach and release port_id from system */
+ 	ret = rte_eth_dev_stop(port_id);
+@@ -187,6 +249,70 @@ int hn_eth_rmv_event_callback(uint16_t port_id,
+ 	return 0;
+ }
+ 
++/*
++ * Handle VF error recovery event from MANA PMD.
++ * Switch data path to synthetic but keep the VF attached.
++ */
++static int
++hn_eth_recovering_callback(uint16_t port_id,
++			   enum rte_eth_event_type event __rte_unused,
++			   void *cb_arg, void *out __rte_unused)
++{
++	struct hn_data *hv = cb_arg;
++
++	PMD_DRV_LOG(NOTICE, "VF port %u recovering from error", port_id);
++
++	rte_rwlock_write_lock(&hv->vf_lock);
++	hn_vf_remove_unlocked(hv);
++	rte_rwlock_write_unlock(&hv->vf_lock);
++
++	return 0;
++}
++
++/*
++ * Handle VF recovery success event from MANA PMD.
++ * Switch data path back to VF.
++ */
++static int
++hn_eth_recovery_success_callback(uint16_t port_id,
++				 enum rte_eth_event_type event __rte_unused,
++				 void *cb_arg, void *out __rte_unused)
++{
++	struct hn_data *hv = cb_arg;
++	int ret;
++
++	PMD_DRV_LOG(NOTICE, "VF port %u recovery succeeded", port_id);
++
++	rte_rwlock_write_lock(&hv->vf_lock);
++	if (hv->vf_ctx.vf_attached && !hv->vf_ctx.vf_vsc_switched) {
++		ret = hn_nvs_set_datapath(hv, NVS_DATAPATH_VF);
++		if (ret)
++			PMD_DRV_LOG(ERR, "Failed to switch to VF after recovery");
++		else
++			hv->vf_ctx.vf_vsc_switched = true;
++	}
++	rte_rwlock_write_unlock(&hv->vf_lock);
++
++	return 0;
++}
++
++/*
++ * Handle VF recovery failure event from MANA PMD.
++ * VF is unusable, do full removal.
++ */
++static int
++hn_eth_recovery_failed_callback(uint16_t port_id,
++				enum rte_eth_event_type event __rte_unused,
++				void *cb_arg, void *out __rte_unused)
++{
++	struct hn_data *hv = cb_arg;
++
++	PMD_DRV_LOG(NOTICE, "VF port %u recovery failed, removing", port_id);
++	rte_eal_alarm_set(1, hn_remove_delayed, hv);
++
++	return 0;
++}
++
+ static int hn_setup_vf_queues(int port, struct rte_eth_dev *dev)
+ {
+ 	struct hn_rx_queue *rx_queue;
+@@ -247,6 +373,12 @@ static void hn_vf_detach(struct hn_data *hv)
+ 
+ 	rte_eth_dev_callback_unregister(port, RTE_ETH_EVENT_INTR_RMV,
+ 					hn_eth_rmv_event_callback, hv);
++	rte_eth_dev_callback_unregister(port, RTE_ETH_EVENT_ERR_RECOVERING,
++					hn_eth_recovering_callback, hv);
++	rte_eth_dev_callback_unregister(port, RTE_ETH_EVENT_RECOVERY_SUCCESS,
++					hn_eth_recovery_success_callback, hv);
++	rte_eth_dev_callback_unregister(port, RTE_ETH_EVENT_RECOVERY_FAILED,
++					hn_eth_recovery_failed_callback, hv);
+ 
+ 	if (rte_eth_dev_owner_unset(port, hv->owner.id) < 0)
+ 		PMD_DRV_LOG(ERR, "Failed to unset owner for port %d", port);
+@@ -630,6 +762,18 @@ int hn_vf_close(struct rte_eth_dev *dev)
+ 						RTE_ETH_EVENT_INTR_RMV,
+ 						hn_eth_rmv_event_callback,
+ 						hv);
++		rte_eth_dev_callback_unregister(hv->vf_ctx.vf_port,
++						RTE_ETH_EVENT_ERR_RECOVERING,
++						hn_eth_recovering_callback,
++						hv);
++		rte_eth_dev_callback_unregister(hv->vf_ctx.vf_port,
++						RTE_ETH_EVENT_RECOVERY_SUCCESS,
++						hn_eth_recovery_success_callback,
++						hv);
++		rte_eth_dev_callback_unregister(hv->vf_ctx.vf_port,
++						RTE_ETH_EVENT_RECOVERY_FAILED,
++						hn_eth_recovery_failed_callback,
++						hv);
+ 		rte_eal_alarm_cancel(hn_remove_delayed, hv);
+ 		ret = rte_eth_dev_close(hv->vf_ctx.vf_port);
+ 		hv->vf_ctx.vf_attached = false;
 -- 
 2.43.0
 
