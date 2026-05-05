@@ -2,71 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D0D6CD3427
-	for <dpdk-dev@archiver.kernel.org>; Mon,  4 May 2026 17:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2146BFF885A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 05:30:32 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25E02402B2;
-	Mon,  4 May 2026 19:56:28 +0200 (CEST)
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
- [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id 71633400EF
- for <dev@dpdk.org>; Mon,  4 May 2026 19:56:25 +0200 (CEST)
-Received: by mail-dy1-f172.google.com with SMTP id
- 5a478bee46e88-2ba895adfeaso4661236eec.0
- for <dev@dpdk.org>; Mon, 04 May 2026 10:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1777917384;
- x=1778522184; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=sOKdKucaUi6j5U/QLlTfdzIlokY6qDl0MOtd7ZSBUJU=;
- b=A9TnXZ++EUSrx2pP0yzSzl+mwu+VM2AszwjXFYzOxELBjlr47/pGloljTpBhTFamCb
- Pkz9LMlYRBiI23F/uGh8yB25RoCkfFjdyfkP0awjtYiHXXqMVIH2msLocR4t3O3r6gV6
- s3k2+8icvLttdv37xLqJDl0XpjsVDYHA37f4Gz/E3/ZcuyXIMYP7gcVqSoQDEEtBJPVo
- jTBFVrj5uN0texQQgmAz5WRX2gOIZN4qBYWUZOtSO2pByW2XzkJSoHOvwFTrHGJ7S7M0
- W3t1TQEl6BZjpgiec19hjnzi8iczHVoVwv+DVRy2J9W7FxhFeHOB62DCRPrpGapTLxxQ
- rggA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1777917384; x=1778522184;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=sOKdKucaUi6j5U/QLlTfdzIlokY6qDl0MOtd7ZSBUJU=;
- b=sYAtYTXZmGe9FyJR7GMrsHE63rdlFoBwznl03VqSdI+YSeAV4YXFMqOcREaOEYemGX
- hsSktXOFrT+jeSoxiDa6a7RLU098b/cKcjTryUbjhxTU5k2MBjfDzMSXTuhHNgUmy+Ac
- FBMNXG5G5VDbntfxprTuHMeI/LicaLUq5dfmyjwUMF5mcDa1GonJPIZhgGM/uW9QXB64
- eYUb/8lEa9BIPmLJ4zjyqD5KD4j5omlJ/9Dj/JK/DiORuvfju+pkodRODXGC2HRWXsDF
- hgjXhbnXCxAw1VFhEPvvfRKQwImkdjIYt6BBgnx3mEGyR2bYn8lU1VHBHWwiDiEQClyD
- 08QQ==
-X-Gm-Message-State: AOJu0Yyu4E3VkwhN2dmul76QcJFd++oIoHmZG9ajzYvm3YrTK457kfPi
- UtdiaX1b5mB8GjHsNUqG5cCso4gVXvwFQsz3JzD3gTzKlLYEXBf8LW/NfPCHfsWGkCg=
-X-Gm-Gg: AeBDieumUb+ccUxmWFOD4N8VcvAQhWtfd7oqcQO3Ay12CiP4Wd0tz00Jgw08lw+TGyg
- AkUaYz47O1dAhbw2s+GlIeBrgwptHpFqleII2M3peVbtUZyp7KSozsuEjOmZnQ5rk3ghuor1aFR
- j33ZhvkAL4A48Jz5t8pPJKu/7SPG2j44Llio8othyqIvl0J3DeMtZkcaH84wu0cjAE9VLtx494t
- c1AgMpFhzdqE3WzTmH1GOTHebafLV4M+e85g4W1hXKJvnLkkSEKKyJBVz9KKi/BbkVOHZhKRW6k
- Ov/5t9elNdr5NIOmkK5I+wxs/xx+SJ7anPlAs0t1P6OCNwWtZNMMZi/HHHvSddDiIPfNdqr50xY
- wvaQRTohVVm+6nTqUQ5oe+XiI7FFWZRTCJfURKQz0j8exX5UdTL2/jHtdB6zu0i6CotQw9JjXK/
- VaovRnCUyKV61BETkYdGdOI+j9B697pnPF3RG16XiuMmn4hw==
-X-Received: by 2002:a05:7301:2c88:b0:2d9:cfa6:3d34 with SMTP id
- 5a478bee46e88-2efba28a5fbmr4645323eec.23.1777917383841; 
- Mon, 04 May 2026 10:56:23 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2ee3b7815d4sm16138213eec.20.2026.05.04.10.56.23
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 04 May 2026 10:56:23 -0700 (PDT)
-Date: Mon, 4 May 2026 10:56:21 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Rajesh Kumar <rajesh3.kumar@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com
-Subject: Re: [RFC v3 0/6] introduce PTP protocol library and software relay
-Message-ID: <20260504105621.0eb6dbab@phoenix.local>
-In-Reply-To: <20260504091728.1406661-1-rajesh3.kumar@intel.com>
-References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
- <20260504091728.1406661-1-rajesh3.kumar@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0BEF940272;
+	Tue,  5 May 2026 07:30:32 +0200 (CEST)
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
+ [67.231.156.173])
+ by mails.dpdk.org (Postfix) with ESMTP id 30EAD40270
+ for <dev@dpdk.org>; Tue,  5 May 2026 07:30:30 +0200 (CEST)
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 6454WUr1285371; Mon, 4 May 2026 22:30:29 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=g
+ y6HO0lHF01MkYlTDhUHXn+yIiGVu2UV19kErn13pSg=; b=P2s4ZoWAFdhJQOVgV
+ hOymOXcvVG93zketPVvUPIQgr/MY/wSkIyLjl8ucmeVfil9txCQuXrUovj7SX3wb
+ lTHw3eaAGc1WykoL58m0hFrGQlvtceBf59+5GgY957j58591uHeRtHjklX+gz0vd
+ 1uErUoetAyb3UwJwWxF4o7Y6AMM6D1K9gP2H+gF09Xijm37jhJk5hBinBCZko/B0
+ Ed2H3jfXadXerAxQOM9AkLAq0P1mCTjPs1meowpXWqE7hrVoVRlEBuTRRg8myVMR
+ /pjfN/tzuwvH4XrDRxODbCqZJFXkGcL+vqDB1cQzGUJzB9RFa2hv2DXcK5Y0h+pS
+ 3Uyqw==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4dx218vt37-1
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+ Mon, 04 May 2026 22:30:29 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Mon, 4 May 2026 22:30:28 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Mon, 4 May 2026 22:30:28 -0700
+Received: from localhost.localdomain (unknown [10.28.36.154])
+ by maili.marvell.com (Postfix) with ESMTP id A5B993F70B3;
+ Mon,  4 May 2026 22:30:25 -0700 (PDT)
+From: rkudurumalla <rkudurumalla@marvell.com>
+To: Jerin Jacob <jerinj@marvell.com>, Sunil Kumar Kori <skori@marvell.com>
+CC: <dev@dpdk.org>, <david.marchand@redhat.com>, <ndabilpuram@marvell.com>,
+ <mb@smartsharesystems.com>, Rakesh Kudurumalla <rkudurumalla@marvell.com>,
+ Tomasz Duszynski <tduszynski@marvell.com>
+Subject: [PATCH v2 1/5] trace: change scope of conditional block
+Date: Tue, 5 May 2026 11:00:19 +0530
+Message-ID: <20260505053023.3854665-1-rkudurumalla@marvell.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20251024054830.933910-8-tduszynski@marvell.com>
+References: <20251024054830.933910-8-tduszynski@marvell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDA0OCBTYWx0ZWRfX2oZTbiP/pkRg
+ unaaRwnirAILtwVRtfNpjUJew3k/tkGAN+WJmB+X48N0cT+aHls1w3PBtwGTDmUg5Gnt7Yf9a2q
+ vmcqApAMzbQsKCikyeMiauhvugKVTNR+UYeB2qc1UgYj6VGMr3ZaUGnmnU6eAWTS0bjpMgytlwG
+ M/B/qSXKuJAwFpVMOPWE6bay/YCZUi2uVVt8wprFrTVTaC3ZhRXkP9cmx8l4KVH255A+tjIPaj2
+ JPbrqxmng12+uss5CqdFwFM6Ahz1FIjukqcnTwTSmCfT0K8LnpDZ/lBgO7OlLq4FSNd49vf/RFc
+ aSdX8gxlrAeVVFGmaxa+j4Z/luPItxLqG4dRc4v1NPeA0sje+dU0bO3gk3Hy41e2kNRUu8s6rbz
+ hI5NWY1804mJJf0Yn1/oD/kdfFk6zZF37jo+CKNqI31g9BsrZ5cgGIzg1Q7nOexinQ6Ihu/mMY2
+ JqXfjW+0EwM3aR8pwXw==
+X-Proofpoint-ORIG-GUID: lrmWWr9Qg8Mq6vVz6L805ts29T4Y7YjS
+X-Authority-Analysis: v=2.4 cv=coqrVV4i c=1 sm=1 tr=0 ts=69f98075 cx=c_pps
+ a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+ a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
+ a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=Kcy3tOko_B9AbsjGbs8A:9
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-GUID: lrmWWr9Qg8Mq6vVz6L805ts29T4Y7YjS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-05_01,2026-04-30_02,2025-10-01_01
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -80,179 +83,40 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon,  4 May 2026 14:47:16 +0530
-Rajesh Kumar <rajesh3.kumar@intel.com> wrote:
+From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-> This series introduces a new DPDK library (lib/ptp) for IEEE 1588-2019
-> PTP protocol packet processing and a companion example application
-> (ptp_tap_relay_sw) that demonstrates its usage.
->=20
-> Motivation
-> ----------
-> Several DPDK applications need to classify and manipulate PTP packets
-> (e.g. ptpclient, ptp_tap_relay, custom Transparent Clocks). Today each
-> application re-implements its own PTP header parsing and correctionField
-> handling. A shared library avoids duplication and provides a tested,
-> standards-compliant foundation.
->=20
-> Library: lib/ptp
-> ----------------
-> The library provides:
->   - PTP header structures (IEEE 1588-2019 common header, timestamp,
->     port identity)
->   - Packet classification: rte_ptp_classify() detects PTP over L2
->     (EtherType 0x88F7), VLAN-tagged L2 (TPIDs 0x8100/0x88A8, single
->     or double), UDP/IPv4, UDP/IPv6 (ports 319/320), and VLAN-tagged
->     UDP variants
->   - Header access: rte_ptp_hdr_get() returns a pointer to the PTP
->     header inside an mbuf
->   - Inline helpers: correctionField manipulation (48.16 fixed-point),
->     message type extraction, two-step flag check, timestamp conversion
->   - Debug: rte_ptp_msg_type_str() for human-readable message names
->=20
-> Example: ptp_tap_relay_sw
-> -------------------------
-> A minimal PTP Transparent Clock relay between a DPDK-bound physical NIC
-> and a kernel TAP interface using software timestamps only. No patched
-> kernel modules, custom TAP PMD, or hardware timestamp support is
-> required.
->=20
-> The relay:
->   1. Receives packets on the physical NIC via DPDK
->   2. Parses packets using rte_ptp_hdr_get()
->   3. For event messages, records software timestamps
->      (clock_gettime(CLOCK_MONOTONIC)) at ingress and egress
->   4. Adds residence time to correctionField via rte_ptp_add_correction()
->      (IEEE 1588-2019 10.2 Transparent Clock)
->   5. Forwards bidirectionally: PHY <-> TAP
->=20
-> Unit Tests: app/test
-> --------------------
-> A comprehensive test suite (ptp_autotest) covers all library APIs,
-> including VLAN/QinQ/IPv4/IPv6 transports, correctionField helpers,
-> flags, and negative tests. This v3 also adds coverage for IPv4 options
-> (IHL > 5).
->=20
-> v3:
->   - Reused RTE_ETHER_TYPE_1588 via RTE_PTP_ETHERTYPE alias
->   - Updated version field comment to minorVersionPTP|versionPTP
->   - Fixed prog guide rte_ptp_hdr_get() signature (non-const mbuf)
->   - Added ALLOW_EXPERIMENTAL_API to ptp_tap_relay_sw Makefile
->   - Updated relay example to parse once (rte_ptp_hdr_get + msg_type)
->   - Updated relay sample app limitations wording to match capabilities
->   - Added hdr_get NULL checks in correction tests
->   - Added IPv4 options classification test (IHL > 5)
->   - Made correction counter update style consistent via pointer arg
->=20
-> v2:
->   - Fixed flag bit positions for host-order representation after
->     rte_be_to_cpu_16(): TWO_STEP (1<<9), UNICAST (1<<10),
->     LI_61 (1<<0), LI_59 (1<<1)
->   - Fixed QinQ classification: outer 0x88A8 now enters VLAN parser
->   - Fixed signed left-shift UB in rte_ptp_add_correction()
->   - Fixed promiscuous enable failure handling in relay port_init()
->   - Replaced deprecated master/slave terminology with IEEE terms
->   - Added and documented IHL validation for IPv4 PTP-over-UDP
->   - Changed rte_ptp_is_event() parameter to int with negative guard
->   - Changed rte_ptp_hdr_get() parameter to non-const mbuf
->   - Added programmer's guide note about avoiding double-parse
->=20
-> Rajesh Kumar (6):
->   ptp: introduce PTP protocol library
->   doc: add PTP library programmer's guide
->   examples/ptp_tap_relay_sw: add software PTP relay example
->   doc: add PTP software relay sample app guide
->   app/test: add PTP library unit tests
->   examples/ptpclient: use shared PTP library definitions
->=20
->  MAINTAINERS                                   |    8 +
->  app/test/meson.build                          |    1 +
->  app/test/test_ptp.c                           | 1106 +++++++++++++++++
->  doc/api/doxy-api-index.md                     |    1 +
->  doc/api/doxy-api.conf.in                      |    1 +
->  doc/guides/prog_guide/index.rst               |    1 +
->  doc/guides/prog_guide/ptp_lib.rst             |  205 +++
->  doc/guides/rel_notes/release_26_07.rst        |   13 +
->  doc/guides/sample_app_ug/index.rst            |    1 +
->  doc/guides/sample_app_ug/ptp_tap_relay_sw.rst |  212 ++++
->  examples/meson.build                          |    1 +
->  examples/ptp_tap_relay_sw/Makefile            |   43 +
->  examples/ptp_tap_relay_sw/meson.build         |   14 +
->  examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c  |  433 +++++++
->  examples/ptpclient/meson.build                |    1 +
->  examples/ptpclient/ptpclient.c                |  188 ++-
->  lib/meson.build                               |    1 +
->  lib/ptp/meson.build                           |    6 +
->  lib/ptp/rte_ptp.c                             |  185 +++
->  lib/ptp/rte_ptp.h                             |  339 +++++
->  20 files changed, 2644 insertions(+), 116 deletions(-)
->  create mode 100644 app/test/test_ptp.c
->  create mode 100644 doc/guides/prog_guide/ptp_lib.rst
->  create mode 100644 doc/guides/sample_app_ug/ptp_tap_relay_sw.rst
->  create mode 100644 examples/ptp_tap_relay_sw/Makefile
->  create mode 100644 examples/ptp_tap_relay_sw/meson.build
->  create mode 100644 examples/ptp_tap_relay_sw/ptp_tap_relay_sw.c
->  create mode 100644 lib/ptp/meson.build
->  create mode 100644 lib/ptp/rte_ptp.c
->  create mode 100644 lib/ptp/rte_ptp.h
->=20
->=20
-> base-commit: 7baf81674a011ab8a2fe329566b6d43d7377244c
+If ALLOW_EXPERIMENTAL_API isn't defined warnings should show up but
+build itself should not fail (unless -Dwerror=true).
 
-Lots of build failures in CI.
-Looks like alot around c++ build of header etc.
-g++ -Ibuildtools/chkincs/chkincs-cpp-exp.p -Ibuildtools/chkincs -I../buildt=
-ools/chkincs -I. -I.. -Iconfig -I../config -Ibuildtools/chkincs/staging -I.=
-./buildtools/chkincs/staging -fdiagnostics-color=3Dalways -pipe -D_FILE_OFF=
-SET_BITS=3D64 -Wall -Winvalid-pch -Wnon-virtual-dtor -Wextra -Werror -g -in=
-clude rte_config.h -march=3Dcorei7 -mrtm -Wno-missing-field-initializers -W=
-no-vla -DALLOW_EXPERIMENTAL_API -MD -MQ buildtools/chkincs/chkincs-cpp-exp.=
-p/meson-generated_rte_ptp.cpp.o -MF buildtools/chkincs/chkincs-cpp-exp.p/me=
-son-generated_rte_ptp.cpp.o.d -o buildtools/chkincs/chkincs-cpp-exp.p/meson=
--generated_rte_ptp.cpp.o -c buildtools/chkincs/chkincs-cpp-exp.p/rte_ptp.cpp
-In file included from buildtools/chkincs/staging/rte_memory.h:18,
-                 from buildtools/chkincs/staging/rte_ring_core.h:29,
-                 from buildtools/chkincs/staging/rte_ring.h:38,
-                 from buildtools/chkincs/staging/rte_mempool.h:49,
-                 from buildtools/chkincs/staging/rte_mbuf.h:39,
-                 from buildtools/chkincs/staging/rte_ether.h:20,
-                 from /home/runner/work/dpdk/dpdk/lib/ptp/rte_ptp.h:32,
-                 from buildtools/chkincs/chkincs-cpp-exp.p/rte_ptp.cpp:1:
-buildtools/chkincs/staging/rte_bitops.h:1468:1: error: conflicting declarat=
-ion of C function =E2=80=98bool rte_bit_test(const volatile uint32_t*, unsi=
-gned int)=E2=80=99
- 1468 | rte_bit_ ## family ## fun(qualifier uint ## size ## _t *addr, arg1_=
-type arg1_name) \
-      | ^~~~~~~~
-buildtools/chkincs/staging/rte_bitops.h:1475:9: note: in expansion of macro=
- =E2=80=98__RTE_BIT_OVERLOAD_V_2R=E2=80=99
- 1475 |         __RTE_BIT_OVERLOAD_V_2R(family, v_, fun, qualifier volatile=
-, size, ret_type, arg1_type, \
-      |         ^~~~~~~~~~~~~~~~~~~~~~~
-buildtools/chkincs/staging/rte_bitops.h:1479:9: note: in expansion of macro=
- =E2=80=98__RTE_BIT_OVERLOAD_SZ_2R=E2=80=99
- 1479 |         __RTE_BIT_OVERLOAD_SZ_2R(family, fun, qualifier, 32, ret_ty=
-pe, arg1_type, arg1_name) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-buildtools/chkincs/staging/rte_bitops.h:1575:1: note: in expansion of macro=
- =E2=80=98__RTE_BIT_OVERLOAD_2R=E2=80=99
- 1575 | __RTE_BIT_OVERLOAD_2R(, test, const, bool, unsigned int, nr)
-      | ^~~~~~~~~~~~~~~~~~~~~
-buildtools/chkincs/staging/rte_bitops.h:1468:1: note: previous declaration =
-=E2=80=98bool rte_bit_test(const uint32_t*, unsigned int)=E2=80=99
- 1468 | rte_bit_ ## family ## fun(qualifier uint ## size ## _t *addr, arg1_=
-type arg1_name) \
-      | ^~~~~~~~
-buildtools/chkincs/staging/rte_bitops.h:1474:9: note: in expansion of macro=
- =E2=80=98__RTE_BIT_OVERLOAD_V_2R=E2=80=99
- 1474 |         __RTE_BIT_OVERLOAD_V_2R(family,, fun, qualifier, size, ret_=
-type, arg1_type, arg1_name) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~~
-buildtools/chkincs/staging/rte_bitops.h:1479:9: note: in expansion of macro=
- =E2=80=98__RTE_BIT_OVERLOAD_SZ_2R=E2=80=99
- 1479 |         __RTE_BIT_OVERLOAD_SZ_2R(family, fun, qualifier, 32, ret_ty=
-pe, arg1_type, arg1_name) \
-      |         ^~~~~~~~~~~~~~~~~~~~~~~~
-buildtools/chkincs/staging/rte_bitops.h:1575:1: note: in expansion of macro=
- =E2=80=98__RTE_BIT_OVERLOAD_2R=E2=80=99
- 1575 | __RTE_BIT_OVERLOAD_2R(, test, const, bool, unsigned int, nr)
+In order to avoid build failures change the scope of conditional block.
+
+Signed-off-by: Tomasz Duszynski <tduszynski@marvell.com>
+Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
+---
+ lib/eal/include/rte_trace_point.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/lib/eal/include/rte_trace_point.h b/lib/eal/include/rte_trace_point.h
+index c0ebf1ce13..394b2619c5 100644
+--- a/lib/eal/include/rte_trace_point.h
++++ b/lib/eal/include/rte_trace_point.h
+@@ -289,7 +289,6 @@ int __rte_trace_point_register(rte_trace_point_t *trace, const char *name,
+ #ifndef __DOXYGEN__
+ 
+ #ifndef _RTE_TRACE_POINT_REGISTER_H_
+-#ifdef ALLOW_EXPERIMENTAL_API
+ 
+ #define __RTE_TRACE_EVENT_HEADER_ID_SHIFT (48)
+ 
+@@ -314,6 +313,8 @@ struct __rte_trace_header {
+ 	uint8_t mem[];
+ };
+ 
++#ifdef ALLOW_EXPERIMENTAL_API
++
+ RTE_DECLARE_PER_LCORE(void *, trace_mem);
+ 
+ static __rte_always_inline void *
+-- 
+2.25.1
+
