@@ -2,79 +2,53 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC7DFF885A
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 07:01:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9527ACD342F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 07:47:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6AA23402A7;
-	Tue,  5 May 2026 09:01:48 +0200 (CEST)
-Received: from fhigh-b1-smtp.messagingengine.com
- (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
- by mails.dpdk.org (Postfix) with ESMTP id A0C1040270;
- Tue,  5 May 2026 09:01:46 +0200 (CEST)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
- by mailfhigh.stl.internal (Postfix) with ESMTP id D83307A003F;
- Tue,  5 May 2026 03:01:45 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-03.internal (MEProxy); Tue, 05 May 2026 03:01:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1777964505;
- x=1778050905; bh=oEwEAS0o9x6OU1RBMwZ3x5vCUR4h49JoVTmtke69hiY=; b=
- n/JQIPNnjPizJiWjSoBC86dIzqYP8agHMDGuUcYcCxdvzuoMDdfqERn396BLtaFU
- YESHmIaAecEvluHu4PoRl5DGrF91oBQyO0hgfXX0vz5u4lUvcymIOaYnWIlmKJMC
- HD4uqJP5THqt3H4A95MMEimvpADhjQRoSjSS9oGDB5PMXkxkfrUypn/3HH3bxEg0
- s7B3U48ew1VLBthYn4uFHLP0++GbbqTtetRGjDNSapvKmVfdrbybOpiG/fk7vg9a
- 8s1GoGFL7LMK2gnn2+htsIdNTKjfcJe9rcijGOLKiiVA2ezdstTIOlCJlyLS8AJs
- dIx9iMR93hVEouSDUoaKfw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1777964505; x=
- 1778050905; bh=oEwEAS0o9x6OU1RBMwZ3x5vCUR4h49JoVTmtke69hiY=; b=T
- bOEajWct8AEYWBtJLLyjuacbB1Ga3wXiTaiiP5KdtOqPIcAyT3HDLdT/s12MQJ1Y
- 3/5UQP05dUTnfR3mkDdCA8sufYQZkdlknkXvLzl13LXWQsehYRcxvZXyXi30wh11
- j3GD+MSFmFlJPbdPByBIKoD8FKMxC5UvjqCUdzJ4u59ZdTD0WRPH3vRf048uQ2JT
- C5E26FY/P2G+ReSdTukR8XZO2t/clhv8V5tMm75lCnsGx21RTdximiY2h/mR9xEY
- oSjScXzPW5GO9kZFEhudUi/Rd3UOK+fsvKTdem7yr9UJvDMBoXPKvtBK8XZ4p3QU
- cd50/BXxZiNVOdZHpOk+A==
-X-ME-Sender: <xms:2ZX5aaFTetqOS6q42OgAeALGTSgAPHGYjr_hhWx92oSqjnClLThtbw>
- <xme:2ZX5afosPEFpv251aPJYor9DPFmnwlfJMFY4YluAKb3_ehQnu_KEl5luCZs67QMDt
- YelNS6aVszL2nfuTuNrr81HjgE57jwGjGBVJGBa4BYk_0ztX_0_>
-X-ME-Received: <xmr:2ZX5aTR1FPVScIccc-6netkgmCByy1Y87ZltE6oC_NZnIlKKDcKXxfgsQgowfmiqd7sixKC0LjoHRjrULcYi9G8Ysg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddutddutdeiucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkph
- hluhhmsggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphht
- thhopehsthgrsghlvgesughpughkrdhorhhg
-X-ME-Proxy: <xmx:2ZX5acOWxJAThPrvIRHJ3ofIfCrtRrEcVeYOfuZ2XpUpv0dfhqNpkQ>
- <xmx:2ZX5aWNraY0S01p0CevpttBdxN2ToulNCael1eWww96BrkTWa5L54Q>
- <xmx:2ZX5acsubK7idL8z-XtPn3GGjKG14Vrq9x-MkBWK9DsJAHBRzLn69A>
- <xmx:2ZX5aQXKnw3LHsAq-6F1q_K6Ye2lwPc8I36IhSvZLX4wB4q2HkUReA>
- <xmx:2ZX5aVJPdFGgZ2mf0Gzt_r0_-lS5bA7S7PPdZXavVQfE0s3q7kUNFB1d>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 5 May 2026 03:01:44 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org, stable@dpdk.org
-Subject: Re: [PATCH] spinlock: remove volatile qualifier
-Date: Tue, 05 May 2026 09:01:43 +0200
-Message-ID: <3066926.2VHbPRQshP@thomas>
-In-Reply-To: <20260504100239.07d48122@phoenix.local>
-References: <20260504083714.2904729-1-thomas@monjalon.net>
- <20260504100239.07d48122@phoenix.local>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+	by mails.dpdk.org (Postfix) with ESMTP id 8505740272;
+	Tue,  5 May 2026 09:47:08 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56])
+ by mails.dpdk.org (Postfix) with ESMTP id 7810640270;
+ Tue,  5 May 2026 09:47:07 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4g8rF651PhzJ46Ck;
+ Tue,  5 May 2026 15:46:50 +0800 (CST)
+Received: from dubpeml500002.china.huawei.com (unknown [7.214.145.83])
+ by mail.maildlp.com (Postfix) with ESMTPS id C6E1F40570;
+ Tue,  5 May 2026 15:47:05 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml500002.china.huawei.com (7.214.145.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 5 May 2026 08:47:05 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Tue, 5 May 2026 08:47:05 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>,
+ "dev@dpdk.org" <dev@dpdk.org>, Konstantin Ananyev
+ <konstantin.v.ananyev@yandex.ru>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>, "stable@dpdk.org" <stable@dpdk.org>
+CC: David Marchand <david.marchand@redhat.com>
+Subject: RE: [PATCH] ring: add cache guard after ring elements table
+Thread-Topic: [PATCH] ring: add cache guard after ring elements table
+Thread-Index: AQHc0XkQlTcfmwaszE+wFaHNWAZ9L7X358TAgAAS8tCAArdBsIADNeMQgAE7FGA=
+Date: Tue, 5 May 2026 07:47:05 +0000
+Message-ID: <70a4b0baa49448d0b93d2088319afaf5@huawei.com>
+References: <20260421102358.118204-1-mb@smartsharesystems.com>
+ <e1fa27a3450f4bc5ab0c12bcfb07f694@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65835@smartserver.smartshare.dk>
+ <452224d4ef25481b938a10b3d82b69a5@huawei.com>
+ <98CBD80474FA8B44BF855DF32C47DC35F65842@smartserver.smartshare.dk>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65842@smartserver.smartshare.dk>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.126.173.196]
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,32 +62,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-04/05/2026 19:02, Stephen Hemminger:
-> On Mon,  4 May 2026 10:37:14 +0200
-> Thomas Monjalon <thomas@monjalon.net> wrote:
-> 
-> > diff --git a/lib/eal/include/generic/rte_spinlock.h b/lib/eal/include/generic/rte_spinlock.h
-> > index c907d4e45c..19c0e34f0a 100644
-> > --- a/lib/eal/include/generic/rte_spinlock.h
-> > +++ b/lib/eal/include/generic/rte_spinlock.h
-> > @@ -197,8 +197,8 @@ rte_spinlock_trylock_tm(rte_spinlock_t *sl)
-> >   */
-> >  typedef struct {
-> >  	rte_spinlock_t sl; /**< the actual spinlock */
-> > -	volatile int user; /**< core id using lock, -1 for unused */
-> > -	volatile int count; /**< count of time this lock has been called */
-> > +	int user; /**< core id using lock, -1 for unused */
-> > +	int count; /**< count of time this lock has been called */
-> 
-> It might make sense to use unsigned for count, and sized types.
-> I.e do you really need 32 bit values?
-
-Such a change would need to be evaluated in a performance benchmark.
-
-> Only in tree use of recursive spinlock in vdev code.
-> 
-> PS: I wonder if we really need to keep the transactional memory versions of stuff.
-
-I don't know, it's part of the API and has no maintenance cost.
-
-
+DQoNCj4gPiA+ID4gPiBBZGRlZCBjYWNoZSBndWFyZCBhZnRlciB0aGUgdGFibGUgaG9sZGluZyB0
+aGUgcmluZyBlbGVtZW50cywgdG8NCj4gPiBhdm9pZA0KPiA+ID4gPiA+IGZhbHNlIHNoYXJpbmcg
+Y29uZmxpY3RzIGNhdXNlZCBieSBuZXh0LWxpbmUgaGFyZHdhcmUgcHJlZmV0Y2hlcnMNCj4gPiB3
+aGVuDQo+ID4gPiA+ID4gYWNjZXNzaW5nIGVsZW1lbnRzIGF0IHRoZSBlbmQgb2YgdGhlIHJpbmcg
+dGFibGUuDQo+ID4gPiA+DQo+ID4gPiA+IEkgZG9uJ3Qgc2VlIGFueSBoYXJtIHdpdGggaXQsIGFu
+ZCBpbiB0aGVvcnkgaXQgbWlnaHQgaGVscCBpbiBzb21lDQo+ID4gPiA+IGNhc2VzLi4uDQo+ID4g
+PiA+IFRob3VnaCBJIHdvbmRlciBob3cgcmVhbCBpcyB0aGF0IHByb2JsZW0/DQo+ID4gPiA+IERp
+ZCB5b3UgZXZlciBvYnNlcnZlIHN1Y2ggY29udGVudGlvbiB0byBoYXBwZW4/DQo+ID4gPg0KPiA+
+ID4gSSBuZXZlciBvYnNlcnZlZCBhIHByb2JsZW0gd2l0aCB0aGlzLg0KPiA+ID4gVGhlIHJpc2sg
+b2YgY29udGVudGlvbiBkZXBlbmRzIG9uIHdoYXQgaXMgYWxsb2NhdGVkIGluIHRoZSBtZW1vcnkN
+Cj4gPiBhZnRlciB0aGUgcmluZy4NCj4gPiA+IFdoaWNoIGlzIGFwcGxpY2F0aW9uIHNwZWNpZmlj
+Lg0KPiA+ID4NCj4gPiA+IEl0IHNlZW1zIGxpa2UgYSBwdXJlbHkgdGhlb3JldGljYWwgaXNzdWUs
+IGJ1dCBzaG91bGQgYmUgZml4ZWQgYW55d2F5LA0KPiA+IHRvIGVsaW1pbmF0ZQ0KPiA+ID4gdGhh
+dCByaXNrLg0KPiA+DQo+ID4gT2ssIGFzIEkgc2FpZCBJIHNlZSBubyBoYXJtIHdpdGggaXQuDQo+
+ID4gU2hvdWxkIHdlIGRvY3VtZW50IHRoaXMgY2hhbmdlIHNvbWV3aGVyZT8gUk4gb3IgUEc/DQo+
+IA0KPiBXZSBkb24ndCB3YW50IHRoZSByZWxlYXNlIG5vdGVzIG92ZXJmbG93aW5nIHdpdGggbWlu
+b3IgZGV0YWlscy4NCj4gSU1PLCB0aGlzIGNoYW5nZSBpcyBiZWxvdyB0aGUgdGhyZXNob2xkIGZv
+ciB3aGF0IHBlb3BsZSBtaWdodCBjYXJlIGFib3V0Lg0KPiBQZW9wbGUgaW50ZXJlc3RlZCBpbiB0
+aGUgZGV0YWlsZWQgY2hhbmdlcyBiZXR3ZWVuIHJlbGVhc2VzIHNob3VsZCByZWFkIHRoZSBnaXQN
+Cj4gbG9nLg0KDQpJIHN0aWxsIHRoaW5rIHdlIGRvIG5lZWQgZG9jdW1lbnQgc29tZXdoZXJlIHdo
+eSB3ZSBkb2luZyBpdC4NCklmIHlvdSB0aGluayBSTiBvciBQRyBpcyBub3QgdGhlIHJpZ2h0IHBs
+YWNlLCBsZXQncyBqdXN0IHB1dCBpdCBhcyBhIGNvbW1lbnQgZm9yIHRoYXQgcGFydGljdWxhciBm
+dW5jdGlvbi4NCg0KPiBBbHNvLCBJIGRvbid0IHRoaW5rIGl0J3Mgd29ydGggYmFja3BvcnRpbmcs
+IGJlY2F1c2UgSSBjb25zaWRlciBpdCB1bmxpa2VseSB0byBoYXZlDQo+IGFueSByZWFsIGVmZmVj
+dC4NCj4gSW4gdGhlIGNvbnRleHQgb2YgYmFja3BvcnRpbmcsIGl0IGNvdWxkIGJlIGNvbnNpZGVy
+ZWQgYSBwZXJmb3JtYW5jZQ0KPiBpbXByb3ZlbWVudCByYXRoZXIgdGhhbiBhIGJ1ZyBmaXguDQoN
+CkkgZG9uJ3Qgc2VlIG11Y2ggcG9pbnQgdG8gYmFja3BvcnQgaXQuDQoNCj4gDQo+ID4gQWNrZWQt
+Ynk6IEtvbnN0YW50aW4gQW5hbnlldiA8a29uc3RhbnRpbi5hbmFueWV2QGh1YXdlaS5jb20+DQo+
+ID4NCj4gPiA+ID4NCj4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBNb3J0ZW4gQnLDuHJ1cCA8bWJA
+c21hcnRzaGFyZXN5c3RlbXMuY29tPg0KPiA+ID4gPiA+IC0tLQ0KPiA+ID4gPiA+ICBsaWIvcmlu
+Zy9ydGVfcmluZy5jIHwgMyArKysNCj4gPiA+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0
+aW9ucygrKQ0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2xpYi9yaW5nL3J0ZV9y
+aW5nLmMgYi9saWIvcmluZy9ydGVfcmluZy5jDQo+ID4gPiA+ID4gaW5kZXggZjEwMDUwYTFjNC4u
+OWNjYzYyY2Q0MiAxMDA2NDQNCj4gPiA+ID4gPiAtLS0gYS9saWIvcmluZy9ydGVfcmluZy5jDQo+
+ID4gPiA+ID4gKysrIGIvbGliL3JpbmcvcnRlX3JpbmcuYw0KPiA+ID4gPiA+IEBAIC03Myw4ICs3
+MywxMSBAQCBydGVfcmluZ19nZXRfbWVtc2l6ZV9lbGVtKHVuc2lnbmVkIGludCBlc2l6ZSwNCj4g
+PiA+ID4gdW5zaWduZWQNCj4gPiA+ID4gPiBpbnQgY291bnQpDQo+ID4gPiA+ID4gIAkJcmV0dXJu
+IC1FSU5WQUw7DQo+ID4gPiA+ID4gIAl9DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiArCXN0YXRpY19h
+c3NlcnQoc2l6ZW9mKHN0cnVjdCBydGVfcmluZykgPT0NCj4gPiA+ID4gPiBSVEVfQ0FDSEVfTElO
+RV9ST1VORFVQKHNpemVvZihzdHJ1Y3QgcnRlX3JpbmcpKSwNCj4gPiA+ID4gPiArCQkJIlNpemUg
+b2Ygc3RydWN0IHJ0ZV9yaW5nIG5vdCBjYWNoZSBsaW5lDQo+ID4gYWxpZ25lZCIpOw0KPiA+ID4g
+PiA+ICAJc3ogPSBzaXplb2Yoc3RydWN0IHJ0ZV9yaW5nKSArIChzc2l6ZV90KWNvdW50ICogZXNp
+emU7DQo+ID4gPiA+ID4gIAlzeiA9IFJURV9BTElHTihzeiwgUlRFX0NBQ0hFX0xJTkVfU0laRSk7
+DQo+ID4gPiA+ID4gKwlzeiArPSBSVEVfQ0FDSEVfR1VBUkRfTElORVMgKiBSVEVfQ0FDSEVfTElO
+RV9TSVpFOw0KPiA+ID4gPiA+ICAJcmV0dXJuIHN6Ow0KPiA+ID4gPiA+ICB9DQo+ID4gPiA+ID4N
+Cj4gPiA+ID4gPiAtLQ0KPiA+ID4gPiA+IDIuNDMuMA0KDQo=
