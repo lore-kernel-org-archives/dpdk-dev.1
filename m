@@ -2,69 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C00A3CD3430
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 08:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E6AFF885A
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 08:50:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D70BA4060B;
-	Tue,  5 May 2026 10:50:45 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id ACE904065B;
+	Tue,  5 May 2026 10:50:50 +0200 (CEST)
 Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com
  [67.231.156.173])
- by mails.dpdk.org (Postfix) with ESMTP id AB1A540272
- for <dev@dpdk.org>; Tue,  5 May 2026 10:50:44 +0200 (CEST)
-Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+ by mails.dpdk.org (Postfix) with ESMTP id 727A340272
+ for <dev@dpdk.org>; Tue,  5 May 2026 10:50:49 +0200 (CEST)
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
  by mx0b-0016f401.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 6455PRb4351382 for <dev@dpdk.org>; Tue, 5 May 2026 01:50:43 -0700
+ 6458dvHR813449 for <dev@dpdk.org>; Tue, 5 May 2026 01:50:48 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
- cc:content-transfer-encoding:content-type:date:from:message-id
- :mime-version:subject:to; s=pfpt0220; bh=Qtx7Qhxqb4qKuGhPTUgREHT
- 9Ms8fOd0ZnqCRzvzRXoc=; b=B0DvdSl44n7jFTP87B6wQ2nppLXYDfwJt1L8vqV
- 7DXehUUa0apQ00av6/vLKMFvjEV6Sl2YajZQBiuYEkkYHsEVCVSmwscS4krwZTo0
- Btbv3lKjChNvWDaO23q1JlPy75h/DTCHdmg9OPXzvVdpBW99lIJNFGX+q4agr5UF
- aU3SZXSi3D7iNFssbaBu9iJTeFoOm7SEfNImBz0TcgCNKPA52ISJlIeFoysuoAHt
- xIA2mO3/lYRrKmdxFefb+V9nnpAyxuhI4v53zW3gvffzBMy5Qa/Uh2iPpROolwLu
- tKNlajgrVEOKR2NjCbFvQJhlolmi2JgI5WKsZPwuANA5aMw==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
- by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4dx218x09n-1
+ cc:content-transfer-encoding:content-type:date:from:in-reply-to
+ :message-id:mime-version:references:subject:to; s=pfpt0220; bh=w
+ 6BevfBeqyh071Ko25VwHxB+YG4DpmSksqOLdMlb5LY=; b=GibijtMawIpYZlC2e
+ a+5ZJUtQRlY/d+MCWIpEABbOP7U15UuJBe8vTLtEkM8wJTbdbHmivGW7ck6pwH17
+ TCRwNLly5s7reRRXOf66n5ytk9DKjh6WmA6iazFQn+W4rSIlltX6OdlUe5gCeS+P
+ m2Py8TZ/4gTzqGZTMsD3N91Nl8a1ld5Flc8ucRjOjLDPTEMBn6P6d4amY8tvfr5J
+ E81d38SB5yFvK8JiWoL/iDEtF/Kike13junuFPWhE4nk19DvLNjncNlyTBNgxzY/
+ gWR/uurPSHd3Omrd4oNqTCqTyS3JeXnUWP4N4LI10gA6cUTIfFhHLEd9cmkjjMvG
+ H1cZw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+ by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 4dwgsj79jd-1
  (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Tue, 05 May 2026 01:50:43 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ for <dev@dpdk.org>; Tue, 05 May 2026 01:50:48 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 5 May 2026 01:50:42 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
- Transport; Tue, 5 May 2026 01:50:42 -0700
+ 15.2.1544.25; Tue, 5 May 2026 01:50:47 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.25 via Frontend
+ Transport; Tue, 5 May 2026 01:50:47 -0700
 Received: from localhost.localdomain (unknown [10.28.36.154])
- by maili.marvell.com (Postfix) with ESMTP id 7A5AD3F704B;
- Tue,  5 May 2026 01:50:39 -0700 (PDT)
+ by maili.marvell.com (Postfix) with ESMTP id 019D73F704B;
+ Tue,  5 May 2026 01:50:43 -0700 (PDT)
 From: rkudurumalla <rkudurumalla@marvell.com>
 To: Nithin Dabilpuram <ndabilpuram@marvell.com>, Kiran Kumar K
  <kirankumark@marvell.com>, Sunil Kumar Kori <skori@marvell.com>, Satha Rao
  <skoteshwar@marvell.com>, Harman Kalra <hkalra@marvell.com>
 CC: <dev@dpdk.org>, <jerinj@marvell.com>, Rakesh Kudurumalla
  <rkudurumalla@marvell.com>
-Subject: [PATCH 1/2] common/cnxk: add ROC API to support custom profile
-Date: Tue, 5 May 2026 14:20:36 +0530
-Message-ID: <20260505085037.3961519-1-rkudurumalla@marvell.com>
+Subject: [PATCH 2/2] net/cnxk: add PMD API to support custom profile setup
+Date: Tue, 5 May 2026 14:20:37 +0530
+Message-ID: <20260505085037.3961519-2-rkudurumalla@marvell.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20260505085037.3961519-1-rkudurumalla@marvell.com>
+References: <20260505085037.3961519-1-rkudurumalla@marvell.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDA4MiBTYWx0ZWRfX7O+8aRAtSQcR
- KD9PF19rj8pSuUD2lVLigynAsFplyxPd+ybsr9E+PnrqPNxN/BSaJX1pptxZ5Qs39lQQomLrLMb
- IJb5XHkc+TRpbNWXGGizFWiyASHewJ9SFnTsp9ibm4G7xD6xO+3W6b5h0byMfIh0mbdtgIcBT/w
- oyAlPlCDyArDMYYUrY0YBa9eRs3ovTYW6PPCC/kJxdd7m8Mlt+llq+mGvjdX+U+lTo6qLx1qOlW
- ZPRI2Dy5P+dedEXELh5kdiT4TEOEkeAAzFpB6mD/TZm+p4+aqjSMDW9b4uC5XU6JJQnrgnHAFin
- f8t1zqU5YfyJljJOPk23y6fascsNZDyF6rU+8q45HtCS2dvoUu8+RSkaGjWmUXq8Rz2yl6mo9Mo
- j9feACnsEvutrXq9XUf3mcKz/DcD4w/yNtwnTf0axKJJfwXy+8Ue4Nm00gdIwmfOTNg42tCKske
- kmR0/q8Uj1o42KqsK8g==
-X-Proofpoint-ORIG-GUID: LwKEimnh7mNL653cDiHeFq0sHt1ko5c6
-X-Authority-Analysis: v=2.4 cv=coqrVV4i c=1 sm=1 tr=0 ts=69f9af63 cx=c_pps
- a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA1MDA4MiBTYWx0ZWRfXz1vW7tfaRfAX
+ wH6IqUqh6vMm15wIonrkQw+8xdx3K2OQIlaT1QSkfgO0SJJjtU+8QZOu/0syfSXdbTqKlNqjb7I
+ AfVlLSGyY9qa/fbw8tMJQzxTW+UzrJN7b2EaOV3m1sIYaDecOP4ckpIwYxCjZKgqx0CU3y5ZpB+
+ iinjFZz3aZorL5LKeZuWm+GJapuholpmYUSZH3QmrtznosTakXRZ+3uMX4TSknXskPNARMYhdh2
+ 4FqkzIJ10d2P/cl63Ir++0KlzAFr23OXiCKl0MpLQtyaTz3Deh8uCEFchjwjUd6hoYGkhasAQJd
+ Kv+HNmUKxgJIjb1SWs9JABPZrSVnuKtvrevvm8OhOwS8jmRXRXcrIAy+hzEsxYDS4A+I0N2jaCo
+ XTKrqQzYP71o+FJVGfAejK+zHipJkiwnUrwTwUbWyTUN7vGaXnrWSJcErAqjKUQJ3b2qqtstvCM
+ GmOA8iW+WzmFKAlKBng==
+X-Proofpoint-ORIG-GUID: JVzr3GXEp400qzEq8X2XBbjSFwM-023G
+X-Proofpoint-GUID: JVzr3GXEp400qzEq8X2XBbjSFwM-023G
+X-Authority-Analysis: v=2.4 cv=G+As1dk5 c=1 sm=1 tr=0 ts=69f9af68 cx=c_pps
+ a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17
  a=NGcC8JguVDcA:10 a=VkNPw1HP01LnGYTKEx00:22 a=l0iWHRpgs5sLHlkKQ1IR:22
- a=qit2iCtTFQkLgVSMPQTB:22 a=M5GUcnROAAAA:8 a=-HEf2dkWPfUWr8P7ZxMA:9
+ a=QXcCYyLzdtTjyudCfB6f:22 a=M5GUcnROAAAA:8 a=VdMmYqvrre1EFKHHD4QA:9
  a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: LwKEimnh7mNL653cDiHeFq0sHt1ko5c6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
  definitions=2026-05-05_02,2026-04-30_02,2025-10-01_01
@@ -83,565 +86,458 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 
-Added ROC api to support custom inline profile creation,
-and create and configure sa_table for both inl_dev and nix
-dev.
+Added new PMD APIS to create custom profile and API to update
+SA table created during profile setup based on profile ID
 
 Signed-off-by: Rakesh Kudurumalla <rkudurumalla@marvell.com>
 ---
- drivers/common/cnxk/hw/nix.h                  |  44 +++
- drivers/common/cnxk/roc_nix_inl.c             | 294 ++++++++++++++++++
- drivers/common/cnxk/roc_nix_inl.h             |   9 +
- drivers/common/cnxk/roc_nix_inl_dev.c         |  28 +-
- drivers/common/cnxk/roc_nix_inl_priv.h        |   2 +
- drivers/common/cnxk/roc_npc.c                 |  23 +-
- drivers/common/cnxk/roc_npc.h                 |   6 +
- .../common/cnxk/roc_platform_base_symbols.c   |   3 +
- 8 files changed, 392 insertions(+), 17 deletions(-)
+ drivers/net/cnxk/cnxk_ethdev.h     |   4 +
+ drivers/net/cnxk/cnxk_ethdev_sec.c | 175 +++++++++++++++++++++++
+ drivers/net/cnxk/rte_pmd_cnxk.h    | 216 +++++++++++++++++++++++++++++
+ 3 files changed, 395 insertions(+)
 
-diff --git a/drivers/common/cnxk/hw/nix.h b/drivers/common/cnxk/hw/nix.h
-index a2a372a56a..6abb184d45 100644
---- a/drivers/common/cnxk/hw/nix.h
-+++ b/drivers/common/cnxk/hw/nix.h
-@@ -2794,4 +2794,48 @@ enum cgx_port_type {
- 	CGX_PORT_OTHER = 0xff,
- };
+diff --git a/drivers/net/cnxk/cnxk_ethdev.h b/drivers/net/cnxk/cnxk_ethdev.h
+index 8691acc642..ea6a2be30e 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.h
++++ b/drivers/net/cnxk/cnxk_ethdev.h
+@@ -26,6 +26,10 @@
  
-+/* Shift values for NIX_AF_RX_DEF_INLINE register */
-+enum {
-+	NIX_LTYPE_MASK_SHIFT = 0,
-+	NIX_LTYPE_MATCH_SHIFT = 4,
-+	NIX_LID_SHIFT = 8,
-+	NIX_GEN_OFFSET_NG_SHIFT = 11,
-+	NIX_GEN_OFFSET_SHIFT = 12,
-+	NIX_GEN_NZ_SHIFT = 16,
-+	NIX_CPT_L3_LID_SHIFT = 17,
-+	NIX_FLAGS_MASK_SHIFT = 20,
-+	NIX_FLAGS_MATCH_SHIFT = 24,
-+	NIX_MATCH_OIPV4_SHIFT = 28,
-+	NIX_MATCH_OIPV6_SHIFT = 29,
-+	NIX_OIPLEN_ENA_SHIFT = 30,
-+	NIX_INLINE_SHIFT_SHIFT = 32,
-+};
+ #define CNXK_ETH_DEV_PMD_VERSION "1.0"
+ 
++/* Macros for packing configuration fields */
++#define CNXK_FIELD_MASK(width)	((1ULL << (width)) - 1)
++#define PACK(val, shift, width) (((uint64_t)((val) & CNXK_FIELD_MASK(width))) << (shift))
 +
-+/* Shift values for NIX_AF_RX_INLINE_GEN_CFG register */
-+enum {
-+	NIX_PARAM2_SHIFT = 0,
-+	NIX_PARAM1_SHIFT = 16,
-+	NIX_OPCODE_SHIFT = 32,
-+	NIX_EGRP_SHIFT = 48,
-+	NIX_CTX_VAL_SHIFT = 51,
-+};
-+
-+/* Shift values for NIX_AF_RX_EXTRACT_INLINE register */
-+enum {
-+	NIX_LEN_L_SHIFT = 0,
-+	NIX_BITPOS_L_SHIFT = 8,
-+	NIX_LEN_M_SHIFT = 16,
-+	NIX_BITPOS_M_SHIFT = 24,
-+	NIX_LEN_H_SHIFT = 32,
-+	NIX_BITPOS_H_SHIFT = 40,
-+};
-+
-+/* Shift values for NIX_AF_RX_PROT_FIELD_INLINE register */
-+enum {
-+	NIX_VALID_SHIFT = 0,
-+	NIX_OFFSET_SHIFT = 2,
-+	NIX_SIZEM1_SHIFT = 8,
-+	NIX_LOGMULT_SHIFT = 12,
-+};
-+
- #endif /* __NIX_HW_H__ */
-diff --git a/drivers/common/cnxk/roc_nix_inl.c b/drivers/common/cnxk/roc_nix_inl.c
-index ecf93ed03e..b515d52534 100644
---- a/drivers/common/cnxk/roc_nix_inl.c
-+++ b/drivers/common/cnxk/roc_nix_inl.c
-@@ -778,6 +778,43 @@ roc_nix_inl_inb_sa_base_get(struct roc_nix *roc_nix, bool inb_inl_dev)
- 	return (uintptr_t)nix->inb_sa_base[nix->ipsec_prof_id];
+ /* Used for struct cnxk_eth_dev::flags */
+ #define CNXK_LINK_CFG_IN_PROGRESS_F BIT_ULL(0)
+ 
+diff --git a/drivers/net/cnxk/cnxk_ethdev_sec.c b/drivers/net/cnxk/cnxk_ethdev_sec.c
+index abb50d32de..fa7eacfbe4 100644
+--- a/drivers/net/cnxk/cnxk_ethdev_sec.c
++++ b/drivers/net/cnxk/cnxk_ethdev_sec.c
+@@ -348,6 +348,181 @@ rte_pmd_cnxk_hw_session_base_get(uint16_t portid, bool inb)
+ 	return (union rte_pmd_cnxk_ipsec_hw_sa *)sa_base;
  }
  
-+uintptr_t
-+roc_nix_inl_inb_prof_sa_base_get(struct roc_nix *roc_nix, bool inb_inl_dev, uint16_t profile_id)
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_cnxk_inl_inb_prof_sa_base_get, 25.11)
++union rte_pmd_cnxk_ipsec_hw_sa *
++rte_pmd_cnxk_inl_inb_prof_sa_base_get(uint16_t portid, uint16_t profile_id)
 +{
-+	struct idev_cfg *idev = idev_get_cfg();
-+	struct nix_inl_dev *inl_dev;
-+	struct nix *nix = NULL;
++	struct rte_eth_dev *eth_dev;
++	struct cnxk_eth_dev *dev;
++	uintptr_t sa_base;
 +
-+	/* Validate profile_id range */
-+	if (profile_id >= ROC_NIX_INL_PROFILE_CNT) {
-+		plt_err("Invalid profile_id %u, must be < %u", profile_id, ROC_NIX_INL_PROFILE_CNT);
-+		return 0;
-+	}
++	if (!rte_eth_dev_is_valid_port(portid))
++		return NULL;
 +
-+	if (idev == NULL)
-+		return 0;
++	eth_dev = &rte_eth_devices[portid];
++	dev = cnxk_eth_pmd_priv(eth_dev);
 +
-+	if (!inb_inl_dev && roc_nix == NULL)
-+		return 0;
++	sa_base = roc_nix_inl_inb_prof_sa_base_get(&dev->nix, !dev->inb.no_inl_dev, profile_id);
 +
-+	if (roc_nix) {
-+		nix = roc_nix_to_nix_priv(roc_nix);
-+		if (!nix->inl_inb_ena)
-+			return 0;
-+	}
++	if (!sa_base)
++		return NULL;
 +
-+	if (inb_inl_dev) {
-+		inl_dev = idev->nix_inl_dev;
-+		/* Return inline dev sa base for the specified profile */
-+		if (inl_dev)
-+			return (uintptr_t)inl_dev->inb_sa_base[profile_id];
-+		return 0;
-+	}
-+
-+	/* Return NIX sa base for the specified profile */
-+	return (uintptr_t)nix->inb_sa_base[profile_id];
++	return (union rte_pmd_cnxk_ipsec_hw_sa *)sa_base;
 +}
 +
- uint16_t
- roc_nix_inl_inb_ipsec_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev)
- {
-@@ -838,6 +875,263 @@ roc_nix_inl_inb_reass_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev)
- 	return nix->reass_prof_id;
- }
- 
-+static int
-+nix_inl_custom_profile_sa_tbl_setup(struct roc_nix *roc_nix, uint32_t sa_size, uint32_t max_sa,
-+				    uint16_t profile_id)
++static uint64_t
++cnxk_rx_def_inl_cfg_pack(const struct rte_pmd_cnxk_rx_def_inl_cfg *cfg)
 +{
-+	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
-+	struct idev_cfg *idev = idev_get_cfg();
-+	struct nix_inl_dev *inl_dev = NULL;
-+	struct nix_rx_inl_lf_cfg_req *lf_cfg;
-+	uint64_t res_addr_offset = 0;
-+	uint64_t cpt_cq_ena = 0;
-+	uint32_t inb_sa_sz;
-+	uint32_t lenm1_max;
-+	uint64_t def_cptq = 0;
-+	struct mbox *mbox;
-+	uint8_t sa_pow2_sz;
-+	uint8_t sa_w;
-+	int rc = 0;
++	uint64_t val = 0;
 +
-+	/* Validate profile_id range */
-+	if (profile_id >= ROC_NIX_INL_PROFILE_CNT) {
-+		plt_err("Invalid profile_id %u, must be < %u", profile_id, ROC_NIX_INL_PROFILE_CNT);
-+		return -EINVAL;
-+	}
++	val |= PACK(cfg->ltype_mask, NIX_LTYPE_MASK_SHIFT, 4);
++	val |= PACK(cfg->ltype_match, NIX_LTYPE_MATCH_SHIFT, 4);
++	val |= PACK(cfg->lid, NIX_LID_SHIFT, 3);
++	val |= PACK(cfg->gen_offset_ng, NIX_GEN_OFFSET_NG_SHIFT, 1);
++	val |= PACK(cfg->gen_offset, NIX_GEN_OFFSET_SHIFT, 4);
++	val |= PACK(cfg->gen_nz, NIX_GEN_NZ_SHIFT, 1);
++	val |= PACK(cfg->cpt_l3_lid, NIX_CPT_L3_LID_SHIFT, 3);
++	val |= PACK(cfg->flags_mask, NIX_FLAGS_MASK_SHIFT, 4);
++	val |= PACK(cfg->flags_match, NIX_FLAGS_MATCH_SHIFT, 4);
++	val |= PACK(cfg->match_oipv4, NIX_MATCH_OIPV4_SHIFT, 1);
++	val |= PACK(cfg->match_oipv6, NIX_MATCH_OIPV6_SHIFT, 1);
++	val |= PACK(cfg->oiplen_ena, NIX_OIPLEN_ENA_SHIFT, 1);
++	val |= PACK(cfg->inline_shift, NIX_INLINE_SHIFT_SHIFT, 2);
 +
-+	/* Use sa_size parameter if provided, otherwise use default */
-+	if (sa_size > 0)
-+		inb_sa_sz = sa_size;
-+	else
-+		inb_sa_sz = ROC_NIX_INL_OW_IPSEC_INB_SA_SZ;
-+
-+	/* Validate max_sa is provided */
-+	if (max_sa == 0) {
-+		plt_err("max_sa must be greater than 0 for profile %u", profile_id);
-+		return -EINVAL;
-+	}
-+
-+	/* Update max_sa */
-+	nix->inb_sa_max[profile_id] = max_sa;
-+
-+	nix->inb_sa_sz[profile_id] = inb_sa_sz;
-+	nix->inb_sa_base[profile_id] = plt_zmalloc(inb_sa_sz * max_sa, ROC_NIX_INL_SA_BASE_ALIGN);
-+	if (!nix->inb_sa_base[profile_id]) {
-+		plt_err("Failed to allocate memory for Inbound SA for profile %u", profile_id);
-+		rc = -ENOMEM;
-+		goto exit;
-+	}
-+
-+	mbox = mbox_get(nix->dev.mbox);
-+	lf_cfg = mbox_alloc_msg_nix_rx_inl_lf_cfg(mbox);
-+	if (lf_cfg == NULL) {
-+		rc = -ENOSPC;
-+		goto free_mem;
-+	}
-+
-+	lenm1_max = NIX_RPM_MAX_HW_FRS - 1;
-+	sa_w = plt_log2_u32(max_sa);
-+	sa_pow2_sz = plt_log2_u32(inb_sa_sz);
-+
-+	/* Get default CPT queue from inline device if available */
-+	if (idev && idev->nix_inl_dev) {
-+		inl_dev = idev->nix_inl_dev;
-+		if (!inl_dev->nb_inb_cptlfs)
-+			def_cptq = 0;
-+		else
-+			def_cptq = inl_dev->nix_inb_qids[inl_dev->inb_cpt_lf_id];
-+
-+		res_addr_offset = (uint64_t)(inl_dev->res_addr_offset & 0xFF) << 48;
-+		if (res_addr_offset)
-+			res_addr_offset |= (1UL << 56);
-+
-+		cpt_cq_ena = (uint64_t)inl_dev->cpt_cq_ena << 63;
-+	}
-+
-+	lf_cfg->enable = 1;
-+	lf_cfg->profile_id = profile_id;
-+	lf_cfg->rx_inline_sa_base = (uintptr_t)nix->inb_sa_base[profile_id] | cpt_cq_ena;
-+	lf_cfg->rx_inline_cfg0 = ((uint64_t)def_cptq << 57) | res_addr_offset |
-+				 ((uint64_t)SSO_TT_ORDERED << 44) | (sa_pow2_sz << 16) | lenm1_max;
-+	lf_cfg->rx_inline_cfg1 = (max_sa - 1) | ((uint64_t)sa_w << 32);
-+
-+	rc = mbox_process(mbox);
-+	if (rc) {
-+		plt_err("Failed to setup NIX Inbound SA conf of profile=%u, rc=%d", profile_id, rc);
-+		goto free_mem;
-+	}
-+
-+	mbox_put(mbox);
-+	return rc;
-+
-+free_mem:
-+	mbox_put(mbox);
-+	plt_free(nix->inb_sa_base[profile_id]);
-+	nix->inb_sa_base[profile_id] = NULL;
-+exit:
-+	return rc;
++	return val;
 +}
 +
++static uint64_t
++cnxk_rx_gen_inl_cfg_pack(const struct rte_pmd_cnxk_rx_gen_inl_cfg *cfg)
++{
++	uint64_t val = 0;
++
++	/* CPT instruction fields */
++	val |= PACK(cfg->param2, NIX_PARAM2_SHIFT, 16);
++	val |= PACK(cfg->param1, NIX_PARAM1_SHIFT, 16);
++	val |= PACK(cfg->opcode, NIX_OPCODE_SHIFT, 16);
++	val |= PACK(cfg->egrp, NIX_EGRP_SHIFT, 3);
++	val |= PACK(cfg->ctx_val, NIX_CTX_VAL_SHIFT, 1);
++
++	return val;
++}
++
++static uint64_t
++cnxk_rx_extract_inl_cfg_pack(const struct rte_pmd_cnxk_rx_extract_inl_cfg *cfg)
++{
++	uint64_t val = 0;
++
++	val |= PACK(cfg->len_l, NIX_LEN_L_SHIFT, 6);
++	val |= PACK(cfg->bitpos_l, NIX_BITPOS_L_SHIFT, 6);
++	val |= PACK(cfg->len_m, NIX_LEN_M_SHIFT, 6);
++	val |= PACK(cfg->bitpos_m, NIX_BITPOS_M_SHIFT, 6);
++	val |= PACK(cfg->len_h, NIX_LEN_H_SHIFT, 6);
++	val |= PACK(cfg->bitpos_h, NIX_BITPOS_H_SHIFT, 6);
++
++	return val;
++}
++
++static uint64_t
++cnxk_rx_prot_field_inline_cfg_pack(const struct rte_pmd_cnxk_rx_prot_field_inl_cfg *cfg)
++{
++	uint64_t val = 0;
++
++	val |= PACK(cfg->valid, NIX_VALID_SHIFT, 1);
++	val |= PACK(cfg->offset, NIX_OFFSET_SHIFT, 6);
++	val |= PACK(cfg->sizem1, NIX_SIZEM1_SHIFT, 4);
++	val |= PACK(cfg->logmult, NIX_LOGMULT_SHIFT, 2);
++
++	return val;
++}
++
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_cnxk_nix_inl_custom_profile_setup, 25.11)
 +int
-+roc_nix_inl_custom_profile_setup(struct roc_nix *roc_nix, uint64_t def_cfg, uint64_t gen_cfg,
-+				 uint64_t extract_cfg, const uint64_t *prot_field_cfg,
-+				 uint32_t sa_size, uint32_t max_sa, bool is_inline,
-+				 uint16_t *profile_id)
++rte_pmd_cnxk_nix_inl_custom_profile_setup(uint16_t portid,
++					  const struct rte_pmd_cnxk_profile_cfg_params *cfg,
++					  uint16_t *profile_id)
 +{
-+	struct nix_rx_inl_profile_cfg_req *req;
-+	struct nix_rx_inl_profile_cfg_rsp *rsp;
-+	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
-+	struct idev_cfg *idev = idev_get_cfg();
-+	struct nix_inl_dev *inl_dev = NULL;
-+	struct mbox *mbox;
++	uint64_t prot_field_cfg_val[RTE_PMD_CNXK_MAX_PROT_FIELDS] = {0};
++	struct rte_eth_dev *eth_dev;
++	struct cnxk_eth_dev *dev;
++	uint64_t extract_cfg_val = 0;
++	uint64_t def_cfg_val = 0;
++	uint64_t gen_cfg_val = 0;
++	uint32_t sa_size = 0;
++	uint32_t max_sa = 0;
++	uint16_t prof_id = 0;
 +	int rc = 0;
 +	int i;
 +
-+	if (roc_nix == NULL || profile_id == NULL)
-+		return -EINVAL;
-+
-+	if (!nix->inl_inb_ena)
++	if (!roc_feature_nix_has_inl_profile())
 +		return -ENOTSUP;
 +
-+	/* Get inline device - required for custom profiles */
-+	if (!idev || !idev->nix_inl_dev) {
-+		plt_err("nix_inl_dev not available for custom profile setup");
-+		return -ENODEV;
-+	}
++	if (!rte_eth_dev_is_valid_port(portid))
++		return -EINVAL;
 +
-+	inl_dev = idev->nix_inl_dev;
++	if (!cfg || !profile_id)
++		return -EINVAL;
 +
-+	/* Use inline device mbox if is_inline is true, otherwise use nix mbox */
-+	if (is_inline)
-+		mbox = mbox_get(inl_dev->dev.mbox);
-+	else
-+		mbox = mbox_get(nix->dev.mbox);
++	eth_dev = &rte_eth_devices[portid];
++	dev = cnxk_eth_pmd_priv(eth_dev);
 +
-+	req = mbox_alloc_msg_nix_rx_inl_profile_cfg(mbox);
-+	if (req == NULL) {
-+		rc = -ENOSPC;
-+		plt_err("Failed to alloc %s profile cfg mbox msg",
-+			is_inline ? "inline device" : "nix device");
-+		mbox_put(mbox);
-+		goto exit;
-+	}
++	/* Pack default inline configuration */
++	def_cfg_val = cnxk_rx_def_inl_cfg_pack(&cfg->def_cfg);
 +
-+	req->def_cfg = def_cfg;
-+	req->gen_cfg = gen_cfg;
-+	req->extract_cfg = extract_cfg;
-+	for (i = 0; i < NIX_RX_INL_PROFILE_PROTO_CNT; i++)
-+		req->prot_field_cfg[i] = prot_field_cfg[i];
++	/* Pack generic inline configuration */
++	gen_cfg_val = cnxk_rx_gen_inl_cfg_pack(&cfg->gen_cfg);
 +
-+	rc = mbox_process_msg(mbox, (void **)&rsp);
++	/* Pack extract inline configuration */
++	extract_cfg_val = cnxk_rx_extract_inl_cfg_pack(&cfg->extract_cfg);
++
++	/* Pack protocol field inline configurations */
++	for (i = 0; i < RTE_PMD_CNXK_MAX_PROT_FIELDS; i++)
++		prot_field_cfg_val[i] = cnxk_rx_prot_field_inline_cfg_pack(&cfg->prot_field_cfg[i]);
++
++	/* Get SA size and max SA count */
++	sa_size = cfg->sa_size;
++	max_sa = cfg->max_sa;
++
++	/* Call ROC API to configure the custom profile */
++	rc = roc_nix_inl_custom_profile_setup(&dev->nix, def_cfg_val, gen_cfg_val, extract_cfg_val,
++					      prot_field_cfg_val, sa_size, max_sa,
++					      !dev->inb.no_inl_dev, &prof_id);
 +	if (rc) {
-+		plt_err("Failed to setup %s custom profile, rc=%d",
-+			is_inline ? "inline device" : "nix device", rc);
-+		mbox_put(mbox);
-+		goto exit;
++		plt_err("Failed to setup custom profile: rc=%d", rc);
++		return rc;
 +	}
 +
-+	*profile_id = rsp->profile_id;
++	*profile_id = prof_id;
 +
-+	/* Validate returned profile_id */
-+	if (*profile_id >= ROC_NIX_INL_PROFILE_CNT) {
-+		plt_err("Hardware returned invalid profile_id %u", *profile_id);
-+		mbox_put(mbox);
-+		rc = -EINVAL;
-+		goto exit;
-+	}
++	plt_nix_dbg("Custom profile setup: port=%u, sa_size=%u, max_sa=%u, profile_id=%u", portid,
++		    sa_size, max_sa, *profile_id);
 +
-+	plt_info("%s custom profile %u created", is_inline ? "Inline device" : "NIX device",
-+		 *profile_id);
-+	mbox_put(mbox);
-+
-+	if (is_inline)
-+		rc = nix_inl_dev_profile_config(inl_dev, sa_size, max_sa, *profile_id);
-+	else
-+		rc = nix_inl_custom_profile_sa_tbl_setup(roc_nix, sa_size, max_sa, *profile_id);
-+
-+	if (rc) {
-+		plt_err("Failed to configure custom profile %u, rc=%d", *profile_id, rc);
-+		/* Release the allocated profile on failure */
-+		roc_nix_inl_custom_profile_release(roc_nix, *profile_id, is_inline);
-+	}
-+
-+exit:
-+	return rc;
++	return 0;
 +}
 +
++RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_cnxk_nix_inl_custom_profile_release, 25.11)
 +int
-+roc_nix_inl_custom_profile_release(struct roc_nix *roc_nix, uint16_t profile_id, bool is_inline)
++rte_pmd_cnxk_nix_inl_custom_profile_release(uint16_t portid, uint16_t profile_id)
 +{
-+	struct nix *nix = roc_nix_to_nix_priv(roc_nix);
-+	struct idev_cfg *idev = idev_get_cfg();
-+	struct nix_inl_dev *inl_dev = NULL;
-+	struct nix_rx_inl_lf_cfg_req *lf_cfg;
-+	struct mbox *mbox;
-+	int rc = 0;
++	struct rte_eth_dev *eth_dev;
++	struct cnxk_eth_dev *dev;
++	int rc;
 +
-+	if (roc_nix == NULL)
++	if (!rte_eth_dev_is_valid_port(portid))
 +		return -EINVAL;
 +
-+	if (!nix->inl_inb_ena)
-+		return -ENOTSUP;
++	eth_dev = &rte_eth_devices[portid];
++	dev = cnxk_eth_pmd_priv(eth_dev);
 +
-+	/* Validate profile_id range */
-+	if (profile_id >= ROC_NIX_INL_PROFILE_CNT) {
-+		plt_err("Invalid profile_id %u, must be < %u", profile_id, ROC_NIX_INL_PROFILE_CNT);
-+		return -EINVAL;
-+	}
-+
-+	if (is_inline) {
-+		/* Get inline device for inline mode */
-+		if (!idev || !idev->nix_inl_dev) {
-+			plt_err("nix_inl_dev not available for custom profile release");
-+			return -ENODEV;
-+		}
-+		inl_dev = idev->nix_inl_dev;
-+		mbox = mbox_get(inl_dev->dev.mbox);
-+	} else {
-+		/* Use NIX device mbox for non-inline mode */
-+		mbox = mbox_get(nix->dev.mbox);
-+	}
-+
-+	lf_cfg = mbox_alloc_msg_nix_rx_inl_lf_cfg(mbox);
-+	if (lf_cfg == NULL) {
-+		rc = -ENOSPC;
-+		plt_err("Failed to alloc profile release mbox msg");
-+		mbox_put(mbox);
-+		goto exit;
-+	}
-+
-+	lf_cfg->enable = 0;
-+	lf_cfg->profile_id = profile_id;
-+	rc = mbox_process(mbox);
++	/* Call ROC API to release the custom profile */
++	rc = roc_nix_inl_custom_profile_release(&dev->nix, profile_id, !dev->inb.no_inl_dev);
 +	if (rc) {
-+		plt_err("Failed to cleanup NIX Inbound profile=%u SA conf, rc=%d", profile_id, rc);
-+		mbox_put(mbox);
-+		goto exit;
++		plt_err("Failed to release custom profile %u: rc=%d", profile_id, rc);
++		return rc;
 +	}
 +
-+	/* Free SA base memory */
-+	if (is_inline) {
-+		if (inl_dev->inb_sa_base[profile_id]) {
-+			plt_free(inl_dev->inb_sa_base[profile_id]);
-+			inl_dev->inb_sa_base[profile_id] = NULL;
-+		}
-+	} else {
-+		if (nix->inb_sa_base[profile_id]) {
-+			plt_free(nix->inb_sa_base[profile_id]);
-+			nix->inb_sa_base[profile_id] = NULL;
-+		}
-+	}
-+
-+	mbox_put(mbox);
-+	plt_info("%s custom profile %u released", is_inline ? "Inline device" : "NIX device",
-+		 profile_id);
-+
-+exit:
-+	return rc;
++	return 0;
 +}
 +
- bool
- roc_nix_inl_inb_rx_inject_enable(struct roc_nix *roc_nix, bool inb_inl_dev)
- {
-diff --git a/drivers/common/cnxk/roc_nix_inl.h b/drivers/common/cnxk/roc_nix_inl.h
-index 82dae4b1ba..2832ed7961 100644
---- a/drivers/common/cnxk/roc_nix_inl.h
-+++ b/drivers/common/cnxk/roc_nix_inl.h
-@@ -162,8 +162,17 @@ int __roc_api roc_nix_inl_inb_fini(struct roc_nix *roc_nix);
- bool __roc_api roc_nix_inl_inb_is_enabled(struct roc_nix *roc_nix);
- uintptr_t __roc_api roc_nix_inl_inb_sa_base_get(struct roc_nix *roc_nix,
- 						bool inl_dev_sa);
-+uintptr_t __roc_api roc_nix_inl_inb_prof_sa_base_get(struct roc_nix *roc_nix, bool inb_inl_dev,
-+						     uint16_t profile_id);
- uint16_t roc_nix_inl_inb_ipsec_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev);
- uint16_t __roc_api roc_nix_inl_inb_reass_profile_id_get(struct roc_nix *roc_nix, bool inb_inl_dev);
-+int __roc_api roc_nix_inl_custom_profile_setup(struct roc_nix *roc_nix, uint64_t def_cfg,
-+					       uint64_t gen_cfg, uint64_t extract_cfg,
-+					       const uint64_t *prot_field_cfg,
-+					       uint32_t sa_size, uint32_t max_sa,
-+					       bool is_inline, uint16_t *profile_id);
-+int __roc_api roc_nix_inl_custom_profile_release(struct roc_nix *roc_nix, uint16_t profile_id,
-+						 bool is_inline);
- bool __roc_api roc_nix_inl_inb_rx_inject_enable(struct roc_nix *roc_nix, bool inl_dev_sa);
- uint32_t __roc_api roc_nix_inl_inb_spi_range(struct roc_nix *roc_nix,
- 					     bool inl_dev_sa, uint32_t *min,
-diff --git a/drivers/common/cnxk/roc_nix_inl_dev.c b/drivers/common/cnxk/roc_nix_inl_dev.c
-index 246dd4612f..667209b8a0 100644
---- a/drivers/common/cnxk/roc_nix_inl_dev.c
-+++ b/drivers/common/cnxk/roc_nix_inl_dev.c
-@@ -641,11 +641,12 @@ nix_inl_sso_release(struct nix_inl_dev *inl_dev)
- 	return 0;
- }
- 
--static int
--nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
-+int
-+nix_inl_dev_profile_config(struct nix_inl_dev *inl_dev, uint32_t sa_size, uint32_t max_sa,
-+			   uint16_t profile_id)
- {
- 	struct mbox *mbox = mbox_get((&inl_dev->dev)->mbox);
--	uint64_t max_sa, sa_w, sa_pow2_sz, lenm1_max;
-+	uint64_t sa_w, sa_pow2_sz, lenm1_max;
- 	struct nix_rx_inl_lf_cfg_req *lf_cfg;
- 	uint64_t res_addr_offset;
- 	uint64_t cpt_cq_ena;
-@@ -653,10 +654,12 @@ nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
- 	size_t inb_sa_sz;
- 	void *sa;
- 	int rc;
-+	uint32_t i;
- 
--	/* Alloc contiguous memory for Inbound SA's */
--	inb_sa_sz = ROC_NIX_INL_OW_IPSEC_INB_SA_SZ;
--	max_sa = inl_dev->inb_sa_max[profile_id];
-+	inb_sa_sz = sa_size;
-+
-+	/* Update max_sa in inl_dev */
-+	inl_dev->inb_sa_max[profile_id] = max_sa;
- 	inl_dev->inb_sa_sz[profile_id] = inb_sa_sz;
- 	inl_dev->inb_sa_base[profile_id] =
- 		plt_zmalloc(inb_sa_sz * max_sa, ROC_NIX_INL_SA_BASE_ALIGN);
-@@ -666,8 +669,11 @@ nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
- 		goto exit;
- 	}
- 
--	sa = ((uint8_t *)inl_dev->inb_sa_base[profile_id]);
--	roc_ow_reass_inb_sa_init(sa);
-+	/* Initialize all SAs */
-+	for (i = 0; i < max_sa; i++) {
-+		sa = ((uint8_t *)inl_dev->inb_sa_base[profile_id]) + (i * inb_sa_sz);
-+		roc_ow_reass_inb_sa_init(sa);
-+	}
- 	lf_cfg = mbox_alloc_msg_nix_rx_inl_lf_cfg(mbox);
- 	if (lf_cfg == NULL) {
- 		rc = -ENOSPC;
-@@ -694,7 +700,7 @@ nix_inl_nix_profile_config(struct nix_inl_dev *inl_dev, uint8_t profile_id)
- 	lf_cfg->rx_inline_cfg0 =
- 		((def_cptq << 57) | res_addr_offset | ((uint64_t)SSO_TT_ORDERED << 44) |
- 		 (sa_pow2_sz << 16) | lenm1_max);
--	lf_cfg->rx_inline_cfg1 = (max_sa - 1) | (sa_w << 32);
-+	lf_cfg->rx_inline_cfg1 = (max_sa - 1) | ((uint64_t)sa_w << 32);
- 
- 	rc = mbox_process(mbox);
- 	if (rc) {
-@@ -791,8 +797,8 @@ nix_inl_nix_reass_setup(struct nix_inl_dev *inl_dev)
- 		return rc;
- 	}
- 
--	inl_dev->inb_sa_max[inl_dev->reass_prof_id] = 1;
--	return nix_inl_nix_profile_config(inl_dev, inl_dev->reass_prof_id);
-+	return nix_inl_dev_profile_config(inl_dev, ROC_NIX_INL_OW_IPSEC_INB_SA_SZ, 1,
-+					  inl_dev->reass_prof_id);
- }
- 
- static int
-diff --git a/drivers/common/cnxk/roc_nix_inl_priv.h b/drivers/common/cnxk/roc_nix_inl_priv.h
-index 402b1514e7..f63b7787ac 100644
---- a/drivers/common/cnxk/roc_nix_inl_priv.h
-+++ b/drivers/common/cnxk/roc_nix_inl_priv.h
-@@ -148,5 +148,7 @@ uint16_t nix_inl_dev_pffunc_get(void);
- 
- int nix_inl_setup_dflt_ipsec_profile(struct dev *dev, uint16_t *prof_id);
- int nix_inl_setup_reass_profile(struct dev *dev, uint8_t *prof_id);
-+int nix_inl_dev_profile_config(struct nix_inl_dev *inl_dev, uint32_t sa_size, uint32_t max_sa,
-+			       uint16_t profile_id);
- 
- #endif /* _ROC_NIX_INL_PRIV_H_ */
-diff --git a/drivers/common/cnxk/roc_npc.c b/drivers/common/cnxk/roc_npc.c
-index acf0007e05..a906fe0413 100644
---- a/drivers/common/cnxk/roc_npc.c
-+++ b/drivers/common/cnxk/roc_npc.c
-@@ -547,9 +547,13 @@ npc_parse_spi_to_sa_action(struct roc_npc *roc_npc, const struct roc_npc_action
- 		req->spi_index = plt_be_to_cpu_32(flow->spi_to_sa_info.spi);
- 		req->match_id = flow->match_id;
- 		req->valid = true;
--		if (roc_model_is_cn20k())
--			req->inline_profile_id =
--				roc_nix_inl_inb_ipsec_profile_id_get(roc_nix, true);
-+		if (roc_model_is_cn20k()) {
-+			if (sec_action->use_custom_profile)
-+				req->inline_profile_id = sec_action->profile_id;
-+			else
-+				req->inline_profile_id =
-+					roc_nix_inl_inb_ipsec_profile_id_get(roc_nix, true);
-+		}
- 		rc = mbox_process_msg(mbox, (void *)&rsp);
- 		if (rc)
- 			return rc;
-@@ -937,11 +941,18 @@ npc_parse_actions(struct roc_npc *roc_npc, const struct roc_npc_attr *attr,
- 		flow->npc_action = NIX_RX_ACTIONOP_UCAST;
- 	} else if (req_act & ROC_NPC_ACTION_TYPE_SEC) {
- 		if (roc_model_is_cn20k()) {
-+			const struct roc_npc_sec_action *sa_action = NULL;
-+			uint16_t profile_id;
-+
- 			flow->npc_action = NIX_RX_ACTIONOP_UCAST_CPT;
- 			flow->npc_action |= (uint64_t)rq << 20;
--			flow->npc_action2 =
--				roc_nix_inl_inb_ipsec_profile_id_get(roc_nix, true) << 8;
--			flow->npc_action2 |= is_non_inp ? (1ULL << 15) : 0;
-+			profile_id = roc_nix_inl_inb_ipsec_profile_id_get(roc_nix, true);
-+			if (sec_action && sec_action->conf) {
-+				sa_action = (const struct roc_npc_sec_action *)sec_action->conf;
-+				if (sa_action->use_custom_profile)
-+					profile_id = sa_action->profile_id;
-+			}
-+			flow->npc_action2 = (is_non_inp ? (1ULL << 15) : 0) | (profile_id << 8);
- 		} else {
- 			flow->npc_action = NIX_RX_ACTIONOP_UCAST_IPSEC;
- 			flow->npc_action |= (uint64_t)rq << 20;
-diff --git a/drivers/common/cnxk/roc_npc.h b/drivers/common/cnxk/roc_npc.h
-index 62385e4481..130990bda7 100644
---- a/drivers/common/cnxk/roc_npc.h
-+++ b/drivers/common/cnxk/roc_npc.h
-@@ -285,6 +285,12 @@ struct roc_npc_sec_action {
+ RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_pmd_cnxk_sa_flush, 23.11)
+ int
+ rte_pmd_cnxk_sa_flush(uint16_t portid, union rte_pmd_cnxk_ipsec_hw_sa *sess, bool inb)
+diff --git a/drivers/net/cnxk/rte_pmd_cnxk.h b/drivers/net/cnxk/rte_pmd_cnxk.h
+index d344137dd5..1960288cef 100644
+--- a/drivers/net/cnxk/rte_pmd_cnxk.h
++++ b/drivers/net/cnxk/rte_pmd_cnxk.h
+@@ -83,6 +83,15 @@ struct rte_pmd_cnxk_sec_action {
  	 */
- 	enum roc_npc_sec_action_alg alg;
+ 	enum rte_pmd_cnxk_sec_action_alg alg;
  	bool is_non_inp;
++	/** Inline profile ID (0-7) for custom profiles.
++	 * Only used when use_custom_profile is true.
++	 * Use profile_id returned by rte_pmd_cnxk_nix_inl_custom_profile_setup().
++	 */
 +	uint16_t profile_id;
-+	/* Enable custom inline profile.
-+	 * When true, use custom IPsec profile specified by profile_id.
++	/** When true, use custom inline profile specified by profile_id.
 +	 * When false, use default IPsec profile (backward compatible).
 +	 */
 +	bool use_custom_profile;
  };
  
- struct roc_npc_attr {
-diff --git a/drivers/common/cnxk/roc_platform_base_symbols.c b/drivers/common/cnxk/roc_platform_base_symbols.c
-index cf080b1bdc..ed34d4b05b 100644
---- a/drivers/common/cnxk/roc_platform_base_symbols.c
-+++ b/drivers/common/cnxk/roc_platform_base_symbols.c
-@@ -249,6 +249,9 @@ RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_outb_lf_base_get)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_inb_inj_lf_get)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_outb_sa_base_get)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_inb_sa_base_get)
-+RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_inb_prof_sa_base_get)
-+RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_custom_profile_setup)
-+RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_custom_profile_release)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_inb_rx_inject_enable)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_inb_spi_range)
- RTE_EXPORT_INTERNAL_SYMBOL(roc_nix_inl_inb_sa_sz)
+ #define RTE_PMD_CNXK_CTX_MAX_CKEY_LEN	   32
+@@ -607,6 +616,21 @@ union rte_pmd_cnxk_cpt_res_s *rte_pmd_cnxk_inl_ipsec_res(struct rte_mbuf *mbuf);
+ __rte_experimental
+ union rte_pmd_cnxk_ipsec_hw_sa *rte_pmd_cnxk_hw_session_base_get(uint16_t portid, bool inb);
+ 
++/**
++ * Get pointer to the Inline Inbound SA table base for a specific custom profile.
++ *
++ * @param portid
++ *   Port identifier of Ethernet device.
++ * @param profile_id
++ *   Custom profile ID to get the SA base for.
++ *
++ * @return
++ *   Pointer to Inbound SA base for the specified profile, or NULL on error.
++ */
++__rte_experimental
++union rte_pmd_cnxk_ipsec_hw_sa *rte_pmd_cnxk_inl_inb_prof_sa_base_get(uint16_t portid,
++								       uint16_t profile_id);
++
+ /**
+  * Executes a CPT flush on the specified session.
+  *
+@@ -682,6 +706,198 @@ int rte_pmd_cnxk_cpt_q_stats_get(uint16_t portid, enum rte_pmd_cnxk_cpt_q_stats_
+ __rte_experimental
+ void rte_pmd_cnxk_hw_inline_inb_cfg_set(uint16_t portid, struct rte_pmd_cnxk_ipsec_inb_cfg *cfg);
+ 
++/**
++ * RX Default Inline Configuration structure
++ * This structure represents the NIX_AF_RX_DEF_INLINE register fields
++ * used for configuring inline IPsec processing.
++ */
++struct rte_pmd_cnxk_rx_def_inl_cfg {
++	/** Layer type mask (bits 3:0) */
++	uint64_t ltype_mask;
++	/** Layer type match value (bits 7:4) */
++	uint64_t ltype_match;
++	/** Layer ID (bits 10:8) - Enumerated by NPC_LID_E */
++	uint64_t lid;
++	/** Generic offset negative (bit 11) */
++	uint64_t gen_offset_ng;
++	/** Generic offset in bytes (bits 15:12) */
++	uint64_t gen_offset;
++	/** Generic field non-zero (bit 16) */
++	uint64_t gen_nz;
++	/** CPT L3 Layer ID (bits 19:17) */
++	uint64_t cpt_l3_lid;
++	/** Layer type mask (bits 23:20) */
++	uint64_t flags_mask;
++	/** Layer type match value (bits 27:24) */
++	uint64_t flags_match;
++	/** Match on IPv4 (bit 28) */
++	uint64_t match_oipv4;
++	/** Match on IPv6 (bit 29) */
++	uint64_t match_oipv6;
++	/** OIP Length Enable (bit 30) */
++	uint64_t oiplen_ena;
++	/** Inline shift (bits 33:32) - Valid values: 0, 1, 2 */
++	uint64_t inline_shift;
++};
++
++/**
++ * RX Generic Inline Configuration structure
++ * This structure represents the NIX_AF_RX_INLINE_GEN_CFG(0..7) register fields.
++ */
++struct rte_pmd_cnxk_rx_gen_inl_cfg {
++	/** Layer type mask (bits 3:0) */
++	uint64_t ltype_mask;
++	/** Layer type match value (bits 7:4) */
++	uint64_t ltype_match;
++	/** Layer ID (bits 10:8) */
++	uint64_t lid;
++	/** Nibble Offset (bit 11) - 0: IPv4, 1: IPv6 */
++	uint64_t noffset;
++	/** Offset (bits 17:12) - Offset to DSCP field */
++	uint64_t offset;
++	/** PARAM2 (bits 15:0) - CPT_INST_S[PARAM2] */
++	uint64_t param2;
++	/** PARAM1 (bits 31:16) - CPT_INST_S[PARAM1] */
++	uint64_t param1;
++	/** OPCODE (bits 47:32) - CPT_INST_S[OPCODE] */
++	uint64_t opcode;
++	/** Engine Group (bits 50:48) - CPT_INST_S[EGRP] */
++	uint64_t egrp;
++	/** Context Valid (bit 51) - CPT_INST_S[CTX_VAL] */
++	uint64_t ctx_val;
++};
++
++/**
++ * RX Extract Inline Configuration structure
++ * This structure represents the NIX_AF_RX_EXTRACT_INLINE(0..7) register fields.
++ */
++struct rte_pmd_cnxk_rx_extract_inl_cfg {
++	/** LEN_L (bits 5:0) - Bit length from BITPOS_L (0-32) */
++	uint64_t len_l;
++	/** BITPOS_L (bits 13:8) - Bit pos to start extraction */
++	uint64_t bitpos_l;
++	/** LEN_M (bits 21:16) - Bit length from BITPOS_M (0-32) */
++	uint64_t len_m;
++	/** BITPOS_M (bits 29:24) - Bit pos to start extraction */
++	uint64_t bitpos_m;
++	/** LEN_H (bits 37:32) - Bit length from BITPOS_H (0-32) */
++	uint64_t len_h;
++	/** BITPOS_H (bits 45:40) - Bit pos to start extraction */
++	uint64_t bitpos_h;
++};
++
++/**
++ * Protocol field types for inline IPsec configuration
++ */
++enum rte_pmd_cnxk_nix_rx_prot_e {
++	RTE_PMD_CNXK_RX_PROT_OPCODE = 0,     /**< Opcode (max 2 bytes) */
++	RTE_PMD_CNXK_RX_PROT_PARAM1 = 1,     /**< Parameter 1 (max 2 bytes) */
++	RTE_PMD_CNXK_RX_PROT_PARAM2 = 2,     /**< Parameter 2 (max 2 bytes) */
++	RTE_PMD_CNXK_RX_PROT_SA_INDEX = 3,   /**< SA index (max 4 bytes) */
++	RTE_PMD_CNXK_RX_PROT_RPTR_H = 4,     /**< RPTR high bits (max 4 bytes) */
++	RTE_PMD_CNXK_RX_PROT_IP_OFFSET = 5,  /**< IP offset (max 1 byte) */
++	RTE_PMD_CNXK_RX_PROT_INL_OFFSET = 6, /**< Inline offset (max 4 bytes) */
++	RTE_PMD_CNXK_RX_PROT_ALG = 7,	     /**< ALG override (max 1 nibble) */
++	RTE_PMD_CNXK_RX_PROT_SUB_INDEX = 8,  /**< Sub index (max 1 nibble) */
++};
++
++/** Maximum number of inline profiles supported */
++#define RTE_PMD_CNXK_MAX_PROT_FIELDS 9
++
++/**
++ * RX Protocol Field Inline Configuration structure
++ * This structure represents the NIX_AF_RX_PROT_FIELD(0..8)_INLINE(0..7) registers.
++ */
++struct rte_pmd_cnxk_rx_prot_field_inl_cfg {
++	/** LOGMULT (bits 13:12) - Multiply: 0=1, 1=2, 2=4, 3=8 */
++	uint64_t logmult;
++	/** SIZEM1 (bits 11:8) - Size of field in nibbles */
++	uint64_t sizem1;
++	/** OFFSET (bits 7:2) - Offset from header start in nibbles */
++	uint64_t offset;
++	/** VALID (bit 0) - Valid flag */
++	uint64_t valid;
++};
++
++/**
++ * Combined profile configuration parameters structure
++ * This structure combines all configuration parameters needed for
++ * setting up a custom inline IPsec profile.
++ */
++struct rte_pmd_cnxk_profile_cfg_params {
++	/** Default inline configuration (NIX_AF_RX_DEF_INLINE) */
++	struct rte_pmd_cnxk_rx_def_inl_cfg def_cfg;
++
++	/** Generic inline configuration (NIX_AF_RX_INLINE_GEN_CFG) */
++	struct rte_pmd_cnxk_rx_gen_inl_cfg gen_cfg;
++
++	/** Extract inline configuration (NIX_AF_RX_EXTRACT_INLINE) */
++	struct rte_pmd_cnxk_rx_extract_inl_cfg extract_cfg;
++
++	/** Protocol field inline configuration
++	 * Array of configs for NIX_AF_RX_PROT_FIELD(prot_field)_INLINE(0..7)
++	 */
++	struct rte_pmd_cnxk_rx_prot_field_inl_cfg prot_field_cfg[RTE_PMD_CNXK_MAX_PROT_FIELDS];
++
++	/** SA size in bytes.
++	 * Size of each SA entry for this profile.
++	 * Must be a power of 2 and >= 128 bytes.
++	 * If 0, default SA size is used.
++	 */
++	uint32_t sa_size;
++
++	/** Maximum number of SAs for this profile.
++	 * Number of SA entries to allocate for this profile.
++	 * If 0, default max_sa is used.
++	 */
++	uint32_t max_sa;
++};
++
++/**
++ * Setup custom inline IPsec profile
++ *
++ * This function configures a custom inline IPsec profile for the specified port.
++ * The profile includes default inline configuration, generic inline configuration,
++ * extract inline configuration, protocol field inline configuration, and
++ * optional custom SA size and max SA count.
++ *
++ * @param portid
++ *   Port identifier of the Ethernet device.
++ * @param cfg
++ *   Pointer to the combined profile configuration structure.
++ * @param[out] profile_id
++ *   Pointer to store the returned profile ID (0-7).
++ *   This ID can be used in rte_pmd_cnxk_sec_action.profile_id.
++ *
++ * @return
++ *   0 on success, a negative errno value otherwise.
++ *   - -EINVAL: Invalid parameters
++ *   - -ENOTSUP: Function not supported on this device
++ *   - -ENOSPC: No free profile available
++ *   - -ENOMEM: Memory allocation failed for SA table
++ */
++__rte_experimental
++int rte_pmd_cnxk_nix_inl_custom_profile_setup(uint16_t portid,
++		const struct rte_pmd_cnxk_profile_cfg_params *cfg, uint16_t *profile_id);
++
++/**
++ * Release a custom inline profile.
++ *
++ * This function releases resources associated with a custom inline profile
++ * that was previously created using rte_pmd_cnxk_nix_inl_custom_profile_setup().
++ *
++ * @param portid
++ *   Port identifier of the Ethernet device.
++ * @param profile_id
++ *   Custom profile ID to release.
++ *
++ * @return
++ *   0 on success, a negative errno value otherwise.
++ */
++__rte_experimental
++int rte_pmd_cnxk_nix_inl_custom_profile_release(uint16_t portid,
++						uint16_t profile_id);
++
+ /**
+  * Retrieves model name on which it is running as a string.
+  *
 -- 
 2.25.1
 
