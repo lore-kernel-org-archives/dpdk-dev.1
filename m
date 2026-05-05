@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D77CD342F
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 11:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F836CD342F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 11:13:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 07A1C406B7;
-	Tue,  5 May 2026 13:13:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 2AD5240A6C;
+	Tue,  5 May 2026 13:13:04 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 4A25E4069D
- for <dev@dpdk.org>; Tue,  5 May 2026 13:13:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 854A2406BA
+ for <dev@dpdk.org>; Tue,  5 May 2026 13:13:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777979580; x=1809515580;
+ t=1777979583; x=1809515583;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=zMDDSaKSYNUUGwi4knviFNK1U8BSkNhmmJE64+hkSCk=;
- b=atp3EARhmHPpAVTNBhnkRdTzbDAATJnD1FOWx2tqrDyEgfTUgyhiFlyS
- E+ytJbIxLGTq4avs+uvBatdqGaNeL58fxwVSCHAyLx/lgUPqWPcCbvSOn
- e+kt5ZTMWXB9a09I/h0wqjy5JRqmbOBuvPWG7TGhNeO5TnO9/d74lIFvQ
- UKZ5p4qu4WVN9K3r3UB9Zcoq4gpYvZRbFaQZEI9sMqZC2K8hNBzQ8PA9p
- hUpwUMkk6yhbwGWM0jUUAaHXTgZhqpBxKGOMAwWbR2ZtLK6hvA4ceyuxI
- qUxqNdASFNLteoqxHJaa8Y2fkQ5rRVxmzM/y2gObJ7L0kn7e2EcgHZWtd g==;
-X-CSE-ConnectionGUID: Nm3Dbva4TpGoYRL1gFZlxw==
-X-CSE-MsgGUID: 7KIq9IAiTGubrWVClWgiSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11776"; a="90220419"
-X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="90220419"
+ bh=Xt8loCKcHQkjP/a3KpwOW4g4rlp6fM383izjGCGWQeE=;
+ b=P8Ta6PTNdvz2oaCy1rxz2c4gZTu6DzGWkJ3tiWDVjhGbYLHjGZ8HrhrN
+ 4NxgpjXc+C6joOLgUlkfaKvT+o1JcSehG5LB/Ja029C4YJQeNZrBIB7oX
+ FfQMlwVDtZAX4+zwj+gVpiHD7vAZGuiwbg/nLPgiLzafJfsgW5cJAym01
+ ffuvkoopiZ2gM9krJjQARieUKYx+nLVK3PlPNrwQc9VqGpgMwOshe3hZw
+ tQgIQJfzSYnFpAZ49ZTtzIcEyGLnh4aMcRvjij2WK8N9/gxpJNI98t3Il
+ Hp5d0nP06RGdK2IlhqSlDX2TaHQkRZhnHdTcENWZfchterD9DqUjjoce/ g==;
+X-CSE-ConnectionGUID: XxWqZlJ4RqeGtjelOSt6lQ==
+X-CSE-MsgGUID: fZH/GRicT9e89SXn8u2niA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11776"; a="90220424"
+X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="90220424"
 Received: from orviesa002.jf.intel.com ([10.64.159.142])
  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 May 2026 04:13:00 -0700
-X-CSE-ConnectionGUID: cO1BFYbJQouw6WNk7p+Y5w==
-X-CSE-MsgGUID: XM26L1orSRyUxdyQj40P/g==
+ 05 May 2026 04:13:02 -0700
+X-CSE-ConnectionGUID: vlW82OfVSSyTAQuZoCmVSQ==
+X-CSE-MsgGUID: P5m9LwhzSPGy+FUEXZlsLw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="266126037"
+X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="266126042"
 Received: from icx008.iind.intel.com ([10.190.212.196])
- by orviesa002.jf.intel.com with ESMTP; 05 May 2026 04:12:58 -0700
+ by orviesa002.jf.intel.com with ESMTP; 05 May 2026 04:13:00 -0700
 From: Rajesh Kumar <rajesh3.kumar@intel.com>
 To: dev@dpdk.org
 Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
  stephen@networkplumber.org, Rajesh Kumar <rajesh3.kumar@intel.com>
-Subject: [RFC v4 5/6] app/test: add PTP library unit tests
-Date: Tue,  5 May 2026 22:08:54 +0530
-Message-ID: <20260505163858.212158-6-rajesh3.kumar@intel.com>
+Subject: [RFC v4 6/6] examples/ptpclient: use shared PTP library definitions
+Date: Tue,  5 May 2026 22:08:55 +0530
+Message-ID: <20260505163858.212158-7-rajesh3.kumar@intel.com>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260505163858.212158-1-rajesh3.kumar@intel.com>
 References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
@@ -61,1158 +61,374 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add autotest for the PTP library covering:
-- Transport classification (L2, VLAN, QinQ, UDP/IPv4, UDP/IPv6)
-- Message type parsing and string conversion
-- Inline helpers (is_event, two_step, seq_id, version, domain)
-- Correction field arithmetic (add, accumulate, negative values)
-- Timestamp nanosecond conversion
-- Flag field extraction (TWO_STEP, UNICAST, LI_61, LI_59)
+Replace local PTP struct and constant definitions with the shared
+rte_ptp.h library types introduced earlier in this series:
+- struct ptp_header  -> struct rte_ptp_hdr
+- struct tstamp      -> struct rte_ptp_timestamp
+- struct clock_id    -> uint8_t clock_id[8] (from rte_ptp_port_id)
+- SYNC/FOLLOW_UP/DELAY_* defines -> RTE_PTP_MSGTYPE_* constants
+- PTP_PROTOCOL       -> RTE_PTP_ETHERTYPE
+- hardcoded multicast -> RTE_PTP_MULTICAST_MAC
+- ptp_hdr->msg_type switch -> rte_ptp_msg_type() accessor
+
+No functional change.
 
 Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
 ---
- MAINTAINERS          |    1 +
- app/test/meson.build |    1 +
- app/test/test_ptp.c  | 1106 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 1108 insertions(+)
- create mode 100644 app/test/test_ptp.c
+ examples/ptpclient/meson.build |   1 +
+ examples/ptpclient/ptpclient.c | 188 +++++++++++++--------------------
+ 2 files changed, 73 insertions(+), 116 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 665e08dc90..8d509cbe8e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1668,6 +1668,7 @@ F: app/test-sad/
- PTP - EXPERIMENTAL
- M: Rajesh Kumar <rajesh3.kumar@intel.com>
- F: lib/ptp/
-+F: app/test/test_ptp.c
- F: doc/guides/prog_guide/ptp_lib.rst
- F: examples/ptp_tap_relay_sw/
- F: doc/guides/sample_app_ug/ptp_tap_relay_sw.rst
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 7d458f9c07..ecaa8d0839 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -154,6 +154,7 @@ source_file_deps = {
-     'test_power_kvm_vm.c': ['power', 'power_kvm_vm'],
-     'test_prefetch.c': [],
-     'test_ptr_compress.c': ['ptr_compress'],
-+    'test_ptp.c': ['ptp'],
-     'test_rand_perf.c': [],
-     'test_rawdev.c': ['rawdev', 'bus_vdev', 'raw_skeleton'],
-     'test_rcu_qsbr.c': ['rcu', 'hash'],
-diff --git a/app/test/test_ptp.c b/app/test/test_ptp.c
-new file mode 100644
-index 0000000000..803951b1fa
---- /dev/null
-+++ b/app/test/test_ptp.c
-@@ -0,0 +1,1106 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright(c) 2026 Intel Corporation
-+ */
-+
-+#include "test.h"
-+
-+#include <string.h>
-+#include <stdio.h>
-+#include <stdint.h>
-+#include <inttypes.h>
-+
-+#include <rte_mbuf.h>
-+#include <rte_mempool.h>
-+#include <rte_memory.h>
-+#include <rte_ether.h>
-+#include <rte_ip.h>
-+#include <rte_udp.h>
-+#include <rte_byteorder.h>
+diff --git a/examples/ptpclient/meson.build b/examples/ptpclient/meson.build
+index 2e9b7625fc..ab074c9cb1 100644
+--- a/examples/ptpclient/meson.build
++++ b/examples/ptpclient/meson.build
+@@ -7,6 +7,7 @@
+ # DPDK instance, use 'make'
+ 
+ allow_experimental_apis = true
++deps += ['ptp']
+ sources = files(
+         'ptpclient.c',
+ )
+diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
+index 174ca5dd70..ee93f511d7 100644
+--- a/examples/ptpclient/ptpclient.c
++++ b/examples/ptpclient/ptpclient.c
+@@ -17,6 +17,7 @@
+ #include <rte_lcore.h>
+ #include <rte_mbuf.h>
+ #include <rte_ip.h>
 +#include <rte_ptp.h>
-+
-+#define PTP_TEST_MP_NAME   "test_ptp_pool"
-+#define PTP_TEST_MP_SIZE   63
-+#define PTP_TEST_BUF_SIZE  RTE_MBUF_DEFAULT_BUF_SIZE
-+
-+static struct rte_mempool *ptp_mp;
-+
-+/* Helper: fill a minimal PTP header */
-+static void
-+fill_ptp_hdr(struct rte_ptp_hdr *ptp, uint8_t msg_type, uint16_t flags_host,
-+	     int64_t correction_scaled_ns, uint16_t seq_id)
-+{
-+	memset(ptp, 0, sizeof(*ptp));
-+	ptp->msg_type = msg_type;
-+	ptp->version = 0x02;
-+	ptp->msg_length = rte_cpu_to_be_16(34);
-+	ptp->flags = rte_cpu_to_be_16(flags_host);
-+	ptp->correction = rte_cpu_to_be_64(correction_scaled_ns);
-+	ptp->sequence_id = rte_cpu_to_be_16(seq_id);
-+}
-+
-+/* ================================================================
-+ *  Packet builders
-+ * ================================================================
-+ */
-+
-+static struct rte_mbuf *
-+build_l2_ptp(uint8_t msg_type)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)
-+		rte_pktmbuf_append(m, sizeof(*eth) + sizeof(struct rte_ptp_hdr));
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(0x88F7);
-+
-+	struct rte_ptp_hdr *ptp = (struct rte_ptp_hdr *)((uint8_t *)eth + sizeof(*eth));
-+	fill_ptp_hdr(ptp, msg_type, RTE_PTP_FLAG_TWO_STEP, 0, 100);
-+	return m;
-+}
-+
-+/* Build L2 PTP with no TWO_STEP flag */
-+static struct rte_mbuf *
-+build_l2_ptp_noflags(uint8_t msg_type)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)
-+		rte_pktmbuf_append(m, sizeof(*eth) + sizeof(struct rte_ptp_hdr));
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(0x88F7);
-+
-+	struct rte_ptp_hdr *ptp = (struct rte_ptp_hdr *)((uint8_t *)eth + sizeof(*eth));
-+	fill_ptp_hdr(ptp, msg_type, 0, 0, 200);
-+	return m;
-+}
-+
-+static struct rte_mbuf *
-+build_vlan_l2_ptp(uint8_t msg_type, uint16_t tpid)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   sizeof(struct rte_vlan_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(tpid);
-+
-+	struct rte_vlan_hdr *vlan = (struct rte_vlan_hdr *)(data + sizeof(*eth));
-+	vlan->vlan_tci = rte_cpu_to_be_16(100);
-+	vlan->eth_proto = rte_cpu_to_be_16(0x88F7);
-+
-+	struct rte_ptp_hdr *ptp = (struct rte_ptp_hdr *)
-+		(data + sizeof(*eth) + sizeof(*vlan));
-+	fill_ptp_hdr(ptp, msg_type, 0, 0, 200);
-+	return m;
-+}
-+
-+static struct rte_mbuf *
-+build_qinq_l2_ptp(uint8_t msg_type, uint16_t outer_tpid, uint16_t inner_tpid)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   2 * sizeof(struct rte_vlan_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(outer_tpid);
-+
-+	uint32_t off = sizeof(*eth);
-+	struct rte_vlan_hdr *vo = (struct rte_vlan_hdr *)(data + off);
-+	vo->vlan_tci = rte_cpu_to_be_16(200);
-+	vo->eth_proto = rte_cpu_to_be_16(inner_tpid);
-+	off += sizeof(*vo);
-+
-+	struct rte_vlan_hdr *vi = (struct rte_vlan_hdr *)(data + off);
-+	vi->vlan_tci = rte_cpu_to_be_16(300);
-+	vi->eth_proto = rte_cpu_to_be_16(0x88F7);
-+	off += sizeof(*vi);
-+
-+	struct rte_ptp_hdr *ptp = (struct rte_ptp_hdr *)(data + off);
-+	fill_ptp_hdr(ptp, msg_type, 0, 0, 300);
-+	return m;
-+}
-+
-+/* Helper: append IPv4 + UDP + PTP after offset */
-+static void
-+fill_ipv4_udp_ptp(uint8_t *data, uint32_t off, uint8_t msg_type,
-+		  uint16_t dst_port, uint16_t seq_id)
-+{
-+	struct rte_ipv4_hdr *iph = (struct rte_ipv4_hdr *)(data + off);
-+	memset(iph, 0, sizeof(*iph));
-+	iph->version_ihl = 0x45;
-+	iph->next_proto_id = IPPROTO_UDP;
-+	iph->total_length = rte_cpu_to_be_16(
-+		sizeof(struct rte_ipv4_hdr) + sizeof(struct rte_udp_hdr) +
-+		sizeof(struct rte_ptp_hdr));
-+	iph->src_addr = rte_cpu_to_be_32(0x0A000001);
-+	iph->dst_addr = rte_cpu_to_be_32(0xE0000181);
-+	off += sizeof(*iph);
-+
-+	struct rte_udp_hdr *udp = (struct rte_udp_hdr *)(data + off);
-+	memset(udp, 0, sizeof(*udp));
-+	udp->src_port = rte_cpu_to_be_16(12345);
-+	udp->dst_port = rte_cpu_to_be_16(dst_port);
-+	udp->dgram_len = rte_cpu_to_be_16(sizeof(*udp) +
-+		sizeof(struct rte_ptp_hdr));
-+	off += sizeof(*udp);
-+
-+	struct rte_ptp_hdr *ptp = (struct rte_ptp_hdr *)(data + off);
-+	fill_ptp_hdr(ptp, msg_type, 0, 0, seq_id);
-+}
-+
-+static struct rte_mbuf *
-+build_ipv4_udp_ptp(uint8_t msg_type, uint16_t dst_port)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   sizeof(struct rte_ipv4_hdr) +
-+			   sizeof(struct rte_udp_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	fill_ipv4_udp_ptp(data, sizeof(*eth), msg_type, dst_port, 400);
-+	return m;
-+}
-+
-+static struct rte_mbuf *
-+build_vlan_ipv4_udp_ptp(uint8_t msg_type, uint16_t dst_port)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   sizeof(struct rte_vlan_hdr) +
-+			   sizeof(struct rte_ipv4_hdr) +
-+			   sizeof(struct rte_udp_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
-+
-+	uint32_t off = sizeof(*eth);
-+	struct rte_vlan_hdr *vlan = (struct rte_vlan_hdr *)(data + off);
-+	vlan->vlan_tci = rte_cpu_to_be_16(100);
-+	vlan->eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+	off += sizeof(*vlan);
-+
-+	fill_ipv4_udp_ptp(data, off, msg_type, dst_port, 500);
-+	return m;
-+}
-+
-+static struct rte_mbuf *
-+build_qinq_ipv4_udp_ptp(uint8_t msg_type, uint16_t dst_port)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   2 * sizeof(struct rte_vlan_hdr) +
-+			   sizeof(struct rte_ipv4_hdr) +
-+			   sizeof(struct rte_udp_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ);
-+
-+	uint32_t off = sizeof(*eth);
-+	struct rte_vlan_hdr *vo = (struct rte_vlan_hdr *)(data + off);
-+	vo->vlan_tci = rte_cpu_to_be_16(200);
-+	vo->eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
-+	off += sizeof(*vo);
-+
-+	struct rte_vlan_hdr *vi = (struct rte_vlan_hdr *)(data + off);
-+	vi->vlan_tci = rte_cpu_to_be_16(300);
-+	vi->eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+	off += sizeof(*vi);
-+
-+	fill_ipv4_udp_ptp(data, off, msg_type, dst_port, 600);
-+	return m;
-+}
-+
-+/* Helper: append IPv6 + UDP + PTP */
-+static void
-+fill_ipv6_udp_ptp(uint8_t *data, uint32_t off, uint8_t msg_type,
-+		  uint16_t dst_port, uint16_t seq_id)
-+{
-+	struct rte_ipv6_hdr *ip6 = (struct rte_ipv6_hdr *)(data + off);
-+	memset(ip6, 0, sizeof(*ip6));
-+	ip6->vtc_flow = rte_cpu_to_be_32(0x60000000);
-+	ip6->payload_len = rte_cpu_to_be_16(
-+		sizeof(struct rte_udp_hdr) + sizeof(struct rte_ptp_hdr));
-+	ip6->proto = IPPROTO_UDP;
-+	ip6->hop_limits = 64;
-+	off += sizeof(*ip6);
-+
-+	struct rte_udp_hdr *udp = (struct rte_udp_hdr *)(data + off);
-+	memset(udp, 0, sizeof(*udp));
-+	udp->src_port = rte_cpu_to_be_16(12345);
-+	udp->dst_port = rte_cpu_to_be_16(dst_port);
-+	udp->dgram_len = rte_cpu_to_be_16(sizeof(*udp) +
-+		sizeof(struct rte_ptp_hdr));
-+	off += sizeof(*udp);
-+
-+	struct rte_ptp_hdr *ptp = (struct rte_ptp_hdr *)(data + off);
-+	fill_ptp_hdr(ptp, msg_type, 0, 0, seq_id);
-+}
-+
-+static struct rte_mbuf *
-+build_ipv6_udp_ptp(uint8_t msg_type, uint16_t dst_port)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   sizeof(struct rte_ipv6_hdr) +
-+			   sizeof(struct rte_udp_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
-+
-+	fill_ipv6_udp_ptp(data, sizeof(*eth), msg_type, dst_port, 700);
-+	return m;
-+}
-+
-+static struct rte_mbuf *
-+build_vlan_ipv6_udp_ptp(uint8_t msg_type, uint16_t dst_port)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   sizeof(struct rte_vlan_hdr) +
-+			   sizeof(struct rte_ipv6_hdr) +
-+			   sizeof(struct rte_udp_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
-+
-+	uint32_t off = sizeof(*eth);
-+	struct rte_vlan_hdr *vlan = (struct rte_vlan_hdr *)(data + off);
-+	vlan->vlan_tci = rte_cpu_to_be_16(100);
-+	vlan->eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
-+	off += sizeof(*vlan);
-+
-+	fill_ipv6_udp_ptp(data, off, msg_type, dst_port, 800);
-+	return m;
-+}
-+
-+static struct rte_mbuf *
-+build_qinq_ipv6_udp_ptp(uint8_t msg_type, uint16_t dst_port)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   2 * sizeof(struct rte_vlan_hdr) +
-+			   sizeof(struct rte_ipv6_hdr) +
-+			   sizeof(struct rte_udp_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ);
-+
-+	uint32_t off = sizeof(*eth);
-+	struct rte_vlan_hdr *vo = (struct rte_vlan_hdr *)(data + off);
-+	vo->vlan_tci = rte_cpu_to_be_16(200);
-+	vo->eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN);
-+	off += sizeof(*vo);
-+
-+	struct rte_vlan_hdr *vi = (struct rte_vlan_hdr *)(data + off);
-+	vi->vlan_tci = rte_cpu_to_be_16(300);
-+	vi->eth_proto = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV6);
-+	off += sizeof(*vi);
-+
-+	fill_ipv6_udp_ptp(data, off, msg_type, dst_port, 900);
-+	return m;
-+}
-+
-+static struct rte_mbuf *
-+build_non_ptp(void)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) + 28;
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(data, 0, pkt_len);
-+	eth->ether_type = rte_cpu_to_be_16(0x0806);
-+	return m;
-+}
-+
-+static struct rte_mbuf *
-+build_ipv4_udp_non_ptp(void)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	if (!m)
-+		return NULL;
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   sizeof(struct rte_ipv4_hdr) +
-+			   sizeof(struct rte_udp_hdr) + 20;
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(data, 0, pkt_len);
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	struct rte_ipv4_hdr *iph = (struct rte_ipv4_hdr *)(data + sizeof(*eth));
-+	iph->version_ihl = 0x45;
-+	iph->next_proto_id = IPPROTO_UDP;
-+	iph->total_length = rte_cpu_to_be_16(
-+		sizeof(*iph) + sizeof(struct rte_udp_hdr) + 20);
-+
-+	struct rte_udp_hdr *udp = (struct rte_udp_hdr *)
-+		(data + sizeof(*eth) + sizeof(*iph));
-+	udp->dst_port = rte_cpu_to_be_16(53);
-+	return m;
-+}
-+
-+/* ================================================================
-+ *  Individual test cases
-+ * ================================================================
-+ */
-+
-+/* Helper: classify + hdr_get for a given mbuf */
-+static int
-+check_classify_and_hdr_get(struct rte_mbuf *m, int expected_type)
-+{
-+	int ret;
-+
-+	TEST_ASSERT_NOT_NULL(m, "mbuf allocation failed");
-+
-+	ret = rte_ptp_classify(m);
-+	TEST_ASSERT_EQUAL(ret, expected_type,
-+		"classify: expected %d, got %d", expected_type, ret);
-+
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	if (expected_type == RTE_PTP_MSGTYPE_INVALID) {
-+		TEST_ASSERT_NULL(hdr,
-+			"hdr_get: expected NULL for non-PTP packet");
-+	} else {
-+		TEST_ASSERT_NOT_NULL(hdr,
-+			"hdr_get: expected non-NULL for PTP packet");
-+		TEST_ASSERT_EQUAL(rte_ptp_msg_type(hdr),
-+			(uint8_t)expected_type,
-+			"hdr_get: msg_type mismatch: expected %d, got %d",
-+			expected_type, rte_ptp_msg_type(hdr));
-+	}
-+
-+	rte_pktmbuf_free(m);
-+	return TEST_SUCCESS;
-+}
-+
-+/* Section 1: Transport classification */
-+static int
-+test_ptp_classify_l2(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_l2_ptp(RTE_PTP_MSGTYPE_SYNC), RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_l2_delay_req(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_l2_ptp(RTE_PTP_MSGTYPE_DELAY_REQ),
-+		RTE_PTP_MSGTYPE_DELAY_REQ);
-+}
-+
-+static int
-+test_ptp_classify_vlan_8100(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_vlan_l2_ptp(RTE_PTP_MSGTYPE_SYNC, RTE_ETHER_TYPE_VLAN),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_vlan_88a8(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_vlan_l2_ptp(RTE_PTP_MSGTYPE_SYNC, RTE_ETHER_TYPE_QINQ),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_qinq(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_qinq_l2_ptp(RTE_PTP_MSGTYPE_SYNC,
-+			RTE_ETHER_TYPE_QINQ, RTE_ETHER_TYPE_VLAN),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_double_8100(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_qinq_l2_ptp(RTE_PTP_MSGTYPE_SYNC,
-+			RTE_ETHER_TYPE_VLAN, RTE_ETHER_TYPE_VLAN),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_ipv4_udp_319(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_ipv4_udp_ptp(RTE_PTP_MSGTYPE_SYNC, 319),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_ipv4_udp_320(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_ipv4_udp_ptp(RTE_PTP_MSGTYPE_FOLLOW_UP, 320),
-+		RTE_PTP_MSGTYPE_FOLLOW_UP);
-+}
-+
-+static int
-+test_ptp_classify_vlan_ipv4_udp(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_vlan_ipv4_udp_ptp(RTE_PTP_MSGTYPE_SYNC, 319),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_qinq_ipv4_udp(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_qinq_ipv4_udp_ptp(RTE_PTP_MSGTYPE_SYNC, 319),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_ipv6_udp_319(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_ipv6_udp_ptp(RTE_PTP_MSGTYPE_SYNC, 319),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_ipv6_udp_320(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_ipv6_udp_ptp(RTE_PTP_MSGTYPE_FOLLOW_UP, 320),
-+		RTE_PTP_MSGTYPE_FOLLOW_UP);
-+}
-+
-+static int
-+test_ptp_classify_vlan_ipv6_udp(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_vlan_ipv6_udp_ptp(RTE_PTP_MSGTYPE_SYNC, 319),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_qinq_ipv6_udp(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_qinq_ipv6_udp_ptp(RTE_PTP_MSGTYPE_SYNC, 319),
-+		RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+static int
-+test_ptp_classify_non_ptp_arp(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_non_ptp(), RTE_PTP_MSGTYPE_INVALID);
-+}
-+
-+static int
-+test_ptp_classify_non_ptp_udp(void)
-+{
-+	return check_classify_and_hdr_get(
-+		build_ipv4_udp_non_ptp(), RTE_PTP_MSGTYPE_INVALID);
-+}
-+
-+/* IPv4 with invalid IHL (< 5) should be rejected */
-+static int
-+test_ptp_classify_ipv4_bad_ihl(void)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+
-+	uint32_t pkt_len = sizeof(struct rte_ether_hdr) +
-+			   sizeof(struct rte_ipv4_hdr) +
-+			   sizeof(struct rte_udp_hdr) +
-+			   sizeof(struct rte_ptp_hdr);
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	fill_ipv4_udp_ptp(data, sizeof(*eth), RTE_PTP_MSGTYPE_SYNC, 319, 999);
-+
-+	/* Corrupt the IHL to 3 (< minimum 5) */
-+	struct rte_ipv4_hdr *iph = (struct rte_ipv4_hdr *)
-+		(data + sizeof(*eth));
-+	iph->version_ihl = 0x43;
-+
-+	return check_classify_and_hdr_get(m, RTE_PTP_MSGTYPE_INVALID);
-+}
-+
-+/* IPv4 with options (IHL > 5) should still be parsed correctly */
-+static int
-+test_ptp_classify_ipv4_options(void)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+	uint32_t pkt_len;
-+	uint32_t off;
-+	uint8_t *data;
-+	struct rte_ether_hdr *eth;
-+	struct rte_ipv4_hdr *iph;
-+	struct rte_udp_hdr *udp;
-+	struct rte_ptp_hdr *ptp;
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+
-+	pkt_len = sizeof(struct rte_ether_hdr) +
-+			sizeof(struct rte_ipv4_hdr) + 4 +
-+			sizeof(struct rte_udp_hdr) +
-+			sizeof(struct rte_ptp_hdr);
-+	data = (uint8_t *)rte_pktmbuf_append(m, pkt_len);
-+	TEST_ASSERT_NOT_NULL(data, "append failed");
-+
-+	eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4);
-+
-+	off = sizeof(*eth);
-+	iph = (struct rte_ipv4_hdr *)(data + off);
-+	memset(iph, 0, sizeof(*iph));
-+	iph->version_ihl = 0x46; /* IHL = 6 words = 24 bytes */
-+	iph->next_proto_id = IPPROTO_UDP;
-+	iph->total_length = rte_cpu_to_be_16(sizeof(struct rte_ipv4_hdr) + 4 +
-+			sizeof(struct rte_udp_hdr) + sizeof(struct rte_ptp_hdr));
-+	iph->src_addr = rte_cpu_to_be_32(0x0A000001);
-+	iph->dst_addr = rte_cpu_to_be_32(0xE0000181);
-+	off += sizeof(*iph);
-+
-+	memset(data + off, 0, 4); /* IPv4 options bytes */
-+	off += 4;
-+
-+	udp = (struct rte_udp_hdr *)(data + off);
-+	memset(udp, 0, sizeof(*udp));
-+	udp->src_port = rte_cpu_to_be_16(12345);
-+	udp->dst_port = rte_cpu_to_be_16(RTE_PTP_EVENT_PORT);
-+	udp->dgram_len = rte_cpu_to_be_16(sizeof(*udp) + sizeof(struct rte_ptp_hdr));
-+	off += sizeof(*udp);
-+
-+	ptp = (struct rte_ptp_hdr *)(data + off);
-+	fill_ptp_hdr(ptp, RTE_PTP_MSGTYPE_SYNC, 0, 0, 1001);
-+
-+	return check_classify_and_hdr_get(m, RTE_PTP_MSGTYPE_SYNC);
-+}
-+
-+/* Truncated packet: Ethernet header only, no payload */
-+static int
-+test_ptp_classify_truncated(void)
-+{
-+	struct rte_mbuf *m = rte_pktmbuf_alloc(ptp_mp);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+
-+	uint8_t *data = (uint8_t *)rte_pktmbuf_append(m,
-+		sizeof(struct rte_ether_hdr));
-+	struct rte_ether_hdr *eth = (struct rte_ether_hdr *)data;
-+	memset(eth, 0, sizeof(*eth));
-+	eth->ether_type = rte_cpu_to_be_16(0x88F7);
-+
-+	return check_classify_and_hdr_get(m, RTE_PTP_MSGTYPE_INVALID);
-+}
-+
-+/* Section 2: All 10 message types via L2 */
-+static int
-+test_ptp_all_msg_types(void)
-+{
-+	static const uint8_t types[] = {
-+		RTE_PTP_MSGTYPE_SYNC,
-+		RTE_PTP_MSGTYPE_DELAY_REQ,
-+		RTE_PTP_MSGTYPE_PDELAY_REQ,
-+		RTE_PTP_MSGTYPE_PDELAY_RESP,
-+		RTE_PTP_MSGTYPE_FOLLOW_UP,
-+		RTE_PTP_MSGTYPE_DELAY_RESP,
-+		RTE_PTP_MSGTYPE_PDELAY_RESP_FU,
-+		RTE_PTP_MSGTYPE_ANNOUNCE,
-+		RTE_PTP_MSGTYPE_SIGNALING,
-+		RTE_PTP_MSGTYPE_MANAGEMENT,
-+	};
-+	unsigned int i;
-+
-+	for (i = 0; i < RTE_DIM(types); i++) {
-+		int ret = check_classify_and_hdr_get(
-+			build_l2_ptp(types[i]), types[i]);
-+		if (ret != TEST_SUCCESS)
-+			return ret;
-+	}
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Section 3: Inline helpers */
-+static int
-+test_ptp_is_event(void)
-+{
-+	TEST_ASSERT(rte_ptp_is_event(RTE_PTP_MSGTYPE_SYNC),
-+		"Sync should be event");
-+	TEST_ASSERT(rte_ptp_is_event(RTE_PTP_MSGTYPE_DELAY_REQ),
-+		"Delay_Req should be event");
-+	TEST_ASSERT(rte_ptp_is_event(RTE_PTP_MSGTYPE_PDELAY_REQ),
-+		"Pdelay_Req should be event");
-+	TEST_ASSERT(rte_ptp_is_event(RTE_PTP_MSGTYPE_PDELAY_RESP),
-+		"Pdelay_Resp should be event");
-+	TEST_ASSERT(!rte_ptp_is_event(RTE_PTP_MSGTYPE_FOLLOW_UP),
-+		"Follow_Up should not be event");
-+	TEST_ASSERT(!rte_ptp_is_event(RTE_PTP_MSGTYPE_ANNOUNCE),
-+		"Announce should not be event");
-+	TEST_ASSERT(!rte_ptp_is_event(RTE_PTP_MSGTYPE_INVALID),
-+		"INVALID (-1) should not be event");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_two_step(void)
-+{
-+	struct rte_mbuf *m;
-+	struct rte_ptp_hdr *hdr;
-+
-+	m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+	TEST_ASSERT(rte_ptp_is_two_step(hdr),
-+		"TWO_STEP flag should be set");
-+	rte_pktmbuf_free(m);
-+
-+	m = build_l2_ptp_noflags(RTE_PTP_MSGTYPE_SYNC);
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+	TEST_ASSERT(!rte_ptp_is_two_step(hdr),
-+		"TWO_STEP flag should not be set");
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_seq_id(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+	TEST_ASSERT_EQUAL(rte_ptp_seq_id(hdr), 100,
-+		"seq_id: expected 100, got %u", rte_ptp_seq_id(hdr));
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_version(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+	TEST_ASSERT_EQUAL(rte_ptp_version(hdr), 2,
-+		"version: expected 2, got %u", rte_ptp_version(hdr));
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_domain(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+	TEST_ASSERT_EQUAL(rte_ptp_domain(hdr), 0,
-+		"domain: expected 0, got %u", rte_ptp_domain(hdr));
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Section 4: correctionField */
-+static int
-+test_ptp_correction_zero(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+	int64_t ns = rte_ptp_correction_ns(hdr);
-+	TEST_ASSERT_EQUAL(ns, 0,
-+		"correction_ns: expected 0, got %" PRId64, ns);
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_correction_known(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *ptp = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(ptp, "hdr_get failed");
-+	int64_t scaled_1000 = (int64_t)1000 << 16;
-+	fill_ptp_hdr(ptp, RTE_PTP_MSGTYPE_SYNC, 0, scaled_1000, 0);
-+
-+	int64_t ns = rte_ptp_correction_ns(ptp);
-+	TEST_ASSERT_EQUAL(ns, 1000,
-+		"correction_ns: expected 1000, got %" PRId64, ns);
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_add_correction(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+
-+	rte_ptp_add_correction(hdr, 500);
-+	int64_t ns = rte_ptp_correction_ns(hdr);
-+	TEST_ASSERT_EQUAL(ns, 500,
-+		"add 500: expected 500, got %" PRId64, ns);
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_add_correction_accumulate(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+
-+	rte_ptp_add_correction(hdr, 300);
-+	rte_ptp_add_correction(hdr, 700);
-+	int64_t ns = rte_ptp_correction_ns(hdr);
-+	TEST_ASSERT_EQUAL(ns, 1000,
-+		"accumulate: expected 1000, got %" PRId64, ns);
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_add_correction_large(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+
-+	rte_ptp_add_correction(hdr, 1000000000LL);
-+	int64_t ns = rte_ptp_correction_ns(hdr);
-+	TEST_ASSERT_EQUAL(ns, 1000000000LL,
-+		"1s: expected 1000000000, got %" PRId64, ns);
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+static int
-+test_ptp_add_correction_negative(void)
-+{
-+	struct rte_mbuf *m = build_l2_ptp(RTE_PTP_MSGTYPE_SYNC);
-+
-+	TEST_ASSERT_NOT_NULL(m, "alloc failed");
-+	struct rte_ptp_hdr *hdr = rte_ptp_hdr_get(m);
-+	TEST_ASSERT_NOT_NULL(hdr, "hdr_get failed");
-+
-+	rte_ptp_add_correction(hdr, -100LL);
-+	int64_t ns = rte_ptp_correction_ns(hdr);
-+	TEST_ASSERT_EQUAL(ns, -100LL,
-+		"negative: expected -100, got %" PRId64, ns);
-+	rte_pktmbuf_free(m);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Section 5: Timestamp conversion */
-+static int
-+test_ptp_timestamp_to_ns(void)
-+{
-+	struct rte_ptp_timestamp ts;
-+	uint64_t ns;
-+
-+	/* Zero */
-+	memset(&ts, 0, sizeof(ts));
-+	ns = rte_ptp_timestamp_to_ns(&ts);
-+	TEST_ASSERT_EQUAL(ns, 0ULL,
-+		"zero: expected 0, got %" PRIu64, ns);
-+
-+	/* 1 second */
-+	ts.seconds_hi = 0;
-+	ts.seconds_lo = rte_cpu_to_be_32(1);
-+	ts.nanoseconds = 0;
-+	ns = rte_ptp_timestamp_to_ns(&ts);
-+	TEST_ASSERT_EQUAL(ns, 1000000000ULL,
-+		"1s: expected 1000000000, got %" PRIu64, ns);
-+
-+	/* 1.5 seconds */
-+	ts.seconds_lo = rte_cpu_to_be_32(1);
-+	ts.nanoseconds = rte_cpu_to_be_32(500000000);
-+	ns = rte_ptp_timestamp_to_ns(&ts);
-+	TEST_ASSERT_EQUAL(ns, 1500000000ULL,
-+		"1.5s: expected 1500000000, got %" PRIu64, ns);
-+
-+	/* Large value with seconds_hi */
-+	ts.seconds_hi = rte_cpu_to_be_16(1);
-+	ts.seconds_lo = 0;
-+	ts.nanoseconds = 0;
-+	ns = rte_ptp_timestamp_to_ns(&ts);
-+	uint64_t expected = ((uint64_t)1 << 32) * 1000000000ULL;
-+	TEST_ASSERT_EQUAL(ns, expected,
-+		"2^32s: expected %" PRIu64 ", got %" PRIu64, expected, ns);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Section 6: msg_type_str */
-+static int
-+test_ptp_msg_type_str(void)
-+{
-+	static const struct {
-+		int type;
-+		const char *expected;
-+	} cases[] = {
-+		{ RTE_PTP_MSGTYPE_SYNC,           "Sync" },
-+		{ RTE_PTP_MSGTYPE_DELAY_REQ,      "Delay_Req" },
-+		{ RTE_PTP_MSGTYPE_PDELAY_REQ,     "PDelay_Req" },
-+		{ RTE_PTP_MSGTYPE_PDELAY_RESP,    "PDelay_Resp" },
-+		{ RTE_PTP_MSGTYPE_FOLLOW_UP,      "Follow_Up" },
-+		{ RTE_PTP_MSGTYPE_DELAY_RESP,     "Delay_Resp" },
-+		{ RTE_PTP_MSGTYPE_PDELAY_RESP_FU, "PDelay_Resp_Follow_Up" },
-+		{ RTE_PTP_MSGTYPE_ANNOUNCE,       "Announce" },
-+		{ RTE_PTP_MSGTYPE_SIGNALING,      "Signaling" },
-+		{ RTE_PTP_MSGTYPE_MANAGEMENT,     "Management" },
-+	};
-+	unsigned int i;
-+
-+	for (i = 0; i < RTE_DIM(cases); i++) {
-+		const char *str = rte_ptp_msg_type_str(cases[i].type);
-+		TEST_ASSERT_NOT_NULL(str,
-+			"msg_type_str(%d) returned NULL", cases[i].type);
-+		TEST_ASSERT(strcmp(str, cases[i].expected) == 0,
-+			"msg_type_str(%d): expected \"%s\", got \"%s\"",
-+			cases[i].type, cases[i].expected, str);
-+	}
-+
-+	/* Invalid type should still return non-NULL */
-+	const char *inv = rte_ptp_msg_type_str(RTE_PTP_MSGTYPE_INVALID);
-+	TEST_ASSERT_NOT_NULL(inv,
-+		"msg_type_str(INVALID) returned NULL");
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* Section 7: Flag bit positions */
-+static int
-+test_ptp_flags(void)
-+{
-+	struct rte_ptp_hdr hdr;
-+	uint16_t f;
-+
-+	/* TWO_STEP */
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.flags = rte_cpu_to_be_16(RTE_PTP_FLAG_TWO_STEP);
-+	f = rte_be_to_cpu_16(hdr.flags);
-+	TEST_ASSERT(f & RTE_PTP_FLAG_TWO_STEP,
-+		"TWO_STEP bit not set: 0x%04x", f);
-+	TEST_ASSERT(rte_ptp_is_two_step(&hdr),
-+		"is_two_step() should return true");
-+
-+	/* UNICAST */
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.flags = rte_cpu_to_be_16(RTE_PTP_FLAG_UNICAST);
-+	f = rte_be_to_cpu_16(hdr.flags);
-+	TEST_ASSERT(f & RTE_PTP_FLAG_UNICAST,
-+		"UNICAST bit not set: 0x%04x", f);
-+
-+	/* LI_61 */
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.flags = rte_cpu_to_be_16(RTE_PTP_FLAG_LI_61);
-+	f = rte_be_to_cpu_16(hdr.flags);
-+	TEST_ASSERT(f & RTE_PTP_FLAG_LI_61,
-+		"LI_61 bit not set: 0x%04x", f);
-+
-+	/* LI_59 */
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.flags = rte_cpu_to_be_16(RTE_PTP_FLAG_LI_59);
-+	f = rte_be_to_cpu_16(hdr.flags);
-+	TEST_ASSERT(f & RTE_PTP_FLAG_LI_59,
-+		"LI_59 bit not set: 0x%04x", f);
-+
-+	/* Combined TWO_STEP + UNICAST */
-+	memset(&hdr, 0, sizeof(hdr));
-+	hdr.flags = rte_cpu_to_be_16(
-+		RTE_PTP_FLAG_TWO_STEP | RTE_PTP_FLAG_UNICAST);
-+	f = rte_be_to_cpu_16(hdr.flags);
-+	TEST_ASSERT((f & RTE_PTP_FLAG_TWO_STEP) &&
-+		    (f & RTE_PTP_FLAG_UNICAST) &&
-+		    !(f & RTE_PTP_FLAG_LI_61) &&
-+		    !(f & RTE_PTP_FLAG_LI_59),
-+		"combined flags incorrect: 0x%04x", f);
-+
-+	return TEST_SUCCESS;
-+}
-+
-+/* ================================================================
-+ *  Suite setup / teardown
-+ * ================================================================
-+ */
-+
-+static int
-+test_ptp_setup(void)
-+{
-+	ptp_mp = rte_pktmbuf_pool_create(PTP_TEST_MP_NAME, PTP_TEST_MP_SIZE,
-+		0, 0, PTP_TEST_BUF_SIZE, SOCKET_ID_ANY);
-+	if (ptp_mp == NULL) {
-+		printf("Cannot create ptp test mempool\n");
-+		return TEST_FAILED;
-+	}
-+	return TEST_SUCCESS;
-+}
-+
-+static void
-+test_ptp_teardown(void)
-+{
-+	rte_mempool_free(ptp_mp);
-+	ptp_mp = NULL;
-+}
-+
-+static struct unit_test_suite ptp_test_suite = {
-+	.suite_name = "PTP Library Unit Tests",
-+	.setup = test_ptp_setup,
-+	.teardown = test_ptp_teardown,
-+	.unit_test_cases = {
-+		/* Transport classification */
-+		TEST_CASE(test_ptp_classify_l2),
-+		TEST_CASE(test_ptp_classify_l2_delay_req),
-+		TEST_CASE(test_ptp_classify_vlan_8100),
-+		TEST_CASE(test_ptp_classify_vlan_88a8),
-+		TEST_CASE(test_ptp_classify_qinq),
-+		TEST_CASE(test_ptp_classify_double_8100),
-+		TEST_CASE(test_ptp_classify_ipv4_udp_319),
-+		TEST_CASE(test_ptp_classify_ipv4_udp_320),
-+		TEST_CASE(test_ptp_classify_vlan_ipv4_udp),
-+		TEST_CASE(test_ptp_classify_qinq_ipv4_udp),
-+		TEST_CASE(test_ptp_classify_ipv6_udp_319),
-+		TEST_CASE(test_ptp_classify_ipv6_udp_320),
-+		TEST_CASE(test_ptp_classify_vlan_ipv6_udp),
-+		TEST_CASE(test_ptp_classify_qinq_ipv6_udp),
-+		TEST_CASE(test_ptp_classify_non_ptp_arp),
-+		TEST_CASE(test_ptp_classify_non_ptp_udp),
-+		TEST_CASE(test_ptp_classify_ipv4_bad_ihl),
-+		TEST_CASE(test_ptp_classify_ipv4_options),
-+		TEST_CASE(test_ptp_classify_truncated),
-+
-+		/* All message types */
-+		TEST_CASE(test_ptp_all_msg_types),
-+
-+		/* Inline helpers */
-+		TEST_CASE(test_ptp_is_event),
-+		TEST_CASE(test_ptp_two_step),
-+		TEST_CASE(test_ptp_seq_id),
-+		TEST_CASE(test_ptp_version),
-+		TEST_CASE(test_ptp_domain),
-+
-+		/* correctionField */
-+		TEST_CASE(test_ptp_correction_zero),
-+		TEST_CASE(test_ptp_correction_known),
-+		TEST_CASE(test_ptp_add_correction),
-+		TEST_CASE(test_ptp_add_correction_accumulate),
-+		TEST_CASE(test_ptp_add_correction_large),
-+		TEST_CASE(test_ptp_add_correction_negative),
-+
-+		/* Timestamp conversion */
-+		TEST_CASE(test_ptp_timestamp_to_ns),
-+
-+		/* msg_type_str */
-+		TEST_CASE(test_ptp_msg_type_str),
-+
-+		/* Flag field bit positions */
-+		TEST_CASE(test_ptp_flags),
-+
-+		TEST_CASES_END()
-+	},
-+};
-+
-+static int
-+test_ptp(void)
-+{
-+	return unit_test_suite_runner(&ptp_test_suite);
-+}
-+
-+REGISTER_FAST_TEST(ptp_autotest, NOHUGE_SKIP, ASAN_OK, test_ptp);
+ #include <limits.h>
+ #include <sys/time.h>
+ #include <getopt.h>
+@@ -30,21 +31,8 @@ static volatile bool force_quit;
+ #define NUM_MBUFS            8191
+ #define MBUF_CACHE_SIZE       250
+ 
+-/* Values for the PTP messageType field. */
+-#define SYNC                  0x0
+-#define DELAY_REQ             0x1
+-#define PDELAY_REQ            0x2
+-#define PDELAY_RESP           0x3
+-#define FOLLOW_UP             0x8
+-#define DELAY_RESP            0x9
+-#define PDELAY_RESP_FOLLOW_UP 0xA
+-#define ANNOUNCE              0xB
+-#define SIGNALING             0xC
+-#define MANAGEMENT            0xD
+-
+ #define NSEC_PER_SEC        1000000000L
+ #define KERNEL_TIME_ADJUST_LIMIT  20000
+-#define PTP_PROTOCOL             0x88F7
+ 
+ struct rte_mempool *mbuf_pool;
+ uint32_t ptp_enabled_port_mask;
+@@ -52,66 +40,36 @@ uint8_t ptp_enabled_port_nb;
+ static uint8_t ptp_enabled_ports[RTE_MAX_ETHPORTS];
+ 
+ static const struct rte_ether_addr ether_multicast = {
+-	.addr_bytes = {0x01, 0x1b, 0x19, 0x0, 0x0, 0x0}
+-};
+-
+-/* Structs used for PTP handling. */
+-struct __rte_packed_begin tstamp {
+-	uint16_t   sec_msb;
+-	uint32_t   sec_lsb;
+-	uint32_t   ns;
+-} __rte_packed_end;
+-
+-struct clock_id {
+-	uint8_t id[8];
++	.addr_bytes = RTE_PTP_MULTICAST_MAC
+ };
+ 
+-struct __rte_packed_begin port_id {
+-	struct clock_id        clock_id;
+-	uint16_t               port_number;
+-} __rte_packed_end;
+-
+-struct __rte_packed_begin ptp_header {
+-	uint8_t              msg_type;
+-	uint8_t              ver;
+-	uint16_t             message_length;
+-	uint8_t              domain_number;
+-	uint8_t              reserved1;
+-	uint8_t              flag_field[2];
+-	int64_t              correction;
+-	uint32_t             reserved2;
+-	struct port_id       source_port_id;
+-	uint16_t             seq_id;
+-	uint8_t              control;
+-	int8_t               log_message_interval;
+-} __rte_packed_end;
+-
++/* Message body structs using the library PTP header and timestamp. */
+ struct __rte_packed_begin sync_msg {
+-	struct ptp_header   hdr;
+-	struct tstamp       origin_tstamp;
++	struct rte_ptp_hdr       hdr;
++	struct rte_ptp_timestamp origin_tstamp;
+ } __rte_packed_end;
+ 
+ struct __rte_packed_begin follow_up_msg {
+-	struct ptp_header   hdr;
+-	struct tstamp       precise_origin_tstamp;
+-	uint8_t             suffix[];
++	struct rte_ptp_hdr       hdr;
++	struct rte_ptp_timestamp precise_origin_tstamp;
++	uint8_t                  suffix[];
+ } __rte_packed_end;
+ 
+ struct __rte_packed_begin delay_req_msg {
+-	struct ptp_header   hdr;
+-	struct tstamp       origin_tstamp;
++	struct rte_ptp_hdr       hdr;
++	struct rte_ptp_timestamp origin_tstamp;
+ } __rte_packed_end;
+ 
+ struct __rte_packed_begin delay_resp_msg {
+-	struct ptp_header    hdr;
+-	struct tstamp        rx_tstamp;
+-	struct port_id       req_port_id;
+-	uint8_t              suffix[];
++	struct rte_ptp_hdr       hdr;
++	struct rte_ptp_timestamp rx_tstamp;
++	struct rte_ptp_port_id   req_port_id;
++	uint8_t                  suffix[];
+ } __rte_packed_end;
+ 
+ struct ptp_message {
+ 	union __rte_packed_begin {
+-		struct ptp_header          header;
++		struct rte_ptp_hdr         header;
+ 		struct sync_msg            sync;
+ 		struct delay_req_msg       delay_req;
+ 		struct follow_up_msg       follow_up;
+@@ -125,8 +83,8 @@ struct ptpv2_time_receiver_ordinary {
+ 	struct timespec tstamp2;
+ 	struct timespec tstamp3;
+ 	struct timespec tstamp4;
+-	struct clock_id client_clock_id;
+-	struct clock_id transmitter_clock_id;
++	uint8_t client_clock_id[8];
++	uint8_t transmitter_clock_id[8];
+ 	struct timeval new_adj;
+ 	int64_t delta;
+ 	uint16_t portid;
+@@ -272,14 +230,14 @@ print_clock_info(struct ptpv2_time_receiver_ordinary *ptp_data)
+ 	struct timespec net_time, sys_time;
+ 
+ 	printf("time transmitter clock id: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
+-		ptp_data->transmitter_clock_id.id[0],
+-		ptp_data->transmitter_clock_id.id[1],
+-		ptp_data->transmitter_clock_id.id[2],
+-		ptp_data->transmitter_clock_id.id[3],
+-		ptp_data->transmitter_clock_id.id[4],
+-		ptp_data->transmitter_clock_id.id[5],
+-		ptp_data->transmitter_clock_id.id[6],
+-		ptp_data->transmitter_clock_id.id[7]);
++		ptp_data->transmitter_clock_id[0],
++		ptp_data->transmitter_clock_id[1],
++		ptp_data->transmitter_clock_id[2],
++		ptp_data->transmitter_clock_id[3],
++		ptp_data->transmitter_clock_id[4],
++		ptp_data->transmitter_clock_id[5],
++		ptp_data->transmitter_clock_id[6],
++		ptp_data->transmitter_clock_id[7]);
+ 
+ 	printf("\nT2 - time receiver clock.  %lds %ldns",
+ 			(ptp_data->tstamp2.tv_sec),
+@@ -356,20 +314,20 @@ delta_eval(struct ptpv2_time_receiver_ordinary *ptp_data)
+ static void
+ parse_sync(struct ptpv2_time_receiver_ordinary *ptp_data, uint16_t rx_tstamp_idx)
+ {
+-	struct ptp_header *ptp_hdr;
++	struct rte_ptp_hdr *ptp_hdr;
+ 
+-	ptp_hdr = rte_pktmbuf_mtod_offset(ptp_data->m, struct ptp_header *,
++	ptp_hdr = rte_pktmbuf_mtod_offset(ptp_data->m, struct rte_ptp_hdr *,
+ 					  sizeof(struct rte_ether_hdr));
+-	ptp_data->seqID_SYNC = rte_be_to_cpu_16(ptp_hdr->seq_id);
++	ptp_data->seqID_SYNC = rte_be_to_cpu_16(ptp_hdr->sequence_id);
+ 
+ 	if (ptp_data->ptpset == 0) {
+-		ptp_data->transmitter_clock_id = ptp_hdr->source_port_id.clock_id;
++		memcpy(ptp_data->transmitter_clock_id,
++		       ptp_hdr->source_port_id.clock_id, 8);
+ 		ptp_data->ptpset = 1;
+ 	}
+ 
+-	if (memcmp(&ptp_data->transmitter_clock_id,
+-			&ptp_hdr->source_port_id.clock_id,
+-			sizeof(struct clock_id)) == 0) {
++	if (memcmp(ptp_data->transmitter_clock_id,
++			ptp_hdr->source_port_id.clock_id, 8) == 0) {
+ 
+ 		if (ptp_data->ptpset == 1)
+ 			rte_eth_timesync_read_rx_timestamp(ptp_data->portid,
+@@ -386,12 +344,12 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
+ {
+ 	struct rte_ether_hdr *eth_hdr;
+ 	struct rte_ether_addr eth_addr;
+-	struct ptp_header *ptp_hdr;
+-	struct clock_id *client_clkid;
++	struct rte_ptp_hdr *ptp_hdr;
++	uint8_t *client_clkid;
+ 	struct ptp_message *ptp_msg;
+ 	struct delay_req_msg *req_msg;
+ 	struct rte_mbuf *created_pkt;
+-	struct tstamp *origin_tstamp;
++	struct rte_ptp_timestamp *origin_tstamp;
+ 	struct rte_ether_addr eth_multicast = ether_multicast;
+ 	size_t pkt_size;
+ 	int wait_us;
+@@ -399,22 +357,21 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
+ 	int ret;
+ 
+ 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
+-	ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
++	ptp_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ptp_hdr *,
+ 					  sizeof(struct rte_ether_hdr));
+-	if (memcmp(&ptp_data->transmitter_clock_id,
+-			&ptp_hdr->source_port_id.clock_id,
+-			sizeof(struct clock_id)) != 0)
++	if (memcmp(ptp_data->transmitter_clock_id,
++			ptp_hdr->source_port_id.clock_id, 8) != 0)
+ 		return;
+ 
+-	ptp_data->seqID_FOLLOWUP = rte_be_to_cpu_16(ptp_hdr->seq_id);
++	ptp_data->seqID_FOLLOWUP = rte_be_to_cpu_16(ptp_hdr->sequence_id);
+ 	ptp_msg = rte_pktmbuf_mtod_offset(m, struct ptp_message *,
+ 					  sizeof(struct rte_ether_hdr));
+ 
+ 	origin_tstamp = &ptp_msg->follow_up.precise_origin_tstamp;
+-	ptp_data->tstamp1.tv_nsec = ntohl(origin_tstamp->ns);
++	ptp_data->tstamp1.tv_nsec = ntohl(origin_tstamp->nanoseconds);
+ 	ptp_data->tstamp1.tv_sec =
+-		((uint64_t)ntohl(origin_tstamp->sec_lsb)) |
+-		(((uint64_t)ntohs(origin_tstamp->sec_msb)) << 32);
++		((uint64_t)ntohl(origin_tstamp->seconds_lo)) |
++		(((uint64_t)ntohs(origin_tstamp->seconds_hi)) << 32);
+ 
+ 	if (ptp_data->seqID_FOLLOWUP == ptp_data->seqID_SYNC) {
+ 		ret = rte_eth_macaddr_get(ptp_data->portid, &eth_addr);
+@@ -441,34 +398,34 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
+ 		/* Set multicast address 01-1B-19-00-00-00. */
+ 		rte_ether_addr_copy(&eth_multicast, &eth_hdr->dst_addr);
+ 
+-		eth_hdr->ether_type = htons(PTP_PROTOCOL);
++		eth_hdr->ether_type = htons(RTE_PTP_ETHERTYPE);
+ 		req_msg = rte_pktmbuf_mtod_offset(created_pkt,
+ 			struct delay_req_msg *, sizeof(struct
+ 			rte_ether_hdr));
+ 
+-		req_msg->hdr.seq_id = htons(ptp_data->seqID_SYNC);
+-		req_msg->hdr.msg_type = DELAY_REQ;
+-		req_msg->hdr.ver = 2;
++		req_msg->hdr.sequence_id = htons(ptp_data->seqID_SYNC);
++		req_msg->hdr.msg_type = RTE_PTP_MSGTYPE_DELAY_REQ;
++		req_msg->hdr.version = 2;
+ 		req_msg->hdr.control = 1;
+-		req_msg->hdr.log_message_interval = 127;
+-		req_msg->hdr.message_length =
++		req_msg->hdr.log_msg_interval = 127;
++		req_msg->hdr.msg_length =
+ 			htons(sizeof(struct delay_req_msg));
+ 		req_msg->hdr.domain_number = ptp_hdr->domain_number;
+ 
+ 		/* Set up clock id. */
+ 		client_clkid =
+-			&req_msg->hdr.source_port_id.clock_id;
++			req_msg->hdr.source_port_id.clock_id;
+ 
+-		client_clkid->id[0] = eth_hdr->src_addr.addr_bytes[0];
+-		client_clkid->id[1] = eth_hdr->src_addr.addr_bytes[1];
+-		client_clkid->id[2] = eth_hdr->src_addr.addr_bytes[2];
+-		client_clkid->id[3] = 0xFF;
+-		client_clkid->id[4] = 0xFE;
+-		client_clkid->id[5] = eth_hdr->src_addr.addr_bytes[3];
+-		client_clkid->id[6] = eth_hdr->src_addr.addr_bytes[4];
+-		client_clkid->id[7] = eth_hdr->src_addr.addr_bytes[5];
++		client_clkid[0] = eth_hdr->src_addr.addr_bytes[0];
++		client_clkid[1] = eth_hdr->src_addr.addr_bytes[1];
++		client_clkid[2] = eth_hdr->src_addr.addr_bytes[2];
++		client_clkid[3] = 0xFF;
++		client_clkid[4] = 0xFE;
++		client_clkid[5] = eth_hdr->src_addr.addr_bytes[3];
++		client_clkid[6] = eth_hdr->src_addr.addr_bytes[4];
++		client_clkid[7] = eth_hdr->src_addr.addr_bytes[5];
+ 
+-		ptp_data->client_clock_id = *client_clkid;
++		memcpy(ptp_data->client_clock_id, client_clkid, 8);
+ 
+ 		/* Enable flag for hardware timestamping. */
+ 		created_pkt->ol_flags |= RTE_MBUF_F_TX_IEEE1588_TMST;
+@@ -534,21 +491,20 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp_data)
+ {
+ 	struct rte_mbuf *m = ptp_data->m;
+ 	struct ptp_message *ptp_msg;
+-	struct tstamp *rx_tstamp;
++	struct rte_ptp_timestamp *rx_tstamp;
+ 	uint16_t seq_id;
+ 
+ 	ptp_msg = rte_pktmbuf_mtod_offset(m, struct ptp_message *,
+ 					  sizeof(struct rte_ether_hdr));
+-	seq_id = rte_be_to_cpu_16(ptp_msg->delay_resp.hdr.seq_id);
+-	if (memcmp(&ptp_data->client_clock_id,
+-		   &ptp_msg->delay_resp.req_port_id.clock_id,
+-		   sizeof(struct clock_id)) == 0) {
++	seq_id = rte_be_to_cpu_16(ptp_msg->delay_resp.hdr.sequence_id);
++	if (memcmp(ptp_data->client_clock_id,
++		   ptp_msg->delay_resp.req_port_id.clock_id, 8) == 0) {
+ 		if (seq_id == ptp_data->seqID_FOLLOWUP) {
+ 			rx_tstamp = &ptp_msg->delay_resp.rx_tstamp;
+-			ptp_data->tstamp4.tv_nsec = ntohl(rx_tstamp->ns);
++			ptp_data->tstamp4.tv_nsec = ntohl(rx_tstamp->nanoseconds);
+ 			ptp_data->tstamp4.tv_sec =
+-				((uint64_t)ntohl(rx_tstamp->sec_lsb)) |
+-				(((uint64_t)ntohs(rx_tstamp->sec_msb)) << 32);
++				((uint64_t)ntohl(rx_tstamp->seconds_lo)) |
++				(((uint64_t)ntohs(rx_tstamp->seconds_hi)) << 32);
+ 
+ 			/* Evaluate the delta for adjustment. */
+ 			ptp_data->delta = delta_eval(ptp_data);
+@@ -575,27 +531,27 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp_data)
+ /* Parse ptp frames. 8< */
+ static void
+ parse_ptp_frames(uint16_t portid, struct rte_mbuf *m) {
+-	struct ptp_header *ptp_hdr;
++	struct rte_ptp_hdr *ptp_hdr;
+ 	struct rte_ether_hdr *eth_hdr;
+ 	uint16_t eth_type;
+ 
+ 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
+ 	eth_type = rte_be_to_cpu_16(eth_hdr->ether_type);
+ 
+-	if (eth_type == PTP_PROTOCOL) {
++	if (eth_type == RTE_PTP_ETHERTYPE) {
+ 		ptp_data.m = m;
+ 		ptp_data.portid = portid;
+-		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
++		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ptp_hdr *,
+ 						  sizeof(struct rte_ether_hdr));
+ 
+-		switch (ptp_hdr->msg_type) {
+-		case SYNC:
++		switch (rte_ptp_msg_type(ptp_hdr)) {
++		case RTE_PTP_MSGTYPE_SYNC:
+ 			parse_sync(&ptp_data, m->timesync);
+ 			break;
+-		case FOLLOW_UP:
++		case RTE_PTP_MSGTYPE_FOLLOW_UP:
+ 			parse_fup(&ptp_data);
+ 			break;
+-		case DELAY_RESP:
++		case RTE_PTP_MSGTYPE_DELAY_RESP:
+ 			parse_drsp(&ptp_data);
+ 			print_clock_info(&ptp_data);
+ 			break;
 -- 
 2.53.0
 
