@@ -2,52 +2,142 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F836CD342F
-	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 11:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8121CCD342F
+	for <dpdk-dev@archiver.kernel.org>; Tue,  5 May 2026 11:13:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2AD5240A6C;
-	Tue,  5 May 2026 13:13:04 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
- by mails.dpdk.org (Postfix) with ESMTP id 854A2406BA
- for <dev@dpdk.org>; Tue,  5 May 2026 13:13:02 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 11BF240674;
+	Tue,  5 May 2026 13:13:20 +0200 (CEST)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+ by mails.dpdk.org (Postfix) with ESMTP id 80CE840673
+ for <dev@dpdk.org>; Tue,  5 May 2026 13:13:18 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1777979583; x=1809515583;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=Xt8loCKcHQkjP/a3KpwOW4g4rlp6fM383izjGCGWQeE=;
- b=P8Ta6PTNdvz2oaCy1rxz2c4gZTu6DzGWkJ3tiWDVjhGbYLHjGZ8HrhrN
- 4NxgpjXc+C6joOLgUlkfaKvT+o1JcSehG5LB/Ja029C4YJQeNZrBIB7oX
- FfQMlwVDtZAX4+zwj+gVpiHD7vAZGuiwbg/nLPgiLzafJfsgW5cJAym01
- ffuvkoopiZ2gM9krJjQARieUKYx+nLVK3PlPNrwQc9VqGpgMwOshe3hZw
- tQgIQJfzSYnFpAZ49ZTtzIcEyGLnh4aMcRvjij2WK8N9/gxpJNI98t3Il
- Hp5d0nP06RGdK2IlhqSlDX2TaHQkRZhnHdTcENWZfchterD9DqUjjoce/ g==;
-X-CSE-ConnectionGUID: XxWqZlJ4RqeGtjelOSt6lQ==
-X-CSE-MsgGUID: fZH/GRicT9e89SXn8u2niA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11776"; a="90220424"
-X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="90220424"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
- by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 05 May 2026 04:13:02 -0700
-X-CSE-ConnectionGUID: vlW82OfVSSyTAQuZoCmVSQ==
-X-CSE-MsgGUID: P5m9LwhzSPGy+FUEXZlsLw==
+ t=1777979598; x=1809515598;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=BXDMiGdbQGb3yh/ppvJiYuGsAgTJ0N2a/AB+aS+Frn8=;
+ b=hL5HGRcLBA794jpQGWJRrGzTnpKv00REYhH3y5IpVAuQVXvZ4OEMjonF
+ VS7GKvGEuXOGw/bqy+/lNL5NfrTYwEHcNipRAdfZjwJMu7CcbaP9wk9Tf
+ 5ovjiUNaW9Fk/eqvVEyF7YMNsEAjQJTI7+jryaHz+eB1UzWdd40wsyujf
+ GnHCDHufc+FDu/3kz4uq1IUI12Ll5WlP2t6mtVlNHPS3Mifuu+Igv1yfG
+ aBuxRA/MlFDoyxFIbtbfiCzT60tHYBhQnQmO+qsAdPy3/cHqS4d8cwoNB
+ h16K6vQHS2iaaunS7oGzB1znJOrBJ68LjB469kF+VFaTw2SAF9nrIictY g==;
+X-CSE-ConnectionGUID: N2oGBkxjRDe0K98mSysmHQ==
+X-CSE-MsgGUID: pDTvVcz7RdWm0rbtDyLaLw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11776"; a="89152692"
+X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="89152692"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+ by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 May 2026 04:13:17 -0700
+X-CSE-ConnectionGUID: 5c49bHvXQXOU1KZfgbbWJg==
+X-CSE-MsgGUID: O38rtaI/SmWFCn95QrQ3hA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="266126042"
-Received: from icx008.iind.intel.com ([10.190.212.196])
- by orviesa002.jf.intel.com with ESMTP; 05 May 2026 04:13:00 -0700
-From: Rajesh Kumar <rajesh3.kumar@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
- stephen@networkplumber.org, Rajesh Kumar <rajesh3.kumar@intel.com>
-Subject: [RFC v4 6/6] examples/ptpclient: use shared PTP library definitions
-Date: Tue,  5 May 2026 22:08:55 +0530
-Message-ID: <20260505163858.212158-7-rajesh3.kumar@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260505163858.212158-1-rajesh3.kumar@intel.com>
-References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
- <20260505163858.212158-1-rajesh3.kumar@intel.com>
+X-IronPort-AV: E=Sophos;i="6.23,217,1770624000"; d="scan'208";a="239780413"
+Received: from fmsmsx902.amr.corp.intel.com ([10.18.126.91])
+ by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 05 May 2026 04:13:18 -0700
+Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 5 May 2026 04:13:17 -0700
+Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
+ FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37 via Frontend Transport; Tue, 5 May 2026 04:13:17 -0700
+Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.3) by
+ edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.37; Tue, 5 May 2026 04:13:17 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ds+RQDWyDL/x+7T74TRUvqGdAqpxvIZoB0ab59doH8UE7qn4dVnljIpXXm7coHSpcn8vVtePo5OfOo+Wx6aeDfJleSi9aQf9kbyBKCRBGcG44v6OvdJkOGEHTMNej1AcW8AcqWfnHvv/y69P2rVP1Ob2OKTEdPHHk008ipOnWOJDbSVnOI3HLOj1A8My0QgfVDcTVcVyQIS+oFVJuk57JRfHGVU88gvdLNjeObvheRtDivi+qtnCK52Zt9x+7grbeovoFNiFzMqpj330cb2VSa4UQ9IfMWzmgc6w8945WD/3490UK1pnPOId+XHtHg2rXhbeSL1EZdNoyhH9jpGN7Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GFqu0yiiibxC8tcbsnwicb5R5K6ZwYC7ck1idkc6rHQ=;
+ b=OP1KT/wuFFCFYCdZOgvnZjjBMgU2ZQnCGoYV/YAvhnpv3xKOtehfIhxcWisVJMkMj+hI22Rt+O/5d1rF+kBIWZjAMr57nx1WKwbUdX72hjhIYcSHYGI9T4Gx/MXlAwT6lfGuZSKZlmnSY6RJxnmf6x6Vjkf20yUn/zZfaZLvMDM3CEvaA4NDR1aNM1XXhEUefcQ8qh05NNnHzV/qVHc/RezJy5zdtbB2TJ6YZgR1h+18cgszIiz9zWosH3mkfC21W6VxIJ1U1VqWrV6cMwHZy1iEG/ZgrM2Wm88EbtfDfnyiQXelBjlkaeu42loejjMrLwOxpO21t/uzqqrECDSXqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by SJ1PR11MB6226.namprd11.prod.outlook.com (2603:10b6:a03:45b::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9870.25; Tue, 5 May
+ 2026 11:13:14 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9870.023; Tue, 5 May 2026
+ 11:13:14 +0000
+Date: Tue, 5 May 2026 12:13:09 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Ciara Loftus <ciara.loftus@intel.com>
+CC: <dev@dpdk.org>
+Subject: Re: [PATCH v5 0/3] iavf: LLDP ptype and AVX2 ctx paths
+Message-ID: <afnQxcEOzabE3nZz@bricha3-mobl1.ger.corp.intel.com>
+References: <20260417105610.1161242-4-ciara.loftus@intel.com>
+ <20260422091609.1797686-1-ciara.loftus@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260422091609.1797686-1-ciara.loftus@intel.com>
+X-ClientProxiedBy: DUZPR01CA0334.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:4b8::25) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SJ1PR11MB6226:EE_
+X-MS-Office365-Filtering-Correlation-Id: 475463a2-2982-4779-4170-08deaa974ce3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|1800799024|366016|376014|18002099003|22082099003|56012099003; 
+X-Microsoft-Antispam-Message-Info: WpXoixrBSoauaotEe0CParQf1r/jM6POZgHn1c9vy3/Ud5FQE6K8D5naQt3eX2igO21utAoyRVCyBF9/ySqYq+DgUcd7kIsWP8p7wqmzgjpYTTYxOp9EdSnHCGnhhuEJh/frIZ5J9JJ/Zdkgclp587gv8I3GZxkGp5xAvNgrObTPBCaU8Fh+RuAhZzsAj7fr3u43ChgF40xSaMpzP6WTBtQwkUPV4zwt4IMAzBEgGEffWllQAFkrtq78KIDISEbwncGSLCs73kohrgOLcL4S1d/1Jv30+hzjSvO239xZpwhUQglPTvfHrhBPxLQ5oTH0Sgqti/B83XQchd1hGiNABxZexrUAQHRtAVn0pOFUjb/w+zTXiz0hvcXEokMOAEnGXn1NvYHUwbV4wO19vgaIjef75H7C1SMQTrWi7V8dfQTpDFVo5ySvjBtuaczseJuDVVTJZeGuJuiRQF0ZYEJY1mAQuTxX2sNMVjN08KvziTO2EwW5UspWY1uxzif/Ha0QdU8IoGMBY+fLDMYAvpdDdhhQa6TqDIHa47m2VTBgP96DW29tRAVZ3PQ2kFz9B0jOIQ7BE8x0RW7fqaylu+N9QLXtOdUuV/sKYdogsgpmtlBj7l3swpSjlfmkYdBErINcx8TSIoVTVxAtMiA1celtOuUMcN96TXRW05IbnFwTqTjNmku8StK0dXO1s61Remj1
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?rc1vhKmjWXCXARXQHqnrGGvEWbwV92f7yqXAAbH44MjdDxK9YI9FYHaxtc2H?=
+ =?us-ascii?Q?hsuSAi0yu3H2h1CmU/eypnqpYaPmNXENuhAbvvsawUir9guWT7LjJGS8GzfF?=
+ =?us-ascii?Q?4MUKBg5Xb9z7X5KPqE1+fDZth40xr1J3+xtsgTEcgOPw/HXtaRSrn+HPyAXm?=
+ =?us-ascii?Q?Hi7ZMpJF4ehyKMpUq+ix0pTRtPkGAvlFjUlspzTFBa4822M6uwNGBoiPQ0XB?=
+ =?us-ascii?Q?OyKtU22aJW+X4qMN2OpGbJF5yOm7ICFdaCNJ/LC0PVR+JnDJhyOft59fBbEF?=
+ =?us-ascii?Q?CkNfbc3XGmaiA0c/gygOCwup5kDpquwHBkywRfXdf6noQ9wRgFjwU2KSb6cT?=
+ =?us-ascii?Q?1EJ7RoOGlTmzBx3xPCH09X6S6EqYxVZ72/7wJZa0xnGW/EqwspSS6FwzZUJ4?=
+ =?us-ascii?Q?u1X9zYVHfKbu2kxcAp4kNwLhYy+gNnfuaGKz4/PUchVW6nChjnvdCNzKbRWM?=
+ =?us-ascii?Q?FUQKUm6VN3ZnhSNDMWY61Xfo2P6pNojv8OIgJ+QOVHYWscnp9k/ls58gxeNz?=
+ =?us-ascii?Q?9Unv45a4w5JqOBecysq0Trt1XPXuAE6pRrXw1wnV7cBT51NEOEmMWW8XOd+4?=
+ =?us-ascii?Q?o7A3HoPwe6V9USZvS3zPZKTr8Mk+2ij7KkqyAZ3hlil/eeAIQBvG22G+p/t2?=
+ =?us-ascii?Q?INMUy9o/JTXx0bm3qLhM+kmZMf5RcQJ82NcBMziYRWMRTfHZ5kBS7kd6VXBN?=
+ =?us-ascii?Q?RvIewv4K+ugODZDK1r63TX3m2WeBPySvKInX8LA2RV9siwL8gEOaSH+S28a5?=
+ =?us-ascii?Q?R0bfw/b2xXOJRq0geSELCiuCk2cmY5WsS1Rrcl0U0pBSgjOllh9FXvgEASGa?=
+ =?us-ascii?Q?iNYA9MdHDkGs17GJaSCnha2Vo8HPtPXDCqDAE6abSHXzBquKlSB2EEIKGXNu?=
+ =?us-ascii?Q?8aLlYYI3fupQbhJgd8TSnweTmg2LPh+v53Zx5on/AN/glk5SVQyAZs3dz7uL?=
+ =?us-ascii?Q?8lS+Hfzt0pj6I5oFbk/31Ja/zdLlUcj7rXBeZvbwtqJoMGp3ZgYSAB59e+lQ?=
+ =?us-ascii?Q?zdidrD7BbIixRcmH1vHCWsQvt2voxExqMHvN+n8mDdAllE5/5ZuyY8Ob9wqk?=
+ =?us-ascii?Q?F2b087KcvxKbEercyNgWmCSWzJFNj+PF2Z1jGwBH1AJADZd4CRCG4pD5e0OO?=
+ =?us-ascii?Q?i3xFB4eoNjFlUB0hD5K58GYOe/10BVwTvHQN4yOkissEsGtvdlRKk8OZju4a?=
+ =?us-ascii?Q?ty983oJSRToaB+WamLe0r0pzGrfOeL2y4/UY9dnmimdV6t3CIcngVmhEWyNw?=
+ =?us-ascii?Q?+rUyQFbbKuRz+IYV8BALWOAC7510SxK9UOuHm1ueloGXrQSeKjM44KjQzGG5?=
+ =?us-ascii?Q?I5DP+ja+mE/XkIFHDtixjt5UrEqpW4Q+eZT2o0AZAnhW3DuO7dRcU6mwzPbT?=
+ =?us-ascii?Q?EYQi5Xpy37h6rzI8QZfjiLdznhm0vtbyYdM4U12g24dvmd9CSJTK8+dAqaRE?=
+ =?us-ascii?Q?nEUpcTqa944GXUodL52ST/jfaAs0D+3mGZRcKZUgNU/QyozS3f+/5b9uKbKo?=
+ =?us-ascii?Q?R9wnzHnvThm8sSjTqxzkKi7daepEDCh/0etb0DQiRb6dV3h15VbINyRDBBs+?=
+ =?us-ascii?Q?UgtwrDTbJL/qSfV2d0bAYaxIxoVP/63uZbRx78F9krfqerPKhhJj8t9aOS69?=
+ =?us-ascii?Q?iUt7DUZhIvZ+I7ELKBiVYUjCjjGdcGV/Ol/U4OIrhuRKfdGOvVuXUl6/tkJH?=
+ =?us-ascii?Q?JWXYq1jNGzjvRhVRdWIattclgyD6Z56klhad9roV4PslhrRrGnj0b2l9TTh3?=
+ =?us-ascii?Q?4SkJ2rCAm2BkLPrS6K0ANzU1vZnHA6Y=3D?=
+X-Exchange-RoutingPolicyChecked: gYd+5jH3IlA42t60kclFk/zZr159C30r1GIjdbrwa9nia3Zf2gUHWY+19TfLIc61RlkvHS3zD8OFgf+JK2c3qrqJeNZCYt2mcLFmjMsBoN1JLWDtQiAmWAtisq3VqGkTS52vZPdBrTFPLBOXQ/3RWxXMfX6iLUqmki/eqGQPa0/gyccfsLzTOVVjXIMVCIxrBKX374KoNcVp9HEQeeoYGmcwcCSSNfwtGRp81XyILCJ3VWIphqTM5XpZTOrcjk2w7v050BsDtTDQGE8V0WswsY6l6mncept/9cIvUG6wB3XEzDBwrElCpYOwkNxbWQDXfWlgwkvQbPbMksjsxlOqRA==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 475463a2-2982-4779-4170-08deaa974ce3
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 May 2026 11:13:14.1410 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Or6OnAwRblyJYuwzK/OsRP5C7QrOSJSEZRn4icLYfsFyymOKisrEirT/FoqQdx7SA1jg0IeUn9DjjjSYuBHORGEypsttRbzCkLYi35hE17A=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6226
+X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,374 +151,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Replace local PTP struct and constant definitions with the shared
-rte_ptp.h library types introduced earlier in this series:
-- struct ptp_header  -> struct rte_ptp_hdr
-- struct tstamp      -> struct rte_ptp_timestamp
-- struct clock_id    -> uint8_t clock_id[8] (from rte_ptp_port_id)
-- SYNC/FOLLOW_UP/DELAY_* defines -> RTE_PTP_MSGTYPE_* constants
-- PTP_PROTOCOL       -> RTE_PTP_ETHERTYPE
-- hardcoded multicast -> RTE_PTP_MULTICAST_MAC
-- ptp_hdr->msg_type switch -> rte_ptp_msg_type() accessor
+On Wed, Apr 22, 2026 at 09:16:06AM +0000, Ciara Loftus wrote:
+> This series adds another way to detect LLDP packets in the Tx paths
+> of the iavf PMD, which is based on the mbuf packet type field. This is
+> in addition to the existing method of using a dynamic field. The series
+> also adds new AVX2 context descriptor Tx paths that support LLDP. Finally,
+> a deprecation notice is added to the documentation to flag that the
+> dynamic mbuf field method of LLDP packet detection will be removed in a
+> future release.
+> 
+> Patch 1 flags "CHECK:MACRO_ARG_REUSE" in checkpatch for the
+> IAVF_CHECK_TX_LLDP macro. This is a false positive because the inputs to
+> the macro are not reused in a way that would cause issues.
+> 
+> v5:
+> * Updated the documentation
+> * Made the "lldp mode" per-device rather than a global value. This is
+> necessary because the devarg is per-device unlike the global dynfield.
+> The mode is added to the iavf-specific flags in the ci_tx_queue struct
+> so that it can be read for each device on the datapath.
+> 
+> Ciara Loftus (3):
+>   net/iavf: support LLDP Tx via mbuf ptype or dynfield
+>   net/iavf: add AVX2 context descriptor Tx paths
+>   doc: announce change to LLDP packet detection in iavf PMD
+> 
+Series-Acked-by: Bruce Richardson <bruce.richardson@intel.com>
 
-No functional change.
+Applied to dpdk-next-net-intel.
 
-Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
----
- examples/ptpclient/meson.build |   1 +
- examples/ptpclient/ptpclient.c | 188 +++++++++++++--------------------
- 2 files changed, 73 insertions(+), 116 deletions(-)
-
-diff --git a/examples/ptpclient/meson.build b/examples/ptpclient/meson.build
-index 2e9b7625fc..ab074c9cb1 100644
---- a/examples/ptpclient/meson.build
-+++ b/examples/ptpclient/meson.build
-@@ -7,6 +7,7 @@
- # DPDK instance, use 'make'
- 
- allow_experimental_apis = true
-+deps += ['ptp']
- sources = files(
-         'ptpclient.c',
- )
-diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
-index 174ca5dd70..ee93f511d7 100644
---- a/examples/ptpclient/ptpclient.c
-+++ b/examples/ptpclient/ptpclient.c
-@@ -17,6 +17,7 @@
- #include <rte_lcore.h>
- #include <rte_mbuf.h>
- #include <rte_ip.h>
-+#include <rte_ptp.h>
- #include <limits.h>
- #include <sys/time.h>
- #include <getopt.h>
-@@ -30,21 +31,8 @@ static volatile bool force_quit;
- #define NUM_MBUFS            8191
- #define MBUF_CACHE_SIZE       250
- 
--/* Values for the PTP messageType field. */
--#define SYNC                  0x0
--#define DELAY_REQ             0x1
--#define PDELAY_REQ            0x2
--#define PDELAY_RESP           0x3
--#define FOLLOW_UP             0x8
--#define DELAY_RESP            0x9
--#define PDELAY_RESP_FOLLOW_UP 0xA
--#define ANNOUNCE              0xB
--#define SIGNALING             0xC
--#define MANAGEMENT            0xD
--
- #define NSEC_PER_SEC        1000000000L
- #define KERNEL_TIME_ADJUST_LIMIT  20000
--#define PTP_PROTOCOL             0x88F7
- 
- struct rte_mempool *mbuf_pool;
- uint32_t ptp_enabled_port_mask;
-@@ -52,66 +40,36 @@ uint8_t ptp_enabled_port_nb;
- static uint8_t ptp_enabled_ports[RTE_MAX_ETHPORTS];
- 
- static const struct rte_ether_addr ether_multicast = {
--	.addr_bytes = {0x01, 0x1b, 0x19, 0x0, 0x0, 0x0}
--};
--
--/* Structs used for PTP handling. */
--struct __rte_packed_begin tstamp {
--	uint16_t   sec_msb;
--	uint32_t   sec_lsb;
--	uint32_t   ns;
--} __rte_packed_end;
--
--struct clock_id {
--	uint8_t id[8];
-+	.addr_bytes = RTE_PTP_MULTICAST_MAC
- };
- 
--struct __rte_packed_begin port_id {
--	struct clock_id        clock_id;
--	uint16_t               port_number;
--} __rte_packed_end;
--
--struct __rte_packed_begin ptp_header {
--	uint8_t              msg_type;
--	uint8_t              ver;
--	uint16_t             message_length;
--	uint8_t              domain_number;
--	uint8_t              reserved1;
--	uint8_t              flag_field[2];
--	int64_t              correction;
--	uint32_t             reserved2;
--	struct port_id       source_port_id;
--	uint16_t             seq_id;
--	uint8_t              control;
--	int8_t               log_message_interval;
--} __rte_packed_end;
--
-+/* Message body structs using the library PTP header and timestamp. */
- struct __rte_packed_begin sync_msg {
--	struct ptp_header   hdr;
--	struct tstamp       origin_tstamp;
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp origin_tstamp;
- } __rte_packed_end;
- 
- struct __rte_packed_begin follow_up_msg {
--	struct ptp_header   hdr;
--	struct tstamp       precise_origin_tstamp;
--	uint8_t             suffix[];
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp precise_origin_tstamp;
-+	uint8_t                  suffix[];
- } __rte_packed_end;
- 
- struct __rte_packed_begin delay_req_msg {
--	struct ptp_header   hdr;
--	struct tstamp       origin_tstamp;
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp origin_tstamp;
- } __rte_packed_end;
- 
- struct __rte_packed_begin delay_resp_msg {
--	struct ptp_header    hdr;
--	struct tstamp        rx_tstamp;
--	struct port_id       req_port_id;
--	uint8_t              suffix[];
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp rx_tstamp;
-+	struct rte_ptp_port_id   req_port_id;
-+	uint8_t                  suffix[];
- } __rte_packed_end;
- 
- struct ptp_message {
- 	union __rte_packed_begin {
--		struct ptp_header          header;
-+		struct rte_ptp_hdr         header;
- 		struct sync_msg            sync;
- 		struct delay_req_msg       delay_req;
- 		struct follow_up_msg       follow_up;
-@@ -125,8 +83,8 @@ struct ptpv2_time_receiver_ordinary {
- 	struct timespec tstamp2;
- 	struct timespec tstamp3;
- 	struct timespec tstamp4;
--	struct clock_id client_clock_id;
--	struct clock_id transmitter_clock_id;
-+	uint8_t client_clock_id[8];
-+	uint8_t transmitter_clock_id[8];
- 	struct timeval new_adj;
- 	int64_t delta;
- 	uint16_t portid;
-@@ -272,14 +230,14 @@ print_clock_info(struct ptpv2_time_receiver_ordinary *ptp_data)
- 	struct timespec net_time, sys_time;
- 
- 	printf("time transmitter clock id: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
--		ptp_data->transmitter_clock_id.id[0],
--		ptp_data->transmitter_clock_id.id[1],
--		ptp_data->transmitter_clock_id.id[2],
--		ptp_data->transmitter_clock_id.id[3],
--		ptp_data->transmitter_clock_id.id[4],
--		ptp_data->transmitter_clock_id.id[5],
--		ptp_data->transmitter_clock_id.id[6],
--		ptp_data->transmitter_clock_id.id[7]);
-+		ptp_data->transmitter_clock_id[0],
-+		ptp_data->transmitter_clock_id[1],
-+		ptp_data->transmitter_clock_id[2],
-+		ptp_data->transmitter_clock_id[3],
-+		ptp_data->transmitter_clock_id[4],
-+		ptp_data->transmitter_clock_id[5],
-+		ptp_data->transmitter_clock_id[6],
-+		ptp_data->transmitter_clock_id[7]);
- 
- 	printf("\nT2 - time receiver clock.  %lds %ldns",
- 			(ptp_data->tstamp2.tv_sec),
-@@ -356,20 +314,20 @@ delta_eval(struct ptpv2_time_receiver_ordinary *ptp_data)
- static void
- parse_sync(struct ptpv2_time_receiver_ordinary *ptp_data, uint16_t rx_tstamp_idx)
- {
--	struct ptp_header *ptp_hdr;
-+	struct rte_ptp_hdr *ptp_hdr;
- 
--	ptp_hdr = rte_pktmbuf_mtod_offset(ptp_data->m, struct ptp_header *,
-+	ptp_hdr = rte_pktmbuf_mtod_offset(ptp_data->m, struct rte_ptp_hdr *,
- 					  sizeof(struct rte_ether_hdr));
--	ptp_data->seqID_SYNC = rte_be_to_cpu_16(ptp_hdr->seq_id);
-+	ptp_data->seqID_SYNC = rte_be_to_cpu_16(ptp_hdr->sequence_id);
- 
- 	if (ptp_data->ptpset == 0) {
--		ptp_data->transmitter_clock_id = ptp_hdr->source_port_id.clock_id;
-+		memcpy(ptp_data->transmitter_clock_id,
-+		       ptp_hdr->source_port_id.clock_id, 8);
- 		ptp_data->ptpset = 1;
- 	}
- 
--	if (memcmp(&ptp_data->transmitter_clock_id,
--			&ptp_hdr->source_port_id.clock_id,
--			sizeof(struct clock_id)) == 0) {
-+	if (memcmp(ptp_data->transmitter_clock_id,
-+			ptp_hdr->source_port_id.clock_id, 8) == 0) {
- 
- 		if (ptp_data->ptpset == 1)
- 			rte_eth_timesync_read_rx_timestamp(ptp_data->portid,
-@@ -386,12 +344,12 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- {
- 	struct rte_ether_hdr *eth_hdr;
- 	struct rte_ether_addr eth_addr;
--	struct ptp_header *ptp_hdr;
--	struct clock_id *client_clkid;
-+	struct rte_ptp_hdr *ptp_hdr;
-+	uint8_t *client_clkid;
- 	struct ptp_message *ptp_msg;
- 	struct delay_req_msg *req_msg;
- 	struct rte_mbuf *created_pkt;
--	struct tstamp *origin_tstamp;
-+	struct rte_ptp_timestamp *origin_tstamp;
- 	struct rte_ether_addr eth_multicast = ether_multicast;
- 	size_t pkt_size;
- 	int wait_us;
-@@ -399,22 +357,21 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- 	int ret;
- 
- 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
--	ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
-+	ptp_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ptp_hdr *,
- 					  sizeof(struct rte_ether_hdr));
--	if (memcmp(&ptp_data->transmitter_clock_id,
--			&ptp_hdr->source_port_id.clock_id,
--			sizeof(struct clock_id)) != 0)
-+	if (memcmp(ptp_data->transmitter_clock_id,
-+			ptp_hdr->source_port_id.clock_id, 8) != 0)
- 		return;
- 
--	ptp_data->seqID_FOLLOWUP = rte_be_to_cpu_16(ptp_hdr->seq_id);
-+	ptp_data->seqID_FOLLOWUP = rte_be_to_cpu_16(ptp_hdr->sequence_id);
- 	ptp_msg = rte_pktmbuf_mtod_offset(m, struct ptp_message *,
- 					  sizeof(struct rte_ether_hdr));
- 
- 	origin_tstamp = &ptp_msg->follow_up.precise_origin_tstamp;
--	ptp_data->tstamp1.tv_nsec = ntohl(origin_tstamp->ns);
-+	ptp_data->tstamp1.tv_nsec = ntohl(origin_tstamp->nanoseconds);
- 	ptp_data->tstamp1.tv_sec =
--		((uint64_t)ntohl(origin_tstamp->sec_lsb)) |
--		(((uint64_t)ntohs(origin_tstamp->sec_msb)) << 32);
-+		((uint64_t)ntohl(origin_tstamp->seconds_lo)) |
-+		(((uint64_t)ntohs(origin_tstamp->seconds_hi)) << 32);
- 
- 	if (ptp_data->seqID_FOLLOWUP == ptp_data->seqID_SYNC) {
- 		ret = rte_eth_macaddr_get(ptp_data->portid, &eth_addr);
-@@ -441,34 +398,34 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- 		/* Set multicast address 01-1B-19-00-00-00. */
- 		rte_ether_addr_copy(&eth_multicast, &eth_hdr->dst_addr);
- 
--		eth_hdr->ether_type = htons(PTP_PROTOCOL);
-+		eth_hdr->ether_type = htons(RTE_PTP_ETHERTYPE);
- 		req_msg = rte_pktmbuf_mtod_offset(created_pkt,
- 			struct delay_req_msg *, sizeof(struct
- 			rte_ether_hdr));
- 
--		req_msg->hdr.seq_id = htons(ptp_data->seqID_SYNC);
--		req_msg->hdr.msg_type = DELAY_REQ;
--		req_msg->hdr.ver = 2;
-+		req_msg->hdr.sequence_id = htons(ptp_data->seqID_SYNC);
-+		req_msg->hdr.msg_type = RTE_PTP_MSGTYPE_DELAY_REQ;
-+		req_msg->hdr.version = 2;
- 		req_msg->hdr.control = 1;
--		req_msg->hdr.log_message_interval = 127;
--		req_msg->hdr.message_length =
-+		req_msg->hdr.log_msg_interval = 127;
-+		req_msg->hdr.msg_length =
- 			htons(sizeof(struct delay_req_msg));
- 		req_msg->hdr.domain_number = ptp_hdr->domain_number;
- 
- 		/* Set up clock id. */
- 		client_clkid =
--			&req_msg->hdr.source_port_id.clock_id;
-+			req_msg->hdr.source_port_id.clock_id;
- 
--		client_clkid->id[0] = eth_hdr->src_addr.addr_bytes[0];
--		client_clkid->id[1] = eth_hdr->src_addr.addr_bytes[1];
--		client_clkid->id[2] = eth_hdr->src_addr.addr_bytes[2];
--		client_clkid->id[3] = 0xFF;
--		client_clkid->id[4] = 0xFE;
--		client_clkid->id[5] = eth_hdr->src_addr.addr_bytes[3];
--		client_clkid->id[6] = eth_hdr->src_addr.addr_bytes[4];
--		client_clkid->id[7] = eth_hdr->src_addr.addr_bytes[5];
-+		client_clkid[0] = eth_hdr->src_addr.addr_bytes[0];
-+		client_clkid[1] = eth_hdr->src_addr.addr_bytes[1];
-+		client_clkid[2] = eth_hdr->src_addr.addr_bytes[2];
-+		client_clkid[3] = 0xFF;
-+		client_clkid[4] = 0xFE;
-+		client_clkid[5] = eth_hdr->src_addr.addr_bytes[3];
-+		client_clkid[6] = eth_hdr->src_addr.addr_bytes[4];
-+		client_clkid[7] = eth_hdr->src_addr.addr_bytes[5];
- 
--		ptp_data->client_clock_id = *client_clkid;
-+		memcpy(ptp_data->client_clock_id, client_clkid, 8);
- 
- 		/* Enable flag for hardware timestamping. */
- 		created_pkt->ol_flags |= RTE_MBUF_F_TX_IEEE1588_TMST;
-@@ -534,21 +491,20 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp_data)
- {
- 	struct rte_mbuf *m = ptp_data->m;
- 	struct ptp_message *ptp_msg;
--	struct tstamp *rx_tstamp;
-+	struct rte_ptp_timestamp *rx_tstamp;
- 	uint16_t seq_id;
- 
- 	ptp_msg = rte_pktmbuf_mtod_offset(m, struct ptp_message *,
- 					  sizeof(struct rte_ether_hdr));
--	seq_id = rte_be_to_cpu_16(ptp_msg->delay_resp.hdr.seq_id);
--	if (memcmp(&ptp_data->client_clock_id,
--		   &ptp_msg->delay_resp.req_port_id.clock_id,
--		   sizeof(struct clock_id)) == 0) {
-+	seq_id = rte_be_to_cpu_16(ptp_msg->delay_resp.hdr.sequence_id);
-+	if (memcmp(ptp_data->client_clock_id,
-+		   ptp_msg->delay_resp.req_port_id.clock_id, 8) == 0) {
- 		if (seq_id == ptp_data->seqID_FOLLOWUP) {
- 			rx_tstamp = &ptp_msg->delay_resp.rx_tstamp;
--			ptp_data->tstamp4.tv_nsec = ntohl(rx_tstamp->ns);
-+			ptp_data->tstamp4.tv_nsec = ntohl(rx_tstamp->nanoseconds);
- 			ptp_data->tstamp4.tv_sec =
--				((uint64_t)ntohl(rx_tstamp->sec_lsb)) |
--				(((uint64_t)ntohs(rx_tstamp->sec_msb)) << 32);
-+				((uint64_t)ntohl(rx_tstamp->seconds_lo)) |
-+				(((uint64_t)ntohs(rx_tstamp->seconds_hi)) << 32);
- 
- 			/* Evaluate the delta for adjustment. */
- 			ptp_data->delta = delta_eval(ptp_data);
-@@ -575,27 +531,27 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp_data)
- /* Parse ptp frames. 8< */
- static void
- parse_ptp_frames(uint16_t portid, struct rte_mbuf *m) {
--	struct ptp_header *ptp_hdr;
-+	struct rte_ptp_hdr *ptp_hdr;
- 	struct rte_ether_hdr *eth_hdr;
- 	uint16_t eth_type;
- 
- 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
- 	eth_type = rte_be_to_cpu_16(eth_hdr->ether_type);
- 
--	if (eth_type == PTP_PROTOCOL) {
-+	if (eth_type == RTE_PTP_ETHERTYPE) {
- 		ptp_data.m = m;
- 		ptp_data.portid = portid;
--		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
-+		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ptp_hdr *,
- 						  sizeof(struct rte_ether_hdr));
- 
--		switch (ptp_hdr->msg_type) {
--		case SYNC:
-+		switch (rte_ptp_msg_type(ptp_hdr)) {
-+		case RTE_PTP_MSGTYPE_SYNC:
- 			parse_sync(&ptp_data, m->timesync);
- 			break;
--		case FOLLOW_UP:
-+		case RTE_PTP_MSGTYPE_FOLLOW_UP:
- 			parse_fup(&ptp_data);
- 			break;
--		case DELAY_RESP:
-+		case RTE_PTP_MSGTYPE_DELAY_RESP:
- 			parse_drsp(&ptp_data);
- 			print_clock_info(&ptp_data);
- 			break;
--- 
-2.53.0
+Thanks,
+/Bruce
 
