@@ -2,55 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FA5CD342C
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 12:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD22CD343B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 12:36:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8AC3B4066A;
-	Wed,  6 May 2026 14:36:30 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C3D0340608;
+	Wed,  6 May 2026 14:36:35 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id 49F94402D1
- for <dev@dpdk.org>; Wed,  6 May 2026 14:36:29 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id AE1A740608
+ for <dev@dpdk.org>; Wed,  6 May 2026 14:36:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1778070988;
+ s=mimecast20190719; t=1778070993;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=67zqw/gNiO8mCi7IMlmOY6WN4XcypH9P7mrvByNM7Pg=;
- b=QiSRl9OuHX0QF8pDt0SIaTkyeChRNxiF/OwIYQL0uJ0a6Fw576Q/Pl8EVZf4I6B2bCVtG2
- Bz6aydDMU2bU8xBqPq9iLY8rqMfQZreSn/982TYfCKkOrLi2/P3xl+cmufeXMWIL+Gzx73
- sGkkclCBwD5LbtfHPMPgTXm6/C6hbsI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ bh=WcSb1KjfXqmd143j84yccvSqIdHQsOnZGIBgprhlaT4=;
+ b=PQdCB7OHAYZWwrDUTjpVxb09nhdcLdHEugCmbAtOpJMHSex+2JI2FPhqMqOBGd6lYipeX6
+ WoARaw7E8lz4tCYTfS+CTtj0awbQxlcVZDWETFaMkbGaIufzNSoAhp5XvwByYOfqyrKmuV
+ KP/pwWDu3dUkr0Hv6BzMT/j6T1gHYoI=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-85-5YYzge6JNEysnWVzM2C8AA-1; Wed,
- 06 May 2026 08:36:25 -0400
-X-MC-Unique: 5YYzge6JNEysnWVzM2C8AA-1
-X-Mimecast-MFC-AGG-ID: 5YYzge6JNEysnWVzM2C8AA_1778070984
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-479-QT9zEoTjOw63-cJdU7kstg-1; Wed,
+ 06 May 2026 08:36:29 -0400
+X-MC-Unique: QT9zEoTjOw63-cJdU7kstg-1
+X-Mimecast-MFC-AGG-ID: QT9zEoTjOw63-cJdU7kstg_1778070988
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
- by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 5D7F818002EE; Wed,  6 May 2026 12:36:24 +0000 (UTC)
+ by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id A7C4A1956094; Wed,  6 May 2026 12:36:28 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.32.242])
- by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 3309519560AD; Wed,  6 May 2026 12:36:22 +0000 (UTC)
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 2E43C1944B08; Wed,  6 May 2026 12:36:26 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
-Cc: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH v2 4/5] net/iavf: accept up to 32k unicast MAC addresses
-Date: Wed,  6 May 2026 14:35:52 +0200
-Message-ID: <20260506123554.2524136-5-david.marchand@redhat.com>
+Cc: stable@dpdk.org, Vladimir Medvedkin <vladimir.medvedkin@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH v2 5/5] net/iavf: fix duplicate MAC addresses install
+Date: Wed,  6 May 2026 14:35:53 +0200
+Message-ID: <20260506123554.2524136-6-david.marchand@redhat.com>
 In-Reply-To: <20260506123554.2524136-1-david.marchand@redhat.com>
 References: <20260403091836.1073484-1-david.marchand@redhat.com>
  <20260506123554.2524136-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: beUQ6P2fEuyf7KG1s4cfRpkd-fPJQFP1NnoTeOjRW0I_1778070984
+X-Mimecast-MFC-PROC-ID: isxeKozA9c0SsWHMJICnJbRcMW6gvvWShFnEI0Tvxzo_1778070988
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -67,238 +68,96 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-E810 hardware provides 32k switch lookups.
-Thanks to this, it is possible to allow a lot more secondary mac
-addresses than what is possible today.
+On port restart, all MAC addresses get pushed *twice* to the hardware,
+once by the driver and once by the eth_dev_mac_restore() in ethdev.
 
-In practice, the maximum number of macs available per port may be lower
-and depends on usage by other (trusted?) VFs on the same PF.
-There is no way to figure out this limit but to try adding a mac address
-and get an error from the PF driver.
+On the other hand, MAC address filters are reset in the hardware
+by the PF only when a VF reset is triggered.
 
-Mailbox exchanges are limited to IAVF_AQ_BUF_SZ, segment messages
-accordingly.
+Strictly speaking, the mac restore on port (re)start is unneeded,
+if no VF reset happened, so we can announce to ethdev that no mac
+restoration is needed via a get_restore_flags callback.
+
+Then, move the mac restoration to the VF reset handler.
+
+Fixes: 3d42086def30 ("net/iavf: preserve MAC address with i40e PF Linux driver")
+Cc: stable@dpdk.org
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
-Changes since v1:
-- fixed buffer overflow on mailbox messages during port restart/VF reset,
+ drivers/net/intel/iavf/iavf_ethdev.c | 31 ++++++++++++++++++++--------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
----
- drivers/net/intel/iavf/iavf.h        |   5 +-
- drivers/net/intel/iavf/iavf_ethdev.c |  10 +--
- drivers/net/intel/iavf/iavf_vchnl.c  | 117 +++++++++++++++++++--------
- 3 files changed, 93 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
-index 403c61e2e8..f1dede0694 100644
---- a/drivers/net/intel/iavf/iavf.h
-+++ b/drivers/net/intel/iavf/iavf.h
-@@ -31,7 +31,8 @@
- #define IAVF_IRQ_MAP_NUM_PER_BUF	 128
- #define IAVF_RXTX_QUEUE_CHUNKS_NUM	 2
- 
--#define IAVF_NUM_MACADDR_MAX      64
-+#define IAVF_UC_MACADDR_MAX      32768
-+#define IAVF_MC_MACADDR_MAX      64
- 
- #define IAVF_DEV_WATCHDOG_PERIOD     2000 /* microseconds, set 0 to disable*/
- 
-@@ -253,7 +254,7 @@ struct iavf_info {
- 	uint32_t link_speed;
- 
- 	/* Multicast addrs */
--	struct rte_ether_addr mc_addrs[IAVF_NUM_MACADDR_MAX];
-+	struct rte_ether_addr mc_addrs[IAVF_MC_MACADDR_MAX];
- 	uint16_t mc_addrs_num;   /* Multicast mac addresses number */
- 
- 	struct iavf_vsi vsi;
 diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
-index 1eca20bc9a..c69a012d50 100644
+index c69a012d50..5871ed3539 100644
 --- a/drivers/net/intel/iavf/iavf_ethdev.c
 +++ b/drivers/net/intel/iavf/iavf_ethdev.c
-@@ -379,10 +379,10 @@ iavf_set_mc_addr_list(struct rte_eth_dev *dev,
- 		IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
- 	int err, ret;
+@@ -126,6 +126,8 @@ static void iavf_dev_del_mac_addr(struct rte_eth_dev *dev, uint32_t index);
+ static int iavf_dev_vlan_filter_set(struct rte_eth_dev *dev,
+ 				   uint16_t vlan_id, int on);
+ static int iavf_dev_vlan_offload_set(struct rte_eth_dev *dev, int mask);
++static uint64_t iavf_get_restore_flags(struct rte_eth_dev *dev,
++				       enum rte_eth_dev_operation op);
+ static int iavf_dev_rss_reta_update(struct rte_eth_dev *dev,
+ 				   struct rte_eth_rss_reta_entry64 *reta_conf,
+ 				   uint16_t reta_size);
+@@ -249,6 +251,7 @@ static const struct eth_dev_ops iavf_eth_dev_ops = {
+ 	.tx_done_cleanup	    = iavf_dev_tx_done_cleanup,
+ 	.get_monitor_addr           = iavf_get_monitor_addr,
+ 	.tm_ops_get                 = iavf_tm_ops_get,
++	.get_restore_flags          = iavf_get_restore_flags,
+ };
  
--	if (mc_addrs_num > IAVF_NUM_MACADDR_MAX) {
-+	if (mc_addrs_num > IAVF_MC_MACADDR_MAX) {
- 		PMD_DRV_LOG(ERR,
- 			    "can't add more than a limited number (%u) of addresses.",
--			    (uint32_t)IAVF_NUM_MACADDR_MAX);
-+			    (uint32_t)IAVF_MC_MACADDR_MAX);
- 		return -EINVAL;
- 	}
- 
-@@ -1120,7 +1120,7 @@ iavf_dev_info_get(struct rte_eth_dev *dev, struct rte_eth_dev_info *dev_info)
- 	dev_info->hash_key_size = vf->vf_res->rss_key_size;
- 	dev_info->reta_size = vf->vf_res->rss_lut_size;
- 	dev_info->flow_type_rss_offloads = IAVF_RSS_OFFLOAD_ALL;
--	dev_info->max_mac_addrs = IAVF_NUM_MACADDR_MAX;
-+	dev_info->max_mac_addrs = IAVF_UC_MACADDR_MAX;
- 	dev_info->dev_capa =
- 		RTE_ETH_DEV_CAPA_RUNTIME_RX_QUEUE_SETUP |
- 		RTE_ETH_DEV_CAPA_RUNTIME_TX_QUEUE_SETUP;
-@@ -2822,11 +2822,11 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
- 
- 	/* copy mac addr */
- 	eth_dev->data->mac_addrs = rte_zmalloc(
--		"iavf_mac", RTE_ETHER_ADDR_LEN * IAVF_NUM_MACADDR_MAX, 0);
-+		"iavf_mac", RTE_ETHER_ADDR_LEN * IAVF_UC_MACADDR_MAX, 0);
- 	if (!eth_dev->data->mac_addrs) {
- 		PMD_INIT_LOG(ERR, "Failed to allocate %d bytes needed to"
- 			     " store MAC addresses",
--			     RTE_ETHER_ADDR_LEN * IAVF_NUM_MACADDR_MAX);
-+			     RTE_ETHER_ADDR_LEN * IAVF_UC_MACADDR_MAX);
- 		ret = -ENOMEM;
- 		goto init_vf_err;
- 	}
-diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
-index 08dd6f2d7f..144968db35 100644
---- a/drivers/net/intel/iavf/iavf_vchnl.c
-+++ b/drivers/net/intel/iavf/iavf_vchnl.c
-@@ -1437,48 +1437,101 @@ iavf_config_irq_map_lv(struct iavf_adapter *adapter, uint16_t num)
+ static int
+@@ -269,6 +272,13 @@ iavf_tm_ops_get(struct rte_eth_dev *dev,
  	return 0;
  }
  
--void
--iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add)
-+static int
-+iavf_add_del_uc_addr_bulk(struct iavf_adapter *adapter, struct rte_ether_addr *addrs,
-+			  uint32_t nb_addrs, bool add)
- {
-+#define IAVF_ETH_ADDR_PER_REQ \
-+	((IAVF_AQ_BUF_SZ - sizeof(struct virtchnl_ether_addr_list)) / \
-+	 sizeof(struct virtchnl_ether_addr))
- 	struct {
- 		struct virtchnl_ether_addr_list list;
--		struct virtchnl_ether_addr addr[IAVF_NUM_MACADDR_MAX];
--	} list_req = {0};
--	struct virtchnl_ether_addr_list *list = &list_req.list;
-+		struct virtchnl_ether_addr addr[IAVF_ETH_ADDR_PER_REQ];
-+	} cmd_buffer;
-+#undef IAVF_ETH_ADDR_PER_REQ
-+	struct virtchnl_ether_addr_list *list = &cmd_buffer.list;
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
--	struct iavf_cmd_info args = {0};
--	int err, i;
--	size_t buf_len;
- 
--	for (i = 0; i < IAVF_NUM_MACADDR_MAX; i++) {
--		struct rte_ether_addr *addr = &adapter->dev_data->mac_addrs[i];
--		struct virtchnl_ether_addr *vc_addr = &list->list[list->num_elements];
-+	for (uint32_t i = 0; i < nb_addrs; i++) {
-+		size_t buf_len = sizeof(struct virtchnl_ether_addr_list) +
-+			sizeof(struct virtchnl_ether_addr) * list->num_elements;
-+		struct iavf_cmd_info args;
-+		uint32_t batch;
-+		int err;
- 
--		/* ignore empty addresses */
--		if (rte_is_zero_ether_addr(addr))
--			continue;
-+		batch = i % RTE_DIM(cmd_buffer.addr);
++static uint64_t
++iavf_get_restore_flags(__rte_unused struct rte_eth_dev *dev,
++		       __rte_unused enum rte_eth_dev_operation op)
++{
++	return RTE_ETH_RESTORE_ALL & ~RTE_ETH_RESTORE_MAC_ADDR;
++}
 +
-+		if (batch == 0) {
-+			memset(&cmd_buffer, 0, sizeof(cmd_buffer));
-+			list->vsi_id = vf->vsi_res->vsi_id;
-+			list->num_elements = 0;
-+		}
-+
-+		rte_memcpy(list->list[batch].addr, addrs[i].addr_bytes,
-+			   sizeof(list->list[batch].addr));
-+		list->list[batch].type = VIRTCHNL_ETHER_ADDR_EXTRA;
- 		list->num_elements++;
- 
--		memcpy(vc_addr->addr, addr->addr_bytes, sizeof(addr->addr_bytes));
--		vc_addr->type = (list->num_elements == 1) ?
--				VIRTCHNL_ETHER_ADDR_PRIMARY :
--				VIRTCHNL_ETHER_ADDR_EXTRA;
-+		if (batch != RTE_DIM(cmd_buffer.addr) - 1 && i != nb_addrs - 1)
-+			continue;
-+
-+		buf_len = sizeof(struct virtchnl_ether_addr_list) +
-+			sizeof(struct virtchnl_ether_addr) * list->num_elements;
-+
-+		memset(&args, 0, sizeof(args));
-+		args.ops = add ? VIRTCHNL_OP_ADD_ETH_ADDR : VIRTCHNL_OP_DEL_ETH_ADDR;
-+		args.in_args = (uint8_t *)list;
-+		args.in_args_size = buf_len;
-+		args.out_buffer = vf->aq_resp;
-+		args.out_size = IAVF_AQ_BUF_SZ;
-+		err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
-+		if (err != 0) {
-+			PMD_DRV_LOG(ERR, "fail to execute command %s for %u macs",
-+				add ? "VIRTCHNL_OP_ADD_ETH_ADDR" : "VIRTCHNL_OP_DEL_ETH_ADDR",
-+				list->num_elements);
-+			return err;
-+		}
-+
-+		PMD_DRV_LOG(DEBUG, "executed command %s for %u macs",
-+			add ? "VIRTCHNL_OP_ADD_ETH_ADDR" : "VIRTCHNL_OP_DEL_ETH_ADDR",
-+			list->num_elements);
+ __rte_unused
+ static int
+ iavf_vfr_inprogress(struct iavf_hw *hw)
+@@ -1039,15 +1049,14 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ 		rte_intr_enable(intr_handle);
  	}
  
--	/* for some reason PF side checks for buffer being too big, so adjust it down */
--	buf_len = sizeof(struct virtchnl_ether_addr_list) +
--		  sizeof(struct virtchnl_ether_addr) * list->num_elements;
-+	return 0;
-+}
- 
--	list->vsi_id = vf->vsi_res->vsi_id;
--	args.ops = add ? VIRTCHNL_OP_ADD_ETH_ADDR : VIRTCHNL_OP_DEL_ETH_ADDR;
--	args.in_args = (uint8_t *)list;
--	args.in_args_size = buf_len;
--	args.out_buffer = vf->aq_resp;
--	args.out_size = IAVF_AQ_BUF_SZ;
--	err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
--	if (err)
--		PMD_DRV_LOG(ERR, "fail to execute command %s",
--				add ? "OP_ADD_ETHER_ADDRESS" : "OP_DEL_ETHER_ADDRESS");
-+void
-+iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add)
-+{
-+	int start = -1;
-+	int i;
-+
-+	/* Handle primary address (index 0) separately */
-+	if (!rte_is_zero_ether_addr(&adapter->dev_data->mac_addrs[0]))
-+		iavf_add_del_eth_addr(adapter, &adapter->dev_data->mac_addrs[0], add,
-+			VIRTCHNL_ETHER_ADDR_PRIMARY);
-+
-+	/* Process secondary addresses in contiguous blocks */
-+	for (i = 1; i < IAVF_UC_MACADDR_MAX; i++) {
-+		struct rte_ether_addr *addr = &adapter->dev_data->mac_addrs[i];
-+
-+		if (!rte_is_zero_ether_addr(addr)) {
-+			if (start == -1)
-+				start = i;
-+			continue;
-+		}
-+
-+		if (start != -1) {
-+			iavf_add_del_uc_addr_bulk(adapter, &adapter->dev_data->mac_addrs[start],
-+				i - start, add);
-+			start = -1;
-+		}
+-	/* Set all mac addrs */
+-	iavf_add_del_all_mac_addr(adapter, true);
+-
+-	if (!adapter->mac_primary_set)
+-		adapter->mac_primary_set = true;
+-
+-	/* Set all multicast addresses */
+-	iavf_add_del_mc_addr_list(adapter, vf->mc_addrs, vf->mc_addrs_num,
+-				  true);
++	if (!adapter->mac_primary_set) {
++		if (iavf_add_del_eth_addr(adapter, &dev->data->mac_addrs[0], true,
++				VIRTCHNL_ETHER_ADDR_PRIMARY) != 0)
++			PMD_DRV_LOG(ERR, "failed to add primary MAC:" RTE_ETHER_ADDR_PRT_FMT,
++				RTE_ETHER_ADDR_BYTES(&dev->data->mac_addrs[0]));
++		else
++			adapter->mac_primary_set = true;
 +	}
-+
-+	if (start != -1) {
-+		iavf_add_del_uc_addr_bulk(adapter, &adapter->dev_data->mac_addrs[start],
-+			i - start, add);
-+	}
- }
  
- int
-@@ -2060,7 +2113,7 @@ iavf_add_del_mc_addr_list(struct iavf_adapter *adapter,
- {
- 	struct iavf_info *vf = IAVF_DEV_PRIVATE_TO_VF(adapter);
- 	uint8_t cmd_buffer[sizeof(struct virtchnl_ether_addr_list) +
--		(IAVF_NUM_MACADDR_MAX * sizeof(struct virtchnl_ether_addr))];
-+		(IAVF_MC_MACADDR_MAX * sizeof(struct virtchnl_ether_addr))];
- 	struct virtchnl_ether_addr_list *list;
- 	struct iavf_cmd_info args;
- 	uint32_t i;
+ 	rte_spinlock_init(&vf->phc_time_aq_lock);
+ 
+@@ -3144,6 +3153,10 @@ iavf_handle_hw_reset(struct rte_eth_dev *dev, bool vf_initiated_reset)
+ 		if (ret)
+ 			goto error;
+ 
++		/* after a VF reset, all mac addresses got flushed, restore them */
++		iavf_add_del_all_mac_addr(adapter, true);
++		iavf_add_del_mc_addr_list(adapter, vf->mc_addrs, vf->mc_addrs_num, true);
++
+ 		dev->data->dev_started = 1;
+ 	}
+ 	goto exit;
 -- 
 2.53.0
 
