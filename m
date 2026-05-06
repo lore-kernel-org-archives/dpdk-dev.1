@@ -2,56 +2,58 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE0ACD343B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 15:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF7CCD3442
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 15:54:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9719240B95;
-	Wed,  6 May 2026 17:54:34 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 94B1340B91;
+	Wed,  6 May 2026 17:54:38 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 82A1440696
- for <dev@dpdk.org>; Wed,  6 May 2026 17:54:33 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C8FF740B98
+ for <dev@dpdk.org>; Wed,  6 May 2026 17:54:37 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1778082873;
+ s=mimecast20190719; t=1778082877;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references;
- bh=wzs2N11Xq6Eo5+caC55JTxKHvDimIhoP35LewmwHzWI=;
- b=Q6vlKQ4y+mdbvM5+r4NDaR3i4+T5iVBXbUaVfeCJIDsIm0oeMAWZxw2P5c0BDONztoZmHd
- piRU3Uz2CseDSkcKS2Yh803U8DyUwofXQe1VW7NXZ5TbCS41GzkKzkZU6nRZpBM6LmRMnT
- TfD1sM9OLKiJ04zCvr/aPCPW4vOBGVI=
+ bh=4PgmFHO1viAEVBH3lGc68bSKNQbuw+JFFXBMJBY6JBo=;
+ b=bxadwDyCEJSqTYynF5UUu/6w9fG9GlZXuoxP1hjSjBQN9s2V4S3glKfZaoYXTK/lNfUkHh
+ EhGLnI71H7UlPqIkMADTwUDb0A67EURJsbzBGrvE7cMiOdWHojpEPH/CXu+bDwwUxXDBmb
+ Fb75Uz9dZ8eTa+6w+GSS2XlolQzezbM=
 Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-nDFCRMLuNIaVs2p0gngjwQ-1; Wed,
- 06 May 2026 11:54:28 -0400
-X-MC-Unique: nDFCRMLuNIaVs2p0gngjwQ-1
-X-Mimecast-MFC-AGG-ID: nDFCRMLuNIaVs2p0gngjwQ_1778082867
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-156-39B7XqZ_NoC70tgUqFWXdA-1; Wed,
+ 06 May 2026 11:54:33 -0400
+X-MC-Unique: 39B7XqZ_NoC70tgUqFWXdA-1
+X-Mimecast-MFC-AGG-ID: 39B7XqZ_NoC70tgUqFWXdA_1778082872
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
  (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
  key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
  (No client certificate requested)
  by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 9D43B180047F; Wed,  6 May 2026 15:54:27 +0000 (UTC)
+ id 992E51800627; Wed,  6 May 2026 15:54:32 +0000 (UTC)
 Received: from dmarchan.lan (unknown [10.44.32.242])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id E03C11953947; Wed,  6 May 2026 15:54:25 +0000 (UTC)
+ by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id 86B9D19560A3; Wed,  6 May 2026 15:54:30 +0000 (UTC)
 From: David Marchand <david.marchand@redhat.com>
 To: dev@dpdk.org
 Cc: thomas@monjalon.net, stephen@networkplumber.org,
- bruce.richardson@intel.com, Kevin Laatz <kevin.laatz@intel.com>
-Subject: [PATCH v2 19/23] dma/idxd: remove specific bus type
-Date: Wed,  6 May 2026 17:51:51 +0200
-Message-ID: <20260506155201.2709810-20-david.marchand@redhat.com>
+ bruce.richardson@intel.com, Hemant Agrawal <hemant.agrawal@nxp.com>,
+ Sachin Saxena <sachin.saxena@nxp.com>
+Subject: [PATCH v2 20/23] drivers/bus: separate specific bus metadata for NXP
+ drivers
+Date: Wed,  6 May 2026 17:51:52 +0200
+Message-ID: <20260506155201.2709810-21-david.marchand@redhat.com>
 In-Reply-To: <20260506155201.2709810-1-david.marchand@redhat.com>
 References: <20260429114503.932575-1-david.marchand@redhat.com>
  <20260506155201.2709810-1-david.marchand@redhat.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: tYFXm96a0MZyOH71d5O6_x0qclXHo8RsU6MrKHq73fI_1778082867
+X-Mimecast-MFC-PROC-ID: oF8KUTFgPVCNCQcw_U2NFOkwaU5utPZ0mJbYr6nsoNQ_1778082872
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
@@ -68,91 +70,245 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There is nothing that requires a specific bus type.
+As a preparation for the next commit, split the specific bus types and
+move specific fields to a private structure/singleton variable.
 
 Signed-off-by: David Marchand <david.marchand@redhat.com>
 ---
- drivers/dma/idxd/idxd_bus.c | 38 ++++++++++++++-----------------------
- 1 file changed, 14 insertions(+), 24 deletions(-)
+ drivers/bus/dpaa/dpaa_bus.c   | 55 ++++++++++++++++++++---------------
+ drivers/bus/fslmc/fslmc_bus.c |  6 ++--
+ drivers/bus/fslmc/private.h   |  2 --
+ 3 files changed, 34 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/dma/idxd/idxd_bus.c b/drivers/dma/idxd/idxd_bus.c
-index 93bde69ff9..daf5f48ac1 100644
---- a/drivers/dma/idxd/idxd_bus.c
-+++ b/drivers/dma/idxd/idxd_bus.c
-@@ -41,34 +41,24 @@ struct rte_dsa_device {
+diff --git a/drivers/bus/dpaa/dpaa_bus.c b/drivers/bus/dpaa/dpaa_bus.c
+index ade093cd13..08c1607647 100644
+--- a/drivers/bus/dpaa/dpaa_bus.c
++++ b/drivers/bus/dpaa/dpaa_bus.c
+@@ -59,6 +59,9 @@
+ 
+ struct rte_dpaa_bus {
+ 	struct rte_bus bus;
++};
++
++struct rte_dpaa_bus_private {
+ 	int device_count;
+ 	int detected;
+ 	uint32_t svr_ver;
+@@ -67,6 +70,7 @@ struct rte_dpaa_bus {
  };
  
- /* forward prototypes */
--struct dsa_bus;
- static int dsa_scan(void);
- static bool dsa_match(const struct rte_driver *drv, const struct rte_device *dev);
- static int dsa_probe_device(struct rte_driver *drv, struct rte_device *dev);
- static enum rte_iova_mode dsa_get_iommu_class(void);
- static int dsa_addr_parse(const char *name, void *addr);
+ static struct rte_dpaa_bus rte_dpaa_bus;
++static struct rte_dpaa_bus_private dpaa_bus;
+ static struct netcfg_info *dpaa_netcfg;
  
--/**
-- * Structure describing the DSA bus
-- */
--struct dsa_bus {
--	struct rte_bus bus;               /**< Inherit the generic class */
--	struct rte_driver driver;         /**< Driver struct for devices to point to */
-+struct rte_bus dsa_bus = {
-+	.scan = dsa_scan,
-+	.probe = rte_bus_generic_probe,
-+	.match = dsa_match,
-+	.probe_device = dsa_probe_device,
-+	.find_device = rte_bus_generic_find_device,
-+	.get_iommu_class = dsa_get_iommu_class,
-+	.parse = dsa_addr_parse,
- };
- 
--struct dsa_bus dsa_bus = {
--	.bus = {
--		.scan = dsa_scan,
--		.probe = rte_bus_generic_probe,
--		.match = dsa_match,
--		.probe_device = dsa_probe_device,
--		.find_device = rte_bus_generic_find_device,
--		.get_iommu_class = dsa_get_iommu_class,
--		.parse = dsa_addr_parse,
--	},
--	.driver = {
--		.name = "dmadev_idxd",
--	},
-+struct rte_driver dsa_driver = {
-+	.name = "dmadev_idxd",
- };
- 
- static inline const char *
-@@ -267,7 +257,7 @@ static bool dsa_match(const struct rte_driver *drv, const struct rte_device *dev
+ /* define a variable to hold the portal_key, once created.*/
+@@ -87,7 +91,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_get_eth_port_cfg)
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_soc_ver)
+ uint32_t dpaa_soc_ver(void)
  {
- 	const struct rte_dsa_device *dsa_dev = RTE_BUS_DEVICE(dev, *dsa_dev);
+-	return rte_dpaa_bus.svr_ver;
++	return dpaa_bus.svr_ver;
+ }
  
--	if (drv == &dsa_bus.driver) {
-+	if (drv == &dsa_driver) {
- 		char type[64], name[64];
+ struct fm_eth_port_cfg *
+@@ -103,11 +107,11 @@ dpaa_push_queue_num_update(void)
+ 	int ret = false;
+ 	uint16_t current, new_val;
  
- 		if (read_wq_string(dsa_dev, "type", type, sizeof(type)) >= 0 &&
-@@ -319,7 +309,7 @@ dsa_scan(void)
- 			continue;
+-	current = rte_atomic_load_explicit(&rte_dpaa_bus.push_rxq_num,
++	current = rte_atomic_load_explicit(&dpaa_bus.push_rxq_num,
+ 					   rte_memory_order_acquire);
+-	if (current < rte_dpaa_bus.max_push_rxq_num) {
++	if (current < dpaa_bus.max_push_rxq_num) {
+ 		new_val = current + 1;
+-		if (rte_atomic_compare_exchange_strong_explicit(&rte_dpaa_bus.push_rxq_num,
++		if (rte_atomic_compare_exchange_strong_explicit(&dpaa_bus.push_rxq_num,
+ 				&current, new_val,
+ 				rte_memory_order_release,
+ 				rte_memory_order_acquire))
+@@ -121,7 +125,7 @@ RTE_EXPORT_INTERNAL_SYMBOL(dpaa_push_queue_max_num)
+ uint16_t
+ dpaa_push_queue_max_num(void)
+ {
+-	return rte_dpaa_bus.max_push_rxq_num;
++	return dpaa_bus.max_push_rxq_num;
+ }
+ 
+ static int
+@@ -204,7 +208,7 @@ dpaa_create_device_list(void)
+ 	struct fm_eth_port_cfg *cfg;
+ 	struct fman_if *fman_intf;
+ 
+-	rte_dpaa_bus.device_count = 0;
++	dpaa_bus.device_count = 0;
+ 
+ 	/* Creating Ethernet Devices */
+ 	for (i = 0; dpaa_netcfg && (i < dpaa_netcfg->num_ethports); i++) {
+@@ -256,7 +260,7 @@ dpaa_create_device_list(void)
+ 		dpaa_add_to_device_list(dev);
+ 	}
+ 
+-	rte_dpaa_bus.device_count += i;
++	dpaa_bus.device_count += i;
+ 
+ 	/* Unlike case of ETH, RTE_LIBRTE_DPAA_MAX_CRYPTODEV SEC devices are
+ 	 * constantly created only if "sec" property is found in the device
+@@ -289,7 +293,7 @@ dpaa_create_device_list(void)
  		}
- 		strlcpy(dev->wq_name, wq->d_name, sizeof(dev->wq_name));
--		rte_bus_add_device(&dsa_bus.bus, &dev->device);
-+		rte_bus_add_device(&dsa_bus, &dev->device);
- 		devcount++;
  
- 		read_device_int(dev, "numa_node", &numa_node);
-@@ -357,8 +347,8 @@ dsa_addr_parse(const char *name, void *addr)
+ 		dev->device_type = FSL_DPAA_CRYPTO;
+-		dev->id.dev_id = rte_dpaa_bus.device_count + i;
++		dev->id.dev_id = dpaa_bus.device_count + i;
+ 
+ 		/* Even though RTE_CRYPTODEV_NAME_MAX_LEN is valid length of
+ 		 * crypto PMD, using RTE_ETH_NAME_MAX_LEN as that is the size
+@@ -306,7 +310,7 @@ dpaa_create_device_list(void)
+ 		dpaa_add_to_device_list(dev);
+ 	}
+ 
+-	rte_dpaa_bus.device_count += i;
++	dpaa_bus.device_count += i;
+ 
+ qdma_dpaa:
+ 	/* Creating QDMA Device */
+@@ -319,7 +323,7 @@ dpaa_create_device_list(void)
+ 		}
+ 
+ 		dev->device_type = FSL_DPAA_QDMA;
+-		dev->id.dev_id = rte_dpaa_bus.device_count + i;
++		dev->id.dev_id = dpaa_bus.device_count + i;
+ 
+ 		memset(dev->name, 0, RTE_ETH_NAME_MAX_LEN);
+ 		sprintf(dev->name, "dpaa_qdma-%d", i+1);
+@@ -331,7 +335,7 @@ dpaa_create_device_list(void)
+ 
+ 		dpaa_add_to_device_list(dev);
+ 	}
+-	rte_dpaa_bus.device_count += i;
++	dpaa_bus.device_count += i;
+ 
  	return 0;
+ 
+@@ -688,10 +692,10 @@ rte_dpaa_bus_scan(void)
+ 		return 0;
+ 	}
+ 
+-	if (rte_dpaa_bus.detected)
++	if (dpaa_bus.detected)
+ 		return 0;
+ 
+-	rte_dpaa_bus.detected = 1;
++	dpaa_bus.detected = 1;
+ 
+ 	/* create the key, supplying a function that'll be invoked
+ 	 * when a portal affined thread will be deleted.
+@@ -707,34 +711,34 @@ rte_dpaa_bus_scan(void)
+ 	svr_file = fopen(DPAA_SOC_ID_FILE, "r");
+ 	if (svr_file) {
+ 		if (fscanf(svr_file, "svr:%x", &svr_ver) > 0)
+-			rte_dpaa_bus.svr_ver = svr_ver & DPAA_SVR_MASK;
++			dpaa_bus.svr_ver = svr_ver & DPAA_SVR_MASK;
+ 		else
+-			rte_dpaa_bus.svr_ver = 0;
++			dpaa_bus.svr_ver = 0;
+ 		fclose(svr_file);
+ 	} else {
+-		rte_dpaa_bus.svr_ver = 0;
++		dpaa_bus.svr_ver = 0;
+ 	}
+-	if (rte_dpaa_bus.svr_ver == SVR_LS1046A_FAMILY) {
++	if (dpaa_bus.svr_ver == SVR_LS1046A_FAMILY) {
+ 		DPAA_BUS_LOG(INFO, "This is LS1046A family SoC.");
+-	} else if (rte_dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
++	} else if (dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
+ 		DPAA_BUS_LOG(INFO, "This is LS1043A family SoC.");
+ 	} else {
+ 		DPAA_BUS_LOG(WARNING,
+ 			"This is Unknown(%08x) DPAA1 family SoC.",
+-			rte_dpaa_bus.svr_ver);
++			dpaa_bus.svr_ver);
+ 	}
+ 
+ 	/* Disabling the default push mode for LS1043A */
+-	if (rte_dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
+-		rte_dpaa_bus.max_push_rxq_num = 0;
++	if (dpaa_bus.svr_ver == SVR_LS1043A_FAMILY) {
++		dpaa_bus.max_push_rxq_num = 0;
+ 		return 0;
+ 	}
+ 
+ 	penv = getenv("DPAA_PUSH_QUEUES_NUMBER");
+ 	if (penv)
+-		rte_dpaa_bus.max_push_rxq_num = atoi(penv);
+-	if (rte_dpaa_bus.max_push_rxq_num > DPAA_MAX_PUSH_MODE_QUEUE)
+-		rte_dpaa_bus.max_push_rxq_num = DPAA_MAX_PUSH_MODE_QUEUE;
++		dpaa_bus.max_push_rxq_num = atoi(penv);
++	if (dpaa_bus.max_push_rxq_num > DPAA_MAX_PUSH_MODE_QUEUE)
++		dpaa_bus.max_push_rxq_num = DPAA_MAX_PUSH_MODE_QUEUE;
+ 
+ 	/* Device list creation is only done once */
+ 	if (!process_once) {
+@@ -868,6 +872,9 @@ static struct rte_dpaa_bus rte_dpaa_bus = {
+ 		.dev_iterate = rte_bus_generic_dev_iterate,
+ 		.cleanup = dpaa_bus_cleanup,
+ 	},
++};
++
++static struct rte_dpaa_bus_private dpaa_bus = {
+ 	.max_push_rxq_num = DPAA_DEFAULT_PUSH_MODE_QUEUE,
+ 	.device_count = 0,
+ };
+diff --git a/drivers/bus/fslmc/fslmc_bus.c b/drivers/bus/fslmc/fslmc_bus.c
+index d855d6b36b..821fe63955 100644
+--- a/drivers/bus/fslmc/fslmc_bus.c
++++ b/drivers/bus/fslmc/fslmc_bus.c
+@@ -28,6 +28,7 @@
+ #define VFIO_IOMMU_GROUP_PATH "/sys/kernel/iommu_groups"
+ 
+ struct rte_fslmc_bus rte_fslmc_bus;
++static int fslmc_bus_device_count[DPAA2_DEVTYPE_MAX];
+ 
+ #define DPAA2_SEQN_DYNFIELD_NAME "dpaa2_seqn_dynfield"
+ RTE_EXPORT_INTERNAL_SYMBOL(dpaa2_seqn_dynfield_offset)
+@@ -39,7 +40,7 @@ rte_fslmc_get_device_count(enum rte_dpaa2_dev_type device_type)
+ {
+ 	if (device_type >= DPAA2_DEVTYPE_MAX)
+ 		return 0;
+-	return rte_fslmc_bus.device_count[device_type];
++	return fslmc_bus_device_count[device_type];
  }
  
--RTE_REGISTER_BUS(dsa, dsa_bus.bus);
-+RTE_REGISTER_BUS(dsa, dsa_bus);
- RTE_INIT(dsa_bus_init)
- {
--	rte_bus_add_driver(&dsa_bus.bus, &dsa_bus.driver);
-+	rte_bus_add_driver(&dsa_bus, &dsa_driver);
- }
+ static void
+@@ -200,7 +201,7 @@ scan_one_fslmc_device(char *dev_name)
+ 	dev->device.devargs = rte_bus_find_devargs(&rte_fslmc_bus.bus, dev_name);
+ 
+ 	/* Update the device found into the device_count table */
+-	rte_fslmc_bus.device_count[dev->dev_type]++;
++	fslmc_bus_device_count[dev->dev_type]++;
+ 
+ 	/* Add device in the fslmc device list */
+ 	insert_in_device_list(dev);
+@@ -559,7 +560,6 @@ struct rte_fslmc_bus rte_fslmc_bus = {
+ 		.unplug = fslmc_bus_unplug,
+ 		.dev_iterate = rte_bus_generic_dev_iterate,
+ 	},
+-	.device_count = {0},
+ };
+ 
+ RTE_REGISTER_BUS(fslmc, rte_fslmc_bus.bus);
+diff --git a/drivers/bus/fslmc/private.h b/drivers/bus/fslmc/private.h
+index 2fe592f24d..a0dda4f9d6 100644
+--- a/drivers/bus/fslmc/private.h
++++ b/drivers/bus/fslmc/private.h
+@@ -14,8 +14,6 @@
+  */
+ struct rte_fslmc_bus {
+ 	struct rte_bus bus;     /**< Generic Bus object */
+-	int device_count[DPAA2_DEVTYPE_MAX];
+-				/**< Count of all devices scanned */
+ };
+ 
+ extern struct rte_fslmc_bus rte_fslmc_bus;
 -- 
 2.53.0
 
