@@ -2,68 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC816CD343B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 15:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D3FCD343B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 15:46:38 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E90CF4026D;
-	Wed,  6 May 2026 17:45:07 +0200 (CEST)
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com
- [209.85.160.42]) by mails.dpdk.org (Postfix) with ESMTP id D9548400D7
- for <dev@dpdk.org>; Wed,  6 May 2026 17:45:06 +0200 (CEST)
-Received: by mail-oa1-f42.google.com with SMTP id
- 586e51a60fabf-40ea611d1a4so2515517fac.2
- for <dev@dpdk.org>; Wed, 06 May 2026 08:45:06 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E1B584026D;
+	Wed,  6 May 2026 17:46:37 +0200 (CEST)
+Received: from mail-dy1-f182.google.com (mail-dy1-f182.google.com
+ [74.125.82.182]) by mails.dpdk.org (Postfix) with ESMTP id 18E994026D
+ for <dev@dpdk.org>; Wed,  6 May 2026 17:46:37 +0200 (CEST)
+Received: by mail-dy1-f182.google.com with SMTP id
+ 5a478bee46e88-2ef38cf04f0so7264400eec.1
+ for <dev@dpdk.org>; Wed, 06 May 2026 08:46:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778082306;
- x=1778687106; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778082396;
+ x=1778687196; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=fndz4FxWODyqSGIn0lYppG6yc0c2FR1pP8+LjZuccuc=;
- b=WL3p52DN3os4E4GadHpWJyr0iJVJl/4f0IDeKedQUyipYAzi2OJiNU5XZm92BEliCm
- khrCta5FDWAm7dAVPizFjfBm8pTyfoiWuqwlqNzmGHdoeahOAo/11D+y2ACSoqOW4ipU
- iMpAUvzLva0qk7oF+FtmZGhi/otBEm34NQCpnnDDZO7Ui3dter+w+NoVP6HWWWZwMuPz
- 0UeroNYLs632WFpSVXNdUNkA+gOOrbaXWIvtz5nIUAS3JMvw8nWfMUXFTd40DXiuMSFQ
- bQS9AvbdvOdgDij1okqCb0m1sUuyJiMDi8xIhfpnbgq2xqYPnz3ch2RmAoyaEDUYs+Pu
- yaRg==
+ bh=CrbBWMUHyJj8PEz0T8A4tGhmgDvaPx4P90le+68hr4I=;
+ b=G3IANxjc4GQK02Mx+Xdh4j+ETZ28TCYQPhSwEsWbuVdHYLTRCiAjhpH0rTY2YQmMph
+ IsvFWe7gitoFIa1+MqyM1UZDj7mXkwwTutubZdzpw7rgOUh73eh8x8AY92cqNpiyrJfL
+ xsmR2cEe27dVBThs/PjRRHZ5illtjYfVwnYEy7Ol6KjkzMToEW8FSeN/TMmqjRF1wEpo
+ Mm4zJU1JgF6Yz03wCdRGCbV0rlsPDZR9dGJEvn27dSdkoCnRsoPsqWD9/0Ft461Lgl0q
+ v0riYQoJQlZrHu30wbOP695LASxpkhTuF13Y2YJYmapP+9DlMHx8Y7IajzCMk2Plib/P
+ u9nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778082306; x=1778687106;
+ d=1e100.net; s=20251104; t=1778082396; x=1778687196;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=fndz4FxWODyqSGIn0lYppG6yc0c2FR1pP8+LjZuccuc=;
- b=nyzLoHG51EQaciWGjjw1FMdIayhYcOQKGCwe0Zag9kwfZBeyxcE8oneTbj1teVy1mP
- hay35Z78SQ/o1+3j2u8akHNsiFe5L8IwjygL5GZhlUGBjP+kRW6xgkaqIfYlx1McxilL
- QXtU0JtVRYmmr3z05IKrWv+H/hLj2FDxqjU4y0m4HYvPblETqrX82NqfYiCFbdZsDDrp
- BaVQA0Uv5ENsqcONsBKFJ4m/AW9VzwXfKKJLJVGC1eYQcnc7CBdNunx2tWtZ8/KyFOo0
- DH0kCFogNqnCvlOQU78IBysP4RWTeWPugEdqpcv+s/d4hHBNPH36O/lS+/jTkdH3FufY
- EbCA==
-X-Gm-Message-State: AOJu0Yzf0Sht6gnweX4QL613PlS5bMLDEcdcjCdy7XjiLgx4dGOA3L6D
- PbRfLWoeXdfttoF8gqLb1x5oGUJvaRcKIPf2ZPnBnWSJl1eZU5VC41jnqsw6FdK+W+E=
-X-Gm-Gg: AeBDiescdN0JcXOP6DQDa4U3imgTsEhHPlauHpFbDezI/wBCgBaN83tDs5i/yDRA4la
- fvDSdqS8g4iNmvXSc15uzgx6X/yQbwKp4yFtaZJyyI0+VgSAiL+aet5joeHoUoG4Zzvnt33pKLw
- Ic/frZoCxrh78ivWkrMVgrq9IxROAfWzZPyeeBo5q4MODSk3Nqh7jwx2d6cL48Ae4VQzv1NtquW
- R/Ar62FO8bXOlN0Li95b5F6qb1ImJf2ln8Pt9K0Z3LtYgmMdt82g42Q9GrJehiPpnSrpWEhfNNk
- OpVQ1cQPgEMA2YNYPgek/QH5Er+JnhczRHoprjJw2+2lYrcKPJ7RQRaVzD7RPzlhFYtTQskGzwW
- m/5IlfXzqiF7e2D0FUlEWFRubPxpupoVm+X7aw+SsUZkEBF6RlzxC5G98d10BxkgLL6rVUj0jAy
- hqYW/AJTkz/LFyDt1Y5c6c1cXkeOEZBU3sKKIt33El8s1UCA==
-X-Received: by 2002:a05:6871:7428:b0:42b:d0fa:771 with SMTP id
- 586e51a60fabf-434f64eb18cmr2497032fac.21.1778082305910; 
- Wed, 06 May 2026 08:45:05 -0700 (PDT)
+ bh=CrbBWMUHyJj8PEz0T8A4tGhmgDvaPx4P90le+68hr4I=;
+ b=o7lbF/3TiOqzJotKABIRNVRRhdVFGRnDhMoOoQz8xdeUPjUu4OSCTCs4/0zGbyoCkk
+ 97SFeb2beCgLSw9Ktc+LvibqzgE811pZJxoH0MOMIUWUzF0ljt0d8F2kClodbFH7+AKJ
+ +HSMCyQus/uthxKmY5aRXyZJ0v2RDDf65ILN2uNpjvH0ZfFSBx2CY6jV2/P5vG/oobLv
+ Tdz5sEOKwyZLg6tueiiHpLPn9JzXnTuBh4+ljNi5CkMVssn/246NYNDXEEJweSGLSsk/
+ ZlaY8vOPyRyvDD4AwuZssZNreANYUKYctCr3eu9Nh8dlyIzYBgfqprWe4OT70aKBbX6s
+ Ai5Q==
+X-Gm-Message-State: AOJu0Yyt8e9oZ/7OX+q4eQu/MIEblDW0ckFTvlAnrnGOwcl+HDMWmsQv
+ 4v4ZjXrIxl22By0G75Gn/YoBsYpfefxPO2ug9VkkxeH+YNgdZQkZWeDD3fTB2OdJ1tg=
+X-Gm-Gg: AeBDies1bPgA4cUzFAfMKg5leAKgmnUVmI61+XDA0X/ZXSU//YN1E90k3hxo4v9fFOU
+ HeQR8NMHcAUBI3HP6hk0AqXV9KQbjMYjM+pr8b5AxqXoBJtxKl5gy71tuYHKLDLpYzDyBHj4ko+
+ P1M0YQ+nzy5tqiFARr1cXIFNEp81lMAtzLfzvy9YF1VeQn+hKzPWyCemBX2m3mLbMuMzA+VNkEs
+ dAuoqK9uIdWhge+q3n6n5qleyOK2SZRVjEPfU+mBwF1isTjT+Gn4A5QpDgnCCkjMc9ss2OxUT4M
+ d8HqFPBZl1dAhXmousigW5uyzF+MPC1pAdcFUq330vVkrr7qq4XizizSEeYLLI6Y+UohE6gkyd0
+ RJGCQo4ssw5LPyOn5UKuaSZD5L3pXyHcq61whLYUR80FeNMmMjvqhl27MBnCIIacij47VOT3oaV
+ 9adhLPPmMWXmRH4tCBM+TEhBdzI94igHC5c6HtSyKipy7cwg==
+X-Received: by 2002:a05:7301:38a3:b0:2f2:32bc:787d with SMTP id
+ 5a478bee46e88-2f54a38a0femr1825334eec.23.1778082396010; 
+ Wed, 06 May 2026 08:46:36 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 586e51a60fabf-43454d53a55sm16911877fac.16.2026.05.06.08.45.05
+ 5a478bee46e88-2f56cec593dsm4313010eec.6.2026.05.06.08.46.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Wed, 06 May 2026 08:45:05 -0700 (PDT)
-Date: Wed, 6 May 2026 08:45:03 -0700
+ Wed, 06 May 2026 08:46:35 -0700 (PDT)
+Date: Wed, 6 May 2026 08:46:32 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Rajesh Kumar <rajesh3.kumar@intel.com>
-Cc: dev@dpdk.org, bruce.richardson@intel.com, aman.deep.singh@intel.com
-Subject: Re: [RFC v5 0/6] introduce PTP protocol library and software relay
-Message-ID: <20260506084503.1c54f055@phoenix.local>
-In-Reply-To: <20260506154131.2496072-1-rajesh3.kumar@intel.com>
-References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
- <20260506154131.2496072-1-rajesh3.kumar@intel.com>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [RFC 1/3] flow_compile: introduce textual flow rule compiler
+Message-ID: <20260506084632.5cfc676e@phoenix.local>
+In-Reply-To: <afr2frTWMC3kGKxq@bricha3-mobl1.ger.corp.intel.com>
+References: <20260505183917.370281-1-sismis@dyna-nic.com>
+ <20260506033338.480610-1-stephen@networkplumber.org>
+ <20260506033338.480610-2-stephen@networkplumber.org>
+ <afr2frTWMC3kGKxq@bricha3-mobl1.ger.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,9 +82,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Wed,  6 May 2026 21:11:22 +0530
-Rajesh Kumar <rajesh3.kumar@intel.com> wrote:
+On Wed, 6 May 2026 09:06:22 +0100
+Bruce Richardson <bruce.richardson@intel.com> wrote:
 
->   - Fixed checkpatch warnings: removed unnecessary #include <stdio.h>
+> > 
+> > Dependencies are limited to rte_ethdev and rte_net; no
+> > librte_cmdline, no flex/bison, no platform-specific headers.
+> > The grammar follows testpmd's syntax so familiar rules carry
+> > over and is documented in the programmer's guide.
+> >   
+> Was there a particular reason to avoid using flex/bison here, or did their
+> use just not make sense? In general I would prefer using code-generation
+> tools where possible rather than maintaining (metaphorically) hand-written code.
+> 
+> /Bruce
 
-PS. spelling error complaints about stdio.h are bogus
+As long as we are willing to accept flex/bison as build dependency,
+it would make sense to use it.
