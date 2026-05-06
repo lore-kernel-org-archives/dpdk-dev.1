@@ -2,72 +2,110 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF66BCD343B
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 03:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76430CD3427
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 03:37:55 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B111D40693;
-	Wed,  6 May 2026 05:33:47 +0200 (CEST)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id 85F5140673
- for <dev@dpdk.org>; Wed,  6 May 2026 05:33:45 +0200 (CEST)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-12dca45ca21so8156463c88.1
- for <dev@dpdk.org>; Tue, 05 May 2026 20:33:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BE63F4027E;
+	Wed,  6 May 2026 05:37:54 +0200 (CEST)
+Received: from mx0b-00154904.pphosted.com (mx0b-00154904.pphosted.com
+ [148.163.137.20])
+ by mails.dpdk.org (Postfix) with ESMTP id E11A1400D6
+ for <dev@dpdk.org>; Wed,  6 May 2026 05:37:52 +0200 (CEST)
+Received: from pps.filterd (m0170398.ppops.net [127.0.0.1])
+ by mx0b-00154904.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 645HlA631833272 for <dev@dpdk.org>; Tue, 5 May 2026 23:37:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
+ :content-transfer-encoding:content-type:date:from:message-id
+ :mime-version:subject:to; s=smtpout1; bh=eaZI5Nrnuj2TfW5xOsYrTaN
+ k+J5tV4VGy/9+t44SLe0=; b=CC/Q8h8o1/Pm5CEbHyCXuK7EEA4CKS5qkSgPZnh
+ 0paoZh8wEuYGjMYW9/MeKGe9FhHJsC7sIovPtsNmIi6ZwC/vsGdenj4jhmRyzywq
+ LJ8lfnY0/8ER5YARiC1ReVSX8hWtg7zlYUK7COh2uS9i+wVn4UNymZ1KYH4/1ysi
+ 0Nw3oQsfGEB1jFZvK2HtH5Jho88dOcVpli1qncIly2c2ZHZsH11Manam4otb9EAC
+ 1YwklbTLmVGy09AuX+2JWGRe3UYE42G9fYLeejx2AJxEugYnP/SBZdhHdjsLZ1X4
+ pwLJikHm6AJmAXiM8Lptg0TycWkrJMBBz3EfaBOp+/Bno5A==
+Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com
+ [67.231.149.39])
+ by mx0b-00154904.pphosted.com (PPS) with ESMTPS id 4dwcg5pa2h-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
+ for <dev@dpdk.org>; Tue, 05 May 2026 23:37:52 -0400 (EDT)
+Received: from pps.filterd (m0134746.ppops.net [127.0.0.1])
+ by mx0a-00154901.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 6462UZZ3548036 for <dev@dpdk.org>; Tue, 5 May 2026 23:37:51 -0400
+Received: from esapsmtpat07.us.dell.com (esapsmtpat07.us.dell.com
+ [143.166.211.149])
+ by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 4dyv1u1992-1
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK)
+ for <dev@dpdk.org>; Tue, 05 May 2026 23:37:50 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778038425;
- x=1778643225; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
- :message-id:reply-to;
- bh=e5oWkvLBo3iWNGN3LZrecTTS4kgkmHLmgEsws3EBJfM=;
- b=EzXEO53Hrd4cJ7k+PrEi2nk4O14SKX0Y0CC4qpdDWAKFRx+JL/tMUbZq6OP06yK1+F
- Ggz9yDL8DIvfwmr7cpQBl3Xg0lGb0eQuw7TyFx/qXpabfN5thCTZZl1DVWDBdgYUooV5
- qQhfsf7gippzbTIFlyTlnieoHCZMUz0MUof4KI0XxqQl6ug4ZUe6rHkL2TbQsZMlx0F4
- 5Fp+G09PS0xp/66UjE/wEF0mjEnNPphEqnIpznx1TFnp7JXQFF7Bwr9raJfpko2hTScY
- THB9NX56M/BivWjn1aHBt4S51T7D+ttzPmGOruIWY1w9APMWMxn2/+w7aruOnDhTfgts
- pzAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778038425; x=1778643225;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=e5oWkvLBo3iWNGN3LZrecTTS4kgkmHLmgEsws3EBJfM=;
- b=hTCp0f9LgB82Bx0VNhFiT48ZDVgBaX4/+Cqnui9uOZYgCr8blRhMnL0yoEosu97z+S
- SmcaK2FdKqiP2Gjd+kTRJHzKXDevN78FShe8aFNigcqDyhgK8dUoLPuTJTClIA3WLX6T
- s/ryYq/kVMJ+unlo6rKnb85t+++AYGTZ75Nw1tjl75aXpO1tNPFXQqdB5kzjNL7W7R7L
- hfp9YRACYJXpBWYEQ1DiAH1OaPG0vUq3XstlZo8djgxkvCYkZXPZw1KLznEOROTYsDSz
- VIctHpJfmOG0fDuXhGAZZYhREOYUMy3Cvceqfd5vmChEumICr0+20RSIGz/C2954nrPj
- ts/g==
-X-Gm-Message-State: AOJu0YyFMMwXzlWbIvZEonBaB0Xo8EaOtIsPk8EYv3uhw/o0KqmY0SFh
- V2mtuGbDUDABNjX9uKPMDTTzi5xM3umR9Dtgq2zDVHCnUjK2PCoGIkRYFE1RM0eTQbcp8hzBUBV
- 28iCl
-X-Gm-Gg: AeBDiesBJPdYRrGWB/MRYIiviYhJtYmOme6A9XPyH1rzyTDsWaMAvFINNORFHRrOfy1
- b/f8pgZhxBQJPTQbBOfTX4HoQkfUEvHZ+CLKbUSoVCF80yeVOdKzgBe1Bk4sNyCPQz8gFjGpl02
- 8wg3mv1c/BVH1lpKUdUxuAyoIDG5jWLEcb2cuzEETsoUfvr6g1bsa00IgGiqw90iZ4lS29QTgiI
- Ngq6cJLg5XORzUPmyOQZSahf35T/kLpWte3agqvOZXdRalez4GD1y2ifKWoXuihfYOq/C4u9kFg
- ZxH1MPDzpxvNmXodvpGW4ApVQp/IM+LRghqcxR2Ib/ArWkIYlCwIMPkZ7w9uwEodDD6bo0YK5Bm
- cf63R1Edo3v/LdP9MlDvwztJroJwtktQqcf6c3PkM5fs/vHJXQ3QRKyfpeR0F81zuqfwjcuz+jP
- iZAlhPon9nulqalOW7F03SoKxD+YfpCKpMvcj8YSgX/Rw=
-X-Received: by 2002:a05:7022:388e:b0:12c:8cae:cccb with SMTP id
- a92af1059eb24-1318e928358mr919646c88.26.1778038424561; 
- Tue, 05 May 2026 20:33:44 -0700 (PDT)
-Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-131f9679dc4sm1829479c88.3.2026.05.05.20.33.43
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 05 May 2026 20:33:44 -0700 (PDT)
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Thomas Monjalon <thomas@monjalon.net>
-Subject: [RFC 3/3] test/flow_compile: add unit tests for flow rule compiler
-Date: Tue,  5 May 2026 20:29:57 -0700
-Message-ID: <20260506033338.480610-4-stephen@networkplumber.org>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260506033338.480610-1-stephen@networkplumber.org>
-References: <20260505183917.370281-1-sismis@dyna-nic.com>
- <20260506033338.480610-1-stephen@networkplumber.org>
+ d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
+ t=1778038671; x=1809574671;
+ h=from:to:cc:subject:date:message-id:mime-version:
+ content-transfer-encoding;
+ bh=eaZI5Nrnuj2TfW5xOsYrTaNk+J5tV4VGy/9+t44SLe0=;
+ b=qt7+GV1empMQyCDL2iAamvZFh61ofRoxVg6OKZ3wJCrFwDyn//OFc4Xf
+ eFEqcoGITb8TrjpV/eJ8sj2k+4kOTXnQ4Sg06xyQuQLa7T6FtYmuweFYv
+ 4IXLTUtKSo7Z2kOb3ZV5/Zw6m6xPuwJ/6cGFqV98/Jwi78fYSVgKvwmW6
+ 3ox/ngXYqfiNvjv0OeUES/8GR3pS4f+NZh1vYJvpUm8zm/IhVlUEgVXGv
+ gUCHYVLMfr7nSl1lxX1SCHdchbXqt7wGTU7+ESssM20HPyDKc9R8uA2bN
+ OVge6L8m7cmqdj4cT1KnKLMIoMJUYJjnpHHDQg5z6U8WIxbv4HrbDptT9 A==;
+X-CSE-ConnectionGUID: F0la+AvzT0aZMJgfsJx7qw==
+X-CSE-MsgGUID: 2OzcuVp+QhmqmRDTrhm/8g==
+X-LoopCount0: from 10.215.64.30
+X-MS-Exchange-CrossPremises-AuthAs: Internal
+Received: from mx1-adc.dell.com (HELO ieorr5-pvwed001.delllabs.net)
+ ([10.215.64.30])
+ by esapsmtpat07.us.dell.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
+ 06 May 2026 03:37:50 +0000
+Received: from ieorr5-ppwem002.delllabs.net (100.64.0.133) by
+ ieorr5-pvwed001.delllabs.net (10.215.64.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 5 May 2026 22:39:00 -0500
+Received: from ieorr5-pvwer001.delllabs.net (100.64.0.134) by
+ ieorr5-ppwem002.delllabs.net (100.64.0.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Tue, 5 May 2026 22:37:48 -0500
+Received: from localhost (10.240.17.25) by smtprelay.delllabs.net
+ (100.64.0.134) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
+ Transport; Tue, 5 May 2026 22:37:48 -0500
+From: <pravin.bathija@dell.com>
+To: <dev@dpdk.org>, <stephen@networkplumber.org>, <maxime.coquelin@redhat.com>
+CC: <pravin.bathija@dell.com>, <thomas@monjalon.net>, <fengchengwen@huawei.com>
+Subject: [PATCH v12 0/5] Support add/remove memory region and get-max-slots
+Date: Wed, 6 May 2026 03:37:28 +0000
+Message-ID: <20260506033733.972952-1-pravin.bathija@dell.com>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1143,Hydra:6.1.51,FMLib:17.12.100.49
+ definitions=2026-05-05_02,2026-04-30_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 spamscore=0 phishscore=0
+ suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605060032
+X-Proofpoint-GUID: G6FdL0JzzvAtq2w36CP-zIPHJRM02YR5
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTA2MDAzMiBTYWx0ZWRfX2AUma1iVBeMj
+ rw5qzGjfJ7+8I1LbP1vTY67IEZ1RTt8B/uHdy1zI2HX0fMwqG59kr8EPxOR4A2W/orwzPgOlKdn
+ pSRdzqd9ALs5eUjc9GZ4jxF8DMFO5+/AfXlCpd6mSUIweF/ZfpGEnnrqBpXBc6CaIBETxWZAXs1
+ dCiWxuC46xX2io2T7v5EVqk11JB9AQIJVvOOLHRerF/P3rmLTxzKG2pgADbqWkLrby4cwpzZ6mA
+ m/9RrMlV4NX+gSSj+6B9TtcTt/GofxaUGNNPC7dseEaT0UWLI/GIDScuuEc6roTZIX649EPm3fD
+ iGDRgPQuY+UFqOBAdiF4UmcJaOBGDViSzhaEMSpovD3BKGE+9nM78TWnHEo3TTXvOM8lNL7CKri
+ YA0LzLYtlMlmdwY8Q5JUnktNbHceb+LmkFziArOvrmN8VJ3Lh94SMzswoghA/QCO3MEAI/8SwT8
+ iE/SU55KGLhWOwC+25g==
+X-Proofpoint-ORIG-GUID: G6FdL0JzzvAtq2w36CP-zIPHJRM02YR5
+X-Authority-Analysis: v=2.4 cv=bLQm5v+Z c=1 sm=1 tr=0 ts=69fab790 cx=c_pps
+ a=j0++y401J6f/BxNAf5EDow==:117 a=vdbZnCXtvJht7X5WT7bgSg==:17
+ a=NGcC8JguVDcA:10 a=ke5jqHz-1hQA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=6gNNCFAoQcIphELLPWWu:22 a=vUAfKriDyi6VqHAKCLgX:22 a=iLNU1ar6AAAA:8
+ a=PKI3R_pDefeA-SqXiwkA:9 a=gbU3OgOOxF9bX48Letew:22
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ priorityscore=1501 malwarescore=0 bulkscore=0
+ impostorscore=0 spamscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 adultscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2604200000 definitions=main-2605060032
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,292 +119,94 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add an autotest for the new rte_flow_compile library.  The tests
-exercise the parser end to end without needing a real ethdev port:
-each case compiles a textual rule and inspects the resulting
-attribute, pattern and action arrays directly.
+From: Pravin M Bathija <pravin.bathija@dell.com>
 
-Coverage spans the common happy paths (simple drop, IPv4/IPv6 match
-with queue and count actions, MAC matching, CIDR-style prefix
-masks) and a set of error-path cases.  The error tests assert a
-substring of the diagnostic rather than the full message so that
-wording can evolve without churning the tests.
+This is version v12 of the patchset and it incorporates the
+recommendations made by Maxime Coquelin and ai-code-review.
 
-Registered as flow_compile_autotest in the fast test suite so it
-runs under the standard meson test invocation.
+Changes made to patch 3/5
+* Refactored async_dma_map() to delegate to async_dma_map_region(),
+  eliminating code duplication between the two functions.
+* Restored original comments in async_dma_map_region() explaining why
+  ENODEV and EINVAL errors are ignored (these were stripped in v10)
+* Reverted unnecessary changes to vhost_user_postcopy_register() -- removed
+  the host_user_addr == 0 checks and reg_msg_index indirection that were
+  added in  v10, since this function is only called from
+  vhost_user_set_mem_table() where regions are always contiguous.
 
-Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
----
- MAINTAINERS                  |   1 +
- app/test/meson.build         |   1 +
- app/test/test_flow_compile.c | 234 +++++++++++++++++++++++++++++++++++
- 3 files changed, 236 insertions(+)
- create mode 100644 app/test/test_flow_compile.c
+This implementation has been extensively tested by doing Read/Write I/O
+from multiple instances of fio + libblkio (front-end) talking to
+spdk/dpdk (back-end) based drives. Tested with qemu front-end talking to
+dpdk testpmd (back-end) performing add/removal of memory regions. Also
+tested post-copy live migration after doing add_memory_region.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4923e126df..d469ac2c19 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -453,6 +453,7 @@ M: Stephen Hemminger <stephen@networkplumber.org>
- T: git://dpdk.org/next/dpdk-next-net
- F: lib/flow_compile/
- F: doc/guides/prog_guide/flow_compile_lib.rst
-+F: app/test/test_flow_compile.c
- 
- Traffic Management API
- M: Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-diff --git a/app/test/meson.build b/app/test/meson.build
-index 7d458f9c07..be0d61c6a0 100644
---- a/app/test/meson.build
-+++ b/app/test/meson.build
-@@ -88,6 +88,7 @@ source_file_deps = {
-     'test_fib6_perf.c': ['fib'],
-     'test_fib_perf.c': ['net', 'fib'],
-     'test_flow_classify.c': ['net', 'acl', 'table', 'ethdev', 'flow_classify'],
-+    'test_flow_compile.c': ['net', 'ethdev', 'flow_compile'],
-     'test_func_reentrancy.c': ['hash', 'lpm'],
-     'test_graph.c': ['graph'],
-     'test_graph_feature_arc.c': ['graph'],
-diff --git a/app/test/test_flow_compile.c b/app/test/test_flow_compile.c
-new file mode 100644
-index 0000000000..5cfcc92fad
---- /dev/null
-+++ b/app/test/test_flow_compile.c
-@@ -0,0 +1,234 @@
-+/* SPDX-License-Identifier: BSD-3-Clause
-+ * Copyright (c) 2026 Stephen Hemminger <stephen@networkplumber.org>
-+ */
-+
-+/*
-+ * Unit tests for rte_flow_compile.
-+ *
-+ * These exercise the parser only -- they don't need a real ethdev
-+ * port.  They check both successful parses (asserting the resulting
-+ * pattern/action arrays) and parse failures (asserting that the
-+ * error buffer contains a recognizable substring).
-+ */
-+
-+#include <stdint.h>
-+#include <string.h>
-+
-+#include <rte_byteorder.h>
-+#include <rte_eal.h>
-+#include <rte_flow.h>
-+
-+#include "test.h"
-+#include "rte_flow_compile.h"
-+
-+static int
-+test_simple_eth_drop(void)
-+{
-+	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
-+	struct rte_flow_compile *fc =
-+		rte_flow_compile("ingress pattern eth / end actions drop / end",
-+				 err);
-+	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
-+
-+	TEST_ASSERT_EQUAL(rte_flow_compile_attr(fc)->ingress, 1,
-+			  "ingress not set");
-+	TEST_ASSERT_EQUAL(rte_flow_compile_attr(fc)->egress, 0,
-+			  "egress should not be set");
-+
-+	unsigned int n;
-+	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, &n);
-+	TEST_ASSERT_EQUAL(n, 2u, "expected 2 items, got %u", n);
-+	TEST_ASSERT_EQUAL(p[0].type, RTE_FLOW_ITEM_TYPE_ETH,
-+			  "item 0 type");
-+	TEST_ASSERT_NULL(p[0].spec, "eth spec should be NULL");
-+	TEST_ASSERT_EQUAL(p[1].type, RTE_FLOW_ITEM_TYPE_END,
-+			  "item 1 should be END");
-+
-+	const struct rte_flow_action *a = rte_flow_compile_actions(fc, &n);
-+	TEST_ASSERT_EQUAL(n, 2u, "expected 2 actions, got %u", n);
-+	TEST_ASSERT_EQUAL(a[0].type, RTE_FLOW_ACTION_TYPE_DROP,
-+			  "action 0 type");
-+	TEST_ASSERT_EQUAL(a[1].type, RTE_FLOW_ACTION_TYPE_END,
-+			  "action 1 should be END");
-+
-+	rte_flow_compile_free(fc);
-+	return 0;
-+}
-+
-+static int
-+test_ipv4_match_queue(void)
-+{
-+	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
-+	const char *src =
-+		"ingress group 0 priority 1\n"
-+		"pattern eth / ipv4 src is 10.0.0.1 dst is 10.0.0.2 /"
-+		"   udp dst is 4789 / end\n"
-+		"actions queue index 3 / count / end\n";
-+
-+	struct rte_flow_compile *fc = rte_flow_compile(src, err);
-+	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
-+
-+	TEST_ASSERT_EQUAL(rte_flow_compile_attr(fc)->priority, 1u,
-+			  "priority not set");
-+
-+	unsigned int n;
-+	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, &n);
-+	TEST_ASSERT_EQUAL(n, 4u, "expected 4 items");
-+	TEST_ASSERT_EQUAL(p[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
-+			  "item 1 should be IPV4");
-+
-+	const struct rte_flow_item_ipv4 *ipv4 = p[1].spec;
-+	const struct rte_flow_item_ipv4 *m4   = p[1].mask;
-+	TEST_ASSERT_NOT_NULL(ipv4, "ipv4 spec");
-+	TEST_ASSERT_NOT_NULL(m4,   "ipv4 mask");
-+
-+	/* 10.0.0.1 in network order = bytes 0a 00 00 01 */
-+	const uint8_t *src_b = (const uint8_t *)&ipv4->hdr.src_addr;
-+	const uint8_t *dst_b = (const uint8_t *)&ipv4->hdr.dst_addr;
-+	TEST_ASSERT_EQUAL(src_b[0], 0x0a, "src[0]");
-+	TEST_ASSERT_EQUAL(src_b[3], 0x01, "src[3]");
-+	TEST_ASSERT_EQUAL(dst_b[0], 0x0a, "dst[0]");
-+	TEST_ASSERT_EQUAL(dst_b[3], 0x02, "dst[3]");
-+
-+	const uint8_t *src_m = (const uint8_t *)&m4->hdr.src_addr;
-+	for (int i = 0; i < 4; i++)
-+		TEST_ASSERT_EQUAL(src_m[i], 0xff, "src mask byte %d", i);
-+
-+	TEST_ASSERT_EQUAL(p[2].type, RTE_FLOW_ITEM_TYPE_UDP,
-+			  "item 2 should be UDP");
-+	const struct rte_flow_item_udp *u = p[2].spec;
-+	TEST_ASSERT_EQUAL(rte_be_to_cpu_16(u->hdr.dst_port), 4789,
-+			  "udp dst port");
-+
-+	const struct rte_flow_action *a = rte_flow_compile_actions(fc, &n);
-+	TEST_ASSERT_EQUAL(n, 3u, "expected 3 actions");
-+	TEST_ASSERT_EQUAL(a[0].type, RTE_FLOW_ACTION_TYPE_QUEUE,
-+			  "action 0 should be QUEUE");
-+	const struct rte_flow_action_queue *q = a[0].conf;
-+	TEST_ASSERT_EQUAL(q->index, 3u, "queue index");
-+	TEST_ASSERT_EQUAL(a[1].type, RTE_FLOW_ACTION_TYPE_COUNT,
-+			  "action 1 should be COUNT");
-+
-+	rte_flow_compile_free(fc);
-+	return 0;
-+}
-+
-+static int
-+test_ipv4_prefix(void)
-+{
-+	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
-+	struct rte_flow_compile *fc = rte_flow_compile(
-+		"pattern eth / ipv4 src spec 192.168.0.0 src prefix 16 / end "
-+		"actions drop / end", err);
-+	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
-+
-+	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, NULL);
-+	const struct rte_flow_item_ipv4 *m = p[1].mask;
-+	TEST_ASSERT_NOT_NULL(m, "ipv4 mask");
-+	TEST_ASSERT_EQUAL(rte_be_to_cpu_32(m->hdr.src_addr), 0xffff0000u,
-+			  "/16 prefix mask");
-+
-+	rte_flow_compile_free(fc);
-+	return 0;
-+}
-+
-+static int
-+test_mac(void)
-+{
-+	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
-+	struct rte_flow_compile *fc = rte_flow_compile(
-+		"pattern eth dst is 11:22:33:44:55:66 / end "
-+		"actions drop / end", err);
-+	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
-+
-+	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, NULL);
-+	const struct rte_flow_item_eth *e = p[0].spec;
-+	TEST_ASSERT_EQUAL(e->hdr.dst_addr.addr_bytes[0], 0x11,
-+			  "MAC byte 0");
-+	TEST_ASSERT_EQUAL(e->hdr.dst_addr.addr_bytes[5], 0x66,
-+			  "MAC byte 5");
-+
-+	rte_flow_compile_free(fc);
-+	return 0;
-+}
-+
-+static int
-+test_ipv6(void)
-+{
-+	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
-+	struct rte_flow_compile *fc = rte_flow_compile(
-+		"pattern eth / ipv6 dst is 2001:db8::1 / end "
-+		"actions drop / end", err);
-+	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
-+
-+	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, NULL);
-+	const struct rte_flow_item_ipv6 *v6 = p[1].spec;
-+	const uint8_t *b = (const uint8_t *)&v6->hdr.dst_addr;
-+	TEST_ASSERT_EQUAL(b[0],  0x20, "ipv6[0]");
-+	TEST_ASSERT_EQUAL(b[1],  0x01, "ipv6[1]");
-+	TEST_ASSERT_EQUAL(b[2],  0x0d, "ipv6[2]");
-+	TEST_ASSERT_EQUAL(b[3],  0xb8, "ipv6[3]");
-+	TEST_ASSERT_EQUAL(b[15], 0x01, "ipv6[15]");
-+
-+	rte_flow_compile_free(fc);
-+	return 0;
-+}
-+
-+static int
-+expect_error(const char *src, const char *needle)
-+{
-+	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
-+	struct rte_flow_compile *fc = rte_flow_compile(src, err);
-+
-+	TEST_ASSERT_NULL(fc, "expected failure, got success: %s", src);
-+	TEST_ASSERT(strstr(err, needle) != NULL,
-+		    "error '%s' did not contain '%s'", err, needle);
-+	return 0;
-+}
-+
-+static int
-+test_errors(void)
-+{
-+	TEST_ASSERT_SUCCESS(expect_error("",
-+		"expected"), "empty input");
-+	TEST_ASSERT_SUCCESS(expect_error(
-+		"pattern bogus / end actions drop / end",
-+		"unknown flow item"), "unknown item");
-+	TEST_ASSERT_SUCCESS(expect_error(
-+		"pattern eth bogus is 1 / end actions drop / end",
-+		"unknown field"), "unknown field");
-+	TEST_ASSERT_SUCCESS(expect_error(
-+		"pattern eth dst is 1 / end actions drop / end",
-+		"MAC"), "non-MAC value for MAC field");
-+	TEST_ASSERT_SUCCESS(expect_error(
-+		"pattern eth / end actions queue bogus 1 / end",
-+		"unknown parameter"), "unknown action parameter");
-+	TEST_ASSERT_SUCCESS(expect_error(
-+		"pattern eth / end actions queue index 99999 / end",
-+		"out of range"), "out-of-range action parameter");
-+	TEST_ASSERT_SUCCESS(expect_error(
-+		"pattern eth ; / end actions drop / end",
-+		"unexpected"), "unexpected character");
-+	return 0;
-+}
-+
-+static struct unit_test_suite flow_compile_suite = {
-+	.suite_name = "flow_compile",
-+	.unit_test_cases = {
-+		TEST_CASE(test_simple_eth_drop),
-+		TEST_CASE(test_ipv4_match_queue),
-+		TEST_CASE(test_ipv4_prefix),
-+		TEST_CASE(test_mac),
-+		TEST_CASE(test_ipv6),
-+		TEST_CASE(test_errors),
-+		TEST_CASES_END(),
-+	},
-+};
-+
-+static int
-+test_flow_compile(void)
-+{
-+	return unit_test_suite_runner(&flow_compile_suite);
-+}
-+
-+REGISTER_FAST_TEST(flow_compile_autotest, NOHUGE_OK, ASAN_OK, test_flow_compile);
+Version Log:
+Version v12 (Current version): Incorporate code review suggestions from
+Maxime Coquelin and ai-code-review as described above.
+Version v11: Incorporate code review suggestions from Stephen Hemminger.
+Change made to patch 4/5
+Fix incomplete cleanup in vhost_user_add_mem_reg() when
+vhost_user_mmap_region() fails after the mmap succeeds (e.g.
+add_guest_pages() realloc failure) realloc failure). The error path now
+calls remove_guest_pages() and free_mem_region() to undo the mapping
+and stale guest-page entries, preventing a leaked mmap and slot reuse
+corruption. The plain close(fd) path is kept for pre-mmap failures.
+Version v10: Incorporate code review suggestions from Stephen Hemminger.
+Change made to patch 4/5
+Moved dev_invalidate_vrings after free_mem_region, array compaction, and
+nregions decrement. This ensures translate_ring_addresses only sees
+surviving memory regions, preventing vring pointers from resolving into
+a region that is about to be unmapped.
+Version v9: Incorporate code review suggestions from Stephen Hemminger.
+Changes made to patch 3/5
+Restored max_guest_pages initial value to hardcoded 8 instead of
+VHOST_MEMORY_MAX_NREGIONS, matching upstream semantics.
+Changes made to patch 4/5
+Added close(reg->fd) and reg->fd = -1 before goto close_msg_fds in the
+mmap failure path to fix fd leak after fd was moved from ctx->fds[0].
+Converted dev_invalidate_vrings from a plain function to a macro +
+implementation function pair, accepting message ID as a parameter so
+the static_assert reports the correct handler at each call site.
+Updated dev_invalidate_vrings call in add_mem_reg to pass
+VHOST_USER_ADD_MEM_REG as message ID.
+Updated dev_invalidate_vrings call in rem_mem_reg to pass
+VHOST_USER_REM_MEM_REG as message ID.
+Version v8:  Incorporate code review suggestions from Stephen Hemminger.
+rewrite async_dma_map_region function to iterate guest pages by host
+address range matching
+change function dev_invalidate_vrings to accept a double pointer to
+propagate pointer updates
+new function remove_guest_pages was added
+add_mem_reg error path was narrowed to only clean up the single failed
+region instead of destroting all existing regions
+Version v7: Incorporate code review suggestions from Maxime Coquelin.
+Add debug messages to vhost_postcopy_register function.
+Version v6: Added the enablement of this feature as a final patch in
+this patch-set and other code optimizations as suggested by Maxime
+Coquelin.
+Version v5: removed the patch that increased the number of memory regions
+from 8 to 128. This will be submitted as a separate feature at a later
+point after incorporating additional optimizations. Also includes code
+optimizations as suggested by Feng Cheng Wen.
+Version v4: code optimizations as suggested by Feng Cheng Wen.
+Version v3: code optimizations as suggested by Maxime Coquelin
+and Thomas Monjalon.
+Version v2: code optimizations as suggested by Maxime Coquelin.
+Version v1: Initial patch set.
+
+Pravin M Bathija (5):
+  vhost: add user to mailmap and define to vhost hdr
+  vhost_user: header defines for add/rem mem region
+  vhost_user: support function defines for back-end
+  vhost_user: Function defs for add/rem mem regions
+  vhost_user: enable configure memory slots
+
+ .mailmap               |   1 +
+ lib/vhost/rte_vhost.h  |   4 +
+ lib/vhost/vhost_user.c | 418 +++++++++++++++++++++++++++++++++++------
+ lib/vhost/vhost_user.h |  10 +
+ 4 files changed, 371 insertions(+), 62 deletions(-)
+
 -- 
-2.53.0
+2.43.0
 
