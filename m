@@ -2,45 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584BECD342C
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 11:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A73CD3436
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 11:36:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 50C924027E;
-	Wed,  6 May 2026 13:36:12 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 1EE4E4065E;
+	Wed,  6 May 2026 13:36:14 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id 1135540275
- for <dev@dpdk.org>; Wed,  6 May 2026 13:36:10 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 5F9464027E
+ for <dev@dpdk.org>; Wed,  6 May 2026 13:36:11 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowABHs26oJ_tpEyFuDw--.16283S2;
- Wed, 06 May 2026 19:36:08 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowABHs26oJ_tpEyFuDw--.16283S4;
+ Wed, 06 May 2026 19:36:09 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v10 00/10] Add Linkdata sxe2 driver
-Date: Wed,  6 May 2026 19:35:46 +0800
-Message-ID: <20260506113557.1151250-1-liujie5@linkdatatechnology.com>
+Subject: [PATCH v10 02/10] doc: add sxe2 guide and release notes
+Date: Wed,  6 May 2026 19:35:48 +0800
+Message-ID: <20260506113557.1151250-3-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20260506095704.1056840-11-liujie5@linkdatatechnology.com>
+In-Reply-To: <20260506113557.1151250-1-liujie5@linkdatatechnology.com>
 References: <20260506095704.1056840-11-liujie5@linkdatatechnology.com>
+ <20260506113557.1151250-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowABHs26oJ_tpEyFuDw--.16283S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr1kWF1UKr4xWw4UZr45Awb_yoW7Jr4kpF
- 48ZryrZF15JFW3Ww4fJayfZFyrK3WfJryjkrW2gas3XFyvyFyUCrs0gFy5Awn7AF15JF1F
- vrZIyr1UGa15Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
- 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
- 6r4UM28EF7xvwVC2z280aVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
- 0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
- 6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
- 0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC
- 0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
- 1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij
- 64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
- 0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF
- 0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvjfUeEfOUUUUU
+X-CM-TRANSID: qwCowABHs26oJ_tpEyFuDw--.16283S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF18AF1ktrWktw15JF4rGrg_yoW5Zw4xpa
+ n3CFySkr9xJw1xZr9xta18Ar45Ca1kAa45CFyIq34rXFn8ur18Zw4UKryxt34DJF95Z3Wr
+ ZF4jqry7CF1DW3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+ x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+ Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1l84
+ ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1l
+ e2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI
+ 8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
+ jcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lw4CEc2x0rVAKj4xxMxAIw2
+ 8IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
+ x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUXVWUAwCIc40Y0x0EwIxGrw
+ CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI
+ 42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z2
+ 80aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU6v38UUUUU=
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -58,106 +60,97 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-V10:
- - Addressed AI comments
+Add a new guide for SXE2 PMD in the nics directory.
+The guide contains driver capabilities, prerequisites,
+and compilation/usage instructions.
 
-Jie Liu (10):
-  mailmap: add Jie Liu
-  doc: add sxe2 guide and release notes
-  drivers: add sxe2 basic structures
-  common/sxe2: add base driver skeleton
-  drivers: add base driver probe skeleton
-  drivers: support PCI BAR mapping
-  common/sxe2: add ioctl interface for DMA map and unmap
-  net/sxe2: support queue setup and control
-  drivers: add data path for Rx and Tx
-  net/sxe2: add vectorized Rx and Tx
+Update the release notes to announce the addition of the
+sxe2 network driver.
 
- .mailmap                                   |   1 +
- doc/guides/nics/features/sxe2.ini          |  11 +
- doc/guides/nics/index.rst                  |   1 +
- doc/guides/nics/sxe2.rst                   |  23 +
- doc/guides/rel_notes/release_26_07.rst     |   4 +
- drivers/common/sxe2/meson.build            |  21 +
- drivers/common/sxe2/sxe2_common.c          | 683 +++++++++++++++
- drivers/common/sxe2/sxe2_common.h          |  86 ++
- drivers/common/sxe2/sxe2_common_log.c      |  75 ++
- drivers/common/sxe2/sxe2_common_log.h      | 263 ++++++
- drivers/common/sxe2/sxe2_errno.h           | 110 +++
- drivers/common/sxe2/sxe2_host_regs.h       | 707 +++++++++++++++
- drivers/common/sxe2/sxe2_internal_ver.h    |  33 +
- drivers/common/sxe2/sxe2_ioctl_chnl.c      | 326 +++++++
- drivers/common/sxe2/sxe2_ioctl_chnl.h      | 141 +++
- drivers/common/sxe2/sxe2_ioctl_chnl_func.h |  63 ++
- drivers/common/sxe2/sxe2_osal.h            | 582 ++++++++++++
- drivers/common/sxe2/sxe2_type.h            |  64 ++
- drivers/meson.build                        |   1 +
- drivers/net/meson.build                    |   1 +
- drivers/net/sxe2/meson.build               |  43 +
- drivers/net/sxe2/sxe2_cmd_chnl.c           | 319 +++++++
- drivers/net/sxe2/sxe2_cmd_chnl.h           |  33 +
- drivers/net/sxe2/sxe2_drv_cmd.h            | 398 +++++++++
- drivers/net/sxe2/sxe2_ethdev.c             | 971 +++++++++++++++++++++
- drivers/net/sxe2/sxe2_ethdev.h             | 315 +++++++
- drivers/net/sxe2/sxe2_irq.h                |  49 ++
- drivers/net/sxe2/sxe2_queue.c              |  39 +
- drivers/net/sxe2/sxe2_queue.h              | 227 +++++
- drivers/net/sxe2/sxe2_rx.c                 | 579 ++++++++++++
- drivers/net/sxe2/sxe2_rx.h                 |  34 +
- drivers/net/sxe2/sxe2_tx.c                 | 447 ++++++++++
- drivers/net/sxe2/sxe2_tx.h                 |  32 +
- drivers/net/sxe2/sxe2_txrx.c               | 367 ++++++++
- drivers/net/sxe2/sxe2_txrx.h               |  21 +
- drivers/net/sxe2/sxe2_txrx_common.h        | 541 ++++++++++++
- drivers/net/sxe2/sxe2_txrx_poll.c          | 966 ++++++++++++++++++++
- drivers/net/sxe2/sxe2_txrx_poll.h          |  17 +
- drivers/net/sxe2/sxe2_txrx_vec.c           | 192 ++++
- drivers/net/sxe2/sxe2_txrx_vec.h           |  72 ++
- drivers/net/sxe2/sxe2_txrx_vec_common.h    | 235 +++++
- drivers/net/sxe2/sxe2_txrx_vec_sse.c       | 547 ++++++++++++
- drivers/net/sxe2/sxe2_vsi.c                | 211 +++++
- drivers/net/sxe2/sxe2_vsi.h                | 205 +++++
- 44 files changed, 10056 insertions(+)
+Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
+---
+ doc/guides/nics/features/sxe2.ini      | 11 +++++++++++
+ doc/guides/nics/index.rst              |  1 +
+ doc/guides/nics/sxe2.rst               | 23 +++++++++++++++++++++++
+ doc/guides/rel_notes/release_26_07.rst |  4 ++++
+ 4 files changed, 39 insertions(+)
  create mode 100644 doc/guides/nics/features/sxe2.ini
  create mode 100644 doc/guides/nics/sxe2.rst
- create mode 100644 drivers/common/sxe2/meson.build
- create mode 100644 drivers/common/sxe2/sxe2_common.c
- create mode 100644 drivers/common/sxe2/sxe2_common.h
- create mode 100644 drivers/common/sxe2/sxe2_common_log.c
- create mode 100644 drivers/common/sxe2/sxe2_common_log.h
- create mode 100644 drivers/common/sxe2/sxe2_errno.h
- create mode 100644 drivers/common/sxe2/sxe2_host_regs.h
- create mode 100644 drivers/common/sxe2/sxe2_internal_ver.h
- create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.c
- create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.h
- create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl_func.h
- create mode 100644 drivers/common/sxe2/sxe2_osal.h
- create mode 100644 drivers/common/sxe2/sxe2_type.h
- create mode 100644 drivers/net/sxe2/meson.build
- create mode 100644 drivers/net/sxe2/sxe2_cmd_chnl.c
- create mode 100644 drivers/net/sxe2/sxe2_cmd_chnl.h
- create mode 100644 drivers/net/sxe2/sxe2_drv_cmd.h
- create mode 100644 drivers/net/sxe2/sxe2_ethdev.c
- create mode 100644 drivers/net/sxe2/sxe2_ethdev.h
- create mode 100644 drivers/net/sxe2/sxe2_irq.h
- create mode 100644 drivers/net/sxe2/sxe2_queue.c
- create mode 100644 drivers/net/sxe2/sxe2_queue.h
- create mode 100644 drivers/net/sxe2/sxe2_rx.c
- create mode 100644 drivers/net/sxe2/sxe2_rx.h
- create mode 100644 drivers/net/sxe2/sxe2_tx.c
- create mode 100644 drivers/net/sxe2/sxe2_tx.h
- create mode 100644 drivers/net/sxe2/sxe2_txrx.c
- create mode 100644 drivers/net/sxe2/sxe2_txrx.h
- create mode 100644 drivers/net/sxe2/sxe2_txrx_common.h
- create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.c
- create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.h
- create mode 100644 drivers/net/sxe2/sxe2_txrx_vec.c
- create mode 100644 drivers/net/sxe2/sxe2_txrx_vec.h
- create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_common.h
- create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_sse.c
- create mode 100644 drivers/net/sxe2/sxe2_vsi.c
- create mode 100644 drivers/net/sxe2/sxe2_vsi.h
 
+diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
+new file mode 100644
+index 0000000000..cbf5a773fb
+--- /dev/null
++++ b/doc/guides/nics/features/sxe2.ini
+@@ -0,0 +1,11 @@
++;
++; Supported features of the 'sxe2' network poll mode driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++; A feature with "P" indicates only be supported when non-vector path
++; is selected.
++;
++[Features]
++Queue start/stop     = Y
++Linux                = Y
+\ No newline at end of file
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+index cb818284fe..e20be478f8 100644
+--- a/doc/guides/nics/index.rst
++++ b/doc/guides/nics/index.rst
+@@ -68,6 +68,7 @@ Network Interface Controller Drivers
+     rnp
+     sfc_efx
+     softnic
++    sxe2
+     tap
+     thunderx
+     txgbe
+diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
+new file mode 100644
+index 0000000000..2f9ba91c33
+--- /dev/null
++++ b/doc/guides/nics/sxe2.rst
+@@ -0,0 +1,23 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++
++SXE2 Poll Mode Driver
++======================
++
++The sxe2 PMD (**librte_net_sxe2**) provides poll mode driver support for
++10/25/50/100/200 Gbps Network Adapters.
++The embedded switch, Physical Functions (PF),
++and SR-IOV Virtual Functions (VF) are supported
++
++Implementation details
++----------------------
++
++For security reasons and robustness, this driver only deals with virtual
++memory addresses. The way resources allocations are handled by the kernel
++combined with hardware specifications that allow it to handle virtual memory
++addresses directly ensure that DPDK applications cannot access random
++physical memory (or memory that does not belong to the current process).
++
++This capability allows the PMD to coexist with kernel network interfaces
++which remain functional, although they stop receiving unicast packets as
++long as they share the same MAC address.
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index f012d47a4b..fa0f0f5cca 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -64,6 +64,10 @@ New Features
+   * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
+ 
+ 
++* **Added Linkdata sxe2 ethernet driver.**
++
++  Added network driver for the Linkdata Network Adapters.
++
+ Removed Items
+ -------------
+ 
 -- 
 2.47.3
 
