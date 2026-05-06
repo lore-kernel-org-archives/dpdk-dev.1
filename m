@@ -2,31 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A53CD3439
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 17:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B32FCD342C
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 17:40:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B0DD440A79;
-	Wed,  6 May 2026 19:39:24 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C10C640A71;
+	Wed,  6 May 2026 19:39:26 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56])
- by mails.dpdk.org (Postfix) with ESMTP id B8C3140658;
- Wed,  6 May 2026 19:39:17 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4g9jK73cXqzHnGjR;
- Thu,  7 May 2026 01:38:19 +0800 (CST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 374B940672
+ for <dev@dpdk.org>; Wed,  6 May 2026 19:39:18 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.150])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4g9jKw4Hx7zJ46Cq
+ for <dev@dpdk.org>; Thu,  7 May 2026 01:39:00 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 9A2A540584;
- Thu,  7 May 2026 01:39:17 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 0F0B740571
+ for <dev@dpdk.org>; Thu,  7 May 2026 01:39:18 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1544.11; Wed, 6 May 2026 19:39:17 +0200
 From: Marat Khalili <marat.khalili@huawei.com>
-To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-CC: <dev@dpdk.org>, <stable@dpdk.org>
-Subject: [PATCH 07/25] bpf/validate: fix BPF_LDX | EBPF_DW signed range
-Date: Wed, 6 May 2026 18:38:25 +0100
-Message-ID: <20260506173846.64914-8-marat.khalili@huawei.com>
+To: 
+CC: <dev@dpdk.org>
+Subject: [PATCH 08/25] test/bpf_validate: add setup and basic tests
+Date: Wed, 6 May 2026 18:38:26 +0100
+Message-ID: <20260506173846.64914-9-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260506173846.64914-1-marat.khalili@huawei.com>
 References: <20260506173846.64914-1-marat.khalili@huawei.com>
@@ -49,65 +48,944 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Function `eval_max_load` copied signed range from unsigned regardless of
-the mask (operation width) producing on 64-bit load nonsensical signed
-range 0..-1 that breaks invariant min <= max relied upon in multiple
-places (e.g. signed overflow detection in `eval_mul` only checks `s.min`
-to make sure the range is non-negative and so on).
-
-E.g. consider the following program with the current validation code:
-
-    Tested program:
-        0:  mov r0, #0x0
-        1:  mov r3, #0x0
-        2:  add r3, r1
-        3:  ldxdw r2, [r3 + 16]  ; tested instruction
-        4:  mov r0, #0x1
-        5:  exit
-    Pre-state:
-       r2:  %undefined
-       r3:  %buffer<24> + 0
-    Post-state:
-       r2:  0..-1 INTERSECT 0..UINT64_MAX (!)
-       r3:  %buffer<24> + 0
-
-Part before INTERSECT represents signed range, part after INTERSECT
-represents unsigned range. Unsigned range is correctly set to full range
-0..UINT64_MAX, but signed range copied from it becomes 0..-1.
-
-Fix loading logic to only copy unsigned to signed for non-full mask.
-
-The test will be added in subsequent commits since it depends on other
-fixes.
-
-Fixes: 8021917293d0 ("bpf: add extra validation for input BPF program")
-Cc: stable@dpdk.org
+Introduce tests for validation of specific eBPF instructions, generating
+a sample eBPF program setting specified pre-conditions for the
+instruction, then validating both pre- and post-conditions using step
+execution of the validation over the validate debug interface.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- lib/bpf/bpf_validate.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ app/test/meson.build         |   1 +
+ app/test/test_bpf_validate.c | 908 +++++++++++++++++++++++++++++++++++
+ 2 files changed, 909 insertions(+)
+ create mode 100644 app/test/test_bpf_validate.c
 
-diff --git a/lib/bpf/bpf_validate.c b/lib/bpf/bpf_validate.c
-index 41dca2fb7673..391be9cbb474 100644
---- a/lib/bpf/bpf_validate.c
-+++ b/lib/bpf/bpf_validate.c
-@@ -1220,10 +1220,11 @@ eval_max_load(struct bpf_reg_val *rv, uint64_t mask)
- 	/* full 64-bit load */
- 	if (mask == UINT64_MAX)
- 		eval_smax_bound(rv, mask);
--
--	/* zero-extend load */
--	rv->s.min = rv->u.min;
--	rv->s.max = rv->u.max;
-+	else {
-+		/* zero-extend load */
-+		rv->s.min = rv->u.min;
-+		rv->s.max = rv->u.max;
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 7d458f9c079a..45a18ee68bb7 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -35,6 +35,7 @@ source_file_deps = {
+     'test_bitset.c': [],
+     'test_bitratestats.c': ['metrics', 'bitratestats', 'ethdev'] + sample_packet_forward_deps,
+     'test_bpf.c': ['bpf', 'net'],
++    'test_bpf_validate.c': ['bpf'],
+     'test_byteorder.c': [],
+     'test_cfgfile.c': ['cfgfile'],
+     'test_cksum.c': ['net'],
+diff --git a/app/test/test_bpf_validate.c b/app/test/test_bpf_validate.c
+new file mode 100644
+index 000000000000..20b0dfaf87b2
+--- /dev/null
++++ b/app/test/test_bpf_validate.c
+@@ -0,0 +1,908 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright(c) 2025 Huawei Technologies Co., Ltd
++ */
++
++#include "test.h"
++
++#include <bpf_def.h>
++#include <rte_bpf.h>
++#include <rte_bpf_validate_debug.h>
++#include <rte_errno.h>
++
++/*
++ * Tests of BPF validation.
++ */
++
++extern int test_bpf_validate_logtype;
++#define RTE_LOGTYPE_TEST_BPF_VALIDATE test_bpf_validate_logtype
++#define TEST_LOG_LINE(level, ...) \
++	RTE_LOG_LINE(level, TEST_BPF_VALIDATE, "" __VA_ARGS__)
++
++RTE_LOG_REGISTER(test_bpf_validate_logtype, test.bpf_validate, NOTICE);
++
++/* Special value indicating that program counter variable is not being used. */
++#define NO_PROGRAM_COUNTER UINT32_MAX
++
++/* Special value indicating that register variable is not being used. */
++#define NO_REGISTER UINT8_MAX
++
++/* Sizes of text buffers used for formatting various debug outputs. */
++#define VALUE_FORMAT_BUFFER_SIZE 24
++#define INTERVAL_FORMAT_BUFFER_SIZE 64
++#define REGISTER_FORMAT_BUFFER_SIZE 256
++#define DISASSEMBLY_FORMAT_BUFFER_SIZE 64
++
++/* Interval bounded by two signed values, inclusive; min <= max. */
++struct signed_interval {
++	int64_t min;
++	int64_t max;
++};
++
++/* Interval bounded by two unsigned values, inclusive; min <= max. */
++struct unsigned_interval {
++	uint64_t min;
++	uint64_t max;
++};
++
++/*
++ * Expected interval of register values.
++ *
++ * If `is_defined` is not set, domain is considered to be unused in verification
++ * parameters (instruction is not accessing corresponding register).
++ * It's not the same as `unknown` domain which describes register that is being
++ * used but can hold any value.
++ */
++struct domain {
++	bool is_defined;
++	struct signed_interval s;
++	struct unsigned_interval u;
++};
++
++/* Expected validation state at certain point. */
++struct state {
++	/* Specifies that the branch is dynamically unreachable. */
++	bool is_unreachable;
++	struct domain dst;
++	struct domain src;
++};
++
++/* Instruction verification parameters. */
++struct verify_instruction_param {
++	struct ebpf_insn tested_instruction;
++	size_t area_size;
++	/* States just before the tested instruction, just after, or if jumped. */
++	struct state pre;
++	struct state post;
++	struct state jump;
++};
++
++/* Point (pre/post/jump) specific verification context. */
++struct point_context {
++	uint32_t program_counter;
++	uint32_t hit_count;
++	char formatted_dst[REGISTER_FORMAT_BUFFER_SIZE];
++	char formatted_src[REGISTER_FORMAT_BUFFER_SIZE];
++};
++
++/* Verification context. */
++struct verify_instruction_context {
++	struct verify_instruction_param prm;
++	/* Allocation of registers in the generated program. */
++	uint8_t base_reg;
++	uint8_t dst_reg;
++	uint8_t src_reg;
++	uint8_t tmp_reg;
++	/* Number of times invalid state callback was called. */
++	uint32_t invalid_state_count;
++	/* Contexts just before the tested instruction, just after, or if jumped. */
++	struct point_context pre;
++	struct point_context post;
++	struct point_context jump;
++};
++
++/* Domain with both signed and unsigned interval having maximum size. */
++static const struct domain unknown = {
++	.is_defined = true,
++	.s = { .min = INT64_MIN, .max = INT64_MAX },
++	.u = { .min = 0, .max = UINT64_MAX },
++};
++
++
++/* BUILDING DOMAINS */
++
++/* Create domain from singleton interval. */
++static struct domain
++make_singleton_domain(uint64_t value)
++{
++	return (struct domain){
++		.is_defined = true,
++		.s = { .min = value, .max = value },
++		.u = { .min = value, .max = value },
++	};
++}
++
++/* Create domain from signed interval. */
++static struct domain
++make_signed_domain(int64_t min, int64_t max)
++{
++	RTE_VERIFY(min <= max);
++	return (struct domain){
++		.is_defined = true,
++		.s = { .min = min, .max = max },
++		.u = (min ^ max) >= 0 ?
++			(struct unsigned_interval){ .min = min, .max = max } :
++			unknown.u,
++	};
++}
++
++/* Create domain from unsigned interval. */
++static struct domain
++make_unsigned_domain(uint64_t min, uint64_t max)
++{
++	RTE_VERIFY(min <= max);
++	return (struct domain){
++		.is_defined = true,
++		.s = (int64_t)(min ^ max) >= 0 ?
++			(struct signed_interval){ .min = min, .max = max } :
++			unknown.s,
++		.u = { .min = min, .max = max },
++	};
++}
++
++/* Return true if domain is a singleton. */
++static bool
++domain_is_singleton(const struct domain *domain)
++{
++	return domain->s.min == domain->s.max &&
++		(uint64_t)domain->s.max == domain->u.min &&
++		domain->u.min == domain->u.max;
++}
++
++/* Print error message into buffer if rc signifies error or overflow. */
++static void
++handle_format_errors(char *buffer, size_t bufsz, int rc)
++{
++	if (rc < 0)
++		snprintf(buffer, bufsz, "FORMAT ERROR %d!", -rc);
++	else if ((unsigned int)rc >= bufsz)
++		snprintf(buffer, bufsz, "FORMAT OVERFLOW!");
++}
++
++/* Format register information into provided buffer and return the buffer. */
++static const char *
++format_value(char *buffer, size_t bufsz, char format, uint64_t value)
++{
++	handle_format_errors(buffer, bufsz,
++		rte_bpf_validate_debug_format_value(buffer, bufsz, format, value));
++	return buffer;
++}
++
++/* Format register information into provided buffer and return the buffer. */
++static const char *
++format_interval(char *buffer, size_t bufsz, char format, uint64_t min, uint64_t max)
++{
++	handle_format_errors(buffer, bufsz,
++		rte_bpf_validate_debug_format_interval(buffer, bufsz, format, min, max));
++	return buffer;
++}
++
++/* Format domain information into provided buffer and return the buffer. */
++static const char *
++format_domain(char *buffer, size_t bufsz, const struct domain *domain)
++{
++	char signed_buffer[INTERVAL_FORMAT_BUFFER_SIZE];
++	char unsigned_buffer[INTERVAL_FORMAT_BUFFER_SIZE];
++
++	const int rc = !domain->is_defined ?
++		snprintf(buffer, bufsz, "UNDEFINED") :
++		snprintf(buffer, bufsz, "%s INTERSECT %s",
++			format_interval(signed_buffer, sizeof(signed_buffer), 'd',
++				domain->s.min, domain->s.max),
++			format_interval(unsigned_buffer, sizeof(unsigned_buffer), 'x',
++				domain->u.min, domain->u.max));
++
++	handle_format_errors(buffer, bufsz, rc < 0 ? -errno : rc);
++
++	return buffer;
++}
++
++/* Format register information into provided buffer and return the buffer. */
++static const char *
++format_register(struct rte_bpf_validate_debug *debug, char *buffer, size_t bufsz, uint8_t reg)
++{
++	handle_format_errors(buffer, bufsz,
++		rte_bpf_validate_debug_format_register_info(debug, buffer, bufsz, reg));
++	return buffer;
++}
++
++
++/* CHECKING REGISTER ACTUAL DOMAINS */
++
++/* Return true the specified conditional jump _may_ occur at current state. */
++static bool
++may_jump(const struct rte_bpf_validate_debug *debug,
++	const struct ebpf_insn *jump, uint64_t imm64)
++{
++	const int result = rte_bpf_validate_debug_may_jump(debug, jump, imm64);
++	RTE_VERIFY(result >= 0);
++	return (result & RTE_BPF_VALIDATE_DEBUG_MAY_BE_TRUE) != 0;
++}
++
++/* Check interval of the register interpreted as signed. */
++static int
++check_signed_interval(struct rte_bpf_validate_debug *debug,
++	uint8_t reg, struct signed_interval interval)
++{
++	char buffer[VALUE_FORMAT_BUFFER_SIZE];
++
++	TEST_ASSERT_EQUAL(may_jump(debug,
++		&(struct ebpf_insn){
++			.code = (BPF_JMP | EBPF_JSLT | BPF_K),
++			.dst_reg = reg,
++		}, interval.min),
++		false,
++		"r%hhu s< %s is impossible", reg,
++		format_value(buffer, sizeof(buffer), 'd', interval.min));
++
++	TEST_ASSERT_EQUAL(may_jump(debug,
++		&(struct ebpf_insn){
++			.code = (BPF_JMP | BPF_JEQ | BPF_K),
++			.dst_reg = reg,
++		}, interval.min),
++		true,
++		"r%hhu == %s is possible", reg,
++		format_value(buffer, sizeof(buffer), 'd', interval.min));
++
++	TEST_ASSERT_EQUAL(may_jump(debug,
++		&(struct ebpf_insn){
++			.code = (BPF_JMP | BPF_JEQ | BPF_K),
++			.dst_reg = reg,
++		}, interval.max),
++		true,
++		"r%hhu == %s is possible", reg,
++		format_value(buffer, sizeof(buffer), 'd', interval.max));
++
++	TEST_ASSERT_EQUAL(may_jump(debug,
++		&(struct ebpf_insn){
++			.code = (BPF_JMP | EBPF_JSGT | BPF_K),
++			.dst_reg = reg,
++		}, interval.max),
++		false,
++		"r%hhu s> %s is impossible", reg,
++		format_value(buffer, sizeof(buffer), 'd', interval.max));
++
++	return TEST_SUCCESS;
++}
++
++/* Check interval of the register interpreted as unsigned. */
++static int
++check_unsigned_interval(struct rte_bpf_validate_debug *debug,
++	uint8_t reg, struct unsigned_interval interval)
++{
++	char buffer[VALUE_FORMAT_BUFFER_SIZE];
++
++	TEST_ASSERT_EQUAL(may_jump(debug,
++		&(struct ebpf_insn){
++			.code = (BPF_JMP | EBPF_JLT | BPF_K),
++			.dst_reg = reg,
++		}, interval.min),
++		false,
++		"r%hhu u< %s is impossible", reg,
++		format_value(buffer, sizeof(buffer), 'x', interval.min));
++
++	TEST_ASSERT_EQUAL(may_jump(debug,
++		&(struct ebpf_insn){
++			.code = (BPF_JMP | BPF_JEQ | BPF_K),
++			.dst_reg = reg,
++		}, interval.min),
++		true,
++		"r%hhu == %s is possible", reg,
++		format_value(buffer, sizeof(buffer), 'x', interval.min));
++
++	TEST_ASSERT_EQUAL(may_jump(debug,
++		&(struct ebpf_insn){
++			.code = (BPF_JMP | BPF_JEQ | BPF_K),
++			.dst_reg = reg,
++		}, interval.max),
++		true,
++		"r%hhu == %s is possible", reg,
++		format_value(buffer, sizeof(buffer), 'x', interval.max));
++
++	TEST_ASSERT_EQUAL(may_jump(debug,
++		&(struct ebpf_insn){
++			.code = (BPF_JMP | BPF_JGT | BPF_K),
++			.dst_reg = reg,
++		}, interval.max),
++		false,
++		"r%hhu u> %s is impossible", reg,
++		format_value(buffer, sizeof(buffer), 'x', interval.max));
++
++	return TEST_SUCCESS;
++}
++
++/* Check domain of the register interpreted as value. */
++static int
++check_domain_impl(struct rte_bpf_validate_debug *debug, uint8_t reg,
++	const struct domain *domain)
++{
++	TEST_ASSERT_SUCCESS(
++		check_signed_interval(debug, reg, domain->s),
++		"signed interval check");
++
++	TEST_ASSERT_SUCCESS(
++		check_unsigned_interval(debug, reg, domain->u),
++		"unsigned interval check");
++
++	return TEST_SUCCESS;
++}
++
++/* Check domain of the register and format the values in case of an error. */
++static int
++check_domain(struct rte_bpf_validate_debug *debug, uint8_t reg,
++	const struct domain *domain)
++{
++	char buffer[REGISTER_FORMAT_BUFFER_SIZE];
++
++	const int rc = check_domain_impl(debug, reg, domain);
++
++	if (rc != TEST_SUCCESS) {
++		TEST_LOG_LINE(WARNING, "\tExpected: r%hhu = %s", reg,
++			format_domain(buffer, sizeof(buffer), domain));
++
++		TEST_LOG_LINE(WARNING, "\tFound: r%hhu = %s", reg,
++			format_register(debug, buffer, sizeof(buffer), reg));
 +	}
- }
- 
- 
++
++	return rc;
++}
++
++
++/* GENERATING TEST PROGRAM */
++
++static bool
++fits_in_imm32(int64_t value)
++{
++	return value >= INT32_MIN && value <= INT32_MAX;
++}
++
++/* Load constant into the register.  */
++static void
++load_constant(struct ebpf_insn **ins, uint8_t reg, int64_t value)
++{
++	if (fits_in_imm32(value)) {
++		*(*ins)++ = (struct ebpf_insn){
++			.code = (EBPF_ALU64 | EBPF_MOV | BPF_K),
++			.dst_reg = reg,
++			.imm = (int32_t)value,
++		};
++	} else {
++		/* Load imm64 into tmp_reg using wide load, lower bits first... */
++		*(*ins)++ = (struct ebpf_insn){
++			.code = (BPF_LD | BPF_IMM | EBPF_DW),
++			.dst_reg = reg,
++			.imm = (uint32_t)value,
++		};
++		/* ... then higher bits. */
++		*(*ins)++ = (struct ebpf_insn){
++			.imm = (uint32_t)(value >> 32),
++		};
++	}
++}
++
++/*
++ * Compare specified register to value and jump.
++ *
++ * Jump offset is not filled and should be patched in by the caller.
++ */
++static void
++compare_and_jump(struct ebpf_insn **ins, uint8_t op, uint8_t reg,
++	int64_t value, uint8_t tmp_reg)
++{
++	if (fits_in_imm32(value)) {
++		/* Jump on specified condition between reg and immediate. */
++		*(*ins)++ = (struct ebpf_insn){
++			.code = (BPF_JMP | op | BPF_K),
++			.dst_reg = reg,
++			.imm = value,
++		};
++	} else {
++		/* Load value into tmp_reg. */
++		load_constant(ins, tmp_reg, value);
++
++		/* Jump on specified condition between reg and tmp_reg. */
++		*(*ins)++ = (struct ebpf_insn){
++			.code = (BPF_JMP | op | BPF_X),
++			.dst_reg = reg,
++			.src_reg = tmp_reg,
++		};
++	}
++}
++
++/*
++ * Prepare register to be in the specified domain.
++ *
++ * Unless singleton, load unknown value into it and clamp it with conditional jumps.
++ * (Jump offsets are not filled and should be patched in by the caller.)
++ */
++static void
++prepare_domain(struct ebpf_insn **ins, uint8_t reg,
++	const struct domain *domain, uint8_t base_reg, int *service_cell_count,
++	uint8_t tmp_reg)
++{
++	if (domain_is_singleton(domain)) {
++		/* Don't need any uncertainty for a singleton. */
++		load_constant(ins, reg, domain->s.min);
++		return;
++	}
++
++	/* Load value from memory area into the register. */
++	*(*ins)++ = (struct ebpf_insn){
++		.code = (BPF_LDX | EBPF_DW | BPF_MEM),
++		.dst_reg = reg,
++		.src_reg = base_reg,
++		.off = sizeof(uint64_t) * (*service_cell_count)++,
++	};
++
++	/*
++	 * Use both signed and unsigned conditions, even if redundant.
++	 * It makes it more robust if conditional jump verification itself
++	 * contains bugs like not updating the other type of interval.
++	 * Jump instructions themselves can be tested separately to catch
++	 * these bugs, this preparation phase is not a test for them.
++	 */
++	if (domain->u.min > unknown.u.min)
++		compare_and_jump(ins, EBPF_JLT, reg, domain->u.min, tmp_reg);
++	if (domain->u.max < unknown.u.max)
++		compare_and_jump(ins, BPF_JGT, reg, domain->u.max, tmp_reg);
++	if (domain->s.min > unknown.s.min)
++		compare_and_jump(ins, EBPF_JSLT, reg, domain->s.min, tmp_reg);
++	if (domain->s.max < unknown.s.max)
++		compare_and_jump(ins, EBPF_JSGT, reg, domain->s.max, tmp_reg);
++}
++
++static void
++fill_verify_instruction_defaults(struct verify_instruction_param *prm)
++{
++
++	if (BPF_CLASS(prm->tested_instruction.code) != BPF_JMP)
++		prm->jump.is_unreachable = true;
++
++	RTE_VERIFY(!prm->pre.is_unreachable);
++	if (prm->post.is_unreachable) {
++		RTE_VERIFY(!prm->post.dst.is_defined);
++		RTE_VERIFY(!prm->post.src.is_defined);
++	} else {
++		if (!prm->post.dst.is_defined)
++			prm->post.dst = prm->pre.dst;
++		if (!prm->post.src.is_defined)
++			prm->post.src = prm->pre.src;
++	}
++
++	if (prm->jump.is_unreachable) {
++		RTE_VERIFY(!prm->jump.dst.is_defined);
++		RTE_VERIFY(!prm->jump.src.is_defined);
++	} else {
++		if (!prm->jump.dst.is_defined)
++			prm->jump.dst = prm->pre.dst;
++		if (!prm->jump.src.is_defined)
++			prm->jump.src = prm->pre.src;
++	}
++}
++
++/* Generate program for the tested instruction and domains from the context.
++ *
++ * Return number of instructions.
++ *
++ * Destination and source registers in tested_instruction should not be specified,
++ * they are filled in by the function as long as domains for them are specified.
++ * Jump offset should not be specified, it is filled in by the function.
++ *
++ * If `pre.dst` or `pre.src` domain is not defined, corresponding register
++ * is not prepared.
++ *
++ * For non-jump instructions `jump.is_unreachable` is always set automatically.
++ *
++ * If any of the post or jump domains are not defined, they are copied from src
++ * unless corresponding branch is unreachable.
++ *
++ * Memory area size is automatically expanded to have enough space for loading
++ * unknown dst and src register values, thus testing sizes less than 16 bytes is
++ * not guaranteed.
++ *
++ * Limitations:
++ * - Support for jump instructions is incomplete (e.g. exit, ja).
++ * - Wide instructions are not supported yet.
++ */
++static uint32_t
++generate_program(struct verify_instruction_context *ctx, struct ebpf_insn *ins)
++{
++	struct ebpf_insn *const ins_buf = ins;
++	/* Number of double words used for service purposes. */
++	int service_cell_count = 0;
++
++	/* Make sure we actually support provided instruction. */
++	switch (BPF_CLASS(ctx->prm.tested_instruction.code)) {
++	case BPF_LD:
++		/* Wide instructions are not supported yet. */
++		RTE_VERIFY(!rte_bpf_insn_is_wide(&ctx->prm.tested_instruction));
++		break;
++	}
++
++	fill_verify_instruction_defaults(&ctx->prm);
++
++	/* Allocate registers, base_reg is received as program argument. */
++	ctx->base_reg = EBPF_REG_1;
++	ctx->dst_reg = (ctx->prm.pre.dst.is_defined || ctx->prm.post.dst.is_defined ||
++		ctx->prm.jump.dst.is_defined) ? EBPF_REG_2 : NO_REGISTER;
++	ctx->src_reg = (ctx->prm.pre.src.is_defined || ctx->prm.post.src.is_defined ||
++		ctx->prm.jump.src.is_defined) ? EBPF_REG_3 : NO_REGISTER;
++	ctx->tmp_reg = EBPF_REG_4;
++
++	/* Clear r0 to make it eligible as a return value. */
++	load_constant(&ins, EBPF_REG_0, 0);
++
++	/* Fill dst register in the instruction if defined anywhere, prepare if needed. */
++	if (ctx->dst_reg != NO_REGISTER) {
++		RTE_VERIFY(ctx->prm.tested_instruction.dst_reg == 0);
++		ctx->prm.tested_instruction.dst_reg = ctx->dst_reg;
++
++		if (ctx->prm.pre.dst.is_defined)
++			prepare_domain(&ins, ctx->dst_reg, &ctx->prm.pre.dst,
++				ctx->base_reg, &service_cell_count, ctx->tmp_reg);
++		else
++			TEST_LOG_LINE(DEBUG, "Not preparing undefined r%hhu", ctx->dst_reg);
++	}
++
++	/* Fill src register in the instruction if defined anywhere, prepare if needed. */
++	if (ctx->src_reg != NO_REGISTER) {
++		RTE_VERIFY(ctx->prm.tested_instruction.src_reg == 0);
++		ctx->prm.tested_instruction.src_reg = ctx->src_reg;
++
++		if (ctx->prm.pre.src.is_defined)
++			prepare_domain(&ins, ctx->src_reg, &ctx->prm.pre.src,
++				ctx->base_reg, &service_cell_count, ctx->tmp_reg);
++		else
++			TEST_LOG_LINE(DEBUG, "Not preparing undefined r%hhu", ctx->src_reg);
++	}
++
++	/* Automatically increase area size if needed. */
++	ctx->prm.area_size = RTE_MAX(ctx->prm.area_size, service_cell_count * sizeof(uint64_t));
++
++	/* Issue tested instruction. */
++	ctx->pre.program_counter = ins - ins_buf;
++	*ins++ = ctx->prm.tested_instruction;
++
++	/* Issue post instruction (for setting post breakpoint). */
++	ctx->post.program_counter = ins - ins_buf;
++	load_constant(&ins, EBPF_REG_0, 1);
++
++	/* Issue jump branch for the jump instruction, even if dynamically unreachable. */
++	if (BPF_CLASS(ctx->prm.tested_instruction.code) != BPF_JMP)
++		ctx->jump.program_counter = NO_PROGRAM_COUNTER;
++	else {
++		/* Finish previous branch by issuing exit. */
++		*ins++ = (struct ebpf_insn){ .code = (BPF_JMP | EBPF_EXIT) };
++
++		/* Issue jump target instruction (for setting jump breakpoint). */
++		ctx->jump.program_counter = ins - ins_buf;
++		load_constant(&ins, EBPF_REG_0, 2);
++
++		/* Patch jump in tested jump instruction. */
++		RTE_VERIFY(ins_buf[ctx->pre.program_counter].off == 0);
++		ins_buf[ctx->pre.program_counter].off =
++			ctx->jump.program_counter - ctx->post.program_counter;
++	}
++
++	/* Issue exit instruction. */
++	const uint32_t exit_pc = ins - ins_buf;
++	*ins++ = (struct ebpf_insn){ .code = (BPF_JMP | EBPF_EXIT) };
++
++	/* Patch all jumps to point to exit. */
++	for (uint32_t pc = 0; pc != ctx->pre.program_counter; ++pc)
++		if (BPF_CLASS(ins_buf[pc].code) == BPF_JMP) {
++			RTE_ASSERT(ins_buf[pc].off == 0);
++			ins_buf[pc].off = exit_pc - (pc + 1);
++		}
++
++	const uint32_t nb_ins = ins - ins_buf;
++	return nb_ins;
++}
++
++
++/* VERIFICATION OF AN ARBITRARY INSTRUCTION */
++
++/* Invoked when invalid state is detected. */
++static int
++invalid_state_cb(struct rte_bpf_validate_debug *debug, void *void_ctx)
++{
++	struct verify_instruction_context *const ctx = void_ctx;
++
++	++ctx->invalid_state_count;
++
++	TEST_LOG_LINE(WARNING,
++		"Invalid state detected at pc %u",
++		rte_bpf_validate_debug_get_pc(debug));
++
++	RTE_SET_USED(debug);
++
++	return TEST_SUCCESS;
++}
++
++static int
++point_callback(struct rte_bpf_validate_debug *debug, const struct verify_instruction_context *ctx,
++	struct point_context *point_ctx, const struct state *state)
++{
++	TEST_ASSERT_EQUAL(point_ctx->hit_count, 0, "not called before");
++
++	const uint32_t pc = rte_bpf_validate_debug_get_pc(debug);
++	TEST_ASSERT_EQUAL(pc, point_ctx->program_counter,
++		"Expected program counter: %" PRIu32 ", found: %" PRIu32,
++			point_ctx->program_counter, pc);
++
++	if (ctx->dst_reg != NO_REGISTER) {
++		format_register(debug, point_ctx->formatted_dst,
++			sizeof(point_ctx->formatted_dst), ctx->dst_reg);
++
++		if (state->dst.is_defined) {
++			TEST_ASSERT_SUCCESS(
++				check_domain(debug, ctx->dst_reg, &state->dst),
++				"dst domain check");
++			TEST_LOG_LINE(DEBUG, "Successfully checked r%hhu.", ctx->dst_reg);
++		} else
++			TEST_LOG_LINE(DEBUG, "Not checking undefined r%hhu.", ctx->dst_reg);
++	}
++
++	if (ctx->src_reg != NO_REGISTER) {
++		format_register(debug, point_ctx->formatted_src,
++			sizeof(point_ctx->formatted_src), ctx->src_reg);
++
++		if (state->src.is_defined) {
++			TEST_ASSERT_SUCCESS(
++				check_domain(debug, ctx->src_reg, &state->src),
++				"src domain check");
++			TEST_LOG_LINE(DEBUG, "Successfully checked r%hhu.", ctx->src_reg);
++		} else
++			TEST_LOG_LINE(DEBUG, "Not checking undefined r%hhu.", ctx->src_reg);
++	}
++
++	++point_ctx->hit_count;
++
++	return TEST_SUCCESS;
++}
++
++/*
++ * Invoked before the tested instruction and checks pre-conditions.
++ *
++ * Also formats registers in the pre state for postmortem, if needed.
++ */
++static int
++pre_callback(struct rte_bpf_validate_debug *debug, void *void_ctx)
++{
++	struct verify_instruction_context *const ctx = void_ctx;
++
++	TEST_LOG_LINE(DEBUG, "Pre callback invoked.");
++
++	TEST_ASSERT_SUCCESS(
++		point_callback(debug, ctx, &ctx->pre, &ctx->prm.pre),
++		"pre-state check");
++
++	return TEST_SUCCESS;
++}
++
++/* Invoked after the tested instruction and checks post-conditions. */
++static int
++post_callback(struct rte_bpf_validate_debug *debug, void *void_ctx)
++{
++	struct verify_instruction_context *const ctx = void_ctx;
++
++	TEST_LOG_LINE(DEBUG, "Post callback invoked.");
++
++	TEST_ASSERT_SUCCESS(
++		point_callback(debug, ctx, &ctx->post, &ctx->prm.post),
++		"post-state check");
++
++	return TEST_SUCCESS;
++}
++
++/* Invoked after the tested instruction jumped and checks jump post-conditions. */
++static int
++jump_callback(struct rte_bpf_validate_debug *debug, void *void_ctx)
++{
++	struct verify_instruction_context *const ctx = void_ctx;
++
++	TEST_LOG_LINE(DEBUG, "Jump callback invoked.");
++
++	TEST_ASSERT_SUCCESS(
++		point_callback(debug, ctx, &ctx->jump, &ctx->prm.jump),
++		"jump-state check");
++
++	return TEST_SUCCESS;
++}
++
++static int
++debug_validation(struct verify_instruction_context *ctx, const struct ebpf_insn *ins,
++	uint32_t nb_ins)
++{
++	struct rte_bpf_validate_debug *const debug = rte_bpf_validate_debug_create();
++	TEST_ASSERT_NOT_NULL(debug, "validate debug create error %d", rte_errno);
++
++	const struct rte_bpf_prm_ex prm = {
++		.sz = sizeof(struct rte_bpf_prm_ex),
++		.origin = RTE_BPF_ORIGIN_RAW,
++		.raw.ins = ins,
++		.raw.nb_ins = nb_ins,
++		.prog_arg[0] = {
++			.type = RTE_BPF_ARG_PTR,
++			.size = ctx->prm.area_size,
++		},
++		.nb_prog_arg = 1,
++		.debug = debug,
++	};
++
++	/* Catch invalid states. */
++	TEST_ASSERT_NOT_NULL(rte_bpf_validate_debug_catch(debug,
++		RTE_BPF_VALIDATE_DEBUG_EVENT_INVALID_STATE,
++		&(struct rte_bpf_validate_debug_callback){
++			.fn = invalid_state_cb,
++			.ctx = ctx,
++		}), "add catchpoint error %d", rte_errno);
++
++	/* Break on pre test instruction. */
++	TEST_ASSERT_NOT_NULL(rte_bpf_validate_debug_break(debug, ctx->pre.program_counter,
++		&(struct rte_bpf_validate_debug_callback){
++			.fn = pre_callback,
++			.ctx = ctx,
++		}), "add pre breakpoint error %d", rte_errno);
++
++	/* Break on post test instruction. */
++	TEST_ASSERT_NOT_NULL(rte_bpf_validate_debug_break(debug, ctx->post.program_counter,
++		&(struct rte_bpf_validate_debug_callback){
++			.fn = post_callback,
++			.ctx = ctx,
++		}), "add post breakpoint error %d", rte_errno);
++
++	if (ctx->jump.program_counter != NO_PROGRAM_COUNTER)
++		/* Break on jump test instruction. */
++		TEST_ASSERT_NOT_NULL(rte_bpf_validate_debug_break(debug, ctx->jump.program_counter,
++			&(struct rte_bpf_validate_debug_callback){
++				.fn = jump_callback,
++				.ctx = ctx,
++			}), "add jump breakpoint error %d", rte_errno);
++
++	struct rte_bpf *const bpf = rte_bpf_load_ex(&prm);
++	const int validation_errno = rte_errno;
++
++	rte_bpf_destroy(bpf);
++	rte_bpf_validate_debug_destroy(debug);
++
++	TEST_ASSERT_NOT_NULL(bpf, "validation error %d", validation_errno);
++
++	TEST_ASSERT_EQUAL(ctx->pre.hit_count, !ctx->prm.pre.is_unreachable,
++		"pre hit_count = %d", ctx->pre.hit_count);
++	TEST_ASSERT_EQUAL(ctx->post.hit_count, !ctx->prm.post.is_unreachable,
++		"post hit_count = %d", ctx->post.hit_count);
++	TEST_ASSERT_EQUAL(ctx->jump.hit_count, !ctx->prm.jump.is_unreachable,
++		"jump hit_count = %d", ctx->jump.hit_count);
++
++	return TEST_SUCCESS;
++}
++
++/* Dump whole program to log. */
++static void
++log_program_dump(const struct ebpf_insn *ins, uint32_t nb_ins, uint32_t pre_pc)
++{
++	char hexadecimal[DISASSEMBLY_FORMAT_BUFFER_SIZE];
++	char disassembly[DISASSEMBLY_FORMAT_BUFFER_SIZE];
++
++	TEST_LOG_LINE(NOTICE, "\tTested program:");
++	for (uint32_t pc = 0; pc != nb_ins; ++pc) {
++		rte_bpf_format(hexadecimal, sizeof(hexadecimal), &ins[pc], pc,
++			RTE_BPF_FORMAT_FLAG_HEXADECIMAL |
++			RTE_BPF_FORMAT_FLAG_NEVER_WIDE);
++		rte_bpf_format(disassembly, sizeof(disassembly), &ins[pc], pc,
++			RTE_BPF_FORMAT_FLAG_DISASSEMBLY |
++			RTE_BPF_FORMAT_FLAG_ABSOLUTE_JUMPS);
++		TEST_LOG_LINE(NOTICE, "\t%5u: \t%s \t%s%s",
++			pc, hexadecimal, disassembly,
++			pc != pre_pc ? "" : "  ; tested instruction");
++
++		if (!rte_bpf_insn_is_wide(&ins[pc]))
++			continue;
++
++		++pc;
++
++		rte_bpf_format(hexadecimal, sizeof(hexadecimal), &ins[pc], pc,
++			RTE_BPF_FORMAT_FLAG_HEXADECIMAL |
++			RTE_BPF_FORMAT_FLAG_NEVER_WIDE);
++		TEST_LOG_LINE(NOTICE, "\t%6s \t%s", "", hexadecimal);
++	}
++}
++
++static void
++log_formatted_registers(const char *heading, const struct verify_instruction_context *ctx,
++	const struct point_context *point_ctx)
++{
++	char register_name[8];
++
++	TEST_LOG_LINE(NOTICE, "\t%s", heading);
++	if (ctx->dst_reg != NO_REGISTER) {
++		snprintf(register_name, sizeof(register_name), "r%hhu", ctx->dst_reg);
++		TEST_LOG_LINE(NOTICE, "\t%5s: \t%s", register_name, point_ctx->formatted_dst);
++	}
++	if (ctx->src_reg != NO_REGISTER) {
++		snprintf(register_name, sizeof(register_name), "r%hhu", ctx->src_reg);
++		TEST_LOG_LINE(NOTICE, "\t%5s: \t%s", register_name, point_ctx->formatted_src);
++	}
++}
++
++/*
++ * Verify instruction validation behaviour described by prm.
++ *
++ * Generate the program containing specified instruction on the code path with
++ * specified register pre-domains and verify specified register post-domains.
++ *
++ * See comment to `generate_program` for more requirements and limitations.
++ */
++static int
++verify_instruction(struct verify_instruction_param prm)
++{
++	struct verify_instruction_context ctx = {
++		.prm = prm,
++	};
++	struct ebpf_insn ins_buf[64];
++
++	const uint32_t nb_ins = generate_program(&ctx, ins_buf);
++	RTE_ASSERT(nb_ins <= RTE_DIM(ins_buf));
++
++	const int rc = debug_validation(&ctx, ins_buf, nb_ins);
++
++	/* Log more data at DEBUG level on success, NOTICE on failure. */
++	if (rte_log_can_log(RTE_LOGTYPE_TEST_BPF_VALIDATE, RTE_LOG_DEBUG) ||
++			rc != TEST_SUCCESS) {
++		log_program_dump(ins_buf, nb_ins, ctx.pre.program_counter);
++		log_formatted_registers("Pre-state:", &ctx, &ctx.pre);
++		log_formatted_registers("Post-state:", &ctx, &ctx.post);
++		if (ctx.jump.program_counter != NO_PROGRAM_COUNTER)
++			log_formatted_registers("Jump-state:", &ctx, &ctx.jump);
++	}
++
++	return rc;
++}
++
++
++/* TESTS FOR SPECIFIC INSTRUCTIONS */
++
++/* 64-bit addition of immediate to a range. */
++static int
++test_alu64_add_k(void)
++{
++	return verify_instruction((struct verify_instruction_param){
++		.tested_instruction = {
++			.code = (EBPF_ALU64 | BPF_ADD | BPF_K),
++			.imm = 17,
++		},
++		.pre.dst = make_signed_domain(11, 29),
++		.post.dst = make_signed_domain(11 + 17, 29 + 17),
++	});
++}
++
++REGISTER_FAST_TEST(bpf_validate_alu64_add_k_autotest, NOHUGE_OK, ASAN_OK,
++	test_alu64_add_k);
++
++/* Jump if greater than immediate. */
++static int
++test_jmp64_jeq_k(void)
++{
++	return verify_instruction((struct verify_instruction_param){
++		.tested_instruction = {
++			.code = (BPF_JMP | BPF_JGT | BPF_K),
++			.imm = 0,
++		},
++		.pre.dst = make_unsigned_domain(0, 1),
++		.post.dst = make_singleton_domain(0),
++		.jump.dst = make_singleton_domain(1),
++	});
++}
++
++REGISTER_FAST_TEST(bpf_validate_jmp64_jeq_k_autotest, NOHUGE_OK, ASAN_OK,
++	test_jmp64_jeq_k);
 -- 
 2.43.0
 
