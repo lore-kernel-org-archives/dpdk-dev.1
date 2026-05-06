@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C12BCD3427
-	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 03:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF66BCD343B
+	for <dpdk-dev@archiver.kernel.org>; Wed,  6 May 2026 03:33:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B5CD8402D1;
-	Wed,  6 May 2026 05:33:46 +0200 (CEST)
-Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
- by mails.dpdk.org (Postfix) with ESMTP id ABAD44060A
- for <dev@dpdk.org>; Wed,  6 May 2026 05:33:44 +0200 (CEST)
-Received: by mail-dl1-f46.google.com with SMTP id
- a92af1059eb24-12c88e5f4aeso383372c88.0
- for <dev@dpdk.org>; Tue, 05 May 2026 20:33:44 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B111D40693;
+	Wed,  6 May 2026 05:33:47 +0200 (CEST)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id 85F5140673
+ for <dev@dpdk.org>; Wed,  6 May 2026 05:33:45 +0200 (CEST)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-12dca45ca21so8156463c88.1
+ for <dev@dpdk.org>; Tue, 05 May 2026 20:33:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778038424;
- x=1778643224; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778038425;
+ x=1778643225; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=aPwQn7DvMD2UbzArLI3AEsM97xnKNa6lYBsyMPqMRKg=;
- b=o1yrACl7HuD1QlcYa/X3iJAeGk0ASvA5WNRg4FJ0HrEGsvCt9VRjVAADdRbq3nb6o4
- 4rkzRgfY2fkwG5m2l2GuEN4aNQJznuFFKw093SJR0jT05OqPWptdTIK/Pt7swQ3+pVPh
- f3I8EBAPrthwCAPYtfOr4pd/63MWZ/08LNOEfnl7FzHCJjJleG8cUyZvlp38coX56Zcw
- aoSUyAtLwMI0ZJ7gAJdahAvagIzC5WcTmJIwvq7aPhPow5ENODC5TKk9hPAJOwhmHRrp
- RHBBWp17QBYJSma57jmSw/VHzI5KveJ98Ys3UeooheB4el1/35khMD9yeAiugSQ7h5Yn
- 9hDA==
+ bh=e5oWkvLBo3iWNGN3LZrecTTS4kgkmHLmgEsws3EBJfM=;
+ b=EzXEO53Hrd4cJ7k+PrEi2nk4O14SKX0Y0CC4qpdDWAKFRx+JL/tMUbZq6OP06yK1+F
+ Ggz9yDL8DIvfwmr7cpQBl3Xg0lGb0eQuw7TyFx/qXpabfN5thCTZZl1DVWDBdgYUooV5
+ qQhfsf7gippzbTIFlyTlnieoHCZMUz0MUof4KI0XxqQl6ug4ZUe6rHkL2TbQsZMlx0F4
+ 5Fp+G09PS0xp/66UjE/wEF0mjEnNPphEqnIpznx1TFnp7JXQFF7Bwr9raJfpko2hTScY
+ THB9NX56M/BivWjn1aHBt4S51T7D+ttzPmGOruIWY1w9APMWMxn2/+w7aruOnDhTfgts
+ pzAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778038424; x=1778643224;
+ d=1e100.net; s=20251104; t=1778038425; x=1778643225;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=aPwQn7DvMD2UbzArLI3AEsM97xnKNa6lYBsyMPqMRKg=;
- b=JBvNBSOwJLgRgzW5iOxX4+Nrc12SPCo9drOZmmZ8zeDda29KoeVSVCNa9SlQVaaEvX
- NjKWNDZWR2jWly6L3YKw4HLWD/HCZnsuKrLBQgtGRldOdo0t2PSNHvWZXnu2FoDdEpP9
- xbb+8xHC+9Tj5ytTOr+5a5CEh49lX4GDzWaM6w9e6paBFTHVmWEJ4TXnh+RDAFzYjd0e
- /M4YHS4iWqzau3Yd0JWf9gsim+Fd7nJxqjUwJRD4ROTCfhTaSPqJpFXo02YtToNt6cuO
- 50Qc0uGmG9VzChAHR5qGhOvjfb4x5n7Aahj59kpUgpXmnhQJlMGF4fT7DRCTkYJjo16w
- Pibg==
-X-Gm-Message-State: AOJu0YyJ4axyoqqbcDKCeB/jGf/nZmTgF/XKwLDsOtxiVbqV90f05Myk
- E5aMlRbOHRh9u1PCM+7jKuug5iex4zjN34Rb5h+gYCb+TGporcyYOv/EVYZWgoPsWyLRM3HRUlk
- +wx3O
-X-Gm-Gg: AeBDieuHluDV21VLG4hWBsJgLRlruzCBMffHoyH3P5wPRXc/f9UjsR2eQcrr9ueSPPc
- 4mtsT0pmM7LkgSJKlnuOuolrzW4Nn9zcBbCKT2v+uz4HRMTjit1MGk6wmvXCuzlH4cCDbZekYOi
- XD7Ly6NGRg1AIvkJfUTFIQTeWEzGbHWoucbbKy9qHTGwH71Bbf7FTIOviUOyOdo7+MxA1Q8DEFo
- C9B5GrZGtxzNfd4uj1L5b5AhLpXRMu6oEFMjVaoe9QrSQwXCW11RGfyT6WpxFXxCvmKazL28MFe
- 8AVL+Eak9tYQs/SqsofTD85fq5ku3yqAggHKzPtwuVMsQer7BmequTZgE6IlTrm5cLyzV8/TTKg
- BOXeUMWvgf/A4J/U4J0fu5O7QM3u2f0TMKH0uFrDlLUmvNGiLWbGb2msvcSV7jUVmelaUCGD1UH
- zeevoBLpplzg8E3NJoMtpSzDAGm5XUfC5T56vBUjjoYqI=
-X-Received: by 2002:a05:7022:45a2:b0:130:8ed9:204c with SMTP id
- a92af1059eb24-130a98f8e5emr3023764c88.10.1778038423416; 
- Tue, 05 May 2026 20:33:43 -0700 (PDT)
+ bh=e5oWkvLBo3iWNGN3LZrecTTS4kgkmHLmgEsws3EBJfM=;
+ b=hTCp0f9LgB82Bx0VNhFiT48ZDVgBaX4/+Cqnui9uOZYgCr8blRhMnL0yoEosu97z+S
+ SmcaK2FdKqiP2Gjd+kTRJHzKXDevN78FShe8aFNigcqDyhgK8dUoLPuTJTClIA3WLX6T
+ s/ryYq/kVMJ+unlo6rKnb85t+++AYGTZ75Nw1tjl75aXpO1tNPFXQqdB5kzjNL7W7R7L
+ hfp9YRACYJXpBWYEQ1DiAH1OaPG0vUq3XstlZo8djgxkvCYkZXPZw1KLznEOROTYsDSz
+ VIctHpJfmOG0fDuXhGAZZYhREOYUMy3Cvceqfd5vmChEumICr0+20RSIGz/C2954nrPj
+ ts/g==
+X-Gm-Message-State: AOJu0YyFMMwXzlWbIvZEonBaB0Xo8EaOtIsPk8EYv3uhw/o0KqmY0SFh
+ V2mtuGbDUDABNjX9uKPMDTTzi5xM3umR9Dtgq2zDVHCnUjK2PCoGIkRYFE1RM0eTQbcp8hzBUBV
+ 28iCl
+X-Gm-Gg: AeBDiesBJPdYRrGWB/MRYIiviYhJtYmOme6A9XPyH1rzyTDsWaMAvFINNORFHRrOfy1
+ b/f8pgZhxBQJPTQbBOfTX4HoQkfUEvHZ+CLKbUSoVCF80yeVOdKzgBe1Bk4sNyCPQz8gFjGpl02
+ 8wg3mv1c/BVH1lpKUdUxuAyoIDG5jWLEcb2cuzEETsoUfvr6g1bsa00IgGiqw90iZ4lS29QTgiI
+ Ngq6cJLg5XORzUPmyOQZSahf35T/kLpWte3agqvOZXdRalez4GD1y2ifKWoXuihfYOq/C4u9kFg
+ ZxH1MPDzpxvNmXodvpGW4ApVQp/IM+LRghqcxR2Ib/ArWkIYlCwIMPkZ7w9uwEodDD6bo0YK5Bm
+ cf63R1Edo3v/LdP9MlDvwztJroJwtktQqcf6c3PkM5fs/vHJXQ3QRKyfpeR0F81zuqfwjcuz+jP
+ iZAlhPon9nulqalOW7F03SoKxD+YfpCKpMvcj8YSgX/Rw=
+X-Received: by 2002:a05:7022:388e:b0:12c:8cae:cccb with SMTP id
+ a92af1059eb24-1318e928358mr919646c88.26.1778038424561; 
+ Tue, 05 May 2026 20:33:44 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-131f9679dc4sm1829479c88.3.2026.05.05.20.33.42
+ a92af1059eb24-131f9679dc4sm1829479c88.3.2026.05.05.20.33.43
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 05 May 2026 20:33:42 -0700 (PDT)
+ Tue, 05 May 2026 20:33:44 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Thomas Monjalon <thomas@monjalon.net>
-Subject: [RFC 2/3] doc: add programmer's guide for flow rule compiler
-Date: Tue,  5 May 2026 20:29:56 -0700
-Message-ID: <20260506033338.480610-3-stephen@networkplumber.org>
+Subject: [RFC 3/3] test/flow_compile: add unit tests for flow rule compiler
+Date: Tue,  5 May 2026 20:29:57 -0700
+Message-ID: <20260506033338.480610-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260506033338.480610-1-stephen@networkplumber.org>
 References: <20260505183917.370281-1-sismis@dyna-nic.com>
@@ -81,349 +81,292 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add a chapter to the programmer's guide describing the new
-rte_flow_compile library: API summary, BNF grammar, field
-qualifier semantics (is/spec/last/mask/prefix), diagnostic
-format, and the table-driven extension model for adding
-items and actions.
+Add an autotest for the new rte_flow_compile library.  The tests
+exercise the parser end to end without needing a real ethdev port:
+each case compiles a textual rule and inspects the resulting
+attribute, pattern and action arrays directly.
 
-Documents the limitations of the initial implementation
-(item/action coverage, missing RSS and RAW handling) and
-the textual MAC and IPv6 forms accepted.
+Coverage spans the common happy paths (simple drop, IPv4/IPv6 match
+with queue and count actions, MAC matching, CIDR-style prefix
+masks) and a set of error-path cases.  The error tests assert a
+substring of the diagnostic rather than the full message so that
+wording can evolve without churning the tests.
+
+Registered as flow_compile_autotest in the fast test suite so it
+runs under the standard meson test invocation.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- MAINTAINERS                                |   6 +
- doc/guides/prog_guide/flow_compile_lib.rst | 272 +++++++++++++++++++++
- doc/guides/prog_guide/index.rst            |   1 +
- doc/guides/rel_notes/release_26_07.rst     |   6 +
- 4 files changed, 285 insertions(+)
- create mode 100644 doc/guides/prog_guide/flow_compile_lib.rst
+ MAINTAINERS                  |   1 +
+ app/test/meson.build         |   1 +
+ app/test/test_flow_compile.c | 234 +++++++++++++++++++++++++++++++++++
+ 3 files changed, 236 insertions(+)
+ create mode 100644 app/test/test_flow_compile.c
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 0f5539f851..4923e126df 100644
+index 4923e126df..d469ac2c19 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -448,6 +448,12 @@ F: app/test-pmd/cmdline_flow.c
- F: doc/guides/prog_guide/ethdev/flow_offload.rst
- F: lib/ethdev/rte_flow*
+@@ -453,6 +453,7 @@ M: Stephen Hemminger <stephen@networkplumber.org>
+ T: git://dpdk.org/next/dpdk-next-net
+ F: lib/flow_compile/
+ F: doc/guides/prog_guide/flow_compile_lib.rst
++F: app/test/test_flow_compile.c
  
-+Flow Compiler API
-+M: Stephen Hemminger <stephen@networkplumber.org>
-+T: git://dpdk.org/next/dpdk-next-net
-+F: lib/flow_compile/
-+F: doc/guides/prog_guide/flow_compile_lib.rst
-+
  Traffic Management API
  M: Cristian Dumitrescu <cristian.dumitrescu@intel.com>
- T: git://dpdk.org/next/dpdk-next-net
-diff --git a/doc/guides/prog_guide/flow_compile_lib.rst b/doc/guides/prog_guide/flow_compile_lib.rst
+diff --git a/app/test/meson.build b/app/test/meson.build
+index 7d458f9c07..be0d61c6a0 100644
+--- a/app/test/meson.build
++++ b/app/test/meson.build
+@@ -88,6 +88,7 @@ source_file_deps = {
+     'test_fib6_perf.c': ['fib'],
+     'test_fib_perf.c': ['net', 'fib'],
+     'test_flow_classify.c': ['net', 'acl', 'table', 'ethdev', 'flow_classify'],
++    'test_flow_compile.c': ['net', 'ethdev', 'flow_compile'],
+     'test_func_reentrancy.c': ['hash', 'lpm'],
+     'test_graph.c': ['graph'],
+     'test_graph_feature_arc.c': ['graph'],
+diff --git a/app/test/test_flow_compile.c b/app/test/test_flow_compile.c
 new file mode 100644
-index 0000000000..8af374b33b
+index 0000000000..5cfcc92fad
 --- /dev/null
-+++ b/doc/guides/prog_guide/flow_compile_lib.rst
-@@ -0,0 +1,272 @@
-+..  SPDX-License-Identifier: BSD-3-Clause
-+    Copyright (c) 2026 Stephen Hemminger <stephen@networkplumber.org>
-+
-+Flow Rule Compiler
-+==================
-+
-+The flow rule compiler (``rte_flow_compile``) turns a textual
-+description of an ``rte_flow`` rule into the
-+``struct rte_flow_attr`` / ``struct rte_flow_item`` /
-+``struct rte_flow_action`` arrays accepted by ``rte_flow_create()``.
-+
-+It is modelled on ``pcap_compile()`` from libpcap: a single string in,
-+an opaque compiled object out, with human readable diagnostics
-+written to a caller supplied buffer.
-+
-+The compiler depends only on the EAL and the existing
-+``rte_ethdev`` (``rte_flow.h``) library.  In particular it does not
-+pull in ``rte_cmdline``, so it is suitable for use from libraries,
-+control planes and unit tests.
-+
-+
-+Example
-+-------
-+
-+.. code-block:: c
-+
-+   char errbuf[RTE_FLOW_COMPILE_ERRBUF_SIZE];
-+   const char *src =
-+       "ingress group 0 priority 1 "
-+       "pattern eth / ipv4 src is 10.0.0.1 / udp dst is 4789 / end "
-+       "actions queue index 3 / count / end";
-+
-+   struct rte_flow_compile *fc = rte_flow_compile(src, errbuf);
-+   if (fc == NULL) {
-+           fprintf(stderr, "%s\n", errbuf);
-+           return -1;
-+   }
-+
-+   struct rte_flow_error err;
-+   struct rte_flow *f = rte_flow_compile_create(port_id, fc, &err);
-+
-+   /* fc may be reused on multiple ports or freed now. */
-+   rte_flow_compile_free(fc);
-+
-+
-+API summary
-+-----------
-+
-+.. code-block:: c
-+
-+   struct rte_flow_compile *
-+   rte_flow_compile(const char *str,
-+                    char errbuf[RTE_FLOW_COMPILE_ERRBUF_SIZE]);
-+
-+   void
-+   rte_flow_compile_free(struct rte_flow_compile *fc);
-+
-+   const struct rte_flow_attr   *rte_flow_compile_attr(...);
-+   const struct rte_flow_item   *rte_flow_compile_pattern(..., unsigned int *n);
-+   const struct rte_flow_action *rte_flow_compile_actions(..., unsigned int *n);
-+
-+   int             rte_flow_compile_validate(uint16_t port_id, ..., struct rte_flow_error *);
-+   struct rte_flow *rte_flow_compile_create  (uint16_t port_id, ..., struct rte_flow_error *);
-+
-+The compiled object owns every buffer it returns: attributes,
-+patterns, actions and all underlying spec/mask/last/conf payloads.
-+Pointers are valid until ``rte_flow_compile_free()`` is called.
-+A single compiled rule may be installed on many ports and validated
-+or created concurrently from multiple threads; the parser itself
-+holds no static mutable state.
-+
-+
-+Grammar
-+-------
-+
-+The grammar is pure ASCII; ``#`` starts an end-of-line comment.
-+Whitespace is insignificant.
-+
-+.. code-block:: bnf
-+
-+   rule         ::= attribute* "pattern" item-list "actions" action-list
-+   attribute    ::= "ingress" | "egress" | "transfer"
-+                  | "group"    UINT
-+                  | "priority" UINT
-+   item-list    ::= ( item "/" )* "end"
-+   item         ::= IDENT field-spec*
-+   field-spec   ::= IDENT qualifier value
-+   qualifier    ::= "is" | "spec" | "last" | "mask" | "prefix"
-+   action-list  ::= ( action "/" )* "end"
-+   action       ::= IDENT param*
-+   param        ::= IDENT value
-+   value        ::= UINT | IPV4 | IPV6 | MAC | HEXSTR | STRING
-+
-+Both lists may be empty; ``pattern end`` is a wildcard match and is
-+useful as a catch-all rule.  An empty action list is accepted by the
-+compiler but typically rejected by the underlying PMD.
-+
-+Lexical tokens:
-+
-+.. code-block:: bnf
-+
-+   IDENT        ::= [A-Za-z_][A-Za-z0-9_]*
-+   UINT         ::= [0-9]+ | "0x" [0-9A-Fa-f]+         ; up to 16 hex digits
-+   IPV4         ::= UINT "." UINT "." UINT "." UINT    ; each 0..255
-+   IPV6         ::= RFC 4291 / 5952 textual form (no embedded IPv4)
-+   MAC          ::= XX ":" XX ":" XX ":" XX ":" XX ":" XX
-+   HEXSTR       ::= "0x" [0-9A-Fa-f]{2*N}              ; > 16 hex digits
-+   STRING       ::= '"' character* '"'
-+
-+The grammar follows ``testpmd`` closely so that flow rules already
-+familiar to users carry over; the lexer and parser are independent
-+implementations and do not depend on testpmd, ``rte_cmdline`` or
-+``cmdline_parse_*``.
-+
-+
-+Field qualifier semantics
-+-------------------------
-+
-+For each parsed ``field qualifier value`` triple the compiler writes
-+into one or more of the spec/mask/last buffers.  Semantics match
-+``testpmd``:
-+
-+.. list-table::
-+   :header-rows: 1
-+   :widths: 10 30 30 20
-+
-+   * - Qualifier
-+     - spec
-+     - mask
-+     - last
-+   * - ``is``
-+     - value
-+     - all-ones over the field
-+     - --
-+   * - ``spec``
-+     - value
-+     - --
-+     - --
-+   * - ``mask``
-+     - --
-+     - value
-+     - --
-+   * - ``last``
-+     - --
-+     - --
-+     - value
-+   * - ``prefix``
-+     - --
-+     - high N bits set (CIDR style); IPv4/IPv6 only
-+     - --
-+
-+Last write wins.  ``ipv4 src spec 10.0.0.0 src prefix 16`` therefore
-+matches the entire ``10.0.0.0/16`` range with mask ``255.255.0.0``;
-+``src is 10.0.0.0`` would have set the mask to all-ones, which is
-+exact match.
-+
-+
-+Diagnostics
-+-----------
-+
-+Errors are reported as ``LINE:COL: message`` in the caller-supplied
-+``errbuf`` of at least ``RTE_FLOW_COMPILE_ERRBUF_SIZE`` (256) bytes.
-+The first error wins; subsequent errors are suppressed so that the
-+user sees the original cause rather than a cascade.
-+
-+On failure ``rte_errno`` is set to ``EINVAL`` for parse errors and
-+``ENOMEM`` for allocation failures.
-+
-+
-+Extending the compiler
-+----------------------
-+
-+The parser is entirely table driven.  Adding a new flow item type
-+requires no parser changes:
-+
-+#. In ``flow_compile_tables.c``, define a static
-+   ``struct field_desc`` array describing the parsable fields of the
-+   item's spec struct.
-+#. Add an ``ITEM(...)`` entry to ``flow_items[]``.
-+
-+Each ``field_desc`` lists the field's offset, byte width and a
-+``field_kind`` (``FK_U32``, ``FK_BE16``, ``FK_MAC``, ``FK_IPV4``,
-+``FK_IPV6``, ``FK_BYTES``, ...).  Default setters honor every kind
-+and produce the correct byte order automatically.
-+
-+For fields whose layout cannot be expressed as a plain byte range
-+(C bitfields, indirect arrays, RSS keys, ...) populate the ``set``
-+function pointer.  The custom setter receives the destination
-+buffer, an optional mask buffer (non-NULL when the user wrote
-+``is``) and the parsed value token.
-+
-+Adding a new action type follows the same pattern with
-+``flow_actions[]`` and ``ACTION(...)``.
-+
-+
-+Source layout
-+-------------
-+
-+The library sits in ``lib/flow_compile`` and is split for clarity:
-+
-+================================  ==================================
-+File                              Contents
-+================================  ==================================
-+``rte_flow_compile.h``            Public API.
-+``flow_compile_priv.h``           Internal types: tokens, descriptors,
-+                                  parser state.
-+``flow_compile_lex.c``            Hand-rolled lexer with
-+                                  source-position tracking for
-+                                  diagnostics.
-+``flow_compile_parse.c``          Recursive-descent parser plus the
-+                                  default field setters used by the
-+                                  table-driven body parser.
-+``flow_compile_tables.c``         Per-item and per-action descriptor
-+                                  tables.  All extension work
-+                                  happens here.
-+``rte_flow_compile_api.c``        Public entry points: compile,
-+                                  free, accessors, validate, create.
-+================================  ==================================
-+
-+
-+Implementation notes
-+--------------------
-+
-+Locale independence
-+   Every character classification uses inline ASCII-only predicates
-+   rather than ``<ctype.h>``; hex parsing uses an inline nibble
-+   helper rather than ``strtoul()``.  The grammar is pure ASCII, so
-+   the active locale cannot affect parsing.
-+
-+Endianness
-+   All multibyte writes go through ``rte_cpu_to_be_{16,32,64}`` or
-+   raw byte copies from already network-order tokens
-+   (``TK_IPV4``, ``TK_MAC``, ``TK_IPV6``).
-+
-+Alignment
-+   Spec and mask buffers may contain unaligned multibyte fields
-+   inside packed-ish header structs.  All writes go through
-+   ``memcpy`` to handle this portably.
-+
-+Memory
-+   All allocations go through ``rte_zmalloc`` and ``rte_free``.  Each
-+   spec, mask, last and conf payload is its own allocation; the
-+   pattern and action arrays are separate ``rte_calloc`` allocations
-+   that grow by doubling.  ``rte_flow_compile_free()`` walks the
-+   pattern and action arrays and frees every non-NULL slot before
-+   freeing the arrays themselves, so a partially compiled rule on
-+   a parse-error path is cleaned up uniformly.
-+
-+Reentrancy
-+   The parser holds no static mutable state.  Multiple threads may
-+   compile rules in parallel and a single compiled rule may be
-+   installed concurrently on multiple ports.
-+
-+
-+Limitations
-+-----------
-+
-+The initial implementation covers the most common items
-+(``eth``, ``vlan``, ``ipv4``, ``ipv6``, ``tcp``, ``udp``, ``vxlan``,
-+``port_id``, ``port_representor``, ``represented_port``) and actions
-+(``drop``, ``passthru``, ``queue``, ``mark``, ``jump``, ``count``,
-+``port_id``, ``port_representor``, ``represented_port``,
-+``of_pop_vlan``, ``vxlan_decap``).  Adding more is purely a matter
-+of extending the descriptor tables.
-+
-+Items and actions whose conf has a variable-length payload
-+(``RSS``, ``RAW``, the various ``RAW_ENCAP``/``RAW_DECAP`` actions)
-+are not yet wired up; they require custom setters via the
-+``field_desc.set`` hook.
-+
-+The IPv6 tokeniser does not accept the embedded-IPv4 dotted-quad
-+form (``::ffff:10.0.0.1``); use the all-hex form instead.
-diff --git a/doc/guides/prog_guide/index.rst b/doc/guides/prog_guide/index.rst
-index e6f24945b0..3476dfecfd 100644
---- a/doc/guides/prog_guide/index.rst
-+++ b/doc/guides/prog_guide/index.rst
-@@ -121,6 +121,7 @@ Utility Libraries
- 
-     argparse_lib
-     cmdline
-+    flow_compile_lib
-     ptr_compress_lib
-     timer_lib
-     rcu_lib
-diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
-index f012d47a4b..addb9ff94b 100644
---- a/doc/guides/rel_notes/release_26_07.rst
-+++ b/doc/guides/rel_notes/release_26_07.rst
-@@ -64,6 +64,12 @@ New Features
-   * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
- 
- 
-+* **Added library to compile flow definitions.**
-+
-+  New library that works like libpcap ``pcap_compile`` function to compile
-+  a text string into flow rules.
-+
-+
- Removed Items
- -------------
- 
++++ b/app/test/test_flow_compile.c
+@@ -0,0 +1,234 @@
++/* SPDX-License-Identifier: BSD-3-Clause
++ * Copyright (c) 2026 Stephen Hemminger <stephen@networkplumber.org>
++ */
++
++/*
++ * Unit tests for rte_flow_compile.
++ *
++ * These exercise the parser only -- they don't need a real ethdev
++ * port.  They check both successful parses (asserting the resulting
++ * pattern/action arrays) and parse failures (asserting that the
++ * error buffer contains a recognizable substring).
++ */
++
++#include <stdint.h>
++#include <string.h>
++
++#include <rte_byteorder.h>
++#include <rte_eal.h>
++#include <rte_flow.h>
++
++#include "test.h"
++#include "rte_flow_compile.h"
++
++static int
++test_simple_eth_drop(void)
++{
++	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
++	struct rte_flow_compile *fc =
++		rte_flow_compile("ingress pattern eth / end actions drop / end",
++				 err);
++	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
++
++	TEST_ASSERT_EQUAL(rte_flow_compile_attr(fc)->ingress, 1,
++			  "ingress not set");
++	TEST_ASSERT_EQUAL(rte_flow_compile_attr(fc)->egress, 0,
++			  "egress should not be set");
++
++	unsigned int n;
++	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, &n);
++	TEST_ASSERT_EQUAL(n, 2u, "expected 2 items, got %u", n);
++	TEST_ASSERT_EQUAL(p[0].type, RTE_FLOW_ITEM_TYPE_ETH,
++			  "item 0 type");
++	TEST_ASSERT_NULL(p[0].spec, "eth spec should be NULL");
++	TEST_ASSERT_EQUAL(p[1].type, RTE_FLOW_ITEM_TYPE_END,
++			  "item 1 should be END");
++
++	const struct rte_flow_action *a = rte_flow_compile_actions(fc, &n);
++	TEST_ASSERT_EQUAL(n, 2u, "expected 2 actions, got %u", n);
++	TEST_ASSERT_EQUAL(a[0].type, RTE_FLOW_ACTION_TYPE_DROP,
++			  "action 0 type");
++	TEST_ASSERT_EQUAL(a[1].type, RTE_FLOW_ACTION_TYPE_END,
++			  "action 1 should be END");
++
++	rte_flow_compile_free(fc);
++	return 0;
++}
++
++static int
++test_ipv4_match_queue(void)
++{
++	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
++	const char *src =
++		"ingress group 0 priority 1\n"
++		"pattern eth / ipv4 src is 10.0.0.1 dst is 10.0.0.2 /"
++		"   udp dst is 4789 / end\n"
++		"actions queue index 3 / count / end\n";
++
++	struct rte_flow_compile *fc = rte_flow_compile(src, err);
++	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
++
++	TEST_ASSERT_EQUAL(rte_flow_compile_attr(fc)->priority, 1u,
++			  "priority not set");
++
++	unsigned int n;
++	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, &n);
++	TEST_ASSERT_EQUAL(n, 4u, "expected 4 items");
++	TEST_ASSERT_EQUAL(p[1].type, RTE_FLOW_ITEM_TYPE_IPV4,
++			  "item 1 should be IPV4");
++
++	const struct rte_flow_item_ipv4 *ipv4 = p[1].spec;
++	const struct rte_flow_item_ipv4 *m4   = p[1].mask;
++	TEST_ASSERT_NOT_NULL(ipv4, "ipv4 spec");
++	TEST_ASSERT_NOT_NULL(m4,   "ipv4 mask");
++
++	/* 10.0.0.1 in network order = bytes 0a 00 00 01 */
++	const uint8_t *src_b = (const uint8_t *)&ipv4->hdr.src_addr;
++	const uint8_t *dst_b = (const uint8_t *)&ipv4->hdr.dst_addr;
++	TEST_ASSERT_EQUAL(src_b[0], 0x0a, "src[0]");
++	TEST_ASSERT_EQUAL(src_b[3], 0x01, "src[3]");
++	TEST_ASSERT_EQUAL(dst_b[0], 0x0a, "dst[0]");
++	TEST_ASSERT_EQUAL(dst_b[3], 0x02, "dst[3]");
++
++	const uint8_t *src_m = (const uint8_t *)&m4->hdr.src_addr;
++	for (int i = 0; i < 4; i++)
++		TEST_ASSERT_EQUAL(src_m[i], 0xff, "src mask byte %d", i);
++
++	TEST_ASSERT_EQUAL(p[2].type, RTE_FLOW_ITEM_TYPE_UDP,
++			  "item 2 should be UDP");
++	const struct rte_flow_item_udp *u = p[2].spec;
++	TEST_ASSERT_EQUAL(rte_be_to_cpu_16(u->hdr.dst_port), 4789,
++			  "udp dst port");
++
++	const struct rte_flow_action *a = rte_flow_compile_actions(fc, &n);
++	TEST_ASSERT_EQUAL(n, 3u, "expected 3 actions");
++	TEST_ASSERT_EQUAL(a[0].type, RTE_FLOW_ACTION_TYPE_QUEUE,
++			  "action 0 should be QUEUE");
++	const struct rte_flow_action_queue *q = a[0].conf;
++	TEST_ASSERT_EQUAL(q->index, 3u, "queue index");
++	TEST_ASSERT_EQUAL(a[1].type, RTE_FLOW_ACTION_TYPE_COUNT,
++			  "action 1 should be COUNT");
++
++	rte_flow_compile_free(fc);
++	return 0;
++}
++
++static int
++test_ipv4_prefix(void)
++{
++	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
++	struct rte_flow_compile *fc = rte_flow_compile(
++		"pattern eth / ipv4 src spec 192.168.0.0 src prefix 16 / end "
++		"actions drop / end", err);
++	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
++
++	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, NULL);
++	const struct rte_flow_item_ipv4 *m = p[1].mask;
++	TEST_ASSERT_NOT_NULL(m, "ipv4 mask");
++	TEST_ASSERT_EQUAL(rte_be_to_cpu_32(m->hdr.src_addr), 0xffff0000u,
++			  "/16 prefix mask");
++
++	rte_flow_compile_free(fc);
++	return 0;
++}
++
++static int
++test_mac(void)
++{
++	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
++	struct rte_flow_compile *fc = rte_flow_compile(
++		"pattern eth dst is 11:22:33:44:55:66 / end "
++		"actions drop / end", err);
++	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
++
++	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, NULL);
++	const struct rte_flow_item_eth *e = p[0].spec;
++	TEST_ASSERT_EQUAL(e->hdr.dst_addr.addr_bytes[0], 0x11,
++			  "MAC byte 0");
++	TEST_ASSERT_EQUAL(e->hdr.dst_addr.addr_bytes[5], 0x66,
++			  "MAC byte 5");
++
++	rte_flow_compile_free(fc);
++	return 0;
++}
++
++static int
++test_ipv6(void)
++{
++	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
++	struct rte_flow_compile *fc = rte_flow_compile(
++		"pattern eth / ipv6 dst is 2001:db8::1 / end "
++		"actions drop / end", err);
++	TEST_ASSERT_NOT_NULL(fc, "compile failed: %s", err);
++
++	const struct rte_flow_item *p = rte_flow_compile_pattern(fc, NULL);
++	const struct rte_flow_item_ipv6 *v6 = p[1].spec;
++	const uint8_t *b = (const uint8_t *)&v6->hdr.dst_addr;
++	TEST_ASSERT_EQUAL(b[0],  0x20, "ipv6[0]");
++	TEST_ASSERT_EQUAL(b[1],  0x01, "ipv6[1]");
++	TEST_ASSERT_EQUAL(b[2],  0x0d, "ipv6[2]");
++	TEST_ASSERT_EQUAL(b[3],  0xb8, "ipv6[3]");
++	TEST_ASSERT_EQUAL(b[15], 0x01, "ipv6[15]");
++
++	rte_flow_compile_free(fc);
++	return 0;
++}
++
++static int
++expect_error(const char *src, const char *needle)
++{
++	char err[RTE_FLOW_COMPILE_ERRBUF_SIZE];
++	struct rte_flow_compile *fc = rte_flow_compile(src, err);
++
++	TEST_ASSERT_NULL(fc, "expected failure, got success: %s", src);
++	TEST_ASSERT(strstr(err, needle) != NULL,
++		    "error '%s' did not contain '%s'", err, needle);
++	return 0;
++}
++
++static int
++test_errors(void)
++{
++	TEST_ASSERT_SUCCESS(expect_error("",
++		"expected"), "empty input");
++	TEST_ASSERT_SUCCESS(expect_error(
++		"pattern bogus / end actions drop / end",
++		"unknown flow item"), "unknown item");
++	TEST_ASSERT_SUCCESS(expect_error(
++		"pattern eth bogus is 1 / end actions drop / end",
++		"unknown field"), "unknown field");
++	TEST_ASSERT_SUCCESS(expect_error(
++		"pattern eth dst is 1 / end actions drop / end",
++		"MAC"), "non-MAC value for MAC field");
++	TEST_ASSERT_SUCCESS(expect_error(
++		"pattern eth / end actions queue bogus 1 / end",
++		"unknown parameter"), "unknown action parameter");
++	TEST_ASSERT_SUCCESS(expect_error(
++		"pattern eth / end actions queue index 99999 / end",
++		"out of range"), "out-of-range action parameter");
++	TEST_ASSERT_SUCCESS(expect_error(
++		"pattern eth ; / end actions drop / end",
++		"unexpected"), "unexpected character");
++	return 0;
++}
++
++static struct unit_test_suite flow_compile_suite = {
++	.suite_name = "flow_compile",
++	.unit_test_cases = {
++		TEST_CASE(test_simple_eth_drop),
++		TEST_CASE(test_ipv4_match_queue),
++		TEST_CASE(test_ipv4_prefix),
++		TEST_CASE(test_mac),
++		TEST_CASE(test_ipv6),
++		TEST_CASE(test_errors),
++		TEST_CASES_END(),
++	},
++};
++
++static int
++test_flow_compile(void)
++{
++	return unit_test_suite_runner(&flow_compile_suite);
++}
++
++REGISTER_FAST_TEST(flow_compile_autotest, NOHUGE_OK, ASAN_OK, test_flow_compile);
 -- 
 2.53.0
 
