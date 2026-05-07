@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E48E5CD37AA
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 21:02:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82CCFCD343F
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 21:02:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 158404060A;
-	Thu,  7 May 2026 23:01:59 +0200 (CEST)
-Received: from mail-dl1-f53.google.com (mail-dl1-f53.google.com [74.125.82.53])
- by mails.dpdk.org (Postfix) with ESMTP id 623C24025A
- for <dev@dpdk.org>; Thu,  7 May 2026 23:01:57 +0200 (CEST)
-Received: by mail-dl1-f53.google.com with SMTP id
- a92af1059eb24-1309f4ee973so1684088c88.1
- for <dev@dpdk.org>; Thu, 07 May 2026 14:01:57 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4358F4065F;
+	Thu,  7 May 2026 23:02:00 +0200 (CEST)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mails.dpdk.org (Postfix) with ESMTP id C60B7402E8
+ for <dev@dpdk.org>; Thu,  7 May 2026 23:01:58 +0200 (CEST)
+Received: by mail-dl1-f51.google.com with SMTP id
+ a92af1059eb24-12ddbe104ccso1374885c88.0
+ for <dev@dpdk.org>; Thu, 07 May 2026 14:01:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778187716;
- x=1778792516; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778187718;
+ x=1778792518; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=LVyt7UEVPmjFaIAvwsSDphYo04ulEbvaeff65GGXmCc=;
- b=JBxI8DdINwjON1LwkPwT0TgVmS0di+dI0DRz0vYI6nYb7VtdW+sH1tKkI42mQ756xm
- Qde3R/RfrH5epL2wuk7cnWOAP2SQqnwbg23u2yZgwvik/chXRdNHabxmgI52gIcZhr7Q
- 4byoaZyWsBRqWOf2FOVfBcyfLq3qH2v5uHMuAXF6fq5sPr7KRUmpN4F9pGQoC9cR3A8e
- AoPIOfE1njeSmcEkL0icXRXZat3oYqX+gZjDa8egIew3Gh5kQMW1FwqObK2XNxyQdSar
- Q6S1GY5fO+RZjDFjbBma0LAHvJndOGi4Unay2F/nPh/TWSocZ0S9O8oLAzBfbw8Fk+EI
- THSg==
+ bh=UTC0jegFGVFfq4TQsKICbKpucgiD1XJ65Af0srEjwPo=;
+ b=m4NRJn+voTqoVIBUIKMn1jy+vhW6scbhgjq5y/OuWMzDvPgZEWieNHARhsTKsXp48O
+ uNd8Tz6fUJehtDLTTefFUbcXLfOmMIf+RFo5wexF5zYw6O1TWDC5YUN9j6mRorbDQ7Q7
+ zslSGT6XSJg17cxSlFYlel2MVfVoydB9aInK4W+loIAuIOEXExsdTMq6ZvntrJ1owhe4
+ fBWQ0p2KKzwZwEwZxF+OlOR9WPoW7rhr/sN8hpEUMP60dOES/TmGbjHuVXK29agxA12a
+ 0ZYX+RhEQ+OdUOLWD6caOw6/BM2xWKPyqFvhF1KRh5a820p4oFPTtXq9+gesLazjW2kX
+ 7ztg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778187716; x=1778792516;
+ d=1e100.net; s=20251104; t=1778187718; x=1778792518;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=LVyt7UEVPmjFaIAvwsSDphYo04ulEbvaeff65GGXmCc=;
- b=XtS/FmLqVYPFT3bDS6ISJW53Xq2oE3gI4DVoqDsINXqUdUBDPLJx2S0jsxIVtsH18z
- 28e23xDMSgOSBVkE2Z1DgOV1+xbyr3vGderYJD4w/k6huK42rb2jliFD7nmOY6XfZKy/
- 67Rjrl3fNTtmsjYAb+zbE8dQ03bOVQMRw9s+la5MPkFILMzsJXygWAkodVUhfrE6GBw3
- ssH8iEcSVJCPF5Klauzg3ly5F6/akY1kfbS1UwT4XKjnmlC8PDgejjb38fnodBceXRaq
- kiqpEgJD2f5DB3irVXy5NJDmTUNZOELZ41n9J4D+RokB+r2qZsDy6muAGKnDF7y9zM23
- zWVw==
-X-Gm-Message-State: AOJu0Yw9YUKFo0dInxdBrP/FqeC1rUmMsfFwy13BIJ2LfRhxm6G4dduf
- mRsnFR2cBHMvAvJIcDiCE7+zY1lm9BmEp/lbrCIcehk7HaKKRgF19QSRUb+skEy/CrlBB/JLKQK
- BUvvY
-X-Gm-Gg: AeBDiesSFGLVHWB0CvVjQufhYbJ2m7/bVORVu/w20tYShPLHqiw3ZwB4yjDva7e+36V
- jNeKSRUt/F8ueYJ3LwydGqs5/ASwncpeaoQTgP08znr+fBSg6Zysd40t+aISlOX4QnBJWmI41ar
- 8AQ6O9+RYEbbbhYM1rUVPX2GG2YFkxneIlAVUccwYd6EoE+nQswVl6iDxW54v958ZrxGIg9Qgpc
- 9mZ7vs9uQFyTKAb86qqdt4hPI6glD4gxI/rr/eEaavIf22Ul4v7iQ3QdVDjYaU9sRVqcKuBezS4
- sNK00el15qtANXhL6IUIh8D0NZx2xN5X8BnsNVFThOOdKthvzC+38sWN2p7ovOE6oeGD0BUwRXJ
- xdvlxS4Gh0L2268ZMU9LGfZBeXgMSjszBXm1+dRNU6o/bpMOFmgdKdNtwggrTOoxz2ch1lwb2ra
- Z2zzQvlJ5ltM/DoIFNqmXWwaab0VAa8+mY
-X-Received: by 2002:a05:7022:6998:b0:119:e56c:18a5 with SMTP id
- a92af1059eb24-131851d7b45mr4648387c88.13.1778187716327; 
- Thu, 07 May 2026 14:01:56 -0700 (PDT)
+ bh=UTC0jegFGVFfq4TQsKICbKpucgiD1XJ65Af0srEjwPo=;
+ b=ok0yMPKi4BgCmLJ5kKh8Sd4nX3rlZplXL1qI7Xm4Ooztz/D7J1ZTN62EqYmwxZauLB
+ PgIgQCtt/lKrbA3h/Qgb6tuhywSnaxMrP0bUt4fJpKkDXzn37ozT+lYUADP6+x9CJlNl
+ umr1zw5BgZt6JuJohsDNNCHk0BVMlxv0DegYu3YXUcq7EqP/aJrjG8Eh92iPqMmUmwkB
+ X/wWyEvH35NR1QAzXohzEp66ENR8B2mRmvpZ+tek9o2i46dSAPl/RJ0XcXWFjOkkrvO2
+ fhZbWj5HGrRdZYzrVY4RFbXkxFaCtz6feVygDrtndocpP+/aNZh72xXCrhpa8GcNkJGj
+ E8ww==
+X-Gm-Message-State: AOJu0Yyw2nD+hiz17RYS/mwin53rJu5DHinjpv+A1g2SrYLkEBBdWsP/
+ JBdYYo7PDM2pzBTQmcIY5seA/HDMyKmbGIayVgNtpUZt/W4lnDKrHwk/j3AUWDzF7+OsjBVarCw
+ RKVzC
+X-Gm-Gg: AeBDieuyMWs5sTRXHE0gGa9FlvO/dfGcZITRod+xje/fmVyUWgb8HaW9ntjTkbZXT4Z
+ bwxd1lQAKPwmthLU6antTRnpfHF3HxCVEVB8/q3cndAy4UC2aamlk7tR77ENvld/WNas3o3+Oa6
+ 94YpzjE1fHQkJmhkADhDsh0Y2zu4l7kLO8Ck+c/IUqDA/sPZ0KylI5jbkmAKTuJt7R/JBRCrl9I
+ EoIAKzjC27ep8Mp72nWiVlmxn1L2gY9nbeCTM+BilJ3e4lV2OSt01duhJuMtWCCoypNXCseIbRp
+ nwN6FR2696v59lmXdcTtkOoTqecjScxmDbgk5KIP1hhQCR0vdHJnBCJZcyZIQy1jZ0a3LFq+4KI
+ sl/XFLFXVuajDONhyd7TgQ2wHj1V72BTNlXmc9bwRiZ50jLhVwZqd6EyZ2iGaIqqYtZBlOa56V2
+ O1XHraThRXVMR9gcOKdQ45IqX1rbyP2++e
+X-Received: by 2002:a05:7022:f311:b0:132:2486:b47 with SMTP id
+ a92af1059eb24-13224860ce4mr2293364c88.3.1778187717720; 
+ Thu, 07 May 2026 14:01:57 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-13270901ba2sm227282c88.11.2026.05.07.14.01.55
+ a92af1059eb24-13270901ba2sm227282c88.11.2026.05.07.14.01.56
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 07 May 2026 14:01:55 -0700 (PDT)
+ Thu, 07 May 2026 14:01:57 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
- Aman Singh <aman.deep.singh@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH 1/2] Revert "app/testpmd: stop forwarding in secondary process"
-Date: Thu,  7 May 2026 13:58:36 -0700
-Message-ID: <20260507210152.410419-2-stephen@networkplumber.org>
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Qi Zhang <qi.z.zhang@intel.com>
+Subject: [PATCH 2/2] eal: notify secondary on primary exit
+Date: Thu,  7 May 2026 13:58:37 -0700
+Message-ID: <20260507210152.410419-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260507210152.410419-1-stephen@networkplumber.org>
 References: <20260507210152.410419-1-stephen@networkplumber.org>
@@ -81,159 +81,106 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Testpmd must not assume that the secondary process
-is testpmd. The notification needs to be done by EAL.
-
-This reverts commit f96273c8e9d39e472bb07acc05e493b1e712e51b.
+When primary process exits, it should notify the secondary
+processes. This allows for clean shutdown and eliminates need
+for MP handling in applications (such as test-pmd).
 
 Bugzilla ID: 1942
+Fixes: 85d6815fa6d0 ("eal: close multi-process socket during cleanup")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-pmd/testpmd.c | 103 ++---------------------------------------
- 1 file changed, 4 insertions(+), 99 deletions(-)
+ lib/eal/common/eal_common_proc.c | 51 ++++++++++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 2 deletions(-)
 
-diff --git a/app/test-pmd/testpmd.c b/app/test-pmd/testpmd.c
-index e2569d9e30..e54a3981e9 100644
---- a/app/test-pmd/testpmd.c
-+++ b/app/test-pmd/testpmd.c
-@@ -3716,83 +3716,6 @@ detach_devargs(char *identifier)
- 	rte_devargs_reset(&da);
+diff --git a/lib/eal/common/eal_common_proc.c b/lib/eal/common/eal_common_proc.c
+index 06f151818c..4369892e44 100644
+--- a/lib/eal/common/eal_common_proc.c
++++ b/lib/eal/common/eal_common_proc.c
+@@ -60,6 +60,15 @@ enum mp_type {
+ 	MP_IGN, /* Response telling requester to ignore this response */
+ };
+ 
++/* Message sent from primary EAL to secondary EAL */
++#define EAL_MP "mp_eal"
++struct eal_mp_req {
++	enum {
++		MP_REQ_NOP = 0,
++		MP_REQ_QUIT,
++	} type;
++};
++
+ struct mp_msg_internal {
+ 	int type;
+ 	struct rte_mp_msg msg;
+@@ -614,6 +623,25 @@ close_socket_fd(int fd)
+ 		unlink(path);
  }
  
--#ifndef RTE_EXEC_ENV_WINDOWS
--
--enum testpmd_req_type {
--	TESTPMD_REQ_TYPE_EXIT,
--};
--
--struct testpmd_mp_req {
--	enum testpmd_req_type t;
--};
--
--struct testpmd_mp_resp {
--	int result;
--};
--
--#define TESTPMD_MP	"mp_testpmd"
--
--/* Send reply to this peer when testpmd exits */
--static RTE_ATOMIC(const char *) primary_name;
--
--static void
--reply_to_primary(const char *peer, int result)
--{
--	struct rte_mp_msg reply = { };
--	struct testpmd_mp_resp *resp = (struct testpmd_mp_resp *) &reply.param;
--
--	strlcpy(reply.name, TESTPMD_MP, RTE_MP_MAX_NAME_LEN);
--	reply.len_param = sizeof(*resp);
--	resp->result = result;
--
--	printf("Replying %d to primary\n", result);
--	fflush(stdout);
--
--	if (rte_mp_reply(&reply, peer) < 0)
--		printf("Failed to send response to primary:%s", strerror(rte_errno));
--}
--
--/* Primary process is exiting, stop secondary process */
--static void
--pmd_notify_secondary(void)
--{
--	struct testpmd_mp_req request = {
--		.t = TESTPMD_REQ_TYPE_EXIT,
--	};
--	struct rte_mp_msg mp_req = {
--		.name = TESTPMD_MP,
--		.len_param = sizeof(request),
--	};
--	struct rte_mp_reply reply;
--	struct timespec ts = {.tv_sec = 5, .tv_nsec = 0};
--
--	printf("\nPrimary: Sending 'stop_req' request to secondary...\n");
--	fflush(stdout);
--
--	memcpy(mp_req.param, &request, sizeof(request));
--	rte_mp_request_sync(&mp_req, &reply, &ts);
--}
--
--static int
--handle_testpmd_request(const struct rte_mp_msg *request, const void *peer)
--{
--	const struct testpmd_mp_req *req = (const struct testpmd_mp_req *)request->param;
--
--	if (req->t == TESTPMD_REQ_TYPE_EXIT) {
--		printf("\nReceived notification of primary exiting\n");
--		fflush(stdout);
--
--		/* Response is sent after forwarding loop exits */
--		rte_atomic_store_explicit(&primary_name, peer, rte_memory_order_relaxed);
--
--		kill(getpid(), SIGINT);
--	} else {
--		reply_to_primary(peer, -EINVAL);
--	}
--	return 0;
--}
--#endif
--
- void
- pmd_test_exit(void)
++/* callback in secondary when primary has exited */
++static int
++mp_primary_exited(const struct rte_mp_msg *msg, const void *peer __rte_unused)
++{
++	const struct eal_mp_req *req;
++
++	if (msg->len_param != sizeof(*req)) {
++		EAL_LOG(ERR, "invalid request from primary");
++		return -EINVAL;
++	}
++
++	req = (const struct eal_mp_req *)msg->param;
++	if (req->type == MP_REQ_QUIT)
++		rte_mp_channel_cleanup();
++
++	/* no reply needed */
++	return 0;
++}
++
+ int
+ rte_mp_channel_init(void)
  {
-@@ -3804,10 +3727,6 @@ pmd_test_exit(void)
- 		stop_packet_forwarding();
- 
- #ifndef RTE_EXEC_ENV_WINDOWS
--	/* Tell secondary to exit */
--	if (rte_eal_process_type() == RTE_PROC_PRIMARY)
--		pmd_notify_secondary();
--
- 	for (i = 0 ; i < RTE_DIM(mempools) ; i++) {
- 		if (mempools[i]) {
- 			if (mp_alloc_type == MP_ALLOC_ANON)
-@@ -4623,12 +4542,9 @@ main(int argc, char** argv)
- 			 rte_strerror(rte_errno));
- 
- #ifndef RTE_EXEC_ENV_WINDOWS
--	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
--		if (enable_primary_monitor() < 0)
--			rte_exit(EXIT_FAILURE, "Cannot setup primary monitor");
--		if (rte_mp_action_register(TESTPMD_MP, handle_testpmd_request) < 0)
--			rte_exit(EXIT_FAILURE, "Failed to register message action\n");
--	}
-+	if (rte_eal_process_type() == RTE_PROC_SECONDARY &&
-+	    enable_primary_monitor() < 0)
-+		rte_exit(EXIT_FAILURE, "Cannot setup primary monitor");
- #endif
- 
- 	/* allocate port structures, and init them */
-@@ -4830,23 +4746,12 @@ main(int argc, char** argv)
+@@ -661,6 +689,10 @@ rte_mp_channel_init(void)
+ 		return -1;
  	}
  
- #ifndef RTE_EXEC_ENV_WINDOWS
--	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
++	/* listen for quit message from primary */
 +	if (rte_eal_process_type() == RTE_PROC_SECONDARY)
- 		disable_primary_monitor();
--		rte_mp_action_unregister(TESTPMD_MP);
--	}
- #endif
++		rte_mp_action_register(EAL_MP, mp_primary_exited);
++
+ 	if (rte_thread_create_internal_control(&mp_handle_tid, "mp-msg",
+ 			mp_handle, NULL) < 0) {
+ 		EAL_LOG(ERR, "failed to create mp thread: %s",
+@@ -682,12 +714,27 @@ rte_mp_channel_cleanup(void)
+ {
+ 	int fd;
  
- 	pmd_test_exit();
++	/* Primary exiting, tell all secondary processes */
++	if (rte_eal_process_type() == RTE_PROC_PRIMARY) {
++		struct rte_mp_msg msg = { .name = EAL_MP };
++		struct eal_mp_req req = { .type = MP_REQ_QUIT };
++
++		memcpy(&msg.param, &req, sizeof(req));
++		msg.len_param = sizeof(req);
++
++		rte_mp_sendmsg(&msg);
++	} else {
++		rte_mp_action_unregister(EAL_MP);
++	}
++
+ 	fd = rte_atomic_exchange_explicit(&mp_fd, -1, rte_memory_order_relaxed);
+ 	if (fd < 0)
+ 		return;
  
--#ifndef RTE_EXEC_ENV_WINDOWS
--	if (rte_eal_process_type() == RTE_PROC_SECONDARY) {
--		const char *peer = rte_atomic_exchange_explicit(&primary_name, NULL,
--				rte_memory_order_relaxed);
--		if (peer)
--			reply_to_primary(peer, 0);
--	}
--#endif
--
- #ifdef RTE_LIB_PDUMP
- 	/* uninitialize packet capture framework */
- 	rte_pdump_uninit();
+-	pthread_cancel((pthread_t)mp_handle_tid.opaque_id);
+-	rte_thread_join(mp_handle_tid, NULL);
++	if (pthread_self() != (pthread_t)mp_handle_tid.opaque_id) {
++		pthread_cancel((pthread_t)mp_handle_tid.opaque_id);
++		rte_thread_join(mp_handle_tid, NULL);
++	}
+ 	close_socket_fd(fd);
+ }
+ 
 -- 
 2.53.0
 
