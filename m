@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 469A6CD3427
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 09:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBA8CD3427
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 09:51:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C77A64064A;
-	Thu,  7 May 2026 11:50:50 +0200 (CEST)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com
- [209.85.128.44]) by mails.dpdk.org (Postfix) with ESMTP id DCE184025F
- for <dev@dpdk.org>; Thu,  7 May 2026 11:50:49 +0200 (CEST)
-Received: by mail-wm1-f44.google.com with SMTP id
- 5b1f17b1804b1-488ad135063so5794375e9.0
- for <dev@dpdk.org>; Thu, 07 May 2026 02:50:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E5D464066B;
+	Thu,  7 May 2026 11:50:53 +0200 (CEST)
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
+ [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 41F2D4065E
+ for <dev@dpdk.org>; Thu,  7 May 2026 11:50:52 +0200 (CEST)
+Received: by mail-wm1-f54.google.com with SMTP id
+ 5b1f17b1804b1-488a88aeec9so7857385e9.2
+ for <dev@dpdk.org>; Thu, 07 May 2026 02:50:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1778147449; x=1778752249; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1778147452; x=1778752252; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=h/zq0PQTZUXx8NU7wIBPri3rDkQ71wdmSAHEWT9sW/M=;
- b=kBwwxJKoqYkG6YiZKVZZiai8UYtHuuGfpO0lqZjrEoMDWKkhR571Wad6WZWQFm/Kt1
- kuj4BNdJhCfYKhqCByboUIlAP3Kidurh7QAfw9Vfeor2j3dtuCrs1g4Zv6fPik5Mzuh2
- EGlVhGV/e5VqnA2uHtwWssh1kMICkLWMmBR7dcp/OXd1+TFHfNht+nNMHNtcnhiMv+6V
- iWNULek3yRZNEE1jdqN46YFf9lJbhYKmqPeenpnuIzGpzPuaWmkxWxTYb8YPnrPbcPzR
- zL/dtMkRVVYn/IGBAN8szEOct3cuqe1ZEwBYByC4sNpt38gAbGLbpHH63BTQRcmv9g4z
- nmWA==
+ bh=Ljawef+pOQJm2kKUZk21NBvEZpa0AHaVlbp2VUbBOqM=;
+ b=fV6XTE3mvJKGXBsIarXXxUvtDuwAUdt6vZZkrbccuCDaNMtLw+cdJs6719qng/fY2U
+ VF5KHQeFPnuV8FR9xgiXCIJOtqn7NKeuySGMuO5Ztcl7Tcs/9fdIClPLrqR624I4UlZR
+ 9N2KjVE3s9IAt2znNRY2FwWcUol5TK8ynz7dalwEeAA3y2i7g56Ut3Uoixnc3jlsyZGz
+ zzqYpSJEev1oCwQMNqNt/ywp+2NR6kkTxnHH/AI3z0820Okga3Siyv47iSwfyD4recdg
+ u1nYYHzaf4SUpGZnDphPyBYeS8FMeG3IrEo2P2INUGUuoBoteR6P2tzUUiDOs7ApQ8g5
+ lHXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778147449; x=1778752249;
+ d=1e100.net; s=20251104; t=1778147452; x=1778752252;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=h/zq0PQTZUXx8NU7wIBPri3rDkQ71wdmSAHEWT9sW/M=;
- b=fA9xk+ujYMbxJGO5u6FzFyPD3c6cAqD1xfrQGILaNonGgaBcE4EXD75YSSb5j0T/IJ
- rNtZlBIoqMF2SBqOiVNbvwbqKh095Xd2tqwXz3hZNoeC1Cd6v39T/SN4pckm1cDVbIER
- 1tdO3jk7mrqPnIsAfKPl6lLBPFX0SDiRvZzcngWm90d5sM8kZzbYelcsnaciwBi0ifB3
- +bD9OlMXvOL8qVrZFN8eAxYZsiCvKCorY669sbktIsnBpT6KrYNio60idLDETrfFSRel
- /yQNlQMhdAG/rONkCLbHMgXfTFvqXgJ7qi1yIdKA2q2oXK+eIk9Hz127XRoRr1CRRuUH
- fkrg==
-X-Gm-Message-State: AOJu0Yzv0xjoFWhsFN0d7afkpCr45o56hA8niSFebH0AjfaBWqQAfW6n
- zDpjEjIit3qLUz+OXxtQk6HCCqe5xhxV8Ys8gf7hV2OKh/jO6hFnFeg/
-X-Gm-Gg: AeBDievc2YdPqePDvS77FSsJIhBrRE+fHy/DhsPYIUh5WNCHGkrImK6a4oyB5DeLXYw
- 6431XKs/ACGzkgCOcS4bQhARxdvoMyHAFilbnmdd4gWMNHlwKdqdL4OQhx3qt7rKqYfGNd9tTQH
- kWZ9EOksHE8H2fz3bQYsxvSyzYuLaozk02NS84fSx4C8lh2dQDVnQXbOYzL+Wn6luGg1P3r+4/D
- 03d6/zzYjf7ueXynrABdA7YmuRjC5iFnpkyTWP26S1nsA21RNg/uuZsJzXWVhq0MnUffOD43tVJ
- zeq+Fnq8HjrB9f+Gpp2GU9D+GT4z4x5smSzom6277lrFrVyqW/qCnsXdev+Dpiw1qk3q4EEPXz4
- 4Vrs5v1d7f6oCNkPiMgosKYQroHKHkoj+sdZGXkUEL9a5pNu+E/bSfq2oBDDOm7KwP+MdpYqlFk
- 14RtJZIZtTvqThqIJiEwtfNNuCdX18aUOyQNEJsh+c/Ac5uWhsYMTHIiJuls2Uw10=
-X-Received: by 2002:a05:600c:8012:b0:48e:5fb8:f80f with SMTP id
- 5b1f17b1804b1-48e5fb8fac9mr23661935e9.24.1778147449209; 
- Thu, 07 May 2026 02:50:49 -0700 (PDT)
+ bh=Ljawef+pOQJm2kKUZk21NBvEZpa0AHaVlbp2VUbBOqM=;
+ b=j3QJg9TT7UcurL+SZG2EHr6Em7+B4+coRWGrpJ2rDU4udJEgZ6nv/HS+u1v3I19Ddb
+ dV1yz6m/+LY7ytZLBQt+Yk3/qdSivsQ50329vW20or1osslyEX0iITtjwIJF/u4B6PVf
+ pVejjiFe5ad+msdtNPDra4vOh+F2VWZtPg7W3VPcFCPXmLv5bpyMJwUUuiqzxMXlIZZK
+ MvBPxHSRsT9SbVUwcwuCZFhKF6nf0zfBkUJkuETZV6zEjK3VBGw/AtdZl5/RppwoCBPX
+ y4OXKxw3aC3qx7Hs5v7SfwC/DqfEsqt1Kvj8trpM3HKZagpd3v6i+OPrCn6RXvwkmZBJ
+ JbIg==
+X-Gm-Message-State: AOJu0YwH29Nlpt3L5rklIGZaHFmOuvIuGf2YbUs1yyGJOaVTkNuMrhVj
+ 9NeZxAMe8igt6Cg5gWMRYjndSqObuarnB8e0I+PrDTs/banaktm//bmB
+X-Gm-Gg: AeBDietVcO3zPGtqYOi95jAIRQJUeCIOWj4TSrLyuvr3VDZ0JPEGs8HFiKGgllcRiMB
+ p3To/RKFrzb/Qfa5h3GVJU5JhryATLS6XisMib8frkDoelLPxVpvHKRQP4N0iCTw5NR0jfW9bpe
+ ojsA8cF5Tdz67GX1taWoD5hdirYpbogIon8CiZJ1EKpMh5TvVX6n5be12BYTHJm0ke4PtYU8JP/
+ DIPkSK2a2v22sPC05REz/MWmB8bN5aMEdRZSGK2IMg1y3N+fAufBgJ3BnR12w4bV8Lz6uX2PzSt
+ Lc9SudsqbUMPa0dBSpST144oFeijdL5r4yhKczugpCh+Nr/FvVu8tywJS0nngAnaTndma8qerxO
+ vuDONIkYbK3CHlr7tBvH5NbfAhzMxjijVNgPWbx6ZTjB2Bsby/19+Th6FL3gcn35CRZdJLFHarh
+ uTvLzIOq1pk2O0kiE0H5Wieu45yjirX8OUroDFabGHoL1YdhU/zmqvbOOAh2ORlhoUA9Grr8TM3
+ A==
+X-Received: by 2002:a05:600c:1d18:b0:48a:5574:3a5b with SMTP id
+ 5b1f17b1804b1-48e51f45c84mr117965245e9.27.1778147451368; 
+ Thu, 07 May 2026 02:50:51 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48e530fdc50sm56811335e9.5.2026.05.07.02.50.48
+ 5b1f17b1804b1-48e538b26a3sm207209465e9.9.2026.05.07.02.50.50
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 07 May 2026 02:50:48 -0700 (PDT)
+ Thu, 07 May 2026 02:50:50 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 Cc: dev@dpdk.org,
-	Maxime Leroy <maxime@leroys.fr>,
-	stable@dpdk.org
-Subject: [RFC 1/3] fib6: fix tbl8 reservation drift in trie
-Date: Thu,  7 May 2026 11:50:41 +0200
-Message-ID: <51c96687deba79270c867ae37d01f51adfca6622.1778146229.git.maxime@leroys.fr>
+	Maxime Leroy <maxime@leroys.fr>
+Subject: [RFC 2/3] test/fib6: add reproducer for tbl8 reservation drift
+Date: Thu,  7 May 2026 11:50:42 +0200
+Message-ID: <309bfce729c90a9d78afe0ed8cd6ce7e2d62598e.1778146229.git.maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1778146229.git.maxime@leroys.fr>
 References: <cover.1778146229.git.maxime@leroys.fr>
@@ -81,108 +81,132 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-trie_modify() updates rsvd_tbl8s by depth_diff computed from the
-current RIB state. The RIB is not invariant between the ADD of a
-prefix and its later DEL (a covering parent may be added or removed
-in between), so depth_diff at DEL time may not match depth_diff at
-ADD time. Repeated over asymmetric pairs, rsvd_tbl8s drifts and
-eventually wraps to UINT32_MAX, after which the pre-check rejects
-all long-prefix ADDs with -ENOSPC even when the pool is empty.
+Regression test for the rsvd_tbl8s drift bug fixed in
+"fib6: fix tbl8 reservation drift in trie".
 
-Replace rsvd_tbl8s with tbl8_pool_pos, which tbl8_get()/tbl8_put()
-maintain exactly. To preserve the QSBR_MODE_DQ safety net previously
-provided by the retry-with-reclaim inside tbl8_alloc(), the pre-check
-now calls rte_rcu_qsbr_dq_reclaim(depth_diff) before returning
--ENOSPC.
+The test installs a /28 parent and three /48 children, deletes the
+/28 parent while children are alive, then deletes each /48 child.
+One asymmetric cycle wraps rsvd_tbl8s past zero (net -2 per cycle).
 
-The single-tbl8 retry inside tbl8_alloc() is removed: depth_diff is
-the algorithmic upper bound for new tbl8 allocations, and the
-pre-check now performs the DQ reclaim before allocation, so the
-retry inside the allocator is no longer needed.
+The probe is a /28 ADD (depth_diff=1) so UINT32_MAX-1 + 1 exceeds
+the pool size without further uint32_t overflow.
 
-Fixes: c3e12e0f0354 ("fib: add dataplane algorithm for IPv6")
-Cc: stable@dpdk.org
+Without the fix, the final ADD /28 fails with -ENOSPC.
+With the fix, it succeeds.
+
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- lib/fib/trie.c | 23 ++++++++++-------------
- lib/fib/trie.h |  3 +--
- 2 files changed, 11 insertions(+), 15 deletions(-)
+ app/test/test_fib6.c | 83 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 83 insertions(+)
 
-diff --git a/lib/fib/trie.c b/lib/fib/trie.c
-index fa5d9ec6b0..52f25d499c 100644
---- a/lib/fib/trie.c
-+++ b/lib/fib/trie.c
-@@ -161,12 +161,6 @@ tbl8_alloc(struct rte_trie_tbl *dp, uint64_t nh)
- 	uint8_t		*tbl8_ptr;
+diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
+index fffb590dbf..85a6c0abc3 100644
+--- a/app/test/test_fib6.c
++++ b/app/test/test_fib6.c
+@@ -25,6 +25,7 @@ static int32_t test_get_invalid(void);
+ static int32_t test_lookup(void);
+ static int32_t test_invalid_rcu(void);
+ static int32_t test_fib_rcu_sync_rw(void);
++static int32_t test_drift(void);
  
- 	tbl8_idx = tbl8_get(dp);
--
--	/* If there are no tbl8 groups try to reclaim one. */
--	if (unlikely(tbl8_idx == -ENOSPC && dp->dq &&
--			!rte_rcu_qsbr_dq_reclaim(dp->dq, 1, NULL, NULL, NULL)))
--		tbl8_idx = tbl8_get(dp);
--
- 	if (tbl8_idx < 0)
- 		return tbl8_idx;
- 	tbl8_ptr = get_tbl_p_by_idx(dp->tbl8,
-@@ -603,8 +597,15 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
- 			return 0;
- 		}
+ #define MAX_ROUTES	(1 << 16)
+ /** Maximum number of tbl8 for 2-byte entries */
+@@ -599,6 +600,87 @@ test_fib_rcu_sync_rw(void)
+ 	return status == 0 ? TEST_SUCCESS : TEST_FAILED;
+ }
  
--		if ((depth > 24) && (dp->rsvd_tbl8s + depth_diff > dp->number_tbl8s))
--			return -ENOSPC;
-+		if ((depth > 24) &&
-+		    (dp->tbl8_pool_pos + depth_diff > dp->number_tbl8s)) {
-+			/* Reclaim deferred tbl8s before failing. */
-+			if (dp->dq != NULL)
-+				rte_rcu_qsbr_dq_reclaim(dp->dq, depth_diff,
-+					NULL, NULL, NULL);
-+			if (dp->tbl8_pool_pos + depth_diff > dp->number_tbl8s)
-+				return -ENOSPC;
-+		}
- 
- 		node = rte_rib6_insert(rib, &ip_masked, depth);
- 		if (node == NULL)
-@@ -614,15 +615,13 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
- 		if (parent != NULL) {
- 			rte_rib6_get_nh(parent, &par_nh);
- 			if (par_nh == next_hop)
--				goto successfully_added;
-+				return 0;
- 		}
- 		ret = modify_dp(dp, rib, &ip_masked, depth, next_hop);
- 		if (ret != 0) {
- 			rte_rib6_remove(rib, &ip_masked, depth);
- 			return ret;
- 		}
--successfully_added:
--		dp->rsvd_tbl8s += depth_diff;
- 		return 0;
- 	case RTE_FIB6_DEL:
- 		if (node == NULL)
-@@ -641,8 +640,6 @@ trie_modify(struct rte_fib6 *fib, const struct rte_ipv6_addr *ip,
- 		if (ret != 0)
- 			return ret;
- 		rte_rib6_remove(rib, ip, depth);
--
--		dp->rsvd_tbl8s -= depth_diff;
- 		return 0;
- 	default:
- 		break;
-diff --git a/lib/fib/trie.h b/lib/fib/trie.h
-index c34cc2c057..b42a28f84e 100644
---- a/lib/fib/trie.h
-+++ b/lib/fib/trie.h
-@@ -31,8 +31,7 @@
- 
- struct rte_trie_tbl {
- 	uint32_t	number_tbl8s;	/**< Total number of tbl8s */
--	uint32_t	rsvd_tbl8s;	/**< Number of reserved tbl8s */
--	uint32_t	cur_tbl8s;	/**< Current cumber of tbl8s */
-+	uint32_t	cur_tbl8s;	/**< Current number of tbl8s */
- 	uint64_t	def_nh;		/**< Default next hop */
- 	enum rte_fib_trie_nh_sz	nh_sz;	/**< Size of nexthop entry */
- 	uint64_t	*tbl8;		/**< tbl8 table. */
++/*
++ * Reproducer for the rsvd_tbl8s drift bug. depth_diff used to maintain
++ * rsvd_tbl8s is computed from the current RIB state, so it is not
++ * invariant between the ADD of a prefix and its later DEL when a
++ * covering parent prefix is removed in between.
++ *
++ * Layout: one /28 parent (fcde::/28) and three /48 siblings under it
++ * (fcde:0:6000::/48, fcde:1:6000::/48, fcde:2:6000::/48). The second
++ * hextet's high 12 bits are zero, so the three /48 IPs all fall inside
++ * the /28.
++ *
++ * One asymmetric sequence is enough to wrap the counter:
++ *   ADD /28                                  rsvd_tbl8s += 1
++ *   ADD /48 child_0,1,2 (with /28 parent)    rsvd_tbl8s += 2 each (+6)
++ *   DEL /28 (sibling /48 found)              rsvd_tbl8s -= 0
++ *   DEL /48 child_0,1,2 (no parent left)     rsvd_tbl8s -= 3 each (-9)
++ *
++ * Net: -2. Starting from 0, rsvd_tbl8s wraps to UINT32_MAX-1. The
++ * next ADD of a prefix longer than /24 then unconditionally fails the
++ * pre-check (rsvd_tbl8s + depth_diff > number_tbl8s), even though the
++ * pool is empty.
++ */
++static int32_t
++test_drift(void)
++{
++	struct rte_fib6_conf config = { 0 };
++	struct rte_fib6 *fib;
++	struct rte_ipv6_addr parent =
++		RTE_IPV6(0xfcde, 0, 0, 0, 0, 0, 0, 0);
++	struct rte_ipv6_addr child[3] = {
++		RTE_IPV6(0xfcde, 0, 0x6000, 0, 0, 0, 0, 0),
++		RTE_IPV6(0xfcde, 1, 0x6000, 0, 0, 0, 0, 0),
++		RTE_IPV6(0xfcde, 2, 0x6000, 0, 0, 0, 0, 0),
++	};
++	unsigned int c;
++	int ret;
++
++	config.max_routes = 1024;
++	config.rib_ext_sz = 0;
++	config.default_nh = 0;
++	config.type = RTE_FIB6_TRIE;
++	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
++	config.trie.num_tbl8 = 256;
++
++	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
++	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
++
++	ret = rte_fib6_add(fib, &parent, 28, 0xa);
++	RTE_TEST_ASSERT(ret == 0, "ADD /28 failed (ret=%d)\n", ret);
++
++	for (c = 0; c < 3; c++) {
++		ret = rte_fib6_add(fib, &child[c], 48, 0xb + c);
++		RTE_TEST_ASSERT(ret == 0,
++			"ADD /48 child %u failed (ret=%d)\n", c, ret);
++	}
++
++	ret = rte_fib6_delete(fib, &parent, 28);
++	RTE_TEST_ASSERT(ret == 0, "DEL /28 failed (ret=%d)\n", ret);
++
++	for (c = 0; c < 3; c++) {
++		ret = rte_fib6_delete(fib, &child[c], 48);
++		RTE_TEST_ASSERT(ret == 0,
++			"DEL /48 child %u failed (ret=%d)\n", c, ret);
++	}
++
++	/*
++	 * Pre-fix: -ENOSPC because rsvd_tbl8s wrapped to UINT32_MAX-1.
++	 * Post-fix: succeeds; the pre-check uses tbl8_pool_pos which
++	 * accurately reflects the (empty) pool.
++	 */
++	ret = rte_fib6_add(fib, &parent, 28, 0xe);
++	RTE_TEST_ASSERT(ret == 0,
++		"Fresh ADD /28 spuriously failed (ret=%d)\n", ret);
++
++	ret = rte_fib6_delete(fib, &parent, 28);
++	RTE_TEST_ASSERT(ret == 0, "Final DEL /28 failed (ret=%d)\n", ret);
++
++	rte_fib6_free(fib);
++	return TEST_SUCCESS;
++}
++
+ static struct unit_test_suite fib6_fast_tests = {
+ 	.suite_name = "fib6 autotest",
+ 	.setup = NULL,
+@@ -611,6 +693,7 @@ static struct unit_test_suite fib6_fast_tests = {
+ 	TEST_CASE(test_lookup),
+ 	TEST_CASE(test_invalid_rcu),
+ 	TEST_CASE(test_fib_rcu_sync_rw),
++	TEST_CASE(test_drift),
+ 	TEST_CASES_END()
+ 	}
+ };
 -- 
 2.43.0
 
