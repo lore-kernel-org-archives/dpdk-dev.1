@@ -2,46 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9AECD3439
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 15:00:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1995BCD343F
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 15:00:41 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A4CCF40A67;
-	Thu,  7 May 2026 17:00:04 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 75F764066A;
+	Thu,  7 May 2026 17:00:05 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id 6191840687;
- Thu,  7 May 2026 17:00:02 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 8991B4068A
+ for <dev@dpdk.org>; Thu,  7 May 2026 17:00:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1778166003; x=1809702003;
+ t=1778166004; x=1809702004;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=n1TK4RZX7BOUY1EnR5bpRJBUp4mzCW/zCtmd65Gmm9c=;
- b=eSG8iJMEU/Fk7Dwa5E9y2/+vA+AUZp9BorTzrTXjGcSsoQ3TvJC4tbtM
- 9Q6meA404KkpW1ITdVL3TLDvKfG9xAJkmePqNvDd9FRMBgr8oRQLc/2uB
- pG3UoBCrO6nPDxXhw8X5iltDn1smkQV16mMDTwG6zOPIKo/p4FeYHP+NS
- 9jgTsOnWnVXrC3V37XYD7LmylqICc3/Ics1anAfEalVaT3dV0M0yHtGwg
- mVusCBRz55QnNfCKD+tUYwQWELNwEwxI8SZnidLhZo0M/ks+bQG0B4Dul
- xCJILFB835v/DoGDcQIkcR/RxNQxDcrQ3AT9R1NMF0OKp3MUYtevPTJNg g==;
-X-CSE-ConnectionGUID: lmEeDT/RTm+Vv08H70+R9g==
-X-CSE-MsgGUID: rdLzQKkSQV23+LjHujNwoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11779"; a="82738170"
-X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="82738170"
+ bh=wt9C4C5hmL10dobZaEyg48on0vDcDRJhEZf5UcQci94=;
+ b=CDsF8KIAqCzJJquFz/BNdqpV75KdbIG4i15IquKq32X8MHAsNLq2Shgu
+ eFoNUcdLEvjuEFKfbZA1pgMZiK8yIOrCfYjlsXZEfWqbPGcoGwKK0hKX9
+ oQjPClFAhzBHEwI0mLl4B/RrnM4iW3HP8XVGGFqnuhx1yXahzpFNoSNsr
+ 2Qo4/vLXLxXQG3FMe1+48aqLwHb278rf2ltHlGFW/ou1yy5WIfb1CHPbR
+ v+q6Xj7v1r4SoCa6nqSlwTQw5C2cquzCIijwk1cVtGkEjTDF1JFD1C80M
+ Pr4N2P5g7/TIkvVcvmS/69STi2fS+uwhe4jWCaCmo0NAMvAOxod6Rhu/H Q==;
+X-CSE-ConnectionGUID: RfOPQwRfRemCQbMP1rz3nA==
+X-CSE-MsgGUID: 5FKF+46fS5aO3TVXPTM3Hg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11779"; a="82738173"
+X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="82738173"
 Received: from fmviesa008.fm.intel.com ([10.60.135.148])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 May 2026 08:00:02 -0700
-X-CSE-ConnectionGUID: FUgOMmJQSNKQyNLudtBKNw==
-X-CSE-MsgGUID: L6wOLKHNQEexDbSfGbFf0A==
+ 07 May 2026 08:00:04 -0700
+X-CSE-ConnectionGUID: z//Tbm/gQW+ab4WB6oJF6g==
+X-CSE-MsgGUID: 7BUDNe2fRWenUcHaQA5MZw==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="233818223"
+X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="233818280"
 Received: from silpixa00401385.ir.intel.com ([10.20.224.226])
- by fmviesa008.fm.intel.com with ESMTP; 07 May 2026 08:00:01 -0700
+ by fmviesa008.fm.intel.com with ESMTP; 07 May 2026 08:00:02 -0700
 From: Bruce Richardson <bruce.richardson@intel.com>
 To: dev@dpdk.org
-Cc: Bruce Richardson <bruce.richardson@intel.com>,
-	stable@dpdk.org
-Subject: [PATCH 5/6] cmdline: guard zero-size destination buffers
-Date: Thu,  7 May 2026 15:59:48 +0100
-Message-ID: <20260507145950.197753-6-bruce.richardson@intel.com>
+Cc: Bruce Richardson <bruce.richardson@intel.com>
+Subject: [PATCH 6/6] cmdline: add null checks for invalid input
+Date: Thu,  7 May 2026 15:59:49 +0100
+Message-ID: <20260507145950.197753-7-bruce.richardson@intel.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20260507145950.197753-1-bruce.richardson@intel.com>
 References: <20260507145950.197753-1-bruce.richardson@intel.com>
@@ -60,45 +59,43 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add missing zero-size destination checks in cmdline helper routines.
-Always check for size == 0, before doing an assignment of '\0' to string
-position of "size - 1".
-
-Fixes: af75078fece3 ("first public release")
-Cc: stable@dpdk.org
+To harden the public API, add some NULL checks before dereferencing
+pointers. Properly written apps should never call these with NULL, but
+to increase resilience, we'll add the checks.
 
 Signed-off-by: Bruce Richardson <bruce.richardson@intel.com>
 ---
- lib/cmdline/cmdline_parse_num.c    | 2 +-
- lib/cmdline/cmdline_parse_string.c | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ lib/cmdline/cmdline.c        | 3 +++
+ lib/cmdline/cmdline_rdline.c | 3 +++
+ 2 files changed, 6 insertions(+)
 
-diff --git a/lib/cmdline/cmdline_parse_num.c b/lib/cmdline/cmdline_parse_num.c
-index f21796bedb..4cfc900391 100644
---- a/lib/cmdline/cmdline_parse_num.c
-+++ b/lib/cmdline/cmdline_parse_num.c
-@@ -323,7 +323,7 @@ cmdline_get_help_num(cmdline_parse_token_hdr_t *tk, char *dstbuf, unsigned int s
- 	struct cmdline_token_num_data nd;
- 	int ret;
- 
--	if (!tk)
-+	if (!tk || !dstbuf || size == 0)
- 		return -1;
- 
- 	memcpy(&nd, &((struct cmdline_token_num *)tk)->num_data, sizeof(nd));
-diff --git a/lib/cmdline/cmdline_parse_string.c b/lib/cmdline/cmdline_parse_string.c
-index 731947159f..33cf89f84f 100644
---- a/lib/cmdline/cmdline_parse_string.c
-+++ b/lib/cmdline/cmdline_parse_string.c
-@@ -171,6 +171,9 @@ int cmdline_complete_get_elt_string(cmdline_parse_token_hdr_t *tk, int idx,
- 	if (!tk || !dstbuf || idx < 0)
- 		return -1;
- 
-+	if (size == 0)
-+		return -1;
+diff --git a/lib/cmdline/cmdline.c b/lib/cmdline/cmdline.c
+index d1003f0b8e..51fbc36cef 100644
+--- a/lib/cmdline/cmdline.c
++++ b/lib/cmdline/cmdline.c
+@@ -103,6 +103,9 @@ RTE_EXPORT_SYMBOL(cmdline_get_rdline)
+ struct rdline*
+ cmdline_get_rdline(struct cmdline *cl)
+ {
++	if (!cl)
++		return NULL;
 +
- 	tk2 = (struct cmdline_token_string *)tk;
- 	sd = &tk2->string_data;
+ 	return &cl->rdl;
+ }
+ 
+diff --git a/lib/cmdline/cmdline_rdline.c b/lib/cmdline/cmdline_rdline.c
+index 0a5a399b32..15da285c8d 100644
+--- a/lib/cmdline/cmdline_rdline.c
++++ b/lib/cmdline/cmdline_rdline.c
+@@ -618,6 +618,9 @@ RTE_EXPORT_SYMBOL(rdline_get_history_buffer_size)
+ size_t
+ rdline_get_history_buffer_size(struct rdline *rdl)
+ {
++	if (!rdl)
++		return 0;
++
+ 	return sizeof(rdl->history_buf);
+ }
  
 -- 
 2.51.0
