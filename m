@@ -2,51 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A26FCD3442
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 08:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC60ECD3427
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 09:50:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DF8804066B;
-	Thu,  7 May 2026 10:20:09 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id D083F4067B
- for <dev@dpdk.org>; Thu,  7 May 2026 10:20:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1778142008; x=1809678008;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=imiftTO4JiJkGkF7SRH2KzcrS4rM6PPCqrhdrHLliaw=;
- b=TEPpKuCeh5rKjnXGdbdGE9E3mTJON97FphGnOtnKkVlF4vG3loc1pN+S
- FCIhuHkRbWxN80aj+DnouqNfD2PAxMKlTay0rB2XWRWqIrt253nocuguw
- t7etgdTNPGdzmWN4yn0xwVlxGuMo2ZzgECAnN8Bmmzqb8AYfQ9OlOSZLh
- jxV0xv7osVjKYW+VijhDbxr6BsWrhOsIcDpF+2Zhu7SCu+52nY1Vjq0Ab
- cBIw/gf5ZoMFDvBbBrXNEaB4SndIjTQE7KBqoBfLoOmZ0pzaxK9vVXrx2
- s/+trjesShrqVuZnU+J0ZZSQVPb7TT90iYvDhoFq3rk1ETGOZD/SP3fNH A==;
-X-CSE-ConnectionGUID: /0SBLt3NR3W595sPsqVHwg==
-X-CSE-MsgGUID: /y3PrIJ2Tw+5cR00PgROnw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11778"; a="79075759"
-X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="79075759"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
- by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 May 2026 01:20:07 -0700
-X-CSE-ConnectionGUID: JSG3K1H6Q1K52+DvJOBQLA==
-X-CSE-MsgGUID: 7jevp5BOSo21fuTJjNrH9A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="236313802"
-Received: from icx008.iind.intel.com ([10.190.212.196])
- by orviesa008.jf.intel.com with ESMTP; 07 May 2026 01:20:05 -0700
-From: Rajesh Kumar <rajesh3.kumar@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
- stephen@networkplumber.org, mb@smartsharesystems.com,
- Rajesh Kumar <rajesh3.kumar@intel.com>
-Subject: [PATCH v7 4/4] examples/ptpclient: use shared PTP library definitions
-Date: Thu,  7 May 2026 19:15:29 +0530
-Message-ID: <20260507134529.2573300-5-rajesh3.kumar@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260507134529.2573300-1-rajesh3.kumar@intel.com>
-References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
- <20260507134529.2573300-1-rajesh3.kumar@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id EBCD44026D;
+	Thu,  7 May 2026 11:50:49 +0200 (CEST)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com
+ [209.85.128.50]) by mails.dpdk.org (Postfix) with ESMTP id 461774025A
+ for <dev@dpdk.org>; Thu,  7 May 2026 11:50:48 +0200 (CEST)
+Received: by mail-wm1-f50.google.com with SMTP id
+ 5b1f17b1804b1-4896c22fcbaso6319915e9.0
+ for <dev@dpdk.org>; Thu, 07 May 2026 02:50:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1778147448; x=1778752248; darn=dpdk.org;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+ bh=4fHGXcXALAKQAB93lJb9QMso+m61DY28KYpvKwW498E=;
+ b=OMlbB7rgPtMkeK9XE9yNLunMgSJATqhJ7sQazuCxt1LLivxxDDgFHlQkcm8k5cCWNk
+ CYMW0eY5pIlC93GvmD6JCfZMU9TBNj7y7v7J4lEAiSbecq/WGC3nZL/RRJ8EC03M7sL0
+ ES4mDhldr/L2Onwx5n+bjFNKIEoueyHFm9836MR1FNo2GfRqYLkt5LdAYkYwwsbFM4B7
+ VanUedE7D9HsfYkjWQUZZlURwVHUmwBgN12NT614CyEYEUgObr38FBdVCm0uXZO87dGO
+ vTm9spx8bu7ECE1VkvYRWMxpScsj3eM6JoB/VocPBAFALMkGc4ka/jgVjkjrO3YBBB9+
+ +ySw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778147448; x=1778752248;
+ h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+ :to:from:sender:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4fHGXcXALAKQAB93lJb9QMso+m61DY28KYpvKwW498E=;
+ b=IF9s0pDcP3PtnKjxgly0eYv1FbtJT4xcFGh5/AlIS+QnyuN4gLa+N5brB82URRzQ/H
+ MoAqf1NwIdPf/69a6+m+5jNqqwDBVhllVn4yqoFuw5TKkgWAdKmlb0HaXEmd01JyH9mk
+ QZ62BaJvENa4flZRdgzjSRuL3MzW+M0/WqTD+Fs3oa2b39tIehHkuqQ4RJeVTDvhOz3x
+ gU1juoHDAX04nosqA3NWmnSWL0CoLs37lDmU5jP5Rx+zCOYpyoYEg8HlHpUYmu9Hu5bc
+ BjWfMoKs5AbTro+VVaLqzuZH+u+fEIcbmAWFYwM6GosYP0o7G5mtVCK13GMsaYcuyIPN
+ A+oQ==
+X-Gm-Message-State: AOJu0YwLyeSQb4bvMyDBtkGCBj2NKwipAUItMDomJAmJlFiIsqc/MnNl
+ JbLHN3UeY7o7nX8J1rlkl2j9cJ79SIiwTtm4xXtJhHUAFzw1CXh+X9m6pXFrPw==
+X-Gm-Gg: AeBDieu6yyJYDQjB52M3ADY5hCvH4C9CBhY/sGlh3E/HbquoM9cenIdmAXjD/vbSTJ0
+ 4ybhDkPoi+XuQvwuH+YVcjtT5duZlK1dOXw+1mhcTPWFHeqNzczHEwQzuGcraSNIOVxQOdubzzS
+ 5hKW5Llr/6+rnfrMGzIeVLfERmooopLBnKm1wo20xwcYrDjNeYODHCqfvD35d3FiMos5FQj4pu/
+ NLeQ0NsKM60xxCUG9ZeM41ha+W0ksQJlQYV9nfsmRXSjMEQXLk2/8ks1mqIZpD9rjT7WMTJb5/t
+ I+Wnt/lD790zbZOP+FIlUMJaYv0cAxbgv0NQ2WWmmNChT2lIe5W44+UyuHYHQPHMV2pC9DP8M7M
+ eaZKRn7l7bU4vd0lMsnzJxflCEIMvoUTjdaVdkPT7iRGWVFnEFQLzrWJDkeHjPnqRLFUgjOy0IS
+ QBCl4kAcgKrrWU3mhTkOtd+JsqzBO5Edcz3WKhW64fmBQj6Ra43XmJvvIyCKy981Y=
+X-Received: by 2002:a05:600c:2e0c:b0:489:1c2d:211e with SMTP id
+ 5b1f17b1804b1-48e51e0c833mr70365975e9.5.1778147447308; 
+ Thu, 07 May 2026 02:50:47 -0700 (PDT)
+Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
+ by smtp.gmail.com with ESMTPSA id
+ 5b1f17b1804b1-48e5310930esm51981825e9.7.2026.05.07.02.50.46
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Thu, 07 May 2026 02:50:46 -0700 (PDT)
+Sender: Maxime Leroy <maxime.leroys@gmail.com>
+From: Maxime Leroy <maxime@leroys.fr>
+To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
+Cc: dev@dpdk.org,
+	Maxime Leroy <maxime@leroys.fr>
+Subject: [RFC 0/3] fib: tbl8 reservation drift reproducer and proposed fix
+Date: Thu,  7 May 2026 11:50:40 +0200
+Message-ID: <cover.1778146229.git.maxime@leroys.fr>
+X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -62,385 +77,44 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update ptpclient to use the lib/net/rte_ptp.h library instead of
-duplicated local PTP header structures and message type constants.
+Asymmetric ADD/DEL sequences in FIB6 trie (a covering parent
+removed between the ADD and DEL of a longer prefix) eventually
+make ADD fail with -ENOSPC even when the tbl8 pool is empty.
 
-Changes:
-  - Add #include <rte_ptp.h>
-  - Replace local struct ptp_header with struct rte_ptp_hdr
-  - Replace local struct tstamp with struct rte_ptp_timestamp
-  - Replace local struct clock_id with uint8_t[8] arrays
-  - Use RTE_PTP_MSGTYPE_* constants instead of local message types
-  - Use rte_ptp_msg_type(), rte_ptp_seq_id() inline helpers
-  - Remove local PTP_PROTOCOL definition (use RTE_ETHER_TYPE_1588)
+Patch 2/3 is a small reproducer.
 
-Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
----
- examples/ptpclient/meson.build |   1 +
- examples/ptpclient/ptpclient.c | 204 +++++++++++++--------------------
- 2 files changed, 81 insertions(+), 124 deletions(-)
+Root cause: rsvd_tbl8s is updated by depth_diff recomputed from
+the current RIB, so increments at ADD and decrements at DEL do
+not cancel when the RIB state changes in between. The counter
+drifts and wraps to UINT32_MAX.
 
-diff --git a/examples/ptpclient/meson.build b/examples/ptpclient/meson.build
-index 2e9b7625fc..9087c987d5 100644
---- a/examples/ptpclient/meson.build
-+++ b/examples/ptpclient/meson.build
-@@ -7,6 +7,7 @@
- # DPDK instance, use 'make'
- 
- allow_experimental_apis = true
-+deps += ['net']
- sources = files(
-         'ptpclient.c',
- )
-diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
-index 174ca5dd70..ce3798d1d3 100644
---- a/examples/ptpclient/ptpclient.c
-+++ b/examples/ptpclient/ptpclient.c
-@@ -17,6 +17,7 @@
- #include <rte_lcore.h>
- #include <rte_mbuf.h>
- #include <rte_ip.h>
-+#include <rte_ptp.h>
- #include <limits.h>
- #include <sys/time.h>
- #include <getopt.h>
-@@ -30,21 +31,8 @@ static volatile bool force_quit;
- #define NUM_MBUFS            8191
- #define MBUF_CACHE_SIZE       250
- 
--/* Values for the PTP messageType field. */
--#define SYNC                  0x0
--#define DELAY_REQ             0x1
--#define PDELAY_REQ            0x2
--#define PDELAY_RESP           0x3
--#define FOLLOW_UP             0x8
--#define DELAY_RESP            0x9
--#define PDELAY_RESP_FOLLOW_UP 0xA
--#define ANNOUNCE              0xB
--#define SIGNALING             0xC
--#define MANAGEMENT            0xD
--
- #define NSEC_PER_SEC        1000000000L
- #define KERNEL_TIME_ADJUST_LIMIT  20000
--#define PTP_PROTOCOL             0x88F7
- 
- struct rte_mempool *mbuf_pool;
- uint32_t ptp_enabled_port_mask;
-@@ -55,69 +43,39 @@ static const struct rte_ether_addr ether_multicast = {
- 	.addr_bytes = {0x01, 0x1b, 0x19, 0x0, 0x0, 0x0}
- };
- 
--/* Structs used for PTP handling. */
--struct __rte_packed_begin tstamp {
--	uint16_t   sec_msb;
--	uint32_t   sec_lsb;
--	uint32_t   ns;
--} __rte_packed_end;
--
--struct clock_id {
--	uint8_t id[8];
--};
--
--struct __rte_packed_begin port_id {
--	struct clock_id        clock_id;
--	uint16_t               port_number;
--} __rte_packed_end;
--
--struct __rte_packed_begin ptp_header {
--	uint8_t              msg_type;
--	uint8_t              ver;
--	uint16_t             message_length;
--	uint8_t              domain_number;
--	uint8_t              reserved1;
--	uint8_t              flag_field[2];
--	int64_t              correction;
--	uint32_t             reserved2;
--	struct port_id       source_port_id;
--	uint16_t             seq_id;
--	uint8_t              control;
--	int8_t               log_message_interval;
--} __rte_packed_end;
--
-+/* Structs used for PTP handling - using library definitions from rte_ptp.h */
- struct __rte_packed_begin sync_msg {
--	struct ptp_header   hdr;
--	struct tstamp       origin_tstamp;
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp origin_tstamp;
- } __rte_packed_end;
- 
- struct __rte_packed_begin follow_up_msg {
--	struct ptp_header   hdr;
--	struct tstamp       precise_origin_tstamp;
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp precise_origin_tstamp;
- 	uint8_t             suffix[];
- } __rte_packed_end;
- 
- struct __rte_packed_begin delay_req_msg {
--	struct ptp_header   hdr;
--	struct tstamp       origin_tstamp;
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp origin_tstamp;
- } __rte_packed_end;
- 
- struct __rte_packed_begin delay_resp_msg {
--	struct ptp_header    hdr;
--	struct tstamp        rx_tstamp;
--	struct port_id       req_port_id;
--	uint8_t              suffix[];
-+	struct rte_ptp_hdr       hdr;
-+	struct rte_ptp_timestamp rx_tstamp;
-+	struct rte_ptp_port_id   req_port_id;
-+	uint8_t             suffix[];
- } __rte_packed_end;
- 
--struct ptp_message {
-+struct __rte_packed_begin ptp_message {
- 	union __rte_packed_begin {
--		struct ptp_header          header;
--		struct sync_msg            sync;
--		struct delay_req_msg       delay_req;
--		struct follow_up_msg       follow_up;
--		struct delay_resp_msg      delay_resp;
-+		struct rte_ptp_hdr         header;
-+		struct sync_msg      sync;
-+		struct delay_req_msg delay_req;
-+		struct follow_up_msg follow_up;
-+		struct delay_resp_msg delay_resp;
- 	} __rte_packed_end;
--};
-+} __rte_packed_end;
- 
- struct ptpv2_time_receiver_ordinary {
- 	struct rte_mbuf *m;
-@@ -125,8 +83,8 @@ struct ptpv2_time_receiver_ordinary {
- 	struct timespec tstamp2;
- 	struct timespec tstamp3;
- 	struct timespec tstamp4;
--	struct clock_id client_clock_id;
--	struct clock_id transmitter_clock_id;
-+	uint8_t client_clock_id[8];
-+	uint8_t transmitter_clock_id[8];
- 	struct timeval new_adj;
- 	int64_t delta;
- 	uint16_t portid;
-@@ -272,14 +230,14 @@ print_clock_info(struct ptpv2_time_receiver_ordinary *ptp_data)
- 	struct timespec net_time, sys_time;
- 
- 	printf("time transmitter clock id: %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",
--		ptp_data->transmitter_clock_id.id[0],
--		ptp_data->transmitter_clock_id.id[1],
--		ptp_data->transmitter_clock_id.id[2],
--		ptp_data->transmitter_clock_id.id[3],
--		ptp_data->transmitter_clock_id.id[4],
--		ptp_data->transmitter_clock_id.id[5],
--		ptp_data->transmitter_clock_id.id[6],
--		ptp_data->transmitter_clock_id.id[7]);
-+		ptp_data->transmitter_clock_id[0],
-+		ptp_data->transmitter_clock_id[1],
-+		ptp_data->transmitter_clock_id[2],
-+		ptp_data->transmitter_clock_id[3],
-+		ptp_data->transmitter_clock_id[4],
-+		ptp_data->transmitter_clock_id[5],
-+		ptp_data->transmitter_clock_id[6],
-+		ptp_data->transmitter_clock_id[7]);
- 
- 	printf("\nT2 - time receiver clock.  %lds %ldns",
- 			(ptp_data->tstamp2.tv_sec),
-@@ -356,20 +314,21 @@ delta_eval(struct ptpv2_time_receiver_ordinary *ptp_data)
- static void
- parse_sync(struct ptpv2_time_receiver_ordinary *ptp_data, uint16_t rx_tstamp_idx)
- {
--	struct ptp_header *ptp_hdr;
-+	struct rte_ptp_hdr *ptp_hdr;
- 
--	ptp_hdr = rte_pktmbuf_mtod_offset(ptp_data->m, struct ptp_header *,
-+	ptp_hdr = rte_pktmbuf_mtod_offset(ptp_data->m, struct rte_ptp_hdr *,
- 					  sizeof(struct rte_ether_hdr));
--	ptp_data->seqID_SYNC = rte_be_to_cpu_16(ptp_hdr->seq_id);
-+	ptp_data->seqID_SYNC = rte_ptp_seq_id(ptp_hdr);
- 
- 	if (ptp_data->ptpset == 0) {
--		ptp_data->transmitter_clock_id = ptp_hdr->source_port_id.clock_id;
-+		memcpy(ptp_data->transmitter_clock_id,
-+		       ptp_hdr->source_port_id.clock_id, 8);
- 		ptp_data->ptpset = 1;
- 	}
- 
--	if (memcmp(&ptp_data->transmitter_clock_id,
--			&ptp_hdr->source_port_id.clock_id,
--			sizeof(struct clock_id)) == 0) {
-+	if (memcmp(ptp_data->transmitter_clock_id,
-+			ptp_hdr->source_port_id.clock_id,
-+			8) == 0) {
- 
- 		if (ptp_data->ptpset == 1)
- 			rte_eth_timesync_read_rx_timestamp(ptp_data->portid,
-@@ -386,12 +345,11 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- {
- 	struct rte_ether_hdr *eth_hdr;
- 	struct rte_ether_addr eth_addr;
--	struct ptp_header *ptp_hdr;
--	struct clock_id *client_clkid;
-+	struct rte_ptp_hdr *ptp_hdr;
- 	struct ptp_message *ptp_msg;
- 	struct delay_req_msg *req_msg;
- 	struct rte_mbuf *created_pkt;
--	struct tstamp *origin_tstamp;
-+	struct rte_ptp_timestamp *origin_tstamp;
- 	struct rte_ether_addr eth_multicast = ether_multicast;
- 	size_t pkt_size;
- 	int wait_us;
-@@ -399,22 +357,22 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- 	int ret;
- 
- 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
--	ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
-+	ptp_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ptp_hdr *,
- 					  sizeof(struct rte_ether_hdr));
--	if (memcmp(&ptp_data->transmitter_clock_id,
--			&ptp_hdr->source_port_id.clock_id,
--			sizeof(struct clock_id)) != 0)
-+	if (memcmp(ptp_data->transmitter_clock_id,
-+			ptp_hdr->source_port_id.clock_id,
-+			8) != 0)
- 		return;
- 
--	ptp_data->seqID_FOLLOWUP = rte_be_to_cpu_16(ptp_hdr->seq_id);
-+	ptp_data->seqID_FOLLOWUP = rte_ptp_seq_id(ptp_hdr);
- 	ptp_msg = rte_pktmbuf_mtod_offset(m, struct ptp_message *,
- 					  sizeof(struct rte_ether_hdr));
- 
- 	origin_tstamp = &ptp_msg->follow_up.precise_origin_tstamp;
--	ptp_data->tstamp1.tv_nsec = ntohl(origin_tstamp->ns);
-+	ptp_data->tstamp1.tv_nsec = rte_be_to_cpu_32(origin_tstamp->nanoseconds);
- 	ptp_data->tstamp1.tv_sec =
--		((uint64_t)ntohl(origin_tstamp->sec_lsb)) |
--		(((uint64_t)ntohs(origin_tstamp->sec_msb)) << 32);
-+		((uint64_t)rte_be_to_cpu_32(origin_tstamp->seconds_lo)) |
-+		(((uint64_t)rte_be_to_cpu_16(origin_tstamp->seconds_hi)) << 32);
- 
- 	if (ptp_data->seqID_FOLLOWUP == ptp_data->seqID_SYNC) {
- 		ret = rte_eth_macaddr_get(ptp_data->portid, &eth_addr);
-@@ -441,34 +399,30 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- 		/* Set multicast address 01-1B-19-00-00-00. */
- 		rte_ether_addr_copy(&eth_multicast, &eth_hdr->dst_addr);
- 
--		eth_hdr->ether_type = htons(PTP_PROTOCOL);
-+		eth_hdr->ether_type = htons(RTE_ETHER_TYPE_1588);
- 		req_msg = rte_pktmbuf_mtod_offset(created_pkt,
- 			struct delay_req_msg *, sizeof(struct
- 			rte_ether_hdr));
- 
--		req_msg->hdr.seq_id = htons(ptp_data->seqID_SYNC);
--		req_msg->hdr.msg_type = DELAY_REQ;
--		req_msg->hdr.ver = 2;
--		req_msg->hdr.control = 1;
--		req_msg->hdr.log_message_interval = 127;
--		req_msg->hdr.message_length =
-+		req_msg->hdr.sequence_id = htons(ptp_data->seqID_SYNC);
-+		req_msg->hdr.msg_type = RTE_PTP_MSGTYPE_DELAY_REQ;
-+		req_msg->hdr.version = 2;
-+		req_msg->hdr.msg_length =
- 			htons(sizeof(struct delay_req_msg));
- 		req_msg->hdr.domain_number = ptp_hdr->domain_number;
- 
- 		/* Set up clock id. */
--		client_clkid =
--			&req_msg->hdr.source_port_id.clock_id;
--
--		client_clkid->id[0] = eth_hdr->src_addr.addr_bytes[0];
--		client_clkid->id[1] = eth_hdr->src_addr.addr_bytes[1];
--		client_clkid->id[2] = eth_hdr->src_addr.addr_bytes[2];
--		client_clkid->id[3] = 0xFF;
--		client_clkid->id[4] = 0xFE;
--		client_clkid->id[5] = eth_hdr->src_addr.addr_bytes[3];
--		client_clkid->id[6] = eth_hdr->src_addr.addr_bytes[4];
--		client_clkid->id[7] = eth_hdr->src_addr.addr_bytes[5];
--
--		ptp_data->client_clock_id = *client_clkid;
-+		ptp_data->client_clock_id[0] = eth_hdr->src_addr.addr_bytes[0];
-+		ptp_data->client_clock_id[1] = eth_hdr->src_addr.addr_bytes[1];
-+		ptp_data->client_clock_id[2] = eth_hdr->src_addr.addr_bytes[2];
-+		ptp_data->client_clock_id[3] = 0xFF;
-+		ptp_data->client_clock_id[4] = 0xFE;
-+		ptp_data->client_clock_id[5] = eth_hdr->src_addr.addr_bytes[3];
-+		ptp_data->client_clock_id[6] = eth_hdr->src_addr.addr_bytes[4];
-+		ptp_data->client_clock_id[7] = eth_hdr->src_addr.addr_bytes[5];
-+
-+		memcpy(req_msg->hdr.source_port_id.clock_id,
-+		       ptp_data->client_clock_id, 8);
- 
- 		/* Enable flag for hardware timestamping. */
- 		created_pkt->ol_flags |= RTE_MBUF_F_TX_IEEE1588_TMST;
-@@ -534,21 +488,21 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp_data)
- {
- 	struct rte_mbuf *m = ptp_data->m;
- 	struct ptp_message *ptp_msg;
--	struct tstamp *rx_tstamp;
-+	struct rte_ptp_timestamp *rx_tstamp;
- 	uint16_t seq_id;
- 
- 	ptp_msg = rte_pktmbuf_mtod_offset(m, struct ptp_message *,
- 					  sizeof(struct rte_ether_hdr));
--	seq_id = rte_be_to_cpu_16(ptp_msg->delay_resp.hdr.seq_id);
--	if (memcmp(&ptp_data->client_clock_id,
--		   &ptp_msg->delay_resp.req_port_id.clock_id,
--		   sizeof(struct clock_id)) == 0) {
-+	seq_id = rte_ptp_seq_id(&ptp_msg->delay_resp.hdr);
-+	if (memcmp(ptp_data->client_clock_id,
-+		   ptp_msg->delay_resp.req_port_id.clock_id,
-+		   8) == 0) {
- 		if (seq_id == ptp_data->seqID_FOLLOWUP) {
- 			rx_tstamp = &ptp_msg->delay_resp.rx_tstamp;
--			ptp_data->tstamp4.tv_nsec = ntohl(rx_tstamp->ns);
-+			ptp_data->tstamp4.tv_nsec = rte_be_to_cpu_32(rx_tstamp->nanoseconds);
- 			ptp_data->tstamp4.tv_sec =
--				((uint64_t)ntohl(rx_tstamp->sec_lsb)) |
--				(((uint64_t)ntohs(rx_tstamp->sec_msb)) << 32);
-+				((uint64_t)rte_be_to_cpu_32(rx_tstamp->seconds_lo)) |
-+				(((uint64_t)rte_be_to_cpu_16(rx_tstamp->seconds_hi)) << 32);
- 
- 			/* Evaluate the delta for adjustment. */
- 			ptp_data->delta = delta_eval(ptp_data);
-@@ -575,27 +529,29 @@ parse_drsp(struct ptpv2_time_receiver_ordinary *ptp_data)
- /* Parse ptp frames. 8< */
- static void
- parse_ptp_frames(uint16_t portid, struct rte_mbuf *m) {
--	struct ptp_header *ptp_hdr;
-+	struct rte_ptp_hdr *ptp_hdr;
- 	struct rte_ether_hdr *eth_hdr;
- 	uint16_t eth_type;
-+	uint8_t msg_type;
- 
- 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
- 	eth_type = rte_be_to_cpu_16(eth_hdr->ether_type);
- 
--	if (eth_type == PTP_PROTOCOL) {
-+	if (eth_type == RTE_ETHER_TYPE_1588) {
- 		ptp_data.m = m;
- 		ptp_data.portid = portid;
--		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
-+		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct rte_ptp_hdr *,
- 						  sizeof(struct rte_ether_hdr));
- 
--		switch (ptp_hdr->msg_type) {
--		case SYNC:
-+		msg_type = rte_ptp_msg_type(ptp_hdr);
-+		switch (msg_type) {
-+		case RTE_PTP_MSGTYPE_SYNC:
- 			parse_sync(&ptp_data, m->timesync);
- 			break;
--		case FOLLOW_UP:
-+		case RTE_PTP_MSGTYPE_FOLLOW_UP:
- 			parse_fup(&ptp_data);
- 			break;
--		case DELAY_RESP:
-+		case RTE_PTP_MSGTYPE_DELAY_RESP:
- 			parse_drsp(&ptp_data);
- 			print_clock_info(&ptp_data);
- 			break;
+The simplest fix I could find (1/3, 3/3) is to drop rsvd_tbl8s
+and use the pool counters already maintained by alloc/free:
+tbl8_pool_pos in trie, cur_tbl8s in dir24_8. The DQ reclaim
+inside tbl8_alloc() is moved into the pre-check.
+
+I am not sure I understood the original intent of keeping
+rsvd_tbl8s separate from the pool counters. In dir24_8 the two
+mirror each other 1:1 and rsvd_tbl8s looks redundant; in trie,
+depth_diff gives it a worst-case-reservation flavor but the
+recomputation from the RIB is exactly what makes it drift. If
+there was a deliberate reason, please point it out.
+
+Patch 3/3 is a no-op cleanup that aligns dir24_8 with the trie
+pattern.
+
+Maxime Leroy (3):
+  fib6: fix tbl8 reservation drift in trie
+  test/fib6: add reproducer for tbl8 reservation drift
+  fib: drop redundant tbl8 reservation counter
+
+ app/test/test_fib6.c | 83 ++++++++++++++++++++++++++++++++++++++++++++
+ lib/fib/dir24_8.c    | 31 ++++++-----------
+ lib/fib/dir24_8.h    |  1 -
+ lib/fib/trie.c       | 23 ++++++------
+ lib/fib/trie.h       |  3 +-
+ 5 files changed, 104 insertions(+), 37 deletions(-)
+
 -- 
-2.53.0
+2.43.0
 
