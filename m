@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBA8CD3427
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 09:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33B1ACD3446
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 09:51:11 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E5D464066B;
-	Thu,  7 May 2026 11:50:53 +0200 (CEST)
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com
- [209.85.128.54]) by mails.dpdk.org (Postfix) with ESMTP id 41F2D4065E
- for <dev@dpdk.org>; Thu,  7 May 2026 11:50:52 +0200 (CEST)
-Received: by mail-wm1-f54.google.com with SMTP id
- 5b1f17b1804b1-488a88aeec9so7857385e9.2
- for <dev@dpdk.org>; Thu, 07 May 2026 02:50:52 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id BC5AE40670;
+	Thu,  7 May 2026 11:50:54 +0200 (CEST)
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com
+ [209.85.128.52]) by mails.dpdk.org (Postfix) with ESMTP id 0C8D54066F
+ for <dev@dpdk.org>; Thu,  7 May 2026 11:50:54 +0200 (CEST)
+Received: by mail-wm1-f52.google.com with SMTP id
+ 5b1f17b1804b1-48374014a77so7509295e9.3
+ for <dev@dpdk.org>; Thu, 07 May 2026 02:50:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1778147452; x=1778752252; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1778147453; x=1778752253; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Ljawef+pOQJm2kKUZk21NBvEZpa0AHaVlbp2VUbBOqM=;
- b=fV6XTE3mvJKGXBsIarXXxUvtDuwAUdt6vZZkrbccuCDaNMtLw+cdJs6719qng/fY2U
- VF5KHQeFPnuV8FR9xgiXCIJOtqn7NKeuySGMuO5Ztcl7Tcs/9fdIClPLrqR624I4UlZR
- 9N2KjVE3s9IAt2znNRY2FwWcUol5TK8ynz7dalwEeAA3y2i7g56Ut3Uoixnc3jlsyZGz
- zzqYpSJEev1oCwQMNqNt/ywp+2NR6kkTxnHH/AI3z0820Okga3Siyv47iSwfyD4recdg
- u1nYYHzaf4SUpGZnDphPyBYeS8FMeG3IrEo2P2INUGUuoBoteR6P2tzUUiDOs7ApQ8g5
- lHXQ==
+ bh=b7fPm5rv3HY+O1xM7vRfdhHVmzrvNFpSqX+nJ/ltryo=;
+ b=LCpvaZvuUGFOaxrhDe8+lJ7hMvKy8LBUbfbaPUyF7HYa3Dq1/W89He6/QRdMyZc/k1
+ ZntyJHwRbwD0Y7Jf8UU7DuCorT4JE1l0/5MZrPc2iRtCU4ukkqc4Mq2SbA5nlF2YxxAt
+ dshR3KrZhTaqou8HHL/C8X19QSru/gJAOiIAqmPBz57L/kRToMmShpXmAMrHKyGRlyT6
+ 4nXIB50jPEp66cV7HnE+qEV6ukvI4f/tv8am4vWUDIF7VpJLShFyAaxco1YCje1sh9yq
+ nhMTtDPaM0FcNera0IHWZYX+SEUmZ2B3DNv4wSujtO8UJ2Yy+iMa/551w3QTpRPHcJqr
+ Z8hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778147452; x=1778752252;
+ d=1e100.net; s=20251104; t=1778147453; x=1778752253;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:sender:x-gm-gg
  :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=Ljawef+pOQJm2kKUZk21NBvEZpa0AHaVlbp2VUbBOqM=;
- b=j3QJg9TT7UcurL+SZG2EHr6Em7+B4+coRWGrpJ2rDU4udJEgZ6nv/HS+u1v3I19Ddb
- dV1yz6m/+LY7ytZLBQt+Yk3/qdSivsQ50329vW20or1osslyEX0iITtjwIJF/u4B6PVf
- pVejjiFe5ad+msdtNPDra4vOh+F2VWZtPg7W3VPcFCPXmLv5bpyMJwUUuiqzxMXlIZZK
- MvBPxHSRsT9SbVUwcwuCZFhKF6nf0zfBkUJkuETZV6zEjK3VBGw/AtdZl5/RppwoCBPX
- y4OXKxw3aC3qx7Hs5v7SfwC/DqfEsqt1Kvj8trpM3HKZagpd3v6i+OPrCn6RXvwkmZBJ
- JbIg==
-X-Gm-Message-State: AOJu0YwH29Nlpt3L5rklIGZaHFmOuvIuGf2YbUs1yyGJOaVTkNuMrhVj
- 9NeZxAMe8igt6Cg5gWMRYjndSqObuarnB8e0I+PrDTs/banaktm//bmB
-X-Gm-Gg: AeBDietVcO3zPGtqYOi95jAIRQJUeCIOWj4TSrLyuvr3VDZ0JPEGs8HFiKGgllcRiMB
- p3To/RKFrzb/Qfa5h3GVJU5JhryATLS6XisMib8frkDoelLPxVpvHKRQP4N0iCTw5NR0jfW9bpe
- ojsA8cF5Tdz67GX1taWoD5hdirYpbogIon8CiZJ1EKpMh5TvVX6n5be12BYTHJm0ke4PtYU8JP/
- DIPkSK2a2v22sPC05REz/MWmB8bN5aMEdRZSGK2IMg1y3N+fAufBgJ3BnR12w4bV8Lz6uX2PzSt
- Lc9SudsqbUMPa0dBSpST144oFeijdL5r4yhKczugpCh+Nr/FvVu8tywJS0nngAnaTndma8qerxO
- vuDONIkYbK3CHlr7tBvH5NbfAhzMxjijVNgPWbx6ZTjB2Bsby/19+Th6FL3gcn35CRZdJLFHarh
- uTvLzIOq1pk2O0kiE0H5Wieu45yjirX8OUroDFabGHoL1YdhU/zmqvbOOAh2ORlhoUA9Grr8TM3
- A==
-X-Received: by 2002:a05:600c:1d18:b0:48a:5574:3a5b with SMTP id
- 5b1f17b1804b1-48e51f45c84mr117965245e9.27.1778147451368; 
- Thu, 07 May 2026 02:50:51 -0700 (PDT)
+ bh=b7fPm5rv3HY+O1xM7vRfdhHVmzrvNFpSqX+nJ/ltryo=;
+ b=nArEOFw8F2/7wosaRdSyQvKNkjdyMcYp7pwY/b4dgfWnIC0V4SlBF2Gv0hMKRxlw6z
+ y9s6zA5tUZ4b4smxBN+mGgHlcbZ9ZMZQ10I+E16Bq7VjtVP8gUMJqCphnWlJnQnvB5LO
+ XiKk5D5H9oDSdbqUNz3vsIFdUaURvVBkygjk2dZwkHJEoWMJcLD24muJPzx+LtLhknQn
+ kQQcCn62bQLnhI5LX/XBcPlE4hwKt2g1qk24IX2/q5jdEPccLCpW1Bkl7sYLZrrud2PX
+ 380FYBJnjodpmAlwHS9Sp6xptmXXO0BlSr14DgTP1M2n8WPgVpngzIAC7cMfgZN/ZuwY
+ f7+g==
+X-Gm-Message-State: AOJu0YxGmmF1YCgdP5RJ+XE3uvGwqrLXj8wOp7IJbqLyh8BkVSkVabtM
+ 9Zfap0BCSGUI9VqBFxF7ZZIzhQFf7ZJQFJyKEIcIVPegzozwRpujRu9a
+X-Gm-Gg: AeBDiesRBKsjD2GD4HOTpJuH3XvWhXUHOBcXmUL3EkkLzEgc3X+CkV6nO/J18xTjZmy
+ o7NinAH6OLXuqdTwX+pOjx+Nhpu/Xnsi4iF5brTHz6X7KvmP3lvvygBbYNvD+YFR6QWl+UWVUvJ
+ GKLLAvYEXvssVTnea/sJCmwH7w76f59bK1hZFLJreLd+sHWETRYVROc4FXKuN/9vOrngaBm8Igz
+ uhPjPIAbLE0eiV/YsTnsV1RyrXtKXc5zPd9UrJwZD9W+T4kHvXRC6TgnbJn70ybh4+4Db8/fZvy
+ SiRKohCF43vATtCu8kpf4tjfzqhwmpn3nPgEEGAwDTeTibzQH8l96y/e/hoLALb6oO4xMPcvgvm
+ wkCiZLuuYQtgTt6/mxdctXPhyxzmovZ+e0JYf82CuDfKC4WWYJvetevNiHommGXkZ4AuL98H0mz
+ X3a/6mj6caqchL34r7gQ61elbIRKhRsgnfMAwnQKTC40NOaQ8byEXihzhEeZTsBCc=
+X-Received: by 2002:a05:600c:c494:b0:489:e126:b757 with SMTP id
+ 5b1f17b1804b1-48e51f41be6mr112929035e9.25.1778147453412; 
+ Thu, 07 May 2026 02:50:53 -0700 (PDT)
 Received: from freepad.iliad.local (free-mobile.vlq16.iliad.fr. [213.36.7.11])
  by smtp.gmail.com with ESMTPSA id
- 5b1f17b1804b1-48e538b26a3sm207209465e9.9.2026.05.07.02.50.50
+ ffacd0b85a97d-45052483166sm18295273f8f.7.2026.05.07.02.50.52
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Thu, 07 May 2026 02:50:50 -0700 (PDT)
+ Thu, 07 May 2026 02:50:52 -0700 (PDT)
 Sender: Maxime Leroy <maxime.leroys@gmail.com>
 From: Maxime Leroy <maxime@leroys.fr>
 To: Vladimir Medvedkin <vladimir.medvedkin@intel.com>
 Cc: dev@dpdk.org,
 	Maxime Leroy <maxime@leroys.fr>
-Subject: [RFC 2/3] test/fib6: add reproducer for tbl8 reservation drift
-Date: Thu,  7 May 2026 11:50:42 +0200
-Message-ID: <309bfce729c90a9d78afe0ed8cd6ce7e2d62598e.1778146229.git.maxime@leroys.fr>
+Subject: [RFC 3/3] fib: drop redundant tbl8 reservation counter
+Date: Thu,  7 May 2026 11:50:43 +0200
+Message-ID: <f0f08a796e1554f9cfa58bd94ad5deb7e732098d.1778146229.git.maxime@leroys.fr>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1778146229.git.maxime@leroys.fr>
 References: <cover.1778146229.git.maxime@leroys.fr>
@@ -81,132 +80,104 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Regression test for the rsvd_tbl8s drift bug fixed in
-"fib6: fix tbl8 reservation drift in trie".
+In dir24_8, rsvd_tbl8s mirrors cur_tbl8s: both are bumped when
+depth > 24 and no /24+ cover exists, and decremented under the
+same condition. Removing rsvd_tbl8s leaves cur_tbl8s as the
+single source of truth for the pre-check.
 
-The test installs a /28 parent and three /48 children, deletes the
-/28 parent while children are alive, then deletes each /48 child.
-One asymmetric cycle wraps rsvd_tbl8s past zero (net -2 per cycle).
-
-The probe is a /28 ADD (depth_diff=1) so UINT32_MAX-1 + 1 exceeds
-the pool size without further uint32_t overflow.
-
-Without the fix, the final ADD /28 fails with -ENOSPC.
-With the fix, it succeeds.
+Move the DQ reclaim retry from tbl8_alloc() into the pre-check,
+mirroring the layout used by the trie path. Behavior is unchanged
+for non-DQ modes; in DQ mode the pre-check now performs the
+reclaim that the in-allocator retry used to perform.
 
 Signed-off-by: Maxime Leroy <maxime@leroys.fr>
 ---
- app/test/test_fib6.c | 83 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 83 insertions(+)
+ lib/fib/dir24_8.c | 31 ++++++++++---------------------
+ lib/fib/dir24_8.h |  1 -
+ 2 files changed, 10 insertions(+), 22 deletions(-)
 
-diff --git a/app/test/test_fib6.c b/app/test/test_fib6.c
-index fffb590dbf..85a6c0abc3 100644
---- a/app/test/test_fib6.c
-+++ b/app/test/test_fib6.c
-@@ -25,6 +25,7 @@ static int32_t test_get_invalid(void);
- static int32_t test_lookup(void);
- static int32_t test_invalid_rcu(void);
- static int32_t test_fib_rcu_sync_rw(void);
-+static int32_t test_drift(void);
+diff --git a/lib/fib/dir24_8.c b/lib/fib/dir24_8.c
+index 489d2ef427..80215b93b0 100644
+--- a/lib/fib/dir24_8.c
++++ b/lib/fib/dir24_8.c
+@@ -207,12 +207,6 @@ tbl8_alloc(struct dir24_8_tbl *dp, uint64_t nh)
+ 	uint8_t	*tbl8_ptr;
  
- #define MAX_ROUTES	(1 << 16)
- /** Maximum number of tbl8 for 2-byte entries */
-@@ -599,6 +600,87 @@ test_fib_rcu_sync_rw(void)
- 	return status == 0 ? TEST_SUCCESS : TEST_FAILED;
- }
+ 	tbl8_idx = tbl8_get_idx(dp);
+-
+-	/* If there are no tbl8 groups try to reclaim one. */
+-	if (unlikely(tbl8_idx == -ENOSPC && dp->dq &&
+-			!rte_rcu_qsbr_dq_reclaim(dp->dq, 1, NULL, NULL, NULL)))
+-		tbl8_idx = tbl8_get_idx(dp);
+-
+ 	if (tbl8_idx < 0)
+ 		return tbl8_idx;
+ 	tbl8_ptr = (uint8_t *)dp->tbl8 +
+@@ -504,9 +498,14 @@ dir24_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
+ 			tmp = rte_rib_get_nxt(rib, ip, 24, NULL,
+ 				RTE_RIB_GET_NXT_COVER);
+ 			if ((tmp == NULL) &&
+-				(dp->rsvd_tbl8s >= dp->number_tbl8s))
+-				return -ENOSPC;
+-
++			    (dp->cur_tbl8s >= dp->number_tbl8s)) {
++				/* Reclaim deferred tbl8s before failing. */
++				if (dp->dq != NULL)
++					rte_rcu_qsbr_dq_reclaim(dp->dq, 1,
++						NULL, NULL, NULL);
++				if (dp->cur_tbl8s >= dp->number_tbl8s)
++					return -ENOSPC;
++			}
+ 		}
+ 		node = rte_rib_insert(rib, ip, depth);
+ 		if (node == NULL)
+@@ -516,16 +515,13 @@ dir24_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
+ 		if (parent != NULL) {
+ 			rte_rib_get_nh(parent, &par_nh);
+ 			if (par_nh == next_hop)
+-				goto successfully_added;
++				return 0;
+ 		}
+ 		ret = modify_fib(dp, rib, ip, depth, next_hop);
+ 		if (ret != 0) {
+ 			rte_rib_remove(rib, ip, depth);
+ 			return ret;
+ 		}
+-successfully_added:
+-		if ((depth > 24) && (tmp == NULL))
+-			dp->rsvd_tbl8s++;
+ 		return 0;
+ 	case RTE_FIB_DEL:
+ 		if (node == NULL)
+@@ -539,15 +535,8 @@ dir24_8_modify(struct rte_fib *fib, uint32_t ip, uint8_t depth,
+ 				ret = modify_fib(dp, rib, ip, depth, par_nh);
+ 		} else
+ 			ret = modify_fib(dp, rib, ip, depth, dp->def_nh);
+-		if (ret == 0) {
++		if (ret == 0)
+ 			rte_rib_remove(rib, ip, depth);
+-			if (depth > 24) {
+-				tmp = rte_rib_get_nxt(rib, ip, 24, NULL,
+-					RTE_RIB_GET_NXT_COVER);
+-				if (tmp == NULL)
+-					dp->rsvd_tbl8s--;
+-			}
+-		}
+ 		return ret;
+ 	default:
+ 		break;
+diff --git a/lib/fib/dir24_8.h b/lib/fib/dir24_8.h
+index b343b5d686..502540173c 100644
+--- a/lib/fib/dir24_8.h
++++ b/lib/fib/dir24_8.h
+@@ -30,7 +30,6 @@
  
-+/*
-+ * Reproducer for the rsvd_tbl8s drift bug. depth_diff used to maintain
-+ * rsvd_tbl8s is computed from the current RIB state, so it is not
-+ * invariant between the ADD of a prefix and its later DEL when a
-+ * covering parent prefix is removed in between.
-+ *
-+ * Layout: one /28 parent (fcde::/28) and three /48 siblings under it
-+ * (fcde:0:6000::/48, fcde:1:6000::/48, fcde:2:6000::/48). The second
-+ * hextet's high 12 bits are zero, so the three /48 IPs all fall inside
-+ * the /28.
-+ *
-+ * One asymmetric sequence is enough to wrap the counter:
-+ *   ADD /28                                  rsvd_tbl8s += 1
-+ *   ADD /48 child_0,1,2 (with /28 parent)    rsvd_tbl8s += 2 each (+6)
-+ *   DEL /28 (sibling /48 found)              rsvd_tbl8s -= 0
-+ *   DEL /48 child_0,1,2 (no parent left)     rsvd_tbl8s -= 3 each (-9)
-+ *
-+ * Net: -2. Starting from 0, rsvd_tbl8s wraps to UINT32_MAX-1. The
-+ * next ADD of a prefix longer than /24 then unconditionally fails the
-+ * pre-check (rsvd_tbl8s + depth_diff > number_tbl8s), even though the
-+ * pool is empty.
-+ */
-+static int32_t
-+test_drift(void)
-+{
-+	struct rte_fib6_conf config = { 0 };
-+	struct rte_fib6 *fib;
-+	struct rte_ipv6_addr parent =
-+		RTE_IPV6(0xfcde, 0, 0, 0, 0, 0, 0, 0);
-+	struct rte_ipv6_addr child[3] = {
-+		RTE_IPV6(0xfcde, 0, 0x6000, 0, 0, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 1, 0x6000, 0, 0, 0, 0, 0),
-+		RTE_IPV6(0xfcde, 2, 0x6000, 0, 0, 0, 0, 0),
-+	};
-+	unsigned int c;
-+	int ret;
-+
-+	config.max_routes = 1024;
-+	config.rib_ext_sz = 0;
-+	config.default_nh = 0;
-+	config.type = RTE_FIB6_TRIE;
-+	config.trie.nh_sz = RTE_FIB6_TRIE_2B;
-+	config.trie.num_tbl8 = 256;
-+
-+	fib = rte_fib6_create(__func__, SOCKET_ID_ANY, &config);
-+	RTE_TEST_ASSERT(fib != NULL, "Failed to create FIB\n");
-+
-+	ret = rte_fib6_add(fib, &parent, 28, 0xa);
-+	RTE_TEST_ASSERT(ret == 0, "ADD /28 failed (ret=%d)\n", ret);
-+
-+	for (c = 0; c < 3; c++) {
-+		ret = rte_fib6_add(fib, &child[c], 48, 0xb + c);
-+		RTE_TEST_ASSERT(ret == 0,
-+			"ADD /48 child %u failed (ret=%d)\n", c, ret);
-+	}
-+
-+	ret = rte_fib6_delete(fib, &parent, 28);
-+	RTE_TEST_ASSERT(ret == 0, "DEL /28 failed (ret=%d)\n", ret);
-+
-+	for (c = 0; c < 3; c++) {
-+		ret = rte_fib6_delete(fib, &child[c], 48);
-+		RTE_TEST_ASSERT(ret == 0,
-+			"DEL /48 child %u failed (ret=%d)\n", c, ret);
-+	}
-+
-+	/*
-+	 * Pre-fix: -ENOSPC because rsvd_tbl8s wrapped to UINT32_MAX-1.
-+	 * Post-fix: succeeds; the pre-check uses tbl8_pool_pos which
-+	 * accurately reflects the (empty) pool.
-+	 */
-+	ret = rte_fib6_add(fib, &parent, 28, 0xe);
-+	RTE_TEST_ASSERT(ret == 0,
-+		"Fresh ADD /28 spuriously failed (ret=%d)\n", ret);
-+
-+	ret = rte_fib6_delete(fib, &parent, 28);
-+	RTE_TEST_ASSERT(ret == 0, "Final DEL /28 failed (ret=%d)\n", ret);
-+
-+	rte_fib6_free(fib);
-+	return TEST_SUCCESS;
-+}
-+
- static struct unit_test_suite fib6_fast_tests = {
- 	.suite_name = "fib6 autotest",
- 	.setup = NULL,
-@@ -611,6 +693,7 @@ static struct unit_test_suite fib6_fast_tests = {
- 	TEST_CASE(test_lookup),
- 	TEST_CASE(test_invalid_rcu),
- 	TEST_CASE(test_fib_rcu_sync_rw),
-+	TEST_CASE(test_drift),
- 	TEST_CASES_END()
- 	}
- };
+ struct dir24_8_tbl {
+ 	uint32_t	number_tbl8s;	/**< Total number of tbl8s */
+-	uint32_t	rsvd_tbl8s;	/**< Number of reserved tbl8s */
+ 	uint32_t	cur_tbl8s;	/**< Current number of tbl8s */
+ 	enum rte_fib_dir24_8_nh_sz	nh_sz;	/**< Size of nexthop entry */
+ 	/* RCU config. */
 -- 
 2.43.0
 
