@@ -2,29 +2,29 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37606CD342C
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 02:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E36D5CD3436
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 02:43:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1A91040B9B;
-	Thu,  7 May 2026 04:42:51 +0200 (CEST)
-Received: from canpmsgout01.his.huawei.com (canpmsgout01.his.huawei.com
- [113.46.200.216])
- by mails.dpdk.org (Postfix) with ESMTP id 7B4C440658
+	by mails.dpdk.org (Postfix) with ESMTP id 16EA240A84;
+	Thu,  7 May 2026 04:42:52 +0200 (CEST)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id D76AE40666
  for <dev@dpdk.org>; Thu,  7 May 2026 04:42:38 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=SUBh+NbV+kh+n7B52a80hwrIQ3JvcvIMl7N1ygXpHIU=;
- b=bKFGiqUgjNcWsHKjQPx0h9G38mOBLpT4K+KfyDNTktSx9Ay//BGVtPSEjEWNkFYSdjXyWS3P5
- lp/TKrPdp6tys+aDg3SmWFQct980ulVWDM8Z3UooTDUo58eb7fy7QQnp6WF1lVpBrpX/LnXEPEz
- SAayTXWRTDeZK59n/zN7/b8=
-Received: from mail.maildlp.com (unknown [172.19.163.104])
- by canpmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4g9xDS166yz1T4Hh;
- Thu,  7 May 2026 10:35:04 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
- by mail.maildlp.com (Postfix) with ESMTPS id 9DE604056A;
+ bh=ZudQBtFyqrUTVHJVNbynTh/V/brcOMeSBCwpZfMKc5o=;
+ b=odirzVGwTFrpZ2xehyOXPMKv2gOcKaCbwtYIbZH1ISZ24jHyOB58ZB7H10+uZI8eWXDC+1A6o
+ tZ1KpVK9SZMo+tKpCm3Jx/Vq9uIzKyrS3P7+Ag8QMHY9X+jOumRuH2ZPO2JSfmO8RQ7luwcp2A8
+ GtGhxKxPHkYtfBJaO/FjDSE=
+Received: from mail.maildlp.com (unknown [172.19.163.163])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4g9xDR2RfZzLlVD;
+ Thu,  7 May 2026 10:35:03 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+ by mail.maildlp.com (Postfix) with ESMTPS id 29B334048B;
  Thu,  7 May 2026 10:42:36 +0800 (CST)
 Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
  15.2.1544.11; Thu, 7 May 2026 10:42:36 +0800
 Received: from localhost.localdomain (10.50.163.32) by
@@ -36,9 +36,9 @@ To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>,
  <stephen@networkplumber.org>
 CC: <dev@dpdk.org>, <thomas@monjalon.net>, <fengchengwen@huawei.com>,
  <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, <lihuisong@huawei.com>
-Subject: [PATCH V2 14/15] power: allow the service core to config power QoS
-Date: Thu, 7 May 2026 10:42:29 +0800
-Message-ID: <20260507024230.1198111-15-lihuisong@huawei.com>
+Subject: [PATCH V2 13/15] power/kvm_vm: remove the verification of lcore ID
+Date: Thu, 7 May 2026 10:42:28 +0800
+Message-ID: <20260507024230.1198111-14-lihuisong@huawei.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20260507024230.1198111-1-lihuisong@huawei.com>
 References: <20260416030612.2379407-1-lihuisong@huawei.com>
@@ -62,42 +62,42 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The service core thread can use power QoS API.
-So allow these cores to config it.
+Now the lcore ID has been verified in framework API, so remove
+the verification in driver.
 
 Signed-off-by: Huisong Li <lihuisong@huawei.com>
 ---
- lib/power/rte_power_qos.c | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ drivers/power/kvm_vm/kvm_vm.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/lib/power/rte_power_qos.c b/lib/power/rte_power_qos.c
-index be230d1c50..f6630b08f7 100644
---- a/lib/power/rte_power_qos.c
-+++ b/lib/power/rte_power_qos.c
-@@ -27,10 +27,7 @@ rte_power_qos_set_cpu_resume_latency(uint16_t lcore_id, int latency)
- 	FILE *f;
+diff --git a/drivers/power/kvm_vm/kvm_vm.c b/drivers/power/kvm_vm/kvm_vm.c
+index 133d1f0882..e8b454bb55 100644
+--- a/drivers/power/kvm_vm/kvm_vm.c
++++ b/drivers/power/kvm_vm/kvm_vm.c
+@@ -24,11 +24,6 @@ power_kvm_vm_check_supported(void)
+ int
+ power_kvm_vm_init(unsigned int lcore_id)
+ {
+-	if (!rte_lcore_is_eal_managed(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is invalid.", lcore_id);
+-		return -1;
+-	}
+-
+ 	pkt[lcore_id].command = RTE_POWER_CPU_POWER;
+ 	pkt[lcore_id].resource_id = lcore_id;
+ 	return guest_channel_host_connect(FD_PATH, lcore_id);
+@@ -73,11 +68,6 @@ send_msg(unsigned int lcore_id, uint32_t scale_direction)
+ {
  	int ret;
  
--	if (!rte_lcore_is_enabled(lcore_id)) {
--		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
--		return -EINVAL;
+-	if (!rte_lcore_is_eal_managed(lcore_id)) {
+-		POWER_LOG(ERR, "lcore id %u is invalid.", lcore_id);
+-		return -1;
 -	}
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -EINVAL);
- 	ret = power_get_lcore_mapped_cpu_id(lcore_id, &cpu_id);
- 	if (ret != 0)
- 		return ret;
-@@ -82,10 +79,7 @@ rte_power_qos_get_cpu_resume_latency(uint16_t lcore_id)
- 	FILE *f;
- 	int ret;
- 
--	if (!rte_lcore_is_enabled(lcore_id)) {
--		POWER_LOG(ERR, "lcore id %u is not enabled", lcore_id);
--		return -EINVAL;
--	}
-+	RTE_POWER_VALID_LCOREID_OR_ERR_RET(lcore_id, -EINVAL);
- 	ret = power_get_lcore_mapped_cpu_id(lcore_id, &cpu_id);
- 	if (ret != 0)
- 		return ret;
+-
+ 	pkt[lcore_id].unit = scale_direction;
+ 	ret = guest_channel_send_msg(&pkt[lcore_id], lcore_id);
+ 	if (ret == 0)
 -- 
 2.33.0
 
