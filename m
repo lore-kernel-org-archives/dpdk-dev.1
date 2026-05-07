@@ -2,154 +2,141 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E138CD343B
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 08:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45995CD3442
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 08:11:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 246AE40265;
-	Thu,  7 May 2026 10:08:47 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 31D6440265;
+	Thu,  7 May 2026 10:11:13 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
- by mails.dpdk.org (Postfix) with ESMTP id D1CAA4025A
- for <dev@dpdk.org>; Thu,  7 May 2026 10:08:44 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 0E89E4025A
+ for <dev@dpdk.org>; Thu,  7 May 2026 10:11:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1778141325; x=1809677325;
- h=message-id:date:subject:to:cc:references:from:
- in-reply-to:content-transfer-encoding:mime-version;
- bh=fu61aYaIJKOINTjeAY3AgDqa4mGjlK5IBnny1vZQWNs=;
- b=QCEBQp0mf+u8ia0yC58CeTNsbiuABiwzvMoBHXT+/Ui5+qVrEA6Wvywo
- VHzFS5IOcW4VoZl9N1B3Pxd7pu/7x55KK/ONYT+JSXocN1+25LF5+P35J
- TLMo9tPSudGoPwFVXJV2TOR2HwNdBBVu7IDqMvhuUlTd++gY0HXjpl2v4
- V2Gt9lpUkfcMbY7G1efCqGeoA3eJJzLYVRo4E9obV8GmAE9Kv1Ez+bcCo
- VZoPcLc3INY7z6iX1PeqvzSFsi7hdc0WCjQWbhjwxaU7hc28bAxVXlyJR
- UhxJshJKjaic3J974gOwNmTNj0D5TWEDvKAZVWwy3U8+SWotuRFeZ0DWE Q==;
-X-CSE-ConnectionGUID: cGlrxQ2RQ4qaRWmD0k7QbA==
-X-CSE-MsgGUID: Dwyq76O4QAupEpjSTaSe8A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11778"; a="79074611"
-X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="79074611"
+ t=1778141471; x=1809677471;
+ h=date:from:to:cc:subject:message-id:references:
+ in-reply-to:mime-version;
+ bh=APFOfxeGP5zLDmj//HHvfOgihxG9b2hiTVJC8zTlNPk=;
+ b=EhxVWpbNEoMn/+2QHSKashq5JD41wVBY/y8q7CRBybYe5LMeFFXnVUPH
+ c9ojYYILV0hqM2365EvaMF7IsQuCgJhTK5HMPgUPYdUvs80FkT+13Mrkj
+ CPUT5kGU6t0xdSlT4GOY/zdGooYZ5wsg713LBUjqD4fsGSb8Bt3RpnLLQ
+ byBkfn7PP0yXz7NONGNMdKlWc8w4PHOFjvxJGAJrQxcBGmsXcIBj9FmNc
+ XhtNRACdfbWKd/TjWF2EWcb1+zOQGxldB5extZesCDZeDPnf2aGFi0Aeq
+ Hjt+oqVc61eXZKRIuH/a7qTlsrDGN8kcuOfRrG19MZAyudqFuFtLIemsP w==;
+X-CSE-ConnectionGUID: HnIxoFsrTYqkHNI7kHBoyg==
+X-CSE-MsgGUID: HvVpoKKPTkO9lFkjLMcarA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11778"; a="79074880"
+X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="79074880"
 Received: from orviesa005.jf.intel.com ([10.64.159.145])
  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 May 2026 01:08:43 -0700
-X-CSE-ConnectionGUID: Ykww6VfcRXiYKz8T5PpehQ==
-X-CSE-MsgGUID: TNnM7yH/ShyYsQTOQ5+o9Q==
+ 07 May 2026 01:10:58 -0700
+X-CSE-ConnectionGUID: ePKgYBvmSTKcOeMoCGLdZw==
+X-CSE-MsgGUID: DWphVYu7QEuhQYa8nqk8Yg==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="241394389"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+X-IronPort-AV: E=Sophos;i="6.23,221,1770624000"; d="scan'208";a="241395127"
+Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 07 May 2026 01:08:43 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ 07 May 2026 01:10:58 -0700
+Received: from FMSMSX902.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 7 May 2026 01:08:43 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ 15.2.2562.37; Thu, 7 May 2026 01:10:57 -0700
+Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
+ FMSMSX902.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Thu, 7 May 2026 01:08:43 -0700
-Received: from CY3PR05CU001.outbound.protection.outlook.com (40.93.201.21) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ 15.2.2562.37 via Frontend Transport; Thu, 7 May 2026 01:10:57 -0700
+Received: from CH1PR05CU001.outbound.protection.outlook.com (52.101.193.58) by
+ edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Thu, 7 May 2026 01:08:42 -0700
+ 15.2.2562.37; Thu, 7 May 2026 01:10:57 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NEintyGcQYu3rHRDshA70A5Fs7tWgLki3AHvZivwTfjBUAu7HeAmx2sfMvWAEHFH2GHSI1b6S7DKkZSYv5e14xkTEFo7bsYfkhJKZc5r6WE5vtQmQrLS4k88l/9MSZFRtxuFQRQyBZzT1PPmZ/ZiYWUsmAsbqGzk7UCgfU5J2UWuLQrVDFD++uUeMHkJVpbiObVwK5u4Ne/XXgGJf9o6v3in2st6UyTC/7jv80krFZbxOZxTWRQPSFQ8sGlXof2M0KsBf8at0UqciYQh63zZOuGE9+Ctl/NYqRwoZJ5tfzVQNZ7Mxh3OvAhDNVRODTuQiYxAbDbuwsGQUKmYRu1yfg==
+ b=UEznyRRMEyxw/B8M99Q1a+utN5dS0z2LLoCsA7q8mta1gjG6llYBXp0G3OLfXsLsWPBj2vgR0jw8ncKHHgBW6ZTygZmk3VNlKi7GREyYoLbkYMsd+LFlb7l7vnsdTsfVPdukSK0vklUJ+l417lVryyIHlbNyq3rKUOImXXmbSGd0UIfxHBvUKrZSdgZtl/d905lJ+nj3N8B37i51XNzLAJjbKPK+N96Q/Qem9bg4zldO3e/j6szR+2EEKNX3LU0SP8ewgFO2laKcTAqSfT7F/Yo/dAt8Sl9QKE2se2gATBXOU1I+oKNt0TWrJG4xnqVIC3gcvHyf8fmFCbZg119cRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0rNpEe5LrYuEyGdnU4HmOpPGG4X1wSkCmGGI4IZhuL0=;
- b=DPLVGx7FeVc1cTl3KnpFlUQLLTrxV3GALr5anP3wEC/gGmgwHsM2/6+H+MzRIus8esj/I2j5F5p1pAR1MYG36Ta2Dyce8uZHq6EsWXf2hwYQuix0W+c5sBUatlAcDkBdeUQHNVvD/O/aloUiyZeU8uwQb7QNDlO2M7b+6X9ItuJECMaIkzfIDlRLDEyPnyt12kRzW9nQknuX+M6aTegu1uKnMONUqvX53w5koL+rgUMUnr+J7XH+UQ//Pq0GhkI0WnpKy1RjHYg8kKXBBe0n1FQ4L1BVNtFU+AJGr1uBNp0K6+zmVxtEtAPuczQOH1gUNUhBVwZsqLd5fdM1iK5ynw==
+ bh=oCZX7g95zqmuj02XapUq4AgyvZLJ9WetEOsOwyU/Ljk=;
+ b=XS1bocle3phxuD56oNdqxvsqLfl+8ZG1GVyNTa5k5Ovh7RKg0LICC43Jj3UBh/1qyBohK3YcFHcxytQBSo1thae63v67htQLK2SSBjwCVcQpxqtL7f5sI1l3nGFmSeOYpMj3Ys7SSuOJXxexvgawoyGGCoOm0t1Ai1r5Ta4fw/RTqS0AcATWrxzPU7F9oahdGw1QMx97j/o/HEqNCoOyWCdepCpEhWNRH8x4obdhxn8qK+PkMGfsjQaMFtIreOSI6tnV5d973B3HpJkfqgzJ1vDhp2P4fa+1ifWDBhuQQouhRS1yj6A+/PFxFYPVfSBELAptgDokGPSv5o7VRD/N4w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com (2603:10b6:8:89::7) by
- CO1PR11MB5107.namprd11.prod.outlook.com (2603:10b6:303:97::6) with
- Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9891.17; Thu, 7 May 2026 08:08:41 +0000
-Received: from DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::d2df:4650:72ad:47d4]) by DM4PR11MB6502.namprd11.prod.outlook.com
- ([fe80::d2df:4650:72ad:47d4%4]) with mapi id 15.20.9891.008; Thu, 7 May 2026
- 08:08:40 +0000
-Message-ID: <3b9ba191-f086-4264-8382-653c06772e17@intel.com>
-Date: Thu, 7 May 2026 10:08:34 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] net/iavf: fix large VF IRQ mapping
-To: David Marchand <david.marchand@redhat.com>
-CC: <dev@dpdk.org>, Vladimir Medvedkin <vladimir.medvedkin@intel.com>, "Bruce
- Richardson" <bruce.richardson@intel.com>
-References: <c50ef6c3d4ecaa7902d325d5e8a7fd4c92c8eeb6.1778076415.git.anatoly.burakov@intel.com>
- <CAJFAV8yNKxSXjmjQ0sM21-6hZDTVrGT9cpZ6aQU_FNTepTP4nw@mail.gmail.com>
-Content-Language: en-US
-From: "Burakov, Anatoly" <anatoly.burakov@intel.com>
-In-Reply-To: <CAJFAV8yNKxSXjmjQ0sM21-6hZDTVrGT9cpZ6aQU_FNTepTP4nw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DUZPR01CA0092.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bb::27) To DM4PR11MB6502.namprd11.prod.outlook.com
- (2603:10b6:8:89::7)
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
+ by MW4PR11MB6713.namprd11.prod.outlook.com (2603:10b6:303:1e8::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.17; Thu, 7 May
+ 2026 08:10:53 +0000
+Received: from DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
+ ([fe80::2a1:33a9:9f92:b52e%3]) with mapi id 15.20.9891.015; Thu, 7 May 2026
+ 08:10:53 +0000
+Date: Thu, 7 May 2026 09:10:48 +0100
+From: Bruce Richardson <bruce.richardson@intel.com>
+To: Stephen Hemminger <stephen@networkplumber.org>
+CC: <dev@dpdk.org>
+Subject: Re: [RFC v2 0/4] flow_compile: textual flow rule compiler
+Message-ID: <afxJCBfkbui5clep@bricha3-mobl1.ger.corp.intel.com>
+References: <20260505183917.370281-1-sismis@dyna-nic.com>
+ <20260507001501.608724-1-stephen@networkplumber.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20260507001501.608724-1-stephen@networkplumber.org>
+X-ClientProxiedBy: DUZPR01CA0077.eurprd01.prod.exchangelabs.com
+ (2603:10a6:10:46a::15) To DS0PR11MB7309.namprd11.prod.outlook.com
+ (2603:10b6:8:13e::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6502:EE_|CO1PR11MB5107:EE_
-X-MS-Office365-Filtering-Correlation-Id: 707141ee-8123-4eb4-7b0a-08deac0fd958
+X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|MW4PR11MB6713:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28a04a88-9f1e-48f5-854e-08deac102867
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
- ARA:13230040|366016|1800799024|376014|18002099003|56012099003|22082099003; 
-X-Microsoft-Antispam-Message-Info: v83++VTHWh4yKU7wRXJWPMvRRZ64wR9uQYydcy/idM7rcRES58vMzUKIHOtgCqrr6/juJ3Kfi6lqHNFHb25B8VmkeNk300Ty+HPNSc+ZyYo+JaT0q+XsD5gkL591ngyrsDcNkRmDcn34D9LlzJ/jkZSyz2WzDvnt6HEwjlaRgyIqJD5x9Vpk7LBGmA800Q7gEjCfUpcWMCWkz13QNdNRHaliXfEj4jebsemNwXB/e3UwTtbafmcYyHu+M42a4h3tE8kl9uWSVPca26EpsnyI4lcrdGPdReljrpsNTkTPzO9JXxaHSZCR/fIMCAfzOexIk+BqvbmG8hZ5GjKFfhLckmtATZa5SrSJsUYaHsVZ8JYbrrO6/3k+LCN2+JXxMVwuXp/FVLcf+kXcpLMNZSmhM42PW2hIrxKoOEekwB4PcEN2r/xmqf6kWUn/cIVsObVmvwF4uUd9icf/C9AELhMm/GX7GRN0+h8htyMmn2NpJXgfjyxEtcQa4OotuSxO8URljZ53uvR22c/FVnS/2Dj7MHoeVb5SYA3SuxA7hmcqqCjfp02C6/s4eLyHhByWoUfagMMwMpcil1h+pASXTE+zMODBs34qkCc349yLuze8/BMheFSgaDew//fdETb0RHZ+YGsr/IfPCVEBrTtfehFWkKLCS/AJCBO+ewEFIa6KArx4ngxE3iNhw+26HI4gFFjy
+ ARA:13230040|1800799024|366016|376014|20052099010|18002099003|22082099003|56012099003;
+X-Microsoft-Antispam-Message-Info: HpUqrW3+i/RPuWa+SlQz5RpZ8NTD9sQf+ZmDLsvHS9TIbZaouBSezhdw+q+Au9DdkNuy+hQprXTVeHCqD10MftwZeeGdoClYkCganXSzgVmlnUeju3CRYRrKygxJGF3nLEntcRDk8Aoo4N9buUgn5eu8zAmtdn+jlzBJM227c+zj4V7/LRif+7M6gE0AdxS3qaBYNDV5R/duT1HC6IKGhEzwA4GlT7Hwyz1eKuFVU7UxcGaz6hLdpawU9zY7XioMAyPMihF7sQSdfaaNXh6tNKLwtnnaSnesrX38aqbNrrxkXUd06HEOlhuqSzeWFCqxNjpVhhV+QJrbaRjJ348g9TyCzZyymlRrufX1Cu1iqakdnJaQHc0G5ZbAb3emNUgxWaqwljHAQ6XfL5O4LYzy8JQjZR/kwVN1fTaRi3PmLZu8KM8s8vt2MGHb5pD9SJMwxyR2G5OrFUhnY4841ByLZWCcW+VIUe5o9jV0iBB5OMhpoXk5RjXxiI6HBCNrhaA9aEYpJw1ngRnEbGxtFxNuk8v+oDnhbW7C0ta8T/w4qV2JlvuQCMp57EpreGWmSa6MKVLSQc4HZT0ULf3MAYAgCY0Nayx57XSjk45E2h2KkKLt7OBT6YEhaP1kqQ2hj8ZWq6MIFPbD7tjWeXnA/J+PzuJYdNz4Gv5WMOA94OkN0aCd9hiw2zDdpIWCRV3zpuawAQvLnE4xQuiRV2dtu6x4jg==
 X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DM4PR11MB6502.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(366016)(1800799024)(376014)(18002099003)(56012099003)(22082099003);
+ IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(1800799024)(366016)(376014)(20052099010)(18002099003)(22082099003)(56012099003);
  DIR:OUT; SFP:1101; 
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZEV1Wkpab2M0VW5hYmVTNUlKa2Z2VVJnTkw2am9KSW5xZzdqNCtSSHNKS2ov?=
- =?utf-8?B?b1h0TnV0b29VYUswWUdtc293b0REdzdDbUF5Q3ptL0s0RTJMS1pMVWFZRnMv?=
- =?utf-8?B?S25ZME1Fc0FlRUh3UVdHcXlaVFRIeVNWVVM3cW1WMU9TV21qTWZHcUs4alB2?=
- =?utf-8?B?dTJCOWtVOXJoZ1dtcnN1MXZidWVvbFdBQ0dmSkpnMzJGMXR6UnVEUG0vZ0RW?=
- =?utf-8?B?ejVyeHdiT1YvNGhxL1cvSXl4b0Z1TFdwWWJNMWNmelNlYUZiQ2RNWjJPaWNh?=
- =?utf-8?B?N0gyRDU4ODBSd3Y0L2Y0UUU1dEMxa2pJc3JiemtWc09oWXZ6N2Q5cUhmNnRn?=
- =?utf-8?B?SEE0RjZkYUhjWWFzMFN2U3dJSG1ub0JJaUl2SlhKNW4yOVN1TjVrWlgvSk1C?=
- =?utf-8?B?M0MzRTBNTXFsaHk1MUwreWJZTUVJNUlmVFQ4K1VweEszS3dMT2tVUWpXU2NO?=
- =?utf-8?B?NVgrSFJXekdEOGJVNWlVN2VQTXFpaTFLMkhlNlhGQ2pzVEovbDZGSWxxVDBi?=
- =?utf-8?B?RUJxd2R6TXYveStUMXAwMGY5S2JnRTVTMXRmWThMTUw0SE01dFdseHR5SjBl?=
- =?utf-8?B?Z0RBYTNEOXU3eVhqK3owRjlrbWdqMU9TUDM4TFFybDBvVGwyb1AzWVN1eGIz?=
- =?utf-8?B?eVdZY2lISVEvWXZ6c29xWHltcmJRNU8rYUM2SVZRT3IvRzFOcHl6Y0p1L3Iw?=
- =?utf-8?B?dlB3VEdhamlFa0E1RVhZRk40NC9nWksyWGxGWlNVcVZrS2lDQkNoVmVhcmVh?=
- =?utf-8?B?SWtEOXEwVUpadXdKR2V6L3N2YTRCVWlUWjRVQytpZUJFSlNIUEdOdUhqcG4z?=
- =?utf-8?B?ek5NK3dPVkp0OUdhUEZBYUFxUWtHN0tVVkZHN3lUdUowNSs0bTMweWVoVFZ1?=
- =?utf-8?B?SDFubFFRZkNVRFVxOE1QbHdyekN4b2lDa0Z6QVJKMXBYdkJHWkZJdDFRMVNz?=
- =?utf-8?B?NHNNNmxPUEg1ZVhZNzNkZlZ4YUFCazhZNEhFSk9Ib0VaMGFZU0NsMjA2b1ZM?=
- =?utf-8?B?VVd6QlptMDV1SzhwOGFnbms3ZDJvUnFjdHpXV0FRWVpmMlp6dXlSditQMGhL?=
- =?utf-8?B?Q0tSUm9YVm1NTkJseEZZcWo1MFo2czZGQThCMXgzcjZadXFZZUlrZk9nRm0w?=
- =?utf-8?B?WWdacnpzWlRkb2xpYWNxTis4eW9tZmc3TFVYZGJrQ2toK3JuT2l2S3p0Tm9W?=
- =?utf-8?B?TG9HcHZwRnpSS3VmSFhpUzE4MmRMMWJKeTZsT1c2clhacVJtZ09ybWNMb3Yy?=
- =?utf-8?B?VGFsMkFzSWY0ZEM4aE8raFVGTTEyTDJRcGtxTmprUUovVUM5YXA1c1pwSlFV?=
- =?utf-8?B?aTJSVTNZbyt4dW13QWFYT2FnRExlMDdSSERnMGoxeHFzSEZxcVVMV1VWMVlj?=
- =?utf-8?B?MmVkR3lXbmNyamFISUg2RU9peVU5K2NEOVNXQm1tYWtZZHlib2swOUk5UFpU?=
- =?utf-8?B?RFdhVDl3STJGbzQzY0xtd2wvbTNISmk2SmlHMVBGbkx6S2dhUFBwMzZRYkFa?=
- =?utf-8?B?Uzh5ZWViVkp6dXAwdkdKSU9ucWRvNzZvS3VQcTNmZXVYdUw4L0hPbFh4K1ZJ?=
- =?utf-8?B?NWxYd3RFQWQraSt5NENLSFRhZ2RCNGFqQi9MSWNtSEdoRWNZeUg1N3pJQlU3?=
- =?utf-8?B?YjRsWEtzdmpMbnhFU2MySVN0djVTNklBVUpXRWs5azZzaGVRZXhyWEd4MEFv?=
- =?utf-8?B?TzRsVUxqYURYejFXQU1jYklXSDVsN1F5WUw5a3RtazAzMkt6R0g5ZzFQMWcx?=
- =?utf-8?B?NW9JS25rbzVzNFN5ZTEwK3M5K1RRMStYU0trRTl1Y2tDVDRCYUpSS0F2Ri8v?=
- =?utf-8?B?eWwra1hYSC9FdTF4Y3FTSVM0OXpibUxEZVU3M2NwK1FmT0JQaVFUWkZybHVS?=
- =?utf-8?B?SmJtUXRhaHJkcnIraGUxYUpUL3orckJhelUzaHB2cUtGUUJRTE5VSzhvaW95?=
- =?utf-8?B?MjJFNkZUSi9jQkR0UTBrOEIyNGhlUkpBNjdXRWZFUHVDN1hrRHA4RGNBSWtj?=
- =?utf-8?B?QUpBeGplb1IyM3ZqZUtab2w3eEVoN1ZUYlVwaXk3aE40bE9DSGR3SWN4SU9l?=
- =?utf-8?B?aldZc0NuL0FscEhjUGhDNXNXRlQrKzBtM3d1cVQxU2VLeEVFR0tjOGFZV0Zq?=
- =?utf-8?B?SFlKOEZqK1M3djdBeEs0L28yMUZlaG4wT3FLQVp6SVk3Ly81RktCRFIzV2Z5?=
- =?utf-8?B?V05YK0VXeE9Qc3l5RHphNXpvT1hOWndOUGtkUURxek92YlNKSEtBK3NpTlhR?=
- =?utf-8?B?SElwNHRDaHhjcjEvVUROcVpReW5kdVAvc2pGbWE4SjNtNGJvR1hmK1lDRnJu?=
- =?utf-8?B?Q1UxWTBkempLMDY3Zlc0ZDRVaUV3VisxWmlXM3Y4dGlBQm5wM295ekFDbHZa?=
- =?utf-8?Q?m34rFNXeuGhMrvCI=3D?=
-X-Exchange-RoutingPolicyChecked: q62ZvjG0hQfdZ3C5HWXB+mrP0CDW4zMfZBa+oqYx3cNC4O9JJuFMjDWbmlJ6ydoOGgMa+JYFGGdAVSBDmlztW5ZPkaGXLlws+GEdi3uSM6ZQqXIqDC0gqQ20+dQ2c1MTNkLoro/bzQs3rXwgKEFHlAR6fOsDJqsPn1AmNj9oN0ZWph4n/SNP04B+Y9J88eGcS8Rsvf/nOfpXU+eiCO+WEFCaja+Fqip6KH4UC56MsZZ4BueEWJ5F5A9kQBFXkwHnSjboLTq/Z5ga6x4tJ2BdVSO6FYWJrxcFSbtEercN1oZuaKEbWZOHy5CASk2Mx1mYGAtgsquSDgr1bS1n1my7rA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 707141ee-8123-4eb4-7b0a-08deac0fd958
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6502.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?H+bKvJfDXWKLv7CCtAFiALd1y7L4CXcWGOsYpwR7MCZCfTHB7VCnX+UHgptF?=
+ =?us-ascii?Q?yKGsX+SuZ8BDIgsaq3fwlAfs77zgREIGAgOnwPR6a+eydXGuzW00IcZKsxeM?=
+ =?us-ascii?Q?IgKDT1ik6GzXvwjN8Ixpqqk8BV1lGdFh3OVha8aUWGDPJIrAntf2hY7WEUye?=
+ =?us-ascii?Q?HLPlIKvCCORL49gnIDsbwoUizUiHnvP9tmumgVxlhQgxDDQ2inQRrq85E1iH?=
+ =?us-ascii?Q?GAn5pKgq3JlPMYvd+6SqfIpXTdzS1tCXAhPk15z481DrIlVlBUxBHdL57h3F?=
+ =?us-ascii?Q?+fdFz96QNNURO0yCwYQYkEh+QdgakTXyoxNhN6NcHcx+3P56jlBZ5PbdJbT/?=
+ =?us-ascii?Q?II/+EAysPiiYS/jQAjguPj77V1HlPIEQrm74p5HfTtfrdryEwAbUiebKEXCM?=
+ =?us-ascii?Q?HffPonMPPcX6wvDjNx2f5P3BFVsWpN0pKaZvTusBl/KNwhFTLT6B96nWxKUD?=
+ =?us-ascii?Q?wDnnFbjvTZjk/UZVp/G0l1JJYgAVT3+vwxh2r4L9KbaRk24HajhMjagq1i+T?=
+ =?us-ascii?Q?9YpB83/FOkL3EiRrb89UrRSNY1LfMpvUxy8TmGlhOBFD3COsJo0l15RWNotz?=
+ =?us-ascii?Q?zwGjRvGbH7rAx2p6bnoa4FGcoAbDJR/fRfMZpppJuD3/qiMLaRb85hsy1uoS?=
+ =?us-ascii?Q?CNRNlqmF2kJTod5PkRo88au91IUT+4MMmWTuXCSALwZemjBq31r0NQecwnog?=
+ =?us-ascii?Q?RAHvf98Y8ol5cx/+inHhbPf7DxXPZO6gBsXZsF/UHvLGEzywNXXFNpV28EAo?=
+ =?us-ascii?Q?00hySp9ndhmo7s4o0/cZrIUlPrI/YQyMCRze+SFaTqPAJ50VX0rvlSmkK0QN?=
+ =?us-ascii?Q?GICNS+BqzerfPAToGTEdSng/CUYeo4GDPXpntnF7LDfyIPY3873LwTIS6C64?=
+ =?us-ascii?Q?dXqE3RloRee4L/c1xuy1A+LNeIK1gSJE1g06L1heGvkMNxIDrUQNqieMEjdX?=
+ =?us-ascii?Q?8C9t01t+pLWN2d+DBAbrM96PLmkpU92/c6Hw6WPV8AAU7ywn2Je5xwMVZDVQ?=
+ =?us-ascii?Q?uQGxy2n5E5HXKy9dzeZ7kNVvvXq4ZSPvhIlkIWTLSMHyCT9I7Lp1oiLnQye2?=
+ =?us-ascii?Q?TmCe+mgBt/g3hSuyBLIDTzbQapYM6nNBj+6QsY9GoPa2mjbb8mfE2uhBgqjy?=
+ =?us-ascii?Q?jyHGx+lDk8n3EAJeAdjtytXib0B9QnasiM36VNL0vSWUGzuOtK8eDpDZpl7V?=
+ =?us-ascii?Q?kEVeH8ROI5UJL3zImNMv8s8sNrWsiH1KhQ5u2zQpzmEKHRtvv4yI8twNteWD?=
+ =?us-ascii?Q?zxazR3rs0SsvVfAOkMaAQ9/2EWISkNfyrZ8ulqKEDGloWg+jv7Knkdndio2d?=
+ =?us-ascii?Q?LJgpA3yrhUQ8ble9FKCe902oArh6Tns9SSM9LLLs4p86HugIYOrcwS2+Xtd5?=
+ =?us-ascii?Q?B3/TTxbuf/2wNTbHKsINSbHbo+UXeLy1QedGMqDQLtlEMnR91MCl3aJJkJvd?=
+ =?us-ascii?Q?Sk4RI2FxbQcV4al7+g/AW6jYQr4GhwtEFJuRdH6Fl/X4p6Xk3O42IH7CfvTu?=
+ =?us-ascii?Q?WR1Y89qDMKVBD3B0aFniR2UKzjj8MdMKuH2K/rISHhSrPEbSdYFhXjry9F6V?=
+ =?us-ascii?Q?7dP1qhtxgMe7XQiVP7Yw9mctKONasq5G37Fg1UJI/Q/dwWmPkO7Kj23a2Laj?=
+ =?us-ascii?Q?I2vKbjO6eTRjnp5gizP9PeQArVoYfbOQHxzkxOZ5Qdtaneo3Xq9Zj6P1wcFd?=
+ =?us-ascii?Q?Y2LD9S54t9+SKPs7eY7l3e1ftfJ1/4r65qr2jct/0QNnKDxefuJCYp7DLGHT?=
+ =?us-ascii?Q?dNxY0mD0RCkoymlRbP6dw+ZbE+Q+DaY=3D?=
+X-Exchange-RoutingPolicyChecked: Y2UIUJiPVjh6gJLoEECgaFyRUzVe3m2Ld94HDf69xFim9PQuCsi8ZCDpk4ccsx2+y7RIcxEpRzd3wqT8m5Ay88To9t8SXKaBXF0ObVAYBwo2sFJfB6yLxjtJijDMYK4oS2I0H/4NJq6SLow3rffhiCZynd2V/8nOy2e1A9lv/+5ztvKZ04CklgXhl1nf7erk2L+9huxEQRrvNOfEuhDz1LW4jyhvD/UYNVImJZZxayy1XMXFJOEHeaArP45xR4guDaaO0kb8aQjLOXyNx8xDhlcfsM10SjxsFQHr8YDsBc2pEHu7nVXeFjeiAfeEiEchuKmPp92dRHFTYN4dcnE5Xw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28a04a88-9f1e-48f5-854e-08deac102867
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2026 08:08:40.7805 (UTC)
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2026 08:10:53.3588 (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NZQkeV9UgrGDtuazW0tGnkW1Y3Xf+jcGBdH638b7+n8y0qAW+yz1lKBIAM2o1g2huZCsOdAbZvoUiYngD8izWVHp9Z9Opt1wV/W4WX24euM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5107
+X-MS-Exchange-CrossTenant-UserPrincipalName: q2wLd7P6guY/0f0EttEdfPsLKJHPGJF8K+tQGq4kZ4CYLmr63W7IHlzgPm73jQAd4M5lH1xMftMBEpgJLF/i0hBD8JBM16i/RBL83RKFmhQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6713
 X-OriginatorOrg: intel.com
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -164,59 +151,167 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 5/6/2026 5:58 PM, David Marchand wrote:
-> On Wed, 6 May 2026 at 16:07, Anatoly Burakov <anatoly.burakov@intel.com> wrote:
->>
->> The PF will check buffer size for being too big, and the chunk sizing code
->> correctly calls that out. However, the size was actually still too big
->> because `struct virtchnl_queue_vector_maps` already had one queue vector
->> as part of its definition, so `chunk_sz` was too big by 1.
->>
->> Fixes: 292d3b781ac4 ("net/iavf: replace unnecessary hugepage memory allocations")
->>
->> Signed-off-by: Anatoly Burakov <anatoly.burakov@intel.com>
->> ---
->>   drivers/net/intel/iavf/iavf_vchnl.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
->> index c2f340db81..dd09b0fa61 100644
->> --- a/drivers/net/intel/iavf/iavf_vchnl.c
->> +++ b/drivers/net/intel/iavf/iavf_vchnl.c
->> @@ -1528,7 +1528,7 @@ iavf_config_irq_map_lv_chunk(struct iavf_adapter *adapter,
->>
->>          /* for some reason PF side checks for buffer being too big, so adjust it down */
+On Wed, May 06, 2026 at 05:06:47PM -0700, Stephen Hemminger wrote:
+> Background
+> ----------
 > 
-> The comment above can be removed?
-
-No, it's still relevant, because it refers to the fact that we're 
-adjusting the total length downwards as opposed to leaving it at max size.
-
+> Multiple efforts over the past few cycles have tried to make
+> testpmd's flow rule grammar reusable from outside testpmd.
+> External applications that need rte_flow want a documented way
+> to turn human-written rules into the rte_flow_attr/item/action
+> arrays accepted by rte_flow_create().
 > 
->>          buf_len = sizeof(struct virtchnl_queue_vector_maps) +
->> -                 sizeof(struct virtchnl_queue_vector) * chunk_sz;
->> +                 sizeof(struct virtchnl_queue_vector) * (chunk_sz - 1);
+> The most recent attempt is Lukas Sismis's series, currently at
+> v12:
 > 
-> - did you make sure you did not break compat with previous version of
-> Intel out of tree PF driver (since this concerns configuring "Large
-> VF")?
-
-The commit in question *did* break things with previous out of tree PF 
-driver. This commit fixes the breakage introduced in that commit. The 
-commit being fixed was a refactor, which specified size as N-1.
-
+>   http://patches.dpdk.org/project/dpdk/list/?series=37384
 > 
-> - all those virtchnl list struct have the same elems[1] issue.
-> Kernel side did some cleanups some time ago, maybe time for DPDK to do
-> the same...?
+> That series factors testpmd's existing cmdline_flow.c into a
+> library and updates testpmd to consume it.  It works, but
+> inherits two properties of cmdline_flow.c that I think are worth
+> avoiding in a reusable library:
+> 
+>   - Coupling to librte_cmdline.  Even after the v12 split into
+>     a "simple" part and a "cmdline" part, the parser is still
+>     organized around testpmd's command interpreter, and v12 has
+>     cmdline depending on ethdev to break a previous circular
+>     dependency.  A library used by daemons, control planes, or
+>     unit tests should not need that.
+> 
+>   - Ad-hoc grammar.  cmdline_flow.c implements parsing per-token
+>     in long dispatch logic; the grammar emerges from the code
+>     rather than being stated, and adding a new flow item
+>     requires touching the parser.
+> 
+> This RFC explores a different shape and is posted to ask the
+> list which one is preferred before more work goes into either.
+> 
+> I started a new green-field library for parsing flow rules
+> (with AI assistance for the boilerplate).  It is young but
+> passes tests and reviews clean under the project's AI review
+> guidelines.
+> 
+> This series
+> -----------
+> 
+> lib/flow_compile -- a small new library providing the same
+> service via a pcap_compile()-style API:
+> 
+>     char errbuf[RTE_FLOW_COMPILE_ERRBUF_SIZE];
+>     struct rte_flow_compile *fc = rte_flow_compile(rule, errbuf);
+>     if (fc == NULL)
+>             fail(errbuf);            /* "line:col: message" */
+> 
+>     rte_flow_compile_create(port_id, fc, &flow_error);
+>     rte_flow_compile_free(fc);
+> 
+> Design properties:
+> 
+>   - Flex lexer plus bison grammar.  Both are reentrant
+>     (%option reentrant, %define api.pure full), so multiple
+>     compilations may run concurrently and the parser holds no
+>     static mutable state.  The grammar itself is short
+>     (~200 lines) because all per-type knowledge lives in
+>     descriptor tables, not in productions.
+> 
+>   - Parser is driven entirely by descriptor tables of items and
+>     actions.  Adding a new flow item is a table edit, not a
+>     grammar change.  A custom-setter hook on each field is the
+>     escape valve for layouts that don't fit a plain byte range
+>     (bitfields, indirect arrays).
+> 
+>   - Dependencies: rte_ethdev (for rte_flow.h) and rte_net (for
+>     MAC parsing).  No librte_cmdline.  Flex and bison are
+>     required at build time to regenerate the lexer and parser;
+>     if either tool is missing the library is silently skipped
+>     via meson's has_flex_bison check, the same pattern other
+>     DPDK components use for optional generators.
+> 
+>   - Per-allocation rte_zmalloc for spec/mask/last/conf payloads;
+>     rte_flow_compile_free() walks the pattern and action arrays
+>     and releases every non-NULL slot before freeing the arrays.
+>     Parse-error paths use the same walker, so partially
+>     constructed rules clean up uniformly.  ASan/LSan run clean
+>     on the autotest, including the failure cases.
+> 
+> The grammar follows testpmd's syntax closely so familiar rules
+> carry over:
+> 
+>     ingress pattern eth / ipv4 src is 10.0.0.1 / end
+>     actions queue index 3 / count / end
+> 
+> and is documented as a formal BNF in the programmer's guide
+> chapter (patch 2).
+> 
+> Initial coverage: eth, vlan, ipv4, ipv6, tcp, udp, vxlan,
+> port_id, port_representor, represented_port items; drop,
+> passthru, queue, mark, jump, count, port_id and representor
+> variants, of_pop_vlan, vxlan_decap actions.  Variable-conf
+> items and actions (RSS, RAW) need custom setters and are
+> deferred to a follow-up.
+> 
+> What this RFC is *not*
+> ----------------------
+> 
+> Not a replacement for cmdline_flow.c in testpmd.  If the shape
+> here is acceptable, the next step is a separate series adding a
+> "flow compile <port> <rule>" command in testpmd alongside the
+> existing parser, so users can adopt the library incrementally
+> without breaking scripts that depend on the current syntax.
+> 
+> What I'd like feedback on
+> -------------------------
+> 
+> 1. API shape.  pcap_compile-style (one string -> opaque object ->
+>    arrays) versus the three-call attr/pattern/actions form
+>    Sismis's v12 exposes.  What does your application actually
+>    want?
 > 
 
-Yes, it is indeed time to do the same, but not as part of this patchset, 
-and not before the base driver code is updated to do the same. There is 
-some background work happening on that front already, but there are a 
-lot of dependencies and moving parts, so we can't just change this willy 
-nilly.
+For this, I wonder if we also could do with a second API for the creation
+which takes a list of tokens rather than just a single string. Thinking
+about integration with testpmd, or with apps which already have some
+commandline interface which produces a list of tokens, having to re-stitch
+the tokens together into one string seems awkward.
 
--- 
-Thanks,
-Anatoly
+Also, have you already investigated how this might be integrated into
+testpmd? Do we have the capability to pass multi-token strings via cmdline?
+
+> 2. Library placement.  Stand-alone at lib/flow_compile/ versus
+>    addition to lib/ethdev.  This series treats it as a
+>    control-path parser layered on top of ethdev rather than
+>    part of ethdev itself; v12 places its parser inside ethdev.
+> 
+
++1 to external to ethdev
+
+> 3. Table-driven extension model.  Is "to add a new flow item,
+>    add a row to the descriptor table" the right contract?
+>    Should the tables live alongside each rte_flow_item_*
+>    definition in rte_flow.h, or in their own file as here?
+> 
+> 4. Build-tool dependency.  Flex and bison are not currently
+>    required to build DPDK.  Adding a library that needs them
+>    (with a clean has_flex_bison fallback so the rest of DPDK
+>    still builds without them) is the cleanest way I see to get
+>    a real grammar. If this gets used by testpmd then
+>    what is now an optional dependency would get hardened in.
+> 
+
+Flex and bison are very common build tools. I don't see an issue with this
+dependency.
+
+> 5. Convergence.  If this design is preferred, I'm happy to
+>    coordinate with Lukas to fold in the testpmd-side changes
+>    from his series.
+> 
+> 6. Readability. AI generated code like this tends to be
+>    either opaque or too verbose for humans. Often have to
+>    nudge it into submission.
+> 
+
+For readability, can you (or the AI's working for you :-) ) split the main
+patch into a couple of patches for easier review and comment. It's a very
+large single patch to go through in one go.
+
+/Bruce
