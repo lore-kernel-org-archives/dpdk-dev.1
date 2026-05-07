@@ -2,53 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DD3CD3427
-	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 04:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49439CD342C
+	for <dpdk-dev@archiver.kernel.org>; Thu,  7 May 2026 04:52:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 99D984067B;
-	Thu,  7 May 2026 06:47:52 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
- by mails.dpdk.org (Postfix) with ESMTP id 937E54067D
- for <dev@dpdk.org>; Thu,  7 May 2026 06:47:50 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1778129271; x=1809665271;
- h=from:to:cc:subject:date:message-id:in-reply-to:
- references:mime-version:content-transfer-encoding;
- bh=5gY7P3v7XYnlMyS5FHk+s96U6AtjQdP0zUfAOHIwoFc=;
- b=BDX+vYMZqKhtTFM9Zraf0elKT/AeuVHLBSeeVr/XY85BkAxssJcC5yjy
- 7aM0IfzicK2HMg2TzJs1pJUdXZeqDmf80ktuMsUAoJlD5gyrI0OCf9rDl
- 3P9toixVkZ5tbuKIIhd/yn/6RJmeI+X4/N2YYvb4W++2OzBCLsVdkaho8
- F28yBW1sHDL9mNCKGsGBAJkbpkoPZ44kGmsQiJvKug/HQIInxZ0gcLxlz
- QTiCCGI5m7xN9s+sI3uaKCwue+p8F//8YLmTmC19DMgrJbs3agATWmujd
- N2Khp+drvQGbpuj8vn237uIAM1FEzCyHt1cDwJPOs4ngLZHfY6qhU2T+/ A==;
-X-CSE-ConnectionGUID: eIvU9VBFQ06J1NR4VE8fOA==
-X-CSE-MsgGUID: 1p/XUGl0QPGgAvxYolEwrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11778"; a="79180253"
-X-IronPort-AV: E=Sophos;i="6.23,220,1770624000"; d="scan'208";a="79180253"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
- by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 06 May 2026 21:47:50 -0700
-X-CSE-ConnectionGUID: rZ8wRx8gTbe+5ekze1AUFw==
-X-CSE-MsgGUID: D4y/KY4KRYKIQ6OBogg+Xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,220,1770624000"; d="scan'208";a="233680767"
-Received: from icx008.iind.intel.com ([10.190.212.196])
- by fmviesa008.fm.intel.com with ESMTP; 06 May 2026 21:47:48 -0700
-From: Rajesh Kumar <rajesh3.kumar@intel.com>
-To: dev@dpdk.org
-Cc: bruce.richardson@intel.com, aman.deep.singh@intel.com,
- stephen@networkplumber.org, mb@smartsharesystems.com,
- Rajesh Kumar <rajesh3.kumar@intel.com>
-Subject: [PATCH v6 4/4] examples/ptpclient: use shared PTP library definitions
-Date: Thu,  7 May 2026 15:43:14 +0530
-Message-ID: <20260507101314.2456467-5-rajesh3.kumar@intel.com>
-X-Mailer: git-send-email 2.53.0
-In-Reply-To: <20260507101314.2456467-1-rajesh3.kumar@intel.com>
-References: <20260428010117.692626-1-rajesh3.kumar@intel.com>
- <20260507101314.2456467-1-rajesh3.kumar@intel.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 30CB74026D;
+	Thu,  7 May 2026 06:52:18 +0200 (CEST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com
+ [209.85.208.176])
+ by mails.dpdk.org (Postfix) with ESMTP id 79C8140265
+ for <dev@dpdk.org>; Thu,  7 May 2026 06:52:17 +0200 (CEST)
+Received: by mail-lj1-f176.google.com with SMTP id
+ 38308e7fff4ca-38be5e86918so4238291fa.3
+ for <dev@dpdk.org>; Wed, 06 May 2026 21:52:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778129537; cv=none;
+ d=google.com; s=arc-20240605;
+ b=LvuNtK+DYtqQTQmCw7fOdr4bFPaE8yGLGjrR9cUSKJdhO8+tt1FIoWWAoiHFSZRF9K
+ z42YFW0GUQ6BqZrFiGds3OXlINLXo6aDWxExuUdUMtPn2TQwFKaTEJJ3Fxs/oD//OknV
+ RqI8ApFcSfV7dYx1g+kft4etrtN1U4DjN+o8YNg55W/wi0F2zw95QNPSBxynIJ29sDlX
+ /OZFM0Tc1vEnq3c7TvLVbNtI0QoOmwOIiCIFa/vUVCvdvIijjr9u39JCiNApvztkkJj0
+ ZkWIycrd0k/cXcbDLmif55ah6AG8O4k8RIOeYosKmsEG9C9Va8nInKZE22N9A02y9D5O
+ 6wHg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=mAvkR81Ec8FZfQstFzul5hWdGYx4UySkawg0SaI5N38=;
+ fh=XYr84m3B/UHoc2lCDe0rBctGDcHZDfdVePN+zFDZ4UQ=;
+ b=H5UVrVOTF35nCLrM8kWWZ0ZXsAUvDL4f8VYFpnDEV/kTD9DR6+viy3gY4iPZ3LAiZg
+ 70OyLotKWFNTkHuaZcDncfk0ew0dE6pEUKsRpyUC2T+qqzu2TdnWRgXHyOMjqwPq3EBD
+ efdBJr3KptFsQbVD/dsvYLLf4kDGNeiUP8X9M9ZSg4EDdquVLmaYBupc+vf0pUe23zZg
+ 2WaoE4nGm/4k88FPbaA6Fsn0WaH+YAMB2T/t0BYCgVTTpiKhmxZ9FekbsGI/IHPKTKGg
+ jTF4GFkwkPIPZFi12XFhhT/ejI4IGAazurtVUu+x4oP0EDfRxF5vxSsxZJHvL+58xdN+
+ 1H6A==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=gmail.com; s=20251104; t=1778129537; x=1778734337; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=mAvkR81Ec8FZfQstFzul5hWdGYx4UySkawg0SaI5N38=;
+ b=JwjOhLG+1bMvEbrBESx8jopfap9MN14zt2Al13y2yOcg0Nz+pYi+fab5Ka0ScsxT7a
+ i7kgKX7R/zX1FtK+24Ci/JKj8ExwpjiztzTntLzxsamQTlv5JlnTjIQ+8BGMMzMCnkej
+ mTJDbFead08DyqjWR7h6rS4TIFR4+3yIiZOIhsbWHAganEvZBsQMsk3/6fzDyithddpl
+ rnWKhsex8jKXq2GQfPu4m+DRGGqRCETJ+M2l9UB+AqRApQs3JMK+PhxOnfpH+SFveKPj
+ praaoN7ZbGPNgzTCun+pp7ObbuhZBcV/mqXUOE0qxaWjzFtj9dzsUI1zC/GvIGmPBCuO
+ wioA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778129537; x=1778734337;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=mAvkR81Ec8FZfQstFzul5hWdGYx4UySkawg0SaI5N38=;
+ b=Z0/tgcq/DZ37X3owIjelWS2phq3imnJG/jV1UZwUxDbpUFxXlNfhaRteVog7WnluGL
+ 5i88QjknOIusN7Zb21p/RLopJHETdhlA3gMUUgCT5UDP8M6TqD3aBcQmv6AERnhc4SjU
+ LhUMPVvT/6TcHnrgLL0qAWTvzvmdE4iiU6i/6w+OxCFpNovuPOcnUv6bFLEKK/be4I/z
+ Eu68LQhjgHbVfD4+UbYceNUsPWg8UzOmSazrjdYZxJYqUYxMmujNJnmo4T4mPIsYn/9k
+ F09DT9Rcmcdt9h1KvDpLnqRv7o/eZpBlncKuZaMoEJJJ8+wzM4fu44tdwCtfO19BRhFA
+ ftkQ==
+X-Gm-Message-State: AOJu0YwkbRE940wWms1xR/3BX1NFDGujQ0M/Ex6PY5Csb6VZI/B0lFBO
+ uGPYr/Hlmr4W/QlviCcsNBscYdhuEd6LJoT5AxMoK+3mX2wi7kHmJwOdPIS/fXByf1Q2xLRXON6
+ dqf+L9lYg5O7rUDoGyGPf0HY1KOS9dSs=
+X-Gm-Gg: AeBDies6yCgIRYTtDdAwgLYkraO05Cnz6roNi9P24dAEXLXkdjXRVpbLZjzkz0k3mQJ
+ csWU6V1lGANN/UScSFW8UDfjaXCyFDyXj3H8SPy2aepHxP5VZCcyGhWpLqW/64GZgZULiAFc7KO
+ IoD6L7tDjb0BhL5NHregeW04UIx64uxbzQEp7WuzDq1ZulZoV7tZS/x3CTwMRU/1DBFSRA9XTpL
+ vrdHbX2zRlCTVU6W140Sqyr5RFxmEwHm5C2faVcLA9JFp3Kr0L9/Gb+mSFCdJiVlb1HyP63CTkC
+ 9COyUSloDrfTt9XQUkWOBJfGuusRKtY3z6ErTUs=
+X-Received: by 2002:a05:6512:128d:b0:5a8:6b81:6694 with SMTP id
+ 2adb3069b0e04-5a887ce5e99mr2109522e87.30.1778129536470; Wed, 06 May 2026
+ 21:52:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20260401192401.6243-1-stanislaw.kardach@gmail.com>
+ <7c10b2b5-71e9-4ef7-be7e-02da5bda7aaf@iscas.ac.cn>
+In-Reply-To: <7c10b2b5-71e9-4ef7-be7e-02da5bda7aaf@iscas.ac.cn>
+From: =?UTF-8?Q?Stanis=C5=82aw_Kardach?= <stanislaw.kardach@gmail.com>
+Date: Thu, 7 May 2026 06:52:05 +0200
+X-Gm-Features: AVHnY4KAOZxb4EJcq4xVZ-Rlj9KC-ouYEKAOix0tWLIGCa0ZBqxKZezgvfFGTRk
+Message-ID: <CAJcPQBpyWh7YU0Ef2w7AHNCHGKN66koT-xS_wXVKBFwq1zLi7Q@mail.gmail.com>
+Subject: Re: [PATCH] maintainers: update RISC-V maintainer
+To: sunyuechi <sunyuechi@iscas.ac.cn>
+Cc: dev@dpdk.org, Thomas Monjalon <thomas@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -62,56 +96,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Update ptpclient example to use IEEE 1588 PTP definitions from lib/net:
-  - Replace PTP_PROTOCOL macro with standard RTE_ETHER_TYPE_1588
-  - Remove local duplicate PTP header definitions
-  - Add net library dependency in meson.build
-  - Leverage rte_ptp.h inline helpers for header access
+Kind ping Thomas, would you be able to pull in this change so that Sun
+can be unblocked?
 
-This aligns with DPDK library patterns and reduces code duplication.
-The example remains compatible with standard linuxptp (ptp4l) tooling
-for time synchronization.
-
-Signed-off-by: Rajesh Kumar <rajesh3.kumar@intel.com>
----
- examples/ptpclient/meson.build | 1 +
- examples/ptpclient/ptpclient.c | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/examples/ptpclient/meson.build b/examples/ptpclient/meson.build
-index 2e9b7625fc..9087c987d5 100644
---- a/examples/ptpclient/meson.build
-+++ b/examples/ptpclient/meson.build
-@@ -7,6 +7,7 @@
- # DPDK instance, use 'make'
- 
- allow_experimental_apis = true
-+deps += ['net']
- sources = files(
-         'ptpclient.c',
- )
-diff --git a/examples/ptpclient/ptpclient.c b/examples/ptpclient/ptpclient.c
-index 174ca5dd70..ec6f316139 100644
---- a/examples/ptpclient/ptpclient.c
-+++ b/examples/ptpclient/ptpclient.c
-@@ -441,7 +441,7 @@ parse_fup(struct ptpv2_time_receiver_ordinary *ptp_data)
- 		/* Set multicast address 01-1B-19-00-00-00. */
- 		rte_ether_addr_copy(&eth_multicast, &eth_hdr->dst_addr);
- 
--		eth_hdr->ether_type = htons(PTP_PROTOCOL);
-+		eth_hdr->ether_type = htons(RTE_ETHER_TYPE_1588);
- 		req_msg = rte_pktmbuf_mtod_offset(created_pkt,
- 			struct delay_req_msg *, sizeof(struct
- 			rte_ether_hdr));
-@@ -582,7 +582,7 @@ parse_ptp_frames(uint16_t portid, struct rte_mbuf *m) {
- 	eth_hdr = rte_pktmbuf_mtod(m, struct rte_ether_hdr *);
- 	eth_type = rte_be_to_cpu_16(eth_hdr->ether_type);
- 
--	if (eth_type == PTP_PROTOCOL) {
-+	if (eth_type == RTE_ETHER_TYPE_1588) {
- 		ptp_data.m = m;
- 		ptp_data.portid = portid;
- 		ptp_hdr = rte_pktmbuf_mtod_offset(m, struct ptp_header *,
--- 
-2.53.0
-
+On Thu, Apr 2, 2026 at 6:08=E2=80=AFAM sunyuechi <sunyuechi@iscas.ac.cn> wr=
+ote:
+>
+> On 4/2/26 3:24 AM, Stanislaw Kardach wrote:
+>
+> > Change the RISC-V maintainer to Sun Yuechi and remove myself as
+> > I'm unable to properly perform maintainer duties due to time
+> > constraints.
+> >
+> > Signed-off-by: Stanislaw Kardach <stanislaw.kardach@gmail.com>
+> > ---
+> >   MAINTAINERS | 3 +--
+> >   1 file changed, 1 insertion(+), 2 deletions(-)
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 0f5539f851..eeb55951b4 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -334,11 +334,10 @@ F: examples/*/*_altivec.*
+> >   F: examples/common/altivec/
+> >
+> >   RISC-V
+> > -M: Stanis=C5=82aw Kardach <stanislaw.kardach@gmail.com>
+> > +M: Sun Yuechi <sunyuechi@iscas.ac.cn>
+> >   F: config/riscv/
+> >   F: doc/guides/linux_gsg/cross_build_dpdk_for_riscv.rst
+> >   F: lib/eal/riscv/
+> > -M: Sun Yuechi <sunyuechi@iscas.ac.cn>
+> >   F: lib/**/*rvv*
+> >
+> >   Intel x86
+> Acked-by: Sun Yuechi <sunyuechi@iscas.ac.cn>
+>
