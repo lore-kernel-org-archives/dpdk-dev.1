@@ -2,66 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6822BCD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866F6CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 447AB40689;
-	Fri,  8 May 2026 22:36:21 +0200 (CEST)
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
- [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id BC07940666
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:17 +0200 (CEST)
-Received: by mail-dy1-f170.google.com with SMTP id
- 5a478bee46e88-2f0ad52830cso3798847eec.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3594840697;
+	Fri,  8 May 2026 22:36:22 +0200 (CEST)
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
+ [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id E7AF840670
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:18 +0200 (CEST)
+Received: by mail-dy1-f169.google.com with SMTP id
+ 5a478bee46e88-2f7020a928eso3380084eec.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272577;
- x=1778877377; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272578;
+ x=1778877378; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=jNFtKRGs6O9qdKpXBO2/CjuA1+iKrgfvcgCL6vpz3EA=;
- b=Xul8Xdow7s+UZVlaLsDH6mFTiwYi5kVAp3Tn7XKI1L7jwCnpJPeYu4lnqrBmrIcTu1
- TrEDCDh+12YBtvRBkQduWOUaESg6rXaPPkBaCU4uzAj7JnS7zt4HVfyS5IIq4hMuUtuy
- g/l4tuu2dqNWwL2Sd0mA//+n2vbzb9chn+R7/FVSz0l/Qd7/qEH4sb8RJVEVZgSIDT2l
- s/YfZ3MeKJ9616y80xeoDPrDFNzwnMX6M+r05ngzFR33whpCgqPrmXti3KLzshTCTdR1
- paPYfZTU4FoqJB9PAqEWr41XUyRvVoHoeyvR966XskiUe//z+1sPPnX5j0vEo/Nis+bE
- yViA==
+ bh=rATRo6uWtJVI2otVQopvYSka4269lpC3sCAnO18HUvY=;
+ b=o231J1byK04tRR+pTL7TbQyaTmlO0L1oEmO8C+Ty36QHWZU64zczgwW2YA3XDrYYKh
+ UpU2aqh3rqYhWOlUFs9jbvK4s8dk3ih43QgT6pUvsafkTtKj33rdveqYHaXi7CL6N1IS
+ FhlXwvH5InM+j/HYQ6QX0XtsVbUg1VK0vfgkteFwHn4vWMMccuj8RkU438ZoMdBqQLob
+ EZ4HBzAXwJ9EOYObHg4UrAqBn1fjlfZrHmrfy7BQ1Dya0o/aW5zpiMNuS2Ps9AMavzau
+ CZsWwKkiGI1IbH1rDA1MFfO5m0UqeG/ys1N7EL3WfdbPiOB8+zqYAXNvbALhg5nwbx1+
+ 4i2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272577; x=1778877377;
+ d=1e100.net; s=20251104; t=1778272578; x=1778877378;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=jNFtKRGs6O9qdKpXBO2/CjuA1+iKrgfvcgCL6vpz3EA=;
- b=b3BWZnIchteXRc6a2rjWxNROtqoMkGth1smNbm1MdixrC5swExjY058Ayli5kL9jvB
- vDEIJMKu8WgGaJhqZH6sYqgAy7NDtno9n89lJk9WXsk9f+AZBPigbPxpXqwUmme37vCU
- 3e25zBZ7hKXFTtKL8ztQNq4/Ff4LZF5jiJG35w5yBKSxb9btSzkjklPcvNWe4JJVgk9p
- /wxaQYodVthWqo2Rct4tWvDi3CbL8kjccrwwAEfI47m3TOFer47RJmKC9fc2xGKeTHKN
- hgXm3JJnOSslKPm9uIw9Jk5nrqehrSTyrOFfpYzH5TcKFKnaY9cKZZ/ZojTnhKiqZed1
- QtBQ==
-X-Gm-Message-State: AOJu0Yw1xVq/ZrERGIkZlyWoYvh6B1+/t39/01CU8QoXgYGVKS/vBCm2
- vcahtlRgYgfcR2T6WEuvuPnRQje6++0hIZS67aLuNNPSLHkfIuQKt4EUYQKb9iqNH0jfbhURkYn
- Xqhft
-X-Gm-Gg: Acq92OH90B3/MAgXPW8gr1iHNT4aRxG+1uFSUE5AW7dbYQWa0ObfflQF44ZTPzYJyBY
- J8HUqeLh6hueUlTvmkmnB/zhNCNANJG+G34OiI5b1vuRW/EezyH1eBshRMPrGgeQaYqsriTITNL
- 1TGmLxuESLHWoRS77ZV6raJIc/VD2YPL+GFohSgzdheQ7vK4rRZjEmTJ/oydLYM+wAdrQQCV6Mv
- /elQ1tWFseIUuIrooiFN5C4GXrfoVzRXv4/Jsawd9IJLwP0roJoKH7p/yIpzE5ywX1Om+MAUKVc
- HGTwt+CGDX2SA1hBgx1D6GZPJHAM/taeVGybeuJqGDOjbyYZ0tGmF6ygkY6B/x/iZ1C8ex+w9CK
- RePIbak59hc8OKHjeZ/+Q4jjVqg74gQXzDGD3rMpbhNWk5zHNXLGDTsBQIY/MHbckuo+0G2Dauy
- fAEtIaCiH7fmSf7d+jdMagcjPsF5d6Mv0J
-X-Received: by 2002:a05:7300:a507:b0:2ef:8b72:1b9 with SMTP id
- 5a478bee46e88-2f5459a2137mr7160869eec.0.1778272576846; 
- Fri, 08 May 2026 13:36:16 -0700 (PDT)
+ bh=rATRo6uWtJVI2otVQopvYSka4269lpC3sCAnO18HUvY=;
+ b=KufASkKv53LkDz7y259n2Rih8zok5BCiJnc6YH+aahfgg65+lU75CIwSj8qyiXp47n
+ 1jkDMi+/23Wr6EtkeXFFa4dGl87pnmv629b5ZQ0M2kK8j82f2t+INW3Djkxe+0Wjva0Z
+ 0faXrcFnrQPSZbdkFcLd2rDoYonB1EkaaVMBuk8OKW3fxdUgDZaNUF3DjByDBH3KdQsy
+ E4d4s34C6E2MdAbIkIzA6TBY96wzR592sx1xdDpZduHf9XMzSw3UP6ycWGwo7DgvKC2O
+ RC6vyCIsTtkH2cm9hw3qPMNjlR4/w7A8WUd61yb6Z90YmMIP7aOLEl0nVGsDQ/n12nQ2
+ Z4+Q==
+X-Gm-Message-State: AOJu0YyO1/HlXJTakktzkDWIBOhr9ho0v05aVxFx5Z4UYoIeXLuvCxif
+ fzrgE5NGU3INYqGYf1pEUaS7ihy7dXfpln57A3oXQ2aw0i4Qx0XEPQm+1cNA0HzfloJz7ZKq1v4
+ dmZFp
+X-Gm-Gg: Acq92OGJrqm6ZhhcLrN2VT8qSELkKRvfTkVgNjWGQ9aedC3+dNAuLGQwvVorayQZe7O
+ bYEQ4anHnE+gDWb+Xj2W1VmnPF+ugtjHjq7/InWpiIQXmzcsu/o0S3xHYfsN6vxNkTT6JvIm70m
+ 6mHjmqdlFcBMv4RL0xD156xg4wBE/vm3feercGc3Lu9aZtIoL5m78zC//Wc5JVNHtOaYU6MMW9O
+ kIlWXPIm1O05UrPf2LFYbiv2wOL34p+rHW/OkGu20M1ZdrhDk2v14z5W/zsTTMaUDaKe6qFBgJk
+ i7nniSzObi/ifXf+f8ESWWV3nlEsxqRVSdZ7ZiFqvfuVW8zXMFDW0BN1ZwJtQnuCLTp85zmHANI
+ XnR4kUSOtPz4vtZUr5B0EMXKARPTU/uwAbBTlKcGT9LGZjnPIstE0D5bMaN/Tc9xtEZOxlB+W7A
+ 0m/Hgo7u7IdLvg/JtP7fvNrPOHzrBOq+Gp
+X-Received: by 2002:a05:7300:8623:b0:2e2:d94d:6186 with SMTP id
+ 5a478bee46e88-2f548e95823mr6286820eec.11.1778272577965; 
+ Fri, 08 May 2026 13:36:17 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.16
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.17
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:16 -0700 (PDT)
+ Fri, 08 May 2026 13:36:17 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
-Subject: [PATCH 07/20] net/af_xdp: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:28 -0700
-Message-ID: <20260508203607.1003036-8-stephen@networkplumber.org>
+ Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Kiran Kumar K <kirankumark@marvell.com>,
+ Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
+ Harman Kalra <hkalra@marvell.com>
+Subject: [PATCH 08/20] net/cnxk: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:29 -0700
+Message-ID: <20260508203607.1003036-9-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -86,22 +89,31 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/af_xdp/rte_eth_af_xdp.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/cnxk/cnxk_ethdev.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
-index 10dbcf1333..4f55887963 100644
---- a/drivers/net/af_xdp/rte_eth_af_xdp.c
-+++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
-@@ -263,8 +263,7 @@ reserve_fill_queue_zc(struct xsk_umem_info *umem, uint16_t reserve_size,
- 	uint16_t i;
+diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
+index 06d1c9b362..3330dd5051 100644
+--- a/drivers/net/cnxk/cnxk_ethdev.c
++++ b/drivers/net/cnxk/cnxk_ethdev.c
+@@ -1913,7 +1913,7 @@ cnxk_nix_dev_stop(struct rte_eth_dev *eth_dev)
+ 	const struct eth_dev_ops *dev_ops = eth_dev->dev_ops;
+ 	struct rte_mbuf *rx_pkts[32];
+ 	struct rte_eth_link link;
+-	int count, i, j, rc;
++	int count, i, rc;
+ 	void *rxq;
  
- 	if (unlikely(!xsk_ring_prod__reserve(fq, reserve_size, &idx))) {
--		for (i = 0; i < reserve_size; i++)
--			rte_pktmbuf_free(bufs[i]);
-+		rte_pktmbuf_free_bulk(bufs, reserve_size);
- 		AF_XDP_LOG_LINE(DEBUG, "Failed to reserve enough fq descs.");
- 		return -1;
+ 	/* In case of Inline IPSec, will need to avoid disabling the MCAM rules and NPC Rx
+@@ -1951,8 +1951,7 @@ cnxk_nix_dev_stop(struct rte_eth_dev *eth_dev)
+ 		rxq = eth_dev->data->rx_queues[i];
+ 		count = dev->rx_pkt_burst_no_offload(rxq, rx_pkts, 32);
+ 		while (count) {
+-			for (j = 0; j < count; j++)
+-				rte_pktmbuf_free(rx_pkts[j]);
++			rte_pktmbuf_free_bulk(rx_pkts, count);
+ 			count = dev->rx_pkt_burst_no_offload(rxq, rx_pkts, 32);
+ 		}
  	}
 -- 
 2.53.0
