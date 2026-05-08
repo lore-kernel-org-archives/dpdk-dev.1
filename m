@@ -2,42 +2,44 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58998CD3436
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 09:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D31BCCD342F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 09:29:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25D6040268;
-	Fri,  8 May 2026 11:16:07 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id 496DF4013F
- for <dev@dpdk.org>; Fri,  8 May 2026 11:16:05 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 14061208C9;
- Fri,  8 May 2026 11:16:05 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id E69E040268;
+	Fri,  8 May 2026 11:29:07 +0200 (CEST)
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com
+ [113.46.200.222])
+ by mails.dpdk.org (Postfix) with ESMTP id 212594013F
+ for <dev@dpdk.org>; Fri,  8 May 2026 11:29:06 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=d3cF91JzEnPdw/R4w0Ug9P+MXPoP/u26g04nxUj/2VY=;
+ b=O4HMNCZLIgYVX7aqyKWHYicftI2c3auZCcrhqEXwGSJ2xSsLE8WuR/ezYDL8EUdyZZJEjQ1cQ
+ YCJuwJ1KzrBGOoOuhP1jFYtV3EReWNmNCm+Mu/iB59QCmQTHJgi21UhFrKWL0c1AE13q/HtC+zX
+ SI2VVTxwhg1urEyT2MZs7wA=
+Received: from mail.maildlp.com (unknown [172.19.163.163])
+ by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4gBkBy6ClkzLlTt;
+ Fri,  8 May 2026 17:21:30 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 71DD04048B;
+ Fri,  8 May 2026 17:29:04 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 8 May 2026 17:29:04 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>, <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <wathsala.vithanage@arm.com>
+Subject: [PATCH v1 0/4] Introduce generic cache stash API and PCIe TPH
+ implementation
+Date: Fri, 8 May 2026 17:28:51 +0800
+Message-ID: <20260508092855.51987-1-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH v1 1/1] net/iavf: fix large VF IRQ mapping
-Date: Fri, 8 May 2026 11:16:03 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65860@smartserver.smartshare.dk>
-In-Reply-To: <3b9ba191-f086-4264-8382-653c06772e17@intel.com>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH v1 1/1] net/iavf: fix large VF IRQ mapping
-Thread-Index: Adzd+L094xOO1SQwT+Ke5gtFPOExKQAz86pQ
-References: <c50ef6c3d4ecaa7902d325d5e8a7fd4c92c8eeb6.1778076415.git.anatoly.burakov@intel.com>
- <CAJFAV8yNKxSXjmjQ0sM21-6hZDTVrGT9cpZ6aQU_FNTepTP4nw@mail.gmail.com>
- <3b9ba191-f086-4264-8382-653c06772e17@intel.com>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Burakov, Anatoly" <anatoly.burakov@intel.com>,
- "Vladimir Medvedkin" <vladimir.medvedkin@intel.com>,
- "Bruce Richardson" <bruce.richardson@intel.com>
-Cc: <dev@dpdk.org>,
-	"David Marchand" <david.marchand@redhat.com>
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -51,57 +53,63 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBCdXJha292LCBBbmF0b2x5IFttYWlsdG86YW5hdG9seS5idXJha292QGludGVsLmNv
-bV0NCj4gU2VudDogVGh1cnNkYXksIDcgTWF5IDIwMjYgMTAuMDkNCj4gDQo+IE9uIDUvNi8yMDI2
-IDU6NTggUE0sIERhdmlkIE1hcmNoYW5kIHdyb3RlOg0KPiA+IE9uIFdlZCwgNiBNYXkgMjAyNiBh
-dCAxNjowNywgQW5hdG9seSBCdXJha292DQo+IDxhbmF0b2x5LmJ1cmFrb3ZAaW50ZWwuY29tPiB3
-cm90ZToNCj4gPj4NCj4gPj4gVGhlIFBGIHdpbGwgY2hlY2sgYnVmZmVyIHNpemUgZm9yIGJlaW5n
-IHRvbyBiaWcsIGFuZCB0aGUgY2h1bmsNCj4gc2l6aW5nIGNvZGUNCj4gPj4gY29ycmVjdGx5IGNh
-bGxzIHRoYXQgb3V0LiBIb3dldmVyLCB0aGUgc2l6ZSB3YXMgYWN0dWFsbHkgc3RpbGwgdG9vDQo+
-IGJpZw0KPiA+PiBiZWNhdXNlIGBzdHJ1Y3QgdmlydGNobmxfcXVldWVfdmVjdG9yX21hcHNgIGFs
-cmVhZHkgaGFkIG9uZSBxdWV1ZQ0KPiB2ZWN0b3INCj4gPj4gYXMgcGFydCBvZiBpdHMgZGVmaW5p
-dGlvbiwgc28gYGNodW5rX3N6YCB3YXMgdG9vIGJpZyBieSAxLg0KPiA+Pg0KPiA+PiBGaXhlczog
-MjkyZDNiNzgxYWM0ICgibmV0L2lhdmY6IHJlcGxhY2UgdW5uZWNlc3NhcnkgaHVnZXBhZ2UgbWVt
-b3J5DQo+IGFsbG9jYXRpb25zIikNCj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogQW5hdG9seSBC
-dXJha292IDxhbmF0b2x5LmJ1cmFrb3ZAaW50ZWwuY29tPg0KPiA+PiAtLS0NCj4gPj4gICBkcml2
-ZXJzL25ldC9pbnRlbC9pYXZmL2lhdmZfdmNobmwuYyB8IDIgKy0NCj4gPj4gICAxIGZpbGUgY2hh
-bmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4gPj4NCj4gPj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvbmV0L2ludGVsL2lhdmYvaWF2Zl92Y2hubC5jDQo+IGIvZHJpdmVycy9uZXQv
-aW50ZWwvaWF2Zi9pYXZmX3ZjaG5sLmMNCj4gPj4gaW5kZXggYzJmMzQwZGI4MS4uZGQwOWIwZmE2
-MSAxMDA2NDQNCj4gPj4gLS0tIGEvZHJpdmVycy9uZXQvaW50ZWwvaWF2Zi9pYXZmX3ZjaG5sLmMN
-Cj4gPj4gKysrIGIvZHJpdmVycy9uZXQvaW50ZWwvaWF2Zi9pYXZmX3ZjaG5sLmMNCj4gPj4gQEAg
-LTE1MjgsNyArMTUyOCw3IEBAIGlhdmZfY29uZmlnX2lycV9tYXBfbHZfY2h1bmsoc3RydWN0DQo+
-IGlhdmZfYWRhcHRlciAqYWRhcHRlciwNCj4gPj4NCj4gPj4gICAgICAgICAgLyogZm9yIHNvbWUg
-cmVhc29uIFBGIHNpZGUgY2hlY2tzIGZvciBidWZmZXIgYmVpbmcgdG9vIGJpZywNCj4gc28gYWRq
-dXN0IGl0IGRvd24gKi8NCj4gPg0KPiA+IFRoZSBjb21tZW50IGFib3ZlIGNhbiBiZSByZW1vdmVk
-Pw0KPiANCj4gTm8sIGl0J3Mgc3RpbGwgcmVsZXZhbnQsIGJlY2F1c2UgaXQgcmVmZXJzIHRvIHRo
-ZSBmYWN0IHRoYXQgd2UncmUNCj4gYWRqdXN0aW5nIHRoZSB0b3RhbCBsZW5ndGggZG93bndhcmRz
-IGFzIG9wcG9zZWQgdG8gbGVhdmluZyBpdCBhdCBtYXgNCj4gc2l6ZS4NCj4gDQo+ID4NCj4gPj4g
-ICAgICAgICAgYnVmX2xlbiA9IHNpemVvZihzdHJ1Y3QgdmlydGNobmxfcXVldWVfdmVjdG9yX21h
-cHMpICsNCj4gPj4gLSAgICAgICAgICAgICAgICAgc2l6ZW9mKHN0cnVjdCB2aXJ0Y2hubF9xdWV1
-ZV92ZWN0b3IpICogY2h1bmtfc3o7DQo+ID4+ICsgICAgICAgICAgICAgICAgIHNpemVvZihzdHJ1
-Y3QgdmlydGNobmxfcXVldWVfdmVjdG9yKSAqIChjaHVua19zeiAtDQo+IDEpOw0KPiA+DQo+ID4g
-LSBkaWQgeW91IG1ha2Ugc3VyZSB5b3UgZGlkIG5vdCBicmVhayBjb21wYXQgd2l0aCBwcmV2aW91
-cyB2ZXJzaW9uIG9mDQo+ID4gSW50ZWwgb3V0IG9mIHRyZWUgUEYgZHJpdmVyIChzaW5jZSB0aGlz
-IGNvbmNlcm5zIGNvbmZpZ3VyaW5nICJMYXJnZQ0KPiA+IFZGIik/DQo+IA0KPiBUaGUgY29tbWl0
-IGluIHF1ZXN0aW9uICpkaWQqIGJyZWFrIHRoaW5ncyB3aXRoIHByZXZpb3VzIG91dCBvZiB0cmVl
-IFBGDQo+IGRyaXZlci4gVGhpcyBjb21taXQgZml4ZXMgdGhlIGJyZWFrYWdlIGludHJvZHVjZWQg
-aW4gdGhhdCBjb21taXQuIFRoZQ0KPiBjb21taXQgYmVpbmcgZml4ZWQgd2FzIGEgcmVmYWN0b3Is
-IHdoaWNoIHNwZWNpZmllZCBzaXplIGFzIE4tMS4NCj4gDQo+ID4NCj4gPiAtIGFsbCB0aG9zZSB2
-aXJ0Y2hubCBsaXN0IHN0cnVjdCBoYXZlIHRoZSBzYW1lIGVsZW1zWzFdIGlzc3VlLg0KPiA+IEtl
-cm5lbCBzaWRlIGRpZCBzb21lIGNsZWFudXBzIHNvbWUgdGltZSBhZ28sIG1heWJlIHRpbWUgZm9y
-IERQREsgdG8NCj4gZG8NCj4gPiB0aGUgc2FtZS4uLj8NCj4gPg0KPiANCj4gWWVzLCBpdCBpcyBp
-bmRlZWQgdGltZSB0byBkbyB0aGUgc2FtZSwgYnV0IG5vdCBhcyBwYXJ0IG9mIHRoaXMNCj4gcGF0
-Y2hzZXQsDQo+IGFuZCBub3QgYmVmb3JlIHRoZSBiYXNlIGRyaXZlciBjb2RlIGlzIHVwZGF0ZWQg
-dG8gZG8gdGhlIHNhbWUuIFRoZXJlIGlzDQo+IHNvbWUgYmFja2dyb3VuZCB3b3JrIGhhcHBlbmlu
-ZyBvbiB0aGF0IGZyb250IGFscmVhZHksIGJ1dCB0aGVyZSBhcmUgYQ0KPiBsb3Qgb2YgZGVwZW5k
-ZW5jaWVzIGFuZCBtb3ZpbmcgcGFydHMsIHNvIHdlIGNhbid0IGp1c3QgY2hhbmdlIHRoaXMNCj4g
-d2lsbHkNCj4gbmlsbHkuDQoNCklzIHRoZXJlIGEgdGltZWxpbmUgZm9yIHRoaXMgZml4Pw0KDQpX
-aXRoIHRoZSBwZXJmb3JtYW5jZSBpbXByb3ZlZCBydGVfbWVtY3B5KCkgcGF0Y2ggWzFdLCBvbmUg
-b2YgdGhlIENJIGNvbXBpbGVycyBjb21wbGFpbnMgYWJvdXQgYnVmZmVyIG92ZXJmbG93cyB3aGVu
-IHdyaXRpbmcgYmV5b25kIHRoZXNlIHVuZGVyc2l6ZSBhcnJheXMgWzJdLg0KQW5kIEknZCBsaWtl
-IHRvIHNlZSB0aGUgcGVyZm9ybWFuY2UgaW1wcm92ZWQgcnRlX21lbWNweSgpIG1lcmdlZCBpbiAy
-Ni4wNy4NCg0KWzFdOiBodHRwczovL3BhdGNod29yay5kcGRrLm9yZy9wcm9qZWN0L2RwZGsvcGF0
-Y2gvMjAyNjA0MjkxMDM1NDguMjIwMzU0LTEtbWJAc21hcnRzaGFyZXN5c3RlbXMuY29tLw0KWzJd
-OiBodHRwczovL2dpdGh1Yi5jb20vb3Zzcm9ib3QvZHBkay9hY3Rpb25zL3J1bnMvMjUxMDQ0Mzg1
-NTIvam9iLzc0OTY4MjE4NDIwDQoNCi1Nb3J0ZW4NCg0K
+This patch set introduces a generic ethdev cache stash framework,
+provides PCIe TPH (Transaction Processing Hints) implementation
+on PCI/VFIO bus, enables TPH cache stash support for e1000/igb PMD,
+and adds testpmd command line configuration.
+
+The patchset is organized as follows:
+- Patch 1/4: bus/pci: introduce PCIe TPH support
+  Add generic PCIe TPH APIs and VFIO backend implementation,
+  with stub implementations for BSD and Windows.
+
+- Patch 2/4: ethdev: introduce generic cache stash API
+  Define unified cache stash capability/operation/config abstraction,
+  support device-level and per-queue stash management.
+
+- Patch 3/4: net/e1000: add cache stash support via TPH
+  Implement ethdev cache stash ops for igb PMD based on PCIe TPH.
+
+- Patch 4/4: app/testpmd: add TPH stash objects configuration
+  Add testpmd CLI option to configure stash objects and
+  automatically apply stash enable/disable on forwarding start/stop.
+
+Note:
+1. This implementation references the Linux kernel VFIO TPH uapi
+   series (v8 version), which is not yet merged upstream:
+   https://lore.kernel.org/all/20260508064053.37529-1-fengchengwen@huawei.com/
+
+2. The API design and cache stash model learn from the prior  work
+   by Wathsala Vithanage: "An API for Cache Stashing with TPH".
+
+3. The e1000/igb PMD is enabled as the first user of this API
+   because it is the only PCIe TPH capable hardware available
+   for testing at this time. The generic API design is extensible
+   to other NICs and future cache stash mechanisms.
+
+Chengwen Feng (4):
+  bus/pci: introduce PCIe TPH support
+  ethdev: introduce generic cache stash API
+  net/e1000: add cache stash support via TPH
+  app/testpmd: add TPH stash objects configuration
+
+ app/test-pmd/parameters.c               |  20 ++
+ app/test-pmd/testpmd.c                  |  81 +++++++
+ app/test-pmd/testpmd.h                  |   1 +
+ drivers/bus/pci/bsd/pci.c               |  50 +++++
+ drivers/bus/pci/linux/pci.c             |  48 +++++
+ drivers/bus/pci/linux/pci_init.h        |   9 +
+ drivers/bus/pci/linux/pci_vfio.c        | 272 ++++++++++++++++++++++++
+ drivers/bus/pci/rte_bus_pci.h           | 112 ++++++++++
+ drivers/bus/pci/windows/pci.c           |  50 +++++
+ drivers/net/intel/e1000/base/e1000_hw.h |   2 +
+ drivers/net/intel/e1000/base/e1000_vf.h |   2 +
+ drivers/net/intel/e1000/igb_ethdev.c    | 221 +++++++++++++++++++
+ lib/ethdev/ethdev_driver.h              |  37 ++++
+ lib/ethdev/rte_ethdev.c                 |  40 ++++
+ lib/ethdev/rte_ethdev.h                 |  95 +++++++++
+ 15 files changed, 1040 insertions(+)
+
+-- 
+2.17.1
+
