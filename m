@@ -2,67 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 610AFCD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44BFCD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0197540BA2;
-	Fri,  8 May 2026 22:36:33 +0200 (CEST)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 2BF9B40A6C
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:29 +0200 (CEST)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-2f36da5c8fbso2473287eec.0
+	by mails.dpdk.org (Postfix) with ESMTP id 0A91740670;
+	Fri,  8 May 2026 22:36:34 +0200 (CEST)
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
+ [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id 0DA36406BC
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:30 +0200 (CEST)
+Received: by mail-dy1-f169.google.com with SMTP id
+ 5a478bee46e88-2f03d6cf77bso2711510eec.0
  for <dev@dpdk.org>; Fri, 08 May 2026 13:36:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272588;
- x=1778877388; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272589;
+ x=1778877389; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=1ByZV8llKOpvbP+yxJVvfSvfvfD38lEU8tQ37+GmZEQ=;
- b=StMjLWYZRwp+bw104NN+F+je4686EGSoZdTY2aaMaZlK85eBFrJu3EDTX/VSeAlYle
- tXeSpgxyOXwhEfUXMCwJUQM04Fx8oMFc/8cakr2E4jaznKmShU4Jm70emLzSp8yWPGx9
- TTK8T1wYYL/h5U/fzi88fWV1OoEcZtvJxenK51gHeQGyfjeF+L3cR8nJwtYUGCrQtREO
- asaT8qsOUjlazGjX5ICApJ+Xxl21aHUAP6X1bRPonCOBdOIMV0AAR3O5Lnme+neFgFDT
- wGrWtTxr2vfxjjGNFIFS71JbxsEVTXKs1c0wloI8BY18U+PMkHKoFbviIdMfw48hbjZy
- WiBA==
+ bh=sqAz7YsV6AN2nqnywDN1AEIGuIurAvIF0ULLH/9vFBs=;
+ b=k40Z8KSYFZKOxfovQLNR7IIhXfWRzGvpZSfZ1YcQNW/LOPqUpXDoumKkXK1y/UnMsI
+ Wpv7A+D1glzlNqQV2PjUoGIyf+Y5BjbLmvwxpE/4HWiv5ltpld151VseAQDKv+DpAFHu
+ IsA8Fmw4OXztXZ2qr8PJlZlBTXYoxRz0XmKgTInRgF4c1zCP2FOATb6sEJcFQ1WW5WCO
+ CmcxoGLkonEw21jy+gyZmpEcJMXv3Oaz27b28NOrO128lcYDqTHdfpIyBIb3hOPrYlLw
+ kVn1c8uze2LpoU4rCKAlmG2Ntz9sssIKflkUDvHR3e7BM8JuI+jFupR+EQP2Yaus84Zp
+ eAOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272588; x=1778877388;
+ d=1e100.net; s=20251104; t=1778272589; x=1778877389;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=1ByZV8llKOpvbP+yxJVvfSvfvfD38lEU8tQ37+GmZEQ=;
- b=f6KGX/+u2KFUYSYbYxq1kWSUuZP3Dg1WMqahbXnrow6omq0LcfxerUSwKwq3A+xFy2
- IRy2U8jGawdCybXXDoo6AM7qe8b3gxmbN4gBoMpdrwCx0IevvHITG584olRgqh43Gonm
- ivh5muj6rMx5OVVhDwgyhuTm7HvgUBI5YmMjh8O8l8UjeW3GCLKuySsycIDjISlqoLxf
- KMyGg4kK6G8KPFfwpdLWyPATXISUtga9jVELVvafZvyjkIqWj5wQp9K6xdH6S9ezfTM/
- t/Mis6e6BxCPLJ7GIoHKSTn7yszrSMPNsI0RqJkCcSHxz26U0LYT0aKd8CDD9Wg1Y0Jg
- Zwrw==
-X-Gm-Message-State: AOJu0Yxe99s6eOJwGoOoBpsOWOaTlLeT/Eer1Q4tXt75Sz2t8InC7PbT
- F9Jj7A24YhkrKAJXwuiCZZtMTRLLhnhAeMM+TlX0eFMtIMyE9LoIsKUdHiXgpocbhkGVwivN2ai
- 5tyW4
-X-Gm-Gg: Acq92OEbpD0JsZWE52Fv9oorimjFzD3bt+Q8y2rwG2S2n6KIyayFDTwnNcmzFSiTd+g
- DYW+vODHx18bxSad7g9pHhZpUd0sy9vrUy3MLWmPOAQ1zHXE3ESMqiFDqopkEQAWzkKz154Sy0m
- YcioMRzvzkw3KPO+GUz+JmaT/YW3y/PV7YE0vYrBy+GAKUwdjk91K47w6qzZB7GaMCmAOoHoMlT
- K7+Jinae+fV/b4qI5hSTNcuPTybVyF1hWamv+UpWhVfgzUdnBZSZn1TwM5iRRwfTpiMgA/dh7Tl
- rZiGN6UqLMw8uv6X1K4bfWUJgEGSoW/Hi55gj7AlmAWWJTdxLp1SodOQ4KDaqS1PuQqMPJOnFgG
- qtHHCMiOjjFWtAo7nVa3zGEkcgNszIHKRURWVF+2kmDJV+OfMlEnJ7mY76sCvrxFQQXgBwnDsWG
- MeOOXrB+P+cEe6DeOxYEv5ODDyGPxZt7Ny
-X-Received: by 2002:a05:7300:a187:b0:2d3:2983:c87c with SMTP id
- 5a478bee46e88-2f548895039mr7376153eec.1.1778272588196; 
- Fri, 08 May 2026 13:36:28 -0700 (PDT)
+ bh=sqAz7YsV6AN2nqnywDN1AEIGuIurAvIF0ULLH/9vFBs=;
+ b=UfPHBxsg42drAezEkL1VMEBpE0BUOSEmklHi5YXUEQQdWFTGCWWnrgMYcf8nDaGKc6
+ CGFoOUEXXUAXYDd2LaFHyzUw2tExXolB2s12T6dF6r+D+cdgmRV08i5W/Jb4jh0Lmb12
+ 3xfyhqLYBwLcronWX2b5WIxALOYuayq3EB2vh3DY0nfAWInvgVVBGqcK/PI95qzKB4+O
+ N1XTyeJFpDarelOregv2t5TIKTOqkBFyJG/0O5fTaL02iesX2B6zFXtYWKWLH+Ft9S0a
+ FJi6za6RHmcEF/pGu8zNNOaOMoq7CY3Q8RzEf2eajFoQ5e4m0eUI0jJidxFnPl4aH80H
+ Q12Q==
+X-Gm-Message-State: AOJu0YyO3cV23qSfCBmp8korwfxRQlmDfM8ATDNtP3MqFCsxmsJHKT/J
+ gcjgTSLBXqNV6+qMoRZ1U5sPJ6k+9q/G9vGHUKnChcKg3jIHSF0jxVs5WIlUonNwEmd+vUr7pl6
+ qt+Qr
+X-Gm-Gg: Acq92OHjYHmj7NB3EwYR9f/C1qsCVDdI+qE3zHb116q+IKqn1Nemp+3qkVUXtE8eVWz
+ fe6P56D+cG0wZwke6QIKYO6eW196F4Uz8TQSllZG7PNr05wMBGhZVu6sIGi2GRfs6IJtxlMYhvo
+ 7DiInbBPyLkYQ0KRjKnDJvPuAqhf7VCZ2RP9beYKqJajOVxlWw3cJ67KkUGeE5odgNDL5vuRzLz
+ a2NaWJAPJl01SefqzlVuBhe915Yb+xNUxMoN61k9otJ9yRzbE6LLMqgaQFIUaT3a8VYxCJpH8ZO
+ 3lJlSKbv8gmw+uhHB2B+w50MLjC35HtQ71lqtyYqiu/8an9q+y9+I5iEqES/72F3IqLj1SX5J9i
+ Jug4UHfztLvlHfZWZH7kWUcIQ0DWcrlzcJLt2bxKhl7NYOrtV6V5I5ivvUOMJJavonmGBzsbKVp
+ gKfYu7U76pjvDBUZA1P/36moa+QPtkeCluWo22vMzvxCs=
+X-Received: by 2002:a05:693c:2b0b:b0:2f1:496c:94d4 with SMTP id
+ 5a478bee46e88-2f548895060mr6091749eec.4.1778272589136; 
+ Fri, 08 May 2026 13:36:29 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.27
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.28
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:27 -0700 (PDT)
+ Fri, 08 May 2026 13:36:28 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cheng Jiang <honest.jiang@foxmail.com>,
- Chengwen Feng <fengchengwen@huawei.com>
-Subject: [PATCH 18/20] app/test-dma-perf: remove unnecessary null check
-Date: Fri,  8 May 2026 13:33:39 -0700
-Message-ID: <20260508203607.1003036-19-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 19/20] app/test-compress-perf: remove unnecessary null check
+Date: Fri,  8 May 2026 13:33:40 -0700
+Message-ID: <20260508203607.1003036-20-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -81,32 +79,57 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove unnecessary if check before calling rte_pktmbuf_free_bulk.
+Remove unnecessary if check before calling rte_free
+and rte_pktmbuf_free_bulk.
 
 Generated by devtools/cocci/null_free.cocci
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-dma-perf/benchmark.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ app/test-compress-perf/comp_perf_test_common.c | 6 ++----
+ app/test-compress-perf/main.c                  | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/app/test-dma-perf/benchmark.c b/app/test-dma-perf/benchmark.c
-index c0ffc859bd..576c59faff 100644
---- a/app/test-dma-perf/benchmark.c
-+++ b/app/test-dma-perf/benchmark.c
-@@ -690,10 +690,8 @@ teardown_memory_env(uint32_t nr_buf, struct rte_mbuf **srcs, struct rte_mbuf **d
- 		    struct rte_dma_op **dma_ops)
+diff --git a/app/test-compress-perf/comp_perf_test_common.c b/app/test-compress-perf/comp_perf_test_common.c
+index 12c2a7bbd0..90eb98166e 100644
+--- a/app/test-compress-perf/comp_perf_test_common.c
++++ b/app/test-compress-perf/comp_perf_test_common.c
+@@ -83,11 +83,9 @@ comp_perf_free_memory(struct comp_test_data *test_data,
  {
- 	/* free mbufs used in the test */
--	if (srcs != NULL)
--		rte_pktmbuf_free_bulk(srcs, nr_buf);
--	if (dsts != NULL)
--		rte_pktmbuf_free_bulk(dsts, nr_buf);
-+	rte_pktmbuf_free_bulk(srcs, nr_buf);
-+	rte_pktmbuf_free_bulk(dsts, nr_buf);
+ 	uint32_t i;
  
- 	/* free the points for the mbufs */
- 	rte_free(srcs);
+-	if (mem->decomp_bufs != NULL)
+-		rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
++	rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
+ 
+-	if (mem->comp_bufs != NULL)
+-		rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
++	rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
+ 
+ 	rte_free(mem->decomp_bufs);
+ 	rte_free(mem->comp_bufs);
+diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
+index c9ead02cb4..bc2b185da4 100644
+--- a/app/test-compress-perf/main.c
++++ b/app/test-compress-perf/main.c
+@@ -392,15 +392,13 @@ comp_perf_dump_dictionary_data(struct comp_test_data *td)
+ 
+ 		if (fread(data, data_to_read, 1, f) != 1) {
+ 			RTE_LOG(ERR, USER1, "Input file could not be read\n");
+-			if (td->dictionary_data)
+-				rte_free(td->dictionary_data);
++			rte_free(td->dictionary_data);
+ 			goto end;
+ 		}
+ 		if (fseek(f, 0, SEEK_SET) != 0) {
+ 			RTE_LOG(ERR, USER1,
+ 				"Size of input could not be calculated\n");
+-			if (td->dictionary_data)
+-				rte_free(td->dictionary_data);
++			rte_free(td->dictionary_data);
+ 			goto end;
+ 		}
+ 		remaining_data -= data_to_read;
 -- 
 2.53.0
 
