@@ -2,67 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA25CD342F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16F2CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B507F40B8F;
-	Fri,  8 May 2026 22:36:30 +0200 (CEST)
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
- by mails.dpdk.org (Postfix) with ESMTP id C0C4C40A77
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:26 +0200 (CEST)
-Received: by mail-dl1-f48.google.com with SMTP id
- a92af1059eb24-1309f4ee97fso3260799c88.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:26 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C4E8640B91;
+	Fri,  8 May 2026 22:36:31 +0200 (CEST)
+Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
+ [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id 31EB340A6F
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:28 +0200 (CEST)
+Received: by mail-dy1-f174.google.com with SMTP id
+ 5a478bee46e88-2f33ae12f97so1504621eec.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272586;
- x=1778877386; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272587;
+ x=1778877387; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=l8/kSagyHm7d8K+kImZdOd18Ksp4U2IJ7WeVOucD7tw=;
- b=PI9HY+X7ftVrkVIT1H47fG2RHD+dzNp1IqxdufMiJ/+uiBHcKbvvXguJ94R6i9LS9k
- QAsrTPx2/lDnTBopeWEHAUUW9WpdcO35EdbHtrTXKCjixttVnJ1ALNJXlDCmqIls0vRA
- Nns9HtriBXOZb3idkGtoVQuj70C9Y3ryNih1r+SQ55cPnzD8hW9Jmzt7UN3i2+rmaEOu
- l2gWUAPtMTeMqZ0OGBI1ZlEu7hNUOznrvvegKEuXGiL87ysnH+6w4fC+5ZFnHaN6nAuI
- HC9i0NVMIn7xZeXkdzFtpTq9qp/yBbFxWqo3iDIxiX7tn2GoCOuI4jA6D6hyOl9mUABa
- 8sPg==
+ bh=Yyja7/mhBwsH4OCfdzseVXnpoxaukx2TAeYw/ajU25w=;
+ b=fraAfUBSukgTsVZXFa0MxXAIo0Cii3Re+2CSyK6hnRIBYAxKNs98Je9xnERzMeRGMG
+ SF4YDH0q6h8LaHD6JdZS+KvjeSVuJ9HMMQJhnn5zSNMjO5UHD8IyROmPhXQNzu3c7hQV
+ lzaRth3VWkvqR+RipFWPJ+JspL6tjAQvidpV4H+AWp5Ffjil4U4tcOsKhfGfRU1oK04N
+ 0KcSNbE6VaeEsk3jWEcriq2DN6Xd9as5sHcit5Wz+BuaDWeheOnqMWnfjy+2K7Wzld+Q
+ u+V+Ics+2Bx8S08EnjKnhnXcMV233UngNINuBtUj12dZtd4WJTEb1vrk7i8dlZLCETaU
+ W9Jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272586; x=1778877386;
+ d=1e100.net; s=20251104; t=1778272587; x=1778877387;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=l8/kSagyHm7d8K+kImZdOd18Ksp4U2IJ7WeVOucD7tw=;
- b=m/mvT8MOPc3AxFNiZ5s9uE2Lxt8OlTahc/2TwSsx3reNTrel+248dQ1YpJ98rlDPhJ
- E+pRImng8Td7p53wCCHaC2vXl7RWH1D3TRBUDgDPvCbb0HinmMaMf5xnUyrIX6dUEqXS
- YDZXaI737JP5SEiL+d73VM1v/vNvfZwELdbbYwM7l6YiZ/+Zf59CK2h8z+nwokOd5ch/
- 850OApXu5h2k6+i99SPsDsDHKGPqdCQ2z06hfqzt/AK3WCf7bTYLv3hHbwZNJJBL0eDR
- 4nw+f57t+cH1MlgEkmTcvDT1nPfSPTrgy+nnB5wzgv3SRkENR5TslLno7FaiXTv8xJuX
- /mmw==
-X-Gm-Message-State: AOJu0YwKb/H2NP9DbZL74yfnWY30EtnJMM43jYODTaICFOwsvM5T8xy6
- ixcTX57835+kzscr9KXMe5By+m1etxhkLibcHWLjabisuXj9iXu/dM4D9B3BYZcGEQxc/aP6iK/
- EdLQD
-X-Gm-Gg: AeBDietWdFkYJqU+7QE0OtnVOmutpMes425fk3jroZ2+dijBijn5pbI2IzkYmaTFOKO
- X85jiiVrylzu6KtEW+gqoZzi3lVEP4Bn9CF9/mhpboEhJ8AvVEQymMU8UtV7ddW0Nx3dltuuASH
- jsXX+vHGyNNkLEYTM5C/7MK25M3ibg9QiTnlM6q8dOgePhXHeaLdQoRbJofiaBbdUe1ofltmDvx
- xINUvAGksxwTQHQnopU2IS0H/9jZGaR9BDYr9xkHbgNPH3cWipoQvn2pwdOIaPCBtGMtH2LTWrP
- FTujqDruQk/PG5jZ6Xa5mx3WVItcuaTLCuUGBKRx1u/SF7jjK9yQBshXpKt8yjxsigV9cj+wpiP
- u1u0EvWBcqLv7KM0IEkCfu+p9PM3pKtjSH5HQWwl0IacBZmbshWWdvzy/pOf0XJfwZPlfvu1L7A
- YETZS/XcTjmka3OSprv0oUBUm0iPjxYrkKNlgzOT3mSkA8kBN2p0g0hw==
-X-Received: by 2002:a05:7022:4a9:b0:12d:de3e:be88 with SMTP id
- a92af1059eb24-131a69f2f19mr6661936c88.36.1778272585755; 
- Fri, 08 May 2026 13:36:25 -0700 (PDT)
+ bh=Yyja7/mhBwsH4OCfdzseVXnpoxaukx2TAeYw/ajU25w=;
+ b=noZkJ/Iv8GZov2whJyQP4j1YSkFA4aNEkELiQwtyGh6dACd9lh+UZAPA0MFS8AOl0S
+ eHwaiMGpj18C4eD65807fAIjb+AU3oVQRBIj2b2JBDE9SJE2xkYaXIiuFXMvk1sxEupi
+ D8PotT6x7Db2RHb3UU5Ik4NFhC32YU7E8iBiuFkB2OeG9W/Ph410ArtBiIn7tpnrEV0/
+ 874D+pnZdXVcPpf9R8webLW1uQ5WuMLuoTR6e4zKUrfUFdwTBd+3iaZ0kz7upZzzPT98
+ WbayuH5KW88ltgHukfRp6Kh+B1gzpH9ewZkAH2+F4SjJm8s44e6Xv1BsD1Hm+gJTz3/8
+ qIAQ==
+X-Gm-Message-State: AOJu0YwJ7+vy8q3wQxc1arPxuiKO2cCuC/rlgFfxbivmPvoxneQgiTtC
+ WV6kCsXwY5z4wtiNEjrV6uF0TbPQ+gfjRAmtLldCJ1OVQupWimteDk4tZOVFJ4gGcHbg5K0lMfV
+ XmEyN
+X-Gm-Gg: Acq92OGwT8fLdwJkcOayTX6GSYmP0B9yt/CFA6tkHd7+Ms/rlcKzmFbv9wUdd8+jx6z
+ qwjDolP7jW7t+FrXB3PhNd5BmDVmDeJzcnYd1mooaxKC1VhZJnrdQIPt3b8pn/ENBoxnYA/Kcvs
+ svTtp486raF7HjPl5hGOQyEayvxmj7UrBJnCDYVqdixwQeMT47CuT27gFKC0grJkMy2RCPcYycS
+ v2pn/lbbCNEuU9RHuUlBtoi27GneH0ZHXjeQ545RULOS0r0x7BF9965cLvZxgI6b577bpYHk6/1
+ Br2q7OeO4dzLq6pREjr07HhywG+UoJb48DgeWTaDm03yZ0tRiusQDhOsxpHF7BSKa7RdB7Rpo2Q
+ aortj55kgE9CqvJHebOWSBNThPnDSLImpa8v6wzR2RPge/vT2Wqbi/e2nmxXNFhZAeV/liHe+oA
+ OqFFDe7RB5DSR9xQ3EjH1XPjkUX6hDerZZ
+X-Received: by 2002:a05:693c:3b0b:b0:2c1:6676:5ebd with SMTP id
+ 5a478bee46e88-2f85bf85741mr2132697eec.10.1778272587161; 
+ Fri, 08 May 2026 13:36:27 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.25
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.26
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:25 -0700 (PDT)
+ Fri, 08 May 2026 13:36:26 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
- Ajit Khaparde <ajit.khaparde@broadcom.com>
-Subject: [PATCH 16/20] net/bnxt: remove unnecessary null check
-Date: Fri,  8 May 2026 13:33:37 -0700
-Message-ID: <20260508203607.1003036-17-stephen@networkplumber.org>
+ Reshma Pattan <reshma.pattan@intel.com>,
+ Chengwen Feng <fengchengwen@huawei.com>,
+ Kevin Laatz <kevin.laatz@intel.com>,
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>,
+ Chas Williams <3chas3@gmail.com>, "Min Hu (Connor)" <humin29@huawei.com>,
+ Volodymyr Fialko <vfialko@marvell.com>,
+ Cristian Dumitrescu <cristian.dumitrescu@intel.com>
+Subject: [PATCH 17/20] test: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:38 -0700
+Message-ID: <20260508203607.1003036-18-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -81,53 +87,328 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove unnecessary if check before calling rte_free.
+Replace open-coded loop with rte_pktmbuf_free_bulk().
 
-Generated by devtools/cocci/null_free.cocci
+Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/bnxt/tf_core/v3/tfo.c    | 6 ++----
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ app/test/sample_packet_forward.c |  5 +----
+ app/test/test_distributor.c      |  4 +---
+ app/test/test_dmadev.c           |  6 ++----
+ app/test/test_ipfrag.c           |  4 +---
+ app/test/test_link_bonding.c     | 13 ++++---------
+ app/test/test_pmd_perf.c         |  3 +--
+ app/test/test_pmd_tap.c          |  3 +--
+ app/test/test_reorder.c          | 12 ++++--------
+ app/test/test_table_ports.c      | 12 ++++--------
+ app/test/test_table_tables.c     | 21 +++++++--------------
+ 10 files changed, 26 insertions(+), 57 deletions(-)
 
-diff --git a/drivers/net/bnxt/tf_core/v3/tfo.c b/drivers/net/bnxt/tf_core/v3/tfo.c
-index 4b1f545476..681d1dd8d3 100644
---- a/drivers/net/bnxt/tf_core/v3/tfo.c
-+++ b/drivers/net/bnxt/tf_core/v3/tfo.c
-@@ -183,13 +183,11 @@ void tfo_close(void **tfo)
- 				}
- 			}
- 		}
--		if (tim)
--			rte_free(tim);
-+		rte_free(tim);
- 		tfco->ts_tim = NULL;
- 		tfco->tfgo = NULL;
+diff --git a/app/test/sample_packet_forward.c b/app/test/sample_packet_forward.c
+index aa897274d8..70bb75e321 100644
+--- a/app/test/sample_packet_forward.c
++++ b/app/test/sample_packet_forward.c
+@@ -115,10 +115,7 @@ test_get_mbuf_from_pool(struct rte_mempool **mp, struct rte_mbuf **pbuf,
+ void
+ test_put_mbuf_to_pool(struct rte_mempool *mp, struct rte_mbuf **pbuf)
+ {
+-	int itr = 0;
+-
+-	for (itr = 0; itr < NUM_PACKETS; itr++)
+-		rte_pktmbuf_free(pbuf[itr]);
++	rte_pktmbuf_free_bulk(pbuf, NUM_PACKETS);
+ 	rte_mempool_free(mp);
+ }
  
--		if (*tfo)
--			rte_free(*tfo);
-+		rte_free(*tfo);
- 		*tfo = NULL;
+diff --git a/app/test/test_distributor.c b/app/test/test_distributor.c
+index da0a21ea83..ed37ca80f1 100644
+--- a/app/test/test_distributor.c
++++ b/app/test/test_distributor.c
+@@ -309,7 +309,6 @@ handle_work_with_free_mbufs(void *arg)
+ 	alignas(RTE_CACHE_LINE_SIZE) struct rte_mbuf *buf[8];
+ 	struct worker_params *wp = arg;
+ 	struct rte_distributor *d = wp->dist;
+-	unsigned int i;
+ 	unsigned int num;
+ 	unsigned int id = rte_atomic_fetch_add_explicit(&worker_idx, 1, rte_memory_order_relaxed);
+ 
+@@ -317,8 +316,7 @@ handle_work_with_free_mbufs(void *arg)
+ 	while (!quit) {
+ 		rte_atomic_fetch_add_explicit(&worker_stats[id].handled_packets, num,
+ 				rte_memory_order_relaxed);
+-		for (i = 0; i < num; i++)
+-			rte_pktmbuf_free(buf[i]);
++		rte_pktmbuf_free_bulk(buf, num);
+ 		num = rte_distributor_get_pkt(d, id, buf, NULL, 0);
+ 	}
+ 	rte_atomic_fetch_add_explicit(&worker_stats[id].handled_packets, num,
+diff --git a/app/test/test_dmadev.c b/app/test/test_dmadev.c
+index 5488a1af33..a5772cc843 100644
+--- a/app/test/test_dmadev.c
++++ b/app/test/test_dmadev.c
+@@ -499,10 +499,8 @@ test_enqueue_sg_copies(int16_t dev_id, uint16_t vchan)
+ 				ERR_RETURN("Error:incorrect job id received when no job done, %u [expected %u]\n",
+ 						id, 0);
+ 
+-			for (i = 0; i < n_src; i++)
+-				rte_pktmbuf_free(src[i]);
+-			for (i = 0; i < n_dst; i++)
+-				rte_pktmbuf_free(dst[i]);
++			rte_pktmbuf_free_bulk(src, n_src);
++			rte_pktmbuf_free_bulk(dst, n_dst);
+ 
+ 			/* Verify that completion returns nothing more */
+ 			if (rte_dma_completed(dev_id, 0, 1, NULL, NULL) != 0)
+diff --git a/app/test/test_ipfrag.c b/app/test/test_ipfrag.c
+index 247575d6c5..2c553222c2 100644
+--- a/app/test/test_ipfrag.c
++++ b/app/test/test_ipfrag.c
+@@ -240,9 +240,7 @@ v6_allocate_packet_of(struct rte_mbuf *b, int fill, size_t s, uint8_t ttl,
+ static inline void
+ test_free_fragments(struct rte_mbuf *mb[], uint32_t num)
+ {
+-	uint32_t i;
+-	for (i = 0; i < num; i++)
+-		rte_pktmbuf_free(mb[i]);
++	rte_pktmbuf_free_bulk(mb, num);
+ }
+ 
+ static inline void
+diff --git a/app/test/test_link_bonding.c b/app/test/test_link_bonding.c
+index 19b064771a..eac785610a 100644
+--- a/app/test/test_link_bonding.c
++++ b/app/test/test_link_bonding.c
+@@ -1476,10 +1476,7 @@ verify_mbufs_ref_count(struct rte_mbuf **mbufs, int nb_mbufs, int val)
+ static void
+ free_mbufs(struct rte_mbuf **mbufs, int nb_mbufs)
+ {
+-	int i;
+-
+-	for (i = 0; i < nb_mbufs; i++)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, nb_mbufs);
+ }
+ 
+ #define TEST_RR_MEMBER_TX_FAIL_MEMBER_COUNT		(2)
+@@ -4193,7 +4190,7 @@ testsuite_teardown(void)
+ static void
+ free_virtualpmd_tx_queue(void)
+ {
+-	int i, member_port, to_free_cnt;
++	int member_port, to_free_cnt;
+ 	struct rte_mbuf *pkts_to_free[MAX_PKT_BURST];
+ 
+ 	/* Free tx queue of virtual pmd */
+@@ -4202,8 +4199,7 @@ free_virtualpmd_tx_queue(void)
+ 		to_free_cnt = virtual_ethdev_get_mbufs_from_tx_queue(
+ 				test_params->member_port_ids[member_port],
+ 				pkts_to_free, MAX_PKT_BURST);
+-		for (i = 0; i < to_free_cnt; i++)
+-			rte_pktmbuf_free(pkts_to_free[i]);
++		rte_pktmbuf_free_bulk(pkts_to_free, to_free_cnt);
  	}
  }
-diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-index 23e1b59ca4..3707cd1a2d 100644
---- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-+++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
-@@ -169,11 +169,9 @@ ulp_sc_mgr_deinit(struct bnxt_ulp_context *ctxt)
  
- 	ulp_sc_mgr_thread_cancel(ctxt);
+@@ -4381,8 +4377,7 @@ test_tlb_rx_burst(void)
+ 		}
  
--	if (ulp_sc_info->stats_cache_tbl)
--		rte_free(ulp_sc_info->stats_cache_tbl);
-+	rte_free(ulp_sc_info->stats_cache_tbl);
+ 		/* free mbufs */
+-		for (i = 0; i < burst_size; i++)
+-			rte_pktmbuf_free(rx_pkt_burst[i]);
++		rte_pktmbuf_free_bulk(rx_pkt_burst, burst_size);
  
--	if (ulp_sc_info->read_data)
--		rte_free(ulp_sc_info->read_data);
-+	rte_free(ulp_sc_info->read_data);
+ 		/* reset bonding device stats */
+ 		rte_eth_stats_reset(test_params->bonding_port_id);
+diff --git a/app/test/test_pmd_perf.c b/app/test/test_pmd_perf.c
+index 995b0a6f20..dab1751b9a 100644
+--- a/app/test/test_pmd_perf.c
++++ b/app/test/test_pmd_perf.c
+@@ -602,8 +602,7 @@ poll_burst(void *args)
+ 	       total, MAX_IDLE - timeout);
+ 	/* clean up */
+ 	total = pkt_per_port * conf->nb_ports - total;
+-	for (i = 0; i < total; i++)
+-		rte_pktmbuf_free(pkts_burst[i]);
++	rte_pktmbuf_free_bulk(pkts_burst, total);
  
- 	rte_free(ulp_sc_info);
+ 	rte_free(pkts_burst);
+ 
+diff --git a/app/test/test_pmd_tap.c b/app/test/test_pmd_tap.c
+index 6d0e8b4f54..f48b69de3b 100644
+--- a/app/test/test_pmd_tap.c
++++ b/app/test/test_pmd_tap.c
+@@ -192,8 +192,7 @@ test_tap_send_receive(void)
+ 	printf("Received %u packets on port %d\n", nb_rx, tap_port0);
+ 
+ 	/* Free received packets */
+-	for (i = 0; i < nb_rx; i++)
+-		rte_pktmbuf_free(rx_mbufs[i]);
++	rte_pktmbuf_free_bulk(rx_mbufs, nb_rx);
+ 
+ 	return TEST_SUCCESS;
+ }
+diff --git a/app/test/test_reorder.c b/app/test/test_reorder.c
+index 8c68e00869..fc922650d6 100644
+--- a/app/test/test_reorder.c
++++ b/app/test/test_reorder.c
+@@ -208,8 +208,7 @@ test_reorder_insert(void)
+ 	ret = 0;
+ exit:
+ 	rte_reorder_free(b);
+-	for (i = 0; i < INSERT_NUM_BUFS; i++)
+-		rte_pktmbuf_free(bufs[i]);
++	rte_pktmbuf_free_bulk(bufs, INSERT_NUM_BUFS);
+ 
+ 	return ret;
+ }
+@@ -382,8 +381,7 @@ test_reorder_drain_up_to_seqn(void)
+ 		ret = -1;
+ 		goto exit;
+ 	}
+-	for (i = 0; i < 2; i++)
+-		rte_pktmbuf_free(robufs[i]);
++	rte_pktmbuf_free_bulk(robufs, 2);
+ 	memset(robufs, 0, sizeof(robufs));
+ 
+ 	/* Insert more packets
+@@ -406,8 +404,7 @@ test_reorder_drain_up_to_seqn(void)
+ 		ret = -1;
+ 		goto exit;
+ 	}
+-	for (i = 0; i < 2; i++)
+-		rte_pktmbuf_free(robufs[i]);
++	rte_pktmbuf_free_bulk(robufs, 2);
+ 	memset(robufs, 0, sizeof(robufs));
+ 
+ 	ret = 0;
+@@ -483,8 +480,7 @@ test_reorder_set_seqn(void)
+ 	ret = 0;
+ exit:
+ 	rte_reorder_free(b);
+-	for (i = 0; i < SET_SEQN_NUM_BUFS; i++)
+-		rte_pktmbuf_free(bufs[i]);
++	rte_pktmbuf_free_bulk(bufs, SET_SEQN_NUM_BUFS);
+ 
+ 	return ret;
+ }
+diff --git a/app/test/test_table_ports.c b/app/test/test_table_ports.c
+index 282ec2a3d2..d617e73810 100644
+--- a/app/test/test_table_ports.c
++++ b/app/test/test_table_ports.c
+@@ -73,8 +73,7 @@ test_port_ring_reader(void)
+ 	if (received_pkts < expected_pkts)
+ 		return -6;
+ 
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(res_mbuf[i]);
++	rte_pktmbuf_free_bulk(res_mbuf, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	return 0;
+ }
+@@ -156,8 +155,7 @@ test_port_ring_writer(void)
+ 	if (received_pkts < expected_pkts)
+ 		return -8;
+ 
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(res_mbuf[i]);
++	rte_pktmbuf_free_bulk(res_mbuf, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	/* TX Bulk */
+ 	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+@@ -171,8 +169,7 @@ test_port_ring_writer(void)
+ 	if (received_pkts < expected_pkts)
+ 		return -8;
+ 
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(res_mbuf[i]);
++	rte_pktmbuf_free_bulk(res_mbuf, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+ 		mbuf[i] = rte_pktmbuf_alloc(pool);
+@@ -186,8 +183,7 @@ test_port_ring_writer(void)
+ 	if (received_pkts < expected_pkts)
+ 		return -9;
+ 
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(res_mbuf[i]);
++	rte_pktmbuf_free_bulk(res_mbuf, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	return 0;
+ }
+diff --git a/app/test/test_table_tables.c b/app/test/test_table_tables.c
+index 920aa555cb..d2c09c360f 100644
+--- a/app/test/test_table_tables.c
++++ b/app/test/test_table_tables.c
+@@ -162,8 +162,7 @@ test_table_stub(void)
+ 		return -2;
+ 
+ 	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	return 0;
+ }
+@@ -276,8 +275,7 @@ test_table_array(void)
+ 				return -13;
+ 
+ 	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	status = rte_table_array_ops.f_free(table);
+ 
+@@ -442,8 +440,7 @@ test_table_lpm(void)
+ 		return -23;
+ 
+ 	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	status = rte_table_lpm_ops.f_free(table);
+ 
+@@ -620,8 +617,7 @@ test_table_lpm_ipv6(void)
+ 		return -24;
+ 
+ 	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	status = rte_table_lpm_ipv6_ops.f_free(table);
+ 
+@@ -723,8 +719,7 @@ test_table_hash_lru_generic(struct rte_table_ops *ops, uint32_t key_size)
+ 		return -13;
+ 
+ 	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	status = ops->f_free(table);
+ 
+@@ -833,8 +828,7 @@ test_table_hash_ext_generic(struct rte_table_ops *ops, uint32_t key_size)
+ 		return -13;
+ 
+ 	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	status = ops->f_free(table);
+ 
+@@ -1047,8 +1041,7 @@ test_table_hash_cuckoo(void)
+ 		return -20;
+ 
+ 	/* Free resources */
+-	for (i = 0; i < RTE_PORT_IN_BURST_SIZE_MAX; i++)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, RTE_PORT_IN_BURST_SIZE_MAX);
+ 
+ 	status = rte_table_hash_cuckoo_ops.f_free(table);
  
 -- 
 2.53.0
