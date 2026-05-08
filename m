@@ -2,66 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A86FFCD342F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D541ACD342F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:19 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 57ADB40678;
-	Fri,  8 May 2026 22:36:25 +0200 (CEST)
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
- [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 067FB40691
+	by mails.dpdk.org (Postfix) with ESMTP id AA13B40A75;
+	Fri,  8 May 2026 22:36:26 +0200 (CEST)
+Received: from mail-dl1-f52.google.com (mail-dl1-f52.google.com [74.125.82.52])
+ by mails.dpdk.org (Postfix) with ESMTP id CF2D440666
  for <dev@dpdk.org>; Fri,  8 May 2026 22:36:22 +0200 (CEST)
-Received: by mail-dy1-f179.google.com with SMTP id
- 5a478bee46e88-2ef8d6ba48bso1471240eec.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:21 -0700 (PDT)
+Received: by mail-dl1-f52.google.com with SMTP id
+ a92af1059eb24-1329507c387so928719c88.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272581;
- x=1778877381; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272582;
+ x=1778877382; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=giVKlewypWLP3zUx37o04z9DcQ6GPWZXNahfu92BVJw=;
- b=kL88ldUJGP0kQXIpnHsTPG19J2a9t5yoxEMjGVgdAle3Pgk0Lp++NIF1Pe9s4OwHTK
- Xc8olmf/QW8q4SMhiJFSsTyobvc9/RS6jkMylS44988Tq5wKqbid4JOQU5mJ3NRl7v5p
- OjJngIQd9+RK5zjkBQZtzYU6HFjx+HHWtmtpcDr2ac+TjGZlZYM8gvXQKkbKmKenwrdL
- z0pwjnAg8EA7hWhZu3xThhrlx5Jj7S+UYyfdLRTlYPYfOIok122ABoJdiPCpvjTifdWh
- zaM6m+fwQ2Yy5BfTZ2F/rcs4cyv3EIkJGWM5tEykFiSk5ErJLsesWQf29njAYPUepSUJ
- vKiw==
+ bh=+QGsJl9Q56c4fIXZ3B1SOc6rI7OSGOMGhAYYErrC+5Q=;
+ b=FEF+fvgvxe1uQvR10V2qwNPZJRBydw4dvrIgJRIwb89XWpc62ZxM4dDSq1cbWR1ttz
+ acp9aDPuDChSvnVPnqfGuil5vUKgJVqrM2+/Z0QraaXgkcLRyqIkDt2vOxlFWeTJu+Qc
+ WFcPuUVMGCOQsSLYZJlpV9Jq82yGiOmbgZb+GOKS9JM57Bd/FPuDTku9aGqkExYluxLl
+ cm9J5FsZexOSNfzNk2D7dOaRK1DPSlQbAE1HLhjX+5OYW8yN8Mrr2/lfCJOHI4DLXNDa
+ HDufNrhm6TLXKSuI/9l35NnT3UbNIP3Qc5ACY23eoqQhWbIUsl33WWfcGc/tfCbHSaOk
+ 7QzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272581; x=1778877381;
+ d=1e100.net; s=20251104; t=1778272582; x=1778877382;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=giVKlewypWLP3zUx37o04z9DcQ6GPWZXNahfu92BVJw=;
- b=g1FTEFc9fhQSNB8RYV9hj5OC8oc8s4PVqeYwL8K2n5EC2P71NY9Zac9miO/Gpfad4M
- gBNjkpPKJyTOro2ZGjxiDLC2O7PrXLwHRpx+wFYYYLbGEFlO41+qq9pJoJ1qa0IWGGmc
- Casm8ZKaDNm9sS55jQ7qR1LXlRQa1Lp8G5J3Qb7Gnf94mv4a6rsdM/VUhfewgf+FbxzM
- r9g1I0DIeTSNhJmTgz7MBetx7ImxKFAXnsMGa00NircNFWXGjrzvQZuujPS8Fnp6T55K
- TIL/LwxqokhzL7np0VMAm8LrLogX/J8KfA2FCsUtBmrWoxBY00DIpayDErmv1TsjclN2
- BbJg==
-X-Gm-Message-State: AOJu0Yxo5cV4wUPvB8GPdvsLV+vWvCqF3S/6jXJg9U3sU4P5/wBeiLSs
- hb6kJvYrFD22L1D31kUzYqfzybbgahp+s3Zh0fiYCtcGq5ovediD1zKSAVg0vZ4f6Zd6hexv7mS
- 3CF0A
-X-Gm-Gg: Acq92OEqt7PdFXAveq/+YJOqXufrtqE8ThEhFL+jjvAiVvJtELEhBJqZWAjIaGqTeFD
- 8FURV49d/9MjDbZLHMIF8wf5KhBAHYI0BlwM6ZItJRyVfvZSUBk3X/sG1X7gh+Wb5RZEBgLXtnv
- S9BZApWqNyMfdOzKDGhgiSJ+B3ErECHSFVHyaW1qGerlzFZyQp+FtqOQqWW8VzIxzgRRVVM/p7G
- jPCnw2FUhgY4jCh7c3G5BsTUQ8nH3n3jrjAwsPW3vsKhBRUb5y7ev29mJLBXQ3HwQ6RqVruwUMF
- PwKTMB5jSD8ZKOjQaREL/yZiUotX/pR+0Vos+GzZEd/Zv3NfAn2sv5rMHBAC82KiAZ7fF+KEmpM
- bUPD7fwD8t6Zqt4jykFEqgiv/RRJS4RYf/vZQ4X8Wps9tHrYZU7CNU9Z9CJSlx1Iaef6MhdsB01
- XqXOTDFbELGxVL6+wKPJ3FjUbbqoQnVKPs
-X-Received: by 2002:a05:7301:9f03:b0:2be:ca4:e114 with SMTP id
- 5a478bee46e88-2f6e3e93a6amr3740277eec.9.1778272580926; 
- Fri, 08 May 2026 13:36:20 -0700 (PDT)
+ bh=+QGsJl9Q56c4fIXZ3B1SOc6rI7OSGOMGhAYYErrC+5Q=;
+ b=YsXeokas5t5r0k9Pz3Wk9N2Nv4crYSXWsiNgY7kH031KPQ1fPbJaSrYSTmdawcedw/
+ n5GjQKUjcdFwpZashzlAGKAuIlCJubb0Pmxn63Sjw2RQX0THnbgf+tpcv7ygqS13qUkw
+ H4AZTaVkn/p6SOQ+cMPQ5Ev3N5HdkbKHd0GOL08Z5hMi41Q3pYQ2n1p1DWH8pkHq2Y4v
+ lV2J+hc0kuzmOIC5p1adJ3A6/yhEMIm9HJvo5ohQ7Igo5/z5V+UncvKJSYLfcKxmj12g
+ +KH/ecdDBGIIjlftmd2Lkzqqc0+9KffcnIoM30jLxHonW9GhSx3U783pc/INrSq7bDH+
+ zOGg==
+X-Gm-Message-State: AOJu0YyobLRT9CHVafWIyBNZ4RG6dkMJ3mjTBNAtizqTuNXzfI3LDxg2
+ uIxiJl4ov09XAS/LZ3AxNvgPyAE4UeuQNfO/4bqynZZOFGEfzpfx7BE1qeifNqlAmjeXvPZr7Az
+ o/Jif
+X-Gm-Gg: Acq92OEfu7ZvZ7lowM2K4GT4bsrdHSTB4UpfsrtYX0Kz/AdcTCCt8ysnqc7kBDIgm8l
+ lvNJ7lB9dGzflimA/E7cbKPY5ORl8+RiRy32i6Kq5/Bm1Tbp8Rz1EGpEFDxahjg37GlxmVq9aTI
+ i1NKNC0gbBBedSDDFIBV0BAKNWSehd1+qu9+l5cXONW1TTol30fV5AVLJX1zF7QD2LRHUBUmuHk
+ UAYrImUajcJb4rmX6Ws+zYdhVWD03KcrGfzgBM0NXM6Em2bdmQPmoZqadhGtgiOj5Djp/kclsx3
+ X4IsL9j6qaRk+ZNceQZHQ7TsfOaKrta7m96fuYiuf/YMD3DOiGgUrItIBOpJ4FCKD7i7HOOYXIN
+ FExOvpOyBRJ4l1mP+mlC/TgEtQEFC/oPdNrAu3Qii3l4pUWO4kHp/o33io7BKK+ygxbfLhPqjDb
+ i4rkPPy3Z8n7WgTmGJoLZHAm2pE6L2PU6ORlqz/6pJcH0=
+X-Received: by 2002:a05:7300:bc83:b0:2ed:ff78:2c12 with SMTP id
+ 5a478bee46e88-2f54da92842mr6894941eec.34.1778272581869; 
+ Fri, 08 May 2026 13:36:21 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.20
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.21
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:20 -0700 (PDT)
+ Fri, 08 May 2026 13:36:21 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: [PATCH 11/20] net/zxdh: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:32 -0700
-Message-ID: <20260508203607.1003036-12-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH 12/20] app/compress-perf: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:33 -0700
+Message-ID: <20260508203607.1003036-13-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -86,42 +85,28 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/zxdh/zxdh_queue.c | 7 ++-----
- drivers/net/zxdh/zxdh_rxtx.c  | 3 +--
- 2 files changed, 3 insertions(+), 7 deletions(-)
+ app/test-compress-perf/comp_perf_test_common.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/zxdh/zxdh_queue.c b/drivers/net/zxdh/zxdh_queue.c
-index 7162593b16..543f626e6f 100644
---- a/drivers/net/zxdh/zxdh_queue.c
-+++ b/drivers/net/zxdh/zxdh_queue.c
-@@ -445,11 +445,8 @@ int32_t zxdh_dev_rx_queue_setup_finish(struct rte_eth_dev *dev, uint16_t queue_i
+diff --git a/app/test-compress-perf/comp_perf_test_common.c b/app/test-compress-perf/comp_perf_test_common.c
+index 78487196ad..12c2a7bbd0 100644
+--- a/app/test-compress-perf/comp_perf_test_common.c
++++ b/app/test-compress-perf/comp_perf_test_common.c
+@@ -84,12 +84,10 @@ comp_perf_free_memory(struct comp_test_data *test_data,
+ 	uint32_t i;
  
- 		if (likely(rte_pktmbuf_alloc_bulk(rxvq->mpool, new_pkts, free_cnt) == 0)) {
- 			error = zxdh_enqueue_recv_refill_packed(vq, new_pkts, free_cnt);
--			if (unlikely(error)) {
--				int32_t i;
--				for (i = 0; i < free_cnt; i++)
--					rte_pktmbuf_free(new_pkts[i]);
--			}
-+			if (unlikely(error))
-+				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
- 		} else {
- 			PMD_DRV_LOG(ERR, "port %d rxq %d allocated bufs from %s failed",
- 				hw->port_id, logic_qidx, rxvq->mpool->name);
-diff --git a/drivers/net/zxdh/zxdh_rxtx.c b/drivers/net/zxdh/zxdh_rxtx.c
-index db86922aea..cb324336d0 100644
---- a/drivers/net/zxdh/zxdh_rxtx.c
-+++ b/drivers/net/zxdh/zxdh_rxtx.c
-@@ -970,8 +970,7 @@ zxdh_recv_pkts_packed(void *rx_queue, struct rte_mbuf **rx_pkts,
- 		if (!rte_pktmbuf_alloc_bulk(rxvq->mpool, new_pkts, free_cnt)) {
- 			error = zxdh_enqueue_recv_refill_packed(vq, new_pkts, free_cnt);
- 			if (unlikely(error)) {
--				for (i = 0; i < free_cnt; i++)
--					rte_pktmbuf_free(new_pkts[i]);
-+				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
- 			}
+ 	if (mem->decomp_bufs != NULL)
+-		for (i = 0; i < mem->total_bufs; i++)
+-			rte_pktmbuf_free(mem->decomp_bufs[i]);
++		rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
  
- 			if (unlikely(zxdh_queue_kick_prepare_packed(vq)))
+ 	if (mem->comp_bufs != NULL)
+-		for (i = 0; i < mem->total_bufs; i++)
+-			rte_pktmbuf_free(mem->comp_bufs[i]);
++		rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
+ 
+ 	rte_free(mem->decomp_bufs);
+ 	rte_free(mem->comp_bufs);
 -- 
 2.53.0
 
