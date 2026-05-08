@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A242CCD342F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0009ECD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 23EA540652;
-	Fri,  8 May 2026 22:36:16 +0200 (CEST)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id 0DD0A40608
+	by mails.dpdk.org (Postfix) with ESMTP id 1526B4027E;
+	Fri,  8 May 2026 22:36:17 +0200 (CEST)
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
+ [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id EA3E040653
  for <dev@dpdk.org>; Fri,  8 May 2026 22:36:13 +0200 (CEST)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-130c9dcbd25so2963739c88.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:12 -0700 (PDT)
+Received: by mail-dy1-f169.google.com with SMTP id
+ 5a478bee46e88-2f7020a928eso3379889eec.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272572;
- x=1778877372; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272573;
+ x=1778877373; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ru2baaQPIL4Mlm+QrgXp6Z2wtOg8/tdLcu7HwXmm/yI=;
- b=Brw0QNzg8ucDQwocvNoA6sG/lNkY0DEnJbe9v1/16FRYXwrhTtSVle2zuZE8Uep1Du
- CRciSh3X3wxUf9MaiddOBO9kVDqnbSIMjMdKRRbMZxGebC8BqKUj8uh7Gcaagnji51OC
- nZ0vsPMZOeJBPtO7ok176/XomqS/xsEXxd8tLMF/OeE4iVS079P4w+BUfBlyR8XZZRh7
- dgjgkOJn4Po9JoDGbmFQLSD5PNDt5mTHDeYpqqXigy9JRmlA8aEBvxpYmMy6pJeSMsSy
- lY2VE7/M0QlMfzX/7QJvOJNlL+R84jbrYQ9wMmILe6pE+eMAEDFCmaXE5Xu0h2n1jazR
- yFHQ==
+ bh=I/m8q7Hx5KCzI4dLYnEIIaJhdIj0wjtzPL0VpGf1bKI=;
+ b=kXPaVP8LLzxSGC59zaH6iMfrcxYfYC5t1CioeZBDOIGfgI4MTd5ur0quPwaNA1fVRF
+ mPdMKmVJjJfOEaQPLlUZdkzybzgOAtAl1N6QrhYH8bkDrwTKCDiOmnbcPHlwIZDSjuNm
+ JVw1+bLSSusXPNK6ImQ5ZRVm41DnMBx7oo7w2G1U8eEQ9nUN+fuitl1VhWi9U8zJufWa
+ JEQu8IttT+23EiWtDPdvf5ZlVoJEcYp3Zro+ZGeFGrIeHU7Nfqs7Cl2+xUhYeOBeVBSa
+ IMI2AID+5bBwqOAVD2KPZyLXUgG2MbYszc7F93y0N2+pV7vWuGsPVK7oJRPhLd0+HJ2g
+ Fb8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272572; x=1778877372;
+ d=1e100.net; s=20251104; t=1778272573; x=1778877373;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ru2baaQPIL4Mlm+QrgXp6Z2wtOg8/tdLcu7HwXmm/yI=;
- b=XSrf/vI8Jir2RO4AbXhSf9r5MpGFu5cPjtIe9800WBGYbTLIgyYDMURxov26RlI7pD
- uaRTRtJPVR+6r3fj4DAcSNJO/0Wl0tyHEPzePuNGrTEsajuh+JYxsyuZef75tCw2gKgV
- IPqH15NMtWmpgpstlp5YYsUnJcOpuSHPEx5SeBZL0pxxBWgTqN+Owl88RXeXG7XR3nCl
- NeLuU18B1HRhCwdxYEE8roxR4vIim5AcB8tJYAVtdYohPuLiDlxHvwNg51AWxv4ofyhT
- H7xDj9jQqOmELh7kCZlDb+vHr2TqhtHA4tKQsaT0zX/YTUgFMmjb4wHili6PisXVclF5
- UsCA==
-X-Gm-Message-State: AOJu0YzxLQS8eiZLsPWgsQGExW+hDqAEgTHVENO4QO6p/++vWGyqUsqz
- U5rr0Us8BRQ/g9k51kpaEVUiPovc+MMmvcvGnXwVEdW9pVw7F30fccXcGGb+jmIKQqV51UQrxTg
- FrK5h
-X-Gm-Gg: AeBDietjejYjVU3L9OzbHp1UYMODGR+VLL8lPtKrW144aQJjxYmnuzDA41t57dWgqE7
- 2NLXOUPPVAk6FXh3wLDa/bMd0IbrE3o0ICB8U3w3I6EJg3SN8IlNrdw3aA87WALSeyPmCv3OiQ0
- Cjzk4ET95Cf0s+7Rjp2wFizg9X9nbC3Uv8jKpRPgwzzD/QEh9BmcT31igaFuPsAx0wJrT7+6BHL
- U3PzCwEzzIMt9RZVJ0E3oBUh9kKe/LFS5sJ4o8ZCuA4fnXaAbn5TQI60+wLhE3BKkY338sEGYSt
- o7imHy7Axkh0AVMfqMcw3Z/SHr1wXUCkH+VKOPTd9GK29seNgF1clx+XpU59B57OsTuL7urKKcx
- eH8frNdAfK2BLIfmN7Vb9k0QnzVrVrEiqN5eLG7E4y9Xv8w3/nQPrXY1uuu7QtvkZ0a1iorQ04Z
- 4ddAqP2Vmw9jp3MVTHheKkFRExCtG/GePLOB2vwYFANIk=
-X-Received: by 2002:a05:7022:6707:b0:130:8ed9:204c with SMTP id
- a92af1059eb24-1323ac98250mr4245295c88.10.1778272572082; 
+ bh=I/m8q7Hx5KCzI4dLYnEIIaJhdIj0wjtzPL0VpGf1bKI=;
+ b=lOx0mKg+u6j3MXmP7NxHug9Kfn+XHVFfM8SyTxwAM3dofBxDBqpl/6rH5DUJ6+dHax
+ spdlwxIFUZWML2DYpN/JRFinOTa8nufVmJueKK9jkoUyx4U44WuONYeCpqt9Y2RHs95r
+ YKdhgYnZfQlLBk4Mc7Lb6Vc4u6vwESlnK744ysIBAEpzU1JeZEBq79Ob3svYPAA5oC1Z
+ 3wvOXKQz5NeDZ0yFc8u4dB7qd0DffKLGhTPH9TZ9DKmMAlw3+nf4VUNkZ3hcLb1g8i4W
+ 4BD++SsltgP3RRlJkoHn3JEHxIPsFDUB++/n2bccDTyFteRXsyzvIMk64udpogBZIP9Q
+ jpsQ==
+X-Gm-Message-State: AOJu0YzhEbcIbWyw7pEOS6MBmkDyZ+1y1wvuWe7aB2damA6erVCdDdmT
+ 6SkHfR1e3e6Dv+dvj8v6/Ys+N24+t9RewN6gth9otwczeSIDxgoOscaqohmk7NccqPFo8Q466Km
+ 2LOzh
+X-Gm-Gg: Acq92OHerxzEa2FvqsgSjEi1IPwHkJaRZymszNWLnYqGdkJKnRKxEMvxvidZYU7zGfd
+ ZEhvusaS+CdBmyay1ezrF4/MuvsKzRDAQpi2AUktzD8pttroKs4z1nWxrKCQ9ednDWO1emURSmI
+ 1nQ/4ueo0qdAqeKzgr5YhdAz2S8rBDPy3FQwJpjZCOkDCvQtgOd3qJ6E7yEzk4/ybkTf2Q+hfRg
+ C6H+prjqbIFVt1DOFTd3HwQP7VzEcz81XHPyzqmezX/r2xqEy/rs2vsEYDwLRx1G5Ud3xVI5jtq
+ JQc+2RY/1U3u6gcMOtKI7TQg1Ncalg752cSIt5LQ9Jcv9uTRpP0L31b6nuJ5u8tNElfjwj9rfKj
+ FKeUsTq8jh+IAO9c6VAzCiWbZMQfFWF5SzhwH7voJQEtM4j55WfHE+2zlzncKwVBhNsYNNC5Phf
+ 1R23u5+UsaqPhuvz5ORPkVfIoAZTwui/R65sMXRDxuDS4=
+X-Received: by 2002:a05:7300:d704:b0:2ed:75d:fe40 with SMTP id
+ 5a478bee46e88-2f54958a6d9mr7557336eec.15.1778272572999; 
  Fri, 08 May 2026 13:36:12 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.11
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.12
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:11 -0700 (PDT)
+ Fri, 08 May 2026 13:36:12 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Naga Harish K S V <s.v.naga.harish.k@intel.com>,
- Jerin Jacob <jerinj@marvell.com>
-Subject: [PATCH 02/20] eventdev: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:23 -0700
-Message-ID: <20260508203607.1003036-3-stephen@networkplumber.org>
+ Jiayu Hu <hujiayu.hu@foxmail.com>
+Subject: [PATCH 03/20] gso: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:24 -0700
+Message-ID: <20260508203607.1003036-4-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -87,27 +86,25 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/eventdev/rte_event_eth_tx_adapter.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ lib/gso/gso_common.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/lib/eventdev/rte_event_eth_tx_adapter.c b/lib/eventdev/rte_event_eth_tx_adapter.c
-index 91c7be55c7..2de96a02c2 100644
---- a/lib/eventdev/rte_event_eth_tx_adapter.c
-+++ b/lib/eventdev/rte_event_eth_tx_adapter.c
-@@ -914,12 +914,10 @@ static inline void
- txa_txq_buffer_drain(struct txa_service_queue_info *tqi)
+diff --git a/lib/gso/gso_common.c b/lib/gso/gso_common.c
+index 378bf2c6aa..6ccaa7103a 100644
+--- a/lib/gso/gso_common.c
++++ b/lib/gso/gso_common.c
+@@ -31,10 +31,7 @@ hdr_segment_init(struct rte_mbuf *hdr_segment, struct rte_mbuf *pkt,
+ static inline void
+ free_gso_segment(struct rte_mbuf **pkts, uint16_t nb_pkts)
  {
- 	struct rte_eth_dev_tx_buffer *b;
 -	uint16_t i;
- 
- 	b = tqi->tx_buf;
- 
--	for (i = 0; i < b->length; i++)
--		rte_pktmbuf_free(b->pkts[i]);
-+	rte_pktmbuf_free_bulk(b->pkts, b->length);
- 
- 	b->length = 0;
+-
+-	for (i = 0; i < nb_pkts; i++)
+-		rte_pktmbuf_free(pkts[i]);
++	rte_pktmbuf_free_bulk(pkts, nb_pkts);
  }
+ 
+ int
 -- 
 2.53.0
 
