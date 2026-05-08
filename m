@@ -2,69 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 866F6CD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC20CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3594840697;
-	Fri,  8 May 2026 22:36:22 +0200 (CEST)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id E7AF840670
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:18 +0200 (CEST)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-2f7020a928eso3380084eec.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:18 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 567744069F;
+	Fri,  8 May 2026 22:36:23 +0200 (CEST)
+Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
+ [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id D80E540661
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:19 +0200 (CEST)
+Received: by mail-dy1-f172.google.com with SMTP id
+ 5a478bee46e88-2c156c4a9efso3299891eec.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272578;
- x=1778877378; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272579;
+ x=1778877379; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=rATRo6uWtJVI2otVQopvYSka4269lpC3sCAnO18HUvY=;
- b=o231J1byK04tRR+pTL7TbQyaTmlO0L1oEmO8C+Ty36QHWZU64zczgwW2YA3XDrYYKh
- UpU2aqh3rqYhWOlUFs9jbvK4s8dk3ih43QgT6pUvsafkTtKj33rdveqYHaXi7CL6N1IS
- FhlXwvH5InM+j/HYQ6QX0XtsVbUg1VK0vfgkteFwHn4vWMMccuj8RkU438ZoMdBqQLob
- EZ4HBzAXwJ9EOYObHg4UrAqBn1fjlfZrHmrfy7BQ1Dya0o/aW5zpiMNuS2Ps9AMavzau
- CZsWwKkiGI1IbH1rDA1MFfO5m0UqeG/ys1N7EL3WfdbPiOB8+zqYAXNvbALhg5nwbx1+
- 4i2A==
+ bh=Y5m+L/1rDUly6cgtJBKkQnUjIMw/qIzmLoHTANQD6LA=;
+ b=I8bccyWP3snd8XLtpSnQQWL16hyQNjE3Go58eWlp6vaQP3keHaRtbmLe3FfKzrj1ls
+ oth6LhC1y17bZmdSSONzZ0IdB5ynXjN8SUDEVbEtaOeOecPk5QWHZnZ+K5NcbRHuzrL1
+ MH7KBdP2FrBPDJQQf9JO9YaHj9ut8elSJnbuBZ21DL4Bj/SwSxk3YEqa2LYa9H2ei6vf
+ QVL+xGLQIERAvz+DLcceEdDWsa0RRtRsHmJdQiQ/2yFvda5NWNUJTKxyk65eYnZVZGgw
+ ipxbIajd0FNtqn1F39h915hdxxppcfVFLATkynKnWWcuIJkyHPrdp7PWY6Hh8PrC1zGT
+ 8plg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272578; x=1778877378;
+ d=1e100.net; s=20251104; t=1778272579; x=1778877379;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=rATRo6uWtJVI2otVQopvYSka4269lpC3sCAnO18HUvY=;
- b=KufASkKv53LkDz7y259n2Rih8zok5BCiJnc6YH+aahfgg65+lU75CIwSj8qyiXp47n
- 1jkDMi+/23Wr6EtkeXFFa4dGl87pnmv629b5ZQ0M2kK8j82f2t+INW3Djkxe+0Wjva0Z
- 0faXrcFnrQPSZbdkFcLd2rDoYonB1EkaaVMBuk8OKW3fxdUgDZaNUF3DjByDBH3KdQsy
- E4d4s34C6E2MdAbIkIzA6TBY96wzR592sx1xdDpZduHf9XMzSw3UP6ycWGwo7DgvKC2O
- RC6vyCIsTtkH2cm9hw3qPMNjlR4/w7A8WUd61yb6Z90YmMIP7aOLEl0nVGsDQ/n12nQ2
- Z4+Q==
-X-Gm-Message-State: AOJu0YyO1/HlXJTakktzkDWIBOhr9ho0v05aVxFx5Z4UYoIeXLuvCxif
- fzrgE5NGU3INYqGYf1pEUaS7ihy7dXfpln57A3oXQ2aw0i4Qx0XEPQm+1cNA0HzfloJz7ZKq1v4
- dmZFp
-X-Gm-Gg: Acq92OGJrqm6ZhhcLrN2VT8qSELkKRvfTkVgNjWGQ9aedC3+dNAuLGQwvVorayQZe7O
- bYEQ4anHnE+gDWb+Xj2W1VmnPF+ugtjHjq7/InWpiIQXmzcsu/o0S3xHYfsN6vxNkTT6JvIm70m
- 6mHjmqdlFcBMv4RL0xD156xg4wBE/vm3feercGc3Lu9aZtIoL5m78zC//Wc5JVNHtOaYU6MMW9O
- kIlWXPIm1O05UrPf2LFYbiv2wOL34p+rHW/OkGu20M1ZdrhDk2v14z5W/zsTTMaUDaKe6qFBgJk
- i7nniSzObi/ifXf+f8ESWWV3nlEsxqRVSdZ7ZiFqvfuVW8zXMFDW0BN1ZwJtQnuCLTp85zmHANI
- XnR4kUSOtPz4vtZUr5B0EMXKARPTU/uwAbBTlKcGT9LGZjnPIstE0D5bMaN/Tc9xtEZOxlB+W7A
- 0m/Hgo7u7IdLvg/JtP7fvNrPOHzrBOq+Gp
-X-Received: by 2002:a05:7300:8623:b0:2e2:d94d:6186 with SMTP id
- 5a478bee46e88-2f548e95823mr6286820eec.11.1778272577965; 
- Fri, 08 May 2026 13:36:17 -0700 (PDT)
+ bh=Y5m+L/1rDUly6cgtJBKkQnUjIMw/qIzmLoHTANQD6LA=;
+ b=ObqCC+2GcIAxyOETsxWk8oWv0n0j6v8ui4L58mKvPfuc09Luxf0rFPGb4KH8nNPdw9
+ 08+gp0Qr8y2ihxUVk1Laty0edm1wgIo0KjrCmJk6iXRB7qdPGV8AYDWZytWuW9KmTz7/
+ 27IogDHn4QvDq8nnfY4r9OYlurHrtojLJ9BI2K68uADsuLvtAPLBNRhPbcObXEVu3vDC
+ QXejnNZVa8InFwl1fqDbZJXhOJm1s6Q/8NM58eakZtfxBUiObzTi4ZmqKdER6IkbR9pT
+ LN4GbknTdnVRyi6TcIEKPMA12vrpSbbEYyepGX+HT9c3wNQMrbI3zW+iyrUiIuFkNJv0
+ viFg==
+X-Gm-Message-State: AOJu0YxT9Sv1AsjzfHDe+3sjZfRRmfEmJHvQGxj3Lv/c1VzOZvh4zAds
+ Iobyf8q/gg2uv/JOj2DaJZABywRcjD+6nr2dkhvOS8GQGODC+2NcgMApFcTaqJGi4jKp6MD7nqG
+ whlAY
+X-Gm-Gg: Acq92OFDrqJ5FdpQJL2dPQJ0gu3SCD91Hhcyq2KjqubqK/ctzBW+WM6mhDaIvn2zxW6
+ lS9hy3tBPC7oMTg6DxJCZjPTZNJEX7O7CiRHz8X4ZXkNnwQiRymhfqcQt8emawR8TBzyMGjQ3YH
+ MPb5C50qCpcs5cNib3X62/CRl3aPhwwDhabSR6CEvVn9yuTNaHzPCHLLWWwrjoIerXyivGL2NFv
+ 4sVxoOhRYTjS2Z96ZvRCGNTc/AgS7fU+9TXCrdQEEQjyyV3CLDf0bJLs33aZ33GAmglSOTXMBLD
+ Epzzy2lGjEjBZSrV/KmuWMd81I/VGURRucTCKPtsJ89LwSfK8qUPWzPvAcrQZeRleCFFdRfpT7Z
+ fmJ23UlZCEpIM+6k9xnBsw8ehxcr1bkrB3q3Kbw/n0h3mk41SFLm65Wm71L1bal2guCAUwh8XJA
+ vUJSdOx87PtqYX/98SVCSwiQs6vxQjei3ju+pPP3f6gFGYvN8UYR0I9A==
+X-Received: by 2002:a05:693c:2c01:b0:2de:c5ca:c1e8 with SMTP id
+ 5a478bee46e88-2f54d696d50mr6491909eec.4.1778272578906; 
+ Fri, 08 May 2026 13:36:18 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.17
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:17 -0700 (PDT)
+ Fri, 08 May 2026 13:36:18 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Nithin Dabilpuram <ndabilpuram@marvell.com>,
- Kiran Kumar K <kirankumark@marvell.com>,
- Sunil Kumar Kori <skori@marvell.com>, Satha Rao <skoteshwar@marvell.com>,
- Harman Kalra <hkalra@marvell.com>
-Subject: [PATCH 08/20] net/cnxk: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:29 -0700
-Message-ID: <20260508203607.1003036-9-stephen@networkplumber.org>
+ Gagandeep Singh <g.singh@nxp.com>
+Subject: [PATCH 09/20] net/pfe: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:30 -0700
+Message-ID: <20260508203607.1003036-10-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -89,32 +86,24 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/cnxk/cnxk_ethdev.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/pfe/pfe_ethdev.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/net/cnxk/cnxk_ethdev.c b/drivers/net/cnxk/cnxk_ethdev.c
-index 06d1c9b362..3330dd5051 100644
---- a/drivers/net/cnxk/cnxk_ethdev.c
-+++ b/drivers/net/cnxk/cnxk_ethdev.c
-@@ -1913,7 +1913,7 @@ cnxk_nix_dev_stop(struct rte_eth_dev *eth_dev)
- 	const struct eth_dev_ops *dev_ops = eth_dev->dev_ops;
- 	struct rte_mbuf *rx_pkts[32];
- 	struct rte_eth_link link;
--	int count, i, j, rc;
-+	int count, i, rc;
- 	void *rxq;
- 
- 	/* In case of Inline IPSec, will need to avoid disabling the MCAM rules and NPC Rx
-@@ -1951,8 +1951,7 @@ cnxk_nix_dev_stop(struct rte_eth_dev *eth_dev)
- 		rxq = eth_dev->data->rx_queues[i];
- 		count = dev->rx_pkt_burst_no_offload(rxq, rx_pkts, 32);
- 		while (count) {
--			for (j = 0; j < count; j++)
--				rte_pktmbuf_free(rx_pkts[j]);
-+			rte_pktmbuf_free_bulk(rx_pkts, count);
- 			count = dev->rx_pkt_burst_no_offload(rxq, rx_pkts, 32);
- 		}
- 	}
+diff --git a/drivers/net/pfe/pfe_ethdev.c b/drivers/net/pfe/pfe_ethdev.c
+index 1efa17539e..4c0f9e63a0 100644
+--- a/drivers/net/pfe/pfe_ethdev.c
++++ b/drivers/net/pfe/pfe_ethdev.c
+@@ -281,9 +281,7 @@ pfe_eth_open(struct rte_eth_dev *dev)
+ 			ret = hif_lib_receive_pkt(&client->rx_q[0],
+ 						  hif_shm->pool, rx_pkts, 32);
+ 			while (ret) {
+-				int i;
+-				for (i = 0; i < ret; i++)
+-					rte_pktmbuf_free(rx_pkts[i]);
++				rte_pktmbuf_free_bulk(rx_pkts, ret);
+ 				ret = hif_lib_receive_pkt(&client->rx_q[0],
+ 							  hif_shm->pool,
+ 							  rx_pkts, 32);
 -- 
 2.53.0
 
