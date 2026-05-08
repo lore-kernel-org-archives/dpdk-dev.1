@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC6ACD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BC5CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4F5D440679;
-	Fri,  8 May 2026 22:36:19 +0200 (CEST)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id C9A7140659
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:15 +0200 (CEST)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-130b2295ed0so7072139c88.0
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 4DB6740684;
+	Fri,  8 May 2026 22:36:20 +0200 (CEST)
+Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
+ by mails.dpdk.org (Postfix) with ESMTP id C7E1B4065B
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:16 +0200 (CEST)
+Received: by mail-dl1-f51.google.com with SMTP id
+ a92af1059eb24-12dfee30612so2305880c88.0
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272575;
- x=1778877375; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272576;
+ x=1778877376; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Ed3/rkctET4OjhM4zs7fEhEkGHS5rAaj0JTLcB3q4Jc=;
- b=KPMB5eKUHMjpIXU48mY8h6fNVJC65h4QUNKiGG2xKLgvd2KmITGEUCtrVr6d6LH/6u
- ejK6pyMSGJgvs27RykDtR3WbQPPfLHFypWvS3kUAPuXBXTtnvCTh/R6HGVnW5xmmgzeV
- BC1uDTJbAotKe+fzVdkSQqWnlbhVChQ1dOreKvBME+rJ0F4tz2MMkc0CPeSa825bTaeE
- tfN04mvjJMt3IL1zTQSS2/S6SDAcQMH3LMYP1FpUuAQGMduEOmBtBeyn0GHMiSO3DGnp
- 0rDeAoNy8LvAG5iqJSO+KiNAtY7wOFn6/m2aeRpecUlZHiqBJ3grGTh4MlIwIpPDnJnX
- 3Lww==
+ bh=ywHb1i3lqxvBSzwfFfa9ZjnA5a+sYdLCSuZUUmaVfto=;
+ b=M93KzhhgCh8oq81+RK6udchPTKuLUYJu6PZrCMLASFaPLki/qIuEf0PCY30UsBqabx
+ KEC9xC8OzHdlF9t4mxesjaEbRYowp5TJgnocfRigMCv+3SSk1x1I6jSXfeJfq65B5YfW
+ L3jAAhGtFXzyQTkNahzZ0xCZyB52lYT1QUjXOq9bOIw/rVsovjc821sVfyVV/0MP9u9F
+ 4djBXDF+W5sX7IxHAvEes7LqQz01e0Zar5JENvUzgZ2ubIb7okettq14+kLQ7/A/Nm7x
+ TpdgIfysN0FWiSyaOUNYzAnM65jp7Mri1sdiI740F9NgJb2LYanqE2LvEbpvo0K1UBVn
+ gPHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272575; x=1778877375;
+ d=1e100.net; s=20251104; t=1778272576; x=1778877376;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Ed3/rkctET4OjhM4zs7fEhEkGHS5rAaj0JTLcB3q4Jc=;
- b=Zs9IPO4ZMI7oVvf5C8kruRM3XOA+snz5Twg90KA+Yj1VUDvN0PzJfv7b6qfzfgjxsD
- JmDZReu4pIoavYkaTTqF0Ev3KNvdih5+cZaVlWaaRGSJgdkoJTYL0MMnGJR3ULiwMjks
- PuGVHcIgyWKIoSz1JPsvphyHZaM0xquELgwTQ8hS2/s6mdPXq4FqNmNBZbn49pO1ntfd
- lIrDBgulsyIzn6uQ16HAs8OSOvhfNfkXg/CNjLIHjjgUjnsqAViwKSdz4iihBBNLk5oq
- 80nMXgw1L7gcgXT16Zbb89oJ4vsLyV0kD9HtnJxjBHFguS8tPCDijSq/iJAyPZ3jFkBN
- TpLA==
-X-Gm-Message-State: AOJu0YzVvclESd1qHJYvfazIGTWJF/I0iPDXDp0ygtYAqWQkR7I7udGP
- 6Y96Vg+zHK/8+a5XIfPjWSM1QvyyxlTG6IHdNTCugbX2tAqyLlnqCJIyx2vh6MInOO77HXq7OOu
- QbTaj
-X-Gm-Gg: Acq92OHBzCkRdeemkmAeYl/ltqAOfhuCXv44t2+Mih83DFuwSc3LIi+h3rAiWO8GpMI
- cAjo1O1jb3QpHYM0Av4BGKBT6tg3S9+Xg9+8DSDSWGjlmJ4bd1GbOihEV48/seEPrUO1uKq1G1j
- LMP6+fRg/JvU+1B/LD5Aw7ZESAWzjd/KECN62Bk5JEcctVdPqY+Bav30S//z3zJd5MJhzaS78nT
- k/hTuwsfO4J0NOOHd7+c1TGgWIDPxEiqOZjwQ19t1hY7XYwXZpNLfIXSW8LgmLl8irofOAPCisY
- uFzGz2fhG1YOFaJcqIHQh9vifg8NxNrBoql/hBHvlkr0PZZ46XT5swsp7I3koV0HR8HVj/5fEwH
- M93GmbRZH+2CQ8LQJxFHBWHZyp716tXiVScYiRldv+YPCgSiBisYOpUCvZHFK0Hy698tVrehD5r
- 2FyHKinArqX5GiwktMpTPrWYkmnxvob40Ciy5IKMiwYE8=
-X-Received: by 2002:a05:7301:6790:b0:2da:44ac:6d0d with SMTP id
- 5a478bee46e88-2f54ac74af7mr7594392eec.20.1778272574855; 
- Fri, 08 May 2026 13:36:14 -0700 (PDT)
+ bh=ywHb1i3lqxvBSzwfFfa9ZjnA5a+sYdLCSuZUUmaVfto=;
+ b=kve8EaS5IshWKd550UJCj5YEu0HfPhBbwB4CyCe/aFoS9eOoXsosPkRlNwQlC58kHS
+ OzepJ91u7/ZgP48UETh4IfkyDI/NqwiCYWu12XLsVwwgNxyskskJ+QL64qquyelIe+Uq
+ 0u85X4dm5BiOou37ieWr37qlTcSwHj7OYRiBr1ukpeUKuAFLS0NT2XM+7ScB3YkRWACC
+ 7xKPXZFw6npBMADKlZKnZwjFuaypj7FuyqN9rfe+CdCvoEb3nccKRJTZGDm8EANmIvOm
+ ITq+KWic706a3p/onyhBMJbU+RWWvt8vic6pu1ejR3Kl3t5gii0vJYyjHcCKy3T7c35g
+ 0BuQ==
+X-Gm-Message-State: AOJu0Ywv13xfWaw2NxMxHM0OHXrmWsbR8YwJMIYCFWQzE7XiI27aquwu
+ 1oIzXJcposWAvUZuWzzkYi+xk6JU8yEDZU0sKBaDGQQLQleRDPgeGLQN4WXl1IVRUY66N0Hc0ci
+ enmW3
+X-Gm-Gg: Acq92OFUQpCxOki6ZO4Xq2hBZ7LLWLDhL0hHHIbQTzrSbAETcmjza1HNCgWnmcCG/cm
+ qHxbM47tb84Yn+czjr1ce/8V3TxHscR1eAXQX6NO6s/rwz3hmJ+eCJEewyW+9vUSevJza9/TENR
+ ob4dzYth2eN/GvYDk2RvnkMH9ujvI3TI7S388BtC4BJxJ6AW61Ht+qWxN0QuC/X+iVbgfCR6127
+ cjKlsUzbnxjBMu6CK+JGVXG1tdfb6Vsvt3wliessX9n5+piKhFK/+4ruTRpKkL1LH9Z23d34HyB
+ d3cmpRsysdrsIF2juuclMsV2sCyQL+k9qz6Yb/ZlCVVNWpWcD4DMKNcLmC8mQJ5rXiOifX4Hnq1
+ eP/OfE3moEqK58m7uH3ND9RMg8tRzKpmg/pArbJeVKIiqRCbclp2HwWf1KaZdcSs77zrylVG6T0
+ D9ImjesTrvt0CoucCFRK1E+K3YI0fGPvpv
+X-Received: by 2002:a05:7300:ac81:b0:2db:2089:460f with SMTP id
+ 5a478bee46e88-2f85d94b37cmr2062828eec.19.1778272575846; 
+ Fri, 08 May 2026 13:36:15 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.14
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.15
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:14 -0700 (PDT)
+ Fri, 08 May 2026 13:36:15 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
  Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH 05/20] pipeline: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:26 -0700
-Message-ID: <20260508203607.1003036-6-stephen@networkplumber.org>
+Subject: [PATCH 06/20] port: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:27 -0700
+Message-ID: <20260508203607.1003036-7-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -86,24 +86,86 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/pipeline/rte_pipeline.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ lib/port/rte_port_fd.c              | 6 ++----
+ lib/port/rte_swx_port_fd.c          | 8 ++------
+ lib/port/rte_swx_port_source_sink.c | 6 +-----
+ 3 files changed, 5 insertions(+), 15 deletions(-)
 
-diff --git a/lib/pipeline/rte_pipeline.c b/lib/pipeline/rte_pipeline.c
-index fa3c8b77ee..1fadae01d8 100644
---- a/lib/pipeline/rte_pipeline.c
-+++ b/lib/pipeline/rte_pipeline.c
-@@ -1305,10 +1305,8 @@ rte_pipeline_action_handler_drop(struct rte_pipeline *p, uint64_t pkts_mask)
- {
- 	if ((pkts_mask & (pkts_mask + 1)) == 0) {
- 		uint64_t n_pkts = rte_popcount64(pkts_mask);
--		uint32_t i;
+diff --git a/lib/port/rte_port_fd.c b/lib/port/rte_port_fd.c
+index dbc9efef1b..2b021710d4 100644
+--- a/lib/port/rte_port_fd.c
++++ b/lib/port/rte_port_fd.c
+@@ -212,8 +212,7 @@ send_burst(struct rte_port_fd_writer *p)
  
--		for (i = 0; i < n_pkts; i++)
--			rte_pktmbuf_free(p->pkts[i]);
-+		rte_pktmbuf_free_bulk(p->pkts, n_pkts);
- 	} else {
- 		uint32_t i;
+ 	RTE_PORT_FD_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - i);
+ 
+-	for (i = 0; i < p->tx_buf_count; i++)
+-		rte_pktmbuf_free(p->tx_buf[i]);
++	rte_pktmbuf_free_bulk(p->tx_buf, p->tx_buf_count);
+ 
+ 	p->tx_buf_count = 0;
+ }
+@@ -397,8 +396,7 @@ send_burst_nodrop(struct rte_port_fd_writer_nodrop *p)
+ 
+ 	RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - i);
+ 
+-	for (i = 0; i < p->tx_buf_count; i++)
+-		rte_pktmbuf_free(p->tx_buf[i]);
++	rte_pktmbuf_free_bulk(p->tx_buf, p->tx_buf_count);
+ 
+ 	p->tx_buf_count = 0;
+ }
+diff --git a/lib/port/rte_swx_port_fd.c b/lib/port/rte_swx_port_fd.c
+index 72783d2b0f..937b1e0945 100644
+--- a/lib/port/rte_swx_port_fd.c
++++ b/lib/port/rte_swx_port_fd.c
+@@ -73,14 +73,11 @@ static void
+ reader_free(void *port)
+ {
+ 	struct reader *p = port;
+-	uint32_t i;
+ 
+ 	if (!p)
+ 		return;
+ 
+-	for (i = 0; i < p->n_pkts; i++)
+-		rte_pktmbuf_free(p->pkts[i]);
+-
++	rte_pktmbuf_free_bulk(p->pkts, p->n_pkts);
+ 	free(p->pkts);
+ 	free(p);
+ }
+@@ -218,8 +215,7 @@ __writer_flush(struct writer *p)
+ 		(uint32_t)p->params.fd,
+ 		p->n_pkts);
+ 
+-	for (i = 0; i < p->n_pkts; i++)
+-		rte_pktmbuf_free(p->pkts[i]);
++	rte_pktmbuf_free_bulk(p->pkts, p->n_pkts);
+ 
+ 	p->n_pkts = 0;
+ }
+diff --git a/lib/port/rte_swx_port_source_sink.c b/lib/port/rte_swx_port_source_sink.c
+index af8b9ec68d..f651d5b5ad 100644
+--- a/lib/port/rte_swx_port_source_sink.c
++++ b/lib/port/rte_swx_port_source_sink.c
+@@ -52,16 +52,12 @@ static void
+ source_free(void *port)
+ {
+ 	struct source *p = port;
+-	uint32_t i;
+ 
+ 	if (!p)
+ 		return;
+ 
+-	for (i = 0; i < p->n_pkts; i++)
+-		rte_pktmbuf_free(p->pkts[i]);
+-
++	rte_pktmbuf_free_bulk(p->pkts, p->n_pkts);
+ 	free(p->pkts);
+-
+ 	free(p);
+ }
  
 -- 
 2.53.0
