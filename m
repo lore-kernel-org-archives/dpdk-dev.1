@@ -2,65 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD4ECD342F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A242CCD342F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 26CB54064E;
-	Fri,  8 May 2026 22:36:13 +0200 (CEST)
-Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
- by mails.dpdk.org (Postfix) with ESMTP id 2CB0140150
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:12 +0200 (CEST)
-Received: by mail-dl1-f42.google.com with SMTP id
- a92af1059eb24-13298f7e84eso836057c88.0
+	by mails.dpdk.org (Postfix) with ESMTP id 23EA540652;
+	Fri,  8 May 2026 22:36:16 +0200 (CEST)
+Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
+ by mails.dpdk.org (Postfix) with ESMTP id 0DD0A40608
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:13 +0200 (CEST)
+Received: by mail-dl1-f50.google.com with SMTP id
+ a92af1059eb24-130c9dcbd25so2963739c88.1
  for <dev@dpdk.org>; Fri, 08 May 2026 13:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272571;
- x=1778877371; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272572;
+ x=1778877372; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=isrm6uI+iS6goJfVRAsABe59yGdu8wgX+OSP9y5Nzv0=;
- b=Ju4RqGpCYoZSbrOHutFcqh201YHzOk965YTaankVuA1s5W3vWuhwUcpEOyRETW3bvZ
- gkbafISgU/i9uYxWx1K3DdnWkI3JA+VWow9ci27yt03JBvN2dDJcKtcm1i4bca1kI3pE
- IwWKlaPa/XcEkoZc9bjeqjFnMO3XUlgNo8wyMX77z7wwaJBhY8kHROTZhj7Ka/jYN64v
- qQZBMwox08Ekr9fmTPlB511QlQ5LKjTR8wT/ePoNMMvPKPpvrRNWyvLgcTA6RTvis76F
- 0O3CmXTZJLI/EWNoail/rwtg/oZpuLo+vJVGvPUq9Fwtg3tdYGpqIEGaHBLfe/KeQ3Iy
- m+DQ==
+ bh=ru2baaQPIL4Mlm+QrgXp6Z2wtOg8/tdLcu7HwXmm/yI=;
+ b=Brw0QNzg8ucDQwocvNoA6sG/lNkY0DEnJbe9v1/16FRYXwrhTtSVle2zuZE8Uep1Du
+ CRciSh3X3wxUf9MaiddOBO9kVDqnbSIMjMdKRRbMZxGebC8BqKUj8uh7Gcaagnji51OC
+ nZ0vsPMZOeJBPtO7ok176/XomqS/xsEXxd8tLMF/OeE4iVS079P4w+BUfBlyR8XZZRh7
+ dgjgkOJn4Po9JoDGbmFQLSD5PNDt5mTHDeYpqqXigy9JRmlA8aEBvxpYmMy6pJeSMsSy
+ lY2VE7/M0QlMfzX/7QJvOJNlL+R84jbrYQ9wMmILe6pE+eMAEDFCmaXE5Xu0h2n1jazR
+ yFHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272571; x=1778877371;
+ d=1e100.net; s=20251104; t=1778272572; x=1778877372;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=isrm6uI+iS6goJfVRAsABe59yGdu8wgX+OSP9y5Nzv0=;
- b=Q25g1DuodMV2hTTBiqLQPW/Ju0bvQbCnp5sY02DgUfmkkZbRWK6+nsBaMy/AEuq1CB
- r4KHeOS3fivgXfu+l0Y4vf277aJw0Nq6yoFQHtJn7KR3xNANiXepiNfo3KNEImSXNIcd
- A8J6VWvAwClyaGB0eKF2wCKrL2bFxHwp5CiJPbTcpI4bsFLYq8QxHTV5eaM6ncPTZWeb
- r9ptHjOvp0MRJ7AE4eZLf4WEAZ4nEYaVKnAaipAoMb6ueR6fl1w6YSVR6Xk+ETcwhwkg
- YyeTRxVk3Mw/3IRiyiPdzdEdoGalW78iOj8SxFJfuW1F04Fq9RG9KNPQk22Wyy/2i9pF
- C7Vg==
-X-Gm-Message-State: AOJu0YyfR7B8alrpzl0qkhzsgCJmjC7oQH3hCsT3flruSwDMx9SV/0OU
- GiN7EYvz0NscLZWxqRvk0jWc6u+3n8VDat2CVGwZm19h+E2UBUX2335YjuEZ3kJCZ/7fXNEZjp/
- HSKsy
-X-Gm-Gg: Acq92OF0kmkumUhpdhb7m0wJ1MuvnO4d/dMsk56U9p536uUkgY2LKIAycja4mDMpcWf
- JPJGndzYtLlwReoS1t8MZaiA23lSw5gcengzIDrp7FSn2QTLlqKTnCFf8jTV1mqnLgNkHJUMM3q
- Rdz4NhMavn/zC+6Qoppw0TByYjh1pOcCfaG3qwRHUN/bIN1TeNaZ38CjzPeJRtzuf6wCssDTbfM
- 0ZohMSNOD/9f8r5XdqzpS24s/NU1WT30k/APfgeoHNKKTFNEDv7T1ItpEBXCTTCJsYltHDjKCZK
- F6mISC51K/fxn8EGJ3igarAMFQhG/N29PhQ5vosyZaEaJX7u2Er20PuQtw+dJArRVI0w2O8wURR
- HXbJtS0LAUtCP85bDDivA2ZI/30u8WNb+GWV5Wb6wYg50mQs/oSjmanF25INEsPCBpN3dW/IMDi
- tj+nNMtjMIlxO9TLStK/714BOJvmIU1AXG
-X-Received: by 2002:a05:7300:b919:b0:2e7:120:137b with SMTP id
- 5a478bee46e88-2f547f6f1a0mr7718504eec.0.1778272571046; 
- Fri, 08 May 2026 13:36:11 -0700 (PDT)
+ bh=ru2baaQPIL4Mlm+QrgXp6Z2wtOg8/tdLcu7HwXmm/yI=;
+ b=XSrf/vI8Jir2RO4AbXhSf9r5MpGFu5cPjtIe9800WBGYbTLIgyYDMURxov26RlI7pD
+ uaRTRtJPVR+6r3fj4DAcSNJO/0Wl0tyHEPzePuNGrTEsajuh+JYxsyuZef75tCw2gKgV
+ IPqH15NMtWmpgpstlp5YYsUnJcOpuSHPEx5SeBZL0pxxBWgTqN+Owl88RXeXG7XR3nCl
+ NeLuU18B1HRhCwdxYEE8roxR4vIim5AcB8tJYAVtdYohPuLiDlxHvwNg51AWxv4ofyhT
+ H7xDj9jQqOmELh7kCZlDb+vHr2TqhtHA4tKQsaT0zX/YTUgFMmjb4wHili6PisXVclF5
+ UsCA==
+X-Gm-Message-State: AOJu0YzxLQS8eiZLsPWgsQGExW+hDqAEgTHVENO4QO6p/++vWGyqUsqz
+ U5rr0Us8BRQ/g9k51kpaEVUiPovc+MMmvcvGnXwVEdW9pVw7F30fccXcGGb+jmIKQqV51UQrxTg
+ FrK5h
+X-Gm-Gg: AeBDietjejYjVU3L9OzbHp1UYMODGR+VLL8lPtKrW144aQJjxYmnuzDA41t57dWgqE7
+ 2NLXOUPPVAk6FXh3wLDa/bMd0IbrE3o0ICB8U3w3I6EJg3SN8IlNrdw3aA87WALSeyPmCv3OiQ0
+ Cjzk4ET95Cf0s+7Rjp2wFizg9X9nbC3Uv8jKpRPgwzzD/QEh9BmcT31igaFuPsAx0wJrT7+6BHL
+ U3PzCwEzzIMt9RZVJ0E3oBUh9kKe/LFS5sJ4o8ZCuA4fnXaAbn5TQI60+wLhE3BKkY338sEGYSt
+ o7imHy7Axkh0AVMfqMcw3Z/SHr1wXUCkH+VKOPTd9GK29seNgF1clx+XpU59B57OsTuL7urKKcx
+ eH8frNdAfK2BLIfmN7Vb9k0QnzVrVrEiqN5eLG7E4y9Xv8w3/nQPrXY1uuu7QtvkZ0a1iorQ04Z
+ 4ddAqP2Vmw9jp3MVTHheKkFRExCtG/GePLOB2vwYFANIk=
+X-Received: by 2002:a05:7022:6707:b0:130:8ed9:204c with SMTP id
+ a92af1059eb24-1323ac98250mr4245295c88.10.1778272572082; 
+ Fri, 08 May 2026 13:36:12 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.10
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.11
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:10 -0700 (PDT)
+ Fri, 08 May 2026 13:36:11 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 01/20] devtools/cocci: add transform for rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:22 -0700
-Message-ID: <20260508203607.1003036-2-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Naga Harish K S V <s.v.naga.harish.k@intel.com>,
+ Jerin Jacob <jerinj@marvell.com>
+Subject: [PATCH 02/20] eventdev: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:23 -0700
+Message-ID: <20260508203607.1003036-3-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -79,78 +81,33 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Convert simple loops freeing mbufs one at a time into a
-single rte_pktmbuf_free_bulk() call.
+Replace open-coded loop with rte_pktmbuf_free_bulk().
+
+Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- devtools/cocci/free_bulk.cocci | 57 ++++++++++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
- create mode 100644 devtools/cocci/free_bulk.cocci
+ lib/eventdev/rte_event_eth_tx_adapter.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/devtools/cocci/free_bulk.cocci b/devtools/cocci/free_bulk.cocci
-new file mode 100644
-index 0000000000..51ce58400a
---- /dev/null
-+++ b/devtools/cocci/free_bulk.cocci
-@@ -0,0 +1,57 @@
-+//
-+// Replace simple loops freeing mbufs one-by-one with rte_pktmbuf_free_bulk().
-+//
-+// rte_pktmbuf_free_bulk() handles NULL entries internally, so per-element
-+// NULL guards are folded in as well.  Loops whose body does more than the
-+// free (clearing the slot, bookkeeping, etc.) are not matched.
-+//
-+@@
-+expression A, N;
-+identifier i;
-+@@
-+
-+(
-+- for (i = 0; i < N; i++)
-+-     rte_pktmbuf_free(A[i]);
-++ rte_pktmbuf_free_bulk(A, N);
-+|
-+- for (i = 0; i < N; ++i)
-+-     rte_pktmbuf_free(A[i]);
-++ rte_pktmbuf_free_bulk(A, N);
-+|
-+- for (i = 0; i < N; i++)
-+-     if (A[i] != NULL)
-+-         rte_pktmbuf_free(A[i]);
-++ rte_pktmbuf_free_bulk(A, N);
-+|
-+- for (i = 0; i < N; i++)
-+-     if (A[i])
-+-         rte_pktmbuf_free(A[i]);
-++ rte_pktmbuf_free_bulk(A, N);
-+)
-+
-+@@
-+expression A, N;
-+identifier i;
-+type T;
-+@@
-+
-+(
-+- for (T i = 0; i < N; i++)
-+-     rte_pktmbuf_free(A[i]);
-++ rte_pktmbuf_free_bulk(A, N);
-+|
-+- for (T i = 0; i < N; ++i)
-+-     rte_pktmbuf_free(A[i]);
-++ rte_pktmbuf_free_bulk(A, N);
-+|
-+- for (T i = 0; i < N; i++)
-+-     if (A[i] != NULL)
-+-         rte_pktmbuf_free(A[i]);
-++ rte_pktmbuf_free_bulk(A, N);
-+|
-+- for (T i = 0; i < N; i++)
-+-     if (A[i])
-+-         rte_pktmbuf_free(A[i]);
-++ rte_pktmbuf_free_bulk(A, N);
-+)
+diff --git a/lib/eventdev/rte_event_eth_tx_adapter.c b/lib/eventdev/rte_event_eth_tx_adapter.c
+index 91c7be55c7..2de96a02c2 100644
+--- a/lib/eventdev/rte_event_eth_tx_adapter.c
++++ b/lib/eventdev/rte_event_eth_tx_adapter.c
+@@ -914,12 +914,10 @@ static inline void
+ txa_txq_buffer_drain(struct txa_service_queue_info *tqi)
+ {
+ 	struct rte_eth_dev_tx_buffer *b;
+-	uint16_t i;
+ 
+ 	b = tqi->tx_buf;
+ 
+-	for (i = 0; i < b->length; i++)
+-		rte_pktmbuf_free(b->pkts[i]);
++	rte_pktmbuf_free_bulk(b->pkts, b->length);
+ 
+ 	b->length = 0;
+ }
 -- 
 2.53.0
 
