@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF4CCD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 19:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91C2CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 19:11:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C6C6840666;
-	Fri,  8 May 2026 21:11:17 +0200 (CEST)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id A039840653
- for <dev@dpdk.org>; Fri,  8 May 2026 21:11:15 +0200 (CEST)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-12e332315a8so3439567c88.0
- for <dev@dpdk.org>; Fri, 08 May 2026 12:11:15 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0BD8F4067B;
+	Fri,  8 May 2026 21:11:19 +0200 (CEST)
+Received: from mail-dl1-f46.google.com (mail-dl1-f46.google.com [74.125.82.46])
+ by mails.dpdk.org (Postfix) with ESMTP id B7D2E40665
+ for <dev@dpdk.org>; Fri,  8 May 2026 21:11:16 +0200 (CEST)
+Received: by mail-dl1-f46.google.com with SMTP id
+ a92af1059eb24-12c8ccc7755so3706308c88.0
+ for <dev@dpdk.org>; Fri, 08 May 2026 12:11:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778267475;
- x=1778872275; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778267476;
+ x=1778872276; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nZO0wdDD4DSlLX4n4DMIO1bIJmiM8zT5Jy8kQ1B0lsk=;
- b=QwSmWU7djelRdnLYYJr0LsPuUVcq+jT1UHkDXSD0YYwBD1AZIrQZ7z6gL8wsXNwsWA
- fznOcZIVVqpNrrIpe2kfDQoLc0qB8vQXxkCLII0FLbBcp77XHwm7GvFoI6W0bnfVEuy3
- FByo8hTJ4K2HZAvmdtJnmjfwVZ2Ea8NzNjOHP8e/dt48N5LrO8t2iGdSozEFA+tpna7v
- nr4RqHzmkuP+1L/BhXWe1CkBDgx8y6whd45Jd/kWJe1ZynVqCPHSvvuO6D5bUIsx/1qk
- PNuIt2f0n7pCMaoy5F/EPuz2K/sXd8AqW/01iU7+L4jpZkCkjSlmTwnPIMJNNm5/AKKQ
- eg4A==
+ bh=oKGLn2ORT0jWA7KVMkQn75W2XqDrUDze6YZnyScZQIY=;
+ b=y7nEozw9NgfE6Dq5VIlTj3rRcbOg1HQ3PYagpgM1z+m/J30nAeQ0cZ63ke//puXx0D
+ KVaja1P820JxefVPjz6BFdJLk7P+wIbwz40fFWOJb2U9VlNhk7g9+BK/VXXeR9jO/1AF
+ BEVg9EvCpAIbVsrD2zlXdvyesNxELgu3Aaxt6k5EqIVoKi826xFKLw1VVYfSYMAydTo0
+ mjOcEWiD3uasmFNeAeJmGmBOr8TdOWaM5kDwqXyAkRgHJMyIiyScNo/xghX1cB7a4eRb
+ cml+ojSbsbrx1kx1Au3bhm2S+IANPs9cKOJhQrA3z+3KGoTfiJRzjJbKb5mW+fdVv1UB
+ Fvfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778267475; x=1778872275;
+ d=1e100.net; s=20251104; t=1778267476; x=1778872276;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=nZO0wdDD4DSlLX4n4DMIO1bIJmiM8zT5Jy8kQ1B0lsk=;
- b=G4VRRs4HqLLSxaVrYgVyLL8yhGKSZNudTBv5Kr4gUbnZpLG1QyHv1KtC0qsrIP2y05
- 6MMe+S0Uq0iHKxyUY7HsZds5wFTcorPAIh+/rf8z5SjXy/5DAt12dH8xsZuABfIbOJqe
- tfx2DfQXjt3We2+h+yFa47apyrcFMpsny/7zetsLWw58+Kk8BAzEMpN2LqhjCqJkETbZ
- WyQSwIpxmKWb/lO3uaWfSfwBJG2YU8LuB3myKtc5kJ1X2KfqytEvhfhf/XQPMhcMEIlL
- 4P5HatEdlE8EhGSeR6PofkxTP3K7cNZGi3/L6wmADqpJvrIlPtaH3bryPOvwFCxQOhAv
- WChA==
-X-Gm-Message-State: AOJu0YwEwto4mCDxT2IQQxp9WdbYhZyGbrnxQSbCkVXrBkqdKQ68GmDW
- ToNYh1i+LegcYI7GCNGc9efNx4cve2ERdpbMC6l+43/ur1HRN8PJZ+WyOThLO+EKITTAXA1yN97
- n3sA/
-X-Gm-Gg: AeBDietszX4opZmLr3hEb+vezEKABbdH60uEM1vmVAWmCJv3OkORp+vw5L+VDJFuYRw
- AgLEYAsTl7buuLzQhaNKVwWZXtuJS61cQCXaHsnACQAnYlqj6D3Tkxe8jJgssxEsvZfyYzbc3N8
- xPEzL+/7MUj9/mquvYKiQpqhw5YQmtbUXgezKUlL9XW8fWt3WvxeDXEF7q/HK5UXAd5nvM/m5WV
- d/0uHWOureFvcEN+2S+jY7NvN+9U8F465rdKirEkdbzTp+ollZDbYnZsy8bF78MfGuZGjoXUHNX
- 7fC8+NVQetvkEMK+ENyLByrhvwS8pRPXBSecjJcVKvM9m9a37YZdPuoYU2DsJ7B/q4ZAzzH2wBk
- 4OrCxZcsga7TOTm1IpUqFDVp3qgz+Yjl1vZJgg2q5I3lARgyVmm9MlnlKKiy1CU5j2b4r29PNGP
- sYjm+g+ZTxZTXJpH2ypZRwpAHI1ZCi3EEp
-X-Received: by 2002:a05:7022:2512:b0:130:ab68:2b72 with SMTP id
- a92af1059eb24-131851c384amr7716733c88.11.1778267474585; 
- Fri, 08 May 2026 12:11:14 -0700 (PDT)
+ bh=oKGLn2ORT0jWA7KVMkQn75W2XqDrUDze6YZnyScZQIY=;
+ b=GQ2fVCEAgv2mRRRVjOmrALM6/ZggQK7/yGaZtxWlvp5eJ5mxfsNrpQu5WG5YxWBg82
+ esguMSmssbDs3/lyTAjjkp2/oRyycl3A/Zt8Rw7WQQ45rNjVLRPeS0o42rxiB0BI1PXR
+ /nKI2WUSLjt85iLQCBGlEFz77tVMEpVTzqKKg3r6e0W7yURhIPeTOe2OaYw9jMlhGIzh
+ 6Bk82lTobCWpK67nX8cnHBoTTaSnUeLtRKUjhTFKeIICoHILQeeuuJITtim5U9xLNyMA
+ qkBF9fjf3NVj+QeBo/2N3AU1mgC5seDvQ5/28mtLNZdF1kYlRUiQcDo4ZdOu5YFNV3r6
+ bDcw==
+X-Gm-Message-State: AOJu0YzPgq+dH++1Y0Sm/UYwmtHX6q4qZPk00UHtOnM3Bh43ZAq2q4Af
+ cdlbTpNRnRJtsiyMcPJamGN8cewvB/0Qcs9zY4dUN6idiCB9acNg38gove6MgpkfqzW5PHNJIP2
+ FB+3E
+X-Gm-Gg: AeBDievGJllvV7TxcmD03Vj508iO4yKQ+4+Q2aBUAQs+/RQsOnHFLXOJmGjOkM7qEZj
+ Rjn7GUVgVjA+ChuKq8bQ191SqFt1G8WxTxHOkXeamLmbH/fvNLH5KEXXspiqhgT3IZl7mlER81+
+ 7DsVwDhw51bbjXAboTX4sc+UQTaJ7tS0j5Pm2APv+CAMxfYX9wNgQk91yLiCAlxiS+DXjaN2H0k
+ 8PL0A8nzsm15uJlxhYi7D+ZQ0Llg9/o3CIUXi1jw7urhdQVXwMfuDLxnyf5gO4Eq69m88THIpNZ
+ Afsl0edIB1KDIfXLT6Jz+gcp5h6xAOOdaAw31zvWjVLT+Pw6QL7vv6hoWdn7Q3VgJmOxEyRwanK
+ Sq8Zr2/B9AKfH55QPM5wss8iAdoqJ0dUOgBQyF6HmWedIGQ//BYBx7cbFvBhHU48f4pd+d7AxRs
+ I5scDJxTRxB45Y9F2R1aVURF/gpEtrdJGT
+X-Received: by 2002:a05:7022:6609:b0:119:e56c:18ab with SMTP id
+ a92af1059eb24-131853e9c33mr7397215c88.19.1778267475681; 
+ Fri, 08 May 2026 12:11:15 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- a92af1059eb24-1329fc4bf3fsm212796c88.5.2026.05.08.12.11.13
+ a92af1059eb24-1329fc4bf3fsm212796c88.5.2026.05.08.12.11.14
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 12:11:14 -0700 (PDT)
+ Fri, 08 May 2026 12:11:15 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>, stable@dpdk.org,
  Selwin Sebastian <selwin.sebastian@amd.com>,
- Ravi Kumar <ravi1.kumar@amd.com>
-Subject: [PATCH v2 3/4] net/axgbe: destroy mutexes on device close
-Date: Fri,  8 May 2026 12:10:51 -0700
-Message-ID: <20260508191109.734377-4-stephen@networkplumber.org>
+ Ravi Kumar <ravi1.kumar@amd.com>, Amaranath Somalapuram <asomalap@amd.com>
+Subject: [PATCH v2 4/4] net/axgbe: fix descriptor status out-of-bounds access
+Date: Fri,  8 May 2026 12:10:52 -0700
+Message-ID: <20260508191109.734377-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508191109.734377-1-stephen@networkplumber.org>
 References: <20260218164324.915065-1-stephen@networkplumber.org>
@@ -82,37 +82,49 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Four pthread mutexes (xpcs_mutex, i2c_mutex, an_mutex, phy_mutex)
-are initialized in eth_axgbe_dev_init() but never destroyed in
-axgbe_dev_close(). This leaks kernel resources on every device
-close/reopen cycle.
+Both axgbe_dev_rx_descriptor_status() and
+axgbe_dev_tx_descriptor_status() compute the descriptor address as
+desc[idx + offset] where idx is the masked ring position. When
+idx + offset >= nb_desc, this reads past the end of the
+descriptor ring buffer.
 
-Add pthread_mutex_destroy() calls to the close path.
+Fix by incorporating the offset into the index before masking,
+using AXGBE_GET_DESC_IDX() which wraps with (nb_desc - 1).
 
-Fixes: 572890ef6625 ("net/axgbe: add structs for MAC init and reset")
+Fixes: 0962b6055c08 ("net/axgbe: support descriptor status")
 Cc: stable@dpdk.org
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/axgbe/axgbe_ethdev.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/axgbe/axgbe_rxtx.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/axgbe/axgbe_ethdev.c b/drivers/net/axgbe/axgbe_ethdev.c
-index 709a52acc8..c8414998b4 100644
---- a/drivers/net/axgbe/axgbe_ethdev.c
-+++ b/drivers/net/axgbe/axgbe_ethdev.c
-@@ -2482,6 +2482,11 @@ axgbe_dev_close(struct rte_eth_dev *eth_dev)
- 	/* Disable all interrupts in the hardware */
- 	XP_IOWRITE(pdata, XP_INT_EN, 0x0);
+diff --git a/drivers/net/axgbe/axgbe_rxtx.c b/drivers/net/axgbe/axgbe_rxtx.c
+index 51a1aeb0b9..6f750d6ede 100644
+--- a/drivers/net/axgbe/axgbe_rxtx.c
++++ b/drivers/net/axgbe/axgbe_rxtx.c
+@@ -1205,8 +1205,8 @@ axgbe_dev_rx_descriptor_status(void *rx_queue, uint16_t offset)
+ 	if (offset >= rxq->nb_desc - rxq->dirty)
+ 		return RTE_ETH_RX_DESC_UNAVAIL;
  
-+	pthread_mutex_destroy(&pdata->xpcs_mutex);
-+	pthread_mutex_destroy(&pdata->i2c_mutex);
-+	pthread_mutex_destroy(&pdata->an_mutex);
-+	pthread_mutex_destroy(&pdata->phy_mutex);
-+
- 	return 0;
- }
+-	idx = AXGBE_GET_DESC_IDX(rxq, rxq->cur);
+-	desc = &rxq->desc[idx + offset];
++	idx = AXGBE_GET_DESC_IDX(rxq, rxq->cur + offset);
++	desc = &rxq->desc[idx];
  
+ 	if (!AXGMAC_GET_BITS_LE(desc->write.desc3, RX_NORMAL_DESC3, OWN))
+ 		return RTE_ETH_RX_DESC_DONE;
+@@ -1228,8 +1228,8 @@ axgbe_dev_tx_descriptor_status(void *tx_queue, uint16_t offset)
+ 	if (offset >= txq->nb_desc - txq->dirty)
+ 		return RTE_ETH_TX_DESC_UNAVAIL;
+ 
+-	idx = AXGBE_GET_DESC_IDX(txq, txq->dirty + txq->free_batch_cnt - 1);
+-	desc = &txq->desc[idx + offset];
++	idx = AXGBE_GET_DESC_IDX(txq, txq->dirty + txq->free_batch_cnt - 1 + offset);
++	desc = &txq->desc[idx];
+ 
+ 	if (!AXGMAC_GET_BITS_LE(desc->desc3, TX_NORMAL_DESC3, OWN))
+ 		return RTE_ETH_TX_DESC_DONE;
 -- 
 2.53.0
 
