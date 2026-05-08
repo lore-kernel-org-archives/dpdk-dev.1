@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0009ECD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7FC0CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1526B4027E;
-	Fri,  8 May 2026 22:36:17 +0200 (CEST)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id EA3E040653
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:13 +0200 (CEST)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-2f7020a928eso3379889eec.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:13 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 044EC40669;
+	Fri,  8 May 2026 22:36:18 +0200 (CEST)
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com
+ [74.125.82.173]) by mails.dpdk.org (Postfix) with ESMTP id E3AB840659
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:14 +0200 (CEST)
+Received: by mail-dy1-f173.google.com with SMTP id
+ 5a478bee46e88-2f3c623322bso3973713eec.0
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272573;
- x=1778877373; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272574;
+ x=1778877374; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=I/m8q7Hx5KCzI4dLYnEIIaJhdIj0wjtzPL0VpGf1bKI=;
- b=kXPaVP8LLzxSGC59zaH6iMfrcxYfYC5t1CioeZBDOIGfgI4MTd5ur0quPwaNA1fVRF
- mPdMKmVJjJfOEaQPLlUZdkzybzgOAtAl1N6QrhYH8bkDrwTKCDiOmnbcPHlwIZDSjuNm
- JVw1+bLSSusXPNK6ImQ5ZRVm41DnMBx7oo7w2G1U8eEQ9nUN+fuitl1VhWi9U8zJufWa
- JEQu8IttT+23EiWtDPdvf5ZlVoJEcYp3Zro+ZGeFGrIeHU7Nfqs7Cl2+xUhYeOBeVBSa
- IMI2AID+5bBwqOAVD2KPZyLXUgG2MbYszc7F93y0N2+pV7vWuGsPVK7oJRPhLd0+HJ2g
- Fb8Q==
+ bh=trP+cxHs4L9X31SPq0qpQ/+ysi5+rfsmDWtVgeZlcOc=;
+ b=hdKDxGx74KHEN2UL4reMCYswV+rMhk1BpS6Z3hlCZEgJLg8FkZ4vmUUT6yNtFYatqM
+ /Iy8dpweYyQi7dEOo+ddlPMUaxmZojEUM/tCPDxEx8FMkz5DDAvwbHTOZtIFIvrGCSmI
+ sg4DS3tKwk9fqTt9epbzxswWPMo5JEHLWwmsQuw/fquG2NdRPcSZylTmRgmC0hb129nL
+ X3bk1N2cqc+f+jUMUJuqSyby3Sdd2HBPRRlBBJqEZq4vECOXLl+p9U3/47Xexpwl9lcY
+ c/3hMap8g6HX6ppDy1V2rRBQsnB9bWcg7gmOZKctIwHpOrx8tyZE6CGjU+HiRePq6kdF
+ EZqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272573; x=1778877373;
+ d=1e100.net; s=20251104; t=1778272574; x=1778877374;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=I/m8q7Hx5KCzI4dLYnEIIaJhdIj0wjtzPL0VpGf1bKI=;
- b=lOx0mKg+u6j3MXmP7NxHug9Kfn+XHVFfM8SyTxwAM3dofBxDBqpl/6rH5DUJ6+dHax
- spdlwxIFUZWML2DYpN/JRFinOTa8nufVmJueKK9jkoUyx4U44WuONYeCpqt9Y2RHs95r
- YKdhgYnZfQlLBk4Mc7Lb6Vc4u6vwESlnK744ysIBAEpzU1JeZEBq79Ob3svYPAA5oC1Z
- 3wvOXKQz5NeDZ0yFc8u4dB7qd0DffKLGhTPH9TZ9DKmMAlw3+nf4VUNkZ3hcLb1g8i4W
- 4BD++SsltgP3RRlJkoHn3JEHxIPsFDUB++/n2bccDTyFteRXsyzvIMk64udpogBZIP9Q
- jpsQ==
-X-Gm-Message-State: AOJu0YzhEbcIbWyw7pEOS6MBmkDyZ+1y1wvuWe7aB2damA6erVCdDdmT
- 6SkHfR1e3e6Dv+dvj8v6/Ys+N24+t9RewN6gth9otwczeSIDxgoOscaqohmk7NccqPFo8Q466Km
- 2LOzh
-X-Gm-Gg: Acq92OHerxzEa2FvqsgSjEi1IPwHkJaRZymszNWLnYqGdkJKnRKxEMvxvidZYU7zGfd
- ZEhvusaS+CdBmyay1ezrF4/MuvsKzRDAQpi2AUktzD8pttroKs4z1nWxrKCQ9ednDWO1emURSmI
- 1nQ/4ueo0qdAqeKzgr5YhdAz2S8rBDPy3FQwJpjZCOkDCvQtgOd3qJ6E7yEzk4/ybkTf2Q+hfRg
- C6H+prjqbIFVt1DOFTd3HwQP7VzEcz81XHPyzqmezX/r2xqEy/rs2vsEYDwLRx1G5Ud3xVI5jtq
- JQc+2RY/1U3u6gcMOtKI7TQg1Ncalg752cSIt5LQ9Jcv9uTRpP0L31b6nuJ5u8tNElfjwj9rfKj
- FKeUsTq8jh+IAO9c6VAzCiWbZMQfFWF5SzhwH7voJQEtM4j55WfHE+2zlzncKwVBhNsYNNC5Phf
- 1R23u5+UsaqPhuvz5ORPkVfIoAZTwui/R65sMXRDxuDS4=
-X-Received: by 2002:a05:7300:d704:b0:2ed:75d:fe40 with SMTP id
- 5a478bee46e88-2f54958a6d9mr7557336eec.15.1778272572999; 
- Fri, 08 May 2026 13:36:12 -0700 (PDT)
+ bh=trP+cxHs4L9X31SPq0qpQ/+ysi5+rfsmDWtVgeZlcOc=;
+ b=g49E0GU+21j3V+tgeR093vKH1aQSZQAORFVSgIxwUTi65FtR173U37BbfkKOH89bY2
+ TuxsTLvPVjHZFfSyibULPZCgAUCB7/mMok6Y+qQx+JeBIEmQbk6rwHmvkX9XNCbUlBBH
+ smFJBdcl0zZdrluUqmnPlhayugT5e2b2yvBLHX+sVY0AXWth+KG44bhULEYhGTV9hA8n
+ KSR9bwxxUIvPlTJ9AnahfOnxXPBqbvjQlsAAIic4kH53fAIUj8ilyagXUNEVojoWpehJ
+ P3KpuvlZjaKCX1re0j/IuWjoIFeOoj5A/n6Pnn9G63lSro0Pi7tZAwO1gSzGweB6BN6c
+ lzfw==
+X-Gm-Message-State: AOJu0YxHVhc1ydyWeRf2RTWyosRu/QO0G/ussR92jmFyouyNSPaSpBup
+ UBpudO5Ou3S5tn5PNcEZ4SfcRf7q27jEC3dfzxYixkcM53Snacxlq8siJmLHyUfojoJF+c0fHjw
+ ETP1H
+X-Gm-Gg: Acq92OEKPmbO75WtFG6/RbJIV3hCRshr7ud/c4dvZWqUvkx07rednWCMegLNSnF89oy
+ SWmOBfnIXk6syrxc735Q7E/+bOWppSsjdowG7F0R9RV+LWNfOzdF3AOuCN+QVmoohDWvvT5Mtja
+ V7nonNUyXc/5j+p2R7MW5sQ1ykzZz/mX1pC4JLcwGcRb4squ0oyuvUd3e5wNccjVJuMD0Ybj2Vm
+ 8Cn779SijMrWD1VJjYQ1AtzOWqGjDy534elbYvJwCq6iZSBHRDb3E/pB9mSN83sf9DKgCuhT4lE
+ 6RZnrrwpsHr/sg7dcoqlcDioOwBDfTrQHvPQeV5MFbL+54wK9hOgqpYGTA1sU6A7oHsIsFABZWV
+ y9WFbBVdgM8/FUW2mG3mc6fyxSNfxWy5CGesvurB3CNOJ9pdKcvpQzDP+ZS3ykj4/+45fMwDLr+
+ tuXhjEifKasWr4doHYv2nLpyZnrAFhgMoB
+X-Received: by 2002:a05:7300:434b:b0:2df:919f:ce59 with SMTP id
+ 5a478bee46e88-2f54c87cd0amr6142566eec.19.1778272573981; 
+ Fri, 08 May 2026 13:36:13 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.12
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.13
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:12 -0700 (PDT)
+ Fri, 08 May 2026 13:36:13 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Jiayu Hu <hujiayu.hu@foxmail.com>
-Subject: [PATCH 03/20] gso: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:24 -0700
-Message-ID: <20260508203607.1003036-4-stephen@networkplumber.org>
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH 04/20] ip_frag: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:25 -0700
+Message-ID: <20260508203607.1003036-5-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -86,25 +86,24 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/gso/gso_common.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ lib/ip_frag/rte_ipv6_fragmentation.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/lib/gso/gso_common.c b/lib/gso/gso_common.c
-index 378bf2c6aa..6ccaa7103a 100644
---- a/lib/gso/gso_common.c
-+++ b/lib/gso/gso_common.c
-@@ -31,10 +31,7 @@ hdr_segment_init(struct rte_mbuf *hdr_segment, struct rte_mbuf *pkt,
+diff --git a/lib/ip_frag/rte_ipv6_fragmentation.c b/lib/ip_frag/rte_ipv6_fragmentation.c
+index c81f2402e3..4d8fb05233 100644
+--- a/lib/ip_frag/rte_ipv6_fragmentation.c
++++ b/lib/ip_frag/rte_ipv6_fragmentation.c
+@@ -38,9 +38,7 @@ __fill_ipv6hdr_frag(struct rte_ipv6_hdr *dst,
  static inline void
- free_gso_segment(struct rte_mbuf **pkts, uint16_t nb_pkts)
+ __free_fragments(struct rte_mbuf *mb[], uint32_t num)
  {
--	uint16_t i;
--
--	for (i = 0; i < nb_pkts; i++)
--		rte_pktmbuf_free(pkts[i]);
-+	rte_pktmbuf_free_bulk(pkts, nb_pkts);
+-	uint32_t i;
+-	for (i = 0; i < num; i++)
+-		rte_pktmbuf_free(mb[i]);
++	rte_pktmbuf_free_bulk(mb, num);
  }
  
- int
+ /**
 -- 
 2.53.0
 
