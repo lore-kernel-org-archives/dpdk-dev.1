@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43895CD342F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA25CD342F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:40 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 930CE40A8A;
-	Fri,  8 May 2026 22:36:29 +0200 (CEST)
-Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
- [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id BF15840A4B
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:25 +0200 (CEST)
-Received: by mail-dy1-f171.google.com with SMTP id
- 5a478bee46e88-2ef2a1cc06dso1225212eec.0
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:25 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id B507F40B8F;
+	Fri,  8 May 2026 22:36:30 +0200 (CEST)
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+ by mails.dpdk.org (Postfix) with ESMTP id C0C4C40A77
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:26 +0200 (CEST)
+Received: by mail-dl1-f48.google.com with SMTP id
+ a92af1059eb24-1309f4ee97fso3260799c88.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272585;
- x=1778877385; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272586;
+ x=1778877386; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=tptwahIhE6s4X5dIE5liHpfqTvTWXfj2QMD2lazoM64=;
- b=d202i3vFXoIs6Z8vbNWUJWWNn4/UF7/8r8gCcLzMPrfwO64b00f/708UDcJIr4fDmY
- xFcxPkHb2KUo/+MxNwQ0jZP1ZeqOC64jVDhfdCffCA0TQAdH1kYL3pD2IAZMq6tReJfd
- LcYAdGHswgoB/CSz+KxspvxSlir0zV27N48LQUEokwHucDOT4TTVQwcNse5NHGtZf4mp
- BV9WqfkF4fIJ3lC3pI86dGPLH5IaTyeYS7l/kGihLEL7I0qhgsSUW014iTxKFgJjraXl
- 7z5BBY/0TX5/06x0sEfyAO4kEMYNv7BlwsBpw6ydXAALlKUww18ac42+3VHkMHthrSyY
- gaBA==
+ bh=l8/kSagyHm7d8K+kImZdOd18Ksp4U2IJ7WeVOucD7tw=;
+ b=PI9HY+X7ftVrkVIT1H47fG2RHD+dzNp1IqxdufMiJ/+uiBHcKbvvXguJ94R6i9LS9k
+ QAsrTPx2/lDnTBopeWEHAUUW9WpdcO35EdbHtrTXKCjixttVnJ1ALNJXlDCmqIls0vRA
+ Nns9HtriBXOZb3idkGtoVQuj70C9Y3ryNih1r+SQ55cPnzD8hW9Jmzt7UN3i2+rmaEOu
+ l2gWUAPtMTeMqZ0OGBI1ZlEu7hNUOznrvvegKEuXGiL87ysnH+6w4fC+5ZFnHaN6nAuI
+ HC9i0NVMIn7xZeXkdzFtpTq9qp/yBbFxWqo3iDIxiX7tn2GoCOuI4jA6D6hyOl9mUABa
+ 8sPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272585; x=1778877385;
+ d=1e100.net; s=20251104; t=1778272586; x=1778877386;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=tptwahIhE6s4X5dIE5liHpfqTvTWXfj2QMD2lazoM64=;
- b=WXAdn+Ug2IHK7NGR6/bviQCayazppxnVB6vSVHQPEoPlqircsFsbexSUnK0eUIJfkl
- 95vcC4qU7KZgqmnoUBVP5KM3+eoC4h579tmU9eN8Y7RzI2pPV2/0RVYlHFHilXPzZcmr
- L1aF28PG9WT5TStY5wzYAnXYr8Xl+m/aBIB0ZiD46QwL6iqrFJIChA6aH5M8rvCjqsZM
- kX7hATCQ1UBKn2YBpoqP77y4PWhiM/01gwvZgsCDrsM+rMHKFZ5/1r7wh1qL3fOHZ15t
- eS/wHK/UNThM94ZeancpQWiiZEJUYYq78b5kpa/Xb/lFm4u3rTFdLZ+UArk0n9yfjgs2
- V8DA==
-X-Gm-Message-State: AOJu0YzN6PWUjJsr6bhbdUVs+qBy0rWWD04vOdAUpAlnmoAQJi84nTPC
- liQJblYvmfsIWTArBBHAXrIGT/Wa4sCz2t9BAeEMrVeRp74SQ72BBxckZucdZHr4WSEkKgM/yDM
- mJBUa
-X-Gm-Gg: Acq92OG1kfoR2rX5YLhEcHCT8d9OxPD1hj/xDHf7TokBrGOZAUiUvwI8laD2CkBS1PD
- cgbl+kk83a307Cg2K1iC9RqJKzIp3T4xFM4Iged4lnjGoscOsYl3yvQutEq3b9QINQerKZ0evAg
- C42tbcTLTW9Uxbmy2g8GJYK+5w/ibBjWI5UCmqiHa0VJVEcFZPUiYaVR2/IdlrGkJRByZYinHuO
- l5p8rIxMABGnAzSzIGI9/rTHQXgugcP9P+G6Crb4furer7ZH5HNHXyyv/DheLahQuUsdbcJQO4c
- aiFzyHJt5SpitNsSLzVSU4/YDC7SDUvRATzlCmNXLMyWyhklsreNEJ+eA5eN4UjXEA784vlGQ2O
- o8z8gaml6cVmnYlr2W8ew+F+J3tIFgvjnNXe9A+QOVy9+i54TdpmJvsqQk3T1OQkMZCzX2ajqPE
- WRPdpeD2WeaMquEefsEE/4G3g02Nt1bJvVy3iwk5hs+N4=
-X-Received: by 2002:a05:7300:cd92:b0:2dd:6937:79d1 with SMTP id
- 5a478bee46e88-2f548e9c897mr7678888eec.15.1778272584777; 
- Fri, 08 May 2026 13:36:24 -0700 (PDT)
+ bh=l8/kSagyHm7d8K+kImZdOd18Ksp4U2IJ7WeVOucD7tw=;
+ b=m/mvT8MOPc3AxFNiZ5s9uE2Lxt8OlTahc/2TwSsx3reNTrel+248dQ1YpJ98rlDPhJ
+ E+pRImng8Td7p53wCCHaC2vXl7RWH1D3TRBUDgDPvCbb0HinmMaMf5xnUyrIX6dUEqXS
+ YDZXaI737JP5SEiL+d73VM1v/vNvfZwELdbbYwM7l6YiZ/+Zf59CK2h8z+nwokOd5ch/
+ 850OApXu5h2k6+i99SPsDsDHKGPqdCQ2z06hfqzt/AK3WCf7bTYLv3hHbwZNJJBL0eDR
+ 4nw+f57t+cH1MlgEkmTcvDT1nPfSPTrgy+nnB5wzgv3SRkENR5TslLno7FaiXTv8xJuX
+ /mmw==
+X-Gm-Message-State: AOJu0YwKb/H2NP9DbZL74yfnWY30EtnJMM43jYODTaICFOwsvM5T8xy6
+ ixcTX57835+kzscr9KXMe5By+m1etxhkLibcHWLjabisuXj9iXu/dM4D9B3BYZcGEQxc/aP6iK/
+ EdLQD
+X-Gm-Gg: AeBDietWdFkYJqU+7QE0OtnVOmutpMes425fk3jroZ2+dijBijn5pbI2IzkYmaTFOKO
+ X85jiiVrylzu6KtEW+gqoZzi3lVEP4Bn9CF9/mhpboEhJ8AvVEQymMU8UtV7ddW0Nx3dltuuASH
+ jsXX+vHGyNNkLEYTM5C/7MK25M3ibg9QiTnlM6q8dOgePhXHeaLdQoRbJofiaBbdUe1ofltmDvx
+ xINUvAGksxwTQHQnopU2IS0H/9jZGaR9BDYr9xkHbgNPH3cWipoQvn2pwdOIaPCBtGMtH2LTWrP
+ FTujqDruQk/PG5jZ6Xa5mx3WVItcuaTLCuUGBKRx1u/SF7jjK9yQBshXpKt8yjxsigV9cj+wpiP
+ u1u0EvWBcqLv7KM0IEkCfu+p9PM3pKtjSH5HQWwl0IacBZmbshWWdvzy/pOf0XJfwZPlfvu1L7A
+ YETZS/XcTjmka3OSprv0oUBUm0iPjxYrkKNlgzOT3mSkA8kBN2p0g0hw==
+X-Received: by 2002:a05:7022:4a9:b0:12d:de3e:be88 with SMTP id
+ a92af1059eb24-131a69f2f19mr6661936c88.36.1778272585755; 
+ Fri, 08 May 2026 13:36:25 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.24
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.25
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:24 -0700 (PDT)
+ Fri, 08 May 2026 13:36:25 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Anatoly Burakov <anatoly.burakov@intel.com>
-Subject: [PATCH 15/20] net/ice: remove unnecessary null check
-Date: Fri,  8 May 2026 13:33:36 -0700
-Message-ID: <20260508203607.1003036-16-stephen@networkplumber.org>
+ Kishore Padmanabha <kishore.padmanabha@broadcom.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>
+Subject: [PATCH 16/20] net/bnxt: remove unnecessary null check
+Date: Fri,  8 May 2026 13:33:37 -0700
+Message-ID: <20260508203607.1003036-17-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -81,32 +81,54 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove unnecessary if check before calling free.
+Remove unnecessary if check before calling rte_free.
 
 Generated by devtools/cocci/null_free.cocci
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/intel/ice/ice_dcf_sched.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/bnxt/tf_core/v3/tfo.c    | 6 ++----
+ drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c | 6 ++----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/intel/ice/ice_dcf_sched.c b/drivers/net/intel/ice/ice_dcf_sched.c
-index 948774a282..14e902edbe 100644
---- a/drivers/net/intel/ice/ice_dcf_sched.c
-+++ b/drivers/net/intel/ice/ice_dcf_sched.c
-@@ -877,10 +877,8 @@ static int ice_dcf_hierarchy_commit(struct rte_eth_dev *dev,
- 	return ret_val;
+diff --git a/drivers/net/bnxt/tf_core/v3/tfo.c b/drivers/net/bnxt/tf_core/v3/tfo.c
+index 4b1f545476..681d1dd8d3 100644
+--- a/drivers/net/bnxt/tf_core/v3/tfo.c
++++ b/drivers/net/bnxt/tf_core/v3/tfo.c
+@@ -183,13 +183,11 @@ void tfo_close(void **tfo)
+ 				}
+ 			}
+ 		}
+-		if (tim)
+-			rte_free(tim);
++		rte_free(tim);
+ 		tfco->ts_tim = NULL;
+ 		tfco->tfgo = NULL;
  
- fail_clear:
--	if (vf_bw != NULL)
--		free(vf_bw);
--	if (tc_bw != NULL)
--		free(tc_bw);
-+	free(vf_bw);
-+	free(tc_bw);
+-		if (*tfo)
+-			rte_free(*tfo);
++		rte_free(*tfo);
+ 		*tfo = NULL;
+ 	}
+ }
+diff --git a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
+index 23e1b59ca4..3707cd1a2d 100644
+--- a/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
++++ b/drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c
+@@ -169,11 +169,9 @@ ulp_sc_mgr_deinit(struct bnxt_ulp_context *ctxt)
  
- 	/* clear all the traffic manager configuration */
- 	if (clear_on_fail) {
+ 	ulp_sc_mgr_thread_cancel(ctxt);
+ 
+-	if (ulp_sc_info->stats_cache_tbl)
+-		rte_free(ulp_sc_info->stats_cache_tbl);
++	rte_free(ulp_sc_info->stats_cache_tbl);
+ 
+-	if (ulp_sc_info->read_data)
+-		rte_free(ulp_sc_info->read_data);
++	rte_free(ulp_sc_info->read_data);
+ 
+ 	rte_free(ulp_sc_info);
+ 
 -- 
 2.53.0
 
