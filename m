@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC20CD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73D2CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:08 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 567744069F;
-	Fri,  8 May 2026 22:36:23 +0200 (CEST)
-Received: from mail-dy1-f172.google.com (mail-dy1-f172.google.com
- [74.125.82.172]) by mails.dpdk.org (Postfix) with ESMTP id D80E540661
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:19 +0200 (CEST)
-Received: by mail-dy1-f172.google.com with SMTP id
- 5a478bee46e88-2c156c4a9efso3299891eec.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 5BD54406BA;
+	Fri,  8 May 2026 22:36:24 +0200 (CEST)
+Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
+ by mails.dpdk.org (Postfix) with ESMTP id CB9064065E
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:20 +0200 (CEST)
+Received: by mail-dl1-f43.google.com with SMTP id
+ a92af1059eb24-1309f4ee97fso3260688c88.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272579;
- x=1778877379; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272580;
+ x=1778877380; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=Y5m+L/1rDUly6cgtJBKkQnUjIMw/qIzmLoHTANQD6LA=;
- b=I8bccyWP3snd8XLtpSnQQWL16hyQNjE3Go58eWlp6vaQP3keHaRtbmLe3FfKzrj1ls
- oth6LhC1y17bZmdSSONzZ0IdB5ynXjN8SUDEVbEtaOeOecPk5QWHZnZ+K5NcbRHuzrL1
- MH7KBdP2FrBPDJQQf9JO9YaHj9ut8elSJnbuBZ21DL4Bj/SwSxk3YEqa2LYa9H2ei6vf
- QVL+xGLQIERAvz+DLcceEdDWsa0RRtRsHmJdQiQ/2yFvda5NWNUJTKxyk65eYnZVZGgw
- ipxbIajd0FNtqn1F39h915hdxxppcfVFLATkynKnWWcuIJkyHPrdp7PWY6Hh8PrC1zGT
- 8plg==
+ bh=c6Sa/MIf+4YTnEdfuDfFMw/ZSefXUMXt6txowlTrEwg=;
+ b=VgBIbP8xgF6tNt3LaxILsalopJ5NS/dx/DZzCpVKCJDvw2/SIqM1bp/6ZN9CiXykcI
+ 4abqQ9xa9WmjbVDK0mYH1GTumjwHpg4sfm45O4LdRimEHM8zFBP50LoIc64ZTz+ZYYkQ
+ HQ5WWdEiHwYkpCQgi/p1mJ/i310oZV/cdHmH/x4+PnFxXXXnIIl6XtHBqFpO4dDgvxD5
+ hTqh58pOo6Vyi8xJqzPvJAp+r5x2cRF55c7MrJLp6ALXldIVHqpk/ye+wFiGzF86WGbK
+ EfXprBzhpkTHp7+5GmcfiqAAs7Uv93XLIbZDErOeulEKXLV2SV5fY2pQD6roMzzQnlKC
+ efjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272579; x=1778877379;
+ d=1e100.net; s=20251104; t=1778272580; x=1778877380;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=Y5m+L/1rDUly6cgtJBKkQnUjIMw/qIzmLoHTANQD6LA=;
- b=ObqCC+2GcIAxyOETsxWk8oWv0n0j6v8ui4L58mKvPfuc09Luxf0rFPGb4KH8nNPdw9
- 08+gp0Qr8y2ihxUVk1Laty0edm1wgIo0KjrCmJk6iXRB7qdPGV8AYDWZytWuW9KmTz7/
- 27IogDHn4QvDq8nnfY4r9OYlurHrtojLJ9BI2K68uADsuLvtAPLBNRhPbcObXEVu3vDC
- QXejnNZVa8InFwl1fqDbZJXhOJm1s6Q/8NM58eakZtfxBUiObzTi4ZmqKdER6IkbR9pT
- LN4GbknTdnVRyi6TcIEKPMA12vrpSbbEYyepGX+HT9c3wNQMrbI3zW+iyrUiIuFkNJv0
- viFg==
-X-Gm-Message-State: AOJu0YxT9Sv1AsjzfHDe+3sjZfRRmfEmJHvQGxj3Lv/c1VzOZvh4zAds
- Iobyf8q/gg2uv/JOj2DaJZABywRcjD+6nr2dkhvOS8GQGODC+2NcgMApFcTaqJGi4jKp6MD7nqG
- whlAY
-X-Gm-Gg: Acq92OFDrqJ5FdpQJL2dPQJ0gu3SCD91Hhcyq2KjqubqK/ctzBW+WM6mhDaIvn2zxW6
- lS9hy3tBPC7oMTg6DxJCZjPTZNJEX7O7CiRHz8X4ZXkNnwQiRymhfqcQt8emawR8TBzyMGjQ3YH
- MPb5C50qCpcs5cNib3X62/CRl3aPhwwDhabSR6CEvVn9yuTNaHzPCHLLWWwrjoIerXyivGL2NFv
- 4sVxoOhRYTjS2Z96ZvRCGNTc/AgS7fU+9TXCrdQEEQjyyV3CLDf0bJLs33aZ33GAmglSOTXMBLD
- Epzzy2lGjEjBZSrV/KmuWMd81I/VGURRucTCKPtsJ89LwSfK8qUPWzPvAcrQZeRleCFFdRfpT7Z
- fmJ23UlZCEpIM+6k9xnBsw8ehxcr1bkrB3q3Kbw/n0h3mk41SFLm65Wm71L1bal2guCAUwh8XJA
- vUJSdOx87PtqYX/98SVCSwiQs6vxQjei3ju+pPP3f6gFGYvN8UYR0I9A==
-X-Received: by 2002:a05:693c:2c01:b0:2de:c5ca:c1e8 with SMTP id
- 5a478bee46e88-2f54d696d50mr6491909eec.4.1778272578906; 
- Fri, 08 May 2026 13:36:18 -0700 (PDT)
+ bh=c6Sa/MIf+4YTnEdfuDfFMw/ZSefXUMXt6txowlTrEwg=;
+ b=m1TfrkjQntIBH+GkHJ3e6wjUldmR5SaojrDv1zG3Ko/u2vfpSOvMvOt4VrRBO2FuCR
+ 5yjZRjnWjl7aKIRvKcv8ZUsCVR0NZNuVYQWiWEwoCi9FsJgUYTwMo7V+9FQbzaz1s+cF
+ wM6jjBMb9g2rMvjbbJRZT+MLTfY99oC7m5G56ZGalBqHzheSzA96rLlC1p47K4K9BP2d
+ dka1id9P03jLZNDeOEGmMJSxx1EJn7felmMIKcOpQVbLzwyFHlOEssX2jJEDN9mUvF3H
+ IjHujysk+IR10N3/T4e6E4gIdEOXlffLfqQ7xpA6ejGpVpsU8VEn5Rq52Ppb2Hz6NTIb
+ LO2w==
+X-Gm-Message-State: AOJu0YyVaIyyWvDbGtaHF64HRHoQx+P7M+5vdvHqWZex2VutqoXFGtSX
+ ZGbGEu9DPc3V36RSwAmv3+V7NYDvcNuQFjx+JRH+wcmAUndkL4s3QyqGz8X2q8OQeHsM3BuuvK4
+ mtzbu
+X-Gm-Gg: Acq92OGShA+H8wpX8xeUZIbI13HRw+mm2g000xfSze2Ij7321A/X8wXNYINGpw6W35m
+ 2xcKqUfclva4J5mrjSANpU6OhmN1MXRX5FnJT3vvBgEJZDfgIo1Vrz6aaDsSkoLaQH3jSZ1H6Cr
+ kZK0o4g/9EFS/jouIpLgAjn4qbeyExnKTSYqHfYfttc6wWLNF0rTe5DfLrL3Tk82uUD8mzeB9HK
+ QhrHam1GkYKAMO0kJrNk4DeuBWtoxc64VyIpcCBQaFHEolHKfNPEjfy77EsStsefv/oS/Ad7VrQ
+ Yw8GDEGTO4CwDrH9OarpSR98ltSBMOHpuS0lam6ARwioXMAdIhL3fmkQJsII+hfF+Bmi73qa/Xt
+ y40KMHFdkNHvBcdsnbNVmqvGuiNNAbzhUfq6zuC8f8EF839kPQ1U6WSYR7otItGbCoADEHEUvYs
+ uLNFfyyJViaEoCKanrN/mJXL6DhpWi/ZCY
+X-Received: by 2002:a05:7300:a987:b0:2df:c5bb:3720 with SMTP id
+ 5a478bee46e88-2f54c587faemr7215509eec.15.1778272579876; 
+ Fri, 08 May 2026 13:36:19 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.18
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.19
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:18 -0700 (PDT)
+ Fri, 08 May 2026 13:36:19 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Gagandeep Singh <g.singh@nxp.com>
-Subject: [PATCH 09/20] net/pfe: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:30 -0700
-Message-ID: <20260508203607.1003036-10-stephen@networkplumber.org>
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH 10/20] net/virtio: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:31 -0700
+Message-ID: <20260508203607.1003036-11-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -86,24 +87,82 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/pfe/pfe_ethdev.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/virtio/virtio_rxtx.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/pfe/pfe_ethdev.c b/drivers/net/pfe/pfe_ethdev.c
-index 1efa17539e..4c0f9e63a0 100644
---- a/drivers/net/pfe/pfe_ethdev.c
-+++ b/drivers/net/pfe/pfe_ethdev.c
-@@ -281,9 +281,7 @@ pfe_eth_open(struct rte_eth_dev *dev)
- 			ret = hif_lib_receive_pkt(&client->rx_q[0],
- 						  hif_shm->pool, rx_pkts, 32);
- 			while (ret) {
--				int i;
--				for (i = 0; i < ret; i++)
--					rte_pktmbuf_free(rx_pkts[i]);
-+				rte_pktmbuf_free_bulk(rx_pkts, ret);
- 				ret = hif_lib_receive_pkt(&client->rx_q[0],
- 							  hif_shm->pool,
- 							  rx_pkts, 32);
+diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
+index edecd2011f..a1fbdd9f34 100644
+--- a/drivers/net/virtio/virtio_rxtx.c
++++ b/drivers/net/virtio/virtio_rxtx.c
+@@ -723,7 +723,7 @@ virtio_dev_rx_queue_setup_finish(struct rte_eth_dev *dev, uint16_t queue_idx)
+ 	struct virtnet_rx *rxvq = &vq->rxq;
+ 	struct rte_mbuf *m;
+ 	uint16_t desc_idx;
+-	int error, nbufs, i;
++	int error, nbufs;
+ 	bool in_order = virtio_with_feature(hw, VIRTIO_F_IN_ORDER);
+ 
+ 	PMD_INIT_FUNC_TRACE();
+@@ -764,8 +764,7 @@ virtio_dev_rx_queue_setup_finish(struct rte_eth_dev *dev, uint16_t queue_idx)
+ 						pkts,
+ 						free_cnt);
+ 				if (unlikely(error)) {
+-					for (i = 0; i < free_cnt; i++)
+-						rte_pktmbuf_free(pkts[i]);
++					rte_pktmbuf_free_bulk(pkts, free_cnt);
+ 				} else {
+ 					nbufs += free_cnt;
+ 				}
+@@ -1071,8 +1070,7 @@ virtio_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
+ 			error = virtqueue_enqueue_recv_refill(vq, new_pkts,
+ 					free_cnt);
+ 			if (unlikely(error)) {
+-				for (i = 0; i < free_cnt; i++)
+-					rte_pktmbuf_free(new_pkts[i]);
++				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
+ 			}
+ 			nb_enqueued += free_cnt;
+ 		} else {
+@@ -1176,8 +1174,7 @@ virtio_recv_pkts_packed(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 			error = virtqueue_enqueue_recv_refill_packed(vq,
+ 					new_pkts, free_cnt);
+ 			if (unlikely(error)) {
+-				for (i = 0; i < free_cnt; i++)
+-					rte_pktmbuf_free(new_pkts[i]);
++				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
+ 			}
+ 			nb_enqueued += free_cnt;
+ 		} else {
+@@ -1358,8 +1355,7 @@ virtio_recv_pkts_inorder(void *rx_queue,
+ 			error = virtqueue_enqueue_refill_inorder(vq, new_pkts,
+ 					free_cnt);
+ 			if (unlikely(error)) {
+-				for (i = 0; i < free_cnt; i++)
+-					rte_pktmbuf_free(new_pkts[i]);
++				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
+ 			}
+ 			nb_enqueued += free_cnt;
+ 		} else {
+@@ -1535,8 +1531,7 @@ virtio_recv_mergeable_pkts(void *rx_queue,
+ 			error = virtqueue_enqueue_recv_refill(vq, new_pkts,
+ 					free_cnt);
+ 			if (unlikely(error)) {
+-				for (i = 0; i < free_cnt; i++)
+-					rte_pktmbuf_free(new_pkts[i]);
++				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
+ 			}
+ 			nb_enqueued += free_cnt;
+ 		} else {
+@@ -1707,8 +1702,7 @@ virtio_recv_mergeable_pkts_packed(void *rx_queue,
+ 			error = virtqueue_enqueue_recv_refill_packed(vq,
+ 					new_pkts, free_cnt);
+ 			if (unlikely(error)) {
+-				for (i = 0; i < free_cnt; i++)
+-					rte_pktmbuf_free(new_pkts[i]);
++				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
+ 			}
+ 			nb_enqueued += free_cnt;
+ 		} else {
 -- 
 2.53.0
 
