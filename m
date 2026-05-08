@@ -2,73 +2,80 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49EE1CD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 15:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 603CCCD3436
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 15:05:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 1F33440150;
-	Fri,  8 May 2026 17:01:00 +0200 (CEST)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id 697384013F
- for <dev@dpdk.org>; Fri,  8 May 2026 17:00:59 +0200 (CEST)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-12c45281a06so3620316c88.1
- for <dev@dpdk.org>; Fri, 08 May 2026 08:00:59 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7CEB240150;
+	Fri,  8 May 2026 17:05:34 +0200 (CEST)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com
+ [209.85.208.50]) by mails.dpdk.org (Postfix) with ESMTP id A99CF4013F
+ for <dev@dpdk.org>; Fri,  8 May 2026 17:05:33 +0200 (CEST)
+Received: by mail-ed1-f50.google.com with SMTP id
+ 4fb4d7f45d1cf-67b6da5a618so3095389a12.2
+ for <dev@dpdk.org>; Fri, 08 May 2026 08:05:33 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778252733; cv=none;
+ d=google.com; s=arc-20240605;
+ b=JL2+hY9HWpywUG4USPEFoQpDnMv/yXm4b+MkthsdqZN4xNePY1sFrl3IMbBTKhAU8H
+ V1mZMpoJpJU+q6pf95+X2ni+2qNkQFrHDfKmBp6TDnTpSkegHem7RwWE5nLd1NL24E3B
+ p9F58vWxxUNDlvFTlQnS7G0vBQZmoSDLLnA2YqG8UGDHj9Dq2RQtw8WCEIE/pbeRBA7w
+ qeP+EQ3Gn8Rl394WZMMfY7ElKYNQUNhvv9HHJcUOV+mhnulMJzMPlWKtlnQKebZUMjGN
+ yW43jldVUfD36DyWOJP2hD9nYZ2N0+XmF1eTuQbOJir+adDoNEYHnTvHPyghNLLP/Ru3
+ 94HA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:dkim-signature;
+ bh=qZY3WpMu4b/TNNofOgaqUVLfPb+yXXRdghnKHHDZ36k=;
+ fh=yQk5J478VWv3V7GfAg15PVL7CU6nOcWqmvRTFKhoDQ4=;
+ b=Q07nzVIaSBUloYPSatFX0tMs/NNJfDHFLuODhjCbSdAxK5LsreOi/L1DjbwsDQms6w
+ lazEK0oDqp0nN6jW6h4393Xkd+GrFIe8o/rEprMmpkqMaRm/RAhcQMPvFFO0Gyn7gP3I
+ 4QABYcyhm7PMmoaz31zC2JvEkq4kMW/eiXFW/HlUBHWWHTym0DnvarBjrFYaqSMy5fD5
+ 38Og+WGayzEdPa1zVx7+Z1SZ7SldarhgL7HeOXj0yPTwlc68KvoTT+VmYj6AUzAoE34V
+ 4Hzmp2jnwo5LVaIO+i6dpIgXQ37tWCsgFC62s31oizaypEMC3Oa+ozWYyRYIc+cLfYsx
+ 9OeA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778252458;
- x=1778857258; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=UKyIfQvRyGSkvqVYGGu7DDd7+cHQScNu0B7kdbrKD/k=;
- b=dreIhKigMsD6XJdrM1A9ehc8Q5WcKeNrfqiZmk1DQzhKXk7sAOICRpuW7twuxZ8ShF
- el/cWCAT9nOCtWtk5aneX6wbtozv3RR7sYM/ponpUjJVh1XUNP2MPzcAbKQ+dHrIVg/5
- j6Obd94KN/x4F6DOcUdd+bTcpOOP90E2YwNtR+tquL+wFcHtIIfgRJGWdlnZ8BRTwJqt
- j2lKnXUdINRN8gWMsZ6c+I5d8G71pyGoUeaeWmynRvklZ1Mvv8486Zsv88+dIZ8uiawT
- NdiNFXHG2JpSNZVzosg//SY+9uz5K3W542v0JJn9kTqVjO18IUkM/NC3+h+AujuDLVKA
- nqKg==
+ d=iol.unh.edu; s=unh-iol; t=1778252733; x=1778857533; darn=dpdk.org;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:from:to:cc:subject:date:message-id:reply-to;
+ bh=qZY3WpMu4b/TNNofOgaqUVLfPb+yXXRdghnKHHDZ36k=;
+ b=cJ29h8/IaGTocbQpfJ0gg53Oi1i5NF+vltUi7S8wgVGsLny3SCcDeH/YBvx6Tydh79
+ k3KS0soCQkfqilNHtXHqUqnbyX7WkkY9yjXkBUgE8zfpn3moNPAdaZ3zZ5RVNZj/bD0U
+ z87j5otj/Cy3V9nf0nsom7oXNr4poiuhreJsU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778252458; x=1778857258;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=UKyIfQvRyGSkvqVYGGu7DDd7+cHQScNu0B7kdbrKD/k=;
- b=bgYMTxDfMbzXJbZ4ujJ+phhFtq2EJ+MKds8Pa1JmJPr1JAXn/F/6Kzu6jwA0+NlquN
- WbSnvATIxUFJzN2HIe+xeQL8M1H5DSblJxcIn9iNFb2JfXiZ42FWetUrmGaBLUEgrkRQ
- 9PzJRWeUbsKdjjnjNb1FraDBRRxLIM22vqwHr7fGaheFnTilRqu2hl7TDyNrUrrppfxy
- vYnwfc1f0s39VHys4QSMe/CQ3GMb9e0R6oB/KcrpcSU8nysjQ3SoVnf2OvXp6PD+1GAh
- MEI+f8Qwf79d5mp7IL4jgALNJ9Btt1j/vWcA876v22QD0aoBit38b/L4V2oXtzzVLy4p
- xNmQ==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/0neVrOhUwMbdJSxIUv3DSevKAnz37JfcODvlUhmmAWhtNpfICr1/mP/vBfe43Tg2APOo=@dpdk.org
-X-Gm-Message-State: AOJu0Yzynrq/1QU4x+ugb4oqu1zBOrwP2hq27AKNrkgZRiy6yCoYBsNO
- LpA9nQEiELOKRUohXAC3gk+6mNBqzNOPoS9+FLFi2uPsVgl0YCyuqA3zKzsCtD4RCXM=
-X-Gm-Gg: Acq92OHURO49FOxwndkbbnTz86U8isnjqSyVVNMpqX0M/BLwfatZ6OfinW1T9Xv2bk/
- EJh2bxXluGhd7zLdJW/Cj3yTp0KFsdU3Lk+A+d5qQpdd+Eanf0qZjLLwcrqvkOWODY4F8o/3ZsX
- EFjT7ILIxYl00/+1J5yOf0rOAX1x4I61rTxpknH/5AeO9XbLJel4WT1ikXqexZiEfptrLBCPtYR
- sEy42i593AKElLdBL+5GpA2l9c11Fh6ZTrtgq9tYgf9R7clbtQNpeWf/ukTaU1m7rtM1ea6mIvC
- mG+JWS/vVQGQcvlXsJ5IxQjQIBM9Bn0b3PXe5m+sjcghA+AuvKoGbDtfr1/kZfkEF81tOLGC1Bn
- y9VPewiF0My/NAyYgy0TJeV94hlOrYpaFaelTL7K6I6DJBIThHj4gN7UYQfwY22XGNqfXsqv0hZ
- 619MXMX78NSqo8Ke7Sw9AR3SJMGmRM58QUkwQ=
-X-Received: by 2002:a05:7301:2f8b:b0:2de:cc07:e8b with SMTP id
- 5a478bee46e88-2f548895150mr6414689eec.1.1778252457929; 
- Fri, 08 May 2026 08:00:57 -0700 (PDT)
-Received: from phoenix.local ([104.202.41.210])
- by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafc2sm3108782eec.4.2026.05.08.08.00.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 08:00:57 -0700 (PDT)
-Date: Fri, 8 May 2026 08:00:50 -0700
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Chengwen Feng <fengchengwen@huawei.com>
-Cc: <thomas@monjalon.net>, <dev@dpdk.org>, <wathsala.vithanage@arm.com>
-Subject: Re: [PATCH v1 1/4] bus/pci: introduce PCIe TPH support
-Message-ID: <20260508080050.08a1e535@phoenix.local>
-In-Reply-To: <20260508092855.51987-2-fengchengwen@huawei.com>
-References: <20260508092855.51987-1-fengchengwen@huawei.com>
- <20260508092855.51987-2-fengchengwen@huawei.com>
+ d=1e100.net; s=20251104; t=1778252733; x=1778857533;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=qZY3WpMu4b/TNNofOgaqUVLfPb+yXXRdghnKHHDZ36k=;
+ b=P8HFiF8fPLRV+PIfRnjNiKdCIBnAjXBf3Hl5xTuxbepkZQl842VCWuN1wOsVfDcNQf
+ Kv+b9OsyWpUfBuXdpJ37fIyaJ4AhR7RJei0/0aoY66TsjpgKr43Z84VCRHEFIUYdXxB7
+ ZJv3bEfpvmOhDHHhs7ya5oqQ5A0JH2uQgj58HQAWtzJz2pZx0xcXwZK9TOgrBNy8+UHF
+ oGph0GVMeHVDYfka1sate/X+27WaXTmejojU6tJv9HyzX8NNxumvQNVVFH2Z2inR9nDv
+ 1X2WdFmQ/VJfKRQidrsvILywC2HwywyDXZJ81ur2Oy22Ox5cFc/S9Mv0eiPABJqmMMj6
+ Mhpw==
+X-Gm-Message-State: AOJu0Yz94JaYGTzoIC+43SD/Le0GB6dn05JF3XWHZpI7DPaPz6PkTU+X
+ +kQj2g6bwy9ktTLwiVLY2NajfAV2eZFhr891rLIl32Df/Jz8qJX94TbdLCdbmmyDf1JP3bo8jis
+ YIYkf9p5O11XHDXmAN0ljGpE2CJHi8z5yPuGnIvTGAM/zgr4st0XH
+X-Gm-Gg: Acq92OG/M6ELgdwmhWfa147cTh9aQihoHLID1Vf83h39hefkppVv4NqKVUU7ugHMG5k
+ hE7fVtrVcmbgA0eoOKtITd4WmxJ0Vs5ctwAZ6vUFdJ1xPbKERxlLNVG5Uzg/01JujThobjfyJ9L
+ Fhw/1s3Xdl0I1LutkKtYa3aM1QrD19QQ6JsYTb/l8WfOlflPtg54vtlBa1eLgYhGB4ekZ8qlChS
+ tSiVBDpSkOh3B8HfRW5RE7pILZlpMgoEU9rMxZKE3tFTgOi4+3tUrV8tt8s1Sq1RqoWgLKZavhO
+ 6sG20zolRtCOaeRXj4hFRNx/9KnhChCtKAwk1uXZlEd84uwqxZ8zFXbCpIPHDg==
+X-Received: by 2002:aa7:d9cc:0:b0:678:f81a:76a1 with SMTP id
+ 4fb4d7f45d1cf-67d63d8f13fmr4897580a12.10.1778252732641; Fri, 08 May 2026
+ 08:05:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20260507163659.40739-1-abailey@iol.unh.edu>
+In-Reply-To: <20260507163659.40739-1-abailey@iol.unh.edu>
+From: Andrew Bailey <abailey@iol.unh.edu>
+Date: Fri, 8 May 2026 11:05:21 -0400
+X-Gm-Features: AVHnY4J9Kx2LKh48qnCTqgZw28dAkOgdVCydH039txoDBYN00QtwGm9Pt1qO03s
+Message-ID: <CABJ3N2Xmy9-HCLzN5EWeeOFyFiEKTiP3DAk4wEmzVToe0uxDvg@mail.gmail.com>
+Subject: Re: [PATCH v1] dts: clean cryptodev environment after a test run
+To: dev@dpdk.org, luca.vizzarro@arm.com, patrickrobb1997@gmail.com
+Cc: lylavoie@iol.unh.edu, ahassick@iol.unh.edu, knimoji@iol.unh.edu
+Content-Type: multipart/alternative; boundary="00000000000073441806514fbaba"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,26 +89,15 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 8 May 2026 17:28:52 +0800
-Chengwen Feng <fengchengwen@huawei.com> wrote:
+--00000000000073441806514fbaba
+Content-Type: text/plain; charset="UTF-8"
 
-> + * Used with VFIO_PCI_TPH_GET_CAP operation to return device
-> + * TLP Processing Hints (TPH) capabilities to userspace.
-> + */
-> +struct vfio_pci_tph_cap {
-> +	__u8  supported_modes;
-> +#define VFIO_PCI_TPH_MODE_IV	(1u << 0) /* Interrupt vector */
-> +#define VFIO_PCI_TPH_MODE_DS	(1u << 1) /* Device specific */
+Recheck-request: iol-intel-Functional
 
-Use enum n
+--00000000000073441806514fbaba
+Content-Type: text/html; charset="UTF-8"
 
-> +	__u8  reserved0;
-> +	__u16 st_table_sz;
-> +	__u32 reserved;
-> +};
+<div dir="ltr"><div dir="ltr"><div dir="ltr">Recheck-request: iol-intel-Functional</div></div>
+</div>
 
-__u8, __u32 are kernel style types don't use in DPDK API's
-
-I hate reserved fields. They don't do what you think and
-create more problems. You end up having to enforce that reserved == 0
-and 
+--00000000000073441806514fbaba--
