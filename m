@@ -2,67 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E73D2CD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A86FFCD342F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:13 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5BD54406BA;
-	Fri,  8 May 2026 22:36:24 +0200 (CEST)
-Received: from mail-dl1-f43.google.com (mail-dl1-f43.google.com [74.125.82.43])
- by mails.dpdk.org (Postfix) with ESMTP id CB9064065E
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:20 +0200 (CEST)
-Received: by mail-dl1-f43.google.com with SMTP id
- a92af1059eb24-1309f4ee97fso3260688c88.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:20 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 57ADB40678;
+	Fri,  8 May 2026 22:36:25 +0200 (CEST)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 067FB40691
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:22 +0200 (CEST)
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-2ef8d6ba48bso1471240eec.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272580;
- x=1778877380; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272581;
+ x=1778877381; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=c6Sa/MIf+4YTnEdfuDfFMw/ZSefXUMXt6txowlTrEwg=;
- b=VgBIbP8xgF6tNt3LaxILsalopJ5NS/dx/DZzCpVKCJDvw2/SIqM1bp/6ZN9CiXykcI
- 4abqQ9xa9WmjbVDK0mYH1GTumjwHpg4sfm45O4LdRimEHM8zFBP50LoIc64ZTz+ZYYkQ
- HQ5WWdEiHwYkpCQgi/p1mJ/i310oZV/cdHmH/x4+PnFxXXXnIIl6XtHBqFpO4dDgvxD5
- hTqh58pOo6Vyi8xJqzPvJAp+r5x2cRF55c7MrJLp6ALXldIVHqpk/ye+wFiGzF86WGbK
- EfXprBzhpkTHp7+5GmcfiqAAs7Uv93XLIbZDErOeulEKXLV2SV5fY2pQD6roMzzQnlKC
- efjg==
+ bh=giVKlewypWLP3zUx37o04z9DcQ6GPWZXNahfu92BVJw=;
+ b=kL88ldUJGP0kQXIpnHsTPG19J2a9t5yoxEMjGVgdAle3Pgk0Lp++NIF1Pe9s4OwHTK
+ Xc8olmf/QW8q4SMhiJFSsTyobvc9/RS6jkMylS44988Tq5wKqbid4JOQU5mJ3NRl7v5p
+ OjJngIQd9+RK5zjkBQZtzYU6HFjx+HHWtmtpcDr2ac+TjGZlZYM8gvXQKkbKmKenwrdL
+ z0pwjnAg8EA7hWhZu3xThhrlx5Jj7S+UYyfdLRTlYPYfOIok122ABoJdiPCpvjTifdWh
+ zaM6m+fwQ2Yy5BfTZ2F/rcs4cyv3EIkJGWM5tEykFiSk5ErJLsesWQf29njAYPUepSUJ
+ vKiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272580; x=1778877380;
+ d=1e100.net; s=20251104; t=1778272581; x=1778877381;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=c6Sa/MIf+4YTnEdfuDfFMw/ZSefXUMXt6txowlTrEwg=;
- b=m1TfrkjQntIBH+GkHJ3e6wjUldmR5SaojrDv1zG3Ko/u2vfpSOvMvOt4VrRBO2FuCR
- 5yjZRjnWjl7aKIRvKcv8ZUsCVR0NZNuVYQWiWEwoCi9FsJgUYTwMo7V+9FQbzaz1s+cF
- wM6jjBMb9g2rMvjbbJRZT+MLTfY99oC7m5G56ZGalBqHzheSzA96rLlC1p47K4K9BP2d
- dka1id9P03jLZNDeOEGmMJSxx1EJn7felmMIKcOpQVbLzwyFHlOEssX2jJEDN9mUvF3H
- IjHujysk+IR10N3/T4e6E4gIdEOXlffLfqQ7xpA6ejGpVpsU8VEn5Rq52Ppb2Hz6NTIb
- LO2w==
-X-Gm-Message-State: AOJu0YyVaIyyWvDbGtaHF64HRHoQx+P7M+5vdvHqWZex2VutqoXFGtSX
- ZGbGEu9DPc3V36RSwAmv3+V7NYDvcNuQFjx+JRH+wcmAUndkL4s3QyqGz8X2q8OQeHsM3BuuvK4
- mtzbu
-X-Gm-Gg: Acq92OGShA+H8wpX8xeUZIbI13HRw+mm2g000xfSze2Ij7321A/X8wXNYINGpw6W35m
- 2xcKqUfclva4J5mrjSANpU6OhmN1MXRX5FnJT3vvBgEJZDfgIo1Vrz6aaDsSkoLaQH3jSZ1H6Cr
- kZK0o4g/9EFS/jouIpLgAjn4qbeyExnKTSYqHfYfttc6wWLNF0rTe5DfLrL3Tk82uUD8mzeB9HK
- QhrHam1GkYKAMO0kJrNk4DeuBWtoxc64VyIpcCBQaFHEolHKfNPEjfy77EsStsefv/oS/Ad7VrQ
- Yw8GDEGTO4CwDrH9OarpSR98ltSBMOHpuS0lam6ARwioXMAdIhL3fmkQJsII+hfF+Bmi73qa/Xt
- y40KMHFdkNHvBcdsnbNVmqvGuiNNAbzhUfq6zuC8f8EF839kPQ1U6WSYR7otItGbCoADEHEUvYs
- uLNFfyyJViaEoCKanrN/mJXL6DhpWi/ZCY
-X-Received: by 2002:a05:7300:a987:b0:2df:c5bb:3720 with SMTP id
- 5a478bee46e88-2f54c587faemr7215509eec.15.1778272579876; 
- Fri, 08 May 2026 13:36:19 -0700 (PDT)
+ bh=giVKlewypWLP3zUx37o04z9DcQ6GPWZXNahfu92BVJw=;
+ b=g1FTEFc9fhQSNB8RYV9hj5OC8oc8s4PVqeYwL8K2n5EC2P71NY9Zac9miO/Gpfad4M
+ gBNjkpPKJyTOro2ZGjxiDLC2O7PrXLwHRpx+wFYYYLbGEFlO41+qq9pJoJ1qa0IWGGmc
+ Casm8ZKaDNm9sS55jQ7qR1LXlRQa1Lp8G5J3Qb7Gnf94mv4a6rsdM/VUhfewgf+FbxzM
+ r9g1I0DIeTSNhJmTgz7MBetx7ImxKFAXnsMGa00NircNFWXGjrzvQZuujPS8Fnp6T55K
+ TIL/LwxqokhzL7np0VMAm8LrLogX/J8KfA2FCsUtBmrWoxBY00DIpayDErmv1TsjclN2
+ BbJg==
+X-Gm-Message-State: AOJu0Yxo5cV4wUPvB8GPdvsLV+vWvCqF3S/6jXJg9U3sU4P5/wBeiLSs
+ hb6kJvYrFD22L1D31kUzYqfzybbgahp+s3Zh0fiYCtcGq5ovediD1zKSAVg0vZ4f6Zd6hexv7mS
+ 3CF0A
+X-Gm-Gg: Acq92OEqt7PdFXAveq/+YJOqXufrtqE8ThEhFL+jjvAiVvJtELEhBJqZWAjIaGqTeFD
+ 8FURV49d/9MjDbZLHMIF8wf5KhBAHYI0BlwM6ZItJRyVfvZSUBk3X/sG1X7gh+Wb5RZEBgLXtnv
+ S9BZApWqNyMfdOzKDGhgiSJ+B3ErECHSFVHyaW1qGerlzFZyQp+FtqOQqWW8VzIxzgRRVVM/p7G
+ jPCnw2FUhgY4jCh7c3G5BsTUQ8nH3n3jrjAwsPW3vsKhBRUb5y7ev29mJLBXQ3HwQ6RqVruwUMF
+ PwKTMB5jSD8ZKOjQaREL/yZiUotX/pR+0Vos+GzZEd/Zv3NfAn2sv5rMHBAC82KiAZ7fF+KEmpM
+ bUPD7fwD8t6Zqt4jykFEqgiv/RRJS4RYf/vZQ4X8Wps9tHrYZU7CNU9Z9CJSlx1Iaef6MhdsB01
+ XqXOTDFbELGxVL6+wKPJ3FjUbbqoQnVKPs
+X-Received: by 2002:a05:7301:9f03:b0:2be:ca4:e114 with SMTP id
+ 5a478bee46e88-2f6e3e93a6amr3740277eec.9.1778272580926; 
+ Fri, 08 May 2026 13:36:20 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.19
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.20
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:19 -0700 (PDT)
+ Fri, 08 May 2026 13:36:20 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Maxime Coquelin <maxime.coquelin@redhat.com>,
- Chenbo Xia <chenbox@nvidia.com>
-Subject: [PATCH 10/20] net/virtio: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:31 -0700
-Message-ID: <20260508203607.1003036-11-stephen@networkplumber.org>
+ Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
+Subject: [PATCH 11/20] net/zxdh: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:32 -0700
+Message-ID: <20260508203607.1003036-12-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -87,82 +86,42 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/virtio/virtio_rxtx.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ drivers/net/zxdh/zxdh_queue.c | 7 ++-----
+ drivers/net/zxdh/zxdh_rxtx.c  | 3 +--
+ 2 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/virtio/virtio_rxtx.c b/drivers/net/virtio/virtio_rxtx.c
-index edecd2011f..a1fbdd9f34 100644
---- a/drivers/net/virtio/virtio_rxtx.c
-+++ b/drivers/net/virtio/virtio_rxtx.c
-@@ -723,7 +723,7 @@ virtio_dev_rx_queue_setup_finish(struct rte_eth_dev *dev, uint16_t queue_idx)
- 	struct virtnet_rx *rxvq = &vq->rxq;
- 	struct rte_mbuf *m;
- 	uint16_t desc_idx;
--	int error, nbufs, i;
-+	int error, nbufs;
- 	bool in_order = virtio_with_feature(hw, VIRTIO_F_IN_ORDER);
+diff --git a/drivers/net/zxdh/zxdh_queue.c b/drivers/net/zxdh/zxdh_queue.c
+index 7162593b16..543f626e6f 100644
+--- a/drivers/net/zxdh/zxdh_queue.c
++++ b/drivers/net/zxdh/zxdh_queue.c
+@@ -445,11 +445,8 @@ int32_t zxdh_dev_rx_queue_setup_finish(struct rte_eth_dev *dev, uint16_t queue_i
  
- 	PMD_INIT_FUNC_TRACE();
-@@ -764,8 +764,7 @@ virtio_dev_rx_queue_setup_finish(struct rte_eth_dev *dev, uint16_t queue_idx)
- 						pkts,
- 						free_cnt);
- 				if (unlikely(error)) {
--					for (i = 0; i < free_cnt; i++)
--						rte_pktmbuf_free(pkts[i]);
-+					rte_pktmbuf_free_bulk(pkts, free_cnt);
- 				} else {
- 					nbufs += free_cnt;
- 				}
-@@ -1071,8 +1070,7 @@ virtio_recv_pkts(void *rx_queue, struct rte_mbuf **rx_pkts, uint16_t nb_pkts)
- 			error = virtqueue_enqueue_recv_refill(vq, new_pkts,
- 					free_cnt);
+ 		if (likely(rte_pktmbuf_alloc_bulk(rxvq->mpool, new_pkts, free_cnt) == 0)) {
+ 			error = zxdh_enqueue_recv_refill_packed(vq, new_pkts, free_cnt);
+-			if (unlikely(error)) {
+-				int32_t i;
+-				for (i = 0; i < free_cnt; i++)
+-					rte_pktmbuf_free(new_pkts[i]);
+-			}
++			if (unlikely(error))
++				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
+ 		} else {
+ 			PMD_DRV_LOG(ERR, "port %d rxq %d allocated bufs from %s failed",
+ 				hw->port_id, logic_qidx, rxvq->mpool->name);
+diff --git a/drivers/net/zxdh/zxdh_rxtx.c b/drivers/net/zxdh/zxdh_rxtx.c
+index db86922aea..cb324336d0 100644
+--- a/drivers/net/zxdh/zxdh_rxtx.c
++++ b/drivers/net/zxdh/zxdh_rxtx.c
+@@ -970,8 +970,7 @@ zxdh_recv_pkts_packed(void *rx_queue, struct rte_mbuf **rx_pkts,
+ 		if (!rte_pktmbuf_alloc_bulk(rxvq->mpool, new_pkts, free_cnt)) {
+ 			error = zxdh_enqueue_recv_refill_packed(vq, new_pkts, free_cnt);
  			if (unlikely(error)) {
 -				for (i = 0; i < free_cnt; i++)
 -					rte_pktmbuf_free(new_pkts[i]);
 +				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
  			}
- 			nb_enqueued += free_cnt;
- 		} else {
-@@ -1176,8 +1174,7 @@ virtio_recv_pkts_packed(void *rx_queue, struct rte_mbuf **rx_pkts,
- 			error = virtqueue_enqueue_recv_refill_packed(vq,
- 					new_pkts, free_cnt);
- 			if (unlikely(error)) {
--				for (i = 0; i < free_cnt; i++)
--					rte_pktmbuf_free(new_pkts[i]);
-+				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
- 			}
- 			nb_enqueued += free_cnt;
- 		} else {
-@@ -1358,8 +1355,7 @@ virtio_recv_pkts_inorder(void *rx_queue,
- 			error = virtqueue_enqueue_refill_inorder(vq, new_pkts,
- 					free_cnt);
- 			if (unlikely(error)) {
--				for (i = 0; i < free_cnt; i++)
--					rte_pktmbuf_free(new_pkts[i]);
-+				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
- 			}
- 			nb_enqueued += free_cnt;
- 		} else {
-@@ -1535,8 +1531,7 @@ virtio_recv_mergeable_pkts(void *rx_queue,
- 			error = virtqueue_enqueue_recv_refill(vq, new_pkts,
- 					free_cnt);
- 			if (unlikely(error)) {
--				for (i = 0; i < free_cnt; i++)
--					rte_pktmbuf_free(new_pkts[i]);
-+				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
- 			}
- 			nb_enqueued += free_cnt;
- 		} else {
-@@ -1707,8 +1702,7 @@ virtio_recv_mergeable_pkts_packed(void *rx_queue,
- 			error = virtqueue_enqueue_recv_refill_packed(vq,
- 					new_pkts, free_cnt);
- 			if (unlikely(error)) {
--				for (i = 0; i < free_cnt; i++)
--					rte_pktmbuf_free(new_pkts[i]);
-+				rte_pktmbuf_free_bulk(new_pkts, free_cnt);
- 			}
- 			nb_enqueued += free_cnt;
- 		} else {
+ 
+ 			if (unlikely(zxdh_queue_kick_prepare_packed(vq)))
 -- 
 2.53.0
 
