@@ -2,102 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B06CD342F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 17:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5172CCD342F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 17:41:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0D1EB40150;
-	Fri,  8 May 2026 19:19:22 +0200 (CEST)
-Received: from CH5PR02CU005.outbound.protection.outlook.com
- (mail-northcentralusazon11012032.outbound.protection.outlook.com
- [40.107.200.32])
- by mails.dpdk.org (Postfix) with ESMTP id 0A4574013F;
- Fri,  8 May 2026 19:19:20 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ecwuYLSFClmfc5NJw4ZOOcJwYCXKlUXW7OmTeCkS5KSQWOkC4retqjy6zDtcrAZgVzz3xIHPeH3iDhTfx4Y2Q4PleiQx1cVOBI4LA8p3pOL0lg940VG7+faRv+nfvLXy6Hwu2DSp9+Tbovhwcndbxe6J8SAhWbZlwkCllrwpjYPqwGzdPpfo8ZekRcpWvi5r2sDivc45sQPSy/mRgaTsgyO5aINDpgoVYHLLBgrDC4XCT4c4oahaGu7voD4it3w3sFxEc2CyLOiy8M0LxNgnQcPQSWSviaChMjyp9lIyeZLL+cTeudx2Q6/2Y8up+ZON5thKX0QFE9HDriP50+jGog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PnAKrw/KPVqVrP8cAHAi5KpVEppZWBkLO8ylY2jkIV8=;
- b=ayYh2FY2vJi9uf+uAO3mpnTnRonh7QUmxh4gekZ+TRZPoMwmgDCzeINgy4CRkOYQlOTxj5TKs5zzkDCuzlfEK14tM4hUWlaetVp/ncn5T/yRzVoQBKosmAEnJoU+wNhgWpOtIwmgDpzq14WkBbsLkviiH/8z5Py41RJVNCYo3F10iaCPaNUk+4NBW3ex4FVa8zo6Wmy7DuGkxBjlf6iTcpcpLp1VtFXiJ2kmZWYW53q04r9VX22TtaXwqMe38YbFTFAxg2+wMYTpEdGKwUn/36rw7R2w4TtFP/UO4sGph/KjrgPcB8FdlVXF3oigd6U/zCFo9s4SDv5Yd9REBQjjFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=oracle.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PnAKrw/KPVqVrP8cAHAi5KpVEppZWBkLO8ylY2jkIV8=;
- b=dfzdyrYIowXFBFr8nBu9tKcnhFzyweZLM/VBErBSW1KJ4Gi5KchY6CiS1XhcCvjod1r6HfNOhwCe+6HaQkU29v6GRLDpDYYsN9BNeyCRMwY3VZxaxc2vSo4UZQMyHR5/fQP+eMe2n/tTVICs4Hbw5yJc2G09YygWtJCm3L8GdqHAys0RWtcZQ2WFlfxRYffdntLxQguqJ5iomPL6pDfuaxxDm2CyMiUrUUQg6UrfYMtIAtkGuo8timweFkfAFc7Roq1Wu8+2iPMIYSC0JVxDgIWyIJodT3KiFzoL/vVlUomLOjA84jRnHh52ztRaG2fOdYw3PPViA7RMr8yX+zlb0g==
-Received: from SJ0PR03CA0226.namprd03.prod.outlook.com (2603:10b6:a03:39f::21)
- by MN0PR12MB5809.namprd12.prod.outlook.com (2603:10b6:208:375::7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.20; Fri, 8 May
- 2026 17:19:16 +0000
-Received: from SJ1PEPF000026C7.namprd04.prod.outlook.com
- (2603:10b6:a03:39f:cafe::c1) by SJ0PR03CA0226.outlook.office365.com
- (2603:10b6:a03:39f::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9891.20 via Frontend Transport; Fri,
- 8 May 2026 17:19:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000026C7.mail.protection.outlook.com (10.167.244.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9891.9 via Frontend Transport; Fri, 8 May 2026 17:19:16 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 8 May
- 2026 10:18:55 -0700
-Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 8 May
- 2026 10:18:54 -0700
-Date: Fri, 8 May 2026 19:18:36 +0200
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: <banoth.saikumar@oracle.com>
-CC: <viacheslavo@nvidia.com>, <bingz@nvidia.com>, <dev@dpdk.org>,
- <stable@dpdk.org>
-Subject: Re: [PATCH] net/mlx5: fallback to verbs for Tx memory allocation if
- devx unsupported
-Message-ID: <ojacuve3ocnzdr4qylbpbyuobl4soe7w7bwft2pa4qecj63uih@xe6gn6dr4syn>
-References: <20260323113403.1984-1-banoth.saikumar@oracle.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 5553E40268;
+	Fri,  8 May 2026 19:41:30 +0200 (CEST)
+Received: from mail-dy1-f175.google.com (mail-dy1-f175.google.com
+ [74.125.82.175]) by mails.dpdk.org (Postfix) with ESMTP id 938C240150
+ for <dev@dpdk.org>; Fri,  8 May 2026 19:41:28 +0200 (CEST)
+Received: by mail-dy1-f175.google.com with SMTP id
+ 5a478bee46e88-2f30a4601bbso2505031eec.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 10:41:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778262087;
+ x=1778866887; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=n5Tb8EWuede6cptzRhgU2TC77NDKl7Q7SMA2XGUfR/Y=;
+ b=k2piqtU8IED4w/DzyghQjfC7+00fQ8VelOk9+WdtDn9oz7cyRHp5CvTBA066+VrVFe
+ oPnh7MBcZ+A9Jtl3duQY+CcrcvttC589pG4nN9vjcUwd03PVLD33fnINmhol9HAgtZoF
+ JjoA3ZBvPeE/9F9ePk+6lJ6WkiAnDdSgbnnF6lgu8uMjRFWSpHrdH0Khvs2x0ld3cs+e
+ WDqgTQsKFT8emQm4dAEzGBBUc6WWlHkQ5UP5xk7+gqeY/R9AtB2y/g2OBBwUylNieRrn
+ zjalmTL9HfCzCEM0wXNo1yzHVC+Rs0+hunxqZA3axt72KUHyKGB3BxYtzGXi74t4CqTK
+ LeLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778262087; x=1778866887;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=n5Tb8EWuede6cptzRhgU2TC77NDKl7Q7SMA2XGUfR/Y=;
+ b=hEiLA5QwjhfbZyAs1FSqXxLmu87I8AmgEEj5/3etLrHZ3MmfLQ7ulxYL3AVSaFVf5O
+ MtSgWLk3lsvQaTURo8HRhyzkX7T6kL/4hI+WCEw8psDnO9Czz7pidb7zsc6r1THqlpBC
+ d74j44JnbnPXaABZ/YWlCtWCxBQPl1qQ4qtflQxgy5IOXwY96K3zKdqFxMy3UV4Z/KWB
+ BVOQKb90pysqDRhuN3Mion5lrb2bN+4kBnIeddGrbFuXt5NyCAkNjexbFzDIlnqbapW7
+ 1YkSGJvmAyfS6U8N+kWFU6H7+rmgoVVC3x3ML6egUG4qIwNcrAngpaFsSm4ws0B03t4/
+ PaAg==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ8X2/l67Cqb7iE2mHcNyd59VwdOt1cG8kmgeTrl2j9dVzy27WUAANkRsiJFelFYnVoRmcQ=@dpdk.org
+X-Gm-Message-State: AOJu0Yx5y6HbCDJGa+pnLJVI9oWG3x7TAUY2iLMadEfFE0rcFNmwv4wc
+ FdCAP5IoqRO5zqBaApXFJOcb467lAwgzCaTcKlZvgScJafZ4xRUHkiO48yASb6/Cx/o=
+X-Gm-Gg: Acq92OF56l2GlLDPRETAielv2gu8x/pvp6rx4dJ1W1r59T29SOa6wVw0kgDDjlVfMCd
+ TaoHGAIbSIT3nwJcddmU4juCVDA4k0aaICA+VMWaCzlVCxBhsuUvAaOjFdWX1LZUBpScF1TuxGO
+ VPnUbtvUcSnB/08HQKI0C1aMWe+Q1P1t+eKy4n+C7wtRhIcQa2nejMPHWK7AoISTL8Pxtaq0AUy
+ JXHudBgTKG/+x+RtctrF9KBYDXXIn4ih6QDNwcw1DmGeem2WNNMUfUYNswhJ3+DcOGKwOu3tHql
+ /T8/IQylVhjYYacQs8JHFO1vaMMZADDd47IBnIVoUJDoXNQMYfjMPiaDr+thee+adA7r3Q0tqJr
+ Wz4zvuSg1JFcgoCP5I5XE9nKh6mra9uNCjOHs3uUXBkapK5hDaf6LZ1Chvxb0rgdLiA8xn399+t
+ fEe5Y3fY1a9vmyDv0Z0yl7CDThxRzDwEQiA4c=
+X-Received: by 2002:a05:693c:2c01:b0:2d9:db50:c6d6 with SMTP id
+ 5a478bee46e88-2f54d79b988mr6810624eec.21.1778262087148; 
+ Fri, 08 May 2026 10:41:27 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2f8859eafcdsm3891259eec.6.2026.05.08.10.41.26
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Fri, 08 May 2026 10:41:26 -0700 (PDT)
+Date: Fri, 8 May 2026 10:41:23 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, <dev@dpdk.org>
+Subject: Re: [PATCH 25/25] doc: add BPF validate debug to programmer's guide
+Message-ID: <20260508104123.07784d2c@phoenix.local>
+In-Reply-To: <20260506173846.64914-26-marat.khalili@huawei.com>
+References: <20260506173846.64914-1-marat.khalili@huawei.com>
+ <20260506173846.64914-26-marat.khalili@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20260323113403.1984-1-banoth.saikumar@oracle.com>
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C7:EE_|MN0PR12MB5809:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c0abd54-1f19-4c5c-d27b-08dead25eea2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|376014|36860700016|18002099003|56012099003|22082099003;
-X-Microsoft-Antispam-Message-Info: zxAM1hKC2xCqPIRubI0HYsFB+F7gFasFIA0wx8vVCppoabVaP4x2WORNJh+OruiR8oxLurnbQrn94hQ9TrxAy5VN0NegvPXtJ39fFXLHMiQNpQdsocxn1KYC5ZIxlcgqBOqeQvE0u+sxy4brfmOWVJq6mYYv4I8PJg5BTqXXeItBPRLppVhAyPynrq9lBntmtt8wpHREtGrSjwucKU4soi2HbI1Pn3+iPr0S4PglV+rdXevMY/lhZuqRZRdmRnvEfc+6n5t8PFWnTeekywIsfbo3LEHVWum5hmhhVoBRvP6GaVimLNVxwGwLzpQIperEInS6/B+uvLEaKrP/2dWQYJWf4EBIb0ialDqKaJ+laAQAAlkqf3F4SFBTO2t8RhDUpPV4O2qurkgCr5w3CIxjur2A0YPti78WJk7BzOEE+7OMUIet8E9zlhUVrdeqgVhcIMcNBTd6RcIRWuO6X13M+NFGrL+fby5x/z8AmoYM7keD2UecJSppUOj4gP7TS5vez2AO8MCfbv8biapZU4VO3axsFnlBUokcZ8l2/RdGdncCfep4Ps6MPWA9rrf5GefY/fpzlE/7QZdp7jmbRfOzpUcSnxHmehKXNcsmrPizdmGs3+Ux4NV8abDD2MQQLrlapwtRZkGHI0Kqarh9O2g0jOI+Rch6DLE02IyEr77IqOZFW151OXfeYdS+Lq2QyZeKWpZfyeMAWN2fcasNqFatmtLd362OwQ1bVaZMeUKn1G8=
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:US; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(18002099003)(56012099003)(22082099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: JrsqxFkjQI96KEGMlpy+ydhOlQPffYGL1QGyHtw6Rp71niXpKtTUaZGilJNn/KMkNH0Iyb3DNMu6Dw6BQf4HtBO4JTeK0dLqOSs9JfRgbzqFZqN3ClQk7yUbwnqzAWheMmmIjqNj2LXkYUg/j7VkntJnqHulz04vuBfCnMVqaSfIclknf6Vky6WBhqaVld0nrQO5W6/eGQtthDoeaviYQukwANTvl6uix32wQTgfq4Hj5332Gwhuz0rlKxzEZ9huwqMWelnDFT7bu3/CaXDgxvxT/KpmcLgdptO2u+x/54rIS934wUEjMcu2GR3l+iE79TS0QO82gVUHvIRYnkcmrpORFTzAvRcleUInj13AsPpnfwiBtyU9/IpoF27w/7EOmypcwK6y307oiZXUA+9964HUVV1/2Y7fIxs5v444PKHbqe1jkQVv6btoeNmdzaxo
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2026 17:19:16.0483 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c0abd54-1f19-4c5c-d27b-08dead25eea2
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PEPF000026C7.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5809
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -111,48 +82,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hi,
+On Wed, 6 May 2026 18:38:43 +0100
+Marat Khalili <marat.khalili@huawei.com> wrote:
 
-Thank you for the contribution. Please see below.
-
-On Mon, Mar 23, 2026 at 05:04:02PM +0530, banoth.saikumar@oracle.com wrote:
-> From: Banoth Saikumar <banoth.saikumar@oracle.com>
-> 
-> Previously, the mlx5 PMD attempted to allocate consecutive Tx memory
-> using DevX without checking whether the NIC actually supported DevX.
-> This led to allocation failures on legacy or unsupported NICs.
-> 
-> This patch adds a fallback mechanism: if DevX is not available, the PMD
-> skips DevX-based allocation and allows the verbs path to handle memory
-> allocation and registration. This improves compatibility with older
-> NICs and ensures Tx queue setup proceeds correctly.
-> 
-> Fixes: bbfab2eb2528 ("net/mlx5: allocate and release unique
-> resources for Tx queues")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Banoth Saikumar <banoth.saikumar@oracle.com>
+> Document the new gdb-like validation debugger API, outlining how it can
+> be used to set breakpoints and inspect register states during
+> validation.
+>=20
+> Highlight its primary use case: writing robust tests for the eBPF
+> verifier using the harness in app/test/test_bpf_validate.c.
+>=20
+> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 > ---
->  drivers/net/mlx5/mlx5_trigger.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/mlx5/mlx5_trigger.c b/drivers/net/mlx5/mlx5_trigger.c
-> index 6c6f228..c9ce3d4 100644
-> --- a/drivers/net/mlx5/mlx5_trigger.c
-> +++ b/drivers/net/mlx5/mlx5_trigger.c
-> @@ -1161,7 +1161,7 @@ static int mlx5_dev_allocate_consec_tx_mem(struct rte_eth_dev *dev)
->  	void *umem_buf = NULL;
->  
->  	/* Legacy per queue allocation, do nothing here. */
-> -	if (priv->sh->config.txq_mem_algn == 0)
-> +	if (priv->sh->config.txq_mem_algn == 0 || !priv->sh->cdev->config.devx)
 
-Please use mlx5_devx_obj_ops_en() function instead of directly
-checking priv->sh->cdev->config.devx field.
+Regular AI review doesn't dig deep enough on this; so redid it with
+stronger model and prompt.
 
->  		return 0;
->  	alignment = (size_t)1 << priv->sh->config.txq_mem_algn;
->  	total_size = priv->consec_tx_mem.sq_total_size + priv->consec_tx_mem.cq_total_size;
+Reviewed the series. It cannot be applied as-is for two compounding
+reasons; once those are resolved, the individual fixes look correct
+and well-tested.
 
-Best regards,
-Dariusz Sosnowski
+Series-level: the patches reference rte_bpf_prm_ex, enum rte_bpf_origin
+(RTE_BPF_ORIGIN_RAW), rte_bpf_load_ex, and rte_bpf_get_jit_ex. None of
+these exist in upstream master, and none are introduced by this 25-patch
+series =E2=80=94 diff context in patch 5 (struct rte_bpf_prm_ex { hunk head=
+er)
+and patch 2 (rte_bpf_get_jit_ex near the insertion point) confirms the
+prerequisite must already be in the base. Please declare the dependency
+in a 0/25 cover letter so reviewers can apply on the right base.
+
+Patches 03, 05, 10: Build break. RTE_BPF_LOG_FUNC_LINE is used (replacing
+RTE_BPF_LOG_LINE) but never defined =E2=80=94 not in bpf_impl.h, not elsewh=
+ere in
+DPDK, not in any of the 25 patches (verified by grep). Either add the
+macro to bpf_impl.h, e.g.
+
+    #define RTE_BPF_LOG_FUNC_LINE(lvl, ...) \
+        RTE_LOG_LINE_PREFIX(lvl, BPF, "%s(): ", \
+            __func__ RTE_LOG_COMMA __VA_ARGS__)
+
+following the pattern in lib/eal/common/eal_trace.h, or revert the call
+sites to RTE_BPF_LOG_LINE(... "%s: ...", __func__, ...).
+
+Patch 05: __rte_bpf_validate_state_is_valid and
+__rte_bpf_validate_can_access return int but mix tri-state (true / false
+/ -errno) with bool semantics; the caller does `if (rc =3D=3D false)`
+against an int. Works, but consider splitting the bool case from the
+tri-state case for clarity.
+
+Patch 08: Test file uses rte_bpf_load_ex, struct rte_bpf_prm_ex, and
+RTE_BPF_ORIGIN_RAW (see series-level note). Two minor items in the test
+helpers: load_constant / compare_and_jump assign int64_t to .imm
+(int32_t) =E2=80=94 fits_in_imm32() guards the value but an explicit (int32=
+_t)
+cast would document intent; and `value >> 32` on int64_t is
+implementation-defined for negative values, a (uint64_t) cast before
+the shift would be portable.
+
+Patch 17: RTE_BPF_VALIDATE_DEBUG_EVENT_BRANCH_UNREACHABLE is inserted in
+the middle of the enum, shifting BRANCH_RETURN and the _END sentinel.
+Fine for an unreleased experimental API in the same series. Once the API
+stabilizes, additions should go at the end before the sentinel.
+
+Patches 01, 02, 04, 06, 07, 09, 11=E2=80=9316, 18, 19: no comments. The bug
+descriptions with reproducer programs, expected-vs-actual output, and
+UBSan diagnostics are very useful and the fixes are well-targeted.
+
+I did not get to patches 20=E2=80=9325 in this pass.
