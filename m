@@ -2,65 +2,68 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD82CD342F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD4ECD342F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 489164026E;
-	Fri,  8 May 2026 22:36:12 +0200 (CEST)
-Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
- [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id 3D2DE40150
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:11 +0200 (CEST)
-Received: by mail-dy1-f170.google.com with SMTP id
- 5a478bee46e88-2ecf9e398f4so6326005eec.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:11 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 26CB54064E;
+	Fri,  8 May 2026 22:36:13 +0200 (CEST)
+Received: from mail-dl1-f42.google.com (mail-dl1-f42.google.com [74.125.82.42])
+ by mails.dpdk.org (Postfix) with ESMTP id 2CB0140150
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:12 +0200 (CEST)
+Received: by mail-dl1-f42.google.com with SMTP id
+ a92af1059eb24-13298f7e84eso836057c88.0
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272570;
- x=1778877370; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=JAkYxAvYnXSf807TH1wEzV+d1XVbbyga01wPbItfDAk=;
- b=OFpe2DJoeoYQHf8CB+dd/xxdWUaypjRmVSnolWyb+/A6k47Dwr20UV3otNL76K5+yJ
- gLpGiQrufgMHTF5R35sj5dkeUOy1pljHq6A+bYg88Pg/wdOJbEalBa2iPjs+T0xaGZox
- lgC5eoFsKi1v77NIzEdPHRAHFONspx1HrFnQTMiHWgK3M+P7E91AJXW26m3mKDjnp/mV
- tZpqGDjqC35iFZBaypb6Dz8lqT+1pICBuC1lezanX/zYUZPtlGsZFhPSShmadfLPeb2H
- No1Z4QC2CU/i5mvvn1PDoGPe0mI7dMdmwt3TQfVviqOIvHhr8CoQykEVw4jHEur2cpn9
- fnTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272570; x=1778877370;
- h=content-transfer-encoding:mime-version:message-id:date:subject:cc
- :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272571;
+ x=1778877371; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=JAkYxAvYnXSf807TH1wEzV+d1XVbbyga01wPbItfDAk=;
- b=n0506cNuxv8AQzv1M8nfc8a+o0SEmmOr9vMv+m7Qy8RwrO7ZAWpCLobhRNKl19DS2D
- CewxIxl+cGiHQZVRvykSpMtn09a0fGQooRd7aqw07OtHEX0mICcKVW9HAlr/Ns+dBN/S
- EUQj1sHV20VdhetRqzgZbH8IsVljXonoYndHrwoPUodv+9Rt+V/8+AhNI+ww3QSD3o7Q
- l3e27sFoQLy73MWnGOMeB2jDdGQEk/3U+FIuMWl9bGNZiqSKKSzYIoMsIf2ZyX7uXt8T
- +ZxWOhReFlb980XJB81sgmGm2TMQoWL8+wRpnehn8UWPg9ti9O7eoyTuwxicpaNdjADj
- Is0A==
-X-Gm-Message-State: AOJu0Yx3bTDNfDkPDihAvAJgfBjwPiiKAGbi3Whv98mpC3gIyfI4rjSM
- qwcJfOZVwyJxEjJW4yl5eiVpAwc8+8/v9oR4+B6FAmFAQCAw9ui/z1XCArcrIdbS+TYhZObDNpo
- /ffv7
-X-Gm-Gg: Acq92OHJ3+sLNXWxi6qK9IlgZyBhNKpaTDbIKHiAfJSX/S0Kz7DnclxEizGnYu7dSKA
- 3+xcJJTtjYEpeQgb1qjcigAOb1K3AIdz0qUt3lI3VGm2YtykiyZ2ZeMtX0vn74lKZoCir+gy8kL
- PQiyNGSwH2QJ0uSKfde/mlo104ca++SrKX1UpOnuTvSwxx1WzfFulKk+zbWQ2v3vfrOna7zfQzv
- +qRcBaiNEp5O6e5lyr5LA64FF9zMqewJMTiyIOnTGDN8mDm+n9KAUOT8/RTkUOG/dKNtzRMgnJ0
- 88OFdYoZzSn4uDfSoz7J7drKCxJULGEsCBmFgqNX2+rqaZj90Cdivol8raIHCrazm2OMvIVIicd
- 48NZrgKwnaf3DnH1AxI8JfMvKVvwf2ICt6XptjDsBUqZWFUtWTjkRGvDRaf5V0O82FOPKOTmcRq
- ZM8x3HacudlO07tH4ky5eSp+4ApjftNDcE
-X-Received: by 2002:a05:7301:3d1a:b0:2d4:532e:7e45 with SMTP id
- 5a478bee46e88-2f54cf5dd7fmr6490006eec.23.1778272569931; 
- Fri, 08 May 2026 13:36:09 -0700 (PDT)
+ bh=isrm6uI+iS6goJfVRAsABe59yGdu8wgX+OSP9y5Nzv0=;
+ b=Ju4RqGpCYoZSbrOHutFcqh201YHzOk965YTaankVuA1s5W3vWuhwUcpEOyRETW3bvZ
+ gkbafISgU/i9uYxWx1K3DdnWkI3JA+VWow9ci27yt03JBvN2dDJcKtcm1i4bca1kI3pE
+ IwWKlaPa/XcEkoZc9bjeqjFnMO3XUlgNo8wyMX77z7wwaJBhY8kHROTZhj7Ka/jYN64v
+ qQZBMwox08Ekr9fmTPlB511QlQ5LKjTR8wT/ePoNMMvPKPpvrRNWyvLgcTA6RTvis76F
+ 0O3CmXTZJLI/EWNoail/rwtg/oZpuLo+vJVGvPUq9Fwtg3tdYGpqIEGaHBLfe/KeQ3Iy
+ m+DQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778272571; x=1778877371;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=isrm6uI+iS6goJfVRAsABe59yGdu8wgX+OSP9y5Nzv0=;
+ b=Q25g1DuodMV2hTTBiqLQPW/Ju0bvQbCnp5sY02DgUfmkkZbRWK6+nsBaMy/AEuq1CB
+ r4KHeOS3fivgXfu+l0Y4vf277aJw0Nq6yoFQHtJn7KR3xNANiXepiNfo3KNEImSXNIcd
+ A8J6VWvAwClyaGB0eKF2wCKrL2bFxHwp5CiJPbTcpI4bsFLYq8QxHTV5eaM6ncPTZWeb
+ r9ptHjOvp0MRJ7AE4eZLf4WEAZ4nEYaVKnAaipAoMb6ueR6fl1w6YSVR6Xk+ETcwhwkg
+ YyeTRxVk3Mw/3IRiyiPdzdEdoGalW78iOj8SxFJfuW1F04Fq9RG9KNPQk22Wyy/2i9pF
+ C7Vg==
+X-Gm-Message-State: AOJu0YyfR7B8alrpzl0qkhzsgCJmjC7oQH3hCsT3flruSwDMx9SV/0OU
+ GiN7EYvz0NscLZWxqRvk0jWc6u+3n8VDat2CVGwZm19h+E2UBUX2335YjuEZ3kJCZ/7fXNEZjp/
+ HSKsy
+X-Gm-Gg: Acq92OF0kmkumUhpdhb7m0wJ1MuvnO4d/dMsk56U9p536uUkgY2LKIAycja4mDMpcWf
+ JPJGndzYtLlwReoS1t8MZaiA23lSw5gcengzIDrp7FSn2QTLlqKTnCFf8jTV1mqnLgNkHJUMM3q
+ Rdz4NhMavn/zC+6Qoppw0TByYjh1pOcCfaG3qwRHUN/bIN1TeNaZ38CjzPeJRtzuf6wCssDTbfM
+ 0ZohMSNOD/9f8r5XdqzpS24s/NU1WT30k/APfgeoHNKKTFNEDv7T1ItpEBXCTTCJsYltHDjKCZK
+ F6mISC51K/fxn8EGJ3igarAMFQhG/N29PhQ5vosyZaEaJX7u2Er20PuQtw+dJArRVI0w2O8wURR
+ HXbJtS0LAUtCP85bDDivA2ZI/30u8WNb+GWV5Wb6wYg50mQs/oSjmanF25INEsPCBpN3dW/IMDi
+ tj+nNMtjMIlxO9TLStK/714BOJvmIU1AXG
+X-Received: by 2002:a05:7300:b919:b0:2e7:120:137b with SMTP id
+ 5a478bee46e88-2f547f6f1a0mr7718504eec.0.1778272571046; 
+ Fri, 08 May 2026 13:36:11 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.09
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.10
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:09 -0700 (PDT)
+ Fri, 08 May 2026 13:36:10 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 00/20] pktmbuf free bulk cleanups
-Date: Fri,  8 May 2026 13:33:21 -0700
-Message-ID: <20260508203607.1003036-1-stephen@networkplumber.org>
+Subject: [PATCH 01/20] devtools/cocci: add transform for rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:22 -0700
+Message-ID: <20260508203607.1003036-2-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
+In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
+References: <20260508203607.1003036-1-stephen@networkplumber.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -76,86 +79,78 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Looking at one driver noticed that rte_pktmbuf_free_bulk
-was not being used. That motivated me to make a coccinelle
-script to do a tree wide cleanup.
+Convert simple loops freeing mbufs one at a time into a
+single rte_pktmbuf_free_bulk() call.
 
-Then noticed that callers were having to check for NULL
-before calling rte_pktmbuf_free_bulk, so changed it to
-handle NULL array similar to free() and rte_free().
-
-Do another tree wide pass to fix that and catch some
-other unnecessary null checks in code.
-
-Stephen Hemminger (20):
-  devtools/cocci: add transform for rte_pktmbuf_free_bulk
-  eventdev: use rte_pktmbuf_free_bulk
-  gso: use rte_pktmbuf_free_bulk
-  ip_frag: use rte_pktmbuf_free_bulk
-  pipeline: use rte_pktmbuf_free_bulk
-  port: use rte_pktmbuf_free_bulk
-  net/af_xdp: use rte_pktmbuf_free_bulk
-  net/cnxk: use rte_pktmbuf_free_bulk
-  net/pfe: use rte_pktmbuf_free_bulk
-  net/virtio: use rte_pktmbuf_free_bulk
-  net/zxdh: use rte_pktmbuf_free_bulk
-  app/compress-perf: use rte_pktmbuf_free_bulk
-  mbuf: allow NULL array in rte_pktmbuf_free_bulk
-  net/zxdh: remove unnecessary null check
-  net/ice: remove unnecessary null check
-  net/bnxt: remove unnecessary null check
-  test: use rte_pktmbuf_free_bulk
-  app/test-dma-perf: remove unnecessary null check
-  app/test-compress-perf: remove unnecessary null check
-  examples: use rte_pktmbuf_free_bulk
-
- .../comp_perf_test_common.c                   |  8 +--
- app/test-compress-perf/main.c                 |  6 +-
- app/test-dma-perf/benchmark.c                 |  6 +-
- app/test/sample_packet_forward.c              |  5 +-
- app/test/test_distributor.c                   |  4 +-
- app/test/test_dmadev.c                        |  6 +-
- app/test/test_ipfrag.c                        |  4 +-
- app/test/test_link_bonding.c                  | 13 ++---
- app/test/test_pmd_perf.c                      |  3 +-
- app/test/test_pmd_tap.c                       |  3 +-
- app/test/test_reorder.c                       | 12 ++--
- app/test/test_table_ports.c                   | 12 ++--
- app/test/test_table_tables.c                  | 21 +++----
- devtools/cocci/free_bulk.cocci                | 57 +++++++++++++++++++
- devtools/cocci/nullfree.cocci                 |  5 +-
- doc/guides/rel_notes/release_26_07.rst        |  5 ++
- drivers/net/af_xdp/rte_eth_af_xdp.c           |  3 +-
- drivers/net/bnxt/tf_core/v3/tfo.c             |  6 +-
- drivers/net/bnxt/tf_ulp/ulp_sc_mgr.c          |  6 +-
- drivers/net/cnxk/cnxk_ethdev.c                |  5 +-
- drivers/net/intel/ice/ice_dcf_sched.c         |  6 +-
- drivers/net/pfe/pfe_ethdev.c                  |  4 +-
- drivers/net/virtio/virtio_rxtx.c              | 20 +++----
- drivers/net/zxdh/zxdh_np.c                    |  3 +-
- drivers/net/zxdh/zxdh_queue.c                 |  7 +--
- drivers/net/zxdh/zxdh_rxtx.c                  |  3 +-
- examples/bbdev_app/main.c                     |  4 +-
- examples/l2fwd-crypto/main.c                  |  4 +-
- .../client_server_mp/mp_client/client.c       |  7 +--
- .../client_server_mp/mp_server/main.c         |  5 +-
- examples/ntb/ntb_fwd.c                        | 12 ++--
- examples/packet_ordering/main.c               |  5 +-
- examples/server_node_efd/efd_node/node.c      |  7 +--
- examples/server_node_efd/efd_server/main.c    |  5 +-
- examples/vhost/main.c                         |  3 +-
- lib/eventdev/rte_event_eth_tx_adapter.c       |  4 +-
- lib/gso/gso_common.c                          |  5 +-
- lib/ip_frag/rte_ipv6_fragmentation.c          |  4 +-
- lib/mbuf/rte_mbuf.c                           |  3 +
- lib/mbuf/rte_mbuf.h                           |  1 +
- lib/pipeline/rte_pipeline.c                   |  4 +-
- lib/port/rte_port_fd.c                        |  6 +-
- lib/port/rte_swx_port_fd.c                    |  8 +--
- lib/port/rte_swx_port_source_sink.c           |  6 +-
- 44 files changed, 152 insertions(+), 174 deletions(-)
+Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
+---
+ devtools/cocci/free_bulk.cocci | 57 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
  create mode 100644 devtools/cocci/free_bulk.cocci
 
+diff --git a/devtools/cocci/free_bulk.cocci b/devtools/cocci/free_bulk.cocci
+new file mode 100644
+index 0000000000..51ce58400a
+--- /dev/null
++++ b/devtools/cocci/free_bulk.cocci
+@@ -0,0 +1,57 @@
++//
++// Replace simple loops freeing mbufs one-by-one with rte_pktmbuf_free_bulk().
++//
++// rte_pktmbuf_free_bulk() handles NULL entries internally, so per-element
++// NULL guards are folded in as well.  Loops whose body does more than the
++// free (clearing the slot, bookkeeping, etc.) are not matched.
++//
++@@
++expression A, N;
++identifier i;
++@@
++
++(
++- for (i = 0; i < N; i++)
++-     rte_pktmbuf_free(A[i]);
+++ rte_pktmbuf_free_bulk(A, N);
++|
++- for (i = 0; i < N; ++i)
++-     rte_pktmbuf_free(A[i]);
+++ rte_pktmbuf_free_bulk(A, N);
++|
++- for (i = 0; i < N; i++)
++-     if (A[i] != NULL)
++-         rte_pktmbuf_free(A[i]);
+++ rte_pktmbuf_free_bulk(A, N);
++|
++- for (i = 0; i < N; i++)
++-     if (A[i])
++-         rte_pktmbuf_free(A[i]);
+++ rte_pktmbuf_free_bulk(A, N);
++)
++
++@@
++expression A, N;
++identifier i;
++type T;
++@@
++
++(
++- for (T i = 0; i < N; i++)
++-     rte_pktmbuf_free(A[i]);
+++ rte_pktmbuf_free_bulk(A, N);
++|
++- for (T i = 0; i < N; ++i)
++-     rte_pktmbuf_free(A[i]);
+++ rte_pktmbuf_free_bulk(A, N);
++|
++- for (T i = 0; i < N; i++)
++-     if (A[i] != NULL)
++-         rte_pktmbuf_free(A[i]);
+++ rte_pktmbuf_free_bulk(A, N);
++|
++- for (T i = 0; i < N; i++)
++-     if (A[i])
++-         rte_pktmbuf_free(A[i]);
+++ rte_pktmbuf_free_bulk(A, N);
++)
 -- 
 2.53.0
 
