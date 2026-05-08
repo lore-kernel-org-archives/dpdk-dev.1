@@ -2,66 +2,66 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34BC5CD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6822BCD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:36:53 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 4DB6740684;
-	Fri,  8 May 2026 22:36:20 +0200 (CEST)
-Received: from mail-dl1-f51.google.com (mail-dl1-f51.google.com [74.125.82.51])
- by mails.dpdk.org (Postfix) with ESMTP id C7E1B4065B
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:16 +0200 (CEST)
-Received: by mail-dl1-f51.google.com with SMTP id
- a92af1059eb24-12dfee30612so2305880c88.0
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:16 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 447AB40689;
+	Fri,  8 May 2026 22:36:21 +0200 (CEST)
+Received: from mail-dy1-f170.google.com (mail-dy1-f170.google.com
+ [74.125.82.170]) by mails.dpdk.org (Postfix) with ESMTP id BC07940666
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:17 +0200 (CEST)
+Received: by mail-dy1-f170.google.com with SMTP id
+ 5a478bee46e88-2f0ad52830cso3798847eec.1
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272576;
- x=1778877376; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272577;
+ x=1778877377; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=ywHb1i3lqxvBSzwfFfa9ZjnA5a+sYdLCSuZUUmaVfto=;
- b=M93KzhhgCh8oq81+RK6udchPTKuLUYJu6PZrCMLASFaPLki/qIuEf0PCY30UsBqabx
- KEC9xC8OzHdlF9t4mxesjaEbRYowp5TJgnocfRigMCv+3SSk1x1I6jSXfeJfq65B5YfW
- L3jAAhGtFXzyQTkNahzZ0xCZyB52lYT1QUjXOq9bOIw/rVsovjc821sVfyVV/0MP9u9F
- 4djBXDF+W5sX7IxHAvEes7LqQz01e0Zar5JENvUzgZ2ubIb7okettq14+kLQ7/A/Nm7x
- TpdgIfysN0FWiSyaOUNYzAnM65jp7Mri1sdiI740F9NgJb2LYanqE2LvEbpvo0K1UBVn
- gPHg==
+ bh=jNFtKRGs6O9qdKpXBO2/CjuA1+iKrgfvcgCL6vpz3EA=;
+ b=Xul8Xdow7s+UZVlaLsDH6mFTiwYi5kVAp3Tn7XKI1L7jwCnpJPeYu4lnqrBmrIcTu1
+ TrEDCDh+12YBtvRBkQduWOUaESg6rXaPPkBaCU4uzAj7JnS7zt4HVfyS5IIq4hMuUtuy
+ g/l4tuu2dqNWwL2Sd0mA//+n2vbzb9chn+R7/FVSz0l/Qd7/qEH4sb8RJVEVZgSIDT2l
+ s/YfZ3MeKJ9616y80xeoDPrDFNzwnMX6M+r05ngzFR33whpCgqPrmXti3KLzshTCTdR1
+ paPYfZTU4FoqJB9PAqEWr41XUyRvVoHoeyvR966XskiUe//z+1sPPnX5j0vEo/Nis+bE
+ yViA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272576; x=1778877376;
+ d=1e100.net; s=20251104; t=1778272577; x=1778877377;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=ywHb1i3lqxvBSzwfFfa9ZjnA5a+sYdLCSuZUUmaVfto=;
- b=kve8EaS5IshWKd550UJCj5YEu0HfPhBbwB4CyCe/aFoS9eOoXsosPkRlNwQlC58kHS
- OzepJ91u7/ZgP48UETh4IfkyDI/NqwiCYWu12XLsVwwgNxyskskJ+QL64qquyelIe+Uq
- 0u85X4dm5BiOou37ieWr37qlTcSwHj7OYRiBr1ukpeUKuAFLS0NT2XM+7ScB3YkRWACC
- 7xKPXZFw6npBMADKlZKnZwjFuaypj7FuyqN9rfe+CdCvoEb3nccKRJTZGDm8EANmIvOm
- ITq+KWic706a3p/onyhBMJbU+RWWvt8vic6pu1ejR3Kl3t5gii0vJYyjHcCKy3T7c35g
- 0BuQ==
-X-Gm-Message-State: AOJu0Ywv13xfWaw2NxMxHM0OHXrmWsbR8YwJMIYCFWQzE7XiI27aquwu
- 1oIzXJcposWAvUZuWzzkYi+xk6JU8yEDZU0sKBaDGQQLQleRDPgeGLQN4WXl1IVRUY66N0Hc0ci
- enmW3
-X-Gm-Gg: Acq92OFUQpCxOki6ZO4Xq2hBZ7LLWLDhL0hHHIbQTzrSbAETcmjza1HNCgWnmcCG/cm
- qHxbM47tb84Yn+czjr1ce/8V3TxHscR1eAXQX6NO6s/rwz3hmJ+eCJEewyW+9vUSevJza9/TENR
- ob4dzYth2eN/GvYDk2RvnkMH9ujvI3TI7S388BtC4BJxJ6AW61Ht+qWxN0QuC/X+iVbgfCR6127
- cjKlsUzbnxjBMu6CK+JGVXG1tdfb6Vsvt3wliessX9n5+piKhFK/+4ruTRpKkL1LH9Z23d34HyB
- d3cmpRsysdrsIF2juuclMsV2sCyQL+k9qz6Yb/ZlCVVNWpWcD4DMKNcLmC8mQJ5rXiOifX4Hnq1
- eP/OfE3moEqK58m7uH3ND9RMg8tRzKpmg/pArbJeVKIiqRCbclp2HwWf1KaZdcSs77zrylVG6T0
- D9ImjesTrvt0CoucCFRK1E+K3YI0fGPvpv
-X-Received: by 2002:a05:7300:ac81:b0:2db:2089:460f with SMTP id
- 5a478bee46e88-2f85d94b37cmr2062828eec.19.1778272575846; 
- Fri, 08 May 2026 13:36:15 -0700 (PDT)
+ bh=jNFtKRGs6O9qdKpXBO2/CjuA1+iKrgfvcgCL6vpz3EA=;
+ b=b3BWZnIchteXRc6a2rjWxNROtqoMkGth1smNbm1MdixrC5swExjY058Ayli5kL9jvB
+ vDEIJMKu8WgGaJhqZH6sYqgAy7NDtno9n89lJk9WXsk9f+AZBPigbPxpXqwUmme37vCU
+ 3e25zBZ7hKXFTtKL8ztQNq4/Ff4LZF5jiJG35w5yBKSxb9btSzkjklPcvNWe4JJVgk9p
+ /wxaQYodVthWqo2Rct4tWvDi3CbL8kjccrwwAEfI47m3TOFer47RJmKC9fc2xGKeTHKN
+ hgXm3JJnOSslKPm9uIw9Jk5nrqehrSTyrOFfpYzH5TcKFKnaY9cKZZ/ZojTnhKiqZed1
+ QtBQ==
+X-Gm-Message-State: AOJu0Yw1xVq/ZrERGIkZlyWoYvh6B1+/t39/01CU8QoXgYGVKS/vBCm2
+ vcahtlRgYgfcR2T6WEuvuPnRQje6++0hIZS67aLuNNPSLHkfIuQKt4EUYQKb9iqNH0jfbhURkYn
+ Xqhft
+X-Gm-Gg: Acq92OH90B3/MAgXPW8gr1iHNT4aRxG+1uFSUE5AW7dbYQWa0ObfflQF44ZTPzYJyBY
+ J8HUqeLh6hueUlTvmkmnB/zhNCNANJG+G34OiI5b1vuRW/EezyH1eBshRMPrGgeQaYqsriTITNL
+ 1TGmLxuESLHWoRS77ZV6raJIc/VD2YPL+GFohSgzdheQ7vK4rRZjEmTJ/oydLYM+wAdrQQCV6Mv
+ /elQ1tWFseIUuIrooiFN5C4GXrfoVzRXv4/Jsawd9IJLwP0roJoKH7p/yIpzE5ywX1Om+MAUKVc
+ HGTwt+CGDX2SA1hBgx1D6GZPJHAM/taeVGybeuJqGDOjbyYZ0tGmF6ygkY6B/x/iZ1C8ex+w9CK
+ RePIbak59hc8OKHjeZ/+Q4jjVqg74gQXzDGD3rMpbhNWk5zHNXLGDTsBQIY/MHbckuo+0G2Dauy
+ fAEtIaCiH7fmSf7d+jdMagcjPsF5d6Mv0J
+X-Received: by 2002:a05:7300:a507:b0:2ef:8b72:1b9 with SMTP id
+ 5a478bee46e88-2f5459a2137mr7160869eec.0.1778272576846; 
+ Fri, 08 May 2026 13:36:16 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.15
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.16
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:15 -0700 (PDT)
+ Fri, 08 May 2026 13:36:16 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Cristian Dumitrescu <cristian.dumitrescu@intel.com>
-Subject: [PATCH 06/20] port: use rte_pktmbuf_free_bulk
-Date: Fri,  8 May 2026 13:33:27 -0700
-Message-ID: <20260508203607.1003036-7-stephen@networkplumber.org>
+ Ciara Loftus <ciara.loftus@intel.com>, Maryam Tahhan <mtahhan@redhat.com>
+Subject: [PATCH 07/20] net/af_xdp: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:28 -0700
+Message-ID: <20260508203607.1003036-8-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -86,87 +86,23 @@ Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- lib/port/rte_port_fd.c              | 6 ++----
- lib/port/rte_swx_port_fd.c          | 8 ++------
- lib/port/rte_swx_port_source_sink.c | 6 +-----
- 3 files changed, 5 insertions(+), 15 deletions(-)
+ drivers/net/af_xdp/rte_eth_af_xdp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/lib/port/rte_port_fd.c b/lib/port/rte_port_fd.c
-index dbc9efef1b..2b021710d4 100644
---- a/lib/port/rte_port_fd.c
-+++ b/lib/port/rte_port_fd.c
-@@ -212,8 +212,7 @@ send_burst(struct rte_port_fd_writer *p)
+diff --git a/drivers/net/af_xdp/rte_eth_af_xdp.c b/drivers/net/af_xdp/rte_eth_af_xdp.c
+index 10dbcf1333..4f55887963 100644
+--- a/drivers/net/af_xdp/rte_eth_af_xdp.c
++++ b/drivers/net/af_xdp/rte_eth_af_xdp.c
+@@ -263,8 +263,7 @@ reserve_fill_queue_zc(struct xsk_umem_info *umem, uint16_t reserve_size,
+ 	uint16_t i;
  
- 	RTE_PORT_FD_WRITER_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - i);
- 
--	for (i = 0; i < p->tx_buf_count; i++)
--		rte_pktmbuf_free(p->tx_buf[i]);
-+	rte_pktmbuf_free_bulk(p->tx_buf, p->tx_buf_count);
- 
- 	p->tx_buf_count = 0;
- }
-@@ -397,8 +396,7 @@ send_burst_nodrop(struct rte_port_fd_writer_nodrop *p)
- 
- 	RTE_PORT_FD_WRITER_NODROP_STATS_PKTS_DROP_ADD(p, p->tx_buf_count - i);
- 
--	for (i = 0; i < p->tx_buf_count; i++)
--		rte_pktmbuf_free(p->tx_buf[i]);
-+	rte_pktmbuf_free_bulk(p->tx_buf, p->tx_buf_count);
- 
- 	p->tx_buf_count = 0;
- }
-diff --git a/lib/port/rte_swx_port_fd.c b/lib/port/rte_swx_port_fd.c
-index 72783d2b0f..937b1e0945 100644
---- a/lib/port/rte_swx_port_fd.c
-+++ b/lib/port/rte_swx_port_fd.c
-@@ -73,14 +73,11 @@ static void
- reader_free(void *port)
- {
- 	struct reader *p = port;
--	uint32_t i;
- 
- 	if (!p)
- 		return;
- 
--	for (i = 0; i < p->n_pkts; i++)
--		rte_pktmbuf_free(p->pkts[i]);
--
-+	rte_pktmbuf_free_bulk(p->pkts, p->n_pkts);
- 	free(p->pkts);
- 	free(p);
- }
-@@ -218,8 +215,7 @@ __writer_flush(struct writer *p)
- 		(uint32_t)p->params.fd,
- 		p->n_pkts);
- 
--	for (i = 0; i < p->n_pkts; i++)
--		rte_pktmbuf_free(p->pkts[i]);
-+	rte_pktmbuf_free_bulk(p->pkts, p->n_pkts);
- 
- 	p->n_pkts = 0;
- }
-diff --git a/lib/port/rte_swx_port_source_sink.c b/lib/port/rte_swx_port_source_sink.c
-index af8b9ec68d..f651d5b5ad 100644
---- a/lib/port/rte_swx_port_source_sink.c
-+++ b/lib/port/rte_swx_port_source_sink.c
-@@ -52,16 +52,12 @@ static void
- source_free(void *port)
- {
- 	struct source *p = port;
--	uint32_t i;
- 
- 	if (!p)
- 		return;
- 
--	for (i = 0; i < p->n_pkts; i++)
--		rte_pktmbuf_free(p->pkts[i]);
--
-+	rte_pktmbuf_free_bulk(p->pkts, p->n_pkts);
- 	free(p->pkts);
--
- 	free(p);
- }
- 
+ 	if (unlikely(!xsk_ring_prod__reserve(fq, reserve_size, &idx))) {
+-		for (i = 0; i < reserve_size; i++)
+-			rte_pktmbuf_free(bufs[i]);
++		rte_pktmbuf_free_bulk(bufs, reserve_size);
+ 		AF_XDP_LOG_LINE(DEBUG, "Failed to reserve enough fq descs.");
+ 		return -1;
+ 	}
 -- 
 2.53.0
 
