@@ -2,65 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44BFCD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C618CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:38:01 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0A91740670;
-	Fri,  8 May 2026 22:36:34 +0200 (CEST)
-Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
- [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id 0DA36406BC
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:30 +0200 (CEST)
-Received: by mail-dy1-f169.google.com with SMTP id
- 5a478bee46e88-2f03d6cf77bso2711510eec.0
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:29 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0844B40C35;
+	Fri,  8 May 2026 22:36:35 +0200 (CEST)
+Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
+ [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id 6989B40B91
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:31 +0200 (CEST)
+Received: by mail-dy1-f179.google.com with SMTP id
+ 5a478bee46e88-2c15849aa2cso3167253eec.0
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272589;
- x=1778877389; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272590;
+ x=1778877390; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=sqAz7YsV6AN2nqnywDN1AEIGuIurAvIF0ULLH/9vFBs=;
- b=k40Z8KSYFZKOxfovQLNR7IIhXfWRzGvpZSfZ1YcQNW/LOPqUpXDoumKkXK1y/UnMsI
- Wpv7A+D1glzlNqQV2PjUoGIyf+Y5BjbLmvwxpE/4HWiv5ltpld151VseAQDKv+DpAFHu
- IsA8Fmw4OXztXZ2qr8PJlZlBTXYoxRz0XmKgTInRgF4c1zCP2FOATb6sEJcFQ1WW5WCO
- CmcxoGLkonEw21jy+gyZmpEcJMXv3Oaz27b28NOrO128lcYDqTHdfpIyBIb3hOPrYlLw
- kVn1c8uze2LpoU4rCKAlmG2Ntz9sssIKflkUDvHR3e7BM8JuI+jFupR+EQP2Yaus84Zp
- eAOw==
+ bh=MdM7n/a0Slj8HIMQ+AMJfxV67bg5tyJEqIdmbGUIyzY=;
+ b=xSwUkat8i1am0jQKsx7TVCkgwl5XMcbmrkrB8IWPoMri5NFspNv1BPHNua2FyZn1O1
+ 7znXCYDuj9kxaIDiCoHAMTsThStene6oDJKT0liavdhOfUnY6bGYF+KDhAHb6UFo+ZAr
+ uJfSUDoGdp7oxoRPD8vOxrjEZkbZqHnPdkELsfZ6oygySGA2RbRbNolYdjKkyrlEQaec
+ 0TAz2rIqQ7bIqV7BVqKIhteAXlyat/fQ+NMSZRd7ycUHf2gBsqYaUJo/J9fN/NsXYVgu
+ IVX9IOJ6U2K4LlkE2ayiH7sVbl6TsVulgSZ23ZC9hx2bxzKQQwszhMfq9Eu7nFCqGB9v
+ boCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272589; x=1778877389;
+ d=1e100.net; s=20251104; t=1778272590; x=1778877390;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=sqAz7YsV6AN2nqnywDN1AEIGuIurAvIF0ULLH/9vFBs=;
- b=UfPHBxsg42drAezEkL1VMEBpE0BUOSEmklHi5YXUEQQdWFTGCWWnrgMYcf8nDaGKc6
- CGFoOUEXXUAXYDd2LaFHyzUw2tExXolB2s12T6dF6r+D+cdgmRV08i5W/Jb4jh0Lmb12
- 3xfyhqLYBwLcronWX2b5WIxALOYuayq3EB2vh3DY0nfAWInvgVVBGqcK/PI95qzKB4+O
- N1XTyeJFpDarelOregv2t5TIKTOqkBFyJG/0O5fTaL02iesX2B6zFXtYWKWLH+Ft9S0a
- FJi6za6RHmcEF/pGu8zNNOaOMoq7CY3Q8RzEf2eajFoQ5e4m0eUI0jJidxFnPl4aH80H
- Q12Q==
-X-Gm-Message-State: AOJu0YyO3cV23qSfCBmp8korwfxRQlmDfM8ATDNtP3MqFCsxmsJHKT/J
- gcjgTSLBXqNV6+qMoRZ1U5sPJ6k+9q/G9vGHUKnChcKg3jIHSF0jxVs5WIlUonNwEmd+vUr7pl6
- qt+Qr
-X-Gm-Gg: Acq92OHjYHmj7NB3EwYR9f/C1qsCVDdI+qE3zHb116q+IKqn1Nemp+3qkVUXtE8eVWz
- fe6P56D+cG0wZwke6QIKYO6eW196F4Uz8TQSllZG7PNr05wMBGhZVu6sIGi2GRfs6IJtxlMYhvo
- 7DiInbBPyLkYQ0KRjKnDJvPuAqhf7VCZ2RP9beYKqJajOVxlWw3cJ67KkUGeE5odgNDL5vuRzLz
- a2NaWJAPJl01SefqzlVuBhe915Yb+xNUxMoN61k9otJ9yRzbE6LLMqgaQFIUaT3a8VYxCJpH8ZO
- 3lJlSKbv8gmw+uhHB2B+w50MLjC35HtQ71lqtyYqiu/8an9q+y9+I5iEqES/72F3IqLj1SX5J9i
- Jug4UHfztLvlHfZWZH7kWUcIQ0DWcrlzcJLt2bxKhl7NYOrtV6V5I5ivvUOMJJavonmGBzsbKVp
- gKfYu7U76pjvDBUZA1P/36moa+QPtkeCluWo22vMzvxCs=
-X-Received: by 2002:a05:693c:2b0b:b0:2f1:496c:94d4 with SMTP id
- 5a478bee46e88-2f548895060mr6091749eec.4.1778272589136; 
- Fri, 08 May 2026 13:36:29 -0700 (PDT)
+ bh=MdM7n/a0Slj8HIMQ+AMJfxV67bg5tyJEqIdmbGUIyzY=;
+ b=oZOlcbVixu5lNLsMWNEN2wd5pBo2cGTDJ/a9DSDy2zBumaImjligGw+rrB1hpO44kB
+ lmIYK7bdk8GbxezMu88A0GHOTueqLRdXI6nwEQalPplolfLYdIl8wE9joVO3oRaL4vwN
+ D14YHaRgs6U+NaThw8QHR+To/I1FJ1GG0uyvTBtlkpudXCa61TjMU4f8QzaIpw9PTrvk
+ WGfafKYXf76dlEW0q1eNnkpqNP+De0i3CVAZIAaAh4sVqSXJVjYIS6G29E1zEqRSqXdK
+ V7MayvMY6OsOXDNI0c9s+kT9POlNGnKAh1O5jAcRkVPjA1yz5qvELrJe0ZOT6n9Y4vWz
+ qG6w==
+X-Gm-Message-State: AOJu0YzO5+Zhecs5lUjz9nBpWtmOeZ/eBh4iT4ShqwfP/ZmpwokqZeQe
+ vah9TuNbnxy09wZrFKJ3Aj52yXkLJEV0Lj2+dOH/C5PVMh0b6KlZiJ3EKQRLv9/fpSQDd9DcIu7
+ 5qpg9
+X-Gm-Gg: Acq92OHpp5sgUZMFsXslD5iu7IE/KoGD1LPP/a/5GNd9n/FpcZvpMGRdYwzl80Y1Fzx
+ hokjHW0Ewfcy2NP9gDhBUbajeYl4IxFVVotFpsrU6kmR6dB3yXQ76GLXFbp2Hi9WlxJe8Z2THqL
+ Jq4YIzozxZLwdTXFaHSf2sHLzfKcwQqatp2arE1OxPuSRGzQ9UbR1+Ix7/MqEF33dK2PwCjFt7j
+ 3jggvPnwttApXmGjPjZKHdeR26/M+mGi5RvXry8JWAFJnu7f7A+iNDp/Zzf32lDNLO/OjtOM+7q
+ wuSEKxDfqc6zMwgp75zmD4Et6QNnZer4tbxaPjt8LvocWkFJ2RqJEE9bk3dt2rStqjmbpI8pbp/
+ 8aYDFyjwtv22uw8QBO0AwTJkNUA9INsV/pekRp7iiohHoh3wf4pCDeQ9CCipOY4lJIyDap/FuU9
+ p7MADUFfPTkOMkQPshFUD1iCrNo4Mx3LC6
+X-Received: by 2002:a05:7300:80ca:b0:2e6:fe90:27ad with SMTP id
+ 5a478bee46e88-2f54826849dmr6862315eec.7.1778272590440; 
+ Fri, 08 May 2026 13:36:30 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.28
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.29
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:28 -0700 (PDT)
+ Fri, 08 May 2026 13:36:30 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH 19/20] app/test-compress-perf: remove unnecessary null check
-Date: Fri,  8 May 2026 13:33:40 -0700
-Message-ID: <20260508203607.1003036-20-stephen@networkplumber.org>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Nicolas Chautru <nicolas.chautru@intel.com>,
+ Akhil Goyal <gakhil@marvell.com>, Fan Zhang <fanzhang.oss@gmail.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>,
+ Jingjing Wu <jingjing.wu@intel.com>,
+ Volodymyr Fialko <vfialko@marvell.com>,
+ Yipeng Wang <yipeng1.wang@intel.com>,
+ Maxime Coquelin <maxime.coquelin@redhat.com>,
+ Chenbo Xia <chenbox@nvidia.com>
+Subject: [PATCH 20/20] examples: use rte_pktmbuf_free_bulk
+Date: Fri,  8 May 2026 13:33:41 -0700
+Message-ID: <20260508203607.1003036-21-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -79,57 +87,219 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove unnecessary if check before calling rte_free
-and rte_pktmbuf_free_bulk.
+Replace open-coded loop with rte_pktmbuf_free_bulk().
 
-Generated by devtools/cocci/null_free.cocci
+Generated by devtools/cocci/free_bulk.cocci.
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- app/test-compress-perf/comp_perf_test_common.c | 6 ++----
- app/test-compress-perf/main.c                  | 6 ++----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ examples/bbdev_app/main.c                            |  4 +---
+ examples/l2fwd-crypto/main.c                         |  4 ++--
+ .../client_server_mp/mp_client/client.c              |  7 +++----
+ .../multi_process/client_server_mp/mp_server/main.c  |  5 ++---
+ examples/ntb/ntb_fwd.c                               | 12 +++++-------
+ examples/packet_ordering/main.c                      |  5 +----
+ examples/server_node_efd/efd_node/node.c             |  7 +++----
+ examples/server_node_efd/efd_server/main.c           |  5 ++---
+ examples/vhost/main.c                                |  3 +--
+ 9 files changed, 20 insertions(+), 32 deletions(-)
 
-diff --git a/app/test-compress-perf/comp_perf_test_common.c b/app/test-compress-perf/comp_perf_test_common.c
-index 12c2a7bbd0..90eb98166e 100644
---- a/app/test-compress-perf/comp_perf_test_common.c
-+++ b/app/test-compress-perf/comp_perf_test_common.c
-@@ -83,11 +83,9 @@ comp_perf_free_memory(struct comp_test_data *test_data,
+diff --git a/examples/bbdev_app/main.c b/examples/bbdev_app/main.c
+index 03f15f91cc..4602f8012d 100644
+--- a/examples/bbdev_app/main.c
++++ b/examples/bbdev_app/main.c
+@@ -291,9 +291,7 @@ print_mac(unsigned int portid, struct rte_ether_addr *bbdev_ports_eth_address)
+ static inline void
+ pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int nb_to_free)
  {
- 	uint32_t i;
+-	unsigned int i;
+-	for (i = 0; i < nb_to_free; ++i)
+-		rte_pktmbuf_free(mbufs[i]);
++	rte_pktmbuf_free_bulk(mbufs, nb_to_free);
+ }
  
--	if (mem->decomp_bufs != NULL)
--		rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
-+	rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
+ static inline void
+diff --git a/examples/l2fwd-crypto/main.c b/examples/l2fwd-crypto/main.c
+index a441312f55..3b2c23f29a 100644
+--- a/examples/l2fwd-crypto/main.c
++++ b/examples/l2fwd-crypto/main.c
+@@ -931,8 +931,8 @@ l2fwd_main_loop(struct l2fwd_crypto_options *options)
+ 						RTE_CRYPTO_OP_TYPE_SYMMETRIC,
+ 						ops_burst, nb_rx) !=
+ 								nb_rx) {
+-					for (j = 0; j < nb_rx; j++)
+-						rte_pktmbuf_free(pkts_burst[j]);
++					rte_pktmbuf_free_bulk(pkts_burst,
++							      nb_rx);
  
--	if (mem->comp_bufs != NULL)
--		rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
-+	rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
+ 					nb_rx = 0;
+ 				}
+diff --git a/examples/multi_process/client_server_mp/mp_client/client.c b/examples/multi_process/client_server_mp/mp_client/client.c
+index 087c38ef73..9353ab7fda 100644
+--- a/examples/multi_process/client_server_mp/mp_client/client.c
++++ b/examples/multi_process/client_server_mp/mp_client/client.c
+@@ -117,15 +117,14 @@ parse_app_args(int argc, char *argv[])
+  */
+ static void
+ flush_tx_error_callback(struct rte_mbuf **unsent, uint16_t count,
+-		void *userdata) {
+-	int i;
++		void *userdata)
++{
+ 	uint16_t port_id = (uintptr_t)userdata;
  
- 	rte_free(mem->decomp_bufs);
- 	rte_free(mem->comp_bufs);
-diff --git a/app/test-compress-perf/main.c b/app/test-compress-perf/main.c
-index c9ead02cb4..bc2b185da4 100644
---- a/app/test-compress-perf/main.c
-+++ b/app/test-compress-perf/main.c
-@@ -392,15 +392,13 @@ comp_perf_dump_dictionary_data(struct comp_test_data *td)
+ 	tx_stats->tx_drop[port_id] += count;
  
- 		if (fread(data, data_to_read, 1, f) != 1) {
- 			RTE_LOG(ERR, USER1, "Input file could not be read\n");
--			if (td->dictionary_data)
--				rte_free(td->dictionary_data);
-+			rte_free(td->dictionary_data);
- 			goto end;
+ 	/* free the mbufs which failed from transmit */
+-	for (i = 0; i < count; i++)
+-		rte_pktmbuf_free(unsent[i]);
++	rte_pktmbuf_free_bulk(unsent, count);
+ 
+ }
+ 
+diff --git a/examples/multi_process/client_server_mp/mp_server/main.c b/examples/multi_process/client_server_mp/mp_server/main.c
+index 691d453d0e..aa8b759aca 100644
+--- a/examples/multi_process/client_server_mp/mp_server/main.c
++++ b/examples/multi_process/client_server_mp/mp_server/main.c
+@@ -195,7 +195,6 @@ clear_stats(void)
+ static void
+ flush_rx_queue(uint16_t client)
+ {
+-	uint16_t j;
+ 	struct client *cl;
+ 
+ 	if (cl_rx_buf[client].count == 0)
+@@ -204,8 +203,8 @@ flush_rx_queue(uint16_t client)
+ 	cl = &clients[client];
+ 	if (rte_ring_enqueue_bulk(cl->rx_q, (void **)cl_rx_buf[client].buffer,
+ 			cl_rx_buf[client].count, NULL) == 0){
+-		for (j = 0; j < cl_rx_buf[client].count; j++)
+-			rte_pktmbuf_free(cl_rx_buf[client].buffer[j]);
++		rte_pktmbuf_free_bulk(cl_rx_buf[client].buffer,
++				      cl_rx_buf[client].count);
+ 		cl->stats.rx_drop += cl_rx_buf[client].count;
+ 	}
+ 	else
+diff --git a/examples/ntb/ntb_fwd.c b/examples/ntb/ntb_fwd.c
+index 33f3c1ef17..fe2b1e6b2b 100644
+--- a/examples/ntb/ntb_fwd.c
++++ b/examples/ntb/ntb_fwd.c
+@@ -253,8 +253,7 @@ cmd_send_parsed(void *parsed_result,
+ 						(void *)queue_id);
+ 		if (ret < 0) {
+ 			printf("Enqueue failed with err %d\n", ret);
+-			for (j = 0; j < nb_pkt; j++)
+-				rte_pktmbuf_free(mbuf_send[j]);
++			rte_pktmbuf_free_bulk(mbuf_send, nb_pkt);
+ 			goto clean;
  		}
- 		if (fseek(f, 0, SEEK_SET) != 0) {
- 			RTE_LOG(ERR, USER1,
- 				"Size of input could not be calculated\n");
--			if (td->dictionary_data)
--				rte_free(td->dictionary_data);
-+			rte_free(td->dictionary_data);
- 			goto end;
- 		}
- 		remaining_data -= data_to_read;
+ 		nb_tx = ret;
+@@ -387,8 +386,8 @@ start_iofwd_per_lcore(void *param)
+ 				if (ret < 0) {
+ 					printf("Enqueue failed with err %d\n",
+ 						ret);
+-					for (j = 0; j < nb_rx; j++)
+-						rte_pktmbuf_free(pkts_burst[j]);
++					rte_pktmbuf_free_bulk(pkts_burst,
++							      nb_rx);
+ 					goto clean;
+ 				}
+ 				nb_tx = ret;
+@@ -476,7 +475,7 @@ start_txonly_per_lcore(void *param)
+ 	struct ntb_fwd_lcore_conf *conf = param;
+ 	struct ntb_fwd_stream fs;
+ 	uint16_t nb_pkt, nb_tx;
+-	int i, j, ret;
++	int i, ret;
+ 
+ 	for (i = 0; i < NTB_MAX_PKT_BURST; i++)
+ 		ntb_buf[i] = (struct rte_rawdev_buf *)
+@@ -517,8 +516,7 @@ start_txonly_per_lcore(void *param)
+ 					nb_pkt, (void *)(size_t)fs.qp_id);
+ 			if (ret < 0) {
+ 				printf("Enqueue failed with err %d\n", ret);
+-				for (j = 0; j < nb_pkt; j++)
+-					rte_pktmbuf_free(pkts_burst[j]);
++				rte_pktmbuf_free_bulk(pkts_burst, nb_pkt);
+ 				goto clean;
+ 			}
+ 			nb_tx = ret;
+diff --git a/examples/packet_ordering/main.c b/examples/packet_ordering/main.c
+index 748fe0826a..f2097a90d4 100644
+--- a/examples/packet_ordering/main.c
++++ b/examples/packet_ordering/main.c
+@@ -128,10 +128,7 @@ get_previous_lcore_id(unsigned int id)
+ static inline void
+ pktmbuf_free_bulk(struct rte_mbuf *mbuf_table[], unsigned n)
+ {
+-	unsigned int i;
+-
+-	for (i = 0; i < n; i++)
+-		rte_pktmbuf_free(mbuf_table[i]);
++	rte_pktmbuf_free_bulk(mbuf_table, n);
+ }
+ 
+ /* display usage */
+diff --git a/examples/server_node_efd/efd_node/node.c b/examples/server_node_efd/efd_node/node.c
+index fc2aa5ffef..5805e049b2 100644
+--- a/examples/server_node_efd/efd_node/node.c
++++ b/examples/server_node_efd/efd_node/node.c
+@@ -121,15 +121,14 @@ parse_app_args(int argc, char *argv[])
+  */
+ static void
+ flush_tx_error_callback(struct rte_mbuf **unsent, uint16_t count,
+-		void *userdata) {
+-	int i;
++		void *userdata)
++{
+ 	uint16_t port_id = (uintptr_t)userdata;
+ 
+ 	tx_stats->tx_drop[port_id] += count;
+ 
+ 	/* free the mbufs which failed from transmit */
+-	for (i = 0; i < count; i++)
+-		rte_pktmbuf_free(unsent[i]);
++	rte_pktmbuf_free_bulk(unsent, count);
+ 
+ }
+ 
+diff --git a/examples/server_node_efd/efd_server/main.c b/examples/server_node_efd/efd_server/main.c
+index 70a7372d4a..384bcfa780 100644
+--- a/examples/server_node_efd/efd_server/main.c
++++ b/examples/server_node_efd/efd_server/main.c
+@@ -218,7 +218,6 @@ clear_stats(void)
+ static void
+ flush_rx_queue(uint16_t node)
+ {
+-	uint16_t j;
+ 	struct node *cl;
+ 
+ 	if (cl_rx_buf[node].count == 0)
+@@ -227,8 +226,8 @@ flush_rx_queue(uint16_t node)
+ 	cl = &nodes[node];
+ 	if (rte_ring_enqueue_bulk(cl->rx_q, (void **)cl_rx_buf[node].buffer,
+ 			cl_rx_buf[node].count, NULL) != cl_rx_buf[node].count){
+-		for (j = 0; j < cl_rx_buf[node].count; j++)
+-			rte_pktmbuf_free(cl_rx_buf[node].buffer[j]);
++		rte_pktmbuf_free_bulk(cl_rx_buf[node].buffer,
++				      cl_rx_buf[node].count);
+ 		cl->stats.rx_drop += cl_rx_buf[node].count;
+ 	} else
+ 		cl->stats.rx += cl_rx_buf[node].count;
+diff --git a/examples/vhost/main.c b/examples/vhost/main.c
+index ac888348d2..79561d6de0 100644
+--- a/examples/vhost/main.c
++++ b/examples/vhost/main.c
+@@ -1006,8 +1006,7 @@ unlink_vmdq(struct vhost_dev *vdev)
+ 					(uint16_t)vdev->vmdq_rx_q, pkts_burst, MAX_PKT_BURST);
+ 
+ 		while (rx_count) {
+-			for (i = 0; i < rx_count; i++)
+-				rte_pktmbuf_free(pkts_burst[i]);
++			rte_pktmbuf_free_bulk(pkts_burst, rx_count);
+ 
+ 			rx_count = rte_eth_rx_burst(ports[0],
+ 					(uint16_t)vdev->vmdq_rx_q, pkts_burst, MAX_PKT_BURST);
 -- 
 2.53.0
 
