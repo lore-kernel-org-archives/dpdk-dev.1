@@ -2,66 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E37EDCD342F
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43895CD342F
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 20:37:35 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A3BFE4026E;
-	Fri,  8 May 2026 22:36:28 +0200 (CEST)
-Received: from mail-dy1-f174.google.com (mail-dy1-f174.google.com
- [74.125.82.174]) by mails.dpdk.org (Postfix) with ESMTP id B1D7E40A4B
- for <dev@dpdk.org>; Fri,  8 May 2026 22:36:24 +0200 (CEST)
-Received: by mail-dy1-f174.google.com with SMTP id
- 5a478bee46e88-2ee1054627bso2788319eec.1
- for <dev@dpdk.org>; Fri, 08 May 2026 13:36:24 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 930CE40A8A;
+	Fri,  8 May 2026 22:36:29 +0200 (CEST)
+Received: from mail-dy1-f171.google.com (mail-dy1-f171.google.com
+ [74.125.82.171]) by mails.dpdk.org (Postfix) with ESMTP id BF15840A4B
+ for <dev@dpdk.org>; Fri,  8 May 2026 22:36:25 +0200 (CEST)
+Received: by mail-dy1-f171.google.com with SMTP id
+ 5a478bee46e88-2ef2a1cc06dso1225212eec.0
+ for <dev@dpdk.org>; Fri, 08 May 2026 13:36:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272584;
- x=1778877384; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778272585;
+ x=1778877385; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=nDdYGodF6Xu3Qlnn1VL/GMVvOXS5+4YgyqXw26Ag+Hc=;
- b=T0xIobAZtYOczCxpd1AxwlQ3oO3D4SoYjf2EfHB1JjM2kcrjCVsPXCCPfRT6cdG2LK
- 2fwzJNQV6hl6kMMhvLQ1EaUWZxJG4Jz0E626ZJsS8uzOt0fJ2QYi0bDpRS/MomuLzyGL
- hR/+SIIr8gSc3hVQ7prlbxNPJx7TbJcY9vshRw0FW9gRO7QuuYeUnOnqgmGf7WC3sRVM
- z8E5iwUeK+/x4KIOWKWYc2PAmsnJgnrcDan5bIlBNBxp1tYLzpoBkJx9/STE5eGSIoqD
- bc91AV9NU5u+4Uz4GgD6WQAtzZuipxGzi4YTDzIzowqVrfFoyFidAG8VcRSc8iAZdcun
- TW/Q==
+ bh=tptwahIhE6s4X5dIE5liHpfqTvTWXfj2QMD2lazoM64=;
+ b=d202i3vFXoIs6Z8vbNWUJWWNn4/UF7/8r8gCcLzMPrfwO64b00f/708UDcJIr4fDmY
+ xFcxPkHb2KUo/+MxNwQ0jZP1ZeqOC64jVDhfdCffCA0TQAdH1kYL3pD2IAZMq6tReJfd
+ LcYAdGHswgoB/CSz+KxspvxSlir0zV27N48LQUEokwHucDOT4TTVQwcNse5NHGtZf4mp
+ BV9WqfkF4fIJ3lC3pI86dGPLH5IaTyeYS7l/kGihLEL7I0qhgsSUW014iTxKFgJjraXl
+ 7z5BBY/0TX5/06x0sEfyAO4kEMYNv7BlwsBpw6ydXAALlKUww18ac42+3VHkMHthrSyY
+ gaBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778272584; x=1778877384;
+ d=1e100.net; s=20251104; t=1778272585; x=1778877385;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=nDdYGodF6Xu3Qlnn1VL/GMVvOXS5+4YgyqXw26Ag+Hc=;
- b=qJQo7mvrLytObp8dfukpgIB32zd47J9R5un24zDP/fuJEpdsK1+bZQm2iBqKxkigZd
- hrMwZS0e7UkRYYOmoy5QBY/oQH0qJN16GxpDB+fPItviIBVMEhgkCI+Yf/aZWDyb1xHF
- 4HUUYY1z9Ew1Y3aKcvegjFIQ0lLDci5p9Hk1V6QV2RO3UGXTUDekSWb//8hPVeS2oWTV
- 7bOO9weAG8ZXmltDRNncnbB/w3kV7OsAlwh74WTpkDNwC2mf4gJhWmWDFVFgIgwkZyUJ
- wxw+0RvwAomyXHY5ZST+14fatG4JDr8Kd2xEE8140SMBEX/R55xA6X6QxOd8TZRKOyd9
- I//g==
-X-Gm-Message-State: AOJu0Yy2TDF2E5/YlXhBM5BYNCo0SygiZrYR8ctEMAHguBcuwgTt/Gz6
- XpV8QRDTK10WLLNylHXbvno4bwh+t5nfI2KgDLJbrSOfix2aZuALpQSZyvbNEh+B4QB7vSgKFF/
- sroJY
-X-Gm-Gg: Acq92OGa+rNOaFwNdiSLgRAbVExC6+qzy5t+q3NWe0KBqvJub+JtHG6Ghv+xmqCQJnt
- sqexDHz2AsNgdAHXTJ5q+gC59yZRAdMCxUQnUUEeBs8CKWqp1f8xyCWnKX/GuYsWacHynwLe/V8
- NOWpW66aufb1WJ1K9J4gS4uRxv0xJXHvGLt5VhNb346YlYU1cx+mBc6ypR/YAvlItts1SmZrdMv
- CSpBxrrGiBqkYNTHiGdGfH/nqIIJEpkJa1kdu9V0DkSe6NYx2yY0RkyChNaWpu0cYamMHeE6u4g
- TKMNZuIxL3myinVSY7NPD5U6jppTq5mfTR/ULXfNrjQmCkrgriOopAJa2nxII4iwz26rY3Sf3ha
- hEkKYqvhhVuEpyKSB/dv2p+j8cu4rBgmaxuKM4Sc8DeeL9lfPqawRc5T485umqnCyfIWjIdXPqK
- XA19ia8WVhMJmZr3TH9NJqHrY+hfZybAm0
-X-Received: by 2002:a05:7300:a599:b0:2ee:7b2e:8a3e with SMTP id
- 5a478bee46e88-2f6e1e32133mr3599208eec.1.1778272583772; 
- Fri, 08 May 2026 13:36:23 -0700 (PDT)
+ bh=tptwahIhE6s4X5dIE5liHpfqTvTWXfj2QMD2lazoM64=;
+ b=WXAdn+Ug2IHK7NGR6/bviQCayazppxnVB6vSVHQPEoPlqircsFsbexSUnK0eUIJfkl
+ 95vcC4qU7KZgqmnoUBVP5KM3+eoC4h579tmU9eN8Y7RzI2pPV2/0RVYlHFHilXPzZcmr
+ L1aF28PG9WT5TStY5wzYAnXYr8Xl+m/aBIB0ZiD46QwL6iqrFJIChA6aH5M8rvCjqsZM
+ kX7hATCQ1UBKn2YBpoqP77y4PWhiM/01gwvZgsCDrsM+rMHKFZ5/1r7wh1qL3fOHZ15t
+ eS/wHK/UNThM94ZeancpQWiiZEJUYYq78b5kpa/Xb/lFm4u3rTFdLZ+UArk0n9yfjgs2
+ V8DA==
+X-Gm-Message-State: AOJu0YzN6PWUjJsr6bhbdUVs+qBy0rWWD04vOdAUpAlnmoAQJi84nTPC
+ liQJblYvmfsIWTArBBHAXrIGT/Wa4sCz2t9BAeEMrVeRp74SQ72BBxckZucdZHr4WSEkKgM/yDM
+ mJBUa
+X-Gm-Gg: Acq92OG1kfoR2rX5YLhEcHCT8d9OxPD1hj/xDHf7TokBrGOZAUiUvwI8laD2CkBS1PD
+ cgbl+kk83a307Cg2K1iC9RqJKzIp3T4xFM4Iged4lnjGoscOsYl3yvQutEq3b9QINQerKZ0evAg
+ C42tbcTLTW9Uxbmy2g8GJYK+5w/ibBjWI5UCmqiHa0VJVEcFZPUiYaVR2/IdlrGkJRByZYinHuO
+ l5p8rIxMABGnAzSzIGI9/rTHQXgugcP9P+G6Crb4furer7ZH5HNHXyyv/DheLahQuUsdbcJQO4c
+ aiFzyHJt5SpitNsSLzVSU4/YDC7SDUvRATzlCmNXLMyWyhklsreNEJ+eA5eN4UjXEA784vlGQ2O
+ o8z8gaml6cVmnYlr2W8ew+F+J3tIFgvjnNXe9A+QOVy9+i54TdpmJvsqQk3T1OQkMZCzX2ajqPE
+ WRPdpeD2WeaMquEefsEE/4G3g02Nt1bJvVy3iwk5hs+N4=
+X-Received: by 2002:a05:7300:cd92:b0:2dd:6937:79d1 with SMTP id
+ 5a478bee46e88-2f548e9c897mr7678888eec.15.1778272584777; 
+ Fri, 08 May 2026 13:36:24 -0700 (PDT)
 Received: from phoenix.lan ([104.202.41.210]) by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.23
+ 5a478bee46e88-2f8859eafcdsm4715146eec.6.2026.05.08.13.36.24
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Fri, 08 May 2026 13:36:23 -0700 (PDT)
+ Fri, 08 May 2026 13:36:24 -0700 (PDT)
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: dev@dpdk.org
 Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Junlong Wang <wang.junlong1@zte.com.cn>, Lijie Shan <shan.lijie@zte.com.cn>
-Subject: [PATCH 14/20] net/zxdh: remove unnecessary null check
-Date: Fri,  8 May 2026 13:33:35 -0700
-Message-ID: <20260508203607.1003036-15-stephen@networkplumber.org>
+ Bruce Richardson <bruce.richardson@intel.com>,
+ Anatoly Burakov <anatoly.burakov@intel.com>
+Subject: [PATCH 15/20] net/ice: remove unnecessary null check
+Date: Fri,  8 May 2026 13:33:36 -0700
+Message-ID: <20260508203607.1003036-16-stephen@networkplumber.org>
 X-Mailer: git-send-email 2.53.0
 In-Reply-To: <20260508203607.1003036-1-stephen@networkplumber.org>
 References: <20260508203607.1003036-1-stephen@networkplumber.org>
@@ -86,23 +87,26 @@ Generated by devtools/cocci/null_free.cocci
 
 Signed-off-by: Stephen Hemminger <stephen@networkplumber.org>
 ---
- drivers/net/zxdh/zxdh_np.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/intel/ice/ice_dcf_sched.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/zxdh/zxdh_np.c b/drivers/net/zxdh/zxdh_np.c
-index efb57e34f2..b078ec5b6c 100644
---- a/drivers/net/zxdh/zxdh_np.c
-+++ b/drivers/net/zxdh/zxdh_np.c
-@@ -12383,8 +12383,7 @@ zxdh_np_dtb_acl_data_clear(uint32_t dev_id, uint32_t queue_id,
- 				&element_id);
- 	free(data_buff);
- 	free(mask_buff);
--	if (eram_buff)
--		free(eram_buff);
-+	free(eram_buff);
+diff --git a/drivers/net/intel/ice/ice_dcf_sched.c b/drivers/net/intel/ice/ice_dcf_sched.c
+index 948774a282..14e902edbe 100644
+--- a/drivers/net/intel/ice/ice_dcf_sched.c
++++ b/drivers/net/intel/ice/ice_dcf_sched.c
+@@ -877,10 +877,8 @@ static int ice_dcf_hierarchy_commit(struct rte_eth_dev *dev,
+ 	return ret_val;
  
- 	free(p_entry_arr);
- 	ZXDH_COMM_CHECK_DEV_RC(dev_id, rc, "zxdh_np_dtb_acl_dma_insert");
+ fail_clear:
+-	if (vf_bw != NULL)
+-		free(vf_bw);
+-	if (tc_bw != NULL)
+-		free(tc_bw);
++	free(vf_bw);
++	free(tc_bw);
+ 
+ 	/* clear all the traffic manager configuration */
+ 	if (clear_on_fail) {
 -- 
 2.53.0
 
