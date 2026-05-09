@@ -2,72 +2,73 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 212DCCD3447
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 15:44:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2295BCD3445
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 15:47:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B284B4026D;
-	Sat,  9 May 2026 17:44:42 +0200 (CEST)
-Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com
- [74.125.82.173]) by mails.dpdk.org (Postfix) with ESMTP id E16FF4026E
- for <dev@dpdk.org>; Sat,  9 May 2026 17:44:40 +0200 (CEST)
-Received: by mail-dy1-f173.google.com with SMTP id
- 5a478bee46e88-2f3c623322bso4780740eec.0
- for <dev@dpdk.org>; Sat, 09 May 2026 08:44:40 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 1F3BC4026D;
+	Sat,  9 May 2026 17:47:02 +0200 (CEST)
+Received: from mail-dl1-f44.google.com (mail-dl1-f44.google.com [74.125.82.44])
+ by mails.dpdk.org (Postfix) with ESMTP id 2A20C40269
+ for <dev@dpdk.org>; Sat,  9 May 2026 17:47:01 +0200 (CEST)
+Received: by mail-dl1-f44.google.com with SMTP id
+ a92af1059eb24-1329fc4bf77so40837c88.1
+ for <dev@dpdk.org>; Sat, 09 May 2026 08:47:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778341480;
- x=1778946280; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778341620;
+ x=1778946420; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=HVS3O5vGrO0XxjOoBP50MXFO/cWD2ug+52191dIpi38=;
- b=YT4jXlvAeRXf8VeU91xmHFX/TPNMiXqTbRgqXrQ8M7Yz/6bHB6KWeG5r2UeSPPitAb
- Z29y3GpH6GcXWlfI79ZOXgFQ4u6yrYCSwritjrQuwbCk4f/jz1GpN8HJ2TLhCoEihE7f
- pblezaJ7D6jW5FO5NEoxoKoZoZC9t0Qc0J9igpog3ukvJZAOnAxRMZKEzfQSZ0juXvj/
- rvVK8XQjuLbrIw6cd2Oln6oWmE1NXvts+DCi7LjT7idrcVwqzlS1vHS6sJGhYiTAbOgk
- ROBUFU8HL4pOALTcbUJ+sKaw2Zu0HomIguCQy0CrmIMbnSlclO20lebZ1SfU9i0JGqPm
- 45Bg==
+ bh=mW2ls89x6w0RYoL6jA5ElUsABLSsTfHZT6zHfKgxYGk=;
+ b=IiEDm3ZTapY4M2IJ5prJW5p24Rc0ZyUegi+ewNDCvmVLhd5Mimo4GSuroz0Z84YBHC
+ 1fTAYm0tFtr2Fj5CE2da+TGmYCn+4UfAqQ9XEIx3vtuPJJf8st95OjtQgSro07ntQMYr
+ 8vXu2oLXdq8n7aBarl8kVdKZrcv3hVzgvfaHgbVfqnIN6wOwCbv3PePY0mnB0GXQkzcz
+ pQKqI643wZkWNoSjxAX2CrZGtM6m0FcK5bUEwV9IBgj9k6vNhQN/U2jStnncw4ZA0v43
+ fk+S7b4HN/E6mq/Ome3qGVnkPkNNdwyonJlXGMC7QnwFYpGhvTg34IezCtPmQji8Ay4K
+ 6ENg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778341480; x=1778946280;
+ d=1e100.net; s=20251104; t=1778341620; x=1778946420;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=HVS3O5vGrO0XxjOoBP50MXFO/cWD2ug+52191dIpi38=;
- b=cmMPqI5LJrk/u1Gp2acnn676tKDF0lyWzYyRfPuzwYUjBofRuxq6Y7iWl4EuzA8wDs
- +bY2Be1n3+JxVhvGiAH5uUmTf7LpcpkcA3B9C3PxKqKgEKY9OYcWgzz++CZzGL2NsuZf
- l31bTVLUikKwIT+7hxe8rGgboVTZzKpBTuQQW7wJjNITlZORIYUrNFEDcHC15kjTmNMZ
- ERLgC56Uogs5+0Cm38jzxhIwyN4zq2ppYWUk5/apTxJwQb/M7DRyoRahUcI+HAgJpYT7
- 6bPMUsrQUhwTu5kHJ8eyT7hTr8W45MPkZFbtFYemhLfcY9LFzFA/UInSKmsZHcMKieb1
- R0Lg==
-X-Gm-Message-State: AOJu0YzcINOQtLfzLeyU2GtqG7YvgdavauO9+7gwwv5HUPoSNVbU8Qfh
- ImKQJuiicG/ypiJxiVZ6La/E5l4/GGHCecHHX8JEFfYS47b1EKRe+QsO2RgNDmWOmuQBJRCZTTx
- 07wOK
-X-Gm-Gg: Acq92OF9D5KEQkqo9joo0+1aSJ9iTTMkcttx4pS0weFr5afd8FEovAqGD6n277qG/H+
- vY/xlmedys+h9GfK1kQuAIh51kXVexUM4g3M5dh1zfYC97e6G6Vog+5vLQtkzS6e4JpNlyRyI6l
- TBoxRi/pFmcf/sZ85hN3CYznw08n4Vq5seDFIsQJTBK5RxETrk39pR0ct/D7SR2L+IE89ATX+yY
- lxhmeFgrnvq4ceCU1jE338+34SfQ60kMJWClmAYuun2Gth9lCV+S4FsiPB6wdi8Eqhd+f0RB6by
- +jYzLxFohkxYm6zK2KYddfDYbHUhit6H92IKpSF2t9bePFVSoZb0cGSIhNXHIVOZZYsTcmHdS3K
- CqP+jrKekZye35ysagYHuyQflFhLuhqjamGOEJg6t1i+mlwx++ht4Nazi/4czdZ5YTxM5+mCa7c
- /hOPLiySybPi9jNDdjtOWgO8pzyu1AXz+jWbU=
-X-Received: by 2002:a05:7300:df4b:b0:2be:142f:d499 with SMTP id
- 5a478bee46e88-2f54c971297mr7981178eec.16.1778341479514; 
- Sat, 09 May 2026 08:44:39 -0700 (PDT)
+ bh=mW2ls89x6w0RYoL6jA5ElUsABLSsTfHZT6zHfKgxYGk=;
+ b=Oen/A7abghxJC6h/39YGDSuf8wkXYS542X1XCsGtoHmafesLX2l3xoTCyCZwGcVpQi
+ oR0PWiVwBWkxltOdMehFM9cvH/RH3tKR4/yRjalXigEuxVJHYJvcJKhnWSZswyMuij/3
+ lZumlEH7xXilSJ+o2KA6uzk5PgKz6ZIx39JL4Xfzw0IHzzfeG3W8HvrOdsdj6adBorsv
+ yi1P9oMAwkyQ3p/AfoHhyAFSxXTL4vo6JH29flZfQacu0v1t3DBKyJokipCjcnuNdE9u
+ UfU8WG5Wn73j/HdnrxEJ2HSagqeFzagvwe9e/jom6csVjZOYB7HdiYIySR9eba4MLwtp
+ P/Hg==
+X-Gm-Message-State: AOJu0YxfOrcima56ij7KNmxCx6GP72uQbn3RDE5OjyZ12bGoyWWVUjE7
+ rsD/eaesEZ8MeVx2zjX5fnCVnJ4/wn7iA4mRJuBnc/eSRdX+LmQpmnA5nYeS1/1FN84yjPyC4Nt
+ LPE4m
+X-Gm-Gg: Acq92OEHL3YUdAOP44ThiFyk67Ir8iwBxuNT4upaYTW8jQYzRqQVSo8lI+FoJhzuVzk
+ HmDz2GAOgr+Y/MGGhWegZvAobV5wWDB+RqKc6W4byucqeW60/zQ81If/crM/U/RYTyCkeJMQDt6
+ W87NDMf15wVGlRxWWIw4BYMezz8QUHOAaSk7OhX/ptxRwgEWsafZDe0t1e1Y7joEv3QhR5fokna
+ fKR3cDweeRG7k+hp4PS8c9EB0Ql0h4tPNdN3TGNH68vrS2lNqGOkY/bsj1l0w9kQN1sEnZhsAtL
+ BVCo7+njHT0rnYdk9DVsgmEbO9SDTZmiBUv9YP9bOlzlLZRk3WJ/jmCpuzNcp9/CLgeyryWZWMo
+ 6KA4+N9tjm9zmFmlN1pAWCHo1Iv8Wxf/rCSL3Q51rTSVd7YH84Wr7WYWGDld6DRRV8g9xSgqZRo
+ UJlB/b4zLIoJP7jg+VInEAIS2zYZou9EUol/4=
+X-Received: by 2002:a05:7022:ea24:b0:12c:87f1:f41a with SMTP id
+ a92af1059eb24-1318e91771bmr9204156c88.21.1778341619943; 
+ Sat, 09 May 2026 08:46:59 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-2f888e381c9sm6418999eec.26.2026.05.09.08.44.38
+ a92af1059eb24-13278758e0csm7299986c88.12.2026.05.09.08.46.59
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sat, 09 May 2026 08:44:39 -0700 (PDT)
-Date: Sat, 9 May 2026 08:44:36 -0700
+ Sat, 09 May 2026 08:46:59 -0700 (PDT)
+Date: Sat, 9 May 2026 08:46:57 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v3 00/20] Wangxun Fixes
-Message-ID: <20260509084436.1a016049@phoenix.local>
-In-Reply-To: <20260509112823.7728-1-zaiyuwang@trustnetic.com>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260509112823.7728-1-zaiyuwang@trustnetic.com>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH 13/20] mbuf: allow NULL array in rte_pktmbuf_free_bulk
+Message-ID: <20260509084657.598eebfb@phoenix.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F65869@smartserver.smartshare.dk>
+References: <20260508203607.1003036-1-stephen@networkplumber.org>
+ <20260508203607.1003036-14-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35F65869@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,72 +82,67 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sat,  9 May 2026 19:28:02 +0800
-Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
+On Sat, 9 May 2026 10:47:53 +0200
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-> This series fixes several issues found on Wangxun Emerald, Sapphire and
-> Amber-lite NICs, with a focus on link-related problems.
-> ---
-> v3:
-> - Addressed Stephen's comments
-> ---
-> v2:
-> - Fixed compilation error and code style issues
-> ---
-> 
-> Zaiyu Wang (20):
->   net/txgbe: remove duplicate xstats counters
->   net/ngbe: remove duplicate xstats counters
->   net/ngbe: add missing CDR config for YT PHY
->   net/ngbe: fix VF promiscuous and allmulticast
->   net/txgbe: fix inaccuracy in TX rate limiting
->   net/txgbe: fix link status check condition
->   net/txgbe: fix Tx desc free logic
->   net/txgbe: fix link flow control registers for Amber-Lite
->   net/txgbe: fix link flow control config for Sapphire
->   net/txgbe: fix a mass of unknown interrupts
->   net/txgbe: fix traffic class priority configuration
->   net/txgbe: fix link stability for 25G NIC
->   net/txgbe: fix link stability for 40G NIC
->   net/txgbe: fix link stability for Amber-Lite backplane mode
->   net/txgbe: fix FEC mode configuration on 25G NIC
->   net/txgbe: fix SFP module identification
->   net/txgbe: fix get module info operation
->   net/txgbe: fix get eeprom operation
->   net/txgbe: fix to reset Tx write-back pointer
->   net/txgbe: fix to enable Tx desc check
-> 
->  drivers/net/ngbe/base/ngbe_phy_yt.c       |    3 +
->  drivers/net/ngbe/ngbe_ethdev.c            |    5 -
->  drivers/net/ngbe/ngbe_ethdev_vf.c         |   11 +-
->  drivers/net/txgbe/base/meson.build        |    2 +
->  drivers/net/txgbe/base/txgbe.h            |    2 +
->  drivers/net/txgbe/base/txgbe_aml.c        |  187 +-
->  drivers/net/txgbe/base/txgbe_aml.h        |    6 +-
->  drivers/net/txgbe/base/txgbe_aml40.c      |  113 +-
->  drivers/net/txgbe/base/txgbe_aml40.h      |    6 +-
->  drivers/net/txgbe/base/txgbe_dcb_hw.c     |    2 +-
->  drivers/net/txgbe/base/txgbe_e56.c        | 3774 +++++++++++++++++++++
->  drivers/net/txgbe/base/txgbe_e56.h        | 1744 ++++++++++
->  drivers/net/txgbe/base/txgbe_e56_bp.c     | 2593 ++++++++++++++
->  drivers/net/txgbe/base/txgbe_e56_bp.h     |  278 ++
->  drivers/net/txgbe/base/txgbe_hw.c         |   54 +-
->  drivers/net/txgbe/base/txgbe_hw.h         |    4 +-
->  drivers/net/txgbe/base/txgbe_osdep.h      |    4 +
->  drivers/net/txgbe/base/txgbe_phy.c        |  360 +-
->  drivers/net/txgbe/base/txgbe_phy.h        |   45 +-
->  drivers/net/txgbe/base/txgbe_regs.h       |   11 +-
->  drivers/net/txgbe/base/txgbe_type.h       |   43 +-
->  drivers/net/txgbe/txgbe_ethdev.c          |  414 ++-
->  drivers/net/txgbe/txgbe_ethdev.h          |    6 +-
->  drivers/net/txgbe/txgbe_rxtx.c            |  102 +-
->  drivers/net/txgbe/txgbe_rxtx.h            |    1 +
->  drivers/net/txgbe/txgbe_rxtx_vec_common.h |   14 +-
->  26 files changed, 9350 insertions(+), 434 deletions(-)
->  create mode 100644 drivers/net/txgbe/base/txgbe_e56.c
->  create mode 100644 drivers/net/txgbe/base/txgbe_e56.h
->  create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.c
->  create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.h
-> 
+> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > Sent: Friday, 8 May 2026 22.34
+> >=20
+> > This allows callers to avoid NULL checks and just call
+> > rte_pktmbuf_free_bulk, similar to rte_pktmbuf_free.
+> >=20
+> > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org> =20
+>=20
+> I disagree with this patch.
+>=20
+> The parameter is an array of (pointers to) mbufs.
+> We already accept that the array can contain NULL pointers (no mbuf prese=
+nt).
+> This is extremely forgiving, considering that other fast path functions d=
+on't allow NULL pointers in arrays;
+> e.g. rte_eth_tx_burst(), rte_mempool_put_bulk().
+> But since it's a "free()" class of function, I don't object to it.
+>=20
+> However, this patch changes the parameter type from "array" to "array or =
+NULL (no array present)".
+> And I don't think we should change the parameter type; it should remain "=
+array" only.
+>=20
+> If there are any scenarios where a non-present array (NULL) is passed to =
+the function, the count should be zero too.
+> And when the count is zero, the function does not dereference the array, =
+so explicitly checking for NULL is superfluous.
+>=20
+> We have a convention of not checking parameter validity in fast path func=
+tions.
+> And I consider it invalid parameters passing NULL with a non-zero count.
+>=20
+> You might argue that this is a "free()" class of function, which warrants=
+ checking for NULL; but since it already accepts NULL with zero count, it i=
+s already covered.
+>=20
+> We could change the function declaration for clarity:
+>=20
+> void rte_pktmbuf_free_bulk(
+> 		unsigned int count;
+> 		struct rte_mbuf *mbufs[count], unsigned int count);
+>=20
+> Or add a debug assertion at the start of the function:
+> RTE_ASSERT(mbufs !=3D NULL || count =3D=3D 0);
 
-Review will be delayed because of DPDK summit this week.
+Ok, it was more motivated by common pattern in driver cleanup paths like:
+
+--- a/app/test-compress-perf/comp_perf_test_common.c
++++ b/app/test-compress-perf/comp_perf_test_common.c
+@@ -83,11 +83,9 @@ comp_perf_free_memory(struct comp_test_data *test_data,
+ {
+ 	uint32_t i;
+=20
+-	if (mem->decomp_bufs !=3D NULL)
+-		rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
++	rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
+=20
+-	if (mem->comp_bufs !=3D NULL)
+-		rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
++	rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
+=20
