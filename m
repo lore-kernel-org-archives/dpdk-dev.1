@@ -2,54 +2,56 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC1DCD3447
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C63FCCD343F
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:28:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D5AA84026D;
-	Sat,  9 May 2026 13:28:41 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id B359940269
- for <dev@dpdk.org>; Sat,  9 May 2026 13:28:39 +0200 (CEST)
-X-QQ-mid: zesmtpgz1t1778326113tad27ee93
-X-QQ-Originating-IP: Xmm64AQtdpX6HgI/sSSQV0QPkM5FqrK1QVt8WCx/sD8=
+	by mails.dpdk.org (Postfix) with ESMTP id D29B74026D;
+	Sat,  9 May 2026 13:28:57 +0200 (CEST)
+Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
+ by mails.dpdk.org (Postfix) with ESMTP id EC8D140269;
+ Sat,  9 May 2026 13:28:55 +0200 (CEST)
+X-QQ-mid: zesmtpgz1t1778326125t82265b28
+X-QQ-Originating-IP: JvGNLy8pvgIa3Gz4vsUqJ7R8NK7p05h6Cc0EhjO+bdo=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Sat, 09 May 2026 19:28:30 +0800 (CST)
+ id ; Sat, 09 May 2026 19:28:35 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 11337703613186777736
-EX-QQ-RecipientCnt: 2
+X-BIZMAIL-ID: 2553874047074953984
+EX-QQ-RecipientCnt: 5
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Subject: [PATCH v3 00/20] Wangxun Fixes
-Date: Sat,  9 May 2026 19:28:02 +0800
-Message-Id: <20260509112823.7728-1-zaiyuwang@trustnetic.com>
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
+ Jiawen Wu <jiawenwu@trustnetic.com>, Ferruh Yigit <ferruh.yigit@amd.com>
+Subject: [PATCH v3 01/20] net/txgbe: remove duplicate xstats counters
+Date: Sat,  9 May 2026 19:28:03 +0800
+Message-Id: <20260509112823.7728-2-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
+In-Reply-To: <20260509112823.7728-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
+ <20260509112823.7728-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: M2OfKeMHoPgxsPAhTgxEybAfT++2x3EdVz6phkdXzWtqorU2aq7NkZ9r
- kAZkYWJdyzf5D9rOIrYWjhEr7VmtbvZqjJJ0oJgE7zgWclCgRKn0ftt01/qn0y7+oZFVKXZ
- cjhRUq0d6VQ23ASmhYQ1pXGqrJRMYOf8P1QDSdHYAYZVC61AVndAH2FPVFviVM7KEKcoUql
- KvrF4U6BUDW59KNagrLTkTz8Pb7vKRfBwjGS2mQ7TXIOQDqkFcXnAymfKnXpzLeZIarIm3G
- 661E0BkIX5EJx8hDhMzLb6H9K1IYNwUwfhFjgUQ4WIBd7wqiMnLru8k5XpT1qykwSYc0ggP
- RycsPc/NzZWfpIx6x8K8Z1kTLvJg238BsgpzR60xxMjJtpPctUuR9VsgnUlZh86WWekCpar
- rQGFOlG/6QrbJqvKYPafWxlSNSlXwFZTPx+w40lleV89OhrTHBVtCAcN3RcufFpDkAlEl7t
- v4yGSqjO2ML15CziwupF7MEaUri3sEdHV6+j0YEwkjKDCGk6kvBeaZN2pMdJw68xc5UbbI+
- NodfymydWgUTkYIBmCmN4d9TRp5bYTAOZZeGKmvAQ3Y+9Nw53MW/CI6uWoh2wUYd8wEt2vn
- Kjyk9Puk/UVC0PSiN4UklJbTU6pBtzqtFiFUlT+3wzKJbjwwpFOWb8XlpGoJIMA47uPyQ6u
- XkNCBwLUXi5pXprDJJiaBsbjN5JAk+aym73WpDXgau5T/OlLZ4h0y1wJMSTSWxauqRgGWEQ
- qFfyhtaVpRF/LkzN3AzZeVytNCYq1rlgH0QNpGlb3ircpkNg0g2Qcsq0Qp/GOBpk/QGmfa3
- UYnsKDIs3zhKCwrzweZqwULBVnB5g/8vh0NtPvnjetqUqPtQzwBwh17xTFZflgpRfVZiU5v
- IIAaueGWO5opt6pVKL6IiFtYaTpjvRTv/fNwRAUhQCvy9wlvQmyJODHuqtiNJ3NBij2XO/N
- f6FAzJkKLvTWy0WYEudwaO/6gUMlcoe7JKT+mo/GRITY+/hv5Y90UzHGM5fJ9BKpEAyfD1e
- t7JN6eHs+BhSvhVd2uSnZ+KvSi/6woK7vnnTt6eYL6G1Us8dOClTmjjf/gaAsBOmmpV6dV0
- rnbwazJAbN+Af1H7OeWgks=
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-XMAILINFO: NG63YEgwc4yzF4rfTkYgbOHa1MO96gxgajJbCoqa9hTADphfZRs1kf9a
+ xWjNl3AnTaIwip0gz36qtFw879Re4TdVp/uCP2O4yJSUIGnojRhnCDJSUtn3YRR6IN0+HXj
+ +NzR6s0tboKqZsQ6iPGOT3uP/jrdnSaOkJf8mMY9jd/DFXBwqyEUqdKDloxrxVgBl/qOnZi
+ 1+KzVOBne+rNrUd+tTvk5t3kcbG9HFMG2YrYpVqH9iLUmCqIq3HWY6tYxNjkQgyQQWPGzyo
+ Z9zITj8WlnKQ0kWoosrGYVOBEkvZeyLktYetefWtwG3dKu/l0wAp6hIHSV3Vgw0VBhNnYJa
+ y2jmUU8wjCwSbb3yLO82bedry7z9adccZE93Fr0wPfd90mnKgVkv4SQSNvZGN0H4VTpgpZ4
+ gdKkhpp0s1a+B10v3MOMWJbg2L3jM6NR+XiES8xrhnTl2IJGjQ3dR5MqQ6BOv5zjtnDL3mD
+ 2jBsyx3QVxx+0sV9HcGcPNwouImW8EyWwlVekoEBl2gaMKzDFAIQgQGMdbOsgShWf+Up6GT
+ cfKGWx/y2///+bEp6ik2PI5KXl6qrNM6C5OE/44ZZRSmdkeAIsQlzJ49+4ygwFnwB5wLpYp
+ VVNORQV6v97KzyukIv+g1AKvaAbGGjJ8Pl3Ub0jO0SCVs+R8+wJ/L+3Mi/TSvwa3VdXSHlf
+ LjGgdaaQmnEM9+UsEji0/NsqVwAMe2cCFQWo8jflcAC+xjbGSV+a1tebLn01p57qTJkYr1f
+ GOanUI0o+1L7pdbWmu/t8eKzg/ylta3Fee9pTMgAP6OZstoz1wL7pcQ2eHrR7aLqGcKtzmu
+ vofF3BC1xMTIIDCpxPhpcH8tNsuyqneuGxGHiK5JPwMkzwYjkzkN2weAiCwSorT0aQd3fns
+ d3boV2zcUtHRuh0V3BehRJc3costRtHGuGlSLccd7tu4FfPr81c7fgWTbTRX4RdTfdhk3cV
+ v/yN7jBcv450sX6DwLBy0x5FESaR5noQfQi2QZ2kxRNGhRKRh3aa23elxxRd6sGkWiDMYi2
+ g9fYE5GyH9SlRWOWc465p+pAzoCDdRqjqwrhwvtSBHBq4P5cQf+dLf4lPthmCsjYKKs8xNc
+ w==
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -64,70 +66,37 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This series fixes several issues found on Wangxun Emerald, Sapphire and
-Amber-lite NICs, with a focus on link-related problems.
----
-v3:
-- Addressed Stephen's comments
----
-v2:
-- Fixed compilation error and code style issues
----
+Remove four redundant counters (tx_xon_packets, rx_xon_packets,
+tx_xoff_packets and rx_xoff_packets) from xstats, as they were duplicates
+of tx_flow_control_xon_packets and others. Both sets were reading the same
+registers but being output twice under different names. After removing
+these entries, the flow control counters in DPDK now align with those in
+our Linux kernel driver.
 
-Zaiyu Wang (20):
-  net/txgbe: remove duplicate xstats counters
-  net/ngbe: remove duplicate xstats counters
-  net/ngbe: add missing CDR config for YT PHY
-  net/ngbe: fix VF promiscuous and allmulticast
-  net/txgbe: fix inaccuracy in TX rate limiting
-  net/txgbe: fix link status check condition
-  net/txgbe: fix Tx desc free logic
-  net/txgbe: fix link flow control registers for Amber-Lite
-  net/txgbe: fix link flow control config for Sapphire
-  net/txgbe: fix a mass of unknown interrupts
-  net/txgbe: fix traffic class priority configuration
-  net/txgbe: fix link stability for 25G NIC
-  net/txgbe: fix link stability for 40G NIC
-  net/txgbe: fix link stability for Amber-Lite backplane mode
-  net/txgbe: fix FEC mode configuration on 25G NIC
-  net/txgbe: fix SFP module identification
-  net/txgbe: fix get module info operation
-  net/txgbe: fix get eeprom operation
-  net/txgbe: fix to reset Tx write-back pointer
-  net/txgbe: fix to enable Tx desc check
+Fixes: 91fe49c87d76 ("net/txgbe: support device xstats")
+Cc: stable@dpdk.org
 
- drivers/net/ngbe/base/ngbe_phy_yt.c       |    3 +
- drivers/net/ngbe/ngbe_ethdev.c            |    5 -
- drivers/net/ngbe/ngbe_ethdev_vf.c         |   11 +-
- drivers/net/txgbe/base/meson.build        |    2 +
- drivers/net/txgbe/base/txgbe.h            |    2 +
- drivers/net/txgbe/base/txgbe_aml.c        |  187 +-
- drivers/net/txgbe/base/txgbe_aml.h        |    6 +-
- drivers/net/txgbe/base/txgbe_aml40.c      |  113 +-
- drivers/net/txgbe/base/txgbe_aml40.h      |    6 +-
- drivers/net/txgbe/base/txgbe_dcb_hw.c     |    2 +-
- drivers/net/txgbe/base/txgbe_e56.c        | 3774 +++++++++++++++++++++
- drivers/net/txgbe/base/txgbe_e56.h        | 1744 ++++++++++
- drivers/net/txgbe/base/txgbe_e56_bp.c     | 2593 ++++++++++++++
- drivers/net/txgbe/base/txgbe_e56_bp.h     |  278 ++
- drivers/net/txgbe/base/txgbe_hw.c         |   54 +-
- drivers/net/txgbe/base/txgbe_hw.h         |    4 +-
- drivers/net/txgbe/base/txgbe_osdep.h      |    4 +
- drivers/net/txgbe/base/txgbe_phy.c        |  360 +-
- drivers/net/txgbe/base/txgbe_phy.h        |   45 +-
- drivers/net/txgbe/base/txgbe_regs.h       |   11 +-
- drivers/net/txgbe/base/txgbe_type.h       |   43 +-
- drivers/net/txgbe/txgbe_ethdev.c          |  414 ++-
- drivers/net/txgbe/txgbe_ethdev.h          |    6 +-
- drivers/net/txgbe/txgbe_rxtx.c            |  102 +-
- drivers/net/txgbe/txgbe_rxtx.h            |    1 +
- drivers/net/txgbe/txgbe_rxtx_vec_common.h |   14 +-
- 26 files changed, 9350 insertions(+), 434 deletions(-)
- create mode 100644 drivers/net/txgbe/base/txgbe_e56.c
- create mode 100644 drivers/net/txgbe/base/txgbe_e56.h
- create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.c
- create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.h
+Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
+---
+ drivers/net/txgbe/txgbe_ethdev.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 5d360f8305..779874aac9 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -261,11 +261,6 @@ static const struct rte_txgbe_xstats_name_off rte_txgbe_stats_strings[] = {
+ 	HW_XSTAT(tx_size_1024_to_max_packets),
+ 
+ 	/* Flow Control */
+-	HW_XSTAT(tx_xon_packets),
+-	HW_XSTAT(rx_xon_packets),
+-	HW_XSTAT(tx_xoff_packets),
+-	HW_XSTAT(rx_xoff_packets),
+-
+ 	HW_XSTAT_NAME(tx_xon_packets, "tx_flow_control_xon_packets"),
+ 	HW_XSTAT_NAME(rx_xon_packets, "rx_flow_control_xon_packets"),
+ 	HW_XSTAT_NAME(tx_xoff_packets, "tx_flow_control_xoff_packets"),
 -- 
 2.21.0.windows.1
 
