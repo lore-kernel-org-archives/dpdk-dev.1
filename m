@@ -2,39 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FB8CD343F
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 06:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08352CD343F
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 06:47:59 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 2E6B9402AB;
-	Sat,  9 May 2026 08:37:03 +0200 (CEST)
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com
- [113.46.200.220])
- by mails.dpdk.org (Postfix) with ESMTP id C27E74026D
- for <dev@dpdk.org>; Sat,  9 May 2026 08:37:00 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 3EE82402AB;
+	Sat,  9 May 2026 08:47:59 +0200 (CEST)
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com
+ [113.46.200.217])
+ by mails.dpdk.org (Postfix) with ESMTP id 679A34026D
+ for <dev@dpdk.org>; Sat,  9 May 2026 08:47:57 +0200 (CEST)
 dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
  c=relaxed/relaxed; q=dns/txt; h=From;
- bh=beZ5IMXRx8N+W71Wm4S4O7nKSIlYU+8HpHlC0sXrrSI=;
- b=gsXcM3PeFdBHoh+sOrbj22Ruhx2W1c4yKJmz5dtMPcWOacJ1cYGDUlvanS00c3mJJe44L/22E
- mEXmRNyy3vtmOUm89Z5OyiHGPsW4d4og40QVB8wl6aFRzJbKuj2Mm58NmeQiAGWVOtHSrpdJBpr
- +A+ZIrQfkAZ1avCnXpJvnrw=
-Received: from mail.maildlp.com (unknown [172.19.162.197])
- by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4gCGLP6KByz12LDB;
- Sat,  9 May 2026 14:29:49 +0800 (CST)
+ bh=68i6CaVuhFdZpBtZZFrp9KG2D17E32vqZIfzCi0bgVs=;
+ b=WldFVMsrUG4jekNyZHEV36EjuRzhN0zk4qalfsxs0DpGFgyix/wamYGf+Fb7xmtGAJycBmI4j
+ 2R0bqfTlhrxFxZfisKKNQJYAduMhDOs09OinXq5pqtcb6vJkZvJ8+wcYlPuQOGfNiaYw6es9ERw
+ d2Sd/rmkSpBlZTjuWyGEJo0=
+Received: from mail.maildlp.com (unknown [172.19.163.0])
+ by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4gCGZx19yRzcZyn;
+ Sat,  9 May 2026 14:40:41 +0800 (CST)
 Received: from kwepemj100018.china.huawei.com (unknown [7.202.194.12])
- by mail.maildlp.com (Postfix) with ESMTPS id 70A1A40569;
- Sat,  9 May 2026 14:36:57 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id E9F3340561;
+ Sat,  9 May 2026 14:47:54 +0800 (CST)
 Received: from localhost.huawei.com (10.90.31.46) by
  kwepemj100018.china.huawei.com (7.202.194.12) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Sat, 9 May 2026 14:36:56 +0800
+ 15.2.1544.36; Sat, 9 May 2026 14:47:54 +0800
 From: Xingui Yang <yangxingui@huawei.com>
 To: <dev@dpdk.org>
 CC: <stephen@networkplumber.org>, <david.marchand@redhat.com>,
  <fengchengwen@huawei.com>, <lihuisong@huawei.com>, <liuyonglong@huawei.com>,
  <kangfenglong@huawei.com>
-Subject: [PATCH] net/hns3: fix L4 checksum incorrect for tunnel packets
-Date: Sat, 9 May 2026 14:36:56 +0800
-Message-ID: <20260509063656.3000266-1-yangxingui@huawei.com>
+Subject: [PATCH v2] net/hns3: fix L4 checksum incorrect for tunnel packets
+Date: Sat, 9 May 2026 14:47:53 +0800
+Message-ID: <20260509064753.3292074-1-yangxingui@huawei.com>
 X-Mailer: git-send-email 2.33.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -74,7 +74,7 @@ using simple BD mode, including NvGRE, VxLAN, GRE, GENEVE tunnels.
 Fix by adding outer_l2_len and outer_l3_len to L4_START calculation
 when RTE_MBUF_F_TX_TUNNEL_MASK flag is set.
 
-Fixes: 6393fc0b823 ("net/hns3: simplify hardware checksum offloading")
+Fixes: 6393fc0b823c ("net/hns3: simplify hardware checksum offloading")
 Cc: stable@dpdk.org
 
 Signed-off-by: Xingui Yang <yangxingui@huawei.com>
