@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63FCCD343F
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:28:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B43CD37B2
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:29:03 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D29B74026D;
-	Sat,  9 May 2026 13:28:57 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id EC8D140269;
- Sat,  9 May 2026 13:28:55 +0200 (CEST)
-X-QQ-mid: zesmtpgz1t1778326125t82265b28
-X-QQ-Originating-IP: JvGNLy8pvgIa3Gz4vsUqJ7R8NK7p05h6Cc0EhjO+bdo=
+	by mails.dpdk.org (Postfix) with ESMTP id CDFC240658;
+	Sat,  9 May 2026 13:28:58 +0200 (CEST)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+ by mails.dpdk.org (Postfix) with ESMTP id 48D04402E8;
+ Sat,  9 May 2026 13:28:56 +0200 (CEST)
+X-QQ-mid: zesmtpgz1t1778326133t8f6994bf
+X-QQ-Originating-IP: mhq1Znyio1JFU6y3iL2O+kBlQ4EJO194hSCa60gdfM0=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Sat, 09 May 2026 19:28:35 +0800 (CST)
+ id ; Sat, 09 May 2026 19:28:47 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2553874047074953984
-EX-QQ-RecipientCnt: 5
+X-BIZMAIL-ID: 16998547991422203135
+EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>, Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH v3 01/20] net/txgbe: remove duplicate xstats counters
-Date: Sat,  9 May 2026 19:28:03 +0800
-Message-Id: <20260509112823.7728-2-zaiyuwang@trustnetic.com>
+ Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: [PATCH v3 02/20] net/ngbe: remove duplicate xstats counters
+Date: Sat,  9 May 2026 19:28:04 +0800
+Message-Id: <20260509112823.7728-3-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260509112823.7728-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NG63YEgwc4yzF4rfTkYgbOHa1MO96gxgajJbCoqa9hTADphfZRs1kf9a
- xWjNl3AnTaIwip0gz36qtFw879Re4TdVp/uCP2O4yJSUIGnojRhnCDJSUtn3YRR6IN0+HXj
- +NzR6s0tboKqZsQ6iPGOT3uP/jrdnSaOkJf8mMY9jd/DFXBwqyEUqdKDloxrxVgBl/qOnZi
- 1+KzVOBne+rNrUd+tTvk5t3kcbG9HFMG2YrYpVqH9iLUmCqIq3HWY6tYxNjkQgyQQWPGzyo
- Z9zITj8WlnKQ0kWoosrGYVOBEkvZeyLktYetefWtwG3dKu/l0wAp6hIHSV3Vgw0VBhNnYJa
- y2jmUU8wjCwSbb3yLO82bedry7z9adccZE93Fr0wPfd90mnKgVkv4SQSNvZGN0H4VTpgpZ4
- gdKkhpp0s1a+B10v3MOMWJbg2L3jM6NR+XiES8xrhnTl2IJGjQ3dR5MqQ6BOv5zjtnDL3mD
- 2jBsyx3QVxx+0sV9HcGcPNwouImW8EyWwlVekoEBl2gaMKzDFAIQgQGMdbOsgShWf+Up6GT
- cfKGWx/y2///+bEp6ik2PI5KXl6qrNM6C5OE/44ZZRSmdkeAIsQlzJ49+4ygwFnwB5wLpYp
- VVNORQV6v97KzyukIv+g1AKvaAbGGjJ8Pl3Ub0jO0SCVs+R8+wJ/L+3Mi/TSvwa3VdXSHlf
- LjGgdaaQmnEM9+UsEji0/NsqVwAMe2cCFQWo8jflcAC+xjbGSV+a1tebLn01p57qTJkYr1f
- GOanUI0o+1L7pdbWmu/t8eKzg/ylta3Fee9pTMgAP6OZstoz1wL7pcQ2eHrR7aLqGcKtzmu
- vofF3BC1xMTIIDCpxPhpcH8tNsuyqneuGxGHiK5JPwMkzwYjkzkN2weAiCwSorT0aQd3fns
- d3boV2zcUtHRuh0V3BehRJc3costRtHGuGlSLccd7tu4FfPr81c7fgWTbTRX4RdTfdhk3cV
- v/yN7jBcv450sX6DwLBy0x5FESaR5noQfQi2QZ2kxRNGhRKRh3aa23elxxRd6sGkWiDMYi2
- g9fYE5GyH9SlRWOWc465p+pAzoCDdRqjqwrhwvtSBHBq4P5cQf+dLf4lPthmCsjYKKs8xNc
- w==
-X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-QQ-XMAILINFO: ONMinSPvVgZROAHN1YknHSEpGAnSf/FW9/U3zQX9MnzibpT3aKvoIato
+ IYOrKr17JfHA3JOdwXwIVsXiw2Wnb2G3ZkykzPEiE8XXSst1xmJ1HlRVrh182uYTWTNQnbR
+ Duc+dxWWb+lTSuyhsMOkkq9LOo/qQeLLgb9vMkYPgrbM7ZIkcMhIf77iUM/Uq2hRi0G7zAV
+ 2zMujyLqzTbsIab2IJUNexpnoP9EHUhkDDxh2tnqMxnmY6yu7NJb/8ir9aiy/BlcSc7gD1E
+ PRWqDeEigbuI9/MVmAhkMqeXuT4+/nE/23aY5ky+k+ojkWLV5lG0TRR/md5XWEsGhHPv79d
+ QmqXZA9q5O3eR69UTNQTto3F+K6rhOG1oX3NnvFm0ibCw2J5Gg/Ku2CtscbssPM/OAD2wb0
+ YmQkTL2ovet5k/3euhLzWbFZnUIQvfF4KVlRneowMcrvU0lVevCreZGnpKTVa1K2fTg30s2
+ sF7o65zSNfSDdhJQWNiVmwij9CdqyUgePKXZRy3oXOv46xI7Ok/RXmiQD2rqG76Y4oqHD87
+ eaeth+cAyzmOX0lCAsDnkKEmeDRQWB2K5HXanh9G6XhmlYujV/8IvJ9SO0Vow03VX50cL5U
+ kdhsV8xnZGrBVoNRWYxIHgRX2/rYajd7Z90YO8ai+8q+nz/+INbYzrlt+7u7c3B5JgTa4tt
+ iULom0Gbc5T9hN61GhjMwTXv/Y0eUJNdTqNqVcFORRm340IzqlKX5cDaEH76qlZKgFmv7um
+ LQk6oHg/dL7VdXm397z6DvzyfezJUstpeM4yGoKYpdh5bXzAVWuKeHpn8tHwftQn6qSmj5A
+ d8Yw6ijpTdsCm+r/EwhpJKfTOmocU+qRSeVmTbmgXjwZkFmC5rwObmRct3nneEaTci3+7p4
+ RovBpCkEs1PIEkVYT4K056CBefaXcKY9AubWcyiSPrjeisekUN3BrrsgxZtqBC+vgc3HTHF
+ iJFqQxUffWSRPrxr7LKjEljxxg23gjd7U6zONAwXHWDWPrUFgExwUafSWVBx/liMIo0ZYa9
+ YxSPIX+Zkxw8EbPuXBHHt10BeNumFpE75ByJ8A+IDB+k2PMPaXdEU+jOpdBS0F24w5HTRyl
+ gMZ3WAu/u1m69xJz2xGf6XGZ1NTDVcQAoDtsGhZrwLL
+X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -73,19 +73,19 @@ registers but being output twice under different names. After removing
 these entries, the flow control counters in DPDK now align with those in
 our Linux kernel driver.
 
-Fixes: 91fe49c87d76 ("net/txgbe: support device xstats")
+Fixes: 8b433d04adc9 ("net/ngbe: support device xstats")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_ethdev.c | 5 -----
+ drivers/net/ngbe/ngbe_ethdev.c | 5 -----
  1 file changed, 5 deletions(-)
 
-diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
-index 5d360f8305..779874aac9 100644
---- a/drivers/net/txgbe/txgbe_ethdev.c
-+++ b/drivers/net/txgbe/txgbe_ethdev.c
-@@ -261,11 +261,6 @@ static const struct rte_txgbe_xstats_name_off rte_txgbe_stats_strings[] = {
+diff --git a/drivers/net/ngbe/ngbe_ethdev.c b/drivers/net/ngbe/ngbe_ethdev.c
+index 8b9d6371fb..6df53f3266 100644
+--- a/drivers/net/ngbe/ngbe_ethdev.c
++++ b/drivers/net/ngbe/ngbe_ethdev.c
+@@ -227,11 +227,6 @@ static const struct rte_ngbe_xstats_name_off rte_ngbe_stats_strings[] = {
  	HW_XSTAT(tx_size_1024_to_max_packets),
  
  	/* Flow Control */
