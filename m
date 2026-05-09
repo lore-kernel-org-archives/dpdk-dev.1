@@ -2,48 +2,48 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1E1CD3447
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 22:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FC2BCD3447
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 22:04:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8DE2E4026D;
-	Sun, 10 May 2026 00:04:15 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id 026FB40269
- for <dev@dpdk.org>; Sun, 10 May 2026 00:04:14 +0200 (CEST)
-Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 2E8A57A0070;
- Sat,  9 May 2026 18:04:14 -0400 (EDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 68A054060A;
+	Sun, 10 May 2026 00:04:22 +0200 (CEST)
+Received: from fout-b4-smtp.messagingengine.com
+ (fout-b4-smtp.messagingengine.com [202.12.124.147])
+ by mails.dpdk.org (Postfix) with ESMTP id 53ED54042E
+ for <dev@dpdk.org>; Sun, 10 May 2026 00:04:20 +0200 (CEST)
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+ by mailfout.stl.internal (Postfix) with ESMTP id 9547A1D0005C;
+ Sat,  9 May 2026 18:04:19 -0400 (EDT)
 Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-11.internal (MEProxy); Sat, 09 May 2026 18:04:14 -0400
+ by phl-compute-03.internal (MEProxy); Sat, 09 May 2026 18:04:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:date:date:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1778364253; x=
- 1778450653; bh=7xzEpD/lvRPhw7DnRCEXzPwFMz83j9ayTQ/6wjSvb5s=; b=d
- I9TammIEH/ArLBC8Y89F+Y+AfJEQNvHfR79McgAxg59WG74u0gGC9oz9AuSGG6cU
- +ltlD2wORXJtVr73TiNB1RvblXaHjEm4wesvacvtj7mnTGB67fyOYYsUCCTvoNRe
- 0ix7qkas9j2sY2NJVpCHz6o9xxTBgAs+Ipix+JJONMFepZcxVnaUsB5wmf+nPWw3
- 7SVP1GIM3BTDBwC1rvVEH80uAqZU9ro5xDXznNgUHz7VFmeoNSVd7w0QngxxRmAw
- uooc3qMjmcX27WLAaT1wbBYEcJtrhek9vVXqW5WgaXLNtjEWTaW9dSpsZEyh0Yi6
- aEmB4miE7ODkI+gUaW2VA==
+ :reply-to:subject:subject:to:to; s=fm3; t=1778364259; x=
+ 1778450659; bh=YHkdGsuMY62M/AuEMvbvksloJujTz6zangkqphvdY8k=; b=e
+ BDdaexN1j59oCcFWCtU/Z7X/f2GLVf6UmbNonfty3Ae6zhVu3DB9O2gDMQQ1VJuF
+ oVZH0OUW8GkT1PiRB2NpSfqcHhm+nLfCEEzSw/rHql375VtCO3u/57ZpU1Z+3wW6
+ 5H0yFjyhk4FG58bNPM9LoxwdCEcsFADw9ZX6rFt4e6jvU4q2c0VYzJ/VEKkAKYCc
+ ZhUa5fHDn5Gj5TrxOZgYRGl/iPrcw6PxTyLLnbaJSARsJSroLBWApGnwB600GUUQ
+ 86Q+nypttTlA1QNs+W0kXOB/EH5LIRJraU01jE6QK8sgFtaxhw+1qyKCFk7Vmc1z
+ +Kennes2RqrizK6YAX8Ng==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:date:date:feedback-id:feedback-id:from:from
  :in-reply-to:in-reply-to:message-id:mime-version:references
  :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1778364253; x=1778450653; bh=7
- xzEpD/lvRPhw7DnRCEXzPwFMz83j9ayTQ/6wjSvb5s=; b=nX5ZCSiCjinrK5Y7n
- s9Edq9ayIWEC8fDDNblaFtGwGwZsbnNYLqGb9QvZPwUPtmsClCasviIPTtk0vrdB
- KjYJZ+D96KvQfqWfpk42YeVJ3en0i4Ipwq1mQCnCEzsZcr3Vtb9HVr9gB5mgRWZv
- CJmXjcYKE5FUMsLXKNOEKCVZ3ceCAIDe3D/IhuD2fpcUloRX7GPvPedNf1q/qb8N
- pU/ro1VbM2qaMLxGcy8HAFjSb7JBG2w7VLdgzeDud76lLnTzcYaDAo+NOU0JsudO
- aDejq3fFrnutzO4jeLYX7vJ9rAPbljFCIPVqyY/40t8RcLCvZLwYIfVhEm6AAFBe
- PfCWA==
-X-ME-Sender: <xms:Xa__aTfp_XOLfQ9CavHzoGGW4bCViORoglGKlLrvvmYYQSmhy-Tdsg>
- <xme:Xa__aVijAvXLD-U0cfPEPYx81FgtpkoCIHrQo90ARMTnRDLG59Veq7NZD9E7NV-TF
- SZTEY7_ZI97zZ68BaCiJCLo9BE_nkFJS0kSX7Qx5m0xCGtic7PWWg>
-X-ME-Received: <xmr:Xa__afSl_6TCRPUydlLHvmpgXtrkYkWs3ZnmkvsGcZCsvsewodVPBin6uCjdKEFgHNmf3CG2F-M5wIbpNLUC5t_xtAzkNx4>
+ :x-me-sender:x-sasl-enc; s=fm3; t=1778364259; x=1778450659; bh=Y
+ HkdGsuMY62M/AuEMvbvksloJujTz6zangkqphvdY8k=; b=U5AfnL6XF5lK4kHdU
+ k8zzYvKot1LyGR/S+/zhtRhOvAKY9RtTAXF/vF+zbIcW0UfMYQw3mT40EdpfEMBk
+ qMh77pOkjuLhnDnBizh69O6ys+VAZiThRuBA5H4nNblVKo9940ixMdFW2LdYl7Rp
+ 8zH3EQIxADxesEX+9q1CaEq8nFAopD+DZU2yibSxUVPPx+3gqSDJb6EOYeF/QYDf
+ HZjDebPHMsJEYuj2HyQo7nlhVZghOrwLiDYQfd0qUumZnVSPgx2JKGx+jnuhgLc7
+ xOz58cC6lLSEtBoClZWF1ZgFwzsaw32olu/fLCrzay6ZBT5Dh+ECj53dpiaHe401
+ 7Bcbw==
+X-ME-Sender: <xms:Yq__aX8tAsqGVIUG09JAojLTvTUHiyTifyCCLl8XXWmIRdhk0RE2fg>
+ <xme:Yq__aYBkeaioWqlFE40BGdOWg5RKCv8vowQCgA_cdss3N-ezTEvMssduEuAhSs28K
+ 8p0ldestEic0PSFnpqTTomBlvp8-S8SegVXOvUazNWJuv0TPnp_FQ>
+X-ME-Received: <xmr:Yq__aUJ9j01uerqhpIUW0n_bke2v84Frk0s2z3Ui_BlCJGy3iarCojt5tcoa19qerEbL2k5GmxnK3U7X5d0RdoyP3iYn7PI>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduudegfeekucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
@@ -51,26 +51,29 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduudegfeekucetufdote
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
  hfeilefhtdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeefpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
- htthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrgh
-X-ME-Proxy: <xmx:Xa__aWyAdl3PwDla0hb3-XhH1aNCar2Dea7ofpjnK_zuWzCh1U4BBw>
- <xmx:Xa__aSesroLPzl2EeFwieSA5tTNotGi1-DHQvePDGpdr1R7ntMBiFQ>
- <xmx:Xa__aaKf2EBBXT9TQbR1dzF9U9nJAn6dz8wsAYhy6kLqdiJJ8cWwXw>
- <xmx:Xa__abEBxsqb144xp1kob4t-6o8oknifcCKmHhxuwlhd0tRMJhotPQ>
- <xmx:Xa__aW_I53f5TyruVc4-8y-qVJ4XkXH1EErXLNp0Q8jbLDsseAqOBC7i>
+ htthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphht
+ thhopegrmhgrnhdruggvvghprdhsihhnghhhsehinhhtvghlrdgtohhm
+X-ME-Proxy: <xmx:Yq__abmYS1dSfRO60gK7GChYDYS8oLXn7-8nwSwCjtkbQQQRL37zKw>
+ <xmx:Yq__aSFFcIPT4zke4pK7DesrOaRAVgmGUsKddsew8d366iM1-dUfPA>
+ <xmx:Yq__abGYHxZOjjhG53cKbj4N9uby6bClDjQgBP8f1GUeoQwEICPcxQ>
+ <xmx:Yq__afOEMHo7CV5_Xjg52n0MegZ7Gt-I8dffyxsMwv57b8_3uUzNPg>
+ <xmx:Y6__aS6U14ABafGPJTbJP5hhkVT1jOPYepXc6SAe9z0FTM35NCGGREPY>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 9 May 2026 18:04:13 -0400 (EDT)
+ 9 May 2026 18:04:18 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH v2 00/10] selective Rx
-Date: Sat,  9 May 2026 23:56:51 +0200
-Message-ID: <20260509220356.3679114-1-thomas@monjalon.net>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Aman Singh <aman.deep.singh@intel.com>
+Subject: [PATCH v2 01/10] app/testpmd: print Rx split capabilities
+Date: Sat,  9 May 2026 23:56:52 +0200
+Message-ID: <20260509220356.3679114-2-thomas@monjalon.net>
 X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260202160903.254621-1-getelson@nvidia.com>
+In-Reply-To: <20260509220356.3679114-1-thomas@monjalon.net>
 References: <20260202160903.254621-1-getelson@nvidia.com>
+ <20260509220356.3679114-1-thomas@monjalon.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -86,69 +89,48 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-This is a new feature in ethdev with tests and mlx5 implementation.
-Selective Rx allows to receive partial data,
-saving some hardware bandwidth.
+The capabilities from rte_eth_rxseg_capa are added
+to the command "show port info".
 
-Note 1: mlx5 support patch is not correctly indented
-to make review easier. An indent patch follows to be squashed.
+Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+---
+ app/test-pmd/config.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-Note 2: DTS patch is an attempt to test the feature on day 1,
-it is not mandatory if it is blocking the merge.
-
-
-Gregory Etelson (4):
-  ethdev: introduce selective Rx
-  app/testpmd: support selective Rx
-  common/mlx5: add null MR functions
-  net/mlx5: support selective Rx
-
-Thomas Monjalon (6):
-  app/testpmd: print Rx split capabilities
-  net/mlx5: fix Rx split segment counter type
-  net/mlx5: reindent previous changes
-  common/mlx5: remove callbacks for MR registration
-  dts: fix topology capability comparison
-  dts: add selective Rx tests
-
- app/test-pmd/config.c                         |  17 ++
- app/test-pmd/testpmd.c                        |  69 ++++-
- devtools/libabigail.abignore                  |   7 +
- doc/guides/nics/features.rst                  |  14 +
- doc/guides/nics/features/default.ini          |   1 +
- doc/guides/nics/features/mlx5.ini             |   1 +
- doc/guides/nics/mlx5.rst                      |  86 ++++--
- doc/guides/rel_notes/release_26_07.rst        |  11 +
- doc/guides/testpmd_app_ug/run_app.rst         |  20 ++
- drivers/common/mlx5/linux/mlx5_common_verbs.c |  53 ++--
- drivers/common/mlx5/mlx5_common.c             |   6 +-
- drivers/common/mlx5/mlx5_common_mr.c          |  37 ++-
- drivers/common/mlx5/mlx5_common_mr.h          |  29 +-
- drivers/common/mlx5/windows/mlx5_common_os.c  |  31 ++-
- drivers/compress/mlx5/mlx5_compress.c         |   4 +-
- drivers/crypto/mlx5/mlx5_crypto.h             |   2 -
- drivers/crypto/mlx5/mlx5_crypto_gcm.c         |   6 +-
- drivers/net/mlx5/mlx5.c                       |   7 +
- drivers/net/mlx5/mlx5.h                       |   4 +-
- drivers/net/mlx5/mlx5_ethdev.c                |  25 ++
- drivers/net/mlx5/mlx5_flow_aso.c              |  21 +-
- drivers/net/mlx5/mlx5_flow_hw.c               |  11 +-
- drivers/net/mlx5/mlx5_flow_quota.c            |   6 +-
- drivers/net/mlx5/mlx5_hws_cnt.c               |  19 +-
- drivers/net/mlx5/mlx5_rx.c                    | 162 ++++++-----
- drivers/net/mlx5/mlx5_rx.h                    |   5 +-
- drivers/net/mlx5/mlx5_rxq.c                   |  75 +++--
- drivers/net/mlx5/mlx5_trigger.c               |  64 ++++-
- dts/api/capabilities.py                       |   2 +
- dts/api/testpmd/__init__.py                   |  17 ++
- dts/api/testpmd/types.py                      |   6 +
- dts/framework/testbed_model/capability.py     |  10 +-
- dts/tests/TestSuite_rx_split.py               | 262 ++++++++++++++++++
- lib/ethdev/rte_ethdev.c                       |  24 +-
- lib/ethdev/rte_ethdev.h                       |  14 +-
- 35 files changed, 857 insertions(+), 271 deletions(-)
- create mode 100644 dts/tests/TestSuite_rx_split.py
-
+diff --git a/app/test-pmd/config.c b/app/test-pmd/config.c
+index 32c885de0b..af725fb74e 100644
+--- a/app/test-pmd/config.c
++++ b/app/test-pmd/config.c
+@@ -790,6 +790,12 @@ rss_offload_types_display(uint64_t offload_types, uint16_t char_num_per_line)
+ 	printf("\n");
+ }
+ 
++static void
++print_bool_capa(const char *label, int value)
++{
++	printf("%s: %s\n", label, value ? "supported" : "not supported");
++}
++
+ void
+ port_infos_display(portid_t port_id)
+ {
+@@ -911,6 +917,16 @@ port_infos_display(portid_t port_id)
+ 		dev_info.max_rx_pktlen);
+ 	printf("Maximum configurable size of LRO aggregated packet: %u\n",
+ 		dev_info.max_lro_pkt_size);
++
++	printf("Rx split:\n");
++	printf("\tMax segments: %hu\n", dev_info.rx_seg_capa.max_nseg);
++	if (dev_info.rx_seg_capa.max_nseg > 0) {
++		print_bool_capa("\tMulti-pool", dev_info.rx_seg_capa.multi_pools);
++		print_bool_capa("\tBuffer offset", dev_info.rx_seg_capa.offset_allowed);
++		printf("\tOffset alignment: %u\n",
++				RTE_BIT32(dev_info.rx_seg_capa.offset_align_log2));
++	}
++
+ 	if (dev_info.max_vfs)
+ 		printf("Maximum number of VFs: %u\n", dev_info.max_vfs);
+ 	if (dev_info.max_vmdq_pools)
 -- 
 2.54.0
 
