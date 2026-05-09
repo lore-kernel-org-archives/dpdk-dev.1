@@ -2,45 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F3F2CD343F
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 12:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 212DCCD3447
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 15:44:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0FFED402E8;
-	Sat,  9 May 2026 14:36:26 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 8F153402D9
- for <dev@dpdk.org>; Sat,  9 May 2026 14:36:25 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.107])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gCQSy5SJhzJ46BM
- for <dev@dpdk.org>; Sat,  9 May 2026 20:36:02 +0800 (CST)
-Received: from dubpeml100004.china.huawei.com (unknown [7.214.146.78])
- by mail.maildlp.com (Postfix) with ESMTPS id C2A594058D
- for <dev@dpdk.org>; Sat,  9 May 2026 20:36:24 +0800 (CST)
-Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
- dubpeml100004.china.huawei.com (7.214.146.78) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Sat, 9 May 2026 13:36:24 +0100
-Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
- dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
- Sat, 9 May 2026 13:36:24 +0100
-From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-To: Marat Khalili <marat.khalili@huawei.com>
-CC: "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH 00/25] bpf: test and fix issues in verifier
-Thread-Topic: [PATCH 00/25] bpf: test and fix issues in verifier
-Thread-Index: AQHc3X9RfaWrMbk0AEasnb/WpYFhq7YFpc6g
-Date: Sat, 9 May 2026 12:36:24 +0000
-Message-ID: <a9ce38e21c254f4fbf75824586edcdbd@huawei.com>
-References: <20260506173846.64914-1-marat.khalili@huawei.com>
-In-Reply-To: <20260506173846.64914-1-marat.khalili@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.48.154.35]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by mails.dpdk.org (Postfix) with ESMTP id B284B4026D;
+	Sat,  9 May 2026 17:44:42 +0200 (CEST)
+Received: from mail-dy1-f173.google.com (mail-dy1-f173.google.com
+ [74.125.82.173]) by mails.dpdk.org (Postfix) with ESMTP id E16FF4026E
+ for <dev@dpdk.org>; Sat,  9 May 2026 17:44:40 +0200 (CEST)
+Received: by mail-dy1-f173.google.com with SMTP id
+ 5a478bee46e88-2f3c623322bso4780740eec.0
+ for <dev@dpdk.org>; Sat, 09 May 2026 08:44:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778341480;
+ x=1778946280; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=HVS3O5vGrO0XxjOoBP50MXFO/cWD2ug+52191dIpi38=;
+ b=YT4jXlvAeRXf8VeU91xmHFX/TPNMiXqTbRgqXrQ8M7Yz/6bHB6KWeG5r2UeSPPitAb
+ Z29y3GpH6GcXWlfI79ZOXgFQ4u6yrYCSwritjrQuwbCk4f/jz1GpN8HJ2TLhCoEihE7f
+ pblezaJ7D6jW5FO5NEoxoKoZoZC9t0Qc0J9igpog3ukvJZAOnAxRMZKEzfQSZ0juXvj/
+ rvVK8XQjuLbrIw6cd2Oln6oWmE1NXvts+DCi7LjT7idrcVwqzlS1vHS6sJGhYiTAbOgk
+ ROBUFU8HL4pOALTcbUJ+sKaw2Zu0HomIguCQy0CrmIMbnSlclO20lebZ1SfU9i0JGqPm
+ 45Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778341480; x=1778946280;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=HVS3O5vGrO0XxjOoBP50MXFO/cWD2ug+52191dIpi38=;
+ b=cmMPqI5LJrk/u1Gp2acnn676tKDF0lyWzYyRfPuzwYUjBofRuxq6Y7iWl4EuzA8wDs
+ +bY2Be1n3+JxVhvGiAH5uUmTf7LpcpkcA3B9C3PxKqKgEKY9OYcWgzz++CZzGL2NsuZf
+ l31bTVLUikKwIT+7hxe8rGgboVTZzKpBTuQQW7wJjNITlZORIYUrNFEDcHC15kjTmNMZ
+ ERLgC56Uogs5+0Cm38jzxhIwyN4zq2ppYWUk5/apTxJwQb/M7DRyoRahUcI+HAgJpYT7
+ 6bPMUsrQUhwTu5kHJ8eyT7hTr8W45MPkZFbtFYemhLfcY9LFzFA/UInSKmsZHcMKieb1
+ R0Lg==
+X-Gm-Message-State: AOJu0YzcINOQtLfzLeyU2GtqG7YvgdavauO9+7gwwv5HUPoSNVbU8Qfh
+ ImKQJuiicG/ypiJxiVZ6La/E5l4/GGHCecHHX8JEFfYS47b1EKRe+QsO2RgNDmWOmuQBJRCZTTx
+ 07wOK
+X-Gm-Gg: Acq92OF9D5KEQkqo9joo0+1aSJ9iTTMkcttx4pS0weFr5afd8FEovAqGD6n277qG/H+
+ vY/xlmedys+h9GfK1kQuAIh51kXVexUM4g3M5dh1zfYC97e6G6Vog+5vLQtkzS6e4JpNlyRyI6l
+ TBoxRi/pFmcf/sZ85hN3CYznw08n4Vq5seDFIsQJTBK5RxETrk39pR0ct/D7SR2L+IE89ATX+yY
+ lxhmeFgrnvq4ceCU1jE338+34SfQ60kMJWClmAYuun2Gth9lCV+S4FsiPB6wdi8Eqhd+f0RB6by
+ +jYzLxFohkxYm6zK2KYddfDYbHUhit6H92IKpSF2t9bePFVSoZb0cGSIhNXHIVOZZYsTcmHdS3K
+ CqP+jrKekZye35ysagYHuyQflFhLuhqjamGOEJg6t1i+mlwx++ht4Nazi/4czdZ5YTxM5+mCa7c
+ /hOPLiySybPi9jNDdjtOWgO8pzyu1AXz+jWbU=
+X-Received: by 2002:a05:7300:df4b:b0:2be:142f:d499 with SMTP id
+ 5a478bee46e88-2f54c971297mr7981178eec.16.1778341479514; 
+ Sat, 09 May 2026 08:44:39 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2f888e381c9sm6418999eec.26.2026.05.09.08.44.38
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sat, 09 May 2026 08:44:39 -0700 (PDT)
+Date: Sat, 9 May 2026 08:44:36 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v3 00/20] Wangxun Fixes
+Message-ID: <20260509084436.1a016049@phoenix.local>
+In-Reply-To: <20260509112823.7728-1-zaiyuwang@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
+ <20260509112823.7728-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -54,93 +81,72 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+On Sat,  9 May 2026 19:28:02 +0800
+Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 
-> This patchset addresses numerous bugs in the BPF verifier's abstract
-> interpretation logic and introduces a new validation debugger API to
-> enable precise, robust testing of the verifier itself.
->=20
-> While the existing DPDK eBPF verifier is capable of checking basic
-> execution graph loops and dead code, the mathematical tracking of
-> register bounds (both signed and unsigned) contained flaws resulting in
-> false positives and false negatives, undefined behavior, and hardware
-> exceptions such as SIGFPE during validation.
->=20
-> To resolve these issues and ensure they do not regress, this patchset
-> first introduces the "Validation Debugger API"
-> (`rte_bpf_validate_debug_*`). This gdb-like interface allows setting
-> breakpoints and catchpoints during the validation process to inspect the
-> verifier's internal state.
->=20
-> Using this new API, a comprehensive test harness
-> (`app/test/test_bpf_validate.c`) was created to formally check the
-> abstract domains of instructions across all their valid branches. The
-> remainder of the patchset incrementally fixes the math and bounds logic
-> for individual eBPF instructions, using the new tests to prove the
-> correctness of the fixes.
->=20
-> This debugger API also lays the foundation for an interactive eBPF
-> validation debugger to be introduced in the future.
->=20
-> Depends-on: series-38068 ("bpf: introduce extensible load API")
->=20
-> Marat Khalili (25):
->   bpf: format and dump jlt, jle, jslt, and jsle
->   bpf: add format instruction function
->   bpf/validate: break on error in evaluate
->   bpf/validate: expand comments in evaluate cycle
->   bpf/validate: introduce debugging interface
->   bpf/validate: fix BPF_ADD of pointer to a scalar
->   bpf/validate: fix BPF_LDX | EBPF_DW signed range
->   test/bpf_validate: add setup and basic tests
->   test/bpf_validate: add harness for pointer tests
->   bpf/validate: fix EBPF_JSLT | BPF_X evaluation
->   bpf/validate: fix BPF_NEG of INT64_MIN and 0
->   bpf/validate: fix BPF_DIV and BPF_MOD signed part
->   bpf/validate: fix BPF_MUL ranges minimum typo
->   bpf/validate: fix BPF_MUL signed overflow UB
->   bpf/validate: fix BPF_JGT/EBPF_JSGT no-jump max
->   bpf/validate: fix BPF_JMP source range calculation
->   bpf/validate: fix BPF_JMP empty range handling
->   bpf/validate: fix BPF_AND min calculations
->   bpf/validate: fix BPF_LSH shift-out-of-bounds UB
->   bpf/validate: fix BPF_OR min calculations
->   bpf/validate: fix BPF_SUB signed max zero case
->   bpf/validate: fix BPF_XOR signed min calculation
->   bpf/validate: prevent overflow when building graph
->   doc: add release notes for BPF validation fixes
->   doc: add BPF validate debug to programmer's guide
->=20
->  app/test/meson.build                   |    1 +
->  app/test/test_bpf.c                    |   99 ++
->  app/test/test_bpf_validate.c           | 2271 ++++++++++++++++++++++++
->  doc/guides/prog_guide/bpf_lib.rst      |   31 +
->  doc/guides/rel_notes/release_26_07.rst |   16 +
->  lib/bpf/bpf_dump.c                     |  292 +--
->  lib/bpf/bpf_validate.c                 |  730 +++++++-
->  lib/bpf/bpf_validate.h                 |   54 +
->  lib/bpf/bpf_validate_debug.c           |  663 +++++++
->  lib/bpf/bpf_validate_debug.h           |   86 +
->  lib/bpf/bpf_value_set.c                |  403 +++++
->  lib/bpf/bpf_value_set.h                |  126 ++
->  lib/bpf/meson.build                    |    9 +-
->  lib/bpf/rte_bpf.h                      |   55 +
->  lib/bpf/rte_bpf_validate_debug.h       |  377 ++++
->  15 files changed, 5016 insertions(+), 197 deletions(-)
->  create mode 100644 app/test/test_bpf_validate.c
->  create mode 100644 lib/bpf/bpf_validate.h
->  create mode 100644 lib/bpf/bpf_validate_debug.c
->  create mode 100644 lib/bpf/bpf_validate_debug.h
->  create mode 100644 lib/bpf/bpf_value_set.c
->  create mode 100644 lib/bpf/bpf_value_set.h
->  create mode 100644 lib/bpf/rte_bpf_validate_debug.h
->=20
-> --
+> This series fixes several issues found on Wangxun Emerald, Sapphire and
+> Amber-lite NICs, with a focus on link-related problems.
+> ---
+> v3:
+> - Addressed Stephen's comments
+> ---
+> v2:
+> - Fixed compilation error and code style issues
+> ---
+> 
+> Zaiyu Wang (20):
+>   net/txgbe: remove duplicate xstats counters
+>   net/ngbe: remove duplicate xstats counters
+>   net/ngbe: add missing CDR config for YT PHY
+>   net/ngbe: fix VF promiscuous and allmulticast
+>   net/txgbe: fix inaccuracy in TX rate limiting
+>   net/txgbe: fix link status check condition
+>   net/txgbe: fix Tx desc free logic
+>   net/txgbe: fix link flow control registers for Amber-Lite
+>   net/txgbe: fix link flow control config for Sapphire
+>   net/txgbe: fix a mass of unknown interrupts
+>   net/txgbe: fix traffic class priority configuration
+>   net/txgbe: fix link stability for 25G NIC
+>   net/txgbe: fix link stability for 40G NIC
+>   net/txgbe: fix link stability for Amber-Lite backplane mode
+>   net/txgbe: fix FEC mode configuration on 25G NIC
+>   net/txgbe: fix SFP module identification
+>   net/txgbe: fix get module info operation
+>   net/txgbe: fix get eeprom operation
+>   net/txgbe: fix to reset Tx write-back pointer
+>   net/txgbe: fix to enable Tx desc check
+> 
+>  drivers/net/ngbe/base/ngbe_phy_yt.c       |    3 +
+>  drivers/net/ngbe/ngbe_ethdev.c            |    5 -
+>  drivers/net/ngbe/ngbe_ethdev_vf.c         |   11 +-
+>  drivers/net/txgbe/base/meson.build        |    2 +
+>  drivers/net/txgbe/base/txgbe.h            |    2 +
+>  drivers/net/txgbe/base/txgbe_aml.c        |  187 +-
+>  drivers/net/txgbe/base/txgbe_aml.h        |    6 +-
+>  drivers/net/txgbe/base/txgbe_aml40.c      |  113 +-
+>  drivers/net/txgbe/base/txgbe_aml40.h      |    6 +-
+>  drivers/net/txgbe/base/txgbe_dcb_hw.c     |    2 +-
+>  drivers/net/txgbe/base/txgbe_e56.c        | 3774 +++++++++++++++++++++
+>  drivers/net/txgbe/base/txgbe_e56.h        | 1744 ++++++++++
+>  drivers/net/txgbe/base/txgbe_e56_bp.c     | 2593 ++++++++++++++
+>  drivers/net/txgbe/base/txgbe_e56_bp.h     |  278 ++
+>  drivers/net/txgbe/base/txgbe_hw.c         |   54 +-
+>  drivers/net/txgbe/base/txgbe_hw.h         |    4 +-
+>  drivers/net/txgbe/base/txgbe_osdep.h      |    4 +
+>  drivers/net/txgbe/base/txgbe_phy.c        |  360 +-
+>  drivers/net/txgbe/base/txgbe_phy.h        |   45 +-
+>  drivers/net/txgbe/base/txgbe_regs.h       |   11 +-
+>  drivers/net/txgbe/base/txgbe_type.h       |   43 +-
+>  drivers/net/txgbe/txgbe_ethdev.c          |  414 ++-
+>  drivers/net/txgbe/txgbe_ethdev.h          |    6 +-
+>  drivers/net/txgbe/txgbe_rxtx.c            |  102 +-
+>  drivers/net/txgbe/txgbe_rxtx.h            |    1 +
+>  drivers/net/txgbe/txgbe_rxtx_vec_common.h |   14 +-
+>  26 files changed, 9350 insertions(+), 434 deletions(-)
+>  create mode 100644 drivers/net/txgbe/base/txgbe_e56.c
+>  create mode 100644 drivers/net/txgbe/base/txgbe_e56.h
+>  create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.c
+>  create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.h
+> 
 
-I already reviewed these changes offline, as part of our
-internal patch acceptance process.=20
-Current version LGMT and addresses all comments I had.=20
-
-Series-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
-
-> 2.43.0
-
+Review will be delayed because of DPDK summit this week.
