@@ -2,56 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D189CCD3447
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC1DCD3447
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:28:42 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 91A124026D;
-	Sat,  9 May 2026 13:06:53 +0200 (CEST)
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
- by mails.dpdk.org (Postfix) with ESMTP id EAFA540269;
- Sat,  9 May 2026 13:06:49 +0200 (CEST)
-X-QQ-mid: Yeas9t1778324801t828t18730
-Received: from 0F57A7141CBF4D1588B97A6ED8A17143 (zaiyuwang@trustnetic.com
- [115.204.251.157])
+	by mails.dpdk.org (Postfix) with ESMTP id D5AA84026D;
+	Sat,  9 May 2026 13:28:41 +0200 (CEST)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+ by mails.dpdk.org (Postfix) with ESMTP id B359940269
+ for <dev@dpdk.org>; Sat,  9 May 2026 13:28:39 +0200 (CEST)
+X-QQ-mid: zesmtpgz1t1778326113tad27ee93
+X-QQ-Originating-IP: Xmm64AQtdpX6HgI/sSSQV0QPkM5FqrK1QVt8WCx/sD8=
+Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
+ by bizesmtp.qq.com (ESMTP) with 
+ id ; Sat, 09 May 2026 19:28:30 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
-From: =?utf-8?b?WmFpeXUgV2FuZw==?= <zaiyuwang@trustnetic.com>
-X-BIZMAIL-ID: 12363965412987554375
-To: "'Stephen Hemminger'" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>,
-	<stable@dpdk.org>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>	<20260429102515.58880-1-zaiyuwang@trustnetic.com>	<20260429102515.58880-12-zaiyuwang@trustnetic.com>
- <20260429081136.3defdeba@phoenix.local>
-In-Reply-To: <20260429081136.3defdeba@phoenix.local>
-Subject: RE: [PATCH v2 11/20] net/txgbe: fix traffic class priority
- configuration
-Date: Sat, 9 May 2026 19:06:40 +0800
-Message-ID: <000e01dcdfa3$e9b30880$bd191980$@trustnetic.com>
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 11337703613186777736
+EX-QQ-RecipientCnt: 2
+From: Zaiyu Wang <zaiyuwang@trustnetic.com>
+To: dev@dpdk.org
+Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Subject: [PATCH v3 00/20] Wangxun Fixes
+Date: Sat,  9 May 2026 19:28:02 +0800
+Message-Id: <20260509112823.7728-1-zaiyuwang@trustnetic.com>
+X-Mailer: git-send-email 2.21.0.windows.1
+In-Reply-To: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQIzGrJ934oa1ka+Tuv/tXGR6pozcwHnyBxIArpVolwBjXDnqrUnlckg
-Content-Language: zh-cn
+Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
-Feedback-ID: Yeas:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: N3IC8um5pMyYsQfPMPilZTMH1ARGE7tkjkB+yutZBiuGd6Z7ZtW2TWeH
- kuV9u/3NoKejnmTmDqPiMbrph264SEFMlsHNOssn2gYBPYqJy0PW3YQhayQnQxDelJWHSLY
- TWnKrSUBJifRijwN01gNzXJZVlwhJALzBIDqeJGVBgk0IXR34JTUs1B59OvMbFhaUKWd6yd
- Az4qXyiwBLU++1zsNW8mM80SvgQOBN3KXurIuMtlEKGjUFNd4Xc0T/8T5JQxxQ5vDUZqf42
- lSoKneiMzlW+0NcXNnzrNOOy916XHJ+TJ/TcdJjBfn2zihrIm8gl5+iF5aywuFQLwIavIxZ
- AM15Xv7MtuMeWRXv5j8lIh3XYJCtBw8PFK4ls8lz1TuAP56wIvNQjqkKDrS8eecNnS8z+5w
- 5SNyJhQ3ynHkj3GiQbJnhSkNs2f+I7HyR5NOlMsNZk85TlFSj4jd1Ffyyoz9rT3CW8YfX86
- PpqADfeaWtfAepxr34h+V/pdONLic2h68BDURn7D9NH9OcrO5TWDZRNQK+EjfcCUrxWvNbt
- PP1gynyhKbLac0MuADb72+0slT0/RYVJu798w4PeUraC2/TMBmdLAgDyhwn5D0eXS1vnfQ2
- hffcrTfXs7N9d/uhC1glUHAKM5hbRHFXQDCZEVNYl0ddQwM9VVri3onnfCwoNz/iUUcK4WP
- h3ffi1gIdVp63otaK+3L5K+oiPNnzeWOIozyevSTABDy/YmiSoR4hZ+EhqqEE40or6P0CNH
- g45Tp8oZmTFyDp4vUN9E57nQ7GVEx8irnsk9bPy6bPBuFkEV8RpOO85BZlB6fu6a/dBcks7
- 03JP93vQwIgVmjKSnhFZo0gT/tc0mEvP7747hH2ejH23DHu7qGRDs/59LHvdEKFCbNgVE3V
- 7zV7rIk/MlHFf2eHeTOPjca+SV0UKSRxmRq/CRcD2retVNX4BSE0hl41fIlnTj5M7cL3bRe
- bjje003YnbbQONtt/8IFuwVIFnVzX8YK2ThoD42zPU9BGECHzER//blm/tq7gi3o9z9q1DL
- dfztFWdQ==
-X-QQ-XMRINFO: M/715EihBoGS47X28/vv4NpnfpeBLnr4Qg==
+Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
+X-QQ-XMAILINFO: M2OfKeMHoPgxsPAhTgxEybAfT++2x3EdVz6phkdXzWtqorU2aq7NkZ9r
+ kAZkYWJdyzf5D9rOIrYWjhEr7VmtbvZqjJJ0oJgE7zgWclCgRKn0ftt01/qn0y7+oZFVKXZ
+ cjhRUq0d6VQ23ASmhYQ1pXGqrJRMYOf8P1QDSdHYAYZVC61AVndAH2FPVFviVM7KEKcoUql
+ KvrF4U6BUDW59KNagrLTkTz8Pb7vKRfBwjGS2mQ7TXIOQDqkFcXnAymfKnXpzLeZIarIm3G
+ 661E0BkIX5EJx8hDhMzLb6H9K1IYNwUwfhFjgUQ4WIBd7wqiMnLru8k5XpT1qykwSYc0ggP
+ RycsPc/NzZWfpIx6x8K8Z1kTLvJg238BsgpzR60xxMjJtpPctUuR9VsgnUlZh86WWekCpar
+ rQGFOlG/6QrbJqvKYPafWxlSNSlXwFZTPx+w40lleV89OhrTHBVtCAcN3RcufFpDkAlEl7t
+ v4yGSqjO2ML15CziwupF7MEaUri3sEdHV6+j0YEwkjKDCGk6kvBeaZN2pMdJw68xc5UbbI+
+ NodfymydWgUTkYIBmCmN4d9TRp5bYTAOZZeGKmvAQ3Y+9Nw53MW/CI6uWoh2wUYd8wEt2vn
+ Kjyk9Puk/UVC0PSiN4UklJbTU6pBtzqtFiFUlT+3wzKJbjwwpFOWb8XlpGoJIMA47uPyQ6u
+ XkNCBwLUXi5pXprDJJiaBsbjN5JAk+aym73WpDXgau5T/OlLZ4h0y1wJMSTSWxauqRgGWEQ
+ qFfyhtaVpRF/LkzN3AzZeVytNCYq1rlgH0QNpGlb3ircpkNg0g2Qcsq0Qp/GOBpk/QGmfa3
+ UYnsKDIs3zhKCwrzweZqwULBVnB5g/8vh0NtPvnjetqUqPtQzwBwh17xTFZflgpRfVZiU5v
+ IIAaueGWO5opt6pVKL6IiFtYaTpjvRTv/fNwRAUhQCvy9wlvQmyJODHuqtiNJ3NBij2XO/N
+ f6FAzJkKLvTWy0WYEudwaO/6gUMlcoe7JKT+mo/GRITY+/hv5Y90UzHGM5fJ9BKpEAyfD1e
+ t7JN6eHs+BhSvhVd2uSnZ+KvSi/6woK7vnnTt6eYL6G1Us8dOClTmjjf/gaAsBOmmpV6dV0
+ rnbwazJAbN+Af1H7OeWgks=
+X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,82 +64,70 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This series fixes several issues found on Wangxun Emerald, Sapphire and
+Amber-lite NICs, with a focus on link-related problems.
+---
+v3:
+- Addressed Stephen's comments
+---
+v2:
+- Fixed compilation error and code style issues
+---
 
+Zaiyu Wang (20):
+  net/txgbe: remove duplicate xstats counters
+  net/ngbe: remove duplicate xstats counters
+  net/ngbe: add missing CDR config for YT PHY
+  net/ngbe: fix VF promiscuous and allmulticast
+  net/txgbe: fix inaccuracy in TX rate limiting
+  net/txgbe: fix link status check condition
+  net/txgbe: fix Tx desc free logic
+  net/txgbe: fix link flow control registers for Amber-Lite
+  net/txgbe: fix link flow control config for Sapphire
+  net/txgbe: fix a mass of unknown interrupts
+  net/txgbe: fix traffic class priority configuration
+  net/txgbe: fix link stability for 25G NIC
+  net/txgbe: fix link stability for 40G NIC
+  net/txgbe: fix link stability for Amber-Lite backplane mode
+  net/txgbe: fix FEC mode configuration on 25G NIC
+  net/txgbe: fix SFP module identification
+  net/txgbe: fix get module info operation
+  net/txgbe: fix get eeprom operation
+  net/txgbe: fix to reset Tx write-back pointer
+  net/txgbe: fix to enable Tx desc check
 
-> -----Original Message-----
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Sent: Wednesday, April 29, 2026 11:12 PM
-> To: Zaiyu Wang <zaiyuwang@trustnetic.com>; Zaiyu Wang
-> <zaiyuwang@trustnetic.com>
-> Cc: dev@dpdk.org; stable@dpdk.org; Jiawen Wu =
-<jiawenwu@trustnetic.com>;
-> Ferruh Yigit <ferruh.yigit@amd.com>; dev@dpdk.org; stable@dpdk.org; =
-Jiawen
-> Wu <jiawenwu@trustnetic.com>; Ferruh Yigit <ferruh.yigit@amd.com>
-> Subject: Re: [PATCH v2 11/20] net/txgbe: fix traffic class priority =
-configuration
->=20
-> On Wed, 29 Apr 2026 18:25:05 +0800
-> Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
->=20
-> > After applying the following testpmd command, 802.1Q packets with
-> > specific priorities were not properly directed to the corresponding =
-traffic classes:
-> >     port config 0 dcb vt off 4 pfc off
-> >
-> > The old driver had two issues:
-> > 1. The hardware uses a 4-bit mapping register per traffic class for
-> >    priority-to-TC mapping, but the driver incorrectly configured it
-> >    as 3 bits.
-> > 2. The DCB TX configuration mistakenly wrote to the RX register.
-> >
-> > Fix both issues, ensuring that tc-prio mapping works as expected.
-> >
-> > Fixes: 8bdc7882f376 ("net/txgbe: support DCB")
-> > Cc: stable@dpdk.org
-> >
-> > Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
-> > ---
->=20
-> AI review spotted issues:
->=20
-> Error: The fix is incomplete. The same priority-to-TC layout is also =
-written in
-> drivers/net/txgbe/txgbe_rxtx.c around line 3380 in =
-txgbe_vmdq_dcb_configure():
-> for (i =3D 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++)
-> 	/*
-> 	 * mapping is done with 3 bits per priority,
-> 	 * so shift by i*3 each time
-> 	 */
-> 	queue_mapping |=3D ((cfg->dcb_tc[i] & 0x07) << (i * 3));
->=20
-> wr32(hw, TXGBE_RPUP2TC, queue_mapping);
-> This writes the same TXGBE_RPUP2TC register (0x019008) the patch is =
-fixing,
-> using a hardcoded i*3 shift and a comment claiming 3 bits per =
-priority. After this
-> patch, txgbe_dcb_config_rx_arbiter_raptor() encodes priorities at =
-4-bit positions
-> (via the updated TXGBE_RPUP2TC_UP_SHIFT=3D4), but =
-txgbe_vmdq_dcb_configure()
-> still uses 3-bit positions. The VMDQ+DCB path will produce a wrong =
-tc-prio
-> mapping. txgbe_vmdq_dcb_configure() needs the same fix (use
-> TXGBE_RPUP2TC_UP_SHIFT and update the comment).
-> Warning: TXGBE_DCBUP2TC_DEC and TXGBE_DCBUP2TC_MAP are now
-> inconsistent. After this patch:
-> #define TXGBE_DCBUP2TC_MAP(tc, v)     LS(v, 4 * (tc), 0x7)
-> #define TXGBE_DCBUP2TC_DEC(tc, r)     RS(r, 3 * (tc), 0x7)
-> DEC will not decode what MAP encoded for any tc > 0. =
-TXGBE_DCBUP2TC_DEC
-> isn't currently used in tree, so this is not a runtime bug, but it's a =
-latent trap. Either
-> update DEC to also use 4*(tc), or remove DEC since it has no callers.
->=20
-Hi Stephen,
-Thank you for the thorough AI=E2=80=91assisted review. I really =
-appreciate it.
-I have addressed all the issues you raised, and an updated patch set =
-will be sent shortly.
+ drivers/net/ngbe/base/ngbe_phy_yt.c       |    3 +
+ drivers/net/ngbe/ngbe_ethdev.c            |    5 -
+ drivers/net/ngbe/ngbe_ethdev_vf.c         |   11 +-
+ drivers/net/txgbe/base/meson.build        |    2 +
+ drivers/net/txgbe/base/txgbe.h            |    2 +
+ drivers/net/txgbe/base/txgbe_aml.c        |  187 +-
+ drivers/net/txgbe/base/txgbe_aml.h        |    6 +-
+ drivers/net/txgbe/base/txgbe_aml40.c      |  113 +-
+ drivers/net/txgbe/base/txgbe_aml40.h      |    6 +-
+ drivers/net/txgbe/base/txgbe_dcb_hw.c     |    2 +-
+ drivers/net/txgbe/base/txgbe_e56.c        | 3774 +++++++++++++++++++++
+ drivers/net/txgbe/base/txgbe_e56.h        | 1744 ++++++++++
+ drivers/net/txgbe/base/txgbe_e56_bp.c     | 2593 ++++++++++++++
+ drivers/net/txgbe/base/txgbe_e56_bp.h     |  278 ++
+ drivers/net/txgbe/base/txgbe_hw.c         |   54 +-
+ drivers/net/txgbe/base/txgbe_hw.h         |    4 +-
+ drivers/net/txgbe/base/txgbe_osdep.h      |    4 +
+ drivers/net/txgbe/base/txgbe_phy.c        |  360 +-
+ drivers/net/txgbe/base/txgbe_phy.h        |   45 +-
+ drivers/net/txgbe/base/txgbe_regs.h       |   11 +-
+ drivers/net/txgbe/base/txgbe_type.h       |   43 +-
+ drivers/net/txgbe/txgbe_ethdev.c          |  414 ++-
+ drivers/net/txgbe/txgbe_ethdev.h          |    6 +-
+ drivers/net/txgbe/txgbe_rxtx.c            |  102 +-
+ drivers/net/txgbe/txgbe_rxtx.h            |    1 +
+ drivers/net/txgbe/txgbe_rxtx_vec_common.h |   14 +-
+ 26 files changed, 9350 insertions(+), 434 deletions(-)
+ create mode 100644 drivers/net/txgbe/base/txgbe_e56.c
+ create mode 100644 drivers/net/txgbe/base/txgbe_e56.h
+ create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.c
+ create mode 100644 drivers/net/txgbe/base/txgbe_e56_bp.h
+
+-- 
+2.21.0.windows.1
 
