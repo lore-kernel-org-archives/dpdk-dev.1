@@ -2,57 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 398B3CD3447
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B91BCD3447
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 12:36:25 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 425E540A73;
-	Sat,  9 May 2026 13:29:45 +0200 (CEST)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
- by mails.dpdk.org (Postfix) with ESMTP id BE3CB40662;
- Sat,  9 May 2026 13:29:42 +0200 (CEST)
-X-QQ-mid: zesmtpgz1t1778326179t7ec151b5
-X-QQ-Originating-IP: tJF1DcYOpT3D39iObPBCzYmFRZIDCqZe5N952YGKlxE=
-Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Sat, 09 May 2026 19:29:38 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 15721888936788250486
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v3 20/20] net/txgbe: fix to enable Tx desc check
-Date: Sat,  9 May 2026 19:28:22 +0800
-Message-Id: <20260509112823.7728-21-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20260509112823.7728-1-zaiyuwang@trustnetic.com>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260509112823.7728-1-zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 3246740269;
+	Sat,  9 May 2026 14:36:24 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id ACB1840268
+ for <dev@dpdk.org>; Sat,  9 May 2026 14:36:22 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gCQSt2XmhzJ467l
+ for <dev@dpdk.org>; Sat,  9 May 2026 20:35:58 +0800 (CST)
+Received: from dubpeml100003.china.huawei.com (unknown [7.214.147.98])
+ by mail.maildlp.com (Postfix) with ESMTPS id 5EEA340575
+ for <dev@dpdk.org>; Sat,  9 May 2026 20:36:20 +0800 (CST)
+Received: from dubpeml500001.china.huawei.com (7.214.147.241) by
+ dubpeml100003.china.huawei.com (7.214.147.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.36; Sat, 9 May 2026 13:36:19 +0100
+Received: from dubpeml500001.china.huawei.com ([7.214.147.241]) by
+ dubpeml500001.china.huawei.com ([7.214.147.241]) with mapi id 15.02.1544.011; 
+ Sat, 9 May 2026 13:36:19 +0100
+From: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+To: Marat Khalili <marat.khalili@huawei.com>
+CC: "dev@dpdk.org" <dev@dpdk.org>
+Subject: RE: [PATCH 00/10] bpf: introduce extensible load API
+Thread-Topic: [PATCH 00/10] bpf: introduce extensible load API
+Thread-Index: AQHc3X0OFikWHXOPyUOyj3nwhTtQ9LYFpA+w
+Date: Sat, 9 May 2026 12:36:19 +0000
+Message-ID: <72a072e1281c4037bbccbff91ec84d2b@huawei.com>
+References: <20260506172209.6805-1-marat.khalili@huawei.com>
+In-Reply-To: <20260506172209.6805-1-marat.khalili@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.48.154.35]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NSahpW5IwUZOkEGJIOCbcqI2pZ2HDjcSw5O+cMFIqK7ZUVYGMxU75YI2
- L/J5JnkMaTpO4l474tf0SIjppG7Shmt+6Xjv8WxCO5AaAPkAsB+b5I+BSi62hCo1ZNnhPif
- sEuPdqCR0+oSZBz8NNADot0/2mMDf6hvm2yON6GC/jgqYnUJtd0ZYPGscatXwi0cQV5GodW
- Roi6e+E95fy4r+6CkP4Q5WvUG82AuuICC5OqoegESIrJKSRjRgiUeRHnvuLHkcUXRZWf+ov
- 8Ybyr+RZ3ol/lZKxkdAl2TEaEGoPw7Bl2vWpCv3y8/VTmntp7XmGTlll5Oopds2PY5auAPC
- wqeOIQUduCPOYV3HpqOae83EL6PV6667qXFNq9fCZGjHsA91ZiRWqJWnrEBR8hHfLHKocAp
- Hzedg/YMmiPB0+bKm8lWMcF+CPBxiiV5FJSimA5pnutJHtc56SLJmp2ZdMabWOEt7J/IBL1
- 6Hk1K4NZJzK3gAy4kPGqbmrEuwtFkmPEJ69cthk5GsAE7W3Hdq5mWr8awr/SW5RQqUq7opg
- hKo7fSYcz4LwaAiN1avFeOb8064yehOHKlQo/zrD5E4fAEt4MHHFg+MrN6gtpWdum8agg7o
- NQ3ZrrMZGXTokhPwwvE/WVT3e+Vt42eCMqF/azz0KEgme8J3KrH0iczGGDNUBoKDeUnVj+g
- afX7mgkihrl/483+bu3Y9anUdh3vEFgJggUQB/J56cmjuijuVxeTy9FIK74j4ur22LZj4Sv
- 9WH1JK9qHi99jY6eZwuIR46GpsYzq7pIaw+9xNaVxLalfO2D/i5IRb5/ppDJFKlR3zKHIsd
- 1yyQXDRS12VTRUJTluGKbhSIHdv5wDW88uQIyaySyqiXIddT3MEXzXM0UX1Bzu4n2h2ht+M
- KGXFS3oSgbqJ5zPAW6GU6zDRtA4tGdNlts2SOkVOZGugj9TjWC0ZpJDLq+xDAXPJZ42R0pX
- NXqQuOTpdCCXUxFC7GtbG2UBetdIxUMPbsRlF1nbEgAOICFrcfBu1wnj/0pryyTJBYjqVGA
- qH5TG4ycJ+ov9r644aPIA/rUaYhd3xl4PgXkUWUf+3DxRF8Qhh0SrO1UBVKpEG5oBljMomJ
- wzD1zR3G08E
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
-X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,47 +54,68 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now lib security is enabled by default, and cannot be disabled if the
-driver is intended to be used. So Tdm_desc_chk is always unable to enable.
-Remove this restriction, and just enable the corresponding queue check.
 
-Fixes: 0eabdfcd4af4 ("net/txgbe: enable Tx descriptor error interrupt")
-Cc: stable@dpdk.org
 
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
----
- drivers/net/txgbe/txgbe_rxtx.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+> This patchset introduces an extensible load API for the BPF library in
+> DPDK, addressing current limitations regarding ABI stability and feature
+> constraints.
+>=20
+> Currently, `rte_bpf_load` relies on a fixed `struct rte_bpf_prm`, which
+> makes it difficult to add new loading options or parameters without
+> breaking the ABI.
+>=20
+> To resolve these issues, this series introduces `rte_bpf_load_ex` taking
+> `struct rte_bpf_prm_ex`. The new parameter structure includes a `sz`
+> field for backward compatibility, allowing future extensions.
+>=20
+> Taking advantage of the new extensible API, this patchset also adds
+> several new features:
+> * Support for loading and executing BPF programs with up to 5 arguments.
+> * Support for loading classic BPF (cBPF) directly.
+> * Support for loading ELF files directly from memory buffers.
+> * New API functions (`rte_bpf_eth_rx_install` and `rte_bpf_eth_tx_install=
+`)
+>   to install an already loaded BPF program as a port callback, decoupling
+>   the loading phase from the installation phase.
+>=20
+> Marat Khalili (10):
+>   bpf: make logging prefixes more consistent
+>   bpf: introduce extensible load API
+>   bpf: support up to 5 arguments
+>   bpf: add cBPF origin to rte_bpf_load_ex
+>   bpf: support rte_bpf_prm_ex with port callbacks
+>   bpf: support loading ELF files from memory
+>   test/bpf: test loading cBPF directly
+>   test/bpf: test loading ELF file from memory
+>   doc: add release notes for new extensible BPF API
+>   doc: add load API to BPF programmer's guide
+>=20
+>  app/test/test_bpf.c                    | 325 +++++++++++++++----------
+>  doc/guides/prog_guide/bpf_lib.rst      |  75 +++++-
+>  doc/guides/rel_notes/release_26_07.rst |  20 ++
+>  lib/bpf/bpf.c                          |  32 ++-
+>  lib/bpf/bpf_convert.c                  |  97 +++++++-
+>  lib/bpf/bpf_exec.c                     | 126 +++++++++-
+>  lib/bpf/bpf_impl.h                     |  53 +++-
+>  lib/bpf/bpf_jit_arm64.c                |  18 +-
+>  lib/bpf/bpf_jit_x86.c                  |  10 +-
+>  lib/bpf/bpf_load.c                     | 200 +++++++++++++--
+>  lib/bpf/bpf_load_elf.c                 | 189 +++++++++-----
+>  lib/bpf/bpf_pkt.c                      |  65 +++--
+>  lib/bpf/bpf_stub.c                     |  46 ----
+>  lib/bpf/bpf_validate.c                 |  94 ++++---
+>  lib/bpf/meson.build                    |  15 +-
+>  lib/bpf/rte_bpf.h                      | 195 ++++++++++++++-
+>  lib/bpf/rte_bpf_ethdev.h               |  54 ++++
+>  17 files changed, 1245 insertions(+), 369 deletions(-)
+>  delete mode 100644 lib/bpf/bpf_stub.c
+> --
 
-diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
-index ef53a868a6..8b3d5eec14 100644
---- a/drivers/net/txgbe/txgbe_rxtx.c
-+++ b/drivers/net/txgbe/txgbe_rxtx.c
-@@ -4768,6 +4768,12 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
- 		wr32(hw, TXGBE_TXRP(txq->reg_idx), 0);
- 		wr32(hw, TXGBE_TXWP(txq->reg_idx), 0);
- 
-+#ifdef RTE_LIBRTE_SECURITY
-+		if (!(txq->using_ipsec))
-+#endif
-+			wr32m(hw, TXGBE_TDM_DESC_CHK(txq->reg_idx / 32),
-+			      BIT(txq->reg_idx % 32), BIT(txq->reg_idx % 32));
-+
- 		if (txq->headwb_mem) {
- 			uint32_t txdctl;
- 
-@@ -4785,11 +4791,6 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
- 		}
- 	}
- 
--#ifndef RTE_LIB_SECURITY
--	for (i = 0; i < 4; i++)
--		wr32(hw, TXGBE_TDM_DESC_CHK(i), 0xFFFFFFFF);
--#endif
--
- 	/* Device configured with multiple TX queues. */
- 	txgbe_dev_mq_tx_configure(dev);
- }
--- 
-2.21.0.windows.1
+I already reviewed these changes offline, as part of our
+internal patch acceptance process.=20
+Current version LGMT and addresses all comments I had.=20
+
+Series-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+
+> 2.43.0
 
