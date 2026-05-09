@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 731A7CD3447
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15555CD343F
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 11:29:31 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 50E9540674;
-	Sat,  9 May 2026 13:29:08 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id BA83F40655;
- Sat,  9 May 2026 13:29:05 +0200 (CEST)
-X-QQ-mid: zesmtpgz1t1778326143t128a439c
-X-QQ-Originating-IP: LZPV67hN8W0X3kfUF1U7lEiINBogrTw6PpG5vmsMbb8=
+	by mails.dpdk.org (Postfix) with ESMTP id 9241640678;
+	Sat,  9 May 2026 13:29:10 +0200 (CEST)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
+ by mails.dpdk.org (Postfix) with ESMTP id 7411840673;
+ Sat,  9 May 2026 13:29:06 +0200 (CEST)
+X-QQ-mid: zesmtpgz1t1778326140t728b4b06
+X-QQ-Originating-IP: dmds/nkra1b17obdd4Zggc8qJ3/7tuI33UrvlNsIKo0=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Sat, 09 May 2026 19:29:01 +0800 (CST)
+ id ; Sat, 09 May 2026 19:28:59 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 2045400647185219102
+X-BIZMAIL-ID: 4341777369527933098
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v3 06/20] net/txgbe: fix link status check condition
-Date: Sat,  9 May 2026 19:28:08 +0800
-Message-Id: <20260509112823.7728-7-zaiyuwang@trustnetic.com>
+Subject: [PATCH v3 05/20] net/txgbe: fix inaccuracy in TX rate limiting
+Date: Sat,  9 May 2026 19:28:07 +0800
+Message-Id: <20260509112823.7728-6-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260509112823.7728-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpgz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OKKHiI6c9SH3xDGZ8iAfY6E6MNvXkVavYUY3c+xjaETjc7ip5bg2gm7k
- cFmFpOh7PSlbxg1eEdCuGW7jNn/6ht+q8lMzfkqgNtdbVLiRza83KVToPe+5E59hFS60K5a
- bggmAPbuiRTqGfrAPN2KeVNVbNfLa5pq4ielokLK348PKNVTABIGZugzBhWPUh0mG1Kqe+S
- EHnUaZuEv5ESCYtmqTV2CuxczUU5lfKXgd1nEt+dVBbb+Xu3vcr/Mn8dRs9gab9H+PHeq7i
- Oy5m1yVyMnEntaYOZHCUtNy2B3guXDvkagT4hOdI1p4Zu0jtlzB1nA2quQANnQW5O/O9n8h
- V/O+APtZb4W1H++WIm7VcAsI7cOJ1ahV/ifJFcHvxwGJoCC4Fr3hjaaWi8kjy9NzdhRHte/
- c7qMHVEMhhdJ41xUAxZb+mqJl95lMiiR9saghIpUbLR2etq6kGbIiwIWjBi5u66WxIpiJVZ
- eMbU3NtksKO8xFmZsGUDe/b8+BVul7nHTZD4LLKzRDD3lfXG8UQdpXBX+0njr3mnQeupxcG
- Y5bsN16E65ue4YpF3OQUKEubzb3CkTPV1UYudbSaGbV5pE8ojZidbgMgRpYuOEEGTImxbfz
- T0+3oTaGM0tlC18zRYD9yB6sD1+70Ms/mJJjzEHY6hbtGf3c3f+VLhy7209zcHW9GbOgcy2
- TUyuCdRITZ7XzJaHLtSoow+Ye4ozo4Tx1Fx5vIT1+T8xPtYARVEwQzMnFgXdTIFNoa1ItaL
- lnp/fDtJemuzmYYrOU63+ma+P7Xr/8luPlJn8yMwlftw8uiQRC6q4O47Hfeaxk1EuIr5geI
- BT2L3zgMrP0Jsqcfwpo68sGzsExkO5LTjszYgHIwFsL2akKRJArC+0P6GcG2cd9uZ2KcH5+
- /SHxDM5fSrbBFCOoCe65b/euWjPqcNf+ZBAX1QZf71oEAPajgA+L+B3xr70lA8oL8vREuWF
- 5eeC+MObaCilz7ycRJ2+VRb0fUkUZGFY2TNdJ/YsubP7t6eTQpueIpJrmzZZA0O7tOe6qFN
- tXH2ofkBwUaU0H1eu/Z9gGwI8O6f3QBuc66tRxm3+Jx/iwE7scJOxa0ldbdKt3FUqo3hYSJ
- oPNx/D1Enyb
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
+X-QQ-XMAILINFO: NOIkHYnr7Vzdp/2HeafEPAW/u7wdNdLplKIGTX6v8BA5hElZl3Sfv+24
+ PmqlswUKwjpXM4uZ2SV8Ssf69m7/NkSNZQ5a+BJ8tPYYynnCAGBAKP/1FU+4X0SWiGJS2+7
+ VNXV5OhD5Y+m6c+aFB0UH0zjCK15QRIv6eEm4sULPZrwUaZlkIluKah/u2J18clLtuT65i0
+ rtZi7DzzWNoXD3oRYEaqvxqVZhX+DO/9YOLac9YzGOU6MjmJ+FpZU3cwvrkq5f8LZnDP65A
+ GZWQZNhZI+kugOT7QLPaJ4GpL1nM0MqqHmo+Wy6vOwZqBH4caGGW8XKmNks5iioI8oI3Qd3
+ zvWRjshpVR7hW/rQu1wGHysGvn9N7eCR2NdquMo/ziGN9y2VXI5x/qyFKi3WUG39Klp4+NA
+ G3MyfjWs/IYAmn/E8v9bkmaFKEQLzxWDnGsUxcvkUpiZpEM5p9KfJj/whrWd3QO1uX1+fsX
+ aWUu+jKF4i6H5DMj2uuux6Yz4wNyCsfF8ciO31SHYSyWLWEFQ8TlmFAyJacz2fjUYhRcm/R
+ 8V+WU3dTgY23GJjkhsyIBhAlBmUfW8wnRYD+sHIwoLDKFa9gNQnjN/SgZSfr/mhfF9OF48u
+ l7yUh1QJ7nq0geh0micsT8ij+9ZN7//ztLQ2FL8ctqWaVRnUyc4dGQ7gAYBrNsfzH2Dl86G
+ 2Om8rWTTtreeZmKW+cfCoJq0Z85UhMFhYF+Q5uC542R3aOnDMzA/NZCRHNuxoiQoDs/2zbd
+ MSq2CEX/SiJMLfGSVKgzso9rLoSxHoitTehFxNSCBQCfY2eaa51ljKi3caPcc27eT0g+nie
+ QlJNph2OwfLDdig0U/uOOL3z0ZbbpSVbe2Ah2shZH9Ow4RuD52++MbNWXc4Vq5xiHZ9QKwr
+ /kX1750rrAbQzCMR66U/kimmCJjSxUk7q7GuMZ4l5Pt5s8m6ic/941OW1xLk14vrLpCC1g0
+ g4Qvj/894y+e77j9V2YOnRgWggeEgJP7nQ41DAIgwXNY0jMIVba/+Wlnl+bbYF7tJPtSw9r
+ gaYMtiLCb3bi+CzG5745sY/xQEsGKh7ERPNonAqOuwP6Vgfu5DgesODz15sTc=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,46 +65,58 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The original code incorrectly used 'if (link_up)' instead of
-'if (*link_up)', causing the condition to always evaluate to true
-because the pointer itself is non-NULL. This led to incorrect speed
-assignment.
+Amber-lite NIC's TX rate limiting has large deviations for small
+packets. To fix this issue, there are some changes:
 
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
+1. Set TDM_RL_ADJ (0x1820c) to 21B (includes 7B Ethernet preamble,
+   1B SFD, 1B EFD, and 12B IPG).
+2) Remove the rate offset in the driver (e.g., 105 / 100, a rough
+   compensation value from Linux kernel driver tests).
+
+After these changes, accuracy deviation for 64B packets is within
+~5%, while large packets show lower deviation.
+
+Fixes: a309ab43acf3 ("net/txgbe: support Tx queue rate limiting for Amber-Lite")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml.c   | 2 +-
- drivers/net/txgbe/base/txgbe_aml40.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/base/txgbe_regs.h | 1 +
+ drivers/net/txgbe/txgbe_ethdev.c    | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
-index b376eca5b5..de9a1b1c93 100644
---- a/drivers/net/txgbe/base/txgbe_aml.c
-+++ b/drivers/net/txgbe/base/txgbe_aml.c
-@@ -67,7 +67,7 @@ s32 txgbe_check_mac_link_aml(struct txgbe_hw *hw, u32 *speed,
- 			*link_up = false;
- 	}
+diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
+index 95c585a025..060757323a 100644
+--- a/drivers/net/txgbe/base/txgbe_regs.h
++++ b/drivers/net/txgbe/base/txgbe_regs.h
+@@ -1670,6 +1670,7 @@ enum txgbe_5tuple_protocol {
+ #define   TXGBE_TDM_FACTOR_INT_SHIFT    16
+ #define   TXGBE_TDM_FACTOR_FRA_SHIFT    2
  
--	if (link_up) {
-+	if (*link_up) {
- 		switch (links_reg & TXGBE_CFG_PORT_ST_AML_LINK_MASK) {
- 		case TXGBE_CFG_PORT_ST_AML_LINK_25G:
- 			*speed = TXGBE_LINK_SPEED_25GB_FULL;
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 733bbac13a..eefd7119fd 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -68,7 +68,7 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
- 			*link_up = false;
- 	}
++#define TXGBE_TDM_RL_ADJ                0x1820C
+ #define TXGBE_TDM_RL_VM_IDX             0x018218
+ #define TXGBE_TDM_RL_VM_CFG             0x01821C
+ #define TXGBE_TDM_RL_CFG                0x018400
+diff --git a/drivers/net/txgbe/txgbe_ethdev.c b/drivers/net/txgbe/txgbe_ethdev.c
+index 779874aac9..414107d7a7 100644
+--- a/drivers/net/txgbe/txgbe_ethdev.c
++++ b/drivers/net/txgbe/txgbe_ethdev.c
+@@ -4314,7 +4314,6 @@ txgbe_set_queue_rate_limit(struct rte_eth_dev *dev,
+ 			u16 frac;
  
--	if (link_up) {
-+	if (*link_up) {
- 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
- 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
- 			*speed = TXGBE_LINK_SPEED_40GB_FULL;
+ 			link_speed = dev->data->dev_link.link_speed;
+-			tx_rate  = tx_rate * 105 / 100;
+ 			/* Calculate the rate factor values to set */
+ 			factor_int = link_speed / tx_rate;
+ 			frac = (link_speed % tx_rate) * 10000 / tx_rate;
+@@ -4324,6 +4323,7 @@ txgbe_set_queue_rate_limit(struct rte_eth_dev *dev,
+ 				factor_fra = 0;
+ 			}
+ 
++			wr32(hw, TXGBE_TDM_RL_ADJ, 21);
+ 			wr32(hw, TXGBE_TDM_RL_QUEUE_IDX, queue_idx);
+ 			wr32m(hw, TXGBE_TDM_RL_QUEUE_CFG,
+ 			      TXGBE_TDM_FACTOR_INT_MASK, factor_int << TXGBE_TDM_FACTOR_INT_SHIFT);
 -- 
 2.21.0.windows.1
 
