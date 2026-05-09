@@ -2,52 +2,38 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D737CCD37B2
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 08:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C5ACD343F
+	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 08:47:57 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E77E54065A;
-	Sat,  9 May 2026 10:45:10 +0200 (CEST)
-Received: from canpmsgout11.his.huawei.com (canpmsgout11.his.huawei.com
- [113.46.200.226])
- by mails.dpdk.org (Postfix) with ESMTP id 65F1940269
- for <dev@dpdk.org>; Sat,  9 May 2026 10:45:08 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=tzmlfOSb4C0F2J+54p+2uewQp4Gy8hflpgBIPoWCqOM=;
- b=qoVw3v/9B+idZnEWMRbo8iEGb9J3/nnJIGApqygR4fZigx8mV8OXLc21aly5MKmuegSPHgoMO
- sVnq4on17EAHGZcrTxfTgupAnMytRTEbAyKtuA2uDVQU/CE6WPx8QjyFAY9MfIr+AsteKuUplgG
- 0SYK62CQT8sV95TMKX7DZkM=
-Received: from mail.maildlp.com (unknown [172.19.163.200])
- by canpmsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4gCK9h3H30zKm4S;
- Sat,  9 May 2026 16:37:28 +0800 (CST)
-Received: from dggemv712-chm.china.huawei.com (unknown [10.1.198.32])
- by mail.maildlp.com (Postfix) with ESMTPS id 7B31640563;
- Sat,  9 May 2026 16:45:05 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv712-chm.china.huawei.com (10.1.198.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 9 May 2026 16:45:05 +0800
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Sat, 9 May 2026 16:45:04 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <anatoly.burakov@intel.com>, <sivaprasad.tummala@amd.com>
-CC: <dev@dpdk.org>, <thomas@monjalon.net>, <stephen@networkplumber.org>,
- <fengchengwen@huawei.com>, <yangxingui@huawei.com>, <zhanjie9@hisilicon.com>, 
- <lihuisong@huawei.com>
-Subject: [PATCH 3/3] power: use common decimal macro definition
-Date: Sat, 9 May 2026 16:45:03 +0800
-Message-ID: <20260509084503.2917038-4-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20260509084503.2917038-1-lihuisong@huawei.com>
-References: <20260509084503.2917038-1-lihuisong@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0AF9D4026D;
+	Sat,  9 May 2026 10:47:57 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id AF7C340269
+ for <dev@dpdk.org>; Sat,  9 May 2026 10:47:55 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 709FC20628;
+ Sat,  9 May 2026 10:47:55 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Subject: RE: [PATCH 13/20] mbuf: allow NULL array in rte_pktmbuf_free_bulk
+Date: Sat, 9 May 2026 10:47:53 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F65869@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+In-Reply-To: <20260508203607.1003036-14-stephen@networkplumber.org>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: [PATCH 13/20] mbuf: allow NULL array in rte_pktmbuf_free_bulk
+Thread-Index: AdzfKlgL6qa4/rP0RsWwcN6N4X+l8gAXGCmQ
+References: <20260508203607.1003036-1-stephen@networkplumber.org>
+ <20260508203607.1003036-14-stephen@networkplumber.org>
+From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
+To: "Stephen Hemminger" <stephen@networkplumber.org>,
+	<dev@dpdk.org>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -61,27 +47,80 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Power QoS uses the common decimal macro definition
-to replace magic number.
-
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
----
- lib/power/rte_power_qos.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/lib/power/rte_power_qos.c b/lib/power/rte_power_qos.c
-index be230d1c50..f991230532 100644
---- a/lib/power/rte_power_qos.c
-+++ b/lib/power/rte_power_qos.c
-@@ -115,7 +115,7 @@ rte_power_qos_get_cpu_resume_latency(uint16_t lcore_id)
- 	if (strcmp(buf, "n/a") == 0)
- 		latency = RTE_POWER_QOS_STRICT_LATENCY_VALUE;
- 	else {
--		latency = strtoul(buf, NULL, 10);
-+		latency = strtoul(buf, NULL, POWER_CONVERT_TO_DECIMAL);
- 		latency = latency == 0 ? RTE_POWER_QOS_RESUME_LATENCY_NO_CONSTRAINT : latency;
- 	}
- 
--- 
-2.33.0
-
+PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
+b3JnXQ0KPiBTZW50OiBGcmlkYXksIDggTWF5IDIwMjYgMjIuMzQNCj4gDQo+IFRoaXMgYWxsb3dz
+IGNhbGxlcnMgdG8gYXZvaWQgTlVMTCBjaGVja3MgYW5kIGp1c3QgY2FsbA0KPiBydGVfcGt0bWJ1
+Zl9mcmVlX2J1bGssIHNpbWlsYXIgdG8gcnRlX3BrdG1idWZfZnJlZS4NCj4gDQo+IFNpZ25lZC1v
+ZmYtYnk6IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4NCg0K
+SSBkaXNhZ3JlZSB3aXRoIHRoaXMgcGF0Y2guDQoNClRoZSBwYXJhbWV0ZXIgaXMgYW4gYXJyYXkg
+b2YgKHBvaW50ZXJzIHRvKSBtYnVmcy4NCldlIGFscmVhZHkgYWNjZXB0IHRoYXQgdGhlIGFycmF5
+IGNhbiBjb250YWluIE5VTEwgcG9pbnRlcnMgKG5vIG1idWYgcHJlc2VudCkuDQpUaGlzIGlzIGV4
+dHJlbWVseSBmb3JnaXZpbmcsIGNvbnNpZGVyaW5nIHRoYXQgb3RoZXIgZmFzdCBwYXRoIGZ1bmN0
+aW9ucyBkb24ndCBhbGxvdyBOVUxMIHBvaW50ZXJzIGluIGFycmF5czsNCmUuZy4gcnRlX2V0aF90
+eF9idXJzdCgpLCBydGVfbWVtcG9vbF9wdXRfYnVsaygpLg0KQnV0IHNpbmNlIGl0J3MgYSAiZnJl
+ZSgpIiBjbGFzcyBvZiBmdW5jdGlvbiwgSSBkb24ndCBvYmplY3QgdG8gaXQuDQoNCkhvd2V2ZXIs
+IHRoaXMgcGF0Y2ggY2hhbmdlcyB0aGUgcGFyYW1ldGVyIHR5cGUgZnJvbSAiYXJyYXkiIHRvICJh
+cnJheSBvciBOVUxMIChubyBhcnJheSBwcmVzZW50KSIuDQpBbmQgSSBkb24ndCB0aGluayB3ZSBz
+aG91bGQgY2hhbmdlIHRoZSBwYXJhbWV0ZXIgdHlwZTsgaXQgc2hvdWxkIHJlbWFpbiAiYXJyYXki
+IG9ubHkuDQoNCklmIHRoZXJlIGFyZSBhbnkgc2NlbmFyaW9zIHdoZXJlIGEgbm9uLXByZXNlbnQg
+YXJyYXkgKE5VTEwpIGlzIHBhc3NlZCB0byB0aGUgZnVuY3Rpb24sIHRoZSBjb3VudCBzaG91bGQg
+YmUgemVybyB0b28uDQpBbmQgd2hlbiB0aGUgY291bnQgaXMgemVybywgdGhlIGZ1bmN0aW9uIGRv
+ZXMgbm90IGRlcmVmZXJlbmNlIHRoZSBhcnJheSwgc28gZXhwbGljaXRseSBjaGVja2luZyBmb3Ig
+TlVMTCBpcyBzdXBlcmZsdW91cy4NCg0KV2UgaGF2ZSBhIGNvbnZlbnRpb24gb2Ygbm90IGNoZWNr
+aW5nIHBhcmFtZXRlciB2YWxpZGl0eSBpbiBmYXN0IHBhdGggZnVuY3Rpb25zLg0KQW5kIEkgY29u
+c2lkZXIgaXQgaW52YWxpZCBwYXJhbWV0ZXJzIHBhc3NpbmcgTlVMTCB3aXRoIGEgbm9uLXplcm8g
+Y291bnQuDQoNCllvdSBtaWdodCBhcmd1ZSB0aGF0IHRoaXMgaXMgYSAiZnJlZSgpIiBjbGFzcyBv
+ZiBmdW5jdGlvbiwgd2hpY2ggd2FycmFudHMgY2hlY2tpbmcgZm9yIE5VTEw7IGJ1dCBzaW5jZSBp
+dCBhbHJlYWR5IGFjY2VwdHMgTlVMTCB3aXRoIHplcm8gY291bnQsIGl0IGlzIGFscmVhZHkgY292
+ZXJlZC4NCg0KV2UgY291bGQgY2hhbmdlIHRoZSBmdW5jdGlvbiBkZWNsYXJhdGlvbiBmb3IgY2xh
+cml0eToNCg0Kdm9pZCBydGVfcGt0bWJ1Zl9mcmVlX2J1bGsoDQoJCXVuc2lnbmVkIGludCBjb3Vu
+dDsNCgkJc3RydWN0IHJ0ZV9tYnVmICptYnVmc1tjb3VudF0sIHVuc2lnbmVkIGludCBjb3VudCk7
+DQoNCk9yIGFkZCBhIGRlYnVnIGFzc2VydGlvbiBhdCB0aGUgc3RhcnQgb2YgdGhlIGZ1bmN0aW9u
+Og0KUlRFX0FTU0VSVChtYnVmcyAhPSBOVUxMIHx8IGNvdW50ID09IDApOw0KDQoNCj4gLS0tDQo+
+ICBkZXZ0b29scy9jb2NjaS9udWxsZnJlZS5jb2NjaSAgICAgICAgICB8IDUgKysrKy0NCj4gIGRv
+Yy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMDcucnN0IHwgNSArKysrKw0KPiAgbGliL21i
+dWYvcnRlX21idWYuYyAgICAgICAgICAgICAgICAgICAgfCAzICsrKw0KPiAgbGliL21idWYvcnRl
+X21idWYuaCAgICAgICAgICAgICAgICAgICAgfCAxICsNCj4gIDQgZmlsZXMgY2hhbmdlZCwgMTMg
+aW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RldnRvb2xz
+L2NvY2NpL251bGxmcmVlLmNvY2NpDQo+IGIvZGV2dG9vbHMvY29jY2kvbnVsbGZyZWUuY29jY2kN
+Cj4gaW5kZXggZTc0MTdiNjlmZi4uNzhlMzBmNzMwYSAxMDA2NDQNCj4gLS0tIGEvZGV2dG9vbHMv
+Y29jY2kvbnVsbGZyZWUuY29jY2kNCj4gKysrIGIvZGV2dG9vbHMvY29jY2kvbnVsbGZyZWUuY29j
+Y2kNCj4gQEAgLTQsNyArNCw3IEBADQo+ICAvLyBmcmVlKE5VTEwpIGFzIGEgbm8tb3AuDQo+ICAv
+Lw0KPiAgQEANCj4gLWV4cHJlc3Npb24gRTsNCj4gK2V4cHJlc3Npb24gRSwgTjsNCj4gIEBADQo+
+ICAoDQo+ICAtIGlmIChFICE9IE5VTEwpIGNtZGxpbmVfZnJlZShFKTsNCj4gQEAgLTc5LDYgKzc5
+LDkgQEAgZXhwcmVzc2lvbiBFOw0KPiAgLSBpZiAoRSAhPSBOVUxMKSBydGVfcGt0bWJ1Zl9mcmVl
+KEUpOw0KPiAgKyBydGVfcGt0bWJ1Zl9mcmVlKEUpOw0KPiAgfA0KPiArLSBpZiAoRSAhPSBOVUxM
+KSBydGVfcGt0bWJ1Zl9mcmVlX2J1bGsoRSwgTik7DQo+ICsrIHJ0ZV9wa3RtYnVmX2ZyZWVfYnVs
+ayhFLCBOKTsNCj4gK3wNCj4gIC0gaWYgKEUgIT0gTlVMTCkgcnRlX3JpYl9mcmVlKEUpOw0KPiAg
+KyBydGVfcmliX2ZyZWUoRSk7DQo+ICB8DQo+IGRpZmYgLS1naXQgYS9kb2MvZ3VpZGVzL3JlbF9u
+b3Rlcy9yZWxlYXNlXzI2XzA3LnJzdA0KPiBiL2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2Vf
+MjZfMDcucnN0DQo+IGluZGV4IGYwMTJkNDdhNGIuLjZmMmY3Zjg0OWYgMTAwNjQ0DQo+IC0tLSBh
+L2RvYy9ndWlkZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMDcucnN0DQo+ICsrKyBiL2RvYy9ndWlk
+ZXMvcmVsX25vdGVzL3JlbGVhc2VfMjZfMDcucnN0DQo+IEBAIC02Myw2ICs2MywxMSBAQCBOZXcg
+RmVhdHVyZXMNCj4gICAgICBgYHJ0ZV9lYWxfaW5pdGBgIGFuZCB0aGUgYXBwbGljYXRpb24gaXMg
+cmVzcG9uc2libGUgZm9yIHByb2JpbmcNCj4gZWFjaCBkZXZpY2UsDQo+ICAgICogYGAtLWF1dG8t
+cHJvYmluZ2BgIGVuYWJsZXMgdGhlIGluaXRpYWwgYnVzIHByb2JpbmcsIHdoaWNoIGlzIHRoZQ0K
+PiBjdXJyZW50IGRlZmF1bHQgYmVoYXZpb3IuDQo+IA0KPiArKiAqKm1idWY6IHJ0ZV9wa3RtYnVm
+X2ZyZWVfYnVsayBub3cgYWNjZXB0cyBOVUxMIGFycmF5IHBvaW50ZXIuKioNCj4gKw0KPiArICBD
+YWxsaW5nIGBgcnRlX3BrdG1idWZfZnJlZV9idWxrYGAgd2l0aCBhIE5VTEwgYGBtYnVmc2BgIGFy
+Z3VtZW50ICBpcw0KPiBhIG5vLW9wLA0KPiArICBtYXRjaGluZyB0aGUgYmVoYXZpb3Igb2YgYGBy
+dGVfcGt0bWJ1Zl9mcmVlKClgYCBhbmQgYGBydGVfZnJlZSgpYGAuDQo+ICsNCj4gDQo+ICBSZW1v
+dmVkIEl0ZW1zDQo+ICAtLS0tLS0tLS0tLS0tDQo+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9ydGVf
+bWJ1Zi5jIGIvbGliL21idWYvcnRlX21idWYuYw0KPiBpbmRleCBjMjQ3NmU3NzA0Li44ZWMzYmI1
+M2JiIDEwMDY0NA0KPiAtLS0gYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5jDQo+ICsrKyBiL2xpYi9tYnVm
+L3J0ZV9tYnVmLmMNCj4gQEAgLTU2Miw2ICs1NjIsOSBAQCB2b2lkIHJ0ZV9wa3RtYnVmX2ZyZWVf
+YnVsayhzdHJ1Y3QgcnRlX21idWYgKiptYnVmcywNCj4gdW5zaWduZWQgaW50IGNvdW50KQ0KPiAg
+CXN0cnVjdCBydGVfbWJ1ZiAqbSwgKm1fbmV4dCwNCj4gKnBlbmRpbmdbUlRFX1BLVE1CVUZfRlJF
+RV9QRU5ESU5HX1NaXTsNCj4gIAl1bnNpZ25lZCBpbnQgaWR4LCBuYl9wZW5kaW5nID0gMDsNCj4g
+DQo+ICsJaWYgKG1idWZzID09IE5VTEwpDQo+ICsJCXJldHVybjsNCj4gKw0KPiAgCXJ0ZV9tYnVm
+X2hpc3RvcnlfbWFya19idWxrKG1idWZzLCBjb3VudCwNCj4gUlRFX01CVUZfSElTVE9SWV9PUF9M
+SUJfRlJFRSk7DQo+IA0KPiAgCWZvciAoaWR4ID0gMDsgaWR4IDwgY291bnQ7IGlkeCsrKSB7DQo+
+IGRpZmYgLS1naXQgYS9saWIvbWJ1Zi9ydGVfbWJ1Zi5oIGIvbGliL21idWYvcnRlX21idWYuaA0K
+PiBpbmRleCBlN2MzYmJhZGQ0Li5lOWY4OTMyZTgwIDEwMDY0NA0KPiAtLS0gYS9saWIvbWJ1Zi9y
+dGVfbWJ1Zi5oDQo+ICsrKyBiL2xpYi9tYnVmL3J0ZV9tYnVmLmgNCj4gQEAgLTE1MzQsNiArMTUz
+NCw3IEBAIHN0YXRpYyBpbmxpbmUgdm9pZCBydGVfcGt0bWJ1Zl9mcmVlKHN0cnVjdA0KPiBydGVf
+bWJ1ZiAqbSkNCj4gICAqICBAcGFyYW0gbWJ1ZnMNCj4gICAqICAgIEFycmF5IG9mIHBvaW50ZXJz
+IHRvIHBhY2tldCBtYnVmcy4NCj4gICAqICAgIFRoZSBhcnJheSBtYXkgY29udGFpbiBOVUxMIHBv
+aW50ZXJzLg0KPiArICogICAgVGhlIGFycmF5IHBvaW50ZXIgaXMgTlVMTCBmdW5jdGlvbiBkb2Vz
+IG5vdGhpbmcuDQo+ICAgKiAgQHBhcmFtIGNvdW50DQo+ICAgKiAgICBBcnJheSBzaXplLg0KPiAg
+ICovDQo+IC0tDQo+IDIuNTMuMA0KDQo=
