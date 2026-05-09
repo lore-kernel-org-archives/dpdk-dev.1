@@ -2,46 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11AE3CD3445
-	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 21:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 615F7CD3445
+	for <dpdk-dev@archiver.kernel.org>; Fri,  8 May 2026 21:41:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B21604064E;
-	Fri,  8 May 2026 23:40:58 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id EB01440665;
+	Fri,  8 May 2026 23:41:01 +0200 (CEST)
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
- by mails.dpdk.org (Postfix) with ESMTP id BABB440608;
- Fri,  8 May 2026 23:40:57 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id 2F9EC40661;
+ Fri,  8 May 2026 23:41:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1778276458; x=1809812458;
+ t=1778276461; x=1809812461;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=ld7dqS3JlmlELgOAz/Ibp7U0wOLdvsrjTmgatuWtQOQ=;
- b=RaUxsSHBZOWoWXxMeHXl7EjL5St4oERunDiNgaOfWDb1kpqRP/sX53bX
- xShAOCiFhchuR2mUn2bEu3JcmzWOzIAQ6NTYPJKSdyyXebPDGvnjzPsle
- Wg0J0wIFs44Qf2PI3HffHTuGlF487IqPh1OA/ugAt8/8fpPtoDFFawBq3
- Gpe1noeAWwdhCBFq9PoASgzhhASOk63RbF08yPPOlVGEwgybSxNiCSsEo
- LiK3ftP/JGUjoQ2M+pPSOBiV4pXbeRQ/fPn7k2mdvDR4tKEs6OjSfQEl7
- N8vZwWjevJehO7IsC1QVlq1rzSuu3ldLFfirRcow/ZcIUI0MfdnU6MeaQ w==;
-X-CSE-ConnectionGUID: cZ5jzvQSRNSlaDnCKUJBeg==
-X-CSE-MsgGUID: irnqRP3GQHGrKIZTMdkWdA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11780"; a="82876716"
-X-IronPort-AV: E=Sophos;i="6.23,224,1770624000"; d="scan'208";a="82876716"
+ bh=o5eoAxhI22tx78UFJsm0n8gLBKTH19VkPbX/FBK65/U=;
+ b=lmqglmKGyGUSygjfOOXOxqMVksrPNbTqJPGX4cR9L93c62NkxdNvku0C
+ sevt+ZfB5VCKXB7ow5XUNPH2SZYQOWW+XCSOWRSRsRVHNnlVODoB4McGv
+ 7O0nbXHc0pb+XYbqYc7l13UfFKcLfsGurX+k++18Lg3c7y0Oj+Ri4zslN
+ d53Kn5zDrsu9ligcP5Hni72EHJfOyvY/CuSGYppegmfw0P+9xolQoBQZW
+ RHEHFKDyQV5ZPNmnsDwqNBWmkWButkzNZdBtInDBcA0qbPq8FcEvaQDZ6
+ t7lq87u6ZuBCjHVg/gVxkdKicioWz6WgLwTt/IeLh8aHIqylvGMdmeJiy g==;
+X-CSE-ConnectionGUID: zxPdmXqUQ0uplOHxp8wDvw==
+X-CSE-MsgGUID: LTuzghdSR4aMzN0LYu2gHw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11780"; a="82876718"
+X-IronPort-AV: E=Sophos;i="6.23,224,1770624000"; d="scan'208";a="82876718"
 Received: from orviesa009.jf.intel.com ([10.64.159.149])
  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 08 May 2026 14:40:57 -0700
-X-CSE-ConnectionGUID: Q1m9qwi2T0KKhMw5wJ6Ctg==
-X-CSE-MsgGUID: 9RUtehuJSgyWL59T8YtedA==
+ 08 May 2026 14:41:00 -0700
+X-CSE-ConnectionGUID: W8zkc3W9QPKntLk6utlK8g==
+X-CSE-MsgGUID: kiJuNp1GQrqTp+cgmu9L5w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,224,1770624000"; d="scan'208";a="236993087"
+X-IronPort-AV: E=Sophos;i="6.23,224,1770624000"; d="scan'208";a="236993097"
 Received: from fenlix-mobl.ccr.corp.intel.com ([10.239.252.5])
- by orviesa009.jf.intel.com with ESMTP; 08 May 2026 14:40:55 -0700
+ by orviesa009.jf.intel.com with ESMTP; 08 May 2026 14:40:57 -0700
 From: Soumyadeep Hore <soumyadeep.hore@intel.com>
 To: bruce.richardson@intel.com, manoj.kumar.subbarao@intel.com,
  aman.deep.singh@intel.com, dev@dpdk.org
 Cc: stable@dpdk.org
-Subject: [PATCH v4 1/2] net/iavf: remove PHC polling from Rx datapath
-Date: Sat,  9 May 2026 06:14:46 -0400
-Message-ID: <20260509101447.42093-2-soumyadeep.hore@intel.com>
+Subject: [PATCH v4 2/2] net/iavf: reuse device alarm for PHC sync
+Date: Sat,  9 May 2026 06:14:47 -0400
+Message-ID: <20260509101447.42093-3-soumyadeep.hore@intel.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20260509101447.42093-1-soumyadeep.hore@intel.com>
 References: <20260406212208.1562899-1-soumyadeep.hore@intel.com>
@@ -61,11 +61,11 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove periodic PHC read/update checks from scalar and vector flex
-RX paths, keeping timestamp conversion based on queue PHC state.
+Reuse existing iavf device alarm cadence to drive periodic PHC sync
+instead of a dedicated PHC alarm callback.
 
-This avoids hot-path PHC polling overhead and preserves the latency
-fix for RX timestamp-enabled traffic.
+Keep PHC start/stop hooks as pause/resume controls around queue
+reconfiguration and device lifecycle paths.
 
 Bugzilla ID: 1898
 Fixes: 61b6874b9224 ("net/iavf: support Rx timestamp offload on AVX512")
@@ -75,182 +75,199 @@ Cc: stable@dpdk.org
 
 Signed-off-by: Soumyadeep Hore <soumyadeep.hore@intel.com>
 ---
- drivers/net/intel/iavf/iavf_rxtx.c            | 34 -------------------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c   | 16 ++-------
- drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c | 16 ++-------
- 3 files changed, 4 insertions(+), 62 deletions(-)
+ drivers/net/intel/iavf/iavf.h        |  5 ++
+ drivers/net/intel/iavf/iavf_ethdev.c | 70 ++++++++++++++++++++++++++++
+ drivers/net/intel/iavf/iavf_vchnl.c  |  4 ++
+ 3 files changed, 79 insertions(+)
 
-diff --git a/drivers/net/intel/iavf/iavf_rxtx.c b/drivers/net/intel/iavf/iavf_rxtx.c
-index 4ff6c18dc4..fabccc89bf 100644
---- a/drivers/net/intel/iavf/iavf_rxtx.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx.c
-@@ -1507,16 +1507,6 @@ iavf_recv_pkts_flex_rxd(void *rx_queue,
- 	rx_ring = rxq->rx_flex_ring;
- 	ptype_tbl = rxq->iavf_vsi->adapter->ptype_tbl;
+diff --git a/drivers/net/intel/iavf/iavf.h b/drivers/net/intel/iavf/iavf.h
+index 403c61e2e8..2f1779d47b 100644
+--- a/drivers/net/intel/iavf/iavf.h
++++ b/drivers/net/intel/iavf/iavf.h
+@@ -76,6 +76,7 @@
+ #define IAVF_QUEUE_ITR_INTERVAL_MAX     8160 /* 8160 us */
  
--	if (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
--		uint64_t sw_cur_time = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
--
--		if (sw_cur_time - rxq->hw_time_update > 4) {
--			if (iavf_get_phc_time(rxq))
--				PMD_DRV_LOG(ERR, "get physical time failed");
--			rxq->hw_time_update = sw_cur_time;
--		}
--	}
--
- 	while (nb_rx < nb_pkts) {
- 		rxdp = &rx_ring[rx_id];
- 		rx_stat_err0 = rte_le_to_cpu_16(rxdp->wb.status_error0);
-@@ -1585,7 +1575,6 @@ iavf_recv_pkts_flex_rxd(void *rx_queue,
- 				rte_le_to_cpu_32(rxd.wb.flex_ts.ts_high));
+ #define IAVF_ALARM_INTERVAL 50000 /* us */
++#define IAVF_PHC_SYNC_ALARM_INTERVAL_US 200000
  
- 			rxq->phc_time = ts_ns;
--			rxq->hw_time_update = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
- 
- 			*RTE_MBUF_DYNFIELD(rxm,
- 				iavf_timestamp_dynfield_offset,
-@@ -1627,16 +1616,6 @@ iavf_recv_scattered_pkts_flex_rxd(void *rx_queue, struct rte_mbuf **rx_pkts,
- 	volatile union ci_rx_flex_desc *rxdp;
- 	const uint32_t *ptype_tbl = rxq->iavf_vsi->adapter->ptype_tbl;
- 
--	if (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
--		uint64_t sw_cur_time = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
--
--		if (sw_cur_time - rxq->hw_time_update > 4) {
--			if (iavf_get_phc_time(rxq))
--				PMD_DRV_LOG(ERR, "get physical time failed");
--			rxq->hw_time_update = sw_cur_time;
--		}
--	}
--
- 	while (nb_rx < nb_pkts) {
- 		rxdp = &rx_ring[rx_id];
- 		rx_stat_err0 = rte_le_to_cpu_16(rxdp->wb.status_error0);
-@@ -1755,7 +1734,6 @@ iavf_recv_scattered_pkts_flex_rxd(void *rx_queue, struct rte_mbuf **rx_pkts,
- 				rte_le_to_cpu_32(rxd.wb.flex_ts.ts_high));
- 
- 			rxq->phc_time = ts_ns;
--			rxq->hw_time_update = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
- 
- 			*RTE_MBUF_DYNFIELD(first_seg,
- 				iavf_timestamp_dynfield_offset,
-@@ -1969,16 +1947,6 @@ iavf_rx_scan_hw_ring_flex_rxd(struct ci_rx_queue *rxq,
- 	if (!(stat_err0 & (1 << IAVF_RX_FLEX_DESC_STATUS0_DD_S)))
- 		return 0;
- 
--	if (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
--		uint64_t sw_cur_time = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
--
--		if (sw_cur_time - rxq->hw_time_update > 4) {
--			if (iavf_get_phc_time(rxq))
--				PMD_DRV_LOG(ERR, "get physical time failed");
--			rxq->hw_time_update = sw_cur_time;
--		}
--	}
--
- 	/* Scan LOOK_AHEAD descriptors at a time to determine which
- 	 * descriptors reference packets that are ready to be received.
- 	 */
-@@ -2041,8 +2009,6 @@ iavf_rx_scan_hw_ring_flex_rxd(struct ci_rx_queue *rxq,
- 					rte_le_to_cpu_32(rxdp[j].wb.flex_ts.ts_high));
- 
- 				rxq->phc_time = ts_ns;
--				rxq->hw_time_update = rte_get_timer_cycles() /
--					(rte_get_timer_hz() / 1000);
- 
- 				*RTE_MBUF_DYNFIELD(mb,
- 					iavf_timestamp_dynfield_offset,
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-index db0462f0f5..9349646d55 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx2.c
-@@ -514,18 +514,10 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct ci_rx_queue *rxq,
- 	if (!(rxdp->wb.status_error0 &
- 			rte_cpu_to_le_32(1 << IAVF_RX_FLEX_DESC_STATUS0_DD_S)))
- 		return 0;
--	bool is_tsinit = false;
- 	uint8_t inflection_point = 0;
- 	__m256i hw_low_last = _mm256_set_epi32(0, 0, 0, 0, 0, 0, 0, rxq->phc_time);
- 	if (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
--		uint64_t sw_cur_time = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
--
--		if (unlikely(sw_cur_time - rxq->hw_time_update > 4)) {
--			hw_low_last = _mm256_setzero_si256();
--			is_tsinit = 1;
--		} else {
--			hw_low_last = _mm256_set_epi32(0, 0, 0, 0, 0, 0, 0, rxq->phc_time);
--		}
-+		hw_low_last = _mm256_set_epi32(0, 0, 0, 0, 0, 0, 0, rxq->phc_time);
+ /* The overhead from MTU to max frame size.
+  * Considering QinQ packet, the VLAN tag needs to be counted twice.
+@@ -383,6 +384,8 @@ struct iavf_adapter {
+ 	enum iavf_rx_func_type rx_func_type;
+ 	enum iavf_tx_func_type tx_func_type;
+ 	uint16_t fdir_ref_cnt;
++	uint8_t phc_sync_ticks;
++	bool phc_sync_paused;
+ 	struct iavf_devargs devargs;
+ 	bool mac_primary_set;
+ };
+@@ -517,6 +520,8 @@ void iavf_add_del_all_mac_addr(struct iavf_adapter *adapter, bool add);
+ int iavf_dev_link_update(struct rte_eth_dev *dev,
+ 			__rte_unused int wait_to_complete);
+ void iavf_dev_alarm_handler(void *param);
++void iavf_phc_sync_alarm_start(struct rte_eth_dev *dev);
++void iavf_phc_sync_alarm_stop(struct rte_eth_dev *dev);
+ int iavf_query_stats(struct iavf_adapter *adapter,
+ 		    struct virtchnl_eth_stats **pstats);
+ int iavf_config_promisc(struct iavf_adapter *adapter, bool enable_unicast,
+diff --git a/drivers/net/intel/iavf/iavf_ethdev.c b/drivers/net/intel/iavf/iavf_ethdev.c
+index 1eca20bc9a..02272d45c1 100644
+--- a/drivers/net/intel/iavf/iavf_ethdev.c
++++ b/drivers/net/intel/iavf/iavf_ethdev.c
+@@ -21,6 +21,7 @@
+ #include <rte_pci.h>
+ #include <rte_alarm.h>
+ #include <rte_atomic.h>
++#include <rte_cycles.h>
+ #include <rte_eal.h>
+ #include <rte_ether.h>
+ #include <ethdev_driver.h>
+@@ -145,6 +146,7 @@ static int iavf_dev_rx_queue_intr_disable(struct rte_eth_dev *dev,
+ 					 uint16_t queue_id);
+ static void iavf_dev_interrupt_handler(void *param);
+ static void iavf_disable_irq0(struct iavf_hw *hw);
++static bool iavf_phc_sync_alarm_needed(struct rte_eth_dev *dev);
+ static int iavf_dev_flow_ops_get(struct rte_eth_dev *dev,
+ 				 const struct rte_flow_ops **ops);
+ static int iavf_set_mc_addr_list(struct rte_eth_dev *dev,
+@@ -1056,6 +1058,8 @@ iavf_dev_start(struct rte_eth_dev *dev)
+ 		goto error;
  	}
  
- 	/* constants used in processing loop */
-@@ -1152,10 +1144,8 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct ci_rx_queue *rxq,
- 					*RTE_MBUF_DYNFIELD(rx_pkts[i + 7],
- 						iavf_timestamp_dynfield_offset, uint32_t *) = _mm256_extract_epi32(ts_low1, 7);
++	iavf_phc_sync_alarm_start(dev);
++
+ 	return 0;
  
--					if (unlikely(is_tsinit)) {
-+					{
- 						uint32_t in_timestamp;
--						if (iavf_get_phc_time(rxq))
--							PMD_DRV_LOG(ERR, "get physical time failed");
- 						in_timestamp = *RTE_MBUF_DYNFIELD(rx_pkts[i + 0],
- 								iavf_timestamp_dynfield_offset, uint32_t *);
- 						rxq->phc_time = iavf_tstamp_convert_32b_64b(rxq->phc_time, in_timestamp);
-@@ -1388,8 +1378,6 @@ _iavf_recv_raw_pkts_vec_avx2_flex_rxd(struct ci_rx_queue *rxq,
- 				PMD_DRV_LOG(ERR, "invalid inflection point for rx timestamp");
- 				break;
- 			}
--
--			rxq->hw_time_update = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
- 		}
- 		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
- 			break;
-diff --git a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-index 4e8bf94fa0..1bb3e9746b 100644
---- a/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-+++ b/drivers/net/intel/iavf/iavf_rxtx_vec_avx512.c
-@@ -615,18 +615,10 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct ci_rx_queue *rxq,
+ error:
+@@ -1082,6 +1086,8 @@ iavf_dev_stop(struct rte_eth_dev *dev)
+ 	if (adapter->stopped == 1)
+ 		return 0;
  
- #ifdef IAVF_RX_TS_OFFLOAD
- 	uint8_t inflection_point = 0;
--	bool is_tsinit = false;
- 	__m256i hw_low_last = _mm256_set_epi32(0, 0, 0, 0, 0, 0, 0, (uint32_t)rxq->phc_time);
++	iavf_phc_sync_alarm_stop(dev);
++
+ 	/* Disable the interrupt for Rx */
+ 	rte_intr_efd_disable(intr_handle);
+ 	/* Rx interrupt vector mapping free */
+@@ -2705,9 +2711,11 @@ void
+ iavf_dev_alarm_handler(void *param)
+ {
+ 	struct rte_eth_dev *dev = (struct rte_eth_dev *)param;
++	struct iavf_adapter *adapter;
+ 	if (dev == NULL || dev->data == NULL || dev->data->dev_private == NULL)
+ 		return;
  
- 	if (rxq->offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP) {
--		uint64_t sw_cur_time = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
--
--		if (unlikely(sw_cur_time - rxq->hw_time_update > 4)) {
--			hw_low_last = _mm256_setzero_si256();
--			is_tsinit = 1;
--		} else {
--			hw_low_last = _mm256_set_epi32(0, 0, 0, 0, 0, 0, 0, (uint32_t)rxq->phc_time);
--		}
-+		hw_low_last = _mm256_set_epi32(0, 0, 0, 0, 0, 0, 0, (uint32_t)rxq->phc_time);
++	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
+ 	struct iavf_hw *hw = IAVF_DEV_PRIVATE_TO_HW(dev->data->dev_private);
+ 	uint32_t icr0;
+ 
+@@ -2723,10 +2731,70 @@ iavf_dev_alarm_handler(void *param)
+ 
+ 	iavf_enable_irq0(hw);
+ 
++	if (iavf_phc_sync_alarm_needed(dev) && !adapter->phc_sync_paused) {
++		adapter->phc_sync_ticks++;
++		if (adapter->phc_sync_ticks >=
++		    IAVF_PHC_SYNC_ALARM_INTERVAL_US / IAVF_ALARM_INTERVAL) {
++			struct ci_rx_queue *rxq = dev->data->rx_queues[0];
++
++			adapter->phc_sync_ticks = 0;
++			if (iavf_get_phc_time(rxq) == 0)
++				rxq->hw_time_update = rte_get_timer_cycles() /
++					(rte_get_timer_hz() / 1000);
++		}
++	} else {
++		adapter->phc_sync_ticks = 0;
++	}
++
+ 	rte_eal_alarm_set(IAVF_ALARM_INTERVAL,
+ 			  iavf_dev_alarm_handler, dev);
+ }
+ 
++static bool
++iavf_phc_sync_alarm_needed(struct rte_eth_dev *dev)
++{
++	struct iavf_adapter *adapter;
++
++	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++
++	if (adapter->closed || adapter->stopped)
++		return false;
++
++	if (!(dev->data->dev_conf.rxmode.offloads & RTE_ETH_RX_OFFLOAD_TIMESTAMP))
++		return false;
++
++	if (dev->data->nb_rx_queues == 0 || dev->data->rx_queues[0] == NULL)
++		return false;
++
++	return true;
++}
++
++void
++iavf_phc_sync_alarm_start(struct rte_eth_dev *dev)
++{
++	struct iavf_adapter *adapter;
++
++	if (!iavf_phc_sync_alarm_needed(dev))
++		return;
++
++	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++	adapter->phc_sync_paused = false;
++	adapter->phc_sync_ticks = 0;
++}
++
++void
++iavf_phc_sync_alarm_stop(struct rte_eth_dev *dev)
++{
++	struct iavf_adapter *adapter;
++
++	if (dev == NULL || dev->data == NULL || dev->data->dev_private == NULL)
++		return;
++
++	adapter = IAVF_DEV_PRIVATE_TO_ADAPTER(dev->data->dev_private);
++	adapter->phc_sync_paused = true;
++	adapter->phc_sync_ticks = 0;
++}
++
+ static int
+ iavf_dev_flow_ops_get(struct rte_eth_dev *dev,
+ 		      const struct rte_flow_ops **ops)
+@@ -2912,6 +2980,7 @@ iavf_dev_init(struct rte_eth_dev *eth_dev)
+ 	} else {
+ 		rte_eal_alarm_cancel(iavf_dev_alarm_handler, eth_dev);
  	}
- #endif
++	iavf_phc_sync_alarm_stop(eth_dev);
  
-@@ -1343,11 +1335,9 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct ci_rx_queue *rxq,
- 					*RTE_MBUF_DYNFIELD(rx_pkts[i + 7],
- 						iavf_timestamp_dynfield_offset, uint32_t *) = _mm256_extract_epi32(ts_low1, 7);
+ 	rte_free(eth_dev->data->mac_addrs);
+ 	eth_dev->data->mac_addrs = NULL;
+@@ -2986,6 +3055,7 @@ iavf_dev_close(struct rte_eth_dev *dev)
+ 	} else {
+ 		rte_eal_alarm_cancel(iavf_dev_alarm_handler, dev);
+ 	}
++	iavf_phc_sync_alarm_stop(dev);
+ 	iavf_disable_irq0(hw);
  
--					if (unlikely(is_tsinit)) {
-+					{
- 						uint32_t in_timestamp;
+ 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_QOS)
+diff --git a/drivers/net/intel/iavf/iavf_vchnl.c b/drivers/net/intel/iavf/iavf_vchnl.c
+index 08dd6f2d7f..82943472e1 100644
+--- a/drivers/net/intel/iavf/iavf_vchnl.c
++++ b/drivers/net/intel/iavf/iavf_vchnl.c
+@@ -2133,12 +2133,16 @@ iavf_request_queues(struct rte_eth_dev *dev, uint16_t num)
+ 	args.out_size = IAVF_AQ_BUF_SZ;
  
--						if (iavf_get_phc_time(rxq))
--							PMD_DRV_LOG(ERR, "get physical time failed");
- 						in_timestamp = *RTE_MBUF_DYNFIELD(rx_pkts[i + 0],
- 										iavf_timestamp_dynfield_offset, uint32_t *);
- 						rxq->phc_time = iavf_tstamp_convert_32b_64b(rxq->phc_time, in_timestamp);
-@@ -1584,8 +1574,6 @@ _iavf_recv_raw_pkts_vec_avx512_flex_rxd(struct ci_rx_queue *rxq,
- 				PMD_DRV_LOG(ERR, "invalid inflection point for rx timestamp");
- 				break;
- 			}
--
--			rxq->hw_time_update = rte_get_timer_cycles() / (rte_get_timer_hz() / 1000);
- 		}
- #endif
- 		if (burst != IAVF_VPMD_DESCS_PER_LOOP_WIDE)
+ 	if (vf->vf_res->vf_cap_flags & VIRTCHNL_VF_OFFLOAD_WB_ON_ITR) {
++		iavf_phc_sync_alarm_stop(dev);
+ 		err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
++		iavf_phc_sync_alarm_start(dev);
+ 	} else {
+ 		rte_eal_alarm_cancel(iavf_dev_alarm_handler, dev);
++		iavf_phc_sync_alarm_stop(dev);
+ 		err = iavf_execute_vf_cmd_safe(adapter, &args, 0);
+ 		rte_eal_alarm_set(IAVF_ALARM_INTERVAL,
+ 				  iavf_dev_alarm_handler, dev);
++		iavf_phc_sync_alarm_start(dev);
+ 	}
+ 
+ 	if (err) {
 -- 
 2.47.1
 
