@@ -2,75 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F75CD3447
-	for <dpdk-dev@archiver.kernel.org>; Sun, 10 May 2026 15:04:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E04CD3427
+	for <dpdk-dev@archiver.kernel.org>; Sun, 10 May 2026 15:21:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 6C94E40272;
-	Sun, 10 May 2026 17:04:13 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id A30CB40270
- for <dev@dpdk.org>; Sun, 10 May 2026 17:04:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1778425451;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- in-reply-to:in-reply-to:references:references;
- bh=2pGgwxueozESERci/r+85NONbnHJ9p1HzN2aCUeyE7I=;
- b=Iab+ihyUx7UGE9BgEVLd/4hGTa485ApKIHI4WJDgAO9EzwOWg5pxNCKKX4d3LZemdCfwd7
- pqe1wIoVY05xRFjPahSBGjloxlkh/gsJeX5vUGVJWEbt8+37JgUykehVg01v5dgJ0YCJnf
- tMuvEk15AvexHEAZ67hwPpSmPd0c8h8=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-508-83JMyGd2PYmWDS41_eyMWg-1; Sun, 10 May 2026 11:04:10 -0400
-X-MC-Unique: 83JMyGd2PYmWDS41_eyMWg-1
-X-Mimecast-MFC-AGG-ID: 83JMyGd2PYmWDS41_eyMWg_1778425449
-Received: by mail-lf1-f71.google.com with SMTP id
- 2adb3069b0e04-5a898609ca2so1826024e87.3
- for <dev@dpdk.org>; Sun, 10 May 2026 08:04:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778425448; x=1779030248;
- h=cc:to:subject:message-id:date:from:in-reply-to:references
- :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+	by mails.dpdk.org (Postfix) with ESMTP id AAEC740272;
+	Sun, 10 May 2026 17:21:26 +0200 (CEST)
+Received: from mail-dy1-f180.google.com (mail-dy1-f180.google.com
+ [74.125.82.180]) by mails.dpdk.org (Postfix) with ESMTP id 705BC40270
+ for <dev@dpdk.org>; Sun, 10 May 2026 17:21:25 +0200 (CEST)
+Received: by mail-dy1-f180.google.com with SMTP id
+ 5a478bee46e88-2ef38cf04f0so5053558eec.1
+ for <dev@dpdk.org>; Sun, 10 May 2026 08:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778426484;
+ x=1779031284; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=2pGgwxueozESERci/r+85NONbnHJ9p1HzN2aCUeyE7I=;
- b=dtb9An0e1Aj4TUzYIOzODVlzC8ByRn+AGn7kqoCWuL6SD2U1eBatRlp+PiWh6dkSiY
- NuWJ3AAy9zHXLFdxKCF+lrok9QJLnQFheUvnWqfArhOSgX0kbEwGW1S2xOim09JK8+OC
- CeoXUZXAJA6ONrWrVeK0DXc8KcV99/Vcli3rVzvDnXUQWQmaQVEaC8Ha3nSb9HWsa3cm
- 1xAqDp9gFk6/q6uq1W6UABAb3a4cGbQ6icB/z8MKbGvYrnE9gCKzmoezT8b9QvHZBywx
- goRGS5rgOSZsO50pvD2vq0KwF1maqQJcWvgl7/cSGRTzYTdu5JHNN+peh43AMvd1cXP3
- ji4A==
-X-Gm-Message-State: AOJu0Yw0AeAfsa93PIRPc+Hoz5ByJjwWwNx7OdwgaxuzR9DKxxN3bO8g
- g3SawovVqE0v943PZtnTaAemF7Wz98D8I1ijX7Ld+RW1CoT3RhvU8obFvkRO1Lfo5IyVJDP1n9t
- d4PtUEvkngpzrEOg5fUd1t+ZWTiQJfcDSzyn1LM3M7vld5HFuRX29EAvYLp2DmOrlcSpRk5Iv+h
- 5TRZNYQMvhf0EMeiOlhyfuFdZ7PPs=
-X-Gm-Gg: Acq92OES5JLlLgsEET4dgn3dY1xicQRETTW1ihxm+NXuisZdS9JqxrF6vEPuHq7n+2L
- ACoew0nvVXVfyF/4M7yFsT+fDo5WirzQfLeQmt3ri0wm5HBCJBjbqwsja+j1KiKgj0yczXkVm7U
- djAuJMYMCDb11OxoMyXLd+ylVLD9Q1u+W1CjR1gwc9EWfOiHbHdodmrCLXkX7VJ6UFKYc2cE9I0
- GnkVq9+TrleHTFJgysH6NZTQhRKfbHkWFM1CXx86Q88In8m6lfWLmJaDAR4AamZ/k6fvA==
-X-Received: by 2002:a05:6512:3a81:b0:5a8:65ce:e832 with SMTP id
- 2adb3069b0e04-5a887ceb5ddmr6763745e87.36.1778425448569; 
- Sun, 10 May 2026 08:04:08 -0700 (PDT)
-X-Received: by 2002:a05:6512:3a81:b0:5a8:65ce:e832 with SMTP id
- 2adb3069b0e04-5a887ceb5ddmr6763740e87.36.1778425447913; Sun, 10 May 2026
- 08:04:07 -0700 (PDT)
+ bh=EzxLdq2nnEqFKdLj/qC9rTLt7YUff+ubTJAOd70JS3g=;
+ b=RROU8jl1xzgz3tWehbcIK4kD2bkG1OnjYc+R4E2uWZwkQPIKhX1YyZJXS3bafnhI9+
+ iu+lCDB91Kmse/aC30/T6t4++6js8CIAFYhI/Sui+U0EBH2jyH4dSC3Tcf+p+Io+rLOC
+ Vgg+RaTE+whPixBPdSZLPNitC/uO+4nGwY/zp0T6SGqju++g7tfhxt+V/MizwHfC99ch
+ 2FbJD2jRk3mP4G5wjMfcDfKX7DETfcyiEoN0d8iFBgIoj//0TZIBvL4aNriFS0R07hV7
+ GaHtDui2fSMbSewWX5Xw686kXx+RoPke9k290+8qD4WwLL1Bg0qfI8dW4eOeJradxrnD
+ 9A0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778426484; x=1779031284;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=EzxLdq2nnEqFKdLj/qC9rTLt7YUff+ubTJAOd70JS3g=;
+ b=RETHNfC6CMkKV2b5u0EqK6rsTsEp+PFnKxHji1Jh2mCX7S6TNqtBieH1V+A54JZOQh
+ kV7ByNcuOFSG/yU1SDQcOB7JgsZPWPfaVijWTNx/IpmR1UNRnrKiovLnLgqTZtgBTnaN
+ dR9jG5kdxIDQ/9OIMZ7SIkgNuyf6dEMT46P8KCNre+uIHJC+fc13Xdi82hRO1I4H/iu7
+ 6ibxa1KuDi10Zja6SBgSBMLXIDXfC2HHltY0RvlBjBZKqtJDLWA0kuH8wsUkZoN4FFLG
+ 1Y4XvD04YU5G+msnJ32RSRqKXPI4rsfkMPaOO4Ix4Fu9zHSqXm9/Z2AHJzeRxy9gynYp
+ iUwg==
+X-Gm-Message-State: AOJu0Ywmo+sf5p7ItNARgR1Qg3wS2IdtXO3qpf+14ZxY0LWbafeY484w
+ +m1tsoHNtib5UqV1roTabsC4VtXHCO1NMhRy8viro9fl/jTEw0cC5R8xpsRxxHTOKNyuWryH8jb
+ zUfKgkF4=
+X-Gm-Gg: Acq92OGkJei/3T9foiI0u+Aizm7fIlnqfuwZrGt7ikgUewaTZ+SrhsJwiiLAJpiVwis
+ jComxN8uf7GRMJ0sKNzaxucEZVQEiO4bSWum2BjsVgTzDqqPF8Ws4im9cDKi44GdmAP7C60TZoZ
+ qyZKoYUSItjI/Ro7AAKKh5YM4Qfk/W/nrc+aIkGOxiKvtNoMd+HbhMoGroRbXi+huRUKIapuGLs
+ 8eSMcQl0qY85q7YM0+VRs0rGXtBWwoQBtEKlAXuqJZ2VX6pV1iWqSw8mu7udIPYiRxxcnrYdpEF
+ EgVbRPHiHwZ4Xxh8dcA45IIEdRY24hKuAG1LFrN/BcF/XZRqsLb43RGieREfoMY1ahXRRBpriTY
+ jRc9wO4GOpVWlRZFu/OeY1gUd7nv8gMgRBR8L2Zr0RqmZPercB46i42IkmpSOYimAJpDG86PhlG
+ s9qKbpbth/E+F347ESiHDGPMR5XaeIgewJlsRRoACU0Teebg==
+X-Received: by 2002:a05:7301:1292:b0:2e2:3381:2fba with SMTP id
+ 5a478bee46e88-2fb3dbf9968mr2500841eec.3.1778426483986; 
+ Sun, 10 May 2026 08:21:23 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-2f8864c37basm9843665eec.13.2026.05.10.08.21.23
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Sun, 10 May 2026 08:21:23 -0700 (PDT)
+Date: Sun, 10 May 2026 08:21:21 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: <dev@dpdk.org>
+Subject: Re: [PATCH 13/20] mbuf: allow NULL array in rte_pktmbuf_free_bulk
+Message-ID: <20260510082121.7da55e33@phoenix.local>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F6586C@smartserver.smartshare.dk>
+References: <20260508203607.1003036-1-stephen@networkplumber.org>
+ <20260508203607.1003036-14-stephen@networkplumber.org>
+ <98CBD80474FA8B44BF855DF32C47DC35F65869@smartserver.smartshare.dk>
+ <20260509084657.598eebfb@phoenix.local>
+ <98CBD80474FA8B44BF855DF32C47DC35F6586C@smartserver.smartshare.dk>
 MIME-Version: 1.0
-References: <20260403091836.1073484-1-david.marchand@redhat.com>
- <20260506123554.2524136-1-david.marchand@redhat.com>
- <20260506195128.68d47ed2@phoenix.local>
-In-Reply-To: <20260506195128.68d47ed2@phoenix.local>
-From: David Marchand <david.marchand@redhat.com>
-Date: Sun, 10 May 2026 17:03:56 +0200
-X-Gm-Features: AVHnY4JtUD6JFuqr7T8_ZU_RJQFzIn6qjXqosGSYYgSiFpIDRX-vIvtp4QXtYuQ
-Message-ID: <CAJFAV8z0Tqf0XXnes7mGMwN6wOj6aByhvmy_L1gPHjjGvNY=vw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] Remove limitations coming from legacy VMDq
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Wham7-D6LyPFCudbRt2xhUWjIsG5OknUti0zRs6u7Cs_1778425449
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -84,170 +84,134 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Hello Stephen,
+On Sun, 10 May 2026 14:31:57 +0200
+Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
 
-On Thu, 7 May 2026 at 04:51, Stephen Hemminger
-<stephen@networkplumber.org> wrote:
->
-> On Wed,  6 May 2026 14:35:48 +0200
-> David Marchand <david.marchand@redhat.com> wrote:
->
-> > Since the commit 88ac4396ad29 ("ethdev: add VMDq support"),
-> > VMDq has been imposing a maximum number of mac addresses in the
-> > mac_addr_add/del API.
-> >
-> > Nowadays, new Intel drivers do not support the feature and few other
-> > drivers implement this feature.
-> >
-> > This series proposes to flag drivers that support the feature, and
-> > remove the limit of number of mac addresses for others.
-> >
-> > Next step could be to remove the VMDq pool notion from the generic API.
-> > However I have some concern about this, as changing the quite stable
-> > mac_addr_add/del API now seems a lot of noise for not much benefit.
-> >
->
->
-> AI review (manual not automated) saw these:
->
-> On Wed,  6 May 2026 14:35:49 +0200
-> David Marchand <david.marchand@redhat.com> wrote:
->
-> [PATCH v2 1/5] ethdev: skip VMDq pools unless configured
-> --------------------------------------------------------
->
-> Warning: duplicate-add no longer returns 0 in non-VMDq mode
->
->    } else if (vmdq) {
->            pool_mask = dev->data->mac_pool_sel[index];
->            /* Check if both MAC address and pool is already there, and do nothing */
->            if (pool_mask & RTE_BIT64(pool))
->                    return 0;
->    }
->
->    When index >= 0 (MAC already present) and VMDq is not configured,
->    the early "already there" return that existed before is now skipped
->    entirely. The driver's mac_addr_add op gets re-invoked and
->    mac_pool_sel is no longer updated for !vmdq, so subsequent calls
->    keep re-invoking it. Pre-patch behaviour was idempotent (return 0).
->
->    Suggested fix:
->
->    } else if (vmdq) {
->            pool_mask = dev->data->mac_pool_sel[index];
->            if (pool_mask & RTE_BIT64(pool))
->                    return 0;
->    } else {
->            return 0;       /* MAC already installed, only one pool */
->    }
+> > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > Sent: Saturday, 9 May 2026 17.47
+> >=20
+> > On Sat, 9 May 2026 10:47:53 +0200
+> > Morten Br=C3=B8rup <mb@smartsharesystems.com> wrote:
+> >  =20
+> > > > From: Stephen Hemminger [mailto:stephen@networkplumber.org]
+> > > > Sent: Friday, 8 May 2026 22.34
+> > > >
+> > > > This allows callers to avoid NULL checks and just call
+> > > > rte_pktmbuf_free_bulk, similar to rte_pktmbuf_free.
+> > > >
+> > > > Signed-off-by: Stephen Hemminger <stephen@networkplumber.org> =20
+> > >
+> > > I disagree with this patch.
+> > >
+> > > The parameter is an array of (pointers to) mbufs.
+> > > We already accept that the array can contain NULL pointers (no mbuf =
+=20
+> > present). =20
+> > > This is extremely forgiving, considering that other fast path =20
+> > functions don't allow NULL pointers in arrays; =20
+> > > e.g. rte_eth_tx_burst(), rte_mempool_put_bulk().
+> > > But since it's a "free()" class of function, I don't object to it.
+> > >
+> > > However, this patch changes the parameter type from "array" to "array=
+ =20
+> > or NULL (no array present)". =20
+> > > And I don't think we should change the parameter type; it should =20
+> > remain "array" only. =20
+> > >
+> > > If there are any scenarios where a non-present array (NULL) is passed=
+ =20
+> > to the function, the count should be zero too. =20
+> > > And when the count is zero, the function does not dereference the =20
+> > array, so explicitly checking for NULL is superfluous. =20
+> > >
+> > > We have a convention of not checking parameter validity in fast path =
+=20
+> > functions. =20
+> > > And I consider it invalid parameters passing NULL with a non-zero =20
+> > count. =20
+> > >
+> > > You might argue that this is a "free()" class of function, which =20
+> > warrants checking for NULL; but since it already accepts NULL with zero
+> > count, it is already covered. =20
+> > >
+> > > We could change the function declaration for clarity:
+> > >
+> > > void rte_pktmbuf_free_bulk(
+> > > 		unsigned int count;
+> > > 		struct rte_mbuf *mbufs[count], unsigned int count);
+> > >
+> > > Or add a debug assertion at the start of the function:
+> > > RTE_ASSERT(mbufs !=3D NULL || count =3D=3D 0); =20
+> >=20
+> > Ok, it was more motivated by common pattern in driver cleanup paths
+> > like:
+> >=20
+> > --- a/app/test-compress-perf/comp_perf_test_common.c
+> > +++ b/app/test-compress-perf/comp_perf_test_common.c
+> > @@ -83,11 +83,9 @@ comp_perf_free_memory(struct comp_test_data
+> > *test_data,
+> >  {
+> >  	uint32_t i;
+> >=20
+> > -	if (mem->decomp_bufs !=3D NULL)
+> > -		rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
+> > +	rte_pktmbuf_free_bulk(mem->decomp_bufs, mem->total_bufs);
+> >=20
+> > -	if (mem->comp_bufs !=3D NULL)
+> > -		rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
+> > +	rte_pktmbuf_free_bulk(mem->comp_bufs, mem->total_bufs);
+> >  =20
+>=20
+> Skimming comp_perf_test_common.c, it looks like mem->total_bufs is initia=
+lized to the number of wanted buffers, and then mem->decomp_bufs is set up =
+afterwards. In other words, total_bufs can be non-zero while comp_bufs is N=
+ULL.
+>=20
+> IMO, removing the NULL comparison here would pass invalid parameters to r=
+te_pktmbuf_free_bulk().
+>=20
+> Train of thoughts...
+>=20
+> On the other hand, it does provide a good example where considering rte_p=
+ktmbuf_free_bulk() a "free()" class function accepting a NULL pointer would=
+ be helpful.
+> And the added performance cost of checking for a NULL pointer is per burs=
+t, not per packet.
+> I'm not as strongly opposed as I was initially.
+>=20
+> However, looking at it in a broader scope gets me be back to being oppose=
+d:
+> This patch is for freeing mbufs.
+> If we consider freeing mempool objects, the cleanup function would call r=
+te_mempool_put_bulk() to free the objects, which is the function for freein=
+g previously allocated mempool objects. It just happens to not have "free" =
+as part of its name.
+>=20
+> The mempool single object "free()" function, rte_mempool_put(), doesn't a=
+ccept a NULL pointer.
+> Similarly, the mempool bulk free function, rte_mempool_put_bulk(), doesn'=
+t accept holes (NULL pointers) in the array.
+> I certainly do not want to introduce holes into mempool object arrays.
+>=20
+> Maybe it was a bad decision to allow holes in mbuf arrays being passed to=
+ rte_pktmbuf_free_bulk(). Such holes are not accepted in any other DPDK API=
+s.
+>=20
+> At this point, I'm still not in favor of this patch.
+> It's defensive coding (with a performance cost, however small) in a fast =
+path function.
+>=20
 
-Yes, good catch.
+More thoughts.
+- allowing NULL array is not worth it; not a big win, and only one place ma=
+ttered
 
+- allowing holes in array seems odd, and not that useful. Probably can't ch=
+ange now.
+  Not sure why callers would need it.
 
->
->
-> [PATCH v2 2/5] ethdev: announce VMDq capability
-> -----------------------------------------------
->
-> Warning: capability advertised even when max_vmdq_pools may be 0
->
->    The capability bit is set unconditionally in several drivers where
->    VMDq availability is conditional on hardware variant or runtime
->    configuration:
->
->      - net/intel/e1000/igb_ethdev.c: max_vmdq_pools = 0 for e1000_82575,
->        e1000_i354 (no setting), e1000_i210, e1000_i211.
->      - net/intel/i40e/i40e_ethdev.c: max_vmdq_pools is gated on
->        (pf->flags & I40E_FLAG_VMDQ).
->      - net/bnxt/bnxt_ethdev.c: max_vmdq_pools is set to 0 when there
->        are not enough resources (see "Not enough resources to support
->        VMDq" path).
->
->    With this patch a user can pass mq_mode |= RTE_ETH_MQ_RX_VMDQ_FLAG
->    through rte_eth_dev_configure() because the new capability check
->    passes, but the driver has no pools to honour the request.
->
->    Suggested fix: gate the capa bit on max_vmdq_pools > 0, or set it
->    per-MAC-type / per-flag in each driver.
-
-I realise now that this new device capability would also break VMDQ
-with failsafe on top of VMDQ-capable ports.
-In the end, as suggested here, max_vmdq_pools is already a gate and no
-new capability is needed.
-
-
->
-> Warning: VMDq capability advertised on VFs that do not configure VMDq
->
->    ixgbevf_dev_info_get() and txgbevf_dev_info_get() now advertise
->    RTE_ETH_DEV_CAPA_VMDQ, but ixgbevf_dev_configure() and
->    txgbevf_dev_configure() only handle RTE_ETH_MQ_RX_RSS_FLAG. The
->    feature matrices doc/guides/nics/features/ixgbe_vf.ini and
->    txgbe_vf.ini do not list "VMDq = Y". A VF is itself a member of a
->    PF VMDq pool; advertising the capa from the VF is misleading.
->
-> Warning: ipn3ke advertises VMDq=Y in its features file but is not
->    updated by the patch
->
->    doc/guides/nics/features/ipn3ke.ini has "VMDq = Y" but the patch
->    does not add RTE_ETH_DEV_CAPA_VMDQ to ipn3ke. Either update the
->    driver or correct the feature matrix.
->
-> Warning: missing release note
->
->    The new RTE_ETH_DEV_CAPA_VMDQ public bit and the new rejection in
->    rte_eth_dev_configure() (returning -EINVAL when an application sets
->    a VMDq mq_mode on a non-VMDq device) are user-visible API and
->    behavioural changes. release_26_07.rst should mention them under
->    "API Changes".
->
-> [PATCH v2 3/5] ethdev: hide VMDq internal sizes
-> -----------------------------------------------
->
-> Warning: public defines removed without deprecation cycle
->
->    RTE_ETH_NUM_RECEIVE_MAC_ADDR and RTE_ETH_VMDQ_NUM_UC_HASH_ARRAY
->    were declared in the application-facing rte_ethdev.h. Moving them
->    to ethdev_driver.h removes them from the public API. Per the DPDK
->    API/ABI policy this normally needs a prior deprecation notice; at
->    minimum it warrants a release_26_07.rst "API Changes" entry.
-
-Mixed feeling about it.
-I can add a note, but I think it is noise.
-
-
->
->
-> [PATCH v2 4/5] net/iavf: accept up to 32k unicast MAC addresses
-> ---------------------------------------------------------------
->
-> Warning: dead store in iavf_add_del_uc_addr_bulk()
->
->    for (uint32_t i = 0; i < nb_addrs; i++) {
->            size_t buf_len = sizeof(struct virtchnl_ether_addr_list) +
->                    sizeof(struct virtchnl_ether_addr) * list->num_elements;
->            ...
->            buf_len = sizeof(struct virtchnl_ether_addr_list) +
->                    sizeof(struct virtchnl_ether_addr) * list->num_elements;
->
->    The first initialiser is unconditionally overwritten by the second
->    assignment before any read. Drop the initialiser (or move the
->    declaration to the use site).
-
-Good catch.. rebase damage on my side, I dropped some
-experiments/changes but forgot to update after.
-
-
->
-> Warning: missing release note for max_mac_addrs jump
->
->    max_mac_addrs goes from 64 to 32768 and dev_data->mac_addrs is now
->    allocated at RTE_ETHER_ADDR_LEN * 32768 = 192 KiB per VF port. This
->    is a notable behaviour change for iavf users and worth a
->    release_26_07.rst entry.
->
-
-
--- 
-David Marchand
-
+- Probably should add RTE_ASSERT() into free bulk. Should allow rte_pktmbuf=
+_free_bulk(NULL, 0)
+  for consistency with some other API's that take array and count. But asse=
+rt should trigger
+  on rte_pktmbuf_free_bulk(NULL, 1)
