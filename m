@@ -2,81 +2,121 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB90ECD37B2
-	for <dpdk-dev@archiver.kernel.org>; Sat,  9 May 2026 22:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFA4CD37AF
+	for <dpdk-dev@archiver.kernel.org>; Sun, 10 May 2026 09:00:46 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 02C1640693;
-	Sun, 10 May 2026 00:05:08 +0200 (CEST)
-Received: from fhigh-b6-smtp.messagingengine.com
- (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
- by mails.dpdk.org (Postfix) with ESMTP id EB0F440612
- for <dev@dpdk.org>; Sun, 10 May 2026 00:05:05 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.stl.internal (Postfix) with ESMTP id 6C0727A005D;
- Sat,  9 May 2026 18:05:05 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Sat, 09 May 2026 18:05:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:date:date:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to; s=fm3; t=1778364305; x=
- 1778450705; bh=TOXyZ6Y80ZwaBr9psdNcrh4RkcL71fowUCEFw20JOVc=; b=Y
- cYYTaxcEmqnecVVBBJXiEdCQOctIoo1Nq+DVpKBB2QA2xf8w2Gc2rbW45A15iZeR
- RROQUvvtG8Y170pKVzUwp8S/Em/gVnMUs5Jfv5H+nNsMm/+w53I7YMPbgoR6/CU8
- +OnIa7cN6/xbxcgJbz0t5z7s4dNLGVR7nSWd4vCAsBYoLNHU5jVwXyHFjL6jtr3y
- cPfxv5YXewyzGLFF5EQRcELRSNUVFw4RcuoPkv+XETs0zku0gFt6jC76KCJ+mVtz
- iJ7KKkMiixVKv54Hm9Ag8qoF5sa4zCpkzQue1Y2Jt3EC9ENPYqqMWw5eY6ldCfD8
- N3fivKruAvW11sHTUMRsw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:date:date:feedback-id:feedback-id:from:from
- :in-reply-to:in-reply-to:message-id:mime-version:references
- :reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
- :x-me-sender:x-sasl-enc; s=fm3; t=1778364305; x=1778450705; bh=T
- OXyZ6Y80ZwaBr9psdNcrh4RkcL71fowUCEFw20JOVc=; b=MqX91FeLLoDPr9Qe9
- c+/MR2B4JS9G981OfO4iI6y797j53d9+oKyQEwjXR3ThMylTmsTQy1RFfGZJtfuJ
- 3A4l3EnR5yGG9yq6azCJG4kEc7WZ4KFT3fuECk68m2J7IPhg3GuFXw4/vUWsUxC5
- GTjrwzAPRpaxCp5s+NSeHNwOz3ywZB1+wY8bGpQMQ5uVUo+cQfTZqHeNZLgsQRt+
- HcSeO5jCaCm0hd+AgDF3QmjFzhH9tqWrIeG708BZFkWLH2bVYf/9GxV2NS1xdmuD
- x7H6m2QEzynOy9ZU8n7+nPfAOhULhP4yApZ6Mw9kLNpSQjlH31OuX/qSt9ICdcEM
- qpI4g==
-X-ME-Sender: <xms:ka__abKmMEP15ky_AdWOsgYyZ0DkmPyI6E34hPkJx4JpLvvmONfLxg>
- <xme:ka__aWKmwby_AwNGfGiSB6cWZQrhpGX8SEPLnrTR3cbi1ocHJecU5N3sSg7HAdKHD
- 17iWX4Qtf_cyJwdrg-GJyY5s5oq20PNihvtu7FcMsmwok3foANdBRU>
-X-ME-Received: <xmr:ka__aYvxMSYXKcekCEPmz9VWEFA5eLWEfjOSQZQ8NSRKxHULvn0g-bowZKRcNQnZzzxne8xmxFbycmU3d5PyOeqGv-AoXok>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduudegfeekucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpedvjefhudeghedvtdeijeeigeetuedugfejueekieeltdfhteevkeeh
- hfeilefhtdenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtph
- htthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhmsggvrhdrohhrghdprhgtphht
- thhopehluhgtrgdrvhhiiiiirghrrhhosegrrhhmrdgtohhmpdhrtghpthhtohepphhroh
- gssgesihholhdruhhnhhdrvgguuh
-X-ME-Proxy: <xmx:ka__aTTIijEFtLv6QHXhDaya-OUobh46fX8SMT6UaxCPgvrdxnnJ1Q>
- <xmx:ka__aeMrJx0YOZSXsqnHp4UrdAUsB_HNUnIBlF8N81Ra4uiT3TD3bg>
- <xmx:ka__aYbv9Tj8a-ALxJWWcPzXryfWFlOCEfYIw3fSoCnV2cIhZFmVCg>
- <xmx:ka__aYxzXMFi0ECEMPaTwoR8BVXn_ewMNLlkkI4Pjk-Cxa7b1h7Q6A>
- <xmx:ka__aeqSSSXWyOSqBTZFWz64pHVH2OYfSUqQ7xPpUG7S9GQVfGsr3xFl>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 9 May 2026 18:05:01 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
+	by mails.dpdk.org (Postfix) with ESMTP id 2458C402ED;
+	Sun, 10 May 2026 11:00:45 +0200 (CEST)
+Received: from DM5PR21CU001.outbound.protection.outlook.com
+ (mail-centralusazon11011015.outbound.protection.outlook.com [52.101.62.15])
+ by mails.dpdk.org (Postfix) with ESMTP id 5513F402BD
+ for <dev@dpdk.org>; Sun, 10 May 2026 11:00:42 +0200 (CEST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dcv+6C0j8tEmABPYry8Bla0vk39xYvMZgMEUt5LcGjQfHkh1VuMDY7kRO0priQVn8ZZPjqOsJZIe2cDpvAmjrOl6os/g3xlLOhi2+aOyTT2ZKoi4sz8AQKxkyVgcIBeTkvr3d/P44NTyEROlth3YVTBNAtGSdQQcTHOvOT+CiGZcrI2s+GT/ci/zbtNopPZpjR/vIGtpcBqiwp0wAiFOv6k/zqqpaYiklP+QsUoOS/7Lu/AfMiwyLzDBIf7O7RYb89iOVZpdsJ3oKwUPvQCxipQOMXFORz2VSGgOeSRc+cakDZ/9M+TN5ELcv79zNBZCmNfWTPkQMwJPZy+SqCXQMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=haN59endEDzrgAN+NvlCJwAzg16DyjIuEEDJqajGjvk=;
+ b=sLhA4Jv/qDhHEtkPtyf04II2PPXuTTHyxn3a1oMX/OAt/FdjDz/pg+Cn9Bm/8jsdR65Mrb9dyx48chMowmaAmfYLTFpQIZRQ+OpRvpSb9ZOle7oRYpzDRs07RSqVe2w7ag4dqNrJpLL4AhQtKQ26scnYeePBqjwYZB4JU7YJNX/AHG+NrSQTwNiTxq1dV4Uf/lDk1wdSdvtFwiqJWUIXoxljevB8bpsV+EOVCTIxjTh/kXPXdrrBWoxI0TAZLk6qtR6y+CXXiAXb/cJRGvhn8kuIwMkmgBJJK1hbtQoeQ6THyparbZBPubgrAK38Htdoe4i6be4N3jL2NseDFDKBmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=haN59endEDzrgAN+NvlCJwAzg16DyjIuEEDJqajGjvk=;
+ b=GFVYJSOIAEmsbPJo7hNdobY3D1sX+cKiGfZTHa7fR7vbs6b1SLRFt1LSXeB26fEYaZ8TIAf8YJkm7suNVDhjVRHpgdBzsmfeDFzAYVLhc4h2J6B+CTanoegVJp3yAq0sOegHrzKhhpUSdV+kKFTurkTr/bl/W9GXs0vjN4IzyPPYVwnHWyOgUFjIKNd2HKTbavbmGJQl66v6FtPfPrwvE97t+YSL8JojzaNgMFthOGUdSM68sAdn8NmBybDN/OslZNxvAGx18rF2wsR1UfCKInN8Dp0U+HWZsNYF7JI9Czxy6NoG/qvGyv0npyGn8rK5aPCiA/PVYFLS8AFGu7W0bA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW4PR12MB6754.namprd12.prod.outlook.com (2603:10b6:303:1eb::7)
+ by CH0PR12MB8551.namprd12.prod.outlook.com (2603:10b6:610:186::21)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9891.21; Sun, 10 May
+ 2026 09:00:39 +0000
+Received: from MW4PR12MB6754.namprd12.prod.outlook.com
+ ([fe80::baee:e8cc:6cbf:3d84]) by MW4PR12MB6754.namprd12.prod.outlook.com
+ ([fe80::baee:e8cc:6cbf:3d84%4]) with mapi id 15.20.9891.021; Sun, 10 May 2026
+ 09:00:39 +0000
+Message-ID: <a36e7f28-b6f8-4f83-bbf0-5f8b80f479be@nvidia.com>
+Date: Sun, 10 May 2026 12:00:29 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] common/mlx5: add ConnectX-10 SmartNIC
+From: Raslan Darawsheh <rasland@nvidia.com>
 To: dev@dpdk.org
-Cc: Stephen Hemminger <stephen@networkplumber.org>,
- Luca Vizzarro <luca.vizzarro@arm.com>, Patrick Robb <probb@iol.unh.edu>
-Subject: [PATCH v2 10/10] dts: add selective Rx tests
-Date: Sat,  9 May 2026 23:57:01 +0200
-Message-ID: <20260509220356.3679114-11-thomas@monjalon.net>
-X-Mailer: git-send-email 2.54.0
-In-Reply-To: <20260509220356.3679114-1-thomas@monjalon.net>
-References: <20260202160903.254621-1-getelson@nvidia.com>
- <20260509220356.3679114-1-thomas@monjalon.net>
+Cc: thomas@monjalon.net, dsosnowski@nvidia.com
+References: <20260419111721.7301-1-rasland@nvidia.com>
+ <20260420104856.14187-1-rasland@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20260420104856.14187-1-rasland@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR2P281CA0114.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:9d::6) To MW4PR12MB6754.namprd12.prod.outlook.com
+ (2603:10b6:303:1eb::7)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR12MB6754:EE_|CH0PR12MB8551:EE_
+X-MS-Office365-Filtering-Correlation-Id: f5e207fd-9cea-4da9-a749-08deae729b2f
+X-LD-Processed: 43083d15-7273-40c1-b7db-39efd9ccc17a,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+ ARA:13230040|366016|1800799024|376014|56012099003|22082099003|18002099003; 
+X-Microsoft-Antispam-Message-Info: oRB3uSokExk9kXzeiDCc2+iFsg6MyDIAXFUqXbOLGq/QRSSNVqmoIOtTlwX99iALnrpH0R20mmgtXYS/SzsrKiJYVJ+ZBvoCis7AJbxZJNpAIoiGLtLNBrF5bTRj/165FU3qDdafC1PkNGRD9I9/GLRPSiKTYx9HJ+TjjdzoFcuGUS9nCbzyQZjLjOdAuzobr+QdtqewGisKHL8QId14q7B9JKmEik0kzalEVFh5/YbjC6mDE9QClRrLLY22aLtRGZzu+hvtDwuy7nhBtiqVmbkE5g2xZeIiQqbbQRaR2ukDjDCcFrYh98VCMUVu3LjP0WwchFcaTnv5/dTdR0oabKpRNxo09+ASuOBYBroIhI1b6LMObEqeOCBbVwq3QNp5OScQR52Y0joY82j8lw84dxltyEOtmXbyRZDw6Bf30iQ1xoSBSbIIS6dmvM44thtgCJ4CTqF/eVuva0AOiYpFrdJa6+KJteNhHcIDPi6q+jHmYdSy6vpDQjo1lVozzMT3ZN6zHZPS9pKk8MXAP1L23Wyk9X22QGgajK8WJ16pYRIN+9Z9BWd5jzRb7zAQ8WJwbKyNmYn2FglYJriYZ2L7xfsa9YFkiW0H7hSCKi751Ip7u85but8u7HJUgFneyaSOWDdV06v+aQcqjcRQRfxRGslegOjuSqhookL7o7/+P6nUe7xTWdSOlBJaXVmq+7U6
+X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
+ IPV:NLI; SFV:NSPM; H:MW4PR12MB6754.namprd12.prod.outlook.com; PTR:; CAT:NONE;
+ SFS:(13230040)(366016)(1800799024)(376014)(56012099003)(22082099003)(18002099003);
+ DIR:OUT; SFP:1101; 
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?N1p1Z1NOVllJU1R6NW9ySzUyeUxoRW1VOHl3L2x6dUF5TXMxcjZYUm9OV0ts?=
+ =?utf-8?B?RzZKVTUweWVzT1Y4dlRvOUxZYnBNbzM5TWtFaFNvZm82cTZaWWdJSGwxZG5E?=
+ =?utf-8?B?Y1ROZU82aytqa2ZST1F4ZEdxcmNWV2RhL0xFeEFQZGYvcjFPenhEOENNK0Jm?=
+ =?utf-8?B?ODFvVksvbjluRGE5RUljSVZ0enAvYUZqTklHN1ppNE8xdkgvbkwyVm1wbFZ5?=
+ =?utf-8?B?YXBqcjBqUjFxcXZBa3FDdVp5Ukx2eEp2TmVYUndxMExKK1RaWjA0YTJ2RzNz?=
+ =?utf-8?B?NWpMN2VGV3ZSRG5KeWpqYnhaamVTKzNpeStlTStLaUxoeGp2SDNScjlGZjVV?=
+ =?utf-8?B?SHJqbmdvV3luV2o5WGJLb0lXUEo1cGN0Z2pSSnIrWXJVMklMbS91ZDI1RWdD?=
+ =?utf-8?B?QUVMYThGWkFzQVExZExqYi94UXB5cnpEc1A3eGlPOWJDeW0zODZSWjNRY0lz?=
+ =?utf-8?B?NmZqU29EMDBXVG5BeWl1Tk1VcHphcDFTMEcwOGw2bWhwbmhReWxuWGZUMkFm?=
+ =?utf-8?B?bldSUHZaUTFqZG11b21DVGVrMzFGckVsZDZFV1JLUGE0aFVLcVBNN25KRHU5?=
+ =?utf-8?B?dVUxbk1saDlYSCtJQTFCTUJmV0s0RElkM2hMVkcybXdZQytlSmRKc0RMZ1ll?=
+ =?utf-8?B?azR1RjJLa3QxSmdsbzA2dnJvdjVlV2pzQzRESVRHRnZFeEpHSUJTTTI5Wm8y?=
+ =?utf-8?B?YS9YMlBTZWphZTQrUWxQZndSQXZKZ1lxYzVnUVNqb3NCQW1xTjRSbTl0d2Ja?=
+ =?utf-8?B?SFRHTU44V0RHZGRxQUlkdjRzb0NvVm1LZ29NczRjblhZVmJMbm1hY1IxTHVB?=
+ =?utf-8?B?ZytLNU12aXFDbXhVYzVsTnY3UmJHZHhxa2d3V3BySFY1c1M4ODkrckVwV2Q5?=
+ =?utf-8?B?LzkxMUdlLzFJYjZaTkIwWEdFcnlQeVFBUEM3SHB1R3EyVFdYMXZjVWdxTWtt?=
+ =?utf-8?B?L3d1N3FTbzNmQTR3S0szUE1JZXNEdFgwV0MxU3lqckJKdmFZTTI5NEMzKzZ2?=
+ =?utf-8?B?YS9hUmNJUmxRa1ljWTA2TWxGOEdJOEV5QU55dDZ3SENVcm91Vis0ZE5wV2RC?=
+ =?utf-8?B?OEhwNlc4clhlRURESTVHSThtVXNWNE1KOS9xNWJpZktNL21rYjRSMGVrRVJ6?=
+ =?utf-8?B?dGdKOXRIeFlESHhUbXlKR0t3QUFTNjM3TWhQSFJMK1d3QmNkUEY4VUpWNkVq?=
+ =?utf-8?B?STBlb1Ria1p3emNBbi9TVVZBNWJDWWFsOGo1aW42dkFJaHQrei9BNXQrMDFZ?=
+ =?utf-8?B?S1pqbDZ4RTRxS0xSRWpRZ0NyK2hYSUM4bzQzemIvUlIxTWEySU5NSjdPU3lB?=
+ =?utf-8?B?RVVWUVJocUFnMnlIUjYzMGJVbW5WVWxDNGloWG51bVE2cER3UlRiSFdKL0dJ?=
+ =?utf-8?B?aHRNb1VRWjB5ckdWSDlzdGg1STRBeENKb09OUGRERkd6VlVjRDA1U3ZFZ0hK?=
+ =?utf-8?B?T0JaK3l6L1JFTzJBRjRQQ3pLNFpLMS9aY1dXYk5jWlNpdzlReGdIOU1IL3Bn?=
+ =?utf-8?B?SjRHNngwYzA1dkNMKzNLR1phcG9SS0JuMTQ2REU0MlloUzFOZWlqSlBKQTdH?=
+ =?utf-8?B?ZHdYT3lHYVd1VlNJaWZmWmJaWUZhblJkMzJ4MlpRajh6aDVMOGx1TktHclNw?=
+ =?utf-8?B?NUZGZjBuWS9QbEhiem51U3N3MUlWcXNlN1dHeXNQTjZldEtsWGU3a1JCLys2?=
+ =?utf-8?B?TTU2dzhDMTlMQWlBZFY5QkR4YThOZzRHcXNKUjJnTmZmR1NkRWd1MDBxcGc0?=
+ =?utf-8?B?YWpnRHRtRGs4dlhBYWdDTHNLUFNJRnk0V28vZ3poTlJCR2s4SFlpdUt5bjlC?=
+ =?utf-8?B?dUZ6d2V0bWtmK0JabEZVNGVFYTVUdmdUeWZiL2YzdnVkemw1bDhZZmQ5U1pi?=
+ =?utf-8?B?RG5HK2YvOHF0RTFHeTNzL3EvY3FoWEdHc215SFp6eU9tOHl6VHJtckxWKzhI?=
+ =?utf-8?B?QmgwS00vS3VwdU50L0hNdENFR3VYNWYrZkI5L1VVS0RWak5CKzZpd3ZPdThJ?=
+ =?utf-8?B?TjhLc054c2N2M2dXZ2VoOVRUNmgrcjVqNE9WeEZGOE5SUzdTWW50b2hmVkZO?=
+ =?utf-8?B?NDhBVEJvL0J0cTEwVEhiVitJS1FsSVkzR1NjT05tZmlKYVpBV29wdVFGaXo4?=
+ =?utf-8?B?VWJ6MlZoSmlXS01pajZ3YnNaSDE4Z0ZNN1BmS1RwYS9wK3h0WjcxMUpsRS84?=
+ =?utf-8?B?UjRqREJabWZ3UHdYSjgrdjlkcXlKVHNXZzYvUXM4aFVkZ0MwMkFtZ2ZOS2N1?=
+ =?utf-8?B?aG50czBRZW1WQjNRbnJjZk9nZ0o0alV1bUlRazREU2MxMWt3Q213aWg2WnAx?=
+ =?utf-8?Q?izdMdwy/VQy6QiOTfy?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5e207fd-9cea-4da9-a749-08deae729b2f
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB6754.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2026 09:00:38.9716 (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ji12K1niBlWghVm7uWj4ikM14+eje4uc87EwPYoL+X1XFPTP2KHJiQgM686rHqUepnPN53ZjoMUTMgwAG7qWaw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8551
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -90,364 +130,20 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Add TestSuite_rx_split with 7 test cases:
-- 3 positive: headers only, payload only, two non-contiguous segments
-- 4 negative: missing offload flag, out-of-range, overlap, all-discard
+Hi,
 
-Add selective Rx capability detection via testpmd "show port info".
 
-The test suite could be completed later for the basic buffer split
-configuration based on offsets or protocols.
+On 20/04/2026 1:48 PM, Raslan Darawsheh wrote:
+> This adds the ConnectX-10 SmartNIC device ID to the
+> list of NVIDIA devices that run the mlx5 drivers.
+> The device is still in development stage.
+> 
+> Signed-off-by: Raslan Darawsheh <rasland@nvidia.com>
+> --
+> v2: changing order of devices
 
-Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
----
- dts/api/capabilities.py                   |   2 +
- dts/api/testpmd/__init__.py               |  17 ++
- dts/api/testpmd/types.py                  |   6 +
- dts/framework/testbed_model/capability.py |   2 +
- dts/tests/TestSuite_rx_split.py           | 262 ++++++++++++++++++++++
- 5 files changed, 289 insertions(+)
- create mode 100644 dts/tests/TestSuite_rx_split.py
+Patch applied to next-net-mlx,
 
-diff --git a/dts/api/capabilities.py b/dts/api/capabilities.py
-index 09bc538523..b0c1d81d36 100644
---- a/dts/api/capabilities.py
-+++ b/dts/api/capabilities.py
-@@ -136,6 +136,8 @@ class NicCapability(IntEnum):
-     #: Device supports all VLAN capabilities.
-     PORT_RX_OFFLOAD_VLAN = auto()
-     QUEUE_RX_OFFLOAD_VLAN = auto()
-+    #: Device supports selective Rx.
-+    SELECTIVE_RX = auto()
-     #: Device supports Rx queue setup after device started.
-     RUNTIME_RX_QUEUE_SETUP = auto()
-     #: Device supports Tx queue setup after device started.
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-index e9187440bb..6973a64573 100644
---- a/dts/api/testpmd/__init__.py
-+++ b/dts/api/testpmd/__init__.py
-@@ -1409,6 +1409,23 @@ def get_capabilities_show_port_info(
-             self.ports[0].device_capabilities,
-         )
- 
-+    def get_capabilities_selective_rx(
-+        self,
-+        supported_capabilities: MutableSet["NicCapability"],
-+        unsupported_capabilities: MutableSet["NicCapability"],
-+    ) -> None:
-+        """Get selective Rx capability from show port info.
-+
-+        Args:
-+            supported_capabilities: Supported capabilities will be added to this set.
-+            unsupported_capabilities: Unsupported capabilities will be added to this set.
-+        """
-+        port_info = self.show_port_info(self.ports[0].id)
-+        if port_info.selective_rx:
-+            supported_capabilities.add(NicCapability.SELECTIVE_RX)
-+        else:
-+            unsupported_capabilities.add(NicCapability.SELECTIVE_RX)
-+
-     def get_capabilities_mcast_filtering(
-         self,
-         supported_capabilities: MutableSet["NicCapability"],
-diff --git a/dts/api/testpmd/types.py b/dts/api/testpmd/types.py
-index 0d322aece2..6f1eaf47cc 100644
---- a/dts/api/testpmd/types.py
-+++ b/dts/api/testpmd/types.py
-@@ -614,6 +614,12 @@ def _validate(info: str) -> str | None:
-         metadata=VLANOffloadFlag.make_parser(),
-     )
- 
-+    #: Selective Rx support
-+    selective_rx: bool = field(
-+        default=False,
-+        metadata=TextParser.find(r"Selective Rx: supported"),
-+    )
-+
-     #: Maximum size of RX buffer
-     max_rx_bufsize: int | None = field(
-         default=None, metadata=TextParser.find_int(r"Maximum size of RX buffer: (\d+)")
-diff --git a/dts/framework/testbed_model/capability.py b/dts/framework/testbed_model/capability.py
-index 96e1cd449f..b10799ea4b 100644
---- a/dts/framework/testbed_model/capability.py
-+++ b/dts/framework/testbed_model/capability.py
-@@ -324,6 +324,8 @@ def mapping(cap: NicCapability) -> TestPmdNicCapability:
-                     | NicCapability.FLOW_SHARED_OBJECT_KEEP
-                 ):
-                     return (TestPmd.get_capabilities_show_port_info, None)
-+                case NicCapability.SELECTIVE_RX:
-+                    return (TestPmd.get_capabilities_selective_rx, None)
-                 case NicCapability.MCAST_FILTERING:
-                     return (TestPmd.get_capabilities_mcast_filtering, None)
-                 case NicCapability.FLOW_CTRL:
-diff --git a/dts/tests/TestSuite_rx_split.py b/dts/tests/TestSuite_rx_split.py
-new file mode 100644
-index 0000000000..42ff70fe64
---- /dev/null
-+++ b/dts/tests/TestSuite_rx_split.py
-@@ -0,0 +1,262 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 NVIDIA Corporation & Affiliates
-+
-+"""Rx split test suite.
-+
-+Test configuring a packet split on Rx,
-+and discarding some segments (selective Rx) at NIC level.
-+"""
-+
-+from typing import Any
-+
-+from scapy.layers.inet import IP
-+from scapy.layers.l2 import Ether
-+from scapy.packet import Raw
-+
-+from api.capabilities import (
-+    NicCapability,
-+    requires_nic_capability,
-+)
-+from api.packet import send_packet_and_capture
-+from api.test import fail, verify
-+from api.testpmd import TestPmd
-+from api.testpmd.config import SimpleForwardingModes
-+from api.testpmd.types import RxOffloadCapability, TxOffloadCapability
-+from framework.exception import InteractiveCommandExecutionError
-+from framework.test_suite import TestSuite, func_test
-+
-+PAYLOAD = bytes(range(256))
-+ETHER_HDR_LEN = len(Ether())
-+IP_HDR_LEN = len(IP())
-+ETHER_IP_HDR_LEN = ETHER_HDR_LEN + IP_HDR_LEN
-+
-+
-+@requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_BUFFER_SPLIT)
-+@requires_nic_capability(NicCapability.SELECTIVE_RX)
-+class TestRxSplit(TestSuite):
-+    """Rx split test suite.
-+
-+    Configure testpmd with various Rx segment offset/length combinations
-+    and verify that only the requested portions of the packet are received
-+    and forwarded.
-+    """
-+
-+    def _create_testpmd(self, **kwargs: Any) -> TestPmd:
-+        """Create a TestPmd instance with defaults overridden by kwargs."""
-+        defaults: dict[str, Any] = {
-+            "forward_mode": SimpleForwardingModes.mac,
-+            "rx_offloads": RxOffloadCapability.BUFFER_SPLIT,
-+            "enable_scatter": True,
-+        }
-+        return TestPmd(**{**defaults, **kwargs})
-+
-+    def _build_packet(self) -> Ether:
-+        """Build a test packet with an incrementing byte pattern payload."""
-+        return Ether() / IP() / Raw(load=PAYLOAD)
-+
-+    def _send_and_verify(
-+        self,
-+        testpmd: TestPmd,
-+        packet: Ether,
-+        expected_bytes: bytes,
-+    ) -> None:
-+        """Clear stats, send a packet, and verify received content and stats.
-+
-+        Args:
-+            testpmd: The running testpmd instance.
-+            packet: The packet to send.
-+            expected_bytes: Expected raw bytes of the received packet.
-+        """
-+        expected_len = len(expected_bytes)
-+        testpmd.clear_port_stats_all(verify=False)
-+
-+        received = send_packet_and_capture(packet)
-+        verify(
-+            len(received) > 0,
-+            "Did not receive any packets.",
-+        )
-+
-+        recv_bytes = bytes(received[0])
-+        verify(
-+            len(recv_bytes) == expected_len,
-+            f"Expected packet length {expected_len}, got {len(recv_bytes)}.",
-+        )
-+        verify(
-+            recv_bytes == expected_bytes,
-+            "Received packet content does not match expected bytes.",
-+        )
-+
-+        all_stats, _ = testpmd.show_port_stats_all()
-+        total_rx_packets = sum(s.rx_packets for s in all_stats)
-+        total_rx_bytes = sum(s.rx_bytes for s in all_stats)
-+        verify(
-+            total_rx_packets == 1,
-+            f"Expected 1 Rx packet, got {total_rx_packets}.",
-+        )
-+        verify(
-+            total_rx_bytes == expected_len,
-+            f"Expected {expected_len} Rx bytes, got {total_rx_bytes}.",
-+        )
-+
-+    @func_test
-+    def selective_rx_headers(self) -> None:
-+        """Keep only the Ethernet + IP headers, discard the payload.
-+
-+        Steps:
-+            Start testpmd with rxoffs/rxpkts and buffer split enabled.
-+            Send an Ether/IP/payload packet.
-+
-+        Verify:
-+            Received packet has Ether + IP headers only.
-+            Port stats show expected rx_packets and rx_bytes.
-+        """
-+        with self._create_testpmd(
-+            rx_segments_offsets=[0],
-+            rx_segments_length=[ETHER_IP_HDR_LEN],
-+        ) as testpmd:
-+            testpmd.start()
-+            packet = self._build_packet()
-+            expected = bytes(packet)[:ETHER_IP_HDR_LEN]
-+            self._send_and_verify(testpmd, packet, expected)
-+
-+    @func_test
-+    def selective_rx_payload_only(self) -> None:
-+        """Skip the Ethernet + IP headers, keep only the payload.
-+
-+        Steps:
-+            Start testpmd with rxoffs/rxpkts and buffer split enabled.
-+            Send an Ether/IP/payload packet.
-+
-+        Verify:
-+            Received packet is matching the original payload.
-+            Port stats show expected rx_packets and rx_bytes.
-+        """
-+        with self._create_testpmd(
-+            rx_segments_offsets=[ETHER_IP_HDR_LEN],
-+            rx_segments_length=[len(PAYLOAD)],
-+        ) as testpmd:
-+            testpmd.start()
-+            self._send_and_verify(testpmd, self._build_packet(), PAYLOAD)
-+
-+    @func_test
-+    def selective_rx_two_segments(self) -> None:
-+        """Keep the IP header and the middle of the payload, skip the rest.
-+
-+        Steps:
-+            Start testpmd with rxoffs/rxpkts, buffer split
-+            and multi-segment Tx enabled.
-+            Send an Ether/IP/payload packet.
-+
-+        Verify:
-+            Received packet is matching the IP header and middle of payload.
-+            Port stats show expected rx_packets and rx_bytes.
-+        """
-+        payload_offset = 100
-+        payload_length = 100
-+        with self._create_testpmd(
-+            tx_offloads=TxOffloadCapability.MULTI_SEGS,
-+            rx_segments_offsets=[ETHER_HDR_LEN, ETHER_IP_HDR_LEN + payload_offset],
-+            rx_segments_length=[IP_HDR_LEN, payload_length],
-+        ) as testpmd:
-+            testpmd.start()
-+            packet = self._build_packet()
-+            raw = bytes(packet)
-+            payload_start = ETHER_IP_HDR_LEN + payload_offset
-+            expected = (
-+                raw[ETHER_HDR_LEN:ETHER_IP_HDR_LEN]
-+                + raw[payload_start : payload_start + payload_length]
-+            )
-+            self._send_and_verify(testpmd, packet, expected)
-+
-+    @func_test
-+    def selective_rx_no_offload(self) -> None:
-+        """Configure selective Rx with buffer split disabled.
-+
-+        Steps:
-+            Start testpmd with rxoffs/rxpkts, buffer split
-+            and device start disabled.
-+            Attempt to start ports.
-+
-+        Verify:
-+            Queue configuration fails.
-+        """
-+        with self._create_testpmd(
-+            rx_offloads=None,
-+            rx_segments_offsets=[0],
-+            rx_segments_length=[ETHER_IP_HDR_LEN],
-+            disable_device_start=True,
-+        ) as testpmd:
-+            try:
-+                testpmd.start_all_ports()
-+                fail("Expected configuration to fail with buffer split disabled.")
-+            except InteractiveCommandExecutionError:
-+                pass
-+
-+    @func_test
-+    def selective_rx_offset_out_of_range(self) -> None:
-+        """Configure selective Rx with an offset beyond max_rx_pktlen.
-+
-+        Steps:
-+            Start testpmd with rxoffs too big, buffer split enabled,
-+            and device start disabled.
-+            Attempt to start ports.
-+
-+        Verify:
-+            Queue configuration fails.
-+        """
-+        with self._create_testpmd(
-+            rx_segments_offsets=[20000],
-+            rx_segments_length=[100],
-+            disable_device_start=True,
-+        ) as testpmd:
-+            try:
-+                testpmd.start_all_ports()
-+                fail("Expected configuration to fail with out-of-range offset.")
-+            except InteractiveCommandExecutionError:
-+                pass
-+
-+    @func_test
-+    def selective_rx_overlap(self) -> None:
-+        """Configure selective Rx with overlapping segments.
-+
-+        Steps:
-+            Start testpmd with overlapping rxoffs/rxpkts, buffer split enabled,
-+            and device start disabled.
-+            Attempt to start ports.
-+
-+        Verify:
-+            Queue configuration fails.
-+        """
-+        with self._create_testpmd(
-+            rx_segments_offsets=[0, 10],
-+            rx_segments_length=[64, 64],
-+            disable_device_start=True,
-+        ) as testpmd:
-+            try:
-+                testpmd.start_all_ports()
-+                fail("Expected configuration to fail with overlapping segments.")
-+            except InteractiveCommandExecutionError:
-+                pass
-+
-+    @func_test
-+    def selective_rx_all_discard(self) -> None:
-+        """Configure selective Rx with only discard segment.
-+
-+        Steps:
-+            Start testpmd with rxoffs/rxpkts=0 (null segment), buffer split enabled,
-+            and device start disabled.
-+            Attempt to start ports.
-+
-+        Verify:
-+            Queue configuration fails.
-+        """
-+        with self._create_testpmd(
-+            rx_segments_offsets=[0],
-+            rx_segments_length=[0],
-+            disable_device_start=True,
-+        ) as testpmd:
-+            try:
-+                testpmd.start_all_ports()
-+                fail("Expected configuration to fail with only discard segment.")
-+            except InteractiveCommandExecutionError:
-+                pass
--- 
-2.54.0
+Kindest regards
+Raslan Darawsheh
 
