@@ -2,38 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E10CD37B2
-	for <dpdk-dev@archiver.kernel.org>; Sun, 10 May 2026 12:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F75CD3447
+	for <dpdk-dev@archiver.kernel.org>; Sun, 10 May 2026 15:04:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 375D540272;
-	Sun, 10 May 2026 14:32:04 +0200 (CEST)
-Received: from dkmailrelay1.smartsharesystems.com
- (smartserver.smartsharesystems.com [77.243.40.215])
- by mails.dpdk.org (Postfix) with ESMTP id B6DE140270
- for <dev@dpdk.org>; Sun, 10 May 2026 14:32:02 +0200 (CEST)
-Received: from smartserver.smartsharesystems.com
- (smartserver.smartsharesys.local [192.168.4.10])
- by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id B232D20628;
- Sun, 10 May 2026 14:32:01 +0200 (CEST)
-Content-class: urn:content-classes:message
+	by mails.dpdk.org (Postfix) with ESMTP id 6C94E40272;
+	Sun, 10 May 2026 17:04:13 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id A30CB40270
+ for <dev@dpdk.org>; Sun, 10 May 2026 17:04:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1778425451;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+ in-reply-to:in-reply-to:references:references;
+ bh=2pGgwxueozESERci/r+85NONbnHJ9p1HzN2aCUeyE7I=;
+ b=Iab+ihyUx7UGE9BgEVLd/4hGTa485ApKIHI4WJDgAO9EzwOWg5pxNCKKX4d3LZemdCfwd7
+ pqe1wIoVY05xRFjPahSBGjloxlkh/gsJeX5vUGVJWEbt8+37JgUykehVg01v5dgJ0YCJnf
+ tMuvEk15AvexHEAZ67hwPpSmPd0c8h8=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-508-83JMyGd2PYmWDS41_eyMWg-1; Sun, 10 May 2026 11:04:10 -0400
+X-MC-Unique: 83JMyGd2PYmWDS41_eyMWg-1
+X-Mimecast-MFC-AGG-ID: 83JMyGd2PYmWDS41_eyMWg_1778425449
+Received: by mail-lf1-f71.google.com with SMTP id
+ 2adb3069b0e04-5a898609ca2so1826024e87.3
+ for <dev@dpdk.org>; Sun, 10 May 2026 08:04:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778425448; x=1779030248;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=2pGgwxueozESERci/r+85NONbnHJ9p1HzN2aCUeyE7I=;
+ b=dtb9An0e1Aj4TUzYIOzODVlzC8ByRn+AGn7kqoCWuL6SD2U1eBatRlp+PiWh6dkSiY
+ NuWJ3AAy9zHXLFdxKCF+lrok9QJLnQFheUvnWqfArhOSgX0kbEwGW1S2xOim09JK8+OC
+ CeoXUZXAJA6ONrWrVeK0DXc8KcV99/Vcli3rVzvDnXUQWQmaQVEaC8Ha3nSb9HWsa3cm
+ 1xAqDp9gFk6/q6uq1W6UABAb3a4cGbQ6icB/z8MKbGvYrnE9gCKzmoezT8b9QvHZBywx
+ goRGS5rgOSZsO50pvD2vq0KwF1maqQJcWvgl7/cSGRTzYTdu5JHNN+peh43AMvd1cXP3
+ ji4A==
+X-Gm-Message-State: AOJu0Yw0AeAfsa93PIRPc+Hoz5ByJjwWwNx7OdwgaxuzR9DKxxN3bO8g
+ g3SawovVqE0v943PZtnTaAemF7Wz98D8I1ijX7Ld+RW1CoT3RhvU8obFvkRO1Lfo5IyVJDP1n9t
+ d4PtUEvkngpzrEOg5fUd1t+ZWTiQJfcDSzyn1LM3M7vld5HFuRX29EAvYLp2DmOrlcSpRk5Iv+h
+ 5TRZNYQMvhf0EMeiOlhyfuFdZ7PPs=
+X-Gm-Gg: Acq92OES5JLlLgsEET4dgn3dY1xicQRETTW1ihxm+NXuisZdS9JqxrF6vEPuHq7n+2L
+ ACoew0nvVXVfyF/4M7yFsT+fDo5WirzQfLeQmt3ri0wm5HBCJBjbqwsja+j1KiKgj0yczXkVm7U
+ djAuJMYMCDb11OxoMyXLd+ylVLD9Q1u+W1CjR1gwc9EWfOiHbHdodmrCLXkX7VJ6UFKYc2cE9I0
+ GnkVq9+TrleHTFJgysH6NZTQhRKfbHkWFM1CXx86Q88In8m6lfWLmJaDAR4AamZ/k6fvA==
+X-Received: by 2002:a05:6512:3a81:b0:5a8:65ce:e832 with SMTP id
+ 2adb3069b0e04-5a887ceb5ddmr6763745e87.36.1778425448569; 
+ Sun, 10 May 2026 08:04:08 -0700 (PDT)
+X-Received: by 2002:a05:6512:3a81:b0:5a8:65ce:e832 with SMTP id
+ 2adb3069b0e04-5a887ceb5ddmr6763740e87.36.1778425447913; Sun, 10 May 2026
+ 08:04:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
-Subject: RE: [PATCH 13/20] mbuf: allow NULL array in rte_pktmbuf_free_bulk
-Date: Sun, 10 May 2026 14:31:57 +0200
-Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6586C@smartserver.smartshare.dk>
-In-Reply-To: <20260509084657.598eebfb@phoenix.local>
-X-MimeOLE: Produced By Microsoft Exchange V6.5
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-Thread-Topic: [PATCH 13/20] mbuf: allow NULL array in rte_pktmbuf_free_bulk
-Thread-Index: AdzfyxUYaHX3E/ekSYScFyEGVGHyewAppIng
-References: <20260508203607.1003036-1-stephen@networkplumber.org><20260508203607.1003036-14-stephen@networkplumber.org><98CBD80474FA8B44BF855DF32C47DC35F65869@smartserver.smartshare.dk>
- <20260509084657.598eebfb@phoenix.local>
-From: =?utf-8?B?TW9ydGVuIEJyw7hydXA=?= <mb@smartsharesystems.com>
-To: "Stephen Hemminger" <stephen@networkplumber.org>
-Cc: <dev@dpdk.org>
+References: <20260403091836.1073484-1-david.marchand@redhat.com>
+ <20260506123554.2524136-1-david.marchand@redhat.com>
+ <20260506195128.68d47ed2@phoenix.local>
+In-Reply-To: <20260506195128.68d47ed2@phoenix.local>
+From: David Marchand <david.marchand@redhat.com>
+Date: Sun, 10 May 2026 17:03:56 +0200
+X-Gm-Features: AVHnY4JtUD6JFuqr7T8_ZU_RJQFzIn6qjXqosGSYYgSiFpIDRX-vIvtp4QXtYuQ
+Message-ID: <CAJFAV8z0Tqf0XXnes7mGMwN6wOj6aByhvmy_L1gPHjjGvNY=vw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Remove limitations coming from legacy VMDq
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: Wham7-D6LyPFCudbRt2xhUWjIsG5OknUti0zRs6u7Cs_1778425449
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -47,79 +84,170 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-PiBGcm9tOiBTdGVwaGVuIEhlbW1pbmdlciBbbWFpbHRvOnN0ZXBoZW5AbmV0d29ya3BsdW1iZXIu
-b3JnXQ0KPiBTZW50OiBTYXR1cmRheSwgOSBNYXkgMjAyNiAxNy40Nw0KPiANCj4gT24gU2F0LCA5
-IE1heSAyMDI2IDEwOjQ3OjUzICswMjAwDQo+IE1vcnRlbiBCcsO4cnVwIDxtYkBzbWFydHNoYXJl
-c3lzdGVtcy5jb20+IHdyb3RlOg0KPiANCj4gPiA+IEZyb206IFN0ZXBoZW4gSGVtbWluZ2VyIFtt
-YWlsdG86c3RlcGhlbkBuZXR3b3JrcGx1bWJlci5vcmddDQo+ID4gPiBTZW50OiBGcmlkYXksIDgg
-TWF5IDIwMjYgMjIuMzQNCj4gPiA+DQo+ID4gPiBUaGlzIGFsbG93cyBjYWxsZXJzIHRvIGF2b2lk
-IE5VTEwgY2hlY2tzIGFuZCBqdXN0IGNhbGwNCj4gPiA+IHJ0ZV9wa3RtYnVmX2ZyZWVfYnVsaywg
-c2ltaWxhciB0byBydGVfcGt0bWJ1Zl9mcmVlLg0KPiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYtYnk6
-IFN0ZXBoZW4gSGVtbWluZ2VyIDxzdGVwaGVuQG5ldHdvcmtwbHVtYmVyLm9yZz4NCj4gPg0KPiA+
-IEkgZGlzYWdyZWUgd2l0aCB0aGlzIHBhdGNoLg0KPiA+DQo+ID4gVGhlIHBhcmFtZXRlciBpcyBh
-biBhcnJheSBvZiAocG9pbnRlcnMgdG8pIG1idWZzLg0KPiA+IFdlIGFscmVhZHkgYWNjZXB0IHRo
-YXQgdGhlIGFycmF5IGNhbiBjb250YWluIE5VTEwgcG9pbnRlcnMgKG5vIG1idWYNCj4gcHJlc2Vu
-dCkuDQo+ID4gVGhpcyBpcyBleHRyZW1lbHkgZm9yZ2l2aW5nLCBjb25zaWRlcmluZyB0aGF0IG90
-aGVyIGZhc3QgcGF0aA0KPiBmdW5jdGlvbnMgZG9uJ3QgYWxsb3cgTlVMTCBwb2ludGVycyBpbiBh
-cnJheXM7DQo+ID4gZS5nLiBydGVfZXRoX3R4X2J1cnN0KCksIHJ0ZV9tZW1wb29sX3B1dF9idWxr
-KCkuDQo+ID4gQnV0IHNpbmNlIGl0J3MgYSAiZnJlZSgpIiBjbGFzcyBvZiBmdW5jdGlvbiwgSSBk
-b24ndCBvYmplY3QgdG8gaXQuDQo+ID4NCj4gPiBIb3dldmVyLCB0aGlzIHBhdGNoIGNoYW5nZXMg
-dGhlIHBhcmFtZXRlciB0eXBlIGZyb20gImFycmF5IiB0byAiYXJyYXkNCj4gb3IgTlVMTCAobm8g
-YXJyYXkgcHJlc2VudCkiLg0KPiA+IEFuZCBJIGRvbid0IHRoaW5rIHdlIHNob3VsZCBjaGFuZ2Ug
-dGhlIHBhcmFtZXRlciB0eXBlOyBpdCBzaG91bGQNCj4gcmVtYWluICJhcnJheSIgb25seS4NCj4g
-Pg0KPiA+IElmIHRoZXJlIGFyZSBhbnkgc2NlbmFyaW9zIHdoZXJlIGEgbm9uLXByZXNlbnQgYXJy
-YXkgKE5VTEwpIGlzIHBhc3NlZA0KPiB0byB0aGUgZnVuY3Rpb24sIHRoZSBjb3VudCBzaG91bGQg
-YmUgemVybyB0b28uDQo+ID4gQW5kIHdoZW4gdGhlIGNvdW50IGlzIHplcm8sIHRoZSBmdW5jdGlv
-biBkb2VzIG5vdCBkZXJlZmVyZW5jZSB0aGUNCj4gYXJyYXksIHNvIGV4cGxpY2l0bHkgY2hlY2tp
-bmcgZm9yIE5VTEwgaXMgc3VwZXJmbHVvdXMuDQo+ID4NCj4gPiBXZSBoYXZlIGEgY29udmVudGlv
-biBvZiBub3QgY2hlY2tpbmcgcGFyYW1ldGVyIHZhbGlkaXR5IGluIGZhc3QgcGF0aA0KPiBmdW5j
-dGlvbnMuDQo+ID4gQW5kIEkgY29uc2lkZXIgaXQgaW52YWxpZCBwYXJhbWV0ZXJzIHBhc3Npbmcg
-TlVMTCB3aXRoIGEgbm9uLXplcm8NCj4gY291bnQuDQo+ID4NCj4gPiBZb3UgbWlnaHQgYXJndWUg
-dGhhdCB0aGlzIGlzIGEgImZyZWUoKSIgY2xhc3Mgb2YgZnVuY3Rpb24sIHdoaWNoDQo+IHdhcnJh
-bnRzIGNoZWNraW5nIGZvciBOVUxMOyBidXQgc2luY2UgaXQgYWxyZWFkeSBhY2NlcHRzIE5VTEwg
-d2l0aCB6ZXJvDQo+IGNvdW50LCBpdCBpcyBhbHJlYWR5IGNvdmVyZWQuDQo+ID4NCj4gPiBXZSBj
-b3VsZCBjaGFuZ2UgdGhlIGZ1bmN0aW9uIGRlY2xhcmF0aW9uIGZvciBjbGFyaXR5Og0KPiA+DQo+
-ID4gdm9pZCBydGVfcGt0bWJ1Zl9mcmVlX2J1bGsoDQo+ID4gCQl1bnNpZ25lZCBpbnQgY291bnQ7
-DQo+ID4gCQlzdHJ1Y3QgcnRlX21idWYgKm1idWZzW2NvdW50XSwgdW5zaWduZWQgaW50IGNvdW50
-KTsNCj4gPg0KPiA+IE9yIGFkZCBhIGRlYnVnIGFzc2VydGlvbiBhdCB0aGUgc3RhcnQgb2YgdGhl
-IGZ1bmN0aW9uOg0KPiA+IFJURV9BU1NFUlQobWJ1ZnMgIT0gTlVMTCB8fCBjb3VudCA9PSAwKTsN
-Cj4gDQo+IE9rLCBpdCB3YXMgbW9yZSBtb3RpdmF0ZWQgYnkgY29tbW9uIHBhdHRlcm4gaW4gZHJp
-dmVyIGNsZWFudXAgcGF0aHMNCj4gbGlrZToNCj4gDQo+IC0tLSBhL2FwcC90ZXN0LWNvbXByZXNz
-LXBlcmYvY29tcF9wZXJmX3Rlc3RfY29tbW9uLmMNCj4gKysrIGIvYXBwL3Rlc3QtY29tcHJlc3Mt
-cGVyZi9jb21wX3BlcmZfdGVzdF9jb21tb24uYw0KPiBAQCAtODMsMTEgKzgzLDkgQEAgY29tcF9w
-ZXJmX2ZyZWVfbWVtb3J5KHN0cnVjdCBjb21wX3Rlc3RfZGF0YQ0KPiAqdGVzdF9kYXRhLA0KPiAg
-ew0KPiAgCXVpbnQzMl90IGk7DQo+IA0KPiAtCWlmIChtZW0tPmRlY29tcF9idWZzICE9IE5VTEwp
-DQo+IC0JCXJ0ZV9wa3RtYnVmX2ZyZWVfYnVsayhtZW0tPmRlY29tcF9idWZzLCBtZW0tPnRvdGFs
-X2J1ZnMpOw0KPiArCXJ0ZV9wa3RtYnVmX2ZyZWVfYnVsayhtZW0tPmRlY29tcF9idWZzLCBtZW0t
-PnRvdGFsX2J1ZnMpOw0KPiANCj4gLQlpZiAobWVtLT5jb21wX2J1ZnMgIT0gTlVMTCkNCj4gLQkJ
-cnRlX3BrdG1idWZfZnJlZV9idWxrKG1lbS0+Y29tcF9idWZzLCBtZW0tPnRvdGFsX2J1ZnMpOw0K
-PiArCXJ0ZV9wa3RtYnVmX2ZyZWVfYnVsayhtZW0tPmNvbXBfYnVmcywgbWVtLT50b3RhbF9idWZz
-KTsNCj4gDQoNClNraW1taW5nIGNvbXBfcGVyZl90ZXN0X2NvbW1vbi5jLCBpdCBsb29rcyBsaWtl
-IG1lbS0+dG90YWxfYnVmcyBpcyBpbml0aWFsaXplZCB0byB0aGUgbnVtYmVyIG9mIHdhbnRlZCBi
-dWZmZXJzLCBhbmQgdGhlbiBtZW0tPmRlY29tcF9idWZzIGlzIHNldCB1cCBhZnRlcndhcmRzLiBJ
-biBvdGhlciB3b3JkcywgdG90YWxfYnVmcyBjYW4gYmUgbm9uLXplcm8gd2hpbGUgY29tcF9idWZz
-IGlzIE5VTEwuDQoNCklNTywgcmVtb3ZpbmcgdGhlIE5VTEwgY29tcGFyaXNvbiBoZXJlIHdvdWxk
-IHBhc3MgaW52YWxpZCBwYXJhbWV0ZXJzIHRvIHJ0ZV9wa3RtYnVmX2ZyZWVfYnVsaygpLg0KDQpU
-cmFpbiBvZiB0aG91Z2h0cy4uLg0KDQpPbiB0aGUgb3RoZXIgaGFuZCwgaXQgZG9lcyBwcm92aWRl
-IGEgZ29vZCBleGFtcGxlIHdoZXJlIGNvbnNpZGVyaW5nIHJ0ZV9wa3RtYnVmX2ZyZWVfYnVsaygp
-IGEgImZyZWUoKSIgY2xhc3MgZnVuY3Rpb24gYWNjZXB0aW5nIGEgTlVMTCBwb2ludGVyIHdvdWxk
-IGJlIGhlbHBmdWwuDQpBbmQgdGhlIGFkZGVkIHBlcmZvcm1hbmNlIGNvc3Qgb2YgY2hlY2tpbmcg
-Zm9yIGEgTlVMTCBwb2ludGVyIGlzIHBlciBidXJzdCwgbm90IHBlciBwYWNrZXQuDQpJJ20gbm90
-IGFzIHN0cm9uZ2x5IG9wcG9zZWQgYXMgSSB3YXMgaW5pdGlhbGx5Lg0KDQpIb3dldmVyLCBsb29r
-aW5nIGF0IGl0IGluIGEgYnJvYWRlciBzY29wZSBnZXRzIG1lIGJlIGJhY2sgdG8gYmVpbmcgb3Bw
-b3NlZDoNClRoaXMgcGF0Y2ggaXMgZm9yIGZyZWVpbmcgbWJ1ZnMuDQpJZiB3ZSBjb25zaWRlciBm
-cmVlaW5nIG1lbXBvb2wgb2JqZWN0cywgdGhlIGNsZWFudXAgZnVuY3Rpb24gd291bGQgY2FsbCBy
-dGVfbWVtcG9vbF9wdXRfYnVsaygpIHRvIGZyZWUgdGhlIG9iamVjdHMsIHdoaWNoIGlzIHRoZSBm
-dW5jdGlvbiBmb3IgZnJlZWluZyBwcmV2aW91c2x5IGFsbG9jYXRlZCBtZW1wb29sIG9iamVjdHMu
-IEl0IGp1c3QgaGFwcGVucyB0byBub3QgaGF2ZSAiZnJlZSIgYXMgcGFydCBvZiBpdHMgbmFtZS4N
-Cg0KVGhlIG1lbXBvb2wgc2luZ2xlIG9iamVjdCAiZnJlZSgpIiBmdW5jdGlvbiwgcnRlX21lbXBv
-b2xfcHV0KCksIGRvZXNuJ3QgYWNjZXB0IGEgTlVMTCBwb2ludGVyLg0KU2ltaWxhcmx5LCB0aGUg
-bWVtcG9vbCBidWxrIGZyZWUgZnVuY3Rpb24sIHJ0ZV9tZW1wb29sX3B1dF9idWxrKCksIGRvZXNu
-J3QgYWNjZXB0IGhvbGVzIChOVUxMIHBvaW50ZXJzKSBpbiB0aGUgYXJyYXkuDQpJIGNlcnRhaW5s
-eSBkbyBub3Qgd2FudCB0byBpbnRyb2R1Y2UgaG9sZXMgaW50byBtZW1wb29sIG9iamVjdCBhcnJh
-eXMuDQoNCk1heWJlIGl0IHdhcyBhIGJhZCBkZWNpc2lvbiB0byBhbGxvdyBob2xlcyBpbiBtYnVm
-IGFycmF5cyBiZWluZyBwYXNzZWQgdG8gcnRlX3BrdG1idWZfZnJlZV9idWxrKCkuIFN1Y2ggaG9s
-ZXMgYXJlIG5vdCBhY2NlcHRlZCBpbiBhbnkgb3RoZXIgRFBESyBBUElzLg0KDQpBdCB0aGlzIHBv
-aW50LCBJJ20gc3RpbGwgbm90IGluIGZhdm9yIG9mIHRoaXMgcGF0Y2guDQpJdCdzIGRlZmVuc2l2
-ZSBjb2RpbmcgKHdpdGggYSBwZXJmb3JtYW5jZSBjb3N0LCBob3dldmVyIHNtYWxsKSBpbiBhIGZh
-c3QgcGF0aCBmdW5jdGlvbi4NCg0K
+Hello Stephen,
+
+On Thu, 7 May 2026 at 04:51, Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+>
+> On Wed,  6 May 2026 14:35:48 +0200
+> David Marchand <david.marchand@redhat.com> wrote:
+>
+> > Since the commit 88ac4396ad29 ("ethdev: add VMDq support"),
+> > VMDq has been imposing a maximum number of mac addresses in the
+> > mac_addr_add/del API.
+> >
+> > Nowadays, new Intel drivers do not support the feature and few other
+> > drivers implement this feature.
+> >
+> > This series proposes to flag drivers that support the feature, and
+> > remove the limit of number of mac addresses for others.
+> >
+> > Next step could be to remove the VMDq pool notion from the generic API.
+> > However I have some concern about this, as changing the quite stable
+> > mac_addr_add/del API now seems a lot of noise for not much benefit.
+> >
+>
+>
+> AI review (manual not automated) saw these:
+>
+> On Wed,  6 May 2026 14:35:49 +0200
+> David Marchand <david.marchand@redhat.com> wrote:
+>
+> [PATCH v2 1/5] ethdev: skip VMDq pools unless configured
+> --------------------------------------------------------
+>
+> Warning: duplicate-add no longer returns 0 in non-VMDq mode
+>
+>    } else if (vmdq) {
+>            pool_mask = dev->data->mac_pool_sel[index];
+>            /* Check if both MAC address and pool is already there, and do nothing */
+>            if (pool_mask & RTE_BIT64(pool))
+>                    return 0;
+>    }
+>
+>    When index >= 0 (MAC already present) and VMDq is not configured,
+>    the early "already there" return that existed before is now skipped
+>    entirely. The driver's mac_addr_add op gets re-invoked and
+>    mac_pool_sel is no longer updated for !vmdq, so subsequent calls
+>    keep re-invoking it. Pre-patch behaviour was idempotent (return 0).
+>
+>    Suggested fix:
+>
+>    } else if (vmdq) {
+>            pool_mask = dev->data->mac_pool_sel[index];
+>            if (pool_mask & RTE_BIT64(pool))
+>                    return 0;
+>    } else {
+>            return 0;       /* MAC already installed, only one pool */
+>    }
+
+Yes, good catch.
+
+
+>
+>
+> [PATCH v2 2/5] ethdev: announce VMDq capability
+> -----------------------------------------------
+>
+> Warning: capability advertised even when max_vmdq_pools may be 0
+>
+>    The capability bit is set unconditionally in several drivers where
+>    VMDq availability is conditional on hardware variant or runtime
+>    configuration:
+>
+>      - net/intel/e1000/igb_ethdev.c: max_vmdq_pools = 0 for e1000_82575,
+>        e1000_i354 (no setting), e1000_i210, e1000_i211.
+>      - net/intel/i40e/i40e_ethdev.c: max_vmdq_pools is gated on
+>        (pf->flags & I40E_FLAG_VMDQ).
+>      - net/bnxt/bnxt_ethdev.c: max_vmdq_pools is set to 0 when there
+>        are not enough resources (see "Not enough resources to support
+>        VMDq" path).
+>
+>    With this patch a user can pass mq_mode |= RTE_ETH_MQ_RX_VMDQ_FLAG
+>    through rte_eth_dev_configure() because the new capability check
+>    passes, but the driver has no pools to honour the request.
+>
+>    Suggested fix: gate the capa bit on max_vmdq_pools > 0, or set it
+>    per-MAC-type / per-flag in each driver.
+
+I realise now that this new device capability would also break VMDQ
+with failsafe on top of VMDQ-capable ports.
+In the end, as suggested here, max_vmdq_pools is already a gate and no
+new capability is needed.
+
+
+>
+> Warning: VMDq capability advertised on VFs that do not configure VMDq
+>
+>    ixgbevf_dev_info_get() and txgbevf_dev_info_get() now advertise
+>    RTE_ETH_DEV_CAPA_VMDQ, but ixgbevf_dev_configure() and
+>    txgbevf_dev_configure() only handle RTE_ETH_MQ_RX_RSS_FLAG. The
+>    feature matrices doc/guides/nics/features/ixgbe_vf.ini and
+>    txgbe_vf.ini do not list "VMDq = Y". A VF is itself a member of a
+>    PF VMDq pool; advertising the capa from the VF is misleading.
+>
+> Warning: ipn3ke advertises VMDq=Y in its features file but is not
+>    updated by the patch
+>
+>    doc/guides/nics/features/ipn3ke.ini has "VMDq = Y" but the patch
+>    does not add RTE_ETH_DEV_CAPA_VMDQ to ipn3ke. Either update the
+>    driver or correct the feature matrix.
+>
+> Warning: missing release note
+>
+>    The new RTE_ETH_DEV_CAPA_VMDQ public bit and the new rejection in
+>    rte_eth_dev_configure() (returning -EINVAL when an application sets
+>    a VMDq mq_mode on a non-VMDq device) are user-visible API and
+>    behavioural changes. release_26_07.rst should mention them under
+>    "API Changes".
+>
+> [PATCH v2 3/5] ethdev: hide VMDq internal sizes
+> -----------------------------------------------
+>
+> Warning: public defines removed without deprecation cycle
+>
+>    RTE_ETH_NUM_RECEIVE_MAC_ADDR and RTE_ETH_VMDQ_NUM_UC_HASH_ARRAY
+>    were declared in the application-facing rte_ethdev.h. Moving them
+>    to ethdev_driver.h removes them from the public API. Per the DPDK
+>    API/ABI policy this normally needs a prior deprecation notice; at
+>    minimum it warrants a release_26_07.rst "API Changes" entry.
+
+Mixed feeling about it.
+I can add a note, but I think it is noise.
+
+
+>
+>
+> [PATCH v2 4/5] net/iavf: accept up to 32k unicast MAC addresses
+> ---------------------------------------------------------------
+>
+> Warning: dead store in iavf_add_del_uc_addr_bulk()
+>
+>    for (uint32_t i = 0; i < nb_addrs; i++) {
+>            size_t buf_len = sizeof(struct virtchnl_ether_addr_list) +
+>                    sizeof(struct virtchnl_ether_addr) * list->num_elements;
+>            ...
+>            buf_len = sizeof(struct virtchnl_ether_addr_list) +
+>                    sizeof(struct virtchnl_ether_addr) * list->num_elements;
+>
+>    The first initialiser is unconditionally overwritten by the second
+>    assignment before any read. Drop the initialiser (or move the
+>    declaration to the use site).
+
+Good catch.. rebase damage on my side, I dropped some
+experiments/changes but forgot to update after.
+
+
+>
+> Warning: missing release note for max_mac_addrs jump
+>
+>    max_mac_addrs goes from 64 to 32768 and dev_data->mac_addrs is now
+>    allocated at RTE_ETHER_ADDR_LEN * 32768 = 192 KiB per VF port. This
+>    is a notable behaviour change for iavf users and worth a
+>    release_26_07.rst entry.
+>
+
+
+-- 
+David Marchand
+
