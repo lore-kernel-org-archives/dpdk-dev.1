@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE8BCD37B5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E2CCD37B5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:37:17 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8EBDC40696;
-	Mon, 11 May 2026 12:36:45 +0200 (CEST)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id D96124067E;
- Mon, 11 May 2026 12:36:41 +0200 (CEST)
-X-QQ-mid: zesmtpsz3t1778495798tc5aad2f2
-X-QQ-Originating-IP: AzFjXvXCcDauBUgTSmiq99wDmN6BWYs3mccGGGkzLdg=
+	by mails.dpdk.org (Postfix) with ESMTP id A4BCB406B4;
+	Mon, 11 May 2026 12:36:46 +0200 (CEST)
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+ by mails.dpdk.org (Postfix) with ESMTP id 5F06440673;
+ Mon, 11 May 2026 12:36:44 +0200 (CEST)
+X-QQ-mid: zesmtpsz3t1778495801tb6430911
+X-QQ-Originating-IP: WFsx4mlF/Oktkgql0gW5U+0c2rFM/qBfvT6234trddY=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 11 May 2026 18:36:37 +0800 (CST)
+ id ; Mon, 11 May 2026 18:36:39 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 9358975047868960168
+X-BIZMAIL-ID: 4824376215983365300
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v4 06/20] net/txgbe: fix link status check condition
-Date: Mon, 11 May 2026 18:35:48 +0800
-Message-Id: <20260511103604.19724-7-zaiyuwang@trustnetic.com>
+Subject: [PATCH v4 07/20] net/txgbe: fix Tx desc free logic
+Date: Mon, 11 May 2026 18:35:49 +0800
+Message-Id: <20260511103604.19724-8-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260511103604.19724-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: NrNHTFHgCqYa8T/8RDMtP6TrK9D3Usl2CWZQ1mQvRM81GAwBALq1z96T
- rDmPp6QmuV9VVdnYBphDMKZddvkHVY4kZLjR6dOUOK9FDiyXZAnaO+9a8zKVG7xg0wLmS39
- /qk1Uc2O5MnJHORlAt7rMXLjppPxuo3ezlrkDOFrOwzfhwUp5mbe+HUqGW2OWe/wxcEwPnA
- l4+VeU60dyT2KO5IZtx7n4W3ni+Cxa7f9nAV1NhrkSw45xkU1+TDhJnh1Zn3QNnD22zPG8e
- EUwTrexW8WZJnhaUKiN9D+aUHkh/0Bc4P0BUEOSzu99Rd0aHpgTlpUGfQyCousavXqYX6iO
- YPuxgf5x2CbyWjwO48uvx/Kq2tVlUsiwDBBRfe0XIV9UXi+WJ/sZEC7bwkdxSFv6S0frHWu
- ApdqGvX623cOjPpEW14aCIHaGtZkq1XJNoNXrDE+nMpX/mKlu6oZ4EpI0M9LHnRdwfNtgmS
- ctPcz+YcTITChHNXZKElJ3wRezMsiO94IAGc+xZCUyJc7+loT3Sno4kDhu8RHa1tDocgZxF
- b2DJT5/y+oQhErKNcgpPraAgh7D0DLdw/pPdW/BIvCj4G931BI6+d3k/BKmueAD+U+RVoRE
- mES6LwxoDU/0lUYxSDKhjixhwomB6hZyre7Tbbqs/pV6/Wxr762ozKekTxQLdjRBL5qlUI4
- nEksp+Mb74mJUZPq8lwOWwHMbS80VrPEqjkBDqrH/ybTbIGlkwXTxfCDhcgHVPjAGb34KNb
- kz7mkBxUF+8w0zPlVQHdjw4dTQl8E5D8i0e2fOUMIzMC2zXImeVQBxIXYIAg72+IHXRMEsj
- ZjtiWeBz/ycIPohJ227zjH4uuwOVd8/lQshI0UnOsDjkObr+8Gp74hjQkkiR7yZs8WQB+67
- q//3ZulYC1pvIm7tWBHhx05gJc7h3tx5DwJ9JPagrNX0hT+JEMxhc59FT+SMEbRicmqvNQs
- 2G1bPyQOCIJpWGfyrH+RQ/vP0eohZm9OmR4Xt6phiId9IBwLI1btXKJ31V6iuChYtJZdkLu
- s1LOi+hHEwTMKaQe8F8wqmpWHScHHeTxS4p+E9P6TyhPndA+UdYPcx+Y+cXQjCJCptw6Cf4
- Hz8EPZ04x4vF1+QxRMJfkg=
-X-QQ-XMRINFO: Nq+8W0+stu50tPAe92KXseR0ZZmBTk3gLg==
+X-QQ-XMAILINFO: NafziRg7Bx69C6cE4Ml9sinPkSkUz+KltB//ZVDSnH3C/cDxdiobOIZB
+ Fnhde7iVCVWZQdwFmyvmx8ZwIEXcrDzIiSqjqDHzGrQgV53mPqf5CfLddpsf6JJx1FGmioO
+ Y9r9DV9X8exU4402Q4nX6DmsIqlvs/3qKiXIweCprD7F0iGERGMdZm06r9UBQ+5rt1FWx1o
+ RjEVUWVoCDq9V2fqrk1l8BE28ulqU4NNt9HHSl4LlCZ4dPUJnxAI1H7AFadfqP0zEomT7DY
+ bfk53hYcYXiFRbs4ONu3xU3hbg9WwnsOWbKnJs9DQMxdI6o2PqlbIxDIuVw03K4rN9R10+W
+ NoOv+vVtnRxAIxT20dlHmQbRZKubIKtqYfyVxE43Ym3RGs61Obsc7TpdM1DLcWDXFwAMpv0
+ 6hIWsAD1Q7ve1btL6FXrURvh7RVuEH7Gf2nv716JCzlb5jUnhLXbCFmBiTp4MO1XNbxhdqm
+ Cc/aHQHsLsNZcZ+AQxPa+vptZajW1NzYoGzYlmuHYBEbNR+MQ6AWjuX5qDulnFu2GCXMpAc
+ R5O/2f08LV6HDOSvnxOdZF4ICTYIvFeRzGIhtyMqJVLHN0TPJartxiq3RJyG5r61dWCCP6M
+ MgR3Vrai7ox/IN7BG8kEcd50ZDe0Tg3gi7w4BUZVHMJTNcMmITVblpshKuVgVdJrom/uxuH
+ uyTXP/NkXiY1CGUcm5luh3WvxwvMHzrGmrNsubpONXgAWrzr7y39WJIyeoT9RsfCHNTj2Ck
+ 0iwGqiIR3HfkDXa/KOzi3x2RAS2iWFvjaOFiY7GrM/reWG4wJfPl4DWfB7erQFi0PME+SmV
+ p3zj2ZTFJUQ5Qb0w9v2kzlRAJSfCk4SpDmJvqOwetpNP8qEyVy7WVkb0GJIOO1xIma6eYbR
+ 3dqxodF66uDXFsuvWH6pVSq2dva/JgpKo6FcDv09Xdto4dCCM3eOpT82XmmvBmrduf1PTuS
+ 64NjopvLy9egAE4SSmDYVoeWxTmGFEVURfhADzxgjRvocaA3l/h7VNlKSXFAFtTU3e+YnfX
+ KTllPK3FIHlwJFYS3yOXhLCyF3QbFq+gENMxNkAHUzmuofXI0Z5kTfaXBtnys0A6spTwGEW
+ OoZ6ZWjjthuOcLkG6YR6rs=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,46 +66,79 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The original code incorrectly used 'if (link_up)' instead of
-'if (*link_up)', causing the condition to always evaluate to true
-because the pointer itself is non-NULL. This led to incorrect speed
-assignment.
+On some server environments, this driver caused TDM non-fatal errors
+or PCIe request errors during Tx operation
 
-Fixes: fb6eb170dfa2 ("net/txgbe: add basic link configuration for Amber-Lite")
+In Amber-Lite NIC's Tx head write-back mode, the hardware periodically
+writes back a head index pointing to the next descriptor it is adout
+to process in Tx ring. All descriptors before the head are considered
+processed by hardware and can be safely freed by the driver.
+
+The root cause is that the driver can safely free a batch of descriptors
+only when the hardware's write-back head pointer has advanced beyond all
+descriptors in that batch, meaning they have all been processed by the
+hardware. If the driver frees a descriptor before the hardware has
+finished processing it, invalid memory access may occur, leading to the
+observed bug.
+
+To fix the issue, correct the boundary check in all three Tx cleanup
+functions, each of which was missing the proper condition to prevent
+freeing unprocessed descriptors.
+
+Fixes: 8ada71d0bb7f ("net/txgbe: add Tx head write-back mode for Amber-Lite")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/base/txgbe_aml.c   | 2 +-
- drivers/net/txgbe/base/txgbe_aml40.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/txgbe/txgbe_rxtx.c            | 9 ++++++++-
+ drivers/net/txgbe/txgbe_rxtx_vec_common.h | 7 +++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/txgbe/base/txgbe_aml.c b/drivers/net/txgbe/base/txgbe_aml.c
-index b376eca5b5..de9a1b1c93 100644
---- a/drivers/net/txgbe/base/txgbe_aml.c
-+++ b/drivers/net/txgbe/base/txgbe_aml.c
-@@ -67,7 +67,7 @@ s32 txgbe_check_mac_link_aml(struct txgbe_hw *hw, u32 *speed,
- 			*link_up = false;
- 	}
+diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
+index e2cd9b8841..72a4965693 100644
+--- a/drivers/net/txgbe/txgbe_rxtx.c
++++ b/drivers/net/txgbe/txgbe_rxtx.c
+@@ -100,7 +100,9 @@ txgbe_tx_free_bufs(struct txgbe_tx_queue *txq)
  
--	if (link_up) {
-+	if (*link_up) {
- 		switch (links_reg & TXGBE_CFG_PORT_ST_AML_LINK_MASK) {
- 		case TXGBE_CFG_PORT_ST_AML_LINK_25G:
- 			*speed = TXGBE_LINK_SPEED_25GB_FULL;
-diff --git a/drivers/net/txgbe/base/txgbe_aml40.c b/drivers/net/txgbe/base/txgbe_aml40.c
-index 733bbac13a..eefd7119fd 100644
---- a/drivers/net/txgbe/base/txgbe_aml40.c
-+++ b/drivers/net/txgbe/base/txgbe_aml40.c
-@@ -68,7 +68,7 @@ s32 txgbe_check_mac_link_aml40(struct txgbe_hw *hw, u32 *speed,
- 			*link_up = false;
- 	}
+ 		volatile uint16_t head = (uint16_t)*txq->headwb_mem;
  
--	if (link_up) {
-+	if (*link_up) {
- 		if ((links_reg & TXGBE_CFG_PORT_ST_AML_LINK_40G) ==
- 			TXGBE_CFG_PORT_ST_AML_LINK_40G)
- 			*speed = TXGBE_LINK_SPEED_40GB_FULL;
+-		if (txq->tx_next_dd > head && head > tx_last_dd)
++		if (txq->tx_next_dd == head)
++			return 0;
++		else if (txq->tx_next_dd > head && head > tx_last_dd)
+ 			return 0;
+ 		else if (tx_last_dd > txq->tx_next_dd &&
+ 				(head > tx_last_dd || head < txq->tx_next_dd))
+@@ -652,6 +654,11 @@ txgbe_xmit_cleanup(struct txgbe_tx_queue *txq)
+ 		/* we have caught up to head, no work left to do */
+ 		if (desc_to_clean_to == head)
+ 			return -(1);
++		else if (desc_to_clean_to > head && head > last_desc_cleaned)
++			return -(1);
++		else if (last_desc_cleaned > desc_to_clean_to &&
++			 (head > last_desc_cleaned || head < desc_to_clean_to))
++			return -(1);
+ 	} else {
+ 		if (!(status & rte_cpu_to_le_32(TXGBE_TXD_DD))) {
+ 			PMD_TX_FREE_LOG(DEBUG,
+diff --git a/drivers/net/txgbe/txgbe_rxtx_vec_common.h b/drivers/net/txgbe/txgbe_rxtx_vec_common.h
+index 00847d087b..edf3586b77 100644
+--- a/drivers/net/txgbe/txgbe_rxtx_vec_common.h
++++ b/drivers/net/txgbe/txgbe_rxtx_vec_common.h
+@@ -94,8 +94,11 @@ txgbe_tx_free_bufs(struct txgbe_tx_queue *txq)
+ 				      txq->tx_next_dd - txq->tx_free_thresh;
+ 		if (tx_last_dd >= txq->nb_tx_desc)
+ 			tx_last_dd -= txq->nb_tx_desc;
+-				volatile uint16_t head = (uint16_t)*txq->headwb_mem;
+-		if (txq->tx_next_dd > head && head > tx_last_dd)
++
++		volatile uint16_t head = (uint16_t)*txq->headwb_mem;
++		if (txq->tx_next_dd == head)
++			return 0;
++		else if (txq->tx_next_dd > head && head > tx_last_dd)
+ 			return 0;
+ 		else if (tx_last_dd > txq->tx_next_dd &&
+ 				(head > tx_last_dd || head < txq->tx_next_dd))
 -- 
 2.21.0.windows.1
 
