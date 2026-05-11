@@ -2,67 +2,67 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EBECD37BE
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 15:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF572CD37BE
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 16:00:27 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D4906402D9;
-	Mon, 11 May 2026 17:46:23 +0200 (CEST)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com
- [209.85.221.175])
- by mails.dpdk.org (Postfix) with ESMTP id 4E7FA402D5
- for <dev@dpdk.org>; Mon, 11 May 2026 17:46:22 +0200 (CEST)
-Received: by mail-vk1-f175.google.com with SMTP id
- 71dfb90a1353d-56a9a7e762bso4337273e0c.3
- for <dev@dpdk.org>; Mon, 11 May 2026 08:46:22 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E8959402D9;
+	Mon, 11 May 2026 18:00:26 +0200 (CEST)
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com
+ [209.85.219.53]) by mails.dpdk.org (Postfix) with ESMTP id A93A6402D5
+ for <dev@dpdk.org>; Mon, 11 May 2026 18:00:25 +0200 (CEST)
+Received: by mail-qv1-f53.google.com with SMTP id
+ 6a1803df08f44-8b45dff1eebso43342036d6.2
+ for <dev@dpdk.org>; Mon, 11 May 2026 09:00:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1778514381; x=1779119181; darn=dpdk.org;
+ d=iol.unh.edu; s=unh-iol; t=1778515225; x=1779120025; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:from:to:cc:subject:date
  :message-id:reply-to;
- bh=NVFRWW+HCyvOHQL9ahMM8DUOELFZMFxDQeX1XuYINTU=;
- b=X59kzCECaR7U3h514M9m8GqvtaCi8QN7asmDUacdz+ARUZvjBs6ZwXv+mABe3EUU1R
- amxy9aCdYtvVAvV2HSD6AH1Rjl8pLprsYFrTkPqNG4Uzhjlvz83qHcJOiZmxc6ayifpp
- KmfRE34U5zE/4ToYULpiAbd9GbL3RJIKih4Ms=
+ bh=38tL7+Yj57GU099anHDUiC2wIPweQFNbdKQLgDiVjK0=;
+ b=cwVIPovSel+0ntrjqzA9KjH0XwtDPWeH4EuPXkY6uVEL1DGkFSg3Ki0hXiHVbX2Rzv
+ hfpRZFtdCz2Om401YruRKGmM59BTzVuTDVmnUSfCJB9TnvDD/O2nBr8/aqipuTW6oU1o
+ BMVtQEzlVH6PvMjq34WV1NTWcEANTi+FOGmYM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778514381; x=1779119181;
+ d=1e100.net; s=20251104; t=1778515225; x=1779120025;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=NVFRWW+HCyvOHQL9ahMM8DUOELFZMFxDQeX1XuYINTU=;
- b=lGcA0nEczLoFCZSG2Um3pGUBNoVY4CWRN2dqudU9fhYTNMP4GBlIIcbEXBF2MYckd7
- /q+390Y4qX12TuL/favVD7FnW2PaPqO5iBh57sSYrw1334Q5QRYduUtDsF20WouqW9pa
- eQkjHJbbsSLAK+0p/H5vtZr9o1NSlo8CQCm2ZOtD//GojSYfz8UzrLgNfKj4LtUdN8ju
- A0c5LxA8ln7Vh7dRtMOcr/cNYw6wjlu2HFDOKPZVbmuDA/lcA3m4GinOg5OHU59TG49C
- 50tSnUTKnooAgHIZl/5RoQyHPQOU87OfR+z2rqFbE8vcC8Xq06rnqVELOdjlVwzsiEVP
- 3TYw==
-X-Gm-Message-State: AOJu0Yw8rMWcQ/ZzuWDEjLia7mmziIGMwHrz8Yi/TXALgfadE7het/Dl
- KWkk+bxFkB2T4rFwspi+rDhIEqoX1YlG1YrWY7iCgXAlf0qXiFJSuNGlJLuUSlIdO/M=
-X-Gm-Gg: Acq92OGAA7NScE8enqjqMIZqHGAWM+nyj3vAoKIa1vpPlXDGJYxoARwvkUkiLYvZnDC
- ZpC7NcptXkh8vO8ARbzoL5N93aF9sJiu2PES8oX6JzlHl7Gx6fpLCZ/wCTVpCGcZRO/XD150fmI
- f9zbrwK0voXDyL1f6WEljN7Abi44u7BviQVUynsgu+Hmhf0oVVGlb4YmhOjplsT0jAkvodYis1e
- +LKIuwHEbPMq4qfkSS2dLRjcqLOQdqf98opQdDWZdF7W7+zfq5SUIly1Xj9NVZbjIruVMACZM71
- ibEBP/zdrD5fJ+oJZMUw7aKLVbsBkSYnFp1VQibOq3vjBzMDz11GK/HlzAoUzp/gqXV+JG1PjQq
- E6i5Y05qBoKo2jo/m4ybN60lP3CWbD+smCz+cyAr1A/61xRt+1UMtY/Dw9pyKtdvagzAar+2fQq
- n2iPiBN1Ay512GufPDwxZ3chpJiR5bCR9E6+Kp3P9TYVaRh1Yn4eky0Bb5aSw8Nrd4
-X-Received: by 2002:a05:6122:2883:b0:56f:22ad:f5c9 with SMTP id
- 71dfb90a1353d-575593aeae8mr13464810e0c.2.1778514381533; 
- Mon, 11 May 2026 08:46:21 -0700 (PDT)
+ bh=38tL7+Yj57GU099anHDUiC2wIPweQFNbdKQLgDiVjK0=;
+ b=MoiZHi/UlAbvYsA8lFCkGPKXvN+B5LDwffSymFQH9bT49ehdklI0Rk+wg4QxRPueM1
+ HH3E0JlxsGqeExnD8x6IEOmfVMbobMN/a6X43iEQikPDX8pxXZJsGKPJ4WMUW2caZaOz
+ 0RRBPvUPB6w9ovON2zYwFE05q/Lg0B4UGEpl5iC1Nfp0nKE92x55eUKqFyIaclnp8Fcd
+ TZZKqRqHWhhzf2jpCiXzjA/knweaMPiHp7lepbdsX977uQLh0v+8H26JDg7EoCaiqoqt
+ OXAF+pU1g7Ecqn0G6dlX9UxhzgT+M0rnWVFl6NHWyzB8zl51Uab9w20Lf3EqxNbSamxr
+ QxCw==
+X-Gm-Message-State: AOJu0YzWyQ4h2Dwy7cFd+Whv/7g3FT/leyeAw6KIsDiG1+eKx7HCgC5R
+ 0Cv2CbgVUiS4E1xZm++UigFsiV2gF62jIXjLWrmCACKQE+AlmqnzfwGkJotA1YqC9FA=
+X-Gm-Gg: Acq92OEyQm/Rq+etjlh+S1xaLY6zImICBDp7+GXm+toe17KCnc8R3c47DQW6839YUDn
+ 1lNPrJBYTDS+dNjeNnLBwm9wr9K0nVYS37jBvxay3dYH3igSV6ehQU5zvqTvhk2R6nYLNCql5fV
+ EpU6CarAVYw6M0yNw9r/gvl7eZX1iR3FSTOgpHZeoyFNw/h6LFJxq1BqKx9GwZevDj2MLDN+pyx
+ TkSnwMuhgV1NbSKHgXGfyiA87XUvI94BKv3PYdTnIS06AYar8IplIFIA2y849/RJmAWw/GuvXRs
+ CgJyzNaeNcigZl4RVzSaqB4GRBw9E2Gqiperz0syL3HINAKm+FiQfhleNHuN6Q5jQo7mPdwMtpI
+ qZujyczhWY1j0UbSnCCaTgAljg1WMPdJ2ey0VkmSC/fNPVPR7OUvJen5pS6SkMJPM79REyauv22
+ zPm0ApvyUcpVrdXFGE0qQK8aJnBWWLyLEMu1fr8TCJYDCX754CMcPtWY4CbR8J6BeB/x8D5/U8x
+ QA=
+X-Received: by 2002:a05:6214:3292:b0:8ac:b4b3:3ce2 with SMTP id
+ 6a1803df08f44-8bc453692b5mr377253986d6.41.1778515224540; 
+ Mon, 11 May 2026 09:00:24 -0700 (PDT)
 Received: from d122205.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8bf3a906e65sm96850716d6.16.2026.05.11.08.46.20
+ 6a1803df08f44-8b53ca982a1sm346255656d6.38.2026.05.11.09.00.23
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 11 May 2026 08:46:20 -0700 (PDT)
+ Mon, 11 May 2026 09:00:24 -0700 (PDT)
 From: Andrew Bailey <abailey@iol.unh.edu>
 To: luca.vizzarro@arm.com,
 	patrickrobb1997@gmail.com
-Cc: dev@dpdk.org, ahassick@iol.unh.edu, lylavoie@iol.unh.edu,
- knimoji@iol.unh.edu, Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2] dts: add ipgre test suite
-Date: Mon, 11 May 2026 11:46:17 -0400
-Message-ID: <20260511154617.75903-1-abailey@iol.unh.edu>
+Cc: dev@dpdk.org, lylavoie@iol.unh.edu, knimoji@iol.unh.edu,
+ ahassick@iol.unh.edu, Andrew Bailey <abailey@iol.unh.edu>
+Subject: [PATCH v4] dts: update test suite names to be clear and consistent
+Date: Mon, 11 May 2026 12:00:13 -0400
+Message-ID: <20260511160013.78676-1-abailey@iol.unh.edu>
 X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260327180232.443820-1-abailey@iol.unh.edu>
-References: <20260327180232.443820-1-abailey@iol.unh.edu>
+In-Reply-To: <20260508141319.52648-1-abailey@iol.unh.edu>
+References: <20260508141319.52648-1-abailey@iol.unh.edu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
@@ -78,376 +78,311 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Port over the IP GRE test suite from old DTS to next DTS. This test
-suite covers GRE tunneling and checksum offload verification using this
-protocol.
+Some test suites were prefixed with PMD which is not meaningful.
+Other test suites used inconsistent naming schemes which this patch
+makes uniform. For example, some suites had abbreviated words that
+others had not. These words are no longer abbreviated among any test
+suite.
 
-Bugzilla ID: 1480
+Bugzilla ID: 1826
 
 Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
 ---
- doc/api/dts/tests.TestSuite_ip_gre.rst |   8 +
- dts/api/testpmd/__init__.py            |  23 ++
- dts/tests/TestSuite_ip_gre.py          | 301 +++++++++++++++++++++++++
- 3 files changed, 332 insertions(+)
- create mode 100644 doc/api/dts/tests.TestSuite_ip_gre.rst
- create mode 100644 dts/tests/TestSuite_ip_gre.py
+ doc/api/dts/tests.TestSuite_buffer_scatter.rst            | 8 ++++++++
+ doc/api/dts/tests.TestSuite_flow_offload.rst              | 8 ++++++++
+ doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst        | 8 --------
+ doc/api/dts/tests.TestSuite_pmd_rss.rst                   | 8 --------
+ doc/api/dts/tests.TestSuite_queue_start_stop.rst          | 8 --------
+ doc/api/dts/tests.TestSuite_queue_toggle.rst              | 8 ++++++++
+ ...ests.TestSuite_uni_pkt.rst => tests.TestSuite_rss.rst} | 6 +++---
+ doc/api/dts/tests.TestSuite_rte_flow.rst                  | 8 --------
+ doc/api/dts/tests.TestSuite_unified_packet.rst            | 8 ++++++++
+ doc/api/dts/tests.TestSuite_virtio_forward.rst            | 8 ++++++++
+ doc/api/dts/tests.TestSuite_virtio_fwd.rst                | 8 --------
+ ..._pmd_buffer_scatter.py => TestSuite_buffer_scatter.py} | 2 +-
+ .../{TestSuite_rte_flow.py => TestSuite_flow_offload.py}  | 4 ++--
+ ...uite_queue_start_stop.py => TestSuite_queue_toggle.py} | 2 +-
+ dts/tests/{TestSuite_pmd_rss.py => TestSuite_rss.py}      | 4 ++--
+ .../{TestSuite_uni_pkt.py => TestSuite_unified_packet.py} | 2 +-
+ ...estSuite_virtio_fwd.py => TestSuite_virtio_forward.py} | 2 +-
+ 17 files changed, 51 insertions(+), 51 deletions(-)
+ create mode 100644 doc/api/dts/tests.TestSuite_buffer_scatter.rst
+ create mode 100644 doc/api/dts/tests.TestSuite_flow_offload.rst
+ delete mode 100644 doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
+ delete mode 100644 doc/api/dts/tests.TestSuite_pmd_rss.rst
+ delete mode 100644 doc/api/dts/tests.TestSuite_queue_start_stop.rst
+ create mode 100644 doc/api/dts/tests.TestSuite_queue_toggle.rst
+ rename doc/api/dts/{tests.TestSuite_uni_pkt.rst => tests.TestSuite_rss.rst} (50%)
+ delete mode 100644 doc/api/dts/tests.TestSuite_rte_flow.rst
+ create mode 100644 doc/api/dts/tests.TestSuite_unified_packet.rst
+ create mode 100644 doc/api/dts/tests.TestSuite_virtio_forward.rst
+ delete mode 100644 doc/api/dts/tests.TestSuite_virtio_fwd.rst
+ rename dts/tests/{TestSuite_pmd_buffer_scatter.py => TestSuite_buffer_scatter.py} (99%)
+ rename dts/tests/{TestSuite_rte_flow.py => TestSuite_flow_offload.py} (99%)
+ rename dts/tests/{TestSuite_queue_start_stop.py => TestSuite_queue_toggle.py} (99%)
+ rename dts/tests/{TestSuite_pmd_rss.py => TestSuite_rss.py} (99%)
+ rename dts/tests/{TestSuite_uni_pkt.py => TestSuite_unified_packet.py} (99%)
+ rename dts/tests/{TestSuite_virtio_fwd.py => TestSuite_virtio_forward.py} (99%)
 
-diff --git a/doc/api/dts/tests.TestSuite_ip_gre.rst b/doc/api/dts/tests.TestSuite_ip_gre.rst
+diff --git a/doc/api/dts/tests.TestSuite_buffer_scatter.rst b/doc/api/dts/tests.TestSuite_buffer_scatter.rst
 new file mode 100644
-index 0000000000..e8ce01dc0b
+index 0000000000..ce764ff0d6
 --- /dev/null
-+++ b/doc/api/dts/tests.TestSuite_ip_gre.rst
++++ b/doc/api/dts/tests.TestSuite_buffer_scatter.rst
 @@ -0,0 +1,8 @@
 +.. SPDX-License-Identifier: BSD-3-Clause
 +
-+ip_gre Test Suite
-+=================
++buffer_scatter Test Suite
++=========================
 +
-+.. automodule:: tests.TestSuite_ip_gre
++.. automodule:: tests.TestSuite_buffer_scatter
 +   :members:
 +   :show-inheritance:
-diff --git a/dts/api/testpmd/__init__.py b/dts/api/testpmd/__init__.py
-index e9187440bb..bb5cbd6725 100644
---- a/dts/api/testpmd/__init__.py
-+++ b/dts/api/testpmd/__init__.py
-@@ -951,6 +951,29 @@ def set_flow_control(
-                     f"Testpmd failed to set the {flow_ctrl} in port {port}."
-                 )
- 
-+    def set_csum_parse_tunnel(self, port: int, on: bool, verify: bool = True) -> None:
-+        """Set parse tunnel on or of in testpmd for a given port.
-+
-+        Args:
-+            port: The ID of the requested port
-+            on: set parse tunnel on if `on` is :data:`True`, otherwise off
-+            verify: if :data:`True`, the output of the command is scanned to verify that
-+                parse tunnel was set successfully
-+
-+        Raises:
-+            InteractiveCommandExecutionError: If `verify` is :data:`True` and the command
-+                fails to execute.
-+
-+        """
-+        output = self.send_command(f"csum parse-tunnel {'on' if on else 'off'} {port}")
-+        if verify and f"Parse tunnel is {'on' if on else'off'}" not in output:
-+            self._logger.debug(
-+                f"Testpmd failed to set csum parse-tunnel {'on' if on else 'off'} in port {port}"
-+            )
-+            raise InteractiveCommandExecutionError(
-+                f"Testpmd failed to set csum parse-tunnel {'on' if on else 'off'} in port {port}"
-+            )
-+
-     def show_port_flow_info(self, port: int) -> TestPmdPortFlowCtrl | None:
-         """Show port info flow.
- 
-diff --git a/dts/tests/TestSuite_ip_gre.py b/dts/tests/TestSuite_ip_gre.py
+diff --git a/doc/api/dts/tests.TestSuite_flow_offload.rst b/doc/api/dts/tests.TestSuite_flow_offload.rst
 new file mode 100644
-index 0000000000..fc51eef181
+index 0000000000..5fcd3f57c3
 --- /dev/null
-+++ b/dts/tests/TestSuite_ip_gre.py
-@@ -0,0 +1,301 @@
-+# SPDX-License-Identifier: BSD-3-Clause
-+# Copyright(c) 2026 University of New Hampshire
++++ b/doc/api/dts/tests.TestSuite_flow_offload.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
 +
-+"""DPDK IP GRE test suite."""
++flow_offload Test Suite
++=======================
 +
-+from scapy.layers.inet import GRE, IP, TCP, UDP
-+from scapy.layers.inet6 import IPv6
-+from scapy.layers.l2 import Dot1Q, Ether
-+from scapy.layers.sctp import SCTP
-+from scapy.packet import Packet
++.. automodule:: tests.TestSuite_flow_offload
++   :members:
++   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst b/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
+deleted file mode 100644
+index cdf30fd879..0000000000
+--- a/doc/api/dts/tests.TestSuite_pmd_buffer_scatter.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
+-
+-pmd_buffer_scatter Test Suite
+-=============================
+-
+-.. automodule:: tests.TestSuite_pmd_buffer_scatter
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_pmd_rss.rst b/doc/api/dts/tests.TestSuite_pmd_rss.rst
+deleted file mode 100644
+index 942fa5ebdc..0000000000
+--- a/doc/api/dts/tests.TestSuite_pmd_rss.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
+-
+-pmd_rss Test Suite
+-==================
+-
+-.. automodule:: tests.TestSuite_pmd_rss
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_queue_start_stop.rst b/doc/api/dts/tests.TestSuite_queue_start_stop.rst
+deleted file mode 100644
+index 87121676fb..0000000000
+--- a/doc/api/dts/tests.TestSuite_queue_start_stop.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
+-
+-queue_start_stop Test Suite
+-===========================
+-
+-.. automodule:: tests.TestSuite_queue_start_stop
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_queue_toggle.rst b/doc/api/dts/tests.TestSuite_queue_toggle.rst
+new file mode 100644
+index 0000000000..1d6345511f
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_queue_toggle.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
 +
-+from api.capabilities import (
-+    NicCapability,
-+    requires_nic_capability,
-+)
-+from api.packet import send_packet_and_capture
-+from api.test import verify
-+from api.testpmd import TestPmd
-+from api.testpmd.config import SimpleForwardingModes
-+from api.testpmd.types import (
-+    ChecksumOffloadOptions,
-+    PacketOffloadFlag,
-+    RtePTypes,
-+    TestPmdVerbosePacket,
-+)
-+from framework.test_suite import TestSuite, func_test
++queue_toggle Test Suite
++=======================
 +
-+SRC_ID = "FF:FF:FF:FF:FF:FF"
++.. automodule:: tests.TestSuite_queue_toggle
++   :members:
++   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_uni_pkt.rst b/doc/api/dts/tests.TestSuite_rss.rst
+similarity index 50%
+rename from doc/api/dts/tests.TestSuite_uni_pkt.rst
+rename to doc/api/dts/tests.TestSuite_rss.rst
+index 95c5a5a28b..ecd8676b09 100644
+--- a/doc/api/dts/tests.TestSuite_uni_pkt.rst
++++ b/doc/api/dts/tests.TestSuite_rss.rst
+@@ -1,8 +1,8 @@
+ .. SPDX-License-Identifier: BSD-3-Clause
+ 
+-uni_pkt Test Suite
+-==================
++rss Test Suite
++==============
+ 
+-.. automodule:: tests.TestSuite_uni_pkt
++.. automodule:: tests.TestSuite_rss
+    :members:
+    :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_rte_flow.rst b/doc/api/dts/tests.TestSuite_rte_flow.rst
+deleted file mode 100644
+index eacbfd3a2a..0000000000
+--- a/doc/api/dts/tests.TestSuite_rte_flow.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
+-
+-rte_flow Test Suite
+-===================
+-
+-.. automodule:: tests.TestSuite_rte_flow
+-   :members:
+-   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_unified_packet.rst b/doc/api/dts/tests.TestSuite_unified_packet.rst
+new file mode 100644
+index 0000000000..dddf12b18a
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_unified_packet.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
 +
++unified_packet Test Suite
++=========================
 +
-+class TestIpGre(TestSuite):
-+    """IP GRE test suite."""
++.. automodule:: tests.TestSuite_unified_packet
++   :members:
++   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_virtio_forward.rst b/doc/api/dts/tests.TestSuite_virtio_forward.rst
+new file mode 100644
+index 0000000000..9178c73be5
+--- /dev/null
++++ b/doc/api/dts/tests.TestSuite_virtio_forward.rst
+@@ -0,0 +1,8 @@
++.. SPDX-License-Identifier: BSD-3-Clause
 +
-+    def _check_for_matching_packet(
-+        self, output: list[TestPmdVerbosePacket], flags: RtePTypes
-+    ) -> bool:
-+        """Returns :data:`True` if the packet in verbose output contains all specified flags."""
-+        for packet in output:
-+            if packet.src_mac == SRC_ID:
-+                if flags not in packet.hw_ptype and flags not in packet.sw_ptype:
-+                    return False
-+        return True
++virtio_forward Test Suite
++=========================
 +
-+    def _send_packet_and_verify_flags(
-+        self, expected_flag: RtePTypes, packet: Packet, testpmd: TestPmd
-+    ) -> None:
-+        """Sends a packet to the DUT and verifies the verbose ptype flags."""
-+        send_packet_and_capture(packet=packet)
-+        verbose_output = testpmd.extract_verbose_output(testpmd.stop(verify=True))
-+        valid = self._check_for_matching_packet(output=verbose_output, flags=expected_flag)
-+        verify(valid, f"Packet type flag did not match the expected flag: {expected_flag}.")
-+
-+    def _setup_session(
-+        self, testpmd: TestPmd, expected_flags: list[RtePTypes], packet_list=list[Packet]
-+    ) -> None:
-+        """Sets the forwarding and verbose mode of each test case interactive shell session."""
-+        testpmd.set_forward_mode(SimpleForwardingModes.rxonly)
-+        testpmd.set_verbose(level=1)
-+        for i in range(0, len(packet_list)):
-+            testpmd.start(verify=True)
-+            self._send_packet_and_verify_flags(
-+                expected_flag=expected_flags[i], packet=packet_list[i], testpmd=testpmd
-+            )
-+
-+    def _send_packet_and_verify_checksum(
-+        self, packet: Packet, good_L4: bool, good_IP: bool, testpmd: TestPmd
-+    ) -> None:
-+        """Send packet and verify verbose output matches expected output."""
-+        testpmd.start()
-+        send_packet_and_capture(packet=packet)
-+        verbose_output = testpmd.extract_verbose_output(testpmd.stop())
-+        is_IP = is_L4 = None
-+        for testpmd_packet in verbose_output:
-+            if testpmd_packet.src_mac == SRC_ID:
-+                is_IP = PacketOffloadFlag.RTE_MBUF_F_RX_IP_CKSUM_GOOD in testpmd_packet.ol_flags
-+                is_L4 = PacketOffloadFlag.RTE_MBUF_F_RX_L4_CKSUM_GOOD in testpmd_packet.ol_flags
-+        verify(
-+            is_IP is not None and is_L4 is not None,
-+            "Test packet was dropped when it should have been received.",
-+        )
-+        verify(is_L4 == good_L4, "Layer 4 checksum flag did not match expected checksum flag.")
-+        verify(is_IP == good_IP, "IP checksum flag did not match expected checksum flag.")
-+
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
-+    @func_test
-+    def gre_ip4_pkt_detect(self) -> None:
-+        """GRE IP4 packet send and detect.
-+
-+        Steps:
-+            * Craft packets using GRE tunneling.
-+            * Send them to the testpmd application.
-+
-+        Verify:
-+            * All packets were received.
-+        """
-+        packets = [
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / UDP(),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / SCTP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / UDP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IP() / GRE() / IP() / SCTP(),
-+        ]
-+        flags = [
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_SCTP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV4
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_SCTP,
-+        ]
-+        with TestPmd() as testpmd:
-+            self._setup_session(testpmd=testpmd, expected_flags=flags, packet_list=packets)
-+
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
-+    @func_test
-+    def gre_ip6_outer_ip4_inner_pkt_detect(self) -> None:
-+        """GRE IPv6 outer and IPv4 inner send and detect.
-+
-+        Steps:
-+            * Craft packets using GRE tunneling.
-+            * Send them to the testpmd application.
-+
-+        Verify:
-+            * All packets were received.
-+        """
-+        packets = [
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / UDP(),
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IP() / SCTP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / UDP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IP() / SCTP(),
-+        ]
-+        flags = [
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_SCTP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV4
-+            | RtePTypes.INNER_L4_SCTP,
-+        ]
-+        with TestPmd() as testpmd:
-+            self._setup_session(testpmd=testpmd, expected_flags=flags, packet_list=packets)
-+
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
-+    @func_test
-+    def gre_ip6_outer_ip6_inner_pkt_detect(self) -> None:
-+        """GRE IPv6 outer and inner send and detect.
-+
-+        Steps:
-+            * Craft packets using GRE tunneling.
-+            * Send them to the testpmd application.
-+
-+        Verify:
-+            * All packets were received.
-+        """
-+        packets = [
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / UDP(),
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / TCP(),
-+            Ether(src=SRC_ID) / IPv6() / GRE() / IPv6() / SCTP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / UDP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / TCP(),
-+            Ether(src=SRC_ID) / Dot1Q() / IPv6() / GRE() / IPv6() / SCTP(),
-+        ]
-+        flags = [
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_SCTP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_UDP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_TCP,
-+            RtePTypes.L2_ETHER_VLAN
-+            | RtePTypes.L3_IPV6
-+            | RtePTypes.TUNNEL_GRE
-+            | RtePTypes.INNER_L3_IPV6
-+            | RtePTypes.INNER_L4_SCTP,
-+        ]
-+        with TestPmd() as testpmd:
-+            self._setup_session(testpmd=testpmd, expected_flags=flags, packet_list=packets)
-+
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_OUTER_IPV4_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_IPV4_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_TCP_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_UDP_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_SCTP_CKSUM)
-+    @requires_nic_capability(NicCapability.PORT_TX_OFFLOAD_GRE_TNL_TSO)
-+    @func_test
-+    def gre_checksum_offload(self) -> None:
-+        """GRE checksum offload test.
-+
-+        Steps:
-+            * Craft packets using GRE tunneling.
-+            * Alter checksum of each packet.
-+            * Send packets to the testpmd application.
-+
-+        Verify:
-+            * All packets were received with the expected checksum flags.
-+        """
-+        packets = [
-+            Ether(src=SRC_ID) / IP(chksum=0x0) / GRE() / IP() / TCP(),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP(chksum=0x0) / TCP(),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / TCP(chksum=0x0),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / UDP(chksum=0xFFFF),
-+            Ether(src=SRC_ID) / IP() / GRE() / IP() / SCTP(chksum=0x0),
-+        ]
-+        good_l4_ip = [
-+            (True, True),
-+            (True, False),
-+            (False, True),
-+            (False, True),
-+            (False, True),
-+        ]
-+        with TestPmd() as testpmd:
-+            testpmd.set_forward_mode(SimpleForwardingModes.csum)
-+            testpmd.csum_set_hw(
-+                layers=ChecksumOffloadOptions.ip
-+                | ChecksumOffloadOptions.udp
-+                | ChecksumOffloadOptions.outer_ip
-+                | ChecksumOffloadOptions.sctp
-+                | ChecksumOffloadOptions.tcp,
-+                port_id=0,
-+            )
-+            testpmd.set_csum_parse_tunnel(port=0, on=True)
-+            testpmd.set_verbose(1)
-+            testpmd.start_all_ports()
-+            testpmd.start()
-+            for i in range(len(packets)):
-+                self._send_packet_and_verify_checksum(
-+                    packets[i],
-+                    good_l4_ip[i][0],
-+                    good_l4_ip[i][1],
-+                    testpmd,
-+                )
++.. automodule:: tests.TestSuite_virtio_forward
++   :members:
++   :show-inheritance:
+diff --git a/doc/api/dts/tests.TestSuite_virtio_fwd.rst b/doc/api/dts/tests.TestSuite_virtio_fwd.rst
+deleted file mode 100644
+index e40cc4ca2b..0000000000
+--- a/doc/api/dts/tests.TestSuite_virtio_fwd.rst
++++ /dev/null
+@@ -1,8 +0,0 @@
+-.. SPDX-License-Identifier: BSD-3-Clause
+-
+-virtio_fwd Test Suite
+-=====================
+-
+-.. automodule:: tests.TestSuite_virtio_fwd
+-   :members:
+-   :show-inheritance:
+diff --git a/dts/tests/TestSuite_pmd_buffer_scatter.py b/dts/tests/TestSuite_buffer_scatter.py
+similarity index 99%
+rename from dts/tests/TestSuite_pmd_buffer_scatter.py
+rename to dts/tests/TestSuite_buffer_scatter.py
+index 96da67ee7d..539082f2e4 100644
+--- a/dts/tests/TestSuite_pmd_buffer_scatter.py
++++ b/dts/tests/TestSuite_buffer_scatter.py
+@@ -35,7 +35,7 @@
+ 
+ @requires_nic_capability(NicCapability.PHYSICAL_FUNCTION)
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_SCATTER)
+-class TestPmdBufferScatter(TestSuite):
++class TestBufferScatter(TestSuite):
+     """DPDK PMD packet scattering test suite.
+ 
+     Configure the Rx queues to have mbuf data buffers
+diff --git a/dts/tests/TestSuite_rte_flow.py b/dts/tests/TestSuite_flow_offload.py
+similarity index 99%
+rename from dts/tests/TestSuite_rte_flow.py
+rename to dts/tests/TestSuite_flow_offload.py
+index 6255e4c36d..be11d09875 100644
+--- a/dts/tests/TestSuite_rte_flow.py
++++ b/dts/tests/TestSuite_flow_offload.py
+@@ -402,8 +402,8 @@ def generate(
+ 
+ 
+ @requires_nic_capability(NicCapability.FLOW_CTRL)
+-class TestRteFlow(TestSuite):
+-    """RTE Flow test suite.
++class TestFlowOffload(TestSuite):
++    """Flow offload test suite.
+ 
+     This suite consists of 4 test cases:
+     1. Queue Action: Verifies queue actions with multi-protocol patterns
+diff --git a/dts/tests/TestSuite_queue_start_stop.py b/dts/tests/TestSuite_queue_toggle.py
+similarity index 99%
+rename from dts/tests/TestSuite_queue_start_stop.py
+rename to dts/tests/TestSuite_queue_toggle.py
+index e9048d4245..e4edc89123 100644
+--- a/dts/tests/TestSuite_queue_start_stop.py
++++ b/dts/tests/TestSuite_queue_toggle.py
+@@ -32,7 +32,7 @@
+ @requires_link_topology(LinkTopology.TWO_LINKS)
+ @requires_nic_capability(NicCapability.RUNTIME_RX_QUEUE_SETUP)
+ @requires_nic_capability(NicCapability.RUNTIME_TX_QUEUE_SETUP)
+-class TestQueueStartStop(TestSuite):
++class TestQueueToggle(TestSuite):
+     """DPDK Queue start/stop test suite.
+ 
+     Ensures Rx/Tx queue on a port can be disabled and enabled.
+diff --git a/dts/tests/TestSuite_pmd_rss.py b/dts/tests/TestSuite_rss.py
+similarity index 99%
+rename from dts/tests/TestSuite_pmd_rss.py
+rename to dts/tests/TestSuite_rss.py
+index f6adf262c3..2747c8a36c 100644
+--- a/dts/tests/TestSuite_pmd_rss.py
++++ b/dts/tests/TestSuite_rss.py
+@@ -55,8 +55,8 @@ class HashAlgorithm(StrEnum):
+ 
+ @requires_link_topology(LinkTopology.ONE_LINK)
+ @requires_nic_capability(NicCapability.PORT_RX_OFFLOAD_RSS_HASH)
+-class TestPmdRss(TestSuite):
+-    """PMD RSS test suite."""
++class TestRss(TestSuite):
++    """RSS test suite."""
+ 
+     config: Config
+ 
+diff --git a/dts/tests/TestSuite_uni_pkt.py b/dts/tests/TestSuite_unified_packet.py
+similarity index 99%
+rename from dts/tests/TestSuite_uni_pkt.py
+rename to dts/tests/TestSuite_unified_packet.py
+index 222276ce67..fcc7f7fbbb 100644
+--- a/dts/tests/TestSuite_uni_pkt.py
++++ b/dts/tests/TestSuite_unified_packet.py
+@@ -31,7 +31,7 @@
+ from framework.test_suite import TestSuite, func_test
+ 
+ 
+-class TestUniPkt(TestSuite):
++class TestUnifiedPacket(TestSuite):
+     """DPDK Unified packet test suite.
+ 
+     This testing suite uses testpmd's verbose output hardware/software
+diff --git a/dts/tests/TestSuite_virtio_fwd.py b/dts/tests/TestSuite_virtio_forward.py
+similarity index 99%
+rename from dts/tests/TestSuite_virtio_fwd.py
+rename to dts/tests/TestSuite_virtio_forward.py
+index bdecdb76fd..6efaa4e156 100644
+--- a/dts/tests/TestSuite_virtio_fwd.py
++++ b/dts/tests/TestSuite_virtio_forward.py
+@@ -20,7 +20,7 @@
+ from framework.testbed_model.virtual_device import VirtualDevice
+ 
+ 
+-class TestVirtioFwd(TestSuite):
++class TestVirtioForward(TestSuite):
+     """Virtio forwarding test suite."""
+ 
+     virtio_user_vdev = VirtualDevice(
 -- 
 2.50.1
 
