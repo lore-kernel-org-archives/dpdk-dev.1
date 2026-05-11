@@ -2,57 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9987ACD37AC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3C7CD37AC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 13:00:48 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 47C4B40A7D;
-	Mon, 11 May 2026 12:37:23 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id 11B1440DCA;
- Mon, 11 May 2026 12:37:20 +0200 (CEST)
-X-QQ-mid: zesmtpsz3t1778495838t26c24621
-X-QQ-Originating-IP: hIk76wT5suUtS3I82fafXp4jD9Lg9CxLn4zMZAdmBQM=
-Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
- by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 11 May 2026 18:37:16 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13248451390419033631
-EX-QQ-RecipientCnt: 4
-From: Zaiyu Wang <zaiyuwang@trustnetic.com>
-To: dev@dpdk.org
-Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
- Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v4 20/20] net/txgbe: fix to enable Tx desc check
-Date: Mon, 11 May 2026 18:36:02 +0800
-Message-Id: <20260511103604.19724-21-zaiyuwang@trustnetic.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20260511103604.19724-1-zaiyuwang@trustnetic.com>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260511103604.19724-1-zaiyuwang@trustnetic.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 96517402D9;
+	Mon, 11 May 2026 15:00:47 +0200 (CEST)
+Received: from fout-b4-smtp.messagingengine.com
+ (fout-b4-smtp.messagingengine.com [202.12.124.147])
+ by mails.dpdk.org (Postfix) with ESMTP id 895D9402D5
+ for <dev@dpdk.org>; Mon, 11 May 2026 15:00:45 +0200 (CEST)
+Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
+ by mailfout.stl.internal (Postfix) with ESMTP id BB79B1D000CB;
+ Mon, 11 May 2026 09:00:44 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-09.internal (MEProxy); Mon, 11 May 2026 09:00:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1778504444;
+ x=1778590844; bh=jOMAER0X6Keyf5QLRQqkjaLXJjSfMgKtKzNAYUhEWKQ=; b=
+ Kbui8Paw1e82KhvRbtlavOr10RdciruXrSX+yp+BVlnbeqNbKy4hC50xkjk5MKb9
+ Gzw9BIDxOYHRJeIaBEuO2NlMgMjuQq3BxQ9yuEwN5lROZpRR1XqsoVJff3k7L4co
+ hn/RiW0+u4Nh0vb4VugDl3OFfxCIC+srbfAOE5dxoBa9a41GlB/gmXAKIwbNdaHZ
+ WCWsOcwLuX55gutIVFEOrvVjRGdDdFKiGuSiKLWCbaUFYtdluPf0DhqmGe6wUWX2
+ fAKVox+7HiqEz7XZcSN4Lkdx64cU5X/m29AqnElBJNporTpRP36uVa81ERS0Ow9L
+ HpJeC2OUgyQe0DNZN6IViQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778504444; x=
+ 1778590844; bh=jOMAER0X6Keyf5QLRQqkjaLXJjSfMgKtKzNAYUhEWKQ=; b=Y
+ njSUY3VZyF5dUjvbaZtsTLo6DJU/HTWVWqlyYj+YOE11R1/FNTRU85IZNeI2Abta
+ FeWNrE0JVkgpCxKFNwrMI2TKtZOlq0AC1iz4sP97rUQwcOZgyHeYwYeNOpFX5LSN
+ mg/LZQIE4pp9LyFgtIf5Ptuo5zf1f25J3986UtNwzwO7h/2T8B8KUyry8vNZlpAN
+ AIkYTJG32RBs6kMJL2QaFQUL0hZwGrhl6H1sEAeAVJnP2Jiwqk879g7FI5aB50Yr
+ KBBTJbYAdn9HwWols9yLYsMWhLw1cAlceLzEPMK7PA9fbTgOCSfEq7sogjNPONvS
+ SfG4yoJ1SCvb2Q0I1w+rA==
+X-ME-Sender: <xms:_NIBajGeDnwEjIEgftiQfJIu-lx1nRebKkeFRat6H4jUUl0WUIKWfw>
+ <xme:_NIBaspNMAkidcIKrCyOFE7vnTifE7mlGNxCDPiKvdqt7oW24ZjuDONdO31n22jIP
+ XowUt7quMTBBLp2cUXn6ShO4bTp4C4x73WXphD99P8fB3fvTwa8SUc>
+X-ME-Received: <xmr:_NIBan6kq0CI9yCoB3VfP3TxotrLocT1FxmmgTdr0da1LYSneurrXO4FOV9mMVVfP-Mo4KPHFo6cyg2G_fjh>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduudekleelucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpefftdeuhfehvdekleelveffvdelhfelhedvgedtvddvudeuieevtdfg
+ jedvudegfeenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
+ eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
+ nhgvthdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+ epmhgssehsmhgrrhhtshhhrghrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtohepuggv
+ vhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:_NIBai7dmX8Md9mU0gaUZPEGxJ59iUKnE89FpQ-O0TWwNbtdaoBNvw>
+ <xmx:_NIBasF2649vuotiT2Z-fH2qqlgXNMyGZNAjjC66qkubi9iLRCWHKQ>
+ <xmx:_NIBajQ_udP7a3vmeBpL7oKdHgiCjkDlf4wvIiXKlHkr1tJ0-eL9_Q>
+ <xmx:_NIBatseX9rA5b2aS2amN9ziHbH3BjiaGnTS9VkCC71VM8DHuvQOuw>
+ <xmx:_NIBaum9Re87HTjxnXZuUCjwj1UZn94--l8CEfYC032KZZ0jLOOawCZI>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 11 May 2026 09:00:42 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH] doc: add link to mbuf layout history
+Date: Mon, 11 May 2026 15:00:36 +0200
+Message-ID: <MytLSAGsRfqGQpE8fyv5ow@monjalon.net>
+In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F657D8@smartserver.smartshare.dk>
+References: <20260407080544.614206-1-thomas@monjalon.net>
+ <98CBD80474FA8B44BF855DF32C47DC35F657D8@smartserver.smartshare.dk>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: M3uTjkO5QXGx5JF4UqEefs22gNqJ6Hr/MKb7LmC1ywT+EWUbBrL+iYKu
- 7s5X3ZhyWHkhC2/zsiZ6IkeQAZPIq6ELUuKVruazG8OziD1fs24p57mIejf+iBFirK12ttf
- pP/tbqTuA56bUO7wF72GcyvPFWAGepQLI/rnvlWFbs6QfF7dZ/s/oD+4tjcstO4xYbln/Mu
- HeBsuM+jAez2qryFdNh04C+tEFSLpeJcYbGP0WcYVh0kZgjAUt+wg/54XJmkh0Xhojnz4qF
- lX2stdS5LpLuF5eOMNWpwmoauKZv80bfE+LqB80xBceTlBUWFQfyTvOQ6IHE2+6yxVxhH3v
- tNQy+aXpQ9yf7W/Tz8TIDmQZuPW+8jBUmMcRnCfLl9QRObNQuLv9kpmhrAILuu94ovBrL6+
- z5Cz7gbcoRdQ//SK3ua8LK6viFYV/+MaJI2kE7BQ40bHWzpek8Gg265w6Tp/G1JeaXV17TE
- mhTv2M+4kXxwQGHwcHL0J8UVOUF70OrV85TE12jIcme4ndgRyJJu8LqHvjaiXReWt6qVene
- jWIOvhGO4MRxh/cti0XkdSDwapy83vY8OXRqGg2Ge8sk3D0Grjm3CRtkCez0r0UXWymC0db
- Og6YUZlRaTHDd8xHG/nlqA+3JazQh4jiu9xDvwd2i1te/GijBW3xcb/Y8TOtBYCy7tRm74O
- feqcCiKXlAawTbMclWHIxP31v2XgMU9wouqWbtIY8rs6Vl3pNXzG1chL0aH/PBY4fJrnD4G
- LT67R2Gj4wFH5XnFgZmnc4bJOC1NLOWUL8/zkBqv+1HXs9YRkEyCYCz8i4kWY8/Ao4c5LXW
- tXTAQEBM49wb3KX1xAApL2oRLxmEEIdiJNQYa3H1j8ZVM/0oIMNEwd6xW3NT2x8B6sU8ou+
- qtTt8wnocdK7MGechx4HULW64XwIchUSk1+3mTsdWlCesAIu/EgVtkaXUagirz6r57gHRgm
- PT0dGLOe6+axtsENCC620pzjObzghH8EADoxjnpViA4Nmgel7PK8yPvk9glf/FUC3RHTtCh
- 11Vz2fgvo+etDXjTMCbJPFCHcuLpv6aW3Ndxyw6jTiwRWgBdbDliecSuaXC8u56KcWVBUWD
- QSdv235LRKzb+iDZ7rxXi0=
-X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
-X-QQ-RECHKSPAM: 0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,47 +88,55 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Now lib security is enabled by default, and cannot be disabled if the
-driver is intended to be used. So Tdm_desc_chk is always unable to enable.
-Remove this restriction, and just enable the corresponding queue check.
+07/04/2026 10:44, Morten Br=C3=B8rup:
+> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
+> > Sent: Tuesday, 7 April 2026 10.06
+> >=20
+> > In order to illustrate how mbuf is kept small,
+> > add a link to a page showing the mbuf layout for each version.
+> >=20
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
+> >  doc/guides/prog_guide/mbuf_lib.rst | 11 ++++++-----
+> >  1 file changed, 6 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/doc/guides/prog_guide/mbuf_lib.rst
+> > b/doc/guides/prog_guide/mbuf_lib.rst
+> > index 382bfbdca4..97f8e72356 100644
+> > --- a/doc/guides/prog_guide/mbuf_lib.rst
+> > +++ b/doc/guides/prog_guide/mbuf_lib.rst
+> > @@ -8,11 +8,12 @@ The Packet (MBuf) library provides the ability to
+> > allocate and free buffers (mbu
+> >  that may be used by the DPDK application to store message buffers.
+> >  The message buffers are stored in a mempool, using the
+> > :doc:`mempool_lib`.
+> >=20
+> > -A rte_mbuf struct generally carries network packet buffers, but it can
+> > actually
+> > -be any data (control data, events, ...).
+> > -The rte_mbuf header structure is kept as small as possible and
+> > currently uses
+> > -just two cache lines, with the most frequently used fields being on
+> > the first
+> > -of the two cache lines.
+> > +A ``struct rte_mbuf`` generally carries network packet buffers,
+> > +but it can actually be any data (control data, events, etc).
+> > +The ``rte_mbuf`` header structure is
+> > +`kept as small as possible
+> > <https://doc.dpdk.org/struct/mbuf/history.html>`_
+> > +and currently uses just two 64-byte cache lines,
+> > +with the most frequently used fields being on the first of the two
+> > cache lines.
+> >=20
+> >  Design of Packet Buffers
+> >  ------------------------
+> > --
+> > 2.53.0
+>=20
+> Hadn't noticed that illustration before, so good idea linking to it here.
+>=20
+> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
 
-Fixes: 0eabdfcd4af4 ("net/txgbe: enable Tx descriptor error interrupt")
-Cc: stable@dpdk.org
+Applied
 
-Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
----
- drivers/net/txgbe/txgbe_rxtx.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
-index ef53a868a6..8b3d5eec14 100644
---- a/drivers/net/txgbe/txgbe_rxtx.c
-+++ b/drivers/net/txgbe/txgbe_rxtx.c
-@@ -4768,6 +4768,12 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
- 		wr32(hw, TXGBE_TXRP(txq->reg_idx), 0);
- 		wr32(hw, TXGBE_TXWP(txq->reg_idx), 0);
- 
-+#ifdef RTE_LIBRTE_SECURITY
-+		if (!(txq->using_ipsec))
-+#endif
-+			wr32m(hw, TXGBE_TDM_DESC_CHK(txq->reg_idx / 32),
-+			      BIT(txq->reg_idx % 32), BIT(txq->reg_idx % 32));
-+
- 		if (txq->headwb_mem) {
- 			uint32_t txdctl;
- 
-@@ -4785,11 +4791,6 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
- 		}
- 	}
- 
--#ifndef RTE_LIB_SECURITY
--	for (i = 0; i < 4; i++)
--		wr32(hw, TXGBE_TDM_DESC_CHK(i), 0xFFFFFFFF);
--#endif
--
- 	/* Device configured with multiple TX queues. */
- 	txgbe_dev_mq_tx_configure(dev);
- }
--- 
-2.21.0.windows.1
 
