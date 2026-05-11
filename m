@@ -2,79 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3C7CD37AC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 13:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525C1CD37AC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 13:40:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 96517402D9;
-	Mon, 11 May 2026 15:00:47 +0200 (CEST)
-Received: from fout-b4-smtp.messagingengine.com
- (fout-b4-smtp.messagingengine.com [202.12.124.147])
- by mails.dpdk.org (Postfix) with ESMTP id 895D9402D5
- for <dev@dpdk.org>; Mon, 11 May 2026 15:00:45 +0200 (CEST)
-Received: from phl-compute-09.internal (phl-compute-09.internal [10.202.2.49])
- by mailfout.stl.internal (Postfix) with ESMTP id BB79B1D000CB;
- Mon, 11 May 2026 09:00:44 -0400 (EDT)
-Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-09.internal (MEProxy); Mon, 11 May 2026 09:00:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
- cc:cc:content-transfer-encoding:content-type:content-type:date
- :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1778504444;
- x=1778590844; bh=jOMAER0X6Keyf5QLRQqkjaLXJjSfMgKtKzNAYUhEWKQ=; b=
- Kbui8Paw1e82KhvRbtlavOr10RdciruXrSX+yp+BVlnbeqNbKy4hC50xkjk5MKb9
- Gzw9BIDxOYHRJeIaBEuO2NlMgMjuQq3BxQ9yuEwN5lROZpRR1XqsoVJff3k7L4co
- hn/RiW0+u4Nh0vb4VugDl3OFfxCIC+srbfAOE5dxoBa9a41GlB/gmXAKIwbNdaHZ
- WCWsOcwLuX55gutIVFEOrvVjRGdDdFKiGuSiKLWCbaUFYtdluPf0DhqmGe6wUWX2
- fAKVox+7HiqEz7XZcSN4Lkdx64cU5X/m29AqnElBJNporTpRP36uVa81ERS0Ow9L
- HpJeC2OUgyQe0DNZN6IViQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
- messagingengine.com; h=cc:cc:content-transfer-encoding
- :content-type:content-type:date:date:feedback-id:feedback-id
- :from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1778504444; x=
- 1778590844; bh=jOMAER0X6Keyf5QLRQqkjaLXJjSfMgKtKzNAYUhEWKQ=; b=Y
- njSUY3VZyF5dUjvbaZtsTLo6DJU/HTWVWqlyYj+YOE11R1/FNTRU85IZNeI2Abta
- FeWNrE0JVkgpCxKFNwrMI2TKtZOlq0AC1iz4sP97rUQwcOZgyHeYwYeNOpFX5LSN
- mg/LZQIE4pp9LyFgtIf5Ptuo5zf1f25J3986UtNwzwO7h/2T8B8KUyry8vNZlpAN
- AIkYTJG32RBs6kMJL2QaFQUL0hZwGrhl6H1sEAeAVJnP2Jiwqk879g7FI5aB50Yr
- KBBTJbYAdn9HwWols9yLYsMWhLw1cAlceLzEPMK7PA9fbTgOCSfEq7sogjNPONvS
- SfG4yoJ1SCvb2Q0I1w+rA==
-X-ME-Sender: <xms:_NIBajGeDnwEjIEgftiQfJIu-lx1nRebKkeFRat6H4jUUl0WUIKWfw>
- <xme:_NIBaspNMAkidcIKrCyOFE7vnTifE7mlGNxCDPiKvdqt7oW24ZjuDONdO31n22jIP
- XowUt7quMTBBLp2cUXn6ShO4bTp4C4x73WXphD99P8fB3fvTwa8SUc>
-X-ME-Received: <xmr:_NIBan6kq0CI9yCoB3VfP3TxotrLocT1FxmmgTdr0da1LYSneurrXO4FOV9mMVVfP-Mo4KPHFo6cyg2G_fjh>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgdduudekleelucetufdoteggodetrf
- dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
- rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthhqredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpefftdeuhfehvdekleelveffvdelhfelhedvgedtvddvudeuieevtdfg
- jedvudegfeenucffohhmrghinhepughpughkrdhorhhgnecuvehluhhsthgvrhfuihiivg
- eptdenucfrrghrrghmpehmrghilhhfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdr
- nhgvthdpnhgspghrtghpthhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
- epmhgssehsmhgrrhhtshhhrghrvghshihsthgvmhhsrdgtohhmpdhrtghpthhtohepuggv
- vhesughpughkrdhorhhg
-X-ME-Proxy: <xmx:_NIBai7dmX8Md9mU0gaUZPEGxJ59iUKnE89FpQ-O0TWwNbtdaoBNvw>
- <xmx:_NIBasF2649vuotiT2Z-fH2qqlgXNMyGZNAjjC66qkubi9iLRCWHKQ>
- <xmx:_NIBajQ_udP7a3vmeBpL7oKdHgiCjkDlf4wvIiXKlHkr1tJ0-eL9_Q>
- <xmx:_NIBatseX9rA5b2aS2amN9ziHbH3BjiaGnTS9VkCC71VM8DHuvQOuw>
- <xmx:_NIBaum9Re87HTjxnXZuUCjwj1UZn94--l8CEfYC032KZZ0jLOOawCZI>
-Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 11 May 2026 09:00:42 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Morten =?UTF-8?B?QnLDuHJ1cA==?= <mb@smartsharesystems.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH] doc: add link to mbuf layout history
-Date: Mon, 11 May 2026 15:00:36 +0200
-Message-ID: <MytLSAGsRfqGQpE8fyv5ow@monjalon.net>
-In-Reply-To: <98CBD80474FA8B44BF855DF32C47DC35F657D8@smartserver.smartshare.dk>
-References: <20260407080544.614206-1-thomas@monjalon.net>
- <98CBD80474FA8B44BF855DF32C47DC35F657D8@smartserver.smartshare.dk>
+	by mails.dpdk.org (Postfix) with ESMTP id 740C8402C9;
+	Mon, 11 May 2026 15:40:04 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id 9155140275;
+ Mon, 11 May 2026 15:40:02 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id 514E520628;
+ Mon, 11 May 2026 15:40:02 +0200 (CEST)
+Received: from dkrd4.smartsharesys.local ([192.168.4.26]) by
+ smartserver.smartsharesystems.com with Microsoft SMTPSVC(6.0.3790.4675); 
+ Mon, 11 May 2026 15:39:59 +0200
+From: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>
+To: dev@dpdk.org, Shani Peretz <shperetz@nvidia.com>,
+ Thomas Monjalon <thomas@monjalon.net>,
+ Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Cc: =?UTF-8?q?Morten=20Br=C3=B8rup?= <mb@smartsharesystems.com>,
+ stable@dpdk.org
+Subject: [PATCH v2] mbuf: fix mbuf operations history recording
+Date: Mon, 11 May 2026 13:39:52 +0000
+Message-ID: <20260511133952.65539-1-mb@smartsharesystems.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260419221220.86455-1-mb@smartsharesystems.com>
+References: <20260419221220.86455-1-mb@smartsharesystems.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 11 May 2026 13:39:59.0668 (UTC)
+ FILETIME=[A97E0F40:01DCE14B]
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -88,55 +48,114 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-07/04/2026 10:44, Morten Br=C3=B8rup:
-> > From: Thomas Monjalon [mailto:thomas@monjalon.net]
-> > Sent: Tuesday, 7 April 2026 10.06
-> >=20
-> > In order to illustrate how mbuf is kept small,
-> > add a link to a page showing the mbuf layout for each version.
-> >=20
-> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
-> > ---
-> >  doc/guides/prog_guide/mbuf_lib.rst | 11 ++++++-----
-> >  1 file changed, 6 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/doc/guides/prog_guide/mbuf_lib.rst
-> > b/doc/guides/prog_guide/mbuf_lib.rst
-> > index 382bfbdca4..97f8e72356 100644
-> > --- a/doc/guides/prog_guide/mbuf_lib.rst
-> > +++ b/doc/guides/prog_guide/mbuf_lib.rst
-> > @@ -8,11 +8,12 @@ The Packet (MBuf) library provides the ability to
-> > allocate and free buffers (mbu
-> >  that may be used by the DPDK application to store message buffers.
-> >  The message buffers are stored in a mempool, using the
-> > :doc:`mempool_lib`.
-> >=20
-> > -A rte_mbuf struct generally carries network packet buffers, but it can
-> > actually
-> > -be any data (control data, events, ...).
-> > -The rte_mbuf header structure is kept as small as possible and
-> > currently uses
-> > -just two cache lines, with the most frequently used fields being on
-> > the first
-> > -of the two cache lines.
-> > +A ``struct rte_mbuf`` generally carries network packet buffers,
-> > +but it can actually be any data (control data, events, etc).
-> > +The ``rte_mbuf`` header structure is
-> > +`kept as small as possible
-> > <https://doc.dpdk.org/struct/mbuf/history.html>`_
-> > +and currently uses just two 64-byte cache lines,
-> > +with the most frequently used fields being on the first of the two
-> > cache lines.
-> >=20
-> >  Design of Packet Buffers
-> >  ------------------------
-> > --
-> > 2.53.0
->=20
-> Hadn't noticed that illustration before, so good idea linking to it here.
->=20
-> Acked-by: Morten Br=C3=B8rup <mb@smartsharesystems.com>
+This addresses two bugs in mbuf operations history recording.
 
-Applied
+1. With mbuf operations history recording enabled, when allocating mbufs
+from a mempool failed, the array of fetched mbuf pointers was not set, but
+it was dereferenced for mbuf operations history recording anyway, which
+would trigger a segmentation fault or cause undefined behavior.
 
+This was fixed by changing how the return value from the mempool
+allocation is checked, so the function returns early on failure, and only
+proceeds on success.
+
+2. When allocating a bulk of mbufs using rte_pktmbuf_alloc_bulk(), two
+mbuf library allocation operations were recorded on the mbuf, because the
+function calls rte_mbuf_raw_alloc_bulk() for allocation, and both
+functions record a mbuf library allocation operation.
+
+This was fixed by not recording a mbuf library allocation operation in
+rte_pktmbuf_alloc_bulk().
+
+3. When freeing a bulk of segmented mbufs, the free operations were only
+recorded on the first segments.
+
+This was fixed by freeing the pending bulks of segments using
+rte_mbuf_raw_free_bulk(), which records the free operation on the mbufs,
+instead of calling rte_mempool_put_bulk() directly.
+The bulk operation recording at the start of the function, which only
+affected the first segments of segmented packets, was removed.
+
+Fixes: d265a24a32a4 ("mbuf: record mbuf operations history")
+Cc: stable@dpdk.org
+
+Signed-off-by: Morten Brørup <mb@smartsharesystems.com>
+Acked-by: Thomas Monjalon <thomas@monjalon.net>
+Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+---
+v2:
+* Added fix for rte_pktmbuf_free_bulk.
+---
+ lib/mbuf/rte_mbuf.c |  8 +++-----
+ lib/mbuf/rte_mbuf.h | 12 +++++-------
+ 2 files changed, 8 insertions(+), 12 deletions(-)
+
+diff --git a/lib/mbuf/rte_mbuf.c b/lib/mbuf/rte_mbuf.c
+index c2476e7704..005bfaa573 100644
+--- a/lib/mbuf/rte_mbuf.c
++++ b/lib/mbuf/rte_mbuf.c
+@@ -540,8 +540,8 @@ __rte_pktmbuf_free_seg_via_array(struct rte_mbuf *m,
+ 	if (likely(m != NULL)) {
+ 		if (*nb_pending == pending_sz ||
+ 		    (*nb_pending > 0 && m->pool != pending[0]->pool)) {
+-			rte_mempool_put_bulk(pending[0]->pool,
+-					(void **)pending, *nb_pending);
++			rte_mbuf_raw_free_bulk(pending[0]->pool,
++					pending, *nb_pending);
+ 			*nb_pending = 0;
+ 		}
+ 
+@@ -562,8 +562,6 @@ void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
+ 	struct rte_mbuf *m, *m_next, *pending[RTE_PKTMBUF_FREE_PENDING_SZ];
+ 	unsigned int idx, nb_pending = 0;
+ 
+-	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_FREE);
+-
+ 	for (idx = 0; idx < count; idx++) {
+ 		m = mbufs[idx];
+ 		if (unlikely(m == NULL))
+@@ -581,7 +579,7 @@ void rte_pktmbuf_free_bulk(struct rte_mbuf **mbufs, unsigned int count)
+ 	}
+ 
+ 	if (nb_pending > 0)
+-		rte_mempool_put_bulk(pending[0]->pool, (void **)pending, nb_pending);
++		rte_mbuf_raw_free_bulk(pending[0]->pool, pending, nb_pending);
+ }
+ 
+ /* Creates a shallow copy of mbuf */
+diff --git a/lib/mbuf/rte_mbuf.h b/lib/mbuf/rte_mbuf.h
+index e7c3bbadd4..60ec8158cd 100644
+--- a/lib/mbuf/rte_mbuf.h
++++ b/lib/mbuf/rte_mbuf.h
+@@ -663,14 +663,14 @@ static __rte_always_inline int
+ rte_mbuf_raw_alloc_bulk(struct rte_mempool *mp, struct rte_mbuf **mbufs, unsigned int count)
+ {
+ 	int rc = rte_mempool_get_bulk(mp, (void **)mbufs, count);
+-	if (likely(rc == 0)) {
+-		for (unsigned int idx = 0; idx < count; idx++)
+-			__rte_mbuf_raw_sanity_check_mp(mbufs[idx], mp);
+-	}
++	if (unlikely(rc))
++		return rc;
++	for (unsigned int idx = 0; idx < count; idx++)
++		__rte_mbuf_raw_sanity_check_mp(mbufs[idx], mp);
+ 
+ 	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
+ 
+-	return rc;
++	return 0;
+ }
+ 
+ /**
+@@ -1068,8 +1068,6 @@ static inline int rte_pktmbuf_alloc_bulk(struct rte_mempool *pool,
+ 	if (unlikely(rc))
+ 		return rc;
+ 
+-	rte_mbuf_history_mark_bulk(mbufs, count, RTE_MBUF_HISTORY_OP_LIB_ALLOC);
+-
+ 	rte_mbuf_raw_reset_bulk(pool, mbufs, count);
+ 
+ 	return 0;
+-- 
+2.43.0
 
