@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0EDCD37AC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA6FCD37B5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:36:44 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C4D640653;
-	Mon, 11 May 2026 12:36:33 +0200 (CEST)
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
- by mails.dpdk.org (Postfix) with ESMTP id E0900402D5;
- Mon, 11 May 2026 12:36:30 +0200 (CEST)
-X-QQ-mid: zesmtpsz3t1778495788t0a37aff0
-X-QQ-Originating-IP: r2PgvGdzi3d3Jr2gq37l0DuzKTcQ/aM6JOXNCHjsR08=
+	by mails.dpdk.org (Postfix) with ESMTP id B3C2F40668;
+	Mon, 11 May 2026 12:36:35 +0200 (CEST)
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+ by mails.dpdk.org (Postfix) with ESMTP id 70AC440657;
+ Mon, 11 May 2026 12:36:33 +0200 (CEST)
+X-QQ-mid: zesmtpsz3t1778495791tb3419e21
+X-QQ-Originating-IP: KfrtGKVCuzPJu0dbV0Y9CtwRFBhkJiWEFkk10V3s+Pc=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 11 May 2026 18:36:27 +0800 (CST)
+ id ; Mon, 11 May 2026 18:36:29 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13123843796800898486
+X-BIZMAIL-ID: 16799225716457244045
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v4 02/20] net/ngbe: remove duplicate xstats counters
-Date: Mon, 11 May 2026 18:35:44 +0800
-Message-Id: <20260511103604.19724-3-zaiyuwang@trustnetic.com>
+Subject: [PATCH v4 03/20] net/ngbe: add missing CDR config for YT PHY
+Date: Mon, 11 May 2026 18:35:45 +0800
+Message-Id: <20260511103604.19724-4-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260511103604.19724-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: OCnNLGxuhE2oiHaWs3cl6OIuFKPHb/n8VRu2RmINh4pBIZzC57ErvOAU
- fg5dwAv0FU1JXfQ3Subf8ZjRvss3ZM1VJtJTy8BD3L8WWmMEQc/PfvlfaiFn7Qk5rYXkH7y
- Khe6JqOs8Pu9opPtOfUqP3YHSZ/wW+jGX7IxFgqvupAaeOJ9V+eNqYf4U+cCbb+fc4j8tor
- j9Ac3akpQWKEKVPueVVUUzQTRbSM595iI+g/007BjUBiWVAJ0j7Asn8NiHmlOOF03ZR72aI
- TG5CPk4f20CGhC8YsX9yhiVQbrObl8y57xAx3b1pzb/RBVMqNb4oAsW5QcRFcMRuqylnSL3
- XKyGRnRlRPGecsZ7RXJ/EOuUxeAC9qbXfYN33bPQeUHvrDreGp6zKcptJ84Cn5Y5rLkF03h
- pkB3smJevjbOJAhVB5m1obwdOjYGvAikFYvQqYvy/ptEMUhMCz4E2U9Ue4VzKSuMeiJ+c6d
- MPo4eMZvofMrOq0ltHrVprvX8sWSMyMUZM9/3tfyzw/LdCvFo3wmRuMzDzKxENpHoNhwseE
- wsKjoEux3K3SNn0JC79VZOnLWtTatCj/Nmjwn1tBeDiRtyckY69K6ZXi3iM7s7vwZJpN/cw
- wOsTqWH7jwHMDHx6UKg8ecN0Ideq8XsxpY/XNrc190NH/wZyFTkZIlIel+BKYa/kOXcSEDG
- IEk8HI/UObXglwa6N9SrIz1yHg/TN5rLC2LKrKKZQ1Tn6EBKKHAC0tdPqvCXc2XdFXkOzTH
- 1l75z6Da522x8wnfG2ylq2tyBFfJlhFdvmW6nyggna1xvpyVgVD93W/R/8ReMpqzV3dAtXI
- PhqAuH/6ZpVP5c/4GEuDoXAzoC9lmVpYr+wiHS2u4OQANkNP8fZNtPSsgahXw85lrBdATvn
- NNQ5J+rNEyw8D2BHXx/EDbF9nFbQf6p9jpeCv6dtnzFkbk2RXfucQRUFrBSlO62TjCTmjAA
- y7hLL4U+6BUZZ9e09DSBJOut9MPSpHTww/6A5lofcCQ0SZcPbHBOB/eyfiDSWXbxMkaYXza
- +1+H/c0URUXyOxkYYj7zpdC1Kf/Ha28QPjl+0oIVp+47klE8w9zLtfohTdgRAYfdo4p6Us+
- LGn16UJ+UYwkiMShD2cOMKS/li3DJcV29uzsF4srLLP
-X-QQ-XMRINFO: OD9hHCdaPRBwH5bRRRw8tsiH4UAatJqXfg==
+X-QQ-XMAILINFO: MPAlP4yRn0xg/L5qVYxGJiXVNC3wq9T0azsVj6FL0QvIPcr48/u2DDXT
+ EsmEJpr5KrELiKz0v3zuGOEEYdqYUglykqTtlMhtHdehDcEFHPx4ZGaiJF2tjZKwvCs8Z4r
+ J0+4B9+01ER/C88K+DWyXfNB+te0oWhH6kh+fbbrIo1Anx9Olmbssb9O5s+GKLwNMkF2R0U
+ DocWnu8M77CfKIZFD1+yS2xCaNXh5iT82EiajIhmCS4sVdzY4vtql5C3hhxRIE1PqiPdxfe
+ EHeWTYY68srDEz63LWb3a5GmU1H242fgMGIusx1c7dtDZVufQ3Qt8oLWxlnRs+bBDzxqpjG
+ uWitFl5cIfm7nP4NpjC1G1h4YGaotzVfLdZaG2aSEtiDHzQtNuVvwdSTJIk5fvGuKzu8lbv
+ bfPX7W+uAb2AHdELREuARXOUrViZDG6PBOYA8yNqjP5D7rEGbjfYv5Fy8kgR1Zl5ELu7RaZ
+ 7x1kuC7GC4GKPR1uxc/+2SktPJ5TUjHVuRzrby8DhQFER94RW3PSelVzsLNQJhgHufNJiJe
+ pdK5mZxm/5ljxDSp/QphzEUbV/v/CLCm8c34NUfnNvb81vPOYMyp06kmgpQY/lj/zmX+vVN
+ 3eaLxiINMZBjqheEWVD3mlqYyIzZKe3vdl5RgMeJKrEp0/znKfv7BLFqQ5pzZZsWqs4FYdB
+ gDRleVUrhl0jAet6e9wbOs3J7GfvIPCz9/tAIffyrNM+KsIeyFzNaJMXc0bJ+mgqeb3reNC
+ Z2hX+SRp68rlH0ZJ6J8O2DvmDmrjQhGmdH27/x86YKloWiOpT/Ry0lZDa+vhffHJUky4nOj
+ huZ7Jc/utjRBFys8wDaveSg7lJ8f/Mpesz4Pwrv1eQp1lLVhMedeAaRvDpHS+dRnx9PddUU
+ zclJiR6ud7emR5pxaU0+3PybcNOeTc/ChacxFS9RE88glyefm8cKc6HH/j2wJhhxQGg7ABb
+ 3JB/9GwTRLnyZtJZ9yWaH58aSiVhHt1/gNqO79wuh2S/tObBN4n6UVvVr7G5WEIRxAcuaI7
+ Z17lkI6STYdd/fngJpLdM77oU7MbcFakOMQ7Ho9mQXqxUgKhrzQdGvEGj+0Wdbb2TqsWywA
+ Q==
+X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,37 +66,34 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Remove four redundant counters (tx_xon_packets, rx_xon_packets,
-tx_xoff_packets and rx_xoff_packets) from xstats, as they were duplicates
-of tx_flow_control_xon_packets and others. Both sets were reading the same
-registers but being output twice under different names. After removing
-these entries, the flow control counters in DPDK now align with those in
-our Linux kernel driver.
+According to the PHY vendor, when YT8531S operates in UTP-to-Fiber or
+RGMII-to-Fiber mode with auto-negotiation disabled (Force mode),
+additional CDR (Clock Data Recovery) configuration is required to
+improve link connectivity. Without this config, link may be unstable
+or fail to establish.
 
-Fixes: 8b433d04adc9 ("net/ngbe: support device xstats")
+Fixes: f1268369403d ("net/ngbe: support autoneg on/off for external PHY SFI mode")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/ngbe/ngbe_ethdev.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/net/ngbe/base/ngbe_phy_yt.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ngbe/ngbe_ethdev.c b/drivers/net/ngbe/ngbe_ethdev.c
-index 8b9d6371fb..6df53f3266 100644
---- a/drivers/net/ngbe/ngbe_ethdev.c
-+++ b/drivers/net/ngbe/ngbe_ethdev.c
-@@ -227,11 +227,6 @@ static const struct rte_ngbe_xstats_name_off rte_ngbe_stats_strings[] = {
- 	HW_XSTAT(tx_size_1024_to_max_packets),
- 
- 	/* Flow Control */
--	HW_XSTAT(tx_xon_packets),
--	HW_XSTAT(rx_xon_packets),
--	HW_XSTAT(tx_xoff_packets),
--	HW_XSTAT(rx_xoff_packets),
--
- 	HW_XSTAT_NAME(tx_xon_packets, "tx_flow_control_xon_packets"),
- 	HW_XSTAT_NAME(rx_xon_packets, "rx_flow_control_xon_packets"),
- 	HW_XSTAT_NAME(tx_xoff_packets, "tx_flow_control_xoff_packets"),
+diff --git a/drivers/net/ngbe/base/ngbe_phy_yt.c b/drivers/net/ngbe/base/ngbe_phy_yt.c
+index d110fbc8b2..ab0778d246 100644
+--- a/drivers/net/ngbe/base/ngbe_phy_yt.c
++++ b/drivers/net/ngbe/base/ngbe_phy_yt.c
+@@ -264,6 +264,9 @@ s32 ngbe_setup_phy_link_yt(struct ngbe_hw *hw, u32 speed,
+ 			value = YT_BCR_RESET | YT_BCR_ANE | YT_BCR_RESTART_AN |
+ 				YT_BCR_DUPLEX | YT_BCR_SPEED_SELECT1;
+ 		} else {
++			/* force mode need to config cdr */
++			ngbe_write_phy_reg_sds_ext_yt(hw, 0x3, 0, 0x1434);
++			ngbe_write_phy_reg_sds_ext_yt(hw, 0xe, 0, 0x163);
+ 			value = YT_BCR_RESET | YT_BCR_DUPLEX;
+ 			if (speed & NGBE_LINK_SPEED_1GB_FULL)
+ 				value |= YT_BCR_SPEED_SELECT1;
 -- 
 2.21.0.windows.1
 
