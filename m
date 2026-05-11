@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B123CD37AC
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9987ACD37AC
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:38:56 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 25DD740DD3;
-	Mon, 11 May 2026 12:37:21 +0200 (CEST)
-Received: from smtpbgsg1.qq.com (smtpbgsg1.qq.com [54.254.200.92])
- by mails.dpdk.org (Postfix) with ESMTP id 3A2C740652;
- Mon, 11 May 2026 12:37:18 +0200 (CEST)
-X-QQ-mid: zesmtpsz3t1778495835t5ffea5d1
-X-QQ-Originating-IP: Pgt42omBJUtDhG4ZlrUDRojBm8/Bkd8KYsCfq/tjNmg=
+	by mails.dpdk.org (Postfix) with ESMTP id 47C4B40A7D;
+	Mon, 11 May 2026 12:37:23 +0200 (CEST)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+ by mails.dpdk.org (Postfix) with ESMTP id 11B1440DCA;
+ Mon, 11 May 2026 12:37:20 +0200 (CEST)
+X-QQ-mid: zesmtpsz3t1778495838t26c24621
+X-QQ-Originating-IP: hIk76wT5suUtS3I82fafXp4jD9Lg9CxLn4zMZAdmBQM=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 11 May 2026 18:37:13 +0800 (CST)
+ id ; Mon, 11 May 2026 18:37:16 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 16648364105179027096
+X-BIZMAIL-ID: 13248451390419033631
 EX-QQ-RecipientCnt: 4
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: [PATCH v4 19/20] net/txgbe: fix to reset Tx write-back pointer
-Date: Mon, 11 May 2026 18:36:01 +0800
-Message-Id: <20260511103604.19724-20-zaiyuwang@trustnetic.com>
+Subject: [PATCH v4 20/20] net/txgbe: fix to enable Tx desc check
+Date: Mon, 11 May 2026 18:36:02 +0800
+Message-Id: <20260511103604.19724-21-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260511103604.19724-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: N4KH/PyO63QvbyiqbkKgoo6FpGYzRDbEoFJ0CqKaWHH+NTIlOGLUpr0F
- aKyx/Bev/mmGV0heqvn/hZFJCPKJNDfxa46/BtO/N6LtOTirEWbbR7MzXoxBR7e+UdrBjvP
- s74F5dsg8LQCt/WIkwd6VXMK9Hx+gJEUIUHN6ZaJvt+uLQdcwWAkidoqQIgHpRlCNY9FSg4
- rY12iFERq18VWi/z8n2FMout9Kh9cinm5VM9iVA866U+B4b3qupP0fT9OVzsyI1A3d+EZw3
- WFmG/JrXVrY48wvT+4opS5Lcd2hU7bDX4eiVC/9Z72DX7T44S/8IaMkJKuWc9LWr6NXv7vk
- fVT5S8gyYW3Nw6uhCbuti3NxpKOOGCkNGPFsuXJPsAbyMRf8r1YQ0imilG0q0K/xxzoNSoc
- vfXpDBxjYh4B0QjAYhaFpzjUwv8ZHvsLrXrhAqw9HkUyFYdjAHhnClBa8nqv4mzZSAtSr3v
- t1h6uW+TI5wg55J4ZhwtFApORnsAOxFOJtloZgcBiXXs/aVe7TqCoGM8cKXIgX9myCleNS/
- An+pvryPuCpTXBl3JK86B3AeOBcdGM3C+y3XHRz6zlmk6hX9/WsmoWDEVdifW94EeD0e6Ms
- dFpCULc/cwb83C47wi5Kt9LAuAWKF38P61fd1u4IvaPbG7ThRt3jhhUwoDfFPi0i9rXrCAm
- MT0DpGQKC00mdK3mXEcIM8lDa8coqyeaJ/3nbjxH6UK76wtWa+XRkSisHJg7uKCRxP1bSDZ
- bcf6kuh+/Tn6i99yYJ1sicofgACjCdWi9hIY+RNxprz8k6Z7mqO/SIbFMZSPVYfqiCvi13Q
- qDbEp2u4FVkpcYp4zyTkryX8r0wea9NWWFuB1hUycZqXJaoIGfhjFCLsQwKWYPwD/m7U89c
- dohj6QOLmQyesBoJXoG/anG7bTVxRwY5ZbjSmKN38ovfFaMKsTmy+3WCn7vinv1y3SjV2Dn
- fLy8+IpPmwjb7WzasNNqUt2TgtLFs5x8XJwO8B3UYWR8dutOMQ/RRBxgcWnb2bts+zrwT0r
- yGgAExZeLLXW11lfOMVtjYfpSH2zKVRBHDeaQChH3dkFVHwxJeBXCZq7hXS9VUXLOmX2zQZ
- 0ToFGolpBl9MVQZZML3258=
-X-QQ-XMRINFO: OWPUhxQsoeAVwkVaQIEGSKwwgKCxK/fD5g==
+X-QQ-XMAILINFO: M3uTjkO5QXGx5JF4UqEefs22gNqJ6Hr/MKb7LmC1ywT+EWUbBrL+iYKu
+ 7s5X3ZhyWHkhC2/zsiZ6IkeQAZPIq6ELUuKVruazG8OziD1fs24p57mIejf+iBFirK12ttf
+ pP/tbqTuA56bUO7wF72GcyvPFWAGepQLI/rnvlWFbs6QfF7dZ/s/oD+4tjcstO4xYbln/Mu
+ HeBsuM+jAez2qryFdNh04C+tEFSLpeJcYbGP0WcYVh0kZgjAUt+wg/54XJmkh0Xhojnz4qF
+ lX2stdS5LpLuF5eOMNWpwmoauKZv80bfE+LqB80xBceTlBUWFQfyTvOQ6IHE2+6yxVxhH3v
+ tNQy+aXpQ9yf7W/Tz8TIDmQZuPW+8jBUmMcRnCfLl9QRObNQuLv9kpmhrAILuu94ovBrL6+
+ z5Cz7gbcoRdQ//SK3ua8LK6viFYV/+MaJI2kE7BQ40bHWzpek8Gg265w6Tp/G1JeaXV17TE
+ mhTv2M+4kXxwQGHwcHL0J8UVOUF70OrV85TE12jIcme4ndgRyJJu8LqHvjaiXReWt6qVene
+ jWIOvhGO4MRxh/cti0XkdSDwapy83vY8OXRqGg2Ge8sk3D0Grjm3CRtkCez0r0UXWymC0db
+ Og6YUZlRaTHDd8xHG/nlqA+3JazQh4jiu9xDvwd2i1te/GijBW3xcb/Y8TOtBYCy7tRm74O
+ feqcCiKXlAawTbMclWHIxP31v2XgMU9wouqWbtIY8rs6Vl3pNXzG1chL0aH/PBY4fJrnD4G
+ LT67R2Gj4wFH5XnFgZmnc4bJOC1NLOWUL8/zkBqv+1HXs9YRkEyCYCz8i4kWY8/Ao4c5LXW
+ tXTAQEBM49wb3KX1xAApL2oRLxmEEIdiJNQYa3H1j8ZVM/0oIMNEwd6xW3NT2x8B6sU8ou+
+ qtTt8wnocdK7MGechx4HULW64XwIchUSk1+3mTsdWlCesAIu/EgVtkaXUagirz6r57gHRgm
+ PT0dGLOe6+axtsENCC620pzjObzghH8EADoxjnpViA4Nmgel7PK8yPvk9glf/FUC3RHTtCh
+ 11Vz2fgvo+etDXjTMCbJPFCHcuLpv6aW3Ndxyw6jTiwRWgBdbDliecSuaXC8u56KcWVBUWD
+ QSdv235LRKzb+iDZ7rxXi0=
+X-QQ-XMRINFO: Mp0Kj//9VHAxzExpfF+O8yhSrljjwrznVg==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,160 +66,47 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-The write-back pointer was not reset when the Tx queue was reset. This
-leads to the wrong Tx desc free logic. Move the resetting of pointer into
-txq->ops->reset(txq).
+Now lib security is enabled by default, and cannot be disabled if the
+driver is intended to be used. So Tdm_desc_chk is always unable to enable.
+Remove this restriction, and just enable the corresponding queue check.
 
-Fixes: 8ada71d0bb7f ("net/txgbe: add Tx head write-back mode for Amber-Lite")
+Fixes: 0eabdfcd4af4 ("net/txgbe: enable Tx descriptor error interrupt")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_rxtx.c            | 45 +++++++++++++----------
- drivers/net/txgbe/txgbe_rxtx.h            |  1 +
- drivers/net/txgbe/txgbe_rxtx_vec_common.h |  7 ++++
- 3 files changed, 33 insertions(+), 20 deletions(-)
+ drivers/net/txgbe/txgbe_rxtx.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
-index 851cd122d8..ef53a868a6 100644
+index ef53a868a6..8b3d5eec14 100644
 --- a/drivers/net/txgbe/txgbe_rxtx.c
 +++ b/drivers/net/txgbe/txgbe_rxtx.c
-@@ -2320,6 +2320,12 @@ txgbe_reset_tx_queue(struct txgbe_tx_queue *txq)
- 	txq->tx_next_dd = (uint16_t)(txq->tx_free_thresh - 1);
- 	txq->tx_tail = 0;
- 
-+	/* Zero out headwb_mem memory */
-+	if (txq->headwb_mem) {
-+		for (i = 0; i < txq->headwb_size; i++)
-+			txq->headwb_mem[i] = 0;
-+	}
-+
- 	/*
- 	 * Always allow 1 descriptor to be un-allocated to avoid
- 	 * a H/W race condition
-@@ -2419,7 +2425,7 @@ txgbe_get_tx_port_offloads(struct rte_eth_dev *dev)
- 	return tx_offload_capa;
- }
- 
--static int
-+static void
- txgbe_setup_headwb_resources(struct rte_eth_dev *dev,
- 					void *tx_queue,
- 					unsigned int socket_id)
-@@ -2427,33 +2433,33 @@ txgbe_setup_headwb_resources(struct rte_eth_dev *dev,
- 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
- 	const struct rte_memzone *headwb;
- 	struct txgbe_tx_queue *txq = tx_queue;
--	u8 i, headwb_size = 0;
-+	u8 headwb_size = 0;
- 
--	if (hw->mac.type != txgbe_mac_aml && hw->mac.type != txgbe_mac_aml40) {
--		txq->headwb_mem = NULL;
--		return 0;
--	}
-+	if (hw->mac.type != txgbe_mac_aml && hw->mac.type != txgbe_mac_aml40)
-+		goto out;
-+
-+	if (!hw->devarg.tx_headwb)
-+		goto out;
- 
--	headwb_size = hw->devarg.tx_headwb_size;
-+	headwb_size = txq->headwb_size;
- 	headwb = rte_eth_dma_zone_reserve(dev, "tx_headwb_mem", txq->queue_id,
- 			sizeof(u32) * headwb_size,
- 			TXGBE_ALIGN, socket_id);
- 
- 	if (headwb == NULL) {
--		DEBUGOUT("Fail to setup headwb resources: no mem");
--		txgbe_tx_queue_release(txq);
--		return -ENOMEM;
-+		PMD_DRV_LOG(INFO,
-+			    "Failed to allocate headwb memory for Tx queue %u, change to SP mode",
-+			    txq->queue_id);
-+		goto out;
- 	}
- 
- 	txq->headwb = headwb;
- 	txq->headwb_dma = TMZ_PADDR(headwb);
- 	txq->headwb_mem = (uint32_t *)TMZ_VADDR(headwb);
-+	return;
- 
--	/* Zero out headwb_mem memory */
--	for (i = 0; i < headwb_size; i++)
--		txq->headwb_mem[i] = 0;
--
--	return 0;
-+out:
-+	txq->headwb_mem = NULL;
- }
- 
- int __rte_cold
-@@ -2549,6 +2555,7 @@ txgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	txq->offloads = offloads;
- 	txq->ops = &def_txq_ops;
- 	txq->tx_deferred_start = tx_conf->tx_deferred_start;
-+	txq->headwb_size = hw->devarg.tx_headwb_size;
- #ifdef RTE_LIB_SECURITY
- 	txq->using_ipsec = !!(dev->data->dev_conf.txmode.offloads &
- 			RTE_ETH_TX_OFFLOAD_SECURITY);
-@@ -2584,8 +2591,7 @@ txgbe_dev_tx_queue_setup(struct rte_eth_dev *dev,
- 	/* set up scalar TX function as appropriate */
- 	txgbe_set_tx_function(dev, txq);
- 
--	if (hw->devarg.tx_headwb)
--		err = txgbe_setup_headwb_resources(dev, txq, socket_id);
-+	txgbe_setup_headwb_resources(dev, txq, socket_id);
- 
- 	txq->ops->reset(txq);
- 	txq->desc_error = 0;
-@@ -4762,15 +4768,14 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
+@@ -4768,6 +4768,12 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
  		wr32(hw, TXGBE_TXRP(txq->reg_idx), 0);
  		wr32(hw, TXGBE_TXWP(txq->reg_idx), 0);
  
--		if ((hw->mac.type == txgbe_mac_aml || hw->mac.type == txgbe_mac_aml40) &&
--		     hw->devarg.tx_headwb) {
-+		if (txq->headwb_mem) {
++#ifdef RTE_LIBRTE_SECURITY
++		if (!(txq->using_ipsec))
++#endif
++			wr32m(hw, TXGBE_TDM_DESC_CHK(txq->reg_idx / 32),
++			      BIT(txq->reg_idx % 32), BIT(txq->reg_idx % 32));
++
+ 		if (txq->headwb_mem) {
  			uint32_t txdctl;
  
- 			wr32(hw, TXGBE_PX_TR_HEAD_ADDRL(txq->reg_idx),
- 				(uint32_t)(txq->headwb_dma & BIT_MASK32));
- 			wr32(hw, TXGBE_PX_TR_HEAD_ADDRH(txq->reg_idx),
- 				(uint32_t)(txq->headwb_dma >> 32));
--			if (hw->devarg.tx_headwb_size == 16)
-+			if (txq->headwb_size == 16)
- 				txdctl = TXGBE_PX_TR_CFG_HEAD_WB |
- 					 TXGBE_PX_TR_CFG_HEAD_WB_64BYTE;
- 			else
-diff --git a/drivers/net/txgbe/txgbe_rxtx.h b/drivers/net/txgbe/txgbe_rxtx.h
-index 02e2617cce..237bb64697 100644
---- a/drivers/net/txgbe/txgbe_rxtx.h
-+++ b/drivers/net/txgbe/txgbe_rxtx.h
-@@ -416,6 +416,7 @@ struct txgbe_tx_queue {
- 	uint64_t	    desc_error;
- 	bool		    resetting;
- 	const struct rte_memzone *headwb;
-+	uint16_t             headwb_size;
- 	uint64_t             headwb_dma;
- 	volatile uint32_t    *headwb_mem;
- };
-diff --git a/drivers/net/txgbe/txgbe_rxtx_vec_common.h b/drivers/net/txgbe/txgbe_rxtx_vec_common.h
-index edf3586b77..594886c5b1 100644
---- a/drivers/net/txgbe/txgbe_rxtx_vec_common.h
-+++ b/drivers/net/txgbe/txgbe_rxtx_vec_common.h
-@@ -255,6 +255,13 @@ _txgbe_reset_tx_queue_vec(struct txgbe_tx_queue *txq)
- 	txq->tx_next_dd = (uint16_t)(txq->tx_free_thresh - 1);
+@@ -4785,11 +4791,6 @@ txgbe_dev_tx_init(struct rte_eth_dev *dev)
+ 		}
+ 	}
  
- 	txq->tx_tail = 0;
-+
-+	/* Zero out headwb_mem memory */
-+	if (txq->headwb_mem) {
-+		for (i = 0; i < txq->headwb_size; i++)
-+			txq->headwb_mem[i] = 0;
-+	}
-+
- 	/*
- 	 * Always allow 1 descriptor to be un-allocated to avoid
- 	 * a H/W race condition
+-#ifndef RTE_LIB_SECURITY
+-	for (i = 0; i < 4; i++)
+-		wr32(hw, TXGBE_TDM_DESC_CHK(i), 0xFFFFFFFF);
+-#endif
+-
+ 	/* Device configured with multiple TX queues. */
+ 	txgbe_dev_mq_tx_configure(dev);
+ }
 -- 
 2.21.0.windows.1
 
