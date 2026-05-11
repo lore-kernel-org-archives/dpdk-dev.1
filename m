@@ -2,30 +2,30 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901E0CD37B5
-	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD82CD37B5
+	for <dpdk-dev@archiver.kernel.org>; Mon, 11 May 2026 10:37:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D185A40A6B;
-	Mon, 11 May 2026 12:37:03 +0200 (CEST)
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
- by mails.dpdk.org (Postfix) with ESMTP id B42BE4060C;
- Mon, 11 May 2026 12:36:58 +0200 (CEST)
-X-QQ-mid: zesmtpsz3t1778495810tb7884834
-X-QQ-Originating-IP: Gyi8ouNsbagou8uAyG6UqtDQuVJp8WOjq74XqMjOAdE=
+	by mails.dpdk.org (Postfix) with ESMTP id 2300140A82;
+	Mon, 11 May 2026 12:37:05 +0200 (CEST)
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+ by mails.dpdk.org (Postfix) with ESMTP id 0031340648;
+ Mon, 11 May 2026 12:37:00 +0200 (CEST)
+X-QQ-mid: zesmtpsz3t1778495812tb01b541d
+X-QQ-Originating-IP: lqt1KYf8zTdxXaYcX0wd9BCk1o7YAqblJSWY0hIVRIA=
 Received: from DSK-zaiyuwang.trustnetic.com ( [115.204.251.157])
  by bizesmtp.qq.com (ESMTP) with 
- id ; Mon, 11 May 2026 18:36:48 +0800 (CST)
+ id ; Mon, 11 May 2026 18:36:51 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6599888055775018967
+X-BIZMAIL-ID: 10853766958600923869
 EX-QQ-RecipientCnt: 5
 From: Zaiyu Wang <zaiyuwang@trustnetic.com>
 To: dev@dpdk.org
 Cc: Zaiyu Wang <zaiyuwang@trustnetic.com>, stable@dpdk.org,
  Jiawen Wu <jiawenwu@trustnetic.com>, Ferruh Yigit <ferruh.yigit@amd.com>
-Subject: [PATCH v4 10/20] net/txgbe: fix a mass of unknown interrupts
-Date: Mon, 11 May 2026 18:35:52 +0800
-Message-Id: <20260511103604.19724-11-zaiyuwang@trustnetic.com>
+Subject: [PATCH v4 11/20] net/txgbe: fix traffic class priority configuration
+Date: Mon, 11 May 2026 18:35:53 +0800
+Message-Id: <20260511103604.19724-12-zaiyuwang@trustnetic.com>
 X-Mailer: git-send-email 2.21.0.windows.1
 In-Reply-To: <20260511103604.19724-1-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
@@ -34,24 +34,24 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: zesmtpsz:trustnetic.com:qybglogicsvrsz:qybglogicsvrsz3b-0
-X-QQ-XMAILINFO: Mm/8i8/T4yneU5jX/ZfI5I+VDlhyc1xgTr8mCt1WzKecWvYJ/ukvbw/E
- z+KIeTyAqW4WEdzrIOZ/qNmGK3BBOS52bD2EKEbZGpOfW0E5tCAZ9EpE4hD6V7vdllo01mx
- VRvmtj6VOeJUArbHHEBpuLEDv5LP9ySohv187+u6UHmZjpvlqhVDAMurH7CMM0m7l828jic
- FurylmPhg9k1abqflrR4CwQhia4kWUGzpHtVgmHaJUK9VpD68bIX6xwSv8uochJ5Zei2zrO
- 8Lo6TMqRJmtcbcSsDs4Y3hysMTEl67YlUdIaUEGlWjgy1KjKaqamGM1J9ntxZbQLrxjS8gS
- qC1NbILKX6Vb4UIgpOmoADduVLVvjmBJ/U9TVJydRuXnz9jj1EtKsq7a2bDNAfteMP6M2mh
- 7vROmazQiF9vhetQl5Lf+/kOFWTkCJy3LIp/VKb6n14SoCV0AU7pHb4V6LBqIzQs30ZjC8X
- FaGFfZzJL5sYLFokNyXCYfTZC+fpW82IC/pAQVC+ynXHZaJtAKLU55aM8yqVkdjDiT9F2nu
- grmn3GoSG1ZcuyzcKlksBa1ZdKUh+HDdbPjypbjTkHPXvIIdhihumUnLv5x1C5NXyoxdCk7
- 8tIma5sNQh44micsmjvtZ0NRi5YCSDPZaCJ1Wl6WKEviJvcXX16+2yh+SgeaL+NhpBYb8Q6
- zgc+/1NRKVuM1nkfBUqWmAwn4EIMCLorii+fIFnO5sJAMeHhWqa8eQm4FMfK1jFUvjQhYB1
- +IBs7K81IdfOGn09je2JexcyfSWK91HfihDZabYgtQUb8cg5/OINp0PBG4R9oDSAOkbBWvE
- Sm5Zxhph6N+hGLyLOEYF7NSmnjwlsyvxAzymGKuhqR/S4NxR5OXl7Lx0X6sZp9WKkLkXvE/
- 2/ylMCIwDZkFbGdW9uJmU1ekhGGUqN3Ml1jMcGdHIUu9PTzVdm2nmikJPwepa8XAWDj9U3x
- sMAXK7+g7CKKmBqKJwCgUhD7OBrb+8DzZKovd1J9oaVjm3C2gaCTcK7fnr8OVbXaW8FWFeY
- 5AX9yF/vz4DmpMc3HZfdYla93P9Zj54ruGPiFe97d9iGtsxaxW0XjhrXBnoEbCzYzuHAcHk
- 2XVGPSIkVizwj22X3p3WzY=
-X-QQ-XMRINFO: NyFYKkN4Ny6FuXrnB5Ye7Aabb3ujjtK+gg==
+X-QQ-XMAILINFO: NhQ9hXNievYaqqlawwmpf47H3MIJxI5xuSmYRD5uNIKC0g+Lm1XEUGL3
+ kP2PsbzICE2pS27qkZWDNThqLSBLWp16aXuesPv2Dq6FPrVZ4kMADBByeYdofS5JDzmJHjx
+ IuuserSS1xePrTMLlzlx6a+YVSHwRQsU1H2L2DojwtodvfKm+ronzPbnYIgMlFtycTIeN6E
+ kuJ15DktxVL/qMwXn0hOvQlkW6gmUdxgyqhRW8HU1sBFs+JgMNT0uPauAhGSd2Nf0xDIB6K
+ 8FoPddsheabdIrLd1CW/KjR0+LQc1gmDFoZRgqIvDim4BJfO6RNK0sf4idC8PeWih8OyjyP
+ Rw3TpZ3pKEICN9xlz+VZgfK17l6yEDSni9MMOSB+XiXGf2Px4wP3B4nSMUQoj2N3ekL20cF
+ m+YlPhUzWYMTN2tLr0JFXBULAz3WOWZp6Rj8qDB31ReXbv17xOzXoibFbp54CCCRKzxgd8B
+ xVLTZSa+c+VpeF30+KSsAajsFI74oLjQIIYW/1cZ/4NOj518aiiZ47t5i9Q3vknJzoNxWt/
+ qZGKaN7PS+PADLXPxn934L5t6UGmsc2mywj4GAwWKO6A+V3T4uyzTsTJ1A8Qbb0nmeLOMvC
+ Yx8T+RKNEWDnekM6i26Abf+/Tpwej4IgqhAU/TBlvcwTkn3TrpMJFEsMUmQRiUEG+HSLJJv
+ gTmU6q+5Dsij8Oe9/Q94i/5WnNPRWMFSfbLLG0m5rgiDM44C1K7dC2Ounqomyajr7GPhyI9
+ xLXrSLk5ut8B/c2VXJ/T/ADd087tJH1JT1Uowa9nYHkC742NzGCu7Bt6P1QPd2h1SgS26lt
+ RlopoR9KV6J/ho26YVhBLfN4u2m1CZLKH/QB4A8ttIwk2sstuwPcvwZGQ/0n8eXavJDaIJk
+ vJ3vQP7NqC2rmRBJ/nOtX1yhs7Hit70+C2LqMB0Sk4LCvM7vN3eU6LnzIc0GlQq16PKUpMZ
+ 3WTz/U20SUIHj+9LrEIA9UoRJxmR9ljXcUQN9/sIw74Yb+45r2slQvRY52wt8hCNEcGAxSW
+ vtzzR1L/cbGD2FThwYxUSrcsD+GJf8+m1dITEz2zIPfLsGsWeIvI1ZzBkZ4KgQxoMGWN8+t
+ OyxplyJ0hGiPoNVIplOT24=
+X-QQ-XMRINFO: MPJ6Tf5t3I/ylTmHUqvI8+Wpn+Gzalws3A==
 X-QQ-RECHKSPAM: 0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -66,84 +66,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-When RSC is enabled, Rx ring IVAR is set to configure ITR. It causes Rx
-ring interrupts report on the default msix_vector. Thus a mass of unknown
-interrupts occupy CPU.
+After applying the following testpmd command, 802.1Q packets with specific
+priorities were not properly directed to the corresponding traffic classes:
+    port config 0 dcb vt off 4 pfc off
 
-Fix the issue by setting ring IVAR only when the rxq interrupt is enabled.
+The old driver had two issues:
+1. The hardware uses a 4-bit mapping register per traffic class for
+   priority-to-TC mapping, but the driver incorrectly configured it
+   as 3 bits.
+2. The DCB TX configuration mistakenly wrote to the RX register.
 
-Fixes: be797cbf4582 ("net/txgbe: add Rx and Tx init")
+Fix both issues, ensuring that tc-prio mapping works as expected.
+Additionally, remove the stale and inconsistent TXGBE_DCBUP2TC_DEC macro as
+it has no callers.
+
+Fixes: 8bdc7882f376 ("net/txgbe: support DCB")
 Cc: stable@dpdk.org
 
 Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 ---
- drivers/net/txgbe/txgbe_rxtx.c | 30 +++++++++++++++++-------------
- 1 file changed, 17 insertions(+), 13 deletions(-)
+ drivers/net/txgbe/base/txgbe_dcb_hw.c | 2 +-
+ drivers/net/txgbe/base/txgbe_regs.h   | 6 ++----
+ drivers/net/txgbe/txgbe_rxtx.c        | 7 ++-----
+ 3 files changed, 5 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/net/txgbe/base/txgbe_dcb_hw.c b/drivers/net/txgbe/base/txgbe_dcb_hw.c
+index 75c91a6b6a..79e1da447b 100644
+--- a/drivers/net/txgbe/base/txgbe_dcb_hw.c
++++ b/drivers/net/txgbe/base/txgbe_dcb_hw.c
+@@ -154,7 +154,7 @@ s32 txgbe_dcb_config_tx_data_arbiter_raptor(struct txgbe_hw *hw, u16 *refill,
+ 	for (i = 0; i < TXGBE_DCB_UP_MAX; i++)
+ 		reg |= TXGBE_DCBUP2TC_MAP(i, map[i]);
+ 
+-	wr32(hw, TXGBE_PBRXUP2TC, reg);
++	wr32(hw, TXGBE_PBTXUP2TC, reg);
+ 
+ 	/* Configure traffic class credits and priority */
+ 	for (i = 0; i < TXGBE_DCB_TC_MAX; i++) {
+diff --git a/drivers/net/txgbe/base/txgbe_regs.h b/drivers/net/txgbe/base/txgbe_regs.h
+index de382601c9..25aaf8ea68 100644
+--- a/drivers/net/txgbe/base/txgbe_regs.h
++++ b/drivers/net/txgbe/base/txgbe_regs.h
+@@ -503,10 +503,8 @@
+ #define TXGBE_PBRXCTL                   0x019000
+ #define   TXGBE_PBRXCTL_ST              MS(0, 0x1)
+ #define   TXGBE_PBRXCTL_ENA             MS(31, 0x1)
+-#define TXGBE_PBRXUP2TC                 0x019008
+ #define TXGBE_PBTXUP2TC                 0x01C800
+-#define   TXGBE_DCBUP2TC_MAP(tc, v)     LS(v, 3 * (tc), 0x7)
+-#define   TXGBE_DCBUP2TC_DEC(tc, r)     RS(r, 3 * (tc), 0x7)
++#define   TXGBE_DCBUP2TC_MAP(tc, v)     LS(v, 4 * (tc), 0x7)
+ #define TXGBE_PBRXSIZE(tc)              (0x019020 + (tc) * 4)
+ #define   TXGBE_PBRXSIZE_KB(v)          LS(v, 10, 0x3FF)
+ 
+@@ -1703,7 +1701,7 @@ enum txgbe_5tuple_protocol {
+ #define TXGBE_RDM_PF_HIDE(_i)   (0x12090 + ((_i) * 4))
+ 
+ #define TXGBE_RPUP2TC                   0x019008
+-#define   TXGBE_RPUP2TC_UP_SHIFT        3
++#define   TXGBE_RPUP2TC_UP_SHIFT        4
+ #define   TXGBE_RPUP2TC_UP_MASK         0x7
+ 
+ #define TXGBE_RDM_DCACHE_CTL             0x0120A8
 diff --git a/drivers/net/txgbe/txgbe_rxtx.c b/drivers/net/txgbe/txgbe_rxtx.c
-index 72a4965693..be279dc4ec 100644
+index be279dc4ec..851cd122d8 100644
 --- a/drivers/net/txgbe/txgbe_rxtx.c
 +++ b/drivers/net/txgbe/txgbe_rxtx.c
-@@ -4354,6 +4354,8 @@ static int
- txgbe_set_rsc(struct rte_eth_dev *dev)
- {
- 	struct rte_eth_rxmode *rx_conf = &dev->data->dev_conf.rxmode;
-+	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
-+	struct rte_intr_handle *intr_handle = pci_dev->intr_handle;
- 	struct txgbe_hw *hw = TXGBE_DEV_HW(dev);
- 	struct rte_eth_dev_info dev_info = { 0 };
- 	bool rsc_capable = false;
-@@ -4404,8 +4406,6 @@ txgbe_set_rsc(struct rte_eth_dev *dev)
- 			rd32(hw, TXGBE_RXCFG(rxq->reg_idx));
- 		uint32_t psrtype =
- 			rd32(hw, TXGBE_POOLRSS(rxq->reg_idx));
--		uint32_t eitr =
--			rd32(hw, TXGBE_ITR(rxq->reg_idx));
+@@ -3385,11 +3385,8 @@ txgbe_vmdq_dcb_configure(struct rte_eth_dev *dev)
  
- 		/*
- 		 * txgbe PMD doesn't support header-split at the moment.
-@@ -4424,6 +4424,9 @@ txgbe_set_rsc(struct rte_eth_dev *dev)
- 		srrctl |= txgbe_get_rscctl_maxdesc(rxq->mb_pool);
- 		psrtype |= TXGBE_POOLRSS_L4HDR;
- 
-+		wr32(hw, TXGBE_RXCFG(rxq->reg_idx), srrctl);
-+		wr32(hw, TXGBE_POOLRSS(rxq->reg_idx), psrtype);
-+
- 		/*
- 		 * RSC: Set ITR interval corresponding to 2K ints/s.
- 		 *
-@@ -4437,19 +4440,20 @@ txgbe_set_rsc(struct rte_eth_dev *dev)
- 		 * For a sparse streaming case this setting will yield
- 		 * at most 500us latency for a single RSC aggregation.
- 		 */
--		eitr &= ~TXGBE_ITR_IVAL_MASK;
--		eitr |= TXGBE_ITR_IVAL_10G(TXGBE_QUEUE_ITR_INTERVAL_DEFAULT);
--		eitr |= TXGBE_ITR_WRDSA;
-+		if (rte_intr_dp_is_en(intr_handle)) {
-+			uint32_t eitr = rd32(hw, TXGBE_ITR(rxq->reg_idx));
- 
--		wr32(hw, TXGBE_RXCFG(rxq->reg_idx), srrctl);
--		wr32(hw, TXGBE_POOLRSS(rxq->reg_idx), psrtype);
--		wr32(hw, TXGBE_ITR(rxq->reg_idx), eitr);
-+			eitr &= ~TXGBE_ITR_IVAL_MASK;
-+			eitr |= TXGBE_ITR_IVAL_10G(TXGBE_QUEUE_ITR_INTERVAL_DEFAULT);
-+			eitr |= TXGBE_ITR_WRDSA;
-+			wr32(hw, TXGBE_ITR(rxq->reg_idx), eitr);
- 
+ 	queue_mapping = 0;
+ 	for (i = 0; i < RTE_ETH_DCB_NUM_USER_PRIORITIES; i++)
 -		/*
--		 * RSC requires the mapping of the queue to the
--		 * interrupt vector.
+-		 * mapping is done with 3 bits per priority,
+-		 * so shift by i*3 each time
 -		 */
--		txgbe_set_ivar_map(hw, 0, rxq->reg_idx, i);
-+			/*
-+			 * RSC requires the mapping of the queue to the
-+			 * interrupt vector.
-+			 */
-+			txgbe_set_ivar_map(hw, 0, rxq->reg_idx, i);
-+		}
- 	}
+-		queue_mapping |= ((cfg->dcb_tc[i] & 0x07) << (i * 3));
++		queue_mapping |= ((cfg->dcb_tc[i] & TXGBE_RPUP2TC_UP_MASK) <<
++				  (i * TXGBE_RPUP2TC_UP_SHIFT));
  
- 	dev->data->lro = 1;
+ 	wr32(hw, TXGBE_RPUP2TC, queue_mapping);
+ 
 -- 
 2.21.0.windows.1
 
