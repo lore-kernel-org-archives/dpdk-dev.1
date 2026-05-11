@@ -2,54 +2,54 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5ED9CD4F26
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 07:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF53FCD4F26
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 07:56:28 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 625864066F;
-	Tue, 12 May 2026 09:55:55 +0200 (CEST)
-Received: from mail-qv1-f74.google.com (mail-qv1-f74.google.com
- [209.85.219.74]) by mails.dpdk.org (Postfix) with ESMTP id D4CAD40278
- for <dev@dpdk.org>; Tue, 12 May 2026 00:23:45 +0200 (CEST)
-Received: by mail-qv1-f74.google.com with SMTP id
- 6a1803df08f44-8b3fe2f190bso131311846d6.2
- for <dev@dpdk.org>; Mon, 11 May 2026 15:23:45 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 7ADE340673;
+	Tue, 12 May 2026 09:55:56 +0200 (CEST)
+Received: from mail-qv1-f73.google.com (mail-qv1-f73.google.com
+ [209.85.219.73]) by mails.dpdk.org (Postfix) with ESMTP id D2722402BC
+ for <dev@dpdk.org>; Tue, 12 May 2026 00:23:46 +0200 (CEST)
+Received: by mail-qv1-f73.google.com with SMTP id
+ 6a1803df08f44-8b1f4478ca7so13631906d6.3
+ for <dev@dpdk.org>; Mon, 11 May 2026 15:23:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1778538225; x=1779143025; darn=dpdk.org;
+ d=google.com; s=20251104; t=1778538226; x=1779143026; darn=dpdk.org;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:from:to:cc:subject:date:message-id:reply-to;
- bh=xlJCOaK7ruzLyv/YJH53EUXEmD2vmNyvovGyfpEKMt4=;
- b=ni8y0lUvSXb/1eiJVjnhkrLXIsrK7CcjrsfEFezg+cEnSmvIfEPbyCP/mk54hdgDiz
- 64gTZz+7JwuJUeRWgcFbAHrfdfIW6XIBW9i2/W1FtAPWTOPe65iX8wqlfq57OjN8xGDr
- BhaqUArWXbFE3MnWJg4vUTmNGgISi8YQvIeyy3c8tlsLPviJjquUl3RAQ8pUNWOCLV2P
- oYts9R4AIyboa8Kxgh6r0Lo/cDrySTwCK3wjxUHfZJGjukqE68BgELJvNxvYFS3gOAX/
- TlJH1fz0JpN/ucrfGUHn1+DWm3E/0ncIgOEF9vgMyU6FInUck+71L6ZMCRmb/W7pe4OS
- pwdA==
+ bh=tS33VN/mb+G/G7/sAJHMGL5jYb9q1YfSPd4R3IR26OA=;
+ b=Zfyg4oyWVyUETF+Q55kBly+u4Fje2wvGuM/a46pRDy8b34U3/xpqJ2mVGMRH/YHTI3
+ ZTSKDHExZB4pf5RqMk8+PHsb/Mz3Td8xdkn+6EWUqXvIRw/oINJvV+4kc9QFHezJRP39
+ 5qFK0Z0rF2rBwd84d4gR+IE/4EsPOSNEQJjozvb10FuHGYqEVzL0D8mkx7NBljDVEV4D
+ GPzwYM31b5P21666F9/rYAZ450a5Q3RTRY3BHgiZ0SrdtJmXQyBeAskTc3rViu6nv9P2
+ 2B3IEAxX/rxvywjrTpOA6394JG+NWTZm8lrRCJms7J5RLqHb+b53/BiIylb7HuzIgdOl
+ jE0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778538225; x=1779143025;
+ d=1e100.net; s=20251104; t=1778538226; x=1779143026;
  h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
  :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
- bh=xlJCOaK7ruzLyv/YJH53EUXEmD2vmNyvovGyfpEKMt4=;
- b=h3VS+2gL/FNpNG6SsUNNiWaq9JHq/dvNnLiQ5aBnqQArlKfH8xzi0QZqpFrD4mbRxs
- Ck7kxkBx1Rw4EK1PAiUvLIuFYuOuxJJoeb+j3gQOi3FiAKgokrU0XUBk/4hIIJoxMLEb
- sRjD7cCQfgqHIhKFAahJYh4t0CnfpkEEnJVLPWWFDtvXnwuIYE0QI+dXYeGiJvHPhyC4
- wzIhUsX1rhEuoQznQn9kXr+zY68wf3UI/QeNU8rFg4By30jLl72djjKT/P4bLCTLDF+b
- feKQdYOhqpVYVhX4QyU6QbW6c3gVhnaauZQ+3fazpJX4VwpPhSj20h00HmdLthCBZcz9
- FgYw==
-X-Gm-Message-State: AOJu0Yzlrcu67E9tSNLGPi+Z7PP0qcwVTrvmLoY0fJkg31tfT12L7b21
- ttJx+IAcGQZFdNecLYt6ASt+krZS0hTClJ2fyzLK9mDTIS16oPX0aCkSj4hPdfrrxPBWkFEg3QJ
- 0Z0sQfA==
-X-Received: from qvbiu5.prod.google.com ([2002:ad4:5cc5:0:b0:8ad:a08f:e000])
+ bh=tS33VN/mb+G/G7/sAJHMGL5jYb9q1YfSPd4R3IR26OA=;
+ b=YkIL8uRXTRqOrZDARg0Hi/HYpDFN/Bi8It4jcR1HtBQb6mRxSAKzYEJXsKiEIK4N5o
+ B5TYTZ8FB5XRdw+5eGyNBuLQ7IrLVKPBL/NA8hC8V+k5zHm7E6C1vVTGIIgZh2k6v19K
+ DIBqtBYT92jX7hJdNE9py8rZKbKOjNQ0tjPdBAZVX3gGvAN7pLpzxMbSL/zWtDzdut4M
+ rNz1O+HjMjgiME6Hbri3lCfU/CnMDh9tJWpXxj4SRmW18ZJnEXqXmi+VV5+suroAvKoI
+ eU+W81TW6PWFv/t279CdBnoMybelSMvIgGLRaytlt56LqMEwLP/kBUa2yErKNKHYVvMh
+ 8l5A==
+X-Gm-Message-State: AOJu0YyK8QspNUbyGxdsyIXnCn2mXdDZsTXI3kYeBYYJcxTIlHSZ4e83
+ kcfhvAhSiKu6yAzbL/NOvDjd1XqoB5oBZX/XdgMDGwYEOkvsNPEfH1d4ObgbzHNItZXCzWdL2Bb
+ RKkzYYw==
+X-Received: from qvlh14.prod.google.com ([2002:a0c:f40e:0:b0:8bb:87e0:a3ea])
  (user=blasko job=prod-delivery.src-stubby-dispatcher) by
- 2002:a0c:e006:0:b0:89a:1575:e1d3
- with SMTP id 6a1803df08f44-8c6616ce1c1mr9499386d6.12.1778538224986; Mon, 11
- May 2026 15:23:44 -0700 (PDT)
-Date: Mon, 11 May 2026 22:22:55 +0000
+ 2002:a05:6214:4a89:b0:8be:3da0:bba7
+ with SMTP id 6a1803df08f44-8be3db0014fmr329424116d6.16.1778538226003; Mon, 11
+ May 2026 15:23:46 -0700 (PDT)
+Date: Mon, 11 May 2026 22:22:56 +0000
 In-Reply-To: <20260511222301.862880-1-blasko@google.com>
 Mime-Version: 1.0
 References: <20260511222301.862880-1-blasko@google.com>
 X-Mailer: git-send-email 2.54.0.563.g4f69b47b94-goog
-Message-ID: <20260511222301.862880-2-blasko@google.com>
-Subject: [PATCH 1/6] net/gve: add thread safety to admin queue
+Message-ID: <20260511222301.862880-3-blasko@google.com>
+Subject: [PATCH 2/6] net/gve: add device option support for HW timestamps
 From: mark-blasko <blasko@google.com>
 To: jeroendb@google.com, joshwash@google.com
 Cc: dev@dpdk.org, jtranoleary@google.com, Mark Blasko <blasko@google.com>
@@ -70,192 +70,181 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Mark Blasko <blasko@google.com>
 
-Introduce a pthread_mutex to protect the admin queue operations.
-Locking was added around gve_adminq_execute_cmd and the batch
-queue creation/destruction functions.
+Introduce the necessary definitions and functions for the device
+option flag (GVE_DEV_OPT_ID_NIC_TIMESTAMP) to detect hardware
+timestamping support in the gvnic device.
 
 Signed-off-by: Mark Blasko <blasko@google.com>
 Reviewed-by: Joshua Washington <joshwash@google.com>
 Reviewed-by: Jasper Tran O'Leary <jtranoleary@google.com>
 ---
- drivers/net/gve/base/gve_adminq.c | 68 +++++++++++++++++++++++++------
- drivers/net/gve/gve_ethdev.h      |  1 +
- 2 files changed, 56 insertions(+), 13 deletions(-)
+ drivers/net/gve/base/gve_adminq.c | 41 ++++++++++++++++++++++++++-----
+ drivers/net/gve/base/gve_adminq.h |  9 +++++++
+ drivers/net/gve/gve_ethdev.h      |  3 +++
+ 3 files changed, 47 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/gve/base/gve_adminq.c b/drivers/net/gve/base/gve_adminq.c
-index 9c5316fb00..28661fb6cd 100644
+index 28661fb6cd..c9095fd165 100644
 --- a/drivers/net/gve/base/gve_adminq.c
 +++ b/drivers/net/gve/base/gve_adminq.c
-@@ -216,6 +216,7 @@ gve_process_device_options(struct gve_priv *priv,
- 
- int gve_adminq_alloc(struct gve_priv *priv)
+@@ -38,7 +38,8 @@ void gve_parse_device_option(struct gve_priv *priv,
+ 			     struct gve_device_option_dqo_rda **dev_op_dqo_rda,
+ 			     struct gve_device_option_flow_steering **dev_op_flow_steering,
+ 			     struct gve_device_option_modify_ring **dev_op_modify_ring,
+-			     struct gve_device_option_jumbo_frames **dev_op_jumbo_frames)
++			     struct gve_device_option_jumbo_frames **dev_op_jumbo_frames,
++			     struct gve_device_option_nic_timestamp **dev_op_nic_timestamp)
  {
-+	pthread_mutexattr_t mutexattr;
- 	uint8_t pci_rev_id;
- 
- 	priv->adminq = gve_alloc_dma_mem(&priv->adminq_dma_mem, PAGE_SIZE);
-@@ -241,6 +242,12 @@ int gve_adminq_alloc(struct gve_priv *priv)
- 	priv->adminq_get_ptype_map_cnt = 0;
- 	priv->adminq_cfg_flow_rule_cnt = 0;
- 
-+	pthread_mutexattr_init(&mutexattr);
-+	pthread_mutexattr_setpshared(&mutexattr, PTHREAD_PROCESS_SHARED);
-+	pthread_mutexattr_setrobust(&mutexattr, PTHREAD_MUTEX_ROBUST);
-+	pthread_mutex_init(&priv->adminq_lock, &mutexattr);
-+	pthread_mutexattr_destroy(&mutexattr);
+ 	u32 req_feat_mask = be32_to_cpu(option->required_features_mask);
+ 	u16 option_length = be16_to_cpu(option->option_length);
+@@ -168,6 +169,24 @@ void gve_parse_device_option(struct gve_priv *priv,
+ 		}
+ 		*dev_op_jumbo_frames = RTE_PTR_ADD(option, sizeof(*option));
+ 		break;
++	case GVE_DEV_OPT_ID_NIC_TIMESTAMP:
++		if (option_length < sizeof(**dev_op_nic_timestamp) ||
++		    req_feat_mask != GVE_DEV_OPT_REQ_FEAT_MASK_NIC_TIMESTAMP) {
++			PMD_DRV_LOG(WARNING, GVE_DEVICE_OPTION_ERROR_FMT,
++				    "Nic Timestamp",
++				    (int)sizeof(**dev_op_nic_timestamp),
++				    GVE_DEV_OPT_REQ_FEAT_MASK_NIC_TIMESTAMP,
++				    option_length, req_feat_mask);
++			break;
++		}
 +
- 	/* Setup Admin queue with the device */
- 	rte_pci_read_config(priv->pci_dev, &pci_rev_id, sizeof(pci_rev_id),
- 			    RTE_PCI_REVISION_ID);
-@@ -304,6 +311,7 @@ void gve_adminq_free(struct gve_priv *priv)
- 		return;
- 	gve_adminq_release(priv);
- 	gve_free_dma_mem(&priv->adminq_dma_mem);
-+	pthread_mutex_destroy(&priv->adminq_lock);
- 	gve_clear_admin_queue_ok(priv);
- }
++		if (option_length > sizeof(**dev_op_nic_timestamp)) {
++			PMD_DRV_LOG(WARNING,
++				    GVE_DEVICE_OPTION_TOO_BIG_FMT,
++				    "Nic Timestamp");
++		}
++		*dev_op_nic_timestamp = RTE_PTR_ADD(option, sizeof(*option));
++		break;
+ 	default:
+ 		/* If we don't recognize the option just continue
+ 		 * without doing anything.
+@@ -186,7 +205,8 @@ gve_process_device_options(struct gve_priv *priv,
+ 			   struct gve_device_option_dqo_rda **dev_op_dqo_rda,
+ 			   struct gve_device_option_flow_steering **dev_op_flow_steering,
+ 			   struct gve_device_option_modify_ring **dev_op_modify_ring,
+-			   struct gve_device_option_jumbo_frames **dev_op_jumbo_frames)
++			   struct gve_device_option_jumbo_frames **dev_op_jumbo_frames,
++			   struct gve_device_option_nic_timestamp **dev_op_nic_timestamp)
+ {
+ 	const int num_options = be16_to_cpu(descriptor->num_device_options);
+ 	struct gve_device_option *dev_opt;
+@@ -207,7 +227,8 @@ gve_process_device_options(struct gve_priv *priv,
+ 		gve_parse_device_option(priv, dev_opt,
+ 					dev_op_gqi_rda, dev_op_gqi_qpl,
+ 					dev_op_dqo_rda, dev_op_flow_steering,
+-					dev_op_modify_ring, dev_op_jumbo_frames);
++					dev_op_modify_ring, dev_op_jumbo_frames,
++					dev_op_nic_timestamp);
+ 		dev_opt = next_opt;
+ 	}
  
-@@ -418,7 +426,10 @@ static int gve_adminq_issue_cmd(struct gve_priv *priv,
- 	    (tail & priv->adminq_mask)) {
- 		int err;
- 
--		/* Flush existing commands to make room. */
-+		/* Flush existing commands to make room.
-+		 * Note: This kicks the doorbell for all staged commands.
-+		 * Any failure here means we failed after attempting to kick.
-+		 */
- 		err = gve_adminq_kick_and_wait(priv);
- 		if (err)
- 			return err;
-@@ -509,17 +520,24 @@ static int gve_adminq_execute_cmd(struct gve_priv *priv,
- 	u32 tail, head;
- 	int err;
- 
-+	pthread_mutex_lock(&priv->adminq_lock);
- 	tail = ioread32be(&priv->reg_bar0->adminq_event_counter);
- 	head = priv->adminq_prod_cnt;
--	if (tail != head)
-+	if (tail != head) {
- 		/* This is not a valid path */
--		return -EINVAL;
-+		err = -EINVAL;
-+		goto unlock_and_return;
+@@ -921,7 +942,8 @@ static void gve_enable_supported_features(struct gve_priv *priv,
+ 	u32 supported_features_mask,
+ 	const struct gve_device_option_flow_steering *dev_op_flow_steering,
+ 	const struct gve_device_option_modify_ring *dev_op_modify_ring,
+-	const struct gve_device_option_jumbo_frames *dev_op_jumbo_frames)
++	const struct gve_device_option_jumbo_frames *dev_op_jumbo_frames,
++	const struct gve_device_option_nic_timestamp *dev_op_nic_timestamp)
+ {
+ 	if (dev_op_flow_steering &&
+ 	    (supported_features_mask & GVE_SUP_FLOW_STEERING_MASK) &&
+@@ -948,6 +970,11 @@ static void gve_enable_supported_features(struct gve_priv *priv,
+ 		PMD_DRV_LOG(INFO, "JUMBO FRAMES device option enabled.");
+ 		priv->max_mtu = be16_to_cpu(dev_op_jumbo_frames->max_mtu);
+ 	}
++	if (dev_op_nic_timestamp &&
++	    (supported_features_mask & GVE_SUP_NIC_TIMESTAMP_MASK)) {
++		PMD_DRV_LOG(INFO, "NIC TIMESTAMP device option enabled.");
++		priv->nic_timestamp_supported = true;
 +	}
+ }
  
- 	err = gve_adminq_issue_cmd(priv, cmd_orig);
+ int gve_adminq_describe_device(struct gve_priv *priv)
+@@ -955,6 +982,7 @@ int gve_adminq_describe_device(struct gve_priv *priv)
+ 	struct gve_device_option_jumbo_frames *dev_op_jumbo_frames = NULL;
+ 	struct gve_device_option_modify_ring *dev_op_modify_ring = NULL;
+ 	struct gve_device_option_flow_steering *dev_op_flow_steering = NULL;
++	struct gve_device_option_nic_timestamp *dev_op_nic_timestamp = NULL;
+ 	struct gve_device_option_gqi_rda *dev_op_gqi_rda = NULL;
+ 	struct gve_device_option_gqi_qpl *dev_op_gqi_qpl = NULL;
+ 	struct gve_device_option_dqo_rda *dev_op_dqo_rda = NULL;
+@@ -984,7 +1012,8 @@ int gve_adminq_describe_device(struct gve_priv *priv)
+ 					 &dev_op_gqi_qpl, &dev_op_dqo_rda,
+ 					 &dev_op_flow_steering,
+ 					 &dev_op_modify_ring,
+-					 &dev_op_jumbo_frames);
++					 &dev_op_jumbo_frames,
++					 &dev_op_nic_timestamp);
  	if (err)
--		return err;
-+		goto unlock_and_return;
+ 		goto free_device_descriptor;
  
--	return gve_adminq_kick_and_wait(priv);
-+	err = gve_adminq_kick_and_wait(priv);
+@@ -1039,7 +1068,7 @@ int gve_adminq_describe_device(struct gve_priv *priv)
+ 
+ 	gve_enable_supported_features(priv, supported_features_mask,
+ 				      dev_op_flow_steering, dev_op_modify_ring,
+-				      dev_op_jumbo_frames);
++				      dev_op_jumbo_frames, dev_op_nic_timestamp);
+ 
+ free_device_descriptor:
+ 	gve_free_dma_mem(&descriptor_dma_mem);
+diff --git a/drivers/net/gve/base/gve_adminq.h b/drivers/net/gve/base/gve_adminq.h
+index d8e5e6a352..eaee5649f2 100644
+--- a/drivers/net/gve/base/gve_adminq.h
++++ b/drivers/net/gve/base/gve_adminq.h
+@@ -153,6 +153,12 @@ struct gve_device_option_jumbo_frames {
+ 
+ GVE_CHECK_STRUCT_LEN(8, gve_device_option_jumbo_frames);
+ 
++struct gve_device_option_nic_timestamp {
++	__be32 supported_features_mask;
++};
 +
-+unlock_and_return:
-+	pthread_mutex_unlock(&priv->adminq_lock);
-+	return err;
- }
- 
- static int gve_adminq_execute_extended_cmd(struct gve_priv *priv, u32 opcode,
-@@ -693,13 +711,19 @@ int gve_adminq_create_tx_queues(struct gve_priv *priv, u32 num_queues)
- 	int err;
- 	u32 i;
- 
-+	pthread_mutex_lock(&priv->adminq_lock);
++GVE_CHECK_STRUCT_LEN(4, gve_device_option_nic_timestamp);
 +
- 	for (i = 0; i < num_queues; i++) {
- 		err = gve_adminq_create_tx_queue(priv, i);
- 		if (err)
--			return err;
-+			goto unlock_and_return;
- 	}
+ /* Terminology:
+  *
+  * RDA - Raw DMA Addressing - Buffers associated with SKBs are directly DMA
+@@ -169,6 +175,7 @@ enum gve_dev_opt_id {
+ 	GVE_DEV_OPT_ID_MODIFY_RING = 0x6,
+ 	GVE_DEV_OPT_ID_JUMBO_FRAMES = 0x8,
+ 	GVE_DEV_OPT_ID_FLOW_STEERING = 0xb,
++	GVE_DEV_OPT_ID_NIC_TIMESTAMP = 0xd,
+ };
  
--	return gve_adminq_kick_and_wait(priv);
-+	err = gve_adminq_kick_and_wait(priv);
-+
-+unlock_and_return:
-+	pthread_mutex_unlock(&priv->adminq_lock);
-+	return err;
- }
+ enum gve_dev_opt_req_feat_mask {
+@@ -179,12 +186,14 @@ enum gve_dev_opt_req_feat_mask {
+ 	GVE_DEV_OPT_REQ_FEAT_MASK_FLOW_STEERING = 0x0,
+ 	GVE_DEV_OPT_REQ_FEAT_MASK_MODIFY_RING = 0x0,
+ 	GVE_DEV_OPT_REQ_FEAT_MASK_JUMBO_FRAMES = 0x0,
++	GVE_DEV_OPT_REQ_FEAT_MASK_NIC_TIMESTAMP = 0x0,
+ };
  
- static int gve_adminq_create_rx_queue(struct gve_priv *priv, u32 queue_index)
-@@ -747,13 +771,19 @@ int gve_adminq_create_rx_queues(struct gve_priv *priv, u32 num_queues)
- 	int err;
- 	u32 i;
+ enum gve_sup_feature_mask {
+ 	GVE_SUP_MODIFY_RING_MASK = 1 << 0,
+ 	GVE_SUP_JUMBO_FRAMES_MASK = 1 << 2,
+ 	GVE_SUP_FLOW_STEERING_MASK = 1 << 5,
++	GVE_SUP_NIC_TIMESTAMP_MASK = 1 << 8,
+ };
  
-+	pthread_mutex_lock(&priv->adminq_lock);
-+
- 	for (i = 0; i < num_queues; i++) {
- 		err = gve_adminq_create_rx_queue(priv, i);
- 		if (err)
--			return err;
-+			goto unlock_and_return;
- 	}
- 
--	return gve_adminq_kick_and_wait(priv);
-+	err = gve_adminq_kick_and_wait(priv);
-+
-+unlock_and_return:
-+	pthread_mutex_unlock(&priv->adminq_lock);
-+	return err;
- }
- 
- static int gve_adminq_destroy_tx_queue(struct gve_priv *priv, u32 queue_index)
-@@ -779,13 +809,19 @@ int gve_adminq_destroy_tx_queues(struct gve_priv *priv, u32 num_queues)
- 	int err;
- 	u32 i;
- 
-+	pthread_mutex_lock(&priv->adminq_lock);
-+
- 	for (i = 0; i < num_queues; i++) {
- 		err = gve_adminq_destroy_tx_queue(priv, i);
- 		if (err)
--			return err;
-+			goto unlock_and_return;
- 	}
- 
--	return gve_adminq_kick_and_wait(priv);
-+	err = gve_adminq_kick_and_wait(priv);
-+
-+unlock_and_return:
-+	pthread_mutex_unlock(&priv->adminq_lock);
-+	return err;
- }
- 
- static int gve_adminq_destroy_rx_queue(struct gve_priv *priv, u32 queue_index)
-@@ -811,13 +847,19 @@ int gve_adminq_destroy_rx_queues(struct gve_priv *priv, u32 num_queues)
- 	int err;
- 	u32 i;
- 
-+	pthread_mutex_lock(&priv->adminq_lock);
-+
- 	for (i = 0; i < num_queues; i++) {
- 		err = gve_adminq_destroy_rx_queue(priv, i);
- 		if (err)
--			return err;
-+			goto unlock_and_return;
- 	}
- 
--	return gve_adminq_kick_and_wait(priv);
-+	err = gve_adminq_kick_and_wait(priv);
-+
-+unlock_and_return:
-+	pthread_mutex_unlock(&priv->adminq_lock);
-+	return err;
- }
- 
- static int gve_set_desc_cnt(struct gve_priv *priv,
+ #define GVE_DEV_OPT_LEN_GQI_RAW_ADDRESSING 0x0
 diff --git a/drivers/net/gve/gve_ethdev.h b/drivers/net/gve/gve_ethdev.h
-index 0577f03974..524e48e723 100644
+index 524e48e723..b9b4688367 100644
 --- a/drivers/net/gve/gve_ethdev.h
 +++ b/drivers/net/gve/gve_ethdev.h
-@@ -339,6 +339,7 @@ struct gve_priv {
- 	struct gve_tx_queue **txqs;
- 	struct gve_rx_queue **rxqs;
+@@ -355,6 +355,9 @@ struct gve_priv {
+ 	void *avail_flow_rule_bmp_mem; /* Backing memory for the bitmap */
+ 	pthread_mutex_t flow_rule_lock; /* Lock for bitmap and tailq access */
+ 	TAILQ_HEAD(, gve_flow) active_flows;
++
++	/* HW Timestamping Fields */
++	bool nic_timestamp_supported;
+ };
  
-+	pthread_mutex_t adminq_lock; /* Protects AdminQ command execution */
- 	uint32_t stats_report_len;
- 	const struct rte_memzone *stats_report_mem;
- 	uint16_t stats_start_idx; /* start index of array of stats written by NIC */
+ static inline bool
 -- 
 2.54.0.563.g4f69b47b94-goog
 
