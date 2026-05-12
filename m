@@ -2,72 +2,46 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D758CD4855
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 08:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457C1CD4851
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 09:23:14 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 473954060F;
-	Tue, 12 May 2026 10:26:57 +0200 (CEST)
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com
- [209.85.208.174])
- by mails.dpdk.org (Postfix) with ESMTP id 5BA65400D7
- for <dev@dpdk.org>; Tue, 12 May 2026 10:26:55 +0200 (CEST)
-Received: by mail-lj1-f174.google.com with SMTP id
- 38308e7fff4ca-392445f11c5so52885971fa.1
- for <dev@dpdk.org>; Tue, 12 May 2026 01:26:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778574415;
- x=1779179215; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=gKwnRDaRq2TdBnG+0IZY6Khkv01MSnaDFHEA4ABx6U8=;
- b=q1cJfAxI0cq5Pd5nGrcVyoCRlCBJ3sxty2WelCxqwsD/HLXingI+v5tvsN9hZUCEli
- O8da3eVDLddo8PnkTeWaKiSupqW5Vd4nBPEEJW2hfPZxpoh1RdtZfQyRjIMbH2u6/PcK
- kA8ccIKRIj5XwiEC42COMdX4Tm0IFs+/Dqv6pjeOHabeCLgrwtNNhYs3qC5ZEbY/xNHf
- AbZhtKaXLxXySo1WYEQ4l1A2K9rU4J9lSHKBfrb52NrEo35XjD1ppY+fVpwiyEdD45a8
- XOBMDQWiYOGE/ZPRcZZ4HrQx/SEzvpW33ufTljoIV2efUaCqdDs/VMQQHf2bLY3cHDyZ
- q2Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778574415; x=1779179215;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=gKwnRDaRq2TdBnG+0IZY6Khkv01MSnaDFHEA4ABx6U8=;
- b=RqIqSrD9ULN1rOkYeyKgQXLRwsDRB0PKp//XgKe0jYSUsMbb4gtBoPFLMp2RHHYzOE
- 6Cu+6GGRdcd+AAc5kbizBaBX/TfuNPiHwU4MjesBnIpn3eKiVqx7fYuW9oZJveCsH0RG
- mxdru6au7Vo8F+ewZS/0XjMwOZCDfLyMF8Sg+3IPGq/na5uc9R9ab0FQkqnhgtwn1VH3
- fjJ8RQIFhkfiuGDD2slCfvfNkso/gVDvXsLqtszu6bjvoyyphZoRyoNucu8ob/VuWHvY
- utspSZDa9pbt5C9qkwniB6wDUK6obVYkGBiieI9AEDprACE1b+XjQJQl1eHP/YeJDNWj
- kPdw==
-X-Gm-Message-State: AOJu0YzkLHbjpUQZZwMmzAvCKgtk7qWLYqCqu2s5kgslJ5+a6AVYdWhH
- s761Il0YxCrK3zMAPtkfJVvNBacKocP/to+/wX4u0p0nnagEsIokd7VVKIeMVLJw8LDWZ01W5oH
- 0CEwV6tmBbQ==
-X-Gm-Gg: Acq92OEnou6CTFFYC0Lv8ZedKRI5hpM6FuPRtunydIc503X0JKEOWzJ0TcB59k+cQ7S
- VsECZSKPud8241eMADDvDu3e7pIGztYrRyCS1aX8B69jsDOLme6PaYqPS/mZbB8aAi/KSUjCMPC
- NoVae/gALBLbXVKDe48ftFMOJTkCtBRYTP6PH6c2yjzMWdZBEPSMzRWWlkhScg9f8lAB60yXXH5
- nnyKmgl2SHP3/bv0DnrzHQTNx0/AxCzLSCk/9U9OizK7PWW8TDWZNXcQMRLHWNtIwgeHJjFyB69
- ct3ALeMVR7ScJM3NowuklrhKuKYuLHPX8dSAHKfFK8IuLvLjGJKmkxFgm6kfDVCmLwaPzF2smoW
- 8GKo23Peui8pldkfrJc6Bcsf5O6ObMtde1agMGD1hfJ+m96ZJY/vT1vSEBrRXrxgHFEGCEedfgE
- TpsL4+n8w2WbL47KsGqEOgjso8EGnmt4zLW+b/FznNk+LHLReb2xs=
-X-Received: by 2002:a2e:2e18:0:b0:38c:c0de:d58f with SMTP id
- 38308e7fff4ca-3943865ec55mr6645171fa.14.1778574414736; 
- Tue, 12 May 2026 01:26:54 -0700 (PDT)
-Received: from stephen-xps.local ([62.119.255.230])
- by smtp.gmail.com with ESMTPSA id
- 38308e7fff4ca-393f5f3a2afsm32290331fa.13.2026.05.12.01.26.54
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 12 May 2026 01:26:54 -0700 (PDT)
-Date: Tue, 12 May 2026 10:26:51 +0200
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mark Blasko <blasko@google.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH 0/6] net/gve: add hardware timestamping support
-Message-ID: <20260512102651.643ddb8c@stephen-xps.local>
-In-Reply-To: <20260512005404.946979-1-blasko@google.com>
-References: <20260512005404.946979-1-blasko@google.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 63A2C40264;
+	Tue, 12 May 2026 11:23:13 +0200 (CEST)
+Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com
+ [113.46.200.220])
+ by mails.dpdk.org (Postfix) with ESMTP id 40C3940264
+ for <dev@dpdk.org>; Tue, 12 May 2026 11:23:11 +0200 (CEST)
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+ c=relaxed/relaxed; q=dns/txt; h=From;
+ bh=C4JZKdDr0QgekJvlQNaq4IFa89FeaaFaub/A/KRsLy8=;
+ b=ZPBXdQkhrvLTGXMhhc0W3jYotaVTVr0x8gqteSPPh7HQJsOaAlMOd5CPfgDHnDoQRfffLOwT7
+ T30NmyhnwaYEaDo4q15O1u6w7cbUxCO5NMSp4L1VaRNLVYiySbc6vG/R1nwDwHBLeztcG8My3PQ
+ Xe1NSDW07Eewo9umwo6zLQY=
+Received: from mail.maildlp.com (unknown [172.19.162.223])
+ by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4gF9tq67kkz12LFj;
+ Tue, 12 May 2026 17:16:03 +0800 (CST)
+Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
+ by mail.maildlp.com (Postfix) with ESMTPS id 9BA3540571;
+ Tue, 12 May 2026 17:23:09 +0800 (CST)
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 12 May 2026 17:23:09 +0800
+From: Chengwen Feng <fengchengwen@huawei.com>
+To: <thomas@monjalon.net>, <stephen@networkplumber.org>
+CC: <dev@dpdk.org>, <wathsala.vithanage@arm.com>, <liuyonglong@huawei.com>
+Subject: [PATCH v2 3/4] net/e1000: add cache stash support via TPH
+Date: Tue, 12 May 2026 17:23:01 +0800
+Message-ID: <20260512092302.23735-4-fengchengwen@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20260512092302.23735-1-fengchengwen@huawei.com>
+References: <20260508092855.51987-1-fengchengwen@huawei.com>
+ <20260512092302.23735-1-fengchengwen@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.50.163.32]
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ kwepemk500009.china.huawei.com (7.202.194.94)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,35 +55,279 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Tue, 12 May 2026 00:53:47 +0000
-Mark Blasko <blasko@google.com> wrote:
+Implement ethdev generic cache stash operations for igb PMD
+using PCIe TPH (Transaction Processing Hints) as the underlying
+mechanism.
 
-> This patch series introduces support for GVE hardware timestamping on DQO
-> queues. To support concurrent access, a mutex lock is introduced to protect
-> admin queue operations. A mechanism is then added to periodically synchronize
-> the NIC clock via AdminQ, and support is introduced for the read_clock ethdev
-> operation. Finally, the RX datapath is updated to reconstruct full 64-bit
-> timestamps from the 32-bit values in DQO descriptors.
-> 
-> Mark Blasko (6):
->   net/gve: add thread safety to admin queue
->   net/gve: add device option support for HW timestamps
->   net/gve: add AdminQ command for NIC timestamps
->   net/gve: add periodic NIC clock synchronization
->   net/gve: support read clock ethdev op
->   net/gve: reconstruct HW timestamps from DQO
-> 
->  .mailmap                               |   1 +
->  doc/guides/nics/features/gve.ini       |   1 +
->  doc/guides/nics/gve.rst                |  18 +++
->  doc/guides/rel_notes/release_26_07.rst |   3 +
->  drivers/net/gve/base/gve_adminq.c      | 127 +++++++++++++++++----
->  drivers/net/gve/base/gve_adminq.h      |  29 +++++
->  drivers/net/gve/base/gve_desc_dqo.h    |   8 +-
->  drivers/net/gve/gve_ethdev.c           | 148 ++++++++++++++++++++++++-
->  drivers/net/gve/gve_ethdev.h           |  39 +++++++
->  drivers/net/gve/gve_rx_dqo.c           |  26 +++++
->  10 files changed, 378 insertions(+), 22 deletions(-)
-> 
+The implementation supports:
+- Query TPH based stash capabilities
+- Device-level global enable/disable of TPH
+- Per-queue TPH stashing configuration with target lcore
+- Configure stashing objects (Rx descriptor, payload, etc.)
 
-Please rate limit submissions to mailing list to one series per day.
+Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
+---
+ drivers/net/intel/e1000/base/e1000_hw.h |   2 +
+ drivers/net/intel/e1000/base/e1000_vf.h |   2 +
+ drivers/net/intel/e1000/igb_ethdev.c    | 205 ++++++++++++++++++++++++
+ 3 files changed, 209 insertions(+)
+
+diff --git a/drivers/net/intel/e1000/base/e1000_hw.h b/drivers/net/intel/e1000/base/e1000_hw.h
+index 9b1fafd75c..3e8e21b194 100644
+--- a/drivers/net/intel/e1000/base/e1000_hw.h
++++ b/drivers/net/intel/e1000/base/e1000_hw.h
+@@ -1092,6 +1092,8 @@ struct e1000_hw {
+ 	u16 vendor_id;
+ 
+ 	u8  revision_id;
++
++	u8 tph_mode;
+ };
+ 
+ #include "e1000_82541.h"
+diff --git a/drivers/net/intel/e1000/base/e1000_vf.h b/drivers/net/intel/e1000/base/e1000_vf.h
+index 4bec21c935..dd3cef254e 100644
+--- a/drivers/net/intel/e1000/base/e1000_vf.h
++++ b/drivers/net/intel/e1000/base/e1000_vf.h
+@@ -248,6 +248,8 @@ struct e1000_hw {
+ 	u16 vendor_id;
+ 
+ 	u8  revision_id;
++
++	u8 tph_mode;
+ };
+ 
+ enum e1000_promisc_type {
+diff --git a/drivers/net/intel/e1000/igb_ethdev.c b/drivers/net/intel/e1000/igb_ethdev.c
+index ef1599ac38..0f06139786 100644
+--- a/drivers/net/intel/e1000/igb_ethdev.c
++++ b/drivers/net/intel/e1000/igb_ethdev.c
+@@ -241,6 +241,10 @@ static int igb_tx_burst_mode_get(struct rte_eth_dev *dev,
+ 	__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
+ static int igb_rx_burst_mode_get(struct rte_eth_dev *dev,
+ 	__rte_unused uint16_t queue_id, struct rte_eth_burst_mode *mode);
++static int eth_igb_cache_stash_get(struct rte_eth_dev *dev,
++				   struct rte_eth_cache_stash_capability *capa);
++static int eth_igb_cache_stash_set(struct rte_eth_dev *dev, enum rte_eth_cache_stash_op op,
++				   struct rte_eth_cache_stash_config *config);
+ 
+ /*
+  * Define VF Stats MACRO for Non "cleared on read" register
+@@ -402,6 +406,8 @@ static const struct eth_dev_ops eth_igb_ops = {
+ 	.timesync_read_time   = igb_timesync_read_time,
+ 	.timesync_write_time  = igb_timesync_write_time,
+ 	.read_clock		      = eth_igb_read_clock,
++	.cache_stash_get      = eth_igb_cache_stash_get,
++	.cache_stash_set      = eth_igb_cache_stash_set,
+ };
+ 
+ /*
+@@ -5692,6 +5698,205 @@ igb_filter_restore(struct rte_eth_dev *dev)
+ 	return 0;
+ }
+ 
++static int
++eth_igb_cache_stash_get(struct rte_eth_dev *dev, struct rte_eth_cache_stash_capability *capa)
++{
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	uint32_t support_modes, st_table_sz;
++	int ret;
++
++	ret = rte_pci_tph_query(pci_dev, &support_modes, &st_table_sz);
++	if (ret != 0)
++		return -ENOTSUP;
++	capa->supported_types = RTE_ETH_CACHE_STASH_TYPE_TPH;
++	capa->supported_objects = RTE_ETH_CACHE_STASH_OBJ_RX_DESC |
++				  RTE_ETH_CACHE_STASH_OBJ_RX_HEADER |
++				  RTE_ETH_CACHE_STASH_OBJ_RX_PAYLOAD |
++				  RTE_ETH_CACHE_STASH_OBJ_TX_DESC |
++				  RTE_ETH_CACHE_STASH_OBJ_TX_HEADER |
++				  RTE_ETH_CACHE_STASH_OBJ_TX_PAYLOAD;
++	return 0;
++}
++
++static int
++eth_igb_cache_stash_dev_enable(struct rte_eth_dev *dev,
++			       struct rte_eth_cache_stash_config *config)
++{
++	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	uint32_t support_modes, st_table_sz;
++	uint32_t mode;
++	int ret;
++
++	if (hw->tph_mode != 0) {
++		PMD_DRV_LOG(ERR, "Already enable tph_mode=%u", hw->tph_mode);
++		return -EINVAL;
++	}
++
++	if (config->dev.type != RTE_ETH_CACHE_STASH_TYPE_TPH) {
++		PMD_DRV_LOG(ERR, "Unsupported stash type=%u!", config->dev.type);
++		return -ENOTSUP;
++	}
++
++	ret = rte_pci_tph_query(pci_dev, &support_modes, &st_table_sz);
++	if (ret != 0) {
++		PMD_DRV_LOG(ERR, "Query TPH failed! ret=%d", ret);
++		return -ENOTSUP;
++	}
++
++	if (support_modes & RTE_PCI_TPH_MODE_IV)
++		mode = RTE_PCI_TPH_MODE_IV;
++	else if (support_modes & RTE_PCI_TPH_MODE_DS)
++		mode = RTE_PCI_TPH_MODE_DS;
++	else
++		return -ENOTSUP;
++	ret = rte_pci_tph_enable(pci_dev, mode);
++	if (ret == 0)
++		hw->tph_mode = mode;
++
++	return ret;
++}
++
++static void
++eth_igb_cache_stash_dev_clear(struct rte_eth_dev *dev)
++{
++	uint32_t nb_queues = RTE_MAX(dev->data->nb_rx_queues, dev->data->nb_tx_queues);
++	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	struct rte_pci_tph_entry ent = {0};
++	uint32_t reg;
++	uint32_t i;
++
++	for (i = 0; i < nb_queues; i++) {
++		ent.cpu = UINT32_MAX;
++		rte_pci_tph_st_set(pci_dev, i, &ent, 1);
++		reg = E1000_READ_REG(hw, E1000_RXCTL(i));
++		reg &= ~RTE_BIT32(0);
++		reg &= ~RTE_BIT32(2);
++		reg &= ~RTE_BIT32(3);
++		reg &= ~RTE_SHIFT_VAL32(0xFF, 24);
++		E1000_WRITE_REG(hw, E1000_RXCTL(i), reg);
++	}
++}
++
++static int
++eth_igb_cache_stash_dev_disable(struct rte_eth_dev *dev)
++{
++	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	int ret;
++
++	if (hw->tph_mode == 0) {
++		PMD_DRV_LOG(ERR, "Already disable TPH!");
++		return -EINVAL;
++	}
++
++	eth_igb_cache_stash_dev_clear(dev);
++	ret = rte_pci_tph_disable(pci_dev);
++	if (ret == 0)
++		hw->tph_mode = 0;
++
++	return ret;
++}
++
++static int
++eth_igb_cache_stash_queue_enable(struct rte_eth_dev *dev,
++				 struct rte_eth_cache_stash_config *config)
++{
++	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	struct rte_pci_device *pci_dev = RTE_ETH_DEV_TO_PCI(dev);
++	uint32_t queue_id = config->queue.queue_id;
++	struct rte_pci_tph_entry ent = {0};
++	uint32_t reg;
++	uint16_t st;
++	int ret;
++
++	if (hw->tph_mode == 0) {
++		PMD_DRV_LOG(ERR, "Device TPH was not enabled!");
++		return -EINVAL;
++	}
++
++	ent.cpu = config->queue.lcore_id;
++	ret = rte_pci_tph_st_get(pci_dev, &ent, 1);
++	if (ret != 0) {
++		PMD_DRV_LOG(ERR, "Failed to get device queue=%u st of cpu=%u ret=%u",
++			    queue_id, config->queue.lcore_id, ret);
++		return ret;
++	}
++	st = ent.st;
++
++	reg = E1000_READ_REG(hw, E1000_RXCTL(queue_id));
++	PMD_DRV_LOG(DEBUG, "[Enable] Queue=%u rxctl register init val=0x%x", queue_id, reg);
++	if (config->queue.objects & RTE_ETH_CACHE_STASH_OBJ_RX_DESC)
++		reg |= RTE_BIT32(0);
++	else
++		reg &= ~RTE_BIT32(0);
++	if (config->queue.objects & RTE_ETH_CACHE_STASH_OBJ_RX_HEADER)
++		reg |= RTE_BIT32(2);
++	else
++		reg &= ~RTE_BIT32(2);
++	if (config->queue.objects & RTE_ETH_CACHE_STASH_OBJ_RX_PAYLOAD)
++		reg |= RTE_BIT32(3);
++	else
++		reg &= ~RTE_BIT32(3);
++	/* I350 must encoding st in high 8bit, and ST in config-space is no needed! */
++	reg |= RTE_SHIFT_VAL32(st, 24);
++	E1000_WRITE_REG(hw, E1000_RXCTL(queue_id), reg);
++	PMD_DRV_LOG(DEBUG, "[Enable] Queue=%u rxctl register after val=0x%x", queue_id, reg);
++
++	PMD_DRV_LOG(DEBUG, "[Enable] Enable device queue=%u st of cpu=%u success!",
++			    queue_id, config->queue.lcore_id);
++
++	return 0;
++}
++
++static int
++eth_igb_cache_stash_queue_disable(struct rte_eth_dev *dev,
++				  struct rte_eth_cache_stash_config *config)
++{
++	struct e1000_hw *hw = E1000_DEV_PRIVATE_TO_HW(dev->data->dev_private);
++	uint32_t queue_id = config->queue.queue_id;
++	uint32_t reg;
++
++	if (hw->tph_mode == 0) {
++		PMD_DRV_LOG(ERR, "Device TPH was not enabled!");
++		return -EINVAL;
++	}
++
++	reg = E1000_READ_REG(hw, E1000_RXCTL(queue_id));
++	PMD_DRV_LOG(DEBUG, "[Disable] Queue=%u rxctl register init val=0x%x", queue_id, reg);
++	reg &= ~RTE_BIT32(0);
++	reg &= ~RTE_BIT32(1);
++	reg &= ~RTE_BIT32(2);
++	reg &= ~RTE_BIT32(3);
++	reg &= ~RTE_SHIFT_VAL32(0xFF, 24);
++	E1000_WRITE_REG(hw, E1000_RXCTL(queue_id), reg);
++	PMD_DRV_LOG(DEBUG, "[Disable] Queue=%u rxctl register after val=0x%x", queue_id, reg);
++
++	PMD_DRV_LOG(DEBUG, "[Disable] disable device queue=%u st of cpu=%u success!",
++			    queue_id, config->queue.lcore_id);
++
++	return 0;
++}
++
++static int
++eth_igb_cache_stash_set(struct rte_eth_dev *dev, enum rte_eth_cache_stash_op op,
++			struct rte_eth_cache_stash_config *config)
++{
++	switch (op) {
++	case RTE_ETH_CACHE_STASH_OP_DEV_ENABLE:
++		return eth_igb_cache_stash_dev_enable(dev, config);
++	case RTE_ETH_CACHE_STASH_OP_DEV_DISABLE:
++		return eth_igb_cache_stash_dev_disable(dev);
++	case RTE_ETH_CACHE_STASH_OP_QUEUE_ENABLE:
++		return eth_igb_cache_stash_queue_enable(dev, config);
++	case RTE_ETH_CACHE_STASH_OP_QUEUE_DISABLE:
++		return eth_igb_cache_stash_queue_disable(dev, config);
++	default:
++		return -ENOTSUP;
++	}
++}
++
+ RTE_PMD_REGISTER_PCI(net_e1000_igb, rte_igb_pmd);
+ RTE_PMD_REGISTER_PCI_TABLE(net_e1000_igb, pci_id_igb_map);
+ RTE_PMD_REGISTER_KMOD_DEP(net_e1000_igb, "* igb_uio | uio_pci_generic | vfio-pci");
+-- 
+2.17.1
+
