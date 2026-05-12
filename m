@@ -2,73 +2,57 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC25CD4851
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 14:42:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E99CD4F24
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 15:16:30 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id AA89B40652;
-	Tue, 12 May 2026 16:42:00 +0200 (CEST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com
- [209.85.167.50]) by mails.dpdk.org (Postfix) with ESMTP id 797DE402C1
- for <dev@dpdk.org>; Tue, 12 May 2026 16:41:59 +0200 (CEST)
-Received: by mail-lf1-f50.google.com with SMTP id
- 2adb3069b0e04-5a8891f0c51so5336694e87.1
- for <dev@dpdk.org>; Tue, 12 May 2026 07:41:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1778596919;
- x=1779201719; darn=dpdk.org; 
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:from:to:cc:subject:date
- :message-id:reply-to;
- bh=pd0DQGUgZrErnw8XS89sBufK7evSg5R+uG4UGX9pjBg=;
- b=lW6tIjPD3K4zmmmyUf0Q/EuGbPtax8YF1KlD6EGNmx4GV+MaR6WypGgUD/lQyLqkKp
- sIZUFatTe33JHxUdNvuu3GVkaMk3ByOd3UOtFaNoM0pHVj+Cnkcux/sfmm+OO24oQYdP
- pst9sQPe6uRRewjG66OcVvRuxnzXrxR65/ctDzBH3lxlx332oMTLNL22us/TMWYmrHD9
- fBReYuRyVyMz/0A4RSt3IOyPbO4y/XBE3ZhhQu/yAp29L/0FPuliB0HDodLshmhtxP5O
- ZvKYKcPnly5XEIhefyhjsAAYq3u9XKKCZKcifK6iaVf0ZYA4FVfe1z4frVSDzqTrTg/j
- XXMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778596919; x=1779201719;
- h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=pd0DQGUgZrErnw8XS89sBufK7evSg5R+uG4UGX9pjBg=;
- b=OIB/35r3bxiORP39XxNhLpU4NAzkCZl2v6OdjjqMsD+O2uIBj01Igb9mIU/Y6surVC
- vW3EGZ+SLaL8XVR8PWtEDqOvDwLKlGeAbAYMI5xQQi6vCWbbQplJfKgZGBB08VjHZOtv
- 3NKHYMnQ+1Ga7B7FAg7hBPM8+v7AnAbLv2AGDSROaH6L0SqFDIdiQocJPWpJY0kpt4RT
- n3zb0kiRepn0LRHAry7JQsMbD7IjaFkdBlvQ9Vzlt+5epR+mvYaxOo0sFh6UnZSuDdfX
- p+QbvFLF9eXWnOuv+JIt/8QgVNZjQ71xOhSoMsjcxSRZWXa3cI6h3hHX3M2GokTBTzQU
- iOJw==
-X-Gm-Message-State: AOJu0Yxl1UiTyYR814zUxdrVhEUaFF+Az8HvSfKpRF4hRpRhJKUCr2Ox
- 04ZZR/6GyFlrzfguOzOdlvXxTSuhvChmI2Htt4CvnrIE1BMufbV23miXR9DiTbS2A+g=
-X-Gm-Gg: Acq92OGzg7rE4w9XdMXqBkr4EmQdgJ2w3V6bMVbTdQPz+VSBLSs0B4Wje4ZTgsemD69
- T4sc5boCOIuOyY7hZp8P5IYREZna36Fw4ZW5GTmKjr+iCmfzGrg+4lmWuJEFWC9wBvHzr0F2qRi
- omKJOFM//y19csDuu+4h0okXZlPeUrzN22QiOK00jqkKU1lXvOk7Cubix2ovgF9vkff9LP6QG7G
- SaxoRlrpKII6Ip+FIzy921LEtX7gQSLbgKWpdowxPKMU6l/8MV4C7Df29QzdDxNv+qKI9J5ZR/F
- ySzPM0ijlzJpW4APJjXefy90EOr86pwAqLs7Ot9o6naXs/L9pWuyfv3QodQBsuM7TCxJvG/dWlS
- 2wPNQkh3FrcDXs4M6o1o+wx1fBgIiyD2PY4C+C6/SQrDb7YjlYFOF3epqjyy4k/DP6T1mqHJLb4
- 0f1bYb8Jhn5nP2wYvCJNRQ2gvLi3VTyrk98uBRxQyg
-X-Received: by 2002:a05:6512:1044:b0:5a4:7ed:3e41 with SMTP id
- 2adb3069b0e04-5a887ce6483mr10015502e87.32.1778596918690; 
- Tue, 12 May 2026 07:41:58 -0700 (PDT)
-Received: from stephen-xps.local ([62.119.255.230])
- by smtp.gmail.com with ESMTPSA id
- 2adb3069b0e04-5a8c66facc2sm1940162e87.22.2026.05.12.07.41.57
- (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 12 May 2026 07:41:57 -0700 (PDT)
-Date: Tue, 12 May 2026 16:41:54 +0200
-From: Stephen Hemminger <stephen@networkplumber.org>
-To: David Marchand <david.marchand@redhat.com>
-Cc: dev@dpdk.org, rjarry@redhat.com, cfontain@redhat.com, Vladimir Medvedkin
- <vladimir.medvedkin@intel.com>
-Subject: Re: [PATCH v3 4/5] net/iavf: accept up to 32k unicast MAC addresses
-Message-ID: <20260512164154.00d109c5@stephen-xps.local>
-In-Reply-To: <20260510170306.3406045-5-david.marchand@redhat.com>
-References: <20260403091836.1073484-1-david.marchand@redhat.com>
- <20260510170306.3406045-1-david.marchand@redhat.com>
- <20260510170306.3406045-5-david.marchand@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 626AE402C1;
+	Tue, 12 May 2026 17:16:29 +0200 (CEST)
+Received: from us-smtp-delivery-124.mimecast.com
+ (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+ by mails.dpdk.org (Postfix) with ESMTP id 38D29402A7
+ for <dev@dpdk.org>; Tue, 12 May 2026 17:16:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+ s=mimecast20190719; t=1778598987;
+ h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+ to:to:cc:mime-version:mime-version:content-type:content-type:
+ content-transfer-encoding:content-transfer-encoding:
+ in-reply-to:in-reply-to:references:references;
+ bh=gE5+uWNzzQ1mXA0pPXHGXOpeC3xqddPUuU+vsJEseK8=;
+ b=Wxzc0EpD3xrSdzBWN9xOl/NTdJPUEKnjoXespukMflwuce5mlQK47N/3fp0QVskvwEkhS/
+ +3Wile2M/Y9iatmHYopOQY/ABDssitWJraHrtmbkeZv034BmfAcF3kPM+g2nDP82yPr4Z4
+ 9wBJHatq6AUFwk4MlBxYKkdH+o4PoWU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-422-LtU6C7miNi-STZxIu32zeQ-1; Tue,
+ 12 May 2026 11:16:26 -0400
+X-MC-Unique: LtU6C7miNi-STZxIu32zeQ-1
+X-Mimecast-MFC-AGG-ID: LtU6C7miNi-STZxIu32zeQ_1778598985
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
+ (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
+ id 31C3918002F0; Tue, 12 May 2026 15:16:25 +0000 (UTC)
+Received: from ringo.redhat.com (unknown [10.44.32.68])
+ by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
+ id BC4A81955D84; Tue, 12 May 2026 15:16:23 +0000 (UTC)
+From: Robin Jarry <rjarry@redhat.com>
+To: dev@dpdk.org,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: [PATCH dpdk v4] net/tap: use offsets provided by rte_net_get_ptype
+Date: Tue, 12 May 2026 17:16:12 +0200
+Message-ID: <20260512151611.186577-2-rjarry@redhat.com>
+In-Reply-To: <20260422133615.680318-2-rjarry@redhat.com>
+References: <20260422133615.680318-2-rjarry@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: NLl6rZQpBoEBlBLlK__nMxHtL7QqqmOApWZbelh_0XI_1778598985
+X-Mimecast-Originator: redhat.com
+Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -82,91 +66,154 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Sun, 10 May 2026 19:03:04 +0200
-David Marchand <david.marchand@redhat.com> wrote:
+Instead of guessing what are the proper header lengths, pass
+a rte_net_hdr_lens struct to rte_net_get_ptype and use it to get the
+proper header lengths/offsets in tap_verify_csum.
 
-> E810 hardware provides 32k switch lookups.
-> Thanks to this, it is possible to allow a lot more secondary mac
-> addresses than what is possible today.
-> 
-> In practice, the maximum number of macs available per port may be lower
-> and depends on usage by other (trusted?) VFs on the same PF.
-> There is no way to figure out this limit but to try adding a mac address
-> and get an error from the PF driver.
-> 
-> Mailbox exchanges are limited to IAVF_AQ_BUF_SZ, segment messages
-> accordingly.
-> 
-> Signed-off
+This allows supporting stacked VLAN/QinQ tags and IPv6 extensions.
 
-AI review feedback; nothing major but worth a look
+Signed-off-by: Robin Jarry <rjarry@redhat.com>
+---
 
-Series: ethdev: VMDq cleanup and iavf: 32k MACs / duplicate install fix
-Tree: dpdk main (DPDK 26.07)
+Notes:
+    v4:
+    
+    * Fixed stale comments.
+    
+    v3:
+    
+    * Fixed double count for ipv6 extension headers.
+    
+    v2:
+    
+    * Restored packet length checks in IPv4/IPv6 before checking L4
+      checksums.
+    * Moved struct rte_net_hdr_lens variable next to rte_net_get_ptype call
+      and initialize it to 0 instead of calling memset().
 
-Patch 2 - ethdev: skip VMDq pools unless configured
-  Info
-    Doxygen of rte_eth_dev_mac_addr_add() is not updated to describe the
-    new constraint that pool must be 0 when VMDq is not configured. The
-    function-level @param documentation and @return list should mention
-    that -EINVAL is now returned when VMDq is disabled and pool != 0.
+ drivers/net/tap/rte_eth_tap.c | 46 +++++++++++++----------------------
+ 1 file changed, 17 insertions(+), 29 deletions(-)
 
-    Subtle behavior change: when VMDq is not configured, mac_pool_sel[index]
-    is no longer set to RTE_BIT64(0) on add. Before this patch every added
-    MAC ended up with bit 0 set; afterwards the array stays at 0. This is
-    consistent with the new restore path (which now uses the VMDq flag
-    rather than walking pool_mask in the !vmdq case), but the change in
-    observable state of dev->data->mac_pool_sel[] could surprise an out-of-
-    tree consumer. Worth a sentence in the API change note.
+diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
+index a5d460a0b3cb..09cd252918e4 100644
+--- a/drivers/net/tap/rte_eth_tap.c
++++ b/drivers/net/tap/rte_eth_tap.c
+@@ -327,79 +327,66 @@ tun_alloc(struct pmd_internals *pmd, int is_keepalive, int persistent)
+ }
+ 
+ static void
+-tap_verify_csum(struct rte_mbuf *mbuf)
++tap_verify_csum(struct rte_mbuf *mbuf, const struct rte_net_hdr_lens *hlen)
+ {
+-	uint32_t l2 = mbuf->packet_type & RTE_PTYPE_L2_MASK;
+ 	uint32_t l3 = mbuf->packet_type & RTE_PTYPE_L3_MASK;
+ 	uint32_t l4 = mbuf->packet_type & RTE_PTYPE_L4_MASK;
+-	unsigned int l2_len = sizeof(struct rte_ether_hdr);
+-	unsigned int l3_len;
++	uint32_t l4_off = hlen->l2_len + hlen->l3_len;
+ 	uint16_t cksum = 0;
+ 	void *l3_hdr;
+ 	void *l4_hdr;
+-	struct rte_udp_hdr *udp_hdr;
+ 
+-	if (l2 == RTE_PTYPE_L2_ETHER_VLAN)
+-		l2_len += 4;
+-	else if (l2 == RTE_PTYPE_L2_ETHER_QINQ)
+-		l2_len += 8;
+ 	/* Don't verify checksum for packets with discontinuous L2 header */
+-	if (unlikely(l2_len + sizeof(struct rte_ipv4_hdr) >
+-		     rte_pktmbuf_data_len(mbuf)))
++	if (unlikely(l4_off > rte_pktmbuf_data_len(mbuf)))
+ 		return;
+-	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len);
++
++	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, hlen->l2_len);
+ 	if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
+ 		struct rte_ipv4_hdr *iph = l3_hdr;
+ 
+-		l3_len = rte_ipv4_hdr_len(iph);
+-		if (unlikely(l2_len + l3_len > rte_pktmbuf_data_len(mbuf)))
+-			return;
+ 		/* check that the total length reported by header is not
+ 		 * greater than the total received size
+ 		 */
+-		if (l2_len + rte_be_to_cpu_16(iph->total_length) >
++		if (hlen->l2_len + rte_be_to_cpu_16(iph->total_length) >
+ 				rte_pktmbuf_data_len(mbuf))
+ 			return;
+ 
+-		cksum = ~rte_raw_cksum(iph, l3_len);
++		cksum = ~rte_raw_cksum(iph, hlen->l3_len);
+ 		mbuf->ol_flags |= cksum ?
+ 			RTE_MBUF_F_RX_IP_CKSUM_BAD :
+ 			RTE_MBUF_F_RX_IP_CKSUM_GOOD;
+-	} else if (l3 == RTE_PTYPE_L3_IPV6) {
++	} else if (l3 == RTE_PTYPE_L3_IPV6 || l3 == RTE_PTYPE_L3_IPV6_EXT) {
+ 		struct rte_ipv6_hdr *iph = l3_hdr;
+ 
+-		l3_len = sizeof(struct rte_ipv6_hdr);
+ 		/* check that the total length reported by header is not
+ 		 * greater than the total received size
+ 		 */
+-		if (l2_len + l3_len + rte_be_to_cpu_16(iph->payload_len) >
++		if (hlen->l2_len + sizeof(*iph) + rte_be_to_cpu_16(iph->payload_len) >
+ 				rte_pktmbuf_data_len(mbuf))
+ 			return;
+ 	} else {
+ 		/* - RTE_PTYPE_L3_IPV4_EXT_UNKNOWN cannot happen because
+ 		 *   mbuf->packet_type is filled by rte_net_get_ptype() which
+ 		 *   never returns this value.
+-		 * - IPv6 extensions are not supported.
+ 		 */
+ 		return;
+ 	}
+ 
+ 	if (l4 == RTE_PTYPE_L4_UDP || l4 == RTE_PTYPE_L4_TCP) {
+ 		int cksum_ok;
+-		const unsigned int l4_min_len = (l4 == RTE_PTYPE_L4_UDP)
+-			? sizeof(struct rte_udp_hdr) : sizeof(struct rte_tcp_hdr);
+ 
+ 		/* Don't verify checksum if L4 header is truncated */
+-		if (l2_len + l3_len + l4_min_len > rte_pktmbuf_data_len(mbuf))
++		if (l4_off + hlen->l4_len > rte_pktmbuf_data_len(mbuf))
+ 			return;
+ 
+-		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len + l3_len);
+ 		/* Don't verify checksum for multi-segment packets. */
+ 		if (mbuf->nb_segs > 1)
+ 			return;
++
++		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l4_off);
+ 		if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
+ 			if (l4 == RTE_PTYPE_L4_UDP) {
+-				udp_hdr = (struct rte_udp_hdr *)l4_hdr;
++				struct rte_udp_hdr *udp_hdr = l4_hdr;
+ 				if (udp_hdr->dgram_cksum == 0) {
+ 					/*
+ 					 * For IPv4, a zero UDP checksum
+@@ -412,7 +399,7 @@ tap_verify_csum(struct rte_mbuf *mbuf)
+ 			}
+ 			cksum_ok = !rte_ipv4_udptcp_cksum_verify(l3_hdr,
+ 								 l4_hdr);
+-		} else { /* l3 == RTE_PTYPE_L3_IPV6, checked above */
++		} else { /* l3 == RTE_PTYPE_L3_IPV6{,_EXT}, checked above */
+ 			cksum_ok = !rte_ipv6_udptcp_cksum_verify(l3_hdr,
+ 								 l4_hdr);
+ 		}
+@@ -561,10 +548,11 @@ pmd_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
+ 			continue;
+ 		}
+ 
+-		mbuf->packet_type = rte_net_get_ptype(mbuf, NULL,
++		struct rte_net_hdr_lens hlen = {0};
++		mbuf->packet_type = rte_net_get_ptype(mbuf, &hlen,
+ 						      RTE_PTYPE_ALL_MASK);
+ 		if (rxq->rxmode->offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM)
+-			tap_verify_csum(mbuf);
++			tap_verify_csum(mbuf, &hlen);
+ 
+ 		/* account for the receive frame */
+ 		bufs[num_rx++] = mbuf;
+-- 
+2.54.0
 
-Patch 4 - net/iavf: accept up to 32k unicast MAC addresses
-  Info
-    Release notes wording: "secondary MAC addresses from 64 to 32k" is
-    slightly imprecise. IAVF_NUM_MACADDR_MAX (64) was the total cap including
-    the primary MAC; IAVF_UC_MACADDR_MAX (32768) is also a total cap
-    including index 0. Either drop "secondary" or say "secondary MAC
-    addresses from 63 to 32767".
-
-    iavf_add_del_uc_addr_bulk() returns an int but the only caller
-    (iavf_add_del_all_mac_addr) discards it. The pre-existing function was
-    already void so this is no regression, but having the helper return an
-    error code that is unconditionally dropped is misleading. Either
-    propagate the error to the caller (and make iavf_add_del_all_mac_addr
-    return int) or make the helper void.
-
-    eth_dev_mac_restore() now iterates dev_info->max_mac_addrs which for
-    iavf becomes 32768. With patch 5 applied this path is skipped via
-    get_restore_flags, but any driver that increases max_mac_addrs into the
-    thousands without setting RTE_ETH_RESTORE_MAC_ADDR off will pay a 32k
-    rte_is_zero_ether_addr() scan on every dev_start. Not a bug here, but
-    worth keeping in mind.
-
-    sizeof(struct virtchnl_ether_addr_list) already accounts for the
-    embedded list[1] slot, so
-       in_args_size = sizeof(struct virtchnl_ether_addr_list) +
-                      sizeof(struct virtchnl_ether_addr) * list->num_elements
-    overcounts by sizeof(struct virtchnl_ether_addr). This matches what
-    iavf_add_del_eth_addr() already does, and the buffer is sized to hold
-    it, so it's not a bug -- noting it for completeness.
-
-Patch 5 - net/iavf: fix duplicate MAC addresses install
-  Info
-    Recovery edge case: if iavf_add_del_eth_addr() for the primary fails
-    during the first iavf_dev_start(), mac_primary_set stays false. On a
-    subsequent VF reset, iavf_dev_start() (called from iavf_handle_hw_reset)
-    will re-attempt the primary add, and the new
-    iavf_add_del_all_mac_addr() call right after will add the primary again
-    via VIRTCHNL_ETHER_ADDR_PRIMARY. This re-introduces a single-MAC
-    double-install in a narrow failure path. Could be avoided by skipping
-    the primary in iavf_add_del_all_mac_addr() when mac_primary_set is
-    already true, or by having iavf_dev_start() skip the primary add when
-    in_reset_recovery is set.
-
-    No release notes entry. With Fixes: + Cc: stable this is acceptable as
-    a bug fix, but the patch also introduces a new dev_op
-    (get_restore_flags) for the driver and changes when MC addresses are
-    re-pushed (only on VF reset, not on every dev_start). A one-line note
-    in the iavf section of the release notes would help users tracking
-    behaviour changes between stop/start cycles.
-
-Patches 1 and 3 have no findings.
