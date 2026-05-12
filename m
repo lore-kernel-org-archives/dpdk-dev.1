@@ -2,64 +2,65 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5634DCD4F24
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 May 2026 12:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787F0CD4F24
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 May 2026 12:35:34 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id EE75E4064F;
-	Wed, 13 May 2026 14:35:22 +0200 (CEST)
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com
- [209.85.216.41]) by mails.dpdk.org (Postfix) with ESMTP id 39CDC4026A
- for <dev@dpdk.org>; Tue, 12 May 2026 21:28:38 +0200 (CEST)
-Received: by mail-pj1-f41.google.com with SMTP id
- 98e67ed59e1d1-366375c4076so2791250a91.3
- for <dev@dpdk.org>; Tue, 12 May 2026 12:28:38 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id C928E40657;
+	Wed, 13 May 2026 14:35:23 +0200 (CEST)
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com
+ [209.85.214.171])
+ by mails.dpdk.org (Postfix) with ESMTP id 64453402B5
+ for <dev@dpdk.org>; Wed, 13 May 2026 01:42:35 +0200 (CEST)
+Received: by mail-pl1-f171.google.com with SMTP id
+ d9443c01a7336-2ba3e3c4f87so56261605ad.3
+ for <dev@dpdk.org>; Tue, 12 May 2026 16:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gmail.com; s=20251104; t=1778614117; x=1779218917; darn=dpdk.org;
+ d=gmail.com; s=20251104; t=1778629354; x=1779234154; darn=dpdk.org;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:from:to:cc:subject:date:message-id:reply-to;
- bh=7i6L8HmwB92cCFLxlnFzk/JblWBceVxxkPIb3axLXpM=;
- b=J2YMNR6LCnF1bHk5DvOKWyhyx4Xx0Dof3y8gq41/7r2PgVkV15HIZtcc+NQ8KX17Uc
- Fcr8AaiENGcu/Om62tlHFFnvVcluv5Boh/4MlGaTieAXBRnOumlRDUHQZfVT7AKvBySl
- QHDDjleYTHWdQ91+ZCDmTWVMvIyEfDXwNMI1eCpzSUIYZainHAmlThjrX1d/gpQT22oB
- 5h+Xmqhpl+GKZa5e+vqUkFkpWS3By6TpDVtosZ+Q2Qg9dDL7hqlbpc1ZHLNgCg7J26Hh
- 6aVMLVBy2qLTYbfXexyfbpG8okVIJnSBx4C5rRKFhK9FiZxB2ZrD9MrTlbDV9MBxsTYC
- C1Lg==
+ bh=sN4tXiAcqN8VTDoVjmBu0syj4E2vR25EUs6cn9dRowQ=;
+ b=n2/i9YukKlLeY8TUBvqNWuP/aN4ExJtbC7wWCNYd7ZtlI0M/A+F+ng24zY5Ym9sRyk
+ dr4Yy3DBSPzdzOAtFWD6N7vNCitOHMYGdraNIBCWC94iWgVOyIRVA0H9sbfQZ9/GcQbn
+ ErpweHfZd+5a5YH3b2Y8ITJUYtbmf62HXdX92bJni5Dg8riC6eaNrpEGYA2dBJVgjuhd
+ YYhzoBHnGPigO/eU7/R1TcIqFM2ZN776UFpY/WmzCHrNvkmO1jLEoFDR9XgKn2WEbcTA
+ Vikw0tK9mSdPbkf41Uh5wYtJmXDNGhHimlGHv8PRkjXlHCSVIf09ZNsxe2dU3xj7XLf9
+ 97VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778614117; x=1779218917;
+ d=1e100.net; s=20251104; t=1778629354; x=1779234154;
  h=content-transfer-encoding:mime-version:message-id:date:subject:cc
  :to:from:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7i6L8HmwB92cCFLxlnFzk/JblWBceVxxkPIb3axLXpM=;
- b=s5t5XiY+kHLa8Q6vdu4K0sMlnI3z3O1QlWQZJNsNa9rAeIKZ3RO/9Klr1lbNSmLl80
- IM7xfVzxp85e16O4jcgvx486/esE0NEr+xpeFIAUex5zwpBsd14GOmwtKeIkHTRc5J1v
- AyFAYuIDi7h1n7VbgEqstnNCztjs2rxPUm5lF8ebrAPfDqfVEDuDIDmIWIjC9bgOumem
- LNdvqWwxJnAHxTEA/7rstw2J1ZUwYd/alNWLj40/IFmKQhWcizzkBHBPRnXRIt/ThJCp
- Mv28DLv1xQNk+Ue6DgQ0cXk6bNhv5VpDxkisEEOxoDdfQ21MWtFlguQ0OmDa0TDY3pLY
- Q4Kw==
-X-Gm-Message-State: AOJu0Yz7wf2XtsanJ56/Q8eD3fglUPgxCKM5QmSlC70CQKrz6vRsZtGG
- LW+3Zy2XqkoXDgdhbTRORexrzh6syV10jq/9Oo0Ay9XARCZ/PsryQ69Io1Gqcw==
-X-Gm-Gg: Acq92OFIG7dIpIaOrqukdFSAOg9skmzsGj6IVyc06k75G2vMR9rbdXdEQakaVdTXBZp
- YXe3mdF5BRHMm7+zc+GEN25gmgI/tiCHao2uB/q9qTvQ/jECU7IBtX6krlO7ZrymUjdY3cBaIBV
- KiuB1mJ803CiSDnsGQjNfpa4BZZXatxf30ddqMEkHRNpXefOn9IPC3izTAhN/Vf6oHwWZm7o4Eb
- 65ddd4rv7OD7kmlpRkt0V+5silPLgA5KzromTrc3Fk5A0q1fUWmufFAotYcLFoMAmb+7bfC4GfE
- eqTEeCteZTi+R6l8TzPm3LW0Qw/SBd5yF2Gf5O2GATRO4ShZWYtwrFhjBcnifFyOMt96mzk1HbH
- 9i2pot6l74m33VIXechkW34CM2WKLJI6NhZrve3ELOMUcYWkIUV1BI+/79tquq3wmWvrLDKkHqS
- 3Kqaj+wuZ8viDMX+NKSJKI2lfdDifpg8wB8PhB+V4hh7SXWkLVYmTpHBZrO/PtsptFyAzXOQlLq
- OuOjuIAua1dNQ==
-X-Received: by 2002:a17:90b:3a46:b0:367:b9ed:dec4 with SMTP id
- 98e67ed59e1d1-368f3e7c1acmr400366a91.27.1778614116900; 
- Tue, 12 May 2026 12:28:36 -0700 (PDT)
+ bh=sN4tXiAcqN8VTDoVjmBu0syj4E2vR25EUs6cn9dRowQ=;
+ b=qhLXadC2nPbKuGWtBRwRONQuUfcQv887cKJUxTZMsmljHqvRpz/OZai2x/NhCd98Sn
+ nZGSxgwtnhKIMU8/aH8pKwIdblbwutZ00H8iEXi7BU79vYU5kgMXqKrREauoTxDrwXiK
+ ocHftMI/HcEgLctzerPVYPl3vln3pNbuH4Gn0/nuVQfPW9aWdt7pvL03RfV/XQ+PaXR3
+ 9ADwgDfKosLGYbGBujVzBz/tFUKI5CfS75ymFMlFkx8hIYNXInYl1b/cNh6dxYJRbZLG
+ fhJrslc4ozjx2+qrcxf8Khr1XJYYL8mLa3u0ueCnur5K0Ow/orx8DLALuOLfU0xV7H7U
+ z9Ig==
+X-Gm-Message-State: AOJu0YyQNER8t5cpy2WLjElqWSraI9v8ACsnri3RI929cn8g4Uo2zZ6+
+ 7aUnmFfNt/OGUuVYUorDswAZtUs88mLDLK9c5G24mXLepvnwZBUINT9lwG33lw==
+X-Gm-Gg: Acq92OGzvXkKTALKWJ1L19M6qiNqfj2iNa1cS/DvptYaSr/g/nfI/jH6h09T1PWyiV5
+ g0DBoOdT4z2nGl1N0AvcrBUC5Fihyylc6a2k/lIeAduDzLjiA/iFthC1EQGGlmo2zjS1J6qvZ9l
+ 9kSfjAO3Zq9V+sSllBbFEoHhKDApk6sXUeOCyNa/iWzw7YJYo2nN1Gf5S4EdzMQOkz0lxasx0Ot
+ m2Ae/QZgif9eRBLLc22T/M/Jw0IXGznWdC2VvlAshH+V46r5kdoeUYvRhRXIgowLnj/AUDd5RHw
+ RdLr1SpIDlWpY06SKec3CRwCwFtwgf0Mxluh+br3AYNQPQqzA8m7wFi9o2B7K1qzS3wsP8mBvBk
+ orELt2mFNUhV4ROth6FARzwiOXUZX8v7qezjDvY1FAmsR8WF6p098RKIcE4yoip37KIiL+pJX58
+ E14wtHJUwCZpq6k0C8w4/RDfLJ5vIniWoXkbMg3BGEBATgpWD/EmJ2IDtHnpNyZTXQY+QIC2Nqh
+ C+J+qJbyhImqT052p1+RdPz
+X-Received: by 2002:a17:903:198c:b0:2bc:a577:70c2 with SMTP id
+ d9443c01a7336-2bd276e9861mr11238285ad.31.1778629350585; 
+ Tue, 12 May 2026 16:42:30 -0700 (PDT)
 Received: from arin-Desktop.dhcp4.washington.edu ([205.175.106.86])
  by smtp.gmail.com with ESMTPSA id
- 98e67ed59e1d1-368ede2074esm634798a91.1.2026.05.12.12.28.36
+ d9443c01a7336-2baf1e35632sm152652695ad.53.2026.05.12.16.42.30
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Tue, 12 May 2026 12:28:36 -0700 (PDT)
+ Tue, 12 May 2026 16:42:30 -0700 (PDT)
 From: Arin Kharkar <arinkharkar@gmail.com>
 To: dev@dpdk.org
 Cc: Arin Kharkar <arinkharkar@gmail.com>
-Subject: [PATCH] Updated skeleton example code to better emit error
-Date: Tue, 12 May 2026 12:28:34 -0700
-Message-ID: <20260512192834.130651-1-arinkharkar@gmail.com>
+Subject: [PATCH] FIX: excessive logging in I40E driver
+Date: Tue, 12 May 2026 16:42:27 -0700
+Message-ID: <20260512234227.218761-1-arinkharkar@gmail.com>
 X-Mailer: git-send-email 2.43.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -77,29 +78,24 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Previously, the program would check if the number of ports is even and if not, would exit with an error stating "the number of ports must be even". To provide more information, the program now states how many ports were found. This is especially helpful if 0 ports were found, as it explicitly states DPDK wasn't able to find any ports, rather than making the user troubleshoot this.
+Resolved bug #1936 by changing the log level in i40e_set_tx_function from NOTICE to DEBUG
 ---
- examples/skeleton/basicfwd.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/intel/i40e/i40e_rxtx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/examples/skeleton/basicfwd.c b/examples/skeleton/basicfwd.c
-index 133293cf15..381e4d4273 100644
---- a/examples/skeleton/basicfwd.c
-+++ b/examples/skeleton/basicfwd.c
-@@ -188,11 +188,9 @@ main(int argc, char *argv[])
- 	/* Check that there is an even number of ports to send/receive on. */
- 	nb_ports = rte_eth_dev_count_avail();
- 	if (nb_ports < 2 || (nb_ports & 1))
--		rte_exit(EXIT_FAILURE, "Error: number of ports must be even\n");
-+		rte_exit(EXIT_FAILURE, "Error: number of ports must be even, found %u ports\n", nb_ports);
+diff --git a/drivers/net/intel/i40e/i40e_rxtx.c b/drivers/net/intel/i40e/i40e_rxtx.c
+index c5ac75e0f0..bc48303a25 100644
+--- a/drivers/net/intel/i40e/i40e_rxtx.c
++++ b/drivers/net/intel/i40e/i40e_rxtx.c
+@@ -3124,7 +3124,7 @@ i40e_set_tx_function(struct rte_eth_dev *dev)
+ 					 i40e_tx_path_infos[ad->tx_func_type].pkt_burst;
+ 	dev->tx_pkt_prepare = i40e_tx_path_infos[ad->tx_func_type].pkt_prep;
  
--	/* Creates a new mempool in memory to hold the mbufs. */
--
--	/* Allocates mempool to hold the mbufs. 8< */
-+	/* Creates and allocates a mempool to hold the mbufs. 8< */
- 	mbuf_pool = rte_pktmbuf_pool_create("MBUF_POOL", NUM_MBUFS * nb_ports,
- 		MBUF_CACHE_SIZE, 0, RTE_MBUF_DEFAULT_BUF_SIZE, rte_socket_id());
- 	/* >8 End of allocating mempool to hold mbuf. */
+-	PMD_DRV_LOG(NOTICE, "Using %s (port %d).",
++	PMD_DRV_LOG(DEBUG, "Using %s (port %d).",
+ 		i40e_tx_path_infos[ad->tx_func_type].info, dev->data->port_id);
+ 
+ 	if (ad->tx_func_type == I40E_TX_SCALAR_SIMPLE ||
 -- 
 2.43.0
 
