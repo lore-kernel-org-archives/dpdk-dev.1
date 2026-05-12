@@ -2,46 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663CFCD4855
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 09:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0604ECD4F21
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 11:37:12 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5A63D40678;
-	Tue, 12 May 2026 11:23:17 +0200 (CEST)
-Received: from canpmsgout10.his.huawei.com (canpmsgout10.his.huawei.com
- [113.46.200.225])
- by mails.dpdk.org (Postfix) with ESMTP id 1843C400D7
- for <dev@dpdk.org>; Tue, 12 May 2026 11:23:12 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=uDfoVVlqiz31Q076ZujUs0mEUP12jJcdt7hCJD466b4=;
- b=hkc73NulYUlYFBfUuVmkDN3RMsR1V+Uxd4xPukzxp/0J17/iqOGKBYjqXXQT5AuibRQJL/Rbm
- TOyo6JMlEGMycuKLMcsP8rbCeDR/G5/nhNh1gzoFafD1ZgNp2Kc0m318/rtDYevLZnFW5RWEjAV
- HVpxlZbot/2uf7p+AJqLSGM=
-Received: from mail.maildlp.com (unknown [172.19.163.15])
- by canpmsgout10.his.huawei.com (SkyGuard) with ESMTPS id 4gF9tG1hrPz1K96G;
- Tue, 12 May 2026 17:15:34 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id 563F740573;
- Tue, 12 May 2026 17:23:09 +0800 (CST)
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 12 May 2026 17:23:08 +0800
-From: Chengwen Feng <fengchengwen@huawei.com>
-To: <thomas@monjalon.net>, <stephen@networkplumber.org>
-CC: <dev@dpdk.org>, <wathsala.vithanage@arm.com>, <liuyonglong@huawei.com>
-Subject: [PATCH v2 2/4] ethdev: introduce generic cache stash API
-Date: Tue, 12 May 2026 17:23:00 +0800
-Message-ID: <20260512092302.23735-3-fengchengwen@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20260512092302.23735-1-fengchengwen@huawei.com>
-References: <20260508092855.51987-1-fengchengwen@huawei.com>
- <20260512092302.23735-1-fengchengwen@huawei.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A9BD24064F;
+	Tue, 12 May 2026 13:37:11 +0200 (CEST)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+ by mails.dpdk.org (Postfix) with ESMTP id DF774400D7
+ for <dev@dpdk.org>; Tue, 12 May 2026 13:37:09 +0200 (CEST)
+Received: from localhost.localdomain (unknown [118.112.177.181])
+ by APP-01 (Coremail) with SMTP id qwCowADXfmriEANq57oBEA--.19582S2;
+ Tue, 12 May 2026 19:37:06 +0800 (CST)
+From: liujie5@linkdatatechnology.com
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org,
+	Jie Liu <liujie5@linkdatatechnology.com>
+Subject: [PATCH v13 00/10] net/sxe2: fix logic errors and address feedback
+Date: Tue, 12 May 2026 19:36:49 +0800
+Message-ID: <20260512113700.837744-1-liujie5@linkdatatechnology.com>
+X-Mailer: git-send-email 2.47.3
+In-Reply-To: <20260512080616.454171-11-liujie5@linkdatatechnology.com>
+References: <20260512080616.454171-11-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.50.163.32]
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: qwCowADXfmriEANq57oBEA--.19582S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3AF1kAr45JF4DGryxWF4DJwb_yoW7Cw1fpF
+ 48ZryrZF13JFW3Ww4fJayfZFyrK3WfJryjkrW2gas3XFyvyFyUCrs0gFy5Awn7AF15JF10
+ vrZIyr1UGa15Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUkS14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+ 1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r1j
+ 6r4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4j6r
+ 4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+ I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+ 4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAKzVCY07xG64k0F24l
+ 42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
+ WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1Y6r17MIIYrxkI7VAK
+ I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
+ 4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY
+ 6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUeEfOUUUUU
+X-Originating-IP: [118.112.177.181]
+X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -55,237 +56,118 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce a generic Ethernet device API for cache stashing,
-supporting hardware mechanisms such as PCIe TPH (Transaction
-Processing Hints).
+From: Jie Liu <liujie5@linkdatatechnology.com>
 
-The API provides:
-- Generic query for supported stashing types and objects
-- Device-wide stashing enable/disable
-- Per-queue stashing with target lcore and data objects
-  (Rx/Tx descriptor, header, payload)
+This patch set addresses the feedback received on the v10 submission
+for the sxe2 PMD. The primary focus is on fixing vector path selection,
+ensuring memory safety during mbuf initialization, and cleaning up
+redundant logic in the configuration functions.
 
-The design allows a device to support multiple stashing types
-while only allowing one active type at runtime.
+v13 Changes:
+- Fixed vector Rx burst function being overwritten by scalar selection.
+- Refactored Rx/Tx mode set functions to seed flags from caps first,eliminating tautological checks.
+- Added memset for mbuf_def in vector init to avoid uninitialized reads.
+- Converted pci_map_addr_info to designated initializers.
+- Removed dead Windows-only code in meson.build.
+- Added NULL checks for mbuf free for driver-wide consistency.
+- Updated burst_mode_get to accurately report AVX paths.
+- Adjusted SXE2_ETH_OVERHEAD to match actual VLAN capabilities.
 
-Signed-off-by: Chengwen Feng <fengchengwen@huawei.com>
----
- lib/ethdev/ethdev_driver.h | 37 +++++++++++++++
- lib/ethdev/rte_ethdev.c    | 40 ++++++++++++++++
- lib/ethdev/rte_ethdev.h    | 95 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 172 insertions(+)
+Jie Liu (10):
+  mailmap: add Jie Liu
+  doc: add sxe2 guide and release notes
+  common/sxe2: add sxe2 basic structures
+  drivers: add base driver skeleton
+  drivers: add base driver probe skeleton
+  drivers: support PCI BAR mapping
+  common/sxe2: add ioctl interface for DMA map and unmap
+  net/sxe2: support queue setup and control
+  drivers: add data path for Rx and Tx
+  net/sxe2: add vectorized Rx and Tx
 
-diff --git a/lib/ethdev/ethdev_driver.h b/lib/ethdev/ethdev_driver.h
-index 1255cd6f2c..e7b4167939 100644
---- a/lib/ethdev/ethdev_driver.h
-+++ b/lib/ethdev/ethdev_driver.h
-@@ -1409,6 +1409,38 @@ enum rte_eth_dev_operation {
- typedef uint64_t (*eth_get_restore_flags_t)(struct rte_eth_dev *dev,
- 					    enum rte_eth_dev_operation op);
- 
-+/**
-+ * @internal
-+ * Get cache stash capabilities of the Ethernet device.
-+ *
-+ * @param dev
-+ *   Port (ethdev) handle.
-+ * @param capa
-+ *   Pointer to capability structure to store supported stash types and objects.
-+ *
-+ * @return
-+ *   Negative on error, 0 on success.
-+ */
-+typedef int (*eth_cache_stash_get_t)(struct rte_eth_dev *dev,
-+				     struct rte_eth_cache_stash_capability *capa);
-+
-+/**
-+ * @internal
-+ * Configure cache stash for the Ethernet device or queue.
-+ *
-+ * @param dev
-+ *   Port (ethdev) handle.
-+ * @param op
-+ *   Cache stash operation type (enable/disable device or queue).
-+ * @param config
-+ *   Cache stash configuration (device or queue level).
-+ *
-+ * @return
-+ *   Negative on error, 0 on success.
-+ */
-+typedef int (*eth_cache_stash_set_t)(struct rte_eth_dev *dev, enum rte_eth_cache_stash_op op,
-+				     struct rte_eth_cache_stash_config *config);
-+
- /**
-  * @internal A structure containing the functions exported by an Ethernet driver.
-  */
-@@ -1661,6 +1693,11 @@ struct eth_dev_ops {
- 
- 	/** Get configuration which ethdev should restore */
- 	eth_get_restore_flags_t get_restore_flags;
-+
-+	/** Cache stash get ops */
-+	eth_cache_stash_get_t cache_stash_get;
-+	/** Cache stash set ops */
-+	eth_cache_stash_set_t cache_stash_set;
- };
- 
- /**
-diff --git a/lib/ethdev/rte_ethdev.c b/lib/ethdev/rte_ethdev.c
-index 2edc7a362e..4398aca5e1 100644
---- a/lib/ethdev/rte_ethdev.c
-+++ b/lib/ethdev/rte_ethdev.c
-@@ -7460,5 +7460,45 @@ int rte_eth_dev_map_aggr_tx_affinity(uint16_t port_id, uint16_t tx_queue_id,
- 	return ret;
- }
- 
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_cache_stash_get, 26.03)
-+int
-+rte_eth_cache_stash_get(uint16_t port_id,
-+			struct rte_eth_cache_stash_capability *capa)
-+{
-+	struct rte_eth_dev *dev;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
-+
-+	if (capa == NULL)
-+		return -EINVAL;
-+
-+	dev = &rte_eth_devices[port_id];
-+
-+	if (*dev->dev_ops->cache_stash_get == NULL)
-+		return -ENOTSUP;
-+
-+	return eth_err(port_id, (*dev->dev_ops->cache_stash_get)(dev, capa));
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_eth_cache_stash_set, 26.03)
-+int
-+rte_eth_cache_stash_set(uint16_t port_id, enum rte_eth_cache_stash_op op,
-+		       struct rte_eth_cache_stash_config *config)
-+{
-+	struct rte_eth_dev *dev;
-+
-+	RTE_ETH_VALID_PORTID_OR_ERR_RET(port_id, -ENODEV);
-+
-+	if (op != RTE_ETH_CACHE_STASH_OP_DEV_DISABLE && config == NULL)
-+		return -EINVAL;
-+
-+	dev = &rte_eth_devices[port_id];
-+
-+	if (*dev->dev_ops->cache_stash_set == NULL)
-+		return -ENOTSUP;
-+
-+	return eth_err(port_id, (*dev->dev_ops->cache_stash_set)(dev, op, config));
-+}
-+
- RTE_EXPORT_SYMBOL(rte_eth_dev_logtype)
- RTE_LOG_REGISTER_DEFAULT(rte_eth_dev_logtype, INFO);
-diff --git a/lib/ethdev/rte_ethdev.h b/lib/ethdev/rte_ethdev.h
-index 0d8e2d0236..014f0c21b6 100644
---- a/lib/ethdev/rte_ethdev.h
-+++ b/lib/ethdev/rte_ethdev.h
-@@ -7178,6 +7178,101 @@ rte_eth_tx_queue_count(uint16_t port_id, uint16_t queue_id)
- 	return rc;
- }
- 
-+/**
-+ * Cache stash mechanisms (bitmask).
-+ * A device may support multiple types but can only enable one at a time.
-+ */
-+enum rte_eth_cache_stash_type {
-+	RTE_ETH_CACHE_STASH_TYPE_TPH = RTE_BIT32(0),
-+};
-+
-+/**
-+ * Cache stash objects (bitmask).
-+ */
-+#define RTE_ETH_CACHE_STASH_OBJ_RX_DESC		RTE_BIT64(0)
-+#define RTE_ETH_CACHE_STASH_OBJ_TX_DESC         RTE_BIT64(1)
-+#define RTE_ETH_CACHE_STASH_OBJ_RX_HEADER	RTE_BIT64(2)
-+#define RTE_ETH_CACHE_STASH_OBJ_TX_HEADER       RTE_BIT64(3)
-+#define RTE_ETH_CACHE_STASH_OBJ_RX_PAYLOAD	RTE_BIT64(4)
-+#define RTE_ETH_CACHE_STASH_OBJ_TX_PAYLOAD	RTE_BIT64(5)
-+
-+/**
-+ * Cache stash capability.
-+ */
-+struct rte_eth_cache_stash_capability {
-+	uint32_t supported_types;  /**< Bitmask of rte_eth_cache_stash_type */
-+	uint64_t supported_objects;/**< Bitmask of RTE_ETH_CACHE_STASH_OBJ_* */
-+};
-+
-+/**
-+ * Cache stash operations.
-+ */
-+enum rte_eth_cache_stash_op {
-+	RTE_ETH_CACHE_STASH_OP_DEV_ENABLE,	/**< Enable device-wide cache stash */
-+	RTE_ETH_CACHE_STASH_OP_DEV_DISABLE,	/**< Disable device-wide cache stash */
-+	RTE_ETH_CACHE_STASH_OP_QUEUE_ENABLE,	/**< Enable cache stash for a queue */
-+	RTE_ETH_CACHE_STASH_OP_QUEUE_DISABLE,	/**< Disable cache stash for a queue */
-+	RTE_ETH_CACHE_STASH_OP_BUTT
-+};
-+
-+/**
-+ * Cache stash configuration.
-+ * The used union member is determined by the operation.
-+ */
-+struct rte_eth_cache_stash_config {
-+	union {
-+		/**
-+		 * Device-level configuration (used with DEV_ENABLE).
-+		 */
-+		struct {
-+			uint32_t type;	/**< Selected stash mechanism type */
-+		} dev;
-+		/**
-+		 * Queue-level configuration (used with QUEUE_ENABLE/QUEUE_DISABLE).
-+		 */
-+		struct {
-+			uint32_t lcore_id;	/**< Target CPU core ID */
-+			uint32_t queue_id;	/**< Queue ID */
-+			uint64_t objects;	/**< Objects bitmask to stash */
-+		} queue;
-+	};
-+};
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Get cache stash capabilities of a port.
-+ *
-+ * @param port_id
-+ *   The port identifier.
-+ * @param capa
-+ *   Output: supported stash types and objects.
-+ * @return
-+ *   0 on success, negative on error.
-+ */
-+__rte_experimental
-+int rte_eth_cache_stash_get(uint16_t port_id, struct rte_eth_cache_stash_capability *capa);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: this API may change without prior notice.
-+ *
-+ * Configure cache stash.
-+ *
-+ * @param port_id
-+ *   The port identifier.
-+ * @param op
-+ *   Configuration operation.
-+ * @param config
-+ *   Configuration structure.
-+ * @return
-+ *   0 on success, negative on error.
-+ */
-+__rte_experimental
-+int rte_eth_cache_stash_set(uint16_t port_id, enum rte_eth_cache_stash_op op,
-+			    struct rte_eth_cache_stash_config *config);
-+
- #ifdef __cplusplus
- }
- #endif
+ .mailmap                                   |   1 +
+ doc/guides/nics/features/sxe2.ini          |  30 +
+ doc/guides/nics/index.rst                  |   1 +
+ doc/guides/nics/sxe2.rst                   |  34 +
+ doc/guides/rel_notes/release_26_07.rst     |   4 +
+ drivers/common/sxe2/meson.build            |  15 +
+ drivers/common/sxe2/sxe2_common.c          | 685 +++++++++++++++
+ drivers/common/sxe2/sxe2_common.h          |  86 ++
+ drivers/common/sxe2/sxe2_common_log.h      |  83 ++
+ drivers/common/sxe2/sxe2_errno.h           | 110 +++
+ drivers/common/sxe2/sxe2_host_regs.h       | 707 +++++++++++++++
+ drivers/common/sxe2/sxe2_internal_ver.h    |  33 +
+ drivers/common/sxe2/sxe2_ioctl_chnl.c      | 326 +++++++
+ drivers/common/sxe2/sxe2_ioctl_chnl.h      | 141 +++
+ drivers/common/sxe2/sxe2_ioctl_chnl_func.h |  63 ++
+ drivers/common/sxe2/sxe2_osal.h            | 584 +++++++++++++
+ drivers/common/sxe2/sxe2_type.h            |  60 ++
+ drivers/meson.build                        |   1 +
+ drivers/net/meson.build                    |   1 +
+ drivers/net/sxe2/meson.build               |  32 +
+ drivers/net/sxe2/sxe2_cmd_chnl.c           | 319 +++++++
+ drivers/net/sxe2/sxe2_cmd_chnl.h           |  33 +
+ drivers/net/sxe2/sxe2_drv_cmd.h            | 389 +++++++++
+ drivers/net/sxe2/sxe2_ethdev.c             | 941 ++++++++++++++++++++
+ drivers/net/sxe2/sxe2_ethdev.h             | 315 +++++++
+ drivers/net/sxe2/sxe2_irq.h                |  49 ++
+ drivers/net/sxe2/sxe2_queue.c              |  67 ++
+ drivers/net/sxe2/sxe2_queue.h              | 194 +++++
+ drivers/net/sxe2/sxe2_rx.c                 | 579 +++++++++++++
+ drivers/net/sxe2/sxe2_rx.h                 |  34 +
+ drivers/net/sxe2/sxe2_tx.c                 | 447 ++++++++++
+ drivers/net/sxe2/sxe2_tx.h                 |  32 +
+ drivers/net/sxe2/sxe2_txrx.c               | 372 ++++++++
+ drivers/net/sxe2/sxe2_txrx.h               |  22 +
+ drivers/net/sxe2/sxe2_txrx_common.h        | 541 ++++++++++++
+ drivers/net/sxe2/sxe2_txrx_poll.c          | 945 +++++++++++++++++++++
+ drivers/net/sxe2/sxe2_txrx_poll.h          |  17 +
+ drivers/net/sxe2/sxe2_txrx_vec.c           | 197 +++++
+ drivers/net/sxe2/sxe2_txrx_vec.h           |  72 ++
+ drivers/net/sxe2/sxe2_txrx_vec_common.h    | 235 +++++
+ drivers/net/sxe2/sxe2_txrx_vec_sse.c       | 545 ++++++++++++
+ drivers/net/sxe2/sxe2_vsi.c                | 212 +++++
+ drivers/net/sxe2/sxe2_vsi.h                | 205 +++++
+ 43 files changed, 9759 insertions(+)
+ create mode 100644 doc/guides/nics/features/sxe2.ini
+ create mode 100644 doc/guides/nics/sxe2.rst
+ create mode 100644 drivers/common/sxe2/meson.build
+ create mode 100644 drivers/common/sxe2/sxe2_common.c
+ create mode 100644 drivers/common/sxe2/sxe2_common.h
+ create mode 100644 drivers/common/sxe2/sxe2_common_log.h
+ create mode 100644 drivers/common/sxe2/sxe2_errno.h
+ create mode 100644 drivers/common/sxe2/sxe2_host_regs.h
+ create mode 100644 drivers/common/sxe2/sxe2_internal_ver.h
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.c
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl.h
+ create mode 100644 drivers/common/sxe2/sxe2_ioctl_chnl_func.h
+ create mode 100644 drivers/common/sxe2/sxe2_osal.h
+ create mode 100644 drivers/common/sxe2/sxe2_type.h
+ create mode 100644 drivers/net/sxe2/meson.build
+ create mode 100644 drivers/net/sxe2/sxe2_cmd_chnl.c
+ create mode 100644 drivers/net/sxe2/sxe2_cmd_chnl.h
+ create mode 100644 drivers/net/sxe2/sxe2_drv_cmd.h
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev.c
+ create mode 100644 drivers/net/sxe2/sxe2_ethdev.h
+ create mode 100644 drivers/net/sxe2/sxe2_irq.h
+ create mode 100644 drivers/net/sxe2/sxe2_queue.c
+ create mode 100644 drivers/net/sxe2/sxe2_queue.h
+ create mode 100644 drivers/net/sxe2/sxe2_rx.c
+ create mode 100644 drivers/net/sxe2/sxe2_rx.h
+ create mode 100644 drivers/net/sxe2/sxe2_tx.c
+ create mode 100644 drivers/net/sxe2/sxe2_tx.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_common.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_poll.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec.c
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_common.h
+ create mode 100644 drivers/net/sxe2/sxe2_txrx_vec_sse.c
+ create mode 100644 drivers/net/sxe2/sxe2_vsi.c
+ create mode 100644 drivers/net/sxe2/sxe2_vsi.h
+
 -- 
-2.17.1
+2.47.3
 
