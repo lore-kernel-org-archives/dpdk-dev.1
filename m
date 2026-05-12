@@ -2,48 +2,47 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1CACD4855
-	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 08:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEF9CD4855
+	for <dpdk-dev@archiver.kernel.org>; Tue, 12 May 2026 08:06:36 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 8132240264;
-	Tue, 12 May 2026 10:06:29 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 8944C40657;
+	Tue, 12 May 2026 10:06:30 +0200 (CEST)
 Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
- by mails.dpdk.org (Postfix) with ESMTP id C922B4060C
+ by mails.dpdk.org (Postfix) with ESMTP id D5E3440653
  for <dev@dpdk.org>; Tue, 12 May 2026 10:06:27 +0200 (CEST)
 Received: from localhost.localdomain (unknown [118.112.177.181])
- by APP-01 (Coremail) with SMTP id qwCowAAHrWh93wJqIJr9Dw--.16996S9;
- Tue, 12 May 2026 16:06:25 +0800 (CST)
+ by APP-01 (Coremail) with SMTP id qwCowAAHrWh93wJqIJr9Dw--.16996S4;
+ Tue, 12 May 2026 16:06:23 +0800 (CST)
 From: liujie5@linkdatatechnology.com
 To: stephen@networkplumber.org
 Cc: dev@dpdk.org,
 	Jie Liu <liujie5@linkdatatechnology.com>
-Subject: [PATCH v12 07/10] common/sxe2: add ioctl interface for DMA map and
- unmap
-Date: Tue, 12 May 2026 16:06:08 +0800
-Message-ID: <20260512080616.454171-8-liujie5@linkdatatechnology.com>
+Subject: [PATCH v12 02/10] doc: add sxe2 guide and release notes
+Date: Tue, 12 May 2026 16:06:03 +0800
+Message-ID: <20260512080616.454171-3-liujie5@linkdatatechnology.com>
 X-Mailer: git-send-email 2.47.3
 In-Reply-To: <20260512080616.454171-1-liujie5@linkdatatechnology.com>
 References: <20260506113557.1151250-11-liujie5@linkdatatechnology.com>
  <20260512080616.454171-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: qwCowAAHrWh93wJqIJr9Dw--.16996S9
-X-Coremail-Antispam: 1UD129KBjvJXoW3XrykWr18XF1kXF13GrWruFg_yoWxuF1kpF
- 4vgFy5tFy8Ja12g3Z8Ja12vFy5KwsYq3y7CFWxG3s3KF1qvrykZw4FgFy3Jw15CrZxJF93
- AFsIkF15Cr18GrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
- 9KBjDU0xBIdaVrnRJUUUBv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
- rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
- kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
- z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr
- 1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1U
- M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
- v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
- F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF04
- k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
- MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr4
- 1lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
- IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
- A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUB89_UUUUU=
+X-CM-TRANSID: qwCowAAHrWh93wJqIJr9Dw--.16996S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF18AF1ktrWkKF18AF1fZwb_yoWrAFyfpa
+ n3uFWakrnxJw1xXrnIya18Ar45Ca1vya45Crn2q34rXFn8Cr18Zr4UKryxt3srJr93Za43
+ XF4Yqry7CF1UW3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+ 9KBjDU0xBIdaVrnRJUUUBI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+ rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+ x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+ Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1l84
+ ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2AI
+ xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
+ vE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
+ r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4kE6xkIj40Ew7xC0wCF04k20x
+ vY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I
+ 3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jrv_JF1lIxkGc2Ij64vIr41lIx
+ AIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAI
+ cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2js
+ IEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUjiID7UUUUU==
 X-Originating-IP: [118.112.177.181]
 X-CM-SenderInfo: xolxyxrhv6zxpqngt3pdwhux5qro0w31of0z/
 X-BeenThere: dev@dpdk.org
@@ -61,246 +60,126 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Jie Liu <liujie5@linkdatatechnology.com>
 
-Implement DMA mapping and unmapping functionality using ioctl
-calls. This allows the driver to configure the hardware's IOMMU/DMA
-tables, ensuring the device can safely access memory buffers
-allocated by the userspace.
+Add a new guide for SXE2 PMD in the nics directory.
+The guide contains driver capabilities, prerequisites,
+and compilation/usage instructions.
 
-The mapping is established during device initialization or queue
-setup and is revoked during device closure to prevent memory
-leaks and ensure hardware security.
+Update the release notes to announce the addition of the
+sxe2 network driver.
 
 Signed-off-by: Jie Liu <liujie5@linkdatatechnology.com>
 ---
- drivers/common/sxe2/sxe2_common.c          |  50 +++++++++-
- drivers/common/sxe2/sxe2_ioctl_chnl.c      | 108 ++++++++++++++++++++-
- drivers/common/sxe2/sxe2_ioctl_chnl_func.h |   9 ++
- 3 files changed, 164 insertions(+), 3 deletions(-)
+ doc/guides/nics/features/sxe2.ini      | 30 +++++++++++++++++++++++
+ doc/guides/nics/index.rst              |  1 +
+ doc/guides/nics/sxe2.rst               | 34 ++++++++++++++++++++++++++
+ doc/guides/rel_notes/release_26_07.rst |  4 +++
+ 4 files changed, 69 insertions(+)
+ create mode 100644 doc/guides/nics/features/sxe2.ini
+ create mode 100644 doc/guides/nics/sxe2.rst
 
-diff --git a/drivers/common/sxe2/sxe2_common.c b/drivers/common/sxe2/sxe2_common.c
-index 7d4001343a..e04982e92f 100644
---- a/drivers/common/sxe2/sxe2_common.c
-+++ b/drivers/common/sxe2/sxe2_common.c
-@@ -443,7 +443,7 @@ static s32 sxe2_common_pci_remove(struct rte_pci_device *pci_dev)
- 	cdev = sxe2_rtedev_to_cdev(&pci_dev->device);
- 	if (cdev == NULL) {
- 		ret = -ENODEV;
--		PMD_LOG_ERR(COM, "Fail to get remove device.");
-+		PMD_LOG_ERR(COM, "Fail to get device when remove.");
- 		goto l_end;
- 	}
+diff --git a/doc/guides/nics/features/sxe2.ini b/doc/guides/nics/features/sxe2.ini
+new file mode 100644
+index 0000000000..2718a702d4
+--- /dev/null
++++ b/doc/guides/nics/features/sxe2.ini
+@@ -0,0 +1,30 @@
++;
++; Supported features of the 'sxe2' network poll mode driver.
++;
++; Refer to default.ini for the full list of available PMD features.
++;
++; A feature with "P" indicates only be supported when non-vector path
++; is selected.
++;
++[Features]
++Fast mbuf free       = P
++Free Tx mbuf on demand = Y
++Burst mode info      = Y
++Queue start/stop     = Y
++MTU update           = Y
++Buffer split on Rx   = P
++Scattered Rx         = Y
++CRC offload          = Y
++VLAN offload         = Y
++QinQ offload         = P
++L3 checksum offload  = Y
++L4 checksum offload  = Y
++Timestamp offload    = P
++Inner L3 checksum    = P
++Inner L4 checksum    = P
++Rx descriptor status = Y
++Tx descriptor status = Y
++FreeBSD              = Y
++Linux                = Y
++x86-32               = Y
++x86-64               = Y
+diff --git a/doc/guides/nics/index.rst b/doc/guides/nics/index.rst
+index cb818284fe..e20be478f8 100644
+--- a/doc/guides/nics/index.rst
++++ b/doc/guides/nics/index.rst
+@@ -68,6 +68,7 @@ Network Interface Controller Drivers
+     rnp
+     sfc_efx
+     softnic
++    sxe2
+     tap
+     thunderx
+     txgbe
+diff --git a/doc/guides/nics/sxe2.rst b/doc/guides/nics/sxe2.rst
+new file mode 100644
+index 0000000000..7fcf9c085b
+--- /dev/null
++++ b/doc/guides/nics/sxe2.rst
+@@ -0,0 +1,34 @@
++..  SPDX-License-Identifier: BSD-3-Clause
++    Copyright (C), 2025, Wuxi Stars Micro System Technologies Co., Ltd.
++
++SXE2 Poll Mode Driver
++======================
++
++The sxe2 PMD (**librte_net_sxe2**) provides poll mode driver support for
++10/25/50/100 Gbps Network Adapters.
++The embedded switch, Physical Functions (PF),
++and SR-IOV Virtual Functions (VF) are supported.
++
++Implementation details
++----------------------
++
++The sxe2 PMD is designed to operate alongside the sxe2 kernel network driver.
++For management and control operations, the PMD communicates with the kernel
++driver via ioctl interfaces. These commands are processed by the kernel
++driver and subsequently dispatched to the hardware firmware for execution.
++
++For security and robustness, the driver's data path is optimized to operate
++using virtual addresses (IOVA as VA mode). However, to ensure full
++compatibility in system environments where an IOMMU is absent or disabled,
++the driver also provides an explicit path to support physical addressing
++(IOVA as PA mode).
++
++The hardware is capable of handling the corresponding IOVA addresses (either
++VA or PA) directly, as provided by the DPDK memory subsystem. This ensures
++that DPDK applications can only access memory segments explicitly allocated
++to the current process, preventing unauthorized access to random physical
++memory.
++
++This capability allows the PMD to coexist with kernel network interfaces
++which remain functional, although they stop receiving unicast packets as
++long as they share the same MAC address.
+diff --git a/doc/guides/rel_notes/release_26_07.rst b/doc/guides/rel_notes/release_26_07.rst
+index f012d47a4b..fa0f0f5cca 100644
+--- a/doc/guides/rel_notes/release_26_07.rst
++++ b/doc/guides/rel_notes/release_26_07.rst
+@@ -64,6 +64,10 @@ New Features
+   * ``--auto-probing`` enables the initial bus probing, which is the current default behavior.
  
-@@ -467,12 +467,60 @@ static s32 sxe2_common_pci_remove(struct rte_pci_device *pci_dev)
- 	return ret;
- }
  
-+static s32 sxe2_common_pci_dma_map(struct rte_pci_device *pci_dev,
-+		void *addr,	u64 iova, size_t len)
-+{
-+	struct sxe2_common_device *cdev;
-+	s32 ret = SXE2_ERROR;
++* **Added Linkdata sxe2 ethernet driver.**
 +
-+	cdev = sxe2_rtedev_to_cdev(&pci_dev->device);
-+	if (cdev == NULL) {
-+		ret = -ENODEV;
-+		PMD_LOG_ERR(COM, "Fail to get device when dma map.");
-+		goto l_end;
-+	}
++  Added network driver for the Linkdata Network Adapters.
 +
-+	ret = sxe2_drv_dev_dma_map(cdev, (u64)(uintptr_t)addr, iova, len);
-+	if (ret) {
-+		PMD_LOG_ERR(COM, "Fail to map dma map, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
-+static s32 sxe2_common_pci_dma_unmap(struct rte_pci_device *pci_dev,
-+		void *addr __rte_unused, u64 iova, size_t len __rte_unused)
-+{
-+	struct sxe2_common_device *cdev;
-+	s32 ret = SXE2_ERROR;
-+
-+	cdev = sxe2_rtedev_to_cdev(&pci_dev->device);
-+	if (cdev == NULL) {
-+		ret = -ENODEV;
-+		PMD_LOG_ERR(COM, "Fail to get device when dma unmap.");
-+		goto l_end;
-+	}
-+
-+	ret = sxe2_drv_dev_dma_unmap(cdev, iova);
-+	if (ret) {
-+		PMD_LOG_ERR(COM, "Fail to unmap dma map, ret=%d", ret);
-+		goto l_end;
-+	}
-+
-+l_end:
-+	return ret;
-+}
-+
- static struct rte_pci_driver sxe2_common_pci_driver = {
- 	.driver = {
- 		   .name = SXE2_COMMON_PCI_DRIVER_NAME,
- 	},
- 	.probe = sxe2_common_pci_probe,
- 	.remove = sxe2_common_pci_remove,
-+	.dma_map = sxe2_common_pci_dma_map,
-+	.dma_unmap = sxe2_common_pci_dma_unmap,
- };
+ Removed Items
+ -------------
  
- static u32 sxe2_common_pci_id_table_size_get(const struct rte_pci_id *id_table)
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl.c b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-index 8c55f5098f..4dfc4fd0fa 100644
---- a/drivers/common/sxe2/sxe2_ioctl_chnl.c
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl.c
-@@ -168,7 +168,7 @@ void
- 	void *virt = NULL;
- 
- 	if (cdev->config.kernel_reset) {
--		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
-+		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
- 		goto l_err;
- 	}
- 
-@@ -202,7 +202,7 @@ sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, u64 len)
- 
- 	if (cdev->config.kernel_reset) {
- 		ret = -EPERM;
--		PMD_LOG_WARN(COM, "kernel reseted, need restart app.");
-+		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
- 		goto l_end;
- 	}
- 
-@@ -220,3 +220,107 @@ sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, u64 len)
- l_end:
- 	return ret;
- }
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_dma_map)
-+s32
-+sxe2_drv_dev_dma_map(struct sxe2_common_device *cdev, u64 vaddr,
-+			u64 iova, u64 size)
-+{
-+	struct sxe2_ioctl_iommu_dma_map cmd_params;
-+	enum rte_iova_mode iova_mode;
-+	s32 ret = SXE2_SUCCESS;
-+	s32 cmd_fd = 0;
-+
-+	if (cdev->config.kernel_reset) {
-+		ret = -EPERM;
-+		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
-+		goto l_end;
-+	}
-+
-+	iova_mode = rte_eal_iova_mode();
-+	if (iova_mode == RTE_IOVA_PA) {
-+		if (cdev->config.support_iommu) {
-+			PMD_LOG_ERR(COM, "iommu not support pa mode");
-+			ret = -EIO;
-+		}
-+		goto l_end;
-+	} else if (iova_mode == RTE_IOVA_VA) {
-+		if (!cdev->config.support_iommu) {
-+			PMD_LOG_ERR(COM, "no iommu not support va mode, please use pa mode.");
-+			ret = -EIO;
-+			goto l_end;
-+		}
-+	}
-+
-+	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
-+	if (cmd_fd < 0) {
-+		ret = -EBADF;
-+		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
-+		goto l_end;
-+	}
-+
-+	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_iommu_dma_map));
-+	cmd_params.vaddr = vaddr;
-+	cmd_params.iova = iova;
-+	cmd_params.size = size;
-+
-+	rte_ticketlock_lock(&cdev->config.lock);
-+	ret = ioctl(cmd_fd, SXE2_COM_CMD_DMA_MAP, &cmd_params);
-+	if (ret < 0) {
-+		PMD_LOG_ERR(COM, "Failed to dma map, fd=%d, ret=%d, err:%s",
-+				cmd_fd, ret, strerror(errno));
-+		ret = -EIO;
-+		rte_ticketlock_unlock(&cdev->config.lock);
-+		goto l_end;
-+	}
-+	rte_ticketlock_unlock(&cdev->config.lock);
-+
-+l_end:
-+	return ret;
-+}
-+
-+RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_dma_unmap)
-+s32
-+sxe2_drv_dev_dma_unmap(struct sxe2_common_device *cdev, u64 iova)
-+{
-+	s32 ret = SXE2_SUCCESS;
-+	s32 cmd_fd = 0;
-+	struct sxe2_ioctl_iommu_dma_unmap cmd_params;
-+
-+	if (cdev->config.kernel_reset) {
-+		ret = -EPERM;
-+		PMD_LOG_WARN(COM, "kernel reset, need restart app.");
-+		goto l_end;
-+	}
-+
-+	if (!cdev->config.support_iommu)
-+		goto l_end;
-+
-+	cmd_fd = SXE2_CDEV_TO_CMD_FD(cdev);
-+	if (cmd_fd < 0) {
-+		ret = -EBADF;
-+		PMD_LOG_ERR(COM, "Failed to exec cmd, fd=%d", cmd_fd);
-+		goto l_end;
-+	}
-+
-+	PMD_LOG_DEBUG(COM, "fd %d dma unmap iova=0x%"PRIX64"",
-+		cmd_fd, iova);
-+
-+	memset(&cmd_params, 0, sizeof(struct sxe2_ioctl_iommu_dma_unmap));
-+	cmd_params.iova = iova;
-+
-+	rte_ticketlock_lock(&cdev->config.lock);
-+	ret = ioctl(cmd_fd, SXE2_COM_CMD_DMA_UNMAP, &cmd_params);
-+	if (ret < 0) {
-+		PMD_LOG_INFO(COM, "Failed to dma unmap, fd=%d, ret=%d, err:%s",
-+				cmd_fd, ret, strerror(errno));
-+		ret = -EIO;
-+		rte_ticketlock_unlock(&cdev->config.lock);
-+		goto l_end;
-+	}
-+	rte_ticketlock_unlock(&cdev->config.lock);
-+
-+l_end:
-+	return ret;
-+}
-+
-diff --git a/drivers/common/sxe2/sxe2_ioctl_chnl_func.h b/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
-index 376c5e3ac7..e8f983e40e 100644
---- a/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
-+++ b/drivers/common/sxe2/sxe2_ioctl_chnl_func.h
-@@ -47,6 +47,15 @@ __rte_internal
- s32
- sxe2_drv_dev_munmap(struct sxe2_common_device *cdev, void *virt, u64 len);
- 
-+__rte_internal
-+s32
-+sxe2_drv_dev_dma_map(struct sxe2_common_device *cdev, u64 vaddr,
-+		u64 iova, u64 size);
-+
-+__rte_internal
-+s32
-+sxe2_drv_dev_dma_unmap(struct sxe2_common_device *cdev, u64 iova);
-+
- #ifdef __cplusplus
- }
- #endif
 -- 
 2.47.3
 
