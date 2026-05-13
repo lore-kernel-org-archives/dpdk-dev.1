@@ -2,80 +2,35 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3593ACD37AC
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 May 2026 20:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E29CD37AC
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 May 2026 23:55:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 17CCB402B6;
-	Wed, 13 May 2026 22:56:40 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.129.124])
- by mails.dpdk.org (Postfix) with ESMTP id E86404025E
- for <dev@dpdk.org>; Wed, 13 May 2026 22:56:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1778705798;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=cysCL0f1toLrOPTeUSOTePy9/M6fmH95m3fpRhHMBDM=;
- b=SaQTDk4dLMcytD2pc8R1QVdxZMCiyqyfpYx+jIMOrpv4cXn9Laytcs3B0ZS9aysj3hieaP
- 8Cqzm/F6JuQMQNkxB6zSQbjULQt4MDAER258Lfoo5ZkcZp0iEu3ICx7s5rqQwFDuEBDF6K
- NMetYy387I7HccN/JmJS+VebZubQdRA=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-209-jzWkQ72JNvi4_6hmHfOqHw-1; Wed, 13 May 2026 16:56:34 -0400
-X-MC-Unique: jzWkQ72JNvi4_6hmHfOqHw-1
-X-Mimecast-MFC-AGG-ID: jzWkQ72JNvi4_6hmHfOqHw_1778705794
-Received: by mail-wr1-f70.google.com with SMTP id
- ffacd0b85a97d-45dbbbf8d57so147781f8f.3
- for <dev@dpdk.org>; Wed, 13 May 2026 13:56:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778705793; x=1779310593;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=cysCL0f1toLrOPTeUSOTePy9/M6fmH95m3fpRhHMBDM=;
- b=RvfTcz2hOAUSt4nFi6A1P5IjzD8gppVlpdP/aDFXWF2aNgoQUr1kFk7gLKBOTHsZMw
- 6HeA4+heXqmIWXhg+jdGy8ovVq6iFSEM/d/5N6pnvY+rnVTW7v+PKdVJN2ZKEAs7hwgy
- 5h/dVIesRx6qwcgVaeyqHnAKWpGN+/ZUCCSfK2EmJ86Odgplv7JGddP/iwYhSuQgot/x
- i1vCkp1PjA13qTDxzX+4SMeDu8OqdEx0LCazXa4NOa4JO/fnLce9o6Fu35jdVH/FIejO
- xyVeVGL2oGvNMppaQaSn+eXuHTQ+bi3BRHlQo1cK9/MEftioDtDWC2ZiE8aJV31L28LB
- /5TA==
-X-Gm-Message-State: AOJu0Yy0KFsbCpmsUJB+Rp9PdK0dFczg5zNfscEccgGqzc//a/S+a9Ry
- FNZnDNASQRFsYS77gr7jOPLlZ7V/Ta91VmjqrVIAu2D/xR0L8vQjnsmDbmjfy6O3Mn98wCKns3+
- OHdnHB6H/hthPPBxCaK+i8/J50UXZjpGX6jVWnQYG1nnOGn5CSHBGzRGjZFImXIwl5uNp31wSuI
- vIVwaAgjy16ppOT2Wkh6Q=
-X-Gm-Gg: Acq92OESa1nF7uMbTQnkB/DokUOndZdBxZ+INeA6V1WIJfHpA+GsM5+cW6xjUG46nhm
- Tc0ffGeeD/GJsccHwgEXrhL3Av6wJ1iUUelAxrxhaTw0dgKjfQ61W+z4enuOHFlAqX0oqIiZrav
- qSTqkXBa+Dhz9DtS6vibVfuXssh2bYd1XgXKdDzfnjR86vz/8f0hgXVLoLpIJgAgPMSILFC14+h
- akpMWL5EW51Se2eNYIT/3RSacRJzEqyVgy8E0RUW1Txey4peQ==
-X-Received: by 2002:a05:600c:5303:b0:48e:526e:101a with SMTP id
- 5b1f17b1804b1-48fc9a1026amr88016645e9.12.1778705793565; 
- Wed, 13 May 2026 13:56:33 -0700 (PDT)
-X-Received: by 2002:a05:600c:5303:b0:48e:526e:101a with SMTP id
- 5b1f17b1804b1-48fc9a1026amr88016465e9.12.1778705793233; Wed, 13 May 2026
- 13:56:33 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 289E2402B6;
+	Thu, 14 May 2026 01:55:51 +0200 (CEST)
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+ by mails.dpdk.org (Postfix) with ESMTP id 04F634025E
+ for <dev@dpdk.org>; Thu, 14 May 2026 01:55:49 +0200 (CEST)
+Received: by linux.microsoft.com (Postfix, from userid 1213)
+ id 5143320B7166; Wed, 13 May 2026 16:55:46 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5143320B7166
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+ s=default; t=1778716546;
+ bh=eFTjRStRlTuTjUSKBiLQbaHz/uynV1gYbAms7x9iQq4=;
+ h=From:To:Cc:Subject:Date:From;
+ b=Lg3EajcYgJtutoqHaL9YDBQnWwqa5GuSHQlk42Tvj0W4MTaeMVJcrSRmrn/eRHUN0
+ lT3RGLzoInkB531hn1z0nwmaPuna9DGtLJjdbUfN+CzvwbooQaRrWLRVcuQGZqXhI9
+ kUf/1ZRx3ocYvzTBdsFwTgU3Z462K+su66ZILZM4=
+From: Andre Muezerie <andremue@linux.microsoft.com>
+To: Dmitry Kozlyuk <dmitry.kozliuk@gmail.com>
+Cc: dev@dpdk.org, Gena Tertychnyi <genter@microsoft.com>,
+ Andre Muezerie <andremue@linux.microsoft.com>
+Subject: [PATCH] Windows: fix core count on NUMA with more than 64 cores per
+ node
+Date: Wed, 13 May 2026 16:55:18 -0700
+Message-ID: <20260513235518.408895-1-andremue@linux.microsoft.com>
+X-Mailer: git-send-email 2.43.7
 MIME-Version: 1.0
-References: <20260310122045.4057836-1-cfontain@redhat.com>
- <20260319114500.9757-1-cfontain@redhat.com>
- <20260319114500.9757-3-cfontain@redhat.com>
- <CAHVr2N=DR9G8Wixv9sgov9Ks_DZkxbRHovn4ng0uME6GX8RboA@mail.gmail.com>
- <35f96fed-29d4-4a0b-b3a1-0f2c9fc6b60e@arm.com>
-In-Reply-To: <35f96fed-29d4-4a0b-b3a1-0f2c9fc6b60e@arm.com>
-From: Christophe Fontaine <cfontain@redhat.com>
-Date: Wed, 13 May 2026 16:56:21 -0400
-X-Gm-Features: AVHnY4J4yNAHIkGtRFRuAB96JmKxhMVhGWNpxy1Wj_VtpDy5xzAWwpuEH3xdMNM
-Message-ID: <CAHVr2NmGRJNJW_CxFOv6u7+4LRJkKNf__FQqZyZe3Y7fEmJ1_A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] bpf/arm64: support packet data load instructions
-To: Wathsala Vithanage <wathsala.vithanage@arm.com>
-Cc: dev@dpdk.org, Konstantin Ananyev <konstantin.ananyev@huawei.com>, 
- Marat Khalili <marat.khalili@huawei.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: LV3fzRGRSHYFblpEqud9iNZ86hFQun1AnwEUxWnC04Y_1778705794
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -89,58 +44,152 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Thu, Apr 9, 2026 at 7:24=E2=80=AFPM Wathsala Vithanage
-<wathsala.vithanage@arm.com> wrote:
->
-> Hi Christophe,
->
-> Thanks for doing this work. I saw that you intend to submit a v3 due to
-> failure in Ubuntu. Please, see my comment regarding emit_b below.
->
-> >> +       /* A64_R(0) =3D mbuf->buf_addr */
-> >> +       emit_mov_imm(ctx, 1, tmp1, offsetof(struct rte_mbuf, buf_addr)=
-);
-> >> +       emit_ldr(ctx, EBPF_DW, A64_R(0), r6, tmp1);
-> >> +       /* tmp2 =3D * mbuf->data_off */
-> >> +       emit_mov_imm(ctx, 1, tmp2, offsetof(struct rte_mbuf, data_off)=
-);
-> >> +       emit_ldr(ctx, BPF_H, tmp2, r6, tmp2);
-> >> +
-> >> +       /* A64_R(0) +=3D data_off + off */
-> >> +       emit_add(ctx, 1, A64_R(0), tmp2);
-> >> +       emit_add(ctx, 1, A64_R(0), A64_R(1));
-> >> +
-> >> +       /* End of Fast Path, skip slow path */
-> >> +       emit_b(ctx, 4);
-> >> +
-> Followed by emit_b() above there is an emit_call(). It invokes
-> emit_mov_imm() which could possibly generate different number of movk
-> instructions depending on the address of the __rte_pktmbuf_read. So,
-> emit_b(ctx, 4), may not  necessarily land at the intended location
-> because there could be more than 4 instructions emitted by emit_call.
+From: Gena Tertychnyi <genter@microsoft.com>
 
-Hi
-Very good point, this was probably the cause of the error on Ubuntu.
-Sorry for the delay in responding to this patch, but I'm about to send
-a new version, fixing (hopefully!) all the previous comments.
-I'll add you in CC for the new version as well.
+Fix specific to Windows NUMA machines with more than 64 cores per node
+(e.g. 2 NUMAs with 128 cores each):
 
-Christophe
+- NumaNode.GroupMasks[] array is used instead of NumaNode.GroupMask.
+- RelationAll is used instead of RelationNumaNode when calling
+GetLogicalProcessorInformationEx because RelationAll returns the full
+multi-group NUMA affinity as RelationNumaNode returns only the NUMA
+node's primary group.
 
-> >> +       /* slow path, call __rte_pktmbuf_read */
-> >> +       emit_call(ctx, tmp1, __rte_pktmbuf_read);
-> >> +       /* check return value of __rte_pktmbuf_read */
-> >> +       emit_return_zero_if_src_zero(ctx, 1, A64_R(0));
-> >> +
-> >> +       /* A64_R(0) points to the data, load 1/2/4 bytes into r0*/
-> >> +       emit_ldr(ctx, opsz, r0, A64_R(0), A64_ZR);
-> >> +       if (sz !=3D sizeof(uint8_t))
-> >> +               emit_be(ctx, r0, sz * CHAR_BIT);
-> >> +}
-> >> +
-> >>
->
-> --wathsala
->
->
+Signed-off-by: Gena Tertychnyi <genter@microsoft.com>
+Signed-off-by: Andre Muezerie <andremue@linux.microsoft.com>
+---
+ lib/eal/windows/eal_lcore.c | 68 +++++++++++++++++++++++++++----------
+ 1 file changed, 51 insertions(+), 17 deletions(-)
+
+diff --git a/lib/eal/windows/eal_lcore.c b/lib/eal/windows/eal_lcore.c
+index a498044620..d2a2c2d091 100644
+--- a/lib/eal/windows/eal_lcore.c
++++ b/lib/eal/windows/eal_lcore.c
+@@ -17,13 +17,27 @@
+ /** Number of logical processors (cores) in a processor group (32 or 64). */
+ #define EAL_PROCESSOR_GROUP_SIZE (sizeof(KAFFINITY) * CHAR_BIT)
+ 
++/*
++ * NUMA_NODE_RELATIONSHIP layout differs:
++ *  - MSVC + modern SDK: GroupCount + GroupMasks[]
++ *  - MinGW-w64: only GroupMask (MinGW headers lag behind Windows SDK ABI changes)
++ */
++#ifdef RTE_TOOLCHAIN_GCC
++#define EAL_NUMA_GROUP_COUNT(numa) (RTE_SET_USED(numa), 1)
++#define EAL_NUMA_GROUP_MASKS(numa) (&((numa).GroupMask))
++#else
++#define EAL_NUMA_GROUP_COUNT(numa) ((numa).GroupCount)
++#define EAL_NUMA_GROUP_MASKS(numa) ((numa).GroupMasks)
++#endif
++
+ struct lcore_map {
+-	uint8_t socket_id;
+-	uint8_t core_id;
++	unsigned int socket_id;
++	unsigned int core_id;
+ };
+ 
+ struct socket_map {
+ 	uint16_t node_id;
++	unsigned int lcore_count;
+ };
+ 
+ struct cpu_map {
+@@ -112,11 +126,15 @@ static bool
+ eal_create_lcore_map(const SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *info)
+ {
+ 	const unsigned int node_id = info->NumaNode.NodeNumber;
+-	const GROUP_AFFINITY *cores = &info->NumaNode.GroupMask;
++	const GROUP_AFFINITY *group_masks = EAL_NUMA_GROUP_MASKS(info->NumaNode);
+ 	struct lcore_map *lcore;
+ 	unsigned int socket_id;
++	unsigned int group_count;
++	unsigned int group_no;
+ 	unsigned int i;
+ 
++	group_count = EAL_NUMA_GROUP_COUNT(info->NumaNode);
++
+ 	/*
+ 	 * NUMA node may be reported multiple times if it includes
+ 	 * cores from different processor groups, e. g. 80 cores
+@@ -132,20 +150,33 @@ eal_create_lcore_map(const SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *info)
+ 			return true;
+ 
+ 		cpu_map.sockets[socket_id].node_id = node_id;
++		cpu_map.sockets[socket_id].lcore_count = 0;
+ 		cpu_map.socket_count++;
+ 	}
+ 
+-	for (i = 0; i < EAL_PROCESSOR_GROUP_SIZE; i++) {
+-		if ((cores->Mask & ((KAFFINITY)1 << i)) == 0)
+-			continue;
++	/* Old Windows versions report NUMA nodes with GroupCount == 0 */
++	if (group_count == 0) {
++		group_count = 1;
++		group_masks = &info->NumaNode.GroupMask;
++	}
+ 
+-		if (cpu_map.lcore_count == RTE_DIM(cpu_map.lcores))
+-			return true;
++	for (group_no = 0; group_no < group_count; group_no++) {
++		const GROUP_AFFINITY *cores = &group_masks[group_no];
++		for (i = 0; i < EAL_PROCESSOR_GROUP_SIZE; i++) {
++			if ((cores->Mask & ((KAFFINITY)1 << i)) == 0)
++				continue;
++
++			if (cpu_map.lcore_count == RTE_DIM(cpu_map.lcores))
++				return true;
+ 
+-		lcore = &cpu_map.lcores[cpu_map.lcore_count];
+-		lcore->socket_id = socket_id;
+-		lcore->core_id = cores->Group * EAL_PROCESSOR_GROUP_SIZE + i;
+-		cpu_map.lcore_count++;
++			lcore = &cpu_map.lcores[cpu_map.lcore_count];
++			lcore->socket_id = socket_id;
++
++			/* core_id within the socket */
++			lcore->core_id = cpu_map.sockets[socket_id].lcore_count;
++			cpu_map.sockets[socket_id].lcore_count++;
++			cpu_map.lcore_count++;
++		}
+ 	}
+ 	return false;
+ }
+@@ -160,8 +191,9 @@ eal_create_cpu_map(void)
+ 
+ 	infos = NULL;
+ 	infos_size = 0;
++	/* RelationAll is needed to get full multi-group NUMA affinity */
+ 	if (!GetLogicalProcessorInformationEx(
+-			RelationNumaNode, NULL, &infos_size)) {
++			RelationAll, NULL, &infos_size)) {
+ 		DWORD error = GetLastError();
+ 		if (error != ERROR_INSUFFICIENT_BUFFER) {
+ 			log_early("Cannot get NUMA node info size, error %lu\n",
+@@ -181,7 +213,7 @@ eal_create_cpu_map(void)
+ 	}
+ 
+ 	if (!GetLogicalProcessorInformationEx(
+-			RelationNumaNode, infos, &infos_size)) {
++			RelationAll, infos, &infos_size)) {
+ 		log_early("Cannot get NUMA node information, error %lu\n",
+ 			GetLastError());
+ 		rte_errno = EINVAL;
+@@ -191,9 +223,11 @@ eal_create_cpu_map(void)
+ 
+ 	info = infos;
+ 	while ((uint8_t *)info - (uint8_t *)infos < infos_size) {
+-		if (eal_create_lcore_map(info)) {
+-			full = true;
+-			break;
++		if (info->Relationship == RelationNumaNode) {
++			if (eal_create_lcore_map(info)) {
++				full = true;
++				break;
++			}
+ 		}
+ 
+ 		info = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX *)(
+-- 
+2.53.0.vfs.0.7
 
