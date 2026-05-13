@@ -2,43 +2,45 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 314AFCD4F21
-	for <dpdk-dev@archiver.kernel.org>; Wed, 13 May 2026 16:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC55CD4F21
+	for <dpdk-dev@archiver.kernel.org>; Wed, 13 May 2026 17:23:18 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 463E8402B6;
-	Wed, 13 May 2026 18:30:45 +0200 (CEST)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 7527C40041
- for <dev@dpdk.org>; Wed, 13 May 2026 18:30:44 +0200 (CEST)
-Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gFzTh51jpzHnGj3
- for <dev@dpdk.org>; Thu, 14 May 2026 00:30:32 +0800 (CST)
-Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id D62C640575
- for <dev@dpdk.org>; Thu, 14 May 2026 00:30:42 +0800 (CST)
-Received: from frapema500003.china.huawei.com (7.182.19.114) by
- frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 13 May 2026 18:30:42 +0200
-Received: from frapema500003.china.huawei.com ([7.182.19.114]) by
- frapema500003.china.huawei.com ([7.182.19.114]) with mapi id 15.02.1544.011;
- Wed, 13 May 2026 18:30:42 +0200
-From: Marat Khalili <marat.khalili@huawei.com>
-To: Arin Kharkar <arinkharkar@gmail.com>, "dev@dpdk.org" <dev@dpdk.org>
-Subject: RE: [PATCH] Updated skeleton example code to better emit error
-Thread-Topic: [PATCH] Updated skeleton example code to better emit error
-Thread-Index: AQHc4tUINr4k8nZga02V0cqaJKyq1LYMJVLw
-Date: Wed, 13 May 2026 16:30:42 +0000
-Message-ID: <fc1544b27d75489fb7f3b95abbebc0a3@huawei.com>
-References: <20260512192834.130651-1-arinkharkar@gmail.com>
-In-Reply-To: <20260512192834.130651-1-arinkharkar@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.206.138.16]
-Content-Type: text/plain; charset="us-ascii"
+	by mails.dpdk.org (Postfix) with ESMTP id 2A596402D0;
+	Wed, 13 May 2026 19:23:17 +0200 (CEST)
+Received: from inbox.dpdk.org (inbox.dpdk.org [95.142.172.178])
+ by mails.dpdk.org (Postfix) with ESMTP id 1AC90402B6
+ for <dev@dpdk.org>; Wed, 13 May 2026 19:23:16 +0200 (CEST)
+Received: by inbox.dpdk.org (Postfix, from userid 33)
+ id 0023B4B1AF; Wed, 13 May 2026 19:23:15 +0200 (CEST)
+From: bugzilla@dpdk.org
+To: dev@dpdk.org
+Subject: [DPDK/core Bug 1944] Crash due to corruption from data race in page
+ prefault in alloc_seg()
+Date: Wed, 13 May 2026 17:23:16 +0000
+X-Bugzilla-Reason: AssignedTo
+X-Bugzilla-Type: new
+X-Bugzilla-Watch-Reason: None
+X-Bugzilla-Product: DPDK
+X-Bugzilla-Component: core
+X-Bugzilla-Version: 24.11
+X-Bugzilla-Keywords: 
+X-Bugzilla-Severity: normal
+X-Bugzilla-Who: michal.sieron@nokia.com
+X-Bugzilla-Status: UNCONFIRMED
+X-Bugzilla-Resolution: 
+X-Bugzilla-Priority: Normal
+X-Bugzilla-Assigned-To: dev@dpdk.org
+X-Bugzilla-Target-Milestone: ---
+X-Bugzilla-Flags: 
+X-Bugzilla-Changed-Fields: bug_id short_desc product version rep_platform
+ op_sys bug_status bug_severity priority component assigned_to reporter
+ target_milestone
+Message-ID: <bug-1944-3@http.bugs.dpdk.org/>
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+X-Bugzilla-URL: http://bugs.dpdk.org/
+Auto-Submitted: auto-generated
+X-Auto-Response-Suppress: All
 MIME-Version: 1.0
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
@@ -53,14 +55,39 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-> --- a/examples/skeleton/basicfwd.c
-> +++ b/examples/skeleton/basicfwd.c
-> @@ -188,11 +188,9 @@ main(int argc, char *argv[])
->  	/* Check that there is an even number of ports to send/receive on. */
->  	nb_ports =3D rte_eth_dev_count_avail();
->  	if (nb_ports < 2 || (nb_ports & 1))
-> -		rte_exit(EXIT_FAILURE, "Error: number of ports must be even\n");
-> +		rte_exit(EXIT_FAILURE, "Error: number of ports must be even, found %u =
-ports\n", nb_ports);
+http://bugs.dpdk.org/show_bug.cgi?id=3D1944
 
-Maybe "positive even"?
+            Bug ID: 1944
+           Summary: Crash due to corruption from data race in page
+                    prefault in alloc_seg()
+           Product: DPDK
+           Version: 24.11
+          Hardware: All
+                OS: Linux
+            Status: UNCONFIRMED
+          Severity: normal
+          Priority: Normal
+         Component: core
+          Assignee: dev@dpdk.org
+          Reporter: michal.sieron@nokia.com
+  Target Milestone: ---
+
+Hi, recently we caught a data corruption seemingly caused by a page prefaul=
+t in
+`alloc_seg()` function from `lib/eal/linux/eal_memalloc.c`:
+> *(volatile int *)addr =3D *(volatile int *)addr;
+
+Internal investigation showed that `rte_eal_init()` from a secondary process
+was indirectly calling this function, which in rare cases led to data
+corruption.
+In our case it resulted in a scheduler crash:
+> EAL: PANIC in eth_event_queue_callback():
+> Cannot restart RxQ(p:1,q:0) after max trying times 4, abort!
+
+The issue is reported for v24.11, but I don't think it is tied to this spec=
+ific
+version and is a general problem since that prefault was added in v18.05.
+
+--=20
+You are receiving this mail because:
+You are the assignee for the bug.=
