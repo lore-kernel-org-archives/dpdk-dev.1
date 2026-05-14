@@ -2,50 +2,39 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B54ECCD4F21
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 May 2026 02:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55865CD4F25
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 May 2026 09:38:05 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D2F5B402B5;
-	Thu, 14 May 2026 04:28:28 +0200 (CEST)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
- by mails.dpdk.org (Postfix) with ESMTP id 2FFBA40657
- for <dev@dpdk.org>; Thu, 14 May 2026 04:28:28 +0200 (CEST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mxhk.zte.com.cn (FangMail) with ESMTPS id 4gGDlX4cLxz8Xs6v;
- Thu, 14 May 2026 10:28:24 +0800 (CST)
-Received: from szxlzmapp03.zte.com.cn ([10.5.231.207])
- by mse-fl1.zte.com.cn with SMTP id 64E2SBsX016105;
- Thu, 14 May 2026 10:28:11 +0800 (+08)
- (envelope-from wang.junlong1@zte.com.cn)
-Received: from localhost.localdomain (unknown [192.168.6.15])
- by smtp (Zmail) with SMTP; Thu, 14 May 2026 10:28:12 +0800
-X-Zmail-TransId: 3e816a05333c002-23b09
-X-Zmail-LocalSMTP: 1
-X-Zmail-RealSender: wang.junlong1@zte.com.cn
-From: Junlong Wang <wang.junlong1@zte.com.cn>
-To: thomas@monjalon.net, stephen@networkplumber.org
-Cc: ran.ming@zte.com.cn, dev@dpdk.org, Junlong Wang <wang.junlong1@zte.com.cn>
-Subject: [PATCH v1 2/2] net/zxdh: update zxdh Maintainers eamil
-Date: Thu, 14 May 2026 09:56:50 +0800
-Message-ID: <20260514015650.3500578-2-wang.junlong1@zte.com.cn>
+	by mails.dpdk.org (Postfix) with ESMTP id 60BBB40276;
+	Thu, 14 May 2026 11:38:04 +0200 (CEST)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 3A4E24025E
+ for <dev@dpdk.org>; Thu, 14 May 2026 11:38:02 +0200 (CEST)
+Received: from mail.maildlp.com (unknown [172.18.224.83])
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gGQGg2CNgzJ4680
+ for <dev@dpdk.org>; Thu, 14 May 2026 17:37:31 +0800 (CST)
+Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
+ by mail.maildlp.com (Postfix) with ESMTPS id 5F27A40577
+ for <dev@dpdk.org>; Thu, 14 May 2026 17:38:01 +0800 (CST)
+Received: from localhost.localdomain (10.220.239.45) by
+ frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 14 May 2026 11:38:01 +0200
+From: Marat Khalili <marat.khalili@huawei.com>
+To: 
+CC: <dev@dpdk.org>, Konstantin Ananyev <konstantin.ananyev@huawei.com>
+Subject: [PATCH v2 00/10] bpf: introduce extensible load API
+Date: Thu, 14 May 2026 10:37:02 +0100
+Message-ID: <20260514093713.90118-1-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20260514015650.3500578-1-wang.junlong1@zte.com.cn>
-References: <20260514015650.3500578-1-wang.junlong1@zte.com.cn>
+In-Reply-To: <20260506172209.6805-1-marat.khalili@huawei.com>
+References: <20260506172209.6805-1-marat.khalili@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: multipart/mixed;
-	boundary="=====_001_next====="
-X-MAIL: mse-fl1.zte.com.cn 64E2SBsX016105
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: wang.junlong1@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Thu, 14 May 2026 10:28:24 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6A053348.002/4gGDlX4cLxz8Xs6v
+Content-Type: text/plain
+X-Originating-IP: [10.220.239.45]
+X-ClientProxiedBy: frapema100002.china.huawei.com (7.182.19.63) To
+ frapema500003.china.huawei.com (7.182.19.114)
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -59,63 +48,131 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
+This patchset introduces an extensible load API for the BPF library in
+DPDK, addressing current limitations regarding ABI stability and feature
+constraints.
 
+Currently, `rte_bpf_load` relies on a fixed `struct rte_bpf_prm`, which
+makes it difficult to add new loading options or parameters without
+breaking the ABI.
 
---=====_001_next=====
-Content-Type: multipart/related;
-	boundary="=====_002_next====="
+To resolve these issues, this series introduces `rte_bpf_load_ex` taking
+`struct rte_bpf_prm_ex`. The new parameter structure includes a `sz`
+field for backward compatibility, allowing future extensions.
 
+Taking advantage of the new extensible API, this patchset also adds
+several new features:
+* Support for loading and executing BPF programs with up to 5 arguments.
+* Support for loading classic BPF (cBPF) directly.
+* Support for loading ELF files directly from memory buffers.
+* New API functions (`rte_bpf_eth_rx_install` and `rte_bpf_eth_tx_install`)
+  to install an already loaded BPF program as a port callback, decoupling
+  the loading phase from the installation phase.
 
---=====_002_next=====
-Content-Type: multipart/alternative;
-	boundary="=====_003_next====="
+v2:
+* Fixed a potential segmentation fault in `exec_vm_burst_ex` by deferring
+  the dereference of `ctx[i].arg` until it is confirmed that `nb_prog_arg > 0`.
+* Clarified documentation and code comments for `RTE_BPF_EXEC_FLAG_JIT`
+  requirements and fast-path expectations.
 
+Series-Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 
---=====_003_next=====
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+---
+To the AI reviewer:
+Thank you for the review. Several of your points were very helpful and
+have been addressed in v2 (e.g. the potential null pointer dereference
+in `exec_vm_burst_ex`, and documenting the `RTE_BPF_EXEC_FLAG_JIT`
+expectations). The remaining points were investigated but do not require
+code changes for the following reasons:
 
-dXBkYXRlIHp4ZGggTWFpbnRhaW5lcnMgZWFtaWwuDQoNClNpZ25lZC1vZmYtYnk6IEp1bmxvbmcg
-V2FuZyA8d2FuZy5qdW5sb25nMUB6dGUuY29tLmNuPg0KLS0tDQogTUFJTlRBSU5FUlMgfCAyICst
-DQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pDQoNCmRpZmYg
-LS1naXQgYS9NQUlOVEFJTkVSUyBiL01BSU5UQUlORVJTDQppbmRleCAwZjU1MzlmODUxLi5lZWIz
-NTJmNmZlIDEwMDY0NA0KLS0tIGEvTUFJTlRBSU5FUlMNCisrKyBiL01BSU5UQUlORVJTDQpAQCAt
-MTExMCw3ICsxMTEwLDcgQEAgRjogZG9jL2d1aWRlcy9uaWNzL2ZlYXR1cmVzL2F2cC5pbmkNCiAN
-CiBaVEUgenhkaA0KIE06IEp1bmxvbmcgV2FuZyA8d2FuZy5qdW5sb25nMUB6dGUuY29tLmNuPg0K
-LU06IExpamllIFNoYW4gPHNoYW4ubGlqaWVAenRlLmNvbS5jbj4NCitNOiBNaW5nIFJhbiA8cmFu
-Lm1pbmdAenRlLmNvbS5jbj4NCiBGOiBkcml2ZXJzL25ldC96eGRoLw0KIEY6IGRvYy9ndWlkZXMv
-bmljcy96eGRoLnJzdA0KIEY6IGRvYy9ndWlkZXMvbmljcy9mZWF0dXJlcy96eGRoLmluaQ0KLS0g
-DQoyLjI3LjA=
+> Can the macro [RTE_BPF_LOG_FUNC_LINE] be enhanced for type safety?
+> Does string literal concatenation support logging format modifiers
+> consistently across all call sites?
+`RTE_LOG_LINE` uses compiler attributes (`__attribute__((format(printf,
+...)))`) to strictly enforce format type safety. Furthermore, standard C
+preprocessors inherently support string literal concatenation prior to
+format checking, ensuring it works safely across all macro invocations.
 
+> Does `bpf_load()` always set `rte_errno` to `ENOMEM` when returning
+> `NULL`, or could it mask other errors by hardcoding `-ENOMEM`?
+By design, the internal `bpf_load()` function only returns `NULL` when
+its internal memory allocation (`mmap`) fails. Returning `-ENOMEM`
+perfectly accurately reflects the nature of this failure.
 
---=====_003_next=====
-Content-Type: text/html ;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+> Can the loop go out of bounds? When `opts_sz` is larger than
+> `type_sz`, does this code read beyond the allocated memory region
+> pointed to by `opts`?
+The bounds are established by the application-supplied `opts_sz`.
+Standard C semantics dictate that if a caller declares a size larger
+than the actual allocated memory, it generates undefined behavior on
+their end. `opts_valid` iterates exactly within the declared limits.
 
-dXBkYXRlJm5ic3A7enhkaCZuYnNwO01haW50YWluZXJzJm5ic3A7ZWFtaWwuPGJyIC8+DTxiciAv
-PlNpZ25lZC1vZmYtYnk6Jm5ic3A7SnVubG9uZyZuYnNwO1dhbmcmbmJzcDsmbHQ7d2FuZy5qdW5s
-b25nMUB6dGUuY29tLmNuJmd0Ow08YnIgLz4tLS08YnIgLz4mbmJzcDtNQUlOVEFJTkVSUyZuYnNw
-O3wmbmJzcDsyJm5ic3A7Ky08YnIgLz4mbmJzcDsxJm5ic3A7ZmlsZSZuYnNwO2NoYW5nZWQsJm5i
-c3A7MSZuYnNwO2luc2VydGlvbigrKSwmbmJzcDsxJm5ic3A7ZGVsZXRpb24oLSk8YnIgLz4NPGJy
-IC8+ZGlmZiZuYnNwOy0tZ2l0Jm5ic3A7YS9NQUlOVEFJTkVSUyZuYnNwO2IvTUFJTlRBSU5FUlM8
-YnIgLz5pbmRleCZuYnNwOzBmNTUzOWY4NTEuLmVlYjM1MmY2ZmUmbmJzcDsxMDA2NDQ8YnIgLz4t
-LS0mbmJzcDthL01BSU5UQUlORVJTPGJyIC8+KysrJm5ic3A7Yi9NQUlOVEFJTkVSUzxiciAvPkBA
-Jm5ic3A7LTExMTAsNyZuYnNwOysxMTEwLDcmbmJzcDtAQCZuYnNwO0Y6Jm5ic3A7ZG9jL2d1aWRl
-cy9uaWNzL2ZlYXR1cmVzL2F2cC5pbmk8YnIgLz4mbmJzcDsNPGJyIC8+Jm5ic3A7WlRFJm5ic3A7
-enhkaDxiciAvPiZuYnNwO006Jm5ic3A7SnVubG9uZyZuYnNwO1dhbmcmbmJzcDsmbHQ7d2FuZy5q
-dW5sb25nMUB6dGUuY29tLmNuJmd0Ow08YnIgLz4tTTombmJzcDtMaWppZSZuYnNwO1NoYW4mbmJz
-cDsmbHQ7c2hhbi5saWppZUB6dGUuY29tLmNuJmd0Ow08YnIgLz4rTTombmJzcDtNaW5nJm5ic3A7
-UmFuJm5ic3A7Jmx0O3Jhbi5taW5nQHp0ZS5jb20uY24mZ3Q7DTxiciAvPiZuYnNwO0Y6Jm5ic3A7
-ZHJpdmVycy9uZXQvenhkaC88YnIgLz4mbmJzcDtGOiZuYnNwO2RvYy9ndWlkZXMvbmljcy96eGRo
-LnJzdDxiciAvPiZuYnNwO0Y6Jm5ic3A7ZG9jL2d1aWRlcy9uaWNzL2ZlYXR1cmVzL3p4ZGguaW5p
-PGJyIC8+LS0mbmJzcDsNPGJyIC8+Mi4yNy4wPGJyIC8+
+> Does the `memcpy()` handle the case where `app_prm->sz` is larger than
+> `sizeof(load->prm)` correctly? Can partial copies lead to inconsistent
+> state if the struct has pointer members?
+The call to `opts_valid()` happens prior to `memcpy()` and guarantees
+that any extra trailing space is definitively filled with zeroes. This
+implies the application relies entirely on default functionality for the
+newer unknown fields, making a truncated partial copy completely sound.
 
+> Can `elf_end()` be called with `NULL` safely? Does it cause undefined
+> behavior if `load->elf` is `NULL`?
+`elf_end()` in `libelf` is explicitly defined to handle `NULL` pointers
+as a safe no-op.
 
---=====_003_next=====--
+> Can this logic handle uninitialized or out-of-range `prog_arg->type`
+> values? Does `RTE_BPF_ARG_PTR_MBUF` have a specific numeric value that
+> should be validated before use?
+The function utilizes strict positive equality checks against valid enum
+values (`RTE_BPF_ARG_RAW`, `RTE_BPF_ARG_PTR`, `RTE_BPF_ARG_PTR_MBUF`).
+Invalid or uninitialized types simply fall through and cleanly return
+`false`.
 
---=====_002_next=====--
+> Does the `malloc` check for integer overflow in the size calculation
+> `nb_ins * sizeof(load->ins[0])`?
+`bpf_convert_filter()` acts as a strict gatekeeper and enforces an upper
+bound limit (`BPF_MAXINSNS` = 4096) on instruction count. This extremely
+small ceiling makes an arithmetic overflow in `malloc` mathematically
+impossible.
 
---=====_001_next=====--
+> Does `bpf_eth_elf_install()` acquire any additional locks? Can this
+> lead to a deadlock?
+No secondary lock acquisitions exist inside `bpf_eth_elf_install()`. It
+executes standard initialization logic and callback registrations
+without touching threading constructs, ensuring a deadlock-free flow.
+
+Marat Khalili (10):
+  bpf: make logging prefixes more consistent
+  bpf: introduce extensible load API
+  bpf: support up to 5 arguments
+  bpf: add cBPF origin to rte_bpf_load_ex
+  bpf: support rte_bpf_prm_ex with port callbacks
+  bpf: support loading ELF files from memory
+  test/bpf: test loading cBPF directly
+  test/bpf: test loading ELF file from memory
+  doc: add release notes for new extensible BPF API
+  doc: add load API to BPF programmer's guide
+
+ app/test/test_bpf.c                    | 325 +++++++++++++++----------
+ doc/guides/prog_guide/bpf_lib.rst      |  75 +++++-
+ doc/guides/rel_notes/release_26_07.rst |  20 ++
+ lib/bpf/bpf.c                          |  32 ++-
+ lib/bpf/bpf_convert.c                  |  97 +++++++-
+ lib/bpf/bpf_exec.c                     | 129 +++++++++-
+ lib/bpf/bpf_impl.h                     |  53 +++-
+ lib/bpf/bpf_jit_arm64.c                |  18 +-
+ lib/bpf/bpf_jit_x86.c                  |  10 +-
+ lib/bpf/bpf_load.c                     | 200 +++++++++++++--
+ lib/bpf/bpf_load_elf.c                 | 189 +++++++++-----
+ lib/bpf/bpf_pkt.c                      |  65 +++--
+ lib/bpf/bpf_stub.c                     |  46 ----
+ lib/bpf/bpf_validate.c                 |  94 ++++---
+ lib/bpf/meson.build                    |  15 +-
+ lib/bpf/rte_bpf.h                      | 199 ++++++++++++++-
+ lib/bpf/rte_bpf_ethdev.h               |  54 ++++
+ 17 files changed, 1252 insertions(+), 369 deletions(-)
+ delete mode 100644 lib/bpf/bpf_stub.c
+
+-- 
+2.43.0
 
