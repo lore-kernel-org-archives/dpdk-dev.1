@@ -2,20 +2,20 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2A3CD4F25
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 May 2026 09:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E62CD4F25
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 May 2026 09:38:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id C085840678;
-	Thu, 14 May 2026 11:38:19 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id D29AD40661;
+	Thu, 14 May 2026 11:38:20 +0200 (CEST)
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com
- [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id C40E94025E
- for <dev@dpdk.org>; Thu, 14 May 2026 11:38:14 +0200 (CEST)
+ [185.176.79.56]) by mails.dpdk.org (Postfix) with ESMTP id 2EFC74025E
+ for <dev@dpdk.org>; Thu, 14 May 2026 11:38:15 +0200 (CEST)
 Received: from mail.maildlp.com (unknown [172.18.224.83])
- by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gGQGw3zhXzJ4680
- for <dev@dpdk.org>; Thu, 14 May 2026 17:37:44 +0800 (CST)
+ by frasgout.his.huawei.com (SkyGuard) with ESMTPS id 4gGQHH3M9tzHnH6s
+ for <dev@dpdk.org>; Thu, 14 May 2026 17:38:03 +0800 (CST)
 Received: from frapema500003.china.huawei.com (unknown [7.182.19.114])
- by mail.maildlp.com (Postfix) with ESMTPS id 9E95B40569
- for <dev@dpdk.org>; Thu, 14 May 2026 17:38:14 +0800 (CST)
+ by mail.maildlp.com (Postfix) with ESMTPS id 1071140569
+ for <dev@dpdk.org>; Thu, 14 May 2026 17:38:15 +0800 (CST)
 Received: from localhost.localdomain (10.220.239.45) by
  frapema500003.china.huawei.com (7.182.19.114) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -23,9 +23,9 @@ Received: from localhost.localdomain (10.220.239.45) by
 From: Marat Khalili <marat.khalili@huawei.com>
 To: Konstantin Ananyev <konstantin.ananyev@huawei.com>
 CC: <dev@dpdk.org>
-Subject: [PATCH v2 05/10] bpf: support rte_bpf_prm_ex with port callbacks
-Date: Thu, 14 May 2026 10:37:07 +0100
-Message-ID: <20260514093713.90118-6-marat.khalili@huawei.com>
+Subject: [PATCH v2 06/10] bpf: support loading ELF files from memory
+Date: Thu, 14 May 2026 10:37:08 +0100
+Message-ID: <20260514093713.90118-7-marat.khalili@huawei.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260514093713.90118-1-marat.khalili@huawei.com>
 References: <20260506172209.6805-1-marat.khalili@huawei.com>
@@ -49,216 +49,144 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Introduce new functions to install an already loaded BPF program into RX
-or TX port/queue, since previous API was tied to rte_bpf_prm.
+Introduce new ELF origin RTE_BPF_ORIGIN_ELF_MEMORY allowing one to
+specify data area containing ELF image.
 
 Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
 ---
- lib/bpf/bpf_pkt.c        | 65 ++++++++++++++++++++++++++++++----------
- lib/bpf/rte_bpf_ethdev.h | 54 +++++++++++++++++++++++++++++++++
- 2 files changed, 104 insertions(+), 15 deletions(-)
+ lib/bpf/bpf_impl.h     |  5 +++++
+ lib/bpf/bpf_load.c     |  4 ++++
+ lib/bpf/bpf_load_elf.c | 40 +++++++++++++++++++++++++++++++++++++++-
+ lib/bpf/rte_bpf.h      |  6 ++++++
+ 4 files changed, 54 insertions(+), 1 deletion(-)
 
-diff --git a/lib/bpf/bpf_pkt.c b/lib/bpf/bpf_pkt.c
-index 5007f6aef5..87065e939f 100644
---- a/lib/bpf/bpf_pkt.c
-+++ b/lib/bpf/bpf_pkt.c
-@@ -490,13 +490,11 @@ rte_bpf_eth_tx_unload(uint16_t port, uint16_t queue)
- }
+diff --git a/lib/bpf/bpf_impl.h b/lib/bpf/bpf_impl.h
+index 92d03583d9..14ad772d4b 100644
+--- a/lib/bpf/bpf_impl.h
++++ b/lib/bpf/bpf_impl.h
+@@ -27,6 +27,7 @@ struct __rte_bpf_load {
+ 	/* Loading ELF and applying relocations. */
+ 	int elf_fd;  /* ELF fd, must be negative (not zero) by default. */
+ 	void *elf;  /* Using void to avoid dependency on libelf. */
++	const char *elf_section;
  
- static int
--bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
--	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
--	uint32_t flags)
-+bpf_eth_elf_install(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
-+	struct rte_bpf *bpf, uint32_t flags)
- {
- 	int32_t rc;
- 	struct bpf_eth_cbi *bc;
--	struct rte_bpf *bpf;
- 	rte_rx_callback_fn frx;
- 	rte_tx_callback_fn ftx;
- 	struct rte_bpf_jit jit;
-@@ -504,14 +502,17 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 	frx = NULL;
- 	ftx = NULL;
+ 	/* Value we are going to return, if any. */
+ 	struct rte_bpf *bpf;
+@@ -53,6 +54,10 @@ __rte_bpf_load_elf_cleanup(struct __rte_bpf_load *load);
+ int
+ __rte_bpf_load_elf_file(struct __rte_bpf_load *load);
  
--	if (prm == NULL || rte_eth_dev_is_valid_port(port) == 0 ||
-+	if (bpf == NULL || rte_eth_dev_is_valid_port(port) == 0 ||
- 			queue >= RTE_MAX_QUEUES_PER_PORT)
++/* Open the ELF memory image. */
++int
++__rte_bpf_load_elf_memory(struct __rte_bpf_load *load);
++
+ /* Get code from ELF and apply relocations to it. */
+ int
+ __rte_bpf_load_elf_code(struct __rte_bpf_load *load);
+diff --git a/lib/bpf/bpf_load.c b/lib/bpf/bpf_load.c
+index c3c49ac49b..b626f6c616 100644
+--- a/lib/bpf/bpf_load.c
++++ b/lib/bpf/bpf_load.c
+@@ -237,6 +237,10 @@ load_try(struct __rte_bpf_load *load, const struct rte_bpf_prm_ex *app_prm)
+ 		rc = rc < 0 ? rc : __rte_bpf_load_elf_file(load);
+ 		rc = rc < 0 ? rc : __rte_bpf_load_elf_code(load);
+ 		break;
++	case RTE_BPF_ORIGIN_ELF_MEMORY:
++		rc = rc < 0 ? rc : __rte_bpf_load_elf_memory(load);
++		rc = rc < 0 ? rc : __rte_bpf_load_elf_code(load);
++		break;
+ 	default:
+ 		rc = rc < 0 ? rc : -EINVAL;
+ 	}
+diff --git a/lib/bpf/bpf_load_elf.c b/lib/bpf/bpf_load_elf.c
+index 4ae7492351..80443cb63a 100644
+--- a/lib/bpf/bpf_load_elf.c
++++ b/lib/bpf/bpf_load_elf.c
+@@ -310,6 +310,36 @@ __rte_bpf_load_elf_file(struct __rte_bpf_load *load)
  		return -EINVAL;
+ 	}
  
-+	if (bpf->prm.nb_prog_arg != 1)
++	load->elf_section = prm->elf_file.section;
++
++	return 0;
++}
++
++int
++__rte_bpf_load_elf_memory(struct __rte_bpf_load *load)
++{
++	const struct rte_bpf_prm_ex *const prm = &load->prm;
++
++	RTE_ASSERT(prm->origin == RTE_BPF_ORIGIN_ELF_MEMORY);
++
++	if (prm->elf_memory.data == NULL || prm->elf_memory.section == NULL)
 +		return -EINVAL;
 +
- 	if (cbh->type == BPF_ETH_RX)
--		frx = select_rx_callback(prm->prog_arg.type, flags);
-+		frx = select_rx_callback(bpf->prm.prog_arg[0].type, flags);
- 	else
--		ftx = select_tx_callback(prm->prog_arg.type, flags);
-+		ftx = select_tx_callback(bpf->prm.prog_arg[0].type, flags);
- 
- 	if (frx == NULL && ftx == NULL) {
- 		RTE_BPF_LOG_LINE(ERR, "%s(%u, %u): no callback selected;",
-@@ -519,16 +520,11 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 		return -EINVAL;
- 	}
- 
--	bpf = rte_bpf_elf_load(prm, fname, sname);
--	if (bpf == NULL)
--		return -rte_errno;
--
- 	rte_bpf_get_jit(bpf, &jit);
- 
- 	if ((flags & RTE_BPF_ETH_F_JIT) != 0 && jit.func == NULL) {
- 		RTE_BPF_LOG_LINE(ERR, "%s(%u, %u): no JIT generated;",
- 			__func__, port, queue);
--		rte_bpf_destroy(bpf);
- 		return -ENOTSUP;
- 	}
- 
-@@ -551,7 +547,6 @@ bpf_eth_elf_load(struct bpf_eth_cbh *cbh, uint16_t port, uint16_t queue,
- 
- 	if (bc->cb == NULL) {
- 		rc = -rte_errno;
--		rte_bpf_destroy(bpf);
- 		bpf_eth_cbi_cleanup(bc);
- 	} else
- 		rc = 0;
-@@ -564,13 +559,33 @@ int
- rte_bpf_eth_rx_elf_load(uint16_t port, uint16_t queue,
- 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
- 	uint32_t flags)
-+{
-+	struct rte_bpf *bpf;
-+	int32_t rc;
++	if (elf_version(EV_CURRENT) == EV_NONE)
++		return -ENOTSUP;
 +
-+	bpf = rte_bpf_elf_load(prm, fname, sname);
-+	if (bpf == NULL)
-+		return -rte_errno;
++	load->elf = elf_memory(
++		/* Cast away const, we are not going to modify the ELF image. */
++		(char *)(uintptr_t)prm->elf_memory.data, prm->elf_memory.size);
++	if (load->elf == NULL) {
++		const int rc = elf_errno();
++		RTE_BPF_LOG_FUNC_LINE(ERR, "error %d opening ELF image: %s",
++			rc, elf_errmsg(rc));
++		return -EINVAL;
++	}
 +
-+	rc = rte_bpf_eth_rx_install(port, queue, bpf, flags);
++	load->elf_section = prm->elf_memory.section;
 +
-+	if (rc < 0)
-+		rte_bpf_destroy(bpf);
-+
-+	return rc;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_eth_rx_install, 26.11)
-+int
-+rte_bpf_eth_rx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
-+	uint32_t flags)
- {
- 	int32_t rc;
- 	struct bpf_eth_cbh *cbh;
- 
- 	cbh = &rx_cbh;
- 	rte_spinlock_lock(&cbh->lock);
--	rc = bpf_eth_elf_load(cbh, port, queue, prm, fname, sname, flags);
-+	rc = bpf_eth_elf_install(cbh, port, queue, bpf, flags);
- 	rte_spinlock_unlock(&cbh->lock);
- 
- 	return rc;
-@@ -581,13 +596,33 @@ int
- rte_bpf_eth_tx_elf_load(uint16_t port, uint16_t queue,
- 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
- 	uint32_t flags)
-+{
-+	struct rte_bpf *bpf;
-+	int32_t rc;
-+
-+	bpf = rte_bpf_elf_load(prm, fname, sname);
-+	if (bpf == NULL)
-+		return -rte_errno;
-+
-+	rc = rte_bpf_eth_tx_install(port, queue, bpf, flags);
-+
-+	if (rc < 0)
-+		rte_bpf_destroy(bpf);
-+
-+	return rc;
-+}
-+
-+RTE_EXPORT_EXPERIMENTAL_SYMBOL(rte_bpf_eth_tx_install, 26.11)
-+int
-+rte_bpf_eth_tx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
-+	uint32_t flags)
- {
- 	int32_t rc;
- 	struct bpf_eth_cbh *cbh;
- 
- 	cbh = &tx_cbh;
- 	rte_spinlock_lock(&cbh->lock);
--	rc = bpf_eth_elf_load(cbh, port, queue, prm, fname, sname, flags);
-+	rc = bpf_eth_elf_install(cbh, port, queue, bpf, flags);
- 	rte_spinlock_unlock(&cbh->lock);
- 
- 	return rc;
-diff --git a/lib/bpf/rte_bpf_ethdev.h b/lib/bpf/rte_bpf_ethdev.h
-index cab8e9e388..e5eaf5b245 100644
---- a/lib/bpf/rte_bpf_ethdev.h
-+++ b/lib/bpf/rte_bpf_ethdev.h
-@@ -109,6 +109,60 @@ rte_bpf_eth_tx_elf_load(uint16_t port, uint16_t queue,
- 	const struct rte_bpf_prm *prm, const char *fname, const char *sname,
- 	uint32_t flags);
- 
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Install callback to execute specified BPF program on given TX port/queue.
-+ *
-+ * On success the ownership of the program passes to the library,
-+ * rte_bpf_eth_unload must be used to unload it, and rte_bpf_destroy must no
-+ * longer be called.
-+ *
-+ * @param port
-+ *   The identifier of the ethernet port
-+ * @param queue
-+ *   The identifier of the TX queue on the given port
-+ * @param bpf
-+ *   BPF program
-+ * @param flags
-+ *   Flags that define expected behavior of the loaded filter
-+ *   (i.e. jited/non-jited version to use).
-+ * @return
-+ *   Zero on successful completion or negative error code otherwise.
-+ */
-+__rte_experimental
-+int
-+rte_bpf_eth_rx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
-+	uint32_t flags);
-+
-+/**
-+ * @warning
-+ * @b EXPERIMENTAL: This API may change, or be removed, without prior notice.
-+ *
-+ * Install callback to execute specified BPF program on given RX port/queue.
-+ *
-+ * On success the ownership of the program passes to the library,
-+ * rte_bpf_eth_unload must be used to unload it, and rte_bpf_destroy must no
-+ * longer be called.
-+ *
-+ * @param port
-+ *   The identifier of the ethernet port
-+ * @param queue
-+ *   The identifier of the RX queue on the given port
-+ * @param bpf
-+ *   BPF program
-+ * @param flags
-+ *   Flags that define expected behavior of the loaded filter
-+ *   (i.e. jited/non-jited version to use).
-+ * @return
-+ *   Zero on successful completion or negative error code otherwise.
-+ */
-+__rte_experimental
-+int
-+rte_bpf_eth_tx_install(uint16_t port, uint16_t queue, struct rte_bpf *bpf,
-+	uint32_t flags);
-+
- #ifdef __cplusplus
+ 	return 0;
  }
- #endif
+ 
+@@ -321,7 +351,7 @@ __rte_bpf_load_elf_code(struct __rte_bpf_load *load)
+ 	size_t sidx;
+ 	int rc;
+ 
+-	rc = find_elf_code(load->elf, prm->elf_file.section, &sd, &sidx);
++	rc = find_elf_code(load->elf, load->elf_section, &sd, &sidx);
+ 	if (rc < 0)
+ 		return rc;
+ 
+@@ -353,6 +383,14 @@ __rte_bpf_load_elf_file(struct __rte_bpf_load *load)
+ 	return -ENOTSUP;
+ }
+ 
++int
++__rte_bpf_load_elf_memory(struct __rte_bpf_load *load)
++{
++	RTE_SET_USED(load);
++	RTE_BPF_LOG_FUNC_LINE(ERR, "not supported, rebuild with libelf installed");
++	return -ENOTSUP;
++}
++
+ int
+ __rte_bpf_load_elf_code(struct __rte_bpf_load *load)
+ {
+diff --git a/lib/bpf/rte_bpf.h b/lib/bpf/rte_bpf.h
+index da2bdea7e0..413ccf0497 100644
+--- a/lib/bpf/rte_bpf.h
++++ b/lib/bpf/rte_bpf.h
+@@ -97,6 +97,7 @@ enum rte_bpf_origin {
+ 	RTE_BPF_ORIGIN_RAW,		/**< code loaded from raw array */
+ 	RTE_BPF_ORIGIN_CBPF,		/**< code converted from cbpf */
+ 	RTE_BPF_ORIGIN_ELF_FILE,	/**< code loaded from elf_file */
++	RTE_BPF_ORIGIN_ELF_MEMORY,	/**< code loaded from elf_memory */
+ };
+ 
+ struct bpf_insn;
+@@ -127,6 +128,11 @@ struct rte_bpf_prm_ex {
+ 			const char *path;  /**< path to the ELF file */
+ 			const char *section;  /**< ELF section with the code */
+ 		} elf_file;
++		struct {
++			const void *data;  /**< pointer to the ELF image */
++			size_t size;  /**< size of the ELF image */
++			const char *section;  /**< ELF section with the code */
++		} elf_memory;
+ 	};
+ 
+ 	const struct rte_bpf_xsym *xsym;
 -- 
 2.43.0
 
