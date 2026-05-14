@@ -2,79 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FADECD37AC
-	for <dpdk-dev@archiver.kernel.org>; Thu, 14 May 2026 02:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14676CD37AC
+	for <dpdk-dev@archiver.kernel.org>; Thu, 14 May 2026 02:03:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E2D6B4065A;
-	Thu, 14 May 2026 04:02:52 +0200 (CEST)
-Received: from mx0b-00154904.pphosted.com (mx0b-00154904.pphosted.com
- [148.163.137.20])
- by mails.dpdk.org (Postfix) with ESMTP id 510FA4065A
+	by mails.dpdk.org (Postfix) with ESMTP id DDE1C40661;
+	Thu, 14 May 2026 04:02:53 +0200 (CEST)
+Received: from mx0a-00154904.pphosted.com (mx0a-00154904.pphosted.com
+ [148.163.133.20])
+ by mails.dpdk.org (Postfix) with ESMTP id 643BF4065B
  for <dev@dpdk.org>; Thu, 14 May 2026 04:02:51 +0200 (CEST)
-Received: from pps.filterd (m0170398.ppops.net [127.0.0.1])
- by mx0b-00154904.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 64DHLwZ91865445 for <dev@dpdk.org>; Wed, 13 May 2026 22:02:48 -0400
+Received: from pps.filterd (m0170391.ppops.net [127.0.0.1])
+ by mx0a-00154904.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
+ 64DFLQuH2613441 for <dev@dpdk.org>; Wed, 13 May 2026 22:02:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=cc
  :content-transfer-encoding:content-type:date:from:in-reply-to
- :message-id:mime-version:references:subject:to; s=smtpout1; bh=K
- GpmCNj4uSTXl2pij3fq5mzREVLTz9L4hgU+zdob5aI=; b=daa6oMkyekNse+TIp
- agA+gRDqa6R6qq6QbAnmiNCJx5ylv0+/z8nUJ4XQONSW4NyLUcCG6S0L8UeqmHv5
- Lm+WLGPbl22dB0ZZLgA5iuuKismu4qQ3iTyLeUo3ZYoN7g3QwrSomEtIWwAQQp8X
- CXpFMhQB8huvScnxCCexDLtO6kBdQfMtwy+xt4SL8UEyRZ4YndFKYDfpIyZ1Cnyy
- xcVvYSpYwQ4028Aw2w1qrjGTb35z4gzY62g8qu3dJwFC9uduSsN6odLDhzR0uN5V
- KI/X/bWdu9zZ/WAF7U0Uu9A8xcWg2yoMPx0BbfOWOyvh36RiiBzQStmc88Nx5rOP
- H0D3g==
+ :message-id:mime-version:references:subject:to; s=smtpout1; bh=m
+ WDwP3z5TqLwgHg7vk5yoV0JMei4Jq72tHkIbZ44ero=; b=PYjHytsLCGDajYh+x
+ jEF8vXEmd4f1ORczbdBKRwo5Mzaq+xycAmMG0VzVxuaoZ6NBqL3pV47XsWwDiOC7
+ +zvvqlgymqxzs2gR9YnZV4ebOHEswAOOs+l96TF4+yQPMhTts2GFIwyvae+FptGk
+ ikaA0O+S58V3HlaNJrcd9GEZQp/0P3yyL4lC142eZji8Wkt2m3cS/wjcFaz6qQzo
+ Tfck3CRokw9a6KwErk581Moa6RHmM6RlhmWggzRr9+HzVzv1F2Tuk+ArkpCBwCLn
+ 3O434e3qmtWaSs0OycgWwE6VyPlYs0EK2pbQFWUfa/PL2n0jQZmmBaGnDUCu0Tik
+ bGTmQ==
 Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com
  [67.231.157.37])
- by mx0b-00154904.pphosted.com (PPS) with ESMTPS id 4e3nv0ks7n-1
+ by mx0a-00154904.pphosted.com (PPS) with ESMTPS id 4e3nv03sww-1
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT)
- for <dev@dpdk.org>; Wed, 13 May 2026 22:02:48 -0400 (EDT)
+ for <dev@dpdk.org>; Wed, 13 May 2026 22:02:49 -0400 (EDT)
 Received: from pps.filterd (m0393468.ppops.net [127.0.0.1])
  by mx0a-00154901.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id
- 64E0wojY1290069 for <dev@dpdk.org>; Wed, 13 May 2026 22:02:48 -0400
+ 64E0wojZ1290069 for <dev@dpdk.org>; Wed, 13 May 2026 22:02:49 -0400
 Received: from esapsmtplv05.us.dell.com (esapsmtplv05.us.dell.com
  [143.166.203.153])
- by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 4e51aej921-1
+ by mx0a-00154901.pphosted.com (PPS) with ESMTPS id 4e51aej921-2
  (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK)
  for <dev@dpdk.org>; Wed, 13 May 2026 22:02:48 -0400 (EDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=dell.com; i=@dell.com; q=dns/txt; s=smtpdev1;
- t=1778724168; x=1810260168;
+ t=1778724169; x=1810260169;
  h=from:to:cc:subject:date:message-id:in-reply-to:
  references:mime-version:content-transfer-encoding;
- bh=KGpmCNj4uSTXl2pij3fq5mzREVLTz9L4hgU+zdob5aI=;
- b=ijQVQRrpTwK4WcOJvE8coq1zF8mJdJo5Yad5is6HqF+m9jv/i3Br0K/e
- RflT+elM5B7K71bX/wm/cLx7LwPVmAjWnjTAJKE0g6geWjUqmnm2/bKAO
- qFdJk6N3CbRW8NiO7aGgzCDmIOW2zLQBql4x3uhA49vQ+cryPAL3fWMZo
- Shj/6ESqo0+PzG4KeI+JhhB1BxmljnRaTXxlCBvipm71AUAf4YEP1Wmwb
- 21Tn7p6LPK+PtapASnjtgfC83jT7zrVY8IxYIk4sJaDGbb1GUy745X8pL
- BxQAiiRXy8L8KwqdtkBjBstUOEPAiGC5CpBUheQtDpccw19I0p4gOh1x0 g==;
-X-CSE-ConnectionGUID: cUiGXqpAR+WPiYFnE5qBuA==
-X-CSE-MsgGUID: KIAIriFqSEi3xBsN7OlWDQ==
+ bh=mWDwP3z5TqLwgHg7vk5yoV0JMei4Jq72tHkIbZ44ero=;
+ b=ZaJx7h3eCETSyTWInhoZhwIzLrt4Dm9nmkZTZsOx+ZMJtX7S+QbQi9YT
+ pV4sivOrV2F1HZgoIX8hNYxR8EJpqI7aJBfClNdb9F2rf56ZEXTDxD1Sj
+ IIV04L78TwBcMg75Nt/+piUhfn+P9YboqML4se2yLzEJ/ku1QVq9M5xwu
+ D+JwcdASHioeC/9E9OIkTGYJlBJPnIawDCTRAUxgwIMm20o+jjuTyru9Q
+ vrabJvxwL+S0w+sMrEvbO6qMRPljUdrfbBQ8HXhUjlqYQzblKpH+i/xp2
+ YwnR3tZ8uc7zMbWH7N6SCSDPByRpKpEcAybgPKDmILuLb7Le+a1YgyqVE w==;
+X-CSE-ConnectionGUID: Snk1bcu/SAGc1Jw21m6a2Q==
+X-CSE-MsgGUID: YGk7JaXqSwaQ6122ZDxwtg==
 X-LoopCount0: from 10.215.64.30
 X-MS-Exchange-CrossPremises-AuthAs: Internal
 Received: from mx1-adc.dell.com (HELO ieorr5-pvwed001.delllabs.net)
  ([10.215.64.30])
  by esapsmtplv05.us.dell.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 14 May 2026 02:02:47 +0000
+ 14 May 2026 02:02:48 +0000
 Received: from ieorr5-ppwem001.delllabs.net (100.64.0.132) by
  ieorr5-pvwed001.delllabs.net (10.215.64.30) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 13 May 2026 21:04:01 -0500
+ 15.2.1544.36; Wed, 13 May 2026 21:04:03 -0500
 Received: from ieorr5-pvwer002.delllabs.net (100.64.0.135) by
  ieorr5-ppwem001.delllabs.net (100.64.0.132) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.36; Wed, 13 May 2026 21:02:45 -0500
+ 15.2.1544.36; Wed, 13 May 2026 21:02:47 -0500
 Received: from localhost (10.240.17.25) by smtprelay.delllabs.net
  (100.64.0.135) with Microsoft SMTP Server id 15.2.1544.36 via Frontend
- Transport; Wed, 13 May 2026 21:02:45 -0500
+ Transport; Wed, 13 May 2026 21:02:46 -0500
 From: <pravin.bathija@dell.com>
 To: <dev@dpdk.org>, <fengchengwen@huawei.com>, <stephen@networkplumber.org>,
  <maxime.coquelin@redhat.com>
 CC: <pravin.bathija@dell.com>, <thomas@monjalon.net>
-Subject: [PATCH v13 2/5] vhost_user: header defines for add/rem mem region
-Date: Thu, 14 May 2026 02:01:54 +0000
-Message-ID: <20260514020157.1937404-3-pravin.bathija@dell.com>
+Subject: [PATCH v13 3/5] vhost_user: support function defines for back-end
+Date: Thu, 14 May 2026 02:01:55 +0000
+Message-ID: <20260514020157.1937404-4-pravin.bathija@dell.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20260514020157.1937404-1-pravin.bathija@dell.com>
 References: <20260514020157.1937404-1-pravin.bathija@dell.com>
@@ -89,25 +89,25 @@ X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
  phishscore=0 suspectscore=0 priorityscore=1501 impostorscore=0 spamscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2605050000 definitions=main-2605140018
-X-Proofpoint-GUID: MwJ5Ti9mQqwSD5BRqWH9o94iSBvdY0w2
-X-Authority-Analysis: v=2.4 cv=f6h4wuyM c=1 sm=1 tr=0 ts=6a052d48 cx=c_pps
+X-Proofpoint-GUID: K30qzFN60vhilzxoE44GUAhY0sKcBieU
+X-Proofpoint-ORIG-GUID: K30qzFN60vhilzxoE44GUAhY0sKcBieU
+X-Authority-Analysis: v=2.4 cv=e/A2j6p/ c=1 sm=1 tr=0 ts=6a052d4a cx=c_pps
  a=Z2e5DKjA+8LiMDv5v6mwwA==:117 a=t4Iba6VQkoKuxR139xjPXA==:17
  a=NGcC8JguVDcA:10 a=ke5jqHz-1hQA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=6gNNCFAoQcIphELLPWWu:22 a=vUAfKriDyi6VqHAKCLgX:22 a=iLNU1ar6AAAA:8
- a=CCbkoWxl33X5vWekUEUA:9 a=hlJyneSgMmFPbskH-t2w:22
-X-Proofpoint-ORIG-GUID: MwJ5Ti9mQqwSD5BRqWH9o94iSBvdY0w2
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE0MDAxOCBTYWx0ZWRfX0eVKi9YW81u8
- HENsJ2MpDOX5uZrsLeHOuw+NXLd/Xl7g6H3PFo23k7d8n8DAyCsdtjWIBcu2hWtwujPSGMFCX8I
- /H+l7w+FbppmYiyug1aQVkxLrHAX15AW0gBSSDwdlBOzGLW+pUso+eHH6gMmy4vidtfXu3aEZGD
- 1Yx3B8V1PlXI+8dh1rbSazqpPwnZnqPze6vF8Po4catCZlu8NsgD1T2Eu72ikLT78x3g/2IjVbE
- +WMjftyOiw95t/Lj7q2FqQopaiNQEEPjfztxsfbnG34iuzzf0CjSz02ytyWY06mPAkxTuwWneoI
- gGe11P42zbPB/0htFjCHNfHQ6ze0WGOIF5MZCZQmebtOOZFc9CUNHI1HBLYjEtqTaqSv/8aM7dd
- FrGH6EYgGXBsTSu3LsWZBnR5xWR/q5J17fY36suba72o9Th9CEl3ZZI7LwsFlRlEK6hsWYNyiZ6
- 1ZxYMS5hRRyLpR3VHtA==
+ a=6gNNCFAoQcIphELLPWWu:22 a=aNt9FJNJ8fZyd9HhltU_:22 a=iLNU1ar6AAAA:8
+ a=dC6U_BfcRaM5ZE5AslMA:9 a=hlJyneSgMmFPbskH-t2w:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjYwNTE0MDAxOCBTYWx0ZWRfX3FqodotW786c
+ o5SUQQUOuWQeLeVLc0VGY1zozSG3H+k07edUPzDC/QcYrUZSCq5LlmxTajGwI1VB+cvlzCdWB5n
+ J3I81jYONTKQD/SM6R8n/Unq4tbzOE1XcHKAWkuIve30madRjMizFuqB9O2MZoCc8P3osRLGAb5
+ nqjYvzLG8IEeK/g8KY1ZItPmtLmEKbUqhD3bi72PiVO4rWV7Ov70n1BiGzz3VxEz1rDgPL5/P+t
+ GdT1xkXk0pkAQnHH/UVRL6Iif+591AQf+zLDUosoBMHmnD/2/b3Z4VrtEU8isArqKM/TzNg27Ql
+ V+yvmziWTXqLVzEtOvckNwV/5oqBZb7rTNosvDGyAJ9hrA3ZarMYa9HQJ9HUIf/kLCEybbejaQe
+ grghjzRj/8bVb2jVO98z9Yuetf9cfCfJOBBLvDRJ71R45rnxmDy+tS830rWfYlSo1k6xQxx7nZv
+ cx+aBwSurINbn4QdMeQ==
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0
- lowpriorityscore=0 priorityscore=1501
- suspectscore=0 phishscore=0
- clxscore=1015 impostorscore=0 adultscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 impostorscore=0 phishscore=0
+ priorityscore=1501 spamscore=0
+ lowpriorityscore=0 bulkscore=0 suspectscore=0 adultscore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
  reason=mlx scancount=1 engine=8.22.0-2605050000 definitions=main-2605140018
 X-BeenThere: dev@dpdk.org
@@ -125,53 +125,175 @@ Errors-To: dev-bounces@dpdk.org
 
 From: Pravin M Bathija <pravin.bathija@dell.com>
 
-The changes in this file cover the enum message requests for
-supporting add/remove memory regions. The front-end vhost-user
-client sends messages like get max memory slots, add memory region
-and remove memory region which are covered in these changes which
-are on the vhost-user back-end. The changes also include data structure
-definition of memory region to be added/removed. The data structure
-VhostUserMsg has been changed to include the memory region.
+Here we define support functions which are called from the various
+vhost-user back-end message functions like set memory table, get
+memory slots, add memory region, remove memory region.  These are
+essentially common functions to unmap a set of memory regions,
+perform register copy, align memory addresses and dma map/unmap a
+single memory region.
 
 Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
 ---
- lib/vhost/vhost_user.h | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ lib/vhost/vhost_user.c | 89 ++++++++++++++++++++++++++++--------------
+ 1 file changed, 60 insertions(+), 29 deletions(-)
 
-diff --git a/lib/vhost/vhost_user.h b/lib/vhost/vhost_user.h
-index ef486545ba..6435816534 100644
---- a/lib/vhost/vhost_user.h
-+++ b/lib/vhost/vhost_user.h
-@@ -67,6 +67,9 @@ typedef enum VhostUserRequest {
- 	VHOST_USER_POSTCOPY_END = 30,
- 	VHOST_USER_GET_INFLIGHT_FD = 31,
- 	VHOST_USER_SET_INFLIGHT_FD = 32,
-+	VHOST_USER_GET_MAX_MEM_SLOTS = 36,
-+	VHOST_USER_ADD_MEM_REG = 37,
-+	VHOST_USER_REM_MEM_REG = 38,
- 	VHOST_USER_SET_STATUS = 39,
- 	VHOST_USER_GET_STATUS = 40,
- } VhostUserRequest;
-@@ -91,6 +94,11 @@ typedef struct VhostUserMemory {
- 	VhostUserMemoryRegion regions[VHOST_MEMORY_MAX_NREGIONS];
- } VhostUserMemory;
+diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
+index 4bfb13fb98..0ee3fe7a5e 100644
+--- a/lib/vhost/vhost_user.c
++++ b/lib/vhost/vhost_user.c
+@@ -171,20 +171,27 @@ get_blk_size(int fd)
+ 	return ret == -1 ? (uint64_t)-1 : (uint64_t)stat.st_blksize;
+ }
  
-+typedef struct VhostUserMemRegMsg {
-+	uint64_t padding;
-+	VhostUserMemoryRegion region;
-+} VhostUserMemRegMsg;
+-static void
+-async_dma_map(struct virtio_net *dev, bool do_map)
++static int
++async_dma_map_region(struct virtio_net *dev, struct rte_vhost_mem_region *reg, bool do_map)
+ {
+-	int ret = 0;
+ 	uint32_t i;
+-	struct guest_page *page;
++	int ret;
++	uint64_t reg_start = reg->host_user_addr;
++	uint64_t reg_end = reg_start + reg->size;
 +
- typedef struct VhostUserLog {
- 	uint64_t mmap_size;
- 	uint64_t mmap_offset;
-@@ -186,6 +194,7 @@ typedef struct __rte_packed_begin VhostUserMsg {
- 		struct vhost_vring_state state;
- 		struct vhost_vring_addr addr;
- 		VhostUserMemory memory;
-+		VhostUserMemRegMsg memreg;
- 		VhostUserLog    log;
- 		struct vhost_iotlb_msg iotlb;
- 		VhostUserCryptoSessionParam crypto_session;
++	for (i = 0; i < dev->nr_guest_pages; i++) {
++		struct guest_page *page = &dev->guest_pages[i];
++
++		/* Only process pages belonging to this region */
++		if (page->host_user_addr < reg_start ||
++		    page->host_user_addr >= reg_end)
++			continue;
+ 
+-	if (do_map) {
+-		for (i = 0; i < dev->nr_guest_pages; i++) {
+-			page = &dev->guest_pages[i];
++		if (do_map) {
+ 			ret = rte_vfio_container_dma_map(RTE_VFIO_DEFAULT_CONTAINER_FD,
+-							 page->host_user_addr,
+-							 page->host_iova,
+-							 page->size);
++					page->host_user_addr,
++					page->host_iova,
++					page->size);
+ 			if (ret) {
+ 				/*
+ 				 * DMA device may bind with kernel driver, in this case,
+@@ -199,33 +206,57 @@ async_dma_map(struct virtio_net *dev, bool do_map)
+ 				 * normal case in async path. This is a workaround.
+ 				 */
+ 				if (rte_errno == ENODEV)
+-					return;
++					return 0;
+ 
+ 				/* DMA mapping errors won't stop VHOST_USER_SET_MEM_TABLE. */
+ 				VHOST_CONFIG_LOG(dev->ifname, ERR, "DMA engine map failed");
++				return -1;
+ 			}
+-		}
+-
+-	} else {
+-		for (i = 0; i < dev->nr_guest_pages; i++) {
+-			page = &dev->guest_pages[i];
++		} else {
+ 			ret = rte_vfio_container_dma_unmap(RTE_VFIO_DEFAULT_CONTAINER_FD,
+-							   page->host_user_addr,
+-							   page->host_iova,
+-							   page->size);
++					page->host_user_addr,
++					page->host_iova,
++					page->size);
+ 			if (ret) {
+ 				/* like DMA map, ignore the kernel driver case when unmap. */
+ 				if (rte_errno == EINVAL)
+-					return;
++					return 0;
+ 
+ 				VHOST_CONFIG_LOG(dev->ifname, ERR, "DMA engine unmap failed");
++				return -1;
+ 			}
+ 		}
+ 	}
++
++	return 0;
++}
++
++static void
++async_dma_map(struct virtio_net *dev, bool do_map)
++{
++	uint32_t i;
++	struct rte_vhost_mem_region *reg;
++
++	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
++		reg = &dev->mem->regions[i];
++		if (reg->host_user_addr == 0)
++			continue;
++		async_dma_map_region(dev, reg, do_map);
++	}
+ }
+ 
+ static void
+-free_mem_region(struct virtio_net *dev)
++free_mem_region(struct rte_vhost_mem_region *reg)
++{
++	if (reg != NULL && reg->mmap_addr) {
++		munmap(reg->mmap_addr, reg->mmap_size);
++		close(reg->fd);
++		memset(reg, 0, sizeof(struct rte_vhost_mem_region));
++	}
++}
++
++static void
++free_all_mem_regions(struct virtio_net *dev)
+ {
+ 	uint32_t i;
+ 	struct rte_vhost_mem_region *reg;
+@@ -236,12 +267,10 @@ free_mem_region(struct virtio_net *dev)
+ 	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
+ 		async_dma_map(dev, false);
+ 
+-	for (i = 0; i < dev->mem->nregions; i++) {
++	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
+ 		reg = &dev->mem->regions[i];
+-		if (reg->host_user_addr) {
+-			munmap(reg->mmap_addr, reg->mmap_size);
+-			close(reg->fd);
+-		}
++		if (reg->mmap_addr)
++			free_mem_region(reg);
+ 	}
+ }
+ 
+@@ -255,7 +284,7 @@ vhost_backend_cleanup(struct virtio_net *dev)
+ 		vdpa_dev->ops->dev_cleanup(dev->vid);
+ 
+ 	if (dev->mem) {
+-		free_mem_region(dev);
++		free_all_mem_regions(dev);
+ 		rte_free(dev->mem);
+ 		dev->mem = NULL;
+ 	}
+@@ -704,7 +733,7 @@ numa_realloc(struct virtio_net **pdev, struct vhost_virtqueue **pvq)
+ 	vhost_devices[dev->vid] = dev;
+ 
+ 	mem_size = sizeof(struct rte_vhost_memory) +
+-		sizeof(struct rte_vhost_mem_region) * dev->mem->nregions;
++		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS;
+ 	mem = rte_realloc_socket(dev->mem, mem_size, 0, node);
+ 	if (!mem) {
+ 		VHOST_CONFIG_LOG(dev->ifname, ERR,
+@@ -808,8 +837,10 @@ hua_to_alignment(struct rte_vhost_memory *mem, void *ptr)
+ 	uint32_t i;
+ 	uintptr_t hua = (uintptr_t)ptr;
+ 
+-	for (i = 0; i < mem->nregions; i++) {
++	for (i = 0; i < VHOST_MEMORY_MAX_NREGIONS; i++) {
+ 		r = &mem->regions[i];
++		if (r->host_user_addr == 0)
++			continue;
+ 		if (hua >= r->host_user_addr &&
+ 			hua < r->host_user_addr + r->size) {
+ 			return get_blk_size(r->fd);
 -- 
 2.43.0
 
