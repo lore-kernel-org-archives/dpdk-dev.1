@@ -2,49 +2,50 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B55CD4F39
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 01:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB44CD4851
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 08:43:58 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 9049640274;
-	Fri, 15 May 2026 03:04:41 +0200 (CEST)
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com
- [113.46.200.218])
- by mails.dpdk.org (Postfix) with ESMTP id 47CE540151
- for <dev@dpdk.org>; Fri, 15 May 2026 03:04:40 +0200 (CEST)
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
- c=relaxed/relaxed; q=dns/txt; h=From;
- bh=jwTm2xVUnXpSISi+h+/zmM96OlXuoi2ph4xwwyAwNtc=;
- b=dX7sj5QyDitSwVeIVUDLhqP7RVYUmhJSkPzfELgfGVwB7Z73bD0YU/HOw1V2dAXPi22YcIe89
- OUH0ZzhxuEE1mZhvyoktBOMod/OzZmmnWgWj4JTwZDSd3tPug0V08bKKo6WYxDSKmpfCatg3TGJ
- 3D52q3mS5YZ0HmdD/qjMqiE=
-Received: from mail.maildlp.com (unknown [172.19.163.104])
- by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4gGphF2VXtzpTHf;
- Fri, 15 May 2026 08:57:33 +0800 (CST)
-Received: from kwepemk500009.china.huawei.com (unknown [7.202.194.94])
- by mail.maildlp.com (Postfix) with ESMTPS id ADEEE4048F;
- Fri, 15 May 2026 09:04:37 +0800 (CST)
-Received: from [10.67.121.161] (10.67.121.161) by
- kwepemk500009.china.huawei.com (7.202.194.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 15 May 2026 09:04:37 +0800
-Message-ID: <71c3a27c-a76f-4339-a4f5-997cd1d98286@huawei.com>
-Date: Fri, 15 May 2026 09:04:36 +0800
+	by mails.dpdk.org (Postfix) with ESMTP id 631A740269;
+	Fri, 15 May 2026 10:43:57 +0200 (CEST)
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+ by mails.dpdk.org (Postfix) with ESMTP id F08A0400EF
+ for <dev@dpdk.org>; Fri, 15 May 2026 10:43:54 +0200 (CEST)
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+ (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+ key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+ (No client certificate requested)
+ by mxct.zte.com.cn (FangMail) with ESMTPS id 4gH12G1JPjz4xPSP
+ for <dev@dpdk.org>; Fri, 15 May 2026 16:43:50 +0800 (CST)
+Received: from szxl2zmapp07.zte.com.cn ([10.1.32.52])
+ by mse-fl1.zte.com.cn with SMTP id 64F8heWJ018170
+ for <dev@dpdk.org>; Fri, 15 May 2026 16:43:40 +0800 (+08)
+ (envelope-from han.chengfei@zte.com.cn)
+Received: from localhost.localdomain (unknown [192.168.6.15])
+ by smtp (Zmail) with SMTP; Fri, 15 May 2026 16:43:43 +0800
+X-Zmail-TransId: 3e816a06dcbe002-650c2
+X-Zmail-LocalSMTP: 1
+X-Zmail-RealSender: han.chengfei@zte.com.cn
+From: Chengfei Han <han.chengfei@zte.com.cn>
+To: dev@dpdk.org
+Cc: ran.ming@zte.com.cn, Chengfei Han <han.chengfei@zte.com.cn>
+Subject: [PATCH 1/1] crypto/zsda: Update product name and maintainer
+Date: Fri, 15 May 2026 16:12:12 +0800
+Message-ID: <20260515081212.3565572-2-han.chengfei@zte.com.cn>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20260515081212.3565572-1-han.chengfei@zte.com.cn>
+References: <20260515081212.3565572-1-han.chengfei@zte.com.cn>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 4/5] vhost_user: Function defs for add/rem mem regions
-To: <pravin.bathija@dell.com>, <dev@dpdk.org>, <stephen@networkplumber.org>,
- <maxime.coquelin@redhat.com>
-CC: <thomas@monjalon.net>
-References: <20260514224627.2014566-1-pravin.bathija@dell.com>
- <20260514224627.2014566-5-pravin.bathija@dell.com>
-Content-Language: en-US
-From: fengchengwen <fengchengwen@huawei.com>
-In-Reply-To: <20260514224627.2014566-5-pravin.bathija@dell.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.121.161]
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemk500009.china.huawei.com (7.202.194.94)
+Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed;
+	boundary="=====_001_next====="
+X-MAIL: mse-fl1.zte.com.cn 64F8heWJ018170
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: han.chengfei@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.132 unknown Fri, 15 May 2026 16:43:50 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6A06DCC6.000/4gH12G1JPjz4xPSP
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -58,467 +59,122 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 5/15/2026 6:46 AM, pravin.bathija@dell.com wrote:
-> From: Pravin M Bathija <pravin.bathija@dell.com>
-> 
-> These changes cover the function definition for add/remove memory
-> region calls which are invoked on receiving vhost user message from
-> vhost user front-end (e.g. Qemu). In our case, in addition to testing
-> with qemu front-end, the testing has also been performed with libblkio
-> front-end and spdk/dpdk back-end. We did I/O using libblkio based device
-> driver, to spdk based drives.
-> There are also changes for set_mem_table and new definition for get memory
-> slots. Our changes optimize the set memory table call to use common support
-> functions. A new vhost_user_initialize_memory() function is introduced to
-> factor out the common memory initialization logic from the function
-> vhost_user_set_mem_table(), which is now called from both the SET_MEM_TABLE
-> message handler and the ADD_MEM_REG handler (for the first region).
-> Message get memory slots is how the vhost-user front-end queries the
-> vhost-user back-end about the number of memory slots available to be
-> registered by the back-end. In addition support function to invalidate
-> vring is also defined which is used in add/remove memory region functions.
-> The helper function remove_guest_pages is also defined here which is called
-> from vhost_user_add_mem_reg.
 
-Two much detail which provide noisy infomation I think, how about:
 
-vhost: add mem region add/remove handlers
+--=====_001_next=====
+Content-Type: multipart/related;
+	boundary="=====_002_next====="
 
-Add support for VHOST_USER_ADD_MEM_REG, VHOST_USER_REM_MEM_REG and
-VHOST_USER_GET_MAX_MEM_SLOTS. Refactor memory initialization into
-common helper and add supporting functions for dynamic memory management.
 
-Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
+--=====_002_next=====
+Content-Type: multipart/alternative;
+	boundary="=====_003_next====="
 
-> 
-> Signed-off-by: Pravin M Bathija <pravin.bathija@dell.com>
-> ---
->  lib/vhost/vhost_user.c | 329 ++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 296 insertions(+), 33 deletions(-)
-> 
-> diff --git a/lib/vhost/vhost_user.c b/lib/vhost/vhost_user.c
-> index 0ee3fe7a5e..fdcb7e0158 100644
-> --- a/lib/vhost/vhost_user.c
-> +++ b/lib/vhost/vhost_user.c
-> @@ -71,6 +71,9 @@ VHOST_MESSAGE_HANDLER(VHOST_USER_SET_FEATURES, vhost_user_set_features, false, t
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_OWNER, vhost_user_set_owner, false, true) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_RESET_OWNER, vhost_user_reset_owner, false, false) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_MEM_TABLE, vhost_user_set_mem_table, true, true) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_GET_MAX_MEM_SLOTS, vhost_user_get_max_mem_slots, false, false) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_ADD_MEM_REG, vhost_user_add_mem_reg, true, true) \
-> +VHOST_MESSAGE_HANDLER(VHOST_USER_REM_MEM_REG, vhost_user_rem_mem_reg, true, true) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_LOG_BASE, vhost_user_set_log_base, true, true) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_LOG_FD, vhost_user_set_log_fd, true, true) \
->  VHOST_MESSAGE_HANDLER(VHOST_USER_SET_VRING_NUM, vhost_user_set_vring_num, false, true) \
-> @@ -1167,6 +1170,24 @@ add_guest_pages(struct virtio_net *dev, struct rte_vhost_mem_region *reg,
->  	return 0;
->  }
->  
-> +static void
-> +remove_guest_pages(struct virtio_net *dev, struct rte_vhost_mem_region *reg)
-> +{
-> +	uint64_t reg_start = reg->host_user_addr;
-> +	uint64_t reg_end = reg_start + reg->size;
-> +	uint32_t i, j = 0;
-> +
-> +	for (i = 0; i < dev->nr_guest_pages; i++) {
-> +		if (dev->guest_pages[i].host_user_addr >= reg_start &&
-> +		    dev->guest_pages[i].host_user_addr < reg_end)
-> +			continue;
-> +		if (j != i)
-> +			dev->guest_pages[j] = dev->guest_pages[i];
-> +		j++;
-> +	}
-> +	dev->nr_guest_pages = j;
-> +}
-> +
->  #ifdef RTE_LIBRTE_VHOST_DEBUG
->  /* TODO: enable it only in debug mode? */
->  static void
-> @@ -1413,6 +1434,52 @@ vhost_user_mmap_region(struct virtio_net *dev,
->  	return 0;
->  }
->  
-> +static int
-> +vhost_user_initialize_memory(struct virtio_net **pdev)
-> +{
-> +	struct virtio_net *dev = *pdev;
-> +	int numa_node = SOCKET_ID_ANY;
-> +
-> +	if (dev->mem != NULL) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +			"memory already initialized, free it first");
-> +		return -1;
-> +	}
-> +
-> +	/*
-> +	 * If VQ 0 has already been allocated, try to allocate on the same
-> +	 * NUMA node. It can be reallocated later in numa_realloc().
-> +	 */
-> +	if (dev->nr_vring > 0)
-> +		numa_node = dev->virtqueue[0]->numa_node;
-> +
-> +	dev->nr_guest_pages = 0;
-> +	if (dev->guest_pages == NULL) {
-> +		dev->max_guest_pages = 8;
-> +		dev->guest_pages = rte_zmalloc_socket(NULL,
-> +					dev->max_guest_pages *
-> +					sizeof(struct guest_page),
-> +					RTE_CACHE_LINE_SIZE,
-> +					numa_node);
-> +		if (dev->guest_pages == NULL) {
-> +			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +				"failed to allocate memory for dev->guest_pages");
-> +			return -1;
-> +		}
-> +	}
-> +
-> +	dev->mem = rte_zmalloc_socket("vhost-mem-table", sizeof(struct rte_vhost_memory) +
-> +		sizeof(struct rte_vhost_mem_region) * VHOST_MEMORY_MAX_NREGIONS, 0, numa_node);
-> +	if (dev->mem == NULL) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to allocate memory for dev->mem");
-> +		rte_free(dev->guest_pages);
-> +		dev->guest_pages = NULL;
-> +		return -1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int
->  vhost_user_set_mem_table(struct virtio_net **pdev,
->  			struct vhu_msg_context *ctx,
-> @@ -1421,7 +1488,6 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
->  	struct virtio_net *dev = *pdev;
->  	struct VhostUserMemory *memory = &ctx->msg.payload.memory;
->  	struct rte_vhost_mem_region *reg;
-> -	int numa_node = SOCKET_ID_ANY;
->  	uint64_t mmap_offset;
->  	uint32_t i;
->  	bool async_notify = false;
-> @@ -1466,39 +1532,13 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
->  		if (dev->features & (1ULL << VIRTIO_F_IOMMU_PLATFORM))
->  			vhost_user_iotlb_flush_all(dev);
->  
-> -		free_mem_region(dev);
-> +		free_all_mem_regions(dev);
 
-This should be done in commit 3/5, I suspect that 3/5 of the code may fail to be compiled.
+--=====_003_next=====
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-Please make sure each commit should compile OK, so that git commit binary search and
-troubleshooting could work.
+Q29ycmVjdCBwcm9kdWN0IG5hbWUgZnJvbSAnMWNmMicgdG8gJ05lbyBYNTEwL1g1MTInIGluIFBN
+RCBkb2N1bWVudGF0aW9uLg0KVXBkYXRlIG1haW50YWluZXIgZm9yIFpURSBTdG9yYWdlIERhdGEg
+QWNjZWxlcmF0b3IgKFpTREEpDQoNClNpZ25lZC1vZmYtYnk6IENoZW5nZmVpIEhhbiA8aGFuLmNo
+ZW5nZmVpQHp0ZS5jb20uY24+DQotLS0NCiBNQUlOVEFJTkVSUyAgICAgICAgICAgICAgICAgICAg
+ICB8IDMgKystDQogZG9jL2d1aWRlcy9jb21wcmVzc2RldnMvenNkYS5yc3QgfCAzICstLQ0KIGRv
+Yy9ndWlkZXMvY3J5cHRvZGV2cy96c2RhLnJzdCAgIHwgMyArLS0NCiAzIGZpbGVzIGNoYW5nZWQs
+IDQgaW5zZXJ0aW9ucygrKSwgNSBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL01BSU5UQUlO
+RVJTIGIvTUFJTlRBSU5FUlMNCmluZGV4IDBmNTUzOWY4NTEuLjdmMzAyMDViMjQgMTAwNjQ0DQot
+LS0gYS9NQUlOVEFJTkVSUw0KKysrIGIvTUFJTlRBSU5FUlMNCkBAIC0xMzUyLDcgKzEzNTIsOCBA
+QCBGOiBkb2MvZ3VpZGVzL2NvbXByZXNzZGV2cy96bGliLnJzdA0KIEY6IGRvYy9ndWlkZXMvY29t
+cHJlc3NkZXZzL2ZlYXR1cmVzL3psaWIuaW5pDQogDQogWlRFIFN0b3JhZ2UgRGF0YSBBY2NlbGVy
+YXRvciAoWlNEQSkNCi1NOiBIYW54aWFvIExpIDxsaS5oYW54aWFvQHp0ZS5jb20uY24+DQorTTog
+Q2hlbmdmZWkgSGFuIDxoYW4uY2hlbmdmZWlAenRlLmNvbS5jbj4NCitNOiBNaW5nIFJhbiA8cmFu
+Lm1pbmdAenRlLmNvbS5jbj4NCiBGOiBkcml2ZXJzL2NvbW1vbi96c2RhLw0KIEY6IGRyaXZlcnMv
+Y29tcHJlc3MvenNkYS8NCiBGOiBkb2MvZ3VpZGVzL2NvbXByZXNzZGV2cy96c2RhLnJzdA0KZGlm
+ZiAtLWdpdCBhL2RvYy9ndWlkZXMvY29tcHJlc3NkZXZzL3pzZGEucnN0IGIvZG9jL2d1aWRlcy9j
+b21wcmVzc2RldnMvenNkYS5yc3QNCmluZGV4IDI1Yjc4ODQ1MzUuLjViOGQ0ODQ2YTAgMTAwNjQ0
+DQotLS0gYS9kb2MvZ3VpZGVzL2NvbXByZXNzZGV2cy96c2RhLnJzdA0KKysrIGIvZG9jL2d1aWRl
+cy9jb21wcmVzc2RldnMvenNkYS5yc3QNCkBAIC03LDggKzcsNyBAQCBaVEUgU3RvcmFnZSBEYXRh
+IEFjY2VsZXJhdG9yIChaU0RBKSBQb2xsIE1vZGUgRHJpdmVyDQogVGhlIFpTREEgY29tcHJlc3Np
+b24gUE1EIHByb3ZpZGVzIHBvbGwgbW9kZSBjb21wcmVzc2lvbiAmIGRlY29tcHJlc3Npb24gZHJp
+dmVyDQogc3VwcG9ydCBmb3IgdGhlIGZvbGxvd2luZyBoYXJkd2FyZSBhY2NlbGVyYXRvciBkZXZp
+Y2VzOg0KIA0KLSogWlRFIFByb2Nlc3NpbmcgYWNjZWxlcmF0b3JzIDFjZjINCi0NCistIE5lbyBY
+NTEwL1g1MTINCiANCiBGZWF0dXJlcw0KIC0tLS0tLS0tDQpkaWZmIC0tZ2l0IGEvZG9jL2d1aWRl
+cy9jcnlwdG9kZXZzL3pzZGEucnN0IGIvZG9jL2d1aWRlcy9jcnlwdG9kZXZzL3pzZGEucnN0DQpp
+bmRleCBiMDI0ZjUzN2MxLi44ODg1NjYzZTllIDEwMDY0NA0KLS0tIGEvZG9jL2d1aWRlcy9jcnlw
+dG9kZXZzL3pzZGEucnN0DQorKysgYi9kb2MvZ3VpZGVzL2NyeXB0b2RldnMvenNkYS5yc3QNCkBA
+IC03LDggKzcsNyBAQCBaVEUgU3RvcmFnZSBEYXRhIEFjY2VsZXJhdG9yIChaU0RBKSBQb2xsIE1v
+ZGUgRHJpdmVyDQogVGhlIFpTREEgY3J5cHRvIFBNRCBwcm92aWRlcyBwb2xsIG1vZGUgQ2lwaGVy
+IGFuZCBIYXNoIGRyaXZlcg0KIHN1cHBvcnQgZm9yIHRoZSBmb2xsb3dpbmcgaGFyZHdhcmUgYWNj
+ZWxlcmF0b3IgZGV2aWNlczoNCiANCi0qIFpURSBQcm9jZXNzaW5nIGFjY2VsZXJhdG9ycyAxY2Yy
+DQotDQorLSBOZW8gWDUxMC9YNTEyDQogDQogRmVhdHVyZXMNCiAtLS0tLS0tLQ0KLS0gDQoyLjI3
+LjA=
 
->  		rte_free(dev->mem);
->  		dev->mem = NULL;
->  	}
->  
-> -	/*
-> -	 * If VQ 0 has already been allocated, try to allocate on the same
-> -	 * NUMA node. It can be reallocated later in numa_realloc().
-> -	 */
-> -	if (dev->nr_vring > 0)
-> -		numa_node = dev->virtqueue[0]->numa_node;
-> -
-> -	dev->nr_guest_pages = 0;
-> -	if (dev->guest_pages == NULL) {
-> -		dev->max_guest_pages = 8;
-> -		dev->guest_pages = rte_zmalloc_socket(NULL,
-> -					dev->max_guest_pages *
-> -					sizeof(struct guest_page),
-> -					RTE_CACHE_LINE_SIZE,
-> -					numa_node);
-> -		if (dev->guest_pages == NULL) {
-> -			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> -				"failed to allocate memory for dev->guest_pages");
-> -			goto close_msg_fds;
-> -		}
-> -	}
-> -
-> -	dev->mem = rte_zmalloc_socket("vhost-mem-table", sizeof(struct rte_vhost_memory) +
-> -		sizeof(struct rte_vhost_mem_region) * memory->nregions, 0, numa_node);
-> -	if (dev->mem == NULL) {
-> -		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to allocate memory for dev->mem");
-> -		goto free_guest_pages;
-> -	}
-> +	if (vhost_user_initialize_memory(pdev) < 0)
-> +		goto close_msg_fds;
->  
->  	for (i = 0; i < memory->nregions; i++) {
->  		reg = &dev->mem->regions[i];
-> @@ -1562,11 +1602,9 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
->  	return RTE_VHOST_MSG_RESULT_OK;
->  
->  free_mem_table:
-> -	free_mem_region(dev);
-> +	free_all_mem_regions(dev);
 
-Same, it should be done in commit 3/5
+--=====_003_next=====
+Content-Type: text/html ;
+	charset="UTF-8"
+Content-Transfer-Encoding: base64
 
->  	rte_free(dev->mem);
->  	dev->mem = NULL;
-> -
-> -free_guest_pages:
->  	rte_free(dev->guest_pages);
->  	dev->guest_pages = NULL;
->  close_msg_fds:
-> @@ -1574,6 +1612,231 @@ vhost_user_set_mem_table(struct virtio_net **pdev,
->  	return RTE_VHOST_MSG_RESULT_ERR;
->  }
->  
-> +
-> +static int
-> +vhost_user_get_max_mem_slots(struct virtio_net **pdev __rte_unused,
-> +			struct vhu_msg_context *ctx,
-> +			int main_fd __rte_unused)
-> +{
-> +	uint32_t max_mem_slots = VHOST_MEMORY_MAX_NREGIONS;
-> +
-> +	ctx->msg.payload.u64 = (uint64_t)max_mem_slots;
-> +	ctx->msg.size = sizeof(ctx->msg.payload.u64);
-> +	ctx->fd_num = 0;
-> +
-> +	return RTE_VHOST_MSG_RESULT_REPLY;
-> +}
-> +
-> +static void
-> +_dev_invalidate_vrings(struct virtio_net **pdev)
+Q29ycmVjdCZuYnNwO3Byb2R1Y3QmbmJzcDtuYW1lJm5ic3A7ZnJvbSZuYnNwOyZhcG9zOzFjZjIm
+YXBvczsmbmJzcDt0byZuYnNwOyZhcG9zO05lbyZuYnNwO1g1MTAvWDUxMiZhcG9zOyZuYnNwO2lu
+Jm5ic3A7UE1EJm5ic3A7ZG9jdW1lbnRhdGlvbi48YnIgLz5VcGRhdGUmbmJzcDttYWludGFpbmVy
+Jm5ic3A7Zm9yJm5ic3A7WlRFJm5ic3A7U3RvcmFnZSZuYnNwO0RhdGEmbmJzcDtBY2NlbGVyYXRv
+ciZuYnNwOyhaU0RBKTxiciAvPg08YnIgLz5TaWduZWQtb2ZmLWJ5OiZuYnNwO0NoZW5nZmVpJm5i
+c3A7SGFuJm5ic3A7Jmx0O2hhbi5jaGVuZ2ZlaUB6dGUuY29tLmNuJmd0Ow08YnIgLz4tLS08YnIg
+Lz4mbmJzcDtNQUlOVEFJTkVSUyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZu
+YnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNw
+OyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwOyZuYnNwO3wmbmJzcDszJm5ic3A7KystPGJy
+IC8+Jm5ic3A7ZG9jL2d1aWRlcy9jb21wcmVzc2RldnMvenNkYS5yc3QmbmJzcDt8Jm5ic3A7MyZu
+YnNwOystLTxiciAvPiZuYnNwO2RvYy9ndWlkZXMvY3J5cHRvZGV2cy96c2RhLnJzdCZuYnNwOyZu
+YnNwOyZuYnNwO3wmbmJzcDszJm5ic3A7Ky0tPGJyIC8+Jm5ic3A7MyZuYnNwO2ZpbGVzJm5ic3A7
+Y2hhbmdlZCwmbmJzcDs0Jm5ic3A7aW5zZXJ0aW9ucygrKSwmbmJzcDs1Jm5ic3A7ZGVsZXRpb25z
+KC0pPGJyIC8+DTxiciAvPmRpZmYmbmJzcDstLWdpdCZuYnNwO2EvTUFJTlRBSU5FUlMmbmJzcDti
+L01BSU5UQUlORVJTPGJyIC8+aW5kZXgmbmJzcDswZjU1MzlmODUxLi43ZjMwMjA1YjI0Jm5ic3A7
+MTAwNjQ0PGJyIC8+LS0tJm5ic3A7YS9NQUlOVEFJTkVSUzxiciAvPisrKyZuYnNwO2IvTUFJTlRB
+SU5FUlM8YnIgLz5AQCZuYnNwOy0xMzUyLDcmbmJzcDsrMTM1Miw4Jm5ic3A7QEAmbmJzcDtGOiZu
+YnNwO2RvYy9ndWlkZXMvY29tcHJlc3NkZXZzL3psaWIucnN0PGJyIC8+Jm5ic3A7RjombmJzcDtk
+b2MvZ3VpZGVzL2NvbXByZXNzZGV2cy9mZWF0dXJlcy96bGliLmluaTxiciAvPiZuYnNwOw08YnIg
+Lz4mbmJzcDtaVEUmbmJzcDtTdG9yYWdlJm5ic3A7RGF0YSZuYnNwO0FjY2VsZXJhdG9yJm5ic3A7
+KFpTREEpPGJyIC8+LU06Jm5ic3A7SGFueGlhbyZuYnNwO0xpJm5ic3A7Jmx0O2xpLmhhbnhpYW9A
+enRlLmNvbS5jbiZndDsNPGJyIC8+K006Jm5ic3A7Q2hlbmdmZWkmbmJzcDtIYW4mbmJzcDsmbHQ7
+aGFuLmNoZW5nZmVpQHp0ZS5jb20uY24mZ3Q7DTxiciAvPitNOiZuYnNwO01pbmcmbmJzcDtSYW4m
+bmJzcDsmbHQ7cmFuLm1pbmdAenRlLmNvbS5jbiZndDsNPGJyIC8+Jm5ic3A7RjombmJzcDtkcml2
+ZXJzL2NvbW1vbi96c2RhLzxiciAvPiZuYnNwO0Y6Jm5ic3A7ZHJpdmVycy9jb21wcmVzcy96c2Rh
+LzxiciAvPiZuYnNwO0Y6Jm5ic3A7ZG9jL2d1aWRlcy9jb21wcmVzc2RldnMvenNkYS5yc3Q8YnIg
+Lz5kaWZmJm5ic3A7LS1naXQmbmJzcDthL2RvYy9ndWlkZXMvY29tcHJlc3NkZXZzL3pzZGEucnN0
+Jm5ic3A7Yi9kb2MvZ3VpZGVzL2NvbXByZXNzZGV2cy96c2RhLnJzdDxiciAvPmluZGV4Jm5ic3A7
+MjViNzg4NDUzNS4uNWI4ZDQ4NDZhMCZuYnNwOzEwMDY0NDxiciAvPi0tLSZuYnNwO2EvZG9jL2d1
+aWRlcy9jb21wcmVzc2RldnMvenNkYS5yc3Q8YnIgLz4rKysmbmJzcDtiL2RvYy9ndWlkZXMvY29t
+cHJlc3NkZXZzL3pzZGEucnN0PGJyIC8+QEAmbmJzcDstNyw4Jm5ic3A7KzcsNyZuYnNwO0BAJm5i
+c3A7WlRFJm5ic3A7U3RvcmFnZSZuYnNwO0RhdGEmbmJzcDtBY2NlbGVyYXRvciZuYnNwOyhaU0RB
+KSZuYnNwO1BvbGwmbmJzcDtNb2RlJm5ic3A7RHJpdmVyPGJyIC8+Jm5ic3A7VGhlJm5ic3A7WlNE
+QSZuYnNwO2NvbXByZXNzaW9uJm5ic3A7UE1EJm5ic3A7cHJvdmlkZXMmbmJzcDtwb2xsJm5ic3A7
+bW9kZSZuYnNwO2NvbXByZXNzaW9uJm5ic3A7JmFtcDsmbmJzcDtkZWNvbXByZXNzaW9uJm5ic3A7
+ZHJpdmVyPGJyIC8+Jm5ic3A7c3VwcG9ydCZuYnNwO2ZvciZuYnNwO3RoZSZuYnNwO2ZvbGxvd2lu
+ZyZuYnNwO2hhcmR3YXJlJm5ic3A7YWNjZWxlcmF0b3ImbmJzcDtkZXZpY2VzOjxiciAvPiZuYnNw
+Ow08YnIgLz4tKiZuYnNwO1pURSZuYnNwO1Byb2Nlc3NpbmcmbmJzcDthY2NlbGVyYXRvcnMmbmJz
+cDsxY2YyPGJyIC8+LTxiciAvPistJm5ic3A7TmVvJm5ic3A7WDUxMC9YNTEyPGJyIC8+Jm5ic3A7
+DTxiciAvPiZuYnNwO0ZlYXR1cmVzPGJyIC8+Jm5ic3A7LS0tLS0tLS08YnIgLz5kaWZmJm5ic3A7
+LS1naXQmbmJzcDthL2RvYy9ndWlkZXMvY3J5cHRvZGV2cy96c2RhLnJzdCZuYnNwO2IvZG9jL2d1
+aWRlcy9jcnlwdG9kZXZzL3pzZGEucnN0PGJyIC8+aW5kZXgmbmJzcDtiMDI0ZjUzN2MxLi44ODg1
+NjYzZTllJm5ic3A7MTAwNjQ0PGJyIC8+LS0tJm5ic3A7YS9kb2MvZ3VpZGVzL2NyeXB0b2RldnMv
+enNkYS5yc3Q8YnIgLz4rKysmbmJzcDtiL2RvYy9ndWlkZXMvY3J5cHRvZGV2cy96c2RhLnJzdDxi
+ciAvPkBAJm5ic3A7LTcsOCZuYnNwOys3LDcmbmJzcDtAQCZuYnNwO1pURSZuYnNwO1N0b3JhZ2Um
+bmJzcDtEYXRhJm5ic3A7QWNjZWxlcmF0b3ImbmJzcDsoWlNEQSkmbmJzcDtQb2xsJm5ic3A7TW9k
+ZSZuYnNwO0RyaXZlcjxiciAvPiZuYnNwO1RoZSZuYnNwO1pTREEmbmJzcDtjcnlwdG8mbmJzcDtQ
+TUQmbmJzcDtwcm92aWRlcyZuYnNwO3BvbGwmbmJzcDttb2RlJm5ic3A7Q2lwaGVyJm5ic3A7YW5k
+Jm5ic3A7SGFzaCZuYnNwO2RyaXZlcjxiciAvPiZuYnNwO3N1cHBvcnQmbmJzcDtmb3ImbmJzcDt0
+aGUmbmJzcDtmb2xsb3dpbmcmbmJzcDtoYXJkd2FyZSZuYnNwO2FjY2VsZXJhdG9yJm5ic3A7ZGV2
+aWNlczo8YnIgLz4mbmJzcDsNPGJyIC8+LSombmJzcDtaVEUmbmJzcDtQcm9jZXNzaW5nJm5ic3A7
+YWNjZWxlcmF0b3JzJm5ic3A7MWNmMjxiciAvPi08YnIgLz4rLSZuYnNwO05lbyZuYnNwO1g1MTAv
+WDUxMjxiciAvPiZuYnNwOw08YnIgLz4mbmJzcDtGZWF0dXJlczxiciAvPiZuYnNwOy0tLS0tLS0t
+PGJyIC8+LS0mbmJzcDsNPGJyIC8+Mi4yNy4wPGJyIC8+
 
-It seems that there is no such naming convention in vhost.
 
-> +{
-> +	struct virtio_net *dev = *pdev;
-> +	uint32_t i;
-> +
-> +	for (i = 0; i < dev->nr_vring; i++) {
-> +		struct vhost_virtqueue *vq = dev->virtqueue[i];
-> +
-> +		if (!vq)
-> +			continue;
-> +
-> +		if (vq->desc || vq->avail || vq->used) {
-> +			vq_assert_lock(dev, vq);
-> +
-> +			/*
-> +			 * If the memory table got updated, the ring addresses
-> +			 * need to be translated again as virtual addresses have
-> +			 * changed.
-> +			 */
-> +			vring_invalidate(dev, vq);
-> +
-> +			translate_ring_addresses(&dev, &vq);
-> +		}
-> +	}
-> +
-> +	*pdev = dev;
+--=====_003_next=====--
 
-why do this?
+--=====_002_next=====--
 
-> +}
-> +
-> +/*
-> + * Macro wrapper that performs the compile-time lock assertion with the
-> + * correct message ID at the call site, then calls the implementation.
-> + */
-> +#define dev_invalidate_vrings(pdev, id) do { \
-> +	static_assert(id ## _LOCK_ALL_QPS, \
-> +		#id " handler is not declared as locking all queue pairs"); \
-> +	_dev_invalidate_vrings(pdev); \
-> +} while (0)
-> +
-> +static int
-> +vhost_user_add_mem_reg(struct virtio_net **pdev,
-> +			struct vhu_msg_context *ctx,
-> +			int main_fd __rte_unused)
-> +{
-> +	uint32_t i;
-> +	struct virtio_net *dev = *pdev;
-> +	struct VhostUserMemoryRegion *region = &ctx->msg.payload.memreg.region;
-
-Local variables should be arranged in descending order of length.
-
-struct VhostUserMemoryRegion *region = &ctx->msg.payload.memreg.region;
-struct virtio_net *dev = *pdev;
-uint32_t i;
-
-> +
-> +	/* convert first region add to normal memory table set */
-> +	if (dev->mem == NULL) {
-> +		if (vhost_user_initialize_memory(pdev) < 0)
-> +			goto close_msg_fds;
-> +	}
-> +
-> +	/* make sure new region will fit */
-> +	if (dev->mem->nregions >= VHOST_MEMORY_MAX_NREGIONS) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "too many memory regions already (%u)",
-> +									dev->mem->nregions);
-> +		goto close_msg_fds;
-> +	}
-> +
-> +	/* make sure supplied memory fd present */
-> +	if (ctx->fd_num != 1) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "fd count makes no sense (%u)", ctx->fd_num);
-> +		goto close_msg_fds;
-> +	}
-> +
-> +	/* Make sure no overlap in guest virtual address space */
-> +	for (i = 0; i < dev->mem->nregions; i++) {
-> +		struct rte_vhost_mem_region *current_region = &dev->mem->regions[i];
-> +		uint64_t current_region_guest_start = current_region->guest_user_addr;
-> +		uint64_t current_region_guest_end = current_region_guest_start
-> +							+ current_region->size - 1;
-> +		uint64_t proposed_region_guest_start = region->userspace_addr;
-> +		uint64_t proposed_region_guest_end = proposed_region_guest_start
-> +							+ region->memory_size - 1;
-
-why not use short name?
-
-> +
-> +		if (!((proposed_region_guest_end < current_region_guest_start) ||
-> +			(proposed_region_guest_start > current_region_guest_end))) {
-> +			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +				"requested memory region overlaps with another region");
-> +			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +				"\tRequested region address:0x%" PRIx64,
-> +				region->userspace_addr);
-> +			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +				"\tRequested region size:0x%" PRIx64,
-> +				region->memory_size);
-> +			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +				"\tOverlapping region address:0x%" PRIx64,
-> +				current_region->guest_user_addr);
-> +			VHOST_CONFIG_LOG(dev->ifname, ERR,
-> +				"\tOverlapping region size:0x%" PRIx64,
-> +				current_region->size);
-> +			goto close_msg_fds;
-> +		}
-> +	}
-> +
-> +	/* New region goes at the end of the contiguous array */
-> +	struct rte_vhost_mem_region *reg = &dev->mem->regions[dev->mem->nregions];
-> +
-> +	reg->guest_phys_addr = region->guest_phys_addr;
-> +	reg->guest_user_addr = region->userspace_addr;
-> +	reg->size            = region->memory_size;
-> +	reg->fd              = ctx->fds[0];
-> +	ctx->fds[0]          = -1;
-> +
-> +	if (vhost_user_mmap_region(dev, reg, region->mmap_offset) < 0) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to mmap region");
-> +		if (reg->mmap_addr) {
-> +			/* mmap succeeded but a later step (e.g. add_guest_pages)
-> +			 * failed; undo the mapping and any guest-page entries.
-> +			 */
-> +			remove_guest_pages(dev, reg);
-> +			free_mem_region(reg);
-> +		} else {
-> +			close(reg->fd);
-> +			reg->fd = -1;
-> +		}
-> +		goto close_msg_fds;
-> +	}
-> +
-> +	dev->mem->nregions++;
-> +
-> +	if (dev->async_copy && rte_vfio_is_enabled("vfio")) {
-> +		if (async_dma_map_region(dev, reg, true) < 0)
-> +			goto free_new_region;
-
-I point it out in v12, maybe not so clear, so again:
-the goto will invoke async_dma_map_region(dev, reg, false), it should not invoke in
-this branch.
-
-> +	}
-> +
-> +	if (dev->postcopy_listening) {
-> +		/*
-> +		 * Cannot use vhost_user_postcopy_register() here because it
-> +		 * reads ctx->msg.payload.memory (SET_MEM_TABLE layout), but
-> +		 * ADD_MEM_REG uses the memreg payload.  Register the
-> +		 * single new region directly instead.
-> +		 */
-> +		if (vhost_user_postcopy_region_register(dev, reg) < 0)
-> +			goto free_new_region;
-> +	}
-> +
-> +	dev_invalidate_vrings(pdev, VHOST_USER_ADD_MEM_REG);
-> +	dev = *pdev;
-
-What the meaning? the dev already set *pdev in the beginning.
-I also point it out in v12, I don't know what happening.
-
-> +	dump_guest_pages(dev);
-> +
-> +	return RTE_VHOST_MSG_RESULT_OK;
-> +
-> +free_new_region:
-> +	if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-> +		async_dma_map_region(dev, reg, false);
-> +	remove_guest_pages(dev, reg);
-> +	free_mem_region(reg);
-> +	dev->mem->nregions--;
-> +close_msg_fds:
-> +	close_msg_fds(ctx);
-> +	return RTE_VHOST_MSG_RESULT_ERR;
-> +}
-> +
-> +static int
-> +vhost_user_rem_mem_reg(struct virtio_net **pdev,
-> +			struct vhu_msg_context *ctx,
-> +			int main_fd __rte_unused)
-> +{
-> +	uint32_t i;
-> +	struct virtio_net *dev = *pdev;
-> +	struct VhostUserMemoryRegion *region = &ctx->msg.payload.memreg.region;
-> +
-> +	if (dev->mem == NULL || dev->mem->nregions == 0) {
-> +		VHOST_CONFIG_LOG(dev->ifname, ERR, "no memory regions to remove");
-> +		close_msg_fds(ctx);
-> +		return RTE_VHOST_MSG_RESULT_ERR;
-> +	}
-> +
-> +	for (i = 0; i < dev->mem->nregions; i++) {
-> +		struct rte_vhost_mem_region *current_region = &dev->mem->regions[i];
-> +
-> +		/*
-> +		 * According to the vhost-user specification:
-> +		 * The memory region to be removed is identified by its GPA,
-> +		 * user address and size. The mmap offset is ignored.
-> +		 */
-> +		if (region->userspace_addr == current_region->guest_user_addr
-> +			&& region->guest_phys_addr == current_region->guest_phys_addr
-> +			&& region->memory_size == current_region->size) {
-> +			if (dev->async_copy && rte_vfio_is_enabled("vfio"))
-> +				async_dma_map_region(dev, current_region, false);
-> +			remove_guest_pages(dev, current_region);
-> +			free_mem_region(current_region);
-> +
-> +			/* Compact the regions array to keep it contiguous */
-> +			if (i < dev->mem->nregions - 1) {
-> +				memmove(&dev->mem->regions[i],
-> +					&dev->mem->regions[i + 1],
-> +					(dev->mem->nregions - 1 - i) *
-> +					sizeof(struct rte_vhost_mem_region));
-> +				memset(&dev->mem->regions[dev->mem->nregions - 1],
-> +					0, sizeof(struct rte_vhost_mem_region));
-> +			}
-> +
-> +			dev->mem->nregions--;
-> +			dev_invalidate_vrings(pdev, VHOST_USER_REM_MEM_REG);
-> +			dev = *pdev;
-
-I still don't know what the assignment meaning/function?
-
-> +			close_msg_fds(ctx);
-> +			return RTE_VHOST_MSG_RESULT_OK;
-> +		}
-> +	}
-> +
-> +	VHOST_CONFIG_LOG(dev->ifname, ERR, "failed to find region");
-> +	close_msg_fds(ctx);
-> +	return RTE_VHOST_MSG_RESULT_ERR;
-> +}
-> +
->  static bool
->  vq_is_ready(struct virtio_net *dev, struct vhost_virtqueue *vq)
->  {
+--=====_001_next=====--
 
