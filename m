@@ -2,82 +2,79 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5600ACD343F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 10:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE08CD4F3D
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 11:17:24 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 20F0540269;
-	Fri, 15 May 2026 12:32:01 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id C00D840269;
+	Fri, 15 May 2026 13:17:23 +0200 (CEST)
 Received: from us-smtp-delivery-124.mimecast.com
  (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 3DBBD400EF
- for <dev@dpdk.org>; Fri, 15 May 2026 12:32:00 +0200 (CEST)
+ by mails.dpdk.org (Postfix) with ESMTP id C9580400EF
+ for <dev@dpdk.org>; Fri, 15 May 2026 13:17:22 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1778841119;
+ s=mimecast20190719; t=1778843842;
  h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
  to:to:cc:cc:mime-version:mime-version:content-type:content-type:
  content-transfer-encoding:content-transfer-encoding:
  in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
- bh=2+VoaTChlQ9UlXJFJKneU+aiYqwo7R4vBUqFPl4BdZY=;
- b=Swk2zbyMNqTMiOR+4jUYZ4hUghcl7w8vCnmGGQtE8Pz9872Q8Mi4UbI3cTa5LrX7OyL4Sa
- pYKEPor8zUA6wzViYzbrQ9VtUJcZjnZoQtJWkeuC+2YnVX0mszCJPW5ilHo65GwNIYn432
- feE4feA8jLRziGxkkUdk1UmJoIb8qVY=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ bh=JWfruNhnOF82Ejqaaqfx7QdTbQPcpy//ESaeNEUD2Bo=;
+ b=gOXMfMduvEuC5aRIG+L0+8i9C+ka+3dAxZaJQyilViZhYPTEv4PZkcXV9mMDFP87n8Jxin
+ K33Gju6L1DbJRptkI4CNS5p+HPIS+w6DGf9FMAgaQ4knn11W9qujaIsdiVGI+bT+8GCAiD
+ o/I7n6TyR4mH+mj/0XpYMoOSgUQWfsg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-672-lNPPjmDYP3GGBmJkXZn2rQ-1; Fri, 15 May 2026 06:31:58 -0400
-X-MC-Unique: lNPPjmDYP3GGBmJkXZn2rQ-1
-X-Mimecast-MFC-AGG-ID: lNPPjmDYP3GGBmJkXZn2rQ_1778841117
-Received: by mail-wm1-f71.google.com with SMTP id
- 5b1f17b1804b1-48fda34ed0aso8672325e9.1
- for <dev@dpdk.org>; Fri, 15 May 2026 03:31:58 -0700 (PDT)
+ us-mta-66-PpwNTiYXNyCxopc4jJactg-1; Fri, 15 May 2026 07:17:21 -0400
+X-MC-Unique: PpwNTiYXNyCxopc4jJactg-1
+X-Mimecast-MFC-AGG-ID: PpwNTiYXNyCxopc4jJactg_1778843840
+Received: by mail-wm1-f70.google.com with SMTP id
+ 5b1f17b1804b1-48fdca5c638so11061405e9.1
+ for <dev@dpdk.org>; Fri, 15 May 2026 04:17:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778841117; x=1779445917;
- h=content-transfer-encoding:in-reply-to:autocrypt:content-language
- :references:cc:to:from:subject:user-agent:mime-version:date
- :message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ d=1e100.net; s=20251104; t=1778843840; x=1779448640;
+ h=content-transfer-encoding:in-reply-to:autocrypt:from
+ :content-language:references:cc:to:subject:user-agent:mime-version
+ :date:message-id:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
  :message-id:reply-to;
- bh=2+VoaTChlQ9UlXJFJKneU+aiYqwo7R4vBUqFPl4BdZY=;
- b=A+skfLaZUBPWzTywLu5ctnsFcXbiq3aiWBbNRPCINRgqSc3ILzrn0gyOD2IKbaCFxQ
- 67Nrc1PZ+4f1VW+y4I9sBgLpC9rEDGWt53/EynCz4Tbb6T/aKy/07LQzqrpO+jT5GIEE
- HHJy0cU2kzI9GsLq+/lGOkP0qYPIMlOoLybeV9D8ZWDuZMxysMud1415VMSHMmtTE6hh
- zKthxMzb0iY/VgCjGkdrRYqsuAEEBQx5QbzwliPVqLu8pQC7fXwnNU3h/B1HN6iHC1ID
- 18XZq1NO5KC4+awuQ9yeyPtQKxrcjHmVUnDfTH2N7BT3h16e6jSv9W/jx5l4tB8L74Uk
- lsXQ==
-X-Forwarded-Encrypted: i=1;
- AFNElJ/SQT6sv0D82iCso4HtHf5qiy8/JkrnZCTgcGG42LoL6UjSMaTuAqWMn7U8TFmsPH5RwR4=@dpdk.org
-X-Gm-Message-State: AOJu0Yz2UoNCueaK8haDkFAe72ssEDWq61/lq9kHJnXhjqUf9mVMp9ol
- mU0dudk8vj6y2V6xxUF8iz3kLhsd/T+wWkpz2sfUlqAHCx3vWdTOmQcGGptw2f9O6XbV8lVJ+GM
- 7YPjUqJZBjY8c4uNFXpKy1Igt2NFHs0ENjDr/XzkXq71I
-X-Gm-Gg: Acq92OHx+4dTWB6QXWDr52ETnWRAzgKiYBPrpdhpcK1ywvij/obhVY1U0klGlorI4Is
- N2u5QPftegSW19SFkSTr5fr5nyWoiYA8yRkMSYhSZwz7bmIb4vWUzR+80UmbR0jviHVWHOD0kBq
- Yp5IKHiRYrNNdfdZntqD7J/R3OwOOKK3LWz4YizzMltyfgBGVAN4c8HX6fydw53oEQcsi4rj3V8
- 0pg0W+Aut1rvawRx6vaulVH6d0a5JcuLk/ZutlCDGgC8xX1OjKlJ+MQxIAqzMwRWwnCTWP7q7V6
- sKt32kK1G3iO28GReBR+kk+DoGwK/21EzmIoAKvpxxhyZb/hIOdDpJpdEGOtkCx0Zyux0RdF//F
- P9toM87K2lrRvneSKjAA6wzVkgmI=
-X-Received: by 2002:a05:600c:4e47:b0:488:a977:8de with SMTP id
- 5b1f17b1804b1-48fe61ed3b3mr47530665e9.16.1778841117135; 
- Fri, 15 May 2026 03:31:57 -0700 (PDT)
-X-Received: by 2002:a05:600c:4e47:b0:488:a977:8de with SMTP id
- 5b1f17b1804b1-48fe61ed3b3mr47530375e9.16.1778841116792; 
- Fri, 15 May 2026 03:31:56 -0700 (PDT)
+ bh=JWfruNhnOF82Ejqaaqfx7QdTbQPcpy//ESaeNEUD2Bo=;
+ b=R+zS8knKFMbCC9sXYKnDU573goBT7m3Fympo6mQNvgPqdr7DvQdYOXNO1HweCBmGvA
+ 4+ewY5lBjNpWZ6tN0TEiK0kWI9FTMLsJe53u+2BTU/E2GCJSzkZmcI3aFEAlcLr0f2ca
+ HKP+uEw7ine3Ch+tgFj9hdUVF9onVFRc7qMSKor34uj7AvXPbss7s0Cqdjf4Lf1ulGK5
+ e9rg6IMRXTSkgdjancIbU0lBZy66iLY2rWcRvTt2CQrIy4lnPg+6alg7b+uumu2BW6QZ
+ bwKTX8jeFXklR+9E97uc8/dFgxw8hC7XN5oFIvn7K/u39p7Qf6btjigHmLDYUEJ2Ffhz
+ vOow==
+X-Gm-Message-State: AOJu0Yzw0CAls2OgxIySQEXRuymV+TbPRdHzYXiMeJA4nqgkvNFRun67
+ 5wYqXO5UhdWrjUFwn7oc7kYeU0Sp/d+R6hY25gvH18oGk9wKEGsjW9G1D+PnRW+EpcuS4xHV6nK
+ L+wXbBUUknWcRv1tvuzVO6MVAagZVnEZrEr6ovKZvIOEDhewq27quzxs=
+X-Gm-Gg: Acq92OF9TgYs/BthLjRKRR4Ej2EhVkng48PnJAGegg2GGeeFHEg7NQLchEQxMsLTLHt
+ yz2u2zQLTTQzhp8xHopLYsr0B5I2U/VnoAVAPkIpMSoC66y4T66+X1C0hBOjBhzjZ6U/POVc1zv
+ 8h5LDvTUYpRzpPOJDknPvyzfxvCwwKsLHrCDi4bi63tI7tteh0dtcMey4jGgk2EN/n3tGJwytvI
+ kD92K3KVvQmnc+Jd4yOyhmlzMqWG3fo4KbMBNskGVwIOcy3mSbfVm29gIpyTbEg2rxcNaIhP/CB
+ j14Ggf2b4G3v/jF1pE+5PyjP9pODIVyeRyo6d6nvIXoYfi1R3+rL7SUiNIg4eajHCvKzAFby0HY
+ 5kXKpzHq5X/cscyBlb+ZYKVzdFUU=
+X-Received: by 2002:a05:600c:1f8f:b0:48f:d612:3c74 with SMTP id
+ 5b1f17b1804b1-48fe651b2b4mr43022275e9.27.1778843838186; 
+ Fri, 15 May 2026 04:17:18 -0700 (PDT)
+X-Received: by 2002:a05:600c:1f8f:b0:48f:d612:3c74 with SMTP id
+ 5b1f17b1804b1-48fe651b2b4mr43020655e9.27.1778843836064; 
+ Fri, 15 May 2026 04:17:16 -0700 (PDT)
 Received: from [172.29.182.199] ([212.129.81.212])
  by smtp.gmail.com with ESMTPSA id
- ffacd0b85a97d-45d9ec3acf7sm13767465f8f.12.2026.05.15.03.31.53
+ 5b1f17b1804b1-48fe5694fcasm48888175e9.5.2026.05.15.04.17.13
  (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
- Fri, 15 May 2026 03:31:54 -0700 (PDT)
-Message-ID: <91a6d5df-57c8-4045-9cc4-4ea0f5170f52@redhat.com>
-Date: Fri, 15 May 2026 12:31:52 +0200
+ Fri, 15 May 2026 04:17:14 -0700 (PDT)
+Message-ID: <7a225069-5c51-4f0d-9abd-a887de124417@redhat.com>
+Date: Fri, 15 May 2026 12:17:12 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: 23.11.7 patches review and test
+Subject: Re: [PATCH dpdk v4] net: fix VLAN packet type
+To: David Marchand <david.marchand@redhat.com>, Robin Jarry <rjarry@redhat.com>
+Cc: dev@dpdk.org, Gregory Etelson <getelson@nvidia.com>, stable@dpdk.org,
+ Thomas Monjalon <thomas@monjalon.net>, Luca Boccassi <bluca@debian.org>
+References: <20260422102814.645299-2-rjarry@redhat.com>
+ <20260423112458.865674-1-rjarry@redhat.com>
+ <CAJFAV8yAhr-iXkn6JvderT_Yy4rB91LVWqYvwRqJH0DdmNkJ1g@mail.gmail.com>
 From: Kevin Traynor <ktraynor@redhat.com>
-To: Luca Boccassi <bluca@debian.org>, Shani Peretz <shperetz@nvidia.com>
-Cc: stable@dpdk.org, dev@dpdk.org, Robin Jarry <rjarry@redhat.com>,
- David Marchand <david.marchand@redhat.com>,
- Thomas Monjalon <thomas@monjalon.net>
-References: <20260421064637.2506152-1-shperetz@nvidia.com>
- <73da1ec3-d1cc-4efb-bedf-89b0f951ec5d@redhat.com> <2787587.q0ZmV6gNhb@thomas>
- <f27bd211-66c0-4a87-9d11-de6d83cae4c9@redhat.com>
 Autocrypt: addr=ktraynor@redhat.com; keydata=
  xsFNBF2J2awBEADUEPNhgNI+nJNgiTAUcw4YIgVXEoHlsNPyyzG1BEXkWXALy0Y3fNTiw6+r
  ltWDkF9jzL9kfkecgQ67itGfk1OaBXgSGKuw1PUpxAwX2Bi76LAR6M5OsyGM9TSVVQwARalz
@@ -121,9 +118,9 @@ Autocrypt: addr=ktraynor@redhat.com; keydata=
  yWzMcVrcGJDQLC9JLKEpoyUF6gdTKaiDL2Vao4+XRIA3Y57b6MO35a3HuzAv7+i5Z0mnDEJO
  XxXqTOmKYpMIGexzM/PtuA0712sT1abG9tAJ17ao/B7cqMW5IkKkalemFbWfI2unns4Papvo
  tk9igVqyp6EJDU98z5TJioCVojwK2laDaoIjTJk9YYv3iwCsqPd5feU=
-In-Reply-To: <f27bd211-66c0-4a87-9d11-de6d83cae4c9@redhat.com>
+In-Reply-To: <CAJFAV8yAhr-iXkn6JvderT_Yy4rB91LVWqYvwRqJH0DdmNkJ1g@mail.gmail.com>
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 3QV34Zif8TVroYQhMfDK1wgyb81WIWCfwZUrYn6JT4s_1778841117
+X-Mimecast-MFC-PROC-ID: -u68Jg8qL29z9aURUs7ASvgTO9DQW-QW_Pc_BND0Ozk_1778843840
 X-Mimecast-Originator: redhat.com
 Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
@@ -141,32 +138,92 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On 4/30/26 12:02 PM, Kevin Traynor wrote:
-> On 4/30/26 10:58 AM, Thomas Monjalon wrote:
->> 30/04/2026 11:32, Kevin Traynor:
->>> On 4/21/26 7:46 AM, Shani Peretz wrote:
->>>> The planned date for the final release is 30 April 2026.
->>>
->>> As discussed on thread [0] there was a quite serious regression caused
->>> by "net: fix packet type for stacked VLAN"
->>>
->>> As discussion on the fix is ongoing, I would suggest to just revert this
->>> patch for your release.
+On 4/25/26 10:40 AM, David Marchand wrote:
+> On Thu, 23 Apr 2026 at 13:25, Robin Jarry <rjarry@redhat.com> wrote:
+>> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
+>> index 458b4814a9c9..a871318b21c2 100644
+>> --- a/lib/net/rte_net.c
+>> +++ b/lib/net/rte_net.c
+>> @@ -357,12 +357,14 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+>>                 const struct rte_vlan_hdr *vh;
+>>                 struct rte_vlan_hdr vh_copy;
 >>
->> I agree the revert is the best option here.
->>
->>> It doesn't require a new RC and re-validation as it's an isolated issue
->>> (and there wasn't test cases to catch before Robin's new patch anyway)
->>
->> I suppose 24.11.5 and 25.11.1 are also impacted?
->>
->>
+>> +               if (vlan_depth == 0) {
+>> +                       pkt_type =
+>> +                               proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ?
+>> +                                        RTE_PTYPE_L2_ETHER_VLAN :
+>> +                                        RTE_PTYPE_L2_ETHER_QINQ;
+>> +               }
 > 
-> Yes, I was hoping we would have a fix in a few days and we could add and
-> re-release. Given that there's now discussion on the patch and what
-> functionality is needed, it's probably best to just revert and release a
-> new 24.11/25.11.
+> This code is becoming too complex.
+> The original usecase with more than 2 stacked vlan is a bit strange,
+> but the max depth limit seems just arbitrary (why 8?).
+> We have clear boundaries, with the size of the packet (see below,
+> check on vh == NULL).
+> 
+> The offending commit also allows stacking mpls on top of vlan, without
+> mentioning it.
+> I think we want this behavior, but still was it intended?
+> 
+> In the end, reverting the previous fix then just advancing off and
+> breaking once proto is not a vlan/qinq type gives a much simpler fix
+> when compared to v25.11.
+> 
+> (ignoring indent changes with -w)
+> 
+> $ git diff -w v25.11 lib/net/rte_net.c
+> diff --git a/lib/net/rte_net.c b/lib/net/rte_net.c
+> index c70b57fdc0..f58d699c83 100644
+> --- a/lib/net/rte_net.c
+> +++ b/lib/net/rte_net.c
+> @@ -349,30 +349,28 @@ uint32_t rte_net_get_ptype(const struct rte_mbuf *m,
+>         if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_IPV4))
+>                 goto l3; /* fast path if packet is IPv4 */
+> 
+> -       if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN)) {
+> +       if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
+> +                       proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
+>                 const struct rte_vlan_hdr *vh;
+>                 struct rte_vlan_hdr vh_copy;
+> 
+> +               if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN))
+>                         pkt_type = RTE_PTYPE_L2_ETHER_VLAN;
+> +               else
+> +                       pkt_type = RTE_PTYPE_L2_ETHER_QINQ;
+> +
+> +               do {
+>                         vh = rte_pktmbuf_read(m, off, sizeof(*vh), &vh_copy);
+>                         if (unlikely(vh == NULL))
+>                                 return pkt_type;
+>                         off += sizeof(*vh);
+>                         hdr_lens->l2_len += sizeof(*vh);
+>                         proto = vh->eth_proto;
+> -       } else if (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ)) {
+> -               const struct rte_vlan_hdr *vh;
+> -               struct rte_vlan_hdr vh_copy;
+> +               } while (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_VLAN) ||
+> +                               proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_QINQ));
+> +       }
+> 
+> -               pkt_type = RTE_PTYPE_L2_ETHER_QINQ;
+> -               vh = rte_pktmbuf_read(m, off + sizeof(*vh), sizeof(*vh),
+> -                       &vh_copy);
+> -               if (unlikely(vh == NULL))
+> -                       return pkt_type;
+> -               off += 2 * sizeof(*vh);
+> -               hdr_lens->l2_len += 2 * sizeof(*vh);
+> -               proto = vh->eth_proto;
+> -       } else if ((proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) ||
+> +       if ((proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLS)) ||
+>                 (proto == rte_cpu_to_be_16(RTE_ETHER_TYPE_MPLSM))) {
+>                 unsigned int i;
+>                 const struct rte_mpls_hdr *mh;
+> 
+> 
+> This is untested, but what do you think?
+> 
+> 
 
-Hi Luca. Are you planning to do a 24.11 release with revert for above
-issue ? If you have a time issue, let me know and I can help out.
+This version LGTM. Maybe we should consider returning NULL on invalid
+packets
 
