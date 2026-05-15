@@ -2,87 +2,59 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CD7CD343F
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 23:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3619CD4851
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 23:19:43 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5C7DC4026C;
-	Sat, 16 May 2026 01:19:08 +0200 (CEST)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com
- [209.85.218.50]) by mails.dpdk.org (Postfix) with ESMTP id 8ABC040269
- for <dev@dpdk.org>; Sat, 16 May 2026 01:19:06 +0200 (CEST)
-Received: by mail-ej1-f50.google.com with SMTP id
- a640c23a62f3a-bd5126a5e0fso52628366b.3
- for <dev@dpdk.org>; Fri, 15 May 2026 16:19:06 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; t=1778887146; cv=none;
- d=google.com; s=arc-20240605;
- b=MzpEyxjqHpEWBcgq7IkPfOgrDd8l9yu7IFEWhuOstRf4qQWX6vhE+BI8Bolde9OMD1
- 81aHaPhLPbWjLxUAGVcAn4vHWhmUoLqQSsopHfL7Q2flF2H61h4sRXrUwke0Z3h/cshs
- qE+vkqbCoBXTZffDFt/cW0nyBDxsxhJb7abXLI06f7tFgvcUgsLGCuOTVdHmF+Tm1Jaj
- W0ggRMFKXG2EdKAyuy9kTrRs9sEOlRHhgw6KO03YgDvgxdEl5mdI6k+1qEkHCsVFSIGy
- yKPVWtYgaBT0xgMwLLcHTMG2J5AXjFYD6UH9MzL8P3iM7a6IcdBD9Ra+63GoRazD5yZJ
- Y6Bw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
- s=arc-20240605; 
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:dkim-signature;
- bh=rs2BUeCD5KFYWViOeuuoWI5GLk0szIZU4LIqlJhjkqM=;
- fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
- b=W4tg4qxykefWAz4WiKXQolysW3z+ZEJn38qH6/LWkAgpCAzhGgU41bcCNz5NGAvuwD
- 6H2fZsm6UfPZKnti/aeWJ+YkrztBjlxViAij5S1TODO5r0Utg/9xTEcVYnz9qQaJTJRh
- ffB05iZsYWSjc1a5X5z93VuiN/RgK5qFTvVTvVwUQx2GDRR4qQzp4zJm23Ui/WKQcg+a
- SRU1fxfoqzL1fQtaXYRQlC6QSCwta001LnoNCydCqC9Bnp/sSwXlgYaU0mJhWKadLOC2
- fQQgiiNYROSiVu/MnK3XzTP5/mq52aTOxX3N/F1/SYqD0zqY/1P8AkcuT87yOf13mSN4
- p+eA==; darn=dpdk.org
-ARC-Authentication-Results: i=1; mx.google.com; arc=none
+	by mails.dpdk.org (Postfix) with ESMTP id 942944026C;
+	Sat, 16 May 2026 01:19:42 +0200 (CEST)
+Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com
+ [209.85.222.201])
+ by mails.dpdk.org (Postfix) with ESMTP id C1DDF40269
+ for <dev@dpdk.org>; Sat, 16 May 2026 01:19:40 +0200 (CEST)
+Received: by mail-qk1-f201.google.com with SMTP id
+ af79cd13be357-90ffa709073so108252685a.1
+ for <dev@dpdk.org>; Fri, 15 May 2026 16:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=google.com; s=20251104; t=1778887146; x=1779491946; darn=dpdk.org;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:from:to:cc:subject:date
- :message-id:reply-to;
- bh=rs2BUeCD5KFYWViOeuuoWI5GLk0szIZU4LIqlJhjkqM=;
- b=E38dv3BNHbYFGYx4fynd8r1VuUvhmbdgRdPEDmJfwfabZkNg0aqOubF4Od6IaDHXZ8
- mqhY+cLIe2Ju64PyHVhxgDOrdMXRYinjuKsS40l5EVz7ml74Jz93QZg5l7+a7jh3/QF3
- WpitcvHSuaOLztFnq2SCSnMy/EbP5ONGH1vBaNiG0kmdp7xEHkUdcTVAaWilfWYDh1Uc
- zQ4rDYeltikrGHg3eB1mEGgRKJmEm7gqITZPUIHb40ChXvJxdv1RWocfT1Upsadcb8S1
- Uc5szLhhJVXfcx6nN3lZYvL1LNrykEgvN+zLu/t8ncNDaN48oZw+RsNt3YRF105rH6fK
- 3CMQ==
+ d=google.com; s=20251104; t=1778887180; x=1779491980; darn=dpdk.org;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:from:to:cc:subject:date:message-id:reply-to;
+ bh=zdBc0QdlhDrEhovHqTRgpH5RftYd7mzBxI6fZOP87UI=;
+ b=XYfmDt1pMfx+NYuPYAPCW0noR30cLxJIWq+5NzQ3RgSJBvBdxOl7e1N52TvmKY22E2
+ 9Bzv4+GuaFXJH64pJbkODSIH884tAxhddwNGwYXZg9fs5wjvIOzNDpBKI1r37fX3knk2
+ N9sgdosgR/Bv1RUCgZJQKn/ua7jFmnERi+sYdRozSeyb3825kwOl6fIRAREfrW0YHRSH
+ TtThvqhQPModZH94d+3szp9UovIFE9H2yB/92onT9GZQlm+LlsnnGNiCWgbB+gqt2q7/
+ zQQR2TA/34HjhkV79GJ+DoBgQBMHEZQIdvit9CwbGRAv03oNXzSuliaY/K4lLZM8Jq9k
+ ShWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1778887146; x=1779491946;
- h=content-transfer-encoding:cc:to:subject:message-id:date:from
- :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
- :to:cc:subject:date:message-id:reply-to;
- bh=rs2BUeCD5KFYWViOeuuoWI5GLk0szIZU4LIqlJhjkqM=;
- b=Xw+cryoFkAi/KXs4EIJ9VeispUFduvZBhqnd/ayl7+Cmdy97W/ucMcSlRVQEbB5vgN
- kFxGk5FhudFo8RRZW3R65xjTPisJHjklm8MyNoelHlNucxTBYETNm+NtWBPIh05VgfKZ
- pHpy5rb9Oxb2P9+3bfr5wxgMXmI92P2F4Nb14loF99yNRCai9e2KvGzTBEnn6ZWDIBzW
- evL6EplqQRpuO6Oj2aZ5IoJzejYEhpwbqrxCQIwL4cQxb9zDwKWnno/pmVGvTy1vsYlc
- 3KoCZcszp1fzZFnuF6BuP4hUsW8jSZYL7yC/oyV9fLlXVaWiG6Zt6J34hAbXntwCU3Es
- ihCg==
-X-Gm-Message-State: AOJu0YxcyIE9mvmy3DZm7kOtgqTnoRPiXT16udj04w5XR1IERsBU7N/w
- JlOlXn/tH8380fJTXB9aHLiO08LIFf9LT0ZnJAE+bg+0idl9JhHxRKDosD6XC5qyYJbqXp6TQWd
- c6Py2K9rF0lEvTKnHT2R+fyIBboFJCjZ6tx8qHv5AbzdY3H+/bBf+j8LtUbo=
-X-Gm-Gg: Acq92OFbJG8LNFrfuJMheLuvNnrsqnTSfxIx4tVHmHwfweMzMm9h4/+Dn0JAfONqhU+
- FNlGVIOGmWLo0a8r7aMSySN3ee+67arR34As33vW2R2i3xSaU+2WPqTTvt/ivTU//8GeCX481XO
- z75hP/Ih8ZrYIMdS9dIdltUFg/KrnQmYOEWDAIh9dsmBgKJ+aNV62CN2D/ueuGoRDfy2fCdB/ac
- kGbnd1b2kUuSSp3md8rIUcvN/IUyi/jrKT5/dxjEfv41MIWqOnUmCpsAVfq42s1jOTP8gaEZE3W
- Y/9mtLt7Oq+niA1DVx+HRh9QCi/5a4wHppeADmBRbgLfzJ1/dCfM2GQ63vrHWyiYBrfwU2Pnf96
- cWHdT/89pcrG0S9rOD75fpgDZhdGLf/E=
-X-Received: by 2002:a17:907:960d:b0:bd3:2385:ee0b with SMTP id
- a640c23a62f3a-bd5177d4699mr338079566b.9.1778887145467; Fri, 15 May 2026
- 16:19:05 -0700 (PDT)
-MIME-Version: 1.0
-References: <20260512005404.946979-1-blasko@google.com>
- <20260513164114.25de780b@stephen-xps.local>
-In-Reply-To: <20260513164114.25de780b@stephen-xps.local>
+ d=1e100.net; s=20251104; t=1778887180; x=1779491980;
+ h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+ :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+ bh=zdBc0QdlhDrEhovHqTRgpH5RftYd7mzBxI6fZOP87UI=;
+ b=gkL4SqTWUbV6QgPY5yW/EaXvOd3+fJgIaHIFWpQfKW5cQ1YgTQtbtKpVCOUoMu13L8
+ 2JwNFGiZpxIIbIfHbBhSQOWFOlYxxfl7gKwy3UPfLUTCVJlmInD1NLAWqQmP7pZRVT+P
+ BiajmkVlJkm5/weBJTCSWAaWgt0/zpznh5ZOfYI6H6k08/TdGxEO6w7KcFhnNU+Z4ar4
+ D0lheXjdRncDJ1/uFqWgBvhnBwTjv5/8L7SxDKezGDytNlMJj0X3u5WJCCk+Kl/oQElV
+ bLwringiJE6IVXPNirrTdbkarUkaFwxnPESvnYjIuYgh07Oc2DfSPSVPhpMSzYGrqDcF
+ OU7g==
+X-Gm-Message-State: AOJu0YwmlfMZnr/+NK0ROQn9WPMB2P8v/3F7o23JOagWGdg27WZ1zL5S
+ PJTuIyBd15jC51qzxnp2v2vqbZRX47LZkfQAsjpsAgt8g3RNNb3h9MB99blJBONd7rbNuCGjFi0
+ iFBqEwA==
+X-Received: from qkgt18.prod.google.com ([2002:a05:620a:b12:b0:90f:784c:22db])
+ (user=blasko job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:620a:28cb:b0:8ec:a621:a3aa
+ with SMTP id af79cd13be357-911cce8e64fmr955088585a.2.1778887179764; Fri, 15
+ May 2026 16:19:39 -0700 (PDT)
+Date: Fri, 15 May 2026 23:19:29 +0000
+In-Reply-To: <20260511224354.872997-1-blasko@google.com>
+Mime-Version: 1.0
+References: <20260511224354.872997-1-blasko@google.com>
+X-Mailer: git-send-email 2.54.0.563.g4f69b47b94-goog
+Message-ID: <20260515231936.3296603-1-blasko@google.com>
+Subject: [PATCH v2 0/6] net/gve: add hardware timestamping support
 From: Mark Blasko <blasko@google.com>
-Date: Fri, 15 May 2026 16:18:53 -0700
-X-Gm-Features: AVHnY4ITcWLV0A-CemDOARCCKSiwskFPEGBRuJfId0zyoGaPH28J6qJ-ru3EwKI
-Message-ID: <CANULgnKecfnVn+jaZcuHeJZMrGSHSJWmL=UR+JY_MdFv-Vhe+Q@mail.gmail.com>
-Subject: Re: [PATCH 0/6] net/gve: add hardware timestamping support
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: dev@dpdk.org
+To: stephen@networkplumber.org
+Cc: dev@dpdk.org, Mark Blasko <blasko@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -96,64 +68,51 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Thanks for the review, and apologies for the accidental spam
-with v1! We'll address most of the initial comments exactly as
-suggested in v2, but have a few follow-ups:
+This patch series introduces support for GVE hardware timestamping on DQO
+queues. To support concurrent access, a mutex lock is introduced to protect
+admin queue operations. A mechanism is then added to periodically synchronize
+the NIC clock via AdminQ, and support is introduced for the read_clock ethdev
+operation. Finally, the RX datapath is updated to reconstruct full 64-bit
+timestamps from the 32-bit values in DQO descriptors.
 
-> [PATCH 4/6] net/gve: add periodic NIC clock synchronization
->
-> gve_setup_nic_timestamp() discards the gve_alloc_nic_ts_report() error.
-> If the memzone allocation fails, priv->nic_timestamp_supported (set in
-> 2/6) remains true, so dev_info_get() in 6/6 will advertise
-> RTE_ETH_RX_OFFLOAD_TIMESTAMP and read_clock() in 5/6 will return -EIO
-> on every call. Clear priv->nic_timestamp_supported on alloc failure so
-> the capability is advertised honestly.
+---
+v2:
+- Patch 1: Dropped ROBUST mutex attribute.
+- Patch 3: Added adminq timestamp counter reset to gve_adminq_alloc.
+- Patch 4:
+  - Removed redundant void* casts.
+  - Handled alarm reschedule failures by marking timestamp stale.
+  - Added transient error logging on memzone allocation failure.
+- Patch 5: Scoped read_clock ethdev operation strictly to DQO queues.
+- Patch 6:
+  - Scoped timestamp offload capability advertisement strictly to
+    DQO queues.
+  - Predicated capability advertisement directly on memzone
+    allocation.
+  - Initialized mbuf_timestamp_offset to -1.
+  - Added blank line separating release notes.
+---
 
-To avoid dishonest capability advertisements and -EIO loops while
-preserving hardware capability tracking, we plan to leave
-priv->nic_timestamp_supported untouched (as it represents immutable
-hardware state). Instead, in v2 we'll predicate capability
-advertisement in gve_dev_info_get() directly on memzone allocation
-(priv->nic_ts_report_mz) and add an explicit error log advising a
-device reset for transient recovery.
+Mark Blasko (6):
+  net/gve: add thread safety to admin queue
+  net/gve: add device option support for HW timestamps
+  net/gve: add AdminQ command for NIC timestamps
+  net/gve: add periodic NIC clock synchronization
+  net/gve: support read clock ethdev op
+  net/gve: reconstruct HW timestamps from DQO
 
-On Wed, May 13, 2026 at 7:41=E2=80=AFAM Stephen Hemminger
-<stephen@networkplumber.org> wrote:
-> Patch 5: net/gve: support read clock ethdev op
->
-> Warning: gve_read_clock and the periodic alarm callback
-> gve_read_nic_clock share a single DMA buffer (priv->nic_ts_report)
-> for the GVE_ADMINQ_REPORT_NIC_TIMESTAMP response. The adminq_lock
-> introduced in patch 1 serializes the adminq command exchange, but
-> is released inside gve_adminq_execute_cmd before either caller
-> reads the buffer:
->
->     err =3D gve_adminq_report_nic_timestamp(priv,
->                                 priv->nic_ts_report_mz->iova);
->     /* lock has already been released here */
->     if (err !=3D 0)
->         return err;
->     ts =3D be64_to_cpu(priv->nic_ts_report->nic_timestamp);
->
-> If the user thread (gve_read_clock) is preempted between returning
-> from gve_adminq_report_nic_timestamp and the be64_to_cpu read, the
-> alarm callback can run, memset() the buffer to zero, take the
-> adminq lock, issue its own command, and either leave its own
-> response in the buffer or be mid-DMA when the user thread reads.
-> The user thread will then read zero or a different command's
-> response.
->
-> The simplest fix is to return the cached
-> priv->last_read_nic_timestamp from gve_read_clock rather than
-> issuing a fresh adminq command. The periodic sync runs every
-> 250ms, so the cached value is recent; the .read_clock semantics
-> do not require a brand new device read. Alternatively, use a
-> separate per-caller DMA buffer or extend the critical section
-> to cover the buffer read.
+ .mailmap                               |   1 +
+ doc/guides/nics/features/gve.ini       |   1 +
+ doc/guides/nics/gve.rst                |  20 ++++
+ doc/guides/rel_notes/release_26_07.rst |   4 +
+ drivers/net/gve/base/gve_adminq.c      | 128 +++++++++++++++++----
+ drivers/net/gve/base/gve_adminq.h      |  29 +++++
+ drivers/net/gve/base/gve_desc_dqo.h    |   8 +-
+ drivers/net/gve/gve_ethdev.c           | 149 ++++++++++++++++++++++++-
+ drivers/net/gve/gve_ethdev.h           |  39 +++++++
+ drivers/net/gve/gve_rx_dqo.c           |  26 +++++
+ 10 files changed, 383 insertions(+), 22 deletions(-)
 
-Before returning the cached timestamp as suggested, we wanted to
-clarify the API contract:
-- Is the fact that .read_clock does not require a fresh device read
-  documented in the DPDK specification, or is this based on typical
-  application use cases? If the latter, what are those typical use
-  cases?
+-- 
+2.54.0.563.g4f69b47b94-goog
+
