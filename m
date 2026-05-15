@@ -2,101 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 129F9CD4851
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 12:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E31CD343F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 12:36:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D4AF240269;
-	Fri, 15 May 2026 14:34:54 +0200 (CEST)
-Received: from DM1PR04CU001.outbound.protection.outlook.com
- (mail-centralusazon11010057.outbound.protection.outlook.com [52.101.61.57])
- by mails.dpdk.org (Postfix) with ESMTP id 1D654400EF;
- Fri, 15 May 2026 14:34:53 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rvcLUDXO727DqvFxd6t74hAKsaqn6iAECSQ4yWVfWyGtOsBPwDhb27OnBGV8Lf8JDs4r4ubFtumtjId2CZ+FG1dkj6tLumDw68gPYHTw1zXYt90L/gvkwRVhfRRgSWrO3aksrK2jY5wpLonOallKa3X6UNYaV+iTMcCX4lp3yQNhb//hG2F4e4NpMC/CBJcwiTCriRvXnDXjIWGkYrLI31lPAnYBPzNeaHqcLjwWba0K5XdUkSquDkFEPC7353vcd9FC5p5YPC75ZVo+2tGkjVyV16geg/hAV2Y0Fpli8v8Craj14hepGvNGNIPs2wfRvCfL1VM5LtR0tyn/7TNjsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WxdTF4rWv4Gs06GepjpD61ADsDwwmWBzP8hzibomf9s=;
- b=vR2XjNDupHTtA65LZPDgc9Dogzxt+y1Lx6U7RfV05bSFPidAG81NP2O9HaGNsmgOspCO5CaiLKgAZHS8yjvtKhR+3D13ca6LaJyJjTzb7YjYdOYC+q3snv1ipCokO01JiO65w8LQezDWSxZ4IKJwtRRuDHkNZr/OV5Hra31MdrIj7a1dyDpP2yCbKugpPA+3YWEouhk0FMtHSXeaUnOdbT/eeNkXwZDxTrP5pEucjFskMl7Qs6Q/RIlq54HiMCDRCjUVmxmmpoykbge+fWFX6Qg0mHR8zjKOmoZfYfFm5UwzSooyMNa1lC/WdURzYFl66c/VW/7byyhzNsqYS+lxTA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=dpdk.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WxdTF4rWv4Gs06GepjpD61ADsDwwmWBzP8hzibomf9s=;
- b=muUE+rjBOG7N/EQ7eBptMuWtgKy8fS+Q9WChJ6dEMur0jXetaqy/1q3tKC1ll2BqnChWB9/yypbT31Dg+6vGa7fiPn6AO0DAINuAOYimGlw9Iw9B8IptsowsYQRYYqXjz4Q5xvkyAXl600cqY98CisLTOK6Y61cUP+UGjkJ9szqteVog8t7ErMyXsoJrWEbQFoYgrNtLKxunGJGWx63hawm90hliCxdp+ruumfvXJPT+iqp5Q05Oiz6KPHXW2qbkaVosB+pM1F80r0II+/cgHqQyYP4OaKv2w+nex2h1p5j325hkaiOrxHoJ46fvsWN7qhoTjL+me1oVkts7f21qCg==
-Received: from MN2PR08CA0022.namprd08.prod.outlook.com (2603:10b6:208:239::27)
- by DM4PR12MB6663.namprd12.prod.outlook.com (2603:10b6:8:8f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9913.11; Fri, 15 May
- 2026 12:34:48 +0000
-Received: from BN2PEPF000055DA.namprd21.prod.outlook.com
- (2603:10b6:208:239:cafe::c8) by MN2PR08CA0022.outlook.office365.com
- (2603:10b6:208:239::27) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.21.25.20 via Frontend Transport; Fri, 15
- May 2026 12:34:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com;
- dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN2PEPF000055DA.mail.protection.outlook.com (10.167.245.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.21.71.0 via Frontend Transport; Fri, 15 May 2026 12:34:48 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 15 May
- 2026 05:34:18 -0700
-Received: from nvidia.com (10.126.231.37) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Fri, 15 May
- 2026 05:34:16 -0700
-From: Dariusz Sosnowski <dsosnowski@nvidia.com>
-To: Viacheslav Ovsiienko <viacheslavo@nvidia.com>, Bing Zhao
- <bingz@nvidia.com>, Ori Kam <orika@nvidia.com>, Suanming Mou
- <suanmingm@nvidia.com>, Matan Azrad <matan@nvidia.com>, Alexander Kozyrev
- <akozyrev@nvidia.com>
-CC: <dev@dpdk.org>, Kiran Vedere <kiranv@nvidia.com>, <stable@dpdk.org>
-Subject: [PATCH] net/mlx5: fix uninitialized skip count
-Date: Fri, 15 May 2026 14:33:58 +0200
-Message-ID: <20260515123358.354191-1-dsosnowski@nvidia.com>
-X-Mailer: git-send-email 2.47.3
+	by mails.dpdk.org (Postfix) with ESMTP id 101D740611;
+	Fri, 15 May 2026 14:36:23 +0200 (CEST)
+Received: from mail-yx1-f53.google.com (mail-yx1-f53.google.com
+ [74.125.224.53]) by mails.dpdk.org (Postfix) with ESMTP id 4C4F3400EF
+ for <dev@dpdk.org>; Fri, 15 May 2026 14:36:22 +0200 (CEST)
+Received: by mail-yx1-f53.google.com with SMTP id
+ 956f58d0204a3-65c21049dafso10643248d50.2
+ for <dev@dpdk.org>; Fri, 15 May 2026 05:36:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778848581; x=1779453381;
+ h=cc:to:subject:message-id:date:from:in-reply-to:references
+ :mime-version:x-gm-gg:x-gm-message-state:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=4zbUdBwqqUzYsEFATOi2cnSFUTuwz9jI0g7M37Uj/mA=;
+ b=pIoa/4eoRuqjpcGFv393aD3uB8MWJjbOzy7IVSPLBm9dyIkgjC/D0iRN+C6FC4XpA1
+ I1ED+d2fZ4lkFDE6AsLokWKQxDZkweq7l57033Q5Kn2KnDxOXsxkP6cFIzfg98RBlOk0
+ 8b/s+LKEPJKdY937BthLW8xO8gub1taQqiCcNCmplOPysDv+c1/EnNpIfuU9Wy2n93ij
+ 8WJobwHCTKr0H2RdGalZiEn6qDfj9k2wnhcQVd9ympQ2EWsK8OMSwVAWWBMaQNMbEt4m
+ vuT7KuvFOguzqvFOeBPckiTckZidK+JoVNbU7+RXYyC7gamr1nS8UmsDXHCv9He59ti4
+ oAhg==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ/b9AQgok7B6luKiWicXcHeGvLQgx0iIlV2F0wFjpE3Qa2whfsOws1dw+EvAkg1ie9LK0E=@dpdk.org
+X-Gm-Message-State: AOJu0YzB38cNDhtr5bmYdN/5V2Vf4GhbyWpcf5DOfrVaqXRv9xo+st6N
+ oaPruEwxs81i089Ga6rnCwvfw0W3T9T8LNzcAb6pk7v/MFoAYzdWsfKg350x/pob
+X-Gm-Gg: Acq92OEcZHOARwqLnwdvEL+zOXBNpm2z/GY0lAIqnHrEqqNW8fi0D7+qDSR8bftljJ+
+ F2CogD0M6WqD8tXxY1VoEknu/CTOOkf+0Xl9CxwcoKqgTjJ54PYYrimRIsxC7RG0qPa5R9uUvhz
+ bUFgdEjEmKIqcEr+Tb7G6w1/NdxLu7Fxes86bAA68EDCQPZ3MmgebLjyBKklaM7mYYB83pwdv37
+ LpybDJbfwpSz0uAOiDWqjd+I5Mdo4rUF9somq0tCymBAr4hi+Wq/0BLvOvZWuVbmoFOAZOjOSvr
+ RvFBfQBNH53R7mzc/sbop+lJu0mV7PeXPCYWOA9lRJMfgcAkYSQUYSrV/JYtIVV2BjyxAs0vbeK
+ woOYPmODO4tL7sNPZBawkCXKwUykpS4FDnOwyjNls+bdMGRCUjXhVJ2EiBitFad6QyUn8QKtzNJ
+ Nj+WoDowEIogFQmbKwRWXMBrrGgpTfBaz5WILK74jxngu5wFOVN2aanMo=
+X-Received: by 2002:a05:690c:7681:b0:7ba:154:87d1 with SMTP id
+ 00721157ae682-7c95be1331bmr31204477b3.33.1778848581423; 
+ Fri, 15 May 2026 05:36:21 -0700 (PDT)
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com.
+ [74.125.224.52]) by smtp.gmail.com with ESMTPSA id
+ 00721157ae682-7c7f55ba65fsm28220557b3.36.2026.05.15.05.36.20
+ for <dev@dpdk.org>
+ (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+ Fri, 15 May 2026 05:36:20 -0700 (PDT)
+Received: by mail-yx1-f52.google.com with SMTP id
+ 956f58d0204a3-65c364b893aso11327354d50.0
+ for <dev@dpdk.org>; Fri, 15 May 2026 05:36:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1;
+ AFNElJ/iIXWhYqc4zWQXJ+x4/3/F7kisUL629D2aReRUrrZm3a9JVnJHTFx7IZTp7hBzGrIrDFQ=@dpdk.org
+X-Received: by 2002:a53:d015:0:b0:65c:391:4553 with SMTP id
+ 956f58d0204a3-65e2264f62amr3305006d50.2.1778848580599; Fri, 15 May 2026
+ 05:36:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Originating-IP: [10.126.231.37]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055DA:EE_|DM4PR12MB6663:EE_
-X-MS-Office365-Filtering-Correlation-Id: 644869ab-4a22-4535-88be-08deb27e5a37
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|82310400026|376014|36860700016|11063799003|56012099003|18002099003;
-X-Microsoft-Antispam-Message-Info: GsmVzY1D0pn8PmCpXXgsqKS+N6eWQmIYtk0ahwGwtPtsfPR2JiSGTqsDkhqCgrlcjxA9+tOcT0UL8yKdEvChv1COk+oKDZEVynDi5xSnjRNqYBXqP0LxlKoPsG/+H+c3u70ztLi7Ez/CQKX1r0YoIx2VwKv4ZU/y8Ljmct37TF4xpksMIXdZqPTQr4FtegZRj6du6nhUGLd/o2OctNvpgJJZNbq5GhQmLAiNsgL1zN30wZQivGVrlDqiQtONs2rUsFWzcUFSkCy6tNddYu9LD7BykMbVpwMq2mHw1G5vNhoQfFEx7PSvJl2AUC3kVPdZtehIB/zfCWAv47mYa9Yj+cXinAfAheWGNI6K70BBDa0g77sEn9oFgiPrE0bw1T42P2J0lpq7wxseBbTuvwBdyvwmJGu+d9weSyPYoCf5jnHKau/PF/UiVOVlrDxrhQ7b4JOix0v976dp9e1NWIGAVIztwr1tWlU7w28g6oaukym/b/HQi7SF/+lXmfDf+HAHptPdgC4wNHzJcyRAGhlzxkTrzsrVEnvY+tVpxabGSyxwRhK6L2zemdTPB50cckoyI0yyfz3Yu78Q1ocR5uSAqoDaG5S3aE/5JQTUzR/3cag46iPoX7MaDBY130guWgs5EPWbaXh6yIhCDjRPLSrLwB98P5s3c/WSTgF5zhtMF5s8y3fAW77LsDJpxRm2/JSg
-X-Forefront-Antispam-Report: CIP:216.228.117.160; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:mail.nvidia.com; PTR:dc6edge1.nvidia.com; CAT:NONE;
- SFS:(13230040)(1800799024)(82310400026)(376014)(36860700016)(11063799003)(56012099003)(18002099003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 5M+teTID47h5Uh7ymlMFAJHAOZ3jxkyP1/zlB45kZZXBFKMRhOeT3CUeBpeO51/cJ+J3J656eVWnidZNzVkeQeEgop7WtACERPPju0gucAFKvxJ++YlxqVXrshFe2EKIuWnhFyK4S77SAN7GN+9wP9G6D0jRI8n6DPDggmZ09N/bwDg7y/1HwKOSO1w/1xObWO7jji7R+demBL/zDyEj5ywXNrBlZEmcgHZFUs5uh5N97TCIWuR/bLOhHXNZR8Wj05l7t1mn5bBpcEkb6KU2vul0B8XkR5CS1AVdiJXob9DFGbHLrwYAm/rjuPnlegcQjPSLnKC4ruvG8n7e+bUfawidFjLKUP5H36kdNCvVj2c766eyBEcjS1caYEPO/YX9deCww5D2C69wI3jCh1eHH/rgMYEVV/9mSRUV8tPvZ4TBOUbpPRUNcPDZw0/2eYEW
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 May 2026 12:34:48.0453 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 644869ab-4a22-4535-88be-08deb27e5a37
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a; Ip=[216.228.117.160];
- Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN2PEPF000055DA.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6663
+References: <20260421064637.2506152-1-shperetz@nvidia.com>
+ <73da1ec3-d1cc-4efb-bedf-89b0f951ec5d@redhat.com>
+ <2787587.q0ZmV6gNhb@thomas> <f27bd211-66c0-4a87-9d11-de6d83cae4c9@redhat.com>
+ <91a6d5df-57c8-4045-9cc4-4ea0f5170f52@redhat.com>
+In-Reply-To: <91a6d5df-57c8-4045-9cc4-4ea0f5170f52@redhat.com>
+From: Luca Boccassi <bluca@debian.org>
+Date: Fri, 15 May 2026 13:36:08 +0100
+X-Gmail-Original-Message-ID: <CAMw=ZnSLnz8uxwPJgZThKUm4fpsge_dvb8+o4grBeNYYsmuBMw@mail.gmail.com>
+X-Gm-Features: AVHnY4IA7XfzMgR-tQjJlSU_9e4o3mCecLEjYHGRErruTc5F9WBeT6RANlb-47U
+Message-ID: <CAMw=ZnSLnz8uxwPJgZThKUm4fpsge_dvb8+o4grBeNYYsmuBMw@mail.gmail.com>
+Subject: Re: 23.11.7 patches review and test
+To: Kevin Traynor <ktraynor@redhat.com>
+Cc: Shani Peretz <shperetz@nvidia.com>, stable@dpdk.org, dev@dpdk.org, 
+ Robin Jarry <rjarry@redhat.com>, David Marchand <david.marchand@redhat.com>, 
+ Thomas Monjalon <thomas@monjalon.net>
+Content-Type: text/plain; charset="UTF-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -110,50 +83,35 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-From: Kiran Vedere <kiranv@nvidia.com>
+On Fri, 15 May 2026 at 11:32, Kevin Traynor <ktraynor@redhat.com> wrote:
+>
+> On 4/30/26 12:02 PM, Kevin Traynor wrote:
+> > On 4/30/26 10:58 AM, Thomas Monjalon wrote:
+> >> 30/04/2026 11:32, Kevin Traynor:
+> >>> On 4/21/26 7:46 AM, Shani Peretz wrote:
+> >>>> The planned date for the final release is 30 April 2026.
+> >>>
+> >>> As discussed on thread [0] there was a quite serious regression caused
+> >>> by "net: fix packet type for stacked VLAN"
+> >>>
+> >>> As discussion on the fix is ongoing, I would suggest to just revert this
+> >>> patch for your release.
+> >>
+> >> I agree the revert is the best option here.
+> >>
+> >>> It doesn't require a new RC and re-validation as it's an isolated issue
+> >>> (and there wasn't test cases to catch before Robin's new patch anyway)
+> >>
+> >> I suppose 24.11.5 and 25.11.1 are also impacted?
+> >>
+> >>
+> >
+> > Yes, I was hoping we would have a fix in a few days and we could add and
+> > re-release. Given that there's now discussion on the patch and what
+> > functionality is needed, it's probably best to just revert and release a
+> > new 24.11/25.11.
+>
+> Hi Luca. Are you planning to do a 24.11 release with revert for above
+> issue ? If you have a time issue, let me know and I can help out.
 
-mlx5_rx_poll_len() may return MLX5_ERROR_CQE_MASK when
-mlx5_rx_err_handle() reports MLX5_CQE_STATUS_HW_OWN while the Rx queue
-is in IGNORE error state. In this HW_OWN case mlx5_rx_err_handle()
-does not necessarily write to *skip_cnt, yet the caller (mlx5_rx_burst)
-unconditionally uses skip_cnt to advance rq_ci.
-
-This can cause rq_ci to jump by an undefined value, desynchronizing the
-RQ and CQ rings and leading to persistent bad packet delivery until the
-queue is reset.
-
-Fixes: aa67ed308458 ("net/mlx5: ignore non-critical syndromes for Rx queue")
-Cc: akozyrev@nvidia.com
-Cc: stable@dpdk.org
-
-Signed-off-by: Kiran Vedere <kiranv@nvidia.com>
-Acked-by: Dariusz Sosnowski <dsosnowski@nvidia.com>
----
- drivers/net/mlx5/mlx5_rx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/mlx5/mlx5_rx.c b/drivers/net/mlx5/mlx5_rx.c
-index 185bfd4fff..09cd3f1ffb 100644
---- a/drivers/net/mlx5/mlx5_rx.c
-+++ b/drivers/net/mlx5/mlx5_rx.c
-@@ -1051,7 +1051,7 @@ mlx5_rx_burst(void *dpdk_rxq, struct rte_mbuf **pkts, uint16_t pkts_n)
- 	int len = 0; /* keep its value across iterations. */
- 
- 	while (pkts_n) {
--		uint16_t skip_cnt;
-+		uint16_t skip_cnt = 0;
- 		unsigned int idx = rq_ci & wqe_mask;
- 		volatile struct mlx5_wqe_data_seg *wqe =
- 			&((volatile struct mlx5_wqe_data_seg *)rxq->wqes)[idx];
-@@ -1497,7 +1497,7 @@ mlx5_rx_burst_mprq(void *dpdk_rxq, struct rte_mbuf **pkts, uint16_t pkts_n)
- 		uint16_t strd_cnt;
- 		uint16_t strd_idx;
- 		uint32_t byte_cnt;
--		uint16_t skip_cnt;
-+		uint16_t skip_cnt = 0;
- 		volatile struct mlx5_mini_cqe8 *mcqe = NULL;
- 		enum mlx5_rqx_code rxq_code;
- 
--- 
-2.47.3
-
+Hi, is it strictly necessary? Could it wait for the next one?
