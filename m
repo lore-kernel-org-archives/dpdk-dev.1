@@ -2,132 +2,87 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE50CD4F3C
-	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 19:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CD7CD343F
+	for <dpdk-dev@archiver.kernel.org>; Fri, 15 May 2026 23:19:09 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id A572C40609;
-	Fri, 15 May 2026 21:45:11 +0200 (CEST)
-Received: from CO1PR03CU002.outbound.protection.outlook.com
- (mail-westus2azon11020076.outbound.protection.outlook.com [52.101.46.76])
- by mails.dpdk.org (Postfix) with ESMTP id A760D402C1;
- Fri, 15 May 2026 21:45:10 +0200 (CEST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=luBhkmOIX5Fp1VzHojpM9W9sTnzGpNvUiwR3f/dk4eCHGk4RsgA1AIjfSxU1ElAljRMBKx2OeVCWEYJbpGanVJxbj5F1ozwdBwZZGmWdUFG1B0VAAQ3Sx71rOs4y0nOLdGKEA/LBmkWrQCodToJ+lDG+emQYtw7DkwjzNiB+XcKYyEHw0VQIMFo9WN/sdbULjncyKyjCq7pwWEZfBNMCEd9YghB9uhdai1yjWsVtdOwrUS7c2KBFdkQLTl0x7usJUXbXD3HcIyPHJ+mCuS8amabD3kh/wDOuAqY+Aab9btJP3Egq10JYvaSLRUwQICj1dg9sKeRDepamb+yrOe6G1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KHBLymM9JDWjx+g6CVfxp9yJSG/RER5aw6UvsS6Zd3U=;
- b=gu62k9HVDYoSM6m0npqqg1bElXmM1GJU2IMCN2oozDIErvOY/cZwE6cb3tDSbh9XpuG0I6ZdPEezMtfRHlkAVJJ+vDXI9G/4zuoLoYMx3PRzwzow6yCq5GD+KBcuNzYu18tvGYjAxsgO+NICiw3Nh1DhwqP0S+SdIfX7hpFVWGHuDTj1h5PVKoGoOLR1sWLEYFI2bkcq0WS0J+tdzmHNelXlvRPmGMsfVzRZac4YzkGm9JDT5E2MiGwKxEzsvHGcMaDB0QldtyEiRZdjNsF/J40r+b8G9eexiiiGrKA5ghTCttQCFwfvb2E32tA/Nc7oCtvt6IpZQeVzUFQFlQz8Qg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KHBLymM9JDWjx+g6CVfxp9yJSG/RER5aw6UvsS6Zd3U=;
- b=Yd84LR6J5BTrhgAg5RtZpROpq8Q4HIazFysIzovmXbAKkzcCtA5Z3JHD0U2fZvrYLS6eOwmXwvxzJ+qyiKEIEnUJlh8J0A1zlh6hEtg8QCrlPpuXMB8jkb5tB5MRxmvr/nLOjB7TlJB5knDTA9QUe5PihqydZTrrXgZ6PO2ZD2A=
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com (2603:10b6:806:4a4::6)
- by SA1PR21MB2034.namprd21.prod.outlook.com (2603:10b6:806:1b5::5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.48.9; Fri, 15 May 2026
- 19:45:07 +0000
-Received: from SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::879f:eec1:ca0e:d219]) by SA1PR21MB6683.namprd21.prod.outlook.com
- ([fe80::879f:eec1:ca0e:d219%6]) with mapi id 15.20.9891.008; Fri, 15 May 2026
- 19:45:07 +0000
-From: Long Li <longli@microsoft.com>
-To: Stephen Hemminger <stephen@networkplumber.org>
-CC: "dev@dpdk.org" <dev@dpdk.org>, Wei Hu <weh@microsoft.com>,
- "stable@dpdk.org" <stable@dpdk.org>
-Subject: RE: [EXTERNAL] Re: [PATCH v2 1/7] net/netvsc: retry VF hotplug
- indefinitely until PCI device disappears
-Thread-Topic: [EXTERNAL] Re: [PATCH v2 1/7] net/netvsc: retry VF hotplug
- indefinitely until PCI device disappears
-Thread-Index: AQHc3PzY4RQlJtvBzU62DKqLAlYo4LYB3lwAgA2uNgA=
-Date: Fri, 15 May 2026 19:45:07 +0000
-Message-ID: <SA1PR21MB66832CC9C7CB7CF2A34437B0CE042@SA1PR21MB6683.namprd21.prod.outlook.com>
-References: <20260506020529.281654-1-longli@microsoft.com>
- <20260506194948.2508fa6b@phoenix.local>
-In-Reply-To: <20260506194948.2508fa6b@phoenix.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=dd0e8c2d-3f1e-4156-a825-959670cbd48f;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2026-05-15T19:44:42Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10, 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR21MB6683:EE_|SA1PR21MB2034:EE_
-x-ms-office365-filtering-correlation-id: 9281f12c-d87f-42c0-f085-08deb2ba7780
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
- ARA:13230040|1800799024|376014|366016|38070700021|4143699003|11063799003|18002099003|56012099003|22082099003;
-x-microsoft-antispam-message-info: ZY/4s0Q0ZzX4NliyqUBFiPVc4p2q/DCW7lo17RU6pgeD4sqsK/9DuZBlkqQIOZvx4gA+U+2FGPZnPzEORvIgejYUbLipX3MU695Y8kImbrEVFzrlqutlwLRZYbODA7mbozJknr4kqLi0/mUDoUEuh+E6bSDDHfbAAmrcrz/xDvtssi8uFzmODFsb0xiQL5GpaJGPzzvKfWBdc80N29rNTdFEDQN2gG+4Y2OLb/8vHavGym6q2CNsATlEu2LwDLmndtLBNzb/ryCBRSTs5gOJAcCOKhBXor7nfO3f2+ImKsB2BdR2iYwCZMpybrAm2L9iF/2twjAcpZTUi0RFv0Su38soXVhxp8wSCoBliHyIlX4LGCFT1ba9oKM02rpA9t6UrxWKcQSjg21zUOZCf3boEGDwlg0rvHIbF5vu/TvqtrYmyTSEjtfKDI3NCaZia1dtuWT3O0QGUtKPkWJ2QoGEnxCO/RDq+lcC35lk/VX17ozLcxk7p8L6QGd893qM1MmDgYV49cVwQA8PHx6iThLl2PjvkMFLC1ry5J83HknKZC6x7CgQZpW/OctOwcK/y9BOZr6kdUKgWO8YWzFLaic3IcsIWuORMwrhF+/8JobiheUKZBSHEWcyPI07AWAFTDaGq8ROtOFVqJ82LV6/vGd1aCpCPFoAzlO3Noq9D0+uVq7EFqbTU+2lN0c26Ya8j1jF8dggJS54EsJSGJBz1MEkWEFbAqBunh7lfs4UdSzXoV7urtSmUBybSLORpUgyxzAW
-x-forefront-antispam-report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:SA1PR21MB6683.namprd21.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(376014)(366016)(38070700021)(4143699003)(11063799003)(18002099003)(56012099003)(22082099003);
- DIR:OUT; SFP:1102; 
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?MUh6Q25CMDlwWWR2bFNRQlZsWUlwdjViblpyeHFYSDYvUGNJRjZ3RXhDMVly?=
- =?utf-8?B?UWFDLzkvaGpLRGtGTHBBZjdkdHJ2MDhyenVaa0NoOTY5Znc4UjBiMExSUnZN?=
- =?utf-8?B?MTUzbGJkQTRtaEYrOXc4ZTQ3b0pvbUtuWUIza29KTU5rWXVNWXBpNXlJbTAw?=
- =?utf-8?B?VGttdEtGckNiM1BpTldsb1p3eTNJd0JDd0FrT2FPS1N0SXMwQmdGMXQvWHZS?=
- =?utf-8?B?NzhBWjhLN0IyV0VDUSsrS0hKNXFmZ09Vd1ZUTDVicEsxTGdJM1ZVWkowNDA1?=
- =?utf-8?B?R2ZYa01Ta0x4K3NVZnBabXJUOStPdDV2WTlmN0RSbllKbS9WSDdVdFRSYUNH?=
- =?utf-8?B?N3d3Snc0RzVNZXIrdFVjVXFFdEhEUnFhRlMrVnFOTFZtVkhvbnhxWklDMEIz?=
- =?utf-8?B?YlByandwUzBpQlUzSnRBRkVDQVBZd0Z5VTIyeTN2NkNQeUlCTktWV3hSWXNo?=
- =?utf-8?B?ZklobGVZRitvOW5OeGtIT3RTYVBGRW13WDJPT2dkSXp5b052ZVYyK3VDRStC?=
- =?utf-8?B?aVROVVlWT0lEK3JXdVdLZ0s0VmhnRy9Xdm1uT1ptZTkreUhJak9CQWIwb09O?=
- =?utf-8?B?Wkdid0JlVlBicUcxWndOcHZiWGlKRGtXYmU5UWFja1BrMHF5QVNmenJuSDR1?=
- =?utf-8?B?M2NKZnNnZ1VYZTk1Sm9hdEdmZUFqODdDaVZ5UnFCNkFXTGV4RTF3RDlnaFgw?=
- =?utf-8?B?ZFp1ekdSWVkrMFZQakZBQ05oTHpDc1RxRmFWOTN5cFJ5dlBRSUovRjczRzNL?=
- =?utf-8?B?SU91cFRkKzFlbWhWcU81TXYrMGQvM1ZoSkVCc1J5SmVGS1I3czBTYjE3Mkxp?=
- =?utf-8?B?VDB5ZGp2U2dLdEhxcnpiV1Rhcm5weUVYOWdOTW1Cc0Q3YUROR2RiNGwzQUR2?=
- =?utf-8?B?NHBtOGhSVnhUcDloNEJOcmNTZ1dJZGtRNWZ6NmdjcjRqNFlweTdqZTFKODEz?=
- =?utf-8?B?aUo0SnE1VkhMSzBvbmlrbXFrMDNnc2UydTV4WnFKMDhlQXlZNmFpR0RmRUo3?=
- =?utf-8?B?SzV5Q3d2dERENWE2VDJ4eVNKcEtDdGE4N0pJeERsSFBuNnFlOFhYUXB3VlRh?=
- =?utf-8?B?c3VXYmhtTU1EakxxMlVpMVNkc003amFPWlRYeTFxbGtyd2RtTElQWnovR3Nz?=
- =?utf-8?B?cy9SWmZnYkJIYUoyVU1YWjI2YmJNaWVEQ3NQeXZQQmJWTWZXRmRSYWFKMnRP?=
- =?utf-8?B?Yit3bFZpdkZqZ3NObWgzTUlxMXF4ZGpkaUxWa3l0RmFiM0duZlRUK044cUhL?=
- =?utf-8?B?ZXNmaTBEdWl6UjIvRGdrU3FEd2ZTcmpDdndnSEhYUGFaZlNaYkxWcjJ4aGhC?=
- =?utf-8?B?bzdCaXIvNDZMQkRQcTdOS0JoNm5mcThSZzAvWUVEdVp1V1ZnU0g4MHVkVkkw?=
- =?utf-8?B?Vmluc3NvMEZoTy9KSFlXOUQyckdubkJtR2hET1FYLy95SXdkeDhheGRBcmlt?=
- =?utf-8?B?Yi9LV2ZVOWE0Wm9EWFRPbExjLzNTZHhNTUx6Vk03MEo3eFVGY0tuZDM0K1FP?=
- =?utf-8?B?ZXM0SStzeWUwSkFWU2R1MEc2ZVpneW0rY2dkYlNnV2piWU5UelhBZnA0K3ZB?=
- =?utf-8?B?QTlaS0l4cCt6VEpMTU9wcU1ld0xwczQrdXFydk14S1Zhb3ArTlMyNXl1cmcz?=
- =?utf-8?B?MU5jZWlqbjJkSmZUUHlMUys5V3I4WU9HdjhOM0dkVElKL3QvVUZHbE9WblQ2?=
- =?utf-8?B?bUFvTFMvU1FNWjlvZ1ZtbmkwRkp6WGdaY0IvMmJQeitHNDdqMFZmUzhqVWdD?=
- =?utf-8?B?bjZTRDBKV0YyM3BJeXljV0RQY1dvWlpTd2phSjN4TUFJVzQ0SVZacjlxa0tM?=
- =?utf-8?B?dEdRUWYyRGI4SHlXK1kxTXl4VVNrVDZRU3lHUjhCRnEwTHo3Z3I0MEFBa3lm?=
- =?utf-8?B?OGRoM3NzbkdtMHdJY0RwemRNdGRHYTNwRGc0VzZpbnNGSHljZmJjRk1NejVU?=
- =?utf-8?B?WkhxN01GaHlHcFNQcGl6MnlmMVFNNW1oTEd1WXQ5WDRycFgvcWdja1NlZmR0?=
- =?utf-8?B?WkFyL2hFZVZrMmxaWEhaVmc3NytYczU3d0VUbjFXS3dZZTFNdVo0alpDUFcw?=
- =?utf-8?B?Z0VBZTlQOHNFZzR6Zld4d1I2RWhvaWUzL0txQ1dOdFp0K0RTSElveHhrVzB3?=
- =?utf-8?B?OHlERjV3TGtURFY1NHQvcFZ4WFZYVWltVDJtNkhFMnROeFBBR2JSanJFUjZw?=
- =?utf-8?B?TjRTLzczcXVGaUQvbExwWDdubkhSbzRCb3gxRFhIOC9UMVhoU09MRlg2Vm5u?=
- =?utf-8?B?U1A2UkdLUEF0aTFNTU9hcThLWHpKNU9YWmRoVzNYOFoyd3lNQWNTWjZZOUIr?=
- =?utf-8?Q?BQ1gC4iqeVoBR38v35?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by mails.dpdk.org (Postfix) with ESMTP id 5C7DC4026C;
+	Sat, 16 May 2026 01:19:08 +0200 (CEST)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com
+ [209.85.218.50]) by mails.dpdk.org (Postfix) with ESMTP id 8ABC040269
+ for <dev@dpdk.org>; Sat, 16 May 2026 01:19:06 +0200 (CEST)
+Received: by mail-ej1-f50.google.com with SMTP id
+ a640c23a62f3a-bd5126a5e0fso52628366b.3
+ for <dev@dpdk.org>; Fri, 15 May 2026 16:19:06 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1778887146; cv=none;
+ d=google.com; s=arc-20240605;
+ b=MzpEyxjqHpEWBcgq7IkPfOgrDd8l9yu7IFEWhuOstRf4qQWX6vhE+BI8Bolde9OMD1
+ 81aHaPhLPbWjLxUAGVcAn4vHWhmUoLqQSsopHfL7Q2flF2H61h4sRXrUwke0Z3h/cshs
+ qE+vkqbCoBXTZffDFt/cW0nyBDxsxhJb7abXLI06f7tFgvcUgsLGCuOTVdHmF+Tm1Jaj
+ W0ggRMFKXG2EdKAyuy9kTrRs9sEOlRHhgw6KO03YgDvgxdEl5mdI6k+1qEkHCsVFSIGy
+ yKPVWtYgaBT0xgMwLLcHTMG2J5AXjFYD6UH9MzL8P3iM7a6IcdBD9Ra+63GoRazD5yZJ
+ Y6Bw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com;
+ s=arc-20240605; 
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:dkim-signature;
+ bh=rs2BUeCD5KFYWViOeuuoWI5GLk0szIZU4LIqlJhjkqM=;
+ fh=t33Egyn4DAOwVRnwraldPtDjoBFAjogf3LzpsEMwxHQ=;
+ b=W4tg4qxykefWAz4WiKXQolysW3z+ZEJn38qH6/LWkAgpCAzhGgU41bcCNz5NGAvuwD
+ 6H2fZsm6UfPZKnti/aeWJ+YkrztBjlxViAij5S1TODO5r0Utg/9xTEcVYnz9qQaJTJRh
+ ffB05iZsYWSjc1a5X5z93VuiN/RgK5qFTvVTvVwUQx2GDRR4qQzp4zJm23Ui/WKQcg+a
+ SRU1fxfoqzL1fQtaXYRQlC6QSCwta001LnoNCydCqC9Bnp/sSwXlgYaU0mJhWKadLOC2
+ fQQgiiNYROSiVu/MnK3XzTP5/mq52aTOxX3N/F1/SYqD0zqY/1P8AkcuT87yOf13mSN4
+ p+eA==; darn=dpdk.org
+ARC-Authentication-Results: i=1; mx.google.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=google.com; s=20251104; t=1778887146; x=1779491946; darn=dpdk.org;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=rs2BUeCD5KFYWViOeuuoWI5GLk0szIZU4LIqlJhjkqM=;
+ b=E38dv3BNHbYFGYx4fynd8r1VuUvhmbdgRdPEDmJfwfabZkNg0aqOubF4Od6IaDHXZ8
+ mqhY+cLIe2Ju64PyHVhxgDOrdMXRYinjuKsS40l5EVz7ml74Jz93QZg5l7+a7jh3/QF3
+ WpitcvHSuaOLztFnq2SCSnMy/EbP5ONGH1vBaNiG0kmdp7xEHkUdcTVAaWilfWYDh1Uc
+ zQ4rDYeltikrGHg3eB1mEGgRKJmEm7gqITZPUIHb40ChXvJxdv1RWocfT1Upsadcb8S1
+ Uc5szLhhJVXfcx6nN3lZYvL1LNrykEgvN+zLu/t8ncNDaN48oZw+RsNt3YRF105rH6fK
+ 3CMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1778887146; x=1779491946;
+ h=content-transfer-encoding:cc:to:subject:message-id:date:from
+ :in-reply-to:references:mime-version:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=rs2BUeCD5KFYWViOeuuoWI5GLk0szIZU4LIqlJhjkqM=;
+ b=Xw+cryoFkAi/KXs4EIJ9VeispUFduvZBhqnd/ayl7+Cmdy97W/ucMcSlRVQEbB5vgN
+ kFxGk5FhudFo8RRZW3R65xjTPisJHjklm8MyNoelHlNucxTBYETNm+NtWBPIh05VgfKZ
+ pHpy5rb9Oxb2P9+3bfr5wxgMXmI92P2F4Nb14loF99yNRCai9e2KvGzTBEnn6ZWDIBzW
+ evL6EplqQRpuO6Oj2aZ5IoJzejYEhpwbqrxCQIwL4cQxb9zDwKWnno/pmVGvTy1vsYlc
+ 3KoCZcszp1fzZFnuF6BuP4hUsW8jSZYL7yC/oyV9fLlXVaWiG6Zt6J34hAbXntwCU3Es
+ ihCg==
+X-Gm-Message-State: AOJu0YxcyIE9mvmy3DZm7kOtgqTnoRPiXT16udj04w5XR1IERsBU7N/w
+ JlOlXn/tH8380fJTXB9aHLiO08LIFf9LT0ZnJAE+bg+0idl9JhHxRKDosD6XC5qyYJbqXp6TQWd
+ c6Py2K9rF0lEvTKnHT2R+fyIBboFJCjZ6tx8qHv5AbzdY3H+/bBf+j8LtUbo=
+X-Gm-Gg: Acq92OFbJG8LNFrfuJMheLuvNnrsqnTSfxIx4tVHmHwfweMzMm9h4/+Dn0JAfONqhU+
+ FNlGVIOGmWLo0a8r7aMSySN3ee+67arR34As33vW2R2i3xSaU+2WPqTTvt/ivTU//8GeCX481XO
+ z75hP/Ih8ZrYIMdS9dIdltUFg/KrnQmYOEWDAIh9dsmBgKJ+aNV62CN2D/ueuGoRDfy2fCdB/ac
+ kGbnd1b2kUuSSp3md8rIUcvN/IUyi/jrKT5/dxjEfv41MIWqOnUmCpsAVfq42s1jOTP8gaEZE3W
+ Y/9mtLt7Oq+niA1DVx+HRh9QCi/5a4wHppeADmBRbgLfzJ1/dCfM2GQ63vrHWyiYBrfwU2Pnf96
+ cWHdT/89pcrG0S9rOD75fpgDZhdGLf/E=
+X-Received: by 2002:a17:907:960d:b0:bd3:2385:ee0b with SMTP id
+ a640c23a62f3a-bd5177d4699mr338079566b.9.1778887145467; Fri, 15 May 2026
+ 16:19:05 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR21MB6683.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9281f12c-d87f-42c0-f085-08deb2ba7780
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 May 2026 19:45:07.1667 (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 9CF0sAv7OiKwbxgcIKLBieEpl7/4nMomJZg+fFRxq+QNGIfQBHqnzO5RFk5H4kPKH6ADafFiH6apnDCXeHiG4Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB2034
+References: <20260512005404.946979-1-blasko@google.com>
+ <20260513164114.25de780b@stephen-xps.local>
+In-Reply-To: <20260513164114.25de780b@stephen-xps.local>
+From: Mark Blasko <blasko@google.com>
+Date: Fri, 15 May 2026 16:18:53 -0700
+X-Gm-Features: AVHnY4ITcWLV0A-CemDOARCCKSiwskFPEGBRuJfId0zyoGaPH28J6qJ-ru3EwKI
+Message-ID: <CANULgnKecfnVn+jaZcuHeJZMrGSHSJWmL=UR+JY_MdFv-Vhe+Q@mail.gmail.com>
+Subject: Re: [PATCH 0/6] net/gve: add hardware timestamping support
+To: Stephen Hemminger <stephen@networkplumber.org>
+Cc: dev@dpdk.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -141,53 +96,64 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3RlcGhlbiBIZW1taW5n
-ZXIgPHN0ZXBoZW5AbmV0d29ya3BsdW1iZXIub3JnPg0KPiBTZW50OiBXZWRuZXNkYXksIE1heSA2
-LCAyMDI2IDc6NTAgUE0NCj4gVG86IExvbmcgTGkgPGxvbmdsaUBtaWNyb3NvZnQuY29tPg0KPiBD
-YzogZGV2QGRwZGsub3JnOyBXZWkgSHUgPHdlaEBtaWNyb3NvZnQuY29tPjsgc3RhYmxlQGRwZGsu
-b3JnDQo+IFN1YmplY3Q6IFtFWFRFUk5BTF0gUmU6IFtQQVRDSCB2MiAxLzddIG5ldC9uZXR2c2M6
-IHJldHJ5IFZGIGhvdHBsdWcgaW5kZWZpbml0ZWx5DQo+IHVudGlsIFBDSSBkZXZpY2UgZGlzYXBw
-ZWFycw0KPiANCj4gT24gVHVlLCAgNSBNYXkgMjAyNiAxOTowNToyMiAtMDcwMA0KPiBMb25nIExp
-IDxsb25nbGlAbWljcm9zb2Z0LmNvbT4gd3JvdGU6DQo+IA0KPiA+IEFmdGVyIFBDSSByZXNjYW4g
-b24gQXp1cmUsIHRoZSBNQU5BIGtlcm5lbCBkcml2ZXIgY2FuIHRha2Ugb3ZlciAxMDANCj4gPiBz
-ZWNvbmRzIHRvIHByb2JlIGFuZCBjcmVhdGUgdGhlIC9zeXMvYnVzL3BjaS9kZXZpY2VzLzxkZXY+
-L25ldCBkaXJlY3RvcnkuDQo+ID4gVGhlIHByZXZpb3VzIGZpeGVkIHJldHJ5IGxpbWl0IChORVRW
-U0NfTUFYX0hPVEFERF9SRVRSWT0xMCwgfjEyDQo+ID4gc2Vjb25kcykgd2FzIGluc3VmZmljaWVu
-dCwgY2F1c2luZyBWRiByZS1hdHRhY2ggdG8gZmFpbCB3aXRoICdGYWlsZWQNCj4gPiB0byBwYXJz
-ZSBQQ0kgZGV2aWNlJyBvbiBzeXN0ZW1zIHdpdGggc2xvdyBNQU5BIGRyaXZlciBpbml0aWFsaXph
-dGlvbi4NCj4gPg0KPiA+IFJlcGxhY2UgdGhlIGZpeGVkIHJldHJ5IGxpbWl0IHdpdGggYW4gaW5k
-ZWZpbml0ZSByZXRyeSB0aGF0IG9ubHkgZ2l2ZXMNCj4gPiB1cCB3aGVuIHRoZSBQQ0kgZGV2aWNl
-IGl0c2VsZiBkaXNhcHBlYXJzIGZyb20gc3lzZnMuIFRoaXMgaXMgc2FmZSBiZWNhdXNlOg0KPiA+
-DQo+ID4gLSBUaGUgcmV0cnkgdXNlcyBydGVfZWFsX2FsYXJtIGNhbGxiYWNrcyB3aGljaCBhcmUg
-c2VyaWFsaXplZCBvbiB0aGUgRUFMDQo+ID4gICBpbnRlcnJ1cHQgdGhyZWFkLCBwcmV2ZW50aW5n
-IHJhY2VzIHdpdGggVkYgcmVtb3ZlIG9yIGRldmljZSBjbG9zZSBwYXRocy4NCj4gPiAtIERldmlj
-ZSBjbG9zZSAoZXRoX2huX2Rldl91bmluaXQpIGV4cGxpY2l0bHkgY2FuY2VscyBhbGwgcGVuZGlu
-ZyBob3RwbHVnDQo+ID4gICBhbGFybXMgdmlhIHJ0ZV9lYWxfYWxhcm1fY2FuY2VsIGFuZCBmcmVl
-cyB0aGUgY29udGV4dC4NCj4gPiAtIElmIHRoZSBQQ0kgZGV2aWNlIGlzIHJlbW92ZWQgd2hpbGUg
-cmV0cnlpbmcsIGFjY2VzcygpIGRldGVjdHMgdGhlDQo+ID4gICBtaXNzaW5nIHN5c2ZzIHBhdGgg
-YW5kIHN0b3BzIGltbWVkaWF0ZWx5Lg0KPiA+DQo+ID4gQSBwZXJpb2RpYyBOT1RJQ0UgbG9nIGV2
-ZXJ5IDMwIHJldHJpZXMgKH4zMHMpIHByb3ZpZGVzIHZpc2liaWxpdHkgaW50bw0KPiA+IGxvbmcg
-d2FpdHMgd2l0aG91dCBmbG9vZGluZyB0aGUgbG9nIGF0IERFQlVHIGxldmVsLg0KPiA+DQo+ID4g
-Rml4ZXM6IGEyYTIzYTc5NGIzYSAoIm5ldC9uZXR2c2M6IHN1cHBvcnQgVkYgZGV2aWNlIGhvdCBh
-ZGQvcmVtb3ZlIikNCj4gPiBDYzogc3RhYmxlQGRwZGsub3JnDQo+ID4gU2lnbmVkLW9mZi1ieTog
-TG9uZyBMaSA8bG9uZ2xpQG1pY3Jvc29mdC5jb20+DQo+ID4gLS0tDQo+IEJldHRlciBidXQgc3Rp
-bGwgc2VlaW5nIEFJIHJldmlldyB3YXJuaW5ncy4NCg0KSSBoYXZlIHNlbnQgdjMuDQoNClRoYW5r
-cywNCkxvbmcNCg0KPiANCj4gUmV2aWV3ZWQgdGhlIHYyIDctcGF0Y2ggc2VyaWVzIGFnYWluc3Qg
-dXBzdHJlYW0gZHJpdmVycy9uZXQvbmV0dnNjLy4gUGF0Y2hlcyAxLA0KPiAyLCAzLCBhbmQgNSBh
-cmUgY2xlYW4uIEZpbmRpbmdzIG9uIHRoZSByZXN0Og0KPiBQYXRjaCA0IOKAlCB0aGUgbmV3ICJy
-ZXRyeSBsb29wIGV4aXRpbmciIE5PVElDRSBmaXJlcyBvbiBldmVyeSB0ZXJtaW5hdGlvbg0KPiBp
-bmNsdWRpbmcgdGhlIHN1Y2Nlc3MgcGF0aCwgcHJvZHVjaW5nIGEgbm9pc2UgYWxlcnQgb24gZXZl
-cnkgc3VjY2Vzc2Z1bCBWRiByZS0NCj4gYXR0YWNoLg0KPiBQYXRjaCA2IOKAlCB0d28gd2Fybmlu
-Z3M6IChhKSByZWFjaGluZyBkaXJlY3RseSBpbnRvIHZmX2Rldi0+ZGV2X29wcy0+c3RhdHNfZ2V0
-DQo+IHdvcmtzIG9ubHkgYmVjYXVzZSBldGhfc3RhdHNfcXN0YXRzX2dldCgpIGFscmVhZHkgbWVt
-c2V0IHRoZSBidWZmZXJzIGJlZm9yZQ0KPiBpbnZva2luZyBuZXR2c2MncyBjYWxsYmFjaywgYW4g
-dW5kb2N1bWVudGVkIGRlcGVuZGVuY3kgb24gdGhlIGNhbGxlcjsgKGIpIHRoZQ0KPiBlbHNlIGZh
-bGxiYWNrIHRvIHJ0ZV9ldGhfc3RhdHNfZ2V0KCkgaXMgZGVhZCBjb2RlIOKAlCBpdCByZXR1cm5z
-IC1FTk9UU1VQIGZvciB0aGUNCj4gc2FtZSByZWFzb24gYXMgdGhlIGRpcmVjdCBjYWxsLg0KPiBQ
-YXRjaCA3IOKAlCB0aGUgcmVjb3ZlcmluZyBhbmQgcmVjb3Zlcnlfc3VjY2VzcyBjYWxsYmFja3Mg
-YWNxdWlyZSB2Zl9sb2NrIGRpcmVjdGx5DQo+IGZyb20gZXZlbnQtY2FsbGJhY2sgY29udGV4dCwg
-ZGVwYXJ0aW5nIGZyb20gdGhlIGV4aXN0aW5nIElOVFJfUk1WIHBhdHRlcm4gdGhhdA0KPiBkZWZl
-cnMgd29yayB2aWEgcnRlX2VhbF9hbGFybV9zZXQgcHJlY2lzZWx5IHRvIGF2b2lkIGNyb3NzLWRy
-aXZlciBsb2NrLW9yZGVyDQo+IGFzc3VtcHRpb25zLiBUaGUgdW5sb2NrZWQgdmZfYXR0YWNoZWQg
-cmVhZCBpbiByZWNvdmVyeV9mYWlsZWQgaXMgYSBiZW5pZ24gcmFjZQ0KPiB0aGF0IGNhbiBiZSBz
-aW1wbGlmaWVkIGJ5IGRyb3BwaW5nIHRoZSBndWFyZC4NCg==
+Thanks for the review, and apologies for the accidental spam
+with v1! We'll address most of the initial comments exactly as
+suggested in v2, but have a few follow-ups:
+
+> [PATCH 4/6] net/gve: add periodic NIC clock synchronization
+>
+> gve_setup_nic_timestamp() discards the gve_alloc_nic_ts_report() error.
+> If the memzone allocation fails, priv->nic_timestamp_supported (set in
+> 2/6) remains true, so dev_info_get() in 6/6 will advertise
+> RTE_ETH_RX_OFFLOAD_TIMESTAMP and read_clock() in 5/6 will return -EIO
+> on every call. Clear priv->nic_timestamp_supported on alloc failure so
+> the capability is advertised honestly.
+
+To avoid dishonest capability advertisements and -EIO loops while
+preserving hardware capability tracking, we plan to leave
+priv->nic_timestamp_supported untouched (as it represents immutable
+hardware state). Instead, in v2 we'll predicate capability
+advertisement in gve_dev_info_get() directly on memzone allocation
+(priv->nic_ts_report_mz) and add an explicit error log advising a
+device reset for transient recovery.
+
+On Wed, May 13, 2026 at 7:41=E2=80=AFAM Stephen Hemminger
+<stephen@networkplumber.org> wrote:
+> Patch 5: net/gve: support read clock ethdev op
+>
+> Warning: gve_read_clock and the periodic alarm callback
+> gve_read_nic_clock share a single DMA buffer (priv->nic_ts_report)
+> for the GVE_ADMINQ_REPORT_NIC_TIMESTAMP response. The adminq_lock
+> introduced in patch 1 serializes the adminq command exchange, but
+> is released inside gve_adminq_execute_cmd before either caller
+> reads the buffer:
+>
+>     err =3D gve_adminq_report_nic_timestamp(priv,
+>                                 priv->nic_ts_report_mz->iova);
+>     /* lock has already been released here */
+>     if (err !=3D 0)
+>         return err;
+>     ts =3D be64_to_cpu(priv->nic_ts_report->nic_timestamp);
+>
+> If the user thread (gve_read_clock) is preempted between returning
+> from gve_adminq_report_nic_timestamp and the be64_to_cpu read, the
+> alarm callback can run, memset() the buffer to zero, take the
+> adminq lock, issue its own command, and either leave its own
+> response in the buffer or be mid-DMA when the user thread reads.
+> The user thread will then read zero or a different command's
+> response.
+>
+> The simplest fix is to return the cached
+> priv->last_read_nic_timestamp from gve_read_clock rather than
+> issuing a fresh adminq command. The periodic sync runs every
+> 250ms, so the cached value is recent; the .read_clock semantics
+> do not require a brand new device read. Alternatively, use a
+> separate per-caller DMA buffer or extend the critical section
+> to cover the buffer read.
+
+Before returning the cached timestamp as suggested, we wanted to
+clarify the API contract:
+- Is the fact that .read_clock does not require a fresh device read
+  documented in the DPDK specification, or is this based on typical
+  application use cases? If the latter, what are those typical use
+  cases?
