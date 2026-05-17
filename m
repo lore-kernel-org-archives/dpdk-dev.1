@@ -2,68 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFC7CD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 23:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9601CCD4F3D
+	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 23:55:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 5028840264;
-	Mon, 18 May 2026 01:15:51 +0200 (CEST)
-Received: from mail-dl1-f50.google.com (mail-dl1-f50.google.com [74.125.82.50])
- by mails.dpdk.org (Postfix) with ESMTP id 43FD540261
- for <dev@dpdk.org>; Mon, 18 May 2026 01:15:50 +0200 (CEST)
-Received: by mail-dl1-f50.google.com with SMTP id
- a92af1059eb24-1329fc4bf77so3951121c88.1
- for <dev@dpdk.org>; Sun, 17 May 2026 16:15:50 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id E3583402EA;
+	Mon, 18 May 2026 01:55:37 +0200 (CEST)
+Received: from mail-dl1-f49.google.com (mail-dl1-f49.google.com [74.125.82.49])
+ by mails.dpdk.org (Postfix) with ESMTP id 5C86B40264
+ for <dev@dpdk.org>; Mon, 18 May 2026 01:55:37 +0200 (CEST)
+Received: by mail-dl1-f49.google.com with SMTP id
+ a92af1059eb24-135200bc7d2so4515216c88.0
+ for <dev@dpdk.org>; Sun, 17 May 2026 16:55:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779059749;
- x=1779664549; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779062136;
+ x=1779666936; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=K8damRcC05CErhprCmMGar2dC3PQztkZ4nkBD2kEKpk=;
- b=GSWM4FfT2NOTSKy8uVu06bbwfeqqkaiZxmStjOQ7nihc3Rdgo2hLiLWR2uIAfH3WMe
- ftm8JO/d6gZui0PVON0yGqMouLpX1p8EUuHNb/yJYWrm9WVI/ovEo2HatB15bmde8KS7
- zo2lxQef60j4RXtyMfE4DtDUblaX/gjntVqgquwIok2ggHC+21jhMlF6CTA+gZE8eJj6
- Fxg9r1fgXVJcKxCvcsMzG46nWpo1PQvqjMRkzxv3GeGQLLl61EWRPN/EokJCuNYLgIoZ
- DrYdef8EwNBIG5sf/0mfWIOYwv24gmEvFklUMcbtpITOz8Kegaf7lZ3+ZmLoziqCpL6Z
- +pMw==
+ bh=3eeuVqMUWCmURiEc5TUaSxB8/Y30fLEvgovALPV07/A=;
+ b=paDhzfEs9zGDSEC/nhzmYQLREkzJ9js925bS9oadocsc190tco8iMEef2BvVUq/C7C
+ BGtxK10IbTjv92uqY42Ls9PAHxkeUVXs+3H08Cq56UWQgBlmTPrzjVzP9q0NjI7JPyqM
+ F9gFp/lphzyltIeizd1cgXpWT3a0LuNwUdHr0GluwgVEVBx3JOGB1K6y7jXaePM8PVGq
+ dOq3ZUz1rKkgu8vdrje4NLHtkEdgf9fUJIUUa+keKpLrubWJ2jqz52xcnhuhcgBiia4U
+ cF6g9D7xuQ9VJEiHOx5KTUeIQlRL9RfVkOvWaXgmD99xvQPmlTH1QrWdjCoDUZ4hlgV9
+ Qwiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779059749; x=1779664549;
+ d=1e100.net; s=20251104; t=1779062136; x=1779666936;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=K8damRcC05CErhprCmMGar2dC3PQztkZ4nkBD2kEKpk=;
- b=VOkRDI858WZy1cAjicFSiV57ii/pBJak7Vz6h7tJZddddpUbsWhe+8b1YLxYi2VjeJ
- EYIG9NlFQYpq2kgGs8YG/1LHH1j3lHQ2Wru1TR8NkiYVqQUQk4xi/vV/fcaEl2CJTS7H
- iyjNlyak+Wfb7w+esCnXbwcHkm09Tplt7IEU8/G7yIO67USMGXUpWgASiLPvx1/c55Qe
- /9PK0tNtwXHiNOQHk2ujCm6lIa5buygbQUY9RxZF1wQ072Hy1oo1pg9c6giRCvE0JYRc
- 3XPwzP8WVR0rBD/CitarDR1jaVTAzoId+8Z7YJAn+h0GmqgPiczBfOVicuWz+oRu4pvt
- NBRQ==
-X-Gm-Message-State: AOJu0Yzc4MTZzCD/NZn53bqvIHlNPSFLp+E86uaJbvUm8KMdlDhgoAbj
- uWl61JN97G3LPLEZ5f+miko3TLY9DPFqC0QRmy5uxv2LHADHE0bvo5hcyhbHKPRVm88=
-X-Gm-Gg: Acq92OGXhNS4otaUH3u6A7RL9yaXmt/jmS0qgHY8AefqRZqDDwKzUcEfEra75MuU2YX
- oYmAsK0BG+GOppRWcoCjMlWu3VGgOVOgSK1YPtzeQK/2K/xEvxBzckgf0XE//BOA+1LmWgB+z0d
- n+nCpqTa4vZPPxFvEhYZR/AdJyfO45WkOyucKeMuCvigYK8ckqWUy+H39EH+vKr70HSsJS3RW3l
- 4dne2K528M+CJ+pRriok9wKFQUmH4uYSFb2JooKUzcQMqv4VJxBvPQOxb/79mRKjH4lAr7KLSLn
- bwiaBTm5oUrC8CFs79cYohtozTaUOTskz0Cu4uKnXC7WHT94ume2Hyj0fX0lXRJouDdR27XlPRg
- Dt7f7TvmRmFhOSgoiAW0DSF1iZpJFDTeJlPKLAmqAFYyNTMI6BqFbH+lIRWScjTqHKs7hhd/oca
- 1hUby6Es8Zcfh9mqfOpZIML+MP+HpzfOYKBzA=
-X-Received: by 2002:a05:7300:4311:b0:2ed:e15:c923 with SMTP id
- 5a478bee46e88-303986bc13cmr5626930eec.31.1779059748811; 
- Sun, 17 May 2026 16:15:48 -0700 (PDT)
+ bh=3eeuVqMUWCmURiEc5TUaSxB8/Y30fLEvgovALPV07/A=;
+ b=bO9Vxzf8yPtmTJIEb6TkR89wJygxFXdn04t46TrvAyBr407gXTq+8UUZdRPTdc4wFb
+ JKlPKbOLuaNK7cEYH1us9MMGgo+tpATBSf7DRcTFZ7mWOIKOorVW7I6M1w3m6a7/9IE7
+ y80Wwq9Q+NqLX48Gp+a1cNNkzdiHy7upfC5reeyzJcIjphiOHy9h8+6yMVLTgkL9aI6o
+ ENZBEiqdX1F+6ZJpMNKkPAsuuSncxTWLUNKRmzVo2HxvCQUXA8ylgd6qAzZ4tiwBv4cg
+ BfDpKgTb8iEO7osfx/ZGsUc1PqClwbWWpwhLvsfzXfOGJBctjaBglqT1yfUaqtDv1HGj
+ SJWA==
+X-Gm-Message-State: AOJu0Yx9BmiDLqGvfJFvmUnhlEUtZtjdDrHjkXIaCZ0PUTTioyBoOBF5
+ s7cTdBYJDj4R6mPqcFQUmYkvyv8AYLOEIH8o6vWZDMn0qMwiQZ9dUs7Upg91byYAuyI=
+X-Gm-Gg: Acq92OE4jf5woUJkfoUpWh6NfnchIUiKIgWfcNSoQ7m6PUVgeRQOMoefbqRqJ9x7QKs
+ ArLXurd8My9xAYwfpV6VKUp79+ALi8ntVpLkfEARxhSTH6gz8UmnJ5q/2XUjpxLDUS4kWFwl3Ut
+ EUW66cqqIBkfe/kbdY5/WGZl33rd9gVsoG9t7dRqaYEGyP59ZQeGaDu3bgejiyCzS6d62tlUO3J
+ t+/Hs9zCGvXVpLbmLTLCvhOfhcYt9u1EIVFQzUc49TcwT03L9PU1hHs51ke22bQIiL3JojCvn6k
+ hfUw9DsVbzLI/AIRVdEaQwF2PLkH5vsq0en55/ucUKbY1NikvHgY1gKXuVAwlrg01OtSbbp+jE3
+ EH7Vjed04i4M2v0T70ZTNWZltnFP4brdtYq9qfshW6mBS40+CCF0cZQ+e4wuEHHgBvPFha4y/rA
+ GVnq0EiGsepOvuIRd5Bap2aiWM+3YYlobolmY=
+X-Received: by 2002:a05:7022:6708:b0:130:68a1:a221 with SMTP id
+ a92af1059eb24-13504a4c7a3mr5681391c88.38.1779062136136; 
+ Sun, 17 May 2026 16:55:36 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-302944ffdf0sm13106455eec.8.2026.05.17.16.15.48
+ a92af1059eb24-134cbdce9fasm15454706c88.4.2026.05.17.16.55.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 17 May 2026 16:15:48 -0700 (PDT)
-Date: Sun, 17 May 2026 16:15:45 -0700
+ Sun, 17 May 2026 16:55:35 -0700 (PDT)
+Date: Sun, 17 May 2026 16:55:33 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Mark Blasko <blasko@google.com>
-Cc: dev@dpdk.org
-Subject: Re: [PATCH v2 0/6] net/gve: add hardware timestamping support
-Message-ID: <20260517161545.2b33289a@phoenix.local>
-In-Reply-To: <20260515231936.3296603-1-blasko@google.com>
-References: <20260511224354.872997-1-blasko@google.com>
- <20260515231936.3296603-1-blasko@google.com>
+To: Zaiyu Wang <zaiyuwang@trustnetic.com>
+Cc: dev@dpdk.org, stable@dpdk.org, Jiawen Wu <jiawenwu@trustnetic.com>
+Subject: Re: [PATCH v4 20/20] net/txgbe: fix to enable Tx desc check
+Message-ID: <20260517165533.20cdb300@phoenix.local>
+In-Reply-To: <20260511103604.19724-21-zaiyuwang@trustnetic.com>
+References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
+ <20260511103604.19724-1-zaiyuwang@trustnetic.com>
+ <20260511103604.19724-21-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -80,88 +81,100 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Fri, 15 May 2026 23:19:29 +0000
-Mark Blasko <blasko@google.com> wrote:
+On Mon, 11 May 2026 18:36:02 +0800
+Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 
-> This patch series introduces support for GVE hardware timestamping on DQO
-> queues. To support concurrent access, a mutex lock is introduced to protect
-> admin queue operations. A mechanism is then added to periodically synchronize
-> the NIC clock via AdminQ, and support is introduced for the read_clock ethdev
-> operation. Finally, the RX datapath is updated to reconstruct full 64-bit
-> timestamps from the 32-bit values in DQO descriptors.
+> Now lib security is enabled by default, and cannot be disabled if the
+> driver is intended to be used. So Tdm_desc_chk is always unable to enable.
+> Remove this restriction, and just enable the corresponding queue check.
 > 
+> Fixes: 0eabdfcd4af4 ("net/txgbe: enable Tx descriptor error interrupt")
+> Cc: stable@dpdk.org
+> 
+> Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 > ---
-> v2:
-> - Patch 1: Dropped ROBUST mutex attribute.
-> - Patch 3: Added adminq timestamp counter reset to gve_adminq_alloc.
-> - Patch 4:
->   - Removed redundant void* casts.
->   - Handled alarm reschedule failures by marking timestamp stale.
->   - Added transient error logging on memzone allocation failure.
-> - Patch 5: Scoped read_clock ethdev operation strictly to DQO queues.
-> - Patch 6:
->   - Scoped timestamp offload capability advertisement strictly to
->     DQO queues.
->   - Predicated capability advertisement directly on memzone
->     allocation.
->   - Initialized mbuf_timestamp_offset to -1.
->   - Added blank line separating release notes.
-> ---
-> 
-> Mark Blasko (6):
->   net/gve: add thread safety to admin queue
->   net/gve: add device option support for HW timestamps
->   net/gve: add AdminQ command for NIC timestamps
->   net/gve: add periodic NIC clock synchronization
->   net/gve: support read clock ethdev op
->   net/gve: reconstruct HW timestamps from DQO
-> 
->  .mailmap                               |   1 +
->  doc/guides/nics/features/gve.ini       |   1 +
->  doc/guides/nics/gve.rst                |  20 ++++
->  doc/guides/rel_notes/release_26_07.rst |   4 +
->  drivers/net/gve/base/gve_adminq.c      | 128 +++++++++++++++++----
->  drivers/net/gve/base/gve_adminq.h      |  29 +++++
->  drivers/net/gve/base/gve_desc_dqo.h    |   8 +-
->  drivers/net/gve/gve_ethdev.c           | 149 ++++++++++++++++++++++++-
->  drivers/net/gve/gve_ethdev.h           |  39 +++++++
->  drivers/net/gve/gve_rx_dqo.c           |  26 +++++
->  10 files changed, 383 insertions(+), 22 deletions(-)
-> 
 
-Looks good, once again AI followup still found some things you need to address.
+Minor AI stuff here:
 
-Patch 5: net/gve: support read clock ethdev op
 
-Error: gve_read_clock is defined as static but never assigned to
-any eth_dev_ops table. In v1 the patch added
-".read_clock = gve_read_clock" to both gve_eth_dev_ops and
-gve_eth_dev_ops_dqo. The v2 changelog notes "Scoped read_clock
-ethdev operation strictly to DQO queues," which should have left
-the assignment in gve_eth_dev_ops_dqo and removed it from
-gve_eth_dev_ops. Instead both assignments were dropped, leaving
-the function unreferenced. DPDK CI builds with -Dwerror=true, so
--Wunused-function will fail the build, and the read_clock feature
-is unreachable at runtime in any case.
+# Review of DPDK Patch: net/txgbe: fix to enable Tx desc check
 
-Restore the assignment in gve_eth_dev_ops_dqo:
+## Summary
+This patch modifies the Tx descriptor check logic in the txgbe driver to work correctly when security features are enabled. The change moves descriptor check setup from a global per-device operation to a per-queue operation.
 
-    static const struct eth_dev_ops gve_eth_dev_ops_dqo = {
-            ...
-            .reta_query           = gve_rss_reta_query,
-            .read_clock           = gve_read_clock,
-    };
+## ERRORS
 
-Warning: (unchanged from v1) gve_read_clock and the periodic
-gve_read_nic_clock alarm callback both issue
-GVE_ADMINQ_REPORT_NIC_TIMESTAMP into the single shared DMA buffer
-priv->nic_ts_report, then read it after gve_adminq_execute_cmd
-has released adminq_lock. If gve_read_clock is preempted between
-gve_adminq_report_nic_timestamp returning and the be64_to_cpu
-read, the alarm callback can memset() and reissue its own
-command, so the user thread will read either zero or another
-command's response. The simplest fix is for gve_read_clock to
-return the cached priv->last_read_nic_timestamp instead of
-issuing a fresh adminq command - the 250ms periodic sync keeps
-it fresh enough for .read_clock semantics. Once the dev_op
-registration is restored this race becomes reachable.
+None found.
+
+## WARNINGS
+
+### 1. Bit manipulation should use RTE_BIT32() macro
+**File:** drivers/net/txgbe/txgbe_rxtx.c  
+**Lines:** 4774, 4775
+
+The code uses `BIT()` macro for bitmask generation. DPDK coding standards prefer `RTE_BIT32()` or `RTE_BIT64()` for clarity and portability.
+
+**Current code:**
+```c
+wr32m(hw, TXGBE_TDM_DESC_CHK(txq->reg_idx / 32),
+      BIT(txq->reg_idx % 32), BIT(txq->reg_idx % 32));
+```
+
+**Suggested fix:**
+```c
+wr32m(hw, TXGBE_TDM_DESC_CHK(txq->reg_idx / 32),
+      RTE_BIT32(txq->reg_idx % 32), RTE_BIT32(txq->reg_idx % 32));
+```
+
+Verify that `BIT()` is defined in the driver's headers. If it's a legacy macro, consider using the DPDK standard `RTE_BIT32()` for consistency.
+
+### 2. Conditional compilation without corresponding documentation update
+**Context:** The patch changes the logic for when descriptor checks are enabled but there's no indication of release notes or documentation updates.
+
+The original code disabled all descriptor checks when `RTE_LIB_SECURITY` was not defined. The new code enables descriptor checks per-queue unless the queue is using IPsec. This is a functional behavior change that should be documented.
+
+**Suggested action:**
+- Update release notes to describe the change in Tx descriptor check behavior
+- Document that descriptor checks are now enabled per-queue based on IPsec usage rather than globally based on library compilation
+
+## INFO
+
+### 1. Potential logic optimization
+The same bitmask value `BIT(txq->reg_idx % 32)` is used twice in the `wr32m()` call. Consider extracting it to a local variable for clarity:
+
+```c
+uint32_t queue_bit = BIT(txq->reg_idx % 32);
+wr32m(hw, TXGBE_TDM_DESC_CHK(txq->reg_idx / 32), queue_bit, queue_bit);
+```
+
+This makes the intent clearer (setting the bit to 1) and slightly improves readability.
+
+### 2. Parentheses around `using_ipsec` unnecessary
+**Line:** 4772
+
+```c
+if (!(txq->using_ipsec))
+```
+
+Could be written as:
+```c
+if (!txq->using_ipsec)
+```
+
+The extra parentheses around `using_ipsec` are unnecessary since `!` has higher precedence than most operators.
+
+---
+
+## OVERALL ASSESSMENT
+
+The patch correctly addresses the issue where descriptor checks could not be enabled when the security library was compiled in. The logic change from global enable/disable to per-queue configuration based on IPsec usage is sound.
+
+**Key improvements made:**
+- Moves descriptor check setup into the per-queue loop
+- Only disables checks for queues actually using IPsec
+- Removes the blanket disable when security library is present
+
+**Correctness:** No bugs detected. The resource management and control flow are correct.
+
+**Style compliance:** Minor issues with macro usage; otherwise compliant.
+
