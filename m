@@ -2,74 +2,74 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBF4CD4F21
-	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 09:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627B7CD37AC
+	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 09:39:06 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 767B040278;
-	Sun, 17 May 2026 11:38:21 +0200 (CEST)
-Received: from fout-b3-smtp.messagingengine.com
- (fout-b3-smtp.messagingengine.com [202.12.124.146])
- by mails.dpdk.org (Postfix) with ESMTP id 170B84026D
- for <dev@dpdk.org>; Sun, 17 May 2026 11:38:20 +0200 (CEST)
+	by mails.dpdk.org (Postfix) with ESMTP id 64910402F1;
+	Sun, 17 May 2026 11:39:05 +0200 (CEST)
+Received: from fhigh-b6-smtp.messagingengine.com
+ (fhigh-b6-smtp.messagingengine.com [202.12.124.157])
+ by mails.dpdk.org (Postfix) with ESMTP id C639740278
+ for <dev@dpdk.org>; Sun, 17 May 2026 11:39:03 +0200 (CEST)
 Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfout.stl.internal (Postfix) with ESMTP id 67A321D0006B;
- Sun, 17 May 2026 05:38:18 -0400 (EDT)
+ by mailfhigh.stl.internal (Postfix) with ESMTP id 464C07A007F;
+ Sun, 17 May 2026 05:39:03 -0400 (EDT)
 Received: from phl-frontend-04 ([10.202.2.163])
- by phl-compute-06.internal (MEProxy); Sun, 17 May 2026 05:38:18 -0400
+ by phl-compute-06.internal (MEProxy); Sun, 17 May 2026 05:39:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1779010698;
- x=1779097098; bh=YjWHu82v3WLm5q3cybp6NyIPgQDprkx5pYrY1nI4PzI=; b=
- hJ7S0pJdzo85dR9NpwFmmAC0u3JcwfFmnP2gFyrufvuOkfojqacaJJ+T/tpM4iBT
- tec9y/2u4ud2LtQ6hq5kbgX8RRNP6fGIB7jPf0XvgoxdVHaAEgEvG4FJGqL8uhX/
- R9Kv4nERR0gDZf2irAJNZr+bZk6Dc3RAGBl5zBkzqR2fSAu+CVP4LuOwIh0UGGOJ
- +zqnNQPCMMa0UGCGi41cJkuXwkodjQJIIelWtFmNqA+ch4wsMsFwx8ZFhaJBOlOS
- MVnkZg5jV5QoxRnMxWuoT3mgDW0YJZwBHAoz8EcIgWT24VVHEKTKTDXx4sV36QcA
- QcE+7LMoE54GQkMACv31jQ==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1779010743;
+ x=1779097143; bh=jAdHjwC6Wr7gn7VDbbUqSyWhv5QP7APzyXHnnfp5SPs=; b=
+ rbblYF0FlUQsk3MJUb8cIjtZxt42a35of9KJ/cg5/kg3V+rnJSjnA0MwgyCvYR8p
+ 7wyzocQOAhFz+UREdTJ4bt72kl8YacBnsXJv1JZz1HBDC0PgZKUPoNzf3nd89S54
+ cYLyYFLR50XFrJcJABkWOYplXDi7rLN1uxO75GJCs/5EVNAgfdvGkz0rean4vve5
+ 7hhSwjnzOptdsZxcoZLSU5xD1IPFOkoD5Uz+upZrXnFzDF0YNWbmy/GUQR84CAz+
+ SgjtN6B1J+j4/akxc8Zz60V1dZIN36jwzryJoTP3rfuOYS4JigsgwZrLLr9XfCYP
+ HIQ9EufTeQmP21KzOnGmww==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779010698; x=
- 1779097098; bh=YjWHu82v3WLm5q3cybp6NyIPgQDprkx5pYrY1nI4PzI=; b=e
- 7OV5nztflMJ/5KV/q4tqlYfIWBzAOx4KPUv6pxO3IqOFqgrzzyBvOGbGXyejbyf/
- 4k7TaM0Mgy6R5Ydm4O88DTXZmxE9LqPy1m6yvZgvHt+fT9nStnTbYIxUYuJQL9lr
- HTweBjguLxgahULIMsvxXL86kq7eFqYkjf2L3krAydAltKX14gNFYGo1w8QR3WRu
- yESfXVqXKaQ0S9JpncVbTeYQOI6mRjIdGKizX5GzLk3NT8jzBq6E8iNIg58PJdlk
- Xncca6IUducRjoifLdFOy0KNR80cUIGqiyK91Qri1qVaJ+MnLiw0ctV660d35b5v
- 3wPm0XdUfRJVzRxXrezag==
-X-ME-Sender: <xms:iYwJasp2kpoePkGeZYFW3WGuND6oTClUN9PpAuvLPatxuqJdGF030A>
- <xme:iYwJagcebu6n1CFhrh7aivzvJs5zU58xEhQ7RH_b0Hpr1c3mcX4X2f_3_ps1ezBg6
- 8CT7GqJAeG5ex-Aymbemks5aRaqcNhVyPH2bewveKRi4QvvcsaT5bE>
-X-ME-Received: <xmr:iYwJarpIkuFH5EuEmG42M8vZtEeTuX3dRvKOsUofkKzwPaliUVKj0bYNqj9af0gyQCJGRFiczvdorURi2LYh7N4e9Q>
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779010743; x=
+ 1779097143; bh=jAdHjwC6Wr7gn7VDbbUqSyWhv5QP7APzyXHnnfp5SPs=; b=m
+ 71Gb01dG94RG7VnzzGzXi1x4Tq3yOyC5h3ZizKxWRJF8b/l/Fv0jV6aSo1zuS3PL
+ ldrEaYZRp4GrTeWy2nsmB4EvfvJgIEG0vBa7jgW6kepTmXAsrkN90l1Pc4m30ydX
+ 49RC0IV73kdoAuK42hP7+TWCj+mOXmTPvJhA7FlN/z9euaBT/JuStJVEnQ+lwB5C
+ qE8y+etyr1IO6cmnq4/ZhDjVMxpy117z0c2qKDTU58/C+jhGNECcgt4+bkTHlzcv
+ k5WY3OrrP81yOWaPtKN014cJoB7FQr/FdSbll7K1BLGLrahR4Vr7cIOHSBOJ05sg
+ HzJB8jYCwrIoTHoXHjJCQ==
+X-ME-Sender: <xms:t4wJap7TorsXfSygeY9fYtyHHVjkNvU9mvkAnr93hdLJ0un9vPJHQQ>
+ <xme:t4wJakscPCHm_VNCZqwWJc3ycFHkbMvwhM5kXxfdjM8-KNMuwKKUOs6z1tIsOWpEG
+ Mf63SxNMbXZOwZpKNKoI9r0NfUHhYMD45wFdJ-qmc6KBxr5BvkfEr8>
+X-ME-Received: <xmr:t4wJaq6jaPQ0HV3CcBL6n_qLKxuxlgSC-WrUz3rKmqX1tP-6LU2wD4exaYR91PfBlokaUtCIaZZ8cL1NlhzWRd-SNQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeehieegucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
  gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
  ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
  frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhroh
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhroh
  hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeegpdhm
  ohguvgepshhmthhpohhuthdprhgtphhtthhopeifrghnghdrjhhunhhlohhnghduseiith
  gvrdgtohhmrdgtnhdprhgtphhtthhopehsthgvphhhvghnsehnvghtfihorhhkphhluhhm
- sggvrhdrohhrghdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthhope
- hrrghnrdhmihhnghesiihtvgdrtghomhdrtghn
-X-ME-Proxy: <xmx:iYwJahFhrh6Kb-8h5kaTlGqaACrqA8cfXVk0IDbJodxUkfxHWKIezg>
- <xmx:iYwJarutC31dY5MKXdmmGaqBwoGSWWn5uAq_9Z3D9r5btu2zjtO9FQ>
- <xmx:iYwJajXhnylrJqHASIbT3CsztIb51AIM-jSQO8pnAtXXeeMhiJ4XUQ>
- <xmx:iYwJanEUV5NQFmnvVt3nXAc9rwbk78xNcpJ-NU9SeUIiVEcPG3GkBQ>
- <xmx:iowJavsOtugm8s93Pv7JcEM75rPmGwiyP4CMb_IAb5A1OgiR1JK63Xmu>
+ sggvrhdrohhrghdprhgtphhtthhopehrrghnrdhmihhnghesiihtvgdrtghomhdrtghnpd
+ hrtghpthhtohepuggvvhesughpughkrdhorhhg
+X-ME-Proxy: <xmx:t4wJavVSmiqLvLJW22uXjq2x5cxT_3CKLEfBGJcpqxhobHaL07a7jg>
+ <xmx:t4wJas-DBEKNhuEA_m3mphChbfi60IuMIZhYYykufDU6L8_L4ZnFlw>
+ <xmx:t4wJarn_WEqjQL7VXHybFr5JQ7h2L2vKyHycKtWdHrrrbXxFsSo5rw>
+ <xmx:t4wJaqWqQ23287he1uJnvuCtFHyh7da2xFRdph03UV36x-4Tr7G9Ng>
+ <xmx:t4wJao_HXAf9AHp4y1ZRM7SNbgx2zZb6GjrqSSCe4AE41TBkM2CgbP9X>
 Feedback-ID: i47234305:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 17 May 2026 05:38:16 -0400 (EDT)
+ 17 May 2026 05:39:02 -0400 (EDT)
 From: Thomas Monjalon <thomas@monjalon.net>
 To: Junlong Wang <wang.junlong1@zte.com.cn>
-Cc: stephen@networkplumber.org, dev@dpdk.org, ran.ming@zte.com.cn
+Cc: stephen@networkplumber.org, ran.ming@zte.com.cn, dev@dpdk.org
 Subject: Re: [PATCH v1 1/2] net/zxdh: add supported zxdh support nics
-Date: Sun, 17 May 2026 11:38:15 +0200
-Message-ID: <_JndlwHKTf61EgE8J24TNw@monjalon.net>
+Date: Sun, 17 May 2026 11:39:01 +0200
+Message-ID: <UJODx65PQSyhfbuj43Jw2g@monjalon.net>
 In-Reply-To: <20260514015650.3500578-1-wang.junlong1@zte.com.cn>
 References: <20260514015650.3500578-1-wang.junlong1@zte.com.cn>
 MIME-Version: 1.0
@@ -90,21 +90,9 @@ Errors-To: dev-bounces@dpdk.org
 
 14/05/2026 03:56, Junlong Wang:
 > update zxdh nics doc.rst, add zxdh support nics.
+> 
+> Signed-off-by: Junlong Wang <wang.junlong1@zte.com.cn>
 
-There is no such file doc.rst
-
-
-[...]
-> +Supported NICs
-> +---------------------------
-
-Underlining is too long
-
-> +
-> +- ZXDH E310 25 Gigabit Ethernet Controller
-> +- ZXDH E312 100 Gigabit Ethernet Controller
-> +- ZXDH E312S 100 Gigabit Ethernet Controller
-> +- ZXDH E316 200 Gigabit Ethernet Controller
-
+Series applies with fixes mentioned in the mail thread.
 
 
