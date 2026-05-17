@@ -2,69 +2,70 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C73CD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 23:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F29CD4F3D
+	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 23:56:29 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 3DA644064A;
-	Mon, 18 May 2026 01:56:21 +0200 (CEST)
-Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
- by mails.dpdk.org (Postfix) with ESMTP id 092C7402EA
- for <dev@dpdk.org>; Mon, 18 May 2026 01:56:20 +0200 (CEST)
-Received: by mail-dl1-f48.google.com with SMTP id
- a92af1059eb24-134fe980658so1963772c88.1
- for <dev@dpdk.org>; Sun, 17 May 2026 16:56:19 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 62BE140649;
+	Mon, 18 May 2026 01:56:24 +0200 (CEST)
+Received: from mail-dy1-f176.google.com (mail-dy1-f176.google.com
+ [74.125.82.176]) by mails.dpdk.org (Postfix) with ESMTP id 9FFE140653
+ for <dev@dpdk.org>; Mon, 18 May 2026 01:56:23 +0200 (CEST)
+Received: by mail-dy1-f176.google.com with SMTP id
+ 5a478bee46e88-2f7ca62a3c4so1424258eec.0
+ for <dev@dpdk.org>; Sun, 17 May 2026 16:56:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779062179;
- x=1779666979; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779062183;
+ x=1779666983; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=7lskQTDmmZi+ibD4np1hVGB+S+pXvemfohJCu9Lecpg=;
- b=hc6XEqX12Al1n/c4uid9ohHfFkmuOCIidhVOhUi1BnBqPgpv74Z9rzY1ejY+JMigTw
- kK8x+HfN8iWcN/5b1aXOPjHq+GYcfbXnls7/TseAKDtr5kvGvlUTGMVGDDJ96Au2L0yA
- aqQZ43e8vpYSZMqtL1duZ4ubD/X+BjnvyHRSR0mtMwHpuA8Zp6OLF7nUSWjz31qwCvBt
- 55nQ0S1klo30AJUhtQ9oSDg/K9xwJ4llwnj2f21eHn7OhGTpjbjMlW6dti4b/Qw7HK2h
- SRI8SzkEevxFtXAGXeHTf7ncxsW3rbpEHsgTv00hcXSC5n4vXOU/+rsvTONAPhJZU6Ym
- fNtg==
+ bh=dX+ITs0xNtHImKy77xzkdfQtIqVwKFZg032XqWOmLF8=;
+ b=pyACDf3iKO1rplUxYBIm6f8dPd7T6FLMA2BIqrWmcWv0zkA/htUayzW/0onIO2pTyj
+ 7pTm6cKYdk+leZ+WGf/FoTq5p8c8J+m/Rp1o69pDiG38W+qS0QXaV/NEkTKY2L7VccVq
+ jK5pGMQeioaoMjZbcKO9WwxoI8JXVcoiGesNqzLsP3eK97ensGWWpAjLTZ3yV5TAm+/I
+ +jB+zjPEqCdRxIDx9HTZfXu7gyaN6RgAL9MSdGIYBvXjz+uESYuRQXiS/l/jenyOoUKB
+ Hk9y8BzHSKyQOTD5gUl4wyVElhYt1S7gEvZ+FQ8kjex9stJxqp8AeittSXlejdUrSjGi
+ cZuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779062179; x=1779666979;
+ d=1e100.net; s=20251104; t=1779062183; x=1779666983;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=7lskQTDmmZi+ibD4np1hVGB+S+pXvemfohJCu9Lecpg=;
- b=IjtwUoYDCXoHUCJJk1aTTNzP/9gmi+lcAqNg9wQEaMHVE9hs7zJKgw00BeXkJB/mAg
- BFm4OUxRnOGWOzeVgscM8uccXCEyLY8n1CE3rkKnKTRMtby65q3iGKX3f8Pnmtl6JkLS
- bDhJHbiEjGbN4CJQO2Vji/y8k2+Vu2l5osnc9OxxLqJI3rlQCkInek/qjcVq0hpPdNdK
- 5iIOxTEHtHNln2IgyBMsJp1uBK/xy7OprU7OwqIoG3JV211nDlNvvXzamxTf2vUKXlxB
- Yj1DKzi5y2kwKRuWED4OveM8xeRCSMFu/h/9WmZ8sfol3m7HaRsVoU+Q1RWwGbjWhUzp
- mQvQ==
-X-Gm-Message-State: AOJu0YyBW6sAWzCjqCpAIS/NS9aUfIwx6x27Vn9d4AuSt00y1uHVu/s9
- ds+IgMjFNahwIjZHcNQMOGQLu0bk0MKxgKnjya2IZcogoUjocfSt/H7Dp8nG1ASt0Ow=
-X-Gm-Gg: Acq92OHjcZRfD3DLYGNNSUDvZCyYSbJFH8OjoT4kVDLRd7GEkXrhcfslMqqWOsVo3RL
- uwxEF+1c0q8VXT8xwE76UJLnngUSOKMdRdqfUoJuzHgZ4vvRbSE/RKtdLRQStjEssRIX9saTa7j
- hTPRjNB058bQPyyQ8sBouooO/IYBjihYoECvZlBuY+YRYPhY5rXUTtjCr2QB9cPhWJJXDsahyVD
- nmm0blD3JcK6QS0DZqm+HF0YCpeKkYnb3iJueo5Vw64Lg2yfPQy1opQvHhKQ7lodvsFJ+yRiW3Q
- +ZHUswOABypkTqa9i4N1+RibsLodGsaKZoj4CRFdygPpRYtri8w2Jtkgitph1FChOj6XcIeV5re
- dD+ytwKK6KypXoooXsKQoPqv3RaBThDZyrm5lQPODuLrX9I/5jWT+AvqLD3Sb46fBKJ4rsruia1
- sgKlzQT9+/7YJYydo/vrezONPLWB3O0pPsQ7U=
-X-Received: by 2002:a05:7300:cc15:b0:2f8:1f2b:bb5d with SMTP id
- 5a478bee46e88-3039867e93emr5062102eec.25.1779062179014; 
- Sun, 17 May 2026 16:56:19 -0700 (PDT)
+ bh=dX+ITs0xNtHImKy77xzkdfQtIqVwKFZg032XqWOmLF8=;
+ b=lbfGGHgVuCfBLA5wk6aYmHqsX+/Q592WWXVG2cJArBW0nmTojT0fC66+qFVPB9VoYp
+ v1EzTozOh6MXNID5+9kifLI+jzLsf2Vo8V5rC+gtOBFxLaz5BgXzqCU/Ob+hNVrvG2Pu
+ sPjpwgOK55o+EXxtxNYSaXyAwB1Lq3+tvSOZ0hNr6o6Qjtkq7MXglMAoyiYtNXZ84sq5
+ iqx+3TuWkrxLWBf0afvwLYNC2eb41QJvqf6stmBUSe1P/GRN7E0HktJ9r9lT8tyqGbHO
+ PS1uSQv17yIMUqGHC8drlfbrJ6sfC2wLwfUm4gaWDKcNJwBMfJh8xNgU76cKIxLQMb0P
+ szFg==
+X-Gm-Message-State: AOJu0YwDohQ1vVP4oLI77pARZfyAe/FJTEVe6qyJScxo0X5I5NsXE7Ja
+ 06UFV5NrBdiMXmqp86qeFeFhj9S6eWPtLUNxqGFofjGLrzSu1fc35IwryAIM54OieYU=
+X-Gm-Gg: Acq92OHJ/w/JqdzcqZ9vK5k7/SGzhqXzQCH+/bx5mpo//wU1Tb6IO4ML36KXDaDBVjA
+ LlatZ1ZQFQu+1LOyIrj3A6K33AwSj4pd74EwUTpsLgLXo7OHvCU/KDxcO+2Mh8roQhNsF1Bdhop
+ aldV5S7+28lmiACPaKUNAjzV6wwlMOdV1pluIIc5EaPqBQhmPwC56/FlGkMnFbye82T1qHb4q26
+ WxqJy1eFk0awWhxnQLNWXboOarjdd5B1u4qF7ftwSXjB0rQANJ9hclW5tCgFZpTRuGUqib+uoiR
+ WzQrvMYpBi2Vv9j2E+KDImMusGvDwCvdvWX2koLTqEQjPJ/ynp9S24NHe5K6M1R/wiPm6bytMj5
+ eTA1uVr6iNEDO1YODuGfiCcxgSacEFqBs22Ln3qQMgVJyEofWBWvVENJ2xp3GT7BZNWtukb7vT+
+ kVwFDvlN4n/7kL5vM5p43ErGcUUKaEu57pN517yVBhgxHhMQ==
+X-Received: by 2002:a05:7301:1187:b0:303:e36d:b68e with SMTP id
+ 5a478bee46e88-303e36db6cdmr377436eec.23.1779062182602; 
+ Sun, 17 May 2026 16:56:22 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-302973bc8ddsm12189379eec.21.2026.05.17.16.56.18
+ 5a478bee46e88-302973bc8ddsm12189379eec.21.2026.05.17.16.56.22
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 17 May 2026 16:56:18 -0700 (PDT)
-Date: Sun, 17 May 2026 16:39:01 -0700
+ Sun, 17 May 2026 16:56:22 -0700 (PDT)
+Date: Sun, 17 May 2026 16:50:32 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Zaiyu Wang <zaiyuwang@trustnetic.com>
 Cc: dev@dpdk.org, stable@dpdk.org, Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: Re: [PATCH v4 04/20] net/ngbe: fix VF promiscuous and allmulticast
-Message-ID: <20260517163901.744df0fc@phoenix.local>
-In-Reply-To: <20260511103604.19724-5-zaiyuwang@trustnetic.com>
+Subject: Re: [PATCH v4 14/20] net/txgbe: fix link stability for Amber-Lite
+ backplane mode
+Message-ID: <20260517165032.059933d3@phoenix.local>
+In-Reply-To: <20260511103604.19724-15-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
  <20260511103604.19724-1-zaiyuwang@trustnetic.com>
- <20260511103604.19724-5-zaiyuwang@trustnetic.com>
+ <20260511103604.19724-15-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -81,98 +82,210 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 11 May 2026 18:35:46 +0800
+On Mon, 11 May 2026 18:35:56 +0800
 Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 
-> The configuration of allmulti and promiscuous modes conflicts
-> together. For instance, if we enable promiscuous mode, then enable and
-> disable allmulti, then the promiscuous mode is wrongly disabled.
+> The link was previously configured via firmware, but this approach
+> resulted in unstable link behavior. To resolve the issue, re-add the
+> PHY configuration flow directly into the driver.
 >=20
-> To resolve this, the following changes are made:
-> - do nothing when we set/unset allmulti if promiscuous mode is on
-> - restore the proper mode (none or allmulti) when we disable
->   promiscuous mode
->=20
-> Fixes: 7744e90805b5 ("net/ngbe: add promiscuous and allmulticast ops for =
-VF device")
+> Fixes: ead3616f630d ("net/txgbe: support PHY configuration via SW-FW mail=
+box")
 > Cc: stable@dpdk.org
 >=20
 > Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 > ---
 
-Worth mentioning, but IMHO this is case of AI being overly pedantic.
-Patch is OK as is.
+Lots of AI feedback here:
 
 
-# Review of DPDK Patch: net/ngbe: fix VF promiscuous and allmulticast
+# Review of DPDK Patch: net/txgbe: fix link stability for 40G NIC
 
 ## Summary
+This patch re-adds direct PHY configuration flow to the txgbe driver to fix=
+ unstable link behavior on 40G NICs. The previous firmware-based configurat=
+ion approach was causing link stability issues.
 
-This patch fixes a mode conflict issue in the ngbe VF driver between promis=
-cuous and allmulticast modes. The overall approach is correct: it prevents =
-mode conflicts by making allmulticast operations no-ops when promiscuous mo=
-de is active, and restores the appropriate mode when disabling promiscuous.
+## ERRORS
 
-## Errors
+### 1. Use-after-free risk in `txgbe_setup_phy_link_aml40`
+**File:** `drivers/net/txgbe/base/txgbe_aml40.c:157-159`
 
-None identified.
-
-## Warnings
-
-### 1. Implicit comparison in existing code (line 1226)
-
-**Issue:** The existing code uses `if (dev->data->promiscuous =3D=3D 1)` wh=
-ich mixes explicit and implicit styles. The patch changes this to `if (dev-=
->data->promiscuous)` which is implicit.
-
-**Why it matters:** DPDK coding standards require explicit comparisons for =
-integers (`!=3D 0` or `=3D=3D 0`).
-
-**Suggested fix:**
 ```c
-/* Line 1226 - be consistent with explicit comparison */
-if (dev->data->promiscuous !=3D 0)
-    return 0;
+ret_status =3D txgbe_set_link_to_amlite(hw, speed);
+rte_spinlock_unlock(&hw->phy_lock);
 
-/* Line 1250 - same issue */
-if (dev->data->promiscuous !=3D 0)
-    return 0;
+if (ret_status =3D=3D TXGBE_ERR_TIMEOUT)
+    hw->link_valid =3D false;
 ```
 
-Note: While the patch changes `=3D=3D 1` to implicit, the proper fix is to =
-use `!=3D 0` since `promiscuous` is an integer field, not a boolean type.
+The spinlock is unlocked before checking `ret_status`, but if another threa=
+d modifies `hw->link_valid` between lines 158 and 160, the state becomes in=
+consistent. The assignment to `hw->link_valid` should occur before unlockin=
+g:
 
-### 2. Error propagation pattern inconsistency
+```c
+ret_status =3D txgbe_set_link_to_amlite(hw, speed);
+if (ret_status =3D=3D TXGBE_ERR_TIMEOUT)
+    hw->link_valid =3D false;
+rte_spinlock_unlock(&hw->phy_lock);
+```
 
-**Issue:** The function `ngbevf_dev_promiscuous_disable()` returns 0 early =
-when allmulticast check causes mode selection, but this early return bypass=
-es the switch statement's error handling for the actual mode update call.
+### 2. Missing error propagation in `txgbe_e56_rx_rd_second_code_40g`
+**File:** `drivers/net/txgbe/base/txgbe_e56.c:1816`
 
-**Context:** This is not a bug in the patch itself=E2=80=94the early return=
-s in `ngbevf_dev_allmulticast_enable()` and `ngbevf_dev_allmulticast_disabl=
-e()` when promiscuous mode is active are correct (those are intentional no-=
-ops). The mode variable change in `ngbevf_dev_promiscuous_disable()` correc=
-tly passes through to the existing switch statement for error handling.
+The function declares `status =3D 0` and returns `status`, but never assign=
+s a failure value even when qsort is called on potentially invalid data. If=
+ the timeout in the preceding while loop is reached (line 1825), the SECOND=
+_CODE array may contain incomplete data, but the function still returns suc=
+cess.
 
-No change needed=E2=80=94this comment is for clarity only.
+### 3. Missing bounds check before array access
+**File:** `drivers/net/txgbe/base/txgbe_e56.c:1831`
 
-## Info
+```c
+median =3D ((N + 1) / 2) - 1;
+*SECOND_CODE =3D RXS_BBCDR_SECOND_ORDER_ST[median];
+```
 
-### Code structure observation
+If `N=3D5`, `median=3D2` which is valid. However, this code pattern is repe=
+ated multiple times (lines 244, 1831, etc.) with `N` as a constant, so it's=
+ safe. Nevertheless, adding `RTE_VERIFY(median < ARRAY_SIZE(RXS_BBCDR_SECON=
+D_ORDER_ST))` would make intent explicit.
 
-The logic correctly handles the mode transitions:
-- When disabling promiscuous mode, it checks `all_multicast` flag and sets =
-the appropriate target mode (ALLMULTI if enabled, NONE otherwise)
-- When enabling/disabling allmulticast while promiscuous is active, it retu=
-rns early as a no-op (correct, since promiscuous overrides allmulticast)
+**Not flagging this as an error** since `N=3D5` is a fixed constant through=
+out.
 
-This is a clean fix for the mode conflict issue described in the commit mes=
-sage.
+### 4. Timeout return without cleanup in `txgbe_e56_rxs_calib_adapt_seq_40G`
+**File:** `drivers/net/txgbe/base/txgbe_e56.c:2475-2481`
+
+```c
+if (timer++ > PHYINIT_TIMEOUT) {
+    rdata =3D 0;
+    addr  =3D E56PHY_PMD_CFG_0_ADDR;
+    rdata =3D rd32_ephy(hw, addr);
+    set_fields_e56(&rdata, E56PHY_PMD_CFG_0_RX_EN_CFG, 0x0);
+    wr32_ephy(hw, addr, rdata);
+    return TXGBE_ERR_TIMEOUT;
+}
+```
+
+The function has already configured many registers in the loop `for (i =3D =
+0; i < 4; i++)` (starting line 2393). When a timeout occurs on lane 0-2, th=
+e function returns immediately without restoring registers on the lanes tha=
+t were successfully configured. This leaves the hardware in a partially con=
+figured state. The cleanup should disable all lanes, not just the one that =
+timed out.
+
+## WARNINGS
+
+### 1. Hardcoded timeout in multiple locations
+**File:** `drivers/net/txgbe/base/txgbe_e56.c` (multiple locations)
+
+The `PHYINIT_TIMEOUT` constant is used consistently, but the delays vary (1=
+00=C2=B5s, 500=C2=B5s, 1000=C2=B5s, 10ms). For the 500=C2=B5s delay case (e=
+.g., line 2478), `PHYINIT_TIMEOUT` iterations result in `PHYINIT_TIMEOUT * =
+500=C2=B5s` total wait time. If `PHYINIT_TIMEOUT` is intended to be millise=
+conds, the timeout duration becomes inconsistent across different polling l=
+oops. Consider documenting what the timeout value represents (iterations? m=
+illiseconds?) and using consistent delay granularity.
+
+### 2. Potentially unreachable code after loop
+**File:** `drivers/net/txgbe/base/txgbe_e56.c:2656`
+
+```c
+for (j =3D 0; j < 16; j++) {
+    // ... ADC adaptation loop
+}
+/* g. Repeat #a to #f total 16 times */
+```
+
+The comment `/* g. Repeat #a to #f total 16 times */` appears *after* the l=
+oop that already runs 16 times. This is documentation only, but could be co=
+nfusing. The comment should be before the loop or removed.
+
+### 3. Inconsistent use of `msleep` vs `usec_delay`
+**File:** `drivers/net/txgbe/base/txgbe_e56.c`
+
+The patch uses `msleep()` for delays >=3D 10ms (lines 181, 3029) and `usec_=
+delay()` for shorter delays (line 1826). However, line 3029 uses `msleep(10=
+)` for 10ms, while line 2707 uses no delay after setting a register. Consid=
+er documenting the rationale for sleep vs busy-wait or using a consistent t=
+hreshold.
+
+### 4. Variable `bypass_ctle` hardcoded but declared as variable
+**File:** `drivers/net/txgbe/base/txgbe_e56.c:2396`
+
+```c
+u32 bypass_ctle =3D true;
+```
+
+The variable `bypass_ctle` is declared as `u32` but assigned a boolean valu=
+e, and it's never modified. Either:
+- Change to `const bool bypass_ctle =3D true;` (preferred)
+- Or document why it's a runtime variable despite being hardcoded
+
+### 5. Missing validation of speed parameter in initialization functions
+**File:** `drivers/net/txgbe/base/txgbe_e56.c:2206`
+
+```c
+if (speed =3D=3D TXGBE_LINK_SPEED_10GB_FULL || speed =3D=3D TXGBE_LINK_SPEE=
+D_40GB_FULL) {
+    CMVAR_SEC_LOW_TH =3D S10G_CMVAR_SEC_LOW_TH;
+    // ...
+} else if (speed =3D=3D TXGBE_LINK_SPEED_25GB_FULL) {
+    // ...
+} else {
+    DEBUGOUT("Error Speed\n");
+    return 0;  // Returns success despite error
+}
+```
+
+The function returns 0 (success) when an invalid speed is passed, but logs =
+"Error Speed". This should return an error code like `-EINVAL` or `TXGBE_ER=
+R_PARAM`.
+
+## INFORMATIONAL
+
+### 1. Large function complexity
+The function `txgbe_e56_rxs_calib_adapt_seq_40G` spans ~280 lines with deep=
+ly nested loops (3-level nesting). Consider refactoring into smaller helper=
+ functions for each calibration stage (ADC offset, ADC gain, interleaver ad=
+aptation) to improve readability and maintainability.
+
+### 2. Magic numbers without symbolic constants
+**File:** `drivers/net/txgbe/base/txgbe_e56.c:2470`
+
+```c
+while (EPHY_XFLD(E56G__PMD_CTRL_FSM_RX_STAT_0, ctrl_fsm_rx0_st) !=3D 0x21 ||
+```
+
+The value `0x21` (POWERDN_ST) appears in multiple locations (lines 2470, 31=
+45). This is already defined as `E56PHY_RX_POWERDN_ST` elsewhere. Use the s=
+ymbolic constant consistently.
+
+### 3. Duplicated initialization sequences
+The 40G initialization in `txgbe_e56_cfg_40g` (lines 176-566) and the exist=
+ing 10G/25G code share many similar register sequences. Consider extracting=
+ common configuration patterns into helper functions to reduce code duplica=
+tion and maintenance burden.
+
+### 4. Temperature check frequency
+**File:** `drivers/net/txgbe/base/txgbe_e56.c:2253-2256`
+
+The temperature tracking sequence comment states "must be run before the te=
+mperature drifts by >5degC" and recommends running every 100ms. However, th=
+e patch doesn't add timer-based periodic execution=E2=80=94it only runs dur=
+ing link setup. If temperature tracking is critical for stability, consider=
+ documenting that the caller must invoke this periodically.
 
 ---
 
-## Final Recommendation
-
-Address the implicit comparison style issue (Warning #1) to comply with DPD=
-K coding standards. Change `if (dev->data->promiscuous)` to `if (dev->data-=
->promiscuous !=3D 0)` in both locations (lines 1226 and 1250).
+## Positive Observations
+1. The patch correctly adds `hw->link_valid` checks in `txgbe_check_mac_lin=
+k_aml40` to prevent reporting link up when PHY configuration fails (lines 5=
+7-60, 80-81).
+2. Error paths in timeout scenarios attempt cleanup by disabling RX (e.g., =
+line 2477).
+3. The use of median filtering for SECOND_CODE (lines 1829-1831) reduces no=
+ise from asynchronous hardware updates=E2=80=94good defensive programming.
