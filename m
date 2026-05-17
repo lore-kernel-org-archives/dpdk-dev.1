@@ -2,70 +2,69 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C623CD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 23:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C73CD4F3D
+	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 23:56:23 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id E509B40264;
-	Mon, 18 May 2026 01:56:17 +0200 (CEST)
-Received: from mail-dl1-f45.google.com (mail-dl1-f45.google.com [74.125.82.45])
- by mails.dpdk.org (Postfix) with ESMTP id 159B140261
- for <dev@dpdk.org>; Mon, 18 May 2026 01:56:17 +0200 (CEST)
-Received: by mail-dl1-f45.google.com with SMTP id
- a92af1059eb24-134fe980658so1963743c88.1
- for <dev@dpdk.org>; Sun, 17 May 2026 16:56:17 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 3DA644064A;
+	Mon, 18 May 2026 01:56:21 +0200 (CEST)
+Received: from mail-dl1-f48.google.com (mail-dl1-f48.google.com [74.125.82.48])
+ by mails.dpdk.org (Postfix) with ESMTP id 092C7402EA
+ for <dev@dpdk.org>; Mon, 18 May 2026 01:56:20 +0200 (CEST)
+Received: by mail-dl1-f48.google.com with SMTP id
+ a92af1059eb24-134fe980658so1963772c88.1
+ for <dev@dpdk.org>; Sun, 17 May 2026 16:56:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779062176;
- x=1779666976; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779062179;
+ x=1779666979; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=lneKP1p9vWjhL+oNKcb1FTGkXCDx0JVWqlFCAyCczik=;
- b=yFI93YJnMEHs+vL2vrVYSrHkZnxJVzj77A3laxPEQ62GbSoICTDxRIKXN+hCRlaUx0
- 9R83fcTpkBq4mmn2Kq0Y171psoH+zJkEcuCUtZLEh+pz4xGkEX4t5nkGE8ROLF8gPPTr
- 38j3tZX7VZ6/3OPs8GKkMbvADJwMhks+xq3zeGxzXS8TdIV+0IHlX8ra1mZVxxSVAm8y
- q5c18m4vGgId5LKv1TkTugfA5CsC9dtvS/jEij3fxBAXW9JHUu+wB7b1sGjbfWn8W7Sv
- 1TOHUYcHOS+eFO2Fh7UmGbXE2LoV+aJI9NZgmmMARUP5v/Q+CPnq2p8rCICpNCoZt4LK
- hG9g==
+ bh=7lskQTDmmZi+ibD4np1hVGB+S+pXvemfohJCu9Lecpg=;
+ b=hc6XEqX12Al1n/c4uid9ohHfFkmuOCIidhVOhUi1BnBqPgpv74Z9rzY1ejY+JMigTw
+ kK8x+HfN8iWcN/5b1aXOPjHq+GYcfbXnls7/TseAKDtr5kvGvlUTGMVGDDJ96Au2L0yA
+ aqQZ43e8vpYSZMqtL1duZ4ubD/X+BjnvyHRSR0mtMwHpuA8Zp6OLF7nUSWjz31qwCvBt
+ 55nQ0S1klo30AJUhtQ9oSDg/K9xwJ4llwnj2f21eHn7OhGTpjbjMlW6dti4b/Qw7HK2h
+ SRI8SzkEevxFtXAGXeHTf7ncxsW3rbpEHsgTv00hcXSC5n4vXOU/+rsvTONAPhJZU6Ym
+ fNtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779062176; x=1779666976;
+ d=1e100.net; s=20251104; t=1779062179; x=1779666979;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=lneKP1p9vWjhL+oNKcb1FTGkXCDx0JVWqlFCAyCczik=;
- b=dV+NH8vAKrR8LtGquhQPxQfPQn8EB22PGilHnKLjRMzirqW+jdF54kn/ZMkQ6QUoyf
- QjFthqQAGankKxJ5lKSjrvu73bMYksgS3vjqP70AEz7Qyyll1bj+ovLW9Tln0FJMtYW1
- OchXBb9G0s0U6bwVRCueGpifscRtN31S9yALw/x7dU0/GCW5A/wXQf/mkKAyzXd4Pq+N
- oaD0q/kfhGQZxofVKkUHI/j+6WPETOIlLQhJz3oooz4LRLJ6Mks3Dl2tw+RWDsH2oxbp
- 7BgngYRMs34vsiT5C3KQHbHIxIIfGXzJw9tRhyQJHpLP0ktrDWsAmavwGbSFy281248S
- rt4g==
-X-Gm-Message-State: AOJu0YwjRJ0ULZ9b+OFYRTBe7ND44vfB0fDCbjjM0Pwtx2bNj95xZng4
- DqfAqPFh17Vfd1fmuPVwBB7B2nPy7s+G7uMm6ait5N51VRybiYCvbZojVfOFpI1KiU/OKToKvCh
- Sclxi9Xo=
-X-Gm-Gg: Acq92OEE2xh3cuFif711Iy5oLPDKaZdaazzc2jZwqEICLR8xH72o77UWDJbon0OwFa6
- mQ8cObq7N9DMJDdWpLJyrIO+ctGLBJa/tK0N3V+SdKX2rYUE1bstE6PKwSt1FW4Qi8vcPjxxlNE
- FqN2sN6iTXRv32Ep/rJYv1Zh4/rdxetUiiyZoah2rX/zF3jI1aLNTmC9jPYXjodNO476ykZWkDs
- FpPb3PHE5oWML2fPEEWPd0Qh58EAFn9C7p3GXc8t5he8J7Tl/wsxtCxP1IRvGSjuipAo9PLdqCk
- r/BmIjTivWxKX6bNrFqdAxZQzdavCoIWCGifh+6QQQpxmkM7nKeGO8yCU8l85v3lCSr6GVJPXOn
- 4CaiWrzyxAoACAj/zPmkibOm7aMhmHNQi4LrDKeQP6T7QH+2Ap0dTrRgmEgehzAaxRczN8vq8BD
- 5RXIrqBFMTI0SYJ1nOR9MxGmtuSmQj9e21gyY=
-X-Received: by 2002:a05:7300:6c12:b0:2ef:8b72:1b9 with SMTP id
- 5a478bee46e88-30397bc0584mr6012540eec.0.1779062176013; 
- Sun, 17 May 2026 16:56:16 -0700 (PDT)
+ bh=7lskQTDmmZi+ibD4np1hVGB+S+pXvemfohJCu9Lecpg=;
+ b=IjtwUoYDCXoHUCJJk1aTTNzP/9gmi+lcAqNg9wQEaMHVE9hs7zJKgw00BeXkJB/mAg
+ BFm4OUxRnOGWOzeVgscM8uccXCEyLY8n1CE3rkKnKTRMtby65q3iGKX3f8Pnmtl6JkLS
+ bDhJHbiEjGbN4CJQO2Vji/y8k2+Vu2l5osnc9OxxLqJI3rlQCkInek/qjcVq0hpPdNdK
+ 5iIOxTEHtHNln2IgyBMsJp1uBK/xy7OprU7OwqIoG3JV211nDlNvvXzamxTf2vUKXlxB
+ Yj1DKzi5y2kwKRuWED4OveM8xeRCSMFu/h/9WmZ8sfol3m7HaRsVoU+Q1RWwGbjWhUzp
+ mQvQ==
+X-Gm-Message-State: AOJu0YyBW6sAWzCjqCpAIS/NS9aUfIwx6x27Vn9d4AuSt00y1uHVu/s9
+ ds+IgMjFNahwIjZHcNQMOGQLu0bk0MKxgKnjya2IZcogoUjocfSt/H7Dp8nG1ASt0Ow=
+X-Gm-Gg: Acq92OHjcZRfD3DLYGNNSUDvZCyYSbJFH8OjoT4kVDLRd7GEkXrhcfslMqqWOsVo3RL
+ uwxEF+1c0q8VXT8xwE76UJLnngUSOKMdRdqfUoJuzHgZ4vvRbSE/RKtdLRQStjEssRIX9saTa7j
+ hTPRjNB058bQPyyQ8sBouooO/IYBjihYoECvZlBuY+YRYPhY5rXUTtjCr2QB9cPhWJJXDsahyVD
+ nmm0blD3JcK6QS0DZqm+HF0YCpeKkYnb3iJueo5Vw64Lg2yfPQy1opQvHhKQ7lodvsFJ+yRiW3Q
+ +ZHUswOABypkTqa9i4N1+RibsLodGsaKZoj4CRFdygPpRYtri8w2Jtkgitph1FChOj6XcIeV5re
+ dD+ytwKK6KypXoooXsKQoPqv3RaBThDZyrm5lQPODuLrX9I/5jWT+AvqLD3Sb46fBKJ4rsruia1
+ sgKlzQT9+/7YJYydo/vrezONPLWB3O0pPsQ7U=
+X-Received: by 2002:a05:7300:cc15:b0:2f8:1f2b:bb5d with SMTP id
+ 5a478bee46e88-3039867e93emr5062102eec.25.1779062179014; 
+ Sun, 17 May 2026 16:56:19 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-302973bc8ddsm12189379eec.21.2026.05.17.16.56.15
+ 5a478bee46e88-302973bc8ddsm12189379eec.21.2026.05.17.16.56.18
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 17 May 2026 16:56:15 -0700 (PDT)
-Date: Sun, 17 May 2026 16:52:25 -0700
+ Sun, 17 May 2026 16:56:18 -0700 (PDT)
+Date: Sun, 17 May 2026 16:39:01 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
 To: Zaiyu Wang <zaiyuwang@trustnetic.com>
 Cc: dev@dpdk.org, stable@dpdk.org, Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: Re: [PATCH v4 16/20] net/txgbe: fix SFP module identification
-Message-ID: <20260517165225.6ba8b774@phoenix.local>
-In-Reply-To: <20260511103604.19724-17-zaiyuwang@trustnetic.com>
+Subject: Re: [PATCH v4 04/20] net/ngbe: fix VF promiscuous and allmulticast
+Message-ID: <20260517163901.744df0fc@phoenix.local>
+In-Reply-To: <20260511103604.19724-5-zaiyuwang@trustnetic.com>
 References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
  <20260511103604.19724-1-zaiyuwang@trustnetic.com>
- <20260511103604.19724-17-zaiyuwang@trustnetic.com>
+ <20260511103604.19724-5-zaiyuwang@trustnetic.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -82,284 +81,98 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 11 May 2026 18:35:58 +0800
+On Mon, 11 May 2026 18:35:46 +0800
 Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
 
-> Some optical modules were not correctly recognized due to ambiguous
-> classification in the original detection flow. Rework the module
-> identification logic to cover all module types. Also narrow the
-> I2C lock scope to avoid potential race conditions during module
-> access.
+> The configuration of allmulti and promiscuous modes conflicts
+> together. For instance, if we enable promiscuous mode, then enable and
+> disable allmulti, then the promiscuous mode is wrongly disabled.
 >=20
-> Fixes: ab191e6d9189 ("net/txgbe: support new SFP/QSFP modules")
+> To resolve this, the following changes are made:
+> - do nothing when we set/unset allmulti if promiscuous mode is on
+> - restore the proper mode (none or allmulti) when we disable
+>   promiscuous mode
+>=20
+> Fixes: 7744e90805b5 ("net/ngbe: add promiscuous and allmulticast ops for =
+VF device")
 > Cc: stable@dpdk.org
 >=20
 > Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
 > ---
 
-Lots of AI feedback here.
-Note: not all this is required; like the request for extra release notes is=
- AI being picky.
+Worth mentioning, but IMHO this is case of AI being overly pedantic.
+Patch is OK as is.
 
-# Review of Patch 16/20: net/txgbe: fix SFP module identification
+
+# Review of DPDK Patch: net/ngbe: fix VF promiscuous and allmulticast
 
 ## Summary
-This patch refactors SFP/QSFP module identification logic and adjusts I2C l=
-ocking scope. The changes address module type detection and claim to fix ra=
-ce conditions.
 
----
+This patch fixes a mode conflict issue in the ngbe VF driver between promis=
+cuous and allmulticast modes. The overall approach is correct: it prevents =
+mode conflicts by making allmulticast operations no-ops when promiscuous mo=
+de is active, and restores the appropriate mode when disabling promiscuous.
 
 ## Errors
 
-### 1. Resource leak in `txgbe_identify_sfp_module()` - multiple error path=
-s missing unlock
-
-**Error paths that acquire lock but fail to release on error:**
-
-At line 836, `hw->mac.acquire_swfw_sync()` acquires `TXGBE_MNGSEM_SWPHY`. S=
-everal error paths after this point fail to release the lock:
-
-```c
-err =3D hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_IDENTIFIER, &identifier);
-if (err !=3D 0) {
-    /* ... */
-    hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);  // OK - releases
-    return TXGBE_ERR_SFP_NOT_PRESENT;
-}
-
-if (identifier !=3D TXGBE_SFF_IDENTIFIER_SFP) {
-    hw->phy.type =3D txgbe_phy_sfp_unsupported;
-    hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);  // OK - releases
-    return TXGBE_ERR_SFP_NOT_SUPPORTED;
-}
-
-err =3D hw->phy.read_i2c_eeprom(hw, ...);
-/* Multiple read_i2c_eeprom calls follow */
-```
-
-**After line 894**, there are at least **4 read_i2c_eeprom() calls** (lines=
- ~895-930 in the context) that can fail with `goto out;` - but `goto out;` =
-is removed in this patch. If any of these reads fail now, the function retu=
-rns immediately **without releasing the lock acquired at line 836**.
-
-Example at line 1000:
-```c
-err =3D hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_CABLE_SPEC_COMP, &cable_spec);
-if (err !=3D 0)
-    goto out;  /* This label is REMOVED - now falls through or returns */
-```
-
-The old code had `out:` label that might have handled cleanup. The new code=
- removes this pattern but doesn't add `hw->mac.release_swfw_sync()` calls b=
-efore each early return.
-
-**Impact:** Lock held indefinitely on I2C read failure, blocking other thre=
-ads.
-
-**Fix:** Add lock release before every early return after line 836:
-```c
-err =3D hw->phy.read_i2c_eeprom(hw, TXGBE_SFF_CABLE_SPEC_COMP, &cable_spec);
-if (err !=3D 0) {
-    hw->mac.release_swfw_sync(hw, TXGBE_MNGSEM_SWPHY);
-    goto out;
-}
-```
-
----
-
-### 2. `txgbe_write_i2c_byte()` removes STOP condition - probable hardware =
-protocol violation
-
-**Line 1299 (old) vs 1299 (new):**
-
-Old code:
-```c
-wr32(hw, TXGBE_I2CDATA, byte_offset | TXGBE_I2CDATA_STOP);
-```
-
-New code:
-```c
-wr32(hw, TXGBE_I2CDATA, byte_offset);
-```
-
-The `TXGBE_I2CDATA_STOP` flag is removed from the byte_offset write but rem=
-ains only on the data write. This changes the I2C transaction sequence:
-
-- Old: Write byte_offset with STOP, write data with STOP
-- New: Write byte_offset (no STOP), write data with WRITE+STOP (via `txgbe_=
-i2c_stop()`)
-
-**Analysis:** I2C writes to EEPROMs typically follow: START =E2=86=92 devic=
-e_addr+W =E2=86=92 ACK =E2=86=92 byte_offset =E2=86=92 ACK =E2=86=92 data =
-=E2=86=92 ACK =E2=86=92 STOP. Removing STOP from the byte_offset phase may =
-be correct if the hardware requires a combined write transaction, **but thi=
-s is a functional change to I2C timing that is not explained in the commit =
-message** and could break module writes.
-
-**Impact:** Could cause I2C write failures or data corruption on SFP/QSFP E=
-EPROMs.
-
-**Fix:** Either:
-1. Verify via hardware datasheet that single STOP at end is correct, docume=
-nt in commit message
-2. Restore `TXGBE_I2CDATA_STOP` on byte_offset write
-
----
-
-### 3. Removed validation logic without replacement - SFP vendor checking d=
-eleted
-
-**Lines 1025-1070 (old code, removed):** The old `txgbe_identify_qsfp_modul=
-e()` read vendor OUI bytes, checked for Intel vendor, and enforced "allow_a=
-ny_sfp" policy. This entire block is deleted with no equivalent in the new =
-code.
-
-**Impact:**
-- Unsupported vendor modules are now silently accepted (security/quality ri=
-sk)
-- `hw->allow_unsupported_sfp` flag is no longer checked (user configuration=
- ignored)
-- Warning messages for untested modules removed (users not informed of risk=
-s)
-
-**This is a functional regression unless the validation moved elsewhere** (=
-not evident in this patch).
-
-**Fix:** Restore vendor OUI check or document why it's safe to remove.
-
----
+None identified.
 
 ## Warnings
 
-### 1. `txgbe_identify_qsfp_module()` GPIO config runs unconditionally
+### 1. Implicit comparison in existing code (line 1226)
 
-**Lines 1098-1099:**
+**Issue:** The existing code uses `if (dev->data->promiscuous =3D=3D 1)` wh=
+ich mixes explicit and implicit styles. The patch changes this to `if (dev-=
+>data->promiscuous)` which is implicit.
+
+**Why it matters:** DPDK coding standards require explicit comparisons for =
+integers (`!=3D 0` or `=3D=3D 0`).
+
+**Suggested fix:**
 ```c
-/* config GPIO before read i2c */
-wr32(hw, TXGBE_GPIODATA, TXGBE_GPIOBIT_1);
+/* Line 1226 - be consistent with explicit comparison */
+if (dev->data->promiscuous !=3D 0)
+    return 0;
+
+/* Line 1250 - same issue */
+if (dev->data->promiscuous !=3D 0)
+    return 0;
 ```
 
-This GPIO write now runs **even when media_type is not fiber_qsfp** (the me=
-dia check is after the GPIO write at lines 1108-1111). The old code had thi=
-s GPIO write inside the `if (hw->mac.type =3D=3D txgbe_mac_aml40)` block, a=
-fter the media check.
+Note: While the patch changes `=3D=3D 1` to implicit, the proper fix is to =
+use `!=3D 0` since `promiscuous` is an integer field, not a boolean type.
 
-**Impact:** Unnecessary hardware access, potential side effects on non-QSFP=
- ports.
+### 2. Error propagation pattern inconsistency
 
-**Fix:** Move GPIO config inside the `if (hw->mac.type =3D=3D txgbe_mac_aml=
-40)` block or add media_type check first.
+**Issue:** The function `ngbevf_dev_promiscuous_disable()` returns 0 early =
+when allmulticast check causes mode selection, but this early return bypass=
+es the switch statement's error handling for the actual mode update call.
 
----
+**Context:** This is not a bug in the patch itself=E2=80=94the early return=
+s in `ngbevf_dev_allmulticast_enable()` and `ngbevf_dev_allmulticast_disabl=
+e()` when promiscuous mode is active are correct (those are intentional no-=
+ops). The mode variable change in `ngbevf_dev_promiscuous_disable()` correc=
+tly passes through to the existing switch statement for error handling.
 
-### 2. Missing error propagation - `txgbe_read_i2c_sff8636()` page select f=
-ailure ignored
-
-**Line 1215:**
-```c
-hw->phy.write_i2c_byte(hw, TXGBE_SFF_QSFP_PAGE_SELECT,
-                TXGBE_I2C_EEPROM_DEV_ADDR,
-                page);
-```
-
-The return value from `write_i2c_byte()` is discarded. If page select fails=
-, the subsequent read at line 1218 will read from the **wrong page**, produ=
-cing incorrect module data.
-
-**Fix:**
-```c
-s32 err =3D hw->phy.write_i2c_byte(hw, TXGBE_SFF_QSFP_PAGE_SELECT,
-                                 TXGBE_I2C_EEPROM_DEV_ADDR, page);
-if (err !=3D 0)
-    return err;
-```
-
----
-
-### 3. Implicit comparison on pointer
-
-**Line 1123 (in `txgbe_identify_qsfp_module`):**
-```c
-if (err)
-    return -EBUSY;
-```
-
-Should be explicit:
-```c
-if (err !=3D 0)
-    return -EBUSY;
-```
-
----
-
-### 4. Release notes likely required
-
-This patch changes module detection logic and affects supported module type=
-s. API behavior changes (vendor validation removed, new module type support=
-) typically require release notes under "Fixed Issues" or "Known Issues" if=
- compatibility changes exist.
-
----
-
-### 5. Function pointer assignments removed but functions still defined
-
-**Lines 2912-2913 (txgbe_hw.c):**
-```c
-phy->read_i2c_byte_unlocked =3D txgbe_read_i2c_byte_unlocked;
-phy->write_i2c_byte_unlocked =3D txgbe_write_i2c_byte_unlocked;
-```
-
-These assignments are removed, but the commit message doesn't indicate whet=
-her the `*_unlocked` functions are deleted or just unused. If the functions=
- remain defined but unreferenced, they are dead code. If other drivers refe=
-rence `phy->read_i2c_byte_unlocked` as a function pointer, this breaks them.
-
----
+No change needed=E2=80=94this comment is for clarity only.
 
 ## Info
 
-### 1. Simplified I2C locking approach is clearer
+### Code structure observation
 
-The removal of separate `*_unlocked` variants and the move to caller-manage=
-d locking (acquire once, multiple reads, release) is a good pattern that re=
-duces lock churn.
+The logic correctly handles the mode transitions:
+- When disabling promiscuous mode, it checks `all_multicast` flag and sets =
+the appropriate target mode (ALLMULTI if enabled, NONE otherwise)
+- When enabling/disabling allmulticast while promiscuous is active, it retu=
+rns early as a no-op (correct, since promiscuous overrides allmulticast)
 
----
-
-### 2. New SFP type handling for 25G/40G modules
-
-The patch adds proper detection for:
-- 25G AOC modules (`txgbe_sfp_type_25g_aoc_core0/1`)
-- 40G QSFP types with Ethernet compliance byte checks
-
-This appears to address the "ambiguous classification" mentioned in the com=
-mit message.
+This is a clean fix for the mode conflict issue described in the commit mes=
+sage.
 
 ---
 
-### 3. Consistent use of `read_i2c_sff8636()` helper
+## Final Recommendation
 
-The new `txgbe_read_i2c_sff8636()` helper centralizes page-select logic for=
- QSFP modules, which is good for maintainability (despite the error handlin=
-g issue noted above).
-
----
-
-## Final Check Summary
-
-**Errors (must fix):**
-1. Lock leaks in `txgbe_identify_sfp_module()` on I2C read errors after lin=
-e 836
-2. `TXGBE_I2CDATA_STOP` removal in `txgbe_write_i2c_byte()` changes I2C pro=
-tocol, not explained/verified
-3. Vendor OUI validation removed without replacement - security/quality reg=
-ression
-
-**Warnings (should fix):**
-1. GPIO config runs before media_type check
-2. Page select error ignored in `txgbe_read_i2c_sff8636()`
-3. Implicit comparison `if (err)`
-4. Release notes likely needed for behavior changes
-5. Unused function pointer assignments removed - check for dead code
-
+Address the implicit comparison style issue (Warning #1) to comply with DPD=
+K coding standards. Change `if (dev->data->promiscuous)` to `if (dev->data-=
+>promiscuous !=3D 0)` in both locations (lines 1226 and 1250).
