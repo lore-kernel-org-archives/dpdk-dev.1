@@ -2,86 +2,83 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4378ECD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 20:26:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBC3BCD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 21:34:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 0EA4540264;
-	Sun, 17 May 2026 22:26:45 +0200 (CEST)
-Received: from fhigh-a3-smtp.messagingengine.com
- (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
- by mails.dpdk.org (Postfix) with ESMTP id DC4F340261;
- Sun, 17 May 2026 22:26:43 +0200 (CEST)
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
- by mailfhigh.phl.internal (Postfix) with ESMTP id 3D0C214000E0;
- Sun, 17 May 2026 16:26:43 -0400 (EDT)
-Received: from phl-frontend-03 ([10.202.2.162])
- by phl-compute-06.internal (MEProxy); Sun, 17 May 2026 16:26:43 -0400
+	by mails.dpdk.org (Postfix) with ESMTP id C6D5C40264;
+	Sun, 17 May 2026 23:34:49 +0200 (CEST)
+Received: from fhigh-a8-smtp.messagingengine.com
+ (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+ by mails.dpdk.org (Postfix) with ESMTP id A6B1440261;
+ Sun, 17 May 2026 23:34:48 +0200 (CEST)
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+ by mailfhigh.phl.internal (Postfix) with ESMTP id 1951014000CC;
+ Sun, 17 May 2026 17:34:48 -0400 (EDT)
+Received: from phl-imap-06 ([10.202.2.83])
+ by phl-compute-05.internal (MEProxy); Sun, 17 May 2026 17:34:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
  cc:cc:content-transfer-encoding:content-type:content-type:date
  :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
- :references:reply-to:subject:subject:to:to; s=fm3; t=1779049603;
- x=1779136003; bh=uIUVEG3cH6l7MLqZ/dGfmixHDZ9LR1VGZ/6W5yIfk8M=; b=
- IHRREav3rlWjEzA+hdOl2QFdtm+/AWnoicLE7cKxUsHQTr/cFn/xSd1/W/C1jmWf
- Cued8rHs2l9hdHLlJ4LgxNFaMW+wVlUwOQL8lYhkD5kdQiiUFJfXe3w3Q17SToy5
- HrKpgn0U2zmeRkdhHzOTz0jtWRF7XUkUH1cqL9LX+tZb5sB/4+cEmquPVPy9fY6R
- /K/ASqbeA8D1ONfeYUnQqpXo6VvrVrGyJgsA5itDaMa9RP4uJJ5wo+OrErGRkyz6
- OvEfsR8MdMq/6Rg5XrJ0fmOyzzo+Zgdl3X1z3iVg8JK9ULtK7WxscQYeWtGpvJA/
- kxnwoxuobZlJUOn2cj/gnw==
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1779053688;
+ x=1779140088; bh=8+utjMQZgNGx6itqoWBXcTBxkB1CJ5fWPuZ6rSAFB58=; b=
+ ZeE7IzcQKMv3aB9NWSUUMCL3tUyARFtTWsIdpirvCFf4gVBXzw/zOb18aRBdM44l
+ L9urjzHKqT1wUOiZC2Zdd/0I8CEZIBfyB/GewaT5mje9dmT2bhFTvMw/yD+ZHaZn
+ KU0vsALMkTnnFHIg90cP2T4AEFBXnZtVIcoY4xzLbvqJWozIdcGGPWrPJJ0gi930
+ VuvG9ZETXHcw4f2gCfHj3QnOIVJt6EWoegVRbpq8lbOPkvqVef8i4KJUVD/NtYWm
+ bsFejohdvU8n8ytsQhYxPA83kWiBaCHVqop5xnhadlsf7mLX50iSn31oNlAiXU7h
+ 70Fm+RFlSbAKmSKSqmRmIQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
  messagingengine.com; h=cc:cc:content-transfer-encoding
  :content-type:content-type:date:date:feedback-id:feedback-id
  :from:from:in-reply-to:in-reply-to:message-id:mime-version
  :references:reply-to:subject:subject:to:to:x-me-proxy
- :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779049603; x=
- 1779136003; bh=uIUVEG3cH6l7MLqZ/dGfmixHDZ9LR1VGZ/6W5yIfk8M=; b=O
- igsFuWDSkesCIXFMtTOHe6ENG+tQ5lQLEvSFGh0JaHHSMBu7iLlzwM1OQDPQL6uc
- Rs98Qu8CsDHy1Ta0OlX31MFg/cVlBuu6DXKGGqXK0JQJDoqp/WhiVuyCehVdVudZ
- /1adf3zsVmH2ry5MHPWwSlrcQrXJs//3ZtfSO73ADh9R+ncAWQaKqTVQ+5cyiYnl
- nF0hfNFoyHh+zPfhWnN2bhCFzmGkptJwPH+VC74Wp7mtW1Ss8KfmZx5TCfutT1XU
- wx2pIC1bHppcSRWPFDpZgYja19nOyFAOnuGOlpbk//5pTBTmNNpPirn7a4QODSrU
- B+g6J/IVIlGtEq3Ixt4dQ==
-X-ME-Sender: <xms:giQKaux8w4ryN0JPS-MMEgJHjdY5lvdas1zqQ54o2OkGphmN-r2VgA>
- <xme:giQKajOSBI0_SRKeWtFKPfAqCOSkpG2P0rcKC5TztHmuTPkWnNdiSGVBmJHAd9_IL
- OTzXPTwRE2pd349_6joYNTnFwchaTKKZpeZpVoRnFHHPabaU7Bs7Q>
-X-ME-Received: <xmr:giQKar5ZiX255tGZeW9-rAhV5i92CIETzu6UdnfdtFMgAqQOytHDrWrPY9iOkEeisAIVyuJPM5yYPKc_uLKave-mJw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeeileefucetufdoteggodetrf
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779053688; x=
+ 1779140088; bh=8+utjMQZgNGx6itqoWBXcTBxkB1CJ5fWPuZ6rSAFB58=; b=Z
+ XdjdCe8WdYb01y13TYuCiXcywy+Y0NcbVHAggQ6s4pNNClBZDOMYGacMtAPqOTHY
+ pGLhkSiLP5+3KQpsZv/sPk3kQH+ND46qV8QAHs/kfz/IvB0JNGmv68+9XhBiVxTW
+ D2MkWXc7PSzqsbZPTqsuX44QpPrkJ7+XtNz+1MU39B+LpFyDJ/H6CcvJ/bDLAAFM
+ 4imlion1OuHXqCjVjUJv1v5GZ3+q7N//30VrBzIZPNfY5cRuNpjLAFD56+4vVNne
+ /BCTNbRLlvb2xjTINAqlXEQa6LNXCaO37jBYPM2H+IpsAVdTH0AApUqFFFQlyplQ
+ YiY+2vmyfxSVloQIlbLsA==
+X-ME-Sender: <xms:dzQKah1ipuXg9Q3AR9EVePeEsc-J0wXROZGQKVB1WRTly-MVU2hJpQ>
+ <xme:dzQKai6oSLip10izcnGoymFOE_Zq5apgqrfE6ORrF58saBUGez5_5eBsjmJvjCGii
+ Jx_39isHjaWcDKaA2ID8XPuylinsdzS_2HiDoW_uCLpaOjWmicWOi0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeejtdejucetufdoteggodetrf
  dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
  rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
- gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
- ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
- frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
- uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
- hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopeeipdhm
- ohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrrghtrdhkhhgrlhhilhhisehhuh
- grfigvihdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrghdprhgtphhtthho
- pehsthgrsghlvgesughpughkrdhorhhgpdhrtghpthhtohepuggrvhhiugdrmhgrrhgthh
- grnhgusehrvgguhhgrthdrtghomhdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgu
- shhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehhvghmrghnthdrrghgrhgrfigrlh
- esnhigphdrtghomh
-X-ME-Proxy: <xmx:giQKakkrtVCsOZ1XpWON3OwRSSt5R09LhLDakCD1pzVi0BMygvQjAQ>
- <xmx:giQKasReFqAWEqQAMrdb_VMCS3mhAhAc-kz95tRRgotH31fgQzsi3g>
- <xmx:giQKajHhR3u6nR-yXE8oe-QWK3l78_u-dRcStieTK6r_HIfKbqOyDQ>
- <xmx:giQKahG3jo9YTJL0U5jLgtoS649uap5UK0jp2N5-FVnXil7qBoVjAg>
- <xmx:gyQKamKdClrIsI8NTk3G7mZb6ei37Va9TlZSzaFvToDocnbvLkp36PHd>
+ gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedfvfhhohhm
+ rghsucfoohhnjhgrlhhonhdfuceothhhohhmrghssehmohhnjhgrlhhonhdrnhgvtheqne
+ cuggftrfgrthhtvghrnhepgeetffdvvdffveevhfffteegfeeugfegvdfggeeuffffffel
+ udekvdeviedttedunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+ hfrhhomhepthhhohhmrghssehmohhnjhgrlhhonhdrnhgvthdpnhgspghrtghpthhtohep
+ hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepuggvvhesughpughkrdhorhhgpd
+ hrtghpthhtohepshhtrggslhgvseguphgukhdrohhrghdprhgtphhtthhopegsrhhutggv
+ rdhrihgthhgrrhgushhonhesihhnthgvlhdrtghomhdprhgtphhtthhopehhvghmrghnth
+ drrghgrhgrfigrlhesnhigphdrtghomhdprhgtphhtthhopegurghvihgurdhmrghrtghh
+ rghnugesrhgvughhrghtrdgtohhm
+X-ME-Proxy: <xmx:dzQKajjPom6gagP-LSQobUrmrJHvf934bhDj01XeVAXbOhcPwj7ZMA>
+ <xmx:dzQKam5xSxS_pj741Qhobvq1Tmx_gIsTid_xuIxOPGYivHLXHrksTQ>
+ <xmx:dzQKarayggQaLN0aS39MWlljWwUe1Nig3yOgxjkfeOkfp50NUJIQ7A>
+ <xmx:dzQKar7FnnEJdAmKTwfmoxnQmzidgU1-15ohZ2e3Xgdg5xKJe83gIw>
+ <xmx:eDQKapw5Zrttd7fjXbxptYp3cz7JFnmYs66ahKmjt9VXoAbC5ojIk2ty>
 Feedback-ID: i47234305:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 17 May 2026 16:26:41 -0400 (EDT)
-From: Thomas Monjalon <thomas@monjalon.net>
-To: Marat Khalili <marat.khalili@huawei.com>
-Cc: "dev@dpdk.org" <dev@dpdk.org>, "stable@dpdk.org" <stable@dpdk.org>,
- David Marchand <david.marchand@redhat.com>,
- Bruce Richardson <bruce.richardson@intel.com>,
- Hemant Agrawal <hemant.agrawal@nxp.com>
-Subject: Re: [PATCH v2] devtools: fix SPDX tag check
-Date: Sun, 17 May 2026 22:26:39 +0200
-Message-ID: <zC0dUUeIRY-fAcGJGXpVcA@monjalon.net>
-In-Reply-To: <67049e0367f2462bade5c2fe837e8173@huawei.com>
-References: <20260429130935.3681177-1-thomas@monjalon.net>
- <15732573.JCcGWNJJiE@thomas>
- <67049e0367f2462bade5c2fe837e8173@huawei.com>
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+ id C078F2400098; Sun, 17 May 2026 17:34:47 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Date: Sun, 17 May 2026 23:34:26 +0200
+From: "Thomas Monjalon" <thomas@monjalon.net>
+To: "David Marchand" <david.marchand@redhat.com>
+Cc: dev@dpdk.org, stable@dpdk.org,
+ "Richardson, Bruce" <bruce.richardson@intel.com>,
+ "Hemant Agrawal" <hemant.agrawal@nxp.com>
+Message-Id: <a32f8e93-b2ff-4088-8498-f549e2ce2e29@app.fastmail.com>
+In-Reply-To: <CAJFAV8yAP34iRGiGKx0+Ls6_FpSa0EubP3KiDrUEU0fY-tp0FQ@mail.gmail.com>
+References: <20260429130935.3681177-1-thomas@monjalon.net>
+ <CAJFAV8yAP34iRGiGKx0+Ls6_FpSa0EubP3KiDrUEU0fY-tp0FQ@mail.gmail.com>
+Subject: Re: [PATCH] devtools: fix SPDX tag check
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -95,14 +92,18 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-01/05/2026 11:55, Marat Khalili:
-> > Sorry I don't understand the need for a sentinel.
-> > The script is working fine with an empty files_without_spdx.
-> 
-> It may filter out everything instead of nothing in that case.
+>> If a file has no SPDX tag and is not filtered out by no_license_list,
+>> there will be an error when using its path containing a slash
+>> in the sed command delimited with slashes.
+>>
+>> It is fixed by using the pipe character as sed command delimiter.
+>>
+>> Fixes: b99a3b8aa989 ("license: standardize SPDX tag")
+>> Cc: stable@dpdk.org
+>>
+>> Reported-by: David Marchand <david.marchand@redhat.com>
+>> Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+>
+> Acked-by: David Marchand <david.marchand@redhat.com>
 
-OK you're right.
-So it becomes complex.
-The first solution with sed looks better.
-
-
+Applied
