@@ -2,69 +2,75 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D71CD4F4A
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 17:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4218CD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 17:57:04 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B20D7402D9;
-	Mon, 18 May 2026 19:54:49 +0200 (CEST)
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com
- [209.85.160.176])
- by mails.dpdk.org (Postfix) with ESMTP id E92E440041
- for <dev@dpdk.org>; Mon, 18 May 2026 19:54:47 +0200 (CEST)
-Received: by mail-qt1-f176.google.com with SMTP id
- d75a77b69052e-50e5c7eb565so32497851cf.3
- for <dev@dpdk.org>; Mon, 18 May 2026 10:54:47 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 0C2D840659;
+	Mon, 18 May 2026 19:57:04 +0200 (CEST)
+Received: from mail-dy1-f177.google.com (mail-dy1-f177.google.com
+ [74.125.82.177]) by mails.dpdk.org (Postfix) with ESMTP id D3606402D9
+ for <dev@dpdk.org>; Mon, 18 May 2026 19:57:02 +0200 (CEST)
+Received: by mail-dy1-f177.google.com with SMTP id
+ 5a478bee46e88-2f0ad52830cso3074131eec.1
+ for <dev@dpdk.org>; Mon, 18 May 2026 10:57:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=iol.unh.edu; s=unh-iol; t=1779126887; x=1779731687; darn=dpdk.org;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779127022;
+ x=1779731822; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=qADP+wJPyD5tRTXpx2d/cGfywBa4kV6qB/63vjM4GB4=;
- b=P2nMO0QXcYaKxcILU2940NO5QTHivxVACxo91UkPKYw0CmCWoqYtyo/nWgL/bBXBjM
- V8jTKW5OcUgCmv5YknpVTkfVRlMX4M1d9/Ww3p1kIJqq5fMKqxWUwzpceNgCW9CeZ+Hu
- 8GmUwUCmmCdpZc651TKhCXwo/NsgaJe4H1iBQ=
+ bh=SDYUIlsUJT+ralALwaydRQBuAhcKR9bjUXRbze79zQ4=;
+ b=sAtycsrY9OIFq3S1B7LR88o/c9g7wCwMnZNJe8KnL8mrQHxa5Lm3Q7U+ueqzgtjRPj
+ iW43lxeWsr93KFN9yhcETNqA7EXqJU8vBzlPmCfm9hJlRbOvxQwCOt2PQz8bWElFCkrE
+ m6GWr8orvovtylIqcSqHSmO0ybhIACapi2l94XOgl2L9RQlZ3uJK+zp8TjLFnlgSjNwR
+ c3+UCLWUWsRaekpN8/j78dv2oY4u+Hhaa2Cimw4VbwwxYJBb/eI5bct9K0WnxoqC8j4W
+ TYegG5jRxr+t4kmZcy50XClhFGSi99joTMpaxJbVVbvDTDoAvXy/Vuei++dUVzzPepRG
+ 2ZDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779126887; x=1779731687;
+ d=1e100.net; s=20251104; t=1779127022; x=1779731822;
  h=content-transfer-encoding:mime-version:references:in-reply-to
- :message-id:date:subject:cc:to:from:x-gm-gg:x-gm-message-state:from
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=qADP+wJPyD5tRTXpx2d/cGfywBa4kV6qB/63vjM4GB4=;
- b=EgWr2UwRFDmD7jXrEsycQqm349VPffNaFcZz7gOhXefGMkF5X1PSrdePeARTt0Z9sS
- pn8qGzUVFSeqmr26A5vWkCTYWEaPOy4QYRHx0xSXktB6Puh2HOu8t7pnsxTTDTgsHQfz
- 2IfjkOH8mGhksXCQciKRLc4hthBaOEKXUOOBx2zK1dcFe6xcbK+mN3pGh8brqdOZRPJT
- l77ZRLsy6Rp89eJp88nTWUlE3KTPGZo7MnJ3ItVBiXr4qR4I99bmDEVIHc9aaGVe5Tg9
- ratwHooL85GBrFOe3WFk4KNw5hSGQ99wyMA5QPAf5vwsk4JbqsyTFwsncKVkxOsp5Kf3
- GsAQ==
-X-Gm-Message-State: AOJu0Yx9b7yXGalUQmLcMM/68KdArVHzY6qy7snF1UGi3rZWaT53K+aK
- 5kCMNZxbVy//oNaZyXTpAwvfn6USS3KVrmVASberH1jfyBoZTo72H7FipKhKOff3xHo=
-X-Gm-Gg: Acq92OFznnqVMJU6yWW2IU+rRFjUUDfJOxhG7+VseJhku2Hcw9KueHmAiOYVHFNh4dL
- Qz5KlAjOsP8OFGn2/k9u+B2/m+m0xkwrbf7Qqxb3uL5lPurdkqFBsI7tKuD6Tky69vk2X5JoB4/
- ijdRMsajM6/I6+iDhT6pA0bJ+iJBUcTZ+gdtv3l23GhbmtacDyoNXBVTsDBoNkPpZXtmUKcydSY
- jssccXUkwaKmWmNgQRxj29II9ew50mPEI5mw9UmrBtACSaQ1m/pkFbhqEEM+050QcBW+znPncw6
- 7H1igWiJqgL3j5VCdFZlrSgAhaaVfc5lqqwqhrVEzGpDgKbHKLiBHXKeDZUrMYerI+Nky9SyRUV
- cCkAf3aGZJWfVuXx/sTTFx5PvcSykRWnaauRrbiv/ctV6df2E7KgsB5ogw37+XZX8HW7wIUq7hb
- Hud5hh46OYMSZT01mJKb1Rcnm6DIIRT3aw1op5Mul00bI5Zjwtso4/KpIYVCTQfQAg
-X-Received: by 2002:a05:622a:a06:b0:50f:c36a:3826 with SMTP id
- d75a77b69052e-5165a0ae89emr230424031cf.16.1779126887155; 
- Mon, 18 May 2026 10:54:47 -0700 (PDT)
-Received: from d122201.iol.unh.edu ([2606:4100:3880:1220:4f6d:e2af:7f5f:4df])
+ bh=SDYUIlsUJT+ralALwaydRQBuAhcKR9bjUXRbze79zQ4=;
+ b=Sg7rrFymL69nuQS0gzBhlX7pEBalbYn4UZZ96Ez41qwcwtt3Xzulwpy5LrfBK+f7mI
+ 4vjm9tyNTEvPXTcwt0Isl3RyzATzaWD5Y65ovLVTCzM0DtAA7GK5rv0YqfYJH68mukDj
+ VTZOBLLp4425kPP6CcNdEzEynd73Dy0lZW/A9QJ1QW/MOax0I47nLJUCetGZtEg4IkDX
+ nc26tN0cjft9FibQn0EEx65h+Cy33mOY113cpqH3hw5nsEAR6lReRWUBZ6p90cUOYZoD
+ 0LWKlpzSC8Q9iUWs0TEVprYKfLu7RkzyUX+akIGqPue0NL5vJqap/ZFp78kFFLcH5gxw
+ m4ng==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ8OjPJJWtmHAdLGAqzjr4lgDvOvG5nFjTsAJ5L4fxPMgxdfHCgGrADJAsZhevcLTVhjtdw=@dpdk.org
+X-Gm-Message-State: AOJu0YzQrarHFK/ubup2Lu/FSpKzuRR2z40kMwyaH9H5ZUzysN0iTaWj
+ CV4ul64ya3bZxZeB7fhfyAKS8B+YqXA+iZZPp+VRJewrxSbrNP0BiPcfcOCZuMSytSE=
+X-Gm-Gg: Acq92OGJ6ZQYV6kavU9UIHkoUrd29OhtRKdhhIAxnfbIbxQwyr9P+2xjmwDEZRbdRjF
+ WwwSOl8hidbbGpqo39KrrViAw4s21KhSNQTf0cEHdj8jvKINmxqXskk48fqgd7jxfw6mrcZtGuk
+ scLNarX8Enq6BkRGhX4mky4xrbTQ8CI0EorVgOyHSvvyVBb1l5WVaNmLB6K753dR9+KqcpofyQ6
+ fEpFUjx+sHOzwJhSULAqDcO0Vrt7gWn9Uw2nK83yxUSKhalPwKmG7fwHcKfDGqsbr+e13U/tWmz
+ gYoTft9UKw6peTa448j3C9cPfMbMI0S5tDZGYBVD0VcdTbk+5CMGrmiUpy2UsACy+SRCnRKJKJn
+ h9RbBzQhfXJI76wiExgtFkWboodUvby66L+NtkJ6VBPxpz/Mrv0+YChImSmOWm3UlCh5+l4YRpg
+ GiciG9Q2nMyDCnWzsEtLPg4J0CyOV+9KF9+seluHzbJhBKaQ==
+X-Received: by 2002:a05:7300:a94b:b0:2ed:a64:a457 with SMTP id
+ 5a478bee46e88-303986552f6mr6937269eec.20.1779127021683; 
+ Mon, 18 May 2026 10:57:01 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 6a1803df08f44-8ca361ad694sm63171406d6.45.2026.05.18.10.54.46
+ 5a478bee46e88-30296dcb6e9sm17162906eec.16.2026.05.18.10.57.01
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Mon, 18 May 2026 10:54:46 -0700 (PDT)
-From: Andrew Bailey <abailey@iol.unh.edu>
-To: luca.vizzarro@arm.com,
-	patrickrobb@iol.unh.edu
-Cc: dev@dpdk.org, lylavoie@iol.unh.edu, knimoji@iol.unh.edu,
- ahassick@iol.unh.edu, Andrew Bailey <abailey@iol.unh.edu>
-Subject: [PATCH v2] dts: add retry loop to trex traffic generation
-Date: Mon, 18 May 2026 13:54:24 -0400
-Message-ID: <20260518175424.253600-1-abailey@iol.unh.edu>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20260515174714.211668-1-abailey@iol.unh.edu>
-References: <20260515174714.211668-1-abailey@iol.unh.edu>
+ Mon, 18 May 2026 10:57:01 -0700 (PDT)
+Date: Mon, 18 May 2026 10:56:58 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Marat Khalili <marat.khalili@huawei.com>
+Cc: Konstantin Ananyev <konstantin.ananyev@huawei.com>, Wathsala Vithanage
+ <wathsala.vithanage@arm.com>, <dev@dpdk.org>
+Subject: Re: [PATCH v3 02/10] bpf: introduce extensible load API
+Message-ID: <20260518105658.7ca14d5b@phoenix.local>
+In-Reply-To: <20260518084912.57006-3-marat.khalili@huawei.com>
+References: <20260514093713.90118-1-marat.khalili@huawei.com>
+ <20260518084912.57006-1-marat.khalili@huawei.com>
+ <20260518084912.57006-3-marat.khalili@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -78,85 +84,167 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-There was an issue where the single core forward test would report zero
-MPPS intermittently. This was due to TREX reporting that the link was
-down when the client was called to start generating traffic. The links
-were being reported down by TREX on the tg even when testpmd was
-reporting them up on the SUT. Adding a retry loop to the generate
-traffic method of TREX gives the tg enough time to set up and send
-traffic.
+On Mon, 18 May 2026 09:49:02 +0100
+Marat Khalili <marat.khalili@huawei.com> wrote:
 
-Bugzilla ID: 1946
-Fixes: d77d7f04f24c ("dts: add single-core performance test suite")
+> Introduce new BPF load parameters struct rte_bpf_prm_ex that can be
+> extended without breaking backward or forward compatibility. Introduce
+> new function rte_bpf_load_ex consolidating in one code path loading from
+> both ELF file and raw memory image, with possibility to add more options
+> in the future.
+> 
+> Some changes in code layout and sequence:
+> * Both old APIs now only forwarding calls to a new single entry point.
+> * There is now a centralized cleanup point for all temporary resources
+>   created during the load process.
+> * External symbols (xsyms) are now checked for validity just after the
+>   load started, not after they were already used for relocation.
+> * File bpf_load_elf.c now only handles opening ELF file and providing
+>   patched instruction array to the load process. These are left as two
+>   separate functions to support other ELF sources like memory image in
+>   the future.
+> * Function stubs for the case libelf is not available are moved to
+>   bpf_load_elf.c to make keeping track of them easier (forgetting to
+>   update stubs is a common problem).
+> 
+> Signed-off-by: Marat Khalili <marat.khalili@huawei.com>
+> Acked-by: Konstantin Ananyev <konstantin.ananyev@huawei.com>
+> ---Review of bundle-1895: bpf load (PATCH v3 01..10/10)
 
-Signed-off-by: Andrew Bailey <abailey@iol.unh.edu>
----
- .../testbed_model/traffic_generator/trex.py   | 37 ++++++++++++++-----
- 1 file changed, 28 insertions(+), 9 deletions(-)
+Lots of AI review on this (with Claude Opus 4.7)
 
-diff --git a/dts/framework/testbed_model/traffic_generator/trex.py b/dts/framework/testbed_model/traffic_generator/trex.py
-index 22cd20dea9..daf07355f2 100644
---- a/dts/framework/testbed_model/traffic_generator/trex.py
-+++ b/dts/framework/testbed_model/traffic_generator/trex.py
-@@ -13,6 +13,7 @@
- 
- from framework.config.node import OS, NodeConfiguration
- from framework.config.test_run import TrexTrafficGeneratorConfig
-+from framework.exception import SSHTimeoutError
- from framework.parser import TextParser
- from framework.remote_session.blocking_app import BlockingApp
- from framework.remote_session.python_shell import PythonShell
-@@ -220,7 +221,9 @@ def _create_packet_stream(self, packet: Packet) -> None:
-         ]
-         self._shell.send_command("\n".join(packet_stream))
- 
--    def _send_traffic_and_get_stats(self, duration: float, send_mpps: float | None = None) -> str:
-+    def _send_traffic_and_get_stats(
-+        self, duration: float, send_mpps: float | None = None, retry_attempts: int = 5
-+    ) -> str:
-         """Send traffic and get TG Rx stats.
- 
-         Sends traffic from the TRex client's ports for the given duration.
-@@ -230,15 +233,31 @@ def _send_traffic_and_get_stats(self, duration: float, send_mpps: float | None =
-         Args:
-             duration: The traffic generation duration.
-             send_mpps: The millions of packets per second for TRex to send from each port.
-+            retry_attempts: The number of times to retry this command on failure.
-+
-+        Raises:
-+            SSHTimeoutError: If TRex fails to send traffic in the allotted attempts.
-         """
--        if send_mpps:
--            self._shell.send_command(f"""{self.stl_client_name}.start(ports=[0, 1],
--                mult = '{send_mpps}mpps',
--                duration = {duration})""")
--        else:
--            self._shell.send_command(f"""{self.stl_client_name}.start(ports=[0, 1],
--                mult = '100%',
--                duration = {duration})""")
-+        result = "link is DOWN"
-+        attempt = 0
-+
-+        while "link is DOWN" in result and attempt <= retry_attempts:
-+            if attempt > 0:
-+                self._logger.info(
-+                    f"Generate traffic command failed (attempt {attempt} out of {retry_attempts})"
-+                )
-+                time.sleep(0.25)
-+            elif attempt == retry_attempts:
-+                raise SSHTimeoutError("Failed to generate traffic on TREX traffic generator")
-+            if send_mpps:
-+                result = self._shell.send_command(f"""{self.stl_client_name}.start(ports=[0, 1],
-+                    mult = '{send_mpps}mpps',
-+                    duration = {duration})""")
-+            else:
-+                result = self._shell.send_command(f"""{self.stl_client_name}.start(ports=[0, 1],
-+                    mult = '100%',
-+                    duration = {duration})""")
-+            attempt += 1
- 
-         time.sleep(duration)
- 
--- 
-2.50.1
+====================================================
 
+Patches 01, 06, 09, and 10 had no findings and are omitted from this
+review.
+
+
+PATCH v3 02/10 -- bpf: introduce extensible load API
+----------------------------------------------------
+
+Errors:
+
+* lib/bpf/bpf_load.c, rte_bpf_load() and rte_bpf_elf_load() wrappers:
+  These now unconditionally dereference `prm` when constructing the
+  compound literal passed to rte_bpf_load_ex():
+
+      return rte_bpf_load_ex(&(struct rte_bpf_prm_ex){
+          ...
+          .raw.ins = prm->ins,           /* NULL deref if prm == NULL */
+          .raw.nb_ins = prm->nb_ins,
+          .xsym = prm->xsym,
+          .nb_xsym = prm->nb_xsym,
+          .prog_arg = prm->prog_arg,
+      });
+
+  Pre-patch both functions explicitly checked `prm == NULL` and
+  returned NULL with rte_errno = EINVAL. The NULL check inside
+  load_try() does not help: NULL is dereferenced before
+  rte_bpf_load_ex() is even called. Add explicit
+  `if (prm == NULL) { rte_errno = EINVAL; return NULL; }` guards at
+  the top of both wrappers.
+
+Info:
+
+* lib/bpf/bpf_load_elf.c: the success log
+  "successfully creates %p(jit={.func=%p,.sz=%zu})" and the error log
+  in rte_bpf_elf_load() are removed silently. If intentional, mention
+  in the commit message.
+
+
+PATCH v3 03/10 -- bpf: support up to 5 arguments
+------------------------------------------------
+
+Warnings:
+
+* lib/bpf/bpf_exec.c, rte_bpf_exec_burst(), exec_jit_burst_ex(), and
+  rte_bpf_exec_burst_ex(): these return `uint32_t` but the patch
+  introduces `return -EINVAL` on error:
+
+      if (bpf->prm.nb_prog_arg != 1)
+          /* Use rte_bpf_exec_burst_ex with this program. */
+          return -EINVAL;
+
+  -22 reinterpreted as uint32_t is 0xFFFFFFEA, which the caller cannot
+  distinguish from a valid "number of successfully processed inputs"
+  result. The doxygen for rte_bpf_exec_burst_ex does not mention error
+  returns. Either change the return type, document the encoding (e.g.
+  any value > num indicates an error), or return 0 on these paths.
+
+
+PATCH v3 04/10 -- bpf: add cBPF origin to rte_bpf_load_ex
+---------------------------------------------------------
+
+Info:
+
+* lib/bpf/bpf_convert.c: the no-libpcap stub for rte_bpf_convert()
+  loses its `if (prog == NULL) return EINVAL` check when moved out of
+  bpf_stub.c. Previously rte_bpf_convert(NULL) returned EINVAL; now it
+  returns ENOTSUP. Both produce NULL so pointer-checking callers are
+  unaffected, but rte_errno semantics changed. Worth a mention or a
+  restore for symmetry with the libpcap-enabled path.
+
+
+PATCH v3 05/10 -- bpf: support rte_bpf_prm_ex with port callbacks
+-----------------------------------------------------------------
+
+Errors:
+
+* lib/bpf/rte_bpf_ethdev.h: the doxygen comments for the two new
+  functions are swapped:
+
+      /**
+       * Install callback to execute specified BPF program on given
+       * TX port/queue.
+       * ...
+       * @param queue
+       *   The identifier of the TX queue on the given port
+       */
+      __rte_experimental
+      int
+      rte_bpf_eth_rx_install(...);
+
+      /**
+       * Install callback to execute specified BPF program on given
+       * RX port/queue.
+       * ...
+       * @param queue
+       *   The identifier of the RX queue on the given port
+       */
+      __rte_experimental
+      int
+      rte_bpf_eth_tx_install(...);
+
+  Swap the two doc blocks.
+
+
+PATCH v3 07/10 -- test/bpf: test loading cBPF directly
+------------------------------------------------------
+
+Info:
+
+* app/test/test_bpf.c, test_bpf_filter(): the failure path previously
+  invoked test_bpf_dump(&fcode, prm) when load failed, useful for
+  diagnosing converter regressions. The refactor drops this. Consider
+  preserving the dump in the failure branch (or moving it into
+  load_cbpf_program_convert on its NULL return).
+
+
+PATCH v3 08/10 -- test/bpf: test loading ELF file from memory
+-------------------------------------------------------------
+
+Errors:
+
+* app/test/test_bpf.c, bpf_rx_test(): when rte_bpf_eth_rx_install()
+  fails, the loaded bpf program is leaked:
+
+      ret = rte_bpf_eth_rx_install(port, 0, bpf, flags);
+      if (ret != 0) {
+          printf(...);
+          return ret;            /* no rte_bpf_destroy(bpf) */
+      }
+
+  bpf_tx_test() in the same patch correctly calls rte_bpf_destroy(bpf)
+  on the equivalent error path. Per the patch 05 contract, ownership
+  transfers to the library only on successful install. Add
+  `rte_bpf_destroy(bpf);` before the return.
