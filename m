@@ -2,57 +2,77 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0690CD4F49
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 10:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3926CD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 10:30:49 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id B49F140652;
-	Mon, 18 May 2026 12:01:32 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 18F0140652
- for <dev@dpdk.org>; Mon, 18 May 2026 12:01:31 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1779098490;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=1P41S0bzN3maytTYfn9/1W28wFs4yTogAzkq3Mq/EAA=;
- b=cBYSOWjvtB9+dPdIcQezT6w9J/EBiFAWEgJzXc6epoR2EPx8U2v1ueuSUnFwZFVNrrz78D
- mME4eobOyWkbwm1CluoYZSbqR81e1H9+tzfcsfoncaYxESS2ovDcak1MtMGKLhcAxZvRL8
- 8yTEk0ejK+V5RyTngEdz9Lz9GRd1F9E=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-M653kxBUNpm19Wjby-5gAA-1; Mon,
- 18 May 2026 06:01:26 -0400
-X-MC-Unique: M653kxBUNpm19Wjby-5gAA-1
-X-Mimecast-MFC-AGG-ID: M653kxBUNpm19Wjby-5gAA_1779098485
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id 260AF180044D; Mon, 18 May 2026 10:01:25 +0000 (UTC)
-Received: from ringo.home (unknown [10.44.32.250])
- by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id C96711800352; Mon, 18 May 2026 10:01:23 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org,
-	Vladimir Medvedkin <vladimir.medvedkin@intel.com>
-Subject: [PATCH dpdk 2/2] rib: add mode to include top-level route in traversal
-Date: Mon, 18 May 2026 11:59:05 +0200
-Message-ID: <20260518095900.29655-8-rjarry@redhat.com>
-In-Reply-To: <20260518095900.29655-6-rjarry@redhat.com>
-References: <20260518095900.29655-6-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id A811B402D9;
+	Mon, 18 May 2026 12:30:48 +0200 (CEST)
+Received: from fhigh-b5-smtp.messagingengine.com
+ (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+ by mails.dpdk.org (Postfix) with ESMTP id A6B78402B8
+ for <dev@dpdk.org>; Mon, 18 May 2026 12:30:47 +0200 (CEST)
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+ by mailfhigh.stl.internal (Postfix) with ESMTP id BB5BB7A010F;
+ Mon, 18 May 2026 06:30:46 -0400 (EDT)
+Received: from phl-frontend-04 ([10.202.2.163])
+ by phl-compute-01.internal (MEProxy); Mon, 18 May 2026 06:30:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=monjalon.net; h=
+ cc:cc:content-transfer-encoding:content-type:content-type:date
+ :date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to; s=fm3; t=1779100246;
+ x=1779186646; bh=4WVEy7sjYK8Z5ordO4hKllqRTl+Oind8R0jyJ2WjImY=; b=
+ syJzTs0NLQUwBSF+I6/3G+DGqSsEi1PSG9ER1qwsuPduTyMn26lwgudJBudG+ce7
+ nY/cihp+WulAODgALn9qMfVEdnDFQxuJG+bZpAgJhE1VeUjOxvjDQQlGo/a1Y0wR
+ PG0xFzSY9ffFimfFcOvIhO9+43AiCCMIHdIi5KhiUZfg3rw6uV08S7himGvSa1uQ
+ ZE3OxJyJQyqXmeAr6xfitcD1AJM2NW0g5UJXlKt0qd08RBZZkr0j3F3i8dQRfG3h
+ yWxdIBR/IwBRtWHw/lEmqQptBBRyWJ820fzfDvuw/Kh4QuwqvRi3mrKMKQrJh1Kc
+ WDrf6KxUzrfTIXEcN/lmfw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+ messagingengine.com; h=cc:cc:content-transfer-encoding
+ :content-type:content-type:date:date:feedback-id:feedback-id
+ :from:from:in-reply-to:in-reply-to:message-id:mime-version
+ :references:reply-to:subject:subject:to:to:x-me-proxy
+ :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1779100246; x=
+ 1779186646; bh=4WVEy7sjYK8Z5ordO4hKllqRTl+Oind8R0jyJ2WjImY=; b=v
+ dtQdKonz5j4VvlmKwO5Dp6WsD52XyBIml1Fn+yEnQk3vEOqGs5BZAHsH93XwojwB
+ iVSNNYAC6vSFuh86/0T2SmOqJjOa/OkFLJTj4wKJz258f+aB2TIHEMnjdCWWEGs8
+ Ojl01YeKyndBycIlYs0K+M+KW1DYs19wqARbfBTDZwzKBr0UdCpEcVJpTkXtwgi5
+ SknYKF5TLC+Pd64TwDtOcJDXibkkh1vjIP2fHIZ/QBYCFXghG/yZLGJ29RJmRbQ1
+ FXsSObudeyigaw8vdzG7IJuoR1XXit8NXTdyUJdQf6PjRPGODevOR6RUh/xw026O
+ dypE0Nn6t5fLrDBjSGM1Q==
+X-ME-Sender: <xms:VuoKas5A5ALhiudY_aEnR6noa0Z5f0mTMBtJmVRayic_Tvfpj4tJig>
+ <xme:VuoKaqOY-3A2REYXNPBhNLaVKtXJXcQZ-a0KdqhB4XGrEaHcVHiNd-sEPFRg9EfdQ
+ OvQPJ-tylTKIJrIFcqAvhu8gT78alxNl3VHUhCt0mAs4D_Wx3cPqg>
+X-ME-Received: <xmr:VuoKauN4hUVDAqgI-1naK9EOHjCgL_ze7vwXzSyCiW-lvC-faWQ7nnXfVxZHlDfVuCn9cT4GT1McMj-NpdR-AJV3DQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefhedrtddtgddufeekieefucetufdoteggodetrf
+ dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+ rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+ gurhephffvvefufffkjghfggfgtgesthfuredttddtjeenucfhrhhomhepvfhhohhmrghs
+ ucfoohhnjhgrlhhonhcuoehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtqeenucggtf
+ frrghtthgvrhhnpeejudevheeiveduuddtveffgfdtgeekueevjeffjeegtdeggeekgfdv
+ uefgfeekjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+ hmpehthhhomhgrshesmhhonhhjrghlohhnrdhnvghtpdhnsggprhgtphhtthhopedvpdhm
+ ohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhutggvrdhrihgthhgrrhgushhonh
+ esihhnthgvlhdrtghomhdprhgtphhtthhopeguvghvseguphgukhdrohhrgh
+X-ME-Proxy: <xmx:VuoKai8KSKi1bDIoTSBrHXNyfNJiohX9vhJi4cfh0hx1aLFRhirGxg>
+ <xmx:VuoKai6Gb7lflus1NgtzyVueRl5EOA9wC8vb171TUJgrWVSaX42oxw>
+ <xmx:VuoKap2-S-WZzwIx8zwh9V1nxf6kck3nSg5G4vejrGxWWfQq4hvHmA>
+ <xmx:VuoKapC0A3e4tVEO2AdLjL9qdF2g2SJqM68TvedRkQ7KU4QdlRpwyQ>
+ <xmx:VuoKasgKe1Hf6bR07KFfUSplGEPlxIVNbotVb4ZzJabGO0wBzVCnUEB1>
+Feedback-ID: i47234305:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 18 May 2026 06:30:45 -0400 (EDT)
+From: Thomas Monjalon <thomas@monjalon.net>
+To: Bruce Richardson <bruce.richardson@intel.com>
+Cc: dev@dpdk.org
+Subject: Re: [PATCH 0/6] add hardening checks to cmdline and cfgfile libs
+Date: Mon, 18 May 2026 12:30:43 +0200
+Message-ID: <ommzVyU8QbmUSqpwi_tg5w@monjalon.net>
+In-Reply-To: <20260507145950.197753-1-bruce.richardson@intel.com>
+References: <20260507145950.197753-1-bruce.richardson@intel.com>
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: Hy6Piyh3s4FCPl7EouS9kET-GLmVdrPb37-z3B86M6Y_1779098485
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,221 +86,23 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-rte_rib_get_nxt() and rte_rib6_get_nxt() skip the exact match
-top-level route when iterating subroutes. This is the expected behavior
-in most cases but some users need the full subtree including the root.
+07/05/2026 16:59, Bruce Richardson:
+> Using AI tools to review the cmdline and cfgfile libraries throws up a
+> couple of places in the libraries where additional hardening could help
+> prevent future issues. A number of these are purely defensive, e.g.
+> adding NULL checks to input parameters where a well-behaved app should
+> never call the function with a NULL value, and so those are not
+> explicitly marked for backport.
+> 
+> Bruce Richardson (6):
+>   cfgfile: add null checks to public APIs
+>   cfgfile: prevent issues with overflow on resize
+>   cmdline: harden parser result buffer handling
+>   cmdline: add explicit help function for bool type
+>   cmdline: guard zero-size destination buffers
+>   cmdline: add null checks for invalid input
 
-Add a RTE_RIB_GET_NXT_ALL_TOP (and RTE_RIB6_GET_NXT_ALL_TOP) mode
-that uses >= instead of > when comparing depths so that the top-level
-route is returned as well.
+Applied, thanks.
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
----
- app/test/test_rib.c  | 16 ++++++++++++++++
- app/test/test_rib6.c | 16 ++++++++++++++++
- lib/rib/rte_rib.c    | 12 ++++++++++--
- lib/rib/rte_rib.h    |  4 ++++
- lib/rib/rte_rib6.c   | 12 ++++++++++--
- lib/rib/rte_rib6.h   |  4 ++++
- 6 files changed, 60 insertions(+), 4 deletions(-)
 
-diff --git a/app/test/test_rib.c b/app/test/test_rib.c
-index a4a683140df3..f56490e67ec0 100644
---- a/app/test/test_rib.c
-+++ b/app/test/test_rib.c
-@@ -300,6 +300,7 @@ test_tree_traversal(void)
- 	uint32_t ip1 = RTE_IPV4(10, 10, 10, 0);
- 	uint32_t ip2 = RTE_IPV4(10, 10, 130, 80);
- 	uint8_t depth = 30;
-+	unsigned int num;
- 
- 	config.max_nodes = MAX_RULES;
- 	config.ext_sz = 0;
-@@ -313,11 +314,26 @@ test_tree_traversal(void)
- 	node = rte_rib_insert(rib, ip2, depth);
- 	RTE_TEST_ASSERT(node != NULL, "Failed to insert rule\n");
- 
-+	node = rte_rib_insert(rib, 0, 0);
-+	RTE_TEST_ASSERT(node != NULL, "Failed to insert default rule\n");
-+
- 	node = NULL;
- 	node = rte_rib_get_nxt(rib, RTE_IPV4(10, 10, 130, 0), 24, node,
- 			RTE_RIB_GET_NXT_ALL);
- 	RTE_TEST_ASSERT(node != NULL, "Failed to get rib_node\n");
- 
-+	num = 0;
-+	node = NULL;
-+	while ((node = rte_rib_get_nxt(rib, 0, 0, node, RTE_RIB_GET_NXT_ALL)) != NULL)
-+		num++;
-+	RTE_TEST_ASSERT(num == 2, "Invalid number of routes\n");
-+
-+	num = 0;
-+	node = NULL;
-+	while ((node = rte_rib_get_nxt(rib, 0, 0, node, RTE_RIB_GET_NXT_ALL_TOP)) != NULL)
-+		num++;
-+	RTE_TEST_ASSERT(num == 3, "Default route not returned by rte_rib_get_nxt\n");
-+
- 	rte_rib_free(rib);
- 
- 	return TEST_SUCCESS;
-diff --git a/app/test/test_rib6.c b/app/test/test_rib6.c
-index 0295a9640cfa..542c955eee8c 100644
---- a/app/test/test_rib6.c
-+++ b/app/test/test_rib6.c
-@@ -300,7 +300,9 @@ test_tree_traversal(void)
- 	struct rte_ipv6_addr ip = RTE_IPV6(0x0a00, 0x0282, 0, 0, 0, 0, 0, 0);
- 	struct rte_ipv6_addr ip1 = RTE_IPV6(0x0a00, 0x0200, 0, 0, 0, 0, 0, 0);
- 	struct rte_ipv6_addr ip2 = RTE_IPV6(0x0a00, 0x0282, 0, 0, 0, 0, 0, 0x0050);
-+	struct rte_ipv6_addr unspec = RTE_IPV6(0, 0, 0, 0, 0, 0, 0, 0);
- 	uint8_t depth = 126;
-+	unsigned int num;
- 
- 	config.max_nodes = MAX_RULES;
- 	config.ext_sz = 0;
-@@ -312,11 +314,25 @@ test_tree_traversal(void)
- 	RTE_TEST_ASSERT(node != NULL, "Failed to insert rule\n");
- 	node = rte_rib6_insert(rib, &ip2, depth);
- 	RTE_TEST_ASSERT(node != NULL, "Failed to insert rule\n");
-+	node = rte_rib6_insert(rib, &unspec, 0);
-+	RTE_TEST_ASSERT(node != NULL, "Failed to insert default route\n");
- 
- 	node = NULL;
- 	node = rte_rib6_get_nxt(rib, &ip, 32, node, RTE_RIB6_GET_NXT_ALL);
- 	RTE_TEST_ASSERT(node != NULL, "Failed to get rib_node\n");
- 
-+	num = 0;
-+	node = NULL;
-+	while ((node = rte_rib6_get_nxt(rib, 0, 0, node, RTE_RIB6_GET_NXT_ALL)) != NULL)
-+		num++;
-+	RTE_TEST_ASSERT(num == 2, "Invalid number of routes\n");
-+
-+	num = 0;
-+	node = NULL;
-+	while ((node = rte_rib6_get_nxt(rib, 0, 0, node, RTE_RIB6_GET_NXT_ALL_TOP)) != NULL)
-+		num++;
-+	RTE_TEST_ASSERT(num == 3, "Default route not returned by rte_rib6_get_nxt\n");
-+
- 	rte_rib6_free(rib);
- 
- 	return TEST_SUCCESS;
-diff --git a/lib/rib/rte_rib.c b/lib/rib/rte_rib.c
-index 89061829a23c..a3c287e215ec 100644
---- a/lib/rib/rte_rib.c
-+++ b/lib/rib/rte_rib.c
-@@ -167,6 +167,14 @@ rte_rib_lookup_exact(struct rte_rib *rib, uint32_t ip, uint8_t depth)
- 	return __rib_lookup_exact(rib, ip, depth);
- }
- 
-+static bool
-+depth_match(struct rte_rib_node *node, uint8_t depth, int flag)
-+{
-+	if (flag == RTE_RIB_GET_NXT_ALL_TOP)
-+		return node->depth >= depth;
-+	return node->depth > depth;
-+}
-+
- /*
-  *  Traverses on subtree and retrieves more specific routes
-  *  for a given in args ip/depth prefix
-@@ -195,7 +203,7 @@ rte_rib_get_nxt(struct rte_rib *rib, uint32_t ip,
- 			tmp = tmp->parent;
- 			if (is_valid_node(tmp) &&
- 					(is_covered(tmp->ip, ip, depth) &&
--					(tmp->depth > depth)))
-+					(depth_match(tmp, depth, mode))))
- 				return tmp;
- 		}
- 		tmp = (tmp->parent) ? tmp->parent->right : NULL;
-@@ -203,7 +211,7 @@ rte_rib_get_nxt(struct rte_rib *rib, uint32_t ip,
- 	while (tmp) {
- 		if (is_valid_node(tmp) &&
- 				(is_covered(tmp->ip, ip, depth) &&
--				(tmp->depth > depth))) {
-+				(depth_match(tmp, depth, mode)))) {
- 			prev = tmp;
- 			if (mode == RTE_RIB_GET_NXT_COVER)
- 				return prev;
-diff --git a/lib/rib/rte_rib.h b/lib/rib/rte_rib.h
-index 0fabfb2a41a6..5e72fa9273e2 100644
---- a/lib/rib/rte_rib.h
-+++ b/lib/rib/rte_rib.h
-@@ -31,6 +31,8 @@ enum rte_rib_nxt_mode {
- 	RTE_RIB_GET_NXT_ALL,
- 	/** get first matched subroutes in a RIB tree, excluding any exact match top-level route */
- 	RTE_RIB_GET_NXT_COVER,
-+	/** get all subroutes in a RIB tree, including the exact match top-level route, if any */
-+	RTE_RIB_GET_NXT_ALL_TOP,
- };
- 
- struct rte_rib;
-@@ -125,6 +127,8 @@ rte_rib_lookup_exact(struct rte_rib *rib, uint32_t ip, uint8_t depth);
-  *   get all prefixes from subtrie
-  *  -RTE_RIB_GET_NXT_COVER
-  *   get only first more specific prefix even if it have more specifics
-+ *  -RTE_RIB_GET_NXT_ALL_TOP
-+ *   get the top-level exact matching prefix, if any
-  * @return
-  *  pointer to the next more specific prefix
-  *  NULL if there is no prefixes left
-diff --git a/lib/rib/rte_rib6.c b/lib/rib/rte_rib6.c
-index c23881f6247e..5114fb522e3e 100644
---- a/lib/rib/rte_rib6.c
-+++ b/lib/rib/rte_rib6.c
-@@ -186,6 +186,14 @@ rte_rib6_lookup_exact(struct rte_rib6 *rib,
- 	return NULL;
- }
- 
-+static bool
-+depth_match(struct rte_rib6_node *node, uint8_t depth, enum rte_rib6_nxt_mode mode)
-+{
-+	if (mode == RTE_RIB6_GET_NXT_ALL_TOP)
-+		return node->depth >= depth;
-+	return node->depth > depth;
-+}
-+
- /*
-  *  Traverses on subtree and retrieves more specific routes
-  *  for a given in args ip/depth prefix
-@@ -219,7 +227,7 @@ rte_rib6_get_nxt(struct rte_rib6 *rib,
- 			tmp = tmp->parent;
- 			if (is_valid_node(tmp) &&
- 					(rte_ipv6_addr_eq_prefix(&tmp->ip, &tmp_ip, depth) &&
--					(tmp->depth > depth)))
-+					(depth_match(tmp, depth, mode))))
- 				return tmp;
- 		}
- 		tmp = (tmp->parent != NULL) ? tmp->parent->right : NULL;
-@@ -227,7 +235,7 @@ rte_rib6_get_nxt(struct rte_rib6 *rib,
- 	while (tmp) {
- 		if (is_valid_node(tmp) &&
- 				(rte_ipv6_addr_eq_prefix(&tmp->ip, &tmp_ip, depth) &&
--				(tmp->depth > depth))) {
-+				(depth_match(tmp, depth, mode)))) {
- 			prev = tmp;
- 			if (mode == RTE_RIB6_GET_NXT_COVER)
- 				return prev;
-diff --git a/lib/rib/rte_rib6.h b/lib/rib/rte_rib6.h
-index ed2761492bc8..1d8b56b89b13 100644
---- a/lib/rib/rte_rib6.h
-+++ b/lib/rib/rte_rib6.h
-@@ -32,6 +32,8 @@ enum rte_rib6_nxt_mode {
- 	RTE_RIB6_GET_NXT_ALL,
- 	/** get first matched subroutes in a RIB tree, excluding any exact match top-level route */
- 	RTE_RIB6_GET_NXT_COVER,
-+	/** get all subroutes in a RIB tree, including the exact match top-level route, if any */
-+	RTE_RIB6_GET_NXT_ALL_TOP,
- };
- 
- struct rte_rib6;
-@@ -184,6 +186,8 @@ rte_rib6_lookup_exact(struct rte_rib6 *rib,
-  *   get all prefixes from subtrie
-  *  -RTE_RIB6_GET_NXT_COVER
-  *   get only first more specific prefix even if it have more specifics
-+ *  -RTE_RIB6_GET_NXT_ALL_TOP
-+ *   get the top-level exact matching prefix, if any
-  * @return
-  *  pointer to the next more specific prefix
-  *  NULL if there is no prefixes left
--- 
-2.54.0
 
