@@ -2,72 +2,72 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0098ECD4F3D
-	for <dpdk-dev@archiver.kernel.org>; Sun, 17 May 2026 23:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE3DCD4F3D
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 00:02:39 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id 203ED4067B;
-	Mon, 18 May 2026 01:56:51 +0200 (CEST)
-Received: from mail-dy1-f179.google.com (mail-dy1-f179.google.com
- [74.125.82.179]) by mails.dpdk.org (Postfix) with ESMTP id BE0BE40667
- for <dev@dpdk.org>; Mon, 18 May 2026 01:56:49 +0200 (CEST)
-Received: by mail-dy1-f179.google.com with SMTP id
- 5a478bee46e88-2f30a4601bbso1380203eec.1
- for <dev@dpdk.org>; Sun, 17 May 2026 16:56:49 -0700 (PDT)
+	by mails.dpdk.org (Postfix) with ESMTP id 9136540264;
+	Mon, 18 May 2026 02:02:38 +0200 (CEST)
+Received: from mail-dl1-f41.google.com (mail-dl1-f41.google.com [74.125.82.41])
+ by mails.dpdk.org (Postfix) with ESMTP id CD31740261
+ for <dev@dpdk.org>; Mon, 18 May 2026 02:02:37 +0200 (CEST)
+Received: by mail-dl1-f41.google.com with SMTP id
+ a92af1059eb24-132d1b2519eso5342462c88.0
+ for <dev@dpdk.org>; Sun, 17 May 2026 17:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779062209;
- x=1779667009; darn=dpdk.org; 
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779062557;
+ x=1779667357; darn=dpdk.org; 
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:from:to:cc:subject:date
  :message-id:reply-to;
- bh=dUInw7kW8DhcvNiefsijvsypGIrcb0T04l2P+sFoFbU=;
- b=gP/IiXdU3xuyRHU+Bq/A/xUuxpCsb5oFYKdb9IR6yHRuTKJ/HkbFyznaxi4wudzE/d
- iSxLB/rJz1XbB4w+uHOaMLzouIWKUfbTkxX/TDMwor7yGtDOKZ9JQLAKjSatzrBu+zAm
- yMYlo1P2xm3iRJ2k6K2s/gfx3DbJhszyijW1QgZlwnB8NQ+ZjbE7ahHb7zshmmqtJ+3L
- MvcK6vHSggsoo1L6kangGtPXxANmzvQuDubRdrgEVTbXaGW+uW3YQVa3P231T5Gex14F
- EPERi7FaQB92MOiUgEMjBPv3NJ45k7jxkfcPfKXVdm+ywInplwVWAMljpCTLZK6m51xs
- +E+Q==
+ bh=jKKYifzxvANVbKfcmas+aMF875jDbFM/+NVRHHzQ1kc=;
+ b=WdgCOsNkjGv7uUm05ZMs/pNTiElWTCZIH5xJWRu67n6rra3E+RXH3wXF20fv8ez+un
+ ZVAL31itdf9NAGIeU16KMjyk1LtxZ59jbHKB2XqabuBIcFFrQYLXCtsNm4YfH7uaUIe/
+ YQKsloPlkNFAGxvSybL42MIz7yjkg9eM1jpE4dI43jxowIiFsjSQFcxa34R00jnOp/fE
+ +WN9aOK5/S11zICu25KBaYwhdtCB2QETnKzcBrRtszgc+lJfFyKIW3PtFPwh+/KQGyjO
+ 5NUZPeCuXU1TvnymZLSXk9H/l9hiTUwm1xy2Mkl2oug2h4HOamjSayF0lFL+SIeRGz2y
+ U5gw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=1e100.net; s=20251104; t=1779062209; x=1779667009;
+ d=1e100.net; s=20251104; t=1779062557; x=1779667357;
  h=content-transfer-encoding:mime-version:references:in-reply-to
  :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
  :to:cc:subject:date:message-id:reply-to;
- bh=dUInw7kW8DhcvNiefsijvsypGIrcb0T04l2P+sFoFbU=;
- b=hYsJg0oMb4lkGf6I66xc7qZJqHVnhjl6Y95ItAw1PqZGuhyiHV5A9+2cGPj0Rea4Hd
- H0fyDW5Gvo2ch/EUe2RirOgb4y0ylytBGY910n2ILAvkozSbZkDcawhNpdUamvHgtuD3
- dsr5fQVPqjFuKOHBPC7yAgUxZbU5PNkLMyZyhTzvlCcFlwtmn5moGodF7BZ7DEOvFOjR
- /rxcV43xva5ii1FxR1Uff+nwSOcQWSD1trkuT50QO+XJErEeaovXYdhHYpZujWD7+pKm
- +nYP41ZKpopNSsnu3QQllER4mwlcE5zeS0NhcnK+UT3sfVrQP8OqQdmzevkY6cfu5vsL
- ahAQ==
-X-Gm-Message-State: AOJu0Ywnf27kvWwB5hpbAJTfvh4+I8lYDj8emdgYyo6ZdU/8tv0z83Ox
- qE4fItRf3rNqOckZbfzhh2IAAI4vqaQs58h5VByxhAvTzQUKBqdiiU3pwe8JST9FNAU=
-X-Gm-Gg: Acq92OF0cQT8vrMTaqJhm2jxoM8ucslLiuBK7gmo54NMahmx7Gq2VY+pJNYhULCoJdL
- Dh0yhhaLFlASiLz5ZL5hhp0GLu3zbfbLqayGk+lQCB6AwJ4BZHc8GT76Z8DpkL43YY02vbMFra3
- MDeleuCQKD4dB0s75njig2fUuDZJrfMcWnfYeY6OAdupgXlwdvHdvWu6PFWqQ+kjJ5A9kN+c+I7
- XdJV2U17p18vzLOtdOuN2i8KQt4HQD2vVGJO4TkxvgW6YVY1YQ8RY153UQOhWoGl/0dzwO+y90E
- Gl4NOOz7mv899rae0UHEJZYo/7BwkBNBxTCWD2SiOK5xB8kGsXAePRwVZlC0pBURWpgW211RQMD
- yRUaLj1JijIG335l+GG/P3fvniozOSX/PfuUwuiS4fFfIE8/4DJV6i9GHvpoKVZ0EMVtHT2WpjA
- IsoRfhsBzuHt0uTEzTwFIdbvinxjrGBhf/eA16YeQWVwu7HA==
-X-Received: by 2002:a05:693c:300a:b0:2f8:42b0:e63d with SMTP id
- 5a478bee46e88-3039828764emr5435824eec.2.1779062208799; 
- Sun, 17 May 2026 16:56:48 -0700 (PDT)
+ bh=jKKYifzxvANVbKfcmas+aMF875jDbFM/+NVRHHzQ1kc=;
+ b=hoAcrU9063EwkxhtJmWbTXOHijiyFUozK7SOA0G4OKNBewvn1E/HJLqi5TJQ8J8hit
+ secsBk5OffwAX7iGn6BLygdKLhCz6/ZpihLmjl/MW20gE4y7U7nOrto0sJXYTv/Y30f4
+ HgO35f5zRjvSvKRxegtq5qoUcFgFjPMU1aCX5fYa1BRuRiwsmQ+AXglG7v6WVEuK/BPr
+ c6WkRz+UY3UpUP2EyNvZhwCbuXkVm3gIyoVAuG72GysoGmTcPIM4kZOtef/U41uTWHBC
+ O2/PbMDbFzBzhpVXSeDLhUFYQqrNpaI50ASTFPfRy3ucsZbDN0XbTXmbA8Gf3+THadkw
+ 2r2A==
+X-Gm-Message-State: AOJu0YyUr+qZqrLaSRlpHNpvL1cYbhLXIa2gDbvuceoBa2b0bKmXsBka
+ rtB/HC3DXMkIUkn9YPhknKnqmBpB4kfs99K1P9omfym5NxEdtRJxs52SXIdK5rabbQ/82end7e+
+ ys19WEBM=
+X-Gm-Gg: Acq92OFSfNeLEvzdsZrJYOzuJbYEktCmr/XvB5++z3/GJ4l33IsCqm5S3m1xc1vIPX3
+ eN8e0jqDOzib1lecWTYcCafAe7i2xGqe4ssPwDABQOnSkfPsb8wd8O1dj5Bkv7XfWw3zXHVeO5o
+ x+CBq66aplPdpvtRJjpKHcBpEhAJKfYZrB186Kejw5Keu1+mvhyaGnwzJGAmtu7dre5Bwp6fh2J
+ e2WhI3ItvIwkzC6ZvS36BQTCxz+7yWiPvBrdJwPqJnHkcUWNWAI8tagcPl3mlluRRl9UTbE0OxO
+ cyABa9jzDn8k5D5iVE7UnemAtakkhXH70c/EAl3HSSn6Op/uTfUDKDskVHwtrNZAUv4p2iJJO8e
+ ceuX6DwIR9IjUS8TSB6RzA9rbOW/kpLOWHm+Vhk6DkgZ9RPxJqJjTcguTU/y//ERK2JuC7Z8ohy
+ WzEJxxuRBCiF0AdcvdunepR55zCA0m8WSNCfI=
+X-Received: by 2002:a05:7022:6988:b0:12a:b39a:339f with SMTP id
+ a92af1059eb24-1350473a96amr5435825c88.21.1779062556517; 
+ Sun, 17 May 2026 17:02:36 -0700 (PDT)
 Received: from phoenix.local ([104.202.41.210])
  by smtp.gmail.com with ESMTPSA id
- 5a478bee46e88-302973bc8ddsm12189379eec.21.2026.05.17.16.56.48
+ a92af1059eb24-134cc33aac9sm14138352c88.14.2026.05.17.17.02.35
  (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
- Sun, 17 May 2026 16:56:48 -0700 (PDT)
-Date: Sun, 17 May 2026 16:40:18 -0700
+ Sun, 17 May 2026 17:02:36 -0700 (PDT)
+Date: Sun, 17 May 2026 17:02:33 -0700
 From: Stephen Hemminger <stephen@networkplumber.org>
-To: Zaiyu Wang <zaiyuwang@trustnetic.com>
-Cc: dev@dpdk.org, stable@dpdk.org, Jiawen Wu <jiawenwu@trustnetic.com>
-Subject: Re: [PATCH v4 05/20] net/txgbe: fix inaccuracy in Tx rate limiting
-Message-ID: <20260517164018.7a58c68c@phoenix.local>
-In-Reply-To: <20260511103604.19724-6-zaiyuwang@trustnetic.com>
-References: <20260423034024.14404-1-zaiyuwang@trustnetic.com>
- <20260511103604.19724-1-zaiyuwang@trustnetic.com>
- <20260511103604.19724-6-zaiyuwang@trustnetic.com>
+To: liujie5@linkdatatechnology.com
+Cc: dev@dpdk.org
+Subject: Re: [PATCH v15 00/11] net/sxe2: fix logic errors and address feedback
+Message-ID: <20260517170233.66915942@phoenix.local>
+In-Reply-To: <20260516074618.2343883-1-liujie5@linkdatatechnology.com>
+References: <20260516025540.2092621-12-liujie5@linkdatatechnology.com>
+ <20260516074618.2343883-1-liujie5@linkdatatechnology.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -81,109 +81,160 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, 11 May 2026 18:35:47 +0800
-Zaiyu Wang <zaiyuwang@trustnetic.com> wrote:
+On Sat, 16 May 2026 15:46:07 +0800
+liujie5@linkdatatechnology.com wrote:
 
-> Amber-lite NIC's TX rate limiting has large deviations for small
-> packets. To address this, the following changes are made:
-> 
-> 1. Set TDM_RL_ADJ (0x1820c) to 21B (includes 7B Ethernet preamble,
->    1B SFD, 1B EFD, and 12B IPG).
-> 2) Remove the rate offset in the driver (e.g., 105 / 100, a rough
->    compensation value from Linux kernel driver tests).
-> 
-> After these changes, accuracy deviation for 64B packets is within
-> ~5%, while large packets show lower deviation.
-> 
-> Fixes: a309ab43acf3 ("net/txgbe: support Tx queue rate limiting for Amber-Lite")
-> Cc: stable@dpdk.org
-> 
-> Signed-off-by: Zaiyu Wang <zaiyuwang@trustnetic.com>
-> ---
-
-AI feedback on this one. Looks ok as is but worth looking at.
+> From: Jie Liu <liujie5@linkdatatechnology.com>
+>=20
+> This patch set addresses the feedback received on the v10 submission
+> for the sxe2 PMD. The primary focus is on fixing vector path selection,
+> ensuring memory safety during mbuf initialization, and cleaning up
+> redundant logic in the configuration functions.
 
 
-# DPDK Patch Review: net/txgbe: fix inaccuracy in Tx rate limiting
+Driver is in much better shape now.
+AI is still finding a few things.
 
-## Summary
+Review of [PATCH v15 00/11] sxe2 PMD
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 
-This patch improves TX rate limiting accuracy for Amber-lite NIC by:
-1. Setting TDM_RL_ADJ register to 21B (Ethernet framing overhead)
-2. Removing the 105/100 compensation factor
+Overall comments
+----------------
 
-## Review Findings
+Most of the issues called out in the v13 review have been
+addressed in v15:
 
-### **Errors**
+  - Inverted "if (!ret)" error checks in sxe2_dev_pci_map_init()
+    are now "if (ret)".
+  - Non-ASCII characters in sxe2_net_map_addr_info_pf[] removed.
+  - rte_ticketlock_t around blocking ioctl() replaced with
+    pthread_mutex_t.
+  - Driver-private u8/s8/u16/... typedefs, __le*/__be* aliases,
+    sxe2_errno.h, STATIC macro, and the reinvented
+    LIST_FOR_EACH_ENTRY / COMPILER_BARRIER / sxe2_*_lock /
+    udelay/mdelay/msleep / __iomem / IS_ERR helpers are gone.
+  - "MTU update =3D Y" claim in the features matrix dropped;
+    "Free Tx mbuf on demand =3D Y" is now backed by the new
+    .tx_done_cleanup callback added in patch 11.
+  - Redundant queue_idx bounds checks at the top of
+    rx_queue_setup / tx_queue_setup removed.
+  - "reseted" log-message typo fixed.
 
-None found.
+What remains:
 
-### **Warnings**
 
-**1. TDM_RL_ADJ write placement causes per-queue reconfiguration**
+Patch 11/11: net/sxe2: implement Tx done cleanup
+------------------------------------------------
 
-The `TXGBE_TDM_RL_ADJ` register write is inside the per-queue rate limit configuration loop, causing the same global register to be written every time any queue's rate limit is set. This register appears to be a global hardware adjustment parameter (affects all queues), not a per-queue setting.
+Error: NULL pointer dereference of tx_queue parameter.
+sxe2_tx_done_cleanup() dereferences txq before checking it for
+NULL:
 
-**Suggested fix:** Move the register write outside the queue configuration context, ideally to device initialization or as a one-time setup when rate limiting is first enabled:
+  int32_t sxe2_tx_done_cleanup(void *tx_queue, uint32_t free_cnt)
+  {
+          struct sxe2_tx_queue *txq =3D (struct sxe2_tx_queue *)tx_queue;
+          struct sxe2_adapter *adapter =3D txq->vsi->adapter;  /* segfault =
+if txq =3D=3D NULL */
+          int32_t ret;
 
-```c
-/* Set once during device init or first rate limit config */
-static bool rl_adj_initialized = false;
-if (!rl_adj_initialized) {
-    wr32(hw, TXGBE_TDM_RL_ADJ, 21);
-    rl_adj_initialized = true;
-}
-wr32(hw, TXGBE_TDM_RL_QUEUE_IDX, queue_idx);
-```
+          if (txq =3D=3D NULL) {                                  /* too la=
+te */
+                  ret =3D 0;
+                  goto l_end;
+          }
+          ...
 
-Or better yet, move it to a device initialization function if this is a hardware parameter that should be set once at device start.
+The NULL check must run before any field access:
 
-**2. Magic number 21 lacks explanation**
+          struct sxe2_tx_queue *txq =3D tx_queue;
+          struct sxe2_adapter *adapter;
 
-The value 21 is documented in the commit message but not in the code. Future maintainers will not see the breakdown (7B preamble + 1B SFD + 1B EFD + 12B IPG).
+          if (txq =3D=3D NULL)
+                  return 0;
+          adapter =3D txq->vsi->adapter;
+          ...
 
-**Suggested fix:** Add a comment or define:
 
-```c
-/* Ethernet framing overhead: 7B preamble + 1B SFD + 1B EFD + 12B IPG */
-#define TXGBE_TDM_RL_ADJ_OVERHEAD  21
-wr32(hw, TXGBE_TDM_RL_ADJ, TXGBE_TDM_RL_ADJ_OVERHEAD);
-```
+Patch 03/10 -> 09/10: vector mode probe gated on RTE_PROC_PRIMARY
+-----------------------------------------------------------------
 
-**3. Missing release notes update**
+Warning: sxe2_rx_mode_func_set() runs the vector capability probe
+only in the primary process:
 
-This is a fix that changes hardware behavior and improves accuracy. Users may observe different TX rates after upgrading. The change should be documented in release notes to inform users of the accuracy improvement.
+          if (rte_eal_process_type() =3D=3D RTE_PROC_PRIMARY) {
+                  ret =3D sxe2_rx_vec_support_check(dev, &vec_flags);
+                  ...
+          }
 
-**Suggested fix:** Add an entry to `doc/guides/rel_notes/release_26_11.rst` (or current release):
+but sxe2_dev_init() calls sxe2_rx_mode_func_set(dev) and
+sxe2_tx_mode_func_set(dev) from the secondary-process branch as
+well.  In a secondary, the vector probe is skipped, rx_mode_flags
+stays 0, and dev->rx_pkt_burst lands on
+sxe2_rx_pkts_scattered{,_split}.  Since dev->rx_pkt_burst is
+per-rte_eth_dev and re-written by whichever process attaches
+last, the effective Rx burst mode depends on attach ordering.
+The same pattern was flagged in v13 and is unchanged in v15.
 
-```rst
-* **net/txgbe: Improved TX rate limiting accuracy for Amber-lite NIC.**
+Either run the same probe in secondaries, or share the primary's
+decision through rte_eth_dev_data so secondaries inherit it.
 
-  Fixed TX rate limiting accuracy for 64-byte packets from ~20% deviation
-  to within ~5% by correcting hardware framing overhead configuration.
-```
 
-### **Info**
+Patch 03/10: common/sxe2: add sxe2 basic structures
+---------------------------------------------------
 
-**1. Consider validating tx_rate is non-zero**
+Warning: macro identifier BITS_TO_uint32_t in sxe2_osal.h.  This
+is the visible result of a wholesale "u32 -> uint32_t" rename
+applied to identifier text without manual review.  The macro is
+unused in the rest of the driver (the only mentions are the
+definition itself and a later rename of the right-hand side),
+so the cleanest fix is to delete it.  If a "bits to 32-bit-word
+count" macro is wanted later, name it BITS_TO_U32 or use
+RTE_DIM/RTE_ALIGN_MUL_CEIL idioms.
 
-The code computes `factor_int = link_speed / tx_rate`. If `tx_rate` is somehow zero (due to caller error or invalid input), this would cause division by zero. The existing code may have validation elsewhere, but defensive programming would check this.
 
-```c
-if (tx_rate == 0) {
-    PMD_DRV_LOG(ERR, "TX rate cannot be zero");
-    return -EINVAL;
-}
-```
+Patch 09/11: drivers: add data path for Rx and Tx
+-------------------------------------------------
 
-**2. Variable scope: factor_fra could be declared at initialization**
+Info: in sxe2_tx_pkts() the exit chain remains
 
-The variable `factor_fra` is declared but not initialized, then assigned in both branches of the conditional. C99 style would allow:
+  l_exit_logic:
+        if (tx_num =3D=3D 0)
+                goto l_end;
+        goto l_end_of_tx;
+  l_end_of_tx:
+        SXE2_PCI_REG_WRITE_WC(...);
 
-```c
-u32 factor_fra = (frac * 16384) / 10000;
-if (factor_fra >= 8192)
-    factor_fra = 0;
-```
+The unconditional "goto l_end_of_tx;" immediately before the
+"l_end_of_tx:" label is dead =E2=80=94 fall through.  The same pattern
+appears in sxe2_rx_mode_func_set() at the end:
 
-This is stylistic only; the existing code is correct.
+          dev->rx_pkt_burst =3D sxe2_rx_pkts_scattered;
+          goto l_end;
+  l_end:
+          PMD_LOG_DEBUG(...);
+
+Both can simply be deleted.
+
+
+Series hygiene
+--------------
+
+Info: several identifiers are introduced with typos in one patch
+and corrected in a later patch within the same series:
+
+  - sxe2_commoin_inited (patch 03) -> sxe2_common_inited (patch 05)
+  - sxe2_drv_dev_handshark (patch 03) -> sxe2_drv_dev_handshke
+    (patch 04).  The renamed form is still a typo (missing 'a'
+    between 'h' and 'k').  Log strings around it were corrected
+    to "handshake" in patch 05; the function name was not.
+  - Dead "if (ret !=3D 0)" after two void-returning
+    sxe2_{rx,tx}_mode_func_set() calls is added in patch 08 and
+    removed again in patch 09.
+
+Each commit needs to be independently correct so that "git
+bisect" lands on meaningful states.  Renaming an exported
+internal symbol (RTE_EXPORT_INTERNAL_SYMBOL(sxe2_drv_dev_handshke))
+mid-series also churns the auto-generated version map.  Please
+collapse these into the patches that introduce the names, and
+fix sxe2_drv_dev_handshke -> sxe2_drv_dev_handshake.
