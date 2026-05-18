@@ -2,57 +2,36 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B09CD4F52
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 08:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD30CCD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 08:35:50 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id D66B5402D9;
-	Mon, 18 May 2026 10:27:15 +0200 (CEST)
-Received: from us-smtp-delivery-124.mimecast.com
- (us-smtp-delivery-124.mimecast.com [170.10.133.124])
- by mails.dpdk.org (Postfix) with ESMTP id 1ABA640265
- for <dev@dpdk.org>; Mon, 18 May 2026 10:27:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
- s=mimecast20190719; t=1779092834;
- h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
- to:to:cc:mime-version:mime-version:content-type:content-type:
- content-transfer-encoding:content-transfer-encoding:
- in-reply-to:in-reply-to:references:references;
- bh=UC5mk1LW7xqdPTYjS4YaN2J3ggUNkObyM6iLv8NyAy8=;
- b=gviG5OxXRBYdpAZ9IGQklEf4rXmD9VPM/ovl3tABUvqCGihVif5LageUNiIQFkSLiRP06m
- f1erxc2yInwhMMT0O8tnG95WYP3pPDS2ED6vH8BfeXe8O5FkLwzJOUwWnvScxayyZ4GTdv
- eOcMLEyUrAG+BacIP6gVXqHMHrP6zME=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-328-JGcKacviNhi5ByfPR4pCXg-1; Mon,
- 18 May 2026 04:27:10 -0400
-X-MC-Unique: JGcKacviNhi5ByfPR4pCXg-1
-X-Mimecast-MFC-AGG-ID: JGcKacviNhi5ByfPR4pCXg_1779092830
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com
- (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
- (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
- key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
- (No client certificate requested)
- by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS
- id AD6CC18005B3; Mon, 18 May 2026 08:27:09 +0000 (UTC)
-Received: from ringo.home (unknown [10.44.34.17])
- by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP
- id 6B9B919432BB; Mon, 18 May 2026 08:27:08 +0000 (UTC)
-From: Robin Jarry <rjarry@redhat.com>
-To: dev@dpdk.org,
-	Stephen Hemminger <stephen@networkplumber.org>
-Subject: [PATCH dpdk v5] net/tap: use offsets provided by rte_net_get_ptype
-Date: Mon, 18 May 2026 10:27:00 +0200
-Message-ID: <20260518082659.13036-2-rjarry@redhat.com>
-In-Reply-To: <20260422133615.680318-2-rjarry@redhat.com>
-References: <20260422133615.680318-2-rjarry@redhat.com>
+	by mails.dpdk.org (Postfix) with ESMTP id 0C43E402D9;
+	Mon, 18 May 2026 10:35:50 +0200 (CEST)
+Received: from dkmailrelay1.smartsharesystems.com
+ (smartserver.smartsharesystems.com [77.243.40.215])
+ by mails.dpdk.org (Postfix) with ESMTP id E52D740265;
+ Mon, 18 May 2026 10:35:48 +0200 (CEST)
+Received: from smartserver.smartsharesystems.com
+ (smartserver.smartsharesys.local [192.168.4.10])
+ by dkmailrelay1.smartsharesystems.com (Postfix) with ESMTP id BF20521091;
+ Mon, 18 May 2026 10:35:47 +0200 (CEST)
+Content-class: urn:content-classes:message
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: RC70eynoV5Krn3H2cc1oDaT4h43Y2mjQnPXQvygevY4_1779092830
-X-Mimecast-Originator: redhat.com
-Content-Transfer-Encoding: 8bit
-content-type: text/plain; charset="US-ASCII"; x-default=true
+Content-Type: text/plain;
+	charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Subject: Memory management BoF summary (DPDK Summit 2026)
+Date: Mon, 18 May 2026 10:35:44 +0200
+Message-ID: <98CBD80474FA8B44BF855DF32C47DC35F6587B@smartserver.smartshare.dk>
+X-MimeOLE: Produced By Microsoft Exchange V6.5
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Thread-Topic: Memory management BoF summary (DPDK Summit 2026)
+Thread-Index: AdzmoVFwN4xj0n6ARyCQahjMRW9t3w==
+From: =?iso-8859-1?Q?Morten_Br=F8rup?= <mb@smartsharesystems.com>
+To: <dev@dpdk.org>
+Cc: <techboard@dpdk.org>,
+	<mattias.ronnblom@ericsson.com>
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -66,142 +45,86 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-Instead of guessing what are the proper header lengths, pass
-a rte_net_hdr_lens struct to rte_net_get_ptype and use it to get the
-proper header lengths/offsets in tap_verify_csum.
+There are two ways of allocating/freeing memory objects in DPDK:
+1.	From the memory heap, i.e. rte_malloc() etc.
+2.	From a memory pool, i.e. rte_mempool_get() etc.
 
-This allows supporting stacked VLAN/QinQ tags and IPv6 extensions.
+The current memory heap in DPDK has two issues:
+-	It is too slow to be used in the fast path.
+-	There may be contention between control threads and
+	EAL threads for the same spinlocks in the heap.
 
-Signed-off-by: Robin Jarry <rjarry@redhat.com>
----
+The memory pools in the DPDK has multiple issues:
+-	It is designed for fixed size objects,
+	so individual mempools must be allocated for each type of object.
+	(In theory, mempools could be allocated per object size,
+	and shared across modules.
+	But that would require coordination across modules, including
+	the total number of objects required by these modules,
+	the choice of underlying mempool driver,
+	and the optimal mempool cache size.)
+-	The number of objects in each mempool is fixed,
+	so applications have to size their mempools to worst case usage.
+-	The memory for the objects in a mempool is pre-allocated.
+In summary, mempools consume significantly more memory than effectively
+being used.
 
-Notes:
-    v5:
-    
-    * Fixed invalid L4 checksum verification when there are IPv6 extension headers.
-    
-    v4:
-    
-    * Fixed stale comments.
-    
-    v3:
-    
-    * Fixed double count for ipv6 extension headers.
-    
-    v2:
-    
-    * Restored packet length checks in IPv4/IPv6 before checking L4
-      checksums.
-    * Moved struct rte_net_hdr_lens variable next to rte_net_get_ptype call
-      and initialize it to 0 instead of calling memset().
+We discussed the need for a new memory heap system,
+and converged on the following features:
+-	Providing functions to allocate and free memory objects of varying
+	size, like the rte_malloc library, but usable in the fast path.
+-	Perhaps also a need for bulk alloc/free functions,
+	like the rte_mempool library.
+-	Building on top of memzones.
+-	No dependency on the current DPDK heap, so it can cleanly replace it.
+	This is a stretch requirement.
+-	NUMA aware.
+-	Using slabs for various block sizes like in the Linux Kernel,
+	possibly with object size 2^N.
+-	Using per-lcore caches to reduce contention,
+	resembling the mempool per-lcore caches.
 
- drivers/net/tap/rte_eth_tap.c | 41 +++++++++++++----------------------
- 1 file changed, 15 insertions(+), 26 deletions(-)
+Mattias R=F6nnblom has implemented a prototype with the above =
+properties,
+and this was a good starting point for the discussion.
 
-diff --git a/drivers/net/tap/rte_eth_tap.c b/drivers/net/tap/rte_eth_tap.c
-index a5d460a0b3cb..3b8e19afb7af 100644
---- a/drivers/net/tap/rte_eth_tap.c
-+++ b/drivers/net/tap/rte_eth_tap.c
-@@ -327,52 +327,41 @@ tun_alloc(struct pmd_internals *pmd, int is_keepalive, int persistent)
- }
- 
- static void
--tap_verify_csum(struct rte_mbuf *mbuf)
-+tap_verify_csum(struct rte_mbuf *mbuf, const struct rte_net_hdr_lens *hlen)
- {
--	uint32_t l2 = mbuf->packet_type & RTE_PTYPE_L2_MASK;
- 	uint32_t l3 = mbuf->packet_type & RTE_PTYPE_L3_MASK;
- 	uint32_t l4 = mbuf->packet_type & RTE_PTYPE_L4_MASK;
--	unsigned int l2_len = sizeof(struct rte_ether_hdr);
--	unsigned int l3_len;
-+	uint32_t l4_off = hlen->l2_len + hlen->l3_len;
- 	uint16_t cksum = 0;
- 	void *l3_hdr;
- 	void *l4_hdr;
--	struct rte_udp_hdr *udp_hdr;
- 
--	if (l2 == RTE_PTYPE_L2_ETHER_VLAN)
--		l2_len += 4;
--	else if (l2 == RTE_PTYPE_L2_ETHER_QINQ)
--		l2_len += 8;
- 	/* Don't verify checksum for packets with discontinuous L2 header */
--	if (unlikely(l2_len + sizeof(struct rte_ipv4_hdr) >
--		     rte_pktmbuf_data_len(mbuf)))
-+	if (unlikely(l4_off > rte_pktmbuf_data_len(mbuf)))
- 		return;
--	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len);
-+
-+	l3_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, hlen->l2_len);
- 	if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
- 		struct rte_ipv4_hdr *iph = l3_hdr;
- 
--		l3_len = rte_ipv4_hdr_len(iph);
--		if (unlikely(l2_len + l3_len > rte_pktmbuf_data_len(mbuf)))
--			return;
- 		/* check that the total length reported by header is not
- 		 * greater than the total received size
- 		 */
--		if (l2_len + rte_be_to_cpu_16(iph->total_length) >
-+		if (hlen->l2_len + rte_be_to_cpu_16(iph->total_length) >
- 				rte_pktmbuf_data_len(mbuf))
- 			return;
- 
--		cksum = ~rte_raw_cksum(iph, l3_len);
-+		cksum = ~rte_raw_cksum(iph, hlen->l3_len);
- 		mbuf->ol_flags |= cksum ?
- 			RTE_MBUF_F_RX_IP_CKSUM_BAD :
- 			RTE_MBUF_F_RX_IP_CKSUM_GOOD;
- 	} else if (l3 == RTE_PTYPE_L3_IPV6) {
- 		struct rte_ipv6_hdr *iph = l3_hdr;
- 
--		l3_len = sizeof(struct rte_ipv6_hdr);
- 		/* check that the total length reported by header is not
- 		 * greater than the total received size
- 		 */
--		if (l2_len + l3_len + rte_be_to_cpu_16(iph->payload_len) >
-+		if (hlen->l2_len + sizeof(*iph) + rte_be_to_cpu_16(iph->payload_len) >
- 				rte_pktmbuf_data_len(mbuf))
- 			return;
- 	} else {
-@@ -386,20 +375,19 @@ tap_verify_csum(struct rte_mbuf *mbuf)
- 
- 	if (l4 == RTE_PTYPE_L4_UDP || l4 == RTE_PTYPE_L4_TCP) {
- 		int cksum_ok;
--		const unsigned int l4_min_len = (l4 == RTE_PTYPE_L4_UDP)
--			? sizeof(struct rte_udp_hdr) : sizeof(struct rte_tcp_hdr);
- 
- 		/* Don't verify checksum if L4 header is truncated */
--		if (l2_len + l3_len + l4_min_len > rte_pktmbuf_data_len(mbuf))
-+		if (l4_off + hlen->l4_len > rte_pktmbuf_data_len(mbuf))
- 			return;
- 
--		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l2_len + l3_len);
- 		/* Don't verify checksum for multi-segment packets. */
- 		if (mbuf->nb_segs > 1)
- 			return;
-+
-+		l4_hdr = rte_pktmbuf_mtod_offset(mbuf, void *, l4_off);
- 		if (l3 == RTE_PTYPE_L3_IPV4 || l3 == RTE_PTYPE_L3_IPV4_EXT) {
- 			if (l4 == RTE_PTYPE_L4_UDP) {
--				udp_hdr = (struct rte_udp_hdr *)l4_hdr;
-+				struct rte_udp_hdr *udp_hdr = l4_hdr;
- 				if (udp_hdr->dgram_cksum == 0) {
- 					/*
- 					 * For IPv4, a zero UDP checksum
-@@ -561,10 +549,11 @@ pmd_rx_burst(void *queue, struct rte_mbuf **bufs, uint16_t nb_pkts)
- 			continue;
- 		}
- 
--		mbuf->packet_type = rte_net_get_ptype(mbuf, NULL,
-+		struct rte_net_hdr_lens hlen = {0};
-+		mbuf->packet_type = rte_net_get_ptype(mbuf, &hlen,
- 						      RTE_PTYPE_ALL_MASK);
- 		if (rxq->rxmode->offloads & RTE_ETH_RX_OFFLOAD_CHECKSUM)
--			tap_verify_csum(mbuf);
-+			tap_verify_csum(mbuf, &hlen);
- 
- 		/* account for the receive frame */
- 		bufs[num_rx++] = mbuf;
--- 
-2.54.0
+Discussion:
+-	It does not seem to be a requirement to be able to free the memory
+	used by the heap back to the memzones.
+-	It is possible having header-less objects.
+	However, if the headers are relatively small compared to the size of
+	the objects themselves, having a header may offer some benefits.
+-	The mempool library has implementation details optimizing for
+	spreading usage across memory channels, cache alignment, etc..
+	Such performance optimization details might need consideration.
+-	There is a lower limit to how small objects will be allocated.
+	E.g. objects smaller than the size of a pointer is unlikely.
+-	It is acceptable to return an object larger than the size requested,
+	e.g. returning an object of 16 bytes when 12 bytes were requested.
+-	Preventing false sharing of allocated objects between CPU caches
+	may not be necessary, but must be considered.
+-	Optimally, the new heap should replace the existing heap.
+	As seen with the timer wheel library previously proposed, replacing
+	core libraries in DPDK is difficult, so adding the new heap library
+	in parallel with the existing heap, i.e. with separate APIs, might be
+	a path of less resistance.
+	It will then be an application choice to use this new memory heap.
+	And long term, it can replace the existing heap, if appropriate.
 
+Mbuf discussion:
+-	As a stretch goal, mbufs should be dynamically allocated from
+	the new heap, instead of being pre-allocated in mempools.
+-	This might be achievable either
+	-	by replacing the mempool library with a wrapper to the heap, or
+	-	by providing a new mempool driver using the heap, as an
+		alternative to the existing ring and stack mempool drivers.
+-	In this context, it is important to note that mbuf objects have some
+	pre-initialized fields when held in their respective mempools.
+	If allocating an mbuf directly from the heap, these fields must
+	somehow be initialized.
+	We did not discuss solutions for this, but noted that using the new
+	heap for mbufs should be considered in the design choices.
+
+
+Venlig hilsen / Kind regards,
+-Morten Br=F8rup
