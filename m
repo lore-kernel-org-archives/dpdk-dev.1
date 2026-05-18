@@ -2,146 +2,76 @@ Return-Path: <dev-bounces@dpdk.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mails.dpdk.org (mails.dpdk.org [217.70.189.124])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D900ECD4F3C
-	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 15:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2150DCD4F3C
+	for <dpdk-dev@archiver.kernel.org>; Mon, 18 May 2026 16:26:51 +0000 (UTC)
 Received: from mails.dpdk.org (localhost [127.0.0.1])
-	by mails.dpdk.org (Postfix) with ESMTP id DAF9B4060A;
-	Mon, 18 May 2026 17:28:37 +0200 (CEST)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
- by mails.dpdk.org (Postfix) with ESMTP id CFC8D402D9;
- Mon, 18 May 2026 17:28:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
- d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
- t=1779118117; x=1810654117;
- h=date:from:to:cc:subject:message-id:references:
- in-reply-to:mime-version;
- bh=xCxTAN5Jb1T1AJPZP+NVinzyJpUj3KYCb1bp6JGUTfw=;
- b=KVnlgMdOfTaCVbg9E8hjwDeRSsPiCJ40RNy0w5bjVtqB+3pmTEiwznfr
- 10Y9SDtZgHzXmw8UmNBFqj8MgJmiTXJAA/zVgNt7zb60vxarJBt9om9rP
- yuesbJ/TrafC3935bmSs/rST7rTgBNkLCY1bE14Kdvw4PJ0ayYiM9GHkx
- HuPC04qT5bfNsj7rVatNPFC4ZI94hJjMwwu3Yg/rAh/WH3ZZMBem7XZyB
- mcpzYwcaJjMYIlCRZq9DI+Ez6Bl4VKGBOkX/mvqyQ1uzGtLrhIEQm04rK
- yl+0793hVPoOFo/dv7/bg18yFSjUG63X2ZODo+tGkTLATtiCcRw3Yb8/z w==;
-X-CSE-ConnectionGUID: yugigiwmRfOZkJj9fcAnDA==
-X-CSE-MsgGUID: W/OJEnc4Qsqe1WwOzaq8fA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11790"; a="102646882"
-X-IronPort-AV: E=Sophos;i="6.23,242,1770624000"; d="scan'208";a="102646882"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
- by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 May 2026 08:28:36 -0700
-X-CSE-ConnectionGUID: 8Kr29+qBTOSFg3ipUMJbMQ==
-X-CSE-MsgGUID: xaEPmsTXTiWmy49eliMfVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.23,242,1770624000"; d="scan'208";a="243759702"
-Received: from fmsmsx901.amr.corp.intel.com ([10.18.126.90])
- by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384;
- 18 May 2026 08:28:36 -0700
-Received: from FMSMSX903.amr.corp.intel.com (10.18.126.92) by
- fmsmsx901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Mon, 18 May 2026 08:28:35 -0700
-Received: from fmsedg901.ED.cps.intel.com (10.1.192.143) by
- FMSMSX903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37 via Frontend Transport; Mon, 18 May 2026 08:28:35 -0700
-Received: from CH5PR02CU005.outbound.protection.outlook.com (40.107.200.2) by
- edgegateway.intel.com (192.55.55.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.37; Mon, 18 May 2026 08:28:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bWLXNSMeXgxNgkgnSv6qw6TROqlNEMB24ZAd1UxrNVvX9MKsRP6et9T+XLjrk2CZ8CfUPsEhzl7VYjoy2P2OKfC/n6ipVC9MHNVR6li0e+JSVmYsuWkR0cI/CauxGUyZNxjQTDBu2RDTmNLAWorU3bkjldZa2md/2pJjudN+IEmCoBxA1VoKGmHpuo16fgMhqLZtyhgXksJHbjBy7Xo3S09AIeqB46jeTEWncMo50ZCaV9zB/TL+kkeHdZuGANMXzvbAcRZtGskTUBdjaiX3swuCqLX+I9uXNExIMjLq7O3M/X2ROcq+OWbNFTZEcc87xdSTH1HLvId4Hte5ihEvLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com; 
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pjldT+GLTeQdEevpScN9Jeg/W8750ZcDfTL51JZfdSs=;
- b=lnU9PMAOK6ub9RsLX8alFgMdhM6K16aCbr74W039h2Qx8DBoHGl/1ZiW07eK6p/WIGmTCXIMLVR61rKvBMhfw1+/JAzKzUO04wi8+SjoA7+NqMfOV9tHdyDftLtxCRR92/h3stP30H0Oarc2cNvZEh3haDEBPkDl0GXwCUHOozei9r6mO5qlsKRHS4YN1LTm8g/2FFEN7coACbWwQhmtFEyEu9g2XWmEBvkWTQWtXihav0aExutroY4h2IotcrSdWrAqqr8pEW9vOPnJfp39XhkkFMoh5V10JV0KRs3EGYdD0ml+J1jBQli8ZA3Dw9SfjmX+h2FAeBMCKtOXEvdZjQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com (2603:10b6:8:13e::17)
- by SAWPR11MB9897.namprd11.prod.outlook.com (2603:10b6:806:54a::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.21.25.24; Mon, 18 May
- 2026 15:28:32 +0000
-Received: from DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e]) by DS0PR11MB7309.namprd11.prod.outlook.com
- ([fe80::2a1:33a9:9f92:b52e%5]) with mapi id 15.21.0025.022; Mon, 18 May 2026
- 15:28:32 +0000
-Date: Mon, 18 May 2026 16:28:26 +0100
-From: Bruce Richardson <bruce.richardson@intel.com>
-To: Thomas Monjalon <thomas@monjalon.net>
-CC: Robin Jarry <rjarry@redhat.com>, <dev@dpdk.org>, Stephen Hemminger
- <stephen@networkplumber.org>, Konstantin Ananyev
- <konstantin.ananyev@huawei.com>, <stable@dpdk.org>
+	by mails.dpdk.org (Postfix) with ESMTP id 523334064F;
+	Mon, 18 May 2026 18:26:50 +0200 (CEST)
+Received: from mail-dy1-f169.google.com (mail-dy1-f169.google.com
+ [74.125.82.169]) by mails.dpdk.org (Postfix) with ESMTP id 0D95E402DE
+ for <dev@dpdk.org>; Mon, 18 May 2026 18:26:48 +0200 (CEST)
+Received: by mail-dy1-f169.google.com with SMTP id
+ 5a478bee46e88-2f7020a928eso3491461eec.1
+ for <dev@dpdk.org>; Mon, 18 May 2026 09:26:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=networkplumber-org.20251104.gappssmtp.com; s=20251104; t=1779121608;
+ x=1779726408; darn=dpdk.org; 
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+ :message-id:reply-to;
+ bh=aUejX98SVsa85D8bv8s0O3BC1ZcobvuSg557+Y99Zt0=;
+ b=PrLYNQJDmFHZkR5y9yPkxdQfN04AufyZEy0Rg7MlLfSftcyIi2taTrYDZtbTV6RsnS
+ nSk8vKeVrXC4wbs5I1mgEsllLMZi2NmgHjL/JACXKYY7gKaka47SLE/UgkhKjmSYPtnw
+ 2Brk27xz3je7ufXkXlaJYkXdEQ7jrzr/KvvIQMYiToWeJ6JQ1Vf71K/X3Kht28PAgaTF
+ 4TS1YqLuOEPHlT1b/3pHOnmFlLPZmDjOa7SY23jjkSffsldRaTJWL5fPgvbyoSxiEXzG
+ weER6BYb6IqfOG85Vfm3dTxuUiDe1hn+E4AkycJ1X/hYuf5U8hQwoJGtCe2HoMgfuxds
+ m07A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20251104; t=1779121608; x=1779726408;
+ h=content-transfer-encoding:mime-version:references:in-reply-to
+ :message-id:subject:cc:to:from:date:x-gm-gg:x-gm-message-state:from
+ :to:cc:subject:date:message-id:reply-to;
+ bh=aUejX98SVsa85D8bv8s0O3BC1ZcobvuSg557+Y99Zt0=;
+ b=kOZ/Tf1Pt01cSS+Hwmi5hR136a74hvA3x5j4Wd/9mjNpRqNhgGiLLMG/OggToiD0xU
+ YfclIQUr6H9MAPUHIKsY23FdzGZX0STrggjBuny1BIjwXbIY+tjzQO/9MVuAa9s0WIzO
+ 8TA6WCvJVUmnFoxojdJwmstdkOJLHdc30TBKL6FsNJRn4d2KAVrI9flb/uwPwMCRxLae
+ rSb27bsEE0QlTbdIspJi1v7NbEpps+gwNWyzkIk4tEDmmsRWvC7bnCEa3nW+hqQEjHP5
+ Wn61o4O1Fs04kUMhUwRzsOmqz+zgD/TT4s3cBdMn1hXAja+CExDXb/MAqHMTEYA6mdVt
+ H2iw==
+X-Forwarded-Encrypted: i=1;
+ AFNElJ86olJpo9ESNS69d2ccyUHiNvsRG0Eo6Z/UG7KBWMuaYxbCESdr0Jok7MQRx0pDXIibz7c=@dpdk.org
+X-Gm-Message-State: AOJu0YxxBNTlINptJDeHFNRQtWeY0T1mefyFX+FC/s8zTmZ89bknAlzd
+ ywGHSLZLA2mzcMrRQiLYcQWs9RShZhBAABrMtRNiwXpS/ZqrBH9z09M6npY2qZV1Zd4=
+X-Gm-Gg: Acq92OEo3tckU0aT2XORjte97FDFwfDDm9BWWFzGl4Dl/qWercGtvDbWK9YU3l3b1Oa
+ kX+SINZGyLMd8/Vjm/NtxgRGojpSieUzHVzLb07hNBm3hYjg1q78+qowZT+fByGcBe1kcZ49ULL
+ Ij8WA651yaDGizYHkZUSffSbQkIHqTGP0eXng4lnOMxyRD+/ZR/F8dCBB2qnQLIpsKWPLKlevHU
+ K0iH9DGK2dSC/g+aUxjOXhcC90tv56U3RX1ard0x2CcQfZLVECZltTtKpxlq6GhoOcbgUOmDvRF
+ jPsWDhLszQVoVbd9wUZR9Up4+zGgqQWEZ05wAedg+hKJ29IcYlYRADM74b8uw3Y9BZfMz92Eazv
+ WanBsOUla0BBQHnQ/iJN43V4Xhp9drnUU2MGr3FIPXZbAlGTBrfwJfs6wBkbwjO0F+eCVf39Pp/
+ C6yIECArxf4eW/yes/TrBoLD6fkA00fB9jrf8=
+X-Received: by 2002:a05:7300:d021:b0:2d9:6f2f:9f6f with SMTP id
+ 5a478bee46e88-30398697cddmr6024678eec.24.1779121607760; 
+ Mon, 18 May 2026 09:26:47 -0700 (PDT)
+Received: from phoenix.local ([104.202.41.210])
+ by smtp.gmail.com with ESMTPSA id
+ 5a478bee46e88-302973bcc5asm13998399eec.22.2026.05.18.09.26.47
+ (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+ Mon, 18 May 2026 09:26:47 -0700 (PDT)
+Date: Mon, 18 May 2026 09:26:44 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: "Robin Jarry" <rjarry@redhat.com>
+Cc: "Thomas Monjalon" <thomas@monjalon.net>, <dev@dpdk.org>, "Konstantin
+ Ananyev" <konstantin.ananyev@huawei.com>, "Bruce Richardson"
+ <bruce.richardson@intel.com>, <stable@dpdk.org>
 Subject: Re: [PATCH v2 1/2] spinlock: remove volatile qualifier
-Message-ID: <agswGt0gN-edMzjZ@bricha3-mobl1.ger.corp.intel.com>
+Message-ID: <20260518092644.0c207992@phoenix.local>
+In-Reply-To: <DILWG1XCA7NV.33OR3FAYCVVI0@redhat.com>
 References: <20260504083714.2904729-1-thomas@monjalon.net>
  <20260518150819.3332628-1-thomas@monjalon.net>
  <DILWG1XCA7NV.33OR3FAYCVVI0@redhat.com>
- <kagkiNyiQQ67llvhX0AB8g@monjalon.net>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <kagkiNyiQQ67llvhX0AB8g@monjalon.net>
-X-ClientProxiedBy: DU2PR04CA0316.eurprd04.prod.outlook.com
- (2603:10a6:10:2b5::21) To DS0PR11MB7309.namprd11.prod.outlook.com
- (2603:10b6:8:13e::17)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7309:EE_|SAWPR11MB9897:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4b39b56d-87a6-4af2-6fee-08deb4f21e51
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
- ARA:13230040|1800799024|366016|376014|18002099003|22082099003|56012099003|11063799003|4143699003;
-X-Microsoft-Antispam-Message-Info: f8CzJTHIFrjyqWJBtznd1C0YVRSHj18TCboSF3dBDWuQdgp/hMpa+8WkVSAFGTFsY/bGJh3RQhymwDCJtR3BN3HoppNiyJcsGTyZ8+4PFNROjYGBH3U/NnCFefEHakLBLfp6kCAmrulShZwfX0+QEkEm9HSTa7zwJ6EX4QesjQzNJ7TMcDRMJ3MmzU2pJ66SI3Dh1OLzLtvR04TgXkNPRv/5wmm7H9ySn5BMesWWGAa70nUSl8gOY4Za4tMsSb1cCvbM+ZdPTXo8VYqAHG5UZ8/HmQVI4ZNZKzsxDPOo0zF8LwCWk+l1b9bWgkyAexur1QLRaJekNV9JDVd4XM8f3KC8sWMzcIm25PpCGsEYIljuCMR+hSJPup/yQvNEwuvYf8hpb1OQTUjB5W8lsBXuBiXQIxZjTGgcLsHdmmeRDCxtsSls9MfkRY73G8+T31eHgk2tr86A+3+FcAd5FMmM4+mOJZYS94IL+Nlu00lC9vkbrtGLJjBj/ev3hCyRSKoi3MksMi85HNPKw/hWpZ4GjjqgA9RbixRCijRMR6cnHXRRQp37Ep9I4/1rocQL27qF6l1sQH4k3kbFWKgmEq2p9RqnIFNB2FgCYLd3jpO3NYcyzRagTMIwJQfb5Qj10akhvc0jhq/mbPNM3xUB1Nl/5wYmwPcQs4WE7TKyIyYmgq9DSZpEooe0APYk8jocHME7
-X-Forefront-Antispam-Report: CIP:255.255.255.255; CTRY:; LANG:en; SCL:1; SRV:;
- IPV:NLI; SFV:NSPM; H:DS0PR11MB7309.namprd11.prod.outlook.com; PTR:; CAT:NONE;
- SFS:(13230040)(1800799024)(366016)(376014)(18002099003)(22082099003)(56012099003)(11063799003)(4143699003);
- DIR:OUT; SFP:1101; 
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?B/awdvfiFRg4DrQh0wjQxephtu3jI4rNMKnWbvNWJReUYPMsUQi6R2XdwofG?=
- =?us-ascii?Q?TAsTdMK6s7TNcdMZ4ySKGZhnH7bSYwrFRPTUWlR2QwKkZeHnTvstXJAjkYGz?=
- =?us-ascii?Q?gQnTtz18Fpch+b1ek3ACXNvRzpuHNOLMmRUbEVgjY4KHlkFyFxl/Am5rrwHv?=
- =?us-ascii?Q?FlfMqN9mIPI/0T9AwblZC3atvTJXHiatRf1bWwdtW734SkPMozAqhrVHV4Q4?=
- =?us-ascii?Q?9H0hfFvZ+sqgUDT5aTfxuPGwABk+MIpO7dqFf3luA70XrckfCBbhKJ/jCvwD?=
- =?us-ascii?Q?XnrZ/M5i/0aVq3HRMNWTqy1XZihis0N4t3A0fWs0KBilbipRl2DMqADwHK34?=
- =?us-ascii?Q?D2XBmoMlHvnoWsIGcf33sqi/5+qp+9+MpvfHVmilDAfM3HGKGdBz3BXL+oeK?=
- =?us-ascii?Q?OdofP1ACydqegukZUKUJJ/4PbuRP7IcK/fJiYNHiAibcMTE/2ue/KO3yEaIe?=
- =?us-ascii?Q?x2kVfLyrDqD9rxOCTcd/cBajAwtXRHUdUuRVWWAJ6t3b3TLzwWkL1U1KUFx3?=
- =?us-ascii?Q?jGhQfdIomvNc1CU9cOF7jj9ztVKDJ5T5FM/YlU+cxHtK2u1TMPcHBy0R1jR9?=
- =?us-ascii?Q?YmFAvw8fI0h8vez3u0WtYPLnhRcX/+zIsJBKejs2rY9M1rbSlGD/8PMIfAEI?=
- =?us-ascii?Q?q0XCht/CdcBTRjOip0WFyDvzvVr3Q2HhQu8hPc/4O33HjE6zk/33K9r0fg5s?=
- =?us-ascii?Q?bVf1D+bAhxmpr9J6ZQCPjLLF76OomQQSFZr/YB5P5fRMyIqnIvGUbzVH3Zox?=
- =?us-ascii?Q?BcUHvi3fOX2lPNHed6SFqOJunplBrzOLIBCyqH9kgkyxhJ3KGYY54hfYLcCE?=
- =?us-ascii?Q?ETgouXssMrGIPIiNu4eSfQz83YsiKpWJvBOlQtiE20lLRAH6Cyn85GGp5n31?=
- =?us-ascii?Q?EnImePr1xGnhc2wyLmyIHIwquoM3TFP8m7NGxoFZlbtUmF6ayNiQbhGNIqnl?=
- =?us-ascii?Q?T1/GJnX31+QNCVK6udCN51syIXCjCj+aVrkLs2UojKb+7x5WwpeDIhnlkbwO?=
- =?us-ascii?Q?AgAsqX92ESMN4Jt6wKg95xUHMhiZhqGmUJj3unwyfZQBExtzKX+NqDfA0fN/?=
- =?us-ascii?Q?PQSqXwzfAWO00qnHE+vSYlHZ7DMQfIH7dnBeHyBDViAbjSvolhAVbOk1xZ+S?=
- =?us-ascii?Q?Occre2ovvwL3pcqRnyYfZWpbdXTtS0cHz+zAmzCTYkdWRVDvManXL3ZhzLCG?=
- =?us-ascii?Q?lBvH+QHnpP7AeyySBGO1YFen2WJ6LfDQ+ZaFQXJ2mJ7bulFy/+y/Em+GbI4G?=
- =?us-ascii?Q?zqmEIo9dsy4jEbN4amxnSpTJO+FoqXDBuvhxu9M1XlAHCBSQ9D1RbS8FWtX4?=
- =?us-ascii?Q?X0O4BkebuHNF/VzdGdA9MOx2AekKdJCJ2iyQdxmJjyF4s8O8jt6YfCW1gaaX?=
- =?us-ascii?Q?qnGEeO6mYpbxTDUVdJ9JV7up8PV7eREIY0E+iG60gdDMy1dY8nDlV4xmqgcl?=
- =?us-ascii?Q?j1W3EP0L0MBgUQE1gKEW2uuMZQsyRuEt0VXzwb+UU13OlLysL+MPxmPOwECv?=
- =?us-ascii?Q?/JTC6bYvannWdTSutt/NL6JYsBGxzlDu11k8ejlM75d7eN1AKxXOHtfj3hMs?=
- =?us-ascii?Q?E9wgrmTprulFl3d1OibGSCJNmFf3n9nBuO9thgK45bVNThVkE0mGDu3DWgMC?=
- =?us-ascii?Q?zCH/h9EMFxMpXZxzaVwQy5ElwGRkm/LzjFTOBShVTsXLPRCUT8Magp5FhXwu?=
- =?us-ascii?Q?wqCS1eizE1APQqZqoGsULm5k03sDW3TmYmaEhApfO9DsegpDeFfifuD9UrC9?=
- =?us-ascii?Q?KpqbaeUt0LRYzgEUqNH1BOXC5FICOQk=3D?=
-X-Exchange-RoutingPolicyChecked: UAXSVx0xYiN77ZBaIbYxgsBiQy3ct9Lq2qwaOZ05hhK0pgUkswMOwNOhyLr3XKgk9API7n8xEBDGevt1mRB0D/sahrTjGbfC3je/p/k7CEQU4xUEOwWmYbSPaBsqFTRnKq2Kk8tNQ40gvLaK+AWlJBbGURaMDwdKYFNYI3Jn9ceAb8CqyZU9iJxBCjroD50kcYo8VryF0iqGYp7R8mkdKbPq3rHqpc4DYhQrC37IV+THUGVj6gendcigKOejXCTeZnaxcqQin9FgTdjKOHGG7H+RmWCZK+Usipi2wS6Yt2IchSBcgRnqIllUY0IRIKE1P8AAXsvP/fnzsxGi5Ta5BA==
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b39b56d-87a6-4af2-6fee-08deb4f21e51
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7309.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 May 2026 15:28:31.8661 (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 60rCC2dIvVAiCMBzIlsY4iw0NevA64ZrwVNVRQNw8+oTJ50qKW//myKI2LQeXpjYlYT4fGkYzhoHwtTypoEqKc3KxuRabQvskYv+j72tyKQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SAWPR11MB9897
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 X-BeenThere: dev@dpdk.org
 X-Mailman-Version: 2.1.29
 Precedence: list
@@ -155,29 +85,96 @@ List-Subscribe: <https://mails.dpdk.org/listinfo/dev>,
  <mailto:dev-request@dpdk.org?subject=subscribe>
 Errors-To: dev-bounces@dpdk.org
 
-On Mon, May 18, 2026 at 05:25:43PM +0200, Thomas Monjalon wrote:
-> 18/05/2026 17:14, Robin Jarry:
-> > Hey Thomas,
-> > 
-> > Thomas Monjalon, May 18, 2026 at 17:07:
+On Mon, 18 May 2026 17:14:54 +0200
+"Robin Jarry" <rjarry@redhat.com> wrote:
 
-<snip>
+> Hey Thomas,
+> 
+> Thomas Monjalon, May 18, 2026 at 17:07:
+> > When compiling with C++20 standard requirement (default in GCC 16),
+> > the increment and decrement of volatile variables are rejected:
+> >
+> > rte_spinlock.h:241:14: error:
+> > 	'++' expression of 'volatile'-qualified type is deprecated
+> > rte_spinlock.h:252:21: error:
+> > 	'--' expression of 'volatile'-qualified type is deprecated
+> > rte_spinlock.h:278:14: error:
+> > 	'++' expression of 'volatile'-qualified type is deprecated
+> >
+> > The count field of rte_spinlock_recursive_t
+> > does not need the volatile qualifier
+> > because it is only accessed by the thread holding the lock,
+> > which already provides the necessary memory ordering.
+> >
+> > The user field can be accessed outside of the lock,
+> > so it must handled as a C11 atomic variable.
+> >
+> > Fixes: af75078fece3 ("first public release")
+> > Cc: stable@dpdk.org
+> >
+> > Signed-off-by: Thomas Monjalon <thomas@monjalon.net>
+> > ---
+> > v1: drop volatile keyword
+> > v2: make user an atomic variable
+> > ---
+> >  lib/eal/include/generic/rte_spinlock.h | 17 ++++++++---------
+> >  1 file changed, 8 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/lib/eal/include/generic/rte_spinlock.h b/lib/eal/include/generic/rte_spinlock.h
+> > index c907d4e45c..5d810b682a 100644
+> > --- a/lib/eal/include/generic/rte_spinlock.h
+> > +++ b/lib/eal/include/generic/rte_spinlock.h
+> > @@ -197,8 +197,8 @@ rte_spinlock_trylock_tm(rte_spinlock_t *sl)
+> >   */
+> >  typedef struct {
+> >  	rte_spinlock_t sl; /**< the actual spinlock */
+> > -	volatile int user; /**< core id using lock, -1 for unused */
+> > -	volatile int count; /**< count of time this lock has been called */
+> > +	RTE_ATOMIC(int) user; /**< core id using lock, -1 for unused */
+> > +	int count; /**< count of time this lock has been called */
+> >  } rte_spinlock_recursive_t;
+> >  
+> >  /**
+> > @@ -215,7 +215,7 @@ typedef struct {
+> >  static inline void rte_spinlock_recursive_init(rte_spinlock_recursive_t *slr)
+> >  {
+> >  	rte_spinlock_init(&slr->sl);
+> > -	slr->user = -1;
+> > +	rte_atomic_store_explicit(&slr->user, -1, rte_memory_order_relaxed);
+> >  	slr->count = 0;
+> >  }
+> >  
+> > @@ -230,9 +230,9 @@ static inline void rte_spinlock_recursive_lock(rte_spinlock_recursive_t *slr)
+> >  {
+> >  	int id = rte_gettid();
+> >  
+> > -	if (slr->user != id) {
+> > +	if (rte_atomic_load_explicit(&slr->user, rte_memory_order_relaxed) != id) {  
+> 
+> This needs to be rte_memory_order_acquire
+
+No it does not. There is no dependency here.
+The acquire is inside the spinlock.
 
 > 
-> [...]
-> > > @@ -246,10 +246,9 @@ static inline void rte_spinlock_recursive_unlock(rte_spinlock_recursive_t *slr)
-> > >  	__rte_no_thread_safety_analysis
-> > >  {
-> > >  	if (--(slr->count) == 0) {
-> > 
-> > This code is completely broken. Any thread can unlock without any check.
+> >  		rte_spinlock_lock(&slr->sl);
+> > -		slr->user = id;
+> > +		rte_atomic_store_explicit(&slr->user, id, rte_memory_order_relaxed);  
 > 
-> Maybe, but I don't intend to fix recursive unlock in this patch.
-> The subject is "remove volatile qualifier" (and unblock GCC 16).
-> 
-As with regular mutexes, threads should not go around unlocking when not
-holding the lock. Therefore, I think this is fine. [With regular spinlocks
-we can't check since we don't track threads, therefore I think we just need
-to assume a well-behaved app.]
+> And rte_memory_order_release
 
-/Bruce
+Ditto.
+
+> 
+> >  	}
+> >  	slr->count++;
+> >  }
+> > @@ -246,10 +246,9 @@ static inline void rte_spinlock_recursive_unlock(rte_spinlock_recursive_t *slr)
+> >  	__rte_no_thread_safety_analysis
+> >  {
+> >  	if (--(slr->count) == 0) {  
+> 
+> This code is completely broken. Any thread can unlock without any check.
+
+I would make an RTE_ASSERT() that id matched current thread id.
+Since caller holds lock, no atomic required for that.
